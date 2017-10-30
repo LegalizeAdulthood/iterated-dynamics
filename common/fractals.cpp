@@ -1721,7 +1721,7 @@ JuliaTrigOrTrigfpFractal()
     return floatbailout();
 }
 
-int AplusOne, Ap1deg;
+int AplusOne, g_halley_a_plus_one_times_degree;
 MP mpAplusOne, mpAp1deg;
 MPC mpctmpparm;
 
@@ -1800,8 +1800,8 @@ HalleyFractal()
     FPUcplxmul(&old, &XtoA, &XtoAplusOne);
 
     CMPLXsub(XtoAplusOne, old, FX);        // FX = X^(a+1) - X  = F
-    F2prime.x = Ap1deg * XtoAlessOne.x; // Ap1deg in setup
-    F2prime.y = Ap1deg * XtoAlessOne.y;        // F"
+    F2prime.x = g_halley_a_plus_one_times_degree * XtoAlessOne.x; // g_halley_a_plus_one_times_degree in setup
+    F2prime.y = g_halley_a_plus_one_times_degree * XtoAlessOne.y;        // F"
 
     F1prime.x = AplusOne * XtoA.x - 1.0;
     F1prime.y = AplusOne * XtoA.y;                             //  F'

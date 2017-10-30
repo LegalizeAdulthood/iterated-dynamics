@@ -1283,14 +1283,14 @@ HalleySetup()
 
     //  precalculated values
     AplusOne = degree + 1; // a+1
-    Ap1deg = AplusOne * degree;
+    g_halley_a_plus_one_times_degree = AplusOne * degree;
 
 #if !defined(XFRACT)
     if (fractype == fractal_type::MPHALLEY)
     {
         setMPfunctions();
         mpAplusOne = *pd2MP((double)AplusOne);
-        mpAp1deg = *pd2MP((double)Ap1deg);
+        mpAp1deg = *pd2MP((double)g_halley_a_plus_one_times_degree);
         mpctmpparm.x = *pd2MP(parm.y);
         mpctmpparm.y = *pd2MP(parm2.y);
         mptmpparm2x = *pd2MP(parm2.x);

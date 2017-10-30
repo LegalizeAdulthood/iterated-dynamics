@@ -33,7 +33,7 @@ extern int                   g_adapter;         // index into g_video_table[]
 extern AlternateMath         g_alternate_math[];   // alternate math function pointers
 extern int                   g_ambient;           // Ambient= parameter value
 extern int                   g_and_color;       // AND mask for iteration to get color index
-extern int                   Ap1deg;
+extern int                   g_halley_a_plus_one_times_degree;
 extern int                   AplusOne;
 extern bool                  askvideo;
 extern float                 aspectdrift;
