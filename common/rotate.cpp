@@ -634,7 +634,7 @@ void save_palette()
             }
             memcpy(old_dac_box, g_dac_box, 256*3);
             colorstate = 2;
-            colorfile = filename;
+            g_color_file = filename;
         }
         fclose(dacfile);
     }

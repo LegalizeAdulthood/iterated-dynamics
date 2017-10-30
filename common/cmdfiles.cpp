@@ -122,7 +122,7 @@ double  math_tol[2] = {.05, .05}; // For math transition
 bool Targa_Out = false;                 // 3D fullcolor flag
 bool truecolor = false;                 // escape time truecolor flag
 int truemode = 0;               // truecolor coloring scheme
-std::string colorfile;          // from last <l> <s> or colors=@filename
+std::string g_color_file;          // from last <l> <s> or colors=@filename
 bool new_bifurcation_functions_loaded = false; // if function loaded for new bifs
 float   screenaspect = DEFAULTASPECT;   // aspect ratio of the screen
 float   g_aspect_drift = DEFAULTASPECTDRIFT;  // how much drift is allowed and
@@ -3667,7 +3667,7 @@ static int parse_colors(char const *value)
         }
         else
         {
-            if (merge_pathnames(colorfile, &value[1], cmd_file::AT_CMD_LINE_SET_NAME) < 0)
+            if (merge_pathnames(g_color_file, &value[1], cmd_file::AT_CMD_LINE_SET_NAME) < 0)
             {
                 init_msg("", &value[1], cmd_file::AT_CMD_LINE_SET_NAME);
             }

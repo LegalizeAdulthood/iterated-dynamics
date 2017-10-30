@@ -135,7 +135,7 @@ void make_batch_file()
         {
             // colors match colorfile
             colorspec[0] = '@';
-            sptr = colorfile.c_str();
+            sptr = g_color_file.c_str();
         }
         else                        // colors match no .map that we know of
         {
