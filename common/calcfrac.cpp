@@ -98,7 +98,7 @@ DComplex tmp = { 0.0 };
 DComplex old = { 0.0 };
 DComplex g_new = { 0.0 };
 DComplex saved = { 0.0 };
-int color = 0;
+int g_color = 0;
 long g_color_iter = 0;
 long oldcoloriter = 0;
 long realcoloriter = 0;
@@ -1466,7 +1466,7 @@ static int diffusion_engine()
                 do
                 {
                     calculate;
-                    (*plot)(col, row, color);
+                    (*plot)(col, row, g_color);
                     j++;
                     row += s;                  // next tile
                 }
@@ -1476,7 +1476,7 @@ static int diffusion_engine()
                 if (rowo < rem_y)
                 {
                     calculate;
-                    (*plot)(col, row, color);
+                    (*plot)(col, row, g_color);
                 }
                 i++;
                 col += s;
@@ -1490,7 +1490,7 @@ static int diffusion_engine()
                 do
                 {
                     calculate;
-                    (*plot)(col, row, color);
+                    (*plot)(col, row, g_color);
                     j++;
                     row += s; // next tile
                 }
@@ -1498,7 +1498,7 @@ static int diffusion_engine()
                 if (rowo < rem_y)
                 {
                     calculate;
-                    (*plot)(col, row, color);
+                    (*plot)(col, row, g_color);
                 }
             }
             dif_counter++;
@@ -1524,7 +1524,7 @@ static int diffusion_engine()
                     row = iystart + rowo + j * s;
 
                     calculate;
-                    plot_block(col, row, sqsz, color);
+                    plot_block(col, row, sqsz, g_color);
                     j++;
                 }
                 while (j < ny);
@@ -1534,7 +1534,7 @@ static int diffusion_engine()
                     row = iystart + rowo + ny * s;
 
                     calculate;
-                    plot_block_lim(col, row, sqsz, color);
+                    plot_block_lim(col, row, sqsz, g_color);
                 }
                 i++;
             }
@@ -1549,7 +1549,7 @@ static int diffusion_engine()
                     row = iystart + rowo + j * s; // get the right tiles
 
                     calculate;
-                    plot_block_lim(col, row, sqsz, color);
+                    plot_block_lim(col, row, sqsz, g_color);
                     j++;
                 }
                 while (j < ny);
@@ -1558,7 +1558,7 @@ static int diffusion_engine()
                     row = iystart + rowo + ny * s;
 
                     calculate;
-                    plot_block_lim(col, row, sqsz, color);
+                    plot_block_lim(col, row, sqsz, g_color);
                 }
             }
 
@@ -1580,7 +1580,7 @@ static int diffusion_engine()
                 row = iystart + rowo + j * s;
 
                 calculate;
-                (*plot)(col, row, color);
+                (*plot)(col, row, g_color);
                 j++;
             }
             while (j < ny);
@@ -1590,7 +1590,7 @@ static int diffusion_engine()
                 row = iystart + rowo + ny * s;
 
                 calculate;
-                (*plot)(col, row, color);
+                (*plot)(col, row, g_color);
             }
             i++;
         }
@@ -1605,7 +1605,7 @@ static int diffusion_engine()
                 row = iystart + rowo + j * s; // get the right tiles
 
                 calculate;
-                (*plot)(col, row, color);
+                (*plot)(col, row, g_color);
                 j++;
             }
             while (j < ny);
@@ -1614,7 +1614,7 @@ static int diffusion_engine()
                 row = iystart + rowo + ny * s;
 
                 calculate;
-                (*plot)(col, row, color);
+                (*plot)(col, row, g_color);
             }
         }
         dif_counter++;
@@ -1892,8 +1892,8 @@ static int standard_calc(int passnum)
             // on 2nd pass of two, skip even pts
             if (quick_calc && !resuming)
             {
-                color = getcolor(col, row);
-                if (color != inside)
+                g_color = getcolor(col, row);
+                if (g_color != inside)
                 {
                     ++col;
                     continue;
@@ -1911,15 +1911,15 @@ static int standard_calc(int passnum)
                 {
                     if ((row&1) == 0 && row < iystop)
                     {
-                        (*plot)(col, row+1, color);
+                        (*plot)(col, row+1, g_color);
                         if ((col&1) == 0 && col < ixstop)
                         {
-                            (*plot)(col+1, row+1, color);
+                            (*plot)(col+1, row+1, g_color);
                         }
                     }
                     if ((col&1) == 0 && col < ixstop)
                     {
-                        (*plot)(++col, row, color);
+                        (*plot)(++col, row, g_color);
                     }
                 }
             }
@@ -1948,7 +1948,7 @@ int calcmand()              // fast per pixel 1/2/b/g, called with row & col set
         {
             g_color_iter = logtablecalc(g_color_iter);
         }
-        color = abs((int)g_color_iter);
+        g_color = abs((int)g_color_iter);
         if (g_color_iter >= colors)
         {
             // don't use color 0 unless from inside/outside
@@ -1956,39 +1956,39 @@ int calcmand()              // fast per pixel 1/2/b/g, called with row & col set
             {
                 if (colors < 16)
                 {
-                    color &= g_and_color;
+                    g_color &= g_and_color;
                 }
                 else
                 {
-                    color = ((color - 1) % g_and_color) + 1;  // skip color zero
+                    g_color = ((g_color - 1) % g_and_color) + 1;  // skip color zero
                 }
             }
             else
             {
                 if (colors < 16)
                 {
-                    color = (int)(g_color_iter & g_and_color);
+                    g_color = (int)(g_color_iter & g_and_color);
                 }
                 else
                 {
-                    color = (int)(((g_color_iter - 1) % g_and_color) + 1);
+                    g_color = (int)(((g_color_iter - 1) % g_and_color) + 1);
                 }
             }
         }
         if (debugflag != debug_flags::force_boundary_trace_error)
         {
-            if (color <= 0 && stdcalcmode == 'b')
+            if (g_color <= 0 && stdcalcmode == 'b')
             {
-                color = 1;
+                g_color = 1;
             }
         }
-        (*plot)(col, row, color);
+        (*plot)(col, row, g_color);
     }
     else
     {
-        color = (int)g_color_iter;
+        g_color = (int)g_color_iter;
     }
-    return color;
+    return g_color;
 }
 
 /************************************************************************/
@@ -2018,7 +2018,7 @@ int calcmandfp()
         {
             g_color_iter = logtablecalc(g_color_iter);
         }
-        color = abs((int)g_color_iter);
+        g_color = abs((int)g_color_iter);
         if (g_color_iter >= colors)
         {
             // don't use color 0 unless from inside/outside
@@ -2026,39 +2026,39 @@ int calcmandfp()
             {
                 if (colors < 16)
                 {
-                    color &= g_and_color;
+                    g_color &= g_and_color;
                 }
                 else
                 {
-                    color = ((color - 1) % g_and_color) + 1;  // skip color zero
+                    g_color = ((g_color - 1) % g_and_color) + 1;  // skip color zero
                 }
             }
             else
             {
                 if (colors < 16)
                 {
-                    color = (int)(g_color_iter & g_and_color);
+                    g_color = (int)(g_color_iter & g_and_color);
                 }
                 else
                 {
-                    color = (int)(((g_color_iter - 1) % g_and_color) + 1);
+                    g_color = (int)(((g_color_iter - 1) % g_and_color) + 1);
                 }
             }
         }
         if (debugflag != debug_flags::force_boundary_trace_error)
         {
-            if (color == 0 && stdcalcmode == 'b')
+            if (g_color == 0 && stdcalcmode == 'b')
             {
-                color = 1;
+                g_color = 1;
             }
         }
-        (*plot)(col, row, color);
+        (*plot)(col, row, g_color);
     }
     else
     {
-        color = (int)g_color_iter;
+        g_color = (int)g_color_iter;
     }
-    return color;
+    return g_color;
 }
 #define STARTRAILMAX FLT_MAX   // just a convenient large number
 
@@ -2993,7 +2993,7 @@ plot_inside: // we're "inside"
 
 plot_pixel:
 
-    color = abs((int)g_color_iter);
+    g_color = abs((int)g_color_iter);
     if (g_color_iter >= colors)
     {
         // don't use color 0 unless from inside/outside
@@ -3001,33 +3001,33 @@ plot_pixel:
         {
             if (colors < 16)
             {
-                color &= g_and_color;
+                g_color &= g_and_color;
             }
             else
             {
-                color = ((color - 1) % g_and_color) + 1;  // skip color zero
+                g_color = ((g_color - 1) % g_and_color) + 1;  // skip color zero
             }
         }
         else
         {
             if (colors < 16)
             {
-                color = (int)(g_color_iter & g_and_color);
+                g_color = (int)(g_color_iter & g_and_color);
             }
             else
             {
-                color = (int)(((g_color_iter - 1) % g_and_color) + 1);
+                g_color = (int)(((g_color_iter - 1) % g_and_color) + 1);
             }
         }
     }
     if (debugflag != debug_flags::force_boundary_trace_error)
     {
-        if (color <= 0 && stdcalcmode == 'b')
+        if (g_color <= 0 && stdcalcmode == 'b')
         {
-            color = 1;
+            g_color = 1;
         }
     }
-    (*plot)(col, row, color);
+    (*plot)(col, row, g_color);
 
     maxit = savemaxit;
     if ((keyboard_check_interval -= abs((int)realcoloriter)) <= 0)
@@ -3038,7 +3038,7 @@ plot_pixel:
         }
         keyboard_check_interval = max_keyboard_check_interval;
     }
-    return color;
+    return g_color;
 }
 
 
@@ -3482,7 +3482,7 @@ int  bound_trace_main()
     for (int currow = iystart; currow <= iystop; currow++)
     {
         reset_periodicity = true; // reset for a new row
-        color = bkcolor;
+        g_color = bkcolor;
         for (int curcol = ixstart; curcol <= ixstop; curcol++)
         {
             if (getcolor(curcol, currow) != bkcolor)
@@ -3490,7 +3490,7 @@ int  bound_trace_main()
                 continue;
             }
 
-            trail_color = color;
+            trail_color = g_color;
             row = currow;
             col = curcol;
             if ((*calctype)() == -1) // color, row, col are global
@@ -3512,7 +3512,7 @@ int  bound_trace_main()
             This next line may cause a few more pixels to be calculated,
             but at the savings of quite a bit of overhead
             */
-            if (color != trail_color)
+            if (g_color != trail_color)
             {
                 continue;
             }
@@ -3520,7 +3520,7 @@ int  bound_trace_main()
             // sweep clockwise to trace outline
             trail_row = currow;
             trail_col = curcol;
-            trail_color = color;
+            trail_color = g_color;
             fillcolor_used = fillcolor > 0 ? fillcolor : trail_color;
             coming_from = direction::West;
             going_to = direction::East;
@@ -3535,8 +3535,8 @@ int  bound_trace_main()
                         && row <= iystop)
                 {
                     // the order of operations in this next line is critical
-                    color = getcolor(col, row);
-                    if (color == bkcolor && (*calctype)() == -1)
+                    g_color = getcolor(col, row);
+                    if (g_color == bkcolor && (*calctype)() == -1)
                         // color, row, col are global for (*calctype)()
                     {
                         if (show_dot != bkcolor)   // remove show_dot pixel
@@ -3550,7 +3550,7 @@ int  bound_trace_main()
                         add_worklist(xxstart, xxstop, curcol, currow, iystop, currow, 0, worksym);
                         return -1;
                     }
-                    if (color == trail_color)
+                    if (g_color == trail_color)
                     {
                         if (matches_found < 4)   // to keep it from overflowing
                         {
@@ -3577,7 +3577,7 @@ int  bound_trace_main()
             if (matches_found <= 3)
             {
                 // no hole
-                color = bkcolor;
+                g_color = bkcolor;
                 reset_periodicity = true;
                 continue;
             }
@@ -3610,13 +3610,13 @@ int  bound_trace_main()
                             right = col;
                             while (--right >= ixstart)
                             {
-                                color = getcolor(right, row);
-                                if (color == trail_color)
+                                g_color = getcolor(right, row);
+                                if (g_color == trail_color)
                                 {
                                     break;
                                 }
                             }
-                            if (color == bkcolor) // check last color
+                            if (g_color == bkcolor) // check last color
                             {
                                 left = right;
                                 while (getcolor(--left, row) == bkcolor)
@@ -3667,7 +3667,7 @@ int  bound_trace_main()
             }
             while (trail_col != curcol || trail_row != currow);
             reset_periodicity = true; // reset after a trace/fill
-            color = bkcolor;
+            g_color = bkcolor;
         }
     }
     return 0;
@@ -5152,8 +5152,8 @@ static long autologmap()
     old_maxit = maxit;
     for (col = 0; col < xstop; col++) // top row
     {
-        color = (*calctype)();
-        if (color == -1)
+        g_color = (*calctype)();
+        if (g_color == -1)
         {
             goto ack; // key pressed, bailout
         }
@@ -5175,8 +5175,8 @@ static long autologmap()
     col = xstop;
     for (row = 0; row < ystop; row++) // right  side
     {
-        color = (*calctype)();
-        if (color == -1)
+        g_color = (*calctype)();
+        if (g_color == -1)
         {
             goto ack; // key pressed, bailout
         }
@@ -5198,8 +5198,8 @@ static long autologmap()
     col = 0;
     for (row = 0; row < ystop; row++) // left  side
     {
-        color = (*calctype)();
-        if (color == -1)
+        g_color = (*calctype)();
+        if (g_color == -1)
         {
             goto ack; // key pressed, bailout
         }
@@ -5221,8 +5221,8 @@ static long autologmap()
     row = ystop ;
     for (col = 0; col < xstop; col++) // bottom row
     {
-        color = (*calctype)();
-        if (color == -1)
+        g_color = (*calctype)();
+        if (g_color == -1)
         {
             goto ack; // key pressed, bailout
         }

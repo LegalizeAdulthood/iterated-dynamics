@@ -1511,18 +1511,18 @@ int lyapunov()
     }
 #endif
 #else
-    color = lyapunov_cycles_in_c(filter_cycles, a, b);
+    g_color = lyapunov_cycles_in_c(filter_cycles, a, b);
 #endif
-    if (inside > COLOR_BLACK && color == 0)
+    if (inside > COLOR_BLACK && g_color == 0)
     {
-        color = inside;
+        g_color = inside;
     }
-    else if (color>=colors)
+    else if (g_color>=colors)
     {
-        color = colors-1;
+        g_color = colors-1;
     }
-    (*plot)(col, row, color);
-    return color;
+    (*plot)(col, row, g_color);
+    return g_color;
 }
 
 
@@ -2794,11 +2794,11 @@ int calcfroth()   // per pixel 1/2/g, called with row & col set
         g_color_iter = 0;
     }
 
-    color = abs((int)(g_color_iter));
+    g_color = abs((int)(g_color_iter));
 
-    (*plot)(col, row, color);
+    (*plot)(col, row, g_color);
 
-    return color;
+    return g_color;
 }
 
 /*

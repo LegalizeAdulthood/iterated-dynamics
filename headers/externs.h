@@ -84,7 +84,7 @@ extern double                g_close_enough;
 extern double                g_close_proximity;
 extern DComplex              g_marks_coefficient;
 extern int                   col;
-extern int                   color;
+extern int                   g_color;
 extern std::string           g_color_file;
 extern long                  g_color_iter;
 extern bool                  g_colors_preloaded;

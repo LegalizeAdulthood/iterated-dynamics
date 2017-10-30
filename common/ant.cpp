@@ -99,52 +99,52 @@ void TurkMite1(int maxtur, int rule_len, char const *ru, long maxpts, long wait)
     if (rule_len == 0)
     {
         // random rule
-        for (color = 0; color < MAX_ANTS; color++)
+        for (g_color = 0; g_color < MAX_ANTS; g_color++)
         {
             /* init the rules and colors for the
              * turkmites: 1 turn left, -1 turn right */
-            rule[color] = 1 - (RANDOM(2) * 2);
-            next_col[color] = color + 1;
+            rule[g_color] = 1 - (RANDOM(2) * 2);
+            next_col[g_color] = g_color + 1;
         }
         // close the cycle
-        next_col[color] = 0;
+        next_col[g_color] = 0;
     }
     else
     {
         // user defined rule
-        for (color = 0; color < rule_len; color++)
+        for (g_color = 0; g_color < rule_len; g_color++)
         {
             /* init the rules and colors for the
              * turkmites: 1 turn left, -1 turn right */
-            rule[color] = (ru[color] * 2) - 1;
-            next_col[color] = color + 1;
+            rule[g_color] = (ru[g_color] * 2) - 1;
+            next_col[g_color] = g_color + 1;
         }
         // repeats to last color
-        for (color = rule_len; color < MAX_ANTS; color++)
+        for (g_color = rule_len; g_color < MAX_ANTS; g_color++)
         {
             /* init the rules and colors for the
              * turkmites: 1 turn left, -1 turn right */
-            rule[color] = rule[color % rule_len];
-            next_col[color] = color + 1;
+            rule[g_color] = rule[g_color % rule_len];
+            next_col[g_color] = g_color + 1;
         }
         // close the cycle
-        next_col[color] = 0;
+        next_col[g_color] = 0;
     }
-    for (color = maxtur; color; color--)
+    for (g_color = maxtur; g_color; g_color--)
     {
         /* init the various turmites N.B. non usa
          * x[0], y[0], dir[0] */
         if (rule_len)
         {
-            dir[color] = 1;
-            x[color] = XO;
-            y[color] = YO;
+            dir[g_color] = 1;
+            x[g_color] = XO;
+            y[g_color] = YO;
         }
         else
         {
-            dir[color] = RANDOM(DIRS);
-            x[color] = RANDOM(xdots);
-            y[color] = RANDOM(ydots);
+            dir[g_color] = RANDOM(DIRS);
+            x[g_color] = RANDOM(xdots);
+            y[g_color] = RANDOM(ydots);
         }
     }
     maxpts = maxpts / (long) INNER_LOOP;

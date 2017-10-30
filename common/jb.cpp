@@ -273,30 +273,30 @@ zline(long x, long y)
         {
             if (juli3Dmode == 3)
             {
-                color = (int)(128l * zpixel / zdots);
+                g_color = (int)(128l * zpixel / zdots);
                 if ((row + col) & 1)
                 {
 
-                    (*plot)(col, row, 127 - color);
+                    (*plot)(col, row, 127 - g_color);
                 }
                 else
                 {
-                    color = (int)(multiply((long) color << 16, brratio, 16) >> 16);
-                    if (color < 1)
+                    g_color = (int)(multiply((long) g_color << 16, brratio, 16) >> 16);
+                    if (g_color < 1)
                     {
-                        color = 1;
+                        g_color = 1;
                     }
-                    if (color > 127)
+                    if (g_color > 127)
                     {
-                        color = 127;
+                        g_color = 127;
                     }
-                    (*plot)(col, row, 127 + bbase - color);
+                    (*plot)(col, row, 127 + bbase - g_color);
                 }
             }
             else
             {
-                color = (int)(254l * zpixel / zdots);
-                (*plot)(col, row, color + 1);
+                g_color = (int)(254l * zpixel / zdots);
+                (*plot)(col, row, g_color + 1);
             }
             plotted = 1;
             break;
@@ -395,29 +395,29 @@ zlinefp(double x, double y)
         {
             if (juli3Dmode == 3)
             {
-                color = (int)(128l * zpixel / zdots);
+                g_color = (int)(128l * zpixel / zdots);
                 if ((row + col) & 1)
                 {
-                    (*plot)(col, row, 127 - color);
+                    (*plot)(col, row, 127 - g_color);
                 }
                 else
                 {
-                    color = (int)(color * brratiofp);
-                    if (color < 1)
+                    g_color = (int)(g_color * brratiofp);
+                    if (g_color < 1)
                     {
-                        color = 1;
+                        g_color = 1;
                     }
-                    if (color > 127)
+                    if (g_color > 127)
                     {
-                        color = 127;
+                        g_color = 127;
                     }
-                    (*plot)(col, row, 127 + bbase - color);
+                    (*plot)(col, row, 127 + bbase - g_color);
                 }
             }
             else
             {
-                color = (int)(254l * zpixel / zdots);
-                (*plot)(col, row, color + 1);
+                g_color = (int)(254l * zpixel / zdots);
+                (*plot)(col, row, g_color + 1);
             }
             plotted = 1;
             break;
