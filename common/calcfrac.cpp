@@ -2860,18 +2860,18 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
     {
         decomposition();
     }
-    else if (biomorph != -1)
+    else if (g_biomorph != -1)
     {
         if (integerfractal)
         {
             if (labs(lnew.x) < llimit2 || labs(lnew.y) < llimit2)
             {
-                coloriter = biomorph;
+                coloriter = g_biomorph;
             }
         }
         else if (fabs(g_new.x) < rqlim2 || fabs(g_new.y) < rqlim2)
         {
-            coloriter = biomorph;
+            coloriter = g_biomorph;
         }
     }
 

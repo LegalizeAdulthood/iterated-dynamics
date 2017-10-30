@@ -24,7 +24,7 @@ MandelSetup()           // Mandelbrot Routine
     if (debugflag != debug_flags::force_standard_fractal
             && !invert && decomp[0] == 0 && rqlim == 4.0
             && bitshift == 29 && !potflag
-            && biomorph == -1 && inside > ZMAG && outside >= ITER
+            && g_biomorph == -1 && inside > ZMAG && outside >= ITER
             && useinitorbit != 1 && !using_jiim && g_bail_out_test == bailouts::Mod
             && (orbitsave&2) == 0)
     {
@@ -45,7 +45,7 @@ JuliaSetup()            // Julia Routine
     if (debugflag != debug_flags::force_standard_fractal
             && !invert && decomp[0] == 0 && rqlim == 4.0
             && bitshift == 29 && !potflag
-            && biomorph == -1 && inside > ZMAG && outside >= ITER
+            && g_biomorph == -1 && inside > ZMAG && outside >= ITER
             && !finattract && !using_jiim && g_bail_out_test == bailouts::Mod
             && (orbitsave&2) == 0)
     {
@@ -231,7 +231,7 @@ MandelfpSetup()
         if (debugflag != debug_flags::force_standard_fractal
                 && !distest
                 && decomp[0] == 0
-                && biomorph == -1
+                && g_biomorph == -1
                 && (inside >= ITER)
                 && outside >= ATAN
                 && useinitorbit != 1
@@ -356,7 +356,7 @@ JuliafpSetup()
         if (debugflag != debug_flags::force_standard_fractal
                 && !distest
                 && decomp[0] == 0
-                && biomorph == -1
+                && g_biomorph == -1
                 && (inside >= ITER)
                 && outside >= ATAN
                 && useinitorbit != 1

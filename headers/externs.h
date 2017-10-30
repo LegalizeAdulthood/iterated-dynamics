@@ -55,7 +55,7 @@ extern int                   g_base_hertz;
 extern int                   g_basin;
 extern int                   g_bf_save_len;
 extern int                   g_bf_digits;
-extern int                   biomorph;
+extern int                   g_biomorph;
 extern unsigned int          bits;
 extern int                   bitshift;
 extern int                   bitshiftless1;
