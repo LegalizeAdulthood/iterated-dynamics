@@ -244,7 +244,7 @@ main_state big_while_loop(bool *const kbdmore, bool *const stacked, bool const r
             {
                 outln = call_line3d;
             }
-            else if (comparegif)            // debug 50
+            else if (g_compare_gif)            // debug 50
             {
                 outln = cmp_line;
             }
@@ -1345,14 +1345,14 @@ do_3d_transform:
             display_3d = display_3d_modes::YES;
         }
     case 'r':                    // restore-from
-        comparegif = false;
+        g_compare_gif = false;
         *frommandel = false;
         g_browsing = false;
         if (*kbdchar == 'r')
         {
             if (debugflag == debug_flags::force_disk_restore_not_save)
             {
-                comparegif = true;
+                g_compare_gif = true;
                 overlay_3d = true;
                 if (init_batch == batch_modes::SAVE)
                 {
@@ -1364,7 +1364,7 @@ do_3d_transform:
             }
             else
             {
-                comparegif = false;
+                g_compare_gif = false;
                 overlay_3d = false;
             }
             display_3d = display_3d_modes::NONE;
@@ -1809,14 +1809,14 @@ static main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdm
     }
 
     case 'r':                    // restore-from
-        comparegif = false;
+        g_compare_gif = false;
         *frommandel = false;
         g_browsing = false;
         if (*kbdchar == 'r')
         {
             if (debugflag == debug_flags::force_disk_restore_not_save)
             {
-                comparegif = true;
+                g_compare_gif = true;
                 overlay_3d = true;
                 if (init_batch == batch_modes::SAVE)
                 {
@@ -1828,7 +1828,7 @@ static main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdm
             }
             else
             {
-                comparegif = false;
+                g_compare_gif = false;
                 overlay_3d = false;
             }
             display_3d = display_3d_modes::NONE;

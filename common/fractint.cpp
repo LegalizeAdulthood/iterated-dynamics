@@ -97,7 +97,7 @@ bool    video_cutboth = false;  // true to keep virtual aspect
 bool    zscroll = false;        // screen/zoombox false fixed, true relaxed
 
 // variables defined by the command line/files processor
-bool    comparegif = false;             // compare two gif files flag
+bool    g_compare_gif = false;             // compare two gif files flag
 int     timedsave = 0;                    // when doing a timed save
 int     resave_flag = 0;                  // tells encoder not to incr filename
 bool    started_resaves = false;        // but incr on first resave

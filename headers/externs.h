@@ -96,7 +96,7 @@ extern int                   g_color_medium;    // nearest to medbright grey in 
 extern std::string           g_command_comment[4];
 extern std::string           g_command_file;
 extern std::string           g_command_name;
-extern bool                  comparegif;
+extern bool                  g_compare_gif;
 extern long                  con;
 extern double                cosx;
 extern int                   curcol;
