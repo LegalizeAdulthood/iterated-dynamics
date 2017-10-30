@@ -1338,14 +1338,14 @@ std::vector<int> browse_box_values;
 inline void save_box(int num_dots, int which)
 {
     std::copy(&g_box_x[0], &g_box_x[num_dots], &browse_box_x[num_dots*which]);
-    std::copy(&boxy[0], &boxy[num_dots], &browse_box_y[num_dots*which]);
+    std::copy(&g_box_y[0], &g_box_y[num_dots], &browse_box_y[num_dots*which]);
     std::copy(&g_box_values[0], &g_box_values[num_dots], &browse_box_values[num_dots*which]);
 }
 
 inline void restore_box(int num_dots, int which)
 {
     std::copy(&browse_box_x[num_dots*which], &browse_box_x[num_dots*(which + 1)], &g_box_x[0]);
-    std::copy(&browse_box_y[num_dots*which], &browse_box_y[num_dots*(which + 1)], &boxy[0]);
+    std::copy(&browse_box_y[num_dots*which], &browse_box_y[num_dots*(which + 1)], &g_box_y[0]);
     std::copy(&browse_box_values[num_dots*which], &browse_box_values[num_dots*(which + 1)], &g_box_values[0]);
 }
 
@@ -1764,13 +1764,13 @@ static void drawindow(int colour, window const *info)
         drawlines(info->itl, info->ibl, info->itr.x-info->itl.x, info->itr.y-info->itl.y); // left & right lines
 #else
         g_box_x[0] = info->itl.x + sxoffs;
-        boxy[0] = info->itl.y + syoffs;
+        g_box_y[0] = info->itl.y + syoffs;
         g_box_x[1] = info->itr.x + sxoffs;
-        boxy[1] = info->itr.y + syoffs;
+        g_box_y[1] = info->itr.y + syoffs;
         g_box_x[2] = info->ibr.x + sxoffs;
-        boxy[2] = info->ibr.y + syoffs;
+        g_box_y[2] = info->ibr.y + syoffs;
         g_box_x[3] = info->ibl.x + sxoffs;
-        boxy[3] = info->ibl.y + syoffs;
+        g_box_y[3] = info->ibl.y + syoffs;
         g_box_count = 4;
 #endif
         dispbox();

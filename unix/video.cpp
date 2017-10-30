@@ -488,10 +488,10 @@ findfont(int fontparm)
 */
 
 /*
- * The IBM method is that g_box_x[],boxy[] is a set of locations, and g_box_values
+ * The IBM method is that g_box_x[],g_box_y[] is a set of locations, and g_box_values
  * is the values in these locations.
  * Instead of using this box save/restore technique, we'll put the corners
- * in g_box_x[0],boxy[0],1,2,3 and then use xor.
+ * in g_box_x[0],g_box_y[0],1,2,3 and then use xor.
  */
 
 void
@@ -500,10 +500,10 @@ dispbox()
     if (g_box_count)
     {
         setlinemode(1);
-        drawline(g_box_x[0], boxy[0], g_box_x[1], boxy[1]);
-        drawline(g_box_x[1], boxy[1], g_box_x[2], boxy[2]);
-        drawline(g_box_x[2], boxy[2], g_box_x[3], boxy[3]);
-        drawline(g_box_x[3], boxy[3], g_box_x[0], boxy[0]);
+        drawline(g_box_x[0], g_box_y[0], g_box_x[1], g_box_y[1]);
+        drawline(g_box_x[1], g_box_y[1], g_box_x[2], g_box_y[2]);
+        drawline(g_box_x[2], g_box_y[2], g_box_x[3], g_box_y[3]);
+        drawline(g_box_x[3], g_box_y[3], g_box_x[0], g_box_y[0]);
         setlinemode(0);
         xsync();
     }

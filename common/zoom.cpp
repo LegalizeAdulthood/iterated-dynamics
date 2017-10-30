@@ -15,7 +15,7 @@
 #define PIXELROUND 0.00001
 
 int g_box_x[NUM_BOX_POINTS] = { 0 };
-int boxy[NUM_BOX_POINTS] = { 0 };
+int g_box_y[NUM_BOX_POINTS] = { 0 };
 int g_box_values[NUM_BOX_POINTS] = { 0 };
 bool g_video_scroll = false;
 
@@ -56,13 +56,13 @@ void dispbox()
     {
         if (g_is_true_color && truemode)
         {
-            driver_get_truecolor(g_box_x[i]-sxoffs, boxy[i]-syoffs, &rgb[0], &rgb[1], &rgb[2], nullptr);
-            driver_put_truecolor(g_box_x[i]-sxoffs, boxy[i]-syoffs,
+            driver_get_truecolor(g_box_x[i]-sxoffs, g_box_y[i]-syoffs, &rgb[0], &rgb[1], &rgb[2], nullptr);
+            driver_put_truecolor(g_box_x[i]-sxoffs, g_box_y[i]-syoffs,
                                  rgb[0]^255, rgb[1]^255, rgb[2]^255, 255);
         }
         else
         {
-            g_box_values[i] = getcolor(g_box_x[i]-sxoffs, boxy[i]-syoffs);
+            g_box_values[i] = getcolor(g_box_x[i]-sxoffs, g_box_y[i]-syoffs);
         }
     }
     // There is an interaction between getcolor and putcolor, so separate them
@@ -71,11 +71,11 @@ void dispbox()
         {
             if (colors == 2)
             {
-                putcolor(g_box_x[i]-sxoffs, boxy[i]-syoffs, (1 - g_box_values[i]));
+                putcolor(g_box_x[i]-sxoffs, g_box_y[i]-syoffs, (1 - g_box_values[i]));
             }
             else
             {
-                putcolor(g_box_x[i]-sxoffs, boxy[i]-syoffs, boxc);
+                putcolor(g_box_x[i]-sxoffs, g_box_y[i]-syoffs, boxc);
             }
         }
 }
@@ -90,7 +90,7 @@ void clearbox()
     {
         for (int i = 0; i < g_box_count; i++)
         {
-            putcolor(g_box_x[i]-sxoffs, boxy[i]-syoffs, g_box_values[i]);
+            putcolor(g_box_x[i]-sxoffs, g_box_y[i]-syoffs, g_box_values[i]);
         }
     }
 }
@@ -219,13 +219,13 @@ void drawbox(bool drawit)
         drawlines(tl, bl, tr.x-tl.x, tr.y-tl.y); // left & right lines
 #else
         g_box_x[0] = tl.x + sxoffs;
-        boxy[0] = tl.y + syoffs;
+        g_box_y[0] = tl.y + syoffs;
         g_box_x[1] = tr.x + sxoffs;
-        boxy[1] = tr.y + syoffs;
+        g_box_y[1] = tr.y + syoffs;
         g_box_x[2] = br.x + sxoffs;
-        boxy[2] = br.y + syoffs;
+        g_box_y[2] = br.y + syoffs;
         g_box_x[3] = bl.x + sxoffs;
-        boxy[3] = bl.y + syoffs;
+        g_box_y[3] = bl.y + syoffs;
         g_box_count = 4;
 #endif
         dispbox();
@@ -319,7 +319,7 @@ void addbox(coords point)
             point.y >= 0 && point.y < sydots)
     {
         g_box_x[g_box_count] = point.x;
-        boxy[g_box_count] = point.y;
+        g_box_y[g_box_count] = point.y;
         ++g_box_count;
     }
 }

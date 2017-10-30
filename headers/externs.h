@@ -67,7 +67,7 @@ extern int                   g_box_color;
 extern int                   g_box_count;
 extern int                   g_box_values[];
 extern int                   g_box_x[];
-extern int                   boxy[];
+extern int                   g_box_y[];
 extern bool                  BRIEF;
 extern std::string browse_mask;
 extern std::string browse_name;
