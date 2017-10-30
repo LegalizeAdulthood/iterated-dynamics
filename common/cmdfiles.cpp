@@ -83,7 +83,7 @@ long    distest = 0;
 int     distestwidth = 0;
 bool    fract_overwrite = false;// true if file overwrite allowed
 int     soundflag = 0;          // sound control bitfield... see sound.c for useage
-int     basehertz = 0;          // sound=x/y/x hertz value
+int     g_base_hertz = 0;          // sound=x/y/x hertz value
 int     debugflag = debug_flags::none; // internal use only - you didn't see this
 bool    timerflag = false;      // you didn't see this, either
 int     cyclelimit = 0;         // color-rotator upper limit
@@ -577,7 +577,7 @@ static void initvars_fractal()          // init vars affecting calculation
     neworbittype = fractal_type::JULIA;
     zdots = 128;
     initvars_3d();
-    basehertz = 440;                     // basic hertz rate
+    g_base_hertz = 440;                     // basic hertz rate
 #ifndef XFRACT
     fm_vol = 63;                         // full volume on soundcard o/p
     hi_atten = 0;                        // no attenuation of hi notes
@@ -2695,7 +2695,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
     if (variable == "hertz")
     {
         // Hertz=?
-        basehertz = numval;
+        g_base_hertz = numval;
         return CMDARG_NONE;
     }
 

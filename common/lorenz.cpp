@@ -1452,7 +1452,7 @@ int orbit2dfloat()
         {
             if (soundvar && (soundflag & SOUNDFLAG_ORBITMASK) > SOUNDFLAG_BEEP)
             {
-                w_snd((int)(*soundvar*100 + basehertz));
+                w_snd((int)(*soundvar*100 + g_base_hertz));
             }
             if ((fractype != fractal_type::ICON) && (fractype != fractal_type::LATOO))
             {
@@ -1636,7 +1636,7 @@ int orbit2dlong()
                 double yy;
                 yy = *soundvar;
                 yy = yy/fudge;
-                w_snd((int)(yy*100+basehertz));
+                w_snd((int)(yy*100+g_base_hertz));
             }
             if (oldcol != -1 && connect)
             {
@@ -1760,7 +1760,7 @@ static int orbit3dlongcalc()
                     double yy;
                     yy = inf.viewvect[((soundflag & SOUNDFLAG_ORBITMASK) - SOUNDFLAG_X)];
                     yy = yy/fudge;
-                    w_snd((int)(yy*100+basehertz));
+                    w_snd((int)(yy*100+g_base_hertz));
                 }
                 if (oldcol != -1 && connect)
                 {
@@ -1889,7 +1889,7 @@ static int orbit3dfloatcalc()
                 }
                 if ((soundflag & SOUNDFLAG_ORBITMASK) > SOUNDFLAG_BEEP)
                 {
-                    w_snd((int)(inf.viewvect[((soundflag & SOUNDFLAG_ORBITMASK) - SOUNDFLAG_X)]*100+basehertz));
+                    w_snd((int)(inf.viewvect[((soundflag & SOUNDFLAG_ORBITMASK) - SOUNDFLAG_X)]*100+g_base_hertz));
                 }
                 if (oldcol != -1 && connect)
                 {
@@ -2106,7 +2106,7 @@ int dynam2dfloat()
             {
                 if (soundvar && (soundflag & SOUNDFLAG_ORBITMASK) > SOUNDFLAG_BEEP)
                 {
-                    w_snd((int)(*soundvar*100+basehertz));
+                    w_snd((int)(*soundvar*100+g_base_hertz));
                 }
 
                 if (count >= orbit_delay)
@@ -2315,7 +2315,7 @@ int plotorbits2dfloat()
             // plot if on the screen
             if (soundvar && (soundflag & SOUNDFLAG_ORBITMASK) > SOUNDFLAG_BEEP)
             {
-                w_snd((int)(*soundvar*100+basehertz));
+                w_snd((int)(*soundvar*100+g_base_hertz));
             }
 
             (*plot)(col, row, o_color%colors);

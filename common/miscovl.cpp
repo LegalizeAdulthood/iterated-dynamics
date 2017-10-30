@@ -1246,9 +1246,9 @@ void write_batch_parms(char const *colorinf, bool colorsonly, int maxcolor, int 
             put_parm(" %s=%d/%d", "cyclerange", rotate_lo, rotate_hi);
         }
 
-        if (basehertz != 440)
+        if (g_base_hertz != 440)
         {
-            put_parm(" %s=%d", "hertz", basehertz);
+            put_parm(" %s=%d", "hertz", g_base_hertz);
         }
 
         if (soundflag != (SOUNDFLAG_BEEP | SOUNDFLAG_SPEAKER))
