@@ -29,10 +29,10 @@ struct VIDEOINFO;
 struct WORKLIST;
 
 // keep var names in column 30 for sorting via sort /+30 <in >out
-extern int                   g_adapter;         // index into g_video_table[]
-extern AlternateMath         g_alternate_math[];   // alternate math function pointers
-extern int                   g_ambient;           // Ambient= parameter value
-extern int                   g_and_color;       // AND mask for iteration to get color index
+extern int                   g_adapter;             // index into g_video_table[]
+extern AlternateMath         g_alternate_math[];    // alternate math function pointers
+extern int                   g_ambient;             // Ambient= parameter value
+extern int                   g_and_color;           // AND mask for iteration to get color index
 extern int                   g_halley_a_plus_one_times_degree;
 extern int                   g_halley_a_plus_one;
 extern bool                  g_ask_video;
