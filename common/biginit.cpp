@@ -459,9 +459,9 @@ void restore_stack(int old_offset)
 
 void init_bf_dec(int dec)
 {
-    if (bfdigits > 0)
+    if (g_bf_digits > 0)
     {
-        decimals = bfdigits;   // blindly force
+        decimals = g_bf_digits;   // blindly force
     }
     else
     {

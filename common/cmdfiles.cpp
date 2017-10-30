@@ -52,7 +52,7 @@ static bool isabigfloat(char const *str);
 int     stoppass = 0;           // stop at this guessing pass early
 int     pseudox = 0;            // xdots to use for video independence
 int     pseudoy = 0;            // ydots to use for video independence
-int     bfdigits = 0;           // digits to use (force) for bf_math
+int     g_bf_digits = 0;           // digits to use (force) for bf_math
 int     show_dot = -1;           // color to show crawling graphics cursor
 int     sizedot = 0;            // size of dot crawling cursor
 char    recordcolors = 0;       // default PAR color-writing method
@@ -1608,7 +1608,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         {
             goto badarg;
         }
-        bfdigits = numval;
+        g_bf_digits = numval;
         return CMDARG_FRACTAL_PARAM;
     }
 
