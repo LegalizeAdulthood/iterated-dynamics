@@ -70,7 +70,7 @@ bool    potflag = false;        // continuous potential enabled?
 bool    pot16bit = false;               // store 16 bit continuous potential values
 bool    gif87a_flag = false;    // true if GIF87a format, false otherwise
 bool    dither_flag = false;    // true if want to dither GIFs
-bool    askvideo = false;       // flag for video prompting
+bool    g_ask_video = false;       // flag for video prompting
 bool    floatflag = false;
 int     biomorph = 0;           // flag for biomorph
 int     usr_biomorph = 0;
@@ -417,7 +417,7 @@ static void initvars_restart()          // <ins> key init
     save_release = g_release;           // this release number
     gif87a_flag = false;                // turn on GIF89a processing
     dither_flag = false;                // no dithering
-    askvideo = true;                    // turn on video-prompt flag
+    g_ask_video = true;                    // turn on video-prompt flag
     fract_overwrite = false;            // don't overwrite
     soundflag = SOUNDFLAG_SPEAKER | SOUNDFLAG_BEEP; // sound is on to PC speaker
     init_batch = batch_modes::NONE;                      // not in batch mode
@@ -2432,7 +2432,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         {
             goto badarg;
         }
-        askvideo = yesnoval[0] != 0;
+        g_ask_video = yesnoval[0] != 0;
         return CMDARG_NONE;
     }
 

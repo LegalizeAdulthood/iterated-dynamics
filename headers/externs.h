@@ -35,7 +35,7 @@ extern int                   g_ambient;           // Ambient= parameter value
 extern int                   g_and_color;       // AND mask for iteration to get color index
 extern int                   g_halley_a_plus_one_times_degree;
 extern int                   g_halley_a_plus_one;
-extern bool                  askvideo;
+extern bool                  g_ask_video;
 extern float                 aspectdrift;
 extern int                   attractors;
 extern int                   attrperiod[];

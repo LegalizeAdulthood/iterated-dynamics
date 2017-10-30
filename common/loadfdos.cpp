@@ -263,14 +263,14 @@ int get_video_mode(FRACTAL_INFO *info, ext_blk_3 *blk_3_info)
         vid[i].flags  = tmpflags;
     }
 
-    if (fastrestore  && !askvideo)
+    if (fastrestore  && !g_ask_video)
     {
         g_init_mode = g_adapter;
     }
 
 #ifndef XFRACT
     gotrealmode = false;
-    if ((g_init_mode < 0 || (askvideo && (init_batch == batch_modes::NONE))) && !make_parameter_file)
+    if ((g_init_mode < 0 || (g_ask_video && (init_batch == batch_modes::NONE))) && !make_parameter_file)
     {
         // no exact match or (askvideo=yes and batch=no), and not in makepar mode, talk to user
 

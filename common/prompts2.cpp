@@ -2632,7 +2632,7 @@ get_brws_restart:
 
     choices[++k] = "Ask about GIF video mode? (y/n)";
     uvalues[k].type = 'y';
-    uvalues[k].uval.ch.val = askvideo ? 1 : 0;
+    uvalues[k].uval.ch.val = g_ask_video ? 1 : 0;
 
     choices[++k] = "Check fractal type? (y/n)";
     uvalues[k].type = 'y';
@@ -2676,7 +2676,7 @@ get_brws_restart:
     {
         smallest_window_display_size = 6;
         auto_browse = false;
-        askvideo = true;
+        g_ask_video = true;
         browse_check_fractal_params = true;
         browse_check_fractal_type = true;
         confirm_file_deletes = true;
@@ -2689,7 +2689,7 @@ get_brws_restart:
     k = -1;
 
     auto_browse = uvalues[++k].uval.ch.val != 0;
-    askvideo = uvalues[++k].uval.ch.val != 0;
+    g_ask_video = uvalues[++k].uval.ch.val != 0;
     browse_check_fractal_type = uvalues[++k].uval.ch.val != 0;
     browse_check_fractal_params = uvalues[++k].uval.ch.val != 0;
     confirm_file_deletes = uvalues[++k].uval.ch.val != 0;

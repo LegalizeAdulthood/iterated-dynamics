@@ -91,13 +91,13 @@ main_state big_while_loop(bool *const kbdmore, bool *const stacked, bool const r
                 {
                     if (driver_diskp())
                     {
-                        askvideo = true;
+                        g_ask_video = true;
                     }
                     else
                     {
                         stopmsg(STOPMSG_NONE,
                             "That video mode is not available with your adapter.");
-                        askvideo = true;
+                        g_ask_video = true;
                     }
                     g_init_mode = -1;
                     driver_set_for_text(); // switch to text mode
@@ -715,7 +715,7 @@ static bool look(bool *stacked)
         name_stack_ptr++;
         file_name_stack[name_stack_ptr] = browse_name;
         merge_pathnames(readname, browse_name.c_str(), cmd_file::AT_AFTER_STARTUP);
-        if (askvideo)
+        if (g_ask_video)
         {
             driver_stack_screen();   // save graphics image
             *stacked = true;
@@ -740,7 +740,7 @@ static bool look(bool *stacked)
             merge_pathnames(readname, browse_name.c_str(), cmd_file::AT_AFTER_STARTUP);
             browsing = true;
             show_file = 0;
-            if (askvideo)
+            if (g_ask_video)
             {
                 driver_stack_screen();// save graphics image
                 *stacked = true;
@@ -1232,7 +1232,7 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
             browsing = true;
             no_sub_images = false;
             show_file = 0;
-            if (askvideo)
+            if (g_ask_video)
             {
                 driver_stack_screen();      // save graphics image
                 *stacked = true;
