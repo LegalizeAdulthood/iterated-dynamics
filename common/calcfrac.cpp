@@ -172,7 +172,7 @@ int currow = 0;
 int curcol = 0;
 
 // static vars for diffusion scan
-unsigned bits = 0;        // number of bits in the counter
+unsigned g_diffusion_bits = 0;        // number of bits in the counter
 unsigned long dif_counter = 0;  // the diffusion counter
 unsigned long dif_limit = 0;    // the diffusion counter
 
@@ -1353,9 +1353,9 @@ static int diffusion_scan()
     // fit any 32 bit architecture, the maxinum limit for this case would
     // be 65536x65536
 
-    bits = (unsigned)(std::min(log(static_cast<double>(iystop-iystart+1)), log(static_cast<double>(ixstop-ixstart+1)))/log2);
-    bits <<= 1; // double for two axes
-    dif_limit = 1UL << bits;
+    g_diffusion_bits = (unsigned)(std::min(log(static_cast<double>(iystop-iystart+1)), log(static_cast<double>(ixstop-ixstart+1)))/log2);
+    g_diffusion_bits <<= 1; // double for two axes
+    dif_limit = 1UL << g_diffusion_bits;
 
     if (diffusion_engine() == -1)
     {
@@ -1427,7 +1427,7 @@ static int diffusion_engine()
 
     int colo, rowo; // original col and row
 
-    int s = 1 << (bits/2); // size of the square
+    int s = 1 << (g_diffusion_bits/2); // size of the square
 
     nx = (int) floor(static_cast<double>((ixstop-ixstart+1)/s));
     ny = (int) floor(static_cast<double>((iystop-iystart+1)/s));
@@ -1446,7 +1446,7 @@ static int diffusion_engine()
         dif_counter = (((long)((unsigned)yybegin)) << 16) | ((unsigned)workpass);
     }
 
-    dif_offset = 12-(bits/2); // offset to adjust coordinates
+    dif_offset = 12-(g_diffusion_bits/2); // offset to adjust coordinates
     // (*) for 4 bytes use 16 for 3 use 12 etc.
 
     /*************************************/
@@ -1510,7 +1510,7 @@ static int diffusion_engine()
         // with progressive filling :
         while (dif_counter < (dif_limit >> 1))
         {
-            sqsz = 1 << ((int)(bits-(int)(log(dif_counter+0.5)/log2)-1)/2);
+            sqsz = 1 << ((int)(g_diffusion_bits-(int)(log(dif_counter+0.5)/log2)-1)/2);
 
             count_to_int(dif_counter, colo, rowo);
 

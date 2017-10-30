@@ -56,7 +56,7 @@ extern int                   g_basin;
 extern int                   g_bf_save_len;
 extern int                   g_bf_digits;
 extern int                   g_biomorph;
-extern unsigned int          bits;
+extern unsigned int          g_diffusion_bits;
 extern int                   bitshift;
 extern int                   bitshiftless1;
 extern BYTE                  block[];
