@@ -1454,7 +1454,7 @@ rescan:  // entry for changed browse parms
         if (!find_fractal_info(tmpmask, &read_info, &blk_2_info, &blk_3_info,
                                &blk_4_info, &blk_5_info, &blk_6_info,
                                &blk_7_info) &&
-                (typeOK(&read_info, &blk_3_info) || !browse_check_fractal_type) &&
+                (typeOK(&read_info, &blk_3_info) || !g_browse_check_fractal_type) &&
                 (paramsOK(&read_info) || !g_browse_check_fractal_params) &&
                 stricmp(g_browse_name.c_str(), DTA.filename) &&
                 !blk_6_info.got_data &&
