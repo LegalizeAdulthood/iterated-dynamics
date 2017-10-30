@@ -268,8 +268,8 @@ MandelfpSetup()
         break;
     case fractal_type::MAGNET1M:
     case fractal_type::MAGNET2M:
-        attr[0].x = 1.0;      // 1.0 + 0.0i always attracts
-        attr[0].y = 0.0;      // - both MAGNET1 and MAGNET2
+        g_attractor[0].x = 1.0;      // 1.0 + 0.0i always attracts
+        g_attractor[0].y = 0.0;      // - both MAGNET1 and MAGNET2
         g_attractor_period[0] = 1;
         g_attractors = 1;
         break;
@@ -393,8 +393,8 @@ JuliafpSetup()
     case fractal_type::MAGNET2J:
         FloatPreCalcMagnet2();
     case fractal_type::MAGNET1J:
-        attr[0].x = 1.0;      // 1.0 + 0.0i always attracts
-        attr[0].y = 0.0;      // - both MAGNET1 and MAGNET2
+        g_attractor[0].x = 1.0;      // 1.0 + 0.0i always attracts
+        g_attractor[0].y = 0.0;      // - both MAGNET1 and MAGNET2
         g_attractor_period[0] = 1;
         g_attractors = 1;
         get_julia_attractor(0.0, 0.0);    // another attractor?

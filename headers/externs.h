@@ -39,7 +39,7 @@ extern bool                  g_ask_video;
 extern float                 g_aspect_drift;
 extern int                   g_attractors;
 extern int                   g_attractor_period[];
-extern DComplex              attr[];
+extern DComplex              g_attractor[];
 extern bool auto_browse;
 extern std::string           autoname;
 extern char                  autoshowdot;
