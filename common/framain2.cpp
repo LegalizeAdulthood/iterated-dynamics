@@ -1487,7 +1487,7 @@ do_3d_transform:
                 zby = 0;
                 zbx = zby;
                 find_special_colors();
-                boxcolor = g_color_bright;
+                g_box_color = g_color_bright;
                 py = evolve_image_grid_size /2;
                 px = py;
                 moveboxf(0.0, 0.0); // force scrolling
@@ -1524,10 +1524,10 @@ do_3d_transform:
         }
         break;
     case FIK_CTL_INSERT:             // Ctrl-ins
-        boxcolor += key_count(FIK_CTL_INSERT);
+        g_box_color += key_count(FIK_CTL_INSERT);
         break;
     case FIK_CTL_DEL:                // Ctrl-del
-        boxcolor -= key_count(FIK_CTL_DEL);
+        g_box_color -= key_count(FIK_CTL_DEL);
         break;
 
     case FIK_ALT_1: // alt + number keys set mutation level and start evolution engine
@@ -2001,7 +2001,7 @@ static main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdm
                 zby = 0;
                 zbx = zby;
                 find_special_colors();
-                boxcolor = g_color_bright;
+                g_box_color = g_color_bright;
                 if (evolving&1)
                 {
                     // set screen view params back (previously changed to allow full screen saves in viewwindow mode)
@@ -2051,10 +2051,10 @@ static main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdm
         }
         break;
     case FIK_CTL_INSERT:             // Ctrl-ins
-        boxcolor += key_count(FIK_CTL_INSERT);
+        g_box_color += key_count(FIK_CTL_INSERT);
         break;
     case FIK_CTL_DEL:                // Ctrl-del
-        boxcolor -= key_count(FIK_CTL_DEL);
+        g_box_color -= key_count(FIK_CTL_DEL);
         break;
 
     /* grabbed a couple of video mode keys, user can change to these using

@@ -1749,7 +1749,7 @@ static void drawindow(int colour, window const *info)
     coords ibl, itr;
 #endif
 
-    boxcolor = colour;
+    g_box_color = colour;
     boxcount = 0;
     if (info->win_size >= smallest_box_size_shown)
     {

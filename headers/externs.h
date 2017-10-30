@@ -63,7 +63,7 @@ extern BYTE                  g_block[];
 extern int                   g_blue_bright;
 extern int                   g_blue_crop_left;
 extern int                   g_blue_crop_right;
-extern int                   boxcolor;
+extern int                   g_box_color;
 extern int                   boxcount;
 extern int                   boxvalues[];
 extern int                   boxx[];

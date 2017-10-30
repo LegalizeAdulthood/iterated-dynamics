@@ -45,12 +45,12 @@ void calc_corner(bf_t target, bf_t p1, double p2, bf_t p3, double p4, bf_t p5)
 }
 
 // Zoom-Box color
-int boxcolor = 0;
+int g_box_color = 0;
 
 #ifndef XFRACT
 void dispbox()
 {
-    int boxc = (colors-1)&boxcolor;
+    int boxc = (colors-1)&g_box_color;
     int rgb[3];
     for (int i = 0; i < boxcount; i++)
     {
