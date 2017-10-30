@@ -1339,14 +1339,14 @@ inline void save_box(int num_dots, int which)
 {
     std::copy(&boxx[0], &boxx[num_dots], &browse_box_x[num_dots*which]);
     std::copy(&boxy[0], &boxy[num_dots], &browse_box_y[num_dots*which]);
-    std::copy(&boxvalues[0], &boxvalues[num_dots], &browse_box_values[num_dots*which]);
+    std::copy(&g_box_values[0], &g_box_values[num_dots], &browse_box_values[num_dots*which]);
 }
 
 inline void restore_box(int num_dots, int which)
 {
     std::copy(&browse_box_x[num_dots*which], &browse_box_x[num_dots*(which + 1)], &boxx[0]);
     std::copy(&browse_box_y[num_dots*which], &browse_box_y[num_dots*(which + 1)], &boxy[0]);
-    std::copy(&browse_box_values[num_dots*which], &browse_box_values[num_dots*(which + 1)], &boxvalues[0]);
+    std::copy(&browse_box_values[num_dots*which], &browse_box_values[num_dots*(which + 1)], &g_box_values[0]);
 }
 
 }

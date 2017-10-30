@@ -65,7 +65,7 @@ extern int                   g_blue_crop_left;
 extern int                   g_blue_crop_right;
 extern int                   g_box_color;
 extern int                   g_box_count;
-extern int                   boxvalues[];
+extern int                   g_box_values[];
 extern int                   boxx[];
 extern int                   boxy[];
 extern bool                  BRIEF;

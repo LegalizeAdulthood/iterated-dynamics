@@ -16,7 +16,7 @@
 
 int boxx[NUM_BOX_POINTS] = { 0 };
 int boxy[NUM_BOX_POINTS] = { 0 };
-int boxvalues[NUM_BOX_POINTS] = { 0 };
+int g_box_values[NUM_BOX_POINTS] = { 0 };
 bool g_video_scroll = false;
 
 static void zmo_calc(double, double, double *, double *, double);
@@ -62,7 +62,7 @@ void dispbox()
         }
         else
         {
-            boxvalues[i] = getcolor(boxx[i]-sxoffs, boxy[i]-syoffs);
+            g_box_values[i] = getcolor(boxx[i]-sxoffs, boxy[i]-syoffs);
         }
     }
     // There is an interaction between getcolor and putcolor, so separate them
@@ -71,7 +71,7 @@ void dispbox()
         {
             if (colors == 2)
             {
-                putcolor(boxx[i]-sxoffs, boxy[i]-syoffs, (1 - boxvalues[i]));
+                putcolor(boxx[i]-sxoffs, boxy[i]-syoffs, (1 - g_box_values[i]));
             }
             else
             {
@@ -90,7 +90,7 @@ void clearbox()
     {
         for (int i = 0; i < g_box_count; i++)
         {
-            putcolor(boxx[i]-sxoffs, boxy[i]-syoffs, boxvalues[i]);
+            putcolor(boxx[i]-sxoffs, boxy[i]-syoffs, g_box_values[i]);
         }
     }
 }

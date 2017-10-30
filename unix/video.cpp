@@ -488,7 +488,7 @@ findfont(int fontparm)
 */
 
 /*
- * The IBM method is that boxx[],boxy[] is a set of locations, and boxvalues
+ * The IBM method is that boxx[],boxy[] is a set of locations, and g_box_values
  * is the values in these locations.
  * Instead of using this box save/restore technique, we'll put the corners
  * in boxx[0],boxy[0],1,2,3 and then use xor.
