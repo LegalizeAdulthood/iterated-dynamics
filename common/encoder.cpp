@@ -556,8 +556,8 @@ bool encoder()
         {
             // resume info block, 002
             save_info.tot_extend_len += extend_blk_len(resume_len);
-            std::copy(&resume_data[0], &resume_data[resume_len], &block[0]);
-            if (!put_extend_blk(2, resume_len, (char *)block))
+            std::copy(&resume_data[0], &resume_data[resume_len], &g_block[0]);
+            if (!put_extend_blk(2, resume_len, (char *)g_block))
             {
                 goto oops;
             }
@@ -1043,7 +1043,7 @@ static int maxcode;                  // maximum code, given n_bits
 static int maxmaxcode = (int)1 << BITSF; // should NEVER generate this code
 # define MAXCODE(n_bits)        (((int) 1 << (n_bits)) - 1)
 
-BYTE block[4096] = { 0 };
+BYTE g_block[4096] = { 0 };
 
 static long htab[HSIZE];
 static unsigned short codetab[10240] = { 0 };

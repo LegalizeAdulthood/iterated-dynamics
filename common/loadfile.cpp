@@ -823,8 +823,8 @@ static int find_fractal_info(char const *gif_file, FRACTAL_INFO *info,
                     skip_ext_blk(&block_len, &data_len); // once to get lengths
                     blk_2_info->resume_data.resize(data_len);
                     fseek(fp, (long)(0-block_len), SEEK_CUR);
-                    load_ext_blk((char *)block, data_len);
-                    std::copy(&block[0], &block[data_len], &blk_2_info->resume_data[0]);
+                    load_ext_blk((char *)g_block, data_len);
+                    std::copy(&g_block[0], &g_block[data_len], &blk_2_info->resume_data[0]);
                     blk_2_info->length = data_len;
                     blk_2_info->got_data = true;
                     break;
