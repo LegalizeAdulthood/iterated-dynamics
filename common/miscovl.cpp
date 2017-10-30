@@ -159,14 +159,14 @@ void make_batch_file()
         }
     }
     strcpy(inpcommandfile, g_command_file.c_str());
-    strcpy(inpcommandname, CommandName.c_str());
+    strcpy(inpcommandname, g_command_name.c_str());
     for (int i = 0; i < 4; i++)
     {
         g_command_comment[i] = expand_comments(par_comment[i]);
         strcpy(inpcomment[i], g_command_comment[i].c_str());
     }
 
-    if (CommandName.empty())
+    if (g_command_name.empty())
     {
         strcpy(inpcommandname, "test");
     }
@@ -257,7 +257,7 @@ prompt_user:
             g_command_file += ".par";   // default extension .par
 
         }
-        CommandName = inpcommandname;
+        g_command_name = inpcommandname;
         for (int i = 0; i < 4; i++)
         {
             g_command_comment[i] = inpcomment[i];
@@ -393,11 +393,11 @@ skip_UI:
             {
                 if (strchr(buf, '{')// entry heading?
                         && sscanf(buf, " %40[^ \t({]", buf2)
-                        && stricmp(buf2, CommandName.c_str()) == 0)
+                        && stricmp(buf2, g_command_name.c_str()) == 0)
                 {
                     // entry with same name
                     _snprintf(buf2, NUM_OF(buf2), "File already has an entry named %s\n%s",
-                              CommandName.c_str(), make_parameter_file ?
+                              g_command_name.c_str(), make_parameter_file ?
                               "... Replacing ..." : "Continue to replace it, Cancel to back out");
                     if (stopmsg(STOPMSG_CANCEL | STOPMSG_INFO_ONLY, buf2) < 0)
                     {
@@ -447,9 +447,9 @@ skip_UI:
                     char c;
                     char PCommandName[80];
                     w = 0;
-                    while (w < (int)CommandName.length())
+                    while (w < (int)g_command_name.length())
                     {
-                        c = CommandName[w];
+                        c = g_command_name[w];
                         if (isspace(c) || c == 0)
                         {
                             break;
@@ -483,7 +483,7 @@ skip_UI:
                 }
                 else
                 {
-                    fprintf(parmfile, "%-19s{", CommandName.c_str());
+                    fprintf(parmfile, "%-19s{", g_command_name.c_str());
                 }
                 {
                     /* guarantee that there are no blank comments above the last

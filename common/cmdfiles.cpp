@@ -157,7 +157,7 @@ std::string FormName;                   // Name of the Formula (if not null)
 std::string LFileName;                  // file to find (type=)L-System's in
 std::string LName;                      // Name of L-System
 std::string g_command_file;                // file to find command sets in
-std::string CommandName;                // Name of Command set
+std::string g_command_name;                // Name of Command set
 std::string g_command_comment[4];          // comments for command set
 std::string IFSFileName;                // file to find (type=)IFS in
 std::string IFSName;                    // Name of the IFS def'n (if not null)
@@ -290,9 +290,9 @@ void process_file_setname(char *curarg, char *sptr)
     {
         init_msg("", g_command_file.c_str(), cmd_file::AT_CMD_LINE);
     }
-    CommandName = &sptr[1];
+    g_command_name = &sptr[1];
     FILE *initfile = nullptr;
-    if (find_file_item(g_command_file, CommandName.c_str(), &initfile, 0) || initfile == nullptr)
+    if (find_file_item(g_command_file, g_command_name.c_str(), &initfile, 0) || initfile == nullptr)
     {
         argerror(curarg);
     }
@@ -442,7 +442,7 @@ static void initvars_restart()          // <ins> key init
     LFileName = "fractint.l";
     LName = "";
     g_command_file = "fractint.par";
-    CommandName = "";
+    g_command_name = "";
     for (auto &elem : g_command_comment)
     {
         elem.clear();
@@ -1125,11 +1125,11 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
             {
                 if (!readname.empty())
                 {
-                    CommandName = extract_filename(readname.c_str());
+                    g_command_name = extract_filename(readname.c_str());
                 }
                 else if (!MAP_name.empty())
                 {
-                    CommandName = extract_filename(MAP_name.c_str());
+                    g_command_name = extract_filename(MAP_name.c_str());
                 }
                 else
                 {
@@ -1138,11 +1138,11 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
             }
             else
             {
-                CommandName = next;
-                assert(CommandName.length() <= ITEMNAMELEN);
-                if (CommandName.length() > ITEMNAMELEN)
+                g_command_name = next;
+                assert(g_command_name.length() <= ITEMNAMELEN);
+                if (g_command_name.length() > ITEMNAMELEN)
                 {
-                    CommandName.resize(ITEMNAMELEN);
+                    g_command_name.resize(ITEMNAMELEN);
                 }
             }
             make_parameter_file = true;

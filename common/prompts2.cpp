@@ -1360,7 +1360,7 @@ int get_commands()              // execute commands from file
     ret = 0;
     int const old_help_mode = help_mode;
     help_mode = HELPPARMFILE;
-    long point = get_file_entry(GETPARM, "Parameter Set", commandmask, g_command_file, CommandName);
+    long point = get_file_entry(GETPARM, "Parameter Set", commandmask, g_command_file, g_command_name);
     if (point >= 0 && (parmfile = fopen(g_command_file.c_str(), "rb")) != nullptr)
     {
         fseek(parmfile, point, SEEK_SET);

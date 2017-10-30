@@ -95,7 +95,7 @@ extern int                   g_color_dark;      // darkest color in palette
 extern int                   g_color_medium;    // nearest to medbright grey in palette
 extern std::string           g_command_comment[4];
 extern std::string           g_command_file;
-extern std::string           CommandName;
+extern std::string           g_command_name;
 extern bool                  comparegif;
 extern long                  con;
 extern double                cosx;
