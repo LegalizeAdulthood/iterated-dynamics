@@ -271,7 +271,7 @@ MandelfpSetup()
         attr[0].x = 1.0;      // 1.0 + 0.0i always attracts
         attr[0].y = 0.0;      // - both MAGNET1 and MAGNET2
         attrperiod[0] = 1;
-        attractors = 1;
+        g_attractors = 1;
         break;
     case fractal_type::SPIDERFP:
         if (periodicitycheck == 1)   // if not user set
@@ -299,12 +299,12 @@ MandelfpSetup()
         break;
     case fractal_type::QUATFP:
         floatparm = &tmp;
-        attractors = 0;
+        g_attractors = 0;
         periodicitycheck = 0;
         break;
     case fractal_type::HYPERCMPLXFP:
         floatparm = &tmp;
-        attractors = 0;
+        g_attractors = 0;
         periodicitycheck = 0;
         if (param[2] != 0)
         {
@@ -396,7 +396,7 @@ JuliafpSetup()
         attr[0].x = 1.0;      // 1.0 + 0.0i always attracts
         attr[0].y = 0.0;      // - both MAGNET1 and MAGNET2
         attrperiod[0] = 1;
-        attractors = 1;
+        g_attractors = 1;
         get_julia_attractor(0.0, 0.0);    // another attractor?
         break;
     case fractal_type::LAMBDAFP:
@@ -436,7 +436,7 @@ JuliafpSetup()
             symmetry = symmetry_type::NONE;
         }
     case fractal_type::QUATJULFP:
-        attractors = 0;   // attractors broken since code checks r,i not j,k
+        g_attractors = 0;   // attractors broken since code checks r,i not j,k
         periodicitycheck = 0;
         if (param[4] != 0.0 || param[5] != 0)
         {

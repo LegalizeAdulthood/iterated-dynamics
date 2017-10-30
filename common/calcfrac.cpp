@@ -199,7 +199,7 @@ BYTE dstack[4096] = { 0 };              // common temp, two put_line calls
 unsigned int tprefix[2][maxyblk][maxxblk] = { 0 }; // common temp
 
 bool nxtscreenflag = false;             // for cellular next screen generation
-int attractors = 0;                     // number of finite attractors
+int g_attractors = 0;                     // number of finite attractors
 DComplex attr[MAX_NUM_ATTRACTORS] = { 0.0 };        // finite attractor vals (f.p)
 LComplex lattr[MAX_NUM_ATTRACTORS] = { 0 };         // finite attractor vals (int)
 int attrperiod[MAX_NUM_ATTRACTORS] = { 0 };         // period of the finite attractor
@@ -615,7 +615,7 @@ int calctypeshowdot()
 
 int calcfract()
 {
-    attractors = 0;          // default to no known finite attractors
+    g_attractors = 0;          // default to no known finite attractors
     display_3d = display_3d_modes::NONE;
     basin = 0;
     putcolor = putcolor_a;
@@ -2520,12 +2520,12 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
             }
         }
 
-        if (attractors > 0)       // finite attractor in the list
+        if (g_attractors > 0)       // finite attractor in the list
         {
             // NOTE: Integer code is UNTESTED
             if (integerfractal)
             {
-                for (int i = 0; i < attractors; i++)
+                for (int i = 0; i < g_attractors; i++)
                 {
                     lat.x = lnew.x - lattr[i].x;
                     lat.x = lsqr(lat.x);
@@ -2550,7 +2550,7 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
             }
             else
             {
-                for (int i = 0; i < attractors; i++)
+                for (int i = 0; i < g_attractors; i++)
                 {
                     at.x = g_new.x - attr[i].x;
                     at.x = sqr(at.x);

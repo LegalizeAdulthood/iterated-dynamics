@@ -1863,12 +1863,12 @@ void get_julia_attractor(double real, double imag)
     int savper;
     long savmaxit;
 
-    if (attractors == 0 && !finattract)   // not magnet & not requested
+    if (g_attractors == 0 && !finattract)   // not magnet & not requested
     {
         return;
     }
 
-    if (attractors >= MAX_NUM_ATTRACTORS)       // space for more attractors ?
+    if (g_attractors >= MAX_NUM_ATTRACTORS)       // space for more attractors ?
     {
         return;                  // Bad luck - no room left !
     }
@@ -1925,9 +1925,9 @@ void get_julia_attractor(double real, double imag)
                     if (labs(lresult.x-lnew.x) < lclosenuff
                             && labs(lresult.y-lnew.y) < lclosenuff)
                     {
-                        lattr[attractors] = lnew;
-                        attrperiod[attractors] = i+1;
-                        attractors++;   // another attractor - coloured lakes !
+                        lattr[g_attractors] = lnew;
+                        attrperiod[g_attractors] = i+1;
+                        g_attractors++;   // another attractor - coloured lakes !
                         break;
                     }
                 }
@@ -1936,9 +1936,9 @@ void get_julia_attractor(double real, double imag)
                     if (fabs(result.x-g_new.x) < closenuff
                             && fabs(result.y-g_new.y) < closenuff)
                     {
-                        attr[attractors] = g_new;
-                        attrperiod[attractors] = i+1;
-                        attractors++;   // another attractor - coloured lakes !
+                        attr[g_attractors] = g_new;
+                        attrperiod[g_attractors] = i+1;
+                        g_attractors++;   // another attractor - coloured lakes !
                         break;
                     }
                 }
@@ -1949,7 +1949,7 @@ void get_julia_attractor(double real, double imag)
             }
         }
     }
-    if (attractors == 0)
+    if (g_attractors == 0)
     {
         periodicitycheck = savper;
     }

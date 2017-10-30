@@ -37,7 +37,7 @@ extern int                   g_halley_a_plus_one_times_degree;
 extern int                   g_halley_a_plus_one;
 extern bool                  g_ask_video;
 extern float                 g_aspect_drift;
-extern int                   attractors;
+extern int                   g_attractors;
 extern int                   attrperiod[];
 extern DComplex              attr[];
 extern bool auto_browse;
