@@ -125,7 +125,7 @@ int truemode = 0;               // truecolor coloring scheme
 std::string colorfile;          // from last <l> <s> or colors=@filename
 bool new_bifurcation_functions_loaded = false; // if function loaded for new bifs
 float   screenaspect = DEFAULTASPECT;   // aspect ratio of the screen
-float   aspectdrift = DEFAULTASPECTDRIFT;  // how much drift is allowed and
+float   g_aspect_drift = DEFAULTASPECTDRIFT;  // how much drift is allowed and
                                 // still forced to screenaspect
 bool fastrestore = false;       /* true - reset viewwindows prior to a restore
                                      and do not display warnings when video
@@ -2393,7 +2393,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         {
             goto badarg;
         }
-        aspectdrift = (float)floatval[0];
+        g_aspect_drift = (float)floatval[0];
         return CMDARG_FRACTAL_PARAM;
     }
 

@@ -36,7 +36,7 @@ extern int                   g_and_color;       // AND mask for iteration to get
 extern int                   g_halley_a_plus_one_times_degree;
 extern int                   g_halley_a_plus_one;
 extern bool                  g_ask_video;
-extern float                 aspectdrift;
+extern float                 g_aspect_drift;
 extern int                   attractors;
 extern int                   attrperiod[];
 extern DComplex              attr[];

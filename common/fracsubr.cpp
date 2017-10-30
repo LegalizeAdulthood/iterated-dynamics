@@ -700,7 +700,7 @@ void adjust_cornerbf()
     // use bftemp, bftemp2 as bfXctr, bfYctr
     cvtcentermagbf(bftemp, bftemp2, &Magnification, &Xmagfactor, &Rotation, &Skew);
     ftemp = fabs(Xmagfactor);
-    if (ftemp != 1 && ftemp >= (1-aspectdrift) && ftemp <= (1+aspectdrift))
+    if (ftemp != 1 && ftemp >= (1-g_aspect_drift) && ftemp <= (1+g_aspect_drift))
     {
         Xmagfactor = sign(Xmagfactor);
         cvtcornersbf(bftemp, bftemp2, Magnification, Xmagfactor, Rotation, Skew);
@@ -775,7 +775,7 @@ void adjust_corner()
         // While we're at it, let's adjust the Xmagfactor as well
         cvtcentermag(&Xctr, &Yctr, &Magnification, &Xmagfactor, &Rotation, &Skew);
         ftemp = fabs(Xmagfactor);
-        if (ftemp != 1 && ftemp >= (1-aspectdrift) && ftemp <= (1+aspectdrift))
+        if (ftemp != 1 && ftemp >= (1-g_aspect_drift) && ftemp <= (1+g_aspect_drift))
         {
             Xmagfactor = sign(Xmagfactor);
             cvtcorners(Xctr, Yctr, Magnification, Xmagfactor, Rotation, Skew);
