@@ -2891,11 +2891,7 @@ static void format_parmfile_line(int choice, char *buf)
         c = getc(gfe_file);
     }
     line[i] = 0;
-#ifndef XFRACT
-    sprintf(buf, "%-20Fs%-56s", gfe_choices[choice]->name, line);
-#else
     sprintf(buf, "%-20s%-56s", gfe_choices[choice]->name, line);
-#endif
 }
 
 // ---------------------------------------------------------------------
