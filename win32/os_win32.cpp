@@ -877,7 +877,7 @@ void findpath(char const *filename, char *fullpathname) // return full pathnames
     splitpath(filename ,nullptr,nullptr,fname,ext);
     makepath(temp_path,""   ,"" ,fname,ext);
 
-    if (checkcurdir && access(temp_path,0) == 0)   // file exists
+    if (g_check_cur_dir && access(temp_path,0) == 0)   // file exists
     {
         strcpy(fullpathname,temp_path);
         return;

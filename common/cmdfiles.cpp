@@ -94,7 +94,7 @@ bool finattract = false;        // finite attractor logic
 display_3d_modes display_3d = display_3d_modes::NONE; // 3D display flag: 0 = OFF
 bool    overlay_3d = false;      // 3D overlay flag
 int     init3d[20] = { 0 };     // '3d=nn/nn/nn/...' values
-bool    checkcurdir = false;    // flag to check current dir for files
+bool    g_check_cur_dir = false;    // flag to check current dir for files
 batch_modes init_batch = batch_modes::NONE; // 1 if batch run (no kbd)
 int     initsavetime = 0;       // autosave minutes
 DComplex  initorbit = { 0.0 };  // initial orbitvalue
@@ -421,7 +421,7 @@ static void initvars_restart()          // <ins> key init
     fract_overwrite = false;            // don't overwrite
     soundflag = SOUNDFLAG_SPEAKER | SOUNDFLAG_BEEP; // sound is on to PC speaker
     init_batch = batch_modes::NONE;                      // not in batch mode
-    checkcurdir = false;                // flag to check current dire for files
+    g_check_cur_dir = false;                // flag to check current dire for files
     initsavetime = 0;                   // no auto-save
     g_init_mode = -1;                   // no initial video mode
     viewwindow = false;                 // no view window
@@ -3566,7 +3566,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         {
             goto badarg;
         }
-        checkcurdir = yesnoval[0] != 0;
+        g_check_cur_dir = yesnoval[0] != 0;
         return CMDARG_NONE;
     }
 

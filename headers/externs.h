@@ -79,7 +79,7 @@ extern long                  g_calc_time;
 extern int                 (*calctype)();
 extern calc_status_value     g_calc_status;
 extern char                  g_calibrate;
-extern bool                  checkcurdir;
+extern bool                  g_check_cur_dir;
 extern double                closenuff;
 extern double                closeprox;
 extern DComplex              coefficient;

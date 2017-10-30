@@ -1508,7 +1508,7 @@ bool find_file_item(char *filename, char const *itemname, FILE **fileptr, int it
             }
         }
 
-        if (!found && checkcurdir)
+        if (!found && g_check_cur_dir)
         {
             makepath(fullpath, "", DOTSLASH, fname, ext);
             infile = fopen(fullpath, "rb");
