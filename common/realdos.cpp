@@ -1369,7 +1369,7 @@ top:
 #ifdef XFRACT
     if (fullmenu && (g_got_real_dac || fake_lut) && colors >= 16)
 #else
-    if (fullmenu && g_got_real_dac && colors >= 16)
+    if (fullmenu && g_got_real_dac && g_colors >= 16)
 #endif
     {
         nextright += 2;
@@ -1386,7 +1386,7 @@ top:
         attributes[nextright] = MENU_ITEM;
         choices[nextright] = "rotate palette      <+>, <->  ";
 
-        if (colors > 16)
+        if (g_colors > 16)
         {
             nextright += 2;
             choicekey[nextright] = 'e';
@@ -1518,13 +1518,13 @@ static int menu_checkkey(int curkey, int /*choice*/)
                 return (0-testkey);
             }
         }
-        if (g_got_real_dac && colors >= 16)
+        if (g_got_real_dac && g_colors >= 16)
         {
             if (strchr("c+-", testkey))
             {
                 return (0-testkey);
             }
-            if (colors > 16 && (testkey == 'a' || (testkey == 'e')))
+            if (g_colors > 16 && (testkey == 'a' || (testkey == 'e')))
             {
                 return (0-testkey);
             }

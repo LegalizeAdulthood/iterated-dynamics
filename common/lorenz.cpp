@@ -325,9 +325,9 @@ bool orbit3dlongsetup()
         {
             mxhits = 1;
         }
-        else if (mxhits >= colors)
+        else if (mxhits >= g_colors)
         {
-            mxhits = colors - 1;
+            mxhits = g_colors - 1;
         }
         param[2] = mxhits;
 
@@ -527,9 +527,9 @@ bool orbit3dfloatsetup()
         {
             mxhits = 1;
         }
-        else if (mxhits >= colors)
+        else if (mxhits >= g_colors)
         {
-            mxhits = colors - 1;
+            mxhits = g_colors - 1;
         }
         param[2] = mxhits;
 
@@ -737,13 +737,13 @@ Minverse_julia_orbit()
             g_new.y = leftright * g_new.y;
             break;
         }
-        if (color < colors-1)
+        if (color < g_colors-1)
         {
             putcolor(newcol, newrow, color+1);
         }
         break;
     case Major::random_walk:
-        if (color < colors-1)
+        if (color < g_colors-1)
         {
             putcolor(newcol, newrow, color+1);
         }
@@ -910,7 +910,7 @@ Linverse_julia_orbit()
         random_len--;
         // fall through
     case Major::random_walk:
-        if (color < colors-1)
+        if (color < g_colors-1)
         {
             putcolor(newcol, newrow, color+1);
         }
@@ -1440,7 +1440,7 @@ int orbit2dfloat()
         {
             // time to switch colors?
             count = 0;
-            if (++color >= colors)   // another color to switch to?
+            if (++color >= g_colors)   // another color to switch to?
             {
                 color = 1;  // (don't use the background color)
             }
@@ -1458,18 +1458,18 @@ int orbit2dfloat()
             {
                 if (oldcol != -1 && connect)
                 {
-                    driver_draw_line(col, row, oldcol, oldrow, color % colors);
+                    driver_draw_line(col, row, oldcol, oldrow, color % g_colors);
                 }
                 else
                 {
-                    (*plot)(col, row, color % colors);
+                    (*plot)(col, row, color % g_colors);
                 }
             }
             else
             {
                 // should this be using plothist()?
                 color = getcolor(col, row)+1;
-                if (color < colors) // color sticks on last value
+                if (color < g_colors) // color sticks on last value
                 {
                     (*plot)(col, row, color);
                 }
@@ -1566,7 +1566,7 @@ int orbit2dlong()
     {
         color = 2;
     }
-    if (color >= colors)
+    if (color >= g_colors)
     {
         color = 1;
     }
@@ -1616,7 +1616,7 @@ int orbit2dlong()
         {
             // time to switch colors?
             count = 0;
-            if (++color >= colors)   // another color to switch to?
+            if (++color >= g_colors)   // another color to switch to?
             {
                 color = 1;  // (don't use the background color)
             }
@@ -1640,11 +1640,11 @@ int orbit2dlong()
             }
             if (oldcol != -1 && connect)
             {
-                driver_draw_line(col, row, oldcol, oldrow, color%colors);
+                driver_draw_line(col, row, oldcol, oldrow, color%g_colors);
             }
             else if (!start)
             {
-                (*plot)(col, row, color%colors);
+                (*plot)(col, row, color%g_colors);
             }
             oldcol = col;
             oldrow = row;
@@ -1695,7 +1695,7 @@ static int orbit3dlongcalc()
     oldrow1 = oldcol;
     oldcol1 = oldrow1;
     color = 2;
-    if (color >= colors)
+    if (color >= g_colors)
     {
         color = 1;
     }
@@ -1729,7 +1729,7 @@ static int orbit3dlongcalc()
         {
             // time to switch colors?
             count = 0;
-            if (++color >= colors)     // another color to switch to?
+            if (++color >= g_colors)     // another color to switch to?
             {
                 color = 1;        // (don't use the background color)
             }
@@ -1764,11 +1764,11 @@ static int orbit3dlongcalc()
                 }
                 if (oldcol != -1 && connect)
                 {
-                    driver_draw_line(inf.col, inf.row, oldcol, oldrow, color%colors);
+                    driver_draw_line(inf.col, inf.row, oldcol, oldrow, color%g_colors);
                 }
                 else
                 {
-                    (*plot)(inf.col, inf.row, color%colors);
+                    (*plot)(inf.col, inf.row, color%g_colors);
                 }
             }
             else if (inf.col == -2)
@@ -1785,11 +1785,11 @@ static int orbit3dlongcalc()
                 {
                     if (oldcol1 != -1 && connect)
                     {
-                        driver_draw_line(inf.col1, inf.row1, oldcol1, oldrow1, color%colors);
+                        driver_draw_line(inf.col1, inf.row1, oldcol1, oldrow1, color%g_colors);
                     }
                     else
                     {
-                        (*plot)(inf.col1, inf.row1, color%colors);
+                        (*plot)(inf.col1, inf.row1, color%g_colors);
                     }
                 }
                 else if (inf.col1 == -2)
@@ -1827,7 +1827,7 @@ static int orbit3dfloatcalc()
     oldrow1 = -1;
     oldcol1 = oldrow1;
     color = 2;
-    if (color >= colors)
+    if (color >= g_colors)
     {
         color = 1;
     }
@@ -1860,7 +1860,7 @@ static int orbit3dfloatcalc()
         {
             // time to switch colors?
             count = 0;
-            if (++color >= colors)     // another color to switch to?
+            if (++color >= g_colors)     // another color to switch to?
             {
                 color = 1;        // (don't use the background color)
             }
@@ -1893,11 +1893,11 @@ static int orbit3dfloatcalc()
                 }
                 if (oldcol != -1 && connect)
                 {
-                    driver_draw_line(inf.col, inf.row, oldcol, oldrow, color%colors);
+                    driver_draw_line(inf.col, inf.row, oldcol, oldrow, color%g_colors);
                 }
                 else
                 {
-                    (*plot)(inf.col, inf.row, color%colors);
+                    (*plot)(inf.col, inf.row, color%g_colors);
                 }
             }
             else if (inf.col == -2)
@@ -1914,11 +1914,11 @@ static int orbit3dfloatcalc()
                 {
                     if (oldcol1 != -1 && connect)
                     {
-                        driver_draw_line(inf.col1, inf.row1, oldcol1, oldrow1, color%colors);
+                        driver_draw_line(inf.col1, inf.row1, oldcol1, oldrow1, color%g_colors);
                     }
                     else
                     {
-                        (*plot)(inf.col1, inf.row1, color%colors);
+                        (*plot)(inf.col1, inf.row1, color%g_colors);
                     }
                 }
                 else if (inf.col1 == -2)
@@ -2026,7 +2026,7 @@ int dynam2dfloat()
     {
         color = inside;
     }
-    if (color >= colors)
+    if (color >= g_colors)
     {
         color = 1;
     }
@@ -2085,7 +2085,7 @@ int dynam2dfloat()
         }
         oldcol = -1;
 
-        if (++color >= colors)     // another color to switch to?
+        if (++color >= g_colors)     // another color to switch to?
         {
             color = 1;    // (don't use the background color)
         }
@@ -2113,11 +2113,11 @@ int dynam2dfloat()
                 {
                     if (oldcol != -1 && connect)
                     {
-                        driver_draw_line(col, row, oldcol, oldrow, color%colors);
+                        driver_draw_line(col, row, oldcol, oldrow, color%g_colors);
                     }
                     else if (count > 0 || fractype != fractal_type::MANDELCLOUD)
                     {
-                        (*plot)(col, row, color%colors);
+                        (*plot)(col, row, color%g_colors);
                     }
                 }
                 oldcol = col;
@@ -2282,7 +2282,7 @@ int plotorbits2dfloat()
     {
         // inside <= 0
         o_color++;
-        if (o_color >= colors)   // another color to switch to?
+        if (o_color >= g_colors)   // another color to switch to?
         {
             o_color = 1;    // (don't use the background color)
         }
@@ -2318,7 +2318,7 @@ int plotorbits2dfloat()
                 w_snd((int)(*soundvar*100+g_base_hertz));
             }
 
-            (*plot)(col, row, o_color%colors);
+            (*plot)(col, row, o_color%g_colors);
         }
         else
         {
@@ -2484,13 +2484,13 @@ static int ifs3dfloat()
                 }
                 if (color_method)
                 {
-                    color = (k%colors)+1;
+                    color = (k%g_colors)+1;
                 }
                 else
                 {
                     color = getcolor(inf.col, inf.row)+1;
                 }
-                if (color < colors)     // color sticks on last value
+                if (color < g_colors)     // color sticks on last value
                 {
                     (*plot)(inf.col, inf.row, color);
                 }
@@ -2507,13 +2507,13 @@ static int ifs3dfloat()
                 {
                     if (color_method)
                     {
-                        color = (k%colors)+1;
+                        color = (k%g_colors)+1;
                     }
                     else
                     {
                         color = getcolor(inf.col1, inf.row1)+1;
                     }
-                    if (color < colors)     // color sticks on last value
+                    if (color < g_colors)     // color sticks on last value
                     {
                         (*plot)(inf.col1, inf.row1, color);
                     }
@@ -2645,13 +2645,13 @@ static int ifs2d()
             // color is count of hits on this pixel
             if (color_method)
             {
-                color = (k%colors)+1;
+                color = (k%g_colors)+1;
             }
             else
             {
                 color = getcolor(col, row)+1;
             }
-            if (color < colors)     // color sticks on last value
+            if (color < g_colors)     // color sticks on last value
             {
                 (*plot)(col, row, color);
             }
@@ -2779,13 +2779,13 @@ static int ifs3dlong()
                 }
                 if (color_method)
                 {
-                    color = (k%colors)+1;
+                    color = (k%g_colors)+1;
                 }
                 else
                 {
                     color = getcolor(inf.col, inf.row)+1;
                 }
-                if (color < colors)     // color sticks on last value
+                if (color < g_colors)     // color sticks on last value
                 {
                     (*plot)(inf.col, inf.row, color);
                 }
@@ -2798,13 +2798,13 @@ static int ifs3dlong()
                 {
                     if (color_method)
                     {
-                        color = (k%colors)+1;
+                        color = (k%g_colors)+1;
                     }
                     else
                     {
                         color = getcolor(inf.col1, inf.row1)+1;
                     }
-                    if (color < colors)     // color sticks on last value
+                    if (color < g_colors)     // color sticks on last value
                     {
                         (*plot)(inf.col1, inf.row1, color);
                     }
@@ -3187,7 +3187,7 @@ static FILE *open_orbitsave()
 static void plothist(int x, int y, int color)
 {
     color = getcolor(x, y)+1;
-    if (color >= colors)
+    if (color >= g_colors)
     {
         color = 1;
     }

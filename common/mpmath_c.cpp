@@ -503,12 +503,12 @@ void SetupLogTable()
             {
                 lf = MaxLTSize - 1;
             }
-            mlf = (colors - (lf?2:1)) / log(static_cast<double>(MaxLTSize - lf));
+            mlf = (g_colors - (lf?2:1)) / log(static_cast<double>(MaxLTSize - lf));
         }
         else if (LogFlag == -1)
         {
             // old log function
-            mlf = (colors - 1) / log(static_cast<double>(MaxLTSize));
+            mlf = (g_colors - 1) / log(static_cast<double>(MaxLTSize));
         }
         else if (LogFlag <= -2)
         {
@@ -518,7 +518,7 @@ void SetupLogTable()
             {
                 lf = MaxLTSize - 1;
             }
-            mlf = (colors - 2) / sqrt(static_cast<double>(MaxLTSize - lf));
+            mlf = (g_colors - 2) / sqrt(static_cast<double>(MaxLTSize - lf));
         }
     }
 
@@ -547,20 +547,20 @@ void SetupLogTable()
         }
         Fg2Float((long)(MaxLTSize-lf), 0, m);
         fLog14(m, m);
-        Fg2Float((long)(colors-(lf?2:1)), 0, c);
+        Fg2Float((long)(g_colors-(lf?2:1)), 0, c);
         fDiv(m, c, m);
         unsigned long prev;
         for (prev = 1; prev <= lf; prev++)
         {
             LogTable[prev] = 1;
         }
-        for (unsigned n = (lf ? 2U : 1U); n < (unsigned int)colors; n++)
+        for (unsigned n = (lf ? 2U : 1U); n < (unsigned int)g_colors; n++)
         {
             Fg2Float((long)n, 0, f);
             fMul16(f, m, f);
             fExp14(f, l);
             limit = (unsigned long)Float2Fg(l, 0) + lf;
-            if (limit > (unsigned long)MaxLTSize || n == (unsigned int)(colors-1))
+            if (limit > (unsigned long)MaxLTSize || n == (unsigned int)(g_colors-1))
             {
                 limit = MaxLTSize;
             }
@@ -579,20 +579,20 @@ void SetupLogTable()
         }
         Fg2Float((long)(MaxLTSize-lf), 0, m);
         fSqrt14(m, m);
-        Fg2Float((long)(colors-2), 0, c);
+        Fg2Float((long)(g_colors-2), 0, c);
         fDiv(m, c, m);
         unsigned long prev;
         for (prev = 1; prev <= lf; prev++)
         {
             LogTable[prev] = 1;
         }
-        for (unsigned n = 2U; n < (unsigned int)colors; n++)
+        for (unsigned n = 2U; n < (unsigned int)g_colors; n++)
         {
             Fg2Float((long)n, 0, f);
             fMul16(f, m, f);
             fMul16(f, f, l);
             limit = (unsigned long)(Float2Fg(l, 0) + lf);
-            if (limit > (unsigned long)MaxLTSize || n == (unsigned int)(colors-1))
+            if (limit > (unsigned long)MaxLTSize || n == (unsigned int)(g_colors-1))
             {
                 limit = MaxLTSize;
             }

@@ -106,7 +106,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
         potparam[2]   = read_info.potential[2];
         if (make_parameter_file)
         {
-            colors = read_info.colors;
+            g_colors = read_info.colors;
         }
         potflag       = (potparam[0] != 0.0);
         rflag         = read_info.rflag != 0;

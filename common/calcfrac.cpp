@@ -663,7 +663,7 @@ int calcfract()
     parm2.x  = param[2];
     parm2.y  = param[3];
 
-    if (LogFlag && colors < 16)
+    if (LogFlag && g_colors < 16)
     {
         stopmsg(STOPMSG_NONE, "Need at least 16 colors to use logmap");
         LogFlag = 0;
@@ -783,7 +783,7 @@ int calcfract()
 
     if (save_release > 2002)
     {
-        atan_colors = colors;
+        atan_colors = g_colors;
     }
     else
     {
@@ -794,7 +794,7 @@ int calcfract()
     show_orbit = start_show_orbit;
     orbit_ptr = 0;
     orbit_color = 15;
-    if (colors < 16)
+    if (g_colors < 16)
     {
         orbit_color = 1;
     }
@@ -1106,7 +1106,7 @@ static void perform_worklist()
 
         use_old_distest = save_release < 1827;
         rqlim = rqlim_save; // just in case changed to DEM_BAILOUT earlier
-        if (distest != 1 || colors == 2)   // not doing regular outside colors
+        if (distest != 1 || g_colors == 2)   // not doing regular outside colors
         {
             if (rqlim < DEM_BAILOUT)           // so go straight for dem bailout
             {
@@ -1185,17 +1185,17 @@ static void perform_worklist()
             switch (g_auto_show_dot)
             {
             case 'd':
-                showdotcolor = g_color_dark % colors;
+                showdotcolor = g_color_dark % g_colors;
                 break;
             case 'm':
-                showdotcolor = g_color_medium % colors;
+                showdotcolor = g_color_medium % g_colors;
                 break;
             case 'b':
             case 'a':
-                showdotcolor = g_color_bright % colors;
+                showdotcolor = g_color_bright % g_colors;
                 break;
             default:
-                showdotcolor = show_dot % colors;
+                showdotcolor = show_dot % g_colors;
                 break;
             }
             if (sizedot <= 0)
@@ -1949,12 +1949,12 @@ int calcmand()              // fast per pixel 1/2/b/g, called with row & col set
             g_color_iter = logtablecalc(g_color_iter);
         }
         g_color = abs((int)g_color_iter);
-        if (g_color_iter >= colors)
+        if (g_color_iter >= g_colors)
         {
             // don't use color 0 unless from inside/outside
             if (save_release <= 1950)
             {
-                if (colors < 16)
+                if (g_colors < 16)
                 {
                     g_color &= g_and_color;
                 }
@@ -1965,7 +1965,7 @@ int calcmand()              // fast per pixel 1/2/b/g, called with row & col set
             }
             else
             {
-                if (colors < 16)
+                if (g_colors < 16)
                 {
                     g_color = (int)(g_color_iter & g_and_color);
                 }
@@ -2019,12 +2019,12 @@ int calcmandfp()
             g_color_iter = logtablecalc(g_color_iter);
         }
         g_color = abs((int)g_color_iter);
-        if (g_color_iter >= colors)
+        if (g_color_iter >= g_colors)
         {
             // don't use color 0 unless from inside/outside
             if (save_release <= 1950)
             {
-                if (colors < 16)
+                if (g_colors < 16)
                 {
                     g_color &= g_and_color;
                 }
@@ -2035,7 +2035,7 @@ int calcmandfp()
             }
             else
             {
-                if (colors < 16)
+                if (g_colors < 16)
                 {
                     g_color = (int)(g_color_iter & g_and_color);
                 }
@@ -2179,7 +2179,7 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
             if (use_old_distest)
             {
                 rqlim = rqlim_save;
-                if (distest != 1 || colors == 2)   // not doing regular outside colors
+                if (distest != 1 || g_colors == 2)   // not doing regular outside colors
                 {
                     if (rqlim < DEM_BAILOUT)     // so go straight for dem bailout
                     {
@@ -2781,7 +2781,7 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
         }
         else if (outside == FMOD)
         {
-            g_color_iter = (long)(memvalue * colors / g_close_proximity);
+            g_color_iter = (long)(memvalue * g_colors / g_close_proximity);
         }
         else if (outside == TDIS)
         {
@@ -2826,7 +2826,7 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
             g_color_iter = 0 - distest;       // show boundary as specified color
             goto plot_pixel;       // no further adjustments apply
         }
-        if (colors == 2)
+        if (g_colors == 2)
         {
             g_color_iter = !inside;   // the only useful distest 2 color use
             goto plot_pixel;       // no further adjustments apply
@@ -2942,7 +2942,7 @@ plot_inside: // we're "inside"
         }
         else if (inside == FMODI)
         {
-            g_color_iter = (long)(memvalue * colors / g_close_proximity);
+            g_color_iter = (long)(memvalue * g_colors / g_close_proximity);
         }
         else if (inside == ATANI)            // "atan"
         {
@@ -2994,12 +2994,12 @@ plot_inside: // we're "inside"
 plot_pixel:
 
     g_color = abs((int)g_color_iter);
-    if (g_color_iter >= colors)
+    if (g_color_iter >= g_colors)
     {
         // don't use color 0 unless from inside/outside
         if (save_release <= 1950)
         {
-            if (colors < 16)
+            if (g_colors < 16)
             {
                 g_color &= g_and_color;
             }
@@ -3010,7 +3010,7 @@ plot_pixel:
         }
         else
         {
-            if (colors < 16)
+            if (g_colors < 16)
             {
                 g_color = (int)(g_color_iter & g_and_color);
             }
@@ -3313,7 +3313,7 @@ static void decomposition()
         {
             g_color_iter = 0;
         }
-        if (colors == 2)
+        if (g_colors == 2)
         {
             g_color_iter++;
         }
@@ -3322,7 +3322,7 @@ static void decomposition()
     {
         g_color_iter &= 1;
     }
-    if (colors > decomp[0])
+    if (g_colors > decomp[0])
     {
         g_color_iter++;
     }
@@ -3420,9 +3420,9 @@ static int potential(double mag, long iterations)
 
     l_pot = (long) (pot * 256);
     i_pot = (int) (l_pot >> 8);
-    if (i_pot >= colors)
+    if (i_pot >= g_colors)
     {
-        i_pot = colors - 1;
+        i_pot = g_colors - 1;
         l_pot = 255;
     }
 
@@ -3471,7 +3471,7 @@ int  bound_trace_main()
         stopmsg(STOPMSG_NONE, "Boundary tracing cannot be used with inside=0 or outside=0");
         return -1;
     }
-    if (colors < 16)
+    if (g_colors < 16)
     {
         stopmsg(STOPMSG_NONE, "Boundary tracing cannot be used with < 16 colors");
         return -1;
@@ -4900,7 +4900,7 @@ static int tesseral()
             {
                 if (fillcolor > 0)
                 {
-                    tp->top = fillcolor %colors;
+                    tp->top = fillcolor %g_colors;
                 }
                 if (guessplot || (j = tp->x2 - tp->x1 - 1) < 2)
                 {

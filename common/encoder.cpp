@@ -232,11 +232,11 @@ restart:
         {
             if ((j & 4) == 0)
             {
-                if (++outcolor1 >= colors)
+                if (++outcolor1 >= g_colors)
                 {
                     outcolor1 = 0;
                 }
-                if (++outcolor2 >= colors)
+                if (++outcolor2 >= g_colors)
                 {
                     outcolor2 = 0;
                 }
@@ -330,13 +330,13 @@ bool encoder()
 
 #ifndef XFRACT
     bitsperpixel = 0;            // calculate bits / pixel
-    for (int i = colors; i >= 2; i /= 2)
+    for (int i = g_colors; i >= 2; i /= 2)
     {
         bitsperpixel++;
     }
 
     startbits = bitsperpixel + 1;// start coding with this many bits
-    if (colors == 2)
+    if (g_colors == 2)
     {
         startbits++;    // B&W Klooge
     }
@@ -426,13 +426,13 @@ bool encoder()
     }
 
 #ifndef XFRACT
-    if (colors == 256)
+    if (g_colors == 256)
     {
         // write out the 256-color palette
         if (g_got_real_dac)
         {
             // got a DAC - must be a VGA
-            if (!shftwrite((BYTE *) g_dac_box, colors))
+            if (!shftwrite((BYTE *) g_dac_box, g_colors))
             {
                 goto oops;
             }
@@ -460,29 +460,29 @@ bool encoder()
             }
         }
     }
-    if (colors == 2)
+    if (g_colors == 2)
     {
         // write out the B&W palette
-        if (!shftwrite((BYTE *)paletteBW, colors))
+        if (!shftwrite((BYTE *)paletteBW, g_colors))
         {
             goto oops;
         }
     }
 #ifndef XFRACT
-    if (colors == 4)
+    if (g_colors == 4)
     {
         // write out the CGA palette
-        if (!shftwrite((BYTE *)paletteCGA, colors))
+        if (!shftwrite((BYTE *)paletteCGA, g_colors))
         {
             goto oops;
         }
     }
-    if (colors == 16)
+    if (g_colors == 16)
     {
         // Either EGA or VGA
         if (g_got_real_dac)
         {
-            if (!shftwrite((BYTE *) g_dac_box, colors))
+            if (!shftwrite((BYTE *) g_dac_box, g_colors))
             {
                 goto oops;
             }
@@ -490,7 +490,7 @@ bool encoder()
         else
         {
             // no DAC - must be an EGA
-            if (!shftwrite((BYTE *)paletteEGA, colors))
+            if (!shftwrite((BYTE *)paletteEGA, g_colors))
             {
                 goto oops;
             }
@@ -1111,7 +1111,7 @@ static bool compress(int rowlimit)
     outcolor1 = 0;               // use these colors to show progress
     outcolor2 = 1;               // (this has nothing to do with GIF)
 
-    if (colors > 2)
+    if (g_colors > 2)
     {
         outcolor1 = 2;
         outcolor2 = 3;
@@ -1223,11 +1223,11 @@ nomatch:
             {
                 if ((ydot & 4) == 0)
                 {
-                    if (++outcolor1 >= colors)
+                    if (++outcolor1 >= g_colors)
                     {
                         outcolor1 = 0;
                     }
-                    if (++outcolor2 >= colors)
+                    if (++outcolor2 >= g_colors)
                     {
                         outcolor2 = 0;
                     }

@@ -75,7 +75,7 @@ int startdisk()
 {
     headerlength = 0;
     disktarga = false;
-    return common_startdisk(sxdots, sydots, colors);
+    return common_startdisk(sxdots, sydots, g_colors);
 }
 
 int pot_startdisk()
@@ -91,7 +91,7 @@ int pot_startdisk()
     }
     headerlength = 0;
     disktarga = false;
-    i = common_startdisk(sxdots, sydots << 1, colors);
+    i = common_startdisk(sxdots, sydots << 1, g_colors);
     cleartempmsg();
     if (i == 0)
     {
@@ -112,7 +112,7 @@ int targa_startdisk(FILE *targafp, int overhead)
     headerlength = overhead;
     fp = targafp;
     disktarga = true;
-    i = common_startdisk(xdots*3, ydots, colors);
+    i = common_startdisk(xdots*3, ydots, g_colors);
     high_offset = 100000000L; // targa not necessarily init'd to zeros
 
     return i;

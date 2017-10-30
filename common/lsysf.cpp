@@ -253,23 +253,23 @@ static void lsysf_dodrawf(lsys_turtlestatef *cmd)
 
 static void lsysf_dodrawc(lsys_turtlestatef *cmd)
 {
-    cmd->curcolor = (char)(((int) cmd->parm.n) % colors);
+    cmd->curcolor = (char)(((int) cmd->parm.n) % g_colors);
 }
 
 static void lsysf_dodrawgt(lsys_turtlestatef *cmd)
 {
     cmd->curcolor = (char)(cmd->curcolor - cmd->parm.n);
-    cmd->curcolor %= colors;
+    cmd->curcolor %= g_colors;
     if (cmd->curcolor == 0)
     {
-        cmd->curcolor = (char)(colors-1);
+        cmd->curcolor = (char)(g_colors-1);
     }
 }
 
 static void lsysf_dodrawlt(lsys_turtlestatef *cmd)
 {
     cmd->curcolor = (char)(cmd->curcolor + cmd->parm.n);
-    cmd->curcolor %= colors;
+    cmd->curcolor %= g_colors;
     if (cmd->curcolor == 0)
     {
         cmd->curcolor = 1;

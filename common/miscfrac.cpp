@@ -66,10 +66,10 @@ int test()
                     return (-1);
                 }
                 color = testpt(init.x, init.y, parm.x, parm.y, maxit, inside);
-                if (color >= colors)
+                if (color >= g_colors)
                 {
                     // avoid trouble if color is 0
-                    if (colors < 16)
+                    if (g_colors < 16)
                     {
                         color &= g_and_color;
                     }
@@ -385,7 +385,7 @@ int plasma()
     bool OldPot16bit = false;
     plasma_check = 0;
 
-    if (colors < 4)
+    if (g_colors < 4)
     {
         stopmsg(STOPMSG_NONE,
                 "Plasma Clouds can currently only be run in a 4-or-more-color video\n"
@@ -488,24 +488,24 @@ int plasma()
         ++rseed;
     }
 
-    if (colors == 256)                     // set the (256-color) palette
+    if (g_colors == 256)                     // set the (256-color) palette
     {
         set_Plasma_palette();             // skip this if < 256 colors
     }
 
-    if (colors > 16)
+    if (g_colors > 16)
     {
         shiftvalue = 18;
     }
     else
     {
-        if (colors > 4)
+        if (g_colors > 4)
         {
             shiftvalue = 22;
         }
         else
         {
-            if (colors > 2)
+            if (g_colors > 2)
             {
                 shiftvalue = 24;
             }
@@ -522,7 +522,7 @@ int plasma()
 
     if (max_plasma == 0)
     {
-        pcolors = std::min(colors, max_colors);
+        pcolors = std::min(g_colors, max_colors);
         for (auto &elem : rnd)
         {
             elem = (U16)(1+(((rand15()/pcolors)*(pcolors-1)) >> (shiftvalue-11)));
@@ -857,14 +857,14 @@ int diffusion()
             // Show the moving point
             if (show_orbit)
             {
-                putcolor(x, y, RANDOM(colors-1)+1);
+                putcolor(x, y, RANDOM(g_colors-1)+1);
             }
 
         } // End of loop, now fix the point
 
         /* If we're doing colorshifting then use currentcolor, otherwise
            pick one at random */
-        putcolor(x, y, colorshift?currentcolor:RANDOM(colors-1)+1);
+        putcolor(x, y, colorshift?currentcolor:RANDOM(g_colors-1)+1);
 
         // If we're doing colorshifting then check to see if we need to shift
         if (colorshift)
@@ -873,7 +873,7 @@ int diffusion()
             {
                 // If the counter reaches zero then shift
                 currentcolor++;      // Increase the current color and wrap
-                currentcolor %= colors;  // around skipping zero
+                currentcolor %= g_colors;  // around skipping zero
                 if (!currentcolor)
                 {
                     currentcolor++;
@@ -1009,7 +1009,7 @@ int Bifurcation()
     }
 
     mono = false;
-    if (colors == 2)
+    if (g_colors == 2)
     {
         mono = true;
     }
@@ -1075,9 +1075,9 @@ int Bifurcation()
             {
                 color = outside_x;
             }
-            else if (color>=colors)
+            else if (color>=g_colors)
             {
-                color = colors-1;
+                color = g_colors-1;
             }
             verhulst_array[y] = 0;
             (*plot)(x, y, color); // was row-1, but that's not right?
@@ -1517,9 +1517,9 @@ int lyapunov()
     {
         g_color = inside;
     }
-    else if (g_color>=colors)
+    else if (g_color>=g_colors)
     {
-        g_color = colors-1;
+        g_color = g_colors-1;
     }
     (*plot)(col, row, g_color);
     return g_color;
@@ -1686,7 +1686,7 @@ jumpout:
         {
             lyap = 1 - exp(temp/((double) lyaLength*i));
         }
-        color = 1 + (int)(lyap * (colors-1));
+        color = 1 + (int)(lyap * (g_colors-1));
     }
     return color;
 }
@@ -2240,9 +2240,9 @@ static void set_Froth_palette()
     {
         return;
     }
-    if (colors >= 16)
+    if (g_colors >= 16)
     {
-        if (colors >= 256)
+        if (g_colors >= 256)
         {
             if (fsp.attractors == 6)
             {
@@ -2357,7 +2357,7 @@ bool froth_setup()
     }
 
     // if 2 attractors, use same shades as 3 attractors
-    fsp.shades = (colors-1) / std::max(3, fsp.attractors);
+    fsp.shades = (g_colors-1) / std::max(3, fsp.attractors);
 
     // rqlim needs to be at least sq(1+sqrt(1+sq(a))),
     // which is never bigger than 6.93..., so we'll call it 7.0
@@ -2367,7 +2367,7 @@ bool froth_setup()
     }
     set_Froth_palette();
     // make the best of the .map situation
-    orbit_color = fsp.attractors != 6 && colors >= 16 ? (fsp.shades<<1)+1 : colors-1;
+    orbit_color = fsp.attractors != 6 && g_colors >= 16 ? (fsp.shades<<1)+1 : g_colors-1;
 
     if (integerfractal)
     {
@@ -2415,7 +2415,7 @@ int calcfroth()   // per pixel 1/2/g, called with row & col set
     g_color_iter = 0;
     if (show_dot >0)
     {
-        (*plot)(col, row, show_dot %colors);
+        (*plot)(col, row, show_dot %g_colors);
     }
     if (!integerfractal) // fp mode
     {
@@ -2718,7 +2718,7 @@ int calcfroth()   // per pixel 1/2/g, called with row & col set
     // color maps in attempt to replicate the images of James Alexander.
     if (found_attractor)
     {
-        if (colors >= 256)
+        if (g_colors >= 256)
         {
             if (!fsp.altcolor)
             {
@@ -2737,7 +2737,7 @@ int calcfroth()   // per pixel 1/2/g, called with row & col set
             }
             g_color_iter += fsp.shades * (found_attractor-1);
         }
-        else if (colors >= 16)
+        else if (g_colors >= 16)
         {
             // only alternate coloring scheme available for 16 colors
             long lshade;

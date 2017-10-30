@@ -1233,7 +1233,7 @@ PopcornFractal_Old()
     g_new.y = old.y - parm.x*sinx;
     if (plot == noplot)
     {
-        plot_orbit(g_new.x, g_new.y, 1+row%colors);
+        plot_orbit(g_new.x, g_new.y, 1+row%g_colors);
         old = g_new;
     }
     else
@@ -1266,7 +1266,7 @@ PopcornFractal()
     g_new.y = old.y - parm.x*sinx;
     if (plot == noplot)
     {
-        plot_orbit(g_new.x, g_new.y, 1+row%colors);
+        plot_orbit(g_new.x, g_new.y, 1+row%g_colors);
         old = g_new;
     }
     tempsqrx = sqr(g_new.x);
@@ -1302,7 +1302,7 @@ LPopcornFractal_Old()
     lnew.y = lold.y - multiply(lparm.x, lsinx, bitshift);
     if (plot == noplot)
     {
-        iplot_orbit(lnew.x, lnew.y, 1+row%colors);
+        iplot_orbit(lnew.x, lnew.y, 1+row%g_colors);
         lold = lnew;
     }
     else
@@ -1344,7 +1344,7 @@ LPopcornFractal()
     lnew.y = lold.y - multiply(lparm.x, lsinx, bitshift);
     if (plot == noplot)
     {
-        iplot_orbit(lnew.x, lnew.y, 1+row%colors);
+        iplot_orbit(lnew.x, lnew.y, 1+row%g_colors);
         lold = lnew;
     }
     // else
@@ -1392,7 +1392,7 @@ PopcornFractalFn()
 
     if (plot == noplot)
     {
-        plot_orbit(g_new.x, g_new.y, 1+row%colors);
+        plot_orbit(g_new.x, g_new.y, 1+row%g_colors);
         old = g_new;
     }
 
@@ -1447,7 +1447,7 @@ LPopcornFractalFn()
 
     if (plot == noplot)
     {
-        iplot_orbit(lnew.x, lnew.y, 1+row%colors);
+        iplot_orbit(lnew.x, lnew.y, 1+row%g_colors);
         lold = lnew;
     }
     ltempsqrx = lsqr(lnew.x);
@@ -2538,7 +2538,7 @@ CirclefpFractal()
 {
     long i;
     i = (long)(param[0]*(tempsqrx+tempsqry));
-    g_color_iter = i%colors;
+    g_color_iter = i%g_colors;
     return 1;
 }
 /*

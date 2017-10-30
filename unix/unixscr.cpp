@@ -58,7 +58,7 @@
 extern  int dotmode;        // video access method (= 19)
 extern  int sxdots, sydots;     // total # of dots on the screen
 extern  int sxoffs, syoffs;     // offset of drawing area
-extern  int colors;         // maximum colors available
+extern  int g_colors;         // maximum colors available
 extern  int initmode;
 extern  int g_adapter;
 extern bool g_got_real_dac;
@@ -347,7 +347,7 @@ select_visual()
     {
     case StaticGray:
     case StaticColor:
-        colors = 1 << Xdepth;
+        g_colors = 1 << Xdepth;
         g_got_real_dac = false;
         fake_lut = false;
         g_is_true_color = false;
@@ -355,7 +355,7 @@ select_visual()
 
     case GrayScale:
     case PseudoColor:
-        colors = 1 << Xdepth;
+        g_colors = 1 << Xdepth;
         g_got_real_dac = true;
         fake_lut = false;
         g_is_true_color = false;
@@ -363,7 +363,7 @@ select_visual()
 
     case TrueColor:
     case DirectColor:
-        colors = 256;
+        g_colors = 256;
         g_got_real_dac = false;
         fake_lut = true;
         g_is_true_color = false;
@@ -374,8 +374,8 @@ select_visual()
         assert(1);
         break;
     }
-    if (colors > 256)
-        colors = 256;
+    if (g_colors > 256)
+        g_colors = 256;
 }
 
 /*
@@ -424,15 +424,15 @@ initUnixWindow()
         fake_lut = false;
         g_is_true_color = false;
         g_got_real_dac = true;
-        colors = 256;
-        for (int i = 0; i < colors; i++)
+        g_colors = 256;
+        for (int i = 0; i < g_colors; i++)
         {
             pixtab[i] = i;
             ipixtab[i] = i;
         }
         if (fixcolors > 0)
         {
-            colors = fixcolors;
+            g_colors = fixcolors;
         }
         if (Xgeometry)
         {
@@ -492,7 +492,7 @@ initUnixWindow()
         select_visual();
         if (fixcolors > 0)
         {
-            colors = fixcolors;
+            g_colors = fixcolors;
         }
 
         if (fullscreen || onroot)
@@ -535,9 +535,9 @@ initUnixWindow()
             XStoreName(Xdp, Xw, Fractint);
             Xgc = XCreateGC(Xdp, Xw, 0, &Xgcvals);
         }
-        colors = xcmapstuff();
+        g_colors = xcmapstuff();
         if (rotate_hi == 255)
-            rotate_hi = colors-1;
+            rotate_hi = g_colors-1;
 
         XSetWMNormalHints(Xdp, Xw, size_hints);
 
@@ -555,7 +555,7 @@ initUnixWindow()
 
     x11_video_table[0].xdots = sxdots;
     x11_video_table[0].ydots = sydots;
-    x11_video_table[0].colors = colors;
+    x11_video_table[0].colors = g_colors;
     x11_video_table[0].dotmode = (unixDisk) ? 11 : 19;
 }
 /*
@@ -629,7 +629,7 @@ clearXwindow()
         /*
          * Initialize image to pixtab[0].
          */
-        if (colors == 2)
+        if (g_colors == 2)
         {
             for (int i = 0; i < Ximage->bytes_per_line; i++)
             {
@@ -876,7 +876,7 @@ xcmapstuff()
     {
         privatecolor = 0;
     }
-    for (int i = 0; i < colors; i++)
+    for (int i = 0; i < g_colors; i++)
     {
         pixtab[i] = i;
         ipixtab[i] = 999;
@@ -902,13 +902,13 @@ xcmapstuff()
         for (int powr = Xdepth; powr >= 1; powr--)
         {
             ncells = 1 << powr;
-            if (ncells > colors)
+            if (ncells > g_colors)
                 continue;
             if (XAllocColorCells(Xdp, Xcmap, False, nullptr, 0, pixtab,
                                  (unsigned int) ncells))
             {
-                colors = ncells;
-                fprintf(stderr, "%d colors\n", colors);
+                g_colors = ncells;
+                fprintf(stderr, "%d colors\n", g_colors);
                 usepixtab = 1;
                 break;
             }
@@ -919,7 +919,7 @@ xcmapstuff()
             g_got_real_dac = false;
         }
     }
-    for (int i = 0; i < colors; i++)
+    for (int i = 0; i < g_colors; i++)
     {
         ipixtab[pixtab[i]] = i;
     }
@@ -943,7 +943,7 @@ xcmapstuff()
         ipixtab[0] = 0;
     }
 
-    if (!g_got_real_dac && colors == 2 && BlackPixelOfScreen(Xsc) != 0)
+    if (!g_got_real_dac && g_colors == 2 && BlackPixelOfScreen(Xsc) != 0)
     {
         ipixtab[0] = 1;
         pixtab[0] = ipixtab[0];
@@ -952,7 +952,7 @@ xcmapstuff()
         usepixtab = 1;
     }
 
-    return colors;
+    return g_colors;
 }
 /*
  *----------------------------------------------------------------------
@@ -1066,9 +1066,9 @@ readvideoline(int y, int x, int lastx, BYTE *pixels)
 void writevideo(int x, int y, int color)
 {
 #ifdef DEBUG // Debugging checks
-    if (color >= colors || color < 0)
+    if (color >= g_colors || color < 0)
     {
-        fprintf(stderr, "Color %d too big %d\n", color, colors);
+        fprintf(stderr, "Color %d too big %d\n", color, g_colors);
     }
     if (x >= sxdots || x < 0 || y >= sydots || y < 0)
     {
@@ -1124,7 +1124,7 @@ int readvideo(int x, int y)
     if (fake_lut)
     {
         XPixel pixel = XGetPixel(Ximage, x, y);
-        for (int i = 0; i < colors; i++)
+        for (int i = 0; i < g_colors; i++)
             if (cmap_pixtab[i] == pixel)
                 return i;
         return 0;
@@ -1154,7 +1154,7 @@ int readvideopalette()
 {
     if (!g_got_real_dac && g_is_true_color && truemode)
         return -1;
-    for (int i = 0; i < colors; i++)
+    for (int i = 0; i < g_colors; i++)
     {
         g_dac_box[i][0] = cols[i].red/1024;
         g_dac_box[i][1] = cols[i].green/1024;
@@ -1188,7 +1188,7 @@ int writevideopalette()
             static unsigned char last_dac[256][3];
             static bool last_dac_inited = false;
 
-            for (int i = 0; i < colors; i++)
+            for (int i = 0; i < g_colors; i++)
             {
                 if (!last_dac_inited ||
                         last_dac[i][0] != g_dac_box[i][0] ||
@@ -1227,7 +1227,7 @@ int writevideopalette()
     else
     {
         // g_got_real_dac => grayscale or pseudocolor displays
-        for (int i = 0; i < colors; i++)
+        for (int i = 0; i < g_colors; i++)
         {
             cols[i].pixel = pixtab[i];
             cols[i].flags = DoRed | DoGreen | DoBlue;
@@ -1237,7 +1237,7 @@ int writevideopalette()
         }
         if (!unixDisk)
         {
-            XStoreColors(Xdp, Xcmap, cols, colors);
+            XStoreColors(Xdp, Xcmap, cols, g_colors);
             XFlush(Xdp);
 
             /* None of these changed the colors without redrawing the fractal
@@ -1988,7 +1988,7 @@ xhandleevents()
                                 ABS(bandy1-bandy0) > 10)
                         {
                             banding = 1;
-                            XSetForeground(Xdp, Xgc, colors-1);
+                            XSetForeground(Xdp, Xgc, g_colors-1);
                             XSetFunction(Xdp, Xgc, GXxor);
                         }
                     }

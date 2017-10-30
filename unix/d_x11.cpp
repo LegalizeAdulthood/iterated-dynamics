@@ -58,7 +58,7 @@ extern bool slowdisplay;
 extern  int dotmode;        // video access method (= 19)
 extern  int sxdots, sydots;     // total # of dots on the screen
 extern  int sxoffs, syoffs;     // offset of drawing area
-extern  int colors;         // maximum colors available
+extern  int g_colors;         // maximum colors available
 extern  int g_init_mode;
 extern  int g_adapter;
 extern bool g_got_real_dac;
@@ -503,21 +503,21 @@ select_visual(DriverX11 *di)
     {
     case StaticGray:
     case StaticColor:
-        colors = (di->Xdepth <= 8) ? di->Xvi->map_entries : 256;
+        g_colors = (di->Xdepth <= 8) ? di->Xvi->map_entries : 256;
         g_got_real_dac = false;
         di->fake_lut = false;
         break;
 
     case GrayScale:
     case PseudoColor:
-        colors = (di->Xdepth <= 8) ? di->Xvi->map_entries : 256;
+        g_colors = (di->Xdepth <= 8) ? di->Xvi->map_entries : 256;
         g_got_real_dac = true;
         di->fake_lut = false;
         break;
 
     case TrueColor:
     case DirectColor:
-        colors = 256;
+        g_colors = 256;
         g_got_real_dac = false;
         di->fake_lut = true;
         break;
@@ -527,8 +527,8 @@ select_visual(DriverX11 *di)
         assert(1);
         break;
     }
-    if (colors > 256)
-        colors = 256;
+    if (g_colors > 256)
+        g_colors = 256;
 }
 
 /*----------------------------------------------------------------------
@@ -559,7 +559,7 @@ clearXwindow(DriverX11 *di)
         /*
          * Initialize image to di->pixtab[0].
          */
-        if (colors == 2)
+        if (g_colors == 2)
         {
             for (int i = 0; i < di->Ximage->bytes_per_line; i++)
             {
@@ -619,7 +619,7 @@ xcmapstuff(DriverX11 *di)
     {
         di->privatecolor = false;
     }
-    for (int i = 0; i < colors; i++)
+    for (int i = 0; i < g_colors; i++)
     {
         di->pixtab[i] = i;
         di->ipixtab[i] = 999;
@@ -645,12 +645,12 @@ xcmapstuff(DriverX11 *di)
         for (int powr = di->Xdepth; powr >= 1; powr--)
         {
             ncells = 1 << powr;
-            if (ncells > colors)
+            if (ncells > g_colors)
                 continue;
             if (XAllocColorCells(di->Xdp, di->Xcmap, False, nullptr, 0, di->pixtab,
                                  (unsigned int) ncells))
             {
-                colors = ncells;
+                g_colors = ncells;
                 di->usepixtab = true;
                 break;
             }
@@ -661,7 +661,7 @@ xcmapstuff(DriverX11 *di)
             g_got_real_dac = false;
         }
     }
-    for (int i = 0; i < colors; i++)
+    for (int i = 0; i < g_colors; i++)
     {
         di->ipixtab[di->pixtab[i]] = i;
     }
@@ -685,7 +685,7 @@ xcmapstuff(DriverX11 *di)
         di->ipixtab[0] = 0;
     }
 
-    if (!g_got_real_dac && colors == 2 && BlackPixelOfScreen(di->Xsc) != 0)
+    if (!g_got_real_dac && g_colors == 2 && BlackPixelOfScreen(di->Xsc) != 0)
     {
         di->ipixtab[0] = 1;
         di->pixtab[0] = di->ipixtab[0];
@@ -694,7 +694,7 @@ xcmapstuff(DriverX11 *di)
         di->usepixtab = true;
     }
 
-    return colors;
+    return g_colors;
 }
 
 static int
@@ -1320,7 +1320,7 @@ ev_button_press(DriverX11 *di, XEvent *xevent)
                 if (ABS(bandx1-bandx0) > 10 || ABS(bandy1-bandy0) > 10)
                 {
                     banding = true;
-                    XSetForeground(di->Xdp, di->Xgc, FAKE_LUT(di, colors-1));
+                    XSetForeground(di->Xdp, di->Xgc, FAKE_LUT(di, g_colors-1));
                     XSetFunction(di->Xdp, di->Xgc, GXxor);
                 }
             }
@@ -1927,7 +1927,7 @@ x11_window(Driver *drv)
     di->Xsc = ScreenOfDisplay(di->Xdp, di->Xdscreen);
     select_visual(di);
     if (di->fixcolors > 0)
-        colors = di->fixcolors;
+        g_colors = di->fixcolors;
 
     if (di->fullscreen || di->onroot)
     {
@@ -1966,9 +1966,9 @@ x11_window(Driver *drv)
         XStoreName(di->Xdp, di->Xw, "xfractint");
         di->Xgc = XCreateGC(di->Xdp, di->Xw, 0, &Xgcvals);
     }
-    colors = xcmapstuff(di);
+    g_colors = xcmapstuff(di);
     if (rotate_hi == 255)
-        rotate_hi = colors-1;
+        rotate_hi = g_colors-1;
 
     {
         unsigned long event_mask = KeyPressMask | KeyReleaseMask | ExposureMask;
@@ -1992,7 +1992,7 @@ x11_window(Driver *drv)
 
     x11_video_table[0].xdots = sxdots;
     x11_video_table[0].ydots = sydots;
-    x11_video_table[0].colors = colors;
+    x11_video_table[0].colors = g_colors;
     x11_video_table[0].dotmode = 19;
 #endif
 }
@@ -2229,7 +2229,7 @@ x11_write_palette(Driver *drv)
             di->cols[i].green = g_dac_box[i][1]*1024;
             di->cols[i].blue = g_dac_box[i][2]*1024;
         }
-        XStoreColors(di->Xdp, di->Xcmap, di->cols, colors);
+        XStoreColors(di->Xdp, di->Xcmap, di->cols, g_colors);
         XFlush(di->Xdp);
     }
 
@@ -2287,9 +2287,9 @@ x11_write_pixel(Driver *drv, int x, int y, int color)
 {
     DIX11(drv);
 #ifdef DEBUG // Debugging checks
-    if (color >= colors || color < 0)
+    if (color >= g_colors || color < 0)
     {
-        printf("Color %d too big %d\n", color, colors);
+        printf("Color %d too big %d\n", color, g_colors);
     }
     if (x >= sxdots || x < 0 || y >= sydots || y < 0)
     {
@@ -2450,7 +2450,7 @@ x11_set_line_mode(Driver *drv, int mode)
     }
     else
     {
-        XSetForeground(di->Xdp, di->Xgc, FAKE_LUT(di, colors-1));
+        XSetForeground(di->Xdp, di->Xgc, FAKE_LUT(di, g_colors-1));
         di->xlastcolor = -1;
         XSetFunction(di->Xdp, di->Xgc, GXxor);
         di->xlastfcn = GXxor;
@@ -2726,7 +2726,7 @@ x11_set_video_mode(Driver *drv, VIDEOINFO *mode)
     if (dotmode != 0)
     {
         x11_read_palette(drv);
-        g_and_color = colors-1;
+        g_and_color = g_colors-1;
         g_box_count =0;
     }
 }

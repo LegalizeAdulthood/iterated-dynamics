@@ -201,7 +201,7 @@ setvideomode(int ax, int bx, int cx, int dx)
     if (dotmode != 0)
     {
         loaddac();
-        g_and_color = colors - 1;
+        g_and_color = g_colors - 1;
         g_box_count = 0;
     }
     g_vesa_x_res = sxdots;
@@ -403,13 +403,13 @@ spindac(int dir, int inc)
 {
     unsigned char tmp[3];
     unsigned char *dacbot;
-    if (colors < 16)
+    if (g_colors < 16)
         return;
     if (g_is_true_color && truemode)
         return;
-    if (dir != 0 && rotate_lo < colors && rotate_lo < rotate_hi)
+    if (dir != 0 && rotate_lo < g_colors && rotate_lo < rotate_hi)
     {
-        int top = rotate_hi > colors ? colors - 1 : rotate_hi;
+        int top = rotate_hi > g_colors ? g_colors - 1 : rotate_hi;
         dacbot = (unsigned char *) g_dac_box + 3 * rotate_lo;
         int len = (top - rotate_lo) * 3 * sizeof(unsigned char);
         if (dir > 0)
@@ -432,7 +432,7 @@ spindac(int dir, int inc)
         }
     }
     writevideopalette();
-    driver_delay(colors - g_dac_count - 1);
+    driver_delay(g_colors - g_dac_count - 1);
 }
 
 /*
@@ -549,7 +549,7 @@ find_special_colors()
     g_color_medium = 7;
     g_color_bright = 15;
 
-    if (colors == 2)
+    if (g_colors == 2)
     {
         g_color_medium = 1;
         g_color_bright = 1;
@@ -559,7 +559,7 @@ find_special_colors()
     if (!(g_got_real_dac || fake_lut))
         return;
 
-    for (int i = 0; i < colors; i++)
+    for (int i = 0; i < g_colors; i++)
     {
         brt = (int) g_dac_box[i][0] + (int) g_dac_box[i][1] + (int) g_dac_box[i][2];
         if (brt > maxb)

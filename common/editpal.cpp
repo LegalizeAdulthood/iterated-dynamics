@@ -1409,7 +1409,7 @@ static void RGBEditor__change(CEditor * /*ceditor*/, void *info) // private
 {
     RGBEditor *me = (RGBEditor *)info;
 
-    if (me->pal < colors && !is_reserved(me->pal))
+    if (me->pal < g_colors && !is_reserved(me->pal))
     {
         setpal(me->pal, CEditor_GetVal(me->color[0]),
                CEditor_GetVal(me->color[1]), CEditor_GetVal(me->color[2]));
@@ -1455,7 +1455,7 @@ static void RGBEditor_Update(RGBEditor *me)
 
     Cursor_Hide();
 
-    if (me->pal >= colors)
+    if (me->pal >= g_colors)
     {
         fillrect(x1, y1, RGBEditor_BWIDTH-2, RGBEditor_BDEPTH-2, bg_color);
         draw_diamond(x1+(RGBEditor_BWIDTH-5)/2, y1+(RGBEditor_BDEPTH-5)/2, fg_color);
@@ -1888,7 +1888,7 @@ static void PalTable__DrawStatus(PalTable *me, bool stripe_mode)
         int x = me->x + 2 + RGBEditor_WIDTH,
             y = me->y + PalTable_PALY - 10;
         int color = PalTable__GetCursorColor(me);
-        if (color < 0 || color >= colors)   // hmm, the border returns -1
+        if (color < 0 || color >= g_colors)   // hmm, the border returns -1
         {
             color = 0;
         }
@@ -1970,7 +1970,7 @@ static void PalTable__Draw(PalTable *me)
         int xoff = PalTable_PALX + (pal%16) * me->csize;
         int yoff = PalTable_PALY + (pal/16) * me->csize;
 
-        if (pal >= colors)
+        if (pal >= g_colors)
         {
             fillrect(me->x + xoff + 1, me->y + yoff + 1, me->csize-1, me->csize-1, bg_color);
             draw_diamond(me->x + xoff + me->csize/2 - 1, me->y + yoff + me->csize/2 - 1, fg_color);
@@ -2309,7 +2309,7 @@ static void PalTable__UpdateDAC(PalTable *me)
     }
     else
     {
-        memmove(g_dac_box[0], me->pal, 3*colors);
+        memmove(g_dac_box[0], me->pal, 3*g_colors);
 
         if (me->freestyle)
         {
@@ -2739,7 +2739,7 @@ static void PalTable__other_key(int key, RGBEditor *rgb, void *info)
 
     case 'V':
     case 'v':  // set the reserved colors to the editor colors
-        if (me->curr[0] >= colors || me->curr[1] >= colors ||
+        if (me->curr[0] >= g_colors || me->curr[1] >= g_colors ||
                 me->curr[0] == me->curr[1])
         {
             driver_buzzer(buzzer_codes::PROBLEM);
@@ -2818,7 +2818,7 @@ static void PalTable__other_key(int key, RGBEditor *rgb, void *info)
 
         load_palette();
 #ifndef XFRACT
-        getpalrange(0, colors, me->pal);
+        getpalrange(0, g_colors, me->pal);
 #else
         getpalrange(0, 256, me->pal);
 #endif
@@ -2834,7 +2834,7 @@ static void PalTable__other_key(int key, RGBEditor *rgb, void *info)
     case 's':
     {
 #ifndef XFRACT
-        setpalrange(0, colors, me->pal);
+        setpalrange(0, g_colors, me->pal);
 #else
         setpalrange(0, 256, me->pal);
 #endif
@@ -2855,9 +2855,9 @@ static void PalTable__other_key(int key, RGBEditor *rgb, void *info)
         {
             PalTable_Hide(me, rgb, true);
         }
-        setpalrange(0, colors, me->pal);
+        setpalrange(0, g_colors, me->pal);
         rotate(0);
-        getpalrange(0, colors, me->pal);
+        getpalrange(0, g_colors, me->pal);
         PalTable__UpdateDAC(me);
         if (!oldhidden)
         {
@@ -3115,7 +3115,7 @@ static void PalTable_Destroy(PalTable *me)
 
 static void PalTable_Process(PalTable *me)
 {
-    getpalrange(0, colors, me->pal);
+    getpalrange(0, g_colors, me->pal);
 
     // Make sure all palette entries are 0-63
 
@@ -3135,7 +3135,7 @@ static void PalTable_Process(PalTable *me)
         MoveBox_SetCSize(me->movebox, me->csize);
         if (!MoveBox_Process(me->movebox))
         {
-            setpalrange(0, colors, me->pal);
+            setpalrange(0, g_colors, me->pal);
             return ;
         }
 
@@ -3168,7 +3168,7 @@ static void PalTable_Process(PalTable *me)
 
     Cursor_Hide();
     PalTable__RestoreRect(me);
-    setpalrange(0, colors, me->pal);
+    setpalrange(0, g_colors, me->pal);
 }
 
 void EditPalette()
@@ -3192,7 +3192,7 @@ void EditPalette()
 
     reserve_colors = true;
     inverse = false;
-    fg_color = (BYTE)(255%colors);
+    fg_color = (BYTE)(255%g_colors);
     bg_color = (BYTE)(fg_color-1);
 
     Cursor_Construct();

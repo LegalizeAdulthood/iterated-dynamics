@@ -148,7 +148,7 @@ int gifview()
     }
     numcolors = 1 << planes;
 
-    if (dither_flag && numcolors > 2 && colors == 2 && outln == out_line)
+    if (dither_flag && numcolors > 2 && g_colors == 2 && outln == out_line)
     {
         outln = out_line_dither;
     }
@@ -443,7 +443,7 @@ static bool put_sound_line(int row, int colstart, int colstop, BYTE *pixels)
         {
             sleepms(orbit_delay);
         }
-        w_snd((int)((int)(*pixels++)*3000/colors+g_base_hertz));
+        w_snd((int)((int)(*pixels++)*3000/g_colors+g_base_hertz));
         if (driver_key_pressed())
         {
             driver_mute();

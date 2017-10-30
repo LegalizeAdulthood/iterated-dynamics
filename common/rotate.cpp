@@ -49,7 +49,7 @@ void rotate(int direction)      // rotate-the-palette routine
 #else
     if (!(g_got_real_dac || fake_lut)   // ??? no DAC to rotate!
 #endif
-            || colors < 16)
+            || g_colors < 16)
     {
         // strange things happen in 2x modes
         driver_buzzer(buzzer_codes::PROBLEM);
@@ -76,7 +76,7 @@ void rotate(int direction)      // rotate-the-palette routine
         direction = 1;                    // and set a rotate direction
     }
 
-    rotate_max = (rotate_hi < colors) ? rotate_hi : colors-1;
+    rotate_max = (rotate_hi < g_colors) ? rotate_hi : g_colors-1;
     rotate_size = rotate_max - rotate_lo + 1;
     last = rotate_max;                   // last box that was filled
     next = rotate_lo;                    // next box to be filled
@@ -171,7 +171,7 @@ void rotate(int direction)      // rotate-the-palette routine
             break;
         case FIK_UP_ARROW:                 // UpArrow means speed up
             g_dac_learn = true;
-            if (++g_dac_count >= colors)
+            if (++g_dac_count >= g_colors)
             {
                 --g_dac_count;
             }
@@ -622,7 +622,7 @@ void save_palette()
         else
         {
 #ifndef XFRACT
-            for (i = 0; i < colors; i++)
+            for (i = 0; i < g_colors; i++)
 #else
             for (i = 0; i < 256; i++)
 #endif

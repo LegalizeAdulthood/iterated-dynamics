@@ -292,7 +292,7 @@ init_restart:
 
     potflag = false;
     if (potparam[0] != 0.0
-            && colors >= 64
+            && g_colors >= 64
             && (curfractalspecific->calctype == standard_fractal
                 || curfractalspecific->calctype == calcmand
                 || curfractalspecific->calctype == calcmandfp))

@@ -88,7 +88,7 @@ extern int                   g_color;
 extern std::string           g_color_file;
 extern long                  g_color_iter;
 extern bool                  g_colors_preloaded;
-extern int                   colors;
+extern int                   g_colors;
 extern int                   g_color_state;
 extern int                   g_color_bright;    // brightest color in palette
 extern int                   g_color_dark;      // darkest color in palette

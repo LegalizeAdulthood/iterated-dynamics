@@ -539,9 +539,9 @@ int line3d(BYTE * pixels, unsigned linelen)
                     RND = -RND;   // Make +/- n-bit number
                 }
 
-                if ((int)(cur.color) + RND >= colors)
+                if ((int)(cur.color) + RND >= g_colors)
                 {
-                    cur.color = colors - 2;
+                    cur.color = g_colors - 2;
                 }
                 else if ((int)(cur.color) + RND <= WATERLINE)
                 {
@@ -821,7 +821,7 @@ int line3d(BYTE * pixels, unsigned linelen)
                             {
                                 stopmsg(STOPMSG_NONE, "debug, normal vector err2");
                             }
-                            f_cur.color = (float) colors;
+                            f_cur.color = (float) g_colors;
                             cur.color = (int) f_cur.color;
                         }
                     }
@@ -832,7 +832,7 @@ int line3d(BYTE * pixels, unsigned linelen)
                     // dot product of unit vectors is cos of angle between
                     // we will use this value to shade surface
 
-                    cur.color = (int)(1 + (colors - 2) *
+                    cur.color = (int)(1 + (g_colors - 2) *
                                       (1.0 - dot_product(cross, light_direction)));
                 }
                 /* if colors out of range, set them to min or max color index
@@ -843,9 +843,9 @@ int line3d(BYTE * pixels, unsigned linelen)
                 {
                     cur.color = 1;// avoid background
                 }
-                if (cur.color > colors - 1)
+                if (cur.color > g_colors - 1)
                 {
-                    cur.color = colors - 1;
+                    cur.color = g_colors - 1;
                 }
 
                 // why "col < 2"? So we have sufficient geometry for the fill
@@ -1347,7 +1347,7 @@ static void T_clipcolor(int x, int y, int color)
 {
     if (0 <= x && x < xdots &&   // is the point on screen?
             0 <= y && y < ydots &&   // Yes?
-            0 <= color && color < colors &&  // Colors in valid range?
+            0 <= color && color < g_colors &&  // Colors in valid range?
             // Lets make sure its not a transparent color
             (transparent[0] > color || color > transparent[1]))
     {
@@ -1396,7 +1396,7 @@ static void interpcolor(int x, int y, int color)
 
     if (0 <= x && x < xdots &&
             0 <= y && y < ydots &&
-            0 <= color && color < colors &&
+            0 <= color && color < g_colors &&
             (transparent[1] == 0 || (int) Real_Color > transparent[1] ||
              transparent[0] > (int) Real_Color))
     {

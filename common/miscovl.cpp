@@ -88,7 +88,7 @@ void make_batch_file()
     old_help_mode = help_mode;
     help_mode = HELPPARMFILE;
 
-    maxcolor = colors;
+    maxcolor = g_colors;
     strcpy(colorspec, "y");
 #ifndef XFRACT
     if (g_got_real_dac || (g_is_true_color && !truemode))

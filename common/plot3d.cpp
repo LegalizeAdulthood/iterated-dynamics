@@ -210,7 +210,7 @@ void plot3dsuperimpose256(int x, int y, int color)
 
     if (color != 0)         // Keeps index 0 still 0
     {
-        color = colors - color; //  Reverses color order
+        color = g_colors - color; //  Reverses color order
         if (max_colors == 236)
         {
             color = 1 + color / 21; //  Maps colors 1-255 to 13 even ranges
@@ -275,7 +275,7 @@ void plotIFS3dsuperimpose256(int x, int y, int color)
     if (color != 0)         // Keeps index 0 still 0
     {
         // my mind is fried - lower indices = darker colors is EASIER!
-        color = colors - color; //  Reverses color order
+        color = g_colors - color; //  Reverses color order
         if (max_colors == 236)
         {
             color = 1 + color / 21; //  Maps colors 1-255 to 13 even ranges
@@ -337,7 +337,7 @@ void plot3dalternate(int x, int y, int color)
     // if which image = 1, compresses color to lower 128 colors
 
     // my mind is STILL fried - lower indices = darker colors is EASIER!
-    color = colors - color;
+    color = g_colors - color;
     if ((g_which_image == stereo_images::RED) && !((x+y)&1)) // - lower half palette
     {
         if (red_local_left < x && x < red_local_right)
@@ -360,12 +360,12 @@ void plot3dalternate(int x, int y, int color)
     {
         if (blue_local_left < x && x < blue_local_right)
         {
-            putcolor(x, y, (color >> 1)+(colors >> 1));
+            putcolor(x, y, (color >> 1)+(g_colors >> 1));
             if (Targa_Out)
             {
                 if (!ILLUMINE)
                 {
-                    targa_color(x, y, (color >> 1)+(colors >> 1));
+                    targa_color(x, y, (color >> 1)+(g_colors >> 1));
                 }
                 else
                 {
@@ -432,7 +432,7 @@ void plot_setup()
         break;
 
     case 2:
-        if (colors == 256)
+        if (g_colors == 256)
         {
             if (fractype != fractal_type::IFS3D)
             {
@@ -527,7 +527,7 @@ void plot_setup()
         ValidateLuts(MAP_name.c_str()); // read the palette file
         if (g_glasses_type == 1 || g_glasses_type == 2)
         {
-            if (g_glasses_type == 2 && colors < 256)
+            if (g_glasses_type == 2 && g_colors < 256)
             {
                 g_dac_box[PAL_RED  ][0] = 63;
                 g_dac_box[PAL_RED  ][1] =  0;

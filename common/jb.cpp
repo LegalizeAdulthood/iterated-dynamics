@@ -66,7 +66,7 @@ JulibrotSetup()
     char const *mapname;
 
 #ifndef XFRACT
-    if (colors < 255)
+    if (g_colors < 255)
     {
         stopmsg(STOPMSG_NONE, "Sorry, but Julibrots require a 256-color video mode");
         return false;

@@ -100,7 +100,7 @@ static int getdepth(int xd, int yd)
 
 static bool get_min_max()
 {
-    MINC = colors;
+    MINC = g_colors;
     MAXC = 0;
     for (int yd = 0; yd < ydots; yd++)
     {
@@ -334,7 +334,7 @@ bool do_AutoStereo()
             }
             for (int i = 0; i < xdots; i++)
             {
-                buf[i] = (unsigned char)(rand()%colors);
+                buf[i] = (unsigned char)(rand()%g_colors);
             }
             outline_stereo(&buf[0], xdots);
         }

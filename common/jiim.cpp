@@ -175,7 +175,7 @@ static void fillrect(int x, int y, int width, int depth, int color)
     {
         return;
     }
-    std::vector<char> row(width, char(color % colors));
+    std::vector<char> row(width, char(color % g_colors));
     while (depth-- > 0)
     {
         if (driver_key_pressed())   // we could do this less often when in fast modes
@@ -985,7 +985,7 @@ void Jiim(jiim_types which)
             {
                 if (QueueEmpty())
                 {
-                    if (maxhits < colors - 1 && maxhits < 5 &&
+                    if (maxhits < g_colors - 1 && maxhits < 5 &&
                             (luckyx != 0.0 || luckyy != 0.0))
                     {
                         lmax = 0;
@@ -1040,7 +1040,7 @@ void Jiim(jiim_types which)
                     r = 0;
                 }
                 iter++;
-                color = ((count++) >> 5)%colors; // chg color every 32 pts
+                color = ((count++) >> 5)%g_colors; // chg color every 32 pts
                 if (color == 0)
                 {
                     color = 1;
@@ -1090,7 +1090,7 @@ void Jiim(jiim_types which)
                 case 4:                     // go negative if max color
                     x = (int)(g_new.x * xfactor * zoom + xoff);
                     y = (int)(g_new.y * yfactor * zoom + yoff);
-                    if (c_getcolor(x, y) == colors - 1)
+                    if (c_getcolor(x, y) == g_colors - 1)
                     {
                         g_new.x = -g_new.x;
                         g_new.y = -g_new.y;
@@ -1103,7 +1103,7 @@ void Jiim(jiim_types which)
                     g_new.y = -g_new.y;
                     x = (int)(g_new.x * xfactor * zoom + xoff);
                     y = (int)(g_new.y * yfactor * zoom + yoff);
-                    if (c_getcolor(x, y) == colors - 1)
+                    if (c_getcolor(x, y) == g_colors - 1)
                     {
                         x = (int)(g_new.x * xfactor * zoom + xoff);
                         y = (int)(g_new.y * yfactor * zoom + yoff);
@@ -1196,7 +1196,7 @@ void Jiim(jiim_types which)
         {
             if (iter < maxit)
             {
-                color = (int)iter%colors;
+                color = (int)iter%g_colors;
                 if (integerfractal)
                 {
                     old.x = lold.x;

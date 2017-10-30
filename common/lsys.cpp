@@ -316,9 +316,9 @@ int Lsystem()
 
             // !! HOW ABOUT A BETTER WAY OF PICKING THE DEFAULT DRAWING COLOR
             ts.curcolor = 15;
-            if (ts.curcolor > colors)
+            if (ts.curcolor > g_colors)
             {
-                ts.curcolor = (char)(colors-1);
+                ts.curcolor = (char)(g_colors-1);
             }
             drawLSysI(rule_cmds[0], &ts, &rule_cmds[1], order);
         }
@@ -363,9 +363,9 @@ int Lsystem()
 
             // !! HOW ABOUT A BETTER WAY OF PICKING THE DEFAULT DRAWING COLOR
             ts.curcolor = 15;
-            if (ts.curcolor > colors)
+            if (ts.curcolor > g_colors)
             {
-                ts.curcolor = (char)(colors-1);
+                ts.curcolor = (char)(g_colors-1);
             }
             drawLSysF(rulef_cmds[0], &ts, &rulef_cmds[1], order);
         }
@@ -713,23 +713,23 @@ void lsysi_dodrawf(lsys_turtlestatei *cmd)
 
 void lsysi_dodrawc(lsys_turtlestatei *cmd)
 {
-    cmd->curcolor = (char)(((int) cmd->num) % colors);
+    cmd->curcolor = (char)(((int) cmd->num) % g_colors);
 }
 
 void lsysi_dodrawgt(lsys_turtlestatei *cmd)
 {
     cmd->curcolor = (char)(cmd->curcolor - (char)cmd->num);
-    cmd->curcolor %= colors;
+    cmd->curcolor %= g_colors;
     if (cmd->curcolor == 0)
     {
-        cmd->curcolor = (char)(colors-1);
+        cmd->curcolor = (char)(g_colors-1);
     }
 }
 
 void lsysi_dodrawlt(lsys_turtlestatei *cmd)
 {
     cmd->curcolor = (char)(cmd->curcolor + (char)cmd->num);
-    cmd->curcolor %= colors;
+    cmd->curcolor %= g_colors;
     if (cmd->curcolor == 0)
     {
         cmd->curcolor = 1;

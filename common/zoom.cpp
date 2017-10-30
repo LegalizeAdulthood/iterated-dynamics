@@ -50,7 +50,7 @@ int g_box_color = 0;
 #ifndef XFRACT
 void dispbox()
 {
-    int boxc = (colors-1)&g_box_color;
+    int boxc = (g_colors-1)&g_box_color;
     int rgb[3];
     for (int i = 0; i < g_box_count; i++)
     {
@@ -69,7 +69,7 @@ void dispbox()
     if (!(g_is_true_color && truemode)) // don't need this for truecolor with truemode set
         for (int i = 0; i < g_box_count; i++)
         {
-            if (colors == 2)
+            if (g_colors == 2)
             {
                 putcolor(g_box_x[i]-sxoffs, g_box_y[i]-syoffs, (1 - g_box_values[i]));
             }

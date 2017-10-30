@@ -345,9 +345,9 @@ int get_toggles()
     {
         inside = -inside;
     }
-    if (inside >= colors)
+    if (inside >= g_colors)
     {
-        inside = (inside % colors) + (inside / colors);
+        inside = (inside % g_colors) + (inside / g_colors);
     }
 
     {
@@ -397,9 +397,9 @@ int get_toggles()
     {
         outside = -outside;
     }
-    if (outside >= colors)
+    if (outside >= g_colors)
     {
-        outside = (outside % colors) + (outside / colors);
+        outside = (outside % g_colors) + (outside / g_colors);
     }
 
     {
@@ -437,9 +437,9 @@ int get_toggles()
     }
 
     usr_biomorph = uvalues[++k].uval.ival;
-    if (usr_biomorph >= colors)
+    if (usr_biomorph >= g_colors)
     {
-        usr_biomorph = (usr_biomorph % colors) + (usr_biomorph / colors);
+        usr_biomorph = (usr_biomorph % g_colors) + (usr_biomorph / g_colors);
     }
     if (usr_biomorph != old_biomorph)
     {
@@ -464,9 +464,9 @@ int get_toggles()
     {
         fillcolor = -1;
     }
-    if (fillcolor >= colors)
+    if (fillcolor >= g_colors)
     {
-        fillcolor = (fillcolor % colors) + (fillcolor / colors);
+        fillcolor = (fillcolor % g_colors) + (fillcolor / g_colors);
     }
     if (fillcolor != old_fillcolor)
     {
@@ -1152,9 +1152,9 @@ int starfield()
             c = getcolor(col, row);
             if (c == inside)
             {
-                c = colors-1;
+                c = g_colors-1;
             }
-            putcolor(col, row, GausianNumber(c, colors));
+            putcolor(col, row, GausianNumber(c, g_colors));
         }
     }
     driver_buzzer(buzzer_codes::COMPLETE);
@@ -1172,7 +1172,7 @@ int get_starfield_params()
         "Ratio of Dim stars to Bright"
     };
 
-    if (colors < 255)
+    if (g_colors < 255)
     {
         stopmsg(STOPMSG_NONE, "starfield requires 256 color mode");
         return (-1);

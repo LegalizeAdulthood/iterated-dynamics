@@ -68,13 +68,13 @@ main_state big_while_loop(bool *const kbdmore, bool *const stacked, bool const r
             dotmode = g_video_entry.dotmode;     // assembler dot read/write
             xdots   = g_video_entry.xdots;       // # dots across the screen
             ydots   = g_video_entry.ydots;       // # dots down the screen
-            colors  = g_video_entry.colors;      // # colors available
+            g_colors  = g_video_entry.colors;      // # colors available
             dotmode %= 100;
             sxdots  = xdots;
             sydots  = ydots;
             syoffs = 0;
             sxoffs = 0;
-            rotate_hi = (rotate_hi < colors) ? rotate_hi : colors - 1;
+            rotate_hi = (rotate_hi < g_colors) ? rotate_hi : g_colors - 1;
 
             memcpy(old_dac_box, g_dac_box, 256*3); // save the DAC
 
@@ -149,7 +149,7 @@ main_state big_while_loop(bool *const kbdmore, bool *const stacked, bool const r
                     }
                     spindac(0, 1);
                 }
-                else if ((driver_diskp() && colors == 256) || !colors)
+                else if ((driver_diskp() && g_colors == 256) || !g_colors)
                 {
                     // disk video, setvideomode via bios didn't get it right, so:
 #if !defined(XFRACT) && !defined(_WIN32)
@@ -1306,7 +1306,7 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
             }
         }
         clear_zoombox();
-        if (g_dac_box[0][0] != 255 && colors >= 16 && !driver_diskp())
+        if (g_dac_box[0][0] != 255 && g_colors >= 16 && !driver_diskp())
         {
             int old_help_mode;
             old_help_mode = help_mode;
@@ -1564,7 +1564,7 @@ do_3d_transform:
         if (k >= 0)
         {
             g_adapter = k;
-            if (g_video_table[g_adapter].colors != colors)
+            if (g_video_table[g_adapter].colors != g_colors)
             {
                 savedac = 0;
             }
@@ -1755,7 +1755,7 @@ static main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdm
             }
         }
         clear_zoombox();
-        if (g_dac_box[0][0] != 255 && colors >= 16 && !driver_diskp())
+        if (g_dac_box[0][0] != 255 && g_colors >= 16 && !driver_diskp())
         {
             int old_help_mode;
             old_help_mode = help_mode;
@@ -2171,7 +2171,7 @@ static main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdm
         if (k >= 0)
         {
             g_adapter = k;
-            if (g_video_table[g_adapter].colors != colors)
+            if (g_video_table[g_adapter].colors != g_colors)
             {
                 savedac = 0;
             }
