@@ -187,7 +187,7 @@ static void main_restart(int const argc, char const *const argv[], bool &stacked
     smallest_window_display_size = 6;
     smallest_box_size_shown = 3;
     g_browse_mask = "*.gif";
-    browse_name = "            ";
+    g_browse_name = "            ";
     name_stack_ptr = -1; // init loaded files stack
 
     evolving = 0;
@@ -307,7 +307,7 @@ static bool main_restore_start(bool &stacked, bool &resumeflag)
             }
 
             name_stack_ptr = 0; // 'r' reads first filename for browsing
-            file_name_stack[name_stack_ptr] = browse_name;
+            file_name_stack[name_stack_ptr] = g_browse_name;
         }
 
         evolving = 0;

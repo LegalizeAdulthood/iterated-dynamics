@@ -270,7 +270,7 @@ void process_simple_command(char *curarg)
                     && tempstring[4] >= '0' && tempstring[4] <= '9')
             {
                 readname = curarg;
-                browse_name = extract_filename(readname.c_str());
+                g_browse_name = extract_filename(readname.c_str());
                 show_file = 0;
                 processed = true;
             }
@@ -1224,7 +1224,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         }
         else
         {
-            browse_name = extract_filename(readname.c_str());
+            g_browse_name = extract_filename(readname.c_str());
         }
         return CMDARG_FRACTAL_PARAM | CMDARG_3D_PARAM;
     }

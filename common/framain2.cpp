@@ -363,7 +363,7 @@ main_state big_while_loop(bool *const kbdmore, bool *const stacked, bool const r
             browsing = false;      // regenerate image, turn off browsing
             //rb
             name_stack_ptr = -1;   // reset pointer
-            browse_name.clear();
+            g_browse_name.clear();
             if (viewwindow && (evolving&1) && (calc_status != calc_status_value::COMPLETED))
             {
                 // generate a set of images with varied parameters on each one
@@ -713,8 +713,8 @@ static bool look(bool *stacked)
             name_stack_ptr = 14;
         }
         name_stack_ptr++;
-        file_name_stack[name_stack_ptr] = browse_name;
-        merge_pathnames(readname, browse_name.c_str(), cmd_file::AT_AFTER_STARTUP);
+        file_name_stack[name_stack_ptr] = g_browse_name;
+        merge_pathnames(readname, g_browse_name.c_str(), cmd_file::AT_AFTER_STARTUP);
         if (g_ask_video)
         {
             driver_stack_screen();   // save graphics image
@@ -736,8 +736,8 @@ static bool look(bool *stacked)
             {
                 break;
             }
-            browse_name = file_name_stack[name_stack_ptr];
-            merge_pathnames(readname, browse_name.c_str(), cmd_file::AT_AFTER_STARTUP);
+            g_browse_name = file_name_stack[name_stack_ptr];
+            merge_pathnames(readname, g_browse_name.c_str(), cmd_file::AT_AFTER_STARTUP);
             browsing = true;
             show_file = 0;
             if (g_ask_video)
@@ -1227,8 +1227,8 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
             {
                 break;
             }
-            browse_name = file_name_stack[name_stack_ptr];
-            merge_pathnames(readname, browse_name.c_str(), cmd_file::AT_AFTER_STARTUP);
+            g_browse_name = file_name_stack[name_stack_ptr];
+            merge_pathnames(readname, g_browse_name.c_str(), cmd_file::AT_AFTER_STARTUP);
             browsing = true;
             no_sub_images = false;
             show_file = 0;

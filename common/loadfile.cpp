@@ -1326,7 +1326,7 @@ static void check_history(char const *oldname, char const *newname);
 static void bfsetup_convert_to_screen();
 static void bftransform(bf_t, bf_t, dblcoords *);
 
-std::string browse_name; // name for browse file
+std::string g_browse_name; // name for browse file
 
 namespace
 {
@@ -1456,7 +1456,7 @@ rescan:  // entry for changed browse parms
                                &blk_7_info) &&
                 (typeOK(&read_info, &blk_3_info) || !browse_check_fractal_type) &&
                 (paramsOK(&read_info) || !browse_check_fractal_params) &&
-                stricmp(browse_name.c_str(), DTA.filename) &&
+                stricmp(g_browse_name.c_str(), DTA.filename) &&
                 !blk_6_info.got_data &&
                 is_visible_window(&winlist, &read_info, &blk_5_info)
            )
@@ -1580,7 +1580,7 @@ rescan:  // entry for changed browse parms
 #endif
             case FIK_ENTER:
             case FIK_ENTER_2:   // this file please
-                browse_name = winlist.name;
+                g_browse_name = winlist.name;
                 done = 1;
                 break;
 

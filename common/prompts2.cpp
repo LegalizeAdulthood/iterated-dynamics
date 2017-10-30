@@ -1852,7 +1852,7 @@ retry_dir:
             }
         }
     }
-    browse_name = std::string{fname} + ext;
+    g_browse_name = std::string{fname} + ext;
     return false;
 }
 
