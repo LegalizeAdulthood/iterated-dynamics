@@ -34,7 +34,7 @@ extern AlternateMath         g_alternate_math[];   // alternate math function po
 extern int                   g_ambient;           // Ambient= parameter value
 extern int                   g_and_color;       // AND mask for iteration to get color index
 extern int                   g_halley_a_plus_one_times_degree;
-extern int                   AplusOne;
+extern int                   g_halley_a_plus_one;
 extern bool                  askvideo;
 extern float                 aspectdrift;
 extern int                   attractors;
