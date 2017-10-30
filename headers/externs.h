@@ -69,7 +69,7 @@ extern int                   g_box_values[];
 extern int                   g_box_x[];
 extern int                   g_box_y[];
 extern bool                  g_brief;
-extern std::string browse_mask;
+extern std::string           g_browse_mask;
 extern std::string browse_name;
 extern bool                  browsing;
 extern bool browse_check_fractal_params;

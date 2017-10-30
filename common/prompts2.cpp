@@ -2620,7 +2620,7 @@ int get_browse_params()
     bool old_doublecaution  = confirm_file_deletes;
     int old_smallest_box_size_shown = smallest_box_size_shown;
     double old_smallest_window_display_size = smallest_window_display_size;
-    std::string old_browse_mask = browse_mask;
+    std::string old_browse_mask = g_browse_mask;
 
 get_brws_restart:
     // fill up the previous values arrays
@@ -2655,7 +2655,7 @@ get_brws_restart:
     uvalues[k].uval.ival = smallest_box_size_shown;
     choices[++k] = "Browse search filename mask ";
     uvalues[k].type = 's';
-    strcpy(uvalues[k].uval.sval, browse_mask.c_str());
+    strcpy(uvalues[k].uval.sval, g_browse_mask.c_str());
 
     choices[++k] = "";
     uvalues[k].type = '*';
@@ -2681,7 +2681,7 @@ get_brws_restart:
         browse_check_fractal_type = true;
         confirm_file_deletes = true;
         smallest_box_size_shown = 3;
-        browse_mask = "*.gif";
+        g_browse_mask = "*.gif";
         goto get_brws_restart;
     }
 
@@ -2708,7 +2708,7 @@ get_brws_restart:
         smallest_box_size_shown = 10;
     }
 
-    browse_mask = uvalues[++k].uval.sval;
+    g_browse_mask = uvalues[++k].uval.sval;
 
     i = 0;
     if (g_auto_browse != old_auto_browse ||
@@ -2717,7 +2717,7 @@ get_brws_restart:
             confirm_file_deletes != old_doublecaution ||
             smallest_window_display_size != old_smallest_window_display_size ||
             smallest_box_size_shown != old_smallest_box_size_shown ||
-            !stricmp(browse_mask.c_str(), old_browse_mask.c_str()))
+            !stricmp(g_browse_mask.c_str(), old_browse_mask.c_str()))
     {
         i = -3;
     }
