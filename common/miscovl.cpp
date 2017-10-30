@@ -600,7 +600,7 @@ void write_batch_parms(char const *colorinf, bool colorsonly, int maxcolor, int 
 
     s_wbdata.len = 0; // force first parm to start on new line
 
-    // Using near string boxx for buffer after saving to extraseg
+    // Using near string g_box_x for buffer after saving to extraseg
 
     if (colorsonly)
     {

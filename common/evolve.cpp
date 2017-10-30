@@ -922,7 +922,7 @@ void SetupParamBox()
 {
     param_box_count = 0;
     parmzoom = ((double) evolve_image_grid_size -1.0)/2.0;
-    // need to allocate 2 int arrays for boxx and boxy plus 1 byte array for values
+    // need to allocate 2 int arrays for g_box_x and boxy plus 1 byte array for values
     int const num_box_values = (xdots + ydots)*2;
     int const num_values = xdots + ydots + 2;
 
@@ -1031,7 +1031,7 @@ void drawparmbox(int mode)
     if (g_box_count)
     {
         // stash normal zoombox pixels
-        std::copy(&boxx[0], &boxx[g_box_count*2], &image_box_x[0]);
+        std::copy(&g_box_x[0], &g_box_x[g_box_count*2], &image_box_x[0]);
         std::copy(&boxy[0], &boxy[g_box_count*2], &image_box_y[0]);
         std::copy(&g_box_values[0], &g_box_values[g_box_count], &image_box_values[0]);
         clearbox(); // to avoid probs when one box overlaps the other
@@ -1040,7 +1040,7 @@ void drawparmbox(int mode)
     {
         // clear last parmbox
         g_box_count = param_box_count;
-        std::copy(&param_box_x[0], &param_box_x[g_box_count*2], &boxx[0]);
+        std::copy(&param_box_x[0], &param_box_x[g_box_count*2], &g_box_x[0]);
         std::copy(&param_box_y[0], &param_box_y[g_box_count*2], &boxy[0]);
         std::copy(&param_box_values[0], &param_box_values[g_box_count], &g_box_values[0]);
         clearbox();
@@ -1071,13 +1071,13 @@ void drawparmbox(int mode)
     drawlines(tl, tr, bl.x-tl.x, bl.y-tl.y);
     drawlines(tl, bl, tr.x-tl.x, tr.y-tl.y);
 #else
-    boxx[0] = tl.x + sxoffs;
+    g_box_x[0] = tl.x + sxoffs;
     boxy[0] = tl.y + syoffs;
-    boxx[1] = tr.x + sxoffs;
+    g_box_x[1] = tr.x + sxoffs;
     boxy[1] = tr.y + syoffs;
-    boxx[2] = br.x + sxoffs;
+    g_box_x[2] = br.x + sxoffs;
     boxy[2] = br.y + syoffs;
-    boxx[3] = bl.x + sxoffs;
+    g_box_x[3] = bl.x + sxoffs;
     boxy[3] = bl.y + syoffs;
     g_box_count = 8;
 #endif
@@ -1085,7 +1085,7 @@ void drawparmbox(int mode)
     {
         dispbox();
         // stash pixel values for later
-        std::copy(&boxx[0], &boxx[g_box_count*2], &param_box_x[0]);
+        std::copy(&g_box_x[0], &g_box_x[g_box_count*2], &param_box_x[0]);
         std::copy(&boxy[0], &boxy[g_box_count*2], &param_box_y[0]);
         std::copy(&g_box_values[0], &g_box_values[g_box_count], &param_box_values[0]);
     }
@@ -1094,7 +1094,7 @@ void drawparmbox(int mode)
     if (image_box_count)
     {
         // and move back old values so that everything can proceed as normal
-        std::copy(&image_box_x[0], &image_box_x[g_box_count*2], &boxx[0]);
+        std::copy(&image_box_x[0], &image_box_x[g_box_count*2], &g_box_x[0]);
         std::copy(&image_box_y[0], &image_box_y[g_box_count*2], &boxy[0]);
         std::copy(&image_box_values[0], &image_box_values[g_box_count], &g_box_values[0]);
         dispbox();

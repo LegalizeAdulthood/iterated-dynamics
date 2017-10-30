@@ -66,7 +66,7 @@ extern int                   g_blue_crop_right;
 extern int                   g_box_color;
 extern int                   g_box_count;
 extern int                   g_box_values[];
-extern int                   boxx[];
+extern int                   g_box_x[];
 extern int                   boxy[];
 extern bool                  BRIEF;
 extern std::string browse_mask;
