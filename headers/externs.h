@@ -40,7 +40,7 @@ extern float                 g_aspect_drift;
 extern int                   g_attractors;
 extern int                   g_attractor_period[];
 extern DComplex              g_attractor[];
-extern bool auto_browse;
+extern bool                  g_auto_browse;
 extern std::string           autoname;
 extern char                  autoshowdot;
 extern int                   AutoStereo_depth;

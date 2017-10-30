@@ -2614,7 +2614,7 @@ int get_browse_params()
     fullscreenvalues uvalues[25];
     int i, k;
 
-    bool old_auto_browse = auto_browse;
+    bool old_auto_browse = g_auto_browse;
     bool old_browse_check_fractal_type = browse_check_fractal_type;
     bool old_brwscheckparms = browse_check_fractal_params;
     bool old_doublecaution  = confirm_file_deletes;
@@ -2628,7 +2628,7 @@ get_brws_restart:
 
     choices[++k] = "Autobrowsing? (y/n)";
     uvalues[k].type = 'y';
-    uvalues[k].uval.ch.val = auto_browse ? 1 : 0;
+    uvalues[k].uval.ch.val = g_auto_browse ? 1 : 0;
 
     choices[++k] = "Ask about GIF video mode? (y/n)";
     uvalues[k].type = 'y';
@@ -2675,7 +2675,7 @@ get_brws_restart:
     if (i == FIK_F4)
     {
         smallest_window_display_size = 6;
-        auto_browse = false;
+        g_auto_browse = false;
         g_ask_video = true;
         browse_check_fractal_params = true;
         browse_check_fractal_type = true;
@@ -2688,7 +2688,7 @@ get_brws_restart:
     // now check out the results (*hopefully* in the same order <grin>)
     k = -1;
 
-    auto_browse = uvalues[++k].uval.ch.val != 0;
+    g_auto_browse = uvalues[++k].uval.ch.val != 0;
     g_ask_video = uvalues[++k].uval.ch.val != 0;
     browse_check_fractal_type = uvalues[++k].uval.ch.val != 0;
     browse_check_fractal_params = uvalues[++k].uval.ch.val != 0;
@@ -2711,7 +2711,7 @@ get_brws_restart:
     browse_mask = uvalues[++k].uval.sval;
 
     i = 0;
-    if (auto_browse != old_auto_browse ||
+    if (g_auto_browse != old_auto_browse ||
             browse_check_fractal_type != old_browse_check_fractal_type ||
             browse_check_fractal_params != old_brwscheckparms ||
             confirm_file_deletes != old_doublecaution ||
@@ -2725,7 +2725,7 @@ get_brws_restart:
     if (evolving)
     {
         // can't browse
-        auto_browse = false;
+        g_auto_browse = false;
         i = 0;
     }
 

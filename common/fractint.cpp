@@ -131,7 +131,7 @@ int name_stack_ptr ;
 double smallest_window_display_size;
 int smallest_box_size_shown;
 bool no_sub_images = false;
-bool auto_browse = false;
+bool g_auto_browse = false;
 bool confirm_file_deletes = false;
 bool browse_check_fractal_params = false;
 bool browse_check_fractal_type = false;
@@ -179,7 +179,7 @@ static void main_restart(int const argc, char const *const argv[], bool &stacked
 #if defined(_WIN32)
     _ASSERTE(_CrtCheckMemory());
 #endif
-    auto_browse = false;
+    g_auto_browse = false;
     browse_check_fractal_type = false;
     browse_check_fractal_params = true;
     confirm_file_deletes = true;

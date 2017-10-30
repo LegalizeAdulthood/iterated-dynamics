@@ -1591,7 +1591,7 @@ rescan:  // entry for changed browse parms
                 // Need all boxes turned on, turn last one back on.
                 drawindow(g_color_bright, &winlist);
 #endif
-                auto_browse = false;
+                g_auto_browse = false;
                 done = 2;
                 break;
 
@@ -1683,7 +1683,7 @@ rescan:  // entry for changed browse parms
                 break;
 
             case 's': // save image with boxes
-                auto_browse = false;
+                g_auto_browse = false;
                 drawindow(color_of_box, &winlist); // current window white
                 done = 4;
                 break;
