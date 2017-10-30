@@ -53,7 +53,7 @@ extern long                  g_bail_out;
 extern bailouts              g_bail_out_test;
 extern int                   g_base_hertz;
 extern int                   g_basin;
-extern int                   bf_save_len;
+extern int                   g_bf_save_len;
 extern int                   bfdigits;
 extern int                   biomorph;
 extern unsigned int          bits;
