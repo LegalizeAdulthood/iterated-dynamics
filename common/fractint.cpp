@@ -125,7 +125,7 @@ long calctime;
 int max_colors;                         // maximum palette size
 bool zoomoff = false;                   // false when zoom is disabled
 int        savedac;                     // save-the-Video DAC flag
-bool browsing = false;                  // browse mode flag
+bool g_browsing = false;                  // browse mode flag
 std::string file_name_stack[16];        // array of file names used while browsing
 int name_stack_ptr ;
 double smallest_window_display_size;
@@ -256,7 +256,7 @@ static void main_restart(int const argc, char const *const argv[], bool &stacked
         }
     }
 
-    browsing = false;
+    g_browsing = false;
 
     if (!new_bifurcation_functions_loaded)
     {
@@ -282,7 +282,7 @@ static bool main_restore_start(bool &stacked, bool &resumeflag)
     {
         char const *hdg;
         tab_mode = false;
-        if (!browsing)      /*RB*/
+        if (!g_browsing)      /*RB*/
         {
             if (overlay_3d)
             {
@@ -325,7 +325,7 @@ static bool main_restore_start(bool &stacked, bool &resumeflag)
         {
             break;                      // got it, exit
         }
-        if (browsing) // break out of infinite loop, but lose your mind
+        if (g_browsing) // break out of infinite loop, but lose your mind
         {
             show_file = 1;
         }

@@ -360,7 +360,7 @@ main_state big_while_loop(bool *const kbdmore, bool *const stacked, bool const r
                 }
                 finishrow = -1;
             }
-            browsing = false;      // regenerate image, turn off browsing
+            g_browsing = false;      // regenerate image, turn off browsing
             //rb
             name_stack_ptr = -1;   // reset pointer
             g_browse_name.clear();
@@ -700,7 +700,7 @@ static bool look(bool *stacked)
     case FIK_ENTER:
     case FIK_ENTER_2:
         show_file = 0;       // trigger load
-        browsing = true;    // but don't ask for the file name as it's just been selected
+        g_browsing = true;    // but don't ask for the file name as it's just been selected
         if (name_stack_ptr == 15)
         {
             /* about to run off the end of the file
@@ -738,7 +738,7 @@ static bool look(bool *stacked)
             }
             g_browse_name = file_name_stack[name_stack_ptr];
             merge_pathnames(readname, g_browse_name.c_str(), cmd_file::AT_AFTER_STARTUP);
-            browsing = true;
+            g_browsing = true;
             show_file = 0;
             if (g_ask_video)
             {
@@ -750,12 +750,12 @@ static bool look(bool *stacked)
     case FIK_ESC:
     case 'l':              // turn it off
     case 'L':
-        browsing = false;
+        g_browsing = false;
         help_mode = old_help_mode;
         break;
 
     case 's':
-        browsing = false;
+        g_browsing = false;
         help_mode = old_help_mode;
         savetodisk(savename);
         break;
@@ -1229,7 +1229,7 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
             }
             g_browse_name = file_name_stack[name_stack_ptr];
             merge_pathnames(readname, g_browse_name.c_str(), cmd_file::AT_AFTER_STARTUP);
-            browsing = true;
+            g_browsing = true;
             no_sub_images = false;
             show_file = 0;
             if (g_ask_video)
@@ -1347,7 +1347,7 @@ do_3d_transform:
     case 'r':                    // restore-from
         comparegif = false;
         *frommandel = false;
-        browsing = false;
+        g_browsing = false;
         if (*kbdchar == 'r')
         {
             if (debugflag == debug_flags::force_disk_restore_not_save)
@@ -1390,7 +1390,7 @@ do_3d_transform:
     case 'L':                    // Look for other files within this view
         if ((zoom_box_width != 0) || driver_diskp())
         {
-            browsing = false;
+            g_browsing = false;
             driver_buzzer(buzzer_codes::PROBLEM);             // can't browse if zooming or disk video
         }
         else if (look(stacked))
@@ -1811,7 +1811,7 @@ static main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdm
     case 'r':                    // restore-from
         comparegif = false;
         *frommandel = false;
-        browsing = false;
+        g_browsing = false;
         if (*kbdchar == 'r')
         {
             if (debugflag == debug_flags::force_disk_restore_not_save)
