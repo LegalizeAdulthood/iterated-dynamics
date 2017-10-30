@@ -2412,7 +2412,7 @@ int calcfroth()   // per pixel 1/2/g, called with row & col set
     }
 
     orbit_ptr = 0;
-    coloriter = 0;
+    g_color_iter = 0;
     if (show_dot >0)
     {
         (*plot)(col, row, show_dot %colors);
@@ -2434,7 +2434,7 @@ int calcfroth()   // per pixel 1/2/g, called with row & col set
         tempsqry = sqr(old.y);
         while (!found_attractor
                 && (tempsqrx + tempsqry < rqlim)
-                && (coloriter < maxit))
+                && (g_color_iter < maxit))
         {
             // simple formula: z = z^2 + conj(z*(-1+ai))
             // but it's the attractor that makes this so interesting
@@ -2448,7 +2448,7 @@ int calcfroth()   // per pixel 1/2/g, called with row & col set
                 old.x = g_new.x;
             }
 
-            coloriter++;
+            g_color_iter++;
 
             if (show_orbit)
             {
@@ -2573,7 +2573,7 @@ int calcfroth()   // per pixel 1/2/g, called with row & col set
         ltempsqry = lsqr(lold.y);
         lmagnitud = ltempsqrx + ltempsqry;
         while (!found_attractor && (lmagnitud < llimit)
-                && (lmagnitud >= 0) && (coloriter < maxit))
+                && (lmagnitud >= 0) && (g_color_iter < maxit))
         {
             // simple formula: z = z^2 + conj(z*(-1+ai))
             // but it's the attractor that makes this so interesting
@@ -2591,7 +2591,7 @@ int calcfroth()   // per pixel 1/2/g, called with row & col set
                 lold.y += (multiply(lold.x, lold.y, bitshift)<<1) - multiply(fsp.fl.l.a, lold.x, bitshift);
                 lold.x = lnew.x;
             }
-            coloriter++;
+            g_color_iter++;
 
             if (show_orbit)
             {
@@ -2703,7 +2703,7 @@ int calcfroth()   // per pixel 1/2/g, called with row & col set
         scrub_orbit();
     }
 
-    realcoloriter = coloriter;
+    realcoloriter = g_color_iter;
     if ((keyboard_check_interval -= abs((int)realcoloriter)) <= 0)
     {
         if (check_key())
@@ -2722,20 +2722,20 @@ int calcfroth()   // per pixel 1/2/g, called with row & col set
         {
             if (!fsp.altcolor)
             {
-                if (coloriter > fsp.shades)
+                if (g_color_iter > fsp.shades)
                 {
-                    coloriter = fsp.shades;
+                    g_color_iter = fsp.shades;
                 }
             }
             else
             {
-                coloriter = fsp.shades * coloriter / maxit;
+                g_color_iter = fsp.shades * g_color_iter / maxit;
             }
-            if (coloriter == 0)
+            if (g_color_iter == 0)
             {
-                coloriter = 1;
+                g_color_iter = 1;
             }
-            coloriter += fsp.shades * (found_attractor-1);
+            g_color_iter += fsp.shades * (found_attractor-1);
         }
         else if (colors >= 16)
         {
@@ -2745,56 +2745,56 @@ int calcfroth()   // per pixel 1/2/g, called with row & col set
             // Trying to make a better 16 color distribution.
             // Since their are only a few possiblities, just handle each case.
             // This is a mostly guess work here.
-            lshade = (coloriter<<16)/maxit;
+            lshade = (g_color_iter<<16)/maxit;
             if (fsp.attractors != 6) // either 2 or 3 attractors
             {
                 if (lshade < 2622)         // 0.04
                 {
-                    coloriter = 1;
+                    g_color_iter = 1;
                 }
                 else if (lshade < 10486)     // 0.16
                 {
-                    coloriter = 2;
+                    g_color_iter = 2;
                 }
                 else if (lshade < 23593)     // 0.36
                 {
-                    coloriter = 3;
+                    g_color_iter = 3;
                 }
                 else if (lshade < 41943L)     // 0.64
                 {
-                    coloriter = 4;
+                    g_color_iter = 4;
                 }
                 else
                 {
-                    coloriter = 5;
+                    g_color_iter = 5;
                 }
-                coloriter += 5 * (found_attractor-1);
+                g_color_iter += 5 * (found_attractor-1);
             }
             else // 6 attractors
             {
                 if (lshade < 10486)        // 0.16
                 {
-                    coloriter = 1;
+                    g_color_iter = 1;
                 }
                 else
                 {
-                    coloriter = 2;
+                    g_color_iter = 2;
                 }
-                coloriter += 2 * (found_attractor-1);
+                g_color_iter += 2 * (found_attractor-1);
             }
         }
         else   // use a color corresponding to the attractor
         {
-            coloriter = found_attractor;
+            g_color_iter = found_attractor;
         }
-        oldcoloriter = coloriter;
+        oldcoloriter = g_color_iter;
     }
     else   // outside, or inside but didn't get sucked in by attractor.
     {
-        coloriter = 0;
+        g_color_iter = 0;
     }
 
-    color = abs((int)(coloriter));
+    color = abs((int)(g_color_iter));
 
     (*plot)(col, row, color);
 

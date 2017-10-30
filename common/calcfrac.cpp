@@ -99,7 +99,7 @@ DComplex old = { 0.0 };
 DComplex g_new = { 0.0 };
 DComplex saved = { 0.0 };
 int color = 0;
-long coloriter = 0;
+long g_color_iter = 0;
 long oldcoloriter = 0;
 long realcoloriter = 0;
 int row = 0;
@@ -1944,12 +1944,12 @@ int calcmand()              // fast per pixel 1/2/b/g, called with row & col set
     if (calcmandasm() >= 0)
     {
         if ((!LogTable.empty() || Log_Calc) // map color, but not if maxit & adjusted for inside,etc
-                && (realcoloriter < maxit || (inside < COLOR_BLACK && coloriter == maxit)))
+                && (realcoloriter < maxit || (inside < COLOR_BLACK && g_color_iter == maxit)))
         {
-            coloriter = logtablecalc(coloriter);
+            g_color_iter = logtablecalc(g_color_iter);
         }
-        color = abs((int)coloriter);
-        if (coloriter >= colors)
+        color = abs((int)g_color_iter);
+        if (g_color_iter >= colors)
         {
             // don't use color 0 unless from inside/outside
             if (save_release <= 1950)
@@ -1967,11 +1967,11 @@ int calcmand()              // fast per pixel 1/2/b/g, called with row & col set
             {
                 if (colors < 16)
                 {
-                    color = (int)(coloriter & g_and_color);
+                    color = (int)(g_color_iter & g_and_color);
                 }
                 else
                 {
-                    color = (int)(((coloriter - 1) % g_and_color) + 1);
+                    color = (int)(((g_color_iter - 1) % g_and_color) + 1);
                 }
             }
         }
@@ -1986,7 +1986,7 @@ int calcmand()              // fast per pixel 1/2/b/g, called with row & col set
     }
     else
     {
-        color = (int)coloriter;
+        color = (int)g_color_iter;
     }
     return color;
 }
@@ -2011,15 +2011,15 @@ int calcmandfp()
     {
         if (potflag)
         {
-            coloriter = potential(magnitude, realcoloriter);
+            g_color_iter = potential(magnitude, realcoloriter);
         }
         if ((!LogTable.empty() || Log_Calc) // map color, but not if maxit & adjusted for inside,etc
-                && (realcoloriter < maxit || (inside < COLOR_BLACK && coloriter == maxit)))
+                && (realcoloriter < maxit || (inside < COLOR_BLACK && g_color_iter == maxit)))
         {
-            coloriter = logtablecalc(coloriter);
+            g_color_iter = logtablecalc(g_color_iter);
         }
-        color = abs((int)coloriter);
-        if (coloriter >= colors)
+        color = abs((int)g_color_iter);
+        if (g_color_iter >= colors)
         {
             // don't use color 0 unless from inside/outside
             if (save_release <= 1950)
@@ -2037,11 +2037,11 @@ int calcmandfp()
             {
                 if (colors < 16)
                 {
-                    color = (int)(coloriter & g_and_color);
+                    color = (int)(g_color_iter & g_and_color);
                 }
                 else
                 {
-                    color = (int)(((coloriter - 1) % g_and_color) + 1);
+                    color = (int)(((g_color_iter - 1) % g_and_color) + 1);
                 }
             }
         }
@@ -2056,7 +2056,7 @@ int calcmandfp()
     }
     else
     {
-        color = (int)coloriter;
+        color = (int)g_color_iter;
     }
     return color;
 }
@@ -2207,10 +2207,10 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
         linit.y = lypixel();
     }
     orbit_ptr = 0;
-    coloriter = 0;
+    g_color_iter = 0;
     if (fractype == fractal_type::JULIAFP || fractype == fractal_type::JULIA)
     {
-        coloriter = -1;
+        g_color_iter = -1;
     }
     caught_a_cycle = false;
     if (inside == PERIOD)
@@ -2271,11 +2271,11 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
     {
         snd_time_write();
     }
-    while (++coloriter < maxit)
+    while (++g_color_iter < maxit)
     {
         // calculation of one orbit goes here
         // input in "old" -- output in "new"
-        if (coloriter % check_freq == 0)
+        if (g_color_iter % check_freq == 0)
         {
             if (check_key())
             {
@@ -2321,7 +2321,7 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
                 {
                     if (dem_color < 0)
                     {
-                        dem_color = coloriter;
+                        dem_color = g_color_iter;
                         dem_new = g_new;
                     }
                     if (rqlim >= DEM_BAILOUT
@@ -2376,7 +2376,7 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
             }
             if (inside == STARTRAIL)
             {
-                if (0 < coloriter && coloriter < 16)
+                if (0 < g_color_iter && g_color_iter < 16)
                 {
                     if (integerfractal)
                     {
@@ -2411,7 +2411,7 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
                     }
                     {
                         int tmpcolor;
-                        tmpcolor = (int)(((coloriter - 1) % g_and_color) + 1);
+                        tmpcolor = (int)(((g_color_iter - 1) % g_and_color) + 1);
                         tantable[tmpcolor-1] = g_new.y/(g_new.x+.000001);
                     }
                 }
@@ -2478,7 +2478,7 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
                 if (magnitude < min_orbit)
                 {
                     min_orbit = magnitude;
-                    min_index = coloriter + 1;
+                    min_index = g_color_iter + 1;
                 }
             }
         }
@@ -2540,7 +2540,7 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
                                 attracted = true;
                                 if (finattract)
                                 {
-                                    coloriter = (coloriter % g_attractor_period[i]) + 1;
+                                    g_color_iter = (g_color_iter % g_attractor_period[i]) + 1;
                                 }
                                 break;
                             }
@@ -2565,7 +2565,7 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
                                 attracted = true;
                                 if (finattract)
                                 {
-                                    coloriter = (coloriter % g_attractor_period[i]) + 1;
+                                    g_color_iter = (g_color_iter % g_attractor_period[i]) + 1;
                                 }
                                 break;
                             }
@@ -2579,11 +2579,11 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
             }
         }
 
-        if (coloriter > oldcoloriter) // check periodicity
+        if (g_color_iter > oldcoloriter) // check periodicity
         {
-            if ((coloriter & savedand) == 0)            // time to save a new value
+            if ((g_color_iter & savedand) == 0)            // time to save a new value
             {
-                savedcoloriter = coloriter;
+                savedcoloriter = g_color_iter;
                 if (integerfractal)
                 {
                     lsaved = lnew;// integer fractals
@@ -2604,7 +2604,7 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
 #ifdef NUMSAVED
                     if (zctr < NUMSAVED)
                     {
-                        changed[zctr]  = coloriter;
+                        changed[zctr]  = g_color_iter;
                         savedz[zctr++] = saved;
                     }
 #endif
@@ -2664,7 +2664,7 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
                             if (fabs(savedz[i].x - g_new.x) < g_close_enough)
                                 if (fabs(savedz[i].y - g_new.y) < g_close_enough)
                                 {
-                                    caught[i] = coloriter;
+                                    caught[i] = g_color_iter;
                                 }
                         }
                     }
@@ -2675,10 +2675,10 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
 #ifdef NUMSAVED
                     static FILE *fp = dir_fopen(workdir.c_str(), "cycles.txt", "w");
 #endif
-                    cyclelen = coloriter-savedcoloriter;
+                    cyclelen = g_color_iter-savedcoloriter;
 #ifdef NUMSAVED
                     fprintf(fp, "row %3d col %3d len %6ld iter %6ld savedand %6ld\n",
-                            row, col, cyclelen, coloriter, savedand);
+                            row, col, cyclelen, g_color_iter, savedand);
                     if (zctr > 1 && zctr < NUMSAVED)
                     {
                         for (int i = 0; i < zctr; i++)
@@ -2688,29 +2688,29 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
                     }
                     fflush(fp);
 #endif
-                    coloriter = maxit - 1;
+                    g_color_iter = maxit - 1;
                 }
 
             }
         }
-    }  // end while (coloriter++ < maxit)
+    }  // end while (g_color_iter++ < maxit)
 
     if (show_orbit)
     {
         scrub_orbit();
     }
 
-    realcoloriter = coloriter;           // save this before we start adjusting it
-    if (coloriter >= maxit)
+    realcoloriter = g_color_iter;           // save this before we start adjusting it
+    if (g_color_iter >= maxit)
     {
         oldcoloriter = 0;         // check periodicity immediately next time
     }
     else
     {
-        oldcoloriter = coloriter + 10;    // check when past this + 10 next time
-        if (coloriter == 0)
+        oldcoloriter = g_color_iter + 10;    // check when past this + 10 next time
+        if (g_color_iter == 0)
         {
-            coloriter = 1;         // needed to make same as calcmand
+            g_color_iter = 1;         // needed to make same as calcmand
         }
     }
 
@@ -2732,15 +2732,15 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
             g_new.y = (double)bftofloat(bfnew.y);
         }
         magnitude = sqr(g_new.x) + sqr(g_new.y);
-        coloriter = potential(magnitude, coloriter);
+        g_color_iter = potential(magnitude, g_color_iter);
         if (!LogTable.empty() || Log_Calc)
         {
-            coloriter = logtablecalc(coloriter);
+            g_color_iter = logtablecalc(g_color_iter);
         }
         goto plot_pixel;          // skip any other adjustments
     }
 
-    if (coloriter >= maxit)                // an "inside" point
+    if (g_color_iter >= maxit)                // an "inside" point
     {
         goto plot_inside;         // distest, decomp, biomorph don't apply
     }
@@ -2761,44 +2761,44 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
         // Add 7 to overcome negative values on the MANDEL
         if (outside == REAL)                 // "real"
         {
-            coloriter += (long)g_new.x + 7;
+            g_color_iter += (long)g_new.x + 7;
         }
         else if (outside == IMAG)              // "imag"
         {
-            coloriter += (long)g_new.y + 7;
+            g_color_iter += (long)g_new.y + 7;
         }
         else if (outside == MULT  && g_new.y)      // "mult"
         {
-            coloriter = (long)((double)coloriter * (g_new.x/g_new.y));
+            g_color_iter = (long)((double)g_color_iter * (g_new.x/g_new.y));
         }
         else if (outside == SUM)               // "sum"
         {
-            coloriter += (long)(g_new.x + g_new.y);
+            g_color_iter += (long)(g_new.x + g_new.y);
         }
         else if (outside == ATAN)              // "atan"
         {
-            coloriter = (long)fabs(atan2(g_new.y, g_new.x)*atan_colors/PI);
+            g_color_iter = (long)fabs(atan2(g_new.y, g_new.x)*atan_colors/PI);
         }
         else if (outside == FMOD)
         {
-            coloriter = (long)(memvalue * colors / g_close_proximity);
+            g_color_iter = (long)(memvalue * colors / g_close_proximity);
         }
         else if (outside == TDIS)
         {
-            coloriter = (long)(totaldist);
+            g_color_iter = (long)(totaldist);
         }
 
 
         // eliminate negative colors & wrap arounds
-        if ((coloriter <= 0 || coloriter > maxit) && outside != FMOD)
+        if ((g_color_iter <= 0 || g_color_iter > maxit) && outside != FMOD)
         {
             if (save_release < 1961)
             {
-                coloriter = 0;
+                g_color_iter = 0;
             }
             else
             {
-                coloriter = 1;
+                g_color_iter = 1;
             }
         }
     }
@@ -2823,34 +2823,34 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
             {
                 goto plot_inside;   // show it as an inside point
             }
-            coloriter = 0 - distest;       // show boundary as specified color
+            g_color_iter = 0 - distest;       // show boundary as specified color
             goto plot_pixel;       // no further adjustments apply
         }
         if (colors == 2)
         {
-            coloriter = !inside;   // the only useful distest 2 color use
+            g_color_iter = !inside;   // the only useful distest 2 color use
             goto plot_pixel;       // no further adjustments apply
         }
         if (distest > 1)          // pick color based on distance
         {
             if (old_demm_colors)   // this one is needed for old color scheme
             {
-                coloriter = (long)sqrt(sqrt(dist) / dem_width + 1);
+                g_color_iter = (long)sqrt(sqrt(dist) / dem_width + 1);
             }
             else if (use_old_distest)
             {
-                coloriter = (long)sqrt(dist / dem_width + 1);
+                g_color_iter = (long)sqrt(dist / dem_width + 1);
             }
             else
             {
-                coloriter = (long)(dist / dem_width + 1);
+                g_color_iter = (long)(dist / dem_width + 1);
             }
-            coloriter &= LONG_MAX;  // oops - color can be negative
+            g_color_iter &= LONG_MAX;  // oops - color can be negative
             goto plot_pixel;       // no further adjustments apply
         }
         if (use_old_distest)
         {
-            coloriter = dem_color;
+            g_color_iter = dem_color;
             g_new = dem_new;
         }
         // use pixel's "regular" color
@@ -2866,46 +2866,46 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
         {
             if (labs(lnew.x) < llimit2 || labs(lnew.y) < llimit2)
             {
-                coloriter = g_biomorph;
+                g_color_iter = g_biomorph;
             }
         }
         else if (fabs(g_new.x) < rqlim2 || fabs(g_new.y) < rqlim2)
         {
-            coloriter = g_biomorph;
+            g_color_iter = g_biomorph;
         }
     }
 
     if (outside >= COLOR_BLACK && !attracted)       // merge escape-time stripes
     {
-        coloriter = outside;
+        g_color_iter = outside;
     }
     else if (!LogTable.empty() || Log_Calc)
     {
-        coloriter = logtablecalc(coloriter);
+        g_color_iter = logtablecalc(g_color_iter);
     }
     goto plot_pixel;
 
 plot_inside: // we're "inside"
     if (periodicitycheck < 0 && caught_a_cycle)
     {
-        coloriter = 7;           // show periodicity
+        g_color_iter = 7;           // show periodicity
     }
     else if (inside >= COLOR_BLACK)
     {
-        coloriter = inside;              // set to specified color, ignore logpal
+        g_color_iter = inside;              // set to specified color, ignore logpal
     }
     else
     {
         if (inside == STARTRAIL)
         {
             double diff;
-            coloriter = 0;
+            g_color_iter = 0;
             for (int i = 1; i < 16; i++)
             {
                 diff = tantable[0] - tantable[i];
                 if (fabs(diff) < .05)
                 {
-                    coloriter = i;
+                    g_color_iter = i;
                     break;
                 }
             }
@@ -2914,26 +2914,26 @@ plot_inside: // we're "inside"
         {
             if (cyclelen > 0)
             {
-                coloriter = cyclelen;
+                g_color_iter = cyclelen;
             }
             else
             {
-                coloriter = maxit;
+                g_color_iter = maxit;
             }
         }
         else if (inside == EPSCROSS)
         {
             if (hooper == 1)
             {
-                coloriter = green;
+                g_color_iter = green;
             }
             else if (hooper == 2)
             {
-                coloriter = yellow;
+                g_color_iter = yellow;
             }
             else if (hooper == 0)
             {
-                coloriter = maxit;
+                g_color_iter = maxit;
             }
             if (show_orbit)
             {
@@ -2942,7 +2942,7 @@ plot_inside: // we're "inside"
         }
         else if (inside == FMODI)
         {
-            coloriter = (long)(memvalue * colors / g_close_proximity);
+            g_color_iter = (long)(memvalue * colors / g_close_proximity);
         }
         else if (inside == ATANI)            // "atan"
         {
@@ -2950,20 +2950,20 @@ plot_inside: // we're "inside"
             {
                 g_new.x = ((double)lnew.x) / fudge;
                 g_new.y = ((double)lnew.y) / fudge;
-                coloriter = (long)fabs(atan2(g_new.y, g_new.x)*atan_colors/PI);
+                g_color_iter = (long)fabs(atan2(g_new.y, g_new.x)*atan_colors/PI);
             }
             else
             {
-                coloriter = (long)fabs(atan2(g_new.y, g_new.x)*atan_colors/PI);
+                g_color_iter = (long)fabs(atan2(g_new.y, g_new.x)*atan_colors/PI);
             }
         }
         else if (inside == BOF60)
         {
-            coloriter = (long)(sqrt(min_orbit) * 75);
+            g_color_iter = (long)(sqrt(min_orbit) * 75);
         }
         else if (inside == BOF61)
         {
-            coloriter = min_index;
+            g_color_iter = min_index;
         }
         else if (inside == ZMAG)
         {
@@ -2972,29 +2972,29 @@ plot_inside: // we're "inside"
                 /*
                 g_new.x = ((double)lnew.x) / fudge;
                 g_new.y = ((double)lnew.y) / fudge;
-                coloriter = (long)((((double)lsqr(lnew.x))/fudge + ((double)lsqr(lnew.y))/fudge) * (maxit>>1) + 1);
+                g_color_iter = (long)((((double)lsqr(lnew.x))/fudge + ((double)lsqr(lnew.y))/fudge) * (maxit>>1) + 1);
                 */
-                coloriter = (long)(((double)lmagnitud/fudge) * (maxit >> 1) + 1);
+                g_color_iter = (long)(((double)lmagnitud/fudge) * (maxit >> 1) + 1);
             }
             else
             {
-                coloriter = (long)((sqr(g_new.x) + sqr(g_new.y)) * (maxit >> 1) + 1);
+                g_color_iter = (long)((sqr(g_new.x) + sqr(g_new.y)) * (maxit >> 1) + 1);
             }
         }
         else   // inside == -1
         {
-            coloriter = maxit;
+            g_color_iter = maxit;
         }
         if (!LogTable.empty() || Log_Calc)
         {
-            coloriter = logtablecalc(coloriter);
+            g_color_iter = logtablecalc(g_color_iter);
         }
     }
 
 plot_pixel:
 
-    color = abs((int)coloriter);
-    if (coloriter >= colors)
+    color = abs((int)g_color_iter);
+    if (g_color_iter >= colors)
     {
         // don't use color 0 unless from inside/outside
         if (save_release <= 1950)
@@ -3012,11 +3012,11 @@ plot_pixel:
         {
             if (colors < 16)
             {
-                color = (int)(coloriter & g_and_color);
+                color = (int)(g_color_iter & g_and_color);
             }
             else
             {
-                color = (int)(((coloriter - 1) % g_and_color) + 1);
+                color = (int)(((g_color_iter - 1) % g_and_color) + 1);
             }
         }
     }
@@ -3079,7 +3079,7 @@ static void decomposition()
     int save_temp = 0;
     LComplex lalt;
     DComplex alt;
-    coloriter = 0;
+    g_color_iter = 0;
     if (integerfractal) // the only case
     {
         if (reset_fudge != fudge)
@@ -3299,7 +3299,7 @@ static void decomposition()
     {
         if (temp & 1)
         {
-            coloriter = (1 << i) - 1 - coloriter;
+            g_color_iter = (1 << i) - 1 - g_color_iter;
         }
         temp >>= 1;
     }
@@ -3307,24 +3307,24 @@ static void decomposition()
     {
         if (save_temp & 2)
         {
-            coloriter = 1;
+            g_color_iter = 1;
         }
         else
         {
-            coloriter = 0;
+            g_color_iter = 0;
         }
         if (colors == 2)
         {
-            coloriter++;
+            g_color_iter++;
         }
     }
     else if (decomp[0] == 2 && save_release < 1827)
     {
-        coloriter &= 1;
+        g_color_iter &= 1;
     }
     if (colors > decomp[0])
     {
-        coloriter++;
+        g_color_iter++;
     }
 }
 

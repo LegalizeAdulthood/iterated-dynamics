@@ -1399,7 +1399,7 @@ int orbit2dfloat()
     x = initorbitfp[0];
     y = initorbitfp[1];
     z = initorbitfp[2];
-    coloriter = 0L;
+    g_color_iter = 0L;
     ret = 0;
     count = ret;
     if (maxit > 0x1fffffL || maxct)
@@ -1417,12 +1417,12 @@ int orbit2dfloat()
         get_resume(sizeof(count), &count, sizeof(color), &color,
                    sizeof(oldrow), &oldrow, sizeof(oldcol), &oldcol,
                    sizeof(x), &x, sizeof(y), &y, sizeof(z), &z, sizeof(t), &t,
-                   sizeof(orbit), &orbit, sizeof(coloriter), &coloriter,
+                   sizeof(orbit), &orbit, sizeof(g_color_iter), &g_color_iter,
                    0);
         end_resume();
     }
 
-    while (coloriter++ <= maxct) // loop until keypress or maxit
+    while (g_color_iter++ <= maxct) // loop until keypress or maxit
     {
         if (driver_key_pressed())
         {
@@ -1431,7 +1431,7 @@ int orbit2dfloat()
             put_resume(sizeof(count), &count, sizeof(color), &color,
                        sizeof(oldrow), &oldrow, sizeof(oldcol), &oldcol,
                        sizeof(x), &x, sizeof(y), &y, sizeof(z), &z, sizeof(t), &t,
-                       sizeof(orbit), &orbit, sizeof(coloriter), &coloriter,
+                       sizeof(orbit), &orbit, sizeof(g_color_iter), &g_color_iter,
                        0);
             ret = -1;
             break;
@@ -1585,7 +1585,7 @@ int orbit2dlong()
     {
         maxct = maxit*1024L;
     }
-    coloriter = 0L;
+    g_color_iter = 0L;
 
     if (resuming)
     {
@@ -1593,12 +1593,12 @@ int orbit2dlong()
         get_resume(sizeof(count), &count, sizeof(color), &color,
                    sizeof(oldrow), &oldrow, sizeof(oldcol), &oldcol,
                    sizeof(x), &x, sizeof(y), &y, sizeof(z), &z, sizeof(t), &t,
-                   sizeof(l_orbit), &l_orbit, sizeof(coloriter), &coloriter,
+                   sizeof(l_orbit), &l_orbit, sizeof(g_color_iter), &g_color_iter,
                    0);
         end_resume();
     }
 
-    while (coloriter++ <= maxct) // loop until keypress or maxit
+    while (g_color_iter++ <= maxct) // loop until keypress or maxit
     {
         if (driver_key_pressed())
         {
@@ -1607,7 +1607,7 @@ int orbit2dlong()
             put_resume(sizeof(count), &count, sizeof(color), &color,
                        sizeof(oldrow), &oldrow, sizeof(oldcol), &oldcol,
                        sizeof(x), &x, sizeof(y), &y, sizeof(z), &z, sizeof(t), &t,
-                       sizeof(l_orbit), &l_orbit, sizeof(coloriter), &coloriter,
+                       sizeof(l_orbit), &l_orbit, sizeof(g_color_iter), &g_color_iter,
                        0);
             ret = -1;
             break;
@@ -1721,8 +1721,8 @@ static int orbit3dlongcalc()
     {
         maxct = maxit*1024L;
     }
-    coloriter = 0L;
-    while (coloriter++ <= maxct) // loop until keypress or maxit
+    g_color_iter = 0L;
+    while (g_color_iter++ <= maxct) // loop until keypress or maxit
     {
         // calc goes here
         if (++count > 1000)
@@ -1851,9 +1851,9 @@ static int orbit3dfloatcalc()
     {
         maxct = maxit*1024L;
     }
-    coloriter = 0L;
-    count = coloriter;
-    while (coloriter++ <= maxct) // loop until keypress or maxit
+    g_color_iter = 0L;
+    count = g_color_iter;
+    while (g_color_iter++ <= maxct) // loop until keypress or maxit
     {
         // calc goes here
         if (++count > 1000)
@@ -2431,8 +2431,8 @@ static int ifs3dfloat()
     {
         maxct = maxit*1024;
     }
-    coloriter = 0L;
-    while (coloriter++ <= maxct) // loop until keypress or maxit
+    g_color_iter = 0L;
+    while (g_color_iter++ <= maxct) // loop until keypress or maxit
     {
         if (driver_key_pressed())  // keypress bails out
         {
@@ -2606,8 +2606,8 @@ static int ifs2d()
     {
         maxct = maxit*1024L;
     }
-    coloriter = 0L;
-    while (coloriter++ <= maxct) // loop until keypress or maxit
+    g_color_iter = 0L;
+    while (g_color_iter++ <= maxct) // loop until keypress or maxit
     {
         if (driver_key_pressed())  // keypress bails out
         {
@@ -2719,8 +2719,8 @@ static int ifs3dlong()
     {
         maxct = maxit*1024L;
     }
-    coloriter = 0L;
-    while (coloriter++ <= maxct) // loop until keypress or maxit
+    g_color_iter = 0L;
+    while (g_color_iter++ <= maxct) // loop until keypress or maxit
     {
         if (driver_key_pressed())  // keypress bails out
         {
@@ -2864,7 +2864,7 @@ static int ifs3d()
 
 static bool long3dviewtransf(long3dvtinf *inf)
 {
-    if (coloriter == 1)  // initialize on first call
+    if (g_color_iter == 1)  // initialize on first call
     {
         for (int i = 0; i < 3; i++)
         {
@@ -2897,7 +2897,7 @@ static bool long3dviewtransf(long3dvtinf *inf)
         longvmult(inf->orbit, inf->longmat1, inf->viewvect1, bitshift);
     }
 
-    if (coloriter <= waste) // waste this many points to find minz and maxz
+    if (g_color_iter <= waste) // waste this many points to find minz and maxz
     {
         // find minz and maxz
         for (int i = 0; i < 3; i++)
@@ -2913,7 +2913,7 @@ static bool long3dviewtransf(long3dvtinf *inf)
             }
         }
 
-        if (coloriter == waste) // time to work it out
+        if (g_color_iter == waste) // time to work it out
         {
             inf->iview[1] = 0L;
             inf->iview[0] = inf->iview[1]; // center viewer on origin
@@ -3054,7 +3054,7 @@ static bool long3dviewtransf(long3dvtinf *inf)
 
 static bool float3dviewtransf(float3dvtinf *inf)
 {
-    if (coloriter == 1)  // initialize on first call
+    if (g_color_iter == 1)  // initialize on first call
     {
         for (int i = 0; i < 3; i++)
         {
@@ -3075,7 +3075,7 @@ static bool float3dviewtransf(float3dvtinf *inf)
         vmult(inf->orbit, inf->doublemat1, inf->viewvect1);
     }
 
-    if (coloriter <= waste) // waste this many points to find minz and maxz
+    if (g_color_iter <= waste) // waste this many points to find minz and maxz
     {
         // find minz and maxz
         for (int i = 0; i < 3; i++)
@@ -3090,7 +3090,7 @@ static bool float3dviewtransf(float3dvtinf *inf)
                 inf->maxvals[i] = tmp;
             }
         }
-        if (coloriter == waste) // time to work it out
+        if (g_color_iter == waste) // time to work it out
         {
             view[1] = 0;
             view[0] = view[1]; // center on origin

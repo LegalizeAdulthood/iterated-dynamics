@@ -462,7 +462,7 @@ int NewtonFractal2()
                 {
                     if (g_basin == 2)
                     {
-                        tmpcolor = 1+(i&7)+((coloriter&1) << 3);
+                        tmpcolor = 1+(i&7)+((g_color_iter&1) << 3);
                     }
                     else
                     {
@@ -473,11 +473,11 @@ int NewtonFractal2()
             }
             if (tmpcolor == -1)
             {
-                coloriter = maxcolor;
+                g_color_iter = maxcolor;
             }
             else
             {
-                coloriter = tmpcolor;
+                g_color_iter = tmpcolor;
             }
         }
         return 1;
@@ -550,7 +550,7 @@ int MPCNewtonFractal()
                 {
                     if (g_basin == 2)
                     {
-                        tmpcolor = 1+(i&7) + ((coloriter&1) << 3);
+                        tmpcolor = 1+(i&7) + ((g_color_iter&1) << 3);
                     }
                     else
                     {
@@ -560,11 +560,11 @@ int MPCNewtonFractal()
                 }
             if (tmpcolor == -1)
             {
-                coloriter = maxcolor;
+                g_color_iter = maxcolor;
             }
             else
             {
-                coloriter = tmpcolor;
+                g_color_iter = tmpcolor;
             }
         }
         return 1;
@@ -2538,7 +2538,7 @@ CirclefpFractal()
 {
     long i;
     i = (long)(param[0]*(tempsqrx+tempsqry));
-    coloriter = i%colors;
+    g_color_iter = i%colors;
     return 1;
 }
 /*
@@ -2547,7 +2547,7 @@ CirclelongFractal()
    long i;
    i = multiply(lparm.x,(ltempsqrx+ltempsqry),bitshift);
    i = i >> bitshift;
-   coloriter = i%colors);
+   g_color_iter = i%colors);
    return 1;
 }
 */
@@ -2795,7 +2795,7 @@ int mandel_per_pixel()
            Mandelbrot iteration with init rather than 0 */
         lold.x = lparm.x; // initial pertubation of parameters set
         lold.y = lparm.y;
-        coloriter = -1;
+        g_color_iter = -1;
     }
     else
     {
@@ -2988,7 +2988,7 @@ int mandelfp_per_pixel()
            Mandelbrot iteration with init rather than 0 */
         old.x = parm.x; // initial pertubation of parameters set
         old.y = parm.y;
-        coloriter = -1;
+        g_color_iter = -1;
     }
     else
     {
@@ -3428,7 +3428,7 @@ EscherfpFractal() // Science of Fractal Images pp. 185, 187
     }
     else   // make distinct level sets if point stayed in target set
     {
-        coloriter = ((3L * coloriter) % 255L) + 1L;
+        g_color_iter = ((3L * g_color_iter) % 255L) + 1L;
         return 1;
     }
 }

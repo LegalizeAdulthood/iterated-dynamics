@@ -1103,10 +1103,10 @@ top:
         driver_put_string(-1, -1, C_GENERAL_HI, msg);
     }
 
-    if ((curfractalspecific->flags&INFCALC) && (coloriter != 0))
+    if ((curfractalspecific->flags&INFCALC) && (g_color_iter != 0))
     {
         driver_put_string(s_row, -1, C_GENERAL_MED, " 1000's of points:");
-        sprintf(msg, " %ld of %ld", coloriter-2, maxct);
+        sprintf(msg, " %ld of %ld", g_color_iter-2, maxct);
         driver_put_string(s_row, -1, C_GENERAL_HI, msg);
     }
 
@@ -1243,7 +1243,7 @@ top:
         }
     }
     driver_put_string(s_row += 2, 2, C_GENERAL_MED, "Current (Max) Iteration: ");
-    sprintf(msg, "%ld (%ld)", coloriter, maxit);
+    sprintf(msg, "%ld (%ld)", g_color_iter, maxit);
     driver_put_string(-1, -1, C_GENERAL_HI, msg);
     driver_put_string(-1, -1, C_GENERAL_MED, "     Effective bailout: ");
     sprintf(msg, "%f", rqlim);
