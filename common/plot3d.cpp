@@ -28,7 +28,7 @@ int blue_local_right;
 int red_crop_left   = 4;
 int red_crop_right  = 0;
 int g_blue_crop_left  = 0;
-int blue_crop_right = 4;
+int g_blue_crop_right = 4;
 int red_bright      = 80;
 int g_blue_bright     = 100;
 
@@ -486,7 +486,7 @@ void plot_setup()
         red_local_left  = (int)((red_crop_left      * (double)xdots)/100.0);
         red_local_right = (int)(((100 - red_crop_right) * (double)xdots)/100.0);
         blue_local_left = (int)((g_blue_crop_left     * (double)xdots)/100.0);
-        blue_local_right = (int)(((100 - blue_crop_right) * (double)xdots)/100.0);
+        blue_local_right = (int)(((100 - g_blue_crop_right) * (double)xdots)/100.0);
         d_red_bright    = (double)red_bright/100.0;
         d_blue_bright   = (double)g_blue_bright/100.0;
 

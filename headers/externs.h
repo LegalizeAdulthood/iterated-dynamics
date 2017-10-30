@@ -62,7 +62,7 @@ extern int                   bitshiftless1;
 extern BYTE                  g_block[];
 extern int                   g_blue_bright;
 extern int                   g_blue_crop_left;
-extern int                   blue_crop_right;
+extern int                   g_blue_crop_right;
 extern int                   boxcolor;
 extern int                   boxcount;
 extern int                   boxvalues[];

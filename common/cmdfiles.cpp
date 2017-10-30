@@ -609,7 +609,7 @@ static void initvars_3d()               // init vars affecting 3d
     red_crop_left   = 4;
     red_crop_right  = 0;
     g_blue_crop_left  = 0;
-    blue_crop_right = 4;
+    g_blue_crop_right = 4;
     red_bright     = 80;
     g_blue_bright   = 100;
     transparent[1] = 0;
@@ -3167,7 +3167,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         red_crop_left   = intval[0];
         red_crop_right  = intval[1];
         g_blue_crop_left  = intval[2];
-        blue_crop_right = intval[3];
+        g_blue_crop_right = intval[3];
         return CMDARG_FRACTAL_PARAM | CMDARG_3D_PARAM;
     }
 

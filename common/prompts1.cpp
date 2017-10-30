@@ -3558,7 +3558,7 @@ static bool get_funny_glasses_params()
 
     prompts3d[++k] = "Right blue image crop (% of screen)";
     uvalues[k].type = 'i';
-    uvalues[k].uval.ival = blue_crop_right;
+    uvalues[k].uval.ival = g_blue_crop_right;
 
     prompts3d[++k] = "Red brightness factor (%)";
     uvalues[k].type = 'i';
@@ -3590,7 +3590,7 @@ static bool get_funny_glasses_params()
     red_crop_left   =  uvalues[k++].uval.ival;
     red_crop_right  =  uvalues[k++].uval.ival;
     g_blue_crop_left  =  uvalues[k++].uval.ival;
-    blue_crop_right =  uvalues[k++].uval.ival;
+    g_blue_crop_right =  uvalues[k++].uval.ival;
     red_bright      =  uvalues[k++].uval.ival;
     g_blue_bright     =  uvalues[k++].uval.ival;
 
