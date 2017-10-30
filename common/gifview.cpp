@@ -24,7 +24,6 @@ static void close_file();
 static FILE *fpin = nullptr;       // FILE pointer
 unsigned int height;
 unsigned numcolors;
-int bad_code_count = 0;         // needed by decoder module
 
 static int out_line_dither(BYTE *, int);
 static int out_line_migs(BYTE *, int);

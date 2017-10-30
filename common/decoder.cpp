@@ -81,17 +81,16 @@ static short code_mask[13] =
 
 static BYTE suffix[10000] = { 0 };
 
-//**** External Variables **********************************************
-/* extern short bad_code_count;
+/* bad_code_count;
  *
- * This value is the only other global required by the using program, and
- * is incremented each time an out of range code is read by the decoder.
+ * This value incremented each time an out of range code is read by the decoder.
  * When this value is non-zero after a decode, your GIF file is probably
  * corrupt in some way...
  */
 
 namespace
 {
+int bad_code_count = 0;
 BYTE decoderline[MAXPIXELS];
 }
 
