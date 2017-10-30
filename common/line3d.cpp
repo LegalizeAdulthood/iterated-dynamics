@@ -135,7 +135,7 @@ int const g_bad_value = -10000;       // set bad values to this
 static int const bad_check = -3000; // check values against this to determine if good
 std::vector<point> lastrow; // this array remembers the previous line
 int RAY = 0;                    // Flag to generate Ray trace compatible files in 3d
-bool BRIEF = false;             // 1 = short ray trace files
+bool g_brief = false;             // 1 = short ray trace files
 
 // array of min and max x values used in triangle fill
 static std::vector<minmax> minmax_x;
@@ -1971,7 +1971,7 @@ ENDTAB\n  0\nENDSEC\n  0\nSECTION\n  2\nENTITIES\n");
     {
         fprintf(File_Ptr1, "DECLARE       F_Dflt = COLOR  RED 0.8 GREEN 0.4 BLUE 0.1\n");
     }
-    if (BRIEF)
+    if (g_brief)
     {
         if (RAY == 2)
         {
@@ -2040,7 +2040,7 @@ static int out_triangle(f_point pt1, f_point pt2, f_point pt3, int c1, int c2, i
     pt_t[2][2] = -2 * pt3.color / numcolors - 1;
 
     // Color of triangle is average of colors of its verticies
-    if (!BRIEF)
+    if (!g_brief)
     {
         for (int i = 0; i <= 2; i++)
         {
@@ -2070,20 +2070,20 @@ static int out_triangle(f_point pt1, f_point pt2, f_point pt3, int c1, int c2, i
     {
         fprintf(File_Ptr1, " OBJECT\n  TRIANGLE ");
     }
-    if (RAY == 2 && !BRIEF)
+    if (RAY == 2 && !g_brief)
     {
         fprintf(File_Ptr1, "surf={diff=");
     }
-    if (RAY == 4 && !BRIEF)
+    if (RAY == 4 && !g_brief)
     {
         fprintf(File_Ptr1, "f");
     }
-    if (RAY == 5 && !BRIEF)
+    if (RAY == 5 && !g_brief)
     {
         fprintf(File_Ptr1, "applysurf diffuse ");
     }
 
-    if (!BRIEF && RAY != 1 && RAY != 7)
+    if (!g_brief && RAY != 1 && RAY != 7)
     {
         for (int i = 0; i <= 2; i++)
         {
@@ -2093,7 +2093,7 @@ static int out_triangle(f_point pt1, f_point pt2, f_point pt3, int c1, int c2, i
 
     if (RAY == 2)
     {
-        if (!BRIEF)
+        if (!g_brief)
         {
             fprintf(File_Ptr1, ";}\n");
         }
@@ -2101,7 +2101,7 @@ static int out_triangle(f_point pt1, f_point pt2, f_point pt3, int c1, int c2, i
     }
     if (RAY == 4)
     {
-        if (!BRIEF)
+        if (!g_brief)
         {
             fprintf(File_Ptr1, "0.95 0.05 5 0 0\n");
         }
@@ -2109,7 +2109,7 @@ static int out_triangle(f_point pt1, f_point pt2, f_point pt3, int c1, int c2, i
     }
     if (RAY == 5)
     {
-        if (!BRIEF)
+        if (!g_brief)
         {
             fprintf(File_Ptr1, "\n");
         }
@@ -2176,7 +2176,7 @@ static int out_triangle(f_point pt1, f_point pt2, f_point pt3, int c1, int c2, i
     if (RAY == 1)
     {
         fprintf(File_Ptr1, " END_TRIANGLE \n");
-        if (!BRIEF)
+        if (!g_brief)
         {
             fprintf(File_Ptr1,
                     "  TEXTURE\n"
@@ -2191,7 +2191,7 @@ static int out_triangle(f_point pt1, f_point pt2, f_point pt3, int c1, int c2, i
     {
         fprintf(File_Ptr1, "}");
     }
-    if (RAY == 3 && !BRIEF)
+    if (RAY == 3 && !g_brief)
     {
         fprintf(File_Ptr1, "\n");
     }

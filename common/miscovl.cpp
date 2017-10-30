@@ -1157,7 +1157,7 @@ void write_batch_parms(char const *colorinf, bool colorsonly, int maxcolor, int 
         if (RAY)
         {
             put_parm(" %s=%d", "ray", RAY);
-            if (BRIEF)
+            if (g_brief)
             {
                 put_parm(" %s=y", "brief");
             }

@@ -3019,7 +3019,7 @@ restart_1:
 
     prompts3d[++k] = "    Brief output?";
     uvalues[k].type = 'y';
-    uvalues[k].uval.ch.val = BRIEF ? 1 : 0;
+    uvalues[k].uval.ch.val = g_brief ? 1 : 0;
 
     check_writefile(ray_name, ".ray");
     prompts3d[++k] = "    Output File Name";
@@ -3061,7 +3061,7 @@ restart_1:
                     "the online documentation.");
         }
     }
-    BRIEF = uvalues[k++].uval.ch.val != 0;
+    g_brief = uvalues[k++].uval.ch.val != 0;
 
     ray_name = uvalues[k++].uval.sval;
 
