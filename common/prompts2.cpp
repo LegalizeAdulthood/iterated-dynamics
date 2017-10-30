@@ -2616,7 +2616,7 @@ int get_browse_params()
 
     bool old_auto_browse = g_auto_browse;
     bool old_browse_check_fractal_type = browse_check_fractal_type;
-    bool old_brwscheckparms = browse_check_fractal_params;
+    bool old_brwscheckparms = g_browse_check_fractal_params;
     bool old_doublecaution  = confirm_file_deletes;
     int old_smallest_box_size_shown = smallest_box_size_shown;
     double old_smallest_window_display_size = smallest_window_display_size;
@@ -2640,7 +2640,7 @@ get_brws_restart:
 
     choices[++k] = "Check fractal parameters (y/n)";
     uvalues[k].type = 'y';
-    uvalues[k].uval.ch.val = browse_check_fractal_params ? 1 : 0;
+    uvalues[k].uval.ch.val = g_browse_check_fractal_params ? 1 : 0;
 
     choices[++k] = "Confirm file deletes (y/n)";
     uvalues[k].type = 'y';
@@ -2677,7 +2677,7 @@ get_brws_restart:
         smallest_window_display_size = 6;
         g_auto_browse = false;
         g_ask_video = true;
-        browse_check_fractal_params = true;
+        g_browse_check_fractal_params = true;
         browse_check_fractal_type = true;
         confirm_file_deletes = true;
         smallest_box_size_shown = 3;
@@ -2691,7 +2691,7 @@ get_brws_restart:
     g_auto_browse = uvalues[++k].uval.ch.val != 0;
     g_ask_video = uvalues[++k].uval.ch.val != 0;
     browse_check_fractal_type = uvalues[++k].uval.ch.val != 0;
-    browse_check_fractal_params = uvalues[++k].uval.ch.val != 0;
+    g_browse_check_fractal_params = uvalues[++k].uval.ch.val != 0;
     confirm_file_deletes = uvalues[++k].uval.ch.val != 0;
     smallest_window_display_size = uvalues[++k].uval.dval;
     if (smallest_window_display_size < 0)
@@ -2713,7 +2713,7 @@ get_brws_restart:
     i = 0;
     if (g_auto_browse != old_auto_browse ||
             browse_check_fractal_type != old_browse_check_fractal_type ||
-            browse_check_fractal_params != old_brwscheckparms ||
+            g_browse_check_fractal_params != old_brwscheckparms ||
             confirm_file_deletes != old_doublecaution ||
             smallest_window_display_size != old_smallest_window_display_size ||
             smallest_box_size_shown != old_smallest_box_size_shown ||

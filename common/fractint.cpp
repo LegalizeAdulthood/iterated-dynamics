@@ -133,7 +133,7 @@ int smallest_box_size_shown;
 bool no_sub_images = false;
 bool g_auto_browse = false;
 bool confirm_file_deletes = false;
-bool browse_check_fractal_params = false;
+bool g_browse_check_fractal_params = false;
 bool browse_check_fractal_type = false;
 std::string g_browse_mask;
 int scale_map[12] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12}; // array for mapping notes to a (user defined) scale
@@ -181,7 +181,7 @@ static void main_restart(int const argc, char const *const argv[], bool &stacked
 #endif
     g_auto_browse = false;
     browse_check_fractal_type = false;
-    browse_check_fractal_params = true;
+    g_browse_check_fractal_params = true;
     confirm_file_deletes = true;
     no_sub_images = false;
     smallest_window_display_size = 6;

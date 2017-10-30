@@ -72,7 +72,7 @@ extern bool                  g_brief;
 extern std::string           g_browse_mask;
 extern std::string           g_browse_name;
 extern bool                  g_browsing;
-extern bool browse_check_fractal_params;
+extern bool                  g_browse_check_fractal_params;
 extern bool browse_check_fractal_type;
 extern bool                  busy;
 extern long                  calctime;
