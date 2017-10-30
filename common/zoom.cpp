@@ -52,7 +52,7 @@ void dispbox()
 {
     int boxc = (colors-1)&g_box_color;
     int rgb[3];
-    for (int i = 0; i < boxcount; i++)
+    for (int i = 0; i < g_box_count; i++)
     {
         if (g_is_true_color && truemode)
         {
@@ -67,7 +67,7 @@ void dispbox()
     }
     // There is an interaction between getcolor and putcolor, so separate them
     if (!(g_is_true_color && truemode)) // don't need this for truecolor with truemode set
-        for (int i = 0; i < boxcount; i++)
+        for (int i = 0; i < g_box_count; i++)
         {
             if (colors == 2)
             {
@@ -88,7 +88,7 @@ void clearbox()
     }
     else
     {
-        for (int i = 0; i < boxcount; i++)
+        for (int i = 0; i < g_box_count; i++)
         {
             putcolor(boxx[i]-sxoffs, boxy[i]-syoffs, boxvalues[i]);
         }
@@ -106,11 +106,11 @@ void drawbox(bool drawit)
     if (zoom_box_width == 0)
     {
         // no box to draw
-        if (boxcount != 0)
+        if (g_box_count != 0)
         {
             // remove the old box from display
             clearbox();
-            boxcount = 0;
+            g_box_count = 0;
         }
         reset_zoom_corners();
         return;
@@ -199,11 +199,11 @@ void drawbox(bool drawit)
     tr.x   = (int)(ftemp1*(x_size_d+PIXELROUND));
     tr.y   = (int)(ftemp2*(y_size_d+PIXELROUND));
 
-    if (boxcount != 0)
+    if (g_box_count != 0)
     {
         // remove the old box from display
         clearbox();
-        boxcount = 0;
+        g_box_count = 0;
     }
 
     if (drawit)
@@ -226,7 +226,7 @@ void drawbox(bool drawit)
         boxy[2] = br.y + syoffs;
         boxx[3] = bl.x + sxoffs;
         boxy[3] = bl.y + syoffs;
-        boxcount = 4;
+        g_box_count = 4;
 #endif
         dispbox();
     }
@@ -312,15 +312,15 @@ void drawlines(coords fr, coords to, int dx, int dy)
 
 void addbox(coords point)
 {
-    assert(boxcount < NUM_BOX_POINTS);
+    assert(g_box_count < NUM_BOX_POINTS);
     point.x += sxoffs;
     point.y += syoffs;
     if (point.x >= 0 && point.x < sxdots &&
             point.y >= 0 && point.y < sydots)
     {
-        boxx[boxcount] = point.x;
-        boxy[boxcount] = point.y;
-        ++boxcount;
+        boxx[g_box_count] = point.x;
+        boxy[g_box_count] = point.y;
+        ++g_box_count;
     }
 }
 

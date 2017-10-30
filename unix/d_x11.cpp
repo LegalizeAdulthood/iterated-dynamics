@@ -2727,7 +2727,7 @@ x11_set_video_mode(Driver *drv, VIDEOINFO *mode)
     {
         x11_read_palette(drv);
         g_and_color = colors-1;
-        boxcount =0;
+        g_box_count =0;
     }
 }
 

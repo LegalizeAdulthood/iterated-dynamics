@@ -1463,7 +1463,7 @@ rescan:  // entry for changed browse parms
         {
             strcpy(winlist.name, DTA.filename);
             drawindow(color_of_box, &winlist);
-            winlist.boxcount = boxcount;
+            winlist.boxcount = g_box_count;
             browse_windows[wincount] = winlist;
             save_box(num_dots, wincount);
             wincount++;
@@ -1704,9 +1704,9 @@ rescan:  // entry for changed browse parms
             for (int i = wincount-1; i >= 0; i--)
             {
                 winlist = browse_windows[i];
-                boxcount = winlist.boxcount;
+                g_box_count = winlist.boxcount;
                 restore_box(num_dots, i);
-                if (boxcount > 0)
+                if (g_box_count > 0)
 #ifdef XFRACT
                     // Turn all boxes off
                     drawindow(g_color_bright, &winlist);
@@ -1750,7 +1750,7 @@ static void drawindow(int colour, window const *info)
 #endif
 
     g_box_color = colour;
-    boxcount = 0;
+    g_box_count = 0;
     if (info->win_size >= smallest_box_size_shown)
     {
         // big enough on screen to show up as a box so draw it
@@ -1771,7 +1771,7 @@ static void drawindow(int colour, window const *info)
         boxy[2] = info->ibr.y + syoffs;
         boxx[3] = info->ibl.x + sxoffs;
         boxy[3] = info->ibl.y + syoffs;
-        boxcount = 4;
+        g_box_count = 4;
 #endif
         dispbox();
     }

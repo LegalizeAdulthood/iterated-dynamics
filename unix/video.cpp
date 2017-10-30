@@ -202,7 +202,7 @@ setvideomode(int ax, int bx, int cx, int dx)
     {
         loaddac();
         g_and_color = colors - 1;
-        boxcount = 0;
+        g_box_count = 0;
     }
     g_vesa_x_res = sxdots;
     g_vesa_y_res = sydots;
@@ -497,7 +497,7 @@ findfont(int fontparm)
 void
 dispbox()
 {
-    if (boxcount)
+    if (g_box_count)
     {
         setlinemode(1);
         drawline(boxx[0], boxy[0], boxx[1], boxy[1]);

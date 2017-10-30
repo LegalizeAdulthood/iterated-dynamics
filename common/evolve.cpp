@@ -1027,33 +1027,33 @@ void drawparmbox(int mode)
         return; // don't draw if not asked to!
     }
     grout = !((evolving & NOGROUT)/NOGROUT) ;
-    image_box_count = boxcount;
-    if (boxcount)
+    image_box_count = g_box_count;
+    if (g_box_count)
     {
         // stash normal zoombox pixels
-        std::copy(&boxx[0], &boxx[boxcount*2], &image_box_x[0]);
-        std::copy(&boxy[0], &boxy[boxcount*2], &image_box_y[0]);
-        std::copy(&boxvalues[0], &boxvalues[boxcount], &image_box_values[0]);
+        std::copy(&boxx[0], &boxx[g_box_count*2], &image_box_x[0]);
+        std::copy(&boxy[0], &boxy[g_box_count*2], &image_box_y[0]);
+        std::copy(&boxvalues[0], &boxvalues[g_box_count], &image_box_values[0]);
         clearbox(); // to avoid probs when one box overlaps the other
     }
     if (param_box_count != 0)
     {
         // clear last parmbox
-        boxcount = param_box_count;
-        std::copy(&param_box_x[0], &param_box_x[boxcount*2], &boxx[0]);
-        std::copy(&param_box_y[0], &param_box_y[boxcount*2], &boxy[0]);
-        std::copy(&param_box_values[0], &param_box_values[boxcount], &boxvalues[0]);
+        g_box_count = param_box_count;
+        std::copy(&param_box_x[0], &param_box_x[g_box_count*2], &boxx[0]);
+        std::copy(&param_box_y[0], &param_box_y[g_box_count*2], &boxy[0]);
+        std::copy(&param_box_values[0], &param_box_values[g_box_count], &boxvalues[0]);
         clearbox();
     }
 
     if (mode == 1)
     {
-        boxcount = image_box_count;
+        g_box_count = image_box_count;
         param_box_count = 0;
         return;
     }
 
-    boxcount =0;
+    g_box_count =0;
     //draw larger box to show parm zooming range
     bl.x = ((px -(int)parmzoom) * (int)(x_size_d+1+grout))-sxoffs-1;
     tl.x = bl.x;
@@ -1079,24 +1079,24 @@ void drawparmbox(int mode)
     boxy[2] = br.y + syoffs;
     boxx[3] = bl.x + sxoffs;
     boxy[3] = bl.y + syoffs;
-    boxcount = 8;
+    g_box_count = 8;
 #endif
-    if (boxcount)
+    if (g_box_count)
     {
         dispbox();
         // stash pixel values for later
-        std::copy(&boxx[0], &boxx[boxcount*2], &param_box_x[0]);
-        std::copy(&boxy[0], &boxy[boxcount*2], &param_box_y[0]);
-        std::copy(&boxvalues[0], &boxvalues[boxcount], &param_box_values[0]);
+        std::copy(&boxx[0], &boxx[g_box_count*2], &param_box_x[0]);
+        std::copy(&boxy[0], &boxy[g_box_count*2], &param_box_y[0]);
+        std::copy(&boxvalues[0], &boxvalues[g_box_count], &param_box_values[0]);
     }
-    param_box_count = boxcount;
-    boxcount = image_box_count;
+    param_box_count = g_box_count;
+    g_box_count = image_box_count;
     if (image_box_count)
     {
         // and move back old values so that everything can proceed as normal
-        std::copy(&image_box_x[0], &image_box_x[boxcount*2], &boxx[0]);
-        std::copy(&image_box_y[0], &image_box_y[boxcount*2], &boxy[0]);
-        std::copy(&image_box_values[0], &image_box_values[boxcount], &boxvalues[0]);
+        std::copy(&image_box_x[0], &image_box_x[g_box_count*2], &boxx[0]);
+        std::copy(&image_box_y[0], &image_box_y[g_box_count*2], &boxy[0]);
+        std::copy(&image_box_values[0], &image_box_values[g_box_count], &boxvalues[0]);
         dispbox();
     }
     return;

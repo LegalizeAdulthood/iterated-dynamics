@@ -46,7 +46,7 @@ int     xdots, ydots;           // # of dots on the logical screen
 double  x_size_d, y_size_d;         // xdots-1, ydots-1
 int     colors = 256;           // maximum colors available
 long    maxit;                  // try this many iterations
-int     boxcount;               // 0 if no zoom-box yet
+int     g_box_count;               // 0 if no zoom-box yet
 int     zoom_box_rotation;                // zoombox rotation
 double  zbx, zby;               // topleft of zoombox
 double  zoom_box_width, zoom_box_height, zoom_box_skew;  // zoombox size & shape

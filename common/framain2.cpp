@@ -494,12 +494,12 @@ done:
             }
         }
 #ifndef XFRACT
-        boxcount = 0;                     // no zoom box yet
+        g_box_count = 0;                     // no zoom box yet
         zoom_box_width = 0;
 #else
         if (!XZoomWaiting)
         {
-            boxcount = 0;                 // no zoom box yet
+            g_box_count = 0;                 // no zoom box yet
             zoom_box_width = 0;
         }
 #endif
@@ -1442,7 +1442,7 @@ do_3d_transform:
         move_zoombox(*kbdchar);
         break;
     case FIK_CTL_HOME:               // Ctrl-home
-        if (boxcount && (curfractalspecific->flags & NOROTATE) == 0)
+        if (g_box_count && (curfractalspecific->flags & NOROTATE) == 0)
         {
             i = key_count(FIK_CTL_HOME);
             if ((zoom_box_skew -= 0.02 * i) < -0.48)
@@ -1452,7 +1452,7 @@ do_3d_transform:
         }
         break;
     case FIK_CTL_END:                // Ctrl-end
-        if (boxcount && (curfractalspecific->flags & NOROTATE) == 0)
+        if (g_box_count && (curfractalspecific->flags & NOROTATE) == 0)
         {
             i = key_count(FIK_CTL_END);
             if ((zoom_box_skew += 0.02 * i) > 0.48)
@@ -1462,13 +1462,13 @@ do_3d_transform:
         }
         break;
     case FIK_CTL_PAGE_UP:            // Ctrl-pgup
-        if (boxcount)
+        if (g_box_count)
         {
             chgboxi(0, -2 * key_count(FIK_CTL_PAGE_UP));
         }
         break;
     case FIK_CTL_PAGE_DOWN:          // Ctrl-pgdn
-        if (boxcount)
+        if (g_box_count)
         {
             chgboxi(0, 2 * key_count(FIK_CTL_PAGE_DOWN));
         }
@@ -1499,7 +1499,7 @@ do_3d_transform:
         }
         break;
     case FIK_PAGE_DOWN:              // page down
-        if (boxcount)
+        if (g_box_count)
         {
             if (zoom_box_width >= .999 && zoom_box_height >= 0.999)   // end zoombox
             {
@@ -1512,13 +1512,13 @@ do_3d_transform:
         }
         break;
     case FIK_CTL_MINUS:              // Ctrl-kpad-
-        if (boxcount && (curfractalspecific->flags & NOROTATE) == 0)
+        if (g_box_count && (curfractalspecific->flags & NOROTATE) == 0)
         {
             zoom_box_rotation += key_count(FIK_CTL_MINUS);
         }
         break;
     case FIK_CTL_PLUS:               // Ctrl-kpad+
-        if (boxcount && (curfractalspecific->flags & NOROTATE) == 0)
+        if (g_box_count && (curfractalspecific->flags & NOROTATE) == 0)
         {
             zoom_box_rotation -= key_count(FIK_CTL_PLUS);
         }
@@ -1887,7 +1887,7 @@ static main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdm
     case FIK_CTL_DOWN_ARROW:           // Ctrl-cursor down
         // borrow ctrl cursor keys for moving selection box
         // in evolver mode
-        if (boxcount)
+        if (g_box_count)
         {
             GENEBASE gene[NUMGENES];
             copy_genes_from_bank(gene);
@@ -1944,7 +1944,7 @@ static main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdm
         }
         break;
     case FIK_CTL_HOME:               // Ctrl-home
-        if (boxcount && (curfractalspecific->flags & NOROTATE) == 0)
+        if (g_box_count && (curfractalspecific->flags & NOROTATE) == 0)
         {
             i = key_count(FIK_CTL_HOME);
             if ((zoom_box_skew -= 0.02 * i) < -0.48)
@@ -1954,7 +1954,7 @@ static main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdm
         }
         break;
     case FIK_CTL_END:                // Ctrl-end
-        if (boxcount && (curfractalspecific->flags & NOROTATE) == 0)
+        if (g_box_count && (curfractalspecific->flags & NOROTATE) == 0)
         {
             i = key_count(FIK_CTL_END);
             if ((zoom_box_skew += 0.02 * i) > 0.48)
@@ -2020,7 +2020,7 @@ static main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdm
         }
         break;
     case FIK_PAGE_DOWN:              // page down
-        if (boxcount)
+        if (g_box_count)
         {
             if (zoom_box_width >= .999 && zoom_box_height >= 0.999)
             {
@@ -2039,13 +2039,13 @@ static main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdm
         }
         break;
     case FIK_CTL_MINUS:              // Ctrl-kpad-
-        if (boxcount && (curfractalspecific->flags & NOROTATE) == 0)
+        if (g_box_count && (curfractalspecific->flags & NOROTATE) == 0)
         {
             zoom_box_rotation += key_count(FIK_CTL_MINUS);
         }
         break;
     case FIK_CTL_PLUS:               // Ctrl-kpad+
-        if (boxcount && (curfractalspecific->flags & NOROTATE) == 0)
+        if (g_box_count && (curfractalspecific->flags & NOROTATE) == 0)
         {
             zoom_box_rotation -= key_count(FIK_CTL_PLUS);
         }
@@ -2238,7 +2238,7 @@ static void move_zoombox(int keynum)
             keynum = driver_key_pressed();         // next pending key
         }
     }
-    if (boxcount)
+    if (g_box_count)
     {
         moveboxf((double)horizontal/x_size_d, (double)vertical/y_size_d);
     }
