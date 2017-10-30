@@ -60,7 +60,7 @@ int root, degree, g_basin;
 double floatmin, floatmax;
 double roverd, d1overd, threshold;
 DComplex tmp2;
-DComplex coefficient;
+DComplex g_marks_coefficient;
 DComplex  staticroots[16]; // roots array for degree 16 or less
 std::vector<DComplex> roots;
 std::vector<MPC> MPCroots;
@@ -940,8 +940,8 @@ MarksLambdafpFractal()
     tmp.x = tempsqrx - tempsqry;
     tmp.y = old.x * old.y *2;
 
-    g_new.x = coefficient.x * tmp.x - coefficient.y * tmp.y + floatparm->x;
-    g_new.y = coefficient.x * tmp.y + coefficient.y * tmp.x + floatparm->y;
+    g_new.x = g_marks_coefficient.x * tmp.x - g_marks_coefficient.y * tmp.y + floatparm->x;
+    g_new.y = g_marks_coefficient.x * tmp.y + g_marks_coefficient.y * tmp.x + floatparm->y;
 
     return floatbailout();
 }
@@ -1470,7 +1470,7 @@ int MarksCplxMand()
 {
     tmp.x = tempsqrx - tempsqry;
     tmp.y = 2*old.x*old.y;
-    FPUcplxmul(&tmp, &coefficient, &g_new);
+    FPUcplxmul(&tmp, &g_marks_coefficient, &g_new);
     g_new.x += floatparm->x;
     g_new.y += floatparm->y;
     return floatbailout();
@@ -2908,21 +2908,21 @@ int marksmandelfp_per_pixel()
 
     if (c_exp > 3)
     {
-        cpower(&old, c_exp-1, &coefficient);
+        cpower(&old, c_exp-1, &g_marks_coefficient);
     }
     else if (c_exp == 3)
     {
-        coefficient.x = tempsqrx - tempsqry;
-        coefficient.y = old.x * old.y * 2;
+        g_marks_coefficient.x = tempsqrx - tempsqry;
+        g_marks_coefficient.y = old.x * old.y * 2;
     }
     else if (c_exp == 2)
     {
-        coefficient = old;
+        g_marks_coefficient = old;
     }
     else if (c_exp < 2)
     {
-        coefficient.x = 1.0;
-        coefficient.y = 0.0;
+        g_marks_coefficient.x = 1.0;
+        g_marks_coefficient.y = 0.0;
     }
 
     return 1; // 1st iteration has been done
@@ -3188,7 +3188,7 @@ int MarksCplxMandperp()
     old.y = init.y + parm.y;
     tempsqrx = sqr(old.x);  // precalculated value
     tempsqry = sqr(old.y);
-    coefficient = ComplexPower(init, pwr);
+    g_marks_coefficient = ComplexPower(init, pwr);
     return 1;
 }
 

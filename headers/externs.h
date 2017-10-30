@@ -82,7 +82,7 @@ extern char                  g_calibrate;
 extern bool                  g_check_cur_dir;
 extern double                g_close_enough;
 extern double                g_close_proximity;
-extern DComplex              coefficient;
+extern DComplex              g_marks_coefficient;
 extern int                   col;
 extern int                   color;
 extern std::string           colorfile;
