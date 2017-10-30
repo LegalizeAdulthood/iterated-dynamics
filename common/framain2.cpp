@@ -2478,7 +2478,7 @@ static void save_history_info()
     current.old_demm_colors      = (short) (old_demm_colors ? 1 : 0);
     current.logcalc              = (short)Log_Fly_Calc;
     current.ismand               = (short) (ismand ? 1 : 0);
-    current.closeprox            = closeprox;
+    current.closeprox            = g_close_proximity;
     current.nobof                = (short)nobof;
     current.orbit_delay          = (short)orbit_delay;
     current.orbit_interval       = orbit_interval;
@@ -2668,7 +2668,7 @@ static void restore_history_info(int i)
     }
     Log_Fly_Calc = last.logcalc;
     ismand = last.ismand != 0;
-    closeprox = last.closeprox;
+    g_close_proximity = last.closeprox;
     nobof = last.nobof != 0;
     orbit_delay = last.orbit_delay;
     orbit_interval = last.orbit_interval;

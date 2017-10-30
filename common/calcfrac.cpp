@@ -123,7 +123,7 @@ bool old_demm_colors = false;
 int (*calctype)() = nullptr;
 int (*calctypetmp)() = nullptr;
 bool quick_calc = false;
-double closeprox = 0.01;
+double g_close_proximity = 0.01;
 
 double g_close_enough = 0.0;
 int pixelpi = 0;                        // value of pi in pixels
@@ -2096,7 +2096,7 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
     double totaldist = 0.0;
     DComplex lastz = { 0.0 };
 
-    lcloseprox = (long)(closeprox*fudge);
+    lcloseprox = (long)(g_close_proximity*fudge);
     savemaxit = maxit;
 #ifdef NUMSAVED
     for (int i = 0; i < NUMSAVED; i++)
@@ -2434,14 +2434,14 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
                 }
                 else
                 {
-                    if (fabs(g_new.x) < fabs(closeprox))
+                    if (fabs(g_new.x) < fabs(g_close_proximity))
                     {
-                        hooper = (closeprox > 0? 1 : -1); // close to y axis
+                        hooper = (g_close_proximity > 0? 1 : -1); // close to y axis
                         goto plot_inside;
                     }
-                    else if (fabs(g_new.y) < fabs(closeprox))
+                    else if (fabs(g_new.y) < fabs(g_close_proximity))
                     {
-                        hooper = (closeprox > 0? 2 : -2); // close to x axis
+                        hooper = (g_close_proximity > 0? 2 : -2); // close to x axis
                         goto plot_inside;
                     }
                 }
@@ -2455,7 +2455,7 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
                     g_new.y = ((double)lnew.y) / fudge;
                 }
                 mag = fmodtest();
-                if (mag < closeprox)
+                if (mag < g_close_proximity)
                 {
                     memvalue = mag;
                 }
@@ -2513,7 +2513,7 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
                     g_new.y = ((double)lnew.y) / fudge;
                 }
                 mag = fmodtest();
-                if (mag < closeprox)
+                if (mag < g_close_proximity)
                 {
                     memvalue = mag;
                 }
@@ -2781,7 +2781,7 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
         }
         else if (outside == FMOD)
         {
-            coloriter = (long)(memvalue * colors / closeprox);
+            coloriter = (long)(memvalue * colors / g_close_proximity);
         }
         else if (outside == TDIS)
         {
@@ -2942,7 +2942,7 @@ plot_inside: // we're "inside"
         }
         else if (inside == FMODI)
         {
-            coloriter = (long)(memvalue * colors / closeprox);
+            coloriter = (long)(memvalue * colors / g_close_proximity);
         }
         else if (inside == ATANI)            // "atan"
         {

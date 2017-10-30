@@ -476,7 +476,7 @@ static void initvars_fractal()          // init vars affecting calculation
     usr_stdcalcmode = 'g';              // initial solid-guessing
     stoppass = 0;                       // initial guessing stoppass
     quick_calc = false;
-    closeprox = 0.01;
+    g_close_proximity = 0.01;
     ismand = true;                      // default formula mand/jul toggle
 #ifndef XFRACT
     usr_floatflag = false;              // turn off the float flag
@@ -1507,7 +1507,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
 
     if (variable == "proximity")       // proximity=?
     {
-        closeprox = floatval[0];
+        g_close_proximity = floatval[0];
         return CMDARG_FRACTAL_PARAM;
     }
 

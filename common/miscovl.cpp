@@ -941,10 +941,10 @@ void write_batch_parms(char const *colorinf, bool colorsonly, int maxcolor, int 
                 put_parm("%d", inside);
             }
         }
-        if (closeprox != 0.01 && (inside == EPSCROSS || inside == FMODI
+        if (g_close_proximity != 0.01 && (inside == EPSCROSS || inside == FMODI
                                   || outside == FMOD))
         {
-            put_parm(" %s=%.15g", "proximity", closeprox);
+            put_parm(" %s=%.15g", "proximity", g_close_proximity);
         }
         if (outside != ITER)
         {

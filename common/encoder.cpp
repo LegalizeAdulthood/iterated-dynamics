@@ -989,7 +989,7 @@ static void setup_save_info(FRACTAL_INFO *save_info)
     save_info->logcalc = (short) Log_Fly_Calc;
     save_info->stoppass = (short) stoppass;
     save_info->quick_calc = (short) (quick_calc ? 1 : 0);
-    save_info->closeprox = closeprox;
+    save_info->closeprox = g_close_proximity;
     save_info->nobof = (short) (nobof ? 1 : 0);
     save_info->orbit_interval = orbit_interval;
     save_info->orbit_delay = (short) orbit_delay;
