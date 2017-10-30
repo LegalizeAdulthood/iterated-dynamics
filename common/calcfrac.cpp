@@ -125,7 +125,7 @@ int (*calctypetmp)() = nullptr;
 bool quick_calc = false;
 double closeprox = 0.01;
 
-double closenuff = 0.0;
+double g_close_enough = 0.0;
 int pixelpi = 0;                        // value of pi in pixels
 unsigned long lm = 0;                   // magnitude limit (CALCMAND)
 
@@ -840,7 +840,7 @@ int calcfract()
         invert = 3; // so values will not be changed if we come back
     }
 
-    closenuff = ddelmin*pow(2.0, -(double)(abs(periodicitycheck)));
+    g_close_enough = ddelmin*pow(2.0, -(double)(abs(periodicitycheck)));
     rqlim_save = rqlim;
     rqlim2 = sqrt(rqlim);
     if (integerfractal)          // for integer routines (lambda)
@@ -855,7 +855,7 @@ int calcfract()
             llimit = 0x7fffffffL; // klooge for integer math
         }
         llimit2 = (long)(rqlim2 * fudge);    // stop if magnitude exceeds this
-        lclosenuff = (long)(closenuff * fudge); // "close enough" value
+        lclosenuff = (long)(g_close_enough * fudge); // "close enough" value
         l16triglim = 8L << 16;         // domain limit of fast trig functions
         linitorbit.x = (long)(initorbit.x * fudge);
         linitorbit.y = (long)(initorbit.y * fudge);
@@ -899,8 +899,8 @@ int calcfract()
         {
             // not a stand-alone
             // next two lines in case periodicity changed
-            closenuff = ddelmin*pow(2.0, -(double)(abs(periodicitycheck)));
-            lclosenuff = (long)(closenuff * fudge); // "close enough" value
+            g_close_enough = ddelmin*pow(2.0, -(double)(abs(periodicitycheck)));
+            lclosenuff = (long)(g_close_enough * fudge); // "close enough" value
             setsymmetry(symmetry, false);
             timer(0, calctype); // non-standard fractal engine
         }
@@ -1268,8 +1268,8 @@ static void perform_worklist()
         }
 
         // some common initialization for escape-time pixel level routines
-        closenuff = ddelmin*pow(2.0, -(double)(abs(periodicitycheck)));
-        lclosenuff = (long)(closenuff * fudge); // "close enough" value
+        g_close_enough = ddelmin*pow(2.0, -(double)(abs(periodicitycheck)));
+        lclosenuff = (long)(g_close_enough * fudge); // "close enough" value
         keyboard_check_interval = max_keyboard_check_interval;
 
         setsymmetry(symmetry, true);
@@ -2649,9 +2649,9 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
                 }
                 else
                 {
-                    if (fabs(saved.x - g_new.x) < closenuff)
+                    if (fabs(saved.x - g_new.x) < g_close_enough)
                     {
-                        if (fabs(saved.y - g_new.y) < closenuff)
+                        if (fabs(saved.y - g_new.y) < g_close_enough)
                         {
                             caught_a_cycle = true;
                         }
@@ -2661,8 +2661,8 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
                     {
                         if (caught[i] == 0)
                         {
-                            if (fabs(savedz[i].x - g_new.x) < closenuff)
-                                if (fabs(savedz[i].y - g_new.y) < closenuff)
+                            if (fabs(savedz[i].x - g_new.x) < g_close_enough)
+                                if (fabs(savedz[i].y - g_new.y) < g_close_enough)
                                 {
                                     caught[i] = coloriter;
                                 }
