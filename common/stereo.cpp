@@ -17,7 +17,7 @@
 
 std::string stereomapname;
 int g_auto_stereo_depth = 100;
-double AutoStereo_width = 10;
+double g_auto_stereo_width = 10;
 bool grayflag = false;          // flag to use gray value rather than color number
 char calibrate = 1;             // add calibration bars to image
 bool image_map = false;
@@ -265,7 +265,7 @@ bool do_AutoStereo()
     }
 
     // empircally determined adjustment to make WIDTH scale correctly
-    WIDTH = AutoStereo_width*.67;
+    WIDTH = g_auto_stereo_width*.67;
     if (WIDTH < 1)
     {
         WIDTH = 1;

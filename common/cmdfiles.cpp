@@ -3476,7 +3476,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         {
             goto badarg;
         }
-        AutoStereo_width  = floatval[0];
+        g_auto_stereo_width  = floatval[0];
         return CMDARG_3D_PARAM;
     }
 
