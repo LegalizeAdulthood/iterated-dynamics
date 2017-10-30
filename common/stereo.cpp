@@ -16,7 +16,7 @@
 #include "helpdefs.h"
 
 std::string stereomapname;
-int AutoStereo_depth = 100;
+int g_auto_stereo_depth = 100;
 double AutoStereo_width = 10;
 bool grayflag = false;          // flag to use gray value rather than color number
 char calibrate = 1;             // add calibration bars to image
@@ -271,7 +271,7 @@ bool do_AutoStereo()
         WIDTH = 1;
     }
     GROUND = xdots / 8;
-    if (AutoStereo_depth < 0)
+    if (g_auto_stereo_depth < 0)
     {
         REVERSE = 1;
     }
@@ -279,7 +279,7 @@ bool do_AutoStereo()
     {
         REVERSE = 0;
     }
-    DEPTH = ((long) xdots * (long) AutoStereo_depth) / 4000L;
+    DEPTH = ((long) xdots * (long) g_auto_stereo_depth) / 4000L;
     DEPTH = labs(DEPTH) + 1;
     if (get_min_max())
     {

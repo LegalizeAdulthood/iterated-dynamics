@@ -1225,7 +1225,7 @@ int get_rds_params()
         ret = 0;
 
         int k = 0;
-        uvalues[k].uval.ival = AutoStereo_depth;
+        uvalues[k].uval.ival = g_auto_stereo_depth;
         uvalues[k++].type = 'i';
 
         uvalues[k].uval.dval = AutoStereo_width;
@@ -1287,7 +1287,7 @@ int get_rds_params()
         else
         {
             k = 0;
-            AutoStereo_depth = uvalues[k++].uval.ival;
+            g_auto_stereo_depth = uvalues[k++].uval.ival;
             AutoStereo_width = uvalues[k++].uval.dval;
             grayflag         = uvalues[k++].uval.ch.val != 0;
             calibrate        = (char)uvalues[k++].uval.ch.val;

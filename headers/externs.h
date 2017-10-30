@@ -43,7 +43,7 @@ extern DComplex              g_attractor[];
 extern bool                  g_auto_browse;
 extern std::string           g_auto_name;
 extern char                  g_auto_show_dot;
-extern int                   AutoStereo_depth;
+extern int                   g_auto_stereo_depth;
 extern double                AutoStereo_width;
 extern BYTE                  back_color[];
 extern int                   g_bad_config;
