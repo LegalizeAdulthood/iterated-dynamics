@@ -112,11 +112,11 @@ static void init_bf_2()
     i = find_alternate_math(fractype, bf_math_type::BIGNUM);
     if (i > -1)
     {
-        bf_math = alternatemath[i].math;
+        bf_math = g_alternate_math[i].math;
     }
     else if ((i = find_alternate_math(fractype, bf_math_type::BIGFLT)) > -1)
     {
-        bf_math = alternatemath[i].math;
+        bf_math = g_alternate_math[i].math;
     }
     else
     {

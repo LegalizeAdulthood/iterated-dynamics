@@ -996,12 +996,12 @@ int find_alternate_math(fractal_type type, bf_math_type math)
     }
     int i = -1;
     fractal_type curtype;
-    while ((curtype = alternatemath[++i].type) != type && curtype != fractal_type::NOFRACTAL)
+    while ((curtype = g_alternate_math[++i].type) != type && curtype != fractal_type::NOFRACTAL)
     {
         ;
     }
     int ret = -1;
-    if (curtype == type && alternatemath[i].math != bf_math_type::NONE)
+    if (curtype == type && g_alternate_math[i].math != bf_math_type::NONE)
     {
         ret = i;
     }
@@ -1023,9 +1023,9 @@ static void perform_worklist()
         sv_orbitcalc = curfractalspecific->orbitcalc;
         sv_per_pixel = curfractalspecific->per_pixel;
         sv_per_image = curfractalspecific->per_image;
-        curfractalspecific->orbitcalc = alternatemath[alt].orbitcalc;
-        curfractalspecific->per_pixel = alternatemath[alt].per_pixel;
-        curfractalspecific->per_image = alternatemath[alt].per_image;
+        curfractalspecific->orbitcalc = g_alternate_math[alt].orbitcalc;
+        curfractalspecific->per_pixel = g_alternate_math[alt].per_pixel;
+        curfractalspecific->per_image = g_alternate_math[alt].per_image;
     }
     else
     {
