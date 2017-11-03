@@ -135,7 +135,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
         {
             for (int i = 0; i < 16; i++)
             {
-                init3d[i] = read_info.init3d[i];
+                g_init_3d[i] = read_info.init3d[i];
             }
             previewfactor   = read_info.previewfactor;
             xtrans          = read_info.xtrans;

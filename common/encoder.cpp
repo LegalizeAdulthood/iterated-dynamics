@@ -890,7 +890,7 @@ static void setup_save_info(FRACTAL_INFO *save_info)
     save_info->symmetry = (short) g_force_symmetry;
     for (int i = 0; i < 16; i++)
     {
-        save_info->init3d[i] = (short) init3d[i];
+        save_info->init3d[i] = (short) g_init_3d[i];
     }
     save_info->previewfactor = (short) previewfactor;
     save_info->xtrans = (short) xtrans;

@@ -214,7 +214,7 @@ extern std::vector<float>    g_ifs_definition;
 extern bool                  g_ifs_type;
 extern int                   g_image_box_count;
 extern bool                  g_image_map;
-extern int                   init3d[20];
+extern int                   g_init_3d[20];
 extern DComplex              init;
 extern batch_modes init_batch;
 extern int                   initcyclelimit;
