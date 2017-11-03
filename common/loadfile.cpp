@@ -564,13 +564,13 @@ int read_overlay()      // read overlay/3D files, if reqr'd
         syoffs       = blk_6_info.syoffs;
         xdots        = blk_6_info.xdots;
         ydots        = blk_6_info.ydots;
-        evolve_image_grid_size = blk_6_info.image_grid_size;
+        g_evolve_image_grid_size = blk_6_info.image_grid_size;
         evolve_this_generation_random_seed = blk_6_info.this_generation_random_seed;
         evolve_max_random_mutation = blk_6_info.max_random_mutation;
         g_evolving = (int) blk_6_info.evolving;
         viewwindow = g_evolving != 0;
-        g_evolve_dist_per_x = evolve_x_parameter_range /(evolve_image_grid_size - 1);
-        g_evolve_dist_per_y = evolve_y_parameter_range /(evolve_image_grid_size - 1);
+        g_evolve_dist_per_x = evolve_x_parameter_range /(g_evolve_image_grid_size - 1);
+        g_evolve_dist_per_y = evolve_y_parameter_range /(g_evolve_image_grid_size - 1);
         if (read_info.version > 14)
         {
             for (int i = 0; i < NUMGENES; i++)

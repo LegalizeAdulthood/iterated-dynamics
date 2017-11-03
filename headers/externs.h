@@ -160,7 +160,7 @@ extern long                  g_fudge_half;
 extern double                g_fudge_limit;
 extern long                  g_fudge_one;
 extern long                  g_fudge_two;
-extern int evolve_image_grid_size;
+extern int                   g_evolve_image_grid_size;
 extern double evolve_max_random_mutation;
 extern double evolve_mutation_reduction_factor;
 extern float                 fileaspectratio;

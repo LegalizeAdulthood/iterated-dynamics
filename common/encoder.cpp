@@ -626,11 +626,11 @@ bool encoder()
                 esave_info.syoffs          = (short)syoffs;
                 esave_info.xdots           = (short)xdots;
                 esave_info.ydots           = (short)ydots;
-                esave_info.image_grid_size = (short) evolve_image_grid_size;
+                esave_info.image_grid_size = (short) g_evolve_image_grid_size;
                 esave_info.evolving        = (short)g_evolving;
                 esave_info.this_generation_random_seed = (unsigned short) evolve_this_generation_random_seed;
                 esave_info.max_random_mutation = evolve_max_random_mutation;
-                esave_info.ecount          = (short)(evolve_image_grid_size * evolve_image_grid_size);  // flag for done
+                esave_info.ecount          = (short)(g_evolve_image_grid_size * g_evolve_image_grid_size);  // flag for done
             }
             else
             {

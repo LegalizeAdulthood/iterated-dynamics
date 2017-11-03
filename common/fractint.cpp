@@ -199,7 +199,7 @@ static void main_restart(int const argc, char const *const argv[], bool &stacked
     evolve_y_parameter_offset = -1.5;
     evolve_discrete_y_parameter_offset = 0;
     evolve_discrete_x_parameter_offset = 0;
-    evolve_image_grid_size = 9;
+    g_evolve_image_grid_size = 9;
     evolve_max_random_mutation = 1;
     evolve_mutation_reduction_factor = 1.0;
     evolve_this_generation_random_seed = (unsigned int)clock_ticks();
