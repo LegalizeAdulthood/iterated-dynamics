@@ -258,16 +258,16 @@ restart:
     if (interrupted)
     {
         texttempmsg(" *interrupted* save ");
-        if (init_batch >= batch_modes::NORMAL)
+        if (g_init_batch >= batch_modes::NORMAL)
         {
-            init_batch = batch_modes::BAILOUT_ERROR_NO_SAVE;         // if batch mode, set error level
+            g_init_batch = batch_modes::BAILOUT_ERROR_NO_SAVE;         // if batch mode, set error level
         }
         return -1;
     }
     if (timedsave == 0)
     {
         driver_buzzer(buzzer_codes::COMPLETE);
-        if (init_batch == batch_modes::NONE)
+        if (g_init_batch == batch_modes::NONE)
         {
             extract_filename(tmpfile, openfile);
             sprintf(tmpmsg, " File saved as %s ", tmpfile);
@@ -318,7 +318,7 @@ bool encoder()
     BYTE bitsperpixel, x;
     FRACTAL_INFO save_info;
 
-    if (init_batch != batch_modes::NONE)                 // flush any impending keystrokes
+    if (g_init_batch != batch_modes::NONE)                 // flush any impending keystrokes
     {
         while (driver_key_pressed())
         {

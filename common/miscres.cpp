@@ -954,7 +954,7 @@ top:
         msgptr = "";
     }
     driver_put_string(s_row, 45, C_GENERAL_HI, msgptr);
-    if (init_batch != batch_modes::NONE && g_calc_status != calc_status_value::PARAMS_CHANGED)
+    if (g_init_batch != batch_modes::NONE && g_calc_status != calc_status_value::PARAMS_CHANGED)
     {
         driver_put_string(-1, -1, C_GENERAL_HI, " (Batch mode)");
     }

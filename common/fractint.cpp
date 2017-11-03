@@ -226,7 +226,7 @@ static void main_restart(int const argc, char const *const argv[], bool &stacked
 
     history_init();
 
-    if (g_debug_flag == debug_flags::prevent_overwrite_savename && init_batch == batch_modes::NORMAL)   // abort if savename already exists
+    if (g_debug_flag == debug_flags::prevent_overwrite_savename && g_init_batch == batch_modes::NORMAL)   // abort if savename already exists
     {
         check_samename();
     }
@@ -339,7 +339,7 @@ static bool main_restore_start(bool &stacked, bool &resumeflag)
     tab_mode = true;
     look_at_mouse = 0;                     // ignore mouse
 
-    if (((overlay_3d && (init_batch == batch_modes::NONE)) || stacked) && g_init_mode < 0)        // overlay command failed
+    if (((overlay_3d && (g_init_batch == batch_modes::NONE)) || stacked) && g_init_mode < 0)        // overlay command failed
     {
         driver_unstack_screen();                  // restore the graphics screen
         stacked = false;
@@ -382,7 +382,7 @@ static main_state main_image_start(bool &stacked, bool &resumeflag)
         }
     }
 
-    if (init_batch == batch_modes::NONE)
+    if (g_init_batch == batch_modes::NONE)
     {
         look_at_mouse = -FIK_PAGE_UP;           // just mouse left button, == pgup
     }
@@ -393,9 +393,9 @@ static main_state main_image_start(bool &stacked, bool &resumeflag)
 
     while (g_adapter < 0)                // cycle through instructions
     {
-        if (init_batch != batch_modes::NONE)                          // batch, nothing to do
+        if (g_init_batch != batch_modes::NONE)                          // batch, nothing to do
         {
-            init_batch = batch_modes::BAILOUT_INTERRUPTED_TRY_SAVE;                 // exit with error condition set
+            g_init_batch = batch_modes::BAILOUT_INTERRUPTED_TRY_SAVE;                 // exit with error condition set
             goodbye();
         }
         int kbdchar = main_menu(0);

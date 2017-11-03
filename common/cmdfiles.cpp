@@ -95,7 +95,7 @@ display_3d_modes g_display_3d = display_3d_modes::NONE; // 3D display flag: 0 = 
 bool    overlay_3d = false;      // 3D overlay flag
 int     g_init_3d[20] = { 0 };     // '3d=nn/nn/nn/...' values
 bool    g_check_cur_dir = false;    // flag to check current dir for files
-batch_modes init_batch = batch_modes::NONE; // 1 if batch run (no kbd)
+batch_modes g_init_batch = batch_modes::NONE; // 1 if batch run (no kbd)
 int     initsavetime = 0;       // autosave minutes
 DComplex  initorbit = { 0.0 };  // initial orbitvalue
 char    useinitorbit = 0;       // flag for initorbit
@@ -420,7 +420,7 @@ static void initvars_restart()          // <ins> key init
     g_ask_video = true;                    // turn on video-prompt flag
     fract_overwrite = false;            // don't overwrite
     soundflag = SOUNDFLAG_SPEAKER | SOUNDFLAG_BEEP; // sound is on to PC speaker
-    init_batch = batch_modes::NONE;                      // not in batch mode
+    g_init_batch = batch_modes::NONE;                      // not in batch mode
     g_check_cur_dir = false;                // flag to check current dire for files
     initsavetime = 0;                   // no auto-save
     g_init_mode = -1;                   // no initial video mode
@@ -998,7 +998,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
 #ifdef XFRACT
             g_init_mode = yesnoval[0] ? 0 : -1; // skip credits for batch mode
 #endif
-            init_batch = static_cast<batch_modes>(yesnoval[0]);
+            g_init_batch = static_cast<batch_modes>(yesnoval[0]);
             return CMDARG_FRACTAL_PARAM | CMDARG_3D_PARAM;
         }
         if (variable == "maxhistory")       // maxhistory=?
@@ -3794,9 +3794,9 @@ static void argerror(char const *badarg)      // oops. couldn't decode this
                " argument list with descriptions)";
     }
     stopmsg(STOPMSG_NONE, msg.c_str());
-    if (init_batch != batch_modes::NONE)
+    if (g_init_batch != batch_modes::NONE)
     {
-        init_batch = batch_modes::BAILOUT_INTERRUPTED_TRY_SAVE;
+        g_init_batch = batch_modes::BAILOUT_INTERRUPTED_TRY_SAVE;
         goodbye();
     }
 }
@@ -3903,7 +3903,7 @@ int init_msg(char const *cmdstr, char const *badfilename, cmd_file mode)
     {"command line", "sstools.ini", "PAR file", "PAR file"};
     static int row = 1;
 
-    if (init_batch == batch_modes::NORMAL)
+    if (g_init_batch == batch_modes::NORMAL)
     {
         // in batch mode
         if (badfilename)
@@ -3959,7 +3959,7 @@ void dopause(int action)
     switch (action)
     {
     case 0:
-        if (init_batch == batch_modes::NONE)
+        if (g_init_batch == batch_modes::NONE)
         {
             if (needpause == 1)
             {
