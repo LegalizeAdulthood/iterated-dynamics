@@ -1093,7 +1093,7 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
             {
                 // switch to corresponding Julia set
                 int key;
-                hasinverse = (fractype == fractal_type::MANDEL || fractype == fractal_type::MANDELFP) && bf_math == bf_math_type::NONE;
+                g_has_inverse = (fractype == fractal_type::MANDEL || fractype == fractal_type::MANDELFP) && bf_math == bf_math_type::NONE;
                 clear_zoombox();
                 Jiim(jiim_types::JIIM);
                 key = driver_get_key();    // flush keyboard buffer

@@ -67,7 +67,7 @@ double  g_f_at_rad;               // finite attractor radius
 int     bitshift;               // fudgefactor
 
 int     g_bad_config = 0;          // 'fractint.cfg' ok?
-bool hasinverse = false;
+bool g_has_inverse = false;
 // note that integer grid is set when integerfractal && !invert;
 // otherwise the floating point grid is set; never both at once
 std::vector<long> lx0;              // x, y grid

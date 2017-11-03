@@ -171,7 +171,7 @@ float  luckyx = 0, luckyy = 0;
 static void fillrect(int x, int y, int width, int depth, int color)
 {
     // fast version of fillrect
-    if (!hasinverse)
+    if (!g_has_inverse)
     {
         return;
     }
@@ -420,7 +420,7 @@ DeQueueLong()
 
 static void SaveRect(int x, int y, int width, int depth)
 {
-    if (!hasinverse)
+    if (!g_has_inverse)
     {
         return;
     }
@@ -440,7 +440,7 @@ static void SaveRect(int x, int y, int width, int depth)
 
 static void RestoreRect(int x, int y, int width, int depth)
 {
-    if (!hasinverse)
+    if (!g_has_inverse)
     {
         return;
     }
@@ -502,7 +502,7 @@ void Jiim(jiim_types which)
     else
     {
         help_mode = HELP_ORBITS;
-        hasinverse = true;
+        g_has_inverse = true;
     }
     oldsxoffs = sxoffs;
     oldsyoffs = syoffs;
@@ -550,13 +550,13 @@ void Jiim(jiim_types which)
 
     if (sxoffs != 0 || syoffs != 0) // we're in view windows
     {
-        bool const savehasinverse = hasinverse;
-        hasinverse = true;
+        bool const savehasinverse = g_has_inverse;
+        g_has_inverse = true;
         SaveRect(0, 0, xdots, ydots);
         sxoffs = g_video_start_x;
         syoffs = g_video_start_y;
         RestoreRect(0, 0, xdots, ydots);
-        hasinverse = savehasinverse;
+        g_has_inverse = savehasinverse;
     }
 
     if (xdots == g_vesa_x_res || ydots == g_vesa_y_res ||
@@ -973,7 +973,7 @@ void Jiim(jiim_types which)
 
         if (which == jiim_types::JIIM)
         {
-            if (!hasinverse)
+            if (!g_has_inverse)
             {
                 continue;
             }
@@ -1271,13 +1271,13 @@ finish:
                 windows = 2;
             }
             Cursor_Hide();
-            bool const savehasinverse = hasinverse;
-            hasinverse = true;
+            bool const savehasinverse = g_has_inverse;
+            g_has_inverse = true;
             SaveRect(0, 0, xdots, ydots);
             sxoffs = oldsxoffs;
             syoffs = oldsyoffs;
             RestoreRect(0, 0, xdots, ydots);
-            hasinverse = savehasinverse;
+            g_has_inverse = savehasinverse;
         }
     }
 #ifdef XFRACT
