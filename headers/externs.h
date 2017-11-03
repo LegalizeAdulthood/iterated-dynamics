@@ -155,7 +155,7 @@ extern bool                  g_have_evolve_info;
 extern EVOLUTION_INFO        g_evolve_info;
 extern int                   g_eye_separation;
 extern float                 g_eyes_fp;
-extern bool                  fastrestore;
+extern bool                  g_fast_restore;
 extern long                  FgHalf;
 extern double                fgLimit;
 extern long                  FgOne;

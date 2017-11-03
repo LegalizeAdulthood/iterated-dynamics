@@ -59,7 +59,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
     g_init_mode = -1;               // no viewing mode set yet
     bool oldfloatflag = usr_floatflag;
     loaded3d = false;
-    if (fastrestore)
+    if (g_fast_restore)
     {
         viewwindow = false;
     }

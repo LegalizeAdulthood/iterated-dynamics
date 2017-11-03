@@ -127,7 +127,7 @@ bool new_bifurcation_functions_loaded = false; // if function loaded for new bif
 float   screenaspect = DEFAULTASPECT;   // aspect ratio of the screen
 float   g_aspect_drift = DEFAULTASPECTDRIFT;  // how much drift is allowed and
                                 // still forced to screenaspect
-bool fastrestore = false;       /* true - reset viewwindows prior to a restore
+bool g_fast_restore = false;       /* true - reset viewwindows prior to a restore
                                      and do not display warnings when video
                                      mode changes during restore */
 
@@ -2463,7 +2463,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         {
             goto badarg;
         }
-        fastrestore = yesnoval[0] != 0;
+        g_fast_restore = yesnoval[0] != 0;
         return CMDARG_NONE;
     }
 

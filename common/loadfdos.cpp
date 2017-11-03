@@ -263,7 +263,7 @@ int get_video_mode(FRACTAL_INFO *info, ext_blk_3 *blk_3_info)
         vid[i].flags  = tmpflags;
     }
 
-    if (fastrestore  && !g_ask_video)
+    if (g_fast_restore  && !g_ask_video)
     {
         g_init_mode = g_adapter;
     }
@@ -516,7 +516,7 @@ int get_video_mode(FRACTAL_INFO *info, ext_blk_3 *blk_3_info)
             viewreduction = tmpreduce; // ok, this works
         }
     }
-    if (!make_parameter_file && !fastrestore && (init_batch == batch_modes::NONE) &&
+    if (!make_parameter_file && !g_fast_restore && (init_batch == batch_modes::NONE) &&
             (fabs(finalaspectratio - screenaspect) > .00001 || viewxdots != 0))
     {
         stopmsg(STOPMSG_NO_BUZZER,
