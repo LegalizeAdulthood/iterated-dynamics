@@ -242,7 +242,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
 
     if (read_info.version > 7)
     {
-        fillcolor         = read_info.fillcolor;
+        g_fill_color         = read_info.fillcolor;
     }
 
     if (read_info.version > 8)

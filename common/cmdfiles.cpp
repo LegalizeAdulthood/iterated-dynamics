@@ -88,7 +88,7 @@ int     g_debug_flag = debug_flags::none; // internal use only - you didn't see 
 bool    timerflag = false;      // you didn't see this, either
 int     g_cycle_limit = 0;         // color-rotator upper limit
 int     inside = 0;             // inside color: 1=blue
-int     fillcolor = 0;          // fillcolor: -1=normal
+int     g_fill_color = 0;          // fillcolor: -1=normal
 int     outside = COLOR_BLACK;  // outside color
 bool finattract = false;        // finite attractor logic
 display_3d_modes g_display_3d = display_3d_modes::NONE; // 3D display flag: 0 = OFF
@@ -469,7 +469,7 @@ static void initvars_fractal()          // init vars affecting calculation
     g_escape_exit = false;                // don't disable the "are you sure?" screen
     usr_periodicitycheck = 1;           // turn on periodicity
     inside = 1;                         // inside color = blue
-    fillcolor = -1;                     // no special fill color
+    g_fill_color = -1;                     // no special fill color
     usr_biomorph = -1;                  // turn off biomorph flag
     outside = ITER;                     // outside color = -1 (not used)
     maxit = 150;                        // initial maxiter
@@ -1515,7 +1515,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
     {
         if (strcmp(value, "normal") == 0)
         {
-            fillcolor = -1;
+            g_fill_color = -1;
         }
         else if (numval == NONNUMERIC)
         {
@@ -1523,7 +1523,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         }
         else
         {
-            fillcolor = numval;
+            g_fill_color = numval;
         }
         return CMDARG_FRACTAL_PARAM;
     }

@@ -892,10 +892,10 @@ void write_batch_parms(char const *colorinf, bool colorsonly, int maxcolor, int 
                 put_parm("mod"); // default, just in case
             }
         }
-        if (fillcolor != -1)
+        if (g_fill_color != -1)
         {
             put_parm(" %s=", "fillcolor");
-            put_parm("%d", fillcolor);
+            put_parm("%d", g_fill_color);
         }
         if (inside != 1)
         {

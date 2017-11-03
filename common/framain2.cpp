@@ -894,7 +894,7 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
         if (maxit > old_maxit && inside >= COLOR_BLACK && g_calc_status == calc_status_value::COMPLETED &&
                 curfractalspecific->calctype == standard_fractal && !LogFlag &&
                 !truecolor &&    // recalc not yet implemented with truecolor
-                !(usr_stdcalcmode == 't' && fillcolor > -1) &&
+                !(usr_stdcalcmode == 't' && g_fill_color > -1) &&
                 // tesseral with fill doesn't work
                 !(usr_stdcalcmode == 'o') &&
                 i == 1 && // nothing else changed
@@ -2385,7 +2385,7 @@ static void save_history_info()
     current.dparm8               = param[7]                  ;
     current.dparm9               = param[8]                  ;
     current.dparm10              = param[9]                  ;
-    current.fillcolor            = (short)fillcolor                 ;
+    current.fillcolor            = (short)g_fill_color                 ;
     current.potential[0]         = potparam[0]               ;
     current.potential[1]         = potparam[1]               ;
     current.potential[2]         = potparam[2]               ;
@@ -2565,7 +2565,7 @@ static void restore_history_info(int i)
     param[7]              = last.dparm8         ;
     param[8]              = last.dparm9         ;
     param[9]              = last.dparm10        ;
-    fillcolor             = last.fillcolor      ;
+    g_fill_color             = last.fillcolor      ;
     potparam[0]           = last.potential[0]   ;
     potparam[1]           = last.potential[1]   ;
     potparam[2]           = last.potential[2]   ;

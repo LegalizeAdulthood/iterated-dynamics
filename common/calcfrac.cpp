@@ -1451,7 +1451,7 @@ static int diffusion_engine()
 
     /*************************************/
     // only the points (dithering only) :
-    if (fillcolor == 0)
+    if (g_fill_color == 0)
     {
         while (g_diffusion_counter < (g_diffusion_limit >> 1))
         {
@@ -3521,7 +3521,7 @@ int  bound_trace_main()
             trail_row = currow;
             trail_col = curcol;
             trail_color = g_color;
-            fillcolor_used = fillcolor > 0 ? fillcolor : trail_color;
+            fillcolor_used = g_fill_color > 0 ? g_fill_color : trail_color;
             coming_from = direction::West;
             going_to = direction::East;
             matches_found = 0;
@@ -4896,11 +4896,11 @@ static int tesseral()
             // all 4 edges are the same color, fill in
             int i, j;
             i = 0;
-            if (fillcolor != 0)
+            if (g_fill_color != 0)
             {
-                if (fillcolor > 0)
+                if (g_fill_color > 0)
                 {
-                    tp->top = fillcolor %g_colors;
+                    tp->top = g_fill_color %g_colors;
                 }
                 if (guessplot || (j = tp->x2 - tp->x1 - 1) < 2)
                 {

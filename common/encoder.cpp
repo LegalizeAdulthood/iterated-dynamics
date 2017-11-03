@@ -867,7 +867,7 @@ static void setup_save_info(FRACTAL_INFO *save_info)
     save_info->dparm8 = param[7];
     save_info->dparm9 = param[8];
     save_info->dparm10 = param[9];
-    save_info->fillcolor = (short) fillcolor;
+    save_info->fillcolor = (short) g_fill_color;
     save_info->potential[0] = (float) potparam[0];
     save_info->potential[1] = (float) potparam[1];
     save_info->potential[2] = (float) potparam[2];

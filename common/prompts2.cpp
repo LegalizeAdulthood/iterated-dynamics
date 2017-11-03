@@ -267,15 +267,15 @@ int get_toggles()
 
     choices[++k] = "Fill Color (normal,#) (works with passes=t, b and d)";
     uvalues[k].type = 's';
-    if (fillcolor < 0)
+    if (g_fill_color < 0)
     {
         strcpy(uvalues[k].uval.sval, "normal");
     }
     else
     {
-        sprintf(uvalues[k].uval.sval, "%d", fillcolor);
+        sprintf(uvalues[k].uval.sval, "%d", g_fill_color);
     }
-    old_fillcolor = fillcolor;
+    old_fillcolor = g_fill_color;
 
     choices[++k] = "Proximity value for inside=epscross and fmod";
     uvalues[k].type = 'f'; // should be 'd', but prompts get messed up
@@ -454,21 +454,21 @@ int get_toggles()
 
     if (strncmp(strlwr(uvalues[++k].uval.sval), "normal", 4) == 0)
     {
-        fillcolor = -1;
+        g_fill_color = -1;
     }
     else
     {
-        fillcolor = atoi(uvalues[k].uval.sval);
+        g_fill_color = atoi(uvalues[k].uval.sval);
     }
-    if (fillcolor < 0)
+    if (g_fill_color < 0)
     {
-        fillcolor = -1;
+        g_fill_color = -1;
     }
-    if (fillcolor >= g_colors)
+    if (g_fill_color >= g_colors)
     {
-        fillcolor = (fillcolor % g_colors) + (fillcolor / g_colors);
+        g_fill_color = (g_fill_color % g_colors) + (g_fill_color / g_colors);
     }
-    if (fillcolor != old_fillcolor)
+    if (g_fill_color != old_fillcolor)
     {
         j++;
     }
