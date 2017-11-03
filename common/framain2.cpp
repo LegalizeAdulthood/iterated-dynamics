@@ -561,7 +561,7 @@ resumeloop:                             // return here on failed overlays
                     }
                     if (kbdchar == FIK_ESC || kbdchar == 'm' || kbdchar == 'M')
                     {
-                        if (kbdchar == FIK_ESC && escape_exit)
+                        if (kbdchar == FIK_ESC && g_escape_exit)
                         {
                             // don't ask, just get out
                             goodbye();

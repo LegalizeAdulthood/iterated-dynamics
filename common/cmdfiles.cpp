@@ -145,7 +145,7 @@ int     Log_Fly_Calc = 0;       // calculate logmap on-the-fly
 bool    Log_Auto_Calc = false;          // auto calculate logmap
 bool    nobof = false;                  // Flag to make inside=bof options not duplicate bof images
 
-bool    escape_exit = false;    // set to true to avoid the "are you sure?" screen
+bool    g_escape_exit = false;    // set to true to avoid the "are you sure?" screen
 bool first_init = true;                 // first time into cmdfiles?
 static int init_rseed = 0;
 static bool initcorners = false;
@@ -466,7 +466,7 @@ static void initvars_restart()          // <ins> key init
 
 static void initvars_fractal()          // init vars affecting calculation
 {
-    escape_exit = false;                // don't disable the "are you sure?" screen
+    g_escape_exit = false;                // don't disable the "are you sure?" screen
     usr_periodicitycheck = 1;           // turn on periodicity
     inside = 1;                         // inside color = blue
     fillcolor = -1;                     // no special fill color
@@ -1088,7 +1088,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
             {
                 goto badarg;
             }
-            escape_exit = yesnoval[0] != 0;
+            g_escape_exit = yesnoval[0] != 0;
             return CMDARG_FRACTAL_PARAM | CMDARG_3D_PARAM;
         }
 
