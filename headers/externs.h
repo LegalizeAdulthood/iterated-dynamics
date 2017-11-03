@@ -152,7 +152,7 @@ extern bool                  g_escape_exit;
 extern BYTE                  g_exit_video_mode;
 extern int                   g_evolving;
 extern bool                  g_have_evolve_info;
-extern EVOLUTION_INFO evolve_info;
+extern EVOLUTION_INFO        g_evolve_info;
 extern int                   g_eye_separation;
 extern float                 eyesfp;
 extern bool                  fastrestore;

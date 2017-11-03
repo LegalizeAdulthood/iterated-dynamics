@@ -30,7 +30,7 @@ static void restore_history_info(int);
 static void save_history_info();
 
 int finishrow = 0;    // save when this row is finished
-EVOLUTION_INFO evolve_info = { 0 };
+EVOLUTION_INFO g_evolve_info = { 0 };
 bool g_have_evolve_info = false;
 char old_stdcalcmode;
 static  int        historyptr = -1;     // user pointer into history tbl
@@ -372,28 +372,28 @@ main_state big_while_loop(bool *const kbdmore, bool *const stacked, bool const r
                 copy_genes_from_bank(gene);
                 if (g_have_evolve_info && (g_calc_status == calc_status_value::RESUMABLE))
                 {
-                    evolve_x_parameter_range = evolve_info.x_parameter_range;
-                    evolve_y_parameter_range = evolve_info.y_parameter_range;
-                    evolve_new_x_parameter_offset = evolve_info.x_parameter_offset;
+                    evolve_x_parameter_range = g_evolve_info.x_parameter_range;
+                    evolve_y_parameter_range = g_evolve_info.y_parameter_range;
+                    evolve_new_x_parameter_offset = g_evolve_info.x_parameter_offset;
                     evolve_x_parameter_offset = evolve_new_x_parameter_offset;
-                    evolve_new_y_parameter_offset = evolve_info.y_parameter_offset;
+                    evolve_new_y_parameter_offset = g_evolve_info.y_parameter_offset;
                     evolve_y_parameter_offset = evolve_new_y_parameter_offset;
-                    evolve_new_discrete_x_parameter_offset = (char)evolve_info.discrete_x_parameter_offset;
+                    evolve_new_discrete_x_parameter_offset = (char)g_evolve_info.discrete_x_parameter_offset;
                     evolve_discrete_x_parameter_offset = evolve_new_discrete_x_parameter_offset;
-                    evolve_new_discrete_y_parameter_offset = (char)evolve_info.discrete_y_paramter_offset;
+                    evolve_new_discrete_y_parameter_offset = (char)g_evolve_info.discrete_y_paramter_offset;
                     evolve_discrete_y_parameter_offset = evolve_new_discrete_y_parameter_offset;
-                    px           = evolve_info.px;
-                    py           = evolve_info.py;
-                    sxoffs       = evolve_info.sxoffs;
-                    syoffs       = evolve_info.syoffs;
-                    xdots        = evolve_info.xdots;
-                    ydots        = evolve_info.ydots;
-                    evolve_image_grid_size = evolve_info.image_grid_size;
-                    evolve_this_generation_random_seed = evolve_info.this_generation_random_seed;
-                    evolve_max_random_mutation = evolve_info.max_random_mutation;
-                    g_evolving     = evolve_info.evolving;
+                    px           = g_evolve_info.px;
+                    py           = g_evolve_info.py;
+                    sxoffs       = g_evolve_info.sxoffs;
+                    syoffs       = g_evolve_info.syoffs;
+                    xdots        = g_evolve_info.xdots;
+                    ydots        = g_evolve_info.ydots;
+                    evolve_image_grid_size = g_evolve_info.image_grid_size;
+                    evolve_this_generation_random_seed = g_evolve_info.this_generation_random_seed;
+                    evolve_max_random_mutation = g_evolve_info.max_random_mutation;
+                    g_evolving     = g_evolve_info.evolving;
                     viewwindow = g_evolving != 0;
-                    ecount       = evolve_info.ecount;
+                    ecount       = g_evolve_info.ecount;
                     g_have_evolve_info = false;
                 }
                 else
@@ -445,23 +445,23 @@ done:
                 }
                 else
                 {
-                    evolve_info.x_parameter_range = evolve_x_parameter_range;
-                    evolve_info.y_parameter_range = evolve_y_parameter_range;
-                    evolve_info.x_parameter_offset = evolve_x_parameter_offset;
-                    evolve_info.y_parameter_offset = evolve_y_parameter_offset;
-                    evolve_info.discrete_x_parameter_offset = (short) evolve_discrete_x_parameter_offset;
-                    evolve_info.discrete_y_paramter_offset = (short) evolve_discrete_y_parameter_offset;
-                    evolve_info.px              = (short)px;
-                    evolve_info.py              = (short)py;
-                    evolve_info.sxoffs          = (short)sxoffs;
-                    evolve_info.syoffs          = (short)syoffs;
-                    evolve_info.xdots           = (short)xdots;
-                    evolve_info.ydots           = (short)ydots;
-                    evolve_info.image_grid_size = (short) evolve_image_grid_size;
-                    evolve_info.this_generation_random_seed = (short) evolve_this_generation_random_seed;
-                    evolve_info.max_random_mutation = evolve_max_random_mutation;
-                    evolve_info.evolving        = (short)g_evolving;
-                    evolve_info.ecount          = (short) ecount;
+                    g_evolve_info.x_parameter_range = evolve_x_parameter_range;
+                    g_evolve_info.y_parameter_range = evolve_y_parameter_range;
+                    g_evolve_info.x_parameter_offset = evolve_x_parameter_offset;
+                    g_evolve_info.y_parameter_offset = evolve_y_parameter_offset;
+                    g_evolve_info.discrete_x_parameter_offset = (short) evolve_discrete_x_parameter_offset;
+                    g_evolve_info.discrete_y_paramter_offset = (short) evolve_discrete_y_parameter_offset;
+                    g_evolve_info.px              = (short)px;
+                    g_evolve_info.py              = (short)py;
+                    g_evolve_info.sxoffs          = (short)sxoffs;
+                    g_evolve_info.syoffs          = (short)syoffs;
+                    g_evolve_info.xdots           = (short)xdots;
+                    g_evolve_info.ydots           = (short)ydots;
+                    g_evolve_info.image_grid_size = (short) evolve_image_grid_size;
+                    g_evolve_info.this_generation_random_seed = (short) evolve_this_generation_random_seed;
+                    g_evolve_info.max_random_mutation = evolve_max_random_mutation;
+                    g_evolve_info.evolving        = (short)g_evolving;
+                    g_evolve_info.ecount          = (short) ecount;
                     g_have_evolve_info = true;
                 }
                 syoffs = 0;

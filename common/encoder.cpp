@@ -635,23 +635,23 @@ bool encoder()
             else
             {
                 // we will need the resuming information
-                esave_info.x_parameter_range = evolve_info.x_parameter_range;
-                esave_info.y_parameter_range = evolve_info.y_parameter_range;
-                esave_info.x_parameter_offset = evolve_info.x_parameter_offset;
-                esave_info.y_parameter_offset = evolve_info.y_parameter_offset;
-                esave_info.discrete_x_parameter_offset = (short)evolve_info.discrete_x_parameter_offset;
-                esave_info.discrete_y_paramter_offset = (short)evolve_info.discrete_y_paramter_offset;
-                esave_info.px              = (short)evolve_info.px;
-                esave_info.py              = (short)evolve_info.py;
-                esave_info.sxoffs          = (short)evolve_info.sxoffs;
-                esave_info.syoffs          = (short)evolve_info.syoffs;
-                esave_info.xdots           = (short)evolve_info.xdots;
-                esave_info.ydots           = (short)evolve_info.ydots;
-                esave_info.image_grid_size = (short)evolve_info.image_grid_size;
-                esave_info.evolving        = (short)evolve_info.evolving;
-                esave_info.this_generation_random_seed = (unsigned short)evolve_info.this_generation_random_seed;
-                esave_info.max_random_mutation = evolve_info.max_random_mutation;
-                esave_info.ecount          = evolve_info.ecount;
+                esave_info.x_parameter_range = g_evolve_info.x_parameter_range;
+                esave_info.y_parameter_range = g_evolve_info.y_parameter_range;
+                esave_info.x_parameter_offset = g_evolve_info.x_parameter_offset;
+                esave_info.y_parameter_offset = g_evolve_info.y_parameter_offset;
+                esave_info.discrete_x_parameter_offset = (short)g_evolve_info.discrete_x_parameter_offset;
+                esave_info.discrete_y_paramter_offset = (short)g_evolve_info.discrete_y_paramter_offset;
+                esave_info.px              = (short)g_evolve_info.px;
+                esave_info.py              = (short)g_evolve_info.py;
+                esave_info.sxoffs          = (short)g_evolve_info.sxoffs;
+                esave_info.syoffs          = (short)g_evolve_info.syoffs;
+                esave_info.xdots           = (short)g_evolve_info.xdots;
+                esave_info.ydots           = (short)g_evolve_info.ydots;
+                esave_info.image_grid_size = (short)g_evolve_info.image_grid_size;
+                esave_info.evolving        = (short)g_evolve_info.evolving;
+                esave_info.this_generation_random_seed = (unsigned short)g_evolve_info.this_generation_random_seed;
+                esave_info.max_random_mutation = g_evolve_info.max_random_mutation;
+                esave_info.ecount          = g_evolve_info.ecount;
             }
             for (int i = 0; i < NUMGENES; i++)
             {

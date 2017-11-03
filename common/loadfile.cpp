@@ -524,23 +524,23 @@ int read_overlay()      // read overlay/3D files, if reqr'd
                 && g_calc_status != calc_status_value::COMPLETED)
         {
             g_calc_status = calc_status_value::RESUMABLE;
-            evolve_info.x_parameter_range = blk_6_info.x_parameter_range;
-            evolve_info.y_parameter_range = blk_6_info.y_parameter_range;
-            evolve_info.x_parameter_offset = blk_6_info.x_parameter_offset;
-            evolve_info.y_parameter_offset = blk_6_info.y_parameter_offset;
-            evolve_info.discrete_x_parameter_offset = blk_6_info.discrete_x_parameter_offset;
-            evolve_info.discrete_y_paramter_offset = blk_6_info.discrete_y_parameter_offset;
-            evolve_info.px           = blk_6_info.px;
-            evolve_info.py           = blk_6_info.py;
-            evolve_info.sxoffs       = blk_6_info.sxoffs;
-            evolve_info.syoffs       = blk_6_info.syoffs;
-            evolve_info.xdots        = blk_6_info.xdots;
-            evolve_info.ydots        = blk_6_info.ydots;
-            evolve_info.image_grid_size = blk_6_info.image_grid_size;
-            evolve_info.evolving     = blk_6_info.evolving;
-            evolve_info.this_generation_random_seed = blk_6_info.this_generation_random_seed;
-            evolve_info.max_random_mutation = blk_6_info.max_random_mutation;
-            evolve_info.ecount       = blk_6_info.ecount;
+            g_evolve_info.x_parameter_range = blk_6_info.x_parameter_range;
+            g_evolve_info.y_parameter_range = blk_6_info.y_parameter_range;
+            g_evolve_info.x_parameter_offset = blk_6_info.x_parameter_offset;
+            g_evolve_info.y_parameter_offset = blk_6_info.y_parameter_offset;
+            g_evolve_info.discrete_x_parameter_offset = blk_6_info.discrete_x_parameter_offset;
+            g_evolve_info.discrete_y_paramter_offset = blk_6_info.discrete_y_parameter_offset;
+            g_evolve_info.px           = blk_6_info.px;
+            g_evolve_info.py           = blk_6_info.py;
+            g_evolve_info.sxoffs       = blk_6_info.sxoffs;
+            g_evolve_info.syoffs       = blk_6_info.syoffs;
+            g_evolve_info.xdots        = blk_6_info.xdots;
+            g_evolve_info.ydots        = blk_6_info.ydots;
+            g_evolve_info.image_grid_size = blk_6_info.image_grid_size;
+            g_evolve_info.evolving     = blk_6_info.evolving;
+            g_evolve_info.this_generation_random_seed = blk_6_info.this_generation_random_seed;
+            g_evolve_info.max_random_mutation = blk_6_info.max_random_mutation;
+            g_evolve_info.ecount       = blk_6_info.ecount;
             g_have_evolve_info = true;
         }
         else
