@@ -213,7 +213,7 @@ extern std::string           g_ifs_name;
 extern std::vector<float>    g_ifs_definition;
 extern bool                  g_ifs_type;
 extern int                   g_image_box_count;
-extern bool                  image_map;
+extern bool                  g_image_map;
 extern int                   init3d[20];
 extern DComplex              init;
 extern batch_modes init_batch;

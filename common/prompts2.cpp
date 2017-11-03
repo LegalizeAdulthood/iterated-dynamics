@@ -1243,11 +1243,11 @@ int get_rds_params()
         uvalues[k].uval.ch.llen = 3;
         uvalues[k++].uval.ch.val  = g_calibrate;
 
-        uvalues[k].uval.ch.val = image_map ? 1 : 0;
+        uvalues[k].uval.ch.val = g_image_map ? 1 : 0;
         uvalues[k++].type = 'y';
 
 
-        if (!stereomapname.empty() && image_map)
+        if (!stereomapname.empty() && g_image_map)
         {
             uvalues[k].uval.ch.val = reuse;
             uvalues[k++].type = 'y';
@@ -1294,8 +1294,8 @@ int get_rds_params()
             g_auto_stereo_width = uvalues[k++].uval.dval;
             g_gray_flag         = uvalues[k++].uval.ch.val != 0;
             g_calibrate        = (char)uvalues[k++].uval.ch.val;
-            image_map        = uvalues[k++].uval.ch.val != 0;
-            if (!stereomapname.empty() && image_map)
+            g_image_map        = uvalues[k++].uval.ch.val != 0;
+            if (!stereomapname.empty() && g_image_map)
             {
                 reuse         = (char)uvalues[k++].uval.ch.val;
             }
@@ -1303,7 +1303,7 @@ int get_rds_params()
             {
                 reuse = 0;
             }
-            if (image_map && !reuse)
+            if (g_image_map && !reuse)
             {
                 if (getafilename("Select an Imagemap File", masks[1], stereomapname))
                 {

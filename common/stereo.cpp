@@ -20,7 +20,7 @@ int g_auto_stereo_depth = 100;
 double g_auto_stereo_width = 10;
 bool g_gray_flag = false;          // flag to use gray value rather than color number
 char g_calibrate = 1;             // add calibration bars to image
-bool image_map = false;
+bool g_image_map = false;
 
 /* this structure permits variables to be temporarily static and visible
    to routines in this file without permanently hogging memory */
@@ -309,7 +309,7 @@ bool do_AutoStereo()
     Y2 = YCEN + BARHEIGHT/2;
 
     Y = 0;
-    if (image_map)
+    if (g_image_map)
     {
         outln = outline_stereo;
         while ((Y) < ydots)
