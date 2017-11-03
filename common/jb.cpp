@@ -48,7 +48,7 @@ float originfp  = 8.0F;
 float heightfp  = 7.0F;
 float widthfp   = 10.0F;
 float g_dist_fp    = 24.0F;
-float eyesfp    = 2.5F;
+float g_eyes_fp    = 2.5F;
 float g_depth_fp   = 8.0F;
 float brratiofp = 1.0F;
 static long width, dist, depth, brratio;
@@ -89,7 +89,7 @@ JulibrotSetup()
     }
     else
     {
-        RightEyefp.x = eyesfp / 2;
+        RightEyefp.x = g_eyes_fp / 2;
     }
     LeftEyefp.x = -RightEyefp.x;
     RightEyefp.y = 0;
@@ -128,7 +128,7 @@ JulibrotSetup()
         depth = (long)(g_depth_fp * fg16);
         width = (long)(widthfp * fg16);
         dist = (long)(g_dist_fp * fg16);
-        eyes = (long)(eyesfp * fg16);
+        eyes = (long)(g_eyes_fp * fg16);
         brratio = (long)(brratiofp * fg16);
         dmx = (mxmax - mxmin) / zdots;
         dmy = (mymax - mymin) / zdots;

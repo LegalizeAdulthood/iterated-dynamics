@@ -572,7 +572,7 @@ static void initvars_fractal()          // init vars affecting calculation
     heightfp = 7;
     widthfp = 10;
     g_dist_fp = 24;
-    eyesfp = 2.5F;
+    g_eyes_fp = 2.5F;
     g_depth_fp = 8;
     neworbittype = fractal_type::JULIA;
     zdots = 128;
@@ -2057,7 +2057,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         {
             goto badarg;
         }
-        eyesfp = (float)floatval[0];
+        g_eyes_fp = (float)floatval[0];
         return CMDARG_FRACTAL_PARAM;
     }
 

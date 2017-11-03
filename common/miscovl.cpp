@@ -639,9 +639,9 @@ void write_batch_parms(char const *colorinf, bool colorsonly, int maxcolor, int 
                 put_parm(" %s=%d/%g/%g/%g/%g/%g", "julibrot3d",
                          zdots, originfp, g_depth_fp, heightfp, widthfp, g_dist_fp);
             }
-            if (eyesfp != 0)
+            if (g_eyes_fp != 0)
             {
-                put_parm(" %s=%g", "julibroteyes", eyesfp);
+                put_parm(" %s=%g", "julibroteyes", g_eyes_fp);
             }
             if (neworbittype != fractal_type::JULIA)
             {

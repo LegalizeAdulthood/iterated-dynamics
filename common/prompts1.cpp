@@ -1862,7 +1862,7 @@ gfp_top:
         paramvalues[promptnum].uval.ch.list = julia_3d_options_list;
         choices[promptnum++] = "3D Mode";
 
-        paramvalues[promptnum].uval.dval = eyesfp;
+        paramvalues[promptnum].uval.dval = g_eyes_fp;
         paramvalues[promptnum].type = 'f';
         choices[promptnum++] = "Distance between eyes";
         paramvalues[promptnum].uval.dval = originfp;
@@ -2039,7 +2039,7 @@ gfp_top:
         myminfp    = paramvalues[promptnum++].uval.dval;
         zdots      = paramvalues[promptnum++].uval.ival;
         juli3Dmode = paramvalues[promptnum++].uval.ch.val;
-        eyesfp     = (float)paramvalues[promptnum++].uval.dval;
+        g_eyes_fp     = (float)paramvalues[promptnum++].uval.dval;
         originfp   = (float)paramvalues[promptnum++].uval.dval;
         g_depth_fp    = (float)paramvalues[promptnum++].uval.dval;
         heightfp   = (float)paramvalues[promptnum++].uval.dval;
