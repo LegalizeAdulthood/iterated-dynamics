@@ -1347,9 +1347,9 @@ void write_batch_parms(char const *colorinf, bool colorsonly, int maxcolor, int 
             put_parm(" %s=%d", "sustain", fm_sustain);
         }
 
-        if (fm_release != 5)
+        if (g_fm_release != 5)
         {
-            put_parm(" %s=%d", "srelease", fm_release);
+            put_parm(" %s=%d", "srelease", g_fm_release);
         }
 
         if (soundflag & SOUNDFLAG_QUANTIZED)

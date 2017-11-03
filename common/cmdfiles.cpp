@@ -584,7 +584,7 @@ static void initvars_fractal()          // init vars affecting calculation
     g_fm_attack = 5;                       // fast attack
     g_fm_decay = 10;                        // long decay
     fm_sustain = 13;                      // fairly high sustain level
-    fm_release = 5;                      // short release
+    g_fm_release = 5;                      // short release
     fm_wavetype = 0;                     // sin wave
     polyphony = 0;                       // no polyphony
     for (int i = 0; i <= 11; i++)
@@ -2772,7 +2772,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
     if (variable == "srelease")
     {
         // release = ?
-        fm_release = numval & 0x0F;
+        g_fm_release = numval & 0x0F;
         return CMDARG_NONE;
     }
 

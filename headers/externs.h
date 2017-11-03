@@ -177,7 +177,7 @@ extern bool                  g_float_flag;
 extern DComplex *            g_float_param;
 extern int                   g_fm_attack;
 extern int                   g_fm_decay;
-extern int                   fm_release;
+extern int                   g_fm_release;
 extern int                   fm_sustain;
 extern int                   fm_wavetype;
 extern int                   fm_vol;            // volume of OPL-3 soundcard output
