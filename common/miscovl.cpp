@@ -105,9 +105,9 @@ void make_batch_file()
         {
             maxcolor = outside;
         }
-        if (distest < COLOR_BLACK && -distest > maxcolor)
+        if (g_distance_estimator < COLOR_BLACK && -g_distance_estimator > maxcolor)
         {
-            maxcolor = (int)(0 - distest);
+            maxcolor = (int)(0 - g_distance_estimator);
         }
         if (g_decomp[0] > maxcolor)
         {
@@ -1031,9 +1031,9 @@ void write_batch_parms(char const *colorinf, bool colorsonly, int maxcolor, int 
         {
             put_parm(" %s=%d", "decomp", g_decomp[0]);
         }
-        if (distest)
+        if (g_distance_estimator)
         {
-            put_parm(" %s=%ld/%d/%d/%d", "distest", distest, distestwidth,
+            put_parm(" %s=%ld/%d/%d/%d", "distest", g_distance_estimator, distestwidth,
                      pseudox?pseudox:xdots, pseudoy?pseudoy:ydots);
         }
         if (old_demm_colors)

@@ -2434,7 +2434,7 @@ static void save_history_info()
     current.stdcalcmode          = usr_stdcalcmode               ;
     current.three_pass           = three_pass ? 1 : 0;
     current.stoppass             = (short)stoppass;
-    current.distest              = distest                   ;
+    current.distest              = g_distance_estimator                   ;
     current.trigndx[0]           = static_cast<BYTE>(trigndx[0]);
     current.trigndx[1]           = static_cast<BYTE>(trigndx[1]);
     current.trigndx[2]           = static_cast<BYTE>(trigndx[2]);
@@ -2616,7 +2616,7 @@ static void restore_history_info(int i)
     stdcalcmode           = last.stdcalcmode    ;
     three_pass            = last.three_pass != 0;
     stoppass              = last.stoppass       ;
-    distest               = last.distest        ;
+    g_distance_estimator               = last.distest        ;
     usr_distest           = last.distest        ;
     trigndx[0]            = static_cast<trig_fn>(last.trigndx[0]);
     trigndx[1]            = static_cast<trig_fn>(last.trigndx[1]);

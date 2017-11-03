@@ -1217,7 +1217,7 @@ void backwards_v19()
     no_mag_calc = fix_bof();
     // fractal might use old periodicity method
     use_old_period = fix_period_bof();
-    use_old_distest = (save_release < 1827 && distest);
+    use_old_distest = (save_release < 1827 && g_distance_estimator);
 }
 
 void backwards_v20()
@@ -1254,7 +1254,7 @@ bool check_back()
             (fractype == fractal_type::TRIGSQR && save_release < 1900) ||
             (inside == STARTRAIL && save_release < 1825) ||
             (maxit > 32767 && save_release <= 1950) ||
-            (distest && save_release <=1950) ||
+            (g_distance_estimator && save_release <=1950) ||
             ((outside <= REAL && outside >= ATAN) &&
              save_release <= 1960) ||
             (fractype == fractal_type::FPPOPCORN && save_release <= 1960) ||

@@ -129,7 +129,7 @@ extern bool                  g_disk_16_bit;
 extern bool                  g_disk_flag;       // disk video active flag
 extern bool                  g_disk_targa;
 extern display_3d_modes      g_display_3d;
-extern long                  distest;
+extern long                  g_distance_estimator;
 extern int                   distestwidth;
 extern float                 distfp;
 extern int                   Distribution;

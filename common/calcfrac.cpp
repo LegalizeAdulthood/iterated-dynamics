@@ -656,7 +656,7 @@ int calcfract()
     // currently used only by bifurcation
     if (integerfractal)
     {
-        distest = 0;
+        g_distance_estimator = 0;
     }
     parm.x   = param[0];
     parm.y   = param[1];
@@ -893,7 +893,7 @@ int calcfract()
         xxstop = xdots-1;
         ixstop = xxstop;
         g_calc_status = calc_status_value::IN_PROGRESS; // mark as in-progress
-        distest = 0; // only standard escape time engine supports distest
+        g_distance_estimator = 0; // only standard escape time engine supports distest
         // per_image routine is run here
         if (curfractalspecific->per_image())
         {
@@ -1082,7 +1082,7 @@ static void perform_worklist()
         }
     }
 
-    if (distest) // setup stuff for distance estimator
+    if (g_distance_estimator) // setup stuff for distance estimator
     {
         double ftemp, ftemp2, delxx, delyy2, delyy, delxx2, d_x_size, d_y_size;
         double aspect;
@@ -1106,7 +1106,7 @@ static void perform_worklist()
 
         use_old_distest = save_release < 1827;
         rqlim = rqlim_save; // just in case changed to DEM_BAILOUT earlier
-        if (distest != 1 || g_colors == 2)   // not doing regular outside colors
+        if (g_distance_estimator != 1 || g_colors == 2)   // not doing regular outside colors
         {
             if (rqlim < DEM_BAILOUT)           // so go straight for dem bailout
             {
@@ -1136,7 +1136,7 @@ static void perform_worklist()
             dem_delta *= 1/(sqr(ftemp)*10000); // multiply by thickness desired
         }
         dem_width = (sqrt(sqr(xxmax-xxmin) + sqr(xx3rd-xxmin)) * aspect
-                     + sqrt(sqr(yymax-yymin) + sqr(yy3rd-yymin))) / distest;
+                     + sqrt(sqr(yymax-yymin) + sqr(yy3rd-yymin))) / g_distance_estimator;
         ftemp = (rqlim < DEM_BAILOUT) ? DEM_BAILOUT : rqlim;
         ftemp += 3; // bailout plus just a bit
         ftemp2 = log(ftemp);
@@ -2174,12 +2174,12 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
             }
         }
         init.y = dypixel();
-        if (distest)
+        if (g_distance_estimator)
         {
             if (use_old_distest)
             {
                 rqlim = rqlim_save;
-                if (distest != 1 || g_colors == 2)   // not doing regular outside colors
+                if (g_distance_estimator != 1 || g_colors == 2)   // not doing regular outside colors
                 {
                     if (rqlim < DEM_BAILOUT)     // so go straight for dem bailout
                     {
@@ -2283,7 +2283,7 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
             }
         }
 
-        if (distest)
+        if (g_distance_estimator)
         {
             double ftemp;
             // Distance estimator for points near Mandelbrot set
@@ -2803,7 +2803,7 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
         }
     }
 
-    if (distest)
+    if (g_distance_estimator)
     {
         double dist;
         dist = sqr(g_new.x) + sqr(g_new.y);
@@ -2819,11 +2819,11 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
         }
         if (dist < dem_delta)     // point is on the edge
         {
-            if (distest > 0)
+            if (g_distance_estimator > 0)
             {
                 goto plot_inside;   // show it as an inside point
             }
-            g_color_iter = 0 - distest;       // show boundary as specified color
+            g_color_iter = 0 - g_distance_estimator;       // show boundary as specified color
             goto plot_pixel;       // no further adjustments apply
         }
         if (g_colors == 2)
@@ -2831,7 +2831,7 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
             g_color_iter = !inside;   // the only useful distest 2 color use
             goto plot_pixel;       // no further adjustments apply
         }
-        if (distest > 1)          // pick color based on distance
+        if (g_distance_estimator > 1)          // pick color based on distance
         {
             if (old_demm_colors)   // this one is needed for old color scheme
             {

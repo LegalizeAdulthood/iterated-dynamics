@@ -229,7 +229,7 @@ MandelfpSetup()
            zmag, epsilon cross, and all the current outside options
         */
         if (g_debug_flag != debug_flags::force_standard_fractal
-                && !distest
+                && !g_distance_estimator
                 && g_decomp[0] == 0
                 && g_biomorph == -1
                 && (inside >= ITER)
@@ -354,7 +354,7 @@ JuliafpSetup()
            zmag, epsilon cross, and all the current outside options
         */
         if (g_debug_flag != debug_flags::force_standard_fractal
-                && !distest
+                && !g_distance_estimator
                 && g_decomp[0] == 0
                 && g_biomorph == -1
                 && (inside >= ITER)

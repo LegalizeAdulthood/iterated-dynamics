@@ -910,9 +910,9 @@ static void setup_save_info(FRACTAL_INFO *save_info)
     save_info->y3rd = yy3rd;
     save_info->calc_status = (short) g_calc_status;
     save_info->stdcalcmode = (char)((three_pass && stdcalcmode == '3') ? 127 : stdcalcmode);
-    if (distest <= 32000)
+    if (g_distance_estimator <= 32000)
     {
-        save_info->distestold = (short) distest;
+        save_info->distestold = (short) g_distance_estimator;
     }
     else
     {
@@ -982,7 +982,7 @@ static void setup_save_info(FRACTAL_INFO *save_info)
     save_info->bf_math = (short) bf_math;
     save_info->old_demm_colors = (short) (old_demm_colors ? 1 : 0);
     save_info->logmap = LogFlag;
-    save_info->distest = distest;
+    save_info->distest = g_distance_estimator;
     save_info->dinvert[0] = inversion[0];
     save_info->dinvert[1] = inversion[1];
     save_info->dinvert[2] = inversion[2];

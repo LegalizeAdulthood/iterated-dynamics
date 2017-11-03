@@ -287,7 +287,7 @@ init_restart:
        xxx is what we actually do in the current situation */
     stdcalcmode      = usr_stdcalcmode;
     periodicitycheck = usr_periodicitycheck;
-    distest          = usr_distest;
+    g_distance_estimator          = usr_distest;
     g_biomorph         = usr_biomorph;
 
     potflag = false;
@@ -299,10 +299,10 @@ init_restart:
     {
         potflag = true;
         usr_distest = 0;
-        distest = 0;    // can't do distest too
+        g_distance_estimator = 0;    // can't do distest too
     }
 
-    if (distest)
+    if (g_distance_estimator)
     {
         floatflag = true;  // force floating point for dist est
     }
