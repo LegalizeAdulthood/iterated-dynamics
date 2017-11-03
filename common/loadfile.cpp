@@ -1602,7 +1602,7 @@ rescan:  // entry for changed browse parms
                 driver_wait_key_pressed(0);
                 cleartempmsg();
                 c = driver_get_key();
-                if (c == 'Y' && confirm_file_deletes)
+                if (c == 'Y' && g_confirm_file_deletes)
                 {
                     texttempmsg("ARE YOU SURE???? (Y/N)");
                     if (driver_get_key() != 'Y')

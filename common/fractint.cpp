@@ -132,7 +132,7 @@ double smallest_window_display_size;
 int smallest_box_size_shown;
 bool no_sub_images = false;
 bool g_auto_browse = false;
-bool confirm_file_deletes = false;
+bool g_confirm_file_deletes = false;
 bool g_browse_check_fractal_params = false;
 bool g_browse_check_fractal_type = false;
 std::string g_browse_mask;
@@ -182,7 +182,7 @@ static void main_restart(int const argc, char const *const argv[], bool &stacked
     g_auto_browse = false;
     g_browse_check_fractal_type = false;
     g_browse_check_fractal_params = true;
-    confirm_file_deletes = true;
+    g_confirm_file_deletes = true;
     no_sub_images = false;
     smallest_window_display_size = 6;
     smallest_box_size_shown = 3;

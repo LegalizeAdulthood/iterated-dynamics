@@ -136,7 +136,7 @@ extern int                   g_distribution;
 extern bool                  g_dither_flag;
 extern bool                  g_read_color;
 extern int                   g_dot_mode;
-extern bool confirm_file_deletes;
+extern bool                  g_confirm_file_deletes;
 extern double                dpx;
 extern double                dpy;
 extern char                  drawmode;
