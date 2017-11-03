@@ -91,8 +91,8 @@ long calcmandfpasm()
     if (fractype != fractal_type::JULIAFP && fractype != fractal_type::JULIA)
     {
         // Mandelbrot_87
-        Cx = init.x;
-        Cy = init.y;
+        Cx = g_init.x;
+        Cy = g_init.y;
         x = parm.x+Cx;
         y = parm.y+Cy;
     }
@@ -101,8 +101,8 @@ long calcmandfpasm()
         // dojulia_87
         Cx = parm.x;
         Cy = parm.y;
-        x = init.x;
-        y = init.y;
+        x = g_init.x;
+        y = g_init.y;
         x2 = x*x;
         y2 = y*y;
         xy = x*y;

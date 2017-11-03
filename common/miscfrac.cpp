@@ -56,8 +56,8 @@ int test()
             for (col = 0; col <= ixstop; col++)       // look at each point on screen
             {
                 int color;
-                init.x = dxpixel();
-                init.y = dypixel();
+                g_init.x = dxpixel();
+                g_init.y = dypixel();
                 if (driver_key_pressed())
                 {
                     testend();
@@ -65,7 +65,7 @@ int test()
                     put_resume(sizeof(row), &row, sizeof(passes), &passes, 0);
                     return (-1);
                 }
-                color = testpt(init.x, init.y, parm.x, parm.y, maxit, inside);
+                color = testpt(g_init.x, g_init.y, parm.x, parm.y, maxit, inside);
                 if (color >= g_colors)
                 {
                     // avoid trouble if color is 0
@@ -1040,7 +1040,7 @@ int Bifurcation()
     }
     else
     {
-        init.y = (double)(yymax - iystop*delyy); // bottom pixels
+        g_init.y = (double)(yymax - iystop*delyy); // bottom pixels
     }
 
     while (x <= ixstop)
@@ -1155,7 +1155,7 @@ static void verhulst()          // P. F. Verhulst (1845)
         }
         else
         {
-            pixel_row = iystop - (int)((Population - init.y) / delyy);
+            pixel_row = iystop - (int)((Population - g_init.y) / delyy);
         }
 
         // if it's visible on the screen, save it in the column array
@@ -1484,9 +1484,9 @@ int lyapunov()
     (*plot)(col, row, 1);
     if (invert)
     {
-        invertz2(&init);
-        a = init.y;
-        b = init.x;
+        invertz2(&g_init);
+        a = g_init.y;
+        b = g_init.x;
     }
     else
     {

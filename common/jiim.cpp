@@ -909,12 +909,12 @@ void Jiim(jiim_types which)
             lold.x = lold.y;
             old.y = lold.x;
             old.x = old.y;
-            init.x = cr;
-            SaveC.x = init.x;
-            init.y = ci;
-            SaveC.y = init.y;
-            linit.x = (long)(init.x*g_fudge_factor);
-            linit.y = (long)(init.y*g_fudge_factor);
+            g_init.x = cr;
+            SaveC.x = g_init.x;
+            g_init.y = ci;
+            SaveC.y = g_init.y;
+            linit.x = (long)(g_init.x*g_fudge_factor);
+            linit.y = (long)(g_init.y*g_fudge_factor);
 
             old_y = -1;
             old_x = old_y;
@@ -1204,8 +1204,8 @@ void Jiim(jiim_types which)
                     old.y = lold.y;
                     old.y /= g_fudge_factor;
                 }
-                x = (int)((old.x - init.x) * xfactor * 3 * zoom + xoff);
-                y = (int)((old.y - init.y) * yfactor * 3 * zoom + yoff);
+                x = (int)((old.x - g_init.x) * xfactor * 3 * zoom + xoff);
+                y = (int)((old.y - g_init.y) * yfactor * 3 * zoom + yoff);
                 if ((*ORBITCALC)())
                 {
                     iter = maxit;

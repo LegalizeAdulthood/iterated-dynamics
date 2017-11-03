@@ -200,7 +200,7 @@ MandelfpSetup()
     g_c_exponent = (int)param[2];
     pwr.x = param[2] - 1.0;
     pwr.y = param[3];
-    g_float_param = &init;
+    g_float_param = &g_init;
     switch (fractype)
     {
     case fractal_type::MARKSMANDELFP:
@@ -808,7 +808,7 @@ ManlamTrigOrTrigSetup()
     // psuedo
     // default symmetry is X_AXIS
     longparm = &linit;
-    g_float_param = &init;
+    g_float_param = &g_init;
     if (trigndx[0] == trig_fn::SQR)
     {
         symmetry = symmetry_type::NONE;
@@ -825,7 +825,7 @@ MandelTrigOrTrigSetup()
 {
     // default symmetry is X_AXIS_NO_PARAM
     longparm = &linit;
-    g_float_param = &init;
+    g_float_param = &g_init;
     if ((trigndx[0] == trig_fn::FLIP) || (trigndx[1] == trig_fn::FLIP))
     {
         symmetry = symmetry_type::NONE;
@@ -1438,7 +1438,7 @@ bool
 MandPhoenixSetup()
 {
     longparm = &linit;
-    g_float_param = &init;
+    g_float_param = &g_init;
     degree = (int)parm2.x;
     if (degree < 2 && degree > -3)
     {
@@ -1488,7 +1488,7 @@ bool
 MandPhoenixCplxSetup()
 {
     longparm = &linit;
-    g_float_param = &init;
+    g_float_param = &g_init;
     degree = (int)param[4];
     if (degree < 2 && degree > -3)
     {

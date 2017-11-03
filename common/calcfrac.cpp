@@ -93,7 +93,7 @@ long llimit = 0;
 long llimit2 = 0;
 long lclosenuff = 0;
 long l16triglim = 0;
-DComplex init = { 0.0 };
+DComplex g_init = { 0.0 };
 DComplex tmp = { 0.0 };
 DComplex old = { 0.0 };
 DComplex g_new = { 0.0 };
@@ -2000,12 +2000,12 @@ int calcmandfp()
 {
     if (invert)
     {
-        invertz2(&init);
+        invertz2(&g_init);
     }
     else
     {
-        init.x = dxpixel();
-        init.y = dypixel();
+        g_init.x = dxpixel();
+        g_init.y = dypixel();
     }
     if (calcmandfpasm() >= 0)
     {
@@ -2173,7 +2173,7 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
                 clear_bf(bfsaved.y);
             }
         }
-        init.y = dypixel();
+        g_init.y = dypixel();
         if (g_distance_estimator)
         {
             if (use_old_distest)

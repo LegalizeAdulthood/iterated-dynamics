@@ -2641,18 +2641,18 @@ int long_mandel_per_pixel()
     if (invert)
     {
         // invert
-        invertz2(&init);
+        invertz2(&g_init);
 
         // watch out for overflow
-        if (sqr(init.x)+sqr(init.y) >= 127)
+        if (sqr(g_init.x)+sqr(g_init.y) >= 127)
         {
-            init.x = 8;  // value to bail out in one iteration
-            init.y = 8;
+            g_init.x = 8;  // value to bail out in one iteration
+            g_init.y = 8;
         }
 
         // convert to fudged longs
-        linit.x = (long)(init.x*g_fudge_factor);
-        linit.y = (long)(init.y*g_fudge_factor);
+        linit.x = (long)(g_init.x*g_fudge_factor);
+        linit.y = (long)(g_init.y*g_fudge_factor);
     }
 
     if (useinitorbit == 1)
@@ -2735,29 +2735,29 @@ int mandel_per_pixel()
 
     if (invert)
     {
-        invertz2(&init);
+        invertz2(&g_init);
 
         // watch out for overflow
         if (bitshift <= 24)
         {
-            if (sqr(init.x)+sqr(init.y) >= 127)
+            if (sqr(g_init.x)+sqr(g_init.y) >= 127)
             {
-                init.x = 8;  // value to bail out in one iteration
-                init.y = 8;
+                g_init.x = 8;  // value to bail out in one iteration
+                g_init.y = 8;
             }
         }
         if (bitshift >  24)
         {
-            if (sqr(init.x)+sqr(init.y) >= 4)
+            if (sqr(g_init.x)+sqr(g_init.y) >= 4)
             {
-                init.x = 2;  // value to bail out in one iteration
-                init.y = 2;
+                g_init.x = 2;  // value to bail out in one iteration
+                g_init.y = 2;
             }
         }
 
         // convert to fudged longs
-        linit.x = (long)(init.x*g_fudge_factor);
-        linit.y = (long)(init.y*g_fudge_factor);
+        linit.x = (long)(g_init.x*g_fudge_factor);
+        linit.y = (long)(g_init.y*g_fudge_factor);
     }
     else
     {
@@ -2813,18 +2813,18 @@ int marksmandel_per_pixel()
     // marksmandel
     if (invert)
     {
-        invertz2(&init);
+        invertz2(&g_init);
 
         // watch out for overflow
-        if (sqr(init.x)+sqr(init.y) >= 127)
+        if (sqr(g_init.x)+sqr(g_init.y) >= 127)
         {
-            init.x = 8;  // value to bail out in one iteration
-            init.y = 8;
+            g_init.x = 8;  // value to bail out in one iteration
+            g_init.y = 8;
         }
 
         // convert to fudged longs
-        linit.x = (long)(init.x*g_fudge_factor);
-        linit.y = (long)(init.y*g_fudge_factor);
+        linit.x = (long)(g_init.x*g_fudge_factor);
+        linit.y = (long)(g_init.y*g_fudge_factor);
     }
     else
     {
@@ -2879,14 +2879,14 @@ int marksmandelfp_per_pixel()
 
     if (invert)
     {
-        invertz2(&init);
+        invertz2(&g_init);
     }
     else
     {
-        init.x = dxpixel();
+        g_init.x = dxpixel();
         if (save_release >= 2004)
         {
-            init.y = dypixel();
+            g_init.y = dypixel();
         }
     }
 
@@ -2896,7 +2896,7 @@ int marksmandelfp_per_pixel()
     }
     else
     {
-        old = init;
+        old = g_init;
     }
 
     old.x += parm.x;      // initial pertubation of parameters set
@@ -2944,14 +2944,14 @@ int mandelfp_per_pixel()
 
     if (invert)
     {
-        invertz2(&init);
+        invertz2(&g_init);
     }
     else
     {
-        init.x = dxpixel();
+        g_init.x = dxpixel();
         if (save_release >= 2004)
         {
-            init.y = dypixel();
+            g_init.y = dypixel();
         }
     }
     switch (fractype)
@@ -2967,7 +2967,7 @@ int mandelfp_per_pixel()
         old.y = 0.0;
         break;
     default:
-        old = init;
+        old = g_init;
         break;
     }
 
@@ -2978,7 +2978,7 @@ int mandelfp_per_pixel()
     }
     else if (useinitorbit == 2)
     {
-        old = init;
+        old = g_init;
     }
 
     if ((inside == BOF60 || inside == BOF61) && !nobof)
@@ -2994,7 +2994,7 @@ int mandelfp_per_pixel()
         old.x += parm.x;
         old.y += parm.y;
     }
-    tmp = init; // for spider
+    tmp = g_init; // for spider
     tempsqrx = sqr(old.x);  // precalculated value for regular Mandelbrot
     tempsqry = sqr(old.y);
     return 1; // 1st iteration has been done
@@ -3054,14 +3054,14 @@ int othermandelfp_per_pixel()
 {
     if (invert)
     {
-        invertz2(&init);
+        invertz2(&g_init);
     }
     else
     {
-        init.x = dxpixel();
+        g_init.x = dxpixel();
         if (save_release >= 2004)
         {
-            init.y = dypixel();
+            g_init.y = dypixel();
         }
     }
 
@@ -3071,7 +3071,7 @@ int othermandelfp_per_pixel()
     }
     else
     {
-        old = init;
+        old = g_init;
     }
 
     old.x += parm.x;      // initial pertubation of parameters set
@@ -3086,19 +3086,19 @@ int MPCHalley_per_pixel()
     // MPC halley
     if (invert)
     {
-        invertz2(&init);
+        invertz2(&g_init);
     }
     else
     {
-        init.x = dxpixel();
+        g_init.x = dxpixel();
         if (save_release >= 2004)
         {
-            init.y = dypixel();
+            g_init.y = dypixel();
         }
     }
 
-    mpcold.x = *pd2MP(init.x);
-    mpcold.y = *pd2MP(init.y);
+    mpcold.x = *pd2MP(g_init.x);
+    mpcold.y = *pd2MP(g_init.y);
 
     return 0;
 #else
@@ -3110,18 +3110,18 @@ int Halley_per_pixel()
 {
     if (invert)
     {
-        invertz2(&init);
+        invertz2(&g_init);
     }
     else
     {
-        init.x = dxpixel();
+        g_init.x = dxpixel();
         if (save_release >= 2004)
         {
-            init.y = dypixel();
+            g_init.y = dypixel();
         }
     }
 
-    old = init;
+    old = g_init;
 
     return 0; // 1st iteration is not done
 }
@@ -3173,21 +3173,21 @@ int MarksCplxMandperp()
 {
     if (invert)
     {
-        invertz2(&init);
+        invertz2(&g_init);
     }
     else
     {
-        init.x = dxpixel();
+        g_init.x = dxpixel();
         if (save_release >= 2004)
         {
-            init.y = dypixel();
+            g_init.y = dypixel();
         }
     }
-    old.x = init.x + parm.x; // initial pertubation of parameters set
-    old.y = init.y + parm.y;
+    old.x = g_init.x + parm.x; // initial pertubation of parameters set
+    old.y = g_init.y + parm.y;
     tempsqrx = sqr(old.x);  // precalculated value
     tempsqry = sqr(old.y);
-    g_marks_coefficient = ComplexPower(init, pwr);
+    g_marks_coefficient = ComplexPower(g_init, pwr);
     return 1;
 }
 
@@ -3254,18 +3254,18 @@ int long_mandphoenix_per_pixel()
     if (invert)
     {
         // invert
-        invertz2(&init);
+        invertz2(&g_init);
 
         // watch out for overflow
-        if (sqr(init.x)+sqr(init.y) >= 127)
+        if (sqr(g_init.x)+sqr(g_init.y) >= 127)
         {
-            init.x = 8;  // value to bail out in one iteration
-            init.y = 8;
+            g_init.x = 8;  // value to bail out in one iteration
+            g_init.y = 8;
         }
 
         // convert to fudged longs
-        linit.x = (long)(init.x*g_fudge_factor);
-        linit.y = (long)(init.y*g_fudge_factor);
+        linit.x = (long)(g_init.x*g_fudge_factor);
+        linit.y = (long)(g_init.y*g_fudge_factor);
     }
 
     if (useinitorbit == 1)
@@ -3292,14 +3292,14 @@ int mandphoenix_per_pixel()
 {
     if (invert)
     {
-        invertz2(&init);
+        invertz2(&g_init);
     }
     else
     {
-        init.x = dxpixel();
+        g_init.x = dxpixel();
         if (save_release >= 2004)
         {
-            init.y = dypixel();
+            g_init.y = dypixel();
         }
     }
 
@@ -3309,7 +3309,7 @@ int mandphoenix_per_pixel()
     }
     else
     {
-        old = init;
+        old = g_init;
     }
 
     old.x += parm.x;      // initial pertubation of parameters set
@@ -3543,15 +3543,15 @@ int MandelbrotMix4fp_per_pixel()
 {
     if (invert)
     {
-        invertz2(&init);
+        invertz2(&g_init);
     }
     else
     {
-        init.x = dxpixel();
-        init.y = dypixel();
+        g_init.x = dxpixel();
+        g_init.y = dypixel();
     }
     old = tmp;
-    CMPLXtrig0(init, C);        // c=fn1(pixel):
+    CMPLXtrig0(g_init, C);        // c=fn1(pixel):
     return 0; // 1st iteration has been NOT been done
 }
 
