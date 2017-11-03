@@ -84,7 +84,7 @@ int     distestwidth = 0;
 bool    fract_overwrite = false;// true if file overwrite allowed
 int     soundflag = 0;          // sound control bitfield... see sound.c for useage
 int     g_base_hertz = 0;          // sound=x/y/x hertz value
-int     debugflag = debug_flags::none; // internal use only - you didn't see this
+int     g_debug_flag = debug_flags::none; // internal use only - you didn't see this
 bool    timerflag = false;      // you didn't see this, either
 int     g_cycle_limit = 0;         // color-rotator upper limit
 int     inside = 0;             // inside color: 1=blue
@@ -355,7 +355,7 @@ int cmdfiles(int argc, char const *const *argv)
 
     init_msg("", nullptr, cmd_file::AT_CMD_LINE);  // this causes driver_get_key if init_msg called on runup
 
-    if (debugflag != debug_flags::allow_init_commands_anytime)
+    if (g_debug_flag != debug_flags::allow_init_commands_anytime)
     {
         first_init = false;
     }
@@ -435,7 +435,7 @@ static void initvars_restart()          // <ins> key init
     zscroll = true;                     // relaxed screen scrolling
     orbit_delay = 0;                    // full speed orbits
     orbit_interval = 1;                 // plot all orbits
-    debugflag = debug_flags::none;      // debugging flag(s) are off
+    g_debug_flag = debug_flags::none;      // debugging flag(s) are off
     timerflag = false;                  // timer flags are off
     FormFileName = "fractint.frm";      // default formula file
     FormName = "";
@@ -986,7 +986,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         }
     }
 
-    if (mode != cmd_file::AT_AFTER_STARTUP || debugflag == debug_flags::allow_init_commands_anytime)
+    if (mode != cmd_file::AT_AFTER_STARTUP || g_debug_flag == debug_flags::allow_init_commands_anytime)
     {
         // these commands are allowed only at startup
         if (variable == "batch")     // batch=?
@@ -2094,8 +2094,8 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         initcorners = true;
         // good first approx, but dec could be too big
         dec = get_max_curarg_len(floatvalstr, totparms) + 1;
-        if ((dec > DBL_DIG+1 || debugflag == debug_flags::force_arbitrary_precision_math)
-                && debugflag != debug_flags::prevent_arbitrary_precision_math)
+        if ((dec > DBL_DIG+1 || g_debug_flag == debug_flags::force_arbitrary_precision_math)
+                && g_debug_flag != debug_flags::prevent_arbitrary_precision_math)
         {
             bf_math_type old_bf_math = bf_math;
             if (bf_math == bf_math_type::NONE || dec > decimals)
@@ -2307,8 +2307,8 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
 
         dec = getpower10(Magnification) + 4; // 4 digits of padding sounds good
 
-        if ((dec <= DBL_DIG+1 && debugflag != debug_flags::force_arbitrary_precision_math)
-                || debugflag == debug_flags::prevent_arbitrary_precision_math)
+        if ((dec <= DBL_DIG+1 && g_debug_flag != debug_flags::force_arbitrary_precision_math)
+                || g_debug_flag == debug_flags::prevent_arbitrary_precision_math)
         {
             // rough estimate that double is OK
             Xctr = floatval[0];
@@ -2879,9 +2879,9 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
             || variable == "debug")
     {
         // internal use only
-        debugflag = numval;
-        timerflag = (debugflag & debug_flags::benchmark_timer) != 0;       // separate timer flag
-        debugflag &= ~debug_flags::benchmark_timer;
+        g_debug_flag = numval;
+        timerflag = (g_debug_flag & debug_flags::benchmark_timer) != 0;       // separate timer flag
+        g_debug_flag &= ~debug_flags::benchmark_timer;
         return CMDARG_NONE;
     }
 

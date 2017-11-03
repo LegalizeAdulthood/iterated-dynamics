@@ -2967,7 +2967,7 @@ static bool long3dviewtransf(long3dvtinf *inf)
     // apply perspective if requested
     if (ZVIEWER)
     {
-        if (debugflag == debug_flags::force_float_perspective || ZVIEWER < 100) // use float for small persp
+        if (g_debug_flag == debug_flags::force_float_perspective || ZVIEWER < 100) // use float for small persp
         {
             // use float perspective calc
             VECTOR tmpv;

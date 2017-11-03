@@ -807,7 +807,7 @@ void write_batch_parms(char const *colorinf, bool colorsonly, int maxcolor, int 
             }
             else
             {
-                if (debugflag == debug_flags::force_long_double_param_output)
+                if (g_debug_flag == debug_flags::force_long_double_param_output)
                 {
                     put_parm(" %s=%.17Lg", "params", (long double)param[0]);
                 }
@@ -824,7 +824,7 @@ void write_batch_parms(char const *colorinf, bool colorsonly, int maxcolor, int 
                 }
                 else
                 {
-                    if (debugflag == debug_flags::force_long_double_param_output)
+                    if (g_debug_flag == debug_flags::force_long_double_param_output)
                     {
                         put_parm("/%.17Lg", (long double)param[j]);
                     }
@@ -1479,7 +1479,7 @@ docolors:
                 {
                     break;
                 }
-                if (debugflag == debug_flags::force_lossless_colormap)    // lossless compression
+                if (g_debug_flag == debug_flags::force_lossless_colormap)    // lossless compression
                 {
                     continue;
                 }
@@ -1513,7 +1513,7 @@ docolors:
                         for (j = 0; j < 3; ++j)
                         {
                             // check pattern of chg per color
-                            if (debugflag != debug_flags::allow_large_colormap_changes
+                            if (g_debug_flag != debug_flags::allow_large_colormap_changes
                                     && scanc > (curc+4) && scanc < maxcolor-5)
                             {
                                 if (abs(2*g_dac_box[scanc][j] - g_dac_box[scanc-5][j]
@@ -1725,9 +1725,9 @@ static int getprec(double a, double b, double c)
         diff = temp;
     }
     digits = 7;
-    if (debugflag >= debug_flags::force_precision_0_digits && debugflag < debug_flags::force_precision_20_digits)
+    if (g_debug_flag >= debug_flags::force_precision_0_digits && g_debug_flag < debug_flags::force_precision_20_digits)
     {
-        digits = debugflag - debug_flags::force_precision_0_digits;
+        digits = g_debug_flag - debug_flags::force_precision_0_digits;
     }
     while (diff < 1.0 && digits <= DBL_DIG+1)
     {

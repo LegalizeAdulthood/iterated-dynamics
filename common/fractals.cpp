@@ -3519,7 +3519,7 @@ bool MandelbrotMix4Setup()
             ;
         }
         // in case our kludge failed, let the user fix it
-        if (debugflag == debug_flags::mandelbrot_mix4_flip_sign)
+        if (g_debug_flag == debug_flags::mandelbrot_mix4_flip_sign)
         {
             tmp.y = -tmp.y;
         }

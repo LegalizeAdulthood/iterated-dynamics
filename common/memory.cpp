@@ -95,7 +95,7 @@ static void WhichDiskError(int I_O)
         "Read file error %d:  %s"
     };
     sprintf(buf, pats[(1 <= I_O && I_O <= 4) ? (I_O-1) : 0], errno, strerror(errno));
-    if (debugflag == debug_flags::display_memory_statistics)
+    if (g_debug_flag == debug_flags::display_memory_statistics)
     {
         if (stopmsg(STOPMSG_CANCEL | STOPMSG_NO_BUZZER, buf) == -1)
         {
@@ -133,11 +133,11 @@ static int check_for_mem(int stored_at, long howmuch)
 
     maxmem = (long)USHRT_MAX;
 
-    if (debugflag == debug_flags::force_memory_from_disk)
+    if (g_debug_flag == debug_flags::force_memory_from_disk)
     {
         stored_at = DISK;
     }
-    if (debugflag == debug_flags::force_memory_from_memory)
+    if (g_debug_flag == debug_flags::force_memory_from_memory)
     {
         stored_at = MEMORY;
     }
@@ -371,7 +371,7 @@ U16 MemoryAlloc(U16 size, long count, int stored_at)
         break;
     } // end of switch
 
-    if (stored_at != use_this_type && debugflag == debug_flags::display_memory_statistics)
+    if (stored_at != use_this_type && g_debug_flag == debug_flags::display_memory_statistics)
     {
         char buf[MSGLEN];
         sprintf(buf, "Asked for %s, allocated %lu bytes of %s, handle = %u.",
@@ -434,7 +434,7 @@ bool CopyFromMemoryToHandle(BYTE const *buffer, U16 size, long count, long offse
 
     start = (long)offset * size;
     tomove = (long)count * size;
-    if (debugflag == debug_flags::display_memory_statistics)
+    if (g_debug_flag == debug_flags::display_memory_statistics)
     {
         if (CheckBounds(start, tomove, handle))
         {
@@ -483,7 +483,7 @@ bool CopyFromMemoryToHandle(BYTE const *buffer, U16 size, long count, long offse
 diskerror:
         break;
     } // end of switch
-    if (!success && debugflag == debug_flags::display_memory_statistics)
+    if (!success && g_debug_flag == debug_flags::display_memory_statistics)
     {
         DisplayHandle(handle);
     }
@@ -503,7 +503,7 @@ bool CopyFromHandleToMemory(BYTE *buffer, U16 size, long count, long offset, U16
 
     start = (long)offset * size;
     tomove = (long)count * size;
-    if (debugflag == debug_flags::display_memory_statistics)
+    if (g_debug_flag == debug_flags::display_memory_statistics)
     {
         if (CheckBounds(start, tomove, handle))
         {
@@ -554,7 +554,7 @@ bool CopyFromHandleToMemory(BYTE *buffer, U16 size, long count, long offset, U16
 diskerror:
         break;
     } // end of switch
-    if (!success && debugflag == debug_flags::display_memory_statistics)
+    if (!success && g_debug_flag == debug_flags::display_memory_statistics)
     {
         DisplayHandle(handle);
     }
@@ -574,7 +574,7 @@ bool SetMemory(int value, U16 size, long count, long offset, U16 handle)
 
     start = (long)offset * size;
     tomove = (long)count * size;
-    if (debugflag == debug_flags::display_memory_statistics)
+    if (g_debug_flag == debug_flags::display_memory_statistics)
     {
         if (CheckBounds(start, tomove, handle))
         {
@@ -622,7 +622,7 @@ bool SetMemory(int value, U16 size, long count, long offset, U16 handle)
 diskerror:
         break;
     } // end of switch
-    if (!success && debugflag == debug_flags::display_memory_statistics)
+    if (!success && g_debug_flag == debug_flags::display_memory_statistics)
     {
         DisplayHandle(handle);
     }

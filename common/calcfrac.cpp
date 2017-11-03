@@ -1285,7 +1285,7 @@ static void perform_worklist()
         switch (stdcalcmode)
         {
         case 's':
-            if (debugflag == debug_flags::use_soi_long_double)
+            if (g_debug_flag == debug_flags::use_soi_long_double)
             {
                 soi_ldbl();
             }
@@ -1975,7 +1975,7 @@ int calcmand()              // fast per pixel 1/2/b/g, called with row & col set
                 }
             }
         }
-        if (debugflag != debug_flags::force_boundary_trace_error)
+        if (g_debug_flag != debug_flags::force_boundary_trace_error)
         {
             if (g_color <= 0 && stdcalcmode == 'b')
             {
@@ -2045,7 +2045,7 @@ int calcmandfp()
                 }
             }
         }
-        if (debugflag != debug_flags::force_boundary_trace_error)
+        if (g_debug_flag != debug_flags::force_boundary_trace_error)
         {
             if (g_color == 0 && stdcalcmode == 'b')
             {
@@ -3020,7 +3020,7 @@ plot_pixel:
             }
         }
     }
-    if (debugflag != debug_flags::force_boundary_trace_error)
+    if (g_debug_flag != debug_flags::force_boundary_trace_error)
     {
         if (g_color <= 0 && stdcalcmode == 'b')
         {
@@ -3728,7 +3728,7 @@ static int solid_guess()
                     || ((plot == putcolor || plot == symplot2) && ixstop+1 == xdots));
 
     // there seems to be a bug in solid guessing at bottom and side
-    if (debugflag != debug_flags::force_solid_guess_error)
+    if (g_debug_flag != debug_flags::force_solid_guess_error)
     {
         bottom_guess = false;
         right_guess = false;

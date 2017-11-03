@@ -441,7 +441,7 @@ Std4dFractal()
         {
             g_c_exponent = 1;
         }
-        if (param[3] == 0.0 && debugflag != debug_flags::force_complex_power && (double)g_c_exponent == param[2])
+        if (param[3] == 0.0 && g_debug_flag != debug_flags::force_complex_power && (double)g_c_exponent == param[2])
         {
             fractalspecific[static_cast<int>(neworbittype)].orbitcalc = longZpowerFractal;
         }
@@ -493,7 +493,7 @@ Std4dfpFractal()
 
     if (neworbittype == fractal_type::FPJULIAZPOWER)
     {
-        if (param[3] == 0.0 && debugflag != debug_flags::force_complex_power && (double)g_c_exponent == param[2])
+        if (param[3] == 0.0 && g_debug_flag != debug_flags::force_complex_power && (double)g_c_exponent == param[2])
         {
             fractalspecific[static_cast<int>(neworbittype)].orbitcalc = floatZpowerFractal;
         }

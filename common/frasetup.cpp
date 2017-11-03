@@ -21,7 +21,7 @@
 bool
 MandelSetup()           // Mandelbrot Routine
 {
-    if (debugflag != debug_flags::force_standard_fractal
+    if (g_debug_flag != debug_flags::force_standard_fractal
             && !invert && decomp[0] == 0 && rqlim == 4.0
             && bitshift == 29 && !potflag
             && g_biomorph == -1 && inside > ZMAG && outside >= ITER
@@ -42,7 +42,7 @@ MandelSetup()           // Mandelbrot Routine
 bool
 JuliaSetup()            // Julia Routine
 {
-    if (debugflag != debug_flags::force_standard_fractal
+    if (g_debug_flag != debug_flags::force_standard_fractal
             && !invert && decomp[0] == 0 && rqlim == 4.0
             && bitshift == 29 && !potflag
             && g_biomorph == -1 && inside > ZMAG && outside >= ITER
@@ -65,7 +65,7 @@ bool
 NewtonSetup()           // Newton/NewtBasin Routines
 {
 #if !defined(XFRACT)
-    if (debugflag != debug_flags::allow_mp_newton_type)
+    if (g_debug_flag != debug_flags::allow_mp_newton_type)
     {
         if (fractype == fractal_type::MPNEWTON)
         {
@@ -228,7 +228,7 @@ MandelfpSetup()
            calcmandfp() can currently handle invert, any rqlim, potflag
            zmag, epsilon cross, and all the current outside options
         */
-        if (debugflag != debug_flags::force_standard_fractal
+        if (g_debug_flag != debug_flags::force_standard_fractal
                 && !distest
                 && decomp[0] == 0
                 && g_biomorph == -1
@@ -257,7 +257,7 @@ MandelfpSetup()
         {
             symmetry = symmetry_type::NONE;
         }
-        if (param[3] == 0.0 && debugflag != debug_flags::force_complex_power && (double)g_c_exponent == param[2])
+        if (param[3] == 0.0 && g_debug_flag != debug_flags::force_complex_power && (double)g_c_exponent == param[2])
         {
             fractalspecific[static_cast<int>(fractype)].orbitcalc = floatZpowerFractal;
         }
@@ -353,7 +353,7 @@ JuliafpSetup()
            calcmandfp() can currently handle invert, any rqlim, potflag
            zmag, epsilon cross, and all the current outside options
         */
-        if (debugflag != debug_flags::force_standard_fractal
+        if (g_debug_flag != debug_flags::force_standard_fractal
                 && !distest
                 && decomp[0] == 0
                 && g_biomorph == -1
@@ -380,7 +380,7 @@ JuliafpSetup()
         {
             symmetry = symmetry_type::NONE;
         }
-        if (param[3] == 0.0 && debugflag != debug_flags::force_complex_power && (double)g_c_exponent == param[2])
+        if (param[3] == 0.0 && g_debug_flag != debug_flags::force_complex_power && (double)g_c_exponent == param[2])
         {
             fractalspecific[static_cast<int>(fractype)].orbitcalc = floatZpowerFractal;
         }
@@ -465,7 +465,7 @@ JuliafpSetup()
         {
             curfractalspecific->orbitcalc = PopcornFractal_Old;
         }
-        else if (default_functions && debugflag == debug_flags::force_real_popcorn)
+        else if (default_functions && g_debug_flag == debug_flags::force_real_popcorn)
         {
             curfractalspecific->orbitcalc = PopcornFractal;
         }
@@ -517,7 +517,7 @@ MandellongSetup()
     longparm = &linit;
     if (fractype == fractal_type::LMANDELZPOWER)
     {
-        if (param[3] == 0.0 && debugflag != debug_flags::force_complex_power && (double)g_c_exponent == param[2])
+        if (param[3] == 0.0 && g_debug_flag != debug_flags::force_complex_power && (double)g_c_exponent == param[2])
         {
             fractalspecific[static_cast<int>(fractype)].orbitcalc = longZpowerFractal;
         }
@@ -574,7 +574,7 @@ JulialongSetup()
         {
             symmetry = symmetry_type::NONE;
         }
-        if (param[3] == 0.0 && debugflag != debug_flags::force_complex_power && (double)g_c_exponent == param[2])
+        if (param[3] == 0.0 && g_debug_flag != debug_flags::force_complex_power && (double)g_c_exponent == param[2])
         {
             fractalspecific[static_cast<int>(fractype)].orbitcalc = longZpowerFractal;
         }
@@ -631,7 +631,7 @@ JulialongSetup()
         {
             curfractalspecific->orbitcalc = LPopcornFractal_Old;
         }
-        else if (default_functions && debugflag == debug_flags::force_real_popcorn)
+        else if (default_functions && g_debug_flag == debug_flags::force_real_popcorn)
         {
             curfractalspecific->orbitcalc = LPopcornFractal;
         }
@@ -655,7 +655,7 @@ TrigPlusSqrlongSetup()
 {
     curfractalspecific->per_pixel =  julia_per_pixel;
     curfractalspecific->orbitcalc =  TrigPlusSqrFractal;
-    if (lparm.x == fudge && lparm.y == 0L && lparm2.y == 0L && debugflag != debug_flags::force_standard_fractal)
+    if (lparm.x == fudge && lparm.y == 0L && lparm2.y == 0L && g_debug_flag != debug_flags::force_standard_fractal)
     {
         if (lparm2.x == fudge)          // Scott variant
         {
@@ -674,7 +674,7 @@ TrigPlusSqrfpSetup()
 {
     curfractalspecific->per_pixel =  juliafp_per_pixel;
     curfractalspecific->orbitcalc =  TrigPlusSqrfpFractal;
-    if (parm.x == 1.0 && parm.y == 0.0 && parm2.y == 0.0 && debugflag != debug_flags::force_standard_fractal)
+    if (parm.x == 1.0 && parm.y == 0.0 && parm2.y == 0.0 && g_debug_flag != debug_flags::force_standard_fractal)
     {
         if (parm2.x == 1.0)          // Scott variant
         {
@@ -698,7 +698,7 @@ TrigPlusTriglongSetup()
     }
     curfractalspecific->per_pixel =  long_julia_per_pixel;
     curfractalspecific->orbitcalc =  TrigPlusTrigFractal;
-    if (lparm.x == fudge && lparm.y == 0L && lparm2.y == 0L && debugflag != debug_flags::force_standard_fractal)
+    if (lparm.x == fudge && lparm.y == 0L && lparm2.y == 0L && g_debug_flag != debug_flags::force_standard_fractal)
     {
         if (lparm2.x == fudge)          // Scott variant
         {
@@ -722,7 +722,7 @@ TrigPlusTrigfpSetup()
     }
     curfractalspecific->per_pixel =  otherjuliafp_per_pixel;
     curfractalspecific->orbitcalc =  TrigPlusTrigfpFractal;
-    if (parm.x == 1.0 && parm.y == 0.0 && parm2.y == 0.0 && debugflag != debug_flags::force_standard_fractal)
+    if (parm.x == 1.0 && parm.y == 0.0 && parm2.y == 0.0 && g_debug_flag != debug_flags::force_standard_fractal)
     {
         if (parm2.x == 1.0)          // Scott variant
         {
@@ -891,7 +891,7 @@ ZXTrigPlusZSetup()
     if (curfractalspecific->isinteger)
     {
         curfractalspecific->orbitcalc =  ZXTrigPlusZFractal;
-        if (lparm.x == fudge && lparm.y == 0L && lparm2.y == 0L && debugflag != debug_flags::force_standard_fractal)
+        if (lparm.x == fudge && lparm.y == 0L && lparm2.y == 0L && g_debug_flag != debug_flags::force_standard_fractal)
         {
             if (lparm2.x == fudge)       // Scott variant
             {
@@ -907,7 +907,7 @@ ZXTrigPlusZSetup()
     else
     {
         curfractalspecific->orbitcalc =  ZXTrigPlusZfpFractal;
-        if (parm.x == 1.0 && parm.y == 0.0 && parm2.y == 0.0 && debugflag != debug_flags::force_standard_fractal)
+        if (parm.x == 1.0 && parm.y == 0.0 && parm2.y == 0.0 && g_debug_flag != debug_flags::force_standard_fractal)
         {
             if (parm2.x == 1.0)       // Scott variant
             {

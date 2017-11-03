@@ -204,37 +204,37 @@ int pstopmsg(int x, char const *msg)
 #define stopmsg pstopmsg
 
 #define DBUGMSG(y)                                                  \
-    if (debugflag == debug_flags::show_formula_info_after_compile   \
-        || debugflag == debug_flags::prevent_formula_optimizer)     \
+    if (g_debug_flag == debug_flags::show_formula_info_after_compile   \
+        || g_debug_flag == debug_flags::prevent_formula_optimizer)     \
         stopmsg(STOPMSG_NONE, (y))
 
 #define DBUGMSG1(y, p)                                               \
-    if (debugflag == debug_flags::show_formula_info_after_compile   \
-        || debugflag == debug_flags::prevent_formula_optimizer)     \
+    if (g_debug_flag == debug_flags::show_formula_info_after_compile   \
+        || g_debug_flag == debug_flags::prevent_formula_optimizer)     \
     {                                                               \
         sprintf(cDbgMsg, (y), (p) );                                \
         stopmsg(STOPMSG_NONE, cDbgMsg);                             \
     }
 
 #define DBUGMSG2(y, p, q)                                             \
-    if (debugflag == debug_flags::show_formula_info_after_compile   \
-        || debugflag == debug_flags::prevent_formula_optimizer)     \
+    if (g_debug_flag == debug_flags::show_formula_info_after_compile   \
+        || g_debug_flag == debug_flags::prevent_formula_optimizer)     \
     {                                                               \
         sprintf(cDbgMsg, (y), (p), (q));                            \
         stopmsg(STOPMSG_NONE, cDbgMsg);                             \
     }
 
 #define DBUGMSG3(y, p, q, r)                                           \
-    if (debugflag == debug_flags::show_formula_info_after_compile   \
-        || debugflag == debug_flags::prevent_formula_optimizer)     \
+    if (g_debug_flag == debug_flags::show_formula_info_after_compile   \
+        || g_debug_flag == debug_flags::prevent_formula_optimizer)     \
     {                                                               \
         sprintf(cDbgMsg, (y), (p), (q), (r) );                      \
         stopmsg(STOPMSG_NONE, cDbgMsg);                             \
     }
 
 #define DBUGMSG4(y, p, q, r, s)                                         \
-    if (debugflag == debug_flags::show_formula_info_after_compile   \
-        || debugflag == debug_flags::prevent_formula_optimizer)     \
+    if (g_debug_flag == debug_flags::show_formula_info_after_compile   \
+        || g_debug_flag == debug_flags::prevent_formula_optimizer)     \
     {                                                               \
         sprintf(cDbgMsg, (y), (p), (q), (r), (s) );                 \
         stopmsg(STOPMSG_NONE, cDbgMsg);                             \
@@ -495,7 +495,7 @@ awful_error:
     {
         OPPTR(cvtptrx) = Store[StoPtr++];
     }
-    else if (ffptr == fStkLod && debugflag == debug_flags::prevent_formula_optimizer)
+    else if (ffptr == fStkLod && g_debug_flag == debug_flags::prevent_formula_optimizer)
     {
         // when disabling optimizer, set load pointer here
         OPPTR(cvtptrx) = Load[LodPtr++];
@@ -506,7 +506,7 @@ awful_error:
         OPPTR(cvtptrx) = NO_OPERAND;
     }
 
-    if (debugflag == debug_flags::prevent_formula_optimizer)
+    if (g_debug_flag == debug_flags::prevent_formula_optimizer)
     {
         goto SkipOptimizer;
     } // --------------------------  begin optimizer  ---------------------
@@ -1472,7 +1472,7 @@ int CvtStk()
                     ntst = fStkClr2;  // convert the last clear to a clr2
                     DBUGMSG("Last fn (CLR) --> (is really CLR2)");
                 }
-                if (ntst == fStkIdent && debugflag != debug_flags::prevent_formula_optimizer)
+                if (ntst == fStkIdent && g_debug_flag != debug_flags::prevent_formula_optimizer)
                 {
                     // ident will be skipped here
                     // this is really part of the optimizer
@@ -1502,7 +1502,7 @@ int CvtStk()
         }
     } // end for
 
-    if (debugflag == debug_flags::prevent_formula_optimizer)
+    if (g_debug_flag == debug_flags::prevent_formula_optimizer)
     {
         goto skipfinalopt;
     } // ------------------------------ final optimizations ----------

@@ -48,7 +48,7 @@ int stopmsg(int flags, char const *msg)
 {
     int ret, toprow, color, old_look_at_mouse;
     static bool batchmode = false;
-    if (debugflag != debug_flags::none || init_batch >= batch_modes::NORMAL)
+    if (g_debug_flag != debug_flags::none || init_batch >= batch_modes::NORMAL)
     {
         static FILE *fp = nullptr;
         if (fp == nullptr && init_batch == batch_modes::NONE)
@@ -127,7 +127,7 @@ int stopmsg(int flags, char const *msg)
     {
         driver_get_key();
     }
-    if (debugflag != debug_flags::show_formula_info_after_compile)
+    if (g_debug_flag != debug_flags::show_formula_info_after_compile)
     {
         if (getakeynohelp() == FIK_ESC)
         {

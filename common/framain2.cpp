@@ -273,7 +273,7 @@ main_state big_while_loop(bool *const kbdmore, bool *const stacked, bool const r
             {
                 outln = out_line;        // regular decoding
             }
-            if (debugflag == debug_flags::show_float_flag)
+            if (g_debug_flag == debug_flags::show_float_flag)
             {
                 char msg[MSGLEN];
                 sprintf(msg, "floatflag=%d", usr_floatflag ? 1 : 0);
@@ -620,7 +620,7 @@ resumeloop:                             // return here on failed overlays
                 }
                 else if (init_batch == batch_modes::NORMAL || init_batch == batch_modes::BAILOUT_INTERRUPTED_TRY_SAVE)         // save-to-disk
                 {
-                    kbdchar = (debugflag == debug_flags::force_disk_restore_not_save) ? 'r' : 's';
+                    kbdchar = (g_debug_flag == debug_flags::force_disk_restore_not_save) ? 'r' : 's';
                     if (init_batch == batch_modes::NORMAL)
                     {
                         init_batch = batch_modes::SAVE;
@@ -1350,7 +1350,7 @@ do_3d_transform:
         g_browsing = false;
         if (*kbdchar == 'r')
         {
-            if (debugflag == debug_flags::force_disk_restore_not_save)
+            if (g_debug_flag == debug_flags::force_disk_restore_not_save)
             {
                 g_compare_gif = true;
                 overlay_3d = true;
@@ -1814,7 +1814,7 @@ static main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdm
         g_browsing = false;
         if (*kbdchar == 'r')
         {
-            if (debugflag == debug_flags::force_disk_restore_not_save)
+            if (g_debug_flag == debug_flags::force_disk_restore_not_save)
             {
                 g_compare_gif = true;
                 overlay_3d = true;

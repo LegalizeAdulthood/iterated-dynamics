@@ -226,7 +226,7 @@ static void main_restart(int const argc, char const *const argv[], bool &stacked
 
     history_init();
 
-    if (debugflag == debug_flags::prevent_overwrite_savename && init_batch == batch_modes::NORMAL)   // abort if savename already exists
+    if (g_debug_flag == debug_flags::prevent_overwrite_savename && init_batch == batch_modes::NORMAL)   // abort if savename already exists
     {
         check_samename();
     }
@@ -642,7 +642,7 @@ int timer(int timertype, int(*subrtn)(), ...)
     bool do_bench = timerflag; // record time?
     if (timertype == 2)     // encoder, record time only if debug flag set
     {
-        do_bench = (debugflag == debug_flags::benchmark_encoder);
+        do_bench = (g_debug_flag == debug_flags::benchmark_encoder);
     }
     if (do_bench)
     {

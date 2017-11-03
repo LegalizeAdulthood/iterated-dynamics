@@ -1227,7 +1227,7 @@ void backwards_v20()
             fractype == fractal_type::MANDEL || fractype == fractal_type::JULIA) &&
             (outside <= REAL && outside >= SUM) && save_release <= 1960;
     ldcheck = (fractype == fractal_type::FORMULA || fractype == fractal_type::FFORMULA) &&
-            (save_release < 1900 || debugflag == debug_flags::force_ld_check);
+            (save_release < 1900 || g_debug_flag == debug_flags::force_ld_check);
     if (inside == EPSCROSS && save_release < 1961)
     {
         g_close_proximity = 0.01;

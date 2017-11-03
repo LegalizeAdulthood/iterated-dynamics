@@ -109,7 +109,7 @@ extern BYTE                  g_dac_box[256][3];
 extern int                   g_dac_count;
 extern bool                  g_dac_learn;
 extern double                ddelmin;
-extern int                   debugflag;
+extern int                   g_debug_flag;
 extern int                   decimals;
 extern int                   decomp[];
 extern int                   degree;

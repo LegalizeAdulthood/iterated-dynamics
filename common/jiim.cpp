@@ -487,7 +487,7 @@ void Jiim(jiim_types which)
     bool first_time = true;
     int old_debugflag;
 
-    old_debugflag = debugflag;
+    old_debugflag = g_debug_flag;
     // must use standard fractal or be calcfroth
     if (fractalspecific[static_cast<int>(fractype)].calctype != standard_fractal
             && fractalspecific[static_cast<int>(fractype)].calctype != calcfroth)
@@ -527,7 +527,7 @@ void Jiim(jiim_types which)
      * Grab memory for Queue/Stack before SaveRect gets it.
      */
     OKtoMIIM  = false;
-    if (which == jiim_types::JIIM && debugflag != debug_flags::prevent_miim)
+    if (which == jiim_types::JIIM && g_debug_flag != debug_flags::prevent_miim)
     {
         OKtoMIIM = Init_Queue(8*1024UL); // Queue Set-up Successful?
     }
@@ -1288,7 +1288,7 @@ finish:
     look_at_mouse = old_look_at_mouse;
     using_jiim = false;
     calctype = oldcalctype;
-    debugflag = old_debugflag;
+    g_debug_flag = old_debugflag;
     help_mode = old_help_mode;
     if (kbdchar == 's' || kbdchar == 'S')
     {

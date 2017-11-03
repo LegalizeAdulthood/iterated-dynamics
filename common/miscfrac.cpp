@@ -535,7 +535,7 @@ int plasma()
             elem = rand16();
         }
     }
-    if (debugflag == debug_flags::prevent_plasma_random)
+    if (g_debug_flag == debug_flags::prevent_plasma_random)
     {
         for (auto &elem : rnd)
         {
@@ -1563,7 +1563,7 @@ bool lya_setup()
     {
         filter_cycles = maxit/2;
     }
-    lyaSeedOK = param[1] > 0 && param[1] <= 1 && debugflag != debug_flags::force_standard_fractal;
+    lyaSeedOK = param[1] > 0 && param[1] <= 1 && g_debug_flag != debug_flags::force_standard_fractal;
     lyaLength = 1;
 
     i = (long)param[0];
