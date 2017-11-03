@@ -331,7 +331,7 @@ U16 MemoryAlloc(U16 size, long count, int stored_at)
         memfile[9] = (char)(handle % 10 + (int)'0');
         memfile[8] = (char)((handle % 100) / 10 + (int)'0');
         memfile[7] = (char)((handle % 1000) / 100 + (int)'0');
-        if (disktarga)
+        if (g_disk_targa)
         {
             handletable[handle].Disk.file = dir_fopen(workdir.c_str(), light_name.c_str(), "a+b");
         }
@@ -356,7 +356,7 @@ U16 MemoryAlloc(U16 size, long count, int stored_at)
         numTOTALhandles++;
         success = true;
         fclose(handletable[handle].Disk.file); // so clusters aren't lost if we crash while running
-        if (disktarga)
+        if (g_disk_targa)
         {
             handletable[handle].Disk.file = dir_fopen(workdir.c_str(), light_name.c_str(), "r+b");
         }

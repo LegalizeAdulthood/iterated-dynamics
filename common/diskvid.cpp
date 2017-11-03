@@ -24,7 +24,7 @@ bool g_disk_16_bit = false;                 // storing 16 bit values for continu
 
 static int timetodisplay;
 static FILE *fp = nullptr;
-bool disktarga = false;
+bool g_disk_targa = false;
 bool g_disk_flag = false;
 bool g_good_mode = false;        // if non-zero, OK to read/write pixels
 
@@ -74,7 +74,7 @@ static void mem_seek(long);
 int startdisk()
 {
     headerlength = 0;
-    disktarga = false;
+    g_disk_targa = false;
     return common_startdisk(sxdots, sydots, g_colors);
 }
 
@@ -90,7 +90,7 @@ int pot_startdisk()
         showtempmsg("clearing 16bit pot work area");
     }
     headerlength = 0;
-    disktarga = false;
+    g_disk_targa = false;
     i = common_startdisk(sxdots, sydots << 1, g_colors);
     cleartempmsg();
     if (i == 0)
@@ -111,7 +111,7 @@ int targa_startdisk(FILE *targafp, int overhead)
     }
     headerlength = overhead;
     fp = targafp;
-    disktarga = true;
+    g_disk_targa = true;
     i = common_startdisk(xdots*3, ydots, g_colors);
     high_offset = 100000000L; // targa not necessarily init'd to zeros
 
@@ -140,7 +140,7 @@ int common_startdisk(long newrowsize, long newcolsize, int colors)
         driver_put_string(BOXROW+2, BOXCOL+4, C_DVID_HI, "'Disk-Video' mode");
         sprintf(buf, "Screen resolution: %d x %d", sxdots, sydots);
         driver_put_string(BOXROW+4, BOXCOL+4, C_DVID_LO, buf);
-        if (disktarga)
+        if (g_disk_targa)
         {
             driver_put_string(-1, -1, C_DVID_LO, "  24 bit Targa");
         }
@@ -159,7 +159,7 @@ int common_startdisk(long newrowsize, long newcolsize, int colors)
     seek_offset = high_offset;
     cur_offset = seek_offset;
     cur_row    = -1;
-    if (disktarga)
+    if (g_disk_targa)
     {
         pixelshift = 0;
     }
@@ -227,7 +227,7 @@ int common_startdisk(long newrowsize, long newcolsize, int colors)
     rowsize = (unsigned int) newrowsize;
     colsize = (unsigned int) newcolsize;
 
-    if (disktarga)
+    if (g_disk_targa)
     {
         // Retrieve the header information first
         fseek(fp, 0L, SEEK_SET);
@@ -258,7 +258,7 @@ int common_startdisk(long newrowsize, long newcolsize, int colors)
 
     membufptr = &membuf[0];
 
-    if (disktarga)
+    if (g_disk_targa)
     {
         // Put header information in the file
         CopyFromMemoryToHandle(&membuf[0], (U16)headerlength, 1L, 0, dv_handle);
@@ -292,7 +292,7 @@ void enddisk()
 {
     if (fp != nullptr)
     {
-        if (disktarga) // flush the cache
+        if (g_disk_targa) // flush the cache
         {
             for (cache_lru = cache_start; cache_lru < cache_end; ++cache_lru)
             {

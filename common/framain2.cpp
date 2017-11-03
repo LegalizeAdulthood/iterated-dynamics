@@ -1322,7 +1322,7 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
         }
         return main_state::CONTINUE;
     case 's':                    // save-to-disk
-        if (driver_diskp() && disktarga)
+        if (driver_diskp() && g_disk_targa)
         {
             return main_state::CONTINUE;  // disk video and targa, nothing to save
         }
@@ -1772,7 +1772,7 @@ static main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdm
         return main_state::CONTINUE;
     case 's':                    // save-to-disk
     {
-        if (driver_diskp() && disktarga)
+        if (driver_diskp() && g_disk_targa)
         {
             return main_state::CONTINUE;  // disk video and targa, nothing to save
         }

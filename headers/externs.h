@@ -127,7 +127,7 @@ extern unsigned long         g_diffusion_counter;
 extern unsigned long         g_diffusion_limit;
 extern bool                  g_disk_16_bit;
 extern bool                  g_disk_flag;       // disk video active flag
-extern bool                  disktarga;
+extern bool                  g_disk_targa;
 extern display_3d_modes display_3d;
 extern long                  distest;
 extern int                   distestwidth;
