@@ -123,7 +123,7 @@ bool Targa_Out = false;                 // 3D fullcolor flag
 bool truecolor = false;                 // escape time truecolor flag
 int truemode = 0;               // truecolor coloring scheme
 std::string g_color_file;          // from last <l> <s> or colors=@filename
-bool new_bifurcation_functions_loaded = false; // if function loaded for new bifs
+bool g_new_bifurcation_functions_loaded = false; // if function loaded for new bifs
 float   screenaspect = DEFAULTASPECT;   // aspect ratio of the screen
 float   g_aspect_drift = DEFAULTASPECTDRIFT;  // how much drift is allowed and
                                 // still forced to screenaspect
@@ -563,7 +563,7 @@ static void initvars_fractal()          // init vars affecting calculation
     bignumbailout = bnMODbailout;
     bigfltbailout = bfMODbailout;
 
-    new_bifurcation_functions_loaded = false; // for old bifs
+    g_new_bifurcation_functions_loaded = false; // for old bifs
     mxminfp = -.83;
     myminfp = -.25;
     mxmaxfp = -.83;
@@ -1564,7 +1564,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
             }
             ++value;
         }
-        new_bifurcation_functions_loaded = true; // for old bifs
+        g_new_bifurcation_functions_loaded = true; // for old bifs
         return CMDARG_FRACTAL_PARAM;
     }
 

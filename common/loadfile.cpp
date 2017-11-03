@@ -317,7 +317,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
     if (save_release < 1725 && read_info.version != 0) // pre-version 17.25
     {
         set_if_old_bif(); // translate bifurcation types
-        new_bifurcation_functions_loaded = true;
+        g_new_bifurcation_functions_loaded = true;
     }
 
     if (read_info.version > 9)
@@ -363,7 +363,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
                 fractype == fractal_type::FPPOPCORNJUL || fractype == fractal_type::LPOPCORNJUL ||
                 fractype == fractal_type::LATOO)
         {
-            new_bifurcation_functions_loaded = true;
+            g_new_bifurcation_functions_loaded = true;
         }
     }
 
@@ -1166,7 +1166,7 @@ void set_function_parm_defaults()
 
 void backwards_v18()
 {
-    if (!new_bifurcation_functions_loaded)
+    if (!g_new_bifurcation_functions_loaded)
     {
         set_if_old_bif(); // old bifs need function set
     }
@@ -1232,7 +1232,7 @@ void backwards_v20()
     {
         g_close_proximity = 0.01;
     }
-    if (!new_bifurcation_functions_loaded)
+    if (!g_new_bifurcation_functions_loaded)
     {
         set_function_parm_defaults();
     }

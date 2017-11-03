@@ -258,7 +258,7 @@ static void main_restart(int const argc, char const *const argv[], bool &stacked
 
     g_browsing = false;
 
-    if (!new_bifurcation_functions_loaded)
+    if (!g_new_bifurcation_functions_loaded)
     {
         set_if_old_bif();
     }
