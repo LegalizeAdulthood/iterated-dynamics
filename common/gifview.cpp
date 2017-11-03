@@ -22,7 +22,7 @@ static void close_file();
 #define MAXCOLORS       256
 
 static FILE *fpin = nullptr;       // FILE pointer
-unsigned int height;
+unsigned int g_height;
 unsigned numcolors;
 
 static int out_line_dither(BYTE *, int);
@@ -137,7 +137,7 @@ int gifview()
     }
 
     width  = buffer[6] | (buffer[7] << 8);
-    height = buffer[8] | (buffer[9] << 8);
+    g_height = buffer[8] | (buffer[9] << 8);
     planes = (buffer[10] & 0x0F) + 1;
     gifview_image_twidth = width;
 
@@ -245,7 +245,7 @@ int gifview()
             left   = buffer[0] | (buffer[1] << 8);
             top    = buffer[2] | (buffer[3] << 8);
             width  = buffer[4] | (buffer[5] << 8);
-            height = buffer[6] | (buffer[7] << 8);
+            g_height = buffer[6] | (buffer[7] << 8);
 
             // adjustments for handling MIGs
             gifview_image_top  = top;

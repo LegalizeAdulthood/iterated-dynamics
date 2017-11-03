@@ -2664,7 +2664,7 @@ static int first_time(int linelen, VECTOR v)
         }
 
         // now phi - these calculated as we go - get started here
-        deltaphi = (float)(phi2 - phi1) / (float) height;
+        deltaphi = (float)(phi2 - phi1) / (float) g_height;
 
         // initial sin,cos phi
 
