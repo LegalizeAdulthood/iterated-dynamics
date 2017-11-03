@@ -192,7 +192,7 @@ UnitySetup()
 {
     periodicitycheck = 0;
     g_fudge_one = (1L << bitshift);
-    FgTwo = g_fudge_one + g_fudge_one;
+    g_fudge_two = g_fudge_one + g_fudge_one;
     return true;
 }
 
