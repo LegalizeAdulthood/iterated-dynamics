@@ -1622,7 +1622,7 @@ static int diffusion_engine()
     return 0;
 }
 
-char drawmode = 'r';
+char g_draw_mode = 'r';
 
 static int sticky_orbits()
 {
@@ -1635,7 +1635,7 @@ static int sticky_orbits()
         return -1;
     }
 
-    switch (drawmode)
+    switch (g_draw_mode)
     {
     case 'r':
     default:

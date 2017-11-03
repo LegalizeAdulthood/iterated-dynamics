@@ -718,10 +718,10 @@ pass_option_restart:
     uvalues[k].uval.ch.vlen = 5;
     uvalues[k].uval.ch.llen = sizeof(passcalcmodes)/sizeof(*passcalcmodes);
     uvalues[k].uval.ch.list = passcalcmodes;
-    uvalues[k].uval.ch.val = (drawmode == 'r') ? 0
-                             : (drawmode == 'l') ? 1
+    uvalues[k].uval.ch.val = (g_draw_mode == 'r') ? 0
+                             : (g_draw_mode == 'l') ? 1
                              :   /* function */    2;
-    old_drawmode = drawmode;
+    old_drawmode = g_draw_mode;
 
     int const old_help_mode = help_mode;
     help_mode = HELPPOPTS;
@@ -791,17 +791,17 @@ pass_option_restart:
         {
         default:
         case 0:
-            drawmode = 'r';
+            g_draw_mode = 'r';
             break;
         case 1:
-            drawmode = 'l';
+            g_draw_mode = 'l';
             break;
         case 2:
-            drawmode = 'f';
+            g_draw_mode = 'f';
             break;
         }
     }
-    if (drawmode != old_drawmode)
+    if (g_draw_mode != old_drawmode)
     {
         j = 1;
     }
@@ -2150,7 +2150,7 @@ gc_loop:
 
     }
     cmag = usemag ? 1 : 0;
-    if (drawmode == 'l')
+    if (g_draw_mode == 'l')
     {
         cmag = 0;
     }
@@ -2179,7 +2179,7 @@ gc_loop:
 
     else
     {
-        if (drawmode == 'l')
+        if (g_draw_mode == 'l')
         {
             prompts[++nump] = "Left End Point";
             values[nump].type = '*';
@@ -2289,7 +2289,7 @@ gc_loop:
 
     else
     {
-        if (drawmode == 'l')
+        if (g_draw_mode == 'l')
         {
             nump = 1;
             xxmin = values[nump++].uval.dval;
@@ -2317,7 +2317,7 @@ gc_loop:
         }
     }
 
-    if (prompt_ret == FIK_F7 && drawmode != 'l')
+    if (prompt_ret == FIK_F7 && g_draw_mode != 'l')
     {
         // toggle corners/center-mag mode
         if (!usemag)

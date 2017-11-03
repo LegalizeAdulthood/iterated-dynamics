@@ -2489,7 +2489,7 @@ static void save_history_info()
     current.ox3rd                = ox3rd;
     current.oy3rd                = oy3rd;
     current.keep_scrn_coords     = (short) (keep_scrn_coords ? 1 : 0);
-    current.drawmode             = drawmode;
+    current.drawmode             = g_draw_mode;
     memcpy(current.dac, g_dac_box, 256*3);
     switch (fractype)
     {
@@ -2683,7 +2683,7 @@ static void restore_history_info(int i)
     {
         set_orbit_corners = true;
     }
-    drawmode = last.drawmode;
+    g_draw_mode = last.drawmode;
     usr_floatflag = curfractalspecific->isinteger == 0;
     memcpy(g_dac_box, last.dac, 256*3);
     memcpy(old_dac_box, last.dac, 256*3);

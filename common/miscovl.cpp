@@ -1414,9 +1414,9 @@ void write_batch_parms(char const *colorinf, bool colorsonly, int maxcolor, int 
             }
         }
 
-        if (drawmode != 'r')
+        if (g_draw_mode != 'r')
         {
-            put_parm(" %s=%c", "orbitdrawmode", drawmode);
+            put_parm(" %s=%c", "orbitdrawmode", g_draw_mode);
         }
 
         if (math_tol[0] != 0.05 || math_tol[1] != 0.05)

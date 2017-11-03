@@ -541,7 +541,7 @@ static void initvars_fractal()          // init vars affecting calculation
     orbit_delay = 0;                     // full speed orbits
     orbit_interval = 1;                  // plot all orbits
     keep_scrn_coords = false;
-    drawmode = 'r';                      // passes=orbits draw mode
+    g_draw_mode = 'r';                      // passes=orbits draw mode
     set_orbit_corners = false;
     oxmin = curfractalspecific->xmin;
     oxmax = curfractalspecific->xmax;
@@ -2233,7 +2233,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         {
             goto badarg;
         }
-        drawmode = charval[0];
+        g_draw_mode = charval[0];
         return CMDARG_FRACTAL_PARAM;
     }
 
