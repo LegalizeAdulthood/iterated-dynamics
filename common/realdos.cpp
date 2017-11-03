@@ -65,7 +65,7 @@ int stopmsg(int flags, char const *msg)
         }
         fclose(fp);
     }
-    if (first_init)
+    if (g_first_init)
     {
         // & cmdfiles hasn't finished 1st try
 #ifdef XFRACT
@@ -187,7 +187,7 @@ bool showtempmsg(char const *msgparm)
         dvid_status(0, msg);
         return false;
     }
-    if (first_init)      // & cmdfiles hasn't finished 1st try
+    if (g_first_init)      // & cmdfiles hasn't finished 1st try
     {
         printf("%s\n", msg);
         return false;

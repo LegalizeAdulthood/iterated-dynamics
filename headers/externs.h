@@ -172,7 +172,7 @@ extern int                   g_fill_color;
 extern float                 g_final_aspect_ratio;
 extern bool                  g_finite_attractor;
 extern int                   g_finish_row;
-extern bool                  first_init;
+extern bool                  g_first_init;
 extern bool                  floatflag;
 extern double                floatmax;
 extern double                floatmin;

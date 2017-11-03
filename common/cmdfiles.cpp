@@ -146,7 +146,7 @@ bool    Log_Auto_Calc = false;          // auto calculate logmap
 bool    nobof = false;                  // Flag to make inside=bof options not duplicate bof images
 
 bool    g_escape_exit = false;    // set to true to avoid the "are you sure?" screen
-bool first_init = true;                 // first time into cmdfiles?
+bool g_first_init = true;                 // first time into cmdfiles?
 static int init_rseed = 0;
 static bool initcorners = false;
 static bool initparams = false;
@@ -313,7 +313,7 @@ void process_file(char *curarg)
 
 int cmdfiles(int argc, char const *const *argv)
 {
-    if (first_init)
+    if (g_first_init)
     {
         initvars_run();                 // once per run initialization
     }
@@ -347,7 +347,7 @@ int cmdfiles(int argc, char const *const *argv)
         }
     }
 
-    if (!first_init)
+    if (!g_first_init)
     {
         g_init_mode = -1; // don't set video when <ins> key used
         show_file = 1;  // nor startup image file
@@ -357,7 +357,7 @@ int cmdfiles(int argc, char const *const *argv)
 
     if (g_debug_flag != debug_flags::allow_init_commands_anytime)
     {
-        first_init = false;
+        g_first_init = false;
     }
 
     // PAR reads a file and sets color, don't read colors from GIF
@@ -1040,7 +1040,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         if (variable == "textsafe")   // textsafe==?
         {
             // textsafe no longer used, do validity checking, but gobble argument
-            if (first_init)
+            if (g_first_init)
             {
                 if (!((charval[0] == 'n')   // no
                         || (charval[0] == 'y')  // yes
@@ -1767,7 +1767,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         {
             goto badarg;
         }
-        if (first_init || mode == cmd_file::AT_AFTER_STARTUP)
+        if (g_first_init || mode == cmd_file::AT_AFTER_STARTUP)
         {
             if (merge_pathnames(savename, value, mode) < 0)
             {
@@ -3518,7 +3518,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         {
             goto badarg;
         }
-        if (first_init || mode == cmd_file::AT_AFTER_STARTUP)
+        if (g_first_init || mode == cmd_file::AT_AFTER_STARTUP)
         {
             light_name = value;
         }
@@ -3786,7 +3786,7 @@ static void argerror(char const *badarg)      // oops. couldn't decode this
     std::string msg{"Oops. I couldn't understand the argument:\n  "};
     msg += badarg;
 
-    if (first_init)       // this is 1st call to cmdfiles
+    if (g_first_init)       // this is 1st call to cmdfiles
     {
         msg += "\n"
                "\n"
@@ -3926,7 +3926,7 @@ int init_msg(char const *cmdstr, char const *badfilename, cmd_file mode)
         msg = std::string {"Can't find "} + cmd + badfilename
               + ", please check " + modestr[static_cast<int>(mode)];
     }
-    if (first_init)
+    if (g_first_init)
     {
         // & cmdfiles hasn't finished 1st try
         if (row == 1 && badfilename)
