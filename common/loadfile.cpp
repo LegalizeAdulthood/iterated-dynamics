@@ -474,7 +474,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
             break;
 
         default:
-            FormName = blk_3_info.form_name;
+            g_formula_name = blk_3_info.form_name;
             uses_p1 = blk_3_info.uses_p1 != 0;
             uses_p2 = blk_3_info.uses_p2 != 0;
             uses_p3 = blk_3_info.uses_p3 != 0;
@@ -2110,7 +2110,7 @@ bool typeOK(FRACTAL_INFO const *info, ext_blk_3 const *blk_3_info)
     if ((fractype == fractal_type::FORMULA || fractype == fractal_type::FFORMULA) &&
             (info->fractal_type == static_cast<int>(fractal_type::FORMULA) || info->fractal_type == static_cast<int>(fractal_type::FFORMULA)))
     {
-        if (!stricmp(blk_3_info->form_name, FormName.c_str()))
+        if (!stricmp(blk_3_info->form_name, g_formula_name.c_str()))
         {
             numfn = maxfn;
             if (numfn > 0)

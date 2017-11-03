@@ -121,7 +121,7 @@ int fullscreen_prompt(      // full-screen prompting routine
     {
         if (fractype == fractal_type::FORMULA || fractype == fractal_type::FFORMULA)
         {
-            find_file_item(g_formula_filename, FormName.c_str(), &scroll_file, 1);
+            find_file_item(g_formula_filename, g_formula_name.c_str(), &scroll_file, 1);
             in_scrolling_mode = true;
             scroll_file_start = ftell(scroll_file);
         }
@@ -1233,7 +1233,7 @@ sel_type_restart:
     if (fractype == fractal_type::FORMULA || fractype == fractal_type::FFORMULA)
     {
         help_mode = HT_FORMULA;
-        if (get_file_entry(GETFORMULA, "Formula", formmask, g_formula_filename, FormName) < 0)
+        if (get_file_entry(GETFORMULA, "Formula", formmask, g_formula_filename, g_formula_name) < 0)
         {
             ret = true;
             goto sel_type_exit;
@@ -1539,7 +1539,7 @@ int get_fract_params(int caller)        // prompt for type-specific parms
         {
             // special for formula
             use_filename_ref = true;
-            entryname = FormName.c_str();
+            entryname = g_formula_name.c_str();
         }
         else if (help_formula == -3)
         {

@@ -898,8 +898,8 @@ top:
         if (fractype == fractal_type::FORMULA || fractype == fractal_type::FFORMULA)
         {
             driver_put_string(s_row+1, 3, C_GENERAL_MED, "Item name:");
-            driver_put_string(s_row+1, 16, C_GENERAL_HI, FormName.c_str());
-            i = FormName.length() + 1;
+            driver_put_string(s_row+1, 16, C_GENERAL_HI, g_formula_name.c_str());
+            i = g_formula_name.length() + 1;
             driver_put_string(s_row+2, 3, C_GENERAL_MED, "Item file:");
             if (g_formula_filename.length() >= 29)
             {

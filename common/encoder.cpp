@@ -566,7 +566,7 @@ bool encoder()
         //    if (save_info.fractal_type == FORMULA || save_info.fractal_type == FFORMULA)
         if (fractype == fractal_type::FORMULA || fractype == fractal_type::FFORMULA)
         {
-            save_info.tot_extend_len += store_item_name(FormName.c_str());
+            save_info.tot_extend_len += store_item_name(g_formula_name.c_str());
         }
         //    if (save_info.fractal_type == LSYSTEM)
         if (fractype == fractal_type::LSYSTEM)

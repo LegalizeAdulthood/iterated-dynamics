@@ -2922,7 +2922,7 @@ static bool ParseStr(char const *Str, int pass)
 
 int Formula()
 {
-    if (FormName.empty() || overflow)
+    if (g_formula_name.empty() || overflow)
     {
         return 1;
     }
@@ -2989,7 +2989,7 @@ int Formula()
 
 int form_per_pixel()
 {
-    if (FormName.empty())
+    if (g_formula_name.empty())
     {
         return 1;
     }
@@ -3865,7 +3865,7 @@ int frm_get_param_stuff(char const *Name)
     uses_p4 = false;
     uses_p5 = false;
 
-    if (FormName.empty())
+    if (g_formula_name.empty())
     {
         return 0;  //  and don't reset the pointers
     }
@@ -4141,7 +4141,7 @@ static std::string PrepareFormula(FILE * File, bool from_prompts1c)
         debug_fp = fopen("debugfrm.txt", "at");
         if (debug_fp != nullptr)
         {
-            fprintf(debug_fp, "%s\n", FormName.c_str());
+            fprintf(debug_fp, "%s\n", g_formula_name.c_str());
             if (symmetry != symmetry_type::NONE)
             {
                 auto it = std::find_if(std::begin(SymStr), std::end(SymStr),
@@ -4245,7 +4245,7 @@ bool RunForm(char const *Name, bool from_prompts1c)
     curfractalspecific->per_pixel = BadFormula;
     curfractalspecific->orbitcalc = BadFormula;
 
-    if (FormName.empty())
+    if (g_formula_name.empty())
     {
         return true;  //  and don't reset the pointers
     }
@@ -4301,7 +4301,7 @@ bool fpFormulaSetup()
     return RunFormRes;
 #else
     MathType = D_MATH;
-    return !RunForm(FormName.c_str(), false); // RunForm() returns true for failure
+    return !RunForm(g_formula_name.c_str(), false); // RunForm() returns true for failure
 #endif
 }
 
