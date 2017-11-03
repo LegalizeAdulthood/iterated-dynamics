@@ -1297,9 +1297,9 @@ void write_batch_parms(char const *colorinf, bool colorsonly, int maxcolor, int 
         }
 
 #ifndef XFRACT
-        if (fm_vol != 63)
+        if (g_fm_volume != 63)
         {
-            put_parm(" %s=%d", "volume", fm_vol);
+            put_parm(" %s=%d", "volume", g_fm_volume);
         }
 
         if (hi_atten != 0)

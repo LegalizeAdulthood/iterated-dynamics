@@ -579,7 +579,7 @@ static void initvars_fractal()          // init vars affecting calculation
     initvars_3d();
     g_base_hertz = 440;                     // basic hertz rate
 #ifndef XFRACT
-    fm_vol = 63;                         // full volume on soundcard o/p
+    g_fm_volume = 63;                         // full volume on soundcard o/p
     hi_atten = 0;                        // no attenuation of hi notes
     g_fm_attack = 5;                       // fast attack
     g_fm_decay = 10;                        // long decay
@@ -2702,7 +2702,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
     if (variable == "volume")
     {
         // Volume =?
-        fm_vol = numval & 0x3F; // 63
+        g_fm_volume = numval & 0x3F; // 63
         return CMDARG_NONE;
     }
 
