@@ -1049,30 +1049,30 @@ void write_batch_parms(char const *colorinf, bool colorsonly, int maxcolor, int 
             put_parm(" %s=y", "finattract");
         }
 
-        if (forcesymmetry != symmetry_type::NOT_FORCED)
+        if (g_force_symmetry != symmetry_type::NOT_FORCED)
         {
-            if (forcesymmetry == static_cast<symmetry_type>(1000) && ii == 1 && jj == 1)
+            if (g_force_symmetry == static_cast<symmetry_type>(1000) && ii == 1 && jj == 1)
             {
                 stopmsg(STOPMSG_NONE, "Regenerate before <b> to get correct symmetry");
             }
             put_parm(" %s=", "symmetry");
-            if (forcesymmetry == symmetry_type::X_AXIS)
+            if (g_force_symmetry == symmetry_type::X_AXIS)
             {
                 put_parm("xaxis");
             }
-            else if (forcesymmetry == symmetry_type::Y_AXIS)
+            else if (g_force_symmetry == symmetry_type::Y_AXIS)
             {
                 put_parm("yaxis");
             }
-            else if (forcesymmetry == symmetry_type::XY_AXIS)
+            else if (g_force_symmetry == symmetry_type::XY_AXIS)
             {
                 put_parm("xyaxis");
             }
-            else if (forcesymmetry == symmetry_type::ORIGIN)
+            else if (g_force_symmetry == symmetry_type::ORIGIN)
             {
                 put_parm("origin");
             }
-            else if (forcesymmetry == symmetry_type::PI_SYM)
+            else if (g_force_symmetry == symmetry_type::PI_SYM)
             {
                 put_parm("pi");
             }

@@ -74,7 +74,7 @@ bool    g_ask_video = false;       // flag for video prompting
 bool    g_float_flag = false;
 int     g_biomorph = 0;           // flag for biomorph
 int     usr_biomorph = 0;
-symmetry_type forcesymmetry = symmetry_type::NONE;      // force symmetry
+symmetry_type g_force_symmetry = symmetry_type::NONE;      // force symmetry
 int     show_file = 0;           // zero if file display pending
 bool    rflag = false;
 int     rseed = 0;              // Random number seeding flag and value
@@ -512,7 +512,7 @@ static void initvars_fractal()          // init vars affecting calculation
     pseudox = 0;
     pseudoy = 0;
     g_distance_estimator_width_factor = 71;
-    forcesymmetry = symmetry_type::NOT_FORCED;
+    g_force_symmetry = symmetry_type::NOT_FORCED;
     xxmin = -2.5;
     xx3rd = xxmin;
     xxmax = 1.5;   // initial corner values
@@ -2561,27 +2561,27 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         // symmetry=?
         if (strcmp(value, "xaxis") == 0)
         {
-            forcesymmetry = symmetry_type::X_AXIS;
+            g_force_symmetry = symmetry_type::X_AXIS;
         }
         else if (strcmp(value, "yaxis") == 0)
         {
-            forcesymmetry = symmetry_type::Y_AXIS;
+            g_force_symmetry = symmetry_type::Y_AXIS;
         }
         else if (strcmp(value, "xyaxis") == 0)
         {
-            forcesymmetry = symmetry_type::XY_AXIS;
+            g_force_symmetry = symmetry_type::XY_AXIS;
         }
         else if (strcmp(value, "origin") == 0)
         {
-            forcesymmetry = symmetry_type::ORIGIN;
+            g_force_symmetry = symmetry_type::ORIGIN;
         }
         else if (strcmp(value, "pi") == 0)
         {
-            forcesymmetry = symmetry_type::PI_SYM;
+            g_force_symmetry = symmetry_type::PI_SYM;
         }
         else if (strcmp(value, "none") == 0)
         {
-            forcesymmetry = symmetry_type::NONE;
+            g_force_symmetry = symmetry_type::NONE;
         }
         else
         {

@@ -4416,7 +4416,7 @@ static void setsymmetry(symmetry_type sym, bool uselist) // set up proper symmet
     {
         return;
     }
-    if (sym == symmetry_type::NO_PLOT && forcesymmetry == symmetry_type::NOT_FORCED)
+    if (sym == symmetry_type::NO_PLOT && g_force_symmetry == symmetry_type::NOT_FORCED)
     {
         plot = noplot;
         return;
@@ -4440,17 +4440,17 @@ static void setsymmetry(symmetry_type sym, bool uselist) // set up proper symmet
     if (sym != symmetry_type::X_AXIS
             && sym != symmetry_type::X_AXIS_NO_PARAM
             && inversion[1] != 0.0
-            && forcesymmetry == symmetry_type::NOT_FORCED)
+            && g_force_symmetry == symmetry_type::NOT_FORCED)
     {
         return;
     }
-    if (forcesymmetry < symmetry_type::NOT_FORCED)
+    if (g_force_symmetry < symmetry_type::NOT_FORCED)
     {
-        sym = forcesymmetry;
+        sym = g_force_symmetry;
     }
-    else if (forcesymmetry == static_cast<symmetry_type>(1000))
+    else if (g_force_symmetry == static_cast<symmetry_type>(1000))
     {
-        forcesymmetry = sym;  // for backwards compatibility
+        g_force_symmetry = sym;  // for backwards compatibility
     }
     else if (outside == REAL || outside == IMAG || outside == MULT || outside == SUM
              || outside == ATAN || g_bail_out_test == bailouts::Manr || outside == FMOD)
@@ -4676,7 +4676,7 @@ originsym:
                 break; // no point in pi symmetry if values too close
             }
         }
-        if (invert && forcesymmetry == symmetry_type::NOT_FORCED)
+        if (invert && g_force_symmetry == symmetry_type::NOT_FORCED)
         {
             goto originsym;
         }

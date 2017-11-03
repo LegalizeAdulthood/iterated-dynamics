@@ -181,7 +181,7 @@ extern int                   g_fm_release;
 extern int                   g_fm_sustain;
 extern int                   g_fm_wavetype;
 extern int                   g_fm_volume;            // volume of OPL-3 soundcard output
-extern symmetry_type         forcesymmetry;
+extern symmetry_type         g_force_symmetry;
 extern std::string           FormFileName;
 extern std::string           FormName;
 extern char const *          fract_dir1;
