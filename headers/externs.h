@@ -103,7 +103,7 @@ extern int                   g_current_column;
 extern int                   g_current_pass;
 extern int                   g_current_row;
 extern int                   g_cycle_limit;
-extern int                   c_exp;
+extern int                   g_c_exponent;
 extern double                d1overd;
 extern BYTE                  g_dac_box[256][3];
 extern int                   g_dac_count;

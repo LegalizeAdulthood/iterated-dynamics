@@ -76,7 +76,7 @@ bool overflow = false;
 #define MPdistance(z1, z2)  (*pMPadd(pMPsqr(*pMPsub((z1).x, (z2).x)), pMPsqr(*pMPsub((z1).y, (z2).y))))
 
 double twopi = PI*2.0;
-int c_exp;
+int g_c_exponent;
 
 
 // These are local but I don't want to pass them as parameters
@@ -1039,7 +1039,7 @@ int
 longZpowerFractal()
 {
 #if !defined(XFRACT)
-    if (lcpower(&lold, c_exp, &lnew, bitshift))
+    if (lcpower(&lold, g_c_exponent, &lnew, bitshift))
     {
         lnew.y = 8L << bitshift;
         lnew.x = lnew.y;
@@ -1083,7 +1083,7 @@ longCmplxZpowerFractal()
 int
 floatZpowerFractal()
 {
-    cpower(&old, c_exp, &g_new);
+    cpower(&old, g_c_exponent, &g_new);
     g_new.x += floatparm->x;
     g_new.y += floatparm->y;
     return floatbailout();
@@ -2848,21 +2848,21 @@ int marksmandel_per_pixel()
     lold.x += lparm.x;    // initial pertubation of parameters set
     lold.y += lparm.y;
 
-    if (c_exp > 3)
+    if (g_c_exponent > 3)
     {
-        lcpower(&lold, c_exp-1, &lcoefficient, bitshift);
+        lcpower(&lold, g_c_exponent-1, &lcoefficient, bitshift);
     }
-    else if (c_exp == 3)
+    else if (g_c_exponent == 3)
     {
         lcoefficient.x = multiply(lold.x, lold.x, bitshift)
                          - multiply(lold.y, lold.y, bitshift);
         lcoefficient.y = multiply(lold.x, lold.y, bitshiftless1);
     }
-    else if (c_exp == 2)
+    else if (g_c_exponent == 2)
     {
         lcoefficient = lold;
     }
-    else if (c_exp < 2)
+    else if (g_c_exponent < 2)
     {
         lcoefficient.x = 1L << bitshift;
         lcoefficient.y = 0L;
@@ -2906,20 +2906,20 @@ int marksmandelfp_per_pixel()
     tempsqrx = sqr(old.x);
     tempsqry = sqr(old.y);
 
-    if (c_exp > 3)
+    if (g_c_exponent > 3)
     {
-        cpower(&old, c_exp-1, &g_marks_coefficient);
+        cpower(&old, g_c_exponent-1, &g_marks_coefficient);
     }
-    else if (c_exp == 3)
+    else if (g_c_exponent == 3)
     {
         g_marks_coefficient.x = tempsqrx - tempsqry;
         g_marks_coefficient.y = old.x * old.y * 2;
     }
-    else if (c_exp == 2)
+    else if (g_c_exponent == 2)
     {
         g_marks_coefficient = old;
     }
-    else if (c_exp < 2)
+    else if (g_c_exponent < 2)
     {
         g_marks_coefficient.x = 1.0;
         g_marks_coefficient.y = 0.0;

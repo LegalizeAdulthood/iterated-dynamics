@@ -200,23 +200,23 @@ bool
 MandelfpSetup()
 {
     bf_math = bf_math_type::NONE;
-    c_exp = (int)param[2];
+    g_c_exponent = (int)param[2];
     pwr.x = param[2] - 1.0;
     pwr.y = param[3];
     floatparm = &init;
     switch (fractype)
     {
     case fractal_type::MARKSMANDELFP:
-        if (c_exp < 1)
+        if (g_c_exponent < 1)
         {
-            c_exp = 1;
+            g_c_exponent = 1;
             param[2] = 1;
         }
-        if (!(c_exp & 1))
+        if (!(g_c_exponent & 1))
         {
             symmetry = symmetry_type::XY_AXIS_NO_PARAM;    // odd exponents
         }
-        if (c_exp & 1)
+        if (g_c_exponent & 1)
         {
             symmetry = symmetry_type::X_AXIS_NO_PARAM;
         }
@@ -249,7 +249,7 @@ MandelfpSetup()
         }
         break;
     case fractal_type::FPMANDELZPOWER:
-        if ((double)c_exp == param[2] && (c_exp & 1))   // odd exponents
+        if ((double)g_c_exponent == param[2] && (g_c_exponent & 1))   // odd exponents
         {
             symmetry = symmetry_type::XY_AXIS_NO_PARAM;
         }
@@ -257,7 +257,7 @@ MandelfpSetup()
         {
             symmetry = symmetry_type::NONE;
         }
-        if (param[3] == 0.0 && debugflag != debug_flags::force_complex_power && (double)c_exp == param[2])
+        if (param[3] == 0.0 && debugflag != debug_flags::force_complex_power && (double)g_c_exponent == param[2])
         {
             fractalspecific[static_cast<int>(fractype)].orbitcalc = floatZpowerFractal;
         }
@@ -336,7 +336,7 @@ MandelfpSetup()
 bool
 JuliafpSetup()
 {
-    c_exp = (int)param[2];
+    g_c_exponent = (int)param[2];
     floatparm = &parm;
     if (fractype == fractal_type::COMPLEXMARKSJUL)
     {
@@ -376,11 +376,11 @@ JuliafpSetup()
         }
         break;
     case fractal_type::FPJULIAZPOWER:
-        if ((c_exp & 1) || param[3] != 0.0 || (double)c_exp != param[2])
+        if ((g_c_exponent & 1) || param[3] != 0.0 || (double)g_c_exponent != param[2])
         {
             symmetry = symmetry_type::NONE;
         }
-        if (param[3] == 0.0 && debugflag != debug_flags::force_complex_power && (double)c_exp == param[2])
+        if (param[3] == 0.0 && debugflag != debug_flags::force_complex_power && (double)g_c_exponent == param[2])
         {
             fractalspecific[static_cast<int>(fractype)].orbitcalc = floatZpowerFractal;
         }
@@ -495,18 +495,18 @@ bool
 MandellongSetup()
 {
     FgHalf = fudge/2;
-    c_exp = (int)param[2];
-    if (fractype == fractal_type::MARKSMANDEL && c_exp < 1)
+    g_c_exponent = (int)param[2];
+    if (fractype == fractal_type::MARKSMANDEL && g_c_exponent < 1)
     {
-        c_exp = 1;
+        g_c_exponent = 1;
         param[2] = 1;
     }
-    if ((fractype == fractal_type::MARKSMANDEL   && !(c_exp & 1)) ||
-            (fractype == fractal_type::LMANDELZPOWER && (c_exp & 1)))
+    if ((fractype == fractal_type::MARKSMANDEL   && !(g_c_exponent & 1)) ||
+            (fractype == fractal_type::LMANDELZPOWER && (g_c_exponent & 1)))
     {
         symmetry = symmetry_type::XY_AXIS_NO_PARAM;    // odd exponents
     }
-    if ((fractype == fractal_type::MARKSMANDEL && (c_exp & 1)) || fractype == fractal_type::LMANDELEXP)
+    if ((fractype == fractal_type::MARKSMANDEL && (g_c_exponent & 1)) || fractype == fractal_type::LMANDELEXP)
     {
         symmetry = symmetry_type::X_AXIS_NO_PARAM;
     }
@@ -517,7 +517,7 @@ MandellongSetup()
     longparm = &linit;
     if (fractype == fractal_type::LMANDELZPOWER)
     {
-        if (param[3] == 0.0 && debugflag != debug_flags::force_complex_power && (double)c_exp == param[2])
+        if (param[3] == 0.0 && debugflag != debug_flags::force_complex_power && (double)g_c_exponent == param[2])
         {
             fractalspecific[static_cast<int>(fractype)].orbitcalc = longZpowerFractal;
         }
@@ -525,7 +525,7 @@ MandellongSetup()
         {
             fractalspecific[static_cast<int>(fractype)].orbitcalc = longCmplxZpowerFractal;
         }
-        if (param[3] != 0 || (double)c_exp != param[2])
+        if (param[3] != 0 || (double)g_c_exponent != param[2])
         {
             symmetry = symmetry_type::NONE;
         }
@@ -565,16 +565,16 @@ MandellongSetup()
 bool
 JulialongSetup()
 {
-    c_exp = (int)param[2];
+    g_c_exponent = (int)param[2];
     longparm = &lparm;
     switch (fractype)
     {
     case fractal_type::LJULIAZPOWER:
-        if ((c_exp & 1) || param[3] != 0.0 || (double)c_exp != param[2])
+        if ((g_c_exponent & 1) || param[3] != 0.0 || (double)g_c_exponent != param[2])
         {
             symmetry = symmetry_type::NONE;
         }
-        if (param[3] == 0.0 && debugflag != debug_flags::force_complex_power && (double)c_exp == param[2])
+        if (param[3] == 0.0 && debugflag != debug_flags::force_complex_power && (double)g_c_exponent == param[2])
         {
             fractalspecific[static_cast<int>(fractype)].orbitcalc = longZpowerFractal;
         }
@@ -1178,23 +1178,23 @@ MarksJuliaSetup()
     {
         param[2] = 1;
     }
-    c_exp = (int)param[2];
+    g_c_exponent = (int)param[2];
     longparm = &lparm;
     lold = *longparm;
-    if (c_exp > 3)
+    if (g_c_exponent > 3)
     {
-        lcpower(&lold, c_exp-1, &lcoefficient, bitshift);
+        lcpower(&lold, g_c_exponent-1, &lcoefficient, bitshift);
     }
-    else if (c_exp == 3)
+    else if (g_c_exponent == 3)
     {
         lcoefficient.x = multiply(lold.x, lold.x, bitshift) - multiply(lold.y, lold.y, bitshift);
         lcoefficient.y = multiply(lold.x, lold.y, bitshiftless1);
     }
-    else if (c_exp == 2)
+    else if (g_c_exponent == 2)
     {
         lcoefficient = lold;
     }
-    else if (c_exp < 2)
+    else if (g_c_exponent < 2)
     {
         lcoefficient.x = 1L << bitshift;
         lcoefficient.y = 0L;
@@ -1211,23 +1211,23 @@ MarksJuliafpSetup()
     {
         param[2] = 1;
     }
-    c_exp = (int)param[2];
+    g_c_exponent = (int)param[2];
     floatparm = &parm;
     old = *floatparm;
-    if (c_exp > 3)
+    if (g_c_exponent > 3)
     {
-        cpower(&old, c_exp-1, &g_marks_coefficient);
+        cpower(&old, g_c_exponent-1, &g_marks_coefficient);
     }
-    else if (c_exp == 3)
+    else if (g_c_exponent == 3)
     {
         g_marks_coefficient.x = sqr(old.x) - sqr(old.y);
         g_marks_coefficient.y = old.x * old.y * 2;
     }
-    else if (c_exp == 2)
+    else if (g_c_exponent == 2)
     {
         g_marks_coefficient = old;
     }
-    else if (c_exp < 2)
+    else if (g_c_exponent < 2)
     {
         g_marks_coefficient.x = 1.0;
         g_marks_coefficient.y = 0.0;
