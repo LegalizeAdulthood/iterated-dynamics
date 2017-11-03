@@ -3033,7 +3033,7 @@ restart_1:
 
     prompts3d[++k] = "Use grayscale value for depth? (if \"no\" uses color number)";
     uvalues[k].type = 'y';
-    uvalues[k].uval.ch.val = grayflag ? 1 : 0;
+    uvalues[k].uval.ch.val = g_gray_flag ? 1 : 0;
 
     old_help_mode = help_mode;
     help_mode = HELP3DMODE;
@@ -3067,7 +3067,7 @@ restart_1:
     ray_name = uvalues[k++].uval.sval;
 
     Targa_Out = uvalues[k++].uval.ch.val != 0;
-    grayflag  = uvalues[k++].uval.ch.val != 0;
+    g_gray_flag  = uvalues[k++].uval.ch.val != 0;
 
     // check ranges
     if (previewfactor < 2)

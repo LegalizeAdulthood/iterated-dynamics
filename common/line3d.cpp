@@ -227,7 +227,7 @@ int line3d(BYTE * pixels, unsigned linelen)
             return 0;
         }
     }
-    else if (grayflag)             // convert color numbers to grayscale values
+    else if (g_gray_flag)             // convert color numbers to grayscale values
     {
         for (col = 0; col < (int) linelen; col++)
         {

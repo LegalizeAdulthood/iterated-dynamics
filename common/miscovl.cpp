@@ -1178,7 +1178,7 @@ void write_batch_parms(char const *colorinf, bool colorsonly, int maxcolor, int 
         {
             put_parm(" %s=y", "fullcolor");
         }
-        if (grayflag)
+        if (g_gray_flag)
         {
             put_parm(" %s=y", "usegrayscale");
         }

@@ -18,7 +18,7 @@
 std::string stereomapname;
 int g_auto_stereo_depth = 100;
 double g_auto_stereo_width = 10;
-bool grayflag = false;          // flag to use gray value rather than color number
+bool g_gray_flag = false;          // flag to use gray value rather than color number
 char g_calibrate = 1;             // add calibration bars to image
 bool image_map = false;
 
@@ -83,7 +83,7 @@ static int getdepth(int xd, int yd)
 {
     int pal;
     pal = getcolor(xd, yd);
-    if (grayflag)
+    if (g_gray_flag)
     {
         // effectively (30*R + 59*G + 11*B)/100 scaled 0 to 255
         pal = ((int) dac[pal][0] * 77 +

@@ -1234,7 +1234,7 @@ int get_rds_params()
         uvalues[k].uval.dval = g_auto_stereo_width;
         uvalues[k++].type = 'f';
 
-        uvalues[k].uval.ch.val = grayflag ? 1 : 0;
+        uvalues[k].uval.ch.val = g_gray_flag ? 1 : 0;
         uvalues[k++].type = 'y';
 
         uvalues[k].type = 'l';
@@ -1292,7 +1292,7 @@ int get_rds_params()
             k = 0;
             g_auto_stereo_depth = uvalues[k++].uval.ival;
             g_auto_stereo_width = uvalues[k++].uval.dval;
-            grayflag         = uvalues[k++].uval.ch.val != 0;
+            g_gray_flag         = uvalues[k++].uval.ch.val != 0;
             g_calibrate        = (char)uvalues[k++].uval.ch.val;
             image_map        = uvalues[k++].uval.ch.val != 0;
             if (!stereomapname.empty() && image_map)

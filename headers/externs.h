@@ -200,7 +200,7 @@ extern int                   g_glasses_type;
 extern bool                  g_good_mode;       // video mode ok?
 extern bool                  g_got_real_dac;    // loaddac worked, really got a dac
 extern int                   g_got_status;
-extern bool                  grayflag;
+extern bool                  g_gray_flag;
 extern std::string const     GreyFile;
 extern bool                  hasinverse;
 extern int                   haze;
