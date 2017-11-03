@@ -1741,7 +1741,7 @@ retry_dir:
         static int lastdir = 0;
         if (lastdir == 0)
         {
-            strcpy(dir, fract_dir1);
+            strcpy(dir, g_fractal_search_dir1);
         }
         else
         {

@@ -31,7 +31,7 @@ int look_at_mouse = 0;  // see notes at mouseread routine
 
 long timer_start, timer_interval;       // timer(...) start & total
 int     g_adapter;                      // Video Adapter chosen from list in ...h
-char const *fract_dir1 = "";
+char const *g_fractal_search_dir1 = "";
 char const *fract_dir2 = "";
 
 /*
@@ -209,10 +209,10 @@ static void main_restart(int const argc, char const *const argv[], bool &stacked
     show_dot = -1; // turn off show_dot if entered with <g> command
     g_calc_status = calc_status_value::NO_FRACTAL;                    // no active fractal image
 
-    fract_dir1 = getenv("FRACTDIR");
-    if (fract_dir1 == nullptr)
+    g_fractal_search_dir1 = getenv("FRACTDIR");
+    if (g_fractal_search_dir1 == nullptr)
     {
-        fract_dir1 = ".";
+        g_fractal_search_dir1 = ".";
     }
 #ifdef SRCDIR
     fract_dir2 = SRCDIR;
