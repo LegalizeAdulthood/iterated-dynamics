@@ -583,7 +583,7 @@ static void initvars_fractal()          // init vars affecting calculation
     hi_atten = 0;                        // no attenuation of hi notes
     g_fm_attack = 5;                       // fast attack
     g_fm_decay = 10;                        // long decay
-    fm_sustain = 13;                      // fairly high sustain level
+    g_fm_sustain = 13;                      // fairly high sustain level
     g_fm_release = 5;                      // short release
     fm_wavetype = 0;                     // sin wave
     polyphony = 0;                       // no polyphony
@@ -2765,7 +2765,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
     if (variable == "sustain")
     {
         // sustain = ?
-        fm_sustain = numval & 0x0F;
+        g_fm_sustain = numval & 0x0F;
         return CMDARG_NONE;
     }
 

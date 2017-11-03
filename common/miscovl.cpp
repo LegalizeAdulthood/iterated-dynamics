@@ -1342,9 +1342,9 @@ void write_batch_parms(char const *colorinf, bool colorsonly, int maxcolor, int 
             put_parm(" %s=%d", "decay", g_fm_decay);
         }
 
-        if (fm_sustain != 13)
+        if (g_fm_sustain != 13)
         {
-            put_parm(" %s=%d", "sustain", fm_sustain);
+            put_parm(" %s=%d", "sustain", g_fm_sustain);
         }
 
         if (g_fm_release != 5)

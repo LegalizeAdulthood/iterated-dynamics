@@ -178,7 +178,7 @@ extern DComplex *            g_float_param;
 extern int                   g_fm_attack;
 extern int                   g_fm_decay;
 extern int                   g_fm_release;
-extern int                   fm_sustain;
+extern int                   g_fm_sustain;
 extern int                   fm_wavetype;
 extern int                   fm_vol;            // volume of OPL-3 soundcard output
 extern symmetry_type         forcesymmetry;
