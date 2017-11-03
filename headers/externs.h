@@ -134,7 +134,7 @@ extern int                   g_distance_estimator_width_factor;
 extern float                 g_dist_fp;
 extern int                   g_distribution;
 extern bool                  g_dither_flag;
-extern bool                  dontreadcolor;
+extern bool                  g_dont_read_color;
 extern int                   dotmode;
 extern bool confirm_file_deletes;
 extern double                dpx;

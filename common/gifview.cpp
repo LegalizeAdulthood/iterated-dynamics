@@ -164,7 +164,7 @@ int gifview()
                 return (-1);
             }
             if ((!g_display_3d || (g_glasses_type != 1 && g_glasses_type != 2))
-                    && !dontreadcolor)
+                    && !g_dont_read_color)
             {
                 g_dac_box[i][j] = (BYTE)(k >> 2); // TODO: don't right shift color table by 2
             }
@@ -194,7 +194,7 @@ int gifview()
         sprintf(msg, "restoring %s", tmpname);
         dvid_status(1, msg);
     }
-    dontreadcolor = false;
+    g_dont_read_color = false;
 
     // Now display one or more GIF objects
     bool finished = false;
