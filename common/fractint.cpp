@@ -289,7 +289,7 @@ static bool main_restore_start(bool &stacked, bool &resumeflag)
                 hdg = "Select File for 3D Overlay";
                 help_mode = HELP3DOVLY;
             }
-            else if (display_3d != display_3d_modes::NONE)
+            else if (g_display_3d != display_3d_modes::NONE)
             {
                 hdg = "Select File for 3D Transform";
                 help_mode = HELP3D;
@@ -344,7 +344,7 @@ static bool main_restore_start(bool &stacked, bool &resumeflag)
         driver_unstack_screen();                  // restore the graphics screen
         stacked = false;
         overlay_3d = false;              // forget overlays
-        display_3d = display_3d_modes::NONE;
+        g_display_3d = display_3d_modes::NONE;
         if (g_calc_status == calc_status_value::NON_RESUMABLE)
         {
             g_calc_status = calc_status_value::PARAMS_CHANGED;
@@ -448,10 +448,10 @@ static main_state main_image_start(bool &stacked, bool &resumeflag)
         if (kbdchar == 'r' || kbdchar == '3' || kbdchar == FIK_F3)
         {
 #endif
-            display_3d = display_3d_modes::NONE;
+            g_display_3d = display_3d_modes::NONE;
             if (kbdchar == '3' || kbdchar == '#' || kbdchar == FIK_F3)
             {
-                display_3d = display_3d_modes::YES;
+                g_display_3d = display_3d_modes::YES;
             }
             if (g_colors_preloaded)
             {

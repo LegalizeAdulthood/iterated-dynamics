@@ -129,7 +129,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
     if (read_info.version > 1)
     {
         save_release  = 1200;
-        if ((display_3d == display_3d_modes::NONE)
+        if ((g_display_3d == display_3d_modes::NONE)
                 && (read_info.version <= 4 || read_info.display_3d > 0
                     || (curfractalspecific->flags & PARMS3D)))
         {
@@ -213,7 +213,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
             save_release = 1410;
             save_system = 0;
         }
-        if (display_3d == display_3d_modes::NONE && read_info.display_3d > 0)
+        if (g_display_3d == display_3d_modes::NONE && read_info.display_3d > 0)
         {
             loaded3d       = true;
             g_ambient        = read_info.ambient;
@@ -396,7 +396,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
     backwards_v19();
     backwards_v20();
 
-    if (display_3d != display_3d_modes::NONE)
+    if (g_display_3d != display_3d_modes::NONE)
     {
         usr_floatflag = oldfloatflag;
     }
@@ -413,15 +413,15 @@ int read_overlay()      // read overlay/3D files, if reqr'd
     }
     else
     {
-        display_3d_modes const old_display_ed = display_3d;
+        display_3d_modes const old_display_ed = g_display_3d;
         bool const oldfloatflag = floatflag;
-        display_3d = loaded3d ? display_3d_modes::YES : display_3d_modes::NONE;   // for <tab> display during next
+        g_display_3d = loaded3d ? display_3d_modes::YES : display_3d_modes::NONE;   // for <tab> display during next
         floatflag = usr_floatflag; // ditto
         int i = get_video_mode(&read_info, &blk_3_info);
 #if defined(_WIN32)
         _ASSERTE(_CrtCheckMemory());
 #endif
-        display_3d = old_display_ed;
+        g_display_3d = old_display_ed;
         floatflag = oldfloatflag;
         if (i)
         {
@@ -435,7 +435,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
         }
     }
 
-    if (display_3d != display_3d_modes::NONE)
+    if (g_display_3d != display_3d_modes::NONE)
     {
         g_calc_status = calc_status_value::PARAMS_CHANGED;
         fractype = fractal_type::PLASMA;

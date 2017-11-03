@@ -240,7 +240,7 @@ main_state big_while_loop(bool *const kbdmore, bool *const stacked, bool const r
         {
             // loading an image
             outln_cleanup = nullptr;          // outln routine can set this
-            if (display_3d != display_3d_modes::NONE)                 // set up 3D decoding
+            if (g_display_3d != display_3d_modes::NONE)                 // set up 3D decoding
             {
                 outln = call_line3d;
             }
@@ -342,7 +342,7 @@ main_state big_while_loop(bool *const kbdmore, bool *const stacked, bool const r
             }
             if (loaded3d)      // 'r' of image created with '3'
             {
-                display_3d = display_3d_modes::YES;  // so set flag for 'b' command
+                g_display_3d = display_3d_modes::YES;  // so set flag for 'b' command
             }
         }
         else
@@ -1338,11 +1338,11 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
 do_3d_transform:
         if (overlay_3d)
         {
-            display_3d = display_3d_modes::B_COMMAND;         // for <b> command
+            g_display_3d = display_3d_modes::B_COMMAND;         // for <b> command
         }
         else
         {
-            display_3d = display_3d_modes::YES;
+            g_display_3d = display_3d_modes::YES;
         }
     case 'r':                    // restore-from
         g_compare_gif = false;
@@ -1367,7 +1367,7 @@ do_3d_transform:
                 g_compare_gif = false;
                 overlay_3d = false;
             }
-            display_3d = display_3d_modes::NONE;
+            g_display_3d = display_3d_modes::NONE;
         }
         driver_stack_screen();            // save graphics image
         if (overlay_3d)
@@ -1831,7 +1831,7 @@ static main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdm
                 g_compare_gif = false;
                 overlay_3d = false;
             }
-            display_3d = display_3d_modes::NONE;
+            g_display_3d = display_3d_modes::NONE;
         }
         driver_stack_screen();            // save graphics image
         if (overlay_3d)
@@ -2447,7 +2447,7 @@ static void save_history_info()
     current.pot16bit             = (short) (g_disk_16_bit ? 1 : 0);
     current.release              = (short)g_release                   ;
     current.save_release         = (short)save_release              ;
-    current.display_3d           = display_3d;
+    current.display_3d           = g_display_3d;
     current.ambient              = (short)g_ambient                   ;
     current.randomize            = (short)RANDOMIZE                 ;
     current.haze                 = (short)haze                      ;
@@ -2631,7 +2631,7 @@ static void restore_history_info(int i)
     g_disk_16_bit             = last.pot16bit != 0;
     g_release             = last.release        ;
     save_release          = last.save_release   ;
-    display_3d = last.display_3d;
+    g_display_3d = last.display_3d;
     g_ambient               = last.ambient        ;
     RANDOMIZE             = last.randomize      ;
     haze                  = last.haze           ;

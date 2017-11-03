@@ -91,7 +91,7 @@ int     inside = 0;             // inside color: 1=blue
 int     fillcolor = 0;          // fillcolor: -1=normal
 int     outside = COLOR_BLACK;  // outside color
 bool finattract = false;        // finite attractor logic
-display_3d_modes display_3d = display_3d_modes::NONE; // 3D display flag: 0 = OFF
+display_3d_modes g_display_3d = display_3d_modes::NONE; // 3D display flag: 0 = OFF
 bool    overlay_3d = false;      // 3D overlay flag
 int     init3d[20] = { 0 };     // '3d=nn/nn/nn/...' values
 bool    g_check_cur_dir = false;    // flag to check current dir for files
@@ -553,7 +553,7 @@ static void initvars_fractal()          // init vars affecting calculation
     math_tol[0] = 0.05;
     math_tol[1] = 0.05;
 
-    display_3d = display_3d_modes::NONE;                       // 3D display is off
+    g_display_3d = display_3d_modes::NONE;                       // 3D display is off
     overlay_3d = false;                  // 3D overlay is off
 
     old_demm_colors = false;
@@ -1208,7 +1208,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         {
             goto badarg;
         }
-        if (mode == cmd_file::AT_AFTER_STARTUP && display_3d == display_3d_modes::NONE) // can't do this in @ command
+        if (mode == cmd_file::AT_AFTER_STARTUP && g_display_3d == display_3d_modes::NONE) // can't do this in @ command
         {
             goto badarg;
         }
@@ -3210,9 +3210,9 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         {
             goto badarg;
         }
-        display_3d = yesnoval[0] != 0 ? display_3d_modes::YES : display_3d_modes::NONE;
+        g_display_3d = yesnoval[0] != 0 ? display_3d_modes::YES : display_3d_modes::NONE;
         initvars_3d();
-        return display_3d != display_3d_modes::NONE ? (CMDARG_3D_PARAM | CMDARG_3D_YES) : CMDARG_3D_PARAM;
+        return g_display_3d != display_3d_modes::NONE ? (CMDARG_3D_PARAM | CMDARG_3D_YES) : CMDARG_3D_PARAM;
     }
 
     if (variable == "sphere")
@@ -3661,7 +3661,7 @@ static int parse_colors(char const *value)
         {
             goto badcolor;
         }
-        if (display_3d != display_3d_modes::NONE)
+        if (g_display_3d != display_3d_modes::NONE)
         {
             mapset = true;
         }
