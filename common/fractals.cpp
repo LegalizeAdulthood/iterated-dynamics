@@ -64,7 +64,7 @@ DComplex g_marks_coefficient;
 DComplex  staticroots[16]; // roots array for degree 16 or less
 std::vector<DComplex> roots;
 std::vector<MPC> MPCroots;
-long FgHalf;
+long g_fudge_half;
 DComplex pwr;
 int     bitshiftless1;                  // bit shift less 1
 bool overflow = false;
@@ -2771,7 +2771,7 @@ int mandel_per_pixel()
     switch (fractype)
     {
     case fractal_type::MANDELLAMBDA:              // Critical Value 0.5 + 0.0i
-        lold.x = FgHalf;
+        lold.x = g_fudge_half;
         lold.y = 0;
         break;
     default:

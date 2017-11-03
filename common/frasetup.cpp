@@ -494,7 +494,7 @@ JuliafpSetup()
 bool
 MandellongSetup()
 {
-    FgHalf = fudge/2;
+    g_fudge_half = fudge/2;
     g_c_exponent = (int)param[2];
     if (fractype == fractal_type::MARKSMANDEL && g_c_exponent < 1)
     {
