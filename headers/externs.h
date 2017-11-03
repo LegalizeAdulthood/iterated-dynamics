@@ -100,7 +100,7 @@ extern bool                  g_compare_gif;
 extern long                  con;
 extern double                cosx;
 extern int                   g_current_column;
-extern int                   curpass;
+extern int                   g_current_pass;
 extern int                   currow;
 extern int                   cyclelimit;
 extern int                   c_exp;

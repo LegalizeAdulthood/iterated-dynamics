@@ -166,7 +166,7 @@ static bool dem_mandel = false;
 int got_status = -1;                    // -1 if not, 0 for 1or2pass, 1 for ssg,
                                         // 2 for btm, 3 for 3d, 4 for tesseral, 5 for diffusion_scan
                                         // 6 for orbits
-int curpass = 0;
+int g_current_pass = 0;
 int totpasses = 0;
 int currow = 0;
 int g_current_column = 0;
@@ -1879,7 +1879,7 @@ static int one_or_two_pass()
 static int standard_calc(int passnum)
 {
     got_status = 0;
-    curpass = passnum;
+    g_current_pass = passnum;
     row = yybegin;
     col = xxbegin;
 
@@ -3755,7 +3755,7 @@ static int solid_guess()
     if (workpass == 0) // otherwise first pass already done
     {
         // first pass, calc every blocksize**2 pixel, quarter result & paint it
-        curpass = 1;
+        g_current_pass = 1;
         if (iystart <= yystart) // first time for this window, init it
         {
             currow = 0;
@@ -3876,7 +3876,7 @@ static int solid_guess()
                 goto exit_solidguess;
             }
         }
-        curpass = workpass + 1;
+        g_current_pass = workpass + 1;
         for (int y = iystart; y <= iystop; y += blocksize)
         {
             currow = y;

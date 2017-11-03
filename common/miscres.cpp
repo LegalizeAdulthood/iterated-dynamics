@@ -1076,7 +1076,7 @@ top:
                 if (totpasses > 1)
                 {
                     driver_put_string(-1, -1, C_GENERAL_MED, "pass ");
-                    sprintf(msg, "%d", curpass);
+                    sprintf(msg, "%d", g_current_pass);
                     driver_put_string(-1, -1, C_GENERAL_HI, msg);
                     driver_put_string(-1, -1, C_GENERAL_MED, " of ");
                     sprintf(msg, "%d", totpasses);
