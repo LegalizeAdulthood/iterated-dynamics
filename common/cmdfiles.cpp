@@ -569,7 +569,7 @@ static void initvars_fractal()          // init vars affecting calculation
     mxmaxfp = -.83;
     mymaxfp =  .25;
     originfp = 8;
-    heightfp = 7;
+    g_height_fp = 7;
     widthfp = 10;
     g_dist_fp = 24;
     g_eyes_fp = 2.5F;
@@ -2038,7 +2038,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         }
         if (totparms > 3)
         {
-            heightfp = (float)floatval[3];
+            g_height_fp = (float)floatval[3];
         }
         if (totparms > 4)
         {

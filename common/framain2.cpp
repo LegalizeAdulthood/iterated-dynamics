@@ -2463,7 +2463,7 @@ static void save_history_info()
     current.zdots                = (short)zdots                         ;
     current.originfp             = originfp                  ;
     current.depthfp              = g_depth_fp                      ;
-    current.heightfp             = heightfp                  ;
+    current.heightfp             = g_height_fp                  ;
     current.widthfp              = widthfp                      ;
     current.distfp               = g_dist_fp                       ;
     current.eyesfp               = g_eyes_fp                       ;
@@ -2647,7 +2647,7 @@ static void restore_history_info(int i)
     zdots                 = last.zdots          ;
     originfp              = last.originfp       ;
     g_depth_fp               = last.depthfp        ;
-    heightfp              = last.heightfp       ;
+    g_height_fp              = last.heightfp       ;
     widthfp               = last.widthfp        ;
     g_dist_fp                = last.distfp         ;
     g_eyes_fp                = last.eyesfp         ;
