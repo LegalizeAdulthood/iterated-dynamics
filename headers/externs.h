@@ -193,7 +193,7 @@ extern double                g_f_radius;
 extern double                g_f_x_center;
 extern double                g_f_y_center;
 extern GENEBASE              g_gene_bank[NUMGENES];
-extern bool                  gif87a_flag;
+extern bool                  g_gif87a_flag;
 extern std::string           gifmask;
 extern std::string const     Glasses1Map;
 extern int                   g_glasses_type;

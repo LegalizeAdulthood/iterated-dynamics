@@ -88,7 +88,7 @@ static int gif_savetodisk(char *filename)      // save-to-disk routine
 
 restart:
     save16bit = g_disk_16_bit;
-    if (gif87a_flag)               // not storing non-standard fractal info
+    if (g_gif87a_flag)               // not storing non-standard fractal info
     {
         save16bit = 0;
     }
@@ -354,7 +354,7 @@ bool encoder()
 #endif
 
     int i = 0;
-    if (gif87a_flag)
+    if (g_gif87a_flag)
     {
         if (fwrite("GIF87a", 6, 1, g_outfile) != 1)
         {
@@ -416,7 +416,7 @@ bool encoder()
     {
         i = 255;
     }
-    if (gif87a_flag)
+    if (g_gif87a_flag)
     {
         i = 0;                    // for some decoders which can't handle aspect
     }
@@ -543,7 +543,7 @@ bool encoder()
         goto oops;
     }
 
-    if (!gif87a_flag)
+    if (!g_gif87a_flag)
     {
         // store non-standard fractal info
         // loadfile.c has notes about extension block structure

@@ -68,7 +68,7 @@ std::string savename{"fract001"}; // save files using this name
 std::string g_auto_name{"auto.key"}; // record auto keystrokes here
 bool    potflag = false;        // continuous potential enabled?
 bool    pot16bit = false;               // store 16 bit continuous potential values
-bool    gif87a_flag = false;    // true if GIF87a format, false otherwise
+bool    g_gif87a_flag = false;    // true if GIF87a format, false otherwise
 bool    g_dither_flag = false;    // true if want to dither GIFs
 bool    g_ask_video = false;       // flag for video prompting
 bool    g_float_flag = false;
@@ -415,7 +415,7 @@ static void initvars_restart()          // <ins> key init
 {
     recordcolors = 'a';                 // don't use mapfiles in PARs
     save_release = g_release;           // this release number
-    gif87a_flag = false;                // turn on GIF89a processing
+    g_gif87a_flag = false;                // turn on GIF89a processing
     g_dither_flag = false;                // no dithering
     g_ask_video = true;                    // turn on video-prompt flag
     fract_overwrite = false;            // don't overwrite
@@ -1375,7 +1375,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         {
             goto badarg;
         }
-        gif87a_flag = yesnoval[0] != 0;
+        g_gif87a_flag = yesnoval[0] != 0;
         return CMDARG_NONE;
     }
 
