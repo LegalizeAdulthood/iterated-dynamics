@@ -299,7 +299,7 @@ static bool main_restore_start(bool &stacked, bool &resumeflag)
                 hdg = "Select File to Restore";
                 help_mode = HELPSAVEREST;
             }
-            if (show_file < 0 && getafilename(hdg, gifmask.c_str(), readname))
+            if (show_file < 0 && getafilename(hdg, g_gif_filename_mask.c_str(), readname))
             {
                 show_file = 1;               // cancelled
                 g_init_mode = -1;
