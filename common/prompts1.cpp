@@ -1877,7 +1877,7 @@ gfp_top:
         paramvalues[promptnum].uval.dval = widthfp;
         paramvalues[promptnum].type = 'f';
         choices[promptnum++] = "Screen width";
-        paramvalues[promptnum].uval.dval = distfp;
+        paramvalues[promptnum].uval.dval = g_dist_fp;
         paramvalues[promptnum].type = 'f';
         choices[promptnum++] = "Distance to Screen";
     }
@@ -2044,7 +2044,7 @@ gfp_top:
         g_depth_fp    = (float)paramvalues[promptnum++].uval.dval;
         heightfp   = (float)paramvalues[promptnum++].uval.dval;
         widthfp    = (float)paramvalues[promptnum++].uval.dval;
-        distfp     = (float)paramvalues[promptnum++].uval.dval;
+        g_dist_fp     = (float)paramvalues[promptnum++].uval.dval;
         ret = 1;  // force new calc since not resumable anyway
     }
     if (curtype == fractal_type::INVERSEJULIA || curtype == fractal_type::INVERSEJULIAFP)

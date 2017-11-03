@@ -2465,7 +2465,7 @@ static void save_history_info()
     current.depthfp              = g_depth_fp                      ;
     current.heightfp             = heightfp                  ;
     current.widthfp              = widthfp                      ;
-    current.distfp               = distfp                       ;
+    current.distfp               = g_dist_fp                       ;
     current.eyesfp               = eyesfp                       ;
     current.orbittype            = (short)neworbittype              ;
     current.juli3Dmode           = (short)juli3Dmode                ;
@@ -2649,7 +2649,7 @@ static void restore_history_info(int i)
     g_depth_fp               = last.depthfp        ;
     heightfp              = last.heightfp       ;
     widthfp               = last.widthfp        ;
-    distfp                = last.distfp         ;
+    g_dist_fp                = last.distfp         ;
     eyesfp                = last.eyesfp         ;
     neworbittype          = static_cast<fractal_type>(last.orbittype);
     juli3Dmode            = last.juli3Dmode     ;

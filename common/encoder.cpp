@@ -969,7 +969,7 @@ static void setup_save_info(FRACTAL_INFO *save_info)
     save_info->depthfp = g_depth_fp;
     save_info->heightfp = heightfp;
     save_info->widthfp = widthfp;
-    save_info->distfp = distfp;
+    save_info->distfp = g_dist_fp;
     save_info->eyesfp = eyesfp;
     save_info->orbittype = (short) neworbittype;
     save_info->juli3Dmode = (short) juli3Dmode;

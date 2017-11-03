@@ -47,7 +47,7 @@ int zdots = 128;
 float originfp  = 8.0F;
 float heightfp  = 7.0F;
 float widthfp   = 10.0F;
-float distfp    = 24.0F;
+float g_dist_fp    = 24.0F;
 float eyesfp    = 2.5F;
 float g_depth_fp   = 8.0F;
 float brratiofp = 1.0F;
@@ -94,9 +94,9 @@ JulibrotSetup()
     LeftEyefp.x = -RightEyefp.x;
     RightEyefp.y = 0;
     LeftEyefp.y = RightEyefp.y;
-    RightEyefp.zx = distfp;
+    RightEyefp.zx = g_dist_fp;
     LeftEyefp.zx = RightEyefp.zx;
-    RightEyefp.zy = distfp;
+    RightEyefp.zy = g_dist_fp;
     LeftEyefp.zy = RightEyefp.zy;
     bbase = 128;
 
@@ -127,7 +127,7 @@ JulibrotSetup()
         long origin = (long)(originfp * fg16);
         depth = (long)(g_depth_fp * fg16);
         width = (long)(widthfp * fg16);
-        dist = (long)(distfp * fg16);
+        dist = (long)(g_dist_fp * fg16);
         eyes = (long)(eyesfp * fg16);
         brratio = (long)(brratiofp * fg16);
         dmx = (mxmax - mxmin) / zdots;
@@ -208,13 +208,13 @@ jb_per_pixel()
 int
 jbfp_per_pixel()
 {
-    jxfp = ((Perfp->x - xpixelfp) * initzfp / distfp - xpixelfp) * x_per_inchfp;
+    jxfp = ((Perfp->x - xpixelfp) * initzfp / g_dist_fp - xpixelfp) * x_per_inchfp;
     jxfp += xoffsetfp;
-    djxfp = (g_depth_fp / distfp) * (Perfp->x - xpixelfp) * x_per_inchfp / zdots;
+    djxfp = (g_depth_fp / g_dist_fp) * (Perfp->x - xpixelfp) * x_per_inchfp / zdots;
 
-    jyfp = ((Perfp->y - ypixelfp) * initzfp / distfp - ypixelfp) * y_per_inchfp;
+    jyfp = ((Perfp->y - ypixelfp) * initzfp / g_dist_fp - ypixelfp) * y_per_inchfp;
     jyfp += yoffsetfp;
-    djyfp = g_depth_fp / distfp * (Perfp->y - ypixelfp) * y_per_inchfp / zdots;
+    djyfp = g_depth_fp / g_dist_fp * (Perfp->y - ypixelfp) * y_per_inchfp / zdots;
 
     return (1);
 }

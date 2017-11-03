@@ -256,7 +256,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
         g_depth_fp   =  read_info.depthfp        ;
         heightfp  =  read_info.heightfp       ;
         widthfp   =  read_info.widthfp        ;
-        distfp    =  read_info.distfp         ;
+        g_dist_fp    =  read_info.distfp         ;
         eyesfp    =  read_info.eyesfp         ;
         neworbittype = static_cast<fractal_type>(read_info.orbittype);
         juli3Dmode   = read_info.juli3Dmode   ;
