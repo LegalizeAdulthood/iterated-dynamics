@@ -390,7 +390,7 @@ main_state big_while_loop(bool *const kbdmore, bool *const stacked, bool const r
                     ydots        = g_evolve_info.ydots;
                     g_evolve_image_grid_size = g_evolve_info.image_grid_size;
                     evolve_this_generation_random_seed = g_evolve_info.this_generation_random_seed;
-                    evolve_max_random_mutation = g_evolve_info.max_random_mutation;
+                    g_evolve_max_random_mutation = g_evolve_info.max_random_mutation;
                     g_evolving     = g_evolve_info.evolving;
                     viewwindow = g_evolving != 0;
                     ecount       = g_evolve_info.ecount;
@@ -406,7 +406,7 @@ main_state big_while_loop(bool *const kbdmore, bool *const stacked, bool const r
                     }
                     param_history(0); // save old history
                     ecount = 0;
-                    evolve_max_random_mutation = evolve_max_random_mutation * evolve_mutation_reduction_factor;
+                    g_evolve_max_random_mutation = g_evolve_max_random_mutation * evolve_mutation_reduction_factor;
                     evolve_x_parameter_offset = evolve_new_x_parameter_offset;
                     evolve_y_parameter_offset = evolve_new_y_parameter_offset;
                     evolve_discrete_x_parameter_offset = evolve_new_discrete_x_parameter_offset;
@@ -459,7 +459,7 @@ done:
                     g_evolve_info.ydots           = (short)ydots;
                     g_evolve_info.image_grid_size = (short) g_evolve_image_grid_size;
                     g_evolve_info.this_generation_random_seed = (short) evolve_this_generation_random_seed;
-                    g_evolve_info.max_random_mutation = evolve_max_random_mutation;
+                    g_evolve_info.max_random_mutation = g_evolve_max_random_mutation;
                     g_evolve_info.evolving        = (short)g_evolving;
                     g_evolve_info.ecount          = (short) ecount;
                     g_have_evolve_info = true;
@@ -804,7 +804,7 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
             evolve_new_discrete_x_parameter_offset = 0;
             evolve_discrete_y_parameter_offset = 0;
             evolve_discrete_x_parameter_offset = 0;
-            evolve_max_random_mutation = 1;           // reset param evolution stuff
+            g_evolve_max_random_mutation = 1;           // reset param evolution stuff
             set_orbit_corners = false;
             param_history(0); // save history
             if (i == 0)
@@ -1602,7 +1602,7 @@ static main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdm
             evolve_new_discrete_x_parameter_offset = 0;
             evolve_discrete_y_parameter_offset = 0;
             evolve_discrete_x_parameter_offset = 0;
-            evolve_max_random_mutation = 1;           // reset param evolution stuff
+            g_evolve_max_random_mutation = 1;           // reset param evolution stuff
             set_orbit_corners = false;
             param_history(0); // save history
             if (i == 0)
@@ -2061,7 +2061,7 @@ static main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdm
         delete and the menu if necessary */
 
     case FIK_F2: // halve mutation params and regen
-        evolve_max_random_mutation = evolve_max_random_mutation / 2;
+        g_evolve_max_random_mutation = g_evolve_max_random_mutation / 2;
         evolve_x_parameter_range = evolve_x_parameter_range / 2;
         evolve_new_x_parameter_offset = evolve_x_parameter_offset + evolve_x_parameter_range / 2;
         evolve_y_parameter_range = evolve_y_parameter_range / 2;
@@ -2073,7 +2073,7 @@ static main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdm
     case FIK_F3: //double mutation parameters and regenerate
     {
         double centerx, centery;
-        evolve_max_random_mutation = evolve_max_random_mutation * 2;
+        g_evolve_max_random_mutation = g_evolve_max_random_mutation * 2;
         centerx = evolve_x_parameter_offset + evolve_x_parameter_range / 2;
         evolve_x_parameter_range = evolve_x_parameter_range * 2;
         evolve_new_x_parameter_offset = centerx - evolve_x_parameter_range / 2;

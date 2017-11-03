@@ -629,7 +629,7 @@ bool encoder()
                 esave_info.image_grid_size = (short) g_evolve_image_grid_size;
                 esave_info.evolving        = (short)g_evolving;
                 esave_info.this_generation_random_seed = (unsigned short) evolve_this_generation_random_seed;
-                esave_info.max_random_mutation = evolve_max_random_mutation;
+                esave_info.max_random_mutation = g_evolve_max_random_mutation;
                 esave_info.ecount          = (short)(g_evolve_image_grid_size * g_evolve_image_grid_size);  // flag for done
             }
             else

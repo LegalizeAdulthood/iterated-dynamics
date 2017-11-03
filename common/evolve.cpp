@@ -38,7 +38,7 @@ double evolve_x_parameter_range;
 double evolve_y_parameter_range;
 double g_evolve_dist_per_x;
 double g_evolve_dist_per_y;
-double evolve_max_random_mutation;
+double g_evolve_max_random_mutation;
 double evolve_mutation_reduction_factor;
 double parmzoom;
 
@@ -244,13 +244,13 @@ void varydbl(GENEBASE gene[], int randval, int i)
         *(double *)gene[i].addr = (px*g_evolve_dist_per_x+ evolve_x_parameter_offset)-(lclpy*g_evolve_dist_per_y+ evolve_y_parameter_offset); //and x-y
         break;
     case variations::RANDOM:
-        *(double *)gene[i].addr += (((double)randval / RAND_MAX) * 2 * evolve_max_random_mutation) - evolve_max_random_mutation;
+        *(double *)gene[i].addr += (((double)randval / RAND_MAX) * 2 * g_evolve_max_random_mutation) - g_evolve_max_random_mutation;
         break;
     case variations::WEIGHTED_RANDOM:
     {
         int mid = g_evolve_image_grid_size /2;
         double radius =  sqrt(static_cast<double>(sqr(px - mid) + sqr(lclpy - mid)));
-        *(double *)gene[i].addr += ((((double)randval / RAND_MAX) * 2 * evolve_max_random_mutation) - evolve_max_random_mutation) * radius;
+        *(double *)gene[i].addr += ((((double)randval / RAND_MAX) * 2 * g_evolve_max_random_mutation) - g_evolve_max_random_mutation) * radius;
     }
     break;
     }
@@ -285,7 +285,7 @@ int varyint(int randvalue, int limit, variations mode)
     {
         int mid = g_evolve_image_grid_size /2;
         double radius =  sqrt(static_cast<double>(sqr(px - mid) + sqr(lclpy - mid)));
-        ret = (int)((((randvalue / RAND_MAX) * 2 * evolve_max_random_mutation) - evolve_max_random_mutation) * radius);
+        ret = (int)((((randvalue / RAND_MAX) * 2 * g_evolve_max_random_mutation) - g_evolve_max_random_mutation) * radius);
         ret %= limit;
         break;
     }
@@ -691,7 +691,7 @@ int get_evolve_Parms()
     old_y_parameter_range = evolve_y_parameter_range;
     old_x_parameter_offset = evolve_x_parameter_offset;
     old_y_parameter_offset = evolve_y_parameter_offset;
-    old_max_random_mutation = evolve_max_random_mutation;
+    old_max_random_mutation = g_evolve_max_random_mutation;
 
 get_evol_restart:
 
@@ -699,10 +699,10 @@ get_evol_restart:
     {
         // adjust field param to make some sense when changing from random modes
         // maybe should adjust for aspect ratio here?
-        evolve_y_parameter_range = evolve_max_random_mutation * 2;
-        evolve_x_parameter_range = evolve_max_random_mutation * 2;
-        evolve_x_parameter_offset = param[0] - evolve_max_random_mutation;
-        evolve_y_parameter_offset = param[1] - evolve_max_random_mutation;
+        evolve_y_parameter_range = g_evolve_max_random_mutation * 2;
+        evolve_x_parameter_range = g_evolve_max_random_mutation * 2;
+        evolve_x_parameter_offset = param[0] - g_evolve_max_random_mutation;
+        evolve_y_parameter_offset = param[1] - g_evolve_max_random_mutation;
         // set middle image to last selected and edges to +- evolve_max_random_mutation
     }
 
@@ -743,7 +743,7 @@ get_evol_restart:
 
     choices[++k] = "Max random mutation";
     uvalues[k].type = 'f';
-    uvalues[k].uval.dval = evolve_max_random_mutation;
+    uvalues[k].uval.dval = g_evolve_max_random_mutation;
 
     choices[++k] = "Mutation reduction factor (between generations)";
     uvalues[k].type = 'f';
@@ -780,7 +780,7 @@ get_evol_restart:
         evolve_y_parameter_range = old_y_parameter_range;
         evolve_x_parameter_offset = old_x_parameter_offset;
         evolve_y_parameter_offset = old_y_parameter_offset;
-        evolve_max_random_mutation = old_max_random_mutation;
+        g_evolve_max_random_mutation = old_max_random_mutation;
 
         return (-1);
     }
@@ -788,7 +788,7 @@ get_evol_restart:
     if (i == FIK_F4)
     {
         set_current_params();
-        evolve_max_random_mutation = 1;
+        g_evolve_max_random_mutation = 1;
         evolve_mutation_reduction_factor = 1.0;
         goto get_evol_restart;
     }
@@ -800,7 +800,7 @@ get_evol_restart:
         evolve_y_parameter_range = evolve_y_parameter_range / 2;
         evolve_new_y_parameter_offset = evolve_y_parameter_offset + evolve_y_parameter_range / 2;
         evolve_y_parameter_offset = evolve_new_y_parameter_offset;
-        evolve_max_random_mutation = evolve_max_random_mutation / 2;
+        g_evolve_max_random_mutation = g_evolve_max_random_mutation / 2;
         goto get_evol_restart;
     }
     if (i == FIK_F3)
@@ -814,7 +814,7 @@ get_evol_restart:
         evolve_y_parameter_range = evolve_y_parameter_range * 2;
         evolve_new_y_parameter_offset = centery - evolve_y_parameter_range / 2;
         evolve_y_parameter_offset = evolve_new_y_parameter_offset;
-        evolve_max_random_mutation = evolve_max_random_mutation * 2;
+        g_evolve_max_random_mutation = g_evolve_max_random_mutation * 2;
         goto get_evol_restart;
     }
 
@@ -864,7 +864,7 @@ get_evol_restart:
         evolve_new_y_parameter_offset = evolve_y_parameter_offset;
     }
 
-    evolve_max_random_mutation = uvalues[++k].uval.dval;
+    g_evolve_max_random_mutation = uvalues[++k].uval.dval;
 
     evolve_mutation_reduction_factor = uvalues[++k].uval.dval;
 
@@ -886,7 +886,7 @@ get_evol_restart:
     if (g_evolving != old_evolving
             || (g_evolve_image_grid_size != old_image_grid_size) || (evolve_x_parameter_range != old_x_parameter_range)
             || (evolve_x_parameter_offset != old_x_parameter_offset) || (evolve_y_parameter_range != old_y_parameter_range)
-            || (evolve_y_parameter_offset != old_y_parameter_offset)  || (evolve_max_random_mutation != old_max_random_mutation)
+            || (evolve_y_parameter_offset != old_y_parameter_offset)  || (g_evolve_max_random_mutation != old_max_random_mutation)
             || (old_variations > 0))
     {
         i = 1;
@@ -911,7 +911,7 @@ get_evol_restart:
             viewwindow = true;
             g_evolving |= 1;   // leave other settings alone
         }
-        evolve_max_random_mutation = 1;
+        g_evolve_max_random_mutation = 1;
         evolve_mutation_reduction_factor = 1.0;
         goto get_evol_restart;
     }
