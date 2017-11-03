@@ -2443,19 +2443,19 @@ static int ifs3dfloat()
         r /= RAND_MAX;
 
         // pick which iterated function to execute, weighted by probability
-        sum = ifs_defn[12]; // [0][12]
+        sum = g_ifs_definition[12]; // [0][12]
         k = 0;
         while (sum < r && ++k < numaffine*NUM_IFS_3D_PARAMS)
         {
-            sum += ifs_defn[k*NUM_IFS_3D_PARAMS+12];
-            if (ifs_defn[(k+1)*NUM_IFS_3D_PARAMS+12] == 0)
+            sum += g_ifs_definition[k*NUM_IFS_3D_PARAMS+12];
+            if (g_ifs_definition[(k+1)*NUM_IFS_3D_PARAMS+12] == 0)
             {
                 break; // for safety
             }
         }
 
         // calculate image of last point under selected iterated function
-        ffptr = &ifs_defn[k*NUM_IFS_3D_PARAMS];     // point to first parm in row
+        ffptr = &g_ifs_definition[k*NUM_IFS_3D_PARAMS];     // point to first parm in row
         newx = *ffptr * inf.orbit[0] +
                *(ffptr+1) * inf.orbit[1] +
                *(ffptr+2) * inf.orbit[2] + *(ffptr+9);
@@ -2534,7 +2534,7 @@ static int ifs3dfloat()
 
 int ifs()                       // front-end for ifs2d and ifs3d
 {
-    if (ifs_defn.empty() && ifsload() < 0)
+    if (g_ifs_definition.empty() && ifsload() < 0)
     {
         return (-1);
     }
@@ -2587,7 +2587,7 @@ static int ifs2d()
     {
         for (int j = 0; j < NUM_IFS_PARAMS; j++)
         {
-            localifs[i*NUM_IFS_PARAMS+j] = (long)(ifs_defn[i*NUM_IFS_PARAMS+j] * g_fudge_factor);
+            localifs[i*NUM_IFS_PARAMS+j] = (long)(g_ifs_definition[i*NUM_IFS_PARAMS+j] * g_fudge_factor);
         }
     }
 
@@ -2698,7 +2698,7 @@ static int ifs3dlong()
     {
         for (int j = 0; j < NUM_IFS_3D_PARAMS; j++)
         {
-            localifs[i*NUM_IFS_3D_PARAMS+j] = (long)(ifs_defn[i*NUM_IFS_3D_PARAMS+j] * g_fudge_factor);
+            localifs[i*NUM_IFS_3D_PARAMS+j] = (long)(g_ifs_definition[i*NUM_IFS_3D_PARAMS+j] * g_fudge_factor);
         }
     }
 
@@ -2736,7 +2736,7 @@ static int ifs3dlong()
         while (sum < r && ++k < numaffine*NUM_IFS_3D_PARAMS)
         {
             sum += localifs[k*NUM_IFS_3D_PARAMS+12];
-            if (ifs_defn[(k+1)*NUM_IFS_3D_PARAMS+12] == 0)
+            if (g_ifs_definition[(k+1)*NUM_IFS_3D_PARAMS+12] == 0)
             {
                 break; // for safety
             }

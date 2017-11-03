@@ -162,7 +162,7 @@ std::string g_command_comment[4];          // comments for command set
 std::string g_ifs_filename;                // file to find (type=)IFS in
 std::string g_ifs_name;                    // Name of the IFS def'n (if not null)
 id::SearchPath searchfor = { 0 };
-std::vector<float> ifs_defn;            // ifs parameters
+std::vector<float> g_ifs_definition;            // ifs parameters
 bool ifs_type = false;                  // false=2d, true=3d
 slides_mode g_slides = slides_mode::OFF; // PLAY autokey=play, RECORD autokey=record
 
@@ -619,9 +619,9 @@ static void initvars_3d()               // init vars affecting 3d
 
 static void reset_ifs_defn()
 {
-    if (!ifs_defn.empty())
+    if (!g_ifs_definition.empty())
     {
-        ifs_defn.clear();
+        g_ifs_definition.clear();
     }
 }
 

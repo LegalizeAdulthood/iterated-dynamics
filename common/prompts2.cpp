@@ -1379,9 +1379,9 @@ void goodbye()                  // we done.  Bail out
 {
     end_resume();
     ReleaseParamBox();
-    if (!ifs_defn.empty())
+    if (!g_ifs_definition.empty())
     {
-        ifs_defn.clear();
+        g_ifs_definition.clear();
     }
     free_grid_pointers();
     free_ant_storage();

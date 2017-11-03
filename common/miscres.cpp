@@ -1389,10 +1389,10 @@ int ifsload()                   // read in IFS parameters
     char *bufptr;
     int ret, rowsize;
 
-    if (!ifs_defn.empty())
+    if (!g_ifs_definition.empty())
     {
         // release prior parms
-        ifs_defn.clear();
+        g_ifs_definition.clear();
     }
 
     ifs_type = false;
@@ -1431,7 +1431,7 @@ int ifsload()                   // read in IFS parameters
         {
             break;
         }
-        ifs_defn.push_back(value);
+        g_ifs_definition.push_back(value);
         if (++i >= NUM_IFS_FUNCTIONS*rowsize)
         {
             stopmsg(STOPMSG_NONE, "IFS definition has too many lines");
