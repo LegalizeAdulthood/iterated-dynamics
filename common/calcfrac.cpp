@@ -174,7 +174,7 @@ int g_current_column = 0;
 // static vars for diffusion scan
 unsigned g_diffusion_bits = 0;        // number of bits in the counter
 unsigned long g_diffusion_counter = 0;  // the diffusion counter
-unsigned long dif_limit = 0;    // the diffusion counter
+unsigned long g_diffusion_limit = 0;    // the diffusion counter
 
 // static vars for solid_guess & its subroutines
 bool three_pass = false;
@@ -1355,7 +1355,7 @@ static int diffusion_scan()
 
     g_diffusion_bits = (unsigned)(std::min(log(static_cast<double>(iystop-iystart+1)), log(static_cast<double>(ixstop-ixstart+1)))/log2);
     g_diffusion_bits <<= 1; // double for two axes
-    dif_limit = 1UL << g_diffusion_bits;
+    g_diffusion_limit = 1UL << g_diffusion_bits;
 
     if (diffusion_engine() == -1)
     {
@@ -1453,7 +1453,7 @@ static int diffusion_engine()
     // only the points (dithering only) :
     if (fillcolor == 0)
     {
-        while (g_diffusion_counter < (dif_limit >> 1))
+        while (g_diffusion_counter < (g_diffusion_limit >> 1))
         {
             count_to_int(g_diffusion_counter, colo, rowo);
 
@@ -1508,7 +1508,7 @@ static int diffusion_engine()
     {
         /*********************************/
         // with progressive filling :
-        while (g_diffusion_counter < (dif_limit >> 1))
+        while (g_diffusion_counter < (g_diffusion_limit >> 1))
         {
             sqsz = 1 << ((int)(g_diffusion_bits-(int)(log(g_diffusion_counter+0.5)/log2)-1)/2);
 
@@ -1566,7 +1566,7 @@ static int diffusion_engine()
         }
     }
     // from half dif_limit on we only plot 1x1 points :-)
-    while (g_diffusion_counter < dif_limit)
+    while (g_diffusion_counter < g_diffusion_limit)
     {
         count_to_int(g_diffusion_counter, colo, rowo);
 
