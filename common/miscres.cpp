@@ -777,7 +777,7 @@ bool tab_display_2(char *msg)
     show_str_var("formulafile", g_formula_filename.c_str(), &row, msg);
     show_str_var("savename",    savename.c_str(),     &row, msg);
     show_str_var("parmfile",    g_command_file.c_str(),  &row, msg);
-    show_str_var("ifsfile",     IFSFileName.c_str(),  &row, msg);
+    show_str_var("ifsfile",     g_ifs_filename.c_str(),  &row, msg);
     show_str_var("autokeyname", g_auto_name.c_str(), &row, msg);
     show_str_var("lightname",   light_name.c_str(),   &row, msg);
     show_str_var("map",         MAP_name.c_str(),     &row, msg);
@@ -925,11 +925,11 @@ top:
             driver_put_string(s_row+1, 3, C_GENERAL_MED, "Item name:");
             driver_put_string(s_row+1, 16, C_GENERAL_HI, IFSName.c_str());
             driver_put_string(s_row+2, 3, C_GENERAL_MED, "Item file:");
-            if ((int) IFSFileName.length() >= 28)
+            if ((int) g_ifs_filename.length() >= 28)
             {
                 addrow = 1;
             }
-            driver_put_string(s_row+2+addrow, 16, C_GENERAL_HI, IFSFileName.c_str());
+            driver_put_string(s_row+2+addrow, 16, C_GENERAL_HI, g_ifs_filename.c_str());
         }
     }
 
@@ -1397,7 +1397,7 @@ int ifsload()                   // read in IFS parameters
 
     ifs_type = false;
     rowsize = NUM_IFS_PARAMS;
-    if (find_file_item(IFSFileName, IFSName.c_str(), &ifsfile, 3))
+    if (find_file_item(g_ifs_filename, IFSName.c_str(), &ifsfile, 3))
     {
         return (-1);
     }

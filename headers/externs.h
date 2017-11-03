@@ -208,7 +208,7 @@ extern unsigned int          g_height;
 extern float                 g_height_fp;
 extern int                   g_help_mode;
 extern int                   g_hi_attenuation;
-extern std::string           IFSFileName;
+extern std::string           g_ifs_filename;
 extern std::string           IFSName;
 extern std::vector<float>    ifs_defn;
 extern bool                  ifs_type;

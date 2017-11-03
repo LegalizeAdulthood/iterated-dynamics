@@ -159,7 +159,7 @@ std::string LName;                      // Name of L-System
 std::string g_command_file;                // file to find command sets in
 std::string g_command_name;                // Name of Command set
 std::string g_command_comment[4];          // comments for command set
-std::string IFSFileName;                // file to find (type=)IFS in
+std::string g_ifs_filename;                // file to find (type=)IFS in
 std::string IFSName;                    // Name of the IFS def'n (if not null)
 id::SearchPath searchfor = { 0 };
 std::vector<float> ifs_defn;            // ifs parameters
@@ -367,7 +367,7 @@ int cmdfiles(int argc, char const *const *argv)
     strcpy(searchfor.par, g_command_file.c_str());
     strcpy(searchfor.frm, g_formula_filename.c_str());
     strcpy(searchfor.lsys, LFileName.c_str());
-    strcpy(searchfor.ifs, IFSFileName.c_str());
+    strcpy(searchfor.ifs, g_ifs_filename.c_str());
     return 0;
 }
 
@@ -447,7 +447,7 @@ static void initvars_restart()          // <ins> key init
     {
         elem.clear();
     }
-    IFSFileName = "fractint.ifs";
+    g_ifs_filename = "fractint.ifs";
     IFSName = "";
     reset_ifs_defn();
     rflag = false;                      // not a fixed srand() seed
@@ -3053,7 +3053,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         {
             goto badarg;
         }
-        existdir = merge_pathnames(IFSFileName, value, mode);
+        existdir = merge_pathnames(g_ifs_filename, value, mode);
         if (existdir == 0)
         {
             reset_ifs_defn();
