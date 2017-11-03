@@ -1158,7 +1158,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
                 make_parameter_file_map = true;
             }
             xdots = g_file_x_dots;
-            ydots = fileydots;
+            ydots = g_file_y_dots;
             x_size_d = xdots - 1;
             y_size_d = ydots - 1;
             calcfracinit();

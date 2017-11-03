@@ -1038,7 +1038,7 @@ top:
             driver_put_string(s_row, 2, C_GENERAL_HI, "Boundary Tracing");
             break;
         case 3:
-            sprintf(msg, "Processing row %d (of %d) of input image", g_current_row, fileydots);
+            sprintf(msg, "Processing row %d (of %d) of input image", g_current_row, g_file_y_dots);
             driver_put_string(s_row, 2, C_GENERAL_HI, msg);
             break;
         case 4:

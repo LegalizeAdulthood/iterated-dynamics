@@ -166,7 +166,7 @@ extern double                g_evolve_mutation_reduction_factor;
 extern float                 g_file_aspect_ratio;
 extern int                   g_file_colors;
 extern int                   g_file_x_dots;
-extern int                   fileydots;
+extern int                   g_file_y_dots;
 extern std::string           file_name_stack[16];
 extern int                   fillcolor;
 extern float                 finalaspectratio;
