@@ -10,7 +10,7 @@
 #include "fractype.h"
 #include "helpdefs.h"
 #define PARMBOX 128
-GENEBASE gene_bank[NUMGENES];
+GENEBASE g_gene_bank[NUMGENES];
 
 // px and py are coordinates in the parameter grid (small images on screen)
 // evolving = flag, evolve_image_grid_size = dimensions of image grid (evolve_image_grid_size x evolve_image_grid_size)
@@ -103,13 +103,13 @@ void ReleaseParamBox();
 
 void copy_genes_from_bank(GENEBASE gene[NUMGENES])
 {
-    std::copy(&gene_bank[0], &gene_bank[NUMGENES], &gene[0]);
+    std::copy(&g_gene_bank[0], &g_gene_bank[NUMGENES], &gene[0]);
 }
 
 void copy_genes_to_bank(GENEBASE const gene[NUMGENES])
 {
     // cppcheck-suppress arrayIndexOutOfBounds
-    std::copy(&gene[0], &gene[NUMGENES], &gene_bank[0]);
+    std::copy(&gene[0], &gene[NUMGENES], &g_gene_bank[0]);
 }
 
 // set up pointers and mutation params for all usable image
@@ -661,7 +661,7 @@ void set_mutation_level(int strength)
 {
     // scan through the gene array turning on random variation for all parms that
     // are suitable for this level of mutation
-    for (auto &elem : gene_bank)
+    for (auto &elem : g_gene_bank)
     {
         if (elem.level <= strength)
         {
@@ -1006,7 +1006,7 @@ static bool explore_check()
     // checks through gene array to see if any of the parameters are set to
     // one of the non random variation modes. Used to see if parmzoom box is
     // needed
-    for (auto &elem : gene_bank)
+    for (auto &elem : g_gene_bank)
     {
         if ((elem.mutate != variations::NONE) && (elem.mutate < variations::RANDOM))
         {

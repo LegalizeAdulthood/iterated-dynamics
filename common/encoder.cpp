@@ -655,7 +655,7 @@ bool encoder()
             }
             for (int i = 0; i < NUMGENES; i++)
             {
-                esave_info.mutate[i] = (short)gene_bank[i].mutate;
+                esave_info.mutate[i] = (short)g_gene_bank[i].mutate;
             }
 
             for (int i = 0; i < sizeof(esave_info.future) / sizeof(short); i++)

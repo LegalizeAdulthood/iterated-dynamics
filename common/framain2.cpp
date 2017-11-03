@@ -2104,7 +2104,7 @@ static main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdm
         break;
 
     case FIK_F6: /* toggle all variables selected for random variation to center weighted variation and vice versa */
-        for (auto &elem : gene_bank)
+        for (auto &elem : g_gene_bank)
         {
             if (elem.mutate == variations::RANDOM)
             {
