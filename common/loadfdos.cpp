@@ -250,11 +250,11 @@ int get_video_mode(FRACTAL_INFO *info, ext_blk_3 *blk_3_info)
         {
             tmpflags -= VI_EXACT;
         }
-        if (fileaspectratio != 0 && (tmpflags & VI_VSMALL) == 0)
+        if (g_file_aspect_ratio != 0 && (tmpflags & VI_VSMALL) == 0)
         {
             ftemp = vid_aspect(filexdots, fileydots);
-            if (ftemp < fileaspectratio * 0.98 ||
-                    ftemp > fileaspectratio * 1.02)
+            if (ftemp < g_file_aspect_ratio * 0.98 ||
+                    ftemp > g_file_aspect_ratio * 1.02)
             {
                 tmpflags |= VI_ASPECT;
             }
@@ -306,7 +306,7 @@ int get_video_mode(FRACTAL_INFO *info, ext_blk_3 *blk_3_info)
                 strcat(heading, buff);
             }
         }
-        if (fileaspectratio != 0 && fileaspectratio != screenaspect)
+        if (g_file_aspect_ratio != 0 && g_file_aspect_ratio != screenaspect)
         {
             strcat(heading,
                    "\nWARNING: non-standard aspect ratio; loading will change your <v>iew settings");
@@ -426,15 +426,15 @@ int get_video_mode(FRACTAL_INFO *info, ext_blk_3 *blk_3_info)
             tmpydots = (fileydots + skipydots - 1) / skipydots;
             // reduce further if that improves aspect
             ftemp = vid_aspect(tmpxdots, tmpydots);
-            if (ftemp > fileaspectratio)
+            if (ftemp > g_file_aspect_ratio)
             {
                 if (j)
                 {
                     break; // already reduced x, don't reduce y
                 }
                 double const ftemp2 = vid_aspect(tmpxdots, (fileydots+skipydots)/(skipydots+1));
-                if (ftemp2 < fileaspectratio &&
-                        ftemp/fileaspectratio *0.9 <= fileaspectratio/ftemp2)
+                if (ftemp2 < g_file_aspect_ratio &&
+                        ftemp/g_file_aspect_ratio *0.9 <= g_file_aspect_ratio/ftemp2)
                 {
                     break; // further y reduction is worse
                 }
@@ -448,8 +448,8 @@ int get_video_mode(FRACTAL_INFO *info, ext_blk_3 *blk_3_info)
                     break; // already reduced y, don't reduce x
                 }
                 double const ftemp2 = vid_aspect((filexdots+skipxdots)/(skipxdots+1), tmpydots);
-                if (ftemp2 > fileaspectratio &&
-                        fileaspectratio/ftemp *0.9 <= ftemp2/fileaspectratio)
+                if (ftemp2 > g_file_aspect_ratio &&
+                        g_file_aspect_ratio/ftemp *0.9 <= ftemp2/g_file_aspect_ratio)
                 {
                     break; // further x reduction is worse
                 }
@@ -463,7 +463,7 @@ int get_video_mode(FRACTAL_INFO *info, ext_blk_3 *blk_3_info)
         --skipydots;
     }
 
-    finalaspectratio = fileaspectratio;
+    finalaspectratio = g_file_aspect_ratio;
     if (finalaspectratio == 0) // assume display correct
     {
         finalaspectratio = (float)vid_aspect(filexdots, fileydots);

@@ -39,7 +39,7 @@ static bool fix_period_bof();
 bool loaded3d = false;
 static FILE *fp;
 int fileydots, filexdots, filecolors;
-float fileaspectratio;
+float g_file_aspect_ratio;
 short skipxdots, skipydots;      // for decoder, when reducing image
 bool g_bad_outside = false;
 bool ldcheck = false;
@@ -200,10 +200,10 @@ int read_overlay()      // read overlay/3D files, if reqr'd
         {
             filexdots >>= 1;
         }
-        fileaspectratio = read_info.faspectratio;
-        if (fileaspectratio < 0.01)       // fix files produced in early v14.1
+        g_file_aspect_ratio = read_info.faspectratio;
+        if (g_file_aspect_ratio < 0.01)       // fix files produced in early v14.1
         {
-            fileaspectratio = screenaspect;
+            g_file_aspect_ratio = screenaspect;
         }
         save_system  = read_info.system;
         save_release = read_info.release; // from fmt 5 on we know real number
@@ -671,21 +671,21 @@ static int find_fractal_info(char const *gif_file, FRACTAL_INFO *info,
     GET16(gifstart[6], filexdots);
     GET16(gifstart[8], fileydots);
     filecolors = 2 << (gifstart[10] & 7);
-    fileaspectratio = 0; // unknown
+    g_file_aspect_ratio = 0; // unknown
     if (gifstart[12])
     {
         // calc reasonably close value from gif header
-        fileaspectratio = (float)((64.0 / ((double)(gifstart[12]) + 15.0))
+        g_file_aspect_ratio = (float)((64.0 / ((double)(gifstart[12]) + 15.0))
                                   * (double)fileydots / (double)filexdots);
-        if (fileaspectratio > screenaspect-0.03
-                && fileaspectratio < screenaspect+0.03)
+        if (g_file_aspect_ratio > screenaspect-0.03
+                && g_file_aspect_ratio < screenaspect+0.03)
         {
-            fileaspectratio = screenaspect;
+            g_file_aspect_ratio = screenaspect;
         }
     }
     else if (fileydots * 4 == filexdots * 3)   // assume the common square pixels
     {
-        fileaspectratio = screenaspect;
+        g_file_aspect_ratio = screenaspect;
     }
 
     if (make_parameter_file && (gifstart[10] & 0x80) != 0)
@@ -942,7 +942,7 @@ static int find_fractal_info(char const *gif_file, FRACTAL_INFO *info,
         }
 
         fclose(fp);
-        fileaspectratio = screenaspect; // if not >= v15, this is correct
+        g_file_aspect_ratio = screenaspect; // if not >= v15, this is correct
         return (0);
     }
 
