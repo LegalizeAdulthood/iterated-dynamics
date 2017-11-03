@@ -1038,7 +1038,7 @@ top:
             driver_put_string(s_row, 2, C_GENERAL_HI, "Boundary Tracing");
             break;
         case 3:
-            sprintf(msg, "Processing row %d (of %d) of input image", currow, fileydots);
+            sprintf(msg, "Processing row %d (of %d) of input image", g_current_row, fileydots);
             driver_put_string(s_row, 2, C_GENERAL_HI, msg);
             break;
         case 4:
@@ -1068,7 +1068,7 @@ top:
             if (got_status == 2 || got_status == 4)  // btm or tesseral
             {
                 driver_put_string(-1, -1, C_GENERAL_MED, "at ");
-                sprintf(msg, "[%d, %d]", currow, g_current_column);
+                sprintf(msg, "[%d, %d]", g_current_row, g_current_column);
                 driver_put_string(-1, -1, C_GENERAL_HI, msg);
             }
             else
@@ -1084,7 +1084,7 @@ top:
                     driver_put_string(-1, -1, C_GENERAL_MED, ", ");
                 }
                 driver_put_string(-1, -1, C_GENERAL_MED, "at row ");
-                sprintf(msg, "%d", currow);
+                sprintf(msg, "%d", g_current_row);
                 driver_put_string(-1, -1, C_GENERAL_HI, msg);
                 driver_put_string(-1, -1, C_GENERAL_MED, " col ");
                 sprintf(msg, "%d", col);

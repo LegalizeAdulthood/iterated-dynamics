@@ -168,7 +168,7 @@ int got_status = -1;                    // -1 if not, 0 for 1or2pass, 1 for ssg,
                                         // 6 for orbits
 int g_current_pass = 0;
 int totpasses = 0;
-int currow = 0;
+int g_current_row = 0;
 int g_current_column = 0;
 
 // static vars for diffusion scan
@@ -1645,7 +1645,7 @@ static int sticky_orbits()
 
         while (row <= iystop)
         {
-            currow = row;
+            g_current_row = row;
             while (col <= ixstop)
             {
                 if (plotorbits2dfloat() == -1)
@@ -1885,7 +1885,7 @@ static int standard_calc(int passnum)
 
     while (row <= iystop)
     {
-        currow = row;
+        g_current_row = row;
         reset_periodicity = true;
         while (col <= ixstop)
         {
@@ -3758,7 +3758,7 @@ static int solid_guess()
         g_current_pass = 1;
         if (iystart <= yystart) // first time for this window, init it
         {
-            currow = 0;
+            g_current_row = 0;
             memset(&tprefix[1][0][0], 0, maxxblk*maxyblk*2); // noskip flags off
             reset_periodicity = true;
             row = iystart;
@@ -3779,7 +3779,7 @@ static int solid_guess()
         }
         for (int y = iystart; y <= iystop; y += blocksize)
         {
-            currow = y;
+            g_current_row = y;
             i = 0;
             if (y+blocksize <= iystop)
             {
@@ -3879,7 +3879,7 @@ static int solid_guess()
         g_current_pass = workpass + 1;
         for (int y = iystart; y <= iystop; y += blocksize)
         {
-            currow = y;
+            g_current_row = y;
             if (guessrow(false, y, blocksize))
             {
                 if (y < yystart)
@@ -4828,7 +4828,7 @@ static int tesseral()
     {
         // do next box
         g_current_column = tp->x1; // for tab_display
-        currow = tp->y1;
+        g_current_row = tp->y1;
 
         if (tp->top == -1 || tp->bot == -1 || tp->lft == -1 || tp->rgt == -1)
         {

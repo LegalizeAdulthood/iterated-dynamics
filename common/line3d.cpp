@@ -184,10 +184,10 @@ int line3d(BYTE * pixels, unsigned linelen)
         plot = normalplot;
     }
 
-    currow = g_row_count;           // use separate variable to allow for pot16bit files
+    g_current_row = g_row_count;           // use separate variable to allow for pot16bit files
     if (pot16bit)
     {
-        currow >>= 1;
+        g_current_row >>= 1;
     }
 
     //**********************************************************************
@@ -261,8 +261,8 @@ int line3d(BYTE * pixels, unsigned linelen)
         if (haze && Targa_Out)
         {
             HAZE_MULT = (int)(haze * (
-                                  (float)((long)(ydots - 1 - currow) *
-                                          (long)(ydots - 1 - currow)) /
+                                  (float)((long)(ydots - 1 - g_current_row) *
+                                          (long)(ydots - 1 - g_current_row)) /
                                   (float)((long)(ydots - 1) * (long)(ydots - 1))));
             HAZE_MULT = 100 - HAZE_MULT;
         }
@@ -277,9 +277,9 @@ int line3d(BYTE * pixels, unsigned linelen)
 
     bool tout = false;          // triangle has been sent to ray trace file
     // Insure last line is drawn in preview and filltypes <0
-    if ((RAY || preview || FILLTYPE < 0) && (currow != ydots - 1) &&
-            (currow % localpreviewfactor) && // Draw mod preview lines
-            !(!RAY && (FILLTYPE > 4) && (currow == 1)))
+    if ((RAY || preview || FILLTYPE < 0) && (g_current_row != ydots - 1) &&
+            (g_current_row % localpreviewfactor) && // Draw mod preview lines
+            !(!RAY && (FILLTYPE > 4) && (g_current_row == 1)))
     {
         // Get init geometry in lightsource modes
         goto reallythebottom;     // skip over most of the line3d calcs
@@ -287,11 +287,11 @@ int line3d(BYTE * pixels, unsigned linelen)
     if (driver_diskp())
     {
         char s[40];
-        sprintf(s, "mapping to 3d, reading line %d", currow);
+        sprintf(s, "mapping to 3d, reading line %d", g_current_row);
         dvid_status(1, s);
     }
 
-    if (!col && RAY && currow != 0)
+    if (!col && RAY && g_current_row != 0)
     {
         start_object();
     }
@@ -456,7 +456,7 @@ int line3d(BYTE * pixels, unsigned linelen)
                 // use 32-bit multiply math to snap this out
                 lv[0] = col;
                 lv[0] = lv[0] << 16;
-                lv[1] = currow;
+                lv[1] = g_current_row;
                 lv[1] = lv[1] << 16;
                 if (pot16bit)             // don't truncate fractional part
                 {
@@ -493,7 +493,7 @@ int line3d(BYTE * pixels, unsigned linelen)
             {
                 // slow float version for comparison
                 v[0] = col;
-                v[1] = currow;
+                v[1] = g_current_row;
                 v[2] = f_cur.color;      // Actually the z value
 
                 mult_vec(v);     // matrix*vector routine
@@ -557,7 +557,7 @@ int line3d(BYTE * pixels, unsigned linelen)
 
         if (RAY)
         {
-            if (col && currow &&
+            if (col && g_current_row &&
                     old.x > bad_check &&
                     old.x < (xdots - bad_check) &&
                     lastrow[col].x > bad_check &&
@@ -590,7 +590,7 @@ int line3d(BYTE * pixels, unsigned linelen)
                 num_tris++;
             }
 
-            if (col < lastdot && currow &&
+            if (col < lastdot && g_current_row &&
                     lastrow[col].x > bad_check &&
                     lastrow[col].y > bad_check &&
                     lastrow[col].x < (xdots - bad_check) &&
@@ -648,7 +648,7 @@ int line3d(BYTE * pixels, unsigned linelen)
             {
                 driver_draw_line(old.x, old.y, cur.x, cur.y, cur.color);
             }
-            if (currow &&
+            if (g_current_row &&
                     lastrow[col].x > bad_check &&
                     lastrow[col].y > bad_check &&
                     lastrow[col].x < (xdots - bad_check) &&
@@ -687,11 +687,11 @@ int line3d(BYTE * pixels, unsigned linelen)
             // oldrow/col ________ trow/col
             //***********************************************************
 
-            if (currow && !col)
+            if (g_current_row && !col)
             {
                 putatriangle(lastrow[next], lastrow[col], cur, cur.color);
             }
-            if (currow && col)  // skip first row and first column
+            if (g_current_row && col)  // skip first row and first column
             {
                 if (col == 1)
                 {
@@ -723,7 +723,7 @@ int line3d(BYTE * pixels, unsigned linelen)
             else
             {
                 lv[0] = col;
-                lv[1] = currow;
+                lv[1] = g_current_row;
                 lv[2] = 0;
 
                 // apply fudge bit shift for integer math
@@ -764,7 +764,7 @@ int line3d(BYTE * pixels, unsigned linelen)
         case 5:
         case 6:
             // light-source modulated fill
-            if (currow && col)  // skip first row and first column
+            if (g_current_row && col)  // skip first row and first column
             {
                 if (f_cur.color < bad_check || f_old.color < bad_check ||
                         f_lastrow[col].color < bad_check)
@@ -852,12 +852,12 @@ int line3d(BYTE * pixels, unsigned linelen)
                 // algorithm, which needs previous point in same row to have
                 // already been calculated (variable old)
                 // fix ragged left margin in preview
-                if (col == 1 && currow > 1)
+                if (col == 1 && g_current_row > 1)
                 {
                     putatriangle(lastrow[next], lastrow[col], cur, cur.color);
                 }
 
-                if (col < 2 || currow < 2)         // don't have valid colors yet
+                if (col < 2 || g_current_row < 2)         // don't have valid colors yet
                 {
                     break;
                 }
@@ -883,7 +883,7 @@ loopbottom:
             // for illumination model purposes
             f_lastrow[col] = f_cur;
             f_old = f_lastrow[col];
-            if (currow && RAY && col >= lastdot)
+            if (g_current_row && RAY && col >= lastdot)
                 // if we're at the end of a row, close the object
             {
                 end_object(tout);
@@ -906,7 +906,7 @@ reallythebottom:
     if (SPHERE)
     {
         // incremental sin/cos phi calc
-        if (currow == 0)
+        if (g_current_row == 0)
         {
             sinphi = oldsinphi2;
             cosphi = oldcosphi2;

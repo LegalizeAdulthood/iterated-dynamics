@@ -101,7 +101,7 @@ extern long                  con;
 extern double                cosx;
 extern int                   g_current_column;
 extern int                   g_current_pass;
-extern int                   currow;
+extern int                   g_current_row;
 extern int                   cyclelimit;
 extern int                   c_exp;
 extern double                d1overd;
