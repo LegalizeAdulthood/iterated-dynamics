@@ -173,7 +173,7 @@ int g_current_column = 0;
 
 // static vars for diffusion scan
 unsigned g_diffusion_bits = 0;        // number of bits in the counter
-unsigned long dif_counter = 0;  // the diffusion counter
+unsigned long g_diffusion_counter = 0;  // the diffusion counter
 unsigned long dif_limit = 0;    // the diffusion counter
 
 // static vars for solid_guess & its subroutines
@@ -1360,8 +1360,8 @@ static int diffusion_scan()
     if (diffusion_engine() == -1)
     {
         add_worklist(xxstart, xxstop, xxstart, yystart, yystop,
-                     (int)(dif_counter >> 16),            // high,
-                     (int)(dif_counter & 0xffff),         // low order words
+                     (int)(g_diffusion_counter >> 16),            // high,
+                     (int)(g_diffusion_counter & 0xffff),         // low order words
                      worksym);
         return -1;
     }
@@ -1438,12 +1438,12 @@ static int diffusion_engine()
     if (yybegin == iystart && workpass == 0)
     {
         // if restarting on pan:
-        dif_counter =0l;
+        g_diffusion_counter =0l;
     }
     else
     {
         // yybegin and passes contain data for resuming the type:
-        dif_counter = (((long)((unsigned)yybegin)) << 16) | ((unsigned)workpass);
+        g_diffusion_counter = (((long)((unsigned)yybegin)) << 16) | ((unsigned)workpass);
     }
 
     dif_offset = 12-(g_diffusion_bits/2); // offset to adjust coordinates
@@ -1453,9 +1453,9 @@ static int diffusion_engine()
     // only the points (dithering only) :
     if (fillcolor == 0)
     {
-        while (dif_counter < (dif_limit >> 1))
+        while (g_diffusion_counter < (dif_limit >> 1))
         {
-            count_to_int(dif_counter, colo, rowo);
+            count_to_int(g_diffusion_counter, colo, rowo);
 
             i = 0;
             col = ixstart + colo; // get the right tiles
@@ -1501,18 +1501,18 @@ static int diffusion_engine()
                     (*plot)(col, row, g_color);
                 }
             }
-            dif_counter++;
+            g_diffusion_counter++;
         }
     }
     else
     {
         /*********************************/
         // with progressive filling :
-        while (dif_counter < (dif_limit >> 1))
+        while (g_diffusion_counter < (dif_limit >> 1))
         {
-            sqsz = 1 << ((int)(g_diffusion_bits-(int)(log(dif_counter+0.5)/log2)-1)/2);
+            sqsz = 1 << ((int)(g_diffusion_bits-(int)(log(g_diffusion_counter+0.5)/log2)-1)/2);
 
-            count_to_int(dif_counter, colo, rowo);
+            count_to_int(g_diffusion_counter, colo, rowo);
 
             i = 0;
             do
@@ -1562,13 +1562,13 @@ static int diffusion_engine()
                 }
             }
 
-            dif_counter++;
+            g_diffusion_counter++;
         }
     }
     // from half dif_limit on we only plot 1x1 points :-)
-    while (dif_counter < dif_limit)
+    while (g_diffusion_counter < dif_limit)
     {
-        count_to_int(dif_counter, colo, rowo);
+        count_to_int(g_diffusion_counter, colo, rowo);
 
         i = 0;
         do
@@ -1617,7 +1617,7 @@ static int diffusion_engine()
                 (*plot)(col, row, g_color);
             }
         }
-        dif_counter++;
+        g_diffusion_counter++;
     }
     return 0;
 }

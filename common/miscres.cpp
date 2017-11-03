@@ -1055,8 +1055,8 @@ top:
         if (got_status == 5)
         {
             sprintf(msg, "%2.2f%% done, counter at %lu of %lu (%u bits)",
-                    (100.0 * dif_counter)/dif_limit,
-                    dif_counter, dif_limit, g_diffusion_bits);
+                    (100.0 * g_diffusion_counter)/dif_limit,
+                    g_diffusion_counter, dif_limit, g_diffusion_bits);
             driver_put_string(s_row, 2, C_GENERAL_MED, msg);
             ++s_row;
         }
@@ -1099,7 +1099,7 @@ top:
     if ((got_status == 5) && (g_calc_status == calc_status_value::IN_PROGRESS))  // estimate total time
     {
         driver_put_string(-1, -1, C_GENERAL_MED, " estimated total time: ");
-        get_calculation_time(msg, (long)(g_calc_time*((dif_limit*1.0)/dif_counter)));
+        get_calculation_time(msg, (long)(g_calc_time*((dif_limit*1.0)/g_diffusion_counter)));
         driver_put_string(-1, -1, C_GENERAL_HI, msg);
     }
 

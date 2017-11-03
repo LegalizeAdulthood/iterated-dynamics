@@ -123,7 +123,7 @@ extern long                  dely;
 extern LDBL                  delyy2;
 extern LDBL                  delyy;
 extern float                 g_depth_fp;
-extern unsigned long         dif_counter;
+extern unsigned long         g_diffusion_counter;
 extern unsigned long         dif_limit;
 extern bool                  disk16bit;
 extern bool                  g_disk_flag;       // disk video active flag
