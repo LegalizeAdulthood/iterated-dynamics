@@ -122,7 +122,7 @@ extern long                  dely2;
 extern long                  dely;
 extern LDBL                  delyy2;
 extern LDBL                  delyy;
-extern float                 depthfp;
+extern float                 g_depth_fp;
 extern unsigned long         dif_counter;
 extern unsigned long         dif_limit;
 extern bool                  disk16bit;

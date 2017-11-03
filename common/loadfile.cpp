@@ -253,7 +253,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
         myminfp   =  read_info.myminfp        ;
         zdots     =  read_info.zdots          ;
         originfp  =  read_info.originfp       ;
-        depthfp   =  read_info.depthfp        ;
+        g_depth_fp   =  read_info.depthfp        ;
         heightfp  =  read_info.heightfp       ;
         widthfp   =  read_info.widthfp        ;
         distfp    =  read_info.distfp         ;

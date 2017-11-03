@@ -573,7 +573,7 @@ static void initvars_fractal()          // init vars affecting calculation
     widthfp = 10;
     distfp = 24;
     eyesfp = 2.5F;
-    depthfp = 8;
+    g_depth_fp = 8;
     neworbittype = fractal_type::JULIA;
     zdots = 128;
     initvars_3d();
@@ -2034,7 +2034,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         }
         if (totparms > 2)
         {
-            depthfp = (float)floatval[2];
+            g_depth_fp = (float)floatval[2];
         }
         if (totparms > 3)
         {

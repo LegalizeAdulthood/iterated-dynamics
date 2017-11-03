@@ -966,7 +966,7 @@ static void setup_save_info(FRACTAL_INFO *save_info)
     save_info->myminfp = myminfp;
     save_info->zdots = (short) zdots;
     save_info->originfp = originfp;
-    save_info->depthfp = depthfp;
+    save_info->depthfp = g_depth_fp;
     save_info->heightfp = heightfp;
     save_info->widthfp = widthfp;
     save_info->distfp = distfp;

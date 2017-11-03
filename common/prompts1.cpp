@@ -1868,7 +1868,7 @@ gfp_top:
         paramvalues[promptnum].uval.dval = originfp;
         paramvalues[promptnum].type = 'f';
         choices[promptnum++] = "Location of z origin";
-        paramvalues[promptnum].uval.dval = depthfp;
+        paramvalues[promptnum].uval.dval = g_depth_fp;
         paramvalues[promptnum].type = 'f';
         choices[promptnum++] = "Depth of z";
         paramvalues[promptnum].uval.dval = heightfp;
@@ -2041,7 +2041,7 @@ gfp_top:
         juli3Dmode = paramvalues[promptnum++].uval.ch.val;
         eyesfp     = (float)paramvalues[promptnum++].uval.dval;
         originfp   = (float)paramvalues[promptnum++].uval.dval;
-        depthfp    = (float)paramvalues[promptnum++].uval.dval;
+        g_depth_fp    = (float)paramvalues[promptnum++].uval.dval;
         heightfp   = (float)paramvalues[promptnum++].uval.dval;
         widthfp    = (float)paramvalues[promptnum++].uval.dval;
         distfp     = (float)paramvalues[promptnum++].uval.dval;

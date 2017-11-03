@@ -2462,7 +2462,7 @@ static void save_history_info()
     current.myminfp              = myminfp                   ;
     current.zdots                = (short)zdots                         ;
     current.originfp             = originfp                  ;
-    current.depthfp              = depthfp                      ;
+    current.depthfp              = g_depth_fp                      ;
     current.heightfp             = heightfp                  ;
     current.widthfp              = widthfp                      ;
     current.distfp               = distfp                       ;
@@ -2646,7 +2646,7 @@ static void restore_history_info(int i)
     myminfp               = last.myminfp        ;
     zdots                 = last.zdots          ;
     originfp              = last.originfp       ;
-    depthfp               = last.depthfp        ;
+    g_depth_fp               = last.depthfp        ;
     heightfp              = last.heightfp       ;
     widthfp               = last.widthfp        ;
     distfp                = last.distfp         ;
