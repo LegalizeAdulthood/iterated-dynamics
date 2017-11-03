@@ -113,7 +113,7 @@ void (* standardplot)(int, int, int);
 MATRIX m; // transformation matrix
 int g_ambient;
 int RANDOMIZE;
-int haze;
+int g_haze;
 int Real_V = 0; // Actual value of V for fillytpe>4 monochrome images
 std::string light_name{"fract001"};
 bool Targa_Overlay = false;
@@ -258,9 +258,9 @@ int line3d(BYTE * pixels, unsigned linelen)
     lastdot = std::min(xdots - 1, (int) linelen - 1);
     if (FILLTYPE >= 5)
     {
-        if (haze && Targa_Out)
+        if (g_haze && Targa_Out)
         {
-            HAZE_MULT = (int)(haze * (
+            HAZE_MULT = (int)(g_haze * (
                                   (float)((long)(ydots - 1 - g_current_row) *
                                           (long)(ydots - 1 - g_current_row)) /
                                   (float)((long)(ydots - 1) * (long)(ydots - 1))));
@@ -1476,7 +1476,7 @@ int targa_color(int x, int y, int color)
         V = (V * (65535L - (unsigned)(color * IAmbient))) / 65535L;
     }
 
-    if (haze)
+    if (g_haze)
     {
         // Haze lowers sat of colors
         S = (unsigned long)(S * HAZE_MULT) / 100;

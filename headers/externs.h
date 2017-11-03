@@ -203,7 +203,7 @@ extern int                   g_got_status;
 extern bool                  g_gray_flag;
 extern std::string const     g_gray_map_file;
 extern bool                  g_has_inverse;
-extern int                   haze;
+extern int                   g_haze;
 extern unsigned int          height;
 extern float                 heightfp;
 extern int help_mode;

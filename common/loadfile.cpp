@@ -218,7 +218,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
             loaded3d       = true;
             g_ambient        = read_info.ambient;
             RANDOMIZE      = read_info.randomize;
-            haze           = read_info.haze;
+            g_haze           = read_info.haze;
             transparent[0] = read_info.transparent[0];
             transparent[1] = read_info.transparent[1];
         }

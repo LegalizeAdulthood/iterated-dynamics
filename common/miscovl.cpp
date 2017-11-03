@@ -1186,9 +1186,9 @@ void write_batch_parms(char const *colorinf, bool colorsonly, int maxcolor, int 
         {
             put_parm(" %s=%d", "ambient", g_ambient);
         }
-        if (haze)
+        if (g_haze)
         {
-            put_parm(" %s=%d", "haze", haze);
+            put_parm(" %s=%d", "haze", g_haze);
         }
         if (g_background_color[0] != 51 || g_background_color[1] != 153 || g_background_color[2] != 200)
         {

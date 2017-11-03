@@ -3345,7 +3345,7 @@ static bool get_light_params()
     {
         prompts3d[++k] = "Haze Factor        (0 - 100, '0' disables)";
         uvalues[k].type = 'i';
-        uvalues[k].uval.ival = haze;
+        uvalues[k].uval.ival = g_haze;
 
         if (!Targa_Overlay)
         {
@@ -3410,14 +3410,14 @@ static bool get_light_params()
 
     if (Targa_Out && !RAY)
     {
-        haze  =  uvalues[k++].uval.ival;
-        if (haze >= 100)
+        g_haze  =  uvalues[k++].uval.ival;
+        if (g_haze >= 100)
         {
-            haze = 100;
+            g_haze = 100;
         }
-        if (haze <= 0)
+        if (g_haze <= 0)
         {
-            haze = 0;
+            g_haze = 0;
         }
         light_name = uvalues[k++].uval.sval;
         /* In case light_name conflicts with an existing name it is checked again in line3d */

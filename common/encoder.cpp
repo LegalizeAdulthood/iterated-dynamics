@@ -954,7 +954,7 @@ static void setup_save_info(FRACTAL_INFO *save_info)
     save_info->display_3d = (short) g_display_3d;
     save_info->ambient = (short) g_ambient;
     save_info->randomize = (short) RANDOMIZE;
-    save_info->haze = (short) haze;
+    save_info->haze = (short) g_haze;
     save_info->transparent[0] = (short) transparent[0];
     save_info->transparent[1] = (short) transparent[1];
     save_info->rotate_lo = (short) rotate_lo;
