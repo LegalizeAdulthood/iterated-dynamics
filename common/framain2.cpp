@@ -29,7 +29,7 @@ static  void cmp_line_cleanup();
 static void restore_history_info(int);
 static void save_history_info();
 
-int finishrow = 0;    // save when this row is finished
+int g_finish_row = 0;    // save when this row is finished
 EVOLUTION_INFO g_evolve_info = { 0 };
 bool g_have_evolve_info = false;
 char old_stdcalcmode;
@@ -358,7 +358,7 @@ main_state big_while_loop(bool *const kbdmore, bool *const stacked, bool const r
                 {
                     ++saveticks; // make low word nonzero
                 }
-                finishrow = -1;
+                g_finish_row = -1;
             }
             g_browsing = false;      // regenerate image, turn off browsing
             //rb
