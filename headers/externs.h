@@ -104,7 +104,7 @@ extern int                   g_current_pass;
 extern int                   g_current_row;
 extern int                   g_cycle_limit;
 extern int                   g_c_exponent;
-extern double                d1overd;
+extern double                g_degree_minus_1_over_degree;
 extern BYTE                  g_dac_box[256][3];
 extern int                   g_dac_count;
 extern bool                  g_dac_learn;

@@ -58,7 +58,7 @@ long ltempsqrx, ltempsqry;
 int maxcolor;
 int root, degree, g_basin;
 double floatmin, floatmax;
-double roverd, d1overd, threshold;
+double roverd, g_degree_minus_1_over_degree, threshold;
 DComplex tmp2;
 DComplex g_marks_coefficient;
 DComplex  staticroots[16]; // roots array for degree 16 or less
@@ -482,8 +482,8 @@ int NewtonFractal2()
         }
         return 1;
     }
-    g_new.x = d1overd * g_new.x + roverd;
-    g_new.y *= d1overd;
+    g_new.x = g_degree_minus_1_over_degree * g_new.x + roverd;
+    g_new.y *= g_degree_minus_1_over_degree;
 
     // Watch for divide underflow
     t2 = tmp.x*tmp.x + tmp.y*tmp.y;
