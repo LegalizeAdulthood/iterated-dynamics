@@ -569,7 +569,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
         evolve_max_random_mutation = blk_6_info.max_random_mutation;
         evolving = (int) blk_6_info.evolving;
         viewwindow = evolving != 0;
-        dpx = evolve_x_parameter_range /(evolve_image_grid_size - 1);
+        g_evolve_dist_per_x = evolve_x_parameter_range /(evolve_image_grid_size - 1);
         dpy = evolve_y_parameter_range /(evolve_image_grid_size - 1);
         if (read_info.version > 14)
         {

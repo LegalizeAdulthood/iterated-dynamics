@@ -137,7 +137,7 @@ extern bool                  g_dither_flag;
 extern bool                  g_read_color;
 extern int                   g_dot_mode;
 extern bool                  g_confirm_file_deletes;
-extern double                dpx;
+extern double                g_evolve_dist_per_x;
 extern double                dpy;
 extern char                  drawmode;
 extern std::vector<double>   dx0;

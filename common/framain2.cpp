@@ -413,7 +413,7 @@ main_state big_while_loop(bool *const kbdmore, bool *const stacked, bool const r
                     evolve_discrete_y_parameter_offset = evolve_new_discrete_y_parameter_offset; // evolve_discrete_x_parameter_offset used for discrete parms like inside, outside, trigfn etc
                 }
                 param_box_count = 0;
-                dpx = evolve_x_parameter_range /(evolve_image_grid_size -1);
+                g_evolve_dist_per_x = evolve_x_parameter_range /(evolve_image_grid_size -1);
                 dpy = evolve_y_parameter_range /(evolve_image_grid_size -1);
                 grout  = !((evolving & NOGROUT)/NOGROUT);
                 tmpxdots = xdots+grout;

@@ -36,7 +36,7 @@ double evolve_new_x_parameter_offset;
 double evolve_new_y_parameter_offset;
 double evolve_x_parameter_range;
 double evolve_y_parameter_range;
-double dpx;
+double g_evolve_dist_per_x;
 double dpy;
 double evolve_max_random_mutation;
 double evolve_mutation_reduction_factor;
@@ -232,16 +232,16 @@ void varydbl(GENEBASE gene[], int randval, int i)
     case variations::NONE:
         break;
     case variations::X:
-        *(double *)gene[i].addr = px * dpx + evolve_x_parameter_offset; //paramspace x coord * per view delta px + offset
+        *(double *)gene[i].addr = px * g_evolve_dist_per_x + evolve_x_parameter_offset; //paramspace x coord * per view delta px + offset
         break;
     case variations::Y:
         *(double *)gene[i].addr = lclpy * dpy + evolve_y_parameter_offset; //same for y
         break;
     case variations::X_PLUS_Y:
-        *(double *)gene[i].addr = px*dpx+ evolve_x_parameter_offset +(lclpy*dpy)+ evolve_y_parameter_offset; //and x+y
+        *(double *)gene[i].addr = px*g_evolve_dist_per_x+ evolve_x_parameter_offset +(lclpy*dpy)+ evolve_y_parameter_offset; //and x+y
         break;
     case variations::X_MINUS_Y:
-        *(double *)gene[i].addr = (px*dpx+ evolve_x_parameter_offset)-(lclpy*dpy+ evolve_y_parameter_offset); //and x-y
+        *(double *)gene[i].addr = (px*g_evolve_dist_per_x+ evolve_x_parameter_offset)-(lclpy*dpy+ evolve_y_parameter_offset); //and x-y
         break;
     case variations::RANDOM:
         *(double *)gene[i].addr += (((double)randval / RAND_MAX) * 2 * evolve_max_random_mutation) - evolve_max_random_mutation;
@@ -1106,9 +1106,9 @@ void set_evolve_ranges()
 {
     int lclpy = evolve_image_grid_size - py - 1;
     // set up ranges and offsets for parameter explorer/evolver
-    evolve_x_parameter_range = dpx*(parmzoom*2.0);
+    evolve_x_parameter_range = g_evolve_dist_per_x*(parmzoom*2.0);
     evolve_y_parameter_range = dpy*(parmzoom*2.0);
-    evolve_new_x_parameter_offset = evolve_x_parameter_offset +(((double)px-parmzoom)*dpx);
+    evolve_new_x_parameter_offset = evolve_x_parameter_offset +(((double)px-parmzoom)*g_evolve_dist_per_x);
     evolve_new_y_parameter_offset = evolve_y_parameter_offset +(((double)lclpy-parmzoom)*dpy);
 
     evolve_new_discrete_x_parameter_offset = (char)(evolve_discrete_x_parameter_offset +(px- evolve_image_grid_size /2));
