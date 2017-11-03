@@ -100,7 +100,7 @@ int     initsavetime = 0;       // autosave minutes
 DComplex  initorbit = { 0.0 };  // initial orbitvalue
 char    useinitorbit = 0;       // flag for initorbit
 int     g_init_mode = 0;        // initial video mode
-int     initcyclelimit = 0;     // initial cycle limit
+int     g_init_cycle_limit = 0;     // initial cycle limit
 bool    usemag = false;         // use center-mag corners
 long    g_bail_out = 0;            // user input bailout value
 bailouts g_bail_out_test;            // test used for determining bailout
@@ -455,7 +455,7 @@ static void initvars_restart()          // <ins> key init
     readname = DOTSLASH;                // initially current directory
     show_file = 1;
     // next should perhaps be fractal re-init, not just <ins> ?
-    initcyclelimit = 55;                   // spin-DAC default speed limit
+    g_init_cycle_limit = 55;                   // spin-DAC default speed limit
     mapset = false;                     // no map= name active
     map_specified = false;
     major_method = Major::breadth_first;    // default inverse julia methods
@@ -1664,7 +1664,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         {
             goto badarg;
         }
-        initcyclelimit = numval;
+        g_init_cycle_limit = numval;
         return CMDARG_NONE;
     }
 

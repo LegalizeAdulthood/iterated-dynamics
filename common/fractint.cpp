@@ -387,7 +387,7 @@ static main_state main_image_start(bool &stacked, bool &resumeflag)
         look_at_mouse = -FIK_PAGE_UP;           // just mouse left button, == pgup
     }
 
-    g_cycle_limit = initcyclelimit;         // default cycle limit
+    g_cycle_limit = g_init_cycle_limit;         // default cycle limit
     g_adapter = g_init_mode;                  // set the video adapter up
     g_init_mode = -1;                       // (once)
 

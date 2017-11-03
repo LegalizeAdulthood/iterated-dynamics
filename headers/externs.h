@@ -217,7 +217,7 @@ extern bool                  g_image_map;
 extern int                   g_init_3d[20];
 extern DComplex              init;
 extern batch_modes           g_init_batch;
-extern int                   initcyclelimit;
+extern int                   g_init_cycle_limit;
 extern int                   g_init_mode;
 extern DComplex              initorbit;
 extern int                   initsavetime;
