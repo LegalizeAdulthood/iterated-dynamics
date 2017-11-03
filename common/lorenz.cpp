@@ -1385,9 +1385,9 @@ int orbit2dfloat()
         break;
     }
 
-    if (inside > COLOR_BLACK)
+    if (g_inside > COLOR_BLACK)
     {
-        color = inside;
+        color = g_inside;
     }
     else
     {
@@ -1558,9 +1558,9 @@ int orbit2dlong()
         break;
     }
 
-    if (inside > COLOR_BLACK)
+    if (g_inside > COLOR_BLACK)
     {
-        color = inside;
+        color = g_inside;
     }
     else
     {
@@ -2022,9 +2022,9 @@ int dynam2dfloat()
     }
 
     long count = 0;
-    if (inside > COLOR_BLACK)
+    if (g_inside > COLOR_BLACK)
     {
-        color = inside;
+        color = g_inside;
     }
     if (color >= g_colors)
     {
@@ -2274,9 +2274,9 @@ int plotorbits2dfloat()
         end_resume();
     }
 
-    if (inside > COLOR_BLACK)
+    if (g_inside > COLOR_BLACK)
     {
-        o_color = inside;
+        o_color = g_inside;
     }
     else
     {

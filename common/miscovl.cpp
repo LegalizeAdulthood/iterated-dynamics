@@ -97,9 +97,9 @@ void make_batch_file()
 #endif
     {
         --maxcolor;
-        if (inside > COLOR_BLACK && inside > maxcolor)
+        if (g_inside > COLOR_BLACK && g_inside > maxcolor)
         {
-            maxcolor = inside;
+            maxcolor = g_inside;
         }
         if (outside > COLOR_BLACK && outside > maxcolor)
         {
@@ -897,51 +897,51 @@ void write_batch_parms(char const *colorinf, bool colorsonly, int maxcolor, int 
             put_parm(" %s=", "fillcolor");
             put_parm("%d", g_fill_color);
         }
-        if (inside != 1)
+        if (g_inside != 1)
         {
             put_parm(" %s=", "inside");
-            if (inside == ITER)
+            if (g_inside == ITER)
             {
                 put_parm("maxiter");
             }
-            else if (inside == ZMAG)
+            else if (g_inside == ZMAG)
             {
                 put_parm("zmag");
             }
-            else if (inside == BOF60)
+            else if (g_inside == BOF60)
             {
                 put_parm("bof60");
             }
-            else if (inside == BOF61)
+            else if (g_inside == BOF61)
             {
                 put_parm("bof61");
             }
-            else if (inside == EPSCROSS)
+            else if (g_inside == EPSCROSS)
             {
                 put_parm("epsiloncross");
             }
-            else if (inside == STARTRAIL)
+            else if (g_inside == STARTRAIL)
             {
                 put_parm("startrail");
             }
-            else if (inside == PERIOD)
+            else if (g_inside == PERIOD)
             {
                 put_parm("period");
             }
-            else if (inside == FMODI)
+            else if (g_inside == FMODI)
             {
                 put_parm("fmod");
             }
-            else if (inside == ATANI)
+            else if (g_inside == ATANI)
             {
                 put_parm("atan");
             }
             else
             {
-                put_parm("%d", inside);
+                put_parm("%d", g_inside);
             }
         }
-        if (g_close_proximity != 0.01 && (inside == EPSCROSS || inside == FMODI
+        if (g_close_proximity != 0.01 && (g_inside == EPSCROSS || g_inside == FMODI
                                   || outside == FMOD))
         {
             put_parm(" %s=%.15g", "proximity", g_close_proximity);

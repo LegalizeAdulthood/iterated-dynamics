@@ -303,7 +303,7 @@ double fmodtest_bailout_or()
 double fmodtest()
 {
     double result;
-    if (inside == FMODI && save_release <= 2000) // for backwards compatibility
+    if (g_inside == FMODI && save_release <= 2000) // for backwards compatibility
     {
         if (magnitude == 0.0 || !no_mag_calc || g_integer_fractal)
         {
@@ -1893,7 +1893,7 @@ static int standard_calc(int passnum)
             if (quick_calc && !resuming)
             {
                 g_color = getcolor(col, row);
-                if (g_color != inside)
+                if (g_color != g_inside)
                 {
                     ++col;
                     continue;
@@ -1944,7 +1944,7 @@ int calcmand()              // fast per pixel 1/2/b/g, called with row & col set
     if (calcmandasm() >= 0)
     {
         if ((!LogTable.empty() || Log_Calc) // map color, but not if maxit & adjusted for inside,etc
-                && (realcoloriter < maxit || (inside < COLOR_BLACK && g_color_iter == maxit)))
+                && (realcoloriter < maxit || (g_inside < COLOR_BLACK && g_color_iter == maxit)))
         {
             g_color_iter = logtablecalc(g_color_iter);
         }
@@ -2014,7 +2014,7 @@ int calcmandfp()
             g_color_iter = potential(magnitude, realcoloriter);
         }
         if ((!LogTable.empty() || Log_Calc) // map color, but not if maxit & adjusted for inside,etc
-                && (realcoloriter < maxit || (inside < COLOR_BLACK && g_color_iter == maxit)))
+                && (realcoloriter < maxit || (g_inside < COLOR_BLACK && g_color_iter == maxit)))
         {
             g_color_iter = logtablecalc(g_color_iter);
         }
@@ -2105,7 +2105,7 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
         changed[i] = 0L;
     }
 #endif
-    if (inside == STARTRAIL)
+    if (g_inside == STARTRAIL)
     {
         for (auto &elem : tantable)
         {
@@ -2116,11 +2116,11 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
             maxit = 16;
         }
     }
-    if (periodicitycheck == 0 || inside == ZMAG || inside == STARTRAIL)
+    if (periodicitycheck == 0 || g_inside == ZMAG || g_inside == STARTRAIL)
     {
         oldcoloriter = 2147483647L;       // don't check periodicity at all
     }
-    else if (inside == PERIOD)       // for display-periodicity
+    else if (g_inside == PERIOD)       // for display-periodicity
     {
         oldcoloriter = (maxit/5)*4;       // don't check until nearly done
     }
@@ -2213,7 +2213,7 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
         g_color_iter = -1;
     }
     caught_a_cycle = false;
-    if (inside == PERIOD)
+    if (g_inside == PERIOD)
     {
         savedand = 16;           // begin checking every 16th cycle
     }
@@ -2227,7 +2227,7 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
     }
     savedincr = 1;               // start checking the very first time
 
-    if (inside <= BOF60 && inside >= BOF61)
+    if (g_inside <= BOF60 && g_inside >= BOF61)
     {
         lmagnitud = 0;
         magnitude = lmagnitud;
@@ -2340,7 +2340,7 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
         }
 
         // the usual case
-        else if ((curfractalspecific->orbitcalc() && inside != STARTRAIL)
+        else if ((curfractalspecific->orbitcalc() && g_inside != STARTRAIL)
                  || overflow)
         {
             break;
@@ -2364,7 +2364,7 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
                 iplot_orbit(lnew.x, lnew.y, -1);
             }
         }
-        if (inside < ITER)
+        if (g_inside < ITER)
         {
             if (bf_math == bf_math_type::BIGNUM)
             {
@@ -2374,7 +2374,7 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
             {
                 g_new = cmplxbftofloat(&bfnew);
             }
-            if (inside == STARTRAIL)
+            if (g_inside == STARTRAIL)
             {
                 if (0 < g_color_iter && g_color_iter < 16)
                 {
@@ -2416,7 +2416,7 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
                     }
                 }
             }
-            else if (inside == EPSCROSS)
+            else if (g_inside == EPSCROSS)
             {
                 hooper = 0;
                 if (g_integer_fractal)
@@ -2446,7 +2446,7 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
                     }
                 }
             }
-            else if (inside == FMODI)
+            else if (g_inside == FMODI)
             {
                 double mag;
                 if (g_integer_fractal)
@@ -2460,7 +2460,7 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
                     memvalue = mag;
                 }
             }
-            else if (inside <= BOF60 && inside >= BOF61)
+            else if (g_inside <= BOF60 && g_inside >= BOF61)
             {
                 if (g_integer_fractal)
                 {
@@ -2828,7 +2828,7 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
         }
         if (g_colors == 2)
         {
-            g_color_iter = !inside;   // the only useful distest 2 color use
+            g_color_iter = !g_inside;   // the only useful distest 2 color use
             goto plot_pixel;       // no further adjustments apply
         }
         if (g_distance_estimator > 1)          // pick color based on distance
@@ -2890,13 +2890,13 @@ plot_inside: // we're "inside"
     {
         g_color_iter = 7;           // show periodicity
     }
-    else if (inside >= COLOR_BLACK)
+    else if (g_inside >= COLOR_BLACK)
     {
-        g_color_iter = inside;              // set to specified color, ignore logpal
+        g_color_iter = g_inside;              // set to specified color, ignore logpal
     }
     else
     {
-        if (inside == STARTRAIL)
+        if (g_inside == STARTRAIL)
         {
             double diff;
             g_color_iter = 0;
@@ -2910,7 +2910,7 @@ plot_inside: // we're "inside"
                 }
             }
         }
-        else if (inside == PERIOD)
+        else if (g_inside == PERIOD)
         {
             if (cyclelen > 0)
             {
@@ -2921,7 +2921,7 @@ plot_inside: // we're "inside"
                 g_color_iter = maxit;
             }
         }
-        else if (inside == EPSCROSS)
+        else if (g_inside == EPSCROSS)
         {
             if (hooper == 1)
             {
@@ -2940,11 +2940,11 @@ plot_inside: // we're "inside"
                 scrub_orbit();
             }
         }
-        else if (inside == FMODI)
+        else if (g_inside == FMODI)
         {
             g_color_iter = (long)(memvalue * g_colors / g_close_proximity);
         }
-        else if (inside == ATANI)            // "atan"
+        else if (g_inside == ATANI)            // "atan"
         {
             if (g_integer_fractal)
             {
@@ -2957,15 +2957,15 @@ plot_inside: // we're "inside"
                 g_color_iter = (long)fabs(atan2(g_new.y, g_new.x)*atan_colors/PI);
             }
         }
-        else if (inside == BOF60)
+        else if (g_inside == BOF60)
         {
             g_color_iter = (long)(sqrt(min_orbit) * 75);
         }
-        else if (inside == BOF61)
+        else if (g_inside == BOF61)
         {
             g_color_iter = min_index;
         }
-        else if (inside == ZMAG)
+        else if (g_inside == ZMAG)
         {
             if (g_integer_fractal)
             {
@@ -3409,9 +3409,9 @@ static int potential(double mag, long iterations)
             pot = 1.0F; // avoid color 0
         }
     }
-    else if (inside >= COLOR_BLACK)
+    else if (g_inside >= COLOR_BLACK)
     {
-        pot = (float) inside;
+        pot = (float) g_inside;
     }
     else     // inside < 0 implies inside = maxit, so use 1st pot param instead
     {
@@ -3466,7 +3466,7 @@ int  bound_trace_main()
     int trail_color, fillcolor_used, last_fillcolor_used = -1;
     int max_putline_length;
     int right, left, length;
-    if (inside == COLOR_BLACK || outside == COLOR_BLACK)
+    if (g_inside == COLOR_BLACK || outside == COLOR_BLACK)
     {
         stopmsg(STOPMSG_NONE, "Boundary tracing cannot be used with inside=0 or outside=0");
         return -1;
@@ -4457,7 +4457,7 @@ static void setsymmetry(symmetry_type sym, bool uselist) // set up proper symmet
     {
         return;
     }
-    else if (inside == FMODI || outside == TDIS)
+    else if (g_inside == FMODI || outside == TDIS)
     {
         return;
     }

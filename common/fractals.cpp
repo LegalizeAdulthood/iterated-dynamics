@@ -2788,7 +2788,7 @@ int mandel_per_pixel()
         lold = linit;
     }
 
-    if ((inside == BOF60 || inside == BOF61) && !nobof)
+    if ((g_inside == BOF60 || g_inside == BOF61) && !nobof)
     {
         /* kludge to match "Beauty of Fractals" picture since we start
            Mandelbrot iteration with init rather than 0 */
@@ -2981,7 +2981,7 @@ int mandelfp_per_pixel()
         old = g_init;
     }
 
-    if ((inside == BOF60 || inside == BOF61) && !nobof)
+    if ((g_inside == BOF60 || g_inside == BOF61) && !nobof)
     {
         /* kludge to match "Beauty of Fractals" picture since we start
            Mandelbrot iteration with init rather than 0 */

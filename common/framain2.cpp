@@ -891,7 +891,7 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
         {
             truecolor = false;          // truecolor doesn't play well with the evolver
         }
-        if (maxit > old_maxit && inside >= COLOR_BLACK && g_calc_status == calc_status_value::COMPLETED &&
+        if (maxit > old_maxit && g_inside >= COLOR_BLACK && g_calc_status == calc_status_value::COMPLETED &&
                 curfractalspecific->calctype == standard_fractal && !LogFlag &&
                 !truecolor &&    // recalc not yet implemented with truecolor
                 !(usr_stdcalcmode == 't' && g_fill_color > -1) &&
@@ -2391,7 +2391,7 @@ static void save_history_info()
     current.potential[2]         = potparam[2]               ;
     current.rflag                = (short) (rflag ? 1 : 0);
     current.rseed                = (short)rseed                     ;
-    current.inside               = (short)inside                    ;
+    current.inside               = (short)g_inside                    ;
     current.logmap               = LogFlag                   ;
     current.invert[0]            = inversion[0]              ;
     current.invert[1]            = inversion[1]              ;
@@ -2571,7 +2571,7 @@ static void restore_history_info(int i)
     potparam[2]           = last.potential[2]   ;
     rflag                 = last.rflag != 0;
     rseed                 = last.rseed          ;
-    inside                = last.inside         ;
+    g_inside                = last.inside         ;
     LogFlag               = last.logmap         ;
     inversion[0]          = last.invert[0]      ;
     inversion[1]          = last.invert[1]      ;
