@@ -2562,7 +2562,7 @@ void invertz2(DComplex *z)
     z->x = dxpixel();
     z->y = dypixel();
     z->x -= g_f_x_center;
-    z->y -= f_ycenter;  // Normalize values to center of circle
+    z->y -= g_f_y_center;  // Normalize values to center of circle
 
     tempsqrx = sqr(z->x) + sqr(z->y);  // Get old radius
     if (fabs(tempsqrx) > FLT_MIN)
@@ -2576,7 +2576,7 @@ void invertz2(DComplex *z)
     z->x *= tempsqrx;
     z->y *= tempsqrx;      // Perform inversion
     z->x += g_f_x_center;
-    z->y += f_ycenter; // Renormalize
+    z->y += g_f_y_center; // Renormalize
 }
 
 int long_julia_per_pixel()

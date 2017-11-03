@@ -1265,7 +1265,7 @@ top:
         sprintf(msg, "%12.9f", g_f_x_center);
         driver_put_string(-1, -1, C_GENERAL_HI, msg);
         driver_put_string(-1, -1, C_GENERAL_MED, "  ycenter: ");
-        sprintf(msg, "%12.9f", f_ycenter);
+        sprintf(msg, "%12.9f", g_f_y_center);
         driver_put_string(-1, -1, C_GENERAL_HI, msg);
     }
 

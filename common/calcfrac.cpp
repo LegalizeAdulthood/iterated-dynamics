@@ -108,7 +108,7 @@ int passes = 0;
 int invert = 0;
 double g_f_radius = 0.0;
 double g_f_x_center = 0.0;
-double f_ycenter = 0.0;                 // for inversion
+double g_f_y_center = 0.0;                 // for inversion
 void (*putcolor)(int, int, int) = putcolor_a;
 void (*plot)(int, int, int) = putcolor_a;
 
@@ -803,7 +803,7 @@ int calcfract()
     {
         g_f_radius    = inversion[0];
         g_f_x_center   = inversion[1];
-        f_ycenter   = inversion[2];
+        g_f_y_center   = inversion[2];
 
         if (inversion[0] == AUTOINVERT)  //  auto calc radius 1/6 screen
         {
@@ -829,11 +829,11 @@ int calcfract()
         {
             inversion[2] = (yymin + yymax) / 2.0;
             fix_inversion(&inversion[2]);
-            f_ycenter = inversion[2];
-            if (fabs(f_ycenter) < fabs(yymax-yymin) / 100)
+            g_f_y_center = inversion[2];
+            if (fabs(g_f_y_center) < fabs(yymax-yymin) / 100)
             {
-                f_ycenter = 0.0;
-                inversion[2] = f_ycenter;
+                g_f_y_center = 0.0;
+                inversion[2] = g_f_y_center;
             }
         }
 

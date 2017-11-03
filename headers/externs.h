@@ -191,7 +191,7 @@ extern bool                  g_new_bifurcation_functions_loaded;
 extern double                g_f_at_rad;
 extern double                g_f_radius;
 extern double                g_f_x_center;
-extern double                f_ycenter;
+extern double                g_f_y_center;
 extern GENEBASE              gene_bank[NUMGENES];
 extern int                   get_corners();
 extern bool                  gif87a_flag;
