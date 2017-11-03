@@ -194,7 +194,7 @@ main_state big_while_loop(bool *const kbdmore, bool *const stacked, bool const r
                 }
                 else if (((xdots <= 1) // changed test to 1, so a 2x2 window will
                           || (ydots <= 1)) // work with the sound feature
-                         && !(evolving&1))
+                         && !(g_evolving&1))
                 {
                     // so ssg works
                     // but no check if in evolve mode to allow lots of small views
@@ -204,20 +204,20 @@ main_state big_while_loop(bool *const kbdmore, bool *const stacked, bool const r
                     xdots = sxdots;
                     ydots = sydots;
                 }
-                if ((evolving & 1) && (curfractalspecific->flags & INFCALC))
+                if ((g_evolving & 1) && (curfractalspecific->flags & INFCALC))
                 {
                     stopmsg(STOPMSG_NONE,
                         "Fractal doesn't terminate! switching off evolution.");
-                    evolving = evolving -1;
+                    g_evolving = g_evolving -1;
                     viewwindow = false;
                     xdots = sxdots;
                     ydots = sydots;
                 }
-                if (evolving & 1)
+                if (g_evolving & 1)
                 {
-                    xdots = (sxdots / evolve_image_grid_size)-!((evolving & NOGROUT)/NOGROUT);
+                    xdots = (sxdots / evolve_image_grid_size)-!((g_evolving & NOGROUT)/NOGROUT);
                     xdots = xdots - (xdots % 4); // trim to multiple of 4 for SSG
-                    ydots = (sydots / evolve_image_grid_size)-!((evolving & NOGROUT)/NOGROUT);
+                    ydots = (sydots / evolve_image_grid_size)-!((g_evolving & NOGROUT)/NOGROUT);
                     ydots = ydots - (ydots % 4);
                 }
                 else
@@ -265,7 +265,7 @@ main_state big_while_loop(bool *const kbdmore, bool *const stacked, bool const r
                 }
                 outln = pot_line;
             }
-            else if ((soundflag & SOUNDFLAG_ORBITMASK) > SOUNDFLAG_BEEP && !evolving) // regular gif/fra input file
+            else if ((soundflag & SOUNDFLAG_ORBITMASK) > SOUNDFLAG_BEEP && !g_evolving) // regular gif/fra input file
             {
                 outln = sound_line;      // sound decoding
             }
@@ -308,7 +308,7 @@ main_state big_while_loop(bool *const kbdmore, bool *const stacked, bool const r
         {
             zoomoff = false;            // for these cases disable zooming
         }
-        if (!evolving)
+        if (!g_evolving)
         {
             calcfracinit();
         }
@@ -364,7 +364,7 @@ main_state big_while_loop(bool *const kbdmore, bool *const stacked, bool const r
             //rb
             name_stack_ptr = -1;   // reset pointer
             g_browse_name.clear();
-            if (viewwindow && (evolving&1) && (g_calc_status != calc_status_value::COMPLETED))
+            if (viewwindow && (g_evolving&1) && (g_calc_status != calc_status_value::COMPLETED))
             {
                 // generate a set of images with varied parameters on each one
                 int grout, ecount, tmpxdots, tmpydots, gridsqr;
@@ -391,8 +391,8 @@ main_state big_while_loop(bool *const kbdmore, bool *const stacked, bool const r
                     evolve_image_grid_size = evolve_info.image_grid_size;
                     evolve_this_generation_random_seed = evolve_info.this_generation_random_seed;
                     evolve_max_random_mutation = evolve_info.max_random_mutation;
-                    evolving     = evolve_info.evolving;
-                    viewwindow = evolving != 0;
+                    g_evolving     = evolve_info.evolving;
+                    viewwindow = g_evolving != 0;
                     ecount       = evolve_info.ecount;
                     have_evolve_info = false;
                 }
@@ -415,7 +415,7 @@ main_state big_while_loop(bool *const kbdmore, bool *const stacked, bool const r
                 param_box_count = 0;
                 g_evolve_dist_per_x = evolve_x_parameter_range /(evolve_image_grid_size -1);
                 g_evolve_dist_per_y = evolve_y_parameter_range /(evolve_image_grid_size -1);
-                grout  = !((evolving & NOGROUT)/NOGROUT);
+                grout  = !((g_evolving & NOGROUT)/NOGROUT);
                 tmpxdots = xdots+grout;
                 tmpydots = ydots+grout;
                 gridsqr = evolve_image_grid_size * evolve_image_grid_size;
@@ -460,7 +460,7 @@ done:
                     evolve_info.image_grid_size = (short) evolve_image_grid_size;
                     evolve_info.this_generation_random_seed = (short) evolve_this_generation_random_seed;
                     evolve_info.max_random_mutation = evolve_max_random_mutation;
-                    evolve_info.evolving        = (short)evolving;
+                    evolve_info.evolving        = (short)g_evolving;
                     evolve_info.ecount          = (short) ecount;
                     have_evolve_info = true;
                 }
@@ -646,7 +646,7 @@ resumeloop:                             // return here on failed overlays
                 kbdchar = tolower(kbdchar);
             }
 #endif
-            if (evolving)
+            if (g_evolving)
             {
                 mms_value = evolver_menu_switch(&kbdchar, &frommandel, kbdmore, stacked);
             }
@@ -887,7 +887,7 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
             i = get_cmd_string();
         }
         driver_unstack_screen();
-        if (evolving && truecolor)
+        if (g_evolving && truecolor)
         {
             truecolor = false;          // truecolor doesn't play well with the evolver
         }
@@ -1061,7 +1061,7 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
         }
         break;
     case FIK_SPACE:                  // spacebar, toggle mand/julia
-        if (bf_math != bf_math_type::NONE || evolving)
+        if (bf_math != bf_math_type::NONE || g_evolving)
         {
             break;
         }
@@ -1537,7 +1537,7 @@ do_3d_transform:
     case FIK_ALT_5:
     case FIK_ALT_6:
     case FIK_ALT_7:
-        evolving = 1;
+        g_evolving = 1;
         viewwindow = true;
         set_mutation_level(*kbdchar - FIK_ALT_1 + 1);
         param_history(0); // save parameter history
@@ -1659,7 +1659,7 @@ static main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdm
             i = get_cmd_string();
         }
         driver_unstack_screen();
-        if (evolving && truecolor)
+        if (g_evolving && truecolor)
         {
             truecolor = false;          // truecolor doesn't play well with the evolver
         }
@@ -1672,7 +1672,7 @@ static main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdm
         }
         break;
     case 'b': // quick exit from evolve mode
-        evolving = 0;
+        g_evolving = 0;
         viewwindow = false;
         param_history(0); // save history
         *kbdmore = false;
@@ -1891,7 +1891,7 @@ static main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdm
         {
             GENEBASE gene[NUMGENES];
             copy_genes_from_bank(gene);
-            if (evolving & 1)
+            if (g_evolving & 1)
             {
                 if (*kbdchar == FIK_CTL_LEFT_ARROW)
                 {
@@ -1925,7 +1925,7 @@ static main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdm
                 {
                     py = 0;
                 }
-                int grout = !((evolving & NOGROUT)/NOGROUT) ;
+                int grout = !((g_evolving & NOGROUT)/NOGROUT) ;
                 sxoffs = px * (int)(x_size_d+1+grout);
                 syoffs = py * (int)(y_size_d+1+grout);
 
@@ -2002,10 +2002,10 @@ static main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdm
                 zbx = zby;
                 find_special_colors();
                 g_box_color = g_color_bright;
-                if (evolving&1)
+                if (g_evolving&1)
                 {
                     // set screen view params back (previously changed to allow full screen saves in viewwindow mode)
-                    int grout = !((evolving & NOGROUT) / NOGROUT);
+                    int grout = !((g_evolving & NOGROUT) / NOGROUT);
                     sxoffs = px * (int)(x_size_d+1+grout);
                     syoffs = py * (int)(y_size_d+1+grout);
                     SetupParamBox();
@@ -2026,7 +2026,7 @@ static main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdm
             {
                 // end zoombox
                 zoom_box_width = 0;
-                if (evolving&1)
+                if (g_evolving&1)
                 {
                     drawparmbox(1); // clear boxes off screen
                     ReleaseParamBox();
@@ -2147,7 +2147,7 @@ static main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdm
         break;
 
     case '0': // mutation level 0 == turn off evolving
-        evolving = 0;
+        g_evolving = 0;
         viewwindow = false;
         *kbdmore = false;
         g_calc_status = calc_status_value::PARAMS_CHANGED;

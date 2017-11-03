@@ -649,7 +649,7 @@ void aspectratio_crop(float oldaspect, float newaspect)
 
 static int check_pan() // return 0 if can't, alignment requirement if can
 {
-    if ((g_calc_status != calc_status_value::RESUMABLE && g_calc_status != calc_status_value::COMPLETED) || evolving)
+    if ((g_calc_status != calc_status_value::RESUMABLE && g_calc_status != calc_status_value::COMPLETED) || g_evolving)
     {
         return (0); // not resumable, not complete
     }
@@ -756,7 +756,7 @@ int init_pan_or_recalc(int do_zoomout) // decide to recalc, or to chg worklist &
     }
     // got a zoombox
     alignmask = check_pan()-1;
-    if (alignmask < 0 || evolving)
+    if (alignmask < 0 || g_evolving)
     {
         g_calc_status = calc_status_value::PARAMS_CHANGED; // can't pan, trigger recalc
         return (0);

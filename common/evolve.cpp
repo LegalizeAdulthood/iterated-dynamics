@@ -14,7 +14,7 @@ GENEBASE gene_bank[NUMGENES];
 
 // px and py are coordinates in the parameter grid (small images on screen)
 // evolving = flag, evolve_image_grid_size = dimensions of image grid (evolve_image_grid_size x evolve_image_grid_size)
-int px, py, evolving, evolve_image_grid_size;
+int px, py, g_evolving, evolve_image_grid_size;
 #define EVOLVE_MAX_GRID_SIZE 51  // This is arbitrary, = 1024/20
 static int ecountbox[EVOLVE_MAX_GRID_SIZE][EVOLVE_MAX_GRID_SIZE];
 
@@ -685,7 +685,7 @@ int get_evolve_Parms()
     double old_x_parameter_range, old_y_parameter_range, old_x_parameter_offset, old_y_parameter_offset, old_max_random_mutation;
 
     // fill up the previous values arrays
-    old_evolving      = evolving;
+    old_evolving      = g_evolving;
     old_image_grid_size = evolve_image_grid_size;
     old_x_parameter_range = evolve_x_parameter_range;
     old_y_parameter_range = evolve_y_parameter_range;
@@ -695,7 +695,7 @@ int get_evolve_Parms()
 
 get_evol_restart:
 
-    if ((evolving & RANDWALK) || (evolving & RANDPARAM))
+    if ((g_evolving & RANDWALK) || (g_evolving & RANDPARAM))
     {
         // adjust field param to make some sense when changing from random modes
         // maybe should adjust for aspect ratio here?
@@ -710,7 +710,7 @@ get_evol_restart:
 
     choices[++k] = "Evolution mode? (no for full screen)";
     uvalues[k].type = 'y';
-    uvalues[k].uval.ch.val = evolving&1;
+    uvalues[k].uval.ch.val = g_evolving&1;
 
     choices[++k] = "Image grid size (odd numbers only)";
     uvalues[k].type = 'i';
@@ -722,7 +722,7 @@ get_evol_restart:
         // variation 'explore mode'
         choices[++k] = "Show parameter zoom box?";
         uvalues[k].type = 'y';
-        uvalues[k].uval.ch.val = ((evolving & PARMBOX) / PARMBOX);
+        uvalues[k].uval.ch.val = ((g_evolving & PARMBOX) / PARMBOX);
 
         choices[++k] = "x parameter range (across screen)";
         uvalues[k].type = 'f';
@@ -751,7 +751,7 @@ get_evol_restart:
 
     choices[++k] = "Grouting? ";
     uvalues[k].type = 'y';
-    uvalues[k].uval.ch.val = !((evolving & NOGROUT) / NOGROUT);
+    uvalues[k].uval.ch.val = !((g_evolving & NOGROUT) / NOGROUT);
 
     choices[++k] = "";
     uvalues[k].type = '*';
@@ -774,7 +774,7 @@ get_evol_restart:
     if (i < 0)
     {
         // in case this point has been reached after calling sub menu with F6
-        evolving      = old_evolving;
+        g_evolving      = old_evolving;
         evolve_image_grid_size = old_image_grid_size;
         evolve_x_parameter_range = old_x_parameter_range;
         evolve_y_parameter_range = old_y_parameter_range;
@@ -824,10 +824,10 @@ get_evol_restart:
 
     k = -1;
 
-    evolving = uvalues[++k].uval.ch.val;
-    viewwindow = evolving != 0;
+    g_evolving = uvalues[++k].uval.ch.val;
+    viewwindow = g_evolving != 0;
 
-    if (!evolving && i != FIK_F6)    // don't need any of the other parameters
+    if (!g_evolving && i != FIK_F6)    // don't need any of the other parameters
     {
         return (1);             // the following code can set evolving even if it's off
     }
@@ -852,9 +852,9 @@ get_evol_restart:
     if (explore_check())
     {
         tmp = (PARMBOX * uvalues[++k].uval.ch.val);
-        if (evolving)
+        if (g_evolving)
         {
-            evolving += tmp;
+            g_evolving += tmp;
         }
         evolve_x_parameter_range = uvalues[++k].uval.dval;
         evolve_x_parameter_offset = uvalues[++k].uval.dval;
@@ -870,7 +870,7 @@ get_evol_restart:
 
     if (!(uvalues[++k].uval.ch.val))
     {
-        evolving = evolving + NOGROUT;
+        g_evolving = g_evolving + NOGROUT;
     }
 
     viewxdots = (sxdots / evolve_image_grid_size)-2;
@@ -883,7 +883,7 @@ get_evol_restart:
 
     i = 0;
 
-    if (evolving != old_evolving
+    if (g_evolving != old_evolving
             || (evolve_image_grid_size != old_image_grid_size) || (evolve_x_parameter_range != old_x_parameter_range)
             || (evolve_x_parameter_offset != old_x_parameter_offset) || (evolve_y_parameter_range != old_y_parameter_range)
             || (evolve_y_parameter_offset != old_y_parameter_offset)  || (evolve_max_random_mutation != old_max_random_mutation)
@@ -892,12 +892,12 @@ get_evol_restart:
         i = 1;
     }
 
-    if (evolving && !old_evolving)
+    if (g_evolving && !old_evolving)
     {
         param_history(0); // save old history
     }
 
-    if (!evolving && (evolving == old_evolving))
+    if (!g_evolving && (g_evolving == old_evolving))
     {
         i = 0;
     }
@@ -909,7 +909,7 @@ get_evol_restart:
         if (old_variations > 0)
         {
             viewwindow = true;
-            evolving |= 1;   // leave other settings alone
+            g_evolving |= 1;   // leave other settings alone
         }
         evolve_max_random_mutation = 1;
         evolve_mutation_reduction_factor = 1.0;
@@ -1022,11 +1022,11 @@ void drawparmbox(int mode)
     // clears boxes off screen if mode = 1, otherwise, redraws boxes
     coords tl, tr, bl, br;
     int grout;
-    if (!(evolving & PARMBOX))
+    if (!(g_evolving & PARMBOX))
     {
         return; // don't draw if not asked to!
     }
-    grout = !((evolving & NOGROUT)/NOGROUT) ;
+    grout = !((g_evolving & NOGROUT)/NOGROUT) ;
     image_box_count = g_box_count;
     if (g_box_count)
     {

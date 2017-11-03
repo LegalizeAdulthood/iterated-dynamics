@@ -2724,7 +2724,7 @@ get_brws_restart:
         i = -3;
     }
 
-    if (evolving)
+    if (g_evolving)
     {
         // can't browse
         g_auto_browse = false;

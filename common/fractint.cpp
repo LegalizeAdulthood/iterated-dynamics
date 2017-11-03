@@ -190,7 +190,7 @@ static void main_restart(int const argc, char const *const argv[], bool &stacked
     g_browse_name = "            ";
     name_stack_ptr = -1; // init loaded files stack
 
-    evolving = 0;
+    g_evolving = 0;
     evolve_x_parameter_range = 4;
     evolve_new_x_parameter_offset = -2.0;
     evolve_x_parameter_offset = -2.0;
@@ -310,7 +310,7 @@ static bool main_restore_start(bool &stacked, bool &resumeflag)
             file_name_stack[name_stack_ptr] = g_browse_name;
         }
 
-        evolving = 0;
+        g_evolving = 0;
         viewwindow = false;
         show_file = 0;
         help_mode = -1;
