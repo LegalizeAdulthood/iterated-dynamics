@@ -226,12 +226,12 @@ int read_overlay()      // read overlay/3D files, if reqr'd
 
     rotate_lo = 1;
     rotate_hi = 255;
-    distestwidth = 71;
+    g_distance_estimator_width_factor = 71;
     if (read_info.version > 5)
     {
         rotate_lo         = read_info.rotate_lo;
         rotate_hi         = read_info.rotate_hi;
-        distestwidth      = read_info.distestwidth;
+        g_distance_estimator_width_factor      = read_info.distestwidth;
     }
 
     if (read_info.version > 6)

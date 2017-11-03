@@ -80,7 +80,7 @@ bool    rflag = false;
 int     rseed = 0;              // Random number seeding flag and value
 int     g_decomp[2] = { 0 };      // Decomposition coloring
 long    g_distance_estimator = 0;
-int     distestwidth = 0;
+int     g_distance_estimator_width_factor = 0;
 bool    fract_overwrite = false;// true if file overwrite allowed
 int     soundflag = 0;          // sound control bitfield... see sound.c for useage
 int     g_base_hertz = 0;          // sound=x/y/x hertz value
@@ -511,7 +511,7 @@ static void initvars_fractal()          // init vars affecting calculation
     usr_distest = 0;
     pseudox = 0;
     pseudoy = 0;
-    distestwidth = 71;
+    g_distance_estimator_width_factor = 71;
     forcesymmetry = symmetry_type::NOT_FORCED;
     xxmin = -2.5;
     xx3rd = xxmin;
@@ -2978,10 +2978,10 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
             goto badarg;
         }
         usr_distest = (long)floatval[0];
-        distestwidth = 71;
+        g_distance_estimator_width_factor = 71;
         if (totparms > 1)
         {
-            distestwidth = intval[1];
+            g_distance_estimator_width_factor = intval[1];
         }
         if (totparms > 3 && intval[2] > 0 && intval[3] > 0)
         {

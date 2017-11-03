@@ -2455,7 +2455,7 @@ static void save_history_info()
     current.transparent[1]       = (short)transparent[1]            ;
     current.rotate_lo            = (short)rotate_lo                 ;
     current.rotate_hi            = (short)rotate_hi                 ;
-    current.distestwidth         = (short)distestwidth              ;
+    current.distestwidth         = (short)g_distance_estimator_width_factor              ;
     current.mxmaxfp              = mxmaxfp                   ;
     current.mxminfp              = mxminfp                   ;
     current.mymaxfp              = mymaxfp                   ;
@@ -2639,7 +2639,7 @@ static void restore_history_info(int i)
     transparent[1]        = last.transparent[1] ;
     rotate_lo             = last.rotate_lo      ;
     rotate_hi             = last.rotate_hi      ;
-    distestwidth          = last.distestwidth   ;
+    g_distance_estimator_width_factor          = last.distestwidth   ;
     mxmaxfp               = last.mxmaxfp        ;
     mxminfp               = last.mxminfp        ;
     mymaxfp               = last.mymaxfp        ;

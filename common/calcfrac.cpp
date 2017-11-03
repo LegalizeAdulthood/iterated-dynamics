@@ -1122,12 +1122,12 @@ static void perform_worklist()
         {
             dem_delta = ftemp;
         }
-        if (distestwidth == 0)
+        if (g_distance_estimator_width_factor == 0)
         {
-            distestwidth = 1;
+            g_distance_estimator_width_factor = 1;
         }
-        ftemp = distestwidth;
-        if (distestwidth > 0)
+        ftemp = g_distance_estimator_width_factor;
+        if (g_distance_estimator_width_factor > 0)
         {
             dem_delta *= sqr(ftemp)/10000; // multiply by thickness desired
         }

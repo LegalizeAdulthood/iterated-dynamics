@@ -529,7 +529,7 @@ int get_toggles2()
 
     choices[++k] = "          width factor:";
     uvalues[k].type = 'i';
-    old_distestwidth = distestwidth;
+    old_distestwidth = g_distance_estimator_width_factor;
     uvalues[k].uval.ival = old_distestwidth;
 
     choices[++k] = "Inversion radius or \"auto\" (0 means off)";
@@ -633,8 +633,8 @@ int get_toggles2()
         changed = true;
     }
     ++k;
-    distestwidth = uvalues[k].uval.ival;
-    if (usr_distest && distestwidth != old_distestwidth)
+    g_distance_estimator_width_factor = uvalues[k].uval.ival;
+    if (usr_distest && g_distance_estimator_width_factor != old_distestwidth)
     {
         changed = true;
     }
