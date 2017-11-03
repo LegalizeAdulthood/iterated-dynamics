@@ -20,7 +20,7 @@
 #define BOXWIDTH 57
 #define BOXDEPTH 12
 
-bool disk16bit = false;                 // storing 16 bit values for continuous potential
+bool g_disk_16_bit = false;                 // storing 16 bit values for continuous potential
 
 static int timetodisplay;
 static FILE *fp = nullptr;
@@ -95,7 +95,7 @@ int pot_startdisk()
     cleartempmsg();
     if (i == 0)
     {
-        disk16bit = true;
+        g_disk_16_bit = true;
     }
 
     return i;
@@ -319,7 +319,7 @@ void enddisk()
     membuf.clear();
     g_disk_flag = false;
     rowsize = 0;
-    disk16bit = false;
+    g_disk_16_bit = false;
 }
 
 int readdisk(int col, int row)

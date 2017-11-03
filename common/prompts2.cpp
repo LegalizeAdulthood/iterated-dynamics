@@ -621,7 +621,7 @@ int get_toggles2()
             }
             else     // keep disk video, but ditch the fraction part at end
             {
-                disk16bit = false;
+                g_disk_16_bit = false;
             }
         }
     }

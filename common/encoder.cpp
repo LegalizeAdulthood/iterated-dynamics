@@ -87,7 +87,7 @@ static int gif_savetodisk(char *filename)      // save-to-disk routine
     int interrupted;
 
 restart:
-    save16bit = disk16bit;
+    save16bit = g_disk_16_bit;
     if (gif87a_flag)               // not storing non-standard fractal info
     {
         save16bit = 0;
@@ -938,7 +938,7 @@ static void setup_save_info(FRACTAL_INFO *save_info)
     save_info->initorbit[1] = initorbit.y;
     save_info->useinitorbit = useinitorbit;
     save_info->periodicity = (short) periodicitycheck;
-    save_info->pot16bit = (short) (disk16bit ? 1 : 0);
+    save_info->pot16bit = (short) (g_disk_16_bit ? 1 : 0);
     save_info->faspectratio = finalaspectratio;
     save_info->system = (short) save_system;
 

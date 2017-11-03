@@ -125,7 +125,7 @@ extern LDBL                  delyy;
 extern float                 g_depth_fp;
 extern unsigned long         g_diffusion_counter;
 extern unsigned long         g_diffusion_limit;
-extern bool                  disk16bit;
+extern bool                  g_disk_16_bit;
 extern bool                  g_disk_flag;       // disk video active flag
 extern bool                  disktarga;
 extern display_3d_modes display_3d;
