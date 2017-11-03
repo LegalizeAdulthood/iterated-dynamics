@@ -585,7 +585,7 @@ static void initvars_fractal()          // init vars affecting calculation
     g_fm_decay = 10;                        // long decay
     g_fm_sustain = 13;                      // fairly high sustain level
     g_fm_release = 5;                      // short release
-    fm_wavetype = 0;                     // sin wave
+    g_fm_wavetype = 0;                     // sin wave
     polyphony = 0;                       // no polyphony
     for (int i = 0; i <= 11; i++)
     {
@@ -2744,7 +2744,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
     if (variable == "wavetype")
     {
         // wavetype = ?
-        fm_wavetype = numval & 0x0F;
+        g_fm_wavetype = numval & 0x0F;
         return CMDARG_NONE;
     }
 
