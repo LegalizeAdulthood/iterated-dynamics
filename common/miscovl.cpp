@@ -1332,9 +1332,9 @@ void write_batch_parms(char const *colorinf, bool colorsonly, int maxcolor, int 
             put_parm(" %s=%d", "wavetype", fm_wavetype);
         }
 
-        if (fm_attack != 5)
+        if (g_fm_attack != 5)
         {
-            put_parm(" %s=%d", "attack", fm_attack);
+            put_parm(" %s=%d", "attack", g_fm_attack);
         }
 
         if (fm_decay != 10)

@@ -581,7 +581,7 @@ static void initvars_fractal()          // init vars affecting calculation
 #ifndef XFRACT
     fm_vol = 63;                         // full volume on soundcard o/p
     hi_atten = 0;                        // no attenuation of hi notes
-    fm_attack = 5;                       // fast attack
+    g_fm_attack = 5;                       // fast attack
     fm_decay = 10;                        // long decay
     fm_sustain = 13;                      // fairly high sustain level
     fm_release = 5;                      // short release
@@ -2751,7 +2751,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
     if (variable == "attack")
     {
         // attack = ?
-        fm_attack = numval & 0x0F;
+        g_fm_attack = numval & 0x0F;
         return CMDARG_NONE;
     }
 

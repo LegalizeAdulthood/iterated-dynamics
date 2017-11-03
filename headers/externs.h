@@ -175,7 +175,7 @@ extern int                   g_finish_row;
 extern bool                  g_first_init;
 extern bool                  g_float_flag;
 extern DComplex *            g_float_param;
-extern int                   fm_attack;
+extern int                   g_fm_attack;
 extern int                   fm_decay;
 extern int                   fm_release;
 extern int                   fm_sustain;
