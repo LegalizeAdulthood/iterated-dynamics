@@ -582,7 +582,7 @@ static void initvars_fractal()          // init vars affecting calculation
     fm_vol = 63;                         // full volume on soundcard o/p
     hi_atten = 0;                        // no attenuation of hi notes
     g_fm_attack = 5;                       // fast attack
-    fm_decay = 10;                        // long decay
+    g_fm_decay = 10;                        // long decay
     fm_sustain = 13;                      // fairly high sustain level
     fm_release = 5;                      // short release
     fm_wavetype = 0;                     // sin wave
@@ -2758,7 +2758,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
     if (variable == "decay")
     {
         // decay = ?
-        fm_decay = numval & 0x0F;
+        g_fm_decay = numval & 0x0F;
         return CMDARG_NONE;
     }
 

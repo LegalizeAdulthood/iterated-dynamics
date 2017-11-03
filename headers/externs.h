@@ -176,7 +176,7 @@ extern bool                  g_first_init;
 extern bool                  g_float_flag;
 extern DComplex *            g_float_param;
 extern int                   g_fm_attack;
-extern int                   fm_decay;
+extern int                   g_fm_decay;
 extern int                   fm_release;
 extern int                   fm_sustain;
 extern int                   fm_wavetype;
