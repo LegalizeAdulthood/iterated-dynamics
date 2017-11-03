@@ -2193,7 +2193,7 @@ long get_file_entry(int type, char const *title, char const *fmask,
         case GETIFS:
             if (ifsload() == 0)
             {
-                fractype = !ifs_type ? fractal_type::IFS : fractal_type::IFS3D;
+                fractype = !g_ifs_type ? fractal_type::IFS : fractal_type::IFS3D;
                 curfractalspecific = &fractalspecific[static_cast<int>(fractype)];
                 set_default_parms(); // to correct them if 3d
                 return 0;

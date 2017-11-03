@@ -1395,7 +1395,7 @@ int ifsload()                   // read in IFS parameters
         g_ifs_definition.clear();
     }
 
-    ifs_type = false;
+    g_ifs_type = false;
     rowsize = NUM_IFS_PARAMS;
     if (find_file_item(g_ifs_filename, g_ifs_name.c_str(), &ifsfile, 3))
     {
@@ -1415,7 +1415,7 @@ int ifsload()                   // read in IFS parameters
     {
         if (strncmp(bufptr, "(3d)", 4) == 0)
         {
-            ifs_type = true;
+            g_ifs_type = true;
             rowsize = NUM_IFS_3D_PARAMS;
         }
         ++bufptr;

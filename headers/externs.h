@@ -211,7 +211,7 @@ extern int                   g_hi_attenuation;
 extern std::string           g_ifs_filename;
 extern std::string           g_ifs_name;
 extern std::vector<float>    g_ifs_definition;
-extern bool                  ifs_type;
+extern bool                  g_ifs_type;
 extern int image_box_count;
 extern bool                  image_map;
 extern int                   init3d[20];

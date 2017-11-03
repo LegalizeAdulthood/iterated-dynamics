@@ -2542,7 +2542,7 @@ int ifs()                       // front-end for ifs2d and ifs3d
     {
         notdiskmsg();
     }
-    return !ifs_type ? ifs2d() : ifs3d();
+    return !g_ifs_type ? ifs2d() : ifs3d();
 }
 
 namespace
