@@ -184,7 +184,7 @@ static int paren;
 static bool ExpectingArg = false;
 int InitLodPtr, InitStoPtr, InitOpPtr, LastInitOp;
 static int Delta16;
-double fgLimit;
+double g_fudge_limit;
 static double fg;
 static int ShiftBack;
 static bool SetRandom = false;
@@ -343,7 +343,7 @@ static void lStkFunct(void (*fct)())   // call lStk via dStk
     Arg1->d.x = (double)Arg1->l.x / fg;
     Arg1->d.y = y;
     (*fct)();
-    if (fabs(Arg1->d.x) < fgLimit && fabs(Arg1->d.y) < fgLimit)
+    if (fabs(Arg1->d.x) < g_fudge_limit && fabs(Arg1->d.y) < g_fudge_limit)
     {
         Arg1->l.x = (long)(Arg1->d.x * fg);
         Arg1->l.y = (long)(Arg1->d.y * fg);
@@ -1856,7 +1856,7 @@ void lStkPwr()
     y.x = (double)Arg1->l.x / fg;
     y.y = (double)Arg1->l.y / fg;
     x = ComplexPower(x, y);
-    if (fabs(x.x) < fgLimit && fabs(x.y) < fgLimit)
+    if (fabs(x.x) < g_fudge_limit && fabs(x.y) < g_fudge_limit)
     {
         Arg2->l.x = (long)(x.x * fg);
         Arg2->l.y = (long)(x.y * fg);
@@ -4338,7 +4338,7 @@ void init_misc()
     Arg1 = &argfirst;
     Arg2 = &argsecond; // needed by all the ?Stk* functions
     fg = (double)(1L << bitshift);
-    fgLimit = (double)0x7fffffffL / fg;
+    g_fudge_limit = (double)0x7fffffffL / fg;
     ShiftBack = 32 - bitshift;
     Delta16 = bitshift - 16;
     bitshiftless1 = bitshift-1;

@@ -157,7 +157,7 @@ extern int                   g_eye_separation;
 extern float                 g_eyes_fp;
 extern bool                  g_fast_restore;
 extern long                  g_fudge_half;
-extern double                fgLimit;
+extern double                g_fudge_limit;
 extern long                  FgOne;
 extern long                  FgTwo;
 extern int evolve_image_grid_size;

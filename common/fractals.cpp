@@ -1063,7 +1063,7 @@ longCmplxZpowerFractal()
     y.x = (double)lparm2.x / fudge;
     y.y = (double)lparm2.y / fudge;
     x = ComplexPower(x, y);
-    if (fabs(x.x) < fgLimit && fabs(x.y) < fgLimit)
+    if (fabs(x.x) < g_fudge_limit && fabs(x.y) < g_fudge_limit)
     {
         lnew.x = (long)(x.x * fudge);
         lnew.y = (long)(x.y * fudge);
