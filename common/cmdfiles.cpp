@@ -139,7 +139,7 @@ int orbit_delay = 0;            // clock ticks delating orbit release
 int     transparent[2] = { 0 }; // transparency min/max values
 long    LogFlag = 0;            // Logarithmic palette flag: 0 = no
 
-BYTE exitmode = 3;              // video mode on exit
+BYTE g_exit_video_mode = 3;              // video mode on exit
 
 int     Log_Fly_Calc = 0;       // calculate logmap on-the-fly
 bool    Log_Auto_Calc = false;          // auto calculate logmap
@@ -1850,7 +1850,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
     if (variable == "exitmode")      // exitmode=?
     {
         sscanf(value, "%x", &numval);
-        exitmode = (BYTE)numval;
+        g_exit_video_mode = (BYTE)numval;
         return CMDARG_NONE;
     }
 

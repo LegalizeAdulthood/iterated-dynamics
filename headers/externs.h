@@ -149,7 +149,7 @@ extern std::vector<double>   dy1;
 extern double              (*dypixel)();
 extern double                y_size_d;
 extern bool                  g_escape_exit;
-extern BYTE                  exitmode;
+extern BYTE                  g_exit_video_mode;
 extern int                   evolving;
 extern bool have_evolve_info;
 extern EVOLUTION_INFO evolve_info;
