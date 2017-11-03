@@ -372,7 +372,7 @@ static main_state main_image_start(bool &stacked, bool &resumeflag)
 #ifdef XFRACT
     usr_floatflag = true;
 #endif
-    got_status = -1;                     // for tab_display
+    g_got_status = -1;                     // for tab_display
 
     if (show_file)
     {

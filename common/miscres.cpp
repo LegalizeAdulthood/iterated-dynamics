@@ -1015,9 +1015,9 @@ top:
 
     ++s_row;
 
-    if (got_status >= 0 && (g_calc_status == calc_status_value::IN_PROGRESS || g_calc_status == calc_status_value::RESUMABLE))
+    if (g_got_status >= 0 && (g_calc_status == calc_status_value::IN_PROGRESS || g_calc_status == calc_status_value::RESUMABLE))
     {
-        switch (got_status)
+        switch (g_got_status)
         {
         case 0:
             sprintf(msg, "%d Pass Mode", totpasses);
@@ -1052,7 +1052,7 @@ top:
             break;
         }
         ++s_row;
-        if (got_status == 5)
+        if (g_got_status == 5)
         {
             sprintf(msg, "%2.2f%% done, counter at %lu of %lu (%u bits)",
                     (100.0 * g_diffusion_counter)/g_diffusion_limit,
@@ -1060,12 +1060,12 @@ top:
             driver_put_string(s_row, 2, C_GENERAL_MED, msg);
             ++s_row;
         }
-        else if (got_status != 3)
+        else if (g_got_status != 3)
         {
             sprintf(msg, "Working on block (y, x) [%d, %d]...[%d, %d], ",
                     yystart, xxstart, yystop, xxstop);
             driver_put_string(s_row, 2, C_GENERAL_MED, msg);
-            if (got_status == 2 || got_status == 4)  // btm or tesseral
+            if (g_got_status == 2 || g_got_status == 4)  // btm or tesseral
             {
                 driver_put_string(-1, -1, C_GENERAL_MED, "at ");
                 sprintf(msg, "[%d, %d]", g_current_row, g_current_column);
@@ -1096,7 +1096,7 @@ top:
     driver_put_string(s_row, 2, C_GENERAL_MED, "Calculation time:");
     get_calculation_time(msg, g_calc_time);
     driver_put_string(-1, -1, C_GENERAL_HI, msg);
-    if ((got_status == 5) && (g_calc_status == calc_status_value::IN_PROGRESS))  // estimate total time
+    if ((g_got_status == 5) && (g_calc_status == calc_status_value::IN_PROGRESS))  // estimate total time
     {
         driver_put_string(-1, -1, C_GENERAL_MED, " estimated total time: ");
         get_calculation_time(msg, (long)(g_calc_time*((g_diffusion_limit*1.0)/g_diffusion_counter)));

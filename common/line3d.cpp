@@ -2833,7 +2833,7 @@ static int first_time(int linelen, VECTOR v)
         lastrow[i] = bad;
         f_lastrow[i] = f_bad;
     }
-    got_status = 3;
+    g_got_status = 3;
     return 0;
 } // end of once-per-image intializations
 

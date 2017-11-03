@@ -163,7 +163,7 @@ static bool dem_mandel = false;
 #define DEM_BAILOUT 535.5
 
 // variables which must be visible for tab_display
-int got_status = -1;                    // -1 if not, 0 for 1or2pass, 1 for ssg,
+int g_got_status = -1;                    // -1 if not, 0 for 1or2pass, 1 for ssg,
                                         // 2 for btm, 3 for 3d, 4 for tesseral, 5 for diffusion_scan
                                         // 6 for orbits
 int g_current_pass = 0;
@@ -1347,7 +1347,7 @@ static int diffusion_scan()
 
     log2 = (double) log(2.0);
 
-    got_status = 5;
+    g_got_status = 5;
 
     // note: the max size of 2048x2048 gives us a 22 bit counter that will
     // fit any 32 bit architecture, the maxinum limit for this case would
@@ -1626,7 +1626,7 @@ char g_draw_mode = 'r';
 
 static int sticky_orbits()
 {
-    got_status = 6; // for <tab> screen
+    g_got_status = 6; // for <tab> screen
     totpasses = 1;
 
     if (plotorbits2dsetup() == -1)
@@ -1878,7 +1878,7 @@ static int one_or_two_pass()
 
 static int standard_calc(int passnum)
 {
-    got_status = 0;
+    g_got_status = 0;
     g_current_pass = passnum;
     row = yybegin;
     col = xxbegin;
@@ -3477,7 +3477,7 @@ int  bound_trace_main()
         return -1;
     }
 
-    got_status = 2;
+    g_got_status = 2;
     max_putline_length = 0; // reset max_putline_length
     for (int currow = iystart; currow <= iystop; currow++)
     {
@@ -3750,7 +3750,7 @@ static int solid_guess()
     iystart = yybegin;
     iystart &= -1 - (maxblock-1);
 
-    got_status = 1;
+    g_got_status = 1;
 
     if (workpass == 0) // otherwise first pass already done
     {
@@ -4822,7 +4822,7 @@ static int tesseral()
         }
     }
 
-    got_status = 4; // for tab_display
+    g_got_status = 4; // for tab_display
 
     while (tp >= (tess *)&dstack[0])
     {
