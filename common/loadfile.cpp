@@ -120,8 +120,8 @@ int read_overlay()      // read overlay/3D files, if reqr'd
         {
             invert = 3;
         }
-        decomp[0]     = read_info.decomp[0];
-        decomp[1]     = read_info.decomp[1];
+        g_decomp[0]     = read_info.decomp[0];
+        g_decomp[1]     = read_info.decomp[1];
         usr_biomorph  = read_info.biomorph;
         forcesymmetry = static_cast<symmetry_type>(read_info.symmetry);
     }
@@ -287,9 +287,9 @@ int read_overlay()      // read overlay/3D files, if reqr'd
         {
             LogFlag = -1;
         }
-        if (decomp[0] > 0 && decomp[1] > 0)
+        if (g_decomp[0] > 0 && g_decomp[1] > 0)
         {
-            g_bail_out = decomp[1];
+            g_bail_out = g_decomp[1];
         }
     }
     if (potflag) // in version 15.x and 16.x logmap didn't work with pot
@@ -1247,7 +1247,7 @@ bool check_back()
     bool ret = false;
     if (fractype == fractal_type::LYAPUNOV ||
             fractype == fractal_type::FROTH || fractype == fractal_type::FROTHFP ||
-            fix_bof() || fix_period_bof() || use_old_distest || decomp[0] == 2 ||
+            fix_bof() || fix_period_bof() || use_old_distest || g_decomp[0] == 2 ||
             (fractype == fractal_type::FORMULA && save_release <= 1920) ||
             (fractype == fractal_type::FFORMULA && save_release <= 1920) ||
             (LogFlag != 0 && save_release <= 2001) ||

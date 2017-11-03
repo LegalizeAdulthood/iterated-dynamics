@@ -2396,7 +2396,7 @@ static void save_history_info()
     current.invert[0]            = inversion[0]              ;
     current.invert[1]            = inversion[1]              ;
     current.invert[2]            = inversion[2]              ;
-    current.decomp               = (short)decomp[0];                ;
+    current.decomp               = (short)g_decomp[0];                ;
     current.biomorph             = (short)g_biomorph                  ;
     current.symmetry             = (short)forcesymmetry             ;
     current.init3d[0]            = (short)init3d[0]                 ;
@@ -2576,7 +2576,7 @@ static void restore_history_info(int i)
     inversion[0]          = last.invert[0]      ;
     inversion[1]          = last.invert[1]      ;
     inversion[2]          = last.invert[2]      ;
-    decomp[0]             = last.decomp         ;
+    g_decomp[0]             = last.decomp         ;
     usr_biomorph          = last.biomorph       ;
     g_biomorph              = last.biomorph       ;
     forcesymmetry         = static_cast<symmetry_type>(last.symmetry);

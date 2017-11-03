@@ -133,7 +133,7 @@ void initgene()
         { &param[9], varydbl, variations::NONE,         "Param 5 imag", 1 },
         { &inside, varyinside, variations::NONE,        "inside color", 2 },
         { &outside, varyoutside, variations::NONE,      "outside color", 3 },
-        { &decomp[0], varypwr2, variations::NONE,       "decomposition", 4 },
+        { &g_decomp[0], varypwr2, variations::NONE,       "decomposition", 4 },
         { &inversion[0], varyinv, variations::NONE,     "invert radius", 7 },
         { &inversion[1], varyinv, variations::NONE,     "invert center x", 7 },
         { &inversion[2], varyinv, variations::NONE,     "invert center y", 7 },
@@ -167,7 +167,7 @@ void save_param_history()
     oldhistory.param9 = param[9];
     oldhistory.inside = inside;
     oldhistory.outside = outside;
-    oldhistory.decomp0 = decomp[0];
+    oldhistory.decomp0 = g_decomp[0];
     oldhistory.invert0 = inversion[0];
     oldhistory.invert1 = inversion[1];
     oldhistory.invert2 = inversion[2];
@@ -193,7 +193,7 @@ void restore_param_history()
     param[9] = oldhistory.param9;
     inside = oldhistory.inside;
     outside = oldhistory.outside;
-    decomp[0] = oldhistory.decomp0;
+    g_decomp[0] = oldhistory.decomp0;
     inversion[0] = oldhistory.invert0;
     inversion[1] = oldhistory.invert1;
     inversion[2] = oldhistory.invert2;

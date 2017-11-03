@@ -78,7 +78,7 @@ symmetry_type forcesymmetry = symmetry_type::NONE;      // force symmetry
 int     show_file = 0;           // zero if file display pending
 bool    rflag = false;
 int     rseed = 0;              // Random number seeding flag and value
-int     decomp[2] = { 0 };      // Decomposition coloring
+int     g_decomp[2] = { 0 };      // Decomposition coloring
 long    distest = 0;
 int     distestwidth = 0;
 bool    fract_overwrite = false;// true if file overwrite allowed
@@ -506,8 +506,8 @@ static void initvars_fractal()          // init vars affecting calculation
     initorbit.y = 0.0;
     initorbit.x = initorbit.y;     // initial orbit values
     invert = 0;
-    decomp[1] = 0;
-    decomp[0] = decomp[1];
+    g_decomp[1] = 0;
+    g_decomp[0] = g_decomp[1];
     usr_distest = 0;
     pseudox = 0;
     pseudoy = 0;
@@ -2961,12 +2961,12 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         {
             goto badarg;
         }
-        decomp[0] = intval[0];
-        decomp[1] = 0;
+        g_decomp[0] = intval[0];
+        g_decomp[1] = 0;
         if (totparms > 1) // backward compatibility
         {
-            decomp[1] = intval[1];
-            g_bail_out = decomp[1];
+            g_decomp[1] = intval[1];
+            g_bail_out = g_decomp[1];
         }
         return CMDARG_FRACTAL_PARAM;
     }

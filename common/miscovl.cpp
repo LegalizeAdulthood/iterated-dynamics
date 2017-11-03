@@ -109,9 +109,9 @@ void make_batch_file()
         {
             maxcolor = (int)(0 - distest);
         }
-        if (decomp[0] > maxcolor)
+        if (g_decomp[0] > maxcolor)
         {
-            maxcolor = decomp[0] - 1;
+            maxcolor = g_decomp[0] - 1;
         }
         if (potflag && potparam[0] >= maxcolor)
         {
@@ -1027,9 +1027,9 @@ void write_batch_parms(char const *colorinf, bool colorsonly, int maxcolor, int 
             put_parm(" %s=%-1.15lg/%-1.15lg/%-1.15lg", "invert",
                      inversion[0], inversion[1], inversion[2]);
         }
-        if (decomp[0])
+        if (g_decomp[0])
         {
-            put_parm(" %s=%d", "decomp", decomp[0]);
+            put_parm(" %s=%d", "decomp", g_decomp[0]);
         }
         if (distest)
         {

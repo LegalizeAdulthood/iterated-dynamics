@@ -2856,7 +2856,7 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
         // use pixel's "regular" color
     }
 
-    if (decomp[0] > 0)
+    if (g_decomp[0] > 0)
     {
         decomposition();
     }
@@ -3110,7 +3110,7 @@ static void decomposition()
             ++temp;
             lnew.x = -lnew.x;
         }
-        if (decomp[0] == 2 && save_release >= 1827)
+        if (g_decomp[0] == 2 && save_release >= 1827)
         {
             save_temp = temp;
             if (temp == 2)
@@ -3123,7 +3123,7 @@ static void decomposition()
             }
         }
 
-        if (decomp[0] >= 8)
+        if (g_decomp[0] >= 8)
         {
             temp <<= 1;
             if (lnew.x < lnew.y)
@@ -3134,7 +3134,7 @@ static void decomposition()
                 lnew.y = lalt.x; // them
             }
 
-            if (decomp[0] >= 16)
+            if (g_decomp[0] >= 16)
             {
                 temp <<= 1;
                 if (multiply(lnew.x, ltan22_5, bitshift) < lnew.y)
@@ -3147,7 +3147,7 @@ static void decomposition()
                              multiply(lalt.y, lcos45, bitshift);
                 }
 
-                if (decomp[0] >= 32)
+                if (g_decomp[0] >= 32)
                 {
                     temp <<= 1;
                     if (multiply(lnew.x, ltan11_25, bitshift) < lnew.y)
@@ -3160,7 +3160,7 @@ static void decomposition()
                                  multiply(lalt.y, lcos22_5, bitshift);
                     }
 
-                    if (decomp[0] >= 64)
+                    if (g_decomp[0] >= 64)
                     {
                         temp <<= 1;
                         if (multiply(lnew.x, ltan5_625, bitshift) < lnew.y)
@@ -3173,7 +3173,7 @@ static void decomposition()
                                      multiply(lalt.y, lcos11_25, bitshift);
                         }
 
-                        if (decomp[0] >= 128)
+                        if (g_decomp[0] >= 128)
                         {
                             temp <<= 1;
                             if (multiply(lnew.x, ltan2_8125, bitshift) < lnew.y)
@@ -3186,7 +3186,7 @@ static void decomposition()
                                          multiply(lalt.y, lcos5_625, bitshift);
                             }
 
-                            if (decomp[0] == 256)
+                            if (g_decomp[0] == 256)
                             {
                                 temp <<= 1;
                                 if (multiply(lnew.x, ltan1_4063, bitshift) < lnew.y)
@@ -3215,7 +3215,7 @@ static void decomposition()
             ++temp;
             g_new.x = -g_new.x;
         }
-        if (decomp[0] == 2 && save_release >= 1827)
+        if (g_decomp[0] == 2 && save_release >= 1827)
         {
             save_temp = temp;
             if (temp == 2)
@@ -3227,7 +3227,7 @@ static void decomposition()
                 save_temp = 2;
             }
         }
-        if (decomp[0] >= 8)
+        if (g_decomp[0] >= 8)
         {
             temp <<= 1;
             if (g_new.x < g_new.y)
@@ -3237,7 +3237,7 @@ static void decomposition()
                 g_new.x = g_new.y; // swap
                 g_new.y = alt.x; // them
             }
-            if (decomp[0] >= 16)
+            if (g_decomp[0] >= 16)
             {
                 temp <<= 1;
                 if (g_new.x*tan22_5 < g_new.y)
@@ -3248,7 +3248,7 @@ static void decomposition()
                     g_new.y = alt.x*sin45 - alt.y*cos45;
                 }
 
-                if (decomp[0] >= 32)
+                if (g_decomp[0] >= 32)
                 {
                     temp <<= 1;
                     if (g_new.x*tan11_25 < g_new.y)
@@ -3259,7 +3259,7 @@ static void decomposition()
                         g_new.y = alt.x*sin22_5 - alt.y*cos22_5;
                     }
 
-                    if (decomp[0] >= 64)
+                    if (g_decomp[0] >= 64)
                     {
                         temp <<= 1;
                         if (g_new.x*tan5_625 < g_new.y)
@@ -3270,7 +3270,7 @@ static void decomposition()
                             g_new.y = alt.x*sin11_25 - alt.y*cos11_25;
                         }
 
-                        if (decomp[0] >= 128)
+                        if (g_decomp[0] >= 128)
                         {
                             temp <<= 1;
                             if (g_new.x*tan2_8125 < g_new.y)
@@ -3281,7 +3281,7 @@ static void decomposition()
                                 g_new.y = alt.x*sin5_625 - alt.y*cos5_625;
                             }
 
-                            if (decomp[0] == 256)
+                            if (g_decomp[0] == 256)
                             {
                                 temp <<= 1;
                                 if ((g_new.x*tan1_4063 < g_new.y))
@@ -3303,7 +3303,7 @@ static void decomposition()
         }
         temp >>= 1;
     }
-    if (decomp[0] == 2 && save_release >= 1827)
+    if (g_decomp[0] == 2 && save_release >= 1827)
     {
         if (save_temp & 2)
         {
@@ -3318,11 +3318,11 @@ static void decomposition()
             g_color_iter++;
         }
     }
-    else if (decomp[0] == 2 && save_release < 1827)
+    else if (g_decomp[0] == 2 && save_release < 1827)
     {
         g_color_iter &= 1;
     }
-    if (g_colors > decomp[0])
+    if (g_colors > g_decomp[0])
     {
         g_color_iter++;
     }
@@ -4432,7 +4432,7 @@ static void setsymmetry(symmetry_type sym, bool uselist) // set up proper symmet
         }
     }
     if ((potflag && pot16bit) || (invert && inversion[2] != 0.0)
-            || decomp[0] != 0
+            || g_decomp[0] != 0
             || xxmin != xx3rd || yymin != yy3rd)
     {
         return;
