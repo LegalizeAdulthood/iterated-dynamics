@@ -612,7 +612,7 @@ bool encoder()
         if (g_evolving & 1)
         {
             EVOLUTION_INFO esave_info;
-            if (!have_evolve_info || g_calc_status == calc_status_value::COMPLETED)
+            if (!g_have_evolve_info || g_calc_status == calc_status_value::COMPLETED)
             {
                 esave_info.x_parameter_range = evolve_x_parameter_range;
                 esave_info.y_parameter_range = evolve_y_parameter_range;

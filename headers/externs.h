@@ -151,7 +151,7 @@ extern double                y_size_d;
 extern bool                  g_escape_exit;
 extern BYTE                  g_exit_video_mode;
 extern int                   g_evolving;
-extern bool have_evolve_info;
+extern bool                  g_have_evolve_info;
 extern EVOLUTION_INFO evolve_info;
 extern int                   g_eye_separation;
 extern float                 eyesfp;

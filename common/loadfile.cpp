@@ -541,11 +541,11 @@ int read_overlay()      // read overlay/3D files, if reqr'd
             evolve_info.this_generation_random_seed = blk_6_info.this_generation_random_seed;
             evolve_info.max_random_mutation = blk_6_info.max_random_mutation;
             evolve_info.ecount       = blk_6_info.ecount;
-            have_evolve_info = true;
+            g_have_evolve_info = true;
         }
         else
         {
-            have_evolve_info = false;
+            g_have_evolve_info = false;
             g_calc_status = calc_status_value::COMPLETED;
         }
         evolve_x_parameter_range = blk_6_info.x_parameter_range;

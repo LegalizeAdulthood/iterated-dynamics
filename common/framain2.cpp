@@ -31,7 +31,7 @@ static void save_history_info();
 
 int finishrow = 0;    // save when this row is finished
 EVOLUTION_INFO evolve_info = { 0 };
-bool have_evolve_info = false;
+bool g_have_evolve_info = false;
 char old_stdcalcmode;
 static  int        historyptr = -1;     // user pointer into history tbl
 static  int        saveptr = 0;         // save ptr into history tbl
@@ -370,7 +370,7 @@ main_state big_while_loop(bool *const kbdmore, bool *const stacked, bool const r
                 int grout, ecount, tmpxdots, tmpydots, gridsqr;
                 GENEBASE gene[NUMGENES];
                 copy_genes_from_bank(gene);
-                if (have_evolve_info && (g_calc_status == calc_status_value::RESUMABLE))
+                if (g_have_evolve_info && (g_calc_status == calc_status_value::RESUMABLE))
                 {
                     evolve_x_parameter_range = evolve_info.x_parameter_range;
                     evolve_y_parameter_range = evolve_info.y_parameter_range;
@@ -394,7 +394,7 @@ main_state big_while_loop(bool *const kbdmore, bool *const stacked, bool const r
                     g_evolving     = evolve_info.evolving;
                     viewwindow = g_evolving != 0;
                     ecount       = evolve_info.ecount;
-                    have_evolve_info = false;
+                    g_have_evolve_info = false;
                 }
                 else
                 {
@@ -462,7 +462,7 @@ done:
                     evolve_info.max_random_mutation = evolve_max_random_mutation;
                     evolve_info.evolving        = (short)g_evolving;
                     evolve_info.ecount          = (short) ecount;
-                    have_evolve_info = true;
+                    g_have_evolve_info = true;
                 }
                 syoffs = 0;
                 sxoffs = syoffs;
