@@ -16,7 +16,7 @@ is in the allocations of memory for the big numbers.
 #include "fractype.h"
 
 // globals
-int bnstep = 0, bnlength = 0, intlength = 0, rlength = 0, padding = 0, shiftfactor = 0, decimals = 0;
+int bnstep = 0, bnlength = 0, intlength = 0, rlength = 0, padding = 0, shiftfactor = 0, g_decimals = 0;
 int bflength = 0, rbflength = 0, bfdecimals = 0;
 
 // used internally by bignum.c routines
@@ -266,7 +266,7 @@ static void init_bf_2()
     if (ptr + NUMVARS*(bflength+2) > maxstack)
     {
         char msg[80];
-        sprintf(msg, "Requested precision of %d too high, aborting", decimals);
+        sprintf(msg, "Requested precision of %d too high, aborting", g_decimals);
         stopmsg(STOPMSG_NONE, msg);
         goodbye();
     }
@@ -401,7 +401,7 @@ void free_bf_vars()
 {
     g_bf_save_len = 0;
     bf_math = bf_math_type::NONE;
-    bnstep = bnlength = intlength = rlength = padding = shiftfactor = decimals = 0;
+    bnstep = bnlength = intlength = rlength = padding = shiftfactor = g_decimals = 0;
     bflength = rbflength = bfdecimals = 0;
 }
 
@@ -461,11 +461,11 @@ void init_bf_dec(int dec)
 {
     if (g_bf_digits > 0)
     {
-        decimals = g_bf_digits;   // blindly force
+        g_decimals = g_bf_digits;   // blindly force
     }
     else
     {
-        decimals = dec;
+        g_decimals = dec;
     }
     if (g_bail_out > 10)      // arbitrary value
     {
@@ -487,7 +487,7 @@ void init_bf_dec(int dec)
         intlength = 1;
     }
     // conservative estimate
-    bnlength = intlength + (int)(decimals/LOG10_256) + 1; // round up
+    bnlength = intlength + (int)(g_decimals/LOG10_256) + 1; // round up
     init_bf_2();
 }
 
@@ -519,7 +519,7 @@ void init_bf_length(int bnl)
         intlength = 1;
     }
     // conservative estimate
-    decimals = (int)((bnlength-intlength)*LOG10_256);
+    g_decimals = (int)((bnlength-intlength)*LOG10_256);
     init_bf_2();
 }
 

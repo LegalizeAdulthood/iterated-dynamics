@@ -110,7 +110,7 @@ extern int                   g_dac_count;
 extern bool                  g_dac_learn;
 extern double                ddelmin;
 extern int                   g_debug_flag;
-extern int                   decimals;
+extern int                   g_decimals;
 extern int                   decomp[];
 extern int                   degree;
 extern long                  delmin;

@@ -87,7 +87,7 @@ bnstep=%d bnlength=%d intlength=%d rlength=%d padding=%d\n\
 shiftfactor=%d decimals=%d bflength=%d rbflength=%d \n\
 bfdecimals=%d ",
             s, bnstep, bnlength, intlength, rlength, padding,
-            shiftfactor, decimals, bflength, rbflength,
+            shiftfactor, g_decimals, bflength, rbflength,
             bfdecimals);
     if (stopmsg(STOPMSG_NONE, msg) == -1)
     {
@@ -97,7 +97,7 @@ bfdecimals=%d ",
 
 void showcornersbf(char const *s)
 {
-    int dec = decimals;
+    int dec = g_decimals;
     char msg[100], msg1[100], msg3[600];
     if (dec > 20)
     {
@@ -105,7 +105,7 @@ void showcornersbf(char const *s)
     }
     bftostr(msg, dec, bfxmin);
     sprintf(msg1, "bfxmin=%s\nxxmin= %.20f decimals %d bflength %d\n\n",
-            msg, xxmin, decimals, bflength);
+            msg, xxmin, g_decimals, bflength);
     strcpy(msg3, s);
     strcat(msg3, "\n");
     strcat(msg3, msg1);

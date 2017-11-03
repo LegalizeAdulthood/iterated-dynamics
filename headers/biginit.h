@@ -11,7 +11,7 @@
 #define MAXREZ        0
 // globals
 extern int bnstep, bnlength, intlength, rlength, padding, shiftfactor;
-extern int decimals, bflength, rbflength, bfshiftfactor, bfdecimals;
+extern int g_decimals, bflength, rbflength, bfshiftfactor, bfdecimals;
 // used internally by bignum.c routines
 extern bn_t bntmp1, bntmp2, bntmp3, bntmp4, bntmp5, bntmp6;     // rlength
 extern bn_t bntmpcpy1, bntmpcpy2;                               // bnlength

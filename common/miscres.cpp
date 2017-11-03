@@ -995,7 +995,7 @@ top:
     }
     else
     {
-        sprintf(msg, "(%-d decimals)", decimals /*getprecbf(CURRENTREZ)*/);
+        sprintf(msg, "(%-d decimals)", g_decimals /*getprecbf(CURRENTREZ)*/);
         driver_put_string(s_row, 45, C_GENERAL_HI, "Arbitrary precision ");
         driver_put_string(-1, -1, C_GENERAL_HI, msg);
     }
@@ -1130,13 +1130,13 @@ top:
         if (bf_math != bf_math_type::NONE)
         {
             int truncaterow;
-            int dec = std::min(320, decimals);
+            int dec = std::min(320, g_decimals);
             adjust_cornerbf(); // make bottom left exact if very near exact
             cvtcentermagbf(bfXctr, bfYctr, &Magnification, &Xmagfactor, &Rotation, &Skew);
             // find alignment information
             msg[0] = 0;
             bool truncate = false;
-            if (dec < decimals)
+            if (dec < g_decimals)
             {
                 truncate = true;
             }

@@ -2098,7 +2098,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
                 && g_debug_flag != debug_flags::prevent_arbitrary_precision_math)
         {
             bf_math_type old_bf_math = bf_math;
-            if (bf_math == bf_math_type::NONE || dec > decimals)
+            if (bf_math == bf_math_type::NONE || dec > g_decimals)
             {
                 init_bf_dec(dec);
             }
@@ -2142,7 +2142,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
                 goto badarg;     // ie: Magnification is +-1.#INF
             }
 
-            if (dec > decimals)  // get corners again if need more precision
+            if (dec > g_decimals)  // get corners again if need more precision
             {
                 init_bf_dec(dec);
 
@@ -2342,7 +2342,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         int saved;
         initcorners = true;
         bf_math_type old_bf_math = bf_math;
-        if (bf_math == bf_math_type::NONE || dec > decimals)
+        if (bf_math == bf_math_type::NONE || dec > g_decimals)
         {
             init_bf_dec(dec);
         }

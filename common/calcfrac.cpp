@@ -2158,7 +2158,7 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
 #endif
         if (bf_math != bf_math_type::NONE)
         {
-            if (decimals > 200)
+            if (g_decimals > 200)
             {
                 keyboard_check_interval = -1;
             }

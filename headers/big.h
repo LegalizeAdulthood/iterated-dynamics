@@ -46,7 +46,7 @@ struct BNComplex
 // globals
 extern bf_math_type bf_math;
 extern int bnstep, intlength;
-extern int bnlength, rlength,   padding,   decimals,   shiftfactor;
+extern int bnlength, rlength,   padding,   g_decimals,   shiftfactor;
 extern int bflength, rbflength, bfpadding, bfdecimals;
 extern bn_t bntmp1, bntmp2, bntmp3, bntmp4, bntmp5, bntmp6;  // rlength
 extern bn_t bntest1, bntest2, bntest3;                       // rlength
