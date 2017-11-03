@@ -1745,7 +1745,7 @@ retry_dir:
         }
         else
         {
-            strcpy(dir, fract_dir2);
+            strcpy(dir, g_fractal_search_dir2);
         }
         fix_dirname(dir);
         makepath(flname, drive, dir, "", "");

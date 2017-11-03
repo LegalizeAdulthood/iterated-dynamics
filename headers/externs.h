@@ -185,7 +185,7 @@ extern symmetry_type         g_force_symmetry;
 extern std::string           g_formula_filename;
 extern std::string           g_formula_name;
 extern char const *          g_fractal_search_dir1;
-extern char const *          fract_dir2;
+extern char const *          g_fractal_search_dir2;
 extern long                  fudge;
 extern bool new_bifurcation_functions_loaded;
 extern double                f_at_rad;

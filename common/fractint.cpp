@@ -32,7 +32,7 @@ int look_at_mouse = 0;  // see notes at mouseread routine
 long timer_start, timer_interval;       // timer(...) start & total
 int     g_adapter;                      // Video Adapter chosen from list in ...h
 char const *g_fractal_search_dir1 = "";
-char const *fract_dir2 = "";
+char const *g_fractal_search_dir2 = "";
 
 /*
    the following variables are out here only so
@@ -215,7 +215,7 @@ static void main_restart(int const argc, char const *const argv[], bool &stacked
         g_fractal_search_dir1 = ".";
     }
 #ifdef SRCDIR
-    fract_dir2 = SRCDIR;
+    g_fractal_search_dir2 = SRCDIR;
 #else
     fract_dir2 = ".";
 #endif
