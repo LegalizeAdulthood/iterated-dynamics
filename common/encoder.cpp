@@ -576,7 +576,7 @@ bool encoder()
         //    if (save_info.fractal_type == IFS || save_info.fractal_type == IFS3D)
         if (fractype == fractal_type::IFS || fractype == fractal_type::IFS3D)
         {
-            save_info.tot_extend_len += store_item_name(IFSName.c_str());
+            save_info.tot_extend_len += store_item_name(g_ifs_name.c_str());
         }
         if (g_display_3d <= display_3d_modes::NONE && rangeslen)
         {

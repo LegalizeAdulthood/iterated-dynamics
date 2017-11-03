@@ -134,7 +134,7 @@ int fullscreen_prompt(      // full-screen prompting routine
         }
         else if (fractype == fractal_type::IFS || fractype == fractal_type::IFS3D)
         {
-            find_file_item(g_ifs_filename, IFSName.c_str(), &scroll_file, 3);
+            find_file_item(g_ifs_filename, g_ifs_name.c_str(), &scroll_file, 3);
             in_scrolling_mode = true;
             scroll_file_start = ftell(scroll_file);
         }
@@ -1243,7 +1243,7 @@ sel_type_restart:
     if (fractype == fractal_type::IFS || fractype == fractal_type::IFS3D)
     {
         g_help_mode = HT_IFS;
-        if (get_file_entry(GETIFS, "IFS", ifsmask, g_ifs_filename, IFSName) < 0)
+        if (get_file_entry(GETIFS, "IFS", ifsmask, g_ifs_filename, g_ifs_name) < 0)
         {
             ret = true;
             goto sel_type_exit;
@@ -1554,7 +1554,7 @@ int get_fract_params(int caller)        // prompt for type-specific parms
             // special for ifs
             use_filename_ref = true;
             filename_ref = g_ifs_filename;
-            entryname = IFSName.c_str();
+            entryname = g_ifs_name.c_str();
         }
         else
         {

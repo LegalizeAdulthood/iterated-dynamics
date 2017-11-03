@@ -209,7 +209,7 @@ extern float                 g_height_fp;
 extern int                   g_help_mode;
 extern int                   g_hi_attenuation;
 extern std::string           g_ifs_filename;
-extern std::string           IFSName;
+extern std::string           g_ifs_name;
 extern std::vector<float>    ifs_defn;
 extern bool                  ifs_type;
 extern int image_box_count;

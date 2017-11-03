@@ -160,7 +160,7 @@ std::string g_command_file;                // file to find command sets in
 std::string g_command_name;                // Name of Command set
 std::string g_command_comment[4];          // comments for command set
 std::string g_ifs_filename;                // file to find (type=)IFS in
-std::string IFSName;                    // Name of the IFS def'n (if not null)
+std::string g_ifs_name;                    // Name of the IFS def'n (if not null)
 id::SearchPath searchfor = { 0 };
 std::vector<float> ifs_defn;            // ifs parameters
 bool ifs_type = false;                  // false=2d, true=3d
@@ -448,7 +448,7 @@ static void initvars_restart()          // <ins> key init
         elem.clear();
     }
     g_ifs_filename = "fractint.ifs";
-    IFSName = "";
+    g_ifs_name = "";
     reset_ifs_defn();
     rflag = false;                      // not a fixed srand() seed
     rseed = init_rseed;
@@ -3073,7 +3073,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         {
             goto badarg;
         }
-        IFSName = value;
+        g_ifs_name = value;
         reset_ifs_defn();
         return CMDARG_FRACTAL_PARAM;
     }
