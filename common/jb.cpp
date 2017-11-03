@@ -77,7 +77,7 @@ JulibrotSetup()
     yoffsetfp = (yymax + yymin) / 2;     // Calculate average
     dmxfp = (mxmaxfp - mxminfp) / zdots;
     dmyfp = (mymaxfp - myminfp) / zdots;
-    floatparm = &jbcfp;
+    g_float_param = &jbcfp;
     x_per_inchfp = (xxmin - xxmax) / widthfp;
     y_per_inchfp = (yymax - yymin) / heightfp;
     inch_per_xdotfp = widthfp / xdots;

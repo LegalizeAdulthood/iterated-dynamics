@@ -44,9 +44,9 @@ static long iteration(double cr, double ci,
     old.y = im;
     tempsqrx = sqr(old.x);
     tempsqry = sqr(old.y);
-    floatparm = &init;
-    floatparm->x = cr;
-    floatparm->y = ci;
+    g_float_param = &init;
+    g_float_param->x = cr;
+    g_float_param->y = ci;
     while (ORBITCALC() == 0 && start < maxit)
     {
         start++;
@@ -567,8 +567,8 @@ scan:
     tempsqry = iq;                              \
     old.x = zr;                                 \
     old.y = zi;                                 \
-    floatparm->x = cr;                          \
-    floatparm->y = ci;                          \
+    g_float_param->x = cr;                      \
+    g_float_param->y = ci;                      \
     (esc) = ORBITCALC();                        \
     (rq) = tempsqrx;                            \
     (iq) = tempsqry;                            \

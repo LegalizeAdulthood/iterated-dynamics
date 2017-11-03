@@ -200,7 +200,7 @@ MandelfpSetup()
     g_c_exponent = (int)param[2];
     pwr.x = param[2] - 1.0;
     pwr.y = param[3];
-    floatparm = &init;
+    g_float_param = &init;
     switch (fractype)
     {
     case fractal_type::MARKSMANDELFP:
@@ -295,12 +295,12 @@ MandelfpSetup()
         }
         break;
     case fractal_type::QUATFP:
-        floatparm = &tmp;
+        g_float_param = &tmp;
         g_attractors = 0;
         periodicitycheck = 0;
         break;
     case fractal_type::HYPERCMPLXFP:
-        floatparm = &tmp;
+        g_float_param = &tmp;
         g_attractors = 0;
         periodicitycheck = 0;
         if (param[2] != 0)
@@ -334,12 +334,12 @@ bool
 JuliafpSetup()
 {
     g_c_exponent = (int)param[2];
-    floatparm = &parm;
+    g_float_param = &parm;
     if (fractype == fractal_type::COMPLEXMARKSJUL)
     {
         pwr.x = param[2] - 1.0;
         pwr.y = param[3];
-        g_marks_coefficient = ComplexPower(*floatparm, pwr);
+        g_marks_coefficient = ComplexPower(*g_float_param, pwr);
     }
     switch (fractype)
     {
@@ -771,7 +771,7 @@ LambdaTrigOrTrigSetup()
 {
     // default symmetry is ORIGIN
     longparm = &lparm;
-    floatparm = &parm;
+    g_float_param = &parm;
     if ((trigndx[0] == trig_fn::EXP) || (trigndx[1] == trig_fn::EXP))
     {
         symmetry = symmetry_type::NONE;
@@ -789,7 +789,7 @@ JuliaTrigOrTrigSetup()
 {
     // default symmetry is X_AXIS
     longparm = &lparm;
-    floatparm = &parm;
+    g_float_param = &parm;
     if (parm.y != 0.0)
     {
         symmetry = symmetry_type::NONE;
@@ -808,7 +808,7 @@ ManlamTrigOrTrigSetup()
     // psuedo
     // default symmetry is X_AXIS
     longparm = &linit;
-    floatparm = &init;
+    g_float_param = &init;
     if (trigndx[0] == trig_fn::SQR)
     {
         symmetry = symmetry_type::NONE;
@@ -825,7 +825,7 @@ MandelTrigOrTrigSetup()
 {
     // default symmetry is X_AXIS_NO_PARAM
     longparm = &linit;
-    floatparm = &init;
+    g_float_param = &init;
     if ((trigndx[0] == trig_fn::FLIP) || (trigndx[1] == trig_fn::FLIP))
     {
         symmetry = symmetry_type::NONE;
@@ -1209,8 +1209,8 @@ MarksJuliafpSetup()
         param[2] = 1;
     }
     g_c_exponent = (int)param[2];
-    floatparm = &parm;
-    old = *floatparm;
+    g_float_param = &parm;
+    old = *g_float_param;
     if (g_c_exponent > 3)
     {
         cpower(&old, g_c_exponent-1, &g_marks_coefficient);
@@ -1310,7 +1310,7 @@ bool
 PhoenixSetup()
 {
     longparm = &lparm;
-    floatparm = &parm;
+    g_float_param = &parm;
     degree = (int)parm2.x;
     if (degree < 2 && degree > -3)
     {
@@ -1360,7 +1360,7 @@ bool
 PhoenixCplxSetup()
 {
     longparm = &lparm;
-    floatparm = &parm;
+    g_float_param = &parm;
     degree = (int)param[4];
     if (degree < 2 && degree > -3)
     {
@@ -1438,7 +1438,7 @@ bool
 MandPhoenixSetup()
 {
     longparm = &linit;
-    floatparm = &init;
+    g_float_param = &init;
     degree = (int)parm2.x;
     if (degree < 2 && degree > -3)
     {
@@ -1488,7 +1488,7 @@ bool
 MandPhoenixCplxSetup()
 {
     longparm = &linit;
-    floatparm = &init;
+    g_float_param = &init;
     degree = (int)param[4];
     if (degree < 2 && degree > -3)
     {
@@ -1567,6 +1567,6 @@ VLSetup()
     {
         param[1] = 1.0;
     }
-    floatparm = &parm;
+    g_float_param = &parm;
     return true;
 }
