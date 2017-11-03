@@ -206,7 +206,7 @@ extern bool                  g_has_inverse;
 extern int                   g_haze;
 extern unsigned int          g_height;
 extern float                 g_height_fp;
-extern int help_mode;
+extern int                   g_help_mode;
 extern int                   hi_atten;
 extern std::string           IFSFileName;
 extern std::string           IFSName;

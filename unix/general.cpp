@@ -61,7 +61,7 @@ int keypressed()
     if (!ch)
         return 0;
     keybuffer = ch;
-    if (ch == FIK_F1 && help_mode)
+    if (ch == FIK_F1 && g_help_mode)
     {
         keybuffer = 0;
         inside_help = true;

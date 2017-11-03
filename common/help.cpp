@@ -800,7 +800,7 @@ int help(int action)
     int       flags;
     HIST      next;
 
-    if (help_mode == -1)   // is help disabled?
+    if (g_help_mode == -1)   // is help disabled?
     {
         return 0;
     }
@@ -833,18 +833,18 @@ int help(int action)
     timer_start -= clock_ticks();
     driver_stack_screen();
 
-    if (help_mode >= 0)
+    if (g_help_mode >= 0)
     {
-        next.topic_num = label[help_mode].topic_num;
-        next.topic_off = label[help_mode].topic_off;
+        next.topic_num = label[g_help_mode].topic_num;
+        next.topic_off = label[g_help_mode].topic_off;
     }
     else
     {
-        next.topic_num = help_mode;
+        next.topic_num = g_help_mode;
         next.topic_off = 0;
     }
 
-    old_help_mode = help_mode;
+    old_help_mode = g_help_mode;
 
     if (curr_hist <= 0)
     {
@@ -948,7 +948,7 @@ int help(int action)
 
     driver_unstack_screen();
     look_at_mouse = old_look_at_mouse;
-    help_mode = old_help_mode;
+    g_help_mode = old_help_mode;
     timer_start += clock_ticks();
 
     return 0;

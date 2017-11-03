@@ -56,8 +56,8 @@ void rotate(int direction)      // rotate-the-palette routine
         return;
     }
 
-    old_help_mode = help_mode;              // save the old help mode
-    help_mode = HELPCYCLING;              // new help mode
+    old_help_mode = g_help_mode;              // save the old help mode
+    g_help_mode = HELPCYCLING;              // new help mode
 
     paused = false;                      // not paused
     fkey = 0;                            // no random coloring
@@ -509,7 +509,7 @@ void rotate(int direction)      // rotate-the-palette routine
         }
     }
 
-    help_mode = old_help_mode;              // return to previous help mode
+    g_help_mode = old_help_mode;              // return to previous help mode
 }
 
 static void pauserotate()               // pause-the-rotate routine
@@ -601,10 +601,10 @@ void save_palette()
     FILE *dacfile;
     int i, old_help_mode;
     strcpy(palname, MAP_name.c_str());
-    old_help_mode = help_mode;
+    old_help_mode = g_help_mode;
     driver_stack_screen();
     char filename[256] = { 0 };
-    help_mode = HELPCOLORMAP;
+    g_help_mode = HELPCOLORMAP;
     i = field_prompt("Name of map file to write", nullptr, filename, 60, nullptr);
     driver_unstack_screen();
     if (i != -1 && filename[0])
@@ -638,7 +638,7 @@ void save_palette()
         }
         fclose(dacfile);
     }
-    help_mode = old_help_mode;
+    g_help_mode = old_help_mode;
 }
 
 
@@ -646,10 +646,10 @@ bool load_palette()
 {
     int old_help_mode;
     char filename[FILE_MAX_PATH];
-    old_help_mode = help_mode;
+    old_help_mode = g_help_mode;
     strcpy(filename, MAP_name.c_str());
     driver_stack_screen();
-    help_mode = HELPCOLORMAP;
+    g_help_mode = HELPCOLORMAP;
     bool i = getafilename("Select a MAP File", mapmask, filename);
     driver_unstack_screen();
     if (!i)
@@ -660,6 +660,6 @@ bool load_palette()
         }
         merge_pathnames(MAP_name, filename, cmd_file::AT_CMD_LINE);
     }
-    help_mode = old_help_mode;
+    g_help_mode = old_help_mode;
     return i;
 }

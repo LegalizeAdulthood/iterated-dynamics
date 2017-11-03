@@ -767,10 +767,10 @@ get_evol_restart:
 
     choices[++k] = "Press F6 to control which parameters are varied";
     uvalues[k].type = '*';
-    old_help_mode = help_mode;     // this prevents HELP from activating
-    help_mode = HELPEVOL;
+    old_help_mode = g_help_mode;     // this prevents HELP from activating
+    g_help_mode = HELPEVOL;
     i = fullscreen_prompt("Evolution Mode Options", k+1, choices, uvalues, 255, nullptr);
-    help_mode = old_help_mode;     // re-enable HELP
+    g_help_mode = old_help_mode;     // re-enable HELP
     if (i < 0)
     {
         // in case this point has been reached after calling sub menu with F6

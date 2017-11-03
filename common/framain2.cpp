@@ -693,8 +693,8 @@ resumeloop:                             // return here on failed overlays
 static bool look(bool *stacked)
 {
     int old_help_mode;
-    old_help_mode = help_mode;
-    help_mode = HELPBROWSE;
+    old_help_mode = g_help_mode;
+    g_help_mode = HELPBROWSE;
     switch (fgetwindow())
     {
     case FIK_ENTER:
@@ -751,12 +751,12 @@ static bool look(bool *stacked)
     case 'l':              // turn it off
     case 'L':
         g_browsing = false;
-        help_mode = old_help_mode;
+        g_help_mode = old_help_mode;
         break;
 
     case 's':
         g_browsing = false;
-        help_mode = old_help_mode;
+        g_help_mode = old_help_mode;
         savetodisk(savename);
         break;
 
@@ -1309,11 +1309,11 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
         if (g_dac_box[0][0] != 255 && g_colors >= 16 && !driver_diskp())
         {
             int old_help_mode;
-            old_help_mode = help_mode;
+            old_help_mode = g_help_mode;
             memcpy(old_dac_box, g_dac_box, 256 * 3);
-            help_mode = HELPXHAIR;
+            g_help_mode = HELPXHAIR;
             EditPalette();
-            help_mode = old_help_mode;
+            g_help_mode = old_help_mode;
             if (memcmp(old_dac_box, g_dac_box, 256 * 3))
             {
                 g_color_state = 1;
@@ -1758,11 +1758,11 @@ static main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdm
         if (g_dac_box[0][0] != 255 && g_colors >= 16 && !driver_diskp())
         {
             int old_help_mode;
-            old_help_mode = help_mode;
+            old_help_mode = g_help_mode;
             memcpy(old_dac_box, g_dac_box, 256 * 3);
-            help_mode = HELPXHAIR;
+            g_help_mode = HELPXHAIR;
             EditPalette();
-            help_mode = old_help_mode;
+            g_help_mode = old_help_mode;
             if (memcmp(old_dac_box, g_dac_box, 256 * 3))
             {
                 g_color_state = 1;

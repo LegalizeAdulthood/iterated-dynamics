@@ -494,14 +494,14 @@ void Jiim(jiim_types which)
     {
         return;
     }
-    old_help_mode = help_mode;
+    old_help_mode = g_help_mode;
     if (which == jiim_types::JIIM)
     {
-        help_mode = HELP_JIIM;
+        g_help_mode = HELP_JIIM;
     }
     else
     {
-        help_mode = HELP_ORBITS;
+        g_help_mode = HELP_ORBITS;
         g_has_inverse = true;
     }
     oldsxoffs = sxoffs;
@@ -1289,7 +1289,7 @@ finish:
     using_jiim = false;
     calctype = oldcalctype;
     g_debug_flag = old_debugflag;
-    help_mode = old_help_mode;
+    g_help_mode = old_help_mode;
     if (kbdchar == 's' || kbdchar == 'S')
     {
         viewwindow = false;

@@ -959,7 +959,7 @@ top:
         driver_put_string(-1, -1, C_GENERAL_HI, " (Batch mode)");
     }
 
-    if (help_mode == HELPCYCLING)
+    if (g_help_mode == HELPCYCLING)
     {
         driver_put_string(s_row+1, 45, C_GENERAL_HI, "You are in color-cycling mode");
     }

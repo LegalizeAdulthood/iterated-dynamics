@@ -250,8 +250,8 @@ bool do_AutoStereo()
     time(&ltime);
     srand((unsigned int)ltime);
 
-    old_help_mode = help_mode;
-    help_mode = RDSKEYS;
+    old_help_mode = g_help_mode;
+    g_help_mode = RDSKEYS;
     driver_save_graphics();                      // save graphics image
     memcpy(savedacbox, g_dac_box, 256 * 3);  // save colors
 
@@ -386,7 +386,7 @@ bool do_AutoStereo()
     }
 
 exit_stereo:
-    help_mode = old_help_mode;
+    g_help_mode = old_help_mode;
     driver_restore_graphics();
     memcpy(g_dac_box, savedacbox, 256 * 3);
     spindac(0, 1);

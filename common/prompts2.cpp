@@ -283,10 +283,10 @@ int get_toggles()
     old_closeprox = g_close_proximity;
     uvalues[k].uval.dval = old_closeprox;
 
-    int const old_help_mode = help_mode;
-    help_mode = HELPXOPTS;
+    int const old_help_mode = g_help_mode;
+    g_help_mode = HELPXOPTS;
     i = fullscreen_prompt("Basic Options\n(not all combinations make sense)", k+1, choices, uvalues, 0, nullptr);
-    help_mode = old_help_mode;
+    g_help_mode = old_help_mode;
     if (i < 0)
     {
         return (-1);
@@ -563,13 +563,13 @@ int get_toggles2()
     old_rotate_hi = rotate_hi;
     uvalues[k].uval.ival = old_rotate_hi;
 
-    int const old_help_mode = help_mode;
-    help_mode = HELPYOPTS;
+    int const old_help_mode = g_help_mode;
+    g_help_mode = HELPYOPTS;
     {
         int i = fullscreen_prompt("Extended Options\n"
                               "(not all combinations make sense)",
                               k+1, choices, uvalues, 0, nullptr);
-        help_mode = old_help_mode;
+        g_help_mode = old_help_mode;
         if (i < 0)
         {
             return (-1);
@@ -724,13 +724,13 @@ pass_option_restart:
                              :   /* function */    2;
     old_drawmode = g_draw_mode;
 
-    int const old_help_mode = help_mode;
-    help_mode = HELPPOPTS;
+    int const old_help_mode = g_help_mode;
+    g_help_mode = HELPPOPTS;
     i = fullscreen_prompt("Passes Options\n"
                           "(not all combinations make sense)\n"
                           "(Press " FK_F2 " for corner parameters)\n"
                           "(Press " FK_F6 " for calculation parameters)", k+1, choices, uvalues, 0x44, nullptr);
-    help_mode = old_help_mode;
+    g_help_mode = old_help_mode;
     if (i < 0)
     {
         return (-1);
@@ -951,10 +951,10 @@ get_view_restart:
         uvalues[k].type = '*';
     }
 
-    int const old_help_mode = help_mode;     // this prevents HELP from activating
-    help_mode = HELPVIEW;
+    int const old_help_mode = g_help_mode;     // this prevents HELP from activating
+    g_help_mode = HELPVIEW;
     i = fullscreen_prompt("View Window Options", k+1, choices, uvalues, 16, nullptr);
-    help_mode = old_help_mode;     // re-enable HELP
+    g_help_mode = old_help_mode;     // re-enable HELP
     if (i < 0)
     {
         return -1;
@@ -1068,10 +1068,10 @@ int get_cmd_string()
     int i;
     static char cmdbuf[61];
 
-    int const old_help_mode = help_mode;
-    help_mode = HELPCOMMANDS;
+    int const old_help_mode = g_help_mode;
+    g_help_mode = HELPCOMMANDS;
     i = field_prompt("Enter command string to use.", nullptr, cmdbuf, 60, nullptr);
-    help_mode = old_help_mode;
+    g_help_mode = old_help_mode;
     if (i >= 0 && cmdbuf[0] != 0)
     {
         i = cmdarg(cmdbuf, cmd_file::AT_AFTER_STARTUP);
@@ -1186,10 +1186,10 @@ int get_starfield_params()
         uvalues[i].type = 'f';
     }
     driver_stack_screen();
-    int const old_help_mode = help_mode;
-    help_mode = HELPSTARFLD;
+    int const old_help_mode = g_help_mode;
+    g_help_mode = HELPSTARFLD;
     int const choice = fullscreen_prompt("Starfield Parameters", 3, starfield_prompts, uvalues, 0, nullptr);
-    help_mode = old_help_mode;
+    g_help_mode = old_help_mode;
     driver_unstack_screen();
     if (choice < 0)
     {
@@ -1278,10 +1278,10 @@ int get_rds_params()
         {
             stereomapname.clear();
         }
-        int const old_help_mode = help_mode;
-        help_mode = HELPRDS;
+        int const old_help_mode = g_help_mode;
+        g_help_mode = HELPRDS;
         int const choice = fullscreen_prompt("Random Dot Stereogram Parameters", k, rds_prompts, uvalues, 0, nullptr);
-        help_mode = old_help_mode;
+        g_help_mode = old_help_mode;
         if (choice < 0)
         {
             ret = -1;
@@ -1361,15 +1361,15 @@ int get_commands()              // execute commands from file
     int ret;
     FILE *parmfile;
     ret = 0;
-    int const old_help_mode = help_mode;
-    help_mode = HELPPARMFILE;
+    int const old_help_mode = g_help_mode;
+    g_help_mode = HELPPARMFILE;
     long point = get_file_entry(GETPARM, "Parameter Set", commandmask, g_command_file, g_command_name);
     if (point >= 0 && (parmfile = fopen(g_command_file.c_str(), "rb")) != nullptr)
     {
         fseek(parmfile, point, SEEK_SET);
         ret = load_commands(parmfile);
     }
-    help_mode = old_help_mode;
+    g_help_mode = old_help_mode;
     return (ret);
 }
 
@@ -2228,10 +2228,10 @@ gc_loop:
     prompts[++nump] = "Press " FK_F4 " to reset to type default values";
     values[nump].type = '*';
 
-    int const old_help_mode = help_mode;
-    help_mode = HELPCOORDS;
+    int const old_help_mode = g_help_mode;
+    g_help_mode = HELPCOORDS;
     prompt_ret = fullscreen_prompt("Image Coordinates", nump+1, prompts, values, 0x90, nullptr);
-    help_mode = old_help_mode;
+    g_help_mode = old_help_mode;
 
     if (prompt_ret < 0)
     {
@@ -2459,10 +2459,10 @@ gsc_loop:
     prompts[++nump] = "Press " FK_F4 " to reset to type default values";
     values[nump].type = '*';
 
-    int const old_help_mode = help_mode;
-    help_mode = HELPSCRNCOORDS;
+    int const old_help_mode = g_help_mode;
+    g_help_mode = HELPSCRNCOORDS;
     prompt_ret = fullscreen_prompt("Screen Coordinates", nump+1, prompts, values, 0x90, nullptr);
-    help_mode = old_help_mode;
+    g_help_mode = old_help_mode;
 
     if (prompt_ret < 0)
     {
@@ -2666,10 +2666,10 @@ get_brws_restart:
     choices[++k] = "Press " FK_F4 " to reset browse parameters to defaults.";
     uvalues[k].type = '*';
 
-    int const old_help_mode = help_mode;     // this prevents HELP from activating
-    help_mode = HELPBRWSPARMS;
+    int const old_help_mode = g_help_mode;     // this prevents HELP from activating
+    g_help_mode = HELPBRWSPARMS;
     i = fullscreen_prompt("Browse ('L'ook) Mode Options", k+1, choices, uvalues, 16, nullptr);
-    help_mode = old_help_mode;     // re-enable HELP
+    g_help_mode = old_help_mode;     // re-enable HELP
     if (i < 0)
     {
         return (0);

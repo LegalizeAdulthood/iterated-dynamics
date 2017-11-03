@@ -1413,7 +1413,7 @@ top:
     i = driver_key_pressed() ? driver_get_key() : 0;
     if (menu_checkkey(i, 0) == 0)
     {
-        help_mode = HELPMAIN;         // switch help modes
+        g_help_mode = HELPMAIN;         // switch help modes
         nextleft += 2;
         if (nextleft < nextright)
         {
@@ -1436,7 +1436,7 @@ top:
             i = choicekey[i];
             if (-10 == i)
             {
-                help_mode = HELPZOOM;
+                g_help_mode = HELPZOOM;
                 help(0);
                 i = 0;
             }

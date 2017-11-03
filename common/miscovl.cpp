@@ -85,8 +85,8 @@ void make_batch_file()
     }
 
     driver_stack_screen();
-    old_help_mode = help_mode;
-    help_mode = HELPPARMFILE;
+    old_help_mode = g_help_mode;
+    g_help_mode = HELPPARMFILE;
 
     maxcolor = g_colors;
     strcpy(colorspec, "y");
@@ -571,7 +571,7 @@ skip_UI:
         }
         break;
     }
-    help_mode = old_help_mode;
+    g_help_mode = old_help_mode;
     driver_unstack_screen();
 }
 
@@ -1978,17 +1978,17 @@ int select_video_mode(int curmode)
     }
 
     bool const old_tab_mode = tab_mode;
-    old_help_mode = help_mode;
+    old_help_mode = g_help_mode;
     modes_changed = false;
     tab_mode = false;
-    help_mode = HELPVIDSEL;
+    g_help_mode = HELPVIDSEL;
     i = fullscreen_choice(CHOICE_HELP,
                           "Select Video Mode",
                           "key...name.......................xdot..ydot.colr.driver......comment......",
                           nullptr, g_video_table_len, nullptr, attributes,
                           1, 16, 74, i, format_vid_table, nullptr, nullptr, check_modekey);
     tab_mode = old_tab_mode;
-    help_mode = old_help_mode;
+    g_help_mode = old_help_mode;
     if (i == -1)
     {
         // update fractint.cfg for new key assignments

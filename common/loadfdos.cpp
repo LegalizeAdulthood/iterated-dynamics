@@ -322,13 +322,13 @@ int get_video_mode(FRACTAL_INFO *info, ext_blk_3 *blk_3_info)
         }
         instructions += "ESCAPE to back out.";
 
-        int oldhelpmode = help_mode;
-        help_mode = HELPLOADFILE;
+        int oldhelpmode = g_help_mode;
+        g_help_mode = HELPLOADFILE;
         int i = fullscreen_choice(0, heading,
             "key...name......................err...xdot..ydot.clr.comment..................",
             instructions.c_str(), g_video_table_len, nullptr, &attributes[0],
             1, 13, 78, 0, format_item, nullptr, nullptr, check_modekey);
-        help_mode = oldhelpmode;
+        g_help_mode = oldhelpmode;
         if (i == -1)
         {
             return -1;
