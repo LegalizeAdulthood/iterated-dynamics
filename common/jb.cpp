@@ -165,7 +165,7 @@ JulibrotSetup()
     }
     else
     {
-        mapname = GreyFile.c_str();
+        mapname = g_gray_map_file.c_str();
     }
     if (savedac != 1)
     {

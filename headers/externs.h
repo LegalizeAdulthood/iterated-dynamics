@@ -201,7 +201,7 @@ extern bool                  g_good_mode;       // video mode ok?
 extern bool                  g_got_real_dac;    // loaddac worked, really got a dac
 extern int                   g_got_status;
 extern bool                  g_gray_flag;
-extern std::string const     GreyFile;
+extern std::string const     g_gray_map_file;
 extern bool                  hasinverse;
 extern int                   haze;
 extern unsigned int          height;
