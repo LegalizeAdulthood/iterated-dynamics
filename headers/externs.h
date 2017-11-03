@@ -135,7 +135,7 @@ extern float                 g_dist_fp;
 extern int                   g_distribution;
 extern bool                  g_dither_flag;
 extern bool                  g_read_color;
-extern int                   dotmode;
+extern int                   g_dot_mode;
 extern bool confirm_file_deletes;
 extern double                dpx;
 extern double                dpy;

@@ -55,7 +55,7 @@
 
 // external variables (set in the FRACTINT.CFG file, but findable here
 
-extern  int dotmode;        // video access method (= 19)
+extern  int g_dot_mode;        // video access method (= 19)
 extern  int sxdots, sydots;     // total # of dots on the screen
 extern  int sxoffs, syoffs;     // offset of drawing area
 extern  int g_colors;         // maximum colors available

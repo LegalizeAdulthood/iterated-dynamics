@@ -55,7 +55,7 @@
 // external variables (set in the FRACTINT.CFG file, but findable here
 
 extern bool slowdisplay;
-extern  int dotmode;        // video access method (= 19)
+extern  int g_dot_mode;        // video access method (= 19)
 extern  int sxdots, sydots;     // total # of dots on the screen
 extern  int sxoffs, syoffs;     // offset of drawing area
 extern  int g_colors;         // maximum colors available
@@ -2707,7 +2707,7 @@ x11_set_video_mode(Driver *drv, VIDEOINFO *mode)
         enddisk();
     x11_end_video(drv);
     g_good_mode = true;
-    switch (dotmode)
+    switch (g_dot_mode)
     {
     case 0:               // text
         break;
@@ -2720,10 +2720,10 @@ x11_set_video_mode(Driver *drv, VIDEOINFO *mode)
         break;
 
     default:
-        printf("Bad mode %d\n", dotmode);
+        printf("Bad mode %d\n", g_dot_mode);
         exit(-1);
     }
-    if (dotmode != 0)
+    if (g_dot_mode != 0)
     {
         x11_read_palette(drv);
         g_and_color = g_colors-1;

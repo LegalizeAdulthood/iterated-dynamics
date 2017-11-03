@@ -168,7 +168,7 @@ setvideomode(int ax, int bx, int cx, int dx)
         videoflag = 0;
     }
     g_good_mode = true;
-    switch (dotmode)
+    switch (g_dot_mode)
     {
     case 0:         // text
         clear();
@@ -195,10 +195,10 @@ setvideomode(int ax, int bx, int cx, int dx)
         setforgraphics();
         break;
     default:
-        printf("Bad mode %d\n", dotmode);
+        printf("Bad mode %d\n", g_dot_mode);
         exit(-1);
     }
-    if (dotmode != 0)
+    if (g_dot_mode != 0)
     {
         loaddac();
         g_and_color = g_colors - 1;

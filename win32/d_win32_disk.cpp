@@ -622,7 +622,7 @@ disk_set_video_mode(Driver *drv, VIDEOINFO *mode)
     g_vesa_x_res = 0;                   // reset indicators used for
     g_vesa_y_res = 0;                   // virtual screen limits estimation
     g_good_mode = true;
-    if (dotmode != 0)
+    if (g_dot_mode != 0)
     {
         g_and_color = g_colors-1;
         g_box_count = 0;

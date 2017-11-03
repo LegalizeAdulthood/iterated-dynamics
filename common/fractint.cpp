@@ -38,7 +38,7 @@ char const *fract_dir2 = "";
    the following variables are out here only so
    that the calcfract() and assembler routines can get at them easily
 */
-int     dotmode;                // video access method
+int     g_dot_mode;                // video access method
 int     textsafe2;              // textsafe override from g_video_table
 int     sxdots, sydots;         // # of dots on the physical screen
 int     sxoffs, syoffs;         // physical top left of logical screen
