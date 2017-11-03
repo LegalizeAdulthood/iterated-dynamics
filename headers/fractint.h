@@ -587,7 +587,7 @@ struct ORBITS_INFO      // for saving orbits data in a GIF file
 #define AUTOINVERT -123456.789
 #define MAX_NUM_ATTRACTORS 8
 extern  long     l_at_rad;      // finite attractor radius
-extern  double   f_at_rad;      // finite attractor radius
+extern  double   g_f_at_rad;      // finite attractor radius
 #define NUM_IFS_FUNCTIONS 64
 #define NUM_IFS_PARAMS    7
 #define NUM_IFS_3D_PARAMS 13

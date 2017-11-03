@@ -2554,13 +2554,13 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
                 {
                     at.x = g_new.x - g_attractor[i].x;
                     at.x = sqr(at.x);
-                    if (at.x < f_at_rad)
+                    if (at.x < g_f_at_rad)
                     {
                         at.y = g_new.y - g_attractor[i].y;
                         at.y = sqr(at.y);
-                        if (at.y < f_at_rad)
+                        if (at.y < g_f_at_rad)
                         {
-                            if ((at.x + at.y) < f_at_rad)
+                            if ((at.x + at.y) < g_f_at_rad)
                             {
                                 attracted = true;
                                 if (g_finite_attractor)

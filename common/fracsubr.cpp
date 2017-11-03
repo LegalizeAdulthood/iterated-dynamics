@@ -441,7 +441,7 @@ init_restart:
     g_fudge_factor = 1L << bitshift;
 
     l_at_rad = g_fudge_factor/32768L;
-    f_at_rad = 1.0/32768L;
+    g_f_at_rad = 1.0/32768L;
 
     // now setup arrays of real coordinates corresponding to each pixel
     if (bf_math != bf_math_type::NONE)
