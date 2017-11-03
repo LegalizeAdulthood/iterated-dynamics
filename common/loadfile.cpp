@@ -184,7 +184,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
         trigndx[1]  = static_cast<trig_fn>(read_info.trigndx[1]);
         trigndx[2]  = static_cast<trig_fn>(read_info.trigndx[2]);
         trigndx[3]  = static_cast<trig_fn>(read_info.trigndx[3]);
-        finattract  = read_info.finattract != 0;
+        g_finite_attractor  = read_info.finattract != 0;
         initorbit.x = read_info.initorbit[0];
         initorbit.y = read_info.initorbit[1];
         useinitorbit = read_info.useinitorbit;

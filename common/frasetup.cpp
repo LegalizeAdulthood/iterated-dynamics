@@ -46,7 +46,7 @@ JuliaSetup()            // Julia Routine
             && !invert && g_decomp[0] == 0 && rqlim == 4.0
             && bitshift == 29 && !potflag
             && g_biomorph == -1 && inside > ZMAG && outside >= ITER
-            && !finattract && !using_jiim && g_bail_out_test == bailouts::Mod
+            && !g_finite_attractor && !using_jiim && g_bail_out_test == bailouts::Mod
             && (orbitsave&2) == 0)
     {
         calctype = calcmand; // the normal case - use CALCMAND
@@ -361,7 +361,7 @@ JuliafpSetup()
                 && outside >= ATAN
                 && useinitorbit != 1
                 && (soundflag & SOUNDFLAG_ORBITMASK) < SOUNDFLAG_X
-                && !finattract
+                && !g_finite_attractor
                 && !using_jiim && g_bail_out_test == bailouts::Mod
                 && (orbitsave&2) == 0)
         {

@@ -90,7 +90,7 @@ int     g_cycle_limit = 0;         // color-rotator upper limit
 int     inside = 0;             // inside color: 1=blue
 int     g_fill_color = 0;          // fillcolor: -1=normal
 int     outside = COLOR_BLACK;  // outside color
-bool finattract = false;        // finite attractor logic
+bool g_finite_attractor = false;        // finite attractor logic
 display_3d_modes g_display_3d = display_3d_modes::NONE; // 3D display flag: 0 = OFF
 bool    overlay_3d = false;      // 3D overlay flag
 int     init3d[20] = { 0 };     // '3d=nn/nn/nn/...' values
@@ -483,7 +483,7 @@ static void initvars_fractal()          // init vars affecting calculation
 #else
     usr_floatflag = true;               // turn on the float flag
 #endif
-    finattract = false;                 // disable finite attractor logic
+    g_finite_attractor = false;                 // disable finite attractor logic
     fractype = fractal_type::MANDEL;    // initial type Set flag
     curfractalspecific = &fractalspecific[0];
     initcorners = false;
@@ -1534,7 +1534,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         {
             goto badarg;
         }
-        finattract = yesnoval[0] != 0;
+        g_finite_attractor = yesnoval[0] != 0;
         return CMDARG_FRACTAL_PARAM;
     }
 

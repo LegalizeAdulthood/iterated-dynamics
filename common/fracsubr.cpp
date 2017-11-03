@@ -1863,7 +1863,7 @@ void get_julia_attractor(double real, double imag)
     int savper;
     long savmaxit;
 
-    if (g_attractors == 0 && !finattract)   // not magnet & not requested
+    if (g_attractors == 0 && !g_finite_attractor)   // not magnet & not requested
     {
         return;
     }

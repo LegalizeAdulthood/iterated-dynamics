@@ -1044,7 +1044,7 @@ void write_batch_parms(char const *colorinf, bool colorsonly, int maxcolor, int 
         {
             put_parm(" %s=%d", "biomorph", usr_biomorph);
         }
-        if (finattract)
+        if (g_finite_attractor)
         {
             put_parm(" %s=y", "finattract");
         }

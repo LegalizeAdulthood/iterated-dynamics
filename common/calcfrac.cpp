@@ -2538,7 +2538,7 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
                             if ((lat.x + lat.y) < l_at_rad)
                             {
                                 attracted = true;
-                                if (finattract)
+                                if (g_finite_attractor)
                                 {
                                     g_color_iter = (g_color_iter % g_attractor_period[i]) + 1;
                                 }
@@ -2563,7 +2563,7 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
                             if ((at.x + at.y) < f_at_rad)
                             {
                                 attracted = true;
-                                if (finattract)
+                                if (g_finite_attractor)
                                 {
                                     g_color_iter = (g_color_iter % g_attractor_period[i]) + 1;
                                 }

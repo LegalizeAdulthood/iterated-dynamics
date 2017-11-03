@@ -933,7 +933,7 @@ static void setup_save_info(FRACTAL_INFO *save_info)
     save_info->trigndx[1] = static_cast<BYTE>(trigndx[1]);
     save_info->trigndx[2] = static_cast<BYTE>(trigndx[2]);
     save_info->trigndx[3] = static_cast<BYTE>(trigndx[3]);
-    save_info->finattract = (short) (finattract ? 1 : 0);
+    save_info->finattract = (short) (g_finite_attractor ? 1 : 0);
     save_info->initorbit[0] = initorbit.x;
     save_info->initorbit[1] = initorbit.y;
     save_info->useinitorbit = useinitorbit;
