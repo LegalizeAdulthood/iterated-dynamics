@@ -96,7 +96,7 @@ bool    overlay_3d = false;      // 3D overlay flag
 int     g_init_3d[20] = { 0 };     // '3d=nn/nn/nn/...' values
 bool    g_check_cur_dir = false;    // flag to check current dir for files
 batch_modes g_init_batch = batch_modes::NONE; // 1 if batch run (no kbd)
-int     initsavetime = 0;       // autosave minutes
+int     g_init_save_time = 0;       // autosave minutes
 DComplex  g_init_orbit = { 0.0 };  // initial orbitvalue
 char    useinitorbit = 0;       // flag for initorbit
 int     g_init_mode = 0;        // initial video mode
@@ -422,7 +422,7 @@ static void initvars_restart()          // <ins> key init
     soundflag = SOUNDFLAG_SPEAKER | SOUNDFLAG_BEEP; // sound is on to PC speaker
     g_init_batch = batch_modes::NONE;                      // not in batch mode
     g_check_cur_dir = false;                // flag to check current dire for files
-    initsavetime = 0;                   // no auto-save
+    g_init_save_time = 0;                   // no auto-save
     g_init_mode = -1;                   // no initial video mode
     viewwindow = false;                 // no view window
     viewreduction = 4.2F;
@@ -1391,7 +1391,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
 
     if (variable == "savetime")      // savetime=?
     {
-        initsavetime = numval;
+        g_init_save_time = numval;
         return CMDARG_NONE;
     }
 

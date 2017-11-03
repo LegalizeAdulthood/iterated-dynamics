@@ -220,7 +220,7 @@ extern batch_modes           g_init_batch;
 extern int                   g_init_cycle_limit;
 extern int                   g_init_mode;
 extern DComplex              g_init_orbit;
-extern int                   initsavetime;
+extern int                   g_init_save_time;
 extern int                   inside;
 extern int                   integerfractal;
 extern double                inversion[];

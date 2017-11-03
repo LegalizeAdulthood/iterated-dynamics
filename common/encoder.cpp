@@ -274,7 +274,7 @@ restart:
             texttempmsg(tmpmsg);
         }
     }
-    if (initsavetime < 0)
+    if (g_init_save_time < 0)
     {
         goodbye();
     }

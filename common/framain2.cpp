@@ -348,11 +348,11 @@ main_state big_while_loop(bool *const kbdmore, bool *const stacked, bool const r
         else
         {
             // draw an image
-            if (initsavetime != 0          // autosave and resumable?
+            if (g_init_save_time != 0          // autosave and resumable?
                     && (curfractalspecific->flags&NORESUME) == 0)
             {
                 savebase = readticker(); // calc's start time
-                saveticks = abs(initsavetime);
+                saveticks = abs(g_init_save_time);
                 saveticks *= 1092; // bios ticks/minute
                 if ((saveticks & 65535L) == 0)
                 {
