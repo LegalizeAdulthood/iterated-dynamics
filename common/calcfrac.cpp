@@ -106,7 +106,7 @@ int row = 0;
 int col = 0;
 int passes = 0;
 int invert = 0;
-double f_radius = 0.0;
+double g_f_radius = 0.0;
 double f_xcenter = 0.0;
 double f_ycenter = 0.0;                 // for inversion
 void (*putcolor)(int, int, int) = putcolor_a;
@@ -801,7 +801,7 @@ int calcfract()
 
     if (inversion[0] != 0.0)
     {
-        f_radius    = inversion[0];
+        g_f_radius    = inversion[0];
         f_xcenter   = inversion[1];
         f_ycenter   = inversion[2];
 
@@ -810,7 +810,7 @@ int calcfract()
             inversion[0] = std::min(fabs(xxmax - xxmin),
                                     fabs(yymax - yymin)) / 6.0;
             fix_inversion(&inversion[0]);
-            f_radius = inversion[0];
+            g_f_radius = inversion[0];
         }
 
         if (invert < 2 || inversion[1] == AUTOINVERT)  // xcenter not already set

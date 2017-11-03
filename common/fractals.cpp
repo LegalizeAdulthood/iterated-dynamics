@@ -2567,7 +2567,7 @@ void invertz2(DComplex *z)
     tempsqrx = sqr(z->x) + sqr(z->y);  // Get old radius
     if (fabs(tempsqrx) > FLT_MIN)
     {
-        tempsqrx = f_radius / tempsqrx;
+        tempsqrx = g_f_radius / tempsqrx;
     }
     else
     {
