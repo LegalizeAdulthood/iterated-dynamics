@@ -132,7 +132,7 @@ extern display_3d_modes      g_display_3d;
 extern long                  g_distance_estimator;
 extern int                   g_distance_estimator_width_factor;
 extern float                 g_dist_fp;
-extern int                   Distribution;
+extern int                   g_distribution;
 extern bool                  dither_flag;
 extern bool                  dontreadcolor;
 extern int                   dotmode;

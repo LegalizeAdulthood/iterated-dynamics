@@ -1088,7 +1088,7 @@ int get_cmd_string()
 
 // ---------------------------------------------------------------------
 
-int Distribution = 30, Offset = 0, Slope = 25;
+int g_distribution = 30, Offset = 0, Slope = 25;
 long con;
 
 
@@ -1130,7 +1130,7 @@ int starfield()
         starfield_values[2] = 100.0;
     }
 
-    Distribution = (int)(starfield_values[0]);
+    g_distribution = (int)(starfield_values[0]);
     con  = (long)(((starfield_values[1]) / 100.0) * (1L << 16));
     Slope = (int)(starfield_values[2]);
 

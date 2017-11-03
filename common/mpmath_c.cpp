@@ -825,8 +825,8 @@ int GausianNumber(int Probability, int Range)
 
     p = divide((long)Probability << 16, (long)Range << 16, 16);
     p = multiply(p, con, 16);
-    p = multiply((long)Distribution << 16, p, 16);
-    if (!(rand15() % (Distribution - (int)(p >> 16) + 1)))
+    p = multiply((long)g_distribution << 16, p, 16);
+    if (!(rand15() % (g_distribution - (int)(p >> 16) + 1)))
     {
         long Accum = 0;
         for (int n = 0; n < Slope; n++)
