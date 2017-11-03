@@ -173,7 +173,7 @@ extern float                 g_final_aspect_ratio;
 extern bool                  g_finite_attractor;
 extern int                   g_finish_row;
 extern bool                  g_first_init;
-extern bool                  floatflag;
+extern bool                  g_float_flag;
 extern double                floatmax;
 extern double                floatmin;
 extern DComplex *            floatparm;

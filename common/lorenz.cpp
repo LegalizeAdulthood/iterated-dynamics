@@ -2194,7 +2194,7 @@ int plotorbits2dsetup()
         {
             return (-1);
         }
-        floatflag = true;
+        g_float_flag = true;
         usr_floatflag = true; // force floating point
         curfractalspecific = &fractalspecific[static_cast<int>(tofloat)];
         fractype = tofloat;
@@ -2852,7 +2852,7 @@ static int ifs3d()
     g_display_3d = display_3d_modes::MINUS_ONE;
 
     realtime = 0 < g_glasses_type && g_glasses_type < 3;
-    if (floatflag)
+    if (g_float_flag)
     {
         return (funny_glasses_call(ifs3dfloat)); // double version of ifs3d
     }

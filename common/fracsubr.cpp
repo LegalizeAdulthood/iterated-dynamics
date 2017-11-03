@@ -170,7 +170,7 @@ void calcfracinit() // initialize a *pile* of stuff for fractal calculation
             g_debug_flag == debug_flags::prevent_coordinate_grid)
     {
         use_grid = false;
-        floatflag = true;
+        g_float_flag = true;
         usr_floatflag = true;
     }
     else
@@ -246,27 +246,27 @@ void calcfracinit() // initialize a *pile* of stuff for fractal calculation
     }
     if (bf_math != bf_math_type::NONE)
     {
-        floatflag = true;
+        g_float_flag = true;
     }
     else
     {
-        floatflag = usr_floatflag;
+        g_float_flag = usr_floatflag;
     }
     if (g_calc_status == calc_status_value::RESUMABLE)
     {
         // on resume, ensure floatflag correct
-        floatflag = curfractalspecific->isinteger == 0;
+        g_float_flag = curfractalspecific->isinteger == 0;
     }
     // if floating pt only, set floatflag for TAB screen
     if (!curfractalspecific->isinteger && curfractalspecific->tofloat == fractal_type::NOFRACTAL)
     {
-        floatflag = true;
+        g_float_flag = true;
     }
     if (usr_stdcalcmode == 's')
     {
         if (fractype == fractal_type::MANDEL || fractype == fractal_type::MANDELFP)
         {
-            floatflag = true;
+            g_float_flag = true;
         }
         else
         {
@@ -304,10 +304,10 @@ init_restart:
 
     if (g_distance_estimator)
     {
-        floatflag = true;  // force floating point for dist est
+        g_float_flag = true;  // force floating point for dist est
     }
 
-    if (floatflag)
+    if (g_float_flag)
     {
         // ensure type matches floatflag
         if (curfractalspecific->isinteger != 0
@@ -500,7 +500,7 @@ expand_retry:
                 if (integerfractal          // integer fractal type?
                         && curfractalspecific->tofloat != fractal_type::NOFRACTAL)
                 {
-                    floatflag = true;       // switch to floating pt
+                    g_float_flag = true;       // switch to floating pt
                 }
                 else
                 {

@@ -123,7 +123,7 @@ static void init_bf_2()
         bf_math = bf_math_type::BIGNUM; // maybe called from cmdfiles.c and fractype not set
     }
 
-    floatflag = true;
+    g_float_flag = true;
 
     // Now split up the memory among the pointers
     // internal pointers

@@ -845,7 +845,7 @@ void write_batch_parms(char const *colorinf, bool colorsonly, int maxcolor, int 
             put_parm(" %s=%.15g/%.15g", "initorbit", initorbit.x, initorbit.y);
         }
 
-        if (floatflag)
+        if (g_float_flag)
         {
             put_parm(" %s=y", "float");
         }

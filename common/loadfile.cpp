@@ -414,15 +414,15 @@ int read_overlay()      // read overlay/3D files, if reqr'd
     else
     {
         display_3d_modes const old_display_ed = g_display_3d;
-        bool const oldfloatflag = floatflag;
+        bool const oldfloatflag = g_float_flag;
         g_display_3d = loaded3d ? display_3d_modes::YES : display_3d_modes::NONE;   // for <tab> display during next
-        floatflag = usr_floatflag; // ditto
+        g_float_flag = usr_floatflag; // ditto
         int i = get_video_mode(&read_info, &blk_3_info);
 #if defined(_WIN32)
         _ASSERTE(_CrtCheckMemory());
 #endif
         g_display_3d = old_display_ed;
-        floatflag = oldfloatflag;
+        g_float_flag = oldfloatflag;
         if (i)
         {
             if (blk_2_info.got_data)
@@ -1737,7 +1737,7 @@ rescan:  // entry for changed browse parms
         free_bf_vars();
     }
     bf_math = oldbf_math;
-    floatflag = usr_floatflag;
+    g_float_flag = usr_floatflag;
 
     return (c);
 }

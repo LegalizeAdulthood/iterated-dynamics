@@ -975,7 +975,7 @@ top:
             j = 1;
         }
     }
-    else if (floatflag)
+    else if (g_float_flag)
     {
         j = usr_floatflag ? 1 : 2;
     }

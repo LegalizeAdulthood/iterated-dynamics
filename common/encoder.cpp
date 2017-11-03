@@ -918,7 +918,7 @@ static void setup_save_info(FRACTAL_INFO *save_info)
     {
         save_info->distestold = 32000;
     }
-    save_info->floatflag = floatflag ? 1 : 0;
+    save_info->floatflag = g_float_flag ? 1 : 0;
     if (g_bail_out >= 4 && g_bail_out <= 32000)
     {
         save_info->bailoutold = (short) g_bail_out;
