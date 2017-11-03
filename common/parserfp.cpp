@@ -1358,7 +1358,7 @@ void (Img_Setup)();
 // convert the array of ptrs
 int CvtStk()
 {
-    extern std::string FormName;
+    extern std::string g_formula_name;
     void (*ftst)();
     void (*ntst)();
     Arg *testoperand;
@@ -1575,7 +1575,7 @@ skipfinalopt:  // -------------- end of final optimizations ------------
     LASTSQR.d.y = 0.0;  // do this once per image
 
     // now change the pointers
-    if (!FormName.empty() &&
+    if (!g_formula_name.empty() &&
             (!uses_jump || fpfill_jump_struct() == 0))
     {
         // but only if parse succeeded

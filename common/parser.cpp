@@ -3869,7 +3869,7 @@ int frm_get_param_stuff(char const *Name)
     {
         return 0;  //  and don't reset the pointers
     }
-    if (find_file_item(FormFileName, Name, &entry_file, 1))
+    if (find_file_item(g_formula_filename, Name, &entry_file, 1))
     {
         stopmsg(STOPMSG_NONE, ParseErrs(PE_COULD_NOT_OPEN_FILE_WHERE_FORMULA_LOCATED));
         return 0;
@@ -4250,7 +4250,7 @@ bool RunForm(char const *Name, bool from_prompts1c)
         return true;  //  and don't reset the pointers
     }
 
-    if (find_file_item(FormFileName, Name, &entry_file, 1))
+    if (find_file_item(g_formula_filename, Name, &entry_file, 1))
     {
         stopmsg(STOPMSG_NONE, ParseErrs(PE_COULD_NOT_OPEN_FILE_WHERE_FORMULA_LOCATED));
         return true;
@@ -4292,7 +4292,7 @@ bool fpFormulaSetup()
     // TODO: when parsera.c contains assembly equivalents, remove !defined(_WIN32)
 #if !defined(XFRACT) && !defined(_WIN32)
     MathType = D_MATH;
-    bool RunFormRes = !RunForm(FormName.c_str(), false); // RunForm() returns true for failure
+    bool RunFormRes = !RunForm(g_formula_name.c_str(), false); // RunForm() returns true for failure
     if (RunFormRes && fpu >=387 && g_debug_flag != debug_flags::force_standard_fractal && (orbitsave&2) == 0
             && !Randomized)
     {
@@ -4322,7 +4322,7 @@ bool intFormulaSetup()
     fg = (double)(1L << bitshift);
     fgLimit = (double)0x7fffffffL / fg;
     ShiftBack = 32 - bitshift;
-    return !RunForm(FormName.c_str(), false);
+    return !RunForm(g_formula_name.c_str(), false);
 #endif
 }
 

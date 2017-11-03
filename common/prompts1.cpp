@@ -121,7 +121,7 @@ int fullscreen_prompt(      // full-screen prompting routine
     {
         if (fractype == fractal_type::FORMULA || fractype == fractal_type::FFORMULA)
         {
-            find_file_item(FormFileName, FormName.c_str(), &scroll_file, 1);
+            find_file_item(g_formula_filename, FormName.c_str(), &scroll_file, 1);
             in_scrolling_mode = true;
             scroll_file_start = ftell(scroll_file);
         }
@@ -1174,9 +1174,9 @@ static fractal_type select_fracttype(fractal_type t) // subrtn of get_fracttype,
     {
         result = static_cast<fractal_type>(choices[done]->num);
         if ((result == fractal_type::FORMULA || result == fractal_type::FFORMULA)
-                && FormFileName == g_command_file)
+                && g_formula_filename == g_command_file)
         {
-            FormFileName = searchfor.frm;
+            g_formula_filename = searchfor.frm;
         }
         if (result == fractal_type::LSYSTEM
                 && LFileName == g_command_file)
@@ -1233,7 +1233,7 @@ sel_type_restart:
     if (fractype == fractal_type::FORMULA || fractype == fractal_type::FFORMULA)
     {
         help_mode = HT_FORMULA;
-        if (get_file_entry(GETFORMULA, "Formula", formmask, FormFileName, FormName) < 0)
+        if (get_file_entry(GETFORMULA, "Formula", formmask, g_formula_filename, FormName) < 0)
         {
             ret = true;
             goto sel_type_exit;
@@ -1534,7 +1534,7 @@ int get_fract_params(int caller)        // prompt for type-specific parms
     if (help_formula < -1)
     {
         bool use_filename_ref = false;
-        std::string &filename_ref = FormFileName;
+        std::string &filename_ref = g_formula_filename;
         if (help_formula == -2)
         {
             // special for formula
