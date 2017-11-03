@@ -161,7 +161,7 @@ JulibrotSetup()
     if (juli3Dmode == 3)
     {
         savedac = 0;
-        mapname = Glasses1Map.c_str();
+        mapname = g_glasses1_map.c_str();
     }
     else
     {

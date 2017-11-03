@@ -60,7 +60,7 @@ static char funnyglasses_map_name[16];
 char ifsmask[13]     = {"*.ifs"};
 char formmask[13]    = {"*.frm"};
 char lsysmask[13]    = {"*.l"};
-std::string const Glasses1Map = "glasses1.map";
+std::string const g_glasses1_map = "glasses1.map";
 std::string MAP_name;
 bool mapset = false;
 bool julibrot = false;                  // flag for julibrot
@@ -3520,7 +3520,7 @@ static bool get_funny_glasses_params()
 
     if (g_glasses_type == 1)
     {
-        strcpy(funnyglasses_map_name, Glasses1Map.c_str());
+        strcpy(funnyglasses_map_name, g_glasses1_map.c_str());
     }
     else if (g_glasses_type == 2)
     {
@@ -3530,7 +3530,7 @@ static bool get_funny_glasses_params()
         }
         else
         {
-            std::string glasses2_map{Glasses1Map};
+            std::string glasses2_map{g_glasses1_map};
             glasses2_map.replace(glasses2_map.find('1'), 1, "2");
             strcpy(funnyglasses_map_name, glasses2_map.c_str());
         }

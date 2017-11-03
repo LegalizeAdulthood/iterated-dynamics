@@ -195,7 +195,7 @@ extern double                g_f_y_center;
 extern GENEBASE              g_gene_bank[NUMGENES];
 extern bool                  g_gif87a_flag;
 extern std::string           g_gif_filename_mask;
-extern std::string const     Glasses1Map;
+extern std::string const     g_glasses1_map;
 extern int                   g_glasses_type;
 extern bool                  g_good_mode;       // video mode ok?
 extern bool                  g_got_real_dac;    // loaddac worked, really got a dac
