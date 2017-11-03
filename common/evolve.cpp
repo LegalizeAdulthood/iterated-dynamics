@@ -39,7 +39,7 @@ double evolve_y_parameter_range;
 double g_evolve_dist_per_x;
 double g_evolve_dist_per_y;
 double g_evolve_max_random_mutation;
-double evolve_mutation_reduction_factor;
+double g_evolve_mutation_reduction_factor;
 double parmzoom;
 
 // offset for discrete parameters x and y..
@@ -747,7 +747,7 @@ get_evol_restart:
 
     choices[++k] = "Mutation reduction factor (between generations)";
     uvalues[k].type = 'f';
-    uvalues[k].uval.dval = evolve_mutation_reduction_factor;
+    uvalues[k].uval.dval = g_evolve_mutation_reduction_factor;
 
     choices[++k] = "Grouting? ";
     uvalues[k].type = 'y';
@@ -789,7 +789,7 @@ get_evol_restart:
     {
         set_current_params();
         g_evolve_max_random_mutation = 1;
-        evolve_mutation_reduction_factor = 1.0;
+        g_evolve_mutation_reduction_factor = 1.0;
         goto get_evol_restart;
     }
     if (i == FIK_F2)
@@ -866,7 +866,7 @@ get_evol_restart:
 
     g_evolve_max_random_mutation = uvalues[++k].uval.dval;
 
-    evolve_mutation_reduction_factor = uvalues[++k].uval.dval;
+    g_evolve_mutation_reduction_factor = uvalues[++k].uval.dval;
 
     if (!(uvalues[++k].uval.ch.val))
     {
@@ -912,7 +912,7 @@ get_evol_restart:
             g_evolving |= 1;   // leave other settings alone
         }
         g_evolve_max_random_mutation = 1;
-        evolve_mutation_reduction_factor = 1.0;
+        g_evolve_mutation_reduction_factor = 1.0;
         goto get_evol_restart;
     }
     return (i);

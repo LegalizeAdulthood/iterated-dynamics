@@ -201,7 +201,7 @@ static void main_restart(int const argc, char const *const argv[], bool &stacked
     evolve_discrete_x_parameter_offset = 0;
     g_evolve_image_grid_size = 9;
     g_evolve_max_random_mutation = 1;
-    evolve_mutation_reduction_factor = 1.0;
+    g_evolve_mutation_reduction_factor = 1.0;
     evolve_this_generation_random_seed = (unsigned int)clock_ticks();
     srand(evolve_this_generation_random_seed);
     initgene(); /*initialise pointers to lots of fractint variables for the evolution engine*/

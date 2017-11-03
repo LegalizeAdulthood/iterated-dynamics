@@ -406,7 +406,7 @@ main_state big_while_loop(bool *const kbdmore, bool *const stacked, bool const r
                     }
                     param_history(0); // save old history
                     ecount = 0;
-                    g_evolve_max_random_mutation = g_evolve_max_random_mutation * evolve_mutation_reduction_factor;
+                    g_evolve_max_random_mutation = g_evolve_max_random_mutation * g_evolve_mutation_reduction_factor;
                     evolve_x_parameter_offset = evolve_new_x_parameter_offset;
                     evolve_y_parameter_offset = evolve_new_y_parameter_offset;
                     evolve_discrete_x_parameter_offset = evolve_new_discrete_x_parameter_offset;
