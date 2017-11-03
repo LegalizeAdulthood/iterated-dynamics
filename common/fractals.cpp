@@ -57,7 +57,6 @@ LComplex lcoefficient, lold, lnew, lparm, linit, ltmp, ltmp2, lparm2;
 long ltempsqrx, ltempsqry;
 int maxcolor;
 int root, degree, g_basin;
-double floatmin, floatmax;
 double roverd, g_degree_minus_1_over_degree, threshold;
 DComplex tmp2;
 DComplex g_marks_coefficient;

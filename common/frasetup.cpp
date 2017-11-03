@@ -112,9 +112,6 @@ NewtonSetup()           // Newton/NewtBasin Routines
     }
 #endif
 
-    floatmin = FLT_MIN;
-    floatmax = FLT_MAX;
-
     g_basin = 0;
     roots.resize(16);
     if (fractype == fractal_type::NEWTBASIN)

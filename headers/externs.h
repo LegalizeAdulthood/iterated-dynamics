@@ -174,8 +174,6 @@ extern bool                  g_finite_attractor;
 extern int                   g_finish_row;
 extern bool                  g_first_init;
 extern bool                  g_float_flag;
-extern double                floatmax;
-extern double                floatmin;
 extern DComplex *            floatparm;
 extern int                   fm_attack;
 extern int                   fm_decay;
