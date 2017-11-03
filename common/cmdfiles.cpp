@@ -97,7 +97,7 @@ int     g_init_3d[20] = { 0 };     // '3d=nn/nn/nn/...' values
 bool    g_check_cur_dir = false;    // flag to check current dir for files
 batch_modes g_init_batch = batch_modes::NONE; // 1 if batch run (no kbd)
 int     initsavetime = 0;       // autosave minutes
-DComplex  initorbit = { 0.0 };  // initial orbitvalue
+DComplex  g_init_orbit = { 0.0 };  // initial orbitvalue
 char    useinitorbit = 0;       // flag for initorbit
 int     g_init_mode = 0;        // initial video mode
 int     g_init_cycle_limit = 0;     // initial cycle limit
@@ -503,8 +503,8 @@ static void initvars_fractal()          // init vars affecting calculation
     {
         elem = 0.0;  // initial invert values
     }
-    initorbit.y = 0.0;
-    initorbit.x = initorbit.y;     // initial orbit values
+    g_init_orbit.y = 0.0;
+    g_init_orbit.x = g_init_orbit.y;     // initial orbit values
     invert = 0;
     g_decomp[1] = 0;
     g_decomp[0] = g_decomp[1];
@@ -1981,8 +1981,8 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
             {
                 goto badarg;
             }
-            initorbit.x = floatval[0];
-            initorbit.y = floatval[1];
+            g_init_orbit.x = floatval[0];
+            g_init_orbit.y = floatval[1];
             useinitorbit = 1;
         }
         return CMDARG_FRACTAL_PARAM;

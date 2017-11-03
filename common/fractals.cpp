@@ -2892,7 +2892,7 @@ int marksmandelfp_per_pixel()
 
     if (useinitorbit == 1)
     {
-        old = initorbit;
+        old = g_init_orbit;
     }
     else
     {
@@ -2974,7 +2974,7 @@ int mandelfp_per_pixel()
     // alter init value
     if (useinitorbit == 1)
     {
-        old = initorbit;
+        old = g_init_orbit;
     }
     else if (useinitorbit == 2)
     {
@@ -3067,7 +3067,7 @@ int othermandelfp_per_pixel()
 
     if (useinitorbit == 1)
     {
-        old = initorbit;
+        old = g_init_orbit;
     }
     else
     {
@@ -3305,7 +3305,7 @@ int mandphoenix_per_pixel()
 
     if (useinitorbit == 1)
     {
-        old = initorbit;
+        old = g_init_orbit;
     }
     else
     {

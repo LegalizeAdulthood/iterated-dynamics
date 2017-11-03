@@ -842,7 +842,7 @@ void write_batch_parms(char const *colorinf, bool colorsonly, int maxcolor, int 
         }
         else if (useinitorbit == 1)
         {
-            put_parm(" %s=%.15g/%.15g", "initorbit", initorbit.x, initorbit.y);
+            put_parm(" %s=%.15g/%.15g", "initorbit", g_init_orbit.x, g_init_orbit.y);
         }
 
         if (g_float_flag)

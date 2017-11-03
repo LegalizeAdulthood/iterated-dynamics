@@ -2440,8 +2440,8 @@ static void save_history_info()
     current.trigndx[2]           = static_cast<BYTE>(trigndx[2]);
     current.trigndx[3]           = static_cast<BYTE>(trigndx[3]);
     current.finattract           = (short) (g_finite_attractor ? 1 : 0);
-    current.initorbit[0]         = initorbit.x               ;
-    current.initorbit[1]         = initorbit.y               ;
+    current.initorbit[0]         = g_init_orbit.x               ;
+    current.initorbit[1]         = g_init_orbit.y               ;
     current.useinitorbit         = useinitorbit              ;
     current.periodicity          = (short)periodicitycheck          ;
     current.pot16bit             = (short) (g_disk_16_bit ? 1 : 0);
@@ -2623,8 +2623,8 @@ static void restore_history_info(int i)
     trigndx[2]            = static_cast<trig_fn>(last.trigndx[2]);
     trigndx[3]            = static_cast<trig_fn>(last.trigndx[3]);
     g_finite_attractor            = last.finattract != 0;
-    initorbit.x           = last.initorbit[0]   ;
-    initorbit.y           = last.initorbit[1]   ;
+    g_init_orbit.x           = last.initorbit[0]   ;
+    g_init_orbit.y           = last.initorbit[1]   ;
     useinitorbit          = last.useinitorbit   ;
     periodicitycheck      = last.periodicity    ;
     usr_periodicitycheck  = last.periodicity    ;

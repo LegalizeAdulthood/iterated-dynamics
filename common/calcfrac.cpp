@@ -857,8 +857,8 @@ int calcfract()
         llimit2 = (long)(rqlim2 * g_fudge_factor);    // stop if magnitude exceeds this
         lclosenuff = (long)(g_close_enough * g_fudge_factor); // "close enough" value
         l16triglim = 8L << 16;         // domain limit of fast trig functions
-        linitorbit.x = (long)(initorbit.x * g_fudge_factor);
-        linitorbit.y = (long)(initorbit.y * g_fudge_factor);
+        linitorbit.x = (long)(g_init_orbit.x * g_fudge_factor);
+        linitorbit.y = (long)(g_init_orbit.y * g_fudge_factor);
     }
     resuming = (g_calc_status == calc_status_value::RESUMABLE);
     if (!resuming) // free resume_info memory if any is hanging around
@@ -2146,7 +2146,7 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
     {
         if (useinitorbit == 1)
         {
-            saved = initorbit;
+            saved = g_init_orbit;
         }
         else
         {
