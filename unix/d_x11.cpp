@@ -63,7 +63,7 @@ extern  int g_init_mode;
 extern  int g_adapter;
 extern bool g_got_real_dac;
 extern bool inside_help;
-extern  float   finalaspectratio;
+extern float g_final_aspect_ratio;
 extern  float   screenaspect;
 extern VIDEOINFO x11_video_table[];
 
@@ -1305,12 +1305,12 @@ ev_button_press(DriverX11 *di, XEvent *xevent)
                                ABS(bandy1-bandy0));
             bandx1 = xevent->xmotion.x;
             bandy1 = xevent->xmotion.y;
-            if (ABS(bandx1-bandx0)*finalaspectratio > ABS(bandy1-bandy0))
+            if (ABS(bandx1-bandx0)*g_final_aspect_ratio > ABS(bandy1-bandy0))
                 bandy1 =
-                    SIGN(bandy1-bandy0)*ABS(bandx1-bandx0)*finalaspectratio + bandy0;
+                    SIGN(bandy1-bandy0)*ABS(bandx1-bandx0)*g_final_aspect_ratio + bandy0;
             else
                 bandx1 =
-                    SIGN(bandx1-bandx0)*ABS(bandy1-bandy0)/finalaspectratio + bandx0;
+                    SIGN(bandx1-bandx0)*ABS(bandy1-bandy0)/g_final_aspect_ratio + bandx0;
 
             if (!banding)
             {
@@ -2035,7 +2035,7 @@ static bool x11_resize(Driver *drv)
         di->Xwinwidth = sxdots;
         di->Xwinheight = sydots;
         screenaspect = sydots/(float) sxdots;
-        finalaspectratio = screenaspect;
+        g_final_aspect_ratio = screenaspect;
         int Xpad = 9;
         int Xmwidth;
         if (di->Xdepth == 1)

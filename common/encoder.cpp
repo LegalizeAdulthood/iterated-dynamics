@@ -406,7 +406,7 @@ bool encoder()
     }
     else       // must risk loss of precision if numbers low
     {
-        i = (int)((((double) ydots / (double) xdots) / finalaspectratio) * 64 - 14.5);
+        i = (int)((((double) ydots / (double) xdots) / g_final_aspect_ratio) * 64 - 14.5);
     }
     if (i < 1)
     {
@@ -939,7 +939,7 @@ static void setup_save_info(FRACTAL_INFO *save_info)
     save_info->useinitorbit = useinitorbit;
     save_info->periodicity = (short) periodicitycheck;
     save_info->pot16bit = (short) (g_disk_16_bit ? 1 : 0);
-    save_info->faspectratio = finalaspectratio;
+    save_info->faspectratio = g_final_aspect_ratio;
     save_info->system = (short) save_system;
 
     if (check_back())

@@ -866,7 +866,7 @@ int get_view_params()
 
     bool const old_viewwindow    = viewwindow;
     old_viewreduction = viewreduction;
-    old_aspectratio   = finalaspectratio;
+    old_aspectratio   = g_final_aspect_ratio;
     old_viewxdots     = viewxdots;
     old_viewydots     = viewydots;
     old_sxdots        = sxdots;
@@ -888,7 +888,7 @@ get_view_restart:
 
         choices[++k] = "Final media overall aspect ratio, y/x";
         uvalues[k].type = 'f';
-        uvalues[k].uval.dval = finalaspectratio;
+        uvalues[k].uval.dval = g_final_aspect_ratio;
 
         choices[++k] = "Crop starting coordinates to new aspect ratio?";
         uvalues[k].type = 'y';
@@ -966,7 +966,7 @@ get_view_restart:
         viewydots = 0;
         viewreduction = 4.2F;
         viewcrop = true;
-        finalaspectratio = screenaspect;
+        g_final_aspect_ratio = screenaspect;
         sxdots = old_sxdots;
         sydots = old_sydots;
         video_cutboth = true;
@@ -981,7 +981,7 @@ get_view_restart:
     {
         viewwindow = uvalues[++k].uval.ch.val != 0;
         viewreduction = (float) uvalues[++k].uval.dval;
-        finalaspectratio = (float) uvalues[++k].uval.dval;
+        g_final_aspect_ratio = (float) uvalues[++k].uval.dval;
         viewcrop = uvalues[++k].uval.ch.val != 0;
         viewxdots = uvalues[++k].uval.ival;
         viewydots = uvalues[++k].uval.ival;
@@ -1004,12 +1004,12 @@ get_view_restart:
     }
     if (sydots == 0) // auto by aspect ratio request
     {
-        if (finalaspectratio == 0.0)
+        if (g_final_aspect_ratio == 0.0)
         {
-            finalaspectratio = (viewwindow && viewxdots != 0 && viewydots != 0) ?
+            g_final_aspect_ratio = (viewwindow && viewxdots != 0 && viewydots != 0) ?
                                ((float) viewydots)/((float) viewxdots) : old_aspectratio;
         }
-        sydots = (int)(finalaspectratio*sxdots + 0.5);
+        sydots = (int)(g_final_aspect_ratio*sxdots + 0.5);
     }
     if ((ymax != -1) && (sydots > ymax))
     {
@@ -1025,31 +1025,31 @@ get_view_restart:
         g_video_entry.xdots = sxdots;
         g_video_entry.ydots = sydots;
         memcpy(&g_video_table[g_adapter], &g_video_entry, sizeof(g_video_entry));
-        if (finalaspectratio == 0.0)
+        if (g_final_aspect_ratio == 0.0)
         {
-            finalaspectratio = ((float) sydots)/((float) sxdots);
+            g_final_aspect_ratio = ((float) sydots)/((float) sxdots);
         }
     }
 
-    if (viewxdots != 0 && viewydots != 0 && viewwindow && finalaspectratio == 0.0)
+    if (viewxdots != 0 && viewydots != 0 && viewwindow && g_final_aspect_ratio == 0.0)
     {
-        finalaspectratio = ((float) viewydots)/((float) viewxdots);
+        g_final_aspect_ratio = ((float) viewydots)/((float) viewxdots);
     }
-    else if (finalaspectratio == 0.0 && (viewxdots == 0 || viewydots == 0))
+    else if (g_final_aspect_ratio == 0.0 && (viewxdots == 0 || viewydots == 0))
     {
-        finalaspectratio = old_aspectratio;
+        g_final_aspect_ratio = old_aspectratio;
     }
 
-    if (finalaspectratio != old_aspectratio && viewcrop)
+    if (g_final_aspect_ratio != old_aspectratio && viewcrop)
     {
-        aspectratio_crop(old_aspectratio, finalaspectratio);
+        aspectratio_crop(old_aspectratio, g_final_aspect_ratio);
     }
 
     return (viewwindow != old_viewwindow
             || sxdots != old_sxdots || sydots != old_sydots
             || (viewwindow
                 && (viewreduction != old_viewreduction
-                    || finalaspectratio != old_aspectratio
+                    || g_final_aspect_ratio != old_aspectratio
                     || viewxdots != old_viewxdots
                     || (viewydots != old_viewydots && viewxdots)))) ? 1 : 0;
 }
@@ -2253,9 +2253,9 @@ gc_loop:
         yymin = curfractalspecific->ymin;
         yy3rd = yymin;
         yymax = curfractalspecific->ymax;
-        if (viewcrop && finalaspectratio != screenaspect)
+        if (viewcrop && g_final_aspect_ratio != screenaspect)
         {
-            aspectratio_crop(screenaspect, finalaspectratio);
+            aspectratio_crop(screenaspect, g_final_aspect_ratio);
         }
         if (bf_math != bf_math_type::NONE)
         {
@@ -2497,9 +2497,9 @@ gsc_loop:
         yymax = oymax;
         xx3rd = ox3rd;
         yy3rd = oy3rd;
-        if (viewcrop && finalaspectratio != screenaspect)
+        if (viewcrop && g_final_aspect_ratio != screenaspect)
         {
-            aspectratio_crop(screenaspect, finalaspectratio);
+            aspectratio_crop(screenaspect, g_final_aspect_ratio);
         }
 
         oxmin = xxmin;

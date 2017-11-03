@@ -428,7 +428,7 @@ static void initvars_restart()          // <ins> key init
     viewreduction = 4.2F;
     viewcrop = true;
     g_virtual_screens = true;           // virtual screen modes on
-    finalaspectratio = screenaspect;
+    g_final_aspect_ratio = screenaspect;
     viewydots = 0;
     viewxdots = viewydots;
     video_cutboth = true;               // keep virtual aspect
@@ -2246,7 +2246,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         }
         viewwindow = true;
         viewreduction = 4.2F;  // reset default values
-        finalaspectratio = screenaspect;
+        g_final_aspect_ratio = screenaspect;
         viewcrop = true;
         viewydots = 0;
         viewxdots = viewydots;
@@ -2257,7 +2257,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         }
         if ((totparms > 1) && (floatval[1] > 0.001))
         {
-            finalaspectratio = (float)floatval[1];
+            g_final_aspect_ratio = (float)floatval[1];
         }
         if ((totparms > 2) && (yesnoval[2] == 0))
         {

@@ -147,13 +147,13 @@ void drawbox(bool drawit)
 
     // calc co-ords of topleft & botright corners of box
     tmpx = zoom_box_width/-2+fxadj; // from zoombox center as origin, on xdots scale
-    tmpy = zoom_box_height*finalaspectratio/2;
+    tmpy = zoom_box_height*g_final_aspect_ratio/2;
     dx = (rotcos*tmpx - rotsin*tmpy) - tmpx; // delta x to rotate topleft
     dy = tmpy - (rotsin*tmpx + rotcos*tmpy); // delta y to rotate topleft
 
     // calc co-ords of topleft
     ftemp1 = zbx + dx + fxadj;
-    ftemp2 = zby + dy/finalaspectratio;
+    ftemp2 = zby + dy/g_final_aspect_ratio;
 
     tl.x   = (int)(ftemp1*(x_size_d+PIXELROUND)); // screen co-ords
     tl.y   = (int)(ftemp2*(y_size_d+PIXELROUND));
@@ -167,7 +167,7 @@ void drawbox(bool drawit)
 
     // calc co-ords of bottom right
     ftemp1 = zbx + zoom_box_width - dx - fxadj;
-    ftemp2 = zby - dy/finalaspectratio + zoom_box_height;
+    ftemp2 = zby - dy/g_final_aspect_ratio + zoom_box_height;
     br.x   = (int)(ftemp1*(x_size_d+PIXELROUND));
     br.y   = (int)(ftemp2*(y_size_d+PIXELROUND));
     xxmax  = sxmin + ftemp1*fxwidth + ftemp2*fxskew;
@@ -183,7 +183,7 @@ void drawbox(bool drawit)
     dx = (rotcos*tmpx - rotsin*tmpy) - tmpx;
     dy = tmpy - (rotsin*tmpx + rotcos*tmpy);
     ftemp1 = zbx + dx - fxadj;
-    ftemp2 = zby + dy/finalaspectratio + zoom_box_height;
+    ftemp2 = zby + dy/g_final_aspect_ratio + zoom_box_height;
     bl.x   = (int)(ftemp1*(x_size_d+PIXELROUND));
     bl.y   = (int)(ftemp2*(y_size_d+PIXELROUND));
     xx3rd  = sxmin + ftemp1*fxwidth + ftemp2*fxskew;
@@ -195,7 +195,7 @@ void drawbox(bool drawit)
         restore_stack(saved);
     }
     ftemp1 = zbx + zoom_box_width - dx + fxadj;
-    ftemp2 = zby - dy/finalaspectratio;
+    ftemp2 = zby - dy/g_final_aspect_ratio;
     tr.x   = (int)(ftemp1*(x_size_d+PIXELROUND));
     tr.y   = (int)(ftemp2*(y_size_d+PIXELROUND));
 

@@ -63,7 +63,7 @@ extern  int initmode;
 extern  int g_adapter;
 extern bool g_got_real_dac;
 extern bool inside_help;
-extern  float   finalaspectratio;
+extern float g_final_aspect_ratio;
 extern  float   screenaspect;
 
 extern VIDEOINFO x11_video_table[];
@@ -804,7 +804,7 @@ resizeWindow()
         Xwinwidth = sxdots;
         Xwinheight = sydots;
         screenaspect = sydots/(float)sxdots;
-        finalaspectratio = screenaspect;
+        g_final_aspect_ratio = screenaspect;
         int Xpad = 8;  // default, unless changed below
         int Xmwidth;
         if (Xdepth == 1)
@@ -1968,16 +1968,16 @@ xhandleevents()
                     }
                     bandx1 = xevent.xmotion.x;
                     bandy1 = xevent.xmotion.y;
-                    if (ABS(bandx1-bandx0)*finalaspectratio >
+                    if (ABS(bandx1-bandx0)*g_final_aspect_ratio >
                             ABS(bandy1-bandy0))
                     {
                         bandy1 = SIGN(bandy1-bandy0)*ABS(bandx1-bandx0)*
-                                 finalaspectratio + bandy0;
+                                 g_final_aspect_ratio + bandy0;
                     }
                     else
                     {
                         bandx1 = SIGN(bandx1-bandx0)*ABS(bandy1-bandy0)/
-                                 finalaspectratio + bandx0;
+                                 g_final_aspect_ratio + bandx0;
                     }
                     if (!banding)
                     {

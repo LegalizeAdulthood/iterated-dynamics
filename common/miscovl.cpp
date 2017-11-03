@@ -1227,7 +1227,7 @@ void write_batch_parms(char const *colorinf, bool colorsonly, int maxcolor, int 
 
     if (viewwindow)
     {
-        put_parm(" %s=%g/%g", "viewwindows", viewreduction, finalaspectratio);
+        put_parm(" %s=%g/%g", "viewwindows", viewreduction, g_final_aspect_ratio);
         if (viewcrop)
         {
             put_parm("/%s", "yes");

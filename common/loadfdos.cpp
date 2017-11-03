@@ -463,19 +463,19 @@ int get_video_mode(FRACTAL_INFO *info, ext_blk_3 *blk_3_info)
         --skipydots;
     }
 
-    finalaspectratio = g_file_aspect_ratio;
-    if (finalaspectratio == 0) // assume display correct
+    g_final_aspect_ratio = g_file_aspect_ratio;
+    if (g_final_aspect_ratio == 0) // assume display correct
     {
-        finalaspectratio = (float)vid_aspect(g_file_x_dots, g_file_y_dots);
+        g_final_aspect_ratio = (float)vid_aspect(g_file_x_dots, g_file_y_dots);
     }
-    if (finalaspectratio >= screenaspect-0.02
-            && finalaspectratio <= screenaspect+0.02)
+    if (g_final_aspect_ratio >= screenaspect-0.02
+            && g_final_aspect_ratio <= screenaspect+0.02)
     {
-        finalaspectratio = screenaspect;
+        g_final_aspect_ratio = screenaspect;
     }
     {
-        int i = (int)(finalaspectratio * 1000.0 + 0.5);
-        finalaspectratio = (float)(i/1000.0); // chop precision to 3 decimals
+        int i = (int)(g_final_aspect_ratio * 1000.0 + 0.5);
+        g_final_aspect_ratio = (float)(i/1000.0); // chop precision to 3 decimals
     }
 
     // setup view window stuff
@@ -486,13 +486,13 @@ int get_video_mode(FRACTAL_INFO *info, ext_blk_3 *blk_3_info)
     {
         // image not exactly same size as screen
         viewwindow = true;
-        ftemp = finalaspectratio
+        ftemp = g_final_aspect_ratio
                 * (double)g_video_entry.ydots / (double)g_video_entry.xdots
                 / screenaspect;
         float tmpreduce;
         int i;
         int j;
-        if (finalaspectratio <= screenaspect)
+        if (g_final_aspect_ratio <= screenaspect)
         {
             i = (int)((double)g_video_entry.xdots / (double)g_file_x_dots * 20.0 + 0.5);
             tmpreduce = (float)(i/20.0); // chop precision to nearest .05
@@ -517,7 +517,7 @@ int get_video_mode(FRACTAL_INFO *info, ext_blk_3 *blk_3_info)
         }
     }
     if (!make_parameter_file && !g_fast_restore && (init_batch == batch_modes::NONE) &&
-            (fabs(finalaspectratio - screenaspect) > .00001 || viewxdots != 0))
+            (fabs(g_final_aspect_ratio - screenaspect) > .00001 || viewxdots != 0))
     {
         stopmsg(STOPMSG_NO_BUZZER,
                 "Warning: <V>iew parameters are being set to non-standard values.\n"

@@ -169,7 +169,7 @@ extern int                   g_file_x_dots;
 extern int                   g_file_y_dots;
 extern std::string           g_file_name_stack[16];
 extern int                   g_fill_color;
-extern float                 finalaspectratio;
+extern float                 g_final_aspect_ratio;
 extern bool                  finattract;
 extern int                   finishrow;
 extern bool                  first_init;

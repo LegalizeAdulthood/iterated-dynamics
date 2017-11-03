@@ -91,7 +91,7 @@ bool    usr_floatflag;
 bool    viewwindow = false;     // false for full screen, true for window
 float   viewreduction;          // window auto-sizing
 bool    viewcrop = false;       // true to crop default coords
-float   finalaspectratio;       // for view shape and rotation
+float   g_final_aspect_ratio;       // for view shape and rotation
 int     viewxdots, viewydots;    // explicit view sizing
 bool    video_cutboth = false;  // true to keep virtual aspect
 bool    zscroll = false;        // screen/zoombox false fixed, true relaxed

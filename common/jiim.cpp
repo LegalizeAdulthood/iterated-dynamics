@@ -1297,7 +1297,7 @@ finish:
         viewydots = 0;
         viewreduction = 4.2F;
         viewcrop = true;
-        finalaspectratio = screenaspect;
+        g_final_aspect_ratio = screenaspect;
         xdots = sxdots;
         ydots = sydots;
         x_size_d = xdots - 1;
