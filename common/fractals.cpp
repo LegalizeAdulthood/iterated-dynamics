@@ -2561,7 +2561,7 @@ void invertz2(DComplex *z)
 {
     z->x = dxpixel();
     z->y = dypixel();
-    z->x -= f_xcenter;
+    z->x -= g_f_x_center;
     z->y -= f_ycenter;  // Normalize values to center of circle
 
     tempsqrx = sqr(z->x) + sqr(z->y);  // Get old radius
@@ -2575,7 +2575,7 @@ void invertz2(DComplex *z)
     }
     z->x *= tempsqrx;
     z->y *= tempsqrx;      // Perform inversion
-    z->x += f_xcenter;
+    z->x += g_f_x_center;
     z->y += f_ycenter; // Renormalize
 }
 

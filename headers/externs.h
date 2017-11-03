@@ -190,7 +190,7 @@ extern long                  g_fudge_factor;
 extern bool                  g_new_bifurcation_functions_loaded;
 extern double                g_f_at_rad;
 extern double                g_f_radius;
-extern double                f_xcenter;
+extern double                g_f_x_center;
 extern double                f_ycenter;
 extern GENEBASE              gene_bank[NUMGENES];
 extern int                   get_corners();
