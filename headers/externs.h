@@ -99,7 +99,7 @@ extern std::string           g_command_name;
 extern bool                  g_compare_gif;
 extern long                  con;
 extern double                cosx;
-extern int                   curcol;
+extern int                   g_current_column;
 extern int                   curpass;
 extern int                   currow;
 extern int                   cyclelimit;

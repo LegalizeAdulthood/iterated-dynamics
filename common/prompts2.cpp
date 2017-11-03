@@ -1100,7 +1100,7 @@ std::string const GreyFile
 };
 
 int starfield()
-{
+{   
     int c;
     g_busy = true;
     if (starfield_values[0] <   1.0)

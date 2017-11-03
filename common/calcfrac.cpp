@@ -169,7 +169,7 @@ int got_status = -1;                    // -1 if not, 0 for 1or2pass, 1 for ssg,
 int curpass = 0;
 int totpasses = 0;
 int currow = 0;
-int curcol = 0;
+int g_current_column = 0;
 
 // static vars for diffusion scan
 unsigned g_diffusion_bits = 0;        // number of bits in the counter
@@ -4827,7 +4827,7 @@ static int tesseral()
     while (tp >= (tess *)&dstack[0])
     {
         // do next box
-        curcol = tp->x1; // for tab_display
+        g_current_column = tp->x1; // for tab_display
         currow = tp->y1;
 
         if (tp->top == -1 || tp->bot == -1 || tp->lft == -1 || tp->rgt == -1)

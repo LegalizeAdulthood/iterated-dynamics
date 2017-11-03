@@ -1068,7 +1068,7 @@ top:
             if (got_status == 2 || got_status == 4)  // btm or tesseral
             {
                 driver_put_string(-1, -1, C_GENERAL_MED, "at ");
-                sprintf(msg, "[%d, %d]", currow, curcol);
+                sprintf(msg, "[%d, %d]", currow, g_current_column);
                 driver_put_string(-1, -1, C_GENERAL_HI, msg);
             }
             else
