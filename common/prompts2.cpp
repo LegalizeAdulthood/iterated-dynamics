@@ -614,6 +614,7 @@ int get_toggles2()
             }
         }
         else // turned it off
+        {
             if (!driver_diskp())   // ditch the disk video
             {
                 enddisk();
@@ -622,6 +623,7 @@ int get_toggles2()
             {
                 disk16bit = false;
             }
+        }
     }
 
     ++k;
