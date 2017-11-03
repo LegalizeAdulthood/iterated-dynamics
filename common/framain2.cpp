@@ -414,7 +414,7 @@ main_state big_while_loop(bool *const kbdmore, bool *const stacked, bool const r
                 }
                 param_box_count = 0;
                 g_evolve_dist_per_x = evolve_x_parameter_range /(evolve_image_grid_size -1);
-                dpy = evolve_y_parameter_range /(evolve_image_grid_size -1);
+                g_evolve_dist_per_y = evolve_y_parameter_range /(evolve_image_grid_size -1);
                 grout  = !((evolving & NOGROUT)/NOGROUT);
                 tmpxdots = xdots+grout;
                 tmpydots = ydots+grout;
