@@ -352,7 +352,7 @@ init_restart:
 
     curfractalspecific = &fractalspecific[static_cast<int>(fractype)];
 
-    integerfractal = curfractalspecific->isinteger;
+    g_integer_fractal = curfractalspecific->isinteger;
 
     if (potflag && potparam[2] != 0.0)
     {
@@ -370,7 +370,7 @@ init_restart:
     {
         rqlim = curfractalspecific->orbit_bailout;
     }
-    if (integerfractal)   // the bailout limit mustn't be too high here
+    if (g_integer_fractal)   // the bailout limit mustn't be too high here
     {
         if (rqlim > 127.0)
         {
@@ -399,11 +399,11 @@ init_restart:
 
     // set up bitshift for integer math
     bitshift = FUDGEFACTOR2; // by default, the smaller shift
-    if (integerfractal > 1)    // use specific override from table
+    if (g_integer_fractal > 1)    // use specific override from table
     {
-        bitshift = integerfractal;
+        bitshift = g_integer_fractal;
     }
-    if (integerfractal == 0)
+    if (g_integer_fractal == 0)
     {
         // float?
         fractal_type i = curfractalspecific->tofloat;
@@ -479,7 +479,7 @@ init_restart:
     if (fractype != fractal_type::PLASMA && bf_math == bf_math_type::NONE
             && fractype != fractal_type::IFS && fractype != fractal_type::IFS3D && fractype != fractal_type::LSYSTEM)
     {
-        if (integerfractal && !invert && use_grid)
+        if (g_integer_fractal && !invert && use_grid)
         {
             if ((delx  == 0 && delxx  != 0.0)
                     || (delx2 == 0 && delxx2 != 0.0)
@@ -497,7 +497,7 @@ init_restart:
                     || ratio_bad((double)ly1[(xdots >> 1)-1], ((double)ymin-y3rd)/2))
             {
 expand_retry:
-                if (integerfractal          // integer fractal type?
+                if (g_integer_fractal          // integer fractal type?
                         && curfractalspecific->tofloat != fractal_type::NOFRACTAL)
                 {
                     g_float_flag = true;       // switch to floating pt
@@ -770,7 +770,7 @@ void adjust_corner()
     double Xctr, Yctr, Xmagfactor, Rotation, Skew;
     LDBL Magnification;
 
-    if (!integerfractal)
+    if (!g_integer_fractal)
     {
         // While we're at it, let's adjust the Xmagfactor as well
         cvtcentermag(&Xctr, &Yctr, &Magnification, &Xmagfactor, &Rotation, &Skew);
@@ -1072,7 +1072,7 @@ static void adjust_to_limits(double expand)
 
     limit = 32767.99;
 
-    if (integerfractal)
+    if (g_integer_fractal)
     {
         if (save_release > 1940)   // let user reproduce old GIF's and PAR's
         {
@@ -1235,7 +1235,7 @@ static void smallest_add_bf(bf_t num)
 static int ratio_bad(double actual, double desired)
 {
     double tol;
-    if (integerfractal)
+    if (g_integer_fractal)
     {
         tol = math_tol[0];
     }
@@ -1906,7 +1906,7 @@ void get_julia_attractor(double real, double imag)
     }
     if (g_color_iter >= maxit)      // if orbit stays in the lake
     {
-        if (integerfractal)     // remember where it went to
+        if (g_integer_fractal)     // remember where it went to
         {
             lresult = lnew;
         }
@@ -1920,7 +1920,7 @@ void get_julia_attractor(double real, double imag)
             if (!curfractalspecific->orbitcalc() && !overflow) // if it stays in the lake
             {
                 // and doesn't move far, probably
-                if (integerfractal)   //   found a finite attractor
+                if (g_integer_fractal)   //   found a finite attractor
                 {
                     if (labs(lresult.x-lnew.x) < lclosenuff
                             && labs(lresult.y-lnew.y) < lclosenuff)

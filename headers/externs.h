@@ -222,7 +222,7 @@ extern int                   g_init_mode;
 extern DComplex              g_init_orbit;
 extern int                   g_init_save_time;
 extern int                   inside;
-extern int                   integerfractal;
+extern int                   g_integer_fractal;
 extern double                inversion[];
 extern int                   invert;
 extern bool                  g_is_true_color;

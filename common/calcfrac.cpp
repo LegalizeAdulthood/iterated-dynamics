@@ -305,7 +305,7 @@ double fmodtest()
     double result;
     if (inside == FMODI && save_release <= 2000) // for backwards compatibility
     {
-        if (magnitude == 0.0 || !no_mag_calc || integerfractal)
+        if (magnitude == 0.0 || !no_mag_calc || g_integer_fractal)
         {
             result = sqr(g_new.x)+sqr(g_new.y);
         }
@@ -319,7 +319,7 @@ double fmodtest()
     switch (g_bail_out_test)
     {
     case bailouts::Mod:
-        if (magnitude == 0.0 || !no_mag_calc || integerfractal)
+        if (magnitude == 0.0 || !no_mag_calc || g_integer_fractal)
         {
             result = sqr(g_new.x)+sqr(g_new.y);
         }
@@ -654,7 +654,7 @@ int calcfract()
 
     // following delta values useful only for types with rotation disabled
     // currently used only by bifurcation
-    if (integerfractal)
+    if (g_integer_fractal)
     {
         g_distance_estimator = 0;
     }
@@ -843,7 +843,7 @@ int calcfract()
     g_close_enough = ddelmin*pow(2.0, -(double)(abs(periodicitycheck)));
     rqlim_save = rqlim;
     rqlim2 = sqrt(rqlim);
-    if (integerfractal)          // for integer routines (lambda)
+    if (g_integer_fractal)          // for integer routines (lambda)
     {
         lparm.x = (long)(parm.x * g_fudge_factor);    // real portion of Lambda
         lparm.y = (long)(parm.y * g_fudge_factor);    // imaginary portion of Lambda
@@ -2142,7 +2142,7 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
     }
 #endif
     // really fractal specific, but we'll leave it here
-    if (!integerfractal)
+    if (!g_integer_fractal)
     {
         if (useinitorbit == 1)
         {
@@ -2241,7 +2241,7 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
 
     if (outside == TDIS)
     {
-        if (integerfractal)
+        if (g_integer_fractal)
         {
             old.x = ((double)lold.x) / g_fudge_factor;
             old.y = ((double)lold.y) / g_fudge_factor;
@@ -2347,7 +2347,7 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
         }
         if (show_orbit)
         {
-            if (!integerfractal)
+            if (!g_integer_fractal)
             {
                 if (bf_math == bf_math_type::BIGNUM)
                 {
@@ -2378,7 +2378,7 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
             {
                 if (0 < g_color_iter && g_color_iter < 16)
                 {
-                    if (integerfractal)
+                    if (g_integer_fractal)
                     {
                         g_new.x = lnew.x;
                         g_new.x /= g_fudge_factor;
@@ -2419,7 +2419,7 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
             else if (inside == EPSCROSS)
             {
                 hooper = 0;
-                if (integerfractal)
+                if (g_integer_fractal)
                 {
                     if (labs(lnew.x) < labs(lcloseprox))
                     {
@@ -2449,7 +2449,7 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
             else if (inside == FMODI)
             {
                 double mag;
-                if (integerfractal)
+                if (g_integer_fractal)
                 {
                     g_new.x = ((double)lnew.x) / g_fudge_factor;
                     g_new.y = ((double)lnew.y) / g_fudge_factor;
@@ -2462,7 +2462,7 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
             }
             else if (inside <= BOF60 && inside >= BOF61)
             {
-                if (integerfractal)
+                if (g_integer_fractal)
                 {
                     if (lmagnitud == 0 || !no_mag_calc)
                     {
@@ -2495,7 +2495,7 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
             }
             if (outside == TDIS)
             {
-                if (integerfractal)
+                if (g_integer_fractal)
                 {
                     g_new.x = ((double)lnew.x) / g_fudge_factor;
                     g_new.y = ((double)lnew.y) / g_fudge_factor;
@@ -2507,7 +2507,7 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
             else if (outside == FMOD)
             {
                 double mag;
-                if (integerfractal)
+                if (g_integer_fractal)
                 {
                     g_new.x = ((double)lnew.x) / g_fudge_factor;
                     g_new.y = ((double)lnew.y) / g_fudge_factor;
@@ -2523,7 +2523,7 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
         if (g_attractors > 0)       // finite attractor in the list
         {
             // NOTE: Integer code is UNTESTED
-            if (integerfractal)
+            if (g_integer_fractal)
             {
                 for (int i = 0; i < g_attractors; i++)
                 {
@@ -2584,7 +2584,7 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
             if ((g_color_iter & savedand) == 0)            // time to save a new value
             {
                 savedcoloriter = g_color_iter;
-                if (integerfractal)
+                if (g_integer_fractal)
                 {
                     lsaved = lnew;// integer fractals
                 }
@@ -2617,7 +2617,7 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
             }
             else                // check against an old save
             {
-                if (integerfractal)     // floating-pt periodicity chk
+                if (g_integer_fractal)     // floating-pt periodicity chk
                 {
                     if (labs(lsaved.x - lnew.x) < lclosenuff)
                     {
@@ -2716,7 +2716,7 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
 
     if (potflag)
     {
-        if (integerfractal)       // adjust integer fractals
+        if (g_integer_fractal)       // adjust integer fractals
         {
             g_new.x = ((double)lnew.x) / g_fudge_factor;
             g_new.y = ((double)lnew.y) / g_fudge_factor;
@@ -2748,7 +2748,7 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
 
     if (outside < ITER)
     {
-        if (integerfractal)
+        if (g_integer_fractal)
         {
             g_new.x = ((double)lnew.x) / g_fudge_factor;
             g_new.y = ((double)lnew.y) / g_fudge_factor;
@@ -2862,7 +2862,7 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
     }
     else if (g_biomorph != -1)
     {
-        if (integerfractal)
+        if (g_integer_fractal)
         {
             if (labs(lnew.x) < llimit2 || labs(lnew.y) < llimit2)
             {
@@ -2946,7 +2946,7 @@ plot_inside: // we're "inside"
         }
         else if (inside == ATANI)            // "atan"
         {
-            if (integerfractal)
+            if (g_integer_fractal)
             {
                 g_new.x = ((double)lnew.x) / g_fudge_factor;
                 g_new.y = ((double)lnew.y) / g_fudge_factor;
@@ -2967,7 +2967,7 @@ plot_inside: // we're "inside"
         }
         else if (inside == ZMAG)
         {
-            if (integerfractal)
+            if (g_integer_fractal)
             {
                 /*
                 g_new.x = ((double)lnew.x) / fudge;
@@ -3080,7 +3080,7 @@ static void decomposition()
     LComplex lalt;
     DComplex alt;
     g_color_iter = 0;
-    if (integerfractal) // the only case
+    if (g_integer_fractal) // the only case
     {
         if (reset_fudge != g_fudge_factor)
         {

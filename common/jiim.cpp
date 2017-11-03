@@ -639,7 +639,7 @@ void Jiim(jiim_types which)
     row = (int)(cvt.c*cr + cvt.d*ci + cvt.f + .5);
 
     // possible extraseg arrays have been trashed, so set up again
-    if (integerfractal)
+    if (g_integer_fractal)
     {
         fill_lx_array();
     }
@@ -867,7 +867,7 @@ void Jiim(jiim_types which)
 
             if (!exact)
             {
-                if (integerfractal)
+                if (g_integer_fractal)
                 {
                     cr = lxpixel();
                     ci = lypixel();
@@ -1197,7 +1197,7 @@ void Jiim(jiim_types which)
             if (iter < maxit)
             {
                 color = (int)iter%g_colors;
-                if (integerfractal)
+                if (g_integer_fractal)
                 {
                     old.x = lold.x;
                     old.x /= g_fudge_factor;

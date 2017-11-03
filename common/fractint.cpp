@@ -80,7 +80,7 @@ std::vector<double> dx0;            // floating pt equivs
 std::vector<double> dy0;
 std::vector<double> dx1;
 std::vector<double> dy1;
-int     integerfractal;         // TRUE if fractal uses integer math
+int     g_integer_fractal;         // TRUE if fractal uses integer math
 
 // usr_xxx is what the user wants, vs what we may be forced to do
 char    usr_stdcalcmode;

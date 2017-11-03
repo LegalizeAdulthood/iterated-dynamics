@@ -1034,7 +1034,7 @@ int Bifurcation()
         half_time_check = true;
     }
 
-    if (integerfractal)
+    if (g_integer_fractal)
     {
         linit.y = ymax - iystop*dely;            // Y-value of
     }
@@ -1053,7 +1053,7 @@ int Bifurcation()
             return (-1);
         }
 
-        if (integerfractal)
+        if (g_integer_fractal)
         {
             lRate = xmin + x*delx;
         }
@@ -1092,7 +1092,7 @@ static void verhulst()          // P. F. Verhulst (1845)
 {
     unsigned int pixel_row;
 
-    if (integerfractal)
+    if (g_integer_fractal)
     {
         lPopulation = (parm.y == 0) ? (long)(SEED*g_fudge_factor) : (long)(parm.y*g_fudge_factor);
     }
@@ -1149,7 +1149,7 @@ static void verhulst()          // P. F. Verhulst (1845)
         }
 
         // assign population value to Y coordinate in pixels
-        if (integerfractal)
+        if (g_integer_fractal)
         {
             pixel_row = iystop - (int)((lPopulation - linit.y) / dely); // iystop
         }
@@ -1182,7 +1182,7 @@ static void Bif_Period_Init()
 {
     Bif_savedinc = 1;
     Bif_savedand = 1;
-    if (integerfractal)
+    if (g_integer_fractal)
     {
         lBif_savedpop = -1;
         lBif_closenuf = dely / 8;
@@ -1200,7 +1200,7 @@ static bool Bif_Periodic(long time)
 {
     if ((time & Bif_savedand) == 0)      // time to save a new value
     {
-        if (integerfractal)
+        if (g_integer_fractal)
         {
             lBif_savedpop = lPopulation;
         }
@@ -1216,7 +1216,7 @@ static bool Bif_Periodic(long time)
     }
     else                         // check against an old save
     {
-        if (integerfractal)
+        if (g_integer_fractal)
         {
             if (labs(lBif_savedpop-lPopulation) <= lBif_closenuf)
             {
@@ -2369,7 +2369,7 @@ bool froth_setup()
     // make the best of the .map situation
     orbit_color = fsp.attractors != 6 && g_colors >= 16 ? (fsp.shades<<1)+1 : g_colors-1;
 
-    if (integerfractal)
+    if (g_integer_fractal)
     {
         froth_long_struct tmp_l;
 
@@ -2417,7 +2417,7 @@ int calcfroth()   // per pixel 1/2/g, called with row & col set
     {
         (*plot)(col, row, show_dot %g_colors);
     }
-    if (!integerfractal) // fp mode
+    if (!g_integer_fractal) // fp mode
     {
         if (invert)
         {
@@ -2810,7 +2810,7 @@ putting in as a stand-alone.
 
 int froth_per_pixel()
 {
-    if (!integerfractal) // fp mode
+    if (!g_integer_fractal) // fp mode
     {
         old.x = dxpixel();
         old.y = dypixel();
@@ -2829,7 +2829,7 @@ int froth_per_pixel()
 
 int froth_per_orbit()
 {
-    if (!integerfractal) // fp mode
+    if (!g_integer_fractal) // fp mode
     {
         g_new.x = tempsqrx - tempsqry - old.x - fsp.fl.f.a*old.y;
         g_new.y = 2.0*old.x*old.y - fsp.fl.f.a*old.x + old.y;
