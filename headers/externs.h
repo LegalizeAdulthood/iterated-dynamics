@@ -167,7 +167,7 @@ extern float                 g_file_aspect_ratio;
 extern int                   g_file_colors;
 extern int                   g_file_x_dots;
 extern int                   g_file_y_dots;
-extern std::string           file_name_stack[16];
+extern std::string           g_file_name_stack[16];
 extern int                   fillcolor;
 extern float                 finalaspectratio;
 extern bool                  finattract;

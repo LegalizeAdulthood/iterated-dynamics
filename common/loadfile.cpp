@@ -2156,9 +2156,9 @@ void check_history(char const *oldname, char const *newname)
     //  file_name_stack[].
     for (int i = 0; i < name_stack_ptr; i++)
     {
-        if (stricmp(file_name_stack[i].c_str(), oldname) == 0)   // we have a match
+        if (stricmp(g_file_name_stack[i].c_str(), oldname) == 0)   // we have a match
         {
-            file_name_stack[i] = newname;    // insert the new name
+            g_file_name_stack[i] = newname;    // insert the new name
         }
     }
 }

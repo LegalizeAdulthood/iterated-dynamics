@@ -126,7 +126,7 @@ int max_colors;                         // maximum palette size
 bool zoomoff = false;                   // false when zoom is disabled
 int        savedac;                     // save-the-Video DAC flag
 bool g_browsing = false;                  // browse mode flag
-std::string file_name_stack[16];        // array of file names used while browsing
+std::string g_file_name_stack[16];        // array of file names used while browsing
 int name_stack_ptr ;
 double smallest_window_display_size;
 int smallest_box_size_shown;
@@ -307,7 +307,7 @@ static bool main_restore_start(bool &stacked, bool &resumeflag)
             }
 
             name_stack_ptr = 0; // 'r' reads first filename for browsing
-            file_name_stack[name_stack_ptr] = g_browse_name;
+            g_file_name_stack[name_stack_ptr] = g_browse_name;
         }
 
         g_evolving = 0;
