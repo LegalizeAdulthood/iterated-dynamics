@@ -389,9 +389,9 @@ long lsqrt(long f)
 
     if (a == 0)                                   // one-time compute consts
     {
-        a = (long)(fudge * .41731);
-        b = (long)(fudge * .59016);
-        c = (long)(fudge * .7071067811);
+        a = (long)(g_fudge_factor * .41731);
+        b = (long)(g_fudge_factor * .59016);
+        c = (long)(g_fudge_factor * .7071067811);
     }
 
     N  = 0;
@@ -435,13 +435,13 @@ LComplex ComplexSqrtLong(long x, long y)
     LComplex    result;
 
 #ifndef LONGSQRT
-    double mag = sqrt(sqrt(((double) multiply(x, x, bitshift))/fudge +
-                           ((double) multiply(y, y, bitshift))/ fudge));
-    maglong   = (long)(mag * fudge);
+    double mag = sqrt(sqrt(((double) multiply(x, x, bitshift))/g_fudge_factor +
+                           ((double) multiply(y, y, bitshift))/ g_fudge_factor));
+    maglong   = (long)(mag * g_fudge_factor);
 #else
     maglong   = lsqrt(lsqrt(multiply(x, x, bitshift)+multiply(y, y, bitshift)));
 #endif
-    theta     = atan2((double) y/fudge, (double) x/fudge)/2;
+    theta     = atan2((double) y/g_fudge_factor, (double) x/g_fudge_factor)/2;
     thetalong = (long)(theta * SinCosFudge);
     SinCos086(thetalong, &result.y, &result.x);
     result.x  = multiply(result.x << (bitshift - 16), maglong, bitshift);

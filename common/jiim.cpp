@@ -913,8 +913,8 @@ void Jiim(jiim_types which)
             SaveC.x = init.x;
             init.y = ci;
             SaveC.y = init.y;
-            linit.x = (long)(init.x*fudge);
-            linit.y = (long)(init.y*fudge);
+            linit.x = (long)(init.x*g_fudge_factor);
+            linit.y = (long)(init.y*g_fudge_factor);
 
             old_y = -1;
             old_x = old_y;
@@ -1200,9 +1200,9 @@ void Jiim(jiim_types which)
                 if (integerfractal)
                 {
                     old.x = lold.x;
-                    old.x /= fudge;
+                    old.x /= g_fudge_factor;
                     old.y = lold.y;
-                    old.y /= fudge;
+                    old.y /= g_fudge_factor;
                 }
                 x = (int)((old.x - init.x) * xfactor * 3 * zoom + xoff);
                 y = (int)((old.y - init.y) * yfactor * 3 * zoom + yoff);

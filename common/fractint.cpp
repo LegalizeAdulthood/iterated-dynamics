@@ -61,7 +61,7 @@ long    delmin;                 // for calcfrac/calcmand
 double  ddelmin;                // same as a double
 double  param[MAXPARAMS];       // parameters
 double  potparam[3];            // three potential parameters
-long    fudge;                  // 2**fudgefactor
+long    g_fudge_factor;                  // 2**fudgefactor
 long    l_at_rad;               // finite attractor radius
 double  f_at_rad;               // finite attractor radius
 int     bitshift;               // fudgefactor

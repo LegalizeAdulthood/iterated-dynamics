@@ -845,20 +845,20 @@ int calcfract()
     rqlim2 = sqrt(rqlim);
     if (integerfractal)          // for integer routines (lambda)
     {
-        lparm.x = (long)(parm.x * fudge);    // real portion of Lambda
-        lparm.y = (long)(parm.y * fudge);    // imaginary portion of Lambda
-        lparm2.x = (long)(parm2.x * fudge);  // real portion of Lambda2
-        lparm2.y = (long)(parm2.y * fudge);  // imaginary portion of Lambda2
-        llimit = (long)(rqlim * fudge);      // stop if magnitude exceeds this
+        lparm.x = (long)(parm.x * g_fudge_factor);    // real portion of Lambda
+        lparm.y = (long)(parm.y * g_fudge_factor);    // imaginary portion of Lambda
+        lparm2.x = (long)(parm2.x * g_fudge_factor);  // real portion of Lambda2
+        lparm2.y = (long)(parm2.y * g_fudge_factor);  // imaginary portion of Lambda2
+        llimit = (long)(rqlim * g_fudge_factor);      // stop if magnitude exceeds this
         if (llimit <= 0)
         {
             llimit = 0x7fffffffL; // klooge for integer math
         }
-        llimit2 = (long)(rqlim2 * fudge);    // stop if magnitude exceeds this
-        lclosenuff = (long)(g_close_enough * fudge); // "close enough" value
+        llimit2 = (long)(rqlim2 * g_fudge_factor);    // stop if magnitude exceeds this
+        lclosenuff = (long)(g_close_enough * g_fudge_factor); // "close enough" value
         l16triglim = 8L << 16;         // domain limit of fast trig functions
-        linitorbit.x = (long)(initorbit.x * fudge);
-        linitorbit.y = (long)(initorbit.y * fudge);
+        linitorbit.x = (long)(initorbit.x * g_fudge_factor);
+        linitorbit.y = (long)(initorbit.y * g_fudge_factor);
     }
     resuming = (g_calc_status == calc_status_value::RESUMABLE);
     if (!resuming) // free resume_info memory if any is hanging around
@@ -900,7 +900,7 @@ int calcfract()
             // not a stand-alone
             // next two lines in case periodicity changed
             g_close_enough = ddelmin*pow(2.0, -(double)(abs(periodicitycheck)));
-            lclosenuff = (long)(g_close_enough * fudge); // "close enough" value
+            lclosenuff = (long)(g_close_enough * g_fudge_factor); // "close enough" value
             setsymmetry(symmetry, false);
             timer(0, calctype); // non-standard fractal engine
         }
@@ -1269,7 +1269,7 @@ static void perform_worklist()
 
         // some common initialization for escape-time pixel level routines
         g_close_enough = ddelmin*pow(2.0, -(double)(abs(periodicitycheck)));
-        lclosenuff = (long)(g_close_enough * fudge); // "close enough" value
+        lclosenuff = (long)(g_close_enough * g_fudge_factor); // "close enough" value
         keyboard_check_interval = max_keyboard_check_interval;
 
         setsymmetry(symmetry, true);
@@ -2096,7 +2096,7 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
     double totaldist = 0.0;
     DComplex lastz = { 0.0 };
 
-    lcloseprox = (long)(g_close_proximity*fudge);
+    lcloseprox = (long)(g_close_proximity*g_fudge_factor);
     savemaxit = maxit;
 #ifdef NUMSAVED
     for (int i = 0; i < NUMSAVED; i++)
@@ -2243,8 +2243,8 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
     {
         if (integerfractal)
         {
-            old.x = ((double)lold.x) / fudge;
-            old.y = ((double)lold.y) / fudge;
+            old.x = ((double)lold.x) / g_fudge_factor;
+            old.y = ((double)lold.y) / g_fudge_factor;
         }
         else if (bf_math == bf_math_type::BIGNUM)
         {
@@ -2381,9 +2381,9 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
                     if (integerfractal)
                     {
                         g_new.x = lnew.x;
-                        g_new.x /= fudge;
+                        g_new.x /= g_fudge_factor;
                         g_new.y = lnew.y;
-                        g_new.y /= fudge;
+                        g_new.y /= g_fudge_factor;
                     }
 
                     if (save_release > 1824)
@@ -2451,8 +2451,8 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
                 double mag;
                 if (integerfractal)
                 {
-                    g_new.x = ((double)lnew.x) / fudge;
-                    g_new.y = ((double)lnew.y) / fudge;
+                    g_new.x = ((double)lnew.x) / g_fudge_factor;
+                    g_new.y = ((double)lnew.y) / g_fudge_factor;
                 }
                 mag = fmodtest();
                 if (mag < g_close_proximity)
@@ -2469,7 +2469,7 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
                         lmagnitud = lsqr(lnew.x) + lsqr(lnew.y);
                     }
                     magnitude = lmagnitud;
-                    magnitude = magnitude / fudge;
+                    magnitude = magnitude / g_fudge_factor;
                 }
                 else if (magnitude == 0.0 || !no_mag_calc)
                 {
@@ -2497,8 +2497,8 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
             {
                 if (integerfractal)
                 {
-                    g_new.x = ((double)lnew.x) / fudge;
-                    g_new.y = ((double)lnew.y) / fudge;
+                    g_new.x = ((double)lnew.x) / g_fudge_factor;
+                    g_new.y = ((double)lnew.y) / g_fudge_factor;
                 }
                 totaldist += sqrt(sqr(lastz.x-g_new.x)+sqr(lastz.y-g_new.y));
                 lastz.x = g_new.x;
@@ -2509,8 +2509,8 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
                 double mag;
                 if (integerfractal)
                 {
-                    g_new.x = ((double)lnew.x) / fudge;
-                    g_new.y = ((double)lnew.y) / fudge;
+                    g_new.x = ((double)lnew.x) / g_fudge_factor;
+                    g_new.y = ((double)lnew.y) / g_fudge_factor;
                 }
                 mag = fmodtest();
                 if (mag < g_close_proximity)
@@ -2718,8 +2718,8 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
     {
         if (integerfractal)       // adjust integer fractals
         {
-            g_new.x = ((double)lnew.x) / fudge;
-            g_new.y = ((double)lnew.y) / fudge;
+            g_new.x = ((double)lnew.x) / g_fudge_factor;
+            g_new.y = ((double)lnew.y) / g_fudge_factor;
         }
         else if (bf_math == bf_math_type::BIGNUM)
         {
@@ -2750,8 +2750,8 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
     {
         if (integerfractal)
         {
-            g_new.x = ((double)lnew.x) / fudge;
-            g_new.y = ((double)lnew.y) / fudge;
+            g_new.x = ((double)lnew.x) / g_fudge_factor;
+            g_new.y = ((double)lnew.y) / g_fudge_factor;
         }
         else if (bf_math ==  bf_math_type::BIGNUM)
         {
@@ -2948,8 +2948,8 @@ plot_inside: // we're "inside"
         {
             if (integerfractal)
             {
-                g_new.x = ((double)lnew.x) / fudge;
-                g_new.y = ((double)lnew.y) / fudge;
+                g_new.x = ((double)lnew.x) / g_fudge_factor;
+                g_new.y = ((double)lnew.y) / g_fudge_factor;
                 g_color_iter = (long)fabs(atan2(g_new.y, g_new.x)*atan_colors/PI);
             }
             else
@@ -2974,7 +2974,7 @@ plot_inside: // we're "inside"
                 g_new.y = ((double)lnew.y) / fudge;
                 g_color_iter = (long)((((double)lsqr(lnew.x))/fudge + ((double)lsqr(lnew.y))/fudge) * (maxit>>1) + 1);
                 */
-                g_color_iter = (long)(((double)lmagnitud/fudge) * (maxit >> 1) + 1);
+                g_color_iter = (long)(((double)lmagnitud/g_fudge_factor) * (maxit >> 1) + 1);
             }
             else
             {
@@ -3082,22 +3082,22 @@ static void decomposition()
     g_color_iter = 0;
     if (integerfractal) // the only case
     {
-        if (reset_fudge != fudge)
+        if (reset_fudge != g_fudge_factor)
         {
-            reset_fudge = fudge;
+            reset_fudge = g_fudge_factor;
             // lcos45     = (long)(cos45 * fudge);
-            lsin45     = (long)(sin45 * fudge);
-            lcos22_5   = (long)(cos22_5 * fudge);
-            lsin22_5   = (long)(sin22_5 * fudge);
-            lcos11_25  = (long)(cos11_25 * fudge);
-            lsin11_25  = (long)(sin11_25 * fudge);
-            lcos5_625  = (long)(cos5_625 * fudge);
-            lsin5_625  = (long)(sin5_625 * fudge);
-            ltan22_5   = (long)(tan22_5 * fudge);
-            ltan11_25  = (long)(tan11_25 * fudge);
-            ltan5_625  = (long)(tan5_625 * fudge);
-            ltan2_8125 = (long)(tan2_8125 * fudge);
-            ltan1_4063 = (long)(tan1_4063 * fudge);
+            lsin45     = (long)(sin45 * g_fudge_factor);
+            lcos22_5   = (long)(cos22_5 * g_fudge_factor);
+            lsin22_5   = (long)(sin22_5 * g_fudge_factor);
+            lcos11_25  = (long)(cos11_25 * g_fudge_factor);
+            lsin11_25  = (long)(sin11_25 * g_fudge_factor);
+            lcos5_625  = (long)(cos5_625 * g_fudge_factor);
+            lsin5_625  = (long)(sin5_625 * g_fudge_factor);
+            ltan22_5   = (long)(tan22_5 * g_fudge_factor);
+            ltan11_25  = (long)(tan11_25 * g_fudge_factor);
+            ltan5_625  = (long)(tan5_625 * g_fudge_factor);
+            ltan2_8125 = (long)(tan2_8125 * g_fudge_factor);
+            ltan1_4063 = (long)(tan1_4063 * g_fudge_factor);
         }
         if (lnew.y < 0)
         {

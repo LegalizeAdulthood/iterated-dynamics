@@ -290,9 +290,9 @@ int  fpMANRbailout()
     {\
         double tmp;\
         tmp = (X);\
-        tmp /= fudge;\
+        tmp /= g_fudge_factor;\
         tmp = fmod(tmp, twopi);\
-        tmp *= fudge;\
+        tmp *= g_fudge_factor;\
         (X) = (long)tmp;\
     }\
  
@@ -432,7 +432,7 @@ int complex_mult(DComplex arg1, DComplex arg2, DComplex *pz);
 
 // Distance of complex z from unit circle
 #define DIST1(z) (((z).x-1.0)*((z).x-1.0)+((z).y)*((z).y))
-#define LDIST1(z) (lsqr((((z).x)-fudge)) + lsqr(((z).y)))
+#define LDIST1(z) (lsqr((((z).x)-g_fudge_factor)) + lsqr(((z).y)))
 
 int NewtonFractal2()
 {
@@ -1057,15 +1057,15 @@ longCmplxZpowerFractal()
 #if !defined(XFRACT)
     DComplex x, y;
 
-    x.x = (double)lold.x / fudge;
-    x.y = (double)lold.y / fudge;
-    y.x = (double)lparm2.x / fudge;
-    y.y = (double)lparm2.y / fudge;
+    x.x = (double)lold.x / g_fudge_factor;
+    x.y = (double)lold.y / g_fudge_factor;
+    y.x = (double)lparm2.x / g_fudge_factor;
+    y.y = (double)lparm2.y / g_fudge_factor;
     x = ComplexPower(x, y);
     if (fabs(x.x) < g_fudge_limit && fabs(x.y) < g_fudge_limit)
     {
-        lnew.x = (long)(x.x * fudge);
-        lnew.y = (long)(x.y * fudge);
+        lnew.x = (long)(x.x * g_fudge_factor);
+        lnew.y = (long)(x.y * g_fudge_factor);
     }
     else
     {
@@ -1112,12 +1112,12 @@ Barnsley3Fractal()
     // orbit calculation
     if (lold.x > 0)
     {
-        lnew.x = oldxinitx   - oldyinity - fudge;
+        lnew.x = oldxinitx   - oldyinity - g_fudge_factor;
         lnew.y = oldxinity << 1;
     }
     else
     {
-        lnew.x = oldxinitx - oldyinity - fudge
+        lnew.x = oldxinitx - oldyinity - g_fudge_factor
                  + multiply(longparm->x, lold.x, bitshift);
         lnew.y = oldxinity <<1;
 
@@ -1407,12 +1407,12 @@ PopcornFractalFn()
     return 0;
 }
 
-#define FIX_OVERFLOW(arg)   \
-    if (overflow)           \
-    {                       \
-        (arg).x = fudge;    \
-        (arg).y = 0;        \
-        overflow = false;   \
+#define FIX_OVERFLOW(arg)           \
+    if (overflow)                   \
+    {                               \
+        (arg).x = g_fudge_factor;   \
+        (arg).y = 0;                \
+        overflow = false;           \
    }
 
 int
@@ -2122,22 +2122,22 @@ static int TryFloatFractal(int (*fpFractal)())
     overflow = false;
     // lold had better not be changed!
     old.x = lold.x;
-    old.x /= fudge;
+    old.x /= g_fudge_factor;
     old.y = lold.y;
-    old.y /= fudge;
+    old.y /= g_fudge_factor;
     tempsqrx = sqr(old.x);
     tempsqry = sqr(old.y);
     fpFractal();
     if (save_release < 1900)
     {
         // for backwards compatibility
-        lnew.x = (long)(g_new.x/fudge); // this error has been here a long time
-        lnew.y = (long)(g_new.y/fudge);
+        lnew.x = (long)(g_new.x/g_fudge_factor); // this error has been here a long time
+        lnew.y = (long)(g_new.y/g_fudge_factor);
     }
     else
     {
-        lnew.x = (long)(g_new.x*fudge);
-        lnew.y = (long)(g_new.y*fudge);
+        lnew.x = (long)(g_new.x*g_fudge_factor);
+        lnew.y = (long)(g_new.y*g_fudge_factor);
     }
     return 0;
 }
@@ -2600,8 +2600,8 @@ int long_julia_per_pixel()
         }
 
         // convert to fudged longs
-        lold.x = (long)(old.x*fudge);
-        lold.y = (long)(old.y*fudge);
+        lold.x = (long)(old.x*g_fudge_factor);
+        lold.y = (long)(old.y*g_fudge_factor);
     }
     else
     {
@@ -2651,8 +2651,8 @@ int long_mandel_per_pixel()
         }
 
         // convert to fudged longs
-        linit.x = (long)(init.x*fudge);
-        linit.y = (long)(init.y*fudge);
+        linit.x = (long)(init.x*g_fudge_factor);
+        linit.y = (long)(init.y*g_fudge_factor);
     }
 
     if (useinitorbit == 1)
@@ -2700,8 +2700,8 @@ int julia_per_pixel()
         }
 
         // convert to fudged longs
-        lold.x = (long)(old.x*fudge);
-        lold.y = (long)(old.y*fudge);
+        lold.x = (long)(old.x*g_fudge_factor);
+        lold.y = (long)(old.y*g_fudge_factor);
     }
     else
     {
@@ -2721,7 +2721,7 @@ marks_mandelpwr_per_pixel()
 #if !defined(XFRACT)
     mandel_per_pixel();
     ltmp = lold;
-    ltmp.x -= fudge;
+    ltmp.x -= g_fudge_factor;
     LCMPLXpwr(lold, ltmp, ltmp);
     return 1;
 #else
@@ -2756,8 +2756,8 @@ int mandel_per_pixel()
         }
 
         // convert to fudged longs
-        linit.x = (long)(init.x*fudge);
-        linit.y = (long)(init.y*fudge);
+        linit.x = (long)(init.x*g_fudge_factor);
+        linit.y = (long)(init.y*g_fudge_factor);
     }
     else
     {
@@ -2823,8 +2823,8 @@ int marksmandel_per_pixel()
         }
 
         // convert to fudged longs
-        linit.x = (long)(init.x*fudge);
-        linit.y = (long)(init.y*fudge);
+        linit.x = (long)(init.x*g_fudge_factor);
+        linit.y = (long)(init.y*g_fudge_factor);
     }
     else
     {
@@ -3207,8 +3207,8 @@ int long_phoenix_per_pixel()
         }
 
         // convert to fudged longs
-        lold.x = (long)(old.x*fudge);
-        lold.y = (long)(old.y*fudge);
+        lold.x = (long)(old.x*g_fudge_factor);
+        lold.y = (long)(old.y*g_fudge_factor);
     }
     else
     {
@@ -3264,8 +3264,8 @@ int long_mandphoenix_per_pixel()
         }
 
         // convert to fudged longs
-        linit.x = (long)(init.x*fudge);
-        linit.y = (long)(init.y*fudge);
+        linit.x = (long)(init.x*g_fudge_factor);
+        linit.y = (long)(init.y*g_fudge_factor);
     }
 
     if (useinitorbit == 1)

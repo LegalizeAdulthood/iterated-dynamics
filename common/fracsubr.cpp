@@ -438,9 +438,9 @@ init_restart:
         }
     }
 
-    fudge = 1L << bitshift;
+    g_fudge_factor = 1L << bitshift;
 
-    l_at_rad = fudge/32768L;
+    l_at_rad = g_fudge_factor/32768L;
     f_at_rad = 1.0/32768L;
 
     // now setup arrays of real coordinates corresponding to each pixel
@@ -656,7 +656,7 @@ expand_retry:
 
 static long fudgetolong(double d)
 {
-    if ((d *= fudge) > 0)
+    if ((d *= g_fudge_factor) > 0)
     {
         d += 0.5;
     }
@@ -671,7 +671,7 @@ static double fudgetodouble(long l)
 {
     char buf[30];
     double d;
-    sprintf(buf, "%.9g", (double)l / fudge);
+    sprintf(buf, "%.9g", (double)l / g_fudge_factor);
 #ifndef XFRACT
     sscanf(buf, "%lg", &d);
 #else
@@ -1719,7 +1719,7 @@ static void plotdorbit(double dx, double dy, int color)
 
 void iplot_orbit(long ix, long iy, int color)
 {
-    plotdorbit((double)ix/fudge-xxmin, (double)iy/fudge-yymax, color);
+    plotdorbit((double)ix/g_fudge_factor-xxmin, (double)iy/g_fudge_factor-yymax, color);
 }
 
 void plot_orbit(double real, double imag, int color)

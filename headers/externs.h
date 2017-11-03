@@ -186,7 +186,7 @@ extern std::string           g_formula_filename;
 extern std::string           g_formula_name;
 extern char const *          g_fractal_search_dir1;
 extern char const *          g_fractal_search_dir2;
-extern long                  fudge;
+extern long                  g_fudge_factor;
 extern bool                  g_new_bifurcation_functions_loaded;
 extern double                f_at_rad;
 extern double                f_radius;

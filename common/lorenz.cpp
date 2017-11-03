@@ -243,12 +243,12 @@ static bool l_setup_convert_to_screen(l_affine *l_cvt)
     {
         return true;
     }
-    l_cvt->a = (long)(cvt.a*fudge);
-    l_cvt->b = (long)(cvt.b*fudge);
-    l_cvt->c = (long)(cvt.c*fudge);
-    l_cvt->d = (long)(cvt.d*fudge);
-    l_cvt->e = (long)(cvt.e*fudge);
-    l_cvt->f = (long)(cvt.f*fudge);
+    l_cvt->a = (long)(cvt.a*g_fudge_factor);
+    l_cvt->b = (long)(cvt.b*g_fudge_factor);
+    l_cvt->c = (long)(cvt.c*g_fudge_factor);
+    l_cvt->d = (long)(cvt.d*g_fudge_factor);
+    l_cvt->e = (long)(cvt.e*g_fudge_factor);
+    l_cvt->f = (long)(cvt.f*g_fudge_factor);
 
     return false;
 }
@@ -281,16 +281,16 @@ bool orbit3dlongsetup()
         projection = 1;
     }
 
-    initorbitlong[0] = fudge;  // initial conditions
-    initorbitlong[1] = fudge;
-    initorbitlong[2] = fudge;
+    initorbitlong[0] = g_fudge_factor;  // initial conditions
+    initorbitlong[1] = g_fudge_factor;
+    initorbitlong[2] = g_fudge_factor;
 
     if (fractype == fractal_type::LHENON)
     {
-        l_a = (long)(param[0]*fudge);
-        l_b = (long)(param[1]*fudge);
-        l_c = (long)(param[2]*fudge);
-        l_d = (long)(param[3]*fudge);
+        l_a = (long)(param[0]*g_fudge_factor);
+        l_b = (long)(param[1]*g_fudge_factor);
+        l_c = (long)(param[2]*g_fudge_factor);
+        l_d = (long)(param[3]*g_fudge_factor);
     }
     else if (fractype == fractal_type::KAM || fractype == fractal_type::KAM3D)
     {
@@ -300,13 +300,13 @@ bool orbit3dlongsetup()
         {
             param[1] = .01;
         }
-        l_b = (long)(param[1]*fudge);     // stepsize
-        l_c = (long)(param[2]*fudge);     // stop
+        l_b = (long)(param[1]*g_fudge_factor);     // stepsize
+        l_c = (long)(param[2]*g_fudge_factor);     // stop
         l_d = (long) param[3];
         t = (int) l_d;      // points per orbit
 
-        l_sinx = (long)(sin(a)*fudge);
-        l_cosx = (long)(cos(a)*fudge);
+        l_sinx = (long)(sin(a)*g_fudge_factor);
+        l_cosx = (long)(cos(a)*g_fudge_factor);
         l_orbit = 0;
         initorbitlong[2] = 0;
         initorbitlong[1] = initorbitlong[2];
@@ -316,8 +316,8 @@ bool orbit3dlongsetup()
     {
         LComplex Sqrt;
 
-        CxLong = (long)(param[0] * fudge);
-        CyLong = (long)(param[1] * fudge);
+        CxLong = (long)(param[0] * g_fudge_factor);
+        CyLong = (long)(param[1] * g_fudge_factor);
 
         mxhits    = (int) param[2];
         run_length = (int) param[3];
@@ -341,7 +341,7 @@ bool orbit3dlongsetup()
         lcvt.e = (long)(cvt.e * (1L << 21));
         lcvt.f = (long)(cvt.f * (1L << 21));
 
-        Sqrt = ComplexSqrtLong(fudge - 4 * CxLong, -4 * CyLong);
+        Sqrt = ComplexSqrtLong(g_fudge_factor - 4 * CxLong, -4 * CyLong);
 
         switch (major_method)
         {
@@ -353,8 +353,8 @@ bool orbit3dlongsetup()
                 major_method = Major::random_walk;
                 goto lrwalk;
             }
-            EnQueueLong((fudge + Sqrt.x) / 2,  Sqrt.y / 2);
-            EnQueueLong((fudge - Sqrt.x) / 2, -Sqrt.y / 2);
+            EnQueueLong((g_fudge_factor + Sqrt.x) / 2,  Sqrt.y / 2);
+            EnQueueLong((g_fudge_factor - Sqrt.x) / 2, -Sqrt.y / 2);
             break;
 
         case Major::depth_first:
@@ -368,24 +368,24 @@ bool orbit3dlongsetup()
             switch (minor_method)
             {
             case Minor::left_first:
-                PushLong((fudge + Sqrt.x) / 2,  Sqrt.y / 2);
-                PushLong((fudge - Sqrt.x) / 2, -Sqrt.y / 2);
+                PushLong((g_fudge_factor + Sqrt.x) / 2,  Sqrt.y / 2);
+                PushLong((g_fudge_factor - Sqrt.x) / 2, -Sqrt.y / 2);
                 break;
             case Minor::right_first:
-                PushLong((fudge - Sqrt.x) / 2, -Sqrt.y / 2);
-                PushLong((fudge + Sqrt.x) / 2,  Sqrt.y / 2);
+                PushLong((g_fudge_factor - Sqrt.x) / 2, -Sqrt.y / 2);
+                PushLong((g_fudge_factor + Sqrt.x) / 2,  Sqrt.y / 2);
                 break;
             }
             break;
         case Major::random_walk:
 lrwalk:
-            initorbitlong[0] = fudge + Sqrt.x / 2;
+            initorbitlong[0] = g_fudge_factor + Sqrt.x / 2;
             lnew.x = initorbitlong[0];
             initorbitlong[1] =         Sqrt.y / 2;
             lnew.y = initorbitlong[1];
             break;
         case Major::random_run:
-            initorbitlong[0] = fudge + Sqrt.x / 2;
+            initorbitlong[0] = g_fudge_factor + Sqrt.x / 2;
             lnew.x = initorbitlong[0];
             initorbitlong[1] =         Sqrt.y / 2;
             lnew.y = initorbitlong[1];
@@ -394,10 +394,10 @@ lrwalk:
     }
     else
     {
-        l_dt = (long)(param[0]*fudge);
-        l_a = (long)(param[1]*fudge);
-        l_b = (long)(param[2]*fudge);
-        l_c = (long)(param[3]*fudge);
+        l_dt = (long)(param[0]*g_fudge_factor);
+        l_a = (long)(param[1]*g_fudge_factor);
+        l_b = (long)(param[2]*g_fudge_factor);
+        l_c = (long)(param[3]*g_fudge_factor);
     }
 
     // precalculations for speed
@@ -1031,7 +1031,7 @@ int henonlongorbit(long *l_x, long *l_y, long * /*l_z*/)
     long newx, newy;
     newx = multiply(*l_x, *l_x, bitshift);
     newx = multiply(newx, l_a, bitshift);
-    newx  = fudge + *l_y - newx;
+    newx  = g_fudge_factor + *l_y - newx;
     newy  = multiply(l_b, *l_x, bitshift);
     *l_x = newx;
     *l_y = newy;
@@ -1635,7 +1635,7 @@ int orbit2dlong()
             {
                 double yy;
                 yy = *soundvar;
-                yy = yy/fudge;
+                yy = yy/g_fudge_factor;
                 w_snd((int)(yy*100+g_base_hertz));
             }
             if (oldcol != -1 && connect)
@@ -1667,7 +1667,7 @@ int orbit2dlong()
         }
         if (fp)
         {
-            fprintf(fp, "%g %g %g 15\n", (double)*p0/fudge, (double)*p1/fudge, 0.0);
+            fprintf(fp, "%g %g %g 15\n", (double)*p0/g_fudge_factor, (double)*p1/g_fudge_factor, 0.0);
         }
     }
     if (fp)
@@ -1744,7 +1744,7 @@ static int orbit3dlongcalc()
         LORBIT(&inf.orbit[0], &inf.orbit[1], &inf.orbit[2]);
         if (fp)
         {
-            fprintf(fp, "%g %g %g 15\n", (double)inf.orbit[0]/fudge, (double)inf.orbit[1]/fudge, (double)inf.orbit[2]/fudge);
+            fprintf(fp, "%g %g %g 15\n", (double)inf.orbit[0]/g_fudge_factor, (double)inf.orbit[1]/g_fudge_factor, (double)inf.orbit[2]/g_fudge_factor);
         }
         if (long3dviewtransf(&inf))
         {
@@ -1759,7 +1759,7 @@ static int orbit3dlongcalc()
                 {
                     double yy;
                     yy = inf.viewvect[((soundflag & SOUNDFLAG_ORBITMASK) - SOUNDFLAG_X)];
-                    yy = yy/fudge;
+                    yy = yy/g_fudge_factor;
                     w_snd((int)(yy*100+g_base_hertz));
                 }
                 if (oldcol != -1 && connect)
@@ -2587,11 +2587,11 @@ static int ifs2d()
     {
         for (int j = 0; j < NUM_IFS_PARAMS; j++)
         {
-            localifs[i*NUM_IFS_PARAMS+j] = (long)(ifs_defn[i*NUM_IFS_PARAMS+j] * fudge);
+            localifs[i*NUM_IFS_PARAMS+j] = (long)(ifs_defn[i*NUM_IFS_PARAMS+j] * g_fudge_factor);
         }
     }
 
-    tempr = fudge / 32767;        // find the proper rand() fudge
+    tempr = g_fudge_factor / 32767;        // find the proper rand() fudge
 
     fp = open_orbitsave();
 
@@ -2634,7 +2634,7 @@ static int ifs2d()
         y = newy;
         if (fp)
         {
-            fprintf(fp, "%g %g %g 15\n", (double)newx/fudge, (double)newy/fudge, 0.0);
+            fprintf(fp, "%g %g %g 15\n", (double)newx/g_fudge_factor, (double)newy/g_fudge_factor, 0.0);
         }
 
         // plot if inside window
@@ -2698,11 +2698,11 @@ static int ifs3dlong()
     {
         for (int j = 0; j < NUM_IFS_3D_PARAMS; j++)
         {
-            localifs[i*NUM_IFS_3D_PARAMS+j] = (long)(ifs_defn[i*NUM_IFS_3D_PARAMS+j] * fudge);
+            localifs[i*NUM_IFS_3D_PARAMS+j] = (long)(ifs_defn[i*NUM_IFS_3D_PARAMS+j] * g_fudge_factor);
         }
     }
 
-    tempr = fudge / 32767;        // find the proper rand() fudge
+    tempr = g_fudge_factor / 32767;        // find the proper rand() fudge
 
     inf.orbit[0] = 0;
     inf.orbit[1] = 0;
@@ -2761,7 +2761,7 @@ static int ifs3dlong()
         inf.orbit[2] = newz;
         if (fp)
         {
-            fprintf(fp, "%g %g %g 15\n", (double)newx/fudge, (double)newy/fudge, (double)newz/fudge);
+            fprintf(fp, "%g %g %g 15\n", (double)newx/g_fudge_factor, (double)newy/g_fudge_factor, (double)newz/g_fudge_factor);
         }
 
         if (long3dviewtransf(&inf))
@@ -2881,10 +2881,10 @@ static bool long3dviewtransf(long3dvtinf *inf)
         {
             for (int j = 0; j < 4; j++)
             {
-                inf->longmat[i][j] = (long)(inf->doublemat[i][j] * fudge);
+                inf->longmat[i][j] = (long)(inf->doublemat[i][j] * g_fudge_factor);
                 if (realtime)
                 {
-                    inf->longmat1[i][j] = (long)(inf->doublemat1[i][j] * fudge);
+                    inf->longmat1[i][j] = (long)(inf->doublemat1[i][j] * g_fudge_factor);
                 }
             }
         }
@@ -2923,29 +2923,29 @@ static bool long3dviewtransf(long3dvtinf *inf)
             inf->iview[2] = (long)((inf->minvals[2]-inf->maxvals[2])*(double)ZVIEWER/100.0);
 
             // center image on origin
-            double tmpx = (-inf->minvals[0]-inf->maxvals[0])/(2.0*fudge); // center x
-            double tmpy = (-inf->minvals[1]-inf->maxvals[1])/(2.0*fudge); // center y
+            double tmpx = (-inf->minvals[0]-inf->maxvals[0])/(2.0*g_fudge_factor); // center x
+            double tmpy = (-inf->minvals[1]-inf->maxvals[1])/(2.0*g_fudge_factor); // center y
 
             // apply perspective shift
             tmpx += ((double)xshift*(xxmax-xxmin))/(xdots);
             tmpy += ((double)yshift*(yymax-yymin))/(ydots);
-            double tmpz = -((double)inf->maxvals[2]) / fudge;
+            double tmpz = -((double)inf->maxvals[2]) / g_fudge_factor;
             trans(tmpx, tmpy, tmpz, inf->doublemat);
 
             if (realtime)
             {
                 // center image on origin
-                tmpx = (-inf->minvals[0]-inf->maxvals[0])/(2.0*fudge); // center x
-                tmpy = (-inf->minvals[1]-inf->maxvals[1])/(2.0*fudge); // center y
+                tmpx = (-inf->minvals[0]-inf->maxvals[0])/(2.0*g_fudge_factor); // center x
+                tmpy = (-inf->minvals[1]-inf->maxvals[1])/(2.0*g_fudge_factor); // center y
 
                 tmpx += ((double)xshift1*(xxmax-xxmin))/(xdots);
                 tmpy += ((double)yshift1*(yymax-yymin))/(ydots);
-                tmpz = -((double)inf->maxvals[2]) / fudge;
+                tmpz = -((double)inf->maxvals[2]) / g_fudge_factor;
                 trans(tmpx, tmpy, tmpz, inf->doublemat1);
             }
             for (int i = 0; i < 3; i++)
             {
-                view[i] = (double)inf->iview[i] / fudge;
+                view[i] = (double)inf->iview[i] / g_fudge_factor;
             }
 
             // copy xform matrix to long for for fixed point math
@@ -2953,10 +2953,10 @@ static bool long3dviewtransf(long3dvtinf *inf)
             {
                 for (int j = 0; j < 4; j++)
                 {
-                    inf->longmat[i][j] = (long)(inf->doublemat[i][j] * fudge);
+                    inf->longmat[i][j] = (long)(inf->doublemat[i][j] * g_fudge_factor);
                     if (realtime)
                     {
-                        inf->longmat1[i][j] = (long)(inf->doublemat1[i][j] * fudge);
+                        inf->longmat1[i][j] = (long)(inf->doublemat1[i][j] * g_fudge_factor);
                     }
                 }
             }
@@ -2973,23 +2973,23 @@ static bool long3dviewtransf(long3dvtinf *inf)
             VECTOR tmpv;
             for (int i = 0; i < 3; i++)
             {
-                tmpv[i] = (double)inf->viewvect[i] / fudge;
+                tmpv[i] = (double)inf->viewvect[i] / g_fudge_factor;
             }
             perspective(tmpv);
             for (int i = 0; i < 3; i++)
             {
-                inf->viewvect[i] = (long)(tmpv[i]*fudge);
+                inf->viewvect[i] = (long)(tmpv[i]*g_fudge_factor);
             }
             if (realtime)
             {
                 for (int i = 0; i < 3; i++)
                 {
-                    tmpv[i] = (double)inf->viewvect1[i] / fudge;
+                    tmpv[i] = (double)inf->viewvect1[i] / g_fudge_factor;
                 }
                 perspective(tmpv);
                 for (int i = 0; i < 3; i++)
                 {
-                    inf->viewvect1[i] = (long)(tmpv[i]*fudge);
+                    inf->viewvect1[i] = (long)(tmpv[i]*g_fudge_factor);
                 }
             }
         }
