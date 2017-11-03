@@ -86,7 +86,7 @@ int     soundflag = 0;          // sound control bitfield... see sound.c for use
 int     g_base_hertz = 0;          // sound=x/y/x hertz value
 int     debugflag = debug_flags::none; // internal use only - you didn't see this
 bool    timerflag = false;      // you didn't see this, either
-int     cyclelimit = 0;         // color-rotator upper limit
+int     g_cycle_limit = 0;         // color-rotator upper limit
 int     inside = 0;             // inside color: 1=blue
 int     fillcolor = 0;          // fillcolor: -1=normal
 int     outside = COLOR_BLACK;  // outside color

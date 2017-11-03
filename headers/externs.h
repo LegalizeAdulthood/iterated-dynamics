@@ -102,7 +102,7 @@ extern double                cosx;
 extern int                   g_current_column;
 extern int                   g_current_pass;
 extern int                   g_current_row;
-extern int                   cyclelimit;
+extern int                   g_cycle_limit;
 extern int                   c_exp;
 extern double                d1overd;
 extern BYTE                  g_dac_box[256][3];

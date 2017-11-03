@@ -506,7 +506,7 @@ done:
 
         if (fractype == fractal_type::PLASMA)
         {
-            cyclelimit = 256;              // plasma clouds need quick spins
+            g_cycle_limit = 256;              // plasma clouds need quick spins
             g_dac_count = 256;
             g_dac_learn = true;
         }
