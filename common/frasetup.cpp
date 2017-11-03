@@ -191,8 +191,8 @@ bool
 UnitySetup()
 {
     periodicitycheck = 0;
-    FgOne = (1L << bitshift);
-    FgTwo = FgOne + FgOne;
+    g_fudge_one = (1L << bitshift);
+    FgTwo = g_fudge_one + g_fudge_one;
     return true;
 }
 

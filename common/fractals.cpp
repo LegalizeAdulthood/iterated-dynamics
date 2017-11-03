@@ -947,14 +947,14 @@ MarksLambdafpFractal()
 }
 
 
-long XXOne, FgOne, FgTwo;
+long XXOne, g_fudge_one, FgTwo;
 
 int
 UnityFractal()
 {
 #if !defined(XFRACT)
     XXOne = multiply(lold.x, lold.x, bitshift) + multiply(lold.y, lold.y, bitshift);
-    if ((XXOne > FgTwo) || (labs(XXOne - FgOne) < delmin))
+    if ((XXOne > FgTwo) || (labs(XXOne - g_fudge_one) < delmin))
     {
         return 1;
     }
