@@ -3436,7 +3436,7 @@ static bool check_mapfile()
 {
     bool askflag = false;
     int i, old_help_mode;
-    if (g_dont_read_color)
+    if (!g_read_color)
     {
         return false;
     }
