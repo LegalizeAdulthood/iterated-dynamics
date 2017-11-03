@@ -1322,7 +1322,7 @@ static void clipcolor(int x, int y, int color)
 {
     if (0 <= x && x < xdots &&
             0 <= y && y < ydots &&
-            0 <= color && color < filecolors)
+            0 <= color && color < g_file_colors)
     {
         standardplot(x, y, color);
 
@@ -2472,7 +2472,7 @@ static int first_time(int linelen, VECTOR v)
 
     rand_factor = 14 - RANDOMIZE;
 
-    zcoord = filecolors;
+    zcoord = g_file_colors;
 
     err = line3dmem();
     if (err != 0)

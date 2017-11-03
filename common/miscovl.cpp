@@ -338,7 +338,7 @@ prompt_user:
 skip_UI:
         if (make_parameter_file)
         {
-            if (filecolors > 0)
+            if (g_file_colors > 0)
             {
                 strcpy(colorspec, "y");
             }
@@ -352,7 +352,7 @@ skip_UI:
             }
             else
             {
-                maxcolor = filecolors;
+                maxcolor = g_file_colors;
             }
         }
         strcpy(outname, g_command_file.c_str());

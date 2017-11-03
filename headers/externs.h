@@ -164,7 +164,7 @@ extern int                   g_evolve_image_grid_size;
 extern double                g_evolve_max_random_mutation;
 extern double                g_evolve_mutation_reduction_factor;
 extern float                 g_file_aspect_ratio;
-extern int                   filecolors;
+extern int                   g_file_colors;
 extern int                   filexdots;
 extern int                   fileydots;
 extern std::string           file_name_stack[16];

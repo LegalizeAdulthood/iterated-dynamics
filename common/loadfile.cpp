@@ -38,7 +38,7 @@ static bool fix_period_bof();
 
 bool loaded3d = false;
 static FILE *fp;
-int fileydots, filexdots, filecolors;
+int fileydots, filexdots, g_file_colors;
 float g_file_aspect_ratio;
 short skipxdots, skipydots;      // for decoder, when reducing image
 bool g_bad_outside = false;
@@ -670,7 +670,7 @@ static int find_fractal_info(char const *gif_file, FRACTAL_INFO *info,
 
     GET16(gifstart[6], filexdots);
     GET16(gifstart[8], fileydots);
-    filecolors = 2 << (gifstart[10] & 7);
+    g_file_colors = 2 << (gifstart[10] & 7);
     g_file_aspect_ratio = 0; // unknown
     if (gifstart[12])
     {
@@ -690,7 +690,7 @@ static int find_fractal_info(char const *gif_file, FRACTAL_INFO *info,
 
     if (make_parameter_file && (gifstart[10] & 0x80) != 0)
     {
-        for (int i = 0; i < filecolors; i++)
+        for (int i = 0; i < g_file_colors; i++)
         {
             int k = 0;
             for (int j = 0; j < 3; j++)
@@ -965,7 +965,7 @@ static int find_fractal_info(char const *gif_file, FRACTAL_INFO *info,
     info->dotmode = 0;
     info->xdots = (short)filexdots;
     info->ydots = (short)fileydots;
-    info->colors = (short)filecolors;
+    info->colors = (short)g_file_colors;
     info->version = 0; // this forces lots more init at calling end too
 
     // zero means we won

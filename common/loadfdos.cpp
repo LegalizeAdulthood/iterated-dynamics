@@ -185,7 +185,7 @@ int get_video_mode(FRACTAL_INFO *info, ext_blk_3 *blk_3_info)
     {
         VIDEOINFO *vident = &g_video_table[i];
         if (info->xdots == vident->xdots && info->ydots == vident->ydots
-                && filecolors == vident->colors)
+                && g_file_colors == vident->colors)
         {
             g_init_mode = i;
             break;
@@ -204,7 +204,7 @@ int get_video_mode(FRACTAL_INFO *info, ext_blk_3 *blk_3_info)
         {
             VIDEOINFO *vident = &g_video_table[i];
             if (info->xdots == vident->xdots && info->ydots == vident->ydots
-                    && filecolors == vident->colors)
+                    && g_file_colors == vident->colors)
             {
                 g_init_mode = i;
                 break;
@@ -238,11 +238,11 @@ int get_video_mode(FRACTAL_INFO *info, ext_blk_3 *blk_3_info)
         {
             tmpflags |= VI_VBIG;
         }
-        if (filecolors > g_video_entry.colors)
+        if (g_file_colors > g_video_entry.colors)
         {
             tmpflags |= VI_CSMALL;
         }
-        if (filecolors < g_video_entry.colors)
+        if (g_file_colors < g_video_entry.colors)
         {
             tmpflags |= VI_CBIG;
         }
@@ -282,7 +282,7 @@ int get_video_mode(FRACTAL_INFO *info, ext_blk_3 *blk_3_info)
         // format heading
         char heading[256];  // big enough for more than a few lines
         sprintf(heading, "File: %-44s  %d x %d x %d\n%-52s",
-                readname.c_str(), filexdots, fileydots, filecolors,
+                readname.c_str(), filexdots, fileydots, g_file_colors,
                 heading_detail(info, blk_3_info).c_str());
         if (info->info_id[0] != 'G')
         {
