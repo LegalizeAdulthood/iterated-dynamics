@@ -38,7 +38,7 @@ static bool fix_period_bof();
 
 bool loaded3d = false;
 static FILE *fp;
-int fileydots, filexdots, g_file_colors;
+int fileydots, g_file_x_dots, g_file_colors;
 float g_file_aspect_ratio;
 short skipxdots, skipydots;      // for decoder, when reducing image
 bool g_bad_outside = false;
@@ -198,7 +198,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
         pot16bit = read_info.pot16bit != 0;
         if (pot16bit)
         {
-            filexdots >>= 1;
+            g_file_x_dots >>= 1;
         }
         g_file_aspect_ratio = read_info.faspectratio;
         if (g_file_aspect_ratio < 0.01)       // fix files produced in early v14.1
@@ -404,7 +404,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
     if (overlay_3d)
     {
         g_init_mode = g_adapter;          // use previous adapter mode for overlays
-        if (filexdots > xdots || fileydots > ydots)
+        if (g_file_x_dots > xdots || fileydots > ydots)
         {
             stopmsg(STOPMSG_NONE, "Can't overlay with a larger image");
             g_init_mode = -1;
@@ -668,7 +668,7 @@ static int find_fractal_info(char const *gif_file, FRACTAL_INFO *info,
         return (-1);
     }
 
-    GET16(gifstart[6], filexdots);
+    GET16(gifstart[6], g_file_x_dots);
     GET16(gifstart[8], fileydots);
     g_file_colors = 2 << (gifstart[10] & 7);
     g_file_aspect_ratio = 0; // unknown
@@ -676,14 +676,14 @@ static int find_fractal_info(char const *gif_file, FRACTAL_INFO *info,
     {
         // calc reasonably close value from gif header
         g_file_aspect_ratio = (float)((64.0 / ((double)(gifstart[12]) + 15.0))
-                                  * (double)fileydots / (double)filexdots);
+                                  * (double)fileydots / (double)g_file_x_dots);
         if (g_file_aspect_ratio > screenaspect-0.03
                 && g_file_aspect_ratio < screenaspect+0.03)
         {
             g_file_aspect_ratio = screenaspect;
         }
     }
-    else if (fileydots * 4 == filexdots * 3)   // assume the common square pixels
+    else if (fileydots * 4 == g_file_x_dots * 3)   // assume the common square pixels
     {
         g_file_aspect_ratio = screenaspect;
     }
@@ -963,7 +963,7 @@ static int find_fractal_info(char const *gif_file, FRACTAL_INFO *info,
     info->videomodecx = 255;
     info->videomodedx = 255;
     info->dotmode = 0;
-    info->xdots = (short)filexdots;
+    info->xdots = (short)g_file_x_dots;
     info->ydots = (short)fileydots;
     info->colors = (short)g_file_colors;
     info->version = 0; // this forces lots more init at calling end too

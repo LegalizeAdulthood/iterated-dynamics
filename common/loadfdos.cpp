@@ -230,11 +230,11 @@ int get_video_mode(FRACTAL_INFO *info, ext_blk_3 *blk_3_info)
         {
             tmpflags |= VI_SBIG;
         }
-        if (filexdots > g_video_entry.xdots || fileydots > g_video_entry.ydots)
+        if (g_file_x_dots > g_video_entry.xdots || fileydots > g_video_entry.ydots)
         {
             tmpflags |= VI_VSMALL;
         }
-        else if (filexdots < g_video_entry.xdots || fileydots < g_video_entry.ydots)
+        else if (g_file_x_dots < g_video_entry.xdots || fileydots < g_video_entry.ydots)
         {
             tmpflags |= VI_VBIG;
         }
@@ -252,7 +252,7 @@ int get_video_mode(FRACTAL_INFO *info, ext_blk_3 *blk_3_info)
         }
         if (g_file_aspect_ratio != 0 && (tmpflags & VI_VSMALL) == 0)
         {
-            ftemp = vid_aspect(filexdots, fileydots);
+            ftemp = vid_aspect(g_file_x_dots, fileydots);
             if (ftemp < g_file_aspect_ratio * 0.98 ||
                     ftemp > g_file_aspect_ratio * 1.02)
             {
@@ -282,7 +282,7 @@ int get_video_mode(FRACTAL_INFO *info, ext_blk_3 *blk_3_info)
         // format heading
         char heading[256];  // big enough for more than a few lines
         sprintf(heading, "File: %-44s  %d x %d x %d\n%-52s",
-                readname.c_str(), filexdots, fileydots, g_file_colors,
+                readname.c_str(), g_file_x_dots, fileydots, g_file_colors,
                 heading_detail(info, blk_3_info).c_str());
         if (info->info_id[0] != 'G')
         {
@@ -378,7 +378,7 @@ int get_video_mode(FRACTAL_INFO *info, ext_blk_3 *blk_3_info)
            sizeof(g_video_entry));
 
     if (viewwindow &&
-            filexdots == g_video_entry.xdots && fileydots == g_video_entry.ydots)
+            g_file_x_dots == g_video_entry.xdots && fileydots == g_video_entry.ydots)
     {
         // pull image into a view window
         if (g_calc_status != calc_status_value::COMPLETED) // if not complete
@@ -399,7 +399,7 @@ int get_video_mode(FRACTAL_INFO *info, ext_blk_3 *blk_3_info)
 
     skipydots = 0;
     skipxdots = skipydots; // set for no reduction
-    if (g_video_entry.xdots < filexdots || g_video_entry.ydots < fileydots)
+    if (g_video_entry.xdots < g_file_x_dots || g_video_entry.ydots < fileydots)
     {
         // set up to load only every nth pixel to make image fit
         if (g_calc_status != calc_status_value::COMPLETED) // if not complete
@@ -408,7 +408,7 @@ int get_video_mode(FRACTAL_INFO *info, ext_blk_3 *blk_3_info)
         }
         skipydots = 1;
         skipxdots = skipydots;
-        while (skipxdots * g_video_entry.xdots < filexdots)
+        while (skipxdots * g_video_entry.xdots < g_file_x_dots)
         {
             ++skipxdots;
         }
@@ -422,7 +422,7 @@ int get_video_mode(FRACTAL_INFO *info, ext_blk_3 *blk_3_info)
         int tmpydots;
         while (true)
         {
-            tmpxdots = (filexdots + skipxdots - 1) / skipxdots;
+            tmpxdots = (g_file_x_dots + skipxdots - 1) / skipxdots;
             tmpydots = (fileydots + skipydots - 1) / skipydots;
             // reduce further if that improves aspect
             ftemp = vid_aspect(tmpxdots, tmpydots);
@@ -447,7 +447,7 @@ int get_video_mode(FRACTAL_INFO *info, ext_blk_3 *blk_3_info)
                 {
                     break; // already reduced y, don't reduce x
                 }
-                double const ftemp2 = vid_aspect((filexdots+skipxdots)/(skipxdots+1), tmpydots);
+                double const ftemp2 = vid_aspect((g_file_x_dots+skipxdots)/(skipxdots+1), tmpydots);
                 if (ftemp2 > g_file_aspect_ratio &&
                         g_file_aspect_ratio/ftemp *0.9 <= ftemp2/g_file_aspect_ratio)
                 {
@@ -457,7 +457,7 @@ int get_video_mode(FRACTAL_INFO *info, ext_blk_3 *blk_3_info)
                 ++j;
             }
         }
-        filexdots = tmpxdots;
+        g_file_x_dots = tmpxdots;
         fileydots = tmpydots;
         --skipxdots;
         --skipydots;
@@ -466,7 +466,7 @@ int get_video_mode(FRACTAL_INFO *info, ext_blk_3 *blk_3_info)
     finalaspectratio = g_file_aspect_ratio;
     if (finalaspectratio == 0) // assume display correct
     {
-        finalaspectratio = (float)vid_aspect(filexdots, fileydots);
+        finalaspectratio = (float)vid_aspect(g_file_x_dots, fileydots);
     }
     if (finalaspectratio >= screenaspect-0.02
             && finalaspectratio <= screenaspect+0.02)
@@ -482,7 +482,7 @@ int get_video_mode(FRACTAL_INFO *info, ext_blk_3 *blk_3_info)
     viewwindow = false;
     viewxdots = 0;
     viewydots = 0;
-    if (filexdots != g_video_entry.xdots || fileydots != g_video_entry.ydots)
+    if (g_file_x_dots != g_video_entry.xdots || fileydots != g_video_entry.ydots)
     {
         // image not exactly same size as screen
         viewwindow = true;
@@ -494,7 +494,7 @@ int get_video_mode(FRACTAL_INFO *info, ext_blk_3 *blk_3_info)
         int j;
         if (finalaspectratio <= screenaspect)
         {
-            i = (int)((double)g_video_entry.xdots / (double)filexdots * 20.0 + 0.5);
+            i = (int)((double)g_video_entry.xdots / (double)g_file_x_dots * 20.0 + 0.5);
             tmpreduce = (float)(i/20.0); // chop precision to nearest .05
             i = (int)((double)g_video_entry.xdots / tmpreduce + 0.5);
             j = (int)((double)i * ftemp + 0.5);
@@ -506,9 +506,9 @@ int get_video_mode(FRACTAL_INFO *info, ext_blk_3 *blk_3_info)
             j = (int)((double)g_video_entry.ydots / tmpreduce + 0.5);
             i = (int)((double)j / ftemp + 0.5);
         }
-        if (i != filexdots || j != fileydots)  // too bad, must be explicit
+        if (i != g_file_x_dots || j != fileydots)  // too bad, must be explicit
         {
-            viewxdots = filexdots;
+            viewxdots = g_file_x_dots;
             viewydots = fileydots;
         }
         else
