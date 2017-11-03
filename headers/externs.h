@@ -207,7 +207,7 @@ extern int                   g_haze;
 extern unsigned int          g_height;
 extern float                 g_height_fp;
 extern int                   g_help_mode;
-extern int                   hi_atten;
+extern int                   g_hi_attenuation;
 extern std::string           IFSFileName;
 extern std::string           IFSName;
 extern std::vector<float>    ifs_defn;

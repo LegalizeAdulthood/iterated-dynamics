@@ -580,7 +580,7 @@ static void initvars_fractal()          // init vars affecting calculation
     g_base_hertz = 440;                     // basic hertz rate
 #ifndef XFRACT
     g_fm_volume = 63;                         // full volume on soundcard o/p
-    hi_atten = 0;                        // no attenuation of hi notes
+    g_hi_attenuation = 0;                        // no attenuation of hi notes
     g_fm_attack = 5;                       // fast attack
     g_fm_decay = 10;                        // long decay
     g_fm_sustain = 13;                      // fairly high sustain level
@@ -2710,19 +2710,19 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
     {
         if (charval[0] == 'n')
         {
-            hi_atten = 0;
+            g_hi_attenuation = 0;
         }
         else if (charval[0] == 'l')
         {
-            hi_atten = 1;
+            g_hi_attenuation = 1;
         }
         else if (charval[0] == 'm')
         {
-            hi_atten = 2;
+            g_hi_attenuation = 2;
         }
         else if (charval[0] == 'h')
         {
-            hi_atten = 3;
+            g_hi_attenuation = 3;
         }
         else
         {

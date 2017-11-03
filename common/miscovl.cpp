@@ -1302,17 +1302,17 @@ void write_batch_parms(char const *colorinf, bool colorsonly, int maxcolor, int 
             put_parm(" %s=%d", "volume", g_fm_volume);
         }
 
-        if (hi_atten != 0)
+        if (g_hi_attenuation != 0)
         {
-            if (hi_atten == 1)
+            if (g_hi_attenuation == 1)
             {
                 put_parm(" %s=%s", "attenuate", "low");
             }
-            else if (hi_atten == 2)
+            else if (g_hi_attenuation == 2)
             {
                 put_parm(" %s=%s", "attenuate", "mid");
             }
-            else if (hi_atten == 3)
+            else if (g_hi_attenuation == 3)
             {
                 put_parm(" %s=%s", "attenuate", "high");
             }
