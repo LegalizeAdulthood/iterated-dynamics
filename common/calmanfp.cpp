@@ -66,11 +66,11 @@ long calcmandfpasm()
     orbit_ptr = 0;
     savedand = firstsavedand;
     savedincr = 1;             // start checking the very first time
-    keyboard_check_interval--;                // Only check the keyboard sometimes
-    if (keyboard_check_interval < 0)
+    g_keyboard_check_interval--;                // Only check the keyboard sometimes
+    if (g_keyboard_check_interval < 0)
     {
         int key;
-        keyboard_check_interval = 1000;
+        g_keyboard_check_interval = 1000;
         key = driver_key_pressed();
         if (key)
         {
@@ -158,7 +158,7 @@ long calcmandfpasm()
                     //          oldcoloriter = 65535;
                     oldcoloriter = maxit;
                     realcoloriter = maxit;
-                    keyboard_check_interval = keyboard_check_interval -(maxit-cx);
+                    g_keyboard_check_interval = g_keyboard_check_interval -(maxit-cx);
                     g_color_iter = periodicity_color;
                     goto pop_stack;
                 }
@@ -175,7 +175,7 @@ long calcmandfpasm()
     // reached maxit
     // check periodicity immediately next time, remember we count down from maxit
     oldcoloriter = maxit;
-    keyboard_check_interval -= maxit;
+    g_keyboard_check_interval -= maxit;
     realcoloriter = maxit;
     g_color_iter = inside_color;
 
@@ -206,7 +206,7 @@ over_bailout_87:
     {
         g_color_iter = 1;
     }
-    keyboard_check_interval -= realcoloriter;
+    g_keyboard_check_interval -= realcoloriter;
     if (outside == ITER)
     {
     }

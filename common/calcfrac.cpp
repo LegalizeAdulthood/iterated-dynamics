@@ -140,7 +140,7 @@ int g_i_y_start = 0;
 int g_i_y_stop = 0;                         // start, stop here
 symmetry_type symmetry = symmetry_type::NONE; // symmetry flag
 bool reset_periodicity = false;         // true if escape time pixel rtn to reset
-int keyboard_check_interval = 0;
+int g_keyboard_check_interval = 0;
 int max_keyboard_check_interval = 0;                   // avoids checking keyboard too often
 
 std::vector<BYTE> resume_data;          // resume info
@@ -374,7 +374,7 @@ static void sym_fill_line(int row, int left, int right, BYTE *str)
     // here's where all the symmetry goes
     if (plot == putcolor)
     {
-        keyboard_check_interval -= length >> 4; // seems like a reasonable value
+        g_keyboard_check_interval -= length >> 4; // seems like a reasonable value
     }
     else if (plot == symplot2)   // X-axis symmetry
     {
@@ -382,13 +382,13 @@ static void sym_fill_line(int row, int left, int right, BYTE *str)
         if (i > g_i_y_stop && i < ydots)
         {
             put_line(i, left, right, str);
-            keyboard_check_interval -= length >> 3;
+            g_keyboard_check_interval -= length >> 3;
         }
     }
     else if (plot == symplot2Y) // Y-axis symmetry
     {
         put_line(row, xxstop-(right-xxstart), xxstop-(left-xxstart), str);
-        keyboard_check_interval -= length >> 3;
+        g_keyboard_check_interval -= length >> 3;
     }
     else if (plot == symplot2J)  // Origin symmetry
     {
@@ -399,7 +399,7 @@ static void sym_fill_line(int row, int left, int right, BYTE *str)
         {
             put_line(i, j, k, str);
         }
-        keyboard_check_interval -= length >> 3;
+        g_keyboard_check_interval -= length >> 3;
     }
     else if (plot == symplot4) // X-axis and Y-axis symmetry
     {
@@ -418,7 +418,7 @@ static void sym_fill_line(int row, int left, int right, BYTE *str)
         {
             put_line(row, j, k, str);
         }
-        keyboard_check_interval -= length >> 2;
+        g_keyboard_check_interval -= length >> 2;
     }
     else    // cheap and easy way out
     {
@@ -426,7 +426,7 @@ static void sym_fill_line(int row, int left, int right, BYTE *str)
         {
             (*plot)(i, row, str[i-left]);
         }
-        keyboard_check_interval -= length >> 1;
+        g_keyboard_check_interval -= length >> 1;
     }
 }
 
@@ -441,7 +441,7 @@ static void sym_put_line(int row, int left, int right, BYTE *str)
     put_line(row, left, right, str);
     if (plot == putcolor)
     {
-        keyboard_check_interval -= length >> 4; // seems like a reasonable value
+        g_keyboard_check_interval -= length >> 4; // seems like a reasonable value
     }
     else if (plot == symplot2)   // X-axis symmetry
     {
@@ -450,7 +450,7 @@ static void sym_put_line(int row, int left, int right, BYTE *str)
         {
             put_line(i, left, right, str);
         }
-        keyboard_check_interval -= length >> 3;
+        g_keyboard_check_interval -= length >> 3;
     }
     else
     {
@@ -458,7 +458,7 @@ static void sym_put_line(int row, int left, int right, BYTE *str)
         {
             (*plot)(i, row, str[i-left]);
         }
-        keyboard_check_interval -= length >> 1;
+        g_keyboard_check_interval -= length >> 1;
     }
 }
 
@@ -1270,7 +1270,7 @@ static void perform_worklist()
         // some common initialization for escape-time pixel level routines
         g_close_enough = ddelmin*pow(2.0, -(double)(abs(periodicitycheck)));
         lclosenuff = (long)(g_close_enough * g_fudge_factor); // "close enough" value
-        keyboard_check_interval = max_keyboard_check_interval;
+        g_keyboard_check_interval = max_keyboard_check_interval;
 
         setsymmetry(symmetry, true);
 
@@ -2160,7 +2160,7 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
         {
             if (g_decimals > 200)
             {
-                keyboard_check_interval = -1;
+                g_keyboard_check_interval = -1;
             }
             if (bf_math == bf_math_type::BIGNUM)
             {
@@ -3030,13 +3030,13 @@ plot_pixel:
     (*plot)(col, row, g_color);
 
     maxit = savemaxit;
-    if ((keyboard_check_interval -= abs((int)realcoloriter)) <= 0)
+    if ((g_keyboard_check_interval -= abs((int)realcoloriter)) <= 0)
     {
         if (check_key())
         {
             return -1;
         }
-        keyboard_check_interval = max_keyboard_check_interval;
+        g_keyboard_check_interval = max_keyboard_check_interval;
     }
     return g_color;
 }
