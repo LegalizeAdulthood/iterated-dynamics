@@ -170,7 +170,7 @@ std::vector<Arg *> Load;
 int OpPtr;
 std::vector<void (*)()> f;
 std::vector<ConstArg> v;
-int StoPtr, LodPtr;
+int StoPtr, g_load_index;
 int complx_count;
 int real_count;
 
@@ -463,40 +463,40 @@ void dStkLodDup()
 {
     Arg1 += 2;
     Arg2 += 2;
-    *Arg1 = *Load[LodPtr];
+    *Arg1 = *Load[g_load_index];
     *Arg2 = *Arg1;
-    LodPtr += 2;
+    g_load_index += 2;
 }
 
 void dStkLodSqr()
 {
     Arg1++;
     Arg2++;
-    Arg1->d.y = Load[LodPtr]->d.x * Load[LodPtr]->d.y * 2.0;
-    Arg1->d.x = (Load[LodPtr]->d.x * Load[LodPtr]->d.x) - (Load[LodPtr]->d.y * Load[LodPtr]->d.y);
-    LodPtr++;
+    Arg1->d.y = Load[g_load_index]->d.x * Load[g_load_index]->d.y * 2.0;
+    Arg1->d.x = (Load[g_load_index]->d.x * Load[g_load_index]->d.x) - (Load[g_load_index]->d.y * Load[g_load_index]->d.y);
+    g_load_index++;
 }
 
 void dStkLodSqr2()
 {
     Arg1++;
     Arg2++;
-    LastSqr.d.x = Load[LodPtr]->d.x * Load[LodPtr]->d.x;
-    LastSqr.d.y = Load[LodPtr]->d.y * Load[LodPtr]->d.y;
-    Arg1->d.y = Load[LodPtr]->d.x * Load[LodPtr]->d.y * 2.0;
+    LastSqr.d.x = Load[g_load_index]->d.x * Load[g_load_index]->d.x;
+    LastSqr.d.y = Load[g_load_index]->d.y * Load[g_load_index]->d.y;
+    Arg1->d.y = Load[g_load_index]->d.x * Load[g_load_index]->d.y * 2.0;
     Arg1->d.x = LastSqr.d.x - LastSqr.d.y;
     LastSqr.d.x += LastSqr.d.y;
     LastSqr.d.y = 0;
-    LodPtr++;
+    g_load_index++;
 }
 
 void dStkLodDbl()
 {
     Arg1++;
     Arg2++;
-    Arg1->d.x = Load[LodPtr]->d.x * 2.0;
-    Arg1->d.y = Load[LodPtr]->d.y * 2.0;
-    LodPtr++;
+    Arg1->d.x = Load[g_load_index]->d.x * 2.0;
+    Arg1->d.y = Load[g_load_index]->d.y * 2.0;
+    g_load_index++;
 }
 
 void dStkSqr0()
@@ -988,7 +988,7 @@ void StkLod()
 {
     Arg1++;
     Arg2++;
-    *Arg1 = *Load[LodPtr++];
+    *Arg1 = *Load[g_load_index++];
 }
 
 void StkClr()
@@ -1883,7 +1883,7 @@ void (*PtrEndInit)() = EndInit;
 void StkJump()
 {
     OpPtr =  jump_control[jump_index].ptrs.JumpOpPtr;
-    LodPtr = jump_control[jump_index].ptrs.JumpLodPtr;
+    g_load_index = jump_control[jump_index].ptrs.JumpLodPtr;
     StoPtr = jump_control[jump_index].ptrs.JumpStoPtr;
     jump_index = jump_control[jump_index].DestJumpIndex;
 }
@@ -2678,8 +2678,8 @@ static bool ParseStr(char const *Str, int pass)
 
     posp = 0;
     StoPtr = posp;
-    LodPtr = StoPtr;
-    OpPtr = LodPtr;
+    g_load_index = StoPtr;
+    OpPtr = g_load_index;
     paren = OpPtr;
     g_last_init_op = paren;
     ExpectingArg = true;
@@ -2830,7 +2830,7 @@ static bool ParseStr(char const *Str, int pass)
             {
                 o[posp-1].f = StkSto;
                 o[posp-1].p = 5 - (paren + Equals)*15;
-                Store[StoPtr++] = Load[--LodPtr];
+                Store[StoPtr++] = Load[--g_load_index];
                 Equals++;
             }
             break;
@@ -2891,7 +2891,7 @@ static bool ParseStr(char const *Str, int pass)
                 else
                 {
                     c = isconst(&Str[InitN], Len);
-                    Load[LodPtr++] = &(c->a);
+                    Load[g_load_index++] = &(c->a);
                     o[posp].f = StkLod;
                     o[posp++].p = 1 - (paren + Equals)*15;
                     n = InitN + c->len - 1;
@@ -2927,7 +2927,7 @@ int Formula()
         return 1;
     }
 
-    LodPtr = InitLodPtr;
+    g_load_index = InitLodPtr;
     StoPtr = InitStoPtr;
     OpPtr = InitOpPtr;
     jump_index = InitJumpIndex;
@@ -2997,7 +2997,7 @@ int form_per_pixel()
     jump_index = 0;
     OpPtr = jump_index;
     StoPtr = OpPtr;
-    LodPtr = StoPtr;
+    g_load_index = StoPtr;
     Arg1 = &s[0];
     Arg2 = Arg1;
     Arg2--;
@@ -3107,7 +3107,7 @@ int form_per_pixel()
         f[OpPtr]();
         OpPtr++;
     }
-    InitLodPtr = LodPtr;
+    InitLodPtr = g_load_index;
     InitStoPtr = StoPtr;
     InitOpPtr = OpPtr;
     // Set old variable for orbits

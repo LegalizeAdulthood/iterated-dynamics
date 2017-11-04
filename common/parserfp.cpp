@@ -54,7 +54,7 @@ extern double _1_, _2_;
 extern Arg s[20];
 extern std::vector<Arg *> Store;
 extern std::vector<Arg *> Load;
-extern int StoPtr, LodPtr, OpPtr;
+extern int StoPtr, g_load_index, OpPtr;
 extern unsigned int vsp, g_last_op;
 extern std::vector<ConstArg> v;
 extern int InitLodPtr, InitStoPtr, InitOpPtr, g_last_init_op;
@@ -498,7 +498,7 @@ awful_error:
     else if (ffptr == fStkLod && g_debug_flag == debug_flags::prevent_formula_optimizer)
     {
         // when disabling optimizer, set load pointer here
-        OPPTR(cvtptrx) = Load[LodPtr++];
+        OPPTR(cvtptrx) = Load[g_load_index++];
     }
     else
     {
@@ -525,7 +525,7 @@ awful_error:
     {
         // about to add Lod to the array
 
-        if (prevfptr == fStkLod && Load[LodPtr-1] == Load[LodPtr])
+        if (prevfptr == fStkLod && Load[g_load_index-1] == Load[g_load_index])
         {
             // previous non-adjust operator was Lod of same operand
             // ? lodx ? (*lodx)
@@ -557,7 +557,7 @@ awful_error:
             ffptr = fStkLodDup;
         }
         else if (prevfptr == fStkSto2
-                 && Store[StoPtr-1] == Load[LodPtr])
+                 && Store[StoPtr-1] == Load[g_load_index])
         {
             // store, load of same value
             // only one operand on stack here when prev oper is Sto2
@@ -569,7 +569,7 @@ awful_error:
         //  use the rounded value that was stored here, while the next
         //  operator uses the more accurate internal value.
         else if (prevfptr == fStkStoClr2
-                 && Store[StoPtr-1] == Load[LodPtr])
+                 && Store[StoPtr-1] == Load[g_load_index])
         {
             // store, clear, load same value found
             // only one operand was on stack so this is safe
@@ -579,7 +579,7 @@ awful_error:
         }
         else
         {
-            testload = Load[LodPtr];
+            testload = Load[g_load_index];
             if (testload == &LASTSQR && lastsqrreal)
             {
                 // -- LastSqr is a real.
@@ -593,7 +593,7 @@ awful_error:
             }
         }
         // set the operand ptr here
-        OPPTR(cvtptrx) = Load[LodPtr++];
+        OPPTR(cvtptrx) = Load[g_load_index++];
     }
     // ********************************************************************
     else if (ffptr == fStkAdd)
@@ -792,7 +792,7 @@ awful_error:
             }
 
             if (FNPTR(cvtptrx-1) == fStkLodRealC
-                    && Load[LodPtr-2]->d.x == _2_)
+                    && Load[g_load_index-2]->d.x == _2_)
             {
                 // -- Convert '2*a' into 'a+a'.
                 if (FNPTR(cvtptrx) == NO_FUNCTION)
@@ -877,7 +877,7 @@ awful_error:
             ffptr = fStkLodRealMul;
 
             if (prevfptr == fStkLodRealC  // use prevfptr here
-                    && Load[LodPtr-1]->d.x == _2_)
+                    && Load[g_load_index-1]->d.x == _2_)
             {
                 if (FNPTR(cvtptrx) == fStkPush2)
                 {
@@ -968,7 +968,7 @@ awful_error:
             }
             v[vsp].s = nullptr;  // this constant has no name
             v[vsp].len = 0;
-            v[vsp].a.d.x = _1_ / Load[LodPtr-1]->d.x;
+            v[vsp].a.d.x = _1_ / Load[g_load_index-1]->d.x;
             v[vsp].a.d.y = 0.0;
             {
                 OPPTR(cvtptrx) = &v[vsp++].a;
@@ -1127,7 +1127,7 @@ awful_error:
 
         if (prevfptr == fStkLodRealC)
         {
-            double dTemp = Load[LodPtr-1]->d.x;
+            double dTemp = Load[g_load_index-1]->d.x;
             if (dTemp == _2_ || dTemp == _1_ || dTemp == -1.0 || dTemp == 0.0)
             {
                 // change ^[-1,0,1,or 2] to recip,one,ident,sqr
@@ -1373,13 +1373,13 @@ int CvtStk()
 
     // now see if the above assumptions are true
     StoPtr = 0;
-    LodPtr = StoPtr;
-    for (OpPtr = LodPtr; OpPtr < (int)g_last_op; OpPtr++)
+    g_load_index = StoPtr;
+    for (OpPtr = g_load_index; OpPtr < (int)g_last_op; OpPtr++)
     {
         ftst = f[OpPtr];
         if (ftst == StkLod)
         {
-            if (Load[LodPtr++] == &LASTSQR)
+            if (Load[g_load_index++] == &LASTSQR)
             {
                 lastsqrused = true;
             }
@@ -1456,8 +1456,8 @@ int CvtStk()
     cvtptrx = realstkcnt;
 
     StoPtr = 0;
-    LodPtr = StoPtr;
-    for (OpPtr = LodPtr; OpPtr < (int)g_last_op; OpPtr++)
+    g_load_index = StoPtr;
+    for (OpPtr = g_load_index; OpPtr < (int)g_last_op; OpPtr++)
     {
         ftst = f[OpPtr];
         bool fnfound = false;
