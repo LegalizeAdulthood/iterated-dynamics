@@ -752,7 +752,6 @@ extern long startstack;
 
 bool tab_display_2(char *msg)
 {
-    extern long maxptr;
     int row, key = 0;
 
     helptitle();
