@@ -262,7 +262,7 @@ extern bool                  g_log_map_auto_calculate;
 extern bool                  g_log_map_calculate;
 extern int                   g_log_map_fly_calculate;
 extern long                  g_log_map_flag;
-extern std::vector<BYTE>     LogTable;
+extern std::vector<BYTE>     g_log_map_table;
 extern LComplex              lold;
 extern LComplex *            longparm;
 extern int look_at_mouse;

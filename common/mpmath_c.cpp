@@ -474,7 +474,7 @@ DComplex ComplexSqrtFloat(double x, double y)
 
 #ifndef TESTING_MATH
 
-std::vector<BYTE> LogTable;
+std::vector<BYTE> g_log_map_table;
 long MaxLTSize;
 bool g_log_map_calculate = false;
 static double mlf;
@@ -532,7 +532,7 @@ void SetupLogTable()
         g_log_map_calculate = true;   // turn it on
         for (unsigned long prev = 0U; prev <= (unsigned long)MaxLTSize; prev++)
         {
-            LogTable[prev] = (BYTE)logtablecalc((long)prev);
+            g_log_map_table[prev] = (BYTE)logtablecalc((long)prev);
         }
         g_log_map_calculate = false;   // turn it off, again
         return;
@@ -552,7 +552,7 @@ void SetupLogTable()
         unsigned long prev;
         for (prev = 1; prev <= lf; prev++)
         {
-            LogTable[prev] = 1;
+            g_log_map_table[prev] = 1;
         }
         for (unsigned n = (lf ? 2U : 1U); n < (unsigned int)g_colors; n++)
         {
@@ -566,7 +566,7 @@ void SetupLogTable()
             }
             while (prev <= limit)
             {
-                LogTable[prev++] = (BYTE)n;
+                g_log_map_table[prev++] = (BYTE)n;
             }
         }
     }
@@ -584,7 +584,7 @@ void SetupLogTable()
         unsigned long prev;
         for (prev = 1; prev <= lf; prev++)
         {
-            LogTable[prev] = 1;
+            g_log_map_table[prev] = 1;
         }
         for (unsigned n = 2U; n < (unsigned int)g_colors; n++)
         {
@@ -598,18 +598,18 @@ void SetupLogTable()
             }
             while (prev <= limit)
             {
-                LogTable[prev++] = (BYTE)n;
+                g_log_map_table[prev++] = (BYTE)n;
             }
         }
     }
-    LogTable[0] = 0;
+    g_log_map_table[0] = 0;
     if (g_log_map_flag != -1)
     {
         for (unsigned long sptop = 1U; sptop < (unsigned long)MaxLTSize; sptop++)   // spread top to incl unused colors
         {
-            if (LogTable[sptop] > LogTable[sptop-1])
+            if (g_log_map_table[sptop] > g_log_map_table[sptop-1])
             {
-                LogTable[sptop] = (BYTE)(LogTable[sptop-1]+1);
+                g_log_map_table[sptop] = (BYTE)(g_log_map_table[sptop-1]+1);
             }
         }
     }
@@ -623,9 +623,9 @@ long logtablecalc(long citer)
     {
         return (citer);
     }
-    if (!LogTable.empty() && !g_log_map_calculate)
+    if (!g_log_map_table.empty() && !g_log_map_calculate)
     {
-        return (LogTable[(long)std::min(citer, MaxLTSize)]);
+        return (g_log_map_table[(long)std::min(citer, MaxLTSize)]);
     }
 
     if (g_log_map_flag > 0)

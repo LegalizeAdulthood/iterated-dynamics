@@ -683,7 +683,7 @@ int calcfract()
         firstsavedand = (long)((nextsavedincr*2) + 1);
     }
 
-    LogTable.clear();
+    g_log_map_table.clear();
     MaxLTSize = maxit;
     g_log_map_calculate = false;
     // below, INT_MAX = 32767 only when an integer is two bytes.  Which is not true for Xfractint.
@@ -710,7 +710,7 @@ int calcfract()
         bool resized = false;
         try
         {
-            LogTable.resize(MaxLTSize + 1);
+            g_log_map_table.resize(MaxLTSize + 1);
             resized = true;
         }
         catch (std::bad_alloc const&)
@@ -759,7 +759,7 @@ int calcfract()
                 }
                 while (l <= numval)
                 {
-                    LogTable[l++] = (BYTE)(k + flip);
+                    g_log_map_table[l++] = (BYTE)(k + flip);
                     if (++m >= altern)
                     {
                         flip ^= 1;            // Alternate colors
@@ -964,9 +964,9 @@ int calcfract()
     }
     g_calc_time += timer_interval;
 
-    if (!LogTable.empty() && !g_log_map_calculate)
+    if (!g_log_map_table.empty() && !g_log_map_calculate)
     {
-        LogTable.clear();
+        g_log_map_table.clear();
     }
     free_workarea();
 
@@ -1941,7 +1941,7 @@ int calcmand()              // fast per pixel 1/2/b/g, called with row & col set
     g_l_init_y = lypixel();
     if (calcmandasm() >= 0)
     {
-        if ((!LogTable.empty() || g_log_map_calculate) // map color, but not if maxit & adjusted for inside,etc
+        if ((!g_log_map_table.empty() || g_log_map_calculate) // map color, but not if maxit & adjusted for inside,etc
                 && (realcoloriter < maxit || (g_inside < COLOR_BLACK && g_color_iter == maxit)))
         {
             g_color_iter = logtablecalc(g_color_iter);
@@ -2011,7 +2011,7 @@ int calcmandfp()
         {
             g_color_iter = potential(magnitude, realcoloriter);
         }
-        if ((!LogTable.empty() || g_log_map_calculate) // map color, but not if maxit & adjusted for inside,etc
+        if ((!g_log_map_table.empty() || g_log_map_calculate) // map color, but not if maxit & adjusted for inside,etc
                 && (realcoloriter < maxit || (g_inside < COLOR_BLACK && g_color_iter == maxit)))
         {
             g_color_iter = logtablecalc(g_color_iter);
@@ -2731,7 +2731,7 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
         }
         magnitude = sqr(g_new.x) + sqr(g_new.y);
         g_color_iter = potential(magnitude, g_color_iter);
-        if (!LogTable.empty() || g_log_map_calculate)
+        if (!g_log_map_table.empty() || g_log_map_calculate)
         {
             g_color_iter = logtablecalc(g_color_iter);
         }
@@ -2877,7 +2877,7 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
     {
         g_color_iter = outside;
     }
-    else if (!LogTable.empty() || g_log_map_calculate)
+    else if (!g_log_map_table.empty() || g_log_map_calculate)
     {
         g_color_iter = logtablecalc(g_color_iter);
     }
@@ -2983,7 +2983,7 @@ plot_inside: // we're "inside"
         {
             g_color_iter = maxit;
         }
-        if (!LogTable.empty() || g_log_map_calculate)
+        if (!g_log_map_table.empty() || g_log_map_calculate)
         {
             g_color_iter = logtablecalc(g_color_iter);
         }
