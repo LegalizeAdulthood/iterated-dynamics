@@ -24,14 +24,6 @@
 #include "prototyp.h"
 #include "drivers.h"
 
-/* the following needs to be changed back to frexpl once the portability
-   issue has been addressed */
-#ifndef XFRACT
-#define FREXP(x, y) frexpl(x, y)
-#else
-#define FREXP(x, y) frexp(x, y)
-#endif
-
 #define EVERY 15
 #define BASIN_COLOR 0
 
@@ -314,7 +306,7 @@ long iteration(LDBL cr, LDBL ci,
 #else
         LDBL d = mag;
 #endif
-        FREXP(d, &exponent);
+        frexpl(d, &exponent);
         return (g_max_iterations + offset - (((iter - 1) << 3) + (long)adjust[exponent >> 3]));
     }
 }
