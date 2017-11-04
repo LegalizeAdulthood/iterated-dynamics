@@ -508,7 +508,7 @@ int line3d(BYTE * pixels, unsigned linelen)
                     {
                         f_cur.x = f_cur.x * (2.0F / xdots) - 1.0F;
                         f_cur.y = f_cur.y * (2.0F / ydots) - 1.0F;
-                        f_cur.color = -f_cur.color * (2.0F / numcolors) - 1.0F;
+                        f_cur.color = -f_cur.color * (2.0F / g_num_colors) - 1.0F;
                     }
                 }
 
@@ -2031,13 +2031,13 @@ static int out_triangle(f_point pt1, f_point pt2, f_point pt3, int c1, int c2, i
     // Normalize each vertex to screen size and adjust coordinate system
     pt_t[0][0] = 2 * pt1.x / xdots - 1;
     pt_t[0][1] = (2 * pt1.y / ydots - 1);
-    pt_t[0][2] = -2 * pt1.color / numcolors - 1;
+    pt_t[0][2] = -2 * pt1.color / g_num_colors - 1;
     pt_t[1][0] = 2 * pt2.x / xdots - 1;
     pt_t[1][1] = (2 * pt2.y / ydots - 1);
-    pt_t[1][2] = -2 * pt2.color / numcolors - 1;
+    pt_t[1][2] = -2 * pt2.color / g_num_colors - 1;
     pt_t[2][0] = 2 * pt3.x / xdots - 1;
     pt_t[2][1] = (2 * pt3.y / ydots - 1);
-    pt_t[2][2] = -2 * pt3.color / numcolors - 1;
+    pt_t[2][2] = -2 * pt3.color / g_num_colors - 1;
 
     // Color of triangle is average of colors of its verticies
     if (!g_brief)

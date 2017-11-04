@@ -23,7 +23,7 @@ static void close_file();
 
 static FILE *fpin = nullptr;       // FILE pointer
 unsigned int g_height;
-unsigned numcolors;
+unsigned g_num_colors;
 
 static int out_line_dither(BYTE *, int);
 static int out_line_migs(BYTE *, int);
@@ -146,14 +146,14 @@ int gifview()
         close_file();
         return (-1);
     }
-    numcolors = 1 << planes;
+    g_num_colors = 1 << planes;
 
-    if (g_dither_flag && numcolors > 2 && g_colors == 2 && outln == out_line)
+    if (g_dither_flag && g_num_colors > 2 && g_colors == 2 && outln == out_line)
     {
         outln = out_line_dither;
     }
 
-    for (int i = 0; i < (int)numcolors; i++)
+    for (int i = 0; i < (int)g_num_colors; i++)
     {
         for (int j = 0; j < 3; j++)
         {

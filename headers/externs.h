@@ -331,7 +331,7 @@ extern bool                  g_browse_sub_images;
 extern bool                  g_magnitude_calc;
 extern bool                  g_bof_match_book_images;
 extern int                   g_num_affine_transforms;
-extern unsigned              numcolors;
+extern unsigned              g_num_colors;
 extern const int             numtrigfn;
 extern int                   num_fractal_types;
 extern int                   num_worklist;
