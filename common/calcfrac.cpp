@@ -2202,7 +2202,7 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
             lsaved.x = 0;
             lsaved.y = 0;
         }
-        linit.y = lypixel();
+        g_l_init.y = lypixel();
     }
     orbit_ptr = 0;
     g_color_iter = 0;

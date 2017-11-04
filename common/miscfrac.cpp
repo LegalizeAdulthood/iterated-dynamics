@@ -1036,7 +1036,7 @@ int Bifurcation()
 
     if (g_integer_fractal)
     {
-        linit.y = ymax - g_i_y_stop*dely;            // Y-value of
+        g_l_init.y = ymax - g_i_y_stop*dely;            // Y-value of
     }
     else
     {
@@ -1151,7 +1151,7 @@ static void verhulst()          // P. F. Verhulst (1845)
         // assign population value to Y coordinate in pixels
         if (g_integer_fractal)
         {
-            pixel_row = g_i_y_stop - (int)((lPopulation - linit.y) / dely); // iystop
+            pixel_row = g_i_y_stop - (int)((lPopulation - g_l_init.y) / dely); // iystop
         }
         else
         {

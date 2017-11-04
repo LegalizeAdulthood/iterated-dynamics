@@ -34,7 +34,7 @@ MandelSetup()           // Mandelbrot Routine
     {
         // special case: use the main processing loop
         calctype = standard_fractal;
-        longparm = &linit;
+        longparm = &g_l_init;
     }
     return true;
 }
@@ -511,7 +511,7 @@ MandellongSetup()
     {
         periodicitycheck = 4;
     }
-    longparm = &linit;
+    longparm = &g_l_init;
     if (fractype == fractal_type::LMANDELZPOWER)
     {
         if (param[3] == 0.0 && g_debug_flag != debug_flags::force_complex_power && (double)g_c_exponent == param[2])
@@ -807,7 +807,7 @@ ManlamTrigOrTrigSetup()
 {
     // psuedo
     // default symmetry is X_AXIS
-    longparm = &linit;
+    longparm = &g_l_init;
     g_float_param = &g_init;
     if (trigndx[0] == trig_fn::SQR)
     {
@@ -824,7 +824,7 @@ bool
 MandelTrigOrTrigSetup()
 {
     // default symmetry is X_AXIS_NO_PARAM
-    longparm = &linit;
+    longparm = &g_l_init;
     g_float_param = &g_init;
     if ((trigndx[0] == trig_fn::FLIP) || (trigndx[1] == trig_fn::FLIP))
     {
@@ -1437,7 +1437,7 @@ PhoenixCplxSetup()
 bool
 MandPhoenixSetup()
 {
-    longparm = &linit;
+    longparm = &g_l_init;
     g_float_param = &g_init;
     degree = (int)parm2.x;
     if (degree < 2 && degree > -3)
@@ -1487,7 +1487,7 @@ MandPhoenixSetup()
 bool
 MandPhoenixCplxSetup()
 {
-    longparm = &linit;
+    longparm = &g_l_init;
     g_float_param = &g_init;
     degree = (int)param[4];
     if (degree < 2 && degree > -3)

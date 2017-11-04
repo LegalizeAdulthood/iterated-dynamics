@@ -913,8 +913,8 @@ void Jiim(jiim_types which)
             SaveC.x = g_init.x;
             g_init.y = ci;
             SaveC.y = g_init.y;
-            linit.x = (long)(g_init.x*g_fudge_factor);
-            linit.y = (long)(g_init.y*g_fudge_factor);
+            g_l_init.x = (long)(g_init.x*g_fudge_factor);
+            g_l_init.y = (long)(g_init.y*g_fudge_factor);
 
             old_y = -1;
             old_x = old_y;

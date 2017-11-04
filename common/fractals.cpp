@@ -60,7 +60,7 @@ const long l16triglim = 8L << 16;       // domain limit of fast trig functions
 
 } // namespace
 
-LComplex g_l_coefficient, lold, lnew, lparm, linit, ltmp, ltmp2, lparm2;
+LComplex g_l_coefficient, lold, lnew, lparm, g_l_init, ltmp, ltmp2, lparm2;
 long ltempsqrx, ltempsqry;
 int maxcolor;
 int root, degree, g_basin;
@@ -2639,10 +2639,10 @@ int long_mandel_per_pixel()
     // integer mandel types
     // barnsleym1
     // barnsleym2
-    linit.x = lxpixel();
+    g_l_init.x = lxpixel();
     if (save_release >= 2004)
     {
-        linit.y = lypixel();
+        g_l_init.y = lypixel();
     }
 
     if (g_invert != 0)
@@ -2658,8 +2658,8 @@ int long_mandel_per_pixel()
         }
 
         // convert to fudged longs
-        linit.x = (long)(g_init.x*g_fudge_factor);
-        linit.y = (long)(g_init.y*g_fudge_factor);
+        g_l_init.x = (long)(g_init.x*g_fudge_factor);
+        g_l_init.y = (long)(g_init.y*g_fudge_factor);
     }
 
     if (useinitorbit == 1)
@@ -2668,7 +2668,7 @@ int long_mandel_per_pixel()
     }
     else
     {
-        lold = linit;
+        lold = g_l_init;
     }
 
     lold.x += lparm.x;    // initial pertubation of parameters set
@@ -2763,15 +2763,15 @@ int mandel_per_pixel()
         }
 
         // convert to fudged longs
-        linit.x = (long)(g_init.x*g_fudge_factor);
-        linit.y = (long)(g_init.y*g_fudge_factor);
+        g_l_init.x = (long)(g_init.x*g_fudge_factor);
+        g_l_init.y = (long)(g_init.y*g_fudge_factor);
     }
     else
     {
-        linit.x = lxpixel();
+        g_l_init.x = lxpixel();
         if (save_release >= 2004)
         {
-            linit.y = lypixel();
+            g_l_init.y = lypixel();
         }
     }
     switch (fractype)
@@ -2781,7 +2781,7 @@ int mandel_per_pixel()
         lold.y = 0;
         break;
     default:
-        lold = linit;
+        lold = g_l_init;
         break;
     }
 
@@ -2792,7 +2792,7 @@ int mandel_per_pixel()
     }
     else if (useinitorbit == 2)
     {
-        lold = linit;
+        lold = g_l_init;
     }
 
     if ((g_inside == BOF60 || g_inside == BOF61) && !nobof)
@@ -2808,7 +2808,7 @@ int mandel_per_pixel()
         lold.x += lparm.x; // initial pertubation of parameters set
         lold.y += lparm.y;
     }
-    ltmp = linit; // for spider
+    ltmp = g_l_init; // for spider
     ltempsqrx = multiply(lold.x, lold.x, bitshift);
     ltempsqry = multiply(lold.y, lold.y, bitshift);
     return 1; // 1st iteration has been done
@@ -2830,15 +2830,15 @@ int marksmandel_per_pixel()
         }
 
         // convert to fudged longs
-        linit.x = (long)(g_init.x*g_fudge_factor);
-        linit.y = (long)(g_init.y*g_fudge_factor);
+        g_l_init.x = (long)(g_init.x*g_fudge_factor);
+        g_l_init.y = (long)(g_init.y*g_fudge_factor);
     }
     else
     {
-        linit.x = lxpixel();
+        g_l_init.x = lxpixel();
         if (save_release >= 2004)
         {
-            linit.y = lypixel();
+            g_l_init.y = lypixel();
         }
     }
 
@@ -2848,7 +2848,7 @@ int marksmandel_per_pixel()
     }
     else
     {
-        lold = linit;
+        lold = g_l_init;
     }
 
     lold.x += lparm.x;    // initial pertubation of parameters set
@@ -3252,10 +3252,10 @@ int phoenix_per_pixel()
 int long_mandphoenix_per_pixel()
 {
 #if !defined(XFRACT)
-    linit.x = lxpixel();
+    g_l_init.x = lxpixel();
     if (save_release >= 2004)
     {
-        linit.y = lypixel();
+        g_l_init.y = lypixel();
     }
 
     if (g_invert != 0)
@@ -3271,8 +3271,8 @@ int long_mandphoenix_per_pixel()
         }
 
         // convert to fudged longs
-        linit.x = (long)(g_init.x*g_fudge_factor);
-        linit.y = (long)(g_init.y*g_fudge_factor);
+        g_l_init.x = (long)(g_init.x*g_fudge_factor);
+        g_l_init.y = (long)(g_init.y*g_fudge_factor);
     }
 
     if (useinitorbit == 1)
@@ -3281,7 +3281,7 @@ int long_mandphoenix_per_pixel()
     }
     else
     {
-        lold = linit;
+        lold = g_l_init;
     }
 
     lold.x += lparm.x;    // initial pertubation of parameters set
