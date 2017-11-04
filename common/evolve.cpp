@@ -47,7 +47,7 @@ double parmzoom;
 char evolve_discrete_x_parameter_offset;
 char evolve_discrete_y_parameter_offset;
 char g_evolve_new_discrete_x_parameter_offset;
-char evolve_new_discrete_y_parameter_offset;
+char g_evolve_new_discrete_y_parameter_offset;
 
 int param_box_count;
 std::vector<int> param_box_x;
@@ -1112,7 +1112,7 @@ void set_evolve_ranges()
     evolve_new_y_parameter_offset = evolve_y_parameter_offset +(((double)lclpy-parmzoom)*g_evolve_dist_per_y);
 
     g_evolve_new_discrete_x_parameter_offset = (char)(evolve_discrete_x_parameter_offset +(px- g_evolve_image_grid_size /2));
-    evolve_new_discrete_y_parameter_offset = (char)(evolve_discrete_y_parameter_offset +(lclpy- g_evolve_image_grid_size /2));
+    g_evolve_new_discrete_y_parameter_offset = (char)(evolve_discrete_y_parameter_offset +(lclpy- g_evolve_image_grid_size /2));
     return;
 }
 
