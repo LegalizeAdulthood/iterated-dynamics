@@ -42,7 +42,7 @@ int g_file_y_dots, g_file_x_dots, g_file_colors;
 float g_file_aspect_ratio;
 short skipxdots, skipydots;      // for decoder, when reducing image
 bool g_bad_outside = false;
-bool ldcheck = false;
+bool g_ld_check = false;
 
 int read_overlay()      // read overlay/3D files, if reqr'd
 {
@@ -1226,7 +1226,7 @@ void backwards_v20()
     g_bad_outside = (fractype == fractal_type::MANDELFP || fractype == fractal_type::JULIAFP ||
             fractype == fractal_type::MANDEL || fractype == fractal_type::JULIA) &&
             (outside <= REAL && outside >= SUM) && save_release <= 1960;
-    ldcheck = (fractype == fractal_type::FORMULA || fractype == fractal_type::FFORMULA) &&
+    g_ld_check = (fractype == fractal_type::FORMULA || fractype == fractal_type::FFORMULA) &&
             (save_release < 1900 || g_debug_flag == debug_flags::force_ld_check);
     if (g_inside == EPSCROSS && save_release < 1961)
     {

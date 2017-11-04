@@ -243,7 +243,7 @@ extern unsigned              g_last_op;
 extern LComplex              g_l_attractor[];
 extern long                  g_l_close_enough;
 extern LComplex              g_l_coefficient;
-extern bool                  ldcheck;
+extern bool                  g_ld_check;
 extern std::string           LFileName;
 extern std::string           light_name;
 extern std::vector<BYTE>     line_buff;

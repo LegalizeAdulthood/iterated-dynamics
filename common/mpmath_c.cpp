@@ -208,7 +208,7 @@ DComplex ComplexPower(DComplex xx, DComplex yy)
     DComplex cLog;
     DComplex t;
 
-    if (!ldcheck)
+    if (!g_ld_check)
     {
         if (xx.x == 0 && xx.y == 0)
         {
