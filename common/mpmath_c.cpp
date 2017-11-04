@@ -111,7 +111,7 @@ MPC MPCsub(MPC x, MPC y)
     return (z);
 }
 
-MPC MPCone =
+MPC g_mpc_one =
 {
     {0x3fff, 0x80000000l},
     {0, 0l}
@@ -128,7 +128,7 @@ MPC MPCpow(MPC x, int exp)
     }
     else
     {
-        z = MPCone;
+        z = g_mpc_one;
     }
     exp >>= 1;
     while (exp)

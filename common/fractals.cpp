@@ -543,8 +543,8 @@ int MPCNewtonFractal()
 
     mpcnew.x = *pMPsub(*pMPmul(mpctmp.x, mpcold.x), *pMPmul(mpctmp.y, mpcold.y));
     mpcnew.y = *pMPadd(*pMPmul(mpctmp.x, mpcold.y), *pMPmul(mpctmp.y, mpcold.x));
-    mpctmp1.x = *pMPsub(mpcnew.x, MPCone.x);
-    mpctmp1.y = *pMPsub(mpcnew.y, MPCone.y);
+    mpctmp1.x = *pMPsub(mpcnew.x, g_mpc_one.x);
+    mpctmp1.y = *pMPsub(mpcnew.y, g_mpc_one.y);
     if (pMPcmp(MPCmod(mpctmp1), mpthreshold) < 0)
     {
         if (fractype == fractal_type::MPNEWTBASIN)

@@ -792,7 +792,7 @@ void dStkOne()
 #if !defined(XFRACT)
 void mStkOne()
 {
-    Arg1->m = MPCone;
+    Arg1->m = g_mpc_one;
 }
 
 void lStkOne()
@@ -3025,7 +3025,7 @@ int form_per_pixel()
     case M_MATH:
         if ((row+col)&1)
         {
-            v[9].a.m = MPCone;
+            v[9].a.m = g_mpc_one;
         }
         else
         {
