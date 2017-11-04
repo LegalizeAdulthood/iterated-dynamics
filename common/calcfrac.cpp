@@ -140,7 +140,7 @@ int g_i_y_stop = 0;                         // start, stop here
 symmetry_type symmetry = symmetry_type::NONE; // symmetry flag
 bool reset_periodicity = false;         // true if escape time pixel rtn to reset
 int g_keyboard_check_interval = 0;
-int max_keyboard_check_interval = 0;                   // avoids checking keyboard too often
+int g_max_keyboard_check_interval = 0;                   // avoids checking keyboard too often
 
 std::vector<BYTE> resume_data;          // resume info
 bool resuming = false;                  // true if resuming after interrupt
@@ -1268,7 +1268,7 @@ static void perform_worklist()
         // some common initialization for escape-time pixel level routines
         g_close_enough = ddelmin*pow(2.0, -(double)(abs(periodicitycheck)));
         g_l_close_enough = (long)(g_close_enough * g_fudge_factor); // "close enough" value
-        g_keyboard_check_interval = max_keyboard_check_interval;
+        g_keyboard_check_interval = g_max_keyboard_check_interval;
 
         setsymmetry(symmetry, true);
 
@@ -3034,7 +3034,7 @@ plot_pixel:
         {
             return -1;
         }
-        g_keyboard_check_interval = max_keyboard_check_interval;
+        g_keyboard_check_interval = g_max_keyboard_check_interval;
     }
     return g_color;
 }

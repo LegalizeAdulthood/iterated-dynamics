@@ -242,7 +242,7 @@ static void main_restart(int const argc, char const *const argv[], bool &stacked
     }
 #endif
 
-    max_keyboard_check_interval = 80;                  // check the keyboard this often
+    g_max_keyboard_check_interval = 80;                  // check the keyboard this often
 
     if (show_file && g_init_mode < 0)
     {

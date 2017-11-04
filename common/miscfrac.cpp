@@ -1416,7 +1416,7 @@ int popcorn()   // subset of std engine
         get_resume(sizeof(start_row), &start_row, 0);
         end_resume();
     }
-    g_keyboard_check_interval = max_keyboard_check_interval;
+    g_keyboard_check_interval = g_max_keyboard_check_interval;
     plot = noplot;
     g_l_temp_sqr_x = 0;
     tempsqrx = g_l_temp_sqr_x;
@@ -2710,7 +2710,7 @@ int calcfroth()   // per pixel 1/2/g, called with row & col set
         {
             return (-1);
         }
-        g_keyboard_check_interval = max_keyboard_check_interval;
+        g_keyboard_check_interval = g_max_keyboard_check_interval;
     }
 
     // inside - Here's where non-palette based images would be nice.  Instead,
