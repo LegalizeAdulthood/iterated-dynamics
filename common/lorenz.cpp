@@ -380,15 +380,15 @@ bool orbit3dlongsetup()
         case Major::random_walk:
 lrwalk:
             initorbitlong[0] = g_fudge_factor + Sqrt.x / 2;
-            lnew.x = initorbitlong[0];
+            g_l_new.x = initorbitlong[0];
             initorbitlong[1] =         Sqrt.y / 2;
-            lnew.y = initorbitlong[1];
+            g_l_new.y = initorbitlong[1];
             break;
         case Major::random_run:
             initorbitlong[0] = g_fudge_factor + Sqrt.x / 2;
-            lnew.x = initorbitlong[0];
+            g_l_new.x = initorbitlong[0];
             initorbitlong[1] =         Sqrt.y / 2;
-            lnew.y = initorbitlong[1];
+            g_l_new.y = initorbitlong[1];
             break;
         }
     }
@@ -772,25 +772,25 @@ Linverse_julia_orbit()
         {
             return -1;
         }
-        lnew = DeQueueLong();
+        g_l_new = DeQueueLong();
         break;
     case Major::depth_first:
         if (QueueEmpty())
         {
             return -1;
         }
-        lnew = PopLong();
+        g_l_new = PopLong();
         break;
     case Major::random_walk:
-        lnew = ComplexSqrtLong(lnew.x - CxLong, lnew.y - CyLong);
+        g_l_new = ComplexSqrtLong(g_l_new.x - CxLong, g_l_new.y - CyLong);
         if (RANDOM(2))
         {
-            lnew.x = -lnew.x;
-            lnew.y = -lnew.y;
+            g_l_new.x = -g_l_new.x;
+            g_l_new.y = -g_l_new.y;
         }
         break;
     case Major::random_run:
-        lnew = ComplexSqrtLong(lnew.x - CxLong, lnew.y - CyLong);
+        g_l_new = ComplexSqrtLong(g_l_new.x - CxLong, g_l_new.y - CyLong);
         if (random_len == 0)
         {
             random_len = RANDOM(run_length);
@@ -801,14 +801,14 @@ Linverse_julia_orbit()
         case 0:     // left
             break;
         case 1:     // right
-            lnew.x = -lnew.x;
-            lnew.y = -lnew.y;
+            g_l_new.x = -g_l_new.x;
+            g_l_new.y = -g_l_new.y;
             break;
         case 2:     // random direction
             if (RANDOM(2))
             {
-                lnew.x = -lnew.x;
-                lnew.y = -lnew.y;
+                g_l_new.x = -g_l_new.x;
+                g_l_new.y = -g_l_new.y;
             }
             break;
         }
@@ -821,10 +821,10 @@ Linverse_julia_orbit()
      * otherwise the values of lcvt were truncated.  Used bitshift
      * of 24 otherwise, for increased precision.
      */
-    newcol = (int)((multiply(lcvt.a, lnew.x >> (bitshift - 21), 21) +
-                    multiply(lcvt.b, lnew.y >> (bitshift - 21), 21) + lcvt.e) >> 21);
-    newrow = (int)((multiply(lcvt.c, lnew.x >> (bitshift - 21), 21) +
-                    multiply(lcvt.d, lnew.y >> (bitshift - 21), 21) + lcvt.f) >> 21);
+    newcol = (int)((multiply(lcvt.a, g_l_new.x >> (bitshift - 21), 21) +
+                    multiply(lcvt.b, g_l_new.y >> (bitshift - 21), 21) + lcvt.e) >> 21);
+    newrow = (int)((multiply(lcvt.c, g_l_new.x >> (bitshift - 21), 21) +
+                    multiply(lcvt.d, g_l_new.y >> (bitshift - 21), 21) + lcvt.f) >> 21);
 
     if (newcol < 1 || newcol >= xdots || newrow < 1 || newrow >= ydots)
     {
@@ -843,12 +843,12 @@ Linverse_julia_orbit()
         switch (major_method)
         {
         case Major::breadth_first:
-            lnew = ComplexSqrtLong(lnew.x - CxLong, lnew.y - CyLong);
-            EnQueueLong(color * lnew.x, color * lnew.y);
+            g_l_new = ComplexSqrtLong(g_l_new.x - CxLong, g_l_new.y - CyLong);
+            EnQueueLong(color * g_l_new.x, color * g_l_new.y);
             break;
         case Major::depth_first:
-            lnew = ComplexSqrtLong(lnew.x - CxLong, lnew.y - CyLong);
-            PushLong(color * lnew.x, color * lnew.y);
+            g_l_new = ComplexSqrtLong(g_l_new.x - CxLong, g_l_new.y - CyLong);
+            PushLong(color * g_l_new.x, color * g_l_new.y);
             break;
         case Major::random_run:
             random_len--;
@@ -870,38 +870,38 @@ Linverse_julia_orbit()
         if (color < mxhits)
         {
             putcolor(newcol, newrow, color+1);
-            lnew = ComplexSqrtLong(lnew.x - CxLong, lnew.y - CyLong);
-            EnQueueLong(lnew.x,  lnew.y);
-            EnQueueLong(-lnew.x, -lnew.y);
+            g_l_new = ComplexSqrtLong(g_l_new.x - CxLong, g_l_new.y - CyLong);
+            EnQueueLong(g_l_new.x,  g_l_new.y);
+            EnQueueLong(-g_l_new.x, -g_l_new.y);
         }
         break;
     case Major::depth_first:
         if (color < mxhits)
         {
             putcolor(newcol, newrow, color+1);
-            lnew = ComplexSqrtLong(lnew.x - CxLong, lnew.y - CyLong);
+            g_l_new = ComplexSqrtLong(g_l_new.x - CxLong, g_l_new.y - CyLong);
             if (minor_method == Minor::left_first)
             {
                 if (QueueFullAlmost())
                 {
-                    PushLong(-lnew.x, -lnew.y);
+                    PushLong(-g_l_new.x, -g_l_new.y);
                 }
                 else
                 {
-                    PushLong(lnew.x,  lnew.y);
-                    PushLong(-lnew.x, -lnew.y);
+                    PushLong(g_l_new.x,  g_l_new.y);
+                    PushLong(-g_l_new.x, -g_l_new.y);
                 }
             }
             else
             {
                 if (QueueFullAlmost())
                 {
-                    PushLong(lnew.x,  lnew.y);
+                    PushLong(g_l_new.x,  g_l_new.y);
                 }
                 else
                 {
-                    PushLong(-lnew.x, -lnew.y);
-                    PushLong(lnew.x,  lnew.y);
+                    PushLong(-g_l_new.x, -g_l_new.y);
+                    PushLong(g_l_new.x,  g_l_new.y);
                 }
             }
         }

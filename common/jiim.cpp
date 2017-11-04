@@ -1242,7 +1242,7 @@ void Jiim(jiim_types which)
             old_y = y;
         }
         old = g_new;
-        lold = lnew;
+        lold = g_l_new;
     } // end while (still)
 finish:
     Free_Queue();

@@ -6,187 +6,187 @@
 
 int asmlMODbailout()
 {
-    ltempsqrx = lsqr(lnew.x);
-    ltempsqry = lsqr(lnew.y);
+    ltempsqrx = lsqr(g_l_new.x);
+    ltempsqry = lsqr(g_l_new.y);
     g_l_magnitude = ltempsqrx + ltempsqry;
-    if (g_l_magnitude >= g_l_limit || g_l_magnitude < 0 || labs(lnew.x) > g_l_limit2
-            || labs(lnew.y) > g_l_limit2 || overflow)
+    if (g_l_magnitude >= g_l_limit || g_l_magnitude < 0 || labs(g_l_new.x) > g_l_limit2
+            || labs(g_l_new.y) > g_l_limit2 || overflow)
     {
         overflow = false;
         return 1;
     }
-    lold = lnew;
+    lold = g_l_new;
     return 0;
 }
 
 int asmlREALbailout()
 {
-    ltempsqrx = lsqr(lnew.x);
-    ltempsqry = lsqr(lnew.y);
+    ltempsqrx = lsqr(g_l_new.x);
+    ltempsqry = lsqr(g_l_new.y);
     if (ltempsqrx >= g_l_limit || overflow)
     {
         overflow = false;
         return 1;
     }
-    lold = lnew;
+    lold = g_l_new;
     return 0;
 }
 
 int asmlIMAGbailout()
 {
-    ltempsqrx = lsqr(lnew.x);
-    ltempsqry = lsqr(lnew.y);
+    ltempsqrx = lsqr(g_l_new.x);
+    ltempsqry = lsqr(g_l_new.y);
     if (ltempsqry >= g_l_limit || overflow)
     {
         overflow = false;
         return 1;
     }
-    lold = lnew;
+    lold = g_l_new;
     return 0;
 }
 
 int asmlORbailout()
 {
-    ltempsqrx = lsqr(lnew.x);
-    ltempsqry = lsqr(lnew.y);
+    ltempsqrx = lsqr(g_l_new.x);
+    ltempsqry = lsqr(g_l_new.y);
     if (ltempsqrx >= g_l_limit || ltempsqry >= g_l_limit || overflow)
     {
         overflow = false;
         return 1;
     }
-    lold = lnew;
+    lold = g_l_new;
     return 0;
 }
 
 int asmlANDbailout()
 {
-    ltempsqrx = lsqr(lnew.x);
-    ltempsqry = lsqr(lnew.y);
+    ltempsqrx = lsqr(g_l_new.x);
+    ltempsqry = lsqr(g_l_new.y);
     if ((ltempsqrx >= g_l_limit && ltempsqry >= g_l_limit) || overflow)
     {
         overflow = false;
         return 1;
     }
-    lold = lnew;
+    lold = g_l_new;
     return 0;
 }
 
 int asmlMANHbailout()
 {
-    ltempsqrx = lsqr(lnew.x);
-    ltempsqry = lsqr(lnew.y);
+    ltempsqrx = lsqr(g_l_new.x);
+    ltempsqry = lsqr(g_l_new.y);
     magnitude = fabs(g_new.x) + fabs(g_new.y);
     if (magnitude*magnitude >= rqlim)
     {
         return 1;
     }
-    lold = lnew;
+    lold = g_l_new;
     return 0;
 }
 
 int asmlMANRbailout()
 {
-    ltempsqrx = lsqr(lnew.x);
-    ltempsqry = lsqr(lnew.y);
+    ltempsqrx = lsqr(g_l_new.x);
+    ltempsqry = lsqr(g_l_new.y);
     magnitude = fabs(g_new.x + g_new.y);
     if (magnitude*magnitude >= rqlim)
     {
         return 1;
     }
-    lold = lnew;
+    lold = g_l_new;
     return 0;
 }
 
 int asm386lMODbailout()
 {
-    ltempsqrx = lsqr(lnew.x);
-    ltempsqry = lsqr(lnew.y);
+    ltempsqrx = lsqr(g_l_new.x);
+    ltempsqry = lsqr(g_l_new.y);
     g_l_magnitude = ltempsqrx + ltempsqry;
-    if (g_l_magnitude >= g_l_limit || g_l_magnitude < 0 || labs(lnew.x) > g_l_limit2
-            || labs(lnew.y) > g_l_limit2 || overflow)
+    if (g_l_magnitude >= g_l_limit || g_l_magnitude < 0 || labs(g_l_new.x) > g_l_limit2
+            || labs(g_l_new.y) > g_l_limit2 || overflow)
     {
         overflow = false;
         return 1;
     }
-    lold = lnew;
+    lold = g_l_new;
     return 0;
 }
 
 int asm386lREALbailout()
 {
-    ltempsqrx = lsqr(lnew.x);
-    ltempsqry = lsqr(lnew.y);
+    ltempsqrx = lsqr(g_l_new.x);
+    ltempsqry = lsqr(g_l_new.y);
     if (ltempsqrx >= g_l_limit || overflow)
     {
         overflow = false;
         return 1;
     }
-    lold = lnew;
+    lold = g_l_new;
     return 0;
 }
 
 int asm386lIMAGbailout()
 {
-    ltempsqrx = lsqr(lnew.x);
-    ltempsqry = lsqr(lnew.y);
+    ltempsqrx = lsqr(g_l_new.x);
+    ltempsqry = lsqr(g_l_new.y);
     if (ltempsqry >= g_l_limit || overflow)
     {
         overflow = false;
         return 1;
     }
-    lold = lnew;
+    lold = g_l_new;
     return 0;
 }
 
 int asm386lORbailout()
 {
-    ltempsqrx = lsqr(lnew.x);
-    ltempsqry = lsqr(lnew.y);
+    ltempsqrx = lsqr(g_l_new.x);
+    ltempsqry = lsqr(g_l_new.y);
     if (ltempsqrx >= g_l_limit || overflow)
     {
         overflow = false;
         return 1;
     }
-    lold = lnew;
+    lold = g_l_new;
     return 0;
 }
 
 int asm386lANDbailout()
 {
-    ltempsqrx = lsqr(lnew.x);
-    ltempsqry = lsqr(lnew.y);
+    ltempsqrx = lsqr(g_l_new.x);
+    ltempsqry = lsqr(g_l_new.y);
     if ((ltempsqrx >= g_l_limit && ltempsqry >= g_l_limit) || overflow)
     {
         overflow = false;
         return 1;
     }
-    lold = lnew;
+    lold = g_l_new;
     return 0;
 }
 
 int asm386lMANHbailout()
 {
-    ltempsqrx = lsqr(lnew.x);
-    ltempsqry = lsqr(lnew.y);
+    ltempsqrx = lsqr(g_l_new.x);
+    ltempsqry = lsqr(g_l_new.y);
     magnitude = fabs(g_new.x) + fabs(g_new.y);
     if (magnitude*magnitude >= rqlim)
     {
         return 1;
     }
-    lold = lnew;
+    lold = g_l_new;
     return 0;
 }
 
 int asm386lMANRbailout()
 {
-    ltempsqrx = lsqr(lnew.x);
-    ltempsqry = lsqr(lnew.y);
+    ltempsqrx = lsqr(g_l_new.x);
+    ltempsqry = lsqr(g_l_new.y);
     magnitude = fabs(g_new.x + g_new.y);
     if (magnitude*magnitude >= rqlim)
     {
         return 1;
     }
-    lold = lnew;
+    lold = g_l_new;
     return 0;
 }
 

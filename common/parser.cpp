@@ -2975,8 +2975,8 @@ int Formula()
         old = g_new;
         return Arg1->m.x.Exp == 0 && Arg1->m.x.Mant == 0;
     case L_MATH:
-        lnew = v[3].a.l;
-        lold = lnew;
+        g_l_new = v[3].a.l;
+        lold = g_l_new;
         if (overflow)
         {
             return 1;
