@@ -794,7 +794,7 @@ bool tab_display_2(char *msg)
     else if (rhombus_stack[0])
     {
         write_row(row++, "SOI Recursion %d stack free %d %d %d %d %d %d %d %d %d %d",
-                  max_rhombus_depth+1,
+                  g_max_rhombus_depth+1,
                   rhombus_stack[0], rhombus_stack[1], rhombus_stack[2],
                   rhombus_stack[3], rhombus_stack[4], rhombus_stack[5],
                   rhombus_stack[6], rhombus_stack[7], rhombus_stack[8],
