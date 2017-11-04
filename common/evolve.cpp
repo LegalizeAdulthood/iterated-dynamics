@@ -46,7 +46,7 @@ double parmzoom;
 // used for things like inside or outside types, bailout tests, trig fn etc
 char evolve_discrete_x_parameter_offset;
 char evolve_discrete_y_parameter_offset;
-char evolve_new_discrete_x_parameter_offset;
+char g_evolve_new_discrete_x_parameter_offset;
 char evolve_new_discrete_y_parameter_offset;
 
 int param_box_count;
@@ -1111,7 +1111,7 @@ void set_evolve_ranges()
     evolve_new_x_parameter_offset = evolve_x_parameter_offset +(((double)px-parmzoom)*g_evolve_dist_per_x);
     evolve_new_y_parameter_offset = evolve_y_parameter_offset +(((double)lclpy-parmzoom)*g_evolve_dist_per_y);
 
-    evolve_new_discrete_x_parameter_offset = (char)(evolve_discrete_x_parameter_offset +(px- g_evolve_image_grid_size /2));
+    g_evolve_new_discrete_x_parameter_offset = (char)(evolve_discrete_x_parameter_offset +(px- g_evolve_image_grid_size /2));
     evolve_new_discrete_y_parameter_offset = (char)(evolve_discrete_y_parameter_offset +(lclpy- g_evolve_image_grid_size /2));
     return;
 }

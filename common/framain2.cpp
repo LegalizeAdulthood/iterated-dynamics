@@ -378,8 +378,8 @@ main_state big_while_loop(bool *const kbdmore, bool *const stacked, bool const r
                     evolve_x_parameter_offset = evolve_new_x_parameter_offset;
                     evolve_new_y_parameter_offset = g_evolve_info.y_parameter_offset;
                     evolve_y_parameter_offset = evolve_new_y_parameter_offset;
-                    evolve_new_discrete_x_parameter_offset = (char)g_evolve_info.discrete_x_parameter_offset;
-                    evolve_discrete_x_parameter_offset = evolve_new_discrete_x_parameter_offset;
+                    g_evolve_new_discrete_x_parameter_offset = (char)g_evolve_info.discrete_x_parameter_offset;
+                    evolve_discrete_x_parameter_offset = g_evolve_new_discrete_x_parameter_offset;
                     evolve_new_discrete_y_parameter_offset = (char)g_evolve_info.discrete_y_paramter_offset;
                     evolve_discrete_y_parameter_offset = evolve_new_discrete_y_parameter_offset;
                     px           = g_evolve_info.px;
@@ -409,7 +409,7 @@ main_state big_while_loop(bool *const kbdmore, bool *const stacked, bool const r
                     g_evolve_max_random_mutation = g_evolve_max_random_mutation * g_evolve_mutation_reduction_factor;
                     evolve_x_parameter_offset = evolve_new_x_parameter_offset;
                     evolve_y_parameter_offset = evolve_new_y_parameter_offset;
-                    evolve_discrete_x_parameter_offset = evolve_new_discrete_x_parameter_offset;
+                    evolve_discrete_x_parameter_offset = g_evolve_new_discrete_x_parameter_offset;
                     evolve_discrete_y_parameter_offset = evolve_new_discrete_y_parameter_offset; // evolve_discrete_x_parameter_offset used for discrete parms like inside, outside, trigfn etc
                 }
                 param_box_count = 0;
@@ -801,7 +801,7 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
             g_ld_check = false;
             set_current_params();
             evolve_new_discrete_y_parameter_offset = 0;
-            evolve_new_discrete_x_parameter_offset = 0;
+            g_evolve_new_discrete_x_parameter_offset = 0;
             evolve_discrete_y_parameter_offset = 0;
             evolve_discrete_x_parameter_offset = 0;
             g_evolve_max_random_mutation = 1;           // reset param evolution stuff
@@ -1599,7 +1599,7 @@ static main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdm
             g_ld_check = false;
             set_current_params();
             evolve_new_discrete_y_parameter_offset = 0;
-            evolve_new_discrete_x_parameter_offset = 0;
+            g_evolve_new_discrete_x_parameter_offset = 0;
             evolve_discrete_y_parameter_offset = 0;
             evolve_discrete_x_parameter_offset = 0;
             g_evolve_max_random_mutation = 1;           // reset param evolution stuff
