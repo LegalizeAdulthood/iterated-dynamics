@@ -307,7 +307,7 @@ extern MP                    g_halley_mp_a_plus_one_times_degree;
 extern MP                    g_halley_mp_a_plus_one;
 extern MPC                   g_mpc_one;
 extern std::vector<MPC>      g_mpc_roots;
-extern MPC                   mpctmpparm;
+extern MPC                   g_mpc_temp_param;
 extern MP                    mpd1overd;
 extern MP                    mpone;
 extern int                   MPOverflow;

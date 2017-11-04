@@ -1729,7 +1729,7 @@ JuliaTrigOrTrigfpFractal()
 
 int g_halley_a_plus_one, g_halley_a_plus_one_times_degree;
 MP g_halley_mp_a_plus_one, g_halley_mp_a_plus_one_times_degree;
-MPC mpctmpparm;
+MPC g_mpc_temp_param;
 
 int MPCHalleyFractal()
 {
@@ -1778,7 +1778,7 @@ int MPCHalleyFractal()
     mpctmp.y = *pMPsub(mpcF1prime.y, mpcHalnumer1.y); //  F' - F"F/2F'
     mpcHalnumer2 = MPCdiv(mpcFX, mpctmp);
 
-    mpctmp   =  MPCmul(mpctmpparm, mpcHalnumer2);  // mpctmpparm is
+    mpctmp   =  MPCmul(g_mpc_temp_param, mpcHalnumer2);  // mpctmpparm is
     // relaxation coef.
     mpcnew = MPCsub(mpcold, mpctmp);
     g_new    = MPC2cmplx(mpcnew);
