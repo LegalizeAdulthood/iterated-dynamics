@@ -202,7 +202,7 @@ void calcfracinit() // initialize a *pile* of stuff for fractal calculation
     if (bf_math != bf_math_type::NONE)
     {
         int gotprec = getprecbf(CURRENTREZ);
-        if ((gotprec <= DBL_DIG+1 && g_debug_flag != debug_flags::force_arbitrary_precision_math) || math_tol[1] >= 1.0)
+        if ((gotprec <= DBL_DIG+1 && g_debug_flag != debug_flags::force_arbitrary_precision_math) || g_math_tol[1] >= 1.0)
         {
             bfcornerstofloat();
             bf_math = bf_math_type::NONE;
@@ -1237,11 +1237,11 @@ static int ratio_bad(double actual, double desired)
     double tol;
     if (g_integer_fractal)
     {
-        tol = math_tol[0];
+        tol = g_math_tol[0];
     }
     else
     {
-        tol = math_tol[1];
+        tol = g_math_tol[1];
     }
     if (tol <= 0.0)
     {

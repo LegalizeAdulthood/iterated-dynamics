@@ -118,7 +118,7 @@ int     g_color_state = 0;         // 0, g_dac_box matches default (bios or map=
 bool    g_colors_preloaded = false; // if g_dac_box preloaded for next mode select
 int     save_release = 0;       // release creating PAR file
 bool    g_read_color = true;  // flag for reading color from GIF
-double  math_tol[2] = {.05, .05}; // For math transition
+double  g_math_tol[2] = {.05, .05}; // For math transition
 bool Targa_Out = false;                 // 3D fullcolor flag
 bool truecolor = false;                 // escape time truecolor flag
 int truemode = 0;               // truecolor coloring scheme
@@ -548,8 +548,8 @@ static void initvars_fractal()          // init vars affecting calculation
     oymax = curfractalspecific->ymax;
     oy3rd = curfractalspecific->ymin;
 
-    math_tol[0] = 0.05;
-    math_tol[1] = 0.05;
+    g_math_tol[0] = 0.05;
+    g_math_tol[1] = 0.05;
 
     g_display_3d = display_3d_modes::NONE;                       // 3D display is off
     overlay_3d = false;                  // 3D overlay is off
@@ -1799,11 +1799,11 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         }
         else if (totparms >= 1)
         {
-            math_tol[0] = floatval[0];
+            g_math_tol[0] = floatval[0];
         }
         if (totparms >= 2)
         {
-            math_tol[1] = floatval[1];
+            g_math_tol[1] = floatval[1];
         }
         return CMDARG_NONE;
     }

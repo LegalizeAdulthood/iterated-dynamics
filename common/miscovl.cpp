@@ -1419,9 +1419,9 @@ void write_batch_parms(char const *colorinf, bool colorsonly, int maxcolor, int 
             put_parm(" %s=%c", "orbitdrawmode", g_draw_mode);
         }
 
-        if (math_tol[0] != 0.05 || math_tol[1] != 0.05)
+        if (g_math_tol[0] != 0.05 || g_math_tol[1] != 0.05)
         {
-            put_parm(" %s=%g/%g", "mathtolerance", math_tol[0], math_tol[1]);
+            put_parm(" %s=%g/%g", "mathtolerance", g_math_tol[0], g_math_tol[1]);
         }
 
     }
