@@ -53,7 +53,7 @@ int test()
     {
         for (row = startrow; row <= iystop; row = row+1+numpasses)
         {
-            for (col = 0; col <= ixstop; col++)       // look at each point on screen
+            for (col = 0; col <= g_i_x_stop; col++)       // look at each point on screen
             {
                 int color;
                 g_init.x = dxpixel();
@@ -1043,7 +1043,7 @@ int Bifurcation()
         g_init.y = (double)(yymax - iystop*delyy); // bottom pixels
     }
 
-    while (x <= ixstop)
+    while (x <= g_i_x_stop)
     {
         if (driver_key_pressed())
         {
@@ -1423,7 +1423,7 @@ int popcorn()   // subset of std engine
     for (row = start_row; row <= iystop; row++)
     {
         reset_periodicity = true;
-        for (col = 0; col <= ixstop; col++)
+        for (col = 0; col <= g_i_x_stop; col++)
         {
             if (standard_fractal() == -1) // interrupted
             {
@@ -1915,8 +1915,8 @@ int cellular()
     bool resized = false;
     try
     {
-        cell_array[0].resize(ixstop+1);
-        cell_array[1].resize(ixstop+1);
+        cell_array[0].resize(g_i_x_stop+1);
+        cell_array[1].resize(g_i_x_stop+1);
         resized = true;
     }
     catch (std::bad_alloc const&)
@@ -1938,13 +1938,13 @@ int cellular()
         start_resume();
         get_resume(sizeof(start_row), &start_row, 0);
         end_resume();
-        get_line(start_row, 0, ixstop, &cell_array[filled][0]);
+        get_line(start_row, 0, g_i_x_stop, &cell_array[filled][0]);
     }
     else if (nxtscreenflag && !lstscreenflag)
     {
         start_resume();
         end_resume();
-        get_line(iystop, 0, ixstop, &cell_array[filled][0]);
+        get_line(iystop, 0, g_i_x_stop, &cell_array[filled][0]);
         param[3] += iystop + 1;
         start_row = -1; // after 1st iteration its = 0
     }
@@ -1952,7 +1952,7 @@ int cellular()
     {
         if (rflag || randparam == 0 || randparam == -1)
         {
-            for (col = 0; col <= ixstop; col++)
+            for (col = 0; col <= g_i_x_stop; col++)
             {
                 cell_array[filled][col] = (BYTE)(rand()%(int)k);
             }
@@ -1960,20 +1960,20 @@ int cellular()
 
         else
         {
-            for (col = 0; col <= ixstop; col++)
+            for (col = 0; col <= g_i_x_stop; col++)
             {
                 // Clear from end to end
                 cell_array[filled][col] = 0;
             }
             int i = 0;
-            for (col = (ixstop-16)/2; col < (ixstop+16)/2; col++)
+            for (col = (g_i_x_stop-16)/2; col < (g_i_x_stop+16)/2; col++)
             {
                 // insert initial
                 cell_array[filled][col] = (BYTE)init_string[i++];    // string
             }
         } // end of if not random
         lstscreenflag = lnnmbr != 0;
-        put_line(start_row, 0, ixstop, &cell_array[filled][0]);
+        put_line(start_row, 0, g_i_x_stop, &cell_array[filled][0]);
     }
     start_row++;
 
@@ -1991,7 +1991,7 @@ int cellular()
                 for (int i = 0; i <= r; i++)
                 {
                     cell_array[notfilled][i] = (BYTE)(rand()%(int)k);
-                    cell_array[notfilled][ixstop-i] = (BYTE)(rand()%(int)k);
+                    cell_array[notfilled][g_i_x_stop-i] = (BYTE)(rand()%(int)k);
                 }
             }
             else
@@ -2000,7 +2000,7 @@ int cellular()
                 for (int i = 0; i <= r; i++)
                 {
                     cell_array[notfilled][i] = 0;
-                    cell_array[notfilled][ixstop-i] = 0;
+                    cell_array[notfilled][g_i_x_stop-i] = 0;
                 }
             }
 
@@ -2019,7 +2019,7 @@ int cellular()
             cell_array[notfilled][r] = (BYTE)cell_table[t];
 
             // use a rolling sum in t
-            for (col = r+1; col < ixstop-r; col++)
+            for (col = r+1; col < g_i_x_stop-r; col++)
             {
                 // now do the rest
                 t = (S16)(t + cell_array[filled][col+r] - cell_array[filled][col-r-1]);
@@ -2056,7 +2056,7 @@ contloop:
             for (int i = 0; i <= r; i++)
             {
                 cell_array[notfilled][i] = (BYTE)(rand()%(int)k);
-                cell_array[notfilled][ixstop-i] = (BYTE)(rand()%(int)k);
+                cell_array[notfilled][g_i_x_stop-i] = (BYTE)(rand()%(int)k);
             }
         }
         else
@@ -2065,7 +2065,7 @@ contloop:
             for (int i = 0; i <= r; i++)
             {
                 cell_array[notfilled][i] = 0;
-                cell_array[notfilled][ixstop-i] = 0;
+                cell_array[notfilled][g_i_x_stop-i] = 0;
             }
         }
 
@@ -2084,7 +2084,7 @@ contloop:
         cell_array[notfilled][r] = (BYTE)cell_table[t];
 
         // use a rolling sum in t
-        for (col = r+1; col < ixstop-r; col++)
+        for (col = r+1; col < g_i_x_stop-r; col++)
         {
             // now do the rest
             t = (S16)(t + cell_array[filled][col+r] - cell_array[filled][col-r-1]);
@@ -2099,7 +2099,7 @@ contloop:
 
         filled = notfilled;
         notfilled = (S16)(1-filled);
-        put_line(row, 0, ixstop, &cell_array[filled][0]);
+        put_line(row, 0, g_i_x_stop, &cell_array[filled][0]);
         if (driver_key_pressed())
         {
             abort_cellular(CELLULAR_DONE, 0);

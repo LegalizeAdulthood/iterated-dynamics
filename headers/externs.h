@@ -228,7 +228,7 @@ extern int                   g_invert;
 extern bool                  g_is_true_color;
 extern bool                  g_is_mandelbrot;
 extern int                   g_i_x_start;
-extern int                   ixstop;
+extern int                   g_i_x_stop;
 extern int                   iystart;
 extern int                   iystop;
 extern std::string const     JIIMleftright[];
