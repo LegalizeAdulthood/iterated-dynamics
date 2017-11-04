@@ -1843,7 +1843,7 @@ gfp_top:
         paramvalues[promptnum].uval.dval = g_julibrot_x_max;
         paramvalues[promptnum].type = 'f';
         choices[promptnum++] = v0;
-        paramvalues[promptnum].uval.dval = mymaxfp;
+        paramvalues[promptnum].uval.dval = g_julibrot_y_max;
         paramvalues[promptnum].type = 'f';
         choices[promptnum++] = v1;
         paramvalues[promptnum].uval.dval = g_julibrot_x_min;
@@ -2035,7 +2035,7 @@ gfp_top:
     if (g_julibrot)
     {
         g_julibrot_x_max    = paramvalues[promptnum++].uval.dval;
-        mymaxfp    = paramvalues[promptnum++].uval.dval;
+        g_julibrot_y_max    = paramvalues[promptnum++].uval.dval;
         g_julibrot_x_min    = paramvalues[promptnum++].uval.dval;
         myminfp    = paramvalues[promptnum++].uval.dval;
         zdots      = paramvalues[promptnum++].uval.ival;

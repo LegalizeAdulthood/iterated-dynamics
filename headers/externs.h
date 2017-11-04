@@ -317,7 +317,7 @@ extern MP                    g_mp_threshold;
 extern MP                    g_mp_temp_param2_x;
 extern double                g_julibrot_x_max;
 extern double                g_julibrot_x_min;
-extern double                mymaxfp;
+extern double                g_julibrot_y_max;
 extern double                myminfp;
 extern int                   name_stack_ptr;
 extern DComplex              g_new;

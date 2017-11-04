@@ -10,7 +10,7 @@
 double g_julibrot_x_min = -.83;
 double myminfp = -.25;
 double g_julibrot_x_max = -.83;
-double mymaxfp =  .25;
+double g_julibrot_y_max =  .25;
 
 static long mxmin, mymin;
 static long x_per_inch, y_per_inch, inch_per_xdot, inch_per_ydot;
@@ -76,7 +76,7 @@ JulibrotSetup()
     xoffsetfp = (xxmax + xxmin) / 2;     // Calculate average
     yoffsetfp = (yymax + yymin) / 2;     // Calculate average
     dmxfp = (g_julibrot_x_max - g_julibrot_x_min) / zdots;
-    dmyfp = (mymaxfp - myminfp) / zdots;
+    dmyfp = (g_julibrot_y_max - myminfp) / zdots;
     g_float_param = &jbcfp;
     x_per_inchfp = (xxmin - xxmax) / widthfp;
     y_per_inchfp = (yymax - yymin) / g_height_fp;
@@ -123,7 +123,7 @@ JulibrotSetup()
         mxmin = (long)(g_julibrot_x_min * fg);
         mxmax = (long)(g_julibrot_x_max * fg);
         mymin = (long)(myminfp * fg);
-        mymax = (long)(mymaxfp * fg);
+        mymax = (long)(g_julibrot_y_max * fg);
         long origin = (long)(originfp * fg16);
         depth = (long)(g_depth_fp * fg16);
         width = (long)(widthfp * fg16);
