@@ -1272,7 +1272,7 @@ static void perform_worklist()
 
         setsymmetry(symmetry, true);
 
-        if (!resuming && (labs(LogFlag) == 2 || (LogFlag && Log_Auto_Calc)))
+        if (!resuming && (labs(LogFlag) == 2 || (LogFlag && g_log_map_auto_calculate)))
         {
             // calculate round screen edges to work out best start for logmap
             LogFlag = (autologmap() * (LogFlag / labs(LogFlag)));

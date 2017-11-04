@@ -142,7 +142,7 @@ long    LogFlag = 0;            // Logarithmic palette flag: 0 = no
 BYTE g_exit_video_mode = 3;              // video mode on exit
 
 int     Log_Fly_Calc = 0;       // calculate logmap on-the-fly
-bool    Log_Auto_Calc = false;          // auto calculate logmap
+bool    g_log_map_auto_calculate = false;          // auto calculate logmap
 bool    nobof = false;                  // Flag to make inside=bof options not duplicate bof images
 
 bool    g_escape_exit = false;    // set to true to avoid the "are you sure?" screen
@@ -2831,7 +2831,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
     if (variable == "logmap")
     {
         // logmap=?
-        Log_Auto_Calc = false;          // turn this off if loading a PAR
+        g_log_map_auto_calculate = false;          // turn this off if loading a PAR
         if (charval[0] == 'y')
         {
             LogFlag = 1;                           // palette is logarithmic
@@ -2855,7 +2855,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
     {
         // logmode=?
         Log_Fly_Calc = 0;                         // turn off if error
-        Log_Auto_Calc = false;
+        g_log_map_auto_calculate = false;
         if (charval[0] == 'f')
         {
             Log_Fly_Calc = 1;                      // calculate on the fly
@@ -2866,7 +2866,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         }
         else if (charval[0] == 'a')
         {
-            Log_Auto_Calc = true;       // force auto calc of logmap
+            g_log_map_auto_calculate = true;        // force auto calc of logmap
         }
         else
         {

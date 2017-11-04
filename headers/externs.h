@@ -258,7 +258,7 @@ extern std::string           g_l_system_name;
 extern LComplex              g_l_new;
 extern bool                  g_loaded_3d;
 extern int                   g_load_index;
-extern bool                  Log_Auto_Calc;
+extern bool                  g_log_map_auto_calculate;
 extern bool                  Log_Calc;
 extern int                   Log_Fly_Calc;
 extern long                  LogFlag;

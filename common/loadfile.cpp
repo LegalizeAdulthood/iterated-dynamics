@@ -374,7 +374,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
     }
 
     // if (read_info.version > 14)  post-version 20.1.12
-    Log_Auto_Calc = false;              // make sure it's turned off
+    g_log_map_auto_calculate = false;              // make sure it's turned off
 
     orbit_interval = 1;
     if (read_info.version > 15) // post-version 20.3.2

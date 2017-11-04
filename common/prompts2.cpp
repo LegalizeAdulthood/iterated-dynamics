@@ -434,7 +434,7 @@ int get_toggles()
     if (LogFlag != old_logflag)
     {
         j++;
-        Log_Auto_Calc = false;          // turn it off, use the supplied value
+        g_log_map_auto_calculate = false;          // turn it off, use the supplied value
     }
 
     usr_biomorph = uvalues[++k].uval.ival;

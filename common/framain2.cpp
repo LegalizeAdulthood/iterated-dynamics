@@ -875,7 +875,7 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
             {
                 start_show_orbit = false;
                 soundflag &= ~(SOUNDFLAG_X | SOUNDFLAG_Y | SOUNDFLAG_Z); // turn off only x,y,z
-                Log_Auto_Calc = false; // turn it off
+                g_log_map_auto_calculate = false; // turn it off
             }
         }
         else if (*kbdchar == FIK_CTL_F)
