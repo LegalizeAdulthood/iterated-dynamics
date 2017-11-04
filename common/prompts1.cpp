@@ -62,7 +62,7 @@ char formmask[13]    = {"*.frm"};
 char lsysmask[13]    = {"*.l"};
 std::string const g_glasses1_map = "glasses1.map";
 std::string MAP_name;
-bool mapset = false;
+bool g_map_set = false;
 bool g_julibrot = false;                  // flag for julibrot
 
 // ---------------------------------------------------------------------
@@ -3442,7 +3442,7 @@ static bool check_mapfile()
         return false;
     }
     char buff[256] = "*";
-    if (mapset)
+    if (g_map_set)
     {
         strcpy(buff, MAP_name.c_str());
     }
@@ -3471,7 +3471,7 @@ static bool check_mapfile()
             }
             if (buff[0] == '*')
             {
-                mapset = false;
+                g_map_set = false;
                 break;
             }
         }
@@ -3483,7 +3483,7 @@ static bool check_mapfile()
             askflag = true;
             continue;
         }
-        mapset = true;
+        g_map_set = true;
         merge_pathnames(MAP_name, buff, cmd_file::AT_CMD_LINE);
         break;
     }

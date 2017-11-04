@@ -454,7 +454,7 @@ static void initvars_restart()          // <ins> key init
     show_file = 1;
     // next should perhaps be fractal re-init, not just <ins> ?
     g_init_cycle_limit = 55;                   // spin-DAC default speed limit
-    mapset = false;                     // no map= name active
+    g_map_set = false;                     // no map= name active
     g_map_specified = false;
     g_major_method = Major::breadth_first;    // default inverse julia methods
     minor_method = Minor::left_first;       // default inverse julia methods
@@ -3654,7 +3654,7 @@ static int parse_colors(char const *value)
         }
         if (g_display_3d != display_3d_modes::NONE)
         {
-            mapset = true;
+            g_map_set = true;
         }
         else
         {

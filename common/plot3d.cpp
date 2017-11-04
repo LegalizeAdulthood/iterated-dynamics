@@ -522,7 +522,7 @@ void plot_setup()
     }
     yyadjust = (int)(-(ytrans* (double)ydots)/100);
 
-    if (mapset)
+    if (g_map_set)
     {
         ValidateLuts(MAP_name.c_str()); // read the palette file
         if (g_glasses_type == 1 || g_glasses_type == 2)
