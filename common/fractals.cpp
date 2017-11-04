@@ -3643,7 +3643,7 @@ static long lxpixel_calc()
 // Imaginary component, grid lookup version - requires ly0/ly1 arrays
 static long lypixel_grid()
 {
-    return ly0[row]+ly1[col];
+    return g_l_y0[row]+ly1[col];
 }
 
 // Imaginary component, calculation version - does not require arrays

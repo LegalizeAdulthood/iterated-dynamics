@@ -274,7 +274,7 @@ extern LComplex              g_l_temp;
 extern std::vector<long>     g_l_x0;
 extern std::vector<long>     g_l_x1;
 extern long                (*g_l_x_pixel)();
-extern std::vector<long>     ly0;
+extern std::vector<long>     g_l_y0;
 extern std::vector<long>     ly1;
 extern long                (*lypixel)();
 extern int                   lzw[2];

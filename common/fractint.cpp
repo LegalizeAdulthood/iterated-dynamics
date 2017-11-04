@@ -71,7 +71,7 @@ bool g_has_inverse = false;
 // note that integer grid is set when integerfractal && !invert;
 // otherwise the floating point grid is set; never both at once
 std::vector<long> g_l_x0;              // x, y grid
-std::vector<long> ly0;
+std::vector<long> g_l_y0;
 std::vector<long> g_l_x1;              // adjustment for rotate
 std::vector<long> ly1;
 // note that lx1 & ly1 values can overflow into sign bit; since

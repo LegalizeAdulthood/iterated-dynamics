@@ -64,7 +64,7 @@ void free_grid_pointers()
     dx1.clear();
     dy1.clear();
     g_l_x0.clear();
-    ly0.clear();
+    g_l_y0.clear();
     g_l_x1.clear();
     ly1.clear();
 }
@@ -81,7 +81,7 @@ void set_grid_pointers()
     g_l_x0.resize(xdots);
     ly1.resize(xdots);
 
-    ly0.resize(ydots);
+    g_l_y0.resize(ydots);
     g_l_x1.resize(ydots);
     set_pixel_calc_functions();
 }
@@ -113,7 +113,7 @@ void fill_lx_array()
     if (use_grid)
     {
         g_l_x0[0] = xmin;               // fill up the x, y grids
-        ly0[0] = ymax;
+        g_l_y0[0] = ymax;
         ly1[0] = 0;
         g_l_x1[0] = ly1[0];
         for (int i = 1; i < xdots; i++)
@@ -123,7 +123,7 @@ void fill_lx_array()
         }
         for (int i = 1; i < ydots; i++)
         {
-            ly0[i] = ly0[i-1] - dely;
+            g_l_y0[i] = g_l_y0[i-1] - dely;
             g_l_x1[i] = g_l_x1[i-1] + delx2;
         }
     }
@@ -492,7 +492,7 @@ init_restart:
             fill_lx_array();   // fill up the x,y grids
             // past max res?  check corners within 10% of expected
             if (ratio_bad((double)g_l_x0[xdots-1]-xmin, (double)xmax-x3rd)
-                    || ratio_bad((double)ly0[ydots-1]-ymax, (double)y3rd-ymax)
+                    || ratio_bad((double)g_l_y0[ydots-1]-ymax, (double)y3rd-ymax)
                     || ratio_bad((double)g_l_x1[(ydots >> 1)-1], ((double)x3rd-xmin)/2)
                     || ratio_bad((double)ly1[(xdots >> 1)-1], ((double)ymin-y3rd)/2))
             {
@@ -515,9 +515,9 @@ expand_retry:
 
             // re-set corners to match reality
             xmax = g_l_x0[xdots-1] + g_l_x1[ydots-1];
-            ymin = ly0[ydots-1] + ly1[xdots-1];
+            ymin = g_l_y0[ydots-1] + ly1[xdots-1];
             x3rd = xmin + g_l_x1[ydots-1];
-            y3rd = ly0[ydots-1];
+            y3rd = g_l_y0[ydots-1];
             xxmin = fudgetodouble(xmin);
             xxmax = fudgetodouble(xmax);
             xx3rd = fudgetodouble(x3rd);
