@@ -1410,7 +1410,7 @@ std::string const JIIMmethod[] =
 };
 #endif
 static char JIIMstr2[] = "Left first or Right first?";
-std::string const JIIMleftright[] = {"left", "right"};
+std::string const g_jiim_left_right[] = {"left", "right"};
 
 // The index into this array must correspond to enum trig_fn
 trig_funct_lst trigfn[] =
@@ -1461,7 +1461,7 @@ namespace
 
 char const *jiim_left_right_list[] =
 {
-    JIIMleftright[0].c_str(), JIIMleftright[1].c_str()
+    g_jiim_left_right[0].c_str(), g_jiim_left_right[1].c_str()
 };
 
 char const *jiim_method_list[] =
