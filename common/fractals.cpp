@@ -62,7 +62,7 @@ const long l16triglim = 8L << 16;       // domain limit of fast trig functions
 
 LComplex g_l_coefficient, g_l_old, g_l_new, g_l_param, g_l_init, g_l_temp, ltmp2, g_l_param2;
 long g_l_temp_sqr_x, g_l_temp_sqr_y;
-int maxcolor;
+int g_max_color;
 int root, degree, g_basin;
 double roverd, g_degree_minus_1_over_degree, threshold;
 DComplex tmp2;
@@ -479,7 +479,7 @@ int NewtonFractal2()
             }
             if (tmpcolor == -1)
             {
-                g_color_iter = maxcolor;
+                g_color_iter = g_max_color;
             }
             else
             {
@@ -566,7 +566,7 @@ int MPCNewtonFractal()
                 }
             if (tmpcolor == -1)
             {
-                g_color_iter = maxcolor;
+                g_color_iter = g_max_color;
             }
             else
             {

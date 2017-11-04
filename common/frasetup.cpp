@@ -100,7 +100,7 @@ NewtonSetup()           // Newton/NewtBasin Routines
     // precalculated values
     roverd       = (double)root / (double)degree;
     g_degree_minus_1_over_degree      = (double)(degree - 1) / (double)degree;
-    maxcolor     = 0;
+    g_max_color     = 0;
     threshold    = .3*PI/degree; // less than half distance between roots
 #if !defined(XFRACT)
     if (fractype == fractal_type::MPNEWTON || fractype == fractal_type::MPNEWTBASIN)

@@ -286,7 +286,7 @@ extern BYTE                  g_map_clut[256][3];
 extern bool                  g_map_set;
 extern std::string           g_map_name;
 extern double                g_math_tol[2];
-extern int                   maxcolor;
+extern int                   g_max_color;
 extern long                  maxct;
 extern char                  maxfn;
 extern long                  maxit;
