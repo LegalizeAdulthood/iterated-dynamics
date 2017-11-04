@@ -88,7 +88,7 @@ static long autologmap();
 
 // variables exported from this file
 LComplex g_l_init_orbit = { 0 };
-long lmagnitud = 0;
+long g_l_magnitude = 0;
 long g_l_limit = 0;
 long g_l_limit2 = 0;
 long g_l_close_enough = 0;
@@ -2227,8 +2227,8 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
 
     if (g_inside <= BOF60 && g_inside >= BOF61)
     {
-        lmagnitud = 0;
-        magnitude = lmagnitud;
+        g_l_magnitude = 0;
+        magnitude = g_l_magnitude;
         min_orbit = 100000.0;
     }
     overflow = false;           // reset integer math overflow flag
@@ -2462,11 +2462,11 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
             {
                 if (g_integer_fractal)
                 {
-                    if (lmagnitud == 0 || !no_mag_calc)
+                    if (g_l_magnitude == 0 || !no_mag_calc)
                     {
-                        lmagnitud = lsqr(lnew.x) + lsqr(lnew.y);
+                        g_l_magnitude = lsqr(lnew.x) + lsqr(lnew.y);
                     }
-                    magnitude = lmagnitud;
+                    magnitude = g_l_magnitude;
                     magnitude = magnitude / g_fudge_factor;
                 }
                 else if (magnitude == 0.0 || !no_mag_calc)
@@ -2972,7 +2972,7 @@ plot_inside: // we're "inside"
                 g_new.y = ((double)lnew.y) / fudge;
                 g_color_iter = (long)((((double)lsqr(lnew.x))/fudge + ((double)lsqr(lnew.y))/fudge) * (maxit>>1) + 1);
                 */
-                g_color_iter = (long)(((double)lmagnitud/g_fudge_factor) * (maxit >> 1) + 1);
+                g_color_iter = (long)(((double)g_l_magnitude/g_fudge_factor) * (maxit >> 1) + 1);
             }
             else
             {

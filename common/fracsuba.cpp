@@ -8,8 +8,8 @@ int asmlMODbailout()
 {
     ltempsqrx = lsqr(lnew.x);
     ltempsqry = lsqr(lnew.y);
-    lmagnitud = ltempsqrx + ltempsqry;
-    if (lmagnitud >= g_l_limit || lmagnitud < 0 || labs(lnew.x) > g_l_limit2
+    g_l_magnitude = ltempsqrx + ltempsqry;
+    if (g_l_magnitude >= g_l_limit || g_l_magnitude < 0 || labs(lnew.x) > g_l_limit2
             || labs(lnew.y) > g_l_limit2 || overflow)
     {
         overflow = false;
@@ -101,8 +101,8 @@ int asm386lMODbailout()
 {
     ltempsqrx = lsqr(lnew.x);
     ltempsqry = lsqr(lnew.y);
-    lmagnitud = ltempsqrx + ltempsqry;
-    if (lmagnitud >= g_l_limit || lmagnitud < 0 || labs(lnew.x) > g_l_limit2
+    g_l_magnitude = ltempsqrx + ltempsqry;
+    if (g_l_magnitude >= g_l_limit || g_l_magnitude < 0 || labs(lnew.x) > g_l_limit2
             || labs(lnew.y) > g_l_limit2 || overflow)
     {
         overflow = false;

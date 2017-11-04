@@ -2571,9 +2571,9 @@ int calcfroth()   // per pixel 1/2/g, called with row & col set
 
         ltempsqrx = lsqr(lold.x);
         ltempsqry = lsqr(lold.y);
-        lmagnitud = ltempsqrx + ltempsqry;
-        while (!found_attractor && (lmagnitud < g_l_limit)
-                && (lmagnitud >= 0) && (g_color_iter < maxit))
+        g_l_magnitude = ltempsqrx + ltempsqry;
+        while (!found_attractor && (g_l_magnitude < g_l_limit)
+                && (g_l_magnitude >= 0) && (g_color_iter < maxit))
         {
             // simple formula: z = z^2 + conj(z*(-1+ai))
             // but it's the attractor that makes this so interesting
@@ -2582,8 +2582,8 @@ int calcfroth()   // per pixel 1/2/g, called with row & col set
             lold.x = lnew.x;
             if (fsp.repeat_mapping)
             {
-                lmagnitud = (ltempsqrx = lsqr(lold.x)) + (ltempsqry = lsqr(lold.y));
-                if ((lmagnitud > g_l_limit) || (lmagnitud < 0))
+                g_l_magnitude = (ltempsqrx = lsqr(lold.x)) + (ltempsqry = lsqr(lold.y));
+                if ((g_l_magnitude > g_l_limit) || (g_l_magnitude < 0))
                 {
                     break;
                 }
@@ -2695,7 +2695,7 @@ int calcfroth()   // per pixel 1/2/g, called with row & col set
             }
             ltempsqrx = lsqr(lold.x);
             ltempsqry = lsqr(lold.y);
-            lmagnitud = ltempsqrx + ltempsqry;
+            g_l_magnitude = ltempsqrx + ltempsqry;
         }
     }
     if (show_orbit)
