@@ -475,7 +475,7 @@ DComplex ComplexSqrtFloat(double x, double y)
 #ifndef TESTING_MATH
 
 std::vector<BYTE> g_log_map_table;
-long MaxLTSize;
+long g_log_map_table_max_size;
 bool g_log_map_calculate = false;
 static double mlf;
 static unsigned long lf;
@@ -499,26 +499,26 @@ void SetupLogTable()
         {
             // new log function
             lf = (g_log_map_flag > 1) ? g_log_map_flag : 0;
-            if (lf >= (unsigned long)MaxLTSize)
+            if (lf >= (unsigned long)g_log_map_table_max_size)
             {
-                lf = MaxLTSize - 1;
+                lf = g_log_map_table_max_size - 1;
             }
-            mlf = (g_colors - (lf?2:1)) / log(static_cast<double>(MaxLTSize - lf));
+            mlf = (g_colors - (lf?2:1)) / log(static_cast<double>(g_log_map_table_max_size - lf));
         }
         else if (g_log_map_flag == -1)
         {
             // old log function
-            mlf = (g_colors - 1) / log(static_cast<double>(MaxLTSize));
+            mlf = (g_colors - 1) / log(static_cast<double>(g_log_map_table_max_size));
         }
         else if (g_log_map_flag <= -2)
         {
             // sqrt function
             lf = 0 - g_log_map_flag;
-            if (lf >= (unsigned long)MaxLTSize)
+            if (lf >= (unsigned long)g_log_map_table_max_size)
             {
-                lf = MaxLTSize - 1;
+                lf = g_log_map_table_max_size - 1;
             }
-            mlf = (g_colors - 2) / sqrt(static_cast<double>(MaxLTSize - lf));
+            mlf = (g_colors - 2) / sqrt(static_cast<double>(g_log_map_table_max_size - lf));
         }
     }
 
@@ -530,7 +530,7 @@ void SetupLogTable()
     if (save_release > 1920 && !g_log_map_calculate)
     {
         g_log_map_calculate = true;   // turn it on
-        for (unsigned long prev = 0U; prev <= (unsigned long)MaxLTSize; prev++)
+        for (unsigned long prev = 0U; prev <= (unsigned long)g_log_map_table_max_size; prev++)
         {
             g_log_map_table[prev] = (BYTE)logtablecalc((long)prev);
         }
@@ -541,11 +541,11 @@ void SetupLogTable()
     if (g_log_map_flag > -2)
     {
         lf = (g_log_map_flag > 1) ? g_log_map_flag : 0;
-        if (lf >= (unsigned long)MaxLTSize)
+        if (lf >= (unsigned long)g_log_map_table_max_size)
         {
-            lf = MaxLTSize - 1;
+            lf = g_log_map_table_max_size - 1;
         }
-        Fg2Float((long)(MaxLTSize-lf), 0, m);
+        Fg2Float((long)(g_log_map_table_max_size-lf), 0, m);
         fLog14(m, m);
         Fg2Float((long)(g_colors-(lf?2:1)), 0, c);
         fDiv(m, c, m);
@@ -560,9 +560,9 @@ void SetupLogTable()
             fMul16(f, m, f);
             fExp14(f, l);
             limit = (unsigned long)Float2Fg(l, 0) + lf;
-            if (limit > (unsigned long)MaxLTSize || n == (unsigned int)(g_colors-1))
+            if (limit > (unsigned long)g_log_map_table_max_size || n == (unsigned int)(g_colors-1))
             {
-                limit = MaxLTSize;
+                limit = g_log_map_table_max_size;
             }
             while (prev <= limit)
             {
@@ -573,11 +573,11 @@ void SetupLogTable()
     else
     {
         lf = 0 - g_log_map_flag;
-        if (lf >= (unsigned long)MaxLTSize)
+        if (lf >= (unsigned long)g_log_map_table_max_size)
         {
-            lf = MaxLTSize - 1;
+            lf = g_log_map_table_max_size - 1;
         }
-        Fg2Float((long)(MaxLTSize-lf), 0, m);
+        Fg2Float((long)(g_log_map_table_max_size-lf), 0, m);
         fSqrt14(m, m);
         Fg2Float((long)(g_colors-2), 0, c);
         fDiv(m, c, m);
@@ -592,9 +592,9 @@ void SetupLogTable()
             fMul16(f, m, f);
             fMul16(f, f, l);
             limit = (unsigned long)(Float2Fg(l, 0) + lf);
-            if (limit > (unsigned long)MaxLTSize || n == (unsigned int)(g_colors-1))
+            if (limit > (unsigned long)g_log_map_table_max_size || n == (unsigned int)(g_colors-1))
             {
-                limit = MaxLTSize;
+                limit = g_log_map_table_max_size;
             }
             while (prev <= limit)
             {
@@ -605,7 +605,7 @@ void SetupLogTable()
     g_log_map_table[0] = 0;
     if (g_log_map_flag != -1)
     {
-        for (unsigned long sptop = 1U; sptop < (unsigned long)MaxLTSize; sptop++)   // spread top to incl unused colors
+        for (unsigned long sptop = 1U; sptop < (unsigned long)g_log_map_table_max_size; sptop++)   // spread top to incl unused colors
         {
             if (g_log_map_table[sptop] > g_log_map_table[sptop-1])
             {
@@ -625,7 +625,7 @@ long logtablecalc(long citer)
     }
     if (!g_log_map_table.empty() && !g_log_map_calculate)
     {
-        return (g_log_map_table[(long)std::min(citer, MaxLTSize)]);
+        return (g_log_map_table[(long)std::min(citer, g_log_map_table_max_size)]);
     }
 
     if (g_log_map_flag > 0)

@@ -684,7 +684,7 @@ int calcfract()
     }
 
     g_log_map_table.clear();
-    MaxLTSize = g_max_iterations;
+    g_log_map_table_max_size = g_max_iterations;
     g_log_map_calculate = false;
     // below, INT_MAX = 32767 only when an integer is two bytes.  Which is not true for Xfractint.
     // Since 32767 is what was meant, replaced the instances of INT_MAX with 32767.
@@ -697,12 +697,12 @@ int calcfract()
     else if (g_log_map_flag && (((g_max_iterations > 32767) && (save_release <= 1920))
                          || g_log_map_fly_calculate == 2))
     {
-        MaxLTSize = 32767;
+        g_log_map_table_max_size = 32767;
         g_log_map_calculate = false; // use logtable
     }
     else if (rangeslen && (g_max_iterations >= 32767))
     {
-        MaxLTSize = 32766;
+        g_log_map_table_max_size = 32766;
     }
 
     if ((g_log_map_flag || rangeslen) && !g_log_map_calculate)
@@ -710,7 +710,7 @@ int calcfract()
         bool resized = false;
         try
         {
-            g_log_map_table.resize(MaxLTSize + 1);
+            g_log_map_table.resize(g_log_map_table_max_size + 1);
             resized = true;
         }
         catch (std::bad_alloc const&)
@@ -753,9 +753,9 @@ int calcfract()
                     altern = ranges[i++];    // sub-range iterations
                     numval = ranges[i++];
                 }
-                if (numval > (int)MaxLTSize || i >= rangeslen)
+                if (numval > (int)g_log_map_table_max_size || i >= rangeslen)
                 {
-                    numval = (int)MaxLTSize;
+                    numval = (int)g_log_map_table_max_size;
                 }
                 while (l <= numval)
                 {
