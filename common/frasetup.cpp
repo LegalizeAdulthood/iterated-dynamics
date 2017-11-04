@@ -1238,9 +1238,9 @@ SierpinskiSetup()
 {
     // sierpinski
     periodicitycheck = 0;                // disable periodicity checks
-    ltmp.x = 1;
-    ltmp.x = ltmp.x << bitshift; // ltmp.x = 1
-    ltmp.y = ltmp.x >> 1;                        // ltmp.y = .5
+    g_l_temp.x = 1;
+    g_l_temp.x = g_l_temp.x << bitshift; // ltmp.x = 1
+    g_l_temp.y = g_l_temp.x >> 1;                        // ltmp.y = .5
     return true;
 }
 

@@ -1263,11 +1263,11 @@ int BifurcVerhulstTrig()
 int LongBifurcVerhulstTrig()
 {
 #if !defined(XFRACT)
-    ltmp.x = lPopulation;
-    ltmp.y = 0;
-    LCMPLXtrig0(ltmp, ltmp);
-    ltmp.y = ltmp.x - multiply(ltmp.x, ltmp.x, bitshift);
-    lPopulation += multiply(lRate, ltmp.y, bitshift);
+    g_l_temp.x = lPopulation;
+    g_l_temp.y = 0;
+    LCMPLXtrig0(g_l_temp, g_l_temp);
+    g_l_temp.y = g_l_temp.x - multiply(g_l_temp.x, g_l_temp.x, bitshift);
+    lPopulation += multiply(lRate, g_l_temp.y, bitshift);
 #endif
     return (overflow);
 }
@@ -1285,10 +1285,10 @@ int BifurcStewartTrig()
 int LongBifurcStewartTrig()
 {
 #if !defined(XFRACT)
-    ltmp.x = lPopulation;
-    ltmp.y = 0;
-    LCMPLXtrig0(ltmp, ltmp);
-    lPopulation = multiply(ltmp.x, ltmp.x, bitshift);
+    g_l_temp.x = lPopulation;
+    g_l_temp.y = 0;
+    LCMPLXtrig0(g_l_temp, g_l_temp);
+    lPopulation = multiply(g_l_temp.x, g_l_temp.x, bitshift);
     lPopulation = multiply(lPopulation, lRate,      bitshift);
     lPopulation -= g_fudge_factor;
 #endif
@@ -1307,10 +1307,10 @@ int BifurcSetTrigPi()
 int LongBifurcSetTrigPi()
 {
 #if !defined(XFRACT)
-    ltmp.x = multiply(lPopulation, LPI, bitshift);
-    ltmp.y = 0;
-    LCMPLXtrig0(ltmp, ltmp);
-    lPopulation = multiply(lRate, ltmp.x, bitshift);
+    g_l_temp.x = multiply(lPopulation, LPI, bitshift);
+    g_l_temp.y = 0;
+    LCMPLXtrig0(g_l_temp, g_l_temp);
+    lPopulation = multiply(lRate, g_l_temp.x, bitshift);
 #endif
     return (overflow);
 }
@@ -1327,10 +1327,10 @@ int BifurcAddTrigPi()
 int LongBifurcAddTrigPi()
 {
 #if !defined(XFRACT)
-    ltmp.x = multiply(lPopulation, LPI, bitshift);
-    ltmp.y = 0;
-    LCMPLXtrig0(ltmp, ltmp);
-    lPopulation += multiply(lRate, ltmp.x, bitshift);
+    g_l_temp.x = multiply(lPopulation, LPI, bitshift);
+    g_l_temp.y = 0;
+    LCMPLXtrig0(g_l_temp, g_l_temp);
+    lPopulation += multiply(lRate, g_l_temp.x, bitshift);
 #endif
     return (overflow);
 }
@@ -1348,11 +1348,11 @@ int BifurcLambdaTrig()
 int LongBifurcLambdaTrig()
 {
 #if !defined(XFRACT)
-    ltmp.x = lPopulation;
-    ltmp.y = 0;
-    LCMPLXtrig0(ltmp, ltmp);
-    ltmp.y = ltmp.x - multiply(ltmp.x, ltmp.x, bitshift);
-    lPopulation = multiply(lRate, ltmp.y, bitshift);
+    g_l_temp.x = lPopulation;
+    g_l_temp.y = 0;
+    LCMPLXtrig0(g_l_temp, g_l_temp);
+    g_l_temp.y = g_l_temp.x - multiply(g_l_temp.x, g_l_temp.x, bitshift);
+    lPopulation = multiply(lRate, g_l_temp.y, bitshift);
 #endif
     return (overflow);
 }
@@ -1375,12 +1375,12 @@ int BifurcMay()
 int LongBifurcMay()
 {
 #if !defined(XFRACT)
-    ltmp.x = lPopulation + g_fudge_factor;
-    ltmp.y = 0;
+    g_l_temp.x = lPopulation + g_fudge_factor;
+    g_l_temp.y = 0;
     g_l_param2.x = beta * g_fudge_factor;
-    LCMPLXpwr(ltmp, g_l_param2, ltmp);
+    LCMPLXpwr(g_l_temp, g_l_param2, g_l_temp);
     lPopulation = multiply(lRate, lPopulation, bitshift);
-    lPopulation = divide(lPopulation, ltmp.x, bitshift);
+    lPopulation = divide(lPopulation, g_l_temp.x, bitshift);
 #endif
     return (overflow);
 }
