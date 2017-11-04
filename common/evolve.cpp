@@ -197,7 +197,7 @@ void restore_param_history()
     g_inversion[0] = oldhistory.invert0;
     g_inversion[1] = oldhistory.invert1;
     g_inversion[2] = oldhistory.invert2;
-    invert = (g_inversion[0] == 0.0) ? 0 : 3;
+    g_invert = (g_inversion[0] == 0.0) ? 0 : 3;
     trigndx[0] = static_cast<trig_fn>(oldhistory.trigndx0);
     trigndx[1] = static_cast<trig_fn>(oldhistory.trigndx1);
     trigndx[2] = static_cast<trig_fn>(oldhistory.trigndx2);
@@ -375,7 +375,7 @@ void varyinv(GENEBASE gene[], int randval, int i)
     {
         varydbl(gene, randval, i);
     }
-    invert = (g_inversion[0] == 0.0) ? 0 : 3 ;
+    g_invert = (g_inversion[0] == 0.0) ? 0 : 3 ;
 }
 
 // ---------------------------------------------------------------------

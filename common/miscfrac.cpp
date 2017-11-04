@@ -1482,7 +1482,7 @@ int lyapunov()
         Population = param[1];
     }
     (*plot)(col, row, 1);
-    if (invert != 0)
+    if (g_invert != 0)
     {
         invertz2(&g_init);
         a = g_init.y;
@@ -2419,7 +2419,7 @@ int calcfroth()   // per pixel 1/2/g, called with row & col set
     }
     if (!g_integer_fractal) // fp mode
     {
-        if (invert != 0)
+        if (g_invert != 0)
         {
             invertz2(&tmp);
             old = tmp;
@@ -2557,7 +2557,7 @@ int calcfroth()   // per pixel 1/2/g, called with row & col set
     }
     else // integer mode
     {
-        if (invert != 0)
+        if (g_invert != 0)
         {
             invertz2(&tmp);
             lold.x = (long)(tmp.x * g_fudge_factor);

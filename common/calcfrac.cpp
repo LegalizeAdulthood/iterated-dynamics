@@ -105,7 +105,7 @@ long realcoloriter = 0;
 int row = 0;
 int col = 0;
 int passes = 0;
-int invert = 0;
+int g_invert = 0;
 double g_f_radius = 0.0;
 double g_f_x_center = 0.0;
 double g_f_y_center = 0.0;                 // for inversion
@@ -813,7 +813,7 @@ int calcfract()
             g_f_radius = g_inversion[0];
         }
 
-        if (invert < 2 || g_inversion[1] == AUTOINVERT)  // xcenter not already set
+        if (g_invert < 2 || g_inversion[1] == AUTOINVERT)  // xcenter not already set
         {
             g_inversion[1] = (xxmin + xxmax) / 2.0;
             fix_inversion(&g_inversion[1]);
@@ -825,7 +825,7 @@ int calcfract()
             }
         }
 
-        if (invert < 3 || g_inversion[2] == AUTOINVERT)  // ycenter not already set
+        if (g_invert < 3 || g_inversion[2] == AUTOINVERT)  // ycenter not already set
         {
             g_inversion[2] = (yymin + yymax) / 2.0;
             fix_inversion(&g_inversion[2]);
@@ -837,7 +837,7 @@ int calcfract()
             }
         }
 
-        invert = 3; // so values will not be changed if we come back
+        g_invert = 3; // so values will not be changed if we come back
     }
 
     g_close_enough = ddelmin*pow(2.0, -(double)(abs(periodicitycheck)));
@@ -1998,7 +1998,7 @@ int calcmand()              // fast per pixel 1/2/b/g, called with row & col set
 /************************************************************************/
 int calcmandfp()
 {
-    if (invert != 0)
+    if (g_invert != 0)
     {
         invertz2(&g_init);
     }
@@ -4431,7 +4431,7 @@ static void setsymmetry(symmetry_type sym, bool uselist) // set up proper symmet
             return;
         }
     }
-    if ((potflag && pot16bit) || ((invert != 0) && g_inversion[2] != 0.0)
+    if ((potflag && pot16bit) || ((g_invert != 0) && g_inversion[2] != 0.0)
             || g_decomp[0] != 0
             || xxmin != xx3rd || yymin != yy3rd)
     {
@@ -4676,7 +4676,7 @@ originsym:
                 break; // no point in pi symmetry if values too close
             }
         }
-        if ((invert != 0) && g_force_symmetry == symmetry_type::NOT_FORCED)
+        if ((g_invert != 0) && g_force_symmetry == symmetry_type::NOT_FORCED)
         {
             goto originsym;
         }

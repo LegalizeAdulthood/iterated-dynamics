@@ -505,7 +505,7 @@ static void initvars_fractal()          // init vars affecting calculation
     }
     g_init_orbit.y = 0.0;
     g_init_orbit.x = g_init_orbit.y;     // initial orbit values
-    invert = 0;
+    g_invert = 0;
     g_decomp[1] = 0;
     g_decomp[0] = g_decomp[1];
     usr_distest = 0;
@@ -2405,7 +2405,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
             goto badarg;
         }
         g_inversion[0] = floatval[0];
-        invert = (g_inversion[0] != 0.0) ? totparms : 0;
+        g_invert = (g_inversion[0] != 0.0) ? totparms : 0;
         if (totparms == 3)
         {
             g_inversion[1] = floatval[1];

@@ -426,7 +426,7 @@ init_restart:
         if (!potflag                                    // not using potential
                 && (param[0] > -2.0 && param[0] < 2.0)  // parameters not too large
                 && (param[1] > -2.0 && param[1] < 2.0)
-                && (invert == 0)                        // and not inverting
+                && (g_invert == 0)                        // and not inverting
                 && g_biomorph == -1                     // and not biomorphing
                 && rqlim <= 4.0                         // and bailout not too high
                 && (outside > REAL || outside < ATAN)   // and no funny outside stuff
@@ -479,7 +479,7 @@ init_restart:
     if (fractype != fractal_type::PLASMA && bf_math == bf_math_type::NONE
             && fractype != fractal_type::IFS && fractype != fractal_type::IFS3D && fractype != fractal_type::LSYSTEM)
     {
-        if (g_integer_fractal && (invert == 0) && use_grid)
+        if (g_integer_fractal && (g_invert == 0) && use_grid)
         {
             if ((delx  == 0 && delxx  != 0.0)
                     || (delx2 == 0 && delxx2 != 0.0)

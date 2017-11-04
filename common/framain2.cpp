@@ -2547,7 +2547,7 @@ static void restore_history_info(int i)
         return;
     }
     HISTORY last = history[i];
-    invert = 0;
+    g_invert = 0;
     g_calc_status = calc_status_value::PARAMS_CHANGED;
     resuming = false;
     fractype              = static_cast<fractal_type>(last.fractal_type);
@@ -2664,7 +2664,7 @@ static void restore_history_info(int i)
     potflag               = (potparam[0] != 0.0);
     if (g_inversion[0] != 0.0)
     {
-        invert = 3;
+        g_invert = 3;
     }
     Log_Fly_Calc = last.logcalc;
     ismand = last.ismand != 0;

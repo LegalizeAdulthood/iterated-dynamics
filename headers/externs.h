@@ -224,7 +224,7 @@ extern int                   g_init_save_time;
 extern int                   g_inside;
 extern int                   g_integer_fractal;
 extern double                g_inversion[];
-extern int                   invert;
+extern int                   g_invert;
 extern bool                  g_is_true_color;
 extern bool                  ismand;
 extern int                   ixstart;

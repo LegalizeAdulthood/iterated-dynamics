@@ -1312,7 +1312,7 @@ sel_type_restart:
     {
         if (newfractype != oldfractype)
         {
-            invert = 0;
+            g_invert = 0;
             g_inversion[2] = 0;
             g_inversion[1] = g_inversion[2];
             g_inversion[0] = g_inversion[1];

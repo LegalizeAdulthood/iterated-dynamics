@@ -94,7 +94,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
     param[1]     = read_info.cimag;
     save_release = 1100; // unless we find out better later on
 
-    invert = 0;
+    g_invert = 0;
     if (read_info.version > 0)
     {
         param[2]      = read_info.parm3;
@@ -118,7 +118,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
         g_inversion[2]  = read_info.invert[2];
         if (g_inversion[0] != 0.0)
         {
-            invert = 3;
+            g_invert = 3;
         }
         g_decomp[0]     = read_info.decomp[0];
         g_decomp[1]     = read_info.decomp[1];
@@ -1208,8 +1208,8 @@ void backwards_v19()
     }
     if ((fractype == fractal_type::FORMULA || fractype == fractal_type::FFORMULA) && save_release < 1824)
     {
-        invert = 0;
-        g_inversion[2] = invert;
+        g_invert = 0;
+        g_inversion[2] = g_invert;
         g_inversion[1] = g_inversion[2];
         g_inversion[0] = g_inversion[1];
     }
