@@ -115,7 +115,7 @@ double g_magnitude = 0.0;
 double rqlim = 0.0;
 double rqlim2 = 0.0;
 double rqlim_save = 0.0;
-bool g_no_magnitude_calc = false;
+bool g_magnitude_calc = true;
 bool use_old_period = false;
 bool use_old_distest = false;
 bool old_demm_colors = false;
@@ -304,7 +304,7 @@ double fmodtest()
     double result;
     if (g_inside == FMODI && save_release <= 2000) // for backwards compatibility
     {
-        if (g_magnitude == 0.0 || !g_no_magnitude_calc || g_integer_fractal)
+        if (g_magnitude == 0.0 || g_magnitude_calc || g_integer_fractal)
         {
             result = sqr(g_new_z.x)+sqr(g_new_z.y);
         }
@@ -318,7 +318,7 @@ double fmodtest()
     switch (g_bail_out_test)
     {
     case bailouts::Mod:
-        if (g_magnitude == 0.0 || !g_no_magnitude_calc || g_integer_fractal)
+        if (g_magnitude == 0.0 || g_magnitude_calc || g_integer_fractal)
         {
             result = sqr(g_new_z.x)+sqr(g_new_z.y);
         }
@@ -2462,14 +2462,14 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
             {
                 if (g_integer_fractal)
                 {
-                    if (g_l_magnitude == 0 || !g_no_magnitude_calc)
+                    if (g_l_magnitude == 0 || g_magnitude_calc)
                     {
                         g_l_magnitude = lsqr(g_l_new_z.x) + lsqr(g_l_new_z.y);
                     }
                     g_magnitude = g_l_magnitude;
                     g_magnitude = g_magnitude / g_fudge_factor;
                 }
-                else if (g_magnitude == 0.0 || !g_no_magnitude_calc)
+                else if (g_magnitude == 0.0 || g_magnitude_calc)
                 {
                     g_magnitude = sqr(g_new_z.x) + sqr(g_new_z.y);
                 }

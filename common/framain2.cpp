@@ -795,7 +795,7 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
             driver_discard_screen();
             savedac = 0;
             save_release = g_release;
-            g_no_magnitude_calc = false;
+            g_magnitude_calc = true;
             use_old_period = false;
             g_bad_outside = false;
             g_ld_check = false;
@@ -1593,7 +1593,7 @@ static main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdm
             driver_discard_screen();
             savedac = 0;
             save_release = g_release;
-            g_no_magnitude_calc = false;
+            g_magnitude_calc = true;
             use_old_period = false;
             g_bad_outside = false;
             g_ld_check = false;
