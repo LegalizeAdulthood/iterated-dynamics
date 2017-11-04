@@ -66,7 +66,7 @@ void free_grid_pointers()
     g_l_x0.clear();
     g_l_y0.clear();
     g_l_x1.clear();
-    ly1.clear();
+    g_l_y1.clear();
 }
 
 void set_grid_pointers()
@@ -79,7 +79,7 @@ void set_grid_pointers()
     dx1.resize(ydots);
 
     g_l_x0.resize(xdots);
-    ly1.resize(xdots);
+    g_l_y1.resize(xdots);
 
     g_l_y0.resize(ydots);
     g_l_x1.resize(ydots);
@@ -114,12 +114,12 @@ void fill_lx_array()
     {
         g_l_x0[0] = xmin;               // fill up the x, y grids
         g_l_y0[0] = ymax;
-        ly1[0] = 0;
-        g_l_x1[0] = ly1[0];
+        g_l_y1[0] = 0;
+        g_l_x1[0] = g_l_y1[0];
         for (int i = 1; i < xdots; i++)
         {
             g_l_x0[i] = g_l_x0[i-1] + delx;
-            ly1[i] = ly1[i-1] - dely2;
+            g_l_y1[i] = g_l_y1[i-1] - dely2;
         }
         for (int i = 1; i < ydots; i++)
         {
@@ -494,7 +494,7 @@ init_restart:
             if (ratio_bad((double)g_l_x0[xdots-1]-xmin, (double)xmax-x3rd)
                     || ratio_bad((double)g_l_y0[ydots-1]-ymax, (double)y3rd-ymax)
                     || ratio_bad((double)g_l_x1[(ydots >> 1)-1], ((double)x3rd-xmin)/2)
-                    || ratio_bad((double)ly1[(xdots >> 1)-1], ((double)ymin-y3rd)/2))
+                    || ratio_bad((double)g_l_y1[(xdots >> 1)-1], ((double)ymin-y3rd)/2))
             {
 expand_retry:
                 if (g_integer_fractal          // integer fractal type?
@@ -515,7 +515,7 @@ expand_retry:
 
             // re-set corners to match reality
             xmax = g_l_x0[xdots-1] + g_l_x1[ydots-1];
-            ymin = g_l_y0[ydots-1] + ly1[xdots-1];
+            ymin = g_l_y0[ydots-1] + g_l_y1[xdots-1];
             x3rd = xmin + g_l_x1[ydots-1];
             y3rd = g_l_y0[ydots-1];
             xxmin = fudgetodouble(xmin);

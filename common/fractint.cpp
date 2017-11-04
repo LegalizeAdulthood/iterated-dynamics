@@ -73,7 +73,7 @@ bool g_has_inverse = false;
 std::vector<long> g_l_x0;              // x, y grid
 std::vector<long> g_l_y0;
 std::vector<long> g_l_x1;              // adjustment for rotate
-std::vector<long> ly1;
+std::vector<long> g_l_y1;
 // note that lx1 & ly1 values can overflow into sign bit; since
 // they're used only to add to lx0/ly0, 2s comp straightens it out
 std::vector<double> dx0;            // floating pt equivs
