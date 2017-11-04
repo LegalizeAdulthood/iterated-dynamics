@@ -143,7 +143,7 @@ BYTE g_exit_video_mode = 3;              // video mode on exit
 
 int     g_log_map_fly_calculate = 0;       // calculate logmap on-the-fly
 bool    g_log_map_auto_calculate = false;          // auto calculate logmap
-bool    g_bof_no_match_book_images = false;                  // Flag to make inside=bof options not duplicate bof images
+bool    g_bof_match_book_images = true;                  // Flag to make inside=bof options not duplicate bof images
 
 bool    g_escape_exit = false;    // set to true to avoid the "are you sure?" screen
 bool g_first_init = true;                 // first time into cmdfiles?
@@ -487,7 +487,7 @@ static void initvars_fractal()          // init vars affecting calculation
     initcorners = false;
     initparams = false;
     g_bail_out = 0;                        // no user-entered bailout
-    g_bof_no_match_book_images = false;                      // use normal bof initialization to make bof images
+    g_bof_match_book_images = true;         // use normal bof initialization to make bof images
     useinitorbit = 0;
     for (int i = 0; i < MAXPARAMS; i++)
     {
@@ -1542,7 +1542,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         {
             goto badarg;
         }
-        g_bof_no_match_book_images = yesnoval[0] != 0;
+        g_bof_match_book_images = yesnoval[0] == 0;
         return CMDARG_FRACTAL_PARAM;
     }
 

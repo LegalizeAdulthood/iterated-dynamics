@@ -990,7 +990,7 @@ static void setup_save_info(FRACTAL_INFO *save_info)
     save_info->stoppass = (short) stoppass;
     save_info->quick_calc = (short) (quick_calc ? 1 : 0);
     save_info->closeprox = g_close_proximity;
-    save_info->nobof = (short) (g_bof_no_match_book_images ? 1 : 0);
+    save_info->nobof = (short) (g_bof_match_book_images ? 0 : 1);
     save_info->orbit_interval = orbit_interval;
     save_info->orbit_delay = (short) orbit_delay;
     save_info->math_tol[0] = g_math_tol[0];

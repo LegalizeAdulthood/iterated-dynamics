@@ -367,10 +367,10 @@ int read_overlay()      // read overlay/3D files, if reqr'd
         }
     }
 
-    g_bof_no_match_book_images = false;
+    g_bof_match_book_images = true;
     if (read_info.version > 13) // post-version 20.1.2
     {
-        g_bof_no_match_book_images = read_info.nobof != 0;
+        g_bof_match_book_images = read_info.nobof == 0;
     }
 
     // if (read_info.version > 14)  post-version 20.1.12

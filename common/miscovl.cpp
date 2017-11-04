@@ -1372,7 +1372,7 @@ void write_batch_parms(char const *colorinf, bool colorsonly, int maxcolor, int 
         }
 #endif
 
-        if (g_bof_no_match_book_images)
+        if (!g_bof_match_book_images)
         {
             put_parm(" %s=%s", "nobof", "yes");
         }
