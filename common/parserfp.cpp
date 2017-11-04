@@ -57,7 +57,7 @@ extern std::vector<Arg *> Load;
 extern int StoPtr, LodPtr, OpPtr;
 extern unsigned int vsp, LastOp;
 extern std::vector<ConstArg> v;
-extern int InitLodPtr, InitStoPtr, InitOpPtr, LastInitOp;
+extern int InitLodPtr, InitStoPtr, InitOpPtr, g_last_init_op;
 extern std::vector<void (*)()> f;
 extern JUMP_CONTROL_ST *jump_control;
 extern bool uses_jump;

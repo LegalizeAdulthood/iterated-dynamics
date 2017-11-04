@@ -182,7 +182,7 @@ unsigned int posp, vsp, LastOp;
 static unsigned int n, NextOp, InitN;
 static int paren;
 static bool ExpectingArg = false;
-int InitLodPtr, InitStoPtr, InitOpPtr, LastInitOp;
+int InitLodPtr, InitStoPtr, InitOpPtr, g_last_init_op;
 static int Delta16;
 double g_fudge_limit;
 static double fg;
@@ -1874,7 +1874,7 @@ void (*StkPwr)() = dStkPwr;
 
 void EndInit()
 {
-    LastInitOp = OpPtr;
+    g_last_init_op = OpPtr;
     InitJumpIndex = jump_index;
 }
 
@@ -2681,7 +2681,7 @@ static bool ParseStr(char const *Str, int pass)
     LodPtr = StoPtr;
     OpPtr = LodPtr;
     paren = OpPtr;
-    LastInitOp = paren;
+    g_last_init_op = paren;
     ExpectingArg = true;
     for (n = 0; Str[n]; n++)
     {
@@ -2745,7 +2745,7 @@ static bool ParseStr(char const *Str, int pass)
             o[posp++].p = -30000;
             paren = 0;
             Equals = paren;
-            LastInitOp = 10000;
+            g_last_init_op = 10000;
             break;
         case '+':
             ExpectingArg = true;
@@ -3098,11 +3098,11 @@ int form_per_pixel()
         }
     }
 
-    if (LastInitOp)
+    if (g_last_init_op)
     {
-        LastInitOp = LastOp;
+        g_last_init_op = LastOp;
     }
-    while (OpPtr < LastInitOp)
+    while (OpPtr < g_last_init_op)
     {
         f[OpPtr]();
         OpPtr++;

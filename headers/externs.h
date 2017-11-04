@@ -238,7 +238,7 @@ extern std::string const     g_julibrot_3d_options[];
 extern bool                  g_julibrot;
 extern int                   g_keyboard_check_interval;
 extern bool                  g_keep_screen_coords;
-extern int                   LastInitOp;
+extern int                   g_last_init_op;
 extern unsigned              LastOp;
 extern int                   lastorbittype;
 extern LComplex              lattr[];
