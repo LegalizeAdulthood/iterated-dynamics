@@ -33,7 +33,7 @@ unsigned int evolve_this_generation_random_seed;
 double evolve_x_parameter_offset;
 double evolve_y_parameter_offset;
 double g_evolve_new_x_parameter_offset;
-double evolve_new_y_parameter_offset;
+double g_evolve_new_y_parameter_offset;
 double evolve_x_parameter_range;
 double evolve_y_parameter_range;
 double g_evolve_dist_per_x;
@@ -798,8 +798,8 @@ get_evol_restart:
         g_evolve_new_x_parameter_offset = evolve_x_parameter_offset + evolve_x_parameter_range /2;
         evolve_x_parameter_offset = g_evolve_new_x_parameter_offset;
         evolve_y_parameter_range = evolve_y_parameter_range / 2;
-        evolve_new_y_parameter_offset = evolve_y_parameter_offset + evolve_y_parameter_range / 2;
-        evolve_y_parameter_offset = evolve_new_y_parameter_offset;
+        g_evolve_new_y_parameter_offset = evolve_y_parameter_offset + evolve_y_parameter_range / 2;
+        evolve_y_parameter_offset = g_evolve_new_y_parameter_offset;
         g_evolve_max_random_mutation = g_evolve_max_random_mutation / 2;
         goto get_evol_restart;
     }
@@ -812,8 +812,8 @@ get_evol_restart:
         evolve_x_parameter_offset = g_evolve_new_x_parameter_offset;
         centery = evolve_y_parameter_offset + evolve_y_parameter_range / 2;
         evolve_y_parameter_range = evolve_y_parameter_range * 2;
-        evolve_new_y_parameter_offset = centery - evolve_y_parameter_range / 2;
-        evolve_y_parameter_offset = evolve_new_y_parameter_offset;
+        g_evolve_new_y_parameter_offset = centery - evolve_y_parameter_range / 2;
+        evolve_y_parameter_offset = g_evolve_new_y_parameter_offset;
         g_evolve_max_random_mutation = g_evolve_max_random_mutation * 2;
         goto get_evol_restart;
     }
@@ -861,7 +861,7 @@ get_evol_restart:
         g_evolve_new_x_parameter_offset = evolve_x_parameter_offset;
         evolve_y_parameter_range = uvalues[++k].uval.dval;
         evolve_y_parameter_offset = uvalues[++k].uval.dval;
-        evolve_new_y_parameter_offset = evolve_y_parameter_offset;
+        g_evolve_new_y_parameter_offset = evolve_y_parameter_offset;
     }
 
     g_evolve_max_random_mutation = uvalues[++k].uval.dval;
@@ -951,8 +951,8 @@ void set_current_params()
     g_evolve_new_x_parameter_offset = - (evolve_x_parameter_range / 2);
     evolve_x_parameter_offset = g_evolve_new_x_parameter_offset;
     evolve_y_parameter_range = curfractalspecific->ymax - curfractalspecific->ymin;
-    evolve_new_y_parameter_offset = - (evolve_y_parameter_range / 2);
-    evolve_y_parameter_offset = evolve_new_y_parameter_offset;
+    g_evolve_new_y_parameter_offset = - (evolve_y_parameter_range / 2);
+    evolve_y_parameter_offset = g_evolve_new_y_parameter_offset;
     return;
 }
 
@@ -1109,7 +1109,7 @@ void set_evolve_ranges()
     evolve_x_parameter_range = g_evolve_dist_per_x*(parmzoom*2.0);
     evolve_y_parameter_range = g_evolve_dist_per_y*(parmzoom*2.0);
     g_evolve_new_x_parameter_offset = evolve_x_parameter_offset +(((double)px-parmzoom)*g_evolve_dist_per_x);
-    evolve_new_y_parameter_offset = evolve_y_parameter_offset +(((double)lclpy-parmzoom)*g_evolve_dist_per_y);
+    g_evolve_new_y_parameter_offset = evolve_y_parameter_offset +(((double)lclpy-parmzoom)*g_evolve_dist_per_y);
 
     g_evolve_new_discrete_x_parameter_offset = (char)(evolve_discrete_x_parameter_offset +(px- g_evolve_image_grid_size /2));
     g_evolve_new_discrete_y_parameter_offset = (char)(evolve_discrete_y_parameter_offset +(lclpy- g_evolve_image_grid_size /2));
