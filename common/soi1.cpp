@@ -13,7 +13,6 @@
  */
 #include <float.h>
 #include <time.h>
-#include <string.h>
 #if !defined(_WIN32)
 #include <malloc.h>
 #endif
