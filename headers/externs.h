@@ -267,7 +267,7 @@ extern LComplex              g_l_old;
 extern LComplex *            g_long_param;
 extern int                   g_look_at_mouse;
 extern LComplex              g_l_param2;
-extern LComplex              lparm;
+extern LComplex              g_l_param;
 extern long                  ltempsqrx;
 extern long                  ltempsqry;
 extern LComplex              ltmp;

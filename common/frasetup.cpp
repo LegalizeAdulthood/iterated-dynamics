@@ -55,7 +55,7 @@ JuliaSetup()            // Julia Routine
     {
         // special case: use the main processing loop
         calctype = standard_fractal;
-        g_long_param = &lparm;
+        g_long_param = &g_l_param;
         get_julia_attractor(0.0, 0.0);    // another attractor?
     }
     return true;
@@ -563,7 +563,7 @@ bool
 JulialongSetup()
 {
     g_c_exponent = (int)param[2];
-    g_long_param = &lparm;
+    g_long_param = &g_l_param;
     switch (fractype)
     {
     case fractal_type::LJULIAZPOWER:
@@ -585,7 +585,7 @@ JulialongSetup()
         get_julia_attractor(0.5, 0.0);    // another attractor?
         break;
     case fractal_type::LLAMBDAEXP:
-        if (lparm.y == 0)
+        if (g_l_param.y == 0)
         {
             symmetry = symmetry_type::X_AXIS;
         }
@@ -652,7 +652,7 @@ TrigPlusSqrlongSetup()
 {
     curfractalspecific->per_pixel =  julia_per_pixel;
     curfractalspecific->orbitcalc =  TrigPlusSqrFractal;
-    if (lparm.x == g_fudge_factor && lparm.y == 0L && g_l_param2.y == 0L && g_debug_flag != debug_flags::force_standard_fractal)
+    if (g_l_param.x == g_fudge_factor && g_l_param.y == 0L && g_l_param2.y == 0L && g_debug_flag != debug_flags::force_standard_fractal)
     {
         if (g_l_param2.x == g_fudge_factor)          // Scott variant
         {
@@ -695,7 +695,7 @@ TrigPlusTriglongSetup()
     }
     curfractalspecific->per_pixel =  long_julia_per_pixel;
     curfractalspecific->orbitcalc =  TrigPlusTrigFractal;
-    if (lparm.x == g_fudge_factor && lparm.y == 0L && g_l_param2.y == 0L && g_debug_flag != debug_flags::force_standard_fractal)
+    if (g_l_param.x == g_fudge_factor && g_l_param.y == 0L && g_l_param2.y == 0L && g_debug_flag != debug_flags::force_standard_fractal)
     {
         if (g_l_param2.x == g_fudge_factor)          // Scott variant
         {
@@ -770,7 +770,7 @@ bool
 LambdaTrigOrTrigSetup()
 {
     // default symmetry is ORIGIN
-    g_long_param = &lparm;
+    g_long_param = &g_l_param;
     g_float_param = &parm;
     if ((trigndx[0] == trig_fn::EXP) || (trigndx[1] == trig_fn::EXP))
     {
@@ -788,7 +788,7 @@ bool
 JuliaTrigOrTrigSetup()
 {
     // default symmetry is X_AXIS
-    g_long_param = &lparm;
+    g_long_param = &g_l_param;
     g_float_param = &parm;
     if (parm.y != 0.0)
     {
@@ -888,7 +888,7 @@ ZXTrigPlusZSetup()
     if (curfractalspecific->isinteger)
     {
         curfractalspecific->orbitcalc =  ZXTrigPlusZFractal;
-        if (lparm.x == g_fudge_factor && lparm.y == 0L && g_l_param2.y == 0L && g_debug_flag != debug_flags::force_standard_fractal)
+        if (g_l_param.x == g_fudge_factor && g_l_param.y == 0L && g_l_param2.y == 0L && g_debug_flag != debug_flags::force_standard_fractal)
         {
             if (g_l_param2.x == g_fudge_factor)       // Scott variant
             {
@@ -1176,7 +1176,7 @@ MarksJuliaSetup()
         param[2] = 1;
     }
     g_c_exponent = (int)param[2];
-    g_long_param = &lparm;
+    g_long_param = &g_l_param;
     g_l_old = *g_long_param;
     if (g_c_exponent > 3)
     {
@@ -1309,7 +1309,7 @@ HalleySetup()
 bool
 PhoenixSetup()
 {
-    g_long_param = &lparm;
+    g_long_param = &g_l_param;
     g_float_param = &parm;
     degree = (int)parm2.x;
     if (degree < 2 && degree > -3)
@@ -1359,7 +1359,7 @@ PhoenixSetup()
 bool
 PhoenixCplxSetup()
 {
-    g_long_param = &lparm;
+    g_long_param = &g_l_param;
     g_float_param = &parm;
     degree = (int)param[4];
     if (degree < 2 && degree > -3)
