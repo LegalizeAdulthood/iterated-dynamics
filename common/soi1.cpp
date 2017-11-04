@@ -28,7 +28,7 @@ extern int rhombus_stack[10];
 extern int rhombus_depth;
 extern int g_max_rhombus_depth;
 extern int minstackavail;
-extern int minstack; // need this much stack to recurse
+extern int g_soi_min_stack; // need this much stack to recurse
 static double twidth;
 static double equal;
 
@@ -376,7 +376,7 @@ static int rhombus(double cre1, double cre2, double cim1, double cim2,
         goto rhombus_done;
     }
 
-    if ((y2 - y1 <= SCAN) || (avail < minstack))
+    if ((y2 - y1 <= SCAN) || (avail < g_soi_min_stack))
     {
         // finish up the image by scanning the rectangle
 scan:

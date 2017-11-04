@@ -300,7 +300,7 @@ extern int                   g_max_image_history;
 extern int                   g_max_rhombus_depth;
 extern int                   g_smallest_box_size_shown;
 extern Minor                 g_inverse_julia_minor_method;
-extern int                   minstack;
+extern int                   g_soi_min_stack;
 extern int                   minstackavail;
 extern MOREPARAMS            moreparams[];
 extern MP                    mpAp1deg;

@@ -31,7 +31,7 @@ int rhombus_stack[10];
 int rhombus_depth = 0;
 int g_max_rhombus_depth;
 int minstackavail;
-int minstack = 2200; // and this much stack to not crash when <tab> is pressed
+int g_soi_min_stack = 2200; // and this much stack to not crash when <tab> is pressed
 static LDBL twidth;
 static LDBL equal;
 static bool baxinxx = false;
@@ -617,7 +617,7 @@ static int rhombus(LDBL cre1, LDBL cre2, LDBL cim1, LDBL cim2,
         goto rhombus_done;
     }
 
-    if ((y2 - y1 <= SCAN) || (avail < minstack))
+    if ((y2 - y1 <= SCAN) || (avail < g_soi_min_stack))
     {
         // finish up the image by scanning the rectangle
 scan:

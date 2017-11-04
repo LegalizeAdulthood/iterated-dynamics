@@ -1787,7 +1787,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         {
             goto badarg;
         }
-        minstack = intval[0];
+        g_soi_min_stack = intval[0];
         return CMDARG_NONE;
     }
 
