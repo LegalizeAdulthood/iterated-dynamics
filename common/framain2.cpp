@@ -786,7 +786,7 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
     switch (*kbdchar)
     {
     case 't':                    // new fractal type
-        julibrot = false;
+        g_julibrot = false;
         clear_zoombox();
         driver_stack_screen();
         i = get_fracttype();
@@ -1584,7 +1584,7 @@ static main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdm
     switch (*kbdchar)
     {
     case 't':                    // new fractal type
-        julibrot = false;
+        g_julibrot = false;
         clear_zoombox();
         driver_stack_screen();
         i = get_fracttype();

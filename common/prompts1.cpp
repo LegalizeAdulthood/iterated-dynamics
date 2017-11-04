@@ -63,7 +63,7 @@ char lsysmask[13]    = {"*.l"};
 std::string const g_glasses1_map = "glasses1.map";
 std::string MAP_name;
 bool mapset = false;
-bool julibrot = false;                  // flag for julibrot
+bool g_julibrot = false;                  // flag for julibrot
 
 // ---------------------------------------------------------------------
 
@@ -1137,7 +1137,7 @@ static fractal_type select_fracttype(fractal_type t) // subrtn of get_fracttype,
         int j = -1;
         while (fractalspecific[++i].name)
         {
-            if (julibrot)
+            if (g_julibrot)
             {
                 if (!((fractalspecific[i].flags & OKJB) && *fractalspecific[i].name != '*'))
                 {
@@ -1167,7 +1167,7 @@ static fractal_type select_fracttype(fractal_type t) // subrtn of get_fracttype,
 
     tname[0] = 0;
     int done = fullscreen_choice(CHOICE_HELP | CHOICE_INSTRUCTIONS,
-            julibrot ? "Select Orbit Algorithm for Julibrot" : "Select a Fractal Type",
+            g_julibrot ? "Select Orbit Algorithm for Julibrot" : "Select a Fractal Type",
             nullptr, "Press " FK_F2 " for a description of the highlighted type", numtypes,
             (char const **)choices, attributes, 0, 0, 0, j, nullptr, tname, nullptr, sel_fractype_help);
     fractal_type result = fractal_type::NOFRACTAL;
@@ -1518,7 +1518,7 @@ int get_fract_params(int caller)        // prompt for type-specific parms
     int fkeymask = 0;
 
     oldbailout = g_bail_out;
-    julibrot = fractype == fractal_type::JULIBROT || fractype == fractal_type::JULIBROTFP;
+    g_julibrot = fractype == fractal_type::JULIBROT || fractype == fractal_type::JULIBROTFP;
     fractal_type curtype = fractype;
     {
         int i;
@@ -1627,7 +1627,7 @@ int get_fract_params(int caller)        // prompt for type-specific parms
 
 gfp_top:
     promptnum = 0;
-    if (julibrot)
+    if (g_julibrot)
     {
         fractal_type i = select_fracttype(neworbittype);
         if (i == fractal_type::NOFRACTAL)
@@ -1636,7 +1636,7 @@ gfp_top:
             {
                 ret = -1;
             }
-            julibrot = false;
+            g_julibrot = false;
             goto gfp_exit;
         }
         else
@@ -1692,7 +1692,7 @@ gfp_top:
         }
     }
 
-    if (julibrot)
+    if (g_julibrot)
     {
         curfractalspecific = jborbit;
         firstparm = 2; // in most case Julibrot does not need first two parms
@@ -1714,7 +1714,7 @@ gfp_top:
         for (int i = firstparm; i < lastparm; i++)
         {
             char tmpbuf[30];
-            if (!typehasparm(julibrot ? neworbittype : fractype, i, parmprompt[j]))
+            if (!typehasparm(g_julibrot ? neworbittype : fractype, i, parmprompt[j]))
             {
                 if (curtype == fractal_type::FORMULA || curtype == fractal_type::FFORMULA)
                 {
@@ -1813,7 +1813,7 @@ gfp_top:
             choices[promptnum++] = bailoutmsg;
         }
     }
-    if (julibrot)
+    if (g_julibrot)
     {
         switch (neworbittype)
         {
@@ -1916,7 +1916,7 @@ gfp_top:
         stopmsg(STOPMSG_INFO_ONLY | STOPMSG_NO_BUZZER, "Current type has no type-specific parameters");
         goto gfp_exit;
     }
-    if (julibrot)
+    if (g_julibrot)
     {
         sprintf(msg, "Julibrot Parameters (orbit=%s)", juliorbitname);
     }
@@ -1939,7 +1939,7 @@ gfp_top:
         g_help_mode = old_help_mode;
         if (i < 0)
         {
-            if (julibrot)
+            if (g_julibrot)
             {
                 goto gfp_top;
             }
@@ -1989,7 +1989,7 @@ gfp_top:
         ++promptnum;
     }
 
-    if (julibrot)
+    if (g_julibrot)
     {
         curfractalspecific = jborbit;
     }
@@ -2032,7 +2032,7 @@ gfp_top:
         }
     }
 
-    if (julibrot)
+    if (g_julibrot)
     {
         mxmaxfp    = paramvalues[promptnum++].uval.dval;
         mymaxfp    = paramvalues[promptnum++].uval.dval;

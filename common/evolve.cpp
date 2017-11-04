@@ -556,7 +556,7 @@ int get_variations()
     numparams = 0;
     for (int i = firstparm; i < lastparm; i++)
     {
-        if (typehasparm(julibrot ? neworbittype : fractype, i, nullptr) == 0)
+        if (typehasparm(g_julibrot ? neworbittype : fractype, i, nullptr) == 0)
         {
             if (fractype == fractal_type::FORMULA || fractype == fractal_type::FFORMULA)
             {
