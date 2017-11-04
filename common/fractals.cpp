@@ -2664,7 +2664,7 @@ int long_mandel_per_pixel()
 
     if (useinitorbit == 1)
     {
-        lold = linitorbit;
+        lold = g_l_init_orbit;
     }
     else
     {
@@ -2788,7 +2788,7 @@ int mandel_per_pixel()
     // alter init value
     if (useinitorbit == 1)
     {
-        lold = linitorbit;
+        lold = g_l_init_orbit;
     }
     else if (useinitorbit == 2)
     {
@@ -2844,7 +2844,7 @@ int marksmandel_per_pixel()
 
     if (useinitorbit == 1)
     {
-        lold = linitorbit;
+        lold = g_l_init_orbit;
     }
     else
     {
@@ -3277,7 +3277,7 @@ int long_mandphoenix_per_pixel()
 
     if (useinitorbit == 1)
     {
-        lold = linitorbit;
+        lold = g_l_init_orbit;
     }
     else
     {

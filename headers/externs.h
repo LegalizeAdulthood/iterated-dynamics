@@ -248,7 +248,7 @@ extern std::string           g_l_system_filename;
 extern std::string           g_light_name;
 extern std::vector<BYTE>     g_line_buff;
 extern LComplex              g_l_init;
-extern LComplex              linitorbit;
+extern LComplex              g_l_init_orbit;
 extern long                  linitx;
 extern long                  linity;
 extern long                  llimit2;
