@@ -1894,7 +1894,7 @@ gfp_top:
 #else
         paramvalues[promptnum].uval.ch.llen = 3; // disable random run
 #endif
-        paramvalues[promptnum++].uval.ch.val  = static_cast<int>(major_method);
+        paramvalues[promptnum++].uval.ch.val  = static_cast<int>(g_major_method);
 
         choices[promptnum] = JIIMstr2;
         paramvalues[promptnum].type = 'l';
@@ -2050,12 +2050,12 @@ gfp_top:
     }
     if (curtype == fractal_type::INVERSEJULIA || curtype == fractal_type::INVERSEJULIAFP)
     {
-        if (paramvalues[promptnum].uval.ch.val != static_cast<int>(major_method) ||
+        if (paramvalues[promptnum].uval.ch.val != static_cast<int>(g_major_method) ||
                 paramvalues[promptnum+1].uval.ch.val != static_cast<int>(minor_method))
         {
             ret = 1;
         }
-        major_method = static_cast<Major>(paramvalues[promptnum++].uval.ch.val);
+        g_major_method = static_cast<Major>(paramvalues[promptnum++].uval.ch.val);
         minor_method = static_cast<Minor>(paramvalues[promptnum++].uval.ch.val);
     }
     if ((curtype == fractal_type::FORMULA || curtype == fractal_type::FFORMULA) && uses_ismand)

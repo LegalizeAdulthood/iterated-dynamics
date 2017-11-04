@@ -2470,7 +2470,7 @@ static void save_history_info()
     current.orbittype            = (short)neworbittype              ;
     current.juli3Dmode           = (short)g_julibrot_3d_mode                ;
     current.maxfn                = maxfn                     ;
-    current.major_method         = (short)major_method              ;
+    current.major_method         = (short)g_major_method              ;
     current.minor_method         = (short)minor_method              ;
     current.bailout              = g_bail_out                   ;
     current.bailoutest           = (short)g_bail_out_test                ;
@@ -2654,7 +2654,7 @@ static void restore_history_info(int i)
     neworbittype          = static_cast<fractal_type>(last.orbittype);
     g_julibrot_3d_mode            = last.juli3Dmode     ;
     maxfn                 = last.maxfn          ;
-    major_method          = static_cast<Major>(last.major_method);
+    g_major_method          = static_cast<Major>(last.major_method);
     minor_method          = static_cast<Minor>(last.minor_method);
     g_bail_out               = last.bailout        ;
     g_bail_out_test            = static_cast<bailouts>(last.bailoutest);

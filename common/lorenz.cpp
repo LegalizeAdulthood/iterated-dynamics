@@ -102,7 +102,7 @@ static char NoQueue[] =
 
 static int    mxhits;
 int    run_length;
-Major major_method;
+Major g_major_method;
 Minor minor_method;
 affine cvt;
 l_affine lcvt;
@@ -343,14 +343,14 @@ bool orbit3dlongsetup()
 
         Sqrt = ComplexSqrtLong(g_fudge_factor - 4 * CxLong, -4 * CyLong);
 
-        switch (major_method)
+        switch (g_major_method)
         {
         case Major::breadth_first:
             if (!Init_Queue(32*1024UL))
             {
                 // can't get queue memory: fall back to random walk
                 stopmsg(STOPMSG_INFO_ONLY | STOPMSG_NO_BUZZER, NoQueue);
-                major_method = Major::random_walk;
+                g_major_method = Major::random_walk;
                 goto lrwalk;
             }
             EnQueueLong((g_fudge_factor + Sqrt.x) / 2,  Sqrt.y / 2);
@@ -362,7 +362,7 @@ bool orbit3dlongsetup()
             {
                 // can't get queue memory: fall back to random walk
                 stopmsg(STOPMSG_INFO_ONLY | STOPMSG_NO_BUZZER, NoQueue);
-                major_method = Major::random_walk;
+                g_major_method = Major::random_walk;
                 goto lrwalk;
             }
             switch (minor_method)
@@ -537,14 +537,14 @@ bool orbit3dfloatsetup()
 
         // find fixed points: guaranteed to be in the set
         Sqrt = ComplexSqrtFloat(1 - 4 * Cx, -4 * Cy);
-        switch (major_method)
+        switch (g_major_method)
         {
         case Major::breadth_first:
             if (!Init_Queue(32*1024UL))
             {
                 // can't get queue memory: fall back to random walk
                 stopmsg(STOPMSG_INFO_ONLY | STOPMSG_NO_BUZZER, NoQueue);
-                major_method = Major::random_walk;
+                g_major_method = Major::random_walk;
                 goto rwalk;
             }
             EnQueueFloat((float)((1 + Sqrt.x) / 2), (float)(Sqrt.y / 2));
@@ -555,7 +555,7 @@ bool orbit3dfloatsetup()
             {
                 // can't get queue memory: fall back to random walk
                 stopmsg(STOPMSG_INFO_ONLY | STOPMSG_NO_BUZZER, NoQueue);
-                major_method = Major::random_walk;
+                g_major_method = Major::random_walk;
                 goto rwalk;
             }
             switch (minor_method)
@@ -578,7 +578,7 @@ rwalk:
             g_new.y = initorbitfp[1];
             break;
         case Major::random_run:       // random run, choose intervals
-            major_method = Major::random_run;
+            g_major_method = Major::random_run;
             initorbitfp[0] = 1 + Sqrt.x / 2;
             g_new.x = initorbitfp[0];
             initorbitfp[1] = Sqrt.y / 2;
@@ -617,7 +617,7 @@ Minverse_julia_orbit()
     /*
      * First, compute new point
      */
-    switch (major_method)
+    switch (g_major_method)
     {
     case Major::breadth_first:
         if (QueueEmpty())
@@ -658,7 +658,7 @@ Minverse_julia_orbit()
          * MIIM must skip points that are off the screen boundary,
          * since it cannot read their color.
          */
-        switch (major_method)
+        switch (g_major_method)
         {
         case Major::breadth_first:
             EnQueueFloat((float)(leftright * g_new.x), (float)(leftright * g_new.y));
@@ -678,7 +678,7 @@ Minverse_julia_orbit()
      *           else put the point's children onto the queue
      */
     color  = getcolor(newcol, newrow);
-    switch (major_method)
+    switch (g_major_method)
     {
     case Major::breadth_first:
         if (color < mxhits)
@@ -765,7 +765,7 @@ Linverse_julia_orbit()
     /*
      * First, compute new point
      */
-    switch (major_method)
+    switch (g_major_method)
     {
     case Major::breadth_first:
         if (QueueEmpty())
@@ -840,7 +840,7 @@ Linverse_julia_orbit()
         {
             color = -1;
         }
-        switch (major_method)
+        switch (g_major_method)
         {
         case Major::breadth_first:
             g_l_new = ComplexSqrtLong(g_l_new.x - CxLong, g_l_new.y - CyLong);
@@ -864,7 +864,7 @@ Linverse_julia_orbit()
      *           else put the point's children onto the queue
      */
     color  = getcolor(newcol, newrow);
-    switch (major_method)
+    switch (g_major_method)
     {
     case Major::breadth_first:
         if (color < mxhits)

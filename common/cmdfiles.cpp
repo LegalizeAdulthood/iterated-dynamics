@@ -456,7 +456,7 @@ static void initvars_restart()          // <ins> key init
     g_init_cycle_limit = 55;                   // spin-DAC default speed limit
     mapset = false;                     // no map= name active
     map_specified = false;
-    major_method = Major::breadth_first;    // default inverse julia methods
+    g_major_method = Major::breadth_first;    // default inverse julia methods
     minor_method = Minor::left_first;       // default inverse julia methods
     truecolor = false;                  // truecolor output flag
     truemode = 0;               // set to default color scheme
@@ -1913,15 +1913,15 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         }
         if (charval[0] == 'b')
         {
-            major_method = Major::breadth_first;
+            g_major_method = Major::breadth_first;
         }
         else if (charval[0] == 'd')
         {
-            major_method = Major::depth_first;
+            g_major_method = Major::depth_first;
         }
         else if (charval[0] == 'w')
         {
-            major_method = Major::random_walk;
+            g_major_method = Major::random_walk;
         }
 #ifdef RANDOM_RUN
         else if (charval[0] == 'r')
