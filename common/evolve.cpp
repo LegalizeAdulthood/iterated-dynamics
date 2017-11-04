@@ -32,7 +32,7 @@ unsigned int evolve_this_generation_random_seed;
 // next to eventually produce a stable population
 double evolve_x_parameter_offset;
 double evolve_y_parameter_offset;
-double evolve_new_x_parameter_offset;
+double g_evolve_new_x_parameter_offset;
 double evolve_new_y_parameter_offset;
 double evolve_x_parameter_range;
 double evolve_y_parameter_range;
@@ -795,8 +795,8 @@ get_evol_restart:
     if (i == FIK_F2)
     {
         evolve_x_parameter_range = evolve_x_parameter_range / 2;
-        evolve_new_x_parameter_offset = evolve_x_parameter_offset + evolve_x_parameter_range /2;
-        evolve_x_parameter_offset = evolve_new_x_parameter_offset;
+        g_evolve_new_x_parameter_offset = evolve_x_parameter_offset + evolve_x_parameter_range /2;
+        evolve_x_parameter_offset = g_evolve_new_x_parameter_offset;
         evolve_y_parameter_range = evolve_y_parameter_range / 2;
         evolve_new_y_parameter_offset = evolve_y_parameter_offset + evolve_y_parameter_range / 2;
         evolve_y_parameter_offset = evolve_new_y_parameter_offset;
@@ -808,8 +808,8 @@ get_evol_restart:
         double centerx, centery;
         centerx = evolve_x_parameter_offset + evolve_x_parameter_range / 2;
         evolve_x_parameter_range = evolve_x_parameter_range * 2;
-        evolve_new_x_parameter_offset = centerx - evolve_x_parameter_range / 2;
-        evolve_x_parameter_offset = evolve_new_x_parameter_offset;
+        g_evolve_new_x_parameter_offset = centerx - evolve_x_parameter_range / 2;
+        evolve_x_parameter_offset = g_evolve_new_x_parameter_offset;
         centery = evolve_y_parameter_offset + evolve_y_parameter_range / 2;
         evolve_y_parameter_range = evolve_y_parameter_range * 2;
         evolve_new_y_parameter_offset = centery - evolve_y_parameter_range / 2;
@@ -858,7 +858,7 @@ get_evol_restart:
         }
         evolve_x_parameter_range = uvalues[++k].uval.dval;
         evolve_x_parameter_offset = uvalues[++k].uval.dval;
-        evolve_new_x_parameter_offset = evolve_x_parameter_offset;
+        g_evolve_new_x_parameter_offset = evolve_x_parameter_offset;
         evolve_y_parameter_range = uvalues[++k].uval.dval;
         evolve_y_parameter_offset = uvalues[++k].uval.dval;
         evolve_new_y_parameter_offset = evolve_y_parameter_offset;
@@ -948,8 +948,8 @@ void ReleaseParamBox()
 void set_current_params()
 {
     evolve_x_parameter_range = curfractalspecific->xmax - curfractalspecific->xmin;
-    evolve_new_x_parameter_offset = - (evolve_x_parameter_range / 2);
-    evolve_x_parameter_offset = evolve_new_x_parameter_offset;
+    g_evolve_new_x_parameter_offset = - (evolve_x_parameter_range / 2);
+    evolve_x_parameter_offset = g_evolve_new_x_parameter_offset;
     evolve_y_parameter_range = curfractalspecific->ymax - curfractalspecific->ymin;
     evolve_new_y_parameter_offset = - (evolve_y_parameter_range / 2);
     evolve_y_parameter_offset = evolve_new_y_parameter_offset;
@@ -1108,7 +1108,7 @@ void set_evolve_ranges()
     // set up ranges and offsets for parameter explorer/evolver
     evolve_x_parameter_range = g_evolve_dist_per_x*(parmzoom*2.0);
     evolve_y_parameter_range = g_evolve_dist_per_y*(parmzoom*2.0);
-    evolve_new_x_parameter_offset = evolve_x_parameter_offset +(((double)px-parmzoom)*g_evolve_dist_per_x);
+    g_evolve_new_x_parameter_offset = evolve_x_parameter_offset +(((double)px-parmzoom)*g_evolve_dist_per_x);
     evolve_new_y_parameter_offset = evolve_y_parameter_offset +(((double)lclpy-parmzoom)*g_evolve_dist_per_y);
 
     g_evolve_new_discrete_x_parameter_offset = (char)(evolve_discrete_x_parameter_offset +(px- g_evolve_image_grid_size /2));
