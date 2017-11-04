@@ -8,7 +8,7 @@
 
 // these need to be accessed elsewhere for saving data
 double g_julibrot_x_min = -.83;
-double myminfp = -.25;
+double g_julibrot_y_min = -.25;
 double g_julibrot_x_max = -.83;
 double g_julibrot_y_max =  .25;
 
@@ -76,7 +76,7 @@ JulibrotSetup()
     xoffsetfp = (xxmax + xxmin) / 2;     // Calculate average
     yoffsetfp = (yymax + yymin) / 2;     // Calculate average
     dmxfp = (g_julibrot_x_max - g_julibrot_x_min) / zdots;
-    dmyfp = (g_julibrot_y_max - myminfp) / zdots;
+    dmyfp = (g_julibrot_y_max - g_julibrot_y_min) / zdots;
     g_float_param = &jbcfp;
     x_per_inchfp = (xxmin - xxmax) / widthfp;
     y_per_inchfp = (yymax - yymin) / g_height_fp;
@@ -122,7 +122,7 @@ JulibrotSetup()
         yoffset = (jymax + jymin) / 2;    // Calculate average
         mxmin = (long)(g_julibrot_x_min * fg);
         mxmax = (long)(g_julibrot_x_max * fg);
-        mymin = (long)(myminfp * fg);
+        mymin = (long)(g_julibrot_y_min * fg);
         mymax = (long)(g_julibrot_y_max * fg);
         long origin = (long)(originfp * fg16);
         depth = (long)(g_depth_fp * fg16);
@@ -318,7 +318,7 @@ zlinefp(double x, double y)
     xpixelfp = x;
     ypixelfp = y;
     mxfp = g_julibrot_x_min;
-    myfp = myminfp;
+    myfp = g_julibrot_y_min;
     switch (g_julibrot_3d_mode)
     {
     case 0:

@@ -1849,7 +1849,7 @@ gfp_top:
         paramvalues[promptnum].uval.dval = g_julibrot_x_min;
         paramvalues[promptnum].type = 'f';
         choices[promptnum++] = v2;
-        paramvalues[promptnum].uval.dval = myminfp;
+        paramvalues[promptnum].uval.dval = g_julibrot_y_min;
         paramvalues[promptnum].type = 'f';
         choices[promptnum++] = v3;
         paramvalues[promptnum].uval.ival = zdots;
@@ -2037,7 +2037,7 @@ gfp_top:
         g_julibrot_x_max    = paramvalues[promptnum++].uval.dval;
         g_julibrot_y_max    = paramvalues[promptnum++].uval.dval;
         g_julibrot_x_min    = paramvalues[promptnum++].uval.dval;
-        myminfp    = paramvalues[promptnum++].uval.dval;
+        g_julibrot_y_min    = paramvalues[promptnum++].uval.dval;
         zdots      = paramvalues[promptnum++].uval.ival;
         g_julibrot_3d_mode = paramvalues[promptnum++].uval.ch.val;
         g_eyes_fp     = (float)paramvalues[promptnum++].uval.dval;

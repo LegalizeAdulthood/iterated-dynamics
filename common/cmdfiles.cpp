@@ -563,7 +563,7 @@ static void initvars_fractal()          // init vars affecting calculation
 
     g_new_bifurcation_functions_loaded = false; // for old bifs
     g_julibrot_x_min = -.83;
-    myminfp = -.25;
+    g_julibrot_y_min = -.25;
     g_julibrot_x_max = -.83;
     g_julibrot_y_max =  .25;
     originfp = 8;
@@ -2061,7 +2061,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         g_julibrot_x_max = floatval[0];
         g_julibrot_x_min = floatval[1];
         g_julibrot_y_max = floatval[2];
-        myminfp = floatval[3];
+        g_julibrot_y_min = floatval[3];
         return CMDARG_FRACTAL_PARAM;
     }
 
