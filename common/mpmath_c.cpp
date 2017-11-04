@@ -476,7 +476,7 @@ DComplex ComplexSqrtFloat(double x, double y)
 
 std::vector<BYTE> LogTable;
 long MaxLTSize;
-bool Log_Calc = false;
+bool g_log_map_calculate = false;
 static double mlf;
 static unsigned long lf;
 
@@ -522,19 +522,19 @@ void SetupLogTable()
         }
     }
 
-    if (Log_Calc)
+    if (g_log_map_calculate)
     {
         return; // LogTable not defined, bail out now
     }
 
-    if (save_release > 1920 && !Log_Calc)
+    if (save_release > 1920 && !g_log_map_calculate)
     {
-        Log_Calc = true;   // turn it on
+        g_log_map_calculate = true;   // turn it on
         for (unsigned long prev = 0U; prev <= (unsigned long)MaxLTSize; prev++)
         {
             LogTable[prev] = (BYTE)logtablecalc((long)prev);
         }
-        Log_Calc = false;   // turn it off, again
+        g_log_map_calculate = false;   // turn it off, again
         return;
     }
 
@@ -623,7 +623,7 @@ long logtablecalc(long citer)
     {
         return (citer);
     }
-    if (!LogTable.empty() && !Log_Calc)
+    if (!LogTable.empty() && !g_log_map_calculate)
     {
         return (LogTable[(long)std::min(citer, MaxLTSize)]);
     }
