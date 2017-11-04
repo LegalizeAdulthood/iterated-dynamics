@@ -134,9 +134,9 @@ void initgene()
         { &g_inside, varyinside, variations::NONE,        "inside color", 2 },
         { &outside, varyoutside, variations::NONE,      "outside color", 3 },
         { &g_decomp[0], varypwr2, variations::NONE,       "decomposition", 4 },
-        { &inversion[0], varyinv, variations::NONE,     "invert radius", 7 },
-        { &inversion[1], varyinv, variations::NONE,     "invert center x", 7 },
-        { &inversion[2], varyinv, variations::NONE,     "invert center y", 7 },
+        { &g_inversion[0], varyinv, variations::NONE,     "invert radius", 7 },
+        { &g_inversion[1], varyinv, variations::NONE,     "invert center x", 7 },
+        { &g_inversion[2], varyinv, variations::NONE,     "invert center y", 7 },
         { &trigndx[0], varytrig, variations::NONE,      "trig function 1", 5 },
         { &trigndx[1], varytrig, variations::NONE,      "trig fn 2", 5 },
         { &trigndx[2], varytrig, variations::NONE,      "trig fn 3", 5 },
@@ -168,9 +168,9 @@ void save_param_history()
     oldhistory.inside = g_inside;
     oldhistory.outside = outside;
     oldhistory.decomp0 = g_decomp[0];
-    oldhistory.invert0 = inversion[0];
-    oldhistory.invert1 = inversion[1];
-    oldhistory.invert2 = inversion[2];
+    oldhistory.invert0 = g_inversion[0];
+    oldhistory.invert1 = g_inversion[1];
+    oldhistory.invert2 = g_inversion[2];
     oldhistory.trigndx0 = static_cast<BYTE>(trigndx[0]);
     oldhistory.trigndx1 = static_cast<BYTE>(trigndx[1]);
     oldhistory.trigndx2 = static_cast<BYTE>(trigndx[2]);
@@ -194,10 +194,10 @@ void restore_param_history()
     g_inside = oldhistory.inside;
     outside = oldhistory.outside;
     g_decomp[0] = oldhistory.decomp0;
-    inversion[0] = oldhistory.invert0;
-    inversion[1] = oldhistory.invert1;
-    inversion[2] = oldhistory.invert2;
-    invert = (inversion[0] == 0.0) ? 0 : 3;
+    g_inversion[0] = oldhistory.invert0;
+    g_inversion[1] = oldhistory.invert1;
+    g_inversion[2] = oldhistory.invert2;
+    invert = (g_inversion[0] == 0.0) ? 0 : 3;
     trigndx[0] = static_cast<trig_fn>(oldhistory.trigndx0);
     trigndx[1] = static_cast<trig_fn>(oldhistory.trigndx1);
     trigndx[2] = static_cast<trig_fn>(oldhistory.trigndx2);
@@ -375,7 +375,7 @@ void varyinv(GENEBASE gene[], int randval, int i)
     {
         varydbl(gene, randval, i);
     }
-    invert = (inversion[0] == 0.0) ? 0 : 3 ;
+    invert = (g_inversion[0] == 0.0) ? 0 : 3 ;
 }
 
 // ---------------------------------------------------------------------

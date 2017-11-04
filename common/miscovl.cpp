@@ -1025,7 +1025,7 @@ void write_batch_parms(char const *colorinf, bool colorsonly, int maxcolor, int 
         if (invert)
         {
             put_parm(" %s=%-1.15lg/%-1.15lg/%-1.15lg", "invert",
-                     inversion[0], inversion[1], inversion[2]);
+                     g_inversion[0], g_inversion[1], g_inversion[2]);
         }
         if (g_decomp[0])
         {

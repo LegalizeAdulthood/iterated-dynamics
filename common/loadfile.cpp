@@ -113,10 +113,10 @@ int read_overlay()      // read overlay/3D files, if reqr'd
         rseed         = read_info.rseed;
         g_inside        = read_info.inside;
         LogFlag       = read_info.logmapold;
-        inversion[0]  = read_info.invert[0];
-        inversion[1]  = read_info.invert[1];
-        inversion[2]  = read_info.invert[2];
-        if (inversion[0] != 0.0)
+        g_inversion[0]  = read_info.invert[0];
+        g_inversion[1]  = read_info.invert[1];
+        g_inversion[2]  = read_info.invert[2];
+        if (g_inversion[0] != 0.0)
         {
             invert = 3;
         }
@@ -348,9 +348,9 @@ int read_overlay()      // read overlay/3D files, if reqr'd
 
     if (read_info.version > 11) // post-version 19.20, inversion fix
     {
-        inversion[0] = read_info.dinvert[0];
-        inversion[1] = read_info.dinvert[1];
-        inversion[2] = read_info.dinvert[2];
+        g_inversion[0] = read_info.dinvert[0];
+        g_inversion[1] = read_info.dinvert[1];
+        g_inversion[2] = read_info.dinvert[2];
         Log_Fly_Calc = read_info.logcalc;
         stoppass     = read_info.stoppass;
     }
@@ -1209,9 +1209,9 @@ void backwards_v19()
     if ((fractype == fractal_type::FORMULA || fractype == fractal_type::FFORMULA) && save_release < 1824)
     {
         invert = 0;
-        inversion[2] = invert;
-        inversion[1] = inversion[2];
-        inversion[0] = inversion[1];
+        g_inversion[2] = invert;
+        g_inversion[1] = g_inversion[2];
+        g_inversion[0] = g_inversion[1];
     }
     // fractal might have old bof60/61 problem with magnitude
     no_mag_calc = fix_bof();
@@ -2081,7 +2081,7 @@ bool paramsOK(FRACTAL_INFO const *info)
             fabs(tmpparm8 - param[7]) < MINDIF &&
             fabs(tmpparm9 - param[8]) < MINDIF &&
             fabs(tmpparm10 - param[9]) < MINDIF &&
-            info->invert[0] - inversion[0] < MINDIF)
+            info->invert[0] - g_inversion[0] < MINDIF)
     {
         return true; // parameters are in range
     }

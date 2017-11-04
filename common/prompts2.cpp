@@ -540,14 +540,14 @@ int get_toggles2()
     for (int i = 0; i < 3; i++)
     {
         uvalues[++k].type = 's';
-        old_inversion[i] = inversion[i];
-        if (inversion[i] == AUTOINVERT)
+        old_inversion[i] = g_inversion[i];
+        if (g_inversion[i] == AUTOINVERT)
         {
             sprintf(uvalues[k].uval.sval, "auto");
         }
         else
         {
-            sprintf(uvalues[k].uval.sval, "%-1.15lg", inversion[i]);
+            sprintf(uvalues[k].uval.sval, "%-1.15lg", g_inversion[i]);
         }
     }
     choices[++k] = "  (use fixed radius & center when zooming)";
@@ -644,19 +644,19 @@ int get_toggles2()
     {
         if (uvalues[++k].uval.sval[0] == 'a' || uvalues[k].uval.sval[0] == 'A')
         {
-            inversion[i] = AUTOINVERT;
+            g_inversion[i] = AUTOINVERT;
         }
         else
         {
-            inversion[i] = atof(uvalues[k].uval.sval);
+            g_inversion[i] = atof(uvalues[k].uval.sval);
         }
-        if (old_inversion[i] != inversion[i]
-                && (i == 0 || inversion[0] != 0.0))
+        if (old_inversion[i] != g_inversion[i]
+                && (i == 0 || g_inversion[0] != 0.0))
         {
             changed = true;
         }
     }
-    invert = (inversion[0] == 0.0) ? 0 : 3;
+    invert = (g_inversion[0] == 0.0) ? 0 : 3;
     ++k;
 
     rotate_lo = uvalues[++k].uval.ival;

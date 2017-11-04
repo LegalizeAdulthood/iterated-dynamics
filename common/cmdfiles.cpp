@@ -104,7 +104,7 @@ int     g_init_cycle_limit = 0;     // initial cycle limit
 bool    usemag = false;         // use center-mag corners
 long    g_bail_out = 0;            // user input bailout value
 bailouts g_bail_out_test;            // test used for determining bailout
-double  inversion[3] = { 0.0 }; // radius, xcenter, ycenter
+double  g_inversion[3] = { 0.0 }; // radius, xcenter, ycenter
 int     rotate_lo = 0;
 int     rotate_hi = 0;          // cycling color range
 std::vector<int> ranges;        // iter->color ranges mapping
@@ -499,7 +499,7 @@ static void initvars_fractal()          // init vars affecting calculation
     {
         potparam[i]  = 0.0; // initial potential values
     }
-    for (auto &elem : inversion)
+    for (auto &elem : g_inversion)
     {
         elem = 0.0;  // initial invert values
     }
@@ -2404,12 +2404,12 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         {
             goto badarg;
         }
-        inversion[0] = floatval[0];
-        invert = (inversion[0] != 0.0) ? totparms : 0;
+        g_inversion[0] = floatval[0];
+        invert = (g_inversion[0] != 0.0) ? totparms : 0;
         if (totparms == 3)
         {
-            inversion[1] = floatval[1];
-            inversion[2] = floatval[2];
+            g_inversion[1] = floatval[1];
+            g_inversion[2] = floatval[2];
         }
         return CMDARG_FRACTAL_PARAM;
     }

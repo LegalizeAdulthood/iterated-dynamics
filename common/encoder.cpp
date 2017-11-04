@@ -882,9 +882,9 @@ static void setup_save_info(FRACTAL_INFO *save_info)
     {
         save_info->logmapold = (short) SHRT_MAX;
     }
-    save_info->invert[0] = (float) inversion[0];
-    save_info->invert[1] = (float) inversion[1];
-    save_info->invert[2] = (float) inversion[2];
+    save_info->invert[0] = (float) g_inversion[0];
+    save_info->invert[1] = (float) g_inversion[1];
+    save_info->invert[2] = (float) g_inversion[2];
     save_info->decomp[0] = (short) g_decomp[0];
     save_info->biomorph = (short) usr_biomorph;
     save_info->symmetry = (short) g_force_symmetry;
@@ -983,9 +983,9 @@ static void setup_save_info(FRACTAL_INFO *save_info)
     save_info->old_demm_colors = (short) (old_demm_colors ? 1 : 0);
     save_info->logmap = LogFlag;
     save_info->distest = g_distance_estimator;
-    save_info->dinvert[0] = inversion[0];
-    save_info->dinvert[1] = inversion[1];
-    save_info->dinvert[2] = inversion[2];
+    save_info->dinvert[0] = g_inversion[0];
+    save_info->dinvert[1] = g_inversion[1];
+    save_info->dinvert[2] = g_inversion[2];
     save_info->logcalc = (short) Log_Fly_Calc;
     save_info->stoppass = (short) stoppass;
     save_info->quick_calc = (short) (quick_calc ? 1 : 0);

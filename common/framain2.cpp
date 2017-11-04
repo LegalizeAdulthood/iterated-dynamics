@@ -2393,9 +2393,9 @@ static void save_history_info()
     current.rseed                = (short)rseed                     ;
     current.inside               = (short)g_inside                    ;
     current.logmap               = LogFlag                   ;
-    current.invert[0]            = inversion[0]              ;
-    current.invert[1]            = inversion[1]              ;
-    current.invert[2]            = inversion[2]              ;
+    current.invert[0]            = g_inversion[0]              ;
+    current.invert[1]            = g_inversion[1]              ;
+    current.invert[2]            = g_inversion[2]              ;
     current.decomp               = (short)g_decomp[0];                ;
     current.biomorph             = (short)g_biomorph                  ;
     current.symmetry             = (short)g_force_symmetry             ;
@@ -2573,9 +2573,9 @@ static void restore_history_info(int i)
     rseed                 = last.rseed          ;
     g_inside                = last.inside         ;
     LogFlag               = last.logmap         ;
-    inversion[0]          = last.invert[0]      ;
-    inversion[1]          = last.invert[1]      ;
-    inversion[2]          = last.invert[2]      ;
+    g_inversion[0]          = last.invert[0]      ;
+    g_inversion[1]          = last.invert[1]      ;
+    g_inversion[2]          = last.invert[2]      ;
     g_decomp[0]             = last.decomp         ;
     usr_biomorph          = last.biomorph       ;
     g_biomorph              = last.biomorph       ;
@@ -2662,7 +2662,7 @@ static void restore_history_info(int i)
     old_demm_colors       = last.old_demm_colors != 0;
     curfractalspecific    = &fractalspecific[static_cast<int>(fractype)];
     potflag               = (potparam[0] != 0.0);
-    if (inversion[0] != 0.0)
+    if (g_inversion[0] != 0.0)
     {
         invert = 3;
     }

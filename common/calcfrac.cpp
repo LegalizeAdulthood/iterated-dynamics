@@ -799,41 +799,41 @@ int calcfract()
         orbit_color = 1;
     }
 
-    if (inversion[0] != 0.0)
+    if (g_inversion[0] != 0.0)
     {
-        g_f_radius    = inversion[0];
-        g_f_x_center   = inversion[1];
-        g_f_y_center   = inversion[2];
+        g_f_radius    = g_inversion[0];
+        g_f_x_center   = g_inversion[1];
+        g_f_y_center   = g_inversion[2];
 
-        if (inversion[0] == AUTOINVERT)  //  auto calc radius 1/6 screen
+        if (g_inversion[0] == AUTOINVERT)  //  auto calc radius 1/6 screen
         {
-            inversion[0] = std::min(fabs(xxmax - xxmin),
+            g_inversion[0] = std::min(fabs(xxmax - xxmin),
                                     fabs(yymax - yymin)) / 6.0;
-            fix_inversion(&inversion[0]);
-            g_f_radius = inversion[0];
+            fix_inversion(&g_inversion[0]);
+            g_f_radius = g_inversion[0];
         }
 
-        if (invert < 2 || inversion[1] == AUTOINVERT)  // xcenter not already set
+        if (invert < 2 || g_inversion[1] == AUTOINVERT)  // xcenter not already set
         {
-            inversion[1] = (xxmin + xxmax) / 2.0;
-            fix_inversion(&inversion[1]);
-            g_f_x_center = inversion[1];
+            g_inversion[1] = (xxmin + xxmax) / 2.0;
+            fix_inversion(&g_inversion[1]);
+            g_f_x_center = g_inversion[1];
             if (fabs(g_f_x_center) < fabs(xxmax-xxmin) / 100)
             {
                 g_f_x_center = 0.0;
-                inversion[1] = g_f_x_center;
+                g_inversion[1] = g_f_x_center;
             }
         }
 
-        if (invert < 3 || inversion[2] == AUTOINVERT)  // ycenter not already set
+        if (invert < 3 || g_inversion[2] == AUTOINVERT)  // ycenter not already set
         {
-            inversion[2] = (yymin + yymax) / 2.0;
-            fix_inversion(&inversion[2]);
-            g_f_y_center = inversion[2];
+            g_inversion[2] = (yymin + yymax) / 2.0;
+            fix_inversion(&g_inversion[2]);
+            g_f_y_center = g_inversion[2];
             if (fabs(g_f_y_center) < fabs(yymax-yymin) / 100)
             {
                 g_f_y_center = 0.0;
-                inversion[2] = g_f_y_center;
+                g_inversion[2] = g_f_y_center;
             }
         }
 
@@ -4431,7 +4431,7 @@ static void setsymmetry(symmetry_type sym, bool uselist) // set up proper symmet
             return;
         }
     }
-    if ((potflag && pot16bit) || (invert && inversion[2] != 0.0)
+    if ((potflag && pot16bit) || (invert && g_inversion[2] != 0.0)
             || g_decomp[0] != 0
             || xxmin != xx3rd || yymin != yy3rd)
     {
@@ -4439,7 +4439,7 @@ static void setsymmetry(symmetry_type sym, bool uselist) // set up proper symmet
     }
     if (sym != symmetry_type::X_AXIS
             && sym != symmetry_type::X_AXIS_NO_PARAM
-            && inversion[1] != 0.0
+            && g_inversion[1] != 0.0
             && g_force_symmetry == symmetry_type::NOT_FORCED)
     {
         return;
