@@ -122,7 +122,6 @@ calc_status_value g_calc_status = calc_status_value::NO_FRACTAL;
 //  4 completed
 long g_calc_time;
 
-int max_colors;                         // maximum palette size
 bool zoomoff = false;                   // false when zoom is disabled
 int        savedac;                     // save-the-Video DAC flag
 bool g_browsing = false;                  // browse mode flag
@@ -243,7 +242,6 @@ static void main_restart(int const argc, char const *const argv[], bool &stacked
     }
 #endif
 
-    max_colors = 256;                   // the Windows version is lower
     max_keyboard_check_interval = 80;                  // check the keyboard this often
 
     if (show_file && g_init_mode < 0)

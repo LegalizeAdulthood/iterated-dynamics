@@ -522,7 +522,7 @@ int plasma()
 
     if (max_plasma == 0)
     {
-        pcolors = std::min(g_colors, max_colors);
+        pcolors = std::min(g_colors, 256);
         for (auto &elem : rnd)
         {
             elem = (U16)(1+(((rand15()/pcolors)*(pcolors-1)) >> (shiftvalue-11)));
