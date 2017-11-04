@@ -1632,20 +1632,24 @@ static void put_parm(char const *parm, ...)
 }
 
 int g_max_line_length = 72;
-#define NICELINELEN (g_max_line_length-4)
+
+inline int nice_line_length()
+{
+    return g_max_line_length-4;
+}
 
 static void put_parm_line()
 {
     int len = s_wbdata.len, c;
-    if (len > NICELINELEN)
+    if (len > nice_line_length())
     {
-        len = NICELINELEN+1;
+        len = nice_line_length()+1;
         while (--len != 0 && s_wbdata.buf[len] != ' ')
         {
         }
         if (len == 0)
         {
-            len = NICELINELEN-1;
+            len = nice_line_length()-1;
             while (++len < g_max_line_length
                     && s_wbdata.buf[len] && s_wbdata.buf[len] != ' ')
             {
