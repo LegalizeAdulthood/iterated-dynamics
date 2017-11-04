@@ -240,7 +240,7 @@ extern int                   g_keyboard_check_interval;
 extern bool                  g_keep_screen_coords;
 extern int                   g_last_init_op;
 extern unsigned              g_last_op;
-extern LComplex              lattr[];
+extern LComplex              g_l_attractor[];
 extern long                  lclosenuff;
 extern LComplex              lcoefficient;
 extern bool                  ldcheck;

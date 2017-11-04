@@ -200,7 +200,7 @@ unsigned int tprefix[2][maxyblk][maxxblk] = { 0 }; // common temp
 bool nxtscreenflag = false;             // for cellular next screen generation
 int g_attractors = 0;                     // number of finite attractors
 DComplex g_attractor[MAX_NUM_ATTRACTORS] = { 0.0 };        // finite attractor vals (f.p)
-LComplex lattr[MAX_NUM_ATTRACTORS] = { 0 };         // finite attractor vals (int)
+LComplex g_l_attractor[MAX_NUM_ATTRACTORS] = { 0 };         // finite attractor vals (int)
 int g_attractor_period[MAX_NUM_ATTRACTORS] = { 0 };         // period of the finite attractor
 
 /***** vars for new btm *****/
@@ -2525,11 +2525,11 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
             {
                 for (int i = 0; i < g_attractors; i++)
                 {
-                    lat.x = lnew.x - lattr[i].x;
+                    lat.x = lnew.x - g_l_attractor[i].x;
                     lat.x = lsqr(lat.x);
                     if (lat.x < l_at_rad)
                     {
-                        lat.y = lnew.y - lattr[i].y;
+                        lat.y = lnew.y - g_l_attractor[i].y;
                         lat.y = lsqr(lat.y);
                         if (lat.y < l_at_rad)
                         {
