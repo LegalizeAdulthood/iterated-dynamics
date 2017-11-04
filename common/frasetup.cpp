@@ -108,7 +108,7 @@ NewtonSetup()           // Newton/NewtBasin Routines
         mproverd     = *pd2MP(roverd);
         g_mp_degree_minus_1_over_degree    = *pd2MP(g_degree_minus_1_over_degree);
         mpthreshold  = *pd2MP(threshold);
-        mpone        = *pd2MP(1.0);
+        g_mp_one        = *pd2MP(1.0);
     }
 #endif
 
@@ -1291,7 +1291,7 @@ HalleySetup()
         g_mpc_temp_param.x = *pd2MP(parm.y);
         g_mpc_temp_param.y = *pd2MP(parm2.y);
         mptmpparm2x = *pd2MP(parm2.x);
-        mpone        = *pd2MP(1.0);
+        g_mp_one        = *pd2MP(1.0);
     }
 #endif
 

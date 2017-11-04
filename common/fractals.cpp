@@ -532,7 +532,7 @@ complex_div(DComplex numerator, DComplex denominator, DComplex *pout)
 #if !defined(XFRACT)
 MP mproverd, g_mp_degree_minus_1_over_degree, mpthreshold;
 MP mpt2;
-MP mpone;
+MP g_mp_one;
 #endif
 
 int MPCNewtonFractal()
@@ -579,7 +579,7 @@ int MPCNewtonFractal()
     mpcnew.x = *pMPadd(*pMPmul(g_mp_degree_minus_1_over_degree, mpcnew.x), mproverd);
     mpcnew.y = *pMPmul(mpcnew.y, g_mp_degree_minus_1_over_degree);
     mpt2 = MPCmod(mpctmp);
-    mpt2 = *pMPdiv(mpone, mpt2);
+    mpt2 = *pMPdiv(g_mp_one, mpt2);
     mpcold.x = *pMPmul(mpt2, (*pMPadd(*pMPmul(mpcnew.x, mpctmp.x), *pMPmul(mpcnew.y, mpctmp.y))));
     mpcold.y = *pMPmul(mpt2, (*pMPsub(*pMPmul(mpcnew.y, mpctmp.x), *pMPmul(mpcnew.x, mpctmp.y))));
     g_new.x = *pMP2d(mpcold.x);
@@ -1763,7 +1763,7 @@ int MPCHalleyFractal()
     mpcF2prime.x = *pMPmul(g_halley_mp_a_plus_one_times_degree, mpcXtoAlessOne.x); // mpAp1deg in setup
     mpcF2prime.y = *pMPmul(g_halley_mp_a_plus_one_times_degree, mpcXtoAlessOne.y);        // F"
 
-    mpcF1prime.x = *pMPsub(*pMPmul(g_halley_mp_a_plus_one, mpcXtoA.x), mpone);
+    mpcF1prime.x = *pMPsub(*pMPmul(g_halley_mp_a_plus_one, mpcXtoA.x), g_mp_one);
     mpcF1prime.y = *pMPmul(g_halley_mp_a_plus_one, mpcXtoA.y);                   //  F'
 
     mpctmp.x = *pMPsub(*pMPmul(mpcF2prime.x, mpcFX.x), *pMPmul(mpcF2prime.y, mpcFX.y));
