@@ -63,7 +63,7 @@ void free_grid_pointers()
     dy0.clear();
     dx1.clear();
     dy1.clear();
-    lx0.clear();
+    g_l_x0.clear();
     ly0.clear();
     lx1.clear();
     ly1.clear();
@@ -78,7 +78,7 @@ void set_grid_pointers()
     dy0.resize(ydots);
     dx1.resize(ydots);
 
-    lx0.resize(xdots);
+    g_l_x0.resize(xdots);
     ly1.resize(xdots);
 
     ly0.resize(ydots);
@@ -112,13 +112,13 @@ void fill_lx_array()
     // they're used only to add to lx0/ly0, 2s comp straightens it out
     if (use_grid)
     {
-        lx0[0] = xmin;               // fill up the x, y grids
+        g_l_x0[0] = xmin;               // fill up the x, y grids
         ly0[0] = ymax;
         ly1[0] = 0;
         lx1[0] = ly1[0];
         for (int i = 1; i < xdots; i++)
         {
-            lx0[i] = lx0[i-1] + delx;
+            g_l_x0[i] = g_l_x0[i-1] + delx;
             ly1[i] = ly1[i-1] - dely2;
         }
         for (int i = 1; i < ydots; i++)
@@ -491,7 +491,7 @@ init_restart:
 
             fill_lx_array();   // fill up the x,y grids
             // past max res?  check corners within 10% of expected
-            if (ratio_bad((double)lx0[xdots-1]-xmin, (double)xmax-x3rd)
+            if (ratio_bad((double)g_l_x0[xdots-1]-xmin, (double)xmax-x3rd)
                     || ratio_bad((double)ly0[ydots-1]-ymax, (double)y3rd-ymax)
                     || ratio_bad((double)lx1[(ydots >> 1)-1], ((double)x3rd-xmin)/2)
                     || ratio_bad((double)ly1[(xdots >> 1)-1], ((double)ymin-y3rd)/2))
@@ -514,7 +514,7 @@ expand_retry:
             } // end if ratio bad
 
             // re-set corners to match reality
-            xmax = lx0[xdots-1] + lx1[ydots-1];
+            xmax = g_l_x0[xdots-1] + lx1[ydots-1];
             ymin = ly0[ydots-1] + ly1[xdots-1];
             x3rd = xmin + lx1[ydots-1];
             y3rd = ly0[ydots-1];

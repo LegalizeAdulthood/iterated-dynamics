@@ -70,7 +70,7 @@ int     g_bad_config = 0;          // 'fractint.cfg' ok?
 bool g_has_inverse = false;
 // note that integer grid is set when integerfractal && !invert;
 // otherwise the floating point grid is set; never both at once
-std::vector<long> lx0;              // x, y grid
+std::vector<long> g_l_x0;              // x, y grid
 std::vector<long> ly0;
 std::vector<long> lx1;              // adjustment for rotate
 std::vector<long> ly1;

@@ -3631,7 +3631,7 @@ static double dypixel_calc()
 // Real component, grid lookup version - requires lx0/lx1 arrays
 static long lxpixel_grid()
 {
-    return lx0[col]+lx1[row];
+    return g_l_x0[col]+lx1[row];
 }
 
 // Real component, calculation version - does not require arrays
