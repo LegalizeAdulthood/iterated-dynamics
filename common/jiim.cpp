@@ -870,7 +870,7 @@ void Jiim(jiim_types which)
                 if (g_integer_fractal)
                 {
                     cr = g_l_x_pixel();
-                    ci = lypixel();
+                    ci = g_l_y_pixel();
                     cr /= (1L << bitshift);
                     ci /= (1L << bitshift);
                 }

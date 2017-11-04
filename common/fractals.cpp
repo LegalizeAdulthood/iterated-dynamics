@@ -2613,7 +2613,7 @@ int long_julia_per_pixel()
     else
     {
         g_l_old.x = g_l_x_pixel();
-        g_l_old.y = lypixel();
+        g_l_old.y = g_l_y_pixel();
     }
     return 0;
 #else
@@ -2642,7 +2642,7 @@ int long_mandel_per_pixel()
     g_l_init.x = g_l_x_pixel();
     if (save_release >= 2004)
     {
-        g_l_init.y = lypixel();
+        g_l_init.y = g_l_y_pixel();
     }
 
     if (g_invert != 0)
@@ -2713,7 +2713,7 @@ int julia_per_pixel()
     else
     {
         g_l_old.x = g_l_x_pixel();
-        g_l_old.y = lypixel();
+        g_l_old.y = g_l_y_pixel();
     }
 
     g_l_temp_sqr_x = multiply(g_l_old.x, g_l_old.x, bitshift);
@@ -2771,7 +2771,7 @@ int mandel_per_pixel()
         g_l_init.x = g_l_x_pixel();
         if (save_release >= 2004)
         {
-            g_l_init.y = lypixel();
+            g_l_init.y = g_l_y_pixel();
         }
     }
     switch (fractype)
@@ -2838,7 +2838,7 @@ int marksmandel_per_pixel()
         g_l_init.x = g_l_x_pixel();
         if (save_release >= 2004)
         {
-            g_l_init.y = lypixel();
+            g_l_init.y = g_l_y_pixel();
         }
     }
 
@@ -3220,7 +3220,7 @@ int long_phoenix_per_pixel()
     else
     {
         g_l_old.x = g_l_x_pixel();
-        g_l_old.y = lypixel();
+        g_l_old.y = g_l_y_pixel();
     }
     g_l_temp_sqr_x = multiply(g_l_old.x, g_l_old.x, bitshift);
     g_l_temp_sqr_y = multiply(g_l_old.y, g_l_old.y, bitshift);
@@ -3255,7 +3255,7 @@ int long_mandphoenix_per_pixel()
     g_l_init.x = g_l_x_pixel();
     if (save_release >= 2004)
     {
-        g_l_init.y = lypixel();
+        g_l_init.y = g_l_y_pixel();
     }
 
     if (g_invert != 0)
@@ -3655,7 +3655,7 @@ static long lypixel_calc()
 double (*dxpixel)() = dxpixel_calc;
 double (*dypixel)() = dypixel_calc;
 long (*g_l_x_pixel)() = lxpixel_calc;
-long (*lypixel)() = lypixel_calc;
+long (*g_l_y_pixel)() = lypixel_calc;
 
 void set_pixel_calc_functions()
 {
@@ -3664,13 +3664,13 @@ void set_pixel_calc_functions()
         dxpixel = dxpixel_grid;
         dypixel = dypixel_grid;
         g_l_x_pixel = lxpixel_grid;
-        lypixel = lypixel_grid;
+        g_l_y_pixel = lypixel_grid;
     }
     else
     {
         dxpixel = dxpixel_calc;
         dypixel = dypixel_calc;
         g_l_x_pixel = lxpixel_calc;
-        lypixel = lypixel_calc;
+        g_l_y_pixel = lypixel_calc;
     }
 }

@@ -1938,7 +1938,7 @@ int calcmand()              // fast per pixel 1/2/b/g, called with row & col set
 {
     // setup values from array to avoid using es reg in calcmand.asm
     g_l_init_x = g_l_x_pixel();
-    g_l_init_y = lypixel();
+    g_l_init_y = g_l_y_pixel();
     if (calcmandasm() >= 0)
     {
         if ((!g_log_map_table.empty() || g_log_map_calculate) // map color, but not if maxit & adjusted for inside,etc
@@ -2202,7 +2202,7 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
             lsaved.x = 0;
             lsaved.y = 0;
         }
-        g_l_init.y = lypixel();
+        g_l_init.y = g_l_y_pixel();
     }
     orbit_ptr = 0;
     g_color_iter = 0;

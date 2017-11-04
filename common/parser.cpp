@@ -3091,7 +3091,7 @@ int form_per_pixel()
                 break;
             case L_MATH:
                 v[0].a.l.x = g_l_x_pixel();
-                v[0].a.l.y = lypixel();
+                v[0].a.l.y = g_l_y_pixel();
                 break;
 #endif
             }
