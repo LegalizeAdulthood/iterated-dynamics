@@ -112,7 +112,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
         rflag         = read_info.rflag != 0;
         rseed         = read_info.rseed;
         g_inside        = read_info.inside;
-        LogFlag       = read_info.logmapold;
+        g_log_map_flag       = read_info.logmapold;
         g_inversion[0]  = read_info.invert[0];
         g_inversion[1]  = read_info.invert[1];
         g_inversion[2]  = read_info.invert[2];
@@ -274,18 +274,18 @@ int read_overlay()      // read overlay/3D files, if reqr'd
     if (read_info.version < 4 && read_info.version != 0) // pre-version 14.0?
     {
         backwardscompat(&read_info); // translate obsolete types
-        if (LogFlag)
+        if (g_log_map_flag)
         {
-            LogFlag = 2;
+            g_log_map_flag = 2;
         }
         usr_floatflag = curfractalspecific->isinteger == 0;
     }
 
     if (read_info.version < 5 && read_info.version != 0) // pre-version 15.0?
     {
-        if (LogFlag == 2) // logmap=old changed again in format 5!
+        if (g_log_map_flag == 2) // logmap=old changed again in format 5!
         {
-            LogFlag = -1;
+            g_log_map_flag = -1;
         }
         if (g_decomp[0] > 0 && g_decomp[1] > 0)
         {
@@ -296,7 +296,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
     {
         if (read_info.version == 6 || read_info.version == 7)
         {
-            LogFlag = 0;
+            g_log_map_flag = 0;
         }
     }
     set_trig_pointers(-1);
@@ -342,7 +342,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
 
     if (read_info.version > 10) // post-version 19.20
     {
-        LogFlag = read_info.logmap;
+        g_log_map_flag = read_info.logmap;
         usr_distest = read_info.distest;
     }
 
@@ -1250,7 +1250,7 @@ bool check_back()
             fix_bof() || fix_period_bof() || use_old_distest || g_decomp[0] == 2 ||
             (fractype == fractal_type::FORMULA && save_release <= 1920) ||
             (fractype == fractal_type::FFORMULA && save_release <= 1920) ||
-            (LogFlag != 0 && save_release <= 2001) ||
+            (g_log_map_flag != 0 && save_release <= 2001) ||
             (fractype == fractal_type::TRIGSQR && save_release < 1900) ||
             (g_inside == STARTRAIL && save_release < 1825) ||
             (maxit > 32767 && save_release <= 1950) ||

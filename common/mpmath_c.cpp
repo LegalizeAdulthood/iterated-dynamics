@@ -495,25 +495,25 @@ void SetupLogTable()
     if (save_release > 1920 || g_log_map_fly_calculate == 1)
     {
         // set up on-the-fly variables
-        if (LogFlag > 0)
+        if (g_log_map_flag > 0)
         {
             // new log function
-            lf = (LogFlag > 1) ? LogFlag : 0;
+            lf = (g_log_map_flag > 1) ? g_log_map_flag : 0;
             if (lf >= (unsigned long)MaxLTSize)
             {
                 lf = MaxLTSize - 1;
             }
             mlf = (g_colors - (lf?2:1)) / log(static_cast<double>(MaxLTSize - lf));
         }
-        else if (LogFlag == -1)
+        else if (g_log_map_flag == -1)
         {
             // old log function
             mlf = (g_colors - 1) / log(static_cast<double>(MaxLTSize));
         }
-        else if (LogFlag <= -2)
+        else if (g_log_map_flag <= -2)
         {
             // sqrt function
-            lf = 0 - LogFlag;
+            lf = 0 - g_log_map_flag;
             if (lf >= (unsigned long)MaxLTSize)
             {
                 lf = MaxLTSize - 1;
@@ -538,9 +538,9 @@ void SetupLogTable()
         return;
     }
 
-    if (LogFlag > -2)
+    if (g_log_map_flag > -2)
     {
-        lf = (LogFlag > 1) ? LogFlag : 0;
+        lf = (g_log_map_flag > 1) ? g_log_map_flag : 0;
         if (lf >= (unsigned long)MaxLTSize)
         {
             lf = MaxLTSize - 1;
@@ -572,7 +572,7 @@ void SetupLogTable()
     }
     else
     {
-        lf = 0 - LogFlag;
+        lf = 0 - g_log_map_flag;
         if (lf >= (unsigned long)MaxLTSize)
         {
             lf = MaxLTSize - 1;
@@ -603,7 +603,7 @@ void SetupLogTable()
         }
     }
     LogTable[0] = 0;
-    if (LogFlag != -1)
+    if (g_log_map_flag != -1)
     {
         for (unsigned long sptop = 1U; sptop < (unsigned long)MaxLTSize; sptop++)   // spread top to incl unused colors
         {
@@ -619,7 +619,7 @@ long logtablecalc(long citer)
 {
     long ret = 0;
 
-    if (LogFlag == 0 && !rangeslen)   // Oops, how did we get here?
+    if (g_log_map_flag == 0 && !rangeslen)   // Oops, how did we get here?
     {
         return (citer);
     }
@@ -628,7 +628,7 @@ long logtablecalc(long citer)
         return (LogTable[(long)std::min(citer, MaxLTSize)]);
     }
 
-    if (LogFlag > 0)
+    if (g_log_map_flag > 0)
     {
         // new log function
         if ((unsigned long)citer <= lf + 1)
@@ -651,7 +651,7 @@ long logtablecalc(long citer)
             ret = (long)(mlf * log(static_cast<double>(citer - lf))) + 1;
         }
     }
-    else if (LogFlag == -1)
+    else if (g_log_map_flag == -1)
     {
         // old log function
         if (citer == 0)
@@ -663,7 +663,7 @@ long logtablecalc(long citer)
             ret = (long)(mlf * log(static_cast<double>(citer))) + 1;
         }
     }
-    else if (LogFlag <= -2)
+    else if (g_log_map_flag <= -2)
     {
         // sqrt function
         if ((unsigned long)citer <= lf)

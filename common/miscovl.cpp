@@ -983,24 +983,24 @@ void write_batch_parms(char const *colorinf, bool colorsonly, int maxcolor, int 
             }
         }
 
-        if (LogFlag && !rangeslen)
+        if (g_log_map_flag && !rangeslen)
         {
             put_parm(" %s=", "logmap");
-            if (LogFlag == -1)
+            if (g_log_map_flag == -1)
             {
                 put_parm("old");
             }
-            else if (LogFlag == 1)
+            else if (g_log_map_flag == 1)
             {
                 put_parm("yes");
             }
             else
             {
-                put_parm("%ld", LogFlag);
+                put_parm("%ld", g_log_map_flag);
             }
         }
 
-        if (g_log_map_fly_calculate && LogFlag && !rangeslen)
+        if (g_log_map_fly_calculate && g_log_map_flag && !rangeslen)
         {
             put_parm(" %s=", "logmode");
             if (g_log_map_fly_calculate == 1)

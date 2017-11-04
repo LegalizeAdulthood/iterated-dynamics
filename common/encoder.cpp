@@ -874,9 +874,9 @@ static void setup_save_info(FRACTAL_INFO *save_info)
     save_info->rflag = (short) (rflag ? 1 : 0);
     save_info->rseed = (short) rseed;
     save_info->inside = (short) g_inside;
-    if (LogFlag <= SHRT_MAX)
+    if (g_log_map_flag <= SHRT_MAX)
     {
-        save_info->logmapold = (short) LogFlag;
+        save_info->logmapold = (short) g_log_map_flag;
     }
     else
     {
@@ -981,7 +981,7 @@ static void setup_save_info(FRACTAL_INFO *save_info)
     save_info->bflength = (short) bnlength;
     save_info->bf_math = (short) bf_math;
     save_info->old_demm_colors = (short) (old_demm_colors ? 1 : 0);
-    save_info->logmap = LogFlag;
+    save_info->logmap = g_log_map_flag;
     save_info->distest = g_distance_estimator;
     save_info->dinvert[0] = g_inversion[0];
     save_info->dinvert[1] = g_inversion[1];

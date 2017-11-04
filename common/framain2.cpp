@@ -892,7 +892,7 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
             truecolor = false;          // truecolor doesn't play well with the evolver
         }
         if (maxit > old_maxit && g_inside >= COLOR_BLACK && g_calc_status == calc_status_value::COMPLETED &&
-                curfractalspecific->calctype == standard_fractal && !LogFlag &&
+                curfractalspecific->calctype == standard_fractal && !g_log_map_flag &&
                 !truecolor &&    // recalc not yet implemented with truecolor
                 !(usr_stdcalcmode == 't' && g_fill_color > -1) &&
                 // tesseral with fill doesn't work
@@ -2392,7 +2392,7 @@ static void save_history_info()
     current.rflag                = (short) (rflag ? 1 : 0);
     current.rseed                = (short)rseed                     ;
     current.inside               = (short)g_inside                    ;
-    current.logmap               = LogFlag                   ;
+    current.logmap               = g_log_map_flag                   ;
     current.invert[0]            = g_inversion[0]              ;
     current.invert[1]            = g_inversion[1]              ;
     current.invert[2]            = g_inversion[2]              ;
@@ -2572,7 +2572,7 @@ static void restore_history_info(int i)
     rflag                 = last.rflag != 0;
     rseed                 = last.rseed          ;
     g_inside                = last.inside         ;
-    LogFlag               = last.logmap         ;
+    g_log_map_flag               = last.logmap         ;
     g_inversion[0]          = last.invert[0]      ;
     g_inversion[1]          = last.invert[1]      ;
     g_inversion[2]          = last.invert[2]      ;

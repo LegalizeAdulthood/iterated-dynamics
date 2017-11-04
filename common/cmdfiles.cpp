@@ -137,7 +137,7 @@ bool orgfrmsearch = false;      /* 1 - user has specified a directory for
 int     orbitsave = 0;          // for IFS and LORENZ to output acrospin file
 int orbit_delay = 0;            // clock ticks delating orbit release
 int     transparent[2] = { 0 }; // transparency min/max values
-long    LogFlag = 0;            // Logarithmic palette flag: 0 = no
+long    g_log_map_flag = 0;            // Logarithmic palette flag: 0 = no
 
 BYTE g_exit_video_mode = 3;              // video mode on exit
 
@@ -522,7 +522,7 @@ static void initvars_fractal()          // init vars affecting calculation
     bf_math = bf_math_type::NONE;
     pot16bit = false;
     potflag = false;
-    LogFlag = 0;                         // no logarithmic palette
+    g_log_map_flag = 0;                         // no logarithmic palette
     set_trig_array(0, "sin");             // trigfn defaults
     set_trig_array(1, "sqr");
     set_trig_array(2, "sinh");
@@ -1713,7 +1713,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         i = 0;
         prev = i;
         entries = prev;
-        LogFlag = 0; // ranges overrides logmap
+        g_log_map_flag = 0; // ranges overrides logmap
         while (i < totparms)
         {
             j = intval[i++];
@@ -2834,19 +2834,19 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         g_log_map_auto_calculate = false;          // turn this off if loading a PAR
         if (charval[0] == 'y')
         {
-            LogFlag = 1;                           // palette is logarithmic
+            g_log_map_flag = 1;                           // palette is logarithmic
         }
         else if (charval[0] == 'n')
         {
-            LogFlag = 0;
+            g_log_map_flag = 0;
         }
         else if (charval[0] == 'o')
         {
-            LogFlag = -1;                          // old log palette
+            g_log_map_flag = -1;                          // old log palette
         }
         else
         {
-            LogFlag = (long)floatval[0];
+            g_log_map_flag = (long)floatval[0];
         }
         return CMDARG_FRACTAL_PARAM;
     }

@@ -1678,7 +1678,7 @@ jumpout:
     else
     {
         double lyap;
-        if (LogFlag)
+        if (g_log_map_flag)
         {
             lyap = -temp/((double) lyaLength*i);
         }

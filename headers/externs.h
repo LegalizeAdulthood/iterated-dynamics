@@ -261,7 +261,7 @@ extern int                   g_load_index;
 extern bool                  g_log_map_auto_calculate;
 extern bool                  g_log_map_calculate;
 extern int                   g_log_map_fly_calculate;
-extern long                  LogFlag;
+extern long                  g_log_map_flag;
 extern std::vector<BYTE>     LogTable;
 extern LComplex              lold;
 extern LComplex *            longparm;

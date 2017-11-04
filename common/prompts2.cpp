@@ -253,7 +253,7 @@ int get_toggles()
         choices[++k] = "Log Palette (n/a, ranges= parameter is in effect)";
         uvalues[k].type = '*';
     }
-    old_logflag = LogFlag;
+    old_logflag = g_log_map_flag;
     uvalues[k].uval.Lval = old_logflag;
 
     choices[++k] = "Biomorph Color (-1 means OFF)";
@@ -430,8 +430,8 @@ int get_toggles()
         j++;
     }
 
-    LogFlag = uvalues[++k].uval.Lval;
-    if (LogFlag != old_logflag)
+    g_log_map_flag = uvalues[++k].uval.Lval;
+    if (g_log_map_flag != old_logflag)
     {
         j++;
         g_log_map_auto_calculate = false;          // turn it off, use the supplied value

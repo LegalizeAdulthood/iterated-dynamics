@@ -662,10 +662,10 @@ int calcfract()
     parm2.x  = param[2];
     parm2.y  = param[3];
 
-    if (LogFlag && g_colors < 16)
+    if (g_log_map_flag && g_colors < 16)
     {
         stopmsg(STOPMSG_NONE, "Need at least 16 colors to use logmap");
-        LogFlag = 0;
+        g_log_map_flag = 0;
     }
 
     if (use_old_period)
@@ -688,13 +688,13 @@ int calcfract()
     g_log_map_calculate = false;
     // below, INT_MAX = 32767 only when an integer is two bytes.  Which is not true for Xfractint.
     // Since 32767 is what was meant, replaced the instances of INT_MAX with 32767.
-    if (LogFlag && (((maxit > 32767) && (save_release > 1920))
+    if (g_log_map_flag && (((maxit > 32767) && (save_release > 1920))
                     || g_log_map_fly_calculate == 1))
     {
         g_log_map_calculate = true; // calculate on the fly
         SetupLogTable();
     }
-    else if (LogFlag && (((maxit > 32767) && (save_release <= 1920))
+    else if (g_log_map_flag && (((maxit > 32767) && (save_release <= 1920))
                          || g_log_map_fly_calculate == 2))
     {
         MaxLTSize = 32767;
@@ -705,7 +705,7 @@ int calcfract()
         MaxLTSize = 32766;
     }
 
-    if ((LogFlag || rangeslen) && !g_log_map_calculate)
+    if ((g_log_map_flag || rangeslen) && !g_log_map_calculate)
     {
         bool resized = false;
         try
@@ -741,7 +741,7 @@ int calcfract()
             int l = 0;
             int k = l;
             int i = k;
-            LogFlag = 0; // ranges overrides logmap
+            g_log_map_flag = 0; // ranges overrides logmap
             while (i < rangeslen)
             {
                 flip = 0;
@@ -1272,10 +1272,10 @@ static void perform_worklist()
 
         setsymmetry(symmetry, true);
 
-        if (!resuming && (labs(LogFlag) == 2 || (LogFlag && g_log_map_auto_calculate)))
+        if (!resuming && (labs(g_log_map_flag) == 2 || (g_log_map_flag && g_log_map_auto_calculate)))
         {
             // calculate round screen edges to work out best start for logmap
-            LogFlag = (autologmap() * (LogFlag / labs(LogFlag)));
+            g_log_map_flag = (autologmap() * (g_log_map_flag / labs(g_log_map_flag)));
             SetupLogTable();
         }
 
