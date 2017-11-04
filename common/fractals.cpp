@@ -60,7 +60,7 @@ const long l16triglim = 8L << 16;       // domain limit of fast trig functions
 
 } // namespace
 
-LComplex g_l_coefficient, g_l_old, g_l_new, lparm, g_l_init, ltmp, ltmp2, lparm2;
+LComplex g_l_coefficient, g_l_old, g_l_new, lparm, g_l_init, ltmp, ltmp2, g_l_param2;
 long ltempsqrx, ltempsqry;
 int maxcolor;
 int root, degree, g_basin;
@@ -1066,8 +1066,8 @@ longCmplxZpowerFractal()
 
     x.x = (double)g_l_old.x / g_fudge_factor;
     x.y = (double)g_l_old.y / g_fudge_factor;
-    y.x = (double)lparm2.x / g_fudge_factor;
-    y.y = (double)lparm2.y / g_fudge_factor;
+    y.x = (double)g_l_param2.x / g_fudge_factor;
+    y.y = (double)g_l_param2.y / g_fudge_factor;
     x = ComplexPower(x, y);
     if (fabs(x.x) < g_fudge_limit && fabs(x.y) < g_fudge_limit)
     {
@@ -1431,7 +1431,7 @@ LPopcornFractalFn()
     overflow = false;
 
     // ltmpx contains the generalized value of the old real "x" equation
-    LCMPLXtimesreal(lparm2, g_l_old.y, ltmp); // tmp = (C * old.y)
+    LCMPLXtimesreal(g_l_param2, g_l_old.y, ltmp); // tmp = (C * old.y)
     LCMPLXtrig1(ltmp, ltmpx);             // tmpx = trig1(tmp)
     FIX_OVERFLOW(ltmpx);
     ltmpx.x += g_l_old.y;                   // tmpx = old.y + trig1(tmp)
@@ -1440,7 +1440,7 @@ LPopcornFractalFn()
     LCMPLXmult(ltmp, lparm, ltmpx);        // tmpx = tmp * h
 
     // ltmpy contains the generalized value of the old real "y" equation
-    LCMPLXtimesreal(lparm2, g_l_old.x, ltmp); // tmp = (C * old.x)
+    LCMPLXtimesreal(g_l_param2, g_l_old.x, ltmp); // tmp = (C * old.x)
     LCMPLXtrig3(ltmp, ltmpy);             // tmpy = trig3(tmp)
     FIX_OVERFLOW(ltmpy);
     ltmpy.x += g_l_old.x;                   // tmpy = old.x + trig1(tmp)
@@ -1523,7 +1523,7 @@ ZXTrigPlusZFractal()
     LCMPLXtrig0(g_l_old, ltmp);          // ltmp  = trig(old)
     LCMPLXmult(lparm, ltmp, ltmp);      // ltmp  = p1*trig(old)
     LCMPLXmult(g_l_old, ltmp, ltmp2);      // ltmp2 = p1*old*trig(old)
-    LCMPLXmult(lparm2, g_l_old, ltmp);     // ltmp  = p2*old
+    LCMPLXmult(g_l_param2, g_l_old, ltmp);     // ltmp  = p2*old
     LCMPLXadd(ltmp2, ltmp, g_l_new);       // lnew  = p1*trig(old) + p2*old
     return longbailout();
 #else
@@ -1623,7 +1623,7 @@ TrigPlusTrigFractal()
     LCMPLXtrig0(g_l_old, ltmp);
     LCMPLXmult(lparm, ltmp, ltmp);
     LCMPLXtrig1(g_l_old, ltmp2);
-    LCMPLXmult(lparm2, ltmp2, g_l_old);
+    LCMPLXmult(g_l_param2, ltmp2, g_l_old);
     LCMPLXadd(ltmp, g_l_old, g_l_new);
     return longbailout();
 #else
@@ -1653,7 +1653,7 @@ LambdaTrigOrTrigFractal()
 #if !defined(XFRACT)
     /* z = trig0(z)*p1 if mod(old) < p2.x and
            trig1(z)*p1 if mod(old) >= p2.x */
-    if ((LCMPLXmod(g_l_old)) < lparm2.x)
+    if ((LCMPLXmod(g_l_old)) < g_l_param2.x)
     {
         LCMPLXtrig0(g_l_old, ltmp);
         LCMPLXmult(*g_long_param, ltmp, g_l_new);
@@ -1693,7 +1693,7 @@ JuliaTrigOrTrigFractal()
 #if !defined(XFRACT)
     /* z = trig0(z)+p1 if mod(old) < p2.x and
            trig1(z)+p1 if mod(old) >= p2.x */
-    if (LCMPLXmod(g_l_old) < lparm2.x)
+    if (LCMPLXmod(g_l_old) < g_l_param2.x)
     {
         LCMPLXtrig0(g_l_old, ltmp);
         LCMPLXadd(*g_long_param, ltmp, g_l_new);
@@ -1860,8 +1860,8 @@ LongPhoenixFractalcplx()
 #if !defined(XFRACT)
     // z(n+1) = z(n)^2 + p + qy(n),  y(n+1) = z(n)
     ltmp.x = multiply(g_l_old.x, g_l_old.y, bitshift);
-    g_l_new.x = ltempsqrx-ltempsqry+g_long_param->x+multiply(lparm2.x, ltmp2.x, bitshift)-multiply(lparm2.y, ltmp2.y, bitshift);
-    g_l_new.y = (ltmp.x + ltmp.x)+g_long_param->y+multiply(lparm2.x, ltmp2.y, bitshift)+multiply(lparm2.y, ltmp2.x, bitshift);
+    g_l_new.x = ltempsqrx-ltempsqry+g_long_param->x+multiply(g_l_param2.x, ltmp2.x, bitshift)-multiply(g_l_param2.y, ltmp2.y, bitshift);
+    g_l_new.y = (ltmp.x + ltmp.x)+g_long_param->y+multiply(g_l_param2.x, ltmp2.y, bitshift)+multiply(g_l_param2.y, ltmp2.x, bitshift);
     ltmp2 = g_l_old; // set ltmp2 to Y value
     return longbailout();
 #else
@@ -1984,7 +1984,7 @@ LongPhoenixCplxPlusFractal()
     loldplus.x += g_long_param->x;
     loldplus.y += g_long_param->y;
     LCMPLXmult(ltmp, loldplus, lnewminus);
-    LCMPLXmult(lparm2, ltmp2, ltmp);
+    LCMPLXmult(g_l_param2, ltmp2, ltmp);
     g_l_new.x = lnewminus.x + ltmp.x;
     g_l_new.y = lnewminus.y + ltmp.y;
     ltmp2 = g_l_old; // set ltmp2 to Y value
@@ -2032,7 +2032,7 @@ LongPhoenixCplxMinusFractal()
     loldsqr.x += g_long_param->x;
     loldsqr.y += g_long_param->y;
     LCMPLXmult(ltmp, loldsqr, lnewminus);
-    LCMPLXmult(lparm2, ltmp2, ltmp);
+    LCMPLXmult(g_l_param2, ltmp2, ltmp);
     g_l_new.x = lnewminus.x + ltmp.x;
     g_l_new.y = lnewminus.y + ltmp.y;
     ltmp2 = g_l_old; // set ltmp2 to Y value
@@ -2182,7 +2182,7 @@ TrigPlusSqrFractal() // generalization of Scott and Skinner types
     LCMPLXtrig0(g_l_old, ltmp);     // ltmp = trig(lold)
     LCMPLXmult(lparm, ltmp, g_l_new); // lnew = lparm*trig(lold)
     LCMPLXsqr_old(ltmp);         // ltmp = sqr(lold)
-    LCMPLXmult(lparm2, ltmp, ltmp);// ltmp = lparm2*sqr(lold)
+    LCMPLXmult(g_l_param2, ltmp, ltmp);// ltmp = lparm2*sqr(lold)
     LCMPLXadd(g_l_new, ltmp, g_l_new);   // lnew = lparm*trig(lold)+lparm2*sqr(lold)
     return longbailout();
 #else
@@ -2626,7 +2626,7 @@ int long_richard8_per_pixel()
 #if !defined(XFRACT)
     long_mandel_per_pixel();
     LCMPLXtrig1(*g_long_param, ltmp);
-    LCMPLXmult(ltmp, lparm2, ltmp);
+    LCMPLXmult(ltmp, g_l_param2, ltmp);
     return 1;
 #else
     return 0;

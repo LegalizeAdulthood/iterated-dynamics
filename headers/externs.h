@@ -266,7 +266,7 @@ extern std::vector<BYTE>     g_log_map_table;
 extern LComplex              g_l_old;
 extern LComplex *            g_long_param;
 extern int                   g_look_at_mouse;
-extern LComplex              lparm2;
+extern LComplex              g_l_param2;
 extern LComplex              lparm;
 extern long                  ltempsqrx;
 extern long                  ltempsqry;

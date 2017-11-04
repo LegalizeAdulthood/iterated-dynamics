@@ -1377,8 +1377,8 @@ int LongBifurcMay()
 #if !defined(XFRACT)
     ltmp.x = lPopulation + g_fudge_factor;
     ltmp.y = 0;
-    lparm2.x = beta * g_fudge_factor;
-    LCMPLXpwr(ltmp, lparm2, ltmp);
+    g_l_param2.x = beta * g_fudge_factor;
+    LCMPLXpwr(ltmp, g_l_param2, ltmp);
     lPopulation = multiply(lRate, lPopulation, bitshift);
     lPopulation = divide(lPopulation, ltmp.x, bitshift);
 #endif

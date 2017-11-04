@@ -846,8 +846,8 @@ int calcfract()
     {
         lparm.x = (long)(parm.x * g_fudge_factor);    // real portion of Lambda
         lparm.y = (long)(parm.y * g_fudge_factor);    // imaginary portion of Lambda
-        lparm2.x = (long)(parm2.x * g_fudge_factor);  // real portion of Lambda2
-        lparm2.y = (long)(parm2.y * g_fudge_factor);  // imaginary portion of Lambda2
+        g_l_param2.x = (long)(parm2.x * g_fudge_factor);  // real portion of Lambda2
+        g_l_param2.y = (long)(parm2.y * g_fudge_factor);  // imaginary portion of Lambda2
         g_l_limit = (long)(rqlim * g_fudge_factor);      // stop if magnitude exceeds this
         if (g_l_limit <= 0)
         {

@@ -652,13 +652,13 @@ TrigPlusSqrlongSetup()
 {
     curfractalspecific->per_pixel =  julia_per_pixel;
     curfractalspecific->orbitcalc =  TrigPlusSqrFractal;
-    if (lparm.x == g_fudge_factor && lparm.y == 0L && lparm2.y == 0L && g_debug_flag != debug_flags::force_standard_fractal)
+    if (lparm.x == g_fudge_factor && lparm.y == 0L && g_l_param2.y == 0L && g_debug_flag != debug_flags::force_standard_fractal)
     {
-        if (lparm2.x == g_fudge_factor)          // Scott variant
+        if (g_l_param2.x == g_fudge_factor)          // Scott variant
         {
             curfractalspecific->orbitcalc =  ScottTrigPlusSqrFractal;
         }
-        else if (lparm2.x == -g_fudge_factor)      // Skinner variant
+        else if (g_l_param2.x == -g_fudge_factor)      // Skinner variant
         {
             curfractalspecific->orbitcalc =  SkinnerTrigSubSqrFractal;
         }
@@ -695,13 +695,13 @@ TrigPlusTriglongSetup()
     }
     curfractalspecific->per_pixel =  long_julia_per_pixel;
     curfractalspecific->orbitcalc =  TrigPlusTrigFractal;
-    if (lparm.x == g_fudge_factor && lparm.y == 0L && lparm2.y == 0L && g_debug_flag != debug_flags::force_standard_fractal)
+    if (lparm.x == g_fudge_factor && lparm.y == 0L && g_l_param2.y == 0L && g_debug_flag != debug_flags::force_standard_fractal)
     {
-        if (lparm2.x == g_fudge_factor)          // Scott variant
+        if (g_l_param2.x == g_fudge_factor)          // Scott variant
         {
             curfractalspecific->orbitcalc =  ScottTrigPlusTrigFractal;
         }
-        else if (lparm2.x == -g_fudge_factor)      // Skinner variant
+        else if (g_l_param2.x == -g_fudge_factor)      // Skinner variant
         {
             curfractalspecific->orbitcalc =  SkinnerTrigSubTrigFractal;
         }
@@ -888,13 +888,13 @@ ZXTrigPlusZSetup()
     if (curfractalspecific->isinteger)
     {
         curfractalspecific->orbitcalc =  ZXTrigPlusZFractal;
-        if (lparm.x == g_fudge_factor && lparm.y == 0L && lparm2.y == 0L && g_debug_flag != debug_flags::force_standard_fractal)
+        if (lparm.x == g_fudge_factor && lparm.y == 0L && g_l_param2.y == 0L && g_debug_flag != debug_flags::force_standard_fractal)
         {
-            if (lparm2.x == g_fudge_factor)       // Scott variant
+            if (g_l_param2.x == g_fudge_factor)       // Scott variant
             {
                 curfractalspecific->orbitcalc =  ScottZXTrigPlusZFractal;
             }
-            else if (lparm2.x == -g_fudge_factor)      // Skinner variant
+            else if (g_l_param2.x == -g_fudge_factor)      // Skinner variant
             {
                 curfractalspecific->orbitcalc =  SkinnerZXTrigSubZFractal;
             }
