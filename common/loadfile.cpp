@@ -1429,7 +1429,7 @@ rescan:  // entry for changed browse parms
     time(&lastime);
     toggle = 0;
     wincount = 0;
-    no_sub_images = false;
+    g_browse_no_sub_images = false;
     splitpath(readname.c_str(), drive, dir, nullptr, nullptr);
     splitpath(g_browse_mask.c_str(), nullptr, nullptr, fname, ext);
     makepath(tmpmask, drive, dir, fname, ext);
@@ -1724,7 +1724,7 @@ rescan:  // entry for changed browse parms
     {
         driver_buzzer(buzzer_codes::INTERRUPT); //no suitable files in directory!
         texttempmsg("Sorry.. I can't find anything");
-        no_sub_images = true;
+        g_browse_no_sub_images = true;
     }
 
     browse_windows.clear();

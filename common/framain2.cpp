@@ -550,7 +550,7 @@ resumeloop:                             // return here on failed overlays
                 }
                 else      // wait for a real keystroke
                 {
-                    if (g_auto_browse && !no_sub_images)
+                    if (g_auto_browse && !g_browse_no_sub_images)
                     {
                         kbdchar = 'l';
                     }
@@ -1230,7 +1230,7 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
             g_browse_name = g_file_name_stack[g_filename_stack_index];
             merge_pathnames(readname, g_browse_name.c_str(), cmd_file::AT_AFTER_STARTUP);
             g_browsing = true;
-            no_sub_images = false;
+            g_browse_no_sub_images = false;
             show_file = 0;
             if (g_ask_video)
             {
