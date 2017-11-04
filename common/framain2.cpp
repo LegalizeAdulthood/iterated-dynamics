@@ -138,7 +138,7 @@ main_state big_while_loop(bool *const kbdmore, bool *const stacked, bool const r
             else
             {
                 // reset DAC to defaults, which setvideomode has done for us
-                if (map_specified)
+                if (g_map_specified)
                 {
                     // but there's a map=, so load that
                     for (int i = 0; i < 256; ++i)
@@ -2687,7 +2687,7 @@ static void restore_history_info(int i)
     usr_floatflag = curfractalspecific->isinteger == 0;
     memcpy(g_dac_box, last.dac, 256*3);
     memcpy(old_dac_box, last.dac, 256*3);
-    if (map_specified)
+    if (g_map_specified)
     {
         for (int i = 0; i < 256; ++i)
         {

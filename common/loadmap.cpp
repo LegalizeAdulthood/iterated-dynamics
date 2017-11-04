@@ -75,5 +75,5 @@ void SetColorPaletteName(char const *fn)
         map_clut[i][1] = g_dac_box[i][1];
         map_clut[i][2] = g_dac_box[i][2];
     }
-    map_specified = true;
+    g_map_specified = true;
 }

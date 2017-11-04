@@ -125,7 +125,7 @@ void make_batch_file()
         if (g_color_state == 0)
         {
             // default colors
-            if (map_specified)
+            if (g_map_specified)
             {
                 colorspec[0] = '@';
                 sptr = MAP_name.c_str();

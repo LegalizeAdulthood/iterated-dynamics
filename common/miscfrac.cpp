@@ -599,7 +599,7 @@ static void set_Plasma_palette()
     static BYTE const Green[3] = { 0, 63, 0 };
     static BYTE const Blue[3]  = { 0,  0, 63 };
 
-    if (map_specified || g_colors_preloaded)
+    if (g_map_specified || g_colors_preloaded)
     {
         return;    // map= specified
     }
@@ -2136,7 +2136,7 @@ static void set_Cellular_palette()
     static BYTE const Yellow[3] = { 60, 58, 18 };
     static BYTE const Brown[3]  = { 42, 21, 0 };
 
-    if (map_specified && g_color_state != 0)
+    if (g_map_specified && g_color_state != 0)
     {
         return;       // map= specified
     }
