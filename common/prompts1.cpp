@@ -1755,7 +1755,7 @@ gfp_top:
     numtrig = (curfractalspecific->flags >> 6) & 7;
     if (curtype == fractal_type::FORMULA || curtype == fractal_type::FFORMULA)
     {
-        numtrig = maxfn;
+        numtrig = g_max_function;
     }
 
     for (int i = NUMTRIGFN-1; i >= 0; --i)

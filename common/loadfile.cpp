@@ -260,7 +260,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
         g_eyes_fp    =  read_info.eyesfp         ;
         neworbittype = static_cast<fractal_type>(read_info.orbittype);
         g_julibrot_3d_mode   = read_info.juli3Dmode   ;
-        maxfn    = (char)read_info.maxfn          ;
+        g_max_function    = (char)read_info.maxfn          ;
         g_major_method = static_cast<Major>(read_info.inversejulia >> 8);
         minor_method = static_cast<Minor>(read_info.inversejulia & 255);
         param[4] = read_info.dparm5;
@@ -2112,7 +2112,7 @@ bool typeOK(FRACTAL_INFO const *info, ext_blk_3 const *blk_3_info)
     {
         if (!stricmp(blk_3_info->form_name, g_formula_name.c_str()))
         {
-            numfn = maxfn;
+            numfn = g_max_function;
             if (numfn > 0)
             {
                 return functionOK(info, numfn);

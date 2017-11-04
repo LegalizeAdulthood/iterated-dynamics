@@ -2469,7 +2469,7 @@ static void save_history_info()
     current.eyesfp               = g_eyes_fp                       ;
     current.orbittype            = (short)neworbittype              ;
     current.juli3Dmode           = (short)g_julibrot_3d_mode                ;
-    current.maxfn                = maxfn                     ;
+    current.maxfn                = g_max_function                     ;
     current.major_method         = (short)g_major_method              ;
     current.minor_method         = (short)minor_method              ;
     current.bailout              = g_bail_out                   ;
@@ -2653,7 +2653,7 @@ static void restore_history_info(int i)
     g_eyes_fp                = last.eyesfp         ;
     neworbittype          = static_cast<fractal_type>(last.orbittype);
     g_julibrot_3d_mode            = last.juli3Dmode     ;
-    maxfn                 = last.maxfn          ;
+    g_max_function                 = last.maxfn          ;
     g_major_method          = static_cast<Major>(last.major_method);
     minor_method          = static_cast<Minor>(last.minor_method);
     g_bail_out               = last.bailout        ;

@@ -288,7 +288,7 @@ extern std::string           g_map_name;
 extern double                g_math_tol[2];
 extern int                   g_max_color;
 extern long                  g_max_count;
-extern char                  maxfn;
+extern char                  g_max_function;
 extern long                  maxit;
 extern int                   maxlinelength;
 extern long                  MaxLTSize;

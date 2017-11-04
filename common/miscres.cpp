@@ -618,7 +618,7 @@ static void trigdetails(char *buf)
     if (curfractalspecific == &fractalspecific[static_cast<int>(fractal_type::FORMULA)] ||
             curfractalspecific == &fractalspecific[static_cast<int>(fractal_type::FFORMULA)])
     {
-        numfn = maxfn;
+        numfn = g_max_function;
     }
     *buf = 0; // null string if none
     if (numfn > 0)

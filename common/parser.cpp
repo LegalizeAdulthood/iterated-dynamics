@@ -2204,7 +2204,7 @@ int isjump(char const *Str, int Len)
 }
 
 
-char maxfn = 0;
+char g_max_function = 0;
 
 FNCT_LIST FnctList[] =
 {
@@ -2314,9 +2314,9 @@ void (*isfunct(char const *Str, int Len))()
                     int functnum = whichfn(Str, Len);
                     if (functnum != 0)
                     {
-                        if (functnum > maxfn)
+                        if (functnum > g_max_function)
                         {
-                            maxfn = (char)functnum;
+                            g_max_function = (char)functnum;
                         }
                     }
                     return *FnctList[n].ptr;
@@ -2576,7 +2576,7 @@ static bool ParseStr(char const *Str, int pass)
         break;
 #endif
     }
-    maxfn = 0;
+    g_max_function = 0;
     for (vsp = 0; vsp < sizeof(Constants) / sizeof(char*); vsp++)
     {
         v[vsp].s = Constants[vsp];
@@ -3861,7 +3861,7 @@ int frm_get_param_stuff(char const *Name)
     uses_p2 = false;
     uses_p3 = false;
     uses_ismand = false;
-    maxfn = 0;
+    g_max_function = 0;
     uses_p4 = false;
     uses_p5 = false;
 
@@ -3935,9 +3935,9 @@ int frm_get_param_stuff(char const *Name)
             }
             break;
         case PARAM_FUNCTION:
-            if ((current_token.token_id - 10) > maxfn)
+            if ((current_token.token_id - 10) > g_max_function)
             {
-                maxfn = (char)(current_token.token_id - 10);
+                g_max_function = (char)(current_token.token_id - 10);
             }
             break;
         }
@@ -3953,7 +3953,7 @@ int frm_get_param_stuff(char const *Name)
         uses_p2 = false;
         uses_p3 = false;
         uses_ismand = false;
-        maxfn = 0;
+        g_max_function = 0;
         uses_p4 = false;
         uses_p5 = false;
         return 0;

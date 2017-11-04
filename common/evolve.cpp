@@ -399,7 +399,7 @@ int get_the_rest()
     numtrig = (curfractalspecific->flags >> 6) & 7;
     if (fractype == fractal_type::FORMULA || fractype == fractal_type::FFORMULA)
     {
-        numtrig = maxfn;
+        numtrig = g_max_function;
     }
 
 choose_vars_restart:
