@@ -250,7 +250,7 @@ extern std::vector<BYTE>     g_line_buff;
 extern LComplex              g_l_init;
 extern LComplex              g_l_init_orbit;
 extern long                  g_l_init_x;
-extern long                  linity;
+extern long                  g_l_init_y;
 extern long                  llimit2;
 extern long                  llimit;
 extern long                  lmagnitud;

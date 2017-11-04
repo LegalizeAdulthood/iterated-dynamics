@@ -1938,7 +1938,7 @@ int calcmand()              // fast per pixel 1/2/b/g, called with row & col set
 {
     // setup values from array to avoid using es reg in calcmand.asm
     g_l_init_x = lxpixel();
-    linity = lypixel();
+    g_l_init_y = lypixel();
     if (calcmandasm() >= 0)
     {
         if ((!LogTable.empty() || Log_Calc) // map color, but not if maxit & adjusted for inside,etc
