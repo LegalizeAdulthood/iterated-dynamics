@@ -1912,7 +1912,7 @@ void get_julia_attractor(double real, double imag)
         }
         else
         {
-            result =  g_new;
+            result =  g_new_z;
         }
         for (int i = 0; i < 10; i++)
         {
@@ -1933,10 +1933,10 @@ void get_julia_attractor(double real, double imag)
                 }
                 else
                 {
-                    if (fabs(result.x-g_new.x) < g_close_enough
-                            && fabs(result.y-g_new.y) < g_close_enough)
+                    if (fabs(result.x-g_new_z.x) < g_close_enough
+                            && fabs(result.y-g_new_z.y) < g_close_enough)
                     {
-                        g_attractor[g_attractors] = g_new;
+                        g_attractor[g_attractors] = g_new_z;
                         g_attractor_period[g_attractors] = i+1;
                         g_attractors++;   // another attractor - coloured lakes !
                         break;

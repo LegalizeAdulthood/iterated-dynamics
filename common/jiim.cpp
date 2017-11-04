@@ -990,17 +990,17 @@ void Jiim(jiim_types which)
                     {
                         lmax = 0;
                         lsize = lmax;
-                        g_new.x = luckyx;
-                        old.x = g_new.x;
-                        g_new.y = luckyy;
-                        old.y = g_new.y;
+                        g_new_z.x = luckyx;
+                        old.x = g_new_z.x;
+                        g_new_z.y = luckyy;
+                        old.y = g_new_z.y;
                         luckyy = 0.0F;
                         luckyx = luckyy;
                         for (int i = 0; i < 199; i++)
                         {
                             old = ComplexSqrtFloat(old.x - cr, old.y - ci);
-                            g_new = ComplexSqrtFloat(g_new.x - cr, g_new.y - ci);
-                            EnQueueFloat((float)g_new.x, (float)g_new.y);
+                            g_new_z = ComplexSqrtFloat(g_new_z.x - cr, g_new_z.y - ci);
+                            EnQueueFloat((float)g_new_z.x, (float)g_new_z.y);
                             EnQueueFloat((float)-old.x, (float)-old.y);
                         }
                         maxhits++;
@@ -1019,9 +1019,9 @@ void Jiim(jiim_types which)
                 if (color < maxhits)
                 {
                     c_putcolor(x, y, color + 1);
-                    g_new = ComplexSqrtFloat(old.x - cr, old.y - ci);
-                    EnQueueFloat((float)g_new.x, (float)g_new.y);
-                    EnQueueFloat((float)-g_new.x, (float)-g_new.y);
+                    g_new_z = ComplexSqrtFloat(old.x - cr, old.y - ci);
+                    EnQueueFloat((float)g_new_z.x, (float)g_new_z.y);
+                    EnQueueFloat((float)-g_new_z.x, (float)-g_new_z.y);
                 }
             }
             else
@@ -1048,13 +1048,13 @@ void Jiim(jiim_types which)
 
                 //       r = sqrt(old.x*old.x + old.y*old.y); calculated above
                 r = sqrt(r);
-                g_new.x = sqrt(fabs((r + old.x)/2));
+                g_new_z.x = sqrt(fabs((r + old.x)/2));
                 if (old.y < 0)
                 {
-                    g_new.x = -g_new.x;
+                    g_new_z.x = -g_new_z.x;
                 }
 
-                g_new.y = sqrt(fabs((r - old.x)/2));
+                g_new_z.y = sqrt(fabs((r - old.x)/2));
 
 
                 switch (SecretExperimentalMode)
@@ -1063,60 +1063,60 @@ void Jiim(jiim_types which)
                 default:
                     if (rand() % 2)
                     {
-                        g_new.x = -g_new.x;
-                        g_new.y = -g_new.y;
+                        g_new_z.x = -g_new_z.x;
+                        g_new_z.y = -g_new_z.y;
                     }
-                    x = (int)(g_new.x * xfactor * zoom + xoff);
-                    y = (int)(g_new.y * yfactor * zoom + yoff);
+                    x = (int)(g_new_z.x * xfactor * zoom + xoff);
+                    y = (int)(g_new_z.y * yfactor * zoom + yoff);
                     break;
                 case 1:                     // always go one direction
                     if (SaveC.y < 0)
                     {
-                        g_new.x = -g_new.x;
-                        g_new.y = -g_new.y;
+                        g_new_z.x = -g_new_z.x;
+                        g_new_z.y = -g_new_z.y;
                     }
-                    x = (int)(g_new.x * xfactor * zoom + xoff);
-                    y = (int)(g_new.y * yfactor * zoom + yoff);
+                    x = (int)(g_new_z.x * xfactor * zoom + xoff);
+                    y = (int)(g_new_z.y * yfactor * zoom + yoff);
                     break;
                 case 2:                     // go one dir, draw the other
                     if (SaveC.y < 0)
                     {
-                        g_new.x = -g_new.x;
-                        g_new.y = -g_new.y;
+                        g_new_z.x = -g_new_z.x;
+                        g_new_z.y = -g_new_z.y;
                     }
-                    x = (int)(-g_new.x * xfactor * zoom + xoff);
-                    y = (int)(-g_new.y * yfactor * zoom + yoff);
+                    x = (int)(-g_new_z.x * xfactor * zoom + xoff);
+                    y = (int)(-g_new_z.y * yfactor * zoom + yoff);
                     break;
                 case 4:                     // go negative if max color
-                    x = (int)(g_new.x * xfactor * zoom + xoff);
-                    y = (int)(g_new.y * yfactor * zoom + yoff);
+                    x = (int)(g_new_z.x * xfactor * zoom + xoff);
+                    y = (int)(g_new_z.y * yfactor * zoom + yoff);
                     if (c_getcolor(x, y) == g_colors - 1)
                     {
-                        g_new.x = -g_new.x;
-                        g_new.y = -g_new.y;
-                        x = (int)(g_new.x * xfactor * zoom + xoff);
-                        y = (int)(g_new.y * yfactor * zoom + yoff);
+                        g_new_z.x = -g_new_z.x;
+                        g_new_z.y = -g_new_z.y;
+                        x = (int)(g_new_z.x * xfactor * zoom + xoff);
+                        y = (int)(g_new_z.y * yfactor * zoom + yoff);
                     }
                     break;
                 case 5:                     // go positive if max color
-                    g_new.x = -g_new.x;
-                    g_new.y = -g_new.y;
-                    x = (int)(g_new.x * xfactor * zoom + xoff);
-                    y = (int)(g_new.y * yfactor * zoom + yoff);
+                    g_new_z.x = -g_new_z.x;
+                    g_new_z.y = -g_new_z.y;
+                    x = (int)(g_new_z.x * xfactor * zoom + xoff);
+                    y = (int)(g_new_z.y * yfactor * zoom + yoff);
                     if (c_getcolor(x, y) == g_colors - 1)
                     {
-                        x = (int)(g_new.x * xfactor * zoom + xoff);
-                        y = (int)(g_new.y * yfactor * zoom + yoff);
+                        x = (int)(g_new_z.x * xfactor * zoom + xoff);
+                        y = (int)(g_new_z.y * yfactor * zoom + yoff);
                     }
                     break;
                 case 7:
                     if (SaveC.y < 0)
                     {
-                        g_new.x = -g_new.x;
-                        g_new.y = -g_new.y;
+                        g_new_z.x = -g_new_z.x;
+                        g_new_z.y = -g_new_z.y;
                     }
-                    x = (int)(-g_new.x * xfactor * zoom + xoff);
-                    y = (int)(-g_new.y * yfactor * zoom + yoff);
+                    x = (int)(-g_new_z.x * xfactor * zoom + xoff);
+                    y = (int)(-g_new_z.y * yfactor * zoom + yoff);
                     if (iter > 10)
                     {
                         if (mode == 0)                          // pixels
@@ -1136,8 +1136,8 @@ void Jiim(jiim_types which)
                         old_x = x;
                         old_y = y;
                     }
-                    x = (int)(g_new.x * xfactor * zoom + xoff);
-                    y = (int)(g_new.y * yfactor * zoom + yoff);
+                    x = (int)(g_new_z.x * xfactor * zoom + xoff);
+                    y = (int)(g_new_z.y * yfactor * zoom + yoff);
                     break;
                 case 8:                     // go in long zig zags
                     if (rancnt >= 300)
@@ -1146,11 +1146,11 @@ void Jiim(jiim_types which)
                     }
                     if (rancnt < 0)
                     {
-                        g_new.x = -g_new.x;
-                        g_new.y = -g_new.y;
+                        g_new_z.x = -g_new_z.x;
+                        g_new_z.y = -g_new_z.y;
                     }
-                    x = (int)(g_new.x * xfactor * zoom + xoff);
-                    y = (int)(g_new.y * yfactor * zoom + yoff);
+                    x = (int)(g_new_z.x * xfactor * zoom + xoff);
+                    y = (int)(g_new_z.y * yfactor * zoom + yoff);
                     break;
                 case 9:                     // "random run"
                     switch (randir)
@@ -1158,8 +1158,8 @@ void Jiim(jiim_types which)
                     case 0:             // go random direction for a while
                         if (rand() % 2)
                         {
-                            g_new.x = -g_new.x;
-                            g_new.y = -g_new.y;
+                            g_new_z.x = -g_new_z.x;
+                            g_new_z.y = -g_new_z.y;
                         }
                         if (++rancnt > 1024)
                         {
@@ -1175,8 +1175,8 @@ void Jiim(jiim_types which)
                         }
                         break;
                     case 1:             // now go negative dir for a while
-                        g_new.x = -g_new.x;
-                        g_new.y = -g_new.y;
+                        g_new_z.x = -g_new_z.x;
+                        g_new_z.y = -g_new_z.y;
                         // fall through
                     case -1:            // now go positive dir for a while
                         if (++rancnt > 512)
@@ -1186,8 +1186,8 @@ void Jiim(jiim_types which)
                         }
                         break;
                     }
-                    x = (int)(g_new.x * xfactor * zoom + xoff);
-                    y = (int)(g_new.y * yfactor * zoom + yoff);
+                    x = (int)(g_new_z.x * xfactor * zoom + xoff);
+                    y = (int)(g_new_z.y * yfactor * zoom + yoff);
                     break;
                 } // end switch SecretMode (sorry about the indentation)
             } // end if not MIIM
@@ -1241,7 +1241,7 @@ void Jiim(jiim_types which)
             old_x = x;
             old_y = y;
         }
-        old = g_new;
+        old = g_new_z;
         g_l_old = g_l_new;
     } // end while (still)
 finish:

@@ -75,7 +75,7 @@ int asmlMANHbailout()
 {
     g_l_temp_sqr_x = lsqr(g_l_new.x);
     g_l_temp_sqr_y = lsqr(g_l_new.y);
-    g_magnitude = fabs(g_new.x) + fabs(g_new.y);
+    g_magnitude = fabs(g_new_z.x) + fabs(g_new_z.y);
     if (g_magnitude*g_magnitude >= rqlim)
     {
         return 1;
@@ -88,7 +88,7 @@ int asmlMANRbailout()
 {
     g_l_temp_sqr_x = lsqr(g_l_new.x);
     g_l_temp_sqr_y = lsqr(g_l_new.y);
-    g_magnitude = fabs(g_new.x + g_new.y);
+    g_magnitude = fabs(g_new_z.x + g_new_z.y);
     if (g_magnitude*g_magnitude >= rqlim)
     {
         return 1;
@@ -168,7 +168,7 @@ int asm386lMANHbailout()
 {
     g_l_temp_sqr_x = lsqr(g_l_new.x);
     g_l_temp_sqr_y = lsqr(g_l_new.y);
-    g_magnitude = fabs(g_new.x) + fabs(g_new.y);
+    g_magnitude = fabs(g_new_z.x) + fabs(g_new_z.y);
     if (g_magnitude*g_magnitude >= rqlim)
     {
         return 1;
@@ -181,7 +181,7 @@ int asm386lMANRbailout()
 {
     g_l_temp_sqr_x = lsqr(g_l_new.x);
     g_l_temp_sqr_y = lsqr(g_l_new.y);
-    g_magnitude = fabs(g_new.x + g_new.y);
+    g_magnitude = fabs(g_new_z.x + g_new_z.y);
     if (g_magnitude*g_magnitude >= rqlim)
     {
         return 1;
@@ -220,16 +220,16 @@ asmfpMODbailout endp
 int asmfpMODbailout()
 {
     // TODO: verify this code is correct
-    tempsqrx = sqr(g_new.x);
-    tempsqry = sqr(g_new.y);
+    tempsqrx = sqr(g_new_z.x);
+    tempsqry = sqr(g_new_z.y);
     g_magnitude = tempsqrx + tempsqry;
-    if (g_magnitude > rqlim || g_magnitude < 0.0 || fabs(g_new.x) > rqlim2 ||
-            fabs(g_new.y) > rqlim2 || overflow)
+    if (g_magnitude > rqlim || g_magnitude < 0.0 || fabs(g_new_z.x) > rqlim2 ||
+            fabs(g_new_z.y) > rqlim2 || overflow)
     {
         overflow = false;
         return 1;
     }
-    old = g_new;
+    old = g_new_z;
     return 0;
 }
 
@@ -263,14 +263,14 @@ asmfpREALbailout endp
 int asmfpREALbailout()
 {
     // TODO: verify this code is correct
-    tempsqrx = sqr(g_new.x);
-    tempsqry = sqr(g_new.y);
+    tempsqrx = sqr(g_new_z.x);
+    tempsqry = sqr(g_new_z.y);
     if (tempsqrx >= rqlim || overflow)
     {
         overflow = false;
         return 1;
     }
-    old = g_new;
+    old = g_new_z;
     return 0;
 }
 
@@ -304,14 +304,14 @@ asmfpIMAGbailout endp
 int asmfpIMAGbailout()
 {
     // TODO: verify this code is correct
-    tempsqrx = sqr(g_new.x);
-    tempsqry = sqr(g_new.y);
+    tempsqrx = sqr(g_new_z.x);
+    tempsqry = sqr(g_new_z.y);
     if (tempsqry >= rqlim || overflow)
     {
         overflow = false;
         return 1;
     }
-    old = g_new;
+    old = g_new_z;
     return 0;
 }
 
@@ -352,14 +352,14 @@ asmfpORbailout endp
 int asmfpORbailout()
 {
     // TODO: verify this code is correct
-    tempsqrx = sqr(g_new.x);
-    tempsqry = sqr(g_new.y);
+    tempsqrx = sqr(g_new_z.x);
+    tempsqry = sqr(g_new_z.y);
     if (tempsqrx >= rqlim || tempsqry >= rqlim || overflow)
     {
         overflow = false;
         return 1;
     }
-    old = g_new;
+    old = g_new_z;
     return 0;
 }
 
@@ -402,14 +402,14 @@ asmfpANDbailout endp
 int asmfpANDbailout()
 {
     // TODO: verify this code is correct
-    tempsqrx = sqr(g_new.x);
-    tempsqry = sqr(g_new.y);
+    tempsqrx = sqr(g_new_z.x);
+    tempsqry = sqr(g_new_z.y);
     if ((tempsqrx >= rqlim && tempsqry >= rqlim) || overflow)
     {
         overflow = false;
         return 1;
     }
-    old = g_new;
+    old = g_new_z;
     return 0;
 }
 
@@ -455,14 +455,14 @@ asmfpMANHbailout endp
 int asmfpMANHbailout()
 {
     // TODO: verify this code is correct
-    tempsqrx = sqr(g_new.x);
-    tempsqry = sqr(g_new.y);
-    g_magnitude = fabs(g_new.x) + fabs(g_new.y);
+    tempsqrx = sqr(g_new_z.x);
+    tempsqry = sqr(g_new_z.y);
+    g_magnitude = fabs(g_new_z.x) + fabs(g_new_z.y);
     if (g_magnitude*g_magnitude >= rqlim)
     {
         return 1;
     }
-    old = g_new;
+    old = g_new_z;
     return 0;
 }
 
@@ -505,13 +505,13 @@ asmfpMANRbailout endp
 int asmfpMANRbailout()
 {
     // TODO: verify this code is correct
-    tempsqrx = sqr(g_new.x);
-    tempsqry = sqr(g_new.y);
-    g_magnitude = fabs(g_new.x + g_new.y);
+    tempsqrx = sqr(g_new_z.x);
+    tempsqry = sqr(g_new_z.y);
+    g_magnitude = fabs(g_new_z.x + g_new_z.y);
     if (g_magnitude*g_magnitude >= rqlim)
     {
         return 1;
     }
-    old = g_new;
+    old = g_new_z;
     return 0;
 }

@@ -189,8 +189,8 @@ pop_stack:
 over_bailout_87:
     if (outside <= REAL)
     {
-        g_new.x = x;
-        g_new.y = y;
+        g_new_z.x = x;
+        g_new_z.y = y;
     }
     if (cx-10 > 0)
     {
@@ -219,23 +219,23 @@ over_bailout_87:
         // special_outside
         if (outside == REAL)
         {
-            g_color_iter += (long) g_new.x + 7;
+            g_color_iter += (long) g_new_z.x + 7;
         }
         else if (outside == IMAG)
         {
-            g_color_iter += (long) g_new.y + 7;
+            g_color_iter += (long) g_new_z.y + 7;
         }
-        else if (outside == MULT && g_new.y != 0.0)
+        else if (outside == MULT && g_new_z.y != 0.0)
         {
-            g_color_iter = (long)((double) g_color_iter * (g_new.x/g_new.y));
+            g_color_iter = (long)((double) g_color_iter * (g_new_z.x/g_new_z.y));
         }
         else if (outside == SUM)
         {
-            g_color_iter += (long)(g_new.x + g_new.y);
+            g_color_iter += (long)(g_new_z.x + g_new_z.y);
         }
         else if (outside == ATAN)
         {
-            g_color_iter = (long) fabs(atan2(g_new.y, g_new.x)*atan_colors/PI);
+            g_color_iter = (long) fabs(atan2(g_new_z.y, g_new_z.x)*atan_colors/PI);
         }
         // check_color
         if ((g_color_iter <= 0 || g_color_iter > g_max_iterations) && outside != FMOD)

@@ -320,7 +320,7 @@ extern double                g_julibrot_x_min;
 extern double                g_julibrot_y_max;
 extern double                g_julibrot_y_min;
 extern int                   g_filename_stack_index;
-extern DComplex              g_new;
+extern DComplex              g_new_z;
 extern char evolve_new_discrete_x_parameter_offset;
 extern char evolve_new_discrete_y_parameter_offset;
 extern double evolve_new_x_parameter_offset;
