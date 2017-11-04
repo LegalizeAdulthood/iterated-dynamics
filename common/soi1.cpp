@@ -27,7 +27,7 @@
 extern int rhombus_stack[10];
 extern int rhombus_depth;
 extern int g_max_rhombus_depth;
-extern int minstackavail;
+extern int g_soi_min_stack_available;
 extern int g_soi_min_stack; // need this much stack to recurse
 static double twidth;
 static double equal;
@@ -354,9 +354,9 @@ static int rhombus(double cre1, double cre2, double cim1, double cim2,
     bool status = false;
     rhombus_depth++;
     avail = stackavail();
-    if (avail < minstackavail)
+    if (avail < g_soi_min_stack_available)
     {
-        minstackavail = avail;
+        g_soi_min_stack_available = avail;
     }
     if (rhombus_depth > g_max_rhombus_depth)
     {
@@ -912,7 +912,7 @@ void soi()
     double tolerance = 0.1;
     double stepx, stepy;
     double xxminl, xxmaxl, yyminl, yymaxl;
-    minstackavail = 30000;
+    g_soi_min_stack_available = 30000;
     rhombus_depth = -1;
     g_max_rhombus_depth = 0;
     if (bf_math != bf_math_type::NONE)

@@ -30,7 +30,7 @@
 int rhombus_stack[10];
 int rhombus_depth = 0;
 int g_max_rhombus_depth;
-int minstackavail;
+int g_soi_min_stack_available;
 int g_soi_min_stack = 2200; // and this much stack to not crash when <tab> is pressed
 static LDBL twidth;
 static LDBL equal;
@@ -595,9 +595,9 @@ static int rhombus(LDBL cre1, LDBL cre2, LDBL cim1, LDBL cim2,
     rhombus_depth++;
 
     avail = stackavail();
-    if (avail < minstackavail)
+    if (avail < g_soi_min_stack_available)
     {
-        minstackavail = avail;
+        g_soi_min_stack_available = avail;
     }
     if (rhombus_depth > g_max_rhombus_depth)
     {
@@ -1104,7 +1104,7 @@ void soi_ldbl()
     LDBL tolerance = 0.1;
     LDBL stepx, stepy;
     LDBL xxminl, xxmaxl, yyminl, yymaxl;
-    minstackavail = 30000;
+    g_soi_min_stack_available = 30000;
     rhombus_depth = -1;
     g_max_rhombus_depth = 0;
     if (bf_math != bf_math_type::NONE)
