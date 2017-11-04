@@ -293,7 +293,7 @@ extern char                  g_max_function;
 extern long                  g_max_iterations;
 extern int                   g_max_line_length;
 extern unsigned              g_max_function_args;
-extern unsigned              Max_Ops;
+extern unsigned              g_max_function_ops;
 extern long                  maxptr;
 extern int                   max_colors;
 extern int max_keyboard_check_interval;

@@ -790,7 +790,7 @@ bool tab_display_2(char *msg)
         write_row(row++, "Max_Ops (posp) %u Max_Args (vsp) %u",
                   posp, vsp);
         write_row(row++, "   Store ptr %d Loadptr %d Max_Ops var %u Max_Args var %u LastInitOp %d",
-                  StoPtr, g_load_index, Max_Ops, g_max_function_args, g_last_init_op);
+                  StoPtr, g_load_index, g_max_function_ops, g_max_function_args, g_last_init_op);
     }
     else if (rhombus_stack[0])
     {

@@ -40,7 +40,7 @@ enum MATH_TYPE MathType = D_MATH;
 #define MAX_OPS 250
 #define MAX_ARGS 100
 
-unsigned Max_Ops  = MAX_OPS;
+unsigned g_max_function_ops  = MAX_OPS;
 unsigned g_max_function_args = MAX_ARGS;
 
 unsigned long number_of_ops, number_of_loads, number_of_stores, number_of_jumps;
@@ -153,8 +153,8 @@ struct token_st
 
 // MAX_STORES must be even to make Unix alignment work
 
-#define MAX_STORES ((Max_Ops/4)*2)  // at most only half the ops can be stores
-#define MAX_LOADS  ((unsigned)(Max_Ops*.8))  // and 80% can be loads
+#define MAX_STORES ((g_max_function_ops/4)*2)  // at most only half the ops can be stores
+#define MAX_LOADS  ((unsigned)(g_max_function_ops*.8))  // and 80% can be loads
 
 static PEND_OP o[2300];
 
@@ -4359,22 +4359,22 @@ static void parser_allocate()
         free_workarea();
         if (pass == 0)
         {
-            Max_Ops = 2300;
-            g_max_function_args = (unsigned)(Max_Ops/2.5);
+            g_max_function_ops = 2300;
+            g_max_function_args = (unsigned)(g_max_function_ops/2.5);
         }
 
-        f.resize(Max_Ops);
+        f.resize(g_max_function_ops);
         Store.resize(MAX_STORES);
         Load.resize(MAX_LOADS);
         v.resize(g_max_function_args);
-        pfls.resize(Max_Ops);
+        pfls.resize(g_max_function_ops);
 
         if (pass == 0)
         {
             if (!ParseStr(FormStr.c_str(), pass))
             {
                 // per Chuck Ebbert, fudge these up a little
-                Max_Ops = posp + 4;
+                g_max_function_ops = posp + 4;
                 g_max_function_args = vsp + 4;
             }
         }
