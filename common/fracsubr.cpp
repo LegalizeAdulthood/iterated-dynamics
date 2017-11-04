@@ -426,13 +426,13 @@ init_restart:
         if (!potflag                                    // not using potential
                 && (param[0] > -2.0 && param[0] < 2.0)  // parameters not too large
                 && (param[1] > -2.0 && param[1] < 2.0)
-                && !invert                              // and not inverting
-                && g_biomorph == -1                       // and not biomorphing
+                && (invert == 0)                        // and not inverting
+                && g_biomorph == -1                     // and not biomorphing
                 && rqlim <= 4.0                         // and bailout not too high
                 && (outside > REAL || outside < ATAN)   // and no funny outside stuff
                 && g_debug_flag != debug_flags::force_smaller_bitshift // and not debugging
-                && g_close_proximity <= 2.0                     // and g_close_proximity not too large
-                && g_bail_out_test == bailouts::Mod)           // and bailout test = mod
+                && g_close_proximity <= 2.0             // and g_close_proximity not too large
+                && g_bail_out_test == bailouts::Mod)    // and bailout test = mod
         {
             bitshift = FUDGEFACTOR;                     // use the larger bitshift
         }
@@ -479,7 +479,7 @@ init_restart:
     if (fractype != fractal_type::PLASMA && bf_math == bf_math_type::NONE
             && fractype != fractal_type::IFS && fractype != fractal_type::IFS3D && fractype != fractal_type::LSYSTEM)
     {
-        if (g_integer_fractal && !invert && use_grid)
+        if (g_integer_fractal && (invert == 0) && use_grid)
         {
             if ((delx  == 0 && delxx  != 0.0)
                     || (delx2 == 0 && delxx2 != 0.0)

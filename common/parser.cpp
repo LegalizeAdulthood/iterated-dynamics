@@ -3048,7 +3048,7 @@ int form_per_pixel()
     }
 
     {
-        if (invert)
+        if (invert != 0)
         {
             invertz2(&old);
             switch (MathType)

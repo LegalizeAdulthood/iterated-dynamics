@@ -1998,7 +1998,7 @@ int calcmand()              // fast per pixel 1/2/b/g, called with row & col set
 /************************************************************************/
 int calcmandfp()
 {
-    if (invert)
+    if (invert != 0)
     {
         invertz2(&g_init);
     }
@@ -4431,7 +4431,7 @@ static void setsymmetry(symmetry_type sym, bool uselist) // set up proper symmet
             return;
         }
     }
-    if ((potflag && pot16bit) || (invert && g_inversion[2] != 0.0)
+    if ((potflag && pot16bit) || ((invert != 0) && g_inversion[2] != 0.0)
             || g_decomp[0] != 0
             || xxmin != xx3rd || yymin != yy3rd)
     {
@@ -4676,7 +4676,7 @@ originsym:
                 break; // no point in pi symmetry if values too close
             }
         }
-        if (invert && g_force_symmetry == symmetry_type::NOT_FORCED)
+        if ((invert != 0) && g_force_symmetry == symmetry_type::NOT_FORCED)
         {
             goto originsym;
         }

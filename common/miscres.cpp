@@ -1256,7 +1256,7 @@ top:
         driver_put_string(-1, -1, C_GENERAL_HI, msg);
     }
 
-    if (invert)
+    if (invert != 0)
     {
         driver_put_string(++s_row, 2, C_GENERAL_MED, "Inversion radius: ");
         sprintf(msg, "%12.9f", g_f_radius);
