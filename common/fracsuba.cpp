@@ -75,8 +75,8 @@ int asmlMANHbailout()
 {
     g_l_temp_sqr_x = lsqr(g_l_new.x);
     g_l_temp_sqr_y = lsqr(g_l_new.y);
-    magnitude = fabs(g_new.x) + fabs(g_new.y);
-    if (magnitude*magnitude >= rqlim)
+    g_magnitude = fabs(g_new.x) + fabs(g_new.y);
+    if (g_magnitude*g_magnitude >= rqlim)
     {
         return 1;
     }
@@ -88,8 +88,8 @@ int asmlMANRbailout()
 {
     g_l_temp_sqr_x = lsqr(g_l_new.x);
     g_l_temp_sqr_y = lsqr(g_l_new.y);
-    magnitude = fabs(g_new.x + g_new.y);
-    if (magnitude*magnitude >= rqlim)
+    g_magnitude = fabs(g_new.x + g_new.y);
+    if (g_magnitude*g_magnitude >= rqlim)
     {
         return 1;
     }
@@ -168,8 +168,8 @@ int asm386lMANHbailout()
 {
     g_l_temp_sqr_x = lsqr(g_l_new.x);
     g_l_temp_sqr_y = lsqr(g_l_new.y);
-    magnitude = fabs(g_new.x) + fabs(g_new.y);
-    if (magnitude*magnitude >= rqlim)
+    g_magnitude = fabs(g_new.x) + fabs(g_new.y);
+    if (g_magnitude*g_magnitude >= rqlim)
     {
         return 1;
     }
@@ -181,8 +181,8 @@ int asm386lMANRbailout()
 {
     g_l_temp_sqr_x = lsqr(g_l_new.x);
     g_l_temp_sqr_y = lsqr(g_l_new.y);
-    magnitude = fabs(g_new.x + g_new.y);
-    if (magnitude*magnitude >= rqlim)
+    g_magnitude = fabs(g_new.x + g_new.y);
+    if (g_magnitude*g_magnitude >= rqlim)
     {
         return 1;
     }
@@ -222,8 +222,8 @@ int asmfpMODbailout()
     // TODO: verify this code is correct
     tempsqrx = sqr(g_new.x);
     tempsqry = sqr(g_new.y);
-    magnitude = tempsqrx + tempsqry;
-    if (magnitude > rqlim || magnitude < 0.0 || fabs(g_new.x) > rqlim2 ||
+    g_magnitude = tempsqrx + tempsqry;
+    if (g_magnitude > rqlim || g_magnitude < 0.0 || fabs(g_new.x) > rqlim2 ||
             fabs(g_new.y) > rqlim2 || overflow)
     {
         overflow = false;
@@ -457,8 +457,8 @@ int asmfpMANHbailout()
     // TODO: verify this code is correct
     tempsqrx = sqr(g_new.x);
     tempsqry = sqr(g_new.y);
-    magnitude = fabs(g_new.x) + fabs(g_new.y);
-    if (magnitude*magnitude >= rqlim)
+    g_magnitude = fabs(g_new.x) + fabs(g_new.y);
+    if (g_magnitude*g_magnitude >= rqlim)
     {
         return 1;
     }
@@ -507,8 +507,8 @@ int asmfpMANRbailout()
     // TODO: verify this code is correct
     tempsqrx = sqr(g_new.x);
     tempsqry = sqr(g_new.y);
-    magnitude = fabs(g_new.x + g_new.y);
-    if (magnitude*magnitude >= rqlim)
+    g_magnitude = fabs(g_new.x + g_new.y);
+    if (g_magnitude*g_magnitude >= rqlim)
     {
         return 1;
     }

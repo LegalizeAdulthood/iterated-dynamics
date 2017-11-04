@@ -111,7 +111,7 @@ double g_f_y_center = 0.0;                 // for inversion
 void (*putcolor)(int, int, int) = putcolor_a;
 void (*plot)(int, int, int) = putcolor_a;
 
-double magnitude = 0.0;
+double g_magnitude = 0.0;
 double rqlim = 0.0;
 double rqlim2 = 0.0;
 double rqlim_save = 0.0;
@@ -304,13 +304,13 @@ double fmodtest()
     double result;
     if (g_inside == FMODI && save_release <= 2000) // for backwards compatibility
     {
-        if (magnitude == 0.0 || !no_mag_calc || g_integer_fractal)
+        if (g_magnitude == 0.0 || !no_mag_calc || g_integer_fractal)
         {
             result = sqr(g_new.x)+sqr(g_new.y);
         }
         else
         {
-            result = magnitude; // don't recalculate
+            result = g_magnitude; // don't recalculate
         }
         return result;
     }
@@ -318,13 +318,13 @@ double fmodtest()
     switch (g_bail_out_test)
     {
     case bailouts::Mod:
-        if (magnitude == 0.0 || !no_mag_calc || g_integer_fractal)
+        if (g_magnitude == 0.0 || !no_mag_calc || g_integer_fractal)
         {
             result = sqr(g_new.x)+sqr(g_new.y);
         }
         else
         {
-            result = magnitude; // don't recalculate
+            result = g_magnitude; // don't recalculate
         }
         break;
 
@@ -2009,7 +2009,7 @@ int calcmandfp()
     {
         if (potflag)
         {
-            g_color_iter = potential(magnitude, realcoloriter);
+            g_color_iter = potential(g_magnitude, realcoloriter);
         }
         if ((!g_log_map_table.empty() || g_log_map_calculate) // map color, but not if maxit & adjusted for inside,etc
                 && (realcoloriter < maxit || (g_inside < COLOR_BLACK && g_color_iter == maxit)))
@@ -2188,7 +2188,7 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
             }
             deriv.x = 1;
             deriv.y = 0;
-            magnitude = 0;
+            g_magnitude = 0;
         }
     }
     else
@@ -2228,7 +2228,7 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
     if (g_inside <= BOF60 && g_inside >= BOF61)
     {
         g_l_magnitude = 0;
-        magnitude = g_l_magnitude;
+        g_magnitude = g_l_magnitude;
         min_orbit = 100000.0;
     }
     overflow = false;           // reset integer math overflow flag
@@ -2323,8 +2323,8 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
                         dem_new = g_new;
                     }
                     if (rqlim >= DEM_BAILOUT
-                            || magnitude >= (rqlim = DEM_BAILOUT)
-                            || magnitude == 0)
+                            || g_magnitude >= (rqlim = DEM_BAILOUT)
+                            || g_magnitude == 0)
                     {
                         break;
                     }
@@ -2404,7 +2404,7 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
                         }
                         tempsqrx = g_new.x * g_new.x;
                         tempsqry = g_new.y * g_new.y;
-                        magnitude = tempsqrx + tempsqry;
+                        g_magnitude = tempsqrx + tempsqry;
                         old = g_new;
                     }
                     {
@@ -2466,16 +2466,16 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
                     {
                         g_l_magnitude = lsqr(g_l_new.x) + lsqr(g_l_new.y);
                     }
-                    magnitude = g_l_magnitude;
-                    magnitude = magnitude / g_fudge_factor;
+                    g_magnitude = g_l_magnitude;
+                    g_magnitude = g_magnitude / g_fudge_factor;
                 }
-                else if (magnitude == 0.0 || !no_mag_calc)
+                else if (g_magnitude == 0.0 || !no_mag_calc)
                 {
-                    magnitude = sqr(g_new.x) + sqr(g_new.y);
+                    g_magnitude = sqr(g_new.x) + sqr(g_new.y);
                 }
-                if (magnitude < min_orbit)
+                if (g_magnitude < min_orbit)
                 {
-                    min_orbit = magnitude;
+                    min_orbit = g_magnitude;
                     min_index = g_color_iter + 1;
                 }
             }
@@ -2729,8 +2729,8 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
             g_new.x = (double)bftofloat(bfnew.x);
             g_new.y = (double)bftofloat(bfnew.y);
         }
-        magnitude = sqr(g_new.x) + sqr(g_new.y);
-        g_color_iter = potential(magnitude, g_color_iter);
+        g_magnitude = sqr(g_new.x) + sqr(g_new.y);
+        g_color_iter = potential(g_magnitude, g_color_iter);
         if (!g_log_map_table.empty() || g_log_map_calculate)
         {
             g_color_iter = logtablecalc(g_color_iter);

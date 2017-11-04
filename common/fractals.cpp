@@ -149,8 +149,8 @@ int  fpMODbailout()
 {
     tempsqrx = sqr(g_new.x);
     tempsqry = sqr(g_new.y);
-    magnitude = tempsqrx + tempsqry;
-    if (magnitude >= rqlim)
+    g_magnitude = tempsqrx + tempsqry;
+    if (g_magnitude >= rqlim)
     {
         return 1;
     }
@@ -162,7 +162,7 @@ int  fpREALbailout()
 {
     tempsqrx = sqr(g_new.x);
     tempsqry = sqr(g_new.y);
-    magnitude = tempsqrx + tempsqry;
+    g_magnitude = tempsqrx + tempsqry;
     if (tempsqrx >= rqlim)
     {
         return 1;
@@ -175,7 +175,7 @@ int  fpIMAGbailout()
 {
     tempsqrx = sqr(g_new.x);
     tempsqry = sqr(g_new.y);
-    magnitude = tempsqrx + tempsqry;
+    g_magnitude = tempsqrx + tempsqry;
     if (tempsqry >= rqlim)
     {
         return 1;
@@ -188,7 +188,7 @@ int  fpORbailout()
 {
     tempsqrx = sqr(g_new.x);
     tempsqry = sqr(g_new.y);
-    magnitude = tempsqrx + tempsqry;
+    g_magnitude = tempsqrx + tempsqry;
     if (tempsqrx >= rqlim || tempsqry >= rqlim)
     {
         return 1;
@@ -201,7 +201,7 @@ int  fpANDbailout()
 {
     tempsqrx = sqr(g_new.x);
     tempsqry = sqr(g_new.y);
-    magnitude = tempsqrx + tempsqry;
+    g_magnitude = tempsqrx + tempsqry;
     if (tempsqrx >= rqlim && tempsqry >= rqlim)
     {
         return 1;
@@ -215,7 +215,7 @@ int  fpMANHbailout()
     double manhmag;
     tempsqrx = sqr(g_new.x);
     tempsqry = sqr(g_new.y);
-    magnitude = tempsqrx + tempsqry;
+    g_magnitude = tempsqrx + tempsqry;
     manhmag = fabs(g_new.x) + fabs(g_new.y);
     if ((manhmag * manhmag) >= rqlim)
     {
@@ -230,7 +230,7 @@ int  fpMANRbailout()
     double manrmag;
     tempsqrx = sqr(g_new.x);
     tempsqry = sqr(g_new.y);
-    magnitude = tempsqrx + tempsqry;
+    g_magnitude = tempsqrx + tempsqry;
     manrmag = g_new.x + g_new.y; // don't need abs() since we square it next
     if ((manrmag * manrmag) >= rqlim)
     {
@@ -1247,8 +1247,8 @@ PopcornFractal_Old()
         tempsqrx = sqr(g_new.x);
     }
     tempsqry = sqr(g_new.y);
-    magnitude = tempsqrx + tempsqry;
-    if (magnitude >= rqlim)
+    g_magnitude = tempsqrx + tempsqry;
+    if (g_magnitude >= rqlim)
     {
         return 1;
     }
@@ -1277,8 +1277,8 @@ PopcornFractal()
     }
     tempsqrx = sqr(g_new.x);
     tempsqry = sqr(g_new.y);
-    magnitude = tempsqrx + tempsqry;
-    if (magnitude >= rqlim
+    g_magnitude = tempsqrx + tempsqry;
+    if (g_magnitude >= rqlim
             || fabs(g_new.x) > rqlim2 || fabs(g_new.y) > rqlim2)
     {
         return 1;
@@ -1404,8 +1404,8 @@ PopcornFractalFn()
 
     tempsqrx = sqr(g_new.x);
     tempsqry = sqr(g_new.y);
-    magnitude = tempsqrx + tempsqry;
-    if (magnitude >= rqlim
+    g_magnitude = tempsqrx + tempsqry;
+    if (g_magnitude >= rqlim
             || fabs(g_new.x) > rqlim2 || fabs(g_new.y) > rqlim2)
     {
         return 1;
@@ -3342,8 +3342,8 @@ QuaternionFPFractal()
     n2 = 2*a0*a2 + qcj;
     n3 = 2*a0*a3 + qck;
     // Check bailout
-    magnitude = a0*a0+a1*a1+a2*a2+a3*a3;
-    if (magnitude > rqlim)
+    g_magnitude = a0*a0+a1*a1+a2*a2+a3*a3;
+    if (g_magnitude > rqlim)
     {
         return 1;
     }
@@ -3380,8 +3380,8 @@ HyperComplexFPFractal()
     g_float_param->y = hnew.t;
 
     // Check bailout
-    magnitude = sqr(old.x)+sqr(old.y)+sqr(g_float_param->x)+sqr(g_float_param->y);
-    if (magnitude > rqlim)
+    g_magnitude = sqr(old.x)+sqr(old.y)+sqr(g_float_param->x)+sqr(g_float_param->y);
+    if (g_magnitude > rqlim)
     {
         return 1;
     }

@@ -121,9 +121,9 @@ long calcmandfpasm()
         x2 = x*x;
         y2 = y*y;
         xy = x*y;
-        magnitude = x2+y2;
+        g_magnitude = x2+y2;
 
-        if (magnitude >= rqlim)
+        if (g_magnitude >= rqlim)
         {
             goto over_bailout_87;
         }

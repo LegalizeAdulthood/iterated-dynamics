@@ -279,7 +279,7 @@ extern std::vector<long>     g_l_y1;
 extern long                (*g_l_y_pixel)();
 extern long                  g_l_at_rad;
 extern MATRIX                g_m;
-extern double                magnitude;
+extern double                g_magnitude;
 extern Major                 major_method;
 extern bool map_specified;
 extern BYTE map_clut[256][3];
