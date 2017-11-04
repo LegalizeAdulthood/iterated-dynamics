@@ -572,7 +572,7 @@ static void initvars_fractal()          // init vars affecting calculation
     g_dist_fp = 24;
     g_eyes_fp = 2.5F;
     g_depth_fp = 8;
-    neworbittype = fractal_type::JULIA;
+    g_new_orbit_type = fractal_type::JULIA;
     zdots = 128;
     initvars_3d();
     g_base_hertz = 440;                     // basic hertz rate

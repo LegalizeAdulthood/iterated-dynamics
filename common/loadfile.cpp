@@ -258,7 +258,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
         widthfp   =  read_info.widthfp        ;
         g_dist_fp    =  read_info.distfp         ;
         g_eyes_fp    =  read_info.eyesfp         ;
-        neworbittype = static_cast<fractal_type>(read_info.orbittype);
+        g_new_orbit_type = static_cast<fractal_type>(read_info.orbittype);
         g_julibrot_3d_mode   = read_info.juli3Dmode   ;
         g_max_function    = (char)read_info.maxfn          ;
         g_major_method = static_cast<Major>(read_info.inversejulia >> 8);
@@ -1265,7 +1265,7 @@ bool check_back()
             ((g_inside == ATANI || outside == ATAN) && save_release <= 2002) ||
             (fractype == fractal_type::LAMBDATRIGFP && trigndx[0] == trig_fn::EXP && save_release <= 2002) ||
             ((fractype == fractal_type::JULIBROT || fractype == fractal_type::JULIBROTFP) &&
-             (neworbittype == fractal_type::QUATFP || neworbittype == fractal_type::HYPERCMPLXFP) &&
+             (g_new_orbit_type == fractal_type::QUATFP || g_new_orbit_type == fractal_type::HYPERCMPLXFP) &&
              save_release <= 2002)
        )
     {

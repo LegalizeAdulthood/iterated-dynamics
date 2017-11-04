@@ -1374,8 +1374,8 @@ int build_fractal_list(int fractals[], int *last_val, char const *nameptr[])
         if ((fractalspecific[i].flags & OKJB) && *fractalspecific[i].name != '*')
         {
             fractals[numfractals] = i;
-            if (i == static_cast<int>(neworbittype)
-                    || i == static_cast<int>(fractalspecific[static_cast<int>(neworbittype)].tofloat))
+            if (i == static_cast<int>(g_new_orbit_type)
+                    || i == static_cast<int>(fractalspecific[static_cast<int>(g_new_orbit_type)].tofloat))
             {
                 *last_val = numfractals;
             }
@@ -1629,7 +1629,7 @@ gfp_top:
     promptnum = 0;
     if (g_julibrot)
     {
-        fractal_type i = select_fracttype(neworbittype);
+        fractal_type i = select_fracttype(g_new_orbit_type);
         if (i == fractal_type::NOFRACTAL)
         {
             if (ret == 0)
@@ -1641,9 +1641,9 @@ gfp_top:
         }
         else
         {
-            neworbittype = i;
+            g_new_orbit_type = i;
         }
-        jborbit = &fractalspecific[static_cast<int>(neworbittype)];
+        jborbit = &fractalspecific[static_cast<int>(g_new_orbit_type)];
         juliorbitname = jborbit->name;
     }
 
@@ -1696,14 +1696,14 @@ gfp_top:
     {
         curfractalspecific = jborbit;
         firstparm = 2; // in most case Julibrot does not need first two parms
-        if (neworbittype == fractal_type::QUATJULFP     ||   // all parameters needed
-                neworbittype == fractal_type::HYPERCMPLXJFP)
+        if (g_new_orbit_type == fractal_type::QUATJULFP     ||   // all parameters needed
+                g_new_orbit_type == fractal_type::HYPERCMPLXJFP)
         {
             firstparm = 0;
             lastparm = 4;
         }
-        if (neworbittype == fractal_type::QUATFP        ||   // no parameters needed
-                neworbittype == fractal_type::HYPERCMPLXFP)
+        if (g_new_orbit_type == fractal_type::QUATFP        ||   // no parameters needed
+                g_new_orbit_type == fractal_type::HYPERCMPLXFP)
         {
             firstparm = 4;
         }
@@ -1714,7 +1714,7 @@ gfp_top:
         for (int i = firstparm; i < lastparm; i++)
         {
             char tmpbuf[30];
-            if (!typehasparm(g_julibrot ? neworbittype : fractype, i, parmprompt[j]))
+            if (!typehasparm(g_julibrot ? g_new_orbit_type : fractype, i, parmprompt[j]))
             {
                 if (curtype == fractal_type::FORMULA || curtype == fractal_type::FFORMULA)
                 {
@@ -1815,7 +1815,7 @@ gfp_top:
     }
     if (g_julibrot)
     {
-        switch (neworbittype)
+        switch (g_new_orbit_type)
         {
         case fractal_type::QUATFP:
         case fractal_type::HYPERCMPLXFP:
@@ -2123,7 +2123,7 @@ bool check_orbit_name(char const *orbitname)
     {
         if (strcmp(orbitname, nameptr[i]) == 0)
         {
-            neworbittype = static_cast<fractal_type>(fractals[i]);
+            g_new_orbit_type = static_cast<fractal_type>(fractals[i]);
             bad = false;
             break;
         }

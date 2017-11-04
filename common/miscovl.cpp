@@ -643,10 +643,10 @@ void write_batch_parms(char const *colorinf, bool colorsonly, int maxcolor, int 
             {
                 put_parm(" %s=%g", "julibroteyes", g_eyes_fp);
             }
-            if (neworbittype != fractal_type::JULIA)
+            if (g_new_orbit_type != fractal_type::JULIA)
             {
                 char const *name;
-                name = fractalspecific[static_cast<int>(neworbittype)].name;
+                name = fractalspecific[static_cast<int>(g_new_orbit_type)].name;
                 if (*name == '*')
                 {
                     name++;
@@ -793,7 +793,7 @@ void write_batch_parms(char const *colorinf, bool colorsonly, int maxcolor, int 
         for (i = (MAXPARAMS-1); i >= 0; --i)
         {
             if (typehasparm((fractype == fractal_type::JULIBROT || fractype == fractal_type::JULIBROTFP)
-                            ?neworbittype:fractype, i, nullptr))
+                            ?g_new_orbit_type:fractype, i, nullptr))
             {
                 break;
             }

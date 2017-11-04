@@ -609,7 +609,7 @@ static void trigdetails(char *buf)
     char tmpbuf[20];
     if (fractype == fractal_type::JULIBROT || fractype == fractal_type::JULIBROTFP)
     {
-        numfn = (fractalspecific[static_cast<int>(neworbittype)].flags >> 6) & 7;
+        numfn = (fractalspecific[static_cast<int>(g_new_orbit_type)].flags >> 6) & 7;
     }
     else
     {

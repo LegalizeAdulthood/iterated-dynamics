@@ -325,24 +325,24 @@ init_restart:
         }
     }
     // match Julibrot with integer mode of orbit
-    if (fractype == fractal_type::JULIBROTFP && fractalspecific[static_cast<int>(neworbittype)].isinteger)
+    if (fractype == fractal_type::JULIBROTFP && fractalspecific[static_cast<int>(g_new_orbit_type)].isinteger)
     {
-        fractal_type i = fractalspecific[static_cast<int>(neworbittype)].tofloat;
+        fractal_type i = fractalspecific[static_cast<int>(g_new_orbit_type)].tofloat;
         if (i != fractal_type::NOFRACTAL)
         {
-            neworbittype = i;
+            g_new_orbit_type = i;
         }
         else
         {
             fractype = fractal_type::JULIBROT;
         }
     }
-    else if (fractype == fractal_type::JULIBROT && fractalspecific[static_cast<int>(neworbittype)].isinteger == 0)
+    else if (fractype == fractal_type::JULIBROT && fractalspecific[static_cast<int>(g_new_orbit_type)].isinteger == 0)
     {
-        fractal_type i = fractalspecific[static_cast<int>(neworbittype)].tofloat;
+        fractal_type i = fractalspecific[static_cast<int>(g_new_orbit_type)].tofloat;
         if (i != fractal_type::NOFRACTAL)
         {
-            neworbittype = i;
+            g_new_orbit_type = i;
         }
         else
         {
