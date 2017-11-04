@@ -34,7 +34,7 @@ MandelSetup()           // Mandelbrot Routine
     {
         // special case: use the main processing loop
         calctype = standard_fractal;
-        longparm = &g_l_init;
+        g_long_param = &g_l_init;
     }
     return true;
 }
@@ -55,7 +55,7 @@ JuliaSetup()            // Julia Routine
     {
         // special case: use the main processing loop
         calctype = standard_fractal;
-        longparm = &lparm;
+        g_long_param = &lparm;
         get_julia_attractor(0.0, 0.0);    // another attractor?
     }
     return true;
@@ -511,7 +511,7 @@ MandellongSetup()
     {
         periodicitycheck = 4;
     }
-    longparm = &g_l_init;
+    g_long_param = &g_l_init;
     if (fractype == fractal_type::LMANDELZPOWER)
     {
         if (param[3] == 0.0 && g_debug_flag != debug_flags::force_complex_power && (double)g_c_exponent == param[2])
@@ -563,7 +563,7 @@ bool
 JulialongSetup()
 {
     g_c_exponent = (int)param[2];
-    longparm = &lparm;
+    g_long_param = &lparm;
     switch (fractype)
     {
     case fractal_type::LJULIAZPOWER:
@@ -770,7 +770,7 @@ bool
 LambdaTrigOrTrigSetup()
 {
     // default symmetry is ORIGIN
-    longparm = &lparm;
+    g_long_param = &lparm;
     g_float_param = &parm;
     if ((trigndx[0] == trig_fn::EXP) || (trigndx[1] == trig_fn::EXP))
     {
@@ -788,7 +788,7 @@ bool
 JuliaTrigOrTrigSetup()
 {
     // default symmetry is X_AXIS
-    longparm = &lparm;
+    g_long_param = &lparm;
     g_float_param = &parm;
     if (parm.y != 0.0)
     {
@@ -807,7 +807,7 @@ ManlamTrigOrTrigSetup()
 {
     // psuedo
     // default symmetry is X_AXIS
-    longparm = &g_l_init;
+    g_long_param = &g_l_init;
     g_float_param = &g_init;
     if (trigndx[0] == trig_fn::SQR)
     {
@@ -824,7 +824,7 @@ bool
 MandelTrigOrTrigSetup()
 {
     // default symmetry is X_AXIS_NO_PARAM
-    longparm = &g_l_init;
+    g_long_param = &g_l_init;
     g_float_param = &g_init;
     if ((trigndx[0] == trig_fn::FLIP) || (trigndx[1] == trig_fn::FLIP))
     {
@@ -1176,8 +1176,8 @@ MarksJuliaSetup()
         param[2] = 1;
     }
     g_c_exponent = (int)param[2];
-    longparm = &lparm;
-    g_l_old = *longparm;
+    g_long_param = &lparm;
+    g_l_old = *g_long_param;
     if (g_c_exponent > 3)
     {
         lcpower(&g_l_old, g_c_exponent-1, &g_l_coefficient, bitshift);
@@ -1309,7 +1309,7 @@ HalleySetup()
 bool
 PhoenixSetup()
 {
-    longparm = &lparm;
+    g_long_param = &lparm;
     g_float_param = &parm;
     degree = (int)parm2.x;
     if (degree < 2 && degree > -3)
@@ -1359,7 +1359,7 @@ PhoenixSetup()
 bool
 PhoenixCplxSetup()
 {
-    longparm = &lparm;
+    g_long_param = &lparm;
     g_float_param = &parm;
     degree = (int)param[4];
     if (degree < 2 && degree > -3)
@@ -1437,7 +1437,7 @@ PhoenixCplxSetup()
 bool
 MandPhoenixSetup()
 {
-    longparm = &g_l_init;
+    g_long_param = &g_l_init;
     g_float_param = &g_init;
     degree = (int)parm2.x;
     if (degree < 2 && degree > -3)
@@ -1487,7 +1487,7 @@ MandPhoenixSetup()
 bool
 MandPhoenixCplxSetup()
 {
-    longparm = &g_l_init;
+    g_long_param = &g_l_init;
     g_float_param = &g_init;
     degree = (int)param[4];
     if (degree < 2 && degree > -3)

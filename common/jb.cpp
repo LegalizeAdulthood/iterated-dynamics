@@ -132,7 +132,7 @@ JulibrotSetup()
         brratio = (long)(brratiofp * fg16);
         dmx = (mxmax - mxmin) / zdots;
         dmy = (mymax - mymin) / zdots;
-        longparm = &jbc;
+        g_long_param = &jbc;
 
         x_per_inch = (long)((xxmin - xxmax) / widthfp * fg);
         y_per_inch = (long)((yymax - yymin) / g_height_fp * fg);
