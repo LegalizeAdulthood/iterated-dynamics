@@ -655,7 +655,7 @@ void write_batch_parms(char const *colorinf, bool colorsonly, int maxcolor, int 
             }
             if (g_julibrot_3d_mode != 0)
             {
-                put_parm(" %s=%s", "3dmode", juli3Doptions[g_julibrot_3d_mode].c_str());
+                put_parm(" %s=%s", "3dmode", g_julibrot_3d_options[g_julibrot_3d_mode].c_str());
             }
         }
         if (fractype == fractal_type::FORMULA || fractype == fractal_type::FFORMULA)

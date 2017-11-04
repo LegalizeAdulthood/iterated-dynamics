@@ -2002,7 +2002,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         int j = -1;
         for (int i = 0; i < 4; i++)
         {
-            if (juli3Doptions[i] == value)
+            if (g_julibrot_3d_options[i] == value)
             {
                 j = i;
             }

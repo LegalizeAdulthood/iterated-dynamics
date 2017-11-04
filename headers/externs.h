@@ -234,7 +234,7 @@ extern int                   g_i_y_stop;
 extern std::string const     g_jiim_left_right[];
 extern std::string const     g_jiim_method[];
 extern int                   g_julibrot_3d_mode;
-extern std::string const     juli3Doptions[];
+extern std::string const     g_julibrot_3d_options[];
 extern bool                  julibrot;
 extern int keyboard_check_interval;
 extern bool                  keep_scrn_coords;

@@ -1390,7 +1390,7 @@ int build_fractal_list(int fractals[], int *last_val, char const *nameptr[])
     return numfractals;
 }
 
-std::string const juli3Doptions[] =
+std::string const g_julibrot_3d_options[] =
 {
     "monocular", "lefteye", "righteye", "red-blue"
 };
@@ -1471,10 +1471,10 @@ char const *jiim_method_list[] =
 
 char const *julia_3d_options_list[] =
 {
-    juli3Doptions[0].c_str(),
-    juli3Doptions[1].c_str(),
-    juli3Doptions[2].c_str(),
-    juli3Doptions[3].c_str()
+    g_julibrot_3d_options[0].c_str(),
+    g_julibrot_3d_options[1].c_str(),
+    g_julibrot_3d_options[2].c_str(),
+    g_julibrot_3d_options[3].c_str()
 };
 
 }
