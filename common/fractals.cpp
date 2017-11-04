@@ -53,6 +53,13 @@ an appropriate setup, per_image, per_pixel, and orbit routines.
 
 #define NEWTONDEGREELIMIT  100
 
+namespace
+{
+
+const long l16triglim = 8L << 16;       // domain limit of fast trig functions
+
+} // namespace
+
 LComplex lcoefficient, lold, lnew, lparm, linit, ltmp, ltmp2, lparm2;
 long ltempsqrx, ltempsqry;
 int maxcolor;

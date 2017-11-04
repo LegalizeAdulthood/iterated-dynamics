@@ -92,7 +92,6 @@ long lmagnitud = 0;
 long llimit = 0;
 long llimit2 = 0;
 long lclosenuff = 0;
-long l16triglim = 0;
 DComplex g_init = { 0.0 };
 DComplex tmp = { 0.0 };
 DComplex old = { 0.0 };
@@ -856,7 +855,6 @@ int calcfract()
         }
         llimit2 = (long)(rqlim2 * g_fudge_factor);    // stop if magnitude exceeds this
         lclosenuff = (long)(g_close_enough * g_fudge_factor); // "close enough" value
-        l16triglim = 8L << 16;         // domain limit of fast trig functions
         linitorbit.x = (long)(g_init_orbit.x * g_fudge_factor);
         linitorbit.y = (long)(g_init_orbit.y * g_fudge_factor);
     }

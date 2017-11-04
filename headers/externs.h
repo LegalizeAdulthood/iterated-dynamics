@@ -238,7 +238,6 @@ extern std::string const     g_julibrot_3d_options[];
 extern bool                  g_julibrot;
 extern int                   g_keyboard_check_interval;
 extern bool                  g_keep_screen_coords;
-extern long                  l16triglim;
 extern int                   LastInitOp;
 extern unsigned              LastOp;
 extern int                   lastorbittype;
