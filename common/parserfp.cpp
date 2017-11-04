@@ -55,7 +55,7 @@ extern Arg s[20];
 extern std::vector<Arg *> Store;
 extern std::vector<Arg *> Load;
 extern int StoPtr, LodPtr, OpPtr;
-extern unsigned int vsp, LastOp;
+extern unsigned int vsp, g_last_op;
 extern std::vector<ConstArg> v;
 extern int InitLodPtr, InitStoPtr, InitOpPtr, g_last_init_op;
 extern std::vector<void (*)()> f;
@@ -1297,7 +1297,7 @@ int fpfill_jump_struct()
     bool find_new_func = true;
     JUMP_PTRS_ST jump_data[MAX_JUMPS];
 
-    for (OpPtr = 0; OpPtr < (int) LastOp; OpPtr++)
+    for (OpPtr = 0; OpPtr < (int) g_last_op; OpPtr++)
     {
         if (find_new_func)
         {
@@ -1374,7 +1374,7 @@ int CvtStk()
     // now see if the above assumptions are true
     StoPtr = 0;
     LodPtr = StoPtr;
-    for (OpPtr = LodPtr; OpPtr < (int)LastOp; OpPtr++)
+    for (OpPtr = LodPtr; OpPtr < (int)g_last_op; OpPtr++)
     {
         ftst = f[OpPtr];
         if (ftst == StkLod)
@@ -1443,11 +1443,11 @@ int CvtStk()
         }
     }
 
-    if (f[LastOp-1] != StkClr)
+    if (f[g_last_op-1] != StkClr)
     {
         DBUGMSG("Missing clr added at end");
         // should be safe to modify this
-        f[LastOp++] = StkClr;
+        f[g_last_op++] = StkClr;
     }
 
     prevfptr = (void (*)())nullptr;
@@ -1457,7 +1457,7 @@ int CvtStk()
 
     StoPtr = 0;
     LodPtr = StoPtr;
-    for (OpPtr = LodPtr; OpPtr < (int)LastOp; OpPtr++)
+    for (OpPtr = LodPtr; OpPtr < (int)g_last_op; OpPtr++)
     {
         ftst = f[OpPtr];
         bool fnfound = false;
@@ -1467,7 +1467,7 @@ int CvtStk()
             {
                 fnfound = true;
                 ntst = pfe->outfn;
-                if (ntst == fStkClr1 && OpPtr == (int)(LastOp-1))
+                if (ntst == fStkClr1 && OpPtr == (int)(g_last_op-1))
                 {
                     ntst = fStkClr2;  // convert the last clear to a clr2
                     DBUGMSG("Last fn (CLR) --> (is really CLR2)");
@@ -1571,7 +1571,7 @@ int CvtStk()
 
 skipfinalopt:  // -------------- end of final optimizations ------------
 
-    LastOp = cvtptrx;  // save the new operator count
+    g_last_op = cvtptrx;  // save the new operator count
     LASTSQR.d.y = 0.0;  // do this once per image
 
     // now change the pointers

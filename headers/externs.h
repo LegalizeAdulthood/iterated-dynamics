@@ -239,7 +239,7 @@ extern bool                  g_julibrot;
 extern int                   g_keyboard_check_interval;
 extern bool                  g_keep_screen_coords;
 extern int                   g_last_init_op;
-extern unsigned              LastOp;
+extern unsigned              g_last_op;
 extern int                   lastorbittype;
 extern LComplex              lattr[];
 extern long                  lclosenuff;

@@ -178,7 +178,7 @@ int real_count;
 
 bool g_is_mandelbrot = true;
 
-unsigned int posp, vsp, LastOp;
+unsigned int posp, vsp, g_last_op;
 static unsigned int n, NextOp, InitN;
 static int paren;
 static bool ExpectingArg = false;
@@ -2903,7 +2903,7 @@ static bool ParseStr(char const *Str, int pass)
     o[posp].f = (void(*)())nullptr;
     o[posp++].p = 16;
     NextOp = 0;
-    LastOp = posp;
+    g_last_op = posp;
     while (NextOp < posp)
     {
         if (o[NextOp].f)
@@ -2913,7 +2913,7 @@ static bool ParseStr(char const *Str, int pass)
         else
         {
             NextOp++;
-            LastOp--;
+            g_last_op--;
         }
     }
     return false;
@@ -2951,7 +2951,7 @@ int Formula()
 
     Arg1 = &s[0];
     Arg2 = Arg1-1;
-    while (OpPtr < (int)LastOp)
+    while (OpPtr < (int)g_last_op)
     {
         f[OpPtr]();
         OpPtr++;
@@ -3100,7 +3100,7 @@ int form_per_pixel()
 
     if (g_last_init_op)
     {
-        g_last_init_op = LastOp;
+        g_last_init_op = g_last_op;
     }
     while (OpPtr < g_last_init_op)
     {
@@ -3184,7 +3184,7 @@ static bool fill_jump_struct()
 
     JUMP_PTRS_ST jump_data[MAX_JUMPS];
 
-    for (OpPtr = 0; OpPtr < (int) LastOp; OpPtr++)
+    for (OpPtr = 0; OpPtr < (int) g_last_op; OpPtr++)
     {
         if (find_new_func)
         {
