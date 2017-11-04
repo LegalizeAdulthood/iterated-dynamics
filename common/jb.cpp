@@ -252,16 +252,16 @@ zline(long x, long y)
     jb_per_pixel();
     for (zpixel = 0; zpixel < zdots; zpixel++)
     {
-        g_l_old.x = jx;
-        g_l_old.y = jy;
+        g_l_old_z.x = jx;
+        g_l_old_z.y = jy;
         jbc.x = mx;
         jbc.y = my;
         if (driver_key_pressed())
         {
             return (-1);
         }
-        g_l_temp_sqr_x = multiply(g_l_old.x, g_l_old.x, bitshift);
-        g_l_temp_sqr_y = multiply(g_l_old.y, g_l_old.y, bitshift);
+        g_l_temp_sqr_x = multiply(g_l_old_z.x, g_l_old_z.x, bitshift);
+        g_l_temp_sqr_y = multiply(g_l_old_z.y, g_l_old_z.y, bitshift);
         for (n = 0; n < g_max_iterations; n++)
         {
             if (fractalspecific[static_cast<int>(neworbittype)].orbitcalc())

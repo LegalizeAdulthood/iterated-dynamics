@@ -264,7 +264,7 @@ extern int                   g_log_map_fly_calculate;
 extern long                  g_log_map_flag;
 extern std::vector<BYTE>     g_log_map_table;
 extern long                  g_log_map_table_max_size;
-extern LComplex              g_l_old;
+extern LComplex              g_l_old_z;
 extern LComplex *            g_long_param;
 extern int                   g_look_at_mouse;
 extern LComplex              g_l_param2;

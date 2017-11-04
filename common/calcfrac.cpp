@@ -2241,8 +2241,8 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
     {
         if (g_integer_fractal)
         {
-            old.x = ((double)g_l_old.x) / g_fudge_factor;
-            old.y = ((double)g_l_old.y) / g_fudge_factor;
+            old.x = ((double)g_l_old_z.x) / g_fudge_factor;
+            old.y = ((double)g_l_old_z.y) / g_fudge_factor;
         }
         else if (bf_math == bf_math_type::BIGNUM)
         {

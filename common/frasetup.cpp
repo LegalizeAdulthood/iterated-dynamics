@@ -1177,19 +1177,19 @@ MarksJuliaSetup()
     }
     g_c_exponent = (int)param[2];
     g_long_param = &g_l_param;
-    g_l_old = *g_long_param;
+    g_l_old_z = *g_long_param;
     if (g_c_exponent > 3)
     {
-        lcpower(&g_l_old, g_c_exponent-1, &g_l_coefficient, bitshift);
+        lcpower(&g_l_old_z, g_c_exponent-1, &g_l_coefficient, bitshift);
     }
     else if (g_c_exponent == 3)
     {
-        g_l_coefficient.x = multiply(g_l_old.x, g_l_old.x, bitshift) - multiply(g_l_old.y, g_l_old.y, bitshift);
-        g_l_coefficient.y = multiply(g_l_old.x, g_l_old.y, bitshiftless1);
+        g_l_coefficient.x = multiply(g_l_old_z.x, g_l_old_z.x, bitshift) - multiply(g_l_old_z.y, g_l_old_z.y, bitshift);
+        g_l_coefficient.y = multiply(g_l_old_z.x, g_l_old_z.y, bitshiftless1);
     }
     else if (g_c_exponent == 2)
     {
-        g_l_coefficient = g_l_old;
+        g_l_coefficient = g_l_old_z;
     }
     else if (g_c_exponent < 2)
     {

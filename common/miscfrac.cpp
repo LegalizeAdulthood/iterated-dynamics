@@ -2560,36 +2560,36 @@ int calcfroth()   // per pixel 1/2/g, called with row & col set
         if (g_invert != 0)
         {
             invertz2(&tmp);
-            g_l_old.x = (long)(tmp.x * g_fudge_factor);
-            g_l_old.y = (long)(tmp.y * g_fudge_factor);
+            g_l_old_z.x = (long)(tmp.x * g_fudge_factor);
+            g_l_old_z.y = (long)(tmp.y * g_fudge_factor);
         }
         else
         {
-            g_l_old.x = g_l_x_pixel();
-            g_l_old.y = g_l_y_pixel();
+            g_l_old_z.x = g_l_x_pixel();
+            g_l_old_z.y = g_l_y_pixel();
         }
 
-        g_l_temp_sqr_x = lsqr(g_l_old.x);
-        g_l_temp_sqr_y = lsqr(g_l_old.y);
+        g_l_temp_sqr_x = lsqr(g_l_old_z.x);
+        g_l_temp_sqr_y = lsqr(g_l_old_z.y);
         g_l_magnitude = g_l_temp_sqr_x + g_l_temp_sqr_y;
         while (!found_attractor && (g_l_magnitude < g_l_limit)
                 && (g_l_magnitude >= 0) && (g_color_iter < g_max_iterations))
         {
             // simple formula: z = z^2 + conj(z*(-1+ai))
             // but it's the attractor that makes this so interesting
-            g_l_new_z.x = g_l_temp_sqr_x - g_l_temp_sqr_y - g_l_old.x - multiply(fsp.fl.l.a, g_l_old.y, bitshift);
-            g_l_old.y += (multiply(g_l_old.x, g_l_old.y, bitshift)<<1) - multiply(fsp.fl.l.a, g_l_old.x, bitshift);
-            g_l_old.x = g_l_new_z.x;
+            g_l_new_z.x = g_l_temp_sqr_x - g_l_temp_sqr_y - g_l_old_z.x - multiply(fsp.fl.l.a, g_l_old_z.y, bitshift);
+            g_l_old_z.y += (multiply(g_l_old_z.x, g_l_old_z.y, bitshift)<<1) - multiply(fsp.fl.l.a, g_l_old_z.x, bitshift);
+            g_l_old_z.x = g_l_new_z.x;
             if (fsp.repeat_mapping)
             {
-                g_l_magnitude = (g_l_temp_sqr_x = lsqr(g_l_old.x)) + (g_l_temp_sqr_y = lsqr(g_l_old.y));
+                g_l_magnitude = (g_l_temp_sqr_x = lsqr(g_l_old_z.x)) + (g_l_temp_sqr_y = lsqr(g_l_old_z.y));
                 if ((g_l_magnitude > g_l_limit) || (g_l_magnitude < 0))
                 {
                     break;
                 }
-                g_l_new_z.x = g_l_temp_sqr_x - g_l_temp_sqr_y - g_l_old.x - multiply(fsp.fl.l.a, g_l_old.y, bitshift);
-                g_l_old.y += (multiply(g_l_old.x, g_l_old.y, bitshift)<<1) - multiply(fsp.fl.l.a, g_l_old.x, bitshift);
-                g_l_old.x = g_l_new_z.x;
+                g_l_new_z.x = g_l_temp_sqr_x - g_l_temp_sqr_y - g_l_old_z.x - multiply(fsp.fl.l.a, g_l_old_z.y, bitshift);
+                g_l_old_z.y += (multiply(g_l_old_z.x, g_l_old_z.y, bitshift)<<1) - multiply(fsp.fl.l.a, g_l_old_z.x, bitshift);
+                g_l_old_z.x = g_l_new_z.x;
             }
             g_color_iter++;
 
@@ -2599,22 +2599,22 @@ int calcfroth()   // per pixel 1/2/g, called with row & col set
                 {
                     break;
                 }
-                iplot_orbit(g_l_old.x, g_l_old.y, -1);
+                iplot_orbit(g_l_old_z.x, g_l_old_z.y, -1);
             }
 
-            if (labs(fsp.fl.l.halfa-g_l_old.y) < FROTH_LCLOSE
-                    && g_l_old.x > fsp.fl.l.top_x1 && g_l_old.x < fsp.fl.l.top_x2)
+            if (labs(fsp.fl.l.halfa-g_l_old_z.y) < FROTH_LCLOSE
+                    && g_l_old_z.x > fsp.fl.l.top_x1 && g_l_old_z.x < fsp.fl.l.top_x2)
             {
                 if ((!fsp.repeat_mapping && fsp.attractors == 2)
                         || (fsp.repeat_mapping && fsp.attractors == 3))
                 {
                     found_attractor = 1;
                 }
-                else if (g_l_old.x <= fsp.fl.l.top_x3)
+                else if (g_l_old_z.x <= fsp.fl.l.top_x3)
                 {
                     found_attractor = 1;
                 }
-                else if (g_l_old.x >= fsp.fl.l.top_x4)
+                else if (g_l_old_z.x >= fsp.fl.l.top_x4)
                 {
                     if (!fsp.repeat_mapping)
                     {
@@ -2626,8 +2626,8 @@ int calcfroth()   // per pixel 1/2/g, called with row & col set
                     }
                 }
             }
-            else if (labs(multiply(FROTH_LSLOPE, g_l_old.x, bitshift)-fsp.fl.l.a-g_l_old.y) < FROTH_LCLOSE
-                     && g_l_old.x <= fsp.fl.l.right_x1 && g_l_old.x >= fsp.fl.l.right_x2)
+            else if (labs(multiply(FROTH_LSLOPE, g_l_old_z.x, bitshift)-fsp.fl.l.a-g_l_old_z.y) < FROTH_LCLOSE
+                     && g_l_old_z.x <= fsp.fl.l.right_x1 && g_l_old_z.x >= fsp.fl.l.right_x2)
             {
                 if (!fsp.repeat_mapping && fsp.attractors == 2)
                 {
@@ -2637,7 +2637,7 @@ int calcfroth()   // per pixel 1/2/g, called with row & col set
                 {
                     found_attractor = 3;
                 }
-                else if (g_l_old.x >= fsp.fl.l.right_x3)
+                else if (g_l_old_z.x >= fsp.fl.l.right_x3)
                 {
                     if (!fsp.repeat_mapping)
                     {
@@ -2648,7 +2648,7 @@ int calcfroth()   // per pixel 1/2/g, called with row & col set
                         found_attractor = 4;
                     }
                 }
-                else if (g_l_old.x <= fsp.fl.l.right_x4)
+                else if (g_l_old_z.x <= fsp.fl.l.right_x4)
                 {
                     if (!fsp.repeat_mapping)
                     {
@@ -2660,7 +2660,7 @@ int calcfroth()   // per pixel 1/2/g, called with row & col set
                     }
                 }
             }
-            else if (labs(multiply(-FROTH_LSLOPE, g_l_old.x, bitshift)-fsp.fl.l.a-g_l_old.y) < FROTH_LCLOSE)
+            else if (labs(multiply(-FROTH_LSLOPE, g_l_old_z.x, bitshift)-fsp.fl.l.a-g_l_old_z.y) < FROTH_LCLOSE)
             {
                 if (!fsp.repeat_mapping && fsp.attractors == 2)
                 {
@@ -2670,7 +2670,7 @@ int calcfroth()   // per pixel 1/2/g, called with row & col set
                 {
                     found_attractor = 2;
                 }
-                else if (g_l_old.x >= fsp.fl.l.left_x3)
+                else if (g_l_old_z.x >= fsp.fl.l.left_x3)
                 {
                     if (!fsp.repeat_mapping)
                     {
@@ -2681,7 +2681,7 @@ int calcfroth()   // per pixel 1/2/g, called with row & col set
                         found_attractor = 5;
                     }
                 }
-                else if (g_l_old.x <= fsp.fl.l.left_x4)
+                else if (g_l_old_z.x <= fsp.fl.l.left_x4)
                 {
                     if (!fsp.repeat_mapping)
                     {
@@ -2693,8 +2693,8 @@ int calcfroth()   // per pixel 1/2/g, called with row & col set
                     }
                 }
             }
-            g_l_temp_sqr_x = lsqr(g_l_old.x);
-            g_l_temp_sqr_y = lsqr(g_l_old.y);
+            g_l_temp_sqr_x = lsqr(g_l_old_z.x);
+            g_l_temp_sqr_y = lsqr(g_l_old_z.y);
             g_l_magnitude = g_l_temp_sqr_x + g_l_temp_sqr_y;
         }
     }
@@ -2819,10 +2819,10 @@ int froth_per_pixel()
     }
     else  // integer mode
     {
-        g_l_old.x = g_l_x_pixel();
-        g_l_old.y = g_l_y_pixel();
-        g_l_temp_sqr_x = multiply(g_l_old.x, g_l_old.x, bitshift);
-        g_l_temp_sqr_y = multiply(g_l_old.y, g_l_old.y, bitshift);
+        g_l_old_z.x = g_l_x_pixel();
+        g_l_old_z.y = g_l_y_pixel();
+        g_l_temp_sqr_x = multiply(g_l_old_z.x, g_l_old_z.x, bitshift);
+        g_l_temp_sqr_y = multiply(g_l_old_z.y, g_l_old_z.y, bitshift);
     }
     return 0;
 }
@@ -2850,8 +2850,8 @@ int froth_per_orbit()
     }
     else  // integer mode
     {
-        g_l_new_z.x = g_l_temp_sqr_x - g_l_temp_sqr_y - g_l_old.x - multiply(fsp.fl.l.a, g_l_old.y, bitshift);
-        g_l_new_z.y = g_l_old.y + (multiply(g_l_old.x, g_l_old.y, bitshift)<<1) - multiply(fsp.fl.l.a, g_l_old.x, bitshift);
+        g_l_new_z.x = g_l_temp_sqr_x - g_l_temp_sqr_y - g_l_old_z.x - multiply(fsp.fl.l.a, g_l_old_z.y, bitshift);
+        g_l_new_z.y = g_l_old_z.y + (multiply(g_l_old_z.x, g_l_old_z.y, bitshift)<<1) - multiply(fsp.fl.l.a, g_l_old_z.x, bitshift);
         if (fsp.repeat_mapping)
         {
             g_l_temp_sqr_x = lsqr(g_l_new_z.x);
@@ -2860,9 +2860,9 @@ int froth_per_orbit()
             {
                 return 1;
             }
-            g_l_old = g_l_new_z;
-            g_l_new_z.x = g_l_temp_sqr_x - g_l_temp_sqr_y - g_l_old.x - multiply(fsp.fl.l.a, g_l_old.y, bitshift);
-            g_l_new_z.y = g_l_old.y + (multiply(g_l_old.x, g_l_old.y, bitshift)<<1) - multiply(fsp.fl.l.a, g_l_old.x, bitshift);
+            g_l_old_z = g_l_new_z;
+            g_l_new_z.x = g_l_temp_sqr_x - g_l_temp_sqr_y - g_l_old_z.x - multiply(fsp.fl.l.a, g_l_old_z.y, bitshift);
+            g_l_new_z.y = g_l_old_z.y + (multiply(g_l_old_z.x, g_l_old_z.y, bitshift)<<1) - multiply(fsp.fl.l.a, g_l_old_z.x, bitshift);
         }
         g_l_temp_sqr_x = lsqr(g_l_new_z.x);
         g_l_temp_sqr_y = lsqr(g_l_new_z.y);
@@ -2870,7 +2870,7 @@ int froth_per_orbit()
         {
             return 1;
         }
-        g_l_old = g_l_new_z;
+        g_l_old_z = g_l_new_z;
     }
     return 0;
 }
