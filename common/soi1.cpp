@@ -21,8 +21,6 @@
 #include "drivers.h"
 #include "fractype.h"
 
-#define FREXP(x, y) frexp(x, y)
-
 #define EVERY 15
 #define BASIN_COLOR 0
 
