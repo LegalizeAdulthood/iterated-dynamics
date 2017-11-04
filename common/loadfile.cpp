@@ -36,7 +36,7 @@ static void backwardscompat(FRACTAL_INFO *info);
 static bool fix_bof();
 static bool fix_period_bof();
 
-bool loaded3d = false;
+bool g_loaded_3d = false;
 static FILE *fp;
 int g_file_y_dots, g_file_x_dots, g_file_colors;
 float g_file_aspect_ratio;
@@ -58,7 +58,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
     show_file = 1;                // for any abort exit, pretend done
     g_init_mode = -1;               // no viewing mode set yet
     bool oldfloatflag = usr_floatflag;
-    loaded3d = false;
+    g_loaded_3d = false;
     if (g_fast_restore)
     {
         viewwindow = false;
@@ -215,7 +215,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
         }
         if (g_display_3d == display_3d_modes::NONE && read_info.display_3d > 0)
         {
-            loaded3d       = true;
+            g_loaded_3d       = true;
             g_ambient        = read_info.ambient;
             RANDOMIZE      = read_info.randomize;
             g_haze           = read_info.haze;
@@ -415,7 +415,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
     {
         display_3d_modes const old_display_ed = g_display_3d;
         bool const oldfloatflag = g_float_flag;
-        g_display_3d = loaded3d ? display_3d_modes::YES : display_3d_modes::NONE;   // for <tab> display during next
+        g_display_3d = g_loaded_3d ? display_3d_modes::YES : display_3d_modes::NONE;   // for <tab> display during next
         g_float_flag = usr_floatflag; // ditto
         int i = get_video_mode(&read_info, &blk_3_info);
 #if defined(_WIN32)

@@ -256,7 +256,7 @@ extern long                  g_l_limit;
 extern long                  g_l_magnitude;
 extern std::string           g_l_system_name;
 extern LComplex              g_l_new;
-extern bool                  loaded3d;
+extern bool                  g_loaded_3d;
 extern int                   LodPtr;
 extern bool                  Log_Auto_Calc;
 extern bool                  Log_Calc;

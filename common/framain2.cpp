@@ -340,7 +340,7 @@ main_state big_while_loop(bool *const kbdmore, bool *const stacked, bool const r
             {
                 g_init_batch = batch_modes::FINISH_CALC_BEFORE_SAVE;
             }
-            if (loaded3d)      // 'r' of image created with '3'
+            if (g_loaded_3d)      // 'r' of image created with '3'
             {
                 g_display_3d = display_3d_modes::YES;  // so set flag for 'b' command
             }

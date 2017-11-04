@@ -1123,7 +1123,7 @@ void write_batch_parms(char const *colorinf, bool colorsonly, int maxcolor, int 
         {
             put_parm(" %s=%s", "3d", "yes");
         }
-        if (!loaded3d)
+        if (!g_loaded_3d)
         {
             put_filename("filename", readname.c_str());
         }
