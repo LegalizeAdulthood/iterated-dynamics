@@ -1180,21 +1180,21 @@ MarksJuliaSetup()
     lold = *longparm;
     if (g_c_exponent > 3)
     {
-        lcpower(&lold, g_c_exponent-1, &lcoefficient, bitshift);
+        lcpower(&lold, g_c_exponent-1, &g_l_coefficient, bitshift);
     }
     else if (g_c_exponent == 3)
     {
-        lcoefficient.x = multiply(lold.x, lold.x, bitshift) - multiply(lold.y, lold.y, bitshift);
-        lcoefficient.y = multiply(lold.x, lold.y, bitshiftless1);
+        g_l_coefficient.x = multiply(lold.x, lold.x, bitshift) - multiply(lold.y, lold.y, bitshift);
+        g_l_coefficient.y = multiply(lold.x, lold.y, bitshiftless1);
     }
     else if (g_c_exponent == 2)
     {
-        lcoefficient = lold;
+        g_l_coefficient = lold;
     }
     else if (g_c_exponent < 2)
     {
-        lcoefficient.x = 1L << bitshift;
-        lcoefficient.y = 0L;
+        g_l_coefficient.x = 1L << bitshift;
+        g_l_coefficient.y = 0L;
     }
     get_julia_attractor(0.0, 0.0);       // an attractor?
 #endif

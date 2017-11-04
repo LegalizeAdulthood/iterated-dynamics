@@ -60,7 +60,7 @@ const long l16triglim = 8L << 16;       // domain limit of fast trig functions
 
 } // namespace
 
-LComplex lcoefficient, lold, lnew, lparm, linit, ltmp, ltmp2, lparm2;
+LComplex g_l_coefficient, lold, lnew, lparm, linit, ltmp, ltmp2, lparm2;
 long ltempsqrx, ltempsqry;
 int maxcolor;
 int root, degree, g_basin;
@@ -926,10 +926,10 @@ MarksLambdaFractal()
     ltmp.x = ltempsqrx - ltempsqry;
     ltmp.y = multiply(lold.x , lold.y , bitshiftless1);
 
-    lnew.x = multiply(lcoefficient.x, ltmp.x, bitshift)
-             - multiply(lcoefficient.y, ltmp.y, bitshift) + longparm->x;
-    lnew.y = multiply(lcoefficient.x, ltmp.y, bitshift)
-             + multiply(lcoefficient.y, ltmp.x, bitshift) + longparm->y;
+    lnew.x = multiply(g_l_coefficient.x, ltmp.x, bitshift)
+             - multiply(g_l_coefficient.y, ltmp.y, bitshift) + longparm->x;
+    lnew.y = multiply(g_l_coefficient.x, ltmp.y, bitshift)
+             + multiply(g_l_coefficient.y, ltmp.x, bitshift) + longparm->y;
 
     return longbailout();
 #else
@@ -2856,22 +2856,22 @@ int marksmandel_per_pixel()
 
     if (g_c_exponent > 3)
     {
-        lcpower(&lold, g_c_exponent-1, &lcoefficient, bitshift);
+        lcpower(&lold, g_c_exponent-1, &g_l_coefficient, bitshift);
     }
     else if (g_c_exponent == 3)
     {
-        lcoefficient.x = multiply(lold.x, lold.x, bitshift)
+        g_l_coefficient.x = multiply(lold.x, lold.x, bitshift)
                          - multiply(lold.y, lold.y, bitshift);
-        lcoefficient.y = multiply(lold.x, lold.y, bitshiftless1);
+        g_l_coefficient.y = multiply(lold.x, lold.y, bitshiftless1);
     }
     else if (g_c_exponent == 2)
     {
-        lcoefficient = lold;
+        g_l_coefficient = lold;
     }
     else if (g_c_exponent < 2)
     {
-        lcoefficient.x = 1L << bitshift;
-        lcoefficient.y = 0L;
+        g_l_coefficient.x = 1L << bitshift;
+        g_l_coefficient.y = 0L;
     }
 
     ltempsqrx = multiply(lold.x, lold.x, bitshift);
