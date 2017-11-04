@@ -304,7 +304,7 @@ extern int                   g_soi_min_stack;
 extern int                   g_soi_min_stack_available;
 extern MOREPARAMS            g_more_fractal_params[];
 extern MP                    g_halley_mp_a_plus_one_times_degree;
-extern MP                    mpAplusOne;
+extern MP                    g_halley_mp_a_plus_one;
 extern MPC                   MPCone;
 extern std::vector<MPC>      MPCroots;
 extern MPC                   mpctmpparm;

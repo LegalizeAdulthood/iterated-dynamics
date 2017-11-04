@@ -1286,8 +1286,8 @@ HalleySetup()
     if (fractype == fractal_type::MPHALLEY)
     {
         setMPfunctions();
-        mpAplusOne = *pd2MP((double)g_halley_a_plus_one);
-        g_mp_halley_a_plus_one_times_degree = *pd2MP((double)g_halley_a_plus_one_times_degree);
+        g_halley_mp_a_plus_one = *pd2MP((double)g_halley_a_plus_one);
+        g_halley_mp_a_plus_one_times_degree = *pd2MP((double)g_halley_a_plus_one_times_degree);
         mpctmpparm.x = *pd2MP(parm.y);
         mpctmpparm.y = *pd2MP(parm2.y);
         mptmpparm2x = *pd2MP(parm2.x);
