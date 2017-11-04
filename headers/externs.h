@@ -255,7 +255,7 @@ extern long                  g_l_limit2;
 extern long                  g_l_limit;
 extern long                  g_l_magnitude;
 extern std::string           g_l_system_name;
-extern LComplex              g_l_new;
+extern LComplex              g_l_new_z;
 extern bool                  g_loaded_3d;
 extern int                   g_load_index;
 extern bool                  g_log_map_auto_calculate;

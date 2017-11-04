@@ -1908,7 +1908,7 @@ void get_julia_attractor(double real, double imag)
     {
         if (g_integer_fractal)     // remember where it went to
         {
-            lresult = g_l_new;
+            lresult = g_l_new_z;
         }
         else
         {
@@ -1922,10 +1922,10 @@ void get_julia_attractor(double real, double imag)
                 // and doesn't move far, probably
                 if (g_integer_fractal)   //   found a finite attractor
                 {
-                    if (labs(lresult.x-g_l_new.x) < g_l_close_enough
-                            && labs(lresult.y-g_l_new.y) < g_l_close_enough)
+                    if (labs(lresult.x-g_l_new_z.x) < g_l_close_enough
+                            && labs(lresult.y-g_l_new_z.y) < g_l_close_enough)
                     {
-                        g_l_attractor[g_attractors] = g_l_new;
+                        g_l_attractor[g_attractors] = g_l_new_z;
                         g_attractor_period[g_attractors] = i+1;
                         g_attractors++;   // another attractor - coloured lakes !
                         break;
