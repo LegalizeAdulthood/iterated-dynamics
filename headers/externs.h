@@ -251,7 +251,7 @@ extern LComplex              g_l_init;
 extern LComplex              g_l_init_orbit;
 extern long                  g_l_init_x;
 extern long                  g_l_init_y;
-extern long                  llimit2;
+extern long                  g_l_limit2;
 extern long                  llimit;
 extern long                  lmagnitud;
 extern std::string           LName;
