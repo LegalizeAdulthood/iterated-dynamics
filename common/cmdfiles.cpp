@@ -457,7 +457,7 @@ static void initvars_restart()          // <ins> key init
     g_map_set = false;                     // no map= name active
     g_map_specified = false;
     g_major_method = Major::breadth_first;    // default inverse julia methods
-    minor_method = Minor::left_first;       // default inverse julia methods
+    g_inverse_julia_minor_method = Minor::left_first;       // default inverse julia methods
     truecolor = false;                  // truecolor output flag
     truemode = 0;               // set to default color scheme
 }
@@ -1936,11 +1936,11 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
 
         if (charval[1] == 'l')
         {
-            minor_method = Minor::left_first;
+            g_inverse_julia_minor_method = Minor::left_first;
         }
         else if (charval[1] == 'r')
         {
-            minor_method = Minor::right_first;
+            g_inverse_julia_minor_method = Minor::right_first;
         }
         else
         {

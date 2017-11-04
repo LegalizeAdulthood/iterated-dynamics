@@ -262,7 +262,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
         g_julibrot_3d_mode   = read_info.juli3Dmode   ;
         g_max_function    = (char)read_info.maxfn          ;
         g_major_method = static_cast<Major>(read_info.inversejulia >> 8);
-        minor_method = static_cast<Minor>(read_info.inversejulia & 255);
+        g_inverse_julia_minor_method = static_cast<Minor>(read_info.inversejulia & 255);
         param[4] = read_info.dparm5;
         param[5] = read_info.dparm6;
         param[6] = read_info.dparm7;

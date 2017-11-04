@@ -103,7 +103,7 @@ static char NoQueue[] =
 static int    mxhits;
 int    run_length;
 Major g_major_method;
-Minor minor_method;
+Minor g_inverse_julia_minor_method;
 affine cvt;
 l_affine lcvt;
 
@@ -365,7 +365,7 @@ bool orbit3dlongsetup()
                 g_major_method = Major::random_walk;
                 goto lrwalk;
             }
-            switch (minor_method)
+            switch (g_inverse_julia_minor_method)
             {
             case Minor::left_first:
                 PushLong((g_fudge_factor + Sqrt.x) / 2,  Sqrt.y / 2);
@@ -558,7 +558,7 @@ bool orbit3dfloatsetup()
                 g_major_method = Major::random_walk;
                 goto rwalk;
             }
-            switch (minor_method)
+            switch (g_inverse_julia_minor_method)
             {
             case Minor::left_first:
                 PushFloat((float)((1 + Sqrt.x) / 2), (float)(Sqrt.y / 2));
@@ -692,7 +692,7 @@ Minverse_julia_orbit()
         if (color < mxhits)
         {
             putcolor(newcol, newrow, color+1);
-            if (minor_method == Minor::left_first)
+            if (g_inverse_julia_minor_method == Minor::left_first)
             {
                 if (QueueFullAlmost())
                 {
@@ -880,7 +880,7 @@ Linverse_julia_orbit()
         {
             putcolor(newcol, newrow, color+1);
             g_l_new = ComplexSqrtLong(g_l_new.x - CxLong, g_l_new.y - CyLong);
-            if (minor_method == Minor::left_first)
+            if (g_inverse_julia_minor_method == Minor::left_first)
             {
                 if (QueueFullAlmost())
                 {
