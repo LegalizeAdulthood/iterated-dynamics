@@ -3090,7 +3090,7 @@ int form_per_pixel()
                 v[0].a.m.y = *d2MP(dypixel());
                 break;
             case L_MATH:
-                v[0].a.l.x = lxpixel();
+                v[0].a.l.x = g_l_x_pixel();
                 v[0].a.l.y = lypixel();
                 break;
 #endif

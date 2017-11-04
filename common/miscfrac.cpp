@@ -2565,7 +2565,7 @@ int calcfroth()   // per pixel 1/2/g, called with row & col set
         }
         else
         {
-            g_l_old.x = lxpixel();
+            g_l_old.x = g_l_x_pixel();
             g_l_old.y = lypixel();
         }
 
@@ -2819,7 +2819,7 @@ int froth_per_pixel()
     }
     else  // integer mode
     {
-        g_l_old.x = lxpixel();
+        g_l_old.x = g_l_x_pixel();
         g_l_old.y = lypixel();
         g_l_temp_sqr_x = multiply(g_l_old.x, g_l_old.x, bitshift);
         g_l_temp_sqr_y = multiply(g_l_old.y, g_l_old.y, bitshift);

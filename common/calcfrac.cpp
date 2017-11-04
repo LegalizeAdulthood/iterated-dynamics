@@ -1937,7 +1937,7 @@ static int standard_calc(int passnum)
 int calcmand()              // fast per pixel 1/2/b/g, called with row & col set
 {
     // setup values from array to avoid using es reg in calcmand.asm
-    g_l_init_x = lxpixel();
+    g_l_init_x = g_l_x_pixel();
     g_l_init_y = lypixel();
     if (calcmandasm() >= 0)
     {
