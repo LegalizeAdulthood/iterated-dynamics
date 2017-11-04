@@ -1296,7 +1296,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         {
             goto badarg;
         }
-        maxlinelength = numval;
+        g_max_line_length = numval;
         return CMDARG_NONE;
     }
 

@@ -222,7 +222,7 @@ prompt_user:
         }
         choices[promptnum] = "Maximum line length";
         paramvalues[promptnum].type = 'i';
-        paramvalues[promptnum++].uval.ival = maxlinelength;
+        paramvalues[promptnum++].uval.ival = g_max_line_length;
         choices[promptnum] = "";
         paramvalues[promptnum++].type = '*';
         choices[promptnum] = "    **** The following is for generating images in pieces ****";
@@ -279,11 +279,11 @@ prompt_user:
         {
             int newmaxlinelength;
             newmaxlinelength = paramvalues[promptnum-3].uval.ival;
-            if (maxlinelength != newmaxlinelength &&
+            if (g_max_line_length != newmaxlinelength &&
                     newmaxlinelength >= MINMAXLINELENGTH &&
                     newmaxlinelength <= MAXMAXLINELENGTH)
             {
-                maxlinelength = newmaxlinelength;
+                g_max_line_length = newmaxlinelength;
             }
         }
         xm = paramvalues[promptnum++].uval.ival;
@@ -1631,9 +1631,8 @@ static void put_parm(char const *parm, ...)
     }
 }
 
-int maxlinelength = 72;
-#define MAXLINELEN  maxlinelength
-#define NICELINELEN (MAXLINELEN-4)
+int g_max_line_length = 72;
+#define NICELINELEN (g_max_line_length-4)
 
 static void put_parm_line()
 {
@@ -1647,7 +1646,7 @@ static void put_parm_line()
         if (len == 0)
         {
             len = NICELINELEN-1;
-            while (++len < MAXLINELEN
+            while (++len < g_max_line_length
                     && s_wbdata.buf[len] && s_wbdata.buf[len] != ' ')
             {
             }

@@ -162,8 +162,8 @@ names. So for now humor us and let's keep the names short.
 */
 #define FILE_MAX_FNAME  64       // max length of filename
 #define FILE_MAX_EXT    64       // max length of extension
-#define MAXMAXLINELENGTH  128   // upper limit for maxlinelength for PARs
-#define MINMAXLINELENGTH  40    // lower limit for maxlinelength for PARs
+#define MAXMAXLINELENGTH  128   // upper limit for g_max_line_length for PARs
+#define MINMAXLINELENGTH  40    // lower limit for g_max_line_length for PARs
 #define MSGLEN 80               // handy buffer size for messages
 #define MAXCMT 57               // length of par comments
 #define MAXPARAMS 10            // maximum number of parameters

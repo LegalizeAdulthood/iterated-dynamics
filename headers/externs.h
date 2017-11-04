@@ -290,7 +290,7 @@ extern int                   g_max_color;
 extern long                  g_max_count;
 extern char                  g_max_function;
 extern long                  g_max_iterations;
-extern int                   maxlinelength;
+extern int                   g_max_line_length;
 extern long                  MaxLTSize;
 extern unsigned              Max_Args;
 extern unsigned              Max_Ops;
