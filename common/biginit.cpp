@@ -411,13 +411,12 @@ void free_bf_vars()
 // Allocates a bn_t variable on stack
 bn_t alloc_stack(size_t size)
 {
-    long stack_addr;
     if (bf_math == bf_math_type::NONE)
     {
         stopmsg(STOPMSG_NONE, "alloc_stack called with bf_math==0");
         return (nullptr);
     }
-    stack_addr = (long)((stack_ptr-bnroot)+size); // part of bnroot
+    const long stack_addr = (long)((stack_ptr-bnroot)+size); // part of bnroot
 
     if (stack_addr > maxstack)
     {
