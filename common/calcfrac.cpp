@@ -222,7 +222,7 @@ int trail_col = 0;
 int periodicitycheck = 0;
 
 // For periodicity testing, only in standard_fractal()
-int nextsavedincr = 0;
+int g_periodicity_next_saved_incr = 0;
 long firstsavedand = 0;
 
 static std::vector<BYTE> savedots;
@@ -670,17 +670,17 @@ int calcfract()
 
     if (use_old_period)
     {
-        nextsavedincr = 1;
+        g_periodicity_next_saved_incr = 1;
         firstsavedand = 1;
     }
     else
     {
-        nextsavedincr = (int)log10(static_cast<double>(g_max_iterations)); // works better than log()
-        if (nextsavedincr < 4)
+        g_periodicity_next_saved_incr = (int)log10(static_cast<double>(g_max_iterations)); // works better than log()
+        if (g_periodicity_next_saved_incr < 4)
         {
-            nextsavedincr = 4; // maintains image with low iterations
+            g_periodicity_next_saved_incr = 4; // maintains image with low iterations
         }
-        firstsavedand = (long)((nextsavedincr*2) + 1);
+        firstsavedand = (long)((g_periodicity_next_saved_incr*2) + 1);
     }
 
     g_log_map_table.clear();
@@ -2610,7 +2610,7 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
                 if (--savedincr == 0)    // time to lengthen the periodicity?
                 {
                     savedand = (savedand << 1) + 1;       // longer periodicity
-                    savedincr = nextsavedincr;// restart counter
+                    savedincr = g_periodicity_next_saved_incr;// restart counter
                 }
             }
             else                // check against an old save

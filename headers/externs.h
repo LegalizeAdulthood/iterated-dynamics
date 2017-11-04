@@ -326,7 +326,7 @@ extern char                  g_evolve_new_discrete_y_parameter_offset;
 extern double                g_evolve_new_x_parameter_offset;
 extern double                g_evolve_new_y_parameter_offset;
 extern fractal_type          g_new_orbit_type;
-extern int                   nextsavedincr;
+extern int                   g_periodicity_next_saved_incr;
 extern bool                  no_sub_images;
 extern bool                  no_mag_calc;
 extern bool                  nobof;
