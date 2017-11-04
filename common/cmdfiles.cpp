@@ -201,8 +201,6 @@ BYTE txtcolor[] =
     BLACK*16+WHITE      // C_CONTRIB         contributing authors
 };
 
-int lzw[2] = { 0 };
-
 /*
         cmdfiles(argc,argv) process the command-line arguments
                 it also processes the 'sstools.ini' file and any
@@ -1779,14 +1777,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
 
     if (variable == "tweaklzw")      // tweaklzw=?
     {
-        if (totparms >= 1)
-        {
-            lzw[0] = intval[0];
-        }
-        if (totparms >= 2)
-        {
-            lzw[1] = intval[1];
-        }
+        // TODO: deprecated
         return CMDARG_NONE;
     }
 
