@@ -2527,13 +2527,13 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
                 {
                     lat.x = g_l_new.x - g_l_attractor[i].x;
                     lat.x = lsqr(lat.x);
-                    if (lat.x < l_at_rad)
+                    if (lat.x < g_l_at_rad)
                     {
                         lat.y = g_l_new.y - g_l_attractor[i].y;
                         lat.y = lsqr(lat.y);
-                        if (lat.y < l_at_rad)
+                        if (lat.y < g_l_at_rad)
                         {
-                            if ((lat.x + lat.y) < l_at_rad)
+                            if ((lat.x + lat.y) < g_l_at_rad)
                             {
                                 attracted = true;
                                 if (g_finite_attractor)

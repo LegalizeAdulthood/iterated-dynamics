@@ -277,7 +277,7 @@ extern long                (*g_l_x_pixel)();
 extern std::vector<long>     g_l_y0;
 extern std::vector<long>     g_l_y1;
 extern long                (*g_l_y_pixel)();
-extern long                  l_at_rad;
+extern long                  g_l_at_rad;
 extern MATRIX                m;
 extern double                magnitude;
 extern Major                 major_method;

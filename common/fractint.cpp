@@ -62,7 +62,7 @@ double  ddelmin;                // same as a double
 double  param[MAXPARAMS];       // parameters
 double  potparam[3];            // three potential parameters
 long    g_fudge_factor;                  // 2**fudgefactor
-long    l_at_rad;               // finite attractor radius
+long    g_l_at_rad;               // finite attractor radius
 double  g_f_at_rad;               // finite attractor radius
 int     bitshift;               // fudgefactor
 
