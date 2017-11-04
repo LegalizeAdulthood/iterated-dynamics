@@ -530,7 +530,7 @@ complex_div(DComplex numerator, DComplex denominator, DComplex *pout)
 }
 
 #if !defined(XFRACT)
-MP mproverd, g_mp_degree_minus_1_over_degree, mpthreshold;
+MP g_newton_mp_r_over_d, g_mp_degree_minus_1_over_degree, mpthreshold;
 MP mpt2;
 MP g_mp_one;
 #endif
@@ -576,7 +576,7 @@ int MPCNewtonFractal()
         return 1;
     }
 
-    mpcnew.x = *pMPadd(*pMPmul(g_mp_degree_minus_1_over_degree, mpcnew.x), mproverd);
+    mpcnew.x = *pMPadd(*pMPmul(g_mp_degree_minus_1_over_degree, mpcnew.x), g_newton_mp_r_over_d);
     mpcnew.y = *pMPmul(mpcnew.y, g_mp_degree_minus_1_over_degree);
     mpt2 = MPCmod(mpctmp);
     mpt2 = *pMPdiv(g_mp_one, mpt2);
