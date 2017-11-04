@@ -680,7 +680,7 @@ void write_batch_parms(char const *colorinf, bool colorsonly, int maxcolor, int 
         if (fractype == fractal_type::INVERSEJULIA || fractype == fractal_type::INVERSEJULIAFP)
         {
             put_parm(" %s=%s/%s", "miim",
-                     JIIMmethod[static_cast<int>(major_method)].c_str(),
+                     g_jiim_method[static_cast<int>(major_method)].c_str(),
                      g_jiim_left_right[static_cast<int>(minor_method)].c_str());
         }
 

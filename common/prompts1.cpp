@@ -1404,7 +1404,7 @@ char const *JIIMmethod[] =
 };
 #else
 static char JIIMstr1[] = "Breadth first, Depth first, Random Walk";
-std::string const JIIMmethod[] =
+std::string const g_jiim_method[] =
 {
     "breadth", "depth", "walk"
 };
@@ -1466,7 +1466,7 @@ char const *jiim_left_right_list[] =
 
 char const *jiim_method_list[] =
 {
-    JIIMmethod[0].c_str(), JIIMmethod[1].c_str(), JIIMmethod[2].c_str()
+    g_jiim_method[0].c_str(), g_jiim_method[1].c_str(), g_jiim_method[2].c_str()
 };
 
 char const *julia_3d_options_list[] =

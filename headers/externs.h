@@ -232,7 +232,7 @@ extern int                   g_i_x_stop;
 extern int                   g_i_y_start;
 extern int                   g_i_y_stop;
 extern std::string const     g_jiim_left_right[];
-extern std::string const     JIIMmethod[];
+extern std::string const     g_jiim_method[];
 extern int                   juli3Dmode;
 extern std::string const     juli3Doptions[];
 extern bool                  julibrot;
