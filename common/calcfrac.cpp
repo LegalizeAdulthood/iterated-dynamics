@@ -91,7 +91,7 @@ LComplex linitorbit = { 0 };
 long lmagnitud = 0;
 long llimit = 0;
 long llimit2 = 0;
-long lclosenuff = 0;
+long g_l_close_enough = 0;
 DComplex g_init = { 0.0 };
 DComplex tmp = { 0.0 };
 DComplex old = { 0.0 };
@@ -854,7 +854,7 @@ int calcfract()
             llimit = 0x7fffffffL; // klooge for integer math
         }
         llimit2 = (long)(rqlim2 * g_fudge_factor);    // stop if magnitude exceeds this
-        lclosenuff = (long)(g_close_enough * g_fudge_factor); // "close enough" value
+        g_l_close_enough = (long)(g_close_enough * g_fudge_factor); // "close enough" value
         linitorbit.x = (long)(g_init_orbit.x * g_fudge_factor);
         linitorbit.y = (long)(g_init_orbit.y * g_fudge_factor);
     }
@@ -898,7 +898,7 @@ int calcfract()
             // not a stand-alone
             // next two lines in case periodicity changed
             g_close_enough = ddelmin*pow(2.0, -(double)(abs(periodicitycheck)));
-            lclosenuff = (long)(g_close_enough * g_fudge_factor); // "close enough" value
+            g_l_close_enough = (long)(g_close_enough * g_fudge_factor); // "close enough" value
             setsymmetry(symmetry, false);
             timer(0, calctype); // non-standard fractal engine
         }
@@ -1267,7 +1267,7 @@ static void perform_worklist()
 
         // some common initialization for escape-time pixel level routines
         g_close_enough = ddelmin*pow(2.0, -(double)(abs(periodicitycheck)));
-        lclosenuff = (long)(g_close_enough * g_fudge_factor); // "close enough" value
+        g_l_close_enough = (long)(g_close_enough * g_fudge_factor); // "close enough" value
         g_keyboard_check_interval = max_keyboard_check_interval;
 
         setsymmetry(symmetry, true);
@@ -2617,9 +2617,9 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
             {
                 if (g_integer_fractal)     // floating-pt periodicity chk
                 {
-                    if (labs(lsaved.x - lnew.x) < lclosenuff)
+                    if (labs(lsaved.x - lnew.x) < g_l_close_enough)
                     {
-                        if (labs(lsaved.y - lnew.y) < lclosenuff)
+                        if (labs(lsaved.y - lnew.y) < g_l_close_enough)
                         {
                             caught_a_cycle = true;
                         }
