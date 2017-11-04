@@ -685,7 +685,7 @@ int passes_options()
     int ret;
 
     int old_periodicity, old_orbit_delay, old_orbit_interval;
-    bool const old_keep_scrn_coords = keep_scrn_coords;
+    bool const old_keep_scrn_coords = g_keep_screen_coords;
     char old_drawmode;
 
     ret = 0;
@@ -711,7 +711,7 @@ pass_option_restart:
 
     choices[++k] = "Maintain screen coordinates";
     uvalues[k].type = 'y';
-    uvalues[k].uval.ch.val = keep_scrn_coords ? 1 : 0;
+    uvalues[k].uval.ch.val = g_keep_screen_coords ? 1 : 0;
 
     choices[++k] = "Orbit pass shape (rect, line)";
     //   choices[++k] = "Orbit pass shape (rect,line,func)";
@@ -776,12 +776,12 @@ pass_option_restart:
         j = 1;
     }
 
-    keep_scrn_coords = uvalues[++k].uval.ch.val != 0;
-    if (keep_scrn_coords != old_keep_scrn_coords)
+    g_keep_screen_coords = uvalues[++k].uval.ch.val != 0;
+    if (g_keep_screen_coords != old_keep_scrn_coords)
     {
         j = 1;
     }
-    if (!keep_scrn_coords)
+    if (!g_keep_screen_coords)
     {
         set_orbit_corners = false;
     }
@@ -2374,7 +2374,7 @@ static int get_screen_corners()
     svyymax = yymax;
     svyy3rd = yy3rd;
 
-    if (!set_orbit_corners && !keep_scrn_coords)
+    if (!set_orbit_corners && !g_keep_screen_coords)
     {
         oxmin = xxmin;
         oxmax = xxmax;
@@ -2596,7 +2596,7 @@ gsc_loop:
     else
     {
         set_orbit_corners = true;
-        keep_scrn_coords = true;
+        g_keep_screen_coords = true;
         // restore corners
         xxmin = svxxmin;
         xxmax = svxxmax;
