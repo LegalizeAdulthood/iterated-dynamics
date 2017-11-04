@@ -960,7 +960,7 @@ static void setup_save_info(FRACTAL_INFO *save_info)
     save_info->rotate_lo = (short) rotate_lo;
     save_info->rotate_hi = (short) rotate_hi;
     save_info->distestwidth = (short) g_distance_estimator_width_factor;
-    save_info->mxmaxfp = mxmaxfp;
+    save_info->mxmaxfp = g_julibrot_x_max;
     save_info->mxminfp = mxminfp;
     save_info->mymaxfp = mymaxfp;
     save_info->myminfp = myminfp;

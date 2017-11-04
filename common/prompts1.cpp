@@ -1840,7 +1840,7 @@ gfp_top:
         }
 
         curfractalspecific = savespecific;
-        paramvalues[promptnum].uval.dval = mxmaxfp;
+        paramvalues[promptnum].uval.dval = g_julibrot_x_max;
         paramvalues[promptnum].type = 'f';
         choices[promptnum++] = v0;
         paramvalues[promptnum].uval.dval = mymaxfp;
@@ -2034,7 +2034,7 @@ gfp_top:
 
     if (g_julibrot)
     {
-        mxmaxfp    = paramvalues[promptnum++].uval.dval;
+        g_julibrot_x_max    = paramvalues[promptnum++].uval.dval;
         mymaxfp    = paramvalues[promptnum++].uval.dval;
         mxminfp    = paramvalues[promptnum++].uval.dval;
         myminfp    = paramvalues[promptnum++].uval.dval;

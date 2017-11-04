@@ -315,7 +315,7 @@ extern MP                    g_newton_mp_r_over_d;
 extern MP                    g_mp_temp2;
 extern MP                    g_mp_threshold;
 extern MP                    g_mp_temp_param2_x;
-extern double                mxmaxfp;
+extern double                g_julibrot_x_max;
 extern double                mxminfp;
 extern double                mymaxfp;
 extern double                myminfp;
