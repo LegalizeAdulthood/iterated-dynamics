@@ -649,7 +649,7 @@ int set_trig_array(int k, char const *name)
 
     strlwr(trigname);
 
-    for (int i = 0; i < numtrigfn; i++)
+    for (int i = 0; i < g_num_trig_functions; i++)
     {
         if (strcmp(trigname, trigfn[i].name) == 0)
         {

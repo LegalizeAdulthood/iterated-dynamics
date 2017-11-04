@@ -332,7 +332,7 @@ extern bool                  g_magnitude_calc;
 extern bool                  g_bof_match_book_images;
 extern int                   g_num_affine_transforms;
 extern unsigned              g_num_colors;
-extern const int             numtrigfn;
+extern const int             g_num_trig_functions;
 extern int                   num_fractal_types;
 extern int                   num_worklist;
 extern bool                  nxtscreenflag;

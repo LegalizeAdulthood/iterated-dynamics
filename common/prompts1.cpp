@@ -1452,7 +1452,7 @@ trig_funct_lst trigfn[] =
 
 #define NUMTRIGFN  sizeof(trigfn)/sizeof(trig_funct_lst)
 
-const int numtrigfn = NUMTRIGFN;
+const int g_num_trig_functions = NUMTRIGFN;
 
 char tstack[4096] = { 0 };
 

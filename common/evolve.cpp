@@ -363,7 +363,7 @@ void varytrig(GENEBASE gene[], int randval, int i)
     if (gene[i].mutate != variations::NONE)
     {
         *static_cast<trig_fn *>(gene[i].addr) =
-            static_cast<trig_fn>(wrapped_positive_varyint(randval, numtrigfn, gene[i].mutate));
+            static_cast<trig_fn>(wrapped_positive_varyint(randval, g_num_trig_functions, gene[i].mutate));
     }
     set_trig_pointers(5); //set all trig ptrs up
     return;
