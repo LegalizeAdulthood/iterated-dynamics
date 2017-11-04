@@ -104,7 +104,7 @@ static char cell_strt[] = {"#Starting Row Number"};
 #define STDBAILOUT      4
 #define NOBAILOUT       0
 
-MOREPARAMS moreparams[] =
+MOREPARAMS g_more_fractal_params[] =
 {
     {fractal_type::ICON             , { "Omega", "+Degree of symmetry",   "", "", "", ""}, {0, 3, 0, 0, 0, 0}},
     {fractal_type::ICON3D           , { "Omega", "+Degree of symmetry",   "", "", "", ""}, {0, 3, 0, 0, 0, 0}},
@@ -2338,7 +2338,7 @@ bool typehasparm(fractal_type type, int parm, char *buf)
         int const extra = find_extra_param(type);
         if (extra > -1)
         {
-            ret = moreparams[extra].param[parm-4];
+            ret = g_more_fractal_params[extra].param[parm-4];
         }
     }
     if (ret)

@@ -1351,7 +1351,7 @@ void set_default_parms()
     {
         for (int i = 0; i < MAXPARAMS-4; i++)
         {
-            param[i+4] = moreparams[extra].paramvalue[i];
+            param[i+4] = g_more_fractal_params[extra].paramvalue[i];
         }
     }
     if (g_debug_flag != debug_flags::force_arbitrary_precision_math)
@@ -2081,7 +2081,7 @@ int find_extra_param(fractal_type type)
 
     if (fractalspecific[static_cast<int>(type)].flags & MORE)
     {
-        while ((curtyp = moreparams[++i].type) != type && curtyp != fractal_type::NOFRACTAL);
+        while ((curtyp = g_more_fractal_params[++i].type) != type && curtyp != fractal_type::NOFRACTAL);
         if (curtyp == type)
         {
             ret = i;
@@ -2105,7 +2105,7 @@ void load_params(fractal_type fractype)
     {
         for (int i = 0; i < MAXPARAMS-4; i++)
         {
-            param[i+4] = moreparams[extra].paramvalue[i];
+            param[i+4] = g_more_fractal_params[extra].paramvalue[i];
         }
     }
 }

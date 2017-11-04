@@ -302,7 +302,7 @@ extern int                   g_smallest_box_size_shown;
 extern Minor                 g_inverse_julia_minor_method;
 extern int                   g_soi_min_stack;
 extern int                   g_soi_min_stack_available;
-extern MOREPARAMS            moreparams[];
+extern MOREPARAMS            g_more_fractal_params[];
 extern MP                    mpAp1deg;
 extern MP                    mpAplusOne;
 extern MPC                   MPCone;
