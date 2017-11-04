@@ -268,7 +268,7 @@ extern LComplex *            g_long_param;
 extern int                   g_look_at_mouse;
 extern LComplex              g_l_param2;
 extern LComplex              g_l_param;
-extern long                  ltempsqrx;
+extern long                  g_l_temp_sqr_x;
 extern long                  ltempsqry;
 extern LComplex              ltmp;
 extern std::vector<long>     lx0;

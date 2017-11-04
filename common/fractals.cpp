@@ -61,7 +61,7 @@ const long l16triglim = 8L << 16;       // domain limit of fast trig functions
 } // namespace
 
 LComplex g_l_coefficient, g_l_old, g_l_new, g_l_param, g_l_init, ltmp, ltmp2, g_l_param2;
-long ltempsqrx, ltempsqry;
+long g_l_temp_sqr_x, ltempsqry;
 int maxcolor;
 int root, degree, g_basin;
 double roverd, g_degree_minus_1_over_degree, threshold;
@@ -708,7 +708,7 @@ JuliaFractal()
 #if !defined(XFRACT)
     /* used for C prototype of fast integer math routines for classic
        Mandelbrot and Julia */
-    g_l_new.x  = ltempsqrx - ltempsqry + g_long_param->x;
+    g_l_new.x  = g_l_temp_sqr_x - ltempsqry + g_long_param->x;
     g_l_new.y = multiply(g_l_old.x, g_l_old.y, bitshiftless1) + g_long_param->y;
     return longbailout();
 #else
@@ -758,14 +758,14 @@ LambdaFractal()
     // variation of classical Mandelbrot/Julia
 
     // in complex math) temp = Z * (1-Z)
-    ltempsqrx = g_l_old.x - ltempsqrx + ltempsqry;
+    g_l_temp_sqr_x = g_l_old.x - g_l_temp_sqr_x + ltempsqry;
     ltempsqry = g_l_old.y
                 - multiply(g_l_old.y, g_l_old.x, bitshiftless1);
     // (in complex math) Z = Lambda * Z
-    g_l_new.x = multiply(g_long_param->x, ltempsqrx, bitshift)
+    g_l_new.x = multiply(g_long_param->x, g_l_temp_sqr_x, bitshift)
              - multiply(g_long_param->y, ltempsqry, bitshift);
     g_l_new.y = multiply(g_long_param->x, ltempsqry, bitshift)
-             + multiply(g_long_param->y, ltempsqrx, bitshift);
+             + multiply(g_long_param->y, g_l_temp_sqr_x, bitshift);
     return longbailout();
 #else
     return 0;
@@ -923,7 +923,7 @@ MarksLambdaFractal()
 
     // Z1 = (C^(exp-1) * Z**2) + C
 #if !defined(XFRACT)
-    ltmp.x = ltempsqrx - ltempsqry;
+    ltmp.x = g_l_temp_sqr_x - ltempsqry;
     ltmp.y = multiply(g_l_old.x , g_l_old.y , bitshiftless1);
 
     g_l_new.x = multiply(g_l_coefficient.x, ltmp.x, bitshift)
@@ -998,7 +998,7 @@ Mandel4Fractal()
 
     // first, compute (x + iy)**2
 #if !defined(XFRACT)
-    g_l_new.x  = ltempsqrx - ltempsqry;
+    g_l_new.x  = g_l_temp_sqr_x - ltempsqry;
     g_l_new.y = multiply(g_l_old.x, g_l_old.y, bitshiftless1);
     if (longbailout())
     {
@@ -1006,7 +1006,7 @@ Mandel4Fractal()
     }
 
     // then, compute ((x + iy)**2)**2 + lambda
-    g_l_new.x  = ltempsqrx - ltempsqry + g_long_param->x;
+    g_l_new.x  = g_l_temp_sqr_x - ltempsqry + g_long_param->x;
     g_l_new.y = multiply(g_l_old.x, g_l_old.y, bitshiftless1) + g_long_param->y;
     return longbailout();
 #else
@@ -1178,7 +1178,7 @@ TrigPlusZsquaredFractal()
     // A Biomorph
     // z(n+1) = trig(z(n))+z(n)**2+C
     LCMPLXtrig0(g_l_old, g_l_new);
-    g_l_new.x += ltempsqrx - ltempsqry + g_long_param->x;
+    g_l_new.x += g_l_temp_sqr_x - ltempsqry + g_long_param->x;
     g_l_new.y += multiply(g_l_old.x, g_l_old.y, bitshiftless1) + g_long_param->y;
     return longbailout();
 #else
@@ -1313,10 +1313,10 @@ LPopcornFractal_Old()
     }
     else
     {
-        ltempsqrx = lsqr(g_l_new.x);
+        g_l_temp_sqr_x = lsqr(g_l_new.x);
         ltempsqry = lsqr(g_l_new.y);
     }
-    g_l_magnitude = ltempsqrx + ltempsqry;
+    g_l_magnitude = g_l_temp_sqr_x + ltempsqry;
     if (g_l_magnitude >= g_l_limit || g_l_magnitude < 0 || labs(g_l_new.x) > g_l_limit2
             || labs(g_l_new.y) > g_l_limit2)
     {
@@ -1354,9 +1354,9 @@ LPopcornFractal()
         g_l_old = g_l_new;
     }
     // else
-    ltempsqrx = lsqr(g_l_new.x);
+    g_l_temp_sqr_x = lsqr(g_l_new.x);
     ltempsqry = lsqr(g_l_new.y);
-    g_l_magnitude = ltempsqrx + ltempsqry;
+    g_l_magnitude = g_l_temp_sqr_x + ltempsqry;
     if (g_l_magnitude >= g_l_limit || g_l_magnitude < 0
             || labs(g_l_new.x) > g_l_limit2
             || labs(g_l_new.y) > g_l_limit2)
@@ -1456,9 +1456,9 @@ LPopcornFractalFn()
         iplot_orbit(g_l_new.x, g_l_new.y, 1+row%g_colors);
         g_l_old = g_l_new;
     }
-    ltempsqrx = lsqr(g_l_new.x);
+    g_l_temp_sqr_x = lsqr(g_l_new.x);
     ltempsqry = lsqr(g_l_new.y);
-    g_l_magnitude = ltempsqrx + ltempsqry;
+    g_l_magnitude = g_l_temp_sqr_x + ltempsqry;
     if (g_l_magnitude >= g_l_limit || g_l_magnitude < 0
             || labs(g_l_new.x) > g_l_limit2
             || labs(g_l_new.y) > g_l_limit2)
@@ -1497,7 +1497,7 @@ SpiderFractal()
 {
 #if !defined(XFRACT)
     // Spider(XAXIS) { c=z=pixel: z=z*z+c; c=c/2+z, |z|<=4 }
-    g_l_new.x  = ltempsqrx - ltempsqry + ltmp.x;
+    g_l_new.x  = g_l_temp_sqr_x - ltempsqry + ltmp.x;
     g_l_new.y = multiply(g_l_old.x, g_l_old.y, bitshiftless1) + ltmp.y;
     ltmp.x = (ltmp.x >> 1) + g_l_new.x;
     ltmp.y = (ltmp.y >> 1) + g_l_new.y;
@@ -1834,7 +1834,7 @@ LongPhoenixFractal()
 #if !defined(XFRACT)
     // z(n+1) = z(n)^2 + p + qy(n),  y(n+1) = z(n)
     ltmp.x = multiply(g_l_old.x, g_l_old.y, bitshift);
-    g_l_new.x = ltempsqrx-ltempsqry+g_long_param->x+multiply(g_long_param->y, ltmp2.x, bitshift);
+    g_l_new.x = g_l_temp_sqr_x-ltempsqry+g_long_param->x+multiply(g_long_param->y, ltmp2.x, bitshift);
     g_l_new.y = (ltmp.x + ltmp.x) + multiply(g_long_param->y, ltmp2.y, bitshift);
     ltmp2 = g_l_old; // set ltmp2 to Y value
     return longbailout();
@@ -1860,7 +1860,7 @@ LongPhoenixFractalcplx()
 #if !defined(XFRACT)
     // z(n+1) = z(n)^2 + p + qy(n),  y(n+1) = z(n)
     ltmp.x = multiply(g_l_old.x, g_l_old.y, bitshift);
-    g_l_new.x = ltempsqrx-ltempsqry+g_long_param->x+multiply(g_l_param2.x, ltmp2.x, bitshift)-multiply(g_l_param2.y, ltmp2.y, bitshift);
+    g_l_new.x = g_l_temp_sqr_x-ltempsqry+g_long_param->x+multiply(g_l_param2.x, ltmp2.x, bitshift)-multiply(g_l_param2.y, ltmp2.y, bitshift);
     g_l_new.y = (ltmp.x + ltmp.x)+g_long_param->y+multiply(g_l_param2.x, ltmp2.y, bitshift)+multiply(g_l_param2.y, ltmp2.x, bitshift);
     ltmp2 = g_l_old; // set ltmp2 to Y value
     return longbailout();
@@ -2456,7 +2456,7 @@ ManOWarFractal()
 {
 #if !defined(XFRACT)
     // From Art Matrix via Lee Skinner
-    g_l_new.x  = ltempsqrx - ltempsqry + ltmp.x + g_long_param->x;
+    g_l_new.x  = g_l_temp_sqr_x - ltempsqry + ltmp.x + g_long_param->x;
     g_l_new.y = multiply(g_l_old.x, g_l_old.y, bitshiftless1) + ltmp.y + g_long_param->y;
     ltmp = g_l_old;
     return longbailout();
@@ -2551,7 +2551,7 @@ CirclefpFractal()
 CirclelongFractal()
 {
    long i;
-   i = multiply(lparm.x,(ltempsqrx+ltempsqry),bitshift);
+   i = multiply(lparm.x,(g_l_temp_sqr_x+ltempsqry),bitshift);
    i = i >> bitshift;
    g_color_iter = i%colors);
    return 1;
@@ -2716,7 +2716,7 @@ int julia_per_pixel()
         g_l_old.y = lypixel();
     }
 
-    ltempsqrx = multiply(g_l_old.x, g_l_old.x, bitshift);
+    g_l_temp_sqr_x = multiply(g_l_old.x, g_l_old.x, bitshift);
     ltempsqry = multiply(g_l_old.y, g_l_old.y, bitshift);
     ltmp = g_l_old;
     return 0;
@@ -2809,7 +2809,7 @@ int mandel_per_pixel()
         g_l_old.y += g_l_param.y;
     }
     ltmp = g_l_init; // for spider
-    ltempsqrx = multiply(g_l_old.x, g_l_old.x, bitshift);
+    g_l_temp_sqr_x = multiply(g_l_old.x, g_l_old.x, bitshift);
     ltempsqry = multiply(g_l_old.y, g_l_old.y, bitshift);
     return 1; // 1st iteration has been done
 }
@@ -2874,7 +2874,7 @@ int marksmandel_per_pixel()
         g_l_coefficient.y = 0L;
     }
 
-    ltempsqrx = multiply(g_l_old.x, g_l_old.x, bitshift);
+    g_l_temp_sqr_x = multiply(g_l_old.x, g_l_old.x, bitshift);
     ltempsqry = multiply(g_l_old.y, g_l_old.y, bitshift);
 #endif
     return 1; // 1st iteration has been done
@@ -3222,7 +3222,7 @@ int long_phoenix_per_pixel()
         g_l_old.x = lxpixel();
         g_l_old.y = lypixel();
     }
-    ltempsqrx = multiply(g_l_old.x, g_l_old.x, bitshift);
+    g_l_temp_sqr_x = multiply(g_l_old.x, g_l_old.x, bitshift);
     ltempsqry = multiply(g_l_old.y, g_l_old.y, bitshift);
     ltmp2.x = 0; // use ltmp2 as the complex Y value
     ltmp2.y = 0;
@@ -3286,7 +3286,7 @@ int long_mandphoenix_per_pixel()
 
     g_l_old.x += g_l_param.x;    // initial pertubation of parameters set
     g_l_old.y += g_l_param.y;
-    ltempsqrx = multiply(g_l_old.x, g_l_old.x, bitshift);
+    g_l_temp_sqr_x = multiply(g_l_old.x, g_l_old.x, bitshift);
     ltempsqry = multiply(g_l_old.y, g_l_old.y, bitshift);
     ltmp2.x = 0;
     ltmp2.y = 0;

@@ -260,7 +260,7 @@ zline(long x, long y)
         {
             return (-1);
         }
-        ltempsqrx = multiply(g_l_old.x, g_l_old.x, bitshift);
+        g_l_temp_sqr_x = multiply(g_l_old.x, g_l_old.x, bitshift);
         ltempsqry = multiply(g_l_old.y, g_l_old.y, bitshift);
         for (n = 0; n < maxit; n++)
         {
