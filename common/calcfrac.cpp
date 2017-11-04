@@ -626,8 +626,8 @@ int calcfract()
     }
     if (truecolor)
     {
-        check_writefile(light_name, ".tga");
-        if (!startdisk1(light_name.c_str(), nullptr, false))
+        check_writefile(g_light_name, ".tga");
+        if (!startdisk1(g_light_name.c_str(), nullptr, false))
         {
             // Have to force passes = 1
             stdcalcmode = '1';

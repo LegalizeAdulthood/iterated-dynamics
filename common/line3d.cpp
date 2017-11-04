@@ -115,7 +115,7 @@ int g_ambient;
 int RANDOMIZE;
 int g_haze;
 int Real_V = 0; // Actual value of V for fillytpe>4 monochrome images
-std::string light_name{"fract001"};
+std::string g_light_name{"fract001"};
 bool Targa_Overlay = false;
 int error;
 char targa_temp[14] = "fractemp.tga";
@@ -891,7 +891,7 @@ loopbottom:
                 if (ferror(File_Ptr1))
                 {
                     fclose(File_Ptr1);
-                    remove(light_name.c_str());
+                    remove(g_light_name.c_str());
                     File_Error(ray_name.c_str(), 2);
                     return -1;
                 }
@@ -2378,8 +2378,8 @@ static void line3d_cleanup()
         enddisk();
         if (g_debug_flag == debug_flags::none && (!T_Safe || error) && Targa_Overlay)
         {
-            dir_remove(workdir.c_str(), light_name.c_str());
-            rename(targa_temp, light_name.c_str());
+            dir_remove(workdir.c_str(), g_light_name.c_str());
+            rename(targa_temp, g_light_name.c_str());
         }
         if (g_debug_flag == debug_flags::none && Targa_Overlay)
         {
@@ -2455,15 +2455,15 @@ static int first_time(int linelen, VECTOR v)
         if (Targa_Overlay)
         {
             // Make sure target file is a supportable Targa File
-            if (targa_validate(light_name.c_str()))
+            if (targa_validate(g_light_name.c_str()))
             {
                 return -1;
             }
         }
         else
         {
-            check_writefile(light_name, ".tga");
-            if (startdisk1(light_name.c_str(), nullptr, false))     // Open new file
+            check_writefile(g_light_name, ".tga");
+            if (startdisk1(g_light_name.c_str(), nullptr, false))     // Open new file
             {
                 return -1;
             }

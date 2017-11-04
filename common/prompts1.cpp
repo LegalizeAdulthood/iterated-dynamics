@@ -3349,11 +3349,11 @@ static bool get_light_params()
 
         if (!Targa_Overlay)
         {
-            check_writefile(light_name, ".tga");
+            check_writefile(g_light_name, ".tga");
         }
         prompts3d[++k] = "Targa File Name  (Assume .tga)";
         uvalues[k].type = 's';
-        strcpy(uvalues[k].uval.sval, light_name.c_str());
+        strcpy(uvalues[k].uval.sval, g_light_name.c_str());
 
         prompts3d[++k] = "Back Ground Color (0 - 255)";
         uvalues[k].type = '*';
@@ -3419,7 +3419,7 @@ static bool get_light_params()
         {
             g_haze = 0;
         }
-        light_name = uvalues[k++].uval.sval;
+        g_light_name = uvalues[k++].uval.sval;
         /* In case light_name conflicts with an existing name it is checked again in line3d */
         k++;
         g_background_color[0] = (char)(uvalues[k++].uval.ival % 255);

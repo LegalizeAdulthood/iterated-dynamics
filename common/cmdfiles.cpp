@@ -3520,7 +3520,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         }
         if (g_first_init || mode == cmd_file::AT_AFTER_STARTUP)
         {
-            light_name = value;
+            g_light_name = value;
         }
         return CMDARG_NONE;
     }
