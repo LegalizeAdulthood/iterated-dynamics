@@ -131,7 +131,7 @@ int get_toggles()
 #endif
     choices[++k] = "Maximum Iterations (2 to 2,147,483,647)";
     uvalues[k].type = 'L';
-    old_maxit = maxit;
+    old_maxit = g_max_iterations;
     uvalues[k].uval.Lval = old_maxit;
 
     choices[++k] = "Inside Color (0-# of colors, if Inside=numb)";
@@ -326,17 +326,17 @@ int get_toggles()
     }
 #endif
     ++k;
-    maxit = uvalues[k].uval.Lval;
-    if (maxit < 0)
+    g_max_iterations = uvalues[k].uval.Lval;
+    if (g_max_iterations < 0)
     {
-        maxit = old_maxit;
+        g_max_iterations = old_maxit;
     }
-    if (maxit < 2)
+    if (g_max_iterations < 2)
     {
-        maxit = 2;
+        g_max_iterations = 2;
     }
 
-    if (maxit != old_maxit)
+    if (g_max_iterations != old_maxit)
     {
         j++;
     }

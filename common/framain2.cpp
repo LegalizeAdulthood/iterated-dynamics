@@ -834,7 +834,7 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
     case FIK_CTL_B:
     case FIK_CTL_E:
     case FIK_CTL_F:
-        old_maxit = maxit;
+        old_maxit = g_max_iterations;
         clear_zoombox();
         if (fromtext_flag)
         {
@@ -891,7 +891,7 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
         {
             truecolor = false;          // truecolor doesn't play well with the evolver
         }
-        if (maxit > old_maxit && g_inside >= COLOR_BLACK && g_calc_status == calc_status_value::COMPLETED &&
+        if (g_max_iterations > old_maxit && g_inside >= COLOR_BLACK && g_calc_status == calc_status_value::COMPLETED &&
                 curfractalspecific->calctype == standard_fractal && !g_log_map_flag &&
                 !truecolor &&    // recalc not yet implemented with truecolor
                 !(usr_stdcalcmode == 't' && g_fill_color > -1) &&
@@ -2474,7 +2474,7 @@ static void save_history_info()
     current.minor_method         = (short)minor_method              ;
     current.bailout              = g_bail_out                   ;
     current.bailoutest           = (short)g_bail_out_test                ;
-    current.iterations           = maxit                     ;
+    current.iterations           = g_max_iterations                     ;
     current.old_demm_colors      = (short) (old_demm_colors ? 1 : 0);
     current.logcalc              = (short)g_log_map_fly_calculate;
     current.ismand               = (short) (g_is_mandelbrot ? 1 : 0);
@@ -2658,7 +2658,7 @@ static void restore_history_info(int i)
     minor_method          = static_cast<Minor>(last.minor_method);
     g_bail_out               = last.bailout        ;
     g_bail_out_test            = static_cast<bailouts>(last.bailoutest);
-    maxit                 = last.iterations     ;
+    g_max_iterations                 = last.iterations     ;
     old_demm_colors       = last.old_demm_colors != 0;
     curfractalspecific    = &fractalspecific[static_cast<int>(fractype)];
     potflag               = (potparam[0] != 0.0);

@@ -1194,7 +1194,7 @@ void Jiim(jiim_types which)
         }
         else // orbits
         {
-            if (iter < maxit)
+            if (iter < g_max_iterations)
             {
                 color = (int)iter%g_colors;
                 if (g_integer_fractal)
@@ -1208,7 +1208,7 @@ void Jiim(jiim_types which)
                 y = (int)((old.y - g_init.y) * yfactor * 3 * zoom + yoff);
                 if ((*ORBITCALC)())
                 {
-                    iter = maxit;
+                    iter = g_max_iterations;
                 }
                 else
                 {

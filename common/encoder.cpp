@@ -833,9 +833,9 @@ static void setup_save_info(FRACTAL_INFO *save_info)
     strcpy(save_info->info_id, INFO_ID);
     save_info->version = FRACTAL_INFO_VERSION;
 
-    if (maxit <= SHRT_MAX)
+    if (g_max_iterations <= SHRT_MAX)
     {
-        save_info->iterationsold = (short) maxit;
+        save_info->iterationsold = (short) g_max_iterations;
     }
     else
     {
@@ -977,7 +977,7 @@ static void setup_save_info(FRACTAL_INFO *save_info)
     save_info->inversejulia = (short)((static_cast<int>(g_major_method) << 8) + static_cast<int>(minor_method));
     save_info->bailout = g_bail_out;
     save_info->bailoutest = (short) g_bail_out_test;
-    save_info->iterations = maxit;
+    save_info->iterations = g_max_iterations;
     save_info->bflength = (short) bnlength;
     save_info->bf_math = (short) bf_math;
     save_info->old_demm_colors = (short) (old_demm_colors ? 1 : 0);

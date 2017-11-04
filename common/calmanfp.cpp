@@ -18,7 +18,7 @@ static int inside_color, periodicity_color;
 
 void calcmandfpasmstart()
 {
-    inside_color = (g_inside < COLOR_BLACK) ? maxit : g_inside;
+    inside_color = (g_inside < COLOR_BLACK) ? g_max_iterations : g_inside;
     periodicity_color = (periodicitycheck < 0) ? 7 : inside_color;
     oldcoloriter = 0;
 }
@@ -47,10 +47,10 @@ long calcmandfpasm()
     }
     else if (reset_periodicity)
     {
-        oldcoloriter = maxit - 255;
+        oldcoloriter = g_max_iterations - 255;
     }
 
-    tmpfsd = maxit - firstsavedand;
+    tmpfsd = g_max_iterations - firstsavedand;
     if (oldcoloriter > tmpfsd) // this defeats checking periodicity immediately
     {
         oldcoloriter = tmpfsd; // but matches the code in standard_fractal()
@@ -87,7 +87,7 @@ long calcmandfpasm()
         }
     }
 
-    cx = maxit;
+    cx = g_max_iterations;
     if (fractype != fractal_type::JULIAFP && fractype != fractal_type::JULIA)
     {
         // Mandelbrot_87
@@ -131,7 +131,7 @@ long calcmandfpasm()
         // no_save_new_xy_87
         if (cx < oldcoloriter)  // check periodicity
         {
-            if (((maxit - cx) & savedand) == 0)
+            if (((g_max_iterations - cx) & savedand) == 0)
             {
 #if USE_NEW
                 savedmag = magnitude;
@@ -156,9 +156,9 @@ long calcmandfpasm()
                 {
 #endif
                     //          oldcoloriter = 65535;
-                    oldcoloriter = maxit;
-                    realcoloriter = maxit;
-                    g_keyboard_check_interval = g_keyboard_check_interval -(maxit-cx);
+                    oldcoloriter = g_max_iterations;
+                    realcoloriter = g_max_iterations;
+                    g_keyboard_check_interval = g_keyboard_check_interval -(g_max_iterations-cx);
                     g_color_iter = periodicity_color;
                     goto pop_stack;
                 }
@@ -174,9 +174,9 @@ long calcmandfpasm()
 
     // reached maxit
     // check periodicity immediately next time, remember we count down from maxit
-    oldcoloriter = maxit;
-    g_keyboard_check_interval -= maxit;
-    realcoloriter = maxit;
+    oldcoloriter = g_max_iterations;
+    g_keyboard_check_interval -= g_max_iterations;
+    realcoloriter = g_max_iterations;
     g_color_iter = inside_color;
 
 pop_stack:
@@ -200,7 +200,7 @@ over_bailout_87:
     {
         oldcoloriter = 0;
     }
-    realcoloriter = maxit-cx;
+    realcoloriter = g_max_iterations-cx;
     g_color_iter = realcoloriter;
     if (g_color_iter == 0)
     {
@@ -238,7 +238,7 @@ over_bailout_87:
             g_color_iter = (long) fabs(atan2(g_new.y, g_new.x)*atan_colors/PI);
         }
         // check_color
-        if ((g_color_iter <= 0 || g_color_iter > maxit) && outside != FMOD)
+        if ((g_color_iter <= 0 || g_color_iter > g_max_iterations) && outside != FMOD)
         {
             if (save_release < 1961)
             {

@@ -3418,7 +3418,7 @@ EscherfpFractal() // Science of Fractal Images pp. 185, 187
     oldtest.y = g_new.y * 15.0;
     testsqr.x = sqr(oldtest.x);  // set up to test with user-specified ...
     testsqr.y = sqr(oldtest.y);  //    ... Julia as the target set
-    while (testsize <= rqlim && testiter < maxit) // nested Julia loop
+    while (testsize <= rqlim && testiter < g_max_iterations) // nested Julia loop
     {
         newtest.x = testsqr.x - testsqr.y + param[0];
         newtest.y = 2.0 * oldtest.x * oldtest.y + param[1];

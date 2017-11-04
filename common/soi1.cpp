@@ -47,11 +47,11 @@ static long iteration(double cr, double ci,
     g_float_param = &g_init;
     g_float_param->x = cr;
     g_float_param->y = ci;
-    while (ORBITCALC() == 0 && start < maxit)
+    while (ORBITCALC() == 0 && start < g_max_iterations)
     {
         start++;
     }
-    if (start >= maxit)
+    if (start >= g_max_iterations)
     {
         start = BASIN_COLOR;
     }
@@ -373,7 +373,7 @@ static int rhombus(double cre1, double cre2, double cim1, double cim2,
         status = true;
         goto rhombus_done;
     }
-    if (iter > maxit)
+    if (iter > g_max_iterations)
     {
         putbox(x1, y1, x2, y2, 0);
         status = false;
@@ -704,7 +704,7 @@ scan:
         /* if maximum number of iterations is reached, the whole rectangle
         can be assumed part of M. This is of course best case behavior
         of SOI, we seldom get there */
-        if (iter > maxit)
+        if (iter > g_max_iterations)
         {
             putbox(x1, y1, x2, y2, 0);
             status = false;

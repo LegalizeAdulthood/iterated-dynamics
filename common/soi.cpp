@@ -71,14 +71,14 @@ long iteration(LDBL cr, LDBL ci,
         imn = im*im;
         if (start != 0)
         {
-            offset = maxit - start + 7;
+            offset = g_max_iterations - start + 7;
             iter = offset >> 3;
             offset &= 7;
             offset = (8 - offset);
         }
         else
         {
-            iter = maxit >> 3;
+            iter = g_max_iterations >> 3;
         }
 
         int k = 8;
@@ -194,14 +194,14 @@ long iteration(LDBL cr, LDBL ci,
         imn = im*im;
         if (start != 0)
         {
-            offset = maxit - start + 7;
+            offset = g_max_iterations - start + 7;
             iter = offset >> 3;
             offset &= 7;
             offset = (8 - offset);
         }
         else
         {
-            iter = maxit >> 3;
+            iter = g_max_iterations >> 3;
         }
 
         do
@@ -316,7 +316,7 @@ long iteration(LDBL cr, LDBL ci,
         LDBL d = mag;
 #endif
         FREXP(d, &exponent);
-        return (maxit + offset - (((iter - 1) << 3) + (long)adjust[exponent >> 3]));
+        return (g_max_iterations + offset - (((iter - 1) << 3) + (long)adjust[exponent >> 3]));
     }
 }
 
@@ -619,7 +619,7 @@ static int rhombus(LDBL cre1, LDBL cre2, LDBL cim1, LDBL cim2,
         status = true;
         goto rhombus_done;
     }
-    if (iter > maxit)
+    if (iter > g_max_iterations)
     {
         putbox(x1, y1, x2, y2, 0);
         status = false;
@@ -901,7 +901,7 @@ scan:
         /* if maximum number of iterations is reached, the whole rectangle
         can be assumed part of M. This is of course best case behavior
         of SOI, we seldomly get there */
-        if (iter > maxit)
+        if (iter > g_max_iterations)
         {
             putbox(x1, y1, x2, y2, 0);
             status = false;

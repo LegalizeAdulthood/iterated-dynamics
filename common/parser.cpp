@@ -2589,7 +2589,7 @@ static bool ParseStr(char const *Str, int pass)
     v[7].a.d.x = v[7].a.d.y;
     v[11].a.d.x = (double)xdots;
     v[11].a.d.y = (double)ydots;
-    v[12].a.d.x = (double)maxit;
+    v[12].a.d.x = (double)g_max_iterations;
     v[12].a.d.y = 0;
     v[13].a.d.x = g_is_mandelbrot ? 1.0 : 0.0;
     v[13].a.d.y = 0;
@@ -2656,7 +2656,7 @@ static bool ParseStr(char const *Str, int pass)
         v[11].a.l.x <<= bitshift;
         v[11].a.l.y = ydots;
         v[11].a.l.y <<= bitshift;
-        v[12].a.l.x = maxit;
+        v[12].a.l.x = g_max_iterations;
         v[12].a.l.x <<= bitshift;
         v[12].a.l.y = 0L;
         v[13].a.l.x = g_is_mandelbrot ? 1 : 0;

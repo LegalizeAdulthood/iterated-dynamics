@@ -1874,7 +1874,7 @@ void get_julia_attractor(double real, double imag)
     }
 
     savper = periodicitycheck;
-    savmaxit = maxit;
+    savmaxit = g_max_iterations;
     periodicitycheck = 0;
     old.x = real;                    // prepare for f.p orbit calc
     old.y = imag;
@@ -1891,20 +1891,20 @@ void get_julia_attractor(double real, double imag)
     g_l_temp_sqr_x = g_l_temp_sqr_x << bitshift;
     g_l_temp_sqr_y = g_l_temp_sqr_y << bitshift;
 
-    if (maxit < 500)           // we're going to try at least this hard
+    if (g_max_iterations < 500)           // we're going to try at least this hard
     {
-        maxit = 500;
+        g_max_iterations = 500;
     }
     g_color_iter = 0;
     overflow = false;
-    while (++g_color_iter < maxit)
+    while (++g_color_iter < g_max_iterations)
     {
         if (curfractalspecific->orbitcalc() || overflow)
         {
             break;
         }
     }
-    if (g_color_iter >= maxit)      // if orbit stays in the lake
+    if (g_color_iter >= g_max_iterations)      // if orbit stays in the lake
     {
         if (g_integer_fractal)     // remember where it went to
         {
@@ -1953,7 +1953,7 @@ void get_julia_attractor(double real, double imag)
     {
         periodicitycheck = savper;
     }
-    maxit = savmaxit;
+    g_max_iterations = savmaxit;
 }
 
 

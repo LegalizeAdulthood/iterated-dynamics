@@ -45,7 +45,7 @@ int     sxoffs, syoffs;         // physical top left of logical screen
 int     xdots, ydots;           // # of dots on the logical screen
 double  x_size_d, y_size_d;         // xdots-1, ydots-1
 int     g_colors = 256;           // maximum colors available
-long    maxit;                  // try this many iterations
+long    g_max_iterations;                  // try this many iterations
 int     g_box_count;               // 0 if no zoom-box yet
 int     zoom_box_rotation;                // zoombox rotation
 double  zbx, zby;               // topleft of zoombox
@@ -684,7 +684,7 @@ int timer(int timertype, int(*subrtn)(), ...)
                 curfractalspecific->name,
                 xdots,
                 ydots,
-                maxit);
+                g_max_iterations);
         fprintf(fp, " time= %ld.%02ld secs\n", timer_interval/100, timer_interval%100);
         if (fp != nullptr)
         {

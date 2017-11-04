@@ -65,7 +65,7 @@ int test()
                     put_resume(sizeof(row), &row, sizeof(passes), &passes, 0);
                     return (-1);
                 }
-                color = testpt(g_init.x, g_init.y, parm.x, parm.y, maxit, g_inside);
+                color = testpt(g_init.x, g_init.y, parm.x, parm.y, g_max_iterations, g_inside);
                 if (color >= g_colors)
                 {
                     // avoid trouble if color is 0
@@ -1028,9 +1028,9 @@ int Bifurcation()
 
     filter_cycles = (parm.x <= 0) ? DEFAULTFILTER : (long)parm.x;
     half_time_check = false;
-    if (periodicitycheck && (unsigned long)maxit < filter_cycles)
+    if (periodicitycheck && (unsigned long)g_max_iterations < filter_cycles)
     {
-        filter_cycles = (filter_cycles - maxit + 1) / 2;
+        filter_cycles = (filter_cycles - g_max_iterations + 1) / 2;
         half_time_check = true;
     }
 
@@ -1114,7 +1114,7 @@ static void verhulst()          // P. F. Verhulst (1845)
     {
         Bif_Period_Init();
         unsigned long counter;
-        for (counter = 0; counter < (unsigned long)maxit ; counter++)
+        for (counter = 0; counter < (unsigned long)g_max_iterations ; counter++)
         {
             if (curfractalspecific->orbitcalc())
             {
@@ -1125,7 +1125,7 @@ static void verhulst()          // P. F. Verhulst (1845)
                 break;
             }
         }
-        if (counter >= (unsigned long)maxit)   // if not periodic, go the distance
+        if (counter >= (unsigned long)g_max_iterations)   // if not periodic, go the distance
         {
             for (counter = 0; counter < filter_cycles ; counter++)
             {
@@ -1141,7 +1141,7 @@ static void verhulst()          // P. F. Verhulst (1845)
     {
         Bif_Period_Init();
     }
-    for (unsigned long counter = 0UL; counter < (unsigned long)maxit ; counter++)
+    for (unsigned long counter = 0UL; counter < (unsigned long)g_max_iterations ; counter++)
     {
         if (curfractalspecific->orbitcalc())
         {
@@ -1561,7 +1561,7 @@ bool lya_setup()
     filter_cycles = (long)param[2];
     if (filter_cycles == 0)
     {
-        filter_cycles = maxit/2;
+        filter_cycles = g_max_iterations/2;
     }
     lyaSeedOK = param[1] > 0 && param[1] <= 1 && g_debug_flag != debug_flags::force_standard_fractal;
     lyaLength = 1;
@@ -1640,7 +1640,7 @@ int lyapunov_cycles_in_c(long filter_cycles, double a, double b)
             }
         }
     }
-    for (i = 0; i < maxit/2; i++)
+    for (i = 0; i < g_max_iterations/2; i++)
     {
         for (int count = 0; count < lyaLength; count++)
         {
@@ -2434,7 +2434,7 @@ int calcfroth()   // per pixel 1/2/g, called with row & col set
         tempsqry = sqr(old.y);
         while (!found_attractor
                 && (tempsqrx + tempsqry < rqlim)
-                && (g_color_iter < maxit))
+                && (g_color_iter < g_max_iterations))
         {
             // simple formula: z = z^2 + conj(z*(-1+ai))
             // but it's the attractor that makes this so interesting
@@ -2573,7 +2573,7 @@ int calcfroth()   // per pixel 1/2/g, called with row & col set
         g_l_temp_sqr_y = lsqr(g_l_old.y);
         g_l_magnitude = g_l_temp_sqr_x + g_l_temp_sqr_y;
         while (!found_attractor && (g_l_magnitude < g_l_limit)
-                && (g_l_magnitude >= 0) && (g_color_iter < maxit))
+                && (g_l_magnitude >= 0) && (g_color_iter < g_max_iterations))
         {
             // simple formula: z = z^2 + conj(z*(-1+ai))
             // but it's the attractor that makes this so interesting
@@ -2729,7 +2729,7 @@ int calcfroth()   // per pixel 1/2/g, called with row & col set
             }
             else
             {
-                g_color_iter = fsp.shades * g_color_iter / maxit;
+                g_color_iter = fsp.shades * g_color_iter / g_max_iterations;
             }
             if (g_color_iter == 0)
             {
@@ -2745,7 +2745,7 @@ int calcfroth()   // per pixel 1/2/g, called with row & col set
             // Trying to make a better 16 color distribution.
             // Since their are only a few possiblities, just handle each case.
             // This is a mostly guess work here.
-            lshade = (g_color_iter<<16)/maxit;
+            lshade = (g_color_iter<<16)/g_max_iterations;
             if (fsp.attractors != 6) // either 2 or 3 attractors
             {
                 if (lshade < 2622)         // 0.04

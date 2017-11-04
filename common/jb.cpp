@@ -262,14 +262,14 @@ zline(long x, long y)
         }
         g_l_temp_sqr_x = multiply(g_l_old.x, g_l_old.x, bitshift);
         g_l_temp_sqr_y = multiply(g_l_old.y, g_l_old.y, bitshift);
-        for (n = 0; n < maxit; n++)
+        for (n = 0; n < g_max_iterations; n++)
         {
             if (fractalspecific[static_cast<int>(neworbittype)].orbitcalc())
             {
                 break;
             }
         }
-        if (n == maxit)
+        if (n == g_max_iterations)
         {
             if (g_julibrot_3d_mode == 3)
             {
@@ -384,14 +384,14 @@ zlinefp(double x, double y)
         tempsqrx = sqr(old.x);
         tempsqry = sqr(old.y);
 
-        for (n = 0; n < maxit; n++)
+        for (n = 0; n < g_max_iterations; n++)
         {
             if (fractalspecific[static_cast<int>(neworbittype)].orbitcalc())
             {
                 break;
             }
         }
-        if (n == maxit)
+        if (n == g_max_iterations)
         {
             if (g_julibrot_3d_mode == 3)
             {

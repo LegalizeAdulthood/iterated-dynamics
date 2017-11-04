@@ -1402,13 +1402,13 @@ int orbit2dfloat()
     g_color_iter = 0L;
     ret = 0;
     count = ret;
-    if (maxit > 0x1fffffL || g_max_count)
+    if (g_max_iterations > 0x1fffffL || g_max_count)
     {
         g_max_count = 0x7fffffffL;
     }
     else
     {
-        g_max_count = maxit*1024L;
+        g_max_count = g_max_iterations*1024L;
     }
 
     if (resuming)
@@ -1577,13 +1577,13 @@ int orbit2dlong()
     z = initorbitlong[2];
     ret = 0;
     count = ret;
-    if (maxit > 0x1fffffL || g_max_count)
+    if (g_max_iterations > 0x1fffffL || g_max_count)
     {
         g_max_count = 0x7fffffffL;
     }
     else
     {
-        g_max_count = maxit*1024L;
+        g_max_count = g_max_iterations*1024L;
     }
     g_color_iter = 0L;
 
@@ -1713,13 +1713,13 @@ static int orbit3dlongcalc()
 
     ret = 0;
     count = ret;
-    if (maxit > 0x1fffffL || g_max_count)
+    if (g_max_iterations > 0x1fffffL || g_max_count)
     {
         g_max_count = 0x7fffffffL;
     }
     else
     {
-        g_max_count = maxit*1024L;
+        g_max_count = g_max_iterations*1024L;
     }
     g_color_iter = 0L;
     while (g_color_iter++ <= g_max_count) // loop until keypress or maxit
@@ -1843,13 +1843,13 @@ static int orbit3dfloatcalc()
     fp = open_orbitsave();
 
     ret = 0;
-    if (maxit > 0x1fffffL || g_max_count)
+    if (g_max_iterations > 0x1fffffL || g_max_count)
     {
         g_max_count = 0x7fffffffL;
     }
     else
     {
-        g_max_count = maxit*1024L;
+        g_max_count = g_max_iterations*1024L;
     }
     g_color_iter = 0L;
     count = g_color_iter;
@@ -2090,7 +2090,7 @@ int dynam2dfloat()
             color = 1;    // (don't use the background color)
         }
 
-        for (count = 0; count < maxit; count++)
+        for (count = 0; count < g_max_iterations; count++)
         {
             if (count % 2048L == 0)
             {
@@ -2222,9 +2222,9 @@ int plotorbits2dsetup()
     o_cvt.e += 0.5;
     o_cvt.f += 0.5;
 
-    if (orbit_delay >= maxit)   // make sure we get an image
+    if (orbit_delay >= g_max_iterations)   // make sure we get an image
     {
-        orbit_delay = (int)(maxit - 1);
+        orbit_delay = (int)(g_max_iterations - 1);
     }
 
     o_color = 1;
@@ -2290,7 +2290,7 @@ int plotorbits2dfloat()
 
     PER_PIXEL(); // initialize the calculations
 
-    for (count = 0; count < maxit; count++)
+    for (count = 0; count < g_max_iterations; count++)
     {
         if (ORBITCALC() == 1 && periodicitycheck)
         {
@@ -2423,13 +2423,13 @@ static int ifs3dfloat()
     fp = open_orbitsave();
 
     ret = 0;
-    if (maxit > 0x1fffffL)
+    if (g_max_iterations > 0x1fffffL)
     {
         g_max_count = 0x7fffffffL;
     }
     else
     {
-        g_max_count = maxit*1024;
+        g_max_count = g_max_iterations*1024;
     }
     g_color_iter = 0L;
     while (g_color_iter++ <= g_max_count) // loop until keypress or maxit
@@ -2598,13 +2598,13 @@ static int ifs2d()
     y = 0;
     x = y;
     ret = 0;
-    if (maxit > 0x1fffffL)
+    if (g_max_iterations > 0x1fffffL)
     {
         g_max_count = 0x7fffffffL;
     }
     else
     {
-        g_max_count = maxit*1024L;
+        g_max_count = g_max_iterations*1024L;
     }
     g_color_iter = 0L;
     while (g_color_iter++ <= g_max_count) // loop until keypress or maxit
@@ -2711,13 +2711,13 @@ static int ifs3dlong()
     fp = open_orbitsave();
 
     ret = 0;
-    if (maxit > 0x1fffffL)
+    if (g_max_iterations > 0x1fffffL)
     {
         g_max_count = 0x7fffffffL;
     }
     else
     {
-        g_max_count = maxit*1024L;
+        g_max_count = g_max_iterations*1024L;
     }
     g_color_iter = 0L;
     while (g_color_iter++ <= g_max_count) // loop until keypress or maxit

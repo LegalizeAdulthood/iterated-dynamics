@@ -470,7 +470,7 @@ static void initvars_fractal()          // init vars affecting calculation
     g_fill_color = -1;                     // no special fill color
     usr_biomorph = -1;                  // turn off biomorph flag
     outside = ITER;                     // outside color = -1 (not used)
-    maxit = 150;                        // initial maxiter
+    g_max_iterations = 150;                        // initial maxiter
     usr_stdcalcmode = 'g';              // initial solid-guessing
     stoppass = 0;                       // initial guessing stoppass
     quick_calc = false;
@@ -1616,7 +1616,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         {
             goto badarg;
         }
-        maxit = (long) floatval[0];
+        g_max_iterations = (long) floatval[0];
         return CMDARG_FRACTAL_PARAM;
     }
 

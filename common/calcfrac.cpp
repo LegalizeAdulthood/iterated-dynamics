@@ -675,7 +675,7 @@ int calcfract()
     }
     else
     {
-        nextsavedincr = (int)log10(static_cast<double>(maxit)); // works better than log()
+        nextsavedincr = (int)log10(static_cast<double>(g_max_iterations)); // works better than log()
         if (nextsavedincr < 4)
         {
             nextsavedincr = 4; // maintains image with low iterations
@@ -684,23 +684,23 @@ int calcfract()
     }
 
     g_log_map_table.clear();
-    MaxLTSize = maxit;
+    MaxLTSize = g_max_iterations;
     g_log_map_calculate = false;
     // below, INT_MAX = 32767 only when an integer is two bytes.  Which is not true for Xfractint.
     // Since 32767 is what was meant, replaced the instances of INT_MAX with 32767.
-    if (g_log_map_flag && (((maxit > 32767) && (save_release > 1920))
+    if (g_log_map_flag && (((g_max_iterations > 32767) && (save_release > 1920))
                     || g_log_map_fly_calculate == 1))
     {
         g_log_map_calculate = true; // calculate on the fly
         SetupLogTable();
     }
-    else if (g_log_map_flag && (((maxit > 32767) && (save_release <= 1920))
+    else if (g_log_map_flag && (((g_max_iterations > 32767) && (save_release <= 1920))
                          || g_log_map_fly_calculate == 2))
     {
         MaxLTSize = 32767;
         g_log_map_calculate = false; // use logtable
     }
-    else if (rangeslen && (maxit >= 32767))
+    else if (rangeslen && (g_max_iterations >= 32767))
     {
         MaxLTSize = 32766;
     }
@@ -1942,7 +1942,7 @@ int calcmand()              // fast per pixel 1/2/b/g, called with row & col set
     if (calcmandasm() >= 0)
     {
         if ((!g_log_map_table.empty() || g_log_map_calculate) // map color, but not if maxit & adjusted for inside,etc
-                && (realcoloriter < maxit || (g_inside < COLOR_BLACK && g_color_iter == maxit)))
+                && (realcoloriter < g_max_iterations || (g_inside < COLOR_BLACK && g_color_iter == g_max_iterations)))
         {
             g_color_iter = logtablecalc(g_color_iter);
         }
@@ -2012,7 +2012,7 @@ int calcmandfp()
             g_color_iter = potential(g_magnitude, realcoloriter);
         }
         if ((!g_log_map_table.empty() || g_log_map_calculate) // map color, but not if maxit & adjusted for inside,etc
-                && (realcoloriter < maxit || (g_inside < COLOR_BLACK && g_color_iter == maxit)))
+                && (realcoloriter < g_max_iterations || (g_inside < COLOR_BLACK && g_color_iter == g_max_iterations)))
         {
             g_color_iter = logtablecalc(g_color_iter);
         }
@@ -2095,7 +2095,7 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
     DComplex lastz = { 0.0 };
 
     lcloseprox = (long)(g_close_proximity*g_fudge_factor);
-    savemaxit = maxit;
+    savemaxit = g_max_iterations;
 #ifdef NUMSAVED
     for (int i = 0; i < NUMSAVED; i++)
     {
@@ -2111,7 +2111,7 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
         }
         if (save_release > 1824)
         {
-            maxit = 16;
+            g_max_iterations = 16;
         }
     }
     if (periodicitycheck == 0 || g_inside == ZMAG || g_inside == STARTRAIL)
@@ -2120,7 +2120,7 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
     }
     else if (g_inside == PERIOD)       // for display-periodicity
     {
-        oldcoloriter = (maxit/5)*4;       // don't check until nearly done
+        oldcoloriter = (g_max_iterations/5)*4;       // don't check until nearly done
     }
     else if (reset_periodicity)
     {
@@ -2269,7 +2269,7 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
     {
         snd_time_write();
     }
-    while (++g_color_iter < maxit)
+    while (++g_color_iter < g_max_iterations)
     {
         // calculation of one orbit goes here
         // input in "old" -- output in "new"
@@ -2686,7 +2686,7 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
                     }
                     fflush(fp);
 #endif
-                    g_color_iter = maxit - 1;
+                    g_color_iter = g_max_iterations - 1;
                 }
 
             }
@@ -2699,7 +2699,7 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
     }
 
     realcoloriter = g_color_iter;           // save this before we start adjusting it
-    if (g_color_iter >= maxit)
+    if (g_color_iter >= g_max_iterations)
     {
         oldcoloriter = 0;         // check periodicity immediately next time
     }
@@ -2738,7 +2738,7 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
         goto plot_pixel;          // skip any other adjustments
     }
 
-    if (g_color_iter >= maxit)                // an "inside" point
+    if (g_color_iter >= g_max_iterations)                // an "inside" point
     {
         goto plot_inside;         // distest, decomp, biomorph don't apply
     }
@@ -2788,7 +2788,7 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
 
 
         // eliminate negative colors & wrap arounds
-        if ((g_color_iter <= 0 || g_color_iter > maxit) && outside != FMOD)
+        if ((g_color_iter <= 0 || g_color_iter > g_max_iterations) && outside != FMOD)
         {
             if (save_release < 1961)
             {
@@ -2916,7 +2916,7 @@ plot_inside: // we're "inside"
             }
             else
             {
-                g_color_iter = maxit;
+                g_color_iter = g_max_iterations;
             }
         }
         else if (g_inside == EPSCROSS)
@@ -2931,7 +2931,7 @@ plot_inside: // we're "inside"
             }
             else if (hooper == 0)
             {
-                g_color_iter = maxit;
+                g_color_iter = g_max_iterations;
             }
             if (show_orbit)
             {
@@ -2972,16 +2972,16 @@ plot_inside: // we're "inside"
                 g_new.y = ((double)lnew.y) / fudge;
                 g_color_iter = (long)((((double)lsqr(lnew.x))/fudge + ((double)lsqr(lnew.y))/fudge) * (maxit>>1) + 1);
                 */
-                g_color_iter = (long)(((double)g_l_magnitude/g_fudge_factor) * (maxit >> 1) + 1);
+                g_color_iter = (long)(((double)g_l_magnitude/g_fudge_factor) * (g_max_iterations >> 1) + 1);
             }
             else
             {
-                g_color_iter = (long)((sqr(g_new.x) + sqr(g_new.y)) * (maxit >> 1) + 1);
+                g_color_iter = (long)((sqr(g_new.x) + sqr(g_new.y)) * (g_max_iterations >> 1) + 1);
             }
         }
         else   // inside == -1
         {
-            g_color_iter = maxit;
+            g_color_iter = g_max_iterations;
         }
         if (!g_log_map_table.empty() || g_log_map_calculate)
         {
@@ -3027,7 +3027,7 @@ plot_pixel:
     }
     (*plot)(col, row, g_color);
 
-    maxit = savemaxit;
+    g_max_iterations = savemaxit;
     if ((g_keyboard_check_interval -= abs((int)realcoloriter)) <= 0)
     {
         if (check_key())
@@ -3350,7 +3350,7 @@ static int potential(double mag, long iterations)
     int i_pot;
     long l_pot;
 
-    if (iterations < maxit)
+    if (iterations < g_max_iterations)
     {
         l_pot = iterations+2;
         pot = (float) l_pot;
@@ -5147,7 +5147,7 @@ static long autologmap()
     mincolour = LONG_MAX;
     row = 0;
     reset_periodicity = false;
-    old_maxit = maxit;
+    old_maxit = g_max_iterations;
     for (col = 0; col < xstop; col++) // top row
     {
         g_color = (*calctype)();
@@ -5158,7 +5158,7 @@ static long autologmap()
         if (realcoloriter < mincolour)
         {
             mincolour = realcoloriter ;
-            maxit = std::max(2L, mincolour); /*speedup for when edges overlap lakes */
+            g_max_iterations = std::max(2L, mincolour); /*speedup for when edges overlap lakes */
         }
         if (col >=32)
         {
@@ -5181,7 +5181,7 @@ static long autologmap()
         if (realcoloriter < mincolour)
         {
             mincolour = realcoloriter ;
-            maxit = std::max(2L, mincolour); /*speedup for when edges overlap lakes */
+            g_max_iterations = std::max(2L, mincolour); /*speedup for when edges overlap lakes */
         }
         if (row >=32)
         {
@@ -5204,7 +5204,7 @@ static long autologmap()
         if (realcoloriter < mincolour)
         {
             mincolour = realcoloriter ;
-            maxit = std::max(2L, mincolour); /*speedup for when edges overlap lakes */
+            g_max_iterations = std::max(2L, mincolour); /*speedup for when edges overlap lakes */
         }
         if (row >=32)
         {
@@ -5227,7 +5227,7 @@ static long autologmap()
         if (realcoloriter < mincolour)
         {
             mincolour = realcoloriter ;
-            maxit = std::max(2L, mincolour); /*speedup for when edges overlap lakes */
+            g_max_iterations = std::max(2L, mincolour); /*speedup for when edges overlap lakes */
         }
         if (col >=32)
         {
@@ -5244,7 +5244,7 @@ ack: // bailout here if key is pressed
     {
         resuming = true;
     }
-    maxit = old_maxit;
+    g_max_iterations = old_maxit;
 
     return mincolour ;
 }

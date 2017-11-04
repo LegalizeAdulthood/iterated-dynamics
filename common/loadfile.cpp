@@ -77,7 +77,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
         return -1;
     }
 
-    maxit        = read_info.iterationsold;
+    g_max_iterations        = read_info.iterationsold;
     int const read_fractype = read_info.fractal_type;
     if (read_fractype < 0 || read_fractype >= num_fractal_types)
     {
@@ -335,7 +335,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
     if (read_info.version > 9)
     {
         // post-version 18.23
-        maxit = read_info.iterations; // use long maxit
+        g_max_iterations = read_info.iterations; // use long maxit
         // post-version 18.27
         old_demm_colors = read_info.old_demm_colors != 0;
     }
@@ -1253,7 +1253,7 @@ bool check_back()
             (g_log_map_flag != 0 && save_release <= 2001) ||
             (fractype == fractal_type::TRIGSQR && save_release < 1900) ||
             (g_inside == STARTRAIL && save_release < 1825) ||
-            (maxit > 32767 && save_release <= 1950) ||
+            (g_max_iterations > 32767 && save_release <= 1950) ||
             (g_distance_estimator && save_release <=1950) ||
             ((outside <= REAL && outside >= ATAN) &&
              save_release <= 1960) ||

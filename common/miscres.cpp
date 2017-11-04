@@ -1243,7 +1243,7 @@ top:
         }
     }
     driver_put_string(s_row += 2, 2, C_GENERAL_MED, "Current (Max) Iteration: ");
-    sprintf(msg, "%ld (%ld)", g_color_iter, maxit);
+    sprintf(msg, "%ld (%ld)", g_color_iter, g_max_iterations);
     driver_put_string(-1, -1, C_GENERAL_HI, msg);
     driver_put_string(-1, -1, C_GENERAL_MED, "     Effective bailout: ");
     sprintf(msg, "%f", rqlim);
@@ -1326,7 +1326,7 @@ static void area()
             }
         }
     }
-    if (g_inside > COLOR_BLACK && outside < COLOR_BLACK && maxit > g_inside)
+    if (g_inside > COLOR_BLACK && outside < COLOR_BLACK && g_max_iterations > g_inside)
     {
         msg = "Warning: inside may not be unique\n";
     }

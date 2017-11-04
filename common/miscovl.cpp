@@ -850,9 +850,9 @@ void write_batch_parms(char const *colorinf, bool colorsonly, int maxcolor, int 
             put_parm(" %s=y", "float");
         }
 
-        if (maxit != 150)
+        if (g_max_iterations != 150)
         {
-            put_parm(" %s=%ld", "maxiter", maxit);
+            put_parm(" %s=%ld", "maxiter", g_max_iterations);
         }
 
         if (g_bail_out && (!potflag || potparam[2] == 0.0))
