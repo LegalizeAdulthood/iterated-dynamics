@@ -21,7 +21,6 @@
 #include "drivers.h"
 #include "fractype.h"
 
-#define FABS(x)  fabs(x)
 #define FREXP(x, y) frexp(x, y)
 
 #define EVERY 15
@@ -716,7 +715,7 @@ scan:
         state.l1 = (state.tzr1 == 0.0)?
            (state.l1 == 0.0)?1.0:1000.0:
            state.l1/state.tzr1;
-        if (FABS(1.0 - state.l1) > twidth)
+        if (fabs(1.0 - state.l1) > twidth)
         {
             break;
         }
@@ -725,7 +724,7 @@ scan:
         state.l2 = (state.tzi1 == 0.0)?
            (state.l2 == 0.0)?1.0:1000.0:
            state.l2/state.tzi1;
-        if (FABS(1.0 - state.l2) > twidth)
+        if (fabs(1.0 - state.l2) > twidth)
         {
             break;
         }
@@ -734,7 +733,7 @@ scan:
         state.l1 = (state.tzr2 == 0.0)?
            (state.l1 == 0.0)?1.0:1000.0:
            state.l1/state.tzr2;
-        if (FABS(1.0 - state.l1) > twidth)
+        if (fabs(1.0 - state.l1) > twidth)
         {
             break;
         }
@@ -743,7 +742,7 @@ scan:
         state.l2 = (state.tzi2 == 0.0)?
            (state.l2 == 0.0)?1.0:1000.0:
            state.l2/state.tzi2;
-        if (FABS(1.0 - state.l2) > twidth)
+        if (fabs(1.0 - state.l2) > twidth)
         {
             break;
         }
@@ -752,7 +751,7 @@ scan:
         state.l1 = (state.tzr3 == 0.0)?
            (state.l1 == 0.0)?1.0:1000.0:
            state.l1/state.tzr3;
-        if (FABS(1.0 - state.l1) > twidth)
+        if (fabs(1.0 - state.l1) > twidth)
         {
             break;
         }
@@ -761,7 +760,7 @@ scan:
         state.l2 = (state.tzi3 == 0.0)?
            (state.l2 == 0.0)?1.0:1000.0:
            state.l2/state.tzi3;
-        if (FABS(1.0 - state.l2) > twidth)
+        if (fabs(1.0 - state.l2) > twidth)
         {
             break;
         }
@@ -770,7 +769,7 @@ scan:
         state.l1 = (state.tzr4 == 0.0)?
            (state.l1 == 0.0)?1.0:1000.0:
            state.l1/state.tzr4;
-        if (FABS(1.0 - state.l1) > twidth)
+        if (fabs(1.0 - state.l1) > twidth)
         {
             break;
         }
@@ -779,7 +778,7 @@ scan:
         state.l2 = (state.tzi4 == 0.0)?
            (state.l2 == 0.0)?1.0:1000.0:
            state.l2/state.tzi4;
-        if (FABS(1.0 - state.l2) > twidth)
+        if (fabs(1.0 - state.l2) > twidth)
         {
             break;
         }
