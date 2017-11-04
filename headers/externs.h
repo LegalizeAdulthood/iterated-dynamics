@@ -312,7 +312,7 @@ extern MP                    g_mp_degree_minus_1_over_degree;
 extern MP                    g_mp_one;
 extern int                   g_mp_overflow;
 extern MP                    g_newton_mp_r_over_d;
-extern MP                    mpt2;
+extern MP                    g_mp_temp2;
 extern MP                    mpthreshold;
 extern MP                    mptmpparm2x;
 extern double                mxmaxfp;

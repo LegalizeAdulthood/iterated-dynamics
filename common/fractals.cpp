@@ -531,7 +531,7 @@ complex_div(DComplex numerator, DComplex denominator, DComplex *pout)
 
 #if !defined(XFRACT)
 MP g_newton_mp_r_over_d, g_mp_degree_minus_1_over_degree, mpthreshold;
-MP mpt2;
+MP g_mp_temp2;
 MP g_mp_one;
 #endif
 
@@ -578,10 +578,10 @@ int MPCNewtonFractal()
 
     mpcnew.x = *pMPadd(*pMPmul(g_mp_degree_minus_1_over_degree, mpcnew.x), g_newton_mp_r_over_d);
     mpcnew.y = *pMPmul(mpcnew.y, g_mp_degree_minus_1_over_degree);
-    mpt2 = MPCmod(mpctmp);
-    mpt2 = *pMPdiv(g_mp_one, mpt2);
-    mpcold.x = *pMPmul(mpt2, (*pMPadd(*pMPmul(mpcnew.x, mpctmp.x), *pMPmul(mpcnew.y, mpctmp.y))));
-    mpcold.y = *pMPmul(mpt2, (*pMPsub(*pMPmul(mpcnew.y, mpctmp.x), *pMPmul(mpcnew.x, mpctmp.y))));
+    g_mp_temp2 = MPCmod(mpctmp);
+    g_mp_temp2 = *pMPdiv(g_mp_one, g_mp_temp2);
+    mpcold.x = *pMPmul(g_mp_temp2, (*pMPadd(*pMPmul(mpcnew.x, mpctmp.x), *pMPmul(mpcnew.y, mpctmp.y))));
+    mpcold.y = *pMPmul(g_mp_temp2, (*pMPsub(*pMPmul(mpcnew.y, mpctmp.x), *pMPmul(mpcnew.x, mpctmp.y))));
     g_new.x = *pMP2d(mpcold.x);
     g_new.y = *pMP2d(mpcold.y);
     return g_mp_overflow;
