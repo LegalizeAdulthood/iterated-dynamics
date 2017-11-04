@@ -110,7 +110,7 @@ static long num_tris; // number of triangles output to ray trace file
 // global variables defined here
 std::vector<f_point> f_lastrow;
 void (* standardplot)(int, int, int);
-MATRIX m; // transformation matrix
+MATRIX g_m; // transformation matrix
 int g_ambient;
 int RANDOMIZE;
 int g_haze;
@@ -2511,18 +2511,18 @@ static int first_time(int linelen, VECTOR v)
         //*******************************************************************
 
         // start with identity
-        identity(m);
+        identity(g_m);
         identity(lightm);
 
         // translate so origin is in center of box, so that when we rotate
         // it, we do so through the center
         trans((double) xdots / (-2.0), (double) ydots / (-2.0),
-              (double) zcoord / (-2.0), m);
+              (double) zcoord / (-2.0), g_m);
         trans((double) xdots / (-2.0), (double) ydots / (-2.0),
               (double) zcoord / (-2.0), lightm);
 
         // apply scale factors
-        scale(sclx, scly, sclz, m);
+        scale(sclx, scly, sclz, g_m);
         scale(sclx, scly, sclz, lightm);
 
         // rotation values - converting from degrees to radians
@@ -2537,18 +2537,18 @@ static int first_time(int linelen, VECTOR v)
             xval = yval;
         }
 
-        xrot(xval, m);
+        xrot(xval, g_m);
         xrot(xval, lightm);
-        yrot(yval, m);
+        yrot(yval, g_m);
         yrot(yval, lightm);
-        zrot(zval, m);
+        zrot(zval, g_m);
         zrot(zval, lightm);
 
         // Find values of translation that make all x,y,z negative
         // m current matrix
         // 0 means don't show box
         // returns minimum and maximum values of x,y,z in fractal
-        corners(m, false, &xmin, &ymin, &zmin, &xmax, &ymax, &zmax);
+        corners(g_m, false, &xmin, &ymin, &zmin, &xmax, &ymax, &zmax);
     }
 
     // perspective 3D vector - lview[2] == 0 means no perspective
@@ -2590,13 +2590,13 @@ static int first_time(int linelen, VECTOR v)
         /* translate back exactly amount we translated earlier plus enough to
          * center image so maximum values are non-positive */
         trans(((double) xdots - xmax - xmin) / 2,
-              ((double) ydots - ymax - ymin) / 2, -zmax, m);
+              ((double) ydots - ymax - ymin) / 2, -zmax, g_m);
 
         // Keep the box centered and on screen regardless of shifts
         trans(((double) xdots - xmax - xmin) / 2,
               ((double) ydots - ymax - ymin) / 2, -zmax, lightm);
 
-        trans((double)(xshift), (double)(-yshift), 0.0, m);
+        trans((double)(xshift), (double)(-yshift), 0.0, g_m);
 
         /* matrix m now contains ALL those transforms composed together !!
          * convert m to long integers shifted 16 bits */
@@ -2604,7 +2604,7 @@ static int first_time(int linelen, VECTOR v)
         {
             for (int j = 0; j < 4; j++)
             {
-                llm[i][j] = (long)(m[i][j] * 65536.0);
+                llm[i][j] = (long)(g_m[i][j] * 65536.0);
             }
         }
 
@@ -2765,8 +2765,8 @@ static int first_time(int linelen, VECTOR v)
         v[0] = 0.0;
         v[1] = 0.0;
         v[2] = 0.0;
-        vmult(v, m, v);
-        vmult(light_direction, m, light_direction);
+        vmult(v, g_m, v);
+        vmult(light_direction, g_m, light_direction);
 
         for (int i = 0; i < 3; i++)
         {
@@ -2817,7 +2817,7 @@ static int first_time(int linelen, VECTOR v)
          * rotations 1 means show box - xmin etc. do nothing here */
         if (!SPHERE)
         {
-            corners(m, true, &xmin, &ymin, &zmin, &xmax, &ymax, &zmax);
+            corners(g_m, true, &xmin, &ymin, &zmin, &xmax, &ymax, &zmax);
         }
     }
 

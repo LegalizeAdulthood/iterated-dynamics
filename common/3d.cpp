@@ -233,10 +233,10 @@ void mult_vec(VECTOR s)
         tmp[j] = 0.0;
         for (int i = 0; i < RMAX-1; i++)
         {
-            tmp[j] += s[i]*m[i][j];
+            tmp[j] += s[i]*g_m[i][j];
         }
         // vector is really four dimensional with last component always 1
-        tmp[j] += m[3][j];
+        tmp[j] += g_m[3][j];
     }
     // set target = tmp. Necessary to use tmp in case source = target
     memcpy(s, tmp, sizeof(tmp));
