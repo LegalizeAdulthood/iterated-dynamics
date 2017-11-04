@@ -1908,7 +1908,7 @@ gfp_top:
     {
         choices[promptnum] = "ismand";
         paramvalues[promptnum].type = 'y';
-        paramvalues[promptnum++].uval.ch.val = ismand ? 1 : 0;
+        paramvalues[promptnum++].uval.ch.val = g_is_mandelbrot ? 1 : 0;
     }
 
     if (caller && (g_display_3d > display_3d_modes::NONE))
@@ -2060,9 +2060,9 @@ gfp_top:
     }
     if ((curtype == fractal_type::FORMULA || curtype == fractal_type::FFORMULA) && uses_ismand)
     {
-        if (ismand != (paramvalues[promptnum].uval.ch.val != 0))
+        if (g_is_mandelbrot != (paramvalues[promptnum].uval.ch.val != 0))
         {
-            ismand = (paramvalues[promptnum].uval.ch.val != 0);
+            g_is_mandelbrot = (paramvalues[promptnum].uval.ch.val != 0);
             ret = 1;
         }
         ++promptnum;

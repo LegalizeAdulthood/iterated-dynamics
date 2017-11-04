@@ -477,7 +477,7 @@ static void initvars_fractal()          // init vars affecting calculation
     stoppass = 0;                       // initial guessing stoppass
     quick_calc = false;
     g_close_proximity = 0.01;
-    ismand = true;                      // default formula mand/jul toggle
+    g_is_mandelbrot = true;                      // default formula mand/jul toggle
 #ifndef XFRACT
     usr_floatflag = false;              // turn off the float flag
 #else
@@ -1654,7 +1654,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         {
             goto badarg;
         }
-        ismand = yesnoval[0] != 0;
+        g_is_mandelbrot = yesnoval[0] != 0;
         return CMDARG_FRACTAL_PARAM;
     }
 

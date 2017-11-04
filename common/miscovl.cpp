@@ -664,7 +664,7 @@ void write_batch_parms(char const *colorinf, bool colorsonly, int maxcolor, int 
             put_parm(" %s=%s", "formulaname", g_formula_name.c_str());
             if (uses_ismand)
             {
-                put_parm(" %s=%c", "ismand", ismand ? 'y' : 'n');
+                put_parm(" %s=%c", "ismand", g_is_mandelbrot ? 'y' : 'n');
             }
         }
         if (fractype == fractal_type::LSYSTEM)

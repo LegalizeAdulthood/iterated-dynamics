@@ -176,7 +176,7 @@ int real_count;
 
 
 
-bool ismand = true;
+bool g_is_mandelbrot = true;
 
 unsigned int posp, vsp, LastOp;
 static unsigned int n, NextOp, InitN;
@@ -2591,7 +2591,7 @@ static bool ParseStr(char const *Str, int pass)
     v[11].a.d.y = (double)ydots;
     v[12].a.d.x = (double)maxit;
     v[12].a.d.y = 0;
-    v[13].a.d.x = ismand ? 1.0 : 0.0;
+    v[13].a.d.x = g_is_mandelbrot ? 1.0 : 0.0;
     v[13].a.d.y = 0;
     v[14].a.d.x = Xctr;
     v[14].a.d.y = Yctr;
@@ -2659,7 +2659,7 @@ static bool ParseStr(char const *Str, int pass)
         v[12].a.l.x = maxit;
         v[12].a.l.x <<= bitshift;
         v[12].a.l.y = 0L;
-        v[13].a.l.x = ismand ? 1 : 0;
+        v[13].a.l.x = g_is_mandelbrot ? 1 : 0;
         v[13].a.l.x <<= bitshift;
         v[13].a.l.y = 0L;
         v[14].a.l.x = (long)(v[14].a.d.x * fg);

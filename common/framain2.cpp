@@ -1075,17 +1075,17 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
         {
             if (fractype == fractal_type::FORMULA || fractype == fractal_type::FFORMULA)
             {
-                if (ismand)
+                if (g_is_mandelbrot)
                 {
                     fractalspecific[static_cast<int>(fractype)].tojulia = fractype;
                     fractalspecific[static_cast<int>(fractype)].tomandel = fractal_type::NOFRACTAL;
-                    ismand = false;
+                    g_is_mandelbrot = false;
                 }
                 else
                 {
                     fractalspecific[static_cast<int>(fractype)].tojulia = fractal_type::NOFRACTAL;
                     fractalspecific[static_cast<int>(fractype)].tomandel = fractype;
-                    ismand = true;
+                    g_is_mandelbrot = true;
                 }
             }
             if (curfractalspecific->tojulia != fractal_type::NOFRACTAL
@@ -2477,7 +2477,7 @@ static void save_history_info()
     current.iterations           = maxit                     ;
     current.old_demm_colors      = (short) (old_demm_colors ? 1 : 0);
     current.logcalc              = (short)Log_Fly_Calc;
-    current.ismand               = (short) (ismand ? 1 : 0);
+    current.ismand               = (short) (g_is_mandelbrot ? 1 : 0);
     current.closeprox            = g_close_proximity;
     current.nobof                = (short)nobof;
     current.orbit_delay          = (short)orbit_delay;
@@ -2667,7 +2667,7 @@ static void restore_history_info(int i)
         g_invert = 3;
     }
     Log_Fly_Calc = last.logcalc;
-    ismand = last.ismand != 0;
+    g_is_mandelbrot = last.ismand != 0;
     g_close_proximity = last.closeprox;
     nobof = last.nobof != 0;
     orbit_delay = last.orbit_delay;

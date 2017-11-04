@@ -226,7 +226,7 @@ extern int                   g_integer_fractal;
 extern double                g_inversion[];
 extern int                   g_invert;
 extern bool                  g_is_true_color;
-extern bool                  ismand;
+extern bool                  g_is_mandelbrot;
 extern int                   ixstart;
 extern int                   ixstop;
 extern int                   iystart;
