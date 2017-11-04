@@ -71,9 +71,9 @@ void SetColorPaletteName(char const *fn)
     }
     for (int i = 0; i < 256; ++i)
     {
-        map_clut[i][0] = g_dac_box[i][0];
-        map_clut[i][1] = g_dac_box[i][1];
-        map_clut[i][2] = g_dac_box[i][2];
+        g_map_clut[i][0] = g_dac_box[i][0];
+        g_map_clut[i][1] = g_dac_box[i][1];
+        g_map_clut[i][2] = g_dac_box[i][2];
     }
     g_map_specified = true;
 }

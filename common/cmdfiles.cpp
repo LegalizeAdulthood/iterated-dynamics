@@ -109,7 +109,7 @@ int     rotate_lo = 0;
 int     rotate_hi = 0;          // cycling color range
 std::vector<int> ranges;        // iter->color ranges mapping
 int     rangeslen = 0;          // size of ranges array
-BYTE map_clut[256][3];          // map= (default colors)
+BYTE g_map_clut[256][3];          // map= (default colors)
 bool g_map_specified = false;     // map= specified
 BYTE *mapdacbox = nullptr;      // map= (default colors)
 int     g_color_state = 0;         // 0, g_dac_box matches default (bios or map=)

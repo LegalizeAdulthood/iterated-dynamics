@@ -143,9 +143,9 @@ main_state big_while_loop(bool *const kbdmore, bool *const stacked, bool const r
                     // but there's a map=, so load that
                     for (int i = 0; i < 256; ++i)
                     {
-                        g_dac_box[i][0] = map_clut[i][0];
-                        g_dac_box[i][1] = map_clut[i][1];
-                        g_dac_box[i][2] = map_clut[i][2];
+                        g_dac_box[i][0] = g_map_clut[i][0];
+                        g_dac_box[i][1] = g_map_clut[i][1];
+                        g_dac_box[i][2] = g_map_clut[i][2];
                     }
                     spindac(0, 1);
                 }
@@ -2691,9 +2691,9 @@ static void restore_history_info(int i)
     {
         for (int i = 0; i < 256; ++i)
         {
-            map_clut[i][0] = last.dac[i][0];
-            map_clut[i][1] = last.dac[i][1];
-            map_clut[i][2] = last.dac[i][2];
+            g_map_clut[i][0] = last.dac[i][0];
+            g_map_clut[i][1] = last.dac[i][1];
+            g_map_clut[i][2] = last.dac[i][2];
         }
     }
     spindac(0, 1);
