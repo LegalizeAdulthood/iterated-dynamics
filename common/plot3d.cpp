@@ -211,14 +211,7 @@ void plot3dsuperimpose256(int x, int y, int color)
     if (color != 0)         // Keeps index 0 still 0
     {
         color = g_colors - color; //  Reverses color order
-        if (max_colors == 236)
-        {
-            color = 1 + color / 21; //  Maps colors 1-255 to 13 even ranges
-        }
-        else
-        {
-            color = 1 + color / 18; //  Maps colors 1-255 to 15 even ranges
-        }
+        color = 1 + color / 18; //  Maps colors 1-255 to 15 even ranges
     }
 
     tmp = getcolor(x, y);
@@ -276,14 +269,7 @@ void plotIFS3dsuperimpose256(int x, int y, int color)
     {
         // my mind is fried - lower indices = darker colors is EASIER!
         color = g_colors - color; //  Reverses color order
-        if (max_colors == 236)
-        {
-            color = 1 + color / 21; //  Maps colors 1-255 to 13 even ranges
-        }
-        else
-        {
-            color = 1 + color / 18; //  Looks weird but maps colors 1-255 to 15 relatively even ranges
-        }
+        color = 1 + color / 18; //  Looks weird but maps colors 1-255 to 15 relatively even ranges
     }
 
     tmp = getcolor(x, y);
