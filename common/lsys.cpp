@@ -379,7 +379,7 @@ int Lsystem()
 
 bool LLoad()
 {
-    if (readLSystemFile(LName.c_str()))
+    if (readLSystemFile(g_l_system_name.c_str()))
     {
         // error occurred
         free_rules_mem();

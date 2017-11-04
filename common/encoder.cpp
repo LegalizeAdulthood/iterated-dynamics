@@ -571,7 +571,7 @@ bool encoder()
         //    if (save_info.fractal_type == LSYSTEM)
         if (fractype == fractal_type::LSYSTEM)
         {
-            save_info.tot_extend_len += store_item_name(LName.c_str());
+            save_info.tot_extend_len += store_item_name(g_l_system_name.c_str());
         }
         //    if (save_info.fractal_type == IFS || save_info.fractal_type == IFS3D)
         if (fractype == fractal_type::IFS || fractype == fractal_type::IFS3D)

@@ -128,7 +128,7 @@ int fullscreen_prompt(      // full-screen prompting routine
         }
         else if (fractype == fractal_type::LSYSTEM)
         {
-            find_file_item(g_l_system_filename, LName.c_str(), &scroll_file, 2);
+            find_file_item(g_l_system_filename, g_l_system_name.c_str(), &scroll_file, 2);
             in_scrolling_mode = true;
             scroll_file_start = ftell(scroll_file);
         }
@@ -1225,7 +1225,7 @@ sel_type_restart:
     if (fractype == fractal_type::LSYSTEM)
     {
         g_help_mode = HT_LSYS;
-        if (get_file_entry(GETLSYS, "L-System", lsysmask, g_l_system_filename, LName) < 0)
+        if (get_file_entry(GETLSYS, "L-System", lsysmask, g_l_system_filename, g_l_system_name) < 0)
         {
             ret = true;
             goto sel_type_exit;
@@ -1547,7 +1547,7 @@ int get_fract_params(int caller)        // prompt for type-specific parms
             // special for lsystem
             use_filename_ref = true;
             filename_ref = g_l_system_filename;
-            entryname = LName.c_str();
+            entryname = g_l_system_name.c_str();
         }
         else if (help_formula == -4)
         {
