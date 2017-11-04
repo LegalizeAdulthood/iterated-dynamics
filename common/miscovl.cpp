@@ -669,7 +669,7 @@ void write_batch_parms(char const *colorinf, bool colorsonly, int maxcolor, int 
         }
         if (fractype == fractal_type::LSYSTEM)
         {
-            put_filename("lfile", LFileName.c_str());
+            put_filename("lfile", g_l_system_filename.c_str());
             put_parm(" %s=%s", "lname", LName.c_str());
         }
         if (fractype == fractal_type::IFS || fractype == fractal_type::IFS3D)

@@ -244,7 +244,7 @@ extern LComplex              g_l_attractor[];
 extern long                  g_l_close_enough;
 extern LComplex              g_l_coefficient;
 extern bool                  g_ld_check;
-extern std::string           LFileName;
+extern std::string           g_l_system_filename;
 extern std::string           light_name;
 extern std::vector<BYTE>     line_buff;
 extern LComplex              linit;

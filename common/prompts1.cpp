@@ -128,7 +128,7 @@ int fullscreen_prompt(      // full-screen prompting routine
         }
         else if (fractype == fractal_type::LSYSTEM)
         {
-            find_file_item(LFileName, LName.c_str(), &scroll_file, 2);
+            find_file_item(g_l_system_filename, LName.c_str(), &scroll_file, 2);
             in_scrolling_mode = true;
             scroll_file_start = ftell(scroll_file);
         }
@@ -1180,9 +1180,9 @@ static fractal_type select_fracttype(fractal_type t) // subrtn of get_fracttype,
             g_formula_filename = searchfor.frm;
         }
         if (result == fractal_type::LSYSTEM
-                && LFileName == g_command_file)
+                && g_l_system_filename == g_command_file)
         {
-            LFileName = searchfor.lsys;
+            g_l_system_filename = searchfor.lsys;
         }
         if ((result == fractal_type::IFS || result == fractal_type::IFS3D)
                 && g_ifs_filename == g_command_file)
@@ -1225,7 +1225,7 @@ sel_type_restart:
     if (fractype == fractal_type::LSYSTEM)
     {
         g_help_mode = HT_LSYS;
-        if (get_file_entry(GETLSYS, "L-System", lsysmask, LFileName, LName) < 0)
+        if (get_file_entry(GETLSYS, "L-System", lsysmask, g_l_system_filename, LName) < 0)
         {
             ret = true;
             goto sel_type_exit;
@@ -1546,7 +1546,7 @@ int get_fract_params(int caller)        // prompt for type-specific parms
         {
             // special for lsystem
             use_filename_ref = true;
-            filename_ref = LFileName;
+            filename_ref = g_l_system_filename;
             entryname = LName.c_str();
         }
         else if (help_formula == -4)

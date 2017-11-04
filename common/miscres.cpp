@@ -914,11 +914,11 @@ top:
             driver_put_string(s_row+1, 3, C_GENERAL_MED, "Item name:");
             driver_put_string(s_row+1, 16, C_GENERAL_HI, LName.c_str());
             driver_put_string(s_row+2, 3, C_GENERAL_MED, "Item file:");
-            if ((int) LFileName.length() >= 28)
+            if ((int) g_l_system_filename.length() >= 28)
             {
                 addrow = 1;
             }
-            driver_put_string(s_row+2+addrow, 16, C_GENERAL_HI, LFileName.c_str());
+            driver_put_string(s_row+2+addrow, 16, C_GENERAL_HI, g_l_system_filename.c_str());
         }
         if (fractype == fractal_type::IFS || fractype == fractal_type::IFS3D)
         {

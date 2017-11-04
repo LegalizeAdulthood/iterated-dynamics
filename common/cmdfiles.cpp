@@ -154,7 +154,7 @@ fractalspecificstuff *curfractalspecific = nullptr;
 
 std::string g_formula_filename;               // file to find (type=)formulas in
 std::string g_formula_name;                   // Name of the Formula (if not null)
-std::string LFileName;                  // file to find (type=)L-System's in
+std::string g_l_system_filename;                  // file to find (type=)L-System's in
 std::string LName;                      // Name of L-System
 std::string g_command_file;                // file to find command sets in
 std::string g_command_name;                // Name of Command set
@@ -366,7 +366,7 @@ int cmdfiles(int argc, char const *const *argv)
     //set structure of search directories
     strcpy(searchfor.par, g_command_file.c_str());
     strcpy(searchfor.frm, g_formula_filename.c_str());
-    strcpy(searchfor.lsys, LFileName.c_str());
+    strcpy(searchfor.lsys, g_l_system_filename.c_str());
     strcpy(searchfor.ifs, g_ifs_filename.c_str());
     return 0;
 }
@@ -439,7 +439,7 @@ static void initvars_restart()          // <ins> key init
     timerflag = false;                  // timer flags are off
     g_formula_filename = "fractint.frm";      // default formula file
     g_formula_name = "";
-    LFileName = "fractint.l";
+    g_l_system_filename = "fractint.l";
     LName = "";
     g_command_file = "fractint.par";
     g_command_name = "";
@@ -3028,7 +3028,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         {
             goto badarg;
         }
-        if (merge_pathnames(LFileName, value, mode) < 0)
+        if (merge_pathnames(g_l_system_filename, value, mode) < 0)
         {
             init_msg(variable.c_str(), value, mode);
         }

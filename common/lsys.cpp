@@ -132,7 +132,7 @@ bool readLSystemFile(char const *str)
     char inline1[MAX_LSYS_LINE_LEN+1];
     FILE *infile;
 
-    if (find_file_item(LFileName, str, &infile, 2))
+    if (find_file_item(g_l_system_filename, str, &infile, 2))
     {
         return true;
     }
