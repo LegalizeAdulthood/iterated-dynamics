@@ -24,7 +24,6 @@
 #include "prototyp.h"
 #include "drivers.h"
 
-#define FABS(x)  fabsl(x)
 /* the following needs to be changed back to frexpl once the portability
    issue has been addressed */
 #ifndef XFRACT
@@ -148,11 +147,11 @@ long iteration(LDBL cr, LDBL ci,
             re += cr;
 
 #ifdef INTEL
-            mag = FABS(sre - re);
+            mag = fabsl(sre - re);
             magi = *(unsigned long *)&mag;
             if (magi < eq)
             {
-                mag = FABS(sim - im);
+                mag = fabsl(sim - im);
                 magi = *(unsigned long *)&mag;
                 if (magi < eq)
                 {
@@ -160,7 +159,7 @@ long iteration(LDBL cr, LDBL ci,
                 }
             }
 #else // INTEL
-            if (FABS(sre - re) < equal && FABS(sim - im) < equal)
+            if (fabsl(sre - re) < equal && fabsl(sim - im) < equal)
             {
                 return BASIN_COLOR;
             }
@@ -914,7 +913,7 @@ scan:
         state.l1 = (state.tzr1 == 0.0)?
            (state.l1 == 0.0)?1.0:1000.0:
            state.l1/state.tzr1;
-        if (FABS(1.0 - state.l1) > twidth)
+        if (fabsl(1.0 - state.l1) > twidth)
         {
             break;
         }
@@ -923,7 +922,7 @@ scan:
         state.l2 = (state.tzi1 == 0.0)?
            (state.l2 == 0.0)?1.0:1000.0:
            state.l2/state.tzi1;
-        if (FABS(1.0 - state.l2) > twidth)
+        if (fabsl(1.0 - state.l2) > twidth)
         {
             break;
         }
@@ -932,7 +931,7 @@ scan:
         state.l1 = (state.tzr2 == 0.0)?
            (state.l1 == 0.0)?1.0:1000.0:
            state.l1/state.tzr2;
-        if (FABS(1.0 - state.l1) > twidth)
+        if (fabsl(1.0 - state.l1) > twidth)
         {
             break;
         }
@@ -941,7 +940,7 @@ scan:
         state.l2 = (state.tzi2 == 0.0)?
            (state.l2 == 0.0)?1.0:1000.0:
            state.l2/state.tzi2;
-        if (FABS(1.0 - state.l2) > twidth)
+        if (fabsl(1.0 - state.l2) > twidth)
         {
             break;
         }
@@ -950,7 +949,7 @@ scan:
         state.l1 = (state.tzr3 == 0.0)?
            (state.l1 == 0.0)?1.0:1000.0:
            state.l1/state.tzr3;
-        if (FABS(1.0 - state.l1) > twidth)
+        if (fabsl(1.0 - state.l1) > twidth)
         {
             break;
         }
@@ -959,7 +958,7 @@ scan:
         state.l2 = (state.tzi3 == 0.0)?
            (state.l2 == 0.0)?1.0:1000.0:
            state.l2/state.tzi3;
-        if (FABS(1.0 - state.l2) > twidth)
+        if (fabsl(1.0 - state.l2) > twidth)
         {
             break;
         }
@@ -968,7 +967,7 @@ scan:
         state.l1 = (state.tzr4 == 0.0)?
            (state.l1 == 0.0)?1.0:1000.0:
            state.l1/state.tzr4;
-        if (FABS(1.0 - state.l1) > twidth)
+        if (fabsl(1.0 - state.l1) > twidth)
         {
             break;
         }
@@ -977,7 +976,7 @@ scan:
         state.l2 = (state.tzi4 == 0.0)?
            (state.l2 == 0.0)?1.0:1000.0:
            state.l2/state.tzi4;
-        if (FABS(1.0 - state.l2) > twidth)
+        if (fabsl(1.0 - state.l2) > twidth)
         {
             break;
         }
