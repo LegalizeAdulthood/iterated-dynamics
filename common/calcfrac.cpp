@@ -89,7 +89,7 @@ static long autologmap();
 // variables exported from this file
 LComplex g_l_init_orbit = { 0 };
 long lmagnitud = 0;
-long llimit = 0;
+long g_l_limit = 0;
 long g_l_limit2 = 0;
 long g_l_close_enough = 0;
 DComplex g_init = { 0.0 };
@@ -848,10 +848,10 @@ int calcfract()
         lparm.y = (long)(parm.y * g_fudge_factor);    // imaginary portion of Lambda
         lparm2.x = (long)(parm2.x * g_fudge_factor);  // real portion of Lambda2
         lparm2.y = (long)(parm2.y * g_fudge_factor);  // imaginary portion of Lambda2
-        llimit = (long)(rqlim * g_fudge_factor);      // stop if magnitude exceeds this
-        if (llimit <= 0)
+        g_l_limit = (long)(rqlim * g_fudge_factor);      // stop if magnitude exceeds this
+        if (g_l_limit <= 0)
         {
-            llimit = 0x7fffffffL; // klooge for integer math
+            g_l_limit = 0x7fffffffL; // klooge for integer math
         }
         g_l_limit2 = (long)(rqlim2 * g_fudge_factor);    // stop if magnitude exceeds this
         g_l_close_enough = (long)(g_close_enough * g_fudge_factor); // "close enough" value
