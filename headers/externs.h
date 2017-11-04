@@ -330,7 +330,7 @@ extern int                   g_periodicity_next_saved_incr;
 extern bool                  g_browse_sub_images;
 extern bool                  g_magnitude_calc;
 extern bool                  g_bof_match_book_images;
-extern int                   numaffine;
+extern int                   g_num_affine_transforms;
 extern unsigned              numcolors;
 extern const int             numtrigfn;
 extern int                   num_fractal_types;

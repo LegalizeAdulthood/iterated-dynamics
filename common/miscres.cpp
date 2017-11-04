@@ -1380,7 +1380,7 @@ char *get_ifs_token(char *buf, FILE *ifsfile)
     }
 }
 
-int numaffine;
+int g_num_affine_transforms;
 int ifsload()                   // read in IFS parameters
 {
     FILE *ifsfile;
@@ -1471,7 +1471,7 @@ int ifsload()                   // read in IFS parameters
 
     if (ret == 0)
     {
-        numaffine = i/rowsize;
+        g_num_affine_transforms = i/rowsize;
     }
     return (ret);
 }

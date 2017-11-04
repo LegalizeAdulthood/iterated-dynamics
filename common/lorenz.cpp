@@ -2445,7 +2445,7 @@ static int ifs3dfloat()
         // pick which iterated function to execute, weighted by probability
         sum = g_ifs_definition[12]; // [0][12]
         k = 0;
-        while (sum < r && ++k < numaffine*NUM_IFS_3D_PARAMS)
+        while (sum < r && ++k < g_num_affine_transforms*NUM_IFS_3D_PARAMS)
         {
             sum += g_ifs_definition[k*NUM_IFS_3D_PARAMS+12];
             if (g_ifs_definition[(k+1)*NUM_IFS_3D_PARAMS+12] == 0)
@@ -2571,7 +2571,7 @@ static int ifs2d()
     bool resized = false;
     try
     {
-        localifs.resize(numaffine*NUM_IFS_PARAMS);
+        localifs.resize(g_num_affine_transforms*NUM_IFS_PARAMS);
         resized = true;
     }
     catch (std::bad_alloc const&)
@@ -2583,7 +2583,7 @@ static int ifs2d()
         return (-1);
     }
 
-    for (int i = 0; i < numaffine; i++)      // fill in the local IFS array
+    for (int i = 0; i < g_num_affine_transforms; i++)      // fill in the local IFS array
     {
         for (int j = 0; j < NUM_IFS_PARAMS; j++)
         {
@@ -2620,7 +2620,7 @@ static int ifs2d()
         // pick which iterated function to execute, weighted by probability
         sum = localifs[6];  // [0][6]
         int k = 0;
-        while (sum < r && k < numaffine-1)    // fixed bug of error if sum < 1
+        while (sum < r && k < g_num_affine_transforms-1)    // fixed bug of error if sum < 1
         {
             sum += localifs[++k*NUM_IFS_PARAMS+6];
         }
@@ -2683,7 +2683,7 @@ static int ifs3dlong()
     color_method = (int)param[0];
     try
     {
-        localifs.resize(numaffine*NUM_IFS_3D_PARAMS);
+        localifs.resize(g_num_affine_transforms*NUM_IFS_3D_PARAMS);
     }
     catch (std::bad_alloc const &)
     {
@@ -2694,7 +2694,7 @@ static int ifs3dlong()
     // setup affine screen coord conversion
     l_setup_convert_to_screen(&inf.cvt);
 
-    for (int i = 0; i < numaffine; i++)      // fill in the local IFS array
+    for (int i = 0; i < g_num_affine_transforms; i++)      // fill in the local IFS array
     {
         for (int j = 0; j < NUM_IFS_3D_PARAMS; j++)
         {
@@ -2733,7 +2733,7 @@ static int ifs3dlong()
         // pick which iterated function to execute, weighted by probability
         sum = localifs[12];  // [0][12]
         int k = 0;
-        while (sum < r && ++k < numaffine*NUM_IFS_3D_PARAMS)
+        while (sum < r && ++k < g_num_affine_transforms*NUM_IFS_3D_PARAMS)
         {
             sum += localifs[k*NUM_IFS_3D_PARAMS+12];
             if (g_ifs_definition[(k+1)*NUM_IFS_3D_PARAMS+12] == 0)
