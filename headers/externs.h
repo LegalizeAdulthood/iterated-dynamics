@@ -298,7 +298,7 @@ extern long                  g_bignum_max_stack_addr;
 extern int                   g_max_keyboard_check_interval;
 extern int                   g_max_image_history;
 extern int                   g_max_rhombus_depth;
-extern int smallest_box_size_shown;
+extern int                   g_smallest_box_size_shown;
 extern Minor                 minor_method;
 extern int                   minstack;
 extern int                   minstackavail;

@@ -128,7 +128,7 @@ bool g_browsing = false;                  // browse mode flag
 std::string g_file_name_stack[16];        // array of file names used while browsing
 int name_stack_ptr ;
 double smallest_window_display_size;
-int smallest_box_size_shown;
+int g_smallest_box_size_shown;
 bool no_sub_images = false;
 bool g_auto_browse = false;
 bool g_confirm_file_deletes = false;
@@ -184,7 +184,7 @@ static void main_restart(int const argc, char const *const argv[], bool &stacked
     g_confirm_file_deletes = true;
     no_sub_images = false;
     smallest_window_display_size = 6;
-    smallest_box_size_shown = 3;
+    g_smallest_box_size_shown = 3;
     g_browse_mask = "*.gif";
     g_browse_name = "            ";
     name_stack_ptr = -1; // init loaded files stack
