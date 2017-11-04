@@ -425,7 +425,7 @@ extern int                   root;
 extern std::vector<DComplex> roots;
 extern int                   rotate_hi;
 extern int                   rotate_lo;
-extern double                roverd;
+extern double                g_newton_r_over_d;
 extern int                   row;
 extern int                   g_row_count;       // row-counter for decoder and out_line
 extern double                rqlim2;

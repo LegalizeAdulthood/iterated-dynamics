@@ -64,7 +64,7 @@ LComplex g_l_coefficient, g_l_old, g_l_new, g_l_param, g_l_init, g_l_temp, ltmp2
 long g_l_temp_sqr_x, g_l_temp_sqr_y;
 int g_max_color;
 int root, degree, g_basin;
-double roverd, g_degree_minus_1_over_degree, threshold;
+double g_newton_r_over_d, g_degree_minus_1_over_degree, threshold;
 DComplex tmp2;
 DComplex g_marks_coefficient;
 DComplex  staticroots[16]; // roots array for degree 16 or less
@@ -488,7 +488,7 @@ int NewtonFractal2()
         }
         return 1;
     }
-    g_new.x = g_degree_minus_1_over_degree * g_new.x + roverd;
+    g_new.x = g_degree_minus_1_over_degree * g_new.x + g_newton_r_over_d;
     g_new.y *= g_degree_minus_1_over_degree;
 
     // Watch for divide underflow

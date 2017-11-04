@@ -98,14 +98,14 @@ NewtonSetup()           // Newton/NewtBasin Routines
     root = 1;
 
     // precalculated values
-    roverd       = (double)root / (double)degree;
+    g_newton_r_over_d       = (double)root / (double)degree;
     g_degree_minus_1_over_degree      = (double)(degree - 1) / (double)degree;
     g_max_color     = 0;
     threshold    = .3*PI/degree; // less than half distance between roots
 #if !defined(XFRACT)
     if (fractype == fractal_type::MPNEWTON || fractype == fractal_type::MPNEWTBASIN)
     {
-        g_newton_mp_r_over_d     = *pd2MP(roverd);
+        g_newton_mp_r_over_d     = *pd2MP(g_newton_r_over_d);
         g_mp_degree_minus_1_over_degree    = *pd2MP(g_degree_minus_1_over_degree);
         mpthreshold  = *pd2MP(threshold);
         g_mp_one        = *pd2MP(1.0);
