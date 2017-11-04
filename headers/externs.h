@@ -292,7 +292,7 @@ extern long                  g_max_count;
 extern char                  g_max_function;
 extern long                  g_max_iterations;
 extern int                   g_max_line_length;
-extern unsigned              Max_Args;
+extern unsigned              g_max_function_args;
 extern unsigned              Max_Ops;
 extern long                  maxptr;
 extern int                   max_colors;

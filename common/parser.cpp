@@ -41,7 +41,7 @@ enum MATH_TYPE MathType = D_MATH;
 #define MAX_ARGS 100
 
 unsigned Max_Ops  = MAX_OPS;
-unsigned Max_Args = MAX_ARGS;
+unsigned g_max_function_args = MAX_ARGS;
 
 unsigned long number_of_ops, number_of_loads, number_of_stores, number_of_jumps;
 
@@ -4360,13 +4360,13 @@ static void parser_allocate()
         if (pass == 0)
         {
             Max_Ops = 2300;
-            Max_Args = (unsigned)(Max_Ops/2.5);
+            g_max_function_args = (unsigned)(Max_Ops/2.5);
         }
 
         f.resize(Max_Ops);
         Store.resize(MAX_STORES);
         Load.resize(MAX_LOADS);
-        v.resize(Max_Args);
+        v.resize(g_max_function_args);
         pfls.resize(Max_Ops);
 
         if (pass == 0)
@@ -4375,7 +4375,7 @@ static void parser_allocate()
             {
                 // per Chuck Ebbert, fudge these up a little
                 Max_Ops = posp + 4;
-                Max_Args = vsp + 4;
+                g_max_function_args = vsp + 4;
             }
         }
     }

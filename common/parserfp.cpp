@@ -952,7 +952,7 @@ awful_error:
     // ********************************************************************
     else if (ffptr == fStkDiv)
     {
-        if (prevfptr == fStkLodRealC && vsp < Max_Args - 1)
+        if (prevfptr == fStkLodRealC && vsp < g_max_function_args - 1)
         {
             // have found a divide by a real constant
             //  and there is space to create a new one
