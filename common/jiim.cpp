@@ -905,9 +905,9 @@ void Jiim(jiim_types which)
                 }
             }
             iter = 1;
-            lold.y = 0;
-            lold.x = lold.y;
-            old.y = lold.x;
+            g_l_old.y = 0;
+            g_l_old.x = g_l_old.y;
+            old.y = g_l_old.x;
             old.x = old.y;
             g_init.x = cr;
             SaveC.x = g_init.x;
@@ -1199,9 +1199,9 @@ void Jiim(jiim_types which)
                 color = (int)iter%g_colors;
                 if (g_integer_fractal)
                 {
-                    old.x = lold.x;
+                    old.x = g_l_old.x;
                     old.x /= g_fudge_factor;
-                    old.y = lold.y;
+                    old.y = g_l_old.y;
                     old.y /= g_fudge_factor;
                 }
                 x = (int)((old.x - g_init.x) * xfactor * 3 * zoom + xoff);
@@ -1242,7 +1242,7 @@ void Jiim(jiim_types which)
             old_y = y;
         }
         old = g_new;
-        lold = g_l_new;
+        g_l_old = g_l_new;
     } // end while (still)
 finish:
     Free_Queue();

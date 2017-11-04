@@ -15,7 +15,7 @@ int asmlMODbailout()
         overflow = false;
         return 1;
     }
-    lold = g_l_new;
+    g_l_old = g_l_new;
     return 0;
 }
 
@@ -28,7 +28,7 @@ int asmlREALbailout()
         overflow = false;
         return 1;
     }
-    lold = g_l_new;
+    g_l_old = g_l_new;
     return 0;
 }
 
@@ -41,7 +41,7 @@ int asmlIMAGbailout()
         overflow = false;
         return 1;
     }
-    lold = g_l_new;
+    g_l_old = g_l_new;
     return 0;
 }
 
@@ -54,7 +54,7 @@ int asmlORbailout()
         overflow = false;
         return 1;
     }
-    lold = g_l_new;
+    g_l_old = g_l_new;
     return 0;
 }
 
@@ -67,7 +67,7 @@ int asmlANDbailout()
         overflow = false;
         return 1;
     }
-    lold = g_l_new;
+    g_l_old = g_l_new;
     return 0;
 }
 
@@ -80,7 +80,7 @@ int asmlMANHbailout()
     {
         return 1;
     }
-    lold = g_l_new;
+    g_l_old = g_l_new;
     return 0;
 }
 
@@ -93,7 +93,7 @@ int asmlMANRbailout()
     {
         return 1;
     }
-    lold = g_l_new;
+    g_l_old = g_l_new;
     return 0;
 }
 
@@ -108,7 +108,7 @@ int asm386lMODbailout()
         overflow = false;
         return 1;
     }
-    lold = g_l_new;
+    g_l_old = g_l_new;
     return 0;
 }
 
@@ -121,7 +121,7 @@ int asm386lREALbailout()
         overflow = false;
         return 1;
     }
-    lold = g_l_new;
+    g_l_old = g_l_new;
     return 0;
 }
 
@@ -134,7 +134,7 @@ int asm386lIMAGbailout()
         overflow = false;
         return 1;
     }
-    lold = g_l_new;
+    g_l_old = g_l_new;
     return 0;
 }
 
@@ -147,7 +147,7 @@ int asm386lORbailout()
         overflow = false;
         return 1;
     }
-    lold = g_l_new;
+    g_l_old = g_l_new;
     return 0;
 }
 
@@ -160,7 +160,7 @@ int asm386lANDbailout()
         overflow = false;
         return 1;
     }
-    lold = g_l_new;
+    g_l_old = g_l_new;
     return 0;
 }
 
@@ -173,7 +173,7 @@ int asm386lMANHbailout()
     {
         return 1;
     }
-    lold = g_l_new;
+    g_l_old = g_l_new;
     return 0;
 }
 
@@ -186,7 +186,7 @@ int asm386lMANRbailout()
     {
         return 1;
     }
-    lold = g_l_new;
+    g_l_old = g_l_new;
     return 0;
 }
 

@@ -106,7 +106,7 @@ extern void (*dtrig3)();
    (out).x = lsqr((arg).x) - lsqr((arg).y);\
    (out).y = multiply((arg).x, (arg).y, bitshiftless1)
 #define LCMPLXsqr_old(out)       \
-   (out).y = multiply(lold.x, lold.y, bitshiftless1);\
+   (out).y = multiply(g_l_old.x, g_l_old.y, bitshiftless1);\
    (out).x = ltempsqrx - ltempsqry
 #define LCMPLXpwr(arg1, arg2, out)    Arg2->l = (arg1); Arg1->l = (arg2);\
          lStkPwr(); Arg1++; Arg2++; (out) = Arg2->l

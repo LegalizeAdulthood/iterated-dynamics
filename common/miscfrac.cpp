@@ -2560,36 +2560,36 @@ int calcfroth()   // per pixel 1/2/g, called with row & col set
         if (g_invert != 0)
         {
             invertz2(&tmp);
-            lold.x = (long)(tmp.x * g_fudge_factor);
-            lold.y = (long)(tmp.y * g_fudge_factor);
+            g_l_old.x = (long)(tmp.x * g_fudge_factor);
+            g_l_old.y = (long)(tmp.y * g_fudge_factor);
         }
         else
         {
-            lold.x = lxpixel();
-            lold.y = lypixel();
+            g_l_old.x = lxpixel();
+            g_l_old.y = lypixel();
         }
 
-        ltempsqrx = lsqr(lold.x);
-        ltempsqry = lsqr(lold.y);
+        ltempsqrx = lsqr(g_l_old.x);
+        ltempsqry = lsqr(g_l_old.y);
         g_l_magnitude = ltempsqrx + ltempsqry;
         while (!found_attractor && (g_l_magnitude < g_l_limit)
                 && (g_l_magnitude >= 0) && (g_color_iter < maxit))
         {
             // simple formula: z = z^2 + conj(z*(-1+ai))
             // but it's the attractor that makes this so interesting
-            g_l_new.x = ltempsqrx - ltempsqry - lold.x - multiply(fsp.fl.l.a, lold.y, bitshift);
-            lold.y += (multiply(lold.x, lold.y, bitshift)<<1) - multiply(fsp.fl.l.a, lold.x, bitshift);
-            lold.x = g_l_new.x;
+            g_l_new.x = ltempsqrx - ltempsqry - g_l_old.x - multiply(fsp.fl.l.a, g_l_old.y, bitshift);
+            g_l_old.y += (multiply(g_l_old.x, g_l_old.y, bitshift)<<1) - multiply(fsp.fl.l.a, g_l_old.x, bitshift);
+            g_l_old.x = g_l_new.x;
             if (fsp.repeat_mapping)
             {
-                g_l_magnitude = (ltempsqrx = lsqr(lold.x)) + (ltempsqry = lsqr(lold.y));
+                g_l_magnitude = (ltempsqrx = lsqr(g_l_old.x)) + (ltempsqry = lsqr(g_l_old.y));
                 if ((g_l_magnitude > g_l_limit) || (g_l_magnitude < 0))
                 {
                     break;
                 }
-                g_l_new.x = ltempsqrx - ltempsqry - lold.x - multiply(fsp.fl.l.a, lold.y, bitshift);
-                lold.y += (multiply(lold.x, lold.y, bitshift)<<1) - multiply(fsp.fl.l.a, lold.x, bitshift);
-                lold.x = g_l_new.x;
+                g_l_new.x = ltempsqrx - ltempsqry - g_l_old.x - multiply(fsp.fl.l.a, g_l_old.y, bitshift);
+                g_l_old.y += (multiply(g_l_old.x, g_l_old.y, bitshift)<<1) - multiply(fsp.fl.l.a, g_l_old.x, bitshift);
+                g_l_old.x = g_l_new.x;
             }
             g_color_iter++;
 
@@ -2599,22 +2599,22 @@ int calcfroth()   // per pixel 1/2/g, called with row & col set
                 {
                     break;
                 }
-                iplot_orbit(lold.x, lold.y, -1);
+                iplot_orbit(g_l_old.x, g_l_old.y, -1);
             }
 
-            if (labs(fsp.fl.l.halfa-lold.y) < FROTH_LCLOSE
-                    && lold.x > fsp.fl.l.top_x1 && lold.x < fsp.fl.l.top_x2)
+            if (labs(fsp.fl.l.halfa-g_l_old.y) < FROTH_LCLOSE
+                    && g_l_old.x > fsp.fl.l.top_x1 && g_l_old.x < fsp.fl.l.top_x2)
             {
                 if ((!fsp.repeat_mapping && fsp.attractors == 2)
                         || (fsp.repeat_mapping && fsp.attractors == 3))
                 {
                     found_attractor = 1;
                 }
-                else if (lold.x <= fsp.fl.l.top_x3)
+                else if (g_l_old.x <= fsp.fl.l.top_x3)
                 {
                     found_attractor = 1;
                 }
-                else if (lold.x >= fsp.fl.l.top_x4)
+                else if (g_l_old.x >= fsp.fl.l.top_x4)
                 {
                     if (!fsp.repeat_mapping)
                     {
@@ -2626,8 +2626,8 @@ int calcfroth()   // per pixel 1/2/g, called with row & col set
                     }
                 }
             }
-            else if (labs(multiply(FROTH_LSLOPE, lold.x, bitshift)-fsp.fl.l.a-lold.y) < FROTH_LCLOSE
-                     && lold.x <= fsp.fl.l.right_x1 && lold.x >= fsp.fl.l.right_x2)
+            else if (labs(multiply(FROTH_LSLOPE, g_l_old.x, bitshift)-fsp.fl.l.a-g_l_old.y) < FROTH_LCLOSE
+                     && g_l_old.x <= fsp.fl.l.right_x1 && g_l_old.x >= fsp.fl.l.right_x2)
             {
                 if (!fsp.repeat_mapping && fsp.attractors == 2)
                 {
@@ -2637,7 +2637,7 @@ int calcfroth()   // per pixel 1/2/g, called with row & col set
                 {
                     found_attractor = 3;
                 }
-                else if (lold.x >= fsp.fl.l.right_x3)
+                else if (g_l_old.x >= fsp.fl.l.right_x3)
                 {
                     if (!fsp.repeat_mapping)
                     {
@@ -2648,7 +2648,7 @@ int calcfroth()   // per pixel 1/2/g, called with row & col set
                         found_attractor = 4;
                     }
                 }
-                else if (lold.x <= fsp.fl.l.right_x4)
+                else if (g_l_old.x <= fsp.fl.l.right_x4)
                 {
                     if (!fsp.repeat_mapping)
                     {
@@ -2660,7 +2660,7 @@ int calcfroth()   // per pixel 1/2/g, called with row & col set
                     }
                 }
             }
-            else if (labs(multiply(-FROTH_LSLOPE, lold.x, bitshift)-fsp.fl.l.a-lold.y) < FROTH_LCLOSE)
+            else if (labs(multiply(-FROTH_LSLOPE, g_l_old.x, bitshift)-fsp.fl.l.a-g_l_old.y) < FROTH_LCLOSE)
             {
                 if (!fsp.repeat_mapping && fsp.attractors == 2)
                 {
@@ -2670,7 +2670,7 @@ int calcfroth()   // per pixel 1/2/g, called with row & col set
                 {
                     found_attractor = 2;
                 }
-                else if (lold.x >= fsp.fl.l.left_x3)
+                else if (g_l_old.x >= fsp.fl.l.left_x3)
                 {
                     if (!fsp.repeat_mapping)
                     {
@@ -2681,7 +2681,7 @@ int calcfroth()   // per pixel 1/2/g, called with row & col set
                         found_attractor = 5;
                     }
                 }
-                else if (lold.x <= fsp.fl.l.left_x4)
+                else if (g_l_old.x <= fsp.fl.l.left_x4)
                 {
                     if (!fsp.repeat_mapping)
                     {
@@ -2693,8 +2693,8 @@ int calcfroth()   // per pixel 1/2/g, called with row & col set
                     }
                 }
             }
-            ltempsqrx = lsqr(lold.x);
-            ltempsqry = lsqr(lold.y);
+            ltempsqrx = lsqr(g_l_old.x);
+            ltempsqry = lsqr(g_l_old.y);
             g_l_magnitude = ltempsqrx + ltempsqry;
         }
     }
@@ -2819,10 +2819,10 @@ int froth_per_pixel()
     }
     else  // integer mode
     {
-        lold.x = lxpixel();
-        lold.y = lypixel();
-        ltempsqrx = multiply(lold.x, lold.x, bitshift);
-        ltempsqry = multiply(lold.y, lold.y, bitshift);
+        g_l_old.x = lxpixel();
+        g_l_old.y = lypixel();
+        ltempsqrx = multiply(g_l_old.x, g_l_old.x, bitshift);
+        ltempsqry = multiply(g_l_old.y, g_l_old.y, bitshift);
     }
     return 0;
 }
@@ -2850,8 +2850,8 @@ int froth_per_orbit()
     }
     else  // integer mode
     {
-        g_l_new.x = ltempsqrx - ltempsqry - lold.x - multiply(fsp.fl.l.a, lold.y, bitshift);
-        g_l_new.y = lold.y + (multiply(lold.x, lold.y, bitshift)<<1) - multiply(fsp.fl.l.a, lold.x, bitshift);
+        g_l_new.x = ltempsqrx - ltempsqry - g_l_old.x - multiply(fsp.fl.l.a, g_l_old.y, bitshift);
+        g_l_new.y = g_l_old.y + (multiply(g_l_old.x, g_l_old.y, bitshift)<<1) - multiply(fsp.fl.l.a, g_l_old.x, bitshift);
         if (fsp.repeat_mapping)
         {
             ltempsqrx = lsqr(g_l_new.x);
@@ -2860,9 +2860,9 @@ int froth_per_orbit()
             {
                 return 1;
             }
-            lold = g_l_new;
-            g_l_new.x = ltempsqrx - ltempsqry - lold.x - multiply(fsp.fl.l.a, lold.y, bitshift);
-            g_l_new.y = lold.y + (multiply(lold.x, lold.y, bitshift)<<1) - multiply(fsp.fl.l.a, lold.x, bitshift);
+            g_l_old = g_l_new;
+            g_l_new.x = ltempsqrx - ltempsqry - g_l_old.x - multiply(fsp.fl.l.a, g_l_old.y, bitshift);
+            g_l_new.y = g_l_old.y + (multiply(g_l_old.x, g_l_old.y, bitshift)<<1) - multiply(fsp.fl.l.a, g_l_old.x, bitshift);
         }
         ltempsqrx = lsqr(g_l_new.x);
         ltempsqry = lsqr(g_l_new.y);
@@ -2870,7 +2870,7 @@ int froth_per_orbit()
         {
             return 1;
         }
-        lold = g_l_new;
+        g_l_old = g_l_new;
     }
     return 0;
 }
