@@ -227,7 +227,7 @@ extern double                g_inversion[];
 extern int                   g_invert;
 extern bool                  g_is_true_color;
 extern bool                  g_is_mandelbrot;
-extern int                   ixstart;
+extern int                   g_i_x_start;
 extern int                   ixstop;
 extern int                   iystart;
 extern int                   iystop;
