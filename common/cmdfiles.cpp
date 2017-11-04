@@ -141,7 +141,7 @@ long    LogFlag = 0;            // Logarithmic palette flag: 0 = no
 
 BYTE g_exit_video_mode = 3;              // video mode on exit
 
-int     Log_Fly_Calc = 0;       // calculate logmap on-the-fly
+int     g_log_map_fly_calculate = 0;       // calculate logmap on-the-fly
 bool    g_log_map_auto_calculate = false;          // auto calculate logmap
 bool    nobof = false;                  // Flag to make inside=bof options not duplicate bof images
 
@@ -2854,15 +2854,15 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
     if (variable == "logmode")
     {
         // logmode=?
-        Log_Fly_Calc = 0;                         // turn off if error
+        g_log_map_fly_calculate = 0;                         // turn off if error
         g_log_map_auto_calculate = false;
         if (charval[0] == 'f')
         {
-            Log_Fly_Calc = 1;                      // calculate on the fly
+            g_log_map_fly_calculate = 1;                      // calculate on the fly
         }
         else if (charval[0] == 't')
         {
-            Log_Fly_Calc = 2;                      // force use of LogTable
+            g_log_map_fly_calculate = 2;                      // force use of LogTable
         }
         else if (charval[0] == 'a')
         {

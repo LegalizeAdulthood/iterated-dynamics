@@ -1000,14 +1000,14 @@ void write_batch_parms(char const *colorinf, bool colorsonly, int maxcolor, int 
             }
         }
 
-        if (Log_Fly_Calc && LogFlag && !rangeslen)
+        if (g_log_map_fly_calculate && LogFlag && !rangeslen)
         {
             put_parm(" %s=", "logmode");
-            if (Log_Fly_Calc == 1)
+            if (g_log_map_fly_calculate == 1)
             {
                 put_parm("fly");
             }
-            else if (Log_Fly_Calc == 2)
+            else if (g_log_map_fly_calculate == 2)
             {
                 put_parm("table");
             }

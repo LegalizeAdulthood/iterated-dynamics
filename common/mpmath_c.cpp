@@ -492,7 +492,7 @@ void SetupLogTable()
     float l, f, c, m;
     unsigned long limit;
 
-    if (save_release > 1920 || Log_Fly_Calc == 1)
+    if (save_release > 1920 || g_log_map_fly_calculate == 1)
     {
         // set up on-the-fly variables
         if (LogFlag > 0)

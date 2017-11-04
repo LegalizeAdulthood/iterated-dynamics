@@ -689,13 +689,13 @@ int calcfract()
     // below, INT_MAX = 32767 only when an integer is two bytes.  Which is not true for Xfractint.
     // Since 32767 is what was meant, replaced the instances of INT_MAX with 32767.
     if (LogFlag && (((maxit > 32767) && (save_release > 1920))
-                    || Log_Fly_Calc == 1))
+                    || g_log_map_fly_calculate == 1))
     {
         g_log_map_calculate = true; // calculate on the fly
         SetupLogTable();
     }
     else if (LogFlag && (((maxit > 32767) && (save_release <= 1920))
-                         || Log_Fly_Calc == 2))
+                         || g_log_map_fly_calculate == 2))
     {
         MaxLTSize = 32767;
         g_log_map_calculate = false; // use logtable
@@ -719,14 +719,14 @@ int calcfract()
 
         if (!resized)
         {
-            if (rangeslen || Log_Fly_Calc == 2)
+            if (rangeslen || g_log_map_fly_calculate == 2)
             {
                 stopmsg(STOPMSG_NONE, "Insufficient memory for logmap/ranges with this maxiter");
             }
             else
             {
                 stopmsg(STOPMSG_NONE, "Insufficient memory for logTable, using on-the-fly routine");
-                Log_Fly_Calc = 1;
+                g_log_map_fly_calculate = 1;
                 g_log_map_calculate = true; // calculate on the fly
                 SetupLogTable();
             }

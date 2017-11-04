@@ -2476,7 +2476,7 @@ static void save_history_info()
     current.bailoutest           = (short)g_bail_out_test                ;
     current.iterations           = maxit                     ;
     current.old_demm_colors      = (short) (old_demm_colors ? 1 : 0);
-    current.logcalc              = (short)Log_Fly_Calc;
+    current.logcalc              = (short)g_log_map_fly_calculate;
     current.ismand               = (short) (g_is_mandelbrot ? 1 : 0);
     current.closeprox            = g_close_proximity;
     current.nobof                = (short)nobof;
@@ -2666,7 +2666,7 @@ static void restore_history_info(int i)
     {
         g_invert = 3;
     }
-    Log_Fly_Calc = last.logcalc;
+    g_log_map_fly_calculate = last.logcalc;
     g_is_mandelbrot = last.ismand != 0;
     g_close_proximity = last.closeprox;
     nobof = last.nobof != 0;

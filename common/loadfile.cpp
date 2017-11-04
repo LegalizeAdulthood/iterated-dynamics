@@ -351,7 +351,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
         g_inversion[0] = read_info.dinvert[0];
         g_inversion[1] = read_info.dinvert[1];
         g_inversion[2] = read_info.dinvert[2];
-        Log_Fly_Calc = read_info.logcalc;
+        g_log_map_fly_calculate = read_info.logcalc;
         stoppass     = read_info.stoppass;
     }
 
