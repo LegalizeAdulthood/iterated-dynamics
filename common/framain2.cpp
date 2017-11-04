@@ -362,7 +362,7 @@ main_state big_while_loop(bool *const kbdmore, bool *const stacked, bool const r
             }
             g_browsing = false;      // regenerate image, turn off browsing
             //rb
-            name_stack_ptr = -1;   // reset pointer
+            g_filename_stack_index = -1;   // reset pointer
             g_browse_name.clear();
             if (viewwindow && (g_evolving&1) && (g_calc_status != calc_status_value::COMPLETED))
             {
@@ -701,7 +701,7 @@ static bool look(bool *stacked)
     case FIK_ENTER_2:
         show_file = 0;       // trigger load
         g_browsing = true;    // but don't ask for the file name as it's just been selected
-        if (name_stack_ptr == 15)
+        if (g_filename_stack_index == 15)
         {
             /* about to run off the end of the file
                 * history stack so shift it all back one to
@@ -710,10 +710,10 @@ static bool look(bool *stacked)
             {
                 g_file_name_stack[tmp - 1] = g_file_name_stack[tmp];
             }
-            name_stack_ptr = 14;
+            g_filename_stack_index = 14;
         }
-        name_stack_ptr++;
-        g_file_name_stack[name_stack_ptr] = g_browse_name;
+        g_filename_stack_index++;
+        g_file_name_stack[g_filename_stack_index] = g_browse_name;
         merge_pathnames(readname, g_browse_name.c_str(), cmd_file::AT_AFTER_STARTUP);
         if (g_ask_video)
         {
@@ -723,20 +723,20 @@ static bool look(bool *stacked)
         return true;       // hop off and do it!!
 
     case '\\':
-        if (name_stack_ptr >= 1)
+        if (g_filename_stack_index >= 1)
         {
             // go back one file if somewhere to go (ie. browsing)
-            name_stack_ptr--;
-            while (g_file_name_stack[name_stack_ptr].empty()
-                    && name_stack_ptr >= 0)
+            g_filename_stack_index--;
+            while (g_file_name_stack[g_filename_stack_index].empty()
+                    && g_filename_stack_index >= 0)
             {
-                name_stack_ptr--;
+                g_filename_stack_index--;
             }
-            if (name_stack_ptr < 0) // oops, must have deleted first one
+            if (g_filename_stack_index < 0) // oops, must have deleted first one
             {
                 break;
             }
-            g_browse_name = g_file_name_stack[name_stack_ptr];
+            g_browse_name = g_file_name_stack[g_filename_stack_index];
             merge_pathnames(readname, g_browse_name.c_str(), cmd_file::AT_AFTER_STARTUP);
             g_browsing = true;
             show_file = 0;
@@ -1214,20 +1214,20 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
     case FIK_CTL_BACKSLASH:
     case 'h':
     case FIK_BACKSPACE:
-        if (name_stack_ptr >= 1)
+        if (g_filename_stack_index >= 1)
         {
             // go back one file if somewhere to go (ie. browsing)
-            name_stack_ptr--;
-            while (g_file_name_stack[name_stack_ptr].empty()
-                    && name_stack_ptr >= 0)
+            g_filename_stack_index--;
+            while (g_file_name_stack[g_filename_stack_index].empty()
+                    && g_filename_stack_index >= 0)
             {
-                name_stack_ptr--;
+                g_filename_stack_index--;
             }
-            if (name_stack_ptr < 0)   // oops, must have deleted first one
+            if (g_filename_stack_index < 0)   // oops, must have deleted first one
             {
                 break;
             }
-            g_browse_name = g_file_name_stack[name_stack_ptr];
+            g_browse_name = g_file_name_stack[g_filename_stack_index];
             merge_pathnames(readname, g_browse_name.c_str(), cmd_file::AT_AFTER_STARTUP);
             g_browsing = true;
             no_sub_images = false;

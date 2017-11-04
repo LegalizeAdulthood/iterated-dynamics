@@ -2154,7 +2154,7 @@ void check_history(char const *oldname, char const *newname)
     //  browser are used.
     // name_stack_ptr is also maintained in framain2.c.  It is the index into
     //  file_name_stack[].
-    for (int i = 0; i < name_stack_ptr; i++)
+    for (int i = 0; i < g_filename_stack_index; i++)
     {
         if (stricmp(g_file_name_stack[i].c_str(), oldname) == 0)   // we have a match
         {

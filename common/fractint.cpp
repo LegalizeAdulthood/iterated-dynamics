@@ -126,7 +126,7 @@ bool zoomoff = false;                   // false when zoom is disabled
 int        savedac;                     // save-the-Video DAC flag
 bool g_browsing = false;                  // browse mode flag
 std::string g_file_name_stack[16];        // array of file names used while browsing
-int name_stack_ptr ;
+int g_filename_stack_index ;
 double smallest_window_display_size;
 int g_smallest_box_size_shown;
 bool no_sub_images = false;
@@ -187,7 +187,7 @@ static void main_restart(int const argc, char const *const argv[], bool &stacked
     g_smallest_box_size_shown = 3;
     g_browse_mask = "*.gif";
     g_browse_name = "            ";
-    name_stack_ptr = -1; // init loaded files stack
+    g_filename_stack_index = -1; // init loaded files stack
 
     g_evolving = 0;
     evolve_x_parameter_range = 4;
@@ -304,8 +304,8 @@ static bool main_restore_start(bool &stacked, bool &resumeflag)
                 break;
             }
 
-            name_stack_ptr = 0; // 'r' reads first filename for browsing
-            g_file_name_stack[name_stack_ptr] = g_browse_name;
+            g_filename_stack_index = 0; // 'r' reads first filename for browsing
+            g_file_name_stack[g_filename_stack_index] = g_browse_name;
         }
 
         g_evolving = 0;
