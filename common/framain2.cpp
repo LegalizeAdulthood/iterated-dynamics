@@ -1239,18 +1239,18 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
             }
             return main_state::RESTORE_START;
         }
-        else if (maxhistory > 0 && bf_math == bf_math_type::NONE)
+        else if (g_max_image_history > 0 && bf_math == bf_math_type::NONE)
         {
             if (*kbdchar == '\\' || *kbdchar == 'h')
             {
                 if (--historyptr < 0)
                 {
-                    historyptr = maxhistory - 1;
+                    historyptr = g_max_image_history - 1;
                 }
             }
             if (*kbdchar == FIK_CTL_BACKSLASH || *kbdchar == FIK_BACKSPACE)
             {
-                if (++historyptr >= maxhistory)
+                if (++historyptr >= g_max_image_history)
                 {
                     historyptr = 0;
                 }
@@ -1694,18 +1694,18 @@ static main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdm
     case FIK_CTL_BACKSLASH:
     case 'h':
     case FIK_BACKSPACE:
-        if (maxhistory > 0 && bf_math == bf_math_type::NONE)
+        if (g_max_image_history > 0 && bf_math == bf_math_type::NONE)
         {
             if (*kbdchar == '\\' || *kbdchar == 'h')
             {
                 if (--historyptr < 0)
                 {
-                    historyptr = maxhistory - 1;
+                    historyptr = g_max_image_history - 1;
                 }
             }
             if (*kbdchar == FIK_CTL_BACKSLASH || *kbdchar == 8)
             {
-                if (++historyptr >= maxhistory)
+                if (++historyptr >= g_max_image_history)
                 {
                     historyptr = 0;
                 }
@@ -2353,16 +2353,16 @@ int key_count(int keynum)
 }
 
 static std::vector<HISTORY> history;
-int maxhistory = 10;
+int g_max_image_history = 10;
 
 void history_init()
 {
-    history.resize(maxhistory);
+    history.resize(g_max_image_history);
 }
 
 static void save_history_info()
 {
-    if (maxhistory <= 0 || bf_math != bf_math_type::NONE)
+    if (g_max_image_history <= 0 || bf_math != bf_math_type::NONE)
     {
         return;
     }
@@ -2514,7 +2514,7 @@ static void save_history_info()
     }
     if (historyptr == -1)        // initialize the history file
     {
-        for (int i = 0; i < maxhistory; i++)
+        for (int i = 0; i < g_max_image_history; i++)
         {
             history[i] = current;
         }
@@ -2528,11 +2528,11 @@ static void save_history_info()
     }
     else if (memcmp(&current, &last, sizeof(HISTORY)))
     {
-        if (++saveptr >= maxhistory)    // back to beginning of circular buffer
+        if (++saveptr >= g_max_image_history)    // back to beginning of circular buffer
         {
             saveptr = 0;
         }
-        if (++historyptr >= maxhistory)    // move user pointer in parallel
+        if (++historyptr >= g_max_image_history)    // move user pointer in parallel
         {
             historyptr = 0;
         }
@@ -2542,7 +2542,7 @@ static void save_history_info()
 
 static void restore_history_info(int i)
 {
-    if (maxhistory <= 0 || bf_math != bf_math_type::NONE)
+    if (g_max_image_history <= 0 || bf_math != bf_math_type::NONE)
     {
         return;
     }

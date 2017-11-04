@@ -1011,7 +1011,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
             }
             else
             {
-                maxhistory = numval;
+                g_max_image_history = numval;
             }
             return CMDARG_FRACTAL_PARAM | CMDARG_3D_PARAM;
         }
