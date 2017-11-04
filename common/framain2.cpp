@@ -2457,7 +2457,7 @@ static void save_history_info()
     current.rotate_hi            = (short)rotate_hi                 ;
     current.distestwidth         = (short)g_distance_estimator_width_factor              ;
     current.mxmaxfp              = g_julibrot_x_max                   ;
-    current.mxminfp              = mxminfp                   ;
+    current.mxminfp              = g_julibrot_x_min                   ;
     current.mymaxfp              = mymaxfp                   ;
     current.myminfp              = myminfp                   ;
     current.zdots                = (short)zdots                         ;
@@ -2641,7 +2641,7 @@ static void restore_history_info(int i)
     rotate_hi             = last.rotate_hi      ;
     g_distance_estimator_width_factor          = last.distestwidth   ;
     g_julibrot_x_max               = last.mxmaxfp        ;
-    mxminfp               = last.mxminfp        ;
+    g_julibrot_x_min               = last.mxminfp        ;
     mymaxfp               = last.mymaxfp        ;
     myminfp               = last.myminfp        ;
     zdots                 = last.zdots          ;

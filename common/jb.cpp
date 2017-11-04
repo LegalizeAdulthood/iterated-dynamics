@@ -7,7 +7,7 @@
 #include "drivers.h"
 
 // these need to be accessed elsewhere for saving data
-double mxminfp = -.83;
+double g_julibrot_x_min = -.83;
 double myminfp = -.25;
 double g_julibrot_x_max = -.83;
 double mymaxfp =  .25;
@@ -75,7 +75,7 @@ JulibrotSetup()
 
     xoffsetfp = (xxmax + xxmin) / 2;     // Calculate average
     yoffsetfp = (yymax + yymin) / 2;     // Calculate average
-    dmxfp = (g_julibrot_x_max - mxminfp) / zdots;
+    dmxfp = (g_julibrot_x_max - g_julibrot_x_min) / zdots;
     dmyfp = (mymaxfp - myminfp) / zdots;
     g_float_param = &jbcfp;
     x_per_inchfp = (xxmin - xxmax) / widthfp;
@@ -120,7 +120,7 @@ JulibrotSetup()
         jymin = (long)(yymin * fg);
         jymax = (long)(yymax * fg);
         yoffset = (jymax + jymin) / 2;    // Calculate average
-        mxmin = (long)(mxminfp * fg);
+        mxmin = (long)(g_julibrot_x_min * fg);
         mxmax = (long)(g_julibrot_x_max * fg);
         mymin = (long)(myminfp * fg);
         mymax = (long)(mymaxfp * fg);
@@ -317,7 +317,7 @@ zlinefp(double x, double y)
 #endif
     xpixelfp = x;
     ypixelfp = y;
-    mxfp = mxminfp;
+    mxfp = g_julibrot_x_min;
     myfp = myminfp;
     switch (g_julibrot_3d_mode)
     {

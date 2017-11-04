@@ -562,7 +562,7 @@ static void initvars_fractal()          // init vars affecting calculation
     bigfltbailout = bfMODbailout;
 
     g_new_bifurcation_functions_loaded = false; // for old bifs
-    mxminfp = -.83;
+    g_julibrot_x_min = -.83;
     myminfp = -.25;
     g_julibrot_x_max = -.83;
     mymaxfp =  .25;
@@ -2059,7 +2059,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
             goto badarg;
         }
         g_julibrot_x_max = floatval[0];
-        mxminfp = floatval[1];
+        g_julibrot_x_min = floatval[1];
         mymaxfp = floatval[2];
         myminfp = floatval[3];
         return CMDARG_FRACTAL_PARAM;

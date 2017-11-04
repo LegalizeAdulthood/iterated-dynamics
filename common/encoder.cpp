@@ -961,7 +961,7 @@ static void setup_save_info(FRACTAL_INFO *save_info)
     save_info->rotate_hi = (short) rotate_hi;
     save_info->distestwidth = (short) g_distance_estimator_width_factor;
     save_info->mxmaxfp = g_julibrot_x_max;
-    save_info->mxminfp = mxminfp;
+    save_info->mxminfp = g_julibrot_x_min;
     save_info->mymaxfp = mymaxfp;
     save_info->myminfp = myminfp;
     save_info->zdots = (short) zdots;

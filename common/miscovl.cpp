@@ -631,7 +631,7 @@ void write_batch_parms(char const *colorinf, bool colorsonly, int maxcolor, int 
         if (fractype == fractal_type::JULIBROT || fractype == fractal_type::JULIBROTFP)
         {
             put_parm(" %s=%.15g/%.15g/%.15g/%.15g",
-                     "julibrotfromto", g_julibrot_x_max, mxminfp, mymaxfp, myminfp);
+                     "julibrotfromto", g_julibrot_x_max, g_julibrot_x_min, mymaxfp, myminfp);
             // these rarely change
             if (originfp != 8 || g_height_fp != 7 || widthfp != 10 || g_dist_fp != 24
                     || g_depth_fp != 8 || zdots != 128)

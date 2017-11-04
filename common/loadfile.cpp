@@ -248,7 +248,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
     if (read_info.version > 8)
     {
         g_julibrot_x_max   =  read_info.mxmaxfp        ;
-        mxminfp   =  read_info.mxminfp        ;
+        g_julibrot_x_min   =  read_info.mxminfp        ;
         mymaxfp   =  read_info.mymaxfp        ;
         myminfp   =  read_info.myminfp        ;
         zdots     =  read_info.zdots          ;
