@@ -69,7 +69,7 @@ DComplex tmp2;
 DComplex g_marks_coefficient;
 DComplex  staticroots[16]; // roots array for degree 16 or less
 std::vector<DComplex> roots;
-std::vector<MPC> MPCroots;
+std::vector<MPC> g_mpc_roots;
 long g_fudge_half;
 DComplex pwr;
 int     bitshiftless1;                  // bit shift less 1
@@ -552,7 +552,7 @@ int MPCNewtonFractal()
             long tmpcolor;
             tmpcolor = -1;
             for (int i = 0; i < degree; i++)
-                if (pMPcmp(MPdistance(MPCroots[i], mpcold), mpthreshold) < 0)
+                if (pMPcmp(MPdistance(g_mpc_roots[i], mpcold), mpthreshold) < 0)
                 {
                     if (g_basin == 2)
                     {

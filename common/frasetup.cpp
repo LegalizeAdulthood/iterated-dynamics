@@ -145,13 +145,13 @@ NewtonSetup()           // Newton/NewtBasin Routines
             g_basin = 1;
         }
 
-        MPCroots.resize(degree);
+        g_mpc_roots.resize(degree);
 
         // list of roots to discover where we converged for newtbasin
         for (int i = 0; i < degree; i++)
         {
-            MPCroots[i].x = *pd2MP(cos(i*twopi/(double)degree));
-            MPCroots[i].y = *pd2MP(sin(i*twopi/(double)degree));
+            g_mpc_roots[i].x = *pd2MP(cos(i*twopi/(double)degree));
+            g_mpc_roots[i].y = *pd2MP(sin(i*twopi/(double)degree));
         }
     }
 #endif
