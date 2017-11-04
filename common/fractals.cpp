@@ -1728,7 +1728,7 @@ JuliaTrigOrTrigfpFractal()
 }
 
 int g_halley_a_plus_one, g_halley_a_plus_one_times_degree;
-MP mpAplusOne, mpAp1deg;
+MP mpAplusOne, g_mp_halley_a_plus_one_times_degree;
 MPC mpctmpparm;
 
 int MPCHalleyFractal()
@@ -1760,8 +1760,8 @@ int MPCHalleyFractal()
     mpcFX.x = *pMPsub(mpcXtoAplusOne.x, mpcold.x);
     mpcFX.y = *pMPsub(mpcXtoAplusOne.y, mpcold.y); // FX = X^(a+1) - X  = F
 
-    mpcF2prime.x = *pMPmul(mpAp1deg, mpcXtoAlessOne.x); // mpAp1deg in setup
-    mpcF2prime.y = *pMPmul(mpAp1deg, mpcXtoAlessOne.y);        // F"
+    mpcF2prime.x = *pMPmul(g_mp_halley_a_plus_one_times_degree, mpcXtoAlessOne.x); // mpAp1deg in setup
+    mpcF2prime.y = *pMPmul(g_mp_halley_a_plus_one_times_degree, mpcXtoAlessOne.y);        // F"
 
     mpcF1prime.x = *pMPsub(*pMPmul(mpAplusOne, mpcXtoA.x), mpone);
     mpcF1prime.y = *pMPmul(mpAplusOne, mpcXtoA.y);                   //  F'

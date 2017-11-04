@@ -1287,7 +1287,7 @@ HalleySetup()
     {
         setMPfunctions();
         mpAplusOne = *pd2MP((double)g_halley_a_plus_one);
-        mpAp1deg = *pd2MP((double)g_halley_a_plus_one_times_degree);
+        g_mp_halley_a_plus_one_times_degree = *pd2MP((double)g_halley_a_plus_one_times_degree);
         mpctmpparm.x = *pd2MP(parm.y);
         mpctmpparm.y = *pd2MP(parm2.y);
         mptmpparm2x = *pd2MP(parm2.x);
