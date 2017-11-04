@@ -310,7 +310,7 @@ extern std::vector<MPC>      g_mpc_roots;
 extern MPC                   g_mpc_temp_param;
 extern MP                    g_mp_degree_minus_1_over_degree;
 extern MP                    g_mp_one;
-extern int                   MPOverflow;
+extern int                   g_mp_overflow;
 extern MP                    mproverd;
 extern MP                    mpt2;
 extern MP                    mpthreshold;

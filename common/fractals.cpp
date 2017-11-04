@@ -538,7 +538,7 @@ MP g_mp_one;
 int MPCNewtonFractal()
 {
 #if !defined(XFRACT)
-    MPOverflow = 0;
+    g_mp_overflow = 0;
     mpctmp   = MPCpow(mpcold, degree-1);
 
     mpcnew.x = *pMPsub(*pMPmul(mpctmp.x, mpcold.x), *pMPmul(mpctmp.y, mpcold.y));
@@ -584,7 +584,7 @@ int MPCNewtonFractal()
     mpcold.y = *pMPmul(mpt2, (*pMPsub(*pMPmul(mpcnew.y, mpctmp.x), *pMPmul(mpcnew.x, mpctmp.y))));
     g_new.x = *pMP2d(mpcold.x);
     g_new.y = *pMP2d(mpcold.y);
-    return MPOverflow;
+    return g_mp_overflow;
 #else
     return 0;
 #endif
@@ -1742,7 +1742,7 @@ int MPCHalleyFractal()
     MPC mpcFX, mpcF1prime, mpcF2prime, mpcHalnumer1;
     MPC mpcHalnumer2, mpcHaldenom, mpctmp;
 
-    MPOverflow = 0;
+    g_mp_overflow = 0;
     mpcXtoAlessOne.x = mpcold.x;
     mpcXtoAlessOne.y = mpcold.y;
     for (int ihal = 2; ihal < degree; ihal++)
@@ -1782,7 +1782,7 @@ int MPCHalleyFractal()
     // relaxation coef.
     mpcnew = MPCsub(mpcold, mpctmp);
     g_new    = MPC2cmplx(mpcnew);
-    return MPCHalleybailout()||MPOverflow;
+    return MPCHalleybailout()||g_mp_overflow;
 #else
     return 0;
 #endif

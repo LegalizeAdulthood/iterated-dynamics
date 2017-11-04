@@ -20,7 +20,7 @@ struct MPC
     MP x;
     MP y;
 };
-extern int MPOverflow;
+extern int g_mp_overflow;
 /* Mark Peterson's expanded floating point operators. If
    the operation results in an overflow (result < 2**(2**14), or division
    by zero) the global 'MPoverflow' is set to one. */

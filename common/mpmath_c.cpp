@@ -29,7 +29,7 @@ struct MP Ans = { 0 };
 
 } // namespace
 
-int MPOverflow = 0;
+int g_mp_overflow = 0;
 
 #if !defined(XFRACT)
 
@@ -858,7 +858,7 @@ MP2d086     PROC     uses si di, xExp:WORD, xMant:DWORD
    jz    InRangeOfDouble
 
 Overflow:
-   mov   MPOverflow, 1
+   mov   g_mp_overflow, 1
    xor   ax, ax
    xor   dx, dx
    xor   bx, bx
@@ -1054,7 +1054,7 @@ ShiftCarry:
    jmp   StoreAns
 
 Overflow:
-   mov   MPOverflow, 1
+   mov   g_mp_overflow, 1
 
 ZeroAns:
    xor   si, si
@@ -1239,7 +1239,7 @@ MPdiv086    PROC     uses si di, xExp:WORD, xMant:DWORD, yExp:WORD, \
    jno   NoOverflow
 
 Overflow:
-   mov   MPOverflow, 1
+   mov   g_mp_overflow, 1
 
 ZeroAns:
    xor   ax, ax
@@ -1347,7 +1347,7 @@ Overflow:
    or    word ptr [yMant+2], 0
    jz    ZeroAns
 
-   mov   MPOverflow, 1
+   mov   g_mp_overflow, 1
 
 ZeroAns:
    xor   ax, ax
@@ -1445,7 +1445,7 @@ MP *MPmul086(MP x, MP y)
         or    word ptr [y.Mant+2], 0
         jz    ZeroAns
 
-        mov   MPOverflow, 1
+        mov   g_mp_overflow, 1
 
     ZeroAns:
         xor   ax, ax
@@ -1573,7 +1573,7 @@ MP2d386     PROC     uses si di, xExp:WORD, xMant:DWORD
    jz    InRangeOfDouble
 
 Overflow:
-   mov   MPOverflow, 1
+   mov   g_mp_overflow, 1
    xor   eax, eax
    xor   edx, edx
    jmp   StoreAns
@@ -1671,7 +1671,7 @@ ShiftCarry:
    jmp   StoreAns
 
 Overflow:
-   mov   MPOverflow, 1
+   mov   g_mp_overflow, 1
 
 ZeroAns:
    xor   si, si
@@ -1801,7 +1801,7 @@ SameMag:
    jno   StoreAns
 
 Overflow:
-   mov   MPOverflow, 1
+   mov   g_mp_overflow, 1
 
 ZeroAns:
    xor   si, si
@@ -1943,7 +1943,7 @@ MPdiv386    PROC     uses si di, xExp:WORD, xMant:DWORD, yExp:WORD, \
    jno   NoOverflow
 
 Overflow:
-   mov   MPOverflow, 1
+   mov   g_mp_overflow, 1
 
 ZeroAns:
    xor   eax, eax
@@ -2010,7 +2010,7 @@ Overflow:
    or    WORD PTR [yMant+2], 0
    jz    ZeroAns
 
-   mov   MPOverflow, 1
+   mov   g_mp_overflow, 1
 
 ZeroAns:
    xor   edx, edx
