@@ -761,10 +761,10 @@ bool tab_display_2(char *msg)
     putstringcenter(row++, 0, 80, C_PROMPT_HI, "Top Secret Developer's Screen");
 
     write_row(++row, "Version %d patch %d", g_release, g_patch_level);
-    write_row(++row, "%ld of %ld bignum memory used", maxptr, maxstack);
+    write_row(++row, "%ld of %ld bignum memory used", g_bignum_max_stack_addr, maxstack);
     write_row(++row, "   %ld used for bignum globals", startstack);
     write_row(++row, "   %ld stack used == %ld variables of length %d",
-              maxptr-startstack, (long)((maxptr-startstack)/(rbflength+2)), rbflength+2);
+              g_bignum_max_stack_addr-startstack, (long)((g_bignum_max_stack_addr-startstack)/(rbflength+2)), rbflength+2);
     if (bf_math != bf_math_type::NONE)
     {
         write_row(++row, "intlength %-d bflength %-d ", intlength, bflength);

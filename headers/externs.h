@@ -294,7 +294,7 @@ extern long                  g_max_iterations;
 extern int                   g_max_line_length;
 extern unsigned              g_max_function_args;
 extern unsigned              g_max_function_ops;
-extern long                  maxptr;
+extern long                  g_bignum_max_stack_addr;
 extern int max_keyboard_check_interval;
 extern int                   maxhistory;
 extern int                   max_rhombus_depth;
