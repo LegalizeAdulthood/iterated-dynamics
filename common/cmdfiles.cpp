@@ -1125,9 +1125,9 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
                 {
                     g_command_name = extract_filename(readname.c_str());
                 }
-                else if (!MAP_name.empty())
+                else if (!g_map_name.empty())
                 {
-                    g_command_name = extract_filename(MAP_name.c_str());
+                    g_command_name = extract_filename(g_map_name.c_str());
                 }
                 else
                 {
@@ -1151,7 +1151,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
                     goodbye();
                 }
             }
-            else if (!MAP_name.empty())
+            else if (!g_map_name.empty())
             {
                 make_parameter_file_map = true;
             }
@@ -1257,7 +1257,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         {
             goto badarg;
         }
-        existdir = merge_pathnames(MAP_name, value, mode);
+        existdir = merge_pathnames(g_map_name, value, mode);
         if (existdir > 0)
         {
             return CMDARG_NONE;    // got a directory
@@ -1267,7 +1267,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
             init_msg(variable.c_str(), value, mode);
             return CMDARG_NONE;
         }
-        SetColorPaletteName(MAP_name.c_str());
+        SetColorPaletteName(g_map_name.c_str());
         return CMDARG_NONE;
     }
 
@@ -3644,11 +3644,11 @@ static int parse_colors(char const *value)
 {
     if (*value == '@')
     {
-        if (merge_pathnames(MAP_name, &value[1], cmd_file::AT_CMD_LINE_SET_NAME) < 0)
+        if (merge_pathnames(g_map_name, &value[1], cmd_file::AT_CMD_LINE_SET_NAME) < 0)
         {
             init_msg("", &value[1], cmd_file::AT_CMD_LINE_SET_NAME);
         }
-        if ((int)strlen(value) > FILE_MAX_PATH || ValidateLuts(MAP_name.c_str()))
+        if ((int)strlen(value) > FILE_MAX_PATH || ValidateLuts(g_map_name.c_str()))
         {
             goto badcolor;
         }

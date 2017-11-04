@@ -284,7 +284,7 @@ extern Major                 g_major_method;
 extern bool                  g_map_specified;
 extern BYTE                  g_map_clut[256][3];
 extern bool                  g_map_set;
-extern std::string           MAP_name;
+extern std::string           g_map_name;
 extern double                math_tol[2];
 extern int                   maxcolor;
 extern long                  maxct;

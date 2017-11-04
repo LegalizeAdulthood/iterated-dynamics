@@ -600,7 +600,7 @@ void save_palette()
     char palname[FILE_MAX_PATH];
     FILE *dacfile;
     int i, old_help_mode;
-    strcpy(palname, MAP_name.c_str());
+    strcpy(palname, g_map_name.c_str());
     old_help_mode = g_help_mode;
     driver_stack_screen();
     char filename[256] = { 0 };
@@ -647,7 +647,7 @@ bool load_palette()
     int old_help_mode;
     char filename[FILE_MAX_PATH];
     old_help_mode = g_help_mode;
-    strcpy(filename, MAP_name.c_str());
+    strcpy(filename, g_map_name.c_str());
     driver_stack_screen();
     g_help_mode = HELPCOLORMAP;
     bool i = getafilename("Select a MAP File", mapmask, filename);
@@ -658,7 +658,7 @@ bool load_palette()
         {
             memcpy(old_dac_box, g_dac_box, 256*3);
         }
-        merge_pathnames(MAP_name, filename, cmd_file::AT_CMD_LINE);
+        merge_pathnames(g_map_name, filename, cmd_file::AT_CMD_LINE);
     }
     g_help_mode = old_help_mode;
     return i;

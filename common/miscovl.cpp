@@ -128,7 +128,7 @@ void make_batch_file()
             if (g_map_specified)
             {
                 colorspec[0] = '@';
-                sptr = MAP_name.c_str();
+                sptr = g_map_name.c_str();
             }
         }
         else if (g_color_state == 2)

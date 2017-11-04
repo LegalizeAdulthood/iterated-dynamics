@@ -780,7 +780,7 @@ bool tab_display_2(char *msg)
     show_str_var("ifsfile",     g_ifs_filename.c_str(),  &row, msg);
     show_str_var("autokeyname", g_auto_name.c_str(), &row, msg);
     show_str_var("lightname",   g_light_name.c_str(),   &row, msg);
-    show_str_var("map",         MAP_name.c_str(),     &row, msg);
+    show_str_var("map",         g_map_name.c_str(),     &row, msg);
     write_row(row++, "Sizeof fractalspecific array %d",
               num_fractal_types*(int)sizeof(fractalspecificstuff));
     write_row(row, "calc_status %d pixel [%d, %d]", g_calc_status, col, row);

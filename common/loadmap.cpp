@@ -15,7 +15,7 @@ bool ValidateLuts(char const *fn)
     char    line[160];
     char    temp[FILE_MAX_PATH+1];
     char    temp_fn[FILE_MAX_PATH];
-    strcpy(temp, MAP_name.c_str());
+    strcpy(temp, g_map_name.c_str());
     strcpy(temp_fn, fn);
 #ifdef XFRACT
     merge_pathnames(temp, temp_fn, cmd_file::AT_CMD_LINE_SET_NAME);
