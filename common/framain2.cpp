@@ -2479,7 +2479,7 @@ static void save_history_info()
     current.logcalc              = (short)g_log_map_fly_calculate;
     current.ismand               = (short) (g_is_mandelbrot ? 1 : 0);
     current.closeprox            = g_close_proximity;
-    current.nobof                = (short)nobof;
+    current.nobof                = (short)g_bof_no_match_book_images;
     current.orbit_delay          = (short)orbit_delay;
     current.orbit_interval       = orbit_interval;
     current.oxmin                = oxmin;
@@ -2669,7 +2669,7 @@ static void restore_history_info(int i)
     g_log_map_fly_calculate = last.logcalc;
     g_is_mandelbrot = last.ismand != 0;
     g_close_proximity = last.closeprox;
-    nobof = last.nobof != 0;
+    g_bof_no_match_book_images = last.nobof != 0;
     orbit_delay = last.orbit_delay;
     orbit_interval = last.orbit_interval;
     oxmin = last.oxmin;

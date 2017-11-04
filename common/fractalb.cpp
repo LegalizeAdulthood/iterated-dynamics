@@ -732,7 +732,7 @@ int mandelbn_per_pixel()
     copy_bn(bnold.x, bnparm.x);
     copy_bn(bnold.y, bnparm.y);
 
-    if ((g_inside == BOF60 || g_inside == BOF61) && !nobof)
+    if ((g_inside == BOF60 || g_inside == BOF61) && !g_bof_no_match_book_images)
     {
         /* kludge to match "Beauty of Fractals" picture since we start
            Mandelbrot iteration with init rather than 0 */
@@ -778,7 +778,7 @@ int mandelbf_per_pixel()
     copy_bf(bfold.x, bfparm.x);
     copy_bf(bfold.y, bfparm.y);
 
-    if ((g_inside == BOF60 || g_inside == BOF61) && !nobof)
+    if ((g_inside == BOF60 || g_inside == BOF61) && !g_bof_no_match_book_images)
     {
         /* kludge to match "Beauty of Fractals" picture since we start
            Mandelbrot iteration with init rather than 0 */
