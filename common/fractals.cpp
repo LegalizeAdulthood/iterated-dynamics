@@ -530,7 +530,7 @@ complex_div(DComplex numerator, DComplex denominator, DComplex *pout)
 }
 
 #if !defined(XFRACT)
-MP g_newton_mp_r_over_d, g_mp_degree_minus_1_over_degree, mpthreshold;
+MP g_newton_mp_r_over_d, g_mp_degree_minus_1_over_degree, g_mp_threshold;
 MP g_mp_temp2;
 MP g_mp_one;
 #endif
@@ -545,14 +545,14 @@ int MPCNewtonFractal()
     mpcnew.y = *pMPadd(*pMPmul(mpctmp.x, mpcold.y), *pMPmul(mpctmp.y, mpcold.x));
     mpctmp1.x = *pMPsub(mpcnew.x, g_mpc_one.x);
     mpctmp1.y = *pMPsub(mpcnew.y, g_mpc_one.y);
-    if (pMPcmp(MPCmod(mpctmp1), mpthreshold) < 0)
+    if (pMPcmp(MPCmod(mpctmp1), g_mp_threshold) < 0)
     {
         if (fractype == fractal_type::MPNEWTBASIN)
         {
             long tmpcolor;
             tmpcolor = -1;
             for (int i = 0; i < degree; i++)
-                if (pMPcmp(MPdistance(g_mpc_roots[i], mpcold), mpthreshold) < 0)
+                if (pMPcmp(MPdistance(g_mpc_roots[i], mpcold), g_mp_threshold) < 0)
                 {
                     if (g_basin == 2)
                     {

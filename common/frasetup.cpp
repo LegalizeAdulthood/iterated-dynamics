@@ -107,7 +107,7 @@ NewtonSetup()           // Newton/NewtBasin Routines
     {
         g_newton_mp_r_over_d     = *pd2MP(g_newton_r_over_d);
         g_mp_degree_minus_1_over_degree    = *pd2MP(g_degree_minus_1_over_degree);
-        mpthreshold  = *pd2MP(threshold);
+        g_mp_threshold  = *pd2MP(threshold);
         g_mp_one        = *pd2MP(1.0);
     }
 #endif
