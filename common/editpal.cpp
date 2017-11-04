@@ -75,7 +75,7 @@ struct PALENTRY
  */
 
 
-std::vector<BYTE> line_buff;
+std::vector<BYTE> g_line_buff;
 static BYTE       fg_color,
        bg_color;
 static bool reserve_colors = false;
@@ -219,8 +219,8 @@ int clip_getcolor(int x, int y)
 
 static void hline(int x, int y, int width, int color)
 {
-    memset(&line_buff[0], color, width);
-    clip_put_line(y, x, x+width-1, &line_buff[0]);
+    memset(&g_line_buff[0], color, width);
+    clip_put_line(y, x, x+width-1, &g_line_buff[0]);
 }
 
 
@@ -405,13 +405,13 @@ static void palrangetonegative(PALENTRY pal[], int first, int how_many)
 
 static void hdline(int x, int y, int width)
 {
-    BYTE *ptr = &line_buff[0];
+    BYTE *ptr = &g_line_buff[0];
     for (int ctr = 0; ctr < width; ctr++, ptr++)
     {
         *ptr = (BYTE)((ctr&2) ? bg_color : fg_color);
     }
 
-    putrow(x, y, width, (char *) &line_buff[0]);
+    putrow(x, y, width, (char *) &g_line_buff[0]);
 }
 
 
@@ -3184,7 +3184,7 @@ void EditPalette()
 
     plot = putcolor;
 
-    line_buff.resize(std::max(sxdots, sydots));
+    g_line_buff.resize(std::max(sxdots, sydots));
 
     look_at_mouse = 3;
     syoffs = 0;
@@ -3204,5 +3204,5 @@ void EditPalette()
     look_at_mouse = old_look_at_mouse;
     sxoffs = oldsxoffs;
     syoffs = oldsyoffs;
-    line_buff.clear();
+    g_line_buff.clear();
 }

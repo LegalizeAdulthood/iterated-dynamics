@@ -509,7 +509,7 @@ void Jiim(jiim_types which)
     oldcalctype = calctype;
     show_numbers = 0;
     using_jiim = true;
-    line_buff.resize(std::max(sxdots, sydots));
+    g_line_buff.resize(std::max(sxdots, sydots));
     aspect = ((double)xdots*3)/((double)ydots*4);  // assumes 4:3
     actively_computing = true;
     SetAspect(aspect);
@@ -1283,7 +1283,7 @@ finish:
 #ifdef XFRACT
     Cursor_EndMouseTracking();
 #endif
-    line_buff.clear();
+    g_line_buff.clear();
     screen_rect.clear();
     look_at_mouse = old_look_at_mouse;
     using_jiim = false;
