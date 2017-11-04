@@ -2013,7 +2013,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         }
         else
         {
-            juli3Dmode = j;
+            g_julibrot_3d_mode = j;
         }
         return CMDARG_FRACTAL_PARAM;
     }

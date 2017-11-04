@@ -55,7 +55,7 @@ static long width, dist, depth, brratio;
 #ifndef XFRACT
 static long eyes;
 #endif
-int juli3Dmode = 0;
+int g_julibrot_3d_mode = 0;
 
 fractal_type neworbittype = fractal_type::JULIA;
 
@@ -83,7 +83,7 @@ JulibrotSetup()
     inch_per_xdotfp = widthfp / xdots;
     inch_per_ydotfp = g_height_fp / ydots;
     initzfp = originfp - (g_depth_fp / 2);
-    if (juli3Dmode == 0)
+    if (g_julibrot_3d_mode == 0)
     {
         RightEyefp.x = 0.0;
     }
@@ -139,7 +139,7 @@ JulibrotSetup()
         inch_per_xdot = (long)((widthfp / xdots) * fg16);
         inch_per_ydot = (long)((g_height_fp / ydots) * fg16);
         initz = origin - (depth / 2);
-        if (juli3Dmode == 0)
+        if (g_julibrot_3d_mode == 0)
         {
             RightEye.x = 0L;
         }
@@ -158,7 +158,7 @@ JulibrotSetup()
     }
 #endif
 
-    if (juli3Dmode == 3)
+    if (g_julibrot_3d_mode == 3)
     {
         savedac = 0;
         mapname = g_glasses1_map.c_str();
@@ -229,7 +229,7 @@ zline(long x, long y)
     ypixel = y;
     mx = mxmin;
     my = mymin;
-    switch (juli3Dmode)
+    switch (g_julibrot_3d_mode)
     {
     case 0:
     case 1:
@@ -271,7 +271,7 @@ zline(long x, long y)
         }
         if (n == maxit)
         {
-            if (juli3Dmode == 3)
+            if (g_julibrot_3d_mode == 3)
             {
                 g_color = (int)(128l * zpixel / zdots);
                 if ((row + col) & 1)
@@ -319,7 +319,7 @@ zlinefp(double x, double y)
     ypixelfp = y;
     mxfp = mxminfp;
     myfp = myminfp;
-    switch (juli3Dmode)
+    switch (g_julibrot_3d_mode)
     {
     case 0:
     case 1:
@@ -393,7 +393,7 @@ zlinefp(double x, double y)
         }
         if (n == maxit)
         {
-            if (juli3Dmode == 3)
+            if (g_julibrot_3d_mode == 3)
             {
                 g_color = (int)(128l * zpixel / zdots);
                 if ((row + col) & 1)

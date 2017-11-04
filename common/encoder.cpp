@@ -972,7 +972,7 @@ static void setup_save_info(FRACTAL_INFO *save_info)
     save_info->distfp = g_dist_fp;
     save_info->eyesfp = g_eyes_fp;
     save_info->orbittype = (short) neworbittype;
-    save_info->juli3Dmode = (short) juli3Dmode;
+    save_info->juli3Dmode = (short) g_julibrot_3d_mode;
     save_info->maxfn = maxfn;
     save_info->inversejulia = (short)((static_cast<int>(major_method) << 8) + static_cast<int>(minor_method));
     save_info->bailout = g_bail_out;

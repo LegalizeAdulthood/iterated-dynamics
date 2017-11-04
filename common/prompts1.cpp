@@ -1857,7 +1857,7 @@ gfp_top:
         choices[promptnum++] = "Number of z pixels";
 
         paramvalues[promptnum].type = 'l';
-        paramvalues[promptnum].uval.ch.val  = juli3Dmode;
+        paramvalues[promptnum].uval.ch.val  = g_julibrot_3d_mode;
         paramvalues[promptnum].uval.ch.llen = 4;
         paramvalues[promptnum].uval.ch.vlen = 9;
         paramvalues[promptnum].uval.ch.list = julia_3d_options_list;
@@ -2039,7 +2039,7 @@ gfp_top:
         mxminfp    = paramvalues[promptnum++].uval.dval;
         myminfp    = paramvalues[promptnum++].uval.dval;
         zdots      = paramvalues[promptnum++].uval.ival;
-        juli3Dmode = paramvalues[promptnum++].uval.ch.val;
+        g_julibrot_3d_mode = paramvalues[promptnum++].uval.ch.val;
         g_eyes_fp     = (float)paramvalues[promptnum++].uval.dval;
         originfp   = (float)paramvalues[promptnum++].uval.dval;
         g_depth_fp    = (float)paramvalues[promptnum++].uval.dval;

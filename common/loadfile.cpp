@@ -259,7 +259,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
         g_dist_fp    =  read_info.distfp         ;
         g_eyes_fp    =  read_info.eyesfp         ;
         neworbittype = static_cast<fractal_type>(read_info.orbittype);
-        juli3Dmode   = read_info.juli3Dmode   ;
+        g_julibrot_3d_mode   = read_info.juli3Dmode   ;
         maxfn    = (char)read_info.maxfn          ;
         major_method = static_cast<Major>(read_info.inversejulia >> 8);
         minor_method = static_cast<Minor>(read_info.inversejulia & 255);
