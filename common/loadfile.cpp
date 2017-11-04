@@ -1214,7 +1214,7 @@ void backwards_v19()
         g_inversion[0] = g_inversion[1];
     }
     // fractal might have old bof60/61 problem with magnitude
-    no_mag_calc = fix_bof();
+    g_no_magnitude_calc = fix_bof();
     // fractal might use old periodicity method
     use_old_period = fix_period_bof();
     use_old_distest = (save_release < 1827 && g_distance_estimator);
