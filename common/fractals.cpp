@@ -316,13 +316,13 @@ static int  Halleybailout()
 #if !defined(XFRACT)
 #define MPCmod(m) (*pMPadd(*pMPmul((m).x, (m).x), *pMPmul((m).y, (m).y)))
 MPC mpcold, mpcnew, mpctmp, mpctmp1;
-MP mptmpparm2x;
+MP g_mp_temp_param2_x;
 
 static int  MPCHalleybailout()
 {
     static MP mptmpbailout;
     mptmpbailout = *MPabs(*pMPsub(MPCmod(mpcnew), MPCmod(mpcold)));
-    if (pMPcmp(mptmpbailout, mptmpparm2x) < 0)
+    if (pMPcmp(mptmpbailout, g_mp_temp_param2_x) < 0)
     {
         return 1;
     }

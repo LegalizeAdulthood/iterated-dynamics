@@ -1290,7 +1290,7 @@ HalleySetup()
         g_halley_mp_a_plus_one_times_degree = *pd2MP((double)g_halley_a_plus_one_times_degree);
         g_mpc_temp_param.x = *pd2MP(parm.y);
         g_mpc_temp_param.y = *pd2MP(parm2.y);
-        mptmpparm2x = *pd2MP(parm2.x);
+        g_mp_temp_param2_x = *pd2MP(parm2.x);
         g_mp_one        = *pd2MP(1.0);
     }
 #endif
