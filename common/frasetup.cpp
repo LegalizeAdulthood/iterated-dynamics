@@ -106,7 +106,7 @@ NewtonSetup()           // Newton/NewtBasin Routines
     if (fractype == fractal_type::MPNEWTON || fractype == fractal_type::MPNEWTBASIN)
     {
         mproverd     = *pd2MP(roverd);
-        mpd1overd    = *pd2MP(g_degree_minus_1_over_degree);
+        g_mp_degree_minus_1_over_degree    = *pd2MP(g_degree_minus_1_over_degree);
         mpthreshold  = *pd2MP(threshold);
         mpone        = *pd2MP(1.0);
     }
