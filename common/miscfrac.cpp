@@ -51,7 +51,7 @@ int test()
     numpasses = (stdcalcmode == '1') ? 0 : 1;
     for (passes = startpass; passes <= numpasses ; passes++)
     {
-        for (row = startrow; row <= iystop; row = row+1+numpasses)
+        for (row = startrow; row <= g_i_y_stop; row = row+1+numpasses)
         {
             for (col = 0; col <= g_i_x_stop; col++)       // look at each point on screen
             {
@@ -989,7 +989,7 @@ int Bifurcation()
     bool resized = false;
     try
     {
-        verhulst_array.resize(iystop + 1);
+        verhulst_array.resize(g_i_y_stop + 1);
         resized = true;
     }
     catch (std::bad_alloc const&)
@@ -1003,7 +1003,7 @@ int Bifurcation()
 
     LPI = (long)(PI * g_fudge_factor);
 
-    for (int y = 0; y <= iystop; y++)   // should be iystop
+    for (int y = 0; y <= g_i_y_stop; y++)   // should be iystop
     {
         verhulst_array[y] = 0;
     }
@@ -1036,11 +1036,11 @@ int Bifurcation()
 
     if (g_integer_fractal)
     {
-        linit.y = ymax - iystop*dely;            // Y-value of
+        linit.y = ymax - g_i_y_stop*dely;            // Y-value of
     }
     else
     {
-        g_init.y = (double)(yymax - iystop*delyy); // bottom pixels
+        g_init.y = (double)(yymax - g_i_y_stop*delyy); // bottom pixels
     }
 
     while (x <= g_i_x_stop)
@@ -1063,7 +1063,7 @@ int Bifurcation()
         }
         verhulst();        // calculate array once per column
 
-        for (int y = iystop; y >= 0; y--) // should be iystop & >=0
+        for (int y = g_i_y_stop; y >= 0; y--) // should be iystop & >=0
         {
             int color;
             color = verhulst_array[y];
@@ -1151,21 +1151,21 @@ static void verhulst()          // P. F. Verhulst (1845)
         // assign population value to Y coordinate in pixels
         if (g_integer_fractal)
         {
-            pixel_row = iystop - (int)((lPopulation - linit.y) / dely); // iystop
+            pixel_row = g_i_y_stop - (int)((lPopulation - linit.y) / dely); // iystop
         }
         else
         {
-            pixel_row = iystop - (int)((Population - g_init.y) / delyy);
+            pixel_row = g_i_y_stop - (int)((Population - g_init.y) / delyy);
         }
 
         // if it's visible on the screen, save it in the column array
-        if (pixel_row <= (unsigned int)iystop)
+        if (pixel_row <= (unsigned int)g_i_y_stop)
         {
             verhulst_array[ pixel_row ] ++;
         }
         if (periodicitycheck && Bif_Periodic(counter))
         {
-            if (pixel_row <= (unsigned int)iystop)
+            if (pixel_row <= (unsigned int)g_i_y_stop)
             {
                 verhulst_array[ pixel_row ] --;
             }
@@ -1420,7 +1420,7 @@ int popcorn()   // subset of std engine
     plot = noplot;
     ltempsqrx = 0;
     tempsqrx = ltempsqrx;
-    for (row = start_row; row <= iystop; row++)
+    for (row = start_row; row <= g_i_y_stop; row++)
     {
         reset_periodicity = true;
         for (col = 0; col <= g_i_x_stop; col++)
@@ -1944,8 +1944,8 @@ int cellular()
     {
         start_resume();
         end_resume();
-        get_line(iystop, 0, g_i_x_stop, &cell_array[filled][0]);
-        param[3] += iystop + 1;
+        get_line(g_i_y_stop, 0, g_i_x_stop, &cell_array[filled][0]);
+        param[3] += g_i_y_stop + 1;
         start_row = -1; // after 1st iteration its = 0
     }
     else
@@ -2048,7 +2048,7 @@ int cellular()
 
     // This section does all the work
 contloop:
-    for (row = start_row; row <= iystop; row++)
+    for (row = start_row; row <= g_i_y_stop; row++)
     {
         if (rflag || randparam == 0 || randparam == -1)
         {
@@ -2110,7 +2110,7 @@ contloop:
     }
     if (nxtscreenflag)
     {
-        param[3] += iystop + 1;
+        param[3] += g_i_y_stop + 1;
         start_row = 0;
         goto contloop;
     }

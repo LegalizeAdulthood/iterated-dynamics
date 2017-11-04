@@ -230,7 +230,7 @@ extern bool                  g_is_mandelbrot;
 extern int                   g_i_x_start;
 extern int                   g_i_x_stop;
 extern int                   g_i_y_start;
-extern int                   iystop;
+extern int                   g_i_y_stop;
 extern std::string const     JIIMleftright[];
 extern std::string const     JIIMmethod[];
 extern int                   juli3Dmode;
