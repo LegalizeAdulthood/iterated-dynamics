@@ -1280,7 +1280,7 @@ ev_button_press(DriverX11 *di, XEvent *xevent)
     bool banding = false;
     int bandx0, bandy0, bandx1, bandy1;
 
-    if (look_at_mouse == 3 || !zoomoff)
+    if (g_look_at_mouse == 3 || !zoomoff)
     {
         di->last_x = xevent->xbutton.x;
         di->last_y = xevent->xbutton.y;
@@ -1390,7 +1390,7 @@ ev_motion_notify(DriverX11 *di, XEvent *xevent)
             di->button_num = 0;
         }
 
-        if (look_at_mouse == 3 && di->button_num != 0)
+        if (g_look_at_mouse == 3 && di->button_num != 0)
         {
             di->dx += (xevent->xmotion.x-di->last_x)/MOUSE_SCALE;
             di->dy += (xevent->xmotion.y-di->last_y)/MOUSE_SCALE;
@@ -1455,7 +1455,7 @@ handle_events(DriverX11 *di)
         }
     }
 
-    if (!di->key_buffer && editpal_cursor && !inside_help && look_at_mouse == 3 &&
+    if (!di->key_buffer && editpal_cursor && !inside_help && g_look_at_mouse == 3 &&
             (di->dx != 0 || di->dy != 0))
     {
         if (ABS(di->dx) > ABS(di->dy))

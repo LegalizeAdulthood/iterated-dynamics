@@ -233,7 +233,7 @@ main_state big_while_loop(bool *const kbdmore, bool *const stacked, bool const r
         savedac = (savedac == 0) ? 2 : 1;
         if (g_init_batch == batch_modes::NONE)
         {
-            look_at_mouse = -FIK_PAGE_UP;        // mouse left button == pgup
+            g_look_at_mouse = -FIK_PAGE_UP;        // mouse left button == pgup
         }
 
         if (show_file == 0)
@@ -540,9 +540,9 @@ resumeloop:                             // return here on failed overlays
             else if (g_init_batch == batch_modes::NONE)      // not batch mode
             {
 #ifndef XFRACT
-                look_at_mouse = (zoom_box_width == 0 && !g_video_scroll) ? -FIK_PAGE_UP : 3;
+                g_look_at_mouse = (zoom_box_width == 0 && !g_video_scroll) ? -FIK_PAGE_UP : 3;
 #else
-                look_at_mouse = (zoom_box_width == 0) ? -FIK_PAGE_UP : 3;
+                g_look_at_mouse = (zoom_box_width == 0) ? -FIK_PAGE_UP : 3;
 #endif
                 if (g_calc_status == calc_status_value::RESUMABLE && zoom_box_width == 0 && !driver_key_pressed())
                 {

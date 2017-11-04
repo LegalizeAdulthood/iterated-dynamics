@@ -27,9 +27,9 @@ void intro()
     int old_help_mode;
 
     timer_start -= clock_ticks();       // "time out" during help
-    old_look_at_mouse = look_at_mouse;
+    old_look_at_mouse = g_look_at_mouse;
     old_help_mode = g_help_mode;
-    look_at_mouse = 0;                    // de-activate full mouse checking
+    g_look_at_mouse = 0;                    // de-activate full mouse checking
 
     int i = 32767 + read_help_topic(INTRO_AUTHORS, 0, 32767, screen_text);
     screen_text[i++] = '\0';
@@ -109,7 +109,7 @@ void intro()
         driver_hide_text_cursor(); // turn it off
     }
 
-    look_at_mouse = old_look_at_mouse;                // restore the mouse-checking
+    g_look_at_mouse = old_look_at_mouse;                // restore the mouse-checking
     g_help_mode = old_help_mode;
     return;
 }

@@ -93,8 +93,8 @@ int stopmsg(int flags, char const *msg)
         return (-1);
     }
     ret = 0;
-    old_look_at_mouse = look_at_mouse;
-    look_at_mouse = -13;
+    old_look_at_mouse = g_look_at_mouse;
+    g_look_at_mouse = -13;
     if ((flags & STOPMSG_NO_STACK))
     {
         blankrows(toprow = 12, 10, 7);
@@ -142,7 +142,7 @@ int stopmsg(int flags, char const *msg)
     {
         driver_unstack_screen();
     }
-    look_at_mouse = old_look_at_mouse;
+    g_look_at_mouse = old_look_at_mouse;
     return ret;
 }
 
@@ -533,8 +533,8 @@ int fullscreen_choice(
     int scrunch;  // scrunch up a line
 
     scrunch = (options & CHOICE_CRUNCH) ? 1 : 0;
-    old_look_at_mouse = look_at_mouse;
-    look_at_mouse = 0;
+    old_look_at_mouse = g_look_at_mouse;
+    g_look_at_mouse = 0;
     ret = -1;
     // preset current to passed string
     int const len = (speedstring == nullptr) ? 0 : (int) strlen(speedstring);
@@ -1127,7 +1127,7 @@ int fullscreen_choice(
     }
 
 fs_choice_end:
-    look_at_mouse = old_look_at_mouse;
+    g_look_at_mouse = old_look_at_mouse;
     return ret;
 }
 
@@ -1556,8 +1556,8 @@ int input_field(
     char buf[81];
     int curkey;
     int i, j;
-    int old_look_at_mouse = look_at_mouse;
-    look_at_mouse = 0;
+    int old_look_at_mouse = g_look_at_mouse;
+    g_look_at_mouse = 0;
     int ret = -1;
     strcpy(savefld, fld);
     int insert = 0;
@@ -1734,7 +1734,7 @@ int input_field(
         }
     }
 inpfld_end:
-    look_at_mouse = old_look_at_mouse;
+    g_look_at_mouse = old_look_at_mouse;
     return (ret);
 }
 

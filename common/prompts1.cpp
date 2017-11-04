@@ -108,8 +108,8 @@ int fullscreen_prompt(      // full-screen prompting routine
     bool rewrite_extrainfo = false; // if true: rewrite extrainfo to text box
     char blanks[78];               // used to clear text box
 
-    old_look_at_mouse = look_at_mouse;
-    look_at_mouse = 0;
+    old_look_at_mouse = g_look_at_mouse;
+    g_look_at_mouse = 0;
     promptfkeys = fkeymask;
     memset(blanks, ' ', 77);   // initialize string of blanks
     blanks[77] = (char) 0;
@@ -836,7 +836,7 @@ int fullscreen_prompt(      // full-screen prompting routine
 
 fullscreen_exit:
     driver_hide_text_cursor();
-    look_at_mouse = old_look_at_mouse;
+    g_look_at_mouse = old_look_at_mouse;
     if (scroll_file)
     {
         fclose(scroll_file);
@@ -983,8 +983,8 @@ static int input_field_list(
     char buf[81];
     int curkey;
     int ret, old_look_at_mouse;
-    old_look_at_mouse = look_at_mouse;
-    look_at_mouse = 0;
+    old_look_at_mouse = g_look_at_mouse;
+    g_look_at_mouse = 0;
     for (initval = 0; initval < llen; ++initval)
     {
         if (strcmp(fld, list[initval]) == 0)
@@ -1061,7 +1061,7 @@ static int input_field_list(
     }
 inpfldl_end:
     strcpy(fld, list[curval]);
-    look_at_mouse = old_look_at_mouse;
+    g_look_at_mouse = old_look_at_mouse;
     return ret;
 }
 
