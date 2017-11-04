@@ -85,7 +85,7 @@ static FILE *open_orbitsave();
 static void plothist(int x, int y, int color);
 static bool realtime = false;
 
-S32 maxct;
+S32 g_max_count;
 static int t;
 static long l_dx, l_dy, l_dz, l_dt, l_a, l_b, l_c, l_d;
 static long l_adt, l_bdt, l_cdt, l_xdt, l_ydt;
@@ -263,7 +263,7 @@ static long l_sinx, l_cosx;
 
 bool orbit3dlongsetup()
 {
-    maxct = 0L;
+    g_max_count = 0L;
     connect = true;
     waste = 100;
     projection = 2;
@@ -294,7 +294,7 @@ bool orbit3dlongsetup()
     }
     else if (fractype == fractal_type::KAM || fractype == fractal_type::KAM3D)
     {
-        maxct = 1L;
+        g_max_count = 1L;
         a   = param[0];           // angle
         if (param[1] <= 0.0)
         {
@@ -412,7 +412,7 @@ lrwalk:
 
 bool orbit3dfloatsetup()
 {
-    maxct = 0L;
+    g_max_count = 0L;
     connect = true;
     waste = 100;
     projection = 2;
@@ -480,7 +480,7 @@ bool orbit3dfloatsetup()
     }
     else if (fractype == fractal_type::KAMFP || fractype == fractal_type::KAM3DFP)
     {
-        maxct = 1L;
+        g_max_count = 1L;
         a = param[0];           // angle
         if (param[1] <= 0.0)
         {
@@ -1402,13 +1402,13 @@ int orbit2dfloat()
     g_color_iter = 0L;
     ret = 0;
     count = ret;
-    if (maxit > 0x1fffffL || maxct)
+    if (maxit > 0x1fffffL || g_max_count)
     {
-        maxct = 0x7fffffffL;
+        g_max_count = 0x7fffffffL;
     }
     else
     {
-        maxct = maxit*1024L;
+        g_max_count = maxit*1024L;
     }
 
     if (resuming)
@@ -1422,7 +1422,7 @@ int orbit2dfloat()
         end_resume();
     }
 
-    while (g_color_iter++ <= maxct) // loop until keypress or maxit
+    while (g_color_iter++ <= g_max_count) // loop until keypress or maxit
     {
         if (driver_key_pressed())
         {
@@ -1577,13 +1577,13 @@ int orbit2dlong()
     z = initorbitlong[2];
     ret = 0;
     count = ret;
-    if (maxit > 0x1fffffL || maxct)
+    if (maxit > 0x1fffffL || g_max_count)
     {
-        maxct = 0x7fffffffL;
+        g_max_count = 0x7fffffffL;
     }
     else
     {
-        maxct = maxit*1024L;
+        g_max_count = maxit*1024L;
     }
     g_color_iter = 0L;
 
@@ -1598,7 +1598,7 @@ int orbit2dlong()
         end_resume();
     }
 
-    while (g_color_iter++ <= maxct) // loop until keypress or maxit
+    while (g_color_iter++ <= g_max_count) // loop until keypress or maxit
     {
         if (driver_key_pressed())
         {
@@ -1713,16 +1713,16 @@ static int orbit3dlongcalc()
 
     ret = 0;
     count = ret;
-    if (maxit > 0x1fffffL || maxct)
+    if (maxit > 0x1fffffL || g_max_count)
     {
-        maxct = 0x7fffffffL;
+        g_max_count = 0x7fffffffL;
     }
     else
     {
-        maxct = maxit*1024L;
+        g_max_count = maxit*1024L;
     }
     g_color_iter = 0L;
-    while (g_color_iter++ <= maxct) // loop until keypress or maxit
+    while (g_color_iter++ <= g_max_count) // loop until keypress or maxit
     {
         // calc goes here
         if (++count > 1000)
@@ -1843,17 +1843,17 @@ static int orbit3dfloatcalc()
     fp = open_orbitsave();
 
     ret = 0;
-    if (maxit > 0x1fffffL || maxct)
+    if (maxit > 0x1fffffL || g_max_count)
     {
-        maxct = 0x7fffffffL;
+        g_max_count = 0x7fffffffL;
     }
     else
     {
-        maxct = maxit*1024L;
+        g_max_count = maxit*1024L;
     }
     g_color_iter = 0L;
     count = g_color_iter;
-    while (g_color_iter++ <= maxct) // loop until keypress or maxit
+    while (g_color_iter++ <= g_max_count) // loop until keypress or maxit
     {
         // calc goes here
         if (++count > 1000)
@@ -2425,14 +2425,14 @@ static int ifs3dfloat()
     ret = 0;
     if (maxit > 0x1fffffL)
     {
-        maxct = 0x7fffffffL;
+        g_max_count = 0x7fffffffL;
     }
     else
     {
-        maxct = maxit*1024;
+        g_max_count = maxit*1024;
     }
     g_color_iter = 0L;
-    while (g_color_iter++ <= maxct) // loop until keypress or maxit
+    while (g_color_iter++ <= g_max_count) // loop until keypress or maxit
     {
         if (driver_key_pressed())  // keypress bails out
         {
@@ -2600,14 +2600,14 @@ static int ifs2d()
     ret = 0;
     if (maxit > 0x1fffffL)
     {
-        maxct = 0x7fffffffL;
+        g_max_count = 0x7fffffffL;
     }
     else
     {
-        maxct = maxit*1024L;
+        g_max_count = maxit*1024L;
     }
     g_color_iter = 0L;
-    while (g_color_iter++ <= maxct) // loop until keypress or maxit
+    while (g_color_iter++ <= g_max_count) // loop until keypress or maxit
     {
         if (driver_key_pressed())  // keypress bails out
         {
@@ -2713,14 +2713,14 @@ static int ifs3dlong()
     ret = 0;
     if (maxit > 0x1fffffL)
     {
-        maxct = 0x7fffffffL;
+        g_max_count = 0x7fffffffL;
     }
     else
     {
-        maxct = maxit*1024L;
+        g_max_count = maxit*1024L;
     }
     g_color_iter = 0L;
-    while (g_color_iter++ <= maxct) // loop until keypress or maxit
+    while (g_color_iter++ <= g_max_count) // loop until keypress or maxit
     {
         if (driver_key_pressed())  // keypress bails out
         {
