@@ -392,13 +392,13 @@ int get_video_mode(FRACTAL_INFO *info, ext_blk_3 *blk_3_info)
             viewxdots = viewydots; // easier to use auto reduction
         }
         viewreduction = (float)((int)(viewreduction + 0.5)); // need integer value
-        skipydots = (short)(viewreduction - 1);
-        g_skip_x_dots = skipydots;
+        g_skip_y_dots = (short)(viewreduction - 1);
+        g_skip_x_dots = g_skip_y_dots;
         return 0;
     }
 
-    skipydots = 0;
-    g_skip_x_dots = skipydots; // set for no reduction
+    g_skip_y_dots = 0;
+    g_skip_x_dots = g_skip_y_dots; // set for no reduction
     if (g_video_entry.xdots < g_file_x_dots || g_video_entry.ydots < g_file_y_dots)
     {
         // set up to load only every nth pixel to make image fit
@@ -406,15 +406,15 @@ int get_video_mode(FRACTAL_INFO *info, ext_blk_3 *blk_3_info)
         {
             g_calc_status = calc_status_value::PARAMS_CHANGED;  // can't resume anyway
         }
-        skipydots = 1;
-        g_skip_x_dots = skipydots;
+        g_skip_y_dots = 1;
+        g_skip_x_dots = g_skip_y_dots;
         while (g_skip_x_dots * g_video_entry.xdots < g_file_x_dots)
         {
             ++g_skip_x_dots;
         }
-        while (skipydots * g_video_entry.ydots < g_file_y_dots)
+        while (g_skip_y_dots * g_video_entry.ydots < g_file_y_dots)
         {
-            ++skipydots;
+            ++g_skip_y_dots;
         }
         int i = 0;
         int j = 0;
@@ -423,7 +423,7 @@ int get_video_mode(FRACTAL_INFO *info, ext_blk_3 *blk_3_info)
         while (true)
         {
             tmpxdots = (g_file_x_dots + g_skip_x_dots - 1) / g_skip_x_dots;
-            tmpydots = (g_file_y_dots + skipydots - 1) / skipydots;
+            tmpydots = (g_file_y_dots + g_skip_y_dots - 1) / g_skip_y_dots;
             // reduce further if that improves aspect
             ftemp = vid_aspect(tmpxdots, tmpydots);
             if (ftemp > g_file_aspect_ratio)
@@ -432,13 +432,13 @@ int get_video_mode(FRACTAL_INFO *info, ext_blk_3 *blk_3_info)
                 {
                     break; // already reduced x, don't reduce y
                 }
-                double const ftemp2 = vid_aspect(tmpxdots, (g_file_y_dots+skipydots)/(skipydots+1));
+                double const ftemp2 = vid_aspect(tmpxdots, (g_file_y_dots+g_skip_y_dots)/(g_skip_y_dots+1));
                 if (ftemp2 < g_file_aspect_ratio &&
                         ftemp/g_file_aspect_ratio *0.9 <= g_file_aspect_ratio/ftemp2)
                 {
                     break; // further y reduction is worse
                 }
-                ++skipydots;
+                ++g_skip_y_dots;
                 ++i;
             }
             else
@@ -460,7 +460,7 @@ int get_video_mode(FRACTAL_INFO *info, ext_blk_3 *blk_3_info)
         g_file_x_dots = tmpxdots;
         g_file_y_dots = tmpydots;
         --g_skip_x_dots;
-        --skipydots;
+        --g_skip_y_dots;
     }
 
     g_final_aspect_ratio = g_file_aspect_ratio;

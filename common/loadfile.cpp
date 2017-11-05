@@ -40,7 +40,7 @@ bool g_loaded_3d = false;
 static FILE *fp;
 int g_file_y_dots, g_file_x_dots, g_file_colors;
 float g_file_aspect_ratio;
-short g_skip_x_dots, skipydots;      // for decoder, when reducing image
+short g_skip_x_dots, g_skip_y_dots;      // for decoder, when reducing image
 bool g_bad_outside = false;
 bool g_ld_check = false;
 

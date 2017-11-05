@@ -295,7 +295,7 @@ short decoder(short linewidth)
                             {
                                 return (ret);
                             }
-                            yskip = skipydots;
+                            yskip = g_skip_y_dots;
                         }
                         if (driver_key_pressed())
                         {
@@ -358,7 +358,7 @@ short decoder(short linewidth)
                     {
                         return (ret);
                     }
-                    yskip = skipydots;
+                    yskip = g_skip_y_dots;
                 }
                 if (driver_key_pressed())
                 {

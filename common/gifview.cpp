@@ -251,10 +251,10 @@ int gifview()
             gifview_image_top  = top;
             if (g_skip_x_dots > 0)
             {
-                gifview_image_top /= (skipydots+1);
+                gifview_image_top /= (g_skip_y_dots+1);
             }
             gifview_image_left = left;
-            if (skipydots > 0)
+            if (g_skip_y_dots > 0)
             {
                 gifview_image_left /= (g_skip_x_dots+1);
             }
