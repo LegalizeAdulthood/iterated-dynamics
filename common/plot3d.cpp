@@ -20,7 +20,7 @@ int g_glasses_type = 0;
 int g_x_shift1;
 int yshift1;
 int g_adjust_3d_x = 0;
-int ytrans = 0;
+int g_adjust_3d_y = 0;
 int red_local_left;
 int red_local_right;
 int blue_local_left;
@@ -506,7 +506,7 @@ void plot_setup()
     {
         xxadjust = (int)((g_adjust_3d_x* (double)g_logical_screen_x_dots)/100);
     }
-    yyadjust = (int)(-(ytrans* (double)g_logical_screen_y_dots)/100);
+    yyadjust = (int)(-(g_adjust_3d_y* (double)g_logical_screen_y_dots)/100);
 
     if (g_map_set)
     {
