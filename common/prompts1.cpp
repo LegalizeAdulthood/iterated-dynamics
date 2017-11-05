@@ -1331,7 +1331,7 @@ void set_default_parms()
     yymin = curfractalspecific->ymin;
     yymax = curfractalspecific->ymax;
     xx3rd = xxmin;
-    yy3rd = yymin;
+    g_y_3rd = yymin;
 
     if (g_view_crop && g_final_aspect_ratio != g_screen_aspect)
     {

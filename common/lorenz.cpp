@@ -212,23 +212,23 @@ bool setup_convert_to_screen(affine *scrn_cnvt)
 {
     double det, xd, yd;
 
-    det = (xx3rd-xxmin)*(yymin-yymax) + (yymax-yy3rd)*(xxmax-xxmin);
+    det = (xx3rd-xxmin)*(yymin-yymax) + (yymax-g_y_3rd)*(xxmax-xxmin);
     if (det == 0)
     {
         return true;
     }
     xd = g_x_size_dots/det;
-    scrn_cnvt->a =  xd*(yymax-yy3rd);
+    scrn_cnvt->a =  xd*(yymax-g_y_3rd);
     scrn_cnvt->b =  xd*(xx3rd-xxmin);
     scrn_cnvt->e = -scrn_cnvt->a*xxmin - scrn_cnvt->b*yymax;
 
-    det = (xx3rd-xxmax)*(yymin-yymax) + (yymin-yy3rd)*(xxmax-xxmin);
+    det = (xx3rd-xxmax)*(yymin-yymax) + (yymin-g_y_3rd)*(xxmax-xxmin);
     if (det == 0)
     {
         return true;
     }
     yd = g_y_size_dots/det;
-    scrn_cnvt->c =  yd*(yymin-yy3rd);
+    scrn_cnvt->c =  yd*(yymin-g_y_3rd);
     scrn_cnvt->d =  yd*(xx3rd-xxmax);
     scrn_cnvt->f = -scrn_cnvt->c*xxmin - scrn_cnvt->d*yymax;
     return false;

@@ -138,7 +138,7 @@ void fractal_floattobf()
     floattobf(g_bf_y_min, yymin);
     floattobf(g_bf_y_max, yymax);
     floattobf(g_bf_x_3rd, xx3rd);
-    floattobf(g_bf_y_3rd, yy3rd);
+    floattobf(g_bf_y_3rd, g_y_3rd);
 
     for (int i = 0; i < MAXPARAMS; i++)
     {
@@ -395,7 +395,7 @@ init_restart:
             yymin = ftemp;
         }
         xx3rd = xxmin;
-        yy3rd = yymin;
+        g_y_3rd = yymin;
     }
 
     // set up bitshift for integer math
@@ -453,9 +453,9 @@ init_restart:
     {
         adjust_to_limits(1.0); // make sure all corners in valid range
         g_delta_x  = (LDBL)(xxmax - xx3rd) / (LDBL)g_x_size_dots; // calculate stepsizes
-        g_delta_y  = (LDBL)(yymax - yy3rd) / (LDBL)g_y_size_dots;
+        g_delta_y  = (LDBL)(yymax - g_y_3rd) / (LDBL)g_y_size_dots;
         g_delta_x2 = (LDBL)(xx3rd - xxmin) / (LDBL)g_y_size_dots;
-        g_delta_y2 = (LDBL)(yy3rd - yymin) / (LDBL)g_x_size_dots;
+        g_delta_y2 = (LDBL)(g_y_3rd - yymin) / (LDBL)g_x_size_dots;
         fill_dx_array();
     }
 
@@ -466,7 +466,7 @@ init_restart:
         x3rd  = fudgetolong(xx3rd);
         ymin  = fudgetolong(yymin);
         ymax  = fudgetolong(yymax);
-        y3rd  = fudgetolong(yy3rd);
+        y3rd  = fudgetolong(g_y_3rd);
         g_l_delta_x  = fudgetolong((double)g_delta_x);
         g_l_delta_y  = fudgetolong((double)g_delta_y);
         g_l_delta_x2 = fudgetolong((double)g_delta_x2);
@@ -524,7 +524,7 @@ expand_retry:
             xx3rd = fudgetodouble(x3rd);
             yymin = fudgetodouble(ymin);
             yymax = fudgetodouble(ymax);
-            yy3rd = fudgetodouble(y3rd);
+            g_y_3rd = fudgetodouble(y3rd);
         } // end if (integerfractal && !invert && use_grid)
         else
         {
@@ -583,14 +583,14 @@ expand_retry:
                     }
                     double testy_try;
                     double testy_exact;
-                    if (fabs(yy3rd-yymax) > fabs(yymin-yy3rd))
+                    if (fabs(g_y_3rd-yymax) > fabs(yymin-g_y_3rd))
                     {
-                        testy_exact = yy3rd-yymax;
+                        testy_exact = g_y_3rd-yymax;
                         testy_try   = dy0-yymax;
                     }
                     else
                     {
-                        testy_exact = yymin-yy3rd;
+                        testy_exact = yymin-g_y_3rd;
                         testy_try   = dy1;
                     }
                     if (ratio_bad(testx_try, testx_exact) ||
@@ -613,7 +613,7 @@ expand_retry:
             xxmax = (double)(xxmin + (xdots-1)*g_delta_x + (ydots-1)*g_delta_x2);
             yymin = (double)(yymax - (ydots-1)*g_delta_y - (xdots-1)*g_delta_y2);
             xx3rd = (double)(xxmin + (ydots-1)*g_delta_x2);
-            yy3rd = (double)(yymax - (ydots-1)*g_delta_y);
+            g_y_3rd = (double)(yymax - (ydots-1)*g_delta_y);
 
         } // end else
     } // end if not plasma
@@ -641,11 +641,11 @@ expand_retry:
     // calculate factors which plot real values to screen co-ords
     // calcfrac.c plot_orbit routines have comments about this
     double ftemp = (double)((0.0-g_delta_y2) * g_delta_x2 * g_x_size_dots * g_y_size_dots
-                     - (xxmax-xx3rd) * (yy3rd-yymax));
+                     - (xxmax-xx3rd) * (g_y_3rd-yymax));
     if (ftemp != 0)
     {
         g_plot_mx1 = (double)(g_delta_x2 * g_x_size_dots * g_y_size_dots / ftemp);
-        g_plot_mx2 = (yy3rd-yymax) * g_x_size_dots / ftemp;
+        g_plot_mx2 = (g_y_3rd-yymax) * g_x_size_dots / ftemp;
         g_plot_my1 = (double)((0.0-g_delta_y2) * g_x_size_dots * g_y_size_dots / ftemp);
         g_plot_my2 = (xxmax-xx3rd) * g_y_size_dots / ftemp;
     }
@@ -787,30 +787,30 @@ void adjust_corner()
     ftemp2 = fabs(xxmax-xx3rd);
     if (ftemp < ftemp2)
     {
-        if (ftemp*10000 < ftemp2 && yy3rd != yymax)
+        if (ftemp*10000 < ftemp2 && g_y_3rd != yymax)
         {
             xx3rd = xxmin;
         }
     }
 
-    if (ftemp2*10000 < ftemp && yy3rd != yymin)
+    if (ftemp2*10000 < ftemp && g_y_3rd != yymin)
     {
         xx3rd = xxmax;
     }
 
-    ftemp = fabs(yy3rd-yymin);
-    ftemp2 = fabs(yymax-yy3rd);
+    ftemp = fabs(g_y_3rd-yymin);
+    ftemp2 = fabs(yymax-g_y_3rd);
     if (ftemp < ftemp2)
     {
         if (ftemp*10000 < ftemp2 && xx3rd != xxmax)
         {
-            yy3rd = yymin;
+            g_y_3rd = yymin;
         }
     }
 
     if (ftemp2*10000 < ftemp && xx3rd != xxmin)
     {
-        yy3rd = yymax;
+        g_y_3rd = yymax;
     }
 
 }
@@ -1110,9 +1110,9 @@ static void adjust_to_limits(double expand)
         smallest_add(&xx3rd);
     }
 
-    if (yy3rd == centery)
+    if (g_y_3rd == centery)
     {
-        smallest_add(&yy3rd);
+        smallest_add(&g_y_3rd);
     }
 
     // setup array for easier manipulation
@@ -1123,8 +1123,8 @@ static void adjust_to_limits(double expand)
 
     cornery[0] = yymax;
     cornery[1] = yymin;
-    cornery[2] = yy3rd;
-    cornery[3] = yymin+(yymax-yy3rd);
+    cornery[2] = g_y_3rd;
+    cornery[3] = yymin+(yymax-g_y_3rd);
 
     // if caller wants image size adjusted, do that first
     if (expand != 1.0)
@@ -1212,7 +1212,7 @@ static void adjust_to_limits(double expand)
     xx3rd = cornerx[2] - adjx;
     yymax = cornery[0] - adjy;
     yymin = cornery[1] - adjy;
-    yy3rd = cornery[2] - adjy;
+    g_y_3rd = cornery[2] - adjy;
 
     adjust_corner(); // make 3rd corner exact if very near other co-ords
 }

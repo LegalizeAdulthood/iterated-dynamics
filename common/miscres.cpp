@@ -122,7 +122,7 @@ void cvtcentermag(double *Xctr, double *Yctr, LDBL *Magnification, double *Xmagf
     double Height;
 
     // simple normal case first
-    if (xx3rd == xxmin && yy3rd == yymin)
+    if (xx3rd == xxmin && g_y_3rd == yymin)
     {
         // no rotation or skewing, but stretching is allowed
         double Width = xxmax - xxmin;
@@ -143,13 +143,13 @@ void cvtcentermag(double *Xctr, double *Yctr, LDBL *Magnification, double *Xmagf
         double c2 = tmpx1*tmpx1 + tmpy1*tmpy1;
 
         tmpx1 = xxmax - xx3rd;
-        tmpy1 = yymin - yy3rd;
+        tmpy1 = yymin - g_y_3rd;
         double a2 = tmpx1*tmpx1 + tmpy1*tmpy1;
         double a = sqrt(a2);
         *Rotation = -rad_to_deg(atan2(tmpy1, tmpx1));   // negative for image rotation
 
         double tmpx2 = xxmin - xx3rd;
-        double tmpy2 = yymax - yy3rd;
+        double tmpy2 = yymax - g_y_3rd;
         double b2 = tmpx2*tmpx2 + tmpy2*tmpy2;
         double b = sqrt(b2);
 
@@ -235,7 +235,7 @@ void cvtcorners(double Xctr, double Yctr, LDBL Magnification, double Xmagfactor,
         xx3rd = xxmin;
         xxmax = Xctr + w;
         yymin = Yctr - h;
-        yy3rd = yymin;
+        g_y_3rd = yymin;
         yymax = Yctr + h;
         return;
     }
@@ -247,7 +247,7 @@ void cvtcorners(double Xctr, double Yctr, LDBL Magnification, double Xmagfactor,
     xx3rd = -w - h*tanskew;
     yymax = h;
     yymin = -h;
-    yy3rd = yymin;
+    g_y_3rd = yymin;
 
     // rotate coord system and then translate it
     Rotation = deg_to_rad(Rotation);
@@ -267,10 +267,10 @@ void cvtcorners(double Xctr, double Yctr, LDBL Magnification, double Xmagfactor,
     yymin = y + Yctr;
 
     // bottom left
-    x = xx3rd * cosrot + yy3rd *  sinrot;
-    y = -xx3rd * sinrot + yy3rd *  cosrot;
+    x = xx3rd * cosrot + g_y_3rd *  sinrot;
+    y = -xx3rd * sinrot + g_y_3rd *  cosrot;
     xx3rd = x + Xctr;
-    yy3rd = y + Yctr;
+    g_y_3rd = y + Yctr;
 
     return;
 }
@@ -1176,10 +1176,10 @@ top:
             sprintf(msg, "%20.16f  %20.16f", xxmax, yymin);
             driver_put_string(-1, 17, C_GENERAL_HI, msg);
 
-            if (xxmin != xx3rd || yymin != yy3rd)
+            if (xxmin != xx3rd || yymin != g_y_3rd)
             {
                 driver_put_string(++s_row, 3, C_GENERAL_MED, "Bot-l");
-                sprintf(msg, "%20.16f  %20.16f", xx3rd, yy3rd);
+                sprintf(msg, "%20.16f  %20.16f", xx3rd, g_y_3rd);
                 driver_put_string(-1, 17, C_GENERAL_HI, msg);
             }
             cvtcentermag(&Xctr, &Yctr, &Magnification, &Xmagfactor, &Rotation, &Skew);

@@ -566,7 +566,7 @@ extern long                  ymin;
 extern int                   yshift1;
 extern int                   yshift;
 extern int                   ytrans;
-extern double                yy3rd;
+extern double                g_y_3rd;
 extern int                   yyadjust1;
 extern int                   yyadjust;
 extern int                   yyadjust;

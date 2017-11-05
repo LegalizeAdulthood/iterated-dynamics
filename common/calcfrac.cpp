@@ -1097,9 +1097,9 @@ static void perform_worklist()
         }
 
         delxx  = (xxmax - xx3rd) / d_x_size; // calculate stepsizes
-        delyy  = (yymax - yy3rd) / d_y_size;
+        delyy  = (yymax - g_y_3rd) / d_y_size;
         delxx2 = (xx3rd - xxmin) / d_y_size;
-        delyy2 = (yy3rd - yymin) / d_x_size;
+        delyy2 = (g_y_3rd - yymin) / d_x_size;
 
         g_use_old_distance_estimator = g_save_release < 1827;
         g_magnitude_limit = rqlim_save; // just in case changed to DEM_BAILOUT earlier
@@ -1133,7 +1133,7 @@ static void perform_worklist()
             dem_delta *= 1/(sqr(ftemp)*10000); // multiply by thickness desired
         }
         dem_width = (sqrt(sqr(xxmax-xxmin) + sqr(xx3rd-xxmin)) * aspect
-                     + sqrt(sqr(yymax-yymin) + sqr(yy3rd-yymin))) / g_distance_estimator;
+                     + sqrt(sqr(yymax-yymin) + sqr(g_y_3rd-yymin))) / g_distance_estimator;
         ftemp = (g_magnitude_limit < DEM_BAILOUT) ? DEM_BAILOUT : g_magnitude_limit;
         ftemp += 3; // bailout plus just a bit
         ftemp2 = log(ftemp);
@@ -4430,7 +4430,7 @@ static void setsymmetry(symmetry_type sym, bool uselist) // set up proper symmet
     }
     if ((g_potential_flag && g_potential_16bit) || ((g_invert != 0) && g_inversion[2] != 0.0)
             || g_decomp[0] != 0
-            || xxmin != xx3rd || yymin != yy3rd)
+            || xxmin != xx3rd || yymin != g_y_3rd)
     {
         return;
     }

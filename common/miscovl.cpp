@@ -421,7 +421,7 @@ skip_UI:
         //**** start here
         if (xm > 1 || ym > 1)
         {
-            have3rd = xxmin != xx3rd || yymin != yy3rd;
+            have3rd = xxmin != xx3rd || yymin != g_y_3rd;
             fpbat = dir_fopen(g_working_dir.c_str(), "makemig.bat", "w");
             if (fpbat == nullptr)
             {
@@ -429,9 +429,9 @@ skip_UI:
                 xm = ym;
             }
             pdelx  = (xxmax - xx3rd) / (xm * pxdots - 1);   // calculate stepsizes
-            pdely  = (yymax - yy3rd) / (ym * pydots - 1);
+            pdely  = (yymax - g_y_3rd) / (ym * pydots - 1);
             pdelx2 = (xx3rd - xxmin) / (ym * pydots - 1);
-            pdely2 = (yy3rd - yymin) / (xm * pxdots - 1);
+            pdely2 = (g_y_3rd - yymin) / (xm * pxdots - 1);
 
             // save corners
             pxxmin = xxmin;
@@ -471,12 +471,12 @@ skip_UI:
                     if (have3rd)
                     {
                         xx3rd = pxxmin + pdelx*(i*pxdots) + pdelx2*((j+1)*pydots - 1);
-                        yy3rd = pyymax - pdely*((j+1)*pydots - 1) - pdely2*(i*pxdots);
+                        g_y_3rd = pyymax - pdely*((j+1)*pydots - 1) - pdely2*(i*pxdots);
                     }
                     else
                     {
                         xx3rd = xxmin;
-                        yy3rd = yymin;
+                        g_y_3rd = yymin;
                     }
                     fprintf(fpbat, "Fractint batch=yes overwrite=yes @%s/%s\n", g_command_file.c_str(), PCommandName);
                     fprintf(fpbat, "If Errorlevel 2 goto oops\n");
@@ -776,15 +776,15 @@ void write_batch_parms(char const *colorinf, bool colorsonly, int maxcolor, int 
             {
                 int xdigits, ydigits;
                 xdigits = getprec(xxmin, xxmax, xx3rd);
-                ydigits = getprec(yymin, yymax, yy3rd);
+                ydigits = getprec(yymin, yymax, g_y_3rd);
                 put_float(0, xxmin, xdigits);
                 put_float(1, xxmax, xdigits);
                 put_float(1, yymin, ydigits);
                 put_float(1, yymax, ydigits);
-                if (xx3rd != xxmin || yy3rd != yymin)
+                if (xx3rd != xxmin || g_y_3rd != yymin)
                 {
                     put_float(1, xx3rd, xdigits);
-                    put_float(1, yy3rd, ydigits);
+                    put_float(1, g_y_3rd, ydigits);
                 }
             }
         }
@@ -1829,14 +1829,14 @@ int getprecdbl(int rezflag)
     }
 
     xdel = ((LDBL)xxmax - (LDBL)xx3rd)/rez;
-    ydel2 = ((LDBL)yy3rd - (LDBL)yymin)/rez;
+    ydel2 = ((LDBL)g_y_3rd - (LDBL)yymin)/rez;
 
     if (rezflag == CURRENTREZ)
     {
         rez = ydots-1;
     }
 
-    ydel = ((LDBL)yymax - (LDBL)yy3rd)/rez;
+    ydel = ((LDBL)yymax - (LDBL)g_y_3rd)/rez;
     xdel2 = ((LDBL)xx3rd - (LDBL)xxmin)/rez;
 
     del1 = fabsl(xdel) + fabsl(xdel2);
@@ -2596,9 +2596,9 @@ void flip_image(int key)
             }
         }
         g_save_x_min = xxmax + xxmin - xx3rd;
-        g_save_y_max = yymax + yymin - yy3rd;
+        g_save_y_max = yymax + yymin - g_y_3rd;
         g_save_x_max = xx3rd;
-        g_save_y_min = yy3rd;
+        g_save_y_min = g_y_3rd;
         g_save_x_3rd = xxmax;
         g_save_y_3rd = yymin;
         if (bf_math != bf_math_type::NONE)
@@ -2628,9 +2628,9 @@ void flip_image(int key)
             }
         }
         g_save_x_min = xx3rd;
-        g_save_y_max = yy3rd;
+        g_save_y_max = g_y_3rd;
         g_save_x_max = xxmax + xxmin - xx3rd;
-        g_save_y_min = yymax + yymin - yy3rd;
+        g_save_y_min = yymax + yymin - g_y_3rd;
         g_save_x_3rd = xxmin;
         g_save_y_3rd = yymax;
         if (bf_math != bf_math_type::NONE)
@@ -2664,7 +2664,7 @@ void flip_image(int key)
         g_save_x_max = xxmin;
         g_save_y_min = yymax;
         g_save_x_3rd = xxmax + xxmin - xx3rd;
-        g_save_y_3rd = yymax + yymin - yy3rd;
+        g_save_y_3rd = yymax + yymin - g_y_3rd;
         if (bf_math != bf_math_type::NONE)
         {
             copy_bf(g_bf_save_x_min, g_bf_x_max);        // sxmin = xxmax;

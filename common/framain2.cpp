@@ -319,7 +319,7 @@ main_state big_while_loop(bool *const kbdmore, bool *const stacked, bool const r
         g_save_x_3rd = xx3rd;
         g_save_y_min = yymin;
         g_save_y_max = yymax;
-        g_save_y_3rd = yy3rd;
+        g_save_y_3rd = g_y_3rd;
 
         if (bf_math != bf_math_type::NONE)
         {
@@ -1128,7 +1128,7 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
                 yymin = curfractalspecific->ymin;
                 yymax = curfractalspecific->ymax;
                 xx3rd = xxmin;
-                yy3rd = yymin;
+                g_y_3rd = yymin;
                 if (g_user_distance_estimator_value == 0 && g_user_biomorph_value != -1 && g_bit_shift != 29)
                 {
                     xxmin *= 3.0;
@@ -1136,7 +1136,7 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
                     yymin *= 3.0;
                     yymax *= 3.0;
                     xx3rd *= 3.0;
-                    yy3rd *= 3.0;
+                    g_y_3rd *= 3.0;
                 }
                 zoomoff = true;
                 g_calc_status = calc_status_value::PARAMS_CHANGED;
@@ -1154,15 +1154,15 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
                     yymin = jyymin;
                     yymax = jyymax;
                     xx3rd = jxx3rd;
-                    yy3rd = jyy3rd;
+                    g_y_3rd = jyy3rd;
                 }
                 else
                 {
                     xx3rd = curfractalspecific->xmin;
                     xxmin = xx3rd;
                     xxmax = curfractalspecific->xmax;
-                    yy3rd = curfractalspecific->ymin;
-                    yymin = yy3rd;
+                    g_y_3rd = curfractalspecific->ymin;
+                    yymin = g_y_3rd;
                     yymax = curfractalspecific->ymax;
                 }
                 g_save_c.x = g_params[0];
@@ -2326,7 +2326,7 @@ void reset_zoom_corners()
     xx3rd = g_save_x_3rd;
     yymax = g_save_y_max;
     yymin = g_save_y_min;
-    yy3rd = g_save_y_3rd;
+    g_y_3rd = g_save_y_3rd;
     if (bf_math != bf_math_type::NONE)
     {
         copy_bf(g_bf_x_min, g_bf_save_x_min);
@@ -2430,7 +2430,7 @@ static void save_history_info()
     current.glassestype          = (short)g_glasses_type               ;
     current.outside              = (short)g_outside_color                   ;
     current.x3rd                 = xx3rd                     ;
-    current.y3rd                 = yy3rd                     ;
+    current.y3rd                 = g_y_3rd                     ;
     current.stdcalcmode          = g_user_std_calc_mode               ;
     current.three_pass           = g_three_pass ? 1 : 0;
     current.stoppass             = (short)g_stop_pass;
@@ -2611,7 +2611,7 @@ static void restore_history_info(int i)
     g_glasses_type        = last.glassestype    ;
     g_outside_color               = last.outside        ;
     xx3rd                 = last.x3rd           ;
-    yy3rd                 = last.y3rd           ;
+    g_y_3rd                 = last.y3rd           ;
     g_user_std_calc_mode       = last.stdcalcmode    ;
     g_std_calc_mode           = last.stdcalcmode    ;
     g_three_pass            = last.three_pass != 0;
