@@ -92,7 +92,7 @@ int     g_fill_color = 0;          // fillcolor: -1=normal
 int     g_outside_color = COLOR_BLACK;  // outside color
 bool g_finite_attractor = false;        // finite attractor logic
 display_3d_modes g_display_3d = display_3d_modes::NONE; // 3D display flag: 0 = OFF
-bool    overlay_3d = false;      // 3D overlay flag
+bool    g_overlay_3d = false;      // 3D overlay flag
 int     g_init_3d[20] = { 0 };     // '3d=nn/nn/nn/...' values
 bool    g_check_cur_dir = false;    // flag to check current dir for files
 batch_modes g_init_batch = batch_modes::NONE; // 1 if batch run (no kbd)
@@ -552,7 +552,7 @@ static void initvars_fractal()          // init vars affecting calculation
     g_math_tol[1] = 0.05;
 
     g_display_3d = display_3d_modes::NONE;                       // 3D display is off
-    overlay_3d = false;                  // 3D overlay is off
+    g_overlay_3d = false;                  // 3D overlay is off
 
     g_old_demm_colors = false;
     g_bail_out_test    = bailouts::Mod;
@@ -3194,7 +3194,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
             yesnoval[0] = 1;
             if (g_calc_status > calc_status_value::NO_FRACTAL)   // if no image, treat same as 3D=yes
             {
-                overlay_3d = true;
+                g_overlay_3d = true;
             }
         }
         else if (yesnoval[0] < 0)

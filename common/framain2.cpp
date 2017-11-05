@@ -78,10 +78,10 @@ main_state big_while_loop(bool *const kbdmore, bool *const stacked, bool const r
 
             memcpy(g_old_dac_box, g_dac_box, 256*3); // save the DAC
 
-            if (overlay_3d && (g_init_batch == batch_modes::NONE))
+            if (g_overlay_3d && (g_init_batch == batch_modes::NONE))
             {
                 driver_unstack_screen();            // restore old graphics image
-                overlay_3d = false;
+                g_overlay_3d = false;
             }
             else
             {
@@ -1333,10 +1333,10 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
     case FIK_F3:                     // 3D overlay
 #endif
         clear_zoombox();
-        overlay_3d = true;
+        g_overlay_3d = true;
     case '3':                    // restore-from (3d)
 do_3d_transform:
-        if (overlay_3d)
+        if (g_overlay_3d)
         {
             g_display_3d = display_3d_modes::B_COMMAND;         // for <b> command
         }
@@ -1353,7 +1353,7 @@ do_3d_transform:
             if (g_debug_flag == debug_flags::force_disk_restore_not_save)
             {
                 g_compare_gif = true;
-                overlay_3d = true;
+                g_overlay_3d = true;
                 if (g_init_batch == batch_modes::SAVE)
                 {
                     driver_stack_screen();   // save graphics image
@@ -1365,12 +1365,12 @@ do_3d_transform:
             else
             {
                 g_compare_gif = false;
-                overlay_3d = false;
+                g_overlay_3d = false;
             }
             g_display_3d = display_3d_modes::NONE;
         }
         driver_stack_screen();            // save graphics image
-        if (overlay_3d)
+        if (g_overlay_3d)
         {
             *stacked = false;
         }
@@ -1817,7 +1817,7 @@ static main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdm
             if (g_debug_flag == debug_flags::force_disk_restore_not_save)
             {
                 g_compare_gif = true;
-                overlay_3d = true;
+                g_overlay_3d = true;
                 if (g_init_batch == batch_modes::SAVE)
                 {
                     driver_stack_screen();   // save graphics image
@@ -1829,12 +1829,12 @@ static main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdm
             else
             {
                 g_compare_gif = false;
-                overlay_3d = false;
+                g_overlay_3d = false;
             }
             g_display_3d = display_3d_modes::NONE;
         }
         driver_stack_screen();            // save graphics image
-        if (overlay_3d)
+        if (g_overlay_3d)
         {
             *stacked = false;
         }

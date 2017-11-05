@@ -282,7 +282,7 @@ static bool main_restore_start(bool &stacked, bool &resumeflag)
         tab_mode = false;
         if (!g_browsing)      /*RB*/
         {
-            if (overlay_3d)
+            if (g_overlay_3d)
             {
                 hdg = "Select File for 3D Overlay";
                 g_help_mode = HELP3DOVLY;
@@ -337,11 +337,11 @@ static bool main_restore_start(bool &stacked, bool &resumeflag)
     tab_mode = true;
     g_look_at_mouse = 0;                     // ignore mouse
 
-    if (((overlay_3d && (g_init_batch == batch_modes::NONE)) || stacked) && g_init_mode < 0)        // overlay command failed
+    if (((g_overlay_3d && (g_init_batch == batch_modes::NONE)) || stacked) && g_init_mode < 0)        // overlay command failed
     {
         driver_unstack_screen();                  // restore the graphics screen
         stacked = false;
-        overlay_3d = false;              // forget overlays
+        g_overlay_3d = false;              // forget overlays
         g_display_3d = display_3d_modes::NONE;
         if (g_calc_status == calc_status_value::NON_RESUMABLE)
         {

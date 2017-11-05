@@ -357,7 +357,7 @@ extern int                 (*g_out_line)(BYTE *, int);
 extern void                (*g_out_line_cleanup)();
 extern int                   g_outside_color;
 extern bool                  g_overflow;
-extern bool overlay_3d;
+extern bool                  g_overlay_3d;
 extern bool                  fract_overwrite;
 extern double                ox3rd;
 extern double                oxmax;
