@@ -1035,7 +1035,7 @@ int Bifurcation()
 
     if (g_integer_fractal)
     {
-        g_l_init.y = ymax - g_i_y_stop*g_l_delta_y;            // Y-value of
+        g_l_init.y = g_l_y_max - g_i_y_stop*g_l_delta_y;            // Y-value of
     }
     else
     {

@@ -3648,7 +3648,7 @@ static long lypixel_grid()
 // Imaginary component, calculation version - does not require arrays
 static long lypixel_calc()
 {
-    return ymax - g_row*g_l_delta_y - g_col*g_l_delta_y2;
+    return g_l_y_max - g_row*g_l_delta_y - g_col*g_l_delta_y2;
 }
 
 double (*g_dx_pixel)() = dxpixel_calc;

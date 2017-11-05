@@ -114,7 +114,7 @@ void fill_lx_array()
     if (g_use_grid)
     {
         g_l_x0[0] = g_l_x_min;               // fill up the x, y grids
-        g_l_y0[0] = ymax;
+        g_l_y0[0] = g_l_y_max;
         g_l_y1[0] = 0;
         g_l_x1[0] = g_l_y1[0];
         for (int i = 1; i < xdots; i++)
@@ -465,7 +465,7 @@ init_restart:
         g_l_x_max  = fudgetolong(g_x_max);
         g_l_x_3rd  = fudgetolong(g_x_3rd);
         ymin  = fudgetolong(g_y_min);
-        ymax  = fudgetolong(g_y_max);
+        g_l_y_max  = fudgetolong(g_y_max);
         y3rd  = fudgetolong(g_y_3rd);
         g_l_delta_x  = fudgetolong((double)g_delta_x);
         g_l_delta_y  = fudgetolong((double)g_delta_y);
@@ -493,7 +493,7 @@ init_restart:
             fill_lx_array();   // fill up the x,y grids
             // past max res?  check corners within 10% of expected
             if (ratio_bad((double)g_l_x0[xdots-1]-g_l_x_min, (double)g_l_x_max-g_l_x_3rd)
-                    || ratio_bad((double)g_l_y0[ydots-1]-ymax, (double)y3rd-ymax)
+                    || ratio_bad((double)g_l_y0[ydots-1]-g_l_y_max, (double)y3rd-g_l_y_max)
                     || ratio_bad((double)g_l_x1[(ydots >> 1)-1], ((double)g_l_x_3rd-g_l_x_min)/2)
                     || ratio_bad((double)g_l_y1[(xdots >> 1)-1], ((double)ymin-y3rd)/2))
             {
@@ -523,7 +523,7 @@ expand_retry:
             g_x_max = fudgetodouble(g_l_x_max);
             g_x_3rd = fudgetodouble(g_l_x_3rd);
             g_y_min = fudgetodouble(ymin);
-            g_y_max = fudgetodouble(ymax);
+            g_y_max = fudgetodouble(g_l_y_max);
             g_y_3rd = fudgetodouble(y3rd);
         } // end if (integerfractal && !invert && use_grid)
         else
