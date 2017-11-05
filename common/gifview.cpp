@@ -318,7 +318,7 @@ int gifview()
             g_busy = false;      // for slideshow CALCWAIT
             if (g_calc_status == calc_status_value::IN_PROGRESS) // e.g., set by line3d
             {
-                g_calc_time = timer_interval; // note how long it took
+                g_calc_time = g_timer_interval; // note how long it took
                 if (driver_key_pressed() != 0)
                 {
                     g_calc_status = calc_status_value::NON_RESUMABLE; // interrupted, not resumable

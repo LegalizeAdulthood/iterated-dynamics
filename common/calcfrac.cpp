@@ -961,7 +961,7 @@ int calcfract()
             timer(0, (int(*)())perform_worklist);
         }
     }
-    g_calc_time += timer_interval;
+    g_calc_time += g_timer_interval;
 
     if (!g_log_map_table.empty() && !g_log_map_calculate)
     {

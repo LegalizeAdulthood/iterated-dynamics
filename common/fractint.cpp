@@ -29,7 +29,7 @@ int g_help_mode;
 
 int g_look_at_mouse = 0;  // see notes at mouseread routine
 
-long timer_start, timer_interval;       // timer(...) start & total
+long timer_start, g_timer_interval;       // timer(...) start & total
 int     g_adapter;                      // Video Adapter chosen from list in ...h
 char const *g_fractal_search_dir1 = "";
 char const *g_fractal_search_dir2 = "";
@@ -661,7 +661,7 @@ int timer(int timertype, int(*subrtn)(), ...)
         break;
     }
     // next assumes CLOCKS_PER_SEC is 10^n, n>=2
-    timer_interval = (clock_ticks() - timer_start) / (CLOCKS_PER_SEC/100);
+    g_timer_interval = (clock_ticks() - timer_start) / (CLOCKS_PER_SEC/100);
 
     if (do_bench)
     {
@@ -683,7 +683,7 @@ int timer(int timertype, int(*subrtn)(), ...)
                 xdots,
                 ydots,
                 g_max_iterations);
-        fprintf(fp, " time= %ld.%02ld secs\n", timer_interval/100, timer_interval%100);
+        fprintf(fp, " time= %ld.%02ld secs\n", g_timer_interval/100, g_timer_interval%100);
         if (fp != nullptr)
         {
             fclose(fp);

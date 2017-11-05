@@ -488,7 +488,7 @@ extern bool                  g_three_pass;
 extern double                g_threshold;
 extern int                   g_timed_save;
 extern bool                  g_timer_flag;
-extern long                  timer_interval;
+extern long                  g_timer_interval;
 extern long                  timer_start;
 extern DComplex              tmp;
 extern std::string           tempdir;
