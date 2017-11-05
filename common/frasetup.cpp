@@ -112,7 +112,7 @@ NewtonSetup()           // Newton/NewtBasin Routines
 #endif
 
     g_basin = 0;
-    roots.resize(16);
+    g_roots.resize(16);
     if (fractype == fractal_type::NEWTBASIN)
     {
         if (g_param_z1.y)
@@ -123,13 +123,13 @@ NewtonSetup()           // Newton/NewtBasin Routines
         {
             g_basin = 1;
         }
-        roots.resize(degree);
+        g_roots.resize(degree);
 
         // list of roots to discover where we converged for newtbasin
         for (int i = 0; i < degree; i++)
         {
-            roots[i].x = cos(i*twopi/(double)degree);
-            roots[i].y = sin(i*twopi/(double)degree);
+            g_roots[i].x = cos(i*twopi/(double)degree);
+            g_roots[i].y = sin(i*twopi/(double)degree);
         }
     }
 #if !defined(XFRACT)

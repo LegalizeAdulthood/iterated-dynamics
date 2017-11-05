@@ -68,7 +68,7 @@ double g_newton_r_over_d, g_degree_minus_1_over_degree, threshold;
 DComplex tmp2;
 DComplex g_marks_coefficient;
 DComplex  staticroots[16]; // roots array for degree 16 or less
-std::vector<DComplex> roots;
+std::vector<DComplex> g_roots;
 std::vector<MPC> g_mpc_roots;
 long g_fudge_half;
 DComplex g_power_z;
@@ -464,7 +464,7 @@ int NewtonFractal2()
             {
                 /* color in alternating shades with iteration according to
                    which root of 1 it converged to */
-                if (distance(roots[i], g_old_z) < threshold)
+                if (distance(g_roots[i], g_old_z) < threshold)
                 {
                     if (g_basin == 2)
                     {
