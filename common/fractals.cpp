@@ -240,7 +240,7 @@ int  fpMANRbailout()
 }
 
 #define FLOATTRIGBAILOUT()  \
-    if (fabs(g_old_z.y) >= rqlim2) \
+    if (fabs(g_old_z.y) >= g_magnitude_limit2) \
         return 1;
 
 #define LONGTRIGBAILOUT()  \
@@ -254,11 +254,11 @@ int  fpMANRbailout()
         { return 1;}
 
 #define FLOATXYTRIGBAILOUT()  \
-    if (fabs(g_old_z.x) >= rqlim2 || fabs(g_old_z.y) >= rqlim2) \
+    if (fabs(g_old_z.x) >= g_magnitude_limit2 || fabs(g_old_z.y) >= g_magnitude_limit2) \
         return 1;
 
 #define FLOATHTRIGBAILOUT()  \
-    if (fabs(g_old_z.x) >= rqlim2) \
+    if (fabs(g_old_z.x) >= g_magnitude_limit2) \
         return 1;
 
 #define LONGHTRIGBAILOUT()  \
@@ -1278,7 +1278,7 @@ PopcornFractal()
     tempsqry = sqr(g_new_z.y);
     g_magnitude = tempsqrx + tempsqry;
     if (g_magnitude >= g_magnitude_limit
-            || fabs(g_new_z.x) > rqlim2 || fabs(g_new_z.y) > rqlim2)
+            || fabs(g_new_z.x) > g_magnitude_limit2 || fabs(g_new_z.y) > g_magnitude_limit2)
     {
         return 1;
     }
@@ -1405,7 +1405,7 @@ PopcornFractalFn()
     tempsqry = sqr(g_new_z.y);
     g_magnitude = tempsqrx + tempsqry;
     if (g_magnitude >= g_magnitude_limit
-            || fabs(g_new_z.x) > rqlim2 || fabs(g_new_z.y) > rqlim2)
+            || fabs(g_new_z.x) > g_magnitude_limit2 || fabs(g_new_z.y) > g_magnitude_limit2)
     {
         return 1;
     }
@@ -3540,7 +3540,7 @@ bool MandelbrotMix4Setup()
     if (g_bail_out == 0)
     {
         g_magnitude_limit = L.x;
-        rqlim2 = g_magnitude_limit*g_magnitude_limit;
+        g_magnitude_limit2 = g_magnitude_limit*g_magnitude_limit;
     }
     return true;
 }

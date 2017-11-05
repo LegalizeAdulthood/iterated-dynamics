@@ -112,7 +112,7 @@ void (*g_plot)(int, int, int) = putcolor_a;
 
 double g_magnitude = 0.0;
 double g_magnitude_limit = 0.0;
-double rqlim2 = 0.0;
+double g_magnitude_limit2 = 0.0;
 double rqlim_save = 0.0;
 bool g_magnitude_calc = true;
 bool g_use_old_periodicity = false;
@@ -840,7 +840,7 @@ int calcfract()
 
     g_close_enough = g_delta_min*pow(2.0, -(double)(abs(g_periodicity_check)));
     rqlim_save = g_magnitude_limit;
-    rqlim2 = sqrt(g_magnitude_limit);
+    g_magnitude_limit2 = sqrt(g_magnitude_limit);
     if (g_integer_fractal)          // for integer routines (lambda)
     {
         g_l_param.x = (long)(g_param_z1.x * g_fudge_factor);    // real portion of Lambda
@@ -852,7 +852,7 @@ int calcfract()
         {
             g_l_limit = 0x7fffffffL; // klooge for integer math
         }
-        g_l_limit2 = (long)(rqlim2 * g_fudge_factor);    // stop if magnitude exceeds this
+        g_l_limit2 = (long)(g_magnitude_limit2 * g_fudge_factor);    // stop if magnitude exceeds this
         g_l_close_enough = (long)(g_close_enough * g_fudge_factor); // "close enough" value
         g_l_init_orbit.x = (long)(g_init_orbit.x * g_fudge_factor);
         g_l_init_orbit.y = (long)(g_init_orbit.y * g_fudge_factor);
@@ -2866,7 +2866,7 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
                 g_color_iter = g_biomorph;
             }
         }
-        else if (fabs(g_new_z.x) < rqlim2 || fabs(g_new_z.y) < rqlim2)
+        else if (fabs(g_new_z.x) < g_magnitude_limit2 || fabs(g_new_z.y) < g_magnitude_limit2)
         {
             g_color_iter = g_biomorph;
         }

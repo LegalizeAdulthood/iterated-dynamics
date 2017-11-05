@@ -223,8 +223,8 @@ int asmfpMODbailout()
     tempsqrx = sqr(g_new_z.x);
     tempsqry = sqr(g_new_z.y);
     g_magnitude = tempsqrx + tempsqry;
-    if (g_magnitude > g_magnitude_limit || g_magnitude < 0.0 || fabs(g_new_z.x) > rqlim2 ||
-            fabs(g_new_z.y) > rqlim2 || g_overflow)
+    if (g_magnitude > g_magnitude_limit || g_magnitude < 0.0 || fabs(g_new_z.x) > g_magnitude_limit2 ||
+            fabs(g_new_z.y) > g_magnitude_limit2 || g_overflow)
     {
         g_overflow = false;
         return 1;
