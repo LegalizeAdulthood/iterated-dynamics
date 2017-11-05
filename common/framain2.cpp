@@ -276,7 +276,7 @@ main_state big_while_loop(bool *const kbdmore, bool *const stacked, bool const r
             if (g_debug_flag == debug_flags::show_float_flag)
             {
                 char msg[MSGLEN];
-                sprintf(msg, "floatflag=%d", usr_floatflag ? 1 : 0);
+                sprintf(msg, "floatflag=%d", g_user_float_flag ? 1 : 0);
                 stopmsg(STOPMSG_NO_BUZZER, msg);
             }
             i = funny_glasses_call(gifview);
@@ -961,13 +961,13 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
         }
         break;
     case 'f':                    // floating pt toggle
-        if (!usr_floatflag)
+        if (!g_user_float_flag)
         {
-            usr_floatflag = true;
+            g_user_float_flag = true;
         }
         else if (g_std_calc_mode != 'o')     // don't go there
         {
-            usr_floatflag = false;
+            g_user_float_flag = false;
         }
         g_init_mode = g_adapter;
         return main_state::IMAGE_START;
@@ -1261,12 +1261,12 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
             if (curfractalspecific->isinteger != 0 &&
                     curfractalspecific->tofloat != fractal_type::NOFRACTAL)
             {
-                usr_floatflag = false;
+                g_user_float_flag = false;
             }
             if (curfractalspecific->isinteger == 0 &&
                     curfractalspecific->tofloat != fractal_type::NOFRACTAL)
             {
-                usr_floatflag = true;
+                g_user_float_flag = true;
             }
             historyflag = true;         // avoid re-store parms due to rounding errs
             return main_state::IMAGE_START;
@@ -1680,13 +1680,13 @@ static main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdm
         break;
 
     case 'f':                    // floating pt toggle
-        if (!usr_floatflag)
+        if (!g_user_float_flag)
         {
-            usr_floatflag = true;
+            g_user_float_flag = true;
         }
         else if (g_std_calc_mode != 'o')     // don't go there
         {
-            usr_floatflag = false;
+            g_user_float_flag = false;
         }
         g_init_mode = g_adapter;
         return main_state::IMAGE_START;
@@ -1716,12 +1716,12 @@ static main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdm
             if (curfractalspecific->isinteger != 0 &&
                     curfractalspecific->tofloat != fractal_type::NOFRACTAL)
             {
-                usr_floatflag = false;
+                g_user_float_flag = false;
             }
             if (curfractalspecific->isinteger == 0 &&
                     curfractalspecific->tofloat != fractal_type::NOFRACTAL)
             {
-                usr_floatflag = true;
+                g_user_float_flag = true;
             }
             historyflag = true;         // avoid re-store parms due to rounding errs
             return main_state::IMAGE_START;
@@ -2684,7 +2684,7 @@ static void restore_history_info(int i)
         g_set_orbit_corners = true;
     }
     g_draw_mode = last.drawmode;
-    usr_floatflag = curfractalspecific->isinteger == 0;
+    g_user_float_flag = curfractalspecific->isinteger == 0;
     memcpy(g_dac_box, last.dac, 256*3);
     memcpy(g_old_dac_box, last.dac, 256*3);
     if (g_map_specified)

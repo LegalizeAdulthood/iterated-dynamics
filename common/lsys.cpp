@@ -280,7 +280,7 @@ int Lsystem()
     {
         order = 0;
     }
-    if (usr_floatflag)
+    if (g_user_float_flag)
     {
         g_overflow = true;
     }

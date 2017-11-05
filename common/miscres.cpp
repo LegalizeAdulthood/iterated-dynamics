@@ -969,14 +969,14 @@ top:
     int j = 0;
     if (g_display_3d > display_3d_modes::NONE)
     {
-        if (usr_floatflag)
+        if (g_user_float_flag)
         {
             j = 1;
         }
     }
     else if (g_float_flag)
     {
-        j = usr_floatflag ? 1 : 2;
+        j = g_user_float_flag ? 1 : 2;
     }
 
     if (bf_math == bf_math_type::NONE)

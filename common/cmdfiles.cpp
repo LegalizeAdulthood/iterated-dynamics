@@ -477,7 +477,7 @@ static void initvars_fractal()          // init vars affecting calculation
     g_close_proximity = 0.01;
     g_is_mandelbrot = true;                      // default formula mand/jul toggle
 #ifndef XFRACT
-    usr_floatflag = false;              // turn off the float flag
+    g_user_float_flag = false;              // turn off the float flag
 #else
     usr_floatflag = true;               // turn on the float flag
 #endif
@@ -2440,7 +2440,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
             goto badarg;
         }
 #ifndef XFRACT
-        usr_floatflag = yesnoval[0] != 0;
+        g_user_float_flag = yesnoval[0] != 0;
 #else
         usr_floatflag = true; // must use floating point
 #endif

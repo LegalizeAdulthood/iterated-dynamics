@@ -166,13 +166,13 @@ void calcfracinit() // initialize a *pile* of stuff for fractal calculation
     // space req for grid is 2(xdots+ydots)*sizeof(long or double)
     // space available in extraseg is 65536 Bytes
     long xytemp = xdots + ydots;
-    if ((!usr_floatflag && (xytemp*sizeof(long) > 32768)) ||
-            (usr_floatflag && (xytemp*sizeof(double) > 32768)) ||
+    if ((!g_user_float_flag && (xytemp*sizeof(long) > 32768)) ||
+            (g_user_float_flag && (xytemp*sizeof(double) > 32768)) ||
             g_debug_flag == debug_flags::prevent_coordinate_grid)
     {
         g_use_grid = false;
         g_float_flag = true;
-        usr_floatflag = true;
+        g_user_float_flag = true;
     }
     else
     {
@@ -218,28 +218,28 @@ void calcfracinit() // initialize a *pile* of stuff for fractal calculation
         fractype = fractal_type::MANDELFP;
         curfractalspecific = &fractalspecific[static_cast<int>(fractal_type::MANDELFP)];
         fractal_floattobf();
-        usr_floatflag = true;
+        g_user_float_flag = true;
     }
     else if ((fractype == fractal_type::JULIA || fractype == fractal_type::JULIAFP) && g_debug_flag == debug_flags::force_arbitrary_precision_math)
     {
         fractype = fractal_type::JULIAFP;
         curfractalspecific = &fractalspecific[static_cast<int>(fractal_type::JULIAFP)];
         fractal_floattobf();
-        usr_floatflag = true;
+        g_user_float_flag = true;
     }
     else if ((fractype == fractal_type::LMANDELZPOWER || fractype == fractal_type::FPMANDELZPOWER) && g_debug_flag == debug_flags::force_arbitrary_precision_math)
     {
         fractype = fractal_type::FPMANDELZPOWER;
         curfractalspecific = &fractalspecific[static_cast<int>(fractal_type::FPMANDELZPOWER)];
         fractal_floattobf();
-        usr_floatflag = true;
+        g_user_float_flag = true;
     }
     else if ((fractype == fractal_type::LJULIAZPOWER || fractype == fractal_type::FPJULIAZPOWER) && g_debug_flag == debug_flags::force_arbitrary_precision_math)
     {
         fractype = fractal_type::FPJULIAZPOWER;
         curfractalspecific = &fractalspecific[static_cast<int>(fractal_type::FPJULIAZPOWER)];
         fractal_floattobf();
-        usr_floatflag = true;
+        g_user_float_flag = true;
     }
     else
     {
@@ -251,7 +251,7 @@ void calcfracinit() // initialize a *pile* of stuff for fractal calculation
     }
     else
     {
-        g_float_flag = usr_floatflag;
+        g_float_flag = g_user_float_flag;
     }
     if (g_calc_status == calc_status_value::RESUMABLE)
     {

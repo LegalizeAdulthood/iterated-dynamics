@@ -399,7 +399,7 @@ int line3d(BYTE * pixels, unsigned linelen)
                     f_cur.y = (float)(ycenter0 + costheta * cosphi * scly * r0);
                     f_cur.color = (float)(-r0 * costheta * sinphi);
                 }
-                if (!(usr_floatflag || g_raytrace_format != raytrace_formats::none))
+                if (!(g_user_float_flag || g_raytrace_format != raytrace_formats::none))
                 {
                     if (longpersp(lv, lview, 16) == -1)
                     {
@@ -410,7 +410,7 @@ int line3d(BYTE * pixels, unsigned linelen)
                     cur.x = (int)(((lv[0] + 32768L) >> 16) + xxadjust);
                     cur.y = (int)(((lv[1] + 32768L) >> 16) + yyadjust);
                 }
-                if (usr_floatflag || g_overflow || g_raytrace_format != raytrace_formats::none)
+                if (g_user_float_flag || g_overflow || g_raytrace_format != raytrace_formats::none)
                 {
                     v[0] = lv[0];
                     v[1] = lv[1];
@@ -442,7 +442,7 @@ int line3d(BYTE * pixels, unsigned linelen)
         }
         else                            // non-sphere 3D
         {
-            if (!usr_floatflag && g_raytrace_format == raytrace_formats::none)
+            if (!g_user_float_flag && g_raytrace_format == raytrace_formats::none)
             {
                 if (FILLTYPE >= 5)         // flag to save vector before perspective
                 {
@@ -488,7 +488,7 @@ int line3d(BYTE * pixels, unsigned linelen)
                 }
             }
 
-            if (usr_floatflag || g_overflow || g_raytrace_format != raytrace_formats::none)
+            if (g_user_float_flag || g_overflow || g_raytrace_format != raytrace_formats::none)
                 // do in float if integer math overflowed or doing Ray trace
             {
                 // slow float version for comparison
@@ -2557,7 +2557,7 @@ static int first_time(int linelen, VECTOR v)
         persp = true;
         if (ZVIEWER < 80)           // force float
         {
-            usr_floatflag = true;
+            g_user_float_flag = true;
         }
     }
 

@@ -57,7 +57,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
 
     g_show_file = 1;                // for any abort exit, pretend done
     g_init_mode = -1;               // no viewing mode set yet
-    bool oldfloatflag = usr_floatflag;
+    bool oldfloatflag = g_user_float_flag;
     g_loaded_3d = false;
     if (g_fast_restore)
     {
@@ -177,7 +177,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
             usr_stdcalcmode = '3';
         }
         g_user_distance_estimator_value     = read_info.distestold;
-        usr_floatflag   = read_info.floatflag != 0;
+        g_user_float_flag   = read_info.floatflag != 0;
         g_bail_out     = read_info.bailoutold;
         g_calc_time    = read_info.calctime;
         trigndx[0]  = static_cast<trig_fn>(read_info.trigndx[0]);
@@ -278,7 +278,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
         {
             g_log_map_flag = 2;
         }
-        usr_floatflag = curfractalspecific->isinteger == 0;
+        g_user_float_flag = curfractalspecific->isinteger == 0;
     }
 
     if (read_info.version < 5 && read_info.version != 0) // pre-version 15.0?
@@ -398,7 +398,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
 
     if (g_display_3d != display_3d_modes::NONE)
     {
-        usr_floatflag = oldfloatflag;
+        g_user_float_flag = oldfloatflag;
     }
 
     if (g_overlay_3d)
@@ -416,7 +416,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
         display_3d_modes const old_display_ed = g_display_3d;
         bool const oldfloatflag = g_float_flag;
         g_display_3d = g_loaded_3d ? display_3d_modes::YES : display_3d_modes::NONE;   // for <tab> display during next
-        g_float_flag = usr_floatflag; // ditto
+        g_float_flag = g_user_float_flag; // ditto
         int i = get_video_mode(&read_info, &blk_3_info);
 #if defined(_WIN32)
         _ASSERTE(_CrtCheckMemory());
@@ -1170,12 +1170,12 @@ void backwards_v18()
     {
         set_if_old_bif(); // old bifs need function set
     }
-    if (fractype == fractal_type::MANDELTRIG && usr_floatflag
+    if (fractype == fractal_type::MANDELTRIG && g_user_float_flag
             && g_save_release < 1800 && g_bail_out == 0)
     {
         g_bail_out = 2500;
     }
-    if (fractype == fractal_type::LAMBDATRIG && usr_floatflag
+    if (fractype == fractal_type::LAMBDATRIG && g_user_float_flag
             && g_save_release < 1800 && g_bail_out == 0)
     {
         g_bail_out = 2500;
@@ -1737,7 +1737,7 @@ rescan:  // entry for changed browse parms
         free_bf_vars();
     }
     bf_math = oldbf_math;
-    g_float_flag = usr_floatflag;
+    g_float_flag = g_user_float_flag;
 
     return (c);
 }

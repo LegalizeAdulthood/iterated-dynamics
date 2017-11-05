@@ -86,7 +86,7 @@ int     g_integer_fractal;         // TRUE if fractal uses integer math
 char    usr_stdcalcmode;
 int     usr_periodicitycheck;
 long    g_user_distance_estimator_value;
-bool    usr_floatflag;
+bool    g_user_float_flag;
 
 bool    viewwindow = false;     // false for full screen, true for window
 float   viewreduction;          // window auto-sizing
@@ -505,7 +505,7 @@ static main_state main_image_start(bool &stacked, bool &resumeflag)
         if (kbdchar == 'f')
         {
             // floating pt toggle
-            usr_floatflag = !usr_floatflag;
+            g_user_float_flag = !g_user_float_flag;
             return main_state::IMAGE_START;
         }
         if (kbdchar == 'i')

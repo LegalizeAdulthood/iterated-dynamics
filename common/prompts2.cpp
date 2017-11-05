@@ -127,7 +127,7 @@ int get_toggles()
 #ifndef XFRACT
     choices[++k] = "Floating Point Algorithm";
     uvalues[k].type = 'y';
-    uvalues[k].uval.ch.val = usr_floatflag ? 1 : 0;
+    uvalues[k].uval.ch.val = g_user_float_flag ? 1 : 0;
 #endif
     choices[++k] = "Maximum Iterations (2 to 2,147,483,647)";
     uvalues[k].type = 'L';
@@ -319,9 +319,9 @@ int get_toggles()
         j++;
     }
 #ifndef XFRACT
-    if ((uvalues[++k].uval.ch.val != 0) != usr_floatflag)
+    if ((uvalues[++k].uval.ch.val != 0) != g_user_float_flag)
     {
-        usr_floatflag = uvalues[k].uval.ch.val != 0;
+        g_user_float_flag = uvalues[k].uval.ch.val != 0;
         j++;
     }
 #endif
