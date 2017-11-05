@@ -2928,7 +2928,7 @@ static bool long3dviewtransf(long3dvtinf *inf)
 
             // apply perspective shift
             tmpx += ((double)g_x_shift*(g_x_max-g_x_min))/(g_logical_screen_x_dots);
-            tmpy += ((double)yshift*(g_y_max-g_y_min))/(g_logical_screen_y_dots);
+            tmpy += ((double)g_y_shift*(g_y_max-g_y_min))/(g_logical_screen_y_dots);
             double tmpz = -((double)inf->maxvals[2]) / g_fudge_factor;
             trans(tmpx, tmpy, tmpz, inf->doublemat);
 
@@ -3104,7 +3104,7 @@ static bool float3dviewtransf(float3dvtinf *inf)
 
             // apply perspective shift
             tmpx += ((double)g_x_shift*(g_x_max-g_x_min))/(g_logical_screen_x_dots);
-            tmpy += ((double)yshift*(g_y_max-g_y_min))/(g_logical_screen_y_dots);
+            tmpy += ((double)g_y_shift*(g_y_max-g_y_min))/(g_logical_screen_y_dots);
             double tmpz = -(inf->maxvals[2]);
             trans(tmpx, tmpy, tmpz, inf->doublemat);
 

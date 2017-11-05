@@ -130,7 +130,7 @@ int g_converge_y_adjust = 0;
 int g_xx_adjust;
 int yyadjust;
 int g_x_shift;
-int yshift;
+int g_y_shift;
 int const g_bad_value = -10000;       // set bad values to this
 static int const bad_check = -3000; // check values against this to determine if good
 std::vector<point> lastrow; // this array remembers the previous line
@@ -212,7 +212,7 @@ int line3d(BYTE * pixels, unsigned linelen)
         crossavg[2] = 0;
         xcenter = g_logical_screen_x_dots / 2 + g_x_shift;
         xcenter0 = (int) xcenter;
-        ycenter = g_logical_screen_y_dots / 2 - yshift;
+        ycenter = g_logical_screen_y_dots / 2 - g_y_shift;
         ycenter0 = (int) ycenter;
     }
     // make sure these pixel coordinates are out of range
@@ -2430,7 +2430,7 @@ static int first_time(int linelen, VECTOR v)
         RAY_Header();
         yyadjust = 0;
         g_xx_adjust = 0;  // Disable shifting in ray tracing
-        yshift = 0;
+        g_y_shift = 0;
         g_x_shift = 0;
     }
 
@@ -2593,7 +2593,7 @@ static int first_time(int linelen, VECTOR v)
         trans(((double) g_logical_screen_x_dots - xmax - xmin) / 2,
               ((double) g_logical_screen_y_dots - ymax - ymin) / 2, -zmax, lightm);
 
-        trans((double)(g_x_shift), (double)(-yshift), 0.0, g_m);
+        trans((double)(g_x_shift), (double)(-g_y_shift), 0.0, g_m);
 
         /* matrix m now contains ALL those transforms composed together !!
          * convert m to long integers shifted 16 bits */
