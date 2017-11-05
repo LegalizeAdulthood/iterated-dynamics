@@ -342,7 +342,7 @@ extern BYTE                  g_old_dac_box[256][3];
 extern bool                  g_old_demm_colors;
 extern char                  g_old_std_calc_mode;
 extern char                  g_evolve_discrete_x_parameter_offset;
-extern char evolve_discrete_y_parameter_offset;
+extern char                  g_evolve_discrete_y_parameter_offset;
 extern double evolve_x_parameter_offset;
 extern double evolve_y_parameter_offset;
 extern int                   orbitsave;
