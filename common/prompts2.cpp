@@ -2621,7 +2621,7 @@ int get_browse_params()
     bool old_brwscheckparms = g_browse_check_fractal_params;
     bool old_doublecaution  = g_confirm_file_deletes;
     int old_smallest_box_size_shown = g_smallest_box_size_shown;
-    double old_smallest_window_display_size = smallest_window_display_size;
+    double old_smallest_window_display_size = g_smallest_window_display_size;
     std::string old_browse_mask = g_browse_mask;
 
 get_brws_restart:
@@ -2650,7 +2650,7 @@ get_brws_restart:
 
     choices[++k] = "Smallest window to display (size in pixels)";
     uvalues[k].type = 'f';
-    uvalues[k].uval.dval = smallest_window_display_size;
+    uvalues[k].uval.dval = g_smallest_window_display_size;
 
     choices[++k] = "Smallest box size shown before crosshairs used (pix)";
     uvalues[k].type = 'i';
@@ -2676,7 +2676,7 @@ get_brws_restart:
 
     if (i == FIK_F4)
     {
-        smallest_window_display_size = 6;
+        g_smallest_window_display_size = 6;
         g_auto_browse = false;
         g_ask_video = true;
         g_browse_check_fractal_params = true;
@@ -2695,10 +2695,10 @@ get_brws_restart:
     g_browse_check_fractal_type = uvalues[++k].uval.ch.val != 0;
     g_browse_check_fractal_params = uvalues[++k].uval.ch.val != 0;
     g_confirm_file_deletes = uvalues[++k].uval.ch.val != 0;
-    smallest_window_display_size = uvalues[++k].uval.dval;
-    if (smallest_window_display_size < 0)
+    g_smallest_window_display_size = uvalues[++k].uval.dval;
+    if (g_smallest_window_display_size < 0)
     {
-        smallest_window_display_size = 0 ;
+        g_smallest_window_display_size = 0 ;
     }
     g_smallest_box_size_shown = uvalues[++k].uval.ival;
     if (g_smallest_box_size_shown < 1)
@@ -2717,7 +2717,7 @@ get_brws_restart:
             g_browse_check_fractal_type != old_browse_check_fractal_type ||
             g_browse_check_fractal_params != old_brwscheckparms ||
             g_confirm_file_deletes != old_doublecaution ||
-            smallest_window_display_size != old_smallest_window_display_size ||
+            g_smallest_window_display_size != old_smallest_window_display_size ||
             g_smallest_box_size_shown != old_smallest_box_size_shown ||
             !stricmp(g_browse_mask.c_str(), old_browse_mask.c_str()))
     {

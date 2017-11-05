@@ -492,7 +492,7 @@ extern long                  g_timer_interval;
 extern long                  g_timer_start;
 extern DComplex              g_tmp_z;
 extern std::string           g_temp_dir;
-extern double smallest_window_display_size;
+extern double                g_smallest_window_display_size;
 extern int                   totpasses;
 extern int                   transparent[];
 extern bool                  truecolor;
