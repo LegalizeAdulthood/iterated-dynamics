@@ -81,7 +81,6 @@ bool g_overflow = false;
 #define pMPsqr(z) (*pMPmul((z), (z)))
 #define MPdistance(z1, z2)  (*pMPadd(pMPsqr(*pMPsub((z1).x, (z2).x)), pMPsqr(*pMPsub((z1).y, (z2).y))))
 
-double twopi = PI*2.0;
 int g_c_exponent;
 
 
@@ -298,7 +297,7 @@ int  fpMANRbailout()
         double tmp;\
         tmp = (X);\
         tmp /= g_fudge_factor;\
-        tmp = fmod(tmp, twopi);\
+        tmp = fmod(tmp, PI*2.0);\
         tmp *= g_fudge_factor;\
         (X) = (long)tmp;\
     }\

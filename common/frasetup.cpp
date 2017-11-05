@@ -128,8 +128,8 @@ NewtonSetup()           // Newton/NewtBasin Routines
         // list of roots to discover where we converged for newtbasin
         for (int i = 0; i < degree; i++)
         {
-            g_roots[i].x = cos(i*twopi/(double)degree);
-            g_roots[i].y = sin(i*twopi/(double)degree);
+            g_roots[i].x = cos(i*PI*2.0/(double)degree);
+            g_roots[i].y = sin(i*PI*2.0/(double)degree);
         }
     }
 #if !defined(XFRACT)
@@ -149,8 +149,8 @@ NewtonSetup()           // Newton/NewtBasin Routines
         // list of roots to discover where we converged for newtbasin
         for (int i = 0; i < degree; i++)
         {
-            g_mpc_roots[i].x = *pd2MP(cos(i*twopi/(double)degree));
-            g_mpc_roots[i].y = *pd2MP(sin(i*twopi/(double)degree));
+            g_mpc_roots[i].x = *pd2MP(cos(i*PI*2.0/(double)degree));
+            g_mpc_roots[i].y = *pd2MP(sin(i*PI*2.0/(double)degree));
         }
     }
 #endif
