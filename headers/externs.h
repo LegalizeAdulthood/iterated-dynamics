@@ -540,7 +540,7 @@ extern std::string           g_working_dir;
 extern WORKLIST              g_work_list[MAXCALCWORK];
 extern int                   g_work_pass;
 extern int                   g_work_symmetry;
-extern long                  x3rd;
+extern long                  g_l_x_3rd;
 extern int                   xadjust;
 extern double                xcjul;
 extern int                   xdots;

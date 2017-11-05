@@ -109,7 +109,7 @@ bool    g_tab_mode = true;                 // tab display enabled
 //    bottom left  corner of screen is (xx3rd,yy3rd)
 //    bottom right corner of screen is (xxmax,yymin)
 double  g_x_min, g_x_max, g_y_min, g_y_max, g_x_3rd, g_y_3rd; // selected screen corners
-long    xmin, xmax, ymin, ymax, x3rd, y3rd;  // integer equivs
+long    xmin, xmax, ymin, ymax, g_l_x_3rd, y3rd;  // integer equivs
 double  g_save_x_min, g_save_x_max, g_save_y_min, g_save_y_max, g_save_x_3rd, g_save_y_3rd; // displayed screen corners
 double  g_plot_mx1, g_plot_mx2, g_plot_my1, g_plot_my2;     // real->screen multipliers
 
