@@ -1900,7 +1900,7 @@ static int filename_speedstr(int row, int col, int vid,
     else
     {
         speedstate = MATCHING;
-        prompt = speed_prompt.c_str();
+        prompt = g_speed_prompt.c_str();
     }
     driver_put_string(row, col, vid, prompt);
     return ((int) strlen(prompt));

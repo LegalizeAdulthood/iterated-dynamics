@@ -452,7 +452,7 @@ extern short                 g_skip_y_dots;
 extern slides_mode           g_slides;
 extern int                   g_slope;
 extern int                   g_sound_flag;
-extern std::string const     speed_prompt;
+extern std::string const     g_speed_prompt;
 extern void                (*standardplot)(int, int, int);
 extern bool start_show_orbit;
 extern bool                  started_resaves;
