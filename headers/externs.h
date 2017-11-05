@@ -410,7 +410,7 @@ extern std::string           g_raytrace_filename;
 extern std::string           g_read_filename;
 extern long                  g_real_color_iter;
 extern record_colors_mode    g_record_colors;
-extern int                   red_bright;
+extern int                   g_red_bright;
 extern int                   red_crop_left;
 extern int                   red_crop_right;
 extern int                   g_release;
