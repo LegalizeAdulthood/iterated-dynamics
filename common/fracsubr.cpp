@@ -88,7 +88,7 @@ void set_grid_pointers()
 
 void fill_dx_array()
 {
-    if (use_grid)
+    if (g_use_grid)
     {
         dx0[0] = xxmin;              // fill up the x, y grids
         dy0[0] = yymax;
@@ -106,11 +106,12 @@ void fill_dx_array()
         }
     }
 }
+
 void fill_lx_array()
 {
     // note that lx1 & ly1 values can overflow into sign bit; since
     // they're used only to add to lx0/ly0, 2s comp straightens it out
-    if (use_grid)
+    if (g_use_grid)
     {
         g_l_x0[0] = xmin;               // fill up the x, y grids
         g_l_y0[0] = ymax;
@@ -150,7 +151,7 @@ void fractal_floattobf()
 }
 
 
-bool use_grid = false;
+bool g_use_grid = false;
 
 void calcfracinit() // initialize a *pile* of stuff for fractal calculation
 {
@@ -169,13 +170,13 @@ void calcfracinit() // initialize a *pile* of stuff for fractal calculation
             (usr_floatflag && (xytemp*sizeof(double) > 32768)) ||
             g_debug_flag == debug_flags::prevent_coordinate_grid)
     {
-        use_grid = false;
+        g_use_grid = false;
         g_float_flag = true;
         usr_floatflag = true;
     }
     else
     {
-        use_grid = true;
+        g_use_grid = true;
     }
 
     set_grid_pointers();
@@ -479,7 +480,7 @@ init_restart:
     if (fractype != fractal_type::PLASMA && bf_math == bf_math_type::NONE
             && fractype != fractal_type::IFS && fractype != fractal_type::IFS3D && fractype != fractal_type::LSYSTEM)
     {
-        if (g_integer_fractal && (g_invert == 0) && use_grid)
+        if (g_integer_fractal && (g_invert == 0) && g_use_grid)
         {
             if ((delx  == 0 && delxx  != 0.0)
                     || (delx2 == 0 && delxx2 != 0.0)

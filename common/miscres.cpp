@@ -819,7 +819,7 @@ bool tab_display_2(char *msg)
             ixstart, ixstop, iystart, iystop, bitshift);
     */
     write_row(row++, "minstackavail %d llimit2 %ld use_grid %d",
-              g_soi_min_stack_available, g_l_limit2, use_grid ? 1 : 0);
+              g_soi_min_stack_available, g_l_limit2, g_use_grid ? 1 : 0);
     putstringcenter(24, 0, 80, C_GENERAL_LO, "Press Esc to continue, Backspace for first screen");
     *msg = 0;
 

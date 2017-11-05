@@ -500,7 +500,7 @@ extern int                   g_transparent_color_3d[];
 extern bool                  g_truecolor;
 extern true_color_mode       g_true_mode;
 extern init_orbit_mode       g_use_init_orbit;
-extern bool                  use_grid;
+extern bool                  g_use_grid;
 extern bool                  usemag;
 extern bool                  uses_ismand;
 extern bool                  uses_p1;

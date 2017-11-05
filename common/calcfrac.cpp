@@ -638,7 +638,7 @@ int calcfract()
             g_truecolor = false;
         }
     }
-    if (!use_grid)
+    if (!g_use_grid)
     {
         if (usr_stdcalcmode != 'o')
         {

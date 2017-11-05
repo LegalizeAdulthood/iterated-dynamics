@@ -3658,7 +3658,7 @@ long (*g_l_y_pixel)() = lypixel_calc;
 
 void set_pixel_calc_functions()
 {
-    if (use_grid)
+    if (g_use_grid)
     {
         dxpixel = dxpixel_grid;
         dypixel = dypixel_grid;
