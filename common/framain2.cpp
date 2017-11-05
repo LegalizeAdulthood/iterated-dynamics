@@ -796,7 +796,7 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
             g_save_dac = 0;
             g_save_release = g_release;
             g_magnitude_calc = true;
-            use_old_period = false;
+            g_use_old_periodicity = false;
             g_bad_outside = false;
             g_ld_check = false;
             set_current_params();
@@ -1594,7 +1594,7 @@ static main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdm
             g_save_dac = 0;
             g_save_release = g_release;
             g_magnitude_calc = true;
-            use_old_period = false;
+            g_use_old_periodicity = false;
             g_bad_outside = false;
             g_ld_check = false;
             set_current_params();

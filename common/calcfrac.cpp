@@ -115,7 +115,7 @@ double rqlim = 0.0;
 double rqlim2 = 0.0;
 double rqlim_save = 0.0;
 bool g_magnitude_calc = true;
-bool use_old_period = false;
+bool g_use_old_periodicity = false;
 bool g_use_old_distance_estimator = false;
 bool g_old_demm_colors = false;
 int (*calctype)() = nullptr;
@@ -667,7 +667,7 @@ int calcfract()
         g_log_map_flag = 0;
     }
 
-    if (use_old_period)
+    if (g_use_old_periodicity)
     {
         g_periodicity_next_saved_incr = 1;
         firstsavedand = 1;
