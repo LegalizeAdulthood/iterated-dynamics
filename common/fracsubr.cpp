@@ -135,7 +135,7 @@ void fractal_floattobf()
     init_bf_dec(getprecdbl(CURRENTREZ));
     floattobf(g_bf_x_min, xxmin);
     floattobf(g_bf_x_max, xxmax);
-    floattobf(g_bf_y_min, yymin);
+    floattobf(g_bf_y_min, g_y_min);
     floattobf(g_bf_y_max, g_y_max);
     floattobf(g_bf_x_3rd, xx3rd);
     floattobf(g_bf_y_3rd, g_y_3rd);
@@ -388,14 +388,14 @@ init_restart:
             xxmax = xxmin;
             xxmin = ftemp;
         }
-        if (yymin > g_y_max)
+        if (g_y_min > g_y_max)
         {
             double ftemp = g_y_max;
-            g_y_max = yymin;
-            yymin = ftemp;
+            g_y_max = g_y_min;
+            g_y_min = ftemp;
         }
         xx3rd = xxmin;
-        g_y_3rd = yymin;
+        g_y_3rd = g_y_min;
     }
 
     // set up bitshift for integer math
@@ -455,7 +455,7 @@ init_restart:
         g_delta_x  = (LDBL)(xxmax - xx3rd) / (LDBL)g_x_size_dots; // calculate stepsizes
         g_delta_y  = (LDBL)(g_y_max - g_y_3rd) / (LDBL)g_y_size_dots;
         g_delta_x2 = (LDBL)(xx3rd - xxmin) / (LDBL)g_y_size_dots;
-        g_delta_y2 = (LDBL)(g_y_3rd - yymin) / (LDBL)g_x_size_dots;
+        g_delta_y2 = (LDBL)(g_y_3rd - g_y_min) / (LDBL)g_x_size_dots;
         fill_dx_array();
     }
 
@@ -464,7 +464,7 @@ init_restart:
         xmin  = fudgetolong(xxmin);
         xmax  = fudgetolong(xxmax);
         x3rd  = fudgetolong(xx3rd);
-        ymin  = fudgetolong(yymin);
+        ymin  = fudgetolong(g_y_min);
         ymax  = fudgetolong(g_y_max);
         y3rd  = fudgetolong(g_y_3rd);
         g_l_delta_x  = fudgetolong((double)g_delta_x);
@@ -522,7 +522,7 @@ expand_retry:
             xxmin = fudgetodouble(xmin);
             xxmax = fudgetodouble(xmax);
             xx3rd = fudgetodouble(x3rd);
-            yymin = fudgetodouble(ymin);
+            g_y_min = fudgetodouble(ymin);
             g_y_max = fudgetodouble(ymax);
             g_y_3rd = fudgetodouble(y3rd);
         } // end if (integerfractal && !invert && use_grid)
@@ -583,14 +583,14 @@ expand_retry:
                     }
                     double testy_try;
                     double testy_exact;
-                    if (fabs(g_y_3rd-g_y_max) > fabs(yymin-g_y_3rd))
+                    if (fabs(g_y_3rd-g_y_max) > fabs(g_y_min-g_y_3rd))
                     {
                         testy_exact = g_y_3rd-g_y_max;
                         testy_try   = dy0-g_y_max;
                     }
                     else
                     {
-                        testy_exact = yymin-g_y_3rd;
+                        testy_exact = g_y_min-g_y_3rd;
                         testy_try   = dy1;
                     }
                     if (ratio_bad(testx_try, testx_exact) ||
@@ -611,7 +611,7 @@ expand_retry:
 
             // re-set corners to match reality
             xxmax = (double)(xxmin + (xdots-1)*g_delta_x + (ydots-1)*g_delta_x2);
-            yymin = (double)(g_y_max - (ydots-1)*g_delta_y - (xdots-1)*g_delta_y2);
+            g_y_min = (double)(g_y_max - (ydots-1)*g_delta_y - (xdots-1)*g_delta_y2);
             xx3rd = (double)(xxmin + (ydots-1)*g_delta_x2);
             g_y_3rd = (double)(g_y_max - (ydots-1)*g_delta_y);
 
@@ -793,18 +793,18 @@ void adjust_corner()
         }
     }
 
-    if (ftemp2*10000 < ftemp && g_y_3rd != yymin)
+    if (ftemp2*10000 < ftemp && g_y_3rd != g_y_min)
     {
         xx3rd = xxmax;
     }
 
-    ftemp = fabs(g_y_3rd-yymin);
+    ftemp = fabs(g_y_3rd-g_y_min);
     ftemp2 = fabs(g_y_max-g_y_3rd);
     if (ftemp < ftemp2)
     {
         if (ftemp*10000 < ftemp2 && xx3rd != xxmax)
         {
-            g_y_3rd = yymin;
+            g_y_3rd = g_y_min;
         }
     }
 
@@ -1090,7 +1090,7 @@ static void adjust_to_limits(double expand)
     }
 
     centerx = (xxmin+xxmax)/2;
-    centery = (yymin+g_y_max)/2;
+    centery = (g_y_min+g_y_max)/2;
 
     if (xxmin == centerx)
     {
@@ -1099,10 +1099,10 @@ static void adjust_to_limits(double expand)
         xxmin -= xxmax-centerx;
     }
 
-    if (yymin == centery)
+    if (g_y_min == centery)
     {
         smallest_add(&g_y_max);
-        yymin -= g_y_max-centery;
+        g_y_min -= g_y_max-centery;
     }
 
     if (xx3rd == centerx)
@@ -1122,9 +1122,9 @@ static void adjust_to_limits(double expand)
     cornerx[3] = xxmin+(xxmax-xx3rd);
 
     cornery[0] = g_y_max;
-    cornery[1] = yymin;
+    cornery[1] = g_y_min;
     cornery[2] = g_y_3rd;
-    cornery[3] = yymin+(g_y_max-g_y_3rd);
+    cornery[3] = g_y_min+(g_y_max-g_y_3rd);
 
     // if caller wants image size adjusted, do that first
     if (expand != 1.0)
@@ -1211,7 +1211,7 @@ static void adjust_to_limits(double expand)
     xxmax = cornerx[1] - adjx;
     xx3rd = cornerx[2] - adjx;
     g_y_max = cornery[0] - adjy;
-    yymin = cornery[1] - adjy;
+    g_y_min = cornery[1] - adjy;
     g_y_3rd = cornery[2] - adjy;
 
     adjust_corner(); // make 3rd corner exact if very near other co-ords

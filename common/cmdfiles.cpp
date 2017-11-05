@@ -514,8 +514,8 @@ static void initvars_fractal()          // init vars affecting calculation
     xxmin = -2.5;
     xx3rd = xxmin;
     xxmax = 1.5;   // initial corner values
-    yymin = -1.5;
-    g_y_3rd = yymin;
+    g_y_min = -1.5;
+    g_y_3rd = g_y_min;
     g_y_max = 1.5;   // initial corner values
     bf_math = bf_math_type::NONE;
     g_potential_16bit = false;
@@ -1454,8 +1454,8 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
             xxmin = curfractalspecific->xmin;
             xx3rd = xxmin;
             xxmax = curfractalspecific->xmax;
-            yymin = curfractalspecific->ymin;
-            g_y_3rd = yymin;
+            g_y_min = curfractalspecific->ymin;
+            g_y_3rd = g_y_min;
             g_y_max = curfractalspecific->ymax;
         }
         if (!initparams)
@@ -2171,8 +2171,8 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         xxmin = floatval[0];
         xx3rd = xxmin;
         xxmax = floatval[1];
-        yymin = floatval[2];
-        g_y_3rd = yymin;
+        g_y_min = floatval[2];
+        g_y_3rd = g_y_min;
         g_y_max = floatval[3];
 
         if (totparms == 6)

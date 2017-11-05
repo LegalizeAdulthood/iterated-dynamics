@@ -925,7 +925,7 @@ void soi()
     else
     {
         xxminl = xxmin;
-        yyminl = yymin;
+        yyminl = g_y_min;
         xxmaxl = xxmax;
         yymaxl = g_y_max;
     }

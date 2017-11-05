@@ -88,7 +88,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
     curfractalspecific = &fractalspecific[read_fractype];
     xxmin        = read_info.xmin;
     xxmax        = read_info.xmax;
-    yymin        = read_info.ymin;
+    g_y_min        = read_info.ymin;
     g_y_max        = read_info.ymax;
     g_params[0]     = read_info.creal;
     g_params[1]     = read_info.cimag;
@@ -160,7 +160,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
 
     g_calc_status = calc_status_value::PARAMS_CHANGED;       // defaults if version < 4
     xx3rd = xxmin;
-    g_y_3rd = yymin;
+    g_y_3rd = g_y_min;
     g_user_distance_estimator_value = 0;
     g_calc_time = 0;
     if (read_info.version > 3)

@@ -122,13 +122,13 @@ void cvtcentermag(double *Xctr, double *Yctr, LDBL *Magnification, double *Xmagf
     double Height;
 
     // simple normal case first
-    if (xx3rd == xxmin && g_y_3rd == yymin)
+    if (xx3rd == xxmin && g_y_3rd == g_y_min)
     {
         // no rotation or skewing, but stretching is allowed
         double Width = xxmax - xxmin;
-        Height = g_y_max - yymin;
+        Height = g_y_max - g_y_min;
         *Xctr = (xxmin + xxmax)/2.0;
-        *Yctr = (yymin + g_y_max)/2.0;
+        *Yctr = (g_y_min + g_y_max)/2.0;
         *Magnification  = 2.0/Height;
         *Xmagfactor =  Height / (DEFAULTASPECT * Width);
         *Rotation = 0.0;
@@ -139,11 +139,11 @@ void cvtcentermag(double *Xctr, double *Yctr, LDBL *Magnification, double *Xmagf
         // set up triangle ABC, having sides abc
         // side a = bottom, b = left, c = diagonal not containing (x3rd,y3rd)
         double tmpx1 = xxmax - xxmin;
-        double tmpy1 = g_y_max - yymin;
+        double tmpy1 = g_y_max - g_y_min;
         double c2 = tmpx1*tmpx1 + tmpy1*tmpy1;
 
         tmpx1 = xxmax - xx3rd;
-        tmpy1 = yymin - g_y_3rd;
+        tmpy1 = g_y_min - g_y_3rd;
         double a2 = tmpx1*tmpx1 + tmpy1*tmpy1;
         double a = sqrt(a2);
         *Rotation = -rad_to_deg(atan2(tmpy1, tmpx1));   // negative for image rotation
@@ -157,7 +157,7 @@ void cvtcentermag(double *Xctr, double *Yctr, LDBL *Magnification, double *Xmagf
         *Skew = 90.0 - rad_to_deg(tmpa);
 
         *Xctr = (xxmin + xxmax)*0.5;
-        *Yctr = (yymin + g_y_max)*0.5;
+        *Yctr = (g_y_min + g_y_max)*0.5;
 
         Height = b * sin(tmpa);
 
@@ -234,8 +234,8 @@ void cvtcorners(double Xctr, double Yctr, LDBL Magnification, double Xmagfactor,
         xxmin = Xctr - w;
         xx3rd = xxmin;
         xxmax = Xctr + w;
-        yymin = Yctr - h;
-        g_y_3rd = yymin;
+        g_y_min = Yctr - h;
+        g_y_3rd = g_y_min;
         g_y_max = Yctr + h;
         return;
     }
@@ -246,8 +246,8 @@ void cvtcorners(double Xctr, double Yctr, LDBL Magnification, double Xmagfactor,
     xxmax =  w - h*tanskew;
     xx3rd = -w - h*tanskew;
     g_y_max = h;
-    yymin = -h;
-    g_y_3rd = yymin;
+    g_y_min = -h;
+    g_y_3rd = g_y_min;
 
     // rotate coord system and then translate it
     Rotation = deg_to_rad(Rotation);
@@ -261,10 +261,10 @@ void cvtcorners(double Xctr, double Yctr, LDBL Magnification, double Xmagfactor,
     g_y_max = y + Yctr;
 
     // bottom right
-    x = xxmax * cosrot + yymin *  sinrot;
-    y = -xxmax * sinrot + yymin *  cosrot;
+    x = xxmax * cosrot + g_y_min *  sinrot;
+    y = -xxmax * sinrot + g_y_min *  cosrot;
     xxmax = x + Xctr;
-    yymin = y + Yctr;
+    g_y_min = y + Yctr;
 
     // bottom left
     x = xx3rd * cosrot + g_y_3rd *  sinrot;
@@ -1173,10 +1173,10 @@ top:
             sprintf(msg, "%20.16f  %20.16f", xxmin, g_y_max);
             driver_put_string(-1, 17, C_GENERAL_HI, msg);
             driver_put_string(++s_row, 3, C_GENERAL_MED, "Bot-r");
-            sprintf(msg, "%20.16f  %20.16f", xxmax, yymin);
+            sprintf(msg, "%20.16f  %20.16f", xxmax, g_y_min);
             driver_put_string(-1, 17, C_GENERAL_HI, msg);
 
-            if (xxmin != xx3rd || yymin != g_y_3rd)
+            if (xxmin != xx3rd || g_y_min != g_y_3rd)
             {
                 driver_put_string(++s_row, 3, C_GENERAL_MED, "Bot-l");
                 sprintf(msg, "%20.16f  %20.16f", xx3rd, g_y_3rd);
@@ -1335,7 +1335,7 @@ static void area()
     }
     sprintf(buf, "%s%ld inside pixels of %ld%s%f",
             msg, cnt, (long)xdots*(long)ydots, ".  Total area ",
-            cnt/((float)xdots*(float)ydots)*(xxmax-xxmin)*(g_y_max-yymin));
+            cnt/((float)xdots*(float)ydots)*(xxmax-xxmin)*(g_y_max-g_y_min));
     stopmsg(STOPMSG_NO_BUZZER, buf);
 }
 
