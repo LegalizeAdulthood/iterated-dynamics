@@ -134,7 +134,7 @@ bool g_fast_restore = false;       /* true - reset viewwindows prior to a restor
 bool orgfrmsearch = false;      /* 1 - user has specified a directory for
                                      Orgform formula compilation files */
 
-int     orbitsave = 0;          // for IFS and LORENZ to output acrospin file
+int     g_orbit_save_flags = 0;          // for IFS and LORENZ to output acrospin file
 int orbit_delay = 0;            // clock ticks delating orbit release
 int     transparent[2] = { 0 }; // transparency min/max values
 long    g_log_map_flag = 0;            // Logarithmic palette flag: 0 = no
@@ -2487,13 +2487,13 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         // orbitsave=?
         if (charval[0] == 's')
         {
-            orbitsave |= osf_midi;
+            g_orbit_save_flags |= osf_midi;
         }
         else if (yesnoval[0] < 0)
         {
             goto badarg;
         }
-        orbitsave |= (yesnoval[0] ? osf_raw : 0);
+        g_orbit_save_flags |= (yesnoval[0] ? osf_raw : 0);
         return CMDARG_FRACTAL_PARAM;
     }
 
