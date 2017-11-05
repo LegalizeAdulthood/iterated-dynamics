@@ -64,7 +64,7 @@ LComplex g_l_coefficient, g_l_old_z, g_l_new_z, g_l_param, g_l_init, g_l_temp, l
 long g_l_temp_sqr_x, g_l_temp_sqr_y;
 int g_max_color;
 int degree, g_basin;
-double g_newton_r_over_d, g_degree_minus_1_over_degree, threshold;
+double g_newton_r_over_d, g_degree_minus_1_over_degree, g_threshold;
 DComplex tmp2;
 DComplex g_marks_coefficient;
 DComplex  staticroots[16]; // roots array for degree 16 or less
@@ -451,7 +451,7 @@ int NewtonFractal2()
     cpower(&g_old_z, degree-1, &tmp);
     complex_mult(tmp, g_old_z, &g_new_z);
 
-    if (DIST1(g_new_z) < threshold)
+    if (DIST1(g_new_z) < g_threshold)
     {
         if (fractype == fractal_type::NEWTBASIN || fractype == fractal_type::MPNEWTBASIN)
         {
@@ -464,7 +464,7 @@ int NewtonFractal2()
             {
                 /* color in alternating shades with iteration according to
                    which root of 1 it converged to */
-                if (distance(g_roots[i], g_old_z) < threshold)
+                if (distance(g_roots[i], g_old_z) < g_threshold)
                 {
                     if (g_basin == 2)
                     {

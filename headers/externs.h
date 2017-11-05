@@ -485,7 +485,7 @@ extern int                   g_text_rbase;      // g_text_row is relative to thi
 extern int                   g_text_row;        // current row in text mode
 extern unsigned int          g_evolve_this_generation_random_seed;
 extern bool                  g_three_pass;
-extern double                threshold;
+extern double                g_threshold;
 extern int                   timedsave;
 extern bool                  timerflag;
 extern long                  timer_interval;

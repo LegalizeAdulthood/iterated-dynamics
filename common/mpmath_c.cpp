@@ -699,7 +699,7 @@ DComplex cdegree = { 3.0, 0.0 }, croot   = { 1.0, 0.0 };
 
 bool ComplexNewtonSetup()
 {
-    threshold = .001;
+    g_threshold = .001;
     g_periodicity_check = 0;
     if (g_params[0] != 0.0 || g_params[1] != 0.0 || g_params[2] != 0.0 ||
             g_params[3] != 0.0)
@@ -730,7 +730,7 @@ int ComplexNewton()
 
     tmp.x = g_new_z.x - croot.x;
     tmp.y = g_new_z.y - croot.y;
-    if ((sqr(tmp.x) + sqr(tmp.y)) < threshold)
+    if ((sqr(tmp.x) + sqr(tmp.y)) < g_threshold)
     {
         return (1);
     }
@@ -765,7 +765,7 @@ int ComplexBasin()
 
     tmp.x = g_new_z.x - croot.x;
     tmp.y = g_new_z.y - croot.y;
-    if ((sqr(tmp.x) + sqr(tmp.y)) < threshold)
+    if ((sqr(tmp.x) + sqr(tmp.y)) < g_threshold)
     {
         if (fabs(g_old_z.y) < .01)
         {
