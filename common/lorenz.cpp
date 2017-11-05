@@ -652,7 +652,7 @@ Minverse_julia_orbit()
     g_new_z       = ComplexSqrtFloat(g_new_z.x - Cx, g_new_z.y - Cy);
     leftright = (RANDOM(2)) ? 1 : -1;
 
-    if (newcol < 1 || newcol >= xdots || newrow < 1 || newrow >= ydots)
+    if (newcol < 1 || newcol >= g_logical_screen_x_dots || newrow < 1 || newrow >= ydots)
     {
         /*
          * MIIM must skip points that are off the screen boundary,
@@ -826,7 +826,7 @@ Linverse_julia_orbit()
     newrow = (int)((multiply(lcvt.c, g_l_new_z.x >> (g_bit_shift - 21), 21) +
                     multiply(lcvt.d, g_l_new_z.y >> (g_bit_shift - 21), 21) + lcvt.f) >> 21);
 
-    if (newcol < 1 || newcol >= xdots || newrow < 1 || newrow >= ydots)
+    if (newcol < 1 || newcol >= g_logical_screen_x_dots || newrow < 1 || newrow >= ydots)
     {
         /*
          * MIIM must skip points that are off the screen boundary,
@@ -1448,7 +1448,7 @@ int orbit2dfloat()
 
         col = (int)(cvt.a*x + cvt.b*y + cvt.e);
         row = (int)(cvt.c*x + cvt.d*y + cvt.f);
-        if (col >= 0 && col < xdots && row >= 0 && row < ydots)
+        if (col >= 0 && col < g_logical_screen_x_dots && row >= 0 && row < ydots)
         {
             if (soundvar && (g_sound_flag & SOUNDFLAG_ORBITMASK) > SOUNDFLAG_BEEP)
             {
@@ -1629,7 +1629,7 @@ int orbit2dlong()
             g_overflow = false;
             return ret;
         }
-        if (col >= 0 && col < xdots && row >= 0 && row < ydots)
+        if (col >= 0 && col < g_logical_screen_x_dots && row >= 0 && row < ydots)
         {
             if (soundvar && (g_sound_flag & SOUNDFLAG_ORBITMASK) > SOUNDFLAG_BEEP)
             {
@@ -2102,7 +2102,7 @@ int dynam2dfloat()
 
             col = (int)(cvt.a*x + cvt.b*y + cvt.e);
             row = (int)(cvt.c*x + cvt.d*y + cvt.f);
-            if (col >= 0 && col < xdots && row >= 0 && row < ydots)
+            if (col >= 0 && col < g_logical_screen_x_dots && row >= 0 && row < ydots)
             {
                 if (soundvar && (g_sound_flag & SOUNDFLAG_ORBITMASK) > SOUNDFLAG_BEEP)
                 {
@@ -2309,7 +2309,7 @@ int plotorbits2dfloat()
         if (col >= 0 && col < xdots && row >= 0 && row < ydots)
 #else
         // don't know why the next line is necessary, the one above should work
-        if (col > 0 && col < xdots && row > 0 && row < ydots)
+        if (col > 0 && col < g_logical_screen_x_dots && row > 0 && row < ydots)
 #endif
         {
             // plot if on the screen
@@ -2379,12 +2379,12 @@ int funny_glasses_call(int (*calc)())
         }
     }
 done:
-    if (g_glasses_type == 4 && g_screen_x_dots >= 2*xdots)
+    if (g_glasses_type == 4 && g_screen_x_dots >= 2*g_logical_screen_x_dots)
     {
         // turn off view windows so will save properly
         g_logical_screen_x_offset = 0;
         g_logical_screen_y_offset = 0;
-        xdots = g_screen_x_dots;
+        g_logical_screen_x_dots = g_screen_x_dots;
         ydots = g_screen_y_dots;
         g_view_window = false;
     }
@@ -2640,7 +2640,7 @@ static int ifs2d()
         // plot if inside window
         col = (int)((multiply(cvt.a, x, g_bit_shift) + multiply(cvt.b, y, g_bit_shift) + cvt.e) >> g_bit_shift);
         row = (int)((multiply(cvt.c, x, g_bit_shift) + multiply(cvt.d, y, g_bit_shift) + cvt.f) >> g_bit_shift);
-        if (col >= 0 && col < xdots && row >= 0 && row < ydots)
+        if (col >= 0 && col < g_logical_screen_x_dots && row >= 0 && row < ydots)
         {
             // color is count of hits on this pixel
             if (color_method)
@@ -2927,7 +2927,7 @@ static bool long3dviewtransf(long3dvtinf *inf)
             double tmpy = (-inf->minvals[1]-inf->maxvals[1])/(2.0*g_fudge_factor); // center y
 
             // apply perspective shift
-            tmpx += ((double)xshift*(g_x_max-g_x_min))/(xdots);
+            tmpx += ((double)xshift*(g_x_max-g_x_min))/(g_logical_screen_x_dots);
             tmpy += ((double)yshift*(g_y_max-g_y_min))/(ydots);
             double tmpz = -((double)inf->maxvals[2]) / g_fudge_factor;
             trans(tmpx, tmpy, tmpz, inf->doublemat);
@@ -2938,7 +2938,7 @@ static bool long3dviewtransf(long3dvtinf *inf)
                 tmpx = (-inf->minvals[0]-inf->maxvals[0])/(2.0*g_fudge_factor); // center x
                 tmpy = (-inf->minvals[1]-inf->maxvals[1])/(2.0*g_fudge_factor); // center y
 
-                tmpx += ((double)xshift1*(g_x_max-g_x_min))/(xdots);
+                tmpx += ((double)xshift1*(g_x_max-g_x_min))/(g_logical_screen_x_dots);
                 tmpy += ((double)yshift1*(g_y_max-g_y_min))/(ydots);
                 tmpz = -((double)inf->maxvals[2]) / g_fudge_factor;
                 trans(tmpx, tmpy, tmpz, inf->doublemat1);
@@ -3012,7 +3012,7 @@ static bool long3dviewtransf(long3dvtinf *inf)
                        multiply(inf->cvt.b, inf->viewvect[1], g_bit_shift) + inf->cvt.e)
                       >> g_bit_shift)
                      + xxadjust);
-    if (inf->col < 0 || inf->col >= xdots || inf->row < 0 || inf->row >= ydots)
+    if (inf->col < 0 || inf->col >= g_logical_screen_x_dots || inf->row < 0 || inf->row >= ydots)
     {
         if ((long)abs(inf->col)+(long)abs(inf->row) > BAD_PIXEL)
         {
@@ -3035,7 +3035,7 @@ static bool long3dviewtransf(long3dvtinf *inf)
                             multiply(inf->cvt.b, inf->viewvect1[1], g_bit_shift) +
                             inf->cvt.e) >> g_bit_shift)
                           + xxadjust1);
-        if (inf->col1 < 0 || inf->col1 >= xdots || inf->row1 < 0 || inf->row1 >= ydots)
+        if (inf->col1 < 0 || inf->col1 >= g_logical_screen_x_dots || inf->row1 < 0 || inf->row1 >= ydots)
         {
             if ((long)abs(inf->col1)+(long)abs(inf->row1) > BAD_PIXEL)
             {
@@ -3103,7 +3103,7 @@ static bool float3dviewtransf(float3dvtinf *inf)
             double tmpy = (-inf->minvals[1]-inf->maxvals[1])/(2.0); // center y
 
             // apply perspective shift
-            tmpx += ((double)xshift*(g_x_max-g_x_min))/(xdots);
+            tmpx += ((double)xshift*(g_x_max-g_x_min))/(g_logical_screen_x_dots);
             tmpy += ((double)yshift*(g_y_max-g_y_min))/(ydots);
             double tmpz = -(inf->maxvals[2]);
             trans(tmpx, tmpy, tmpz, inf->doublemat);
@@ -3114,7 +3114,7 @@ static bool float3dviewtransf(float3dvtinf *inf)
                 tmpx = (-inf->minvals[0]-inf->maxvals[0])/(2.0); // center x
                 tmpy = (-inf->minvals[1]-inf->maxvals[1])/(2.0); // center y
 
-                tmpx += ((double)xshift1*(g_x_max-g_x_min))/(xdots);
+                tmpx += ((double)xshift1*(g_x_max-g_x_min))/(g_logical_screen_x_dots);
                 tmpy += ((double)yshift1*(g_y_max-g_y_min))/(ydots);
                 tmpz = -(inf->maxvals[2]);
                 trans(tmpx, tmpy, tmpz, inf->doublemat1);
@@ -3136,7 +3136,7 @@ static bool float3dviewtransf(float3dvtinf *inf)
                      + inf->cvt.f + yyadjust);
     inf->col = (int)(inf->cvt.a*inf->viewvect[0] + inf->cvt.b*inf->viewvect[1]
                      + inf->cvt.e + xxadjust);
-    if (inf->col < 0 || inf->col >= xdots || inf->row < 0 || inf->row >= ydots)
+    if (inf->col < 0 || inf->col >= g_logical_screen_x_dots || inf->row < 0 || inf->row >= ydots)
     {
         if ((long)abs(inf->col)+(long)abs(inf->row) > BAD_PIXEL)
         {
@@ -3155,7 +3155,7 @@ static bool float3dviewtransf(float3dvtinf *inf)
                           + inf->cvt.f + yyadjust1);
         inf->col1 = (int)(inf->cvt.a*inf->viewvect1[0] + inf->cvt.b*inf->viewvect1[1]
                           + inf->cvt.e + xxadjust1);
-        if (inf->col1 < 0 || inf->col1 >= xdots || inf->row1 < 0 || inf->row1 >= ydots)
+        if (inf->col1 < 0 || inf->col1 >= g_logical_screen_x_dots || inf->row1 < 0 || inf->row1 >= ydots)
         {
             if ((long)abs(inf->col1)+(long)abs(inf->row1) > BAD_PIXEL)
             {

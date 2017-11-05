@@ -407,7 +407,7 @@ static int out_line_dither(BYTE *pixels, int linelen)
 
 static int out_line_too_wide(BYTE *pixels, int linelen)
 {
-    int twidth = xdots;
+    int twidth = g_logical_screen_x_dots;
     int extra;
     while (linelen > 0)
     {
@@ -455,7 +455,7 @@ static bool put_sound_line(int row, int colstart, int colstop, BYTE *pixels)
 
 int sound_line(BYTE *pixels, int linelen)
 {
-    int twidth = xdots;
+    int twidth = g_logical_screen_x_dots;
     int extra;
     int ret = 0;
     while (linelen > 0)
@@ -515,7 +515,7 @@ int pot_line(BYTE *pixels, int linelen)
     {
         out_line(pixels, linelen);
     }
-    for (int col = 0; col < xdots; ++col)
+    for (int col = 0; col < g_logical_screen_x_dots; ++col)
     {
         writedisk(col+g_logical_screen_x_offset, row+g_logical_screen_y_offset, *(pixels+col));
     }

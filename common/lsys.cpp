@@ -817,7 +817,7 @@ bool lsysi_findscale(lsys_cmd *command, lsys_turtlestatei *ts, lsys_cmd **rules,
     double locaspect;
     lsys_cmd *fsret;
 
-    locaspect = g_screen_aspect*xdots/ydots;
+    locaspect = g_screen_aspect*g_logical_screen_x_dots/ydots;
     ts->aspect = FIXEDPT(locaspect);
     ts->counter = 0;
     ts->reverse = ts->counter;
@@ -846,7 +846,7 @@ bool lsysi_findscale(lsys_cmd *command, lsys_turtlestatei *ts, lsys_cmd **rules,
     }
     else
     {
-        horiz = (float)((xdots-10)/(xmax-xmin));
+        horiz = (float)((g_logical_screen_x_dots-10)/(xmax-xmin));
     }
     if (ymax == ymin)
     {
@@ -860,12 +860,12 @@ bool lsysi_findscale(lsys_cmd *command, lsys_turtlestatei *ts, lsys_cmd **rules,
 
     if (horiz == 1E37)
     {
-        ts->xpos = FIXEDPT(xdots/2);
+        ts->xpos = FIXEDPT(g_logical_screen_x_dots/2);
     }
     else
     {
         //    ts->xpos = FIXEDPT(-xmin*(locsize)+5+((xdots-10)-(locsize)*(xmax-xmin))/2);
-        ts->xpos = FIXEDPT((xdots-locsize*(xmax+xmin))/2);
+        ts->xpos = FIXEDPT((g_logical_screen_x_dots-locsize*(xmax+xmin))/2);
     }
     if (vert == 1E37)
     {
@@ -1180,7 +1180,7 @@ void lsysi_dosincos()
     double twopimaxi;
     double s, c;
 
-    locaspect = g_screen_aspect*xdots/ydots;
+    locaspect = g_screen_aspect*g_logical_screen_x_dots/ydots;
     twopimax = TWOPI / maxangle;
     sins.resize(maxangle);
     coss.resize(maxangle);

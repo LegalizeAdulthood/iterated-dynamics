@@ -112,7 +112,7 @@ int targa_startdisk(FILE *targafp, int overhead)
     headerlength = overhead;
     fp = targafp;
     g_disk_targa = true;
-    i = common_startdisk(xdots*3, ydots, g_colors);
+    i = common_startdisk(g_logical_screen_x_dots*3, ydots, g_colors);
     high_offset = 100000000L; // targa not necessarily init'd to zeros
 
     return i;

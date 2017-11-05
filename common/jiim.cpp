@@ -66,7 +66,7 @@ void c_putcolor(int x, int y, int color)
     }
     if (windows == 2)   // avoid overwriting fractal
     {
-        if (0 <= x && x < xdots && 0 <= y && y < ydots)
+        if (0 <= x && x < g_logical_screen_x_dots && 0 <= y && y < ydots)
         {
             return;
         }
@@ -88,7 +88,7 @@ int  c_getcolor(int x, int y)
     }
     if (windows == 2)   // avoid overreading fractal
     {
-        if (0 <= x && x < xdots && 0 <= y && y < ydots)
+        if (0 <= x && x < g_logical_screen_x_dots && 0 <= y && y < ydots)
         {
             return 1000;
         }
@@ -510,7 +510,7 @@ void Jiim(jiim_types which)
     show_numbers = 0;
     g_using_jiim = true;
     g_line_buff.resize(std::max(g_screen_x_dots, g_screen_y_dots));
-    aspect = ((double)xdots*3)/((double)ydots*4);  // assumes 4:3
+    aspect = ((double)g_logical_screen_x_dots*3)/((double)ydots*4);  // assumes 4:3
     actively_computing = true;
     SetAspect(aspect);
     g_look_at_mouse = 3;
@@ -552,17 +552,17 @@ void Jiim(jiim_types which)
     {
         bool const savehasinverse = g_has_inverse;
         g_has_inverse = true;
-        SaveRect(0, 0, xdots, ydots);
+        SaveRect(0, 0, g_logical_screen_x_dots, ydots);
         g_logical_screen_x_offset = g_video_start_x;
         g_logical_screen_y_offset = g_video_start_y;
-        RestoreRect(0, 0, xdots, ydots);
+        RestoreRect(0, 0, g_logical_screen_x_dots, ydots);
         g_has_inverse = savehasinverse;
     }
 
-    if (xdots == g_vesa_x_res || ydots == g_vesa_y_res ||
-            g_vesa_x_res-xdots < g_vesa_x_res/3 ||
+    if (g_logical_screen_x_dots == g_vesa_x_res || ydots == g_vesa_y_res ||
+            g_vesa_x_res-g_logical_screen_x_dots < g_vesa_x_res/3 ||
             g_vesa_y_res-ydots < g_vesa_y_res/3 ||
-            xdots >= MAXRECT)
+            g_logical_screen_x_dots >= MAXRECT)
     {
         /* this mode puts orbit/julia in an overlapping window 1/3 the size of
            the physical screen */
@@ -574,13 +574,13 @@ void Jiim(jiim_types which)
         xoff = g_video_start_x + xd * 5 / 2;
         yoff = g_video_start_y + yd * 5 / 2;
     }
-    else if (xdots > g_vesa_x_res/3 && ydots > g_vesa_y_res/3)
+    else if (g_logical_screen_x_dots > g_vesa_x_res/3 && ydots > g_vesa_y_res/3)
     {
         // Julia/orbit and fractal don't overlap
         windows = 1;
-        xd = g_vesa_x_res - xdots;
+        xd = g_vesa_x_res - g_logical_screen_x_dots;
         yd = g_vesa_y_res - ydots;
-        xc = g_video_start_x + xdots;
+        xc = g_video_start_x + g_logical_screen_x_dots;
         yc = g_video_start_y + ydots;
         xoff = xc + xd/2;
         yoff = yc + yd/2;
@@ -607,8 +607,8 @@ void Jiim(jiim_types which)
     }
     else if (windows == 2)    // leave the fractal
     {
-        fillrect(xdots, yc, xd-xdots, yd, g_color_dark);
-        fillrect(xc   , ydots, xdots, yd-ydots, g_color_dark);
+        fillrect(g_logical_screen_x_dots, yc, xd-g_logical_screen_x_dots, yd, g_color_dark);
+        fillrect(xc   , ydots, g_logical_screen_x_dots, yd-ydots, g_color_dark);
     }
     else    // blank whole window
     {
@@ -620,7 +620,7 @@ void Jiim(jiim_types which)
     // reuse last location if inside window
     g_col = (int)(cvt.a*g_save_c.x + cvt.b*g_save_c.y + cvt.e + .5);
     g_row = (int)(cvt.c*g_save_c.x + cvt.d*g_save_c.y + cvt.f + .5);
-    if (g_col < 0 || g_col >= xdots ||
+    if (g_col < 0 || g_col >= g_logical_screen_x_dots ||
             g_row < 0 || g_row >= ydots)
     {
         cr = (g_x_max + g_x_min) / 2.0;
@@ -794,7 +794,7 @@ void Jiim(jiim_types which)
                     }
                     else if (windows == 3 && xd == g_vesa_x_res)
                     {
-                        RestoreRect(g_video_start_x, g_video_start_y, xdots, ydots);
+                        RestoreRect(g_video_start_x, g_video_start_y, g_logical_screen_x_dots, ydots);
                         windows = 2;
                     }
                     break;
@@ -841,9 +841,9 @@ void Jiim(jiim_types which)
 #endif
 
                 // keep cursor in logical screen
-                if (g_col >= xdots)
+                if (g_col >= g_logical_screen_x_dots)
                 {
-                    g_col = xdots -1;
+                    g_col = g_logical_screen_x_dots -1;
                     exact = false;
                 }
                 if (g_row >= ydots)
@@ -961,8 +961,8 @@ void Jiim(jiim_types which)
             }
             if (windows == 2)
             {
-                fillrect(xdots, yc, xd-xdots, yd-show_numbers, g_color_dark);
-                fillrect(xc   , ydots, xdots, yd-ydots-show_numbers, g_color_dark);
+                fillrect(g_logical_screen_x_dots, yc, xd-g_logical_screen_x_dots, yd-show_numbers, g_color_dark);
+                fillrect(xc   , ydots, g_logical_screen_x_dots, yd-ydots-show_numbers, g_color_dark);
             }
             else
             {
@@ -1258,8 +1258,8 @@ finish:
         {
             if (windows == 2)
             {
-                fillrect(xdots, yc, xd-xdots, yd, g_color_dark);
-                fillrect(xc   , ydots, xdots, yd-ydots, g_color_dark);
+                fillrect(g_logical_screen_x_dots, yc, xd-g_logical_screen_x_dots, yd, g_color_dark);
+                fillrect(xc   , ydots, g_logical_screen_x_dots, yd-ydots, g_color_dark);
             }
             else
             {
@@ -1267,16 +1267,16 @@ finish:
             }
             if (windows == 3 && xd == g_vesa_x_res) // unhide
             {
-                RestoreRect(0, 0, xdots, ydots);
+                RestoreRect(0, 0, g_logical_screen_x_dots, ydots);
                 windows = 2;
             }
             Cursor_Hide();
             bool const savehasinverse = g_has_inverse;
             g_has_inverse = true;
-            SaveRect(0, 0, xdots, ydots);
+            SaveRect(0, 0, g_logical_screen_x_dots, ydots);
             g_logical_screen_x_offset = oldsxoffs;
             g_logical_screen_y_offset = oldsyoffs;
-            RestoreRect(0, 0, xdots, ydots);
+            RestoreRect(0, 0, g_logical_screen_x_dots, ydots);
             g_has_inverse = savehasinverse;
         }
     }
@@ -1298,9 +1298,9 @@ finish:
         g_view_reduction = 4.2F;
         g_view_crop = true;
         g_final_aspect_ratio = g_screen_aspect;
-        xdots = g_screen_x_dots;
+        g_logical_screen_x_dots = g_screen_x_dots;
         ydots = g_screen_y_dots;
-        g_x_size_dots = xdots - 1;
+        g_x_size_dots = g_logical_screen_x_dots - 1;
         g_y_size_dots = ydots - 1;
         g_logical_screen_x_offset = 0;
         g_logical_screen_y_offset = 0;

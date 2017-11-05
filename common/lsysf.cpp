@@ -366,7 +366,7 @@ findsize(lsysf_cmd *command, lsys_turtlestatef *ts, lsysf_cmd **rules, int depth
 bool
 lsysf_findscale(lsysf_cmd *command, lsys_turtlestatef *ts, lsysf_cmd **rules, int depth)
 {
-    ts->aspect = g_screen_aspect*xdots/ydots;
+    ts->aspect = g_screen_aspect*g_logical_screen_x_dots/ydots;
     ts->ymin = 0;
     ts->ymax = ts->ymin;
     ts->xmax = ts->ymax;
@@ -395,7 +395,7 @@ lsysf_findscale(lsysf_cmd *command, lsys_turtlestatef *ts, lsysf_cmd **rules, in
     }
     else
     {
-        horiz = (float)((xdots-10)/(xmax-xmin));
+        horiz = (float)((g_logical_screen_x_dots-10)/(xmax-xmin));
     }
     float vert;
     if (ymax == ymin)
@@ -410,11 +410,11 @@ lsysf_findscale(lsysf_cmd *command, lsys_turtlestatef *ts, lsysf_cmd **rules, in
 
     if (horiz == 1E37)
     {
-        ts->xpos = xdots/2;
+        ts->xpos = g_logical_screen_x_dots/2;
     }
     else
     {
-        ts->xpos = (xdots-locsize*(xmax+xmin))/2;
+        ts->xpos = (g_logical_screen_x_dots-locsize*(xmax+xmin))/2;
     }
     if (vert == 1E37)
     {
@@ -755,7 +755,7 @@ void lsysf_dosincos()
     LDBL twopimax;
     LDBL twopimaxi;
 
-    locaspect = g_screen_aspect*xdots/ydots;
+    locaspect = g_screen_aspect*g_logical_screen_x_dots/ydots;
     twopimax = TWOPI / maxangle;
     sins_f.resize(maxangle);
     coss_f.resize(maxangle);

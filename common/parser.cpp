@@ -2587,7 +2587,7 @@ static bool ParseStr(char const *Str, int pass)
     const_e  = exp(1.0);
     v[7].a.d.y = 0.0;
     v[7].a.d.x = v[7].a.d.y;
-    v[11].a.d.x = (double)xdots;
+    v[11].a.d.x = (double)g_logical_screen_x_dots;
     v[11].a.d.y = (double)ydots;
     v[12].a.d.x = (double)g_max_iterations;
     v[12].a.d.y = 0;
@@ -2652,7 +2652,7 @@ static bool ParseStr(char const *Str, int pass)
         v[6].a.l.y = 0L;
         v[8].a.l.x = (long)(g_params[4] * fg);
         v[8].a.l.y = (long)(g_params[5] * fg);
-        v[11].a.l.x = xdots;
+        v[11].a.l.x = g_logical_screen_x_dots;
         v[11].a.l.x <<= g_bit_shift;
         v[11].a.l.y = ydots;
         v[11].a.l.y <<= g_bit_shift;

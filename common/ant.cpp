@@ -22,7 +22,7 @@
 #define RANDOM(n)       ((int)((long)((long)rand() * (long)(n)) >> 15)) /* Generate Random
                                                                          * Number 0 <= r < n */
 #define MAX_ANTS        256
-#define XO              (xdots/2)
+#define XO              (g_logical_screen_x_dots/2)
 #define YO              (ydots/2)
 #define DIRS            4
 #define INNER_LOOP      100
@@ -143,7 +143,7 @@ void TurkMite1(int maxtur, int rule_len, char const *ru, long maxpts, long wait)
         else
         {
             dir[g_color] = RANDOM(DIRS);
-            x[g_color] = RANDOM(xdots);
+            x[g_color] = RANDOM(g_logical_screen_x_dots);
             y[g_color] = RANDOM(ydots);
         }
     }
@@ -210,7 +210,7 @@ void TurkMite1(int maxtur, int rule_len, char const *ru, long maxpts, long wait)
                     if (!antwrap)
                     {
                         if ((idir == 0 && iy == ydots - 1) ||
-                                (idir == 1 && ix == xdots - 1) ||
+                                (idir == 1 && ix == g_logical_screen_x_dots - 1) ||
                                 (idir == 2 && iy == 0) ||
                                 (idir == 3 && ix == 0))
                         {
@@ -237,7 +237,7 @@ void TurkMite1(int maxtur, int rule_len, char const *ru, long maxpts, long wait)
                     if (!antwrap)
                     {
                         if ((idir == 0 && iy == ydots - 1) ||
-                                (idir == 1 && ix == xdots - 1) ||
+                                (idir == 1 && ix == g_logical_screen_x_dots - 1) ||
                                 (idir == 2 && iy == 0) ||
                                 (idir == 3 && ix == 0))
                         {
@@ -294,7 +294,7 @@ void TurkMite2(int maxtur, int rule_len, char const *ru, long maxpts, long wait)
              * x[0], y[0], dir[0] */
             dir[color] = RANDOM(DIRS);
             rule[color] = (rand() << RANDOM(2)) | RANDOM(2);
-            x[color] = RANDOM(xdots);
+            x[color] = RANDOM(g_logical_screen_x_dots);
             y[color] = RANDOM(ydots);
         }
     }
@@ -396,7 +396,7 @@ void TurkMite2(int maxtur, int rule_len, char const *ru, long maxpts, long wait)
                 if (!antwrap)
                 {
                     if ((idir == 0 && iy == ydots - 1) ||
-                            (idir == 1 && ix == xdots - 1) ||
+                            (idir == 1 && ix == g_logical_screen_x_dots - 1) ||
                             (idir == 2 && iy == 0) ||
                             (idir == 3 && ix == 0))
                     {
@@ -435,15 +435,15 @@ std::string get_rule()
 
 int ant()
 {
-    if (xdots != s_last_xdots || ydots != s_last_ydots)
+    if (g_logical_screen_x_dots != s_last_xdots || ydots != s_last_ydots)
     {
-        s_last_xdots = xdots;
+        s_last_xdots = g_logical_screen_x_dots;
         s_last_ydots = ydots;
 
         free_ant_storage();
         for (int i = 0; i < DIRS; i++)
         {
-            s_incx[i].resize(xdots + 2);
+            s_incx[i].resize(g_logical_screen_x_dots + 2);
             s_incy[i].resize(ydots + 2);
         }
     }
@@ -451,23 +451,23 @@ int ant()
     /* In this vectors put all the possible point that the ants can visit.
      * Wrap them from a side to the other instead of simply end calculation
      */
-    for (int i = 0; i < xdots; i++)
+    for (int i = 0; i < g_logical_screen_x_dots; i++)
     {
         s_incx[0][i] = i;
         s_incx[2][i] = i;
     }
 
-    for (int i = 0; i < xdots; i++)
+    for (int i = 0; i < g_logical_screen_x_dots; i++)
     {
         s_incx[3][i] = i + 1;
     }
-    s_incx[3][xdots-1] = 0; // wrap from right of the screen to left
+    s_incx[3][g_logical_screen_x_dots-1] = 0; // wrap from right of the screen to left
 
-    for (int i = 1; i < xdots; i++)
+    for (int i = 1; i < g_logical_screen_x_dots; i++)
     {
         s_incx[1][i] = i - 1;
     }
-    s_incx[1][0] = xdots-1; // wrap from left of the screen to right
+    s_incx[1][0] = g_logical_screen_x_dots-1; // wrap from left of the screen to right
 
     for (int i = 0; i < ydots; i++)
     {

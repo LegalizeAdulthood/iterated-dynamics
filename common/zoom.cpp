@@ -724,12 +724,12 @@ static int check_pan() // return 0 if can't, alignment requirement if can
 // move a row on the screen
 static void move_row(int fromrow, int torow, int col)
 {
-    std::vector<BYTE> temp(xdots, 0);
+    std::vector<BYTE> temp(g_logical_screen_x_dots, 0);
     if (fromrow >= 0 && fromrow < ydots)
     {
         int startcol = 0;
         int tocol = 0;
-        int endcol = xdots-1;
+        int endcol = g_logical_screen_x_dots-1;
         if (col < 0)
         {
             tocol -= col;
@@ -741,7 +741,7 @@ static void move_row(int fromrow, int torow, int col)
         }
         get_line(fromrow, startcol, endcol, &temp[tocol]);
     }
-    put_line(torow, 0, xdots-1, &temp[0]);
+    put_line(torow, 0, g_logical_screen_x_dots-1, &temp[0]);
 }
 
 int init_pan_or_recalc(int do_zoomout) // decide to recalc, or to chg worklist & pan
@@ -802,12 +802,12 @@ int init_pan_or_recalc(int do_zoomout) // decide to recalc, or to chg worklist &
     int j = ydots-1;
     if (row < 0)
     {
-        listfull |= add_worklist(0, xdots-1, 0, 0, 0-row-1, 0, 0, 0);
+        listfull |= add_worklist(0, g_logical_screen_x_dots-1, 0, 0, 0-row-1, 0, 0, 0);
         i = 0 - row;
     }
     if (row > 0)
     {
-        listfull |= add_worklist(0, xdots-1, 0, ydots-row, ydots-1, ydots-row, 0, 0);
+        listfull |= add_worklist(0, g_logical_screen_x_dots-1, 0, ydots-row, ydots-1, ydots-row, 0, 0);
         j = ydots - row - 1;
     }
     if (col < 0)
@@ -816,7 +816,7 @@ int init_pan_or_recalc(int do_zoomout) // decide to recalc, or to chg worklist &
     }
     if (col > 0)
     {
-        listfull |= add_worklist(xdots-col, xdots-1, xdots-col, i, j, i, 0, 0);
+        listfull |= add_worklist(g_logical_screen_x_dots-col, g_logical_screen_x_dots-1, g_logical_screen_x_dots-col, i, j, i, 0, 0);
     }
     if (listfull != 0)
     {
@@ -875,11 +875,11 @@ static void restart_window(int wknum)
         yto = ydots - 1;
     }
     int xto = g_work_list[wknum].xxstop;
-    if (xto >= xdots)
+    if (xto >= g_logical_screen_x_dots)
     {
-        xto = xdots - 1;
+        xto = g_logical_screen_x_dots - 1;
     }
-    std::vector<BYTE> temp(xdots, 0);
+    std::vector<BYTE> temp(g_logical_screen_x_dots, 0);
     while (yfrom <= yto)
     {
         put_line(yfrom++, xfrom, xto, &temp[0]);
@@ -896,7 +896,7 @@ static void fix_worklist() // fix out of bounds and symmetry related stuff
     {
         WORKLIST *wk = &g_work_list[i];
         if (wk->yystart >= ydots || wk->yystop < 0
-                || wk->xxstart >= xdots || wk->xxstop < 0)
+                || wk->xxstart >= g_logical_screen_x_dots || wk->xxstop < 0)
         {
             // offscreen, delete
             for (int j = i+1; j < g_num_work_list; ++j)
@@ -990,10 +990,10 @@ static void fix_worklist() // fix out of bounds and symmetry related stuff
                 restart_window(i); // restart the no-longer sym part
             }
         }
-        if (wk->xxstop >= xdots)
+        if (wk->xxstop >= g_logical_screen_x_dots)
         {
             // partly off right edge
-            int j = xdots-1;
+            int j = g_logical_screen_x_dots-1;
             if ((wk->sym&2) != 0)
             {
                 // uses xaxis symmetry

@@ -1155,9 +1155,9 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
             {
                 g_make_parameter_file_map = true;
             }
-            xdots = g_file_x_dots;
+            g_logical_screen_x_dots = g_file_x_dots;
             ydots = g_file_y_dots;
-            g_x_size_dots = xdots - 1;
+            g_x_size_dots = g_logical_screen_x_dots - 1;
             g_y_size_dots = ydots - 1;
             calcfracinit();
             make_batch_file();

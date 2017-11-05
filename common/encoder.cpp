@@ -241,12 +241,12 @@ restart:
                     outcolor2 = 0;
                 }
             }
-            for (int i = 0; 250*i < xdots; i++)
+            for (int i = 0; 250*i < g_logical_screen_x_dots; i++)
             {
                 // clear vert status bars
                 g_put_color(i, j, getcolor(i, j) ^ outcolor1);
-                g_put_color(xdots - 1 - i, j,
-                         getcolor(xdots - 1 - i, j) ^ outcolor2);
+                g_put_color(g_logical_screen_x_dots - 1 - i, j,
+                         getcolor(g_logical_screen_x_dots - 1 - i, j) ^ outcolor2);
             }
         }
     }
@@ -369,7 +369,7 @@ bool encoder()
         }
     }
 
-    width = xdots;
+    width = g_logical_screen_x_dots;
     rowlimit = ydots;
     if (save16bit)
     {
@@ -406,7 +406,7 @@ bool encoder()
     }
     else       // must risk loss of precision if numbers low
     {
-        i = (int)((((double) ydots / (double) xdots) / g_final_aspect_ratio) * 64 - 14.5);
+        i = (int)((((double) ydots / (double) g_logical_screen_x_dots) / g_final_aspect_ratio) * 64 - 14.5);
     }
     if (i < 1)
     {
@@ -624,7 +624,7 @@ bool encoder()
                 esave_info.py              = (short)g_evolve_param_grid_y;
                 esave_info.sxoffs          = (short)g_logical_screen_x_offset;
                 esave_info.syoffs          = (short)g_logical_screen_y_offset;
-                esave_info.xdots           = (short)xdots;
+                esave_info.xdots           = (short)g_logical_screen_x_dots;
                 esave_info.ydots           = (short)ydots;
                 esave_info.image_grid_size = (short) g_evolve_image_grid_size;
                 esave_info.evolving        = (short)g_evolving;
@@ -1156,7 +1156,7 @@ static bool compress(int rowlimit)
         // scan through the dots
         for (int ydot = rownum; ydot < rowlimit; ydot += ydots)
         {
-            for (int xdot = 0; xdot < xdots; xdot++)
+            for (int xdot = 0; xdot < g_logical_screen_x_dots; xdot++)
             {
                 if (save16bit == 0 || ydot < ydots)
                 {
@@ -1232,13 +1232,13 @@ nomatch:
                         outcolor2 = 0;
                     }
                 }
-                for (int i = 0; 250*i < xdots; i++)
+                for (int i = 0; 250*i < g_logical_screen_x_dots; i++)
                 {
                     // display vert status bars
                     // (this is NOT GIF-related)
                     g_put_color(i, ydot, getcolor(i, ydot) ^ outcolor1);
-                    g_put_color(xdots - 1 - i, ydot,
-                             getcolor(xdots - 1 - i, ydot) ^ outcolor2);
+                    g_put_color(g_logical_screen_x_dots - 1 - i, ydot,
+                             getcolor(g_logical_screen_x_dots - 1 - i, ydot) ^ outcolor2);
                 }
                 last_colorbar = ydot;
             } // end if !driver_diskp()

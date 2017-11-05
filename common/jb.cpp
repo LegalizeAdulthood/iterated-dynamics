@@ -80,7 +80,7 @@ JulibrotSetup()
     g_float_param = &jbcfp;
     x_per_inchfp = (g_x_min - g_x_max) / g_julibrot_width_fp;
     y_per_inchfp = (g_y_max - g_y_min) / g_julibrot_height_fp;
-    inch_per_xdotfp = g_julibrot_width_fp / xdots;
+    inch_per_xdotfp = g_julibrot_width_fp / g_logical_screen_x_dots;
     inch_per_ydotfp = g_julibrot_height_fp / ydots;
     initzfp = g_julibrot_origin_fp - (g_julibrot_depth_fp / 2);
     if (g_julibrot_3d_mode == 0)
@@ -136,7 +136,7 @@ JulibrotSetup()
 
         x_per_inch = (long)((g_x_min - g_x_max) / g_julibrot_width_fp * fg);
         y_per_inch = (long)((g_y_max - g_y_min) / g_julibrot_height_fp * fg);
-        inch_per_xdot = (long)((g_julibrot_width_fp / xdots) * fg16);
+        inch_per_xdot = (long)((g_julibrot_width_fp / g_logical_screen_x_dots) * fg16);
         inch_per_ydot = (long)((g_julibrot_height_fp / ydots) * fg16);
         initz = origin - (depth / 2);
         if (g_julibrot_3d_mode == 0)
@@ -456,7 +456,7 @@ Std4dFractal()
     {
         plotted = 0;
         x = -(width >> 1);
-        for (int xdot = 0; xdot < xdots; xdot++, x += inch_per_xdot)
+        for (int xdot = 0; xdot < g_logical_screen_x_dots; xdot++, x += inch_per_xdot)
         {
             g_col = xdot;
             g_row = ydot;
@@ -464,7 +464,7 @@ Std4dFractal()
             {
                 return (-1);
             }
-            g_col = xdots - g_col - 1;
+            g_col = g_logical_screen_x_dots - g_col - 1;
             g_row = ydots - g_row - 1;
             if (zline(-x, -y) < 0)
             {
@@ -509,7 +509,7 @@ Std4dfpFractal()
     {
         plotted = 0;
         x = -g_julibrot_width_fp / 2;
-        for (int xdot = 0; xdot < xdots; xdot++, x += inch_per_xdotfp)
+        for (int xdot = 0; xdot < g_logical_screen_x_dots; xdot++, x += inch_per_xdotfp)
         {
             g_col = xdot;
             g_row = ydot;
@@ -517,7 +517,7 @@ Std4dfpFractal()
             {
                 return (-1);
             }
-            g_col = xdots - g_col - 1;
+            g_col = g_logical_screen_x_dots - g_col - 1;
             g_row = ydots - g_row - 1;
             if (zlinefp(-x, -y) < 0)
             {

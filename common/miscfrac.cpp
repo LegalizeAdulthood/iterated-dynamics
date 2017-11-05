@@ -132,7 +132,7 @@ void putpot(int x, int y, U16 color)
 // fixes border
 void putpotborder(int x, int y, U16 color)
 {
-    if ((x == 0) || (y == 0) || (x == xdots-1) || (y == ydots-1))
+    if ((x == 0) || (y == 0) || (x == g_logical_screen_x_dots-1) || (y == ydots-1))
     {
         color = (U16)g_outside_color;
     }
@@ -142,7 +142,7 @@ void putpotborder(int x, int y, U16 color)
 // fixes border
 void putcolorborder(int x, int y, int color)
 {
-    if ((x == 0) || (y == 0) || (x == xdots-1) || (y == ydots-1))
+    if ((x == 0) || (y == 0) || (x == g_logical_screen_x_dots-1) || (y == ydots-1))
     {
         color = g_outside_color;
     }
@@ -543,25 +543,25 @@ int plasma()
     }
 
     g_plot(0,      0,  rnd[0]);
-    g_plot(xdots-1,      0,  rnd[1]);
-    g_plot(xdots-1, ydots-1,  rnd[2]);
+    g_plot(g_logical_screen_x_dots-1,      0,  rnd[1]);
+    g_plot(g_logical_screen_x_dots-1, ydots-1,  rnd[2]);
     g_plot(0, ydots-1,  rnd[3]);
 
     int n;
     recur_level = 0;
     if (g_params[1] == 0)
     {
-        subDivide(0, 0, xdots-1, ydots-1);
+        subDivide(0, 0, g_logical_screen_x_dots-1, ydots-1);
     }
     else
     {
         int i = 1;
         int k = 1;
         recur1 = 1;
-        while (new_subD(0, 0, xdots-1, ydots-1, i) == 0)
+        while (new_subD(0, 0, g_logical_screen_x_dots-1, ydots-1, i) == 0)
         {
             k = k * 2;
-            if (k  >(int)std::max(xdots-1, ydots-1))
+            if (k  >(int)std::max(g_logical_screen_x_dots-1, ydots-1))
             {
                 break;
             }
@@ -674,26 +674,26 @@ int diffusion()
 
     if (mode == 0)
     {
-        xmax = xdots / 2 + border;  // Initial box
-        xmin = xdots / 2 - border;
+        xmax = g_logical_screen_x_dots / 2 + border;  // Initial box
+        xmin = g_logical_screen_x_dots / 2 - border;
         ymax = ydots / 2 + border;
         ymin = ydots / 2 - border;
     }
     if (mode == 1)
     {
-        xmax = xdots / 2 + border;  // Initial box
-        xmin = xdots / 2 - border;
+        xmax = g_logical_screen_x_dots / 2 + border;  // Initial box
+        xmin = g_logical_screen_x_dots / 2 - border;
         ymin = ydots - border;
     }
     if (mode == 2)
     {
-        if (xdots > ydots)
+        if (g_logical_screen_x_dots > ydots)
         {
             radius = (float)(ydots - border);
         }
         else
         {
-            radius = (float)(xdots - border);
+            radius = (float)(g_logical_screen_x_dots - border);
         }
     }
     if (g_resuming) // restore worklist, if we can't the above will stay in place
@@ -715,33 +715,33 @@ int diffusion()
     switch (mode)
     {
     case 0: // Single seed point in the center
-        g_put_color(xdots / 2, ydots / 2, currentcolor);
+        g_put_color(g_logical_screen_x_dots / 2, ydots / 2, currentcolor);
         break;
     case 1: // Line along the bottom
-        for (int i = 0; i <= xdots; i++)
+        for (int i = 0; i <= g_logical_screen_x_dots; i++)
         {
             g_put_color(i, ydots-1, currentcolor);
         }
         break;
     case 2: // Large square that fills the screen
-        if (xdots > ydots)
+        if (g_logical_screen_x_dots > ydots)
         {
             for (int i = 0; i < ydots; i++)
             {
-                g_put_color(xdots/2-ydots/2 , i , currentcolor);
-                g_put_color(xdots/2+ydots/2 , i , currentcolor);
-                g_put_color(xdots/2-ydots/2+i , 0 , currentcolor);
-                g_put_color(xdots/2-ydots/2+i , ydots-1 , currentcolor);
+                g_put_color(g_logical_screen_x_dots/2-ydots/2 , i , currentcolor);
+                g_put_color(g_logical_screen_x_dots/2+ydots/2 , i , currentcolor);
+                g_put_color(g_logical_screen_x_dots/2-ydots/2+i , 0 , currentcolor);
+                g_put_color(g_logical_screen_x_dots/2-ydots/2+i , ydots-1 , currentcolor);
             }
         }
         else
         {
-            for (int i = 0; i < xdots; i++)
+            for (int i = 0; i < g_logical_screen_x_dots; i++)
             {
-                g_put_color(0 , ydots/2-xdots/2+i , currentcolor);
-                g_put_color(xdots-1 , ydots/2-xdots/2+i , currentcolor);
-                g_put_color(i , ydots/2-xdots/2 , currentcolor);
-                g_put_color(i , ydots/2+xdots/2 , currentcolor);
+                g_put_color(0 , ydots/2-g_logical_screen_x_dots/2+i , currentcolor);
+                g_put_color(g_logical_screen_x_dots-1 , ydots/2-g_logical_screen_x_dots/2+i , currentcolor);
+                g_put_color(i , ydots/2-g_logical_screen_x_dots/2 , currentcolor);
+                g_put_color(i , ydots/2+g_logical_screen_x_dots/2 , currentcolor);
             }
         }
         break;
@@ -754,7 +754,7 @@ int diffusion()
         case 0: // Release new point on a circle inside the box
             angle = 2*(double)rand()/(RAND_MAX/PI);
             FPUsincos(&angle, &sine, &cosine);
-            x = (int)(cosine*(xmax-xmin) + xdots);
+            x = (int)(cosine*(xmax-xmin) + g_logical_screen_x_dots);
             y = (int)(sine  *(ymax-ymin) + ydots);
             x = x >> 1; // divide by 2
             y = y >> 1;
@@ -762,13 +762,13 @@ int diffusion()
         case 1: /* Release new point on the line ymin somewhere between xmin
                  and xmax */
             y = ymin;
-            x = RANDOM(xmax-xmin) + (xdots-xmax+xmin)/2;
+            x = RANDOM(xmax-xmin) + (g_logical_screen_x_dots-xmax+xmin)/2;
             break;
         case 2: /* Release new point on a circle inside the box with radius
                  given by the radius variable */
             angle = 2*(double)rand()/(RAND_MAX/PI);
             FPUsincos(&angle, &sine, &cosine);
-            x = (int)(cosine*radius + xdots);
+            x = (int)(cosine*radius + g_logical_screen_x_dots);
             y = (int)(sine  *radius + ydots);
             x = x >> 1;
             y = y >> 1;
@@ -813,7 +813,7 @@ int diffusion()
             if (mode == 1) /* Make sure point is on the screen below ymin, but
                     we need a 1 pixel margin because of the next random step.*/
             {
-                if (x >= xdots-1)
+                if (x >= g_logical_screen_x_dots-1)
                 {
                     x--;
                 }
@@ -914,7 +914,7 @@ int diffusion()
             break;
         case 2: /* Decrease the radius where points are released to stay away
                  from the fractal.  It might be decreased by 1 or 2 */
-            r = sqr((float)x-xdots/2) + sqr((float)y-ydots/2);
+            r = sqr((float)x-g_logical_screen_x_dots/2) + sqr((float)y-ydots/2);
             if (r <= border*border)
             {
                 return 0;

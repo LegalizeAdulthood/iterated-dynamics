@@ -112,7 +112,7 @@ static bool get_min_max()
         {
             showtempmsg("Getting min and max");
         }
-        for (int xd = 0; xd < xdots; xd++)
+        for (int xd = 0; xd < g_logical_screen_x_dots; xd++)
         {
             int ldepth = getdepth(xd, yd);
             if (ldepth < MINC)
@@ -160,14 +160,14 @@ int outline_stereo(BYTE *pixels, int linelen)
     }
 
     std::vector<int> same;
-    same.resize(xdots);
-    for (int x = 0; x < xdots; ++x)
+    same.resize(g_logical_screen_x_dots);
+    for (int x = 0; x < g_logical_screen_x_dots; ++x)
     {
         same[x] = x;
     }
     std::vector<int> colour;
-    colour.resize(xdots);
-    for (int x = 0; x < xdots; ++x)
+    colour.resize(g_logical_screen_x_dots);
+    for (int x = 0; x < g_logical_screen_x_dots; ++x)
     {
         if (REVERSE)
         {
@@ -187,11 +187,11 @@ int outline_stereo(BYTE *pixels, int linelen)
         }
         int i = x - (SEP + (SEP & Y & 1)) / 2;
         int j = i + SEP;
-        if (0 <= i && j < xdots)
+        if (0 <= i && j < g_logical_screen_x_dots)
         {
             // there are cases where next never terminates so we timeout
             int ct = 0;
-            for (int s = same[i]; s != i && s != j && ct++ < xdots; s = same[i])
+            for (int s = same[i]; s != i && s != j && ct++ < g_logical_screen_x_dots; s = same[i])
             {
                 if (s > j)
                 {
@@ -207,7 +207,7 @@ int outline_stereo(BYTE *pixels, int linelen)
             same[i] = j;
         }
     }
-    for (int x = xdots - 1; x >= 0; x--)
+    for (int x = g_logical_screen_x_dots - 1; x >= 0; x--)
     {
         if (same[x] == x)
         {
@@ -240,7 +240,7 @@ bool do_AutoStereo()
     int barwidth;
     time_t ltime;
     std::vector<int> colour;
-    colour.resize(xdots);
+    colour.resize(g_logical_screen_x_dots);
     bool done = false;
 
     pv = &v;   // set static vars to stack structure
@@ -255,7 +255,7 @@ bool do_AutoStereo()
     driver_save_graphics();                      // save graphics image
     memcpy(savedacbox, g_dac_box, 256 * 3);  // save colors
 
-    if (xdots > OLDMAXPIXELS)
+    if (g_logical_screen_x_dots > OLDMAXPIXELS)
     {
         stopmsg(STOPMSG_NONE,
             "Stereo not allowed with resolution > 2048 pixels wide");
@@ -270,7 +270,7 @@ bool do_AutoStereo()
     {
         WIDTH = 1;
     }
-    GROUND = xdots / 8;
+    GROUND = g_logical_screen_x_dots / 8;
     if (g_auto_stereo_depth < 0)
     {
         REVERSE = 1;
@@ -279,7 +279,7 @@ bool do_AutoStereo()
     {
         REVERSE = 0;
     }
-    DEPTH = ((long) xdots * (long) g_auto_stereo_depth) / 4000L;
+    DEPTH = ((long) g_logical_screen_x_dots * (long) g_auto_stereo_depth) / 4000L;
     DEPTH = labs(DEPTH) + 1;
     if (get_min_max())
     {
@@ -290,9 +290,9 @@ bool do_AutoStereo()
     MAXCC = MAXC - MINC + 1;
     AVGCT = 0L;
     AVG = AVGCT;
-    barwidth  = 1 + xdots / 200;
+    barwidth  = 1 + g_logical_screen_x_dots / 200;
     BARHEIGHT = 1 + ydots / 20;
-    XCEN = xdots/2;
+    XCEN = g_logical_screen_x_dots/2;
     if (g_calibrate > 1)
     {
         YCEN = BARHEIGHT/2;
@@ -303,8 +303,8 @@ bool do_AutoStereo()
     }
 
     // box to average for calibration bars
-    X1 = XCEN - xdots/16;
-    X2 = XCEN + xdots/16;
+    X1 = XCEN - g_logical_screen_x_dots/16;
+    X2 = XCEN + g_logical_screen_x_dots/16;
     Y1 = YCEN - BARHEIGHT/2;
     Y2 = YCEN + BARHEIGHT/2;
 
@@ -324,7 +324,7 @@ bool do_AutoStereo()
     else
     {
         std::vector<BYTE> buf;
-        buf.resize(xdots);
+        buf.resize(g_logical_screen_x_dots);
         while (Y < ydots)
         {
             if (driver_key_pressed())
@@ -332,11 +332,11 @@ bool do_AutoStereo()
                 ret = true;
                 goto exit_stereo;
             }
-            for (int i = 0; i < xdots; i++)
+            for (int i = 0; i < g_logical_screen_x_dots; i++)
             {
                 buf[i] = (unsigned char)(rand()%g_colors);
             }
-            outline_stereo(&buf[0], xdots);
+            outline_stereo(&buf[0], g_logical_screen_x_dots);
         }
     }
 

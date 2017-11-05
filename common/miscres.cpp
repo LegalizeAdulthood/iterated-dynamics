@@ -804,7 +804,7 @@ bool tab_display_2(char *msg)
     /*
         write_row(row++, "xdots %d ydots %d sxdots %d sydots %d", xdots, ydots, sxdots, sydots);
     */
-    write_row(row++, "%dx%d dm=%d %s (%s)", xdots, ydots, g_dot_mode,
+    write_row(row++, "%dx%d dm=%d %s (%s)", g_logical_screen_x_dots, ydots, g_dot_mode,
               g_driver->name, g_driver->description);
     write_row(row++, "xxstart %d xxstop %d yystart %d yystop %d %s uses_ismand %d",
               xxstart, xxstop, yystart, yystop,
@@ -1317,7 +1317,7 @@ static void area()
     }
     for (int y = 0; y < ydots; y++)
     {
-        for (int x = 0; x < xdots; x++)
+        for (int x = 0; x < g_logical_screen_x_dots; x++)
         {
             if (getcolor(x, y) == g_inside_color)
             {
@@ -1334,8 +1334,8 @@ static void area()
         msg = "";
     }
     sprintf(buf, "%s%ld inside pixels of %ld%s%f",
-            msg, cnt, (long)xdots*(long)ydots, ".  Total area ",
-            cnt/((float)xdots*(float)ydots)*(g_x_max-g_x_min)*(g_y_max-g_y_min));
+            msg, cnt, (long)g_logical_screen_x_dots*(long)ydots, ".  Total area ",
+            cnt/((float)g_logical_screen_x_dots*(float)ydots)*(g_x_max-g_x_min)*(g_y_max-g_y_min));
     stopmsg(STOPMSG_NO_BUZZER, buf);
 }
 

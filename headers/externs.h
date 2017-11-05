@@ -543,7 +543,7 @@ extern int                   g_work_symmetry;
 extern long                  g_l_x_3rd;
 extern int                   xadjust;
 extern double                xcjul;
-extern int                   xdots;
+extern int                   g_logical_screen_x_dots;
 extern long                  g_l_x_max;
 extern long                  g_l_x_min;
 extern int                   xshift1;

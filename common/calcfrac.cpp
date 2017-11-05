@@ -391,8 +391,8 @@ static void sym_fill_line(int row, int left, int right, BYTE *str)
     else if (g_plot == symplot2J)  // Origin symmetry
     {
         int i = yystop-(row-yystart);
-        int j = std::min(xxstop-(right-xxstart), xdots-1);
-        int k = std::min(xxstop-(left -xxstart), xdots-1);
+        int j = std::min(xxstop-(right-xxstart), g_logical_screen_x_dots-1);
+        int k = std::min(xxstop-(left -xxstart), g_logical_screen_x_dots-1);
         if (i > g_i_y_stop && i < ydots && j <= k)
         {
             put_line(i, j, k, str);
@@ -402,8 +402,8 @@ static void sym_fill_line(int row, int left, int right, BYTE *str)
     else if (g_plot == symplot4) // X-axis and Y-axis symmetry
     {
         int i = yystop-(row-yystart);
-        int j = std::min(xxstop-(right-xxstart), xdots-1);
-        int k = std::min(xxstop-(left -xxstart), xdots-1);
+        int j = std::min(xxstop-(right-xxstart), g_logical_screen_x_dots-1);
+        int k = std::min(xxstop-(left -xxstart), g_logical_screen_x_dots-1);
         if (i > g_i_y_stop && i < ydots)
         {
             put_line(i, left, right, str);
@@ -887,7 +887,7 @@ int calcfract()
         g_i_y_start = g_i_x_start;
         yystop = ydots-1;
         g_i_y_stop = yystop;
-        xxstop = xdots-1;
+        xxstop = g_logical_screen_x_dots-1;
         g_i_x_stop = xxstop;
         g_calc_status = calc_status_value::IN_PROGRESS; // mark as in-progress
         g_distance_estimator = 0; // only standard escape time engine supports distest
@@ -926,7 +926,7 @@ int calcfract()
                 timer(0, (int(*)())perform_worklist);
                 if (g_calc_status == calc_status_value::COMPLETED)
                 {
-                    if (xdots >= 640)    // '2' is silly after 'g' for low rez
+                    if (g_logical_screen_x_dots >= 640)    // '2' is silly after 'g' for low rez
                     {
                         g_std_calc_mode = '2';
                     }
@@ -942,7 +942,7 @@ int calcfract()
             }
             else // resuming '2' pass
             {
-                if (xdots >= 640)
+                if (g_logical_screen_x_dots >= 640)
                 {
                     g_std_calc_mode = '2';
                 }
@@ -1063,7 +1063,7 @@ static void perform_worklist()
     g_work_list[0].xxstart = g_work_list[0].xxbegin;
     g_work_list[0].yybegin = 0;
     g_work_list[0].yystart = g_work_list[0].yybegin;
-    g_work_list[0].xxstop = xdots - 1;
+    g_work_list[0].xxstop = g_logical_screen_x_dots - 1;
     g_work_list[0].yystop = ydots - 1;
     g_work_list[0].sym = 0;
     g_work_list[0].pass = g_work_list[0].sym;
@@ -1091,8 +1091,8 @@ static void perform_worklist()
         }
         else
         {
-            aspect = (double)ydots/(double)xdots;
-            d_x_size = xdots-1;
+            aspect = (double)ydots/(double)g_logical_screen_x_dots;
+            d_x_size = g_logical_screen_x_dots-1;
             d_y_size = ydots-1;
         }
 
@@ -1202,7 +1202,7 @@ static void perform_worklist()
             else
             {
                 double dshowdot_width;
-                dshowdot_width = (double)g_size_dot*xdots/1024.0;
+                dshowdot_width = (double)g_size_dot*g_logical_screen_x_dots/1024.0;
                 /*
                    Arbitrary sanity limit, however showdot_width will
                    overflow if dshowdot width gets near 256.
@@ -1803,7 +1803,7 @@ static int sticky_orbits()
         int angle;
         double factor = PI / 180.0;
         double theta;
-        double xfactor = xdots / 2.0;
+        double xfactor = g_logical_screen_x_dots / 2.0;
         double yfactor = ydots / 2.0;
 
         angle = xxbegin;  // save angle in x parameter
@@ -3722,7 +3722,7 @@ static int solid_guess()
     // check if guessing at bottom & right edges is ok
     bottom_guess = (g_plot == symplot2 || (g_plot == g_put_color && g_i_y_stop+1 == ydots));
     right_guess  = (g_plot == symplot2J
-                    || ((g_plot == g_put_color || g_plot == symplot2) && g_i_x_stop+1 == xdots));
+                    || ((g_plot == g_put_color || g_plot == symplot2) && g_i_x_stop+1 == g_logical_screen_x_dots));
 
     // there seems to be a bug in solid guessing at bottom and side
     if (g_debug_flag != debug_flags::force_solid_guess_error)
@@ -4538,11 +4538,11 @@ static void setsymmetry(symmetry_type sym, bool uselist) // set up proper symmet
         {
             ftemp = (0.0-g_x_min) / (g_x_max-g_x_min);
         }
-        ftemp *= (xdots-1);
+        ftemp *= (g_logical_screen_x_dots-1);
         ftemp += 0.25;
         yaxis_col = (int)ftemp;
         yaxis_between = (ftemp - yaxis_col >= 0.5);
-        if (!uselist && (!yaxis_between || (yaxis_col+1)*2 != xdots))
+        if (!uselist && (!yaxis_between || (yaxis_col+1)*2 != g_logical_screen_x_dots))
         {
             yaxis_col = -1; // can't split screen, so dead center or not at all
         }
@@ -4700,11 +4700,11 @@ originsym:
         {
             sub_bf(bft1, g_bf_x_max, g_bf_x_min);
             abs_a_bf(bft1);
-            g_pi_in_pixels = (int)((PI/(double)bftofloat(bft1)*xdots)); // PI in pixels
+            g_pi_in_pixels = (int)((PI/(double)bftofloat(bft1)*g_logical_screen_x_dots)); // PI in pixels
         }
         else
         {
-            g_pi_in_pixels = (int)((PI/fabs(g_x_max-g_x_min))*xdots); // PI in pixels
+            g_pi_in_pixels = (int)((PI/fabs(g_x_max-g_x_min))*g_logical_screen_x_dots); // PI in pixels
         }
 
         g_i_x_stop = xxstart+g_pi_in_pixels-1;
@@ -5140,7 +5140,7 @@ static long autologmap()
 {
     // calculate round screen edges to avoid wasted colours in logmap
     long mincolour;
-    int xstop = xdots - 1; // don't use symetry
+    int xstop = g_logical_screen_x_dots - 1; // don't use symetry
     int ystop = ydots - 1; // don't use symetry
     long old_maxit;
     mincolour = LONG_MAX;
@@ -5266,7 +5266,7 @@ void symPIplot2J(int x, int y, int color)
         g_put_color(x, y, color) ;
         i = yystop-(y-yystart);
         if (i > g_i_y_stop && i < ydots
-                && (j = xxstop-(x-xxstart)) < xdots)
+                && (j = xxstop-(x-xxstart)) < g_logical_screen_x_dots)
         {
             g_put_color(j, i, color) ;
         }
@@ -5281,7 +5281,7 @@ void symPIplot4J(int x, int y, int color)
     {
         j = xxstop-(x-xxstart);
         g_put_color(x , y , color) ;
-        if (j < xdots)
+        if (j < g_logical_screen_x_dots)
         {
             g_put_color(j , y , color) ;
         }
@@ -5289,7 +5289,7 @@ void symPIplot4J(int x, int y, int color)
         if (i > g_i_y_stop && i < ydots)
         {
             g_put_color(x , i , color) ;
-            if (j < xdots)
+            if (j < g_logical_screen_x_dots)
             {
                 g_put_color(j , i , color) ;
             }
@@ -5316,7 +5316,7 @@ void symplot2Y(int x, int y, int color)
     int i;
     g_put_color(x, y, color) ;
     i = xxstop-(x-xxstart);
-    if (i < xdots)
+    if (i < g_logical_screen_x_dots)
     {
         g_put_color(i, y, color) ;
     }
@@ -5329,7 +5329,7 @@ void symplot2J(int x, int y, int color)
     g_put_color(x, y, color) ;
     i = yystop-(y-yystart);
     if (i > g_i_y_stop && i < ydots
-            && (j = xxstop-(x-xxstart)) < xdots)
+            && (j = xxstop-(x-xxstart)) < g_logical_screen_x_dots)
     {
         g_put_color(j, i, color) ;
     }
@@ -5341,7 +5341,7 @@ void symplot4(int x, int y, int color)
     int i, j;
     j = xxstop-(x-xxstart);
     g_put_color(x , y, color) ;
-    if (j < xdots)
+    if (j < g_logical_screen_x_dots)
     {
         g_put_color(j , y, color) ;
     }
@@ -5349,7 +5349,7 @@ void symplot4(int x, int y, int color)
     if (i > g_i_y_stop && i < ydots)
     {
         g_put_color(x , i, color) ;
-        if (j < xdots)
+        if (j < g_logical_screen_x_dots)
         {
             g_put_color(j , i, color) ;
         }
@@ -5407,7 +5407,7 @@ void symplot4basin(int x, int y, int color)
     }
     j = xxstop-(x-xxstart);
     g_put_color(x, y, color+stripe) ;
-    if (j < xdots)
+    if (j < g_logical_screen_x_dots)
     {
         g_put_color(j, y, color1+stripe) ;
     }
@@ -5415,7 +5415,7 @@ void symplot4basin(int x, int y, int color)
     if (i > g_i_y_stop && i < ydots)
     {
         g_put_color(x, i, stripe + (g_degree+1 - color)%g_degree+1) ;
-        if (j < xdots)
+        if (j < g_logical_screen_x_dots)
         {
             g_put_color(j, i, stripe + (g_degree+1 - color1)%g_degree+1) ;
         }

@@ -929,13 +929,13 @@ void soi()
         xxmaxl = g_x_max;
         yymaxl = g_y_max;
     }
-    twidth = tolerance/(xdots - 1);
-    stepx = (xxmaxl - xxminl)/xdots;
+    twidth = tolerance/(g_logical_screen_x_dots - 1);
+    stepx = (xxmaxl - xxminl)/g_logical_screen_x_dots;
     stepy = (yyminl - yymaxl)/ydots;
     equal = (stepx < stepy ? stepx : stepy);
 
     RHOMBUS(xxminl, xxmaxl, yymaxl, yyminl,
-            0, xdots, 0, ydots,
+            0, g_logical_screen_x_dots, 0, ydots,
             xxminl, yymaxl,
             xxmaxl, yymaxl,
             xxminl, yyminl,
