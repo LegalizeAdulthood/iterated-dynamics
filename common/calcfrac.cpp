@@ -118,7 +118,7 @@ double rqlim_save = 0.0;
 bool g_magnitude_calc = true;
 bool use_old_period = false;
 bool use_old_distest = false;
-bool old_demm_colors = false;
+bool g_old_demm_colors = false;
 int (*calctype)() = nullptr;
 int (*calctypetmp)() = nullptr;
 bool quick_calc = false;
@@ -2831,7 +2831,7 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
         }
         if (g_distance_estimator > 1)          // pick color based on distance
         {
-            if (old_demm_colors)   // this one is needed for old color scheme
+            if (g_old_demm_colors)   // this one is needed for old color scheme
             {
                 g_color_iter = (long)sqrt(sqrt(dist) / dem_width + 1);
             }

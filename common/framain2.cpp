@@ -2475,7 +2475,7 @@ static void save_history_info()
     current.bailout              = g_bail_out                   ;
     current.bailoutest           = (short)g_bail_out_test                ;
     current.iterations           = g_max_iterations                     ;
-    current.old_demm_colors      = (short) (old_demm_colors ? 1 : 0);
+    current.old_demm_colors      = (short) (g_old_demm_colors ? 1 : 0);
     current.logcalc              = (short)g_log_map_fly_calculate;
     current.ismand               = (short) (g_is_mandelbrot ? 1 : 0);
     current.closeprox            = g_close_proximity;
@@ -2659,7 +2659,7 @@ static void restore_history_info(int i)
     g_bail_out               = last.bailout        ;
     g_bail_out_test            = static_cast<bailouts>(last.bailoutest);
     g_max_iterations                 = last.iterations     ;
-    old_demm_colors       = last.old_demm_colors != 0;
+    g_old_demm_colors       = last.old_demm_colors != 0;
     curfractalspecific    = &fractalspecific[static_cast<int>(fractype)];
     potflag               = (potparam[0] != 0.0);
     if (g_inversion[0] != 0.0)

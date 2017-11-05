@@ -339,7 +339,7 @@ extern bool                  g_cellular_next_screen;
 extern DComplex              g_old_z;
 extern long                  g_old_color_iter;
 extern BYTE                  g_old_dac_box[256][3];
-extern bool                  old_demm_colors;
+extern bool                  g_old_demm_colors;
 extern char                  old_stdcalcmode;
 extern char evolve_discrete_x_parameter_offset;
 extern char evolve_discrete_y_parameter_offset;

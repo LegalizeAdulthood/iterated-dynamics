@@ -980,7 +980,7 @@ static void setup_save_info(FRACTAL_INFO *save_info)
     save_info->iterations = g_max_iterations;
     save_info->bflength = (short) bnlength;
     save_info->bf_math = (short) bf_math;
-    save_info->old_demm_colors = (short) (old_demm_colors ? 1 : 0);
+    save_info->old_demm_colors = (short) (g_old_demm_colors ? 1 : 0);
     save_info->logmap = g_log_map_flag;
     save_info->distest = g_distance_estimator;
     save_info->dinvert[0] = g_inversion[0];

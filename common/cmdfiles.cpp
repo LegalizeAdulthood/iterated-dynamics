@@ -554,7 +554,7 @@ static void initvars_fractal()          // init vars affecting calculation
     g_display_3d = display_3d_modes::NONE;                       // 3D display is off
     overlay_3d = false;                  // 3D overlay is off
 
-    old_demm_colors = false;
+    g_old_demm_colors = false;
     g_bail_out_test    = bailouts::Mod;
     floatbailout  = fpMODbailout;
     longbailout   = asmlMODbailout;
@@ -2412,7 +2412,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         {
             goto badarg;
         }
-        old_demm_colors = yesnoval[0] != 0;
+        g_old_demm_colors = yesnoval[0] != 0;
         return CMDARG_NONE;
     }
 
