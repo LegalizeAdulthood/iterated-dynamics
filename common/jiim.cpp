@@ -509,7 +509,7 @@ void Jiim(jiim_types which)
     oldcalctype = g_calc_type;
     show_numbers = 0;
     g_using_jiim = true;
-    g_line_buff.resize(std::max(sxdots, sydots));
+    g_line_buff.resize(std::max(g_screen_x_dots, sydots));
     aspect = ((double)xdots*3)/((double)ydots*4);  // assumes 4:3
     actively_computing = true;
     SetAspect(aspect);
@@ -544,7 +544,7 @@ void Jiim(jiim_types which)
 
     if (!g_video_scroll)
     {
-        g_vesa_x_res = sxdots;
+        g_vesa_x_res = g_screen_x_dots;
         g_vesa_y_res = sydots;
     }
 
@@ -1298,7 +1298,7 @@ finish:
         g_view_reduction = 4.2F;
         g_view_crop = true;
         g_final_aspect_ratio = g_screen_aspect;
-        xdots = sxdots;
+        xdots = g_screen_x_dots;
         ydots = sydots;
         g_x_size_dots = xdots - 1;
         g_y_size_dots = ydots - 1;

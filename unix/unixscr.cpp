@@ -56,7 +56,7 @@
 // external variables (set in the FRACTINT.CFG file, but findable here
 
 extern  int g_dot_mode;        // video access method (= 19)
-extern  int sxdots, sydots;     // total # of dots on the screen
+extern  int g_screen_x_dots, sydots;     // total # of dots on the screen
 extern  int sxoffs, syoffs;     // offset of drawing area
 extern  int g_colors;         // maximum colors available
 extern  int initmode;
@@ -441,7 +441,7 @@ initUnixWindow()
         }
         Xwinwidth &= -4;
         Xwinheight &= -4;
-        sxdots = Xwinwidth;
+        g_screen_x_dots = Xwinwidth;
         sydots = Xwinheight;
     }
     else
@@ -500,7 +500,7 @@ initUnixWindow()
             Xwinwidth = DisplayWidth(Xdp, Xdscreen);
             Xwinheight = DisplayHeight(Xdp, Xdscreen);
         }
-        sxdots = Xwinwidth;
+        g_screen_x_dots = Xwinwidth;
         sydots = Xwinheight;
 
         Xwatt.background_pixel = BlackPixelOfScreen(Xsc);
@@ -553,7 +553,7 @@ initUnixWindow()
 
     writevideopalette();
 
-    x11_video_table[0].xdots = sxdots;
+    x11_video_table[0].xdots = g_screen_x_dots;
     x11_video_table[0].ydots = sydots;
     x11_video_table[0].colors = g_colors;
     x11_video_table[0].dotmode = (unixDisk) ? 11 : 19;
@@ -795,30 +795,30 @@ resizeWindow()
 
     if (oldx != width || oldy != height)
     {
-        sxdots = width & -4;
+        g_screen_x_dots = width & -4;
         sydots = height & -4;
-        x11_video_table[0].xdots = sxdots;
+        x11_video_table[0].xdots = g_screen_x_dots;
         x11_video_table[0].ydots = sydots;
-        oldx = sxdots;
+        oldx = g_screen_x_dots;
         oldy = sydots;
-        Xwinwidth = sxdots;
+        Xwinwidth = g_screen_x_dots;
         Xwinheight = sydots;
-        g_screen_aspect = sydots/(float)sxdots;
+        g_screen_aspect = sydots/(float)g_screen_x_dots;
         g_final_aspect_ratio = g_screen_aspect;
         int Xpad = 8;  // default, unless changed below
         int Xmwidth;
         if (Xdepth == 1)
-            Xmwidth = 1 + sxdots/8;
+            Xmwidth = 1 + g_screen_x_dots/8;
         else if (Xdepth <= 8)
-            Xmwidth = sxdots;
+            Xmwidth = g_screen_x_dots;
         else if (Xdepth <= 16)
         {  // 15 or 16 bpp
-            Xmwidth = 2*sxdots;
+            Xmwidth = 2*g_screen_x_dots;
             Xpad = 16;
         }
         else
         {  // 24 or 32 bpp
-            Xmwidth = 4*sxdots;
+            Xmwidth = 4*g_screen_x_dots;
             Xpad = 32;
         }
         if (pixbuf != nullptr)
@@ -828,7 +828,7 @@ resizeWindow()
         pixbuf = (BYTE *) malloc(Xwinwidth *sizeof(BYTE));
         if (Ximage != nullptr)
             XDestroyImage(Ximage);
-        Ximage = XCreateImage(Xdp, Xvi, Xdepth, ZPixmap, 0, nullptr, sxdots,
+        Ximage = XCreateImage(Xdp, Xvi, Xdepth, ZPixmap, 0, nullptr, g_screen_x_dots,
                               sydots, Xpad, Xmwidth);
         if (Ximage == nullptr)
         {
@@ -1070,7 +1070,7 @@ void writevideo(int x, int y, int color)
     {
         fprintf(stderr, "Color %d too big %d\n", color, g_colors);
     }
-    if (x >= sxdots || x < 0 || y >= sydots || y < 0)
+    if (x >= g_screen_x_dots || x < 0 || y >= sydots || y < 0)
     {
         fprintf(stderr, "Bad coord %d %d\n", x, y);
     }
@@ -1116,7 +1116,7 @@ void writevideo(int x, int y, int color)
 int readvideo(int x, int y)
 {
 #ifdef DEBUG // Debugging checks
-    if (x >= sxdots || x < 0 || y >= sydots || y < 0)
+    if (x >= g_screen_x_dots || x < 0 || y >= sydots || y < 0)
     {
         fprintf(stderr, "Bad coord %d %d\n", x, y);
     }
@@ -2064,15 +2064,15 @@ xhandleevents()
                 y = xevent.xexpose.y;
                 w = xevent.xexpose.width;
                 h = xevent.xexpose.height;
-                if (x+w > sxdots)
+                if (x+w > g_screen_x_dots)
                 {
-                    w = sxdots-x;
+                    w = g_screen_x_dots-x;
                 }
                 if (y+h > sydots)
                 {
                     h = sydots-y;
                 }
-                if (x < sxdots && y < sydots && w > 0 && h > 0)
+                if (x < g_screen_x_dots && y < sydots && w > 0 && h > 0)
                 {
 
                     XPutImage(Xdp, Xw, Xgc, Ximage, xevent.xexpose.x,
@@ -2518,10 +2518,10 @@ redrawscreen()
 {
     if (alarmon)
     {
-        XPutImage(Xdp, Xw, Xgc, Ximage, 0, 0, 0, 0, sxdots, sydots);
+        XPutImage(Xdp, Xw, Xgc, Ximage, 0, 0, 0, 0, g_screen_x_dots, sydots);
         if (onroot)
         {
-            XPutImage(Xdp, Xpixmap, Xgc, Ximage, 0, 0, 0, 0, sxdots, sydots);
+            XPutImage(Xdp, Xpixmap, Xgc, Ximage, 0, 0, 0, 0, g_screen_x_dots, sydots);
         }
         alarmon = 0;
     }

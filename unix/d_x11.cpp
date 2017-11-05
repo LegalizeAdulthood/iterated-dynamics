@@ -56,7 +56,7 @@
 
 extern bool slowdisplay;
 extern  int g_dot_mode;        // video access method (= 19)
-extern  int sxdots, sydots;     // total # of dots on the screen
+extern  int g_screen_x_dots, sydots;     // total # of dots on the screen
 extern  int sxoffs, syoffs;     // offset of drawing area
 extern  int g_colors;         // maximum colors available
 extern  int g_init_mode;
@@ -1257,15 +1257,15 @@ ev_expose(DriverX11 *di, XExposeEvent *xevent)
         y = xevent->y;
         w = xevent->width;
         h = xevent->height;
-        if (x+w > sxdots)
+        if (x+w > g_screen_x_dots)
         {
-            w = sxdots-x;
+            w = g_screen_x_dots-x;
         }
         if (y+h > sydots)
         {
             h = sydots-y;
         }
-        if (x < sxdots && y < sydots && w > 0 && h > 0)
+        if (x < g_screen_x_dots && y < sydots && w > 0 && h > 0)
         {
             XPutImage(di->Xdp, di->Xw, di->Xgc, di->Ximage, x, y, x, y,
                       xevent->width, xevent->height);
@@ -1934,7 +1934,7 @@ x11_window(Driver *drv)
         di->Xwinwidth = DisplayWidth(di->Xdp, di->Xdscreen);
         di->Xwinheight = DisplayHeight(di->Xdp, di->Xdscreen);
     }
-    sxdots = di->Xwinwidth;
+    g_screen_x_dots = di->Xwinwidth;
     sydots = di->Xwinheight;
 
     Xwatt.background_pixel = BlackPixelOfScreen(di->Xsc);
@@ -1990,7 +1990,7 @@ x11_window(Driver *drv)
     x11_flush(drv);
     x11_write_palette(drv);
 
-    x11_video_table[0].xdots = sxdots;
+    x11_video_table[0].xdots = g_screen_x_dots;
     x11_video_table[0].ydots = sydots;
     x11_video_table[0].colors = g_colors;
     x11_video_table[0].dotmode = 19;
@@ -2026,34 +2026,34 @@ static bool x11_resize(Driver *drv)
 
     if (oldx != width || oldy != height)
     {
-        sxdots = width;
+        g_screen_x_dots = width;
         sydots = height;
-        x11_video_table[0].xdots = sxdots;
+        x11_video_table[0].xdots = g_screen_x_dots;
         x11_video_table[0].ydots = sydots;
-        oldx = sxdots;
+        oldx = g_screen_x_dots;
         oldy = sydots;
-        di->Xwinwidth = sxdots;
+        di->Xwinwidth = g_screen_x_dots;
         di->Xwinheight = sydots;
-        g_screen_aspect = sydots/(float) sxdots;
+        g_screen_aspect = sydots/(float) g_screen_x_dots;
         g_final_aspect_ratio = g_screen_aspect;
         int Xpad = 9;
         int Xmwidth;
         if (di->Xdepth == 1)
         {
-            Xmwidth = 1 + sxdots/8;
+            Xmwidth = 1 + g_screen_x_dots/8;
         }
         else if (di->Xdepth <= 8)
         {
-            Xmwidth = sxdots;
+            Xmwidth = g_screen_x_dots;
         }
         else if (di->Xdepth <= 16)
         {
-            Xmwidth = 2*sxdots;
+            Xmwidth = 2*g_screen_x_dots;
             Xpad = 16;
         }
         else
         {
-            Xmwidth = 4*sxdots;
+            Xmwidth = 4*g_screen_x_dots;
             Xpad = 32;
         }
         if (di->pixbuf != nullptr)
@@ -2064,7 +2064,7 @@ static bool x11_resize(Driver *drv)
             free(di->Ximage->data);
             XDestroyImage(di->Ximage);
         }
-        di->Ximage = XCreateImage(di->Xdp, di->Xvi, di->Xdepth, ZPixmap, 0, nullptr, sxdots,
+        di->Ximage = XCreateImage(di->Xdp, di->Xvi, di->Xdepth, ZPixmap, 0, nullptr, g_screen_x_dots,
                                   sydots, Xpad, Xmwidth);
         if (di->Ximage == nullptr)
         {
@@ -2111,10 +2111,10 @@ x11_redraw(Driver *drv)
     if (di->alarmon)
     {
         XPutImage(di->Xdp, di->Xw, di->Xgc, di->Ximage, 0, 0, 0, 0,
-                  sxdots, sydots);
+                  g_screen_x_dots, sydots);
         if (di->onroot)
             XPutImage(di->Xdp, di->Xpixmap, di->Xgc, di->Ximage, 0, 0, 0, 0,
-                      sxdots, sydots);
+                      g_screen_x_dots, sydots);
         di->alarmon = false;
     }
     di->doredraw = false;
@@ -2291,7 +2291,7 @@ x11_write_pixel(Driver *drv, int x, int y, int color)
     {
         printf("Color %d too big %d\n", color, g_colors);
     }
-    if (x >= sxdots || x < 0 || y >= sydots || y < 0)
+    if (x >= g_screen_x_dots || x < 0 || y >= sydots || y < 0)
     {
         printf("Bad coord %d %d\n", x, y);
     }

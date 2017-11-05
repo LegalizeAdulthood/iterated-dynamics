@@ -1399,7 +1399,7 @@ int fgetwindow()
 #ifdef XFRACT
     int const num_dots = 4;   // Xfractint only needs the 4 corners saved.
 #else
-    int const num_dots = sxdots + sydots;
+    int const num_dots = g_screen_x_dots + sydots;
 #endif
     browse_windows.resize(MAX_WINDOWS_OPEN);
     browse_box_x.resize(num_dots*MAX_WINDOWS_OPEN);
@@ -1823,7 +1823,7 @@ bool is_visible_window(
          orig_shiftfactor,
          orig_rbflength;
     double toobig, tmp_sqrt;
-    toobig = sqrt(sqr((double)sxdots)+sqr((double)sydots)) * 1.5;
+    toobig = sqrt(sqr((double)g_screen_x_dots)+sqr((double)sydots)) * 1.5;
     // arbitrary value... stops browser zooming out too far
     cornercount = 0;
     cant_see = false;
@@ -2013,19 +2013,19 @@ bool is_visible_window(
     }
 
     // now see how many corners are on the screen, accept if one or more
-    if (tl.x >= (0-sxoffs) && tl.x <= (sxdots-sxoffs) && tl.y >= (0-syoffs) && tl.y <= (sydots-syoffs))
+    if (tl.x >= (0-sxoffs) && tl.x <= (g_screen_x_dots-sxoffs) && tl.y >= (0-syoffs) && tl.y <= (sydots-syoffs))
     {
         cornercount++;
     }
-    if (bl.x >= (0-sxoffs) && bl.x <= (sxdots-sxoffs) && bl.y >= (0-syoffs) && bl.y <= (sydots-syoffs))
+    if (bl.x >= (0-sxoffs) && bl.x <= (g_screen_x_dots-sxoffs) && bl.y >= (0-syoffs) && bl.y <= (sydots-syoffs))
     {
         cornercount++;
     }
-    if (tr.x >= (0-sxoffs) && tr.x <= (sxdots-sxoffs) && tr.y >= (0-syoffs) && tr.y <= (sydots-syoffs))
+    if (tr.x >= (0-sxoffs) && tr.x <= (g_screen_x_dots-sxoffs) && tr.y >= (0-syoffs) && tr.y <= (sydots-syoffs))
     {
         cornercount++;
     }
-    if (br.x >= (0-sxoffs) && br.x <= (sxdots-sxoffs) && br.y >= (0-syoffs) && br.y <= (sydots-syoffs))
+    if (br.x >= (0-sxoffs) && br.x <= (g_screen_x_dots-sxoffs) && br.y >= (0-syoffs) && br.y <= (sydots-syoffs))
     {
         cornercount++;
     }

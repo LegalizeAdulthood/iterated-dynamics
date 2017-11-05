@@ -244,7 +244,7 @@ void drawlines(coords fr, coords to, int dx, int dy)
             fr = to;
             to = tmpp;
         }
-        int const xincr = (to.x-fr.x)*4/sxdots+1; // do every 1st, 2nd, 3rd, or 4th dot
+        int const xincr = (to.x-fr.x)*4/g_screen_x_dots+1; // do every 1st, 2nd, 3rd, or 4th dot
         int ctr = (to.x-fr.x-1)/xincr;
         int const altdec = abs(to.y-fr.y)*xincr;
         int const altinc = to.x-fr.x;
@@ -315,7 +315,7 @@ void addbox(coords point)
     assert(g_box_count < NUM_BOX_POINTS);
     point.x += sxoffs;
     point.y += syoffs;
-    if (point.x >= 0 && point.x < sxdots &&
+    if (point.x >= 0 && point.x < g_screen_x_dots &&
             point.y >= 0 && point.y < sydots)
     {
         g_box_x[g_box_count] = point.x;

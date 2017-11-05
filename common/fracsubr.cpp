@@ -1651,7 +1651,7 @@ static void plotdorbit(double dx, double dy, int color)
     }
     i = (int)(dy * g_plot_mx1 - dx * g_plot_mx2);
     i += sxoffs;
-    if (i < 0 || i >= sxdots)
+    if (i < 0 || i >= g_screen_x_dots)
     {
         return;
     }

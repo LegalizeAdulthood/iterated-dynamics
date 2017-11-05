@@ -220,7 +220,7 @@ init_pixels(Plot *me)
 {
     me->pixels.clear();
     me->saved_pixels.clear();
-    me->width = sxdots;
+    me->width = g_screen_x_dots;
     me->height = sydots;
     me->row_len = me->width * sizeof(BYTE);
     me->row_len = ((me->row_len + 3)/4)*4;
@@ -466,7 +466,7 @@ void plot_draw_line(Plot *me, int x1, int y1, int x2, int y2, int color)
 
 int plot_resize(Plot *me)
 {
-    if ((sxdots == me->width) && (sydots == me->height))
+    if ((g_screen_x_dots == me->width) && (sydots == me->height))
     {
         return 0;
     }

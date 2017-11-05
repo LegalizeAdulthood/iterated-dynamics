@@ -463,7 +463,7 @@ extern std::string           g_stereo_map_filename;
 extern int                   g_store_index;
 extern int                   g_stop_pass;
 extern double                sx3rd;
-extern int                   sxdots;
+extern int                   g_screen_x_dots;
 extern double                sxmax;
 extern double                sxmin;
 extern int                   sxoffs;

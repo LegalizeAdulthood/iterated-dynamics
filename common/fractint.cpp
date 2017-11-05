@@ -40,7 +40,7 @@ char const *g_fractal_search_dir2 = "";
 */
 int     g_dot_mode;                // video access method
 int     textsafe2;              // textsafe override from g_video_table
-int     sxdots, sydots;         // # of dots on the physical screen
+int     g_screen_x_dots, sydots;         // # of dots on the physical screen
 int     sxoffs, syoffs;         // physical top left of logical screen
 int     xdots, ydots;           // # of dots on the logical screen
 double  g_x_size_dots, g_y_size_dots;         // xdots-1, ydots-1

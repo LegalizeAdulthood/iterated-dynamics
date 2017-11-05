@@ -193,7 +193,7 @@ bool showtempmsg(char const *msgparm)
         return false;
     }
 
-    xrepeat = (sxdots >= 640) ? 2 : 1;
+    xrepeat = (g_screen_x_dots >= 640) ? 2 : 1;
     yrepeat = (sydots >= 300) ? 2 : 1;
     textxdots = (int) strlen(msg) * xrepeat * 8;
     textydots = yrepeat * 8;

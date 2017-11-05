@@ -2379,12 +2379,12 @@ int funny_glasses_call(int (*calc)())
         }
     }
 done:
-    if (g_glasses_type == 4 && sxdots >= 2*xdots)
+    if (g_glasses_type == 4 && g_screen_x_dots >= 2*xdots)
     {
         // turn off view windows so will save properly
         sxoffs = 0;
         syoffs = 0;
-        xdots = sxdots;
+        xdots = g_screen_x_dots;
         ydots = sydots;
         g_view_window = false;
     }

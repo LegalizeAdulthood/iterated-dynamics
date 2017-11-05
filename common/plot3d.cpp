@@ -436,7 +436,7 @@ void plot_setup()
         break;
 
     case 4: // crosseyed mode
-        if (sxdots < 2*xdots)
+        if (g_screen_x_dots < 2*xdots)
         {
             if (XROT == 0 && YROT == 0)
             {
@@ -483,18 +483,18 @@ void plot_setup()
             xxadjust = (int)(((xtrans+xadjust)* (double)xdots)/100);
             xshift1 -= (int)((g_eye_separation* (double)xdots)/200);
             xxadjust1 = (int)(((xtrans-xadjust)* (double)xdots)/100);
-            if (g_glasses_type == 4 && sxdots >= 2*xdots)
+            if (g_glasses_type == 4 && g_screen_x_dots >= 2*xdots)
             {
-                sxoffs = sxdots / 2 - xdots;
+                sxoffs = g_screen_x_dots / 2 - xdots;
             }
             break;
 
         case stereo_images::BLUE:
             xshift  -= (int)((g_eye_separation* (double)xdots)/200);
             xxadjust = (int)(((xtrans-xadjust)* (double)xdots)/100);
-            if (g_glasses_type == 4 && sxdots >= 2*xdots)
+            if (g_glasses_type == 4 && g_screen_x_dots >= 2*xdots)
             {
-                sxoffs = sxdots / 2;
+                sxoffs = g_screen_x_dots / 2;
             }
             break;
 

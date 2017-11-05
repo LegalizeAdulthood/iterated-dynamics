@@ -833,7 +833,7 @@ get_evol_restart:
     }
 
     g_evolve_image_grid_size = uvalues[++k].uval.ival;
-    tmp = sxdots / (MINPIXELS << 1);
+    tmp = g_screen_x_dots / (MINPIXELS << 1);
     // (sxdots / 20), max # of subimages @ 20 pixels per subimage
     // EVOLVE_MAX_GRID_SIZE == 1024 / 20 == 51
     if (g_evolve_image_grid_size > EVOLVE_MAX_GRID_SIZE)
@@ -873,7 +873,7 @@ get_evol_restart:
         g_evolving = g_evolving + NOGROUT;
     }
 
-    g_view_x_dots = (sxdots / g_evolve_image_grid_size)-2;
+    g_view_x_dots = (g_screen_x_dots / g_evolve_image_grid_size)-2;
     g_view_y_dots = (sydots / g_evolve_image_grid_size)-2;
     if (!g_view_window)
     {

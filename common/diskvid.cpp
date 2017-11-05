@@ -75,7 +75,7 @@ int startdisk()
 {
     headerlength = 0;
     g_disk_targa = false;
-    return common_startdisk(sxdots, sydots, g_colors);
+    return common_startdisk(g_screen_x_dots, sydots, g_colors);
 }
 
 int pot_startdisk()
@@ -91,7 +91,7 @@ int pot_startdisk()
     }
     headerlength = 0;
     g_disk_targa = false;
-    i = common_startdisk(sxdots, sydots << 1, g_colors);
+    i = common_startdisk(g_screen_x_dots, sydots << 1, g_colors);
     cleartempmsg();
     if (i == 0)
     {
@@ -138,7 +138,7 @@ int common_startdisk(long newrowsize, long newcolsize, int colors)
             driver_set_attr(BOXROW+i, BOXCOL, C_DVID_LO, BOXWIDTH);  // init box
         }
         driver_put_string(BOXROW+2, BOXCOL+4, C_DVID_HI, "'Disk-Video' mode");
-        sprintf(buf, "Screen resolution: %d x %d", sxdots, sydots);
+        sprintf(buf, "Screen resolution: %d x %d", g_screen_x_dots, sydots);
         driver_put_string(BOXROW+4, BOXCOL+4, C_DVID_LO, buf);
         if (g_disk_targa)
         {
