@@ -325,7 +325,7 @@ main_state big_while_loop(bool *const kbdmore, bool *const stacked, bool const r
         {
             copy_bf(g_bf_save_x_min, bfxmin);
             copy_bf(g_bf_save_x_max, bfxmax);
-            copy_bf(bfsymin, bfymin);
+            copy_bf(g_bf_save_y_min, bfymin);
             copy_bf(bfsymax, bfymax);
             copy_bf(bfsx3rd, bfx3rd);
             copy_bf(bfsy3rd, bfy3rd);
@@ -2331,7 +2331,7 @@ void reset_zoom_corners()
     {
         copy_bf(bfxmin, g_bf_save_x_min);
         copy_bf(bfxmax, g_bf_save_x_max);
-        copy_bf(bfymin, bfsymin);
+        copy_bf(bfymin, g_bf_save_y_min);
         copy_bf(bfymax, bfsymax);
         copy_bf(bfx3rd, bfsx3rd);
         copy_bf(bfy3rd, bfsy3rd);

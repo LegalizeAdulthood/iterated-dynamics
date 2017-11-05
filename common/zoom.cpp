@@ -141,7 +141,7 @@ void drawbox(bool drawit)
         sub_bf(bffxwidth, g_bf_save_x_max, bfsx3rd);
         sub_bf(bffxskew, bfsx3rd, g_bf_save_x_min);
         sub_bf(bffydepth, bfsy3rd, bfsymax);
-        sub_bf(bffyskew, bfsymin, bfsy3rd);
+        sub_bf(bffyskew, g_bf_save_y_min, bfsy3rd);
         floattobf(bffxadj, fxadj);
     }
 
@@ -499,7 +499,7 @@ static void zmo_calcbf(bf_t bfdx, bf_t bfdy,
     sub_bf(btmp1, bfsy3rd, bfsymax);
     mult_bf(btmp2, btempy, btmp1);
     div_bf(btmp2a, btmp2, bfftemp);
-    sub_bf(btmp3, bfsymin, bfsy3rd);
+    sub_bf(btmp3, g_bf_save_y_min, bfsy3rd);
     mult_bf(btmp4, btempx, btmp3);
     div_bf(btmp4a, btmp4, bfftemp);
     add_bf(bfnewy, bfsymax, btmp2a);
@@ -574,7 +574,7 @@ void zoomoutbf() // for ctl-enter, calc corners for zooming out
     zmo_calcbf(tmp1, tmp2, bfxmin, bfymax, bfplotmx1, bfplotmx2, bfplotmy1,
                bfplotmy2, bfftemp);
     sub_bf(tmp1, g_bf_save_x_max, savbfxmin);
-    sub_bf(tmp2, bfsymin, savbfymax);
+    sub_bf(tmp2, g_bf_save_y_min, savbfymax);
     zmo_calcbf(tmp1, tmp2, bfxmax, bfymin, bfplotmx1, bfplotmx2, bfplotmy1,
                bfplotmy2, bfftemp);
     sub_bf(tmp1, bfsx3rd, savbfxmin);
