@@ -498,7 +498,7 @@ extern int                   g_total_passes;
 extern int                   g_transparent_color_3d[];
 extern bool                  g_truecolor;
 extern true_color_mode       g_true_mode;
-extern char                  useinitorbit;
+extern char                  g_use_init_orbit;
 extern bool                  use_grid;
 extern bool                  usemag;
 extern bool                  uses_ismand;

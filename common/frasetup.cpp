@@ -25,7 +25,7 @@ MandelSetup()           // Mandelbrot Routine
             && (g_invert == 0) && g_decomp[0] == 0 && rqlim == 4.0
             && bitshift == 29 && !g_potential_flag
             && g_biomorph == -1 && g_inside_color > ZMAG && g_outside_color >= ITER
-            && useinitorbit != 1 && !using_jiim && g_bail_out_test == bailouts::Mod
+            && g_use_init_orbit != 1 && !using_jiim && g_bail_out_test == bailouts::Mod
             && (g_orbit_save_flags & osf_midi) == 0)
     {
         calctype = calcmand; // the normal case - use CALCMAND
@@ -230,7 +230,7 @@ MandelfpSetup()
                 && g_biomorph == -1
                 && (g_inside_color >= ITER)
                 && g_outside_color >= ATAN
-                && useinitorbit != 1
+                && g_use_init_orbit != 1
                 && (g_sound_flag & SOUNDFLAG_ORBITMASK) < SOUNDFLAG_X
                 && !using_jiim && g_bail_out_test == bailouts::Mod
                 && (g_orbit_save_flags & osf_midi) == 0)
@@ -355,7 +355,7 @@ JuliafpSetup()
                 && g_biomorph == -1
                 && (g_inside_color >= ITER)
                 && g_outside_color >= ATAN
-                && useinitorbit != 1
+                && g_use_init_orbit != 1
                 && (g_sound_flag & SOUNDFLAG_ORBITMASK) < SOUNDFLAG_X
                 && !g_finite_attractor
                 && !using_jiim && g_bail_out_test == bailouts::Mod

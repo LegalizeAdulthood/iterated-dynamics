@@ -98,7 +98,7 @@ bool    g_check_cur_dir = false;    // flag to check current dir for files
 batch_modes g_init_batch = batch_modes::NONE; // 1 if batch run (no kbd)
 int     g_init_save_time = 0;       // autosave minutes
 DComplex  g_init_orbit = { 0.0 };  // initial orbitvalue
-char    useinitorbit = 0;       // flag for initorbit
+char    g_use_init_orbit = 0;       // flag for initorbit
 int     g_init_mode = 0;        // initial video mode
 int     g_init_cycle_limit = 0;     // initial cycle limit
 bool    usemag = false;         // use center-mag corners
@@ -488,7 +488,7 @@ static void initvars_fractal()          // init vars affecting calculation
     initparams = false;
     g_bail_out = 0;                        // no user-entered bailout
     g_bof_match_book_images = true;         // use normal bof initialization to make bof images
-    useinitorbit = 0;
+    g_use_init_orbit = 0;
     for (int i = 0; i < MAXPARAMS; i++)
     {
         g_params[i] = 0.0;     // initial parameter values
@@ -1964,7 +1964,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
     {
         if (strcmp(value, "pixel") == 0)
         {
-            useinitorbit = 2;
+            g_use_init_orbit = 2;
         }
         else
         {
@@ -1974,7 +1974,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
             }
             g_init_orbit.x = floatval[0];
             g_init_orbit.y = floatval[1];
-            useinitorbit = 1;
+            g_use_init_orbit = 1;
         }
         return CMDARG_FRACTAL_PARAM;
     }

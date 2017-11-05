@@ -2661,7 +2661,7 @@ int long_mandel_per_pixel()
         g_l_init.y = (long)(g_init.y*g_fudge_factor);
     }
 
-    if (useinitorbit == 1)
+    if (g_use_init_orbit == 1)
     {
         g_l_old_z = g_l_init_orbit;
     }
@@ -2785,11 +2785,11 @@ int mandel_per_pixel()
     }
 
     // alter init value
-    if (useinitorbit == 1)
+    if (g_use_init_orbit == 1)
     {
         g_l_old_z = g_l_init_orbit;
     }
-    else if (useinitorbit == 2)
+    else if (g_use_init_orbit == 2)
     {
         g_l_old_z = g_l_init;
     }
@@ -2841,7 +2841,7 @@ int marksmandel_per_pixel()
         }
     }
 
-    if (useinitorbit == 1)
+    if (g_use_init_orbit == 1)
     {
         g_l_old_z = g_l_init_orbit;
     }
@@ -2896,7 +2896,7 @@ int marksmandelfp_per_pixel()
         }
     }
 
-    if (useinitorbit == 1)
+    if (g_use_init_orbit == 1)
     {
         g_old_z = g_init_orbit;
     }
@@ -2978,11 +2978,11 @@ int mandelfp_per_pixel()
     }
 
     // alter init value
-    if (useinitorbit == 1)
+    if (g_use_init_orbit == 1)
     {
         g_old_z = g_init_orbit;
     }
-    else if (useinitorbit == 2)
+    else if (g_use_init_orbit == 2)
     {
         g_old_z = g_init;
     }
@@ -3071,7 +3071,7 @@ int othermandelfp_per_pixel()
         }
     }
 
-    if (useinitorbit == 1)
+    if (g_use_init_orbit == 1)
     {
         g_old_z = g_init_orbit;
     }
@@ -3274,7 +3274,7 @@ int long_mandphoenix_per_pixel()
         g_l_init.y = (long)(g_init.y*g_fudge_factor);
     }
 
-    if (useinitorbit == 1)
+    if (g_use_init_orbit == 1)
     {
         g_l_old_z = g_l_init_orbit;
     }
@@ -3309,7 +3309,7 @@ int mandphoenix_per_pixel()
         }
     }
 
-    if (useinitorbit == 1)
+    if (g_use_init_orbit == 1)
     {
         g_old_z = g_init_orbit;
     }
