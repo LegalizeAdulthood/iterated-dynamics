@@ -382,7 +382,7 @@ extern double                g_plot_mx2;
 extern double                g_plot_my1;
 extern double                g_plot_my2;
 extern int                   g_polyphony;
-extern unsigned              posp;
+extern unsigned              g_operation_index;
 extern bool                  pot16bit;
 extern bool                  potflag;
 extern double                potparam[];

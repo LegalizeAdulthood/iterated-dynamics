@@ -178,7 +178,7 @@ int real_count;
 
 bool g_is_mandelbrot = true;
 
-unsigned int posp, vsp, g_last_op;
+unsigned int g_operation_index, vsp, g_last_op;
 static unsigned int n, NextOp, InitN;
 static int paren;
 static bool ExpectingArg = false;
@@ -2103,9 +2103,9 @@ ConstArg *isconst(char const *Str, int Len)
             || (Str[0] == '-' && (isdigit(Str[1]) || Str[1] == '.'))
             || Str[0] == '.')
     {
-        if (o[posp-1].f == StkNeg)
+        if (o[g_operation_index-1].f == StkNeg)
         {
-            posp--;
+            g_operation_index--;
             Str = Str - 1;
             InitN--;
             v[vsp].len++;
@@ -2333,7 +2333,7 @@ void (*isfunct(char const *Str, int Len))()
 void RecSortPrec()
 {
     int ThisOp = NextOp++;
-    while (o[ThisOp].p > o[NextOp].p && NextOp < posp)
+    while (o[ThisOp].p > o[NextOp].p && NextOp < g_operation_index)
     {
         RecSortPrec();
     }
@@ -2676,8 +2676,8 @@ static bool ParseStr(char const *Str, int pass)
 #endif
     }
 
-    posp = 0;
-    StoPtr = posp;
+    g_operation_index = 0;
+    StoPtr = 0;
     g_load_index = StoPtr;
     OpPtr = g_load_index;
     paren = OpPtr;
@@ -2708,8 +2708,8 @@ static bool ParseStr(char const *Str, int pass)
             {
                 ExpectingArg = true;
                 n++;
-                o[posp].f = StkOR;
-                o[posp++].p = 7 - (paren + Equals)*15;
+                o[g_operation_index].f = StkOR;
+                o[g_operation_index++].p = 7 - (paren + Equals)*15;
             }
             else if (ModFlag == paren-1)
             {
@@ -2719,8 +2719,8 @@ static bool ParseStr(char const *Str, int pass)
             else
             {
                 Mods[mdstk++] = ModFlag;
-                o[posp].f = StkMod;
-                o[posp++].p = 2 - (paren + Equals)*15;
+                o[g_operation_index].f = StkMod;
+                o[g_operation_index++].p = 2 - (paren + Equals)*15;
                 ModFlag = paren++;
             }
             break;
@@ -2729,107 +2729,107 @@ static bool ParseStr(char const *Str, int pass)
             if (!ExpectingArg)
             {
                 ExpectingArg = true;
-                o[posp].f = (void(*)())nullptr;
-                o[posp++].p = 15;
-                o[posp].f = StkClr;
-                o[posp++].p = -30000;
+                o[g_operation_index].f = (void(*)())nullptr;
+                o[g_operation_index++].p = 15;
+                o[g_operation_index].f = StkClr;
+                o[g_operation_index++].p = -30000;
                 paren = 0;
                 Equals = paren;
             }
             break;
         case ':':
             ExpectingArg = true;
-            o[posp].f = (void(*)())nullptr;
-            o[posp++].p = 15;
-            o[posp].f = EndInit;
-            o[posp++].p = -30000;
+            o[g_operation_index].f = (void(*)())nullptr;
+            o[g_operation_index++].p = 15;
+            o[g_operation_index].f = EndInit;
+            o[g_operation_index++].p = -30000;
             paren = 0;
             Equals = paren;
             g_last_init_op = 10000;
             break;
         case '+':
             ExpectingArg = true;
-            o[posp].f = StkAdd;
-            o[posp++].p = 4 - (paren + Equals)*15;
+            o[g_operation_index].f = StkAdd;
+            o[g_operation_index++].p = 4 - (paren + Equals)*15;
             break;
         case '-':
             if (ExpectingArg)
             {
-                o[posp].f = StkNeg;
-                o[posp++].p = 2 - (paren + Equals)*15;
+                o[g_operation_index].f = StkNeg;
+                o[g_operation_index++].p = 2 - (paren + Equals)*15;
             }
             else
             {
-                o[posp].f = StkSub;
-                o[posp++].p = 4 - (paren + Equals)*15;
+                o[g_operation_index].f = StkSub;
+                o[g_operation_index++].p = 4 - (paren + Equals)*15;
                 ExpectingArg = true;
             }
             break;
         case '&':
             ExpectingArg = true;
             n++;
-            o[posp].f = StkAND;
-            o[posp++].p = 7 - (paren + Equals)*15;
+            o[g_operation_index].f = StkAND;
+            o[g_operation_index++].p = 7 - (paren + Equals)*15;
             break;
         case '!':
             ExpectingArg = true;
             n++;
-            o[posp].f = StkNE;
-            o[posp++].p = 6 - (paren + Equals)*15;
+            o[g_operation_index].f = StkNE;
+            o[g_operation_index++].p = 6 - (paren + Equals)*15;
             break;
         case '<':
             ExpectingArg = true;
             if (Str[n+1] == '=')
             {
                 n++;
-                o[posp].f = StkLTE;
+                o[g_operation_index].f = StkLTE;
             }
             else
             {
-                o[posp].f = StkLT;
+                o[g_operation_index].f = StkLT;
             }
-            o[posp++].p = 6 - (paren + Equals)*15;
+            o[g_operation_index++].p = 6 - (paren + Equals)*15;
             break;
         case '>':
             ExpectingArg = true;
             if (Str[n+1] == '=')
             {
                 n++;
-                o[posp].f = StkGTE;
+                o[g_operation_index].f = StkGTE;
             }
             else
             {
-                o[posp].f = StkGT;
+                o[g_operation_index].f = StkGT;
             }
-            o[posp++].p = 6 - (paren + Equals)*15;
+            o[g_operation_index++].p = 6 - (paren + Equals)*15;
             break;
         case '*':
             ExpectingArg = true;
-            o[posp].f = StkMul;
-            o[posp++].p = 3 - (paren + Equals)*15;
+            o[g_operation_index].f = StkMul;
+            o[g_operation_index++].p = 3 - (paren + Equals)*15;
             break;
         case '/':
             ExpectingArg = true;
-            o[posp].f = StkDiv;
-            o[posp++].p = 3 - (paren + Equals)*15;
+            o[g_operation_index].f = StkDiv;
+            o[g_operation_index++].p = 3 - (paren + Equals)*15;
             break;
         case '^':
             ExpectingArg = true;
-            o[posp].f = StkPwr;
-            o[posp++].p = 2 - (paren + Equals)*15;
+            o[g_operation_index].f = StkPwr;
+            o[g_operation_index++].p = 2 - (paren + Equals)*15;
             break;
         case '=':
             ExpectingArg = true;
             if (Str[n+1] == '=')
             {
                 n++;
-                o[posp].f = StkEQ;
-                o[posp++].p = 6 - (paren + Equals)*15;
+                o[g_operation_index].f = StkEQ;
+                o[g_operation_index++].p = 6 - (paren + Equals)*15;
             }
             else
             {
-                o[posp-1].f = StkSto;
-                o[posp-1].p = 5 - (paren + Equals)*15;
+                o[g_operation_index-1].f = StkSto;
+                o[g_operation_index-1].p = 5 - (paren + Equals)*15;
                 Store[StoPtr++] = Load[--g_load_index];
                 Equals++;
             }
@@ -2850,31 +2850,31 @@ static bool ParseStr(char const *Str, int pass)
                 case 1:                      // if
                     ExpectingArg = true;
                     jump_control[jump_index++].type = 1;
-                    o[posp].f = StkJumpOnFalse;
-                    o[posp++].p = 1;
+                    o[g_operation_index].f = StkJumpOnFalse;
+                    o[g_operation_index++].p = 1;
                     break;
                 case 2:                     // elseif
                     ExpectingArg = true;
                     jump_control[jump_index++].type = 2;
                     jump_control[jump_index++].type = 2;
-                    o[posp].f = StkJump;
-                    o[posp++].p = 1;
-                    o[posp].f = (void(*)())nullptr;
-                    o[posp++].p = 15;
-                    o[posp].f = StkClr;
-                    o[posp++].p = -30000;
-                    o[posp].f = StkJumpOnFalse;
-                    o[posp++].p = 1;
+                    o[g_operation_index].f = StkJump;
+                    o[g_operation_index++].p = 1;
+                    o[g_operation_index].f = (void(*)())nullptr;
+                    o[g_operation_index++].p = 15;
+                    o[g_operation_index].f = StkClr;
+                    o[g_operation_index++].p = -30000;
+                    o[g_operation_index].f = StkJumpOnFalse;
+                    o[g_operation_index++].p = 1;
                     break;
                 case 3:                     // else
                     jump_control[jump_index++].type = 3;
-                    o[posp].f = StkJump;
-                    o[posp++].p = 1;
+                    o[g_operation_index].f = StkJump;
+                    o[g_operation_index++].p = 1;
                     break;
                 case 4: // endif
                     jump_control[jump_index++].type = 4;
-                    o[posp].f = StkJumpLabel;
-                    o[posp++].p = 1;
+                    o[g_operation_index].f = StkJumpLabel;
+                    o[g_operation_index++].p = 1;
                     break;
                 default:
                     break;
@@ -2882,29 +2882,29 @@ static bool ParseStr(char const *Str, int pass)
             }
             else
             {
-                o[posp].f = isfunct(&Str[InitN], Len);
-                if (o[posp].f != NotAFnct)
+                o[g_operation_index].f = isfunct(&Str[InitN], Len);
+                if (o[g_operation_index].f != NotAFnct)
                 {
-                    o[posp++].p = 1 - (paren + Equals)*15;
+                    o[g_operation_index++].p = 1 - (paren + Equals)*15;
                     ExpectingArg = true;
                 }
                 else
                 {
                     c = isconst(&Str[InitN], Len);
                     Load[g_load_index++] = &(c->a);
-                    o[posp].f = StkLod;
-                    o[posp++].p = 1 - (paren + Equals)*15;
+                    o[g_operation_index].f = StkLod;
+                    o[g_operation_index++].p = 1 - (paren + Equals)*15;
                     n = InitN + c->len - 1;
                 }
             }
             break;
         }
     }
-    o[posp].f = (void(*)())nullptr;
-    o[posp++].p = 16;
+    o[g_operation_index].f = (void(*)())nullptr;
+    o[g_operation_index++].p = 16;
     NextOp = 0;
-    g_last_op = posp;
-    while (NextOp < posp)
+    g_last_op = g_operation_index;
+    while (NextOp < g_operation_index)
     {
         if (o[NextOp].f)
         {
@@ -4374,7 +4374,7 @@ static void parser_allocate()
             if (!ParseStr(FormStr.c_str(), pass))
             {
                 // per Chuck Ebbert, fudge these up a little
-                g_max_function_ops = posp + 4;
+                g_max_function_ops = g_operation_index + 4;
                 g_max_function_args = vsp + 4;
             }
         }
