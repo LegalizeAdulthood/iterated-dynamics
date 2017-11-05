@@ -170,10 +170,10 @@ int read_overlay()      // read overlay/3D files, if reqr'd
         yy3rd       = read_info.y3rd;
         g_calc_status = static_cast<calc_status_value>(read_info.calc_status);
         usr_stdcalcmode = read_info.stdcalcmode;
-        three_pass = false;
+        g_three_pass = false;
         if (usr_stdcalcmode == 127)
         {
-            three_pass = true;
+            g_three_pass = true;
             usr_stdcalcmode = '3';
         }
         usr_distest     = read_info.distestold;

@@ -175,7 +175,7 @@ unsigned long g_diffusion_counter = 0;  // the diffusion counter
 unsigned long g_diffusion_limit = 0;    // the diffusion counter
 
 // static vars for solid_guess & its subroutines
-bool three_pass = false;
+bool g_three_pass = false;
 static int maxblock = 0;
 static int halfblock = 0;
 static bool guessplot = false;          // paint 1st pass row at a time?
@@ -919,10 +919,10 @@ int calcfract()
         {
             int oldcalcmode;
             oldcalcmode = g_std_calc_mode;
-            if (!g_resuming || three_pass)
+            if (!g_resuming || g_three_pass)
             {
                 g_std_calc_mode = 'g';
-                three_pass = true;
+                g_three_pass = true;
                 timer(0, (int(*)())perform_worklist);
                 if (g_calc_status == calc_status_value::COMPLETED)
                 {
@@ -937,7 +937,7 @@ int calcfract()
 
                     }
                     timer(0, (int(*)())perform_worklist);
-                    three_pass = false;
+                    g_three_pass = false;
                 }
             }
             else // resuming '2' pass
@@ -957,7 +957,7 @@ int calcfract()
         }
         else // main case, much nicer!
         {
-            three_pass = false;
+            g_three_pass = false;
             timer(0, (int(*)())perform_worklist);
         }
     }
@@ -3852,7 +3852,7 @@ static int solid_guess()
     {
         memset(&tprefix[0][0][0], -1, maxxblk*maxyblk*2); // noskip flags on
     }
-    if (three_pass)
+    if (g_three_pass)
     {
         goto exit_solidguess;
     }
