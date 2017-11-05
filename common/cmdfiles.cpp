@@ -3478,7 +3478,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         {
             goto badarg;
         }
-        Targa_Overlay = yesnoval[0] != 0;
+        g_targa_overlay = yesnoval[0] != 0;
         return CMDARG_3D_PARAM;
     }
 

@@ -116,7 +116,7 @@ int g_randomize_3d;
 int g_haze;
 int Real_V = 0; // Actual value of V for fillytpe>4 monochrome images
 std::string g_light_name{"fract001"};
-bool Targa_Overlay = false;
+bool g_targa_overlay = false;
 int error;
 char targa_temp[14] = "fractemp.tga";
 int P = 250; // Perspective dist used when viewing light vector
@@ -2376,12 +2376,12 @@ static void line3d_cleanup()
         // Finish up targa files
         T_header_24 = 18;         // Reset Targa header size
         enddisk();
-        if (g_debug_flag == debug_flags::none && (!T_Safe || error) && Targa_Overlay)
+        if (g_debug_flag == debug_flags::none && (!T_Safe || error) && g_targa_overlay)
         {
             dir_remove(workdir.c_str(), g_light_name.c_str());
             rename(targa_temp, g_light_name.c_str());
         }
-        if (g_debug_flag == debug_flags::none && Targa_Overlay)
+        if (g_debug_flag == debug_flags::none && g_targa_overlay)
         {
             dir_remove(workdir.c_str(), targa_temp);
         }
@@ -2452,7 +2452,7 @@ static int first_time(int linelen, VECTOR v)
     if (g_targa_out && !((g_glasses_type == 1 || g_glasses_type == 2)
                        && g_which_image == stereo_images::BLUE))
     {
-        if (Targa_Overlay)
+        if (g_targa_overlay)
         {
             // Make sure target file is a supportable Targa File
             if (targa_validate(g_light_name.c_str()))

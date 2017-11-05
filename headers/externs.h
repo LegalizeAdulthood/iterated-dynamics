@@ -476,7 +476,7 @@ extern bool                  g_make_parameter_file_map;
 extern bool                  g_tab_mode;
 extern bool                  g_tab_or_help;
 extern bool                  g_targa_out;
-extern bool                  Targa_Overlay;
+extern bool                  g_targa_overlay;
 extern double                tempsqrx;
 extern double                tempsqry;
 extern int                   g_text_cbase;      // g_text_col is relative to this

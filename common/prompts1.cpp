@@ -2982,7 +2982,7 @@ int get_3d_params()     // prompt for 3D parameters
 restart_1:
     if (g_targa_out && g_overlay_3d)
     {
-        Targa_Overlay = true;
+        g_targa_overlay = true;
     }
 
     k = -1;
@@ -3347,7 +3347,7 @@ static bool get_light_params()
         uvalues[k].type = 'i';
         uvalues[k].uval.ival = g_haze;
 
-        if (!Targa_Overlay)
+        if (!g_targa_overlay)
         {
             check_writefile(g_light_name, ".tga");
         }
@@ -3372,7 +3372,7 @@ static bool get_light_params()
 
         prompts3d[++k] = "Overlay Targa File? (Y/N)";
         uvalues[k].type = 'y';
-        uvalues[k].uval.ch.val = Targa_Overlay ? 1 : 0;
+        uvalues[k].uval.ch.val = g_targa_overlay ? 1 : 0;
 
     }
 
@@ -3425,7 +3425,7 @@ static bool get_light_params()
         g_background_color[0] = (char)(uvalues[k++].uval.ival % 255);
         g_background_color[1] = (char)(uvalues[k++].uval.ival % 255);
         g_background_color[2] = (char)(uvalues[k++].uval.ival % 255);
-        Targa_Overlay = uvalues[k].uval.ch.val != 0;
+        g_targa_overlay = uvalues[k].uval.ch.val != 0;
     }
     return false;
 }
