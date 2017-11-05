@@ -126,7 +126,7 @@ bool g_preview = false;
 bool g_show_box = false;
 int g_preview_factor = 20;
 int g_converge_x_adjust = 0;
-int yadjust = 0;
+int g_converge_y_adjust = 0;
 int g_xx_adjust;
 int yyadjust;
 int g_x_shift;

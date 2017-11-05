@@ -558,7 +558,7 @@ extern long                  g_xx_one;
 extern int                   g_xx_start;
 extern int                   g_xx_stop;
 extern long                  g_l_y_3rd;
-extern int                   yadjust;
+extern int                   g_converge_y_adjust;
 extern double                g_julia_c_y;
 extern int                   g_logical_screen_y_dots;
 extern long                  g_l_y_max;

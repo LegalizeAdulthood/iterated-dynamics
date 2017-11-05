@@ -600,7 +600,7 @@ static void initvars_3d()               // init vars affecting 3d
     g_preview = false;
     g_show_box = false;
     g_converge_x_adjust = 0;
-    yadjust = 0;
+    g_converge_y_adjust = 0;
     g_eye_separation = 0;
     g_glasses_type = 0;
     g_preview_factor = 20;

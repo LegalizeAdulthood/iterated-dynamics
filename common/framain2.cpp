@@ -2425,7 +2425,7 @@ static void save_history_info()
     current.red_bright           = (short)g_red_bright                ;
     current.blue_bright          = (short)g_blue_bright               ;
     current.xadjust              = (short)g_converge_x_adjust                   ;
-    current.yadjust              = (short)yadjust                   ;
+    current.yadjust              = (short)g_converge_y_adjust                   ;
     current.eyeseparation        = (short)g_eye_separation             ;
     current.glassestype          = (short)g_glasses_type               ;
     current.outside              = (short)g_outside_color                   ;
@@ -2606,7 +2606,7 @@ static void restore_history_info(int i)
     g_red_bright            = last.red_bright     ;
     g_blue_bright           = last.blue_bright    ;
     g_converge_x_adjust               = last.xadjust        ;
-    yadjust               = last.yadjust        ;
+    g_converge_y_adjust               = last.yadjust        ;
     g_eye_separation      = last.eyeseparation  ;
     g_glasses_type        = last.glassestype    ;
     g_outside_color               = last.outside        ;
