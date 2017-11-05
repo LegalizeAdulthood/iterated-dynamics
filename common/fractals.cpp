@@ -3636,7 +3636,7 @@ static long lxpixel_grid()
 // Real component, calculation version - does not require arrays
 static long lxpixel_calc()
 {
-    return xmin + g_col*g_l_delta_x + g_row*g_l_delta_x2;
+    return g_l_x_min + g_col*g_l_delta_x + g_row*g_l_delta_x2;
 }
 
 // Imaginary component, grid lookup version - requires ly0/ly1 arrays

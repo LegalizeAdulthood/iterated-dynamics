@@ -545,7 +545,7 @@ extern int                   xadjust;
 extern double                xcjul;
 extern int                   xdots;
 extern long                  g_l_x_max;
-extern long                  xmin;
+extern long                  g_l_x_min;
 extern int                   xshift1;
 extern int                   xshift;
 extern int                   xtrans;

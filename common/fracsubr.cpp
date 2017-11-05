@@ -113,7 +113,7 @@ void fill_lx_array()
     // they're used only to add to lx0/ly0, 2s comp straightens it out
     if (g_use_grid)
     {
-        g_l_x0[0] = xmin;               // fill up the x, y grids
+        g_l_x0[0] = g_l_x_min;               // fill up the x, y grids
         g_l_y0[0] = ymax;
         g_l_y1[0] = 0;
         g_l_x1[0] = g_l_y1[0];
@@ -461,7 +461,7 @@ init_restart:
 
     if (fractype != fractal_type::CELLULAR && fractype != fractal_type::ANT)  // fudgetolong fails w >10 digits in double
     {
-        xmin  = fudgetolong(g_x_min);
+        g_l_x_min  = fudgetolong(g_x_min);
         g_l_x_max  = fudgetolong(g_x_max);
         g_l_x_3rd  = fudgetolong(g_x_3rd);
         ymin  = fudgetolong(g_y_min);
@@ -492,9 +492,9 @@ init_restart:
 
             fill_lx_array();   // fill up the x,y grids
             // past max res?  check corners within 10% of expected
-            if (ratio_bad((double)g_l_x0[xdots-1]-xmin, (double)g_l_x_max-g_l_x_3rd)
+            if (ratio_bad((double)g_l_x0[xdots-1]-g_l_x_min, (double)g_l_x_max-g_l_x_3rd)
                     || ratio_bad((double)g_l_y0[ydots-1]-ymax, (double)y3rd-ymax)
-                    || ratio_bad((double)g_l_x1[(ydots >> 1)-1], ((double)g_l_x_3rd-xmin)/2)
+                    || ratio_bad((double)g_l_x1[(ydots >> 1)-1], ((double)g_l_x_3rd-g_l_x_min)/2)
                     || ratio_bad((double)g_l_y1[(xdots >> 1)-1], ((double)ymin-y3rd)/2))
             {
 expand_retry:
@@ -517,9 +517,9 @@ expand_retry:
             // re-set corners to match reality
             g_l_x_max = g_l_x0[xdots-1] + g_l_x1[ydots-1];
             ymin = g_l_y0[ydots-1] + g_l_y1[xdots-1];
-            g_l_x_3rd = xmin + g_l_x1[ydots-1];
+            g_l_x_3rd = g_l_x_min + g_l_x1[ydots-1];
             y3rd = g_l_y0[ydots-1];
-            g_x_min = fudgetodouble(xmin);
+            g_x_min = fudgetodouble(g_l_x_min);
             g_x_max = fudgetodouble(g_l_x_max);
             g_x_3rd = fudgetodouble(g_l_x_3rd);
             g_y_min = fudgetodouble(ymin);

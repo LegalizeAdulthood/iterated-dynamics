@@ -1054,7 +1054,7 @@ int Bifurcation()
 
         if (g_integer_fractal)
         {
-            lRate = xmin + x*g_l_delta_x;
+            lRate = g_l_x_min + x*g_l_delta_x;
         }
         else
         {
