@@ -2982,7 +2982,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         else
         {
             pseudoy = 0;
-            pseudox = pseudoy;
+            pseudox = 0;
         }
         return CMDARG_FRACTAL_PARAM;
     }
