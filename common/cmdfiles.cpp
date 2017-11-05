@@ -3760,7 +3760,7 @@ static int parse_colors(char const *value)
         g_color_state = 1;
     }
     g_colors_preloaded = true;
-    memcpy(old_dac_box, g_dac_box, 256*3);
+    memcpy(g_old_dac_box, g_dac_box, 256*3);
     return CMDARG_NONE;
 badcolor:
     return -1;

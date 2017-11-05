@@ -230,7 +230,7 @@ static void main_restart(int const argc, char const *const argv[], bool &stacked
         check_samename();
     }
     driver_window();
-    memcpy(old_dac_box, g_dac_box, 256*3);      // save in case colors= present
+    memcpy(g_old_dac_box, g_dac_box, 256*3);      // save in case colors= present
 
     driver_set_for_text();                      // switch to text mode
     savedac = 0;                         // don't save the VGA DAC
@@ -271,7 +271,7 @@ static bool main_restore_start(bool &stacked, bool &resumeflag)
 
     if (g_colors_preloaded)
     {
-        memcpy(g_dac_box, old_dac_box, 256*3);   // restore in case colors= present
+        memcpy(g_dac_box, g_old_dac_box, 256*3);   // restore in case colors= present
     }
 
     g_look_at_mouse = 0;                     // ignore mouse
@@ -453,7 +453,7 @@ static main_state main_image_start(bool &stacked, bool &resumeflag)
             }
             if (g_colors_preloaded)
             {
-                memcpy(old_dac_box, g_dac_box, 256*3); // save in case colors= present
+                memcpy(g_old_dac_box, g_dac_box, 256*3); // save in case colors= present
             }
             driver_set_for_text(); // switch to text mode
             show_file = -1;
