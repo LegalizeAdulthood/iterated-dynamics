@@ -819,7 +819,12 @@ int ComplexBasin()
  * 1 in Distribution*(1-Probability/Range*con)+1 chance of getting a
  * Gaussian; otherwise you just get offset.
  */
-int g_distribution = 30, Offset = 0, Slope = 25;
+int g_distribution = 30;
+int Slope = 25;
+namespace
+{
+int Offset = 0;
+}
 int GausianNumber(int Probability, int Range)
 {
     long p;

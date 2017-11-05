@@ -336,7 +336,6 @@ extern const int             g_num_trig_functions;
 extern int                   g_num_fractal_types;
 extern int                   g_num_work_list;
 extern bool                  g_cellular_next_screen;
-extern int                   Offset;
 extern DComplex              old;
 extern long                  oldcoloriter;
 extern BYTE                  old_dac_box[256][3];
