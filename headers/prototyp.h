@@ -654,7 +654,7 @@ extern void Arctanz(DComplex z, DComplex *rz);
 // msccos -- C file prototypes
 extern double _cos(double);
 // parser -- C file prototypes
-struct fls
+struct fn_operand
 { // function, load, store pointers
     void (*function)();
     Arg *operand;

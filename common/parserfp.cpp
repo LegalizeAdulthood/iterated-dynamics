@@ -42,7 +42,7 @@
 #include "prototyp.h"
 
 // global data
-std::vector<fls> pfls;
+std::vector<fn_operand> pfls;
 
 #if !defined(XFRACT)
 
