@@ -14,7 +14,7 @@ GENEBASE g_gene_bank[NUMGENES];
 
 // px and py are coordinates in the parameter grid (small images on screen)
 // evolving = flag, evolve_image_grid_size = dimensions of image grid (evolve_image_grid_size x evolve_image_grid_size)
-int px, py, g_evolving, g_evolve_image_grid_size;
+int g_evolve_param_grid_x, py, g_evolving, g_evolve_image_grid_size;
 #define EVOLVE_MAX_GRID_SIZE 51  // This is arbitrary, = 1024/20
 static int ecountbox[EVOLVE_MAX_GRID_SIZE][EVOLVE_MAX_GRID_SIZE];
 
@@ -232,16 +232,16 @@ void varydbl(GENEBASE gene[], int randval, int i)
     case variations::NONE:
         break;
     case variations::X:
-        *(double *)gene[i].addr = px * g_evolve_dist_per_x + g_evolve_x_parameter_offset; //paramspace x coord * per view delta px + offset
+        *(double *)gene[i].addr = g_evolve_param_grid_x * g_evolve_dist_per_x + g_evolve_x_parameter_offset; //paramspace x coord * per view delta px + offset
         break;
     case variations::Y:
         *(double *)gene[i].addr = lclpy * g_evolve_dist_per_y + g_evolve_y_parameter_offset; //same for y
         break;
     case variations::X_PLUS_Y:
-        *(double *)gene[i].addr = px*g_evolve_dist_per_x+ g_evolve_x_parameter_offset +(lclpy*g_evolve_dist_per_y)+ g_evolve_y_parameter_offset; //and x+y
+        *(double *)gene[i].addr = g_evolve_param_grid_x*g_evolve_dist_per_x+ g_evolve_x_parameter_offset +(lclpy*g_evolve_dist_per_y)+ g_evolve_y_parameter_offset; //and x+y
         break;
     case variations::X_MINUS_Y:
-        *(double *)gene[i].addr = (px*g_evolve_dist_per_x+ g_evolve_x_parameter_offset)-(lclpy*g_evolve_dist_per_y+ g_evolve_y_parameter_offset); //and x-y
+        *(double *)gene[i].addr = (g_evolve_param_grid_x*g_evolve_dist_per_x+ g_evolve_x_parameter_offset)-(lclpy*g_evolve_dist_per_y+ g_evolve_y_parameter_offset); //and x-y
         break;
     case variations::RANDOM:
         *(double *)gene[i].addr += (((double)randval / RAND_MAX) * 2 * g_evolve_max_random_mutation) - g_evolve_max_random_mutation;
@@ -249,7 +249,7 @@ void varydbl(GENEBASE gene[], int randval, int i)
     case variations::WEIGHTED_RANDOM:
     {
         int mid = g_evolve_image_grid_size /2;
-        double radius =  sqrt(static_cast<double>(sqr(px - mid) + sqr(lclpy - mid)));
+        double radius =  sqrt(static_cast<double>(sqr(g_evolve_param_grid_x - mid) + sqr(lclpy - mid)));
         *(double *)gene[i].addr += ((((double)randval / RAND_MAX) * 2 * g_evolve_max_random_mutation) - g_evolve_max_random_mutation) * radius;
     }
     break;
@@ -267,16 +267,16 @@ int varyint(int randvalue, int limit, variations mode)
     case variations::NONE:
         break;
     case variations::X:
-        ret = (g_evolve_discrete_x_parameter_offset +px)%limit;
+        ret = (g_evolve_discrete_x_parameter_offset +g_evolve_param_grid_x)%limit;
         break;
     case variations::Y:
         ret = (g_evolve_discrete_y_parameter_offset +lclpy)%limit;
         break;
     case variations::X_PLUS_Y:
-        ret = (g_evolve_discrete_x_parameter_offset +px+ g_evolve_discrete_y_parameter_offset +lclpy)%limit;
+        ret = (g_evolve_discrete_x_parameter_offset +g_evolve_param_grid_x+ g_evolve_discrete_y_parameter_offset +lclpy)%limit;
         break;
     case variations::X_MINUS_Y:
-        ret = (g_evolve_discrete_x_parameter_offset +px)-(g_evolve_discrete_y_parameter_offset +lclpy)%limit;
+        ret = (g_evolve_discrete_x_parameter_offset +g_evolve_param_grid_x)-(g_evolve_discrete_y_parameter_offset +lclpy)%limit;
         break;
     case variations::RANDOM:
         ret = randvalue % limit;
@@ -284,7 +284,7 @@ int varyint(int randvalue, int limit, variations mode)
     case variations::WEIGHTED_RANDOM:
     {
         int mid = g_evolve_image_grid_size /2;
-        double radius =  sqrt(static_cast<double>(sqr(px - mid) + sqr(lclpy - mid)));
+        double radius =  sqrt(static_cast<double>(sqr(g_evolve_param_grid_x - mid) + sqr(lclpy - mid)));
         ret = (int)((((randvalue / RAND_MAX) * 2 * g_evolve_max_random_mutation) - g_evolve_max_random_mutation) * radius);
         ret %= limit;
         break;
@@ -971,7 +971,7 @@ void fiddleparms(GENEBASE gene[], int ecount)
      the variables referenced in the gene array and call the functions required
      to vary them, aren't pointers marvellous! */
 
-    if ((px == g_evolve_image_grid_size / 2) && (py == g_evolve_image_grid_size / 2))   // return if middle image
+    if ((g_evolve_param_grid_x == g_evolve_image_grid_size / 2) && (py == g_evolve_image_grid_size / 2))   // return if middle image
     {
         return;
     }
@@ -1055,11 +1055,11 @@ void drawparmbox(int mode)
 
     g_box_count =0;
     //draw larger box to show parm zooming range
-    bl.x = ((px -(int)g_evolve_param_zoom) * (int)(x_size_d+1+grout))-sxoffs-1;
+    bl.x = ((g_evolve_param_grid_x -(int)g_evolve_param_zoom) * (int)(x_size_d+1+grout))-sxoffs-1;
     tl.x = bl.x;
     tr.y = ((py -(int)g_evolve_param_zoom) * (int)(y_size_d+1+grout))-syoffs-1;
     tl.y = tr.y;
-    tr.x = ((px +1+(int)g_evolve_param_zoom) * (int)(x_size_d+1+grout))-sxoffs;
+    tr.x = ((g_evolve_param_grid_x +1+(int)g_evolve_param_zoom) * (int)(x_size_d+1+grout))-sxoffs;
     br.x = tr.x;
     bl.y = ((py +1+(int)g_evolve_param_zoom) * (int)(y_size_d+1+grout))-syoffs;
     br.y = bl.y;
@@ -1108,10 +1108,10 @@ void set_evolve_ranges()
     // set up ranges and offsets for parameter explorer/evolver
     g_evolve_x_parameter_range = g_evolve_dist_per_x*(g_evolve_param_zoom*2.0);
     g_evolve_y_parameter_range = g_evolve_dist_per_y*(g_evolve_param_zoom*2.0);
-    g_evolve_new_x_parameter_offset = g_evolve_x_parameter_offset +(((double)px-g_evolve_param_zoom)*g_evolve_dist_per_x);
+    g_evolve_new_x_parameter_offset = g_evolve_x_parameter_offset +(((double)g_evolve_param_grid_x-g_evolve_param_zoom)*g_evolve_dist_per_x);
     g_evolve_new_y_parameter_offset = g_evolve_y_parameter_offset +(((double)lclpy-g_evolve_param_zoom)*g_evolve_dist_per_y);
 
-    g_evolve_new_discrete_x_parameter_offset = (char)(g_evolve_discrete_x_parameter_offset +(px- g_evolve_image_grid_size /2));
+    g_evolve_new_discrete_x_parameter_offset = (char)(g_evolve_discrete_x_parameter_offset +(g_evolve_param_grid_x- g_evolve_image_grid_size /2));
     g_evolve_new_discrete_y_parameter_offset = (char)(g_evolve_discrete_y_parameter_offset +(lclpy- g_evolve_image_grid_size /2));
     return;
 }
@@ -1128,14 +1128,14 @@ void spiralmap(int count)
     {
         // start in the middle
         py = mid;
-        px = py;
+        g_evolve_param_grid_x = py;
         return;
     }
     for (int offset = 1; offset <= mid; offset ++)
     {
         // first do the top row
         py = (mid - offset);
-        for (px = (mid - offset)+1; px < mid+offset; px++)
+        for (g_evolve_param_grid_x = (mid - offset)+1; g_evolve_param_grid_x < mid+offset; g_evolve_param_grid_x++)
         {
             i++;
             if (i == count)
@@ -1153,7 +1153,7 @@ void spiralmap(int count)
             }
         }
         // then reverse along the bottom row
-        for (; px > mid - offset; px--)
+        for (; g_evolve_param_grid_x > mid - offset; g_evolve_param_grid_x--)
         {
             i++;
             if (i == count)
@@ -1182,20 +1182,20 @@ int unspiralmap()
     static int old_image_grid_size = 0;
 
     mid = g_evolve_image_grid_size / 2;
-    if ((px == mid && py == mid) || (old_image_grid_size != g_evolve_image_grid_size))
+    if ((g_evolve_param_grid_x == mid && py == mid) || (old_image_grid_size != g_evolve_image_grid_size))
     {
         // set up array and return
         int gridsqr = g_evolve_image_grid_size * g_evolve_image_grid_size;
-        ecountbox[px][py] = 0;  // we know the first one, do the rest
+        ecountbox[g_evolve_param_grid_x][py] = 0;  // we know the first one, do the rest
         for (int i = 1; i < gridsqr; i++)
         {
             spiralmap(i);
-            ecountbox[px][py] = i;
+            ecountbox[g_evolve_param_grid_x][py] = i;
         }
         old_image_grid_size = g_evolve_image_grid_size;
         py = mid;
-        px = py;
+        g_evolve_param_grid_x = py;
         return (0);
     }
-    return (ecountbox[px][py]);
+    return (ecountbox[g_evolve_param_grid_x][py]);
 }

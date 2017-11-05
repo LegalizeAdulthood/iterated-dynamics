@@ -382,7 +382,7 @@ main_state big_while_loop(bool *const kbdmore, bool *const stacked, bool const r
                     g_evolve_discrete_x_parameter_offset = g_evolve_new_discrete_x_parameter_offset;
                     g_evolve_new_discrete_y_parameter_offset = (char)g_evolve_info.discrete_y_paramter_offset;
                     g_evolve_discrete_y_parameter_offset = g_evolve_new_discrete_y_parameter_offset;
-                    px           = g_evolve_info.px;
+                    g_evolve_param_grid_x           = g_evolve_info.px;
                     py           = g_evolve_info.py;
                     sxoffs       = g_evolve_info.sxoffs;
                     syoffs       = g_evolve_info.syoffs;
@@ -400,7 +400,7 @@ main_state big_while_loop(bool *const kbdmore, bool *const stacked, bool const r
                 {
                     // not resuming, start from the beginning
                     int mid = g_evolve_image_grid_size / 2;
-                    if ((px != mid) || (py != mid))
+                    if ((g_evolve_param_grid_x != mid) || (py != mid))
                     {
                         evolve_this_generation_random_seed = (unsigned int)clock_ticks(); // time for new set
                     }
@@ -422,7 +422,7 @@ main_state big_while_loop(bool *const kbdmore, bool *const stacked, bool const r
                 while (ecount < gridsqr)
                 {
                     spiralmap(ecount); // sets px & py
-                    sxoffs = tmpxdots * px;
+                    sxoffs = tmpxdots * g_evolve_param_grid_x;
                     syoffs = tmpydots * py;
                     param_history(1); // restore old history
                     fiddleparms(gene, ecount);
@@ -451,7 +451,7 @@ done:
                     g_evolve_info.y_parameter_offset = g_evolve_y_parameter_offset;
                     g_evolve_info.discrete_x_parameter_offset = (short) g_evolve_discrete_x_parameter_offset;
                     g_evolve_info.discrete_y_paramter_offset = (short) g_evolve_discrete_y_parameter_offset;
-                    g_evolve_info.px              = (short)px;
+                    g_evolve_info.px              = (short)g_evolve_param_grid_x;
                     g_evolve_info.py              = (short)py;
                     g_evolve_info.sxoffs          = (short)sxoffs;
                     g_evolve_info.syoffs          = (short)syoffs;
@@ -471,7 +471,7 @@ done:
 
                 // set up for 1st selected image, this reuses px and py
                 py = g_evolve_image_grid_size /2;
-                px = py;
+                g_evolve_param_grid_x = py;
                 unspiralmap(); // first time called, w/above line sets up array
                 param_history(1); // restore old history
                 fiddleparms(gene, 0);
@@ -1489,7 +1489,7 @@ do_3d_transform:
                 find_special_colors();
                 g_box_color = g_color_bright;
                 py = g_evolve_image_grid_size /2;
-                px = py;
+                g_evolve_param_grid_x = py;
                 moveboxf(0.0, 0.0); // force scrolling
             }
             else
@@ -1784,19 +1784,19 @@ static main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdm
         oldsyoffs = syoffs;
         oldxdots = xdots;
         oldydots = ydots;
-        oldpx = px;
+        oldpx = g_evolve_param_grid_x;
         oldpy = py;
         syoffs = 0;
         sxoffs = syoffs;
         xdots = sxdots;
         ydots = sydots; // for full screen save and pointer move stuff
         py = g_evolve_image_grid_size / 2;
-        px = py;
+        g_evolve_param_grid_x = py;
         param_history(1); // restore old history
         fiddleparms(gene, 0);
         drawparmbox(1);
         savetodisk(savename);
-        px = oldpx;
+        g_evolve_param_grid_x = oldpx;
         py = oldpy;
         param_history(1); // restore old history
         fiddleparms(gene, unspiralmap());
@@ -1895,11 +1895,11 @@ static main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdm
             {
                 if (*kbdchar == FIK_CTL_LEFT_ARROW)
                 {
-                    px--;
+                    g_evolve_param_grid_x--;
                 }
                 if (*kbdchar == FIK_CTL_RIGHT_ARROW)
                 {
-                    px++;
+                    g_evolve_param_grid_x++;
                 }
                 if (*kbdchar == FIK_CTL_UP_ARROW)
                 {
@@ -1909,13 +1909,13 @@ static main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdm
                 {
                     py++;
                 }
-                if (px <0)
+                if (g_evolve_param_grid_x <0)
                 {
-                    px = g_evolve_image_grid_size -1;
+                    g_evolve_param_grid_x = g_evolve_image_grid_size -1;
                 }
-                if (px > (g_evolve_image_grid_size -1))
+                if (g_evolve_param_grid_x > (g_evolve_image_grid_size -1))
                 {
-                    px = 0;
+                    g_evolve_param_grid_x = 0;
                 }
                 if (py < 0)
                 {
@@ -1926,7 +1926,7 @@ static main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdm
                     py = 0;
                 }
                 int grout = !((g_evolving & NOGROUT)/NOGROUT) ;
-                sxoffs = px * (int)(x_size_d+1+grout);
+                sxoffs = g_evolve_param_grid_x * (int)(x_size_d+1+grout);
                 syoffs = py * (int)(y_size_d+1+grout);
 
                 param_history(1); // restore old history
@@ -2006,7 +2006,7 @@ static main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdm
                 {
                     // set screen view params back (previously changed to allow full screen saves in viewwindow mode)
                     int grout = !((g_evolving & NOGROUT) / NOGROUT);
-                    sxoffs = px * (int)(x_size_d+1+grout);
+                    sxoffs = g_evolve_param_grid_x * (int)(x_size_d+1+grout);
                     syoffs = py * (int)(y_size_d+1+grout);
                     SetupParamBox();
                     drawparmbox(0);
