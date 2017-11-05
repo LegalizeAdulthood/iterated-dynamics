@@ -618,7 +618,7 @@ bool encoder()
                 esave_info.y_parameter_range = evolve_y_parameter_range;
                 esave_info.x_parameter_offset = evolve_x_parameter_offset;
                 esave_info.y_parameter_offset = evolve_y_parameter_offset;
-                esave_info.discrete_x_parameter_offset = (short) evolve_discrete_x_parameter_offset;
+                esave_info.discrete_x_parameter_offset = (short) g_evolve_discrete_x_parameter_offset;
                 esave_info.discrete_y_paramter_offset = (short) evolve_discrete_y_parameter_offset;
                 esave_info.px              = (short)px;
                 esave_info.py              = (short)py;
