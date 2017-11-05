@@ -512,7 +512,7 @@ static void zmo_calc(double dx, double dy, double *newx, double *newy, double ft
     double tempx, tempy;
     /* calc cur screen corner relative to zoombox, when zoombox co-ords
        are taken as (0,0) topleft thru (1,1) bottom right */
-    tempx = dy * plotmx1 - dx * plotmx2;
+    tempx = dy * g_plot_mx1 - dx * plotmx2;
     tempy = dx * plotmy1 - dy * plotmy2;
 
     // calc new corner by extending from current screen corners
@@ -597,7 +597,7 @@ void zoomoutdbl() // for ctl-enter, calc corners for zooming out
        */
     double savxxmin, savyymax, ftemp;
     ftemp = (yymin-yy3rd)*(xx3rd-xxmin) - (xxmax-xx3rd)*(yy3rd-yymax);
-    plotmx1 = (xx3rd-xxmin); // reuse the plotxxx vars is safe
+    g_plot_mx1 = (xx3rd-xxmin); // reuse the plotxxx vars is safe
     plotmx2 = (yy3rd-yymax);
     plotmy1 = (yymin-yy3rd);
     plotmy2 = (xxmax-xx3rd);

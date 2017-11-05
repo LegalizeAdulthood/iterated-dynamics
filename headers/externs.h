@@ -377,7 +377,7 @@ struct fn_operand;
 extern std::vector<fn_operand> g_function_operands;
 extern int                   g_pi_in_pixels;
 extern void                (*g_plot)(int, int, int);
-extern double                plotmx1;
+extern double                g_plot_mx1;
 extern double                plotmx2;
 extern double                plotmy1;
 extern double                plotmy2;
