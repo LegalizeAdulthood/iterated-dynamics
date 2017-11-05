@@ -103,7 +103,6 @@ long g_old_color_iter = 0;
 long realcoloriter = 0;
 int row = 0;
 int col = 0;
-int passes = 0;
 int g_invert = 0;
 double g_f_radius = 0.0;
 double g_f_x_center = 0.0;

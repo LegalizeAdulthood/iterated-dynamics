@@ -371,7 +371,6 @@ extern double                g_evolve_y_parameter_range;
 extern double                g_evolve_param_zoom;
 extern DComplex              g_param_z2;
 extern DComplex              g_param_z1;
-extern int                   passes;
 extern int                   g_patch_level;
 extern int                   periodicitycheck;
 struct fls;

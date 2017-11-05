@@ -48,7 +48,7 @@ int test()
         return (0);
     }
     int numpasses = (stdcalcmode == '1') ? 0 : 1;
-    for (passes = startpass; passes <= numpasses ; passes++)
+    for (int passes = startpass; passes <= numpasses ; passes++)
     {
         for (row = startrow; row <= g_i_y_stop; row = row+1+numpasses)
         {
