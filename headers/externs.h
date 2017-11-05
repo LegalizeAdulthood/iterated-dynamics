@@ -150,7 +150,7 @@ extern double              (*g_dx_pixel)();
 extern double                x_size_d;
 extern std::vector<double>   g_grid_y0;
 extern std::vector<double>   g_grid_y1;
-extern double              (*dypixel)();
+extern double              (*g_dy_pixel)();
 extern double                y_size_d;
 extern bool                  g_escape_exit;
 extern BYTE                  g_exit_video_mode;

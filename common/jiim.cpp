@@ -877,7 +877,7 @@ void Jiim(jiim_types which)
                 else
                 {
                     cr = g_dx_pixel();
-                    ci = dypixel();
+                    ci = g_dy_pixel();
                 }
             }
             actively_computing = true;

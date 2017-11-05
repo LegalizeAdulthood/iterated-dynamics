@@ -2566,7 +2566,7 @@ CirclelongFractal()
 void invertz2(DComplex *z)
 {
     z->x = g_dx_pixel();
-    z->y = dypixel();
+    z->y = g_dy_pixel();
     z->x -= g_f_x_center;
     z->y -= g_f_y_center;  // Normalize values to center of circle
 
@@ -2892,7 +2892,7 @@ int marksmandelfp_per_pixel()
         g_init.x = g_dx_pixel();
         if (g_save_release >= 2004)
         {
-            g_init.y = dypixel();
+            g_init.y = g_dy_pixel();
         }
     }
 
@@ -2957,7 +2957,7 @@ int mandelfp_per_pixel()
         g_init.x = g_dx_pixel();
         if (g_save_release >= 2004)
         {
-            g_init.y = dypixel();
+            g_init.y = g_dy_pixel();
         }
     }
     switch (fractype)
@@ -3017,7 +3017,7 @@ int juliafp_per_pixel()
     else
     {
         g_old_z.x = g_dx_pixel();
-        g_old_z.y = dypixel();
+        g_old_z.y = g_dy_pixel();
     }
     tempsqrx = sqr(g_old_z.x);  // precalculated value for regular Julia
     tempsqry = sqr(g_old_z.y);
@@ -3037,7 +3037,7 @@ int MPCjulia_per_pixel()
     else
     {
         g_old_z.x = g_dx_pixel();
-        g_old_z.y = dypixel();
+        g_old_z.y = g_dy_pixel();
     }
     mpcold.x = *pd2MP(g_old_z.x);
     mpcold.y = *pd2MP(g_old_z.y);
@@ -3067,7 +3067,7 @@ int othermandelfp_per_pixel()
         g_init.x = g_dx_pixel();
         if (g_save_release >= 2004)
         {
-            g_init.y = dypixel();
+            g_init.y = g_dy_pixel();
         }
     }
 
@@ -3099,7 +3099,7 @@ int MPCHalley_per_pixel()
         g_init.x = g_dx_pixel();
         if (g_save_release >= 2004)
         {
-            g_init.y = dypixel();
+            g_init.y = g_dy_pixel();
         }
     }
 
@@ -3123,7 +3123,7 @@ int Halley_per_pixel()
         g_init.x = g_dx_pixel();
         if (g_save_release >= 2004)
         {
-            g_init.y = dypixel();
+            g_init.y = g_dy_pixel();
         }
     }
 
@@ -3141,7 +3141,7 @@ int otherjuliafp_per_pixel()
     else
     {
         g_old_z.x = g_dx_pixel();
-        g_old_z.y = dypixel();
+        g_old_z.y = g_dy_pixel();
     }
     return 0;
 }
@@ -3152,7 +3152,7 @@ int otherjuliafp_per_pixel()
 int quaternionjulfp_per_pixel()
 {
     g_old_z.x = g_dx_pixel();
-    g_old_z.y = dypixel();
+    g_old_z.y = g_dy_pixel();
     g_float_param->x = g_params[4];
     g_float_param->y = g_params[5];
     g_quaternion_c  = g_params[0];
@@ -3169,7 +3169,7 @@ int quaternionfp_per_pixel()
     g_float_param->x = 0;
     g_float_param->y = 0;
     g_quaternion_c  = g_dx_pixel();
-    g_quaternion_ci = dypixel();
+    g_quaternion_ci = g_dy_pixel();
     g_quaternion_cj = g_params[2];
     g_quaternino_ck = g_params[3];
     return 0;
@@ -3186,7 +3186,7 @@ int MarksCplxMandperp()
         g_init.x = g_dx_pixel();
         if (g_save_release >= 2004)
         {
-            g_init.y = dypixel();
+            g_init.y = g_dy_pixel();
         }
     }
     g_old_z.x = g_init.x + g_param_z1.x; // initial pertubation of parameters set
@@ -3240,7 +3240,7 @@ int phoenix_per_pixel()
     else
     {
         g_old_z.x = g_dx_pixel();
-        g_old_z.y = dypixel();
+        g_old_z.y = g_dy_pixel();
     }
     tempsqrx = sqr(g_old_z.x);  // precalculated value
     tempsqry = sqr(g_old_z.y);
@@ -3305,7 +3305,7 @@ int mandphoenix_per_pixel()
         g_init.x = g_dx_pixel();
         if (g_save_release >= 2004)
         {
-            g_init.y = dypixel();
+            g_init.y = g_dy_pixel();
         }
     }
 
@@ -3554,7 +3554,7 @@ int MandelbrotMix4fp_per_pixel()
     else
     {
         g_init.x = g_dx_pixel();
-        g_init.y = dypixel();
+        g_init.y = g_dy_pixel();
     }
     g_old_z = g_tmp_z;
     CMPLXtrig0(g_init, C);        // c=fn1(pixel):
@@ -3652,7 +3652,7 @@ static long lypixel_calc()
 }
 
 double (*g_dx_pixel)() = dxpixel_calc;
-double (*dypixel)() = dypixel_calc;
+double (*g_dy_pixel)() = dypixel_calc;
 long (*g_l_x_pixel)() = lxpixel_calc;
 long (*g_l_y_pixel)() = lypixel_calc;
 
@@ -3661,14 +3661,14 @@ void set_pixel_calc_functions()
     if (g_use_grid)
     {
         g_dx_pixel = dxpixel_grid;
-        dypixel = dypixel_grid;
+        g_dy_pixel = dypixel_grid;
         g_l_x_pixel = lxpixel_grid;
         g_l_y_pixel = lypixel_grid;
     }
     else
     {
         g_dx_pixel = dxpixel_calc;
-        dypixel = dypixel_calc;
+        g_dy_pixel = dypixel_calc;
         g_l_x_pixel = lxpixel_calc;
         g_l_y_pixel = lypixel_calc;
     }

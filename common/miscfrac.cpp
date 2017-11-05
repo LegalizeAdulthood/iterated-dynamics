@@ -56,7 +56,7 @@ int test()
             {
                 int color;
                 g_init.x = g_dx_pixel();
-                g_init.y = dypixel();
+                g_init.y = g_dy_pixel();
                 if (driver_key_pressed())
                 {
                     testend();
@@ -1489,7 +1489,7 @@ int lyapunov()
     }
     else
     {
-        a = dypixel();
+        a = g_dy_pixel();
         b = g_dx_pixel();
     }
 #if !defined(XFRACT) && !defined(_WIN32)
@@ -2426,7 +2426,7 @@ int calcfroth()   // per pixel 1/2/g, called with row & col set
         else
         {
             g_old_z.x = g_dx_pixel();
-            g_old_z.y = dypixel();
+            g_old_z.y = g_dy_pixel();
         }
 
         tempsqrx = sqr(g_old_z.x);
@@ -2812,7 +2812,7 @@ int froth_per_pixel()
     if (!g_integer_fractal) // fp mode
     {
         g_old_z.x = g_dx_pixel();
-        g_old_z.y = dypixel();
+        g_old_z.y = g_dy_pixel();
         tempsqrx = sqr(g_old_z.x);
         tempsqry = sqr(g_old_z.y);
     }

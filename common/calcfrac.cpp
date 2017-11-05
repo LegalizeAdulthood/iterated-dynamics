@@ -2002,7 +2002,7 @@ int calcmandfp()
     else
     {
         g_init.x = g_dx_pixel();
-        g_init.y = dypixel();
+        g_init.y = g_dy_pixel();
     }
     if (calcmandfpasm() >= 0)
     {
@@ -2170,7 +2170,7 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
                 clear_bf(bfsaved.y);
             }
         }
-        g_init.y = dypixel();
+        g_init.y = g_dy_pixel();
         if (g_distance_estimator)
         {
             if (g_use_old_distance_estimator)
