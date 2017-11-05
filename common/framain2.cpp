@@ -314,7 +314,7 @@ main_state big_while_loop(bool *const kbdmore, bool *const stacked, bool const r
         }
         driver_schedule_alarm(1);
 
-        sxmin = xxmin; // save 3 corners for zoom.c ref points
+        g_save_x_min = xxmin; // save 3 corners for zoom.c ref points
         g_save_x_max = xxmax;
         sx3rd = xx3rd;
         g_save_y_min = yymin;
@@ -1116,7 +1116,7 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
                     ycjul = BIG;
                     xcjul = ycjul;
                 }
-                jxxmin = sxmin;
+                jxxmin = g_save_x_min;
                 jxxmax = g_save_x_max;
                 jyymax = symax;
                 jyymin = g_save_y_min;
@@ -2321,7 +2321,7 @@ void clear_zoombox()
 
 void reset_zoom_corners()
 {
-    xxmin = sxmin;
+    xxmin = g_save_x_min;
     xxmax = g_save_x_max;
     xx3rd = sx3rd;
     yymax = symax;

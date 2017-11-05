@@ -2595,7 +2595,7 @@ void flip_image(int key)
                 g_put_color(xdots-1-i, j, tempdot);
             }
         }
-        sxmin = xxmax + xxmin - xx3rd;
+        g_save_x_min = xxmax + xxmin - xx3rd;
         symax = yymax + yymin - yy3rd;
         g_save_x_max = xx3rd;
         g_save_y_min = yy3rd;
@@ -2627,7 +2627,7 @@ void flip_image(int key)
                 g_put_color(i, ydots-1-j, tempdot);
             }
         }
-        sxmin = xx3rd;
+        g_save_x_min = xx3rd;
         symax = yy3rd;
         g_save_x_max = xxmax + xxmin - xx3rd;
         g_save_y_min = yymax + yymin - yy3rd;
@@ -2659,7 +2659,7 @@ void flip_image(int key)
                 g_put_color(xdots-1-i, ydots-1-j, tempdot);
             }
         }
-        sxmin = xxmax;
+        g_save_x_min = xxmax;
         symax = yymin;
         g_save_x_max = xxmin;
         g_save_y_min = yymax;
