@@ -387,12 +387,12 @@ int get_video_mode(FRACTAL_INFO *info, ext_blk_3 *blk_3_info)
         }
         if (viewxdots)
         {
-            viewreduction = (float)(g_video_entry.xdots / viewxdots);
+            g_view_reduction = (float)(g_video_entry.xdots / viewxdots);
             viewydots = 0;
             viewxdots = viewydots; // easier to use auto reduction
         }
-        viewreduction = (float)((int)(viewreduction + 0.5)); // need integer value
-        g_skip_y_dots = (short)(viewreduction - 1);
+        g_view_reduction = (float)((int)(g_view_reduction + 0.5)); // need integer value
+        g_skip_y_dots = (short)(g_view_reduction - 1);
         g_skip_x_dots = g_skip_y_dots;
         return 0;
     }
@@ -513,7 +513,7 @@ int get_video_mode(FRACTAL_INFO *info, ext_blk_3 *blk_3_info)
         }
         else
         {
-            viewreduction = tmpreduce; // ok, this works
+            g_view_reduction = tmpreduce; // ok, this works
         }
     }
     if (!g_make_parameter_file && !g_fast_restore && (g_init_batch == batch_modes::NONE) &&

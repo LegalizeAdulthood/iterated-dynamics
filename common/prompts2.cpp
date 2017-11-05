@@ -866,7 +866,7 @@ int get_view_params()
     driver_get_max_screen(&xmax, &ymax);
 
     bool const old_viewwindow    = viewwindow;
-    old_viewreduction = viewreduction;
+    old_viewreduction = g_view_reduction;
     old_aspectratio   = g_final_aspect_ratio;
     old_viewxdots     = viewxdots;
     old_viewydots     = viewydots;
@@ -885,7 +885,7 @@ get_view_restart:
 
         choices[++k] = "Auto window size reduction factor";
         uvalues[k].type = 'f';
-        uvalues[k].uval.dval = viewreduction;
+        uvalues[k].uval.dval = g_view_reduction;
 
         choices[++k] = "Final media overall aspect ratio, y/x";
         uvalues[k].type = 'f';
@@ -965,7 +965,7 @@ get_view_restart:
         viewwindow = false;
         viewxdots = 0;
         viewydots = 0;
-        viewreduction = 4.2F;
+        g_view_reduction = 4.2F;
         g_view_crop = true;
         g_final_aspect_ratio = g_screen_aspect;
         sxdots = old_sxdots;
@@ -981,7 +981,7 @@ get_view_restart:
     if (!driver_diskp())
     {
         viewwindow = uvalues[++k].uval.ch.val != 0;
-        viewreduction = (float) uvalues[++k].uval.dval;
+        g_view_reduction = (float) uvalues[++k].uval.dval;
         g_final_aspect_ratio = (float) uvalues[++k].uval.dval;
         g_view_crop = uvalues[++k].uval.ch.val != 0;
         viewxdots = uvalues[++k].uval.ival;
@@ -1049,7 +1049,7 @@ get_view_restart:
     return (viewwindow != old_viewwindow
             || sxdots != old_sxdots || sydots != old_sydots
             || (viewwindow
-                && (viewreduction != old_viewreduction
+                && (g_view_reduction != old_viewreduction
                     || g_final_aspect_ratio != old_aspectratio
                     || viewxdots != old_viewxdots
                     || (viewydots != old_viewydots && viewxdots)))) ? 1 : 0;

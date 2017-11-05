@@ -174,12 +174,12 @@ main_state big_while_loop(bool *const kbdmore, bool *const stacked, bool const r
                 }
                 else if (g_final_aspect_ratio <= g_screen_aspect)
                 {
-                    xdots = (int)((double)sxdots / viewreduction + 0.5);
+                    xdots = (int)((double)sxdots / g_view_reduction + 0.5);
                     ydots = (int)((double)xdots * ftemp + 0.5);
                 }
                 else
                 {
-                    ydots = (int)((double)sydots / viewreduction + 0.5);
+                    ydots = (int)((double)sydots / g_view_reduction + 0.5);
                     xdots = (int)((double)ydots / ftemp + 0.5);
                 }
                 if (xdots > sxdots || ydots > sydots)

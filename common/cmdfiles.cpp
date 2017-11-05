@@ -423,7 +423,7 @@ static void initvars_restart()          // <ins> key init
     g_init_save_time = 0;                   // no auto-save
     g_init_mode = -1;                   // no initial video mode
     viewwindow = false;                 // no view window
-    viewreduction = 4.2F;
+    g_view_reduction = 4.2F;
     g_view_crop = true;
     g_virtual_screens = true;           // virtual screen modes on
     g_final_aspect_ratio = g_screen_aspect;
@@ -2236,7 +2236,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
             goto badarg;
         }
         viewwindow = true;
-        viewreduction = 4.2F;  // reset default values
+        g_view_reduction = 4.2F;  // reset default values
         g_final_aspect_ratio = g_screen_aspect;
         g_view_crop = true;
         viewydots = 0;
@@ -2244,7 +2244,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
 
         if ((totparms > 0) && (floatval[0] > 0.001))
         {
-            viewreduction = (float)floatval[0];
+            g_view_reduction = (float)floatval[0];
         }
         if ((totparms > 1) && (floatval[1] > 0.001))
         {

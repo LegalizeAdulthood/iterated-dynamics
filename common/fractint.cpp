@@ -89,7 +89,7 @@ long    g_user_distance_estimator_value;
 bool    g_user_float_flag;
 
 bool    viewwindow = false;     // false for full screen, true for window
-float   viewreduction;          // window auto-sizing
+float   g_view_reduction;          // window auto-sizing
 bool    g_view_crop = false;       // true to crop default coords
 float   g_final_aspect_ratio;       // for view shape and rotation
 int     viewxdots, viewydots;    // explicit view sizing
