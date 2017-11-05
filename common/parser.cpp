@@ -2603,55 +2603,55 @@ static bool ParseStr(char const *Str, int pass)
     switch (MathType)
     {
     case D_MATH:
-        v[1].a.d.x = param[0];
-        v[1].a.d.y = param[1];
-        v[2].a.d.x = param[2];
-        v[2].a.d.y = param[3];
+        v[1].a.d.x = g_params[0];
+        v[1].a.d.y = g_params[1];
+        v[2].a.d.x = g_params[2];
+        v[2].a.d.y = g_params[3];
         v[5].a.d.x = const_pi;
         v[5].a.d.y = 0.0;
         v[6].a.d.x = const_e;
         v[6].a.d.y = 0.0;
-        v[8].a.d.x = param[4];
-        v[8].a.d.y = param[5];
-        v[17].a.d.x = param[6];
-        v[17].a.d.y = param[7];
-        v[18].a.d.x = param[8];
-        v[18].a.d.y = param[9];
+        v[8].a.d.x = g_params[4];
+        v[8].a.d.y = g_params[5];
+        v[17].a.d.x = g_params[6];
+        v[17].a.d.y = g_params[7];
+        v[18].a.d.x = g_params[8];
+        v[18].a.d.y = g_params[9];
         break;
 #if !defined(XFRACT)
     case M_MATH:
-        v[1].a.m.x = *d2MP(param[0]);
-        v[1].a.m.y = *d2MP(param[1]);
-        v[2].a.m.x = *d2MP(param[2]);
-        v[2].a.m.y = *d2MP(param[3]);
+        v[1].a.m.x = *d2MP(g_params[0]);
+        v[1].a.m.y = *d2MP(g_params[1]);
+        v[2].a.m.x = *d2MP(g_params[2]);
+        v[2].a.m.y = *d2MP(g_params[3]);
         v[5].a.m.x = *d2MP(const_pi);
         v[5].a.m.y = *d2MP(0.0);
         v[6].a.m.x = *d2MP(const_e);
         v[6].a.m.y = *d2MP(0.0);
-        v[8].a.m.x = *d2MP(param[4]);
-        v[8].a.m.y = *d2MP(param[5]);
+        v[8].a.m.x = *d2MP(g_params[4]);
+        v[8].a.m.y = *d2MP(g_params[5]);
         v[11].a.m  = cmplx2MPC(v[11].a.d);
         v[12].a.m  = cmplx2MPC(v[12].a.d);
         v[13].a.m  = cmplx2MPC(v[13].a.d);
         v[14].a.m  = cmplx2MPC(v[14].a.d);
         v[15].a.m  = cmplx2MPC(v[15].a.d);
         v[16].a.m  = cmplx2MPC(v[16].a.d);
-        v[17].a.m.x = *d2MP(param[6]);
-        v[17].a.m.y = *d2MP(param[7]);
-        v[18].a.m.x = *d2MP(param[8]);
-        v[18].a.m.y = *d2MP(param[9]);
+        v[17].a.m.x = *d2MP(g_params[6]);
+        v[17].a.m.y = *d2MP(g_params[7]);
+        v[18].a.m.x = *d2MP(g_params[8]);
+        v[18].a.m.y = *d2MP(g_params[9]);
         break;
     case L_MATH:
-        v[1].a.l.x = (long)(param[0] * fg);
-        v[1].a.l.y = (long)(param[1] * fg);
-        v[2].a.l.x = (long)(param[2] * fg);
-        v[2].a.l.y = (long)(param[3] * fg);
+        v[1].a.l.x = (long)(g_params[0] * fg);
+        v[1].a.l.y = (long)(g_params[1] * fg);
+        v[2].a.l.x = (long)(g_params[2] * fg);
+        v[2].a.l.y = (long)(g_params[3] * fg);
         v[5].a.l.x = (long)(const_pi * fg);
         v[5].a.l.y = 0L;
         v[6].a.l.x = (long)(const_e * fg);
         v[6].a.l.y = 0L;
-        v[8].a.l.x = (long)(param[4] * fg);
-        v[8].a.l.y = (long)(param[5] * fg);
+        v[8].a.l.x = (long)(g_params[4] * fg);
+        v[8].a.l.y = (long)(g_params[5] * fg);
         v[11].a.l.x = xdots;
         v[11].a.l.x <<= bitshift;
         v[11].a.l.y = ydots;
@@ -2668,10 +2668,10 @@ static bool ParseStr(char const *Str, int pass)
         v[15].a.l.y = (long)(v[15].a.d.y * fg);
         v[16].a.l.x = (long)(v[16].a.d.x * fg);
         v[16].a.l.y = (long)(v[16].a.d.y * fg);
-        v[17].a.l.x = (long)(param[6] * fg);
-        v[17].a.l.y = (long)(param[7] * fg);
-        v[18].a.l.x = (long)(param[8] * fg);
-        v[18].a.l.y = (long)(param[9] * fg);
+        v[17].a.l.x = (long)(g_params[6] * fg);
+        v[17].a.l.y = (long)(g_params[7] * fg);
+        v[18].a.l.x = (long)(g_params[8] * fg);
+        v[18].a.l.y = (long)(g_params[9] * fg);
         break;
 #endif
     }

@@ -121,16 +121,16 @@ void initgene()
     //                        Use only 15 letters below: 123456789012345
     GENEBASE gene[NUMGENES] =
     {
-        { &param[0], varydbl, variations::RANDOM,       "Param 1 real", 1 },
-        { &param[1], varydbl, variations::RANDOM,       "Param 1 imag", 1 },
-        { &param[2], varydbl, variations::NONE,         "Param 2 real", 1 },
-        { &param[3], varydbl, variations::NONE,         "Param 2 imag", 1 },
-        { &param[4], varydbl, variations::NONE,         "Param 3 real", 1 },
-        { &param[5], varydbl, variations::NONE,         "Param 3 imag", 1 },
-        { &param[6], varydbl, variations::NONE,         "Param 4 real", 1 },
-        { &param[7], varydbl, variations::NONE,         "Param 4 imag", 1 },
-        { &param[8], varydbl, variations::NONE,         "Param 5 real", 1 },
-        { &param[9], varydbl, variations::NONE,         "Param 5 imag", 1 },
+        { &g_params[0], varydbl, variations::RANDOM,       "Param 1 real", 1 },
+        { &g_params[1], varydbl, variations::RANDOM,       "Param 1 imag", 1 },
+        { &g_params[2], varydbl, variations::NONE,         "Param 2 real", 1 },
+        { &g_params[3], varydbl, variations::NONE,         "Param 2 imag", 1 },
+        { &g_params[4], varydbl, variations::NONE,         "Param 3 real", 1 },
+        { &g_params[5], varydbl, variations::NONE,         "Param 3 imag", 1 },
+        { &g_params[6], varydbl, variations::NONE,         "Param 4 real", 1 },
+        { &g_params[7], varydbl, variations::NONE,         "Param 4 imag", 1 },
+        { &g_params[8], varydbl, variations::NONE,         "Param 5 real", 1 },
+        { &g_params[9], varydbl, variations::NONE,         "Param 5 imag", 1 },
         { &g_inside_color, varyinside, variations::NONE,        "inside color", 2 },
         { &g_outside_color, varyoutside, variations::NONE,      "outside color", 3 },
         { &g_decomp[0], varypwr2, variations::NONE,       "decomposition", 4 },
@@ -155,16 +155,16 @@ PARAMHIST oldhistory = { 0 };
 void save_param_history()
 {
     // save the old parameter history
-    oldhistory.param0 = param[0];
-    oldhistory.param1 = param[1];
-    oldhistory.param2 = param[2];
-    oldhistory.param3 = param[3];
-    oldhistory.param4 = param[4];
-    oldhistory.param5 = param[5];
-    oldhistory.param6 = param[6];
-    oldhistory.param7 = param[7];
-    oldhistory.param8 = param[8];
-    oldhistory.param9 = param[9];
+    oldhistory.param0 = g_params[0];
+    oldhistory.param1 = g_params[1];
+    oldhistory.param2 = g_params[2];
+    oldhistory.param3 = g_params[3];
+    oldhistory.param4 = g_params[4];
+    oldhistory.param5 = g_params[5];
+    oldhistory.param6 = g_params[6];
+    oldhistory.param7 = g_params[7];
+    oldhistory.param8 = g_params[8];
+    oldhistory.param9 = g_params[9];
     oldhistory.inside = g_inside_color;
     oldhistory.outside = g_outside_color;
     oldhistory.decomp0 = g_decomp[0];
@@ -181,16 +181,16 @@ void save_param_history()
 void restore_param_history()
 {
     // restore the old parameter history
-    param[0] = oldhistory.param0;
-    param[1] = oldhistory.param1;
-    param[2] = oldhistory.param2;
-    param[3] = oldhistory.param3;
-    param[4] = oldhistory.param4;
-    param[5] = oldhistory.param5;
-    param[6] = oldhistory.param6;
-    param[7] = oldhistory.param7;
-    param[8] = oldhistory.param8;
-    param[9] = oldhistory.param9;
+    g_params[0] = oldhistory.param0;
+    g_params[1] = oldhistory.param1;
+    g_params[2] = oldhistory.param2;
+    g_params[3] = oldhistory.param3;
+    g_params[4] = oldhistory.param4;
+    g_params[5] = oldhistory.param5;
+    g_params[6] = oldhistory.param6;
+    g_params[7] = oldhistory.param7;
+    g_params[8] = oldhistory.param8;
+    g_params[9] = oldhistory.param9;
     g_inside_color = oldhistory.inside;
     g_outside_color = oldhistory.outside;
     g_decomp[0] = oldhistory.decomp0;
@@ -701,8 +701,8 @@ get_evol_restart:
         // maybe should adjust for aspect ratio here?
         evolve_y_parameter_range = g_evolve_max_random_mutation * 2;
         evolve_x_parameter_range = g_evolve_max_random_mutation * 2;
-        g_evolve_x_parameter_offset = param[0] - g_evolve_max_random_mutation;
-        g_evolve_y_parameter_offset = param[1] - g_evolve_max_random_mutation;
+        g_evolve_x_parameter_offset = g_params[0] - g_evolve_max_random_mutation;
+        g_evolve_y_parameter_offset = g_params[1] - g_evolve_max_random_mutation;
         // set middle image to last selected and edges to +- evolve_max_random_mutation
     }
 

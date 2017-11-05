@@ -1339,11 +1339,11 @@ void set_default_parms()
     }
     for (int i = 0; i < 4; i++)
     {
-        param[i] = curfractalspecific->paramvalue[i];
+        g_params[i] = curfractalspecific->paramvalue[i];
         if (fractype != fractal_type::CELLULAR && fractype != fractal_type::FROTH && fractype != fractal_type::FROTHFP &&
                 fractype != fractal_type::ANT)
         {
-            roundfloatd(&param[i]); // don't round cellular, frothybasin or ant
+            roundfloatd(&g_params[i]); // don't round cellular, frothybasin or ant
         }
     }
     int extra = find_extra_param(fractype);
@@ -1351,7 +1351,7 @@ void set_default_parms()
     {
         for (int i = 0; i < MAXPARAMS-4; i++)
         {
-            param[i+4] = g_more_fractal_params[extra].paramvalue[i];
+            g_params[i+4] = g_more_fractal_params[extra].paramvalue[i];
         }
     }
     if (g_debug_flag != debug_flags::force_arbitrary_precision_math)
@@ -1738,7 +1738,7 @@ gfp_top:
             {
                 choices[promptnum]++;
             }
-            sprintf(tmpbuf, "%.17g", param[i]);
+            sprintf(tmpbuf, "%.17g", g_params[i]);
             paramvalues[promptnum].uval.dval = atof(tmpbuf);
             oldparam[i] = paramvalues[promptnum++].uval.dval;
         }
@@ -1973,7 +1973,7 @@ gfp_top:
         }
         if (oldparam[i] != paramvalues[promptnum].uval.dval)
         {
-            param[i] = paramvalues[promptnum].uval.dval;
+            g_params[i] = paramvalues[promptnum].uval.dval;
             ret = 1;
         }
         ++promptnum;
@@ -2094,10 +2094,10 @@ void load_params(fractal_type fractype)
 {
     for (int i = 0; i < 4; ++i)
     {
-        param[i] = fractalspecific[static_cast<int>(fractype)].paramvalue[i];
+        g_params[i] = fractalspecific[static_cast<int>(fractype)].paramvalue[i];
         if (fractype != fractal_type::CELLULAR && fractype != fractal_type::ANT)
         {
-            roundfloatd(&param[i]); // don't round cellular or ant
+            roundfloatd(&g_params[i]); // don't round cellular or ant
         }
     }
     int extra = find_extra_param(fractype);
@@ -2105,7 +2105,7 @@ void load_params(fractal_type fractype)
     {
         for (int i = 0; i < MAXPARAMS-4; i++)
         {
-            param[i+4] = g_more_fractal_params[extra].paramvalue[i];
+            g_params[i+4] = g_more_fractal_params[extra].paramvalue[i];
         }
     }
 }

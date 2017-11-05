@@ -361,10 +361,10 @@ zlinefp(double x, double y)
             g_old_z.y = jyfp;
             jbcfp.x = mxfp;
             jbcfp.y = myfp;
-            qc = param[0];
-            qci = param[1];
-            qcj = param[2];
-            qck = param[3];
+            qc = g_params[0];
+            qci = g_params[1];
+            qcj = g_params[2];
+            qck = g_params[3];
         }
 #ifdef XFRACT
         if (keychk++ > 500)
@@ -434,14 +434,14 @@ int
 Std4dFractal()
 {
     long x;
-    g_c_exponent = (int)param[2];
+    g_c_exponent = (int)g_params[2];
     if (g_new_orbit_type == fractal_type::LJULIAZPOWER)
     {
         if (g_c_exponent < 1)
         {
             g_c_exponent = 1;
         }
-        if (param[3] == 0.0 && g_debug_flag != debug_flags::force_complex_power && (double)g_c_exponent == param[2])
+        if (g_params[3] == 0.0 && g_debug_flag != debug_flags::force_complex_power && (double)g_c_exponent == g_params[2])
         {
             fractalspecific[static_cast<int>(g_new_orbit_type)].orbitcalc = longZpowerFractal;
         }
@@ -489,11 +489,11 @@ int
 Std4dfpFractal()
 {
     double x;
-    g_c_exponent = (int)param[2];
+    g_c_exponent = (int)g_params[2];
 
     if (g_new_orbit_type == fractal_type::FPJULIAZPOWER)
     {
-        if (param[3] == 0.0 && g_debug_flag != debug_flags::force_complex_power && (double)g_c_exponent == param[2])
+        if (g_params[3] == 0.0 && g_debug_flag != debug_flags::force_complex_power && (double)g_c_exponent == g_params[2])
         {
             fractalspecific[static_cast<int>(g_new_orbit_type)].orbitcalc = floatZpowerFractal;
         }
@@ -501,7 +501,7 @@ Std4dfpFractal()
         {
             fractalspecific[static_cast<int>(g_new_orbit_type)].orbitcalc = floatCmplxZpowerFractal;
         }
-        get_julia_attractor(param[0], param[1]);  // another attractor?
+        get_julia_attractor(g_params[0], g_params[1]);  // another attractor?
     }
 
     double y = 0.0;

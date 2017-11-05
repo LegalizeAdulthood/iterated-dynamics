@@ -657,10 +657,10 @@ int calcfract()
     {
         g_distance_estimator = 0;
     }
-    parm.x   = param[0];
-    parm.y   = param[1];
-    parm2.x  = param[2];
-    parm2.y  = param[3];
+    parm.x   = g_params[0];
+    parm.y   = g_params[1];
+    parm2.x  = g_params[2];
+    parm2.y  = g_params[3];
 
     if (g_log_map_flag && g_colors < 16)
     {
@@ -4478,14 +4478,14 @@ static void setsymmetry(symmetry_type sym, bool uselist) // set up proper symmet
         break;
     case fractal_type::FORMULA:  // Check P2, P3, P4 and P5
     case fractal_type::FFORMULA:
-        parmszero = (parmszero && param[2] == 0.0 && param[3] == 0.0
-                     && param[4] == 0.0 && param[5] == 0.0
-                     && param[6] == 0.0 && param[7] == 0.0
-                     && param[8] == 0.0 && param[9] == 0.0);
-        parmsnoreal = (parmsnoreal && param[2] == 0.0 && param[4] == 0.0
-                       && param[6] == 0.0 && param[8] == 0.0);
-        parmsnoimag = (parmsnoimag && param[3] == 0.0 && param[5] == 0.0
-                       && param[7] == 0.0 && param[9] == 0.0);
+        parmszero = (parmszero && g_params[2] == 0.0 && g_params[3] == 0.0
+                     && g_params[4] == 0.0 && g_params[5] == 0.0
+                     && g_params[6] == 0.0 && g_params[7] == 0.0
+                     && g_params[8] == 0.0 && g_params[9] == 0.0);
+        parmsnoreal = (parmsnoreal && g_params[2] == 0.0 && g_params[4] == 0.0
+                       && g_params[6] == 0.0 && g_params[8] == 0.0);
+        parmsnoimag = (parmsnoimag && g_params[3] == 0.0 && g_params[5] == 0.0
+                       && g_params[7] == 0.0 && g_params[9] == 0.0);
         break;
     default:   // Check P2 for the rest
         parmszero = (parmszero && parm2.x == 0.0 && parm2.y == 0.0);

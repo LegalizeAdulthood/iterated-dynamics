@@ -847,8 +847,8 @@ static void setup_save_info(FRACTAL_INFO *save_info)
     save_info->xmax = xxmax;
     save_info->ymin = yymin;
     save_info->ymax = yymax;
-    save_info->creal = param[0];
-    save_info->cimag = param[1];
+    save_info->creal = g_params[0];
+    save_info->cimag = g_params[1];
     save_info->videomodeax = (short) g_video_entry.videomodeax;
     save_info->videomodebx = (short) g_video_entry.videomodebx;
     save_info->videomodecx = (short) g_video_entry.videomodecx;
@@ -859,14 +859,14 @@ static void setup_save_info(FRACTAL_INFO *save_info)
     save_info->colors = (short) g_video_entry.colors;
     save_info->parm3 = 0;        // pre version==7 fields
     save_info->parm4 = 0;
-    save_info->dparm3 = param[2];
-    save_info->dparm4 = param[3];
-    save_info->dparm5 = param[4];
-    save_info->dparm6 = param[5];
-    save_info->dparm7 = param[6];
-    save_info->dparm8 = param[7];
-    save_info->dparm9 = param[8];
-    save_info->dparm10 = param[9];
+    save_info->dparm3 = g_params[2];
+    save_info->dparm4 = g_params[3];
+    save_info->dparm5 = g_params[4];
+    save_info->dparm6 = g_params[5];
+    save_info->dparm7 = g_params[6];
+    save_info->dparm8 = g_params[7];
+    save_info->dparm9 = g_params[8];
+    save_info->dparm10 = g_params[9];
     save_info->fillcolor = (short) g_fill_color;
     save_info->potential[0] = (float) potparam[0];
     save_info->potential[1] = (float) potparam[1];

@@ -393,7 +393,7 @@ int plasma()
                 "640x350x16 mode]).");
         return (-1);
     }
-    iparmx = (int)(param[0] * 8);
+    iparmx = (int)(g_params[0] * 8);
     if (parm.x <= 0.0)
     {
         iparmx = 0;
@@ -402,41 +402,41 @@ int plasma()
     {
         iparmx = 800;
     }
-    param[0] = (double)iparmx / 8.0;  // let user know what was used
-    if (param[1] < 0)
+    g_params[0] = (double)iparmx / 8.0;  // let user know what was used
+    if (g_params[1] < 0)
     {
-        param[1] = 0;  // limit parameter values
+        g_params[1] = 0;  // limit parameter values
     }
-    if (param[1] > 1)
+    if (g_params[1] > 1)
     {
-        param[1] = 1;
+        g_params[1] = 1;
     }
-    if (param[2] < 0)
+    if (g_params[2] < 0)
     {
-        param[2] = 0;  // limit parameter values
+        g_params[2] = 0;  // limit parameter values
     }
-    if (param[2] > 1)
+    if (g_params[2] > 1)
     {
-        param[2] = 1;
+        g_params[2] = 1;
     }
-    if (param[3] < 0)
+    if (g_params[3] < 0)
     {
-        param[3] = 0;  // limit parameter values
+        g_params[3] = 0;  // limit parameter values
     }
-    if (param[3] > 1)
+    if (g_params[3] > 1)
     {
-        param[3] = 1;
+        g_params[3] = 1;
     }
 
-    if (!rflag && param[2] == 1)
+    if (!rflag && g_params[2] == 1)
     {
         --rseed;
     }
-    if (param[2] != 0 && param[2] != 1)
+    if (g_params[2] != 0 && g_params[2] != 1)
     {
-        rseed = (int)param[2];
+        rseed = (int)g_params[2];
     }
-    max_plasma = (U16)param[3];  // max_plasma is used as a flag for potential
+    max_plasma = (U16)g_params[3];  // max_plasma is used as a flag for potential
 
     if (max_plasma != 0)
     {
@@ -458,7 +458,7 @@ int plasma()
         else
         {
             max_plasma = 0;        // can't do potential (startdisk failed)
-            param[3]   = 0;
+            g_params[3]   = 0;
             if (g_outside_color >= COLOR_BLACK)
             {
                 plot    = putcolorborder;
@@ -550,7 +550,7 @@ int plasma()
 
     int n;
     recur_level = 0;
-    if (param[1] == 0)
+    if (g_params[1] == 0)
     {
         subDivide(0, 0, xdots-1, ydots-1);
     }
@@ -650,9 +650,9 @@ int diffusion()
     bitshift = 16;
     g_fudge_factor = 1L << 16;
 
-    border = (int)param[0];
-    mode = (int)param[1];
-    colorshift = (int)param[2];
+    border = (int)g_params[0];
+    mode = (int)g_params[1];
+    colorshift = (int)g_params[2];
 
     colorcount = colorshift; // Counts down from colorshift
     currentcolor = 1;  // Start at color 1 (color 0 is probably invisible)
@@ -1388,12 +1388,12 @@ int LongBifurcMay()
 bool BifurcMaySetup()
 {
 
-    beta = (long)param[2];
+    beta = (long)g_params[2];
     if (beta < 2)
     {
         beta = 2;
     }
-    param[2] = (double)beta;
+    g_params[2] = (double)beta;
 
     timer(0, curfractalspecific->calctype);
     return false;
@@ -1466,11 +1466,11 @@ int lyapunov()
         return -1;
     }
     g_overflow = false;
-    if (param[1] == 1)
+    if (g_params[1] == 1)
     {
         Population = (1.0+rand())/(2.0+RAND_MAX);
     }
-    else if (param[1] == 0)
+    else if (g_params[1] == 0)
     {
         if (fabs(Population)>BIG || Population == 0 || Population == 1)
         {
@@ -1479,7 +1479,7 @@ int lyapunov()
     }
     else
     {
-        Population = param[1];
+        Population = g_params[1];
     }
     (*plot)(col, row, 1);
     if (g_invert != 0)
@@ -1558,15 +1558,15 @@ bool lya_setup()
 
     long i;
 
-    filter_cycles = (long)param[2];
+    filter_cycles = (long)g_params[2];
     if (filter_cycles == 0)
     {
         filter_cycles = g_max_iterations/2;
     }
-    lyaSeedOK = param[1] > 0 && param[1] <= 1 && g_debug_flag != debug_flags::force_standard_fractal;
+    lyaSeedOK = g_params[1] > 0 && g_params[1] <= 1 && g_debug_flag != debug_flags::force_standard_fractal;
     lyaLength = 1;
 
-    i = (long)param[0];
+    i = (long)g_params[0];
 #if !defined(XFRACT)
     if (save_release < 1732)
     {
@@ -1794,9 +1794,9 @@ int cellular()
 
     set_Cellular_palette();
 
-    randparam = (S32)param[0];
-    lnnmbr = (U32)param[3];
-    kr = (U16)param[2];
+    randparam = (S32)g_params[0];
+    lnnmbr = (U32)g_params[3];
+    kr = (U16)g_params[2];
     switch (kr)
     {
     case 21:
@@ -1830,7 +1830,7 @@ int cellular()
     }
     if (randparam != 0 && randparam != -1)
     {
-        n = param[0];
+        n = g_params[0];
         sprintf(buf, "%.16g", n); // # of digits in initial string
         t = (S16)strlen(buf);
         if (t>16 || t <= 0)
@@ -1863,7 +1863,7 @@ int cellular()
 
     // generate rule table from parameter 1
 #if !defined(XFRACT)
-    n = param[1];
+    n = g_params[1];
 #else
     // gcc can't manage to convert a big double to an unsigned long properly.
     if (param[1]>0x7fffffff)
@@ -1885,7 +1885,7 @@ int cellular()
             n *= 10;
             n += rand()%(int)k;
         }
-        param[1] = n;
+        g_params[1] = n;
     }
     sprintf(buf, "%.*g", rule_digits , n);
     t = (S16)strlen(buf);
@@ -1945,7 +1945,7 @@ int cellular()
         start_resume();
         end_resume();
         get_line(g_i_y_stop, 0, g_i_x_stop, &cell_array[filled][0]);
-        param[3] += g_i_y_stop + 1;
+        g_params[3] += g_i_y_stop + 1;
         start_row = -1; // after 1st iteration its = 0
     }
     else
@@ -2110,7 +2110,7 @@ contloop:
     }
     if (g_cellular_next_screen)
     {
-        param[3] += g_i_y_stop + 1;
+        g_params[3] += g_i_y_stop + 1;
         start_row = 0;
         goto contloop;
     }
@@ -2288,9 +2288,9 @@ bool froth_setup()
     {
         // use old release parameters
 
-        fsp.repeat_mapping = ((int)param[0] == 6 || (int)param[0] == 2); // map 1 or 2 times (3 or 6 basins)
-        fsp.altcolor = (int)param[1];
-        param[2] = 0; // throw away any value used prior to 18.20
+        fsp.repeat_mapping = ((int)g_params[0] == 6 || (int)g_params[0] == 2); // map 1 or 2 times (3 or 6 basins)
+        fsp.altcolor = (int)g_params[1];
+        g_params[2] = 0; // throw away any value used prior to 18.20
 
         fsp.attractors = !fsp.repeat_mapping ? 3 : 6;
 
@@ -2316,17 +2316,17 @@ bool froth_setup()
     }
     else // use new code
     {
-        if (param[0] != 2)
+        if (g_params[0] != 2)
         {
-            param[0] = 1;
+            g_params[0] = 1;
         }
-        fsp.repeat_mapping = (int)param[0] == 2;
-        if (param[1] != 0)
+        fsp.repeat_mapping = (int)g_params[0] == 2;
+        if (g_params[1] != 0)
         {
-            param[1] = 1;
+            g_params[1] = 1;
         }
-        fsp.altcolor = (int)param[1];
-        fsp.fl.f.a = param[2];
+        fsp.altcolor = (int)g_params[1];
+        fsp.fl.f.a = g_params[2];
 
         fsp.attractors = fabs(fsp.fl.f.a) <= FROTH_CRITICAL_A ? (!fsp.repeat_mapping ? 3 : 6)
                           : (!fsp.repeat_mapping ? 2 : 3);

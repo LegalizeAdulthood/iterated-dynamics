@@ -156,7 +156,7 @@ NewtonSetup()           // Newton/NewtBasin Routines
     }
 #endif
 
-    param[0] = (double)degree;
+    g_params[0] = (double)degree;
     if (degree%4 == 0)
     {
         symmetry = symmetry_type::XY_AXIS;
@@ -197,9 +197,9 @@ bool
 MandelfpSetup()
 {
     bf_math = bf_math_type::NONE;
-    g_c_exponent = (int)param[2];
-    pwr.x = param[2] - 1.0;
-    pwr.y = param[3];
+    g_c_exponent = (int)g_params[2];
+    pwr.x = g_params[2] - 1.0;
+    pwr.y = g_params[3];
     g_float_param = &g_init;
     switch (fractype)
     {
@@ -207,7 +207,7 @@ MandelfpSetup()
         if (g_c_exponent < 1)
         {
             g_c_exponent = 1;
-            param[2] = 1;
+            g_params[2] = 1;
         }
         if (!(g_c_exponent & 1))
         {
@@ -246,15 +246,15 @@ MandelfpSetup()
         }
         break;
     case fractal_type::FPMANDELZPOWER:
-        if ((double)g_c_exponent == param[2] && (g_c_exponent & 1))   // odd exponents
+        if ((double)g_c_exponent == g_params[2] && (g_c_exponent & 1))   // odd exponents
         {
             symmetry = symmetry_type::XY_AXIS_NO_PARAM;
         }
-        if (param[3] != 0)
+        if (g_params[3] != 0)
         {
             symmetry = symmetry_type::NONE;
         }
-        if (param[3] == 0.0 && g_debug_flag != debug_flags::force_complex_power && (double)g_c_exponent == param[2])
+        if (g_params[3] == 0.0 && g_debug_flag != debug_flags::force_complex_power && (double)g_c_exponent == g_params[2])
         {
             fractalspecific[static_cast<int>(fractype)].orbitcalc = floatZpowerFractal;
         }
@@ -303,7 +303,7 @@ MandelfpSetup()
         g_float_param = &tmp;
         g_attractors = 0;
         periodicitycheck = 0;
-        if (param[2] != 0)
+        if (g_params[2] != 0)
         {
             symmetry = symmetry_type::NONE;
         }
@@ -333,12 +333,12 @@ MandelfpSetup()
 bool
 JuliafpSetup()
 {
-    g_c_exponent = (int)param[2];
+    g_c_exponent = (int)g_params[2];
     g_float_param = &parm;
     if (fractype == fractal_type::COMPLEXMARKSJUL)
     {
-        pwr.x = param[2] - 1.0;
-        pwr.y = param[3];
+        pwr.x = g_params[2] - 1.0;
+        pwr.y = g_params[3];
         g_marks_coefficient = ComplexPower(*g_float_param, pwr);
     }
     switch (fractype)
@@ -373,11 +373,11 @@ JuliafpSetup()
         }
         break;
     case fractal_type::FPJULIAZPOWER:
-        if ((g_c_exponent & 1) || param[3] != 0.0 || (double)g_c_exponent != param[2])
+        if ((g_c_exponent & 1) || g_params[3] != 0.0 || (double)g_c_exponent != g_params[2])
         {
             symmetry = symmetry_type::NONE;
         }
-        if (param[3] == 0.0 && g_debug_flag != debug_flags::force_complex_power && (double)g_c_exponent == param[2])
+        if (g_params[3] == 0.0 && g_debug_flag != debug_flags::force_complex_power && (double)g_c_exponent == g_params[2])
         {
             fractalspecific[static_cast<int>(fractype)].orbitcalc = floatZpowerFractal;
         }
@@ -385,7 +385,7 @@ JuliafpSetup()
         {
             fractalspecific[static_cast<int>(fractype)].orbitcalc = floatCmplxZpowerFractal;
         }
-        get_julia_attractor(param[0], param[1]);  // another attractor?
+        get_julia_attractor(g_params[0], g_params[1]);  // another attractor?
         break;
     case fractal_type::MAGNET2J:
         FloatPreCalcMagnet2();
@@ -424,7 +424,7 @@ JuliafpSetup()
         get_julia_attractor(0.0, 0.0);    // another attractor?
         break;
     case fractal_type::HYPERCMPLXJFP:
-        if (param[2] != 0)
+        if (g_params[2] != 0)
         {
             symmetry = symmetry_type::NONE;
         }
@@ -435,7 +435,7 @@ JuliafpSetup()
     case fractal_type::QUATJULFP:
         g_attractors = 0;   // attractors broken since code checks r,i not j,k
         periodicitycheck = 0;
-        if (param[4] != 0.0 || param[5] != 0)
+        if (g_params[4] != 0.0 || g_params[5] != 0)
         {
             symmetry = symmetry_type::NONE;
         }
@@ -492,11 +492,11 @@ bool
 MandellongSetup()
 {
     g_fudge_half = g_fudge_factor/2;
-    g_c_exponent = (int)param[2];
+    g_c_exponent = (int)g_params[2];
     if (fractype == fractal_type::MARKSMANDEL && g_c_exponent < 1)
     {
         g_c_exponent = 1;
-        param[2] = 1;
+        g_params[2] = 1;
     }
     if ((fractype == fractal_type::MARKSMANDEL   && !(g_c_exponent & 1)) ||
             (fractype == fractal_type::LMANDELZPOWER && (g_c_exponent & 1)))
@@ -514,7 +514,7 @@ MandellongSetup()
     g_long_param = &g_l_init;
     if (fractype == fractal_type::LMANDELZPOWER)
     {
-        if (param[3] == 0.0 && g_debug_flag != debug_flags::force_complex_power && (double)g_c_exponent == param[2])
+        if (g_params[3] == 0.0 && g_debug_flag != debug_flags::force_complex_power && (double)g_c_exponent == g_params[2])
         {
             fractalspecific[static_cast<int>(fractype)].orbitcalc = longZpowerFractal;
         }
@@ -522,7 +522,7 @@ MandellongSetup()
         {
             fractalspecific[static_cast<int>(fractype)].orbitcalc = longCmplxZpowerFractal;
         }
-        if (param[3] != 0 || (double)g_c_exponent != param[2])
+        if (g_params[3] != 0 || (double)g_c_exponent != g_params[2])
         {
             symmetry = symmetry_type::NONE;
         }
@@ -562,16 +562,16 @@ MandellongSetup()
 bool
 JulialongSetup()
 {
-    g_c_exponent = (int)param[2];
+    g_c_exponent = (int)g_params[2];
     g_long_param = &g_l_param;
     switch (fractype)
     {
     case fractal_type::LJULIAZPOWER:
-        if ((g_c_exponent & 1) || param[3] != 0.0 || (double)g_c_exponent != param[2])
+        if ((g_c_exponent & 1) || g_params[3] != 0.0 || (double)g_c_exponent != g_params[2])
         {
             symmetry = symmetry_type::NONE;
         }
-        if (param[3] == 0.0 && g_debug_flag != debug_flags::force_complex_power && (double)g_c_exponent == param[2])
+        if (g_params[3] == 0.0 && g_debug_flag != debug_flags::force_complex_power && (double)g_c_exponent == g_params[2])
         {
             fractalspecific[static_cast<int>(fractype)].orbitcalc = longZpowerFractal;
         }
@@ -844,7 +844,7 @@ ZXTrigPlusZSetup()
     // fn1 ->  sin   cos    sinh  cosh exp   log   sqr
     //           {NONE, ORIGIN, NONE, ORIGIN, NONE, NONE, ORIGIN};
 
-    if (param[1] == 0.0 && param[3] == 0.0)
+    if (g_params[1] == 0.0 && g_params[3] == 0.0)
     {
         //      symmetry = ZXTrigPlusZSym1[trigndx[0]];
         switch (trigndx[0])
@@ -1171,11 +1171,11 @@ bool
 MarksJuliaSetup()
 {
 #if !defined(XFRACT)
-    if (param[2] < 1)
+    if (g_params[2] < 1)
     {
-        param[2] = 1;
+        g_params[2] = 1;
     }
-    g_c_exponent = (int)param[2];
+    g_c_exponent = (int)g_params[2];
     g_long_param = &g_l_param;
     g_l_old_z = *g_long_param;
     if (g_c_exponent > 3)
@@ -1204,11 +1204,11 @@ MarksJuliaSetup()
 bool
 MarksJuliafpSetup()
 {
-    if (param[2] < 1)
+    if (g_params[2] < 1)
     {
-        param[2] = 1;
+        g_params[2] = 1;
     }
-    g_c_exponent = (int)param[2];
+    g_c_exponent = (int)g_params[2];
     g_float_param = &parm;
     g_old_z = *g_float_param;
     if (g_c_exponent > 3)
@@ -1276,7 +1276,7 @@ HalleySetup()
     {
         degree = 2;
     }
-    param[0] = (double)degree;
+    g_params[0] = (double)degree;
 
     //  precalculated values
     g_halley_a_plus_one = degree + 1; // a+1
@@ -1316,7 +1316,7 @@ PhoenixSetup()
     {
         degree = 0;
     }
-    param[2] = (double)degree;
+    g_params[2] = (double)degree;
     if (degree == 0)
     {
         if (usr_floatflag)
@@ -1361,12 +1361,12 @@ PhoenixCplxSetup()
 {
     g_long_param = &g_l_param;
     g_float_param = &parm;
-    degree = (int)param[4];
+    degree = (int)g_params[4];
     if (degree < 2 && degree > -3)
     {
         degree = 0;
     }
-    param[4] = (double)degree;
+    g_params[4] = (double)degree;
     if (degree == 0)
     {
         if (parm2.x != 0 || parm2.y != 0)
@@ -1444,7 +1444,7 @@ MandPhoenixSetup()
     {
         degree = 0;
     }
-    param[2] = (double)degree;
+    g_params[2] = (double)degree;
     if (degree == 0)
     {
         if (usr_floatflag)
@@ -1489,12 +1489,12 @@ MandPhoenixCplxSetup()
 {
     g_long_param = &g_l_init;
     g_float_param = &g_init;
-    degree = (int)param[4];
+    degree = (int)g_params[4];
     if (degree < 2 && degree > -3)
     {
         degree = 0;
     }
-    param[4] = (double)degree;
+    g_params[4] = (double)degree;
     if (parm.y != 0 || parm2.y != 0)
     {
         symmetry = symmetry_type::NONE;
@@ -1551,21 +1551,21 @@ StandardSetup()
 bool
 VLSetup()
 {
-    if (param[0] < 0.0)
+    if (g_params[0] < 0.0)
     {
-        param[0] = 0.0;
+        g_params[0] = 0.0;
     }
-    if (param[1] < 0.0)
+    if (g_params[1] < 0.0)
     {
-        param[1] = 0.0;
+        g_params[1] = 0.0;
     }
-    if (param[0] > 1.0)
+    if (g_params[0] > 1.0)
     {
-        param[0] = 1.0;
+        g_params[0] = 1.0;
     }
-    if (param[1] > 1.0)
+    if (g_params[1] > 1.0)
     {
-        param[1] = 1.0;
+        g_params[1] = 1.0;
     }
     g_float_param = &parm;
     return true;

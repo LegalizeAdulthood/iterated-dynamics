@@ -86,7 +86,7 @@ void TurkMite1(int maxtur, int rule_len, char const *ru, long maxpts, long wait)
     bool antwrap;
     int x[MAX_ANTS + 1], y[MAX_ANTS + 1];
     int next_col[MAX_ANTS + 1], rule[MAX_ANTS + 1], dir[MAX_ANTS + 1];
-    antwrap = param[4] != 0;
+    antwrap = g_params[4] != 0;
     step = (int) wait;
     if (step == 1)
     {
@@ -274,7 +274,7 @@ void TurkMite2(int maxtur, int rule_len, char const *ru, long maxpts, long wait)
     int kbdchar, step;
     int x[MAX_ANTS + 1], y[MAX_ANTS + 1];
     int rule[MAX_ANTS + 1];
-    bool antwrap = param[4] != 0;
+    bool antwrap = g_params[4] != 0;
 
     step = (int) wait;
     if (step == 1)
@@ -428,7 +428,7 @@ namespace
 std::string get_rule()
 {
     std::ostringstream buff;
-    buff << std::setprecision(17) << std::fixed << param[0];
+    buff << std::setprecision(17) << std::fixed << g_params[0];
     return buff.str();
 }
 }
@@ -486,7 +486,7 @@ int ant()
     s_incy[2][0] = ydots - 1; // wrap from the bottom of the screen to the top
     int const old_help_mode = g_help_mode;
     g_help_mode = ANTCOMMANDS;
-    long const maxpts = labs(static_cast<long>(param[1]));
+    long const maxpts = labs(static_cast<long>(g_params[1]));
     long const wait = abs(g_orbit_delay);
     std::string rule{get_rule()};
     int rule_len = (int) rule.length();;
@@ -511,13 +511,13 @@ int ant()
     }
 
     // set random seed for reproducibility
-    if (!rflag && param[5] == 1)
+    if (!rflag && g_params[5] == 1)
     {
         --rseed;
     }
-    if (param[5] != 0 && param[5] != 1)
+    if (g_params[5] != 0 && g_params[5] != 1)
     {
-        rseed = (int)param[5];
+        rseed = (int)g_params[5];
     }
 
     srand(rseed);
@@ -526,7 +526,7 @@ int ant()
         ++rseed;
     }
 
-    int maxants = static_cast<int>(param[2]);
+    int maxants = static_cast<int>(g_params[2]);
     if (maxants < 1)               // if maxants == 0 maxants random
     {
         maxants = 2 + RANDOM(MAX_ANTS - 2);
@@ -534,9 +534,9 @@ int ant()
     else if (maxants > MAX_ANTS)
     {
         maxants = MAX_ANTS;
-        param[2] = MAX_ANTS;
+        g_params[2] = MAX_ANTS;
     }
-    int type = static_cast<int>(param[3]);
+    int type = static_cast<int>(g_params[3]);
     if (type < 1 || type > 2)
     {
         type = RANDOM(2);         // if type == 0 choose a random type

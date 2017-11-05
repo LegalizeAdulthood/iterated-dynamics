@@ -701,13 +701,13 @@ bool ComplexNewtonSetup()
 {
     threshold = .001;
     periodicitycheck = 0;
-    if (param[0] != 0.0 || param[1] != 0.0 || param[2] != 0.0 ||
-            param[3] != 0.0)
+    if (g_params[0] != 0.0 || g_params[1] != 0.0 || g_params[2] != 0.0 ||
+            g_params[3] != 0.0)
     {
-        croot.x = param[2];
-        croot.y = param[3];
-        cdegree.x = param[0];
-        cdegree.y = param[1];
+        croot.x = g_params[2];
+        croot.y = g_params[3];
+        cdegree.x = g_params[0];
+        cdegree.y = g_params[1];
         FPUcplxlog(&croot, &BaseLog);
         TwoPi = asin(1.0) * 4;
     }

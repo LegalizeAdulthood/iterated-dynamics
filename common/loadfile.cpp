@@ -90,17 +90,17 @@ int read_overlay()      // read overlay/3D files, if reqr'd
     xxmax        = read_info.xmax;
     yymin        = read_info.ymin;
     yymax        = read_info.ymax;
-    param[0]     = read_info.creal;
-    param[1]     = read_info.cimag;
+    g_params[0]     = read_info.creal;
+    g_params[1]     = read_info.cimag;
     save_release = 1100; // unless we find out better later on
 
     g_invert = 0;
     if (read_info.version > 0)
     {
-        param[2]      = read_info.parm3;
-        roundfloatd(&param[2]);
-        param[3]      = read_info.parm4;
-        roundfloatd(&param[3]);
+        g_params[2]      = read_info.parm3;
+        roundfloatd(&g_params[2]);
+        g_params[3]      = read_info.parm4;
+        roundfloatd(&g_params[3]);
         potparam[0]   = read_info.potential[0];
         potparam[1]   = read_info.potential[1];
         potparam[2]   = read_info.potential[2];
@@ -236,8 +236,8 @@ int read_overlay()      // read overlay/3D files, if reqr'd
 
     if (read_info.version > 6)
     {
-        param[2]          = read_info.dparm3;
-        param[3]          = read_info.dparm4;
+        g_params[2]          = read_info.dparm3;
+        g_params[3]          = read_info.dparm4;
     }
 
     if (read_info.version > 7)
@@ -263,12 +263,12 @@ int read_overlay()      // read overlay/3D files, if reqr'd
         g_max_function    = (char)read_info.maxfn          ;
         g_major_method = static_cast<Major>(read_info.inversejulia >> 8);
         g_inverse_julia_minor_method = static_cast<Minor>(read_info.inversejulia & 255);
-        param[4] = read_info.dparm5;
-        param[5] = read_info.dparm6;
-        param[6] = read_info.dparm7;
-        param[7] = read_info.dparm8;
-        param[8] = read_info.dparm9;
-        param[9] = read_info.dparm10;
+        g_params[4] = read_info.dparm5;
+        g_params[5] = read_info.dparm6;
+        g_params[6] = read_info.dparm7;
+        g_params[7] = read_info.dparm8;
+        g_params[8] = read_info.dparm9;
+        g_params[9] = read_info.dparm10;
     }
 
     if (read_info.version < 4 && read_info.version != 0) // pre-version 14.0?
@@ -440,7 +440,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
         g_calc_status = calc_status_value::PARAMS_CHANGED;
         fractype = fractal_type::PLASMA;
         curfractalspecific = &fractalspecific[static_cast<int>(fractal_type::PLASMA)];
-        param[0] = 0;
+        g_params[0] = 0;
         if (g_init_batch == batch_modes::NONE)
         {
             if (get_3d_params() < 0)
@@ -1186,24 +1186,24 @@ void backwards_v19()
 {
     if (fractype == fractal_type::MARKSJULIA && save_release < 1825)
     {
-        if (param[2] == 0)
+        if (g_params[2] == 0)
         {
-            param[2] = 2;
+            g_params[2] = 2;
         }
         else
         {
-            param[2] += 1;
+            g_params[2] += 1;
         }
     }
     if (fractype == fractal_type::MARKSJULIAFP && save_release < 1825)
     {
-        if (param[2] == 0)
+        if (g_params[2] == 0)
         {
-            param[2] = 2;
+            g_params[2] = 2;
         }
         else
         {
-            param[2] += 1;
+            g_params[2] += 1;
         }
     }
     if ((fractype == fractal_type::FORMULA || fractype == fractal_type::FFORMULA) && save_release < 1824)
@@ -2071,16 +2071,16 @@ bool paramsOK(FRACTAL_INFO const *info)
         tmpparm9 = 0.0;
         tmpparm10 = 0.0;
     }
-    if (fabs(info->creal - param[0]) < MINDIF &&
-            fabs(info->cimag - param[1]) < MINDIF &&
-            fabs(tmpparm3 - param[2]) < MINDIF &&
-            fabs(tmpparm4 - param[3]) < MINDIF &&
-            fabs(tmpparm5 - param[4]) < MINDIF &&
-            fabs(tmpparm6 - param[5]) < MINDIF &&
-            fabs(tmpparm7 - param[6]) < MINDIF &&
-            fabs(tmpparm8 - param[7]) < MINDIF &&
-            fabs(tmpparm9 - param[8]) < MINDIF &&
-            fabs(tmpparm10 - param[9]) < MINDIF &&
+    if (fabs(info->creal - g_params[0]) < MINDIF &&
+            fabs(info->cimag - g_params[1]) < MINDIF &&
+            fabs(tmpparm3 - g_params[2]) < MINDIF &&
+            fabs(tmpparm4 - g_params[3]) < MINDIF &&
+            fabs(tmpparm5 - g_params[4]) < MINDIF &&
+            fabs(tmpparm6 - g_params[5]) < MINDIF &&
+            fabs(tmpparm7 - g_params[6]) < MINDIF &&
+            fabs(tmpparm8 - g_params[7]) < MINDIF &&
+            fabs(tmpparm9 - g_params[8]) < MINDIF &&
+            fabs(tmpparm10 - g_params[9]) < MINDIF &&
             info->invert[0] - g_inversion[0] < MINDIF)
     {
         return true; // parameters are in range

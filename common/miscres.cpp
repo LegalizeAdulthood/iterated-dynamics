@@ -1226,15 +1226,15 @@ top:
                 driver_put_string(s_row, col, C_GENERAL_MED, msg);
                 if (*p == '+')
                 {
-                    sprintf(msg, "%-12d", (int)param[i]);
+                    sprintf(msg, "%-12d", (int)g_params[i]);
                 }
                 else if (*p == '#')
                 {
-                    sprintf(msg, "%-12lu", (U32)param[i]);
+                    sprintf(msg, "%-12lu", (U32)g_params[i]);
                 }
                 else
                 {
-                    sprintf(msg, "%-12.9f", param[i]);
+                    sprintf(msg, "%-12.9f", g_params[i]);
                 }
                 driver_put_string(-1, -1, C_GENERAL_HI, msg);
                 k++;

@@ -491,7 +491,7 @@ static void initvars_fractal()          // init vars affecting calculation
     useinitorbit = 0;
     for (int i = 0; i < MAXPARAMS; i++)
     {
-        param[i] = 0.0;     // initial parameter values
+        g_params[i] = 0.0;     // initial parameter values
     }
     for (int i = 0; i < 3; i++)
     {
@@ -1893,13 +1893,13 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         initparams = true;
         for (int k = 0; k < MAXPARAMS; ++k)
         {
-            param[k] = (k < totparms) ? floatval[k] : 0.0;
+            g_params[k] = (k < totparms) ? floatval[k] : 0.0;
         }
         if (bf_math != bf_math_type::NONE)
         {
             for (int k = 0; k < MAXPARAMS; k++)
             {
-                floattobf(bfparms[k], param[k]);
+                floattobf(bfparms[k], g_params[k]);
             }
         }
         return CMDARG_FRACTAL_PARAM;
@@ -1953,7 +1953,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         {
             for (int k = 2; k < 6; ++k)
             {
-                param[k-2] = (k < totparms) ? floatval[k] : 0.0;
+                g_params[k-2] = (k < totparms) ? floatval[k] : 0.0;
             }
         }
 
@@ -2097,7 +2097,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
             {
                 for (int k = 0; k < MAXPARAMS; k++)
                 {
-                    floattobf(bfparms[k], param[k]);
+                    floattobf(bfparms[k], g_params[k]);
                 }
             }
 
@@ -2141,7 +2141,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
                 decimal setting */
                 for (int k = 0; k < MAXPARAMS; k++)
                 {
-                    floattobf(bfparms[k], param[k]);
+                    floattobf(bfparms[k], g_params[k]);
                 }
 
                 // xx3rd = xxmin = floatval[0];
@@ -2341,7 +2341,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         {
             for (int k = 0; k < MAXPARAMS; k++)
             {
-                floattobf(bfparms[k], param[k]);
+                floattobf(bfparms[k], g_params[k]);
             }
         }
         usemag = true;

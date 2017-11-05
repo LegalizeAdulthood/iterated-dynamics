@@ -1207,7 +1207,7 @@ top:
     if (fullmenu)
     {
         if ((curfractalspecific->tojulia != fractal_type::NOFRACTAL
-                && param[0] == 0.0 && param[1] == 0.0)
+                && g_params[0] == 0.0 && g_params[1] == 0.0)
                 || curfractalspecific->tomandel != fractal_type::NOFRACTAL)
         {
             nextleft += 2;
@@ -1512,7 +1512,7 @@ static int menu_checkkey(int curkey, int /*choice*/)
         if (testkey == ' ')
         {
             if ((curfractalspecific->tojulia != fractal_type::NOFRACTAL
-                    && param[0] == 0.0 && param[1] == 0.0)
+                    && g_params[0] == 0.0 && g_params[1] == 0.0)
                     || curfractalspecific->tomandel != fractal_type::NOFRACTAL)
             {
                 return (0-testkey);

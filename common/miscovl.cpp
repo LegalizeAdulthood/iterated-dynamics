@@ -803,34 +803,34 @@ void write_batch_parms(char const *colorinf, bool colorsonly, int maxcolor, int 
         {
             if (fractype == fractal_type::CELLULAR || fractype == fractal_type::ANT)
             {
-                put_parm(" %s=%.1f", "params", param[0]);
+                put_parm(" %s=%.1f", "params", g_params[0]);
             }
             else
             {
                 if (g_debug_flag == debug_flags::force_long_double_param_output)
                 {
-                    put_parm(" %s=%.17Lg", "params", (long double)param[0]);
+                    put_parm(" %s=%.17Lg", "params", (long double)g_params[0]);
                 }
                 else
                 {
-                    put_parm(" %s=%.17g", "params", param[0]);
+                    put_parm(" %s=%.17g", "params", g_params[0]);
                 }
             }
             for (int j = 1; j <= i; ++j)
             {
                 if (fractype == fractal_type::CELLULAR || fractype == fractal_type::ANT)
                 {
-                    put_parm("/%.1f", param[j]);
+                    put_parm("/%.1f", g_params[j]);
                 }
                 else
                 {
                     if (g_debug_flag == debug_flags::force_long_double_param_output)
                     {
-                        put_parm("/%.17Lg", (long double)param[j]);
+                        put_parm("/%.17Lg", (long double)g_params[j]);
                     }
                     else
                     {
-                        put_parm("/%.17g", param[j]);
+                        put_parm("/%.17g", g_params[j]);
                     }
                 }
             }

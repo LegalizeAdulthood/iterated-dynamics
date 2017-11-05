@@ -986,7 +986,7 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
             fractal_type oldtype = fractype;
             for (int i = 0; i < MAXPARAMS; ++i)
             {
-                oldparm[i] = param[i];
+                oldparm[i] = g_params[i];
             }
             if (fractype != fractal_type::ANT)
             {
@@ -1015,7 +1015,7 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
             fractype = oldtype;
             for (int i = 0; i < MAXPARAMS; ++i)
             {
-                param[i] = oldparm[i];
+                g_params[i] = oldparm[i];
             }
             if (err >= 0)
             {
@@ -1089,7 +1089,7 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
                 }
             }
             if (curfractalspecific->tojulia != fractal_type::NOFRACTAL
-                    && param[0] == 0.0 && param[1] == 0.0)
+                    && g_params[0] == 0.0 && g_params[1] == 0.0)
             {
                 // switch to corresponding Julia set
                 int key;
@@ -1106,13 +1106,13 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
                 curfractalspecific = &fractalspecific[static_cast<int>(fractype)];
                 if (xcjul == BIG || ycjul == BIG)
                 {
-                    param[0] = (xxmax + xxmin) / 2;
-                    param[1] = (yymax + yymin) / 2;
+                    g_params[0] = (xxmax + xxmin) / 2;
+                    g_params[1] = (yymax + yymin) / 2;
                 }
                 else
                 {
-                    param[0] = xcjul;
-                    param[1] = ycjul;
+                    g_params[0] = xcjul;
+                    g_params[1] = ycjul;
                     ycjul = BIG;
                     xcjul = ycjul;
                 }
@@ -1165,10 +1165,10 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
                     yymin = yy3rd;
                     yymax = curfractalspecific->ymax;
                 }
-                SaveC.x = param[0];
-                SaveC.y = param[1];
-                param[0] = 0;
-                param[1] = 0;
+                SaveC.x = g_params[0];
+                SaveC.y = g_params[1];
+                g_params[0] = 0;
+                g_params[1] = 0;
                 zoomoff = true;
                 g_calc_status = calc_status_value::PARAMS_CHANGED;
                 *kbdmore = false;
@@ -2375,16 +2375,16 @@ static void save_history_info()
     current.xmax                 = xxmax                     ;
     current.ymin                 = yymin                     ;
     current.ymax                 = yymax                     ;
-    current.creal                = param[0]                  ;
-    current.cimag                = param[1]                  ;
-    current.dparm3               = param[2]                  ;
-    current.dparm4               = param[3]                  ;
-    current.dparm5               = param[4]                  ;
-    current.dparm6               = param[5]                  ;
-    current.dparm7               = param[6]                  ;
-    current.dparm8               = param[7]                  ;
-    current.dparm9               = param[8]                  ;
-    current.dparm10              = param[9]                  ;
+    current.creal                = g_params[0]                  ;
+    current.cimag                = g_params[1]                  ;
+    current.dparm3               = g_params[2]                  ;
+    current.dparm4               = g_params[3]                  ;
+    current.dparm5               = g_params[4]                  ;
+    current.dparm6               = g_params[5]                  ;
+    current.dparm7               = g_params[6]                  ;
+    current.dparm8               = g_params[7]                  ;
+    current.dparm9               = g_params[8]                  ;
+    current.dparm10              = g_params[9]                  ;
     current.fillcolor            = (short)g_fill_color                 ;
     current.potential[0]         = potparam[0]               ;
     current.potential[1]         = potparam[1]               ;
@@ -2555,16 +2555,16 @@ static void restore_history_info(int i)
     xxmax                 = last.xmax           ;
     yymin                 = last.ymin           ;
     yymax                 = last.ymax           ;
-    param[0]              = last.creal          ;
-    param[1]              = last.cimag          ;
-    param[2]              = last.dparm3         ;
-    param[3]              = last.dparm4         ;
-    param[4]              = last.dparm5         ;
-    param[5]              = last.dparm6         ;
-    param[6]              = last.dparm7         ;
-    param[7]              = last.dparm8         ;
-    param[8]              = last.dparm9         ;
-    param[9]              = last.dparm10        ;
+    g_params[0]              = last.creal          ;
+    g_params[1]              = last.cimag          ;
+    g_params[2]              = last.dparm3         ;
+    g_params[3]              = last.dparm4         ;
+    g_params[4]              = last.dparm5         ;
+    g_params[5]              = last.dparm6         ;
+    g_params[6]              = last.dparm7         ;
+    g_params[7]              = last.dparm8         ;
+    g_params[8]              = last.dparm9         ;
+    g_params[9]              = last.dparm10        ;
     g_fill_color             = last.fillcolor      ;
     potparam[0]           = last.potential[0]   ;
     potparam[1]           = last.potential[1]   ;

@@ -1034,7 +1034,7 @@ Mandel4fpFractal()
 int
 floatZtozPluszpwrFractal()
 {
-    cpower(&g_old_z, (int)param[2], &g_new_z);
+    cpower(&g_old_z, (int)g_params[2], &g_new_z);
     g_old_z = ComplexPower(g_old_z, g_old_z);
     g_new_z.x = g_new_z.x + g_old_z.x +g_float_param->x;
     g_new_z.y = g_new_z.y + g_old_z.y +g_float_param->y;
@@ -1821,7 +1821,7 @@ HalleyFractal()
     FPUcplxdiv(&FX, &Halnumer2, &Halnumer2);
     // parm.y is relaxation coef.
     relax.x = parm.y;
-    relax.y = param[3];
+    relax.y = g_params[3];
     FPUcplxmul(&relax, &Halnumer2, &Halnumer2);
     g_new_z.x = g_old_z.x - Halnumer2.x;
     g_new_z.y = g_old_z.y - Halnumer2.y;
@@ -2543,7 +2543,7 @@ int
 CirclefpFractal()
 {
     long i;
-    i = (long)(param[0]*(tempsqrx+tempsqry));
+    i = (long)(g_params[0]*(tempsqrx+tempsqry));
     g_color_iter = i%g_colors;
     return 1;
 }
@@ -3154,12 +3154,12 @@ int quaternionjulfp_per_pixel()
 {
     g_old_z.x = dxpixel();
     g_old_z.y = dypixel();
-    g_float_param->x = param[4];
-    g_float_param->y = param[5];
-    qc  = param[0];
-    qci = param[1];
-    qcj = param[2];
-    qck = param[3];
+    g_float_param->x = g_params[4];
+    g_float_param->y = g_params[5];
+    qc  = g_params[0];
+    qci = g_params[1];
+    qcj = g_params[2];
+    qck = g_params[3];
     return 0;
 }
 
@@ -3171,8 +3171,8 @@ int quaternionfp_per_pixel()
     g_float_param->y = 0;
     qc  = dxpixel();
     qci = dypixel();
-    qcj = param[2];
-    qck = param[3];
+    qcj = g_params[2];
+    qck = g_params[3];
     return 0;
 }
 
@@ -3393,12 +3393,12 @@ VLfpFractal() // Beauty of Fractals pp. 125 - 127
 {
     double a, b, ab, half, u, w, xy;
 
-    half = param[0] / 2.0;
+    half = g_params[0] / 2.0;
     xy = g_old_z.x * g_old_z.y;
     u = g_old_z.x - xy;
     w = -g_old_z.y + xy;
-    a = g_old_z.x + param[1] * u;
-    b = g_old_z.y + param[1] * w;
+    a = g_old_z.x + g_params[1] * u;
+    b = g_old_z.y + g_params[1] * w;
     ab = a * b;
     g_new_z.x = g_old_z.x + half * (u + (a - ab));
     g_new_z.y = g_old_z.y + half * (w + (-b + ab));
@@ -3420,8 +3420,8 @@ EscherfpFractal() // Science of Fractal Images pp. 185, 187
     testsqr.y = sqr(oldtest.y);  //    ... Julia as the target set
     while (testsize <= rqlim && testiter < g_max_iterations) // nested Julia loop
     {
-        newtest.x = testsqr.x - testsqr.y + param[0];
-        newtest.y = 2.0 * oldtest.x * oldtest.y + param[1];
+        newtest.x = testsqr.x - testsqr.y + g_params[0];
+        newtest.y = 2.0 * oldtest.x * oldtest.y + g_params[1];
         testsqr.x = sqr(newtest.x);
         testsqr.y = sqr(newtest.y);
         testsize = testsqr.x + testsqr.y;
@@ -3457,17 +3457,17 @@ EscherfpFractal() // Science of Fractal Images pp. 185, 187
 bool MandelbrotMix4Setup()
 {
     int sign_array = 0;
-    A.x = param[0];
+    A.x = g_params[0];
     A.y = 0.0;    // a=real(p1),
-    B.x = param[1];
+    B.x = g_params[1];
     B.y = 0.0;    // b=imag(p1),
-    D.x = param[2];
+    D.x = g_params[2];
     D.y = 0.0;    // d=real(p2),
-    F.x = param[3];
+    F.x = g_params[3];
     F.y = 0.0;    // f=imag(p2),
-    K.x = param[4]+1.0;
+    K.x = g_params[4]+1.0;
     K.y = 0.0;    // k=real(p3)+1,
-    L.x = param[5]+100.0;
+    L.x = g_params[5]+100.0;
     L.y = 0.0;    // l=imag(p3)+100,
     CMPLXrecip(F, G);                // g=1/f,
     CMPLXrecip(D, H);                // h=1/d,
@@ -3533,7 +3533,7 @@ bool MandelbrotMix4Setup()
 
     CMPLXpwr(tmp, J, tmp);   // note: z is old
     // in case our kludge failed, let the user fix it
-    if (param[6] < 0.0)
+    if (g_params[6] < 0.0)
     {
         tmp.y = -tmp.y;
     }

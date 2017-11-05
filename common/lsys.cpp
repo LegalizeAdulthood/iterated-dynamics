@@ -275,7 +275,7 @@ int Lsystem()
 
     g_overflow = false;           // reset integer math overflow flag
 
-    order = (int)param[0];
+    order = (int)g_params[0];
     if (order <= 0)
     {
         order = 0;

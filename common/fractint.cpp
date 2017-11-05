@@ -59,7 +59,7 @@ LDBL    delxx, delyy;           // screen pixel increments
 LDBL    delxx2, delyy2;         // screen pixel increments
 long    delmin;                 // for calcfrac/calcmand
 double  ddelmin;                // same as a double
-double  param[MAXPARAMS];       // parameters
+double  g_params[MAXPARAMS];       // parameters
 double  potparam[3];            // three potential parameters
 long    g_fudge_factor;                  // 2**fudgefactor
 long    g_l_at_rad;               // finite attractor radius

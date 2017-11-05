@@ -287,22 +287,22 @@ bool orbit3dlongsetup()
 
     if (fractype == fractal_type::LHENON)
     {
-        l_a = (long)(param[0]*g_fudge_factor);
-        l_b = (long)(param[1]*g_fudge_factor);
-        l_c = (long)(param[2]*g_fudge_factor);
-        l_d = (long)(param[3]*g_fudge_factor);
+        l_a = (long)(g_params[0]*g_fudge_factor);
+        l_b = (long)(g_params[1]*g_fudge_factor);
+        l_c = (long)(g_params[2]*g_fudge_factor);
+        l_d = (long)(g_params[3]*g_fudge_factor);
     }
     else if (fractype == fractal_type::KAM || fractype == fractal_type::KAM3D)
     {
         g_max_count = 1L;
-        a   = param[0];           // angle
-        if (param[1] <= 0.0)
+        a   = g_params[0];           // angle
+        if (g_params[1] <= 0.0)
         {
-            param[1] = .01;
+            g_params[1] = .01;
         }
-        l_b = (long)(param[1]*g_fudge_factor);     // stepsize
-        l_c = (long)(param[2]*g_fudge_factor);     // stop
-        l_d = (long) param[3];
+        l_b = (long)(g_params[1]*g_fudge_factor);     // stepsize
+        l_c = (long)(g_params[2]*g_fudge_factor);     // stop
+        l_d = (long) g_params[3];
         t = (int) l_d;      // points per orbit
 
         l_sinx = (long)(sin(a)*g_fudge_factor);
@@ -316,11 +316,11 @@ bool orbit3dlongsetup()
     {
         LComplex Sqrt;
 
-        CxLong = (long)(param[0] * g_fudge_factor);
-        CyLong = (long)(param[1] * g_fudge_factor);
+        CxLong = (long)(g_params[0] * g_fudge_factor);
+        CyLong = (long)(g_params[1] * g_fudge_factor);
 
-        mxhits    = (int) param[2];
-        run_length = (int) param[3];
+        mxhits    = (int) g_params[2];
+        run_length = (int) g_params[3];
         if (mxhits <= 0)
         {
             mxhits = 1;
@@ -329,7 +329,7 @@ bool orbit3dlongsetup()
         {
             mxhits = g_colors - 1;
         }
-        param[2] = mxhits;
+        g_params[2] = mxhits;
 
         setup_convert_to_screen(&cvt);
         // Note: using bitshift of 21 for affine, 24 otherwise
@@ -394,10 +394,10 @@ lrwalk:
     }
     else
     {
-        l_dt = (long)(param[0]*g_fudge_factor);
-        l_a = (long)(param[1]*g_fudge_factor);
-        l_b = (long)(param[2]*g_fudge_factor);
-        l_c = (long)(param[3]*g_fudge_factor);
+        l_dt = (long)(g_params[0]*g_fudge_factor);
+        l_a = (long)(g_params[1]*g_fudge_factor);
+        l_b = (long)(g_params[2]*g_fudge_factor);
+        l_c = (long)(g_params[3]*g_fudge_factor);
     }
 
     // precalculations for speed
@@ -442,8 +442,8 @@ bool orbit3dfloatsetup()
     initorbitfp[2] = 1;
     if (fractype == fractal_type::FPGINGERBREAD)
     {
-        initorbitfp[0] = param[0];        // initial conditions
-        initorbitfp[1] = param[1];
+        initorbitfp[0] = g_params[0];        // initial conditions
+        initorbitfp[1] = g_params[1];
     }
 
     if (fractype == fractal_type::ICON || fractype == fractal_type::ICON3D)
@@ -461,10 +461,10 @@ bool orbit3dfloatsetup()
 
     if (fractype == fractal_type::FPHENON || fractype == fractal_type::FPPICKOVER)
     {
-        a =  param[0];
-        b =  param[1];
-        c =  param[2];
-        d =  param[3];
+        a =  g_params[0];
+        b =  g_params[1];
+        c =  g_params[2];
+        d =  g_params[3];
     }
     else if (fractype == fractal_type::ICON || fractype == fractal_type::ICON3D)
     {
@@ -473,22 +473,22 @@ bool orbit3dfloatsetup()
         connect = false;
         waste = 2000;
         // Initialize parameters
-        a  =   param[0];
-        b  =   param[1];
-        c  =   param[2];
-        d  =   param[3];
+        a  =   g_params[0];
+        b  =   g_params[1];
+        c  =   g_params[2];
+        d  =   g_params[3];
     }
     else if (fractype == fractal_type::KAMFP || fractype == fractal_type::KAM3DFP)
     {
         g_max_count = 1L;
-        a = param[0];           // angle
-        if (param[1] <= 0.0)
+        a = g_params[0];           // angle
+        if (g_params[1] <= 0.0)
         {
-            param[1] = .01;
+            g_params[1] = .01;
         }
-        b =  param[1];    // stepsize
-        c =  param[2];    // stop
-        l_d = (long) param[3];
+        b =  g_params[1];    // stepsize
+        c =  g_params[2];    // stop
+        l_d = (long) g_params[3];
         t = (int) l_d;      // points per orbit
         sinx = sin(a);
         cosx = cos(a);
@@ -504,10 +504,10 @@ bool orbit3dfloatsetup()
         initorbitfp[1] = 0;
         initorbitfp[2] = 0;
         connect = false;
-        a =  param[0];
-        b =  param[1];
-        c =  param[2];
-        d =  param[3];
+        a =  g_params[0];
+        b =  g_params[1];
+        c =  g_params[2];
+        d =  g_params[3];
         if (fractype == fractal_type::THREEPLY)
         {
             COSB   = cos(b);
@@ -518,11 +518,11 @@ bool orbit3dfloatsetup()
     {
         DComplex Sqrt;
 
-        Cx = param[0];
-        Cy = param[1];
+        Cx = g_params[0];
+        Cy = g_params[1];
 
-        mxhits    = (int) param[2];
-        run_length = (int) param[3];
+        mxhits    = (int) g_params[2];
+        run_length = (int) g_params[3];
         if (mxhits <= 0)
         {
             mxhits = 1;
@@ -531,7 +531,7 @@ bool orbit3dfloatsetup()
         {
             mxhits = g_colors - 1;
         }
-        param[2] = mxhits;
+        g_params[2] = mxhits;
 
         setup_convert_to_screen(&cvt);
 
@@ -588,10 +588,10 @@ rwalk:
     }
     else
     {
-        dt = param[0];
-        a =  param[1];
-        b =  param[2];
-        c =  param[3];
+        dt = g_params[0];
+        a =  g_params[1];
+        b =  g_params[2];
+        c =  g_params[3];
 
     }
 
@@ -1225,12 +1225,12 @@ int dynamfloat(double *x, double *y, double * /*z*/)
 }
 
 #undef  LAMBDA
-#define LAMBDA  param[0]
-#define ALPHA   param[1]
-#define BETA    param[2]
-#define GAMMA   param[3]
-#define OMEGA   param[4]
-#define DEGREE  param[5]
+#define LAMBDA  g_params[0]
+#define ALPHA   g_params[1]
+#define BETA    g_params[2]
+#define GAMMA   g_params[3]
+#define OMEGA   g_params[4]
+#define DEGREE  g_params[5]
 
 int iconfloatorbit(double *x, double *y, double *z)
 {
@@ -1265,10 +1265,10 @@ int iconfloatorbit(double *x, double *y, double *z)
 #undef GAMMA
 #endif
 
-#define PAR_A   param[0]
-#define PAR_B   param[1]
-#define PAR_C   param[2]
-#define PAR_D   param[3]
+#define PAR_A   g_params[0]
+#define PAR_B   g_params[1]
+#define PAR_C   g_params[2]
+#define PAR_D   g_params[3]
 
 int latoofloatorbit(double *x, double *y, double * /*z*/)
 {
@@ -1941,7 +1941,7 @@ bool dynam2dfloatsetup()
 {
     connect = false;
     euler = false;
-    d = param[0]; // number of intervals
+    d = g_params[0]; // number of intervals
     if (d < 0)
     {
         d = -d;
@@ -1953,9 +1953,9 @@ bool dynam2dfloatsetup()
     }
     if (fractype == fractal_type::DYNAMICFP)
     {
-        a = param[2]; // parameter
-        b = param[3]; // parameter
-        dt = param[1]; // step size
+        a = g_params[2]; // parameter
+        b = g_params[3]; // parameter
+        dt = g_params[1]; // step size
         if (dt < 0)
         {
             dt = -dt;
@@ -2410,7 +2410,7 @@ static int ifs3dfloat()
     // setup affine screen coord conversion
     setup_convert_to_screen(&inf.cvt);
     srand(1);
-    color_method = (int)param[0];
+    color_method = (int)g_params[0];
     if (driver_diskp())                  // this would KILL a disk drive!
     {
         notdiskmsg();
@@ -2567,7 +2567,7 @@ static int ifs2d()
     l_setup_convert_to_screen(&cvt);
 
     srand(1);
-    color_method = (int)param[0];
+    color_method = (int)g_params[0];
     bool resized = false;
     try
     {
@@ -2680,7 +2680,7 @@ static int ifs3dlong()
     long3dvtinf inf;
 
     srand(1);
-    color_method = (int)param[0];
+    color_method = (int)g_params[0];
     try
     {
         localifs.resize(g_num_affine_transforms*NUM_IFS_3D_PARAMS);

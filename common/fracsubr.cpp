@@ -143,7 +143,7 @@ void fractal_floattobf()
     {
         if (typehasparm(fractype, i, nullptr))
         {
-            floattobf(bfparms[i], param[i]);
+            floattobf(bfparms[i], g_params[i]);
         }
     }
     g_calc_status = calc_status_value::PARAMS_CHANGED;
@@ -424,8 +424,8 @@ init_restart:
     {
         // adjust shift bits if..
         if (!potflag                                    // not using potential
-                && (param[0] > -2.0 && param[0] < 2.0)  // parameters not too large
-                && (param[1] > -2.0 && param[1] < 2.0)
+                && (g_params[0] > -2.0 && g_params[0] < 2.0)  // parameters not too large
+                && (g_params[1] > -2.0 && g_params[1] < 2.0)
                 && (g_invert == 0)                        // and not inverting
                 && g_biomorph == -1                     // and not biomorphing
                 && rqlim <= 4.0                         // and bailout not too high
