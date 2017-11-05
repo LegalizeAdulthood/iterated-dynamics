@@ -195,7 +195,7 @@ static void main_restart(int const argc, char const *const argv[], bool &stacked
     g_evolve_x_parameter_offset = -2.0;
     evolve_y_parameter_range = 3;
     g_evolve_new_y_parameter_offset = -1.5;
-    evolve_y_parameter_offset = -1.5;
+    g_evolve_y_parameter_offset = -1.5;
     g_evolve_discrete_y_parameter_offset = 0;
     g_evolve_discrete_x_parameter_offset = 0;
     g_evolve_image_grid_size = 9;
