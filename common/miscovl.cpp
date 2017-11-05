@@ -1141,9 +1141,9 @@ void write_batch_parms(char const *colorinf, bool colorsonly, int maxcolor, int 
         {
             put_parm(" %s=%d", "filltype", FILLTYPE);
         }
-        if (transparent[0] || transparent[1])
+        if (g_transparent_color_3d[0] || g_transparent_color_3d[1])
         {
-            put_parm(" %s=%d/%d", "transparent", transparent[0], transparent[1]);
+            put_parm(" %s=%d/%d", "transparent", g_transparent_color_3d[0], g_transparent_color_3d[1]);
         }
         if (g_preview)
         {

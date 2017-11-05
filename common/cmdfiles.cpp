@@ -136,7 +136,7 @@ bool g_organize_formulas_search = false;      /* 1 - user has specified a direct
 
 int     g_orbit_save_flags = 0;          // for IFS and LORENZ to output acrospin file
 int g_orbit_delay = 0;            // clock ticks delating orbit release
-int     transparent[2] = { 0 }; // transparency min/max values
+int g_transparent_color_3d[2] = { 0 }; // transparency min/max values
 long    g_log_map_flag = 0;            // Logarithmic palette flag: 0 = no
 
 BYTE g_exit_video_mode = 3;              // video mode on exit
@@ -610,8 +610,8 @@ static void initvars_3d()               // init vars affecting 3d
     g_blue_crop_right = 4;
     g_red_bright     = 80;
     g_blue_bright   = 100;
-    transparent[1] = 0;
-    transparent[0] = transparent[1]; // no min/max transparency
+    g_transparent_color_3d[1] = 0;
+    g_transparent_color_3d[0] = g_transparent_color_3d[1]; // no min/max transparency
     set_3d_defaults();
 }
 
@@ -3329,11 +3329,11 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         {
             goto badarg;
         }
-        transparent[0] = intval[0];
-        transparent[1] = transparent[0];
+        g_transparent_color_3d[0] = intval[0];
+        g_transparent_color_3d[1] = g_transparent_color_3d[0];
         if (totparms > 1)
         {
-            transparent[1] = intval[1];
+            g_transparent_color_3d[1] = intval[1];
         }
         return CMDARG_3D_PARAM;
     }

@@ -494,7 +494,7 @@ extern DComplex              g_tmp_z;
 extern std::string           g_temp_dir;
 extern double                g_smallest_window_display_size;
 extern int                   g_total_passes;
-extern int                   transparent[];
+extern int                   g_transparent_color_3d[];
 extern bool                  truecolor;
 extern int                   truemode;
 extern double                twopi;

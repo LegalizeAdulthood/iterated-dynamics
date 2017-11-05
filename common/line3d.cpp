@@ -173,7 +173,7 @@ int line3d(BYTE * pixels, unsigned linelen)
     fudge = 1L << 16;
 
 
-    if (transparent[0] || transparent[1])
+    if (g_transparent_color_3d[0] || g_transparent_color_3d[1])
     {
         normalplot = T_clipcolor;
         g_plot = normalplot;          // Use transparent plot function
@@ -1349,7 +1349,7 @@ static void T_clipcolor(int x, int y, int color)
             0 <= y && y < ydots &&   // Yes?
             0 <= color && color < g_colors &&  // Colors in valid range?
             // Lets make sure its not a transparent color
-            (transparent[0] > color || color > transparent[1]))
+            (g_transparent_color_3d[0] > color || color > g_transparent_color_3d[1]))
     {
         g_standard_plot(x, y, color);// I guess we can plot then
         if (g_targa_out)
@@ -1397,8 +1397,8 @@ static void interpcolor(int x, int y, int color)
     if (0 <= x && x < xdots &&
             0 <= y && y < ydots &&
             0 <= color && color < g_colors &&
-            (transparent[1] == 0 || (int) Real_Color > transparent[1] ||
-             transparent[0] > (int) Real_Color))
+            (g_transparent_color_3d[1] == 0 || (int) Real_Color > g_transparent_color_3d[1] ||
+             g_transparent_color_3d[0] > (int) Real_Color))
     {
         if (g_targa_out)
         {
@@ -2733,7 +2733,7 @@ static int first_time(int linelen, VECTOR v)
     {
         fillplot = clipcolor;
 
-        if (transparent[0] || transparent[1])
+        if (g_transparent_color_3d[0] || g_transparent_color_3d[1])
         {
             // If transparent colors are set
             fillplot = T_clipcolor;// Use the transparent plot function

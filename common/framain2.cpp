@@ -2451,8 +2451,8 @@ static void save_history_info()
     current.ambient              = (short)g_ambient                   ;
     current.randomize            = (short)g_randomize_3d                 ;
     current.haze                 = (short)g_haze                      ;
-    current.transparent[0]       = (short)transparent[0]            ;
-    current.transparent[1]       = (short)transparent[1]            ;
+    current.transparent[0]       = (short)g_transparent_color_3d[0]            ;
+    current.transparent[1]       = (short)g_transparent_color_3d[1]            ;
     current.rotate_lo            = (short)g_color_cycle_range_lo                 ;
     current.rotate_hi            = (short)g_color_cycle_range_hi                 ;
     current.distestwidth         = (short)g_distance_estimator_width_factor              ;
@@ -2635,8 +2635,8 @@ static void restore_history_info(int i)
     g_ambient               = last.ambient        ;
     g_randomize_3d             = last.randomize      ;
     g_haze                  = last.haze           ;
-    transparent[0]        = last.transparent[0] ;
-    transparent[1]        = last.transparent[1] ;
+    g_transparent_color_3d[0]        = last.transparent[0] ;
+    g_transparent_color_3d[1]        = last.transparent[1] ;
     g_color_cycle_range_lo             = last.rotate_lo      ;
     g_color_cycle_range_hi             = last.rotate_hi      ;
     g_distance_estimator_width_factor          = last.distestwidth   ;

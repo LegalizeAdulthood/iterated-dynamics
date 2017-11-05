@@ -3228,11 +3228,11 @@ restart_3:
 
         prompts3d[++k] = "First transparent color";
         uvalues[k].type = 'i';
-        uvalues[k].uval.ival = transparent[0];
+        uvalues[k].uval.ival = g_transparent_color_3d[0];
 
         prompts3d[++k] = "Last transparent color";
         uvalues[k].type = 'i';
-        uvalues[k].uval.ival = transparent[1];
+        uvalues[k].uval.ival = g_transparent_color_3d[1];
     }
 
     prompts3d[++k] = "Randomize Colors      (0 - 7, '0' disables)";
@@ -3279,8 +3279,8 @@ restart_3:
         YSHIFT     = uvalues[k++].uval.ival;
         xtrans     = uvalues[k++].uval.ival;
         ytrans     = uvalues[k++].uval.ival;
-        transparent[0] = uvalues[k++].uval.ival;
-        transparent[1] = uvalues[k++].uval.ival;
+        g_transparent_color_3d[0] = uvalues[k++].uval.ival;
+        g_transparent_color_3d[1] = uvalues[k++].uval.ival;
     }
     g_randomize_3d  = uvalues[k++].uval.ival;
     if (g_randomize_3d >= 7)

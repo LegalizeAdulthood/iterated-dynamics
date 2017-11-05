@@ -219,8 +219,8 @@ int read_overlay()      // read overlay/3D files, if reqr'd
             g_ambient        = read_info.ambient;
             g_randomize_3d      = read_info.randomize;
             g_haze           = read_info.haze;
-            transparent[0] = read_info.transparent[0];
-            transparent[1] = read_info.transparent[1];
+            g_transparent_color_3d[0] = read_info.transparent[0];
+            g_transparent_color_3d[1] = read_info.transparent[1];
         }
     }
 
