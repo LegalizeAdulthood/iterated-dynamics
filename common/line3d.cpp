@@ -122,7 +122,7 @@ char targa_temp[14] = "fractemp.tga";
 int P = 250; // Perspective dist used when viewing light vector
 BYTE g_background_color[3];
 std::string ray_name{"fract001"};
-bool preview = false;
+bool g_preview = false;
 bool showbox = false;
 int previewfactor = 20;
 int xadjust = 0;
@@ -277,7 +277,7 @@ int line3d(BYTE * pixels, unsigned linelen)
 
     bool tout = false;          // triangle has been sent to ray trace file
     // Insure last line is drawn in preview and filltypes <0
-    if ((RAY || preview || FILLTYPE < 0) && (g_current_row != ydots - 1) &&
+    if ((RAY || g_preview || FILLTYPE < 0) && (g_current_row != ydots - 1) &&
             (g_current_row % localpreviewfactor) && // Draw mod preview lines
             !(!RAY && (FILLTYPE > 4) && (g_current_row == 1)))
     {
@@ -298,7 +298,7 @@ int line3d(BYTE * pixels, unsigned linelen)
     // PROCESS ROW LOOP BEGINS HERE
     while (col < (int) linelen)
     {
-        if ((RAY || preview || FILLTYPE < 0) &&
+        if ((RAY || g_preview || FILLTYPE < 0) &&
                 (col != lastdot) &&// if this is not the last col
                 // if not the 1st or mod factor col
                 (col % (int)(aspect * localpreviewfactor)) &&
@@ -311,7 +311,7 @@ int line3d(BYTE * pixels, unsigned linelen)
         cur.color = Real_Color;
         f_cur.color = (float) cur.color;
 
-        if (RAY || preview || FILLTYPE < 0)
+        if (RAY || g_preview || FILLTYPE < 0)
         {
             next = (int)(col + aspect * localpreviewfactor);
             if (next == col)
@@ -2775,7 +2775,7 @@ static int first_time(int linelen, VECTOR v)
     }
     normalize_vector(light_direction);
 
-    if (preview && showbox)
+    if (g_preview && showbox)
     {
         normalize_vector(direct);
 

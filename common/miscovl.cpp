@@ -1145,7 +1145,7 @@ void write_batch_parms(char const *colorinf, bool colorsonly, int maxcolor, int 
         {
             put_parm(" %s=%d/%d", "transparent", transparent[0], transparent[1]);
         }
-        if (preview)
+        if (g_preview)
         {
             put_parm(" %s=%s", "preview", "yes");
             if (showbox)

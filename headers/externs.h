@@ -386,7 +386,7 @@ extern unsigned              g_operation_index;
 extern bool                  g_potential_16bit;
 extern bool                  g_potential_flag;
 extern double                g_potential_params[];
-extern bool                  preview;
+extern bool                  g_preview;
 extern int                   previewfactor;
 extern int                   px;
 extern int                   py;
