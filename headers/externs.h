@@ -352,7 +352,7 @@ extern long                  g_orbit_interval;
 extern int                   g_orbit_save_index;
 extern std::string           g_organize_formulas_dir;
 extern bool                  g_organize_formulas_search;
-extern float                 originfp;
+extern float                 g_julibrot_origin_fp;
 extern int                 (*outln)(BYTE *, int);
 extern void                (*outln_cleanup)();
 extern int                   outside;

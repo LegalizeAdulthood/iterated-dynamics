@@ -2461,7 +2461,7 @@ static void save_history_info()
     current.mymaxfp              = g_julibrot_y_max                   ;
     current.myminfp              = g_julibrot_y_min                   ;
     current.zdots                = (short)zdots                         ;
-    current.originfp             = originfp                  ;
+    current.originfp             = g_julibrot_origin_fp                  ;
     current.depthfp              = g_depth_fp                      ;
     current.heightfp             = g_height_fp                  ;
     current.widthfp              = widthfp                      ;
@@ -2645,7 +2645,7 @@ static void restore_history_info(int i)
     g_julibrot_y_max               = last.mymaxfp        ;
     g_julibrot_y_min               = last.myminfp        ;
     zdots                 = last.zdots          ;
-    originfp              = last.originfp       ;
+    g_julibrot_origin_fp              = last.originfp       ;
     g_depth_fp               = last.depthfp        ;
     g_height_fp              = last.heightfp       ;
     widthfp               = last.widthfp        ;

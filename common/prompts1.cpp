@@ -1866,7 +1866,7 @@ gfp_top:
         paramvalues[promptnum].uval.dval = g_eyes_fp;
         paramvalues[promptnum].type = 'f';
         choices[promptnum++] = "Distance between eyes";
-        paramvalues[promptnum].uval.dval = originfp;
+        paramvalues[promptnum].uval.dval = g_julibrot_origin_fp;
         paramvalues[promptnum].type = 'f';
         choices[promptnum++] = "Location of z origin";
         paramvalues[promptnum].uval.dval = g_depth_fp;
@@ -2041,7 +2041,7 @@ gfp_top:
         zdots      = paramvalues[promptnum++].uval.ival;
         g_julibrot_3d_mode = paramvalues[promptnum++].uval.ch.val;
         g_eyes_fp     = (float)paramvalues[promptnum++].uval.dval;
-        originfp   = (float)paramvalues[promptnum++].uval.dval;
+        g_julibrot_origin_fp   = (float)paramvalues[promptnum++].uval.dval;
         g_depth_fp    = (float)paramvalues[promptnum++].uval.dval;
         g_height_fp   = (float)paramvalues[promptnum++].uval.dval;
         widthfp    = (float)paramvalues[promptnum++].uval.dval;

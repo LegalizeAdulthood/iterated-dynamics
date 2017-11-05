@@ -44,7 +44,7 @@ static double fg, fg16;
 #endif
 int zdots = 128;
 
-float originfp  = 8.0F;
+float g_julibrot_origin_fp  = 8.0F;
 float g_height_fp  = 7.0F;
 float widthfp   = 10.0F;
 float g_dist_fp    = 24.0F;
@@ -82,7 +82,7 @@ JulibrotSetup()
     y_per_inchfp = (yymax - yymin) / g_height_fp;
     inch_per_xdotfp = widthfp / xdots;
     inch_per_ydotfp = g_height_fp / ydots;
-    initzfp = originfp - (g_depth_fp / 2);
+    initzfp = g_julibrot_origin_fp - (g_depth_fp / 2);
     if (g_julibrot_3d_mode == 0)
     {
         RightEyefp.x = 0.0;
@@ -124,7 +124,7 @@ JulibrotSetup()
         mxmax = (long)(g_julibrot_x_max * fg);
         mymin = (long)(g_julibrot_y_min * fg);
         mymax = (long)(g_julibrot_y_max * fg);
-        long origin = (long)(originfp * fg16);
+        long origin = (long)(g_julibrot_origin_fp * fg16);
         depth = (long)(g_depth_fp * fg16);
         width = (long)(widthfp * fg16);
         dist = (long)(g_dist_fp * fg16);
