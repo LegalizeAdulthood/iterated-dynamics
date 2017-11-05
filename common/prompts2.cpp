@@ -220,11 +220,11 @@ int get_toggles()
 
     choices[++k] = "Savename (.GIF implied)";
     uvalues[k].type = 's';
-    strcpy(prevsavename, savename.c_str());
-    savenameptr = strrchr(savename.c_str(), SLASHC);
+    strcpy(prevsavename, g_save_filename.c_str());
+    savenameptr = strrchr(g_save_filename.c_str(), SLASHC);
     if (savenameptr == nullptr)
     {
-        savenameptr = savename.c_str();
+        savenameptr = g_save_filename.c_str();
     }
     else
     {
@@ -416,8 +416,8 @@ int get_toggles()
         j++;
     }
 
-    savename = std::string {savename.c_str(), savenameptr} + uvalues[++k].uval.sval;
-    if (strcmp(savename.c_str(), prevsavename))
+    g_save_filename = std::string {g_save_filename.c_str(), savenameptr} + uvalues[++k].uval.sval;
+    if (strcmp(g_save_filename.c_str(), prevsavename))
     {
         g_resave_flag = 0;
         started_resaves = false; // forget pending increment

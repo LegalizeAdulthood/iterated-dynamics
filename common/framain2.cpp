@@ -757,7 +757,7 @@ static bool look(bool *stacked)
     case 's':
         g_browsing = false;
         g_help_mode = old_help_mode;
-        savetodisk(savename);
+        savetodisk(g_save_filename);
         break;
 
     default:               // or no files found, leave the state of browsing alone
@@ -1326,7 +1326,7 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
         {
             return main_state::CONTINUE;  // disk video and targa, nothing to save
         }
-        savetodisk(savename);
+        savetodisk(g_save_filename);
         return main_state::CONTINUE;
     case '#':                    // 3D overlay
 #ifdef XFRACT
@@ -1357,7 +1357,7 @@ do_3d_transform:
                 if (g_init_batch == batch_modes::SAVE)
                 {
                     driver_stack_screen();   // save graphics image
-                    g_read_filename = savename;
+                    g_read_filename = g_save_filename;
                     show_file = 0;
                     return main_state::RESTORE_START;
                 }
@@ -1380,7 +1380,7 @@ do_3d_transform:
         }
         if (g_resave_flag)
         {
-            updatesavename(savename);      // do the pending increment
+            updatesavename(g_save_filename);      // do the pending increment
             g_resave_flag = 0;
             started_resaves = false;
         }
@@ -1795,7 +1795,7 @@ static main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdm
         param_history(1); // restore old history
         fiddleparms(gene, 0);
         drawparmbox(1);
-        savetodisk(savename);
+        savetodisk(g_save_filename);
         g_evolve_param_grid_x = oldpx;
         g_evolve_param_grid_y = oldpy;
         param_history(1); // restore old history
@@ -1821,7 +1821,7 @@ static main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdm
                 if (g_init_batch == batch_modes::SAVE)
                 {
                     driver_stack_screen();   // save graphics image
-                    g_read_filename = savename;
+                    g_read_filename = g_save_filename;
                     show_file = 0;
                     return main_state::RESTORE_START;
                 }
@@ -1844,7 +1844,7 @@ static main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdm
         }
         if (g_resave_flag)
         {
-            updatesavename(savename);      // do the pending increment
+            updatesavename(g_save_filename);      // do the pending increment
             g_resave_flag = 0;
             started_resaves = false;
         }

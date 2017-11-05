@@ -150,7 +150,7 @@ int common_startdisk(long newrowsize, long newcolsize, int colors)
             sprintf(buf, "%d", colors);
             driver_put_string(-1, -1, C_DVID_LO, buf);
         }
-        sprintf(buf, "Save name: %s", savename.c_str());
+        sprintf(buf, "Save name: %s", g_save_filename.c_str());
         driver_put_string(BOXROW+8, BOXCOL+4, C_DVID_LO, buf);
         driver_put_string(BOXROW+10, BOXCOL+4, C_DVID_LO, "Status:");
         dvid_status(0, "clearing the 'screen'");

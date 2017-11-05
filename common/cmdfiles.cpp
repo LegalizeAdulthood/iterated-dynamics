@@ -64,7 +64,7 @@ std::string workdir;            // name of directory for misc files
 std::string g_organize_formulas_dir;          // name of directory for orgfrm files
 std::string g_gif_filename_mask;
 char    PrintName[FILE_MAX_PATH] = {"fract001.prn"}; // Name for print-to-file
-std::string savename{"fract001"}; // save files using this name
+std::string g_save_filename{"fract001"}; // save files using this name
 std::string g_auto_name{"auto.key"}; // record auto keystrokes here
 bool    g_potential_flag = false;        // continuous potential enabled?
 bool    g_potential_16bit = false;               // store 16 bit continuous potential values
@@ -1767,7 +1767,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         }
         if (g_first_init || mode == cmd_file::AT_AFTER_STARTUP)
         {
-            if (merge_pathnames(savename, value, mode) < 0)
+            if (merge_pathnames(g_save_filename, value, mode) < 0)
             {
                 init_msg(variable.c_str(), value, mode);
             }

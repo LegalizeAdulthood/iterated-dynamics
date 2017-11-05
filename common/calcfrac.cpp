@@ -863,7 +863,7 @@ int calcfract()
         end_resume();
         if (g_resave_flag)
         {
-            updatesavename(savename); // do the pending increment
+            updatesavename(g_save_filename); // do the pending increment
             g_resave_flag = 0;
             started_resaves = false;
         }

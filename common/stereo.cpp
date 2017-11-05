@@ -371,7 +371,7 @@ bool do_AutoStereo()
             break;
         case 's':
         case 'S':
-            savetodisk(savename);
+            savetodisk(g_save_filename);
             break;
         default:
             if (kbdchar == FIK_ESC)     // if ESC avoid returning to menu

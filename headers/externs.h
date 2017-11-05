@@ -433,7 +433,7 @@ extern int                   g_random_seed;
 extern long                  g_save_base;
 extern DComplex              SaveC;
 extern int                   g_save_dac;
-extern std::string           savename;
+extern std::string           g_save_filename;
 extern long                  saveticks;
 extern int                   save_release;
 extern int                   save_system;
