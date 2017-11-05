@@ -25,7 +25,7 @@ MandelSetup()           // Mandelbrot Routine
             && (g_invert == 0) && g_decomp[0] == 0 && rqlim == 4.0
             && bitshift == 29 && !g_potential_flag
             && g_biomorph == -1 && g_inside_color > ZMAG && g_outside_color >= ITER
-            && g_use_init_orbit != init_orbit_mode::value && !using_jiim && g_bail_out_test == bailouts::Mod
+            && g_use_init_orbit != init_orbit_mode::value && !g_using_jiim && g_bail_out_test == bailouts::Mod
             && (g_orbit_save_flags & osf_midi) == 0)
     {
         calctype = calcmand; // the normal case - use CALCMAND
@@ -46,7 +46,7 @@ JuliaSetup()            // Julia Routine
             && (g_invert == 0) && g_decomp[0] == 0 && rqlim == 4.0
             && bitshift == 29 && !g_potential_flag
             && g_biomorph == -1 && g_inside_color > ZMAG && g_outside_color >= ITER
-            && !g_finite_attractor && !using_jiim && g_bail_out_test == bailouts::Mod
+            && !g_finite_attractor && !g_using_jiim && g_bail_out_test == bailouts::Mod
             && (g_orbit_save_flags & osf_midi) == 0)
     {
         calctype = calcmand; // the normal case - use CALCMAND
@@ -232,7 +232,7 @@ MandelfpSetup()
                 && g_outside_color >= ATAN
                 && g_use_init_orbit != init_orbit_mode::value
                 && (g_sound_flag & SOUNDFLAG_ORBITMASK) < SOUNDFLAG_X
-                && !using_jiim && g_bail_out_test == bailouts::Mod
+                && !g_using_jiim && g_bail_out_test == bailouts::Mod
                 && (g_orbit_save_flags & osf_midi) == 0)
         {
             calctype = calcmandfp; // the normal case - use calcmandfp
@@ -358,7 +358,7 @@ JuliafpSetup()
                 && g_use_init_orbit != init_orbit_mode::value
                 && (g_sound_flag & SOUNDFLAG_ORBITMASK) < SOUNDFLAG_X
                 && !g_finite_attractor
-                && !using_jiim && g_bail_out_test == bailouts::Mod
+                && !g_using_jiim && g_bail_out_test == bailouts::Mod
                 && (g_orbit_save_flags & osf_midi) == 0)
         {
             calctype = calcmandfp; // the normal case - use calcmandfp

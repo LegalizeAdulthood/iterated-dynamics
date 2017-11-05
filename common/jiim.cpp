@@ -508,7 +508,7 @@ void Jiim(jiim_types which)
     oldsyoffs = syoffs;
     oldcalctype = calctype;
     show_numbers = 0;
-    using_jiim = true;
+    g_using_jiim = true;
     g_line_buff.resize(std::max(sxdots, sydots));
     aspect = ((double)xdots*3)/((double)ydots*4);  // assumes 4:3
     actively_computing = true;
@@ -1286,7 +1286,7 @@ finish:
     g_line_buff.clear();
     screen_rect.clear();
     g_look_at_mouse = old_look_at_mouse;
-    using_jiim = false;
+    g_using_jiim = false;
     calctype = oldcalctype;
     g_debug_flag = old_debugflag;
     g_help_mode = old_help_mode;

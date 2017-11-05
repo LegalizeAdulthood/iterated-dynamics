@@ -256,7 +256,7 @@ void cleartempmsg()
         {
             put_line(i, 0, textxdots-1, &temptextsave[textxdots*i]);
         }
-        if (!using_jiim)                // jiim frees memory with freetempmsg()
+        if (!g_using_jiim)                // jiim frees memory with freetempmsg()
         {
             temptextsave.clear();
         }

@@ -55,7 +55,7 @@ bool editpal_cursor = false;
 /*
  * Stuff from fractint
  */
-bool using_jiim = false;
+bool g_using_jiim = false;
 
 /*
  * basic data types
