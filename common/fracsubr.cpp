@@ -102,7 +102,7 @@ void fill_dx_array()
         for (int i = 1; i < ydots; i++)
         {
             dy0[i] = (double)(dy0[0] - i*delyy);
-            dx1[i] = (double)(dx1[0] + i*delxx2);
+            dx1[i] = (double)(dx1[0] + i*g_delta_x2);
         }
     }
 }
@@ -454,7 +454,7 @@ init_restart:
         adjust_to_limits(1.0); // make sure all corners in valid range
         delxx  = (LDBL)(xxmax - xx3rd) / (LDBL)x_size_d; // calculate stepsizes
         delyy  = (LDBL)(yymax - yy3rd) / (LDBL)y_size_d;
-        delxx2 = (LDBL)(xx3rd - xxmin) / (LDBL)y_size_d;
+        g_delta_x2 = (LDBL)(xx3rd - xxmin) / (LDBL)y_size_d;
         delyy2 = (LDBL)(yy3rd - yymin) / (LDBL)x_size_d;
         fill_dx_array();
     }
@@ -469,7 +469,7 @@ init_restart:
         y3rd  = fudgetolong(yy3rd);
         g_l_delta_x  = fudgetolong((double)delxx);
         dely  = fudgetolong((double)delyy);
-        g_l_delta_x2 = fudgetolong((double)delxx2);
+        g_l_delta_x2 = fudgetolong((double)g_delta_x2);
         dely2 = fudgetolong((double)delyy2);
     }
 
@@ -483,7 +483,7 @@ init_restart:
         if (g_integer_fractal && (g_invert == 0) && g_use_grid)
         {
             if ((g_l_delta_x  == 0 && delxx  != 0.0)
-                    || (g_l_delta_x2 == 0 && delxx2 != 0.0)
+                    || (g_l_delta_x2 == 0 && g_delta_x2 != 0.0)
                     || (dely  == 0 && delyy  != 0.0)
                     || (dely2 == 0 && delyy2 != 0.0))
             {
@@ -546,7 +546,7 @@ expand_retry:
             for (int i = 1; i < ydots; i++)
             {
                 dy0 = (double)(dy0 - (double)delyy);
-                dx1 = (double)(dx1 + (double)delxx2);
+                dx1 = (double)(dx1 + (double)g_delta_x2);
             }
             if (bf_math == bf_math_type::NONE) // redundant test, leave for now
             {
@@ -610,9 +610,9 @@ expand_retry:
             fill_dx_array();       // fill up the x, y grids
 
             // re-set corners to match reality
-            xxmax = (double)(xxmin + (xdots-1)*delxx + (ydots-1)*delxx2);
+            xxmax = (double)(xxmin + (xdots-1)*delxx + (ydots-1)*g_delta_x2);
             yymin = (double)(yymax - (ydots-1)*delyy - (xdots-1)*delyy2);
-            xx3rd = (double)(xxmin + (ydots-1)*delxx2);
+            xx3rd = (double)(xxmin + (ydots-1)*g_delta_x2);
             yy3rd = (double)(yymax - (ydots-1)*delyy);
 
         } // end else
@@ -621,9 +621,9 @@ expand_retry:
     // for periodicity close-enough, and for unity:
     //     min(max(delx,delx2),max(dely,dely2))
     g_delta_min = fabs((double)delxx);
-    if (fabs((double)delxx2) > g_delta_min)
+    if (fabs((double)g_delta_x2) > g_delta_min)
     {
-        g_delta_min = fabs((double)delxx2);
+        g_delta_min = fabs((double)g_delta_x2);
     }
     if (fabs((double)delyy) > fabs((double)delyy2))
     {
@@ -640,11 +640,11 @@ expand_retry:
 
     // calculate factors which plot real values to screen co-ords
     // calcfrac.c plot_orbit routines have comments about this
-    double ftemp = (double)((0.0-delyy2) * delxx2 * x_size_d * y_size_d
+    double ftemp = (double)((0.0-delyy2) * g_delta_x2 * x_size_d * y_size_d
                      - (xxmax-xx3rd) * (yy3rd-yymax));
     if (ftemp != 0)
     {
-        g_plot_mx1 = (double)(delxx2 * x_size_d * y_size_d / ftemp);
+        g_plot_mx1 = (double)(g_delta_x2 * x_size_d * y_size_d / ftemp);
         g_plot_mx2 = (yy3rd-yymax) * x_size_d / ftemp;
         g_plot_my1 = (double)((0.0-delyy2) * x_size_d * y_size_d / ftemp);
         g_plot_my2 = (xxmax-xx3rd) * y_size_d / ftemp;

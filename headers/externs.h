@@ -120,7 +120,7 @@ extern int                   g_degree;
 extern long                  g_l_delta_min;
 extern long                  g_l_delta_x2;
 extern long                  g_l_delta_x;
-extern LDBL                  delxx2;
+extern LDBL                  g_delta_x2;
 extern LDBL                  delxx;
 extern long                  dely2;
 extern long                  dely;

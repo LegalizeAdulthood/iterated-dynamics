@@ -56,7 +56,7 @@ char    g_std_calc_mode;            // '1', '2', 'g', 'b'
 long    g_l_delta_x, dely;             // screen pixel increments
 long    g_l_delta_x2, dely2;           // screen pixel increments
 LDBL    delxx, delyy;           // screen pixel increments
-LDBL    delxx2, delyy2;         // screen pixel increments
+LDBL    g_delta_x2, delyy2;         // screen pixel increments
 long    g_l_delta_min;                 // for calcfrac/calcmand
 double  g_delta_min;                // same as a double
 double  g_params[MAXPARAMS];       // parameters
