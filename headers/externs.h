@@ -521,7 +521,7 @@ extern int                   g_vesa_y_res;
 extern VIDEOINFO             g_video_entry;
 extern VIDEOINFO             g_video_table[];
 extern int                   g_video_table_len;
-extern bool                  video_cutboth;
+extern bool                  g_keep_aspect_ratio;
 extern bool                  g_video_scroll;
 extern int                   g_video_start_x;
 extern int                   g_video_start_y;

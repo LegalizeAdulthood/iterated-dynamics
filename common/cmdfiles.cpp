@@ -429,7 +429,7 @@ static void initvars_restart()          // <ins> key init
     g_final_aspect_ratio = g_screen_aspect;
     viewydots = 0;
     viewxdots = viewydots;
-    video_cutboth = true;               // keep virtual aspect
+    g_keep_aspect_ratio = true;               // keep virtual aspect
     zscroll = true;                     // relaxed screen scrolling
     g_orbit_delay = 0;                    // full speed orbits
     g_orbit_interval = 1;                 // plot all orbits
