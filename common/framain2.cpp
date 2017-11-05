@@ -1114,7 +1114,7 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
                     g_params[0] = xcjul;
                     g_params[1] = ycjul;
                     ycjul = BIG;
-                    xcjul = ycjul;
+                    xcjul = BIG;
                 }
                 jxxmin = g_save_x_min;
                 jxxmax = g_save_x_max;
