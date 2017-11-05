@@ -2807,14 +2807,14 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         else if (numval != 0)
         {
             usr_periodicitycheck = numval;
-        }
-        if (usr_periodicitycheck > 255)
-        {
-            usr_periodicitycheck = 255;
-        }
-        if (usr_periodicitycheck < -255)
-        {
-            usr_periodicitycheck = -255;
+            if (usr_periodicitycheck > 255)
+            {
+                usr_periodicitycheck = 255;
+            }
+            if (usr_periodicitycheck < -255)
+            {
+                usr_periodicitycheck = -255;
+            }
         }
         return CMDARG_FRACTAL_PARAM;
     }
