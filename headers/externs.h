@@ -556,7 +556,7 @@ extern double                g_x_max;
 extern double                g_x_min;
 extern long                  g_xx_one;
 extern int                   g_xx_start;
-extern int                   xxstop;
+extern int                   g_xx_stop;
 extern long                  g_l_y_3rd;
 extern int                   yadjust;
 extern double                g_julia_c_y;
