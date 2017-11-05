@@ -86,7 +86,7 @@ int g_c_exponent;
 
 
 // These are local but I don't want to pass them as parameters
-DComplex parm, parm2;
+DComplex g_param_z1, parm2;
 DComplex *g_float_param;
 LComplex *g_long_param; // used here and in jb.c
 
@@ -1235,8 +1235,8 @@ PopcornFractal_Old()
     tmp.y = siny/cosy + g_old_z.y;
     FPUsincos(&tmp.x, &sinx, &cosx);
     FPUsincos(&tmp.y, &siny, &cosy);
-    g_new_z.x = g_old_z.x - parm.x*siny;
-    g_new_z.y = g_old_z.y - parm.x*sinx;
+    g_new_z.x = g_old_z.x - g_param_z1.x*siny;
+    g_new_z.y = g_old_z.y - g_param_z1.x*sinx;
     if (plot == noplot)
     {
         plot_orbit(g_new_z.x, g_new_z.y, 1+row%g_colors);
@@ -1268,8 +1268,8 @@ PopcornFractal()
     tmp.y = siny/cosy + g_old_z.y;
     FPUsincos(&tmp.x, &sinx, &cosx);
     FPUsincos(&tmp.y, &siny, &cosy);
-    g_new_z.x = g_old_z.x - parm.x*siny;
-    g_new_z.y = g_old_z.y - parm.x*sinx;
+    g_new_z.x = g_old_z.x - g_param_z1.x*siny;
+    g_new_z.y = g_old_z.y - g_param_z1.x*sinx;
     if (plot == noplot)
     {
         plot_orbit(g_new_z.x, g_new_z.y, 1+row%g_colors);
@@ -1383,7 +1383,7 @@ PopcornFractalFn()
     CMPLXtrig1(tmp, tmpx);             // tmpx = trig1(tmp)
     tmpx.x += g_old_z.y;                  // tmpx = old.y + trig1(tmp)
     CMPLXtrig0(tmpx, tmp);             // tmp = trig0(tmpx)
-    CMPLXmult(tmp, parm, tmpx);         // tmpx = tmp * h
+    CMPLXmult(tmp, g_param_z1, tmpx);         // tmpx = tmp * h
 
     // tmpy contains the generalized value of the old real "y" equation
     CMPLXtimesreal(parm2, g_old_z.x, tmp);  // tmp = (C * old.x)
@@ -1391,7 +1391,7 @@ PopcornFractalFn()
     tmpy.x += g_old_z.x;                  // tmpy = old.x + trig1(tmp)
     CMPLXtrig2(tmpy, tmp);             // tmp = trig2(tmpy)
 
-    CMPLXmult(tmp, parm, tmpy);         // tmpy = tmp * h
+    CMPLXmult(tmp, g_param_z1, tmpy);         // tmpy = tmp * h
 
     g_new_z.x = g_old_z.x - tmpx.x - tmpy.y;
     g_new_z.y = g_old_z.y - tmpy.x - tmpx.y;
@@ -1564,7 +1564,7 @@ ZXTrigPlusZfpFractal()
 {
     // z = (p1*z*trig(z))+p2*z
     CMPLXtrig0(g_old_z, tmp);          // tmp  = trig(old)
-    CMPLXmult(parm, tmp, tmp);      // tmp  = p1*trig(old)
+    CMPLXmult(g_param_z1, tmp, tmp);      // tmp  = p1*trig(old)
     CMPLXmult(g_old_z, tmp, tmp2);      // tmp2 = p1*old*trig(old)
     CMPLXmult(parm2, g_old_z, tmp);     // tmp  = p2*old
     CMPLXadd(tmp2, tmp, g_new_z);       // new  = p1*trig(old) + p2*old
@@ -1636,7 +1636,7 @@ TrigPlusTrigfpFractal()
 {
     // z = trig0(z)*p1+trig1(z)*p2
     CMPLXtrig0(g_old_z, tmp);
-    CMPLXmult(parm, tmp, tmp);
+    CMPLXmult(g_param_z1, tmp, tmp);
     CMPLXtrig1(g_old_z, g_old_z);
     CMPLXmult(parm2, g_old_z, g_old_z);
     CMPLXadd(tmp, g_old_z, g_new_z);
@@ -1820,7 +1820,7 @@ HalleyFractal()
     CMPLXsub(F1prime, Halnumer1, Halnumer2);          //  F' - F"F/2F'
     FPUcplxdiv(&FX, &Halnumer2, &Halnumer2);
     // parm.y is relaxation coef.
-    relax.x = parm.y;
+    relax.x = g_param_z1.y;
     relax.y = g_params[3];
     FPUcplxmul(&relax, &Halnumer2, &Halnumer2);
     g_new_z.x = g_old_z.x - Halnumer2.x;
@@ -2195,7 +2195,7 @@ TrigPlusSqrfpFractal() // generalization of Scott and Skinner types
 {
     // { z=pixel: z=(p1,p2)*trig(z)+(p3,p4)*sqr(z), |z|<BAILOUT }
     CMPLXtrig0(g_old_z, tmp);     // tmp = trig(old)
-    CMPLXmult(parm, tmp, g_new_z); // new = parm*trig(old)
+    CMPLXmult(g_param_z1, tmp, g_new_z); // new = parm*trig(old)
     CMPLXsqr_old(tmp);        // tmp = sqr(old)
     CMPLXmult(parm2, tmp, tmp2); // tmp = parm2*sqr(old)
     CMPLXadd(g_new_z, tmp2, g_new_z);    // new = parm*trig(old)+parm2*sqr(old)
@@ -2906,8 +2906,8 @@ int marksmandelfp_per_pixel()
         g_old_z = g_init;
     }
 
-    g_old_z.x += parm.x;      // initial pertubation of parameters set
-    g_old_z.y += parm.y;
+    g_old_z.x += g_param_z1.x;      // initial pertubation of parameters set
+    g_old_z.y += g_param_z1.y;
 
     tempsqrx = sqr(g_old_z.x);
     tempsqry = sqr(g_old_z.y);
@@ -2992,14 +2992,14 @@ int mandelfp_per_pixel()
     {
         /* kludge to match "Beauty of Fractals" picture since we start
            Mandelbrot iteration with init rather than 0 */
-        g_old_z.x = parm.x; // initial pertubation of parameters set
-        g_old_z.y = parm.y;
+        g_old_z.x = g_param_z1.x; // initial pertubation of parameters set
+        g_old_z.y = g_param_z1.y;
         g_color_iter = -1;
     }
     else
     {
-        g_old_z.x += parm.x;
-        g_old_z.y += parm.y;
+        g_old_z.x += g_param_z1.x;
+        g_old_z.y += g_param_z1.y;
     }
     tmp = g_init; // for spider
     tempsqrx = sqr(g_old_z.x);  // precalculated value for regular Mandelbrot
@@ -3081,8 +3081,8 @@ int othermandelfp_per_pixel()
         g_old_z = g_init;
     }
 
-    g_old_z.x += parm.x;      // initial pertubation of parameters set
-    g_old_z.y += parm.y;
+    g_old_z.x += g_param_z1.x;      // initial pertubation of parameters set
+    g_old_z.y += g_param_z1.y;
 
     return 1; // 1st iteration has been done
 }
@@ -3190,8 +3190,8 @@ int MarksCplxMandperp()
             g_init.y = dypixel();
         }
     }
-    g_old_z.x = g_init.x + parm.x; // initial pertubation of parameters set
-    g_old_z.y = g_init.y + parm.y;
+    g_old_z.x = g_init.x + g_param_z1.x; // initial pertubation of parameters set
+    g_old_z.y = g_init.y + g_param_z1.y;
     tempsqrx = sqr(g_old_z.x);  // precalculated value
     tempsqry = sqr(g_old_z.y);
     g_marks_coefficient = ComplexPower(g_init, pwr);
@@ -3319,8 +3319,8 @@ int mandphoenix_per_pixel()
         g_old_z = g_init;
     }
 
-    g_old_z.x += parm.x;      // initial pertubation of parameters set
-    g_old_z.y += parm.y;
+    g_old_z.x += g_param_z1.x;      // initial pertubation of parameters set
+    g_old_z.y += g_param_z1.y;
     tempsqrx = sqr(g_old_z.x);  // precalculated value
     tempsqry = sqr(g_old_z.y);
     tmp2.x = 0;

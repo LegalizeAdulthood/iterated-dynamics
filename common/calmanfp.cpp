@@ -93,14 +93,14 @@ long calcmandfpasm()
         // Mandelbrot_87
         Cx = g_init.x;
         Cy = g_init.y;
-        x = parm.x+Cx;
-        y = parm.y+Cy;
+        x = g_param_z1.x+Cx;
+        y = g_param_z1.y+Cy;
     }
     else
     {
         // dojulia_87
-        Cx = parm.x;
-        Cy = parm.y;
+        Cx = g_param_z1.x;
+        Cy = g_param_z1.y;
         x = g_init.x;
         y = g_init.y;
         x2 = x*x;

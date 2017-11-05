@@ -657,8 +657,8 @@ int calcfract()
     {
         g_distance_estimator = 0;
     }
-    parm.x   = g_params[0];
-    parm.y   = g_params[1];
+    g_param_z1.x   = g_params[0];
+    g_param_z1.y   = g_params[1];
     parm2.x  = g_params[2];
     parm2.y  = g_params[3];
 
@@ -844,8 +844,8 @@ int calcfract()
     rqlim2 = sqrt(rqlim);
     if (g_integer_fractal)          // for integer routines (lambda)
     {
-        g_l_param.x = (long)(parm.x * g_fudge_factor);    // real portion of Lambda
-        g_l_param.y = (long)(parm.y * g_fudge_factor);    // imaginary portion of Lambda
+        g_l_param.x = (long)(g_param_z1.x * g_fudge_factor);    // real portion of Lambda
+        g_l_param.y = (long)(g_param_z1.y * g_fudge_factor);    // imaginary portion of Lambda
         g_l_param2.x = (long)(parm2.x * g_fudge_factor);  // real portion of Lambda2
         g_l_param2.y = (long)(parm2.y * g_fudge_factor);  // imaginary portion of Lambda2
         g_l_limit = (long)(rqlim * g_fudge_factor);      // stop if magnitude exceeds this
@@ -4459,9 +4459,9 @@ static void setsymmetry(symmetry_type sym, bool uselist) // set up proper symmet
     {
         return;
     }
-    bool parmszero = (parm.x == 0.0 && parm.y == 0.0 && useinitorbit != 1);
-    bool parmsnoreal = (parm.x == 0.0 && useinitorbit != 1);
-    bool parmsnoimag = (parm.y == 0.0 && useinitorbit != 1);
+    bool parmszero = (g_param_z1.x == 0.0 && g_param_z1.y == 0.0 && useinitorbit != 1);
+    bool parmsnoreal = (g_param_z1.x == 0.0 && useinitorbit != 1);
+    bool parmsnoimag = (g_param_z1.y == 0.0 && useinitorbit != 1);
     switch (fractype)
     {
     case fractal_type::LMANLAMFNFN:      // These need only P1 checked.
@@ -4683,7 +4683,7 @@ originsym:
         if (!xsym_split(xaxis_row, xaxis_between)
                 && !ysym_split(yaxis_col, yaxis_between))
         {
-            if (parm.y == 0.0)
+            if (g_param_z1.y == 0.0)
             {
                 plot = symPIplot4J; // both axes
             }

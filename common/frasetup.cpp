@@ -90,7 +90,7 @@ NewtonSetup()           // Newton/NewtBasin Routines
     curfractalspecific = &fractalspecific[static_cast<int>(fractype)];
 #endif
     // set up table of roots of 1 along unit circle
-    degree = (int)parm.x;
+    degree = (int)g_param_z1.x;
     if (degree < 2)
     {
         degree = 3;   // defaults to 3, but 2 is possible
@@ -116,7 +116,7 @@ NewtonSetup()           // Newton/NewtBasin Routines
     roots.resize(16);
     if (fractype == fractal_type::NEWTBASIN)
     {
-        if (parm.y)
+        if (g_param_z1.y)
         {
             g_basin = 2; //stripes
         }
@@ -136,7 +136,7 @@ NewtonSetup()           // Newton/NewtBasin Routines
 #if !defined(XFRACT)
     else if (fractype == fractal_type::MPNEWTBASIN)
     {
-        if (parm.y)
+        if (g_param_z1.y)
         {
             g_basin = 2;    //stripes
         }
@@ -281,7 +281,7 @@ MandelfpSetup()
         break;
     case fractal_type::FPMANTRIGPLUSEXP:
     case fractal_type::FPMANTRIGPLUSZSQRD:
-        if (parm.y == 0.0)
+        if (g_param_z1.y == 0.0)
         {
             symmetry = symmetry_type::X_AXIS;
         }
@@ -334,7 +334,7 @@ bool
 JuliafpSetup()
 {
     g_c_exponent = (int)g_params[2];
-    g_float_param = &parm;
+    g_float_param = &g_param_z1;
     if (fractype == fractal_type::COMPLEXMARKSJUL)
     {
         pwr.x = g_params[2] - 1.0;
@@ -401,7 +401,7 @@ JuliafpSetup()
         get_julia_attractor(0.5, 0.0);    // another attractor?
         break;
     case fractal_type::LAMBDAEXP:
-        if (parm.y == 0.0)
+        if (g_param_z1.y == 0.0)
         {
             symmetry = symmetry_type::X_AXIS;
         }
@@ -409,7 +409,7 @@ JuliafpSetup()
         break;
     case fractal_type::FPJULTRIGPLUSEXP:
     case fractal_type::FPJULTRIGPLUSZSQRD:
-        if (parm.y == 0.0)
+        if (g_param_z1.y == 0.0)
         {
             symmetry = symmetry_type::X_AXIS;
         }
@@ -450,7 +450,7 @@ JuliafpSetup()
                 trigndx[3] == trig_fn::TAN &&
                 fabs(parm2.x - 3.0) < .0001 &&
                 parm2.y == 0 &&
-                parm.y == 0)
+                g_param_z1.y == 0)
         {
             default_functions = true;
             if (fractype == fractal_type::FPPOPCORNJUL)
@@ -529,7 +529,7 @@ MandellongSetup()
     }
     if ((fractype == fractal_type::LMANTRIGPLUSEXP) || (fractype == fractal_type::LMANTRIGPLUSZSQRD))
     {
-        if (parm.y == 0.0)
+        if (g_param_z1.y == 0.0)
         {
             symmetry = symmetry_type::X_AXIS;
         }
@@ -592,7 +592,7 @@ JulialongSetup()
         break;
     case fractal_type::LJULTRIGPLUSEXP:
     case fractal_type::LJULTRIGPLUSZSQRD:
-        if (parm.y == 0.0)
+        if (g_param_z1.y == 0.0)
         {
             symmetry = symmetry_type::X_AXIS;
         }
@@ -616,7 +616,7 @@ JulialongSetup()
                 trigndx[3] == trig_fn::TAN &&
                 fabs(parm2.x - 3.0) < .0001 &&
                 parm2.y == 0 &&
-                parm.y == 0)
+                g_param_z1.y == 0)
         {
             default_functions = true;
             if (fractype == fractal_type::LPOPCORNJUL)
@@ -671,7 +671,7 @@ TrigPlusSqrfpSetup()
 {
     curfractalspecific->per_pixel =  juliafp_per_pixel;
     curfractalspecific->orbitcalc =  TrigPlusSqrfpFractal;
-    if (parm.x == 1.0 && parm.y == 0.0 && parm2.y == 0.0 && g_debug_flag != debug_flags::force_standard_fractal)
+    if (g_param_z1.x == 1.0 && g_param_z1.y == 0.0 && parm2.y == 0.0 && g_debug_flag != debug_flags::force_standard_fractal)
     {
         if (parm2.x == 1.0)          // Scott variant
         {
@@ -719,7 +719,7 @@ TrigPlusTrigfpSetup()
     }
     curfractalspecific->per_pixel =  otherjuliafp_per_pixel;
     curfractalspecific->orbitcalc =  TrigPlusTrigfpFractal;
-    if (parm.x == 1.0 && parm.y == 0.0 && parm2.y == 0.0 && g_debug_flag != debug_flags::force_standard_fractal)
+    if (g_param_z1.x == 1.0 && g_param_z1.y == 0.0 && parm2.y == 0.0 && g_debug_flag != debug_flags::force_standard_fractal)
     {
         if (parm2.x == 1.0)          // Scott variant
         {
@@ -748,7 +748,7 @@ FnPlusFnSym() // set symmetry matrix for fn+fn type
         /* log */ {symmetry_type::X_AXIS,  symmetry_type::X_AXIS,  symmetry_type::X_AXIS,  symmetry_type::X_AXIS,  symmetry_type::X_AXIS, symmetry_type::X_AXIS, symmetry_type::X_AXIS},
         /* sqr */ {symmetry_type::X_AXIS,  symmetry_type::X_AXIS,  symmetry_type::X_AXIS,  symmetry_type::X_AXIS,  symmetry_type::X_AXIS, symmetry_type::X_AXIS, symmetry_type::XY_AXIS}
     };
-    if (parm.y == 0.0 && parm2.y == 0.0)
+    if (g_param_z1.y == 0.0 && parm2.y == 0.0)
     {
         if (trigndx[0] <= trig_fn::SQR && trigndx[1] < trig_fn::SQR)    // bounds of array
         {
@@ -771,7 +771,7 @@ LambdaTrigOrTrigSetup()
 {
     // default symmetry is ORIGIN
     g_long_param = &g_l_param;
-    g_float_param = &parm;
+    g_float_param = &g_param_z1;
     if ((trigndx[0] == trig_fn::EXP) || (trigndx[1] == trig_fn::EXP))
     {
         symmetry = symmetry_type::NONE;
@@ -789,8 +789,8 @@ JuliaTrigOrTrigSetup()
 {
     // default symmetry is X_AXIS
     g_long_param = &g_l_param;
-    g_float_param = &parm;
-    if (parm.y != 0.0)
+    g_float_param = &g_param_z1;
+    if (g_param_z1.y != 0.0)
     {
         symmetry = symmetry_type::NONE;
     }
@@ -904,7 +904,7 @@ ZXTrigPlusZSetup()
     else
     {
         curfractalspecific->orbitcalc =  ZXTrigPlusZfpFractal;
-        if (parm.x == 1.0 && parm.y == 0.0 && parm2.y == 0.0 && g_debug_flag != debug_flags::force_standard_fractal)
+        if (g_param_z1.x == 1.0 && g_param_z1.y == 0.0 && parm2.y == 0.0 && g_debug_flag != debug_flags::force_standard_fractal)
         {
             if (parm2.x == 1.0)       // Scott variant
             {
@@ -1209,7 +1209,7 @@ MarksJuliafpSetup()
         g_params[2] = 1;
     }
     g_c_exponent = (int)g_params[2];
-    g_float_param = &parm;
+    g_float_param = &g_param_z1;
     g_old_z = *g_float_param;
     if (g_c_exponent > 3)
     {
@@ -1271,7 +1271,7 @@ HalleySetup()
 
     curfractalspecific = &fractalspecific[static_cast<int>(fractype)];
 
-    degree = (int)parm.x;
+    degree = (int)g_param_z1.x;
     if (degree < 2)
     {
         degree = 2;
@@ -1288,7 +1288,7 @@ HalleySetup()
         setMPfunctions();
         g_halley_mp_a_plus_one = *pd2MP((double)g_halley_a_plus_one);
         g_halley_mp_a_plus_one_times_degree = *pd2MP((double)g_halley_a_plus_one_times_degree);
-        g_mpc_temp_param.x = *pd2MP(parm.y);
+        g_mpc_temp_param.x = *pd2MP(g_param_z1.y);
         g_mpc_temp_param.y = *pd2MP(parm2.y);
         g_mp_temp_param2_x = *pd2MP(parm2.x);
         g_mp_one        = *pd2MP(1.0);
@@ -1310,7 +1310,7 @@ bool
 PhoenixSetup()
 {
     g_long_param = &g_l_param;
-    g_float_param = &parm;
+    g_float_param = &g_param_z1;
     degree = (int)parm2.x;
     if (degree < 2 && degree > -3)
     {
@@ -1360,7 +1360,7 @@ bool
 PhoenixCplxSetup()
 {
     g_long_param = &g_l_param;
-    g_float_param = &parm;
+    g_float_param = &g_param_z1;
     degree = (int)g_params[4];
     if (degree < 2 && degree > -3)
     {
@@ -1377,7 +1377,7 @@ PhoenixCplxSetup()
         {
             symmetry = symmetry_type::ORIGIN;
         }
-        if (parm.y == 0 && parm2.y == 0)
+        if (g_param_z1.y == 0 && parm2.y == 0)
         {
             symmetry = symmetry_type::X_AXIS;
         }
@@ -1393,7 +1393,7 @@ PhoenixCplxSetup()
     if (degree >= 2)
     {
         degree = degree - 1;
-        if (parm.y == 0 && parm2.y == 0)
+        if (g_param_z1.y == 0 && parm2.y == 0)
         {
             symmetry = symmetry_type::X_AXIS;
         }
@@ -1413,7 +1413,7 @@ PhoenixCplxSetup()
     if (degree <= -3)
     {
         degree = abs(degree) - 2;
-        if (parm.y == 0 && parm2.y == 0)
+        if (g_param_z1.y == 0 && parm2.y == 0)
         {
             symmetry = symmetry_type::X_AXIS;
         }
@@ -1495,7 +1495,7 @@ MandPhoenixCplxSetup()
         degree = 0;
     }
     g_params[4] = (double)degree;
-    if (parm.y != 0 || parm2.y != 0)
+    if (g_param_z1.y != 0 || parm2.y != 0)
     {
         symmetry = symmetry_type::NONE;
     }
@@ -1567,6 +1567,6 @@ VLSetup()
     {
         g_params[1] = 1.0;
     }
-    g_float_param = &parm;
+    g_float_param = &g_param_z1;
     return true;
 }

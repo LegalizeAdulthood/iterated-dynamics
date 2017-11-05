@@ -65,7 +65,7 @@ int test()
                     put_resume(sizeof(row), &row, sizeof(passes), &passes, 0);
                     return (-1);
                 }
-                color = testpt(g_init.x, g_init.y, parm.x, parm.y, g_max_iterations, g_inside_color);
+                color = testpt(g_init.x, g_init.y, g_param_z1.x, g_param_z1.y, g_max_iterations, g_inside_color);
                 if (color >= g_colors)
                 {
                     // avoid trouble if color is 0
@@ -394,11 +394,11 @@ int plasma()
         return (-1);
     }
     iparmx = (int)(g_params[0] * 8);
-    if (parm.x <= 0.0)
+    if (g_param_z1.x <= 0.0)
     {
         iparmx = 0;
     }
-    if (parm.x >= 100)
+    if (g_param_z1.x >= 100)
     {
         iparmx = 800;
     }
@@ -1026,7 +1026,7 @@ int Bifurcation()
         }
     }
 
-    filter_cycles = (parm.x <= 0) ? DEFAULTFILTER : (long)parm.x;
+    filter_cycles = (g_param_z1.x <= 0) ? DEFAULTFILTER : (long)g_param_z1.x;
     half_time_check = false;
     if (periodicitycheck && (unsigned long)g_max_iterations < filter_cycles)
     {
@@ -1094,11 +1094,11 @@ static void verhulst()          // P. F. Verhulst (1845)
 
     if (g_integer_fractal)
     {
-        lPopulation = (parm.y == 0) ? (long)(SEED*g_fudge_factor) : (long)(parm.y*g_fudge_factor);
+        lPopulation = (g_param_z1.y == 0) ? (long)(SEED*g_fudge_factor) : (long)(g_param_z1.y*g_fudge_factor);
     }
     else
     {
-        Population = (parm.y == 0) ? SEED : parm.y;
+        Population = (g_param_z1.y == 0) ? SEED : g_param_z1.y;
     }
 
     g_overflow = false;

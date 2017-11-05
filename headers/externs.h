@@ -370,7 +370,7 @@ extern double                g_evolve_x_parameter_range;
 extern double                g_evolve_y_parameter_range;
 extern double                g_evolve_param_zoom;
 extern DComplex              parm2;
-extern DComplex              parm;
+extern DComplex              g_param_z1;
 extern int                   passes;
 extern int                   g_patch_level;
 extern int                   periodicitycheck;
