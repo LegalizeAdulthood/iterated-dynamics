@@ -654,14 +654,14 @@ resumeloop:                             // return here on failed overlays
             {
                 mms_value = main_menu_switch(&kbdchar, &frommandel, kbdmore, stacked);
             }
-            if (quick_calc && (mms_value == main_state::IMAGE_START ||
+            if (g_quick_calc && (mms_value == main_state::IMAGE_START ||
                                mms_value == main_state::RESTORE_START ||
                                mms_value == main_state::RESTART))
             {
-                quick_calc = false;
+                g_quick_calc = false;
                 usr_stdcalcmode = g_old_std_calc_mode;
             }
-            if (quick_calc && g_calc_status != calc_status_value::COMPLETED)
+            if (g_quick_calc && g_calc_status != calc_status_value::COMPLETED)
             {
                 usr_stdcalcmode = '1';
             }
@@ -774,12 +774,12 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
     static double  jxx3rd, jyy3rd;
     long old_maxit;
 
-    if (quick_calc && g_calc_status == calc_status_value::COMPLETED)
+    if (g_quick_calc && g_calc_status == calc_status_value::COMPLETED)
     {
-        quick_calc = false;
+        g_quick_calc = false;
         usr_stdcalcmode = g_old_std_calc_mode;
     }
-    if (quick_calc && g_calc_status != calc_status_value::COMPLETED)
+    if (g_quick_calc && g_calc_status != calc_status_value::COMPLETED)
     {
         usr_stdcalcmode = g_old_std_calc_mode;
     }
@@ -900,7 +900,7 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
                 i == 1 && // nothing else changed
                 g_outside_color != ATAN)
         {
-            quick_calc = true;
+            g_quick_calc = true;
             g_old_std_calc_mode = usr_stdcalcmode;
             usr_stdcalcmode = '1';
             *kbdmore = false;
@@ -909,7 +909,7 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
         else if (i > 0)
         {
             // time to redraw?
-            quick_calc = false;
+            g_quick_calc = false;
             param_history(0);           // save history
             *kbdmore = false;
             g_calc_status = calc_status_value::PARAMS_CHANGED;

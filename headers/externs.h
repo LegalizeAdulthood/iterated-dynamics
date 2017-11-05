@@ -399,7 +399,7 @@ extern double                g_quaternion_c;
 extern double                g_quaternion_ci;
 extern double                g_quaternion_cj;
 extern double                g_quaternino_ck;
-extern bool                  quick_calc;
+extern bool                  g_quick_calc;
 extern int                   RANDOMIZE;
 extern std::vector<int>      ranges;
 extern int                   rangeslen;

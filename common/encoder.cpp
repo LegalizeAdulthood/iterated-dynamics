@@ -988,7 +988,7 @@ static void setup_save_info(FRACTAL_INFO *save_info)
     save_info->dinvert[2] = g_inversion[2];
     save_info->logcalc = (short) g_log_map_fly_calculate;
     save_info->stoppass = (short) stoppass;
-    save_info->quick_calc = (short) (quick_calc ? 1 : 0);
+    save_info->quick_calc = (short) (g_quick_calc ? 1 : 0);
     save_info->closeprox = g_close_proximity;
     save_info->nobof = (short) (g_bof_match_book_images ? 0 : 1);
     save_info->orbit_interval = g_orbit_interval;

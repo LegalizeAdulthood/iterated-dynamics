@@ -120,7 +120,7 @@ bool use_old_distest = false;
 bool g_old_demm_colors = false;
 int (*calctype)() = nullptr;
 int (*calctypetmp)() = nullptr;
-bool quick_calc = false;
+bool g_quick_calc = false;
 double g_close_proximity = 0.01;
 
 double g_close_enough = 0.0;
@@ -1887,7 +1887,7 @@ static int standard_calc(int passnum)
         while (col <= g_i_x_stop)
         {
             // on 2nd pass of two, skip even pts
-            if (quick_calc && !resuming)
+            if (g_quick_calc && !resuming)
             {
                 g_color = getcolor(col, row);
                 if (g_color != g_inside_color)

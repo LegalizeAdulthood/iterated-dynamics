@@ -357,7 +357,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
 
     if (read_info.version > 12) // post-version 19.60
     {
-        quick_calc   = read_info.quick_calc != 0;
+        g_quick_calc   = read_info.quick_calc != 0;
         g_close_proximity    = read_info.closeprox;
         if (fractype == fractal_type::FPPOPCORN || fractype == fractal_type::LPOPCORN ||
                 fractype == fractal_type::FPPOPCORNJUL || fractype == fractal_type::LPOPCORNJUL ||

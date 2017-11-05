@@ -473,7 +473,7 @@ static void initvars_fractal()          // init vars affecting calculation
     g_max_iterations = 150;                        // initial maxiter
     usr_stdcalcmode = 'g';              // initial solid-guessing
     stoppass = 0;                       // initial guessing stoppass
-    quick_calc = false;
+    g_quick_calc = false;
     g_close_proximity = 0.01;
     g_is_mandelbrot = true;                      // default formula mand/jul toggle
 #ifndef XFRACT
