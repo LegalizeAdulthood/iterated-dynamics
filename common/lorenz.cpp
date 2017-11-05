@@ -683,7 +683,7 @@ Minverse_julia_orbit()
     case Major::breadth_first:
         if (color < mxhits)
         {
-            putcolor(newcol, newrow, color+1);
+            g_put_color(newcol, newrow, color+1);
             EnQueueFloat((float)g_new_z.x, (float)g_new_z.y);
             EnQueueFloat((float)-g_new_z.x, (float)-g_new_z.y);
         }
@@ -691,7 +691,7 @@ Minverse_julia_orbit()
     case Major::depth_first:
         if (color < mxhits)
         {
-            putcolor(newcol, newrow, color+1);
+            g_put_color(newcol, newrow, color+1);
             if (g_inverse_julia_minor_method == Minor::left_first)
             {
                 if (QueueFullAlmost())
@@ -739,13 +739,13 @@ Minverse_julia_orbit()
         }
         if (color < g_colors-1)
         {
-            putcolor(newcol, newrow, color+1);
+            g_put_color(newcol, newrow, color+1);
         }
         break;
     case Major::random_walk:
         if (color < g_colors-1)
         {
-            putcolor(newcol, newrow, color+1);
+            g_put_color(newcol, newrow, color+1);
         }
         g_new_z.x = leftright * g_new_z.x;
         g_new_z.y = leftright * g_new_z.y;
@@ -869,7 +869,7 @@ Linverse_julia_orbit()
     case Major::breadth_first:
         if (color < mxhits)
         {
-            putcolor(newcol, newrow, color+1);
+            g_put_color(newcol, newrow, color+1);
             g_l_new_z = ComplexSqrtLong(g_l_new_z.x - CxLong, g_l_new_z.y - CyLong);
             EnQueueLong(g_l_new_z.x,  g_l_new_z.y);
             EnQueueLong(-g_l_new_z.x, -g_l_new_z.y);
@@ -878,7 +878,7 @@ Linverse_julia_orbit()
     case Major::depth_first:
         if (color < mxhits)
         {
-            putcolor(newcol, newrow, color+1);
+            g_put_color(newcol, newrow, color+1);
             g_l_new_z = ComplexSqrtLong(g_l_new_z.x - CxLong, g_l_new_z.y - CyLong);
             if (g_inverse_julia_minor_method == Minor::left_first)
             {
@@ -912,7 +912,7 @@ Linverse_julia_orbit()
     case Major::random_walk:
         if (color < g_colors-1)
         {
-            putcolor(newcol, newrow, color+1);
+            g_put_color(newcol, newrow, color+1);
         }
         break;
     }
@@ -3191,5 +3191,5 @@ static void plothist(int x, int y, int color)
     {
         color = 1;
     }
-    putcolor(x, y, color);
+    g_put_color(x, y, color);
 }

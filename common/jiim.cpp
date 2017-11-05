@@ -71,7 +71,7 @@ void c_putcolor(int x, int y, int color)
             return;
         }
     }
-    putcolor(x, y, color);
+    g_put_color(x, y, color);
 }
 
 

@@ -1156,7 +1156,7 @@ int starfield()
             {
                 c = g_colors-1;
             }
-            putcolor(col, row, GausianNumber(c, g_colors));
+            g_put_color(col, row, GausianNumber(c, g_colors));
         }
     }
     driver_buzzer(buzzer_codes::COMPLETE);

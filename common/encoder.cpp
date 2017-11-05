@@ -244,8 +244,8 @@ restart:
             for (int i = 0; 250*i < xdots; i++)
             {
                 // clear vert status bars
-                putcolor(i, j, getcolor(i, j) ^ outcolor1);
-                putcolor(xdots - 1 - i, j,
+                g_put_color(i, j, getcolor(i, j) ^ outcolor1);
+                g_put_color(xdots - 1 - i, j,
                          getcolor(xdots - 1 - i, j) ^ outcolor2);
             }
         }
@@ -1236,8 +1236,8 @@ nomatch:
                 {
                     // display vert status bars
                     // (this is NOT GIF-related)
-                    putcolor(i, ydot, getcolor(i, ydot) ^ outcolor1);
-                    putcolor(xdots - 1 - i, ydot,
+                    g_put_color(i, ydot, getcolor(i, ydot) ^ outcolor1);
+                    g_put_color(xdots - 1 - i, ydot,
                              getcolor(xdots - 1 - i, ydot) ^ outcolor2);
                 }
                 last_colorbar = ydot;

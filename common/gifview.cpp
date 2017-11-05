@@ -438,7 +438,7 @@ static bool put_sound_line(int row, int colstart, int colstop, BYTE *pixels)
 {
     for (int col = colstart; col <= colstop; col++)
     {
-        putcolor(col, row, *pixels);
+        g_put_color(col, row, *pixels);
         if (g_orbit_delay > 0)
         {
             sleepms(g_orbit_delay);

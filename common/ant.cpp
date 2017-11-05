@@ -202,9 +202,9 @@ void TurkMite1(int maxtur, int rule_len, char const *ru, long maxpts, long wait)
                     idir = dir[color];
 
                     pixel = getcolor(ix, iy);
-                    putcolor(ix, iy, 15);
+                    g_put_color(ix, iy, 15);
                     sleepms(wait);
-                    putcolor(ix, iy, next_col[pixel]);
+                    g_put_color(ix, iy, next_col[pixel]);
                     idir += rule[pixel];
                     idir &= 3;
                     if (!antwrap)
@@ -231,7 +231,7 @@ void TurkMite1(int maxtur, int rule_len, char const *ru, long maxpts, long wait)
                     iy = y[color];
                     idir = dir[color];
                     pixel = getcolor(ix, iy);
-                    putcolor(ix, iy, next_col[pixel]);
+                    g_put_color(ix, iy, next_col[pixel]);
                     idir += rule[pixel];
                     idir &= 3;
                     if (!antwrap)
@@ -373,7 +373,7 @@ void TurkMite2(int maxtur, int rule_len, char const *ru, long maxpts, long wait)
                 iy = y[color];
                 idir = dir[color];
                 pixel = getcolor(ix, iy);
-                putcolor(ix, iy, 15);
+                g_put_color(ix, iy, 15);
 
                 if (wait > 0 && step == 0)
                 {
@@ -384,13 +384,13 @@ void TurkMite2(int maxtur, int rule_len, char const *ru, long maxpts, long wait)
                 {
                     // turn right
                     idir--;
-                    putcolor(ix, iy, 0);
+                    g_put_color(ix, iy, 0);
                 }
                 else
                 {
                     // turn left
                     idir++;
-                    putcolor(ix, iy, color);
+                    g_put_color(ix, iy, color);
                 }
                 idir &= 3;
                 if (!antwrap)

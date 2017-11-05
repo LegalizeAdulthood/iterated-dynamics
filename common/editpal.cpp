@@ -202,7 +202,7 @@ void clip_putcolor(int x, int y, int color)
         return ;
     }
 
-    putcolor(x, y, color);
+    g_put_color(x, y, color);
 }
 
 
@@ -456,11 +456,11 @@ static bool is_in_box(int x, int y, int bx, int by, int bw, int bd)
 
 static void draw_diamond(int x, int y, int color)
 {
-    putcolor(x+2, y+0,    color);
+    g_put_color(x+2, y+0,    color);
     hline(x+1, y+1, 3, color);
     hline(x+0, y+2, 5, color);
     hline(x+1, y+3, 3, color);
-    putcolor(x+2, y+4,    color);
+    g_put_color(x+2, y+4,    color);
 }
 
 
@@ -3182,7 +3182,7 @@ void EditPalette()
         return; // prevents crash when physical screen is too small
     }
 
-    g_plot = putcolor;
+    g_plot = g_put_color;
 
     g_line_buff.resize(std::max(sxdots, sydots));
 

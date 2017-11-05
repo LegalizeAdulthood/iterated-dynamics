@@ -71,11 +71,11 @@ void dispbox()
         {
             if (g_colors == 2)
             {
-                putcolor(g_box_x[i]-sxoffs, g_box_y[i]-syoffs, (1 - g_box_values[i]));
+                g_put_color(g_box_x[i]-sxoffs, g_box_y[i]-syoffs, (1 - g_box_values[i]));
             }
             else
             {
-                putcolor(g_box_x[i]-sxoffs, g_box_y[i]-syoffs, boxc);
+                g_put_color(g_box_x[i]-sxoffs, g_box_y[i]-syoffs, boxc);
             }
         }
 }
@@ -90,7 +90,7 @@ void clearbox()
     {
         for (int i = 0; i < g_box_count; i++)
         {
-            putcolor(g_box_x[i]-sxoffs, g_box_y[i]-syoffs, g_box_values[i]);
+            g_put_color(g_box_x[i]-sxoffs, g_box_y[i]-syoffs, g_box_values[i]);
         }
     }
 }

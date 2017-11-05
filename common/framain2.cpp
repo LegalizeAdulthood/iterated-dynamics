@@ -2278,13 +2278,13 @@ int cmp_line(BYTE *pixels, int linelen)
         oldcolor = getcolor(col, row);
         if (oldcolor == (int)pixels[col])
         {
-            putcolor(col, row, 0);
+            g_put_color(col, row, 0);
         }
         else
         {
             if (oldcolor == 0)
             {
-                putcolor(col, row, 1);
+                g_put_color(col, row, 1);
             }
             ++errcount;
             if (g_init_batch == batch_modes::NONE)

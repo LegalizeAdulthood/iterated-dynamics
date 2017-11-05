@@ -1671,11 +1671,11 @@ static void plotdorbit(double dx, double dy, int color)
         save_orbit[g_orbit_save_index++] = j;
         int const c = getcolor(i, j);
         save_orbit[g_orbit_save_index++] = c;
-        putcolor(i, j, c^g_orbit_color);
+        g_put_color(i, j, c^g_orbit_color);
     }
     else
     {
-        putcolor(i, j, color);
+        g_put_color(i, j, color);
     }
     sxoffs = save_sxoffs;
     syoffs = save_syoffs;
@@ -1741,7 +1741,7 @@ void scrub_orbit()
         c = save_orbit[--g_orbit_save_index];
         j = save_orbit[--g_orbit_save_index];
         i = save_orbit[--g_orbit_save_index];
-        putcolor(i, j, c);
+        g_put_color(i, j, c);
     }
     sxoffs = save_sxoffs;
     syoffs = save_syoffs;
