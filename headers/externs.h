@@ -205,7 +205,7 @@ extern std::string const     g_gray_map_file;
 extern bool                  g_has_inverse;
 extern int                   g_haze;
 extern unsigned int          g_height;
-extern float                 g_height_fp;
+extern float                 g_julibrot_height_fp;
 extern int                   g_help_mode;
 extern int                   g_hi_attenuation;
 extern std::string           g_ifs_filename;

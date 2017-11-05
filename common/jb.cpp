@@ -45,7 +45,7 @@ static double fg, fg16;
 int zdots = 128;
 
 float g_julibrot_origin_fp  = 8.0F;
-float g_height_fp  = 7.0F;
+float g_julibrot_height_fp  = 7.0F;
 float widthfp   = 10.0F;
 float g_dist_fp    = 24.0F;
 float g_eyes_fp    = 2.5F;
@@ -79,9 +79,9 @@ JulibrotSetup()
     dmyfp = (g_julibrot_y_max - g_julibrot_y_min) / zdots;
     g_float_param = &jbcfp;
     x_per_inchfp = (xxmin - xxmax) / widthfp;
-    y_per_inchfp = (yymax - yymin) / g_height_fp;
+    y_per_inchfp = (yymax - yymin) / g_julibrot_height_fp;
     inch_per_xdotfp = widthfp / xdots;
-    inch_per_ydotfp = g_height_fp / ydots;
+    inch_per_ydotfp = g_julibrot_height_fp / ydots;
     initzfp = g_julibrot_origin_fp - (g_julibrot_depth_fp / 2);
     if (g_julibrot_3d_mode == 0)
     {
@@ -135,9 +135,9 @@ JulibrotSetup()
         g_long_param = &jbc;
 
         x_per_inch = (long)((xxmin - xxmax) / widthfp * fg);
-        y_per_inch = (long)((yymax - yymin) / g_height_fp * fg);
+        y_per_inch = (long)((yymax - yymin) / g_julibrot_height_fp * fg);
         inch_per_xdot = (long)((widthfp / xdots) * fg16);
-        inch_per_ydot = (long)((g_height_fp / ydots) * fg16);
+        inch_per_ydot = (long)((g_julibrot_height_fp / ydots) * fg16);
         initz = origin - (depth / 2);
         if (g_julibrot_3d_mode == 0)
         {

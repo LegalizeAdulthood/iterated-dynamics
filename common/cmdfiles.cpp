@@ -567,7 +567,7 @@ static void initvars_fractal()          // init vars affecting calculation
     g_julibrot_x_max = -.83;
     g_julibrot_y_max =  .25;
     g_julibrot_origin_fp = 8;
-    g_height_fp = 7;
+    g_julibrot_height_fp = 7;
     widthfp = 10;
     g_dist_fp = 24;
     g_eyes_fp = 2.5F;
@@ -2029,7 +2029,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         }
         if (totparms > 3)
         {
-            g_height_fp = (float)floatval[3];
+            g_julibrot_height_fp = (float)floatval[3];
         }
         if (totparms > 4)
         {
