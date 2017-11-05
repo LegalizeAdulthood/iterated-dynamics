@@ -898,7 +898,7 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
                 // tesseral with fill doesn't work
                 !(usr_stdcalcmode == 'o') &&
                 i == 1 && // nothing else changed
-                outside != ATAN)
+                g_outside_color != ATAN)
         {
             quick_calc = true;
             g_old_std_calc_mode = usr_stdcalcmode;
@@ -2428,7 +2428,7 @@ static void save_history_info()
     current.yadjust              = (short)yadjust                   ;
     current.eyeseparation        = (short)g_eye_separation             ;
     current.glassestype          = (short)g_glasses_type               ;
-    current.outside              = (short)outside                   ;
+    current.outside              = (short)g_outside_color                   ;
     current.x3rd                 = xx3rd                     ;
     current.y3rd                 = yy3rd                     ;
     current.stdcalcmode          = usr_stdcalcmode               ;
@@ -2609,7 +2609,7 @@ static void restore_history_info(int i)
     yadjust               = last.yadjust        ;
     g_eye_separation      = last.eyeseparation  ;
     g_glasses_type        = last.glassestype    ;
-    outside               = last.outside        ;
+    g_outside_color               = last.outside        ;
     xx3rd                 = last.x3rd           ;
     yy3rd                 = last.y3rd           ;
     usr_stdcalcmode       = last.stdcalcmode    ;

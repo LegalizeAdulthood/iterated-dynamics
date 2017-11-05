@@ -24,7 +24,7 @@ MandelSetup()           // Mandelbrot Routine
     if (g_debug_flag != debug_flags::force_standard_fractal
             && (g_invert == 0) && g_decomp[0] == 0 && rqlim == 4.0
             && bitshift == 29 && !potflag
-            && g_biomorph == -1 && g_inside_color > ZMAG && outside >= ITER
+            && g_biomorph == -1 && g_inside_color > ZMAG && g_outside_color >= ITER
             && useinitorbit != 1 && !using_jiim && g_bail_out_test == bailouts::Mod
             && (g_orbit_save_flags & osf_midi) == 0)
     {
@@ -45,7 +45,7 @@ JuliaSetup()            // Julia Routine
     if (g_debug_flag != debug_flags::force_standard_fractal
             && (g_invert == 0) && g_decomp[0] == 0 && rqlim == 4.0
             && bitshift == 29 && !potflag
-            && g_biomorph == -1 && g_inside_color > ZMAG && outside >= ITER
+            && g_biomorph == -1 && g_inside_color > ZMAG && g_outside_color >= ITER
             && !g_finite_attractor && !using_jiim && g_bail_out_test == bailouts::Mod
             && (g_orbit_save_flags & osf_midi) == 0)
     {
@@ -230,7 +230,7 @@ MandelfpSetup()
                 && g_decomp[0] == 0
                 && g_biomorph == -1
                 && (g_inside_color >= ITER)
-                && outside >= ATAN
+                && g_outside_color >= ATAN
                 && useinitorbit != 1
                 && (soundflag & SOUNDFLAG_ORBITMASK) < SOUNDFLAG_X
                 && !using_jiim && g_bail_out_test == bailouts::Mod
@@ -355,7 +355,7 @@ JuliafpSetup()
                 && g_decomp[0] == 0
                 && g_biomorph == -1
                 && (g_inside_color >= ITER)
-                && outside >= ATAN
+                && g_outside_color >= ATAN
                 && useinitorbit != 1
                 && (soundflag & SOUNDFLAG_ORBITMASK) < SOUNDFLAG_X
                 && !g_finite_attractor

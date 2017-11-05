@@ -155,7 +155,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
     if (read_info.version > 2)
     {
         save_release = 1300;
-        outside      = read_info.outside;
+        g_outside_color      = read_info.outside;
     }
 
     g_calc_status = calc_status_value::PARAMS_CHANGED;       // defaults if version < 4
@@ -305,8 +305,8 @@ int read_overlay()      // read overlay/3D files, if reqr'd
     {
         /* forcesymmetry==1000 means we want to force symmetry but don't
             know which symmetry yet, will find out in setsymmetry() */
-        if (outside == REAL || outside == IMAG || outside == MULT || outside == SUM
-                || outside == ATAN)
+        if (g_outside_color == REAL || g_outside_color == IMAG || g_outside_color == MULT || g_outside_color == SUM
+                || g_outside_color == ATAN)
         {
             if (g_force_symmetry == symmetry_type::NOT_FORCED)
             {
@@ -1225,7 +1225,7 @@ void backwards_v20()
     // Fractype == FP type is not seen from PAR file ?????
     g_bad_outside = (fractype == fractal_type::MANDELFP || fractype == fractal_type::JULIAFP ||
             fractype == fractal_type::MANDEL || fractype == fractal_type::JULIA) &&
-            (outside <= REAL && outside >= SUM) && save_release <= 1960;
+            (g_outside_color <= REAL && g_outside_color >= SUM) && save_release <= 1960;
     g_ld_check = (fractype == fractal_type::FORMULA || fractype == fractal_type::FFORMULA) &&
             (save_release < 1900 || g_debug_flag == debug_flags::force_ld_check);
     if (g_inside_color == EPSCROSS && save_release < 1961)
@@ -1255,14 +1255,14 @@ bool check_back()
             (g_inside_color == STARTRAIL && save_release < 1825) ||
             (g_max_iterations > 32767 && save_release <= 1950) ||
             (g_distance_estimator && save_release <=1950) ||
-            ((outside <= REAL && outside >= ATAN) &&
+            ((g_outside_color <= REAL && g_outside_color >= ATAN) &&
              save_release <= 1960) ||
             (fractype == fractal_type::FPPOPCORN && save_release <= 1960) ||
             (fractype == fractal_type::LPOPCORN && save_release <= 1960) ||
             (fractype == fractal_type::FPPOPCORNJUL && save_release <= 1960) ||
             (fractype == fractal_type::LPOPCORNJUL && save_release <= 1960) ||
             (g_inside_color == FMODI && save_release <= 2000) ||
-            ((g_inside_color == ATANI || outside == ATAN) && save_release <= 2002) ||
+            ((g_inside_color == ATANI || g_outside_color == ATAN) && save_release <= 2002) ||
             (fractype == fractal_type::LAMBDATRIGFP && trigndx[0] == trig_fn::EXP && save_release <= 2002) ||
             ((fractype == fractal_type::JULIBROT || fractype == fractal_type::JULIBROTFP) &&
              (g_new_orbit_type == fractal_type::QUATFP || g_new_orbit_type == fractal_type::HYPERCMPLXFP) &&

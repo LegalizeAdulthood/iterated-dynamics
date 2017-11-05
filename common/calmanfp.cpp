@@ -187,7 +187,7 @@ pop_stack:
     return g_color_iter;
 
 over_bailout_87:
-    if (outside <= REAL)
+    if (g_outside_color <= REAL)
     {
         g_new_z.x = x;
         g_new_z.y = y;
@@ -207,38 +207,38 @@ over_bailout_87:
         g_color_iter = 1;
     }
     g_keyboard_check_interval -= realcoloriter;
-    if (outside == ITER)
+    if (g_outside_color == ITER)
     {
     }
-    else if (outside > REAL)
+    else if (g_outside_color > REAL)
     {
-        g_color_iter = outside;
+        g_color_iter = g_outside_color;
     }
     else
     {
         // special_outside
-        if (outside == REAL)
+        if (g_outside_color == REAL)
         {
             g_color_iter += (long) g_new_z.x + 7;
         }
-        else if (outside == IMAG)
+        else if (g_outside_color == IMAG)
         {
             g_color_iter += (long) g_new_z.y + 7;
         }
-        else if (outside == MULT && g_new_z.y != 0.0)
+        else if (g_outside_color == MULT && g_new_z.y != 0.0)
         {
             g_color_iter = (long)((double) g_color_iter * (g_new_z.x/g_new_z.y));
         }
-        else if (outside == SUM)
+        else if (g_outside_color == SUM)
         {
             g_color_iter += (long)(g_new_z.x + g_new_z.y);
         }
-        else if (outside == ATAN)
+        else if (g_outside_color == ATAN)
         {
             g_color_iter = (long) fabs(atan2(g_new_z.y, g_new_z.x)*atan_colors/PI);
         }
         // check_color
-        if ((g_color_iter <= 0 || g_color_iter > g_max_iterations) && outside != FMOD)
+        if ((g_color_iter <= 0 || g_color_iter > g_max_iterations) && g_outside_color != FMOD)
         {
             if (save_release < 1961)
             {

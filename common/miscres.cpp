@@ -1325,7 +1325,7 @@ static void area()
             }
         }
     }
-    if (g_inside_color > COLOR_BLACK && outside < COLOR_BLACK && g_max_iterations > g_inside_color)
+    if (g_inside_color > COLOR_BLACK && g_outside_color < COLOR_BLACK && g_max_iterations > g_inside_color)
     {
         msg = "Warning: inside may not be unique\n";
     }

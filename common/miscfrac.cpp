@@ -135,7 +135,7 @@ void putpotborder(int x, int y, U16 color)
 {
     if ((x == 0) || (y == 0) || (x == xdots-1) || (y == ydots-1))
     {
-        color = (U16)outside;
+        color = (U16)g_outside_color;
     }
     putpot(x, y, color);
 }
@@ -145,7 +145,7 @@ void putcolorborder(int x, int y, int color)
 {
     if ((x == 0) || (y == 0) || (x == xdots-1) || (y == ydots-1))
     {
-        color = outside;
+        color = g_outside_color;
     }
     if (color < 1)
     {
@@ -443,7 +443,7 @@ int plasma()
         if (pot_startdisk() >= 0)
         {
             max_plasma = 0xFFFF;
-            if (outside >= COLOR_BLACK)
+            if (g_outside_color >= COLOR_BLACK)
             {
                 plot    = (PLOT)putpotborder;
             }
@@ -459,7 +459,7 @@ int plasma()
         {
             max_plasma = 0;        // can't do potential (startdisk failed)
             param[3]   = 0;
-            if (outside >= COLOR_BLACK)
+            if (g_outside_color >= COLOR_BLACK)
             {
                 plot    = putcolorborder;
             }
@@ -472,7 +472,7 @@ int plasma()
     }
     else
     {
-        if (outside >= COLOR_BLACK)
+        if (g_outside_color >= COLOR_BLACK)
         {
             plot    = putcolorborder;
         }

@@ -2237,7 +2237,7 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
 
     attracted = false;
 
-    if (outside == TDIS)
+    if (g_outside_color == TDIS)
     {
         if (g_integer_fractal)
         {
@@ -2481,7 +2481,7 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
             }
         }
 
-        if (outside == TDIS || outside == FMOD)
+        if (g_outside_color == TDIS || g_outside_color == FMOD)
         {
             if (bf_math == bf_math_type::BIGNUM)
             {
@@ -2491,7 +2491,7 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
             {
                 g_new_z = cmplxbftofloat(&bfnew);
             }
-            if (outside == TDIS)
+            if (g_outside_color == TDIS)
             {
                 if (g_integer_fractal)
                 {
@@ -2502,7 +2502,7 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
                 lastz.x = g_new_z.x;
                 lastz.y = g_new_z.y;
             }
-            else if (outside == FMOD)
+            else if (g_outside_color == FMOD)
             {
                 double mag;
                 if (g_integer_fractal)
@@ -2744,7 +2744,7 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
     }
 
 
-    if (outside < ITER)
+    if (g_outside_color < ITER)
     {
         if (g_integer_fractal)
         {
@@ -2757,38 +2757,38 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
             g_new_z.y = (double)bntofloat(bnnew.y);
         }
         // Add 7 to overcome negative values on the MANDEL
-        if (outside == REAL)                 // "real"
+        if (g_outside_color == REAL)                 // "real"
         {
             g_color_iter += (long)g_new_z.x + 7;
         }
-        else if (outside == IMAG)              // "imag"
+        else if (g_outside_color == IMAG)              // "imag"
         {
             g_color_iter += (long)g_new_z.y + 7;
         }
-        else if (outside == MULT  && g_new_z.y)      // "mult"
+        else if (g_outside_color == MULT  && g_new_z.y)      // "mult"
         {
             g_color_iter = (long)((double)g_color_iter * (g_new_z.x/g_new_z.y));
         }
-        else if (outside == SUM)               // "sum"
+        else if (g_outside_color == SUM)               // "sum"
         {
             g_color_iter += (long)(g_new_z.x + g_new_z.y);
         }
-        else if (outside == ATAN)              // "atan"
+        else if (g_outside_color == ATAN)              // "atan"
         {
             g_color_iter = (long)fabs(atan2(g_new_z.y, g_new_z.x)*atan_colors/PI);
         }
-        else if (outside == FMOD)
+        else if (g_outside_color == FMOD)
         {
             g_color_iter = (long)(memvalue * g_colors / g_close_proximity);
         }
-        else if (outside == TDIS)
+        else if (g_outside_color == TDIS)
         {
             g_color_iter = (long)(totaldist);
         }
 
 
         // eliminate negative colors & wrap arounds
-        if ((g_color_iter <= 0 || g_color_iter > g_max_iterations) && outside != FMOD)
+        if ((g_color_iter <= 0 || g_color_iter > g_max_iterations) && g_outside_color != FMOD)
         {
             if (save_release < 1961)
             {
@@ -2873,9 +2873,9 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
         }
     }
 
-    if (outside >= COLOR_BLACK && !attracted)       // merge escape-time stripes
+    if (g_outside_color >= COLOR_BLACK && !attracted)       // merge escape-time stripes
     {
-        g_color_iter = outside;
+        g_color_iter = g_outside_color;
     }
     else if (!g_log_map_table.empty() || g_log_map_calculate)
     {
@@ -3464,7 +3464,7 @@ int  bound_trace_main()
     int trail_color, fillcolor_used, last_fillcolor_used = -1;
     int max_putline_length;
     int right, left, length;
-    if (g_inside_color == COLOR_BLACK || outside == COLOR_BLACK)
+    if (g_inside_color == COLOR_BLACK || g_outside_color == COLOR_BLACK)
     {
         stopmsg(STOPMSG_NONE, "Boundary tracing cannot be used with inside=0 or outside=0");
         return -1;
@@ -4450,12 +4450,12 @@ static void setsymmetry(symmetry_type sym, bool uselist) // set up proper symmet
     {
         g_force_symmetry = sym;  // for backwards compatibility
     }
-    else if (outside == REAL || outside == IMAG || outside == MULT || outside == SUM
-             || outside == ATAN || g_bail_out_test == bailouts::Manr || outside == FMOD)
+    else if (g_outside_color == REAL || g_outside_color == IMAG || g_outside_color == MULT || g_outside_color == SUM
+             || g_outside_color == ATAN || g_bail_out_test == bailouts::Manr || g_outside_color == FMOD)
     {
         return;
     }
-    else if (g_inside_color == FMODI || outside == TDIS)
+    else if (g_inside_color == FMODI || g_outside_color == TDIS)
     {
         return;
     }

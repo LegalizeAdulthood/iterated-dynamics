@@ -101,9 +101,9 @@ void make_batch_file()
         {
             maxcolor = g_inside_color;
         }
-        if (outside > COLOR_BLACK && outside > maxcolor)
+        if (g_outside_color > COLOR_BLACK && g_outside_color > maxcolor)
         {
-            maxcolor = outside;
+            maxcolor = g_outside_color;
         }
         if (g_distance_estimator < COLOR_BLACK && -g_distance_estimator > maxcolor)
         {
@@ -942,44 +942,44 @@ void write_batch_parms(char const *colorinf, bool colorsonly, int maxcolor, int 
             }
         }
         if (g_close_proximity != 0.01 && (g_inside_color == EPSCROSS || g_inside_color == FMODI
-                                  || outside == FMOD))
+                                  || g_outside_color == FMOD))
         {
             put_parm(" %s=%.15g", "proximity", g_close_proximity);
         }
-        if (outside != ITER)
+        if (g_outside_color != ITER)
         {
             put_parm(" %s=", "outside");
-            if (outside == REAL)
+            if (g_outside_color == REAL)
             {
                 put_parm("real");
             }
-            else if (outside == IMAG)
+            else if (g_outside_color == IMAG)
             {
                 put_parm("imag");
             }
-            else if (outside == MULT)
+            else if (g_outside_color == MULT)
             {
                 put_parm("mult");
             }
-            else if (outside == SUM)
+            else if (g_outside_color == SUM)
             {
                 put_parm("summ");
             }
-            else if (outside == ATAN)
+            else if (g_outside_color == ATAN)
             {
                 put_parm("atan");
             }
-            else if (outside == FMOD)
+            else if (g_outside_color == FMOD)
             {
                 put_parm("fmod");
             }
-            else if (outside == TDIS)
+            else if (g_outside_color == TDIS)
             {
                 put_parm("tdis");
             }
             else
             {
-                put_parm("%d", outside);
+                put_parm("%d", g_outside_color);
             }
         }
 

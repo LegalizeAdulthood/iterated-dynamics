@@ -89,7 +89,7 @@ bool    timerflag = false;      // you didn't see this, either
 int     g_cycle_limit = 0;         // color-rotator upper limit
 int     g_inside_color = 0;             // inside color: 1=blue
 int     g_fill_color = 0;          // fillcolor: -1=normal
-int     outside = COLOR_BLACK;  // outside color
+int     g_outside_color = COLOR_BLACK;  // outside color
 bool g_finite_attractor = false;        // finite attractor logic
 display_3d_modes g_display_3d = display_3d_modes::NONE; // 3D display flag: 0 = OFF
 bool    overlay_3d = false;      // 3D overlay flag
@@ -469,7 +469,7 @@ static void initvars_fractal()          // init vars affecting calculation
     g_inside_color = 1;                         // inside color = blue
     g_fill_color = -1;                     // no special fill color
     usr_biomorph = -1;                  // turn off biomorph flag
-    outside = ITER;                     // outside color = -1 (not used)
+    g_outside_color = ITER;                     // outside color = -1 (not used)
     g_max_iterations = 150;                        // initial maxiter
     usr_stdcalcmode = 'g';              // initial solid-guessing
     stoppass = 0;                       // initial guessing stoppass
@@ -1588,7 +1588,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         {
             if (strcmp(value, arg.arg) == 0)
             {
-                outside = arg.outside;
+                g_outside_color = arg.outside;
                 return CMDARG_FRACTAL_PARAM;
             }
         }
@@ -1596,7 +1596,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         {
             goto badarg;
         }
-        outside = numval;
+        g_outside_color = numval;
         return CMDARG_FRACTAL_PARAM;
     }
 

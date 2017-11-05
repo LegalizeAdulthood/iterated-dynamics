@@ -1966,7 +1966,7 @@ bool dynam2dfloatsetup()
             dt = 0.01;
         }
     }
-    if (outside == SUM)
+    if (g_outside_color == SUM)
     {
         plot = plothist;
     }
@@ -2229,7 +2229,7 @@ int plotorbits2dsetup()
 
     o_color = 1;
 
-    if (outside == SUM)
+    if (g_outside_color == SUM)
     {
         plot = plothist;
     }

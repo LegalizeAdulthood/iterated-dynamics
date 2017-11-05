@@ -905,7 +905,7 @@ static void setup_save_info(FRACTAL_INFO *save_info)
     save_info->yadjust = (short) yadjust;
     save_info->eyeseparation = (short) g_eye_separation;
     save_info->glassestype = (short) g_glasses_type;
-    save_info->outside = (short) outside;
+    save_info->outside = (short) g_outside_color;
     save_info->x3rd = xx3rd;
     save_info->y3rd = yy3rd;
     save_info->calc_status = (short) g_calc_status;

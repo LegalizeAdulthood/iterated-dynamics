@@ -429,7 +429,7 @@ init_restart:
                 && (g_invert == 0)                        // and not inverting
                 && g_biomorph == -1                     // and not biomorphing
                 && rqlim <= 4.0                         // and bailout not too high
-                && (outside > REAL || outside < ATAN)   // and no funny outside stuff
+                && (g_outside_color > REAL || g_outside_color < ATAN)   // and no funny outside stuff
                 && g_debug_flag != debug_flags::force_smaller_bitshift // and not debugging
                 && g_close_proximity <= 2.0             // and g_close_proximity not too large
                 && g_bail_out_test == bailouts::Mod)    // and bailout test = mod

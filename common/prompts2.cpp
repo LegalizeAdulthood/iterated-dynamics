@@ -194,9 +194,9 @@ int get_toggles()
 
     choices[++k] = "Outside Color (0-# of colors, if Outside=numb)";
     uvalues[k].type = 'i';
-    if (outside >= COLOR_BLACK)
+    if (g_outside_color >= COLOR_BLACK)
     {
-        uvalues[k].uval.ival = outside;
+        uvalues[k].uval.ival = g_outside_color;
     }
     else
     {
@@ -208,15 +208,15 @@ int get_toggles()
     uvalues[k].uval.ch.vlen = 4;
     uvalues[k].uval.ch.llen = sizeof(outsidemodes)/sizeof(*outsidemodes);
     uvalues[k].uval.ch.list = outsidemodes;
-    if (outside >= COLOR_BLACK)    // numb
+    if (g_outside_color >= COLOR_BLACK)    // numb
     {
         uvalues[k].uval.ch.val = 0;
     }
     else
     {
-        uvalues[k].uval.ch.val = -outside;
+        uvalues[k].uval.ch.val = -g_outside_color;
     }
-    old_outside = outside;
+    old_outside = g_outside_color;
 
     choices[++k] = "Savename (.GIF implied)";
     uvalues[k].type = 's';
@@ -393,14 +393,14 @@ int get_toggles()
         j++;
     }
 
-    outside = uvalues[++k].uval.ival;
-    if (outside < COLOR_BLACK)
+    g_outside_color = uvalues[++k].uval.ival;
+    if (g_outside_color < COLOR_BLACK)
     {
-        outside = -outside;
+        g_outside_color = -g_outside_color;
     }
-    if (outside >= g_colors)
+    if (g_outside_color >= g_colors)
     {
-        outside = (outside % g_colors) + (outside / g_colors);
+        g_outside_color = (g_outside_color % g_colors) + (g_outside_color / g_colors);
     }
 
     {
@@ -408,10 +408,10 @@ int get_toggles()
         tmp = uvalues[++k].uval.ch.val;
         if (tmp > 0)
         {
-            outside = -tmp;
+            g_outside_color = -tmp;
         }
     }
-    if (outside != old_outside)
+    if (g_outside_color != old_outside)
     {
         j++;
     }

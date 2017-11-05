@@ -355,7 +355,7 @@ extern bool                  g_organize_formulas_search;
 extern float                 g_julibrot_origin_fp;
 extern int                 (*g_out_line)(BYTE *, int);
 extern void                (*g_out_line_cleanup)();
-extern int                   outside;
+extern int                   g_outside_color;
 extern bool                  overflow;
 extern bool overlay_3d;
 extern bool                  fract_overwrite;
