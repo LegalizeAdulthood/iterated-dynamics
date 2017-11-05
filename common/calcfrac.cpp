@@ -124,7 +124,7 @@ bool quick_calc = false;
 double g_close_proximity = 0.01;
 
 double g_close_enough = 0.0;
-int pixelpi = 0;                        // value of pi in pixels
+int g_pi_in_pixels = 0;                        // value of pi in pixels
 unsigned long lm = 0;                   // magnitude limit (CALCMAND)
 
 // ORBIT variables
@@ -4700,14 +4700,14 @@ originsym:
         {
             sub_bf(bft1, bfxmax, bfxmin);
             abs_a_bf(bft1);
-            pixelpi = (int)((PI/(double)bftofloat(bft1)*xdots)); // PI in pixels
+            g_pi_in_pixels = (int)((PI/(double)bftofloat(bft1)*xdots)); // PI in pixels
         }
         else
         {
-            pixelpi = (int)((PI/fabs(xxmax-xxmin))*xdots); // PI in pixels
+            g_pi_in_pixels = (int)((PI/fabs(xxmax-xxmin))*xdots); // PI in pixels
         }
 
-        g_i_x_stop = xxstart+pixelpi-1;
+        g_i_x_stop = xxstart+g_pi_in_pixels-1;
         if (g_i_x_stop > xxstop)
         {
             g_i_x_stop = xxstop;
@@ -5254,7 +5254,7 @@ void symPIplot(int x, int y, int color)
     while (x <= xxstop)
     {
         putcolor(x, y, color) ;
-        x += pixelpi;
+        x += g_pi_in_pixels;
     }
 }
 // Symmetry plot for period PI plus Origin Symmetry
@@ -5270,7 +5270,7 @@ void symPIplot2J(int x, int y, int color)
         {
             putcolor(j, i, color) ;
         }
-        x += pixelpi;
+        x += g_pi_in_pixels;
     }
 }
 // Symmetry plot for period PI plus Both Axis Symmetry
@@ -5294,7 +5294,7 @@ void symPIplot4J(int x, int y, int color)
                 putcolor(j , i , color) ;
             }
         }
-        x += pixelpi;
+        x += g_pi_in_pixels;
     }
 }
 
