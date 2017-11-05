@@ -807,7 +807,7 @@ bool tab_display_2(char *msg)
     write_row(row++, "%dx%d dm=%d %s (%s)", g_logical_screen_x_dots, g_logical_screen_y_dots, g_dot_mode,
               g_driver->name, g_driver->description);
     write_row(row++, "xxstart %d xxstop %d yystart %d yystop %d %s uses_ismand %d",
-              xxstart, xxstop, yystart, yystop,
+              g_xx_start, xxstop, yystart, yystop,
 #if !defined(XFRACT) && !defined(_WIN32)
               curfractalspecific->orbitcalc == fFormula ? "fast parser" :
 #endif
@@ -1062,7 +1062,7 @@ top:
         else if (g_got_status != 3)
         {
             sprintf(msg, "Working on block (y, x) [%d, %d]...[%d, %d], ",
-                    yystart, xxstart, yystop, xxstop);
+                    yystart, g_xx_start, yystop, xxstop);
             driver_put_string(s_row, 2, C_GENERAL_MED, msg);
             if (g_got_status == 2 || g_got_status == 4)  // btm or tesseral
             {
