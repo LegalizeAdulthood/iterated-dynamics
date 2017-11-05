@@ -36,7 +36,7 @@ char g_old_std_calc_mode;
 static  int        historyptr = -1;     // user pointer into history tbl
 static  int        saveptr = 0;         // save ptr into history tbl
 static bool historyflag = false;        // are we backing off in history?
-void (*outln_cleanup)();
+void (*g_out_line_cleanup)();
 bool g_virtual_screens = false;
 
 main_state big_while_loop(bool *const kbdmore, bool *const stacked, bool const resumeflag)
@@ -239,7 +239,7 @@ main_state big_while_loop(bool *const kbdmore, bool *const stacked, bool const r
         if (show_file == 0)
         {
             // loading an image
-            outln_cleanup = nullptr;          // outln routine can set this
+            g_out_line_cleanup = nullptr;          // outln routine can set this
             if (g_display_3d != display_3d_modes::NONE)                 // set up 3D decoding
             {
                 g_out_line = call_line3d;
@@ -280,9 +280,9 @@ main_state big_while_loop(bool *const kbdmore, bool *const stacked, bool const r
                 stopmsg(STOPMSG_NO_BUZZER, msg);
             }
             i = funny_glasses_call(gifview);
-            if (outln_cleanup)              // cleanup routine defined?
+            if (g_out_line_cleanup)              // cleanup routine defined?
             {
-                (*outln_cleanup)();
+                (*g_out_line_cleanup)();
             }
             if (i == 0)
             {
@@ -2262,7 +2262,7 @@ int cmp_line(BYTE *pixels, int linelen)
     {
         errcount = 0;
         cmp_fp = dir_fopen(workdir.c_str(), "cmperr", (g_init_batch != batch_modes::NONE) ? "a" : "w");
-        outln_cleanup = cmp_line_cleanup;
+        g_out_line_cleanup = cmp_line_cleanup;
     }
     if (pot16bit)
     {

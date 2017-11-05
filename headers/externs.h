@@ -354,7 +354,7 @@ extern std::string           g_organize_formulas_dir;
 extern bool                  g_organize_formulas_search;
 extern float                 g_julibrot_origin_fp;
 extern int                 (*g_out_line)(BYTE *, int);
-extern void                (*outln_cleanup)();
+extern void                (*g_out_line_cleanup)();
 extern int                   outside;
 extern bool                  overflow;
 extern bool overlay_3d;

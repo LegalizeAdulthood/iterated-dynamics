@@ -2412,7 +2412,7 @@ static int first_time(int linelen, VECTOR v)
     float theta, theta1, theta2; // current,start,stop latitude
     float phi1, phi2;            // current start,stop longitude
     float deltatheta;            // increment of latitude
-    outln_cleanup = line3d_cleanup;
+    g_out_line_cleanup = line3d_cleanup;
 
     evenoddrow = 0;
     g_calc_time = evenoddrow;
