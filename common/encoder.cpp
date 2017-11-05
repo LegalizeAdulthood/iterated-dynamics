@@ -801,7 +801,7 @@ static int store_item_name(char const *nameptr)
         fsave_info.uses_p3 = (short) (g_frm_uses_p3 ? 1 : 0);
         fsave_info.uses_ismand = (short) (g_frm_uses_ismand ? 1 : 0);
         fsave_info.ismand = (short) (g_is_mandelbrot ? 1 : 0);
-        fsave_info.uses_p4 = (short) (uses_p4 ? 1 : 0);
+        fsave_info.uses_p4 = (short) (g_frm_uses_p4 ? 1 : 0);
         fsave_info.uses_p5 = (short) (uses_p5 ? 1 : 0);
     }
     else

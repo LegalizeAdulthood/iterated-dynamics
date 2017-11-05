@@ -1661,7 +1661,7 @@ gfp_top:
         {
             firstparm = 4;
         }
-        else if (uses_p4)
+        else if (g_frm_uses_p4)
         {
             firstparm = 6;
         }
@@ -1674,7 +1674,7 @@ gfp_top:
         {
             lastparm = 10;
         }
-        else if (uses_p4)
+        else if (g_frm_uses_p4)
         {
             lastparm = 8;
         }

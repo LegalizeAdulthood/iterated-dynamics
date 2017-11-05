@@ -193,7 +193,7 @@ static unsigned long RandNum;
 bool g_frm_uses_p1 = false;
 bool g_frm_uses_p2 = false;
 bool g_frm_uses_p3 = false;
-bool uses_p4 = false;
+bool g_frm_uses_p4 = false;
 bool uses_p5 = false;
 bool uses_jump = false;
 bool g_frm_uses_ismand = false;
@@ -2055,7 +2055,7 @@ ConstArg *isconst(char const *Str, int Len)
                 }
                 if (n == 17)          // The formula uses 'p4'.
                 {
-                    uses_p4 = true;
+                    g_frm_uses_p4 = true;
                 }
                 if (n == 18)          // The formula uses 'p5'.
                 {
@@ -3862,7 +3862,7 @@ int frm_get_param_stuff(char const *Name)
     g_frm_uses_p3 = false;
     g_frm_uses_ismand = false;
     g_max_function = 0;
-    uses_p4 = false;
+    g_frm_uses_p4 = false;
     uses_p5 = false;
 
     if (g_formula_name.empty())
@@ -3927,7 +3927,7 @@ int frm_get_param_stuff(char const *Name)
             }
             else if (current_token.token_id == 17)
             {
-                uses_p4 = true;
+                g_frm_uses_p4 = true;
             }
             else if (current_token.token_id == 18)
             {
@@ -3954,7 +3954,7 @@ int frm_get_param_stuff(char const *Name)
         g_frm_uses_p3 = false;
         g_frm_uses_ismand = false;
         g_max_function = 0;
-        uses_p4 = false;
+        g_frm_uses_p4 = false;
         uses_p5 = false;
         return 0;
     }
@@ -4347,7 +4347,7 @@ void init_misc()
     g_frm_uses_p3 = false;
     uses_jump = false;
     g_frm_uses_ismand = false;
-    uses_p4 = false;
+    g_frm_uses_p4 = false;
     uses_p5 = false;
 }
 
@@ -4382,7 +4382,7 @@ static void parser_allocate()
     g_frm_uses_p1 = false;
     g_frm_uses_p2 = false;
     g_frm_uses_p3 = false;
-    uses_p4 = false;
+    g_frm_uses_p4 = false;
     uses_p5 = false;
 }
 
