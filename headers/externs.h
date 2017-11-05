@@ -471,7 +471,7 @@ extern double                symax;
 extern double                symin;
 extern symmetry_type         g_symmetry;
 extern int                   syoffs;
-extern bool make_parameter_file;
+extern bool                  g_make_parameter_file;
 extern bool make_parameter_file_map;
 extern bool tab_mode;
 extern bool                  taborhelp;

@@ -1387,7 +1387,7 @@ void goodbye()                  // we done.  Bail out
     enddisk();
     discardgraphics();
     ExitCheck();
-    if (!make_parameter_file)
+    if (!g_make_parameter_file)
     {
         driver_set_for_text();
     }
@@ -1395,7 +1395,7 @@ void goodbye()                  // we done.  Bail out
     UnixDone();
     printf("\n\n\n%s\n", "   Thank You for using " FRACTINT); // printf takes pointer
 #endif
-    if (!make_parameter_file)
+    if (!g_make_parameter_file)
     {
         driver_move_cursor(6, 0);
         discardgraphics(); // if any emm/xmm tied up there, release it

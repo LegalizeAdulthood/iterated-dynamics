@@ -39,7 +39,7 @@ static void update_fractint_cfg();
 static void strip_zeros(char *buf);
 
 bool g_is_true_color = false;
-bool make_parameter_file = false;
+bool g_make_parameter_file = false;
 bool make_parameter_file_map = false;
 
 char par_comment[4][MAXCMT];
@@ -174,7 +174,7 @@ void make_batch_file()
     pydots = ydots;
     ym = 1;
     xm = ym;
-    if (make_parameter_file)
+    if (g_make_parameter_file)
     {
         goto skip_UI;
     }
@@ -336,7 +336,7 @@ prompt_user:
             }
         }
 skip_UI:
-        if (make_parameter_file)
+        if (g_make_parameter_file)
         {
             if (g_file_colors > 0)
             {
@@ -397,7 +397,7 @@ skip_UI:
                 {
                     // entry with same name
                     _snprintf(buf2, NUM_OF(buf2), "File already has an entry named %s\n%s",
-                              g_command_name.c_str(), make_parameter_file ?
+                              g_command_name.c_str(), g_make_parameter_file ?
                               "... Replacing ..." : "Continue to replace it, Cancel to back out");
                     if (stopmsg(STOPMSG_CANCEL | STOPMSG_INFO_ONLY, buf2) < 0)
                     {

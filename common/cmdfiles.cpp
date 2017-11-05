@@ -1143,7 +1143,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
                     g_command_name.resize(ITEMNAMELEN);
                 }
             }
-            make_parameter_file = true;
+            g_make_parameter_file = true;
             if (!g_read_filename.empty())
             {
                 if (read_overlay() != 0)
