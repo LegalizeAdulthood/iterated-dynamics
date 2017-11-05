@@ -854,7 +854,7 @@ LongLambdaexponentFractal()
 
     SinCos086(g_l_old_z.y, &lsiny,  &lcosy);
 
-    if (g_l_old_z.x >= g_l_limit && lcosy >= 0L)
+    if (g_l_old_z.x >= g_l_magnitude_limit && lcosy >= 0L)
     {
         return 1;
     }
@@ -1316,7 +1316,7 @@ LPopcornFractal_Old()
         g_l_temp_sqr_y = lsqr(g_l_new_z.y);
     }
     g_l_magnitude = g_l_temp_sqr_x + g_l_temp_sqr_y;
-    if (g_l_magnitude >= g_l_limit || g_l_magnitude < 0 || labs(g_l_new_z.x) > g_l_limit2
+    if (g_l_magnitude >= g_l_magnitude_limit || g_l_magnitude < 0 || labs(g_l_new_z.x) > g_l_limit2
             || labs(g_l_new_z.y) > g_l_limit2)
     {
         return 1;
@@ -1356,7 +1356,7 @@ LPopcornFractal()
     g_l_temp_sqr_x = lsqr(g_l_new_z.x);
     g_l_temp_sqr_y = lsqr(g_l_new_z.y);
     g_l_magnitude = g_l_temp_sqr_x + g_l_temp_sqr_y;
-    if (g_l_magnitude >= g_l_limit || g_l_magnitude < 0
+    if (g_l_magnitude >= g_l_magnitude_limit || g_l_magnitude < 0
             || labs(g_l_new_z.x) > g_l_limit2
             || labs(g_l_new_z.y) > g_l_limit2)
     {
@@ -1458,7 +1458,7 @@ LPopcornFractalFn()
     g_l_temp_sqr_x = lsqr(g_l_new_z.x);
     g_l_temp_sqr_y = lsqr(g_l_new_z.y);
     g_l_magnitude = g_l_temp_sqr_x + g_l_temp_sqr_y;
-    if (g_l_magnitude >= g_l_limit || g_l_magnitude < 0
+    if (g_l_magnitude >= g_l_magnitude_limit || g_l_magnitude < 0
             || labs(g_l_new_z.x) > g_l_limit2
             || labs(g_l_new_z.y) > g_l_limit2)
     {

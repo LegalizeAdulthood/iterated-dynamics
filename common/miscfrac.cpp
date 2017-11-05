@@ -2571,7 +2571,7 @@ int calcfroth()   // per pixel 1/2/g, called with row & col set
         g_l_temp_sqr_x = lsqr(g_l_old_z.x);
         g_l_temp_sqr_y = lsqr(g_l_old_z.y);
         g_l_magnitude = g_l_temp_sqr_x + g_l_temp_sqr_y;
-        while (!found_attractor && (g_l_magnitude < g_l_limit)
+        while (!found_attractor && (g_l_magnitude < g_l_magnitude_limit)
                 && (g_l_magnitude >= 0) && (g_color_iter < g_max_iterations))
         {
             // simple formula: z = z^2 + conj(z*(-1+ai))
@@ -2582,7 +2582,7 @@ int calcfroth()   // per pixel 1/2/g, called with row & col set
             if (fsp.repeat_mapping)
             {
                 g_l_magnitude = (g_l_temp_sqr_x = lsqr(g_l_old_z.x)) + (g_l_temp_sqr_y = lsqr(g_l_old_z.y));
-                if ((g_l_magnitude > g_l_limit) || (g_l_magnitude < 0))
+                if ((g_l_magnitude > g_l_magnitude_limit) || (g_l_magnitude < 0))
                 {
                     break;
                 }
@@ -2855,7 +2855,7 @@ int froth_per_orbit()
         {
             g_l_temp_sqr_x = lsqr(g_l_new_z.x);
             g_l_temp_sqr_y = lsqr(g_l_new_z.y);
-            if (g_l_temp_sqr_x + g_l_temp_sqr_y >= g_l_limit)
+            if (g_l_temp_sqr_x + g_l_temp_sqr_y >= g_l_magnitude_limit)
             {
                 return 1;
             }
@@ -2865,7 +2865,7 @@ int froth_per_orbit()
         }
         g_l_temp_sqr_x = lsqr(g_l_new_z.x);
         g_l_temp_sqr_y = lsqr(g_l_new_z.y);
-        if (g_l_temp_sqr_x + g_l_temp_sqr_y >= g_l_limit)
+        if (g_l_temp_sqr_x + g_l_temp_sqr_y >= g_l_magnitude_limit)
         {
             return 1;
         }
