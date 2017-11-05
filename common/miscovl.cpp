@@ -696,9 +696,9 @@ void write_batch_parms(char const *colorinf, bool colorsonly, int maxcolor, int 
         }
 
 
-        if (stoppass != 0)
+        if (g_stop_pass != 0)
         {
-            put_parm(" %s=%c%c", "passes", usr_stdcalcmode, (char)stoppass + '0');
+            put_parm(" %s=%c%c", "passes", usr_stdcalcmode, (char)g_stop_pass + '0');
         }
 
         if (usemag)

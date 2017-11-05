@@ -459,7 +459,7 @@ extern bool                  g_started_resaves;
 extern char                  g_std_calc_mode;
 extern std::string           g_stereo_map_filename;
 extern int                   StoPtr;
-extern int                   stoppass;
+extern int                   g_stop_pass;
 extern double                sx3rd;
 extern int                   sxdots;
 extern double                sxmax;

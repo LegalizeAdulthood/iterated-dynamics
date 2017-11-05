@@ -49,7 +49,7 @@ static int  get_bf(bf_t bf, char const *curarg);
 static bool isabigfloat(char const *str);
 
 // variables defined by the command line/files processor
-int     stoppass = 0;           // stop at this guessing pass early
+int     g_stop_pass = 0;           // stop at this guessing pass early
 int     g_distance_estimator_x_dots = 0;            // xdots to use for video independence
 int     g_distance_estimator_y_dots = 0;            // ydots to use for video independence
 int     g_bf_digits = 0;           // digits to use (force) for bf_math
@@ -472,7 +472,7 @@ static void initvars_fractal()          // init vars affecting calculation
     g_outside_color = ITER;                     // outside color = -1 (not used)
     g_max_iterations = 150;                        // initial maxiter
     usr_stdcalcmode = 'g';              // initial solid-guessing
-    stoppass = 0;                       // initial guessing stoppass
+    g_stop_pass = 0;                       // initial guessing stoppass
     g_quick_calc = false;
     g_close_proximity = 0.01;
     g_is_mandelbrot = true;                      // default formula mand/jul toggle
@@ -1637,10 +1637,10 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         usr_stdcalcmode = charval[0];
         if (charval[0] == 'g')
         {
-            stoppass = ((int)value[1] - (int)'0');
-            if (stoppass < 0 || stoppass > 6)
+            g_stop_pass = ((int)value[1] - (int)'0');
+            if (g_stop_pass < 0 || g_stop_pass > 6)
             {
-                stoppass = 0;
+                g_stop_pass = 0;
             }
         }
         return CMDARG_FRACTAL_PARAM;

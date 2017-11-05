@@ -3866,9 +3866,9 @@ static int solid_guess()
     g_reset_periodicity = false;
     while ((blocksize = blocksize >> 1) >= 2)
     {
-        if (stoppass > 0)
+        if (g_stop_pass > 0)
         {
-            if (workpass >= stoppass)
+            if (workpass >= g_stop_pass)
             {
                 goto exit_solidguess;
             }
