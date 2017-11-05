@@ -20,7 +20,7 @@ void calcmandfpasmstart()
 {
     inside_color = (g_inside < COLOR_BLACK) ? g_max_iterations : g_inside;
     periodicity_color = (periodicitycheck < 0) ? 7 : inside_color;
-    oldcoloriter = 0;
+    g_old_color_iter = 0;
 }
 
 #define ABS(x) ((x) < 0?-(x):(x))
@@ -43,17 +43,17 @@ long calcmandfpasm()
 
     if (periodicitycheck == 0)
     {
-        oldcoloriter = 0;      // don't check periodicity
+        g_old_color_iter = 0;      // don't check periodicity
     }
     else if (reset_periodicity)
     {
-        oldcoloriter = g_max_iterations - 255;
+        g_old_color_iter = g_max_iterations - 255;
     }
 
     tmpfsd = g_max_iterations - firstsavedand;
-    if (oldcoloriter > tmpfsd) // this defeats checking periodicity immediately
+    if (g_old_color_iter > tmpfsd) // this defeats checking periodicity immediately
     {
-        oldcoloriter = tmpfsd; // but matches the code in standard_fractal()
+        g_old_color_iter = tmpfsd; // but matches the code in standard_fractal()
     }
 
     // initparms
@@ -129,7 +129,7 @@ long calcmandfpasm()
         }
 
         // no_save_new_xy_87
-        if (cx < oldcoloriter)  // check periodicity
+        if (cx < g_old_color_iter)  // check periodicity
         {
             if (((g_max_iterations - cx) & savedand) == 0)
             {
@@ -156,7 +156,7 @@ long calcmandfpasm()
                 {
 #endif
                     //          oldcoloriter = 65535;
-                    oldcoloriter = g_max_iterations;
+                    g_old_color_iter = g_max_iterations;
                     realcoloriter = g_max_iterations;
                     g_keyboard_check_interval = g_keyboard_check_interval -(g_max_iterations-cx);
                     g_color_iter = periodicity_color;
@@ -174,7 +174,7 @@ long calcmandfpasm()
 
     // reached maxit
     // check periodicity immediately next time, remember we count down from maxit
-    oldcoloriter = g_max_iterations;
+    g_old_color_iter = g_max_iterations;
     g_keyboard_check_interval -= g_max_iterations;
     realcoloriter = g_max_iterations;
     g_color_iter = inside_color;
@@ -194,11 +194,11 @@ over_bailout_87:
     }
     if (cx-10 > 0)
     {
-        oldcoloriter = cx-10;
+        g_old_color_iter = cx-10;
     }
     else
     {
-        oldcoloriter = 0;
+        g_old_color_iter = 0;
     }
     realcoloriter = g_max_iterations-cx;
     g_color_iter = realcoloriter;

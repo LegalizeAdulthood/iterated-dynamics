@@ -2787,7 +2787,7 @@ int calcfroth()   // per pixel 1/2/g, called with row & col set
         {
             g_color_iter = found_attractor;
         }
-        oldcoloriter = g_color_iter;
+        g_old_color_iter = g_color_iter;
     }
     else   // outside, or inside but didn't get sucked in by attractor.
     {

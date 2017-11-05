@@ -99,7 +99,7 @@ DComplex g_new_z = { 0.0 };
 DComplex saved = { 0.0 };
 int g_color = 0;
 long g_color_iter = 0;
-long oldcoloriter = 0;
+long g_old_color_iter = 0;
 long realcoloriter = 0;
 int row = 0;
 int col = 0;
@@ -2116,15 +2116,15 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
     }
     if (periodicitycheck == 0 || g_inside == ZMAG || g_inside == STARTRAIL)
     {
-        oldcoloriter = 2147483647L;       // don't check periodicity at all
+        g_old_color_iter = 2147483647L;       // don't check periodicity at all
     }
     else if (g_inside == PERIOD)       // for display-periodicity
     {
-        oldcoloriter = (g_max_iterations/5)*4;       // don't check until nearly done
+        g_old_color_iter = (g_max_iterations/5)*4;       // don't check until nearly done
     }
     else if (reset_periodicity)
     {
-        oldcoloriter = 255;               // don't check periodicity 1st 250 iterations
+        g_old_color_iter = 255;               // don't check periodicity 1st 250 iterations
     }
 
     // Jonathan - how about this idea ? skips first saved value which never works
@@ -2134,9 +2134,9 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
         oldcoloriter = MINSAVEDAND;
     }
 #else
-    if (oldcoloriter < firstsavedand)   // I like it!
+    if (g_old_color_iter < firstsavedand)   // I like it!
     {
-        oldcoloriter = firstsavedand;
+        g_old_color_iter = firstsavedand;
     }
 #endif
     // really fractal specific, but we'll leave it here
@@ -2577,7 +2577,7 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
             }
         }
 
-        if (g_color_iter > oldcoloriter) // check periodicity
+        if (g_color_iter > g_old_color_iter) // check periodicity
         {
             if ((g_color_iter & savedand) == 0)            // time to save a new value
             {
@@ -2701,11 +2701,11 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
     realcoloriter = g_color_iter;           // save this before we start adjusting it
     if (g_color_iter >= g_max_iterations)
     {
-        oldcoloriter = 0;         // check periodicity immediately next time
+        g_old_color_iter = 0;         // check periodicity immediately next time
     }
     else
     {
-        oldcoloriter = g_color_iter + 10;    // check when past this + 10 next time
+        g_old_color_iter = g_color_iter + 10;    // check when past this + 10 next time
         if (g_color_iter == 0)
         {
             g_color_iter = 1;         // needed to make same as calcmand

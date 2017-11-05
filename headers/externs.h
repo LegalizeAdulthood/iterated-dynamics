@@ -337,7 +337,7 @@ extern int                   g_num_fractal_types;
 extern int                   g_num_work_list;
 extern bool                  g_cellular_next_screen;
 extern DComplex              g_old_z;
-extern long                  oldcoloriter;
+extern long                  g_old_color_iter;
 extern BYTE                  old_dac_box[256][3];
 extern bool                  old_demm_colors;
 extern char                  old_stdcalcmode;

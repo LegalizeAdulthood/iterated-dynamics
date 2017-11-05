@@ -154,8 +154,8 @@ bool use_grid = false;
 
 void calcfracinit() // initialize a *pile* of stuff for fractal calculation
 {
-    oldcoloriter = 0L;
-    g_color_iter = oldcoloriter;
+    g_old_color_iter = 0L;
+    g_color_iter = g_old_color_iter;
     for (int i = 0; i < 10; i++)
     {
         rhombus_stack[i] = 0;
