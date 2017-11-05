@@ -201,7 +201,7 @@ unsigned int chars_in_formula;
 
 #if !defined(XFRACT)
 #define ChkLongDenom(denom)                                 \
-    if ((denom == 0 || g_overflow) && save_release > 1920)    \
+    if ((denom == 0 || g_overflow) && g_save_release > 1920)    \
     {                                                       \
         g_overflow = true;                                    \
         return;                                             \
@@ -213,7 +213,7 @@ unsigned int chars_in_formula;
 #define ChkFloatDenom(denom)                                \
     if (fabs(denom) <= DBL_MIN)                             \
     {                                                       \
-        if (save_release > 1920)                            \
+        if (g_save_release > 1920)                            \
             g_overflow = true;                                \
         return;                                             \
     }
@@ -1249,7 +1249,7 @@ void lStkRecip()
     long mod;
     mod = multiply(Arg1->l.x, Arg1->l.x, bitshift)
           + multiply(Arg1->l.y, Arg1->l.y, bitshift);
-    if (save_release > 1920)
+    if (g_save_release > 1920)
     {
         ChkLongDenom(mod);
     }
@@ -2522,7 +2522,7 @@ static bool ParseStr(char const *Str, int pass)
         StkSinh = lStkSinh;
         StkLT = lStkLT;
         StkLTE = lStkLTE;
-        if (save_release > 1826)
+        if (g_save_release > 1826)
         {
             StkMod = lStkMod;
         }

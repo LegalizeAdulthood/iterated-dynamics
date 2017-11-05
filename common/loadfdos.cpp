@@ -155,14 +155,14 @@ std::string heading_detail(FRACTAL_INFO const *info, ext_blk_3 const *blk_3_info
 std::string save_release_detail()
 {
     char buff[80];
-    sprintf(buff, "v%d.%01d", save_release/100, (save_release%100)/10);
-    if (save_release%100)
+    sprintf(buff, "v%d.%01d", g_save_release/100, (g_save_release%100)/10);
+    if (g_save_release%100)
     {
         int i = (int) strlen(buff);
-        buff[i] = (char)((save_release%10) + '0');
+        buff[i] = (char)((g_save_release%10) + '0');
         buff[i+1] = 0;
     }
-    if (save_system == 0 && save_release <= 1410)
+    if (save_system == 0 && g_save_release <= 1410)
     {
         strcat(buff, " or earlier");
     }

@@ -457,7 +457,7 @@ JuliafpSetup()
                 symmetry = symmetry_type::ORIGIN;
             }
         }
-        if (save_release <= 1960)
+        if (g_save_release <= 1960)
         {
             curfractalspecific->orbitcalc = PopcornFractal_Old;
         }
@@ -623,7 +623,7 @@ JulialongSetup()
                 symmetry = symmetry_type::ORIGIN;
             }
         }
-        if (save_release <= 1960)
+        if (g_save_release <= 1960)
         {
             curfractalspecific->orbitcalc = LPopcornFractal_Old;
         }

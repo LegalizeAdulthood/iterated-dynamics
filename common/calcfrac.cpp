@@ -301,7 +301,7 @@ double fmodtest_bailout_or()
 double fmodtest()
 {
     double result;
-    if (g_inside_color == FMODI && save_release <= 2000) // for backwards compatibility
+    if (g_inside_color == FMODI && g_save_release <= 2000) // for backwards compatibility
     {
         if (g_magnitude == 0.0 || g_magnitude_calc || g_integer_fractal)
         {
@@ -687,13 +687,13 @@ int calcfract()
     g_log_map_calculate = false;
     // below, INT_MAX = 32767 only when an integer is two bytes.  Which is not true for Xfractint.
     // Since 32767 is what was meant, replaced the instances of INT_MAX with 32767.
-    if (g_log_map_flag && (((g_max_iterations > 32767) && (save_release > 1920))
+    if (g_log_map_flag && (((g_max_iterations > 32767) && (g_save_release > 1920))
                     || g_log_map_fly_calculate == 1))
     {
         g_log_map_calculate = true; // calculate on the fly
         SetupLogTable();
     }
-    else if (g_log_map_flag && (((g_max_iterations > 32767) && (save_release <= 1920))
+    else if (g_log_map_flag && (((g_max_iterations > 32767) && (g_save_release <= 1920))
                          || g_log_map_fly_calculate == 2))
     {
         g_log_map_table_max_size = 32767;
@@ -779,7 +779,7 @@ int calcfract()
     }
     lm = 4L << bitshift;                 // CALCMAND magnitude limit
 
-    if (save_release > 2002)
+    if (g_save_release > 2002)
     {
         atan_colors = g_colors;
     }
@@ -1101,7 +1101,7 @@ static void perform_worklist()
         delxx2 = (xx3rd - xxmin) / d_y_size;
         delyy2 = (yy3rd - yymin) / d_x_size;
 
-        use_old_distest = save_release < 1827;
+        use_old_distest = g_save_release < 1827;
         rqlim = rqlim_save; // just in case changed to DEM_BAILOUT earlier
         if (g_distance_estimator != 1 || g_colors == 2)   // not doing regular outside colors
         {
@@ -1949,7 +1949,7 @@ int calcmand()              // fast per pixel 1/2/b/g, called with row & col set
         if (g_color_iter >= g_colors)
         {
             // don't use color 0 unless from inside/outside
-            if (save_release <= 1950)
+            if (g_save_release <= 1950)
             {
                 if (g_colors < 16)
                 {
@@ -2019,7 +2019,7 @@ int calcmandfp()
         if (g_color_iter >= g_colors)
         {
             // don't use color 0 unless from inside/outside
-            if (save_release <= 1950)
+            if (g_save_release <= 1950)
             {
                 if (g_colors < 16)
                 {
@@ -2108,7 +2108,7 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
         {
             elem = 0.0;
         }
-        if (save_release > 1824)
+        if (g_save_release > 1824)
         {
             g_max_iterations = 16;
         }
@@ -2302,7 +2302,7 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
                     break;
                 }
             }
-            else if (save_release > 1950)
+            else if (g_save_release > 1950)
             {
                 if (std::max(fabs(deriv.x), fabs(deriv.y)) > dem_toobig)
                 {
@@ -2312,7 +2312,7 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
             /* if above exit taken, the later test vs dem_delta will place this
                        point on the boundary, because mag(old)<bailout just now */
 
-            if (curfractalspecific->orbitcalc() || (g_overflow && save_release > 1826))
+            if (curfractalspecific->orbitcalc() || (g_overflow && g_save_release > 1826))
             {
                 if (use_old_distest)
                 {
@@ -2383,7 +2383,7 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
                         g_new_z.y /= g_fudge_factor;
                     }
 
-                    if (save_release > 1824)
+                    if (g_save_release > 1824)
                     {
                         if (g_new_z.x > STARTRAILMAX)
                         {
@@ -2789,7 +2789,7 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
         // eliminate negative colors & wrap arounds
         if ((g_color_iter <= 0 || g_color_iter > g_max_iterations) && g_outside_color != FMOD)
         {
-            if (save_release < 1961)
+            if (g_save_release < 1961)
             {
                 g_color_iter = 0;
             }
@@ -2994,7 +2994,7 @@ plot_pixel:
     if (g_color_iter >= g_colors)
     {
         // don't use color 0 unless from inside/outside
-        if (save_release <= 1950)
+        if (g_save_release <= 1950)
         {
             if (g_colors < 16)
             {
@@ -3107,7 +3107,7 @@ static void decomposition()
             ++temp;
             g_l_new_z.x = -g_l_new_z.x;
         }
-        if (g_decomp[0] == 2 && save_release >= 1827)
+        if (g_decomp[0] == 2 && g_save_release >= 1827)
         {
             save_temp = temp;
             if (temp == 2)
@@ -3212,7 +3212,7 @@ static void decomposition()
             ++temp;
             g_new_z.x = -g_new_z.x;
         }
-        if (g_decomp[0] == 2 && save_release >= 1827)
+        if (g_decomp[0] == 2 && g_save_release >= 1827)
         {
             save_temp = temp;
             if (temp == 2)
@@ -3300,7 +3300,7 @@ static void decomposition()
         }
         temp >>= 1;
     }
-    if (g_decomp[0] == 2 && save_release >= 1827)
+    if (g_decomp[0] == 2 && g_save_release >= 1827)
     {
         if (save_temp & 2)
         {
@@ -3315,7 +3315,7 @@ static void decomposition()
             g_color_iter++;
         }
     }
-    else if (g_decomp[0] == 2 && save_release < 1827)
+    else if (g_decomp[0] == 2 && g_save_release < 1827)
     {
         g_color_iter &= 1;
     }

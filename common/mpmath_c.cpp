@@ -492,7 +492,7 @@ void SetupLogTable()
     float l, f, c, m;
     unsigned long limit;
 
-    if (save_release > 1920 || g_log_map_fly_calculate == 1)
+    if (g_save_release > 1920 || g_log_map_fly_calculate == 1)
     {
         // set up on-the-fly variables
         if (g_log_map_flag > 0)
@@ -527,7 +527,7 @@ void SetupLogTable()
         return; // LogTable not defined, bail out now
     }
 
-    if (save_release > 1920 && !g_log_map_calculate)
+    if (g_save_release > 1920 && !g_log_map_calculate)
     {
         g_log_map_calculate = true;   // turn it on
         for (unsigned long prev = 0U; prev <= (unsigned long)g_log_map_table_max_size; prev++)
@@ -637,7 +637,7 @@ long logtablecalc(long citer)
         }
         else if ((citer - lf)/log(static_cast<double>(citer - lf)) <= mlf)
         {
-            if (save_release < 2002)
+            if (g_save_release < 2002)
             {
                 ret = (long)(citer - lf + (lf?1:0));
             }

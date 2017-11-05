@@ -1567,7 +1567,7 @@ bool lya_setup()
 
     i = (long)g_params[0];
 #if !defined(XFRACT)
-    if (save_release < 1732)
+    if (g_save_release < 1732)
     {
         i &= 0x0FFFFL;    // make it a short to reproduce prior stuff
     }
@@ -1586,14 +1586,14 @@ bool lya_setup()
         lyaRxy[lyaLength++] = (i & (1<<t)) != 0;
     }
     lyaRxy[lyaLength++] = 0;
-    if (save_release < 1732)                // swap axes prior to 1732
+    if (g_save_release < 1732)                // swap axes prior to 1732
     {
         for (t = lyaLength; t >= 0; t--)
         {
             lyaRxy[t] = !lyaRxy[t];
         }
     }
-    if (save_release < 1731)
+    if (g_save_release < 1731)
     {
         // ignore inside=, stdcalcmode
         stdcalcmode = '1';
@@ -2283,7 +2283,7 @@ bool froth_setup()
     cos_theta = -0.5;    // cos(2*PI/3)
 
     // for the all important backwards compatibility
-    if (save_release <= 1821)   // book version is 18.21
+    if (g_save_release <= 1821)   // book version is 18.21
     {
         // use old release parameters
 

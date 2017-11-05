@@ -1074,7 +1074,7 @@ static void adjust_to_limits(double expand)
 
     if (g_integer_fractal)
     {
-        if (save_release > 1940)   // let user reproduce old GIF's and PAR's
+        if (g_save_release > 1940)   // let user reproduce old GIF's and PAR's
         {
             limit = 1023.99;
         }
