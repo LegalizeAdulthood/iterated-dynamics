@@ -1125,7 +1125,7 @@ void write_batch_parms(char const *colorinf, bool colorsonly, int maxcolor, int 
         }
         if (!g_loaded_3d)
         {
-            put_filename("filename", readname.c_str());
+            put_filename("filename", g_read_filename.c_str());
         }
         if (SPHERE)
         {

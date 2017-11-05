@@ -282,7 +282,7 @@ int get_video_mode(FRACTAL_INFO *info, ext_blk_3 *blk_3_info)
         // format heading
         char heading[256];  // big enough for more than a few lines
         sprintf(heading, "File: %-44s  %d x %d x %d\n%-52s",
-                readname.c_str(), g_file_x_dots, g_file_y_dots, g_file_colors,
+                g_read_filename.c_str(), g_file_x_dots, g_file_y_dots, g_file_colors,
                 heading_detail(info, blk_3_info).c_str());
         if (info->info_id[0] != 'G')
         {

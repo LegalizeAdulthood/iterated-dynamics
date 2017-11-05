@@ -63,16 +63,16 @@ int read_overlay()      // read overlay/3D files, if reqr'd
     {
         viewwindow = false;
     }
-    if (has_ext(readname.c_str()) == nullptr)
+    if (has_ext(g_read_filename.c_str()) == nullptr)
     {
-        readname += ".gif";
+        g_read_filename += ".gif";
     }
 
-    if (find_fractal_info(readname.c_str(), &read_info, &blk_2_info, &blk_3_info,
+    if (find_fractal_info(g_read_filename.c_str(), &read_info, &blk_2_info, &blk_3_info,
                           &blk_4_info, &blk_5_info, &blk_6_info, &blk_7_info))
     {
         // didn't find a useable file
-        sprintf(msg, "Sorry, %s isn't a file I can decode.", readname.c_str());
+        sprintf(msg, "Sorry, %s isn't a file I can decode.", g_read_filename.c_str());
         stopmsg(STOPMSG_NONE, msg);
         return -1;
     }
@@ -81,7 +81,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
     int const read_fractype = read_info.fractal_type;
     if (read_fractype < 0 || read_fractype >= g_num_fractal_types)
     {
-        sprintf(msg, "Warning: %s has a bad fractal type; using 0", readname.c_str());
+        sprintf(msg, "Warning: %s has a bad fractal type; using 0", g_read_filename.c_str());
         fractype = fractal_type::MANDEL;
     }
     fractype = static_cast<fractal_type>(read_fractype);
@@ -1430,7 +1430,7 @@ rescan:  // entry for changed browse parms
     toggle = 0;
     wincount = 0;
     g_browse_sub_images = true;
-    splitpath(readname.c_str(), drive, dir, nullptr, nullptr);
+    splitpath(g_read_filename.c_str(), drive, dir, nullptr, nullptr);
     splitpath(g_browse_mask.c_str(), nullptr, nullptr, fname, ext);
     makepath(tmpmask, drive, dir, fname, ext);
     done = (vid_too_big == 2) || no_memory || fr_findfirst(tmpmask);
@@ -1613,7 +1613,7 @@ rescan:  // entry for changed browse parms
                 }
                 if (c == 'Y')
                 {
-                    splitpath(readname.c_str(), drive, dir, nullptr, nullptr);
+                    splitpath(g_read_filename.c_str(), drive, dir, nullptr, nullptr);
                     splitpath(winlist.name, nullptr, nullptr, fname, ext);
                     makepath(tmpmask, drive, dir, fname, ext);
                     if (!unlink(tmpmask))
@@ -1643,7 +1643,7 @@ rescan:  // entry for changed browse parms
                 driver_stack_screen();
                 newname[0] = 0;
                 strcpy(mesg, "Enter the new filename for ");
-                splitpath(readname.c_str(), drive, dir, nullptr, nullptr);
+                splitpath(g_read_filename.c_str(), drive, dir, nullptr, nullptr);
                 splitpath(winlist.name, nullptr, nullptr, fname, ext);
                 makepath(tmpmask, drive, dir, fname, ext);
                 strcpy(newname, tmpmask);

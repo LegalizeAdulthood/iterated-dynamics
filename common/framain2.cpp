@@ -714,7 +714,7 @@ static bool look(bool *stacked)
         }
         g_filename_stack_index++;
         g_file_name_stack[g_filename_stack_index] = g_browse_name;
-        merge_pathnames(readname, g_browse_name.c_str(), cmd_file::AT_AFTER_STARTUP);
+        merge_pathnames(g_read_filename, g_browse_name.c_str(), cmd_file::AT_AFTER_STARTUP);
         if (g_ask_video)
         {
             driver_stack_screen();   // save graphics image
@@ -737,7 +737,7 @@ static bool look(bool *stacked)
                 break;
             }
             g_browse_name = g_file_name_stack[g_filename_stack_index];
-            merge_pathnames(readname, g_browse_name.c_str(), cmd_file::AT_AFTER_STARTUP);
+            merge_pathnames(g_read_filename, g_browse_name.c_str(), cmd_file::AT_AFTER_STARTUP);
             g_browsing = true;
             show_file = 0;
             if (g_ask_video)
@@ -1228,7 +1228,7 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
                 break;
             }
             g_browse_name = g_file_name_stack[g_filename_stack_index];
-            merge_pathnames(readname, g_browse_name.c_str(), cmd_file::AT_AFTER_STARTUP);
+            merge_pathnames(g_read_filename, g_browse_name.c_str(), cmd_file::AT_AFTER_STARTUP);
             g_browsing = true;
             g_browse_sub_images = true;
             show_file = 0;
@@ -1357,7 +1357,7 @@ do_3d_transform:
                 if (g_init_batch == batch_modes::SAVE)
                 {
                     driver_stack_screen();   // save graphics image
-                    readname = savename;
+                    g_read_filename = savename;
                     show_file = 0;
                     return main_state::RESTORE_START;
                 }
@@ -1821,7 +1821,7 @@ static main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdm
                 if (g_init_batch == batch_modes::SAVE)
                 {
                     driver_stack_screen();   // save graphics image
-                    readname = savename;
+                    g_read_filename = savename;
                     show_file = 0;
                     return main_state::RESTORE_START;
                 }
@@ -2307,7 +2307,7 @@ static void cmp_line_cleanup()
         timestring = ctime(&ltime);
         timestring[24] = 0; //clobber newline in time string
         fprintf(cmp_fp, "%s compare to %s has %5d errs\n",
-                timestring, readname.c_str(), errcount);
+                timestring, g_read_filename.c_str(), errcount);
     }
     fclose(cmp_fp);
 }

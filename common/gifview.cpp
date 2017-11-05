@@ -86,7 +86,7 @@ int gifview()
     }
     else
     {
-        strcpy(temp1, readname.c_str());
+        strcpy(temp1, g_read_filename.c_str());
     }
     if (has_ext(temp1) == nullptr)
     {
@@ -104,7 +104,7 @@ int gifview()
             }
             else
             {
-                strcpy(temp1, readname.c_str());
+                strcpy(temp1, g_read_filename.c_str());
             }
             strcat(temp1, ALTERNATEFRACTALTYPE);
         }

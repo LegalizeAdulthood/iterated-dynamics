@@ -58,7 +58,7 @@ int     sizedot = 0;            // size of dot crawling cursor
 char    recordcolors = 0;       // default PAR color-writing method
 char    g_auto_show_dot = 0;        // dark, medium, bright
 bool    start_show_orbit = false;        // show orbits on at start of fractal
-std::string readname;           // name of fractal input file
+std::string g_read_filename;           // name of fractal input file
 std::string tempdir;            // name of temporary directory
 std::string workdir;            // name of directory for misc files
 std::string g_organize_formulas_dir;          // name of directory for orgfrm files
@@ -267,8 +267,8 @@ void process_simple_command(char *curarg)
                     && tempstring[3] >= '8' && tempstring[3] <= '9'
                     && tempstring[4] >= '0' && tempstring[4] <= '9')
             {
-                readname = curarg;
-                g_browse_name = extract_filename(readname.c_str());
+                g_read_filename = curarg;
+                g_browse_name = extract_filename(g_read_filename.c_str());
                 show_file = 0;
                 processed = true;
             }
@@ -450,7 +450,7 @@ static void initvars_restart()          // <ins> key init
     reset_ifs_defn();
     rflag = false;                      // not a fixed srand() seed
     rseed = init_rseed;
-    readname = DOTSLASH;                // initially current directory
+    g_read_filename = DOTSLASH;                // initially current directory
     show_file = 1;
     // next should perhaps be fractal re-init, not just <ins> ?
     g_init_cycle_limit = 55;                   // spin-DAC default speed limit
@@ -1115,15 +1115,15 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
             {
                 g_command_file += ".par";
             }
-            if (readname == DOTSLASH)
+            if (g_read_filename == DOTSLASH)
             {
-                readname = "";
+                g_read_filename = "";
             }
             if (next == nullptr)
             {
-                if (!readname.empty())
+                if (!g_read_filename.empty())
                 {
-                    g_command_name = extract_filename(readname.c_str());
+                    g_command_name = extract_filename(g_read_filename.c_str());
                 }
                 else if (!g_map_name.empty())
                 {
@@ -1144,7 +1144,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
                 }
             }
             make_parameter_file = true;
-            if (!readname.empty())
+            if (!g_read_filename.empty())
             {
                 if (read_overlay() != 0)
                 {
@@ -1211,7 +1211,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
             goto badarg;
         }
 
-        existdir = merge_pathnames(readname, value, mode);
+        existdir = merge_pathnames(g_read_filename, value, mode);
         if (existdir == 0)
         {
             show_file = 0;
@@ -1222,7 +1222,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         }
         else
         {
-            g_browse_name = extract_filename(readname.c_str());
+            g_browse_name = extract_filename(g_read_filename.c_str());
         }
         return CMDARG_FRACTAL_PARAM | CMDARG_3D_PARAM;
     }

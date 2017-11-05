@@ -406,7 +406,7 @@ extern std::vector<int>      g_iteration_ranges;
 extern int                   g_iteration_ranges_len;
 extern raytrace_formats      g_raytrace_format;
 extern std::string           g_raytrace_filename;
-extern std::string           readname;
+extern std::string           g_read_filename;
 extern long                  realcoloriter;
 extern char                  recordcolors;
 extern int                   red_bright;
