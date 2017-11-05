@@ -559,7 +559,7 @@ extern int                   xxstart;
 extern int                   xxstop;
 extern long                  g_l_y_3rd;
 extern int                   yadjust;
-extern double                ycjul;
+extern double                g_julia_c_y;
 extern int                   g_logical_screen_y_dots;
 extern long                  g_l_y_max;
 extern long                  g_l_y_min;

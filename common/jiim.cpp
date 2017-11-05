@@ -29,7 +29,7 @@ int windows = 0;               // windows management system
 int xc, yc;                       // corners of the window
 int xd, yd;                       // dots in the window
 double g_julia_c_x = BIG;
-double ycjul = BIG;
+double g_julia_c_y = BIG;
 
 // circle routines from Dr. Dobbs June 1990
 int xbase, ybase;
@@ -681,7 +681,7 @@ void Jiim(jiim_types which)
                 int dcol = 0;
                 int drow = 0;
                 g_julia_c_x = BIG;
-                ycjul = BIG;
+                g_julia_c_y = BIG;
                 switch (kbdchar)
                 {
                 case FIK_CTL_KEYPAD_5:      // ctrl - keypad 5
@@ -757,7 +757,7 @@ void Jiim(jiim_types which)
                     break;
                 case FIK_SPACE:
                     g_julia_c_x = cr;
-                    ycjul = ci;
+                    g_julia_c_y = ci;
                     goto finish;
                 case 'c':   // circle toggle
                 case 'C':   // circle toggle
