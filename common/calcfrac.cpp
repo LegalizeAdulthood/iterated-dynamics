@@ -100,7 +100,7 @@ DComplex saved = { 0.0 };
 int g_color = 0;
 long g_color_iter = 0;
 long g_old_color_iter = 0;
-long realcoloriter = 0;
+long g_real_color_iter = 0;
 int row = 0;
 int col = 0;
 int g_invert = 0;
@@ -1941,7 +1941,7 @@ int calcmand()              // fast per pixel 1/2/b/g, called with row & col set
     if (calcmandasm() >= 0)
     {
         if ((!g_log_map_table.empty() || g_log_map_calculate) // map color, but not if maxit & adjusted for inside,etc
-                && (realcoloriter < g_max_iterations || (g_inside_color < COLOR_BLACK && g_color_iter == g_max_iterations)))
+                && (g_real_color_iter < g_max_iterations || (g_inside_color < COLOR_BLACK && g_color_iter == g_max_iterations)))
         {
             g_color_iter = logtablecalc(g_color_iter);
         }
@@ -2008,10 +2008,10 @@ int calcmandfp()
     {
         if (g_potential_flag)
         {
-            g_color_iter = potential(g_magnitude, realcoloriter);
+            g_color_iter = potential(g_magnitude, g_real_color_iter);
         }
         if ((!g_log_map_table.empty() || g_log_map_calculate) // map color, but not if maxit & adjusted for inside,etc
-                && (realcoloriter < g_max_iterations || (g_inside_color < COLOR_BLACK && g_color_iter == g_max_iterations)))
+                && (g_real_color_iter < g_max_iterations || (g_inside_color < COLOR_BLACK && g_color_iter == g_max_iterations)))
         {
             g_color_iter = logtablecalc(g_color_iter);
         }
@@ -2697,7 +2697,7 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
         scrub_orbit();
     }
 
-    realcoloriter = g_color_iter;           // save this before we start adjusting it
+    g_real_color_iter = g_color_iter;           // save this before we start adjusting it
     if (g_color_iter >= g_max_iterations)
     {
         g_old_color_iter = 0;         // check periodicity immediately next time
@@ -3027,7 +3027,7 @@ plot_pixel:
     (*g_plot)(col, row, g_color);
 
     g_max_iterations = savemaxit;
-    if ((g_keyboard_check_interval -= abs((int)realcoloriter)) <= 0)
+    if ((g_keyboard_check_interval -= abs((int)g_real_color_iter)) <= 0)
     {
         if (check_key())
         {
@@ -5154,9 +5154,9 @@ static long autologmap()
         {
             goto ack; // key pressed, bailout
         }
-        if (realcoloriter < mincolour)
+        if (g_real_color_iter < mincolour)
         {
-            mincolour = realcoloriter ;
+            mincolour = g_real_color_iter ;
             g_max_iterations = std::max(2L, mincolour); /*speedup for when edges overlap lakes */
         }
         if (col >=32)
@@ -5177,9 +5177,9 @@ static long autologmap()
         {
             goto ack; // key pressed, bailout
         }
-        if (realcoloriter < mincolour)
+        if (g_real_color_iter < mincolour)
         {
-            mincolour = realcoloriter ;
+            mincolour = g_real_color_iter ;
             g_max_iterations = std::max(2L, mincolour); /*speedup for when edges overlap lakes */
         }
         if (row >=32)
@@ -5200,9 +5200,9 @@ static long autologmap()
         {
             goto ack; // key pressed, bailout
         }
-        if (realcoloriter < mincolour)
+        if (g_real_color_iter < mincolour)
         {
-            mincolour = realcoloriter ;
+            mincolour = g_real_color_iter ;
             g_max_iterations = std::max(2L, mincolour); /*speedup for when edges overlap lakes */
         }
         if (row >=32)
@@ -5223,9 +5223,9 @@ static long autologmap()
         {
             goto ack; // key pressed, bailout
         }
-        if (realcoloriter < mincolour)
+        if (g_real_color_iter < mincolour)
         {
-            mincolour = realcoloriter ;
+            mincolour = g_real_color_iter ;
             g_max_iterations = std::max(2L, mincolour); /*speedup for when edges overlap lakes */
         }
         if (col >=32)

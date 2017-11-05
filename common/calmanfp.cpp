@@ -157,7 +157,7 @@ long calcmandfpasm()
 #endif
                     //          oldcoloriter = 65535;
                     g_old_color_iter = g_max_iterations;
-                    realcoloriter = g_max_iterations;
+                    g_real_color_iter = g_max_iterations;
                     g_keyboard_check_interval = g_keyboard_check_interval -(g_max_iterations-cx);
                     g_color_iter = periodicity_color;
                     goto pop_stack;
@@ -176,7 +176,7 @@ long calcmandfpasm()
     // check periodicity immediately next time, remember we count down from maxit
     g_old_color_iter = g_max_iterations;
     g_keyboard_check_interval -= g_max_iterations;
-    realcoloriter = g_max_iterations;
+    g_real_color_iter = g_max_iterations;
     g_color_iter = inside_color;
 
 pop_stack:
@@ -200,13 +200,13 @@ over_bailout_87:
     {
         g_old_color_iter = 0;
     }
-    realcoloriter = g_max_iterations-cx;
-    g_color_iter = realcoloriter;
+    g_real_color_iter = g_max_iterations-cx;
+    g_color_iter = g_real_color_iter;
     if (g_color_iter == 0)
     {
         g_color_iter = 1;
     }
-    g_keyboard_check_interval -= realcoloriter;
+    g_keyboard_check_interval -= g_real_color_iter;
     if (g_outside_color == ITER)
     {
     }

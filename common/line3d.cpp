@@ -1459,9 +1459,9 @@ int targa_color(int x, int y, int color)
     }
     case 1:
     {
-        RGB[0] = (BYTE)((realcoloriter >> 16) & 0xff);  // red
-        RGB[1] = (BYTE)((realcoloriter >> 8) & 0xff);   // green
-        RGB[2] = (BYTE)((realcoloriter) & 0xff);        // blue
+        RGB[0] = (BYTE)((g_real_color_iter >> 16) & 0xff);  // red
+        RGB[1] = (BYTE)((g_real_color_iter >> 8) & 0xff);   // green
+        RGB[2] = (BYTE)((g_real_color_iter) & 0xff);        // blue
         break;
     }
     }

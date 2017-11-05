@@ -2702,8 +2702,8 @@ int calcfroth()   // per pixel 1/2/g, called with row & col set
         scrub_orbit();
     }
 
-    realcoloriter = g_color_iter;
-    if ((g_keyboard_check_interval -= abs((int)realcoloriter)) <= 0)
+    g_real_color_iter = g_color_iter;
+    if ((g_keyboard_check_interval -= abs((int)g_real_color_iter)) <= 0)
     {
         if (check_key())
         {
