@@ -399,10 +399,10 @@ init_restart:
     }
 
     // set up bitshift for integer math
-    bitshift = FUDGEFACTOR2; // by default, the smaller shift
+    g_bit_shift = FUDGEFACTOR2; // by default, the smaller shift
     if (g_integer_fractal > 1)    // use specific override from table
     {
-        bitshift = g_integer_fractal;
+        g_bit_shift = g_integer_fractal;
     }
     if (g_integer_fractal == 0)
     {
@@ -412,12 +412,12 @@ init_restart:
         {
             if (fractalspecific[static_cast<int>(i)].isinteger > 1)   // specific shift?
             {
-                bitshift = fractalspecific[static_cast<int>(i)].isinteger;
+                g_bit_shift = fractalspecific[static_cast<int>(i)].isinteger;
             }
         }
         else
         {
-            bitshift = 16;  // to allow larger corners
+            g_bit_shift = 16;  // to allow larger corners
         }
     }
     // We want this code if we're using the assembler calcmand
@@ -435,11 +435,11 @@ init_restart:
                 && g_close_proximity <= 2.0             // and g_close_proximity not too large
                 && g_bail_out_test == bailouts::Mod)    // and bailout test = mod
         {
-            bitshift = FUDGEFACTOR;                     // use the larger bitshift
+            g_bit_shift = FUDGEFACTOR;                     // use the larger bitshift
         }
     }
 
-    g_fudge_factor = 1L << bitshift;
+    g_fudge_factor = 1L << g_bit_shift;
 
     g_l_at_rad = g_fudge_factor/32768L;
     g_f_at_rad = 1.0/32768L;
@@ -1079,11 +1079,11 @@ static void adjust_to_limits(double expand)
         {
             limit = 1023.99;
         }
-        if (bitshift >= 24)
+        if (g_bit_shift >= 24)
         {
             limit = 31.99;
         }
-        if (bitshift >= 29)
+        if (g_bit_shift >= 29)
         {
             limit = 3.99;
         }
@@ -1887,10 +1887,10 @@ void get_julia_attractor(double real, double imag)
     g_l_temp_sqr_x = (long)tempsqrx;
     g_l_temp_sqr_y = (long)tempsqry;
 
-    g_l_old_z.x = g_l_old_z.x << bitshift;
-    g_l_old_z.y = g_l_old_z.y << bitshift;
-    g_l_temp_sqr_x = g_l_temp_sqr_x << bitshift;
-    g_l_temp_sqr_y = g_l_temp_sqr_y << bitshift;
+    g_l_old_z.x = g_l_old_z.x << g_bit_shift;
+    g_l_old_z.y = g_l_old_z.y << g_bit_shift;
+    g_l_temp_sqr_x = g_l_temp_sqr_x << g_bit_shift;
+    g_l_temp_sqr_y = g_l_temp_sqr_y << g_bit_shift;
 
     if (g_max_iterations < 500)           // we're going to try at least this hard
     {

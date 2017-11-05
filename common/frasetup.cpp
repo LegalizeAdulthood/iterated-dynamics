@@ -23,7 +23,7 @@ MandelSetup()           // Mandelbrot Routine
 {
     if (g_debug_flag != debug_flags::force_standard_fractal
             && (g_invert == 0) && g_decomp[0] == 0 && rqlim == 4.0
-            && bitshift == 29 && !g_potential_flag
+            && g_bit_shift == 29 && !g_potential_flag
             && g_biomorph == -1 && g_inside_color > ZMAG && g_outside_color >= ITER
             && g_use_init_orbit != init_orbit_mode::value && !g_using_jiim && g_bail_out_test == bailouts::Mod
             && (g_orbit_save_flags & osf_midi) == 0)
@@ -44,7 +44,7 @@ JuliaSetup()            // Julia Routine
 {
     if (g_debug_flag != debug_flags::force_standard_fractal
             && (g_invert == 0) && g_decomp[0] == 0 && rqlim == 4.0
-            && bitshift == 29 && !g_potential_flag
+            && g_bit_shift == 29 && !g_potential_flag
             && g_biomorph == -1 && g_inside_color > ZMAG && g_outside_color >= ITER
             && !g_finite_attractor && !g_using_jiim && g_bail_out_test == bailouts::Mod
             && (g_orbit_save_flags & osf_midi) == 0)
@@ -187,7 +187,7 @@ bool
 UnitySetup()
 {
     g_periodicity_check = 0;
-    g_fudge_one = (1L << bitshift);
+    g_fudge_one = (1L << g_bit_shift);
     g_fudge_two = g_fudge_one + g_fudge_one;
     return true;
 }
@@ -1179,11 +1179,11 @@ MarksJuliaSetup()
     g_l_old_z = *g_long_param;
     if (g_c_exponent > 3)
     {
-        lcpower(&g_l_old_z, g_c_exponent-1, &g_l_coefficient, bitshift);
+        lcpower(&g_l_old_z, g_c_exponent-1, &g_l_coefficient, g_bit_shift);
     }
     else if (g_c_exponent == 3)
     {
-        g_l_coefficient.x = multiply(g_l_old_z.x, g_l_old_z.x, bitshift) - multiply(g_l_old_z.y, g_l_old_z.y, bitshift);
+        g_l_coefficient.x = multiply(g_l_old_z.x, g_l_old_z.x, g_bit_shift) - multiply(g_l_old_z.y, g_l_old_z.y, g_bit_shift);
         g_l_coefficient.y = multiply(g_l_old_z.x, g_l_old_z.y, bitshiftless1);
     }
     else if (g_c_exponent == 2)
@@ -1192,7 +1192,7 @@ MarksJuliaSetup()
     }
     else if (g_c_exponent < 2)
     {
-        g_l_coefficient.x = 1L << bitshift;
+        g_l_coefficient.x = 1L << g_bit_shift;
         g_l_coefficient.y = 0L;
     }
     get_julia_attractor(0.0, 0.0);       // an attractor?
@@ -1238,7 +1238,7 @@ SierpinskiSetup()
     // sierpinski
     g_periodicity_check = 0;                // disable periodicity checks
     g_l_temp.x = 1;
-    g_l_temp.x = g_l_temp.x << bitshift; // ltmp.x = 1
+    g_l_temp.x = g_l_temp.x << g_bit_shift; // ltmp.x = 1
     g_l_temp.y = g_l_temp.x >> 1;                        // ltmp.y = .5
     return true;
 }

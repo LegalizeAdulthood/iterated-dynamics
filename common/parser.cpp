@@ -363,8 +363,8 @@ unsigned long NewRandNum()
 
 void lRandom()
 {
-    v[7].a.l.x = NewRandNum() >> (32 - bitshift);
-    v[7].a.l.y = NewRandNum() >> (32 - bitshift);
+    v[7].a.l.x = NewRandNum() >> (32 - g_bit_shift);
+    v[7].a.l.y = NewRandNum() >> (32 - g_bit_shift);
 }
 
 void dRandom()
@@ -373,10 +373,10 @@ void dRandom()
 
     /* Use the same algorithm as for fixed math so that they will generate
            the same fractals when the srand() function is used. */
-    x = NewRandNum() >> (32 - bitshift);
-    y = NewRandNum() >> (32 - bitshift);
-    v[7].a.d.x = ((double)x / (1L << bitshift));
-    v[7].a.d.y = ((double)y / (1L << bitshift));
+    x = NewRandNum() >> (32 - g_bit_shift);
+    y = NewRandNum() >> (32 - g_bit_shift);
+    v[7].a.d.x = ((double)x / (1L << g_bit_shift));
+    v[7].a.d.y = ((double)y / (1L << g_bit_shift));
 
 }
 
@@ -387,10 +387,10 @@ void mRandom()
 
     /* Use the same algorithm as for fixed math so that they will generate
        the same fractals when the srand() function is used. */
-    x = NewRandNum() >> (32 - bitshift);
-    y = NewRandNum() >> (32 - bitshift);
-    v[7].a.m.x = *fg2MP(x, bitshift);
-    v[7].a.m.y = *fg2MP(y, bitshift);
+    x = NewRandNum() >> (32 - g_bit_shift);
+    y = NewRandNum() >> (32 - g_bit_shift);
+    v[7].a.m.x = *fg2MP(x, g_bit_shift);
+    v[7].a.m.y = *fg2MP(y, g_bit_shift);
 }
 #endif
 
@@ -449,8 +449,8 @@ void mStkSRand()
 
 void dStkSRand()
 {
-    Arg1->l.x = (long)(Arg1->d.x * (1L << bitshift));
-    Arg1->l.y = (long)(Arg1->d.y * (1L << bitshift));
+    Arg1->l.x = (long)(Arg1->d.x * (1L << g_bit_shift));
+    Arg1->l.y = (long)(Arg1->d.y * (1L << g_bit_shift));
     SetRandFnct();
     dRandom();
     Arg1->d = v[7].a.d;
@@ -567,9 +567,9 @@ void mStkSqr()
 
 void lStkSqr()
 {
-    LastSqr.l.x = multiply(Arg1->l.x, Arg1->l.x, bitshift);
-    LastSqr.l.y = multiply(Arg1->l.y, Arg1->l.y, bitshift);
-    Arg1->l.y = multiply(Arg1->l.x, Arg1->l.y, bitshift) << 1;
+    LastSqr.l.x = multiply(Arg1->l.x, Arg1->l.x, g_bit_shift);
+    LastSqr.l.y = multiply(Arg1->l.y, Arg1->l.y, g_bit_shift);
+    Arg1->l.y = multiply(Arg1->l.x, Arg1->l.y, g_bit_shift) << 1;
     Arg1->l.x = LastSqr.l.x - LastSqr.l.y;
     LastSqr.l.x += LastSqr.l.y;
     LastSqr.l.y = 0L;
@@ -670,10 +670,10 @@ void lStkFloor()
      * Kill fractional part. This operation truncates negative numbers
      * toward negative infinity as desired.
      */
-    Arg1->l.x = (Arg1->l.x) >> bitshift;
-    Arg1->l.y = (Arg1->l.y) >> bitshift;
-    Arg1->l.x = (Arg1->l.x) << bitshift;
-    Arg1->l.y = (Arg1->l.y) << bitshift;
+    Arg1->l.x = (Arg1->l.x) >> g_bit_shift;
+    Arg1->l.y = (Arg1->l.y) >> g_bit_shift;
+    Arg1->l.x = (Arg1->l.x) << g_bit_shift;
+    Arg1->l.y = (Arg1->l.y) << g_bit_shift;
 }
 #endif
 
@@ -695,10 +695,10 @@ void lStkCeil()
 {
     /* the shift operation does the "floor" operation, so we
        negate everything before the operation */
-    Arg1->l.x = (-Arg1->l.x) >> bitshift;
-    Arg1->l.y = (-Arg1->l.y) >> bitshift;
-    Arg1->l.x = -((Arg1->l.x) << bitshift);
-    Arg1->l.y = -((Arg1->l.y) << bitshift);
+    Arg1->l.x = (-Arg1->l.x) >> g_bit_shift;
+    Arg1->l.y = (-Arg1->l.y) >> g_bit_shift;
+    Arg1->l.x = -((Arg1->l.x) << g_bit_shift);
+    Arg1->l.y = -((Arg1->l.y) << g_bit_shift);
 }
 #endif
 
@@ -725,10 +725,10 @@ void lStkTrunc()
     signy = sign(Arg1->l.y);
     Arg1->l.x = labs(Arg1->l.x);
     Arg1->l.y = labs(Arg1->l.y);
-    Arg1->l.x = (Arg1->l.x) >> bitshift;
-    Arg1->l.y = (Arg1->l.y) >> bitshift;
-    Arg1->l.x = (Arg1->l.x) << bitshift;
-    Arg1->l.y = (Arg1->l.y) << bitshift;
+    Arg1->l.x = (Arg1->l.x) >> g_bit_shift;
+    Arg1->l.y = (Arg1->l.y) >> g_bit_shift;
+    Arg1->l.x = (Arg1->l.x) << g_bit_shift;
+    Arg1->l.y = (Arg1->l.y) << g_bit_shift;
     Arg1->l.x = signx*Arg1->l.x;
     Arg1->l.y = signy*Arg1->l.y;
 }
@@ -889,10 +889,10 @@ void lStkMul()
 {
     long x, y;
 
-    x = multiply(Arg2->l.x, Arg1->l.x, bitshift) -
-        multiply(Arg2->l.y, Arg1->l.y, bitshift);
-    y = multiply(Arg2->l.y, Arg1->l.x, bitshift) +
-        multiply(Arg2->l.x, Arg1->l.y, bitshift);
+    x = multiply(Arg2->l.x, Arg1->l.x, g_bit_shift) -
+        multiply(Arg2->l.y, Arg1->l.y, g_bit_shift);
+    y = multiply(Arg2->l.y, Arg1->l.x, g_bit_shift) +
+        multiply(Arg2->l.x, Arg1->l.y, g_bit_shift);
     Arg2->l.x = x;
     Arg2->l.y = y;
     Arg1--;
@@ -921,12 +921,12 @@ void lStkDiv()
 {
     long x, y, mod, x2, y2;
 
-    mod = multiply(Arg1->l.x, Arg1->l.x, bitshift) +
-          multiply(Arg1->l.y, Arg1->l.y, bitshift);
-    x = divide(Arg1->l.x, mod, bitshift);
-    y = -divide(Arg1->l.y, mod, bitshift);
-    x2 = multiply(Arg2->l.x, x, bitshift) - multiply(Arg2->l.y, y, bitshift);
-    y2 = multiply(Arg2->l.y, x, bitshift) + multiply(Arg2->l.x, y, bitshift);
+    mod = multiply(Arg1->l.x, Arg1->l.x, g_bit_shift) +
+          multiply(Arg1->l.y, Arg1->l.y, g_bit_shift);
+    x = divide(Arg1->l.x, mod, g_bit_shift);
+    y = -divide(Arg1->l.y, mod, g_bit_shift);
+    x2 = multiply(Arg2->l.x, x, g_bit_shift) - multiply(Arg2->l.y, y, g_bit_shift);
+    y2 = multiply(Arg2->l.y, x, g_bit_shift) + multiply(Arg2->l.x, y, g_bit_shift);
     Arg2->l.x = x2;
     Arg2->l.y = y2;
     Arg1--;
@@ -954,8 +954,8 @@ void lStkMod()
 {
     //   Arg1->l.x = multiply(Arg2->l.x, Arg1->l.x, bitshift) +
     //   multiply(Arg2->l.y, Arg1->l.y, bitshift);
-    Arg1->l.x = multiply(Arg1->l.x, Arg1->l.x, bitshift) +
-                multiply(Arg1->l.y, Arg1->l.y, bitshift);
+    Arg1->l.x = multiply(Arg1->l.x, Arg1->l.x, g_bit_shift) +
+                multiply(Arg1->l.y, Arg1->l.y, g_bit_shift);
     if (Arg1->l.x < 0)
     {
         g_overflow = true;
@@ -965,8 +965,8 @@ void lStkMod()
 
 void lStkModOld()
 {
-    Arg1->l.x = multiply(Arg2->l.x, Arg1->l.x, bitshift) +
-                multiply(Arg2->l.y, Arg1->l.y, bitshift);
+    Arg1->l.x = multiply(Arg2->l.x, Arg1->l.x, g_bit_shift) +
+                multiply(Arg2->l.y, Arg1->l.y, g_bit_shift);
     if (Arg1->l.x < 0)
     {
         g_overflow = true;
@@ -1095,8 +1095,8 @@ void lStkTan()
     SinhCosh086(y, &sinhy, &coshy);
     denom = cosx + coshy;
     ChkLongDenom(denom);
-    Arg1->l.x = divide(sinx, denom, bitshift);
-    Arg1->l.y = divide(sinhy, denom, bitshift);
+    Arg1->l.x = divide(sinx, denom, g_bit_shift);
+    Arg1->l.y = divide(sinhy, denom, g_bit_shift);
 }
 #endif
 
@@ -1132,8 +1132,8 @@ void lStkTanh()
     SinhCosh086(x, &sinhx, &coshx);
     denom = coshx + cosy;
     ChkLongDenom(denom);
-    Arg1->l.x = divide(sinhx, denom, bitshift);
-    Arg1->l.y = divide(siny, denom, bitshift);
+    Arg1->l.x = divide(sinhx, denom, g_bit_shift);
+    Arg1->l.y = divide(siny, denom, g_bit_shift);
 }
 #endif
 
@@ -1169,8 +1169,8 @@ void lStkCoTan()
     SinhCosh086(y, &sinhy, &coshy);
     denom = coshy - cosx;
     ChkLongDenom(denom);
-    Arg1->l.x = divide(sinx, denom, bitshift);
-    Arg1->l.y = -divide(sinhy, denom, bitshift);
+    Arg1->l.x = divide(sinx, denom, g_bit_shift);
+    Arg1->l.y = -divide(sinhy, denom, g_bit_shift);
 }
 #endif
 
@@ -1206,8 +1206,8 @@ void lStkCoTanh()
     SinhCosh086(x, &sinhx, &coshx);
     denom = coshx - cosy;
     ChkLongDenom(denom);
-    Arg1->l.x = divide(sinhx, denom, bitshift);
-    Arg1->l.y = -divide(siny, denom, bitshift);
+    Arg1->l.x = divide(sinhx, denom, g_bit_shift);
+    Arg1->l.y = -divide(siny, denom, g_bit_shift);
 }
 #endif
 
@@ -1247,8 +1247,8 @@ void mStkRecip()
 void lStkRecip()
 {
     long mod;
-    mod = multiply(Arg1->l.x, Arg1->l.x, bitshift)
-          + multiply(Arg1->l.y, Arg1->l.y, bitshift);
+    mod = multiply(Arg1->l.x, Arg1->l.x, g_bit_shift)
+          + multiply(Arg1->l.y, Arg1->l.y, g_bit_shift);
     if (g_save_release > 1920)
     {
         ChkLongDenom(mod);
@@ -1257,8 +1257,8 @@ void lStkRecip()
     {
         return;
     }
-    Arg1->l.x =  divide(Arg1->l.x, mod, bitshift);
-    Arg1->l.y = -divide(Arg1->l.y, mod, bitshift);
+    Arg1->l.x =  divide(Arg1->l.x, mod, g_bit_shift);
+    Arg1->l.y = -divide(Arg1->l.y, mod, g_bit_shift);
 }
 #endif
 
@@ -1557,7 +1557,7 @@ void mStkLT()
 
 void lStkLT()
 {
-    Arg2->l.x = (long)(Arg2->l.x < Arg1->l.x) << bitshift;
+    Arg2->l.x = (long)(Arg2->l.x < Arg1->l.x) << g_bit_shift;
     Arg2->l.y = 0l;
     Arg1--;
     Arg2--;
@@ -1586,7 +1586,7 @@ void mStkGT()
 
 void lStkGT()
 {
-    Arg2->l.x = (long)(Arg2->l.x > Arg1->l.x) << bitshift;
+    Arg2->l.x = (long)(Arg2->l.x > Arg1->l.x) << g_bit_shift;
     Arg2->l.y = 0l;
     Arg1--;
     Arg2--;
@@ -1618,7 +1618,7 @@ void mStkLTE()
 
 void lStkLTE()
 {
-    Arg2->l.x = (long)(Arg2->l.x <= Arg1->l.x) << bitshift;
+    Arg2->l.x = (long)(Arg2->l.x <= Arg1->l.x) << g_bit_shift;
     Arg2->l.y = 0l;
     Arg1--;
     Arg2--;
@@ -1650,7 +1650,7 @@ void mStkGTE()
 
 void lStkGTE()
 {
-    Arg2->l.x = (long)(Arg2->l.x >= Arg1->l.x) << bitshift;
+    Arg2->l.x = (long)(Arg2->l.x >= Arg1->l.x) << g_bit_shift;
     Arg2->l.y = 0l;
     Arg1--;
     Arg2--;
@@ -1682,7 +1682,7 @@ void mStkEQ()
 
 void lStkEQ()
 {
-    Arg2->l.x = (long)(Arg2->l.x == Arg1->l.x) << bitshift;
+    Arg2->l.x = (long)(Arg2->l.x == Arg1->l.x) << g_bit_shift;
     Arg2->l.y = 0l;
     Arg1--;
     Arg2--;
@@ -1714,7 +1714,7 @@ void mStkNE()
 
 void lStkNE()
 {
-    Arg2->l.x = (long)(Arg2->l.x != Arg1->l.x) << bitshift;
+    Arg2->l.x = (long)(Arg2->l.x != Arg1->l.x) << g_bit_shift;
     Arg2->l.y = 0l;
     Arg1--;
     Arg2--;
@@ -1743,7 +1743,7 @@ void mStkOR()
 
 void lStkOR()
 {
-    Arg2->l.x = (long)(Arg2->l.x || Arg1->l.x) << bitshift;
+    Arg2->l.x = (long)(Arg2->l.x || Arg1->l.x) << g_bit_shift;
     Arg2->l.y = 0l;
     Arg1--;
     Arg2--;
@@ -1772,7 +1772,7 @@ void mStkAND()
 
 void lStkAND()
 {
-    Arg2->l.x = (long)(Arg2->l.x && Arg1->l.x) << bitshift;
+    Arg2->l.x = (long)(Arg2->l.x && Arg1->l.x) << g_bit_shift;
     Arg2->l.y = 0l;
     Arg1--;
     Arg2--;
@@ -2512,8 +2512,8 @@ static bool ParseStr(char const *Str, int pass)
         StkOne = mStkOne;
         break;
     case L_MATH:
-        Delta16 = bitshift - 16;
-        ShiftBack = 32 - bitshift;
+        Delta16 = g_bit_shift - 16;
+        ShiftBack = 32 - g_bit_shift;
         StkAdd = lStkAdd;
         StkSub = lStkSub;
         StkNeg = lStkNeg;
@@ -2653,14 +2653,14 @@ static bool ParseStr(char const *Str, int pass)
         v[8].a.l.x = (long)(g_params[4] * fg);
         v[8].a.l.y = (long)(g_params[5] * fg);
         v[11].a.l.x = xdots;
-        v[11].a.l.x <<= bitshift;
+        v[11].a.l.x <<= g_bit_shift;
         v[11].a.l.y = ydots;
-        v[11].a.l.y <<= bitshift;
+        v[11].a.l.y <<= g_bit_shift;
         v[12].a.l.x = g_max_iterations;
-        v[12].a.l.x <<= bitshift;
+        v[12].a.l.x <<= g_bit_shift;
         v[12].a.l.y = 0L;
         v[13].a.l.x = g_is_mandelbrot ? 1 : 0;
-        v[13].a.l.x <<= bitshift;
+        v[13].a.l.x <<= g_bit_shift;
         v[13].a.l.y = 0L;
         v[14].a.l.x = (long)(v[14].a.d.x * fg);
         v[14].a.l.y = (long)(v[14].a.d.y * fg);
@@ -3040,9 +3040,9 @@ int form_per_pixel()
         v[9].a.l.x = (long)(((row+col)&1) * fg);
         v[9].a.l.y = 0L;
         v[10].a.l.x = col;
-        v[10].a.l.x <<= bitshift;
+        v[10].a.l.x <<= g_bit_shift;
         v[10].a.l.y = row;
-        v[10].a.l.y <<= bitshift;
+        v[10].a.l.y <<= g_bit_shift;
         break;
 #endif
     }
@@ -4319,9 +4319,9 @@ bool intFormulaSetup()
     return false;
 #else
     MathType = L_MATH;
-    fg = (double)(1L << bitshift);
+    fg = (double)(1L << g_bit_shift);
     fgLimit = (double)0x7fffffffL / fg;
-    ShiftBack = 32 - bitshift;
+    ShiftBack = 32 - g_bit_shift;
     return !RunForm(g_formula_name.c_str(), false);
 #endif
 }
@@ -4337,11 +4337,11 @@ void init_misc()
     }
     Arg1 = &argfirst;
     Arg2 = &argsecond; // needed by all the ?Stk* functions
-    fg = (double)(1L << bitshift);
+    fg = (double)(1L << g_bit_shift);
     g_fudge_limit = (double)0x7fffffffL / fg;
-    ShiftBack = 32 - bitshift;
-    Delta16 = bitshift - 16;
-    bitshiftless1 = bitshift-1;
+    ShiftBack = 32 - g_bit_shift;
+    Delta16 = g_bit_shift - 16;
+    bitshiftless1 = g_bit_shift-1;
     g_frm_uses_p1 = false;
     g_frm_uses_p2 = false;
     g_frm_uses_p3 = false;

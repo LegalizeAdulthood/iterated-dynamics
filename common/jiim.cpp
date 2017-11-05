@@ -871,8 +871,8 @@ void Jiim(jiim_types which)
                 {
                     cr = g_l_x_pixel();
                     ci = g_l_y_pixel();
-                    cr /= (1L << bitshift);
-                    ci /= (1L << bitshift);
+                    cr /= (1L << g_bit_shift);
+                    ci /= (1L << g_bit_shift);
                 }
                 else
                 {

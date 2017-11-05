@@ -646,7 +646,7 @@ int diffusion()
 
     y = -1;
     x = y;
-    bitshift = 16;
+    g_bit_shift = 16;
     g_fudge_factor = 1L << 16;
 
     border = (int)g_params[0];
@@ -1265,8 +1265,8 @@ int LongBifurcVerhulstTrig()
     g_l_temp.x = lPopulation;
     g_l_temp.y = 0;
     LCMPLXtrig0(g_l_temp, g_l_temp);
-    g_l_temp.y = g_l_temp.x - multiply(g_l_temp.x, g_l_temp.x, bitshift);
-    lPopulation += multiply(lRate, g_l_temp.y, bitshift);
+    g_l_temp.y = g_l_temp.x - multiply(g_l_temp.x, g_l_temp.x, g_bit_shift);
+    lPopulation += multiply(lRate, g_l_temp.y, g_bit_shift);
 #endif
     return (g_overflow);
 }
@@ -1287,8 +1287,8 @@ int LongBifurcStewartTrig()
     g_l_temp.x = lPopulation;
     g_l_temp.y = 0;
     LCMPLXtrig0(g_l_temp, g_l_temp);
-    lPopulation = multiply(g_l_temp.x, g_l_temp.x, bitshift);
-    lPopulation = multiply(lPopulation, lRate,      bitshift);
+    lPopulation = multiply(g_l_temp.x, g_l_temp.x, g_bit_shift);
+    lPopulation = multiply(lPopulation, lRate,      g_bit_shift);
     lPopulation -= g_fudge_factor;
 #endif
     return (g_overflow);
@@ -1306,10 +1306,10 @@ int BifurcSetTrigPi()
 int LongBifurcSetTrigPi()
 {
 #if !defined(XFRACT)
-    g_l_temp.x = multiply(lPopulation, LPI, bitshift);
+    g_l_temp.x = multiply(lPopulation, LPI, g_bit_shift);
     g_l_temp.y = 0;
     LCMPLXtrig0(g_l_temp, g_l_temp);
-    lPopulation = multiply(lRate, g_l_temp.x, bitshift);
+    lPopulation = multiply(lRate, g_l_temp.x, g_bit_shift);
 #endif
     return (g_overflow);
 }
@@ -1326,10 +1326,10 @@ int BifurcAddTrigPi()
 int LongBifurcAddTrigPi()
 {
 #if !defined(XFRACT)
-    g_l_temp.x = multiply(lPopulation, LPI, bitshift);
+    g_l_temp.x = multiply(lPopulation, LPI, g_bit_shift);
     g_l_temp.y = 0;
     LCMPLXtrig0(g_l_temp, g_l_temp);
-    lPopulation += multiply(lRate, g_l_temp.x, bitshift);
+    lPopulation += multiply(lRate, g_l_temp.x, g_bit_shift);
 #endif
     return (g_overflow);
 }
@@ -1350,8 +1350,8 @@ int LongBifurcLambdaTrig()
     g_l_temp.x = lPopulation;
     g_l_temp.y = 0;
     LCMPLXtrig0(g_l_temp, g_l_temp);
-    g_l_temp.y = g_l_temp.x - multiply(g_l_temp.x, g_l_temp.x, bitshift);
-    lPopulation = multiply(lRate, g_l_temp.y, bitshift);
+    g_l_temp.y = g_l_temp.x - multiply(g_l_temp.x, g_l_temp.x, g_bit_shift);
+    lPopulation = multiply(lRate, g_l_temp.y, g_bit_shift);
 #endif
     return (g_overflow);
 }
@@ -1378,8 +1378,8 @@ int LongBifurcMay()
     g_l_temp.y = 0;
     g_l_param2.x = beta * g_fudge_factor;
     LCMPLXpwr(g_l_temp, g_l_param2, g_l_temp);
-    lPopulation = multiply(lRate, lPopulation, bitshift);
-    lPopulation = divide(lPopulation, g_l_temp.x, bitshift);
+    lPopulation = multiply(lRate, lPopulation, g_bit_shift);
+    lPopulation = divide(lPopulation, g_l_temp.x, g_bit_shift);
 #endif
     return (g_overflow);
 }
@@ -2576,8 +2576,8 @@ int calcfroth()   // per pixel 1/2/g, called with row & col set
         {
             // simple formula: z = z^2 + conj(z*(-1+ai))
             // but it's the attractor that makes this so interesting
-            g_l_new_z.x = g_l_temp_sqr_x - g_l_temp_sqr_y - g_l_old_z.x - multiply(fsp.fl.l.a, g_l_old_z.y, bitshift);
-            g_l_old_z.y += (multiply(g_l_old_z.x, g_l_old_z.y, bitshift)<<1) - multiply(fsp.fl.l.a, g_l_old_z.x, bitshift);
+            g_l_new_z.x = g_l_temp_sqr_x - g_l_temp_sqr_y - g_l_old_z.x - multiply(fsp.fl.l.a, g_l_old_z.y, g_bit_shift);
+            g_l_old_z.y += (multiply(g_l_old_z.x, g_l_old_z.y, g_bit_shift)<<1) - multiply(fsp.fl.l.a, g_l_old_z.x, g_bit_shift);
             g_l_old_z.x = g_l_new_z.x;
             if (fsp.repeat_mapping)
             {
@@ -2586,8 +2586,8 @@ int calcfroth()   // per pixel 1/2/g, called with row & col set
                 {
                     break;
                 }
-                g_l_new_z.x = g_l_temp_sqr_x - g_l_temp_sqr_y - g_l_old_z.x - multiply(fsp.fl.l.a, g_l_old_z.y, bitshift);
-                g_l_old_z.y += (multiply(g_l_old_z.x, g_l_old_z.y, bitshift)<<1) - multiply(fsp.fl.l.a, g_l_old_z.x, bitshift);
+                g_l_new_z.x = g_l_temp_sqr_x - g_l_temp_sqr_y - g_l_old_z.x - multiply(fsp.fl.l.a, g_l_old_z.y, g_bit_shift);
+                g_l_old_z.y += (multiply(g_l_old_z.x, g_l_old_z.y, g_bit_shift)<<1) - multiply(fsp.fl.l.a, g_l_old_z.x, g_bit_shift);
                 g_l_old_z.x = g_l_new_z.x;
             }
             g_color_iter++;
@@ -2625,7 +2625,7 @@ int calcfroth()   // per pixel 1/2/g, called with row & col set
                     }
                 }
             }
-            else if (labs(multiply(FROTH_LSLOPE, g_l_old_z.x, bitshift)-fsp.fl.l.a-g_l_old_z.y) < FROTH_LCLOSE
+            else if (labs(multiply(FROTH_LSLOPE, g_l_old_z.x, g_bit_shift)-fsp.fl.l.a-g_l_old_z.y) < FROTH_LCLOSE
                      && g_l_old_z.x <= fsp.fl.l.right_x1 && g_l_old_z.x >= fsp.fl.l.right_x2)
             {
                 if (!fsp.repeat_mapping && fsp.attractors == 2)
@@ -2659,7 +2659,7 @@ int calcfroth()   // per pixel 1/2/g, called with row & col set
                     }
                 }
             }
-            else if (labs(multiply(-FROTH_LSLOPE, g_l_old_z.x, bitshift)-fsp.fl.l.a-g_l_old_z.y) < FROTH_LCLOSE)
+            else if (labs(multiply(-FROTH_LSLOPE, g_l_old_z.x, g_bit_shift)-fsp.fl.l.a-g_l_old_z.y) < FROTH_LCLOSE)
             {
                 if (!fsp.repeat_mapping && fsp.attractors == 2)
                 {
@@ -2820,8 +2820,8 @@ int froth_per_pixel()
     {
         g_l_old_z.x = g_l_x_pixel();
         g_l_old_z.y = g_l_y_pixel();
-        g_l_temp_sqr_x = multiply(g_l_old_z.x, g_l_old_z.x, bitshift);
-        g_l_temp_sqr_y = multiply(g_l_old_z.y, g_l_old_z.y, bitshift);
+        g_l_temp_sqr_x = multiply(g_l_old_z.x, g_l_old_z.x, g_bit_shift);
+        g_l_temp_sqr_y = multiply(g_l_old_z.y, g_l_old_z.y, g_bit_shift);
     }
     return 0;
 }
@@ -2849,8 +2849,8 @@ int froth_per_orbit()
     }
     else  // integer mode
     {
-        g_l_new_z.x = g_l_temp_sqr_x - g_l_temp_sqr_y - g_l_old_z.x - multiply(fsp.fl.l.a, g_l_old_z.y, bitshift);
-        g_l_new_z.y = g_l_old_z.y + (multiply(g_l_old_z.x, g_l_old_z.y, bitshift)<<1) - multiply(fsp.fl.l.a, g_l_old_z.x, bitshift);
+        g_l_new_z.x = g_l_temp_sqr_x - g_l_temp_sqr_y - g_l_old_z.x - multiply(fsp.fl.l.a, g_l_old_z.y, g_bit_shift);
+        g_l_new_z.y = g_l_old_z.y + (multiply(g_l_old_z.x, g_l_old_z.y, g_bit_shift)<<1) - multiply(fsp.fl.l.a, g_l_old_z.x, g_bit_shift);
         if (fsp.repeat_mapping)
         {
             g_l_temp_sqr_x = lsqr(g_l_new_z.x);
@@ -2860,8 +2860,8 @@ int froth_per_orbit()
                 return 1;
             }
             g_l_old_z = g_l_new_z;
-            g_l_new_z.x = g_l_temp_sqr_x - g_l_temp_sqr_y - g_l_old_z.x - multiply(fsp.fl.l.a, g_l_old_z.y, bitshift);
-            g_l_new_z.y = g_l_old_z.y + (multiply(g_l_old_z.x, g_l_old_z.y, bitshift)<<1) - multiply(fsp.fl.l.a, g_l_old_z.x, bitshift);
+            g_l_new_z.x = g_l_temp_sqr_x - g_l_temp_sqr_y - g_l_old_z.x - multiply(fsp.fl.l.a, g_l_old_z.y, g_bit_shift);
+            g_l_new_z.y = g_l_old_z.y + (multiply(g_l_old_z.x, g_l_old_z.y, g_bit_shift)<<1) - multiply(fsp.fl.l.a, g_l_old_z.x, g_bit_shift);
         }
         g_l_temp_sqr_x = lsqr(g_l_new_z.x);
         g_l_temp_sqr_y = lsqr(g_l_new_z.y);

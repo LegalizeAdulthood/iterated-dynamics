@@ -777,7 +777,7 @@ int calcfract()
             SetupLogTable();
         }
     }
-    lm = 4L << bitshift;                 // CALCMAND magnitude limit
+    lm = 4L << g_bit_shift;                 // CALCMAND magnitude limit
 
     if (g_save_release > 2002)
     {
@@ -3134,59 +3134,59 @@ static void decomposition()
             if (g_decomp[0] >= 16)
             {
                 temp <<= 1;
-                if (multiply(g_l_new_z.x, ltan22_5, bitshift) < g_l_new_z.y)
+                if (multiply(g_l_new_z.x, ltan22_5, g_bit_shift) < g_l_new_z.y)
                 {
                     ++temp;
                     lalt = g_l_new_z;
-                    g_l_new_z.x = multiply(lalt.x, lcos45, bitshift) +
-                             multiply(lalt.y, lsin45, bitshift);
-                    g_l_new_z.y = multiply(lalt.x, lsin45, bitshift) -
-                             multiply(lalt.y, lcos45, bitshift);
+                    g_l_new_z.x = multiply(lalt.x, lcos45, g_bit_shift) +
+                             multiply(lalt.y, lsin45, g_bit_shift);
+                    g_l_new_z.y = multiply(lalt.x, lsin45, g_bit_shift) -
+                             multiply(lalt.y, lcos45, g_bit_shift);
                 }
 
                 if (g_decomp[0] >= 32)
                 {
                     temp <<= 1;
-                    if (multiply(g_l_new_z.x, ltan11_25, bitshift) < g_l_new_z.y)
+                    if (multiply(g_l_new_z.x, ltan11_25, g_bit_shift) < g_l_new_z.y)
                     {
                         ++temp;
                         lalt = g_l_new_z;
-                        g_l_new_z.x = multiply(lalt.x, lcos22_5, bitshift) +
-                                 multiply(lalt.y, lsin22_5, bitshift);
-                        g_l_new_z.y = multiply(lalt.x, lsin22_5, bitshift) -
-                                 multiply(lalt.y, lcos22_5, bitshift);
+                        g_l_new_z.x = multiply(lalt.x, lcos22_5, g_bit_shift) +
+                                 multiply(lalt.y, lsin22_5, g_bit_shift);
+                        g_l_new_z.y = multiply(lalt.x, lsin22_5, g_bit_shift) -
+                                 multiply(lalt.y, lcos22_5, g_bit_shift);
                     }
 
                     if (g_decomp[0] >= 64)
                     {
                         temp <<= 1;
-                        if (multiply(g_l_new_z.x, ltan5_625, bitshift) < g_l_new_z.y)
+                        if (multiply(g_l_new_z.x, ltan5_625, g_bit_shift) < g_l_new_z.y)
                         {
                             ++temp;
                             lalt = g_l_new_z;
-                            g_l_new_z.x = multiply(lalt.x, lcos11_25, bitshift) +
-                                     multiply(lalt.y, lsin11_25, bitshift);
-                            g_l_new_z.y = multiply(lalt.x, lsin11_25, bitshift) -
-                                     multiply(lalt.y, lcos11_25, bitshift);
+                            g_l_new_z.x = multiply(lalt.x, lcos11_25, g_bit_shift) +
+                                     multiply(lalt.y, lsin11_25, g_bit_shift);
+                            g_l_new_z.y = multiply(lalt.x, lsin11_25, g_bit_shift) -
+                                     multiply(lalt.y, lcos11_25, g_bit_shift);
                         }
 
                         if (g_decomp[0] >= 128)
                         {
                             temp <<= 1;
-                            if (multiply(g_l_new_z.x, ltan2_8125, bitshift) < g_l_new_z.y)
+                            if (multiply(g_l_new_z.x, ltan2_8125, g_bit_shift) < g_l_new_z.y)
                             {
                                 ++temp;
                                 lalt = g_l_new_z;
-                                g_l_new_z.x = multiply(lalt.x, lcos5_625, bitshift) +
-                                         multiply(lalt.y, lsin5_625, bitshift);
-                                g_l_new_z.y = multiply(lalt.x, lsin5_625, bitshift) -
-                                         multiply(lalt.y, lcos5_625, bitshift);
+                                g_l_new_z.x = multiply(lalt.x, lcos5_625, g_bit_shift) +
+                                         multiply(lalt.y, lsin5_625, g_bit_shift);
+                                g_l_new_z.y = multiply(lalt.x, lsin5_625, g_bit_shift) -
+                                         multiply(lalt.y, lcos5_625, g_bit_shift);
                             }
 
                             if (g_decomp[0] == 256)
                             {
                                 temp <<= 1;
-                                if (multiply(g_l_new_z.x, ltan1_4063, bitshift) < g_l_new_z.y)
+                                if (multiply(g_l_new_z.x, ltan1_4063, g_bit_shift) < g_l_new_z.y)
                                 {
                                     if ((g_l_new_z.x*ltan1_4063 < g_l_new_z.y))
                                     {

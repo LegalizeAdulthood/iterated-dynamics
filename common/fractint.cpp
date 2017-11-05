@@ -64,7 +64,7 @@ double  g_potential_params[3];            // three potential parameters
 long    g_fudge_factor;                  // 2**fudgefactor
 long    g_l_at_rad;               // finite attractor radius
 double  g_f_at_rad;               // finite attractor radius
-int     bitshift;               // fudgefactor
+int     g_bit_shift;               // fudgefactor
 
 int     g_bad_config = 0;          // 'fractint.cfg' ok?
 bool g_has_inverse = false;

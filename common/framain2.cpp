@@ -1129,7 +1129,7 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
                 yymax = curfractalspecific->ymax;
                 xx3rd = xxmin;
                 yy3rd = yymin;
-                if (g_user_distance_estimator_value == 0 && g_user_biomorph_value != -1 && bitshift != 29)
+                if (g_user_distance_estimator_value == 0 && g_user_biomorph_value != -1 && g_bit_shift != 29)
                 {
                     xxmin *= 3.0;
                     xxmax *= 3.0;

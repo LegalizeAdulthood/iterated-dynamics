@@ -110,9 +110,9 @@ JulibrotSetup()
         }
         if (fractalspecific[static_cast<int>(g_new_orbit_type)].isinteger > 1)
         {
-            bitshift = fractalspecific[static_cast<int>(g_new_orbit_type)].isinteger;
+            g_bit_shift = fractalspecific[static_cast<int>(g_new_orbit_type)].isinteger;
         }
-        fg = (double)(1L << bitshift);
+        fg = (double)(1L << g_bit_shift);
         fg16 = (double)(1L << 16);
         jxmin = (long)(xxmin * fg);
         jxmax = (long)(xxmax * fg);
@@ -188,19 +188,19 @@ jb_per_pixel()
 {
     jx = multiply(Per->x - xpixel, initz, 16);
     jx = divide(jx, dist, 16) - xpixel;
-    jx = multiply(jx << (bitshift - 16), x_per_inch, bitshift);
+    jx = multiply(jx << (g_bit_shift - 16), x_per_inch, g_bit_shift);
     jx += xoffset;
     djx = divide(depth, dist, 16);
-    djx = multiply(djx, Per->x - xpixel, 16) << (bitshift - 16);
-    djx = multiply(djx, x_per_inch, bitshift) / zdots;
+    djx = multiply(djx, Per->x - xpixel, 16) << (g_bit_shift - 16);
+    djx = multiply(djx, x_per_inch, g_bit_shift) / zdots;
 
     jy = multiply(Per->y - ypixel, initz, 16);
     jy = divide(jy, dist, 16) - ypixel;
-    jy = multiply(jy << (bitshift - 16), y_per_inch, bitshift);
+    jy = multiply(jy << (g_bit_shift - 16), y_per_inch, g_bit_shift);
     jy += yoffset;
     djy = divide(depth, dist, 16);
-    djy = multiply(djy, Per->y - ypixel, 16) << (bitshift - 16);
-    djy = multiply(djy, y_per_inch, bitshift) / zdots;
+    djy = multiply(djy, Per->y - ypixel, 16) << (g_bit_shift - 16);
+    djy = multiply(djy, y_per_inch, g_bit_shift) / zdots;
 
     return (1);
 }
@@ -260,8 +260,8 @@ zline(long x, long y)
         {
             return (-1);
         }
-        g_l_temp_sqr_x = multiply(g_l_old_z.x, g_l_old_z.x, bitshift);
-        g_l_temp_sqr_y = multiply(g_l_old_z.y, g_l_old_z.y, bitshift);
+        g_l_temp_sqr_x = multiply(g_l_old_z.x, g_l_old_z.x, g_bit_shift);
+        g_l_temp_sqr_y = multiply(g_l_old_z.y, g_l_old_z.y, g_bit_shift);
         for (n = 0; n < g_max_iterations; n++)
         {
             if (fractalspecific[static_cast<int>(g_new_orbit_type)].orbitcalc())

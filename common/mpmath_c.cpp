@@ -407,15 +407,15 @@ long lsqrt(long f)
         f *= 2;
     }
 
-    y0 = a + multiply(b, f,  bitshift);         // Newton's approximation
+    y0 = a + multiply(b, f,  g_bit_shift);         // Newton's approximation
 
-    z  = y0 + divide(f, y0, bitshift);
-    y0 = (z >> 2) + divide(f, z,  bitshift);
+    z  = y0 + divide(f, y0, g_bit_shift);
+    y0 = (z >> 2) + divide(f, z,  g_bit_shift);
 
     if (N % 2)
     {
         N++;
-        y0 = multiply(c, y0, bitshift);
+        y0 = multiply(c, y0, g_bit_shift);
     }
     N /= 2;
     if (N >= 0)
@@ -435,17 +435,17 @@ LComplex ComplexSqrtLong(long x, long y)
     LComplex    result;
 
 #ifndef LONGSQRT
-    double mag = sqrt(sqrt(((double) multiply(x, x, bitshift))/g_fudge_factor +
-                           ((double) multiply(y, y, bitshift))/ g_fudge_factor));
+    double mag = sqrt(sqrt(((double) multiply(x, x, g_bit_shift))/g_fudge_factor +
+                           ((double) multiply(y, y, g_bit_shift))/ g_fudge_factor));
     maglong   = (long)(mag * g_fudge_factor);
 #else
-    maglong   = lsqrt(lsqrt(multiply(x, x, bitshift)+multiply(y, y, bitshift)));
+    maglong   = lsqrt(lsqrt(multiply(x, x, g_bit_shift)+multiply(y, y, g_bit_shift)));
 #endif
     theta     = atan2((double) y/g_fudge_factor, (double) x/g_fudge_factor)/2;
     thetalong = (long)(theta * SinCosFudge);
     SinCos086(thetalong, &result.y, &result.x);
-    result.x  = multiply(result.x << (bitshift - 16), maglong, bitshift);
-    result.y  = multiply(result.y << (bitshift - 16), maglong, bitshift);
+    result.x  = multiply(result.x << (g_bit_shift - 16), maglong, g_bit_shift);
+    result.y  = multiply(result.y << (g_bit_shift - 16), maglong, g_bit_shift);
     return result;
 }
 

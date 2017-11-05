@@ -802,9 +802,9 @@ inline double sqr(double x)
 
 inline long lsqr(long x)
 {
-    extern int bitshift;
+    extern int g_bit_shift;
     extern long multiply(long x, long y, int n);
-    return multiply(x, x, bitshift);
+    return multiply(x, x, g_bit_shift);
 }
 
 #define CMPLXmod(z)     (sqr((z).x)+sqr((z).y))
