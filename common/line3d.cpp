@@ -134,7 +134,7 @@ int yshift;
 int const g_bad_value = -10000;       // set bad values to this
 static int const bad_check = -3000; // check values against this to determine if good
 std::vector<point> lastrow; // this array remembers the previous line
-int g_raytrace_format = 0;                    // Flag to generate Ray trace compatible files in 3d
+raytrace_formats g_raytrace_format = raytrace_formats::none;                    // Flag to generate Ray trace compatible files in 3d
 bool g_brief = false;             // 1 = short ray trace files
 
 // array of min and max x values used in triangle fill
@@ -277,9 +277,9 @@ int line3d(BYTE * pixels, unsigned linelen)
 
     bool tout = false;          // triangle has been sent to ray trace file
     // Insure last line is drawn in preview and filltypes <0
-    if ((g_raytrace_format || g_preview || FILLTYPE < 0) && (g_current_row != ydots - 1) &&
+    if ((g_raytrace_format != raytrace_formats::none|| g_preview || FILLTYPE < 0) && (g_current_row != ydots - 1) &&
             (g_current_row % localpreviewfactor) && // Draw mod preview lines
-            !(!g_raytrace_format && (FILLTYPE > 4) && (g_current_row == 1)))
+            !(g_raytrace_format == raytrace_formats::none && (FILLTYPE > 4) && (g_current_row == 1)))
     {
         // Get init geometry in lightsource modes
         goto reallythebottom;     // skip over most of the line3d calcs
@@ -291,18 +291,18 @@ int line3d(BYTE * pixels, unsigned linelen)
         dvid_status(1, s);
     }
 
-    if (!col && g_raytrace_format && g_current_row != 0)
+    if (!col && g_raytrace_format != raytrace_formats::none && g_current_row != 0)
     {
         start_object();
     }
     // PROCESS ROW LOOP BEGINS HERE
     while (col < (int) linelen)
     {
-        if ((g_raytrace_format || g_preview || FILLTYPE < 0) &&
+        if ((g_raytrace_format != raytrace_formats::none || g_preview || FILLTYPE < 0) &&
                 (col != lastdot) &&// if this is not the last col
                 // if not the 1st or mod factor col
                 (col % (int)(aspect * localpreviewfactor)) &&
-                (!(!g_raytrace_format && FILLTYPE > 4 && col == 1)))
+                (!(g_raytrace_format == raytrace_formats::none && FILLTYPE > 4 && col == 1)))
         {
             goto loopbottom;
         }
@@ -311,7 +311,7 @@ int line3d(BYTE * pixels, unsigned linelen)
         cur.color = Real_Color;
         f_cur.color = (float) cur.color;
 
-        if (g_raytrace_format || g_preview || FILLTYPE < 0)
+        if (g_raytrace_format != raytrace_formats::none|| g_preview || FILLTYPE < 0)
         {
             next = (int)(col + aspect * localpreviewfactor);
             if (next == col)
@@ -344,7 +344,7 @@ int line3d(BYTE * pixels, unsigned linelen)
             sintheta = sinthetaarray[col];
             costheta = costhetaarray[col];
 
-            if (sinphi < 0 && !(g_raytrace_format || FILLTYPE < 0))
+            if (sinphi < 0 && !(g_raytrace_format != raytrace_formats::none|| FILLTYPE < 0))
             {
                 cur = bad;
                 f_cur = f_bad;
@@ -375,7 +375,7 @@ int line3d(BYTE * pixels, unsigned linelen)
                 r = R;
             }
             // Allow Ray trace to go through so display ok
-            if (persp || g_raytrace_format)
+            if (persp || g_raytrace_format != raytrace_formats::none)
             {
                 // how do lv[] and cur and f_cur all relate
                 // NOTE: fudge was pre-calculated above in r and R
@@ -390,7 +390,7 @@ int line3d(BYTE * pixels, unsigned linelen)
                 lv[0] = (long)(xcenter + sintheta * sclx * r);   // x
                 lv[1] = (long)(ycenter + costheta * cosphi * scly * r);  // y
 
-                if ((FILLTYPE >= 5) || g_raytrace_format)
+                if ((FILLTYPE >= 5) || g_raytrace_format != raytrace_formats::none)
                 {
                     // calculate illumination normal before persp
 
@@ -399,7 +399,7 @@ int line3d(BYTE * pixels, unsigned linelen)
                     f_cur.y = (float)(ycenter0 + costheta * cosphi * scly * r0);
                     f_cur.color = (float)(-r0 * costheta * sinphi);
                 }
-                if (!(usr_floatflag || g_raytrace_format))
+                if (!(usr_floatflag || g_raytrace_format != raytrace_formats::none))
                 {
                     if (longpersp(lv, lview, 16) == -1)
                     {
@@ -410,7 +410,7 @@ int line3d(BYTE * pixels, unsigned linelen)
                     cur.x = (int)(((lv[0] + 32768L) >> 16) + xxadjust);
                     cur.y = (int)(((lv[1] + 32768L) >> 16) + yyadjust);
                 }
-                if (usr_floatflag || g_overflow || g_raytrace_format)
+                if (usr_floatflag || g_overflow || g_raytrace_format != raytrace_formats::none)
                 {
                     v[0] = lv[0];
                     v[1] = lv[1];
@@ -424,14 +424,14 @@ int line3d(BYTE * pixels, unsigned linelen)
                 }
             }
             // Not sure how this an 3rd if above relate
-            else if (!(persp && g_raytrace_format))
+            else if (!(persp && g_raytrace_format != raytrace_formats::none))
             {
                 // Why the xx- and yyadjust here and not above?
                 f_cur.x = (float) (xcenter + sintheta*sclx*r + xxadjust);
                 cur.x = (int) f_cur.x;
                 f_cur.y = (float)(ycenter + costheta*cosphi*scly*r + yyadjust);
                 cur.y = (int) f_cur.y;
-                if (FILLTYPE >= 5 || g_raytrace_format)          // why do we do this for filltype>5?
+                if (FILLTYPE >= 5 || g_raytrace_format != raytrace_formats::none)          // why do we do this for filltype>5?
                 {
                     f_cur.color = (float)(-r * costheta * sinphi * sclz);
                 }
@@ -442,7 +442,7 @@ int line3d(BYTE * pixels, unsigned linelen)
         }
         else                            // non-sphere 3D
         {
-            if (!usr_floatflag && !g_raytrace_format)
+            if (!usr_floatflag && g_raytrace_format == raytrace_formats::none)
             {
                 if (FILLTYPE >= 5)         // flag to save vector before perspective
                 {
@@ -488,7 +488,7 @@ int line3d(BYTE * pixels, unsigned linelen)
                 }
             }
 
-            if (usr_floatflag || g_overflow || g_raytrace_format)
+            if (usr_floatflag || g_overflow || g_raytrace_format != raytrace_formats::none)
                 // do in float if integer math overflowed or doing Ray trace
             {
                 // slow float version for comparison
@@ -498,13 +498,13 @@ int line3d(BYTE * pixels, unsigned linelen)
 
                 mult_vec(v);     // matrix*vector routine
 
-                if (FILLTYPE > 4 || g_raytrace_format)
+                if (FILLTYPE > 4 || g_raytrace_format != raytrace_formats::none)
                 {
                     f_cur.x = (float) v[0];
                     f_cur.y = (float) v[1];
                     f_cur.color = (float) v[2];
 
-                    if (g_raytrace_format == 6)
+                    if (g_raytrace_format == raytrace_formats::acrospin)
                     {
                         f_cur.x = f_cur.x * (2.0F / xdots) - 1.0F;
                         f_cur.y = f_cur.y * (2.0F / ydots) - 1.0F;
@@ -512,7 +512,7 @@ int line3d(BYTE * pixels, unsigned linelen)
                     }
                 }
 
-                if (persp && !g_raytrace_format)
+                if (persp && g_raytrace_format == raytrace_formats::none)
                 {
                     perspective(v);
                 }
@@ -555,7 +555,7 @@ int line3d(BYTE * pixels, unsigned linelen)
             }
         }
 
-        if (g_raytrace_format)
+        if (g_raytrace_format != raytrace_formats::none)
         {
             if (col && g_current_row &&
                     old.x > bad_check &&
@@ -574,7 +574,7 @@ int line3d(BYTE * pixels, unsigned linelen)
                     goto loopbottom;
                 }
 
-                if (g_raytrace_format != 6)      // Output the vertex info
+                if (g_raytrace_format != raytrace_formats::acrospin)      // Output the vertex info
                 {
                     out_triangle(f_cur, f_old, f_lastrow[col],
                                  cur.color, old.color, lastrow[col].color);
@@ -609,7 +609,7 @@ int line3d(BYTE * pixels, unsigned linelen)
                     goto loopbottom;
                 }
 
-                if (g_raytrace_format != 6)      // Output the vertex info
+                if (g_raytrace_format != raytrace_formats::acrospin)      // Output the vertex info
                 {
                     out_triangle(f_cur, f_lastrow[col], f_lastrow[next],
                                  cur.color, lastrow[col].color, lastrow[next].color);
@@ -626,7 +626,7 @@ int line3d(BYTE * pixels, unsigned linelen)
                 num_tris++;
             }
 
-            if (g_raytrace_format == 6)       // Output vertex info for Acrospin
+            if (g_raytrace_format == raytrace_formats::acrospin)       // Output vertex info for Acrospin
             {
                 fprintf(File_Ptr1, "% #4.4f % #4.4f % #4.4f R%dC%d\n",
                         f_cur.x, f_cur.y, f_cur.color, RO, CO);
@@ -873,7 +873,7 @@ int line3d(BYTE * pixels, unsigned linelen)
             break;
         }                      // End of CASE statement for fill type
 loopbottom:
-        if (g_raytrace_format || (FILLTYPE != 0 && FILLTYPE != 4))
+        if (g_raytrace_format != raytrace_formats::none || (FILLTYPE != 0 && FILLTYPE != 4))
         {
             // for triangle and grid fill purposes
             oldlast = lastrow[col];
@@ -883,7 +883,7 @@ loopbottom:
             // for illumination model purposes
             f_lastrow[col] = f_cur;
             f_old = f_lastrow[col];
-            if (g_current_row && g_raytrace_format && col >= lastdot)
+            if (g_current_row && g_raytrace_format != raytrace_formats::none && col >= lastdot)
                 // if we're at the end of a row, close the object
             {
                 end_object(tout);
@@ -1933,66 +1933,66 @@ static int RAY_Header()
         return -1;              // Oops, somethings wrong!
     }
 
-    if (g_raytrace_format == 2)
+    if (g_raytrace_format == raytrace_formats::vivid)
     {
         fprintf(File_Ptr1, "//");
     }
-    if (g_raytrace_format == 4)
+    if (g_raytrace_format == raytrace_formats::mtv)
     {
         fprintf(File_Ptr1, "#");
     }
-    if (g_raytrace_format == 5)
+    if (g_raytrace_format == raytrace_formats::rayshade)
     {
         fprintf(File_Ptr1, "/*\n");
     }
-    if (g_raytrace_format == 6)
+    if (g_raytrace_format == raytrace_formats::acrospin)
     {
         fprintf(File_Ptr1, "--");
     }
-    if (g_raytrace_format == 7)
+    if (g_raytrace_format == raytrace_formats::dxf)
         fprintf(File_Ptr1, "  0\nSECTION\n  2\nTABLES\n  0\nTABLE\n  2\nLAYER\n\
  70\n     2\n  0\nLAYER\n  2\n0\n 70\n     0\n 62\n     7\n  6\nCONTINUOUS\n\
   0\nLAYER\n  2\nFRACTAL\n 70\n    64\n 62\n     1\n  6\nCONTINUOUS\n  0\n\
 ENDTAB\n  0\nENDSEC\n  0\nSECTION\n  2\nENTITIES\n");
 
-    if (g_raytrace_format != 7)
+    if (g_raytrace_format != raytrace_formats::dxf)
     {
         fprintf(File_Ptr1, "{ Created by FRACTINT Ver. %#4.2f }\n\n", g_release / 100.);
     }
 
-    if (g_raytrace_format == 5)
+    if (g_raytrace_format == raytrace_formats::rayshade)
     {
         fprintf(File_Ptr1, "*/\n");
     }
 
 
     // Set the default color
-    if (g_raytrace_format == 1)
+    if (g_raytrace_format == raytrace_formats::povray)
     {
         fprintf(File_Ptr1, "DECLARE       F_Dflt = COLOR  RED 0.8 GREEN 0.4 BLUE 0.1\n");
     }
     if (g_brief)
     {
-        if (g_raytrace_format == 2)
+        if (g_raytrace_format == raytrace_formats::vivid)
         {
             fprintf(File_Ptr1, "surf={diff=0.8 0.4 0.1;}\n");
         }
-        if (g_raytrace_format == 4)
+        if (g_raytrace_format == raytrace_formats::mtv)
         {
             fprintf(File_Ptr1, "f 0.8 0.4 0.1 0.95 0.05 5 0 0\n");
         }
-        if (g_raytrace_format == 5)
+        if (g_raytrace_format == raytrace_formats::rayshade)
         {
             fprintf(File_Ptr1, "applysurf diffuse 0.8 0.4 0.1");
         }
     }
-    if (g_raytrace_format != 7)
+    if (g_raytrace_format != raytrace_formats::dxf)
     {
         fprintf(File_Ptr1, "\n");
     }
 
     // open "grid" opject, a speedy way to do aggregates in rayshade
-    if (g_raytrace_format == 5)
+    if (g_raytrace_format == raytrace_formats::rayshade)
     {
         fprintf(File_Ptr1,
                 "/* make a gridded aggregate. this size grid is fast for landscapes. */\n"
@@ -2000,7 +2000,7 @@ ENDTAB\n  0\nENDSEC\n  0\nSECTION\n  2\nENTITIES\n");
                 "grid 33 25 1\n");
     }
 
-    if (g_raytrace_format == 6)
+    if (g_raytrace_format == raytrace_formats::acrospin)
     {
         fprintf(File_Ptr1, "Set Layer 1\nSet Color 2\nEndpointList X Y Z Name\n");
     }
@@ -2066,24 +2066,24 @@ static int out_triangle(f_point pt1, f_point pt2, f_point pt3, int c1, int c2, i
     }
 
     // Describe the triangle
-    if (g_raytrace_format == 1)
+    if (g_raytrace_format == raytrace_formats::povray)
     {
         fprintf(File_Ptr1, " OBJECT\n  TRIANGLE ");
     }
-    if (g_raytrace_format == 2 && !g_brief)
+    if (g_raytrace_format == raytrace_formats::vivid && !g_brief)
     {
         fprintf(File_Ptr1, "surf={diff=");
     }
-    if (g_raytrace_format == 4 && !g_brief)
+    if (g_raytrace_format == raytrace_formats::mtv && !g_brief)
     {
         fprintf(File_Ptr1, "f");
     }
-    if (g_raytrace_format == 5 && !g_brief)
+    if (g_raytrace_format == raytrace_formats::rayshade && !g_brief)
     {
         fprintf(File_Ptr1, "applysurf diffuse ");
     }
 
-    if (!g_brief && g_raytrace_format != 1 && g_raytrace_format != 7)
+    if (!g_brief && g_raytrace_format != raytrace_formats::povray && g_raytrace_format != raytrace_formats::dxf)
     {
         for (int i = 0; i <= 2; i++)
         {
@@ -2091,7 +2091,7 @@ static int out_triangle(f_point pt1, f_point pt2, f_point pt3, int c1, int c2, i
         }
     }
 
-    if (g_raytrace_format == 2)
+    if (g_raytrace_format == raytrace_formats::vivid)
     {
         if (!g_brief)
         {
@@ -2099,7 +2099,7 @@ static int out_triangle(f_point pt1, f_point pt2, f_point pt3, int c1, int c2, i
         }
         fprintf(File_Ptr1, "polygon={points=3;");
     }
-    if (g_raytrace_format == 4)
+    if (g_raytrace_format == raytrace_formats::mtv)
     {
         if (!g_brief)
         {
@@ -2107,7 +2107,7 @@ static int out_triangle(f_point pt1, f_point pt2, f_point pt3, int c1, int c2, i
         }
         fprintf(File_Ptr1, "p 3");
     }
-    if (g_raytrace_format == 5)
+    if (g_raytrace_format == raytrace_formats::rayshade)
     {
         if (!g_brief)
         {
@@ -2116,34 +2116,34 @@ static int out_triangle(f_point pt1, f_point pt2, f_point pt3, int c1, int c2, i
         fprintf(File_Ptr1, "triangle");
     }
 
-    if (g_raytrace_format == 7)
+    if (g_raytrace_format == raytrace_formats::dxf)
     {
         fprintf(File_Ptr1, "  0\n3DFACE\n  8\nFRACTAL\n 62\n%3d\n", std::min(255, std::max(1, c1)));
     }
 
     for (int i = 0; i <= 2; i++)     // Describe each  Vertex
     {
-        if (g_raytrace_format != 7)
+        if (g_raytrace_format != raytrace_formats::dxf)
         {
             fprintf(File_Ptr1, "\n");
         }
 
-        if (g_raytrace_format == 1)
+        if (g_raytrace_format == raytrace_formats::povray)
         {
             fprintf(File_Ptr1, "      <");
         }
-        if (g_raytrace_format == 2)
+        if (g_raytrace_format == raytrace_formats::vivid)
         {
             fprintf(File_Ptr1, " vertex =  ");
         }
-        if (g_raytrace_format > 3 && g_raytrace_format != 7)
+        if (g_raytrace_format > raytrace_formats::raw && g_raytrace_format != raytrace_formats::dxf)
         {
             fprintf(File_Ptr1, " ");
         }
 
         for (int j = 0; j <= 2; j++)
         {
-            if (g_raytrace_format == 7)
+            if (g_raytrace_format == raytrace_formats::dxf)
             {
                 // write 3dface entity to dxf file
                 fprintf(File_Ptr1, "%3d\n%g\n", 10 * (j + 1) + i, pt_t[i][j]);
@@ -2153,7 +2153,7 @@ static int out_triangle(f_point pt1, f_point pt2, f_point pt3, int c1, int c2, i
                             pt_t[i][j]);
                 }
             }
-            else if (!(g_raytrace_format == 4 || g_raytrace_format == 5))
+            else if (!(g_raytrace_format == raytrace_formats::mtv || g_raytrace_format == raytrace_formats::rayshade))
             {
                 fprintf(File_Ptr1, "% #4.4f ", pt_t[i][j]); // Right handed
             }
@@ -2163,17 +2163,17 @@ static int out_triangle(f_point pt1, f_point pt2, f_point pt3, int c1, int c2, i
             }
         }
 
-        if (g_raytrace_format == 1)
+        if (g_raytrace_format == raytrace_formats::povray)
         {
             fprintf(File_Ptr1, ">");
         }
-        if (g_raytrace_format == 2)
+        if (g_raytrace_format == raytrace_formats::vivid)
         {
             fprintf(File_Ptr1, ";");
         }
     }
 
-    if (g_raytrace_format == 1)
+    if (g_raytrace_format == raytrace_formats::povray)
     {
         fprintf(File_Ptr1, " END_TRIANGLE \n");
         if (!g_brief)
@@ -2187,16 +2187,16 @@ static int out_triangle(f_point pt1, f_point pt2, f_point pt3, int c1, int c2, i
         fprintf(File_Ptr1, "  COLOR  F_Dflt  END_OBJECT");
         triangle_bounds(pt_t);    // update bounding info
     }
-    if (g_raytrace_format == 2)
+    if (g_raytrace_format == raytrace_formats::vivid)
     {
         fprintf(File_Ptr1, "}");
     }
-    if (g_raytrace_format == 3 && !g_brief)
+    if (g_raytrace_format == raytrace_formats::raw && !g_brief)
     {
         fprintf(File_Ptr1, "\n");
     }
 
-    if (g_raytrace_format != 7)
+    if (g_raytrace_format != raytrace_formats::dxf)
     {
         fprintf(File_Ptr1, "\n");
     }
@@ -2239,7 +2239,7 @@ static void triangle_bounds(float pt_t[3][3])
 
 static int start_object()
 {
-    if (g_raytrace_format != 1)
+    if (g_raytrace_format != raytrace_formats::povray)
     {
         return 0;
     }
@@ -2267,11 +2267,11 @@ static int start_object()
 
 static int end_object(bool triout)
 {
-    if (g_raytrace_format == 7)
+    if (g_raytrace_format == raytrace_formats::dxf)
     {
         return 0;
     }
-    if (g_raytrace_format == 1)
+    if (g_raytrace_format == raytrace_formats::povray)
     {
         if (triout)
         {
@@ -2305,7 +2305,7 @@ static int end_object(bool triout)
         fprintf(File_Ptr1, "END_%s\n", "COMPOSITE");
     }
 
-    if (g_raytrace_format != 6 && g_raytrace_format != 5)
+    if (g_raytrace_format != raytrace_formats::acrospin && g_raytrace_format != raytrace_formats::rayshade)
     {
         fprintf(File_Ptr1, "\n");
     }
@@ -2315,29 +2315,29 @@ static int end_object(bool triout)
 
 static void line3d_cleanup()
 {
-    if (g_raytrace_format && File_Ptr1)
+    if (g_raytrace_format != raytrace_formats::none && File_Ptr1)
     {
         // Finish up the ray tracing files
-        if (g_raytrace_format != 5 && g_raytrace_format != 7)
+        if (g_raytrace_format != raytrace_formats::rayshade && g_raytrace_format != raytrace_formats::dxf)
         {
             fprintf(File_Ptr1, "\n");
         }
-        if (g_raytrace_format == 2)
+        if (g_raytrace_format == raytrace_formats::vivid)
         {
             fprintf(File_Ptr1, "\n\n//");
         }
-        if (g_raytrace_format == 4)
+        if (g_raytrace_format == raytrace_formats::mtv)
         {
             fprintf(File_Ptr1, "\n\n#");
         }
 
-        if (g_raytrace_format == 5)
+        if (g_raytrace_format == raytrace_formats::rayshade)
         {
             // end grid aggregate
             fprintf(File_Ptr1, "end\n\n/*good landscape:*/\n%s%s\n/*",
                     "screen 640 480\neyep 0 2.1 0.8\nlookp 0 0 -0.95\nlight 1 point -2 1 1.5\n", "background .3 0 0\nreport verbose\n");
         }
-        if (g_raytrace_format == 6)
+        if (g_raytrace_format == raytrace_formats::acrospin)
         {
             fprintf(File_Ptr1, "LineList From To\n");
             for (int i = 0; i < RO; i++)
@@ -2360,11 +2360,11 @@ static void line3d_cleanup()
             }
             fprintf(File_Ptr1, "\n\n--");
         }
-        if (g_raytrace_format != 7)
+        if (g_raytrace_format != raytrace_formats::dxf)
         {
             fprintf(File_Ptr1, "{ No. Of Triangles = %ld }*/\n\n", num_tris);
         }
-        if (g_raytrace_format == 7)
+        if (g_raytrace_format == raytrace_formats::dxf)
         {
             fprintf(File_Ptr1, "  0\nENDSEC\n  0\nEOF\n");
         }
@@ -2428,7 +2428,7 @@ static int first_time(int linelen, VECTOR v)
     num_tris = 0;
 
     // Open file for RAY trace output and write header
-    if (g_raytrace_format)
+    if (g_raytrace_format != raytrace_formats::none)
     {
         RAY_Header();
         yyadjust = 0;
@@ -2530,7 +2530,7 @@ static int first_time(int linelen, VECTOR v)
         yval = YROT / 57.29577;
         zval = ZROT / 57.29577;
 
-        if (g_raytrace_format)
+        if (g_raytrace_format != raytrace_formats::none)
         {
             zval = 0;
             yval = zval;

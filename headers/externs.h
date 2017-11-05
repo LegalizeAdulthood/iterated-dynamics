@@ -18,6 +18,7 @@ enum class Minor;
 struct MOREPARAMS;
 struct MP;
 struct MPC;
+enum class raytrace_formats;
 namespace id
 {
 struct SearchPath;
@@ -403,7 +404,7 @@ extern bool                  g_quick_calc;
 extern int                   g_randomize_3d;
 extern std::vector<int>      g_iteration_ranges;
 extern int                   g_iteration_ranges_len;
-extern int                   g_raytrace_format;
+extern raytrace_formats      g_raytrace_format;
 extern std::string           ray_name;
 extern std::string           readname;
 extern long                  realcoloriter;

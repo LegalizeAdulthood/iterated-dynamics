@@ -722,6 +722,18 @@ enum orbit_save_flags
     osf_midi = 2
 };
 
+enum class raytrace_formats
+{
+    none = 0,
+    povray = 1,
+    vivid = 2,
+    raw = 3,
+    mtv = 4,
+    rayshade = 5,
+    acrospin = 6,
+    dxf = 7
+};
+
 // bitmask defines for fractalspecific flags
 #define  NOZOOM         1    // zoombox not allowed at all
 #define  NOGUESS        2    // solid guessing not allowed
