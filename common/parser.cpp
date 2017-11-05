@@ -3081,12 +3081,12 @@ int form_per_pixel()
             switch (MathType)
             {
             case D_MATH:
-                v[0].a.d.x = dxpixel();
+                v[0].a.d.x = g_dx_pixel();
                 v[0].a.d.y = dypixel();
                 break;
 #if !defined(XFRACT)
             case M_MATH:
-                v[0].a.m.x = *d2MP(dxpixel());
+                v[0].a.m.x = *d2MP(g_dx_pixel());
                 v[0].a.m.y = *d2MP(dypixel());
                 break;
             case L_MATH:

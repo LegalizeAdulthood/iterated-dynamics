@@ -2001,7 +2001,7 @@ int calcmandfp()
     }
     else
     {
-        g_init.x = dxpixel();
+        g_init.x = g_dx_pixel();
         g_init.y = dypixel();
     }
     if (calcmandfpasm() >= 0)

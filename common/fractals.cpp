@@ -2565,7 +2565,7 @@ CirclelongFractal()
 // transform points with reciprocal function
 void invertz2(DComplex *z)
 {
-    z->x = dxpixel();
+    z->x = g_dx_pixel();
     z->y = dypixel();
     z->x -= g_f_x_center;
     z->y -= g_f_y_center;  // Normalize values to center of circle
@@ -2889,7 +2889,7 @@ int marksmandelfp_per_pixel()
     }
     else
     {
-        g_init.x = dxpixel();
+        g_init.x = g_dx_pixel();
         if (g_save_release >= 2004)
         {
             g_init.y = dypixel();
@@ -2954,7 +2954,7 @@ int mandelfp_per_pixel()
     }
     else
     {
-        g_init.x = dxpixel();
+        g_init.x = g_dx_pixel();
         if (g_save_release >= 2004)
         {
             g_init.y = dypixel();
@@ -3016,7 +3016,7 @@ int juliafp_per_pixel()
     }
     else
     {
-        g_old_z.x = dxpixel();
+        g_old_z.x = g_dx_pixel();
         g_old_z.y = dypixel();
     }
     tempsqrx = sqr(g_old_z.x);  // precalculated value for regular Julia
@@ -3036,7 +3036,7 @@ int MPCjulia_per_pixel()
     }
     else
     {
-        g_old_z.x = dxpixel();
+        g_old_z.x = g_dx_pixel();
         g_old_z.y = dypixel();
     }
     mpcold.x = *pd2MP(g_old_z.x);
@@ -3064,7 +3064,7 @@ int othermandelfp_per_pixel()
     }
     else
     {
-        g_init.x = dxpixel();
+        g_init.x = g_dx_pixel();
         if (g_save_release >= 2004)
         {
             g_init.y = dypixel();
@@ -3096,7 +3096,7 @@ int MPCHalley_per_pixel()
     }
     else
     {
-        g_init.x = dxpixel();
+        g_init.x = g_dx_pixel();
         if (g_save_release >= 2004)
         {
             g_init.y = dypixel();
@@ -3120,7 +3120,7 @@ int Halley_per_pixel()
     }
     else
     {
-        g_init.x = dxpixel();
+        g_init.x = g_dx_pixel();
         if (g_save_release >= 2004)
         {
             g_init.y = dypixel();
@@ -3140,7 +3140,7 @@ int otherjuliafp_per_pixel()
     }
     else
     {
-        g_old_z.x = dxpixel();
+        g_old_z.x = g_dx_pixel();
         g_old_z.y = dypixel();
     }
     return 0;
@@ -3151,7 +3151,7 @@ int otherjuliafp_per_pixel()
 
 int quaternionjulfp_per_pixel()
 {
-    g_old_z.x = dxpixel();
+    g_old_z.x = g_dx_pixel();
     g_old_z.y = dypixel();
     g_float_param->x = g_params[4];
     g_float_param->y = g_params[5];
@@ -3168,7 +3168,7 @@ int quaternionfp_per_pixel()
     g_old_z.y = 0;
     g_float_param->x = 0;
     g_float_param->y = 0;
-    g_quaternion_c  = dxpixel();
+    g_quaternion_c  = g_dx_pixel();
     g_quaternion_ci = dypixel();
     g_quaternion_cj = g_params[2];
     g_quaternino_ck = g_params[3];
@@ -3183,7 +3183,7 @@ int MarksCplxMandperp()
     }
     else
     {
-        g_init.x = dxpixel();
+        g_init.x = g_dx_pixel();
         if (g_save_release >= 2004)
         {
             g_init.y = dypixel();
@@ -3239,7 +3239,7 @@ int phoenix_per_pixel()
     }
     else
     {
-        g_old_z.x = dxpixel();
+        g_old_z.x = g_dx_pixel();
         g_old_z.y = dypixel();
     }
     tempsqrx = sqr(g_old_z.x);  // precalculated value
@@ -3302,7 +3302,7 @@ int mandphoenix_per_pixel()
     }
     else
     {
-        g_init.x = dxpixel();
+        g_init.x = g_dx_pixel();
         if (g_save_release >= 2004)
         {
             g_init.y = dypixel();
@@ -3553,7 +3553,7 @@ int MandelbrotMix4fp_per_pixel()
     }
     else
     {
-        g_init.x = dxpixel();
+        g_init.x = g_dx_pixel();
         g_init.y = dypixel();
     }
     g_old_z = g_tmp_z;
@@ -3651,7 +3651,7 @@ static long lypixel_calc()
     return ymax - row*g_l_delta_y - g_col*g_l_delta_y2;
 }
 
-double (*dxpixel)() = dxpixel_calc;
+double (*g_dx_pixel)() = dxpixel_calc;
 double (*dypixel)() = dypixel_calc;
 long (*g_l_x_pixel)() = lxpixel_calc;
 long (*g_l_y_pixel)() = lypixel_calc;
@@ -3660,14 +3660,14 @@ void set_pixel_calc_functions()
 {
     if (g_use_grid)
     {
-        dxpixel = dxpixel_grid;
+        g_dx_pixel = dxpixel_grid;
         dypixel = dypixel_grid;
         g_l_x_pixel = lxpixel_grid;
         g_l_y_pixel = lypixel_grid;
     }
     else
     {
-        dxpixel = dxpixel_calc;
+        g_dx_pixel = dxpixel_calc;
         dypixel = dypixel_calc;
         g_l_x_pixel = lxpixel_calc;
         g_l_y_pixel = lypixel_calc;

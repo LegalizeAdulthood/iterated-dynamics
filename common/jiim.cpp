@@ -876,7 +876,7 @@ void Jiim(jiim_types which)
                 }
                 else
                 {
-                    cr = dxpixel();
+                    cr = g_dx_pixel();
                     ci = dypixel();
                 }
             }

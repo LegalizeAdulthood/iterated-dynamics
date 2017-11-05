@@ -55,7 +55,7 @@ int test()
             for (g_col = 0; g_col <= g_i_x_stop; g_col++)       // look at each point on screen
             {
                 int color;
-                g_init.x = dxpixel();
+                g_init.x = g_dx_pixel();
                 g_init.y = dypixel();
                 if (driver_key_pressed())
                 {
@@ -1490,7 +1490,7 @@ int lyapunov()
     else
     {
         a = dypixel();
-        b = dxpixel();
+        b = g_dx_pixel();
     }
 #if !defined(XFRACT) && !defined(_WIN32)
     /*  the assembler routines don't work for a & b outside the
@@ -2425,7 +2425,7 @@ int calcfroth()   // per pixel 1/2/g, called with row & col set
         }
         else
         {
-            g_old_z.x = dxpixel();
+            g_old_z.x = g_dx_pixel();
             g_old_z.y = dypixel();
         }
 
@@ -2811,7 +2811,7 @@ int froth_per_pixel()
 {
     if (!g_integer_fractal) // fp mode
     {
-        g_old_z.x = dxpixel();
+        g_old_z.x = g_dx_pixel();
         g_old_z.y = dypixel();
         tempsqrx = sqr(g_old_z.x);
         tempsqry = sqr(g_old_z.y);
