@@ -63,7 +63,7 @@ const long l16triglim = 8L << 16;       // domain limit of fast trig functions
 LComplex g_l_coefficient, g_l_old_z, g_l_new_z, g_l_param, g_l_init, g_l_temp, ltmp2, g_l_param2;
 long g_l_temp_sqr_x, g_l_temp_sqr_y;
 int g_max_color;
-int degree, g_basin;
+int g_degree, g_basin;
 double g_newton_r_over_d, g_degree_minus_1_over_degree, g_threshold;
 DComplex tmp2;
 DComplex g_marks_coefficient;
@@ -447,7 +447,7 @@ int NewtonFractal2()
     {
         start = 0;
     }
-    cpower(&g_old_z, degree-1, &g_tmp_z);
+    cpower(&g_old_z, g_degree-1, &g_tmp_z);
     complex_mult(g_tmp_z, g_old_z, &g_new_z);
 
     if (DIST1(g_new_z) < g_threshold)
@@ -459,7 +459,7 @@ int NewtonFractal2()
             /* this code determines which degree-th root of root the
                Newton formula converges to. The roots of a 1 are
                distributed on a circle of radius 1 about the origin. */
-            for (int i = 0; i < degree; i++)
+            for (int i = 0; i < g_degree; i++)
             {
                 /* color in alternating shades with iteration according to
                    which root of 1 it converged to */
@@ -538,7 +538,7 @@ int MPCNewtonFractal()
 {
 #if !defined(XFRACT)
     g_mp_overflow = 0;
-    mpctmp   = MPCpow(mpcold, degree-1);
+    mpctmp   = MPCpow(mpcold, g_degree-1);
 
     mpcnew.x = *pMPsub(*pMPmul(mpctmp.x, mpcold.x), *pMPmul(mpctmp.y, mpcold.y));
     mpcnew.y = *pMPadd(*pMPmul(mpctmp.x, mpcold.y), *pMPmul(mpctmp.y, mpcold.x));
@@ -550,7 +550,7 @@ int MPCNewtonFractal()
         {
             long tmpcolor;
             tmpcolor = -1;
-            for (int i = 0; i < degree; i++)
+            for (int i = 0; i < g_degree; i++)
                 if (pMPcmp(MPdistance(g_mpc_roots[i], mpcold), g_mp_threshold) < 0)
                 {
                     if (g_basin == 2)
@@ -1744,7 +1744,7 @@ int MPCHalleyFractal()
     g_mp_overflow = 0;
     mpcXtoAlessOne.x = mpcold.x;
     mpcXtoAlessOne.y = mpcold.y;
-    for (int ihal = 2; ihal < degree; ihal++)
+    for (int ihal = 2; ihal < g_degree; ihal++)
     {
         mpctmp.x = *pMPsub(*pMPmul(mpcXtoAlessOne.x, mpcold.x), *pMPmul(mpcXtoAlessOne.y, mpcold.y));
         mpctmp.y = *pMPadd(*pMPmul(mpcXtoAlessOne.x, mpcold.y), *pMPmul(mpcXtoAlessOne.y, mpcold.x));
@@ -1797,7 +1797,7 @@ HalleyFractal()
     DComplex relax;
 
     XtoAlessOne = g_old_z;
-    for (int ihal = 2; ihal < degree; ihal++)
+    for (int ihal = 2; ihal < g_degree; ihal++)
     {
         FPUcplxmul(&g_old_z, &XtoAlessOne, &XtoAlessOne);
     }
@@ -1887,7 +1887,7 @@ LongPhoenixPlusFractal()
     LComplex loldplus, lnewminus;
     loldplus = g_l_old_z;
     g_l_temp = g_l_old_z;
-    for (int i = 1; i < degree; i++)
+    for (int i = 1; i < g_degree; i++)
     {
         // degree >= 2, degree=degree-1 in setup
         LCMPLXmult(g_l_old_z, g_l_temp, g_l_temp); // = old^(degree-1)
@@ -1910,7 +1910,7 @@ PhoenixPlusFractal()
     DComplex oldplus, newminus;
     oldplus = g_old_z;
     g_tmp_z = g_old_z;
-    for (int i = 1; i < degree; i++)
+    for (int i = 1; i < g_degree; i++)
     {
         // degree >= 2, degree=degree-1 in setup
         FPUcplxmul(&g_old_z, &g_tmp_z, &g_tmp_z); // = old^(degree-1)
@@ -1931,7 +1931,7 @@ LongPhoenixMinusFractal()
     LComplex loldsqr, lnewminus;
     LCMPLXmult(g_l_old_z, g_l_old_z, loldsqr);
     g_l_temp = g_l_old_z;
-    for (int i = 1; i < degree; i++)
+    for (int i = 1; i < g_degree; i++)
     {
         // degree >= 3, degree=degree-2 in setup
         LCMPLXmult(g_l_old_z, g_l_temp, g_l_temp); // = old^(degree-2)
@@ -1954,7 +1954,7 @@ PhoenixMinusFractal()
     DComplex oldsqr, newminus;
     FPUcplxmul(&g_old_z, &g_old_z, &oldsqr);
     g_tmp_z = g_old_z;
-    for (int i = 1; i < degree; i++)
+    for (int i = 1; i < g_degree; i++)
     {
         // degree >= 3, degree=degree-2 in setup
         FPUcplxmul(&g_old_z, &g_tmp_z, &g_tmp_z); // = old^(degree-2)
@@ -1975,7 +1975,7 @@ LongPhoenixCplxPlusFractal()
     LComplex loldplus, lnewminus;
     loldplus = g_l_old_z;
     g_l_temp = g_l_old_z;
-    for (int i = 1; i < degree; i++)
+    for (int i = 1; i < g_degree; i++)
     {
         // degree >= 2, degree=degree-1 in setup
         LCMPLXmult(g_l_old_z, g_l_temp, g_l_temp); // = old^(degree-1)
@@ -2000,7 +2000,7 @@ PhoenixCplxPlusFractal()
     DComplex oldplus, newminus;
     oldplus = g_old_z;
     g_tmp_z = g_old_z;
-    for (int i = 1; i < degree; i++)
+    for (int i = 1; i < g_degree; i++)
     {
         // degree >= 2, degree=degree-1 in setup
         FPUcplxmul(&g_old_z, &g_tmp_z, &g_tmp_z); // = old^(degree-1)
@@ -2023,7 +2023,7 @@ LongPhoenixCplxMinusFractal()
     LComplex loldsqr, lnewminus;
     LCMPLXmult(g_l_old_z, g_l_old_z, loldsqr);
     g_l_temp = g_l_old_z;
-    for (int i = 1; i < degree; i++)
+    for (int i = 1; i < g_degree; i++)
     {
         // degree >= 3, degree=degree-2 in setup
         LCMPLXmult(g_l_old_z, g_l_temp, g_l_temp); // = old^(degree-2)
@@ -2048,7 +2048,7 @@ PhoenixCplxMinusFractal()
     DComplex oldsqr, newminus;
     FPUcplxmul(&g_old_z, &g_old_z, &oldsqr);
     g_tmp_z = g_old_z;
-    for (int i = 1; i < degree; i++)
+    for (int i = 1; i < g_degree; i++)
     {
         // degree >= 3, degree=degree-2 in setup
         FPUcplxmul(&g_old_z, &g_tmp_z, &g_tmp_z); // = old^(degree-2)

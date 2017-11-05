@@ -116,7 +116,7 @@ extern double                g_delta_min;
 extern int                   g_debug_flag;
 extern int                   g_decimals;
 extern int                   g_decomp[];
-extern int                   degree;
+extern int                   g_degree;
 extern long                  g_l_delta_min;
 extern long                  delx2;
 extern long                  delx;

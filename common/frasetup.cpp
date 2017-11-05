@@ -90,17 +90,17 @@ NewtonSetup()           // Newton/NewtBasin Routines
     curfractalspecific = &fractalspecific[static_cast<int>(fractype)];
 #endif
     // set up table of roots of 1 along unit circle
-    degree = (int)g_param_z1.x;
-    if (degree < 2)
+    g_degree = (int)g_param_z1.x;
+    if (g_degree < 2)
     {
-        degree = 3;   // defaults to 3, but 2 is possible
+        g_degree = 3;   // defaults to 3, but 2 is possible
     }
 
     // precalculated values
-    g_newton_r_over_d       = 1.0 / (double)degree;
-    g_degree_minus_1_over_degree      = (double)(degree - 1) / (double)degree;
+    g_newton_r_over_d       = 1.0 / (double)g_degree;
+    g_degree_minus_1_over_degree      = (double)(g_degree - 1) / (double)g_degree;
     g_max_color     = 0;
-    g_threshold    = .3*PI/degree; // less than half distance between roots
+    g_threshold    = .3*PI/g_degree; // less than half distance between roots
 #if !defined(XFRACT)
     if (fractype == fractal_type::MPNEWTON || fractype == fractal_type::MPNEWTBASIN)
     {
@@ -123,13 +123,13 @@ NewtonSetup()           // Newton/NewtBasin Routines
         {
             g_basin = 1;
         }
-        g_roots.resize(degree);
+        g_roots.resize(g_degree);
 
         // list of roots to discover where we converged for newtbasin
-        for (int i = 0; i < degree; i++)
+        for (int i = 0; i < g_degree; i++)
         {
-            g_roots[i].x = cos(i*PI*2.0/(double)degree);
-            g_roots[i].y = sin(i*PI*2.0/(double)degree);
+            g_roots[i].x = cos(i*PI*2.0/(double)g_degree);
+            g_roots[i].y = sin(i*PI*2.0/(double)g_degree);
         }
     }
 #if !defined(XFRACT)
@@ -144,19 +144,19 @@ NewtonSetup()           // Newton/NewtBasin Routines
             g_basin = 1;
         }
 
-        g_mpc_roots.resize(degree);
+        g_mpc_roots.resize(g_degree);
 
         // list of roots to discover where we converged for newtbasin
-        for (int i = 0; i < degree; i++)
+        for (int i = 0; i < g_degree; i++)
         {
-            g_mpc_roots[i].x = *pd2MP(cos(i*PI*2.0/(double)degree));
-            g_mpc_roots[i].y = *pd2MP(sin(i*PI*2.0/(double)degree));
+            g_mpc_roots[i].x = *pd2MP(cos(i*PI*2.0/(double)g_degree));
+            g_mpc_roots[i].y = *pd2MP(sin(i*PI*2.0/(double)g_degree));
         }
     }
 #endif
 
-    g_params[0] = (double)degree;
-    if (degree%4 == 0)
+    g_params[0] = (double)g_degree;
+    if (g_degree%4 == 0)
     {
         g_symmetry = symmetry_type::XY_AXIS;
     }
@@ -1270,16 +1270,16 @@ HalleySetup()
 
     curfractalspecific = &fractalspecific[static_cast<int>(fractype)];
 
-    degree = (int)g_param_z1.x;
-    if (degree < 2)
+    g_degree = (int)g_param_z1.x;
+    if (g_degree < 2)
     {
-        degree = 2;
+        g_degree = 2;
     }
-    g_params[0] = (double)degree;
+    g_params[0] = (double)g_degree;
 
     //  precalculated values
-    g_halley_a_plus_one = degree + 1; // a+1
-    g_halley_a_plus_one_times_degree = g_halley_a_plus_one * degree;
+    g_halley_a_plus_one = g_degree + 1; // a+1
+    g_halley_a_plus_one_times_degree = g_halley_a_plus_one * g_degree;
 
 #if !defined(XFRACT)
     if (fractype == fractal_type::MPHALLEY)
@@ -1294,7 +1294,7 @@ HalleySetup()
     }
 #endif
 
-    if (degree % 2)
+    if (g_degree % 2)
     {
         g_symmetry = symmetry_type::X_AXIS;   // odd
     }
@@ -1310,13 +1310,13 @@ PhoenixSetup()
 {
     g_long_param = &g_l_param;
     g_float_param = &g_param_z1;
-    degree = (int)g_param_z2.x;
-    if (degree < 2 && degree > -3)
+    g_degree = (int)g_param_z2.x;
+    if (g_degree < 2 && g_degree > -3)
     {
-        degree = 0;
+        g_degree = 0;
     }
-    g_params[2] = (double)degree;
-    if (degree == 0)
+    g_params[2] = (double)g_degree;
+    if (g_degree == 0)
     {
         if (g_user_float_flag)
         {
@@ -1327,9 +1327,9 @@ PhoenixSetup()
             curfractalspecific->orbitcalc =  LongPhoenixFractal;
         }
     }
-    if (degree >= 2)
+    if (g_degree >= 2)
     {
-        degree = degree - 1;
+        g_degree = g_degree - 1;
         if (g_user_float_flag)
         {
             curfractalspecific->orbitcalc =  PhoenixPlusFractal;
@@ -1339,9 +1339,9 @@ PhoenixSetup()
             curfractalspecific->orbitcalc =  LongPhoenixPlusFractal;
         }
     }
-    if (degree <= -3)
+    if (g_degree <= -3)
     {
-        degree = abs(degree) - 2;
+        g_degree = abs(g_degree) - 2;
         if (g_user_float_flag)
         {
             curfractalspecific->orbitcalc =  PhoenixMinusFractal;
@@ -1360,13 +1360,13 @@ PhoenixCplxSetup()
 {
     g_long_param = &g_l_param;
     g_float_param = &g_param_z1;
-    degree = (int)g_params[4];
-    if (degree < 2 && degree > -3)
+    g_degree = (int)g_params[4];
+    if (g_degree < 2 && g_degree > -3)
     {
-        degree = 0;
+        g_degree = 0;
     }
-    g_params[4] = (double)degree;
-    if (degree == 0)
+    g_params[4] = (double)g_degree;
+    if (g_degree == 0)
     {
         if (g_param_z2.x != 0 || g_param_z2.y != 0)
         {
@@ -1389,9 +1389,9 @@ PhoenixCplxSetup()
             curfractalspecific->orbitcalc =  LongPhoenixFractalcplx;
         }
     }
-    if (degree >= 2)
+    if (g_degree >= 2)
     {
-        degree = degree - 1;
+        g_degree = g_degree - 1;
         if (g_param_z1.y == 0 && g_param_z2.y == 0)
         {
             g_symmetry = symmetry_type::X_AXIS;
@@ -1409,9 +1409,9 @@ PhoenixCplxSetup()
             curfractalspecific->orbitcalc =  LongPhoenixCplxPlusFractal;
         }
     }
-    if (degree <= -3)
+    if (g_degree <= -3)
     {
-        degree = abs(degree) - 2;
+        g_degree = abs(g_degree) - 2;
         if (g_param_z1.y == 0 && g_param_z2.y == 0)
         {
             g_symmetry = symmetry_type::X_AXIS;
@@ -1438,13 +1438,13 @@ MandPhoenixSetup()
 {
     g_long_param = &g_l_init;
     g_float_param = &g_init;
-    degree = (int)g_param_z2.x;
-    if (degree < 2 && degree > -3)
+    g_degree = (int)g_param_z2.x;
+    if (g_degree < 2 && g_degree > -3)
     {
-        degree = 0;
+        g_degree = 0;
     }
-    g_params[2] = (double)degree;
-    if (degree == 0)
+    g_params[2] = (double)g_degree;
+    if (g_degree == 0)
     {
         if (g_user_float_flag)
         {
@@ -1455,9 +1455,9 @@ MandPhoenixSetup()
             curfractalspecific->orbitcalc =  LongPhoenixFractal;
         }
     }
-    if (degree >= 2)
+    if (g_degree >= 2)
     {
-        degree = degree - 1;
+        g_degree = g_degree - 1;
         if (g_user_float_flag)
         {
             curfractalspecific->orbitcalc =  PhoenixPlusFractal;
@@ -1467,9 +1467,9 @@ MandPhoenixSetup()
             curfractalspecific->orbitcalc =  LongPhoenixPlusFractal;
         }
     }
-    if (degree <= -3)
+    if (g_degree <= -3)
     {
-        degree = abs(degree) - 2;
+        g_degree = abs(g_degree) - 2;
         if (g_user_float_flag)
         {
             curfractalspecific->orbitcalc =  PhoenixMinusFractal;
@@ -1488,17 +1488,17 @@ MandPhoenixCplxSetup()
 {
     g_long_param = &g_l_init;
     g_float_param = &g_init;
-    degree = (int)g_params[4];
-    if (degree < 2 && degree > -3)
+    g_degree = (int)g_params[4];
+    if (g_degree < 2 && g_degree > -3)
     {
-        degree = 0;
+        g_degree = 0;
     }
-    g_params[4] = (double)degree;
+    g_params[4] = (double)g_degree;
     if (g_param_z1.y != 0 || g_param_z2.y != 0)
     {
         g_symmetry = symmetry_type::NONE;
     }
-    if (degree == 0)
+    if (g_degree == 0)
     {
         if (g_user_float_flag)
         {
@@ -1509,9 +1509,9 @@ MandPhoenixCplxSetup()
             curfractalspecific->orbitcalc =  LongPhoenixFractalcplx;
         }
     }
-    if (degree >= 2)
+    if (g_degree >= 2)
     {
-        degree = degree - 1;
+        g_degree = g_degree - 1;
         if (g_user_float_flag)
         {
             curfractalspecific->orbitcalc =  PhoenixCplxPlusFractal;
@@ -1521,9 +1521,9 @@ MandPhoenixCplxSetup()
             curfractalspecific->orbitcalc =  LongPhoenixCplxPlusFractal;
         }
     }
-    if (degree <= -3)
+    if (g_degree <= -3)
     {
-        degree = abs(degree) - 2;
+        g_degree = abs(g_degree) - 2;
         if (g_user_float_flag)
         {
             curfractalspecific->orbitcalc =  PhoenixCplxMinusFractal;

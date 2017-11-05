@@ -5373,7 +5373,7 @@ void symplot2basin(int x, int y, int color)
     if (i > g_i_y_stop && i < ydots)
     {
         color -= stripe;                    // reconstruct unstriped color
-        color = (degree+1-color)%degree+1;  // symmetrical color
+        color = (g_degree+1-color)%g_degree+1;  // symmetrical color
         color += stripe;                    // add stripe
         g_put_color(x, i, color)  ;
     }
@@ -5397,13 +5397,13 @@ void symplot4basin(int x, int y, int color)
         stripe = 0;
     }
     color -= stripe;               // reconstruct unstriped color
-    if (color < degree/2+2)
+    if (color < g_degree/2+2)
     {
-        color1 = degree/2+2 - color;
+        color1 = g_degree/2+2 - color;
     }
     else
     {
-        color1 = degree/2+degree+2 - color;
+        color1 = g_degree/2+g_degree+2 - color;
     }
     j = xxstop-(x-xxstart);
     g_put_color(x, y, color+stripe) ;
@@ -5414,10 +5414,10 @@ void symplot4basin(int x, int y, int color)
     i = yystop-(y-yystart);
     if (i > g_i_y_stop && i < ydots)
     {
-        g_put_color(x, i, stripe + (degree+1 - color)%degree+1) ;
+        g_put_color(x, i, stripe + (g_degree+1 - color)%g_degree+1) ;
         if (j < xdots)
         {
-            g_put_color(j, i, stripe + (degree+1 - color1)%degree+1) ;
+            g_put_color(j, i, stripe + (g_degree+1 - color1)%g_degree+1) ;
         }
     }
 }
