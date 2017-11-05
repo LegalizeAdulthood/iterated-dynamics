@@ -1034,7 +1034,7 @@ void write_batch_parms(char const *colorinf, bool colorsonly, int maxcolor, int 
         if (g_distance_estimator)
         {
             put_parm(" %s=%ld/%d/%d/%d", "distest", g_distance_estimator, g_distance_estimator_width_factor,
-                     pseudox?pseudox:xdots, pseudoy?pseudoy:ydots);
+                     g_distance_estimator_x_dots?g_distance_estimator_x_dots:xdots, pseudoy?pseudoy:ydots);
         }
         if (g_old_demm_colors)
         {

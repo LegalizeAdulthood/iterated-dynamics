@@ -1083,10 +1083,10 @@ static void perform_worklist()
     {
         double ftemp, ftemp2, delxx, delyy2, delyy, delxx2, d_x_size, d_y_size;
         double aspect;
-        if (pseudox && pseudoy)
+        if (g_distance_estimator_x_dots && pseudoy)
         {
-            aspect = (double)pseudoy/(double)pseudox;
-            d_x_size = pseudox-1;
+            aspect = (double)pseudoy/(double)g_distance_estimator_x_dots;
+            d_x_size = g_distance_estimator_x_dots-1;
             d_y_size = pseudoy-1;
         }
         else
