@@ -3175,7 +3175,7 @@ static bool float3dviewtransf(float3dvtinf *inf)
 static FILE *open_orbitsave()
 {
     FILE *fp;
-    if ((orbitsave&1) && (fp = fopen("orbits.raw", "w")) != nullptr)
+    if ((orbitsave & osf_raw) && (fp = fopen("orbits.raw", "w")) != nullptr)
     {
         fprintf(fp, "pointlist x y z color\n");
         return fp;

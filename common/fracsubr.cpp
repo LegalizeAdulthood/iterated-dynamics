@@ -1576,7 +1576,7 @@ static FILE *snd_fp = nullptr;
 bool snd_open()
 {
     static char soundname[] = {"sound001.txt"};
-    if ((orbitsave&2) != 0 && snd_fp == nullptr)
+    if ((orbitsave & osf_midi) != 0 && snd_fp == nullptr)
     {
         snd_fp = fopen(soundname, "w");
         if (snd_fp == nullptr)
@@ -1595,7 +1595,7 @@ bool snd_open()
    if the orbitsave variable is turned on */
 void w_snd(int tone)
 {
-    if ((orbitsave&2) != 0)
+    if ((orbitsave & osf_midi) != 0)
     {
         // cppcheck-suppress leakNoVarFunctionCall
         if (snd_open())

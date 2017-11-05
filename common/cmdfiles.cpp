@@ -2487,13 +2487,13 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         // orbitsave=?
         if (charval[0] == 's')
         {
-            orbitsave |= 2;
+            orbitsave |= osf_midi;
         }
         else if (yesnoval[0] < 0)
         {
             goto badarg;
         }
-        orbitsave |= yesnoval[0];
+        orbitsave |= (yesnoval[0] ? osf_raw : 0);
         return CMDARG_FRACTAL_PARAM;
     }
 
