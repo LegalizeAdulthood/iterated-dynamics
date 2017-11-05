@@ -129,8 +129,8 @@ void drawbox(bool drawit)
     rotsin = sin(ftemp1);
 
     // do some calcs just once here to reduce fp work a bit
-    fxwidth = g_save_x_max-sx3rd;
-    fxskew  = sx3rd-g_save_x_min;
+    fxwidth = g_save_x_max-g_save_x_3rd;
+    fxskew  = g_save_x_3rd-g_save_x_min;
     fydepth = sy3rd-g_save_y_max;
     fyskew  = g_save_y_min-sy3rd;
     fxadj   = zoom_box_width*zoom_box_skew;
@@ -516,7 +516,7 @@ static void zmo_calc(double dx, double dy, double *newx, double *newy, double ft
     tempy = dx * g_plot_my1 - dy * g_plot_my2;
 
     // calc new corner by extending from current screen corners
-    *newx = g_save_x_min + tempx*(g_save_x_max-sx3rd)/ftemp + tempy*(sx3rd-g_save_x_min)/ftemp;
+    *newx = g_save_x_min + tempx*(g_save_x_max-g_save_x_3rd)/ftemp + tempy*(g_save_x_3rd-g_save_x_min)/ftemp;
     *newy = g_save_y_max + tempy*(sy3rd-g_save_y_max)/ftemp + tempx*(g_save_y_min-sy3rd)/ftemp;
 }
 
@@ -605,7 +605,7 @@ void zoomoutdbl() // for ctl-enter, calc corners for zooming out
     savyymax = yymax;
     zmo_calc(g_save_x_min-savxxmin, g_save_y_max-savyymax, &xxmin, &yymax, ftemp);
     zmo_calc(g_save_x_max-savxxmin, g_save_y_min-savyymax, &xxmax, &yymin, ftemp);
-    zmo_calc(sx3rd-savxxmin, sy3rd-savyymax, &xx3rd, &yy3rd, ftemp);
+    zmo_calc(g_save_x_3rd-savxxmin, sy3rd-savyymax, &xx3rd, &yy3rd, ftemp);
 }
 
 void zoomout() // for ctl-enter, calc corners for zooming out

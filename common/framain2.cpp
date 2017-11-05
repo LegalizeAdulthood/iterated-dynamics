@@ -316,7 +316,7 @@ main_state big_while_loop(bool *const kbdmore, bool *const stacked, bool const r
 
         g_save_x_min = xxmin; // save 3 corners for zoom.c ref points
         g_save_x_max = xxmax;
-        sx3rd = xx3rd;
+        g_save_x_3rd = xx3rd;
         g_save_y_min = yymin;
         g_save_y_max = yymax;
         sy3rd = yy3rd;
@@ -1120,7 +1120,7 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
                 jxxmax = g_save_x_max;
                 jyymax = g_save_y_max;
                 jyymin = g_save_y_min;
-                jxx3rd = sx3rd;
+                jxx3rd = g_save_x_3rd;
                 jyy3rd = sy3rd;
                 *frommandel = true;
                 xxmin = curfractalspecific->xmin;
@@ -2323,7 +2323,7 @@ void reset_zoom_corners()
 {
     xxmin = g_save_x_min;
     xxmax = g_save_x_max;
-    xx3rd = sx3rd;
+    xx3rd = g_save_x_3rd;
     yymax = g_save_y_max;
     yymin = g_save_y_min;
     yy3rd = sy3rd;

@@ -462,7 +462,7 @@ extern char                  g_std_calc_mode;
 extern std::string           g_stereo_map_filename;
 extern int                   g_store_index;
 extern int                   g_stop_pass;
-extern double                sx3rd;
+extern double                g_save_x_3rd;
 extern int                   g_screen_x_dots;
 extern double                g_save_x_max;
 extern double                g_save_x_min;
