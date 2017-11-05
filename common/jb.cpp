@@ -353,7 +353,7 @@ zlinefp(double x, double y)
             g_quaternion_c = jxfp;
             g_quaternion_ci = jyfp;
             g_quaternion_cj = mxfp;
-            qck = myfp;
+            g_quaternino_ck = myfp;
         }
         else
         {
@@ -364,7 +364,7 @@ zlinefp(double x, double y)
             g_quaternion_c = g_params[0];
             g_quaternion_ci = g_params[1];
             g_quaternion_cj = g_params[2];
-            qck = g_params[3];
+            g_quaternino_ck = g_params[3];
         }
 #ifdef XFRACT
         if (keychk++ > 500)

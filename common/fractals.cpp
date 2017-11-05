@@ -104,7 +104,7 @@ long oldxinitx, oldyinity, oldxinity, oldyinitx;
 long longtmp;
 
 // These are for quaternions
-double g_quaternion_c, g_quaternion_ci, g_quaternion_cj, qck;
+double g_quaternion_c, g_quaternion_ci, g_quaternion_cj, g_quaternino_ck;
 
 // temporary variables for trig use
 long lcosx, lsinx;
@@ -3159,7 +3159,7 @@ int quaternionjulfp_per_pixel()
     g_quaternion_c  = g_params[0];
     g_quaternion_ci = g_params[1];
     g_quaternion_cj = g_params[2];
-    qck = g_params[3];
+    g_quaternino_ck = g_params[3];
     return 0;
 }
 
@@ -3172,7 +3172,7 @@ int quaternionfp_per_pixel()
     g_quaternion_c  = dxpixel();
     g_quaternion_ci = dypixel();
     g_quaternion_cj = g_params[2];
-    qck = g_params[3];
+    g_quaternino_ck = g_params[3];
     return 0;
 }
 
@@ -3340,7 +3340,7 @@ QuaternionFPFractal()
     n0 = a0*a0-a1*a1-a2*a2-a3*a3 + g_quaternion_c;
     n1 = 2*a0*a1 + g_quaternion_ci;
     n2 = 2*a0*a2 + g_quaternion_cj;
-    n3 = 2*a0*a3 + qck;
+    n3 = 2*a0*a3 + g_quaternino_ck;
     // Check bailout
     g_magnitude = a0*a0+a1*a1+a2*a2+a3*a3;
     if (g_magnitude > rqlim)
@@ -3370,7 +3370,7 @@ HyperComplexFPFractal()
     hnew.x += g_quaternion_c;
     hnew.y += g_quaternion_ci;
     hnew.z += g_quaternion_cj;
-    hnew.t += qck;
+    hnew.t += g_quaternino_ck;
 
     g_new_z.x = hnew.x;
     g_old_z.x = g_new_z.x;

@@ -398,7 +398,7 @@ extern DComplex              g_power_z;
 extern double                g_quaternion_c;
 extern double                g_quaternion_ci;
 extern double                g_quaternion_cj;
-extern double                qck;
+extern double                g_quaternino_ck;
 extern bool                  quick_calc;
 extern int                   RANDOMIZE;
 extern std::vector<int>      ranges;
