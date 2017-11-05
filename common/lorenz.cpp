@@ -2338,7 +2338,7 @@ int funny_glasses_call(int (*calc)())
 {
     g_which_image = g_glasses_type ? stereo_images::RED : stereo_images::NONE;
     plot_setup();
-    g_plot = standardplot;
+    g_plot = g_standard_plot;
     int status = calc();
     if (realtime && g_glasses_type < 3)
     {
@@ -2366,7 +2366,7 @@ int funny_glasses_call(int (*calc)())
             curfractalspecific->per_image(); // reset for 2nd image
         }
         plot_setup();
-        g_plot = standardplot;
+        g_plot = g_standard_plot;
         // is there a better way to clear the graphics screen ?
         status = calc();
         if (status != 0)

@@ -414,7 +414,7 @@ void plot_setup()
     switch (g_glasses_type)
     {
     case 1:
-        standardplot = plot3dalternate;
+        g_standard_plot = plot3dalternate;
         break;
 
     case 2:
@@ -422,16 +422,16 @@ void plot_setup()
         {
             if (fractype != fractal_type::IFS3D)
             {
-                standardplot = plot3dsuperimpose256;
+                g_standard_plot = plot3dsuperimpose256;
             }
             else
             {
-                standardplot = plotIFS3dsuperimpose256;
+                g_standard_plot = plotIFS3dsuperimpose256;
             }
         }
         else
         {
-            standardplot = plot3dsuperimpose16;
+            g_standard_plot = plot3dsuperimpose16;
         }
         break;
 
@@ -440,25 +440,25 @@ void plot_setup()
         {
             if (XROT == 0 && YROT == 0)
             {
-                standardplot = plot3dcrosseyedA; // use hidden surface kludge
+                g_standard_plot = plot3dcrosseyedA; // use hidden surface kludge
             }
             else
             {
-                standardplot = plot3dcrosseyedB;
+                g_standard_plot = plot3dcrosseyedB;
             }
         }
         else if (XROT == 0 && YROT == 0)
         {
-            standardplot = plot3dcrosseyedC; // use hidden surface kludge
+            g_standard_plot = plot3dcrosseyedC; // use hidden surface kludge
         }
         else
         {
-            standardplot = g_put_color;
+            g_standard_plot = g_put_color;
         }
         break;
 
     default:
-        standardplot = g_put_color;
+        g_standard_plot = g_put_color;
         break;
     }
 

@@ -109,7 +109,7 @@ static long num_tris; // number of triangles output to ray trace file
 
 // global variables defined here
 std::vector<f_point> f_lastrow;
-void (* standardplot)(int, int, int);
+void (* g_standard_plot)(int, int, int);
 MATRIX g_m; // transformation matrix
 int g_ambient;
 int g_randomize_3d;
@@ -868,7 +868,7 @@ int line3d(BYTE * pixels, unsigned linelen)
                 }
                 putatriangle(old, lastrow[col], cur, cur.color);
 
-                g_plot = standardplot;
+                g_plot = g_standard_plot;
             }
             break;
         }                      // End of CASE statement for fill type
@@ -1324,7 +1324,7 @@ static void clipcolor(int x, int y, int color)
             0 <= y && y < ydots &&
             0 <= color && color < g_file_colors)
     {
-        standardplot(x, y, color);
+        g_standard_plot(x, y, color);
 
         if (Targa_Out)
         {
@@ -1351,7 +1351,7 @@ static void T_clipcolor(int x, int y, int color)
             // Lets make sure its not a transparent color
             (transparent[0] > color || color > transparent[1]))
     {
-        standardplot(x, y, color);// I guess we can plot then
+        g_standard_plot(x, y, color);// I guess we can plot then
         if (Targa_Out)
         {
             // standardplot modifies color in these types
@@ -1424,7 +1424,7 @@ static void interpcolor(int x, int y, int color)
                 }
             }
         }
-        standardplot(x, y, color);
+        g_standard_plot(x, y, color);
     }
 }
 
