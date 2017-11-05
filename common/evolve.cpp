@@ -1055,11 +1055,11 @@ void drawparmbox(int mode)
 
     g_box_count =0;
     //draw larger box to show parm zooming range
-    bl.x = ((g_evolve_param_grid_x -(int)g_evolve_param_zoom) * (int)(g_x_size_dots+1+grout))-sxoffs-1;
+    bl.x = ((g_evolve_param_grid_x -(int)g_evolve_param_zoom) * (int)(g_x_size_dots+1+grout))-g_logical_screen_x_offset-1;
     tl.x = bl.x;
     tr.y = ((g_evolve_param_grid_y -(int)g_evolve_param_zoom) * (int)(g_y_size_dots+1+grout))-syoffs-1;
     tl.y = tr.y;
-    tr.x = ((g_evolve_param_grid_x +1+(int)g_evolve_param_zoom) * (int)(g_x_size_dots+1+grout))-sxoffs;
+    tr.x = ((g_evolve_param_grid_x +1+(int)g_evolve_param_zoom) * (int)(g_x_size_dots+1+grout))-g_logical_screen_x_offset;
     br.x = tr.x;
     bl.y = ((g_evolve_param_grid_y +1+(int)g_evolve_param_zoom) * (int)(g_y_size_dots+1+grout))-syoffs;
     br.y = bl.y;

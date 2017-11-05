@@ -517,7 +517,7 @@ int pot_line(BYTE *pixels, int linelen)
     }
     for (int col = 0; col < xdots; ++col)
     {
-        writedisk(col+sxoffs, row+syoffs, *(pixels+col));
+        writedisk(col+g_logical_screen_x_offset, row+syoffs, *(pixels+col));
     }
     g_row_count = saverowcount + 1;
     return (0);

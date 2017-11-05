@@ -560,7 +560,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
         g_evolve_discrete_y_parameter_offset = g_evolve_new_discrete_y_parameter_offset;
         g_evolve_param_grid_x           = blk_6_info.px;
         g_evolve_param_grid_y           = blk_6_info.py;
-        sxoffs       = blk_6_info.sxoffs;
+        g_logical_screen_x_offset       = blk_6_info.sxoffs;
         syoffs       = blk_6_info.syoffs;
         xdots        = blk_6_info.xdots;
         ydots        = blk_6_info.ydots;
@@ -2013,19 +2013,19 @@ bool is_visible_window(
     }
 
     // now see how many corners are on the screen, accept if one or more
-    if (tl.x >= (0-sxoffs) && tl.x <= (g_screen_x_dots-sxoffs) && tl.y >= (0-syoffs) && tl.y <= (g_screen_y_dots-syoffs))
+    if (tl.x >= (0-g_logical_screen_x_offset) && tl.x <= (g_screen_x_dots-g_logical_screen_x_offset) && tl.y >= (0-syoffs) && tl.y <= (g_screen_y_dots-syoffs))
     {
         cornercount++;
     }
-    if (bl.x >= (0-sxoffs) && bl.x <= (g_screen_x_dots-sxoffs) && bl.y >= (0-syoffs) && bl.y <= (g_screen_y_dots-syoffs))
+    if (bl.x >= (0-g_logical_screen_x_offset) && bl.x <= (g_screen_x_dots-g_logical_screen_x_offset) && bl.y >= (0-syoffs) && bl.y <= (g_screen_y_dots-syoffs))
     {
         cornercount++;
     }
-    if (tr.x >= (0-sxoffs) && tr.x <= (g_screen_x_dots-sxoffs) && tr.y >= (0-syoffs) && tr.y <= (g_screen_y_dots-syoffs))
+    if (tr.x >= (0-g_logical_screen_x_offset) && tr.x <= (g_screen_x_dots-g_logical_screen_x_offset) && tr.y >= (0-syoffs) && tr.y <= (g_screen_y_dots-syoffs))
     {
         cornercount++;
     }
-    if (br.x >= (0-sxoffs) && br.x <= (g_screen_x_dots-sxoffs) && br.y >= (0-syoffs) && br.y <= (g_screen_y_dots-syoffs))
+    if (br.x >= (0-g_logical_screen_x_offset) && br.x <= (g_screen_x_dots-g_logical_screen_x_offset) && br.y >= (0-syoffs) && br.y <= (g_screen_y_dots-syoffs))
     {
         cornercount++;
     }

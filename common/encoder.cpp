@@ -622,7 +622,7 @@ bool encoder()
                 esave_info.discrete_y_paramter_offset = (short) g_evolve_discrete_y_parameter_offset;
                 esave_info.px              = (short)g_evolve_param_grid_x;
                 esave_info.py              = (short)g_evolve_param_grid_y;
-                esave_info.sxoffs          = (short)sxoffs;
+                esave_info.sxoffs          = (short)g_logical_screen_x_offset;
                 esave_info.syoffs          = (short)syoffs;
                 esave_info.xdots           = (short)xdots;
                 esave_info.ydots           = (short)ydots;
@@ -1164,7 +1164,7 @@ static bool compress(int rowlimit)
                 }
                 else
                 {
-                    color = readdisk(xdot + sxoffs, ydot + syoffs);
+                    color = readdisk(xdot + g_logical_screen_x_offset, ydot + syoffs);
                 }
                 if (in_count == 0)
                 {

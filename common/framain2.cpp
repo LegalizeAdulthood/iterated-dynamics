@@ -73,7 +73,7 @@ main_state big_while_loop(bool *const kbdmore, bool *const stacked, bool const r
             g_screen_x_dots  = xdots;
             g_screen_y_dots  = ydots;
             syoffs = 0;
-            sxoffs = 0;
+            g_logical_screen_x_offset = 0;
             g_color_cycle_range_hi = (g_color_cycle_range_hi < g_colors) ? g_color_cycle_range_hi : g_colors - 1;
 
             memcpy(g_old_dac_box, g_dac_box, 256*3); // save the DAC
@@ -222,7 +222,7 @@ main_state big_while_loop(bool *const kbdmore, bool *const stacked, bool const r
                 }
                 else
                 {
-                    sxoffs = (g_screen_x_dots - xdots) / 2;
+                    g_logical_screen_x_offset = (g_screen_x_dots - xdots) / 2;
                     syoffs = (g_screen_y_dots - ydots) / 3;
                 }
             }
@@ -384,7 +384,7 @@ main_state big_while_loop(bool *const kbdmore, bool *const stacked, bool const r
                     g_evolve_discrete_y_parameter_offset = g_evolve_new_discrete_y_parameter_offset;
                     g_evolve_param_grid_x           = g_evolve_info.px;
                     g_evolve_param_grid_y           = g_evolve_info.py;
-                    sxoffs       = g_evolve_info.sxoffs;
+                    g_logical_screen_x_offset       = g_evolve_info.sxoffs;
                     syoffs       = g_evolve_info.syoffs;
                     xdots        = g_evolve_info.xdots;
                     ydots        = g_evolve_info.ydots;
@@ -422,7 +422,7 @@ main_state big_while_loop(bool *const kbdmore, bool *const stacked, bool const r
                 while (ecount < gridsqr)
                 {
                     spiralmap(ecount); // sets px & py
-                    sxoffs = tmpxdots * g_evolve_param_grid_x;
+                    g_logical_screen_x_offset = tmpxdots * g_evolve_param_grid_x;
                     syoffs = tmpydots * g_evolve_param_grid_y;
                     param_history(1); // restore old history
                     fiddleparms(gene, ecount);
@@ -453,7 +453,7 @@ done:
                     g_evolve_info.discrete_y_paramter_offset = (short) g_evolve_discrete_y_parameter_offset;
                     g_evolve_info.px              = (short)g_evolve_param_grid_x;
                     g_evolve_info.py              = (short)g_evolve_param_grid_y;
-                    g_evolve_info.sxoffs          = (short)sxoffs;
+                    g_evolve_info.sxoffs          = (short)g_logical_screen_x_offset;
                     g_evolve_info.syoffs          = (short)syoffs;
                     g_evolve_info.xdots           = (short)xdots;
                     g_evolve_info.ydots           = (short)ydots;
@@ -465,7 +465,7 @@ done:
                     g_have_evolve_info = true;
                 }
                 syoffs = 0;
-                sxoffs = syoffs;
+                g_logical_screen_x_offset = syoffs;
                 xdots = g_screen_x_dots;
                 ydots = g_screen_y_dots; // otherwise save only saves a sub image and boxes get clipped
 
@@ -1780,14 +1780,14 @@ static main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdm
         int oldsxoffs, oldsyoffs, oldxdots, oldydots, oldpx, oldpy;
         GENEBASE gene[NUMGENES];
         copy_genes_from_bank(gene);
-        oldsxoffs = sxoffs;
+        oldsxoffs = g_logical_screen_x_offset;
         oldsyoffs = syoffs;
         oldxdots = xdots;
         oldydots = ydots;
         oldpx = g_evolve_param_grid_x;
         oldpy = g_evolve_param_grid_y;
         syoffs = 0;
-        sxoffs = syoffs;
+        g_logical_screen_x_offset = syoffs;
         xdots = g_screen_x_dots;
         ydots = g_screen_y_dots; // for full screen save and pointer move stuff
         g_evolve_param_grid_y = g_evolve_image_grid_size / 2;
@@ -1800,7 +1800,7 @@ static main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdm
         g_evolve_param_grid_y = oldpy;
         param_history(1); // restore old history
         fiddleparms(gene, unspiralmap());
-        sxoffs = oldsxoffs;
+        g_logical_screen_x_offset = oldsxoffs;
         syoffs = oldsyoffs;
         xdots = oldxdots;
         ydots = oldydots;
@@ -1926,7 +1926,7 @@ static main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdm
                     g_evolve_param_grid_y = 0;
                 }
                 int grout = !((g_evolving & NOGROUT)/NOGROUT) ;
-                sxoffs = g_evolve_param_grid_x * (int)(g_x_size_dots+1+grout);
+                g_logical_screen_x_offset = g_evolve_param_grid_x * (int)(g_x_size_dots+1+grout);
                 syoffs = g_evolve_param_grid_y * (int)(g_y_size_dots+1+grout);
 
                 param_history(1); // restore old history
@@ -2006,7 +2006,7 @@ static main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdm
                 {
                     // set screen view params back (previously changed to allow full screen saves in viewwindow mode)
                     int grout = !((g_evolving & NOGROUT) / NOGROUT);
-                    sxoffs = g_evolve_param_grid_x * (int)(g_x_size_dots+1+grout);
+                    g_logical_screen_x_offset = g_evolve_param_grid_x * (int)(g_x_size_dots+1+grout);
                     syoffs = g_evolve_param_grid_y * (int)(g_y_size_dots+1+grout);
                     SetupParamBox();
                     drawparmbox(0);

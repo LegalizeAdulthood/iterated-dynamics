@@ -230,7 +230,7 @@ void plot3dsuperimpose256(int x, int y, int color)
                 }
                 else
                 {
-                    targa_writedisk(x+sxoffs, y+syoffs, t_c, 0, 0);
+                    targa_writedisk(x+g_logical_screen_x_offset, y+syoffs, t_c, 0, 0);
                 }
             }
         }
@@ -250,8 +250,8 @@ void plot3dsuperimpose256(int x, int y, int color)
                 }
                 else
                 {
-                    targa_readdisk(x+sxoffs, y+syoffs, &T_RED, (BYTE *)&tmp, (BYTE *)&tmp);
-                    targa_writedisk(x+sxoffs, y+syoffs, T_RED, 0, t_c);
+                    targa_readdisk(x+g_logical_screen_x_offset, y+syoffs, &T_RED, (BYTE *)&tmp, (BYTE *)&tmp);
+                    targa_writedisk(x+g_logical_screen_x_offset, y+syoffs, T_RED, 0, t_c);
                 }
             }
         }
@@ -287,7 +287,7 @@ void plotIFS3dsuperimpose256(int x, int y, int color)
                 }
                 else
                 {
-                    targa_writedisk(x+sxoffs, y+syoffs, t_c, 0, 0);
+                    targa_writedisk(x+g_logical_screen_x_offset, y+syoffs, t_c, 0, 0);
                 }
             }
         }
@@ -306,8 +306,8 @@ void plotIFS3dsuperimpose256(int x, int y, int color)
                 }
                 else
                 {
-                    targa_readdisk(x+sxoffs, y+syoffs, &T_RED, (BYTE *)&tmp, (BYTE *)&tmp);
-                    targa_writedisk(x+sxoffs, y+syoffs, T_RED, 0, t_c);
+                    targa_readdisk(x+g_logical_screen_x_offset, y+syoffs, &T_RED, (BYTE *)&tmp, (BYTE *)&tmp);
+                    targa_writedisk(x+g_logical_screen_x_offset, y+syoffs, T_RED, 0, t_c);
                 }
             }
         }
@@ -337,7 +337,7 @@ void plot3dalternate(int x, int y, int color)
                 }
                 else
                 {
-                    targa_writedisk(x+sxoffs, y+syoffs, t_c, 0, 0);
+                    targa_writedisk(x+g_logical_screen_x_offset, y+syoffs, t_c, 0, 0);
                 }
             }
         }
@@ -355,7 +355,7 @@ void plot3dalternate(int x, int y, int color)
                 }
                 else
                 {
-                    targa_writedisk(x+sxoffs, y+syoffs, T_RED, 0, t_c);
+                    targa_writedisk(x+g_logical_screen_x_offset, y+syoffs, T_RED, 0, t_c);
                 }
             }
         }
@@ -485,7 +485,7 @@ void plot_setup()
             xxadjust1 = (int)(((xtrans-xadjust)* (double)xdots)/100);
             if (g_glasses_type == 4 && g_screen_x_dots >= 2*xdots)
             {
-                sxoffs = g_screen_x_dots / 2 - xdots;
+                g_logical_screen_x_offset = g_screen_x_dots / 2 - xdots;
             }
             break;
 
@@ -494,7 +494,7 @@ void plot_setup()
             xxadjust = (int)(((xtrans-xadjust)* (double)xdots)/100);
             if (g_glasses_type == 4 && g_screen_x_dots >= 2*xdots)
             {
-                sxoffs = g_screen_x_dots / 2;
+                g_logical_screen_x_offset = g_screen_x_dots / 2;
             }
             break;
 

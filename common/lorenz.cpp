@@ -2382,7 +2382,7 @@ done:
     if (g_glasses_type == 4 && g_screen_x_dots >= 2*xdots)
     {
         // turn off view windows so will save properly
-        sxoffs = 0;
+        g_logical_screen_x_offset = 0;
         syoffs = 0;
         xdots = g_screen_x_dots;
         ydots = g_screen_y_dots;

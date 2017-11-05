@@ -1650,7 +1650,7 @@ static void plotdorbit(double dx, double dy, int color)
         return;
     }
     i = (int)(dy * g_plot_mx1 - dx * g_plot_mx2);
-    i += sxoffs;
+    i += g_logical_screen_x_offset;
     if (i < 0 || i >= g_screen_x_dots)
     {
         return;
@@ -1661,10 +1661,10 @@ static void plotdorbit(double dx, double dy, int color)
     {
         return;
     }
-    save_sxoffs = sxoffs;
+    save_sxoffs = g_logical_screen_x_offset;
     save_syoffs = syoffs;
     syoffs = 0;
-    sxoffs = syoffs;
+    g_logical_screen_x_offset = syoffs;
     // save orbit value
     if (color == -1)
     {
@@ -1678,7 +1678,7 @@ static void plotdorbit(double dx, double dy, int color)
     {
         g_put_color(i, j, color);
     }
-    sxoffs = save_sxoffs;
+    g_logical_screen_x_offset = save_sxoffs;
     syoffs = save_syoffs;
     if (g_debug_flag == debug_flags::force_scaled_sound_formula)
     {
@@ -1733,10 +1733,10 @@ void scrub_orbit()
     int i, j, c;
     int save_sxoffs, save_syoffs;
     driver_mute();
-    save_sxoffs = sxoffs;
+    save_sxoffs = g_logical_screen_x_offset;
     save_syoffs = syoffs;
     syoffs = 0;
-    sxoffs = syoffs;
+    g_logical_screen_x_offset = syoffs;
     while (g_orbit_save_index >= 3)
     {
         c = save_orbit[--g_orbit_save_index];
@@ -1744,7 +1744,7 @@ void scrub_orbit()
         i = save_orbit[--g_orbit_save_index];
         g_put_color(i, j, c);
     }
-    sxoffs = save_sxoffs;
+    g_logical_screen_x_offset = save_sxoffs;
     syoffs = save_syoffs;
 }
 

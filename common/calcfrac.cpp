@@ -3427,9 +3427,9 @@ static int potential(double mag, long iterations)
     {
         if (!driver_diskp())   // if putcolor won't be doing it for us
         {
-            writedisk(g_col+sxoffs, g_row+syoffs, i_pot);
+            writedisk(g_col+g_logical_screen_x_offset, g_row+syoffs, i_pot);
         }
-        writedisk(g_col+sxoffs, g_row+g_screen_y_dots+syoffs, (int)l_pot);
+        writedisk(g_col+g_logical_screen_x_offset, g_row+g_screen_y_dots+syoffs, (int)l_pot);
     }
 
     return i_pot;

@@ -3174,7 +3174,7 @@ static void PalTable_Process(PalTable *me)
 void EditPalette()
 {
     int       old_look_at_mouse = g_look_at_mouse;
-    int       oldsxoffs      = sxoffs;
+    int       oldsxoffs      = g_logical_screen_x_offset;
     int       oldsyoffs      = syoffs;
 
     if (g_screen_x_dots < 133 || g_screen_y_dots < 174)
@@ -3188,7 +3188,7 @@ void EditPalette()
 
     g_look_at_mouse = 3;
     syoffs = 0;
-    sxoffs = syoffs;
+    g_logical_screen_x_offset = syoffs;
 
     reserve_colors = true;
     inverse = false;
@@ -3202,7 +3202,7 @@ void EditPalette()
     PalTable_Destroy(&pt);
 
     g_look_at_mouse = old_look_at_mouse;
-    sxoffs = oldsxoffs;
+    g_logical_screen_x_offset = oldsxoffs;
     syoffs = oldsyoffs;
     g_line_buff.clear();
 }

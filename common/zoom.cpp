@@ -56,13 +56,13 @@ void dispbox()
     {
         if (g_is_true_color && g_true_mode != true_color_mode::default_color)
         {
-            driver_get_truecolor(g_box_x[i]-sxoffs, g_box_y[i]-syoffs, &rgb[0], &rgb[1], &rgb[2], nullptr);
-            driver_put_truecolor(g_box_x[i]-sxoffs, g_box_y[i]-syoffs,
+            driver_get_truecolor(g_box_x[i]-g_logical_screen_x_offset, g_box_y[i]-syoffs, &rgb[0], &rgb[1], &rgb[2], nullptr);
+            driver_put_truecolor(g_box_x[i]-g_logical_screen_x_offset, g_box_y[i]-syoffs,
                                  rgb[0]^255, rgb[1]^255, rgb[2]^255, 255);
         }
         else
         {
-            g_box_values[i] = getcolor(g_box_x[i]-sxoffs, g_box_y[i]-syoffs);
+            g_box_values[i] = getcolor(g_box_x[i]-g_logical_screen_x_offset, g_box_y[i]-syoffs);
         }
     }
     // There is an interaction between getcolor and putcolor, so separate them
@@ -71,11 +71,11 @@ void dispbox()
         {
             if (g_colors == 2)
             {
-                g_put_color(g_box_x[i]-sxoffs, g_box_y[i]-syoffs, (1 - g_box_values[i]));
+                g_put_color(g_box_x[i]-g_logical_screen_x_offset, g_box_y[i]-syoffs, (1 - g_box_values[i]));
             }
             else
             {
-                g_put_color(g_box_x[i]-sxoffs, g_box_y[i]-syoffs, boxc);
+                g_put_color(g_box_x[i]-g_logical_screen_x_offset, g_box_y[i]-syoffs, boxc);
             }
         }
 }
@@ -90,7 +90,7 @@ void clearbox()
     {
         for (int i = 0; i < g_box_count; i++)
         {
-            g_put_color(g_box_x[i]-sxoffs, g_box_y[i]-syoffs, g_box_values[i]);
+            g_put_color(g_box_x[i]-g_logical_screen_x_offset, g_box_y[i]-syoffs, g_box_values[i]);
         }
     }
 }
@@ -313,7 +313,7 @@ void drawlines(coords fr, coords to, int dx, int dy)
 void addbox(coords point)
 {
     assert(g_box_count < NUM_BOX_POINTS);
-    point.x += sxoffs;
+    point.x += g_logical_screen_x_offset;
     point.y += syoffs;
     if (point.x >= 0 && point.x < g_screen_x_dots &&
             point.y >= 0 && point.y < g_screen_y_dots)
@@ -375,7 +375,7 @@ void moveboxf(double dx, double dy)
 #ifndef XFRACT
     if (g_video_scroll)                 // scroll screen center to the box center
     {
-        int col = (int)((zbx + zoom_box_width/2)*(g_x_size_dots + PIXELROUND)) + sxoffs;
+        int col = (int)((zbx + zoom_box_width/2)*(g_x_size_dots + PIXELROUND)) + g_logical_screen_x_offset;
         int row = (int)((zby + zoom_box_height/2)*(g_y_size_dots + PIXELROUND)) + syoffs;
         if (!zscroll)
         {

@@ -1500,7 +1500,7 @@ int targa_color(int x, int y, int color)
 
     // Now write the color triple to its transformed location
     // on the disk.
-    targa_writedisk(x + sxoffs, y + syoffs, RGB[0], RGB[1], RGB[2]);
+    targa_writedisk(x + g_logical_screen_x_offset, y + syoffs, RGB[0], RGB[1], RGB[2]);
 
     return (int)(255 - V);
 }
