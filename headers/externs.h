@@ -102,7 +102,7 @@ extern std::string           g_command_file;
 extern std::string           g_command_name;
 extern bool                  g_compare_gif;
 extern long                  g_concentration;
-extern double                cosx;
+extern double                g_cos_x;
 extern int                   g_current_column;
 extern int                   g_current_pass;
 extern int                   g_current_row;

@@ -491,7 +491,7 @@ bool orbit3dfloatsetup()
         l_d = (long) g_params[3];
         t = (int) l_d;      // points per orbit
         sinx = sin(a);
-        cosx = cos(a);
+        g_cos_x = cos(a);
         orbit = 0;
         initorbitfp[2] = 0;
         initorbitfp[1] = initorbitfp[2];
@@ -1113,8 +1113,8 @@ int kamtorusfloatorbit(double *r, double *s, double *z)
         }
     }
     srr = (*s)-(*r)*(*r);
-    (*s) = (*r)*sinx+srr*cosx;
-    (*r) = (*r)*cosx-srr*sinx;
+    (*s) = (*r)*sinx+srr*g_cos_x;
+    (*r) = (*r)*g_cos_x-srr*sinx;
     return (0);
 }
 
