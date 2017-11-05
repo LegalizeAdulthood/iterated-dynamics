@@ -763,7 +763,7 @@ void write_batch_parms(char const *colorinf, bool colorsonly, int maxcolor, int 
                 int digits;
                 digits = getprecbf(MAXREZ);
                 put_bf(0, bfxmin, digits);
-                put_bf(1, bfxmax, digits);
+                put_bf(1, g_bf_x_max, digits);
                 put_bf(1, g_bf_y_min, digits);
                 put_bf(1, g_bf_y_max, digits);
                 if (cmp_bf(g_bf_x_3rd, bfxmin) || cmp_bf(g_bf_y_3rd, g_bf_y_min))
@@ -1768,7 +1768,7 @@ int getprecbf(int rezflag)
     }
 
     // bfxxdel = (bfxmax - bfx3rd)/(xdots-1)
-    sub_bf(bfxxdel, bfxmax, g_bf_x_3rd);
+    sub_bf(bfxxdel, g_bf_x_max, g_bf_x_3rd);
     div_a_bf_int(bfxxdel, (U16)rez);
 
     // bfyydel2 = (bfy3rd - bfymin)/(xdots-1)
@@ -2603,13 +2603,13 @@ void flip_image(int key)
         g_save_y_3rd = yymin;
         if (bf_math != bf_math_type::NONE)
         {
-            add_bf(g_bf_save_x_min, bfxmax, bfxmin); // sxmin = xxmax + xxmin - xx3rd;
+            add_bf(g_bf_save_x_min, g_bf_x_max, bfxmin); // sxmin = xxmax + xxmin - xx3rd;
             sub_a_bf(g_bf_save_x_min, g_bf_x_3rd);
             add_bf(g_bf_save_y_max, g_bf_y_max, g_bf_y_min); // symax = yymax + yymin - yy3rd;
             sub_a_bf(g_bf_save_y_max, g_bf_y_3rd);
             copy_bf(g_bf_save_x_max, g_bf_x_3rd);        // sxmax = xx3rd;
             copy_bf(g_bf_save_y_min, g_bf_y_3rd);        // symin = yy3rd;
-            copy_bf(g_bf_save_x_3rd, bfxmax);        // sx3rd = xxmax;
+            copy_bf(g_bf_save_x_3rd, g_bf_x_max);        // sx3rd = xxmax;
             copy_bf(g_bf_save_y_3rd, g_bf_y_min);        // sy3rd = yymin;
         }
         break;
@@ -2637,7 +2637,7 @@ void flip_image(int key)
         {
             copy_bf(g_bf_save_x_min, g_bf_x_3rd);        // sxmin = xx3rd;
             copy_bf(g_bf_save_y_max, g_bf_y_3rd);        // symax = yy3rd;
-            add_bf(g_bf_save_x_max, bfxmax, bfxmin); // sxmax = xxmax + xxmin - xx3rd;
+            add_bf(g_bf_save_x_max, g_bf_x_max, bfxmin); // sxmax = xxmax + xxmin - xx3rd;
             sub_a_bf(g_bf_save_x_max, g_bf_x_3rd);
             add_bf(g_bf_save_y_min, g_bf_y_max, g_bf_y_min); // symin = yymax + yymin - yy3rd;
             sub_a_bf(g_bf_save_y_min, g_bf_y_3rd);
@@ -2667,11 +2667,11 @@ void flip_image(int key)
         g_save_y_3rd = yymax + yymin - yy3rd;
         if (bf_math != bf_math_type::NONE)
         {
-            copy_bf(g_bf_save_x_min, bfxmax);        // sxmin = xxmax;
+            copy_bf(g_bf_save_x_min, g_bf_x_max);        // sxmin = xxmax;
             copy_bf(g_bf_save_y_max, g_bf_y_min);        // symax = yymin;
             copy_bf(g_bf_save_x_max, bfxmin);        // sxmax = xxmin;
             copy_bf(g_bf_save_y_min, g_bf_y_max);        // symin = yymax;
-            add_bf(g_bf_save_x_3rd, bfxmax, bfxmin); // sx3rd = xxmax + xxmin - xx3rd;
+            add_bf(g_bf_save_x_3rd, g_bf_x_max, bfxmin); // sx3rd = xxmax + xxmin - xx3rd;
             sub_a_bf(g_bf_save_x_3rd, g_bf_x_3rd);
             add_bf(g_bf_save_y_3rd, g_bf_y_max, g_bf_y_min); // sy3rd = yymax + yymin - yy3rd;
             sub_a_bf(g_bf_save_y_3rd, g_bf_y_3rd);

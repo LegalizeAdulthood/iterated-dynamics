@@ -257,7 +257,7 @@ void bfcornerstofloat()
     {
         xxmin = (double)bftofloat(bfxmin);
         yymin = (double)bftofloat(g_bf_y_min);
-        xxmax = (double)bftofloat(bfxmax);
+        xxmax = (double)bftofloat(g_bf_x_max);
         yymax = (double)bftofloat(g_bf_y_max);
         xx3rd = (double)bftofloat(g_bf_x_3rd);
         yy3rd = (double)bftofloat(g_bf_y_3rd);
@@ -542,7 +542,7 @@ bool MandelbnSetup()
     bntemp2 = alloc_stack(bnlength);
 
     bftobn(bnxmin, bfxmin);
-    bftobn(bnxmax, bfxmax);
+    bftobn(bnxmax, g_bf_x_max);
     bftobn(bnymin, g_bf_y_min);
     bftobn(bnymax, g_bf_y_max);
     bftobn(bnx3rd, g_bf_x_3rd);
@@ -638,7 +638,7 @@ bool MandelbfSetup()
     bf_math = bf_math_type::BIGFLT;
 
     // bfxdel = (bfxmax - bfx3rd)/(xdots-1)
-    sub_bf(bfxdel, bfxmax, g_bf_x_3rd);
+    sub_bf(bfxdel, g_bf_x_max, g_bf_x_3rd);
     div_a_bf_int(bfxdel, (U16)(xdots - 1));
 
     // bfydel = (bfymax - bfy3rd)/(ydots-1)

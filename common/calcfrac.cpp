@@ -4496,7 +4496,7 @@ static void setsymmetry(symmetry_type sym, bool uselist) // set up proper symmet
         saved = save_stack();
         bft1    = alloc_stack(rbflength+2);
         xaxis_on_screen = (sign_bf(g_bf_y_min) != sign_bf(g_bf_y_max));
-        yaxis_on_screen = (sign_bf(bfxmin) != sign_bf(bfxmax));
+        yaxis_on_screen = (sign_bf(bfxmin) != sign_bf(g_bf_x_max));
     }
     else
     {
@@ -4529,7 +4529,7 @@ static void setsymmetry(symmetry_type sym, bool uselist) // set up proper symmet
     {
         if (bf_math != bf_math_type::NONE)
         {
-            sub_bf(bft1, bfxmax, bfxmin);
+            sub_bf(bft1, g_bf_x_max, bfxmin);
             div_bf(bft1, bfxmin, bft1);
             neg_a_bf(bft1);
             ftemp = (double)bftofloat(bft1);
@@ -4661,7 +4661,7 @@ originsym:
     case symmetry_type::PI_SYM:                      // PI symmetry
         if (bf_math != bf_math_type::NONE)
         {
-            if ((double)bftofloat(abs_a_bf(sub_bf(bft1, bfxmax, bfxmin))) < PI/4)
+            if ((double)bftofloat(abs_a_bf(sub_bf(bft1, g_bf_x_max, bfxmin))) < PI/4)
             {
                 break; // no point in pi symmetry if values too close
             }
@@ -4698,7 +4698,7 @@ originsym:
         }
         if (bf_math != bf_math_type::NONE)
         {
-            sub_bf(bft1, bfxmax, bfxmin);
+            sub_bf(bft1, g_bf_x_max, bfxmin);
             abs_a_bf(bft1);
             g_pi_in_pixels = (int)((PI/(double)bftofloat(bft1)*xdots)); // PI in pixels
         }

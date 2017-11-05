@@ -1111,7 +1111,7 @@ void soi_ldbl()
     {
         xxminl = bftofloat(bfxmin);
         yyminl = bftofloat(g_bf_y_min);
-        xxmaxl = bftofloat(bfxmax);
+        xxmaxl = bftofloat(g_bf_x_max);
         yymaxl = bftofloat(g_bf_y_max);
     }
     else
