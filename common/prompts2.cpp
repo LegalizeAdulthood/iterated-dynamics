@@ -2377,7 +2377,7 @@ static int get_screen_corners()
     {
         oxmin = xxmin;
         oxmax = xxmax;
-        ox3rd = xx3rd;
+        g_orbit_corner_3_x = xx3rd;
         oymin = yymin;
         oymax = yymax;
         oy3rd = yy3rd;
@@ -2387,14 +2387,14 @@ static int get_screen_corners()
     oxxmax = oxmax;
     oyymin = oymin;
     oyymax = oymax;
-    oxx3rd = ox3rd;
+    oxx3rd = g_orbit_corner_3_x;
     oyy3rd = oy3rd;
 
     xxmin = oxmin;
     xxmax = oxmax;
     yymin = oymin;
     yymax = oymax;
-    xx3rd = ox3rd;
+    xx3rd = g_orbit_corner_3_x;
     yy3rd = oy3rd;
 
 gsc_loop:
@@ -2440,15 +2440,15 @@ gsc_loop:
         values[nump].uval.dval = oxmax;
         prompts[++nump] = yprompt;
         values[nump].uval.dval = oymin;
-        if (oxmin == ox3rd && oymin == oy3rd)
+        if (oxmin == g_orbit_corner_3_x && oymin == oy3rd)
         {
             oy3rd = 0;
-            ox3rd = oy3rd;
+            g_orbit_corner_3_x = oy3rd;
         }
         prompts[++nump] = "Bottom-left (zeros for top-left X, bottom-right Y)";
         values[nump].type = '*';
         prompts[++nump] = xprompt;
-        values[nump].uval.dval = ox3rd;
+        values[nump].uval.dval = g_orbit_corner_3_x;
         prompts[++nump] = yprompt;
         values[nump].uval.dval = oy3rd;
         prompts[++nump] = "Press " FK_F7 " to switch to \"center-mag\" mode";
@@ -2470,7 +2470,7 @@ gsc_loop:
         oxmax = oxxmax;
         oymin = oyymin;
         oymax = oyymax;
-        ox3rd = oxx3rd;
+        g_orbit_corner_3_x = oxx3rd;
         oy3rd = oyy3rd;
         // restore corners
         xxmin = svxxmin;
@@ -2486,7 +2486,7 @@ gsc_loop:
     {
         // reset to type defaults
         oxmin = curfractalspecific->xmin;
-        ox3rd = oxmin;
+        g_orbit_corner_3_x = oxmin;
         oxmax = curfractalspecific->xmax;
         oymin = curfractalspecific->ymin;
         oy3rd = oymin;
@@ -2495,7 +2495,7 @@ gsc_loop:
         xxmax = oxmax;
         yymin = oymin;
         yymax = oymax;
-        xx3rd = ox3rd;
+        xx3rd = g_orbit_corner_3_x;
         yy3rd = oy3rd;
         if (viewcrop && g_final_aspect_ratio != screenaspect)
         {
@@ -2506,7 +2506,7 @@ gsc_loop:
         oxmax = xxmax;
         oymin = yymin;
         oymax = yymax;
-        ox3rd = xxmin;
+        g_orbit_corner_3_x = xxmin;
         oy3rd = yymin;
         goto gsc_loop;
     }
@@ -2536,7 +2536,7 @@ gsc_loop:
             oxmax = xxmax;
             oymin = yymin;
             oymax = yymax;
-            ox3rd = xx3rd;
+            g_orbit_corner_3_x = xx3rd;
             oy3rd = yy3rd;
         }
     }
@@ -2549,11 +2549,11 @@ gsc_loop:
         oxmax = values[nump++].uval.dval;
         oymin = values[nump++].uval.dval;
         nump++;
-        ox3rd = values[nump++].uval.dval;
+        g_orbit_corner_3_x = values[nump++].uval.dval;
         oy3rd = values[nump++].uval.dval;
-        if (ox3rd == 0 && oy3rd == 0)
+        if (g_orbit_corner_3_x == 0 && oy3rd == 0)
         {
-            ox3rd = oxmin;
+            g_orbit_corner_3_x = oxmin;
             oy3rd = oymin;
         }
     }
@@ -2574,14 +2574,14 @@ gsc_loop:
     }
 
     if (!cmpdbl(oxxmin, oxmin) && !cmpdbl(oxxmax, oxmax) && !cmpdbl(oyymin, oymin) &&
-            !cmpdbl(oyymax, oymax) && !cmpdbl(oxx3rd, ox3rd) && !cmpdbl(oyy3rd, oy3rd))
+            !cmpdbl(oyymax, oymax) && !cmpdbl(oxx3rd, g_orbit_corner_3_x) && !cmpdbl(oyy3rd, oy3rd))
     {
         // no change, restore values to avoid drift
         oxmin = oxxmin;
         oxmax = oxxmax;
         oymin = oyymin;
         oymax = oyymax;
-        ox3rd = oxx3rd;
+        g_orbit_corner_3_x = oxx3rd;
         oy3rd = oyy3rd;
         // restore corners
         xxmin = svxxmin;

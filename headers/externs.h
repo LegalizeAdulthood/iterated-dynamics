@@ -359,7 +359,7 @@ extern int                   g_outside_color;
 extern bool                  g_overflow;
 extern bool                  g_overlay_3d;
 extern bool                  g_overwrite_file;
-extern double                ox3rd;
+extern double                g_orbit_corner_3_x;
 extern double                oxmax;
 extern double                oxmin;
 extern double                oy3rd;

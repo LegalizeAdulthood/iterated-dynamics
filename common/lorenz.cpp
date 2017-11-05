@@ -2153,7 +2153,7 @@ int dynam2dfloat()
 bool g_keep_screen_coords = false;
 bool set_orbit_corners = false;
 long g_orbit_interval;
-double oxmin, oymin, oxmax, oymax, ox3rd, oy3rd;
+double oxmin, oymin, oxmax, oymax, g_orbit_corner_3_x, oy3rd;
 affine o_cvt;
 static int o_color;
 
@@ -2161,24 +2161,24 @@ int setup_orbits_to_screen(affine *scrn_cnvt)
 {
     double det, xd, yd;
 
-    det = (ox3rd-oxmin)*(oymin-oymax) + (oymax-oy3rd)*(oxmax-oxmin);
+    det = (g_orbit_corner_3_x-oxmin)*(oymin-oymax) + (oymax-oy3rd)*(oxmax-oxmin);
     if (det == 0)
     {
         return (-1);
     }
     xd = x_size_d/det;
     scrn_cnvt->a =  xd*(oymax-oy3rd);
-    scrn_cnvt->b =  xd*(ox3rd-oxmin);
+    scrn_cnvt->b =  xd*(g_orbit_corner_3_x-oxmin);
     scrn_cnvt->e = -scrn_cnvt->a*oxmin - scrn_cnvt->b*oymax;
 
-    det = (ox3rd-oxmax)*(oymin-oymax) + (oymin-oy3rd)*(oxmax-oxmin);
+    det = (g_orbit_corner_3_x-oxmax)*(oymin-oymax) + (oymin-oy3rd)*(oxmax-oxmin);
     if (det == 0)
     {
         return (-1);
     }
     yd = y_size_d/det;
     scrn_cnvt->c =  yd*(oymin-oy3rd);
-    scrn_cnvt->d =  yd*(ox3rd-oxmax);
+    scrn_cnvt->d =  yd*(g_orbit_corner_3_x-oxmax);
     scrn_cnvt->f = -scrn_cnvt->c*oxmin - scrn_cnvt->d*oymax;
     return (0);
 }
