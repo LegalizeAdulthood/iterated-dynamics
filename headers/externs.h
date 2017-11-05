@@ -531,7 +531,7 @@ extern bool                  g_view_crop;
 extern float                 g_view_reduction;
 extern bool                  g_view_window;
 extern int                   g_view_x_dots;
-extern int                   viewydots;
+extern int                   g_view_y_dots;
 extern bool                  g_virtual_screens;
 extern unsigned              vsp;
 extern int                   g_vxdots;

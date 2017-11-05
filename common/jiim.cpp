@@ -1294,7 +1294,7 @@ finish:
     {
         g_view_window = false;
         g_view_x_dots = 0;
-        viewydots = 0;
+        g_view_y_dots = 0;
         g_view_reduction = 4.2F;
         g_view_crop = true;
         g_final_aspect_ratio = g_screen_aspect;

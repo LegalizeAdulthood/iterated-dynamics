@@ -427,8 +427,8 @@ static void initvars_restart()          // <ins> key init
     g_view_crop = true;
     g_virtual_screens = true;           // virtual screen modes on
     g_final_aspect_ratio = g_screen_aspect;
-    viewydots = 0;
-    g_view_x_dots = viewydots;
+    g_view_y_dots = 0;
+    g_view_x_dots = g_view_y_dots;
     g_keep_aspect_ratio = true;               // keep virtual aspect
     zscroll = true;                     // relaxed screen scrolling
     g_orbit_delay = 0;                    // full speed orbits
@@ -2239,8 +2239,8 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         g_view_reduction = 4.2F;  // reset default values
         g_final_aspect_ratio = g_screen_aspect;
         g_view_crop = true;
-        viewydots = 0;
-        g_view_x_dots = viewydots;
+        g_view_y_dots = 0;
+        g_view_x_dots = g_view_y_dots;
 
         if ((totparms > 0) && (floatval[0] > 0.001))
         {
@@ -2260,7 +2260,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         }
         if ((totparms == 5) && (intval[4] > 0))
         {
-            viewydots = intval[4];
+            g_view_y_dots = intval[4];
         }
         return CMDARG_FRACTAL_PARAM;
     }

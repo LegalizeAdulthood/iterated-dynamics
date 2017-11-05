@@ -388,8 +388,8 @@ int get_video_mode(FRACTAL_INFO *info, ext_blk_3 *blk_3_info)
         if (g_view_x_dots)
         {
             g_view_reduction = (float)(g_video_entry.xdots / g_view_x_dots);
-            viewydots = 0;
-            g_view_x_dots = viewydots; // easier to use auto reduction
+            g_view_y_dots = 0;
+            g_view_x_dots = g_view_y_dots; // easier to use auto reduction
         }
         g_view_reduction = (float)((int)(g_view_reduction + 0.5)); // need integer value
         g_skip_y_dots = (short)(g_view_reduction - 1);
@@ -481,7 +481,7 @@ int get_video_mode(FRACTAL_INFO *info, ext_blk_3 *blk_3_info)
     // setup view window stuff
     g_view_window = false;
     g_view_x_dots = 0;
-    viewydots = 0;
+    g_view_y_dots = 0;
     if (g_file_x_dots != g_video_entry.xdots || g_file_y_dots != g_video_entry.ydots)
     {
         // image not exactly same size as screen
@@ -509,7 +509,7 @@ int get_video_mode(FRACTAL_INFO *info, ext_blk_3 *blk_3_info)
         if (i != g_file_x_dots || j != g_file_y_dots)  // too bad, must be explicit
         {
             g_view_x_dots = g_file_x_dots;
-            viewydots = g_file_y_dots;
+            g_view_y_dots = g_file_y_dots;
         }
         else
         {

@@ -166,7 +166,7 @@ main_state big_while_loop(bool *const kbdmore, bool *const stacked, bool const r
                 if (xdots != 0)
                 {
                     // xdots specified
-                    ydots = viewydots;
+                    ydots = g_view_y_dots;
                     if (ydots == 0) // calc ydots?
                     {
                         ydots = (int)((double)xdots * ftemp + 0.5);
@@ -189,8 +189,8 @@ main_state big_while_loop(bool *const kbdmore, bool *const stacked, bool const r
                     g_view_window = false;
                     g_view_x_dots = sxdots;
                     xdots = g_view_x_dots;
-                    viewydots = sydots;
-                    ydots = viewydots;
+                    g_view_y_dots = sydots;
+                    ydots = g_view_y_dots;
                 }
                 else if (((xdots <= 1) // changed test to 1, so a 2x2 window will
                           || (ydots <= 1)) // work with the sound feature
