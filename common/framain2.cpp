@@ -2449,7 +2449,7 @@ static void save_history_info()
     current.save_release         = (short)save_release              ;
     current.display_3d           = g_display_3d;
     current.ambient              = (short)g_ambient                   ;
-    current.randomize            = (short)RANDOMIZE                 ;
+    current.randomize            = (short)g_randomize_3d                 ;
     current.haze                 = (short)g_haze                      ;
     current.transparent[0]       = (short)transparent[0]            ;
     current.transparent[1]       = (short)transparent[1]            ;
@@ -2633,7 +2633,7 @@ static void restore_history_info(int i)
     save_release          = last.save_release   ;
     g_display_3d = last.display_3d;
     g_ambient               = last.ambient        ;
-    RANDOMIZE             = last.randomize      ;
+    g_randomize_3d             = last.randomize      ;
     g_haze                  = last.haze           ;
     transparent[0]        = last.transparent[0] ;
     transparent[1]        = last.transparent[1] ;

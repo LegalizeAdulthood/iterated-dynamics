@@ -3237,7 +3237,7 @@ restart_3:
 
     prompts3d[++k] = "Randomize Colors      (0 - 7, '0' disables)";
     uvalues[k].type = 'i';
-    uvalues[k++].uval.ival = RANDOMIZE;
+    uvalues[k++].uval.ival = g_randomize_3d;
 
     if (SPHERE)
     {
@@ -3282,14 +3282,14 @@ restart_3:
         transparent[0] = uvalues[k++].uval.ival;
         transparent[1] = uvalues[k++].uval.ival;
     }
-    RANDOMIZE  = uvalues[k++].uval.ival;
-    if (RANDOMIZE >= 7)
+    g_randomize_3d  = uvalues[k++].uval.ival;
+    if (g_randomize_3d >= 7)
     {
-        RANDOMIZE = 7;
+        g_randomize_3d = 7;
     }
-    if (RANDOMIZE <= 0)
+    if (g_randomize_3d <= 0)
     {
-        RANDOMIZE = 0;
+        g_randomize_3d = 0;
     }
 
     if (Targa_Out || ILLUMINE || RAY)

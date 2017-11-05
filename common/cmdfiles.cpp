@@ -3378,7 +3378,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         {
             goto badarg;
         }
-        RANDOMIZE = numval;
+        g_randomize_3d = numval;
         return CMDARG_3D_PARAM;
     }
 
@@ -3803,7 +3803,7 @@ void set_3d_defaults()
     ytrans    = 0;
     LIGHTAVG  = 0;
     g_ambient   = 20;
-    RANDOMIZE = 0;
+    g_randomize_3d = 0;
     g_haze      = 0;
     g_background_color[0] = 51;
     g_background_color[1] = 153;

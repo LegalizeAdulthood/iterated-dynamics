@@ -1170,9 +1170,9 @@ void write_batch_parms(char const *colorinf, bool colorsonly, int maxcolor, int 
                 put_parm(" %s=%d", "smoothing", LIGHTAVG);
             }
         }
-        if (RANDOMIZE)
+        if (g_randomize_3d)
         {
-            put_parm(" %s=%d", "randomize", RANDOMIZE);
+            put_parm(" %s=%d", "randomize", g_randomize_3d);
         }
         if (Targa_Out)
         {

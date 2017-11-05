@@ -112,7 +112,7 @@ std::vector<f_point> f_lastrow;
 void (* standardplot)(int, int, int);
 MATRIX g_m; // transformation matrix
 int g_ambient;
-int RANDOMIZE;
+int g_randomize_3d;
 int g_haze;
 int Real_V = 0; // Actual value of V for fillytpe>4 monochrome images
 std::string g_light_name{"fract001"};
@@ -527,7 +527,7 @@ int line3d(BYTE * pixels, unsigned linelen)
             }
         }
 
-        if (RANDOMIZE != 0)
+        if (g_randomize_3d != 0)
         {
             if (cur.color > WATERLINE)
             {
@@ -2470,7 +2470,7 @@ static int first_time(int linelen, VECTOR v)
         }
     }
 
-    rand_factor = 14 - RANDOMIZE;
+    rand_factor = 14 - g_randomize_3d;
 
     zcoord = g_file_colors;
 
