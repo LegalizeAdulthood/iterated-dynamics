@@ -165,7 +165,7 @@ int g_got_status = -1;                    // -1 if not, 0 for 1or2pass, 1 for ss
                                         // 2 for btm, 3 for 3d, 4 for tesseral, 5 for diffusion_scan
                                         // 6 for orbits
 int g_current_pass = 0;
-int totpasses = 0;
+int g_total_passes = 0;
 int g_current_row = 0;
 int g_current_column = 0;
 
@@ -1624,7 +1624,7 @@ char g_draw_mode = 'r';
 static int sticky_orbits()
 {
     g_got_status = 6; // for <tab> screen
-    totpasses = 1;
+    g_total_passes = 1;
 
     if (plotorbits2dsetup() == -1)
     {
@@ -1837,10 +1837,10 @@ static int one_or_two_pass()
 {
     int i;
 
-    totpasses = 1;
+    g_total_passes = 1;
     if (g_std_calc_mode == '2')
     {
-        totpasses = 2;
+        g_total_passes = 2;
     }
     if (g_std_calc_mode == '2' && workpass == 0) // do 1st pass of two
     {
@@ -3734,10 +3734,10 @@ static int solid_guess()
     blocksize = ssg_blocksize();
     maxblock = blocksize;
     i = maxblock;
-    totpasses = 1;
+    g_total_passes = 1;
     while ((i >>= 1) > 1)
     {
-        ++totpasses;
+        ++g_total_passes;
     }
 
     /* ensure window top and left are on required boundary, treat window

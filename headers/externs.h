@@ -493,7 +493,7 @@ extern long                  g_timer_start;
 extern DComplex              g_tmp_z;
 extern std::string           g_temp_dir;
 extern double                g_smallest_window_display_size;
-extern int                   totpasses;
+extern int                   g_total_passes;
 extern int                   transparent[];
 extern bool                  truecolor;
 extern int                   truemode;
