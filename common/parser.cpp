@@ -4022,7 +4022,7 @@ static bool frm_check_name_and_sym(FILE * open_file, bool report_bad_sym)
         return false;
     }
     // get symmetry
-    symmetry = symmetry_type::NONE;
+    g_symmetry = symmetry_type::NONE;
     if (c == '(')
     {
         char sym_buf[20];
@@ -4063,7 +4063,7 @@ static bool frm_check_name_and_sym(FILE * open_file, bool report_bad_sym)
         {
             if (!stricmp(SymStr[i].s, sym_buf))
             {
-                symmetry = SymStr[i].n;
+                g_symmetry = SymStr[i].n;
                 break;
             }
         }
@@ -4142,10 +4142,10 @@ static std::string PrepareFormula(FILE * File, bool from_prompts1c)
         if (debug_fp != nullptr)
         {
             fprintf(debug_fp, "%s\n", g_formula_name.c_str());
-            if (symmetry != symmetry_type::NONE)
+            if (g_symmetry != symmetry_type::NONE)
             {
                 auto it = std::find_if(std::begin(SymStr), std::end(SymStr),
-                    [](SYMETRY const& item) { return item.n == symmetry; });
+                    [](SYMETRY const& item) { return item.n == g_symmetry; });
                 if (it != std::end(SymStr))
                 {
                     fprintf(debug_fp, "%s\n", it->s);

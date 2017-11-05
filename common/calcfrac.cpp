@@ -136,7 +136,7 @@ int g_i_x_start = 0;
 int g_i_x_stop = 0;
 int g_i_y_start = 0;
 int g_i_y_stop = 0;                         // start, stop here
-symmetry_type symmetry = symmetry_type::NONE; // symmetry flag
+symmetry_type g_symmetry = symmetry_type::NONE; // symmetry flag
 bool g_reset_periodicity = false;         // true if escape time pixel rtn to reset
 int g_keyboard_check_interval = 0;
 int g_max_keyboard_check_interval = 0;                   // avoids checking keyboard too often
@@ -877,7 +877,7 @@ int calcfract()
             && curfractalspecific->calctype != calcfroth)
     {
         calctype = curfractalspecific->calctype; // per_image can override
-        symmetry = curfractalspecific->symmetry; //   calctype & symmetry
+        g_symmetry = curfractalspecific->symmetry; //   calctype & symmetry
         g_plot = g_put_color; // defaults when setsymmetry not called or does nothing
         xxbegin = 0;
         yybegin = xxbegin;
@@ -898,7 +898,7 @@ int calcfract()
             // next two lines in case periodicity changed
             g_close_enough = ddelmin*pow(2.0, -(double)(abs(g_periodicity_check)));
             g_l_close_enough = (long)(g_close_enough * g_fudge_factor); // "close enough" value
-            setsymmetry(symmetry, false);
+            setsymmetry(g_symmetry, false);
             timer(0, calctype); // non-standard fractal engine
         }
         if (check_key())
@@ -1151,7 +1151,7 @@ static void perform_worklist()
     {
         // per_image can override
         calctype = curfractalspecific->calctype;
-        symmetry = curfractalspecific->symmetry; //   calctype & symmetry
+        g_symmetry = curfractalspecific->symmetry; //   calctype & symmetry
         g_plot = g_put_color; // defaults when setsymmetry not called or does nothing
 
         // pull top entry off worklist
@@ -1269,7 +1269,7 @@ static void perform_worklist()
         g_l_close_enough = (long)(g_close_enough * g_fudge_factor); // "close enough" value
         g_keyboard_check_interval = g_max_keyboard_check_interval;
 
-        setsymmetry(symmetry, true);
+        setsymmetry(g_symmetry, true);
 
         if (!g_resuming && (labs(g_log_map_flag) == 2 || (g_log_map_flag && g_log_map_auto_calculate)))
         {
@@ -4340,7 +4340,7 @@ static bool xsym_split(int xaxis_row, bool xaxis_between)
         g_i_y_stop = xaxis_row;
         worksym |= 1;
     }
-    symmetry = symmetry_type::NONE;
+    g_symmetry = symmetry_type::NONE;
     return false; // tell set_symmetry its a go
 }
 
@@ -4393,7 +4393,7 @@ static bool ysym_split(int yaxis_col, bool yaxis_between)
         g_i_x_stop = yaxis_col;
         worksym |= 2;
     }
-    symmetry = symmetry_type::NONE;
+    g_symmetry = symmetry_type::NONE;
     return false; // tell set_symmetry its a go
 }
 
@@ -4408,7 +4408,7 @@ static void setsymmetry(symmetry_type sym, bool uselist) // set up proper symmet
     double ftemp;
     bf_t bft1;
     int saved = 0;
-    symmetry = symmetry_type::X_AXIS;
+    g_symmetry = symmetry_type::X_AXIS;
     if (g_std_calc_mode == 's' || g_std_calc_mode == 'o')
     {
         return;
@@ -4615,7 +4615,7 @@ xsym:
             if (g_basin) // got no routine for this case
             {
                 g_i_x_stop = xxstop; // fix what split should not have done
-                symmetry = symmetry_type::X_AXIS;
+                g_symmetry = symmetry_type::X_AXIS;
             }
             else
             {
@@ -4649,7 +4649,7 @@ originsym:
         else
         {
             g_i_y_stop = yystop; // in case first split worked
-            symmetry = symmetry_type::X_AXIS;
+            g_symmetry = symmetry_type::X_AXIS;
             worksym = 0x30; // let it recombine with others like it
         }
         break;
@@ -4678,7 +4678,7 @@ originsym:
             goto originsym;
         }
         g_plot = symPIplot ;
-        symmetry = symmetry_type::NONE;
+        g_symmetry = symmetry_type::NONE;
         if (!xsym_split(xaxis_row, xaxis_between)
                 && !ysym_split(yaxis_col, yaxis_between))
         {

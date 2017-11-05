@@ -469,7 +469,7 @@ extern double                sy3rd;
 extern int                   sydots;
 extern double                symax;
 extern double                symin;
-extern symmetry_type         symmetry;
+extern symmetry_type         g_symmetry;
 extern int                   syoffs;
 extern bool make_parameter_file;
 extern bool make_parameter_file_map;
