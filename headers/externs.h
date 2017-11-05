@@ -405,7 +405,7 @@ extern int                   g_randomize_3d;
 extern std::vector<int>      g_iteration_ranges;
 extern int                   g_iteration_ranges_len;
 extern raytrace_formats      g_raytrace_format;
-extern std::string           ray_name;
+extern std::string           g_raytrace_filename;
 extern std::string           readname;
 extern long                  realcoloriter;
 extern char                  recordcolors;

@@ -121,7 +121,7 @@ int error;
 char targa_temp[14] = "fractemp.tga";
 int P = 250; // Perspective dist used when viewing light vector
 BYTE g_background_color[3];
-std::string ray_name{"fract001"};
+std::string g_raytrace_filename{"fract001"};
 bool g_preview = false;
 bool showbox = false;
 int g_preview_factor = 20;
@@ -892,7 +892,7 @@ loopbottom:
                 {
                     fclose(File_Ptr1);
                     remove(g_light_name.c_str());
-                    File_Error(ray_name.c_str(), 2);
+                    File_Error(g_raytrace_filename.c_str(), 2);
                     return -1;
                 }
             }
@@ -1926,8 +1926,8 @@ static int H_R(BYTE *R, BYTE *G, BYTE *B, unsigned long H, unsigned long S, unsi
 static int RAY_Header()
 {
     // Open the ray tracing output file
-    check_writefile(ray_name, ".ray");
-    File_Ptr1 = fopen(ray_name.c_str(), "w");
+    check_writefile(g_raytrace_filename, ".ray");
+    File_Ptr1 = fopen(g_raytrace_filename.c_str(), "w");
     if (File_Ptr1 == nullptr)
     {
         return -1;              // Oops, somethings wrong!

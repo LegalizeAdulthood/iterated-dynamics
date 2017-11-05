@@ -3022,10 +3022,10 @@ restart_1:
     uvalues[k].type = 'y';
     uvalues[k].uval.ch.val = g_brief ? 1 : 0;
 
-    check_writefile(ray_name, ".ray");
+    check_writefile(g_raytrace_filename, ".ray");
     prompts3d[++k] = "    Output File Name";
     uvalues[k].type = 's';
-    strcpy(uvalues[k].uval.sval, ray_name.c_str());
+    strcpy(uvalues[k].uval.sval, g_raytrace_filename.c_str());
 
     prompts3d[++k] = "Targa output?";
     uvalues[k].type = 'y';
@@ -3064,7 +3064,7 @@ restart_1:
     }
     g_brief = uvalues[k++].uval.ch.val != 0;
 
-    ray_name = uvalues[k++].uval.sval;
+    g_raytrace_filename = uvalues[k++].uval.sval;
 
     Targa_Out = uvalues[k++].uval.ch.val != 0;
     g_gray_flag  = uvalues[k++].uval.ch.val != 0;
