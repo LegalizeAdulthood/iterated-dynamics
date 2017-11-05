@@ -78,7 +78,7 @@ std::vector<long> g_l_y1;
 // they're used only to add to lx0/ly0, 2s comp straightens it out
 std::vector<double> g_grid_x0;            // floating pt equivs
 std::vector<double> dy0;
-std::vector<double> dx1;
+std::vector<double> g_grid_x1;
 std::vector<double> dy1;
 int     g_integer_fractal;         // TRUE if fractal uses integer math
 

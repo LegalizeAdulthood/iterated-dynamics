@@ -3606,7 +3606,7 @@ MandelbrotMix4fpFractal() // from formula by Jim Muth
 // Real component, grid lookup version - requires dx0/dx1 arrays
 static double dxpixel_grid()
 {
-    return g_grid_x0[g_col]+dx1[row];
+    return g_grid_x0[g_col]+g_grid_x1[row];
 }
 
 // Real component, calculation version - does not require arrays

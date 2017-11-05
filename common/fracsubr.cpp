@@ -61,7 +61,7 @@ void free_grid_pointers()
 {
     g_grid_x0.clear();
     dy0.clear();
-    dx1.clear();
+    g_grid_x1.clear();
     dy1.clear();
     g_l_x0.clear();
     g_l_y0.clear();
@@ -76,7 +76,7 @@ void set_grid_pointers()
     dy1.resize(xdots);
 
     dy0.resize(ydots);
-    dx1.resize(ydots);
+    g_grid_x1.resize(ydots);
 
     g_l_x0.resize(xdots);
     g_l_y1.resize(xdots);
@@ -93,7 +93,7 @@ void fill_dx_array()
         g_grid_x0[0] = xxmin;              // fill up the x, y grids
         dy0[0] = yymax;
         dy1[0] = 0;
-        dx1[0] = dy1[0];
+        g_grid_x1[0] = dy1[0];
         for (int i = 1; i < xdots; i++)
         {
             g_grid_x0[i] = (double)(g_grid_x0[0] + i*g_delta_x);
@@ -102,7 +102,7 @@ void fill_dx_array()
         for (int i = 1; i < ydots; i++)
         {
             dy0[i] = (double)(dy0[0] - i*g_delta_y);
-            dx1[i] = (double)(dx1[0] + i*g_delta_x2);
+            g_grid_x1[i] = (double)(g_grid_x1[0] + i*g_delta_x2);
         }
     }
 }
