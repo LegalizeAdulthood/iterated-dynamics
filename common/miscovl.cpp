@@ -1174,7 +1174,7 @@ void write_batch_parms(char const *colorinf, bool colorsonly, int maxcolor, int 
         {
             put_parm(" %s=%d", "randomize", g_randomize_3d);
         }
-        if (Targa_Out)
+        if (g_targa_out)
         {
             put_parm(" %s=y", "fullcolor");
         }

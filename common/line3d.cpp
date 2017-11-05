@@ -258,7 +258,7 @@ int line3d(BYTE * pixels, unsigned linelen)
     lastdot = std::min(xdots - 1, (int) linelen - 1);
     if (FILLTYPE >= 5)
     {
-        if (g_haze && Targa_Out)
+        if (g_haze && g_targa_out)
         {
             HAZE_MULT = (int)(g_haze * (
                                   (float)((long)(ydots - 1 - g_current_row) *
@@ -1326,7 +1326,7 @@ static void clipcolor(int x, int y, int color)
     {
         g_standard_plot(x, y, color);
 
-        if (Targa_Out)
+        if (g_targa_out)
         {
             // standardplot modifies color in these types
             if (!(g_glasses_type == 1 || g_glasses_type == 2))
@@ -1352,7 +1352,7 @@ static void T_clipcolor(int x, int y, int color)
             (transparent[0] > color || color > transparent[1]))
     {
         g_standard_plot(x, y, color);// I guess we can plot then
-        if (Targa_Out)
+        if (g_targa_out)
         {
             // standardplot modifies color in these types
             if (!(g_glasses_type == 1 || g_glasses_type == 2))
@@ -1400,7 +1400,7 @@ static void interpcolor(int x, int y, int color)
             (transparent[1] == 0 || (int) Real_Color > transparent[1] ||
              transparent[0] > (int) Real_Color))
     {
-        if (Targa_Out)
+        if (g_targa_out)
         {
             // standardplot modifies color in these types
             if (!(g_glasses_type == 1 || g_glasses_type == 2))
@@ -1411,7 +1411,7 @@ static void interpcolor(int x, int y, int color)
 
         if (FILLTYPE >= 5)
         {
-            if (Real_V && Targa_Out)
+            if (Real_V && g_targa_out)
             {
                 color = D;
             }
@@ -2371,7 +2371,7 @@ static void line3d_cleanup()
         fclose(File_Ptr1);
         File_Ptr1 = nullptr;
     }
-    if (Targa_Out)
+    if (g_targa_out)
     {
         // Finish up targa files
         T_header_24 = 18;         // Reset Targa header size
@@ -2449,7 +2449,7 @@ static int first_time(int linelen, VECTOR v)
         T_Safe = false; // Not safe yet to mess with the source image
     }
 
-    if (Targa_Out && !((g_glasses_type == 1 || g_glasses_type == 2)
+    if (g_targa_out && !((g_glasses_type == 1 || g_glasses_type == 2)
                        && g_which_image == stereo_images::BLUE))
     {
         if (Targa_Overlay)

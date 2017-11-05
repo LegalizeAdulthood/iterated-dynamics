@@ -475,7 +475,7 @@ extern bool                  g_make_parameter_file;
 extern bool                  g_make_parameter_file_map;
 extern bool                  g_tab_mode;
 extern bool                  g_tab_or_help;
-extern bool                  Targa_Out;
+extern bool                  g_targa_out;
 extern bool                  Targa_Overlay;
 extern double                tempsqrx;
 extern double                tempsqry;

@@ -2980,7 +2980,7 @@ int get_3d_params()     // prompt for 3D parameters
     int old_help_mode;
 
 restart_1:
-    if (Targa_Out && g_overlay_3d)
+    if (g_targa_out && g_overlay_3d)
     {
         Targa_Overlay = true;
     }
@@ -3029,7 +3029,7 @@ restart_1:
 
     prompts3d[++k] = "Targa output?";
     uvalues[k].type = 'y';
-    uvalues[k].uval.ch.val = Targa_Out ? 1 : 0;
+    uvalues[k].uval.ch.val = g_targa_out ? 1 : 0;
 
     prompts3d[++k] = "Use grayscale value for depth? (if \"no\" uses color number)";
     uvalues[k].type = 'y';
@@ -3066,7 +3066,7 @@ restart_1:
 
     g_raytrace_filename = uvalues[k++].uval.sval;
 
-    Targa_Out = uvalues[k++].uval.ch.val != 0;
+    g_targa_out = uvalues[k++].uval.ch.val != 0;
     g_gray_flag  = uvalues[k++].uval.ch.val != 0;
 
     // check ranges
@@ -3292,7 +3292,7 @@ restart_3:
         g_randomize_3d = 0;
     }
 
-    if (Targa_Out || ILLUMINE || g_raytrace_format != raytrace_formats::none)
+    if (g_targa_out || ILLUMINE || g_raytrace_format != raytrace_formats::none)
     {
         if (get_light_params())
         {
@@ -3341,7 +3341,7 @@ static bool get_light_params()
         }
     }
 
-    if (Targa_Out && g_raytrace_format == raytrace_formats::none)
+    if (g_targa_out && g_raytrace_format == raytrace_formats::none)
     {
         prompts3d[++k] = "Haze Factor        (0 - 100, '0' disables)";
         uvalues[k].type = 'i';
@@ -3408,7 +3408,7 @@ static bool get_light_params()
         }
     }
 
-    if (Targa_Out && g_raytrace_format == raytrace_formats::none)
+    if (g_targa_out && g_raytrace_format == raytrace_formats::none)
     {
         g_haze  =  uvalues[k++].uval.ival;
         if (g_haze >= 100)

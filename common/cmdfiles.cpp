@@ -119,7 +119,7 @@ bool    g_colors_preloaded = false; // if g_dac_box preloaded for next mode sele
 int     g_save_release = 0;       // release creating PAR file
 bool    g_read_color = true;  // flag for reading color from GIF
 double  g_math_tol[2] = {.05, .05}; // For math transition
-bool Targa_Out = false;                 // 3D fullcolor flag
+bool g_targa_out = false;                 // 3D fullcolor flag
 bool truecolor = false;                 // escape time truecolor flag
 int truemode = 0;               // truecolor coloring scheme
 std::string g_color_file;          // from last <l> <s> or colors=@filename
@@ -3411,7 +3411,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         {
             goto badarg;
         }
-        Targa_Out = yesnoval[0] != 0;
+        g_targa_out = yesnoval[0] != 0;
         return CMDARG_3D_PARAM;
     }
 
