@@ -4423,7 +4423,7 @@ static void setsymmetry(symmetry_type sym, bool uselist) // set up proper symmet
     // also any rotation other than 180deg and any off-axis stretch
     if (bf_math != bf_math_type::NONE)
     {
-        if (cmp_bf(bfxmin, bfx3rd) || cmp_bf(bfymin, g_bf_y_3rd))
+        if (cmp_bf(bfxmin, g_bf_x_3rd) || cmp_bf(bfymin, g_bf_y_3rd))
         {
             return;
         }

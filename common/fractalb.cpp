@@ -259,7 +259,7 @@ void bfcornerstofloat()
         yymin = (double)bftofloat(bfymin);
         xxmax = (double)bftofloat(bfxmax);
         yymax = (double)bftofloat(bfymax);
-        xx3rd = (double)bftofloat(bfx3rd);
+        xx3rd = (double)bftofloat(g_bf_x_3rd);
         yy3rd = (double)bftofloat(g_bf_y_3rd);
     }
     for (int i = 0; i < MAXPARAMS; i++)
@@ -545,7 +545,7 @@ bool MandelbnSetup()
     bftobn(bnxmax, bfxmax);
     bftobn(bnymin, bfymin);
     bftobn(bnymax, bfymax);
-    bftobn(bnx3rd, bfx3rd);
+    bftobn(bnx3rd, g_bf_x_3rd);
     bftobn(bny3rd, g_bf_y_3rd);
 
     bf_math = bf_math_type::BIGNUM;
@@ -638,7 +638,7 @@ bool MandelbfSetup()
     bf_math = bf_math_type::BIGFLT;
 
     // bfxdel = (bfxmax - bfx3rd)/(xdots-1)
-    sub_bf(bfxdel, bfxmax, bfx3rd);
+    sub_bf(bfxdel, bfxmax, g_bf_x_3rd);
     div_a_bf_int(bfxdel, (U16)(xdots - 1));
 
     // bfydel = (bfymax - bfy3rd)/(ydots-1)
@@ -646,7 +646,7 @@ bool MandelbfSetup()
     div_a_bf_int(bfydel, (U16)(ydots - 1));
 
     // bfxdel2 = (bfx3rd - bfxmin)/(ydots-1)
-    sub_bf(bfxdel2, bfx3rd, bfxmin);
+    sub_bf(bfxdel2, g_bf_x_3rd, bfxmin);
     div_a_bf_int(bfxdel2, (U16)(ydots - 1));
 
     // bfydel2 = (bfy3rd - bfymin)/(xdots-1)

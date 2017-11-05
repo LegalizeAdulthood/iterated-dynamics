@@ -2103,7 +2103,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
 
             // xx3rd = xxmin = floatval[0];
             get_bf(bfxmin, floatvalstr[0]);
-            get_bf(bfx3rd, floatvalstr[0]);
+            get_bf(g_bf_x_3rd, floatvalstr[0]);
 
             // xxmax = floatval[1];
             get_bf(bfxmax, floatvalstr[1]);
@@ -2118,7 +2118,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
             if (totparms == 6)
             {
                 // xx3rd = floatval[4];
-                get_bf(bfx3rd, floatvalstr[4]);
+                get_bf(g_bf_x_3rd, floatvalstr[4]);
 
                 // yy3rd = floatval[5];
                 get_bf(g_bf_y_3rd, floatvalstr[5]);
@@ -2146,7 +2146,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
 
                 // xx3rd = xxmin = floatval[0];
                 get_bf(bfxmin, floatvalstr[0]);
-                get_bf(bfx3rd, floatvalstr[0]);
+                get_bf(g_bf_x_3rd, floatvalstr[0]);
 
                 // xxmax = floatval[1];
                 get_bf(bfxmax, floatvalstr[1]);
@@ -2161,7 +2161,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
                 if (totparms == 6)
                 {
                     // xx3rd = floatval[4];
-                    get_bf(bfx3rd, floatvalstr[4]);
+                    get_bf(g_bf_x_3rd, floatvalstr[4]);
 
                     // yy3rd = floatval[5];
                     get_bf(g_bf_y_3rd, floatvalstr[5]);

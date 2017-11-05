@@ -137,7 +137,7 @@ void fractal_floattobf()
     floattobf(bfxmax, xxmax);
     floattobf(bfymin, yymin);
     floattobf(bfymax, yymax);
-    floattobf(bfx3rd, xx3rd);
+    floattobf(g_bf_x_3rd, xx3rd);
     floattobf(g_bf_y_3rd, yy3rd);
 
     for (int i = 0; i < MAXPARAMS; i++)
@@ -708,10 +708,10 @@ void adjust_cornerbf()
     }
 
     // ftemp=fabs(xx3rd-xxmin);
-    abs_a_bf(sub_bf(bftemp, bfx3rd, bfxmin));
+    abs_a_bf(sub_bf(bftemp, g_bf_x_3rd, bfxmin));
 
     // ftemp2=fabs(xxmax-xx3rd);
-    abs_a_bf(sub_bf(bftemp2, bfxmax, bfx3rd));
+    abs_a_bf(sub_bf(bftemp2, bfxmax, g_bf_x_3rd));
 
     // if ( (ftemp=fabs(xx3rd-xxmin)) < (ftemp2=fabs(xxmax-xx3rd)) )
     if (cmp_bf(bftemp, bftemp2) < 0)
@@ -721,7 +721,7 @@ void adjust_cornerbf()
                 && cmp_bf(g_bf_y_3rd, bfymax) != 0)
         {
             // xx3rd = xxmin;
-            copy_bf(bfx3rd, bfxmin);
+            copy_bf(g_bf_x_3rd, bfxmin);
         }
     }
 
@@ -730,7 +730,7 @@ void adjust_cornerbf()
             && cmp_bf(g_bf_y_3rd, bfymin) != 0)
     {
         // xx3rd = xxmax;
-        copy_bf(bfx3rd, bfxmax);
+        copy_bf(g_bf_x_3rd, bfxmax);
     }
 
     // ftemp=fabs(yy3rd-yymin);
@@ -744,7 +744,7 @@ void adjust_cornerbf()
     {
         // if (ftemp*10000 < ftemp2 && xx3rd != xxmax)
         if (cmp_bf(mult_bf_int(btmp1, bftemp, 10000), bftemp2) < 0
-                && cmp_bf(bfx3rd, bfxmax) != 0)
+                && cmp_bf(g_bf_x_3rd, bfxmax) != 0)
         {
             // yy3rd = yymin;
             copy_bf(g_bf_y_3rd, bfymin);
@@ -753,7 +753,7 @@ void adjust_cornerbf()
 
     // else if (ftemp2*10000 < ftemp && xx3rd != xxmin)
     if (cmp_bf(mult_bf_int(btmp1, bftemp2, 10000), bftemp) < 0
-            && cmp_bf(bfx3rd, bfxmin) != 0)
+            && cmp_bf(g_bf_x_3rd, bfxmin) != 0)
     {
         // yy3rd = yymax;
         copy_bf(g_bf_y_3rd, bfymax);
@@ -878,9 +878,9 @@ static void adjust_to_limitsbf(double expand)
     }
 
     // if (bfx3rd == centerx)
-    if (cmp_bf(bfx3rd, bcenterx) == 0)
+    if (cmp_bf(g_bf_x_3rd, bcenterx) == 0)
     {
-        smallest_add_bf(bfx3rd);
+        smallest_add_bf(g_bf_x_3rd);
     }
 
     // if (bfy3rd == centery)
@@ -897,10 +897,10 @@ static void adjust_to_limitsbf(double expand)
     copy_bf(bcornerx[1], bfxmax);
 
     // cornerx[2] = xx3rd;
-    copy_bf(bcornerx[2], bfx3rd);
+    copy_bf(bcornerx[2], g_bf_x_3rd);
 
     // cornerx[3] = xxmin+(xxmax-xx3rd);
-    sub_bf(bcornerx[3], bfxmax, bfx3rd);
+    sub_bf(bcornerx[3], bfxmax, g_bf_x_3rd);
     add_a_bf(bcornerx[3], bfxmin);
 
     // cornery[0] = yymax;
@@ -1053,7 +1053,7 @@ static void adjust_to_limitsbf(double expand)
     // xxmax = cornerx[1] - adjx;
     sub_bf(bfxmax, bcornerx[1], badjx);
     // xx3rd = cornerx[2] - adjx;
-    sub_bf(bfx3rd, bcornerx[2], badjx);
+    sub_bf(g_bf_x_3rd, bcornerx[2], badjx);
     // yymax = cornery[0] - adjy;
     sub_bf(bfymax, bcornery[0], badjy);
     // yymin = cornery[1] - adjy;
