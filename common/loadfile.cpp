@@ -111,7 +111,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
         potflag       = (potparam[0] != 0.0);
         rflag         = read_info.rflag != 0;
         rseed         = read_info.rseed;
-        g_inside        = read_info.inside;
+        g_inside_color        = read_info.inside;
         g_log_map_flag       = read_info.logmapold;
         g_inversion[0]  = read_info.invert[0];
         g_inversion[1]  = read_info.invert[1];
@@ -1228,7 +1228,7 @@ void backwards_v20()
             (outside <= REAL && outside >= SUM) && save_release <= 1960;
     g_ld_check = (fractype == fractal_type::FORMULA || fractype == fractal_type::FFORMULA) &&
             (save_release < 1900 || g_debug_flag == debug_flags::force_ld_check);
-    if (g_inside == EPSCROSS && save_release < 1961)
+    if (g_inside_color == EPSCROSS && save_release < 1961)
     {
         g_close_proximity = 0.01;
     }
@@ -1252,7 +1252,7 @@ bool check_back()
             (fractype == fractal_type::FFORMULA && save_release <= 1920) ||
             (g_log_map_flag != 0 && save_release <= 2001) ||
             (fractype == fractal_type::TRIGSQR && save_release < 1900) ||
-            (g_inside == STARTRAIL && save_release < 1825) ||
+            (g_inside_color == STARTRAIL && save_release < 1825) ||
             (g_max_iterations > 32767 && save_release <= 1950) ||
             (g_distance_estimator && save_release <=1950) ||
             ((outside <= REAL && outside >= ATAN) &&
@@ -1261,8 +1261,8 @@ bool check_back()
             (fractype == fractal_type::LPOPCORN && save_release <= 1960) ||
             (fractype == fractal_type::FPPOPCORNJUL && save_release <= 1960) ||
             (fractype == fractal_type::LPOPCORNJUL && save_release <= 1960) ||
-            (g_inside == FMODI && save_release <= 2000) ||
-            ((g_inside == ATANI || outside == ATAN) && save_release <= 2002) ||
+            (g_inside_color == FMODI && save_release <= 2000) ||
+            ((g_inside_color == ATANI || outside == ATAN) && save_release <= 2002) ||
             (fractype == fractal_type::LAMBDATRIGFP && trigndx[0] == trig_fn::EXP && save_release <= 2002) ||
             ((fractype == fractal_type::JULIBROT || fractype == fractal_type::JULIBROTFP) &&
              (g_new_orbit_type == fractal_type::QUATFP || g_new_orbit_type == fractal_type::HYPERCMPLXFP) &&
@@ -1277,7 +1277,7 @@ bool check_back()
 static bool fix_bof()
 {
     bool ret = false;
-    if (g_inside <= BOF60 && g_inside >= BOF61 && save_release < 1826)
+    if (g_inside_color <= BOF60 && g_inside_color >= BOF61 && save_release < 1826)
     {
         if ((curfractalspecific->calctype == standard_fractal &&
                 (curfractalspecific->flags & BAILTEST) == 0) ||
@@ -1292,7 +1292,7 @@ static bool fix_bof()
 static bool fix_period_bof()
 {
     bool ret = false;
-    if (g_inside <= BOF60 && g_inside >= BOF61 && save_release < 1826)
+    if (g_inside_color <= BOF60 && g_inside_color >= BOF61 && save_release < 1826)
     {
         ret = true;
     }

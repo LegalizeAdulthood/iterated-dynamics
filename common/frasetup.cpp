@@ -24,7 +24,7 @@ MandelSetup()           // Mandelbrot Routine
     if (g_debug_flag != debug_flags::force_standard_fractal
             && (g_invert == 0) && g_decomp[0] == 0 && rqlim == 4.0
             && bitshift == 29 && !potflag
-            && g_biomorph == -1 && g_inside > ZMAG && outside >= ITER
+            && g_biomorph == -1 && g_inside_color > ZMAG && outside >= ITER
             && useinitorbit != 1 && !using_jiim && g_bail_out_test == bailouts::Mod
             && (g_orbit_save_flags & osf_midi) == 0)
     {
@@ -45,7 +45,7 @@ JuliaSetup()            // Julia Routine
     if (g_debug_flag != debug_flags::force_standard_fractal
             && (g_invert == 0) && g_decomp[0] == 0 && rqlim == 4.0
             && bitshift == 29 && !potflag
-            && g_biomorph == -1 && g_inside > ZMAG && outside >= ITER
+            && g_biomorph == -1 && g_inside_color > ZMAG && outside >= ITER
             && !g_finite_attractor && !using_jiim && g_bail_out_test == bailouts::Mod
             && (g_orbit_save_flags & osf_midi) == 0)
     {
@@ -229,7 +229,7 @@ MandelfpSetup()
                 && !g_distance_estimator
                 && g_decomp[0] == 0
                 && g_biomorph == -1
-                && (g_inside >= ITER)
+                && (g_inside_color >= ITER)
                 && outside >= ATAN
                 && useinitorbit != 1
                 && (soundflag & SOUNDFLAG_ORBITMASK) < SOUNDFLAG_X
@@ -354,7 +354,7 @@ JuliafpSetup()
                 && !g_distance_estimator
                 && g_decomp[0] == 0
                 && g_biomorph == -1
-                && (g_inside >= ITER)
+                && (g_inside_color >= ITER)
                 && outside >= ATAN
                 && useinitorbit != 1
                 && (soundflag & SOUNDFLAG_ORBITMASK) < SOUNDFLAG_X
@@ -475,9 +475,9 @@ JuliafpSetup()
     }
 
     case fractal_type::FPCIRCLE:
-        if (g_inside == STARTRAIL)   // FPCIRCLE locks up when used with STARTRAIL
+        if (g_inside_color == STARTRAIL)   // FPCIRCLE locks up when used with STARTRAIL
         {
-            g_inside = COLOR_BLACK; // arbitrarily set inside = NUMB
+            g_inside_color = COLOR_BLACK; // arbitrarily set inside = NUMB
         }
         get_julia_attractor(0.0, 0.0);    // another attractor?
         break;

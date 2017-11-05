@@ -1310,7 +1310,7 @@ static void area()
     char const *msg;
     char buf[160];
     long cnt = 0;
-    if (g_inside < COLOR_BLACK)
+    if (g_inside_color < COLOR_BLACK)
     {
         stopmsg(STOPMSG_NONE, "Need solid inside to compute area");
         return;
@@ -1319,13 +1319,13 @@ static void area()
     {
         for (int x = 0; x < xdots; x++)
         {
-            if (getcolor(x, y) == g_inside)
+            if (getcolor(x, y) == g_inside_color)
             {
                 cnt++;
             }
         }
     }
-    if (g_inside > COLOR_BLACK && outside < COLOR_BLACK && g_max_iterations > g_inside)
+    if (g_inside_color > COLOR_BLACK && outside < COLOR_BLACK && g_max_iterations > g_inside_color)
     {
         msg = "Warning: inside may not be unique\n";
     }

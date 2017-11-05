@@ -87,7 +87,7 @@ int     g_base_hertz = 0;          // sound=x/y/x hertz value
 int     g_debug_flag = debug_flags::none; // internal use only - you didn't see this
 bool    timerflag = false;      // you didn't see this, either
 int     g_cycle_limit = 0;         // color-rotator upper limit
-int     g_inside = 0;             // inside color: 1=blue
+int     g_inside_color = 0;             // inside color: 1=blue
 int     g_fill_color = 0;          // fillcolor: -1=normal
 int     outside = COLOR_BLACK;  // outside color
 bool g_finite_attractor = false;        // finite attractor logic
@@ -466,7 +466,7 @@ static void initvars_fractal()          // init vars affecting calculation
 {
     g_escape_exit = false;                // don't disable the "are you sure?" screen
     usr_periodicitycheck = 1;           // turn on periodicity
-    g_inside = 1;                         // inside color = blue
+    g_inside_color = 1;                         // inside color = blue
     g_fill_color = -1;                     // no special fill color
     usr_biomorph = -1;                  // turn off biomorph flag
     outside = ITER;                     // outside color = -1 (not used)
@@ -1488,7 +1488,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         {
             if (strcmp(value, arg.arg) == 0)
             {
-                g_inside = arg.inside;
+                g_inside_color = arg.inside;
                 return CMDARG_FRACTAL_PARAM;
             }
         }
@@ -1498,7 +1498,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         }
         else
         {
-            g_inside = numval;
+            g_inside_color = numval;
         }
         return CMDARG_FRACTAL_PARAM;
     }

@@ -873,7 +873,7 @@ static void setup_save_info(FRACTAL_INFO *save_info)
     save_info->potential[2] = (float) potparam[2];
     save_info->rflag = (short) (rflag ? 1 : 0);
     save_info->rseed = (short) rseed;
-    save_info->inside = (short) g_inside;
+    save_info->inside = (short) g_inside_color;
     if (g_log_map_flag <= SHRT_MAX)
     {
         save_info->logmapold = (short) g_log_map_flag;

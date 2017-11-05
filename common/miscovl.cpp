@@ -97,9 +97,9 @@ void make_batch_file()
 #endif
     {
         --maxcolor;
-        if (g_inside > COLOR_BLACK && g_inside > maxcolor)
+        if (g_inside_color > COLOR_BLACK && g_inside_color > maxcolor)
         {
-            maxcolor = g_inside;
+            maxcolor = g_inside_color;
         }
         if (outside > COLOR_BLACK && outside > maxcolor)
         {
@@ -897,51 +897,51 @@ void write_batch_parms(char const *colorinf, bool colorsonly, int maxcolor, int 
             put_parm(" %s=", "fillcolor");
             put_parm("%d", g_fill_color);
         }
-        if (g_inside != 1)
+        if (g_inside_color != 1)
         {
             put_parm(" %s=", "inside");
-            if (g_inside == ITER)
+            if (g_inside_color == ITER)
             {
                 put_parm("maxiter");
             }
-            else if (g_inside == ZMAG)
+            else if (g_inside_color == ZMAG)
             {
                 put_parm("zmag");
             }
-            else if (g_inside == BOF60)
+            else if (g_inside_color == BOF60)
             {
                 put_parm("bof60");
             }
-            else if (g_inside == BOF61)
+            else if (g_inside_color == BOF61)
             {
                 put_parm("bof61");
             }
-            else if (g_inside == EPSCROSS)
+            else if (g_inside_color == EPSCROSS)
             {
                 put_parm("epsiloncross");
             }
-            else if (g_inside == STARTRAIL)
+            else if (g_inside_color == STARTRAIL)
             {
                 put_parm("startrail");
             }
-            else if (g_inside == PERIOD)
+            else if (g_inside_color == PERIOD)
             {
                 put_parm("period");
             }
-            else if (g_inside == FMODI)
+            else if (g_inside_color == FMODI)
             {
                 put_parm("fmod");
             }
-            else if (g_inside == ATANI)
+            else if (g_inside_color == ATANI)
             {
                 put_parm("atan");
             }
             else
             {
-                put_parm("%d", g_inside);
+                put_parm("%d", g_inside_color);
             }
         }
-        if (g_close_proximity != 0.01 && (g_inside == EPSCROSS || g_inside == FMODI
+        if (g_close_proximity != 0.01 && (g_inside_color == EPSCROSS || g_inside_color == FMODI
                                   || outside == FMOD))
         {
             put_parm(" %s=%.15g", "proximity", g_close_proximity);

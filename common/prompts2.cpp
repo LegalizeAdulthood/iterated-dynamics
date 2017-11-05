@@ -136,9 +136,9 @@ int get_toggles()
 
     choices[++k] = "Inside Color (0-# of colors, if Inside=numb)";
     uvalues[k].type = 'i';
-    if (g_inside >= COLOR_BLACK)
+    if (g_inside_color >= COLOR_BLACK)
     {
-        uvalues[k].uval.ival = g_inside;
+        uvalues[k].uval.ival = g_inside_color;
     }
     else
     {
@@ -150,47 +150,47 @@ int get_toggles()
     uvalues[k].uval.ch.vlen = 12;
     uvalues[k].uval.ch.llen = sizeof(insidemodes)/sizeof(*insidemodes);
     uvalues[k].uval.ch.list = insidemodes;
-    if (g_inside >= COLOR_BLACK)    // numb
+    if (g_inside_color >= COLOR_BLACK)    // numb
     {
         uvalues[k].uval.ch.val = 0;
     }
-    else if (g_inside == ITER)
+    else if (g_inside_color == ITER)
     {
         uvalues[k].uval.ch.val = 1;
     }
-    else if (g_inside == ZMAG)
+    else if (g_inside_color == ZMAG)
     {
         uvalues[k].uval.ch.val = 2;
     }
-    else if (g_inside == BOF60)
+    else if (g_inside_color == BOF60)
     {
         uvalues[k].uval.ch.val = 3;
     }
-    else if (g_inside == BOF61)
+    else if (g_inside_color == BOF61)
     {
         uvalues[k].uval.ch.val = 4;
     }
-    else if (g_inside == EPSCROSS)
+    else if (g_inside_color == EPSCROSS)
     {
         uvalues[k].uval.ch.val = 5;
     }
-    else if (g_inside == STARTRAIL)
+    else if (g_inside_color == STARTRAIL)
     {
         uvalues[k].uval.ch.val = 6;
     }
-    else if (g_inside == PERIOD)
+    else if (g_inside_color == PERIOD)
     {
         uvalues[k].uval.ch.val = 7;
     }
-    else if (g_inside == ATANI)
+    else if (g_inside_color == ATANI)
     {
         uvalues[k].uval.ch.val = 8;
     }
-    else if (g_inside == FMODI)
+    else if (g_inside_color == FMODI)
     {
         uvalues[k].uval.ch.val = 9;
     }
-    old_inside = g_inside;
+    old_inside = g_inside_color;
 
     choices[++k] = "Outside Color (0-# of colors, if Outside=numb)";
     uvalues[k].type = 'i';
@@ -341,14 +341,14 @@ int get_toggles()
         j++;
     }
 
-    g_inside = uvalues[++k].uval.ival;
-    if (g_inside < COLOR_BLACK)
+    g_inside_color = uvalues[++k].uval.ival;
+    if (g_inside_color < COLOR_BLACK)
     {
-        g_inside = -g_inside;
+        g_inside_color = -g_inside_color;
     }
-    if (g_inside >= g_colors)
+    if (g_inside_color >= g_colors)
     {
-        g_inside = (g_inside % g_colors) + (g_inside / g_colors);
+        g_inside_color = (g_inside_color % g_colors) + (g_inside_color / g_colors);
     }
 
     {
@@ -359,36 +359,36 @@ int get_toggles()
             switch (tmp)
             {
             case 1:
-                g_inside = ITER;
+                g_inside_color = ITER;
                 break;
             case 2:
-                g_inside = ZMAG;
+                g_inside_color = ZMAG;
                 break;
             case 3:
-                g_inside = BOF60;
+                g_inside_color = BOF60;
                 break;
             case 4:
-                g_inside = BOF61;
+                g_inside_color = BOF61;
                 break;
             case 5:
-                g_inside = EPSCROSS;
+                g_inside_color = EPSCROSS;
                 break;
             case 6:
-                g_inside = STARTRAIL;
+                g_inside_color = STARTRAIL;
                 break;
             case 7:
-                g_inside = PERIOD;
+                g_inside_color = PERIOD;
                 break;
             case 8:
-                g_inside = ATANI;
+                g_inside_color = ATANI;
                 break;
             case 9:
-                g_inside = FMODI;
+                g_inside_color = FMODI;
                 break;
             }
         }
     }
-    if (g_inside != old_inside)
+    if (g_inside_color != old_inside)
     {
         j++;
     }
@@ -1152,7 +1152,7 @@ int starfield()
                 return (1);
             }
             c = getcolor(col, row);
-            if (c == g_inside)
+            if (c == g_inside_color)
             {
                 c = g_colors-1;
             }

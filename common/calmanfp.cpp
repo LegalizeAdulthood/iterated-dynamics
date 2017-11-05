@@ -18,7 +18,7 @@ static int inside_color, periodicity_color;
 
 void calcmandfpasmstart()
 {
-    inside_color = (g_inside < COLOR_BLACK) ? g_max_iterations : g_inside;
+    inside_color = (g_inside_color < COLOR_BLACK) ? g_max_iterations : g_inside_color;
     periodicity_color = (periodicitycheck < 0) ? 7 : inside_color;
     g_old_color_iter = 0;
 }

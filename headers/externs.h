@@ -221,7 +221,7 @@ extern int                   g_init_cycle_limit;
 extern int                   g_init_mode;
 extern DComplex              g_init_orbit;
 extern int                   g_init_save_time;
-extern int                   g_inside;
+extern int                   g_inside_color;
 extern int                   g_integer_fractal;
 extern double                g_inversion[];
 extern int                   g_invert;

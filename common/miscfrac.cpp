@@ -65,7 +65,7 @@ int test()
                     put_resume(sizeof(row), &row, sizeof(passes), &passes, 0);
                     return (-1);
                 }
-                color = testpt(g_init.x, g_init.y, parm.x, parm.y, g_max_iterations, g_inside);
+                color = testpt(g_init.x, g_init.y, parm.x, parm.y, g_max_iterations, g_inside_color);
                 if (color >= g_colors)
                 {
                     // avoid trouble if color is 0
@@ -1015,10 +1015,10 @@ int Bifurcation()
     }
     if (mono)
     {
-        if (g_inside != COLOR_BLACK)
+        if (g_inside_color != COLOR_BLACK)
         {
             outside_x = 0;
-            g_inside = 1;
+            g_inside_color = 1;
         }
         else
         {
@@ -1069,7 +1069,7 @@ int Bifurcation()
             color = verhulst_array[y];
             if (color && mono)
             {
-                color = g_inside;
+                color = g_inside_color;
             }
             else if ((!color) && mono)
             {
@@ -1513,9 +1513,9 @@ int lyapunov()
 #else
     g_color = lyapunov_cycles_in_c(filter_cycles, a, b);
 #endif
-    if (g_inside > COLOR_BLACK && g_color == 0)
+    if (g_inside_color > COLOR_BLACK && g_color == 0)
     {
-        g_color = g_inside;
+        g_color = g_inside_color;
     }
     else if (g_color>=g_colors)
     {
@@ -1598,16 +1598,16 @@ bool lya_setup()
     {
         // ignore inside=, stdcalcmode
         stdcalcmode = '1';
-        if (g_inside == 1)
+        if (g_inside_color == 1)
         {
-            g_inside = COLOR_BLACK;
+            g_inside_color = COLOR_BLACK;
         }
     }
-    if (g_inside < COLOR_BLACK)
+    if (g_inside_color < COLOR_BLACK)
     {
         stopmsg(STOPMSG_NONE,
             "Sorry, inside options other than inside=nnn are not supported by the lyapunov");
-        g_inside = 1;
+        g_inside_color = 1;
     }
     if (usr_stdcalcmode == 'o')
     {
