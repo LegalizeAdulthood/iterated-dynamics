@@ -125,7 +125,7 @@ void fill_lx_array()
         for (int i = 1; i < ydots; i++)
         {
             g_l_y0[i] = g_l_y0[i-1] - dely;
-            g_l_x1[i] = g_l_x1[i-1] + delx2;
+            g_l_x1[i] = g_l_x1[i-1] + g_l_delta_x2;
         }
     }
 }
@@ -469,7 +469,7 @@ init_restart:
         y3rd  = fudgetolong(yy3rd);
         delx  = fudgetolong((double)delxx);
         dely  = fudgetolong((double)delyy);
-        delx2 = fudgetolong((double)delxx2);
+        g_l_delta_x2 = fudgetolong((double)delxx2);
         dely2 = fudgetolong((double)delyy2);
     }
 
@@ -483,7 +483,7 @@ init_restart:
         if (g_integer_fractal && (g_invert == 0) && g_use_grid)
         {
             if ((delx  == 0 && delxx  != 0.0)
-                    || (delx2 == 0 && delxx2 != 0.0)
+                    || (g_l_delta_x2 == 0 && delxx2 != 0.0)
                     || (dely  == 0 && delyy  != 0.0)
                     || (dely2 == 0 && delyy2 != 0.0))
             {
