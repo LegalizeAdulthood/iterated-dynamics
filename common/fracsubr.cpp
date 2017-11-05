@@ -291,7 +291,7 @@ init_restart:
     g_biomorph         = usr_biomorph;
 
     g_potential_flag = false;
-    if (potparam[0] != 0.0
+    if (g_potential_params[0] != 0.0
             && g_colors >= 64
             && (curfractalspecific->calctype == standard_fractal
                 || curfractalspecific->calctype == calcmand
@@ -354,9 +354,9 @@ init_restart:
 
     g_integer_fractal = curfractalspecific->isinteger;
 
-    if (g_potential_flag && potparam[2] != 0.0)
+    if (g_potential_flag && g_potential_params[2] != 0.0)
     {
-        rqlim = potparam[2];
+        rqlim = g_potential_params[2];
     }
     else if (g_bail_out)     // user input bailout
     {

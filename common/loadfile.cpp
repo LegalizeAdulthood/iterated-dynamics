@@ -101,14 +101,14 @@ int read_overlay()      // read overlay/3D files, if reqr'd
         roundfloatd(&g_params[2]);
         g_params[3]      = read_info.parm4;
         roundfloatd(&g_params[3]);
-        potparam[0]   = read_info.potential[0];
-        potparam[1]   = read_info.potential[1];
-        potparam[2]   = read_info.potential[2];
+        g_potential_params[0]   = read_info.potential[0];
+        g_potential_params[1]   = read_info.potential[1];
+        g_potential_params[2]   = read_info.potential[2];
         if (make_parameter_file)
         {
             g_colors = read_info.colors;
         }
-        g_potential_flag       = (potparam[0] != 0.0);
+        g_potential_flag       = (g_potential_params[0] != 0.0);
         rflag         = read_info.rflag != 0;
         rseed         = read_info.rseed;
         g_inside_color        = read_info.inside;

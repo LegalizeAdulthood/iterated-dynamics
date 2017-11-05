@@ -3395,11 +3395,11 @@ static int potential(double mag, long iterations)
                 fSqrt14(pot, f_tmp);
                 pot = f_tmp;
             }
-            pot = (float)(potparam[0] - pot*potparam[1] - 1.0);
+            pot = (float)(g_potential_params[0] - pot*g_potential_params[1] - 1.0);
         }
         else
         {
-            pot = (float)(potparam[0] - 1.0);
+            pot = (float)(g_potential_params[0] - 1.0);
         }
         if (pot < 1.0F)
         {
@@ -3412,7 +3412,7 @@ static int potential(double mag, long iterations)
     }
     else     // inside < 0 implies inside = maxit, so use 1st pot param instead
     {
-        pot = (float)potparam[0];
+        pot = (float)g_potential_params[0];
     }
 
     l_pot = (long) (pot * 256);

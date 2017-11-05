@@ -495,7 +495,7 @@ static void initvars_fractal()          // init vars affecting calculation
     }
     for (int i = 0; i < 3; i++)
     {
-        potparam[i]  = 0.0; // initial potential values
+        g_potential_params[i]  = 0.0; // initial potential values
     }
     for (auto &elem : g_inversion)
     {
@@ -1858,11 +1858,11 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         {
             if (k == 1)
             {
-                potparam[k] = atof(value);
+                g_potential_params[k] = atof(value);
             }
             else
             {
-                potparam[k] = atoi(value);
+                g_potential_params[k] = atoi(value);
             }
             k++;
             value = strchr(value, '/');

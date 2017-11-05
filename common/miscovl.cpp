@@ -113,9 +113,9 @@ void make_batch_file()
         {
             maxcolor = g_decomp[0] - 1;
         }
-        if (g_potential_flag && potparam[0] >= maxcolor)
+        if (g_potential_flag && g_potential_params[0] >= maxcolor)
         {
-            maxcolor = (int)potparam[0];
+            maxcolor = (int)g_potential_params[0];
         }
         if (++maxcolor > 256)
         {
@@ -855,7 +855,7 @@ void write_batch_parms(char const *colorinf, bool colorsonly, int maxcolor, int 
             put_parm(" %s=%ld", "maxiter", g_max_iterations);
         }
 
-        if (g_bail_out && (!g_potential_flag || potparam[2] == 0.0))
+        if (g_bail_out && (!g_potential_flag || g_potential_params[2] == 0.0))
         {
             put_parm(" %s=%ld", "bailout", g_bail_out);
         }
@@ -1016,7 +1016,7 @@ void write_batch_parms(char const *colorinf, bool colorsonly, int maxcolor, int 
         if (g_potential_flag)
         {
             put_parm(" %s=%d/%g/%d", "potential",
-                     (int)potparam[0], potparam[1], (int)potparam[2]);
+                     (int)g_potential_params[0], g_potential_params[1], (int)g_potential_params[2]);
             if (g_potential_16bit)
             {
                 put_parm("/%s", "16bit");

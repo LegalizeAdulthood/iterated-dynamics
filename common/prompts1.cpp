@@ -1791,7 +1791,7 @@ gfp_top:
 
     if (orbit_bailout)
     {
-        if (potparam[0] != 0.0 && potparam[2] != 0.0)
+        if (g_potential_params[0] != 0.0 && g_potential_params[2] != 0.0)
         {
             paramvalues[promptnum].type = '*';
             choices[promptnum++] = "Bailout: continuous potential (Y screen) value in use";
@@ -2013,7 +2013,7 @@ gfp_top:
 
     if (orbit_bailout)
     {
-        if (potparam[0] != 0.0 && potparam[2] != 0.0)
+        if (g_potential_params[0] != 0.0 && g_potential_params[2] != 0.0)
         {
             promptnum++;
         }

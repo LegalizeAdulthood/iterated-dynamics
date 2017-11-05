@@ -2386,9 +2386,9 @@ static void save_history_info()
     current.dparm9               = g_params[8]                  ;
     current.dparm10              = g_params[9]                  ;
     current.fillcolor            = (short)g_fill_color                 ;
-    current.potential[0]         = potparam[0]               ;
-    current.potential[1]         = potparam[1]               ;
-    current.potential[2]         = potparam[2]               ;
+    current.potential[0]         = g_potential_params[0]               ;
+    current.potential[1]         = g_potential_params[1]               ;
+    current.potential[2]         = g_potential_params[2]               ;
     current.rflag                = (short) (rflag ? 1 : 0);
     current.rseed                = (short)rseed                     ;
     current.inside               = (short)g_inside_color                    ;
@@ -2566,9 +2566,9 @@ static void restore_history_info(int i)
     g_params[8]              = last.dparm9         ;
     g_params[9]              = last.dparm10        ;
     g_fill_color             = last.fillcolor      ;
-    potparam[0]           = last.potential[0]   ;
-    potparam[1]           = last.potential[1]   ;
-    potparam[2]           = last.potential[2]   ;
+    g_potential_params[0]           = last.potential[0]   ;
+    g_potential_params[1]           = last.potential[1]   ;
+    g_potential_params[2]           = last.potential[2]   ;
     rflag                 = last.rflag != 0;
     rseed                 = last.rseed          ;
     g_inside_color                = last.inside         ;
@@ -2661,7 +2661,7 @@ static void restore_history_info(int i)
     g_max_iterations                 = last.iterations     ;
     g_old_demm_colors       = last.old_demm_colors != 0;
     curfractalspecific    = &fractalspecific[static_cast<int>(fractype)];
-    g_potential_flag               = (potparam[0] != 0.0);
+    g_potential_flag               = (g_potential_params[0] != 0.0);
     if (g_inversion[0] != 0.0)
     {
         g_invert = 3;

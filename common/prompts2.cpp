@@ -506,17 +506,17 @@ int get_toggles2()
 
     choices[++k] = "Potential Max Color (0 means off)";
     uvalues[k].type = 'i';
-    old_potparam[0] = potparam[0];
+    old_potparam[0] = g_potential_params[0];
     uvalues[k].uval.ival = (int) old_potparam[0];
 
     choices[++k] = "          Slope";
     uvalues[k].type = 'd';
-    old_potparam[1] = potparam[1];
+    old_potparam[1] = g_potential_params[1];
     uvalues[k].uval.dval = old_potparam[1];
 
     choices[++k] = "          Bailout";
     uvalues[k].type = 'i';
-    old_potparam[2] = potparam[2];
+    old_potparam[2] = g_potential_params[2];
     uvalues[k].uval.ival = (int) old_potparam[2];
 
     choices[++k] = "          16 bit values";
@@ -586,20 +586,20 @@ int get_toggles2()
         changed = true;
     }
 
-    potparam[0] = uvalues[++k].uval.ival;
-    if (potparam[0] != old_potparam[0])
+    g_potential_params[0] = uvalues[++k].uval.ival;
+    if (g_potential_params[0] != old_potparam[0])
     {
         changed = true;
     }
 
-    potparam[1] = uvalues[++k].uval.dval;
-    if (potparam[0] != 0.0 && potparam[1] != old_potparam[1])
+    g_potential_params[1] = uvalues[++k].uval.dval;
+    if (g_potential_params[0] != 0.0 && g_potential_params[1] != old_potparam[1])
     {
         changed = true;
     }
 
-    potparam[2] = uvalues[++k].uval.ival;
-    if (potparam[0] != 0.0 && potparam[2] != old_potparam[2])
+    g_potential_params[2] = uvalues[++k].uval.ival;
+    if (g_potential_params[0] != 0.0 && g_potential_params[2] != old_potparam[2])
     {
         changed = true;
     }
@@ -609,7 +609,7 @@ int get_toggles2()
         g_potential_16bit = uvalues[k].uval.ch.val != 0;
         if (g_potential_16bit)                   // turned it on
         {
-            if (potparam[0] != 0.0)
+            if (g_potential_params[0] != 0.0)
             {
                 changed = true;
             }
