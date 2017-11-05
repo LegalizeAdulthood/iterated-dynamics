@@ -352,7 +352,7 @@ zlinefp(double x, double y)
             jbcfp.y = 0.0;
             g_quaternion_c = jxfp;
             g_quaternion_ci = jyfp;
-            qcj = mxfp;
+            g_quaternion_cj = mxfp;
             qck = myfp;
         }
         else
@@ -363,7 +363,7 @@ zlinefp(double x, double y)
             jbcfp.y = myfp;
             g_quaternion_c = g_params[0];
             g_quaternion_ci = g_params[1];
-            qcj = g_params[2];
+            g_quaternion_cj = g_params[2];
             qck = g_params[3];
         }
 #ifdef XFRACT

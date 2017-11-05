@@ -397,7 +397,7 @@ extern void                (*g_put_color)(int, int, int);
 extern DComplex              g_power_z;
 extern double                g_quaternion_c;
 extern double                g_quaternion_ci;
-extern double                qcj;
+extern double                g_quaternion_cj;
 extern double                qck;
 extern bool                  quick_calc;
 extern int                   RANDOMIZE;
