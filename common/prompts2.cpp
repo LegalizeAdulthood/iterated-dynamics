@@ -1089,7 +1089,6 @@ int get_cmd_string()
 
 // ---------------------------------------------------------------------
 
-int g_distribution = 30, Offset = 0, Slope = 25;
 long con;
 
 
