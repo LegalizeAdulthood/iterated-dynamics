@@ -229,7 +229,7 @@ int asmfpMODbailout()
         overflow = false;
         return 1;
     }
-    old = g_new_z;
+    g_old_z = g_new_z;
     return 0;
 }
 
@@ -270,7 +270,7 @@ int asmfpREALbailout()
         overflow = false;
         return 1;
     }
-    old = g_new_z;
+    g_old_z = g_new_z;
     return 0;
 }
 
@@ -311,7 +311,7 @@ int asmfpIMAGbailout()
         overflow = false;
         return 1;
     }
-    old = g_new_z;
+    g_old_z = g_new_z;
     return 0;
 }
 
@@ -359,7 +359,7 @@ int asmfpORbailout()
         overflow = false;
         return 1;
     }
-    old = g_new_z;
+    g_old_z = g_new_z;
     return 0;
 }
 
@@ -409,7 +409,7 @@ int asmfpANDbailout()
         overflow = false;
         return 1;
     }
-    old = g_new_z;
+    g_old_z = g_new_z;
     return 0;
 }
 
@@ -462,7 +462,7 @@ int asmfpMANHbailout()
     {
         return 1;
     }
-    old = g_new_z;
+    g_old_z = g_new_z;
     return 0;
 }
 
@@ -512,6 +512,6 @@ int asmfpMANRbailout()
     {
         return 1;
     }
-    old = g_new_z;
+    g_old_z = g_new_z;
     return 0;
 }

@@ -2967,12 +2967,12 @@ int Formula()
     {
     case D_MATH:
         g_new_z = v[3].a.d;
-        old = g_new_z;
+        g_old_z = g_new_z;
         return Arg1->d.x == 0.0;
 #if !defined(XFRACT)
     case M_MATH:
         g_new_z = MPC2cmplx(v[3].a.m);
-        old = g_new_z;
+        g_old_z = g_new_z;
         return Arg1->m.x.Exp == 0 && Arg1->m.x.Mant == 0;
     case L_MATH:
         g_l_new_z = v[3].a.l;
@@ -3050,28 +3050,28 @@ int form_per_pixel()
     {
         if (g_invert != 0)
         {
-            invertz2(&old);
+            invertz2(&g_old_z);
             switch (MathType)
             {
             case D_MATH:
-                v[0].a.d.x = old.x;
-                v[0].a.d.y = old.y;
+                v[0].a.d.x = g_old_z.x;
+                v[0].a.d.y = g_old_z.y;
                 break;
 #if !defined(XFRACT)
             case M_MATH:
-                v[0].a.m.x = *d2MP(old.x);
-                v[0].a.m.y = *d2MP(old.y);
+                v[0].a.m.x = *d2MP(g_old_z.x);
+                v[0].a.m.y = *d2MP(g_old_z.y);
                 break;
             case L_MATH:
                 // watch out for overflow
-                if (sqr(old.x)+sqr(old.y) >= 127)
+                if (sqr(g_old_z.x)+sqr(g_old_z.y) >= 127)
                 {
-                    old.x = 8;  // value to bail out in one iteration
-                    old.y = 8;
+                    g_old_z.x = 8;  // value to bail out in one iteration
+                    g_old_z.y = 8;
                 }
                 // convert to fudged longs
-                v[0].a.l.x = (long)(old.x*fg);
-                v[0].a.l.y = (long)(old.y*fg);
+                v[0].a.l.x = (long)(g_old_z.x*fg);
+                v[0].a.l.y = (long)(g_old_z.y*fg);
                 break;
 #endif
             }
@@ -3114,11 +3114,11 @@ int form_per_pixel()
     switch (MathType)
     {
     case D_MATH:
-        old = v[3].a.d;
+        g_old_z = v[3].a.d;
         break;
 #if !defined(XFRACT)
     case M_MATH:
-        old = MPC2cmplx(v[3].a.m);
+        g_old_z = MPC2cmplx(v[3].a.m);
         break;
     case L_MATH:
         g_l_old_z = v[3].a.l;

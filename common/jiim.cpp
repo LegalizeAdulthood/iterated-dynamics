@@ -907,8 +907,8 @@ void Jiim(jiim_types which)
             iter = 1;
             g_l_old_z.y = 0;
             g_l_old_z.x = g_l_old_z.y;
-            old.y = g_l_old_z.x;
-            old.x = old.y;
+            g_old_z.y = g_l_old_z.x;
+            g_old_z.x = g_old_z.y;
             g_init.x = cr;
             SaveC.x = g_init.x;
             g_init.y = ci;
@@ -991,17 +991,17 @@ void Jiim(jiim_types which)
                         lmax = 0;
                         lsize = lmax;
                         g_new_z.x = luckyx;
-                        old.x = g_new_z.x;
+                        g_old_z.x = g_new_z.x;
                         g_new_z.y = luckyy;
-                        old.y = g_new_z.y;
+                        g_old_z.y = g_new_z.y;
                         luckyy = 0.0F;
                         luckyx = luckyy;
                         for (int i = 0; i < 199; i++)
                         {
-                            old = ComplexSqrtFloat(old.x - cr, old.y - ci);
+                            g_old_z = ComplexSqrtFloat(g_old_z.x - cr, g_old_z.y - ci);
                             g_new_z = ComplexSqrtFloat(g_new_z.x - cr, g_new_z.y - ci);
                             EnQueueFloat((float)g_new_z.x, (float)g_new_z.y);
-                            EnQueueFloat((float)-old.x, (float)-old.y);
+                            EnQueueFloat((float)-g_old_z.x, (float)-g_old_z.y);
                         }
                         maxhits++;
                     }
@@ -1011,15 +1011,15 @@ void Jiim(jiim_types which)
                     }
                 }
 
-                old = DeQueueFloat();
+                g_old_z = DeQueueFloat();
 
-                x = (int)(old.x * xfactor * zoom + xoff);
-                y = (int)(old.y * yfactor * zoom + yoff);
+                x = (int)(g_old_z.x * xfactor * zoom + xoff);
+                y = (int)(g_old_z.y * yfactor * zoom + yoff);
                 color = c_getcolor(x, y);
                 if (color < maxhits)
                 {
                     c_putcolor(x, y, color + 1);
-                    g_new_z = ComplexSqrtFloat(old.x - cr, old.y - ci);
+                    g_new_z = ComplexSqrtFloat(g_old_z.x - cr, g_old_z.y - ci);
                     EnQueueFloat((float)g_new_z.x, (float)g_new_z.y);
                     EnQueueFloat((float)-g_new_z.x, (float)-g_new_z.y);
                 }
@@ -1029,13 +1029,13 @@ void Jiim(jiim_types which)
                 /*
                  * end Msnyder code, commence if not MIIM code.
                  */
-                old.x -= cr;
-                old.y -= ci;
-                r = old.x*old.x + old.y*old.y;
+                g_old_z.x -= cr;
+                g_old_z.y -= ci;
+                r = g_old_z.x*g_old_z.x + g_old_z.y*g_old_z.y;
                 if (r > 10.0)
                 {
-                    old.y = 0.0;
-                    old.x = old.y; // avoids math error
+                    g_old_z.y = 0.0;
+                    g_old_z.x = g_old_z.y; // avoids math error
                     iter = 1;
                     r = 0;
                 }
@@ -1048,13 +1048,13 @@ void Jiim(jiim_types which)
 
                 //       r = sqrt(old.x*old.x + old.y*old.y); calculated above
                 r = sqrt(r);
-                g_new_z.x = sqrt(fabs((r + old.x)/2));
-                if (old.y < 0)
+                g_new_z.x = sqrt(fabs((r + g_old_z.x)/2));
+                if (g_old_z.y < 0)
                 {
                     g_new_z.x = -g_new_z.x;
                 }
 
-                g_new_z.y = sqrt(fabs((r - old.x)/2));
+                g_new_z.y = sqrt(fabs((r - g_old_z.x)/2));
 
 
                 switch (SecretExperimentalMode)
@@ -1199,13 +1199,13 @@ void Jiim(jiim_types which)
                 color = (int)iter%g_colors;
                 if (g_integer_fractal)
                 {
-                    old.x = g_l_old_z.x;
-                    old.x /= g_fudge_factor;
-                    old.y = g_l_old_z.y;
-                    old.y /= g_fudge_factor;
+                    g_old_z.x = g_l_old_z.x;
+                    g_old_z.x /= g_fudge_factor;
+                    g_old_z.y = g_l_old_z.y;
+                    g_old_z.y /= g_fudge_factor;
                 }
-                x = (int)((old.x - g_init.x) * xfactor * 3 * zoom + xoff);
-                y = (int)((old.y - g_init.y) * yfactor * 3 * zoom + yoff);
+                x = (int)((g_old_z.x - g_init.x) * xfactor * 3 * zoom + xoff);
+                y = (int)((g_old_z.y - g_init.y) * yfactor * 3 * zoom + yoff);
                 if ((*ORBITCALC)())
                 {
                     iter = g_max_iterations;
@@ -1241,7 +1241,7 @@ void Jiim(jiim_types which)
             old_x = x;
             old_y = y;
         }
-        old = g_new_z;
+        g_old_z = g_new_z;
         g_l_old_z = g_l_new_z;
     } // end while (still)
 finish:

@@ -94,7 +94,7 @@ long g_l_limit2 = 0;
 long g_l_close_enough = 0;
 DComplex g_init = { 0.0 };
 DComplex tmp = { 0.0 };
-DComplex old = { 0.0 };
+DComplex g_old_z = { 0.0 };
 DComplex g_new_z = { 0.0 };
 DComplex saved = { 0.0 };
 int g_color = 0;
@@ -2241,19 +2241,19 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
     {
         if (g_integer_fractal)
         {
-            old.x = ((double)g_l_old_z.x) / g_fudge_factor;
-            old.y = ((double)g_l_old_z.y) / g_fudge_factor;
+            g_old_z.x = ((double)g_l_old_z.x) / g_fudge_factor;
+            g_old_z.y = ((double)g_l_old_z.y) / g_fudge_factor;
         }
         else if (bf_math == bf_math_type::BIGNUM)
         {
-            old = cmplxbntofloat(&bnold);
+            g_old_z = cmplxbntofloat(&bnold);
         }
         else if (bf_math == bf_math_type::BIGFLT)
         {
-            old = cmplxbftofloat(&bfold);
+            g_old_z = cmplxbftofloat(&bfold);
         }
-        lastz.x = old.x;
-        lastz.y = old.y;
+        lastz.x = g_old_z.x;
+        lastz.y = g_old_z.y;
     }
 
     if (((soundflag & SOUNDFLAG_ORBITMASK) > SOUNDFLAG_X || show_dot >= 0) && orbit_delay > 0)
@@ -2288,13 +2288,13 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
             // Algorithms from Peitgen & Saupe, Science of Fractal Images, p.198
             if (dem_mandel)
             {
-                ftemp = 2 * (old.x * deriv.x - old.y * deriv.y) + 1;
+                ftemp = 2 * (g_old_z.x * deriv.x - g_old_z.y * deriv.y) + 1;
             }
             else
             {
-                ftemp = 2 * (old.x * deriv.x - old.y * deriv.y);
+                ftemp = 2 * (g_old_z.x * deriv.x - g_old_z.y * deriv.y);
             }
-            deriv.y = 2 * (old.y * deriv.x + old.x * deriv.y);
+            deriv.y = 2 * (g_old_z.y * deriv.x + g_old_z.x * deriv.y);
             deriv.x = ftemp;
             if (use_old_distest)
             {
@@ -2334,7 +2334,7 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
                     break;
                 }
             }
-            old = g_new_z;
+            g_old_z = g_new_z;
         }
 
         // the usual case
@@ -2405,7 +2405,7 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
                         tempsqrx = g_new_z.x * g_new_z.x;
                         tempsqry = g_new_z.y * g_new_z.y;
                         g_magnitude = tempsqrx + tempsqry;
-                        old = g_new_z;
+                        g_old_z = g_new_z;
                     }
                     {
                         int tmpcolor;

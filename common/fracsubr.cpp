@@ -1876,10 +1876,10 @@ void get_julia_attractor(double real, double imag)
     savper = periodicitycheck;
     savmaxit = g_max_iterations;
     periodicitycheck = 0;
-    old.x = real;                    // prepare for f.p orbit calc
-    old.y = imag;
-    tempsqrx = sqr(old.x);
-    tempsqry = sqr(old.y);
+    g_old_z.x = real;                    // prepare for f.p orbit calc
+    g_old_z.y = imag;
+    tempsqrx = sqr(g_old_z.x);
+    tempsqry = sqr(g_old_z.y);
 
     g_l_old_z.x = (long)real;     // prepare for int orbit calc
     g_l_old_z.y = (long)imag;

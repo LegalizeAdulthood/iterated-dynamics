@@ -36,10 +36,10 @@ static long iteration(double cr, double ci,
                       double re, double im,
                       long start)
 {
-    old.x = re;
-    old.y = im;
-    tempsqrx = sqr(old.x);
-    tempsqry = sqr(old.y);
+    g_old_z.x = re;
+    g_old_z.y = im;
+    tempsqrx = sqr(g_old_z.x);
+    tempsqry = sqr(g_old_z.y);
     g_float_param = &g_init;
     g_float_param->x = cr;
     g_float_param->y = ci;

@@ -1210,19 +1210,19 @@ MarksJuliafpSetup()
     }
     g_c_exponent = (int)param[2];
     g_float_param = &parm;
-    old = *g_float_param;
+    g_old_z = *g_float_param;
     if (g_c_exponent > 3)
     {
-        cpower(&old, g_c_exponent-1, &g_marks_coefficient);
+        cpower(&g_old_z, g_c_exponent-1, &g_marks_coefficient);
     }
     else if (g_c_exponent == 3)
     {
-        g_marks_coefficient.x = sqr(old.x) - sqr(old.y);
-        g_marks_coefficient.y = old.x * old.y * 2;
+        g_marks_coefficient.x = sqr(g_old_z.x) - sqr(g_old_z.y);
+        g_marks_coefficient.y = g_old_z.x * g_old_z.y * 2;
     }
     else if (g_c_exponent == 2)
     {
-        g_marks_coefficient = old;
+        g_marks_coefficient = g_old_z;
     }
     else if (g_c_exponent < 2)
     {

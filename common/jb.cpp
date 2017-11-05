@@ -346,8 +346,8 @@ zlinefp(double x, double y)
         if ((g_new_orbit_type == fractal_type::QUATFP || g_new_orbit_type == fractal_type::HYPERCMPLXFP)
                 && save_release > 2002)
         {
-            old.x = 0.0;
-            old.y = 0.0;
+            g_old_z.x = 0.0;
+            g_old_z.y = 0.0;
             jbcfp.x = 0.0;
             jbcfp.y = 0.0;
             qc = jxfp;
@@ -357,8 +357,8 @@ zlinefp(double x, double y)
         }
         else
         {
-            old.x = jxfp;
-            old.y = jyfp;
+            g_old_z.x = jxfp;
+            g_old_z.y = jyfp;
             jbcfp.x = mxfp;
             jbcfp.y = myfp;
             qc = param[0];
@@ -381,8 +381,8 @@ zlinefp(double x, double y)
             return (-1);
         }
 #endif
-        tempsqrx = sqr(old.x);
-        tempsqry = sqr(old.y);
+        tempsqrx = sqr(g_old_z.x);
+        tempsqry = sqr(g_old_z.y);
 
         for (n = 0; n < g_max_iterations; n++)
         {

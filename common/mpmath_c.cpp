@@ -725,8 +725,8 @@ int ComplexNewton()
     cd1.x = cdegree.x - 1.0;
     cd1.y = cdegree.y;
 
-    temp = ComplexPower(old, cd1);
-    FPUcplxmul(&temp, &old, &g_new_z);
+    temp = ComplexPower(g_old_z, cd1);
+    FPUcplxmul(&temp, &g_old_z, &g_new_z);
 
     tmp.x = g_new_z.x - croot.x;
     tmp.y = g_new_z.y - croot.y;
@@ -740,12 +740,12 @@ int ComplexNewton()
     tmp.y += croot.y;
 
     FPUcplxmul(&temp, &cdegree, &cd1);
-    FPUcplxdiv(&tmp, &cd1, &old);
+    FPUcplxdiv(&tmp, &cd1, &g_old_z);
     if (overflow)
     {
         return (1);
     }
-    g_new_z = old;
+    g_new_z = g_old_z;
     return (0);
 }
 
@@ -760,18 +760,18 @@ int ComplexBasin()
     cd1.x = cdegree.x - 1.0;
     cd1.y = cdegree.y;
 
-    temp = ComplexPower(old, cd1);
-    FPUcplxmul(&temp, &old, &g_new_z);
+    temp = ComplexPower(g_old_z, cd1);
+    FPUcplxmul(&temp, &g_old_z, &g_new_z);
 
     tmp.x = g_new_z.x - croot.x;
     tmp.y = g_new_z.y - croot.y;
     if ((sqr(tmp.x) + sqr(tmp.y)) < threshold)
     {
-        if (fabs(old.y) < .01)
+        if (fabs(g_old_z.y) < .01)
         {
-            old.y = 0.0;
+            g_old_z.y = 0.0;
         }
-        FPUcplxlog(&old, &temp);
+        FPUcplxlog(&g_old_z, &temp);
         FPUcplxmul(&temp, &cdegree, &tmp);
         double mod = tmp.y/TwoPi;
         g_color_iter = (long)mod;
@@ -799,12 +799,12 @@ int ComplexBasin()
     tmp.y += croot.y;
 
     FPUcplxmul(&temp, &cdegree, &cd1);
-    FPUcplxdiv(&tmp, &cd1, &old);
+    FPUcplxdiv(&tmp, &cd1, &g_old_z);
     if (overflow)
     {
         return (1);
     }
-    g_new_z = old;
+    g_new_z = g_old_z;
     return (0);
 }
 
