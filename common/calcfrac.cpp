@@ -116,7 +116,7 @@ double rqlim2 = 0.0;
 double rqlim_save = 0.0;
 bool g_magnitude_calc = true;
 bool use_old_period = false;
-bool use_old_distest = false;
+bool g_use_old_distance_estimator = false;
 bool g_old_demm_colors = false;
 int (*calctype)() = nullptr;
 int (*calctypetmp)() = nullptr;
@@ -1101,7 +1101,7 @@ static void perform_worklist()
         delxx2 = (xx3rd - xxmin) / d_y_size;
         delyy2 = (yy3rd - yymin) / d_x_size;
 
-        use_old_distest = g_save_release < 1827;
+        g_use_old_distance_estimator = g_save_release < 1827;
         rqlim = rqlim_save; // just in case changed to DEM_BAILOUT earlier
         if (g_distance_estimator != 1 || g_colors == 2)   // not doing regular outside colors
         {
@@ -1111,7 +1111,7 @@ static void perform_worklist()
             }
         }
         // must be mandel type, formula, or old PAR/GIF
-        dem_mandel = curfractalspecific->tojulia != fractal_type::NOFRACTAL || use_old_distest
+        dem_mandel = curfractalspecific->tojulia != fractal_type::NOFRACTAL || g_use_old_distance_estimator
                      || fractype == fractal_type::FORMULA || fractype == fractal_type::FFORMULA;
         dem_delta = sqr(delxx) + sqr(delyy2);
         ftemp = sqr(delyy) + sqr(delxx2);
@@ -1137,7 +1137,7 @@ static void perform_worklist()
         ftemp = (rqlim < DEM_BAILOUT) ? DEM_BAILOUT : rqlim;
         ftemp += 3; // bailout plus just a bit
         ftemp2 = log(ftemp);
-        if (use_old_distest)
+        if (g_use_old_distance_estimator)
         {
             dem_toobig = sqr(ftemp) * sqr(ftemp2) * 4 / dem_delta;
         }
@@ -2173,7 +2173,7 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
         g_init.y = dypixel();
         if (g_distance_estimator)
         {
-            if (use_old_distest)
+            if (g_use_old_distance_estimator)
             {
                 rqlim = rqlim_save;
                 if (g_distance_estimator != 1 || g_colors == 2)   // not doing regular outside colors
@@ -2295,7 +2295,7 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
             }
             deriv.y = 2 * (g_old_z.y * deriv.x + g_old_z.x * deriv.y);
             deriv.x = ftemp;
-            if (use_old_distest)
+            if (g_use_old_distance_estimator)
             {
                 if (sqr(deriv.x)+sqr(deriv.y) > dem_toobig)
                 {
@@ -2314,7 +2314,7 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
 
             if (curfractalspecific->orbitcalc() || (g_overflow && g_save_release > 1826))
             {
-                if (use_old_distest)
+                if (g_use_old_distance_estimator)
                 {
                     if (dem_color < 0)
                     {
@@ -2834,7 +2834,7 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
             {
                 g_color_iter = (long)sqrt(sqrt(dist) / dem_width + 1);
             }
-            else if (use_old_distest)
+            else if (g_use_old_distance_estimator)
             {
                 g_color_iter = (long)sqrt(dist / dem_width + 1);
             }
@@ -2845,7 +2845,7 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
             g_color_iter &= LONG_MAX;  // oops - color can be negative
             goto plot_pixel;       // no further adjustments apply
         }
-        if (use_old_distest)
+        if (g_use_old_distance_estimator)
         {
             g_color_iter = dem_color;
             g_new_z = dem_new;

@@ -508,7 +508,7 @@ extern bool                  g_frm_uses_p2;
 extern bool                  g_frm_uses_p3;
 extern bool                  g_frm_uses_p4;
 extern bool                  g_frm_uses_p5;
-extern bool                  use_old_distest;
+extern bool                  g_use_old_distance_estimator;
 extern bool                  use_old_period;
 extern bool                  using_jiim;
 extern int                   usr_biomorph;

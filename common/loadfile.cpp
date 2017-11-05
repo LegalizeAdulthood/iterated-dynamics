@@ -1217,7 +1217,7 @@ void backwards_v19()
     g_magnitude_calc = !fix_bof();
     // fractal might use old periodicity method
     use_old_period = fix_period_bof();
-    use_old_distest = (g_save_release < 1827 && g_distance_estimator);
+    g_use_old_distance_estimator = (g_save_release < 1827 && g_distance_estimator);
 }
 
 void backwards_v20()
@@ -1247,7 +1247,7 @@ bool check_back()
     bool ret = false;
     if (fractype == fractal_type::LYAPUNOV ||
             fractype == fractal_type::FROTH || fractype == fractal_type::FROTHFP ||
-            fix_bof() || fix_period_bof() || use_old_distest || g_decomp[0] == 2 ||
+            fix_bof() || fix_period_bof() || g_use_old_distance_estimator || g_decomp[0] == 2 ||
             (fractype == fractal_type::FORMULA && g_save_release <= 1920) ||
             (fractype == fractal_type::FFORMULA && g_save_release <= 1920) ||
             (g_log_map_flag != 0 && g_save_release <= 2001) ||
