@@ -118,7 +118,7 @@ bool g_magnitude_calc = true;
 bool g_use_old_periodicity = false;
 bool g_use_old_distance_estimator = false;
 bool g_old_demm_colors = false;
-int (*calctype)() = nullptr;
+int (*g_calc_type)() = nullptr;
 int (*calctypetmp)() = nullptr;
 bool g_quick_calc = false;
 double g_close_proximity = 0.01;
@@ -876,7 +876,7 @@ int calcfract()
             && curfractalspecific->calctype != lyapunov
             && curfractalspecific->calctype != calcfroth)
     {
-        calctype = curfractalspecific->calctype; // per_image can override
+        g_calc_type = curfractalspecific->calctype; // per_image can override
         g_symmetry = curfractalspecific->symmetry; //   calctype & symmetry
         g_plot = g_put_color; // defaults when setsymmetry not called or does nothing
         xxbegin = 0;
@@ -899,7 +899,7 @@ int calcfract()
             g_close_enough = ddelmin*pow(2.0, -(double)(abs(g_periodicity_check)));
             g_l_close_enough = (long)(g_close_enough * g_fudge_factor); // "close enough" value
             setsymmetry(g_symmetry, false);
-            timer(0, calctype); // non-standard fractal engine
+            timer(0, g_calc_type); // non-standard fractal engine
         }
         if (check_key())
         {
@@ -1150,7 +1150,7 @@ static void perform_worklist()
     while (g_num_work_list > 0)
     {
         // per_image can override
-        calctype = curfractalspecific->calctype;
+        g_calc_type = curfractalspecific->calctype;
         g_symmetry = curfractalspecific->symmetry; //   calctype & symmetry
         g_plot = g_put_color; // defaults when setsymmetry not called or does nothing
 
@@ -1260,8 +1260,8 @@ static void perform_worklist()
             {
                 showdot_width = -1;
             }
-            calctypetmp = calctype;
-            calctype    = calctypeshowdot;
+            calctypetmp = g_calc_type;
+            g_calc_type    = calctypeshowdot;
         }
 
         // some common initialization for escape-time pixel level routines
@@ -1401,7 +1401,7 @@ static int diffusion_scan()
 // Calculate the point
 #define calculate               \
     g_reset_periodicity = true;   \
-    if ((*calctype)() == -1)    \
+    if ((*g_calc_type)() == -1)    \
         return -1;              \
     g_reset_periodicity = false
 
@@ -1898,7 +1898,7 @@ static int standard_calc(int passnum)
             }
             if (passnum == 1 || g_std_calc_mode == '1' || (row&1) != 0 || (col&1) != 0)
             {
-                if ((*calctype)() == -1)   // standard_fractal(), calcmand() or calcmandfp()
+                if ((*g_calc_type)() == -1)   // standard_fractal(), calcmand() or calcmandfp()
                 {
                     return -1;          // interrupted
                 }
@@ -3490,7 +3490,7 @@ int  bound_trace_main()
             trail_color = g_color;
             row = currow;
             col = curcol;
-            if ((*calctype)() == -1) // color, row, col are global
+            if ((*g_calc_type)() == -1) // color, row, col are global
             {
                 if (g_show_dot != bkcolor)   // remove show_dot pixel
                 {
@@ -3533,7 +3533,7 @@ int  bound_trace_main()
                 {
                     // the order of operations in this next line is critical
                     g_color = getcolor(col, row);
-                    if (g_color == bkcolor && (*calctype)() == -1)
+                    if (g_color == bkcolor && (*g_calc_type)() == -1)
                         // color, row, col are global for (*calctype)()
                     {
                         if (g_show_dot != bkcolor)   // remove show_dot pixel
@@ -3762,7 +3762,7 @@ static int solid_guess()
             for (col = g_i_x_start; col <= g_i_x_stop; col += maxblock)
             {
                 // calc top row
-                if ((*calctype)() == -1)
+                if ((*g_calc_type)() == -1)
                 {
                     add_worklist(xxstart, xxstop, xxbegin, yystart, yystop, yybegin, 0, g_work_symmetry);
                     goto exit_solidguess;
@@ -3785,7 +3785,7 @@ static int solid_guess()
                 g_reset_periodicity = true;
                 for (col = g_i_x_start; col <= g_i_x_stop; col += maxblock)
                 {
-                    i = (*calctype)();
+                    i = (*g_calc_type)();
                     if (i == -1)
                     {
                         break;
@@ -3905,7 +3905,7 @@ exit_solidguess:
 {                           \
     col = x;                  \
     row = y;                  \
-    c = (*calctype)();        \
+    c = (*g_calc_type)();        \
     if (c == -1)            \
         return true;        \
 }
@@ -5091,12 +5091,12 @@ static int tesscol(int x, int y1, int y2)
     col = x;
     row = y1;
     g_reset_periodicity = true;
-    colcolor = (*calctype)();
+    colcolor = (*g_calc_type)();
     g_reset_periodicity = false;
     while (++row <= y2)
     {
         // generate the column
-        i = (*calctype)();
+        i = (*g_calc_type)();
         if (i < 0)
         {
             return -3;
@@ -5115,12 +5115,12 @@ static int tessrow(int x1, int x2, int y)
     row = y;
     col = x1;
     g_reset_periodicity = true;
-    rowcolor = (*calctype)();
+    rowcolor = (*g_calc_type)();
     g_reset_periodicity = false;
     while (++col <= x2)
     {
         // generate the row
-        i = (*calctype)();
+        i = (*g_calc_type)();
         if (i < 0)
         {
             return -3;
@@ -5149,7 +5149,7 @@ static long autologmap()
     old_maxit = g_max_iterations;
     for (col = 0; col < xstop; col++) // top row
     {
-        g_color = (*calctype)();
+        g_color = (*g_calc_type)();
         if (g_color == -1)
         {
             goto ack; // key pressed, bailout
@@ -5172,7 +5172,7 @@ static long autologmap()
     col = xstop;
     for (row = 0; row < ystop; row++) // right  side
     {
-        g_color = (*calctype)();
+        g_color = (*g_calc_type)();
         if (g_color == -1)
         {
             goto ack; // key pressed, bailout
@@ -5195,7 +5195,7 @@ static long autologmap()
     col = 0;
     for (row = 0; row < ystop; row++) // left  side
     {
-        g_color = (*calctype)();
+        g_color = (*g_calc_type)();
         if (g_color == -1)
         {
             goto ack; // key pressed, bailout
@@ -5218,7 +5218,7 @@ static long autologmap()
     row = ystop ;
     for (col = 0; col < xstop; col++) // bottom row
     {
-        g_color = (*calctype)();
+        g_color = (*g_calc_type)();
         if (g_color == -1)
         {
             goto ack; // key pressed, bailout

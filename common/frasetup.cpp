@@ -28,12 +28,12 @@ MandelSetup()           // Mandelbrot Routine
             && g_use_init_orbit != init_orbit_mode::value && !g_using_jiim && g_bail_out_test == bailouts::Mod
             && (g_orbit_save_flags & osf_midi) == 0)
     {
-        calctype = calcmand; // the normal case - use CALCMAND
+        g_calc_type = calcmand; // the normal case - use CALCMAND
     }
     else
     {
         // special case: use the main processing loop
-        calctype = standard_fractal;
+        g_calc_type = standard_fractal;
         g_long_param = &g_l_init;
     }
     return true;
@@ -49,12 +49,12 @@ JuliaSetup()            // Julia Routine
             && !g_finite_attractor && !g_using_jiim && g_bail_out_test == bailouts::Mod
             && (g_orbit_save_flags & osf_midi) == 0)
     {
-        calctype = calcmand; // the normal case - use CALCMAND
+        g_calc_type = calcmand; // the normal case - use CALCMAND
     }
     else
     {
         // special case: use the main processing loop
-        calctype = standard_fractal;
+        g_calc_type = standard_fractal;
         g_long_param = &g_l_param;
         get_julia_attractor(0.0, 0.0);    // another attractor?
     }
@@ -165,7 +165,7 @@ NewtonSetup()           // Newton/NewtBasin Routines
         g_symmetry = symmetry_type::X_AXIS;
     }
 
-    calctype = standard_fractal;
+    g_calc_type = standard_fractal;
 #if !defined(XFRACT)
     if (fractype == fractal_type::MPNEWTON || fractype == fractal_type::MPNEWTBASIN)
     {
@@ -235,13 +235,13 @@ MandelfpSetup()
                 && !g_using_jiim && g_bail_out_test == bailouts::Mod
                 && (g_orbit_save_flags & osf_midi) == 0)
         {
-            calctype = calcmandfp; // the normal case - use calcmandfp
+            g_calc_type = calcmandfp; // the normal case - use calcmandfp
             calcmandfpasmstart();
         }
         else
         {
             // special case: use the main processing loop
-            calctype = standard_fractal;
+            g_calc_type = standard_fractal;
         }
         break;
     case fractal_type::FPMANDELZPOWER:
@@ -361,13 +361,13 @@ JuliafpSetup()
                 && !g_using_jiim && g_bail_out_test == bailouts::Mod
                 && (g_orbit_save_flags & osf_midi) == 0)
         {
-            calctype = calcmandfp; // the normal case - use calcmandfp
+            g_calc_type = calcmandfp; // the normal case - use calcmandfp
             calcmandfpasmstart();
         }
         else
         {
             // special case: use the main processing loop
-            calctype = standard_fractal;
+            g_calc_type = standard_fractal;
             get_julia_attractor(0.0, 0.0);    // another attractor?
         }
         break;

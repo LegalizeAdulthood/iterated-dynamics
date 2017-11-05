@@ -506,7 +506,7 @@ void Jiim(jiim_types which)
     }
     oldsxoffs = sxoffs;
     oldsyoffs = syoffs;
-    oldcalctype = calctype;
+    oldcalctype = g_calc_type;
     show_numbers = 0;
     g_using_jiim = true;
     g_line_buff.resize(std::max(sxdots, sydots));
@@ -1287,7 +1287,7 @@ finish:
     screen_rect.clear();
     g_look_at_mouse = old_look_at_mouse;
     g_using_jiim = false;
-    calctype = oldcalctype;
+    g_calc_type = oldcalctype;
     g_debug_flag = old_debugflag;
     g_help_mode = old_help_mode;
     if (kbdchar == 's' || kbdchar == 'S')
