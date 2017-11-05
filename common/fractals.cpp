@@ -104,7 +104,7 @@ long oldxinitx, oldyinity, oldxinity, oldyinitx;
 long longtmp;
 
 // These are for quaternions
-double qc, qci, qcj, qck;
+double g_quaternion_c, qci, qcj, qck;
 
 // temporary variables for trig use
 long lcosx, lsinx;
@@ -3156,7 +3156,7 @@ int quaternionjulfp_per_pixel()
     g_old_z.y = dypixel();
     g_float_param->x = g_params[4];
     g_float_param->y = g_params[5];
-    qc  = g_params[0];
+    g_quaternion_c  = g_params[0];
     qci = g_params[1];
     qcj = g_params[2];
     qck = g_params[3];
@@ -3169,7 +3169,7 @@ int quaternionfp_per_pixel()
     g_old_z.y = 0;
     g_float_param->x = 0;
     g_float_param->y = 0;
-    qc  = dxpixel();
+    g_quaternion_c  = dxpixel();
     qci = dypixel();
     qcj = g_params[2];
     qck = g_params[3];
@@ -3337,7 +3337,7 @@ QuaternionFPFractal()
     a2 = g_float_param->x;
     a3 = g_float_param->y;
 
-    n0 = a0*a0-a1*a1-a2*a2-a3*a3 + qc;
+    n0 = a0*a0-a1*a1-a2*a2-a3*a3 + g_quaternion_c;
     n1 = 2*a0*a1 + qci;
     n2 = 2*a0*a2 + qcj;
     n3 = 2*a0*a3 + qck;
@@ -3367,7 +3367,7 @@ HyperComplexFPFractal()
 
     HComplexTrig0(&hold, &hnew);
 
-    hnew.x += qc;
+    hnew.x += g_quaternion_c;
     hnew.y += qci;
     hnew.z += qcj;
     hnew.t += qck;
