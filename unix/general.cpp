@@ -26,7 +26,7 @@
 // ********************** Mouse Support Variables **************************
 
 
-bool inside_help = false;
+bool g_inside_help = false;
 
 
 /*
@@ -64,9 +64,9 @@ int keypressed()
     if (ch == FIK_F1 && g_help_mode)
     {
         keybuffer = 0;
-        inside_help = true;
+        g_inside_help = true;
         help(0);
-        inside_help = false;
+        g_inside_help = false;
         return 0;
     }
     else if (ch == FIK_TAB && tab_mode)

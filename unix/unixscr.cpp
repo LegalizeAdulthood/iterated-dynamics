@@ -61,7 +61,7 @@ extern  int g_logical_screen_x_offset, g_logical_screen_y_offset;     // offset 
 extern  int g_colors;         // maximum colors available
 extern  int g_adapter;
 extern bool g_got_real_dac;
-extern bool inside_help;
+extern bool g_inside_help;
 extern float g_final_aspect_ratio;
 extern  float   g_screen_aspect;
 
@@ -1891,7 +1891,7 @@ xhandleevents()
         break;
         case MotionNotify:
         {
-            if (editpal_cursor && !inside_help)
+            if (editpal_cursor && !g_inside_help)
             {
                 while (XCheckWindowEvent(Xdp, Xw, PointerMotionMask,
                                          &xevent))
@@ -2025,7 +2025,7 @@ xhandleevents()
             zby = (MIN(bandy0, bandy1)-g_logical_screen_y_offset)/y_size_d;
             zoom_box_width = ABS(bandx1-bandx0)/x_size_d;
             zoom_box_height = zoom_box_width;
-            if (!inside_help)
+            if (!g_inside_help)
             {
                 xbufkey = FIK_ENTER;
             }
@@ -2089,7 +2089,7 @@ xhandleevents()
         }  // End switch
     }  // End while
 
-    if (!xbufkey && editpal_cursor && !inside_help && g_look_at_mouse == 3 &&
+    if (!xbufkey && editpal_cursor && !g_inside_help && g_look_at_mouse == 3 &&
             (dx != 0 || dy != 0))
     {
         if (ABS(dx) > ABS(dy))

@@ -62,7 +62,7 @@ extern  int g_colors;         // maximum colors available
 extern  int g_init_mode;
 extern  int g_adapter;
 extern bool g_got_real_dac;
-extern bool inside_help;
+extern bool g_inside_help;
 extern float g_final_aspect_ratio;
 extern  float   g_screen_aspect;
 extern VIDEOINFO x11_video_table[];
@@ -1355,7 +1355,7 @@ ev_button_press(DriverX11 *di, XEvent *xevent)
     zby = (MIN(bandy0, bandy1)-g_logical_screen_y_offset)/y_size_d;
     zoom_box_width = ABS(bandx1-bandx0)/x_size_d;
     zoom_box_height = zoom_box_width;
-    if (!inside_help)
+    if (!g_inside_help)
         di->key_buffer = FIK_ENTER;
     if (di->xlastcolor != -1)
         XSetForeground(di->Xdp, di->Xgc, FAKE_LUT(di, di->xlastcolor));
@@ -1367,7 +1367,7 @@ ev_button_press(DriverX11 *di, XEvent *xevent)
 static void
 ev_motion_notify(DriverX11 *di, XEvent *xevent)
 {
-    if (editpal_cursor && !inside_help)
+    if (editpal_cursor && !g_inside_help)
     {
         while (XCheckWindowEvent(di->Xdp, di->Xw, PointerMotionMask, xevent))
             ;
@@ -1455,7 +1455,7 @@ handle_events(DriverX11 *di)
         }
     }
 
-    if (!di->key_buffer && editpal_cursor && !inside_help && g_look_at_mouse == 3 &&
+    if (!di->key_buffer && editpal_cursor && !g_inside_help && g_look_at_mouse == 3 &&
             (di->dx != 0 || di->dy != 0))
     {
         if (ABS(di->dx) > ABS(di->dy))
