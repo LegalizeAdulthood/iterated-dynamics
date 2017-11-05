@@ -2109,7 +2109,7 @@ int dynam2dfloat()
                     w_snd((int)(*soundvar*100+g_base_hertz));
                 }
 
-                if (count >= orbit_delay)
+                if (count >= g_orbit_delay)
                 {
                     if (oldcol != -1 && connect)
                     {
@@ -2222,9 +2222,9 @@ int plotorbits2dsetup()
     o_cvt.e += 0.5;
     o_cvt.f += 0.5;
 
-    if (orbit_delay >= g_max_iterations)   // make sure we get an image
+    if (g_orbit_delay >= g_max_iterations)   // make sure we get an image
     {
-        orbit_delay = (int)(g_max_iterations - 1);
+        g_orbit_delay = (int)(g_max_iterations - 1);
     }
 
     o_color = 1;
@@ -2297,7 +2297,7 @@ int plotorbits2dfloat()
             continue;  // bailed out, don't plot
         }
 
-        if (count < orbit_delay || count%orbit_interval)
+        if (count < g_orbit_delay || count%orbit_interval)
         {
             continue;  // don't plot it
         }

@@ -601,9 +601,9 @@ int calctypeshowdot()
         }
     }
     showdotsaverestore(startx, stopx, starty, stopy, direction, show_dot_action::SAVE);
-    if (orbit_delay > 0)
+    if (g_orbit_delay > 0)
     {
-        sleepms(orbit_delay);
+        sleepms(g_orbit_delay);
     }
     out = (*calctypetmp)();
     showdotsaverestore(startx, stopx, starty, stopy, direction, show_dot_action::RESTORE);
@@ -2256,7 +2256,7 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
         lastz.y = g_old_z.y;
     }
 
-    if (((soundflag & SOUNDFLAG_ORBITMASK) > SOUNDFLAG_X || show_dot >= 0) && orbit_delay > 0)
+    if (((soundflag & SOUNDFLAG_ORBITMASK) > SOUNDFLAG_X || show_dot >= 0) && g_orbit_delay > 0)
     {
         check_freq = 16;
     }

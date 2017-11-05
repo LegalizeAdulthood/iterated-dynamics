@@ -347,7 +347,7 @@ extern double                g_evolve_x_parameter_offset;
 extern double                g_evolve_y_parameter_offset;
 extern int                   g_orbit_save_flags;
 extern int                   g_orbit_color;
-extern int                   orbit_delay;
+extern int                   g_orbit_delay;
 extern long                  orbit_interval;
 extern int                   orbit_ptr;
 extern std::string           orgfrmdir;

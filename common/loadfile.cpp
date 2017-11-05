@@ -382,12 +382,12 @@ int read_overlay()      // read overlay/3D files, if reqr'd
         orbit_interval = read_info.orbit_interval;
     }
 
-    orbit_delay = 0;
+    g_orbit_delay = 0;
     g_math_tol[0] = 0.05;
     g_math_tol[1] = 0.05;
     if (read_info.version > 16) // post-version 20.4.0
     {
-        orbit_delay = read_info.orbit_delay;
+        g_orbit_delay = read_info.orbit_delay;
         g_math_tol[0] = read_info.math_tol[0];
         g_math_tol[1] = read_info.math_tol[1];
     }

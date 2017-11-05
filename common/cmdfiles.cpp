@@ -135,7 +135,7 @@ bool orgfrmsearch = false;      /* 1 - user has specified a directory for
                                      Orgform formula compilation files */
 
 int     g_orbit_save_flags = 0;          // for IFS and LORENZ to output acrospin file
-int orbit_delay = 0;            // clock ticks delating orbit release
+int g_orbit_delay = 0;            // clock ticks delating orbit release
 int     transparent[2] = { 0 }; // transparency min/max values
 long    g_log_map_flag = 0;            // Logarithmic palette flag: 0 = no
 
@@ -431,7 +431,7 @@ static void initvars_restart()          // <ins> key init
     viewxdots = viewydots;
     video_cutboth = true;               // keep virtual aspect
     zscroll = true;                     // relaxed screen scrolling
-    orbit_delay = 0;                    // full speed orbits
+    g_orbit_delay = 0;                    // full speed orbits
     orbit_interval = 1;                 // plot all orbits
     g_debug_flag = debug_flags::none;      // debugging flag(s) are off
     timerflag = false;                  // timer flags are off
@@ -536,7 +536,7 @@ static void initvars_fractal()          // init vars affecting calculation
     g_colors_preloaded = false;
     rotate_lo = 1;
     rotate_hi = 255;      // color cycling default range
-    orbit_delay = 0;                     // full speed orbits
+    g_orbit_delay = 0;                     // full speed orbits
     orbit_interval = 1;                  // plot all orbits
     g_keep_screen_coords = false;
     g_draw_mode = 'r';                      // passes=orbits draw mode
@@ -2885,7 +2885,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
 
     if (variable == "orbitdelay")
     {
-        orbit_delay = numval;
+        g_orbit_delay = numval;
         return CMDARG_NONE;
     }
 

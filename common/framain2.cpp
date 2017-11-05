@@ -2480,7 +2480,7 @@ static void save_history_info()
     current.ismand               = (short) (g_is_mandelbrot ? 1 : 0);
     current.closeprox            = g_close_proximity;
     current.nobof                = (short) (g_bof_match_book_images ? 0 : 1);
-    current.orbit_delay          = (short)orbit_delay;
+    current.orbit_delay          = (short)g_orbit_delay;
     current.orbit_interval       = orbit_interval;
     current.oxmin                = oxmin;
     current.oxmax                = oxmax;
@@ -2670,7 +2670,7 @@ static void restore_history_info(int i)
     g_is_mandelbrot = last.ismand != 0;
     g_close_proximity = last.closeprox;
     g_bof_match_book_images = last.nobof == 0;
-    orbit_delay = last.orbit_delay;
+    g_orbit_delay = last.orbit_delay;
     orbit_interval = last.orbit_interval;
     oxmin = last.oxmin;
     oxmax = last.oxmax;

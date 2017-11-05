@@ -1377,9 +1377,9 @@ void write_batch_parms(char const *colorinf, bool colorsonly, int maxcolor, int 
             put_parm(" %s=%s", "nobof", "yes");
         }
 
-        if (orbit_delay > 0)
+        if (g_orbit_delay > 0)
         {
-            put_parm(" %s=%d", "orbitdelay", orbit_delay);
+            put_parm(" %s=%d", "orbitdelay", g_orbit_delay);
         }
 
         if (orbit_interval != 1)
