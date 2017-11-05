@@ -290,14 +290,14 @@ init_restart:
     g_distance_estimator          = usr_distest;
     g_biomorph         = usr_biomorph;
 
-    potflag = false;
+    g_potential_flag = false;
     if (potparam[0] != 0.0
             && g_colors >= 64
             && (curfractalspecific->calctype == standard_fractal
                 || curfractalspecific->calctype == calcmand
                 || curfractalspecific->calctype == calcmandfp))
     {
-        potflag = true;
+        g_potential_flag = true;
         usr_distest = 0;
         g_distance_estimator = 0;    // can't do distest too
     }
@@ -354,7 +354,7 @@ init_restart:
 
     g_integer_fractal = curfractalspecific->isinteger;
 
-    if (potflag && potparam[2] != 0.0)
+    if (g_potential_flag && potparam[2] != 0.0)
     {
         rqlim = potparam[2];
     }
@@ -423,7 +423,7 @@ init_restart:
     if (fractype == fractal_type::MANDEL || fractype == fractal_type::JULIA)
     {
         // adjust shift bits if..
-        if (!potflag                                    // not using potential
+        if (!g_potential_flag                                    // not using potential
                 && (g_params[0] > -2.0 && g_params[0] < 2.0)  // parameters not too large
                 && (g_params[1] > -2.0 && g_params[1] < 2.0)
                 && (g_invert == 0)                        // and not inverting

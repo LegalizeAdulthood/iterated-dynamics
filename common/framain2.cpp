@@ -255,7 +255,7 @@ main_state big_while_loop(bool *const kbdmore, bool *const stacked, bool const r
                 {
                     // pot file failed?
                     show_file = 1;
-                    potflag  = false;
+                    g_potential_flag  = false;
                     g_potential_16bit = false;
                     g_init_mode = -1;
                     g_calc_status = calc_status_value::RESUMABLE;         // "resume" without 16-bit
@@ -2661,7 +2661,7 @@ static void restore_history_info(int i)
     g_max_iterations                 = last.iterations     ;
     g_old_demm_colors       = last.old_demm_colors != 0;
     curfractalspecific    = &fractalspecific[static_cast<int>(fractype)];
-    potflag               = (potparam[0] != 0.0);
+    g_potential_flag               = (potparam[0] != 0.0);
     if (g_inversion[0] != 0.0)
     {
         g_invert = 3;

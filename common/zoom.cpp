@@ -685,7 +685,7 @@ static int check_pan() // return 0 if can't, alignment requirement if can
     {
         return (1); // image completed, align on any pixel
     }
-    if (potflag && g_potential_16bit)
+    if (g_potential_flag && g_potential_16bit)
     {
         return (1); // 1 pass forced so align on any pixel
     }

@@ -66,7 +66,7 @@ std::string g_gif_filename_mask;
 char    PrintName[FILE_MAX_PATH] = {"fract001.prn"}; // Name for print-to-file
 std::string savename{"fract001"}; // save files using this name
 std::string g_auto_name{"auto.key"}; // record auto keystrokes here
-bool    potflag = false;        // continuous potential enabled?
+bool    g_potential_flag = false;        // continuous potential enabled?
 bool    g_potential_16bit = false;               // store 16 bit continuous potential values
 bool    g_gif87a_flag = false;    // true if GIF87a format, false otherwise
 bool    g_dither_flag = false;    // true if want to dither GIFs
@@ -519,7 +519,7 @@ static void initvars_fractal()          // init vars affecting calculation
     yymax = 1.5;   // initial corner values
     bf_math = bf_math_type::NONE;
     g_potential_16bit = false;
-    potflag = false;
+    g_potential_flag = false;
     g_log_map_flag = 0;                         // no logarithmic palette
     set_trig_array(0, "sin");             // trigfn defaults
     set_trig_array(1, "sqr");

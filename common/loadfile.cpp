@@ -108,7 +108,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
         {
             g_colors = read_info.colors;
         }
-        potflag       = (potparam[0] != 0.0);
+        g_potential_flag       = (potparam[0] != 0.0);
         rflag         = read_info.rflag != 0;
         rseed         = read_info.rseed;
         g_inside_color        = read_info.inside;
@@ -292,7 +292,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
             g_bail_out = g_decomp[1];
         }
     }
-    if (potflag) // in version 15.x and 16.x logmap didn't work with pot
+    if (g_potential_flag) // in version 15.x and 16.x logmap didn't work with pot
     {
         if (read_info.version == 6 || read_info.version == 7)
         {

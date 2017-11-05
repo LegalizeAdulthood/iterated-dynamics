@@ -1029,7 +1029,7 @@ static void perform_worklist()
         bf_math = bf_math_type::NONE;
     }
 
-    if (potflag && g_potential_16bit)
+    if (g_potential_flag && g_potential_16bit)
     {
         int tmpcalcmode = stdcalcmode;
 
@@ -2006,7 +2006,7 @@ int calcmandfp()
     }
     if (calcmandfpasm() >= 0)
     {
-        if (potflag)
+        if (g_potential_flag)
         {
             g_color_iter = potential(g_magnitude, realcoloriter);
         }
@@ -2711,7 +2711,7 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
         }
     }
 
-    if (potflag)
+    if (g_potential_flag)
     {
         if (g_integer_fractal)       // adjust integer fractals
         {
@@ -4428,7 +4428,7 @@ static void setsymmetry(symmetry_type sym, bool uselist) // set up proper symmet
             return;
         }
     }
-    if ((potflag && g_potential_16bit) || ((g_invert != 0) && g_inversion[2] != 0.0)
+    if ((g_potential_flag && g_potential_16bit) || ((g_invert != 0) && g_inversion[2] != 0.0)
             || g_decomp[0] != 0
             || xxmin != xx3rd || yymin != yy3rd)
     {

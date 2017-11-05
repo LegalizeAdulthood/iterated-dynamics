@@ -384,7 +384,7 @@ extern double                g_plot_my2;
 extern int                   g_polyphony;
 extern unsigned              g_operation_index;
 extern bool                  g_potential_16bit;
-extern bool                  potflag;
+extern bool                  g_potential_flag;
 extern double                potparam[];
 extern bool                  preview;
 extern int                   previewfactor;
