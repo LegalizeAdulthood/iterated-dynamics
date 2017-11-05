@@ -624,7 +624,7 @@ void Jiim(jiim_types which)
             g_row < 0 || g_row >= ydots)
     {
         cr = (xxmax + xxmin) / 2.0;
-        ci = (yymax + yymin) / 2.0;
+        ci = (g_y_max + yymin) / 2.0;
     }
     else
     {

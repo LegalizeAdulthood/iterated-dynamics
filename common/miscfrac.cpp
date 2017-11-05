@@ -1039,7 +1039,7 @@ int Bifurcation()
     }
     else
     {
-        g_init.y = (double)(yymax - g_i_y_stop*g_delta_y); // bottom pixels
+        g_init.y = (double)(g_y_max - g_i_y_stop*g_delta_y); // bottom pixels
     }
 
     while (x <= g_i_x_stop)

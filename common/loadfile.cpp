@@ -89,7 +89,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
     xxmin        = read_info.xmin;
     xxmax        = read_info.xmax;
     yymin        = read_info.ymin;
-    yymax        = read_info.ymax;
+    g_y_max        = read_info.ymax;
     g_params[0]     = read_info.creal;
     g_params[1]     = read_info.cimag;
     g_save_release = 1100; // unless we find out better later on

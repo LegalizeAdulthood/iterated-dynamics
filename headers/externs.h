@@ -570,7 +570,7 @@ extern double                g_y_3rd;
 extern int                   yyadjust1;
 extern int                   yyadjust;
 extern int                   yyadjust;
-extern double                yymax;
+extern double                g_y_max;
 extern double                yymin;
 extern int                   yystart;
 extern int                   yystop;

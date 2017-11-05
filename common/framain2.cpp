@@ -318,7 +318,7 @@ main_state big_while_loop(bool *const kbdmore, bool *const stacked, bool const r
         g_save_x_max = xxmax;
         g_save_x_3rd = xx3rd;
         g_save_y_min = yymin;
-        g_save_y_max = yymax;
+        g_save_y_max = g_y_max;
         g_save_y_3rd = g_y_3rd;
 
         if (bf_math != bf_math_type::NONE)
@@ -1107,7 +1107,7 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
                 if (xcjul == BIG || ycjul == BIG)
                 {
                     g_params[0] = (xxmax + xxmin) / 2;
-                    g_params[1] = (yymax + yymin) / 2;
+                    g_params[1] = (g_y_max + yymin) / 2;
                 }
                 else
                 {
@@ -1126,7 +1126,7 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
                 xxmin = curfractalspecific->xmin;
                 xxmax = curfractalspecific->xmax;
                 yymin = curfractalspecific->ymin;
-                yymax = curfractalspecific->ymax;
+                g_y_max = curfractalspecific->ymax;
                 xx3rd = xxmin;
                 g_y_3rd = yymin;
                 if (g_user_distance_estimator_value == 0 && g_user_biomorph_value != -1 && g_bit_shift != 29)
@@ -1134,7 +1134,7 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
                     xxmin *= 3.0;
                     xxmax *= 3.0;
                     yymin *= 3.0;
-                    yymax *= 3.0;
+                    g_y_max *= 3.0;
                     xx3rd *= 3.0;
                     g_y_3rd *= 3.0;
                 }
@@ -1152,7 +1152,7 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
                     xxmin = jxxmin;
                     xxmax = jxxmax;
                     yymin = jyymin;
-                    yymax = jyymax;
+                    g_y_max = jyymax;
                     xx3rd = jxx3rd;
                     g_y_3rd = jyy3rd;
                 }
@@ -1163,7 +1163,7 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
                     xxmax = curfractalspecific->xmax;
                     g_y_3rd = curfractalspecific->ymin;
                     yymin = g_y_3rd;
-                    yymax = curfractalspecific->ymax;
+                    g_y_max = curfractalspecific->ymax;
                 }
                 g_save_c.x = g_params[0];
                 g_save_c.y = g_params[1];
@@ -2324,7 +2324,7 @@ void reset_zoom_corners()
     xxmin = g_save_x_min;
     xxmax = g_save_x_max;
     xx3rd = g_save_x_3rd;
-    yymax = g_save_y_max;
+    g_y_max = g_save_y_max;
     yymin = g_save_y_min;
     g_y_3rd = g_save_y_3rd;
     if (bf_math != bf_math_type::NONE)
@@ -2374,7 +2374,7 @@ static void save_history_info()
     current.xmin                 = xxmin                     ;
     current.xmax                 = xxmax                     ;
     current.ymin                 = yymin                     ;
-    current.ymax                 = yymax                     ;
+    current.ymax                 = g_y_max                     ;
     current.creal                = g_params[0]                  ;
     current.cimag                = g_params[1]                  ;
     current.dparm3               = g_params[2]                  ;
@@ -2554,7 +2554,7 @@ static void restore_history_info(int i)
     xxmin                 = last.xmin           ;
     xxmax                 = last.xmax           ;
     yymin                 = last.ymin           ;
-    yymax                 = last.ymax           ;
+    g_y_max                 = last.ymax           ;
     g_params[0]              = last.creal          ;
     g_params[1]              = last.cimag          ;
     g_params[2]              = last.dparm3         ;

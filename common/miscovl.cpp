@@ -429,13 +429,13 @@ skip_UI:
                 xm = ym;
             }
             pdelx  = (xxmax - xx3rd) / (xm * pxdots - 1);   // calculate stepsizes
-            pdely  = (yymax - g_y_3rd) / (ym * pydots - 1);
+            pdely  = (g_y_max - g_y_3rd) / (ym * pydots - 1);
             pdelx2 = (xx3rd - xxmin) / (ym * pydots - 1);
             pdely2 = (g_y_3rd - yymin) / (xm * pxdots - 1);
 
             // save corners
             pxxmin = xxmin;
-            pyymax = yymax;
+            pyymax = g_y_max;
         }
         for (int i = 0; i < (int)xm; i++)    // columns
         {
@@ -467,7 +467,7 @@ skip_UI:
                     xxmin = pxxmin + pdelx*(i*pxdots) + pdelx2*(j*pydots);
                     xxmax = pxxmin + pdelx*((i+1)*pxdots - 1) + pdelx2*((j+1)*pydots - 1);
                     yymin = pyymax - pdely*((j+1)*pydots - 1) - pdely2*((i+1)*pxdots - 1);
-                    yymax = pyymax - pdely*(j*pydots) - pdely2*(i*pxdots);
+                    g_y_max = pyymax - pdely*(j*pydots) - pdely2*(i*pxdots);
                     if (have3rd)
                     {
                         xx3rd = pxxmin + pdelx*(i*pxdots) + pdelx2*((j+1)*pydots - 1);
@@ -776,11 +776,11 @@ void write_batch_parms(char const *colorinf, bool colorsonly, int maxcolor, int 
             {
                 int xdigits, ydigits;
                 xdigits = getprec(xxmin, xxmax, xx3rd);
-                ydigits = getprec(yymin, yymax, g_y_3rd);
+                ydigits = getprec(yymin, g_y_max, g_y_3rd);
                 put_float(0, xxmin, xdigits);
                 put_float(1, xxmax, xdigits);
                 put_float(1, yymin, ydigits);
-                put_float(1, yymax, ydigits);
+                put_float(1, g_y_max, ydigits);
                 if (xx3rd != xxmin || g_y_3rd != yymin)
                 {
                     put_float(1, xx3rd, xdigits);
@@ -1836,7 +1836,7 @@ int getprecdbl(int rezflag)
         rez = ydots-1;
     }
 
-    ydel = ((LDBL)yymax - (LDBL)g_y_3rd)/rez;
+    ydel = ((LDBL)g_y_max - (LDBL)g_y_3rd)/rez;
     xdel2 = ((LDBL)xx3rd - (LDBL)xxmin)/rez;
 
     del1 = fabsl(xdel) + fabsl(xdel2);
@@ -2596,7 +2596,7 @@ void flip_image(int key)
             }
         }
         g_save_x_min = xxmax + xxmin - xx3rd;
-        g_save_y_max = yymax + yymin - g_y_3rd;
+        g_save_y_max = g_y_max + yymin - g_y_3rd;
         g_save_x_max = xx3rd;
         g_save_y_min = g_y_3rd;
         g_save_x_3rd = xxmax;
@@ -2630,9 +2630,9 @@ void flip_image(int key)
         g_save_x_min = xx3rd;
         g_save_y_max = g_y_3rd;
         g_save_x_max = xxmax + xxmin - xx3rd;
-        g_save_y_min = yymax + yymin - g_y_3rd;
+        g_save_y_min = g_y_max + yymin - g_y_3rd;
         g_save_x_3rd = xxmin;
-        g_save_y_3rd = yymax;
+        g_save_y_3rd = g_y_max;
         if (bf_math != bf_math_type::NONE)
         {
             copy_bf(g_bf_save_x_min, g_bf_x_3rd);        // sxmin = xx3rd;
@@ -2662,9 +2662,9 @@ void flip_image(int key)
         g_save_x_min = xxmax;
         g_save_y_max = yymin;
         g_save_x_max = xxmin;
-        g_save_y_min = yymax;
+        g_save_y_min = g_y_max;
         g_save_x_3rd = xxmax + xxmin - xx3rd;
-        g_save_y_3rd = yymax + yymin - g_y_3rd;
+        g_save_y_3rd = g_y_max + yymin - g_y_3rd;
         if (bf_math != bf_math_type::NONE)
         {
             copy_bf(g_bf_save_x_min, g_bf_x_max);        // sxmin = xxmax;

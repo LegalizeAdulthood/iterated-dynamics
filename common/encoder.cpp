@@ -846,7 +846,7 @@ static void setup_save_info(FRACTAL_INFO *save_info)
     save_info->xmin = xxmin;
     save_info->xmax = xxmax;
     save_info->ymin = yymin;
-    save_info->ymax = yymax;
+    save_info->ymax = g_y_max;
     save_info->creal = g_params[0];
     save_info->cimag = g_params[1];
     save_info->videomodeax = (short) g_video_entry.videomodeax;

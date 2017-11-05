@@ -3624,7 +3624,7 @@ static double dypixel_grid()
 // Imaginary component, calculation version - does not require arrays
 static double dypixel_calc()
 {
-    return (double)(yymax - g_row*g_delta_y - g_col*g_delta_y2);
+    return (double)(g_y_max - g_row*g_delta_y - g_col*g_delta_y2);
 }
 
 // Real component, grid lookup version - requires lx0/lx1 arrays

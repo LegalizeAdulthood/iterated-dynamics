@@ -1329,7 +1329,7 @@ void set_default_parms()
     xxmin = curfractalspecific->xmin;
     xxmax = curfractalspecific->xmax;
     yymin = curfractalspecific->ymin;
-    yymax = curfractalspecific->ymax;
+    g_y_max = curfractalspecific->ymax;
     xx3rd = xxmin;
     g_y_3rd = yymin;
 

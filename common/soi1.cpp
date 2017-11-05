@@ -927,7 +927,7 @@ void soi()
         xxminl = xxmin;
         yyminl = yymin;
         xxmaxl = xxmax;
-        yymaxl = yymax;
+        yymaxl = g_y_max;
     }
     twidth = tolerance/(xdots - 1);
     stepx = (xxmaxl - xxminl)/xdots;
