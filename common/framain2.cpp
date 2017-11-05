@@ -805,7 +805,7 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
             g_evolve_discrete_y_parameter_offset = 0;
             g_evolve_discrete_x_parameter_offset = 0;
             g_evolve_max_random_mutation = 1;           // reset param evolution stuff
-            set_orbit_corners = false;
+            g_set_orbit_corners = false;
             param_history(0); // save history
             if (i == 0)
             {
@@ -1603,7 +1603,7 @@ static main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdm
             g_evolve_discrete_y_parameter_offset = 0;
             g_evolve_discrete_x_parameter_offset = 0;
             g_evolve_max_random_mutation = 1;           // reset param evolution stuff
-            set_orbit_corners = false;
+            g_set_orbit_corners = false;
             param_history(0); // save history
             if (i == 0)
             {
@@ -2681,7 +2681,7 @@ static void restore_history_info(int i)
     g_keep_screen_coords = last.keep_scrn_coords != 0;
     if (g_keep_screen_coords)
     {
-        set_orbit_corners = true;
+        g_set_orbit_corners = true;
     }
     g_draw_mode = last.drawmode;
     usr_floatflag = curfractalspecific->isinteger == 0;

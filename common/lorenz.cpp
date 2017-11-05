@@ -2151,7 +2151,7 @@ int dynam2dfloat()
 }
 
 bool g_keep_screen_coords = false;
-bool set_orbit_corners = false;
+bool g_set_orbit_corners = false;
 long g_orbit_interval;
 double g_orbit_corner_min_x, g_orbit_corner_min_y, g_orbit_corner_max_x, g_orbit_corner_max_y, g_orbit_corner_3_x, g_orbit_corner_3_y;
 affine o_cvt;

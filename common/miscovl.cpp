@@ -1397,7 +1397,7 @@ void write_batch_parms(char const *colorinf, bool colorsonly, int maxcolor, int 
             put_parm(" %s=%s", "screencoords", "yes");
         }
 
-        if (usr_stdcalcmode == 'o' && set_orbit_corners && g_keep_screen_coords)
+        if (usr_stdcalcmode == 'o' && g_set_orbit_corners && g_keep_screen_coords)
         {
             int xdigits, ydigits;
             put_parm(" %s=", "orbitcorners");

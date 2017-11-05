@@ -613,7 +613,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
         g_draw_mode    = blk_7_info.drawmode;
         if (g_keep_screen_coords)
         {
-            set_orbit_corners = true;
+            g_set_orbit_corners = true;
         }
     }
 

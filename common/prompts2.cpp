@@ -783,7 +783,7 @@ pass_option_restart:
     }
     if (!g_keep_screen_coords)
     {
-        set_orbit_corners = false;
+        g_set_orbit_corners = false;
     }
 
     {
@@ -2373,7 +2373,7 @@ static int get_screen_corners()
     svyymax = yymax;
     svyy3rd = yy3rd;
 
-    if (!set_orbit_corners && !g_keep_screen_coords)
+    if (!g_set_orbit_corners && !g_keep_screen_coords)
     {
         g_orbit_corner_min_x = xxmin;
         g_orbit_corner_max_x = xxmax;
@@ -2594,7 +2594,7 @@ gsc_loop:
     }
     else
     {
-        set_orbit_corners = true;
+        g_set_orbit_corners = true;
         g_keep_screen_coords = true;
         // restore corners
         xxmin = svxxmin;
