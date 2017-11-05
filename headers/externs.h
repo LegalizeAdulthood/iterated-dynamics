@@ -571,7 +571,7 @@ extern int                   g_yy_adjust1;
 extern int                   g_yy_adjust;
 extern double                g_y_max;
 extern double                g_y_min;
-extern int                   yystart;
+extern int                   g_yy_start;
 extern int                   yystop;
 extern double                zbx;
 extern double                zby;
