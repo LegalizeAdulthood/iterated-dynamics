@@ -160,23 +160,23 @@ JulibrotSetup()
 
     if (g_julibrot_3d_mode == 3)
     {
-        savedac = 0;
+        g_save_dac = 0;
         mapname = g_glasses1_map.c_str();
     }
     else
     {
         mapname = g_gray_map_file.c_str();
     }
-    if (savedac != 1)
+    if (g_save_dac != 1)
     {
         if (ValidateLuts(mapname))
         {
             return false;
         }
         spindac(0, 1);               // load it, but don't spin
-        if (savedac == 2)
+        if (g_save_dac == 2)
         {
-            savedac = 1;
+            g_save_dac = 1;
         }
     }
     return r >= 0;

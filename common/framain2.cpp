@@ -129,7 +129,7 @@ main_state big_while_loop(bool *const kbdmore, bool *const stacked, bool const r
                 g_video_entry.ydots = ydots;
             }
 
-            if (savedac || g_colors_preloaded)
+            if (g_save_dac || g_colors_preloaded)
             {
                 memcpy(g_dac_box, g_old_dac_box, 256*3); // restore the DAC
                 spindac(0, 1);
@@ -230,7 +230,7 @@ main_state big_while_loop(bool *const kbdmore, bool *const stacked, bool const r
             y_size_d = ydots - 1;
         }
         // assume we save next time (except jb)
-        savedac = (savedac == 0) ? 2 : 1;
+        g_save_dac = (g_save_dac == 0) ? 2 : 1;
         if (g_init_batch == batch_modes::NONE)
         {
             g_look_at_mouse = -FIK_PAGE_UP;        // mouse left button == pgup
@@ -793,7 +793,7 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
         if (i >= 0)
         {
             driver_discard_screen();
-            savedac = 0;
+            g_save_dac = 0;
             save_release = g_release;
             g_magnitude_calc = true;
             use_old_period = false;
@@ -929,7 +929,7 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
             g_adapter = g_init_mode;
             g_init_mode = -1;
             i |= CMDARG_FRACTAL_PARAM;
-            savedac = 0;
+            g_save_dac = 0;
         }
         else if (g_colors_preloaded)
         {
@@ -939,7 +939,7 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
         }
         else if (i & CMDARG_RESET)           // reset was specified
         {
-            savedac = 0;
+            g_save_dac = 0;
         }
         if (i & CMDARG_3D_YES)
         {
@@ -1566,7 +1566,7 @@ do_3d_transform:
             g_adapter = k;
             if (g_video_table[g_adapter].colors != g_colors)
             {
-                savedac = 0;
+                g_save_dac = 0;
             }
             g_calc_status = calc_status_value::PARAMS_CHANGED;
             *kbdmore = false;
@@ -1591,7 +1591,7 @@ static main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdm
         if (i >= 0)
         {
             driver_discard_screen();
-            savedac = 0;
+            g_save_dac = 0;
             save_release = g_release;
             g_magnitude_calc = true;
             use_old_period = false;
@@ -2173,7 +2173,7 @@ static main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdm
             g_adapter = k;
             if (g_video_table[g_adapter].colors != g_colors)
             {
-                savedac = 0;
+                g_save_dac = 0;
             }
             g_calc_status = calc_status_value::PARAMS_CHANGED;
             *kbdmore = false;
@@ -2699,11 +2699,11 @@ static void restore_history_info(int i)
     spindac(0, 1);
     if (fractype == fractal_type::JULIBROT || fractype == fractal_type::JULIBROTFP)
     {
-        savedac = 0;
+        g_save_dac = 0;
     }
     else
     {
-        savedac = 1;
+        g_save_dac = 1;
     }
     switch (fractype)
     {

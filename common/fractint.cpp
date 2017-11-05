@@ -123,7 +123,7 @@ calc_status_value g_calc_status = calc_status_value::NO_FRACTAL;
 long g_calc_time;
 
 bool zoomoff = false;                   // false when zoom is disabled
-int        savedac;                     // save-the-Video DAC flag
+int        g_save_dac;                     // save-the-Video DAC flag
 bool g_browsing = false;                  // browse mode flag
 std::string g_file_name_stack[16];        // array of file names used while browsing
 int g_filename_stack_index ;
@@ -233,7 +233,7 @@ static void main_restart(int const argc, char const *const argv[], bool &stacked
     memcpy(g_old_dac_box, g_dac_box, 256*3);      // save in case colors= present
 
     driver_set_for_text();                      // switch to text mode
-    savedac = 0;                         // don't save the VGA DAC
+    g_save_dac = 0;                         // don't save the VGA DAC
 
 #ifndef XFRACT
     if (g_bad_config < 0)                   // fractint.cfg bad, no msg yet
@@ -351,7 +351,7 @@ static bool main_restore_start(bool &stacked, bool &resumeflag)
         return true;
     }
 
-    savedac = 0;                         // don't save the VGA DAC
+    g_save_dac = 0;                         // don't save the VGA DAC
 
     return false;
 }

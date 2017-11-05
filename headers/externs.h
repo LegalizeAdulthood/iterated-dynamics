@@ -432,7 +432,7 @@ extern double                rqlim;
 extern int                   g_random_seed;
 extern long                  g_save_base;
 extern DComplex              SaveC;
-extern int                   savedac;
+extern int                   g_save_dac;
 extern std::string           savename;
 extern long                  saveticks;
 extern int                   save_release;
