@@ -382,7 +382,7 @@ zlinefp(double x, double y)
         }
 #endif
         g_temp_sqr_x = sqr(g_old_z.x);
-        tempsqry = sqr(g_old_z.y);
+        g_temp_sqr_y = sqr(g_old_z.y);
 
         for (n = 0; n < g_max_iterations; n++)
         {

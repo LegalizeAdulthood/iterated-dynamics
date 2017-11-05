@@ -1880,12 +1880,12 @@ void get_julia_attractor(double real, double imag)
     g_old_z.x = real;                    // prepare for f.p orbit calc
     g_old_z.y = imag;
     g_temp_sqr_x = sqr(g_old_z.x);
-    tempsqry = sqr(g_old_z.y);
+    g_temp_sqr_y = sqr(g_old_z.y);
 
     g_l_old_z.x = (long)real;     // prepare for int orbit calc
     g_l_old_z.y = (long)imag;
     g_l_temp_sqr_x = (long)g_temp_sqr_x;
-    g_l_temp_sqr_y = (long)tempsqry;
+    g_l_temp_sqr_y = (long)g_temp_sqr_y;
 
     g_l_old_z.x = g_l_old_z.x << g_bit_shift;
     g_l_old_z.y = g_l_old_z.y << g_bit_shift;

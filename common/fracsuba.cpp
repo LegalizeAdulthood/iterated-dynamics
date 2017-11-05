@@ -221,8 +221,8 @@ int asmfpMODbailout()
 {
     // TODO: verify this code is correct
     g_temp_sqr_x = sqr(g_new_z.x);
-    tempsqry = sqr(g_new_z.y);
-    g_magnitude = g_temp_sqr_x + tempsqry;
+    g_temp_sqr_y = sqr(g_new_z.y);
+    g_magnitude = g_temp_sqr_x + g_temp_sqr_y;
     if (g_magnitude > g_magnitude_limit || g_magnitude < 0.0 || fabs(g_new_z.x) > g_magnitude_limit2 ||
             fabs(g_new_z.y) > g_magnitude_limit2 || g_overflow)
     {
@@ -264,7 +264,7 @@ int asmfpREALbailout()
 {
     // TODO: verify this code is correct
     g_temp_sqr_x = sqr(g_new_z.x);
-    tempsqry = sqr(g_new_z.y);
+    g_temp_sqr_y = sqr(g_new_z.y);
     if (g_temp_sqr_x >= g_magnitude_limit || g_overflow)
     {
         g_overflow = false;
@@ -305,8 +305,8 @@ int asmfpIMAGbailout()
 {
     // TODO: verify this code is correct
     g_temp_sqr_x = sqr(g_new_z.x);
-    tempsqry = sqr(g_new_z.y);
-    if (tempsqry >= g_magnitude_limit || g_overflow)
+    g_temp_sqr_y = sqr(g_new_z.y);
+    if (g_temp_sqr_y >= g_magnitude_limit || g_overflow)
     {
         g_overflow = false;
         return 1;
@@ -353,8 +353,8 @@ int asmfpORbailout()
 {
     // TODO: verify this code is correct
     g_temp_sqr_x = sqr(g_new_z.x);
-    tempsqry = sqr(g_new_z.y);
-    if (g_temp_sqr_x >= g_magnitude_limit || tempsqry >= g_magnitude_limit || g_overflow)
+    g_temp_sqr_y = sqr(g_new_z.y);
+    if (g_temp_sqr_x >= g_magnitude_limit || g_temp_sqr_y >= g_magnitude_limit || g_overflow)
     {
         g_overflow = false;
         return 1;
@@ -403,8 +403,8 @@ int asmfpANDbailout()
 {
     // TODO: verify this code is correct
     g_temp_sqr_x = sqr(g_new_z.x);
-    tempsqry = sqr(g_new_z.y);
-    if ((g_temp_sqr_x >= g_magnitude_limit && tempsqry >= g_magnitude_limit) || g_overflow)
+    g_temp_sqr_y = sqr(g_new_z.y);
+    if ((g_temp_sqr_x >= g_magnitude_limit && g_temp_sqr_y >= g_magnitude_limit) || g_overflow)
     {
         g_overflow = false;
         return 1;
@@ -456,7 +456,7 @@ int asmfpMANHbailout()
 {
     // TODO: verify this code is correct
     g_temp_sqr_x = sqr(g_new_z.x);
-    tempsqry = sqr(g_new_z.y);
+    g_temp_sqr_y = sqr(g_new_z.y);
     g_magnitude = fabs(g_new_z.x) + fabs(g_new_z.y);
     if (g_magnitude*g_magnitude >= g_magnitude_limit)
     {
@@ -506,7 +506,7 @@ int asmfpMANRbailout()
 {
     // TODO: verify this code is correct
     g_temp_sqr_x = sqr(g_new_z.x);
-    tempsqry = sqr(g_new_z.y);
+    g_temp_sqr_y = sqr(g_new_z.y);
     g_magnitude = fabs(g_new_z.x + g_new_z.y);
     if (g_magnitude*g_magnitude >= g_magnitude_limit)
     {
