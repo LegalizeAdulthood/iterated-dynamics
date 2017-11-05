@@ -2412,9 +2412,9 @@ int calcfroth()   // per pixel 1/2/g, called with row & col set
 
     g_orbit_save_index = 0;
     g_color_iter = 0;
-    if (show_dot >0)
+    if (g_show_dot >0)
     {
-        (*g_plot)(col, row, show_dot %g_colors);
+        (*g_plot)(col, row, g_show_dot %g_colors);
     }
     if (!g_integer_fractal) // fp mode
     {

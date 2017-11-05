@@ -53,7 +53,7 @@ int     stoppass = 0;           // stop at this guessing pass early
 int     g_distance_estimator_x_dots = 0;            // xdots to use for video independence
 int     g_distance_estimator_y_dots = 0;            // ydots to use for video independence
 int     g_bf_digits = 0;           // digits to use (force) for bf_math
-int     show_dot = -1;           // color to show crawling graphics cursor
+int     g_show_dot = -1;           // color to show crawling graphics cursor
 int     sizedot = 0;            // size of dot crawling cursor
 record_colors_mode g_record_colors = record_colors_mode::none;       // default PAR color-writing method
 char    g_auto_show_dot = 0;        // dark, medium, bright
@@ -2905,7 +2905,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
 
     if (variable == "showdot")
     {
-        show_dot = 15;
+        g_show_dot = 15;
         if (totparms > 0)
         {
             g_auto_show_dot = (char)0;
@@ -2922,10 +2922,10 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
             }
             else
             {
-                show_dot = numval;
-                if (show_dot < 0)
+                g_show_dot = numval;
+                if (g_show_dot < 0)
                 {
-                    show_dot = -1;
+                    g_show_dot = -1;
                 }
             }
             if (totparms > 1 && intparms > 0)

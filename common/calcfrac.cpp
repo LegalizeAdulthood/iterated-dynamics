@@ -1176,7 +1176,7 @@ static void perform_worklist()
         g_calc_status = calc_status_value::IN_PROGRESS; // mark as in-progress
 
         curfractalspecific->per_image();
-        if (show_dot >= 0)
+        if (g_show_dot >= 0)
         {
             find_special_colors();
             switch (g_auto_show_dot)
@@ -1192,7 +1192,7 @@ static void perform_worklist()
                 showdotcolor = g_color_bright % g_colors;
                 break;
             default:
-                showdotcolor = show_dot % g_colors;
+                showdotcolor = g_show_dot % g_colors;
                 break;
             }
             if (sizedot <= 0)
@@ -2255,7 +2255,7 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
         lastz.y = g_old_z.y;
     }
 
-    if (((soundflag & SOUNDFLAG_ORBITMASK) > SOUNDFLAG_X || show_dot >= 0) && g_orbit_delay > 0)
+    if (((soundflag & SOUNDFLAG_ORBITMASK) > SOUNDFLAG_X || g_show_dot >= 0) && g_orbit_delay > 0)
     {
         check_freq = 16;
     }
@@ -3492,7 +3492,7 @@ int  bound_trace_main()
             col = curcol;
             if ((*calctype)() == -1) // color, row, col are global
             {
-                if (show_dot != bkcolor)   // remove show_dot pixel
+                if (g_show_dot != bkcolor)   // remove show_dot pixel
                 {
                     (*g_plot)(col, row, bkcolor);
                 }
@@ -3536,7 +3536,7 @@ int  bound_trace_main()
                     if (g_color == bkcolor && (*calctype)() == -1)
                         // color, row, col are global for (*calctype)()
                     {
-                        if (show_dot != bkcolor)   // remove show_dot pixel
+                        if (g_show_dot != bkcolor)   // remove show_dot pixel
                         {
                             (*g_plot)(col, row, bkcolor);
                         }
