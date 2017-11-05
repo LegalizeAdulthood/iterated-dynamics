@@ -54,7 +54,7 @@ void dispbox()
     int rgb[3];
     for (int i = 0; i < g_box_count; i++)
     {
-        if (g_is_true_color && truemode)
+        if (g_is_true_color && truemode != 0)
         {
             driver_get_truecolor(g_box_x[i]-sxoffs, g_box_y[i]-syoffs, &rgb[0], &rgb[1], &rgb[2], nullptr);
             driver_put_truecolor(g_box_x[i]-sxoffs, g_box_y[i]-syoffs,
@@ -66,7 +66,7 @@ void dispbox()
         }
     }
     // There is an interaction between getcolor and putcolor, so separate them
-    if (!(g_is_true_color && truemode)) // don't need this for truecolor with truemode set
+    if (!(g_is_true_color && truemode != 0)) // don't need this for truecolor with truemode set
         for (int i = 0; i < g_box_count; i++)
         {
             if (g_colors == 2)
@@ -82,7 +82,7 @@ void dispbox()
 
 void clearbox()
 {
-    if (g_is_true_color && truemode)
+    if (g_is_true_color && truemode != 0)
     {
         dispbox();
     }
