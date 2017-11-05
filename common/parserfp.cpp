@@ -54,7 +54,7 @@ extern double _1_, _2_;
 extern Arg s[20];
 extern std::vector<Arg *> Store;
 extern std::vector<Arg *> Load;
-extern int StoPtr, g_load_index, OpPtr;
+extern int g_store_index, g_load_index, OpPtr;
 extern unsigned int vsp, g_last_op;
 extern std::vector<ConstArg> v;
 extern int InitLodPtr, InitStoPtr, InitOpPtr, g_last_init_op;
@@ -493,7 +493,7 @@ awful_error:
     // set the operand pointer here for store function
     if (ffptr == fStkSto)
     {
-        OPPTR(cvtptrx) = Store[StoPtr++];
+        OPPTR(cvtptrx) = Store[g_store_index++];
     }
     else if (ffptr == fStkLod && g_debug_flag == debug_flags::prevent_formula_optimizer)
     {
@@ -557,7 +557,7 @@ awful_error:
             ffptr = fStkLodDup;
         }
         else if (prevfptr == fStkSto2
-                 && Store[StoPtr-1] == Load[g_load_index])
+                 && Store[g_store_index-1] == Load[g_load_index])
         {
             // store, load of same value
             // only one operand on stack here when prev oper is Sto2
@@ -569,7 +569,7 @@ awful_error:
         //  use the rounded value that was stored here, while the next
         //  operator uses the more accurate internal value.
         else if (prevfptr == fStkStoClr2
-                 && Store[StoPtr-1] == Load[g_load_index])
+                 && Store[g_store_index-1] == Load[g_load_index])
         {
             // store, clear, load same value found
             // only one operand was on stack so this is safe
@@ -1372,8 +1372,8 @@ int CvtStk()
     lastsqrused = false;  // ... and LastSqr is not used
 
     // now see if the above assumptions are true
-    StoPtr = 0;
-    g_load_index = StoPtr;
+    g_store_index = 0;
+    g_load_index = g_store_index;
     for (OpPtr = g_load_index; OpPtr < (int)g_last_op; OpPtr++)
     {
         ftst = f[OpPtr];
@@ -1386,7 +1386,7 @@ int CvtStk()
         }
         else if (ftst == StkSto)
         {
-            testoperand = Store[StoPtr++];
+            testoperand = Store[g_store_index++];
             if (testoperand == &PARM1)
             {
                 p1const = 0;
@@ -1455,8 +1455,8 @@ int CvtStk()
     realstkcnt = stkcnt;
     cvtptrx = realstkcnt;
 
-    StoPtr = 0;
-    g_load_index = StoPtr;
+    g_store_index = 0;
+    g_load_index = g_store_index;
     for (OpPtr = g_load_index; OpPtr < (int)g_last_op; OpPtr++)
     {
         ftst = f[OpPtr];

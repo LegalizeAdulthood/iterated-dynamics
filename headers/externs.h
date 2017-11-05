@@ -458,7 +458,7 @@ extern bool                  g_start_show_orbit;
 extern bool                  g_started_resaves;
 extern char                  g_std_calc_mode;
 extern std::string           g_stereo_map_filename;
-extern int                   StoPtr;
+extern int                   g_store_index;
 extern int                   g_stop_pass;
 extern double                sx3rd;
 extern int                   sxdots;

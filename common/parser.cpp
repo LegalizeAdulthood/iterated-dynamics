@@ -170,7 +170,7 @@ std::vector<Arg *> Load;
 int OpPtr;
 std::vector<void (*)()> f;
 std::vector<ConstArg> v;
-int StoPtr, g_load_index;
+int g_store_index, g_load_index;
 int complx_count;
 int real_count;
 
@@ -979,7 +979,7 @@ void (*StkMod)() = dStkMod;
 
 void StkSto()
 {
-    *Store[StoPtr++] = *Arg1;
+    *Store[g_store_index++] = *Arg1;
 }
 
 void (*PtrStkSto)() = StkSto;
@@ -1884,7 +1884,7 @@ void StkJump()
 {
     OpPtr =  jump_control[jump_index].ptrs.JumpOpPtr;
     g_load_index = jump_control[jump_index].ptrs.JumpLodPtr;
-    StoPtr = jump_control[jump_index].ptrs.JumpStoPtr;
+    g_store_index = jump_control[jump_index].ptrs.JumpStoPtr;
     jump_index = jump_control[jump_index].DestJumpIndex;
 }
 
@@ -2677,8 +2677,8 @@ static bool ParseStr(char const *Str, int pass)
     }
 
     g_operation_index = 0;
-    StoPtr = 0;
-    g_load_index = StoPtr;
+    g_store_index = 0;
+    g_load_index = g_store_index;
     OpPtr = g_load_index;
     paren = OpPtr;
     g_last_init_op = paren;
@@ -2830,7 +2830,7 @@ static bool ParseStr(char const *Str, int pass)
             {
                 o[g_operation_index-1].f = StkSto;
                 o[g_operation_index-1].p = 5 - (paren + Equals)*15;
-                Store[StoPtr++] = Load[--g_load_index];
+                Store[g_store_index++] = Load[--g_load_index];
                 Equals++;
             }
             break;
@@ -2928,7 +2928,7 @@ int Formula()
     }
 
     g_load_index = InitLodPtr;
-    StoPtr = InitStoPtr;
+    g_store_index = InitStoPtr;
     OpPtr = InitOpPtr;
     jump_index = InitJumpIndex;
     // Set the random number
@@ -2996,8 +2996,8 @@ int form_per_pixel()
     g_overflow = false;
     jump_index = 0;
     OpPtr = jump_index;
-    StoPtr = OpPtr;
-    g_load_index = StoPtr;
+    g_store_index = OpPtr;
+    g_load_index = g_store_index;
     Arg1 = &s[0];
     Arg2 = Arg1;
     Arg2--;
@@ -3108,7 +3108,7 @@ int form_per_pixel()
         OpPtr++;
     }
     InitLodPtr = g_load_index;
-    InitStoPtr = StoPtr;
+    InitStoPtr = g_store_index;
     InitOpPtr = OpPtr;
     // Set old variable for orbits
     switch (MathType)
