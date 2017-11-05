@@ -131,7 +131,7 @@ extern bool                  g_disk_targa;
 extern display_3d_modes      g_display_3d;
 extern long                  g_distance_estimator;
 extern int                   g_distance_estimator_width_factor;
-extern float                 g_dist_fp;
+extern float                 g_julibrot_dist_fp;
 extern int                   g_distribution;
 extern bool                  g_dither_flag;
 extern bool                  g_read_color;

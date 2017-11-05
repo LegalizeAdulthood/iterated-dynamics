@@ -569,7 +569,7 @@ static void initvars_fractal()          // init vars affecting calculation
     g_julibrot_origin_fp = 8;
     g_julibrot_height_fp = 7;
     widthfp = 10;
-    g_dist_fp = 24;
+    g_julibrot_dist_fp = 24;
     g_eyes_fp = 2.5F;
     g_julibrot_depth_fp = 8;
     g_new_orbit_type = fractal_type::JULIA;
@@ -2037,7 +2037,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         }
         if (totparms > 5)
         {
-            g_dist_fp = (float)floatval[5];
+            g_julibrot_dist_fp = (float)floatval[5];
         }
         return CMDARG_FRACTAL_PARAM;
     }
