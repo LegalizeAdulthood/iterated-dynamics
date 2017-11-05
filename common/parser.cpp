@@ -190,7 +190,7 @@ static int ShiftBack;
 static bool SetRandom = false;
 static bool Randomized = false;
 static unsigned long RandNum;
-bool uses_p1 = false;
+bool g_frm_uses_p1 = false;
 bool uses_p2 = false;
 bool uses_p3 = false;
 bool uses_p4 = false;
@@ -2035,7 +2035,7 @@ ConstArg *isconst(char const *Str, int Len)
             {
                 if (n == 1)          // The formula uses 'p1'.
                 {
-                    uses_p1 = true;
+                    g_frm_uses_p1 = true;
                 }
                 if (n == 2)          // The formula uses 'p2'.
                 {
@@ -3857,7 +3857,7 @@ int frm_get_param_stuff(char const *Name)
     int c;
     token_st current_token;
     FILE * entry_file = nullptr;
-    uses_p1 = false;
+    g_frm_uses_p1 = false;
     uses_p2 = false;
     uses_p3 = false;
     g_frm_uses_ismand = false;
@@ -3911,7 +3911,7 @@ int frm_get_param_stuff(char const *Name)
         case PARAM_VARIABLE:
             if (current_token.token_id == 1)
             {
-                uses_p1 = true;
+                g_frm_uses_p1 = true;
             }
             else if (current_token.token_id == 2)
             {
@@ -3949,7 +3949,7 @@ int frm_get_param_stuff(char const *Name)
     }
     if (current_token.token_type != END_OF_FORMULA)
     {
-        uses_p1 = false;
+        g_frm_uses_p1 = false;
         uses_p2 = false;
         uses_p3 = false;
         g_frm_uses_ismand = false;
@@ -4342,7 +4342,7 @@ void init_misc()
     ShiftBack = 32 - bitshift;
     Delta16 = bitshift - 16;
     bitshiftless1 = bitshift-1;
-    uses_p1 = false;
+    g_frm_uses_p1 = false;
     uses_p2 = false;
     uses_p3 = false;
     uses_jump = false;
@@ -4379,7 +4379,7 @@ static void parser_allocate()
             }
         }
     }
-    uses_p1 = false;
+    g_frm_uses_p1 = false;
     uses_p2 = false;
     uses_p3 = false;
     uses_p4 = false;

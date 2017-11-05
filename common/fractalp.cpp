@@ -2284,7 +2284,7 @@ bool paramnotused(int parm)
     switch (parm/2)
     {
     case 0:
-        if (!uses_p1)
+        if (!g_frm_uses_p1)
         {
             ret = true;
         }

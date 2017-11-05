@@ -503,7 +503,7 @@ extern init_orbit_mode       g_use_init_orbit;
 extern bool                  g_use_grid;
 extern bool                  g_use_center_mag;
 extern bool                  g_frm_uses_ismand;
-extern bool                  uses_p1;
+extern bool                  g_frm_uses_p1;
 extern bool                  uses_p2;
 extern bool                  uses_p3;
 extern bool                  uses_p4;

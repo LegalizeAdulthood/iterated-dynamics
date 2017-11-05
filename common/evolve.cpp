@@ -510,7 +510,7 @@ int get_variations()
 
     if (fractype == fractal_type::FORMULA || fractype == fractal_type::FFORMULA)
     {
-        if (uses_p1)    // set first parameter
+        if (g_frm_uses_p1)    // set first parameter
         {
             firstparm = 0;
         }
