@@ -187,7 +187,7 @@ StandaloneSetup()
 bool
 UnitySetup()
 {
-    periodicitycheck = 0;
+    g_periodicity_check = 0;
     g_fudge_one = (1L << bitshift);
     g_fudge_two = g_fudge_one + g_fudge_one;
     return true;
@@ -271,9 +271,9 @@ MandelfpSetup()
         g_attractors = 1;
         break;
     case fractal_type::SPIDERFP:
-        if (periodicitycheck == 1)   // if not user set
+        if (g_periodicity_check == 1)   // if not user set
         {
-            periodicitycheck = 4;
+            g_periodicity_check = 4;
         }
         break;
     case fractal_type::MANDELEXP:
@@ -297,12 +297,12 @@ MandelfpSetup()
     case fractal_type::QUATFP:
         g_float_param = &tmp;
         g_attractors = 0;
-        periodicitycheck = 0;
+        g_periodicity_check = 0;
         break;
     case fractal_type::HYPERCMPLXFP:
         g_float_param = &tmp;
         g_attractors = 0;
-        periodicitycheck = 0;
+        g_periodicity_check = 0;
         if (g_params[2] != 0)
         {
             symmetry = symmetry_type::NONE;
@@ -434,7 +434,7 @@ JuliafpSetup()
         }
     case fractal_type::QUATJULFP:
         g_attractors = 0;   // attractors broken since code checks r,i not j,k
-        periodicitycheck = 0;
+        g_periodicity_check = 0;
         if (g_params[4] != 0.0 || g_params[5] != 0)
         {
             symmetry = symmetry_type::NONE;
@@ -507,9 +507,9 @@ MandellongSetup()
     {
         symmetry = symmetry_type::X_AXIS_NO_PARAM;
     }
-    if (fractype == fractal_type::SPIDER && periodicitycheck == 1)
+    if (fractype == fractal_type::SPIDER && g_periodicity_check == 1)
     {
-        periodicitycheck = 4;
+        g_periodicity_check = 4;
     }
     g_long_param = &g_l_init;
     if (fractype == fractal_type::LMANDELZPOWER)
@@ -1237,7 +1237,7 @@ bool
 SierpinskiSetup()
 {
     // sierpinski
-    periodicitycheck = 0;                // disable periodicity checks
+    g_periodicity_check = 0;                // disable periodicity checks
     g_l_temp.x = 1;
     g_l_temp.x = g_l_temp.x << bitshift; // ltmp.x = 1
     g_l_temp.y = g_l_temp.x >> 1;                        // ltmp.y = .5
@@ -1248,7 +1248,7 @@ bool
 SierpinskiFPSetup()
 {
     // sierpinski
-    periodicitycheck = 0;                // disable periodicity checks
+    g_periodicity_check = 0;                // disable periodicity checks
     tmp.x = 1;
     tmp.y = 0.5;
     return true;
@@ -1258,7 +1258,7 @@ bool
 HalleySetup()
 {
     // Halley
-    periodicitycheck = 0;
+    g_periodicity_check = 0;
 
     if (usr_floatflag)
     {
@@ -1543,7 +1543,7 @@ StandardSetup()
 {
     if (fractype == fractal_type::UNITYFP)
     {
-        periodicitycheck = 0;
+        g_periodicity_check = 0;
     }
     return true;
 }

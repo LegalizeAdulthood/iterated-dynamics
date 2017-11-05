@@ -1027,7 +1027,7 @@ int Bifurcation()
 
     filter_cycles = (g_param_z1.x <= 0) ? DEFAULTFILTER : (long)g_param_z1.x;
     half_time_check = false;
-    if (periodicitycheck && (unsigned long)g_max_iterations < filter_cycles)
+    if (g_periodicity_check && (unsigned long)g_max_iterations < filter_cycles)
     {
         filter_cycles = (filter_cycles - g_max_iterations + 1) / 2;
         half_time_check = true;
@@ -1119,7 +1119,7 @@ static void verhulst()          // P. F. Verhulst (1845)
             {
                 return;
             }
-            if (periodicitycheck && Bif_Periodic(counter))
+            if (g_periodicity_check && Bif_Periodic(counter))
             {
                 break;
             }
@@ -1136,7 +1136,7 @@ static void verhulst()          // P. F. Verhulst (1845)
         }
     }
 
-    if (periodicitycheck)
+    if (g_periodicity_check)
     {
         Bif_Period_Init();
     }
@@ -1162,7 +1162,7 @@ static void verhulst()          // P. F. Verhulst (1845)
         {
             verhulst_array[ pixel_row ] ++;
         }
-        if (periodicitycheck && Bif_Periodic(counter))
+        if (g_periodicity_check && Bif_Periodic(counter))
         {
             if (pixel_row <= (unsigned int)g_i_y_stop)
             {

@@ -372,7 +372,7 @@ extern double                g_evolve_param_zoom;
 extern DComplex              g_param_z2;
 extern DComplex              g_param_z1;
 extern int                   g_patch_level;
-extern int                   periodicitycheck;
+extern int                   g_periodicity_check;
 struct fls;
 extern std::vector<fls>      pfls;
 extern int                   pixelpi;

@@ -2443,7 +2443,7 @@ static void save_history_info()
     current.initorbit[0]         = g_init_orbit.x               ;
     current.initorbit[1]         = g_init_orbit.y               ;
     current.useinitorbit         = useinitorbit              ;
-    current.periodicity          = (short)periodicitycheck          ;
+    current.periodicity          = (short)g_periodicity_check          ;
     current.pot16bit             = (short) (g_disk_16_bit ? 1 : 0);
     current.release              = (short)g_release                   ;
     current.save_release         = (short)save_release              ;
@@ -2626,7 +2626,7 @@ static void restore_history_info(int i)
     g_init_orbit.x           = last.initorbit[0]   ;
     g_init_orbit.y           = last.initorbit[1]   ;
     useinitorbit          = last.useinitorbit   ;
-    periodicitycheck      = last.periodicity    ;
+    g_periodicity_check      = last.periodicity    ;
     usr_periodicitycheck  = last.periodicity    ;
     g_disk_16_bit             = last.pot16bit != 0;
     g_release             = last.release        ;

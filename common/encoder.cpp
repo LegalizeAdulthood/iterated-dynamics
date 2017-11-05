@@ -937,7 +937,7 @@ static void setup_save_info(FRACTAL_INFO *save_info)
     save_info->initorbit[0] = g_init_orbit.x;
     save_info->initorbit[1] = g_init_orbit.y;
     save_info->useinitorbit = useinitorbit;
-    save_info->periodicity = (short) periodicitycheck;
+    save_info->periodicity = (short) g_periodicity_check;
     save_info->pot16bit = (short) (g_disk_16_bit ? 1 : 0);
     save_info->faspectratio = g_final_aspect_ratio;
     save_info->system = (short) save_system;

@@ -700,7 +700,7 @@ DComplex cdegree = { 3.0, 0.0 }, croot   = { 1.0, 0.0 };
 bool ComplexNewtonSetup()
 {
     threshold = .001;
-    periodicitycheck = 0;
+    g_periodicity_check = 0;
     if (g_params[0] != 0.0 || g_params[1] != 0.0 || g_params[2] != 0.0 ||
             g_params[3] != 0.0)
     {

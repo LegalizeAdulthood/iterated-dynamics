@@ -218,7 +218,7 @@ int trail_col = 0;
 //              These variables are external for speed's sake only
 // --------------------------------------------------------------------
 
-int periodicitycheck = 0;
+int g_periodicity_check = 0;
 
 // For periodicity testing, only in standard_fractal()
 int g_periodicity_next_saved_incr = 0;
@@ -838,7 +838,7 @@ int calcfract()
         g_invert = 3; // so values will not be changed if we come back
     }
 
-    g_close_enough = ddelmin*pow(2.0, -(double)(abs(periodicitycheck)));
+    g_close_enough = ddelmin*pow(2.0, -(double)(abs(g_periodicity_check)));
     rqlim_save = rqlim;
     rqlim2 = sqrt(rqlim);
     if (g_integer_fractal)          // for integer routines (lambda)
@@ -896,7 +896,7 @@ int calcfract()
         {
             // not a stand-alone
             // next two lines in case periodicity changed
-            g_close_enough = ddelmin*pow(2.0, -(double)(abs(periodicitycheck)));
+            g_close_enough = ddelmin*pow(2.0, -(double)(abs(g_periodicity_check)));
             g_l_close_enough = (long)(g_close_enough * g_fudge_factor); // "close enough" value
             setsymmetry(symmetry, false);
             timer(0, calctype); // non-standard fractal engine
@@ -1265,7 +1265,7 @@ static void perform_worklist()
         }
 
         // some common initialization for escape-time pixel level routines
-        g_close_enough = ddelmin*pow(2.0, -(double)(abs(periodicitycheck)));
+        g_close_enough = ddelmin*pow(2.0, -(double)(abs(g_periodicity_check)));
         g_l_close_enough = (long)(g_close_enough * g_fudge_factor); // "close enough" value
         g_keyboard_check_interval = g_max_keyboard_check_interval;
 
@@ -2113,7 +2113,7 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
             g_max_iterations = 16;
         }
     }
-    if (periodicitycheck == 0 || g_inside_color == ZMAG || g_inside_color == STARTRAIL)
+    if (g_periodicity_check == 0 || g_inside_color == ZMAG || g_inside_color == STARTRAIL)
     {
         g_old_color_iter = 2147483647L;       // don't check periodicity at all
     }
@@ -2883,7 +2883,7 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
     goto plot_pixel;
 
 plot_inside: // we're "inside"
-    if (periodicitycheck < 0 && caught_a_cycle)
+    if (g_periodicity_check < 0 && caught_a_cycle)
     {
         g_color_iter = 7;           // show periodicity
     }
