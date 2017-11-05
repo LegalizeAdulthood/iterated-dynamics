@@ -102,7 +102,7 @@ static bool get_min_max()
 {
     MINC = g_colors;
     MAXC = 0;
-    for (int yd = 0; yd < ydots; yd++)
+    for (int yd = 0; yd < g_logical_screen_y_dots; yd++)
     {
         if (driver_key_pressed())
         {
@@ -154,7 +154,7 @@ static void toggle_bars(bool *bars, int barwidth, int const *colour)
 
 int outline_stereo(BYTE *pixels, int linelen)
 {
-    if ((Y) >= ydots)
+    if ((Y) >= g_logical_screen_y_dots)
     {
         return (1);
     }
@@ -291,7 +291,7 @@ bool do_AutoStereo()
     AVGCT = 0L;
     AVG = AVGCT;
     barwidth  = 1 + g_logical_screen_x_dots / 200;
-    BARHEIGHT = 1 + ydots / 20;
+    BARHEIGHT = 1 + g_logical_screen_y_dots / 20;
     XCEN = g_logical_screen_x_dots/2;
     if (g_calibrate > 1)
     {
@@ -299,7 +299,7 @@ bool do_AutoStereo()
     }
     else
     {
-        YCEN = ydots/2;
+        YCEN = g_logical_screen_y_dots/2;
     }
 
     // box to average for calibration bars
@@ -312,7 +312,7 @@ bool do_AutoStereo()
     if (g_image_map)
     {
         g_out_line = outline_stereo;
-        while ((Y) < ydots)
+        while ((Y) < g_logical_screen_y_dots)
         {
             if (gifview())
             {
@@ -325,7 +325,7 @@ bool do_AutoStereo()
     {
         std::vector<BYTE> buf;
         buf.resize(g_logical_screen_x_dots);
-        while (Y < ydots)
+        while (Y < g_logical_screen_y_dots)
         {
             if (driver_key_pressed())
             {

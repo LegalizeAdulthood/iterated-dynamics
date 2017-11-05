@@ -370,7 +370,7 @@ void plot3dcrosseyedA(int x, int y, int color)
     {
         x += g_logical_screen_x_dots/2;
     }
-    if (g_row_count >= ydots/2)
+    if (g_row_count >= g_logical_screen_y_dots/2)
     {
         // hidden surface kludge
         if (getcolor(x, y) != 0)
@@ -394,7 +394,7 @@ void plot3dcrosseyedB(int x, int y, int color)
 
 void plot3dcrosseyedC(int x, int y, int color)
 {
-    if (g_row_count >= ydots/2)
+    if (g_row_count >= g_logical_screen_y_dots/2)
     {
         // hidden surface kludge
         if (getcolor(x, y) != 0)
@@ -464,7 +464,7 @@ void plot_setup()
 
     xshift = (int)((XSHIFT * (double)g_logical_screen_x_dots)/100);
     xshift1 = xshift;
-    yshift = (int)((YSHIFT * (double)ydots)/100);
+    yshift = (int)((YSHIFT * (double)g_logical_screen_y_dots)/100);
     yshift1 = yshift;
 
     if (g_glasses_type)
@@ -506,7 +506,7 @@ void plot_setup()
     {
         xxadjust = (int)((xtrans* (double)g_logical_screen_x_dots)/100);
     }
-    yyadjust = (int)(-(ytrans* (double)ydots)/100);
+    yyadjust = (int)(-(ytrans* (double)g_logical_screen_y_dots)/100);
 
     if (g_map_set)
     {

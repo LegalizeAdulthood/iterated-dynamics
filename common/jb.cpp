@@ -81,7 +81,7 @@ JulibrotSetup()
     x_per_inchfp = (g_x_min - g_x_max) / g_julibrot_width_fp;
     y_per_inchfp = (g_y_max - g_y_min) / g_julibrot_height_fp;
     inch_per_xdotfp = g_julibrot_width_fp / g_logical_screen_x_dots;
-    inch_per_ydotfp = g_julibrot_height_fp / ydots;
+    inch_per_ydotfp = g_julibrot_height_fp / g_logical_screen_y_dots;
     initzfp = g_julibrot_origin_fp - (g_julibrot_depth_fp / 2);
     if (g_julibrot_3d_mode == 0)
     {
@@ -137,7 +137,7 @@ JulibrotSetup()
         x_per_inch = (long)((g_x_min - g_x_max) / g_julibrot_width_fp * fg);
         y_per_inch = (long)((g_y_max - g_y_min) / g_julibrot_height_fp * fg);
         inch_per_xdot = (long)((g_julibrot_width_fp / g_logical_screen_x_dots) * fg16);
-        inch_per_ydot = (long)((g_julibrot_height_fp / ydots) * fg16);
+        inch_per_ydot = (long)((g_julibrot_height_fp / g_logical_screen_y_dots) * fg16);
         initz = origin - (depth / 2);
         if (g_julibrot_3d_mode == 0)
         {
@@ -452,7 +452,7 @@ Std4dFractal()
     }
 
     long y = 0;
-    for (int ydot = (ydots >> 1) - 1; ydot >= 0; ydot--, y -= inch_per_ydot)
+    for (int ydot = (g_logical_screen_y_dots >> 1) - 1; ydot >= 0; ydot--, y -= inch_per_ydot)
     {
         plotted = 0;
         x = -(width >> 1);
@@ -465,7 +465,7 @@ Std4dFractal()
                 return (-1);
             }
             g_col = g_logical_screen_x_dots - g_col - 1;
-            g_row = ydots - g_row - 1;
+            g_row = g_logical_screen_y_dots - g_row - 1;
             if (zline(-x, -y) < 0)
             {
                 return (-1);
@@ -505,7 +505,7 @@ Std4dfpFractal()
     }
 
     double y = 0.0;
-    for (int ydot = (ydots >> 1) - 1; ydot >= 0; ydot--, y -= inch_per_ydotfp)
+    for (int ydot = (g_logical_screen_y_dots >> 1) - 1; ydot >= 0; ydot--, y -= inch_per_ydotfp)
     {
         plotted = 0;
         x = -g_julibrot_width_fp / 2;
@@ -518,7 +518,7 @@ Std4dfpFractal()
                 return (-1);
             }
             g_col = g_logical_screen_x_dots - g_col - 1;
-            g_row = ydots - g_row - 1;
+            g_row = g_logical_screen_y_dots - g_row - 1;
             if (zlinefp(-x, -y) < 0)
             {
                 return (-1);

@@ -556,11 +556,11 @@ bool MandelbnSetup()
 
     // bnydel = (bnymax - bny3rd)/(ydots-1)
     sub_bn(bnydel, bnymax, bny3rd);
-    div_a_bn_int(bnydel, (U16)(ydots - 1));
+    div_a_bn_int(bnydel, (U16)(g_logical_screen_y_dots - 1));
 
     // bnxdel2 = (bnx3rd - bnxmin)/(ydots-1)
     sub_bn(bnxdel2, bnx3rd, bnxmin);
-    div_a_bn_int(bnxdel2, (U16)(ydots - 1));
+    div_a_bn_int(bnxdel2, (U16)(g_logical_screen_y_dots - 1));
 
     // bnydel2 = (bny3rd - bnymin)/(xdots-1)
     sub_bn(bnydel2, bny3rd, bnymin);
@@ -643,11 +643,11 @@ bool MandelbfSetup()
 
     // bfydel = (bfymax - bfy3rd)/(ydots-1)
     sub_bf(bfydel, g_bf_y_max, g_bf_y_3rd);
-    div_a_bf_int(bfydel, (U16)(ydots - 1));
+    div_a_bf_int(bfydel, (U16)(g_logical_screen_y_dots - 1));
 
     // bfxdel2 = (bfx3rd - bfxmin)/(ydots-1)
     sub_bf(bfxdel2, g_bf_x_3rd, g_bf_x_min);
-    div_a_bf_int(bfxdel2, (U16)(ydots - 1));
+    div_a_bf_int(bfxdel2, (U16)(g_logical_screen_y_dots - 1));
 
     // bfydel2 = (bfy3rd - bfymin)/(xdots-1)
     sub_bf(bfydel2, g_bf_y_3rd, g_bf_y_min);

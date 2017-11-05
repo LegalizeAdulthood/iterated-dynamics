@@ -23,7 +23,7 @@
                                                                          * Number 0 <= r < n */
 #define MAX_ANTS        256
 #define XO              (g_logical_screen_x_dots/2)
-#define YO              (ydots/2)
+#define YO              (g_logical_screen_y_dots/2)
 #define DIRS            4
 #define INNER_LOOP      100
 
@@ -144,7 +144,7 @@ void TurkMite1(int maxtur, int rule_len, char const *ru, long maxpts, long wait)
         {
             dir[g_color] = RANDOM(DIRS);
             x[g_color] = RANDOM(g_logical_screen_x_dots);
-            y[g_color] = RANDOM(ydots);
+            y[g_color] = RANDOM(g_logical_screen_y_dots);
         }
     }
     maxpts = maxpts / (long) INNER_LOOP;
@@ -209,7 +209,7 @@ void TurkMite1(int maxtur, int rule_len, char const *ru, long maxpts, long wait)
                     idir &= 3;
                     if (!antwrap)
                     {
-                        if ((idir == 0 && iy == ydots - 1) ||
+                        if ((idir == 0 && iy == g_logical_screen_y_dots - 1) ||
                                 (idir == 1 && ix == g_logical_screen_x_dots - 1) ||
                                 (idir == 2 && iy == 0) ||
                                 (idir == 3 && ix == 0))
@@ -236,7 +236,7 @@ void TurkMite1(int maxtur, int rule_len, char const *ru, long maxpts, long wait)
                     idir &= 3;
                     if (!antwrap)
                     {
-                        if ((idir == 0 && iy == ydots - 1) ||
+                        if ((idir == 0 && iy == g_logical_screen_y_dots - 1) ||
                                 (idir == 1 && ix == g_logical_screen_x_dots - 1) ||
                                 (idir == 2 && iy == 0) ||
                                 (idir == 3 && ix == 0))
@@ -295,7 +295,7 @@ void TurkMite2(int maxtur, int rule_len, char const *ru, long maxpts, long wait)
             dir[color] = RANDOM(DIRS);
             rule[color] = (rand() << RANDOM(2)) | RANDOM(2);
             x[color] = RANDOM(g_logical_screen_x_dots);
-            y[color] = RANDOM(ydots);
+            y[color] = RANDOM(g_logical_screen_y_dots);
         }
     }
     else
@@ -395,7 +395,7 @@ void TurkMite2(int maxtur, int rule_len, char const *ru, long maxpts, long wait)
                 idir &= 3;
                 if (!antwrap)
                 {
-                    if ((idir == 0 && iy == ydots - 1) ||
+                    if ((idir == 0 && iy == g_logical_screen_y_dots - 1) ||
                             (idir == 1 && ix == g_logical_screen_x_dots - 1) ||
                             (idir == 2 && iy == 0) ||
                             (idir == 3 && ix == 0))
@@ -435,16 +435,16 @@ std::string get_rule()
 
 int ant()
 {
-    if (g_logical_screen_x_dots != s_last_xdots || ydots != s_last_ydots)
+    if (g_logical_screen_x_dots != s_last_xdots || g_logical_screen_y_dots != s_last_ydots)
     {
         s_last_xdots = g_logical_screen_x_dots;
-        s_last_ydots = ydots;
+        s_last_ydots = g_logical_screen_y_dots;
 
         free_ant_storage();
         for (int i = 0; i < DIRS; i++)
         {
             s_incx[i].resize(g_logical_screen_x_dots + 2);
-            s_incy[i].resize(ydots + 2);
+            s_incy[i].resize(g_logical_screen_y_dots + 2);
         }
     }
 
@@ -469,21 +469,21 @@ int ant()
     }
     s_incx[1][0] = g_logical_screen_x_dots-1; // wrap from left of the screen to right
 
-    for (int i = 0; i < ydots; i++)
+    for (int i = 0; i < g_logical_screen_y_dots; i++)
     {
         s_incy[1][i] = i;
         s_incy[3][i] = i;
     }
-    for (int i = 0; i < ydots; i++)
+    for (int i = 0; i < g_logical_screen_y_dots; i++)
     {
         s_incy[0][i] = i + 1;
     }
-    s_incy[0][ydots - 1] = 0; // wrap from the top of the screen to the bottom
-    for (int i = 1; i < ydots; i++)
+    s_incy[0][g_logical_screen_y_dots - 1] = 0; // wrap from the top of the screen to the bottom
+    for (int i = 1; i < g_logical_screen_y_dots; i++)
     {
         s_incy[2][i] = i - 1;
     }
-    s_incy[2][0] = ydots - 1; // wrap from the bottom of the screen to the top
+    s_incy[2][0] = g_logical_screen_y_dots - 1; // wrap from the bottom of the screen to the top
     int const old_help_mode = g_help_mode;
     g_help_mode = ANTCOMMANDS;
     long const maxpts = labs(static_cast<long>(g_params[1]));

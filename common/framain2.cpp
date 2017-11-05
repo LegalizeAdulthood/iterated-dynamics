@@ -67,11 +67,11 @@ main_state big_while_loop(bool *const kbdmore, bool *const stacked, bool const r
                    sizeof(g_video_entry));
             g_dot_mode = g_video_entry.dotmode;     // assembler dot read/write
             g_logical_screen_x_dots   = g_video_entry.xdots;       // # dots across the screen
-            ydots   = g_video_entry.ydots;       // # dots down the screen
+            g_logical_screen_y_dots   = g_video_entry.ydots;       // # dots down the screen
             g_colors  = g_video_entry.colors;      // # colors available
             g_dot_mode %= 100;
             g_screen_x_dots  = g_logical_screen_x_dots;
-            g_screen_y_dots  = ydots;
+            g_screen_y_dots  = g_logical_screen_y_dots;
             g_logical_screen_y_offset = 0;
             g_logical_screen_x_offset = 0;
             g_color_cycle_range_hi = (g_color_cycle_range_hi < g_colors) ? g_color_cycle_range_hi : g_colors - 1;
@@ -104,17 +104,17 @@ main_state big_while_loop(bool *const kbdmore, bool *const stacked, bool const r
                     return main_state::RESTORE_START;
                 }
 
-                if (g_virtual_screens && (g_logical_screen_x_dots > g_screen_x_dots || ydots > g_screen_y_dots))
+                if (g_virtual_screens && (g_logical_screen_x_dots > g_screen_x_dots || g_logical_screen_y_dots > g_screen_y_dots))
                 {
                     char buf[120];
                     static char msgxy1[] = {"Can't set virtual line that long, width cut down."};
                     static char msgxy2[] = {"Not enough video memory for that many lines, height cut down."};
-                    if (g_logical_screen_x_dots > g_screen_x_dots && ydots > g_screen_y_dots)
+                    if (g_logical_screen_x_dots > g_screen_x_dots && g_logical_screen_y_dots > g_screen_y_dots)
                     {
                         sprintf(buf, "%s\n%s", msgxy1, msgxy2);
                         stopmsg(STOPMSG_NONE, buf);
                     }
-                    else if (ydots > g_screen_y_dots)
+                    else if (g_logical_screen_y_dots > g_screen_y_dots)
                     {
                         stopmsg(STOPMSG_NONE, msgxy2);
                     }
@@ -124,9 +124,9 @@ main_state big_while_loop(bool *const kbdmore, bool *const stacked, bool const r
                     }
                 }
                 g_logical_screen_x_dots = g_screen_x_dots;
-                ydots = g_screen_y_dots;
+                g_logical_screen_y_dots = g_screen_y_dots;
                 g_video_entry.xdots = g_logical_screen_x_dots;
-                g_video_entry.ydots = ydots;
+                g_video_entry.ydots = g_logical_screen_y_dots;
             }
 
             if (g_save_dac || g_colors_preloaded)
@@ -166,23 +166,23 @@ main_state big_while_loop(bool *const kbdmore, bool *const stacked, bool const r
                 if (g_logical_screen_x_dots != 0)
                 {
                     // xdots specified
-                    ydots = g_view_y_dots;
-                    if (ydots == 0) // calc ydots?
+                    g_logical_screen_y_dots = g_view_y_dots;
+                    if (g_logical_screen_y_dots == 0) // calc ydots?
                     {
-                        ydots = (int)((double)g_logical_screen_x_dots * ftemp + 0.5);
+                        g_logical_screen_y_dots = (int)((double)g_logical_screen_x_dots * ftemp + 0.5);
                     }
                 }
                 else if (g_final_aspect_ratio <= g_screen_aspect)
                 {
                     g_logical_screen_x_dots = (int)((double)g_screen_x_dots / g_view_reduction + 0.5);
-                    ydots = (int)((double)g_logical_screen_x_dots * ftemp + 0.5);
+                    g_logical_screen_y_dots = (int)((double)g_logical_screen_x_dots * ftemp + 0.5);
                 }
                 else
                 {
-                    ydots = (int)((double)g_screen_y_dots / g_view_reduction + 0.5);
-                    g_logical_screen_x_dots = (int)((double)ydots / ftemp + 0.5);
+                    g_logical_screen_y_dots = (int)((double)g_screen_y_dots / g_view_reduction + 0.5);
+                    g_logical_screen_x_dots = (int)((double)g_logical_screen_y_dots / ftemp + 0.5);
                 }
-                if (g_logical_screen_x_dots > g_screen_x_dots || ydots > g_screen_y_dots)
+                if (g_logical_screen_x_dots > g_screen_x_dots || g_logical_screen_y_dots > g_screen_y_dots)
                 {
                     stopmsg(STOPMSG_NONE,
                         "View window too large; using full screen.");
@@ -190,10 +190,10 @@ main_state big_while_loop(bool *const kbdmore, bool *const stacked, bool const r
                     g_view_x_dots = g_screen_x_dots;
                     g_logical_screen_x_dots = g_view_x_dots;
                     g_view_y_dots = g_screen_y_dots;
-                    ydots = g_view_y_dots;
+                    g_logical_screen_y_dots = g_view_y_dots;
                 }
                 else if (((g_logical_screen_x_dots <= 1) // changed test to 1, so a 2x2 window will
-                          || (ydots <= 1)) // work with the sound feature
+                          || (g_logical_screen_y_dots <= 1)) // work with the sound feature
                          && !(g_evolving&1))
                 {
                     // so ssg works
@@ -202,7 +202,7 @@ main_state big_while_loop(bool *const kbdmore, bool *const stacked, bool const r
                         "View window too small; using full screen.");
                     g_view_window = false;
                     g_logical_screen_x_dots = g_screen_x_dots;
-                    ydots = g_screen_y_dots;
+                    g_logical_screen_y_dots = g_screen_y_dots;
                 }
                 if ((g_evolving & 1) && (curfractalspecific->flags & INFCALC))
                 {
@@ -211,23 +211,23 @@ main_state big_while_loop(bool *const kbdmore, bool *const stacked, bool const r
                     g_evolving = g_evolving -1;
                     g_view_window = false;
                     g_logical_screen_x_dots = g_screen_x_dots;
-                    ydots = g_screen_y_dots;
+                    g_logical_screen_y_dots = g_screen_y_dots;
                 }
                 if (g_evolving & 1)
                 {
                     g_logical_screen_x_dots = (g_screen_x_dots / g_evolve_image_grid_size)-!((g_evolving & NOGROUT)/NOGROUT);
                     g_logical_screen_x_dots = g_logical_screen_x_dots - (g_logical_screen_x_dots % 4); // trim to multiple of 4 for SSG
-                    ydots = (g_screen_y_dots / g_evolve_image_grid_size)-!((g_evolving & NOGROUT)/NOGROUT);
-                    ydots = ydots - (ydots % 4);
+                    g_logical_screen_y_dots = (g_screen_y_dots / g_evolve_image_grid_size)-!((g_evolving & NOGROUT)/NOGROUT);
+                    g_logical_screen_y_dots = g_logical_screen_y_dots - (g_logical_screen_y_dots % 4);
                 }
                 else
                 {
                     g_logical_screen_x_offset = (g_screen_x_dots - g_logical_screen_x_dots) / 2;
-                    g_logical_screen_y_offset = (g_screen_y_dots - ydots) / 3;
+                    g_logical_screen_y_offset = (g_screen_y_dots - g_logical_screen_y_dots) / 3;
                 }
             }
             g_x_size_dots = g_logical_screen_x_dots - 1;            // convert just once now
-            g_y_size_dots = ydots - 1;
+            g_y_size_dots = g_logical_screen_y_dots - 1;
         }
         // assume we save next time (except jb)
         g_save_dac = (g_save_dac == 0) ? 2 : 1;
@@ -387,7 +387,7 @@ main_state big_while_loop(bool *const kbdmore, bool *const stacked, bool const r
                     g_logical_screen_x_offset       = g_evolve_info.sxoffs;
                     g_logical_screen_y_offset       = g_evolve_info.syoffs;
                     g_logical_screen_x_dots        = g_evolve_info.xdots;
-                    ydots        = g_evolve_info.ydots;
+                    g_logical_screen_y_dots        = g_evolve_info.ydots;
                     g_evolve_image_grid_size = g_evolve_info.image_grid_size;
                     g_evolve_this_generation_random_seed = g_evolve_info.this_generation_random_seed;
                     g_evolve_max_random_mutation = g_evolve_info.max_random_mutation;
@@ -417,7 +417,7 @@ main_state big_while_loop(bool *const kbdmore, bool *const stacked, bool const r
                 g_evolve_dist_per_y = g_evolve_y_parameter_range /(g_evolve_image_grid_size -1);
                 grout  = !((g_evolving & NOGROUT)/NOGROUT);
                 tmpxdots = g_logical_screen_x_dots+grout;
-                tmpydots = ydots+grout;
+                tmpydots = g_logical_screen_y_dots+grout;
                 gridsqr = g_evolve_image_grid_size * g_evolve_image_grid_size;
                 while (ecount < gridsqr)
                 {
@@ -456,7 +456,7 @@ done:
                     g_evolve_info.sxoffs          = (short)g_logical_screen_x_offset;
                     g_evolve_info.syoffs          = (short)g_logical_screen_y_offset;
                     g_evolve_info.xdots           = (short)g_logical_screen_x_dots;
-                    g_evolve_info.ydots           = (short)ydots;
+                    g_evolve_info.ydots           = (short)g_logical_screen_y_dots;
                     g_evolve_info.image_grid_size = (short) g_evolve_image_grid_size;
                     g_evolve_info.this_generation_random_seed = (short) g_evolve_this_generation_random_seed;
                     g_evolve_info.max_random_mutation = g_evolve_max_random_mutation;
@@ -467,7 +467,7 @@ done:
                 g_logical_screen_y_offset = 0;
                 g_logical_screen_x_offset = g_logical_screen_y_offset;
                 g_logical_screen_x_dots = g_screen_x_dots;
-                ydots = g_screen_y_dots; // otherwise save only saves a sub image and boxes get clipped
+                g_logical_screen_y_dots = g_screen_y_dots; // otherwise save only saves a sub image and boxes get clipped
 
                 // set up for 1st selected image, this reuses px and py
                 g_evolve_param_grid_y = g_evolve_image_grid_size /2;
@@ -1783,13 +1783,13 @@ static main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdm
         oldsxoffs = g_logical_screen_x_offset;
         oldsyoffs = g_logical_screen_y_offset;
         oldxdots = g_logical_screen_x_dots;
-        oldydots = ydots;
+        oldydots = g_logical_screen_y_dots;
         oldpx = g_evolve_param_grid_x;
         oldpy = g_evolve_param_grid_y;
         g_logical_screen_y_offset = 0;
         g_logical_screen_x_offset = g_logical_screen_y_offset;
         g_logical_screen_x_dots = g_screen_x_dots;
-        ydots = g_screen_y_dots; // for full screen save and pointer move stuff
+        g_logical_screen_y_dots = g_screen_y_dots; // for full screen save and pointer move stuff
         g_evolve_param_grid_y = g_evolve_image_grid_size / 2;
         g_evolve_param_grid_x = g_evolve_param_grid_y;
         param_history(1); // restore old history
@@ -1803,7 +1803,7 @@ static main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdm
         g_logical_screen_x_offset = oldsxoffs;
         g_logical_screen_y_offset = oldsyoffs;
         g_logical_screen_x_dots = oldxdots;
-        ydots = oldydots;
+        g_logical_screen_y_dots = oldydots;
         copy_genes_to_bank(gene);
         return main_state::CONTINUE;
     }

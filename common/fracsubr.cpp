@@ -75,14 +75,14 @@ void set_grid_pointers()
     g_grid_x0.resize(g_logical_screen_x_dots);
     g_grid_y1.resize(g_logical_screen_x_dots);
 
-    g_grid_y0.resize(ydots);
-    g_grid_x1.resize(ydots);
+    g_grid_y0.resize(g_logical_screen_y_dots);
+    g_grid_x1.resize(g_logical_screen_y_dots);
 
     g_l_x0.resize(g_logical_screen_x_dots);
     g_l_y1.resize(g_logical_screen_x_dots);
 
-    g_l_y0.resize(ydots);
-    g_l_x1.resize(ydots);
+    g_l_y0.resize(g_logical_screen_y_dots);
+    g_l_x1.resize(g_logical_screen_y_dots);
     set_pixel_calc_functions();
 }
 
@@ -99,7 +99,7 @@ void fill_dx_array()
             g_grid_x0[i] = (double)(g_grid_x0[0] + i*g_delta_x);
             g_grid_y1[i] = (double)(g_grid_y1[0] - i*g_delta_y2);
         }
-        for (int i = 1; i < ydots; i++)
+        for (int i = 1; i < g_logical_screen_y_dots; i++)
         {
             g_grid_y0[i] = (double)(g_grid_y0[0] - i*g_delta_y);
             g_grid_x1[i] = (double)(g_grid_x1[0] + i*g_delta_x2);
@@ -122,7 +122,7 @@ void fill_lx_array()
             g_l_x0[i] = g_l_x0[i-1] + g_l_delta_x;
             g_l_y1[i] = g_l_y1[i-1] - g_l_delta_y2;
         }
-        for (int i = 1; i < ydots; i++)
+        for (int i = 1; i < g_logical_screen_y_dots; i++)
         {
             g_l_y0[i] = g_l_y0[i-1] - g_l_delta_y;
             g_l_x1[i] = g_l_x1[i-1] + g_l_delta_x2;
@@ -165,7 +165,7 @@ void calcfracinit() // initialize a *pile* of stuff for fractal calculation
     // set up grid array compactly leaving space at end
     // space req for grid is 2(xdots+ydots)*sizeof(long or double)
     // space available in extraseg is 65536 Bytes
-    long xytemp = g_logical_screen_x_dots + ydots;
+    long xytemp = g_logical_screen_x_dots + g_logical_screen_y_dots;
     if ((!g_user_float_flag && (xytemp*sizeof(long) > 32768)) ||
             (g_user_float_flag && (xytemp*sizeof(double) > 32768)) ||
             g_debug_flag == debug_flags::prevent_coordinate_grid)
@@ -493,8 +493,8 @@ init_restart:
             fill_lx_array();   // fill up the x,y grids
             // past max res?  check corners within 10% of expected
             if (ratio_bad((double)g_l_x0[g_logical_screen_x_dots-1]-g_l_x_min, (double)g_l_x_max-g_l_x_3rd)
-                    || ratio_bad((double)g_l_y0[ydots-1]-g_l_y_max, (double)g_l_y_3rd-g_l_y_max)
-                    || ratio_bad((double)g_l_x1[(ydots >> 1)-1], ((double)g_l_x_3rd-g_l_x_min)/2)
+                    || ratio_bad((double)g_l_y0[g_logical_screen_y_dots-1]-g_l_y_max, (double)g_l_y_3rd-g_l_y_max)
+                    || ratio_bad((double)g_l_x1[(g_logical_screen_y_dots >> 1)-1], ((double)g_l_x_3rd-g_l_x_min)/2)
                     || ratio_bad((double)g_l_y1[(g_logical_screen_x_dots >> 1)-1], ((double)g_l_y_min-g_l_y_3rd)/2))
             {
 expand_retry:
@@ -515,10 +515,10 @@ expand_retry:
             } // end if ratio bad
 
             // re-set corners to match reality
-            g_l_x_max = g_l_x0[g_logical_screen_x_dots-1] + g_l_x1[ydots-1];
-            g_l_y_min = g_l_y0[ydots-1] + g_l_y1[g_logical_screen_x_dots-1];
-            g_l_x_3rd = g_l_x_min + g_l_x1[ydots-1];
-            g_l_y_3rd = g_l_y0[ydots-1];
+            g_l_x_max = g_l_x0[g_logical_screen_x_dots-1] + g_l_x1[g_logical_screen_y_dots-1];
+            g_l_y_min = g_l_y0[g_logical_screen_y_dots-1] + g_l_y1[g_logical_screen_x_dots-1];
+            g_l_x_3rd = g_l_x_min + g_l_x1[g_logical_screen_y_dots-1];
+            g_l_y_3rd = g_l_y0[g_logical_screen_y_dots-1];
             g_x_min = fudgetodouble(g_l_x_min);
             g_x_max = fudgetodouble(g_l_x_max);
             g_x_3rd = fudgetodouble(g_l_x_3rd);
@@ -543,7 +543,7 @@ expand_retry:
                 dx0 = (double)(dx0 + (double)g_delta_x);
                 dy1 = (double)(dy1 - (double)g_delta_y2);
             }
-            for (int i = 1; i < ydots; i++)
+            for (int i = 1; i < g_logical_screen_y_dots; i++)
             {
                 dy0 = (double)(dy0 - (double)g_delta_y);
                 dx1 = (double)(dx1 + (double)g_delta_x2);
@@ -610,10 +610,10 @@ expand_retry:
             fill_dx_array();       // fill up the x, y grids
 
             // re-set corners to match reality
-            g_x_max = (double)(g_x_min + (g_logical_screen_x_dots-1)*g_delta_x + (ydots-1)*g_delta_x2);
-            g_y_min = (double)(g_y_max - (ydots-1)*g_delta_y - (g_logical_screen_x_dots-1)*g_delta_y2);
-            g_x_3rd = (double)(g_x_min + (ydots-1)*g_delta_x2);
-            g_y_3rd = (double)(g_y_max - (ydots-1)*g_delta_y);
+            g_x_max = (double)(g_x_min + (g_logical_screen_x_dots-1)*g_delta_x + (g_logical_screen_y_dots-1)*g_delta_x2);
+            g_y_min = (double)(g_y_max - (g_logical_screen_y_dots-1)*g_delta_y - (g_logical_screen_x_dots-1)*g_delta_y2);
+            g_x_3rd = (double)(g_x_min + (g_logical_screen_y_dots-1)*g_delta_x2);
+            g_y_3rd = (double)(g_y_max - (g_logical_screen_y_dots-1)*g_delta_y);
 
         } // end else
     } // end if not plasma
@@ -1688,7 +1688,7 @@ static void plotdorbit(double dx, double dy, int color)
         }
         else if ((g_sound_flag & SOUNDFLAG_ORBITMASK) > SOUNDFLAG_X)     // sound = y or z
         {
-            w_snd((int)(j*1000/ydots+g_base_hertz));
+            w_snd((int)(j*1000/g_logical_screen_y_dots+g_base_hertz));
         }
         else if (g_orbit_delay > 0)
         {
@@ -1966,13 +1966,13 @@ int ssg_blocksize() // used by solidguessing and by zoom panning
     // blocksize 4 if <300 rows, 8 if 300-599, 16 if 600-1199, 32 if >=1200
     blocksize = 4;
     i = 300;
-    while (i <= ydots)
+    while (i <= g_logical_screen_y_dots)
     {
         blocksize += blocksize;
         i += i;
     }
     // increase blocksize if prefix array not big enough
-    while (blocksize*(maxxblk-2) < g_logical_screen_x_dots || blocksize*(maxyblk-2)*16 < ydots)
+    while (blocksize*(maxxblk-2) < g_logical_screen_x_dots || blocksize*(maxyblk-2)*16 < g_logical_screen_y_dots)
     {
         blocksize += blocksize;
     }

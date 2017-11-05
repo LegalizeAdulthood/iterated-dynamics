@@ -171,7 +171,7 @@ void make_batch_file()
         strcpy(inpcommandname, "test");
     }
     pxdots = g_logical_screen_x_dots;
-    pydots = ydots;
+    pydots = g_logical_screen_y_dots;
     ym = 1;
     xm = ym;
     if (g_make_parameter_file)
@@ -1034,7 +1034,7 @@ void write_batch_parms(char const *colorinf, bool colorsonly, int maxcolor, int 
         if (g_distance_estimator)
         {
             put_parm(" %s=%ld/%d/%d/%d", "distest", g_distance_estimator, g_distance_estimator_width_factor,
-                     g_distance_estimator_x_dots?g_distance_estimator_x_dots:g_logical_screen_x_dots, g_distance_estimator_y_dots?g_distance_estimator_y_dots:ydots);
+                     g_distance_estimator_x_dots?g_distance_estimator_x_dots:g_logical_screen_x_dots, g_distance_estimator_y_dots?g_distance_estimator_y_dots:g_logical_screen_y_dots);
         }
         if (g_old_demm_colors)
         {
@@ -1777,7 +1777,7 @@ int getprecbf(int rezflag)
 
     if (rezflag == CURRENTREZ)
     {
-        rez = ydots-1;
+        rez = g_logical_screen_y_dots-1;
     }
 
     // bfyydel = (bfymax - bfy3rd)/(ydots-1)
@@ -1833,7 +1833,7 @@ int getprecdbl(int rezflag)
 
     if (rezflag == CURRENTREZ)
     {
-        rez = ydots-1;
+        rez = g_logical_screen_y_dots-1;
     }
 
     ydel = ((LDBL)g_y_max - (LDBL)g_y_3rd)/rez;
@@ -2578,7 +2578,7 @@ void flip_image(int key)
         clear_zoombox(); // clear, don't copy, the zoombox
     }
     ixhalf = g_logical_screen_x_dots / 2;
-    iyhalf = ydots / 2;
+    iyhalf = g_logical_screen_y_dots / 2;
     switch (key)
     {
     case 24:            // control-X - reverse X-axis
@@ -2588,7 +2588,7 @@ void flip_image(int key)
             {
                 break;
             }
-            for (int j = 0; j < ydots; j++)
+            for (int j = 0; j < g_logical_screen_y_dots; j++)
             {
                 tempdot = getcolor(i, j);
                 g_put_color(i, j, getcolor(g_logical_screen_x_dots-1-i, j));
@@ -2623,8 +2623,8 @@ void flip_image(int key)
             for (int i = 0; i < g_logical_screen_x_dots; i++)
             {
                 tempdot = getcolor(i, j);
-                g_put_color(i, j, getcolor(i, ydots-1-j));
-                g_put_color(i, ydots-1-j, tempdot);
+                g_put_color(i, j, getcolor(i, g_logical_screen_y_dots-1-j));
+                g_put_color(i, g_logical_screen_y_dots-1-j, tempdot);
             }
         }
         g_save_x_min = g_x_3rd;
@@ -2652,11 +2652,11 @@ void flip_image(int key)
             {
                 break;
             }
-            for (int j = 0; j < ydots; j++)
+            for (int j = 0; j < g_logical_screen_y_dots; j++)
             {
                 tempdot = getcolor(i, j);
-                g_put_color(i, j, getcolor(g_logical_screen_x_dots-1-i, ydots-1-j));
-                g_put_color(g_logical_screen_x_dots-1-i, ydots-1-j, tempdot);
+                g_put_color(i, j, getcolor(g_logical_screen_x_dots-1-i, g_logical_screen_y_dots-1-j));
+                g_put_color(g_logical_screen_x_dots-1-i, g_logical_screen_y_dots-1-j, tempdot);
             }
         }
         g_save_x_min = g_x_max;
@@ -2761,7 +2761,7 @@ static char const *expand_var(char const *var, char *buf)
     }
     else if (strcmp(var, "ydots") == 0)   // 2 to 4 chars
     {
-        sprintf(buf, "%d", ydots);
+        sprintf(buf, "%d", g_logical_screen_y_dots);
         out = buf;
     }
     else if (strcmp(var, "vidkey") == 0)   // 2 to 3 chars

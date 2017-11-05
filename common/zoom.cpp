@@ -725,7 +725,7 @@ static int check_pan() // return 0 if can't, alignment requirement if can
 static void move_row(int fromrow, int torow, int col)
 {
     std::vector<BYTE> temp(g_logical_screen_x_dots, 0);
-    if (fromrow >= 0 && fromrow < ydots)
+    if (fromrow >= 0 && fromrow < g_logical_screen_y_dots)
     {
         int startcol = 0;
         int tocol = 0;
@@ -799,7 +799,7 @@ int init_pan_or_recalc(int do_zoomout) // decide to recalc, or to chg worklist &
     // add worklist entries for the new edges
     listfull = 0;
     int i = 0;
-    int j = ydots-1;
+    int j = g_logical_screen_y_dots-1;
     if (row < 0)
     {
         listfull |= add_worklist(0, g_logical_screen_x_dots-1, 0, 0, 0-row-1, 0, 0, 0);
@@ -807,8 +807,8 @@ int init_pan_or_recalc(int do_zoomout) // decide to recalc, or to chg worklist &
     }
     if (row > 0)
     {
-        listfull |= add_worklist(0, g_logical_screen_x_dots-1, 0, ydots-row, ydots-1, ydots-row, 0, 0);
-        j = ydots - row - 1;
+        listfull |= add_worklist(0, g_logical_screen_x_dots-1, 0, g_logical_screen_y_dots-row, g_logical_screen_y_dots-1, g_logical_screen_y_dots-row, 0, 0);
+        j = g_logical_screen_y_dots - row - 1;
     }
     if (col < 0)
     {
@@ -838,14 +838,14 @@ int init_pan_or_recalc(int do_zoomout) // decide to recalc, or to chg worklist &
     clearbox();
     if (row > 0)   // move image up
     {
-        for (int y = 0; y < ydots; ++y)
+        for (int y = 0; y < g_logical_screen_y_dots; ++y)
         {
             move_row(y+row, y, col);
         }
     }
     else             // move image down
     {
-        for (int y = ydots; --y >=0;)
+        for (int y = g_logical_screen_y_dots; --y >=0;)
         {
             move_row(y+row, y, col);
         }
@@ -870,9 +870,9 @@ static void restart_window(int wknum)
         xfrom = 0;
     }
     int yto = g_work_list[wknum].yystop;
-    if (yto >= ydots)
+    if (yto >= g_logical_screen_y_dots)
     {
-        yto = ydots - 1;
+        yto = g_logical_screen_y_dots - 1;
     }
     int xto = g_work_list[wknum].xxstop;
     if (xto >= g_logical_screen_x_dots)
@@ -895,7 +895,7 @@ static void fix_worklist() // fix out of bounds and symmetry related stuff
     for (int i = 0; i < g_num_work_list; ++i)
     {
         WORKLIST *wk = &g_work_list[i];
-        if (wk->yystart >= ydots || wk->yystop < 0
+        if (wk->yystart >= g_logical_screen_y_dots || wk->yystop < 0
                 || wk->xxstart >= g_logical_screen_x_dots || wk->xxstop < 0)
         {
             // offscreen, delete
@@ -936,10 +936,10 @@ static void fix_worklist() // fix out of bounds and symmetry related stuff
                 restart_window(i); // restart the no-longer sym part
             }
         }
-        if (wk->yystop >= ydots)
+        if (wk->yystop >= g_logical_screen_y_dots)
         {
             // partly off bottom edge
-            int j = ydots-1;
+            int j = g_logical_screen_y_dots-1;
             if ((wk->sym&1) != 0)
             {
                 // uses xaxis symmetry

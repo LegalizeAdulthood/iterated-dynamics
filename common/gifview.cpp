@@ -509,7 +509,7 @@ int pot_line(BYTE *pixels, int linelen)
     row = g_row_count;
     if ((saverowcount & 1) != 0)   // odd line
     {
-        row += ydots;
+        row += g_logical_screen_y_dots;
     }
     else if (!driver_diskp())     // even line - display the line too
     {

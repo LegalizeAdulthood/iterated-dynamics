@@ -42,7 +42,7 @@ int     g_dot_mode;                // video access method
 int     textsafe2;              // textsafe override from g_video_table
 int     g_screen_x_dots, g_screen_y_dots;         // # of dots on the physical screen
 int     g_logical_screen_x_offset, g_logical_screen_y_offset;         // physical top left of logical screen
-int     g_logical_screen_x_dots, ydots;           // # of dots on the logical screen
+int     g_logical_screen_x_dots, g_logical_screen_y_dots;           // # of dots on the logical screen
 double  g_x_size_dots, g_y_size_dots;         // xdots-1, ydots-1
 int     g_colors = 256;           // maximum colors available
 long    g_max_iterations;                  // try this many iterations
@@ -681,7 +681,7 @@ int timer(int timertype, int(*subrtn)(), ...)
                 timestring,
                 curfractalspecific->name,
                 g_logical_screen_x_dots,
-                ydots,
+                g_logical_screen_y_dots,
                 g_max_iterations);
         fprintf(fp, " time= %ld.%02ld secs\n", g_timer_interval/100, g_timer_interval%100);
         if (fp != nullptr)

@@ -560,7 +560,7 @@ extern int                   xxstop;
 extern long                  g_l_y_3rd;
 extern int                   yadjust;
 extern double                ycjul;
-extern int                   ydots;
+extern int                   g_logical_screen_y_dots;
 extern long                  g_l_y_max;
 extern long                  g_l_y_min;
 extern int                   yshift1;

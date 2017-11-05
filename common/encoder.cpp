@@ -370,7 +370,7 @@ bool encoder()
     }
 
     width = g_logical_screen_x_dots;
-    rowlimit = ydots;
+    rowlimit = g_logical_screen_y_dots;
     if (save16bit)
     {
         /* pot16bit info is stored as: file:    double width rows, right side
@@ -384,7 +384,7 @@ bool encoder()
     {
         goto oops;                // screen descriptor
     }
-    if (write2(&ydots, 2, 1, g_outfile) != 1)
+    if (write2(&g_logical_screen_y_dots, 2, 1, g_outfile) != 1)
     {
         goto oops;
     }
@@ -406,7 +406,7 @@ bool encoder()
     }
     else       // must risk loss of precision if numbers low
     {
-        i = (int)((((double) ydots / (double) g_logical_screen_x_dots) / g_final_aspect_ratio) * 64 - 14.5);
+        i = (int)((((double) g_logical_screen_y_dots / (double) g_logical_screen_x_dots) / g_final_aspect_ratio) * 64 - 14.5);
     }
     if (i < 1)
     {
@@ -515,7 +515,7 @@ bool encoder()
     {
         goto oops;
     }
-    if (write2(&ydots, 2, 1, g_outfile) != 1)
+    if (write2(&g_logical_screen_y_dots, 2, 1, g_outfile) != 1)
     {
         goto oops;
     }
@@ -625,7 +625,7 @@ bool encoder()
                 esave_info.sxoffs          = (short)g_logical_screen_x_offset;
                 esave_info.syoffs          = (short)g_logical_screen_y_offset;
                 esave_info.xdots           = (short)g_logical_screen_x_dots;
-                esave_info.ydots           = (short)ydots;
+                esave_info.ydots           = (short)g_logical_screen_y_dots;
                 esave_info.image_grid_size = (short) g_evolve_image_grid_size;
                 esave_info.evolving        = (short)g_evolving;
                 esave_info.this_generation_random_seed = (unsigned short) g_evolve_this_generation_random_seed;
@@ -1151,14 +1151,14 @@ static bool compress(int rowlimit)
 
     output((int)ClearCode);
 
-    for (int rownum = 0; rownum < ydots; rownum++)
+    for (int rownum = 0; rownum < g_logical_screen_y_dots; rownum++)
     {
         // scan through the dots
-        for (int ydot = rownum; ydot < rowlimit; ydot += ydots)
+        for (int ydot = rownum; ydot < rowlimit; ydot += g_logical_screen_y_dots)
         {
             for (int xdot = 0; xdot < g_logical_screen_x_dots; xdot++)
             {
-                if (save16bit == 0 || ydot < ydots)
+                if (save16bit == 0 || ydot < g_logical_screen_y_dots)
                 {
                     color = getcolor(xdot, ydot);
                 }
@@ -1246,7 +1246,7 @@ nomatch:
             if (tempkey && (tempkey != 's'))  // keyboard hit - bail out
             {
                 interrupted = true;
-                rownum = ydots;
+                rownum = g_logical_screen_y_dots;
                 break;
             }
             if (tempkey == 's')

@@ -923,8 +923,8 @@ void SetupParamBox()
     g_evolve_param_box_count = 0;
     g_evolve_param_zoom = ((double) g_evolve_image_grid_size -1.0)/2.0;
     // need to allocate 2 int arrays for g_box_x and g_box_y plus 1 byte array for values
-    int const num_box_values = (g_logical_screen_x_dots + ydots)*2;
-    int const num_values = g_logical_screen_x_dots + ydots + 2;
+    int const num_box_values = (g_logical_screen_x_dots + g_logical_screen_y_dots)*2;
+    int const num_values = g_logical_screen_x_dots + g_logical_screen_y_dots + 2;
 
     param_box_x.resize(num_box_values);
     param_box_y.resize(num_box_values);

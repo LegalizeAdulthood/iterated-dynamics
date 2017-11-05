@@ -404,7 +404,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
     if (g_overlay_3d)
     {
         g_init_mode = g_adapter;          // use previous adapter mode for overlays
-        if (g_file_x_dots > g_logical_screen_x_dots || g_file_y_dots > ydots)
+        if (g_file_x_dots > g_logical_screen_x_dots || g_file_y_dots > g_logical_screen_y_dots)
         {
             stopmsg(STOPMSG_NONE, "Can't overlay with a larger image");
             g_init_mode = -1;
@@ -563,7 +563,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
         g_logical_screen_x_offset       = blk_6_info.sxoffs;
         g_logical_screen_y_offset       = blk_6_info.syoffs;
         g_logical_screen_x_dots        = blk_6_info.xdots;
-        ydots        = blk_6_info.ydots;
+        g_logical_screen_y_dots        = blk_6_info.ydots;
         g_evolve_image_grid_size = blk_6_info.image_grid_size;
         g_evolve_this_generation_random_seed = blk_6_info.this_generation_random_seed;
         g_evolve_max_random_mutation = blk_6_info.max_random_mutation;
@@ -1779,7 +1779,7 @@ static void drawindow(int colour, window const *info)
     {
         // draw crosshairs
 #ifndef XFRACT
-        int cross_size = ydots / 45;
+        int cross_size = g_logical_screen_y_dots / 45;
         if (cross_size < 2)
         {
             cross_size = 2;
