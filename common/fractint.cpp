@@ -57,7 +57,7 @@ long    delx, dely;             // screen pixel increments
 long    delx2, dely2;           // screen pixel increments
 LDBL    delxx, delyy;           // screen pixel increments
 LDBL    delxx2, delyy2;         // screen pixel increments
-long    delmin;                 // for calcfrac/calcmand
+long    g_l_delta_min;                 // for calcfrac/calcmand
 double  g_delta_min;                // same as a double
 double  g_params[MAXPARAMS];       // parameters
 double  g_potential_params[3];            // three potential parameters

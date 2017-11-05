@@ -636,7 +636,7 @@ expand_retry:
     {
         g_delta_min = fabs((double)delyy2);
     }
-    delmin = fudgetolong(g_delta_min);
+    g_l_delta_min = fudgetolong(g_delta_min);
 
     // calculate factors which plot real values to screen co-ords
     // calcfrac.c plot_orbit routines have comments about this

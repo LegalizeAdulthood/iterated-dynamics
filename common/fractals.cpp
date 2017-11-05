@@ -959,7 +959,7 @@ UnityFractal()
 {
 #if !defined(XFRACT)
     XXOne = multiply(g_l_old_z.x, g_l_old_z.x, g_bit_shift) + multiply(g_l_old_z.y, g_l_old_z.y, g_bit_shift);
-    if ((XXOne > g_fudge_two) || (labs(XXOne - g_fudge_one) < delmin))
+    if ((XXOne > g_fudge_two) || (labs(XXOne - g_fudge_one) < g_l_delta_min))
     {
         return 1;
     }
