@@ -451,11 +451,11 @@ int read_overlay()      // read overlay/3D files, if reqr'd
         }
     }
 
-    resume_data.clear();
+    g_resume_data.clear();
 
     if (blk_2_info.got_data)
     {
-        resume_data = blk_2_info.resume_data;
+        g_resume_data = blk_2_info.resume_data;
         resume_len = blk_2_info.length;
     }
 

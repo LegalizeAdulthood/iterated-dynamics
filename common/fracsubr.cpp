@@ -1328,7 +1328,7 @@ int put_resume(int len, ...)
 {
     va_list arg_marker;
 
-    if (resume_data.empty())
+    if (g_resume_data.empty())
     {
         return (-1);
     }
@@ -1337,7 +1337,7 @@ int put_resume(int len, ...)
     while (len)
     {
         BYTE const *source_ptr = va_arg(arg_marker, BYTE *);
-        std::copy(&source_ptr[0], &source_ptr[len], &resume_data[resume_len]);
+        std::copy(&source_ptr[0], &source_ptr[len], &g_resume_data[resume_len]);
         resume_len += len;
         len = va_arg(arg_marker, int);
     }
@@ -1347,8 +1347,8 @@ int put_resume(int len, ...)
 
 int alloc_resume(int alloclen, int version)
 {
-    resume_data.clear();
-    resume_data.resize(sizeof(int)*alloclen);
+    g_resume_data.clear();
+    g_resume_data.resize(sizeof(int)*alloclen);
     resume_len = 0;
     put_resume(sizeof(version), &version, 0);
     g_calc_status = calc_status_value::RESUMABLE;
@@ -1359,7 +1359,7 @@ int get_resume(int len, ...)
 {
     va_list arg_marker;
 
-    if (resume_data.empty())
+    if (g_resume_data.empty())
     {
         return (-1);
     }
@@ -1367,7 +1367,7 @@ int get_resume(int len, ...)
     while (len)
     {
         BYTE *dest_ptr = va_arg(arg_marker, BYTE *);
-        std::copy(&resume_data[resume_offset], &resume_data[resume_offset + len], &dest_ptr[0]);
+        std::copy(&g_resume_data[resume_offset], &g_resume_data[resume_offset + len], &dest_ptr[0]);
         resume_offset += len;
         len = va_arg(arg_marker, int);
     }
@@ -1378,7 +1378,7 @@ int get_resume(int len, ...)
 int start_resume()
 {
     int version;
-    if (resume_data.empty())
+    if (g_resume_data.empty())
     {
         return (-1);
     }
@@ -1389,7 +1389,7 @@ int start_resume()
 
 void end_resume()
 {
-    resume_data.clear();
+    g_resume_data.clear();
 }
 
 

@@ -141,7 +141,7 @@ bool g_reset_periodicity = false;         // true if escape time pixel rtn to re
 int g_keyboard_check_interval = 0;
 int g_max_keyboard_check_interval = 0;                   // avoids checking keyboard too often
 
-std::vector<BYTE> resume_data;          // resume info
+std::vector<BYTE> g_resume_data;          // resume info
 bool resuming = false;                  // true if resuming after interrupt
 int g_num_work_list = 0;                   // resume worklist for standard engine
 WORKLIST worklist[MAXCALCWORK] = { 0 };
