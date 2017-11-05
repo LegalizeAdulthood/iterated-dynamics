@@ -24,7 +24,7 @@ int g_hi_attenuation = 0;
 long linitx = 0;
 long linity = 0;
 int polyphony = 0;
-long savebase = 0;              // base clock ticks
+long g_save_base = 0;              // base clock ticks
 long saveticks = 0;             // save after this many ticks
 
 /* g_video_table

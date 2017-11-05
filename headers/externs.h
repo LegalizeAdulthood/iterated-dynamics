@@ -430,7 +430,7 @@ extern int                   g_row_count;       // row-counter for decoder and o
 extern double                rqlim2;
 extern double                rqlim;
 extern int                   g_random_seed;
-extern long                  savebase;
+extern long                  g_save_base;
 extern DComplex              SaveC;
 extern int                   savedac;
 extern std::string           savename;
