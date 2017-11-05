@@ -51,7 +51,7 @@ static bool isabigfloat(char const *str);
 // variables defined by the command line/files processor
 int     stoppass = 0;           // stop at this guessing pass early
 int     g_distance_estimator_x_dots = 0;            // xdots to use for video independence
-int     pseudoy = 0;            // ydots to use for video independence
+int     g_distance_estimator_y_dots = 0;            // ydots to use for video independence
 int     g_bf_digits = 0;           // digits to use (force) for bf_math
 int     show_dot = -1;           // color to show crawling graphics cursor
 int     sizedot = 0;            // size of dot crawling cursor
@@ -508,7 +508,7 @@ static void initvars_fractal()          // init vars affecting calculation
     g_decomp[0] = g_decomp[1];
     usr_distest = 0;
     g_distance_estimator_x_dots = 0;
-    pseudoy = 0;
+    g_distance_estimator_y_dots = 0;
     g_distance_estimator_width_factor = 71;
     g_force_symmetry = symmetry_type::NOT_FORCED;
     xxmin = -2.5;
@@ -2977,11 +2977,11 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         if (totparms > 3 && intval[2] > 0 && intval[3] > 0)
         {
             g_distance_estimator_x_dots = intval[2];
-            pseudoy = intval[3];
+            g_distance_estimator_y_dots = intval[3];
         }
         else
         {
-            pseudoy = 0;
+            g_distance_estimator_y_dots = 0;
             g_distance_estimator_x_dots = 0;
         }
         return CMDARG_FRACTAL_PARAM;
