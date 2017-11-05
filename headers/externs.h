@@ -535,7 +535,7 @@ extern int                   g_view_y_dots;
 extern bool                  g_virtual_screens;
 extern unsigned              g_variable_index;
 extern stereo_images         g_which_image;
-extern float                 widthfp;
+extern float                 g_julibrot_width_fp;
 extern std::string           workdir;
 extern WORKLIST              worklist[MAXCALCWORK];
 extern int                   workpass;

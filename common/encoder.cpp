@@ -968,7 +968,7 @@ static void setup_save_info(FRACTAL_INFO *save_info)
     save_info->originfp = g_julibrot_origin_fp;
     save_info->depthfp = g_julibrot_depth_fp;
     save_info->heightfp = g_julibrot_height_fp;
-    save_info->widthfp = widthfp;
+    save_info->widthfp = g_julibrot_width_fp;
     save_info->distfp = g_julibrot_dist_fp;
     save_info->eyesfp = g_eyes_fp;
     save_info->orbittype = (short) g_new_orbit_type;

@@ -46,7 +46,7 @@ int zdots = 128;
 
 float g_julibrot_origin_fp  = 8.0F;
 float g_julibrot_height_fp  = 7.0F;
-float widthfp   = 10.0F;
+float g_julibrot_width_fp   = 10.0F;
 float g_julibrot_dist_fp    = 24.0F;
 float g_eyes_fp    = 2.5F;
 float g_julibrot_depth_fp   = 8.0F;
@@ -78,9 +78,9 @@ JulibrotSetup()
     dmxfp = (g_julibrot_x_max - g_julibrot_x_min) / zdots;
     dmyfp = (g_julibrot_y_max - g_julibrot_y_min) / zdots;
     g_float_param = &jbcfp;
-    x_per_inchfp = (xxmin - xxmax) / widthfp;
+    x_per_inchfp = (xxmin - xxmax) / g_julibrot_width_fp;
     y_per_inchfp = (yymax - yymin) / g_julibrot_height_fp;
-    inch_per_xdotfp = widthfp / xdots;
+    inch_per_xdotfp = g_julibrot_width_fp / xdots;
     inch_per_ydotfp = g_julibrot_height_fp / ydots;
     initzfp = g_julibrot_origin_fp - (g_julibrot_depth_fp / 2);
     if (g_julibrot_3d_mode == 0)
@@ -126,7 +126,7 @@ JulibrotSetup()
         mymax = (long)(g_julibrot_y_max * fg);
         long origin = (long)(g_julibrot_origin_fp * fg16);
         depth = (long)(g_julibrot_depth_fp * fg16);
-        width = (long)(widthfp * fg16);
+        width = (long)(g_julibrot_width_fp * fg16);
         dist = (long)(g_julibrot_dist_fp * fg16);
         eyes = (long)(g_eyes_fp * fg16);
         brratio = (long)(brratiofp * fg16);
@@ -134,9 +134,9 @@ JulibrotSetup()
         dmy = (mymax - mymin) / zdots;
         g_long_param = &jbc;
 
-        x_per_inch = (long)((xxmin - xxmax) / widthfp * fg);
+        x_per_inch = (long)((xxmin - xxmax) / g_julibrot_width_fp * fg);
         y_per_inch = (long)((yymax - yymin) / g_julibrot_height_fp * fg);
-        inch_per_xdot = (long)((widthfp / xdots) * fg16);
+        inch_per_xdot = (long)((g_julibrot_width_fp / xdots) * fg16);
         inch_per_ydot = (long)((g_julibrot_height_fp / ydots) * fg16);
         initz = origin - (depth / 2);
         if (g_julibrot_3d_mode == 0)
@@ -508,7 +508,7 @@ Std4dfpFractal()
     for (int ydot = (ydots >> 1) - 1; ydot >= 0; ydot--, y -= inch_per_ydotfp)
     {
         plotted = 0;
-        x = -widthfp / 2;
+        x = -g_julibrot_width_fp / 2;
         for (int xdot = 0; xdot < xdots; xdot++, x += inch_per_xdotfp)
         {
             col = xdot;

@@ -2464,7 +2464,7 @@ static void save_history_info()
     current.originfp             = g_julibrot_origin_fp                  ;
     current.depthfp              = g_julibrot_depth_fp                      ;
     current.heightfp             = g_julibrot_height_fp                  ;
-    current.widthfp              = widthfp                      ;
+    current.widthfp              = g_julibrot_width_fp                      ;
     current.distfp               = g_julibrot_dist_fp                       ;
     current.eyesfp               = g_eyes_fp                       ;
     current.orbittype            = (short)g_new_orbit_type              ;
@@ -2648,7 +2648,7 @@ static void restore_history_info(int i)
     g_julibrot_origin_fp              = last.originfp       ;
     g_julibrot_depth_fp               = last.depthfp        ;
     g_julibrot_height_fp              = last.heightfp       ;
-    widthfp               = last.widthfp        ;
+    g_julibrot_width_fp               = last.widthfp        ;
     g_julibrot_dist_fp                = last.distfp         ;
     g_eyes_fp                = last.eyesfp         ;
     g_new_orbit_type          = static_cast<fractal_type>(last.orbittype);

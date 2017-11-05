@@ -1875,7 +1875,7 @@ gfp_top:
         paramvalues[promptnum].uval.dval = g_julibrot_height_fp;
         paramvalues[promptnum].type = 'f';
         choices[promptnum++] = "Screen height";
-        paramvalues[promptnum].uval.dval = widthfp;
+        paramvalues[promptnum].uval.dval = g_julibrot_width_fp;
         paramvalues[promptnum].type = 'f';
         choices[promptnum++] = "Screen width";
         paramvalues[promptnum].uval.dval = g_julibrot_dist_fp;
@@ -2044,7 +2044,7 @@ gfp_top:
         g_julibrot_origin_fp   = (float)paramvalues[promptnum++].uval.dval;
         g_julibrot_depth_fp    = (float)paramvalues[promptnum++].uval.dval;
         g_julibrot_height_fp   = (float)paramvalues[promptnum++].uval.dval;
-        widthfp    = (float)paramvalues[promptnum++].uval.dval;
+        g_julibrot_width_fp    = (float)paramvalues[promptnum++].uval.dval;
         g_julibrot_dist_fp     = (float)paramvalues[promptnum++].uval.dval;
         ret = 1;  // force new calc since not resumable anyway
     }
