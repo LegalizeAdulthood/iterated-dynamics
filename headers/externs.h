@@ -379,7 +379,7 @@ extern int                   g_pi_in_pixels;
 extern void                (*g_plot)(int, int, int);
 extern double                g_plot_mx1;
 extern double                g_plot_mx2;
-extern double                plotmy1;
+extern double                g_plot_my1;
 extern double                plotmy2;
 extern int                   polyphony;
 extern unsigned              posp;
