@@ -559,7 +559,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
         g_evolve_new_discrete_y_parameter_offset = (char) blk_6_info.discrete_y_parameter_offset;
         g_evolve_discrete_y_parameter_offset = g_evolve_new_discrete_y_parameter_offset;
         g_evolve_param_grid_x           = blk_6_info.px;
-        py           = blk_6_info.py;
+        g_evolve_param_grid_y           = blk_6_info.py;
         sxoffs       = blk_6_info.sxoffs;
         syoffs       = blk_6_info.syoffs;
         xdots        = blk_6_info.xdots;

@@ -14,7 +14,7 @@ GENEBASE g_gene_bank[NUMGENES];
 
 // px and py are coordinates in the parameter grid (small images on screen)
 // evolving = flag, evolve_image_grid_size = dimensions of image grid (evolve_image_grid_size x evolve_image_grid_size)
-int g_evolve_param_grid_x, py, g_evolving, g_evolve_image_grid_size;
+int g_evolve_param_grid_x, g_evolve_param_grid_y, g_evolving, g_evolve_image_grid_size;
 #define EVOLVE_MAX_GRID_SIZE 51  // This is arbitrary, = 1024/20
 static int ecountbox[EVOLVE_MAX_GRID_SIZE][EVOLVE_MAX_GRID_SIZE];
 
@@ -225,7 +225,7 @@ void param_history(int mode)
 // routine to vary doubles
 void varydbl(GENEBASE gene[], int randval, int i)
 {
-    int lclpy = g_evolve_image_grid_size - py - 1;
+    int lclpy = g_evolve_image_grid_size - g_evolve_param_grid_y - 1;
     switch (gene[i].mutate)
     {
     default:
@@ -260,7 +260,7 @@ void varydbl(GENEBASE gene[], int randval, int i)
 int varyint(int randvalue, int limit, variations mode)
 {
     int ret = 0;
-    int lclpy = g_evolve_image_grid_size - py - 1;
+    int lclpy = g_evolve_image_grid_size - g_evolve_param_grid_y - 1;
     switch (mode)
     {
     default:
@@ -971,7 +971,7 @@ void fiddleparms(GENEBASE gene[], int ecount)
      the variables referenced in the gene array and call the functions required
      to vary them, aren't pointers marvellous! */
 
-    if ((g_evolve_param_grid_x == g_evolve_image_grid_size / 2) && (py == g_evolve_image_grid_size / 2))   // return if middle image
+    if ((g_evolve_param_grid_x == g_evolve_image_grid_size / 2) && (g_evolve_param_grid_y == g_evolve_image_grid_size / 2))   // return if middle image
     {
         return;
     }
@@ -1057,11 +1057,11 @@ void drawparmbox(int mode)
     //draw larger box to show parm zooming range
     bl.x = ((g_evolve_param_grid_x -(int)g_evolve_param_zoom) * (int)(x_size_d+1+grout))-sxoffs-1;
     tl.x = bl.x;
-    tr.y = ((py -(int)g_evolve_param_zoom) * (int)(y_size_d+1+grout))-syoffs-1;
+    tr.y = ((g_evolve_param_grid_y -(int)g_evolve_param_zoom) * (int)(y_size_d+1+grout))-syoffs-1;
     tl.y = tr.y;
     tr.x = ((g_evolve_param_grid_x +1+(int)g_evolve_param_zoom) * (int)(x_size_d+1+grout))-sxoffs;
     br.x = tr.x;
-    bl.y = ((py +1+(int)g_evolve_param_zoom) * (int)(y_size_d+1+grout))-syoffs;
+    bl.y = ((g_evolve_param_grid_y +1+(int)g_evolve_param_zoom) * (int)(y_size_d+1+grout))-syoffs;
     br.y = bl.y;
 #ifndef XFRACT
     addbox(br);
@@ -1104,7 +1104,7 @@ void drawparmbox(int mode)
 
 void set_evolve_ranges()
 {
-    int lclpy = g_evolve_image_grid_size - py - 1;
+    int lclpy = g_evolve_image_grid_size - g_evolve_param_grid_y - 1;
     // set up ranges and offsets for parameter explorer/evolver
     g_evolve_x_parameter_range = g_evolve_dist_per_x*(g_evolve_param_zoom*2.0);
     g_evolve_y_parameter_range = g_evolve_dist_per_y*(g_evolve_param_zoom*2.0);
@@ -1127,14 +1127,14 @@ void spiralmap(int count)
     if (count == 0)
     {
         // start in the middle
-        py = mid;
-        g_evolve_param_grid_x = py;
+        g_evolve_param_grid_y = mid;
+        g_evolve_param_grid_x = g_evolve_param_grid_y;
         return;
     }
     for (int offset = 1; offset <= mid; offset ++)
     {
         // first do the top row
-        py = (mid - offset);
+        g_evolve_param_grid_y = (mid - offset);
         for (g_evolve_param_grid_x = (mid - offset)+1; g_evolve_param_grid_x < mid+offset; g_evolve_param_grid_x++)
         {
             i++;
@@ -1144,7 +1144,7 @@ void spiralmap(int count)
             }
         }
         // then do the right hand column
-        for (; py < mid + offset; py++)
+        for (; g_evolve_param_grid_y < mid + offset; g_evolve_param_grid_y++)
         {
             i++;
             if (i == count)
@@ -1162,7 +1162,7 @@ void spiralmap(int count)
             }
         }
         // then up the left to finish
-        for (; py >= mid - offset; py--)
+        for (; g_evolve_param_grid_y >= mid - offset; g_evolve_param_grid_y--)
         {
             i++;
             if (i == count)
@@ -1182,20 +1182,20 @@ int unspiralmap()
     static int old_image_grid_size = 0;
 
     mid = g_evolve_image_grid_size / 2;
-    if ((g_evolve_param_grid_x == mid && py == mid) || (old_image_grid_size != g_evolve_image_grid_size))
+    if ((g_evolve_param_grid_x == mid && g_evolve_param_grid_y == mid) || (old_image_grid_size != g_evolve_image_grid_size))
     {
         // set up array and return
         int gridsqr = g_evolve_image_grid_size * g_evolve_image_grid_size;
-        ecountbox[g_evolve_param_grid_x][py] = 0;  // we know the first one, do the rest
+        ecountbox[g_evolve_param_grid_x][g_evolve_param_grid_y] = 0;  // we know the first one, do the rest
         for (int i = 1; i < gridsqr; i++)
         {
             spiralmap(i);
-            ecountbox[g_evolve_param_grid_x][py] = i;
+            ecountbox[g_evolve_param_grid_x][g_evolve_param_grid_y] = i;
         }
         old_image_grid_size = g_evolve_image_grid_size;
-        py = mid;
-        g_evolve_param_grid_x = py;
+        g_evolve_param_grid_y = mid;
+        g_evolve_param_grid_x = g_evolve_param_grid_y;
         return (0);
     }
-    return (ecountbox[g_evolve_param_grid_x][py]);
+    return (ecountbox[g_evolve_param_grid_x][g_evolve_param_grid_y]);
 }
