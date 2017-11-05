@@ -15,7 +15,7 @@
 #include "drivers.h"
 #include "helpdefs.h"
 
-std::string stereomapname;
+std::string g_stereo_map_filename;
 int g_auto_stereo_depth = 100;
 double g_auto_stereo_width = 10;
 bool g_gray_flag = false;          // flag to use gray value rather than color number

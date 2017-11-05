@@ -1246,7 +1246,7 @@ int get_rds_params()
         uvalues[k++].type = 'y';
 
 
-        if (!stereomapname.empty() && g_image_map)
+        if (!g_stereo_map_filename.empty() && g_image_map)
         {
             uvalues[k].uval.ch.val = reuse;
             uvalues[k++].type = 'y';
@@ -1257,9 +1257,9 @@ int get_rds_params()
                 elem = ' ';
 
             }
-            auto p = stereomapname.find(SLASHC);
+            auto p = g_stereo_map_filename.find(SLASHC);
             if (p == std::string::npos ||
-                    (int) stereomapname.length() < sizeof(rds6)-2)
+                    (int) g_stereo_map_filename.length() < sizeof(rds6)-2)
             {
                 p = 0;
             }
@@ -1268,14 +1268,14 @@ int get_rds_params()
                 p++;
             }
             // center file name
-            rds6[(sizeof(rds6)-(int) (stereomapname.length() - p)+2)/2] = 0;
+            rds6[(sizeof(rds6)-(int) (g_stereo_map_filename.length() - p)+2)/2] = 0;
             strcat(rds6, "[");
-            strcat(rds6, &stereomapname.c_str()[p]);
+            strcat(rds6, &g_stereo_map_filename.c_str()[p]);
             strcat(rds6, "]");
         }
         else
         {
-            stereomapname.clear();
+            g_stereo_map_filename.clear();
         }
         int const old_help_mode = g_help_mode;
         g_help_mode = HELPRDS;
@@ -1294,7 +1294,7 @@ int get_rds_params()
             g_gray_flag         = uvalues[k++].uval.ch.val != 0;
             g_calibrate        = (char)uvalues[k++].uval.ch.val;
             g_image_map        = uvalues[k++].uval.ch.val != 0;
-            if (!stereomapname.empty() && g_image_map)
+            if (!g_stereo_map_filename.empty() && g_image_map)
             {
                 reuse         = (char)uvalues[k++].uval.ch.val;
             }
@@ -1304,7 +1304,7 @@ int get_rds_params()
             }
             if (g_image_map && !reuse)
             {
-                if (getafilename("Select an Imagemap File", masks[1], stereomapname))
+                if (getafilename("Select an Imagemap File", masks[1], g_stereo_map_filename))
                 {
                     continue;
                 }
@@ -1566,7 +1566,7 @@ bool getafilename(char const *hdg, char const *file_template, char *flname)
     static int numtemplates = 1;
     static bool dosort = true;
 
-    rds = (stereomapname == flname) ? 1 : 0;
+    rds = (g_stereo_map_filename == flname) ? 1 : 0;
     for (int i = 0; i < MAXNUMFILES; i++)
     {
         attributes[i] = 1;

@@ -82,7 +82,7 @@ int gifview()
     // Open the file
     if (g_out_line == outline_stereo)
     {
-        strcpy(temp1, stereomapname.c_str());
+        strcpy(temp1, g_stereo_map_filename.c_str());
     }
     else
     {
@@ -100,7 +100,7 @@ int gifview()
         {
             if (g_out_line == outline_stereo)
             {
-                strcpy(temp1, stereomapname.c_str());
+                strcpy(temp1, g_stereo_map_filename.c_str());
             }
             else
             {
