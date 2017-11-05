@@ -1089,7 +1089,7 @@ int get_cmd_string()
 
 // ---------------------------------------------------------------------
 
-long con;
+long g_concentration;
 
 
 double starfield_values[4] =
@@ -1131,7 +1131,7 @@ int starfield()
     }
 
     g_distribution = (int)(starfield_values[0]);
-    con  = (long)(((starfield_values[1]) / 100.0) * (1L << 16));
+    g_concentration  = (long)(((starfield_values[1]) / 100.0) * (1L << 16));
     g_slope = (int)(starfield_values[2]);
 
     if (ValidateLuts(g_gray_map_file.c_str()))

@@ -101,7 +101,7 @@ extern std::string           g_command_comment[4];
 extern std::string           g_command_file;
 extern std::string           g_command_name;
 extern bool                  g_compare_gif;
-extern long                  con;
+extern long                  g_concentration;
 extern double                cosx;
 extern int                   g_current_column;
 extern int                   g_current_pass;
