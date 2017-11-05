@@ -96,7 +96,7 @@ LComplex *g_long_param; // used here and in jb.c
 double g_sin_x, g_cos_x;
 double siny, cosy;
 double tmpexp;
-double tempsqrx, tempsqry;
+double g_temp_sqr_x, tempsqry;
 
 double foldxinitx, foldyinity, foldxinity, foldyinitx;
 long oldxinitx, oldyinity, oldxinity, oldyinitx;
@@ -146,9 +146,9 @@ int (*bigfltbailout)();
 
 int  fpMODbailout()
 {
-    tempsqrx = sqr(g_new_z.x);
+    g_temp_sqr_x = sqr(g_new_z.x);
     tempsqry = sqr(g_new_z.y);
-    g_magnitude = tempsqrx + tempsqry;
+    g_magnitude = g_temp_sqr_x + tempsqry;
     if (g_magnitude >= g_magnitude_limit)
     {
         return 1;
@@ -159,10 +159,10 @@ int  fpMODbailout()
 
 int  fpREALbailout()
 {
-    tempsqrx = sqr(g_new_z.x);
+    g_temp_sqr_x = sqr(g_new_z.x);
     tempsqry = sqr(g_new_z.y);
-    g_magnitude = tempsqrx + tempsqry;
-    if (tempsqrx >= g_magnitude_limit)
+    g_magnitude = g_temp_sqr_x + tempsqry;
+    if (g_temp_sqr_x >= g_magnitude_limit)
     {
         return 1;
     }
@@ -172,9 +172,9 @@ int  fpREALbailout()
 
 int  fpIMAGbailout()
 {
-    tempsqrx = sqr(g_new_z.x);
+    g_temp_sqr_x = sqr(g_new_z.x);
     tempsqry = sqr(g_new_z.y);
-    g_magnitude = tempsqrx + tempsqry;
+    g_magnitude = g_temp_sqr_x + tempsqry;
     if (tempsqry >= g_magnitude_limit)
     {
         return 1;
@@ -185,10 +185,10 @@ int  fpIMAGbailout()
 
 int  fpORbailout()
 {
-    tempsqrx = sqr(g_new_z.x);
+    g_temp_sqr_x = sqr(g_new_z.x);
     tempsqry = sqr(g_new_z.y);
-    g_magnitude = tempsqrx + tempsqry;
-    if (tempsqrx >= g_magnitude_limit || tempsqry >= g_magnitude_limit)
+    g_magnitude = g_temp_sqr_x + tempsqry;
+    if (g_temp_sqr_x >= g_magnitude_limit || tempsqry >= g_magnitude_limit)
     {
         return 1;
     }
@@ -198,10 +198,10 @@ int  fpORbailout()
 
 int  fpANDbailout()
 {
-    tempsqrx = sqr(g_new_z.x);
+    g_temp_sqr_x = sqr(g_new_z.x);
     tempsqry = sqr(g_new_z.y);
-    g_magnitude = tempsqrx + tempsqry;
-    if (tempsqrx >= g_magnitude_limit && tempsqry >= g_magnitude_limit)
+    g_magnitude = g_temp_sqr_x + tempsqry;
+    if (g_temp_sqr_x >= g_magnitude_limit && tempsqry >= g_magnitude_limit)
     {
         return 1;
     }
@@ -212,9 +212,9 @@ int  fpANDbailout()
 int  fpMANHbailout()
 {
     double manhmag;
-    tempsqrx = sqr(g_new_z.x);
+    g_temp_sqr_x = sqr(g_new_z.x);
     tempsqry = sqr(g_new_z.y);
-    g_magnitude = tempsqrx + tempsqry;
+    g_magnitude = g_temp_sqr_x + tempsqry;
     manhmag = fabs(g_new_z.x) + fabs(g_new_z.y);
     if ((manhmag * manhmag) >= g_magnitude_limit)
     {
@@ -227,9 +227,9 @@ int  fpMANHbailout()
 int  fpMANRbailout()
 {
     double manrmag;
-    tempsqrx = sqr(g_new_z.x);
+    g_temp_sqr_x = sqr(g_new_z.x);
     tempsqry = sqr(g_new_z.y);
-    g_magnitude = tempsqrx + tempsqry;
+    g_magnitude = g_temp_sqr_x + tempsqry;
     manrmag = g_new_z.x + g_new_z.y; // don't need abs() since we square it next
     if ((manrmag * manrmag) >= g_magnitude_limit)
     {
@@ -730,7 +730,7 @@ JuliafpFractal()
 {
     // floating point version of classical Mandelbrot/Julia
     // note that fast >= 287 equiv in fracsuba.asm must be kept in step
-    g_new_z.x = tempsqrx - tempsqry + g_float_param->x;
+    g_new_z.x = g_temp_sqr_x - tempsqry + g_float_param->x;
     g_new_z.y = 2.0 * g_old_z.x * g_old_z.y + g_float_param->y;
     return floatbailout();
 }
@@ -741,12 +741,12 @@ LambdaFPFractal()
     // variation of classical Mandelbrot/Julia
     // note that fast >= 287 equiv in fracsuba.asm must be kept in step
 
-    tempsqrx = g_old_z.x - tempsqrx + tempsqry;
+    g_temp_sqr_x = g_old_z.x - g_temp_sqr_x + tempsqry;
     tempsqry = -(g_old_z.y * g_old_z.x);
     tempsqry += tempsqry + g_old_z.y;
 
-    g_new_z.x = g_float_param->x * tempsqrx - g_float_param->y * tempsqry;
-    g_new_z.y = g_float_param->x * tempsqry + g_float_param->y * tempsqrx;
+    g_new_z.x = g_float_param->x * g_temp_sqr_x - g_float_param->y * tempsqry;
+    g_new_z.y = g_float_param->x * tempsqry + g_float_param->y * g_temp_sqr_x;
     return floatbailout();
 }
 
@@ -942,7 +942,7 @@ MarksLambdafpFractal()
     // Mark Peterson's variation of "lambda" function
 
     // Z1 = (C^(exp-1) * Z**2) + C
-    g_tmp_z.x = tempsqrx - tempsqry;
+    g_tmp_z.x = g_temp_sqr_x - tempsqry;
     g_tmp_z.y = g_old_z.x * g_old_z.y *2;
 
     g_new_z.x = g_marks_coefficient.x * g_tmp_z.x - g_marks_coefficient.y * g_tmp_z.y + g_float_param->x;
@@ -1017,7 +1017,7 @@ int
 Mandel4fpFractal()
 {
     // first, compute (x + iy)**2
-    g_new_z.x  = tempsqrx - tempsqry;
+    g_new_z.x  = g_temp_sqr_x - tempsqry;
     g_new_z.y = g_old_z.x*g_old_z.y*2;
     if (floatbailout())
     {
@@ -1025,7 +1025,7 @@ Mandel4fpFractal()
     }
 
     // then, compute ((x + iy)**2)**2 + lambda
-    g_new_z.x  = tempsqrx - tempsqry + g_float_param->x;
+    g_new_z.x  = g_temp_sqr_x - tempsqry + g_float_param->x;
     g_new_z.y =  g_old_z.x*g_old_z.y*2 + g_float_param->y;
     return floatbailout();
 }
@@ -1193,7 +1193,7 @@ TrigPlusZsquaredfpFractal()
     // z(n+1) = trig(z(n))+z(n)**2+C
 
     CMPLXtrig0(g_old_z, g_new_z);
-    g_new_z.x += tempsqrx - tempsqry + g_float_param->x;
+    g_new_z.x += g_temp_sqr_x - tempsqry + g_float_param->x;
     g_new_z.y += 2.0 * g_old_z.x * g_old_z.y + g_float_param->y;
     return floatbailout();
 }
@@ -1243,10 +1243,10 @@ PopcornFractal_Old()
     }
     else
     {
-        tempsqrx = sqr(g_new_z.x);
+        g_temp_sqr_x = sqr(g_new_z.x);
     }
     tempsqry = sqr(g_new_z.y);
-    g_magnitude = tempsqrx + tempsqry;
+    g_magnitude = g_temp_sqr_x + tempsqry;
     if (g_magnitude >= g_magnitude_limit)
     {
         return 1;
@@ -1274,9 +1274,9 @@ PopcornFractal()
         plot_orbit(g_new_z.x, g_new_z.y, 1+g_row%g_colors);
         g_old_z = g_new_z;
     }
-    tempsqrx = sqr(g_new_z.x);
+    g_temp_sqr_x = sqr(g_new_z.x);
     tempsqry = sqr(g_new_z.y);
-    g_magnitude = tempsqrx + tempsqry;
+    g_magnitude = g_temp_sqr_x + tempsqry;
     if (g_magnitude >= g_magnitude_limit
             || fabs(g_new_z.x) > g_magnitude_limit2 || fabs(g_new_z.y) > g_magnitude_limit2)
     {
@@ -1401,9 +1401,9 @@ PopcornFractalFn()
         g_old_z = g_new_z;
     }
 
-    tempsqrx = sqr(g_new_z.x);
+    g_temp_sqr_x = sqr(g_new_z.x);
     tempsqry = sqr(g_new_z.y);
-    g_magnitude = tempsqrx + tempsqry;
+    g_magnitude = g_temp_sqr_x + tempsqry;
     if (g_magnitude >= g_magnitude_limit
             || fabs(g_new_z.x) > g_magnitude_limit2 || fabs(g_new_z.y) > g_magnitude_limit2)
     {
@@ -1473,7 +1473,7 @@ LPopcornFractalFn()
 
 int MarksCplxMand()
 {
-    g_tmp_z.x = tempsqrx - tempsqry;
+    g_tmp_z.x = g_temp_sqr_x - tempsqry;
     g_tmp_z.y = 2*g_old_z.x*g_old_z.y;
     FPUcplxmul(&g_tmp_z, &g_marks_coefficient, &g_new_z);
     g_new_z.x += g_float_param->x;
@@ -1484,7 +1484,7 @@ int MarksCplxMand()
 int SpiderfpFractal()
 {
     // Spider(XAXIS) { c=z=pixel: z=z*z+c; c=c/2+z, |z|<=4 }
-    g_new_z.x = tempsqrx - tempsqry + g_tmp_z.x;
+    g_new_z.x = g_temp_sqr_x - tempsqry + g_tmp_z.x;
     g_new_z.y = 2 * g_old_z.x * g_old_z.y + g_tmp_z.y;
     g_tmp_z.x = g_tmp_z.x/2 + g_new_z.x;
     g_tmp_z.y = g_tmp_z.y/2 + g_new_z.y;
@@ -1847,7 +1847,7 @@ PhoenixFractal()
 {
     // z(n+1) = z(n)^2 + p + qy(n),  y(n+1) = z(n)
     g_tmp_z.x = g_old_z.x * g_old_z.y;
-    g_new_z.x = tempsqrx - tempsqry + g_float_param->x + (g_float_param->y * tmp2.x);
+    g_new_z.x = g_temp_sqr_x - tempsqry + g_float_param->x + (g_float_param->y * tmp2.x);
     g_new_z.y = (g_tmp_z.x + g_tmp_z.x) + (g_float_param->y * tmp2.y);
     tmp2 = g_old_z; // set tmp2 to Y value
     return floatbailout();
@@ -1873,7 +1873,7 @@ PhoenixFractalcplx()
 {
     // z(n+1) = z(n)^2 + p1 + p2*y(n),  y(n+1) = z(n)
     g_tmp_z.x = g_old_z.x * g_old_z.y;
-    g_new_z.x = tempsqrx - tempsqry + g_float_param->x + (g_param_z2.x * tmp2.x) - (g_param_z2.y * tmp2.y);
+    g_new_z.x = g_temp_sqr_x - tempsqry + g_float_param->x + (g_param_z2.x * tmp2.x) - (g_param_z2.y * tmp2.y);
     g_new_z.y = (g_tmp_z.x + g_tmp_z.x) + g_float_param->y + (g_param_z2.x * tmp2.y) + (g_param_z2.y * tmp2.x);
     tmp2 = g_old_z; // set tmp2 to Y value
     return floatbailout();
@@ -2131,7 +2131,7 @@ static int TryFloatFractal(int (*fpFractal)())
     g_old_z.x /= g_fudge_factor;
     g_old_z.y = g_l_old_z.y;
     g_old_z.y /= g_fudge_factor;
-    tempsqrx = sqr(g_old_z.x);
+    g_temp_sqr_x = sqr(g_old_z.x);
     tempsqry = sqr(g_old_z.y);
     fpFractal();
     if (g_save_release < 1900)
@@ -2313,7 +2313,7 @@ Magnet1Fractal()    //    Z = ((Z**2 + C - 1)/(2Z + C - 2))**2
     DComplex top, bot, tmp;
     double div;
 
-    top.x = tempsqrx - tempsqry + g_float_param->x - 1; // top = Z**2+C-1
+    top.x = g_temp_sqr_x - tempsqry + g_float_param->x - 1; // top = Z**2+C-1
     top.y = g_old_z.x * g_old_z.y;
     top.y = top.y + top.y + g_float_param->y;
 
@@ -2343,12 +2343,12 @@ Magnet2Fractal()  // Z = ((Z**3 + 3(C-1)Z + (C-1)(C-2)  ) /
     DComplex top, bot, tmp;
     double div;
 
-    top.x = g_old_z.x * (tempsqrx-tempsqry-tempsqry-tempsqry + T_Cm1.x)
+    top.x = g_old_z.x * (g_temp_sqr_x-tempsqry-tempsqry-tempsqry + T_Cm1.x)
             - g_old_z.y * T_Cm1.y + T_Cm1Cm2.x;
-    top.y = g_old_z.y * (tempsqrx+tempsqrx+tempsqrx-tempsqry + T_Cm1.x)
+    top.y = g_old_z.y * (g_temp_sqr_x+g_temp_sqr_x+g_temp_sqr_x-tempsqry + T_Cm1.x)
             + g_old_z.x * T_Cm1.y + T_Cm1Cm2.y;
 
-    bot.x = tempsqrx - tempsqry;
+    bot.x = g_temp_sqr_x - tempsqry;
     bot.x = bot.x + bot.x + bot.x
             + g_old_z.x * T_Cm2.x - g_old_z.y * T_Cm2.y
             + T_Cm1Cm2.x + 1.0;
@@ -2469,7 +2469,7 @@ ManOWarfpFractal()
 {
     // From Art Matrix via Lee Skinner
     // note that fast >= 287 equiv in fracsuba.asm must be kept in step
-    g_new_z.x = tempsqrx - tempsqry + g_tmp_z.x + g_float_param->x;
+    g_new_z.x = g_temp_sqr_x - tempsqry + g_tmp_z.x + g_float_param->x;
     g_new_z.y = 2.0 * g_old_z.x * g_old_z.y + g_tmp_z.y + g_float_param->y;
     g_tmp_z = g_old_z;
     return floatbailout();
@@ -2542,7 +2542,7 @@ int
 CirclefpFractal()
 {
     long i;
-    i = (long)(g_params[0]*(tempsqrx+tempsqry));
+    i = (long)(g_params[0]*(g_temp_sqr_x+tempsqry));
     g_color_iter = i%g_colors;
     return 1;
 }
@@ -2570,17 +2570,17 @@ void invertz2(DComplex *z)
     z->x -= g_f_x_center;
     z->y -= g_f_y_center;  // Normalize values to center of circle
 
-    tempsqrx = sqr(z->x) + sqr(z->y);  // Get old radius
-    if (fabs(tempsqrx) > FLT_MIN)
+    g_temp_sqr_x = sqr(z->x) + sqr(z->y);  // Get old radius
+    if (fabs(g_temp_sqr_x) > FLT_MIN)
     {
-        tempsqrx = g_f_radius / tempsqrx;
+        g_temp_sqr_x = g_f_radius / g_temp_sqr_x;
     }
     else
     {
-        tempsqrx = FLT_MAX;   // a big number, but not TOO big
+        g_temp_sqr_x = FLT_MAX;   // a big number, but not TOO big
     }
-    z->x *= tempsqrx;
-    z->y *= tempsqrx;      // Perform inversion
+    z->x *= g_temp_sqr_x;
+    z->y *= g_temp_sqr_x;      // Perform inversion
     z->x += g_f_x_center;
     z->y += g_f_y_center; // Renormalize
 }
@@ -2908,7 +2908,7 @@ int marksmandelfp_per_pixel()
     g_old_z.x += g_param_z1.x;      // initial pertubation of parameters set
     g_old_z.y += g_param_z1.y;
 
-    tempsqrx = sqr(g_old_z.x);
+    g_temp_sqr_x = sqr(g_old_z.x);
     tempsqry = sqr(g_old_z.y);
 
     if (g_c_exponent > 3)
@@ -2917,7 +2917,7 @@ int marksmandelfp_per_pixel()
     }
     else if (g_c_exponent == 3)
     {
-        g_marks_coefficient.x = tempsqrx - tempsqry;
+        g_marks_coefficient.x = g_temp_sqr_x - tempsqry;
         g_marks_coefficient.y = g_old_z.x * g_old_z.y * 2;
     }
     else if (g_c_exponent == 2)
@@ -3001,7 +3001,7 @@ int mandelfp_per_pixel()
         g_old_z.y += g_param_z1.y;
     }
     g_tmp_z = g_init; // for spider
-    tempsqrx = sqr(g_old_z.x);  // precalculated value for regular Mandelbrot
+    g_temp_sqr_x = sqr(g_old_z.x);  // precalculated value for regular Mandelbrot
     tempsqry = sqr(g_old_z.y);
     return 1; // 1st iteration has been done
 }
@@ -3019,7 +3019,7 @@ int juliafp_per_pixel()
         g_old_z.x = g_dx_pixel();
         g_old_z.y = g_dy_pixel();
     }
-    tempsqrx = sqr(g_old_z.x);  // precalculated value for regular Julia
+    g_temp_sqr_x = sqr(g_old_z.x);  // precalculated value for regular Julia
     tempsqry = sqr(g_old_z.y);
     g_tmp_z = g_old_z;
     return 0;
@@ -3191,7 +3191,7 @@ int MarksCplxMandperp()
     }
     g_old_z.x = g_init.x + g_param_z1.x; // initial pertubation of parameters set
     g_old_z.y = g_init.y + g_param_z1.y;
-    tempsqrx = sqr(g_old_z.x);  // precalculated value
+    g_temp_sqr_x = sqr(g_old_z.x);  // precalculated value
     tempsqry = sqr(g_old_z.y);
     g_marks_coefficient = ComplexPower(g_init, g_power_z);
     return 1;
@@ -3242,7 +3242,7 @@ int phoenix_per_pixel()
         g_old_z.x = g_dx_pixel();
         g_old_z.y = g_dy_pixel();
     }
-    tempsqrx = sqr(g_old_z.x);  // precalculated value
+    g_temp_sqr_x = sqr(g_old_z.x);  // precalculated value
     tempsqry = sqr(g_old_z.y);
     tmp2.x = 0; // use tmp2 as the complex Y value
     tmp2.y = 0;
@@ -3320,7 +3320,7 @@ int mandphoenix_per_pixel()
 
     g_old_z.x += g_param_z1.x;      // initial pertubation of parameters set
     g_old_z.y += g_param_z1.y;
-    tempsqrx = sqr(g_old_z.x);  // precalculated value
+    g_temp_sqr_x = sqr(g_old_z.x);  // precalculated value
     tempsqry = sqr(g_old_z.y);
     tmp2.x = 0;
     tmp2.y = 0;
@@ -3411,7 +3411,7 @@ EscherfpFractal() // Science of Fractal Images pp. 185, 187
     double testsize = 0.0;
     long testiter = 0;
 
-    g_new_z.x = tempsqrx - tempsqry; // standard Julia with C == (0.0, 0.0i)
+    g_new_z.x = g_temp_sqr_x - tempsqry; // standard Julia with C == (0.0, 0.0i)
     g_new_z.y = 2.0 * g_old_z.x * g_old_z.y;
     oldtest.x = g_new_z.x * 15.0;    // scale it
     oldtest.y = g_new_z.y * 15.0;

@@ -479,7 +479,7 @@ extern bool                  g_tab_mode;
 extern bool                  g_tab_or_help;
 extern bool                  g_targa_out;
 extern bool                  g_targa_overlay;
-extern double                tempsqrx;
+extern double                g_temp_sqr_x;
 extern double                tempsqry;
 extern int                   g_text_cbase;      // g_text_col is relative to this
 extern int                   g_text_col;        // current column in text mode

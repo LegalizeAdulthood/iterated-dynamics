@@ -38,7 +38,7 @@ static long iteration(double cr, double ci,
 {
     g_old_z.x = re;
     g_old_z.y = im;
-    tempsqrx = sqr(g_old_z.x);
+    g_temp_sqr_x = sqr(g_old_z.x);
     tempsqry = sqr(g_old_z.y);
     g_float_param = &g_init;
     g_float_param->x = cr;
