@@ -50,7 +50,7 @@ int test()
     int numpasses = (g_std_calc_mode == '1') ? 0 : 1;
     for (int passes = startpass; passes <= numpasses ; passes++)
     {
-        for (row = startrow; row <= g_i_y_stop; row = row+1+numpasses)
+        for (g_row = startrow; g_row <= g_i_y_stop; g_row = g_row+1+numpasses)
         {
             for (g_col = 0; g_col <= g_i_x_stop; g_col++)       // look at each point on screen
             {
@@ -61,7 +61,7 @@ int test()
                 {
                     testend();
                     alloc_resume(20, 1);
-                    put_resume(sizeof(row), &row, sizeof(passes), &passes, 0);
+                    put_resume(sizeof(g_row), &g_row, sizeof(passes), &passes, 0);
                     return (-1);
                 }
                 color = testpt(g_init.x, g_init.y, g_param_z1.x, g_param_z1.y, g_max_iterations, g_inside_color);
@@ -77,10 +77,10 @@ int test()
                         color = ((color-1) % g_and_color) + 1; // skip color zero
                     }
                 }
-                (*g_plot)(g_col, row, color);
+                (*g_plot)(g_col, g_row, color);
                 if (numpasses && (passes == 0))
                 {
-                    (*g_plot)(g_col, row+1, color);
+                    (*g_plot)(g_col, g_row+1, color);
                 }
             }
         }
@@ -1419,7 +1419,7 @@ int popcorn()   // subset of std engine
     g_plot = noplot;
     g_l_temp_sqr_x = 0;
     tempsqrx = g_l_temp_sqr_x;
-    for (row = start_row; row <= g_i_y_stop; row++)
+    for (g_row = start_row; g_row <= g_i_y_stop; g_row++)
     {
         g_reset_periodicity = true;
         for (g_col = 0; g_col <= g_i_x_stop; g_col++)
@@ -1427,7 +1427,7 @@ int popcorn()   // subset of std engine
             if (standard_fractal() == -1) // interrupted
             {
                 alloc_resume(10, 1);
-                put_resume(sizeof(row), &row, 0);
+                put_resume(sizeof(g_row), &g_row, 0);
                 return (-1);
             }
             g_reset_periodicity = false;
@@ -1480,7 +1480,7 @@ int lyapunov()
     {
         Population = g_params[1];
     }
-    (*g_plot)(g_col, row, 1);
+    (*g_plot)(g_col, g_row, 1);
     if (g_invert != 0)
     {
         invertz2(&g_init);
@@ -1520,7 +1520,7 @@ int lyapunov()
     {
         g_color = g_colors-1;
     }
-    (*g_plot)(g_col, row, g_color);
+    (*g_plot)(g_col, g_row, g_color);
     return g_color;
 }
 
@@ -2047,7 +2047,7 @@ int cellular()
 
     // This section does all the work
 contloop:
-    for (row = start_row; row <= g_i_y_stop; row++)
+    for (g_row = start_row; g_row <= g_i_y_stop; g_row++)
     {
         if (g_random_seed_flag || randparam == 0 || randparam == -1)
         {
@@ -2098,12 +2098,12 @@ contloop:
 
         filled = notfilled;
         notfilled = (S16)(1-filled);
-        put_line(row, 0, g_i_x_stop, &cell_array[filled][0]);
+        put_line(g_row, 0, g_i_x_stop, &cell_array[filled][0]);
         if (driver_key_pressed())
         {
             abort_cellular(CELLULAR_DONE, 0);
             alloc_resume(10, 1);
-            put_resume(sizeof(row), &row, 0);
+            put_resume(sizeof(g_row), &g_row, 0);
             return -1;
         }
     }
@@ -2414,7 +2414,7 @@ int calcfroth()   // per pixel 1/2/g, called with row & col set
     g_color_iter = 0;
     if (g_show_dot >0)
     {
-        (*g_plot)(g_col, row, g_show_dot %g_colors);
+        (*g_plot)(g_col, g_row, g_show_dot %g_colors);
     }
     if (!g_integer_fractal) // fp mode
     {
@@ -2795,7 +2795,7 @@ int calcfroth()   // per pixel 1/2/g, called with row & col set
 
     g_color = abs((int)(g_color_iter));
 
-    (*g_plot)(g_col, row, g_color);
+    (*g_plot)(g_col, g_row, g_color);
 
     return g_color;
 }

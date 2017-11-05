@@ -1141,7 +1141,7 @@ int starfield()
         return (-1);
     }
     spindac(0, 1);                 // load it, but don't spin
-    for (row = 0; row < ydots; row++)
+    for (g_row = 0; g_row < ydots; g_row++)
     {
         for (g_col = 0; g_col < xdots; g_col++)
         {
@@ -1151,12 +1151,12 @@ int starfield()
                 g_busy = false;
                 return (1);
             }
-            c = getcolor(g_col, row);
+            c = getcolor(g_col, g_row);
             if (c == g_inside_color)
             {
                 c = g_colors-1;
             }
-            g_put_color(g_col, row, GausianNumber(c, g_colors));
+            g_put_color(g_col, g_row, GausianNumber(c, g_colors));
         }
     }
     driver_buzzer(buzzer_codes::COMPLETE);

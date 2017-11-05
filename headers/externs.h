@@ -427,7 +427,7 @@ extern std::vector<DComplex> g_roots;
 extern int                   g_color_cycle_range_hi;
 extern int                   g_color_cycle_range_lo;
 extern double                g_newton_r_over_d;
-extern int                   row;
+extern int                   g_row;
 extern int                   g_row_count;       // row-counter for decoder and out_line
 extern double                rqlim2;
 extern double                rqlim;

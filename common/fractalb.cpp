@@ -717,14 +717,14 @@ int mandelbn_per_pixel()
 {
     // parm.x = xxmin + col*delx + row*delx2
     mult_bn_int(bnparm.x, bnxdel, (U16)g_col);
-    mult_bn_int(bntmp, bnxdel2, (U16)row);
+    mult_bn_int(bntmp, bnxdel2, (U16)g_row);
 
     add_a_bn(bnparm.x, bntmp);
     add_a_bn(bnparm.x, bnxmin);
 
     // parm.y = yymax - row*dely - col*dely2;
     // note: in next four lines, bnold is just used as a temporary variable
-    mult_bn_int(bnold.x, bnydel, (U16)row);
+    mult_bn_int(bnold.x, bnydel, (U16)g_row);
     mult_bn_int(bnold.y, bnydel2, (U16)g_col);
     add_a_bn(bnold.x, bnold.y);
     sub_bn(bnparm.y, bnymax, bnold.x);
@@ -763,14 +763,14 @@ int mandelbf_per_pixel()
 {
     // parm.x = xxmin + col*delx + row*delx2
     mult_bf_int(bfparm.x, bfxdel, (U16)g_col);
-    mult_bf_int(bftmp, bfxdel2, (U16)row);
+    mult_bf_int(bftmp, bfxdel2, (U16)g_row);
 
     add_a_bf(bfparm.x, bftmp);
     add_a_bf(bfparm.x, bfxmin);
 
     // parm.y = yymax - row*dely - col*dely2;
     // note: in next four lines, bfold is just used as a temporary variable
-    mult_bf_int(bfold.x, bfydel, (U16)row);
+    mult_bf_int(bfold.x, bfydel, (U16)g_row);
     mult_bf_int(bfold.y, bfydel2, (U16)g_col);
     add_a_bf(bfold.x, bfold.y);
     sub_bf(bfparm.y, bfymax, bfold.x);
@@ -810,14 +810,14 @@ juliabn_per_pixel()
 {
     // old.x = xxmin + col*delx + row*delx2
     mult_bn_int(bnold.x, bnxdel, (U16)g_col);
-    mult_bn_int(bntmp, bnxdel2, (U16)row);
+    mult_bn_int(bntmp, bnxdel2, (U16)g_row);
 
     add_a_bn(bnold.x, bntmp);
     add_a_bn(bnold.x, bnxmin);
 
     // old.y = yymax - row*dely - col*dely2;
     // note: in next four lines, bnnew is just used as a temporary variable
-    mult_bn_int(bnnew.x, bnydel, (U16)row);
+    mult_bn_int(bnnew.x, bnydel, (U16)g_row);
     mult_bn_int(bnnew.y, bnydel2, (U16)g_col);
     add_a_bn(bnnew.x, bnnew.y);
     sub_bn(bnold.y, bnymax, bnnew.x);
@@ -838,14 +838,14 @@ juliabf_per_pixel()
 {
     // old.x = xxmin + col*delx + row*delx2
     mult_bf_int(bfold.x, bfxdel, (U16)g_col);
-    mult_bf_int(bftmp, bfxdel2, (U16)row);
+    mult_bf_int(bftmp, bfxdel2, (U16)g_row);
 
     add_a_bf(bfold.x, bftmp);
     add_a_bf(bfold.x, bfxmin);
 
     // old.y = yymax - row*dely - col*dely2;
     // note: in next four lines, bfnew is just used as a temporary variable
-    mult_bf_int(bfnew.x, bfydel, (U16)row);
+    mult_bf_int(bfnew.x, bfydel, (U16)g_row);
     mult_bf_int(bfnew.y, bfydel2, (U16)g_col);
     add_a_bf(bfnew.x, bfnew.y);
     sub_bf(bfold.y, bfymax, bfnew.x);

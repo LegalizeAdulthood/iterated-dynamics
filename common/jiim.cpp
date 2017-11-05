@@ -619,9 +619,9 @@ void Jiim(jiim_types which)
 
     // reuse last location if inside window
     g_col = (int)(cvt.a*SaveC.x + cvt.b*SaveC.y + cvt.e + .5);
-    row = (int)(cvt.c*SaveC.x + cvt.d*SaveC.y + cvt.f + .5);
+    g_row = (int)(cvt.c*SaveC.x + cvt.d*SaveC.y + cvt.f + .5);
     if (g_col < 0 || g_col >= xdots ||
-            row < 0 || row >= ydots)
+            g_row < 0 || g_row >= ydots)
     {
         cr = (xxmax + xxmin) / 2.0;
         ci = (yymax + yymin) / 2.0;
@@ -636,7 +636,7 @@ void Jiim(jiim_types which)
     old_x = old_y;
 
     g_col = (int)(cvt.a*cr + cvt.b*ci + cvt.e + .5);
-    row = (int)(cvt.c*cr + cvt.d*ci + cvt.f + .5);
+    g_row = (int)(cvt.c*cr + cvt.d*ci + cvt.f + .5);
 
     // possible extraseg arrays have been trashed, so set up again
     if (g_integer_fractal)
@@ -648,7 +648,7 @@ void Jiim(jiim_types which)
         fill_dx_array();
     }
 
-    Cursor_SetPos(g_col, row);
+    Cursor_SetPos(g_col, g_row);
     Cursor_Show();
     color = g_color_bright;
 
@@ -782,7 +782,7 @@ void Jiim(jiim_types which)
                     get_a_number(&cr, &ci);
                     exact = true;
                     g_col = (int)(cvt.a*cr + cvt.b*ci + cvt.e + .5);
-                    row = (int)(cvt.c*cr + cvt.d*ci + cvt.f + .5);
+                    g_row = (int)(cvt.c*cr + cvt.d*ci + cvt.f + .5);
                     drow = 0;
                     dcol = drow;
                     break;
@@ -829,7 +829,7 @@ void Jiim(jiim_types which)
                     exact = false;
                 }
                 g_col += dcol;
-                row += drow;
+                g_row += drow;
 #ifdef XFRACT
                 if (kbdchar == FIK_ENTER)
                 {
@@ -846,9 +846,9 @@ void Jiim(jiim_types which)
                     g_col = xdots -1;
                     exact = false;
                 }
-                if (row >= ydots)
+                if (g_row >= ydots)
                 {
-                    row = ydots -1;
+                    g_row = ydots -1;
                     exact = false;
                 }
                 if (g_col < 0)
@@ -856,13 +856,13 @@ void Jiim(jiim_types which)
                     g_col = 0;
                     exact = false;
                 }
-                if (row < 0)
+                if (g_row < 0)
                 {
-                    row = 0;
+                    g_row = 0;
                     exact = false;
                 }
 
-                Cursor_SetPos(g_col, row);
+                Cursor_SetPos(g_col, g_row);
             }  // end while (driver_key_pressed)
 
             if (!exact)
@@ -884,7 +884,7 @@ void Jiim(jiim_types which)
             if (show_numbers) // write coordinates on screen
             {
                 char str[41];
-                sprintf(str, "%16.14f %16.14f %3d", cr, ci, getcolor(g_col, row));
+                sprintf(str, "%16.14f %16.14f %3d", cr, ci, getcolor(g_col, g_row));
                 if (windows == 0)
                 {
                     /* show temp msg will clear self if new msg is a
@@ -945,7 +945,7 @@ void Jiim(jiim_types which)
                 PER_PIXEL();
             }
             // move window if bumped
-            if (windows == 0 && g_col > xc && g_col < xc+xd && row > yc && row < yc+yd)
+            if (windows == 0 && g_col > xc && g_col < xc+xd && g_row > yc && g_row < yc+yd)
             {
                 RestoreRect(xc, yc, xd, yd);
                 if (xc == g_video_start_x + xd*2)

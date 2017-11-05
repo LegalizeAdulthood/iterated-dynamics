@@ -239,7 +239,7 @@ zline(long x, long y)
         Per = &RightEye;
         break;
     case 3:
-        if ((row + g_col) & 1)
+        if ((g_row + g_col) & 1)
         {
             Per = &LeftEye;
         }
@@ -274,10 +274,10 @@ zline(long x, long y)
             if (g_julibrot_3d_mode == 3)
             {
                 g_color = (int)(128l * zpixel / zdots);
-                if ((row + g_col) & 1)
+                if ((g_row + g_col) & 1)
                 {
 
-                    (*g_plot)(g_col, row, 127 - g_color);
+                    (*g_plot)(g_col, g_row, 127 - g_color);
                 }
                 else
                 {
@@ -290,13 +290,13 @@ zline(long x, long y)
                     {
                         g_color = 127;
                     }
-                    (*g_plot)(g_col, row, 127 + bbase - g_color);
+                    (*g_plot)(g_col, g_row, 127 + bbase - g_color);
                 }
             }
             else
             {
                 g_color = (int)(254l * zpixel / zdots);
-                (*g_plot)(g_col, row, g_color + 1);
+                (*g_plot)(g_col, g_row, g_color + 1);
             }
             plotted = 1;
             break;
@@ -329,7 +329,7 @@ zlinefp(double x, double y)
         Perfp = &RightEyefp;
         break;
     case 3:
-        if ((row + g_col) & 1)
+        if ((g_row + g_col) & 1)
         {
             Perfp = &LeftEyefp;
         }
@@ -396,9 +396,9 @@ zlinefp(double x, double y)
             if (g_julibrot_3d_mode == 3)
             {
                 g_color = (int)(128l * zpixel / zdots);
-                if ((row + g_col) & 1)
+                if ((g_row + g_col) & 1)
                 {
-                    (*g_plot)(g_col, row, 127 - g_color);
+                    (*g_plot)(g_col, g_row, 127 - g_color);
                 }
                 else
                 {
@@ -411,13 +411,13 @@ zlinefp(double x, double y)
                     {
                         g_color = 127;
                     }
-                    (*g_plot)(g_col, row, 127 + bbase - g_color);
+                    (*g_plot)(g_col, g_row, 127 + bbase - g_color);
                 }
             }
             else
             {
                 g_color = (int)(254l * zpixel / zdots);
-                (*g_plot)(g_col, row, g_color + 1);
+                (*g_plot)(g_col, g_row, g_color + 1);
             }
             plotted = 1;
             break;
@@ -459,13 +459,13 @@ Std4dFractal()
         for (int xdot = 0; xdot < xdots; xdot++, x += inch_per_xdot)
         {
             g_col = xdot;
-            row = ydot;
+            g_row = ydot;
             if (zline(x, y) < 0)
             {
                 return (-1);
             }
             g_col = xdots - g_col - 1;
-            row = ydots - row - 1;
+            g_row = ydots - g_row - 1;
             if (zline(-x, -y) < 0)
             {
                 return (-1);
@@ -512,13 +512,13 @@ Std4dfpFractal()
         for (int xdot = 0; xdot < xdots; xdot++, x += inch_per_xdotfp)
         {
             g_col = xdot;
-            row = ydot;
+            g_row = ydot;
             if (zlinefp(x, y) < 0)
             {
                 return (-1);
             }
             g_col = xdots - g_col - 1;
-            row = ydots - row - 1;
+            g_row = ydots - g_row - 1;
             if (zlinefp(-x, -y) < 0)
             {
                 return (-1);

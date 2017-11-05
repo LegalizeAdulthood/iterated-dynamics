@@ -1139,7 +1139,7 @@ top:
             {
                 truncate = true;
             }
-            truncaterow = row;
+            truncaterow = g_row;
             driver_put_string(++s_row, 2, C_GENERAL_MED, "Ctr");
             driver_put_string(s_row, 8, C_GENERAL_MED, "x");
             bftostr(msg, dec, bfXctr);
