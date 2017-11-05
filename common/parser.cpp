@@ -196,7 +196,7 @@ bool uses_p3 = false;
 bool uses_p4 = false;
 bool uses_p5 = false;
 bool uses_jump = false;
-bool uses_ismand = false;
+bool g_frm_uses_ismand = false;
 unsigned int chars_in_formula;
 
 #if !defined(XFRACT)
@@ -2051,7 +2051,7 @@ ConstArg *isconst(char const *Str, int Len)
                 }
                 if (n == 13)          // The formula uses 'ismand'.
                 {
-                    uses_ismand = true;
+                    g_frm_uses_ismand = true;
                 }
                 if (n == 17)          // The formula uses 'p4'.
                 {
@@ -3860,7 +3860,7 @@ int frm_get_param_stuff(char const *Name)
     uses_p1 = false;
     uses_p2 = false;
     uses_p3 = false;
-    uses_ismand = false;
+    g_frm_uses_ismand = false;
     g_max_function = 0;
     uses_p4 = false;
     uses_p5 = false;
@@ -3923,7 +3923,7 @@ int frm_get_param_stuff(char const *Name)
             }
             else if (current_token.token_id == 13)
             {
-                uses_ismand = true;
+                g_frm_uses_ismand = true;
             }
             else if (current_token.token_id == 17)
             {
@@ -3952,7 +3952,7 @@ int frm_get_param_stuff(char const *Name)
         uses_p1 = false;
         uses_p2 = false;
         uses_p3 = false;
-        uses_ismand = false;
+        g_frm_uses_ismand = false;
         g_max_function = 0;
         uses_p4 = false;
         uses_p5 = false;
@@ -4346,7 +4346,7 @@ void init_misc()
     uses_p2 = false;
     uses_p3 = false;
     uses_jump = false;
-    uses_ismand = false;
+    g_frm_uses_ismand = false;
     uses_p4 = false;
     uses_p5 = false;
 }

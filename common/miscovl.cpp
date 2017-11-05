@@ -662,7 +662,7 @@ void write_batch_parms(char const *colorinf, bool colorsonly, int maxcolor, int 
         {
             put_filename("formulafile", g_formula_filename.c_str());
             put_parm(" %s=%s", "formulaname", g_formula_name.c_str());
-            if (uses_ismand)
+            if (g_frm_uses_ismand)
             {
                 put_parm(" %s=%c", "ismand", g_is_mandelbrot ? 'y' : 'n');
             }

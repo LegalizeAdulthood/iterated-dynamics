@@ -813,7 +813,7 @@ bool tab_display_2(char *msg)
 #endif
               curfractalspecific->orbitcalc ==  Formula ? "slow parser" :
               curfractalspecific->orbitcalc ==  BadFormula ? "bad formula" :
-              "", uses_ismand ? 1 : 0);
+              "", g_frm_uses_ismand ? 1 : 0);
     /*
         write_row(row++, "ixstart %d ixstop %d iystart %d iystop %d bitshift %d",
             ixstart, ixstop, iystart, iystop, bitshift);

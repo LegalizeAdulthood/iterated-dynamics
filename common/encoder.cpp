@@ -799,7 +799,7 @@ static int store_item_name(char const *nameptr)
         fsave_info.uses_p1 = (short) (uses_p1 ? 1 : 0);
         fsave_info.uses_p2 = (short) (uses_p2 ? 1 : 0);
         fsave_info.uses_p3 = (short) (uses_p3 ? 1 : 0);
-        fsave_info.uses_ismand = (short) (uses_ismand ? 1 : 0);
+        fsave_info.uses_ismand = (short) (g_frm_uses_ismand ? 1 : 0);
         fsave_info.ismand = (short) (g_is_mandelbrot ? 1 : 0);
         fsave_info.uses_p4 = (short) (uses_p4 ? 1 : 0);
         fsave_info.uses_p5 = (short) (uses_p5 ? 1 : 0);

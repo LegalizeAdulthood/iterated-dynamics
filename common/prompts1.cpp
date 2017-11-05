@@ -1904,7 +1904,7 @@ gfp_top:
         paramvalues[promptnum++].uval.ch.val  = static_cast<int>(g_inverse_julia_minor_method);
     }
 
-    if ((curtype == fractal_type::FORMULA || curtype == fractal_type::FFORMULA) && uses_ismand)
+    if ((curtype == fractal_type::FORMULA || curtype == fractal_type::FFORMULA) && g_frm_uses_ismand)
     {
         choices[promptnum] = "ismand";
         paramvalues[promptnum].type = 'y';
@@ -2058,7 +2058,7 @@ gfp_top:
         g_major_method = static_cast<Major>(paramvalues[promptnum++].uval.ch.val);
         g_inverse_julia_minor_method = static_cast<Minor>(paramvalues[promptnum++].uval.ch.val);
     }
-    if ((curtype == fractal_type::FORMULA || curtype == fractal_type::FFORMULA) && uses_ismand)
+    if ((curtype == fractal_type::FORMULA || curtype == fractal_type::FFORMULA) && g_frm_uses_ismand)
     {
         if (g_is_mandelbrot != (paramvalues[promptnum].uval.ch.val != 0))
         {
