@@ -1184,7 +1184,7 @@ MarksJuliaSetup()
     else if (g_c_exponent == 3)
     {
         g_l_coefficient.x = multiply(g_l_old_z.x, g_l_old_z.x, g_bit_shift) - multiply(g_l_old_z.y, g_l_old_z.y, g_bit_shift);
-        g_l_coefficient.y = multiply(g_l_old_z.x, g_l_old_z.y, bitshiftless1);
+        g_l_coefficient.y = multiply(g_l_old_z.x, g_l_old_z.y, g_bit_shift_less_1);
     }
     else if (g_c_exponent == 2)
     {

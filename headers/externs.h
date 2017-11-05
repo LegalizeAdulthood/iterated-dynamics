@@ -62,7 +62,7 @@ extern int                   g_bf_digits;
 extern int                   g_biomorph;
 extern unsigned int          g_diffusion_bits;
 extern int                   g_bit_shift;
-extern int                   bitshiftless1;
+extern int                   g_bit_shift_less_1;
 extern BYTE                  g_block[];
 extern int                   g_blue_bright;
 extern int                   g_blue_crop_left;

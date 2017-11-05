@@ -72,7 +72,7 @@ std::vector<DComplex> g_roots;
 std::vector<MPC> g_mpc_roots;
 long g_fudge_half;
 DComplex g_power_z;
-int     bitshiftless1;                  // bit shift less 1
+int     g_bit_shift_less_1;                  // bit shift less 1
 bool g_overflow = false;
 
 #define modulus(z)       (sqr((z).x)+sqr((z).y))
@@ -410,7 +410,7 @@ lcpower(LComplex *base, int exp, LComplex *result, int bitshift)
     while (exp)
     {
         lt2 = multiply(lxt, lxt, bitshift) - multiply(lyt, lyt, bitshift);
-        lyt = multiply(lxt, lyt, bitshiftless1);
+        lyt = multiply(lxt, lyt, g_bit_shift_less_1);
         if (g_overflow)
         {
             return g_overflow;
@@ -708,7 +708,7 @@ JuliaFractal()
     /* used for C prototype of fast integer math routines for classic
        Mandelbrot and Julia */
     g_l_new_z.x  = g_l_temp_sqr_x - g_l_temp_sqr_y + g_long_param->x;
-    g_l_new_z.y = multiply(g_l_old_z.x, g_l_old_z.y, bitshiftless1) + g_long_param->y;
+    g_l_new_z.y = multiply(g_l_old_z.x, g_l_old_z.y, g_bit_shift_less_1) + g_long_param->y;
     return longbailout();
 #else
     {
@@ -759,7 +759,7 @@ LambdaFractal()
     // in complex math) temp = Z * (1-Z)
     g_l_temp_sqr_x = g_l_old_z.x - g_l_temp_sqr_x + g_l_temp_sqr_y;
     g_l_temp_sqr_y = g_l_old_z.y
-                - multiply(g_l_old_z.y, g_l_old_z.x, bitshiftless1);
+                - multiply(g_l_old_z.y, g_l_old_z.x, g_bit_shift_less_1);
     // (in complex math) Z = Lambda * Z
     g_l_new_z.x = multiply(g_long_param->x, g_l_temp_sqr_x, g_bit_shift)
              - multiply(g_long_param->y, g_l_temp_sqr_y, g_bit_shift);
@@ -923,7 +923,7 @@ MarksLambdaFractal()
     // Z1 = (C^(exp-1) * Z**2) + C
 #if !defined(XFRACT)
     g_l_temp.x = g_l_temp_sqr_x - g_l_temp_sqr_y;
-    g_l_temp.y = multiply(g_l_old_z.x , g_l_old_z.y , bitshiftless1);
+    g_l_temp.y = multiply(g_l_old_z.x , g_l_old_z.y , g_bit_shift_less_1);
 
     g_l_new_z.x = multiply(g_l_coefficient.x, g_l_temp.x, g_bit_shift)
              - multiply(g_l_coefficient.y, g_l_temp.y, g_bit_shift) + g_long_param->x;
@@ -998,7 +998,7 @@ Mandel4Fractal()
     // first, compute (x + iy)**2
 #if !defined(XFRACT)
     g_l_new_z.x  = g_l_temp_sqr_x - g_l_temp_sqr_y;
-    g_l_new_z.y = multiply(g_l_old_z.x, g_l_old_z.y, bitshiftless1);
+    g_l_new_z.y = multiply(g_l_old_z.x, g_l_old_z.y, g_bit_shift_less_1);
     if (longbailout())
     {
         return 1;
@@ -1006,7 +1006,7 @@ Mandel4Fractal()
 
     // then, compute ((x + iy)**2)**2 + lambda
     g_l_new_z.x  = g_l_temp_sqr_x - g_l_temp_sqr_y + g_long_param->x;
-    g_l_new_z.y = multiply(g_l_old_z.x, g_l_old_z.y, bitshiftless1) + g_long_param->y;
+    g_l_new_z.y = multiply(g_l_old_z.x, g_l_old_z.y, g_bit_shift_less_1) + g_long_param->y;
     return longbailout();
 #else
     return 0;
@@ -1178,7 +1178,7 @@ TrigPlusZsquaredFractal()
     // z(n+1) = trig(z(n))+z(n)**2+C
     LCMPLXtrig0(g_l_old_z, g_l_new_z);
     g_l_new_z.x += g_l_temp_sqr_x - g_l_temp_sqr_y + g_long_param->x;
-    g_l_new_z.y += multiply(g_l_old_z.x, g_l_old_z.y, bitshiftless1) + g_long_param->y;
+    g_l_new_z.y += multiply(g_l_old_z.x, g_l_old_z.y, g_bit_shift_less_1) + g_long_param->y;
     return longbailout();
 #else
     return 0;
@@ -1497,7 +1497,7 @@ SpiderFractal()
 #if !defined(XFRACT)
     // Spider(XAXIS) { c=z=pixel: z=z*z+c; c=c/2+z, |z|<=4 }
     g_l_new_z.x  = g_l_temp_sqr_x - g_l_temp_sqr_y + g_l_temp.x;
-    g_l_new_z.y = multiply(g_l_old_z.x, g_l_old_z.y, bitshiftless1) + g_l_temp.y;
+    g_l_new_z.y = multiply(g_l_old_z.x, g_l_old_z.y, g_bit_shift_less_1) + g_l_temp.y;
     g_l_temp.x = (g_l_temp.x >> 1) + g_l_new_z.x;
     g_l_temp.y = (g_l_temp.y >> 1) + g_l_new_z.y;
     return longbailout();
@@ -2456,7 +2456,7 @@ ManOWarFractal()
 #if !defined(XFRACT)
     // From Art Matrix via Lee Skinner
     g_l_new_z.x  = g_l_temp_sqr_x - g_l_temp_sqr_y + g_l_temp.x + g_long_param->x;
-    g_l_new_z.y = multiply(g_l_old_z.x, g_l_old_z.y, bitshiftless1) + g_l_temp.y + g_long_param->y;
+    g_l_new_z.y = multiply(g_l_old_z.x, g_l_old_z.y, g_bit_shift_less_1) + g_l_temp.y + g_long_param->y;
     g_l_temp = g_l_old_z;
     return longbailout();
 #else
@@ -2861,7 +2861,7 @@ int marksmandel_per_pixel()
     {
         g_l_coefficient.x = multiply(g_l_old_z.x, g_l_old_z.x, g_bit_shift)
                          - multiply(g_l_old_z.y, g_l_old_z.y, g_bit_shift);
-        g_l_coefficient.y = multiply(g_l_old_z.x, g_l_old_z.y, bitshiftless1);
+        g_l_coefficient.y = multiply(g_l_old_z.x, g_l_old_z.y, g_bit_shift_less_1);
     }
     else if (g_c_exponent == 2)
     {

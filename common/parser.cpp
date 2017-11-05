@@ -751,8 +751,8 @@ void mStkRound()
 void lStkRound()
 {
     // Add .5 then truncate
-    Arg1->l.x += (1L << bitshiftless1);
-    Arg1->l.y += (1L << bitshiftless1);
+    Arg1->l.x += (1L << g_bit_shift_less_1);
+    Arg1->l.y += (1L << g_bit_shift_less_1);
     lStkFloor();
 }
 #endif
@@ -4341,7 +4341,7 @@ void init_misc()
     g_fudge_limit = (double)0x7fffffffL / fg;
     ShiftBack = 32 - g_bit_shift;
     Delta16 = g_bit_shift - 16;
-    bitshiftless1 = g_bit_shift-1;
+    g_bit_shift_less_1 = g_bit_shift-1;
     g_frm_uses_p1 = false;
     g_frm_uses_p2 = false;
     g_frm_uses_p3 = false;
