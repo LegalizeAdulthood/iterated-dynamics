@@ -505,7 +505,7 @@ void Jiim(jiim_types which)
         g_has_inverse = true;
     }
     oldsxoffs = g_logical_screen_x_offset;
-    oldsyoffs = syoffs;
+    oldsyoffs = g_logical_screen_y_offset;
     oldcalctype = g_calc_type;
     show_numbers = 0;
     g_using_jiim = true;
@@ -548,13 +548,13 @@ void Jiim(jiim_types which)
         g_vesa_y_res = g_screen_y_dots;
     }
 
-    if (g_logical_screen_x_offset != 0 || syoffs != 0) // we're in view windows
+    if (g_logical_screen_x_offset != 0 || g_logical_screen_y_offset != 0) // we're in view windows
     {
         bool const savehasinverse = g_has_inverse;
         g_has_inverse = true;
         SaveRect(0, 0, xdots, ydots);
         g_logical_screen_x_offset = g_video_start_x;
-        syoffs = g_video_start_y;
+        g_logical_screen_y_offset = g_video_start_y;
         RestoreRect(0, 0, xdots, ydots);
         g_has_inverse = savehasinverse;
     }
@@ -1275,7 +1275,7 @@ finish:
             g_has_inverse = true;
             SaveRect(0, 0, xdots, ydots);
             g_logical_screen_x_offset = oldsxoffs;
-            syoffs = oldsyoffs;
+            g_logical_screen_y_offset = oldsyoffs;
             RestoreRect(0, 0, xdots, ydots);
             g_has_inverse = savehasinverse;
         }
@@ -1303,7 +1303,7 @@ finish:
         g_x_size_dots = xdots - 1;
         g_y_size_dots = ydots - 1;
         g_logical_screen_x_offset = 0;
-        syoffs = 0;
+        g_logical_screen_y_offset = 0;
         freetempmsg();
     }
     else

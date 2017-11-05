@@ -124,9 +124,9 @@ void putpot(int x, int y, U16 color)
           was already a "writedisk" in that case */
     if (!driver_diskp())
     {
-        writedisk(x+g_logical_screen_x_offset, y+syoffs, color >> 8);    // upper 8 bits
+        writedisk(x+g_logical_screen_x_offset, y+g_logical_screen_y_offset, color >> 8);    // upper 8 bits
     }
-    writedisk(x+g_logical_screen_x_offset, y+g_screen_y_dots+syoffs, color&255); // lower 8 bits
+    writedisk(x+g_logical_screen_x_offset, y+g_screen_y_dots+g_logical_screen_y_offset, color&255); // lower 8 bits
 }
 
 // fixes border
@@ -157,8 +157,8 @@ U16 getpot(int x, int y)
 {
     U16 color;
 
-    color = (U16)readdisk(x+g_logical_screen_x_offset, y+syoffs);
-    color = (U16)((color << 8) + (U16) readdisk(x+g_logical_screen_x_offset, y+g_screen_y_dots+syoffs));
+    color = (U16)readdisk(x+g_logical_screen_x_offset, y+g_logical_screen_y_offset);
+    color = (U16)((color << 8) + (U16) readdisk(x+g_logical_screen_x_offset, y+g_screen_y_dots+g_logical_screen_y_offset));
     return (color);
 }
 

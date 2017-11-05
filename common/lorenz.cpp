@@ -2383,7 +2383,7 @@ done:
     {
         // turn off view windows so will save properly
         g_logical_screen_x_offset = 0;
-        syoffs = 0;
+        g_logical_screen_y_offset = 0;
         xdots = g_screen_x_dots;
         ydots = g_screen_y_dots;
         g_view_window = false;

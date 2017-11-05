@@ -57,7 +57,7 @@
 
 extern  int g_dot_mode;        // video access method (= 19)
 extern  int g_screen_x_dots, g_screen_y_dots;     // total # of dots on the screen
-extern  int g_logical_screen_x_offset, syoffs;     // offset of drawing area
+extern  int g_logical_screen_x_offset, g_logical_screen_y_offset;     // offset of drawing area
 extern  int g_colors;         // maximum colors available
 extern  int initmode;
 extern  int g_adapter;
@@ -2023,7 +2023,7 @@ xhandleevents()
             zoom_box_rotation = 0;
             zoom_box_skew = 0;
             zbx = (MIN(bandx0, bandx1)-g_logical_screen_x_offset)/x_size_d;
-            zby = (MIN(bandy0, bandy1)-syoffs)/y_size_d;
+            zby = (MIN(bandy0, bandy1)-g_logical_screen_y_offset)/y_size_d;
             zoom_box_width = ABS(bandx1-bandx0)/x_size_d;
             zoom_box_height = zoom_box_width;
             if (!inside_help)

@@ -204,16 +204,16 @@ bool showtempmsg(char const *msgparm)
         temptextsave.clear();
     }
     save_sxoffs = g_logical_screen_x_offset;
-    save_syoffs = syoffs;
+    save_syoffs = g_logical_screen_y_offset;
     if (g_video_scroll)
     {
         g_logical_screen_x_offset = g_video_start_x;
-        syoffs = g_video_start_y;
+        g_logical_screen_y_offset = g_video_start_y;
     }
     else
     {
-        syoffs = 0;
-        g_logical_screen_x_offset = syoffs;
+        g_logical_screen_y_offset = 0;
+        g_logical_screen_x_offset = g_logical_screen_y_offset;
     }
     if (temptextsave.empty()) // only save screen first time called
     {
@@ -227,7 +227,7 @@ bool showtempmsg(char const *msgparm)
     find_special_colors(); // get g_color_dark & g_color_medium set
     driver_display_string(0, 0, g_color_medium, g_color_dark, msg);
     g_logical_screen_x_offset = save_sxoffs;
-    syoffs = save_syoffs;
+    g_logical_screen_y_offset = save_syoffs;
 
     return false;
 }
@@ -241,16 +241,16 @@ void cleartempmsg()
     else if (!temptextsave.empty())
     {
         int save_sxoffs = g_logical_screen_x_offset;
-        int save_syoffs = syoffs;
+        int save_syoffs = g_logical_screen_y_offset;
         if (g_video_scroll)
         {
             g_logical_screen_x_offset = g_video_start_x;
-            syoffs = g_video_start_y;
+            g_logical_screen_y_offset = g_video_start_y;
         }
         else
         {
-            syoffs = 0;
-            g_logical_screen_x_offset = syoffs;
+            g_logical_screen_y_offset = 0;
+            g_logical_screen_x_offset = g_logical_screen_y_offset;
         }
         for (int i = 0; i < textydots; ++i)
         {
@@ -261,7 +261,7 @@ void cleartempmsg()
             temptextsave.clear();
         }
         g_logical_screen_x_offset = save_sxoffs;
-        syoffs = save_syoffs;
+        g_logical_screen_y_offset = save_syoffs;
     }
 }
 

@@ -561,7 +561,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
         g_evolve_param_grid_x           = blk_6_info.px;
         g_evolve_param_grid_y           = blk_6_info.py;
         g_logical_screen_x_offset       = blk_6_info.sxoffs;
-        syoffs       = blk_6_info.syoffs;
+        g_logical_screen_y_offset       = blk_6_info.syoffs;
         xdots        = blk_6_info.xdots;
         ydots        = blk_6_info.ydots;
         g_evolve_image_grid_size = blk_6_info.image_grid_size;
@@ -2013,19 +2013,19 @@ bool is_visible_window(
     }
 
     // now see how many corners are on the screen, accept if one or more
-    if (tl.x >= (0-g_logical_screen_x_offset) && tl.x <= (g_screen_x_dots-g_logical_screen_x_offset) && tl.y >= (0-syoffs) && tl.y <= (g_screen_y_dots-syoffs))
+    if (tl.x >= (0-g_logical_screen_x_offset) && tl.x <= (g_screen_x_dots-g_logical_screen_x_offset) && tl.y >= (0-g_logical_screen_y_offset) && tl.y <= (g_screen_y_dots-g_logical_screen_y_offset))
     {
         cornercount++;
     }
-    if (bl.x >= (0-g_logical_screen_x_offset) && bl.x <= (g_screen_x_dots-g_logical_screen_x_offset) && bl.y >= (0-syoffs) && bl.y <= (g_screen_y_dots-syoffs))
+    if (bl.x >= (0-g_logical_screen_x_offset) && bl.x <= (g_screen_x_dots-g_logical_screen_x_offset) && bl.y >= (0-g_logical_screen_y_offset) && bl.y <= (g_screen_y_dots-g_logical_screen_y_offset))
     {
         cornercount++;
     }
-    if (tr.x >= (0-g_logical_screen_x_offset) && tr.x <= (g_screen_x_dots-g_logical_screen_x_offset) && tr.y >= (0-syoffs) && tr.y <= (g_screen_y_dots-syoffs))
+    if (tr.x >= (0-g_logical_screen_x_offset) && tr.x <= (g_screen_x_dots-g_logical_screen_x_offset) && tr.y >= (0-g_logical_screen_y_offset) && tr.y <= (g_screen_y_dots-g_logical_screen_y_offset))
     {
         cornercount++;
     }
-    if (br.x >= (0-g_logical_screen_x_offset) && br.x <= (g_screen_x_dots-g_logical_screen_x_offset) && br.y >= (0-syoffs) && br.y <= (g_screen_y_dots-syoffs))
+    if (br.x >= (0-g_logical_screen_x_offset) && br.x <= (g_screen_x_dots-g_logical_screen_x_offset) && br.y >= (0-g_logical_screen_y_offset) && br.y <= (g_screen_y_dots-g_logical_screen_y_offset))
     {
         cornercount++;
     }

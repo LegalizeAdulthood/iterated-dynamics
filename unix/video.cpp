@@ -220,7 +220,7 @@ getcolor(int xdot, int ydot)
 {
     int x1, y1;
     x1 = xdot + g_logical_screen_x_offset;
-    y1 = ydot + syoffs;
+    y1 = ydot + g_logical_screen_y_offset;
     if (x1 < 0 || y1 < 0 || x1 >= g_screen_x_dots || y1 >= g_screen_y_dots)
         return 0;
     return dotread(x1, y1);
@@ -234,7 +234,7 @@ getcolor(int xdot, int ydot)
 void
 putcolor_a(int xdot, int ydot, int color)
 {
-    dotwrite(xdot + g_logical_screen_x_offset, ydot + syoffs, color & g_and_color);
+    dotwrite(xdot + g_logical_screen_x_offset, ydot + g_logical_screen_y_offset, color & g_and_color);
 }
 
 /*
@@ -629,9 +629,9 @@ put_a_char(int ch)
 
 void get_line(int row, int startcol, int stopcol, BYTE *pixels)
 {
-    if (startcol + g_logical_screen_x_offset >= g_screen_x_dots || row + syoffs >= g_screen_y_dots)
+    if (startcol + g_logical_screen_x_offset >= g_screen_x_dots || row + g_logical_screen_y_offset >= g_screen_y_dots)
         return;
-    lineread(row + syoffs, startcol + g_logical_screen_x_offset, stopcol + g_logical_screen_x_offset, pixels);
+    lineread(row + g_logical_screen_y_offset, startcol + g_logical_screen_x_offset, stopcol + g_logical_screen_x_offset, pixels);
 }
 
 /*
@@ -646,9 +646,9 @@ void get_line(int row, int startcol, int stopcol, BYTE *pixels)
 void
 put_line(int row, int startcol, int stopcol, BYTE const *pixels)
 {
-    if (startcol + g_logical_screen_x_offset >= g_screen_x_dots || row + syoffs > g_screen_y_dots)
+    if (startcol + g_logical_screen_x_offset >= g_screen_x_dots || row + g_logical_screen_y_offset > g_screen_y_dots)
         return;
-    linewrite(row + syoffs, startcol + g_logical_screen_x_offset, stopcol + g_logical_screen_x_offset, pixels);
+    linewrite(row + g_logical_screen_y_offset, startcol + g_logical_screen_x_offset, stopcol + g_logical_screen_x_offset, pixels);
 }
 
 /*
@@ -661,9 +661,9 @@ put_line(int row, int startcol, int stopcol, BYTE const *pixels)
 int
 out_line(BYTE *pixels, int linelen)
 {
-    if (g_row_count + syoffs >= g_screen_y_dots)
+    if (g_row_count + g_logical_screen_y_offset >= g_screen_y_dots)
         return 0;
-    linewrite(g_row_count + syoffs, g_logical_screen_x_offset, linelen + g_logical_screen_x_offset - 1, pixels);
+    linewrite(g_row_count + g_logical_screen_y_offset, g_logical_screen_x_offset, linelen + g_logical_screen_x_offset - 1, pixels);
     g_row_count++;
     return 0;
 }

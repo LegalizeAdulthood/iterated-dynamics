@@ -706,10 +706,10 @@ ods(char const *file, unsigned int line, char const *format, ...)
 
 void get_line(int row, int startcol, int stopcol, BYTE *pixels)
 {
-    if (startcol + g_logical_screen_x_offset >= g_screen_x_dots || row + syoffs >= g_screen_y_dots)
+    if (startcol + g_logical_screen_x_offset >= g_screen_x_dots || row + g_logical_screen_y_offset >= g_screen_y_dots)
         return;
     _ASSERTE(lineread);
-    (*lineread)(row + syoffs, startcol + g_logical_screen_x_offset, stopcol + g_logical_screen_x_offset, pixels);
+    (*lineread)(row + g_logical_screen_y_offset, startcol + g_logical_screen_x_offset, stopcol + g_logical_screen_x_offset, pixels);
 }
 
 /*
@@ -723,10 +723,10 @@ void get_line(int row, int startcol, int stopcol, BYTE *pixels)
 
 void put_line(int row, int startcol, int stopcol, BYTE const *pixels)
 {
-    if (startcol + g_logical_screen_x_offset >= g_screen_x_dots || row + syoffs > g_screen_y_dots)
+    if (startcol + g_logical_screen_x_offset >= g_screen_x_dots || row + g_logical_screen_y_offset > g_screen_y_dots)
         return;
     _ASSERTE(linewrite);
-    (*linewrite)(row + syoffs, startcol + g_logical_screen_x_offset, stopcol + g_logical_screen_x_offset, pixels);
+    (*linewrite)(row + g_logical_screen_y_offset, startcol + g_logical_screen_x_offset, stopcol + g_logical_screen_x_offset, pixels);
 }
 
 /*
@@ -818,7 +818,7 @@ int getcolor(int xdot, int ydot)
 {
     int x1, y1;
     x1 = xdot + g_logical_screen_x_offset;
-    y1 = ydot + syoffs;
+    y1 = ydot + g_logical_screen_y_offset;
     _ASSERTE(x1 >= 0 && x1 <= g_screen_x_dots);
     _ASSERTE(y1 >= 0 && y1 <= g_screen_y_dots);
     if (x1 < 0 || y1 < 0 || x1 >= g_screen_x_dots || y1 >= g_screen_y_dots)
@@ -835,7 +835,7 @@ int getcolor(int xdot, int ydot)
 void putcolor_a(int xdot, int ydot, int color)
 {
     int x1 = xdot + g_logical_screen_x_offset;
-    int y1 = ydot + syoffs;
+    int y1 = ydot + g_logical_screen_y_offset;
     _ASSERTE(x1 >= 0 && x1 <= g_screen_x_dots);
     _ASSERTE(y1 >= 0 && y1 <= g_screen_y_dots);
     _ASSERTE(dotwrite);
@@ -852,12 +852,12 @@ void putcolor_a(int xdot, int ydot, int color)
 int out_line(BYTE *pixels, int linelen)
 {
     _ASSERTE(_CrtCheckMemory());
-    if (g_row_count + syoffs >= g_screen_y_dots)
+    if (g_row_count + g_logical_screen_y_offset >= g_screen_y_dots)
     {
         return 0;
     }
     _ASSERTE(linewrite);
-    (*linewrite)(g_row_count + syoffs, g_logical_screen_x_offset, linelen + g_logical_screen_x_offset - 1, pixels);
+    (*linewrite)(g_row_count + g_logical_screen_y_offset, g_logical_screen_x_offset, linelen + g_logical_screen_x_offset - 1, pixels);
     g_row_count++;
     return 0;
 }
