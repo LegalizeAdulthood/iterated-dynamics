@@ -197,7 +197,7 @@ BYTE dstack[4096] = { 0 };              // common temp, two put_line calls
 }
 unsigned int tprefix[2][maxyblk][maxxblk] = { 0 }; // common temp
 
-bool nxtscreenflag = false;             // for cellular next screen generation
+bool g_cellular_next_screen = false;             // for cellular next screen generation
 int g_attractors = 0;                     // number of finite attractors
 DComplex g_attractor[MAX_NUM_ATTRACTORS] = { 0.0 };        // finite attractor vals (f.p)
 LComplex g_l_attractor[MAX_NUM_ATTRACTORS] = { 0 };         // finite attractor vals (int)

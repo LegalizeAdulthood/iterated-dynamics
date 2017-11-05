@@ -1067,7 +1067,7 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
         }
         if (fractype == fractal_type::CELLULAR)
         {
-            nxtscreenflag = !nxtscreenflag;
+            g_cellular_next_screen = !g_cellular_next_screen;
             g_calc_status = calc_status_value::RESUMABLE;
             *kbdmore = false;
         }

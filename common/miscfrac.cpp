@@ -1933,14 +1933,14 @@ int cellular()
 
     filled = 0;
     notfilled = (S16)(1-filled);
-    if (resuming && !nxtscreenflag && !lstscreenflag)
+    if (resuming && !g_cellular_next_screen && !lstscreenflag)
     {
         start_resume();
         get_resume(sizeof(start_row), &start_row, 0);
         end_resume();
         get_line(start_row, 0, g_i_x_stop, &cell_array[filled][0]);
     }
-    else if (nxtscreenflag && !lstscreenflag)
+    else if (g_cellular_next_screen && !lstscreenflag)
     {
         start_resume();
         end_resume();
@@ -2108,7 +2108,7 @@ contloop:
             return -1;
         }
     }
-    if (nxtscreenflag)
+    if (g_cellular_next_screen)
     {
         param[3] += g_i_y_stop + 1;
         start_row = 0;
@@ -2122,7 +2122,7 @@ bool CellularSetup()
 {
     if (!resuming)
     {
-        nxtscreenflag = false; // initialize flag
+        g_cellular_next_screen = false; // initialize flag
     }
     timer(0, curfractalspecific->calctype);
     return false;

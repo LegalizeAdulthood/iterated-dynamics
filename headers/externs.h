@@ -335,7 +335,7 @@ extern unsigned              g_num_colors;
 extern const int             g_num_trig_functions;
 extern int                   g_num_fractal_types;
 extern int                   g_num_work_list;
-extern bool                  nxtscreenflag;
+extern bool                  g_cellular_next_screen;
 extern int                   Offset;
 extern DComplex              old;
 extern long                  oldcoloriter;
