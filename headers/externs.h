@@ -346,7 +346,7 @@ extern char                  g_evolve_discrete_y_parameter_offset;
 extern double                g_evolve_x_parameter_offset;
 extern double                g_evolve_y_parameter_offset;
 extern int                   g_orbit_save_flags;
-extern int                   orbit_color;
+extern int                   g_orbit_color;
 extern int                   orbit_delay;
 extern long                  orbit_interval;
 extern int                   orbit_ptr;

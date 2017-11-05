@@ -2367,7 +2367,7 @@ bool froth_setup()
     }
     set_Froth_palette();
     // make the best of the .map situation
-    orbit_color = fsp.attractors != 6 && g_colors >= 16 ? (fsp.shades<<1)+1 : g_colors-1;
+    g_orbit_color = fsp.attractors != 6 && g_colors >= 16 ? (fsp.shades<<1)+1 : g_colors-1;
 
     if (g_integer_fractal)
     {

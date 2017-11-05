@@ -1671,7 +1671,7 @@ static void plotdorbit(double dx, double dy, int color)
         *(save_orbit + orbit_ptr++) = j;
         int const c = getcolor(i, j);
         *(save_orbit + orbit_ptr++) = c;
-        putcolor(i, j, c^orbit_color);
+        putcolor(i, j, c^g_orbit_color);
     }
     else
     {

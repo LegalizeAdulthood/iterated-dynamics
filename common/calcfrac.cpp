@@ -131,7 +131,7 @@ unsigned long lm = 0;                   // magnitude limit (CALCMAND)
 // ORBIT variables
 bool show_orbit = false;                // flag to turn on and off
 int     orbit_ptr = 0;                  // pointer into save_orbit array
-int     orbit_color = 15;                 // XOR color
+int     g_orbit_color = 15;                 // XOR color
 
 int g_i_x_start = 0;
 int g_i_x_stop = 0;
@@ -792,10 +792,10 @@ int calcfract()
     // ORBIT stuff
     show_orbit = start_show_orbit;
     orbit_ptr = 0;
-    orbit_color = 15;
+    g_orbit_color = 15;
     if (g_colors < 16)
     {
-        orbit_color = 1;
+        g_orbit_color = 1;
     }
 
     if (g_inversion[0] != 0.0)
