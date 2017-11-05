@@ -47,7 +47,7 @@ int test()
     {
         return (0);
     }
-    int numpasses = (stdcalcmode == '1') ? 0 : 1;
+    int numpasses = (g_std_calc_mode == '1') ? 0 : 1;
     for (int passes = startpass; passes <= numpasses ; passes++)
     {
         for (row = startrow; row <= g_i_y_stop; row = row+1+numpasses)
@@ -1596,7 +1596,7 @@ bool lya_setup()
     if (g_save_release < 1731)
     {
         // ignore inside=, stdcalcmode
-        stdcalcmode = '1';
+        g_std_calc_mode = '1';
         if (g_inside_color == 1)
         {
             g_inside_color = COLOR_BLACK;
@@ -1612,7 +1612,7 @@ bool lya_setup()
     {
         // Oops,lyapunov type
         usr_stdcalcmode = '1';  // doesn't use new & breaks orbits
-        stdcalcmode = '1';
+        g_std_calc_mode = '1';
     }
     return true;
 }

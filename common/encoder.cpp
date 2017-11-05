@@ -676,7 +676,7 @@ bool encoder()
         }
 
         // Extended parameters block 007
-        if (stdcalcmode == 'o')
+        if (g_std_calc_mode == 'o')
         {
             ORBITS_INFO osave_info;
             osave_info.oxmin     = g_orbit_corner_min_x;
@@ -909,7 +909,7 @@ static void setup_save_info(FRACTAL_INFO *save_info)
     save_info->x3rd = xx3rd;
     save_info->y3rd = yy3rd;
     save_info->calc_status = (short) g_calc_status;
-    save_info->stdcalcmode = (char)((three_pass && stdcalcmode == '3') ? 127 : stdcalcmode);
+    save_info->stdcalcmode = (char)((three_pass && g_std_calc_mode == '3') ? 127 : g_std_calc_mode);
     if (g_distance_estimator <= 32000)
     {
         save_info->distestold = (short) g_distance_estimator;

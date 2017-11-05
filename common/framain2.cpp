@@ -965,7 +965,7 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
         {
             usr_floatflag = true;
         }
-        else if (stdcalcmode != 'o')     // don't go there
+        else if (g_std_calc_mode != 'o')     // don't go there
         {
             usr_floatflag = false;
         }
@@ -1684,7 +1684,7 @@ static main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdm
         {
             usr_floatflag = true;
         }
-        else if (stdcalcmode != 'o')     // don't go there
+        else if (g_std_calc_mode != 'o')     // don't go there
         {
             usr_floatflag = false;
         }
@@ -2613,7 +2613,7 @@ static void restore_history_info(int i)
     xx3rd                 = last.x3rd           ;
     yy3rd                 = last.y3rd           ;
     usr_stdcalcmode       = last.stdcalcmode    ;
-    stdcalcmode           = last.stdcalcmode    ;
+    g_std_calc_mode           = last.stdcalcmode    ;
     three_pass            = last.three_pass != 0;
     stoppass              = last.stoppass       ;
     g_distance_estimator               = last.distest        ;

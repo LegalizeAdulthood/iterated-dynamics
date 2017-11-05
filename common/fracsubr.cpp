@@ -285,7 +285,7 @@ init_restart:
     /* the following variables may be forced to a different setting due to
        calc routine constraints;  usr_xxx is what the user last said is wanted,
        xxx is what we actually do in the current situation */
-    stdcalcmode      = usr_stdcalcmode;
+    g_std_calc_mode      = usr_stdcalcmode;
     g_periodicity_check = usr_periodicitycheck;
     g_distance_estimator          = usr_distest;
     g_biomorph         = usr_biomorph;

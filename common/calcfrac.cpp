@@ -620,8 +620,8 @@ int calcfract()
     if (g_is_true_color && truemode)
     {
         // Have to force passes = 1
-        stdcalcmode = '1';
-        usr_stdcalcmode = stdcalcmode;
+        g_std_calc_mode = '1';
+        usr_stdcalcmode = g_std_calc_mode;
     }
     if (truecolor)
     {
@@ -629,8 +629,8 @@ int calcfract()
         if (!startdisk1(g_light_name.c_str(), nullptr, false))
         {
             // Have to force passes = 1
-            stdcalcmode = '1';
-            usr_stdcalcmode = stdcalcmode;
+            g_std_calc_mode = '1';
+            usr_stdcalcmode = g_std_calc_mode;
             g_put_color = put_truecolor_disk;
         }
         else
@@ -642,8 +642,8 @@ int calcfract()
     {
         if (usr_stdcalcmode != 'o')
         {
-            stdcalcmode = '1';
-            usr_stdcalcmode = stdcalcmode;
+            g_std_calc_mode = '1';
+            usr_stdcalcmode = g_std_calc_mode;
         }
     }
 
@@ -915,24 +915,24 @@ int calcfract()
     }
     else // standard escape-time engine
     {
-        if (stdcalcmode == '3')  // convoluted 'g' + '2' hybrid
+        if (g_std_calc_mode == '3')  // convoluted 'g' + '2' hybrid
         {
             int oldcalcmode;
-            oldcalcmode = stdcalcmode;
+            oldcalcmode = g_std_calc_mode;
             if (!g_resuming || three_pass)
             {
-                stdcalcmode = 'g';
+                g_std_calc_mode = 'g';
                 three_pass = true;
                 timer(0, (int(*)())perform_worklist);
                 if (g_calc_status == calc_status_value::COMPLETED)
                 {
                     if (xdots >= 640)    // '2' is silly after 'g' for low rez
                     {
-                        stdcalcmode = '2';
+                        g_std_calc_mode = '2';
                     }
                     else
                     {
-                        stdcalcmode = '1';
+                        g_std_calc_mode = '1';
 
 
                     }
@@ -944,16 +944,16 @@ int calcfract()
             {
                 if (xdots >= 640)
                 {
-                    stdcalcmode = '2';
+                    g_std_calc_mode = '2';
                 }
                 else
                 {
-                    stdcalcmode = '1';
+                    g_std_calc_mode = '1';
 
                 }
                 timer(0, (int(*)())perform_worklist);
             }
-            stdcalcmode = (char)oldcalcmode;
+            g_std_calc_mode = (char)oldcalcmode;
         }
         else // main case, much nicer!
         {
@@ -1031,30 +1031,30 @@ static void perform_worklist()
 
     if (g_potential_flag && g_potential_16bit)
     {
-        int tmpcalcmode = stdcalcmode;
+        int tmpcalcmode = g_std_calc_mode;
 
-        stdcalcmode = '1'; // force 1 pass
+        g_std_calc_mode = '1'; // force 1 pass
         if (!g_resuming)
         {
             if (pot_startdisk() < 0)
             {
                 g_potential_16bit = false;       // startdisk failed or cancelled
-                stdcalcmode = (char)tmpcalcmode;    // maybe we can carry on???
+                g_std_calc_mode = (char)tmpcalcmode;    // maybe we can carry on???
             }
         }
     }
-    if (stdcalcmode == 'b' && (curfractalspecific->flags & NOTRACE))
+    if (g_std_calc_mode == 'b' && (curfractalspecific->flags & NOTRACE))
     {
-        stdcalcmode = '1';
+        g_std_calc_mode = '1';
 
     }
-    if (stdcalcmode == 'g' && (curfractalspecific->flags & NOGUESS))
+    if (g_std_calc_mode == 'g' && (curfractalspecific->flags & NOGUESS))
     {
-        stdcalcmode = '1';
+        g_std_calc_mode = '1';
     }
-    if (stdcalcmode == 'o' && (curfractalspecific->calctype != standard_fractal))
+    if (g_std_calc_mode == 'o' && (curfractalspecific->calctype != standard_fractal))
     {
-        stdcalcmode = '1';
+        g_std_calc_mode = '1';
     }
 
     // default setup a new worklist
@@ -1279,7 +1279,7 @@ static void perform_worklist()
         }
 
         // call the appropriate escape-time engine
-        switch (stdcalcmode)
+        switch (g_std_calc_mode)
         {
         case 's':
             if (g_debug_flag == debug_flags::use_soi_long_double)
@@ -1628,7 +1628,7 @@ static int sticky_orbits()
 
     if (plotorbits2dsetup() == -1)
     {
-        stdcalcmode = 'g';
+        g_std_calc_mode = 'g';
         return -1;
     }
 
@@ -1838,11 +1838,11 @@ static int one_or_two_pass()
     int i;
 
     totpasses = 1;
-    if (stdcalcmode == '2')
+    if (g_std_calc_mode == '2')
     {
         totpasses = 2;
     }
-    if (stdcalcmode == '2' && workpass == 0) // do 1st pass of two
+    if (g_std_calc_mode == '2' && workpass == 0) // do 1st pass of two
     {
         if (standard_calc(1) == -1)
         {
@@ -1896,7 +1896,7 @@ static int standard_calc(int passnum)
                     continue;
                 }
             }
-            if (passnum == 1 || stdcalcmode == '1' || (row&1) != 0 || (col&1) != 0)
+            if (passnum == 1 || g_std_calc_mode == '1' || (row&1) != 0 || (col&1) != 0)
             {
                 if ((*calctype)() == -1)   // standard_fractal(), calcmand() or calcmandfp()
                 {
@@ -1974,7 +1974,7 @@ int calcmand()              // fast per pixel 1/2/b/g, called with row & col set
         }
         if (g_debug_flag != debug_flags::force_boundary_trace_error)
         {
-            if (g_color <= 0 && stdcalcmode == 'b')
+            if (g_color <= 0 && g_std_calc_mode == 'b')
             {
                 g_color = 1;
             }
@@ -2044,7 +2044,7 @@ int calcmandfp()
         }
         if (g_debug_flag != debug_flags::force_boundary_trace_error)
         {
-            if (g_color == 0 && stdcalcmode == 'b')
+            if (g_color == 0 && g_std_calc_mode == 'b')
             {
                 g_color = 1;
             }
@@ -3019,7 +3019,7 @@ plot_pixel:
     }
     if (g_debug_flag != debug_flags::force_boundary_trace_error)
     {
-        if (g_color <= 0 && stdcalcmode == 'b')
+        if (g_color <= 0 && g_std_calc_mode == 'b')
         {
             g_color = 1;
         }
@@ -4409,7 +4409,7 @@ static void setsymmetry(symmetry_type sym, bool uselist) // set up proper symmet
     bf_t bft1;
     int saved = 0;
     symmetry = symmetry_type::X_AXIS;
-    if (stdcalcmode == 's' || stdcalcmode == 'o')
+    if (g_std_calc_mode == 's' || g_std_calc_mode == 'o')
     {
         return;
     }

@@ -666,15 +666,15 @@ static int check_pan() // return 0 if can't, alignment requirement if can
     {
         return (0); // not a full size unrotated unskewed zoombox
     }
-    if (stdcalcmode == 't')
+    if (g_std_calc_mode == 't')
     {
         return (0); // tesselate, can't do it
     }
-    if (stdcalcmode == 'd')
+    if (g_std_calc_mode == 'd')
     {
         return (0); // diffusion scan: can't do it either
     }
-    if (stdcalcmode == 'o')
+    if (g_std_calc_mode == 'o')
     {
         return (0); // orbits, can't do it
     }
@@ -689,13 +689,13 @@ static int check_pan() // return 0 if can't, alignment requirement if can
     {
         return (1); // 1 pass forced so align on any pixel
     }
-    if (stdcalcmode == 'b')
+    if (g_std_calc_mode == 'b')
     {
         return (1); // btm, align on any pixel
     }
-    if (stdcalcmode != 'g' || (curfractalspecific->flags&NOGUESS))
+    if (g_std_calc_mode != 'g' || (curfractalspecific->flags&NOGUESS))
     {
-        if (stdcalcmode == '2' || stdcalcmode == '3')   // align on even pixel for 2pass
+        if (g_std_calc_mode == '2' || g_std_calc_mode == '3')   // align on even pixel for 2pass
         {
             return (2);
         }
