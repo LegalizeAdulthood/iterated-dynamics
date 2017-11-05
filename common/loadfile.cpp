@@ -604,7 +604,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
     if (blk_7_info.got_data)
     {
         oxmin       = blk_7_info.oxmin;
-        oxmax       = blk_7_info.oxmax;
+        g_orbit_corner_max_x       = blk_7_info.oxmax;
         oymin       = blk_7_info.oymin;
         oymax       = blk_7_info.oymax;
         g_orbit_corner_3_x       = blk_7_info.ox3rd;

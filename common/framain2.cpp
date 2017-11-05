@@ -2483,7 +2483,7 @@ static void save_history_info()
     current.orbit_delay          = (short)g_orbit_delay;
     current.orbit_interval       = g_orbit_interval;
     current.oxmin                = oxmin;
-    current.oxmax                = oxmax;
+    current.oxmax                = g_orbit_corner_max_x;
     current.oymin                = oymin;
     current.oymax                = oymax;
     current.ox3rd                = g_orbit_corner_3_x;
@@ -2673,7 +2673,7 @@ static void restore_history_info(int i)
     g_orbit_delay = last.orbit_delay;
     g_orbit_interval = last.orbit_interval;
     oxmin = last.oxmin;
-    oxmax = last.oxmax;
+    g_orbit_corner_max_x = last.oxmax;
     oymin = last.oymin;
     oymax = last.oymax;
     g_orbit_corner_3_x = last.ox3rd;

@@ -680,7 +680,7 @@ bool encoder()
         {
             ORBITS_INFO osave_info;
             osave_info.oxmin     = oxmin;
-            osave_info.oxmax     = oxmax;
+            osave_info.oxmax     = g_orbit_corner_max_x;
             osave_info.oymin     = oymin;
             osave_info.oymax     = oymax;
             osave_info.ox3rd     = g_orbit_corner_3_x;
