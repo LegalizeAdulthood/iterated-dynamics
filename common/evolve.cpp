@@ -514,7 +514,7 @@ int get_variations()
         {
             firstparm = 0;
         }
-        else if (uses_p2)
+        else if (g_frm_uses_p2)
         {
             firstparm = 2;
         }
@@ -543,7 +543,7 @@ int get_variations()
         {
             lastparm = 6;
         }
-        else if (uses_p2)
+        else if (g_frm_uses_p2)
         {
             lastparm = 4;
         }

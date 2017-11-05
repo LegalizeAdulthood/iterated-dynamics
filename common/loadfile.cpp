@@ -476,7 +476,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
         default:
             g_formula_name = blk_3_info.form_name;
             g_frm_uses_p1 = blk_3_info.uses_p1 != 0;
-            uses_p2 = blk_3_info.uses_p2 != 0;
+            g_frm_uses_p2 = blk_3_info.uses_p2 != 0;
             uses_p3 = blk_3_info.uses_p3 != 0;
             g_frm_uses_ismand = blk_3_info.uses_ismand != 0;
             g_is_mandelbrot = blk_3_info.ismand != 0;

@@ -1653,7 +1653,7 @@ gfp_top:
         {
             firstparm = 0;
         }
-        else if (uses_p2)
+        else if (g_frm_uses_p2)
         {
             firstparm = 2;
         }
@@ -1682,7 +1682,7 @@ gfp_top:
         {
             lastparm = 6;
         }
-        else if (uses_p2)
+        else if (g_frm_uses_p2)
         {
             lastparm = 4;
         }

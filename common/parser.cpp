@@ -191,7 +191,7 @@ static bool SetRandom = false;
 static bool Randomized = false;
 static unsigned long RandNum;
 bool g_frm_uses_p1 = false;
-bool uses_p2 = false;
+bool g_frm_uses_p2 = false;
 bool uses_p3 = false;
 bool uses_p4 = false;
 bool uses_p5 = false;
@@ -2039,7 +2039,7 @@ ConstArg *isconst(char const *Str, int Len)
                 }
                 if (n == 2)          // The formula uses 'p2'.
                 {
-                    uses_p2 = true;
+                    g_frm_uses_p2 = true;
                 }
                 if (n == 7)          // The formula uses 'rand'.
                 {
@@ -3858,7 +3858,7 @@ int frm_get_param_stuff(char const *Name)
     token_st current_token;
     FILE * entry_file = nullptr;
     g_frm_uses_p1 = false;
-    uses_p2 = false;
+    g_frm_uses_p2 = false;
     uses_p3 = false;
     g_frm_uses_ismand = false;
     g_max_function = 0;
@@ -3915,7 +3915,7 @@ int frm_get_param_stuff(char const *Name)
             }
             else if (current_token.token_id == 2)
             {
-                uses_p2 = true;
+                g_frm_uses_p2 = true;
             }
             else if (current_token.token_id == 8)
             {
@@ -3950,7 +3950,7 @@ int frm_get_param_stuff(char const *Name)
     if (current_token.token_type != END_OF_FORMULA)
     {
         g_frm_uses_p1 = false;
-        uses_p2 = false;
+        g_frm_uses_p2 = false;
         uses_p3 = false;
         g_frm_uses_ismand = false;
         g_max_function = 0;
@@ -4343,7 +4343,7 @@ void init_misc()
     Delta16 = bitshift - 16;
     bitshiftless1 = bitshift-1;
     g_frm_uses_p1 = false;
-    uses_p2 = false;
+    g_frm_uses_p2 = false;
     uses_p3 = false;
     uses_jump = false;
     g_frm_uses_ismand = false;
@@ -4380,7 +4380,7 @@ static void parser_allocate()
         }
     }
     g_frm_uses_p1 = false;
-    uses_p2 = false;
+    g_frm_uses_p2 = false;
     uses_p3 = false;
     uses_p4 = false;
     uses_p5 = false;
