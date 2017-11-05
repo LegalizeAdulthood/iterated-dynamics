@@ -437,7 +437,7 @@ extern std::string           g_save_filename;
 extern long                  g_save_ticks;
 extern int                   g_save_release;
 extern int                   g_save_system;
-extern int                   scale_map[];
+extern int                   g_scale_map[];
 extern float                 screenaspect;
 extern id::SearchPath        searchfor;
 extern bool                  set_orbit_corners;

@@ -587,7 +587,7 @@ static void initvars_fractal()          // init vars affecting calculation
     g_polyphony = 0;                       // no polyphony
     for (int i = 0; i <= 11; i++)
     {
-        scale_map[i] = i+1;    // straight mapping of notes in octave
+        g_scale_map[i] = i+1;    // straight mapping of notes in octave
     }
 #endif
 }
@@ -2778,7 +2778,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
             if ((totparms > counter) && (intval[counter] > 0)
                     && (intval[counter] < 13))
             {
-                scale_map[counter] = intval[counter];
+                g_scale_map[counter] = intval[counter];
             }
 #endif
         return CMDARG_NONE;

@@ -135,7 +135,7 @@ bool g_confirm_file_deletes = false;
 bool g_browse_check_fractal_params = false;
 bool g_browse_check_fractal_type = false;
 std::string g_browse_mask;
-int scale_map[12] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12}; // array for mapping notes to a (user defined) scale
+int g_scale_map[12] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12}; // array for mapping notes to a (user defined) scale
 
 
 void check_samename()

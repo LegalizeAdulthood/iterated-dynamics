@@ -1358,16 +1358,16 @@ void write_batch_parms(char const *colorinf, bool colorsonly, int maxcolor, int 
             int i;
             for (i = 0; i <= 11; i++)
             {
-                if (scale_map[i] != i+1)
+                if (g_scale_map[i] != i+1)
                 {
                     i = 15;
                 }
             }
             if (i > 12)
             {
-                put_parm(" %s=%d/%d/%d/%d/%d/%d/%d/%d/%d/%d/%d/%d", "scalemap", scale_map[0], scale_map[1], scale_map[2], scale_map[3]
-                         , scale_map[4], scale_map[5], scale_map[6], scale_map[7], scale_map[8]
-                         , scale_map[9], scale_map[10], scale_map[11]);
+                put_parm(" %s=%d/%d/%d/%d/%d/%d/%d/%d/%d/%d/%d/%d", "scalemap", g_scale_map[0], g_scale_map[1], g_scale_map[2], g_scale_map[3]
+                         , g_scale_map[4], g_scale_map[5], g_scale_map[6], g_scale_map[7], g_scale_map[8]
+                         , g_scale_map[9], g_scale_map[10], g_scale_map[11]);
             }
         }
 #endif
