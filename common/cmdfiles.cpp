@@ -85,7 +85,7 @@ bool    g_overwrite_file = false;// true if file overwrite allowed
 int     g_sound_flag = 0;          // sound control bitfield... see sound.c for useage
 int     g_base_hertz = 0;          // sound=x/y/x hertz value
 int     g_debug_flag = debug_flags::none; // internal use only - you didn't see this
-bool    timerflag = false;      // you didn't see this, either
+bool    g_timer_flag = false;      // you didn't see this, either
 int     g_cycle_limit = 0;         // color-rotator upper limit
 int     g_inside_color = 0;             // inside color: 1=blue
 int     g_fill_color = 0;          // fillcolor: -1=normal
@@ -434,7 +434,7 @@ static void initvars_restart()          // <ins> key init
     g_orbit_delay = 0;                    // full speed orbits
     g_orbit_interval = 1;                 // plot all orbits
     g_debug_flag = debug_flags::none;      // debugging flag(s) are off
-    timerflag = false;                  // timer flags are off
+    g_timer_flag = false;                  // timer flags are off
     g_formula_filename = "fractint.frm";      // default formula file
     g_formula_name = "";
     g_l_system_filename = "fractint.l";
@@ -2871,7 +2871,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
     {
         // internal use only
         g_debug_flag = numval;
-        timerflag = (g_debug_flag & debug_flags::benchmark_timer) != 0;       // separate timer flag
+        g_timer_flag = (g_debug_flag & debug_flags::benchmark_timer) != 0;       // separate timer flag
         g_debug_flag &= ~debug_flags::benchmark_timer;
         return CMDARG_NONE;
     }

@@ -637,7 +637,7 @@ int timer(int timertype, int(*subrtn)(), ...)
 
     va_start(arg_marker, subrtn);
 
-    bool do_bench = timerflag; // record time?
+    bool do_bench = g_timer_flag; // record time?
     if (timertype == 2)     // encoder, record time only if debug flag set
     {
         do_bench = (g_debug_flag == debug_flags::benchmark_encoder);

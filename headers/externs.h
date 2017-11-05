@@ -487,7 +487,7 @@ extern unsigned int          g_evolve_this_generation_random_seed;
 extern bool                  g_three_pass;
 extern double                g_threshold;
 extern int                   g_timed_save;
-extern bool                  timerflag;
+extern bool                  g_timer_flag;
 extern long                  timer_interval;
 extern long                  timer_start;
 extern DComplex              tmp;
