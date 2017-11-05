@@ -782,7 +782,7 @@ bool tab_display_2(char *msg)
     show_str_var("map",         g_map_name.c_str(),     &row, msg);
     write_row(row++, "Sizeof fractalspecific array %d",
               g_num_fractal_types*(int)sizeof(fractalspecificstuff));
-    write_row(row, "calc_status %d pixel [%d, %d]", g_calc_status, col, row);
+    write_row(row, "calc_status %d pixel [%d, %d]", g_calc_status, g_col, row);
     ++row;
     if (fractype == fractal_type::FORMULA || fractype == fractal_type::FFORMULA)
     {
@@ -1086,7 +1086,7 @@ top:
                 sprintf(msg, "%d", g_current_row);
                 driver_put_string(-1, -1, C_GENERAL_HI, msg);
                 driver_put_string(-1, -1, C_GENERAL_MED, " col ");
-                sprintf(msg, "%d", col);
+                sprintf(msg, "%d", g_col);
                 driver_put_string(-1, -1, C_GENERAL_HI, msg);
             }
             ++s_row;

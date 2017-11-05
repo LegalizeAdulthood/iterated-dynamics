@@ -102,7 +102,7 @@ long g_color_iter = 0;
 long g_old_color_iter = 0;
 long g_real_color_iter = 0;
 int row = 0;
-int col = 0;
+int g_col = 0;
 int g_invert = 0;
 double g_f_radius = 0.0;
 double g_f_x_center = 0.0;
@@ -549,7 +549,7 @@ void showdotsaverestore(
     }
     if (action == show_dot_action::SAVE)
     {
-        (*g_plot)(col, row, showdotcolor);
+        (*g_plot)(g_col, row, showdotcolor);
     }
 }
 
@@ -557,44 +557,44 @@ int calctypeshowdot()
 {
     int out, startx, starty, stopx, stopy, width;
     show_dot_direction direction = show_dot_direction::JUST_A_POINT;
-    stopx = col;
+    stopx = g_col;
     startx = stopx;
     stopy = row;
     starty = stopy;
     width = showdot_width+1;
     if (width > 0)
     {
-        if (col+width <= g_i_x_stop && row+width <= g_i_y_stop)
+        if (g_col+width <= g_i_x_stop && row+width <= g_i_y_stop)
         {
             // preferred show_dot shape
             direction = show_dot_direction::UPPER_LEFT;
-            startx = col;
-            stopx  = col+width;
+            startx = g_col;
+            stopx  = g_col+width;
             starty = row+width;
             stopy  = row+1;
         }
-        else if (col-width >= g_i_x_start && row+width <= g_i_y_stop)
+        else if (g_col-width >= g_i_x_start && row+width <= g_i_y_stop)
         {
             // second choice
             direction = show_dot_direction::UPPER_RIGHT;
-            startx = col-width;
-            stopx  = col;
+            startx = g_col-width;
+            stopx  = g_col;
             starty = row+width;
             stopy  = row+1;
         }
-        else if (col-width >= g_i_x_start && row-width >= g_i_y_start)
+        else if (g_col-width >= g_i_x_start && row-width >= g_i_y_start)
         {
             direction = show_dot_direction::LOWER_RIGHT;
-            startx = col-width;
-            stopx  = col;
+            startx = g_col-width;
+            stopx  = g_col;
             starty = row-width;
             stopy  = row-1;
         }
-        else if (col+width <= g_i_x_stop && row-width >= g_i_y_start)
+        else if (g_col+width <= g_i_x_stop && row-width >= g_i_y_start)
         {
             direction = show_dot_direction::LOWER_LEFT;
-            startx = col;
-            stopx  = col+width;
+            startx = g_col;
+            stopx  = g_col+width;
             starty = row-width;
             stopy  = row-1;
         }
@@ -1455,7 +1455,7 @@ static int diffusion_engine()
             count_to_int(g_diffusion_counter, colo, rowo);
 
             i = 0;
-            col = g_i_x_start + colo; // get the right tiles
+            g_col = g_i_x_start + colo; // get the right tiles
             do
             {
                 j = 0;
@@ -1463,7 +1463,7 @@ static int diffusion_engine()
                 do
                 {
                     calculate;
-                    (*g_plot)(col, row, g_color);
+                    (*g_plot)(g_col, row, g_color);
                     j++;
                     row += s;                  // next tile
                 }
@@ -1473,10 +1473,10 @@ static int diffusion_engine()
                 if (rowo < rem_y)
                 {
                     calculate;
-                    (*g_plot)(col, row, g_color);
+                    (*g_plot)(g_col, row, g_color);
                 }
                 i++;
-                col += s;
+                g_col += s;
             }
             while (i < nx);
             /* in the last x tiles we may not need to plot the point */
@@ -1487,7 +1487,7 @@ static int diffusion_engine()
                 do
                 {
                     calculate;
-                    (*g_plot)(col, row, g_color);
+                    (*g_plot)(g_col, row, g_color);
                     j++;
                     row += s; // next tile
                 }
@@ -1495,7 +1495,7 @@ static int diffusion_engine()
                 if (rowo < rem_y)
                 {
                     calculate;
-                    (*g_plot)(col, row, g_color);
+                    (*g_plot)(g_col, row, g_color);
                 }
             }
             g_diffusion_counter++;
@@ -1517,11 +1517,11 @@ static int diffusion_engine()
                 j = 0;
                 do
                 {
-                    col = g_i_x_start + colo + i * s; // get the right tiles
+                    g_col = g_i_x_start + colo + i * s; // get the right tiles
                     row = g_i_y_start + rowo + j * s;
 
                     calculate;
-                    plot_block(col, row, sqsz, g_color);
+                    plot_block(g_col, row, sqsz, g_color);
                     j++;
                 }
                 while (j < ny);
@@ -1531,7 +1531,7 @@ static int diffusion_engine()
                     row = g_i_y_start + rowo + ny * s;
 
                     calculate;
-                    plot_block_lim(col, row, sqsz, g_color);
+                    plot_block_lim(g_col, row, sqsz, g_color);
                 }
                 i++;
             }
@@ -1539,14 +1539,14 @@ static int diffusion_engine()
             // in the last tile we may not need to plot the point
             if (colo < rem_x)
             {
-                col = g_i_x_start + colo + nx * s;
+                g_col = g_i_x_start + colo + nx * s;
                 j = 0;
                 do
                 {
                     row = g_i_y_start + rowo + j * s; // get the right tiles
 
                     calculate;
-                    plot_block_lim(col, row, sqsz, g_color);
+                    plot_block_lim(g_col, row, sqsz, g_color);
                     j++;
                 }
                 while (j < ny);
@@ -1555,7 +1555,7 @@ static int diffusion_engine()
                     row = g_i_y_start + rowo + ny * s;
 
                     calculate;
-                    plot_block_lim(col, row, sqsz, g_color);
+                    plot_block_lim(g_col, row, sqsz, g_color);
                 }
             }
 
@@ -1573,11 +1573,11 @@ static int diffusion_engine()
             j = 0;
             do
             {
-                col = g_i_x_start + colo + i * s; // get the right tiles
+                g_col = g_i_x_start + colo + i * s; // get the right tiles
                 row = g_i_y_start + rowo + j * s;
 
                 calculate;
-                (*g_plot)(col, row, g_color);
+                (*g_plot)(g_col, row, g_color);
                 j++;
             }
             while (j < ny);
@@ -1587,7 +1587,7 @@ static int diffusion_engine()
                 row = g_i_y_start + rowo + ny * s;
 
                 calculate;
-                (*g_plot)(col, row, g_color);
+                (*g_plot)(g_col, row, g_color);
             }
             i++;
         }
@@ -1595,14 +1595,14 @@ static int diffusion_engine()
         // in the last tile we may nnt need to plot the point
         if (colo < rem_x)
         {
-            col = g_i_x_start + colo + nx * s;
+            g_col = g_i_x_start + colo + nx * s;
             j = 0;
             do
             {
                 row = g_i_y_start + rowo + j * s; // get the right tiles
 
                 calculate;
-                (*g_plot)(col, row, g_color);
+                (*g_plot)(g_col, row, g_color);
                 j++;
             }
             while (j < ny);
@@ -1611,7 +1611,7 @@ static int diffusion_engine()
                 row = g_i_y_start + rowo + ny * s;
 
                 calculate;
-                (*g_plot)(col, row, g_color);
+                (*g_plot)(g_col, row, g_color);
             }
         }
         g_diffusion_counter++;
@@ -1638,21 +1638,21 @@ static int sticky_orbits()
     default:
         // draw a rectangle
         row = yybegin;
-        col = xxbegin;
+        g_col = xxbegin;
 
         while (row <= g_i_y_stop)
         {
             g_current_row = row;
-            while (col <= g_i_x_stop)
+            while (g_col <= g_i_x_stop)
             {
                 if (plotorbits2dfloat() == -1)
                 {
-                    add_worklist(xxstart, xxstop, col, yystart, yystop, row, 0, g_work_symmetry);
+                    add_worklist(xxstart, xxstop, g_col, yystart, yystop, row, 0, g_work_symmetry);
                     return -1; // interrupted
                 }
-                ++col;
+                ++g_col;
             }
-            col = g_i_x_start;
+            g_col = g_i_x_start;
             ++row;
         }
         break;
@@ -1676,13 +1676,13 @@ static int sticky_orbits()
         {
             if (dX > 0)         // determine start point and last column
             {
-                col = xxbegin;
+                g_col = xxbegin;
                 row = yybegin;
                 final = g_i_x_stop;
             }
             else
             {
-                col = g_i_x_stop;
+                g_col = g_i_x_stop;
                 row = g_i_y_stop;
                 final = xxbegin;
             }
@@ -1691,14 +1691,14 @@ static int sticky_orbits()
             inc2 = 2 * (abs(dY) - abs(dX));
             if (pos_slope)
             {
-                while (col <= final)    // step through columns checking for new row
+                while (g_col <= final)    // step through columns checking for new row
                 {
                     if (plotorbits2dfloat() == -1)
                     {
-                        add_worklist(xxstart, xxstop, col, yystart, yystop, row, 0, g_work_symmetry);
+                        add_worklist(xxstart, xxstop, g_col, yystart, yystop, row, 0, g_work_symmetry);
                         return -1; // interrupted
                     }
-                    col++;
+                    g_col++;
                     if (G >= 0)             // it's time to change rows
                     {
                         row++;      // positive slope so increment through the rows
@@ -1712,14 +1712,14 @@ static int sticky_orbits()
             }
             else
             {
-                while (col <= final)    // step through columns checking for new row
+                while (g_col <= final)    // step through columns checking for new row
                 {
                     if (plotorbits2dfloat() == -1)
                     {
-                        add_worklist(xxstart, xxstop, col, yystart, yystop, row, 0, g_work_symmetry);
+                        add_worklist(xxstart, xxstop, g_col, yystart, yystop, row, 0, g_work_symmetry);
                         return -1; // interrupted
                     }
-                    col++;
+                    g_col++;
                     if (G > 0)              // it's time to change rows
                     {
                         row--;      // negative slope so decrement through the rows
@@ -1736,13 +1736,13 @@ static int sticky_orbits()
         {
             if (dY > 0)             // determine start point and last row
             {
-                col = xxbegin;
+                g_col = xxbegin;
                 row = yybegin;
                 final = g_i_y_stop;
             }
             else
             {
-                col = g_i_x_stop;
+                g_col = g_i_x_stop;
                 row = g_i_y_stop;
                 final = yybegin;
             }
@@ -1755,13 +1755,13 @@ static int sticky_orbits()
                 {
                     if (plotorbits2dfloat() == -1)
                     {
-                        add_worklist(xxstart, xxstop, col, yystart, yystop, row, 0, g_work_symmetry);
+                        add_worklist(xxstart, xxstop, g_col, yystart, yystop, row, 0, g_work_symmetry);
                         return -1; // interrupted
                     }
                     row++;
                     if (G >= 0)                 // it's time to change columns
                     {
-                        col++;  // positive slope so increment through the columns
+                        g_col++;  // positive slope so increment through the columns
                         G += inc2;
                     }
                     else                      // stay at the same column
@@ -1776,13 +1776,13 @@ static int sticky_orbits()
                 {
                     if (plotorbits2dfloat() == -1)
                     {
-                        add_worklist(xxstart, xxstop, col, yystart, yystop, row, 0, g_work_symmetry);
+                        add_worklist(xxstart, xxstop, g_col, yystart, yystop, row, 0, g_work_symmetry);
                         return -1; // interrupted
                     }
                     row++;
                     if (G > 0)                  // it's time to change columns
                     {
-                        col--;  // negative slope so decrement through the columns
+                        g_col--;  // negative slope so decrement through the columns
                         G += inc2;
                     }
                     else                      // stay at the same column
@@ -1817,7 +1817,7 @@ static int sticky_orbits()
         while (angle < Rotation)
         {
             theta = (double)angle * factor;
-            col = (int)(xfactor + (Xctr + Xmagfactor * cos(theta)));
+            g_col = (int)(xfactor + (Xctr + Xmagfactor * cos(theta)));
             row = (int)(yfactor + (Yctr + Xmagfactor * sin(theta)));
             if (plotorbits2dfloat() == -1)
             {
@@ -1846,7 +1846,7 @@ static int one_or_two_pass()
     {
         if (standard_calc(1) == -1)
         {
-            add_worklist(xxstart, xxstop, col, yystart, yystop, row, 0, g_work_symmetry);
+            add_worklist(xxstart, xxstop, g_col, yystart, yystop, row, 0, g_work_symmetry);
             return -1;
         }
         if (g_num_work_list > 0) // worklist not empty, defer 2nd pass
@@ -1866,7 +1866,7 @@ static int one_or_two_pass()
         {
             i -= row - g_i_y_start;
         }
-        add_worklist(xxstart, xxstop, col, row, i, row, g_work_pass, g_work_symmetry);
+        add_worklist(xxstart, xxstop, g_col, row, i, row, g_work_pass, g_work_symmetry);
         return -1;
     }
 
@@ -1878,25 +1878,25 @@ static int standard_calc(int passnum)
     g_got_status = 0;
     g_current_pass = passnum;
     row = yybegin;
-    col = xxbegin;
+    g_col = xxbegin;
 
     while (row <= g_i_y_stop)
     {
         g_current_row = row;
         g_reset_periodicity = true;
-        while (col <= g_i_x_stop)
+        while (g_col <= g_i_x_stop)
         {
             // on 2nd pass of two, skip even pts
             if (g_quick_calc && !g_resuming)
             {
-                g_color = getcolor(col, row);
+                g_color = getcolor(g_col, row);
                 if (g_color != g_inside_color)
                 {
-                    ++col;
+                    ++g_col;
                     continue;
                 }
             }
-            if (passnum == 1 || g_std_calc_mode == '1' || (row&1) != 0 || (col&1) != 0)
+            if (passnum == 1 || g_std_calc_mode == '1' || (row&1) != 0 || (g_col&1) != 0)
             {
                 if ((*g_calc_type)() == -1)   // standard_fractal(), calcmand() or calcmandfp()
                 {
@@ -1908,21 +1908,21 @@ static int standard_calc(int passnum)
                 {
                     if ((row&1) == 0 && row < g_i_y_stop)
                     {
-                        (*g_plot)(col, row+1, g_color);
-                        if ((col&1) == 0 && col < g_i_x_stop)
+                        (*g_plot)(g_col, row+1, g_color);
+                        if ((g_col&1) == 0 && g_col < g_i_x_stop)
                         {
-                            (*g_plot)(col+1, row+1, g_color);
+                            (*g_plot)(g_col+1, row+1, g_color);
                         }
                     }
-                    if ((col&1) == 0 && col < g_i_x_stop)
+                    if ((g_col&1) == 0 && g_col < g_i_x_stop)
                     {
-                        (*g_plot)(++col, row, g_color);
+                        (*g_plot)(++g_col, row, g_color);
                     }
                 }
             }
-            ++col;
+            ++g_col;
         }
-        col = g_i_x_start;
+        g_col = g_i_x_start;
         if (passnum == 1 && (row&1) == 0)
         {
             ++row;
@@ -1979,7 +1979,7 @@ int calcmand()              // fast per pixel 1/2/b/g, called with row & col set
                 g_color = 1;
             }
         }
-        (*g_plot)(col, row, g_color);
+        (*g_plot)(g_col, row, g_color);
     }
     else
     {
@@ -2049,7 +2049,7 @@ int calcmandfp()
                 g_color = 1;
             }
         }
-        (*g_plot)(col, row, g_color);
+        (*g_plot)(g_col, row, g_color);
     }
     else
     {
@@ -2675,7 +2675,7 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
                     cyclelen = g_color_iter-savedcoloriter;
 #ifdef NUMSAVED
                     fprintf(fp, "row %3d col %3d len %6ld iter %6ld savedand %6ld\n",
-                            row, col, cyclelen, g_color_iter, savedand);
+                            row, g_col, cyclelen, g_color_iter, savedand);
                     if (zctr > 1 && zctr < NUMSAVED)
                     {
                         for (int i = 0; i < zctr; i++)
@@ -3024,7 +3024,7 @@ plot_pixel:
             g_color = 1;
         }
     }
-    (*g_plot)(col, row, g_color);
+    (*g_plot)(g_col, row, g_color);
 
     g_max_iterations = savemaxit;
     if ((g_keyboard_check_interval -= abs((int)g_real_color_iter)) <= 0)
@@ -3427,9 +3427,9 @@ static int potential(double mag, long iterations)
     {
         if (!driver_diskp())   // if putcolor won't be doing it for us
         {
-            writedisk(col+sxoffs, row+syoffs, i_pot);
+            writedisk(g_col+sxoffs, row+syoffs, i_pot);
         }
-        writedisk(col+sxoffs, row+sydots+syoffs, (int)l_pot);
+        writedisk(g_col+sxoffs, row+sydots+syoffs, (int)l_pot);
     }
 
     return i_pot;
@@ -3489,12 +3489,12 @@ int  bound_trace_main()
 
             trail_color = g_color;
             row = currow;
-            col = curcol;
+            g_col = curcol;
             if ((*g_calc_type)() == -1) // color, row, col are global
             {
                 if (g_show_dot != bkcolor)   // remove show_dot pixel
                 {
-                    (*g_plot)(col, row, bkcolor);
+                    (*g_plot)(g_col, row, bkcolor);
                 }
                 if (g_i_y_stop != yystop)
                 {
@@ -3527,18 +3527,18 @@ int  bound_trace_main()
             {
                 step_col_row();
                 if (row >= currow
-                        && col >= g_i_x_start
-                        && col <= g_i_x_stop
+                        && g_col >= g_i_x_start
+                        && g_col <= g_i_x_stop
                         && row <= g_i_y_stop)
                 {
                     // the order of operations in this next line is critical
-                    g_color = getcolor(col, row);
+                    g_color = getcolor(g_col, row);
                     if (g_color == bkcolor && (*g_calc_type)() == -1)
                         // color, row, col are global for (*calctype)()
                     {
                         if (g_show_dot != bkcolor)   // remove show_dot pixel
                         {
-                            (*g_plot)(col, row, bkcolor);
+                            (*g_plot)(g_col, row, bkcolor);
                         }
                         if (g_i_y_stop != yystop)
                         {
@@ -3554,7 +3554,7 @@ int  bound_trace_main()
                             matches_found++;
                         }
                         trail_row = row;
-                        trail_col = col;
+                        trail_col = g_col;
                         advance_match(coming_from);
                     }
                     else
@@ -3569,7 +3569,7 @@ int  bound_trace_main()
                     continue_loop = (going_to != coming_from) || (matches_found > 0);
                 }
             }
-            while (continue_loop && (col != curcol || row != currow));
+            while (continue_loop && (g_col != curcol || row != currow));
 
             if (matches_found <= 3)
             {
@@ -3594,17 +3594,17 @@ int  bound_trace_main()
                 {
                     step_col_row();
                     if (row >= currow
-                            && col >= g_i_x_start
-                            && col <= g_i_x_stop
+                            && g_col >= g_i_x_start
+                            && g_col <= g_i_x_stop
                             && row <= g_i_y_stop
-                            && getcolor(col, row) == trail_color)
+                            && getcolor(g_col, row) == trail_color)
                         // getcolor() must be last
                     {
                         if (going_to == direction::South
                                 || (going_to == direction::West && coming_from != direction::East))
                         {
                             // fill a row, but only once
-                            right = col;
+                            right = g_col;
                             while (--right >= g_i_x_start)
                             {
                                 g_color = getcolor(right, row);
@@ -3642,7 +3642,7 @@ int  bound_trace_main()
                             } // end of fill line
                         }
                         trail_row = row;
-                        trail_col = col;
+                        trail_col = g_col;
                         advance_match(coming_from);
                         match_found = true;
                     }
@@ -3658,7 +3658,7 @@ int  bound_trace_main()
                     // next one has to be a match
                     step_col_row();
                     trail_row = row;
-                    trail_col = col;
+                    trail_col = g_col;
                     advance_match(coming_from);
                 }
             }
@@ -3677,19 +3677,19 @@ static void step_col_row()
     switch (going_to)
     {
     case direction::North:
-        col = trail_col;
+        g_col = trail_col;
         row = trail_row - 1;
         break;
     case direction::East:
-        col = trail_col + 1;
+        g_col = trail_col + 1;
         row = trail_row;
         break;
     case direction::South:
-        col = trail_col;
+        g_col = trail_col;
         row = trail_row + 1;
         break;
     case direction::West:
-        col = trail_col - 1;
+        g_col = trail_col - 1;
         row = trail_row;
         break;
     }
@@ -3759,7 +3759,7 @@ static int solid_guess()
             memset(&tprefix[1][0][0], 0, maxxblk*maxyblk*2); // noskip flags off
             g_reset_periodicity = true;
             row = g_i_y_start;
-            for (col = g_i_x_start; col <= g_i_x_stop; col += maxblock)
+            for (g_col = g_i_x_start; g_col <= g_i_x_stop; g_col += maxblock)
             {
                 // calc top row
                 if ((*g_calc_type)() == -1)
@@ -3783,7 +3783,7 @@ static int solid_guess()
                 // calc the row below
                 row = y+blocksize;
                 g_reset_periodicity = true;
-                for (col = g_i_x_start; col <= g_i_x_stop; col += maxblock)
+                for (g_col = g_i_x_start; g_col <= g_i_x_stop; g_col += maxblock)
                 {
                     i = (*g_calc_type)();
                     if (i == -1)
@@ -3903,7 +3903,7 @@ exit_solidguess:
 
 #define calcadot(c, x, y)     \
 {                           \
-    col = x;                  \
+    g_col = x;                  \
     row = y;                  \
     c = (*g_calc_type)();        \
     if (c == -1)            \
@@ -4902,11 +4902,11 @@ static int tesseral()
                 if (guessplot || (j = tp->x2 - tp->x1 - 1) < 2)
                 {
                     // paint dots
-                    for (col = tp->x1 + 1; col < tp->x2; col++)
+                    for (g_col = tp->x1 + 1; g_col < tp->x2; g_col++)
                     {
                         for (row = tp->y1 + 1; row < tp->y2; row++)
                         {
-                            (*g_plot)(col, row, tp->top);
+                            (*g_plot)(g_col, row, tp->top);
                             if (++i > 500)
                             {
                                 if (check_key())
@@ -5088,7 +5088,7 @@ static int tesschkrow(int x1, int x2, int y)
 static int tesscol(int x, int y1, int y2)
 {
     int colcolor, i;
-    col = x;
+    g_col = x;
     row = y1;
     g_reset_periodicity = true;
     colcolor = (*g_calc_type)();
@@ -5113,11 +5113,11 @@ static int tessrow(int x1, int x2, int y)
 {
     int rowcolor, i;
     row = y;
-    col = x1;
+    g_col = x1;
     g_reset_periodicity = true;
     rowcolor = (*g_calc_type)();
     g_reset_periodicity = false;
-    while (++col <= x2)
+    while (++g_col <= x2)
     {
         // generate the row
         i = (*g_calc_type)();
@@ -5147,7 +5147,7 @@ static long autologmap()
     row = 0;
     g_reset_periodicity = false;
     old_maxit = g_max_iterations;
-    for (col = 0; col < xstop; col++) // top row
+    for (g_col = 0; g_col < xstop; g_col++) // top row
     {
         g_color = (*g_calc_type)();
         if (g_color == -1)
@@ -5159,17 +5159,17 @@ static long autologmap()
             mincolour = g_real_color_iter ;
             g_max_iterations = std::max(2L, mincolour); /*speedup for when edges overlap lakes */
         }
-        if (col >=32)
+        if (g_col >=32)
         {
-            (*g_plot)(col-32, row, 0);
+            (*g_plot)(g_col-32, row, 0);
         }
     }                                    // these lines tidy up for BTM etc
     for (int lag = 32; lag > 0; lag--)
     {
-        (*g_plot)(col-lag, row, 0);
+        (*g_plot)(g_col-lag, row, 0);
     }
 
-    col = xstop;
+    g_col = xstop;
     for (row = 0; row < ystop; row++) // right  side
     {
         g_color = (*g_calc_type)();
@@ -5184,15 +5184,15 @@ static long autologmap()
         }
         if (row >=32)
         {
-            (*g_plot)(col, row-32, 0);
+            (*g_plot)(g_col, row-32, 0);
         }
     }
     for (int lag = 32; lag > 0; lag--)
     {
-        (*g_plot)(col, row-lag, 0);
+        (*g_plot)(g_col, row-lag, 0);
     }
 
-    col = 0;
+    g_col = 0;
     for (row = 0; row < ystop; row++) // left  side
     {
         g_color = (*g_calc_type)();
@@ -5207,16 +5207,16 @@ static long autologmap()
         }
         if (row >=32)
         {
-            (*g_plot)(col, row-32, 0);
+            (*g_plot)(g_col, row-32, 0);
         }
     }
     for (int lag = 32; lag > 0; lag--)
     {
-        (*g_plot)(col, row-lag, 0);
+        (*g_plot)(g_col, row-lag, 0);
     }
 
     row = ystop ;
-    for (col = 0; col < xstop; col++) // bottom row
+    for (g_col = 0; g_col < xstop; g_col++) // bottom row
     {
         g_color = (*g_calc_type)();
         if (g_color == -1)
@@ -5228,14 +5228,14 @@ static long autologmap()
             mincolour = g_real_color_iter ;
             g_max_iterations = std::max(2L, mincolour); /*speedup for when edges overlap lakes */
         }
-        if (col >=32)
+        if (g_col >=32)
         {
-            (*g_plot)(col-32, row, 0);
+            (*g_plot)(g_col-32, row, 0);
         }
     }
     for (int lag = 32; lag > 0; lag--)
     {
-        (*g_plot)(col-lag, row, 0);
+        (*g_plot)(g_col-lag, row, 0);
     }
 
 ack: // bailout here if key is pressed

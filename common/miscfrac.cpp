@@ -52,7 +52,7 @@ int test()
     {
         for (row = startrow; row <= g_i_y_stop; row = row+1+numpasses)
         {
-            for (col = 0; col <= g_i_x_stop; col++)       // look at each point on screen
+            for (g_col = 0; g_col <= g_i_x_stop; g_col++)       // look at each point on screen
             {
                 int color;
                 g_init.x = dxpixel();
@@ -77,10 +77,10 @@ int test()
                         color = ((color-1) % g_and_color) + 1; // skip color zero
                     }
                 }
-                (*g_plot)(col, row, color);
+                (*g_plot)(g_col, row, color);
                 if (numpasses && (passes == 0))
                 {
-                    (*g_plot)(col, row+1, color);
+                    (*g_plot)(g_col, row+1, color);
                 }
             }
         }
@@ -1422,7 +1422,7 @@ int popcorn()   // subset of std engine
     for (row = start_row; row <= g_i_y_stop; row++)
     {
         g_reset_periodicity = true;
-        for (col = 0; col <= g_i_x_stop; col++)
+        for (g_col = 0; g_col <= g_i_x_stop; g_col++)
         {
             if (standard_fractal() == -1) // interrupted
             {
@@ -1480,7 +1480,7 @@ int lyapunov()
     {
         Population = g_params[1];
     }
-    (*g_plot)(col, row, 1);
+    (*g_plot)(g_col, row, 1);
     if (g_invert != 0)
     {
         invertz2(&g_init);
@@ -1520,7 +1520,7 @@ int lyapunov()
     {
         g_color = g_colors-1;
     }
-    (*g_plot)(col, row, g_color);
+    (*g_plot)(g_col, row, g_color);
     return g_color;
 }
 
@@ -1951,24 +1951,24 @@ int cellular()
     {
         if (g_random_seed_flag || randparam == 0 || randparam == -1)
         {
-            for (col = 0; col <= g_i_x_stop; col++)
+            for (g_col = 0; g_col <= g_i_x_stop; g_col++)
             {
-                cell_array[filled][col] = (BYTE)(rand()%(int)k);
+                cell_array[filled][g_col] = (BYTE)(rand()%(int)k);
             }
         } // end of if random
 
         else
         {
-            for (col = 0; col <= g_i_x_stop; col++)
+            for (g_col = 0; g_col <= g_i_x_stop; g_col++)
             {
                 // Clear from end to end
-                cell_array[filled][col] = 0;
+                cell_array[filled][g_col] = 0;
             }
             int i = 0;
-            for (col = (g_i_x_stop-16)/2; col < (g_i_x_stop+16)/2; col++)
+            for (g_col = (g_i_x_stop-16)/2; g_col < (g_i_x_stop+16)/2; g_col++)
             {
                 // insert initial
-                cell_array[filled][col] = (BYTE)init_string[i++];    // string
+                cell_array[filled][g_col] = (BYTE)init_string[i++];    // string
             }
         } // end of if not random
         lstscreenflag = lnnmbr != 0;
@@ -2018,17 +2018,17 @@ int cellular()
             cell_array[notfilled][r] = (BYTE)cell_table[t];
 
             // use a rolling sum in t
-            for (col = r+1; col < g_i_x_stop-r; col++)
+            for (g_col = r+1; g_col < g_i_x_stop-r; g_col++)
             {
                 // now do the rest
-                t = (S16)(t + cell_array[filled][col+r] - cell_array[filled][col-r-1]);
+                t = (S16)(t + cell_array[filled][g_col+r] - cell_array[filled][g_col-r-1]);
                 if (t > rule_digits || t < 0)
                 {
                     thinking(0, nullptr);
                     abort_cellular(BAD_T, t);
                     return (-1);
                 }
-                cell_array[notfilled][col] = (BYTE)cell_table[t];
+                cell_array[notfilled][g_col] = (BYTE)cell_table[t];
             }
 
             filled = notfilled;
@@ -2083,17 +2083,17 @@ contloop:
         cell_array[notfilled][r] = (BYTE)cell_table[t];
 
         // use a rolling sum in t
-        for (col = r+1; col < g_i_x_stop-r; col++)
+        for (g_col = r+1; g_col < g_i_x_stop-r; g_col++)
         {
             // now do the rest
-            t = (S16)(t + cell_array[filled][col+r] - cell_array[filled][col-r-1]);
+            t = (S16)(t + cell_array[filled][g_col+r] - cell_array[filled][g_col-r-1]);
             if (t > rule_digits || t < 0)
             {
                 thinking(0, nullptr);
                 abort_cellular(BAD_T, t);
                 return (-1);
             }
-            cell_array[notfilled][col] = (BYTE)cell_table[t];
+            cell_array[notfilled][g_col] = (BYTE)cell_table[t];
         }
 
         filled = notfilled;
@@ -2414,7 +2414,7 @@ int calcfroth()   // per pixel 1/2/g, called with row & col set
     g_color_iter = 0;
     if (g_show_dot >0)
     {
-        (*g_plot)(col, row, g_show_dot %g_colors);
+        (*g_plot)(g_col, row, g_show_dot %g_colors);
     }
     if (!g_integer_fractal) // fp mode
     {
@@ -2795,7 +2795,7 @@ int calcfroth()   // per pixel 1/2/g, called with row & col set
 
     g_color = abs((int)(g_color_iter));
 
-    (*g_plot)(col, row, g_color);
+    (*g_plot)(g_col, row, g_color);
 
     return g_color;
 }

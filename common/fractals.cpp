@@ -3606,49 +3606,49 @@ MandelbrotMix4fpFractal() // from formula by Jim Muth
 // Real component, grid lookup version - requires dx0/dx1 arrays
 static double dxpixel_grid()
 {
-    return dx0[col]+dx1[row];
+    return dx0[g_col]+dx1[row];
 }
 
 // Real component, calculation version - does not require arrays
 static double dxpixel_calc()
 {
-    return (double)(xxmin + col*delxx + row*delxx2);
+    return (double)(xxmin + g_col*delxx + row*delxx2);
 }
 
 // Imaginary component, grid lookup version - requires dy0/dy1 arrays
 static double dypixel_grid()
 {
-    return dy0[row]+dy1[col];
+    return dy0[row]+dy1[g_col];
 }
 
 // Imaginary component, calculation version - does not require arrays
 static double dypixel_calc()
 {
-    return (double)(yymax - row*delyy - col*delyy2);
+    return (double)(yymax - row*delyy - g_col*delyy2);
 }
 
 // Real component, grid lookup version - requires lx0/lx1 arrays
 static long lxpixel_grid()
 {
-    return g_l_x0[col]+g_l_x1[row];
+    return g_l_x0[g_col]+g_l_x1[row];
 }
 
 // Real component, calculation version - does not require arrays
 static long lxpixel_calc()
 {
-    return xmin + col*delx + row*delx2;
+    return xmin + g_col*delx + row*delx2;
 }
 
 // Imaginary component, grid lookup version - requires ly0/ly1 arrays
 static long lypixel_grid()
 {
-    return g_l_y0[row]+g_l_y1[col];
+    return g_l_y0[row]+g_l_y1[g_col];
 }
 
 // Imaginary component, calculation version - does not require arrays
 static long lypixel_calc()
 {
-    return ymax - row*dely - col*dely2;
+    return ymax - row*dely - g_col*dely2;
 }
 
 double (*dxpixel)() = dxpixel_calc;
