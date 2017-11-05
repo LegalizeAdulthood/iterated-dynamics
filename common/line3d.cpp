@@ -527,7 +527,7 @@ int line3d(BYTE * pixels, unsigned linelen)
             }
         }
 
-        if (RANDOMIZE)
+        if (RANDOMIZE != 0)
         {
             if (cur.color > WATERLINE)
             {
