@@ -140,8 +140,8 @@ void drawbox(bool drawit)
         // do some calcs just once here to reduce fp work a bit
         sub_bf(bffxwidth, g_bf_save_x_max, g_bf_save_x_3rd);
         sub_bf(bffxskew, g_bf_save_x_3rd, g_bf_save_x_min);
-        sub_bf(bffydepth, bfsy3rd, g_bf_save_y_max);
-        sub_bf(bffyskew, g_bf_save_y_min, bfsy3rd);
+        sub_bf(bffydepth, g_bf_save_y_3rd, g_bf_save_y_max);
+        sub_bf(bffyskew, g_bf_save_y_min, g_bf_save_y_3rd);
         floattobf(bffxadj, fxadj);
     }
 
@@ -496,10 +496,10 @@ static void zmo_calcbf(bf_t bfdx, bf_t bfdy,
     add_a_bf(bfnewx, btmp4a);
 
     // *newy = symax + tempy*(sy3rd-symax)/ftemp + tempx*(symin-sy3rd)/ftemp;
-    sub_bf(btmp1, bfsy3rd, g_bf_save_y_max);
+    sub_bf(btmp1, g_bf_save_y_3rd, g_bf_save_y_max);
     mult_bf(btmp2, btempy, btmp1);
     div_bf(btmp2a, btmp2, bfftemp);
-    sub_bf(btmp3, g_bf_save_y_min, bfsy3rd);
+    sub_bf(btmp3, g_bf_save_y_min, g_bf_save_y_3rd);
     mult_bf(btmp4, btempx, btmp3);
     div_bf(btmp4a, btmp4, bfftemp);
     add_bf(bfnewy, g_bf_save_y_max, btmp2a);
@@ -578,7 +578,7 @@ void zoomoutbf() // for ctl-enter, calc corners for zooming out
     zmo_calcbf(tmp1, tmp2, bfxmax, bfymin, bfplotmx1, bfplotmx2, bfplotmy1,
                bfplotmy2, bfftemp);
     sub_bf(tmp1, g_bf_save_x_3rd, savbfxmin);
-    sub_bf(tmp2, bfsy3rd, savbfymax);
+    sub_bf(tmp2, g_bf_save_y_3rd, savbfymax);
     zmo_calcbf(tmp1, tmp2, bfx3rd, bfy3rd, bfplotmx1, bfplotmx2, bfplotmy1,
                bfplotmy2, bfftemp);
     restore_stack(saved);
