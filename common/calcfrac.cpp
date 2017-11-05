@@ -144,7 +144,7 @@ int g_max_keyboard_check_interval = 0;                   // avoids checking keyb
 
 std::vector<BYTE> resume_data;          // resume info
 bool resuming = false;                  // true if resuming after interrupt
-int num_worklist = 0;                   // resume worklist for standard engine
+int g_num_work_list = 0;                   // resume worklist for standard engine
 WORKLIST worklist[MAXCALCWORK] = { 0 };
 int xxstart = 0;
 int xxstop = 0;
@@ -1059,7 +1059,7 @@ static void perform_worklist()
     }
 
     // default setup a new worklist
-    num_worklist = 1;
+    g_num_work_list = 1;
     worklist[0].xxbegin = 0;
     worklist[0].xxstart = worklist[0].xxbegin;
     worklist[0].yybegin = 0;
@@ -1072,7 +1072,7 @@ static void perform_worklist()
     {
         int vsn;
         vsn = start_resume();
-        get_resume(sizeof(num_worklist), &num_worklist, sizeof(worklist), worklist, 0);
+        get_resume(sizeof(g_num_work_list), &g_num_work_list, sizeof(worklist), worklist, 0);
         end_resume();
         if (vsn < 2)
         {
@@ -1148,7 +1148,7 @@ static void perform_worklist()
         }
     }
 
-    while (num_worklist > 0)
+    while (g_num_work_list > 0)
     {
         // per_image can override
         calctype = curfractalspecific->calctype;
@@ -1168,8 +1168,8 @@ static void perform_worklist()
         yybegin  = worklist[0].yybegin;
         workpass = worklist[0].pass;
         worksym  = worklist[0].sym;
-        --num_worklist;
-        for (int i = 0; i < num_worklist; ++i)
+        --g_num_work_list;
+        for (int i = 0; i < g_num_work_list; ++i)
         {
             worklist[i] = worklist[i+1];
         }
@@ -1321,11 +1321,11 @@ static void perform_worklist()
         }
     }
 
-    if (num_worklist > 0)
+    if (g_num_work_list > 0)
     {
         // interrupted, resumable
         alloc_resume(sizeof(worklist)+20, 2);
-        put_resume(sizeof(num_worklist), &num_worklist, sizeof(worklist), worklist, 0);
+        put_resume(sizeof(g_num_work_list), &g_num_work_list, sizeof(worklist), worklist, 0);
     }
     else
     {
@@ -1850,7 +1850,7 @@ static int one_or_two_pass()
             add_worklist(xxstart, xxstop, col, yystart, yystop, row, 0, worksym);
             return -1;
         }
-        if (num_worklist > 0) // worklist not empty, defer 2nd pass
+        if (g_num_work_list > 0) // worklist not empty, defer 2nd pass
         {
             add_worklist(xxstart, xxstop, xxstart, yystart, yystop, yystart, 1, worksym);
             return 0;
@@ -3806,7 +3806,7 @@ static int solid_guess()
             }
         }
 
-        if (num_worklist) // work list not empty, just do 1st pass
+        if (g_num_work_list) // work list not empty, just do 1st pass
         {
             add_worklist(xxstart, xxstop, xxstart, yystart, yystop, yystart, 1, worksym);
             goto exit_solidguess;
@@ -3889,7 +3889,7 @@ static int solid_guess()
             }
         }
         ++workpass;
-        if (num_worklist // work list not empty, do one pass at a time
+        if (g_num_work_list // work list not empty, do one pass at a time
                 && blocksize > 2) // if 2, we just did last pass
         {
             add_worklist(xxstart, xxstop, xxstart, yystart, yystop, yystart, workpass, worksym);
@@ -4316,7 +4316,7 @@ static bool xsym_split(int xaxis_row, bool xaxis_between)
         }
         if (i > yystop) // split into 2 pieces, bottom has the symmetry
         {
-            if (num_worklist >= MAXCALCWORK-1)   // no room to split
+            if (g_num_work_list >= MAXCALCWORK-1)   // no room to split
             {
                 return true;
             }
@@ -4331,7 +4331,7 @@ static bool xsym_split(int xaxis_row, bool xaxis_between)
         }
         if (i < yystop) // split into 2 pieces, top has the symmetry
         {
-            if (num_worklist >= MAXCALCWORK-1)   // no room to split
+            if (g_num_work_list >= MAXCALCWORK-1)   // no room to split
             {
                 return true;
             }
@@ -4369,7 +4369,7 @@ static bool ysym_split(int yaxis_col, bool yaxis_between)
         }
         if (i > xxstop) // split into 2 pieces, right has the symmetry
         {
-            if (num_worklist >= MAXCALCWORK-1)   // no room to split
+            if (g_num_work_list >= MAXCALCWORK-1)   // no room to split
             {
                 return true;
             }
@@ -4384,7 +4384,7 @@ static bool ysym_split(int yaxis_col, bool yaxis_between)
         }
         if (i < xxstop) // split into 2 pieces, left has the symmetry
         {
-            if (num_worklist >= MAXCALCWORK-1)   // no room to split
+            if (g_num_work_list >= MAXCALCWORK-1)   // no room to split
             {
                 return true;
             }

@@ -1752,30 +1752,30 @@ int add_worklist(int xfrom, int xto, int xbegin,
                  int yfrom, int yto, int ybegin,
                  int pass, int sym)
 {
-    if (num_worklist >= MAXCALCWORK)
+    if (g_num_work_list >= MAXCALCWORK)
     {
         return (-1);
     }
-    worklist[num_worklist].xxstart = xfrom;
-    worklist[num_worklist].xxstop  = xto;
-    worklist[num_worklist].xxbegin = xbegin;
-    worklist[num_worklist].yystart = yfrom;
-    worklist[num_worklist].yystop  = yto;
-    worklist[num_worklist].yybegin = ybegin;
-    worklist[num_worklist].pass    = pass;
-    worklist[num_worklist].sym     = sym;
-    ++num_worklist;
+    worklist[g_num_work_list].xxstart = xfrom;
+    worklist[g_num_work_list].xxstop  = xto;
+    worklist[g_num_work_list].xxbegin = xbegin;
+    worklist[g_num_work_list].yystart = yfrom;
+    worklist[g_num_work_list].yystop  = yto;
+    worklist[g_num_work_list].yybegin = ybegin;
+    worklist[g_num_work_list].pass    = pass;
+    worklist[g_num_work_list].sym     = sym;
+    ++g_num_work_list;
     tidy_worklist();
     return (0);
 }
 
 static int combine_worklist() // look for 2 entries which can freely merge
 {
-    for (int i = 0; i < num_worklist; ++i)
+    for (int i = 0; i < g_num_work_list; ++i)
     {
         if (worklist[i].yystart == worklist[i].yybegin)
         {
-            for (int j = i+1; j < num_worklist; ++j)
+            for (int j = i+1; j < g_num_work_list; ++j)
             {
                 if (worklist[j].sym == worklist[i].sym
                         && worklist[j].yystart == worklist[j].yybegin
@@ -1829,16 +1829,16 @@ void tidy_worklist()
         while ((i = combine_worklist()) != 0)
         {
             // merged two, delete the gone one
-            while (++i < num_worklist)
+            while (++i < g_num_work_list)
             {
                 worklist[i-1] = worklist[i];
             }
-            --num_worklist;
+            --g_num_work_list;
         }
     }
-    for (int i = 0; i < num_worklist; ++i)
+    for (int i = 0; i < g_num_work_list; ++i)
     {
-        for (int j = i+1; j < num_worklist; ++j)
+        for (int j = i+1; j < g_num_work_list; ++j)
         {
             if (worklist[j].pass < worklist[i].pass
                     || (worklist[j].pass == worklist[i].pass

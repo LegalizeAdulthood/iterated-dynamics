@@ -703,10 +703,10 @@ static int check_pan() // return 0 if can't, alignment requirement if can
     }
     // solid guessing
     start_resume();
-    get_resume(sizeof(num_worklist), &num_worklist, sizeof(worklist), worklist, 0);
+    get_resume(sizeof(g_num_work_list), &g_num_work_list, sizeof(worklist), worklist, 0);
     // don't do end_resume! we're just looking
     int i = 9;
-    for (int j = 0; j < num_worklist; ++j)   // find lowest pass in any pending window
+    for (int j = 0; j < g_num_work_list; ++j)   // find lowest pass in any pending window
     {
         if (worklist[j].pass < i)
         {
@@ -780,14 +780,14 @@ int init_pan_or_recalc(int do_zoomout) // decide to recalc, or to chg worklist &
         return (0);
     }
     // pan
-    num_worklist = 0;
+    g_num_work_list = 0;
     if (g_calc_status == calc_status_value::RESUMABLE)
     {
         start_resume();
-        get_resume(sizeof(num_worklist), &num_worklist, sizeof(worklist), worklist, 0);
+        get_resume(sizeof(g_num_work_list), &g_num_work_list, sizeof(worklist), worklist, 0);
     } // don't do end_resume! we might still change our mind
     // adjust existing worklist entries
-    for (int i = 0; i < num_worklist; ++i)
+    for (int i = 0; i < g_num_work_list; ++i)
     {
         worklist[i].yystart -= row;
         worklist[i].yystop  -= row;
@@ -852,7 +852,7 @@ int init_pan_or_recalc(int do_zoomout) // decide to recalc, or to chg worklist &
     }
     fix_worklist(); // fixup any out of bounds worklist entries
     alloc_resume(sizeof(worklist)+20, 2); // post the new worklist
-    put_resume(sizeof(num_worklist), &num_worklist, sizeof(worklist), worklist, 0);
+    put_resume(sizeof(g_num_work_list), &g_num_work_list, sizeof(worklist), worklist, 0);
     return (0);
 }
 
@@ -892,18 +892,18 @@ static void restart_window(int wknum)
 
 static void fix_worklist() // fix out of bounds and symmetry related stuff
 {
-    for (int i = 0; i < num_worklist; ++i)
+    for (int i = 0; i < g_num_work_list; ++i)
     {
         WORKLIST *wk = &worklist[i];
         if (wk->yystart >= ydots || wk->yystop < 0
                 || wk->xxstart >= xdots || wk->xxstop < 0)
         {
             // offscreen, delete
-            for (int j = i+1; j < num_worklist; ++j)
+            for (int j = i+1; j < g_num_work_list; ++j)
             {
                 worklist[j-1] = worklist[j];
             }
-            --num_worklist;
+            --g_num_work_list;
             --i;
             continue;
         }
@@ -921,12 +921,12 @@ static void fix_worklist() // fix out of bounds and symmetry related stuff
                 // xaxis symmetry
                 int j = wk->yystop + wk->yystart;
                 if (j > 0
-                        && num_worklist < MAXCALCWORK)
+                        && g_num_work_list < MAXCALCWORK)
                 {
                     // split the sym part
-                    worklist[num_worklist] = worklist[i];
-                    worklist[num_worklist].yystart = 0;
-                    worklist[num_worklist++].yystop = j;
+                    worklist[g_num_work_list] = worklist[i];
+                    worklist[g_num_work_list].yystart = 0;
+                    worklist[g_num_work_list++].yystop = j;
                     wk->yystart = j+1;
                 }
                 else
@@ -946,16 +946,16 @@ static void fix_worklist() // fix out of bounds and symmetry related stuff
                 int k = wk->yystart + (wk->yystop - j);
                 if (k < j)
                 {
-                    if (num_worklist >= MAXCALCWORK)   // no room to split
+                    if (g_num_work_list >= MAXCALCWORK)   // no room to split
                     {
                         restart_window(i);
                     }
                     else
                     {
                         // split it
-                        worklist[num_worklist] = worklist[i];
-                        worklist[num_worklist].yystart = k;
-                        worklist[num_worklist++].yystop = j;
+                        worklist[g_num_work_list] = worklist[i];
+                        worklist[g_num_work_list].yystart = k;
+                        worklist[g_num_work_list++].yystop = j;
                         j = k-1;
                     }
                 }
@@ -975,12 +975,12 @@ static void fix_worklist() // fix out of bounds and symmetry related stuff
                 // yaxis symmetry
                 int j = wk->xxstop + wk->xxstart;
                 if (j > 0
-                        && num_worklist < MAXCALCWORK)
+                        && g_num_work_list < MAXCALCWORK)
                 {
                     // split the sym part
-                    worklist[num_worklist] = worklist[i];
-                    worklist[num_worklist].xxstart = 0;
-                    worklist[num_worklist++].xxstop = j;
+                    worklist[g_num_work_list] = worklist[i];
+                    worklist[g_num_work_list].xxstart = 0;
+                    worklist[g_num_work_list++].xxstop = j;
                     wk->xxstart = j+1;
                 }
                 else
@@ -1000,16 +1000,16 @@ static void fix_worklist() // fix out of bounds and symmetry related stuff
                 int k = wk->xxstart + (wk->xxstop - j);
                 if (k < j)
                 {
-                    if (num_worklist >= MAXCALCWORK)   // no room to split
+                    if (g_num_work_list >= MAXCALCWORK)   // no room to split
                     {
                         restart_window(i);
                     }
                     else
                     {
                         // split it
-                        worklist[num_worklist] = worklist[i];
-                        worklist[num_worklist].xxstart = k;
-                        worklist[num_worklist++].xxstop = j;
+                        worklist[g_num_work_list] = worklist[i];
+                        worklist[g_num_work_list].xxstart = k;
+                        worklist[g_num_work_list++].xxstop = j;
                         j = k-1;
                     }
                 }

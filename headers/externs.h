@@ -334,7 +334,7 @@ extern int                   g_num_affine_transforms;
 extern unsigned              g_num_colors;
 extern const int             g_num_trig_functions;
 extern int                   g_num_fractal_types;
-extern int                   num_worklist;
+extern int                   g_num_work_list;
 extern bool                  nxtscreenflag;
 extern int                   Offset;
 extern DComplex              old;
