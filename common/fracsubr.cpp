@@ -644,7 +644,7 @@ expand_retry:
     if (ftemp != 0)
     {
         g_plot_mx1 = (double)(delxx2 * x_size_d * y_size_d / ftemp);
-        plotmx2 = (yy3rd-yymax) * x_size_d / ftemp;
+        g_plot_mx2 = (yy3rd-yymax) * x_size_d / ftemp;
         plotmy1 = (double)((0.0-delyy2) * x_size_d * y_size_d / ftemp);
         plotmy2 = (xxmax-xx3rd) * y_size_d / ftemp;
     }
@@ -1648,7 +1648,7 @@ static void plotdorbit(double dx, double dy, int color)
     {
         return;
     }
-    i = (int)(dy * g_plot_mx1 - dx * plotmx2);
+    i = (int)(dy * g_plot_mx1 - dx * g_plot_mx2);
     i += sxoffs;
     if (i < 0 || i >= sxdots)
     {
