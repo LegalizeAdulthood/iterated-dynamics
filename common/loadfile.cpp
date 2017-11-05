@@ -456,7 +456,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
     if (blk_2_info.got_data)
     {
         g_resume_data = blk_2_info.resume_data;
-        resume_len = blk_2_info.length;
+        g_resume_len = blk_2_info.length;
     }
 
     if (blk_3_info.got_data)

@@ -555,9 +555,9 @@ bool encoder()
         if (!g_resume_data.empty() && save_info.calc_status == static_cast<short>(calc_status_value::RESUMABLE))
         {
             // resume info block, 002
-            save_info.tot_extend_len += extend_blk_len(resume_len);
-            std::copy(&g_resume_data[0], &g_resume_data[resume_len], &g_block[0]);
-            if (!put_extend_blk(2, resume_len, (char *)g_block))
+            save_info.tot_extend_len += extend_blk_len(g_resume_len);
+            std::copy(&g_resume_data[0], &g_resume_data[g_resume_len], &g_block[0]);
+            if (!put_extend_blk(2, g_resume_len, (char *)g_block))
             {
                 goto oops;
             }

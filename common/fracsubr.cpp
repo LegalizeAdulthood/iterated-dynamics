@@ -38,7 +38,7 @@ static int    combine_worklist();
 
 static void   adjust_to_limitsbf(double);
 static void   smallest_add_bf(bf_t);
-int    resume_len;               // length of resume info
+int    g_resume_len;               // length of resume info
 static int    resume_offset;            // offset in resume info gets
 bool    taborhelp = false;    // kludge for sound and tab or help key press
 
@@ -1337,8 +1337,8 @@ int put_resume(int len, ...)
     while (len)
     {
         BYTE const *source_ptr = va_arg(arg_marker, BYTE *);
-        std::copy(&source_ptr[0], &source_ptr[len], &g_resume_data[resume_len]);
-        resume_len += len;
+        std::copy(&source_ptr[0], &source_ptr[len], &g_resume_data[g_resume_len]);
+        g_resume_len += len;
         len = va_arg(arg_marker, int);
     }
     va_end(arg_marker);
@@ -1349,7 +1349,7 @@ int alloc_resume(int alloclen, int version)
 {
     g_resume_data.clear();
     g_resume_data.resize(sizeof(int)*alloclen);
-    resume_len = 0;
+    g_resume_len = 0;
     put_resume(sizeof(version), &version, 0);
     g_calc_status = calc_status_value::RESUMABLE;
     return (0);
