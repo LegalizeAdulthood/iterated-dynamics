@@ -138,7 +138,7 @@ void drawbox(bool drawit)
     if (bf_math != bf_math_type::NONE)
     {
         // do some calcs just once here to reduce fp work a bit
-        sub_bf(bffxwidth, bfsxmax, bfsx3rd);
+        sub_bf(bffxwidth, g_bf_save_x_max, bfsx3rd);
         sub_bf(bffxskew, bfsx3rd, g_bf_save_x_min);
         sub_bf(bffydepth, bfsy3rd, bfsymax);
         sub_bf(bffyskew, bfsymin, bfsy3rd);
@@ -484,7 +484,7 @@ static void zmo_calcbf(bf_t bfdx, bf_t bfdy,
 
     // calc new corner by extending from current screen corners
     // *newx = sxmin + tempx*(sxmax-sx3rd)/ftemp + tempy*(sx3rd-sxmin)/ftemp;
-    sub_bf(btmp1, bfsxmax, bfsx3rd);
+    sub_bf(btmp1, g_bf_save_x_max, bfsx3rd);
     mult_bf(btmp2, btempx, btmp1);
     // show_three_bf("fact1",btempx,"fact2",btmp1,"prod ",btmp2,70);
     div_bf(btmp2a, btmp2, bfftemp);
@@ -573,7 +573,7 @@ void zoomoutbf() // for ctl-enter, calc corners for zooming out
     sub_bf(tmp2, bfsymax, savbfymax);
     zmo_calcbf(tmp1, tmp2, bfxmin, bfymax, bfplotmx1, bfplotmx2, bfplotmy1,
                bfplotmy2, bfftemp);
-    sub_bf(tmp1, bfsxmax, savbfxmin);
+    sub_bf(tmp1, g_bf_save_x_max, savbfxmin);
     sub_bf(tmp2, bfsymin, savbfymax);
     zmo_calcbf(tmp1, tmp2, bfxmax, bfymin, bfplotmx1, bfplotmx2, bfplotmy1,
                bfplotmy2, bfftemp);

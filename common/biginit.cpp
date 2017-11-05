@@ -47,7 +47,7 @@ bf_t big_pi = BIG_NULL;                                              // bflength
 
 // used by other routines
 bf_t bfxmin = BIG_NULL, bfxmax = BIG_NULL, bfymin = BIG_NULL, bfymax = BIG_NULL, bfx3rd = BIG_NULL, bfy3rd = BIG_NULL;      // bflength+2
-bf_t g_bf_save_x_min = BIG_NULL, bfsxmax = BIG_NULL, bfsymin = BIG_NULL, bfsymax = BIG_NULL, bfsx3rd = BIG_NULL, bfsy3rd = BIG_NULL;// bflength+2
+bf_t g_bf_save_x_min = BIG_NULL, g_bf_save_x_max = BIG_NULL, bfsymin = BIG_NULL, bfsymax = BIG_NULL, bfsx3rd = BIG_NULL, bfsy3rd = BIG_NULL;// bflength+2
 bf_t bfparms[10];                                    // (bflength+2)*10
 bf_t bftmp = BIG_NULL;
 
@@ -294,7 +294,7 @@ static void init_bf_2()
     }
     g_bf_save_x_min    = bnroot+ptr;
     ptr += bflength+2;
-    bfsxmax    = bnroot+ptr;
+    g_bf_save_x_max    = bnroot+ptr;
     ptr += bflength+2;
     bfsymin    = bnroot+ptr;
     ptr += bflength+2;
@@ -380,7 +380,7 @@ static int restore_bf_vars()
     }
     convert_bf(g_bf_save_x_min, ptr, bflength, g_bf_save_len);
     ptr += g_bf_save_len+2;
-    convert_bf(bfsxmax, ptr, bflength, g_bf_save_len);
+    convert_bf(g_bf_save_x_max, ptr, bflength, g_bf_save_len);
     ptr += g_bf_save_len+2;
     convert_bf(bfsymin, ptr, bflength, g_bf_save_len);
     ptr += g_bf_save_len+2;
