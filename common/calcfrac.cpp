@@ -659,8 +659,8 @@ int calcfract()
     }
     g_param_z1.x   = g_params[0];
     g_param_z1.y   = g_params[1];
-    parm2.x  = g_params[2];
-    parm2.y  = g_params[3];
+    g_param_z2.x  = g_params[2];
+    g_param_z2.y  = g_params[3];
 
     if (g_log_map_flag && g_colors < 16)
     {
@@ -846,8 +846,8 @@ int calcfract()
     {
         g_l_param.x = (long)(g_param_z1.x * g_fudge_factor);    // real portion of Lambda
         g_l_param.y = (long)(g_param_z1.y * g_fudge_factor);    // imaginary portion of Lambda
-        g_l_param2.x = (long)(parm2.x * g_fudge_factor);  // real portion of Lambda2
-        g_l_param2.y = (long)(parm2.y * g_fudge_factor);  // imaginary portion of Lambda2
+        g_l_param2.x = (long)(g_param_z2.x * g_fudge_factor);  // real portion of Lambda2
+        g_l_param2.y = (long)(g_param_z2.y * g_fudge_factor);  // imaginary portion of Lambda2
         g_l_limit = (long)(rqlim * g_fudge_factor);      // stop if magnitude exceeds this
         if (g_l_limit <= 0)
         {
@@ -4488,7 +4488,7 @@ static void setsymmetry(symmetry_type sym, bool uselist) // set up proper symmet
                        && g_params[7] == 0.0 && g_params[9] == 0.0);
         break;
     default:   // Check P2 for the rest
-        parmszero = (parmszero && parm2.x == 0.0 && parm2.y == 0.0);
+        parmszero = (parmszero && g_param_z2.x == 0.0 && g_param_z2.y == 0.0);
     }
     yaxis_col = -1;
     xaxis_row = yaxis_col;

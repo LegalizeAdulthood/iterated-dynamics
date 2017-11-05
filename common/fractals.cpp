@@ -86,7 +86,7 @@ int g_c_exponent;
 
 
 // These are local but I don't want to pass them as parameters
-DComplex g_param_z1, parm2;
+DComplex g_param_z1, g_param_z2;
 DComplex *g_float_param;
 LComplex *g_long_param; // used here and in jb.c
 
@@ -305,7 +305,7 @@ int  fpMANRbailout()
  
 static int  Halleybailout()
 {
-    if (fabs(modulus(g_new_z)-modulus(g_old_z)) < parm2.x)
+    if (fabs(modulus(g_new_z)-modulus(g_old_z)) < g_param_z2.x)
     {
         return 1;
     }
@@ -1098,7 +1098,7 @@ floatZpowerFractal()
 int
 floatCmplxZpowerFractal()
 {
-    g_new_z = ComplexPower(g_old_z, parm2);
+    g_new_z = ComplexPower(g_old_z, g_param_z2);
     g_new_z.x += g_float_param->x;
     g_new_z.y += g_float_param->y;
     return floatbailout();
@@ -1379,14 +1379,14 @@ PopcornFractalFn()
     DComplex tmpy;
 
     // tmpx contains the generalized value of the old real "x" equation
-    CMPLXtimesreal(parm2, g_old_z.y, tmp);  // tmp = (C * old.y)
+    CMPLXtimesreal(g_param_z2, g_old_z.y, tmp);  // tmp = (C * old.y)
     CMPLXtrig1(tmp, tmpx);             // tmpx = trig1(tmp)
     tmpx.x += g_old_z.y;                  // tmpx = old.y + trig1(tmp)
     CMPLXtrig0(tmpx, tmp);             // tmp = trig0(tmpx)
     CMPLXmult(tmp, g_param_z1, tmpx);         // tmpx = tmp * h
 
     // tmpy contains the generalized value of the old real "y" equation
-    CMPLXtimesreal(parm2, g_old_z.x, tmp);  // tmp = (C * old.x)
+    CMPLXtimesreal(g_param_z2, g_old_z.x, tmp);  // tmp = (C * old.x)
     CMPLXtrig3(tmp, tmpy);             // tmpy = trig3(tmp)
     tmpy.x += g_old_z.x;                  // tmpy = old.x + trig1(tmp)
     CMPLXtrig2(tmpy, tmp);             // tmp = trig2(tmpy)
@@ -1566,7 +1566,7 @@ ZXTrigPlusZfpFractal()
     CMPLXtrig0(g_old_z, tmp);          // tmp  = trig(old)
     CMPLXmult(g_param_z1, tmp, tmp);      // tmp  = p1*trig(old)
     CMPLXmult(g_old_z, tmp, tmp2);      // tmp2 = p1*old*trig(old)
-    CMPLXmult(parm2, g_old_z, tmp);     // tmp  = p2*old
+    CMPLXmult(g_param_z2, g_old_z, tmp);     // tmp  = p2*old
     CMPLXadd(tmp2, tmp, g_new_z);       // new  = p1*trig(old) + p2*old
     return floatbailout();
 }
@@ -1638,7 +1638,7 @@ TrigPlusTrigfpFractal()
     CMPLXtrig0(g_old_z, tmp);
     CMPLXmult(g_param_z1, tmp, tmp);
     CMPLXtrig1(g_old_z, g_old_z);
-    CMPLXmult(parm2, g_old_z, g_old_z);
+    CMPLXmult(g_param_z2, g_old_z, g_old_z);
     CMPLXadd(tmp, g_old_z, g_new_z);
     return floatbailout();
 }
@@ -1674,7 +1674,7 @@ LambdaTrigOrTrigfpFractal()
 {
     /* z = trig0(z)*p1 if mod(old) < p2.x and
            trig1(z)*p1 if mod(old) >= p2.x */
-    if (CMPLXmod(g_old_z) < parm2.x)
+    if (CMPLXmod(g_old_z) < g_param_z2.x)
     {
         CMPLXtrig0(g_old_z, g_old_z);
         FPUcplxmul(g_float_param, &g_old_z, &g_new_z);
@@ -1714,7 +1714,7 @@ JuliaTrigOrTrigfpFractal()
 {
     /* z = trig0(z)+p1 if mod(old) < p2.x and
            trig1(z)+p1 if mod(old) >= p2.x */
-    if (CMPLXmod(g_old_z) < parm2.x)
+    if (CMPLXmod(g_old_z) < g_param_z2.x)
     {
         CMPLXtrig0(g_old_z, g_old_z);
         CMPLXadd(*g_float_param, g_old_z, g_new_z);
@@ -1874,8 +1874,8 @@ PhoenixFractalcplx()
 {
     // z(n+1) = z(n)^2 + p1 + p2*y(n),  y(n+1) = z(n)
     tmp.x = g_old_z.x * g_old_z.y;
-    g_new_z.x = tempsqrx - tempsqry + g_float_param->x + (parm2.x * tmp2.x) - (parm2.y * tmp2.y);
-    g_new_z.y = (tmp.x + tmp.x) + g_float_param->y + (parm2.x * tmp2.y) + (parm2.y * tmp2.x);
+    g_new_z.x = tempsqrx - tempsqry + g_float_param->x + (g_param_z2.x * tmp2.x) - (g_param_z2.y * tmp2.y);
+    g_new_z.y = (tmp.x + tmp.x) + g_float_param->y + (g_param_z2.x * tmp2.y) + (g_param_z2.y * tmp2.x);
     tmp2 = g_old_z; // set tmp2 to Y value
     return floatbailout();
 }
@@ -2009,7 +2009,7 @@ PhoenixCplxPlusFractal()
     oldplus.x += g_float_param->x;
     oldplus.y += g_float_param->y;
     FPUcplxmul(&tmp, &oldplus, &newminus);
-    FPUcplxmul(&parm2, &tmp2, &tmp);
+    FPUcplxmul(&g_param_z2, &tmp2, &tmp);
     g_new_z.x = newminus.x + tmp.x;
     g_new_z.y = newminus.y + tmp.y;
     tmp2 = g_old_z; // set tmp2 to Y value
@@ -2057,7 +2057,7 @@ PhoenixCplxMinusFractal()
     oldsqr.x += g_float_param->x;
     oldsqr.y += g_float_param->y;
     FPUcplxmul(&tmp, &oldsqr, &newminus);
-    FPUcplxmul(&parm2, &tmp2, &tmp);
+    FPUcplxmul(&g_param_z2, &tmp2, &tmp);
     g_new_z.x = newminus.x + tmp.x;
     g_new_z.y = newminus.y + tmp.y;
     tmp2 = g_old_z; // set tmp2 to Y value
@@ -2197,7 +2197,7 @@ TrigPlusSqrfpFractal() // generalization of Scott and Skinner types
     CMPLXtrig0(g_old_z, tmp);     // tmp = trig(old)
     CMPLXmult(g_param_z1, tmp, g_new_z); // new = parm*trig(old)
     CMPLXsqr_old(tmp);        // tmp = sqr(old)
-    CMPLXmult(parm2, tmp, tmp2); // tmp = parm2*sqr(old)
+    CMPLXmult(g_param_z2, tmp, tmp2); // tmp = parm2*sqr(old)
     CMPLXadd(g_new_z, tmp2, g_new_z);    // new = parm*trig(old)+parm2*sqr(old)
     return floatbailout();
 }
@@ -3053,7 +3053,7 @@ otherrichard8fp_per_pixel()
 {
     othermandelfp_per_pixel();
     CMPLXtrig1(*g_float_param, tmp);
-    CMPLXmult(tmp, parm2, tmp);
+    CMPLXmult(tmp, g_param_z2, tmp);
     return 1;
 }
 

@@ -448,8 +448,8 @@ JuliafpSetup()
                 trigndx[1] == trig_fn::TAN &&
                 trigndx[2] == trig_fn::SIN &&
                 trigndx[3] == trig_fn::TAN &&
-                fabs(parm2.x - 3.0) < .0001 &&
-                parm2.y == 0 &&
+                fabs(g_param_z2.x - 3.0) < .0001 &&
+                g_param_z2.y == 0 &&
                 g_param_z1.y == 0)
         {
             default_functions = true;
@@ -614,8 +614,8 @@ JulialongSetup()
                 trigndx[1] == trig_fn::TAN &&
                 trigndx[2] == trig_fn::SIN &&
                 trigndx[3] == trig_fn::TAN &&
-                fabs(parm2.x - 3.0) < .0001 &&
-                parm2.y == 0 &&
+                fabs(g_param_z2.x - 3.0) < .0001 &&
+                g_param_z2.y == 0 &&
                 g_param_z1.y == 0)
         {
             default_functions = true;
@@ -671,13 +671,13 @@ TrigPlusSqrfpSetup()
 {
     curfractalspecific->per_pixel =  juliafp_per_pixel;
     curfractalspecific->orbitcalc =  TrigPlusSqrfpFractal;
-    if (g_param_z1.x == 1.0 && g_param_z1.y == 0.0 && parm2.y == 0.0 && g_debug_flag != debug_flags::force_standard_fractal)
+    if (g_param_z1.x == 1.0 && g_param_z1.y == 0.0 && g_param_z2.y == 0.0 && g_debug_flag != debug_flags::force_standard_fractal)
     {
-        if (parm2.x == 1.0)          // Scott variant
+        if (g_param_z2.x == 1.0)          // Scott variant
         {
             curfractalspecific->orbitcalc =  ScottTrigPlusSqrfpFractal;
         }
-        else if (parm2.x == -1.0)      // Skinner variant
+        else if (g_param_z2.x == -1.0)      // Skinner variant
         {
             curfractalspecific->orbitcalc =  SkinnerTrigSubSqrfpFractal;
         }
@@ -719,13 +719,13 @@ TrigPlusTrigfpSetup()
     }
     curfractalspecific->per_pixel =  otherjuliafp_per_pixel;
     curfractalspecific->orbitcalc =  TrigPlusTrigfpFractal;
-    if (g_param_z1.x == 1.0 && g_param_z1.y == 0.0 && parm2.y == 0.0 && g_debug_flag != debug_flags::force_standard_fractal)
+    if (g_param_z1.x == 1.0 && g_param_z1.y == 0.0 && g_param_z2.y == 0.0 && g_debug_flag != debug_flags::force_standard_fractal)
     {
-        if (parm2.x == 1.0)          // Scott variant
+        if (g_param_z2.x == 1.0)          // Scott variant
         {
             curfractalspecific->orbitcalc =  ScottTrigPlusTrigfpFractal;
         }
-        else if (parm2.x == -1.0)      // Skinner variant
+        else if (g_param_z2.x == -1.0)      // Skinner variant
         {
             curfractalspecific->orbitcalc =  SkinnerTrigSubTrigfpFractal;
         }
@@ -748,7 +748,7 @@ FnPlusFnSym() // set symmetry matrix for fn+fn type
         /* log */ {symmetry_type::X_AXIS,  symmetry_type::X_AXIS,  symmetry_type::X_AXIS,  symmetry_type::X_AXIS,  symmetry_type::X_AXIS, symmetry_type::X_AXIS, symmetry_type::X_AXIS},
         /* sqr */ {symmetry_type::X_AXIS,  symmetry_type::X_AXIS,  symmetry_type::X_AXIS,  symmetry_type::X_AXIS,  symmetry_type::X_AXIS, symmetry_type::X_AXIS, symmetry_type::XY_AXIS}
     };
-    if (g_param_z1.y == 0.0 && parm2.y == 0.0)
+    if (g_param_z1.y == 0.0 && g_param_z2.y == 0.0)
     {
         if (trigndx[0] <= trig_fn::SQR && trigndx[1] < trig_fn::SQR)    // bounds of array
         {
@@ -904,13 +904,13 @@ ZXTrigPlusZSetup()
     else
     {
         curfractalspecific->orbitcalc =  ZXTrigPlusZfpFractal;
-        if (g_param_z1.x == 1.0 && g_param_z1.y == 0.0 && parm2.y == 0.0 && g_debug_flag != debug_flags::force_standard_fractal)
+        if (g_param_z1.x == 1.0 && g_param_z1.y == 0.0 && g_param_z2.y == 0.0 && g_debug_flag != debug_flags::force_standard_fractal)
         {
-            if (parm2.x == 1.0)       // Scott variant
+            if (g_param_z2.x == 1.0)       // Scott variant
             {
                 curfractalspecific->orbitcalc =  ScottZXTrigPlusZfpFractal;
             }
-            else if (parm2.x == -1.0)           // Skinner variant
+            else if (g_param_z2.x == -1.0)           // Skinner variant
             {
                 curfractalspecific->orbitcalc =  SkinnerZXTrigSubZfpFractal;
             }
@@ -1289,8 +1289,8 @@ HalleySetup()
         g_halley_mp_a_plus_one = *pd2MP((double)g_halley_a_plus_one);
         g_halley_mp_a_plus_one_times_degree = *pd2MP((double)g_halley_a_plus_one_times_degree);
         g_mpc_temp_param.x = *pd2MP(g_param_z1.y);
-        g_mpc_temp_param.y = *pd2MP(parm2.y);
-        g_mp_temp_param2_x = *pd2MP(parm2.x);
+        g_mpc_temp_param.y = *pd2MP(g_param_z2.y);
+        g_mp_temp_param2_x = *pd2MP(g_param_z2.x);
         g_mp_one        = *pd2MP(1.0);
     }
 #endif
@@ -1311,7 +1311,7 @@ PhoenixSetup()
 {
     g_long_param = &g_l_param;
     g_float_param = &g_param_z1;
-    degree = (int)parm2.x;
+    degree = (int)g_param_z2.x;
     if (degree < 2 && degree > -3)
     {
         degree = 0;
@@ -1369,7 +1369,7 @@ PhoenixCplxSetup()
     g_params[4] = (double)degree;
     if (degree == 0)
     {
-        if (parm2.x != 0 || parm2.y != 0)
+        if (g_param_z2.x != 0 || g_param_z2.y != 0)
         {
             symmetry = symmetry_type::NONE;
         }
@@ -1377,7 +1377,7 @@ PhoenixCplxSetup()
         {
             symmetry = symmetry_type::ORIGIN;
         }
-        if (g_param_z1.y == 0 && parm2.y == 0)
+        if (g_param_z1.y == 0 && g_param_z2.y == 0)
         {
             symmetry = symmetry_type::X_AXIS;
         }
@@ -1393,7 +1393,7 @@ PhoenixCplxSetup()
     if (degree >= 2)
     {
         degree = degree - 1;
-        if (g_param_z1.y == 0 && parm2.y == 0)
+        if (g_param_z1.y == 0 && g_param_z2.y == 0)
         {
             symmetry = symmetry_type::X_AXIS;
         }
@@ -1413,7 +1413,7 @@ PhoenixCplxSetup()
     if (degree <= -3)
     {
         degree = abs(degree) - 2;
-        if (g_param_z1.y == 0 && parm2.y == 0)
+        if (g_param_z1.y == 0 && g_param_z2.y == 0)
         {
             symmetry = symmetry_type::X_AXIS;
         }
@@ -1439,7 +1439,7 @@ MandPhoenixSetup()
 {
     g_long_param = &g_l_init;
     g_float_param = &g_init;
-    degree = (int)parm2.x;
+    degree = (int)g_param_z2.x;
     if (degree < 2 && degree > -3)
     {
         degree = 0;
@@ -1495,7 +1495,7 @@ MandPhoenixCplxSetup()
         degree = 0;
     }
     g_params[4] = (double)degree;
-    if (g_param_z1.y != 0 || parm2.y != 0)
+    if (g_param_z1.y != 0 || g_param_z2.y != 0)
     {
         symmetry = symmetry_type::NONE;
     }
