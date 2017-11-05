@@ -1153,7 +1153,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
             }
             else if (!g_map_name.empty())
             {
-                make_parameter_file_map = true;
+                g_make_parameter_file_map = true;
             }
             xdots = g_file_x_dots;
             ydots = g_file_y_dots;

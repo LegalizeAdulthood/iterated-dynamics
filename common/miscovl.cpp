@@ -40,7 +40,7 @@ static void strip_zeros(char *buf);
 
 bool g_is_true_color = false;
 bool g_make_parameter_file = false;
-bool make_parameter_file_map = false;
+bool g_make_parameter_file_map = false;
 
 char par_comment[4][MAXCMT];
 
@@ -79,7 +79,7 @@ void make_batch_file()
     char const *sptr2;
     int old_help_mode;
 
-    if (make_parameter_file_map)   // makepar map case
+    if (g_make_parameter_file_map)   // makepar map case
     {
         colorsonly = true;
     }
@@ -245,7 +245,7 @@ prompt_user:
             break;
         }
 
-        if (*colorspec == 'o' || make_parameter_file_map)
+        if (*colorspec == 'o' || g_make_parameter_file_map)
         {
             strcpy(colorspec, "y");
             colorsonly = true;
@@ -346,7 +346,7 @@ skip_UI:
             {
                 strcpy(colorspec, "n");
             }
-            if (make_parameter_file_map)
+            if (g_make_parameter_file_map)
             {
                 maxcolor = 256;
             }
