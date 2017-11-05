@@ -37,7 +37,7 @@ int test()
 {
     int startpass = 0;
     int startrow = startpass;
-    if (resuming)
+    if (g_resuming)
     {
         start_resume();
         get_resume(sizeof(startrow), &startrow, sizeof(startpass), &startpass, 0);
@@ -696,7 +696,7 @@ int diffusion()
             radius = (float)(xdots - border);
         }
     }
-    if (resuming) // restore worklist, if we can't the above will stay in place
+    if (g_resuming) // restore worklist, if we can't the above will stay in place
     {
         start_resume();
         if (mode != 2)
@@ -979,7 +979,7 @@ static long   LPI;
 int Bifurcation()
 {
     int x = 0;
-    if (resuming)
+    if (g_resuming)
     {
         start_resume();
         get_resume(sizeof(x), &x, 0);
@@ -1409,7 +1409,7 @@ int popcorn()   // subset of std engine
 {
     int start_row;
     start_row = 0;
-    if (resuming)
+    if (g_resuming)
     {
         start_resume();
         get_resume(sizeof(start_row), &start_row, 0);
@@ -1932,7 +1932,7 @@ int cellular()
 
     filled = 0;
     notfilled = (S16)(1-filled);
-    if (resuming && !g_cellular_next_screen && !lstscreenflag)
+    if (g_resuming && !g_cellular_next_screen && !lstscreenflag)
     {
         start_resume();
         get_resume(sizeof(start_row), &start_row, 0);
@@ -2119,7 +2119,7 @@ contloop:
 
 bool CellularSetup()
 {
-    if (!resuming)
+    if (!g_resuming)
     {
         g_cellular_next_screen = false; // initialize flag
     }

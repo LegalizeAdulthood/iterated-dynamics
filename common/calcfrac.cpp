@@ -142,7 +142,7 @@ int g_keyboard_check_interval = 0;
 int g_max_keyboard_check_interval = 0;                   // avoids checking keyboard too often
 
 std::vector<BYTE> g_resume_data;          // resume info
-bool resuming = false;                  // true if resuming after interrupt
+bool g_resuming = false;                  // true if resuming after interrupt
 int g_num_work_list = 0;                   // resume worklist for standard engine
 WORKLIST worklist[MAXCALCWORK] = { 0 };
 int xxstart = 0;
@@ -857,8 +857,8 @@ int calcfract()
         g_l_init_orbit.x = (long)(g_init_orbit.x * g_fudge_factor);
         g_l_init_orbit.y = (long)(g_init_orbit.y * g_fudge_factor);
     }
-    resuming = (g_calc_status == calc_status_value::RESUMABLE);
-    if (!resuming) // free resume_info memory if any is hanging around
+    g_resuming = (g_calc_status == calc_status_value::RESUMABLE);
+    if (!g_resuming) // free resume_info memory if any is hanging around
     {
         end_resume();
         if (g_resave_flag)
@@ -919,7 +919,7 @@ int calcfract()
         {
             int oldcalcmode;
             oldcalcmode = stdcalcmode;
-            if (!resuming || three_pass)
+            if (!g_resuming || three_pass)
             {
                 stdcalcmode = 'g';
                 three_pass = true;
@@ -1034,7 +1034,7 @@ static void perform_worklist()
         int tmpcalcmode = stdcalcmode;
 
         stdcalcmode = '1'; // force 1 pass
-        if (!resuming)
+        if (!g_resuming)
         {
             if (pot_startdisk() < 0)
             {
@@ -1067,7 +1067,7 @@ static void perform_worklist()
     worklist[0].yystop = ydots - 1;
     worklist[0].sym = 0;
     worklist[0].pass = worklist[0].sym;
-    if (resuming) // restore worklist, if we can't the above will stay in place
+    if (g_resuming) // restore worklist, if we can't the above will stay in place
     {
         int vsn;
         vsn = start_resume();
@@ -1271,7 +1271,7 @@ static void perform_worklist()
 
         setsymmetry(symmetry, true);
 
-        if (!resuming && (labs(g_log_map_flag) == 2 || (g_log_map_flag && g_log_map_auto_calculate)))
+        if (!g_resuming && (labs(g_log_map_flag) == 2 || (g_log_map_flag && g_log_map_auto_calculate)))
         {
             // calculate round screen edges to work out best start for logmap
             g_log_map_flag = (autologmap() * (g_log_map_flag / labs(g_log_map_flag)));
@@ -1887,7 +1887,7 @@ static int standard_calc(int passnum)
         while (col <= g_i_x_stop)
         {
             // on 2nd pass of two, skip even pts
-            if (g_quick_calc && !resuming)
+            if (g_quick_calc && !g_resuming)
             {
                 g_color = getcolor(col, row);
                 if (g_color != g_inside_color)
@@ -1902,7 +1902,7 @@ static int standard_calc(int passnum)
                 {
                     return -1;          // interrupted
                 }
-                resuming = false;       // reset so quick_calc works
+                g_resuming = false;       // reset so quick_calc works
                 g_reset_periodicity = false;
                 if (passnum == 1)       // first pass, copy pixel and bump col
                 {
@@ -5241,7 +5241,7 @@ static long autologmap()
 ack: // bailout here if key is pressed
     if (mincolour == 2)      // insure autologmap not called again
     {
-        resuming = true;
+        g_resuming = true;
     }
     g_max_iterations = old_maxit;
 

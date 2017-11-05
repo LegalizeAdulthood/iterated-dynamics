@@ -2549,7 +2549,7 @@ static void restore_history_info(int i)
     HISTORY last = history[i];
     g_invert = 0;
     g_calc_status = calc_status_value::PARAMS_CHANGED;
-    resuming = false;
+    g_resuming = false;
     fractype              = static_cast<fractal_type>(last.fractal_type);
     xxmin                 = last.xmin           ;
     xxmax                 = last.xmax           ;

@@ -418,7 +418,7 @@ extern int                   g_resave_flag;
 extern bool                  g_reset_periodicity;
 extern std::vector<BYTE>     g_resume_data;
 extern int                   g_resume_len;
-extern bool                  resuming;
+extern bool                  g_resuming;
 extern bool                  rflag;
 extern int                   rhombus_stack[];
 extern int                   root;
