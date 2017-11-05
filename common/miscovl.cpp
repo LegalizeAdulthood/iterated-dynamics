@@ -1207,9 +1207,9 @@ void write_batch_parms(char const *colorinf, bool colorsonly, int maxcolor, int 
         }
         put_parm(" %s=%d", "perspective", ZVIEWER);
         put_parm(" %s=%d/%d", "xyshift", XSHIFT, YSHIFT);
-        if (xtrans || ytrans)
+        if (g_adjust_3d_x || ytrans)
         {
-            put_parm(" %s=%d/%d", "xyadjust", xtrans, ytrans);
+            put_parm(" %s=%d/%d", "xyadjust", g_adjust_3d_x, ytrans);
         }
         if (g_glasses_type)
         {

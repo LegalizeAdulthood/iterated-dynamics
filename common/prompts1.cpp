@@ -3220,7 +3220,7 @@ restart_3:
 
         prompts3d[++k] = "Image non-perspective X adjust (positive = right)";
         uvalues[k].type = 'i';
-        uvalues[k].uval.ival = xtrans    ;
+        uvalues[k].uval.ival = g_adjust_3d_x    ;
 
         prompts3d[++k] = "Image non-perspective Y adjust (positive = up)";
         uvalues[k].type = 'i';
@@ -3277,7 +3277,7 @@ restart_3:
         ZVIEWER = uvalues[k++].uval.ival;
         XSHIFT     = uvalues[k++].uval.ival;
         YSHIFT     = uvalues[k++].uval.ival;
-        xtrans     = uvalues[k++].uval.ival;
+        g_adjust_3d_x     = uvalues[k++].uval.ival;
         ytrans     = uvalues[k++].uval.ival;
         g_transparent_color_3d[0] = uvalues[k++].uval.ival;
         g_transparent_color_3d[1] = uvalues[k++].uval.ival;

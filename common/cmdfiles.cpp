@@ -3181,7 +3181,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         {
             goto badarg;
         }
-        xtrans = intval[0];
+        g_adjust_3d_x = intval[0];
         ytrans = intval[1];
         return CMDARG_FRACTAL_PARAM | CMDARG_3D_PARAM;
     }
@@ -3791,7 +3791,7 @@ void set_3d_defaults()
     ZVIEWER   = 0;
     XSHIFT    = 0;
     YSHIFT    = 0;
-    xtrans    = 0;
+    g_adjust_3d_x    = 0;
     ytrans    = 0;
     LIGHTAVG  = 0;
     g_ambient   = 20;

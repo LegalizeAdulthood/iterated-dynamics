@@ -548,7 +548,7 @@ extern long                  g_l_x_max;
 extern long                  g_l_x_min;
 extern int                   g_x_shift1;
 extern int                   g_x_shift;
-extern int                   xtrans;
+extern int                   g_adjust_3d_x;
 extern double                g_x_3rd;
 extern int                   xxadjust1;
 extern int                   xxadjust;

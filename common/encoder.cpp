@@ -893,7 +893,7 @@ static void setup_save_info(FRACTAL_INFO *save_info)
         save_info->init3d[i] = (short) g_init_3d[i];
     }
     save_info->previewfactor = (short) g_preview_factor;
-    save_info->xtrans = (short) xtrans;
+    save_info->xtrans = (short) g_adjust_3d_x;
     save_info->ytrans = (short) ytrans;
     save_info->red_crop_left = (short) g_red_crop_left;
     save_info->red_crop_right = (short) g_red_crop_right;
