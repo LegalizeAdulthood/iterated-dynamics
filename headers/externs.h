@@ -469,7 +469,7 @@ extern double                g_save_x_min;
 extern int                   sxoffs;
 extern double                sy3rd;
 extern int                   g_screen_y_dots;
-extern double                symax;
+extern double                g_save_y_max;
 extern double                g_save_y_min;
 extern symmetry_type         g_symmetry;
 extern int                   syoffs;

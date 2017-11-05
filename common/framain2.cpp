@@ -318,7 +318,7 @@ main_state big_while_loop(bool *const kbdmore, bool *const stacked, bool const r
         g_save_x_max = xxmax;
         sx3rd = xx3rd;
         g_save_y_min = yymin;
-        symax = yymax;
+        g_save_y_max = yymax;
         sy3rd = yy3rd;
 
         if (bf_math != bf_math_type::NONE)
@@ -1118,7 +1118,7 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
                 }
                 jxxmin = g_save_x_min;
                 jxxmax = g_save_x_max;
-                jyymax = symax;
+                jyymax = g_save_y_max;
                 jyymin = g_save_y_min;
                 jxx3rd = sx3rd;
                 jyy3rd = sy3rd;
@@ -2324,7 +2324,7 @@ void reset_zoom_corners()
     xxmin = g_save_x_min;
     xxmax = g_save_x_max;
     xx3rd = sx3rd;
-    yymax = symax;
+    yymax = g_save_y_max;
     yymin = g_save_y_min;
     yy3rd = sy3rd;
     if (bf_math != bf_math_type::NONE)

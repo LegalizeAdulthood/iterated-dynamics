@@ -2596,7 +2596,7 @@ void flip_image(int key)
             }
         }
         g_save_x_min = xxmax + xxmin - xx3rd;
-        symax = yymax + yymin - yy3rd;
+        g_save_y_max = yymax + yymin - yy3rd;
         g_save_x_max = xx3rd;
         g_save_y_min = yy3rd;
         sx3rd = xxmax;
@@ -2628,7 +2628,7 @@ void flip_image(int key)
             }
         }
         g_save_x_min = xx3rd;
-        symax = yy3rd;
+        g_save_y_max = yy3rd;
         g_save_x_max = xxmax + xxmin - xx3rd;
         g_save_y_min = yymax + yymin - yy3rd;
         sx3rd = xxmin;
@@ -2660,7 +2660,7 @@ void flip_image(int key)
             }
         }
         g_save_x_min = xxmax;
-        symax = yymin;
+        g_save_y_max = yymin;
         g_save_x_max = xxmin;
         g_save_y_min = yymax;
         sx3rd = xxmax + xxmin - xx3rd;
