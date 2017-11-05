@@ -1966,10 +1966,10 @@ static main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdm
     case FIK_CTL_PAGE_UP:
         if (param_box_count)
         {
-            parmzoom -= 1.0;
-            if (parmzoom < 1.0)
+            g_evolve_param_zoom -= 1.0;
+            if (g_evolve_param_zoom < 1.0)
             {
-                parmzoom = 1.0;
+                g_evolve_param_zoom = 1.0;
             }
             drawparmbox(0);
             set_evolve_ranges();
@@ -1978,10 +1978,10 @@ static main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdm
     case FIK_CTL_PAGE_DOWN:
         if (param_box_count)
         {
-            parmzoom += 1.0;
-            if (parmzoom > (double) g_evolve_image_grid_size /2.0)
+            g_evolve_param_zoom += 1.0;
+            if (g_evolve_param_zoom > (double) g_evolve_image_grid_size /2.0)
             {
-                parmzoom = (double) g_evolve_image_grid_size /2.0;
+                g_evolve_param_zoom = (double) g_evolve_image_grid_size /2.0;
             }
             drawparmbox(0);
             set_evolve_ranges();

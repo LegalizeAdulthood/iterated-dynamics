@@ -40,7 +40,7 @@ double g_evolve_dist_per_x;
 double g_evolve_dist_per_y;
 double g_evolve_max_random_mutation;
 double g_evolve_mutation_reduction_factor;
-double parmzoom;
+double g_evolve_param_zoom;
 
 // offset for discrete parameters x and y..
 // used for things like inside or outside types, bailout tests, trig fn etc
@@ -921,7 +921,7 @@ get_evol_restart:
 void SetupParamBox()
 {
     param_box_count = 0;
-    parmzoom = ((double) g_evolve_image_grid_size -1.0)/2.0;
+    g_evolve_param_zoom = ((double) g_evolve_image_grid_size -1.0)/2.0;
     // need to allocate 2 int arrays for g_box_x and g_box_y plus 1 byte array for values
     int const num_box_values = (xdots + ydots)*2;
     int const num_values = xdots + ydots + 2;
@@ -1055,13 +1055,13 @@ void drawparmbox(int mode)
 
     g_box_count =0;
     //draw larger box to show parm zooming range
-    bl.x = ((px -(int)parmzoom) * (int)(x_size_d+1+grout))-sxoffs-1;
+    bl.x = ((px -(int)g_evolve_param_zoom) * (int)(x_size_d+1+grout))-sxoffs-1;
     tl.x = bl.x;
-    tr.y = ((py -(int)parmzoom) * (int)(y_size_d+1+grout))-syoffs-1;
+    tr.y = ((py -(int)g_evolve_param_zoom) * (int)(y_size_d+1+grout))-syoffs-1;
     tl.y = tr.y;
-    tr.x = ((px +1+(int)parmzoom) * (int)(x_size_d+1+grout))-sxoffs;
+    tr.x = ((px +1+(int)g_evolve_param_zoom) * (int)(x_size_d+1+grout))-sxoffs;
     br.x = tr.x;
-    bl.y = ((py +1+(int)parmzoom) * (int)(y_size_d+1+grout))-syoffs;
+    bl.y = ((py +1+(int)g_evolve_param_zoom) * (int)(y_size_d+1+grout))-syoffs;
     br.y = bl.y;
 #ifndef XFRACT
     addbox(br);
@@ -1106,10 +1106,10 @@ void set_evolve_ranges()
 {
     int lclpy = g_evolve_image_grid_size - py - 1;
     // set up ranges and offsets for parameter explorer/evolver
-    g_evolve_x_parameter_range = g_evolve_dist_per_x*(parmzoom*2.0);
-    g_evolve_y_parameter_range = g_evolve_dist_per_y*(parmzoom*2.0);
-    g_evolve_new_x_parameter_offset = g_evolve_x_parameter_offset +(((double)px-parmzoom)*g_evolve_dist_per_x);
-    g_evolve_new_y_parameter_offset = g_evolve_y_parameter_offset +(((double)lclpy-parmzoom)*g_evolve_dist_per_y);
+    g_evolve_x_parameter_range = g_evolve_dist_per_x*(g_evolve_param_zoom*2.0);
+    g_evolve_y_parameter_range = g_evolve_dist_per_y*(g_evolve_param_zoom*2.0);
+    g_evolve_new_x_parameter_offset = g_evolve_x_parameter_offset +(((double)px-g_evolve_param_zoom)*g_evolve_dist_per_x);
+    g_evolve_new_y_parameter_offset = g_evolve_y_parameter_offset +(((double)lclpy-g_evolve_param_zoom)*g_evolve_dist_per_y);
 
     g_evolve_new_discrete_x_parameter_offset = (char)(g_evolve_discrete_x_parameter_offset +(px- g_evolve_image_grid_size /2));
     g_evolve_new_discrete_y_parameter_offset = (char)(g_evolve_discrete_y_parameter_offset +(lclpy- g_evolve_image_grid_size /2));
