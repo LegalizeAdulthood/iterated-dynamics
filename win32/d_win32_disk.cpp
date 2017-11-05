@@ -180,12 +180,12 @@ handle_help_tab(int ch)
         inside_help = false;
         ch = 0;
     }
-    else if (FIK_TAB == ch && tab_mode)
+    else if (FIK_TAB == ch && g_tab_mode)
     {
-        bool const old_tab_mode = tab_mode;
-        tab_mode = false;
+        bool const old_tab_mode = g_tab_mode;
+        g_tab_mode = false;
         tab_display();
-        tab_mode = old_tab_mode;
+        g_tab_mode = old_tab_mode;
         ch = 0;
     }
 

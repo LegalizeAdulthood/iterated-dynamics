@@ -102,7 +102,7 @@ int     timedsave = 0;                    // when doing a timed save
 int     g_resave_flag = 0;                  // tells encoder not to incr filename
 bool    g_started_resaves = false;        // but incr on first resave
 int     g_save_system;                    // from and for save files
-bool    tab_mode = true;                 // tab display enabled
+bool    g_tab_mode = true;                 // tab display enabled
 
 // for historical reasons (before rotation):
 //    top    left  corner of screen is (xxmin,yymax)
@@ -279,7 +279,7 @@ static bool main_restore_start(bool &stacked, bool &resumeflag)
     while (g_show_file <= 0)              // image is to be loaded
     {
         char const *hdg;
-        tab_mode = false;
+        g_tab_mode = false;
         if (!g_browsing)      /*RB*/
         {
             if (g_overlay_3d)
@@ -312,7 +312,7 @@ static bool main_restore_start(bool &stacked, bool &resumeflag)
         viewwindow = false;
         g_show_file = 0;
         g_help_mode = -1;
-        tab_mode = true;
+        g_tab_mode = true;
         if (stacked)
         {
             driver_discard_screen();
@@ -334,7 +334,7 @@ static bool main_restore_start(bool &stacked, bool &resumeflag)
     }
 
     g_help_mode = HELPMENU;                 // now use this help mode
-    tab_mode = true;
+    g_tab_mode = true;
     g_look_at_mouse = 0;                     // ignore mouse
 
     if (((g_overlay_3d && (g_init_batch == batch_modes::NONE)) || stacked) && g_init_mode < 0)        // overlay command failed

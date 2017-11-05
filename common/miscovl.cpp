@@ -1980,17 +1980,17 @@ int select_video_mode(int curmode)
         i = 0;
     }
 
-    bool const old_tab_mode = tab_mode;
+    bool const old_tab_mode = g_tab_mode;
     old_help_mode = g_help_mode;
     modes_changed = false;
-    tab_mode = false;
+    g_tab_mode = false;
     g_help_mode = HELPVIDSEL;
     i = fullscreen_choice(CHOICE_HELP,
                           "Select Video Mode",
                           "key...name.......................xdot..ydot.colr.driver......comment......",
                           nullptr, g_video_table_len, nullptr, attributes,
                           1, 16, 74, i, format_vid_table, nullptr, nullptr, check_modekey);
-    tab_mode = old_tab_mode;
+    g_tab_mode = old_tab_mode;
     g_help_mode = old_help_mode;
     if (i == -1)
     {

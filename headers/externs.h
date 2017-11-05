@@ -473,7 +473,7 @@ extern symmetry_type         g_symmetry;
 extern int                   syoffs;
 extern bool                  g_make_parameter_file;
 extern bool                  g_make_parameter_file_map;
-extern bool tab_mode;
+extern bool                  g_tab_mode;
 extern bool                  taborhelp;
 extern bool                  Targa_Out;
 extern bool                  Targa_Overlay;

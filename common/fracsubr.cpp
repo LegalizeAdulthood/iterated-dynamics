@@ -1423,9 +1423,9 @@ void sleepms_old(long ms)
     int old_help_mode;
     timebx t1, t2;
 #define SLEEPINIT 250 // milliseconds for calibration
-    bool const save_tab_mode = tab_mode;
+    bool const save_tab_mode = g_tab_mode;
     old_help_mode = g_help_mode;
-    tab_mode = false;
+    g_tab_mode = false;
     g_help_mode = -1;
     if (scalems == 0L) // calibrate
     {
@@ -1502,7 +1502,7 @@ void sleepms_old(long ms)
         }
     }
 sleepexit:
-    tab_mode = save_tab_mode;
+    g_tab_mode = save_tab_mode;
     g_help_mode = old_help_mode;
 }
 
