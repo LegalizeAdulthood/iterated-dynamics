@@ -396,7 +396,7 @@ extern int                   g_distance_estimator_y_dots;
 extern void                (*g_put_color)(int, int, int);
 extern DComplex              g_power_z;
 extern double                g_quaternion_c;
-extern double                qci;
+extern double                g_quaternion_ci;
 extern double                qcj;
 extern double                qck;
 extern bool                  quick_calc;

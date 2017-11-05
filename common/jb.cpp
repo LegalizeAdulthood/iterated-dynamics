@@ -351,7 +351,7 @@ zlinefp(double x, double y)
             jbcfp.x = 0.0;
             jbcfp.y = 0.0;
             g_quaternion_c = jxfp;
-            qci = jyfp;
+            g_quaternion_ci = jyfp;
             qcj = mxfp;
             qck = myfp;
         }
@@ -362,7 +362,7 @@ zlinefp(double x, double y)
             jbcfp.x = mxfp;
             jbcfp.y = myfp;
             g_quaternion_c = g_params[0];
-            qci = g_params[1];
+            g_quaternion_ci = g_params[1];
             qcj = g_params[2];
             qck = g_params[3];
         }
