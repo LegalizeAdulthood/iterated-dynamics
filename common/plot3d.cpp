@@ -13,7 +13,7 @@
 #define PAL_MAGENTA 3
 
 stereo_images g_which_image;
-int xxadjust1;
+int g_xx_adjust1;
 int yyadjust1;
 int g_eye_separation = 0;
 int g_glasses_type = 0;
@@ -482,7 +482,7 @@ void plot_setup()
             g_x_shift  += (int)((g_eye_separation* (double)g_logical_screen_x_dots)/200);
             g_xx_adjust = (int)(((g_adjust_3d_x+g_converge_x_adjust)* (double)g_logical_screen_x_dots)/100);
             g_x_shift1 -= (int)((g_eye_separation* (double)g_logical_screen_x_dots)/200);
-            xxadjust1 = (int)(((g_adjust_3d_x-g_converge_x_adjust)* (double)g_logical_screen_x_dots)/100);
+            g_xx_adjust1 = (int)(((g_adjust_3d_x-g_converge_x_adjust)* (double)g_logical_screen_x_dots)/100);
             if (g_glasses_type == 4 && g_screen_x_dots >= 2*g_logical_screen_x_dots)
             {
                 g_logical_screen_x_offset = g_screen_x_dots / 2 - g_logical_screen_x_dots;

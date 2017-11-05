@@ -3034,7 +3034,7 @@ static bool long3dviewtransf(long3dvtinf *inf)
         inf->col1 = (int)(((multiply(inf->cvt.a, inf->viewvect1[0], g_bit_shift) +
                             multiply(inf->cvt.b, inf->viewvect1[1], g_bit_shift) +
                             inf->cvt.e) >> g_bit_shift)
-                          + xxadjust1);
+                          + g_xx_adjust1);
         if (inf->col1 < 0 || inf->col1 >= g_logical_screen_x_dots || inf->row1 < 0 || inf->row1 >= g_logical_screen_y_dots)
         {
             if ((long)abs(inf->col1)+(long)abs(inf->row1) > BAD_PIXEL)
@@ -3154,7 +3154,7 @@ static bool float3dviewtransf(float3dvtinf *inf)
         inf->row1 = (int)(inf->cvt.c*inf->viewvect1[0] + inf->cvt.d*inf->viewvect1[1]
                           + inf->cvt.f + yyadjust1);
         inf->col1 = (int)(inf->cvt.a*inf->viewvect1[0] + inf->cvt.b*inf->viewvect1[1]
-                          + inf->cvt.e + xxadjust1);
+                          + inf->cvt.e + g_xx_adjust1);
         if (inf->col1 < 0 || inf->col1 >= g_logical_screen_x_dots || inf->row1 < 0 || inf->row1 >= g_logical_screen_y_dots)
         {
             if ((long)abs(inf->col1)+(long)abs(inf->row1) > BAD_PIXEL)
