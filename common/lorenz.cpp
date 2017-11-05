@@ -2945,7 +2945,7 @@ static bool long3dviewtransf(long3dvtinf *inf)
             }
             for (int i = 0; i < 3; i++)
             {
-                view[i] = (double)inf->iview[i] / g_fudge_factor;
+                g_view[i] = (double)inf->iview[i] / g_fudge_factor;
             }
 
             // copy xform matrix to long for for fixed point math
@@ -3092,11 +3092,11 @@ static bool float3dviewtransf(float3dvtinf *inf)
         }
         if (g_color_iter == waste) // time to work it out
         {
-            view[1] = 0;
-            view[0] = view[1]; // center on origin
+            g_view[1] = 0;
+            g_view[0] = g_view[1]; // center on origin
             /* z value of user's eye - should be more negative than extreme
                               negative part of image */
-            view[2] = (inf->minvals[2]-inf->maxvals[2])*(double)ZVIEWER/100.0;
+            g_view[2] = (inf->minvals[2]-inf->maxvals[2])*(double)ZVIEWER/100.0;
 
             // center image on origin
             double tmpx = (-inf->minvals[0]-inf->maxvals[0])/(2.0); // center x

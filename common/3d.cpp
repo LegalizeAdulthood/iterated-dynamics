@@ -247,7 +247,7 @@ int
 perspective(VECTOR v)
 {
     double denom;
-    denom = view[2] - v[2];
+    denom = g_view[2] - v[2];
 
     if (denom >= 0.0)
     {
@@ -256,8 +256,8 @@ perspective(VECTOR v)
         v[2] = g_bad_value;
         return -1;
     }
-    v[0] = (v[0]*view[2] - view[0]*v[2])/denom;
-    v[1] = (v[1]*view[2] - view[1]*v[2])/denom;
+    v[0] = (v[0]*g_view[2] - g_view[0]*v[2])/denom;
+    v[1] = (v[1]*g_view[2] - g_view[1]*v[2])/denom;
 
     // calculation of z if needed later
     // v[2] =  v[2]/denom;

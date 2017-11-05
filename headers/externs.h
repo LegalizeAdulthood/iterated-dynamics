@@ -526,7 +526,7 @@ extern bool                  g_video_scroll;
 extern int                   g_video_start_x;
 extern int                   g_video_start_y;
 extern int                   g_video_type;      // video adapter type
-extern VECTOR                view;
+extern VECTOR                g_view;
 extern bool                  viewcrop;
 extern float                 viewreduction;
 extern bool                  viewwindow;

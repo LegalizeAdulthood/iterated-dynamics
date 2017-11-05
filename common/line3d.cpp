@@ -139,7 +139,7 @@ bool g_brief = false;             // 1 = short ray trace files
 
 // array of min and max x values used in triangle fill
 static std::vector<minmax> minmax_x;
-VECTOR view;                // position of observer for perspective
+VECTOR g_view;                // position of observer for perspective
 VECTOR cross;
 static VECTOR tmpcross;
 
@@ -1100,15 +1100,15 @@ static void draw_light_box(double *origin, double *direct, MATRIX light_m)
     }
 
     // always use perspective to aid viewing
-    temp = view[2];              // save perspective distance for a later restore
-    view[2] = -P * 300.0 / 100.0;
+    temp = g_view[2];              // save perspective distance for a later restore
+    g_view[2] = -P * 300.0 / 100.0;
 
     for (int i = 0; i < 4; i++)
     {
         perspective(S[0][i]);
         perspective(S[1][i]);
     }
-    view[2] = temp;              // Restore perspective distance
+    g_view[2] = temp;              // Restore perspective distance
 
     // Adjust for aspect
     for (int i = 0; i < 4; i++)
@@ -2575,9 +2575,9 @@ static int first_time(int linelen, VECTOR v)
         lview[2] = (long)((zmin - zmax) * (double) ZVIEWER / 100.0);
     }
 
-    view[0] = lview[0];
-    view[1] = lview[1];
-    view[2] = lview[2];
+    g_view[0] = lview[0];
+    g_view[1] = lview[1];
+    g_view[2] = lview[2];
     lview[0] = lview[0] << 16;
     lview[1] = lview[1] << 16;
     lview[2] = lview[2] << 16;
