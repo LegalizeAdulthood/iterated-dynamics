@@ -572,7 +572,7 @@ extern int                   g_yy_adjust;
 extern double                g_y_max;
 extern double                g_y_min;
 extern int                   g_yy_start;
-extern int                   yystop;
+extern int                   g_yy_stop;
 extern double                zbx;
 extern double                zby;
 extern double                zoom_box_height;
