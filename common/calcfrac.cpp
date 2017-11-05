@@ -144,7 +144,7 @@ int g_max_keyboard_check_interval = 0;                   // avoids checking keyb
 std::vector<BYTE> g_resume_data;          // resume info
 bool g_resuming = false;                  // true if resuming after interrupt
 int g_num_work_list = 0;                   // resume worklist for standard engine
-WORKLIST worklist[MAXCALCWORK] = { 0 };
+WORKLIST g_work_list[MAXCALCWORK] = { 0 };
 int xxstart = 0;
 int xxstop = 0;
 int xxbegin = 0;                        // these are same as worklist,
@@ -1059,19 +1059,19 @@ static void perform_worklist()
 
     // default setup a new worklist
     g_num_work_list = 1;
-    worklist[0].xxbegin = 0;
-    worklist[0].xxstart = worklist[0].xxbegin;
-    worklist[0].yybegin = 0;
-    worklist[0].yystart = worklist[0].yybegin;
-    worklist[0].xxstop = xdots - 1;
-    worklist[0].yystop = ydots - 1;
-    worklist[0].sym = 0;
-    worklist[0].pass = worklist[0].sym;
+    g_work_list[0].xxbegin = 0;
+    g_work_list[0].xxstart = g_work_list[0].xxbegin;
+    g_work_list[0].yybegin = 0;
+    g_work_list[0].yystart = g_work_list[0].yybegin;
+    g_work_list[0].xxstop = xdots - 1;
+    g_work_list[0].yystop = ydots - 1;
+    g_work_list[0].sym = 0;
+    g_work_list[0].pass = g_work_list[0].sym;
     if (g_resuming) // restore worklist, if we can't the above will stay in place
     {
         int vsn;
         vsn = start_resume();
-        get_resume(sizeof(g_num_work_list), &g_num_work_list, sizeof(worklist), worklist, 0);
+        get_resume(sizeof(g_num_work_list), &g_num_work_list, sizeof(g_work_list), g_work_list, 0);
         end_resume();
         if (vsn < 2)
         {
@@ -1155,22 +1155,22 @@ static void perform_worklist()
         g_plot = g_put_color; // defaults when setsymmetry not called or does nothing
 
         // pull top entry off worklist
-        xxstart = worklist[0].xxstart;
+        xxstart = g_work_list[0].xxstart;
         g_i_x_start = xxstart;
-        xxstop  = worklist[0].xxstop;
+        xxstop  = g_work_list[0].xxstop;
         g_i_x_stop  = xxstop;
-        xxbegin  = worklist[0].xxbegin;
-        yystart = worklist[0].yystart;
+        xxbegin  = g_work_list[0].xxbegin;
+        yystart = g_work_list[0].yystart;
         g_i_y_start = yystart;
-        yystop  = worklist[0].yystop;
+        yystop  = g_work_list[0].yystop;
         g_i_y_stop  = yystop;
-        yybegin  = worklist[0].yybegin;
-        workpass = worklist[0].pass;
-        worksym  = worklist[0].sym;
+        yybegin  = g_work_list[0].yybegin;
+        workpass = g_work_list[0].pass;
+        worksym  = g_work_list[0].sym;
         --g_num_work_list;
         for (int i = 0; i < g_num_work_list; ++i)
         {
-            worklist[i] = worklist[i+1];
+            g_work_list[i] = g_work_list[i+1];
         }
 
         g_calc_status = calc_status_value::IN_PROGRESS; // mark as in-progress
@@ -1323,8 +1323,8 @@ static void perform_worklist()
     if (g_num_work_list > 0)
     {
         // interrupted, resumable
-        alloc_resume(sizeof(worklist)+20, 2);
-        put_resume(sizeof(g_num_work_list), &g_num_work_list, sizeof(worklist), worklist, 0);
+        alloc_resume(sizeof(g_work_list)+20, 2);
+        put_resume(sizeof(g_num_work_list), &g_num_work_list, sizeof(g_work_list), g_work_list, 0);
     }
     else
     {

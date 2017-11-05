@@ -703,14 +703,14 @@ static int check_pan() // return 0 if can't, alignment requirement if can
     }
     // solid guessing
     start_resume();
-    get_resume(sizeof(g_num_work_list), &g_num_work_list, sizeof(worklist), worklist, 0);
+    get_resume(sizeof(g_num_work_list), &g_num_work_list, sizeof(g_work_list), g_work_list, 0);
     // don't do end_resume! we're just looking
     int i = 9;
     for (int j = 0; j < g_num_work_list; ++j)   // find lowest pass in any pending window
     {
-        if (worklist[j].pass < i)
+        if (g_work_list[j].pass < i)
         {
-            i = worklist[j].pass;
+            i = g_work_list[j].pass;
         }
     }
     int j = ssg_blocksize(); // worst-case alignment requirement
@@ -784,17 +784,17 @@ int init_pan_or_recalc(int do_zoomout) // decide to recalc, or to chg worklist &
     if (g_calc_status == calc_status_value::RESUMABLE)
     {
         start_resume();
-        get_resume(sizeof(g_num_work_list), &g_num_work_list, sizeof(worklist), worklist, 0);
+        get_resume(sizeof(g_num_work_list), &g_num_work_list, sizeof(g_work_list), g_work_list, 0);
     } // don't do end_resume! we might still change our mind
     // adjust existing worklist entries
     for (int i = 0; i < g_num_work_list; ++i)
     {
-        worklist[i].yystart -= row;
-        worklist[i].yystop  -= row;
-        worklist[i].yybegin -= row;
-        worklist[i].xxstart -= col;
-        worklist[i].xxstop  -= col;
-        worklist[i].xxbegin -= col;
+        g_work_list[i].yystart -= row;
+        g_work_list[i].yystop  -= row;
+        g_work_list[i].yybegin -= row;
+        g_work_list[i].xxstart -= col;
+        g_work_list[i].xxstop  -= col;
+        g_work_list[i].xxbegin -= col;
     }
     // add worklist entries for the new edges
     listfull = 0;
@@ -851,30 +851,30 @@ int init_pan_or_recalc(int do_zoomout) // decide to recalc, or to chg worklist &
         }
     }
     fix_worklist(); // fixup any out of bounds worklist entries
-    alloc_resume(sizeof(worklist)+20, 2); // post the new worklist
-    put_resume(sizeof(g_num_work_list), &g_num_work_list, sizeof(worklist), worklist, 0);
+    alloc_resume(sizeof(g_work_list)+20, 2); // post the new worklist
+    put_resume(sizeof(g_num_work_list), &g_num_work_list, sizeof(g_work_list), g_work_list, 0);
     return (0);
 }
 
 static void restart_window(int wknum)
 // force a worklist entry to restart
 {
-    int yfrom = worklist[wknum].yystart;
+    int yfrom = g_work_list[wknum].yystart;
     if (yfrom < 0)
     {
         yfrom = 0;
     }
-    int xfrom = worklist[wknum].xxstart;
+    int xfrom = g_work_list[wknum].xxstart;
     if (xfrom < 0)
     {
         xfrom = 0;
     }
-    int yto = worklist[wknum].yystop;
+    int yto = g_work_list[wknum].yystop;
     if (yto >= ydots)
     {
         yto = ydots - 1;
     }
-    int xto = worklist[wknum].xxstop;
+    int xto = g_work_list[wknum].xxstop;
     if (xto >= xdots)
     {
         xto = xdots - 1;
@@ -884,24 +884,24 @@ static void restart_window(int wknum)
     {
         put_line(yfrom++, xfrom, xto, &temp[0]);
     }
-    worklist[wknum].pass = 0;
-    worklist[wknum].sym = worklist[wknum].pass;
-    worklist[wknum].yybegin = worklist[wknum].yystart;
-    worklist[wknum].xxbegin = worklist[wknum].xxstart;
+    g_work_list[wknum].pass = 0;
+    g_work_list[wknum].sym = g_work_list[wknum].pass;
+    g_work_list[wknum].yybegin = g_work_list[wknum].yystart;
+    g_work_list[wknum].xxbegin = g_work_list[wknum].xxstart;
 }
 
 static void fix_worklist() // fix out of bounds and symmetry related stuff
 {
     for (int i = 0; i < g_num_work_list; ++i)
     {
-        WORKLIST *wk = &worklist[i];
+        WORKLIST *wk = &g_work_list[i];
         if (wk->yystart >= ydots || wk->yystop < 0
                 || wk->xxstart >= xdots || wk->xxstop < 0)
         {
             // offscreen, delete
             for (int j = i+1; j < g_num_work_list; ++j)
             {
-                worklist[j-1] = worklist[j];
+                g_work_list[j-1] = g_work_list[j];
             }
             --g_num_work_list;
             --i;
@@ -924,9 +924,9 @@ static void fix_worklist() // fix out of bounds and symmetry related stuff
                         && g_num_work_list < MAXCALCWORK)
                 {
                     // split the sym part
-                    worklist[g_num_work_list] = worklist[i];
-                    worklist[g_num_work_list].yystart = 0;
-                    worklist[g_num_work_list++].yystop = j;
+                    g_work_list[g_num_work_list] = g_work_list[i];
+                    g_work_list[g_num_work_list].yystart = 0;
+                    g_work_list[g_num_work_list++].yystop = j;
                     wk->yystart = j+1;
                 }
                 else
@@ -953,9 +953,9 @@ static void fix_worklist() // fix out of bounds and symmetry related stuff
                     else
                     {
                         // split it
-                        worklist[g_num_work_list] = worklist[i];
-                        worklist[g_num_work_list].yystart = k;
-                        worklist[g_num_work_list++].yystop = j;
+                        g_work_list[g_num_work_list] = g_work_list[i];
+                        g_work_list[g_num_work_list].yystart = k;
+                        g_work_list[g_num_work_list++].yystop = j;
                         j = k-1;
                     }
                 }
@@ -978,9 +978,9 @@ static void fix_worklist() // fix out of bounds and symmetry related stuff
                         && g_num_work_list < MAXCALCWORK)
                 {
                     // split the sym part
-                    worklist[g_num_work_list] = worklist[i];
-                    worklist[g_num_work_list].xxstart = 0;
-                    worklist[g_num_work_list++].xxstop = j;
+                    g_work_list[g_num_work_list] = g_work_list[i];
+                    g_work_list[g_num_work_list].xxstart = 0;
+                    g_work_list[g_num_work_list++].xxstop = j;
                     wk->xxstart = j+1;
                 }
                 else
@@ -1007,9 +1007,9 @@ static void fix_worklist() // fix out of bounds and symmetry related stuff
                     else
                     {
                         // split it
-                        worklist[g_num_work_list] = worklist[i];
-                        worklist[g_num_work_list].xxstart = k;
-                        worklist[g_num_work_list++].xxstop = j;
+                        g_work_list[g_num_work_list] = g_work_list[i];
+                        g_work_list[g_num_work_list].xxstart = k;
+                        g_work_list[g_num_work_list++].xxstop = j;
                         j = k-1;
                     }
                 }

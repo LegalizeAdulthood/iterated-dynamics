@@ -1757,14 +1757,14 @@ int add_worklist(int xfrom, int xto, int xbegin,
     {
         return (-1);
     }
-    worklist[g_num_work_list].xxstart = xfrom;
-    worklist[g_num_work_list].xxstop  = xto;
-    worklist[g_num_work_list].xxbegin = xbegin;
-    worklist[g_num_work_list].yystart = yfrom;
-    worklist[g_num_work_list].yystop  = yto;
-    worklist[g_num_work_list].yybegin = ybegin;
-    worklist[g_num_work_list].pass    = pass;
-    worklist[g_num_work_list].sym     = sym;
+    g_work_list[g_num_work_list].xxstart = xfrom;
+    g_work_list[g_num_work_list].xxstop  = xto;
+    g_work_list[g_num_work_list].xxbegin = xbegin;
+    g_work_list[g_num_work_list].yystart = yfrom;
+    g_work_list[g_num_work_list].yystop  = yto;
+    g_work_list[g_num_work_list].yybegin = ybegin;
+    g_work_list[g_num_work_list].pass    = pass;
+    g_work_list[g_num_work_list].sym     = sym;
     ++g_num_work_list;
     tidy_worklist();
     return (0);
@@ -1774,44 +1774,44 @@ static int combine_worklist() // look for 2 entries which can freely merge
 {
     for (int i = 0; i < g_num_work_list; ++i)
     {
-        if (worklist[i].yystart == worklist[i].yybegin)
+        if (g_work_list[i].yystart == g_work_list[i].yybegin)
         {
             for (int j = i+1; j < g_num_work_list; ++j)
             {
-                if (worklist[j].sym == worklist[i].sym
-                        && worklist[j].yystart == worklist[j].yybegin
-                        && worklist[j].xxstart == worklist[j].xxbegin
-                        && worklist[i].pass == worklist[j].pass)
+                if (g_work_list[j].sym == g_work_list[i].sym
+                        && g_work_list[j].yystart == g_work_list[j].yybegin
+                        && g_work_list[j].xxstart == g_work_list[j].xxbegin
+                        && g_work_list[i].pass == g_work_list[j].pass)
                 {
-                    if (worklist[i].xxstart == worklist[j].xxstart
-                            && worklist[i].xxbegin == worklist[j].xxbegin
-                            && worklist[i].xxstop  == worklist[j].xxstop)
+                    if (g_work_list[i].xxstart == g_work_list[j].xxstart
+                            && g_work_list[i].xxbegin == g_work_list[j].xxbegin
+                            && g_work_list[i].xxstop  == g_work_list[j].xxstop)
                     {
-                        if (worklist[i].yystop+1 == worklist[j].yystart)
+                        if (g_work_list[i].yystop+1 == g_work_list[j].yystart)
                         {
-                            worklist[i].yystop = worklist[j].yystop;
+                            g_work_list[i].yystop = g_work_list[j].yystop;
                             return (j);
                         }
-                        if (worklist[j].yystop+1 == worklist[i].yystart)
+                        if (g_work_list[j].yystop+1 == g_work_list[i].yystart)
                         {
-                            worklist[i].yystart = worklist[j].yystart;
-                            worklist[i].yybegin = worklist[j].yybegin;
+                            g_work_list[i].yystart = g_work_list[j].yystart;
+                            g_work_list[i].yybegin = g_work_list[j].yybegin;
                             return (j);
                         }
                     }
-                    if (worklist[i].yystart == worklist[j].yystart
-                            && worklist[i].yybegin == worklist[j].yybegin
-                            && worklist[i].yystop  == worklist[j].yystop)
+                    if (g_work_list[i].yystart == g_work_list[j].yystart
+                            && g_work_list[i].yybegin == g_work_list[j].yybegin
+                            && g_work_list[i].yystop  == g_work_list[j].yystop)
                     {
-                        if (worklist[i].xxstop+1 == worklist[j].xxstart)
+                        if (g_work_list[i].xxstop+1 == g_work_list[j].xxstart)
                         {
-                            worklist[i].xxstop = worklist[j].xxstop;
+                            g_work_list[i].xxstop = g_work_list[j].xxstop;
                             return (j);
                         }
-                        if (worklist[j].xxstop+1 == worklist[i].xxstart)
+                        if (g_work_list[j].xxstop+1 == g_work_list[i].xxstart)
                         {
-                            worklist[i].xxstart = worklist[j].xxstart;
-                            worklist[i].xxbegin = worklist[j].xxbegin;
+                            g_work_list[i].xxstart = g_work_list[j].xxstart;
+                            g_work_list[i].xxbegin = g_work_list[j].xxbegin;
                             return (j);
                         }
                     }
@@ -1832,7 +1832,7 @@ void tidy_worklist()
             // merged two, delete the gone one
             while (++i < g_num_work_list)
             {
-                worklist[i-1] = worklist[i];
+                g_work_list[i-1] = g_work_list[i];
             }
             --g_num_work_list;
         }
@@ -1841,16 +1841,16 @@ void tidy_worklist()
     {
         for (int j = i+1; j < g_num_work_list; ++j)
         {
-            if (worklist[j].pass < worklist[i].pass
-                    || (worklist[j].pass == worklist[i].pass
-                        && (worklist[j].yystart < worklist[i].yystart
-                            || (worklist[j].yystart == worklist[i].yystart
-                                && worklist[j].xxstart <  worklist[i].xxstart))))
+            if (g_work_list[j].pass < g_work_list[i].pass
+                    || (g_work_list[j].pass == g_work_list[i].pass
+                        && (g_work_list[j].yystart < g_work_list[i].yystart
+                            || (g_work_list[j].yystart == g_work_list[i].yystart
+                                && g_work_list[j].xxstart <  g_work_list[i].xxstart))))
             {
                 // dumb sort, swap 2 entries to correct order
-                WORKLIST tempwork = worklist[i];
-                worklist[i] = worklist[j];
-                worklist[j] = tempwork;
+                WORKLIST tempwork = g_work_list[i];
+                g_work_list[i] = g_work_list[j];
+                g_work_list[j] = tempwork;
             }
         }
     }
