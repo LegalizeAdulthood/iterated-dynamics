@@ -61,7 +61,7 @@ bool    start_show_orbit = false;        // show orbits on at start of fractal
 std::string readname;           // name of fractal input file
 std::string tempdir;            // name of temporary directory
 std::string workdir;            // name of directory for misc files
-std::string orgfrmdir;          // name of directory for orgfrm files
+std::string g_organize_formulas_dir;          // name of directory for orgfrm files
 std::string g_gif_filename_mask;
 char    PrintName[FILE_MAX_PATH] = {"fract001.prn"}; // Name for print-to-file
 std::string savename{"fract001"}; // save files using this name
@@ -2470,8 +2470,8 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
             goto badarg;
         }
         orgfrmsearch = true;
-        orgfrmdir = value;
-        fix_dirname(orgfrmdir);
+        g_organize_formulas_dir = value;
+        fix_dirname(g_organize_formulas_dir);
         return CMDARG_NONE;
     }
 

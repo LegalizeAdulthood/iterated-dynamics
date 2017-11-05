@@ -350,7 +350,7 @@ extern int                   g_orbit_color;
 extern int                   g_orbit_delay;
 extern long                  g_orbit_interval;
 extern int                   g_orbit_save_index;
-extern std::string           orgfrmdir;
+extern std::string           g_organize_formulas_dir;
 extern bool                  orgfrmsearch;
 extern float                 originfp;
 extern int                 (*outln)(BYTE *, int);
