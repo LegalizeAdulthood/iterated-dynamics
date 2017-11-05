@@ -119,7 +119,7 @@ extern int                   g_decomp[];
 extern int                   g_degree;
 extern long                  g_l_delta_min;
 extern long                  g_l_delta_x2;
-extern long                  delx;
+extern long                  g_l_delta_x;
 extern LDBL                  delxx2;
 extern LDBL                  delxx;
 extern long                  dely2;

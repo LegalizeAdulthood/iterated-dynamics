@@ -53,7 +53,7 @@ double  zoom_box_width, zoom_box_height, zoom_box_skew;  // zoombox size & shape
 
 fractal_type fractype;               // if == 0, use Mandelbrot
 char    g_std_calc_mode;            // '1', '2', 'g', 'b'
-long    delx, dely;             // screen pixel increments
+long    g_l_delta_x, dely;             // screen pixel increments
 long    g_l_delta_x2, dely2;           // screen pixel increments
 LDBL    delxx, delyy;           // screen pixel increments
 LDBL    delxx2, delyy2;         // screen pixel increments
