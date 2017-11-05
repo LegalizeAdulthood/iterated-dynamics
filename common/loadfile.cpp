@@ -549,7 +549,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
             g_calc_status = calc_status_value::COMPLETED;
         }
         g_evolve_x_parameter_range = blk_6_info.x_parameter_range;
-        evolve_y_parameter_range = blk_6_info.y_parameter_range;
+        g_evolve_y_parameter_range = blk_6_info.y_parameter_range;
         g_evolve_new_x_parameter_offset = blk_6_info.x_parameter_offset;
         g_evolve_x_parameter_offset = g_evolve_new_x_parameter_offset;
         g_evolve_new_y_parameter_offset = blk_6_info.y_parameter_offset;
@@ -570,7 +570,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
         g_evolving = (int) blk_6_info.evolving;
         viewwindow = g_evolving != 0;
         g_evolve_dist_per_x = g_evolve_x_parameter_range /(g_evolve_image_grid_size - 1);
-        g_evolve_dist_per_y = evolve_y_parameter_range /(g_evolve_image_grid_size - 1);
+        g_evolve_dist_per_y = g_evolve_y_parameter_range /(g_evolve_image_grid_size - 1);
         if (read_info.version > 14)
         {
             for (int i = 0; i < NUMGENES; i++)

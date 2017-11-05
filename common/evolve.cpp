@@ -35,7 +35,7 @@ double g_evolve_y_parameter_offset;
 double g_evolve_new_x_parameter_offset;
 double g_evolve_new_y_parameter_offset;
 double g_evolve_x_parameter_range;
-double evolve_y_parameter_range;
+double g_evolve_y_parameter_range;
 double g_evolve_dist_per_x;
 double g_evolve_dist_per_y;
 double g_evolve_max_random_mutation;
@@ -688,7 +688,7 @@ int get_evolve_Parms()
     old_evolving      = g_evolving;
     old_image_grid_size = g_evolve_image_grid_size;
     old_x_parameter_range = g_evolve_x_parameter_range;
-    old_y_parameter_range = evolve_y_parameter_range;
+    old_y_parameter_range = g_evolve_y_parameter_range;
     old_x_parameter_offset = g_evolve_x_parameter_offset;
     old_y_parameter_offset = g_evolve_y_parameter_offset;
     old_max_random_mutation = g_evolve_max_random_mutation;
@@ -699,7 +699,7 @@ get_evol_restart:
     {
         // adjust field param to make some sense when changing from random modes
         // maybe should adjust for aspect ratio here?
-        evolve_y_parameter_range = g_evolve_max_random_mutation * 2;
+        g_evolve_y_parameter_range = g_evolve_max_random_mutation * 2;
         g_evolve_x_parameter_range = g_evolve_max_random_mutation * 2;
         g_evolve_x_parameter_offset = g_params[0] - g_evolve_max_random_mutation;
         g_evolve_y_parameter_offset = g_params[1] - g_evolve_max_random_mutation;
@@ -734,7 +734,7 @@ get_evol_restart:
 
         choices[++k] = "y parameter range (up screen)";
         uvalues[k].type = 'f';
-        uvalues[k].uval.dval = evolve_y_parameter_range;
+        uvalues[k].uval.dval = g_evolve_y_parameter_range;
 
         choices[++k] = "y parameter offset (lower edge)";
         uvalues[k].type = 'f';
@@ -777,7 +777,7 @@ get_evol_restart:
         g_evolving      = old_evolving;
         g_evolve_image_grid_size = old_image_grid_size;
         g_evolve_x_parameter_range = old_x_parameter_range;
-        evolve_y_parameter_range = old_y_parameter_range;
+        g_evolve_y_parameter_range = old_y_parameter_range;
         g_evolve_x_parameter_offset = old_x_parameter_offset;
         g_evolve_y_parameter_offset = old_y_parameter_offset;
         g_evolve_max_random_mutation = old_max_random_mutation;
@@ -797,8 +797,8 @@ get_evol_restart:
         g_evolve_x_parameter_range = g_evolve_x_parameter_range / 2;
         g_evolve_new_x_parameter_offset = g_evolve_x_parameter_offset + g_evolve_x_parameter_range /2;
         g_evolve_x_parameter_offset = g_evolve_new_x_parameter_offset;
-        evolve_y_parameter_range = evolve_y_parameter_range / 2;
-        g_evolve_new_y_parameter_offset = g_evolve_y_parameter_offset + evolve_y_parameter_range / 2;
+        g_evolve_y_parameter_range = g_evolve_y_parameter_range / 2;
+        g_evolve_new_y_parameter_offset = g_evolve_y_parameter_offset + g_evolve_y_parameter_range / 2;
         g_evolve_y_parameter_offset = g_evolve_new_y_parameter_offset;
         g_evolve_max_random_mutation = g_evolve_max_random_mutation / 2;
         goto get_evol_restart;
@@ -810,9 +810,9 @@ get_evol_restart:
         g_evolve_x_parameter_range = g_evolve_x_parameter_range * 2;
         g_evolve_new_x_parameter_offset = centerx - g_evolve_x_parameter_range / 2;
         g_evolve_x_parameter_offset = g_evolve_new_x_parameter_offset;
-        centery = g_evolve_y_parameter_offset + evolve_y_parameter_range / 2;
-        evolve_y_parameter_range = evolve_y_parameter_range * 2;
-        g_evolve_new_y_parameter_offset = centery - evolve_y_parameter_range / 2;
+        centery = g_evolve_y_parameter_offset + g_evolve_y_parameter_range / 2;
+        g_evolve_y_parameter_range = g_evolve_y_parameter_range * 2;
+        g_evolve_new_y_parameter_offset = centery - g_evolve_y_parameter_range / 2;
         g_evolve_y_parameter_offset = g_evolve_new_y_parameter_offset;
         g_evolve_max_random_mutation = g_evolve_max_random_mutation * 2;
         goto get_evol_restart;
@@ -859,7 +859,7 @@ get_evol_restart:
         g_evolve_x_parameter_range = uvalues[++k].uval.dval;
         g_evolve_x_parameter_offset = uvalues[++k].uval.dval;
         g_evolve_new_x_parameter_offset = g_evolve_x_parameter_offset;
-        evolve_y_parameter_range = uvalues[++k].uval.dval;
+        g_evolve_y_parameter_range = uvalues[++k].uval.dval;
         g_evolve_y_parameter_offset = uvalues[++k].uval.dval;
         g_evolve_new_y_parameter_offset = g_evolve_y_parameter_offset;
     }
@@ -885,7 +885,7 @@ get_evol_restart:
 
     if (g_evolving != old_evolving
             || (g_evolve_image_grid_size != old_image_grid_size) || (g_evolve_x_parameter_range != old_x_parameter_range)
-            || (g_evolve_x_parameter_offset != old_x_parameter_offset) || (evolve_y_parameter_range != old_y_parameter_range)
+            || (g_evolve_x_parameter_offset != old_x_parameter_offset) || (g_evolve_y_parameter_range != old_y_parameter_range)
             || (g_evolve_y_parameter_offset != old_y_parameter_offset)  || (g_evolve_max_random_mutation != old_max_random_mutation)
             || (old_variations > 0))
     {
@@ -950,8 +950,8 @@ void set_current_params()
     g_evolve_x_parameter_range = curfractalspecific->xmax - curfractalspecific->xmin;
     g_evolve_new_x_parameter_offset = - (g_evolve_x_parameter_range / 2);
     g_evolve_x_parameter_offset = g_evolve_new_x_parameter_offset;
-    evolve_y_parameter_range = curfractalspecific->ymax - curfractalspecific->ymin;
-    g_evolve_new_y_parameter_offset = - (evolve_y_parameter_range / 2);
+    g_evolve_y_parameter_range = curfractalspecific->ymax - curfractalspecific->ymin;
+    g_evolve_new_y_parameter_offset = - (g_evolve_y_parameter_range / 2);
     g_evolve_y_parameter_offset = g_evolve_new_y_parameter_offset;
     return;
 }
@@ -1107,7 +1107,7 @@ void set_evolve_ranges()
     int lclpy = g_evolve_image_grid_size - py - 1;
     // set up ranges and offsets for parameter explorer/evolver
     g_evolve_x_parameter_range = g_evolve_dist_per_x*(parmzoom*2.0);
-    evolve_y_parameter_range = g_evolve_dist_per_y*(parmzoom*2.0);
+    g_evolve_y_parameter_range = g_evolve_dist_per_y*(parmzoom*2.0);
     g_evolve_new_x_parameter_offset = g_evolve_x_parameter_offset +(((double)px-parmzoom)*g_evolve_dist_per_x);
     g_evolve_new_y_parameter_offset = g_evolve_y_parameter_offset +(((double)lclpy-parmzoom)*g_evolve_dist_per_y);
 
