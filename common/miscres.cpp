@@ -1534,27 +1534,27 @@ bool find_file_item(char *filename, char const *itemname, FILE **fileptr, int it
         strcat(parsearchname, itemname);
         parsearchname[ITEMNAMELEN + 5] = (char) 0; //safety
         strcpy(defaultextension, ".frm");
-        splitpath(searchfor.frm, drive, dir, nullptr, nullptr);
+        splitpath(g_search_for.frm, drive, dir, nullptr, nullptr);
         break;
     case 2:
         strcpy(parsearchname, "lsys:");
         strcat(parsearchname, itemname);
         parsearchname[ITEMNAMELEN + 5] = (char) 0; //safety
         strcpy(defaultextension, ".l");
-        splitpath(searchfor.lsys, drive, dir, nullptr, nullptr);
+        splitpath(g_search_for.lsys, drive, dir, nullptr, nullptr);
         break;
     case 3:
         strcpy(parsearchname, "ifs:");
         strcat(parsearchname, itemname);
         parsearchname[ITEMNAMELEN + 5] = (char) 0; //safety
         strcpy(defaultextension, ".ifs");
-        splitpath(searchfor.ifs, drive, dir, nullptr, nullptr);
+        splitpath(g_search_for.ifs, drive, dir, nullptr, nullptr);
         break;
     default:
         strcpy(parsearchname, itemname);
         parsearchname[ITEMNAMELEN + 5] = (char) 0; //safety
         strcpy(defaultextension, ".par");
-        splitpath(searchfor.par, drive, dir, nullptr, nullptr);
+        splitpath(g_search_for.par, drive, dir, nullptr, nullptr);
         break;
     }
 

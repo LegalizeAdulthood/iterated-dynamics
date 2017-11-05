@@ -439,7 +439,7 @@ extern int                   g_save_release;
 extern int                   g_save_system;
 extern int                   g_scale_map[];
 extern float                 g_screen_aspect;
-extern id::SearchPath        searchfor;
+extern id::SearchPath        g_search_for;
 extern bool                  set_orbit_corners;
 extern bool                  showbox;
 extern int show_dot;

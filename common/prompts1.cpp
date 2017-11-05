@@ -1177,17 +1177,17 @@ static fractal_type select_fracttype(fractal_type t) // subrtn of get_fracttype,
         if ((result == fractal_type::FORMULA || result == fractal_type::FFORMULA)
                 && g_formula_filename == g_command_file)
         {
-            g_formula_filename = searchfor.frm;
+            g_formula_filename = g_search_for.frm;
         }
         if (result == fractal_type::LSYSTEM
                 && g_l_system_filename == g_command_file)
         {
-            g_l_system_filename = searchfor.lsys;
+            g_l_system_filename = g_search_for.lsys;
         }
         if ((result == fractal_type::IFS || result == fractal_type::IFS3D)
                 && g_ifs_filename == g_command_file)
         {
-            g_ifs_filename = searchfor.ifs;
+            g_ifs_filename = g_search_for.ifs;
         }
     }
 
