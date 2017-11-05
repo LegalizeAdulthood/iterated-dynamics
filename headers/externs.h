@@ -467,7 +467,7 @@ extern int                   g_screen_x_dots;
 extern double                g_save_x_max;
 extern double                g_save_x_min;
 extern int                   sxoffs;
-extern double                sy3rd;
+extern double                g_save_y_3rd;
 extern int                   g_screen_y_dots;
 extern double                g_save_y_max;
 extern double                g_save_y_min;

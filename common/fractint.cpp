@@ -110,7 +110,7 @@ bool    g_tab_mode = true;                 // tab display enabled
 //    bottom right corner of screen is (xxmax,yymin)
 double  xxmin, xxmax, yymin, yymax, xx3rd, yy3rd; // selected screen corners
 long    xmin, xmax, ymin, ymax, x3rd, y3rd;  // integer equivs
-double  g_save_x_min, g_save_x_max, g_save_y_min, g_save_y_max, g_save_x_3rd, sy3rd; // displayed screen corners
+double  g_save_x_min, g_save_x_max, g_save_y_min, g_save_y_max, g_save_x_3rd, g_save_y_3rd; // displayed screen corners
 double  g_plot_mx1, g_plot_mx2, g_plot_my1, g_plot_my2;     // real->screen multipliers
 
 calc_status_value g_calc_status = calc_status_value::NO_FRACTAL;
