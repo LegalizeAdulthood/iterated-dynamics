@@ -37,7 +37,7 @@ static short get_next_code();
  * occurs in an odd place in the GIF file...  In any case, linelen will be
  * equal to the number of pixels passed...
  */
-int (*outln)(BYTE *, int) = out_line;
+int (*g_out_line)(BYTE *, int) = out_line;
 
 /* Various error codes used by decoder
  * and my own routines...   It's okay
@@ -290,7 +290,7 @@ short decoder(short linewidth)
                     {
                         if (--yskip < 0)
                         {
-                            ret = (short)((*outln)(decoderline, (int)(bufptr - decoderline)));
+                            ret = (short)((*g_out_line)(decoderline, (int)(bufptr - decoderline)));
                             if (ret < 0)
                             {
                                 return (ret);
@@ -353,7 +353,7 @@ short decoder(short linewidth)
             {
                 if (--yskip < 0)
                 {
-                    ret = (short)((*outln)(decoderline, (int)(bufptr - decoderline)));
+                    ret = (short)((*g_out_line)(decoderline, (int)(bufptr - decoderline)));
                     if (ret < 0)
                     {
                         return (ret);

@@ -242,11 +242,11 @@ main_state big_while_loop(bool *const kbdmore, bool *const stacked, bool const r
             outln_cleanup = nullptr;          // outln routine can set this
             if (g_display_3d != display_3d_modes::NONE)                 // set up 3D decoding
             {
-                outln = call_line3d;
+                g_out_line = call_line3d;
             }
             else if (g_compare_gif)            // debug 50
             {
-                outln = cmp_line;
+                g_out_line = cmp_line;
             }
             else if (pot16bit)
             {
@@ -263,15 +263,15 @@ main_state big_while_loop(bool *const kbdmore, bool *const stacked, bool const r
                     get_fracttype();
                     return main_state::IMAGE_START;
                 }
-                outln = pot_line;
+                g_out_line = pot_line;
             }
             else if ((soundflag & SOUNDFLAG_ORBITMASK) > SOUNDFLAG_BEEP && !g_evolving) // regular gif/fra input file
             {
-                outln = sound_line;      // sound decoding
+                g_out_line = sound_line;      // sound decoding
             }
             else
             {
-                outln = out_line;        // regular decoding
+                g_out_line = out_line;        // regular decoding
             }
             if (g_debug_flag == debug_flags::show_float_flag)
             {

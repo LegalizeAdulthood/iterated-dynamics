@@ -80,7 +80,7 @@ int gifview()
     colcount = g_row_count;
 
     // Open the file
-    if (outln == outline_stereo)
+    if (g_out_line == outline_stereo)
     {
         strcpy(temp1, stereomapname.c_str());
     }
@@ -98,7 +98,7 @@ int gifview()
         }
         else
         {
-            if (outln == outline_stereo)
+            if (g_out_line == outline_stereo)
             {
                 strcpy(temp1, stereomapname.c_str());
             }
@@ -148,9 +148,9 @@ int gifview()
     }
     g_num_colors = 1 << planes;
 
-    if (g_dither_flag && g_num_colors > 2 && g_colors == 2 && outln == out_line)
+    if (g_dither_flag && g_num_colors > 2 && g_colors == 2 && g_out_line == out_line)
     {
-        outln = out_line_dither;
+        g_out_line = out_line_dither;
     }
 
     for (int i = 0; i < (int)g_num_colors; i++)
@@ -258,17 +258,17 @@ int gifview()
             {
                 gifview_image_left /= (skipxdots+1);
             }
-            if (outln == out_line)
+            if (g_out_line == out_line)
             {
                 // what about continuous potential????
                 if (width != gifview_image_twidth || top != 0)
                 {
                     // we're using normal decoding and we have a MIG
-                    outln = out_line_migs;
+                    g_out_line = out_line_migs;
                 }
                 else if (width > DECODERLINE_WIDTH && skipxdots == 0)
                 {
-                    outln = out_line_too_wide;
+                    g_out_line = out_line_too_wide;
                 }
             }
 

@@ -311,7 +311,7 @@ bool do_AutoStereo()
     Y = 0;
     if (g_image_map)
     {
-        outln = outline_stereo;
+        g_out_line = outline_stereo;
         while ((Y) < ydots)
         {
             if (gifview())
