@@ -447,7 +447,7 @@ extern bool                  g_show_box;
 extern int                   g_show_dot;
 extern int                   g_show_file;
 extern bool                  g_show_orbit;
-extern double                sinx;
+extern double                g_sin_x;
 extern int                   g_size_dot;
 extern short                 g_skip_x_dots;
 extern short                 g_skip_y_dots;

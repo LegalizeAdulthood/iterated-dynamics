@@ -93,7 +93,7 @@ LComplex *g_long_param; // used here and in jb.c
 //              These variables are external for speed's sake only
 // --------------------------------------------------------------------
 
-double sinx, g_cos_x;
+double g_sin_x, g_cos_x;
 double siny, cosy;
 double tmpexp;
 double tempsqrx, tempsqry;
@@ -1228,14 +1228,14 @@ PopcornFractal_Old()
     g_tmp_z = g_old_z;
     g_tmp_z.x *= 3.0;
     g_tmp_z.y *= 3.0;
-    FPUsincos(&g_tmp_z.x, &sinx, &g_cos_x);
+    FPUsincos(&g_tmp_z.x, &g_sin_x, &g_cos_x);
     FPUsincos(&g_tmp_z.y, &siny, &cosy);
-    g_tmp_z.x = sinx/g_cos_x + g_old_z.x;
+    g_tmp_z.x = g_sin_x/g_cos_x + g_old_z.x;
     g_tmp_z.y = siny/cosy + g_old_z.y;
-    FPUsincos(&g_tmp_z.x, &sinx, &g_cos_x);
+    FPUsincos(&g_tmp_z.x, &g_sin_x, &g_cos_x);
     FPUsincos(&g_tmp_z.y, &siny, &cosy);
     g_new_z.x = g_old_z.x - g_param_z1.x*siny;
-    g_new_z.y = g_old_z.y - g_param_z1.x*sinx;
+    g_new_z.y = g_old_z.y - g_param_z1.x*g_sin_x;
     if (g_plot == noplot)
     {
         plot_orbit(g_new_z.x, g_new_z.y, 1+row%g_colors);
@@ -1261,14 +1261,14 @@ PopcornFractal()
     g_tmp_z = g_old_z;
     g_tmp_z.x *= 3.0;
     g_tmp_z.y *= 3.0;
-    FPUsincos(&g_tmp_z.x, &sinx, &g_cos_x);
+    FPUsincos(&g_tmp_z.x, &g_sin_x, &g_cos_x);
     FPUsincos(&g_tmp_z.y, &siny, &cosy);
-    g_tmp_z.x = sinx/g_cos_x + g_old_z.x;
+    g_tmp_z.x = g_sin_x/g_cos_x + g_old_z.x;
     g_tmp_z.y = siny/cosy + g_old_z.y;
-    FPUsincos(&g_tmp_z.x, &sinx, &g_cos_x);
+    FPUsincos(&g_tmp_z.x, &g_sin_x, &g_cos_x);
     FPUsincos(&g_tmp_z.y, &siny, &cosy);
     g_new_z.x = g_old_z.x - g_param_z1.x*siny;
-    g_new_z.y = g_old_z.y - g_param_z1.x*sinx;
+    g_new_z.y = g_old_z.y - g_param_z1.x*g_sin_x;
     if (g_plot == noplot)
     {
         plot_orbit(g_new_z.x, g_new_z.y, 1+row%g_colors);
