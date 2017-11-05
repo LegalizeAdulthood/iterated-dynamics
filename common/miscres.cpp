@@ -770,7 +770,7 @@ bool tab_display_2(char *msg)
         write_row(++row, "intlength %-d bflength %-d ", intlength, bflength);
     }
     row++;
-    show_str_var("tempdir",     tempdir.c_str(),      &row, msg);
+    show_str_var("tempdir",     g_temp_dir.c_str(),      &row, msg);
     show_str_var("workdir",     workdir.c_str(),      &row, msg);
     show_str_var("filename",    g_read_filename.c_str(),     &row, msg);
     show_str_var("formulafile", g_formula_filename.c_str(), &row, msg);

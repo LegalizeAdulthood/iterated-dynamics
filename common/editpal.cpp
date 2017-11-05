@@ -3033,7 +3033,7 @@ static void PalTable_Construct(PalTable *me)
     me->bandwidth      = 15;
     me->top            = 255;
     me->bottom         = 0 ;
-    me->undo_file    = dir_fopen(tempdir.c_str(), undofile, "w+b");
+    me->undo_file    = dir_fopen(g_temp_dir.c_str(), undofile, "w+b");
     me->curr_changed = false;
     me->num_redo     = 0;
 
@@ -3104,7 +3104,7 @@ static void PalTable_Destroy(PalTable *me)
     if (me->undo_file != nullptr)
     {
         fclose(me->undo_file);
-        dir_remove(tempdir.c_str(), undofile);
+        dir_remove(g_temp_dir.c_str(), undofile);
     }
 
     RGBEditor_Destroy(me->rgb[0]);

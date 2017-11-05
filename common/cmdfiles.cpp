@@ -59,7 +59,7 @@ record_colors_mode g_record_colors = record_colors_mode::none;       // default 
 char    g_auto_show_dot = 0;        // dark, medium, bright
 bool    g_start_show_orbit = false;        // show orbits on at start of fractal
 std::string g_read_filename;           // name of fractal input file
-std::string tempdir;            // name of temporary directory
+std::string g_temp_dir;            // name of temporary directory
 std::string workdir;            // name of directory for misc files
 std::string g_organize_formulas_dir;          // name of directory for orgfrm files
 std::string g_gif_filename_mask;
@@ -399,13 +399,13 @@ static void initvars_run()              // once per run init
     {
         if (isadirectory(p))
         {
-            tempdir = p;
-            fix_dirname(tempdir);
+            g_temp_dir = p;
+            fix_dirname(g_temp_dir);
         }
     }
     else
     {
-        tempdir.clear();
+        g_temp_dir.clear();
     }
 }
 
@@ -1818,8 +1818,8 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         {
             goto badarg;
         }
-        tempdir = value;
-        fix_dirname(tempdir);
+        g_temp_dir = value;
+        fix_dirname(g_temp_dir);
         return CMDARG_NONE;
     }
 
