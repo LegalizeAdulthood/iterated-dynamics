@@ -483,7 +483,7 @@ extern int                   g_text_cbase;      // g_text_col is relative to thi
 extern int                   g_text_col;        // current column in text mode
 extern int                   g_text_rbase;      // g_text_row is relative to this
 extern int                   g_text_row;        // current row in text mode
-extern unsigned int evolve_this_generation_random_seed;
+extern unsigned int          g_evolve_this_generation_random_seed;
 extern unsigned *            tga16;
 extern long *                tga32;
 extern bool                  three_pass;

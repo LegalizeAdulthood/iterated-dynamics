@@ -20,7 +20,7 @@ static int ecountbox[EVOLVE_MAX_GRID_SIZE][EVOLVE_MAX_GRID_SIZE];
 
 // used to replay random sequences to obtain correct values when selecting a
 // seed image for next generation
-unsigned int evolve_this_generation_random_seed;
+unsigned int g_evolve_this_generation_random_seed;
 
 // variation factors, opx, opy, paramrangex/y dpx, dpy.
 // used in field mapping for smooth variation across screen.
@@ -991,7 +991,7 @@ static void set_random(int ecount)
     // Call this routine to set the random # to the proper value
     // if it may have changed, before fiddleparms() is called.
     // Now called by fiddleparms().
-    srand(evolve_this_generation_random_seed);
+    srand(g_evolve_this_generation_random_seed);
     for (int index = 0; index < ecount; index++)
     {
         for (int i = 0; i < NUMGENES; i++)

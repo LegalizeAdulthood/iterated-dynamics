@@ -565,7 +565,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
         xdots        = blk_6_info.xdots;
         ydots        = blk_6_info.ydots;
         g_evolve_image_grid_size = blk_6_info.image_grid_size;
-        evolve_this_generation_random_seed = blk_6_info.this_generation_random_seed;
+        g_evolve_this_generation_random_seed = blk_6_info.this_generation_random_seed;
         g_evolve_max_random_mutation = blk_6_info.max_random_mutation;
         g_evolving = (int) blk_6_info.evolving;
         viewwindow = g_evolving != 0;

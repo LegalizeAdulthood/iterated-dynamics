@@ -389,7 +389,7 @@ main_state big_while_loop(bool *const kbdmore, bool *const stacked, bool const r
                     xdots        = g_evolve_info.xdots;
                     ydots        = g_evolve_info.ydots;
                     g_evolve_image_grid_size = g_evolve_info.image_grid_size;
-                    evolve_this_generation_random_seed = g_evolve_info.this_generation_random_seed;
+                    g_evolve_this_generation_random_seed = g_evolve_info.this_generation_random_seed;
                     g_evolve_max_random_mutation = g_evolve_info.max_random_mutation;
                     g_evolving     = g_evolve_info.evolving;
                     viewwindow = g_evolving != 0;
@@ -402,7 +402,7 @@ main_state big_while_loop(bool *const kbdmore, bool *const stacked, bool const r
                     int mid = g_evolve_image_grid_size / 2;
                     if ((g_evolve_param_grid_x != mid) || (g_evolve_param_grid_y != mid))
                     {
-                        evolve_this_generation_random_seed = (unsigned int)clock_ticks(); // time for new set
+                        g_evolve_this_generation_random_seed = (unsigned int)clock_ticks(); // time for new set
                     }
                     param_history(0); // save old history
                     ecount = 0;
@@ -458,7 +458,7 @@ done:
                     g_evolve_info.xdots           = (short)xdots;
                     g_evolve_info.ydots           = (short)ydots;
                     g_evolve_info.image_grid_size = (short) g_evolve_image_grid_size;
-                    g_evolve_info.this_generation_random_seed = (short) evolve_this_generation_random_seed;
+                    g_evolve_info.this_generation_random_seed = (short) g_evolve_this_generation_random_seed;
                     g_evolve_info.max_random_mutation = g_evolve_max_random_mutation;
                     g_evolve_info.evolving        = (short)g_evolving;
                     g_evolve_info.ecount          = (short) ecount;
