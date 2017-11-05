@@ -433,7 +433,7 @@ extern double                g_magnitude_limit2;
 extern double                g_magnitude_limit;
 extern int                   g_random_seed;
 extern long                  g_save_base;
-extern DComplex              SaveC;
+extern DComplex              g_save_c;
 extern int                   g_save_dac;
 extern std::string           g_save_filename;
 extern long                  g_save_ticks;

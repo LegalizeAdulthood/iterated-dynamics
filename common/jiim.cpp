@@ -457,7 +457,7 @@ static void RestoreRect(int x, int y, int width, int depth)
  * interface to FRACTINT
  */
 
-DComplex SaveC = {-3000.0, -3000.0};
+DComplex g_save_c = {-3000.0, -3000.0};
 
 void Jiim(jiim_types which)
 {
@@ -618,8 +618,8 @@ void Jiim(jiim_types which)
     setup_convert_to_screen(&cvt);
 
     // reuse last location if inside window
-    g_col = (int)(cvt.a*SaveC.x + cvt.b*SaveC.y + cvt.e + .5);
-    g_row = (int)(cvt.c*SaveC.x + cvt.d*SaveC.y + cvt.f + .5);
+    g_col = (int)(cvt.a*g_save_c.x + cvt.b*g_save_c.y + cvt.e + .5);
+    g_row = (int)(cvt.c*g_save_c.x + cvt.d*g_save_c.y + cvt.f + .5);
     if (g_col < 0 || g_col >= xdots ||
             g_row < 0 || g_row >= ydots)
     {
@@ -628,8 +628,8 @@ void Jiim(jiim_types which)
     }
     else
     {
-        cr = SaveC.x;
-        ci = SaveC.y;
+        cr = g_save_c.x;
+        ci = g_save_c.y;
     }
 
     old_y = -1;
@@ -910,9 +910,9 @@ void Jiim(jiim_types which)
             g_old_z.y = g_l_old_z.x;
             g_old_z.x = g_old_z.y;
             g_init.x = cr;
-            SaveC.x = g_init.x;
+            g_save_c.x = g_init.x;
             g_init.y = ci;
-            SaveC.y = g_init.y;
+            g_save_c.y = g_init.y;
             g_l_init.x = (long)(g_init.x*g_fudge_factor);
             g_l_init.y = (long)(g_init.y*g_fudge_factor);
 
@@ -1070,7 +1070,7 @@ void Jiim(jiim_types which)
                     y = (int)(g_new_z.y * yfactor * zoom + yoff);
                     break;
                 case 1:                     // always go one direction
-                    if (SaveC.y < 0)
+                    if (g_save_c.y < 0)
                     {
                         g_new_z.x = -g_new_z.x;
                         g_new_z.y = -g_new_z.y;
@@ -1079,7 +1079,7 @@ void Jiim(jiim_types which)
                     y = (int)(g_new_z.y * yfactor * zoom + yoff);
                     break;
                 case 2:                     // go one dir, draw the other
-                    if (SaveC.y < 0)
+                    if (g_save_c.y < 0)
                     {
                         g_new_z.x = -g_new_z.x;
                         g_new_z.y = -g_new_z.y;
@@ -1110,7 +1110,7 @@ void Jiim(jiim_types which)
                     }
                     break;
                 case 7:
-                    if (SaveC.y < 0)
+                    if (g_save_c.y < 0)
                     {
                         g_new_z.x = -g_new_z.x;
                         g_new_z.y = -g_new_z.y;

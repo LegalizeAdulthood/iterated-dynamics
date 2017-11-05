@@ -1165,8 +1165,8 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
                     yymin = yy3rd;
                     yymax = curfractalspecific->ymax;
                 }
-                SaveC.x = g_params[0];
-                SaveC.y = g_params[1];
+                g_save_c.x = g_params[0];
+                g_save_c.y = g_params[1];
                 g_params[0] = 0;
                 g_params[1] = 0;
                 zoomoff = true;
