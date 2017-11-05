@@ -3429,7 +3429,7 @@ static int potential(double mag, long iterations)
         {
             writedisk(g_col+sxoffs, g_row+syoffs, i_pot);
         }
-        writedisk(g_col+sxoffs, g_row+sydots+syoffs, (int)l_pot);
+        writedisk(g_col+sxoffs, g_row+g_screen_y_dots+syoffs, (int)l_pot);
     }
 
     return i_pot;

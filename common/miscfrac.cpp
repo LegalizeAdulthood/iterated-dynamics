@@ -126,7 +126,7 @@ void putpot(int x, int y, U16 color)
     {
         writedisk(x+sxoffs, y+syoffs, color >> 8);    // upper 8 bits
     }
-    writedisk(x+sxoffs, y+sydots+syoffs, color&255); // lower 8 bits
+    writedisk(x+sxoffs, y+g_screen_y_dots+syoffs, color&255); // lower 8 bits
 }
 
 // fixes border
@@ -158,7 +158,7 @@ U16 getpot(int x, int y)
     U16 color;
 
     color = (U16)readdisk(x+sxoffs, y+syoffs);
-    color = (U16)((color << 8) + (U16) readdisk(x+sxoffs, y+sydots+syoffs));
+    color = (U16)((color << 8) + (U16) readdisk(x+sxoffs, y+g_screen_y_dots+syoffs));
     return (color);
 }
 

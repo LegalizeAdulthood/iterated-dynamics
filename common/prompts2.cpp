@@ -871,7 +871,7 @@ int get_view_params()
     old_viewxdots     = g_view_x_dots;
     old_viewydots     = g_view_y_dots;
     old_sxdots        = g_screen_x_dots;
-    old_sydots        = sydots;
+    old_sydots        = g_screen_y_dots;
 
 get_view_restart:
     // fill up the previous values arrays
@@ -915,7 +915,7 @@ get_view_restart:
                    "                     y pixels" :
                    "                     y pixels (0: by aspect ratio)";
     uvalues[k].type = 'i';
-    uvalues[k].uval.ival = sydots;
+    uvalues[k].uval.ival = g_screen_y_dots;
 
     choices[++k] = "Keep aspect? (cuts both x & y when either too big)";
     uvalues[k].type = 'y';
@@ -969,7 +969,7 @@ get_view_restart:
         g_view_crop = true;
         g_final_aspect_ratio = g_screen_aspect;
         g_screen_x_dots = old_sxdots;
-        sydots = old_sydots;
+        g_screen_y_dots = old_sydots;
         g_keep_aspect_ratio = true;
         zscroll = true;
         goto get_view_restart;
@@ -991,7 +991,7 @@ get_view_restart:
     ++k;
 
     g_screen_x_dots = uvalues[++k].uval.ival;
-    sydots = uvalues[++k].uval.ival;
+    g_screen_y_dots = uvalues[++k].uval.ival;
     g_keep_aspect_ratio = uvalues[++k].uval.ch.val != 0;
     zscroll = uvalues[++k].uval.ch.val != 0;
 
@@ -1003,32 +1003,32 @@ get_view_restart:
     {
         g_screen_x_dots = 2;
     }
-    if (sydots == 0) // auto by aspect ratio request
+    if (g_screen_y_dots == 0) // auto by aspect ratio request
     {
         if (g_final_aspect_ratio == 0.0)
         {
             g_final_aspect_ratio = (g_view_window && g_view_x_dots != 0 && g_view_y_dots != 0) ?
                                ((float) g_view_y_dots)/((float) g_view_x_dots) : old_aspectratio;
         }
-        sydots = (int)(g_final_aspect_ratio*g_screen_x_dots + 0.5);
+        g_screen_y_dots = (int)(g_final_aspect_ratio*g_screen_x_dots + 0.5);
     }
-    if ((ymax != -1) && (sydots > ymax))
+    if ((ymax != -1) && (g_screen_y_dots > ymax))
     {
-        sydots = ymax;
+        g_screen_y_dots = ymax;
     }
-    if (sydots < 2)
+    if (g_screen_y_dots < 2)
     {
-        sydots = 2;
+        g_screen_y_dots = 2;
     }
 
     if (driver_diskp())
     {
         g_video_entry.xdots = g_screen_x_dots;
-        g_video_entry.ydots = sydots;
+        g_video_entry.ydots = g_screen_y_dots;
         memcpy(&g_video_table[g_adapter], &g_video_entry, sizeof(g_video_entry));
         if (g_final_aspect_ratio == 0.0)
         {
-            g_final_aspect_ratio = ((float) sydots)/((float) g_screen_x_dots);
+            g_final_aspect_ratio = ((float) g_screen_y_dots)/((float) g_screen_x_dots);
         }
     }
 
@@ -1047,7 +1047,7 @@ get_view_restart:
     }
 
     return (g_view_window != old_viewwindow
-            || g_screen_x_dots != old_sxdots || sydots != old_sydots
+            || g_screen_x_dots != old_sxdots || g_screen_y_dots != old_sydots
             || (g_view_window
                 && (g_view_reduction != old_viewreduction
                     || g_final_aspect_ratio != old_aspectratio

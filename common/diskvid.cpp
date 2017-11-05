@@ -75,7 +75,7 @@ int startdisk()
 {
     headerlength = 0;
     g_disk_targa = false;
-    return common_startdisk(g_screen_x_dots, sydots, g_colors);
+    return common_startdisk(g_screen_x_dots, g_screen_y_dots, g_colors);
 }
 
 int pot_startdisk()
@@ -91,7 +91,7 @@ int pot_startdisk()
     }
     headerlength = 0;
     g_disk_targa = false;
-    i = common_startdisk(g_screen_x_dots, sydots << 1, g_colors);
+    i = common_startdisk(g_screen_x_dots, g_screen_y_dots << 1, g_colors);
     cleartempmsg();
     if (i == 0)
     {
@@ -138,7 +138,7 @@ int common_startdisk(long newrowsize, long newcolsize, int colors)
             driver_set_attr(BOXROW+i, BOXCOL, C_DVID_LO, BOXWIDTH);  // init box
         }
         driver_put_string(BOXROW+2, BOXCOL+4, C_DVID_HI, "'Disk-Video' mode");
-        sprintf(buf, "Screen resolution: %d x %d", g_screen_x_dots, sydots);
+        sprintf(buf, "Screen resolution: %d x %d", g_screen_x_dots, g_screen_y_dots);
         driver_put_string(BOXROW+4, BOXCOL+4, C_DVID_LO, buf);
         if (g_disk_targa)
         {
@@ -332,7 +332,7 @@ int readdisk(int col, int row)
         if (driver_diskp())
         {
             sprintf(buf, " reading line %4d",
-                    (row >= sydots) ? row-sydots : row); // adjust when potfile
+                    (row >= g_screen_y_dots) ? row-g_screen_y_dots : row); // adjust when potfile
             dvid_status(0, buf);
         }
         if (bf_math != bf_math_type::NONE)
@@ -402,7 +402,7 @@ void writedisk(int col, int row, int color)
         if (driver_diskp())
         {
             sprintf(buf, " writing line %4d",
-                    (row >= sydots) ? row-sydots : row); // adjust when potfile
+                    (row >= g_screen_y_dots) ? row-g_screen_y_dots : row); // adjust when potfile
             dvid_status(0, buf);
         }
         timetodisplay = 1000;

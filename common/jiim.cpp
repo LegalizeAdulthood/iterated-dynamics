@@ -60,7 +60,7 @@ void c_putcolor(int x, int y, int color)
     {
         return ;
     }
-    if (y >= sydots - show_numbers)   // avoid overwriting coords
+    if (y >= g_screen_y_dots - show_numbers)   // avoid overwriting coords
     {
         return;
     }
@@ -82,7 +82,7 @@ int  c_getcolor(int x, int y)
     {
         return 1000;
     }
-    if (y >= sydots - show_numbers)   // avoid overreading coords
+    if (y >= g_screen_y_dots - show_numbers)   // avoid overreading coords
     {
         return 1000;
     }
@@ -509,7 +509,7 @@ void Jiim(jiim_types which)
     oldcalctype = g_calc_type;
     show_numbers = 0;
     g_using_jiim = true;
-    g_line_buff.resize(std::max(g_screen_x_dots, sydots));
+    g_line_buff.resize(std::max(g_screen_x_dots, g_screen_y_dots));
     aspect = ((double)xdots*3)/((double)ydots*4);  // assumes 4:3
     actively_computing = true;
     SetAspect(aspect);
@@ -545,7 +545,7 @@ void Jiim(jiim_types which)
     if (!g_video_scroll)
     {
         g_vesa_x_res = g_screen_x_dots;
-        g_vesa_y_res = sydots;
+        g_vesa_y_res = g_screen_y_dots;
     }
 
     if (sxoffs != 0 || syoffs != 0) // we're in view windows
@@ -1299,7 +1299,7 @@ finish:
         g_view_crop = true;
         g_final_aspect_ratio = g_screen_aspect;
         xdots = g_screen_x_dots;
-        ydots = sydots;
+        ydots = g_screen_y_dots;
         g_x_size_dots = xdots - 1;
         g_y_size_dots = ydots - 1;
         sxoffs = 0;

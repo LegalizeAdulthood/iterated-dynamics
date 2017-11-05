@@ -71,7 +71,7 @@ main_state big_while_loop(bool *const kbdmore, bool *const stacked, bool const r
             g_colors  = g_video_entry.colors;      // # colors available
             g_dot_mode %= 100;
             g_screen_x_dots  = xdots;
-            sydots  = ydots;
+            g_screen_y_dots  = ydots;
             syoffs = 0;
             sxoffs = 0;
             g_color_cycle_range_hi = (g_color_cycle_range_hi < g_colors) ? g_color_cycle_range_hi : g_colors - 1;
@@ -104,17 +104,17 @@ main_state big_while_loop(bool *const kbdmore, bool *const stacked, bool const r
                     return main_state::RESTORE_START;
                 }
 
-                if (g_virtual_screens && (xdots > g_screen_x_dots || ydots > sydots))
+                if (g_virtual_screens && (xdots > g_screen_x_dots || ydots > g_screen_y_dots))
                 {
                     char buf[120];
                     static char msgxy1[] = {"Can't set virtual line that long, width cut down."};
                     static char msgxy2[] = {"Not enough video memory for that many lines, height cut down."};
-                    if (xdots > g_screen_x_dots && ydots > sydots)
+                    if (xdots > g_screen_x_dots && ydots > g_screen_y_dots)
                     {
                         sprintf(buf, "%s\n%s", msgxy1, msgxy2);
                         stopmsg(STOPMSG_NONE, buf);
                     }
-                    else if (ydots > sydots)
+                    else if (ydots > g_screen_y_dots)
                     {
                         stopmsg(STOPMSG_NONE, msgxy2);
                     }
@@ -124,7 +124,7 @@ main_state big_while_loop(bool *const kbdmore, bool *const stacked, bool const r
                     }
                 }
                 xdots = g_screen_x_dots;
-                ydots = sydots;
+                ydots = g_screen_y_dots;
                 g_video_entry.xdots = xdots;
                 g_video_entry.ydots = ydots;
             }
@@ -161,7 +161,7 @@ main_state big_while_loop(bool *const kbdmore, bool *const stacked, bool const r
             if (g_view_window)
             {
                 // bypass for VESA virtual screen
-                ftemp = g_final_aspect_ratio*(((double) sydots)/((double) g_screen_x_dots)/g_screen_aspect);
+                ftemp = g_final_aspect_ratio*(((double) g_screen_y_dots)/((double) g_screen_x_dots)/g_screen_aspect);
                 xdots = g_view_x_dots;
                 if (xdots != 0)
                 {
@@ -179,17 +179,17 @@ main_state big_while_loop(bool *const kbdmore, bool *const stacked, bool const r
                 }
                 else
                 {
-                    ydots = (int)((double)sydots / g_view_reduction + 0.5);
+                    ydots = (int)((double)g_screen_y_dots / g_view_reduction + 0.5);
                     xdots = (int)((double)ydots / ftemp + 0.5);
                 }
-                if (xdots > g_screen_x_dots || ydots > sydots)
+                if (xdots > g_screen_x_dots || ydots > g_screen_y_dots)
                 {
                     stopmsg(STOPMSG_NONE,
                         "View window too large; using full screen.");
                     g_view_window = false;
                     g_view_x_dots = g_screen_x_dots;
                     xdots = g_view_x_dots;
-                    g_view_y_dots = sydots;
+                    g_view_y_dots = g_screen_y_dots;
                     ydots = g_view_y_dots;
                 }
                 else if (((xdots <= 1) // changed test to 1, so a 2x2 window will
@@ -202,7 +202,7 @@ main_state big_while_loop(bool *const kbdmore, bool *const stacked, bool const r
                         "View window too small; using full screen.");
                     g_view_window = false;
                     xdots = g_screen_x_dots;
-                    ydots = sydots;
+                    ydots = g_screen_y_dots;
                 }
                 if ((g_evolving & 1) && (curfractalspecific->flags & INFCALC))
                 {
@@ -211,19 +211,19 @@ main_state big_while_loop(bool *const kbdmore, bool *const stacked, bool const r
                     g_evolving = g_evolving -1;
                     g_view_window = false;
                     xdots = g_screen_x_dots;
-                    ydots = sydots;
+                    ydots = g_screen_y_dots;
                 }
                 if (g_evolving & 1)
                 {
                     xdots = (g_screen_x_dots / g_evolve_image_grid_size)-!((g_evolving & NOGROUT)/NOGROUT);
                     xdots = xdots - (xdots % 4); // trim to multiple of 4 for SSG
-                    ydots = (sydots / g_evolve_image_grid_size)-!((g_evolving & NOGROUT)/NOGROUT);
+                    ydots = (g_screen_y_dots / g_evolve_image_grid_size)-!((g_evolving & NOGROUT)/NOGROUT);
                     ydots = ydots - (ydots % 4);
                 }
                 else
                 {
                     sxoffs = (g_screen_x_dots - xdots) / 2;
-                    syoffs = (sydots - ydots) / 3;
+                    syoffs = (g_screen_y_dots - ydots) / 3;
                 }
             }
             g_x_size_dots = xdots - 1;            // convert just once now
@@ -467,7 +467,7 @@ done:
                 syoffs = 0;
                 sxoffs = syoffs;
                 xdots = g_screen_x_dots;
-                ydots = sydots; // otherwise save only saves a sub image and boxes get clipped
+                ydots = g_screen_y_dots; // otherwise save only saves a sub image and boxes get clipped
 
                 // set up for 1st selected image, this reuses px and py
                 g_evolve_param_grid_y = g_evolve_image_grid_size /2;
@@ -1789,7 +1789,7 @@ static main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdm
         syoffs = 0;
         sxoffs = syoffs;
         xdots = g_screen_x_dots;
-        ydots = sydots; // for full screen save and pointer move stuff
+        ydots = g_screen_y_dots; // for full screen save and pointer move stuff
         g_evolve_param_grid_y = g_evolve_image_grid_size / 2;
         g_evolve_param_grid_x = g_evolve_param_grid_y;
         param_history(1); // restore old history

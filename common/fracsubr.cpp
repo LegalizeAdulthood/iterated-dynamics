@@ -1657,7 +1657,7 @@ static void plotdorbit(double dx, double dy, int color)
     }
     j = (int)(dx * g_plot_my1 - dy * g_plot_my2);
     j += syoffs;
-    if (j < 0 || j >= sydots)
+    if (j < 0 || j >= g_screen_y_dots)
     {
         return;
     }

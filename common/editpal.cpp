@@ -143,7 +143,7 @@ static void rotatepal(PALENTRY *pal, int dir, int lo, int hi)
 
 static void clip_put_line(int row, int start, int stop, BYTE const *pixels)
 {
-    if (row < 0 || row >= sydots || start > g_screen_x_dots || stop < 0)
+    if (row < 0 || row >= g_screen_y_dots || start > g_screen_x_dots || stop < 0)
     {
         return ;
     }
@@ -170,7 +170,7 @@ static void clip_put_line(int row, int start, int stop, BYTE const *pixels)
 
 static void clip_get_line(int row, int start, int stop, BYTE *pixels)
 {
-    if (row < 0 || row >= sydots || start > g_screen_x_dots || stop < 0)
+    if (row < 0 || row >= g_screen_y_dots || start > g_screen_x_dots || stop < 0)
     {
         return ;
     }
@@ -197,7 +197,7 @@ static void clip_get_line(int row, int start, int stop, BYTE *pixels)
 
 void clip_putcolor(int x, int y, int color)
 {
-    if (x < 0 || y < 0 || x >= g_screen_x_dots || y >= sydots)
+    if (x < 0 || y < 0 || x >= g_screen_x_dots || y >= g_screen_y_dots)
     {
         return ;
     }
@@ -208,7 +208,7 @@ void clip_putcolor(int x, int y, int color)
 
 int clip_getcolor(int x, int y)
 {
-    if (x < 0 || y < 0 || x >= g_screen_x_dots || y >= sydots)
+    if (x < 0 || y < 0 || x >= g_screen_x_dots || y >= g_screen_y_dots)
     {
         return 0;
     }
@@ -499,7 +499,7 @@ static Cursor the_cursor;
 void Cursor_Construct()
 {
     the_cursor.x          = g_screen_x_dots/2;
-    the_cursor.y          = sydots/2;
+    the_cursor.y          = g_screen_y_dots/2;
     the_cursor.hidden     = 1;
     the_cursor.blink      = false;
     the_cursor.last_blink = 0;
@@ -581,9 +581,9 @@ void Cursor_Move(int xoff, int yoff)
     {
         the_cursor.x = g_screen_x_dots-1;
     }
-    if (the_cursor.y >= sydots)
+    if (the_cursor.y >= g_screen_y_dots)
     {
-        the_cursor.y = sydots-1;
+        the_cursor.y = g_screen_y_dots-1;
     }
 
     if (!the_cursor.hidden)
@@ -722,8 +722,8 @@ static MoveBox *MoveBox_Construct(int x, int y, int csize, int base_width, int b
     me->should_hide = false;
     me->t.resize(g_screen_x_dots);
     me->b.resize(g_screen_x_dots);
-    me->l.resize(sydots);
-    me->r.resize(sydots);
+    me->l.resize(g_screen_y_dots);
+    me->r.resize(g_screen_y_dots);
 
     return me;
 }
@@ -883,9 +883,9 @@ static void MoveBox__Move(MoveBox *me, int key)
         xoff = g_screen_x_dots - (me->base_width+me->csize*16+1);
     }
 
-    if (yoff+me->base_depth+me->csize*16+1 > sydots)
+    if (yoff+me->base_depth+me->csize*16+1 > g_screen_y_dots)
     {
-        yoff = sydots - (me->base_depth+me->csize*16+1);
+        yoff = g_screen_y_dots - (me->base_depth+me->csize*16+1);
     }
 
     if (xoff != me->x || yoff != me->y)
@@ -966,16 +966,16 @@ static bool MoveBox_Process(MoveBox *me)
         {
             int max_width = std::min(g_screen_x_dots, MAX_WIDTH);
 
-            if (me->base_depth+(me->csize+CSIZE_INC)*16+1 < sydots  &&
+            if (me->base_depth+(me->csize+CSIZE_INC)*16+1 < g_screen_y_dots  &&
                     me->base_width+(me->csize+CSIZE_INC)*16+1 < max_width)
             {
                 MoveBox__Erase(me);
                 me->x -= (CSIZE_INC*16) / 2;
                 me->y -= (CSIZE_INC*16) / 2;
                 me->csize += CSIZE_INC;
-                if (me->y+me->base_depth+me->csize*16+1 > sydots)
+                if (me->y+me->base_depth+me->csize*16+1 > g_screen_y_dots)
                 {
-                    me->y = sydots - (me->base_depth+me->csize*16+1);
+                    me->y = g_screen_y_dots - (me->base_depth+me->csize*16+1);
                 }
                 if (me->x+me->base_width+me->csize*16+1 > max_width)
                 {
@@ -3048,7 +3048,7 @@ static void PalTable_Construct(PalTable *me)
     else
     {
         PalTable__SetPos(me, 0, 0);
-        csize = ((sydots-(PalTable_PALY+1+1)) / 2) / 16;
+        csize = ((g_screen_y_dots-(PalTable_PALY+1+1)) / 2) / 16;
     }
 
     if (csize < CSIZE_MIN)
@@ -3177,14 +3177,14 @@ void EditPalette()
     int       oldsxoffs      = sxoffs;
     int       oldsyoffs      = syoffs;
 
-    if (g_screen_x_dots < 133 || sydots < 174)
+    if (g_screen_x_dots < 133 || g_screen_y_dots < 174)
     {
         return; // prevents crash when physical screen is too small
     }
 
     g_plot = g_put_color;
 
-    g_line_buff.resize(std::max(g_screen_x_dots, sydots));
+    g_line_buff.resize(std::max(g_screen_x_dots, g_screen_y_dots));
 
     g_look_at_mouse = 3;
     syoffs = 0;

@@ -205,7 +205,7 @@ setvideomode(int ax, int bx, int cx, int dx)
         g_box_count = 0;
     }
     g_vesa_x_res = g_screen_x_dots;
-    g_vesa_y_res = sydots;
+    g_vesa_y_res = g_screen_y_dots;
 }
 #endif
 
@@ -221,7 +221,7 @@ getcolor(int xdot, int ydot)
     int x1, y1;
     x1 = xdot + sxoffs;
     y1 = ydot + syoffs;
-    if (x1 < 0 || y1 < 0 || x1 >= g_screen_x_dots || y1 >= sydots)
+    if (x1 < 0 || y1 < 0 || x1 >= g_screen_x_dots || y1 >= g_screen_y_dots)
         return 0;
     return dotread(x1, y1);
 }
@@ -629,7 +629,7 @@ put_a_char(int ch)
 
 void get_line(int row, int startcol, int stopcol, BYTE *pixels)
 {
-    if (startcol + sxoffs >= g_screen_x_dots || row + syoffs >= sydots)
+    if (startcol + sxoffs >= g_screen_x_dots || row + syoffs >= g_screen_y_dots)
         return;
     lineread(row + syoffs, startcol + sxoffs, stopcol + sxoffs, pixels);
 }
@@ -646,7 +646,7 @@ void get_line(int row, int startcol, int stopcol, BYTE *pixels)
 void
 put_line(int row, int startcol, int stopcol, BYTE const *pixels)
 {
-    if (startcol + sxoffs >= g_screen_x_dots || row + syoffs > sydots)
+    if (startcol + sxoffs >= g_screen_x_dots || row + syoffs > g_screen_y_dots)
         return;
     linewrite(row + syoffs, startcol + sxoffs, stopcol + sxoffs, pixels);
 }
@@ -661,7 +661,7 @@ put_line(int row, int startcol, int stopcol, BYTE const *pixels)
 int
 out_line(BYTE *pixels, int linelen)
 {
-    if (g_row_count + syoffs >= sydots)
+    if (g_row_count + syoffs >= g_screen_y_dots)
         return 0;
     linewrite(g_row_count + syoffs, sxoffs, linelen + sxoffs - 1, pixels);
     g_row_count++;

@@ -468,7 +468,7 @@ extern double                sxmax;
 extern double                sxmin;
 extern int                   sxoffs;
 extern double                sy3rd;
-extern int                   sydots;
+extern int                   g_screen_y_dots;
 extern double                symax;
 extern double                symin;
 extern symmetry_type         g_symmetry;

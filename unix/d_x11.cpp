@@ -56,7 +56,7 @@
 
 extern bool slowdisplay;
 extern  int g_dot_mode;        // video access method (= 19)
-extern  int g_screen_x_dots, sydots;     // total # of dots on the screen
+extern  int g_screen_x_dots, g_screen_y_dots;     // total # of dots on the screen
 extern  int sxoffs, syoffs;     // offset of drawing area
 extern  int g_colors;         // maximum colors available
 extern  int g_init_mode;
@@ -1261,11 +1261,11 @@ ev_expose(DriverX11 *di, XExposeEvent *xevent)
         {
             w = g_screen_x_dots-x;
         }
-        if (y+h > sydots)
+        if (y+h > g_screen_y_dots)
         {
-            h = sydots-y;
+            h = g_screen_y_dots-y;
         }
-        if (x < g_screen_x_dots && y < sydots && w > 0 && h > 0)
+        if (x < g_screen_x_dots && y < g_screen_y_dots && w > 0 && h > 0)
         {
             XPutImage(di->Xdp, di->Xw, di->Xgc, di->Ximage, x, y, x, y,
                       xevent->width, xevent->height);
@@ -1935,7 +1935,7 @@ x11_window(Driver *drv)
         di->Xwinheight = DisplayHeight(di->Xdp, di->Xdscreen);
     }
     g_screen_x_dots = di->Xwinwidth;
-    sydots = di->Xwinheight;
+    g_screen_y_dots = di->Xwinheight;
 
     Xwatt.background_pixel = BlackPixelOfScreen(di->Xsc);
     Xwatt.bit_gravity = StaticGravity;
@@ -1991,7 +1991,7 @@ x11_window(Driver *drv)
     x11_write_palette(drv);
 
     x11_video_table[0].xdots = g_screen_x_dots;
-    x11_video_table[0].ydots = sydots;
+    x11_video_table[0].ydots = g_screen_y_dots;
     x11_video_table[0].colors = g_colors;
     x11_video_table[0].dotmode = 19;
 #endif
@@ -2027,14 +2027,14 @@ static bool x11_resize(Driver *drv)
     if (oldx != width || oldy != height)
     {
         g_screen_x_dots = width;
-        sydots = height;
+        g_screen_y_dots = height;
         x11_video_table[0].xdots = g_screen_x_dots;
-        x11_video_table[0].ydots = sydots;
+        x11_video_table[0].ydots = g_screen_y_dots;
         oldx = g_screen_x_dots;
-        oldy = sydots;
+        oldy = g_screen_y_dots;
         di->Xwinwidth = g_screen_x_dots;
-        di->Xwinheight = sydots;
-        g_screen_aspect = sydots/(float) g_screen_x_dots;
+        di->Xwinheight = g_screen_y_dots;
+        g_screen_aspect = g_screen_y_dots/(float) g_screen_x_dots;
         g_final_aspect_ratio = g_screen_aspect;
         int Xpad = 9;
         int Xmwidth;
@@ -2065,7 +2065,7 @@ static bool x11_resize(Driver *drv)
             XDestroyImage(di->Ximage);
         }
         di->Ximage = XCreateImage(di->Xdp, di->Xvi, di->Xdepth, ZPixmap, 0, nullptr, g_screen_x_dots,
-                                  sydots, Xpad, Xmwidth);
+                                  g_screen_y_dots, Xpad, Xmwidth);
         if (di->Ximage == nullptr)
         {
             printf("XCreateImage failed\n");
@@ -2111,10 +2111,10 @@ x11_redraw(Driver *drv)
     if (di->alarmon)
     {
         XPutImage(di->Xdp, di->Xw, di->Xgc, di->Ximage, 0, 0, 0, 0,
-                  g_screen_x_dots, sydots);
+                  g_screen_x_dots, g_screen_y_dots);
         if (di->onroot)
             XPutImage(di->Xdp, di->Xpixmap, di->Xgc, di->Ximage, 0, 0, 0, 0,
-                      g_screen_x_dots, sydots);
+                      g_screen_x_dots, g_screen_y_dots);
         di->alarmon = false;
     }
     di->doredraw = false;
@@ -2291,7 +2291,7 @@ x11_write_pixel(Driver *drv, int x, int y, int color)
     {
         printf("Color %d too big %d\n", color, g_colors);
     }
-    if (x >= g_screen_x_dots || x < 0 || y >= sydots || y < 0)
+    if (x >= g_screen_x_dots || x < 0 || y >= g_screen_y_dots || y < 0)
     {
         printf("Bad coord %d %d\n", x, y);
     }

@@ -2385,7 +2385,7 @@ done:
         sxoffs = 0;
         syoffs = 0;
         xdots = g_screen_x_dots;
-        ydots = sydots;
+        ydots = g_screen_y_dots;
         g_view_window = false;
     }
     return (status);

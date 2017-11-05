@@ -874,7 +874,7 @@ get_evol_restart:
     }
 
     g_view_x_dots = (g_screen_x_dots / g_evolve_image_grid_size)-2;
-    g_view_y_dots = (sydots / g_evolve_image_grid_size)-2;
+    g_view_y_dots = (g_screen_y_dots / g_evolve_image_grid_size)-2;
     if (!g_view_window)
     {
         g_view_y_dots = 0;
