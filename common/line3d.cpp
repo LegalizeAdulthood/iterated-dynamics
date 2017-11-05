@@ -128,7 +128,7 @@ int g_preview_factor = 20;
 int g_converge_x_adjust = 0;
 int g_converge_y_adjust = 0;
 int g_xx_adjust;
-int yyadjust;
+int g_yy_adjust;
 int g_x_shift;
 int g_y_shift;
 int const g_bad_value = -10000;       // set bad values to this
@@ -408,7 +408,7 @@ int line3d(BYTE * pixels, unsigned linelen)
                         goto loopbottom;   // another goto !
                     }
                     cur.x = (int)(((lv[0] + 32768L) >> 16) + g_xx_adjust);
-                    cur.y = (int)(((lv[1] + 32768L) >> 16) + yyadjust);
+                    cur.y = (int)(((lv[1] + 32768L) >> 16) + g_yy_adjust);
                 }
                 if (g_user_float_flag || g_overflow || g_raytrace_format != raytrace_formats::none)
                 {
@@ -420,7 +420,7 @@ int line3d(BYTE * pixels, unsigned linelen)
                     v[2] /= fudge;
                     perspective(v);
                     cur.x = (int)(v[0] + .5 + g_xx_adjust);
-                    cur.y = (int)(v[1] + .5 + yyadjust);
+                    cur.y = (int)(v[1] + .5 + g_yy_adjust);
                 }
             }
             // Not sure how this an 3rd if above relate
@@ -429,7 +429,7 @@ int line3d(BYTE * pixels, unsigned linelen)
                 // Why the xx- and yyadjust here and not above?
                 f_cur.x = (float) (xcenter + sintheta*sclx*r + g_xx_adjust);
                 cur.x = (int) f_cur.x;
-                f_cur.y = (float)(ycenter + costheta*cosphi*scly*r + yyadjust);
+                f_cur.y = (float)(ycenter + costheta*cosphi*scly*r + g_yy_adjust);
                 cur.y = (int) f_cur.y;
                 if (FILLTYPE >= 5 || g_raytrace_format != raytrace_formats::none)          // why do we do this for filltype>5?
                 {
@@ -476,7 +476,7 @@ int line3d(BYTE * pixels, unsigned linelen)
                 }
 
                 cur.x = (int)(((lv[0] + 32768L) >> 16) + g_xx_adjust);
-                cur.y = (int)(((lv[1] + 32768L) >> 16) + yyadjust);
+                cur.y = (int)(((lv[1] + 32768L) >> 16) + g_yy_adjust);
                 if (FILLTYPE >= 5 && !g_overflow)
                 {
                     f_cur.x = (float) lv0[0];
@@ -517,7 +517,7 @@ int line3d(BYTE * pixels, unsigned linelen)
                     perspective(v);
                 }
                 cur.x = (int)(v[0] + g_xx_adjust + .5);
-                cur.y = (int)(v[1] + yyadjust + .5);
+                cur.y = (int)(v[1] + g_yy_adjust + .5);
 
                 v[0] = 0;
                 v[1] = 0;
@@ -1046,7 +1046,7 @@ static void corners(MATRIX m, bool show, double *pxmin, double *pymin, double *p
             for (auto &elem_i : elem)
             {
                 elem_i[0] += g_xx_adjust;
-                elem_i[1] += yyadjust;
+                elem_i[1] += g_yy_adjust;
             }
         }
 
@@ -2428,7 +2428,7 @@ static int first_time(int linelen, VECTOR v)
     if (g_raytrace_format != raytrace_formats::none)
     {
         RAY_Header();
-        yyadjust = 0;
+        g_yy_adjust = 0;
         g_xx_adjust = 0;  // Disable shifting in ray tracing
         g_y_shift = 0;
         g_x_shift = 0;

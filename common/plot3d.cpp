@@ -506,7 +506,7 @@ void plot_setup()
     {
         g_xx_adjust = (int)((g_adjust_3d_x* (double)g_logical_screen_x_dots)/100);
     }
-    yyadjust = (int)(-(g_adjust_3d_y* (double)g_logical_screen_y_dots)/100);
+    g_yy_adjust = (int)(-(g_adjust_3d_y* (double)g_logical_screen_y_dots)/100);
 
     if (g_map_set)
     {
