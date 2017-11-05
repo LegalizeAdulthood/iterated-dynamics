@@ -1054,7 +1054,7 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
                 (fractalspecific[static_cast<int>(fractype)].isinteger == 0 ||
                  fractalspecific[static_cast<int>(fractype)].tofloat != fractal_type::NOFRACTAL) &&
                 (bf_math == bf_math_type::NONE) && // for now no arbitrary precision support
-                !(g_is_true_color && g_true_mode != 0))
+                !(g_is_true_color && g_true_mode != true_color_mode::default_color))
         {
             clear_zoombox();
             Jiim(jiim_types::ORBIT);

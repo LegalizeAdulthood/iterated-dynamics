@@ -27,6 +27,7 @@ struct SearchPath;
 enum class slides_mode;
 enum class stereo_images;
 enum class symmetry_type;
+enum class true_color_mode;
 struct VIDEOINFO;
 struct WORKLIST;
 
@@ -496,7 +497,7 @@ extern double                g_smallest_window_display_size;
 extern int                   g_total_passes;
 extern int                   g_transparent_color_3d[];
 extern bool                  g_truecolor;
-extern int                   g_true_mode;
+extern true_color_mode       g_true_mode;
 extern double                twopi;
 extern char                  useinitorbit;
 extern bool                  use_grid;

@@ -405,7 +405,7 @@ spindac(int dir, int inc)
     unsigned char *dacbot;
     if (g_colors < 16)
         return;
-    if (g_is_true_color && truemode)
+    if (g_is_true_color && g_true_mode != true_color_mode::default_color)
         return;
     if (dir != 0 && rotate_lo < g_colors && rotate_lo < rotate_hi)
     {

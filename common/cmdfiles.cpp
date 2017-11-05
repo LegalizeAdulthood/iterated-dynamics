@@ -121,7 +121,7 @@ bool    g_read_color = true;  // flag for reading color from GIF
 double  g_math_tol[2] = {.05, .05}; // For math transition
 bool g_targa_out = false;                 // 3D fullcolor flag
 bool g_truecolor = false;                 // escape time truecolor flag
-int g_true_mode = 0;               // truecolor coloring scheme
+true_color_mode g_true_mode = true_color_mode::default_color;               // truecolor coloring scheme
 std::string g_color_file;          // from last <l> <s> or colors=@filename
 bool g_new_bifurcation_functions_loaded = false; // if function loaded for new bifs
 float   g_screen_aspect = DEFAULTASPECT;   // aspect ratio of the screen
@@ -459,7 +459,7 @@ static void initvars_restart()          // <ins> key init
     g_major_method = Major::breadth_first;    // default inverse julia methods
     g_inverse_julia_minor_method = Minor::left_first;       // default inverse julia methods
     g_truecolor = false;                  // truecolor output flag
-    g_true_mode = 0;               // set to default color scheme
+    g_true_mode = true_color_mode::default_color;
 }
 
 static void initvars_fractal()          // init vars affecting calculation
@@ -3429,22 +3429,14 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
     if (variable == "truemode")
     {
         // truemode=?
-        g_true_mode = 0;                               // use default if error
+        g_true_mode = true_color_mode::default_color;
         if (charval[0] == 'd')
         {
-            g_true_mode = 0;                            // use default color output
+            g_true_mode = true_color_mode::default_color;
         }
         if (charval[0] == 'i' || intval[0] == 1)
         {
-            g_true_mode = 1;                            // use iterates output
-        }
-        if (intval[0] == 2)
-        {
-            g_true_mode = 2;
-        }
-        if (intval[0] == 3)
-        {
-            g_true_mode = 3;
+            g_true_mode = true_color_mode::iterate;
         }
         return CMDARG_FRACTAL_PARAM | CMDARG_3D_PARAM;
     }

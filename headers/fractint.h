@@ -742,6 +742,12 @@ enum class record_colors_mode
     yes = 'y'
 };
 
+enum class true_color_mode
+{
+    default_color = 0,
+    iterate = 1
+};
+
 // bitmask defines for fractalspecific flags
 #define  NOZOOM         1    // zoombox not allowed at all
 #define  NOGUESS        2    // solid guessing not allowed

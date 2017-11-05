@@ -1152,7 +1152,7 @@ XColor cols[256];
  */
 int readvideopalette()
 {
-    if (!g_got_real_dac && g_is_true_color && truemode)
+    if (!g_got_real_dac && g_is_true_color && g_true_mode != true_color_mode::default_color)
         return -1;
     for (int i = 0; i < g_colors; i++)
     {
