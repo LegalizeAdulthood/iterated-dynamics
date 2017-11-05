@@ -464,7 +464,7 @@ init_restart:
         g_l_x_min  = fudgetolong(g_x_min);
         g_l_x_max  = fudgetolong(g_x_max);
         g_l_x_3rd  = fudgetolong(g_x_3rd);
-        ymin  = fudgetolong(g_y_min);
+        g_l_y_min  = fudgetolong(g_y_min);
         g_l_y_max  = fudgetolong(g_y_max);
         g_l_y_3rd  = fudgetolong(g_y_3rd);
         g_l_delta_x  = fudgetolong((double)g_delta_x);
@@ -495,7 +495,7 @@ init_restart:
             if (ratio_bad((double)g_l_x0[xdots-1]-g_l_x_min, (double)g_l_x_max-g_l_x_3rd)
                     || ratio_bad((double)g_l_y0[ydots-1]-g_l_y_max, (double)g_l_y_3rd-g_l_y_max)
                     || ratio_bad((double)g_l_x1[(ydots >> 1)-1], ((double)g_l_x_3rd-g_l_x_min)/2)
-                    || ratio_bad((double)g_l_y1[(xdots >> 1)-1], ((double)ymin-g_l_y_3rd)/2))
+                    || ratio_bad((double)g_l_y1[(xdots >> 1)-1], ((double)g_l_y_min-g_l_y_3rd)/2))
             {
 expand_retry:
                 if (g_integer_fractal          // integer fractal type?
@@ -516,13 +516,13 @@ expand_retry:
 
             // re-set corners to match reality
             g_l_x_max = g_l_x0[xdots-1] + g_l_x1[ydots-1];
-            ymin = g_l_y0[ydots-1] + g_l_y1[xdots-1];
+            g_l_y_min = g_l_y0[ydots-1] + g_l_y1[xdots-1];
             g_l_x_3rd = g_l_x_min + g_l_x1[ydots-1];
             g_l_y_3rd = g_l_y0[ydots-1];
             g_x_min = fudgetodouble(g_l_x_min);
             g_x_max = fudgetodouble(g_l_x_max);
             g_x_3rd = fudgetodouble(g_l_x_3rd);
-            g_y_min = fudgetodouble(ymin);
+            g_y_min = fudgetodouble(g_l_y_min);
             g_y_max = fudgetodouble(g_l_y_max);
             g_y_3rd = fudgetodouble(g_l_y_3rd);
         } // end if (integerfractal && !invert && use_grid)

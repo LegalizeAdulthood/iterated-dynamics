@@ -562,7 +562,7 @@ extern int                   yadjust;
 extern double                ycjul;
 extern int                   ydots;
 extern long                  g_l_y_max;
-extern long                  ymin;
+extern long                  g_l_y_min;
 extern int                   yshift1;
 extern int                   yshift;
 extern int                   ytrans;
