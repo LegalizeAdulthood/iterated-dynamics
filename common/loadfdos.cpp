@@ -377,7 +377,7 @@ int get_video_mode(FRACTAL_INFO *info, ext_blk_3 *blk_3_info)
     memcpy((char *)&g_video_entry, (char *)&g_video_table[g_init_mode],
            sizeof(g_video_entry));
 
-    if (viewwindow &&
+    if (g_view_window &&
             g_file_x_dots == g_video_entry.xdots && g_file_y_dots == g_video_entry.ydots)
     {
         // pull image into a view window
@@ -479,13 +479,13 @@ int get_video_mode(FRACTAL_INFO *info, ext_blk_3 *blk_3_info)
     }
 
     // setup view window stuff
-    viewwindow = false;
+    g_view_window = false;
     viewxdots = 0;
     viewydots = 0;
     if (g_file_x_dots != g_video_entry.xdots || g_file_y_dots != g_video_entry.ydots)
     {
         // image not exactly same size as screen
-        viewwindow = true;
+        g_view_window = true;
         ftemp = g_final_aspect_ratio
                 * (double)g_video_entry.ydots / (double)g_video_entry.xdots
                 / g_screen_aspect;

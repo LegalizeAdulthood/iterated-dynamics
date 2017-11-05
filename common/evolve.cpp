@@ -825,7 +825,7 @@ get_evol_restart:
     k = -1;
 
     g_evolving = uvalues[++k].uval.ch.val;
-    viewwindow = g_evolving != 0;
+    g_view_window = g_evolving != 0;
 
     if (!g_evolving && i != FIK_F6)    // don't need any of the other parameters
     {
@@ -875,7 +875,7 @@ get_evol_restart:
 
     viewxdots = (sxdots / g_evolve_image_grid_size)-2;
     viewydots = (sydots / g_evolve_image_grid_size)-2;
-    if (!viewwindow)
+    if (!g_view_window)
     {
         viewydots = 0;
         viewxdots = viewydots;
@@ -908,7 +908,7 @@ get_evol_restart:
         set_current_params();
         if (old_variations > 0)
         {
-            viewwindow = true;
+            g_view_window = true;
             g_evolving |= 1;   // leave other settings alone
         }
         g_evolve_max_random_mutation = 1;

@@ -865,7 +865,7 @@ int get_view_params()
 
     driver_get_max_screen(&xmax, &ymax);
 
-    bool const old_viewwindow    = viewwindow;
+    bool const old_viewwindow    = g_view_window;
     old_viewreduction = g_view_reduction;
     old_aspectratio   = g_final_aspect_ratio;
     old_viewxdots     = viewxdots;
@@ -881,7 +881,7 @@ get_view_restart:
     {
         choices[++k] = "Preview display? (no for full screen)";
         uvalues[k].type = 'y';
-        uvalues[k].uval.ch.val = viewwindow ? 1 : 0;
+        uvalues[k].uval.ch.val = g_view_window ? 1 : 0;
 
         choices[++k] = "Auto window size reduction factor";
         uvalues[k].type = 'f';
@@ -962,7 +962,7 @@ get_view_restart:
 
     if (i == FIK_F4 && !driver_diskp())
     {
-        viewwindow = false;
+        g_view_window = false;
         viewxdots = 0;
         viewydots = 0;
         g_view_reduction = 4.2F;
@@ -980,7 +980,7 @@ get_view_restart:
 
     if (!driver_diskp())
     {
-        viewwindow = uvalues[++k].uval.ch.val != 0;
+        g_view_window = uvalues[++k].uval.ch.val != 0;
         g_view_reduction = (float) uvalues[++k].uval.dval;
         g_final_aspect_ratio = (float) uvalues[++k].uval.dval;
         g_view_crop = uvalues[++k].uval.ch.val != 0;
@@ -1007,7 +1007,7 @@ get_view_restart:
     {
         if (g_final_aspect_ratio == 0.0)
         {
-            g_final_aspect_ratio = (viewwindow && viewxdots != 0 && viewydots != 0) ?
+            g_final_aspect_ratio = (g_view_window && viewxdots != 0 && viewydots != 0) ?
                                ((float) viewydots)/((float) viewxdots) : old_aspectratio;
         }
         sydots = (int)(g_final_aspect_ratio*sxdots + 0.5);
@@ -1032,7 +1032,7 @@ get_view_restart:
         }
     }
 
-    if (viewxdots != 0 && viewydots != 0 && viewwindow && g_final_aspect_ratio == 0.0)
+    if (viewxdots != 0 && viewydots != 0 && g_view_window && g_final_aspect_ratio == 0.0)
     {
         g_final_aspect_ratio = ((float) viewydots)/((float) viewxdots);
     }
@@ -1046,9 +1046,9 @@ get_view_restart:
         aspectratio_crop(old_aspectratio, g_final_aspect_ratio);
     }
 
-    return (viewwindow != old_viewwindow
+    return (g_view_window != old_viewwindow
             || sxdots != old_sxdots || sydots != old_sydots
-            || (viewwindow
+            || (g_view_window
                 && (g_view_reduction != old_viewreduction
                     || g_final_aspect_ratio != old_aspectratio
                     || viewxdots != old_viewxdots

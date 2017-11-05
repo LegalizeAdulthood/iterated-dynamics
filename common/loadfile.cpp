@@ -61,7 +61,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
     g_loaded_3d = false;
     if (g_fast_restore)
     {
-        viewwindow = false;
+        g_view_window = false;
     }
     if (has_ext(g_read_filename.c_str()) == nullptr)
     {
@@ -568,7 +568,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
         g_evolve_this_generation_random_seed = blk_6_info.this_generation_random_seed;
         g_evolve_max_random_mutation = blk_6_info.max_random_mutation;
         g_evolving = (int) blk_6_info.evolving;
-        viewwindow = g_evolving != 0;
+        g_view_window = g_evolving != 0;
         g_evolve_dist_per_x = g_evolve_x_parameter_range /(g_evolve_image_grid_size - 1);
         g_evolve_dist_per_y = g_evolve_y_parameter_range /(g_evolve_image_grid_size - 1);
         if (read_info.version > 14)

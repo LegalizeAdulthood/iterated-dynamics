@@ -88,7 +88,7 @@ int     g_user_periodicity_value;
 long    g_user_distance_estimator_value;
 bool    g_user_float_flag;
 
-bool    viewwindow = false;     // false for full screen, true for window
+bool    g_view_window = false;     // false for full screen, true for window
 float   g_view_reduction;          // window auto-sizing
 bool    g_view_crop = false;       // true to crop default coords
 float   g_final_aspect_ratio;       // for view shape and rotation
@@ -309,7 +309,7 @@ static bool main_restore_start(bool &stacked, bool &resumeflag)
         }
 
         g_evolving = 0;
-        viewwindow = false;
+        g_view_window = false;
         g_show_file = 0;
         g_help_mode = -1;
         g_tab_mode = true;

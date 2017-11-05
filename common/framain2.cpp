@@ -158,7 +158,7 @@ main_state big_while_loop(bool *const kbdmore, bool *const stacked, bool const r
                 }
                 g_color_state = 0;
             }
-            if (viewwindow)
+            if (g_view_window)
             {
                 // bypass for VESA virtual screen
                 ftemp = g_final_aspect_ratio*(((double) sydots)/((double) sxdots)/g_screen_aspect);
@@ -186,7 +186,7 @@ main_state big_while_loop(bool *const kbdmore, bool *const stacked, bool const r
                 {
                     stopmsg(STOPMSG_NONE,
                         "View window too large; using full screen.");
-                    viewwindow = false;
+                    g_view_window = false;
                     viewxdots = sxdots;
                     xdots = viewxdots;
                     viewydots = sydots;
@@ -200,7 +200,7 @@ main_state big_while_loop(bool *const kbdmore, bool *const stacked, bool const r
                     // but no check if in evolve mode to allow lots of small views
                     stopmsg(STOPMSG_NONE,
                         "View window too small; using full screen.");
-                    viewwindow = false;
+                    g_view_window = false;
                     xdots = sxdots;
                     ydots = sydots;
                 }
@@ -209,7 +209,7 @@ main_state big_while_loop(bool *const kbdmore, bool *const stacked, bool const r
                     stopmsg(STOPMSG_NONE,
                         "Fractal doesn't terminate! switching off evolution.");
                     g_evolving = g_evolving -1;
-                    viewwindow = false;
+                    g_view_window = false;
                     xdots = sxdots;
                     ydots = sydots;
                 }
@@ -364,7 +364,7 @@ main_state big_while_loop(bool *const kbdmore, bool *const stacked, bool const r
             //rb
             g_filename_stack_index = -1;   // reset pointer
             g_browse_name.clear();
-            if (viewwindow && (g_evolving&1) && (g_calc_status != calc_status_value::COMPLETED))
+            if (g_view_window && (g_evolving&1) && (g_calc_status != calc_status_value::COMPLETED))
             {
                 // generate a set of images with varied parameters on each one
                 int grout, ecount, tmpxdots, tmpydots, gridsqr;
@@ -392,7 +392,7 @@ main_state big_while_loop(bool *const kbdmore, bool *const stacked, bool const r
                     g_evolve_this_generation_random_seed = g_evolve_info.this_generation_random_seed;
                     g_evolve_max_random_mutation = g_evolve_info.max_random_mutation;
                     g_evolving     = g_evolve_info.evolving;
-                    viewwindow = g_evolving != 0;
+                    g_view_window = g_evolving != 0;
                     ecount       = g_evolve_info.ecount;
                     g_have_evolve_info = false;
                 }
@@ -1538,7 +1538,7 @@ do_3d_transform:
     case FIK_ALT_6:
     case FIK_ALT_7:
         g_evolving = 1;
-        viewwindow = true;
+        g_view_window = true;
         set_mutation_level(*kbdchar - FIK_ALT_1 + 1);
         param_history(0); // save parameter history
         *kbdmore = false;
@@ -1673,7 +1673,7 @@ static main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdm
         break;
     case 'b': // quick exit from evolve mode
         g_evolving = 0;
-        viewwindow = false;
+        g_view_window = false;
         param_history(0); // save history
         *kbdmore = false;
         g_calc_status = calc_status_value::PARAMS_CHANGED;
@@ -2148,7 +2148,7 @@ static main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdm
 
     case '0': // mutation level 0 == turn off evolving
         g_evolving = 0;
-        viewwindow = false;
+        g_view_window = false;
         *kbdmore = false;
         g_calc_status = calc_status_value::PARAMS_CHANGED;
         break;

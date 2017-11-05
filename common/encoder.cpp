@@ -399,7 +399,7 @@ bool encoder()
     }
 
     // TODO: pixel aspect ratio should be 1:1?
-    if (viewwindow                               // less than full screen?
+    if (g_view_window                               // less than full screen?
             && (viewxdots == 0 || viewydots == 0))     // and we picked the dots?
     {
         i = (int)(((double) sydots / (double) sxdots) * 64.0 / g_screen_aspect - 14.5);

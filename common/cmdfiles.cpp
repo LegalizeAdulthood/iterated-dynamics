@@ -422,7 +422,7 @@ static void initvars_restart()          // <ins> key init
     g_check_cur_dir = false;                // flag to check current dire for files
     g_init_save_time = 0;                   // no auto-save
     g_init_mode = -1;                   // no initial video mode
-    viewwindow = false;                 // no view window
+    g_view_window = false;                 // no view window
     g_view_reduction = 4.2F;
     g_view_crop = true;
     g_virtual_screens = true;           // virtual screen modes on
@@ -2235,7 +2235,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         {
             goto badarg;
         }
-        viewwindow = true;
+        g_view_window = true;
         g_view_reduction = 4.2F;  // reset default values
         g_final_aspect_ratio = g_screen_aspect;
         g_view_crop = true;

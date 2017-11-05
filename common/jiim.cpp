@@ -1292,7 +1292,7 @@ finish:
     g_help_mode = old_help_mode;
     if (kbdchar == 's' || kbdchar == 'S')
     {
-        viewwindow = false;
+        g_view_window = false;
         viewxdots = 0;
         viewydots = 0;
         g_view_reduction = 4.2F;
