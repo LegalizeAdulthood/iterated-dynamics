@@ -316,7 +316,7 @@ main_state big_while_loop(bool *const kbdmore, bool *const stacked, bool const r
 
         g_save_x_min = xxmin; // save 3 corners for zoom.c ref points
         g_save_x_max = xxmax;
-        g_save_x_3rd = xx3rd;
+        g_save_x_3rd = g_x_3rd;
         g_save_y_min = g_y_min;
         g_save_y_max = g_y_max;
         g_save_y_3rd = g_y_3rd;
@@ -1127,7 +1127,7 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
                 xxmax = curfractalspecific->xmax;
                 g_y_min = curfractalspecific->ymin;
                 g_y_max = curfractalspecific->ymax;
-                xx3rd = xxmin;
+                g_x_3rd = xxmin;
                 g_y_3rd = g_y_min;
                 if (g_user_distance_estimator_value == 0 && g_user_biomorph_value != -1 && g_bit_shift != 29)
                 {
@@ -1135,7 +1135,7 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
                     xxmax *= 3.0;
                     g_y_min *= 3.0;
                     g_y_max *= 3.0;
-                    xx3rd *= 3.0;
+                    g_x_3rd *= 3.0;
                     g_y_3rd *= 3.0;
                 }
                 zoomoff = true;
@@ -1153,13 +1153,13 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
                     xxmax = jxxmax;
                     g_y_min = jyymin;
                     g_y_max = jyymax;
-                    xx3rd = jxx3rd;
+                    g_x_3rd = jxx3rd;
                     g_y_3rd = jyy3rd;
                 }
                 else
                 {
-                    xx3rd = curfractalspecific->xmin;
-                    xxmin = xx3rd;
+                    g_x_3rd = curfractalspecific->xmin;
+                    xxmin = g_x_3rd;
                     xxmax = curfractalspecific->xmax;
                     g_y_3rd = curfractalspecific->ymin;
                     g_y_min = g_y_3rd;
@@ -2323,7 +2323,7 @@ void reset_zoom_corners()
 {
     xxmin = g_save_x_min;
     xxmax = g_save_x_max;
-    xx3rd = g_save_x_3rd;
+    g_x_3rd = g_save_x_3rd;
     g_y_max = g_save_y_max;
     g_y_min = g_save_y_min;
     g_y_3rd = g_save_y_3rd;
@@ -2429,7 +2429,7 @@ static void save_history_info()
     current.eyeseparation        = (short)g_eye_separation             ;
     current.glassestype          = (short)g_glasses_type               ;
     current.outside              = (short)g_outside_color                   ;
-    current.x3rd                 = xx3rd                     ;
+    current.x3rd                 = g_x_3rd                     ;
     current.y3rd                 = g_y_3rd                     ;
     current.stdcalcmode          = g_user_std_calc_mode               ;
     current.three_pass           = g_three_pass ? 1 : 0;
@@ -2610,7 +2610,7 @@ static void restore_history_info(int i)
     g_eye_separation      = last.eyeseparation  ;
     g_glasses_type        = last.glassestype    ;
     g_outside_color               = last.outside        ;
-    xx3rd                 = last.x3rd           ;
+    g_x_3rd                 = last.x3rd           ;
     g_y_3rd                 = last.y3rd           ;
     g_user_std_calc_mode       = last.stdcalcmode    ;
     g_std_calc_mode           = last.stdcalcmode    ;

@@ -159,14 +159,14 @@ int read_overlay()      // read overlay/3D files, if reqr'd
     }
 
     g_calc_status = calc_status_value::PARAMS_CHANGED;       // defaults if version < 4
-    xx3rd = xxmin;
+    g_x_3rd = xxmin;
     g_y_3rd = g_y_min;
     g_user_distance_estimator_value = 0;
     g_calc_time = 0;
     if (read_info.version > 3)
     {
         g_save_release = 1400;
-        xx3rd       = read_info.x3rd;
+        g_x_3rd       = read_info.x3rd;
         g_y_3rd       = read_info.y3rd;
         g_calc_status = static_cast<calc_status_value>(read_info.calc_status);
         g_user_std_calc_mode = read_info.stdcalcmode;

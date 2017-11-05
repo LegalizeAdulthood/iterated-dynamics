@@ -2140,7 +2140,7 @@ int get_corners()
     oxxmax = xxmax;
     oyymin = g_y_min;
     oyymax = g_y_max;
-    oxx3rd = xx3rd;
+    oxx3rd = g_x_3rd;
     oyy3rd = g_y_3rd;
 
 gc_loop:
@@ -2208,15 +2208,15 @@ gc_loop:
             values[nump].uval.dval = xxmax;
             prompts[++nump] = yprompt;
             values[nump].uval.dval = g_y_min;
-            if (xxmin == xx3rd && g_y_min == g_y_3rd)
+            if (xxmin == g_x_3rd && g_y_min == g_y_3rd)
             {
                 g_y_3rd = 0;
-                xx3rd = g_y_3rd;
+                g_x_3rd = g_y_3rd;
             }
             prompts[++nump] = "Bottom-left (zeros for top-left X, bottom-right Y)";
             values[nump].type = '*';
             prompts[++nump] = xprompt;
-            values[nump].uval.dval = xx3rd;
+            values[nump].uval.dval = g_x_3rd;
             prompts[++nump] = yprompt;
             values[nump].uval.dval = g_y_3rd;
             prompts[++nump] = "Press " FK_F7 " to switch to \"center-mag\" mode";
@@ -2239,7 +2239,7 @@ gc_loop:
         xxmax = oxxmax;
         g_y_min = oyymin;
         g_y_max = oyymax;
-        xx3rd = oxx3rd;
+        g_x_3rd = oxx3rd;
         g_y_3rd = oyy3rd;
         return (-1);
     }
@@ -2248,7 +2248,7 @@ gc_loop:
     {
         // reset to type defaults
         xxmin = curfractalspecific->xmin;
-        xx3rd = xxmin;
+        g_x_3rd = xxmin;
         xxmax = curfractalspecific->xmax;
         g_y_min = curfractalspecific->ymin;
         g_y_3rd = g_y_min;
@@ -2307,11 +2307,11 @@ gc_loop:
             xxmax = values[nump++].uval.dval;
             g_y_min = values[nump++].uval.dval;
             nump++;
-            xx3rd = values[nump++].uval.dval;
+            g_x_3rd = values[nump++].uval.dval;
             g_y_3rd = values[nump++].uval.dval;
-            if (xx3rd == 0 && g_y_3rd == 0)
+            if (g_x_3rd == 0 && g_y_3rd == 0)
             {
-                xx3rd = xxmin;
+                g_x_3rd = xxmin;
                 g_y_3rd = g_y_min;
             }
         }
@@ -2333,14 +2333,14 @@ gc_loop:
     }
 
     if (!cmpdbl(oxxmin, xxmin) && !cmpdbl(oxxmax, xxmax) && !cmpdbl(oyymin, g_y_min) &&
-            !cmpdbl(oyymax, g_y_max) && !cmpdbl(oxx3rd, xx3rd) && !cmpdbl(oyy3rd, g_y_3rd))
+            !cmpdbl(oyymax, g_y_max) && !cmpdbl(oxx3rd, g_x_3rd) && !cmpdbl(oyy3rd, g_y_3rd))
     {
         // no change, restore values to avoid drift
         xxmin = oxxmin;
         xxmax = oxxmax;
         g_y_min = oyymin;
         g_y_max = oyymax;
-        xx3rd = oxx3rd;
+        g_x_3rd = oxx3rd;
         g_y_3rd = oyy3rd;
         return 0;
     }
@@ -2368,7 +2368,7 @@ static int get_screen_corners()
 
     svxxmin = xxmin;  // save these for later since cvtcorners modifies them
     svxxmax = xxmax;  // and we need to set them for cvtcentermag to work
-    svxx3rd = xx3rd;
+    svxx3rd = g_x_3rd;
     svyymin = g_y_min;
     svyymax = g_y_max;
     svyy3rd = g_y_3rd;
@@ -2377,7 +2377,7 @@ static int get_screen_corners()
     {
         g_orbit_corner_min_x = xxmin;
         g_orbit_corner_max_x = xxmax;
-        g_orbit_corner_3_x = xx3rd;
+        g_orbit_corner_3_x = g_x_3rd;
         g_orbit_corner_min_y = g_y_min;
         g_orbit_corner_max_y = g_y_max;
         g_orbit_corner_3_y = g_y_3rd;
@@ -2394,7 +2394,7 @@ static int get_screen_corners()
     xxmax = g_orbit_corner_max_x;
     g_y_min = g_orbit_corner_min_y;
     g_y_max = g_orbit_corner_max_y;
-    xx3rd = g_orbit_corner_3_x;
+    g_x_3rd = g_orbit_corner_3_x;
     g_y_3rd = g_orbit_corner_3_y;
 
 gsc_loop:
@@ -2477,7 +2477,7 @@ gsc_loop:
         xxmax = svxxmax;
         g_y_min = svyymin;
         g_y_max = svyymax;
-        xx3rd = svxx3rd;
+        g_x_3rd = svxx3rd;
         g_y_3rd = svyy3rd;
         return (-1);
     }
@@ -2495,7 +2495,7 @@ gsc_loop:
         xxmax = g_orbit_corner_max_x;
         g_y_min = g_orbit_corner_min_y;
         g_y_max = g_orbit_corner_max_y;
-        xx3rd = g_orbit_corner_3_x;
+        g_x_3rd = g_orbit_corner_3_x;
         g_y_3rd = g_orbit_corner_3_y;
         if (g_view_crop && g_final_aspect_ratio != g_screen_aspect)
         {
@@ -2536,7 +2536,7 @@ gsc_loop:
             g_orbit_corner_max_x = xxmax;
             g_orbit_corner_min_y = g_y_min;
             g_orbit_corner_max_y = g_y_max;
-            g_orbit_corner_3_x = xx3rd;
+            g_orbit_corner_3_x = g_x_3rd;
             g_orbit_corner_3_y = g_y_3rd;
         }
     }
@@ -2588,7 +2588,7 @@ gsc_loop:
         xxmax = svxxmax;
         g_y_min = svyymin;
         g_y_max = svyymax;
-        xx3rd = svxx3rd;
+        g_x_3rd = svxx3rd;
         g_y_3rd = svyy3rd;
         return 0;
     }
@@ -2601,7 +2601,7 @@ gsc_loop:
         xxmax = svxxmax;
         g_y_min = svyymin;
         g_y_max = svyymax;
-        xx3rd = svxx3rd;
+        g_x_3rd = svxx3rd;
         g_y_3rd = svyy3rd;
         return (1);
     }

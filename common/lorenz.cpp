@@ -212,24 +212,24 @@ bool setup_convert_to_screen(affine *scrn_cnvt)
 {
     double det, xd, yd;
 
-    det = (xx3rd-xxmin)*(g_y_min-g_y_max) + (g_y_max-g_y_3rd)*(xxmax-xxmin);
+    det = (g_x_3rd-xxmin)*(g_y_min-g_y_max) + (g_y_max-g_y_3rd)*(xxmax-xxmin);
     if (det == 0)
     {
         return true;
     }
     xd = g_x_size_dots/det;
     scrn_cnvt->a =  xd*(g_y_max-g_y_3rd);
-    scrn_cnvt->b =  xd*(xx3rd-xxmin);
+    scrn_cnvt->b =  xd*(g_x_3rd-xxmin);
     scrn_cnvt->e = -scrn_cnvt->a*xxmin - scrn_cnvt->b*g_y_max;
 
-    det = (xx3rd-xxmax)*(g_y_min-g_y_max) + (g_y_min-g_y_3rd)*(xxmax-xxmin);
+    det = (g_x_3rd-xxmax)*(g_y_min-g_y_max) + (g_y_min-g_y_3rd)*(xxmax-xxmin);
     if (det == 0)
     {
         return true;
     }
     yd = g_y_size_dots/det;
     scrn_cnvt->c =  yd*(g_y_min-g_y_3rd);
-    scrn_cnvt->d =  yd*(xx3rd-xxmax);
+    scrn_cnvt->d =  yd*(g_x_3rd-xxmax);
     scrn_cnvt->f = -scrn_cnvt->c*xxmin - scrn_cnvt->d*g_y_max;
     return false;
 }

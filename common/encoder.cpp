@@ -906,7 +906,7 @@ static void setup_save_info(FRACTAL_INFO *save_info)
     save_info->eyeseparation = (short) g_eye_separation;
     save_info->glassestype = (short) g_glasses_type;
     save_info->outside = (short) g_outside_color;
-    save_info->x3rd = xx3rd;
+    save_info->x3rd = g_x_3rd;
     save_info->y3rd = g_y_3rd;
     save_info->calc_status = (short) g_calc_status;
     save_info->stdcalcmode = (char)((g_three_pass && g_std_calc_mode == '3') ? 127 : g_std_calc_mode);

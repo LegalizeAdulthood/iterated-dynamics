@@ -512,7 +512,7 @@ static void initvars_fractal()          // init vars affecting calculation
     g_distance_estimator_width_factor = 71;
     g_force_symmetry = symmetry_type::NOT_FORCED;
     xxmin = -2.5;
-    xx3rd = xxmin;
+    g_x_3rd = xxmin;
     xxmax = 1.5;   // initial corner values
     g_y_min = -1.5;
     g_y_3rd = g_y_min;
@@ -1452,7 +1452,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         if (!initcorners)
         {
             xxmin = curfractalspecific->xmin;
-            xx3rd = xxmin;
+            g_x_3rd = xxmin;
             xxmax = curfractalspecific->xmax;
             g_y_min = curfractalspecific->ymin;
             g_y_3rd = g_y_min;
@@ -2169,7 +2169,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
             }
         }
         xxmin = floatval[0];
-        xx3rd = xxmin;
+        g_x_3rd = xxmin;
         xxmax = floatval[1];
         g_y_min = floatval[2];
         g_y_3rd = g_y_min;
@@ -2177,7 +2177,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
 
         if (totparms == 6)
         {
-            xx3rd =      floatval[4];
+            g_x_3rd =      floatval[4];
             g_y_3rd =      floatval[5];
         }
         return CMDARG_FRACTAL_PARAM;

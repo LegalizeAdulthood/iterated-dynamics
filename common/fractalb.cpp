@@ -259,7 +259,7 @@ void bfcornerstofloat()
         g_y_min = (double)bftofloat(g_bf_y_min);
         xxmax = (double)bftofloat(g_bf_x_max);
         g_y_max = (double)bftofloat(g_bf_y_max);
-        xx3rd = (double)bftofloat(g_bf_x_3rd);
+        g_x_3rd = (double)bftofloat(g_bf_x_3rd);
         g_y_3rd = (double)bftofloat(g_bf_y_3rd);
     }
     for (int i = 0; i < MAXPARAMS; i++)
