@@ -352,11 +352,11 @@ main_state big_while_loop(bool *const kbdmore, bool *const stacked, bool const r
                     && (curfractalspecific->flags&NORESUME) == 0)
             {
                 g_save_base = readticker(); // calc's start time
-                saveticks = abs(g_init_save_time);
-                saveticks *= 1092; // bios ticks/minute
-                if ((saveticks & 65535L) == 0)
+                g_save_ticks = abs(g_init_save_time);
+                g_save_ticks *= 1092; // bios ticks/minute
+                if ((g_save_ticks & 65535L) == 0)
                 {
-                    ++saveticks; // make low word nonzero
+                    ++g_save_ticks; // make low word nonzero
                 }
                 g_finish_row = -1;
             }
@@ -487,7 +487,7 @@ done:
                 }
             }
 
-            saveticks = 0;                 // turn off autosave timer
+            g_save_ticks = 0;                 // turn off autosave timer
             if (driver_diskp() && i == 0) // disk-video
             {
                 dvid_status(0, "Image has been completed");

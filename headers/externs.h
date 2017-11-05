@@ -434,7 +434,7 @@ extern long                  g_save_base;
 extern DComplex              SaveC;
 extern int                   g_save_dac;
 extern std::string           g_save_filename;
-extern long                  saveticks;
+extern long                  g_save_ticks;
 extern int                   save_release;
 extern int                   save_system;
 extern int                   scale_map[];
