@@ -151,7 +151,7 @@ int xxbegin = 0;                        // these are same as worklist,
 int yystart = 0;
 int yystop = 0;
 int yybegin = 0;                        // declared as separate items
-int workpass = 0;
+int g_work_pass = 0;
 int worksym = 0;                        // for the sake of calcmand
 
 static double dem_delta = 0.0;
@@ -1165,7 +1165,7 @@ static void perform_worklist()
         yystop  = g_work_list[0].yystop;
         g_i_y_stop  = yystop;
         yybegin  = g_work_list[0].yybegin;
-        workpass = g_work_list[0].pass;
+        g_work_pass = g_work_list[0].pass;
         worksym  = g_work_list[0].sym;
         --g_num_work_list;
         for (int i = 0; i < g_num_work_list; ++i)
@@ -1432,7 +1432,7 @@ static int diffusion_engine()
     rem_x = (g_i_x_stop-g_i_x_start+1) - nx * s;
     rem_y = (g_i_y_stop-g_i_y_start+1) - ny * s;
 
-    if (yybegin == g_i_y_start && workpass == 0)
+    if (yybegin == g_i_y_start && g_work_pass == 0)
     {
         // if restarting on pan:
         g_diffusion_counter =0l;
@@ -1440,7 +1440,7 @@ static int diffusion_engine()
     else
     {
         // yybegin and passes contain data for resuming the type:
-        g_diffusion_counter = (((long)((unsigned)yybegin)) << 16) | ((unsigned)workpass);
+        g_diffusion_counter = (((long)((unsigned)yybegin)) << 16) | ((unsigned)g_work_pass);
     }
 
     dif_offset = 12-(g_diffusion_bits/2); // offset to adjust coordinates
@@ -1842,7 +1842,7 @@ static int one_or_two_pass()
     {
         g_total_passes = 2;
     }
-    if (g_std_calc_mode == '2' && workpass == 0) // do 1st pass of two
+    if (g_std_calc_mode == '2' && g_work_pass == 0) // do 1st pass of two
     {
         if (standard_calc(1) == -1)
         {
@@ -1854,7 +1854,7 @@ static int one_or_two_pass()
             add_worklist(xxstart, xxstop, xxstart, yystart, yystop, yystart, 1, worksym);
             return 0;
         }
-        workpass = 1;
+        g_work_pass = 1;
         xxbegin = xxstart;
         yybegin = yystart;
     }
@@ -1866,7 +1866,7 @@ static int one_or_two_pass()
         {
             i -= row - g_i_y_start;
         }
-        add_worklist(xxstart, xxstop, col, row, i, row, workpass, worksym);
+        add_worklist(xxstart, xxstop, col, row, i, row, g_work_pass, worksym);
         return -1;
     }
 
@@ -3749,7 +3749,7 @@ static int solid_guess()
 
     g_got_status = 1;
 
-    if (workpass == 0) // otherwise first pass already done
+    if (g_work_pass == 0) // otherwise first pass already done
     {
         // first pass, calc every blocksize**2 pixel, quarter result & paint it
         g_current_pass = 1;
@@ -3810,7 +3810,7 @@ static int solid_guess()
             add_worklist(xxstart, xxstop, xxstart, yystart, yystop, yystart, 1, worksym);
             goto exit_solidguess;
         }
-        ++workpass;
+        ++g_work_pass;
         g_i_y_start = yystart & (-1 - (maxblock-1));
 
         // calculate skip flags for skippable blocks
@@ -3858,7 +3858,7 @@ static int solid_guess()
     }
 
     // remaining pass(es), halve blocksize & quarter each blocksize**2
-    i = workpass;
+    i = g_work_pass;
     while (--i > 0)   // allow for already done passes
     {
         blocksize = blocksize >> 1;
@@ -3868,12 +3868,12 @@ static int solid_guess()
     {
         if (g_stop_pass > 0)
         {
-            if (workpass >= g_stop_pass)
+            if (g_work_pass >= g_stop_pass)
             {
                 goto exit_solidguess;
             }
         }
-        g_current_pass = workpass + 1;
+        g_current_pass = g_work_pass + 1;
         for (int y = g_i_y_start; y <= g_i_y_stop; y += blocksize)
         {
             g_current_row = y;
@@ -3883,15 +3883,15 @@ static int solid_guess()
                 {
                     y = yystart;
                 }
-                add_worklist(xxstart, xxstop, xxstart, yystart, yystop, y, workpass, worksym);
+                add_worklist(xxstart, xxstop, xxstart, yystart, yystop, y, g_work_pass, worksym);
                 goto exit_solidguess;
             }
         }
-        ++workpass;
+        ++g_work_pass;
         if (g_num_work_list // work list not empty, do one pass at a time
                 && blocksize > 2) // if 2, we just did last pass
         {
-            add_worklist(xxstart, xxstop, xxstart, yystart, yystop, yystart, workpass, worksym);
+            add_worklist(xxstart, xxstop, xxstart, yystart, yystop, yystart, g_work_pass, worksym);
             goto exit_solidguess;
         }
         g_i_y_start = yystart & (-1 - (maxblock-1));
@@ -4324,7 +4324,7 @@ static bool xsym_split(int xaxis_row, bool xaxis_between)
             {
                 --g_i_y_stop;
             }
-            add_worklist(xxstart, xxstop, xxstart, g_i_y_stop+1, yystop, g_i_y_stop+1, workpass, 0);
+            add_worklist(xxstart, xxstop, xxstart, g_i_y_stop+1, yystop, g_i_y_stop+1, g_work_pass, 0);
             yystop = g_i_y_stop;
             return true; // tell set_symmetry no sym for current window
         }
@@ -4334,7 +4334,7 @@ static bool xsym_split(int xaxis_row, bool xaxis_between)
             {
                 return true;
             }
-            add_worklist(xxstart, xxstop, xxstart, i+1, yystop, i+1, workpass, 0);
+            add_worklist(xxstart, xxstop, xxstart, i+1, yystop, i+1, g_work_pass, 0);
             yystop = i;
         }
         g_i_y_stop = xaxis_row;
@@ -4377,7 +4377,7 @@ static bool ysym_split(int yaxis_col, bool yaxis_between)
             {
                 --g_i_x_stop;
             }
-            add_worklist(g_i_x_stop+1, xxstop, g_i_x_stop+1, yystart, yystop, yystart, workpass, 0);
+            add_worklist(g_i_x_stop+1, xxstop, g_i_x_stop+1, yystart, yystop, yystart, g_work_pass, 0);
             xxstop = g_i_x_stop;
             return true; // tell set_symmetry no sym for current window
         }
@@ -4387,7 +4387,7 @@ static bool ysym_split(int yaxis_col, bool yaxis_between)
             {
                 return true;
             }
-            add_worklist(i+1, xxstop, i+1, yystart, yystop, yystart, workpass, 0);
+            add_worklist(i+1, xxstop, i+1, yystart, yystop, yystart, g_work_pass, 0);
             xxstop = i;
         }
         g_i_x_stop = yaxis_col;
@@ -4746,7 +4746,7 @@ static int tesseral()
     tp->y1 = g_i_y_start;
     tp->y2 = g_i_y_stop;
 
-    if (workpass == 0) // not resuming
+    if (g_work_pass == 0) // not resuming
     {
         tp->top = tessrow(g_i_x_start, g_i_x_stop, g_i_y_start);     // Do top row
         tp->bot = tessrow(g_i_x_start, g_i_x_stop, g_i_y_stop);      // Do bottom row
@@ -4774,9 +4774,9 @@ static int tesseral()
         {
             ysize <<= 1;
         }
-        curx = workpass & 0xfff;
+        curx = g_work_pass & 0xfff;
         xsize = 1;
-        i = (unsigned)workpass >> 12;
+        i = (unsigned)g_work_pass >> 12;
         while (--i >= 0)
         {
             xsize <<= 1;
