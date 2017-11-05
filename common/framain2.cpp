@@ -2484,7 +2484,7 @@ static void save_history_info()
     current.orbit_interval       = g_orbit_interval;
     current.oxmin                = g_orbit_corner_min_x;
     current.oxmax                = g_orbit_corner_max_x;
-    current.oymin                = oymin;
+    current.oymin                = g_orbit_corner_min_y;
     current.oymax                = g_orbit_corner_max_y;
     current.ox3rd                = g_orbit_corner_3_x;
     current.oy3rd                = g_orbit_corner_3_y;
@@ -2674,7 +2674,7 @@ static void restore_history_info(int i)
     g_orbit_interval = last.orbit_interval;
     g_orbit_corner_min_x = last.oxmin;
     g_orbit_corner_max_x = last.oxmax;
-    oymin = last.oymin;
+    g_orbit_corner_min_y = last.oymin;
     g_orbit_corner_max_y = last.oymax;
     g_orbit_corner_3_x = last.ox3rd;
     g_orbit_corner_3_y = last.oy3rd;

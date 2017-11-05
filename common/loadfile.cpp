@@ -605,7 +605,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
     {
         g_orbit_corner_min_x       = blk_7_info.oxmin;
         g_orbit_corner_max_x       = blk_7_info.oxmax;
-        oymin       = blk_7_info.oymin;
+        g_orbit_corner_min_y       = blk_7_info.oymin;
         g_orbit_corner_max_y       = blk_7_info.oymax;
         g_orbit_corner_3_x       = blk_7_info.ox3rd;
         g_orbit_corner_3_y       = blk_7_info.oy3rd;
