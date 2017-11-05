@@ -893,7 +893,7 @@ get_view_restart:
 
         choices[++k] = "Crop starting coordinates to new aspect ratio?";
         uvalues[k].type = 'y';
-        uvalues[k].uval.ch.val = viewcrop ? 1 : 0;
+        uvalues[k].uval.ch.val = g_view_crop ? 1 : 0;
 
         choices[++k] = "Explicit size x pixels (0 for auto size)";
         uvalues[k].type = 'i';
@@ -966,7 +966,7 @@ get_view_restart:
         viewxdots = 0;
         viewydots = 0;
         viewreduction = 4.2F;
-        viewcrop = true;
+        g_view_crop = true;
         g_final_aspect_ratio = g_screen_aspect;
         sxdots = old_sxdots;
         sydots = old_sydots;
@@ -983,7 +983,7 @@ get_view_restart:
         viewwindow = uvalues[++k].uval.ch.val != 0;
         viewreduction = (float) uvalues[++k].uval.dval;
         g_final_aspect_ratio = (float) uvalues[++k].uval.dval;
-        viewcrop = uvalues[++k].uval.ch.val != 0;
+        g_view_crop = uvalues[++k].uval.ch.val != 0;
         viewxdots = uvalues[++k].uval.ival;
         viewydots = uvalues[++k].uval.ival;
     }
@@ -1041,7 +1041,7 @@ get_view_restart:
         g_final_aspect_ratio = old_aspectratio;
     }
 
-    if (g_final_aspect_ratio != old_aspectratio && viewcrop)
+    if (g_final_aspect_ratio != old_aspectratio && g_view_crop)
     {
         aspectratio_crop(old_aspectratio, g_final_aspect_ratio);
     }
@@ -2253,7 +2253,7 @@ gc_loop:
         yymin = curfractalspecific->ymin;
         yy3rd = yymin;
         yymax = curfractalspecific->ymax;
-        if (viewcrop && g_final_aspect_ratio != g_screen_aspect)
+        if (g_view_crop && g_final_aspect_ratio != g_screen_aspect)
         {
             aspectratio_crop(g_screen_aspect, g_final_aspect_ratio);
         }
@@ -2497,7 +2497,7 @@ gsc_loop:
         yymax = g_orbit_corner_max_y;
         xx3rd = g_orbit_corner_3_x;
         yy3rd = g_orbit_corner_3_y;
-        if (viewcrop && g_final_aspect_ratio != g_screen_aspect)
+        if (g_view_crop && g_final_aspect_ratio != g_screen_aspect)
         {
             aspectratio_crop(g_screen_aspect, g_final_aspect_ratio);
         }

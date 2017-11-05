@@ -90,7 +90,7 @@ bool    g_user_float_flag;
 
 bool    viewwindow = false;     // false for full screen, true for window
 float   viewreduction;          // window auto-sizing
-bool    viewcrop = false;       // true to crop default coords
+bool    g_view_crop = false;       // true to crop default coords
 float   g_final_aspect_ratio;       // for view shape and rotation
 int     viewxdots, viewydots;    // explicit view sizing
 bool    g_keep_aspect_ratio = false;  // true to keep virtual aspect

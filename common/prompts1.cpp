@@ -1333,7 +1333,7 @@ void set_default_parms()
     xx3rd = xxmin;
     yy3rd = yymin;
 
-    if (viewcrop && g_final_aspect_ratio != g_screen_aspect)
+    if (g_view_crop && g_final_aspect_ratio != g_screen_aspect)
     {
         aspectratio_crop(g_screen_aspect, g_final_aspect_ratio);
     }
