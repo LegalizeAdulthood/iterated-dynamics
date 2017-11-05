@@ -123,7 +123,7 @@ extern long                  g_l_delta_x;
 extern LDBL                  g_delta_x2;
 extern LDBL                  g_delta_x;
 extern long                  g_l_delta_y2;
-extern long                  dely;
+extern long                  g_l_delta_y;
 extern LDBL                  delyy2;
 extern LDBL                  delyy;
 extern float                 g_julibrot_depth_fp;

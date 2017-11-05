@@ -1035,7 +1035,7 @@ int Bifurcation()
 
     if (g_integer_fractal)
     {
-        g_l_init.y = ymax - g_i_y_stop*dely;            // Y-value of
+        g_l_init.y = ymax - g_i_y_stop*g_l_delta_y;            // Y-value of
     }
     else
     {
@@ -1150,7 +1150,7 @@ static void verhulst()          // P. F. Verhulst (1845)
         // assign population value to Y coordinate in pixels
         if (g_integer_fractal)
         {
-            pixel_row = g_i_y_stop - (int)((lPopulation - g_l_init.y) / dely); // iystop
+            pixel_row = g_i_y_stop - (int)((lPopulation - g_l_init.y) / g_l_delta_y); // iystop
         }
         else
         {
@@ -1184,7 +1184,7 @@ static void Bif_Period_Init()
     if (g_integer_fractal)
     {
         lBif_savedpop = -1;
-        lBif_closenuf = dely / 8;
+        lBif_closenuf = g_l_delta_y / 8;
     }
     else
     {
