@@ -90,7 +90,7 @@ static long autologmap();
 LComplex g_l_init_orbit = { 0 };
 long g_l_magnitude = 0;
 long g_l_magnitude_limit = 0;
-long g_l_limit2 = 0;
+long g_l_magnitude_limit2 = 0;
 long g_l_close_enough = 0;
 DComplex g_init = { 0.0 };
 DComplex g_tmp_z = { 0.0 };
@@ -852,7 +852,7 @@ int calcfract()
         {
             g_l_magnitude_limit = 0x7fffffffL; // klooge for integer math
         }
-        g_l_limit2 = (long)(g_magnitude_limit2 * g_fudge_factor);    // stop if magnitude exceeds this
+        g_l_magnitude_limit2 = (long)(g_magnitude_limit2 * g_fudge_factor);    // stop if magnitude exceeds this
         g_l_close_enough = (long)(g_close_enough * g_fudge_factor); // "close enough" value
         g_l_init_orbit.x = (long)(g_init_orbit.x * g_fudge_factor);
         g_l_init_orbit.y = (long)(g_init_orbit.y * g_fudge_factor);
@@ -2861,7 +2861,7 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
     {
         if (g_integer_fractal)
         {
-            if (labs(g_l_new_z.x) < g_l_limit2 || labs(g_l_new_z.y) < g_l_limit2)
+            if (labs(g_l_new_z.x) < g_l_magnitude_limit2 || labs(g_l_new_z.y) < g_l_magnitude_limit2)
             {
                 g_color_iter = g_biomorph;
             }
