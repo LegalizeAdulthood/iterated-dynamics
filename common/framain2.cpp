@@ -1485,7 +1485,7 @@ do_3d_transform:
                 zoom_box_rotation = 0;
                 zoom_box_skew = zoom_box_rotation;
                 g_zoom_box_x = 0;
-                zby = 0;
+                g_zoom_box_y = 0;
                 find_special_colors();
                 g_box_color = g_color_bright;
                 g_evolve_param_grid_y = g_evolve_image_grid_size /2;
@@ -1999,7 +1999,7 @@ static main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdm
                 zoom_box_rotation = 0;
                 zoom_box_skew = zoom_box_rotation;
                 g_zoom_box_x = 0;
-                zby = 0;
+                g_zoom_box_y = 0;
                 find_special_colors();
                 g_box_color = g_color_bright;
                 if (g_evolving&1)

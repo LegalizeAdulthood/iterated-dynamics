@@ -574,7 +574,7 @@ extern double                g_y_min;
 extern int                   g_yy_start;
 extern int                   g_yy_stop;
 extern double                g_zoom_box_x;
-extern double                zby;
+extern double                g_zoom_box_y;
 extern double                zoom_box_height;
 extern int                   zdots;
 extern bool                  zoomoff;

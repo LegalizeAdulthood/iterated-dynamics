@@ -153,7 +153,7 @@ void drawbox(bool drawit)
 
     // calc co-ords of topleft
     ftemp1 = g_zoom_box_x + dx + fxadj;
-    ftemp2 = zby + dy/g_final_aspect_ratio;
+    ftemp2 = g_zoom_box_y + dy/g_final_aspect_ratio;
 
     tl.x   = (int)(ftemp1*(g_logical_screen_x_size_dots+PIXELROUND)); // screen co-ords
     tl.y   = (int)(ftemp2*(g_logical_screen_y_size_dots+PIXELROUND));
@@ -167,7 +167,7 @@ void drawbox(bool drawit)
 
     // calc co-ords of bottom right
     ftemp1 = g_zoom_box_x + zoom_box_width - dx - fxadj;
-    ftemp2 = zby - dy/g_final_aspect_ratio + zoom_box_height;
+    ftemp2 = g_zoom_box_y - dy/g_final_aspect_ratio + zoom_box_height;
     br.x   = (int)(ftemp1*(g_logical_screen_x_size_dots+PIXELROUND));
     br.y   = (int)(ftemp2*(g_logical_screen_y_size_dots+PIXELROUND));
     g_x_max  = g_save_x_min + ftemp1*fxwidth + ftemp2*fxskew;
@@ -183,7 +183,7 @@ void drawbox(bool drawit)
     dx = (rotcos*tmpx - rotsin*tmpy) - tmpx;
     dy = tmpy - (rotsin*tmpx + rotcos*tmpy);
     ftemp1 = g_zoom_box_x + dx - fxadj;
-    ftemp2 = zby + dy/g_final_aspect_ratio + zoom_box_height;
+    ftemp2 = g_zoom_box_y + dy/g_final_aspect_ratio + zoom_box_height;
     bl.x   = (int)(ftemp1*(g_logical_screen_x_size_dots+PIXELROUND));
     bl.y   = (int)(ftemp2*(g_logical_screen_y_size_dots+PIXELROUND));
     g_x_3rd  = g_save_x_min + ftemp1*fxwidth + ftemp2*fxskew;
@@ -195,7 +195,7 @@ void drawbox(bool drawit)
         restore_stack(saved);
     }
     ftemp1 = g_zoom_box_x + zoom_box_width - dx + fxadj;
-    ftemp2 = zby - dy/g_final_aspect_ratio;
+    ftemp2 = g_zoom_box_y - dy/g_final_aspect_ratio;
     tr.x   = (int)(ftemp1*(g_logical_screen_x_size_dots+PIXELROUND));
     tr.y   = (int)(ftemp2*(g_logical_screen_y_size_dots+PIXELROUND));
 
@@ -352,31 +352,31 @@ void moveboxf(double dx, double dy)
     }
     if (dy != 0.0)
     {
-        if ((zby += dy) + zoom_box_height/2 < 0)
+        if ((g_zoom_box_y += dy) + zoom_box_height/2 < 0)
         {
-            zby = zoom_box_height/-2;
+            g_zoom_box_y = zoom_box_height/-2;
         }
-        if (zby + zoom_box_height/2 > 1)
+        if (g_zoom_box_y + zoom_box_height/2 > 1)
         {
-            zby = 1.0 - zoom_box_height/2;
+            g_zoom_box_y = 1.0 - zoom_box_height/2;
         }
         int row;
         if (align != 0
-                && ((row = (int)(zby*(g_logical_screen_y_size_dots+PIXELROUND))) & (align-1)) != 0)
+                && ((row = (int)(g_zoom_box_y*(g_logical_screen_y_size_dots+PIXELROUND))) & (align-1)) != 0)
         {
             if (dy > 0)
             {
                 row += align;
             }
             row -= row & (align-1);
-            zby = (double)row/g_logical_screen_y_size_dots;
+            g_zoom_box_y = (double)row/g_logical_screen_y_size_dots;
         }
     }
 #ifndef XFRACT
     if (g_video_scroll)                 // scroll screen center to the box center
     {
         int col = (int)((g_zoom_box_x + zoom_box_width/2)*(g_logical_screen_x_size_dots + PIXELROUND)) + g_logical_screen_x_offset;
-        int row = (int)((zby + zoom_box_height/2)*(g_logical_screen_y_size_dots + PIXELROUND)) + g_logical_screen_y_offset;
+        int row = (int)((g_zoom_box_y + zoom_box_height/2)*(g_logical_screen_y_size_dots + PIXELROUND)) + g_logical_screen_y_offset;
         if (!zscroll)
         {
             // fixed - screen center fixed to the zoombox center
@@ -761,13 +761,13 @@ int init_pan_or_recalc(int do_zoomout) // decide to recalc, or to chg worklist &
         g_calc_status = calc_status_value::PARAMS_CHANGED; // can't pan, trigger recalc
         return (0);
     }
-    if (g_zoom_box_x == 0.0 && zby == 0.0)
+    if (g_zoom_box_x == 0.0 && g_zoom_box_y == 0.0)
     {
         clearbox();
         return (0);
     } // box is full screen, leave g_calc_status as is
     col = (int)(g_zoom_box_x*(g_logical_screen_x_size_dots+PIXELROUND)); // calc dest col,row of topleft pixel
-    row = (int)(zby*(g_logical_screen_y_size_dots+PIXELROUND));
+    row = (int)(g_zoom_box_y*(g_logical_screen_y_size_dots+PIXELROUND));
     if (do_zoomout)
     {
         // invert row and col
