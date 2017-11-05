@@ -594,7 +594,7 @@ static void initvars_fractal()          // init vars affecting calculation
 
 static void initvars_3d()               // init vars affecting 3d
 {
-    RAY     = 0;
+    g_raytrace_format     = 0;
     g_brief   = false;
     SPHERE = FALSE;
     g_preview = false;
@@ -3523,7 +3523,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         {
             goto badarg;
         }
-        RAY = numval;
+        g_raytrace_format = numval;
         return CMDARG_3D_PARAM;
     }
 

@@ -1154,9 +1154,9 @@ void write_batch_parms(char const *colorinf, bool colorsonly, int maxcolor, int 
             }
             put_parm(" %s=%d", "coarse", g_preview_factor);
         }
-        if (RAY)
+        if (g_raytrace_format)
         {
-            put_parm(" %s=%d", "ray", RAY);
+            put_parm(" %s=%d", "ray", g_raytrace_format);
             if (g_brief)
             {
                 put_parm(" %s=y", "brief");
