@@ -2627,7 +2627,7 @@ static void restore_history_info(int i)
     g_init_orbit.y           = last.initorbit[1]   ;
     g_use_init_orbit          = static_cast<init_orbit_mode>(last.useinitorbit);
     g_periodicity_check      = last.periodicity    ;
-    usr_periodicitycheck  = last.periodicity    ;
+    g_user_periodicity_value  = last.periodicity    ;
     g_disk_16_bit             = last.pot16bit != 0;
     g_release             = last.release        ;
     g_save_release          = last.save_release   ;

@@ -465,7 +465,7 @@ static void initvars_restart()          // <ins> key init
 static void initvars_fractal()          // init vars affecting calculation
 {
     g_escape_exit = false;                // don't disable the "are you sure?" screen
-    usr_periodicitycheck = 1;           // turn on periodicity
+    g_user_periodicity_value = 1;           // turn on periodicity
     g_inside_color = 1;                         // inside color = blue
     g_fill_color = -1;                     // no special fill color
     g_user_biomorph_value = -1;                  // turn off biomorph flag
@@ -2787,18 +2787,18 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
     if (variable == "periodicity")
     {
         // periodicity=?
-        usr_periodicitycheck = 1;
+        g_user_periodicity_value = 1;
         if ((charval[0] == 'n') || (numval == 0))
         {
-            usr_periodicitycheck = 0;
+            g_user_periodicity_value = 0;
         }
         else if (charval[0] == 'y')
         {
-            usr_periodicitycheck = 1;
+            g_user_periodicity_value = 1;
         }
         else if (charval[0] == 's')       // 's' for 'show'
         {
-            usr_periodicitycheck = -1;
+            g_user_periodicity_value = -1;
         }
         else if (numval == NONNUMERIC)
         {
@@ -2806,14 +2806,14 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         }
         else if (numval != 0)
         {
-            usr_periodicitycheck = numval;
-            if (usr_periodicitycheck > 255)
+            g_user_periodicity_value = numval;
+            if (g_user_periodicity_value > 255)
             {
-                usr_periodicitycheck = 255;
+                g_user_periodicity_value = 255;
             }
-            if (usr_periodicitycheck < -255)
+            if (g_user_periodicity_value < -255)
             {
-                usr_periodicitycheck = -255;
+                g_user_periodicity_value = -255;
             }
         }
         return CMDARG_FRACTAL_PARAM;

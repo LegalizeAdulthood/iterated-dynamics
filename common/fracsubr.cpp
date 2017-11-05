@@ -287,7 +287,7 @@ init_restart:
        calc routine constraints;  usr_xxx is what the user last said is wanted,
        xxx is what we actually do in the current situation */
     g_std_calc_mode      = usr_stdcalcmode;
-    g_periodicity_check = usr_periodicitycheck;
+    g_periodicity_check = g_user_periodicity_value;
     g_distance_estimator          = g_user_distance_estimator_value;
     g_biomorph         = g_user_biomorph_value;
 

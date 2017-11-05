@@ -696,7 +696,7 @@ pass_option_restart:
 
     choices[++k] = "Periodicity (0=off, <0=show, >0=on, -255..+255)";
     uvalues[k].type = 'i';
-    old_periodicity = usr_periodicitycheck;
+    old_periodicity = g_user_periodicity_value;
     uvalues[k].uval.ival = old_periodicity;
 
     choices[++k] = "Orbit delay (0 = none)";
@@ -740,16 +740,16 @@ pass_option_restart:
     k = -1;
     j = 0;   // return code
 
-    usr_periodicitycheck = uvalues[++k].uval.ival;
-    if (usr_periodicitycheck > 255)
+    g_user_periodicity_value = uvalues[++k].uval.ival;
+    if (g_user_periodicity_value > 255)
     {
-        usr_periodicitycheck = 255;
+        g_user_periodicity_value = 255;
     }
-    if (usr_periodicitycheck < -255)
+    if (g_user_periodicity_value < -255)
     {
-        usr_periodicitycheck = -255;
+        g_user_periodicity_value = -255;
     }
-    if (usr_periodicitycheck != old_periodicity)
+    if (g_user_periodicity_value != old_periodicity)
     {
         j = 1;
     }

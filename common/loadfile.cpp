@@ -188,7 +188,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
         g_init_orbit.x = read_info.initorbit[0];
         g_init_orbit.y = read_info.initorbit[1];
         g_use_init_orbit = static_cast<init_orbit_mode>(read_info.useinitorbit);
-        usr_periodicitycheck = read_info.periodicity;
+        g_user_periodicity_value = read_info.periodicity;
     }
 
     g_potential_16bit = false;
