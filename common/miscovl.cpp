@@ -1428,7 +1428,7 @@ void write_batch_parms(char const *colorinf, bool colorsonly, int maxcolor, int 
 
     if (*colorinf != 'n')
     {
-        if (recordcolors == 'c' && *colorinf == '@')
+        if (g_record_colors == 'c' && *colorinf == '@')
         {
             put_parm_line();
             put_parm("; %s=", "colors");
@@ -1437,7 +1437,7 @@ void write_batch_parms(char const *colorinf, bool colorsonly, int maxcolor, int 
         }
 docolors:
         put_parm(" %s=", "colors");
-        if (recordcolors != 'c' && recordcolors != 'y' && *colorinf == '@')
+        if (g_record_colors != 'c' && g_record_colors != 'y' && *colorinf == '@')
         {
             put_parm(colorinf);
         }

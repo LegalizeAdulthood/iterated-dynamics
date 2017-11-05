@@ -408,7 +408,7 @@ extern raytrace_formats      g_raytrace_format;
 extern std::string           g_raytrace_filename;
 extern std::string           g_read_filename;
 extern long                  g_real_color_iter;
-extern char                  recordcolors;
+extern char                  g_record_colors;
 extern int                   red_bright;
 extern int                   red_crop_left;
 extern int                   red_crop_right;
