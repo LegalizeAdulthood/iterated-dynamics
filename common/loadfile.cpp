@@ -192,7 +192,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
     }
 
     g_potential_16bit = false;
-    save_system = 0;
+    g_save_system = 0;
     if (read_info.version > 4)
     {
         g_potential_16bit = read_info.pot16bit != 0;
@@ -205,13 +205,13 @@ int read_overlay()      // read overlay/3D files, if reqr'd
         {
             g_file_aspect_ratio = screenaspect;
         }
-        save_system  = read_info.system;
+        g_save_system  = read_info.system;
         g_save_release = read_info.release; // from fmt 5 on we know real number
         if (read_info.version == 5        // except a few early fmt 5 cases:
                 && (g_save_release <= 0 || g_save_release >= 4000))
         {
             g_save_release = 1410;
-            save_system = 0;
+            g_save_system = 0;
         }
         if (g_display_3d == display_3d_modes::NONE && read_info.display_3d > 0)
         {

@@ -436,7 +436,7 @@ extern int                   g_save_dac;
 extern std::string           g_save_filename;
 extern long                  g_save_ticks;
 extern int                   g_save_release;
-extern int                   save_system;
+extern int                   g_save_system;
 extern int                   scale_map[];
 extern float                 screenaspect;
 extern id::SearchPath        searchfor;

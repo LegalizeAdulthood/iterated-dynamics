@@ -101,7 +101,7 @@ bool    g_compare_gif = false;             // compare two gif files flag
 int     timedsave = 0;                    // when doing a timed save
 int     g_resave_flag = 0;                  // tells encoder not to incr filename
 bool    started_resaves = false;        // but incr on first resave
-int     save_system;                    // from and for save files
+int     g_save_system;                    // from and for save files
 bool    tab_mode = true;                 // tab display enabled
 
 // for historical reasons (before rotation):
