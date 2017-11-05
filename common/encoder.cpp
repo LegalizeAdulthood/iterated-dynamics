@@ -843,7 +843,7 @@ static void setup_save_info(FRACTAL_INFO *save_info)
     }
 
     save_info->fractal_type = (short) fractype;
-    save_info->xmin = xxmin;
+    save_info->xmin = g_x_min;
     save_info->xmax = g_x_max;
     save_info->ymin = g_y_min;
     save_info->ymax = g_y_max;

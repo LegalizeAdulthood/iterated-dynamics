@@ -90,7 +90,7 @@ void fill_dx_array()
 {
     if (g_use_grid)
     {
-        g_grid_x0[0] = xxmin;              // fill up the x, y grids
+        g_grid_x0[0] = g_x_min;              // fill up the x, y grids
         g_grid_y0[0] = g_y_max;
         g_grid_y1[0] = 0;
         g_grid_x1[0] = g_grid_y1[0];
@@ -133,7 +133,7 @@ void fill_lx_array()
 void fractal_floattobf()
 {
     init_bf_dec(getprecdbl(CURRENTREZ));
-    floattobf(g_bf_x_min, xxmin);
+    floattobf(g_bf_x_min, g_x_min);
     floattobf(g_bf_x_max, g_x_max);
     floattobf(g_bf_y_min, g_y_min);
     floattobf(g_bf_y_max, g_y_max);
@@ -382,11 +382,11 @@ init_restart:
     if ((curfractalspecific->flags&NOROTATE) != 0)
     {
         // ensure min<max and unrotated rectangle
-        if (xxmin > g_x_max)
+        if (g_x_min > g_x_max)
         {
             double ftemp = g_x_max;
-            g_x_max = xxmin;
-            xxmin = ftemp;
+            g_x_max = g_x_min;
+            g_x_min = ftemp;
         }
         if (g_y_min > g_y_max)
         {
@@ -394,7 +394,7 @@ init_restart:
             g_y_max = g_y_min;
             g_y_min = ftemp;
         }
-        g_x_3rd = xxmin;
+        g_x_3rd = g_x_min;
         g_y_3rd = g_y_min;
     }
 
@@ -454,14 +454,14 @@ init_restart:
         adjust_to_limits(1.0); // make sure all corners in valid range
         g_delta_x  = (LDBL)(g_x_max - g_x_3rd) / (LDBL)g_x_size_dots; // calculate stepsizes
         g_delta_y  = (LDBL)(g_y_max - g_y_3rd) / (LDBL)g_y_size_dots;
-        g_delta_x2 = (LDBL)(g_x_3rd - xxmin) / (LDBL)g_y_size_dots;
+        g_delta_x2 = (LDBL)(g_x_3rd - g_x_min) / (LDBL)g_y_size_dots;
         g_delta_y2 = (LDBL)(g_y_3rd - g_y_min) / (LDBL)g_x_size_dots;
         fill_dx_array();
     }
 
     if (fractype != fractal_type::CELLULAR && fractype != fractal_type::ANT)  // fudgetolong fails w >10 digits in double
     {
-        xmin  = fudgetolong(xxmin);
+        xmin  = fudgetolong(g_x_min);
         xmax  = fudgetolong(g_x_max);
         x3rd  = fudgetolong(g_x_3rd);
         ymin  = fudgetolong(g_y_min);
@@ -519,7 +519,7 @@ expand_retry:
             ymin = g_l_y0[ydots-1] + g_l_y1[xdots-1];
             x3rd = xmin + g_l_x1[ydots-1];
             y3rd = g_l_y0[ydots-1];
-            xxmin = fudgetodouble(xmin);
+            g_x_min = fudgetodouble(xmin);
             g_x_max = fudgetodouble(xmax);
             g_x_3rd = fudgetodouble(x3rd);
             g_y_min = fudgetodouble(ymin);
@@ -531,7 +531,7 @@ expand_retry:
             double dx0, dy0, dx1, dy1;
             // set up dx0 and dy0 analogs of lx0 and ly0
             // put fractal parameters in doubles
-            dx0 = xxmin;                // fill up the x, y grids
+            dx0 = g_x_min;                // fill up the x, y grids
             dy0 = g_y_max;
             dy1 = 0;
             dx1 = dy1;
@@ -571,14 +571,14 @@ expand_retry:
                        to arbitrary precision sooner, but always later.*/
                     double testx_try;
                     double testx_exact;
-                    if (fabs(g_x_max-g_x_3rd) > fabs(g_x_3rd-xxmin))
+                    if (fabs(g_x_max-g_x_3rd) > fabs(g_x_3rd-g_x_min))
                     {
                         testx_exact  = g_x_max-g_x_3rd;
-                        testx_try    = dx0-xxmin;
+                        testx_try    = dx0-g_x_min;
                     }
                     else
                     {
-                        testx_exact  = g_x_3rd-xxmin;
+                        testx_exact  = g_x_3rd-g_x_min;
                         testx_try    = dx1;
                     }
                     double testy_try;
@@ -610,9 +610,9 @@ expand_retry:
             fill_dx_array();       // fill up the x, y grids
 
             // re-set corners to match reality
-            g_x_max = (double)(xxmin + (xdots-1)*g_delta_x + (ydots-1)*g_delta_x2);
+            g_x_max = (double)(g_x_min + (xdots-1)*g_delta_x + (ydots-1)*g_delta_x2);
             g_y_min = (double)(g_y_max - (ydots-1)*g_delta_y - (xdots-1)*g_delta_y2);
-            g_x_3rd = (double)(xxmin + (ydots-1)*g_delta_x2);
+            g_x_3rd = (double)(g_x_min + (ydots-1)*g_delta_x2);
             g_y_3rd = (double)(g_y_max - (ydots-1)*g_delta_y);
 
         } // end else
@@ -783,13 +783,13 @@ void adjust_corner()
         }
     }
 
-    ftemp = fabs(g_x_3rd-xxmin);
+    ftemp = fabs(g_x_3rd-g_x_min);
     ftemp2 = fabs(g_x_max-g_x_3rd);
     if (ftemp < ftemp2)
     {
         if (ftemp*10000 < ftemp2 && g_y_3rd != g_y_max)
         {
-            g_x_3rd = xxmin;
+            g_x_3rd = g_x_min;
         }
     }
 
@@ -808,7 +808,7 @@ void adjust_corner()
         }
     }
 
-    if (ftemp2*10000 < ftemp && g_x_3rd != xxmin)
+    if (ftemp2*10000 < ftemp && g_x_3rd != g_x_min)
     {
         g_y_3rd = g_y_max;
     }
@@ -1089,14 +1089,14 @@ static void adjust_to_limits(double expand)
         }
     }
 
-    centerx = (xxmin+g_x_max)/2;
+    centerx = (g_x_min+g_x_max)/2;
     centery = (g_y_min+g_y_max)/2;
 
-    if (xxmin == centerx)
+    if (g_x_min == centerx)
     {
         // ohoh, infinitely thin, fix it
         smallest_add(&g_x_max);
-        xxmin -= g_x_max-centerx;
+        g_x_min -= g_x_max-centerx;
     }
 
     if (g_y_min == centery)
@@ -1116,10 +1116,10 @@ static void adjust_to_limits(double expand)
     }
 
     // setup array for easier manipulation
-    cornerx[0] = xxmin;
+    cornerx[0] = g_x_min;
     cornerx[1] = g_x_max;
     cornerx[2] = g_x_3rd;
-    cornerx[3] = xxmin+(g_x_max-g_x_3rd);
+    cornerx[3] = g_x_min+(g_x_max-g_x_3rd);
 
     cornery[0] = g_y_max;
     cornery[1] = g_y_min;
@@ -1207,7 +1207,7 @@ static void adjust_to_limits(double expand)
     {
         g_calc_status = calc_status_value::PARAMS_CHANGED;
     }
-    xxmin = cornerx[0] - adjx;
+    g_x_min = cornerx[0] - adjx;
     g_x_max = cornerx[1] - adjx;
     g_x_3rd = cornerx[2] - adjx;
     g_y_max = cornery[0] - adjy;
@@ -1720,12 +1720,12 @@ static void plotdorbit(double dx, double dy, int color)
 
 void iplot_orbit(long ix, long iy, int color)
 {
-    plotdorbit((double)ix/g_fudge_factor-xxmin, (double)iy/g_fudge_factor-g_y_max, color);
+    plotdorbit((double)ix/g_fudge_factor-g_x_min, (double)iy/g_fudge_factor-g_y_max, color);
 }
 
 void plot_orbit(double real, double imag, int color)
 {
-    plotdorbit(real-xxmin, imag-g_y_max, color);
+    plotdorbit(real-g_x_min, imag-g_y_max, color);
 }
 
 void scrub_orbit()

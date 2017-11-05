@@ -86,7 +86,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
     }
     fractype = static_cast<fractal_type>(read_fractype);
     curfractalspecific = &fractalspecific[read_fractype];
-    xxmin        = read_info.xmin;
+    g_x_min        = read_info.xmin;
     g_x_max        = read_info.xmax;
     g_y_min        = read_info.ymin;
     g_y_max        = read_info.ymax;
@@ -159,7 +159,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
     }
 
     g_calc_status = calc_status_value::PARAMS_CHANGED;       // defaults if version < 4
-    g_x_3rd = xxmin;
+    g_x_3rd = g_x_min;
     g_y_3rd = g_y_min;
     g_user_distance_estimator_value = 0;
     g_calc_time = 0;

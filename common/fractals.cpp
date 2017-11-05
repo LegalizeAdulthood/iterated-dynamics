@@ -3612,7 +3612,7 @@ static double dxpixel_grid()
 // Real component, calculation version - does not require arrays
 static double dxpixel_calc()
 {
-    return (double)(xxmin + g_col*g_delta_x + g_row*g_delta_x2);
+    return (double)(g_x_min + g_col*g_delta_x + g_row*g_delta_x2);
 }
 
 // Imaginary component, grid lookup version - requires dy0/dy1 arrays

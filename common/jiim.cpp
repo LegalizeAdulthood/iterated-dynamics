@@ -623,7 +623,7 @@ void Jiim(jiim_types which)
     if (g_col < 0 || g_col >= xdots ||
             g_row < 0 || g_row >= ydots)
     {
-        cr = (g_x_max + xxmin) / 2.0;
+        cr = (g_x_max + g_x_min) / 2.0;
         ci = (g_y_max + g_y_min) / 2.0;
     }
     else

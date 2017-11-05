@@ -553,7 +553,7 @@ extern double                g_x_3rd;
 extern int                   xxadjust1;
 extern int                   xxadjust;
 extern double                g_x_max;
-extern double                xxmin;
+extern double                g_x_min;
 extern long                  XXOne;
 extern int                   xxstart;
 extern int                   xxstop;

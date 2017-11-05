@@ -1326,11 +1326,11 @@ sel_type_exit:
 
 void set_default_parms()
 {
-    xxmin = curfractalspecific->xmin;
+    g_x_min = curfractalspecific->xmin;
     g_x_max = curfractalspecific->xmax;
     g_y_min = curfractalspecific->ymin;
     g_y_max = curfractalspecific->ymax;
-    g_x_3rd = xxmin;
+    g_x_3rd = g_x_min;
     g_y_3rd = g_y_min;
 
     if (g_view_crop && g_final_aspect_ratio != g_screen_aspect)

@@ -1058,7 +1058,7 @@ int Bifurcation()
         }
         else
         {
-            Rate = (double)(xxmin + x*g_delta_x);
+            Rate = (double)(g_x_min + x*g_delta_x);
         }
         verhulst();        // calculate array once per column
 

@@ -1116,7 +1116,7 @@ void soi_ldbl()
     }
     else
     {
-        xxminl = xxmin;
+        xxminl = g_x_min;
         yyminl = g_y_min;
         xxmaxl = g_x_max;
         yymaxl = g_y_max;
