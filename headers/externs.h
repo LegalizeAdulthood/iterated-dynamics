@@ -505,7 +505,7 @@ extern bool                  g_use_center_mag;
 extern bool                  g_frm_uses_ismand;
 extern bool                  g_frm_uses_p1;
 extern bool                  g_frm_uses_p2;
-extern bool                  uses_p3;
+extern bool                  g_frm_uses_p3;
 extern bool                  uses_p4;
 extern bool                  uses_p5;
 extern bool                  use_old_distest;

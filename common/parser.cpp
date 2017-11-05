@@ -192,7 +192,7 @@ static bool Randomized = false;
 static unsigned long RandNum;
 bool g_frm_uses_p1 = false;
 bool g_frm_uses_p2 = false;
-bool uses_p3 = false;
+bool g_frm_uses_p3 = false;
 bool uses_p4 = false;
 bool uses_p5 = false;
 bool uses_jump = false;
@@ -2047,7 +2047,7 @@ ConstArg *isconst(char const *Str, int Len)
                 }
                 if (n == 8)          // The formula uses 'p3'.
                 {
-                    uses_p3 = true;
+                    g_frm_uses_p3 = true;
                 }
                 if (n == 13)          // The formula uses 'ismand'.
                 {
@@ -3859,7 +3859,7 @@ int frm_get_param_stuff(char const *Name)
     FILE * entry_file = nullptr;
     g_frm_uses_p1 = false;
     g_frm_uses_p2 = false;
-    uses_p3 = false;
+    g_frm_uses_p3 = false;
     g_frm_uses_ismand = false;
     g_max_function = 0;
     uses_p4 = false;
@@ -3919,7 +3919,7 @@ int frm_get_param_stuff(char const *Name)
             }
             else if (current_token.token_id == 8)
             {
-                uses_p3 = true;
+                g_frm_uses_p3 = true;
             }
             else if (current_token.token_id == 13)
             {
@@ -3951,7 +3951,7 @@ int frm_get_param_stuff(char const *Name)
     {
         g_frm_uses_p1 = false;
         g_frm_uses_p2 = false;
-        uses_p3 = false;
+        g_frm_uses_p3 = false;
         g_frm_uses_ismand = false;
         g_max_function = 0;
         uses_p4 = false;
@@ -4344,7 +4344,7 @@ void init_misc()
     bitshiftless1 = bitshift-1;
     g_frm_uses_p1 = false;
     g_frm_uses_p2 = false;
-    uses_p3 = false;
+    g_frm_uses_p3 = false;
     uses_jump = false;
     g_frm_uses_ismand = false;
     uses_p4 = false;
@@ -4381,7 +4381,7 @@ static void parser_allocate()
     }
     g_frm_uses_p1 = false;
     g_frm_uses_p2 = false;
-    uses_p3 = false;
+    g_frm_uses_p3 = false;
     uses_p4 = false;
     uses_p5 = false;
 }

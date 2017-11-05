@@ -2296,7 +2296,7 @@ bool paramnotused(int parm)
         }
         break;
     case 2:
-        if (!uses_p3)
+        if (!g_frm_uses_p3)
         {
             ret = true;
         }
