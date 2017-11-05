@@ -836,11 +836,11 @@ void write_batch_parms(char const *colorinf, bool colorsonly, int maxcolor, int 
             }
         }
 
-        if (g_use_init_orbit == 2)
+        if (g_use_init_orbit == init_orbit_mode::pixel)
         {
             put_parm(" %s=pixel", "initorbit");
         }
-        else if (g_use_init_orbit == 1)
+        else if (g_use_init_orbit == init_orbit_mode::value)
         {
             put_parm(" %s=%.15g/%.15g", "initorbit", g_init_orbit.x, g_init_orbit.y);
         }

@@ -187,7 +187,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
         g_finite_attractor  = read_info.finattract != 0;
         g_init_orbit.x = read_info.initorbit[0];
         g_init_orbit.y = read_info.initorbit[1];
-        g_use_init_orbit = read_info.useinitorbit;
+        g_use_init_orbit = static_cast<init_orbit_mode>(read_info.useinitorbit);
         usr_periodicitycheck = read_info.periodicity;
     }
 
@@ -1100,7 +1100,7 @@ static void backwardscompat(FRACTAL_INFO *info)
         usr_distest = (info->ydots - 1) * 2;
         break;
     case fractal_type::MANDELLAMBDA:
-        g_use_init_orbit = 2;
+        g_use_init_orbit = init_orbit_mode::pixel;
         break;
     default:
         break;
