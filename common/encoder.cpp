@@ -584,7 +584,7 @@ bool encoder()
             int const num_bytes = rangeslen*2;
             save_info.tot_extend_len += extend_blk_len(num_bytes);
             std::vector<char> buffer;
-            for (int range : ranges)
+            for (int range : g_iteration_ranges)
             {
                 // ranges are stored as 16-bit ints in little-endian byte order
                 buffer.push_back(range & 0xFF);

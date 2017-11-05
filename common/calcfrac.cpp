@@ -746,11 +746,11 @@ int calcfract()
                 flip = 0;
                 m = flip;
                 altern = 32767;
-                numval = ranges[i++];
+                numval = g_iteration_ranges[i++];
                 if (numval < 0)
                 {
-                    altern = ranges[i++];    // sub-range iterations
-                    numval = ranges[i++];
+                    altern = g_iteration_ranges[i++];    // sub-range iterations
+                    numval = g_iteration_ranges[i++];
                 }
                 if (numval > (int)g_log_map_table_max_size || i >= rangeslen)
                 {

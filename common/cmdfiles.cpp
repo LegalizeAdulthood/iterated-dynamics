@@ -107,7 +107,7 @@ bailouts g_bail_out_test;            // test used for determining bailout
 double  g_inversion[3] = { 0.0 }; // radius, xcenter, ycenter
 int     rotate_lo = 0;
 int     rotate_hi = 0;          // cycling color range
-std::vector<int> ranges;        // iter->color ranges mapping
+std::vector<int> g_iteration_ranges;        // iter->color ranges mapping
 int     rangeslen = 0;          // size of ranges array
 BYTE g_map_clut[256][3];          // map= (default colors)
 bool g_map_specified = false;     // map= specified
@@ -527,7 +527,7 @@ static void initvars_fractal()          // init vars affecting calculation
     set_trig_array(3, "cosh");
     if (rangeslen)
     {
-        ranges.clear();
+        g_iteration_ranges.clear();
         rangeslen = 0;
     }
     usemag = true;                      // use center-mag, not corners
@@ -1740,7 +1740,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         bool resized = false;
         try
         {
-            ranges.resize(entries);
+            g_iteration_ranges.resize(entries);
             resized = true;
         }
         catch (std::bad_alloc const &)
@@ -1754,7 +1754,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         rangeslen = entries;
         for (int i = 0; i < rangeslen; ++i)
         {
-            ranges[i] = tmpranges[i];
+            g_iteration_ranges[i] = tmpranges[i];
         }
         return CMDARG_FRACTAL_PARAM;
     }

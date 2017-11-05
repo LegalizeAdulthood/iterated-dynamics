@@ -489,14 +489,14 @@ int read_overlay()      // read overlay/3D files, if reqr'd
 
     if (rangeslen) // free prior ranges
     {
-        ranges.clear();
+        g_iteration_ranges.clear();
         rangeslen = 0;
     }
 
     if (blk_4_info.got_data)
     {
         rangeslen = blk_4_info.length;
-        ranges = blk_4_info.range_data;
+        g_iteration_ranges = blk_4_info.range_data;
     }
 
     if (blk_5_info.got_data)

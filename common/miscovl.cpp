@@ -1102,12 +1102,12 @@ void write_batch_parms(char const *colorinf, bool colorsonly, int maxcolor, int 
                 {
                     put_parm("/");
                 }
-                if (ranges[i] == -1)
+                if (g_iteration_ranges[i] == -1)
                 {
-                    put_parm("-%d/", ranges[++i]);
+                    put_parm("-%d/", g_iteration_ranges[++i]);
                     ++i;
                 }
-                put_parm("%d", ranges[i++]);
+                put_parm("%d", g_iteration_ranges[i++]);
             }
         }
     }
