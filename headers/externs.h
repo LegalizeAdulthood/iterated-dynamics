@@ -147,7 +147,7 @@ extern char                  g_draw_mode;
 extern std::vector<double>   g_grid_x0;
 extern std::vector<double>   g_grid_x1;
 extern double              (*g_dx_pixel)();
-extern double                x_size_d;
+extern double                g_x_size_dots;
 extern std::vector<double>   g_grid_y0;
 extern std::vector<double>   g_grid_y1;
 extern double              (*g_dy_pixel)();

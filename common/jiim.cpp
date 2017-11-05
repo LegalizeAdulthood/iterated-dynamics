@@ -1300,7 +1300,7 @@ finish:
         g_final_aspect_ratio = g_screen_aspect;
         xdots = sxdots;
         ydots = sydots;
-        x_size_d = xdots - 1;
+        g_x_size_dots = xdots - 1;
         y_size_d = ydots - 1;
         sxoffs = 0;
         syoffs = 0;

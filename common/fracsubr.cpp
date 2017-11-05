@@ -452,10 +452,10 @@ init_restart:
     else
     {
         adjust_to_limits(1.0); // make sure all corners in valid range
-        g_delta_x  = (LDBL)(xxmax - xx3rd) / (LDBL)x_size_d; // calculate stepsizes
+        g_delta_x  = (LDBL)(xxmax - xx3rd) / (LDBL)g_x_size_dots; // calculate stepsizes
         g_delta_y  = (LDBL)(yymax - yy3rd) / (LDBL)y_size_d;
         g_delta_x2 = (LDBL)(xx3rd - xxmin) / (LDBL)y_size_d;
-        g_delta_y2 = (LDBL)(yy3rd - yymin) / (LDBL)x_size_d;
+        g_delta_y2 = (LDBL)(yy3rd - yymin) / (LDBL)g_x_size_dots;
         fill_dx_array();
     }
 
@@ -640,13 +640,13 @@ expand_retry:
 
     // calculate factors which plot real values to screen co-ords
     // calcfrac.c plot_orbit routines have comments about this
-    double ftemp = (double)((0.0-g_delta_y2) * g_delta_x2 * x_size_d * y_size_d
+    double ftemp = (double)((0.0-g_delta_y2) * g_delta_x2 * g_x_size_dots * y_size_d
                      - (xxmax-xx3rd) * (yy3rd-yymax));
     if (ftemp != 0)
     {
-        g_plot_mx1 = (double)(g_delta_x2 * x_size_d * y_size_d / ftemp);
-        g_plot_mx2 = (yy3rd-yymax) * x_size_d / ftemp;
-        g_plot_my1 = (double)((0.0-g_delta_y2) * x_size_d * y_size_d / ftemp);
+        g_plot_mx1 = (double)(g_delta_x2 * g_x_size_dots * y_size_d / ftemp);
+        g_plot_mx2 = (yy3rd-yymax) * g_x_size_dots / ftemp;
+        g_plot_my1 = (double)((0.0-g_delta_y2) * g_x_size_dots * y_size_d / ftemp);
         g_plot_my2 = (xxmax-xx3rd) * y_size_d / ftemp;
     }
     if (bf_math == bf_math_type::NONE)
