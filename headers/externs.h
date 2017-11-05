@@ -112,7 +112,7 @@ extern double                g_degree_minus_1_over_degree;
 extern BYTE                  g_dac_box[256][3];
 extern int                   g_dac_count;
 extern bool                  g_dac_learn;
-extern double                ddelmin;
+extern double                g_delta_min;
 extern int                   g_debug_flag;
 extern int                   g_decimals;
 extern int                   g_decomp[];

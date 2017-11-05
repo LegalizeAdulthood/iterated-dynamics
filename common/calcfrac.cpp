@@ -838,7 +838,7 @@ int calcfract()
         g_invert = 3; // so values will not be changed if we come back
     }
 
-    g_close_enough = ddelmin*pow(2.0, -(double)(abs(g_periodicity_check)));
+    g_close_enough = g_delta_min*pow(2.0, -(double)(abs(g_periodicity_check)));
     rqlim_save = rqlim;
     rqlim2 = sqrt(rqlim);
     if (g_integer_fractal)          // for integer routines (lambda)
@@ -896,7 +896,7 @@ int calcfract()
         {
             // not a stand-alone
             // next two lines in case periodicity changed
-            g_close_enough = ddelmin*pow(2.0, -(double)(abs(g_periodicity_check)));
+            g_close_enough = g_delta_min*pow(2.0, -(double)(abs(g_periodicity_check)));
             g_l_close_enough = (long)(g_close_enough * g_fudge_factor); // "close enough" value
             setsymmetry(g_symmetry, false);
             timer(0, g_calc_type); // non-standard fractal engine
@@ -1265,7 +1265,7 @@ static void perform_worklist()
         }
 
         // some common initialization for escape-time pixel level routines
-        g_close_enough = ddelmin*pow(2.0, -(double)(abs(g_periodicity_check)));
+        g_close_enough = g_delta_min*pow(2.0, -(double)(abs(g_periodicity_check)));
         g_l_close_enough = (long)(g_close_enough * g_fudge_factor); // "close enough" value
         g_keyboard_check_interval = g_max_keyboard_check_interval;
 

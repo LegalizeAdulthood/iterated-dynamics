@@ -977,7 +977,7 @@ UnityfpFractal()
 {
     double XXOne;
     XXOne = sqr(g_old_z.x) + sqr(g_old_z.y);
-    if ((XXOne > 2.0) || (fabs(XXOne - 1.0) < ddelmin))
+    if ((XXOne > 2.0) || (fabs(XXOne - 1.0) < g_delta_min))
     {
         return 1;
     }

@@ -717,7 +717,7 @@ void write_batch_parms(char const *colorinf, bool colorsonly, int maxcolor, int 
                 cvtcentermag(&Xctr, &Yctr, &Magnification, &Xmagfactor, &Rotation, &Skew);
                 put_parm(" %s=", "center-mag");
                 //          convert 1000 fudged long to double, 1000/1<<24 = 6e-5
-                put_parm(ddelmin > 6e-5 ? "%g/%g" : "%+20.17lf/%+20.17lf", Xctr, Yctr);
+                put_parm(g_delta_min > 6e-5 ? "%g/%g" : "%+20.17lf/%+20.17lf", Xctr, Yctr);
             }
             put_parm("/%.7Lg", Magnification); // precision of magnification not critical, but magnitude is
             // Round to avoid ugly decimals, precision here is not critical

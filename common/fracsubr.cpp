@@ -620,23 +620,23 @@ expand_retry:
 
     // for periodicity close-enough, and for unity:
     //     min(max(delx,delx2),max(dely,dely2))
-    ddelmin = fabs((double)delxx);
-    if (fabs((double)delxx2) > ddelmin)
+    g_delta_min = fabs((double)delxx);
+    if (fabs((double)delxx2) > g_delta_min)
     {
-        ddelmin = fabs((double)delxx2);
+        g_delta_min = fabs((double)delxx2);
     }
     if (fabs((double)delyy) > fabs((double)delyy2))
     {
-        if (fabs((double)delyy) < ddelmin)
+        if (fabs((double)delyy) < g_delta_min)
         {
-            ddelmin = fabs((double)delyy);
+            g_delta_min = fabs((double)delyy);
         }
     }
-    else if (fabs((double)delyy2) < ddelmin)
+    else if (fabs((double)delyy2) < g_delta_min)
     {
-        ddelmin = fabs((double)delyy2);
+        g_delta_min = fabs((double)delyy2);
     }
-    delmin = fudgetolong(ddelmin);
+    delmin = fudgetolong(g_delta_min);
 
     // calculate factors which plot real values to screen co-ords
     // calcfrac.c plot_orbit routines have comments about this
