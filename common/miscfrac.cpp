@@ -784,7 +784,7 @@ int diffusion()
                 (getcolor(x-1, y) == 0) && (getcolor(x-1, y-1) == 0))
         {
             // Erase moving point
-            if (show_orbit)
+            if (g_show_orbit)
             {
                 g_put_color(x, y, 0);
             }
@@ -854,7 +854,7 @@ int diffusion()
             }
 
             // Show the moving point
-            if (show_orbit)
+            if (g_show_orbit)
             {
                 g_put_color(x, y, RANDOM(g_colors-1)+1);
             }
@@ -2449,7 +2449,7 @@ int calcfroth()   // per pixel 1/2/g, called with row & col set
 
             g_color_iter++;
 
-            if (show_orbit)
+            if (g_show_orbit)
             {
                 if (driver_key_pressed())
                 {
@@ -2592,7 +2592,7 @@ int calcfroth()   // per pixel 1/2/g, called with row & col set
             }
             g_color_iter++;
 
-            if (show_orbit)
+            if (g_show_orbit)
             {
                 if (driver_key_pressed())
                 {
@@ -2697,7 +2697,7 @@ int calcfroth()   // per pixel 1/2/g, called with row & col set
             g_l_magnitude = g_l_temp_sqr_x + g_l_temp_sqr_y;
         }
     }
-    if (show_orbit)
+    if (g_show_orbit)
     {
         scrub_orbit();
     }

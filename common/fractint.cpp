@@ -604,7 +604,7 @@ bool check_key()
     int key = driver_key_pressed();
     if (key != 0)
     {
-        if (show_orbit)
+        if (g_show_orbit)
         {
             scrub_orbit();
         }
@@ -615,7 +615,7 @@ bool check_key()
         driver_get_key();
         if (!driver_diskp())
         {
-            show_orbit = !show_orbit;
+            g_show_orbit = !g_show_orbit;
         }
     }
     return false;

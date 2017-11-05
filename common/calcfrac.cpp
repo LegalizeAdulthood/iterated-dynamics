@@ -128,7 +128,7 @@ int g_pi_in_pixels = 0;                        // value of pi in pixels
 unsigned long lm = 0;                   // magnitude limit (CALCMAND)
 
 // ORBIT variables
-bool show_orbit = false;                // flag to turn on and off
+bool g_show_orbit = false;                // flag to turn on and off
 int g_orbit_save_index = 0;             // index into save_orbit array
 int g_orbit_color = 15;                 // XOR color
 
@@ -789,7 +789,7 @@ int calcfract()
     }
 
     // ORBIT stuff
-    show_orbit = start_show_orbit;
+    g_show_orbit = start_show_orbit;
     g_orbit_save_index = 0;
     g_orbit_color = 15;
     if (g_colors < 16)
@@ -2264,7 +2264,7 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
         check_freq = 2048;
     }
 
-    if (show_orbit)
+    if (g_show_orbit)
     {
         snd_time_write();
     }
@@ -2342,7 +2342,7 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
         {
             break;
         }
-        if (show_orbit)
+        if (g_show_orbit)
         {
             if (!g_integer_fractal)
             {
@@ -2692,7 +2692,7 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
         }
     }  // end while (g_color_iter++ < maxit)
 
-    if (show_orbit)
+    if (g_show_orbit)
     {
         scrub_orbit();
     }
@@ -2932,7 +2932,7 @@ plot_inside: // we're "inside"
             {
                 g_color_iter = g_max_iterations;
             }
-            if (show_orbit)
+            if (g_show_orbit)
             {
                 scrub_orbit();
             }
