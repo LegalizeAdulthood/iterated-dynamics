@@ -2939,7 +2939,7 @@ static bool long3dviewtransf(long3dvtinf *inf)
                 tmpy = (-inf->minvals[1]-inf->maxvals[1])/(2.0*g_fudge_factor); // center y
 
                 tmpx += ((double)g_x_shift1*(g_x_max-g_x_min))/(g_logical_screen_x_dots);
-                tmpy += ((double)yshift1*(g_y_max-g_y_min))/(g_logical_screen_y_dots);
+                tmpy += ((double)g_y_shift1*(g_y_max-g_y_min))/(g_logical_screen_y_dots);
                 tmpz = -((double)inf->maxvals[2]) / g_fudge_factor;
                 trans(tmpx, tmpy, tmpz, inf->doublemat1);
             }
@@ -3115,7 +3115,7 @@ static bool float3dviewtransf(float3dvtinf *inf)
                 tmpy = (-inf->minvals[1]-inf->maxvals[1])/(2.0); // center y
 
                 tmpx += ((double)g_x_shift1*(g_x_max-g_x_min))/(g_logical_screen_x_dots);
-                tmpy += ((double)yshift1*(g_y_max-g_y_min))/(g_logical_screen_y_dots);
+                tmpy += ((double)g_y_shift1*(g_y_max-g_y_min))/(g_logical_screen_y_dots);
                 tmpz = -(inf->maxvals[2]);
                 trans(tmpx, tmpy, tmpz, inf->doublemat1);
             }

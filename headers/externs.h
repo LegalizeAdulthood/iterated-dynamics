@@ -563,7 +563,7 @@ extern double                g_julia_c_y;
 extern int                   g_logical_screen_y_dots;
 extern long                  g_l_y_max;
 extern long                  g_l_y_min;
-extern int                   yshift1;
+extern int                   g_y_shift1;
 extern int                   yshift;
 extern int                   g_adjust_3d_y;
 extern double                g_y_3rd;

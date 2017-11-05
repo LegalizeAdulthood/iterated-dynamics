@@ -18,7 +18,7 @@ int yyadjust1;
 int g_eye_separation = 0;
 int g_glasses_type = 0;
 int g_x_shift1;
-int yshift1;
+int g_y_shift1;
 int g_adjust_3d_x = 0;
 int g_adjust_3d_y = 0;
 int red_local_left;
@@ -465,7 +465,7 @@ void plot_setup()
     g_x_shift = (int)((XSHIFT * (double)g_logical_screen_x_dots)/100);
     g_x_shift1 = g_x_shift;
     yshift = (int)((YSHIFT * (double)g_logical_screen_y_dots)/100);
-    yshift1 = yshift;
+    g_y_shift1 = yshift;
 
     if (g_glasses_type)
     {
