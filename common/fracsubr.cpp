@@ -59,7 +59,7 @@ int save_orbit[NUM_SAVE_ORBIT] = { 0 };           // array to save orbit values
 
 void free_grid_pointers()
 {
-    dx0.clear();
+    g_grid_x0.clear();
     dy0.clear();
     dx1.clear();
     dy1.clear();
@@ -72,7 +72,7 @@ void free_grid_pointers()
 void set_grid_pointers()
 {
     free_grid_pointers();
-    dx0.resize(xdots);
+    g_grid_x0.resize(xdots);
     dy1.resize(xdots);
 
     dy0.resize(ydots);
@@ -90,13 +90,13 @@ void fill_dx_array()
 {
     if (g_use_grid)
     {
-        dx0[0] = xxmin;              // fill up the x, y grids
+        g_grid_x0[0] = xxmin;              // fill up the x, y grids
         dy0[0] = yymax;
         dy1[0] = 0;
         dx1[0] = dy1[0];
         for (int i = 1; i < xdots; i++)
         {
-            dx0[i] = (double)(dx0[0] + i*g_delta_x);
+            g_grid_x0[i] = (double)(g_grid_x0[0] + i*g_delta_x);
             dy1[i] = (double)(dy1[0] - i*g_delta_y2);
         }
         for (int i = 1; i < ydots; i++)

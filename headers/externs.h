@@ -144,7 +144,7 @@ extern bool                  g_confirm_file_deletes;
 extern double                g_evolve_dist_per_x;
 extern double                g_evolve_dist_per_y;
 extern char                  g_draw_mode;
-extern std::vector<double>   dx0;
+extern std::vector<double>   g_grid_x0;
 extern std::vector<double>   dx1;
 extern double              (*dxpixel)();
 extern double                x_size_d;
