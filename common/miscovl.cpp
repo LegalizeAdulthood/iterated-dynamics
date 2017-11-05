@@ -1215,7 +1215,7 @@ void write_batch_parms(char const *colorinf, bool colorsonly, int maxcolor, int 
         {
             put_parm(" %s=%d", "stereo", g_glasses_type);
             put_parm(" %s=%d", "interocular", g_eye_separation);
-            put_parm(" %s=%d", "converge", xadjust);
+            put_parm(" %s=%d", "converge", g_converge_x_adjust);
             put_parm(" %s=%d/%d/%d/%d", "crop",
                      g_red_crop_left, g_red_crop_right, g_blue_crop_left, g_blue_crop_right);
             put_parm(" %s=%d/%d", "bright",

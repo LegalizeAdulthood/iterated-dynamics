@@ -146,7 +146,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
             g_blue_crop_right = read_info.blue_crop_right;
             g_red_bright      = read_info.red_bright;
             g_blue_bright     = read_info.blue_bright;
-            xadjust         = read_info.xadjust;
+            g_converge_x_adjust         = read_info.xadjust;
             g_eye_separation   = read_info.eyeseparation;
             g_glasses_type     = read_info.glassestype;
         }

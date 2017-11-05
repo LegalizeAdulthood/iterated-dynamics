@@ -3509,12 +3509,12 @@ static bool get_funny_glasses_params()
         if (fractype == fractal_type::IFS3D || fractype == fractal_type::LLORENZ3D || fractype == fractal_type::FPLORENZ3D)
         {
             g_eye_separation =  2;
-            xadjust       = -2;
+            g_converge_x_adjust       = -2;
         }
         else
         {
             g_eye_separation =  3;
-            xadjust       =  0;
+            g_converge_x_adjust       =  0;
         }
     }
 
@@ -3543,7 +3543,7 @@ static bool get_funny_glasses_params()
 
     prompts3d[++k] = "Convergence adjust (positive = spread greater)";
     uvalues[k].type = 'i';
-    uvalues[k].uval.ival = xadjust;
+    uvalues[k].uval.ival = g_converge_x_adjust;
 
     prompts3d[++k] = "Left  red image crop (% of screen)";
     uvalues[k].type = 'i';
@@ -3587,7 +3587,7 @@ static bool get_funny_glasses_params()
 
     k = 0;
     g_eye_separation   =  uvalues[k++].uval.ival;
-    xadjust         =  uvalues[k++].uval.ival;
+    g_converge_x_adjust         =  uvalues[k++].uval.ival;
     g_red_crop_left   =  uvalues[k++].uval.ival;
     g_red_crop_right  =  uvalues[k++].uval.ival;
     g_blue_crop_left  =  uvalues[k++].uval.ival;

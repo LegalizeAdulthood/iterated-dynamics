@@ -125,7 +125,7 @@ std::string g_raytrace_filename{"fract001"};
 bool g_preview = false;
 bool g_show_box = false;
 int g_preview_factor = 20;
-int xadjust = 0;
+int g_converge_x_adjust = 0;
 int yadjust = 0;
 int xxadjust;
 int yyadjust;

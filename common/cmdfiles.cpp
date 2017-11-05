@@ -599,7 +599,7 @@ static void initvars_3d()               // init vars affecting 3d
     SPHERE = FALSE;
     g_preview = false;
     g_show_box = false;
-    xadjust = 0;
+    g_converge_x_adjust = 0;
     yadjust = 0;
     g_eye_separation = 0;
     g_glasses_type = 0;
@@ -3140,7 +3140,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
     if (variable == "converge")
     {
         // converg=?
-        xadjust = numval;
+        g_converge_x_adjust = numval;
         return CMDARG_FRACTAL_PARAM | CMDARG_3D_PARAM;
     }
 
