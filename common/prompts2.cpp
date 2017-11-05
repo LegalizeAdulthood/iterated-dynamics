@@ -560,7 +560,7 @@ int get_toggles2()
 
     choices[++k] = "              to   color (1 ... 255)";
     uvalues[k].type = 'i';
-    old_rotate_hi = rotate_hi;
+    old_rotate_hi = g_color_cycle_range_hi;
     uvalues[k].uval.ival = old_rotate_hi;
 
     int const old_help_mode = g_help_mode;
@@ -660,11 +660,11 @@ int get_toggles2()
     ++k;
 
     rotate_lo = uvalues[++k].uval.ival;
-    rotate_hi = uvalues[++k].uval.ival;
-    if (rotate_lo < 0 || rotate_hi > 255 || rotate_lo > rotate_hi)
+    g_color_cycle_range_hi = uvalues[++k].uval.ival;
+    if (rotate_lo < 0 || g_color_cycle_range_hi > 255 || rotate_lo > g_color_cycle_range_hi)
     {
         rotate_lo = old_rotate_lo;
-        rotate_hi = old_rotate_hi;
+        g_color_cycle_range_hi = old_rotate_hi;
     }
 
     return changed ? 1 : 0;

@@ -1241,9 +1241,9 @@ void write_batch_parms(char const *colorinf, bool colorsonly, int maxcolor, int 
 
     if (!colorsonly)
     {
-        if (rotate_lo != 1 || rotate_hi != 255)
+        if (rotate_lo != 1 || g_color_cycle_range_hi != 255)
         {
-            put_parm(" %s=%d/%d", "cyclerange", rotate_lo, rotate_hi);
+            put_parm(" %s=%d/%d", "cyclerange", rotate_lo, g_color_cycle_range_hi);
         }
 
         if (g_base_hertz != 440)

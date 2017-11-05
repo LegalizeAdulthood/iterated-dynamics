@@ -74,7 +74,7 @@ main_state big_while_loop(bool *const kbdmore, bool *const stacked, bool const r
             sydots  = ydots;
             syoffs = 0;
             sxoffs = 0;
-            rotate_hi = (rotate_hi < g_colors) ? rotate_hi : g_colors - 1;
+            g_color_cycle_range_hi = (g_color_cycle_range_hi < g_colors) ? g_color_cycle_range_hi : g_colors - 1;
 
             memcpy(g_old_dac_box, g_dac_box, 256*3); // save the DAC
 
@@ -2454,7 +2454,7 @@ static void save_history_info()
     current.transparent[0]       = (short)transparent[0]            ;
     current.transparent[1]       = (short)transparent[1]            ;
     current.rotate_lo            = (short)rotate_lo                 ;
-    current.rotate_hi            = (short)rotate_hi                 ;
+    current.rotate_hi            = (short)g_color_cycle_range_hi                 ;
     current.distestwidth         = (short)g_distance_estimator_width_factor              ;
     current.mxmaxfp              = g_julibrot_x_max                   ;
     current.mxminfp              = g_julibrot_x_min                   ;
@@ -2638,7 +2638,7 @@ static void restore_history_info(int i)
     transparent[0]        = last.transparent[0] ;
     transparent[1]        = last.transparent[1] ;
     rotate_lo             = last.rotate_lo      ;
-    rotate_hi             = last.rotate_hi      ;
+    g_color_cycle_range_hi             = last.rotate_hi      ;
     g_distance_estimator_width_factor          = last.distestwidth   ;
     g_julibrot_x_max               = last.mxmaxfp        ;
     g_julibrot_x_min               = last.mxminfp        ;

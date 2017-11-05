@@ -76,7 +76,7 @@ void rotate(int direction)      // rotate-the-palette routine
         direction = 1;                    // and set a rotate direction
     }
 
-    rotate_max = (rotate_hi < g_colors) ? rotate_hi : g_colors-1;
+    rotate_max = (g_color_cycle_range_hi < g_colors) ? g_color_cycle_range_hi : g_colors-1;
     rotate_size = rotate_max - rotate_lo + 1;
     last = rotate_max;                   // last box that was filled
     next = rotate_lo;                    // next box to be filled
