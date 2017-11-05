@@ -623,7 +623,7 @@ int calcfract()
         g_std_calc_mode = '1';
         usr_stdcalcmode = g_std_calc_mode;
     }
-    if (truecolor)
+    if (g_truecolor)
     {
         check_writefile(g_light_name, ".tga");
         if (!startdisk1(g_light_name.c_str(), nullptr, false))
@@ -635,7 +635,7 @@ int calcfract()
         }
         else
         {
-            truecolor = false;
+            g_truecolor = false;
         }
     }
     if (!use_grid)
@@ -977,7 +977,7 @@ int calcfract()
     {
         close_snd();
     }
-    if (truecolor)
+    if (g_truecolor)
     {
         enddisk();
     }

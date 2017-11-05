@@ -887,13 +887,13 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
             i = get_cmd_string();
         }
         driver_unstack_screen();
-        if (g_evolving && truecolor)
+        if (g_evolving && g_truecolor)
         {
-            truecolor = false;          // truecolor doesn't play well with the evolver
+            g_truecolor = false;          // truecolor doesn't play well with the evolver
         }
         if (g_max_iterations > old_maxit && g_inside_color >= COLOR_BLACK && g_calc_status == calc_status_value::COMPLETED &&
                 curfractalspecific->calctype == standard_fractal && !g_log_map_flag &&
-                !truecolor &&    // recalc not yet implemented with truecolor
+                !g_truecolor &&    // recalc not yet implemented with truecolor
                 !(usr_stdcalcmode == 't' && g_fill_color > -1) &&
                 // tesseral with fill doesn't work
                 !(usr_stdcalcmode == 'o') &&
@@ -1659,9 +1659,9 @@ static main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdm
             i = get_cmd_string();
         }
         driver_unstack_screen();
-        if (g_evolving && truecolor)
+        if (g_evolving && g_truecolor)
         {
-            truecolor = false;          // truecolor doesn't play well with the evolver
+            g_truecolor = false;          // truecolor doesn't play well with the evolver
         }
         if (i > 0)
         {

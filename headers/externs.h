@@ -495,7 +495,7 @@ extern std::string           g_temp_dir;
 extern double                g_smallest_window_display_size;
 extern int                   g_total_passes;
 extern int                   g_transparent_color_3d[];
-extern bool                  truecolor;
+extern bool                  g_truecolor;
 extern int                   truemode;
 extern double                twopi;
 extern char                  useinitorbit;
