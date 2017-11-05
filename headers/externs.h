@@ -421,7 +421,6 @@ extern int                   g_resume_len;
 extern bool                  g_resuming;
 extern bool                  g_random_seed_flag;
 extern int                   g_rhombus_stack[];
-extern int                   root;
 extern std::vector<DComplex> roots;
 extern int                   rotate_hi;
 extern int                   rotate_lo;

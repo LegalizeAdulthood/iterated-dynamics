@@ -95,10 +95,9 @@ NewtonSetup()           // Newton/NewtBasin Routines
     {
         degree = 3;   // defaults to 3, but 2 is possible
     }
-    root = 1;
 
     // precalculated values
-    g_newton_r_over_d       = (double)root / (double)degree;
+    g_newton_r_over_d       = 1.0 / (double)degree;
     g_degree_minus_1_over_degree      = (double)(degree - 1) / (double)degree;
     g_max_color     = 0;
     threshold    = .3*PI/degree; // less than half distance between roots

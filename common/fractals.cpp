@@ -63,7 +63,7 @@ const long l16triglim = 8L << 16;       // domain limit of fast trig functions
 LComplex g_l_coefficient, g_l_old_z, g_l_new_z, g_l_param, g_l_init, g_l_temp, ltmp2, g_l_param2;
 long g_l_temp_sqr_x, g_l_temp_sqr_y;
 int g_max_color;
-int root, degree, g_basin;
+int degree, g_basin;
 double g_newton_r_over_d, g_degree_minus_1_over_degree, threshold;
 DComplex tmp2;
 DComplex g_marks_coefficient;
