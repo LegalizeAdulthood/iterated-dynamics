@@ -511,7 +511,7 @@ int ant()
     }
 
     // set random seed for reproducibility
-    if (!rflag && g_params[5] == 1)
+    if (!g_random_seed_flag && g_params[5] == 1)
     {
         --rseed;
     }
@@ -521,7 +521,7 @@ int ant()
     }
 
     srand(rseed);
-    if (!rflag)
+    if (!g_random_seed_flag)
     {
         ++rseed;
     }

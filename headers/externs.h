@@ -419,7 +419,7 @@ extern bool                  g_reset_periodicity;
 extern std::vector<BYTE>     g_resume_data;
 extern int                   g_resume_len;
 extern bool                  g_resuming;
-extern bool                  rflag;
+extern bool                  g_random_seed_flag;
 extern int                   rhombus_stack[];
 extern int                   root;
 extern std::vector<DComplex> roots;

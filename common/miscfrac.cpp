@@ -427,7 +427,7 @@ int plasma()
         g_params[3] = 1;
     }
 
-    if (!rflag && g_params[2] == 1)
+    if (!g_random_seed_flag && g_params[2] == 1)
     {
         --rseed;
     }
@@ -482,7 +482,7 @@ int plasma()
         getpix  = (U16(*)(int, int))getcolor;
     }
     srand(rseed);
-    if (!rflag)
+    if (!g_random_seed_flag)
     {
         ++rseed;
     }
@@ -667,7 +667,7 @@ int diffusion()
     }
 
     srand(rseed);
-    if (!rflag)
+    if (!g_random_seed_flag)
     {
         ++rseed;
     }
@@ -1823,7 +1823,7 @@ int cellular()
     k_1 = (S16)(k - 1); // Highest state value, k=3 has highest state value of 2
     rule_digits = (S16)((r * 2 + 1) * k_1 + 1); // Number of digits in the rule
 
-    if (!rflag && randparam == -1)
+    if (!g_random_seed_flag && randparam == -1)
     {
         --rseed;
     }
@@ -1855,7 +1855,7 @@ int cellular()
     }
 
     srand(rseed);
-    if (!rflag)
+    if (!g_random_seed_flag)
     {
         ++rseed;
     }
@@ -1949,7 +1949,7 @@ int cellular()
     }
     else
     {
-        if (rflag || randparam == 0 || randparam == -1)
+        if (g_random_seed_flag || randparam == 0 || randparam == -1)
         {
             for (col = 0; col <= g_i_x_stop; col++)
             {
@@ -1984,7 +1984,7 @@ int cellular()
         for (U32 big_row = (U32)start_row; big_row < lnnmbr; big_row++)
         {
             thinking(1, "Cellular thinking (higher start row takes longer)");
-            if (rflag || randparam == 0 || randparam == -1)
+            if (g_random_seed_flag || randparam == 0 || randparam == -1)
             {
                 // Use a random border
                 for (int i = 0; i <= r; i++)
@@ -2049,7 +2049,7 @@ int cellular()
 contloop:
     for (row = start_row; row <= g_i_y_stop; row++)
     {
-        if (rflag || randparam == 0 || randparam == -1)
+        if (g_random_seed_flag || randparam == 0 || randparam == -1)
         {
             // Use a random border
             for (int i = 0; i <= r; i++)

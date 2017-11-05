@@ -2389,7 +2389,7 @@ static void save_history_info()
     current.potential[0]         = g_potential_params[0]               ;
     current.potential[1]         = g_potential_params[1]               ;
     current.potential[2]         = g_potential_params[2]               ;
-    current.rflag                = (short) (rflag ? 1 : 0);
+    current.rflag                = (short) (g_random_seed_flag ? 1 : 0);
     current.rseed                = (short)rseed                     ;
     current.inside               = (short)g_inside_color                    ;
     current.logmap               = g_log_map_flag                   ;
@@ -2569,7 +2569,7 @@ static void restore_history_info(int i)
     g_potential_params[0]           = last.potential[0]   ;
     g_potential_params[1]           = last.potential[1]   ;
     g_potential_params[2]           = last.potential[2]   ;
-    rflag                 = last.rflag != 0;
+    g_random_seed_flag                 = last.rflag != 0;
     rseed                 = last.rseed          ;
     g_inside_color                = last.inside         ;
     g_log_map_flag               = last.logmap         ;

@@ -1087,7 +1087,7 @@ void write_batch_parms(char const *colorinf, bool colorsonly, int maxcolor, int 
             put_parm(" %s=%d", "periodicity", g_periodicity_check);
         }
 
-        if (rflag)
+        if (g_random_seed_flag)
         {
             put_parm(" %s=%d", "rseed", rseed);
         }

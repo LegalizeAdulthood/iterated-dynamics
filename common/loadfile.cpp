@@ -109,7 +109,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
             g_colors = read_info.colors;
         }
         g_potential_flag       = (g_potential_params[0] != 0.0);
-        rflag         = read_info.rflag != 0;
+        g_random_seed_flag         = read_info.rflag != 0;
         rseed         = read_info.rseed;
         g_inside_color        = read_info.inside;
         g_log_map_flag       = read_info.logmapold;
