@@ -542,7 +542,7 @@ extern int                   g_work_pass;
 extern int                   g_work_symmetry;
 extern long                  g_l_x_3rd;
 extern int                   g_converge_x_adjust;
-extern double                xcjul;
+extern double                g_julia_c_x;
 extern int                   g_logical_screen_x_dots;
 extern long                  g_l_x_max;
 extern long                  g_l_x_min;

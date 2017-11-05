@@ -1104,17 +1104,17 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
                 }
                 fractype = curfractalspecific->tojulia;
                 curfractalspecific = &fractalspecific[static_cast<int>(fractype)];
-                if (xcjul == BIG || ycjul == BIG)
+                if (g_julia_c_x == BIG || ycjul == BIG)
                 {
                     g_params[0] = (g_x_max + g_x_min) / 2;
                     g_params[1] = (g_y_max + g_y_min) / 2;
                 }
                 else
                 {
-                    g_params[0] = xcjul;
+                    g_params[0] = g_julia_c_x;
                     g_params[1] = ycjul;
                     ycjul = BIG;
-                    xcjul = BIG;
+                    g_julia_c_x = BIG;
                 }
                 jxxmin = g_save_x_min;
                 jxxmax = g_save_x_max;
