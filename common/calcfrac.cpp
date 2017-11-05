@@ -137,7 +137,7 @@ int g_i_x_stop = 0;
 int g_i_y_start = 0;
 int g_i_y_stop = 0;                         // start, stop here
 symmetry_type symmetry = symmetry_type::NONE; // symmetry flag
-bool reset_periodicity = false;         // true if escape time pixel rtn to reset
+bool g_reset_periodicity = false;         // true if escape time pixel rtn to reset
 int g_keyboard_check_interval = 0;
 int g_max_keyboard_check_interval = 0;                   // avoids checking keyboard too often
 
@@ -1400,10 +1400,10 @@ static int diffusion_scan()
 
 // Calculate the point
 #define calculate               \
-    reset_periodicity = true;   \
+    g_reset_periodicity = true;   \
     if ((*calctype)() == -1)    \
         return -1;              \
-    reset_periodicity = false
+    g_reset_periodicity = false
 
 static int diffusion_engine()
 {
@@ -1883,7 +1883,7 @@ static int standard_calc(int passnum)
     while (row <= g_i_y_stop)
     {
         g_current_row = row;
-        reset_periodicity = true;
+        g_reset_periodicity = true;
         while (col <= g_i_x_stop)
         {
             // on 2nd pass of two, skip even pts
@@ -1903,7 +1903,7 @@ static int standard_calc(int passnum)
                     return -1;          // interrupted
                 }
                 resuming = false;       // reset so quick_calc works
-                reset_periodicity = false;
+                g_reset_periodicity = false;
                 if (passnum == 1)       // first pass, copy pixel and bump col
                 {
                     if ((row&1) == 0 && row < g_i_y_stop)
@@ -2121,7 +2121,7 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
     {
         g_old_color_iter = (g_max_iterations/5)*4;       // don't check until nearly done
     }
-    else if (reset_periodicity)
+    else if (g_reset_periodicity)
     {
         g_old_color_iter = 255;               // don't check periodicity 1st 250 iterations
     }
@@ -3478,7 +3478,7 @@ int  bound_trace_main()
     max_putline_length = 0; // reset max_putline_length
     for (int currow = g_i_y_start; currow <= g_i_y_stop; currow++)
     {
-        reset_periodicity = true; // reset for a new row
+        g_reset_periodicity = true; // reset for a new row
         g_color = bkcolor;
         for (int curcol = g_i_x_start; curcol <= g_i_x_stop; curcol++)
         {
@@ -3503,7 +3503,7 @@ int  bound_trace_main()
                 add_worklist(xxstart, xxstop, curcol, currow, g_i_y_stop, currow, 0, worksym);
                 return -1;
             }
-            reset_periodicity = false; // normal periodicity checking
+            g_reset_periodicity = false; // normal periodicity checking
 
             /*
             This next line may cause a few more pixels to be calculated,
@@ -3575,7 +3575,7 @@ int  bound_trace_main()
             {
                 // no hole
                 g_color = bkcolor;
-                reset_periodicity = true;
+                g_reset_periodicity = true;
                 continue;
             }
 
@@ -3663,7 +3663,7 @@ int  bound_trace_main()
                 }
             }
             while (trail_col != curcol || trail_row != currow);
-            reset_periodicity = true; // reset after a trace/fill
+            g_reset_periodicity = true; // reset after a trace/fill
             g_color = bkcolor;
         }
     }
@@ -3757,7 +3757,7 @@ static int solid_guess()
         {
             g_current_row = 0;
             memset(&tprefix[1][0][0], 0, maxxblk*maxyblk*2); // noskip flags off
-            reset_periodicity = true;
+            g_reset_periodicity = true;
             row = g_i_y_start;
             for (col = g_i_x_start; col <= g_i_x_stop; col += maxblock)
             {
@@ -3767,7 +3767,7 @@ static int solid_guess()
                     add_worklist(xxstart, xxstop, xxbegin, yystart, yystop, yybegin, 0, worksym);
                     goto exit_solidguess;
                 }
-                reset_periodicity = false;
+                g_reset_periodicity = false;
             }
         }
         else
@@ -3782,7 +3782,7 @@ static int solid_guess()
             {
                 // calc the row below
                 row = y+blocksize;
-                reset_periodicity = true;
+                g_reset_periodicity = true;
                 for (col = g_i_x_start; col <= g_i_x_stop; col += maxblock)
                 {
                     i = (*calctype)();
@@ -3790,10 +3790,10 @@ static int solid_guess()
                     {
                         break;
                     }
-                    reset_periodicity = false;
+                    g_reset_periodicity = false;
                 }
             }
-            reset_periodicity = false;
+            g_reset_periodicity = false;
             if (i == -1 || guessrow(true, y, blocksize)) // interrupted?
             {
                 if (y < yystart)
@@ -3863,7 +3863,7 @@ static int solid_guess()
     {
         blocksize = blocksize >> 1;
     }
-    reset_periodicity = false;
+    g_reset_periodicity = false;
     while ((blocksize = blocksize >> 1) >= 2)
     {
         if (stoppass > 0)
@@ -5090,9 +5090,9 @@ static int tesscol(int x, int y1, int y2)
     int colcolor, i;
     col = x;
     row = y1;
-    reset_periodicity = true;
+    g_reset_periodicity = true;
     colcolor = (*calctype)();
-    reset_periodicity = false;
+    g_reset_periodicity = false;
     while (++row <= y2)
     {
         // generate the column
@@ -5114,9 +5114,9 @@ static int tessrow(int x1, int x2, int y)
     int rowcolor, i;
     row = y;
     col = x1;
-    reset_periodicity = true;
+    g_reset_periodicity = true;
     rowcolor = (*calctype)();
-    reset_periodicity = false;
+    g_reset_periodicity = false;
     while (++col <= x2)
     {
         // generate the row
@@ -5145,7 +5145,7 @@ static long autologmap()
     long old_maxit;
     mincolour = LONG_MAX;
     row = 0;
-    reset_periodicity = false;
+    g_reset_periodicity = false;
     old_maxit = g_max_iterations;
     for (col = 0; col < xstop; col++) // top row
     {

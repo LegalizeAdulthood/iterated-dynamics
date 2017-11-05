@@ -45,7 +45,7 @@ long calcmandfpasm()
     {
         g_old_color_iter = 0;      // don't check periodicity
     }
-    else if (reset_periodicity)
+    else if (g_reset_periodicity)
     {
         g_old_color_iter = g_max_iterations - 255;
     }

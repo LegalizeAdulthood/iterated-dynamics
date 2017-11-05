@@ -1421,7 +1421,7 @@ int popcorn()   // subset of std engine
     tempsqrx = g_l_temp_sqr_x;
     for (row = start_row; row <= g_i_y_stop; row++)
     {
-        reset_periodicity = true;
+        g_reset_periodicity = true;
         for (col = 0; col <= g_i_x_stop; col++)
         {
             if (standard_fractal() == -1) // interrupted
@@ -1430,7 +1430,7 @@ int popcorn()   // subset of std engine
                 put_resume(sizeof(row), &row, 0);
                 return (-1);
             }
-            reset_periodicity = false;
+            g_reset_periodicity = false;
         }
     }
     g_calc_status = calc_status_value::COMPLETED;

@@ -415,7 +415,7 @@ extern int                   g_red_crop_left;
 extern int                   g_red_crop_right;
 extern int                   g_release;
 extern int                   g_resave_flag;
-extern bool                  reset_periodicity;
+extern bool                  g_reset_periodicity;
 extern std::vector<BYTE>     resume_data;
 extern int                   resume_len;
 extern bool                  resuming;
