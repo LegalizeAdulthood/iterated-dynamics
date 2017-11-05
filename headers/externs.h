@@ -366,7 +366,7 @@ extern double                g_orbit_corner_3_y;
 extern double                g_orbit_corner_max_y;
 extern double                g_orbit_corner_min_y;
 extern double                g_params[];
-extern double evolve_x_parameter_range;
+extern double                g_evolve_x_parameter_range;
 extern double evolve_y_parameter_range;
 extern double                parmzoom;
 extern DComplex              parm2;

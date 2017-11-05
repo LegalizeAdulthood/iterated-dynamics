@@ -190,7 +190,7 @@ static void main_restart(int const argc, char const *const argv[], bool &stacked
     g_filename_stack_index = -1; // init loaded files stack
 
     g_evolving = 0;
-    evolve_x_parameter_range = 4;
+    g_evolve_x_parameter_range = 4;
     g_evolve_new_x_parameter_offset = -2.0;
     g_evolve_x_parameter_offset = -2.0;
     evolve_y_parameter_range = 3;
