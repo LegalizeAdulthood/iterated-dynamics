@@ -273,7 +273,7 @@ int Lsystem()
         return -1;
     }
 
-    overflow = false;           // reset integer math overflow flag
+    g_overflow = false;           // reset integer math overflow flag
 
     order = (int)param[0];
     if (order <= 0)
@@ -282,7 +282,7 @@ int Lsystem()
     }
     if (usr_floatflag)
     {
-        overflow = true;
+        g_overflow = true;
     }
     else
     {
@@ -329,11 +329,11 @@ int Lsystem()
     {
         stopmsg(STOPMSG_NONE, "insufficient memory, try a lower order");
     }
-    else if (overflow)
+    else if (g_overflow)
     {
         lsys_turtlestatef ts;
 
-        overflow = false;
+        g_overflow = false;
 
         ts.stackoflow = false;
         ts.maxangle = maxangle;
@@ -369,7 +369,7 @@ int Lsystem()
             }
             drawLSysF(rulef_cmds[0], &ts, &rulef_cmds[1], order);
         }
-        overflow = false;
+        g_overflow = false;
     }
     free_rules_mem();
     free_lcmds();
@@ -738,7 +738,7 @@ void lsysi_dodrawlt(lsys_turtlestatei *cmd)
 
 lsys_cmd *findsize(lsys_cmd *command, lsys_turtlestatei *ts, lsys_cmd **rules, int depth)
 {
-    if (overflow)       // integer math routines overflowed
+    if (g_overflow)       // integer math routines overflowed
     {
         return nullptr;
     }
@@ -885,7 +885,7 @@ lsys_cmd *drawLSysI(lsys_cmd *command, lsys_turtlestatei *ts, lsys_cmd **rules, 
 {
     bool tran;
 
-    if (overflow)       // integer math routines overflowed
+    if (g_overflow)       // integer math routines overflowed
     {
         return nullptr;
     }

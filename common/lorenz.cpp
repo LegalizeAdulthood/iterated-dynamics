@@ -1624,9 +1624,9 @@ int orbit2dlong()
 
         col = (int)((multiply(cvt.a, x, bitshift) + multiply(cvt.b, y, bitshift) + cvt.e) >> bitshift);
         row = (int)((multiply(cvt.c, x, bitshift) + multiply(cvt.d, y, bitshift) + cvt.f) >> bitshift);
-        if (overflow)
+        if (g_overflow)
         {
-            overflow = false;
+            g_overflow = false;
             return ret;
         }
         if (col >= 0 && col < xdots && row >= 0 && row < ydots)

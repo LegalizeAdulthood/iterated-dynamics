@@ -1101,7 +1101,7 @@ static void verhulst()          // P. F. Verhulst (1845)
         Population = (parm.y == 0) ? SEED : parm.y;
     }
 
-    overflow = false;
+    g_overflow = false;
 
     for (unsigned long counter = 0UL; counter < filter_cycles ; counter++)
     {
@@ -1269,7 +1269,7 @@ int LongBifurcVerhulstTrig()
     g_l_temp.y = g_l_temp.x - multiply(g_l_temp.x, g_l_temp.x, bitshift);
     lPopulation += multiply(lRate, g_l_temp.y, bitshift);
 #endif
-    return (overflow);
+    return (g_overflow);
 }
 
 int BifurcStewartTrig()
@@ -1292,7 +1292,7 @@ int LongBifurcStewartTrig()
     lPopulation = multiply(lPopulation, lRate,      bitshift);
     lPopulation -= g_fudge_factor;
 #endif
-    return (overflow);
+    return (g_overflow);
 }
 
 int BifurcSetTrigPi()
@@ -1312,7 +1312,7 @@ int LongBifurcSetTrigPi()
     LCMPLXtrig0(g_l_temp, g_l_temp);
     lPopulation = multiply(lRate, g_l_temp.x, bitshift);
 #endif
-    return (overflow);
+    return (g_overflow);
 }
 
 int BifurcAddTrigPi()
@@ -1332,7 +1332,7 @@ int LongBifurcAddTrigPi()
     LCMPLXtrig0(g_l_temp, g_l_temp);
     lPopulation += multiply(lRate, g_l_temp.x, bitshift);
 #endif
-    return (overflow);
+    return (g_overflow);
 }
 
 int BifurcLambdaTrig()
@@ -1354,7 +1354,7 @@ int LongBifurcLambdaTrig()
     g_l_temp.y = g_l_temp.x - multiply(g_l_temp.x, g_l_temp.x, bitshift);
     lPopulation = multiply(lRate, g_l_temp.y, bitshift);
 #endif
-    return (overflow);
+    return (g_overflow);
 }
 
 #define LCMPLXpwr(arg1, arg2, out)    Arg2->l = (arg1); Arg1->l = (arg2);\
@@ -1382,7 +1382,7 @@ int LongBifurcMay()
     lPopulation = multiply(lRate, lPopulation, bitshift);
     lPopulation = divide(lPopulation, g_l_temp.x, bitshift);
 #endif
-    return (overflow);
+    return (g_overflow);
 }
 
 bool BifurcMaySetup()
@@ -1465,7 +1465,7 @@ int lyapunov()
     {
         return -1;
     }
-    overflow = false;
+    g_overflow = false;
     if (param[1] == 1)
     {
         Population = (1.0+rand())/(2.0+RAND_MAX);
@@ -1635,7 +1635,7 @@ int lyapunov_cycles_in_c(long filter_cycles, double a, double b)
             Rate = lyaRxy[count] ? a : b;
             if (curfractalspecific->orbitcalc())
             {
-                overflow = true;
+                g_overflow = true;
                 goto jumpout;
             }
         }
@@ -1647,14 +1647,14 @@ int lyapunov_cycles_in_c(long filter_cycles, double a, double b)
             Rate = lyaRxy[count] ? a : b;
             if (curfractalspecific->orbitcalc())
             {
-                overflow = true;
+                g_overflow = true;
                 goto jumpout;
             }
             temp = fabs(Rate-2.0*Rate*Population);
             total *= temp;
             if (total == 0)
             {
-                overflow = true;
+                g_overflow = true;
                 goto jumpout;
             }
         }
@@ -1671,7 +1671,7 @@ int lyapunov_cycles_in_c(long filter_cycles, double a, double b)
     }
 
 jumpout:
-    if (overflow || total <= 0 || (temp = log(total) + lnadjust) > 0)
+    if (g_overflow || total <= 0 || (temp = log(total) + lnadjust) > 0)
     {
         color = 0;
     }

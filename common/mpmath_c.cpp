@@ -741,7 +741,7 @@ int ComplexNewton()
 
     FPUcplxmul(&temp, &cdegree, &cd1);
     FPUcplxdiv(&tmp, &cd1, &g_old_z);
-    if (overflow)
+    if (g_overflow)
     {
         return (1);
     }
@@ -800,7 +800,7 @@ int ComplexBasin()
 
     FPUcplxmul(&temp, &cdegree, &cd1);
     FPUcplxdiv(&tmp, &cd1, &g_old_z);
-    if (overflow)
+    if (g_overflow)
     {
         return (1);
     }

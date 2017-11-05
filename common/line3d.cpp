@@ -410,7 +410,7 @@ int line3d(BYTE * pixels, unsigned linelen)
                     cur.x = (int)(((lv[0] + 32768L) >> 16) + xxadjust);
                     cur.y = (int)(((lv[1] + 32768L) >> 16) + yyadjust);
                 }
-                if (usr_floatflag || overflow || RAY)
+                if (usr_floatflag || g_overflow || RAY)
                 {
                     v[0] = lv[0];
                     v[1] = lv[1];
@@ -477,7 +477,7 @@ int line3d(BYTE * pixels, unsigned linelen)
 
                 cur.x = (int)(((lv[0] + 32768L) >> 16) + xxadjust);
                 cur.y = (int)(((lv[1] + 32768L) >> 16) + yyadjust);
-                if (FILLTYPE >= 5 && !overflow)
+                if (FILLTYPE >= 5 && !g_overflow)
                 {
                     f_cur.x = (float) lv0[0];
                     f_cur.x /= 65536.0F;
@@ -488,7 +488,7 @@ int line3d(BYTE * pixels, unsigned linelen)
                 }
             }
 
-            if (usr_floatflag || overflow || RAY)
+            if (usr_floatflag || g_overflow || RAY)
                 // do in float if integer math overflowed or doing Ray trace
             {
                 // slow float version for comparison

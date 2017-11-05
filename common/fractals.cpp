@@ -73,7 +73,7 @@ std::vector<MPC> g_mpc_roots;
 long g_fudge_half;
 DComplex pwr;
 int     bitshiftless1;                  // bit shift less 1
-bool overflow = false;
+bool g_overflow = false;
 
 #define modulus(z)       (sqr((z).x)+sqr((z).y))
 #define conjugate(pz)   ((pz)->y = 0.0 - (pz)->y)
@@ -387,12 +387,12 @@ lcpower(LComplex *base, int exp, LComplex *result, int bitshift)
 {
     if (exp < 0)
     {
-        overflow = lcpower(base, -exp, result, bitshift) != 0;
+        g_overflow = lcpower(base, -exp, result, bitshift) != 0;
         LCMPLXrecip(*result, *result);
-        return overflow ? 1 : 0;
+        return g_overflow ? 1 : 0;
     }
 
-    overflow = false;
+    g_overflow = false;
     lxt = base->x;
     lyt = base->y;
 
@@ -412,9 +412,9 @@ lcpower(LComplex *base, int exp, LComplex *result, int bitshift)
     {
         lt2 = multiply(lxt, lxt, bitshift) - multiply(lyt, lyt, bitshift);
         lyt = multiply(lxt, lyt, bitshiftless1);
-        if (overflow)
+        if (g_overflow)
         {
-            return overflow;
+            return g_overflow;
         }
         lxt = lt2;
 
@@ -428,9 +428,9 @@ lcpower(LComplex *base, int exp, LComplex *result, int bitshift)
     }
     if (result->x == 0 && result->y == 0)
     {
-        overflow = true;
+        g_overflow = true;
     }
-    return overflow;
+    return g_overflow;
 }
 #endif
 
@@ -1076,7 +1076,7 @@ longCmplxZpowerFractal()
     }
     else
     {
-        overflow = true;
+        g_overflow = true;
     }
     g_l_new_z.x += g_long_param->x;
     g_l_new_z.y += g_long_param->y;
@@ -1415,11 +1415,11 @@ PopcornFractalFn()
 }
 
 #define FIX_OVERFLOW(arg)           \
-    if (overflow)                   \
+    if (g_overflow)                   \
     {                               \
         (arg).x = g_fudge_factor;   \
         (arg).y = 0;                \
-        overflow = false;           \
+        g_overflow = false;           \
    }
 
 int
@@ -1428,7 +1428,7 @@ LPopcornFractalFn()
 #if !defined(XFRACT)
     LComplex ltmpx, ltmpy;
 
-    overflow = false;
+    g_overflow = false;
 
     // ltmpx contains the generalized value of the old real "x" equation
     LCMPLXtimesreal(g_l_param2, g_l_old_z.y, g_l_temp); // tmp = (C * old.y)
@@ -2126,7 +2126,7 @@ TrigXTrigfpFractal()
 // call float version of fractal if integer math overflow
 static int TryFloatFractal(int (*fpFractal)())
 {
-    overflow = false;
+    g_overflow = false;
     // lold had better not be changed!
     g_old_z.x = g_l_old_z.x;
     g_old_z.x /= g_fudge_factor;
@@ -2159,7 +2159,7 @@ TrigXTrigFractal()
     LCMPLXtrig0(g_l_old_z, g_l_temp);
     LCMPLXtrig1(g_l_old_z, ltmp2);
     LCMPLXmult(g_l_temp, ltmp2, g_l_new_z);
-    if (overflow)
+    if (g_overflow)
     {
         TryFloatFractal(TrigXTrigfpFractal);
     }
@@ -2269,13 +2269,13 @@ TrigZsqrdFractal() // this doesn't work very well
     if ((labs(g_l_temp.x) > l16triglim_2 || labs(g_l_temp.y) > l16triglim_2) &&
             save_release > 1900)
     {
-        overflow = true;
+        g_overflow = true;
     }
     else
     {
         LCMPLXtrig0(g_l_temp, g_l_new_z);
     }
-    if (overflow)
+    if (g_overflow)
     {
         TryFloatFractal(TrigZsqrdfpFractal);
     }

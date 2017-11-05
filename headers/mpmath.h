@@ -123,7 +123,7 @@ extern void (*dtrig3)();
     {                                                   \
         long denom = lsqr((arg).x) + lsqr((arg).y);     \
         if (denom == 0L)                                  \
-            overflow = true;                            \
+            g_overflow = true;                            \
         else                                            \
         {                                               \
             (out).x = divide((arg).x, denom, bitshift);   \

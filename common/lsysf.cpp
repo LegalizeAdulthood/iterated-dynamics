@@ -281,7 +281,7 @@ findsize(lsysf_cmd *command, lsys_turtlestatef *ts, lsysf_cmd **rules, int depth
 {
     bool tran;
 
-    if (overflow)       // integer math routines overflowed
+    if (g_overflow)       // integer math routines overflowed
     {
         return nullptr;
     }
@@ -434,7 +434,7 @@ drawLSysF(lsysf_cmd *command, lsys_turtlestatef *ts, lsysf_cmd **rules, int dept
 {
     bool tran;
 
-    if (overflow)       // integer math routines overflowed
+    if (g_overflow)       // integer math routines overflowed
     {
         return nullptr;
     }

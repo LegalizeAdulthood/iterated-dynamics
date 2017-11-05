@@ -273,7 +273,7 @@ long multiply(long x, long y, int n)
     long l = (long)(((float) x) * ((float) y)/(float)(1 << n));
     if (l == 0x7fffffff)
     {
-        overflow = true;
+        g_overflow = true;
     }
     return l;
 }
@@ -2231,7 +2231,7 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
         g_magnitude = g_l_magnitude;
         min_orbit = 100000.0;
     }
-    overflow = false;           // reset integer math overflow flag
+    g_overflow = false;           // reset integer math overflow flag
 
     curfractalspecific->per_pixel(); // initialize the calculations
 
@@ -2313,7 +2313,7 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
             /* if above exit taken, the later test vs dem_delta will place this
                        point on the boundary, because mag(old)<bailout just now */
 
-            if (curfractalspecific->orbitcalc() || (overflow && save_release > 1826))
+            if (curfractalspecific->orbitcalc() || (g_overflow && save_release > 1826))
             {
                 if (use_old_distest)
                 {
@@ -2339,7 +2339,7 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
 
         // the usual case
         else if ((curfractalspecific->orbitcalc() && g_inside_color != STARTRAIL)
-                 || overflow)
+                 || g_overflow)
         {
             break;
         }
@@ -2805,7 +2805,7 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
     {
         double dist;
         dist = sqr(g_new_z.x) + sqr(g_new_z.y);
-        if (dist == 0 || overflow)
+        if (dist == 0 || g_overflow)
         {
             dist = 0;
         }

@@ -161,7 +161,7 @@ static void my_floating_point_err(int sig)
 {
     if (sig != 0)
     {
-        overflow = true;
+        g_overflow = true;
     }
 }
 
@@ -170,7 +170,7 @@ static void my_floating_point_err(int sig)
 */
 void initasmvars()
 {
-    overflow = false;
+    g_overflow = false;
 }
 
 static void main_restart(int const argc, char const *const argv[], bool &stacked)

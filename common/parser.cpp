@@ -201,9 +201,9 @@ unsigned int chars_in_formula;
 
 #if !defined(XFRACT)
 #define ChkLongDenom(denom)                                 \
-    if ((denom == 0 || overflow) && save_release > 1920)    \
+    if ((denom == 0 || g_overflow) && save_release > 1920)    \
     {                                                       \
-        overflow = true;                                    \
+        g_overflow = true;                                    \
         return;                                             \
     }                                                       \
     else if (denom == 0)                                    \
@@ -214,7 +214,7 @@ unsigned int chars_in_formula;
     if (fabs(denom) <= DBL_MIN)                             \
     {                                                       \
         if (save_release > 1920)                            \
-            overflow = true;                                \
+            g_overflow = true;                                \
         return;                                             \
     }
 
@@ -350,7 +350,7 @@ static void lStkFunct(void (*fct)())   // call lStk via dStk
     }
     else
     {
-        overflow = true;
+        g_overflow = true;
     }
 }
 
@@ -958,7 +958,7 @@ void lStkMod()
                 multiply(Arg1->l.y, Arg1->l.y, bitshift);
     if (Arg1->l.x < 0)
     {
-        overflow = true;
+        g_overflow = true;
     }
     Arg1->l.y = 0L;
 }
@@ -969,7 +969,7 @@ void lStkModOld()
                 multiply(Arg2->l.y, Arg1->l.y, bitshift);
     if (Arg1->l.x < 0)
     {
-        overflow = true;
+        g_overflow = true;
     }
     Arg1->l.y = 0L;
 }
@@ -1236,7 +1236,7 @@ void mStkRecip()
     mod = *MPadd(*MPmul(Arg1->m.x, Arg1->m.x), *MPmul(Arg1->m.y, Arg1->m.y));
     if (mod.Mant == 0L)
     {
-        overflow = true;
+        g_overflow = true;
         return;
     }
     Arg1->m.x = *MPdiv(Arg1->m.x, mod);
@@ -1863,7 +1863,7 @@ void lStkPwr()
     }
     else
     {
-        overflow = true;
+        g_overflow = true;
     }
     Arg1--;
     Arg2--;
@@ -2922,7 +2922,7 @@ static bool ParseStr(char const *Str, int pass)
 
 int Formula()
 {
-    if (g_formula_name.empty() || overflow)
+    if (g_formula_name.empty() || g_overflow)
     {
         return 1;
     }
@@ -2977,7 +2977,7 @@ int Formula()
     case L_MATH:
         g_l_new_z = v[3].a.l;
         g_l_old_z = g_l_new_z;
-        if (overflow)
+        if (g_overflow)
         {
             return 1;
         }
@@ -2993,7 +2993,7 @@ int form_per_pixel()
     {
         return 1;
     }
-    overflow = false;
+    g_overflow = false;
     jump_index = 0;
     OpPtr = jump_index;
     StoPtr = OpPtr;
@@ -3126,7 +3126,7 @@ int form_per_pixel()
 #endif
     }
 
-    if (overflow)
+    if (g_overflow)
     {
         return 0;
     }
