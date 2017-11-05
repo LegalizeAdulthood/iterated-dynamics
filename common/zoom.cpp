@@ -132,7 +132,7 @@ void drawbox(bool drawit)
     fxwidth = g_save_x_max-sx3rd;
     fxskew  = sx3rd-sxmin;
     fydepth = sy3rd-symax;
-    fyskew  = symin-sy3rd;
+    fyskew  = g_save_y_min-sy3rd;
     fxadj   = zoom_box_width*zoom_box_skew;
 
     if (bf_math != bf_math_type::NONE)
@@ -517,7 +517,7 @@ static void zmo_calc(double dx, double dy, double *newx, double *newy, double ft
 
     // calc new corner by extending from current screen corners
     *newx = sxmin + tempx*(g_save_x_max-sx3rd)/ftemp + tempy*(sx3rd-sxmin)/ftemp;
-    *newy = symax + tempy*(sy3rd-symax)/ftemp + tempx*(symin-sy3rd)/ftemp;
+    *newy = symax + tempy*(sy3rd-symax)/ftemp + tempx*(g_save_y_min-sy3rd)/ftemp;
 }
 
 void zoomoutbf() // for ctl-enter, calc corners for zooming out
@@ -604,7 +604,7 @@ void zoomoutdbl() // for ctl-enter, calc corners for zooming out
     savxxmin = xxmin;
     savyymax = yymax;
     zmo_calc(sxmin-savxxmin, symax-savyymax, &xxmin, &yymax, ftemp);
-    zmo_calc(g_save_x_max-savxxmin, symin-savyymax, &xxmax, &yymin, ftemp);
+    zmo_calc(g_save_x_max-savxxmin, g_save_y_min-savyymax, &xxmax, &yymin, ftemp);
     zmo_calc(sx3rd-savxxmin, sy3rd-savyymax, &xx3rd, &yy3rd, ftemp);
 }
 

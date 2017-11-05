@@ -470,7 +470,7 @@ extern int                   sxoffs;
 extern double                sy3rd;
 extern int                   g_screen_y_dots;
 extern double                symax;
-extern double                symin;
+extern double                g_save_y_min;
 extern symmetry_type         g_symmetry;
 extern int                   syoffs;
 extern bool                  g_make_parameter_file;

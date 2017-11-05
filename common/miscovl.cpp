@@ -2598,7 +2598,7 @@ void flip_image(int key)
         sxmin = xxmax + xxmin - xx3rd;
         symax = yymax + yymin - yy3rd;
         g_save_x_max = xx3rd;
-        symin = yy3rd;
+        g_save_y_min = yy3rd;
         sx3rd = xxmax;
         sy3rd = yymin;
         if (bf_math != bf_math_type::NONE)
@@ -2630,7 +2630,7 @@ void flip_image(int key)
         sxmin = xx3rd;
         symax = yy3rd;
         g_save_x_max = xxmax + xxmin - xx3rd;
-        symin = yymax + yymin - yy3rd;
+        g_save_y_min = yymax + yymin - yy3rd;
         sx3rd = xxmin;
         sy3rd = yymax;
         if (bf_math != bf_math_type::NONE)
@@ -2662,7 +2662,7 @@ void flip_image(int key)
         sxmin = xxmax;
         symax = yymin;
         g_save_x_max = xxmin;
-        symin = yymax;
+        g_save_y_min = yymax;
         sx3rd = xxmax + xxmin - xx3rd;
         sy3rd = yymax + yymin - yy3rd;
         if (bf_math != bf_math_type::NONE)
