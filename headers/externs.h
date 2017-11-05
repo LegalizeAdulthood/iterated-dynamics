@@ -121,7 +121,7 @@ extern long                  g_l_delta_min;
 extern long                  g_l_delta_x2;
 extern long                  g_l_delta_x;
 extern LDBL                  g_delta_x2;
-extern LDBL                  delxx;
+extern LDBL                  g_delta_x;
 extern long                  dely2;
 extern long                  dely;
 extern LDBL                  delyy2;

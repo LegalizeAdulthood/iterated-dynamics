@@ -96,7 +96,7 @@ void fill_dx_array()
         dx1[0] = dy1[0];
         for (int i = 1; i < xdots; i++)
         {
-            dx0[i] = (double)(dx0[0] + i*delxx);
+            dx0[i] = (double)(dx0[0] + i*g_delta_x);
             dy1[i] = (double)(dy1[0] - i*delyy2);
         }
         for (int i = 1; i < ydots; i++)
@@ -452,7 +452,7 @@ init_restart:
     else
     {
         adjust_to_limits(1.0); // make sure all corners in valid range
-        delxx  = (LDBL)(xxmax - xx3rd) / (LDBL)x_size_d; // calculate stepsizes
+        g_delta_x  = (LDBL)(xxmax - xx3rd) / (LDBL)x_size_d; // calculate stepsizes
         delyy  = (LDBL)(yymax - yy3rd) / (LDBL)y_size_d;
         g_delta_x2 = (LDBL)(xx3rd - xxmin) / (LDBL)y_size_d;
         delyy2 = (LDBL)(yy3rd - yymin) / (LDBL)x_size_d;
@@ -467,7 +467,7 @@ init_restart:
         ymin  = fudgetolong(yymin);
         ymax  = fudgetolong(yymax);
         y3rd  = fudgetolong(yy3rd);
-        g_l_delta_x  = fudgetolong((double)delxx);
+        g_l_delta_x  = fudgetolong((double)g_delta_x);
         dely  = fudgetolong((double)delyy);
         g_l_delta_x2 = fudgetolong((double)g_delta_x2);
         dely2 = fudgetolong((double)delyy2);
@@ -482,7 +482,7 @@ init_restart:
     {
         if (g_integer_fractal && (g_invert == 0) && g_use_grid)
         {
-            if ((g_l_delta_x  == 0 && delxx  != 0.0)
+            if ((g_l_delta_x  == 0 && g_delta_x  != 0.0)
                     || (g_l_delta_x2 == 0 && g_delta_x2 != 0.0)
                     || (dely  == 0 && delyy  != 0.0)
                     || (dely2 == 0 && delyy2 != 0.0))
@@ -540,7 +540,7 @@ expand_retry:
                the limit of resolution */
             for (int i = 1; i < xdots; i++)
             {
-                dx0 = (double)(dx0 + (double)delxx);
+                dx0 = (double)(dx0 + (double)g_delta_x);
                 dy1 = (double)(dy1 - (double)delyy2);
             }
             for (int i = 1; i < ydots; i++)
@@ -610,7 +610,7 @@ expand_retry:
             fill_dx_array();       // fill up the x, y grids
 
             // re-set corners to match reality
-            xxmax = (double)(xxmin + (xdots-1)*delxx + (ydots-1)*g_delta_x2);
+            xxmax = (double)(xxmin + (xdots-1)*g_delta_x + (ydots-1)*g_delta_x2);
             yymin = (double)(yymax - (ydots-1)*delyy - (xdots-1)*delyy2);
             xx3rd = (double)(xxmin + (ydots-1)*g_delta_x2);
             yy3rd = (double)(yymax - (ydots-1)*delyy);
@@ -620,7 +620,7 @@ expand_retry:
 
     // for periodicity close-enough, and for unity:
     //     min(max(delx,delx2),max(dely,dely2))
-    g_delta_min = fabs((double)delxx);
+    g_delta_min = fabs((double)g_delta_x);
     if (fabs((double)g_delta_x2) > g_delta_min)
     {
         g_delta_min = fabs((double)g_delta_x2);
