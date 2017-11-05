@@ -1869,7 +1869,7 @@ gfp_top:
         paramvalues[promptnum].uval.dval = g_julibrot_origin_fp;
         paramvalues[promptnum].type = 'f';
         choices[promptnum++] = "Location of z origin";
-        paramvalues[promptnum].uval.dval = g_depth_fp;
+        paramvalues[promptnum].uval.dval = g_julibrot_depth_fp;
         paramvalues[promptnum].type = 'f';
         choices[promptnum++] = "Depth of z";
         paramvalues[promptnum].uval.dval = g_height_fp;
@@ -2042,7 +2042,7 @@ gfp_top:
         g_julibrot_3d_mode = paramvalues[promptnum++].uval.ch.val;
         g_eyes_fp     = (float)paramvalues[promptnum++].uval.dval;
         g_julibrot_origin_fp   = (float)paramvalues[promptnum++].uval.dval;
-        g_depth_fp    = (float)paramvalues[promptnum++].uval.dval;
+        g_julibrot_depth_fp    = (float)paramvalues[promptnum++].uval.dval;
         g_height_fp   = (float)paramvalues[promptnum++].uval.dval;
         widthfp    = (float)paramvalues[promptnum++].uval.dval;
         g_dist_fp     = (float)paramvalues[promptnum++].uval.dval;

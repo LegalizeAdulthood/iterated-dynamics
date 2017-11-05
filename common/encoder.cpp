@@ -966,7 +966,7 @@ static void setup_save_info(FRACTAL_INFO *save_info)
     save_info->myminfp = g_julibrot_y_min;
     save_info->zdots = (short) zdots;
     save_info->originfp = g_julibrot_origin_fp;
-    save_info->depthfp = g_depth_fp;
+    save_info->depthfp = g_julibrot_depth_fp;
     save_info->heightfp = g_height_fp;
     save_info->widthfp = widthfp;
     save_info->distfp = g_dist_fp;

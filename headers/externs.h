@@ -122,7 +122,7 @@ extern long                  dely2;
 extern long                  dely;
 extern LDBL                  delyy2;
 extern LDBL                  delyy;
-extern float                 g_depth_fp;
+extern float                 g_julibrot_depth_fp;
 extern unsigned long         g_diffusion_counter;
 extern unsigned long         g_diffusion_limit;
 extern bool                  g_disk_16_bit;

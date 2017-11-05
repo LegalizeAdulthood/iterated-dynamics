@@ -49,7 +49,7 @@ float g_height_fp  = 7.0F;
 float widthfp   = 10.0F;
 float g_dist_fp    = 24.0F;
 float g_eyes_fp    = 2.5F;
-float g_depth_fp   = 8.0F;
+float g_julibrot_depth_fp   = 8.0F;
 float brratiofp = 1.0F;
 static long width, dist, depth, brratio;
 #ifndef XFRACT
@@ -82,7 +82,7 @@ JulibrotSetup()
     y_per_inchfp = (yymax - yymin) / g_height_fp;
     inch_per_xdotfp = widthfp / xdots;
     inch_per_ydotfp = g_height_fp / ydots;
-    initzfp = g_julibrot_origin_fp - (g_depth_fp / 2);
+    initzfp = g_julibrot_origin_fp - (g_julibrot_depth_fp / 2);
     if (g_julibrot_3d_mode == 0)
     {
         RightEyefp.x = 0.0;
@@ -125,7 +125,7 @@ JulibrotSetup()
         mymin = (long)(g_julibrot_y_min * fg);
         mymax = (long)(g_julibrot_y_max * fg);
         long origin = (long)(g_julibrot_origin_fp * fg16);
-        depth = (long)(g_depth_fp * fg16);
+        depth = (long)(g_julibrot_depth_fp * fg16);
         width = (long)(widthfp * fg16);
         dist = (long)(g_dist_fp * fg16);
         eyes = (long)(g_eyes_fp * fg16);
@@ -210,11 +210,11 @@ jbfp_per_pixel()
 {
     jxfp = ((Perfp->x - xpixelfp) * initzfp / g_dist_fp - xpixelfp) * x_per_inchfp;
     jxfp += xoffsetfp;
-    djxfp = (g_depth_fp / g_dist_fp) * (Perfp->x - xpixelfp) * x_per_inchfp / zdots;
+    djxfp = (g_julibrot_depth_fp / g_dist_fp) * (Perfp->x - xpixelfp) * x_per_inchfp / zdots;
 
     jyfp = ((Perfp->y - ypixelfp) * initzfp / g_dist_fp - ypixelfp) * y_per_inchfp;
     jyfp += yoffsetfp;
-    djyfp = g_depth_fp / g_dist_fp * (Perfp->y - ypixelfp) * y_per_inchfp / zdots;
+    djyfp = g_julibrot_depth_fp / g_dist_fp * (Perfp->y - ypixelfp) * y_per_inchfp / zdots;
 
     return (1);
 }

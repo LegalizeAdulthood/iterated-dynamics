@@ -571,7 +571,7 @@ static void initvars_fractal()          // init vars affecting calculation
     widthfp = 10;
     g_dist_fp = 24;
     g_eyes_fp = 2.5F;
-    g_depth_fp = 8;
+    g_julibrot_depth_fp = 8;
     g_new_orbit_type = fractal_type::JULIA;
     zdots = 128;
     initvars_3d();
@@ -2025,7 +2025,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         }
         if (totparms > 2)
         {
-            g_depth_fp = (float)floatval[2];
+            g_julibrot_depth_fp = (float)floatval[2];
         }
         if (totparms > 3)
         {
