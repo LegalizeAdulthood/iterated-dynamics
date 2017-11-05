@@ -133,7 +133,7 @@ void fill_lx_array()
 void fractal_floattobf()
 {
     init_bf_dec(getprecdbl(CURRENTREZ));
-    floattobf(bfxmin, xxmin);
+    floattobf(g_bf_x_min, xxmin);
     floattobf(g_bf_x_max, xxmax);
     floattobf(g_bf_y_min, yymin);
     floattobf(g_bf_y_max, yymax);
@@ -708,7 +708,7 @@ void adjust_cornerbf()
     }
 
     // ftemp=fabs(xx3rd-xxmin);
-    abs_a_bf(sub_bf(bftemp, g_bf_x_3rd, bfxmin));
+    abs_a_bf(sub_bf(bftemp, g_bf_x_3rd, g_bf_x_min));
 
     // ftemp2=fabs(xxmax-xx3rd);
     abs_a_bf(sub_bf(bftemp2, g_bf_x_max, g_bf_x_3rd));
@@ -721,7 +721,7 @@ void adjust_cornerbf()
                 && cmp_bf(g_bf_y_3rd, g_bf_y_max) != 0)
         {
             // xx3rd = xxmin;
-            copy_bf(g_bf_x_3rd, bfxmin);
+            copy_bf(g_bf_x_3rd, g_bf_x_min);
         }
     }
 
@@ -753,7 +753,7 @@ void adjust_cornerbf()
 
     // else if (ftemp2*10000 < ftemp && xx3rd != xxmin)
     if (cmp_bf(mult_bf_int(btmp1, bftemp2, 10000), bftemp) < 0
-            && cmp_bf(g_bf_x_3rd, bfxmin) != 0)
+            && cmp_bf(g_bf_x_3rd, g_bf_x_min) != 0)
     {
         // yy3rd = yymax;
         copy_bf(g_bf_y_3rd, g_bf_y_max);
@@ -853,7 +853,7 @@ static void adjust_to_limitsbf(double expand)
     floattobf(blimit, limit);
     floattobf(bexpand, expand);
 
-    add_bf(bcenterx, bfxmin, g_bf_x_max);
+    add_bf(bcenterx, g_bf_x_min, g_bf_x_max);
     half_a_bf(bcenterx);
 
     // centery = (yymin+yymax)/2;
@@ -861,12 +861,12 @@ static void adjust_to_limitsbf(double expand)
     half_a_bf(bcentery);
 
     // if (xxmin == centerx) {
-    if (cmp_bf(bfxmin, bcenterx) == 0)
+    if (cmp_bf(g_bf_x_min, bcenterx) == 0)
     {
         // ohoh, infinitely thin, fix it
         smallest_add_bf(g_bf_x_max);
         // bfxmin -= bfxmax-centerx;
-        sub_a_bf(bfxmin, sub_bf(btmp1, g_bf_x_max, bcenterx));
+        sub_a_bf(g_bf_x_min, sub_bf(btmp1, g_bf_x_max, bcenterx));
     }
 
     // if (bfymin == centery)
@@ -891,7 +891,7 @@ static void adjust_to_limitsbf(double expand)
 
     // setup array for easier manipulation
     // cornerx[0] = xxmin;
-    copy_bf(bcornerx[0], bfxmin);
+    copy_bf(bcornerx[0], g_bf_x_min);
 
     // cornerx[1] = xxmax;
     copy_bf(bcornerx[1], g_bf_x_max);
@@ -901,7 +901,7 @@ static void adjust_to_limitsbf(double expand)
 
     // cornerx[3] = xxmin+(xxmax-xx3rd);
     sub_bf(bcornerx[3], g_bf_x_max, g_bf_x_3rd);
-    add_a_bf(bcornerx[3], bfxmin);
+    add_a_bf(bcornerx[3], g_bf_x_min);
 
     // cornery[0] = yymax;
     copy_bf(bcornery[0], g_bf_y_max);
@@ -1049,7 +1049,7 @@ static void adjust_to_limitsbf(double expand)
     }
 
     // xxmin = cornerx[0] - adjx;
-    sub_bf(bfxmin, bcornerx[0], badjx);
+    sub_bf(g_bf_x_min, bcornerx[0], badjx);
     // xxmax = cornerx[1] - adjx;
     sub_bf(g_bf_x_max, bcornerx[1], badjx);
     // xx3rd = cornerx[2] - adjx;

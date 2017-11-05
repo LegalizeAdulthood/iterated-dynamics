@@ -46,7 +46,7 @@ bf_t big_pi = BIG_NULL;                                              // bflength
 // for testing only
 
 // used by other routines
-bf_t bfxmin = BIG_NULL, g_bf_x_max = BIG_NULL, g_bf_y_min = BIG_NULL, g_bf_y_max = BIG_NULL, g_bf_x_3rd = BIG_NULL, g_bf_y_3rd = BIG_NULL;      // bflength+2
+bf_t g_bf_x_min = BIG_NULL, g_bf_x_max = BIG_NULL, g_bf_y_min = BIG_NULL, g_bf_y_max = BIG_NULL, g_bf_x_3rd = BIG_NULL, g_bf_y_3rd = BIG_NULL;      // bflength+2
 bf_t g_bf_save_x_min = BIG_NULL, g_bf_save_x_max = BIG_NULL, g_bf_save_y_min = BIG_NULL, g_bf_save_y_max = BIG_NULL, g_bf_save_x_3rd = BIG_NULL, g_bf_save_y_3rd = BIG_NULL;// bflength+2
 bf_t bfparms[10];                                    // (bflength+2)*10
 bf_t bftmp = BIG_NULL;
@@ -275,7 +275,7 @@ static void init_bf_2()
     // this area is safe - use for variables that are used outside fractal
     // generation - e.g. zoom box variables
     ptr  = maxstack;
-    bfxmin     = bnroot+ptr;
+    g_bf_x_min     = bnroot+ptr;
     ptr += bflength+2;
     g_bf_x_max     = bnroot+ptr;
     ptr += bflength+2;
@@ -338,9 +338,9 @@ static int save_bf_vars()
     {
         unsigned int mem = (bflength+2)*22;  // 6 corners + 6 save corners + 10 params
         g_bf_save_len = bflength;
-        memcpy(bnroot, bfxmin, mem);
+        memcpy(bnroot, g_bf_x_min, mem);
         // scrub old high area
-        memset(bfxmin, 0, mem);
+        memset(g_bf_x_min, 0, mem);
         ret = 0;
     }
     else
@@ -361,7 +361,7 @@ static int restore_bf_vars()
         return (-1);
     }
     ptr  = bnroot;
-    convert_bf(bfxmin, ptr, bflength, g_bf_save_len);
+    convert_bf(g_bf_x_min, ptr, bflength, g_bf_save_len);
     ptr += g_bf_save_len+2;
     convert_bf(g_bf_x_max, ptr, bflength, g_bf_save_len);
     ptr += g_bf_save_len+2;

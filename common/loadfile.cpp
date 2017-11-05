@@ -503,7 +503,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
     {
         bf_math = bf_math_type::BIGNUM;
         init_bf_length(read_info.bflength);
-        memcpy((char *) bfxmin, &blk_5_info.apm_data[0], blk_5_info.length);
+        memcpy((char *) g_bf_x_min, &blk_5_info.apm_data[0], blk_5_info.length);
     }
     else
     {
@@ -2181,7 +2181,7 @@ static void bfsetup_convert_to_screen()
     bt_tmp2 = alloc_stack(rbflength+2);
 
     // xx3rd-xxmin
-    sub_bf(bt_inter1, g_bf_x_3rd, bfxmin);
+    sub_bf(bt_inter1, g_bf_x_3rd, g_bf_x_min);
     // yymin-yymax
     sub_bf(bt_inter2, g_bf_y_min, g_bf_y_max);
     // (xx3rd-xxmin)*(yymin-yymax)
@@ -2190,7 +2190,7 @@ static void bfsetup_convert_to_screen()
     // yymax-yy3rd
     sub_bf(bt_inter1, g_bf_y_max, g_bf_y_3rd);
     // xxmax-xxmin
-    sub_bf(bt_inter2, g_bf_x_max, bfxmin);
+    sub_bf(bt_inter2, g_bf_x_max, g_bf_x_min);
     // (yymax-yy3rd)*(xxmax-xxmin)
     mult_bf(bt_tmp2, bt_inter1, bt_inter2);
 
@@ -2206,11 +2206,11 @@ static void bfsetup_convert_to_screen()
     mult_bf(bt_a, bt_xd, bt_inter1);
 
     // b =  xd*(xx3rd-xxmin)
-    sub_bf(bt_inter1, g_bf_x_3rd, bfxmin);
+    sub_bf(bt_inter1, g_bf_x_3rd, g_bf_x_min);
     mult_bf(bt_b, bt_xd, bt_inter1);
 
     // e = -(a*xxmin + b*yymax)
-    mult_bf(bt_tmp1, bt_a, bfxmin);
+    mult_bf(bt_tmp1, bt_a, g_bf_x_min);
     mult_bf(bt_tmp2, bt_b, g_bf_y_max);
     neg_a_bf(add_bf(bt_e, bt_tmp1, bt_tmp2));
 
@@ -2224,7 +2224,7 @@ static void bfsetup_convert_to_screen()
     // yymin-yy3rd
     sub_bf(bt_inter1, g_bf_y_min, g_bf_y_3rd);
     // xxmax-xxmin
-    sub_bf(bt_inter2, g_bf_x_max, bfxmin);
+    sub_bf(bt_inter2, g_bf_x_max, g_bf_x_min);
     // (yymin-yy3rd)*(xxmax-xxmin)
     mult_bf(bt_tmp2, bt_inter1, bt_inter2);
 
@@ -2244,7 +2244,7 @@ static void bfsetup_convert_to_screen()
     mult_bf(bt_d, bt_yd, bt_inter1);
 
     // f = -(c*xxmin + d*yymax)
-    mult_bf(bt_tmp1, bt_c, bfxmin);
+    mult_bf(bt_tmp1, bt_c, g_bf_x_min);
     mult_bf(bt_tmp2, bt_d, g_bf_y_max);
     neg_a_bf(add_bf(bt_f, bt_tmp1, bt_tmp2));
 

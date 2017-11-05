@@ -288,19 +288,19 @@ void cvtcentermagbf(bf_t Xctr, bf_t Yctr, LDBL *Magnification, double *Xmagfacto
 
     // simple normal case first
     // if (xx3rd == xxmin && yy3rd == yymin)
-    if (!cmp_bf(g_bf_x_3rd, bfxmin) && !cmp_bf(g_bf_y_3rd, g_bf_y_min))
+    if (!cmp_bf(g_bf_x_3rd, g_bf_x_min) && !cmp_bf(g_bf_y_3rd, g_bf_y_min))
     {
         // no rotation or skewing, but stretching is allowed
         bfWidth  = alloc_stack(bflength+2);
         bf_t bfHeight = alloc_stack(bflength+2);
         // Width  = xxmax - xxmin;
-        sub_bf(bfWidth, g_bf_x_max, bfxmin);
+        sub_bf(bfWidth, g_bf_x_max, g_bf_x_min);
         LDBL Width = bftofloat(bfWidth);
         // Height = yymax - yymin;
         sub_bf(bfHeight, g_bf_y_max, g_bf_y_min);
         Height = bftofloat(bfHeight);
         // *Xctr = (xxmin + xxmax)/2;
-        add_bf(Xctr, bfxmin, g_bf_x_max);
+        add_bf(Xctr, g_bf_x_min, g_bf_x_max);
         half_a_bf(Xctr);
         // *Yctr = (yymin + yymax)/2;
         add_bf(Yctr, g_bf_y_min, g_bf_y_max);
@@ -320,7 +320,7 @@ void cvtcentermagbf(bf_t Xctr, bf_t Yctr, LDBL *Magnification, double *Xmagfacto
         // IMPORTANT: convert from bf AFTER subtracting
 
         // tmpx = xxmax - xxmin;
-        sub_bf(bftmpx, g_bf_x_max, bfxmin);
+        sub_bf(bftmpx, g_bf_x_max, g_bf_x_min);
         LDBL tmpx1 = bftofloat(bftmpx);
         // tmpy = yymax - yymin;
         sub_bf(bftmpy, g_bf_y_max, g_bf_y_min);
@@ -348,7 +348,7 @@ void cvtcentermagbf(bf_t Xctr, bf_t Yctr, LDBL *Magnification, double *Xmagfacto
         *Rotation = (double)(-rad_to_deg(atan2((double)tmpy, signx)));   // negative for image rotation
 
         // tmpx = xxmin - xx3rd;
-        sub_bf(bftmpx, bfxmin, g_bf_x_3rd);
+        sub_bf(bftmpx, g_bf_x_min, g_bf_x_3rd);
         LDBL tmpx2 = bftofloat(bftmpx);
         // tmpy = yymax - yy3rd;
         sub_bf(bftmpy, g_bf_y_max, g_bf_y_3rd);
@@ -361,7 +361,7 @@ void cvtcentermagbf(bf_t Xctr, bf_t Yctr, LDBL *Magnification, double *Xmagfacto
 
         // these are the only two variables that must use big precision
         // *Xctr = (xxmin + xxmax)/2;
-        add_bf(Xctr, bfxmin, g_bf_x_max);
+        add_bf(Xctr, g_bf_x_min, g_bf_x_max);
         half_a_bf(Xctr);
         // *Yctr = (yymin + yymax)/2;
         add_bf(Yctr, g_bf_y_min, g_bf_y_max);
@@ -420,8 +420,8 @@ void cvtcornersbf(bf_t Xctr, bf_t Yctr, LDBL Magnification, double Xmagfactor, d
     {
         // simple, faster case
         // xx3rd = xxmin = Xctr - w;
-        sub_bf(bfxmin, Xctr, bfw);
-        copy_bf(g_bf_x_3rd, bfxmin);
+        sub_bf(g_bf_x_min, Xctr, bfw);
+        copy_bf(g_bf_x_3rd, g_bf_x_min);
         // xxmax = Xctr + w;
         add_bf(g_bf_x_max, Xctr, bfw);
         // yy3rd = yymin = Yctr - h;
@@ -453,7 +453,7 @@ void cvtcornersbf(bf_t Xctr, bf_t Yctr, LDBL Magnification, double Xmagfactor, d
     y = -xmin * sinrot + ymax *  cosrot;
     // xxmin = x + Xctr;
     floattobf(bftmp, x);
-    add_bf(bfxmin, bftmp, Xctr);
+    add_bf(g_bf_x_min, bftmp, Xctr);
     // yymax = y + Yctr;
     floattobf(bftmp, y);
     add_bf(g_bf_y_max, bftmp, Yctr);

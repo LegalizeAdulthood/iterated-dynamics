@@ -1109,7 +1109,7 @@ void soi_ldbl()
     g_max_rhombus_depth = 0;
     if (bf_math != bf_math_type::NONE)
     {
-        xxminl = bftofloat(bfxmin);
+        xxminl = bftofloat(g_bf_x_min);
         yyminl = bftofloat(g_bf_y_min);
         xxmaxl = bftofloat(g_bf_x_max);
         yymaxl = bftofloat(g_bf_y_max);

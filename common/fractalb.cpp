@@ -255,7 +255,7 @@ void bfcornerstofloat()
 {
     if (bf_math != bf_math_type::NONE)
     {
-        xxmin = (double)bftofloat(bfxmin);
+        xxmin = (double)bftofloat(g_bf_x_min);
         yymin = (double)bftofloat(g_bf_y_min);
         xxmax = (double)bftofloat(g_bf_x_max);
         yymax = (double)bftofloat(g_bf_y_max);
@@ -541,7 +541,7 @@ bool MandelbnSetup()
     bntemp1 = alloc_stack(bnlength);
     bntemp2 = alloc_stack(bnlength);
 
-    bftobn(bnxmin, bfxmin);
+    bftobn(bnxmin, g_bf_x_min);
     bftobn(bnxmax, g_bf_x_max);
     bftobn(bnymin, g_bf_y_min);
     bftobn(bnymax, g_bf_y_max);
@@ -646,7 +646,7 @@ bool MandelbfSetup()
     div_a_bf_int(bfydel, (U16)(ydots - 1));
 
     // bfxdel2 = (bfx3rd - bfxmin)/(ydots-1)
-    sub_bf(bfxdel2, g_bf_x_3rd, bfxmin);
+    sub_bf(bfxdel2, g_bf_x_3rd, g_bf_x_min);
     div_a_bf_int(bfxdel2, (U16)(ydots - 1));
 
     // bfydel2 = (bfy3rd - bfymin)/(xdots-1)
@@ -766,7 +766,7 @@ int mandelbf_per_pixel()
     mult_bf_int(bftmp, bfxdel2, (U16)g_row);
 
     add_a_bf(bfparm.x, bftmp);
-    add_a_bf(bfparm.x, bfxmin);
+    add_a_bf(bfparm.x, g_bf_x_min);
 
     // parm.y = yymax - row*dely - col*dely2;
     // note: in next four lines, bfold is just used as a temporary variable
@@ -841,7 +841,7 @@ juliabf_per_pixel()
     mult_bf_int(bftmp, bfxdel2, (U16)g_row);
 
     add_a_bf(bfold.x, bftmp);
-    add_a_bf(bfold.x, bfxmin);
+    add_a_bf(bfold.x, g_bf_x_min);
 
     // old.y = yymax - row*dely - col*dely2;
     // note: in next four lines, bfnew is just used as a temporary variable

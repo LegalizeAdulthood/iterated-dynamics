@@ -602,7 +602,7 @@ bool encoder()
             save_info.tot_extend_len += extend_blk_len(22 * (bflength + 2));
             /* note: this assumes variables allocated in order starting with
              * bfxmin in init_bf2() in BIGNUM.C */
-            if (!put_extend_blk(5, 22 * (bflength + 2), (char *) bfxmin))
+            if (!put_extend_blk(5, 22 * (bflength + 2), (char *) g_bf_x_min))
             {
                 goto oops;
             }
