@@ -1251,44 +1251,44 @@ void write_batch_parms(char const *colorinf, bool colorsonly, int maxcolor, int 
             put_parm(" %s=%d", "hertz", g_base_hertz);
         }
 
-        if (soundflag != (SOUNDFLAG_BEEP | SOUNDFLAG_SPEAKER))
+        if (g_sound_flag != (SOUNDFLAG_BEEP | SOUNDFLAG_SPEAKER))
         {
-            if ((soundflag & SOUNDFLAG_ORBITMASK) == SOUNDFLAG_OFF)
+            if ((g_sound_flag & SOUNDFLAG_ORBITMASK) == SOUNDFLAG_OFF)
             {
                 put_parm(" %s=%s", "sound", "off");
             }
-            else if ((soundflag & SOUNDFLAG_ORBITMASK) == SOUNDFLAG_BEEP)
+            else if ((g_sound_flag & SOUNDFLAG_ORBITMASK) == SOUNDFLAG_BEEP)
             {
                 put_parm(" %s=%s", "sound", "beep");
             }
-            else if ((soundflag & SOUNDFLAG_ORBITMASK) == SOUNDFLAG_X)
+            else if ((g_sound_flag & SOUNDFLAG_ORBITMASK) == SOUNDFLAG_X)
             {
                 put_parm(" %s=%s", "sound", "x");
             }
-            else if ((soundflag & SOUNDFLAG_ORBITMASK) == SOUNDFLAG_Y)
+            else if ((g_sound_flag & SOUNDFLAG_ORBITMASK) == SOUNDFLAG_Y)
             {
                 put_parm(" %s=%s", "sound", "y");
             }
-            else if ((soundflag & SOUNDFLAG_ORBITMASK) == SOUNDFLAG_Z)
+            else if ((g_sound_flag & SOUNDFLAG_ORBITMASK) == SOUNDFLAG_Z)
             {
                 put_parm(" %s=%s", "sound", "z");
             }
 #ifndef XFRACT
-            if ((soundflag & SOUNDFLAG_ORBITMASK) && (soundflag & SOUNDFLAG_ORBITMASK) <= SOUNDFLAG_Z)
+            if ((g_sound_flag & SOUNDFLAG_ORBITMASK) && (g_sound_flag & SOUNDFLAG_ORBITMASK) <= SOUNDFLAG_Z)
             {
-                if (soundflag & SOUNDFLAG_SPEAKER)
+                if (g_sound_flag & SOUNDFLAG_SPEAKER)
                 {
                     put_parm("/pc");
                 }
-                if (soundflag & SOUNDFLAG_OPL3_FM)
+                if (g_sound_flag & SOUNDFLAG_OPL3_FM)
                 {
                     put_parm("/fm");
                 }
-                if (soundflag & SOUNDFLAG_MIDI)
+                if (g_sound_flag & SOUNDFLAG_MIDI)
                 {
                     put_parm("/midi");
                 }
-                if (soundflag & SOUNDFLAG_QUANTIZED)
+                if (g_sound_flag & SOUNDFLAG_QUANTIZED)
                 {
                     put_parm("/quant");
                 }
@@ -1352,7 +1352,7 @@ void write_batch_parms(char const *colorinf, bool colorsonly, int maxcolor, int 
             put_parm(" %s=%d", "srelease", g_fm_release);
         }
 
-        if (soundflag & SOUNDFLAG_QUANTIZED)
+        if (g_sound_flag & SOUNDFLAG_QUANTIZED)
         {
             // quantize turned on
             int i;

@@ -241,7 +241,7 @@ int get_toggles()
     uvalues[k].uval.ch.vlen = 4;
     uvalues[k].uval.ch.llen = 5;
     uvalues[k].uval.ch.list = soundmodes;
-    uvalues[k].uval.ch.val = (old_soundflag = soundflag) & SOUNDFLAG_ORBITMASK;
+    uvalues[k].uval.ch.val = (old_soundflag = g_sound_flag) & SOUNDFLAG_ORBITMASK;
 
     if (g_iteration_ranges_len == 0)
     {
@@ -424,8 +424,8 @@ int get_toggles()
     }
     g_overwrite_file = uvalues[++k].uval.ch.val != 0;
 
-    soundflag = ((soundflag >> 3) << 3) | (uvalues[++k].uval.ch.val);
-    if (soundflag != old_soundflag && ((soundflag & SOUNDFLAG_ORBITMASK) > SOUNDFLAG_BEEP || (old_soundflag & SOUNDFLAG_ORBITMASK) > SOUNDFLAG_BEEP))
+    g_sound_flag = ((g_sound_flag >> 3) << 3) | (uvalues[++k].uval.ch.val);
+    if (g_sound_flag != old_soundflag && ((g_sound_flag & SOUNDFLAG_ORBITMASK) > SOUNDFLAG_BEEP || (old_soundflag & SOUNDFLAG_ORBITMASK) > SOUNDFLAG_BEEP))
     {
         j++;
     }

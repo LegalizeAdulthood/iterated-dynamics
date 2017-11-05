@@ -1681,11 +1681,11 @@ static void plotdorbit(double dx, double dy, int color)
     syoffs = save_syoffs;
     if (g_debug_flag == debug_flags::force_scaled_sound_formula)
     {
-        if ((soundflag & SOUNDFLAG_ORBITMASK) == SOUNDFLAG_X)   // sound = x
+        if ((g_sound_flag & SOUNDFLAG_ORBITMASK) == SOUNDFLAG_X)   // sound = x
         {
             w_snd((int)(i*1000/xdots+g_base_hertz));
         }
-        else if ((soundflag & SOUNDFLAG_ORBITMASK) > SOUNDFLAG_X)     // sound = y or z
+        else if ((g_sound_flag & SOUNDFLAG_ORBITMASK) > SOUNDFLAG_X)     // sound = y or z
         {
             w_snd((int)(j*1000/ydots+g_base_hertz));
         }
@@ -1696,15 +1696,15 @@ static void plotdorbit(double dx, double dy, int color)
     }
     else
     {
-        if ((soundflag & SOUNDFLAG_ORBITMASK) == SOUNDFLAG_X)   // sound = x
+        if ((g_sound_flag & SOUNDFLAG_ORBITMASK) == SOUNDFLAG_X)   // sound = x
         {
             w_snd((int)(i+g_base_hertz));
         }
-        else if ((soundflag & SOUNDFLAG_ORBITMASK) == SOUNDFLAG_Y)     // sound = y
+        else if ((g_sound_flag & SOUNDFLAG_ORBITMASK) == SOUNDFLAG_Y)     // sound = y
         {
             w_snd((int)(j+g_base_hertz));
         }
-        else if ((soundflag & SOUNDFLAG_ORBITMASK) == SOUNDFLAG_Z)     // sound = z
+        else if ((g_sound_flag & SOUNDFLAG_ORBITMASK) == SOUNDFLAG_Z)     // sound = z
         {
             w_snd((int)(i+j+g_base_hertz));
         }

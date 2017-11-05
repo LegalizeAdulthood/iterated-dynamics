@@ -231,7 +231,7 @@ MandelfpSetup()
                 && (g_inside_color >= ITER)
                 && g_outside_color >= ATAN
                 && useinitorbit != 1
-                && (soundflag & SOUNDFLAG_ORBITMASK) < SOUNDFLAG_X
+                && (g_sound_flag & SOUNDFLAG_ORBITMASK) < SOUNDFLAG_X
                 && !using_jiim && g_bail_out_test == bailouts::Mod
                 && (g_orbit_save_flags & osf_midi) == 0)
         {
@@ -356,7 +356,7 @@ JuliafpSetup()
                 && (g_inside_color >= ITER)
                 && g_outside_color >= ATAN
                 && useinitorbit != 1
-                && (soundflag & SOUNDFLAG_ORBITMASK) < SOUNDFLAG_X
+                && (g_sound_flag & SOUNDFLAG_ORBITMASK) < SOUNDFLAG_X
                 && !g_finite_attractor
                 && !using_jiim && g_bail_out_test == bailouts::Mod
                 && (g_orbit_save_flags & osf_midi) == 0)

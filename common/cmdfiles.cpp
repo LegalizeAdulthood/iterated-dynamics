@@ -82,7 +82,7 @@ int     g_decomp[2] = { 0 };      // Decomposition coloring
 long    g_distance_estimator = 0;
 int     g_distance_estimator_width_factor = 0;
 bool    g_overwrite_file = false;// true if file overwrite allowed
-int     soundflag = 0;          // sound control bitfield... see sound.c for useage
+int     g_sound_flag = 0;          // sound control bitfield... see sound.c for useage
 int     g_base_hertz = 0;          // sound=x/y/x hertz value
 int     g_debug_flag = debug_flags::none; // internal use only - you didn't see this
 bool    timerflag = false;      // you didn't see this, either
@@ -417,7 +417,7 @@ static void initvars_restart()          // <ins> key init
     g_dither_flag = false;                // no dithering
     g_ask_video = true;                    // turn on video-prompt flag
     g_overwrite_file = false;            // don't overwrite
-    soundflag = SOUNDFLAG_SPEAKER | SOUNDFLAG_BEEP; // sound is on to PC speaker
+    g_sound_flag = SOUNDFLAG_SPEAKER | SOUNDFLAG_BEEP; // sound is on to PC speaker
     g_init_batch = batch_modes::NONE;                      // not in batch mode
     g_check_cur_dir = false;                // flag to check current dire for files
     g_init_save_time = 0;                   // no auto-save
@@ -2604,10 +2604,10 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         {
             goto badarg;
         }
-        soundflag = SOUNDFLAG_OFF; // start with a clean slate, add bits as we go
+        g_sound_flag = SOUNDFLAG_OFF; // start with a clean slate, add bits as we go
         if (totparms == 1)
         {
-            soundflag = SOUNDFLAG_SPEAKER; // old command, default to PC speaker
+            g_sound_flag = SOUNDFLAG_SPEAKER; // old command, default to PC speaker
         }
 
         /* soundflag is used as a bitfield... bit 0,1,2 used for whether sound
@@ -2621,23 +2621,23 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
 
         if (charval[0] == 'n' || charval[0] == 'o')
         {
-            soundflag &= ~SOUNDFLAG_ORBITMASK;
+            g_sound_flag &= ~SOUNDFLAG_ORBITMASK;
         }
         else if ((strncmp(value, "ye", 2) == 0) || (charval[0] == 'b'))
         {
-            soundflag |= SOUNDFLAG_BEEP;
+            g_sound_flag |= SOUNDFLAG_BEEP;
         }
         else if (charval[0] == 'x')
         {
-            soundflag |= SOUNDFLAG_X;
+            g_sound_flag |= SOUNDFLAG_X;
         }
         else if (charval[0] == 'y' && strncmp(value, "ye", 2) != 0)
         {
-            soundflag |= SOUNDFLAG_Y;
+            g_sound_flag |= SOUNDFLAG_Y;
         }
         else if (charval[0] == 'z')
         {
-            soundflag |= SOUNDFLAG_Z;
+            g_sound_flag |= SOUNDFLAG_Z;
         }
         else
         {
@@ -2646,7 +2646,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
 #if !defined(XFRACT)
         if (totparms > 1)
         {
-            soundflag &= SOUNDFLAG_ORBITMASK; // reset options
+            g_sound_flag &= SOUNDFLAG_ORBITMASK; // reset options
             for (int i = 1; i < totparms; i++)
             {
                 // this is for 2 or more options at the same time
@@ -2655,24 +2655,24 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
                     // (try to)switch on opl3 fm synth
                     if (driver_init_fm())
                     {
-                        soundflag |= SOUNDFLAG_OPL3_FM;
+                        g_sound_flag |= SOUNDFLAG_OPL3_FM;
                     }
                     else
                     {
-                        soundflag &= ~SOUNDFLAG_OPL3_FM;
+                        g_sound_flag &= ~SOUNDFLAG_OPL3_FM;
                     }
                 }
                 else if (charval[i] == 'p')
                 {
-                    soundflag |= SOUNDFLAG_SPEAKER;
+                    g_sound_flag |= SOUNDFLAG_SPEAKER;
                 }
                 else if (charval[i] == 'm')
                 {
-                    soundflag |= SOUNDFLAG_MIDI;
+                    g_sound_flag |= SOUNDFLAG_MIDI;
                 }
                 else if (charval[i] == 'q')
                 {
-                    soundflag |= SOUNDFLAG_QUANTIZED;
+                    g_sound_flag |= SOUNDFLAG_QUANTIZED;
                 }
                 else
                 {
