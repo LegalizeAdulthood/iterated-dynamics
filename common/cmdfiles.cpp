@@ -471,7 +471,7 @@ static void initvars_fractal()          // init vars affecting calculation
     g_user_biomorph_value = -1;                  // turn off biomorph flag
     g_outside_color = ITER;                     // outside color = -1 (not used)
     g_max_iterations = 150;                        // initial maxiter
-    usr_stdcalcmode = 'g';              // initial solid-guessing
+    g_user_std_calc_mode = 'g';              // initial solid-guessing
     g_stop_pass = 0;                       // initial guessing stoppass
     g_quick_calc = false;
     g_close_proximity = 0.01;
@@ -1634,7 +1634,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         {
             goto badarg;
         }
-        usr_stdcalcmode = charval[0];
+        g_user_std_calc_mode = charval[0];
         if (charval[0] == 'g')
         {
             g_stop_pass = ((int)value[1] - (int)'0');

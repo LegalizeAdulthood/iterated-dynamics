@@ -169,12 +169,12 @@ int read_overlay()      // read overlay/3D files, if reqr'd
         xx3rd       = read_info.x3rd;
         yy3rd       = read_info.y3rd;
         g_calc_status = static_cast<calc_status_value>(read_info.calc_status);
-        usr_stdcalcmode = read_info.stdcalcmode;
+        g_user_std_calc_mode = read_info.stdcalcmode;
         g_three_pass = false;
-        if (usr_stdcalcmode == 127)
+        if (g_user_std_calc_mode == 127)
         {
             g_three_pass = true;
-            usr_stdcalcmode = '3';
+            g_user_std_calc_mode = '3';
         }
         g_user_distance_estimator_value     = read_info.distestold;
         g_user_float_flag   = read_info.floatflag != 0;

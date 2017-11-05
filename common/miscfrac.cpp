@@ -1608,10 +1608,10 @@ bool lya_setup()
             "Sorry, inside options other than inside=nnn are not supported by the lyapunov");
         g_inside_color = 1;
     }
-    if (usr_stdcalcmode == 'o')
+    if (g_user_std_calc_mode == 'o')
     {
         // Oops,lyapunov type
-        usr_stdcalcmode = '1';  // doesn't use new & breaks orbits
+        g_user_std_calc_mode = '1';  // doesn't use new & breaks orbits
         g_std_calc_mode = '1';
     }
     return true;

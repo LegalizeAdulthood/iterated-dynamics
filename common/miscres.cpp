@@ -1021,14 +1021,14 @@ top:
         case 0:
             sprintf(msg, "%d Pass Mode", g_total_passes);
             driver_put_string(s_row, 2, C_GENERAL_HI, msg);
-            if (usr_stdcalcmode == '3')
+            if (g_user_std_calc_mode == '3')
             {
                 driver_put_string(s_row, -1, C_GENERAL_HI, " (threepass)");
             }
             break;
         case 1:
             driver_put_string(s_row, 2, C_GENERAL_HI, "Solid Guessing");
-            if (usr_stdcalcmode == '3')
+            if (g_user_std_calc_mode == '3')
             {
                 driver_put_string(s_row, -1, C_GENERAL_HI, " (threepass)");
             }

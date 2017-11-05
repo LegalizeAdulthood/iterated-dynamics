@@ -83,7 +83,7 @@ std::vector<double> dy1;
 int     g_integer_fractal;         // TRUE if fractal uses integer math
 
 // usr_xxx is what the user wants, vs what we may be forced to do
-char    usr_stdcalcmode;
+char    g_user_std_calc_mode;
 int     g_user_periodicity_value;
 long    g_user_distance_estimator_value;
 bool    g_user_float_flag;

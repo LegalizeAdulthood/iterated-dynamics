@@ -621,7 +621,7 @@ int calcfract()
     {
         // Have to force passes = 1
         g_std_calc_mode = '1';
-        usr_stdcalcmode = g_std_calc_mode;
+        g_user_std_calc_mode = g_std_calc_mode;
     }
     if (g_truecolor)
     {
@@ -630,7 +630,7 @@ int calcfract()
         {
             // Have to force passes = 1
             g_std_calc_mode = '1';
-            usr_stdcalcmode = g_std_calc_mode;
+            g_user_std_calc_mode = g_std_calc_mode;
             g_put_color = put_truecolor_disk;
         }
         else
@@ -640,10 +640,10 @@ int calcfract()
     }
     if (!g_use_grid)
     {
-        if (usr_stdcalcmode != 'o')
+        if (g_user_std_calc_mode != 'o')
         {
             g_std_calc_mode = '1';
-            usr_stdcalcmode = g_std_calc_mode;
+            g_user_std_calc_mode = g_std_calc_mode;
         }
     }
 

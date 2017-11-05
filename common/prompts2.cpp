@@ -107,22 +107,22 @@ int get_toggles()
     uvalues[k].uval.ch.vlen = 3;
     uvalues[k].uval.ch.llen = sizeof(calcmodes)/sizeof(*calcmodes);
     uvalues[k].uval.ch.list = calcmodes;
-    uvalues[k].uval.ch.val = (usr_stdcalcmode == '1') ? 0
-                             : (usr_stdcalcmode == '2') ? 1
-                             : (usr_stdcalcmode == '3') ? 2
-                             : (usr_stdcalcmode == 'g' && g_stop_pass == 0) ? 3
-                             : (usr_stdcalcmode == 'g' && g_stop_pass == 1) ? 4
-                             : (usr_stdcalcmode == 'g' && g_stop_pass == 2) ? 5
-                             : (usr_stdcalcmode == 'g' && g_stop_pass == 3) ? 6
-                             : (usr_stdcalcmode == 'g' && g_stop_pass == 4) ? 7
-                             : (usr_stdcalcmode == 'g' && g_stop_pass == 5) ? 8
-                             : (usr_stdcalcmode == 'g' && g_stop_pass == 6) ? 9
-                             : (usr_stdcalcmode == 'b') ? 10
-                             : (usr_stdcalcmode == 's') ? 11
-                             : (usr_stdcalcmode == 't') ? 12
-                             : (usr_stdcalcmode == 'd') ? 13
+    uvalues[k].uval.ch.val = (g_user_std_calc_mode == '1') ? 0
+                             : (g_user_std_calc_mode == '2') ? 1
+                             : (g_user_std_calc_mode == '3') ? 2
+                             : (g_user_std_calc_mode == 'g' && g_stop_pass == 0) ? 3
+                             : (g_user_std_calc_mode == 'g' && g_stop_pass == 1) ? 4
+                             : (g_user_std_calc_mode == 'g' && g_stop_pass == 2) ? 5
+                             : (g_user_std_calc_mode == 'g' && g_stop_pass == 3) ? 6
+                             : (g_user_std_calc_mode == 'g' && g_stop_pass == 4) ? 7
+                             : (g_user_std_calc_mode == 'g' && g_stop_pass == 5) ? 8
+                             : (g_user_std_calc_mode == 'g' && g_stop_pass == 6) ? 9
+                             : (g_user_std_calc_mode == 'b') ? 10
+                             : (g_user_std_calc_mode == 's') ? 11
+                             : (g_user_std_calc_mode == 't') ? 12
+                             : (g_user_std_calc_mode == 'd') ? 13
                              :        /* "o"rbits */      14;
-    old_usr_stdcalcmode = usr_stdcalcmode;
+    old_usr_stdcalcmode = g_user_std_calc_mode;
     old_stoppass = g_stop_pass;
 #ifndef XFRACT
     choices[++k] = "Floating Point Algorithm";
@@ -296,21 +296,21 @@ int get_toggles()
     k = -1;
     j = 0;   // return code
 
-    usr_stdcalcmode = calcmodes[uvalues[++k].uval.ch.val][0];
+    g_user_std_calc_mode = calcmodes[uvalues[++k].uval.ch.val][0];
     g_stop_pass = (int)calcmodes[uvalues[k].uval.ch.val][1] - (int)'0';
 
-    if (g_stop_pass < 0 || g_stop_pass > 6 || usr_stdcalcmode != 'g')
+    if (g_stop_pass < 0 || g_stop_pass > 6 || g_user_std_calc_mode != 'g')
     {
         g_stop_pass = 0;
     }
 
-    if (usr_stdcalcmode == 'o' && fractype == fractal_type::LYAPUNOV)   // Oops,lyapunov type
+    if (g_user_std_calc_mode == 'o' && fractype == fractal_type::LYAPUNOV)   // Oops,lyapunov type
     {
         // doesn't use 'new' & breaks orbits
-        usr_stdcalcmode = old_usr_stdcalcmode;
+        g_user_std_calc_mode = old_usr_stdcalcmode;
     }
 
-    if (old_usr_stdcalcmode != usr_stdcalcmode)
+    if (old_usr_stdcalcmode != g_user_std_calc_mode)
     {
         j++;
     }

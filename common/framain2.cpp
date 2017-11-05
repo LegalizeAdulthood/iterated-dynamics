@@ -659,11 +659,11 @@ resumeloop:                             // return here on failed overlays
                                mms_value == main_state::RESTART))
             {
                 g_quick_calc = false;
-                usr_stdcalcmode = g_old_std_calc_mode;
+                g_user_std_calc_mode = g_old_std_calc_mode;
             }
             if (g_quick_calc && g_calc_status != calc_status_value::COMPLETED)
             {
-                usr_stdcalcmode = '1';
+                g_user_std_calc_mode = '1';
             }
             switch (mms_value)
             {
@@ -777,11 +777,11 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
     if (g_quick_calc && g_calc_status == calc_status_value::COMPLETED)
     {
         g_quick_calc = false;
-        usr_stdcalcmode = g_old_std_calc_mode;
+        g_user_std_calc_mode = g_old_std_calc_mode;
     }
     if (g_quick_calc && g_calc_status != calc_status_value::COMPLETED)
     {
-        usr_stdcalcmode = g_old_std_calc_mode;
+        g_user_std_calc_mode = g_old_std_calc_mode;
     }
     switch (*kbdchar)
     {
@@ -894,15 +894,15 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
         if (g_max_iterations > old_maxit && g_inside_color >= COLOR_BLACK && g_calc_status == calc_status_value::COMPLETED &&
                 curfractalspecific->calctype == standard_fractal && !g_log_map_flag &&
                 !g_truecolor &&    // recalc not yet implemented with truecolor
-                !(usr_stdcalcmode == 't' && g_fill_color > -1) &&
+                !(g_user_std_calc_mode == 't' && g_fill_color > -1) &&
                 // tesseral with fill doesn't work
-                !(usr_stdcalcmode == 'o') &&
+                !(g_user_std_calc_mode == 'o') &&
                 i == 1 && // nothing else changed
                 g_outside_color != ATAN)
         {
             g_quick_calc = true;
-            g_old_std_calc_mode = usr_stdcalcmode;
-            usr_stdcalcmode = '1';
+            g_old_std_calc_mode = g_user_std_calc_mode;
+            g_user_std_calc_mode = '1';
             *kbdmore = false;
             g_calc_status = calc_status_value::RESUMABLE;
         }
@@ -2431,7 +2431,7 @@ static void save_history_info()
     current.outside              = (short)g_outside_color                   ;
     current.x3rd                 = xx3rd                     ;
     current.y3rd                 = yy3rd                     ;
-    current.stdcalcmode          = usr_stdcalcmode               ;
+    current.stdcalcmode          = g_user_std_calc_mode               ;
     current.three_pass           = g_three_pass ? 1 : 0;
     current.stoppass             = (short)g_stop_pass;
     current.distest              = g_distance_estimator                   ;
@@ -2612,7 +2612,7 @@ static void restore_history_info(int i)
     g_outside_color               = last.outside        ;
     xx3rd                 = last.x3rd           ;
     yy3rd                 = last.y3rd           ;
-    usr_stdcalcmode       = last.stdcalcmode    ;
+    g_user_std_calc_mode       = last.stdcalcmode    ;
     g_std_calc_mode           = last.stdcalcmode    ;
     g_three_pass            = last.three_pass != 0;
     g_stop_pass              = last.stoppass       ;

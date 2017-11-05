@@ -690,15 +690,15 @@ void write_batch_parms(char const *colorinf, bool colorsonly, int maxcolor, int 
             put_parm(buf);
         }
 
-        if (usr_stdcalcmode != 'g')
+        if (g_user_std_calc_mode != 'g')
         {
-            put_parm(" %s=%c", "passes", usr_stdcalcmode);
+            put_parm(" %s=%c", "passes", g_user_std_calc_mode);
         }
 
 
         if (g_stop_pass != 0)
         {
-            put_parm(" %s=%c%c", "passes", usr_stdcalcmode, (char)g_stop_pass + '0');
+            put_parm(" %s=%c%c", "passes", g_user_std_calc_mode, (char)g_stop_pass + '0');
         }
 
         if (g_use_center_mag)
@@ -1397,7 +1397,7 @@ void write_batch_parms(char const *colorinf, bool colorsonly, int maxcolor, int 
             put_parm(" %s=%s", "screencoords", "yes");
         }
 
-        if (usr_stdcalcmode == 'o' && g_set_orbit_corners && g_keep_screen_coords)
+        if (g_user_std_calc_mode == 'o' && g_set_orbit_corners && g_keep_screen_coords)
         {
             int xdigits, ydigits;
             put_parm(" %s=", "orbitcorners");
