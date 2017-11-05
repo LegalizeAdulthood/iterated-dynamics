@@ -288,7 +288,7 @@ void cvtcentermagbf(bf_t Xctr, bf_t Yctr, LDBL *Magnification, double *Xmagfacto
 
     // simple normal case first
     // if (xx3rd == xxmin && yy3rd == yymin)
-    if (!cmp_bf(bfx3rd, bfxmin) && !cmp_bf(bfy3rd, bfymin))
+    if (!cmp_bf(bfx3rd, bfxmin) && !cmp_bf(g_bf_y_3rd, bfymin))
     {
         // no rotation or skewing, but stretching is allowed
         bfWidth  = alloc_stack(bflength+2);
@@ -332,7 +332,7 @@ void cvtcentermagbf(bf_t Xctr, bf_t Yctr, LDBL *Magnification, double *Xmagfacto
         tmpx1 = bftofloat(bftmpx);
 
         // tmpy = yymin - yy3rd;
-        sub_bf(bftmpy, bfymin, bfy3rd);
+        sub_bf(bftmpy, bfymin, g_bf_y_3rd);
         tmpy1 = bftofloat(bftmpy);
         LDBL a2 = tmpx1*tmpx1 + tmpy1*tmpy1;
         LDBL a = sqrtl(a2);
@@ -351,7 +351,7 @@ void cvtcentermagbf(bf_t Xctr, bf_t Yctr, LDBL *Magnification, double *Xmagfacto
         sub_bf(bftmpx, bfxmin, bfx3rd);
         LDBL tmpx2 = bftofloat(bftmpx);
         // tmpy = yymax - yy3rd;
-        sub_bf(bftmpy, bfymax, bfy3rd);
+        sub_bf(bftmpy, bfymax, g_bf_y_3rd);
         LDBL tmpy2 = bftofloat(bftmpy);
         LDBL b2 = tmpx2*tmpx2 + tmpy2*tmpy2;
         LDBL b = sqrtl(b2);
@@ -426,7 +426,7 @@ void cvtcornersbf(bf_t Xctr, bf_t Yctr, LDBL Magnification, double Xmagfactor, d
         add_bf(bfxmax, Xctr, bfw);
         // yy3rd = yymin = Yctr - h;
         sub_bf(bfymin, Yctr, bfh);
-        copy_bf(bfy3rd, bfymin);
+        copy_bf(g_bf_y_3rd, bfymin);
         // yymax = Yctr + h;
         add_bf(bfymax, Yctr, bfh);
         restore_stack(saved);
@@ -476,7 +476,7 @@ void cvtcornersbf(bf_t Xctr, bf_t Yctr, LDBL Magnification, double Xmagfactor, d
     add_bf(bfx3rd, bftmp, Xctr);
     // yy3rd = y + Yctr;
     floattobf(bftmp, y);
-    add_bf(bfy3rd, bftmp, Yctr);
+    add_bf(g_bf_y_3rd, bftmp, Yctr);
 
     restore_stack(saved);
     return;

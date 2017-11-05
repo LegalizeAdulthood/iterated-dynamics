@@ -138,7 +138,7 @@ void fractal_floattobf()
     floattobf(bfymin, yymin);
     floattobf(bfymax, yymax);
     floattobf(bfx3rd, xx3rd);
-    floattobf(bfy3rd, yy3rd);
+    floattobf(g_bf_y_3rd, yy3rd);
 
     for (int i = 0; i < MAXPARAMS; i++)
     {
@@ -718,7 +718,7 @@ void adjust_cornerbf()
     {
         // if (ftemp*10000 < ftemp2 && yy3rd != yymax)
         if (cmp_bf(mult_bf_int(btmp1, bftemp, 10000), bftemp2) < 0
-                && cmp_bf(bfy3rd, bfymax) != 0)
+                && cmp_bf(g_bf_y_3rd, bfymax) != 0)
         {
             // xx3rd = xxmin;
             copy_bf(bfx3rd, bfxmin);
@@ -727,17 +727,17 @@ void adjust_cornerbf()
 
     // else if (ftemp2*10000 < ftemp && yy3rd != yymin)
     if (cmp_bf(mult_bf_int(btmp1, bftemp2, 10000), bftemp) < 0
-            && cmp_bf(bfy3rd, bfymin) != 0)
+            && cmp_bf(g_bf_y_3rd, bfymin) != 0)
     {
         // xx3rd = xxmax;
         copy_bf(bfx3rd, bfxmax);
     }
 
     // ftemp=fabs(yy3rd-yymin);
-    abs_a_bf(sub_bf(bftemp, bfy3rd, bfymin));
+    abs_a_bf(sub_bf(bftemp, g_bf_y_3rd, bfymin));
 
     // ftemp2=fabs(yymax-yy3rd);
-    abs_a_bf(sub_bf(bftemp2, bfymax, bfy3rd));
+    abs_a_bf(sub_bf(bftemp2, bfymax, g_bf_y_3rd));
 
     // if ( (ftemp=fabs(yy3rd-yymin)) < (ftemp2=fabs(yymax-yy3rd)) )
     if (cmp_bf(bftemp, bftemp2) < 0)
@@ -747,7 +747,7 @@ void adjust_cornerbf()
                 && cmp_bf(bfx3rd, bfxmax) != 0)
         {
             // yy3rd = yymin;
-            copy_bf(bfy3rd, bfymin);
+            copy_bf(g_bf_y_3rd, bfymin);
         }
     }
 
@@ -756,7 +756,7 @@ void adjust_cornerbf()
             && cmp_bf(bfx3rd, bfxmin) != 0)
     {
         // yy3rd = yymax;
-        copy_bf(bfy3rd, bfymax);
+        copy_bf(g_bf_y_3rd, bfymax);
     }
 
 
@@ -884,9 +884,9 @@ static void adjust_to_limitsbf(double expand)
     }
 
     // if (bfy3rd == centery)
-    if (cmp_bf(bfy3rd, bcentery) == 0)
+    if (cmp_bf(g_bf_y_3rd, bcentery) == 0)
     {
-        smallest_add_bf(bfy3rd);
+        smallest_add_bf(g_bf_y_3rd);
     }
 
     // setup array for easier manipulation
@@ -910,10 +910,10 @@ static void adjust_to_limitsbf(double expand)
     copy_bf(bcornery[1], bfymin);
 
     // cornery[2] = yy3rd;
-    copy_bf(bcornery[2], bfy3rd);
+    copy_bf(bcornery[2], g_bf_y_3rd);
 
     // cornery[3] = yymin+(yymax-yy3rd);
-    sub_bf(bcornery[3], bfymax, bfy3rd);
+    sub_bf(bcornery[3], bfymax, g_bf_y_3rd);
     add_a_bf(bcornery[3], bfymin);
 
     // if caller wants image size adjusted, do that first
@@ -1059,7 +1059,7 @@ static void adjust_to_limitsbf(double expand)
     // yymin = cornery[1] - adjy;
     sub_bf(bfymin, bcornery[1], badjy);
     // yy3rd = cornery[2] - adjy;
-    sub_bf(bfy3rd, bcornery[2], badjy);
+    sub_bf(g_bf_y_3rd, bcornery[2], badjy);
 
     adjust_cornerbf(); // make 3rd corner exact if very near other co-ords
     restore_stack(saved);

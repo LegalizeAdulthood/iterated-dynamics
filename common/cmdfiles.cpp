@@ -2110,7 +2110,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
 
             // yy3rd = yymin = floatval[2];
             get_bf(bfymin, floatvalstr[2]);
-            get_bf(bfy3rd, floatvalstr[2]);
+            get_bf(g_bf_y_3rd, floatvalstr[2]);
 
             // yymax = floatval[3];
             get_bf(bfymax, floatvalstr[3]);
@@ -2121,7 +2121,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
                 get_bf(bfx3rd, floatvalstr[4]);
 
                 // yy3rd = floatval[5];
-                get_bf(bfy3rd, floatvalstr[5]);
+                get_bf(g_bf_y_3rd, floatvalstr[5]);
             }
 
             // now that all the corners have been read in, get a more
@@ -2153,7 +2153,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
 
                 // yy3rd = yymin = floatval[2];
                 get_bf(bfymin, floatvalstr[2]);
-                get_bf(bfy3rd, floatvalstr[2]);
+                get_bf(g_bf_y_3rd, floatvalstr[2]);
 
                 // yymax = floatval[3];
                 get_bf(bfymax, floatvalstr[3]);
@@ -2164,7 +2164,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
                     get_bf(bfx3rd, floatvalstr[4]);
 
                     // yy3rd = floatval[5];
-                    get_bf(bfy3rd, floatvalstr[5]);
+                    get_bf(g_bf_y_3rd, floatvalstr[5]);
                 }
             }
         }
