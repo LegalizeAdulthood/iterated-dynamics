@@ -412,7 +412,7 @@ extern long                  g_real_color_iter;
 extern record_colors_mode    g_record_colors;
 extern int                   g_red_bright;
 extern int                   g_red_crop_left;
-extern int                   red_crop_right;
+extern int                   g_red_crop_right;
 extern int                   g_release;
 extern int                   resave_flag;
 extern bool                  reset_periodicity;

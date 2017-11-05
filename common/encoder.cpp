@@ -896,7 +896,7 @@ static void setup_save_info(FRACTAL_INFO *save_info)
     save_info->xtrans = (short) xtrans;
     save_info->ytrans = (short) ytrans;
     save_info->red_crop_left = (short) g_red_crop_left;
-    save_info->red_crop_right = (short) red_crop_right;
+    save_info->red_crop_right = (short) g_red_crop_right;
     save_info->blue_crop_left = (short) g_blue_crop_left;
     save_info->blue_crop_right = (short) g_blue_crop_right;
     save_info->red_bright = (short) g_red_bright;

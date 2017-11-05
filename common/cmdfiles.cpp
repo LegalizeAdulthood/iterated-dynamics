@@ -605,7 +605,7 @@ static void initvars_3d()               // init vars affecting 3d
     g_glasses_type = 0;
     g_preview_factor = 20;
     g_red_crop_left   = 4;
-    red_crop_right  = 0;
+    g_red_crop_right  = 0;
     g_blue_crop_left  = 0;
     g_blue_crop_right = 4;
     g_red_bright     = 80;
@@ -3156,7 +3156,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
             goto badarg;
         }
         g_red_crop_left   = intval[0];
-        red_crop_right  = intval[1];
+        g_red_crop_right  = intval[1];
         g_blue_crop_left  = intval[2];
         g_blue_crop_right = intval[3];
         return CMDARG_FRACTAL_PARAM | CMDARG_3D_PARAM;

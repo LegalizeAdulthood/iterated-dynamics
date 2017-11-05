@@ -3551,7 +3551,7 @@ static bool get_funny_glasses_params()
 
     prompts3d[++k] = "Right red image crop (% of screen)";
     uvalues[k].type = 'i';
-    uvalues[k].uval.ival = red_crop_right;
+    uvalues[k].uval.ival = g_red_crop_right;
 
     prompts3d[++k] = "Left  blue image crop (% of screen)";
     uvalues[k].type = 'i';
@@ -3589,7 +3589,7 @@ static bool get_funny_glasses_params()
     g_eye_separation   =  uvalues[k++].uval.ival;
     xadjust         =  uvalues[k++].uval.ival;
     g_red_crop_left   =  uvalues[k++].uval.ival;
-    red_crop_right  =  uvalues[k++].uval.ival;
+    g_red_crop_right  =  uvalues[k++].uval.ival;
     g_blue_crop_left  =  uvalues[k++].uval.ival;
     g_blue_crop_right =  uvalues[k++].uval.ival;
     g_red_bright      =  uvalues[k++].uval.ival;
