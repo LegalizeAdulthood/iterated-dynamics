@@ -952,19 +952,19 @@ MarksLambdafpFractal()
 }
 
 
-long XXOne, g_fudge_one, g_fudge_two;
+long g_xx_one, g_fudge_one, g_fudge_two;
 
 int
 UnityFractal()
 {
 #if !defined(XFRACT)
-    XXOne = multiply(g_l_old_z.x, g_l_old_z.x, g_bit_shift) + multiply(g_l_old_z.y, g_l_old_z.y, g_bit_shift);
-    if ((XXOne > g_fudge_two) || (labs(XXOne - g_fudge_one) < g_l_delta_min))
+    g_xx_one = multiply(g_l_old_z.x, g_l_old_z.x, g_bit_shift) + multiply(g_l_old_z.y, g_l_old_z.y, g_bit_shift);
+    if ((g_xx_one > g_fudge_two) || (labs(g_xx_one - g_fudge_one) < g_l_delta_min))
     {
         return 1;
     }
-    g_l_old_z.y = multiply(g_fudge_two - XXOne, g_l_old_z.x, g_bit_shift);
-    g_l_old_z.x = multiply(g_fudge_two - XXOne, g_l_old_z.y, g_bit_shift);
+    g_l_old_z.y = multiply(g_fudge_two - g_xx_one, g_l_old_z.x, g_bit_shift);
+    g_l_old_z.x = multiply(g_fudge_two - g_xx_one, g_l_old_z.y, g_bit_shift);
     g_l_new_z = g_l_old_z;
     return 0;
 #else

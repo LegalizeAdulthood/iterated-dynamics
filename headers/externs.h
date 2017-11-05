@@ -554,7 +554,7 @@ extern int                   g_xx_adjust1;
 extern int                   g_xx_adjust;
 extern double                g_x_max;
 extern double                g_x_min;
-extern long                  XXOne;
+extern long                  g_xx_one;
 extern int                   xxstart;
 extern int                   xxstop;
 extern long                  g_l_y_3rd;
