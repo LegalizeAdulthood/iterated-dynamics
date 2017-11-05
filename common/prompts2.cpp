@@ -419,7 +419,7 @@ int get_toggles()
     savename = std::string {savename.c_str(), savenameptr} + uvalues[++k].uval.sval;
     if (strcmp(savename.c_str(), prevsavename))
     {
-        resave_flag = 0;
+        g_resave_flag = 0;
         started_resaves = false; // forget pending increment
     }
     g_overwrite_file = uvalues[++k].uval.ch.val != 0;

@@ -526,14 +526,14 @@ resumeloop:                             // return here on failed overlays
                     // woke up for timed save
                     driver_get_key();     // eat the dummy char
                     kbdchar = 's'; // do the save
-                    resave_flag = 1;
+                    g_resave_flag = 1;
                     timedsave = 2;
                 }
                 else
                 {
                     // save done, resume
                     timedsave = 0;
-                    resave_flag = 2;
+                    g_resave_flag = 2;
                     kbdchar = FIK_ENTER;
                 }
             }
@@ -1378,10 +1378,10 @@ do_3d_transform:
         {
             *stacked = true;
         }
-        if (resave_flag)
+        if (g_resave_flag)
         {
             updatesavename(savename);      // do the pending increment
-            resave_flag = 0;
+            g_resave_flag = 0;
             started_resaves = false;
         }
         show_file = -1;
@@ -1842,10 +1842,10 @@ static main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdm
         {
             *stacked = true;
         }
-        if (resave_flag)
+        if (g_resave_flag)
         {
             updatesavename(savename);      // do the pending increment
-            resave_flag = 0;
+            g_resave_flag = 0;
             started_resaves = false;
         }
         show_file = -1;

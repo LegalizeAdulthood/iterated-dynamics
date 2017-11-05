@@ -861,10 +861,10 @@ int calcfract()
     if (!resuming) // free resume_info memory if any is hanging around
     {
         end_resume();
-        if (resave_flag)
+        if (g_resave_flag)
         {
             updatesavename(savename); // do the pending increment
-            resave_flag = 0;
+            g_resave_flag = 0;
             started_resaves = false;
         }
         g_calc_time = 0;
