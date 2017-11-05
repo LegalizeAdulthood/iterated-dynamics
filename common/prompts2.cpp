@@ -706,7 +706,7 @@ pass_option_restart:
 
     choices[++k] = "Orbit interval (1 ... 255)";
     uvalues[k].type = 'i';
-    old_orbit_interval = (int)orbit_interval;
+    old_orbit_interval = (int)g_orbit_interval;
     uvalues[k].uval.ival = old_orbit_interval;
 
     choices[++k] = "Maintain screen coordinates";
@@ -762,16 +762,16 @@ pass_option_restart:
     }
 
 
-    orbit_interval = uvalues[++k].uval.ival;
-    if (orbit_interval > 255)
+    g_orbit_interval = uvalues[++k].uval.ival;
+    if (g_orbit_interval > 255)
     {
-        orbit_interval = 255;
+        g_orbit_interval = 255;
     }
-    if (orbit_interval < 1)
+    if (g_orbit_interval < 1)
     {
-        orbit_interval = 1;
+        g_orbit_interval = 1;
     }
-    if (orbit_interval != old_orbit_interval)
+    if (g_orbit_interval != old_orbit_interval)
     {
         j = 1;
     }

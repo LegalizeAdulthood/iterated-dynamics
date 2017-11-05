@@ -2152,7 +2152,7 @@ int dynam2dfloat()
 
 bool g_keep_screen_coords = false;
 bool set_orbit_corners = false;
-long orbit_interval;
+long g_orbit_interval;
 double oxmin, oymin, oxmax, oymax, ox3rd, oy3rd;
 affine o_cvt;
 static int o_color;
@@ -2297,7 +2297,7 @@ int plotorbits2dfloat()
             continue;  // bailed out, don't plot
         }
 
-        if (count < g_orbit_delay || count%orbit_interval)
+        if (count < g_orbit_delay || count%g_orbit_interval)
         {
             continue;  // don't plot it
         }

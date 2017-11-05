@@ -2481,7 +2481,7 @@ static void save_history_info()
     current.closeprox            = g_close_proximity;
     current.nobof                = (short) (g_bof_match_book_images ? 0 : 1);
     current.orbit_delay          = (short)g_orbit_delay;
-    current.orbit_interval       = orbit_interval;
+    current.orbit_interval       = g_orbit_interval;
     current.oxmin                = oxmin;
     current.oxmax                = oxmax;
     current.oymin                = oymin;
@@ -2671,7 +2671,7 @@ static void restore_history_info(int i)
     g_close_proximity = last.closeprox;
     g_bof_match_book_images = last.nobof == 0;
     g_orbit_delay = last.orbit_delay;
-    orbit_interval = last.orbit_interval;
+    g_orbit_interval = last.orbit_interval;
     oxmin = last.oxmin;
     oxmax = last.oxmax;
     oymin = last.oymin;

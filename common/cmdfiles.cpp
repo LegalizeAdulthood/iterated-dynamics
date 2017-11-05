@@ -432,7 +432,7 @@ static void initvars_restart()          // <ins> key init
     video_cutboth = true;               // keep virtual aspect
     zscroll = true;                     // relaxed screen scrolling
     g_orbit_delay = 0;                    // full speed orbits
-    orbit_interval = 1;                 // plot all orbits
+    g_orbit_interval = 1;                 // plot all orbits
     g_debug_flag = debug_flags::none;      // debugging flag(s) are off
     timerflag = false;                  // timer flags are off
     g_formula_filename = "fractint.frm";      // default formula file
@@ -537,7 +537,7 @@ static void initvars_fractal()          // init vars affecting calculation
     rotate_lo = 1;
     rotate_hi = 255;      // color cycling default range
     g_orbit_delay = 0;                     // full speed orbits
-    orbit_interval = 1;                  // plot all orbits
+    g_orbit_interval = 1;                  // plot all orbits
     g_keep_screen_coords = false;
     g_draw_mode = 'r';                      // passes=orbits draw mode
     set_orbit_corners = false;
@@ -2891,14 +2891,14 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
 
     if (variable == "orbitinterval")
     {
-        orbit_interval = numval;
-        if (orbit_interval < 1)
+        g_orbit_interval = numval;
+        if (g_orbit_interval < 1)
         {
-            orbit_interval = 1;
+            g_orbit_interval = 1;
         }
-        if (orbit_interval > 255)
+        if (g_orbit_interval > 255)
         {
-            orbit_interval = 255;
+            g_orbit_interval = 255;
         }
         return CMDARG_NONE;
     }
