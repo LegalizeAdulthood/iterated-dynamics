@@ -258,7 +258,7 @@ void bfcornerstofloat()
         xxmin = (double)bftofloat(bfxmin);
         yymin = (double)bftofloat(bfymin);
         xxmax = (double)bftofloat(bfxmax);
-        yymax = (double)bftofloat(bfymax);
+        yymax = (double)bftofloat(g_bf_y_max);
         xx3rd = (double)bftofloat(g_bf_x_3rd);
         yy3rd = (double)bftofloat(g_bf_y_3rd);
     }
@@ -544,7 +544,7 @@ bool MandelbnSetup()
     bftobn(bnxmin, bfxmin);
     bftobn(bnxmax, bfxmax);
     bftobn(bnymin, bfymin);
-    bftobn(bnymax, bfymax);
+    bftobn(bnymax, g_bf_y_max);
     bftobn(bnx3rd, g_bf_x_3rd);
     bftobn(bny3rd, g_bf_y_3rd);
 
@@ -642,7 +642,7 @@ bool MandelbfSetup()
     div_a_bf_int(bfxdel, (U16)(xdots - 1));
 
     // bfydel = (bfymax - bfy3rd)/(ydots-1)
-    sub_bf(bfydel, bfymax, g_bf_y_3rd);
+    sub_bf(bfydel, g_bf_y_max, g_bf_y_3rd);
     div_a_bf_int(bfydel, (U16)(ydots - 1));
 
     // bfxdel2 = (bfx3rd - bfxmin)/(ydots-1)
@@ -773,7 +773,7 @@ int mandelbf_per_pixel()
     mult_bf_int(bfold.x, bfydel, (U16)g_row);
     mult_bf_int(bfold.y, bfydel2, (U16)g_col);
     add_a_bf(bfold.x, bfold.y);
-    sub_bf(bfparm.y, bfymax, bfold.x);
+    sub_bf(bfparm.y, g_bf_y_max, bfold.x);
 
     copy_bf(bfold.x, bfparm.x);
     copy_bf(bfold.y, bfparm.y);
@@ -848,7 +848,7 @@ juliabf_per_pixel()
     mult_bf_int(bfnew.x, bfydel, (U16)g_row);
     mult_bf_int(bfnew.y, bfydel2, (U16)g_col);
     add_a_bf(bfnew.x, bfnew.y);
-    sub_bf(bfold.y, bfymax, bfnew.x);
+    sub_bf(bfold.y, g_bf_y_max, bfnew.x);
 
     // square has side effect - must copy first
     copy_bf(bfnew.x, bfold.x);

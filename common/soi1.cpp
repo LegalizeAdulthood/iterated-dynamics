@@ -920,7 +920,7 @@ void soi()
         xxminl = (double)bftofloat(bfxmin);
         yyminl = (double)bftofloat(bfymin);
         xxmaxl = (double)bftofloat(bfxmax);
-        yymaxl = (double)bftofloat(bfymax);
+        yymaxl = (double)bftofloat(g_bf_y_max);
     }
     else
     {

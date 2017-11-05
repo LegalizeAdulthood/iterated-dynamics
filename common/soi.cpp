@@ -1112,7 +1112,7 @@ void soi_ldbl()
         xxminl = bftofloat(bfxmin);
         yyminl = bftofloat(bfymin);
         xxmaxl = bftofloat(bfxmax);
-        yymaxl = bftofloat(bfymax);
+        yymaxl = bftofloat(g_bf_y_max);
     }
     else
     {

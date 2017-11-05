@@ -2113,7 +2113,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
             get_bf(g_bf_y_3rd, floatvalstr[2]);
 
             // yymax = floatval[3];
-            get_bf(bfymax, floatvalstr[3]);
+            get_bf(g_bf_y_max, floatvalstr[3]);
 
             if (totparms == 6)
             {
@@ -2156,7 +2156,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
                 get_bf(g_bf_y_3rd, floatvalstr[2]);
 
                 // yymax = floatval[3];
-                get_bf(bfymax, floatvalstr[3]);
+                get_bf(g_bf_y_max, floatvalstr[3]);
 
                 if (totparms == 6)
                 {

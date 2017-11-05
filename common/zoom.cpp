@@ -162,7 +162,7 @@ void drawbox(bool drawit)
     if (bf_math != bf_math_type::NONE)
     {
         calc_corner(bfxmin, g_bf_save_x_min, ftemp1, bffxwidth, ftemp2, bffxskew);
-        calc_corner(bfymax, g_bf_save_y_max, ftemp2, bffydepth, ftemp1, bffyskew);
+        calc_corner(g_bf_y_max, g_bf_save_y_max, ftemp2, bffydepth, ftemp1, bffyskew);
     }
 
     // calc co-ords of bottom right
@@ -552,7 +552,7 @@ void zoomoutbf() // for ctl-enter, calc corners for zooming out
     sub_bf(tmp1, bfymin, g_bf_y_3rd);
     sub_bf(tmp2, g_bf_x_3rd, bfxmin);
     sub_bf(tmp3, bfxmax, g_bf_x_3rd);
-    sub_bf(tmp4, g_bf_y_3rd, bfymax);
+    sub_bf(tmp4, g_bf_y_3rd, g_bf_y_max);
     mult_bf(tmp5, tmp1, tmp2);
     mult_bf(tmp6, tmp3, tmp4);
     sub_bf(bfftemp, tmp5, tmp6);
@@ -567,11 +567,11 @@ void zoomoutbf() // for ctl-enter, calc corners for zooming out
 
     // savxxmin = xxmin; savyymax = yymax;
     copy_bf(savbfxmin, bfxmin);
-    copy_bf(savbfymax, bfymax);
+    copy_bf(savbfymax, g_bf_y_max);
 
     sub_bf(tmp1, g_bf_save_x_min, savbfxmin);
     sub_bf(tmp2, g_bf_save_y_max, savbfymax);
-    zmo_calcbf(tmp1, tmp2, bfxmin, bfymax, bfplotmx1, bfplotmx2, bfplotmy1,
+    zmo_calcbf(tmp1, tmp2, bfxmin, g_bf_y_max, bfplotmx1, bfplotmx2, bfplotmy1,
                bfplotmy2, bfftemp);
     sub_bf(tmp1, g_bf_save_x_max, savbfxmin);
     sub_bf(tmp2, g_bf_save_y_min, savbfymax);

@@ -297,13 +297,13 @@ void cvtcentermagbf(bf_t Xctr, bf_t Yctr, LDBL *Magnification, double *Xmagfacto
         sub_bf(bfWidth, bfxmax, bfxmin);
         LDBL Width = bftofloat(bfWidth);
         // Height = yymax - yymin;
-        sub_bf(bfHeight, bfymax, bfymin);
+        sub_bf(bfHeight, g_bf_y_max, bfymin);
         Height = bftofloat(bfHeight);
         // *Xctr = (xxmin + xxmax)/2;
         add_bf(Xctr, bfxmin, bfxmax);
         half_a_bf(Xctr);
         // *Yctr = (yymin + yymax)/2;
-        add_bf(Yctr, bfymin, bfymax);
+        add_bf(Yctr, bfymin, g_bf_y_max);
         half_a_bf(Yctr);
         *Magnification  = 2/Height;
         *Xmagfactor = (double)(Height / (DEFAULTASPECT * Width));
@@ -323,7 +323,7 @@ void cvtcentermagbf(bf_t Xctr, bf_t Yctr, LDBL *Magnification, double *Xmagfacto
         sub_bf(bftmpx, bfxmax, bfxmin);
         LDBL tmpx1 = bftofloat(bftmpx);
         // tmpy = yymax - yymin;
-        sub_bf(bftmpy, bfymax, bfymin);
+        sub_bf(bftmpy, g_bf_y_max, bfymin);
         LDBL tmpy1 = bftofloat(bftmpy);
         LDBL c2 = tmpx1*tmpx1 + tmpy1*tmpy1;
 
@@ -351,7 +351,7 @@ void cvtcentermagbf(bf_t Xctr, bf_t Yctr, LDBL *Magnification, double *Xmagfacto
         sub_bf(bftmpx, bfxmin, g_bf_x_3rd);
         LDBL tmpx2 = bftofloat(bftmpx);
         // tmpy = yymax - yy3rd;
-        sub_bf(bftmpy, bfymax, g_bf_y_3rd);
+        sub_bf(bftmpy, g_bf_y_max, g_bf_y_3rd);
         LDBL tmpy2 = bftofloat(bftmpy);
         LDBL b2 = tmpx2*tmpx2 + tmpy2*tmpy2;
         LDBL b = sqrtl(b2);
@@ -364,7 +364,7 @@ void cvtcentermagbf(bf_t Xctr, bf_t Yctr, LDBL *Magnification, double *Xmagfacto
         add_bf(Xctr, bfxmin, bfxmax);
         half_a_bf(Xctr);
         // *Yctr = (yymin + yymax)/2;
-        add_bf(Yctr, bfymin, bfymax);
+        add_bf(Yctr, bfymin, g_bf_y_max);
         half_a_bf(Yctr);
 
         Height = b * sin(tmpa);
@@ -428,7 +428,7 @@ void cvtcornersbf(bf_t Xctr, bf_t Yctr, LDBL Magnification, double Xmagfactor, d
         sub_bf(bfymin, Yctr, bfh);
         copy_bf(g_bf_y_3rd, bfymin);
         // yymax = Yctr + h;
-        add_bf(bfymax, Yctr, bfh);
+        add_bf(g_bf_y_max, Yctr, bfh);
         restore_stack(saved);
         return;
     }
@@ -456,7 +456,7 @@ void cvtcornersbf(bf_t Xctr, bf_t Yctr, LDBL Magnification, double Xmagfactor, d
     add_bf(bfxmin, bftmp, Xctr);
     // yymax = y + Yctr;
     floattobf(bftmp, y);
-    add_bf(bfymax, bftmp, Yctr);
+    add_bf(g_bf_y_max, bftmp, Yctr);
 
     // bottom right
     x =  xmax * cosrot + ymin *  sinrot;
