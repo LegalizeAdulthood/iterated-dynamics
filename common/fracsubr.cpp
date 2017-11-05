@@ -158,7 +158,7 @@ void calcfracinit() // initialize a *pile* of stuff for fractal calculation
     g_color_iter = g_old_color_iter;
     for (int i = 0; i < 10; i++)
     {
-        rhombus_stack[i] = 0;
+        g_rhombus_stack[i] = 0;
     }
 
     // set up grid array compactly leaving space at end

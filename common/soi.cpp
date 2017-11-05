@@ -27,7 +27,7 @@
 #define EVERY 15
 #define BASIN_COLOR 0
 
-int rhombus_stack[10];
+int g_rhombus_stack[10];
 int rhombus_depth = 0;
 int g_max_rhombus_depth;
 int g_soi_min_stack_available;
@@ -603,7 +603,7 @@ static int rhombus(LDBL cre1, LDBL cre2, LDBL cim1, LDBL cim2,
     {
         g_max_rhombus_depth = rhombus_depth;
     }
-    rhombus_stack[rhombus_depth] = avail;
+    g_rhombus_stack[rhombus_depth] = avail;
 
     if (driver_key_pressed())
     {

@@ -791,14 +791,14 @@ bool tab_display_2(char *msg)
         write_row(row++, "   Store ptr %d Loadptr %d Max_Ops var %u Max_Args var %u LastInitOp %d",
                   StoPtr, g_load_index, g_max_function_ops, g_max_function_args, g_last_init_op);
     }
-    else if (rhombus_stack[0])
+    else if (g_rhombus_stack[0])
     {
         write_row(row++, "SOI Recursion %d stack free %d %d %d %d %d %d %d %d %d %d",
                   g_max_rhombus_depth+1,
-                  rhombus_stack[0], rhombus_stack[1], rhombus_stack[2],
-                  rhombus_stack[3], rhombus_stack[4], rhombus_stack[5],
-                  rhombus_stack[6], rhombus_stack[7], rhombus_stack[8],
-                  rhombus_stack[9]);
+                  g_rhombus_stack[0], g_rhombus_stack[1], g_rhombus_stack[2],
+                  g_rhombus_stack[3], g_rhombus_stack[4], g_rhombus_stack[5],
+                  g_rhombus_stack[6], g_rhombus_stack[7], g_rhombus_stack[8],
+                  g_rhombus_stack[9]);
     }
 
     /*
