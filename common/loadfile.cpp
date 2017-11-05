@@ -140,7 +140,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
             g_preview_factor   = read_info.previewfactor;
             xtrans          = read_info.xtrans;
             ytrans          = read_info.ytrans;
-            red_crop_left   = read_info.red_crop_left;
+            g_red_crop_left   = read_info.red_crop_left;
             red_crop_right  = read_info.red_crop_right;
             g_blue_crop_left  = read_info.blue_crop_left;
             g_blue_crop_right = read_info.blue_crop_right;

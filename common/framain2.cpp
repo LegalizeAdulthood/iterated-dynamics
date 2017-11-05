@@ -2418,7 +2418,7 @@ static void save_history_info()
     current.previewfactor        = (short)g_preview_factor             ;
     current.xtrans               = (short)xtrans                    ;
     current.ytrans               = (short)ytrans                    ;
-    current.red_crop_left        = (short)red_crop_left             ;
+    current.red_crop_left        = (short)g_red_crop_left             ;
     current.red_crop_right       = (short)red_crop_right            ;
     current.blue_crop_left       = (short)g_blue_crop_left            ;
     current.blue_crop_right      = (short)g_blue_crop_right           ;
@@ -2599,7 +2599,7 @@ static void restore_history_info(int i)
     g_preview_factor         = last.previewfactor  ;
     xtrans                = last.xtrans         ;
     ytrans                = last.ytrans         ;
-    red_crop_left         = last.red_crop_left  ;
+    g_red_crop_left         = last.red_crop_left  ;
     red_crop_right        = last.red_crop_right ;
     g_blue_crop_left        = last.blue_crop_left ;
     g_blue_crop_right       = last.blue_crop_right;
