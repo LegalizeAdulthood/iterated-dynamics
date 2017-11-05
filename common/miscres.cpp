@@ -1251,7 +1251,7 @@ top:
     if (fractype == fractal_type::PLASMA || fractype == fractal_type::ANT || fractype == fractal_type::CELLULAR)
     {
         driver_put_string(++s_row, 2, C_GENERAL_MED, "Current 'rseed': ");
-        sprintf(msg, "%d", rseed);
+        sprintf(msg, "%d", g_random_seed);
         driver_put_string(-1, -1, C_GENERAL_HI, msg);
     }
 

@@ -429,7 +429,7 @@ extern int                   row;
 extern int                   g_row_count;       // row-counter for decoder and out_line
 extern double                rqlim2;
 extern double                rqlim;
-extern int                   rseed;
+extern int                   g_random_seed;
 extern long                  savebase;
 extern DComplex              SaveC;
 extern int                   savedac;

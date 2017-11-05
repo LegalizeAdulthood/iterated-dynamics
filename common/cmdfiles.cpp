@@ -77,7 +77,7 @@ int     usr_biomorph = 0;
 symmetry_type g_force_symmetry = symmetry_type::NONE;      // force symmetry
 int     show_file = 0;           // zero if file display pending
 bool    g_random_seed_flag = false;
-int     rseed = 0;              // Random number seeding flag and value
+int     g_random_seed = 0;              // Random number seeding flag and value
 int     g_decomp[2] = { 0 };      // Decomposition coloring
 long    g_distance_estimator = 0;
 int     g_distance_estimator_width_factor = 0;
@@ -449,7 +449,7 @@ static void initvars_restart()          // <ins> key init
     g_ifs_name = "";
     reset_ifs_defn();
     g_random_seed_flag = false;                      // not a fixed srand() seed
-    rseed = init_rseed;
+    g_random_seed = init_rseed;
     g_read_filename = DOTSLASH;                // initially current directory
     show_file = 1;
     // next should perhaps be fractal re-init, not just <ins> ?
@@ -2878,7 +2878,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
 
     if (variable == "rseed")
     {
-        rseed = numval;
+        g_random_seed = numval;
         g_random_seed_flag = true;
         return CMDARG_FRACTAL_PARAM;
     }

@@ -429,11 +429,11 @@ int plasma()
 
     if (!g_random_seed_flag && g_params[2] == 1)
     {
-        --rseed;
+        --g_random_seed;
     }
     if (g_params[2] != 0 && g_params[2] != 1)
     {
-        rseed = (int)g_params[2];
+        g_random_seed = (int)g_params[2];
     }
     max_plasma = (U16)g_params[3];  // max_plasma is used as a flag for potential
 
@@ -481,10 +481,10 @@ int plasma()
         }
         getpix  = (U16(*)(int, int))getcolor;
     }
-    srand(rseed);
+    srand(g_random_seed);
     if (!g_random_seed_flag)
     {
-        ++rseed;
+        ++g_random_seed;
     }
 
     if (g_colors == 256)                     // set the (256-color) palette
@@ -666,10 +666,10 @@ int diffusion()
         border = 10;
     }
 
-    srand(rseed);
+    srand(g_random_seed);
     if (!g_random_seed_flag)
     {
-        ++rseed;
+        ++g_random_seed;
     }
 
     if (mode == 0)
@@ -1825,7 +1825,7 @@ int cellular()
 
     if (!g_random_seed_flag && randparam == -1)
     {
-        --rseed;
+        --g_random_seed;
     }
     if (randparam != 0 && randparam != -1)
     {
@@ -1854,10 +1854,10 @@ int cellular()
         }
     }
 
-    srand(rseed);
+    srand(g_random_seed);
     if (!g_random_seed_flag)
     {
-        ++rseed;
+        ++g_random_seed;
     }
 
     // generate rule table from parameter 1

@@ -513,17 +513,17 @@ int ant()
     // set random seed for reproducibility
     if (!g_random_seed_flag && g_params[5] == 1)
     {
-        --rseed;
+        --g_random_seed;
     }
     if (g_params[5] != 0 && g_params[5] != 1)
     {
-        rseed = (int)g_params[5];
+        g_random_seed = (int)g_params[5];
     }
 
-    srand(rseed);
+    srand(g_random_seed);
     if (!g_random_seed_flag)
     {
-        ++rseed;
+        ++g_random_seed;
     }
 
     int maxants = static_cast<int>(g_params[2]);
