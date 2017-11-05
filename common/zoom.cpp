@@ -428,10 +428,10 @@ static void chgboxf(double dwidth, double ddepth)
 void resizebox(int steps)
 {
     double deltax, deltay;
-    if (zoom_box_height*screenaspect > zoom_box_width)
+    if (zoom_box_height*g_screen_aspect > zoom_box_width)
     {
         // box larger on y axis
-        deltay = steps * 0.036 / screenaspect;
+        deltay = steps * 0.036 / g_screen_aspect;
         deltax = zoom_box_width * deltay / zoom_box_height;
     }
     else

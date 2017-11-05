@@ -967,7 +967,7 @@ get_view_restart:
         viewydots = 0;
         viewreduction = 4.2F;
         viewcrop = true;
-        g_final_aspect_ratio = screenaspect;
+        g_final_aspect_ratio = g_screen_aspect;
         sxdots = old_sxdots;
         sydots = old_sydots;
         video_cutboth = true;
@@ -2253,9 +2253,9 @@ gc_loop:
         yymin = curfractalspecific->ymin;
         yy3rd = yymin;
         yymax = curfractalspecific->ymax;
-        if (viewcrop && g_final_aspect_ratio != screenaspect)
+        if (viewcrop && g_final_aspect_ratio != g_screen_aspect)
         {
-            aspectratio_crop(screenaspect, g_final_aspect_ratio);
+            aspectratio_crop(g_screen_aspect, g_final_aspect_ratio);
         }
         if (bf_math != bf_math_type::NONE)
         {
@@ -2497,9 +2497,9 @@ gsc_loop:
         yymax = g_orbit_corner_max_y;
         xx3rd = g_orbit_corner_3_x;
         yy3rd = g_orbit_corner_3_y;
-        if (viewcrop && g_final_aspect_ratio != screenaspect)
+        if (viewcrop && g_final_aspect_ratio != g_screen_aspect)
         {
-            aspectratio_crop(screenaspect, g_final_aspect_ratio);
+            aspectratio_crop(g_screen_aspect, g_final_aspect_ratio);
         }
 
         g_orbit_corner_min_x = xxmin;

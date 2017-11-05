@@ -366,7 +366,7 @@ findsize(lsysf_cmd *command, lsys_turtlestatef *ts, lsysf_cmd **rules, int depth
 bool
 lsysf_findscale(lsysf_cmd *command, lsys_turtlestatef *ts, lsysf_cmd **rules, int depth)
 {
-    ts->aspect = screenaspect*xdots/ydots;
+    ts->aspect = g_screen_aspect*xdots/ydots;
     ts->ymin = 0;
     ts->ymax = ts->ymin;
     ts->xmax = ts->ymax;
@@ -755,7 +755,7 @@ void lsysf_dosincos()
     LDBL twopimax;
     LDBL twopimaxi;
 
-    locaspect = screenaspect*xdots/ydots;
+    locaspect = g_screen_aspect*xdots/ydots;
     twopimax = TWOPI / maxangle;
     sins_f.resize(maxangle);
     coss_f.resize(maxangle);

@@ -203,7 +203,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
         g_file_aspect_ratio = read_info.faspectratio;
         if (g_file_aspect_ratio < 0.01)       // fix files produced in early v14.1
         {
-            g_file_aspect_ratio = screenaspect;
+            g_file_aspect_ratio = g_screen_aspect;
         }
         g_save_system  = read_info.system;
         g_save_release = read_info.release; // from fmt 5 on we know real number
@@ -677,15 +677,15 @@ static int find_fractal_info(char const *gif_file, FRACTAL_INFO *info,
         // calc reasonably close value from gif header
         g_file_aspect_ratio = (float)((64.0 / ((double)(gifstart[12]) + 15.0))
                                   * (double)g_file_y_dots / (double)g_file_x_dots);
-        if (g_file_aspect_ratio > screenaspect-0.03
-                && g_file_aspect_ratio < screenaspect+0.03)
+        if (g_file_aspect_ratio > g_screen_aspect-0.03
+                && g_file_aspect_ratio < g_screen_aspect+0.03)
         {
-            g_file_aspect_ratio = screenaspect;
+            g_file_aspect_ratio = g_screen_aspect;
         }
     }
     else if (g_file_y_dots * 4 == g_file_x_dots * 3)   // assume the common square pixels
     {
-        g_file_aspect_ratio = screenaspect;
+        g_file_aspect_ratio = g_screen_aspect;
     }
 
     if (make_parameter_file && (gifstart[10] & 0x80) != 0)
@@ -942,7 +942,7 @@ static int find_fractal_info(char const *gif_file, FRACTAL_INFO *info,
         }
 
         fclose(fp);
-        g_file_aspect_ratio = screenaspect; // if not >= v15, this is correct
+        g_file_aspect_ratio = g_screen_aspect; // if not >= v15, this is correct
         return (0);
     }
 

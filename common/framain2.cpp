@@ -161,7 +161,7 @@ main_state big_while_loop(bool *const kbdmore, bool *const stacked, bool const r
             if (viewwindow)
             {
                 // bypass for VESA virtual screen
-                ftemp = g_final_aspect_ratio*(((double) sydots)/((double) sxdots)/screenaspect);
+                ftemp = g_final_aspect_ratio*(((double) sydots)/((double) sxdots)/g_screen_aspect);
                 xdots = viewxdots;
                 if (xdots != 0)
                 {
@@ -172,7 +172,7 @@ main_state big_while_loop(bool *const kbdmore, bool *const stacked, bool const r
                         ydots = (int)((double)xdots * ftemp + 0.5);
                     }
                 }
-                else if (g_final_aspect_ratio <= screenaspect)
+                else if (g_final_aspect_ratio <= g_screen_aspect)
                 {
                     xdots = (int)((double)sxdots / viewreduction + 0.5);
                     ydots = (int)((double)xdots * ftemp + 0.5);

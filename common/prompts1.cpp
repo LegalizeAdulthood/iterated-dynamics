@@ -1333,9 +1333,9 @@ void set_default_parms()
     xx3rd = xxmin;
     yy3rd = yymin;
 
-    if (viewcrop && g_final_aspect_ratio != screenaspect)
+    if (viewcrop && g_final_aspect_ratio != g_screen_aspect)
     {
-        aspectratio_crop(screenaspect, g_final_aspect_ratio);
+        aspectratio_crop(g_screen_aspect, g_final_aspect_ratio);
     }
     for (int i = 0; i < 4; i++)
     {

@@ -402,7 +402,7 @@ bool encoder()
     if (viewwindow                               // less than full screen?
             && (viewxdots == 0 || viewydots == 0))     // and we picked the dots?
     {
-        i = (int)(((double) sydots / (double) sxdots) * 64.0 / screenaspect - 14.5);
+        i = (int)(((double) sydots / (double) sxdots) * 64.0 / g_screen_aspect - 14.5);
     }
     else       // must risk loss of precision if numbers low
     {

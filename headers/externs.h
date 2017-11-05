@@ -438,7 +438,7 @@ extern long                  g_save_ticks;
 extern int                   g_save_release;
 extern int                   g_save_system;
 extern int                   g_scale_map[];
-extern float                 screenaspect;
+extern float                 g_screen_aspect;
 extern id::SearchPath        searchfor;
 extern bool                  set_orbit_corners;
 extern bool                  showbox;

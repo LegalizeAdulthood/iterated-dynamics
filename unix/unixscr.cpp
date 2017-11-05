@@ -64,7 +64,7 @@ extern  int g_adapter;
 extern bool g_got_real_dac;
 extern bool inside_help;
 extern float g_final_aspect_ratio;
-extern  float   screenaspect;
+extern  float   g_screen_aspect;
 
 extern VIDEOINFO x11_video_table[];
 
@@ -803,8 +803,8 @@ resizeWindow()
         oldy = sydots;
         Xwinwidth = sxdots;
         Xwinheight = sydots;
-        screenaspect = sydots/(float)sxdots;
-        g_final_aspect_ratio = screenaspect;
+        g_screen_aspect = sydots/(float)sxdots;
+        g_final_aspect_ratio = g_screen_aspect;
         int Xpad = 8;  // default, unless changed below
         int Xmwidth;
         if (Xdepth == 1)

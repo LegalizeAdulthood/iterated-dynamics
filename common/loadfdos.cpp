@@ -113,7 +113,7 @@ static double vid_aspect(int tryxdots, int tryydots)
     // calc resulting aspect ratio for specified dots in current mode
     return (double)tryydots / (double)tryxdots
            * (double)g_video_entry.xdots / (double)g_video_entry.ydots
-           * screenaspect;
+           * g_screen_aspect;
 }
 
 #ifndef XFRACT
@@ -306,7 +306,7 @@ int get_video_mode(FRACTAL_INFO *info, ext_blk_3 *blk_3_info)
                 strcat(heading, buff);
             }
         }
-        if (g_file_aspect_ratio != 0 && g_file_aspect_ratio != screenaspect)
+        if (g_file_aspect_ratio != 0 && g_file_aspect_ratio != g_screen_aspect)
         {
             strcat(heading,
                    "\nWARNING: non-standard aspect ratio; loading will change your <v>iew settings");
@@ -468,10 +468,10 @@ int get_video_mode(FRACTAL_INFO *info, ext_blk_3 *blk_3_info)
     {
         g_final_aspect_ratio = (float)vid_aspect(g_file_x_dots, g_file_y_dots);
     }
-    if (g_final_aspect_ratio >= screenaspect-0.02
-            && g_final_aspect_ratio <= screenaspect+0.02)
+    if (g_final_aspect_ratio >= g_screen_aspect-0.02
+            && g_final_aspect_ratio <= g_screen_aspect+0.02)
     {
-        g_final_aspect_ratio = screenaspect;
+        g_final_aspect_ratio = g_screen_aspect;
     }
     {
         int i = (int)(g_final_aspect_ratio * 1000.0 + 0.5);
@@ -488,11 +488,11 @@ int get_video_mode(FRACTAL_INFO *info, ext_blk_3 *blk_3_info)
         viewwindow = true;
         ftemp = g_final_aspect_ratio
                 * (double)g_video_entry.ydots / (double)g_video_entry.xdots
-                / screenaspect;
+                / g_screen_aspect;
         float tmpreduce;
         int i;
         int j;
-        if (g_final_aspect_ratio <= screenaspect)
+        if (g_final_aspect_ratio <= g_screen_aspect)
         {
             i = (int)((double)g_video_entry.xdots / (double)g_file_x_dots * 20.0 + 0.5);
             tmpreduce = (float)(i/20.0); // chop precision to nearest .05
@@ -517,7 +517,7 @@ int get_video_mode(FRACTAL_INFO *info, ext_blk_3 *blk_3_info)
         }
     }
     if (!make_parameter_file && !g_fast_restore && (g_init_batch == batch_modes::NONE) &&
-            (fabs(g_final_aspect_ratio - screenaspect) > .00001 || viewxdots != 0))
+            (fabs(g_final_aspect_ratio - g_screen_aspect) > .00001 || viewxdots != 0))
     {
         stopmsg(STOPMSG_NO_BUZZER,
                 "Warning: <V>iew parameters are being set to non-standard values.\n"

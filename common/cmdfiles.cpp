@@ -124,7 +124,7 @@ bool truecolor = false;                 // escape time truecolor flag
 int truemode = 0;               // truecolor coloring scheme
 std::string g_color_file;          // from last <l> <s> or colors=@filename
 bool g_new_bifurcation_functions_loaded = false; // if function loaded for new bifs
-float   screenaspect = DEFAULTASPECT;   // aspect ratio of the screen
+float   g_screen_aspect = DEFAULTASPECT;   // aspect ratio of the screen
 float   g_aspect_drift = DEFAULTASPECTDRIFT;  // how much drift is allowed and
                                 // still forced to screenaspect
 bool g_fast_restore = false;       /* true - reset viewwindows prior to a restore
@@ -426,7 +426,7 @@ static void initvars_restart()          // <ins> key init
     viewreduction = 4.2F;
     viewcrop = true;
     g_virtual_screens = true;           // virtual screen modes on
-    g_final_aspect_ratio = screenaspect;
+    g_final_aspect_ratio = g_screen_aspect;
     viewydots = 0;
     viewxdots = viewydots;
     video_cutboth = true;               // keep virtual aspect
@@ -2237,7 +2237,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         }
         viewwindow = true;
         viewreduction = 4.2F;  // reset default values
-        g_final_aspect_ratio = screenaspect;
+        g_final_aspect_ratio = g_screen_aspect;
         viewcrop = true;
         viewydots = 0;
         viewxdots = viewydots;

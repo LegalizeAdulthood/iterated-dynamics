@@ -64,7 +64,7 @@ extern  int g_adapter;
 extern bool g_got_real_dac;
 extern bool inside_help;
 extern float g_final_aspect_ratio;
-extern  float   screenaspect;
+extern  float   g_screen_aspect;
 extern VIDEOINFO x11_video_table[];
 
 // the video-palette array (named after the VGA adapter's video-DAC)
@@ -2034,8 +2034,8 @@ static bool x11_resize(Driver *drv)
         oldy = sydots;
         di->Xwinwidth = sxdots;
         di->Xwinheight = sydots;
-        screenaspect = sydots/(float) sxdots;
-        g_final_aspect_ratio = screenaspect;
+        g_screen_aspect = sydots/(float) sxdots;
+        g_final_aspect_ratio = g_screen_aspect;
         int Xpad = 9;
         int Xmwidth;
         if (di->Xdepth == 1)
