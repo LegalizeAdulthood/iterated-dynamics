@@ -129,7 +129,7 @@ int g_converge_x_adjust = 0;
 int yadjust = 0;
 int xxadjust;
 int yyadjust;
-int xshift;
+int g_x_shift;
 int yshift;
 int const g_bad_value = -10000;       // set bad values to this
 static int const bad_check = -3000; // check values against this to determine if good
@@ -210,7 +210,7 @@ int line3d(BYTE * pixels, unsigned linelen)
         crossavg[0] = 0;
         crossavg[1] = 0;
         crossavg[2] = 0;
-        xcenter = g_logical_screen_x_dots / 2 + xshift;
+        xcenter = g_logical_screen_x_dots / 2 + g_x_shift;
         xcenter0 = (int) xcenter;
         ycenter = g_logical_screen_y_dots / 2 - yshift;
         ycenter0 = (int) ycenter;
@@ -2431,7 +2431,7 @@ static int first_time(int linelen, VECTOR v)
         yyadjust = 0;
         xxadjust = 0;  // Disable shifting in ray tracing
         yshift = 0;
-        xshift = 0;
+        g_x_shift = 0;
     }
 
     RO = 0;
@@ -2593,7 +2593,7 @@ static int first_time(int linelen, VECTOR v)
         trans(((double) g_logical_screen_x_dots - xmax - xmin) / 2,
               ((double) g_logical_screen_y_dots - ymax - ymin) / 2, -zmax, lightm);
 
-        trans((double)(xshift), (double)(-yshift), 0.0, g_m);
+        trans((double)(g_x_shift), (double)(-yshift), 0.0, g_m);
 
         /* matrix m now contains ALL those transforms composed together !!
          * convert m to long integers shifted 16 bits */

@@ -547,7 +547,7 @@ extern int                   g_logical_screen_x_dots;
 extern long                  g_l_x_max;
 extern long                  g_l_x_min;
 extern int                   xshift1;
-extern int                   xshift;
+extern int                   g_x_shift;
 extern int                   xtrans;
 extern double                g_x_3rd;
 extern int                   xxadjust1;

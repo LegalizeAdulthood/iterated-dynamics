@@ -462,8 +462,8 @@ void plot_setup()
         break;
     }
 
-    xshift = (int)((XSHIFT * (double)g_logical_screen_x_dots)/100);
-    xshift1 = xshift;
+    g_x_shift = (int)((XSHIFT * (double)g_logical_screen_x_dots)/100);
+    xshift1 = g_x_shift;
     yshift = (int)((YSHIFT * (double)g_logical_screen_y_dots)/100);
     yshift1 = yshift;
 
@@ -479,7 +479,7 @@ void plot_setup()
         switch (g_which_image)
         {
         case stereo_images::RED:
-            xshift  += (int)((g_eye_separation* (double)g_logical_screen_x_dots)/200);
+            g_x_shift  += (int)((g_eye_separation* (double)g_logical_screen_x_dots)/200);
             xxadjust = (int)(((xtrans+g_converge_x_adjust)* (double)g_logical_screen_x_dots)/100);
             xshift1 -= (int)((g_eye_separation* (double)g_logical_screen_x_dots)/200);
             xxadjust1 = (int)(((xtrans-g_converge_x_adjust)* (double)g_logical_screen_x_dots)/100);
@@ -490,7 +490,7 @@ void plot_setup()
             break;
 
         case stereo_images::BLUE:
-            xshift  -= (int)((g_eye_separation* (double)g_logical_screen_x_dots)/200);
+            g_x_shift  -= (int)((g_eye_separation* (double)g_logical_screen_x_dots)/200);
             xxadjust = (int)(((xtrans-g_converge_x_adjust)* (double)g_logical_screen_x_dots)/100);
             if (g_glasses_type == 4 && g_screen_x_dots >= 2*g_logical_screen_x_dots)
             {
