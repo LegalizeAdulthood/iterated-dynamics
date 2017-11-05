@@ -1447,7 +1447,7 @@ int targa_color(int x, int y, int color)
         Real_Color = (BYTE)color;       // So Targa gets interpolated color
     }
 
-    switch (truemode)
+    switch (g_true_mode)
     {
     case 0:
     default:

@@ -617,7 +617,7 @@ int calcfract()
     g_display_3d = display_3d_modes::NONE;
     g_basin = 0;
     g_put_color = putcolor_a;
-    if (g_is_true_color && truemode != 0)
+    if (g_is_true_color && g_true_mode != 0)
     {
         // Have to force passes = 1
         g_std_calc_mode = '1';

@@ -399,7 +399,7 @@ void spindac(int dir, int inc)
     unsigned char *dacbot;
     if (g_colors < 16)
         return;
-    if (g_is_true_color && truemode != 0)
+    if (g_is_true_color && g_true_mode != 0)
         return;
     if (dir != 0 && g_color_cycle_range_lo < g_colors && g_color_cycle_range_lo < g_color_cycle_range_hi)
     {

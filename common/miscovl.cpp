@@ -91,7 +91,7 @@ void make_batch_file()
     maxcolor = g_colors;
     strcpy(colorspec, "y");
 #ifndef XFRACT
-    if (g_got_real_dac || (g_is_true_color && truemode == 0))
+    if (g_got_real_dac || (g_is_true_color && g_true_mode == 0))
 #else
     if (g_got_real_dac || (g_is_true_color && truemode == 0) || fake_lut)
 #endif
@@ -203,7 +203,7 @@ prompt_user:
         paramvalues[promptnum].type = 0x100 + MAXCMT - 1;
         paramvalues[promptnum++].uval.sbuf = inpcomment[3];
 #ifndef XFRACT
-        if (g_got_real_dac || (g_is_true_color && truemode == 0))
+        if (g_got_real_dac || (g_is_true_color && g_true_mode == 0))
 #else
         if (g_got_real_dac || (g_is_true_color && truemode == 0) || fake_lut)
 #endif
@@ -263,7 +263,7 @@ prompt_user:
             g_command_comment[i] = inpcomment[i];
         }
 #ifndef XFRACT
-        if (g_got_real_dac || (g_is_true_color && truemode == 0))
+        if (g_got_real_dac || (g_is_true_color && g_true_mode == 0))
 #else
         if (g_got_real_dac || (g_is_true_color && truemode == 0) || fake_lut)
 #endif

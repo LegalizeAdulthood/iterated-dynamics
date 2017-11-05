@@ -496,7 +496,7 @@ extern double                g_smallest_window_display_size;
 extern int                   g_total_passes;
 extern int                   g_transparent_color_3d[];
 extern bool                  g_truecolor;
-extern int                   truemode;
+extern int                   g_true_mode;
 extern double                twopi;
 extern char                  useinitorbit;
 extern bool                  use_grid;
