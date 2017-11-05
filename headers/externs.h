@@ -464,7 +464,7 @@ extern int                   g_store_index;
 extern int                   g_stop_pass;
 extern double                sx3rd;
 extern int                   g_screen_x_dots;
-extern double                sxmax;
+extern double                g_save_x_max;
 extern double                sxmin;
 extern int                   sxoffs;
 extern double                sy3rd;
