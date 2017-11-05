@@ -1382,7 +1382,7 @@ do_3d_transform:
         {
             updatesavename(g_save_filename);      // do the pending increment
             g_resave_flag = 0;
-            started_resaves = false;
+            g_started_resaves = false;
         }
         g_show_file = -1;
         return main_state::RESTORE_START;
@@ -1846,7 +1846,7 @@ static main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdm
         {
             updatesavename(g_save_filename);      // do the pending increment
             g_resave_flag = 0;
-            started_resaves = false;
+            g_started_resaves = false;
         }
         g_show_file = -1;
         return main_state::RESTORE_START;

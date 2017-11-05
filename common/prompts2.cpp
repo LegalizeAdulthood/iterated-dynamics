@@ -420,7 +420,7 @@ int get_toggles()
     if (strcmp(g_save_filename.c_str(), prevsavename))
     {
         g_resave_flag = 0;
-        started_resaves = false; // forget pending increment
+        g_started_resaves = false; // forget pending increment
     }
     g_overwrite_file = uvalues[++k].uval.ch.val != 0;
 

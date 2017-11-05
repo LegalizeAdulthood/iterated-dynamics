@@ -865,7 +865,7 @@ int calcfract()
         {
             updatesavename(g_save_filename); // do the pending increment
             g_resave_flag = 0;
-            started_resaves = false;
+            g_started_resaves = false;
         }
         g_calc_time = 0;
     }
