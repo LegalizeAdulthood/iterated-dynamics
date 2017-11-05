@@ -1402,15 +1402,15 @@ void write_batch_parms(char const *colorinf, bool colorsonly, int maxcolor, int 
             int xdigits, ydigits;
             put_parm(" %s=", "orbitcorners");
             xdigits = getprec(g_orbit_corner_min_x, g_orbit_corner_max_x, g_orbit_corner_3_x);
-            ydigits = getprec(oymin, oymax, oy3rd);
+            ydigits = getprec(oymin, oymax, g_orbit_corner_3_y);
             put_float(0, g_orbit_corner_min_x, xdigits);
             put_float(1, g_orbit_corner_max_x, xdigits);
             put_float(1, oymin, ydigits);
             put_float(1, oymax, ydigits);
-            if (g_orbit_corner_3_x != g_orbit_corner_min_x || oy3rd != oymin)
+            if (g_orbit_corner_3_x != g_orbit_corner_min_x || g_orbit_corner_3_y != oymin)
             {
                 put_float(1, g_orbit_corner_3_x, xdigits);
-                put_float(1, oy3rd, ydigits);
+                put_float(1, g_orbit_corner_3_y, ydigits);
             }
         }
 

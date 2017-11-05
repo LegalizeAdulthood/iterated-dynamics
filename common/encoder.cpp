@@ -684,7 +684,7 @@ bool encoder()
             osave_info.oymin     = oymin;
             osave_info.oymax     = oymax;
             osave_info.ox3rd     = g_orbit_corner_3_x;
-            osave_info.oy3rd     = oy3rd;
+            osave_info.oy3rd     = g_orbit_corner_3_y;
             osave_info.keep_scrn_coords = (short) (g_keep_screen_coords ? 1 : 0);
             osave_info.drawmode  = g_draw_mode;
             for (int i = 0; i < sizeof(osave_info.future) / sizeof(short); i++)

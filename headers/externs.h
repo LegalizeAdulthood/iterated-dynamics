@@ -362,7 +362,7 @@ extern bool                  g_overwrite_file;
 extern double                g_orbit_corner_3_x;
 extern double                g_orbit_corner_max_x;
 extern double                g_orbit_corner_min_x;
-extern double                oy3rd;
+extern double                g_orbit_corner_3_y;
 extern double                oymax;
 extern double                oymin;
 extern double                param[];

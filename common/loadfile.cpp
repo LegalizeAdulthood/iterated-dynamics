@@ -608,7 +608,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
         oymin       = blk_7_info.oymin;
         oymax       = blk_7_info.oymax;
         g_orbit_corner_3_x       = blk_7_info.ox3rd;
-        oy3rd       = blk_7_info.oy3rd;
+        g_orbit_corner_3_y       = blk_7_info.oy3rd;
         g_keep_screen_coords = blk_7_info.keep_scrn_coords != 0;
         g_draw_mode    = blk_7_info.drawmode;
         if (g_keep_screen_coords)

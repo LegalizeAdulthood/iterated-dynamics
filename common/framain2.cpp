@@ -2487,7 +2487,7 @@ static void save_history_info()
     current.oymin                = oymin;
     current.oymax                = oymax;
     current.ox3rd                = g_orbit_corner_3_x;
-    current.oy3rd                = oy3rd;
+    current.oy3rd                = g_orbit_corner_3_y;
     current.keep_scrn_coords     = (short) (g_keep_screen_coords ? 1 : 0);
     current.drawmode             = g_draw_mode;
     memcpy(current.dac, g_dac_box, 256*3);
@@ -2677,7 +2677,7 @@ static void restore_history_info(int i)
     oymin = last.oymin;
     oymax = last.oymax;
     g_orbit_corner_3_x = last.ox3rd;
-    oy3rd = last.oy3rd;
+    g_orbit_corner_3_y = last.oy3rd;
     g_keep_screen_coords = last.keep_scrn_coords != 0;
     if (g_keep_screen_coords)
     {

@@ -546,7 +546,7 @@ static void initvars_fractal()          // init vars affecting calculation
     g_orbit_corner_3_x = curfractalspecific->xmin;
     oymin = curfractalspecific->ymin;
     oymax = curfractalspecific->ymax;
-    oy3rd = curfractalspecific->ymin;
+    g_orbit_corner_3_y = curfractalspecific->ymin;
 
     g_math_tol[0] = 0.05;
     g_math_tol[1] = 0.05;
@@ -2195,13 +2195,13 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         g_orbit_corner_3_x = g_orbit_corner_min_x;
         g_orbit_corner_max_x = floatval[1];
         oymin = floatval[2];
-        oy3rd = oymin;
+        g_orbit_corner_3_y = oymin;
         oymax = floatval[3];
 
         if (totparms == 6)
         {
             g_orbit_corner_3_x =      floatval[4];
-            oy3rd =      floatval[5];
+            g_orbit_corner_3_y =      floatval[5];
         }
         set_orbit_corners = true;
         g_keep_screen_coords = true;
