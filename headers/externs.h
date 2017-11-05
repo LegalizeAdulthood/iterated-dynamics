@@ -567,7 +567,7 @@ extern int                   g_y_shift1;
 extern int                   g_y_shift;
 extern int                   g_adjust_3d_y;
 extern double                g_y_3rd;
-extern int                   yyadjust1;
+extern int                   g_yy_adjust1;
 extern int                   yyadjust;
 extern int                   yyadjust;
 extern double                g_y_max;

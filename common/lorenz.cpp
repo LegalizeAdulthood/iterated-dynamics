@@ -3030,7 +3030,7 @@ static bool long3dviewtransf(long3dvtinf *inf)
         inf->row1 = (int)(((multiply(inf->cvt.c, inf->viewvect1[0], g_bit_shift) +
                             multiply(inf->cvt.d, inf->viewvect1[1], g_bit_shift) +
                             inf->cvt.f) >> g_bit_shift)
-                          + yyadjust1);
+                          + g_yy_adjust1);
         inf->col1 = (int)(((multiply(inf->cvt.a, inf->viewvect1[0], g_bit_shift) +
                             multiply(inf->cvt.b, inf->viewvect1[1], g_bit_shift) +
                             inf->cvt.e) >> g_bit_shift)
@@ -3152,7 +3152,7 @@ static bool float3dviewtransf(float3dvtinf *inf)
     if (realtime)
     {
         inf->row1 = (int)(inf->cvt.c*inf->viewvect1[0] + inf->cvt.d*inf->viewvect1[1]
-                          + inf->cvt.f + yyadjust1);
+                          + inf->cvt.f + g_yy_adjust1);
         inf->col1 = (int)(inf->cvt.a*inf->viewvect1[0] + inf->cvt.b*inf->viewvect1[1]
                           + inf->cvt.e + g_xx_adjust1);
         if (inf->col1 < 0 || inf->col1 >= g_logical_screen_x_dots || inf->row1 < 0 || inf->row1 >= g_logical_screen_y_dots)

@@ -14,7 +14,7 @@
 
 stereo_images g_which_image;
 int g_xx_adjust1;
-int yyadjust1;
+int g_yy_adjust1;
 int g_eye_separation = 0;
 int g_glasses_type = 0;
 int g_x_shift1;
