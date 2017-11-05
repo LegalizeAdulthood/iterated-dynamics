@@ -507,7 +507,7 @@ extern bool                  g_frm_uses_p1;
 extern bool                  g_frm_uses_p2;
 extern bool                  g_frm_uses_p3;
 extern bool                  g_frm_uses_p4;
-extern bool                  uses_p5;
+extern bool                  g_frm_uses_p5;
 extern bool                  use_old_distest;
 extern bool                  use_old_period;
 extern bool                  using_jiim;

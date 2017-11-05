@@ -531,7 +531,7 @@ int get_variations()
             firstparm = 8; // uses_p5 or no parameter
         }
 
-        if (uses_p5)   // set last parameter
+        if (g_frm_uses_p5)   // set last parameter
         {
             lastparm = 10;
         }

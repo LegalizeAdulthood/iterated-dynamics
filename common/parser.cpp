@@ -194,7 +194,7 @@ bool g_frm_uses_p1 = false;
 bool g_frm_uses_p2 = false;
 bool g_frm_uses_p3 = false;
 bool g_frm_uses_p4 = false;
-bool uses_p5 = false;
+bool g_frm_uses_p5 = false;
 bool uses_jump = false;
 bool g_frm_uses_ismand = false;
 unsigned int chars_in_formula;
@@ -2059,7 +2059,7 @@ ConstArg *isconst(char const *Str, int Len)
                 }
                 if (n == 18)          // The formula uses 'p5'.
                 {
-                    uses_p5 = true;
+                    g_frm_uses_p5 = true;
                 }
 #if !defined(XFRACT)
                 if (n == 10 || n == 11 || n == 12)
@@ -3863,7 +3863,7 @@ int frm_get_param_stuff(char const *Name)
     g_frm_uses_ismand = false;
     g_max_function = 0;
     g_frm_uses_p4 = false;
-    uses_p5 = false;
+    g_frm_uses_p5 = false;
 
     if (g_formula_name.empty())
     {
@@ -3931,7 +3931,7 @@ int frm_get_param_stuff(char const *Name)
             }
             else if (current_token.token_id == 18)
             {
-                uses_p5 = true;
+                g_frm_uses_p5 = true;
             }
             break;
         case PARAM_FUNCTION:
@@ -3955,7 +3955,7 @@ int frm_get_param_stuff(char const *Name)
         g_frm_uses_ismand = false;
         g_max_function = 0;
         g_frm_uses_p4 = false;
-        uses_p5 = false;
+        g_frm_uses_p5 = false;
         return 0;
     }
     return 1;
@@ -4348,7 +4348,7 @@ void init_misc()
     uses_jump = false;
     g_frm_uses_ismand = false;
     g_frm_uses_p4 = false;
-    uses_p5 = false;
+    g_frm_uses_p5 = false;
 }
 
 
@@ -4383,7 +4383,7 @@ static void parser_allocate()
     g_frm_uses_p2 = false;
     g_frm_uses_p3 = false;
     g_frm_uses_p4 = false;
-    uses_p5 = false;
+    g_frm_uses_p5 = false;
 }
 
 void free_workarea()

@@ -481,7 +481,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
             g_frm_uses_ismand = blk_3_info.uses_ismand != 0;
             g_is_mandelbrot = blk_3_info.ismand != 0;
             g_frm_uses_p4 = blk_3_info.uses_p4 != 0;
-            uses_p5 = blk_3_info.uses_p5 != 0;
+            g_frm_uses_p5 = blk_3_info.uses_p5 != 0;
             break;
         }
         // perhaps in future add more here, check block_len for backward compatibility
