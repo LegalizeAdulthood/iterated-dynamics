@@ -35,9 +35,8 @@ typedef void (*PLOT)(int, int, int);
 
 int test()
 {
-    int startrow, startpass, numpasses;
-    startpass = 0;
-    startrow = startpass;
+    int startpass = 0;
+    int startrow = startpass;
     if (resuming)
     {
         start_resume();
@@ -48,7 +47,7 @@ int test()
     {
         return (0);
     }
-    numpasses = (stdcalcmode == '1') ? 0 : 1;
+    int numpasses = (stdcalcmode == '1') ? 0 : 1;
     for (passes = startpass; passes <= numpasses ; passes++)
     {
         for (row = startrow; row <= g_i_y_stop; row = row+1+numpasses)
