@@ -61,7 +61,7 @@ main_state big_while_loop(bool *const kbdmore, bool *const stacked, bool const r
         _ASSERTE(_CrtCheckMemory());
 #endif
 
-        if (g_calc_status != calc_status_value::RESUMABLE || show_file == 0)
+        if (g_calc_status != calc_status_value::RESUMABLE || g_show_file == 0)
         {
             memcpy((char *)&g_video_entry, (char *)&g_video_table[g_adapter],
                    sizeof(g_video_entry));
@@ -236,7 +236,7 @@ main_state big_while_loop(bool *const kbdmore, bool *const stacked, bool const r
             g_look_at_mouse = -FIK_PAGE_UP;        // mouse left button == pgup
         }
 
-        if (show_file == 0)
+        if (g_show_file == 0)
         {
             // loading an image
             g_out_line_cleanup = nullptr;          // outln routine can set this
@@ -254,7 +254,7 @@ main_state big_while_loop(bool *const kbdmore, bool *const stacked, bool const r
                 if (pot_startdisk() < 0)
                 {
                     // pot file failed?
-                    show_file = 1;
+                    g_show_file = 1;
                     g_potential_flag  = false;
                     g_potential_16bit = false;
                     g_init_mode = -1;
@@ -332,10 +332,10 @@ main_state big_while_loop(bool *const kbdmore, bool *const stacked, bool const r
         }
         save_history_info();
 
-        if (show_file == 0)
+        if (g_show_file == 0)
         {
             // image has been loaded
-            show_file = 1;
+            g_show_file = 1;
             if (g_init_batch == batch_modes::NORMAL && g_calc_status == calc_status_value::RESUMABLE)
             {
                 g_init_batch = batch_modes::FINISH_CALC_BEFORE_SAVE;
@@ -699,7 +699,7 @@ static bool look(bool *stacked)
     {
     case FIK_ENTER:
     case FIK_ENTER_2:
-        show_file = 0;       // trigger load
+        g_show_file = 0;       // trigger load
         g_browsing = true;    // but don't ask for the file name as it's just been selected
         if (g_filename_stack_index == 15)
         {
@@ -739,7 +739,7 @@ static bool look(bool *stacked)
             g_browse_name = g_file_name_stack[g_filename_stack_index];
             merge_pathnames(g_read_filename, g_browse_name.c_str(), cmd_file::AT_AFTER_STARTUP);
             g_browsing = true;
-            show_file = 0;
+            g_show_file = 0;
             if (g_ask_video)
             {
                 driver_stack_screen();// save graphics image
@@ -1231,7 +1231,7 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
             merge_pathnames(g_read_filename, g_browse_name.c_str(), cmd_file::AT_AFTER_STARTUP);
             g_browsing = true;
             g_browse_sub_images = true;
-            show_file = 0;
+            g_show_file = 0;
             if (g_ask_video)
             {
                 driver_stack_screen();      // save graphics image
@@ -1358,7 +1358,7 @@ do_3d_transform:
                 {
                     driver_stack_screen();   // save graphics image
                     g_read_filename = g_save_filename;
-                    show_file = 0;
+                    g_show_file = 0;
                     return main_state::RESTORE_START;
                 }
             }
@@ -1384,7 +1384,7 @@ do_3d_transform:
             g_resave_flag = 0;
             started_resaves = false;
         }
-        show_file = -1;
+        g_show_file = -1;
         return main_state::RESTORE_START;
     case 'l':
     case 'L':                    // Look for other files within this view
@@ -1822,7 +1822,7 @@ static main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdm
                 {
                     driver_stack_screen();   // save graphics image
                     g_read_filename = g_save_filename;
-                    show_file = 0;
+                    g_show_file = 0;
                     return main_state::RESTORE_START;
                 }
             }
@@ -1848,7 +1848,7 @@ static main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdm
             g_resave_flag = 0;
             started_resaves = false;
         }
-        show_file = -1;
+        g_show_file = -1;
         return main_state::RESTORE_START;
     case FIK_ENTER:                  // Enter
     case FIK_ENTER_2:                // Numeric-Keypad Enter

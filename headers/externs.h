@@ -443,7 +443,7 @@ extern id::SearchPath        g_search_for;
 extern bool                  g_set_orbit_corners;
 extern bool                  g_show_box;
 extern int                   g_show_dot;
-extern int show_file;
+extern int                   g_show_file;
 extern bool                  show_orbit;
 extern double                sinx;
 extern int                   sizedot;
