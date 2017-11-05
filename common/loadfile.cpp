@@ -79,7 +79,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
 
     g_max_iterations        = read_info.iterationsold;
     int const read_fractype = read_info.fractal_type;
-    if (read_fractype < 0 || read_fractype >= num_fractal_types)
+    if (read_fractype < 0 || read_fractype >= g_num_fractal_types)
     {
         sprintf(msg, "Warning: %s has a bad fractal type; using 0", readname.c_str());
         fractype = fractal_type::MANDEL;

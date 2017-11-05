@@ -1369,7 +1369,7 @@ void set_default_parms()
 int build_fractal_list(int fractals[], int *last_val, char const *nameptr[])
 {
     int numfractals = 0;
-    for (int i = 0; i < num_fractal_types; i++)
+    for (int i = 0; i < g_num_fractal_types; i++)
     {
         if ((fractalspecific[i].flags & OKJB) && *fractalspecific[i].name != '*')
         {

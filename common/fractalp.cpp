@@ -2263,7 +2263,7 @@ fractalspecificstuff fractalspecific[] =
     }
 };
 
-int num_fractal_types = (sizeof(fractalspecific)/
+int g_num_fractal_types = (sizeof(fractalspecific)/
                          sizeof(fractalspecificstuff)) -1;
 
 /*
