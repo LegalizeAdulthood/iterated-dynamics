@@ -557,7 +557,7 @@ extern double                g_x_min;
 extern long                  XXOne;
 extern int                   xxstart;
 extern int                   xxstop;
-extern long                  y3rd;
+extern long                  g_l_y_3rd;
 extern int                   yadjust;
 extern double                ycjul;
 extern int                   ydots;
