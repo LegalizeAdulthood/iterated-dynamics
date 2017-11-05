@@ -1039,7 +1039,7 @@ int Bifurcation()
     }
     else
     {
-        g_init.y = (double)(yymax - g_i_y_stop*delyy); // bottom pixels
+        g_init.y = (double)(yymax - g_i_y_stop*g_delta_y); // bottom pixels
     }
 
     while (x <= g_i_x_stop)
@@ -1154,7 +1154,7 @@ static void verhulst()          // P. F. Verhulst (1845)
         }
         else
         {
-            pixel_row = g_i_y_stop - (int)((Population - g_init.y) / delyy);
+            pixel_row = g_i_y_stop - (int)((Population - g_init.y) / g_delta_y);
         }
 
         // if it's visible on the screen, save it in the column array
@@ -1189,7 +1189,7 @@ static void Bif_Period_Init()
     else
     {
         Bif_savedpop = -1.0;
-        Bif_closenuf = (double)delyy / 8.0;
+        Bif_closenuf = (double)g_delta_y / 8.0;
     }
 }
 

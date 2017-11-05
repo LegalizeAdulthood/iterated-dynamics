@@ -125,7 +125,7 @@ extern LDBL                  g_delta_x;
 extern long                  g_l_delta_y2;
 extern long                  g_l_delta_y;
 extern LDBL                  g_delta_y2;
-extern LDBL                  delyy;
+extern LDBL                  g_delta_y;
 extern float                 g_julibrot_depth_fp;
 extern unsigned long         g_diffusion_counter;
 extern unsigned long         g_diffusion_limit;

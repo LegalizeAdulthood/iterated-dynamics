@@ -2077,7 +2077,7 @@ int dynam2dfloat()
         xpixel = x_size_d*(xstep+.5)/d;
         ypixel = y_size_d*(ystep+.5)/d;
         x = (double)((xxmin+g_delta_x*xpixel) + (g_delta_x2*ypixel));
-        y = (double)((yymax-delyy*ypixel) + (-g_delta_y2*xpixel));
+        y = (double)((yymax-g_delta_y*ypixel) + (-g_delta_y2*xpixel));
         if (fractype == fractal_type::MANDELCLOUD)
         {
             a = x;

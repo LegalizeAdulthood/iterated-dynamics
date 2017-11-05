@@ -101,7 +101,7 @@ void fill_dx_array()
         }
         for (int i = 1; i < ydots; i++)
         {
-            dy0[i] = (double)(dy0[0] - i*delyy);
+            dy0[i] = (double)(dy0[0] - i*g_delta_y);
             dx1[i] = (double)(dx1[0] + i*g_delta_x2);
         }
     }
@@ -453,7 +453,7 @@ init_restart:
     {
         adjust_to_limits(1.0); // make sure all corners in valid range
         g_delta_x  = (LDBL)(xxmax - xx3rd) / (LDBL)x_size_d; // calculate stepsizes
-        delyy  = (LDBL)(yymax - yy3rd) / (LDBL)y_size_d;
+        g_delta_y  = (LDBL)(yymax - yy3rd) / (LDBL)y_size_d;
         g_delta_x2 = (LDBL)(xx3rd - xxmin) / (LDBL)y_size_d;
         g_delta_y2 = (LDBL)(yy3rd - yymin) / (LDBL)x_size_d;
         fill_dx_array();
@@ -468,7 +468,7 @@ init_restart:
         ymax  = fudgetolong(yymax);
         y3rd  = fudgetolong(yy3rd);
         g_l_delta_x  = fudgetolong((double)g_delta_x);
-        g_l_delta_y  = fudgetolong((double)delyy);
+        g_l_delta_y  = fudgetolong((double)g_delta_y);
         g_l_delta_x2 = fudgetolong((double)g_delta_x2);
         g_l_delta_y2 = fudgetolong((double)g_delta_y2);
     }
@@ -484,7 +484,7 @@ init_restart:
         {
             if ((g_l_delta_x  == 0 && g_delta_x  != 0.0)
                     || (g_l_delta_x2 == 0 && g_delta_x2 != 0.0)
-                    || (g_l_delta_y  == 0 && delyy  != 0.0)
+                    || (g_l_delta_y  == 0 && g_delta_y  != 0.0)
                     || (g_l_delta_y2 == 0 && g_delta_y2 != 0.0))
             {
                 goto expand_retry;
@@ -545,7 +545,7 @@ expand_retry:
             }
             for (int i = 1; i < ydots; i++)
             {
-                dy0 = (double)(dy0 - (double)delyy);
+                dy0 = (double)(dy0 - (double)g_delta_y);
                 dx1 = (double)(dx1 + (double)g_delta_x2);
             }
             if (bf_math == bf_math_type::NONE) // redundant test, leave for now
@@ -611,9 +611,9 @@ expand_retry:
 
             // re-set corners to match reality
             xxmax = (double)(xxmin + (xdots-1)*g_delta_x + (ydots-1)*g_delta_x2);
-            yymin = (double)(yymax - (ydots-1)*delyy - (xdots-1)*g_delta_y2);
+            yymin = (double)(yymax - (ydots-1)*g_delta_y - (xdots-1)*g_delta_y2);
             xx3rd = (double)(xxmin + (ydots-1)*g_delta_x2);
-            yy3rd = (double)(yymax - (ydots-1)*delyy);
+            yy3rd = (double)(yymax - (ydots-1)*g_delta_y);
 
         } // end else
     } // end if not plasma
@@ -625,11 +625,11 @@ expand_retry:
     {
         g_delta_min = fabs((double)g_delta_x2);
     }
-    if (fabs((double)delyy) > fabs((double)g_delta_y2))
+    if (fabs((double)g_delta_y) > fabs((double)g_delta_y2))
     {
-        if (fabs((double)delyy) < g_delta_min)
+        if (fabs((double)g_delta_y) < g_delta_min)
         {
-            g_delta_min = fabs((double)delyy);
+            g_delta_min = fabs((double)g_delta_y);
         }
     }
     else if (fabs((double)g_delta_y2) < g_delta_min)
