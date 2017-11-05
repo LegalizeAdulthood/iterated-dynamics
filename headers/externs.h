@@ -390,7 +390,7 @@ extern bool                  g_preview;
 extern int                   g_preview_factor;
 extern int                   g_evolve_param_grid_x;
 extern int                   g_evolve_param_grid_y;
-extern int param_box_count;
+extern int                   g_evolve_param_box_count;
 extern int                   pseudox;
 extern int                   pseudoy;
 extern void                (*putcolor)(int, int, int);

@@ -412,7 +412,7 @@ main_state big_while_loop(bool *const kbdmore, bool *const stacked, bool const r
                     g_evolve_discrete_x_parameter_offset = g_evolve_new_discrete_x_parameter_offset;
                     g_evolve_discrete_y_parameter_offset = g_evolve_new_discrete_y_parameter_offset; // evolve_discrete_x_parameter_offset used for discrete parms like inside, outside, trigfn etc
                 }
-                param_box_count = 0;
+                g_evolve_param_box_count = 0;
                 g_evolve_dist_per_x = g_evolve_x_parameter_range /(g_evolve_image_grid_size -1);
                 g_evolve_dist_per_y = g_evolve_y_parameter_range /(g_evolve_image_grid_size -1);
                 grout  = !((g_evolving & NOGROUT)/NOGROUT);
@@ -1964,7 +1964,7 @@ static main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdm
         }
         break;
     case FIK_CTL_PAGE_UP:
-        if (param_box_count)
+        if (g_evolve_param_box_count)
         {
             g_evolve_param_zoom -= 1.0;
             if (g_evolve_param_zoom < 1.0)
@@ -1976,7 +1976,7 @@ static main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdm
         }
         break;
     case FIK_CTL_PAGE_DOWN:
-        if (param_box_count)
+        if (g_evolve_param_box_count)
         {
             g_evolve_param_zoom += 1.0;
             if (g_evolve_param_zoom > (double) g_evolve_image_grid_size /2.0)
