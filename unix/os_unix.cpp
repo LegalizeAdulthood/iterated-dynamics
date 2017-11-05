@@ -34,7 +34,6 @@ long saveticks = 0;             // save after this many ticks
  *  |key|--AX---BX---CX---DX|Mode|--X-|--Y-|Color|
  */
 VIDEOINFO g_video_table[MAXVIDEOMODES] = { 0 };
-int g_vxdots = 0;
 
 // Global variables that should be phased out (old video mode stuff)
 int g_video_vram = 0;

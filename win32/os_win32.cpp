@@ -146,7 +146,6 @@ int g_video_start_y = 0;
  *  |key|--AX---BX---CX---DX|Mode|--X-|--Y-|Color|
  */
 VIDEOINFO g_video_table[MAXVIDEOMODES] = { 0 };
-int g_vxdots = 0;
 
 /* Global functions
  *

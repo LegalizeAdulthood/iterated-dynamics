@@ -632,7 +632,6 @@ gdi_set_video_mode(Driver *drv, VIDEOINFO *mode)
     DI(di);
 
     // initially, set the virtual line to be the scan line length
-    g_vxdots = sxdots;
     g_is_true_color = false;            // assume not truecolor
     g_vesa_x_res = 0;                   // reset indicators used for
     g_vesa_y_res = 0;                   // virtual screen limits estimation
