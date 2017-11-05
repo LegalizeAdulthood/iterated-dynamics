@@ -584,7 +584,7 @@ static void initvars_fractal()          // init vars affecting calculation
     g_fm_sustain = 13;                      // fairly high sustain level
     g_fm_release = 5;                      // short release
     g_fm_wavetype = 0;                     // sin wave
-    polyphony = 0;                       // no polyphony
+    g_polyphony = 0;                       // no polyphony
     for (int i = 0; i <= 11; i++)
     {
         scale_map[i] = i+1;    // straight mapping of notes in octave
@@ -2728,7 +2728,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         {
             goto badarg;
         }
-        polyphony = abs(numval-1);
+        g_polyphony = abs(numval-1);
         return CMDARG_NONE;
     }
 

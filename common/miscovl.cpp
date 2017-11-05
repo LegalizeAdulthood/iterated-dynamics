@@ -1322,9 +1322,9 @@ void write_batch_parms(char const *colorinf, bool colorsonly, int maxcolor, int 
             }
         }
 
-        if (polyphony != 0)
+        if (g_polyphony != 0)
         {
-            put_parm(" %s=%d", "polyphony", polyphony+1);
+            put_parm(" %s=%d", "polyphony", g_polyphony+1);
         }
 
         if (g_fm_wavetype != 0)
