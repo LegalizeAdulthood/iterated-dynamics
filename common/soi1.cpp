@@ -918,7 +918,7 @@ void soi()
     if (bf_math != bf_math_type::NONE)
     {
         xxminl = (double)bftofloat(bfxmin);
-        yyminl = (double)bftofloat(bfymin);
+        yyminl = (double)bftofloat(g_bf_y_min);
         xxmaxl = (double)bftofloat(bfxmax);
         yymaxl = (double)bftofloat(g_bf_y_max);
     }

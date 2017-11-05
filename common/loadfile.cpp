@@ -2183,7 +2183,7 @@ static void bfsetup_convert_to_screen()
     // xx3rd-xxmin
     sub_bf(bt_inter1, g_bf_x_3rd, bfxmin);
     // yymin-yymax
-    sub_bf(bt_inter2, bfymin, g_bf_y_max);
+    sub_bf(bt_inter2, g_bf_y_min, g_bf_y_max);
     // (xx3rd-xxmin)*(yymin-yymax)
     mult_bf(bt_tmp1, bt_inter1, bt_inter2);
 
@@ -2217,12 +2217,12 @@ static void bfsetup_convert_to_screen()
     // xx3rd-xxmax
     sub_bf(bt_inter1, g_bf_x_3rd, bfxmax);
     // yymin-yymax
-    sub_bf(bt_inter2, bfymin, g_bf_y_max);
+    sub_bf(bt_inter2, g_bf_y_min, g_bf_y_max);
     // (xx3rd-xxmax)*(yymin-yymax)
     mult_bf(bt_tmp1, bt_inter1, bt_inter2);
 
     // yymin-yy3rd
-    sub_bf(bt_inter1, bfymin, g_bf_y_3rd);
+    sub_bf(bt_inter1, g_bf_y_min, g_bf_y_3rd);
     // xxmax-xxmin
     sub_bf(bt_inter2, bfxmax, bfxmin);
     // (yymin-yy3rd)*(xxmax-xxmin)
@@ -2236,7 +2236,7 @@ static void bfsetup_convert_to_screen()
     div_bf(bt_yd, bt_tmp2, bt_det);
 
     // c =  yd*(yymin-yy3rd)
-    sub_bf(bt_inter1, bfymin, g_bf_y_3rd);
+    sub_bf(bt_inter1, g_bf_y_min, g_bf_y_3rd);
     mult_bf(bt_c, bt_yd, bt_inter1);
 
     // d =  yd*(xx3rd-xxmax)

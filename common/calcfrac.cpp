@@ -4423,7 +4423,7 @@ static void setsymmetry(symmetry_type sym, bool uselist) // set up proper symmet
     // also any rotation other than 180deg and any off-axis stretch
     if (bf_math != bf_math_type::NONE)
     {
-        if (cmp_bf(bfxmin, g_bf_x_3rd) || cmp_bf(bfymin, g_bf_y_3rd))
+        if (cmp_bf(bfxmin, g_bf_x_3rd) || cmp_bf(g_bf_y_min, g_bf_y_3rd))
         {
             return;
         }
@@ -4495,7 +4495,7 @@ static void setsymmetry(symmetry_type sym, bool uselist) // set up proper symmet
     {
         saved = save_stack();
         bft1    = alloc_stack(rbflength+2);
-        xaxis_on_screen = (sign_bf(bfymin) != sign_bf(g_bf_y_max));
+        xaxis_on_screen = (sign_bf(g_bf_y_min) != sign_bf(g_bf_y_max));
         yaxis_on_screen = (sign_bf(bfxmin) != sign_bf(bfxmax));
     }
     else
@@ -4507,7 +4507,7 @@ static void setsymmetry(symmetry_type sym, bool uselist) // set up proper symmet
     {
         if (bf_math != bf_math_type::NONE)
         {
-            sub_bf(bft1, bfymin, g_bf_y_max);
+            sub_bf(bft1, g_bf_y_min, g_bf_y_max);
             div_bf(bft1, g_bf_y_max, bft1);
             neg_a_bf(bft1);
             ftemp = (double)bftofloat(bft1);
