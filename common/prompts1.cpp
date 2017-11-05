@@ -1327,7 +1327,7 @@ sel_type_exit:
 void set_default_parms()
 {
     xxmin = curfractalspecific->xmin;
-    xxmax = curfractalspecific->xmax;
+    g_x_max = curfractalspecific->xmax;
     g_y_min = curfractalspecific->ymin;
     g_y_max = curfractalspecific->ymax;
     g_x_3rd = xxmin;

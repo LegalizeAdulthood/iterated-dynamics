@@ -134,7 +134,7 @@ void fractal_floattobf()
 {
     init_bf_dec(getprecdbl(CURRENTREZ));
     floattobf(g_bf_x_min, xxmin);
-    floattobf(g_bf_x_max, xxmax);
+    floattobf(g_bf_x_max, g_x_max);
     floattobf(g_bf_y_min, g_y_min);
     floattobf(g_bf_y_max, g_y_max);
     floattobf(g_bf_x_3rd, g_x_3rd);
@@ -382,10 +382,10 @@ init_restart:
     if ((curfractalspecific->flags&NOROTATE) != 0)
     {
         // ensure min<max and unrotated rectangle
-        if (xxmin > xxmax)
+        if (xxmin > g_x_max)
         {
-            double ftemp = xxmax;
-            xxmax = xxmin;
+            double ftemp = g_x_max;
+            g_x_max = xxmin;
             xxmin = ftemp;
         }
         if (g_y_min > g_y_max)
@@ -452,7 +452,7 @@ init_restart:
     else
     {
         adjust_to_limits(1.0); // make sure all corners in valid range
-        g_delta_x  = (LDBL)(xxmax - g_x_3rd) / (LDBL)g_x_size_dots; // calculate stepsizes
+        g_delta_x  = (LDBL)(g_x_max - g_x_3rd) / (LDBL)g_x_size_dots; // calculate stepsizes
         g_delta_y  = (LDBL)(g_y_max - g_y_3rd) / (LDBL)g_y_size_dots;
         g_delta_x2 = (LDBL)(g_x_3rd - xxmin) / (LDBL)g_y_size_dots;
         g_delta_y2 = (LDBL)(g_y_3rd - g_y_min) / (LDBL)g_x_size_dots;
@@ -462,7 +462,7 @@ init_restart:
     if (fractype != fractal_type::CELLULAR && fractype != fractal_type::ANT)  // fudgetolong fails w >10 digits in double
     {
         xmin  = fudgetolong(xxmin);
-        xmax  = fudgetolong(xxmax);
+        xmax  = fudgetolong(g_x_max);
         x3rd  = fudgetolong(g_x_3rd);
         ymin  = fudgetolong(g_y_min);
         ymax  = fudgetolong(g_y_max);
@@ -520,7 +520,7 @@ expand_retry:
             x3rd = xmin + g_l_x1[ydots-1];
             y3rd = g_l_y0[ydots-1];
             xxmin = fudgetodouble(xmin);
-            xxmax = fudgetodouble(xmax);
+            g_x_max = fudgetodouble(xmax);
             g_x_3rd = fudgetodouble(x3rd);
             g_y_min = fudgetodouble(ymin);
             g_y_max = fudgetodouble(ymax);
@@ -571,9 +571,9 @@ expand_retry:
                        to arbitrary precision sooner, but always later.*/
                     double testx_try;
                     double testx_exact;
-                    if (fabs(xxmax-g_x_3rd) > fabs(g_x_3rd-xxmin))
+                    if (fabs(g_x_max-g_x_3rd) > fabs(g_x_3rd-xxmin))
                     {
-                        testx_exact  = xxmax-g_x_3rd;
+                        testx_exact  = g_x_max-g_x_3rd;
                         testx_try    = dx0-xxmin;
                     }
                     else
@@ -610,7 +610,7 @@ expand_retry:
             fill_dx_array();       // fill up the x, y grids
 
             // re-set corners to match reality
-            xxmax = (double)(xxmin + (xdots-1)*g_delta_x + (ydots-1)*g_delta_x2);
+            g_x_max = (double)(xxmin + (xdots-1)*g_delta_x + (ydots-1)*g_delta_x2);
             g_y_min = (double)(g_y_max - (ydots-1)*g_delta_y - (xdots-1)*g_delta_y2);
             g_x_3rd = (double)(xxmin + (ydots-1)*g_delta_x2);
             g_y_3rd = (double)(g_y_max - (ydots-1)*g_delta_y);
@@ -641,13 +641,13 @@ expand_retry:
     // calculate factors which plot real values to screen co-ords
     // calcfrac.c plot_orbit routines have comments about this
     double ftemp = (double)((0.0-g_delta_y2) * g_delta_x2 * g_x_size_dots * g_y_size_dots
-                     - (xxmax-g_x_3rd) * (g_y_3rd-g_y_max));
+                     - (g_x_max-g_x_3rd) * (g_y_3rd-g_y_max));
     if (ftemp != 0)
     {
         g_plot_mx1 = (double)(g_delta_x2 * g_x_size_dots * g_y_size_dots / ftemp);
         g_plot_mx2 = (g_y_3rd-g_y_max) * g_x_size_dots / ftemp;
         g_plot_my1 = (double)((0.0-g_delta_y2) * g_x_size_dots * g_y_size_dots / ftemp);
-        g_plot_my2 = (xxmax-g_x_3rd) * g_y_size_dots / ftemp;
+        g_plot_my2 = (g_x_max-g_x_3rd) * g_y_size_dots / ftemp;
     }
     if (bf_math == bf_math_type::NONE)
     {
@@ -784,7 +784,7 @@ void adjust_corner()
     }
 
     ftemp = fabs(g_x_3rd-xxmin);
-    ftemp2 = fabs(xxmax-g_x_3rd);
+    ftemp2 = fabs(g_x_max-g_x_3rd);
     if (ftemp < ftemp2)
     {
         if (ftemp*10000 < ftemp2 && g_y_3rd != g_y_max)
@@ -795,14 +795,14 @@ void adjust_corner()
 
     if (ftemp2*10000 < ftemp && g_y_3rd != g_y_min)
     {
-        g_x_3rd = xxmax;
+        g_x_3rd = g_x_max;
     }
 
     ftemp = fabs(g_y_3rd-g_y_min);
     ftemp2 = fabs(g_y_max-g_y_3rd);
     if (ftemp < ftemp2)
     {
-        if (ftemp*10000 < ftemp2 && g_x_3rd != xxmax)
+        if (ftemp*10000 < ftemp2 && g_x_3rd != g_x_max)
         {
             g_y_3rd = g_y_min;
         }
@@ -1089,14 +1089,14 @@ static void adjust_to_limits(double expand)
         }
     }
 
-    centerx = (xxmin+xxmax)/2;
+    centerx = (xxmin+g_x_max)/2;
     centery = (g_y_min+g_y_max)/2;
 
     if (xxmin == centerx)
     {
         // ohoh, infinitely thin, fix it
-        smallest_add(&xxmax);
-        xxmin -= xxmax-centerx;
+        smallest_add(&g_x_max);
+        xxmin -= g_x_max-centerx;
     }
 
     if (g_y_min == centery)
@@ -1117,9 +1117,9 @@ static void adjust_to_limits(double expand)
 
     // setup array for easier manipulation
     cornerx[0] = xxmin;
-    cornerx[1] = xxmax;
+    cornerx[1] = g_x_max;
     cornerx[2] = g_x_3rd;
-    cornerx[3] = xxmin+(xxmax-g_x_3rd);
+    cornerx[3] = xxmin+(g_x_max-g_x_3rd);
 
     cornery[0] = g_y_max;
     cornery[1] = g_y_min;
@@ -1208,7 +1208,7 @@ static void adjust_to_limits(double expand)
         g_calc_status = calc_status_value::PARAMS_CHANGED;
     }
     xxmin = cornerx[0] - adjx;
-    xxmax = cornerx[1] - adjx;
+    g_x_max = cornerx[1] - adjx;
     g_x_3rd = cornerx[2] - adjx;
     g_y_max = cornery[0] - adjy;
     g_y_min = cornery[1] - adjy;

@@ -87,7 +87,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
     fractype = static_cast<fractal_type>(read_fractype);
     curfractalspecific = &fractalspecific[read_fractype];
     xxmin        = read_info.xmin;
-    xxmax        = read_info.xmax;
+    g_x_max        = read_info.xmax;
     g_y_min        = read_info.ymin;
     g_y_max        = read_info.ymax;
     g_params[0]     = read_info.creal;

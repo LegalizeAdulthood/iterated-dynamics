@@ -805,7 +805,7 @@ int calcfract()
 
         if (g_inversion[0] == AUTOINVERT)  //  auto calc radius 1/6 screen
         {
-            g_inversion[0] = std::min(fabs(xxmax - xxmin),
+            g_inversion[0] = std::min(fabs(g_x_max - xxmin),
                                     fabs(g_y_max - g_y_min)) / 6.0;
             fix_inversion(&g_inversion[0]);
             g_f_radius = g_inversion[0];
@@ -813,10 +813,10 @@ int calcfract()
 
         if (g_invert < 2 || g_inversion[1] == AUTOINVERT)  // xcenter not already set
         {
-            g_inversion[1] = (xxmin + xxmax) / 2.0;
+            g_inversion[1] = (xxmin + g_x_max) / 2.0;
             fix_inversion(&g_inversion[1]);
             g_f_x_center = g_inversion[1];
-            if (fabs(g_f_x_center) < fabs(xxmax-xxmin) / 100)
+            if (fabs(g_f_x_center) < fabs(g_x_max-xxmin) / 100)
             {
                 g_f_x_center = 0.0;
                 g_inversion[1] = g_f_x_center;
@@ -1096,7 +1096,7 @@ static void perform_worklist()
             d_y_size = ydots-1;
         }
 
-        delxx  = (xxmax - g_x_3rd) / d_x_size; // calculate stepsizes
+        delxx  = (g_x_max - g_x_3rd) / d_x_size; // calculate stepsizes
         delyy  = (g_y_max - g_y_3rd) / d_y_size;
         delxx2 = (g_x_3rd - xxmin) / d_y_size;
         delyy2 = (g_y_3rd - g_y_min) / d_x_size;
@@ -1132,7 +1132,7 @@ static void perform_worklist()
         {
             dem_delta *= 1/(sqr(ftemp)*10000); // multiply by thickness desired
         }
-        dem_width = (sqrt(sqr(xxmax-xxmin) + sqr(g_x_3rd-xxmin)) * aspect
+        dem_width = (sqrt(sqr(g_x_max-xxmin) + sqr(g_x_3rd-xxmin)) * aspect
                      + sqrt(sqr(g_y_max-g_y_min) + sqr(g_y_3rd-g_y_min))) / g_distance_estimator;
         ftemp = (g_magnitude_limit < DEM_BAILOUT) ? DEM_BAILOUT : g_magnitude_limit;
         ftemp += 3; // bailout plus just a bit
@@ -4501,7 +4501,7 @@ static void setsymmetry(symmetry_type sym, bool uselist) // set up proper symmet
     else
     {
         xaxis_on_screen = (sign(g_y_min) != sign(g_y_max));
-        yaxis_on_screen = (sign(xxmin) != sign(xxmax));
+        yaxis_on_screen = (sign(xxmin) != sign(g_x_max));
     }
     if (xaxis_on_screen) // axis is on screen
     {
@@ -4536,7 +4536,7 @@ static void setsymmetry(symmetry_type sym, bool uselist) // set up proper symmet
         }
         else
         {
-            ftemp = (0.0-xxmin) / (xxmax-xxmin);
+            ftemp = (0.0-xxmin) / (g_x_max-xxmin);
         }
         ftemp *= (xdots-1);
         ftemp += 0.25;
@@ -4668,7 +4668,7 @@ originsym:
         }
         else
         {
-            if (fabs(xxmax - xxmin) < PI/4)
+            if (fabs(g_x_max - xxmin) < PI/4)
             {
                 break; // no point in pi symmetry if values too close
             }
@@ -4704,7 +4704,7 @@ originsym:
         }
         else
         {
-            g_pi_in_pixels = (int)((PI/fabs(xxmax-xxmin))*xdots); // PI in pixels
+            g_pi_in_pixels = (int)((PI/fabs(g_x_max-xxmin))*xdots); // PI in pixels
         }
 
         g_i_x_stop = xxstart+g_pi_in_pixels-1;

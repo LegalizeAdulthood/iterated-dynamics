@@ -428,7 +428,7 @@ skip_UI:
                 ym = 0;
                 xm = ym;
             }
-            pdelx  = (xxmax - g_x_3rd) / (xm * pxdots - 1);   // calculate stepsizes
+            pdelx  = (g_x_max - g_x_3rd) / (xm * pxdots - 1);   // calculate stepsizes
             pdely  = (g_y_max - g_y_3rd) / (ym * pydots - 1);
             pdelx2 = (g_x_3rd - xxmin) / (ym * pydots - 1);
             pdely2 = (g_y_3rd - g_y_min) / (xm * pxdots - 1);
@@ -465,7 +465,7 @@ skip_UI:
                     }
                     fprintf(parmfile, "%-19s{", PCommandName);
                     xxmin = pxxmin + pdelx*(i*pxdots) + pdelx2*(j*pydots);
-                    xxmax = pxxmin + pdelx*((i+1)*pxdots - 1) + pdelx2*((j+1)*pydots - 1);
+                    g_x_max = pxxmin + pdelx*((i+1)*pxdots - 1) + pdelx2*((j+1)*pydots - 1);
                     g_y_min = pyymax - pdely*((j+1)*pydots - 1) - pdely2*((i+1)*pxdots - 1);
                     g_y_max = pyymax - pdely*(j*pydots) - pdely2*(i*pxdots);
                     if (have3rd)
@@ -775,10 +775,10 @@ void write_batch_parms(char const *colorinf, bool colorsonly, int maxcolor, int 
             else
             {
                 int xdigits, ydigits;
-                xdigits = getprec(xxmin, xxmax, g_x_3rd);
+                xdigits = getprec(xxmin, g_x_max, g_x_3rd);
                 ydigits = getprec(g_y_min, g_y_max, g_y_3rd);
                 put_float(0, xxmin, xdigits);
-                put_float(1, xxmax, xdigits);
+                put_float(1, g_x_max, xdigits);
                 put_float(1, g_y_min, ydigits);
                 put_float(1, g_y_max, ydigits);
                 if (g_x_3rd != xxmin || g_y_3rd != g_y_min)
@@ -1828,7 +1828,7 @@ int getprecdbl(int rezflag)
         rez = xdots-1;
     }
 
-    xdel = ((LDBL)xxmax - (LDBL)g_x_3rd)/rez;
+    xdel = ((LDBL)g_x_max - (LDBL)g_x_3rd)/rez;
     ydel2 = ((LDBL)g_y_3rd - (LDBL)g_y_min)/rez;
 
     if (rezflag == CURRENTREZ)
@@ -2595,11 +2595,11 @@ void flip_image(int key)
                 g_put_color(xdots-1-i, j, tempdot);
             }
         }
-        g_save_x_min = xxmax + xxmin - g_x_3rd;
+        g_save_x_min = g_x_max + xxmin - g_x_3rd;
         g_save_y_max = g_y_max + g_y_min - g_y_3rd;
         g_save_x_max = g_x_3rd;
         g_save_y_min = g_y_3rd;
-        g_save_x_3rd = xxmax;
+        g_save_x_3rd = g_x_max;
         g_save_y_3rd = g_y_min;
         if (bf_math != bf_math_type::NONE)
         {
@@ -2629,7 +2629,7 @@ void flip_image(int key)
         }
         g_save_x_min = g_x_3rd;
         g_save_y_max = g_y_3rd;
-        g_save_x_max = xxmax + xxmin - g_x_3rd;
+        g_save_x_max = g_x_max + xxmin - g_x_3rd;
         g_save_y_min = g_y_max + g_y_min - g_y_3rd;
         g_save_x_3rd = xxmin;
         g_save_y_3rd = g_y_max;
@@ -2659,11 +2659,11 @@ void flip_image(int key)
                 g_put_color(xdots-1-i, ydots-1-j, tempdot);
             }
         }
-        g_save_x_min = xxmax;
+        g_save_x_min = g_x_max;
         g_save_y_max = g_y_min;
         g_save_x_max = xxmin;
         g_save_y_min = g_y_max;
-        g_save_x_3rd = xxmax + xxmin - g_x_3rd;
+        g_save_x_3rd = g_x_max + xxmin - g_x_3rd;
         g_save_y_3rd = g_y_max + g_y_min - g_y_3rd;
         if (bf_math != bf_math_type::NONE)
         {

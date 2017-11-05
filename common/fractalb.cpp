@@ -257,7 +257,7 @@ void bfcornerstofloat()
     {
         xxmin = (double)bftofloat(g_bf_x_min);
         g_y_min = (double)bftofloat(g_bf_y_min);
-        xxmax = (double)bftofloat(g_bf_x_max);
+        g_x_max = (double)bftofloat(g_bf_x_max);
         g_y_max = (double)bftofloat(g_bf_y_max);
         g_x_3rd = (double)bftofloat(g_bf_x_3rd);
         g_y_3rd = (double)bftofloat(g_bf_y_3rd);

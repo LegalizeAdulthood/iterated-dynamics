@@ -315,7 +315,7 @@ main_state big_while_loop(bool *const kbdmore, bool *const stacked, bool const r
         driver_schedule_alarm(1);
 
         g_save_x_min = xxmin; // save 3 corners for zoom.c ref points
-        g_save_x_max = xxmax;
+        g_save_x_max = g_x_max;
         g_save_x_3rd = g_x_3rd;
         g_save_y_min = g_y_min;
         g_save_y_max = g_y_max;
@@ -1106,7 +1106,7 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
                 curfractalspecific = &fractalspecific[static_cast<int>(fractype)];
                 if (xcjul == BIG || ycjul == BIG)
                 {
-                    g_params[0] = (xxmax + xxmin) / 2;
+                    g_params[0] = (g_x_max + xxmin) / 2;
                     g_params[1] = (g_y_max + g_y_min) / 2;
                 }
                 else
@@ -1124,7 +1124,7 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
                 jyy3rd = g_save_y_3rd;
                 *frommandel = true;
                 xxmin = curfractalspecific->xmin;
-                xxmax = curfractalspecific->xmax;
+                g_x_max = curfractalspecific->xmax;
                 g_y_min = curfractalspecific->ymin;
                 g_y_max = curfractalspecific->ymax;
                 g_x_3rd = xxmin;
@@ -1132,7 +1132,7 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
                 if (g_user_distance_estimator_value == 0 && g_user_biomorph_value != -1 && g_bit_shift != 29)
                 {
                     xxmin *= 3.0;
-                    xxmax *= 3.0;
+                    g_x_max *= 3.0;
                     g_y_min *= 3.0;
                     g_y_max *= 3.0;
                     g_x_3rd *= 3.0;
@@ -1150,7 +1150,7 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
                 if (*frommandel)
                 {
                     xxmin = jxxmin;
-                    xxmax = jxxmax;
+                    g_x_max = jxxmax;
                     g_y_min = jyymin;
                     g_y_max = jyymax;
                     g_x_3rd = jxx3rd;
@@ -1160,7 +1160,7 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
                 {
                     g_x_3rd = curfractalspecific->xmin;
                     xxmin = g_x_3rd;
-                    xxmax = curfractalspecific->xmax;
+                    g_x_max = curfractalspecific->xmax;
                     g_y_3rd = curfractalspecific->ymin;
                     g_y_min = g_y_3rd;
                     g_y_max = curfractalspecific->ymax;
@@ -2322,7 +2322,7 @@ void clear_zoombox()
 void reset_zoom_corners()
 {
     xxmin = g_save_x_min;
-    xxmax = g_save_x_max;
+    g_x_max = g_save_x_max;
     g_x_3rd = g_save_x_3rd;
     g_y_max = g_save_y_max;
     g_y_min = g_save_y_min;
@@ -2372,7 +2372,7 @@ static void save_history_info()
     memset((void *)&current, 0, sizeof(HISTORY));
     current.fractal_type         = (short)fractype                  ;
     current.xmin                 = xxmin                     ;
-    current.xmax                 = xxmax                     ;
+    current.xmax                 = g_x_max                     ;
     current.ymin                 = g_y_min                     ;
     current.ymax                 = g_y_max                     ;
     current.creal                = g_params[0]                  ;
@@ -2552,7 +2552,7 @@ static void restore_history_info(int i)
     g_resuming = false;
     fractype              = static_cast<fractal_type>(last.fractal_type);
     xxmin                 = last.xmin           ;
-    xxmax                 = last.xmax           ;
+    g_x_max                 = last.xmax           ;
     g_y_min                 = last.ymin           ;
     g_y_max                 = last.ymax           ;
     g_params[0]              = last.creal          ;

@@ -1118,7 +1118,7 @@ void soi_ldbl()
     {
         xxminl = xxmin;
         yyminl = g_y_min;
-        xxmaxl = xxmax;
+        xxmaxl = g_x_max;
         yymaxl = g_y_max;
     }
     twidth = tolerance/(xdots - 1);

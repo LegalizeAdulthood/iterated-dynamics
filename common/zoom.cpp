@@ -170,7 +170,7 @@ void drawbox(bool drawit)
     ftemp2 = zby - dy/g_final_aspect_ratio + zoom_box_height;
     br.x   = (int)(ftemp1*(g_x_size_dots+PIXELROUND));
     br.y   = (int)(ftemp2*(g_y_size_dots+PIXELROUND));
-    xxmax  = g_save_x_min + ftemp1*fxwidth + ftemp2*fxskew;
+    g_x_max  = g_save_x_min + ftemp1*fxwidth + ftemp2*fxskew;
     g_y_min  = g_save_y_max + ftemp2*fydepth + ftemp1*fyskew;
     if (bf_math != bf_math_type::NONE)
     {
@@ -596,15 +596,15 @@ void zoomoutdbl() // for ctl-enter, calc corners for zooming out
        new actual corners
        */
     double savxxmin, savyymax, ftemp;
-    ftemp = (g_y_min-g_y_3rd)*(g_x_3rd-xxmin) - (xxmax-g_x_3rd)*(g_y_3rd-g_y_max);
+    ftemp = (g_y_min-g_y_3rd)*(g_x_3rd-xxmin) - (g_x_max-g_x_3rd)*(g_y_3rd-g_y_max);
     g_plot_mx1 = (g_x_3rd-xxmin); // reuse the plotxxx vars is safe
     g_plot_mx2 = (g_y_3rd-g_y_max);
     g_plot_my1 = (g_y_min-g_y_3rd);
-    g_plot_my2 = (xxmax-g_x_3rd);
+    g_plot_my2 = (g_x_max-g_x_3rd);
     savxxmin = xxmin;
     savyymax = g_y_max;
     zmo_calc(g_save_x_min-savxxmin, g_save_y_max-savyymax, &xxmin, &g_y_max, ftemp);
-    zmo_calc(g_save_x_max-savxxmin, g_save_y_min-savyymax, &xxmax, &g_y_min, ftemp);
+    zmo_calc(g_save_x_max-savxxmin, g_save_y_min-savyymax, &g_x_max, &g_y_min, ftemp);
     zmo_calc(g_save_x_3rd-savxxmin, g_save_y_3rd-savyymax, &g_x_3rd, &g_y_3rd, ftemp);
 }
 
@@ -627,7 +627,7 @@ void aspectratio_crop(float oldaspect, float newaspect)
     {
         // new ratio is taller, crop x
         ftemp = (1.0 - oldaspect / newaspect) / 2;
-        xmargin = (xxmax - g_x_3rd) * ftemp;
+        xmargin = (g_x_max - g_x_3rd) * ftemp;
         ymargin = (g_y_min - g_y_3rd) * ftemp;
         g_x_3rd += xmargin;
         g_y_3rd += ymargin;
@@ -643,7 +643,7 @@ void aspectratio_crop(float oldaspect, float newaspect)
     }
     xxmin += xmargin;
     g_y_max += ymargin;
-    xxmax -= xmargin;
+    g_x_max -= xmargin;
     g_y_min -= ymargin;
 }
 

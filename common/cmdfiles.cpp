@@ -513,7 +513,7 @@ static void initvars_fractal()          // init vars affecting calculation
     g_force_symmetry = symmetry_type::NOT_FORCED;
     xxmin = -2.5;
     g_x_3rd = xxmin;
-    xxmax = 1.5;   // initial corner values
+    g_x_max = 1.5;   // initial corner values
     g_y_min = -1.5;
     g_y_3rd = g_y_min;
     g_y_max = 1.5;   // initial corner values
@@ -1453,7 +1453,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         {
             xxmin = curfractalspecific->xmin;
             g_x_3rd = xxmin;
-            xxmax = curfractalspecific->xmax;
+            g_x_max = curfractalspecific->xmax;
             g_y_min = curfractalspecific->ymin;
             g_y_3rd = g_y_min;
             g_y_max = curfractalspecific->ymax;
@@ -2170,7 +2170,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         }
         xxmin = floatval[0];
         g_x_3rd = xxmin;
-        xxmax = floatval[1];
+        g_x_max = floatval[1];
         g_y_min = floatval[2];
         g_y_3rd = g_y_min;
         g_y_max = floatval[3];

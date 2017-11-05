@@ -212,7 +212,7 @@ bool setup_convert_to_screen(affine *scrn_cnvt)
 {
     double det, xd, yd;
 
-    det = (g_x_3rd-xxmin)*(g_y_min-g_y_max) + (g_y_max-g_y_3rd)*(xxmax-xxmin);
+    det = (g_x_3rd-xxmin)*(g_y_min-g_y_max) + (g_y_max-g_y_3rd)*(g_x_max-xxmin);
     if (det == 0)
     {
         return true;
@@ -222,14 +222,14 @@ bool setup_convert_to_screen(affine *scrn_cnvt)
     scrn_cnvt->b =  xd*(g_x_3rd-xxmin);
     scrn_cnvt->e = -scrn_cnvt->a*xxmin - scrn_cnvt->b*g_y_max;
 
-    det = (g_x_3rd-xxmax)*(g_y_min-g_y_max) + (g_y_min-g_y_3rd)*(xxmax-xxmin);
+    det = (g_x_3rd-g_x_max)*(g_y_min-g_y_max) + (g_y_min-g_y_3rd)*(g_x_max-xxmin);
     if (det == 0)
     {
         return true;
     }
     yd = g_y_size_dots/det;
     scrn_cnvt->c =  yd*(g_y_min-g_y_3rd);
-    scrn_cnvt->d =  yd*(g_x_3rd-xxmax);
+    scrn_cnvt->d =  yd*(g_x_3rd-g_x_max);
     scrn_cnvt->f = -scrn_cnvt->c*xxmin - scrn_cnvt->d*g_y_max;
     return false;
 }
@@ -2927,7 +2927,7 @@ static bool long3dviewtransf(long3dvtinf *inf)
             double tmpy = (-inf->minvals[1]-inf->maxvals[1])/(2.0*g_fudge_factor); // center y
 
             // apply perspective shift
-            tmpx += ((double)xshift*(xxmax-xxmin))/(xdots);
+            tmpx += ((double)xshift*(g_x_max-xxmin))/(xdots);
             tmpy += ((double)yshift*(g_y_max-g_y_min))/(ydots);
             double tmpz = -((double)inf->maxvals[2]) / g_fudge_factor;
             trans(tmpx, tmpy, tmpz, inf->doublemat);
@@ -2938,7 +2938,7 @@ static bool long3dviewtransf(long3dvtinf *inf)
                 tmpx = (-inf->minvals[0]-inf->maxvals[0])/(2.0*g_fudge_factor); // center x
                 tmpy = (-inf->minvals[1]-inf->maxvals[1])/(2.0*g_fudge_factor); // center y
 
-                tmpx += ((double)xshift1*(xxmax-xxmin))/(xdots);
+                tmpx += ((double)xshift1*(g_x_max-xxmin))/(xdots);
                 tmpy += ((double)yshift1*(g_y_max-g_y_min))/(ydots);
                 tmpz = -((double)inf->maxvals[2]) / g_fudge_factor;
                 trans(tmpx, tmpy, tmpz, inf->doublemat1);
@@ -3103,7 +3103,7 @@ static bool float3dviewtransf(float3dvtinf *inf)
             double tmpy = (-inf->minvals[1]-inf->maxvals[1])/(2.0); // center y
 
             // apply perspective shift
-            tmpx += ((double)xshift*(xxmax-xxmin))/(xdots);
+            tmpx += ((double)xshift*(g_x_max-xxmin))/(xdots);
             tmpy += ((double)yshift*(g_y_max-g_y_min))/(ydots);
             double tmpz = -(inf->maxvals[2]);
             trans(tmpx, tmpy, tmpz, inf->doublemat);
@@ -3114,7 +3114,7 @@ static bool float3dviewtransf(float3dvtinf *inf)
                 tmpx = (-inf->minvals[0]-inf->maxvals[0])/(2.0); // center x
                 tmpy = (-inf->minvals[1]-inf->maxvals[1])/(2.0); // center y
 
-                tmpx += ((double)xshift1*(xxmax-xxmin))/(xdots);
+                tmpx += ((double)xshift1*(g_x_max-xxmin))/(xdots);
                 tmpy += ((double)yshift1*(g_y_max-g_y_min))/(ydots);
                 tmpz = -(inf->maxvals[2]);
                 trans(tmpx, tmpy, tmpz, inf->doublemat1);

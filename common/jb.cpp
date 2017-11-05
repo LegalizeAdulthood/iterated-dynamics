@@ -73,12 +73,12 @@ JulibrotSetup()
     }
 #endif
 
-    xoffsetfp = (xxmax + xxmin) / 2;     // Calculate average
+    xoffsetfp = (g_x_max + xxmin) / 2;     // Calculate average
     yoffsetfp = (g_y_max + g_y_min) / 2;     // Calculate average
     dmxfp = (g_julibrot_x_max - g_julibrot_x_min) / zdots;
     dmyfp = (g_julibrot_y_max - g_julibrot_y_min) / zdots;
     g_float_param = &jbcfp;
-    x_per_inchfp = (xxmin - xxmax) / g_julibrot_width_fp;
+    x_per_inchfp = (xxmin - g_x_max) / g_julibrot_width_fp;
     y_per_inchfp = (g_y_max - g_y_min) / g_julibrot_height_fp;
     inch_per_xdotfp = g_julibrot_width_fp / xdots;
     inch_per_ydotfp = g_julibrot_height_fp / ydots;
@@ -115,7 +115,7 @@ JulibrotSetup()
         fg = (double)(1L << g_bit_shift);
         fg16 = (double)(1L << 16);
         jxmin = (long)(xxmin * fg);
-        jxmax = (long)(xxmax * fg);
+        jxmax = (long)(g_x_max * fg);
         xoffset = (jxmax + jxmin) / 2;    // Calculate average
         jymin = (long)(g_y_min * fg);
         jymax = (long)(g_y_max * fg);
@@ -134,7 +134,7 @@ JulibrotSetup()
         dmy = (mymax - mymin) / zdots;
         g_long_param = &jbc;
 
-        x_per_inch = (long)((xxmin - xxmax) / g_julibrot_width_fp * fg);
+        x_per_inch = (long)((xxmin - g_x_max) / g_julibrot_width_fp * fg);
         y_per_inch = (long)((g_y_max - g_y_min) / g_julibrot_height_fp * fg);
         inch_per_xdot = (long)((g_julibrot_width_fp / xdots) * fg16);
         inch_per_ydot = (long)((g_julibrot_height_fp / ydots) * fg16);
