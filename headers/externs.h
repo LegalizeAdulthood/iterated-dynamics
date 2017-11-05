@@ -394,7 +394,7 @@ extern int                   g_evolve_param_box_count;
 extern int                   g_distance_estimator_x_dots;
 extern int                   g_distance_estimator_y_dots;
 extern void                (*g_put_color)(int, int, int);
-extern DComplex              pwr;
+extern DComplex              g_power_z;
 extern double                qc;
 extern double                qci;
 extern double                qcj;

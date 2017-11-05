@@ -198,8 +198,8 @@ MandelfpSetup()
 {
     bf_math = bf_math_type::NONE;
     g_c_exponent = (int)g_params[2];
-    pwr.x = g_params[2] - 1.0;
-    pwr.y = g_params[3];
+    g_power_z.x = g_params[2] - 1.0;
+    g_power_z.y = g_params[3];
     g_float_param = &g_init;
     switch (fractype)
     {
@@ -337,9 +337,9 @@ JuliafpSetup()
     g_float_param = &g_param_z1;
     if (fractype == fractal_type::COMPLEXMARKSJUL)
     {
-        pwr.x = g_params[2] - 1.0;
-        pwr.y = g_params[3];
-        g_marks_coefficient = ComplexPower(*g_float_param, pwr);
+        g_power_z.x = g_params[2] - 1.0;
+        g_power_z.y = g_params[3];
+        g_marks_coefficient = ComplexPower(*g_float_param, g_power_z);
     }
     switch (fractype)
     {

@@ -71,7 +71,7 @@ DComplex  staticroots[16]; // roots array for degree 16 or less
 std::vector<DComplex> roots;
 std::vector<MPC> g_mpc_roots;
 long g_fudge_half;
-DComplex pwr;
+DComplex g_power_z;
 int     bitshiftless1;                  // bit shift less 1
 bool g_overflow = false;
 
@@ -3194,7 +3194,7 @@ int MarksCplxMandperp()
     g_old_z.y = g_init.y + g_param_z1.y;
     tempsqrx = sqr(g_old_z.x);  // precalculated value
     tempsqry = sqr(g_old_z.y);
-    g_marks_coefficient = ComplexPower(g_init, pwr);
+    g_marks_coefficient = ComplexPower(g_init, g_power_z);
     return 1;
 }
 
