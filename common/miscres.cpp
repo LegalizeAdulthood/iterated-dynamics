@@ -1634,7 +1634,7 @@ bool find_file_item(char *filename, char const *itemname, FILE **fileptr, int it
         cleartempmsg();
     }
 
-    if (!found && orgfrmsearch && itemtype == 1)
+    if (!found && g_organize_formulas_search && itemtype == 1)
     {
         splitpath(g_organize_formulas_dir.c_str(), drive, dir, nullptr, nullptr);
         fname[0] = '_';

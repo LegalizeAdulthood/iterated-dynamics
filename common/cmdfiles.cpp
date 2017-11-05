@@ -131,7 +131,7 @@ bool g_fast_restore = false;       /* true - reset viewwindows prior to a restor
                                      and do not display warnings when video
                                      mode changes during restore */
 
-bool orgfrmsearch = false;      /* 1 - user has specified a directory for
+bool g_organize_formulas_search = false;      /* 1 - user has specified a directory for
                                      Orgform formula compilation files */
 
 int     g_orbit_save_flags = 0;          // for IFS and LORENZ to output acrospin file
@@ -2469,7 +2469,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         {
             goto badarg;
         }
-        orgfrmsearch = true;
+        g_organize_formulas_search = true;
         g_organize_formulas_dir = value;
         fix_dirname(g_organize_formulas_dir);
         return CMDARG_NONE;
