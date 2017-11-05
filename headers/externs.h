@@ -349,7 +349,7 @@ extern int                   g_orbit_save_flags;
 extern int                   g_orbit_color;
 extern int                   g_orbit_delay;
 extern long                  g_orbit_interval;
-extern int                   orbit_ptr;
+extern int                   g_orbit_save_index;
 extern std::string           orgfrmdir;
 extern bool                  orgfrmsearch;
 extern float                 originfp;

@@ -2411,7 +2411,7 @@ int calcfroth()   // per pixel 1/2/g, called with row & col set
         return -1;
     }
 
-    orbit_ptr = 0;
+    g_orbit_save_index = 0;
     g_color_iter = 0;
     if (show_dot >0)
     {

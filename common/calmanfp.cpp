@@ -63,7 +63,7 @@ long calcmandfpasm()
     savedx = 0;
     savedy = 0;
 #endif
-    orbit_ptr = 0;
+    g_orbit_save_index = 0;
     savedand = firstsavedand;
     savedincr = 1;             // start checking the very first time
     g_keyboard_check_interval--;                // Only check the keyboard sometimes
@@ -180,7 +180,7 @@ long calcmandfpasm()
     g_color_iter = inside_color;
 
 pop_stack:
-    if (orbit_ptr)
+    if (g_orbit_save_index)
     {
         scrub_orbit();
     }

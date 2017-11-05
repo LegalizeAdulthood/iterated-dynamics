@@ -1644,7 +1644,7 @@ static void plotdorbit(double dx, double dy, int color)
     int i;
     int j;
     int save_sxoffs, save_syoffs;
-    if (orbit_ptr >= NUM_SAVE_ORBIT-3)
+    if (g_orbit_save_index >= NUM_SAVE_ORBIT-3)
     {
         return;
     }
@@ -1667,10 +1667,10 @@ static void plotdorbit(double dx, double dy, int color)
     // save orbit value
     if (color == -1)
     {
-        save_orbit[orbit_ptr++] = i;
-        save_orbit[orbit_ptr++] = j;
+        save_orbit[g_orbit_save_index++] = i;
+        save_orbit[g_orbit_save_index++] = j;
         int const c = getcolor(i, j);
-        save_orbit[orbit_ptr++] = c;
+        save_orbit[g_orbit_save_index++] = c;
         putcolor(i, j, c^g_orbit_color);
     }
     else
@@ -1736,11 +1736,11 @@ void scrub_orbit()
     save_syoffs = syoffs;
     syoffs = 0;
     sxoffs = syoffs;
-    while (orbit_ptr >= 3)
+    while (g_orbit_save_index >= 3)
     {
-        c = save_orbit[--orbit_ptr];
-        j = save_orbit[--orbit_ptr];
-        i = save_orbit[--orbit_ptr];
+        c = save_orbit[--g_orbit_save_index];
+        j = save_orbit[--g_orbit_save_index];
+        i = save_orbit[--g_orbit_save_index];
         putcolor(i, j, c);
     }
     sxoffs = save_sxoffs;

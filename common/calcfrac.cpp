@@ -130,8 +130,8 @@ unsigned long lm = 0;                   // magnitude limit (CALCMAND)
 
 // ORBIT variables
 bool show_orbit = false;                // flag to turn on and off
-int     orbit_ptr = 0;                  // pointer into save_orbit array
-int     g_orbit_color = 15;                 // XOR color
+int g_orbit_save_index = 0;             // index into save_orbit array
+int g_orbit_color = 15;                 // XOR color
 
 int g_i_x_start = 0;
 int g_i_x_stop = 0;
@@ -791,7 +791,7 @@ int calcfract()
 
     // ORBIT stuff
     show_orbit = start_show_orbit;
-    orbit_ptr = 0;
+    g_orbit_save_index = 0;
     g_orbit_color = 15;
     if (g_colors < 16)
     {
@@ -2204,7 +2204,7 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
         }
         g_l_init.y = g_l_y_pixel();
     }
-    orbit_ptr = 0;
+    g_orbit_save_index = 0;
     g_color_iter = 0;
     if (fractype == fractal_type::JULIAFP || fractype == fractal_type::JULIA)
     {
