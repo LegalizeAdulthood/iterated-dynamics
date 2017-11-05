@@ -385,11 +385,11 @@ int get_video_mode(FRACTAL_INFO *info, ext_blk_3 *blk_3_info)
         {
             g_calc_status = calc_status_value::PARAMS_CHANGED;  // can't resume anyway
         }
-        if (viewxdots)
+        if (g_view_x_dots)
         {
-            g_view_reduction = (float)(g_video_entry.xdots / viewxdots);
+            g_view_reduction = (float)(g_video_entry.xdots / g_view_x_dots);
             viewydots = 0;
-            viewxdots = viewydots; // easier to use auto reduction
+            g_view_x_dots = viewydots; // easier to use auto reduction
         }
         g_view_reduction = (float)((int)(g_view_reduction + 0.5)); // need integer value
         g_skip_y_dots = (short)(g_view_reduction - 1);
@@ -480,7 +480,7 @@ int get_video_mode(FRACTAL_INFO *info, ext_blk_3 *blk_3_info)
 
     // setup view window stuff
     g_view_window = false;
-    viewxdots = 0;
+    g_view_x_dots = 0;
     viewydots = 0;
     if (g_file_x_dots != g_video_entry.xdots || g_file_y_dots != g_video_entry.ydots)
     {
@@ -508,7 +508,7 @@ int get_video_mode(FRACTAL_INFO *info, ext_blk_3 *blk_3_info)
         }
         if (i != g_file_x_dots || j != g_file_y_dots)  // too bad, must be explicit
         {
-            viewxdots = g_file_x_dots;
+            g_view_x_dots = g_file_x_dots;
             viewydots = g_file_y_dots;
         }
         else
@@ -517,7 +517,7 @@ int get_video_mode(FRACTAL_INFO *info, ext_blk_3 *blk_3_info)
         }
     }
     if (!g_make_parameter_file && !g_fast_restore && (g_init_batch == batch_modes::NONE) &&
-            (fabs(g_final_aspect_ratio - g_screen_aspect) > .00001 || viewxdots != 0))
+            (fabs(g_final_aspect_ratio - g_screen_aspect) > .00001 || g_view_x_dots != 0))
     {
         stopmsg(STOPMSG_NO_BUZZER,
                 "Warning: <V>iew parameters are being set to non-standard values.\n"

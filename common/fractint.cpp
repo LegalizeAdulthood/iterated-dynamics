@@ -92,7 +92,7 @@ bool    g_view_window = false;     // false for full screen, true for window
 float   g_view_reduction;          // window auto-sizing
 bool    g_view_crop = false;       // true to crop default coords
 float   g_final_aspect_ratio;       // for view shape and rotation
-int     viewxdots, viewydots;    // explicit view sizing
+int     g_view_x_dots, viewydots;    // explicit view sizing
 bool    g_keep_aspect_ratio = false;  // true to keep virtual aspect
 bool    zscroll = false;        // screen/zoombox false fixed, true relaxed
 

@@ -868,7 +868,7 @@ int get_view_params()
     bool const old_viewwindow    = g_view_window;
     old_viewreduction = g_view_reduction;
     old_aspectratio   = g_final_aspect_ratio;
-    old_viewxdots     = viewxdots;
+    old_viewxdots     = g_view_x_dots;
     old_viewydots     = viewydots;
     old_sxdots        = sxdots;
     old_sydots        = sydots;
@@ -897,7 +897,7 @@ get_view_restart:
 
         choices[++k] = "Explicit size x pixels (0 for auto size)";
         uvalues[k].type = 'i';
-        uvalues[k].uval.ival = viewxdots;
+        uvalues[k].uval.ival = g_view_x_dots;
 
         choices[++k] = "              y pixels (0 to base on aspect ratio)";
         uvalues[k].type = 'i';
@@ -963,7 +963,7 @@ get_view_restart:
     if (i == FIK_F4 && !driver_diskp())
     {
         g_view_window = false;
-        viewxdots = 0;
+        g_view_x_dots = 0;
         viewydots = 0;
         g_view_reduction = 4.2F;
         g_view_crop = true;
@@ -984,7 +984,7 @@ get_view_restart:
         g_view_reduction = (float) uvalues[++k].uval.dval;
         g_final_aspect_ratio = (float) uvalues[++k].uval.dval;
         g_view_crop = uvalues[++k].uval.ch.val != 0;
-        viewxdots = uvalues[++k].uval.ival;
+        g_view_x_dots = uvalues[++k].uval.ival;
         viewydots = uvalues[++k].uval.ival;
     }
 
@@ -1007,8 +1007,8 @@ get_view_restart:
     {
         if (g_final_aspect_ratio == 0.0)
         {
-            g_final_aspect_ratio = (g_view_window && viewxdots != 0 && viewydots != 0) ?
-                               ((float) viewydots)/((float) viewxdots) : old_aspectratio;
+            g_final_aspect_ratio = (g_view_window && g_view_x_dots != 0 && viewydots != 0) ?
+                               ((float) viewydots)/((float) g_view_x_dots) : old_aspectratio;
         }
         sydots = (int)(g_final_aspect_ratio*sxdots + 0.5);
     }
@@ -1032,11 +1032,11 @@ get_view_restart:
         }
     }
 
-    if (viewxdots != 0 && viewydots != 0 && g_view_window && g_final_aspect_ratio == 0.0)
+    if (g_view_x_dots != 0 && viewydots != 0 && g_view_window && g_final_aspect_ratio == 0.0)
     {
-        g_final_aspect_ratio = ((float) viewydots)/((float) viewxdots);
+        g_final_aspect_ratio = ((float) viewydots)/((float) g_view_x_dots);
     }
-    else if (g_final_aspect_ratio == 0.0 && (viewxdots == 0 || viewydots == 0))
+    else if (g_final_aspect_ratio == 0.0 && (g_view_x_dots == 0 || viewydots == 0))
     {
         g_final_aspect_ratio = old_aspectratio;
     }
@@ -1051,8 +1051,8 @@ get_view_restart:
             || (g_view_window
                 && (g_view_reduction != old_viewreduction
                     || g_final_aspect_ratio != old_aspectratio
-                    || viewxdots != old_viewxdots
-                    || (viewydots != old_viewydots && viewxdots)))) ? 1 : 0;
+                    || g_view_x_dots != old_viewxdots
+                    || (viewydots != old_viewydots && g_view_x_dots)))) ? 1 : 0;
 }
 
 /*

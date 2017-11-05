@@ -1236,7 +1236,7 @@ void write_batch_parms(char const *colorinf, bool colorsonly, int maxcolor, int 
         {
             put_parm("/%s", "no");
         }
-        put_parm("/%d/%d", viewxdots, viewydots);
+        put_parm("/%d/%d", g_view_x_dots, viewydots);
     }
 
     if (!colorsonly)

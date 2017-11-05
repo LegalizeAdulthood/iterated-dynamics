@@ -873,12 +873,12 @@ get_evol_restart:
         g_evolving = g_evolving + NOGROUT;
     }
 
-    viewxdots = (sxdots / g_evolve_image_grid_size)-2;
+    g_view_x_dots = (sxdots / g_evolve_image_grid_size)-2;
     viewydots = (sydots / g_evolve_image_grid_size)-2;
     if (!g_view_window)
     {
         viewydots = 0;
-        viewxdots = viewydots;
+        g_view_x_dots = viewydots;
     }
 
     i = 0;

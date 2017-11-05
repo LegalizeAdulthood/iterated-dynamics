@@ -1293,7 +1293,7 @@ finish:
     if (kbdchar == 's' || kbdchar == 'S')
     {
         g_view_window = false;
-        viewxdots = 0;
+        g_view_x_dots = 0;
         viewydots = 0;
         g_view_reduction = 4.2F;
         g_view_crop = true;

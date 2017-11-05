@@ -162,7 +162,7 @@ main_state big_while_loop(bool *const kbdmore, bool *const stacked, bool const r
             {
                 // bypass for VESA virtual screen
                 ftemp = g_final_aspect_ratio*(((double) sydots)/((double) sxdots)/g_screen_aspect);
-                xdots = viewxdots;
+                xdots = g_view_x_dots;
                 if (xdots != 0)
                 {
                     // xdots specified
@@ -187,8 +187,8 @@ main_state big_while_loop(bool *const kbdmore, bool *const stacked, bool const r
                     stopmsg(STOPMSG_NONE,
                         "View window too large; using full screen.");
                     g_view_window = false;
-                    viewxdots = sxdots;
-                    xdots = viewxdots;
+                    g_view_x_dots = sxdots;
+                    xdots = g_view_x_dots;
                     viewydots = sydots;
                     ydots = viewydots;
                 }
