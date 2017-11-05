@@ -490,7 +490,7 @@ extern int                   g_timed_save;
 extern bool                  g_timer_flag;
 extern long                  g_timer_interval;
 extern long                  g_timer_start;
-extern DComplex              tmp;
+extern DComplex              g_tmp_z;
 extern std::string           g_temp_dir;
 extern double smallest_window_display_size;
 extern int                   totpasses;

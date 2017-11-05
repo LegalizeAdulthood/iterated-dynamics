@@ -728,19 +728,19 @@ int ComplexNewton()
     temp = ComplexPower(g_old_z, cd1);
     FPUcplxmul(&temp, &g_old_z, &g_new_z);
 
-    tmp.x = g_new_z.x - croot.x;
-    tmp.y = g_new_z.y - croot.y;
-    if ((sqr(tmp.x) + sqr(tmp.y)) < g_threshold)
+    g_tmp_z.x = g_new_z.x - croot.x;
+    g_tmp_z.y = g_new_z.y - croot.y;
+    if ((sqr(g_tmp_z.x) + sqr(g_tmp_z.y)) < g_threshold)
     {
         return (1);
     }
 
-    FPUcplxmul(&g_new_z, &cd1, &tmp);
-    tmp.x += croot.x;
-    tmp.y += croot.y;
+    FPUcplxmul(&g_new_z, &cd1, &g_tmp_z);
+    g_tmp_z.x += croot.x;
+    g_tmp_z.y += croot.y;
 
     FPUcplxmul(&temp, &cdegree, &cd1);
-    FPUcplxdiv(&tmp, &cd1, &g_old_z);
+    FPUcplxdiv(&g_tmp_z, &cd1, &g_old_z);
     if (g_overflow)
     {
         return (1);
@@ -763,17 +763,17 @@ int ComplexBasin()
     temp = ComplexPower(g_old_z, cd1);
     FPUcplxmul(&temp, &g_old_z, &g_new_z);
 
-    tmp.x = g_new_z.x - croot.x;
-    tmp.y = g_new_z.y - croot.y;
-    if ((sqr(tmp.x) + sqr(tmp.y)) < g_threshold)
+    g_tmp_z.x = g_new_z.x - croot.x;
+    g_tmp_z.y = g_new_z.y - croot.y;
+    if ((sqr(g_tmp_z.x) + sqr(g_tmp_z.y)) < g_threshold)
     {
         if (fabs(g_old_z.y) < .01)
         {
             g_old_z.y = 0.0;
         }
         FPUcplxlog(&g_old_z, &temp);
-        FPUcplxmul(&temp, &cdegree, &tmp);
-        double mod = tmp.y/TwoPi;
+        FPUcplxmul(&temp, &cdegree, &g_tmp_z);
+        double mod = g_tmp_z.y/TwoPi;
         g_color_iter = (long)mod;
         if (fabs(mod - g_color_iter) > 0.5)
         {
@@ -794,12 +794,12 @@ int ComplexBasin()
         return (1);
     }
 
-    FPUcplxmul(&g_new_z, &cd1, &tmp);
-    tmp.x += croot.x;
-    tmp.y += croot.y;
+    FPUcplxmul(&g_new_z, &cd1, &g_tmp_z);
+    g_tmp_z.x += croot.x;
+    g_tmp_z.y += croot.y;
 
     FPUcplxmul(&temp, &cdegree, &cd1);
-    FPUcplxdiv(&tmp, &cd1, &g_old_z);
+    FPUcplxdiv(&g_tmp_z, &cd1, &g_old_z);
     if (g_overflow)
     {
         return (1);

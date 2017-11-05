@@ -294,12 +294,12 @@ MandelfpSetup()
         }
         break;
     case fractal_type::QUATFP:
-        g_float_param = &tmp;
+        g_float_param = &g_tmp_z;
         g_attractors = 0;
         g_periodicity_check = 0;
         break;
     case fractal_type::HYPERCMPLXFP:
-        g_float_param = &tmp;
+        g_float_param = &g_tmp_z;
         g_attractors = 0;
         g_periodicity_check = 0;
         if (g_params[2] != 0)
@@ -1248,8 +1248,8 @@ SierpinskiFPSetup()
 {
     // sierpinski
     g_periodicity_check = 0;                // disable periodicity checks
-    tmp.x = 1;
-    tmp.y = 0.5;
+    g_tmp_z.x = 1;
+    g_tmp_z.y = 0.5;
     return true;
 }
 
