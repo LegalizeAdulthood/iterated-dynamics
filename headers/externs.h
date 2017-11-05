@@ -486,7 +486,7 @@ extern int                   g_text_row;        // current row in text mode
 extern unsigned int          g_evolve_this_generation_random_seed;
 extern bool                  g_three_pass;
 extern double                g_threshold;
-extern int                   timedsave;
+extern int                   g_timed_save;
 extern bool                  timerflag;
 extern long                  timer_interval;
 extern long                  timer_start;

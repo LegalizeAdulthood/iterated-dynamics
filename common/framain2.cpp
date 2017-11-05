@@ -519,20 +519,20 @@ resumeloop:                             // return here on failed overlays
         while (*kbdmore)
         {
             // loop through command keys
-            if (timedsave != 0)
+            if (g_timed_save != 0)
             {
-                if (timedsave == 1)
+                if (g_timed_save == 1)
                 {
                     // woke up for timed save
                     driver_get_key();     // eat the dummy char
                     kbdchar = 's'; // do the save
                     g_resave_flag = 1;
-                    timedsave = 2;
+                    g_timed_save = 2;
                 }
                 else
                 {
                     // save done, resume
-                    timedsave = 0;
+                    g_timed_save = 0;
                     g_resave_flag = 2;
                     kbdchar = FIK_ENTER;
                 }
