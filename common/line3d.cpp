@@ -123,7 +123,7 @@ int P = 250; // Perspective dist used when viewing light vector
 BYTE g_background_color[3];
 std::string g_raytrace_filename{"fract001"};
 bool g_preview = false;
-bool showbox = false;
+bool g_show_box = false;
 int g_preview_factor = 20;
 int xadjust = 0;
 int yadjust = 0;
@@ -2775,7 +2775,7 @@ static int first_time(int linelen, VECTOR v)
     }
     normalize_vector(light_direction);
 
-    if (g_preview && showbox)
+    if (g_preview && g_show_box)
     {
         normalize_vector(direct);
 

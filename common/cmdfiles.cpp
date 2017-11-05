@@ -598,7 +598,7 @@ static void initvars_3d()               // init vars affecting 3d
     g_brief   = false;
     SPHERE = FALSE;
     g_preview = false;
-    showbox = false;
+    g_show_box = false;
     xadjust = 0;
     yadjust = 0;
     g_eye_separation = 0;
@@ -3356,7 +3356,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         {
             goto badarg;
         }
-        showbox = yesnoval[0] != 0;
+        g_show_box = yesnoval[0] != 0;
         return CMDARG_3D_PARAM;
     }
 

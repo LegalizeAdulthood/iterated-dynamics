@@ -2993,7 +2993,7 @@ restart_1:
 
     prompts3d[++k] = "    Show Box?";
     uvalues[k].type = 'y';
-    uvalues[k].uval.ch.val = showbox ? 1 : 0;
+    uvalues[k].uval.ch.val = g_show_box ? 1 : 0;
 
     prompts3d[++k] = "Coarseness, preview/grid/ray (in y dir)";
     uvalues[k].type = 'i';
@@ -3047,7 +3047,7 @@ restart_1:
 
     k = 0;
     g_preview = uvalues[k++].uval.ch.val != 0;
-    showbox = uvalues[k++].uval.ch.val != 0;
+    g_show_box = uvalues[k++].uval.ch.val != 0;
     g_preview_factor  = uvalues[k++].uval.ival;
     sphere = uvalues[k++].uval.ch.val;
     g_glasses_type = uvalues[k++].uval.ival;
