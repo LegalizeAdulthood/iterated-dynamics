@@ -108,7 +108,7 @@ double  g_inversion[3] = { 0.0 }; // radius, xcenter, ycenter
 int     rotate_lo = 0;
 int     rotate_hi = 0;          // cycling color range
 std::vector<int> g_iteration_ranges;        // iter->color ranges mapping
-int     rangeslen = 0;          // size of ranges array
+int     g_iteration_ranges_len = 0;          // size of ranges array
 BYTE g_map_clut[256][3];          // map= (default colors)
 bool g_map_specified = false;     // map= specified
 BYTE *mapdacbox = nullptr;      // map= (default colors)
@@ -525,10 +525,10 @@ static void initvars_fractal()          // init vars affecting calculation
     set_trig_array(1, "sqr");
     set_trig_array(2, "sinh");
     set_trig_array(3, "cosh");
-    if (rangeslen)
+    if (g_iteration_ranges_len)
     {
         g_iteration_ranges.clear();
-        rangeslen = 0;
+        g_iteration_ranges_len = 0;
     }
     usemag = true;                      // use center-mag, not corners
 
@@ -1751,8 +1751,8 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
             stopmsg(STOPMSG_NO_STACK, "Insufficient memory for ranges=");
             return CMDARG_ERROR;
         }
-        rangeslen = entries;
-        for (int i = 0; i < rangeslen; ++i)
+        g_iteration_ranges_len = entries;
+        for (int i = 0; i < g_iteration_ranges_len; ++i)
         {
             g_iteration_ranges[i] = tmpranges[i];
         }

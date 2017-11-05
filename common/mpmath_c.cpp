@@ -619,7 +619,7 @@ long logtablecalc(long citer)
 {
     long ret = 0;
 
-    if (g_log_map_flag == 0 && !rangeslen)   // Oops, how did we get here?
+    if (g_log_map_flag == 0 && !g_iteration_ranges_len)   // Oops, how did we get here?
     {
         return (citer);
     }

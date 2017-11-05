@@ -983,7 +983,7 @@ void write_batch_parms(char const *colorinf, bool colorsonly, int maxcolor, int 
             }
         }
 
-        if (g_log_map_flag && !rangeslen)
+        if (g_log_map_flag && !g_iteration_ranges_len)
         {
             put_parm(" %s=", "logmap");
             if (g_log_map_flag == -1)
@@ -1000,7 +1000,7 @@ void write_batch_parms(char const *colorinf, bool colorsonly, int maxcolor, int 
             }
         }
 
-        if (g_log_map_fly_calculate && g_log_map_flag && !rangeslen)
+        if (g_log_map_fly_calculate && g_log_map_flag && !g_iteration_ranges_len)
         {
             put_parm(" %s=", "logmode");
             if (g_log_map_fly_calculate == 1)
@@ -1092,11 +1092,11 @@ void write_batch_parms(char const *colorinf, bool colorsonly, int maxcolor, int 
             put_parm(" %s=%d", "rseed", rseed);
         }
 
-        if (rangeslen)
+        if (g_iteration_ranges_len)
         {
             put_parm(" %s=", "ranges");
             i = 0;
-            while (i < rangeslen)
+            while (i < g_iteration_ranges_len)
             {
                 if (i)
                 {

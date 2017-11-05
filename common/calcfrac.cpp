@@ -699,12 +699,12 @@ int calcfract()
         g_log_map_table_max_size = 32767;
         g_log_map_calculate = false; // use logtable
     }
-    else if (rangeslen && (g_max_iterations >= 32767))
+    else if (g_iteration_ranges_len && (g_max_iterations >= 32767))
     {
         g_log_map_table_max_size = 32766;
     }
 
-    if ((g_log_map_flag || rangeslen) && !g_log_map_calculate)
+    if ((g_log_map_flag || g_iteration_ranges_len) && !g_log_map_calculate)
     {
         bool resized = false;
         try
@@ -718,7 +718,7 @@ int calcfract()
 
         if (!resized)
         {
-            if (rangeslen || g_log_map_fly_calculate == 2)
+            if (g_iteration_ranges_len || g_log_map_fly_calculate == 2)
             {
                 stopmsg(STOPMSG_NONE, "Insufficient memory for logmap/ranges with this maxiter");
             }
@@ -730,7 +730,7 @@ int calcfract()
                 SetupLogTable();
             }
         }
-        else if (rangeslen)
+        else if (g_iteration_ranges_len)
         {
             // Can't do ranges if MaxLTSize > 32767
             int m;
@@ -741,7 +741,7 @@ int calcfract()
             int k = l;
             int i = k;
             g_log_map_flag = 0; // ranges overrides logmap
-            while (i < rangeslen)
+            while (i < g_iteration_ranges_len)
             {
                 flip = 0;
                 m = flip;
@@ -752,7 +752,7 @@ int calcfract()
                     altern = g_iteration_ranges[i++];    // sub-range iterations
                     numval = g_iteration_ranges[i++];
                 }
-                if (numval > (int)g_log_map_table_max_size || i >= rangeslen)
+                if (numval > (int)g_log_map_table_max_size || i >= g_iteration_ranges_len)
                 {
                     numval = (int)g_log_map_table_max_size;
                 }

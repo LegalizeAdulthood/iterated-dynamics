@@ -402,7 +402,7 @@ extern double                g_quaternino_ck;
 extern bool                  g_quick_calc;
 extern int                   g_randomize_3d;
 extern std::vector<int>      g_iteration_ranges;
-extern int                   rangeslen;
+extern int                   g_iteration_ranges_len;
 extern int                   RAY;
 extern std::string           ray_name;
 extern std::string           readname;
