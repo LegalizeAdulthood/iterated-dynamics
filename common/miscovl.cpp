@@ -1387,7 +1387,7 @@ void write_batch_parms(char const *colorinf, bool colorsonly, int maxcolor, int 
             put_parm(" %s=%d", "orbitinterval", g_orbit_interval);
         }
 
-        if (start_show_orbit)
+        if (g_start_show_orbit)
         {
             put_parm(" %s=%s", "showorbit", "yes");
         }

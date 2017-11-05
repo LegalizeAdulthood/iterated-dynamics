@@ -873,7 +873,7 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
             i = get_evolve_Parms();
             if (i > 0)
             {
-                start_show_orbit = false;
+                g_start_show_orbit = false;
                 g_sound_flag &= ~(SOUNDFLAG_X | SOUNDFLAG_Y | SOUNDFLAG_Z); // turn off only x,y,z
                 g_log_map_auto_calculate = false; // turn it off
             }

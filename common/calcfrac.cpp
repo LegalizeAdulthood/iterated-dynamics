@@ -789,7 +789,7 @@ int calcfract()
     }
 
     // ORBIT stuff
-    g_show_orbit = start_show_orbit;
+    g_show_orbit = g_start_show_orbit;
     g_orbit_save_index = 0;
     g_orbit_color = 15;
     if (g_colors < 16)

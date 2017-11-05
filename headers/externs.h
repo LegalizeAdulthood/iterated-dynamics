@@ -454,7 +454,7 @@ extern int                   g_slope;
 extern int                   g_sound_flag;
 extern std::string const     g_speed_prompt;
 extern void                (*g_standard_plot)(int, int, int);
-extern bool start_show_orbit;
+extern bool                  g_start_show_orbit;
 extern bool                  started_resaves;
 extern char                  stdcalcmode;
 extern std::string           stereomapname;
