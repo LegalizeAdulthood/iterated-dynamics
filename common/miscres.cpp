@@ -555,7 +555,7 @@ nextname:
         return 0;
     }
     // file already exists
-    if (!fract_overwrite)
+    if (!g_overwrite_file)
     {
         updatesavename(name);
         goto nextname;

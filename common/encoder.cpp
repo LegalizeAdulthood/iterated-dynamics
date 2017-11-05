@@ -121,7 +121,7 @@ restart:
     else
     {
         // file already exists
-        if (!fract_overwrite)
+        if (!g_overwrite_file)
         {
             if (resave_flag == 0)
             {

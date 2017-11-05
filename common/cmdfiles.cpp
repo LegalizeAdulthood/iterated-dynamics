@@ -81,7 +81,7 @@ int     rseed = 0;              // Random number seeding flag and value
 int     g_decomp[2] = { 0 };      // Decomposition coloring
 long    g_distance_estimator = 0;
 int     g_distance_estimator_width_factor = 0;
-bool    fract_overwrite = false;// true if file overwrite allowed
+bool    g_overwrite_file = false;// true if file overwrite allowed
 int     soundflag = 0;          // sound control bitfield... see sound.c for useage
 int     g_base_hertz = 0;          // sound=x/y/x hertz value
 int     g_debug_flag = debug_flags::none; // internal use only - you didn't see this
@@ -416,7 +416,7 @@ static void initvars_restart()          // <ins> key init
     g_gif87a_flag = false;                // turn on GIF89a processing
     g_dither_flag = false;                // no dithering
     g_ask_video = true;                    // turn on video-prompt flag
-    fract_overwrite = false;            // don't overwrite
+    g_overwrite_file = false;            // don't overwrite
     soundflag = SOUNDFLAG_SPEAKER | SOUNDFLAG_BEEP; // sound is on to PC speaker
     g_init_batch = batch_modes::NONE;                      // not in batch mode
     g_check_cur_dir = false;                // flag to check current dire for files
@@ -1354,7 +1354,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         {
             goto badarg;
         }
-        fract_overwrite = (yesnoval[0] ^ 1) != 0;
+        g_overwrite_file = (yesnoval[0] ^ 1) != 0;
         return CMDARG_NONE;
     }
     if (variable == "overwrite")    // overwrite=?
@@ -1363,7 +1363,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         {
             goto badarg;
         }
-        fract_overwrite = yesnoval[0] != 0;
+        g_overwrite_file = yesnoval[0] != 0;
         return CMDARG_NONE;
     }
 
