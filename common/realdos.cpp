@@ -53,11 +53,11 @@ int stopmsg(int flags, char const *msg)
         static FILE *fp = nullptr;
         if (fp == nullptr && g_init_batch == batch_modes::NONE)
         {
-            fp = dir_fopen(workdir.c_str(), "stopmsg.txt", "w");
+            fp = dir_fopen(g_working_dir.c_str(), "stopmsg.txt", "w");
         }
         else
         {
-            fp = dir_fopen(workdir.c_str(), "stopmsg.txt", "a");
+            fp = dir_fopen(g_working_dir.c_str(), "stopmsg.txt", "a");
         }
         if (fp != nullptr)
         {

@@ -2261,7 +2261,7 @@ int cmp_line(BYTE *pixels, int linelen)
     if (row == 0)
     {
         errcount = 0;
-        cmp_fp = dir_fopen(workdir.c_str(), "cmperr", (g_init_batch != batch_modes::NONE) ? "a" : "w");
+        cmp_fp = dir_fopen(g_working_dir.c_str(), "cmperr", (g_init_batch != batch_modes::NONE) ? "a" : "w");
         g_out_line_cleanup = cmp_line_cleanup;
     }
     if (g_potential_16bit)

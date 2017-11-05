@@ -422,7 +422,7 @@ skip_UI:
         if (xm > 1 || ym > 1)
         {
             have3rd = xxmin != xx3rd || yymin != yy3rd;
-            fpbat = dir_fopen(workdir.c_str(), "makemig.bat", "w");
+            fpbat = dir_fopen(g_working_dir.c_str(), "makemig.bat", "w");
             if (fpbat == nullptr)
             {
                 ym = 0;

@@ -60,7 +60,7 @@ char    g_auto_show_dot = 0;        // dark, medium, bright
 bool    g_start_show_orbit = false;        // show orbits on at start of fractal
 std::string g_read_filename;           // name of fractal input file
 std::string g_temp_dir;            // name of temporary directory
-std::string workdir;            // name of directory for misc files
+std::string g_working_dir;            // name of directory for misc files
 std::string g_organize_formulas_dir;          // name of directory for orgfrm files
 std::string g_gif_filename_mask;
 char    PrintName[FILE_MAX_PATH] = {"fract001.prn"}; // Name for print-to-file
@@ -1833,8 +1833,8 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         {
             goto badarg;
         }
-        workdir = value;
-        fix_dirname(workdir);
+        g_working_dir = value;
+        fix_dirname(g_working_dir);
         return CMDARG_NONE;
     }
 

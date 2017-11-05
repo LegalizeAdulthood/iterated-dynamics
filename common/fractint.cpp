@@ -644,7 +644,7 @@ int timer(int timertype, int(*subrtn)(), ...)
     }
     if (do_bench)
     {
-        fp = dir_fopen(workdir.c_str(), "bench", "a");
+        fp = dir_fopen(g_working_dir.c_str(), "bench", "a");
     }
     g_timer_start = clock_ticks();
     switch (timertype)
