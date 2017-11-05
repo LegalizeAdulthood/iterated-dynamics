@@ -54,7 +54,7 @@ int     g_distance_estimator_x_dots = 0;            // xdots to use for video in
 int     g_distance_estimator_y_dots = 0;            // ydots to use for video independence
 int     g_bf_digits = 0;           // digits to use (force) for bf_math
 int     g_show_dot = -1;           // color to show crawling graphics cursor
-int     sizedot = 0;            // size of dot crawling cursor
+int     g_size_dot = 0;            // size of dot crawling cursor
 record_colors_mode g_record_colors = record_colors_mode::none;       // default PAR color-writing method
 char    g_auto_show_dot = 0;        // dark, medium, bright
 bool    start_show_orbit = false;        // show orbits on at start of fractal
@@ -2930,11 +2930,11 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
             }
             if (totparms > 1 && intparms > 0)
             {
-                sizedot = intval[1];
+                g_size_dot = intval[1];
             }
-            if (sizedot < 0)
+            if (g_size_dot < 0)
             {
-                sizedot = 0;
+                g_size_dot = 0;
             }
         }
         return CMDARG_NONE;

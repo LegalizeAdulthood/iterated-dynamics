@@ -1195,14 +1195,14 @@ static void perform_worklist()
                 showdotcolor = g_show_dot % g_colors;
                 break;
             }
-            if (sizedot <= 0)
+            if (g_size_dot <= 0)
             {
                 showdot_width = -1;
             }
             else
             {
                 double dshowdot_width;
-                dshowdot_width = (double)sizedot*xdots/1024.0;
+                dshowdot_width = (double)g_size_dot*xdots/1024.0;
                 /*
                    Arbitrary sanity limit, however showdot_width will
                    overflow if dshowdot width gets near 256.
