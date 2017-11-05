@@ -357,25 +357,25 @@ init_restart:
 
     if (g_potential_flag && g_potential_params[2] != 0.0)
     {
-        rqlim = g_potential_params[2];
+        g_magnitude_limit = g_potential_params[2];
     }
     else if (g_bail_out)     // user input bailout
     {
-        rqlim = g_bail_out;
+        g_magnitude_limit = g_bail_out;
     }
     else if (g_biomorph != -1)     // biomorph benefits from larger bailout
     {
-        rqlim = 100;
+        g_magnitude_limit = 100;
     }
     else
     {
-        rqlim = curfractalspecific->orbit_bailout;
+        g_magnitude_limit = curfractalspecific->orbit_bailout;
     }
     if (g_integer_fractal)   // the bailout limit mustn't be too high here
     {
-        if (rqlim > 127.0)
+        if (g_magnitude_limit > 127.0)
         {
-            rqlim = 127.0;
+            g_magnitude_limit = 127.0;
         }
     }
 
@@ -429,7 +429,7 @@ init_restart:
                 && (g_params[1] > -2.0 && g_params[1] < 2.0)
                 && (g_invert == 0)                        // and not inverting
                 && g_biomorph == -1                     // and not biomorphing
-                && rqlim <= 4.0                         // and bailout not too high
+                && g_magnitude_limit <= 4.0                         // and bailout not too high
                 && (g_outside_color > REAL || g_outside_color < ATAN)   // and no funny outside stuff
                 && g_debug_flag != debug_flags::force_smaller_bitshift // and not debugging
                 && g_close_proximity <= 2.0             // and g_close_proximity not too large

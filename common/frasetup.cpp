@@ -22,7 +22,7 @@ bool
 MandelSetup()           // Mandelbrot Routine
 {
     if (g_debug_flag != debug_flags::force_standard_fractal
-            && (g_invert == 0) && g_decomp[0] == 0 && rqlim == 4.0
+            && (g_invert == 0) && g_decomp[0] == 0 && g_magnitude_limit == 4.0
             && g_bit_shift == 29 && !g_potential_flag
             && g_biomorph == -1 && g_inside_color > ZMAG && g_outside_color >= ITER
             && g_use_init_orbit != init_orbit_mode::value && !g_using_jiim && g_bail_out_test == bailouts::Mod
@@ -43,7 +43,7 @@ bool
 JuliaSetup()            // Julia Routine
 {
     if (g_debug_flag != debug_flags::force_standard_fractal
-            && (g_invert == 0) && g_decomp[0] == 0 && rqlim == 4.0
+            && (g_invert == 0) && g_decomp[0] == 0 && g_magnitude_limit == 4.0
             && g_bit_shift == 29 && !g_potential_flag
             && g_biomorph == -1 && g_inside_color > ZMAG && g_outside_color >= ITER
             && !g_finite_attractor && !g_using_jiim && g_bail_out_test == bailouts::Mod

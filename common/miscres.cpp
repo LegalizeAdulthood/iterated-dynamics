@@ -1245,7 +1245,7 @@ top:
     sprintf(msg, "%ld (%ld)", g_color_iter, g_max_iterations);
     driver_put_string(-1, -1, C_GENERAL_HI, msg);
     driver_put_string(-1, -1, C_GENERAL_MED, "     Effective bailout: ");
-    sprintf(msg, "%f", rqlim);
+    sprintf(msg, "%f", g_magnitude_limit);
     driver_put_string(-1, -1, C_GENERAL_HI, msg);
 
     if (fractype == fractal_type::PLASMA || fractype == fractal_type::ANT || fractype == fractal_type::CELLULAR)

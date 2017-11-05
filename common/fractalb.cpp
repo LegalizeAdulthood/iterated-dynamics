@@ -291,7 +291,7 @@ int  bnMODbailout()
     add_bn(bntmp, bntmpsqrx+shiftfactor, bntmpsqry+shiftfactor);
 
     longmagnitude = bntoint(bntmp);  // works with any fractal type
-    if (longmagnitude >= (long)rqlim)
+    if (longmagnitude >= (long)g_magnitude_limit)
     {
         return 1;
     }
@@ -307,7 +307,7 @@ int  bnREALbailout()
     square_bn(bntmpsqrx, bnnew.x);
     square_bn(bntmpsqry, bnnew.y);
     longtempsqrx = bntoint(bntmpsqrx+shiftfactor);
-    if (longtempsqrx >= (long)rqlim)
+    if (longtempsqrx >= (long)g_magnitude_limit)
     {
         return 1;
     }
@@ -324,7 +324,7 @@ int  bnIMAGbailout()
     square_bn(bntmpsqrx, bnnew.x);
     square_bn(bntmpsqry, bnnew.y);
     longtempsqry = bntoint(bntmpsqry+shiftfactor);
-    if (longtempsqry >= (long)rqlim)
+    if (longtempsqry >= (long)g_magnitude_limit)
     {
         return 1;
     }
@@ -341,7 +341,7 @@ int  bnORbailout()
     square_bn(bntmpsqry, bnnew.y);
     longtempsqrx = bntoint(bntmpsqrx+shiftfactor);
     longtempsqry = bntoint(bntmpsqry+shiftfactor);
-    if (longtempsqrx >= (long)rqlim || longtempsqry >= (long)rqlim)
+    if (longtempsqrx >= (long)g_magnitude_limit || longtempsqry >= (long)g_magnitude_limit)
     {
         return 1;
     }
@@ -358,7 +358,7 @@ int  bnANDbailout()
     square_bn(bntmpsqry, bnnew.y);
     longtempsqrx = bntoint(bntmpsqrx+shiftfactor);
     longtempsqry = bntoint(bntmpsqry+shiftfactor);
-    if (longtempsqrx >= (long)rqlim && longtempsqry >= (long)rqlim)
+    if (longtempsqrx >= (long)g_magnitude_limit && longtempsqry >= (long)g_magnitude_limit)
     {
         return 1;
     }
@@ -379,7 +379,7 @@ int  bnMANHbailout()
     add_bn(bntmp, bnold.x, bnold.y);
     square_bn(bnold.x, bntmp);
     longtempmag = bntoint(bnold.x+shiftfactor);
-    if (longtempmag >= (long)rqlim)
+    if (longtempmag >= (long)g_magnitude_limit)
     {
         return 1;
     }
@@ -398,7 +398,7 @@ int  bnMANRbailout()
     // note: in next two lines, bnold is just used as a temporary variable
     square_bn(bnold.x, bntmp);
     longtempmag = bntoint(bnold.x+shiftfactor);
-    if (longtempmag >= (long)rqlim)
+    if (longtempmag >= (long)g_magnitude_limit)
     {
         return 1;
     }
@@ -416,7 +416,7 @@ int  bfMODbailout()
     add_bf(bftmp, bftmpsqrx, bftmpsqry);
 
     longmagnitude = bftoint(bftmp);
-    if (longmagnitude >= (long)rqlim)
+    if (longmagnitude >= (long)g_magnitude_limit)
     {
         return 1;
     }
@@ -432,7 +432,7 @@ int  bfREALbailout()
     square_bf(bftmpsqrx, bfnew.x);
     square_bf(bftmpsqry, bfnew.y);
     longtempsqrx = bftoint(bftmpsqrx);
-    if (longtempsqrx >= (long)rqlim)
+    if (longtempsqrx >= (long)g_magnitude_limit)
     {
         return 1;
     }
@@ -449,7 +449,7 @@ int  bfIMAGbailout()
     square_bf(bftmpsqrx, bfnew.x);
     square_bf(bftmpsqry, bfnew.y);
     longtempsqry = bftoint(bftmpsqry);
-    if (longtempsqry >= (long)rqlim)
+    if (longtempsqry >= (long)g_magnitude_limit)
     {
         return 1;
     }
@@ -466,7 +466,7 @@ int  bfORbailout()
     square_bf(bftmpsqry, bfnew.y);
     longtempsqrx = bftoint(bftmpsqrx);
     longtempsqry = bftoint(bftmpsqry);
-    if (longtempsqrx >= (long)rqlim || longtempsqry >= (long)rqlim)
+    if (longtempsqrx >= (long)g_magnitude_limit || longtempsqry >= (long)g_magnitude_limit)
     {
         return 1;
     }
@@ -483,7 +483,7 @@ int  bfANDbailout()
     square_bf(bftmpsqry, bfnew.y);
     longtempsqrx = bftoint(bftmpsqrx);
     longtempsqry = bftoint(bftmpsqry);
-    if (longtempsqrx >= (long)rqlim && longtempsqry >= (long)rqlim)
+    if (longtempsqrx >= (long)g_magnitude_limit && longtempsqry >= (long)g_magnitude_limit)
     {
         return 1;
     }
@@ -504,7 +504,7 @@ int  bfMANHbailout()
     add_bf(bftmp, bfold.x, bfold.y);
     square_bf(bfold.x, bftmp);
     longtempmag = bftoint(bfold.x);
-    if (longtempmag >= (long)rqlim)
+    if (longtempmag >= (long)g_magnitude_limit)
     {
         return 1;
     }
@@ -523,7 +523,7 @@ int  bfMANRbailout()
     // note: in next two lines, bfold is just used as a temporary variable
     square_bf(bfold.x, bftmp);
     longtempmag = bftoint(bfold.x);
-    if (longtempmag >= (long)rqlim)
+    if (longtempmag >= (long)g_magnitude_limit)
     {
         return 1;
     }

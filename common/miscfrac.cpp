@@ -2360,9 +2360,9 @@ bool froth_setup()
 
     // rqlim needs to be at least sq(1+sqrt(1+sq(a))),
     // which is never bigger than 6.93..., so we'll call it 7.0
-    if (rqlim < 7.0)
+    if (g_magnitude_limit < 7.0)
     {
-        rqlim = 7.0;
+        g_magnitude_limit = 7.0;
     }
     set_Froth_palette();
     // make the best of the .map situation
@@ -2432,7 +2432,7 @@ int calcfroth()   // per pixel 1/2/g, called with row & col set
         tempsqrx = sqr(g_old_z.x);
         tempsqry = sqr(g_old_z.y);
         while (!found_attractor
-                && (tempsqrx + tempsqry < rqlim)
+                && (tempsqrx + tempsqry < g_magnitude_limit)
                 && (g_color_iter < g_max_iterations))
         {
             // simple formula: z = z^2 + conj(z*(-1+ai))
@@ -2841,7 +2841,7 @@ int froth_per_orbit()
 
         tempsqrx = sqr(g_new_z.x);
         tempsqry = sqr(g_new_z.y);
-        if (tempsqrx + tempsqry >= rqlim)
+        if (tempsqrx + tempsqry >= g_magnitude_limit)
         {
             return 1;
         }

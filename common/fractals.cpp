@@ -149,7 +149,7 @@ int  fpMODbailout()
     tempsqrx = sqr(g_new_z.x);
     tempsqry = sqr(g_new_z.y);
     g_magnitude = tempsqrx + tempsqry;
-    if (g_magnitude >= rqlim)
+    if (g_magnitude >= g_magnitude_limit)
     {
         return 1;
     }
@@ -162,7 +162,7 @@ int  fpREALbailout()
     tempsqrx = sqr(g_new_z.x);
     tempsqry = sqr(g_new_z.y);
     g_magnitude = tempsqrx + tempsqry;
-    if (tempsqrx >= rqlim)
+    if (tempsqrx >= g_magnitude_limit)
     {
         return 1;
     }
@@ -175,7 +175,7 @@ int  fpIMAGbailout()
     tempsqrx = sqr(g_new_z.x);
     tempsqry = sqr(g_new_z.y);
     g_magnitude = tempsqrx + tempsqry;
-    if (tempsqry >= rqlim)
+    if (tempsqry >= g_magnitude_limit)
     {
         return 1;
     }
@@ -188,7 +188,7 @@ int  fpORbailout()
     tempsqrx = sqr(g_new_z.x);
     tempsqry = sqr(g_new_z.y);
     g_magnitude = tempsqrx + tempsqry;
-    if (tempsqrx >= rqlim || tempsqry >= rqlim)
+    if (tempsqrx >= g_magnitude_limit || tempsqry >= g_magnitude_limit)
     {
         return 1;
     }
@@ -201,7 +201,7 @@ int  fpANDbailout()
     tempsqrx = sqr(g_new_z.x);
     tempsqry = sqr(g_new_z.y);
     g_magnitude = tempsqrx + tempsqry;
-    if (tempsqrx >= rqlim && tempsqry >= rqlim)
+    if (tempsqrx >= g_magnitude_limit && tempsqry >= g_magnitude_limit)
     {
         return 1;
     }
@@ -216,7 +216,7 @@ int  fpMANHbailout()
     tempsqry = sqr(g_new_z.y);
     g_magnitude = tempsqrx + tempsqry;
     manhmag = fabs(g_new_z.x) + fabs(g_new_z.y);
-    if ((manhmag * manhmag) >= rqlim)
+    if ((manhmag * manhmag) >= g_magnitude_limit)
     {
         return 1;
     }
@@ -231,7 +231,7 @@ int  fpMANRbailout()
     tempsqry = sqr(g_new_z.y);
     g_magnitude = tempsqrx + tempsqry;
     manrmag = g_new_z.x + g_new_z.y; // don't need abs() since we square it next
-    if ((manrmag * manrmag) >= rqlim)
+    if ((manrmag * manrmag) >= g_magnitude_limit)
     {
         return 1;
     }
@@ -830,7 +830,7 @@ LambdaexponentFractal()
     }
     FPUsincos(&g_old_z.y, &siny, &cosy);
 
-    if (g_old_z.x >= rqlim && cosy >= 0.0)
+    if (g_old_z.x >= g_magnitude_limit && cosy >= 0.0)
     {
         return 1;
     }
@@ -1247,7 +1247,7 @@ PopcornFractal_Old()
     }
     tempsqry = sqr(g_new_z.y);
     g_magnitude = tempsqrx + tempsqry;
-    if (g_magnitude >= rqlim)
+    if (g_magnitude >= g_magnitude_limit)
     {
         return 1;
     }
@@ -1277,7 +1277,7 @@ PopcornFractal()
     tempsqrx = sqr(g_new_z.x);
     tempsqry = sqr(g_new_z.y);
     g_magnitude = tempsqrx + tempsqry;
-    if (g_magnitude >= rqlim
+    if (g_magnitude >= g_magnitude_limit
             || fabs(g_new_z.x) > rqlim2 || fabs(g_new_z.y) > rqlim2)
     {
         return 1;
@@ -1404,7 +1404,7 @@ PopcornFractalFn()
     tempsqrx = sqr(g_new_z.x);
     tempsqry = sqr(g_new_z.y);
     g_magnitude = tempsqrx + tempsqry;
-    if (g_magnitude >= rqlim
+    if (g_magnitude >= g_magnitude_limit
             || fabs(g_new_z.x) > rqlim2 || fabs(g_new_z.y) > rqlim2)
     {
         return 1;
@@ -3342,7 +3342,7 @@ QuaternionFPFractal()
     n3 = 2*a0*a3 + g_quaternino_ck;
     // Check bailout
     g_magnitude = a0*a0+a1*a1+a2*a2+a3*a3;
-    if (g_magnitude > rqlim)
+    if (g_magnitude > g_magnitude_limit)
     {
         return 1;
     }
@@ -3380,7 +3380,7 @@ HyperComplexFPFractal()
 
     // Check bailout
     g_magnitude = sqr(g_old_z.x)+sqr(g_old_z.y)+sqr(g_float_param->x)+sqr(g_float_param->y);
-    if (g_magnitude > rqlim)
+    if (g_magnitude > g_magnitude_limit)
     {
         return 1;
     }
@@ -3417,7 +3417,7 @@ EscherfpFractal() // Science of Fractal Images pp. 185, 187
     oldtest.y = g_new_z.y * 15.0;
     testsqr.x = sqr(oldtest.x);  // set up to test with user-specified ...
     testsqr.y = sqr(oldtest.y);  //    ... Julia as the target set
-    while (testsize <= rqlim && testiter < g_max_iterations) // nested Julia loop
+    while (testsize <= g_magnitude_limit && testiter < g_max_iterations) // nested Julia loop
     {
         newtest.x = testsqr.x - testsqr.y + g_params[0];
         newtest.y = 2.0 * oldtest.x * oldtest.y + g_params[1];
@@ -3427,7 +3427,7 @@ EscherfpFractal() // Science of Fractal Images pp. 185, 187
         oldtest = newtest;
         testiter++;
     }
-    if (testsize > rqlim)
+    if (testsize > g_magnitude_limit)
     {
         return floatbailout(); // point not in target set
     }
@@ -3539,8 +3539,8 @@ bool MandelbrotMix4Setup()
 
     if (g_bail_out == 0)
     {
-        rqlim = L.x;
-        rqlim2 = rqlim*rqlim;
+        g_magnitude_limit = L.x;
+        rqlim2 = g_magnitude_limit*g_magnitude_limit;
     }
     return true;
 }

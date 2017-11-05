@@ -111,7 +111,7 @@ void (*g_put_color)(int, int, int) = putcolor_a;
 void (*g_plot)(int, int, int) = putcolor_a;
 
 double g_magnitude = 0.0;
-double rqlim = 0.0;
+double g_magnitude_limit = 0.0;
 double rqlim2 = 0.0;
 double rqlim_save = 0.0;
 bool g_magnitude_calc = true;
@@ -839,15 +839,15 @@ int calcfract()
     }
 
     g_close_enough = g_delta_min*pow(2.0, -(double)(abs(g_periodicity_check)));
-    rqlim_save = rqlim;
-    rqlim2 = sqrt(rqlim);
+    rqlim_save = g_magnitude_limit;
+    rqlim2 = sqrt(g_magnitude_limit);
     if (g_integer_fractal)          // for integer routines (lambda)
     {
         g_l_param.x = (long)(g_param_z1.x * g_fudge_factor);    // real portion of Lambda
         g_l_param.y = (long)(g_param_z1.y * g_fudge_factor);    // imaginary portion of Lambda
         g_l_param2.x = (long)(g_param_z2.x * g_fudge_factor);  // real portion of Lambda2
         g_l_param2.y = (long)(g_param_z2.y * g_fudge_factor);  // imaginary portion of Lambda2
-        g_l_limit = (long)(rqlim * g_fudge_factor);      // stop if magnitude exceeds this
+        g_l_limit = (long)(g_magnitude_limit * g_fudge_factor);      // stop if magnitude exceeds this
         if (g_l_limit <= 0)
         {
             g_l_limit = 0x7fffffffL; // klooge for integer math
@@ -1102,12 +1102,12 @@ static void perform_worklist()
         delyy2 = (yy3rd - yymin) / d_x_size;
 
         g_use_old_distance_estimator = g_save_release < 1827;
-        rqlim = rqlim_save; // just in case changed to DEM_BAILOUT earlier
+        g_magnitude_limit = rqlim_save; // just in case changed to DEM_BAILOUT earlier
         if (g_distance_estimator != 1 || g_colors == 2)   // not doing regular outside colors
         {
-            if (rqlim < DEM_BAILOUT)           // so go straight for dem bailout
+            if (g_magnitude_limit < DEM_BAILOUT)           // so go straight for dem bailout
             {
-                rqlim = DEM_BAILOUT;
+                g_magnitude_limit = DEM_BAILOUT;
             }
         }
         // must be mandel type, formula, or old PAR/GIF
@@ -1134,7 +1134,7 @@ static void perform_worklist()
         }
         dem_width = (sqrt(sqr(xxmax-xxmin) + sqr(xx3rd-xxmin)) * aspect
                      + sqrt(sqr(yymax-yymin) + sqr(yy3rd-yymin))) / g_distance_estimator;
-        ftemp = (rqlim < DEM_BAILOUT) ? DEM_BAILOUT : rqlim;
+        ftemp = (g_magnitude_limit < DEM_BAILOUT) ? DEM_BAILOUT : g_magnitude_limit;
         ftemp += 3; // bailout plus just a bit
         ftemp2 = log(ftemp);
         if (g_use_old_distance_estimator)
@@ -2175,12 +2175,12 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
         {
             if (g_use_old_distance_estimator)
             {
-                rqlim = rqlim_save;
+                g_magnitude_limit = rqlim_save;
                 if (g_distance_estimator != 1 || g_colors == 2)   // not doing regular outside colors
                 {
-                    if (rqlim < DEM_BAILOUT)     // so go straight for dem bailout
+                    if (g_magnitude_limit < DEM_BAILOUT)     // so go straight for dem bailout
                     {
-                        rqlim = DEM_BAILOUT;
+                        g_magnitude_limit = DEM_BAILOUT;
                     }
                 }
                 dem_color = -1;
@@ -2321,8 +2321,8 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
                         dem_color = g_color_iter;
                         dem_new = g_new_z;
                     }
-                    if (rqlim >= DEM_BAILOUT
-                            || g_magnitude >= (rqlim = DEM_BAILOUT)
+                    if (g_magnitude_limit >= DEM_BAILOUT
+                            || g_magnitude >= (g_magnitude_limit = DEM_BAILOUT)
                             || g_magnitude == 0)
                     {
                         break;

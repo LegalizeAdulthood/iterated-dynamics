@@ -430,7 +430,7 @@ extern double                g_newton_r_over_d;
 extern int                   g_row;
 extern int                   g_row_count;       // row-counter for decoder and out_line
 extern double                rqlim2;
-extern double                rqlim;
+extern double                g_magnitude_limit;
 extern int                   g_random_seed;
 extern long                  g_save_base;
 extern DComplex              SaveC;
