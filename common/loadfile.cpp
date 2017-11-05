@@ -122,7 +122,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
         }
         g_decomp[0]     = read_info.decomp[0];
         g_decomp[1]     = read_info.decomp[1];
-        usr_biomorph  = read_info.biomorph;
+        g_user_biomorph_value  = read_info.biomorph;
         g_force_symmetry = static_cast<symmetry_type>(read_info.symmetry);
     }
 

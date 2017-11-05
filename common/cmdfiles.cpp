@@ -73,7 +73,7 @@ bool    g_dither_flag = false;    // true if want to dither GIFs
 bool    g_ask_video = false;       // flag for video prompting
 bool    g_float_flag = false;
 int     g_biomorph = 0;           // flag for biomorph
-int     usr_biomorph = 0;
+int     g_user_biomorph_value = 0;
 symmetry_type g_force_symmetry = symmetry_type::NONE;      // force symmetry
 int     g_show_file = 0;           // zero if file display pending
 bool    g_random_seed_flag = false;
@@ -468,7 +468,7 @@ static void initvars_fractal()          // init vars affecting calculation
     usr_periodicitycheck = 1;           // turn on periodicity
     g_inside_color = 1;                         // inside color = blue
     g_fill_color = -1;                     // no special fill color
-    usr_biomorph = -1;                  // turn off biomorph flag
+    g_user_biomorph_value = -1;                  // turn off biomorph flag
     g_outside_color = ITER;                     // outside color = -1 (not used)
     g_max_iterations = 150;                        // initial maxiter
     usr_stdcalcmode = 'g';              // initial solid-guessing
@@ -2478,7 +2478,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
     if (variable == "biomorph")
     {
         // biomorph=?
-        usr_biomorph = numval;
+        g_user_biomorph_value = numval;
         return CMDARG_FRACTAL_PARAM;
     }
 

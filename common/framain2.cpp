@@ -1129,7 +1129,7 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
                 yymax = curfractalspecific->ymax;
                 xx3rd = xxmin;
                 yy3rd = yymin;
-                if (usr_distest == 0 && usr_biomorph != -1 && bitshift != 29)
+                if (usr_distest == 0 && g_user_biomorph_value != -1 && bitshift != 29)
                 {
                     xxmin *= 3.0;
                     xxmax *= 3.0;
@@ -2577,7 +2577,7 @@ static void restore_history_info(int i)
     g_inversion[1]          = last.invert[1]      ;
     g_inversion[2]          = last.invert[2]      ;
     g_decomp[0]             = last.decomp         ;
-    usr_biomorph          = last.biomorph       ;
+    g_user_biomorph_value          = last.biomorph       ;
     g_biomorph              = last.biomorph       ;
     g_force_symmetry         = static_cast<symmetry_type>(last.symmetry);
     g_init_3d[0]             = last.init3d[0]      ;

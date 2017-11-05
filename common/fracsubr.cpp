@@ -289,7 +289,7 @@ init_restart:
     g_std_calc_mode      = usr_stdcalcmode;
     g_periodicity_check = usr_periodicitycheck;
     g_distance_estimator          = usr_distest;
-    g_biomorph         = usr_biomorph;
+    g_biomorph         = g_user_biomorph_value;
 
     g_potential_flag = false;
     if (g_potential_params[0] != 0.0

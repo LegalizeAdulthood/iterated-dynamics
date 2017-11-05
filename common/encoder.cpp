@@ -886,7 +886,7 @@ static void setup_save_info(FRACTAL_INFO *save_info)
     save_info->invert[1] = (float) g_inversion[1];
     save_info->invert[2] = (float) g_inversion[2];
     save_info->decomp[0] = (short) g_decomp[0];
-    save_info->biomorph = (short) usr_biomorph;
+    save_info->biomorph = (short) g_user_biomorph_value;
     save_info->symmetry = (short) g_force_symmetry;
     for (int i = 0; i < 16; i++)
     {

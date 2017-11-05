@@ -1804,7 +1804,7 @@ gfp_top:
             paramvalues[promptnum++].uval.Lval = oldbailout;
             paramvalues[promptnum].type = '*';
             tmpptr = type_name;
-            if (usr_biomorph != -1)
+            if (g_user_biomorph_value != -1)
             {
                 orbit_bailout = 100;
                 tmpptr = "biomorph";

@@ -1040,9 +1040,9 @@ void write_batch_parms(char const *colorinf, bool colorsonly, int maxcolor, int 
         {
             put_parm(" %s=y", "olddemmcolors");
         }
-        if (usr_biomorph != -1)
+        if (g_user_biomorph_value != -1)
         {
-            put_parm(" %s=%d", "biomorph", usr_biomorph);
+            put_parm(" %s=%d", "biomorph", g_user_biomorph_value);
         }
         if (g_finite_attractor)
         {

@@ -511,7 +511,7 @@ extern bool                  g_frm_uses_p5;
 extern bool                  g_use_old_distance_estimator;
 extern bool                  g_use_old_periodicity;
 extern bool                  g_using_jiim;
-extern int                   usr_biomorph;
+extern int                   g_user_biomorph_value;
 extern long                  usr_distest;
 extern bool                  usr_floatflag;
 extern int                   usr_periodicitycheck;
