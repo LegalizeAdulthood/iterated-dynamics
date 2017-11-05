@@ -734,6 +734,14 @@ enum class raytrace_formats
     dxf = 7
 };
 
+enum class record_colors_mode
+{
+    none = 0,
+    automatic = 'a',
+    comment = 'c',
+    yes = 'y'
+};
+
 // bitmask defines for fractalspecific flags
 #define  NOZOOM         1    // zoombox not allowed at all
 #define  NOGUESS        2    // solid guessing not allowed

@@ -55,7 +55,7 @@ int     g_distance_estimator_y_dots = 0;            // ydots to use for video in
 int     g_bf_digits = 0;           // digits to use (force) for bf_math
 int     show_dot = -1;           // color to show crawling graphics cursor
 int     sizedot = 0;            // size of dot crawling cursor
-char    g_record_colors = 0;       // default PAR color-writing method
+record_colors_mode g_record_colors = record_colors_mode::none;       // default PAR color-writing method
 char    g_auto_show_dot = 0;        // dark, medium, bright
 bool    start_show_orbit = false;        // show orbits on at start of fractal
 std::string g_read_filename;           // name of fractal input file
@@ -411,7 +411,7 @@ static void initvars_run()              // once per run init
 
 static void initvars_restart()          // <ins> key init
 {
-    g_record_colors = 'a';                 // don't use mapfiles in PARs
+    g_record_colors = record_colors_mode::automatic; // use mapfiles in PARs
     save_release = g_release;           // this release number
     g_gif87a_flag = false;                // turn on GIF89a processing
     g_dither_flag = false;                // no dithering
@@ -1286,7 +1286,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         {
             goto badarg;
         }
-        g_record_colors = *value;
+        g_record_colors = static_cast<record_colors_mode>(*value);
         return CMDARG_NONE;
     }
 

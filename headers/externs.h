@@ -19,6 +19,7 @@ struct MOREPARAMS;
 struct MP;
 struct MPC;
 enum class raytrace_formats;
+enum class record_colors_mode;
 namespace id
 {
 struct SearchPath;
@@ -408,7 +409,7 @@ extern raytrace_formats      g_raytrace_format;
 extern std::string           g_raytrace_filename;
 extern std::string           g_read_filename;
 extern long                  g_real_color_iter;
-extern char                  g_record_colors;
+extern record_colors_mode    g_record_colors;
 extern int                   red_bright;
 extern int                   red_crop_left;
 extern int                   red_crop_right;
