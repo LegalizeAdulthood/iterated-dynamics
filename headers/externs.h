@@ -447,7 +447,7 @@ extern int                   g_show_file;
 extern bool                  g_show_orbit;
 extern double                sinx;
 extern int                   g_size_dot;
-extern short                 skipxdots;
+extern short                 g_skip_x_dots;
 extern short                 skipydots;
 extern slides_mode           g_slides;
 extern int                   Slope;

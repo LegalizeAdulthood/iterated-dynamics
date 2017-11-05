@@ -273,7 +273,7 @@ short decoder(short linewidth)
             {
                 int i = sizeofstring[code];
                 j = i;
-                if (i > 0 && bufcnt - i > 0 && skipxdots == 0)
+                if (i > 0 && bufcnt - i > 0 && g_skip_x_dots == 0)
                 {
                     fastloop = YUP;
 
@@ -346,7 +346,7 @@ short decoder(short linewidth)
             --sp;
             if (--xskip < 0)
             {
-                xskip = skipxdots;
+                xskip = g_skip_x_dots;
                 *bufptr++ = *sp;
             }
             if (--bufcnt == 0)     // finished an input row?

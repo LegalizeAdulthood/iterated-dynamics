@@ -249,14 +249,14 @@ int gifview()
 
             // adjustments for handling MIGs
             gifview_image_top  = top;
-            if (skipxdots > 0)
+            if (g_skip_x_dots > 0)
             {
                 gifview_image_top /= (skipydots+1);
             }
             gifview_image_left = left;
             if (skipydots > 0)
             {
-                gifview_image_left /= (skipxdots+1);
+                gifview_image_left /= (g_skip_x_dots+1);
             }
             if (g_out_line == out_line)
             {
@@ -266,7 +266,7 @@ int gifview()
                     // we're using normal decoding and we have a MIG
                     g_out_line = out_line_migs;
                 }
-                else if (width > DECODERLINE_WIDTH && skipxdots == 0)
+                else if (width > DECODERLINE_WIDTH && g_skip_x_dots == 0)
                 {
                     g_out_line = out_line_too_wide;
                 }
@@ -310,7 +310,7 @@ int gifview()
              * Call decoder(width) via timer.
              * Width is limited to DECODERLINE_WIDTH.
              */
-            if (skipxdots == 0)
+            if (g_skip_x_dots == 0)
             {
                 width = std::min(width, static_cast<unsigned>(DECODERLINE_WIDTH));
             }

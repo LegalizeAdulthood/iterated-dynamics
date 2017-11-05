@@ -393,12 +393,12 @@ int get_video_mode(FRACTAL_INFO *info, ext_blk_3 *blk_3_info)
         }
         viewreduction = (float)((int)(viewreduction + 0.5)); // need integer value
         skipydots = (short)(viewreduction - 1);
-        skipxdots = skipydots;
+        g_skip_x_dots = skipydots;
         return 0;
     }
 
     skipydots = 0;
-    skipxdots = skipydots; // set for no reduction
+    g_skip_x_dots = skipydots; // set for no reduction
     if (g_video_entry.xdots < g_file_x_dots || g_video_entry.ydots < g_file_y_dots)
     {
         // set up to load only every nth pixel to make image fit
@@ -407,10 +407,10 @@ int get_video_mode(FRACTAL_INFO *info, ext_blk_3 *blk_3_info)
             g_calc_status = calc_status_value::PARAMS_CHANGED;  // can't resume anyway
         }
         skipydots = 1;
-        skipxdots = skipydots;
-        while (skipxdots * g_video_entry.xdots < g_file_x_dots)
+        g_skip_x_dots = skipydots;
+        while (g_skip_x_dots * g_video_entry.xdots < g_file_x_dots)
         {
-            ++skipxdots;
+            ++g_skip_x_dots;
         }
         while (skipydots * g_video_entry.ydots < g_file_y_dots)
         {
@@ -422,7 +422,7 @@ int get_video_mode(FRACTAL_INFO *info, ext_blk_3 *blk_3_info)
         int tmpydots;
         while (true)
         {
-            tmpxdots = (g_file_x_dots + skipxdots - 1) / skipxdots;
+            tmpxdots = (g_file_x_dots + g_skip_x_dots - 1) / g_skip_x_dots;
             tmpydots = (g_file_y_dots + skipydots - 1) / skipydots;
             // reduce further if that improves aspect
             ftemp = vid_aspect(tmpxdots, tmpydots);
@@ -447,19 +447,19 @@ int get_video_mode(FRACTAL_INFO *info, ext_blk_3 *blk_3_info)
                 {
                     break; // already reduced y, don't reduce x
                 }
-                double const ftemp2 = vid_aspect((g_file_x_dots+skipxdots)/(skipxdots+1), tmpydots);
+                double const ftemp2 = vid_aspect((g_file_x_dots+g_skip_x_dots)/(g_skip_x_dots+1), tmpydots);
                 if (ftemp2 > g_file_aspect_ratio &&
                         g_file_aspect_ratio/ftemp *0.9 <= ftemp2/g_file_aspect_ratio)
                 {
                     break; // further x reduction is worse
                 }
-                ++skipxdots;
+                ++g_skip_x_dots;
                 ++j;
             }
         }
         g_file_x_dots = tmpxdots;
         g_file_y_dots = tmpydots;
-        --skipxdots;
+        --g_skip_x_dots;
         --skipydots;
     }
 
