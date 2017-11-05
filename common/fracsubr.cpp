@@ -288,7 +288,7 @@ init_restart:
        xxx is what we actually do in the current situation */
     g_std_calc_mode      = usr_stdcalcmode;
     g_periodicity_check = usr_periodicitycheck;
-    g_distance_estimator          = usr_distest;
+    g_distance_estimator          = g_user_distance_estimator_value;
     g_biomorph         = g_user_biomorph_value;
 
     g_potential_flag = false;
@@ -299,7 +299,7 @@ init_restart:
                 || curfractalspecific->calctype == calcmandfp))
     {
         g_potential_flag = true;
-        usr_distest = 0;
+        g_user_distance_estimator_value = 0;
         g_distance_estimator = 0;    // can't do distest too
     }
 

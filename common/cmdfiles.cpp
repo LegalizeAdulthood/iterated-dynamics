@@ -506,7 +506,7 @@ static void initvars_fractal()          // init vars affecting calculation
     g_invert = 0;
     g_decomp[1] = 0;
     g_decomp[0] = g_decomp[1];
-    usr_distest = 0;
+    g_user_distance_estimator_value = 0;
     g_distance_estimator_x_dots = 0;
     g_distance_estimator_y_dots = 0;
     g_distance_estimator_width_factor = 71;
@@ -2968,7 +2968,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         {
             goto badarg;
         }
-        usr_distest = (long)floatval[0];
+        g_user_distance_estimator_value = (long)floatval[0];
         g_distance_estimator_width_factor = 71;
         if (totparms > 1)
         {

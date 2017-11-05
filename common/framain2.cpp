@@ -1129,7 +1129,7 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
                 yymax = curfractalspecific->ymax;
                 xx3rd = xxmin;
                 yy3rd = yymin;
-                if (usr_distest == 0 && g_user_biomorph_value != -1 && bitshift != 29)
+                if (g_user_distance_estimator_value == 0 && g_user_biomorph_value != -1 && bitshift != 29)
                 {
                     xxmin *= 3.0;
                     xxmax *= 3.0;
@@ -2617,7 +2617,7 @@ static void restore_history_info(int i)
     g_three_pass            = last.three_pass != 0;
     g_stop_pass              = last.stoppass       ;
     g_distance_estimator               = last.distest        ;
-    usr_distest           = last.distest        ;
+    g_user_distance_estimator_value           = last.distest        ;
     trigndx[0]            = static_cast<trig_fn>(last.trigndx[0]);
     trigndx[1]            = static_cast<trig_fn>(last.trigndx[1]);
     trigndx[2]            = static_cast<trig_fn>(last.trigndx[2]);

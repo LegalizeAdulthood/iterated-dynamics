@@ -161,7 +161,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
     g_calc_status = calc_status_value::PARAMS_CHANGED;       // defaults if version < 4
     xx3rd = xxmin;
     yy3rd = yymin;
-    usr_distest = 0;
+    g_user_distance_estimator_value = 0;
     g_calc_time = 0;
     if (read_info.version > 3)
     {
@@ -176,7 +176,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
             g_three_pass = true;
             usr_stdcalcmode = '3';
         }
-        usr_distest     = read_info.distestold;
+        g_user_distance_estimator_value     = read_info.distestold;
         usr_floatflag   = read_info.floatflag != 0;
         g_bail_out     = read_info.bailoutold;
         g_calc_time    = read_info.calctime;
@@ -343,7 +343,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
     if (read_info.version > 10) // post-version 19.20
     {
         g_log_map_flag = read_info.logmap;
-        usr_distest = read_info.distest;
+        g_user_distance_estimator_value = read_info.distest;
     }
 
     if (read_info.version > 11) // post-version 19.20, inversion fix
@@ -1093,11 +1093,11 @@ static void backwardscompat(FRACTAL_INFO *info)
         break;
     case fractal_type::DEMM:
         fractype = fractal_type::MANDELFP;
-        usr_distest = (info->ydots - 1) * 2;
+        g_user_distance_estimator_value = (info->ydots - 1) * 2;
         break;
     case fractal_type::DEMJ:
         fractype = fractal_type::JULIAFP;
-        usr_distest = (info->ydots - 1) * 2;
+        g_user_distance_estimator_value = (info->ydots - 1) * 2;
         break;
     case fractal_type::MANDELLAMBDA:
         g_use_init_orbit = init_orbit_mode::pixel;

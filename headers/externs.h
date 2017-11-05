@@ -512,7 +512,7 @@ extern bool                  g_use_old_distance_estimator;
 extern bool                  g_use_old_periodicity;
 extern bool                  g_using_jiim;
 extern int                   g_user_biomorph_value;
-extern long                  usr_distest;
+extern long                  g_user_distance_estimator_value;
 extern bool                  usr_floatflag;
 extern int                   usr_periodicitycheck;
 extern char                  usr_stdcalcmode;

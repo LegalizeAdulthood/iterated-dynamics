@@ -525,7 +525,7 @@ int get_toggles2()
 
     choices[++k] = "Distance Estimator (0=off, <0=edge, >0=on):";
     uvalues[k].type = 'L';
-    old_usr_distest = usr_distest;
+    old_usr_distest = g_user_distance_estimator_value;
     uvalues[k].uval.Lval = old_usr_distest;
 
     choices[++k] = "          width factor:";
@@ -628,14 +628,14 @@ int get_toggles2()
     }
 
     ++k;
-    usr_distest = uvalues[k].uval.Lval;
-    if (usr_distest != old_usr_distest)
+    g_user_distance_estimator_value = uvalues[k].uval.Lval;
+    if (g_user_distance_estimator_value != old_usr_distest)
     {
         changed = true;
     }
     ++k;
     g_distance_estimator_width_factor = uvalues[k].uval.ival;
-    if (usr_distest && g_distance_estimator_width_factor != old_distestwidth)
+    if (g_user_distance_estimator_value && g_distance_estimator_width_factor != old_distestwidth)
     {
         changed = true;
     }

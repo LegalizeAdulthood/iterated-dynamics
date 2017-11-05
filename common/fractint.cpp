@@ -85,7 +85,7 @@ int     g_integer_fractal;         // TRUE if fractal uses integer math
 // usr_xxx is what the user wants, vs what we may be forced to do
 char    usr_stdcalcmode;
 int     usr_periodicitycheck;
-long    usr_distest;
+long    g_user_distance_estimator_value;
 bool    usr_floatflag;
 
 bool    viewwindow = false;     // false for full screen, true for window
