@@ -149,7 +149,7 @@ extern std::vector<double>   g_grid_x1;
 extern double              (*dxpixel)();
 extern double                x_size_d;
 extern std::vector<double>   g_grid_y0;
-extern std::vector<double>   dy1;
+extern std::vector<double>   g_grid_y1;
 extern double              (*dypixel)();
 extern double                y_size_d;
 extern bool                  g_escape_exit;

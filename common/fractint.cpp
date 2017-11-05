@@ -79,7 +79,7 @@ std::vector<long> g_l_y1;
 std::vector<double> g_grid_x0;            // floating pt equivs
 std::vector<double> g_grid_y0;
 std::vector<double> g_grid_x1;
-std::vector<double> dy1;
+std::vector<double> g_grid_y1;
 int     g_integer_fractal;         // TRUE if fractal uses integer math
 
 // usr_xxx is what the user wants, vs what we may be forced to do

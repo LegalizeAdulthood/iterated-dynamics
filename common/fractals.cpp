@@ -3618,7 +3618,7 @@ static double dxpixel_calc()
 // Imaginary component, grid lookup version - requires dy0/dy1 arrays
 static double dypixel_grid()
 {
-    return g_grid_y0[row]+dy1[g_col];
+    return g_grid_y0[row]+g_grid_y1[g_col];
 }
 
 // Imaginary component, calculation version - does not require arrays
