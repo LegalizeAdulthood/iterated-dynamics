@@ -387,7 +387,7 @@ extern bool                  g_potential_16bit;
 extern bool                  g_potential_flag;
 extern double                g_potential_params[];
 extern bool                  g_preview;
-extern int                   previewfactor;
+extern int                   g_preview_factor;
 extern int                   px;
 extern int                   py;
 extern int param_box_count;

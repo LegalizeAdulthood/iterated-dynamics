@@ -603,7 +603,7 @@ static void initvars_3d()               // init vars affecting 3d
     yadjust = 0;
     g_eye_separation = 0;
     g_glasses_type = 0;
-    previewfactor = 20;
+    g_preview_factor = 20;
     red_crop_left   = 4;
     red_crop_right  = 0;
     g_blue_crop_left  = 0;
@@ -3367,7 +3367,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         {
             goto badarg;
         }
-        previewfactor = numval;
+        g_preview_factor = numval;
         return CMDARG_3D_PARAM;
     }
 

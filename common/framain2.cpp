@@ -2415,7 +2415,7 @@ static void save_history_info()
     current.init3d[13]           = (short)g_init_3d[14]               ;
     current.init3d[14]           = (short)g_init_3d[15]               ;
     current.init3d[15]           = (short)g_init_3d[16]               ;
-    current.previewfactor        = (short)previewfactor             ;
+    current.previewfactor        = (short)g_preview_factor             ;
     current.xtrans               = (short)xtrans                    ;
     current.ytrans               = (short)ytrans                    ;
     current.red_crop_left        = (short)red_crop_left             ;
@@ -2596,7 +2596,7 @@ static void restore_history_info(int i)
     g_init_3d[14]            = last.init3d[13]     ;
     g_init_3d[15]            = last.init3d[14]     ;
     g_init_3d[16]            = last.init3d[15]     ;
-    previewfactor         = last.previewfactor  ;
+    g_preview_factor         = last.previewfactor  ;
     xtrans                = last.xtrans         ;
     ytrans                = last.ytrans         ;
     red_crop_left         = last.red_crop_left  ;

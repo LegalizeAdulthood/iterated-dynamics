@@ -124,7 +124,7 @@ BYTE g_background_color[3];
 std::string ray_name{"fract001"};
 bool g_preview = false;
 bool showbox = false;
-int previewfactor = 20;
+int g_preview_factor = 20;
 int xadjust = 0;
 int yadjust = 0;
 int xxadjust;
@@ -268,12 +268,12 @@ int line3d(BYTE * pixels, unsigned linelen)
         }
     }
 
-    if (previewfactor >= ydots || previewfactor > lastdot)
+    if (g_preview_factor >= ydots || g_preview_factor > lastdot)
     {
-        previewfactor = std::min(ydots - 1, lastdot);
+        g_preview_factor = std::min(ydots - 1, lastdot);
     }
 
-    localpreviewfactor = ydots / previewfactor;
+    localpreviewfactor = ydots / g_preview_factor;
 
     bool tout = false;          // triangle has been sent to ray trace file
     // Insure last line is drawn in preview and filltypes <0

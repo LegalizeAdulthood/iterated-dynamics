@@ -2997,7 +2997,7 @@ restart_1:
 
     prompts3d[++k] = "Coarseness, preview/grid/ray (in y dir)";
     uvalues[k].type = 'i';
-    uvalues[k].uval.ival = previewfactor;
+    uvalues[k].uval.ival = g_preview_factor;
 
     prompts3d[++k] = "Spherical Projection?";
     uvalues[k].type = 'y';
@@ -3048,7 +3048,7 @@ restart_1:
     k = 0;
     g_preview = uvalues[k++].uval.ch.val != 0;
     showbox = uvalues[k++].uval.ch.val != 0;
-    previewfactor  = uvalues[k++].uval.ival;
+    g_preview_factor  = uvalues[k++].uval.ival;
     sphere = uvalues[k++].uval.ch.val;
     g_glasses_type = uvalues[k++].uval.ival;
     k++;
@@ -3070,13 +3070,13 @@ restart_1:
     g_gray_flag  = uvalues[k++].uval.ch.val != 0;
 
     // check ranges
-    if (previewfactor < 2)
+    if (g_preview_factor < 2)
     {
-        previewfactor = 2;
+        g_preview_factor = 2;
     }
-    if (previewfactor > 2000)
+    if (g_preview_factor > 2000)
     {
-        previewfactor = 2000;
+        g_preview_factor = 2000;
     }
 
     if (sphere && !SPHERE)

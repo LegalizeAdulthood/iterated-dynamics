@@ -1152,7 +1152,7 @@ void write_batch_parms(char const *colorinf, bool colorsonly, int maxcolor, int 
             {
                 put_parm(" %s=%s", "showbox", "yes");
             }
-            put_parm(" %s=%d", "coarse", previewfactor);
+            put_parm(" %s=%d", "coarse", g_preview_factor);
         }
         if (RAY)
         {
