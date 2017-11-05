@@ -820,7 +820,7 @@ int ComplexBasin()
  * Gaussian; otherwise you just get offset.
  */
 int g_distribution = 30;
-int Slope = 25;
+int g_slope = 25;
 namespace
 {
 int Offset = 0;
@@ -835,11 +835,11 @@ int GausianNumber(int Probability, int Range)
     if (!(rand15() % (g_distribution - (int)(p >> 16) + 1)))
     {
         long Accum = 0;
-        for (int n = 0; n < Slope; n++)
+        for (int n = 0; n < g_slope; n++)
         {
             Accum += rand15();
         }
-        Accum /= Slope;
+        Accum /= g_slope;
         int r = (int)(multiply((long)Range << 15, Accum, 15) >> 14);
         r = r - Range;
         if (r < 0)

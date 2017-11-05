@@ -450,7 +450,7 @@ extern int                   g_size_dot;
 extern short                 g_skip_x_dots;
 extern short                 g_skip_y_dots;
 extern slides_mode           g_slides;
-extern int                   Slope;
+extern int                   g_slope;
 extern int                   soundflag;
 extern std::string const     speed_prompt;
 extern void                (*standardplot)(int, int, int);
