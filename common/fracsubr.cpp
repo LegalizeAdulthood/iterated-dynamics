@@ -40,7 +40,7 @@ static void   adjust_to_limitsbf(double);
 static void   smallest_add_bf(bf_t);
 int    g_resume_len;               // length of resume info
 static int    resume_offset;            // offset in resume info gets
-bool    taborhelp = false;    // kludge for sound and tab or help key press
+bool    g_tab_or_help = false;    // kludge for sound and tab or help key press
 
 namespace
 {
@@ -1603,7 +1603,7 @@ void w_snd(int tone)
             fprintf(snd_fp, "%-d\n", tone);
         }
     }
-    taborhelp = false;
+    g_tab_or_help = false;
     if (!driver_key_pressed())
     {
         // driver_key_pressed calls driver_sound_off() if TAB or F1 pressed
@@ -1613,7 +1613,7 @@ void w_snd(int tone)
         if (driver_sound_on(tone))
         {
             wait_until(0, g_orbit_delay);
-            if (!taborhelp)   // kludge because wait_until() calls driver_key_pressed
+            if (!g_tab_or_help)   // kludge because wait_until() calls driver_key_pressed
             {
                 driver_sound_off();
             }
