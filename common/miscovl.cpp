@@ -2609,7 +2609,7 @@ void flip_image(int key)
             sub_a_bf(g_bf_save_y_max, bfy3rd);
             copy_bf(g_bf_save_x_max, bfx3rd);        // sxmax = xx3rd;
             copy_bf(g_bf_save_y_min, bfy3rd);        // symin = yy3rd;
-            copy_bf(bfsx3rd, bfxmax);        // sx3rd = xxmax;
+            copy_bf(g_bf_save_x_3rd, bfxmax);        // sx3rd = xxmax;
             copy_bf(bfsy3rd, bfymin);        // sy3rd = yymin;
         }
         break;
@@ -2641,7 +2641,7 @@ void flip_image(int key)
             sub_a_bf(g_bf_save_x_max, bfx3rd);
             add_bf(g_bf_save_y_min, bfymax, bfymin); // symin = yymax + yymin - yy3rd;
             sub_a_bf(g_bf_save_y_min, bfy3rd);
-            copy_bf(bfsx3rd, bfxmin);        // sx3rd = xxmin;
+            copy_bf(g_bf_save_x_3rd, bfxmin);        // sx3rd = xxmin;
             copy_bf(bfsy3rd, bfymax);        // sy3rd = yymax;
         }
         break;
@@ -2671,8 +2671,8 @@ void flip_image(int key)
             copy_bf(g_bf_save_y_max, bfymin);        // symax = yymin;
             copy_bf(g_bf_save_x_max, bfxmin);        // sxmax = xxmin;
             copy_bf(g_bf_save_y_min, bfymax);        // symin = yymax;
-            add_bf(bfsx3rd, bfxmax, bfxmin); // sx3rd = xxmax + xxmin - xx3rd;
-            sub_a_bf(bfsx3rd, bfx3rd);
+            add_bf(g_bf_save_x_3rd, bfxmax, bfxmin); // sx3rd = xxmax + xxmin - xx3rd;
+            sub_a_bf(g_bf_save_x_3rd, bfx3rd);
             add_bf(bfsy3rd, bfymax, bfymin); // sy3rd = yymax + yymin - yy3rd;
             sub_a_bf(bfsy3rd, bfy3rd);
         }
