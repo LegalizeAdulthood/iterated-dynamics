@@ -1462,7 +1462,7 @@ int orbit2dfloat()
                 }
                 else
                 {
-                    (*plot)(col, row, color % g_colors);
+                    (*g_plot)(col, row, color % g_colors);
                 }
             }
             else
@@ -1471,7 +1471,7 @@ int orbit2dfloat()
                 color = getcolor(col, row)+1;
                 if (color < g_colors) // color sticks on last value
                 {
-                    (*plot)(col, row, color);
+                    (*g_plot)(col, row, color);
                 }
             }
 
@@ -1644,7 +1644,7 @@ int orbit2dlong()
             }
             else if (!start)
             {
-                (*plot)(col, row, color%g_colors);
+                (*g_plot)(col, row, color%g_colors);
             }
             oldcol = col;
             oldrow = row;
@@ -1768,7 +1768,7 @@ static int orbit3dlongcalc()
                 }
                 else
                 {
-                    (*plot)(inf.col, inf.row, color%g_colors);
+                    (*g_plot)(inf.col, inf.row, color%g_colors);
                 }
             }
             else if (inf.col == -2)
@@ -1789,7 +1789,7 @@ static int orbit3dlongcalc()
                     }
                     else
                     {
-                        (*plot)(inf.col1, inf.row1, color%g_colors);
+                        (*g_plot)(inf.col1, inf.row1, color%g_colors);
                     }
                 }
                 else if (inf.col1 == -2)
@@ -1897,7 +1897,7 @@ static int orbit3dfloatcalc()
                 }
                 else
                 {
-                    (*plot)(inf.col, inf.row, color%g_colors);
+                    (*g_plot)(inf.col, inf.row, color%g_colors);
                 }
             }
             else if (inf.col == -2)
@@ -1918,7 +1918,7 @@ static int orbit3dfloatcalc()
                     }
                     else
                     {
-                        (*plot)(inf.col1, inf.row1, color%g_colors);
+                        (*g_plot)(inf.col1, inf.row1, color%g_colors);
                     }
                 }
                 else if (inf.col1 == -2)
@@ -1968,7 +1968,7 @@ bool dynam2dfloatsetup()
     }
     if (g_outside_color == SUM)
     {
-        plot = plothist;
+        g_plot = plothist;
     }
     return true;
 }
@@ -2117,7 +2117,7 @@ int dynam2dfloat()
                     }
                     else if (count > 0 || fractype != fractal_type::MANDELCLOUD)
                     {
-                        (*plot)(col, row, color%g_colors);
+                        (*g_plot)(col, row, color%g_colors);
                     }
                 }
                 oldcol = col;
@@ -2231,7 +2231,7 @@ int plotorbits2dsetup()
 
     if (g_outside_color == SUM)
     {
-        plot = plothist;
+        g_plot = plothist;
     }
     return (1);
 }
@@ -2318,7 +2318,7 @@ int plotorbits2dfloat()
                 w_snd((int)(*soundvar*100+g_base_hertz));
             }
 
-            (*plot)(col, row, o_color%g_colors);
+            (*g_plot)(col, row, o_color%g_colors);
         }
         else
         {
@@ -2338,7 +2338,7 @@ int funny_glasses_call(int (*calc)())
 {
     g_which_image = g_glasses_type ? stereo_images::RED : stereo_images::NONE;
     plot_setup();
-    plot = standardplot;
+    g_plot = standardplot;
     int status = calc();
     if (realtime && g_glasses_type < 3)
     {
@@ -2366,7 +2366,7 @@ int funny_glasses_call(int (*calc)())
             curfractalspecific->per_image(); // reset for 2nd image
         }
         plot_setup();
-        plot = standardplot;
+        g_plot = standardplot;
         // is there a better way to clear the graphics screen ?
         status = calc();
         if (status != 0)
@@ -2492,7 +2492,7 @@ static int ifs3dfloat()
                 }
                 if (color < g_colors)     // color sticks on last value
                 {
-                    (*plot)(inf.col, inf.row, color);
+                    (*g_plot)(inf.col, inf.row, color);
                 }
             }
             else if (inf.col == -2)
@@ -2515,7 +2515,7 @@ static int ifs3dfloat()
                     }
                     if (color < g_colors)     // color sticks on last value
                     {
-                        (*plot)(inf.col1, inf.row1, color);
+                        (*g_plot)(inf.col1, inf.row1, color);
                     }
                 }
                 else if (inf.col1 == -2)
@@ -2653,7 +2653,7 @@ static int ifs2d()
             }
             if (color < g_colors)     // color sticks on last value
             {
-                (*plot)(col, row, color);
+                (*g_plot)(col, row, color);
             }
         }
         else if ((long)abs(row) + (long)abs(col) > BAD_PIXEL)   // sanity check
@@ -2787,7 +2787,7 @@ static int ifs3dlong()
                 }
                 if (color < g_colors)     // color sticks on last value
                 {
-                    (*plot)(inf.col, inf.row, color);
+                    (*g_plot)(inf.col, inf.row, color);
                 }
             }
             if (realtime)
@@ -2806,7 +2806,7 @@ static int ifs3dlong()
                     }
                     if (color < g_colors)     // color sticks on last value
                     {
-                        (*plot)(inf.col1, inf.row1, color);
+                        (*g_plot)(inf.col1, inf.row1, color);
                     }
                 }
             }

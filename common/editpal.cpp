@@ -3182,7 +3182,7 @@ void EditPalette()
         return; // prevents crash when physical screen is too small
     }
 
-    plot = putcolor;
+    g_plot = putcolor;
 
     g_line_buff.resize(std::max(sxdots, sydots));
 

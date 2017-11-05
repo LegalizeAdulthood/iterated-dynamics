@@ -59,7 +59,7 @@ static void puthline(int x1, int y1, int x2, int color)
     int x;
     for (x = x1; x <= x2; x++)
     {
-        (*plot)(x, y1, color);
+        (*g_plot)(x, y1, color);
     }
 }
 
@@ -439,7 +439,7 @@ scan:
                     {
                         break;
                     }
-                    (*plot)(z, y, (int)(helpcolor&255));
+                    (*g_plot)(z, y, (int)(helpcolor&255));
                 }
 
                 if (savex < z)
@@ -448,7 +448,7 @@ scan:
                 }
                 else
                 {
-                    (*plot)(savex, y, (int)(savecolor&255));
+                    (*g_plot)(savex, y, (int)(savecolor&255));
                 }
 
                 savex = x;
@@ -470,7 +470,7 @@ scan:
                     break;
                 }
 
-                (*plot)(z, y, (int)(helpcolor&255));
+                (*g_plot)(z, y, (int)(helpcolor&255));
             }
 
             if (savex < z)
@@ -479,7 +479,7 @@ scan:
             }
             else
             {
-                (*plot)(savex, y, (int)(savecolor&255));
+                (*g_plot)(savex, y, (int)(savecolor&255));
             }
         }
         status = false;

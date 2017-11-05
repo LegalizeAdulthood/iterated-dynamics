@@ -277,7 +277,7 @@ zline(long x, long y)
                 if ((row + col) & 1)
                 {
 
-                    (*plot)(col, row, 127 - g_color);
+                    (*g_plot)(col, row, 127 - g_color);
                 }
                 else
                 {
@@ -290,13 +290,13 @@ zline(long x, long y)
                     {
                         g_color = 127;
                     }
-                    (*plot)(col, row, 127 + bbase - g_color);
+                    (*g_plot)(col, row, 127 + bbase - g_color);
                 }
             }
             else
             {
                 g_color = (int)(254l * zpixel / zdots);
-                (*plot)(col, row, g_color + 1);
+                (*g_plot)(col, row, g_color + 1);
             }
             plotted = 1;
             break;
@@ -398,7 +398,7 @@ zlinefp(double x, double y)
                 g_color = (int)(128l * zpixel / zdots);
                 if ((row + col) & 1)
                 {
-                    (*plot)(col, row, 127 - g_color);
+                    (*g_plot)(col, row, 127 - g_color);
                 }
                 else
                 {
@@ -411,13 +411,13 @@ zlinefp(double x, double y)
                     {
                         g_color = 127;
                     }
-                    (*plot)(col, row, 127 + bbase - g_color);
+                    (*g_plot)(col, row, 127 + bbase - g_color);
                 }
             }
             else
             {
                 g_color = (int)(254l * zpixel / zdots);
-                (*plot)(col, row, g_color + 1);
+                (*g_plot)(col, row, g_color + 1);
             }
             plotted = 1;
             break;

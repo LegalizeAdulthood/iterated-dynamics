@@ -535,7 +535,7 @@ void Jiim(jiim_types which)
     maxhits = 1;
     if (which == jiim_types::ORBIT)
     {
-        plot = c_putcolor;                // for line with clipping
+        g_plot = c_putcolor;                // for line with clipping
     }
 
     /*

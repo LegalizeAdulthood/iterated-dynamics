@@ -75,7 +75,7 @@ void draw_line(int X1, int Y1, int X2, int Y2, int color)
         {
             while (col <= final)    // step through columns checking for new row
             {
-                (*plot)(col, row, color);
+                (*g_plot)(col, row, color);
                 col++;
                 if (G >= 0)             // it's time to change rows
                 {
@@ -92,7 +92,7 @@ void draw_line(int X1, int Y1, int X2, int Y2, int color)
         {
             while (col <= final)    // step through columns checking for new row
             {
-                (*plot)(col, row, color);
+                (*g_plot)(col, row, color);
                 col++;
                 if (G > 0)              // it's time to change rows
                 {
@@ -127,7 +127,7 @@ void draw_line(int X1, int Y1, int X2, int Y2, int color)
         {
             while (row <= final)    // step through rows checking for new column
             {
-                (*plot)(col, row, color);
+                (*g_plot)(col, row, color);
                 row++;
                 if (G >= 0)                 // it's time to change columns
                 {
@@ -144,7 +144,7 @@ void draw_line(int X1, int Y1, int X2, int Y2, int color)
         {
             while (row <= final)    // step through rows checking for new column
             {
-                (*plot)(col, row, color);
+                (*g_plot)(col, row, color);
                 row++;
                 if (G > 0)                  // it's time to change columns
                 {

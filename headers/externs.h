@@ -376,7 +376,7 @@ extern int                   g_periodicity_check;
 struct fn_operand;
 extern std::vector<fn_operand> g_function_operands;
 extern int                   g_pi_in_pixels;
-extern void                (*plot)(int, int, int);
+extern void                (*g_plot)(int, int, int);
 extern double                plotmx1;
 extern double                plotmx2;
 extern double                plotmy1;

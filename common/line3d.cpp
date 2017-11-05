@@ -176,12 +176,12 @@ int line3d(BYTE * pixels, unsigned linelen)
     if (transparent[0] || transparent[1])
     {
         normalplot = T_clipcolor;
-        plot = normalplot;          // Use transparent plot function
+        g_plot = normalplot;          // Use transparent plot function
     }
     else                            // Use the usual FRACTINT plot function with clipping
     {
         normalplot = clipcolor;
-        plot = normalplot;
+        g_plot = normalplot;
     }
 
     g_current_row = g_row_count;           // use separate variable to allow for pot16bit files
@@ -660,7 +660,7 @@ int line3d(BYTE * pixels, unsigned linelen)
             break;
 
         case 0:
-            (*plot)(cur.x, cur.y, cur.color);
+            (*g_plot)(cur.x, cur.y, cur.color);
             break;
 
         case 1:                // connect-a-dot
@@ -868,7 +868,7 @@ int line3d(BYTE * pixels, unsigned linelen)
                 }
                 putatriangle(old, lastrow[col], cur, cur.color);
 
-                plot = standardplot;
+                g_plot = standardplot;
             }
             break;
         }                      // End of CASE statement for fill type
@@ -1135,7 +1135,7 @@ static void draw_light_box(double *origin, double *direct, MATRIX light_m)
         {
             if (abs(i) + abs(j) < 6)
             {
-                plot((int)(S[1][2][0] + i), (int)(S[1][2][1] + j), 10);
+                g_plot((int)(S[1][2][0] + i), (int)(S[1][2][1] + j), 10);
             }
         }
     }
@@ -1221,23 +1221,23 @@ static void putatriangle(point pt1, point pt2, point pt3, int color)
     // fast way if single point or single line
     if (p1.y == p2.y && p1.x == p2.x)
     {
-        plot = fillplot;
+        g_plot = fillplot;
         if (p1.y == p3.y && p1.x == p3.x)
         {
-            (*plot)(p1.x, p1.y, color);
+            (*g_plot)(p1.x, p1.y, color);
         }
         else
         {
             driver_draw_line(p1.x, p1.y, p3.x, p3.y, color);
         }
-        plot = normalplot;
+        g_plot = normalplot;
         return;
     }
     else if ((p3.y == p1.y && p3.x == p1.x) || (p3.y == p2.y && p3.x == p2.x))
     {
-        plot = fillplot;
+        g_plot = fillplot;
         driver_draw_line(p1.x, p1.y, p2.x, p2.y, color);
-        plot = normalplot;
+        g_plot = normalplot;
         return;
     }
 
@@ -1278,7 +1278,7 @@ static void putatriangle(point pt1, point pt2, point pt3, int color)
     }
 
     // set plot to "fake" plot function
-    plot = putminmax;
+    g_plot = putminmax;
 
     // build table of extreme x's of triangle
     driver_draw_line(p1.x, p1.y, p2.x, p2.y, 0);
@@ -1293,7 +1293,7 @@ static void putatriangle(point pt1, point pt2, point pt3, int color)
             (*fillplot)(x, y, color);
         }
     }
-    plot = normalplot;
+    g_plot = normalplot;
 }
 
 static int offscreen(point pt)

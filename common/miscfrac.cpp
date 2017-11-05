@@ -77,10 +77,10 @@ int test()
                         color = ((color-1) % g_and_color) + 1; // skip color zero
                     }
                 }
-                (*plot)(col, row, color);
+                (*g_plot)(col, row, color);
                 if (numpasses && (passes == 0))
                 {
-                    (*plot)(col, row+1, color);
+                    (*g_plot)(col, row+1, color);
                 }
             }
         }
@@ -186,7 +186,7 @@ static U16 adjust(int xa, int ya, int x, int y, int xb, int yb)
     {
         pseudorandom = 1;
     }
-    plot(x, y, (U16)pseudorandom);
+    g_plot(x, y, (U16)pseudorandom);
     return ((U16)pseudorandom);
 }
 
@@ -301,7 +301,7 @@ static bool new_subD(int x1, int y1, int x2, int y2, int recur)
                     i = adjust(nx1, ny1, nx1, y , nx1, ny);
                 }
                 v += i;
-                plot(x, y, (U16)((v + 2) >> 2));
+                g_plot(x, y, (U16)((v + 2) >> 2));
             }
 
             if (subx.r[subx.t-1] == (BYTE)recur)
@@ -366,7 +366,7 @@ static void subDivide(int x1, int y1, int x2, int y2)
 
     if (getpix(x, y) == 0)
     {
-        plot(x, y, (U16)((i+2) >> 2));
+        g_plot(x, y, (U16)((i+2) >> 2));
     }
 
     subDivide(x1, y1, x , y);
@@ -444,11 +444,11 @@ int plasma()
             max_plasma = 0xFFFF;
             if (g_outside_color >= COLOR_BLACK)
             {
-                plot    = (PLOT)putpotborder;
+                g_plot    = (PLOT)putpotborder;
             }
             else
             {
-                plot    = (PLOT)putpot;
+                g_plot    = (PLOT)putpot;
             }
             getpix =  getpot;
             OldPotFlag = potflag;
@@ -460,11 +460,11 @@ int plasma()
             g_params[3]   = 0;
             if (g_outside_color >= COLOR_BLACK)
             {
-                plot    = putcolorborder;
+                g_plot    = putcolorborder;
             }
             else
             {
-                plot    = putcolor;
+                g_plot    = putcolor;
             }
             getpix  = (U16(*)(int, int))getcolor;
         }
@@ -473,11 +473,11 @@ int plasma()
     {
         if (g_outside_color >= COLOR_BLACK)
         {
-            plot    = putcolorborder;
+            g_plot    = putcolorborder;
         }
         else
         {
-            plot    = putcolor;
+            g_plot    = putcolor;
         }
         getpix  = (U16(*)(int, int))getcolor;
     }
@@ -542,10 +542,10 @@ int plasma()
         }
     }
 
-    plot(0,      0,  rnd[0]);
-    plot(xdots-1,      0,  rnd[1]);
-    plot(xdots-1, ydots-1,  rnd[2]);
-    plot(0, ydots-1,  rnd[3]);
+    g_plot(0,      0,  rnd[0]);
+    g_plot(xdots-1,      0,  rnd[1]);
+    g_plot(xdots-1, ydots-1,  rnd[2]);
+    g_plot(0, ydots-1,  rnd[3]);
 
     int n;
     recur_level = 0;
@@ -587,7 +587,7 @@ done:
         potflag = OldPotFlag;
         pot16bit = OldPot16bit;
     }
-    plot    = putcolor;
+    g_plot    = putcolor;
     getpix  = (U16(*)(int, int))getcolor;
     return (n);
 }
@@ -1079,7 +1079,7 @@ int Bifurcation()
                 color = g_colors-1;
             }
             verhulst_array[y] = 0;
-            (*plot)(x, y, color); // was row-1, but that's not right?
+            (*g_plot)(x, y, color); // was row-1, but that's not right?
         }
         x++;
     }
@@ -1416,7 +1416,7 @@ int popcorn()   // subset of std engine
         end_resume();
     }
     g_keyboard_check_interval = g_max_keyboard_check_interval;
-    plot = noplot;
+    g_plot = noplot;
     g_l_temp_sqr_x = 0;
     tempsqrx = g_l_temp_sqr_x;
     for (row = start_row; row <= g_i_y_stop; row++)
@@ -1480,7 +1480,7 @@ int lyapunov()
     {
         Population = g_params[1];
     }
-    (*plot)(col, row, 1);
+    (*g_plot)(col, row, 1);
     if (g_invert != 0)
     {
         invertz2(&g_init);
@@ -1520,7 +1520,7 @@ int lyapunov()
     {
         g_color = g_colors-1;
     }
-    (*plot)(col, row, g_color);
+    (*g_plot)(col, row, g_color);
     return g_color;
 }
 
@@ -2414,7 +2414,7 @@ int calcfroth()   // per pixel 1/2/g, called with row & col set
     g_color_iter = 0;
     if (show_dot >0)
     {
-        (*plot)(col, row, show_dot %g_colors);
+        (*g_plot)(col, row, show_dot %g_colors);
     }
     if (!g_integer_fractal) // fp mode
     {
@@ -2795,7 +2795,7 @@ int calcfroth()   // per pixel 1/2/g, called with row & col set
 
     g_color = abs((int)(g_color_iter));
 
-    (*plot)(col, row, g_color);
+    (*g_plot)(col, row, g_color);
 
     return g_color;
 }
