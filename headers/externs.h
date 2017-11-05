@@ -489,7 +489,7 @@ extern double                g_threshold;
 extern int                   g_timed_save;
 extern bool                  g_timer_flag;
 extern long                  g_timer_interval;
-extern long                  timer_start;
+extern long                  g_timer_start;
 extern DComplex              tmp;
 extern std::string           tempdir;
 extern double smallest_window_display_size;

@@ -830,7 +830,7 @@ int help(int action)
 
     old_look_at_mouse = g_look_at_mouse;
     g_look_at_mouse = 0;
-    timer_start -= clock_ticks();
+    g_timer_start -= clock_ticks();
     driver_stack_screen();
 
     if (g_help_mode >= 0)
@@ -949,7 +949,7 @@ int help(int action)
     driver_unstack_screen();
     g_look_at_mouse = old_look_at_mouse;
     g_help_mode = old_help_mode;
-    timer_start += clock_ticks();
+    g_timer_start += clock_ticks();
 
     return 0;
 }

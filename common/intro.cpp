@@ -26,7 +26,7 @@ void intro()
     int old_look_at_mouse;
     int old_help_mode;
 
-    timer_start -= clock_ticks();       // "time out" during help
+    g_timer_start -= clock_ticks();       // "time out" during help
     old_look_at_mouse = g_look_at_mouse;
     old_help_mode = g_help_mode;
     g_look_at_mouse = 0;                    // de-activate full mouse checking
