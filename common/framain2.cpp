@@ -2482,7 +2482,7 @@ static void save_history_info()
     current.nobof                = (short) (g_bof_match_book_images ? 0 : 1);
     current.orbit_delay          = (short)g_orbit_delay;
     current.orbit_interval       = g_orbit_interval;
-    current.oxmin                = oxmin;
+    current.oxmin                = g_orbit_corner_min_x;
     current.oxmax                = g_orbit_corner_max_x;
     current.oymin                = oymin;
     current.oymax                = oymax;
@@ -2672,7 +2672,7 @@ static void restore_history_info(int i)
     g_bof_match_book_images = last.nobof == 0;
     g_orbit_delay = last.orbit_delay;
     g_orbit_interval = last.orbit_interval;
-    oxmin = last.oxmin;
+    g_orbit_corner_min_x = last.oxmin;
     g_orbit_corner_max_x = last.oxmax;
     oymin = last.oymin;
     oymax = last.oymax;

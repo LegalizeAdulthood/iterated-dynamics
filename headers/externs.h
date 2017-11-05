@@ -361,7 +361,7 @@ extern bool                  g_overlay_3d;
 extern bool                  g_overwrite_file;
 extern double                g_orbit_corner_3_x;
 extern double                g_orbit_corner_max_x;
-extern double                oxmin;
+extern double                g_orbit_corner_min_x;
 extern double                oy3rd;
 extern double                oymax;
 extern double                oymin;

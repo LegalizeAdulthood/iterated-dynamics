@@ -2375,7 +2375,7 @@ static int get_screen_corners()
 
     if (!set_orbit_corners && !g_keep_screen_coords)
     {
-        oxmin = xxmin;
+        g_orbit_corner_min_x = xxmin;
         g_orbit_corner_max_x = xxmax;
         g_orbit_corner_3_x = xx3rd;
         oymin = yymin;
@@ -2383,14 +2383,14 @@ static int get_screen_corners()
         oy3rd = yy3rd;
     }
 
-    oxxmin = oxmin;
+    oxxmin = g_orbit_corner_min_x;
     oxxmax = g_orbit_corner_max_x;
     oyymin = oymin;
     oyymax = oymax;
     oxx3rd = g_orbit_corner_3_x;
     oyy3rd = oy3rd;
 
-    xxmin = oxmin;
+    xxmin = g_orbit_corner_min_x;
     xxmax = g_orbit_corner_max_x;
     yymin = oymin;
     yymax = oymax;
@@ -2431,7 +2431,7 @@ gsc_loop:
         prompts[++nump] = "Top-Left Corner";
         values[nump].type = '*';
         prompts[++nump] = xprompt;
-        values[nump].uval.dval = oxmin;
+        values[nump].uval.dval = g_orbit_corner_min_x;
         prompts[++nump] = yprompt;
         values[nump].uval.dval = oymax;
         prompts[++nump] = "Bottom-Right Corner";
@@ -2440,7 +2440,7 @@ gsc_loop:
         values[nump].uval.dval = g_orbit_corner_max_x;
         prompts[++nump] = yprompt;
         values[nump].uval.dval = oymin;
-        if (oxmin == g_orbit_corner_3_x && oymin == oy3rd)
+        if (g_orbit_corner_min_x == g_orbit_corner_3_x && oymin == oy3rd)
         {
             oy3rd = 0;
             g_orbit_corner_3_x = oy3rd;
@@ -2466,7 +2466,7 @@ gsc_loop:
     if (prompt_ret < 0)
     {
         usemag = ousemag;
-        oxmin = oxxmin;
+        g_orbit_corner_min_x = oxxmin;
         g_orbit_corner_max_x = oxxmax;
         oymin = oyymin;
         oymax = oyymax;
@@ -2485,13 +2485,13 @@ gsc_loop:
     if (prompt_ret == FIK_F4)
     {
         // reset to type defaults
-        oxmin = curfractalspecific->xmin;
-        g_orbit_corner_3_x = oxmin;
+        g_orbit_corner_min_x = curfractalspecific->xmin;
+        g_orbit_corner_3_x = g_orbit_corner_min_x;
         g_orbit_corner_max_x = curfractalspecific->xmax;
         oymin = curfractalspecific->ymin;
         oy3rd = oymin;
         oymax = curfractalspecific->ymax;
-        xxmin = oxmin;
+        xxmin = g_orbit_corner_min_x;
         xxmax = g_orbit_corner_max_x;
         yymin = oymin;
         yymax = oymax;
@@ -2502,7 +2502,7 @@ gsc_loop:
             aspectratio_crop(screenaspect, g_final_aspect_ratio);
         }
 
-        oxmin = xxmin;
+        g_orbit_corner_min_x = xxmin;
         g_orbit_corner_max_x = xxmax;
         oymin = yymin;
         oymax = yymax;
@@ -2532,7 +2532,7 @@ gsc_loop:
             }
             cvtcorners(Xctr, Yctr, Magnification, Xmagfactor, Rotation, Skew);
             // set screen corners
-            oxmin = xxmin;
+            g_orbit_corner_min_x = xxmin;
             g_orbit_corner_max_x = xxmax;
             oymin = yymin;
             oymax = yymax;
@@ -2543,7 +2543,7 @@ gsc_loop:
     else
     {
         nump = 1;
-        oxmin = values[nump++].uval.dval;
+        g_orbit_corner_min_x = values[nump++].uval.dval;
         oymax = values[nump++].uval.dval;
         nump++;
         g_orbit_corner_max_x = values[nump++].uval.dval;
@@ -2553,7 +2553,7 @@ gsc_loop:
         oy3rd = values[nump++].uval.dval;
         if (g_orbit_corner_3_x == 0 && oy3rd == 0)
         {
-            g_orbit_corner_3_x = oxmin;
+            g_orbit_corner_3_x = g_orbit_corner_min_x;
             oy3rd = oymin;
         }
     }
@@ -2573,11 +2573,11 @@ gsc_loop:
         goto gsc_loop;
     }
 
-    if (!cmpdbl(oxxmin, oxmin) && !cmpdbl(oxxmax, g_orbit_corner_max_x) && !cmpdbl(oyymin, oymin) &&
+    if (!cmpdbl(oxxmin, g_orbit_corner_min_x) && !cmpdbl(oxxmax, g_orbit_corner_max_x) && !cmpdbl(oyymin, oymin) &&
             !cmpdbl(oyymax, oymax) && !cmpdbl(oxx3rd, g_orbit_corner_3_x) && !cmpdbl(oyy3rd, oy3rd))
     {
         // no change, restore values to avoid drift
-        oxmin = oxxmin;
+        g_orbit_corner_min_x = oxxmin;
         g_orbit_corner_max_x = oxxmax;
         oymin = oyymin;
         oymax = oyymax;
