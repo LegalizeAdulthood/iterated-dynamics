@@ -42,7 +42,7 @@
 #include "prototyp.h"
 
 // global data
-std::vector<fn_operand> pfls;
+std::vector<fn_operand> g_function_operands;
 
 #if !defined(XFRACT)
 
@@ -173,8 +173,8 @@ NEW_FN  fStkOne;   // to support new parser fn.
 #define REMOVE_PUSH --cvtptrx, stkcnt += 2
 
 #define CLEAR_STK 127
-#define FNPTR(x) pfls[(x)].function  // function pointer
-#define OPPTR(x) pfls[(x)].operand   // operand pointer
+#define FNPTR(x) g_function_operands[(x)].function  // function pointer
+#define OPPTR(x) g_function_operands[(x)].operand   // operand pointer
 #define NO_OPERAND (Arg  *)0
 #define NO_FUNCTION (void ( *)())0
 #define LASTSQR v[4].a
@@ -331,7 +331,7 @@ static unsigned char p4const;       // ...and p4?
 static unsigned char p5const;       // ...and p5?
 
 static unsigned int
-cvtptrx;      // subscript of next free entry in pfls
+cvtptrx;      // subscript of next free entry in g_function_operands
 
 static void (*prevfptr)();    // previous function pointer
 
@@ -1328,7 +1328,7 @@ int fpfill_jump_struct()
             }
             find_new_func = false;
         }
-        if (pfls[OpPtr].function == JumpFunc)
+        if (g_function_operands[OpPtr].function == JumpFunc)
         {
             jump_data[i].JumpOpPtr = OpPtr*4;
             i++;

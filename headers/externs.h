@@ -374,7 +374,7 @@ extern DComplex              g_param_z1;
 extern int                   g_patch_level;
 extern int                   g_periodicity_check;
 struct fn_operand;
-extern std::vector<fn_operand>      pfls;
+extern std::vector<fn_operand> g_function_operands;
 extern int                   pixelpi;
 extern void                (*plot)(int, int, int);
 extern double                plotmx1;

@@ -4367,7 +4367,7 @@ static void parser_allocate()
         Store.resize(MAX_STORES);
         Load.resize(MAX_LOADS);
         v.resize(g_max_function_args);
-        pfls.resize(g_max_function_ops);
+        g_function_operands.resize(g_max_function_ops);
 
         if (pass == 0)
         {
@@ -4392,7 +4392,7 @@ void free_workarea()
     Load.clear();
     v.clear();
     f.clear();
-    pfls.clear();
+    g_function_operands.clear();
 }
 
 

@@ -187,7 +187,7 @@ int fFormula()
    align           2
 _Img_Setup         proc far
       FRAME        <si,di>
-      les          si,_pfls            ; es:si = &pfls[0]
+      les          si,_pfls            ; es:si = &g_function_operands[0]
 
       mov          di,_LastOp          ; load index of lastop
 
