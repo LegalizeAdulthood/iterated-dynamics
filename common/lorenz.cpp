@@ -227,7 +227,7 @@ bool setup_convert_to_screen(affine *scrn_cnvt)
     {
         return true;
     }
-    yd = g_y_size_dots/det;
+    yd = g_logical_screen_y_size_dots/det;
     scrn_cnvt->c =  yd*(g_y_min-g_y_3rd);
     scrn_cnvt->d =  yd*(g_x_3rd-g_x_max);
     scrn_cnvt->f = -scrn_cnvt->c*g_x_min - scrn_cnvt->d*g_y_max;
@@ -2075,7 +2075,7 @@ int dynam2dfloat()
         }
 
         xpixel = g_logical_screen_x_size_dots*(xstep+.5)/d;
-        ypixel = g_y_size_dots*(ystep+.5)/d;
+        ypixel = g_logical_screen_y_size_dots*(ystep+.5)/d;
         x = (double)((g_x_min+g_delta_x*xpixel) + (g_delta_x2*ypixel));
         y = (double)((g_y_max-g_delta_y*ypixel) + (-g_delta_y2*xpixel));
         if (fractype == fractal_type::MANDELCLOUD)
@@ -2176,7 +2176,7 @@ int setup_orbits_to_screen(affine *scrn_cnvt)
     {
         return (-1);
     }
-    yd = g_y_size_dots/det;
+    yd = g_logical_screen_y_size_dots/det;
     scrn_cnvt->c =  yd*(g_orbit_corner_min_y-g_orbit_corner_3_y);
     scrn_cnvt->d =  yd*(g_orbit_corner_3_x-g_orbit_corner_max_x);
     scrn_cnvt->f = -scrn_cnvt->c*g_orbit_corner_min_x - scrn_cnvt->d*g_orbit_corner_max_y;

@@ -152,7 +152,7 @@ extern double                g_logical_screen_x_size_dots;
 extern std::vector<double>   g_grid_y0;
 extern std::vector<double>   g_grid_y1;
 extern double              (*g_dy_pixel)();
-extern double                g_y_size_dots;
+extern double                g_logical_screen_y_size_dots;
 extern bool                  g_escape_exit;
 extern BYTE                  g_exit_video_mode;
 extern int                   g_evolving;

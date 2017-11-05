@@ -1301,7 +1301,7 @@ finish:
         g_logical_screen_x_dots = g_screen_x_dots;
         g_logical_screen_y_dots = g_screen_y_dots;
         g_logical_screen_x_size_dots = g_logical_screen_x_dots - 1;
-        g_y_size_dots = g_logical_screen_y_dots - 1;
+        g_logical_screen_y_size_dots = g_logical_screen_y_dots - 1;
         g_logical_screen_x_offset = 0;
         g_logical_screen_y_offset = 0;
         freetempmsg();
