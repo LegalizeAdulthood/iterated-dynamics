@@ -343,7 +343,7 @@ extern bool                  g_old_demm_colors;
 extern char                  g_old_std_calc_mode;
 extern char                  g_evolve_discrete_x_parameter_offset;
 extern char                  g_evolve_discrete_y_parameter_offset;
-extern double evolve_x_parameter_offset;
+extern double                g_evolve_x_parameter_offset;
 extern double evolve_y_parameter_offset;
 extern int                   orbitsave;
 extern int                   orbit_color;

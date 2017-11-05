@@ -551,7 +551,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
         evolve_x_parameter_range = blk_6_info.x_parameter_range;
         evolve_y_parameter_range = blk_6_info.y_parameter_range;
         g_evolve_new_x_parameter_offset = blk_6_info.x_parameter_offset;
-        evolve_x_parameter_offset = g_evolve_new_x_parameter_offset;
+        g_evolve_x_parameter_offset = g_evolve_new_x_parameter_offset;
         g_evolve_new_y_parameter_offset = blk_6_info.y_parameter_offset;
         evolve_y_parameter_offset = g_evolve_new_y_parameter_offset;
         g_evolve_new_discrete_x_parameter_offset = (char) blk_6_info.discrete_x_parameter_offset;

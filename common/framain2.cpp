@@ -375,7 +375,7 @@ main_state big_while_loop(bool *const kbdmore, bool *const stacked, bool const r
                     evolve_x_parameter_range = g_evolve_info.x_parameter_range;
                     evolve_y_parameter_range = g_evolve_info.y_parameter_range;
                     g_evolve_new_x_parameter_offset = g_evolve_info.x_parameter_offset;
-                    evolve_x_parameter_offset = g_evolve_new_x_parameter_offset;
+                    g_evolve_x_parameter_offset = g_evolve_new_x_parameter_offset;
                     g_evolve_new_y_parameter_offset = g_evolve_info.y_parameter_offset;
                     evolve_y_parameter_offset = g_evolve_new_y_parameter_offset;
                     g_evolve_new_discrete_x_parameter_offset = (char)g_evolve_info.discrete_x_parameter_offset;
@@ -407,7 +407,7 @@ main_state big_while_loop(bool *const kbdmore, bool *const stacked, bool const r
                     param_history(0); // save old history
                     ecount = 0;
                     g_evolve_max_random_mutation = g_evolve_max_random_mutation * g_evolve_mutation_reduction_factor;
-                    evolve_x_parameter_offset = g_evolve_new_x_parameter_offset;
+                    g_evolve_x_parameter_offset = g_evolve_new_x_parameter_offset;
                     evolve_y_parameter_offset = g_evolve_new_y_parameter_offset;
                     g_evolve_discrete_x_parameter_offset = g_evolve_new_discrete_x_parameter_offset;
                     g_evolve_discrete_y_parameter_offset = g_evolve_new_discrete_y_parameter_offset; // evolve_discrete_x_parameter_offset used for discrete parms like inside, outside, trigfn etc
@@ -447,7 +447,7 @@ done:
                 {
                     g_evolve_info.x_parameter_range = evolve_x_parameter_range;
                     g_evolve_info.y_parameter_range = evolve_y_parameter_range;
-                    g_evolve_info.x_parameter_offset = evolve_x_parameter_offset;
+                    g_evolve_info.x_parameter_offset = g_evolve_x_parameter_offset;
                     g_evolve_info.y_parameter_offset = evolve_y_parameter_offset;
                     g_evolve_info.discrete_x_parameter_offset = (short) g_evolve_discrete_x_parameter_offset;
                     g_evolve_info.discrete_y_paramter_offset = (short) g_evolve_discrete_y_parameter_offset;
@@ -2063,7 +2063,7 @@ static main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdm
     case FIK_F2: // halve mutation params and regen
         g_evolve_max_random_mutation = g_evolve_max_random_mutation / 2;
         evolve_x_parameter_range = evolve_x_parameter_range / 2;
-        g_evolve_new_x_parameter_offset = evolve_x_parameter_offset + evolve_x_parameter_range / 2;
+        g_evolve_new_x_parameter_offset = g_evolve_x_parameter_offset + evolve_x_parameter_range / 2;
         evolve_y_parameter_range = evolve_y_parameter_range / 2;
         g_evolve_new_y_parameter_offset = evolve_y_parameter_offset + evolve_y_parameter_range / 2;
         *kbdmore = false;
@@ -2074,7 +2074,7 @@ static main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdm
     {
         double centerx, centery;
         g_evolve_max_random_mutation = g_evolve_max_random_mutation * 2;
-        centerx = evolve_x_parameter_offset + evolve_x_parameter_range / 2;
+        centerx = g_evolve_x_parameter_offset + evolve_x_parameter_range / 2;
         evolve_x_parameter_range = evolve_x_parameter_range * 2;
         g_evolve_new_x_parameter_offset = centerx - evolve_x_parameter_range / 2;
         centery = evolve_y_parameter_offset + evolve_y_parameter_range / 2;
