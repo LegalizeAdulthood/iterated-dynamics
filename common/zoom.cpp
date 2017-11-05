@@ -152,7 +152,7 @@ void drawbox(bool drawit)
     dy = tmpy - (rotsin*tmpx + rotcos*tmpy); // delta y to rotate topleft
 
     // calc co-ords of topleft
-    ftemp1 = zbx + dx + fxadj;
+    ftemp1 = g_zoom_box_x + dx + fxadj;
     ftemp2 = zby + dy/g_final_aspect_ratio;
 
     tl.x   = (int)(ftemp1*(g_logical_screen_x_size_dots+PIXELROUND)); // screen co-ords
@@ -166,7 +166,7 @@ void drawbox(bool drawit)
     }
 
     // calc co-ords of bottom right
-    ftemp1 = zbx + zoom_box_width - dx - fxadj;
+    ftemp1 = g_zoom_box_x + zoom_box_width - dx - fxadj;
     ftemp2 = zby - dy/g_final_aspect_ratio + zoom_box_height;
     br.x   = (int)(ftemp1*(g_logical_screen_x_size_dots+PIXELROUND));
     br.y   = (int)(ftemp2*(g_logical_screen_y_size_dots+PIXELROUND));
@@ -182,7 +182,7 @@ void drawbox(bool drawit)
     tmpy = 0.0-tmpy;
     dx = (rotcos*tmpx - rotsin*tmpy) - tmpx;
     dy = tmpy - (rotsin*tmpx + rotcos*tmpy);
-    ftemp1 = zbx + dx - fxadj;
+    ftemp1 = g_zoom_box_x + dx - fxadj;
     ftemp2 = zby + dy/g_final_aspect_ratio + zoom_box_height;
     bl.x   = (int)(ftemp1*(g_logical_screen_x_size_dots+PIXELROUND));
     bl.y   = (int)(ftemp2*(g_logical_screen_y_size_dots+PIXELROUND));
@@ -194,7 +194,7 @@ void drawbox(bool drawit)
         calc_corner(g_bf_y_3rd, g_bf_save_y_max, ftemp2, bffydepth, ftemp1, bffyskew);
         restore_stack(saved);
     }
-    ftemp1 = zbx + zoom_box_width - dx + fxadj;
+    ftemp1 = g_zoom_box_x + zoom_box_width - dx + fxadj;
     ftemp2 = zby - dy/g_final_aspect_ratio;
     tr.x   = (int)(ftemp1*(g_logical_screen_x_size_dots+PIXELROUND));
     tr.y   = (int)(ftemp2*(g_logical_screen_y_size_dots+PIXELROUND));
@@ -330,24 +330,24 @@ void moveboxf(double dx, double dy)
     align = check_pan();
     if (dx != 0.0)
     {
-        if ((zbx += dx) + zoom_box_width/2 < 0)    // center must stay onscreen
+        if ((g_zoom_box_x += dx) + zoom_box_width/2 < 0)    // center must stay onscreen
         {
-            zbx = zoom_box_width/-2;
+            g_zoom_box_x = zoom_box_width/-2;
         }
-        if (zbx + zoom_box_width/2 > 1)
+        if (g_zoom_box_x + zoom_box_width/2 > 1)
         {
-            zbx = 1.0 - zoom_box_width/2;
+            g_zoom_box_x = 1.0 - zoom_box_width/2;
         }
         int col;
         if (align != 0
-                && ((col = (int)(zbx*(g_logical_screen_x_size_dots+PIXELROUND))) & (align-1)) != 0)
+                && ((col = (int)(g_zoom_box_x*(g_logical_screen_x_size_dots+PIXELROUND))) & (align-1)) != 0)
         {
             if (dx > 0)
             {
                 col += align;
             }
             col -= col & (align-1); // adjust col to pass alignment
-            zbx = (double)col/g_logical_screen_x_size_dots;
+            g_zoom_box_x = (double)col/g_logical_screen_x_size_dots;
         }
     }
     if (dy != 0.0)
@@ -375,7 +375,7 @@ void moveboxf(double dx, double dy)
 #ifndef XFRACT
     if (g_video_scroll)                 // scroll screen center to the box center
     {
-        int col = (int)((zbx + zoom_box_width/2)*(g_logical_screen_x_size_dots + PIXELROUND)) + g_logical_screen_x_offset;
+        int col = (int)((g_zoom_box_x + zoom_box_width/2)*(g_logical_screen_x_size_dots + PIXELROUND)) + g_logical_screen_x_offset;
         int row = (int)((zby + zoom_box_height/2)*(g_logical_screen_y_size_dots + PIXELROUND)) + g_logical_screen_y_offset;
         if (!zscroll)
         {
@@ -761,12 +761,12 @@ int init_pan_or_recalc(int do_zoomout) // decide to recalc, or to chg worklist &
         g_calc_status = calc_status_value::PARAMS_CHANGED; // can't pan, trigger recalc
         return (0);
     }
-    if (zbx == 0.0 && zby == 0.0)
+    if (g_zoom_box_x == 0.0 && zby == 0.0)
     {
         clearbox();
         return (0);
     } // box is full screen, leave g_calc_status as is
-    col = (int)(zbx*(g_logical_screen_x_size_dots+PIXELROUND)); // calc dest col,row of topleft pixel
+    col = (int)(g_zoom_box_x*(g_logical_screen_x_size_dots+PIXELROUND)); // calc dest col,row of topleft pixel
     row = (int)(zby*(g_logical_screen_y_size_dots+PIXELROUND));
     if (do_zoomout)
     {
