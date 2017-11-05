@@ -178,7 +178,7 @@ int real_count;
 
 bool g_is_mandelbrot = true;
 
-unsigned int g_operation_index, vsp, g_last_op;
+unsigned int g_operation_index, g_variable_index, g_last_op;
 static unsigned int n, NextOp, InitN;
 static int paren;
 static bool ExpectingArg = false;
@@ -2027,7 +2027,7 @@ ConstArg *isconst(char const *Str, int Len)
 {
     DComplex z;
     // next line enforces variable vs constant naming convention
-    for (unsigned n = 0U; n < vsp; n++)
+    for (unsigned n = 0U; n < g_variable_index; n++)
     {
         if (v[n].len == Len)
         {
@@ -2077,24 +2077,24 @@ ConstArg *isconst(char const *Str, int Len)
             }
         }
     }
-    v[vsp].s = Str;
-    v[vsp].len = Len;
-    v[vsp].a.d.y = 0.0;
-    v[vsp].a.d.x = v[vsp].a.d.y;
+    v[g_variable_index].s = Str;
+    v[g_variable_index].len = Len;
+    v[g_variable_index].a.d.y = 0.0;
+    v[g_variable_index].a.d.x = v[g_variable_index].a.d.y;
 
 #if !defined(XFRACT)
     // v[vsp].a should already be zeroed out
     switch (MathType)
     {
     case M_MATH:
-        v[vsp].a.m.x.Exp = 0;
-        v[vsp].a.m.x.Mant = v[vsp].a.m.x.Exp;
-        v[vsp].a.m.y.Exp = 0;
-        v[vsp].a.m.y.Mant = v[vsp].a.m.y.Exp;
+        v[g_variable_index].a.m.x.Exp = 0;
+        v[g_variable_index].a.m.x.Mant = v[g_variable_index].a.m.x.Exp;
+        v[g_variable_index].a.m.y.Exp = 0;
+        v[g_variable_index].a.m.y.Mant = v[g_variable_index].a.m.y.Exp;
         break;
     case L_MATH:
-        v[vsp].a.l.y = 0;
-        v[vsp].a.l.x = v[vsp].a.l.y;
+        v[g_variable_index].a.l.y = 0;
+        v[g_variable_index].a.l.x = v[g_variable_index].a.l.y;
         break;
     }
 #endif
@@ -2108,7 +2108,7 @@ ConstArg *isconst(char const *Str, int Len)
             g_operation_index--;
             Str = Str - 1;
             InitN--;
-            v[vsp].len++;
+            v[g_variable_index].len++;
         }
         unsigned n;
         for (n = 1; isdigit(Str[n]) || Str[n] == '.'; n++)
@@ -2125,7 +2125,7 @@ ConstArg *isconst(char const *Str, int Len)
                 for (; isdigit(Str[j]) || Str[j] == '.' || Str[j] == '-'; j++)
                 {
                 }
-                v[vsp].len = j;
+                v[g_variable_index].len = j;
             }
             else
             {
@@ -2140,21 +2140,21 @@ ConstArg *isconst(char const *Str, int Len)
         switch (MathType)
         {
         case D_MATH:
-            v[vsp].a.d = z;
+            v[g_variable_index].a.d = z;
             break;
 #if !defined(XFRACT)
         case M_MATH:
-            v[vsp].a.m = cmplx2MPC(z);
+            v[g_variable_index].a.m = cmplx2MPC(z);
             break;
         case L_MATH:
-            v[vsp].a.l.x = (long)(z.x * fg);
-            v[vsp].a.l.y = (long)(z.y * fg);
+            v[g_variable_index].a.l.x = (long)(z.x * fg);
+            v[g_variable_index].a.l.y = (long)(z.y * fg);
             break;
 #endif
         }
-        v[vsp].s = Str;
+        v[g_variable_index].s = Str;
     }
-    return &v[vsp++];
+    return &v[g_variable_index++];
 }
 
 }
@@ -2577,10 +2577,10 @@ static bool ParseStr(char const *Str, int pass)
 #endif
     }
     g_max_function = 0;
-    for (vsp = 0; vsp < sizeof(Constants) / sizeof(char*); vsp++)
+    for (g_variable_index = 0; g_variable_index < sizeof(Constants) / sizeof(char*); g_variable_index++)
     {
-        v[vsp].s = Constants[vsp];
-        v[vsp].len = (int) strlen(Constants[vsp]);
+        v[g_variable_index].s = Constants[g_variable_index];
+        v[g_variable_index].len = (int) strlen(Constants[g_variable_index]);
     }
     cvtcentermag(&Xctr, &Yctr, &Magnification, &Xmagfactor, &Rotation, &Skew);
     const_pi = atan(1.0) * 4;
@@ -4375,7 +4375,7 @@ static void parser_allocate()
             {
                 // per Chuck Ebbert, fudge these up a little
                 g_max_function_ops = g_operation_index + 4;
-                g_max_function_args = vsp + 4;
+                g_max_function_args = g_variable_index + 4;
             }
         }
     }

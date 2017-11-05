@@ -55,7 +55,7 @@ extern Arg s[20];
 extern std::vector<Arg *> Store;
 extern std::vector<Arg *> Load;
 extern int g_store_index, g_load_index, OpPtr;
-extern unsigned int vsp, g_last_op;
+extern unsigned int g_variable_index, g_last_op;
 extern std::vector<ConstArg> v;
 extern int InitLodPtr, InitStoPtr, InitOpPtr, g_last_init_op;
 extern std::vector<void (*)()> f;
@@ -952,7 +952,7 @@ awful_error:
     // ********************************************************************
     else if (ffptr == fStkDiv)
     {
-        if (prevfptr == fStkLodRealC && vsp < g_max_function_args - 1)
+        if (prevfptr == fStkLodRealC && g_variable_index < g_max_function_args - 1)
         {
             // have found a divide by a real constant
             //  and there is space to create a new one
@@ -966,12 +966,12 @@ awful_error:
             {
                 DBUGMSG("*lodrealc (div) -> (*lodrealmul)");
             }
-            v[vsp].s = nullptr;  // this constant has no name
-            v[vsp].len = 0;
-            v[vsp].a.d.x = _1_ / Load[g_load_index-1]->d.x;
-            v[vsp].a.d.y = 0.0;
+            v[g_variable_index].s = nullptr;  // this constant has no name
+            v[g_variable_index].len = 0;
+            v[g_variable_index].a.d.x = _1_ / Load[g_load_index-1]->d.x;
+            v[g_variable_index].a.d.y = 0.0;
             {
-                OPPTR(cvtptrx) = &v[vsp++].a;
+                OPPTR(cvtptrx) = &v[g_variable_index++].a;
             }
             ffptr = fStkLodRealMul;
         }

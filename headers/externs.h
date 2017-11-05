@@ -533,7 +533,7 @@ extern bool                  g_view_window;
 extern int                   g_view_x_dots;
 extern int                   g_view_y_dots;
 extern bool                  g_virtual_screens;
-extern unsigned              vsp;
+extern unsigned              g_variable_index;
 extern int                   g_vxdots;
 extern stereo_images         g_which_image;
 extern float                 widthfp;
