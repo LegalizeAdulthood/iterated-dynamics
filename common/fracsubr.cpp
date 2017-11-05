@@ -120,7 +120,7 @@ void fill_lx_array()
         for (int i = 1; i < xdots; i++)
         {
             g_l_x0[i] = g_l_x0[i-1] + g_l_delta_x;
-            g_l_y1[i] = g_l_y1[i-1] - dely2;
+            g_l_y1[i] = g_l_y1[i-1] - g_l_delta_y2;
         }
         for (int i = 1; i < ydots; i++)
         {
@@ -470,7 +470,7 @@ init_restart:
         g_l_delta_x  = fudgetolong((double)g_delta_x);
         dely  = fudgetolong((double)delyy);
         g_l_delta_x2 = fudgetolong((double)g_delta_x2);
-        dely2 = fudgetolong((double)delyy2);
+        g_l_delta_y2 = fudgetolong((double)delyy2);
     }
 
     // skip this if plasma to avoid 3d problems
@@ -485,7 +485,7 @@ init_restart:
             if ((g_l_delta_x  == 0 && g_delta_x  != 0.0)
                     || (g_l_delta_x2 == 0 && g_delta_x2 != 0.0)
                     || (dely  == 0 && delyy  != 0.0)
-                    || (dely2 == 0 && delyy2 != 0.0))
+                    || (g_l_delta_y2 == 0 && delyy2 != 0.0))
             {
                 goto expand_retry;
             }
