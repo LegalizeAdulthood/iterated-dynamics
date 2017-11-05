@@ -701,7 +701,7 @@ void write_batch_parms(char const *colorinf, bool colorsonly, int maxcolor, int 
             put_parm(" %s=%c%c", "passes", usr_stdcalcmode, (char)g_stop_pass + '0');
         }
 
-        if (usemag)
+        if (g_use_center_mag)
         {
             if (bf_math != bf_math_type::NONE)
             {

@@ -2135,7 +2135,7 @@ int get_corners()
     double Xmagfactor, Rotation, Skew;
     double oxxmin, oxxmax, oyymin, oyymax, oxx3rd, oyy3rd;
 
-    bool const ousemag = usemag;
+    bool const ousemag = g_use_center_mag;
     oxxmin = xxmin;
     oxxmax = xxmax;
     oyymin = yymin;
@@ -2149,7 +2149,7 @@ gc_loop:
         values[i].type = 'd'; // most values on this screen are type d
 
     }
-    cmag = usemag ? 1 : 0;
+    cmag = g_use_center_mag ? 1 : 0;
     if (g_draw_mode == 'l')
     {
         cmag = 0;
@@ -2234,7 +2234,7 @@ gc_loop:
 
     if (prompt_ret < 0)
     {
-        usemag = ousemag;
+        g_use_center_mag = ousemag;
         xxmin = oxxmin;
         xxmax = oxxmax;
         yymin = oyymin;
@@ -2320,14 +2320,14 @@ gc_loop:
     if (prompt_ret == FIK_F7 && g_draw_mode != 'l')
     {
         // toggle corners/center-mag mode
-        if (!usemag)
+        if (!g_use_center_mag)
         {
             cvtcentermag(&Xctr, &Yctr, &Magnification, &Xmagfactor, &Rotation, &Skew);
-            usemag = true;
+            g_use_center_mag = true;
         }
         else
         {
-            usemag = false;
+            g_use_center_mag = false;
         }
         goto gc_loop;
     }
@@ -2364,7 +2364,7 @@ static int get_screen_corners()
     double oxxmin, oxxmax, oyymin, oyymax, oxx3rd, oyy3rd;
     double svxxmin, svxxmax, svyymin, svyymax, svxx3rd, svyy3rd;
 
-    bool const ousemag = usemag;
+    bool const ousemag = g_use_center_mag;
 
     svxxmin = xxmin;  // save these for later since cvtcorners modifies them
     svxxmax = xxmax;  // and we need to set them for cvtcentermag to work
@@ -2403,7 +2403,7 @@ gsc_loop:
         value.type = 'd'; // most values on this screen are type d
 
     }
-    cmag = usemag ? 1 : 0;
+    cmag = g_use_center_mag ? 1 : 0;
     cvtcentermag(&Xctr, &Yctr, &Magnification, &Xmagfactor, &Rotation, &Skew);
 
     nump = -1;
@@ -2465,7 +2465,7 @@ gsc_loop:
 
     if (prompt_ret < 0)
     {
-        usemag = ousemag;
+        g_use_center_mag = ousemag;
         g_orbit_corner_min_x = oxxmin;
         g_orbit_corner_max_x = oxxmax;
         g_orbit_corner_min_y = oyymin;
@@ -2561,14 +2561,14 @@ gsc_loop:
     if (prompt_ret == FIK_F7)
     {
         // toggle corners/center-mag mode
-        if (!usemag)
+        if (!g_use_center_mag)
         {
             cvtcentermag(&Xctr, &Yctr, &Magnification, &Xmagfactor, &Rotation, &Skew);
-            usemag = true;
+            g_use_center_mag = true;
         }
         else
         {
-            usemag = false;
+            g_use_center_mag = false;
         }
         goto gsc_loop;
     }

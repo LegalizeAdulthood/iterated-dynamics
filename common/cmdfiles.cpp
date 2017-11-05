@@ -101,7 +101,7 @@ DComplex  g_init_orbit = { 0.0 };  // initial orbitvalue
 init_orbit_mode g_use_init_orbit = init_orbit_mode::normal;       // flag for initorbit
 int     g_init_mode = 0;        // initial video mode
 int     g_init_cycle_limit = 0;     // initial cycle limit
-bool    usemag = false;         // use center-mag corners
+bool    g_use_center_mag = false;         // use center-mag corners
 long    g_bail_out = 0;            // user input bailout value
 bailouts g_bail_out_test;            // test used for determining bailout
 double  g_inversion[3] = { 0.0 }; // radius, xcenter, ycenter
@@ -530,7 +530,7 @@ static void initvars_fractal()          // init vars affecting calculation
         g_iteration_ranges.clear();
         g_iteration_ranges_len = 0;
     }
-    usemag = true;                      // use center-mag, not corners
+    g_use_center_mag = true;                      // use center-mag, not corners
 
     g_color_state = 0;
     g_colors_preloaded = false;
@@ -2077,7 +2077,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         {
             goto badarg;
         }
-        usemag = false;
+        g_use_center_mag = false;
         if (totparms == 0)
         {
             return CMDARG_NONE; // turns corners mode on
@@ -2280,7 +2280,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         {
             return CMDARG_FRACTAL_PARAM; // skip setting the corners
         }
-        usemag = true;
+        g_use_center_mag = true;
         if (totparms == 0)
         {
             return CMDARG_NONE; // turns center-mag mode on
@@ -2344,7 +2344,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
                 floattobf(bfparms[k], g_params[k]);
             }
         }
-        usemag = true;
+        g_use_center_mag = true;
         saved = save_stack();
         bXctr            = alloc_stack(bflength+2);
         bYctr            = alloc_stack(bflength+2);
