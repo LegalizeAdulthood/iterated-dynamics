@@ -217,7 +217,7 @@ bool setup_convert_to_screen(affine *scrn_cnvt)
     {
         return true;
     }
-    xd = g_x_size_dots/det;
+    xd = g_logical_screen_x_size_dots/det;
     scrn_cnvt->a =  xd*(g_y_max-g_y_3rd);
     scrn_cnvt->b =  xd*(g_x_3rd-g_x_min);
     scrn_cnvt->e = -scrn_cnvt->a*g_x_min - scrn_cnvt->b*g_y_max;
@@ -2074,7 +2074,7 @@ int dynam2dfloat()
             }
         }
 
-        xpixel = g_x_size_dots*(xstep+.5)/d;
+        xpixel = g_logical_screen_x_size_dots*(xstep+.5)/d;
         ypixel = g_y_size_dots*(ystep+.5)/d;
         x = (double)((g_x_min+g_delta_x*xpixel) + (g_delta_x2*ypixel));
         y = (double)((g_y_max-g_delta_y*ypixel) + (-g_delta_y2*xpixel));
@@ -2166,7 +2166,7 @@ int setup_orbits_to_screen(affine *scrn_cnvt)
     {
         return (-1);
     }
-    xd = g_x_size_dots/det;
+    xd = g_logical_screen_x_size_dots/det;
     scrn_cnvt->a =  xd*(g_orbit_corner_max_y-g_orbit_corner_3_y);
     scrn_cnvt->b =  xd*(g_orbit_corner_3_x-g_orbit_corner_min_x);
     scrn_cnvt->e = -scrn_cnvt->a*g_orbit_corner_min_x - scrn_cnvt->b*g_orbit_corner_max_y;

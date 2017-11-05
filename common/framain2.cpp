@@ -226,7 +226,7 @@ main_state big_while_loop(bool *const kbdmore, bool *const stacked, bool const r
                     g_logical_screen_y_offset = (g_screen_y_dots - g_logical_screen_y_dots) / 3;
                 }
             }
-            g_x_size_dots = g_logical_screen_x_dots - 1;            // convert just once now
+            g_logical_screen_x_size_dots = g_logical_screen_x_dots - 1;            // convert just once now
             g_y_size_dots = g_logical_screen_y_dots - 1;
         }
         // assume we save next time (except jb)
@@ -1926,7 +1926,7 @@ static main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdm
                     g_evolve_param_grid_y = 0;
                 }
                 int grout = !((g_evolving & NOGROUT)/NOGROUT) ;
-                g_logical_screen_x_offset = g_evolve_param_grid_x * (int)(g_x_size_dots+1+grout);
+                g_logical_screen_x_offset = g_evolve_param_grid_x * (int)(g_logical_screen_x_size_dots+1+grout);
                 g_logical_screen_y_offset = g_evolve_param_grid_y * (int)(g_y_size_dots+1+grout);
 
                 param_history(1); // restore old history
@@ -2006,7 +2006,7 @@ static main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdm
                 {
                     // set screen view params back (previously changed to allow full screen saves in viewwindow mode)
                     int grout = !((g_evolving & NOGROUT) / NOGROUT);
-                    g_logical_screen_x_offset = g_evolve_param_grid_x * (int)(g_x_size_dots+1+grout);
+                    g_logical_screen_x_offset = g_evolve_param_grid_x * (int)(g_logical_screen_x_size_dots+1+grout);
                     g_logical_screen_y_offset = g_evolve_param_grid_y * (int)(g_y_size_dots+1+grout);
                     SetupParamBox();
                     drawparmbox(0);
@@ -2240,7 +2240,7 @@ static void move_zoombox(int keynum)
     }
     if (g_box_count)
     {
-        moveboxf((double)horizontal/g_x_size_dots, (double)vertical/g_y_size_dots);
+        moveboxf((double)horizontal/g_logical_screen_x_size_dots, (double)vertical/g_y_size_dots);
     }
 #ifndef XFRACT
     else                                 // if no zoombox, scroll by arrows

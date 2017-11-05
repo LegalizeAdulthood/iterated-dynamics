@@ -43,7 +43,7 @@ int     textsafe2;              // textsafe override from g_video_table
 int     g_screen_x_dots, g_screen_y_dots;         // # of dots on the physical screen
 int     g_logical_screen_x_offset, g_logical_screen_y_offset;         // physical top left of logical screen
 int     g_logical_screen_x_dots, g_logical_screen_y_dots;           // # of dots on the logical screen
-double  g_x_size_dots, g_y_size_dots;         // xdots-1, ydots-1
+double  g_logical_screen_x_size_dots, g_y_size_dots;         // xdots-1, ydots-1
 int     g_colors = 256;           // maximum colors available
 long    g_max_iterations;                  // try this many iterations
 int     g_box_count;               // 0 if no zoom-box yet
