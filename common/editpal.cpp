@@ -2674,8 +2674,8 @@ static void PalTable__other_key(int key, RGBEditor *rgb, void *info)
     {
         int dir = (key == '.') ? 1 : -1;
 
-        PalTable__SaveUndoRotate(me, dir, rotate_lo, g_color_cycle_range_hi);
-        PalTable__Rotate(me, dir, rotate_lo, g_color_cycle_range_hi);
+        PalTable__SaveUndoRotate(me, dir, g_color_cycle_range_lo, g_color_cycle_range_hi);
+        PalTable__Rotate(me, dir, g_color_cycle_range_lo, g_color_cycle_range_hi);
         break;
     }
 
@@ -2703,7 +2703,7 @@ static void PalTable__other_key(int key, RGBEditor *rgb, void *info)
             while (!driver_key_pressed())
             {
                 tick = readticker();
-                PalTable__Rotate(me, dir, rotate_lo, g_color_cycle_range_hi);
+                PalTable__Rotate(me, dir, g_color_cycle_range_lo, g_color_cycle_range_hi);
                 diff += dir;
                 while (readticker() == tick)    // wait until a tick passes
                 {
@@ -2724,7 +2724,7 @@ static void PalTable__other_key(int key, RGBEditor *rgb, void *info)
 
         if (diff != 0)
         {
-            PalTable__SaveUndoRotate(me, diff, rotate_lo, g_color_cycle_range_hi);
+            PalTable__SaveUndoRotate(me, diff, g_color_cycle_range_lo, g_color_cycle_range_hi);
         }
 
         Cursor_Show();
@@ -2764,12 +2764,12 @@ static void PalTable__other_key(int key, RGBEditor *rgb, void *info)
     case 'o':
         if (me->curr[0] > me->curr[1])
         {
-            rotate_lo = me->curr[1];
+            g_color_cycle_range_lo = me->curr[1];
             g_color_cycle_range_hi = me->curr[0];
         }
         else
         {
-            rotate_lo = me->curr[0];
+            g_color_cycle_range_lo = me->curr[0];
             g_color_cycle_range_hi = me->curr[1];
         }
         break;

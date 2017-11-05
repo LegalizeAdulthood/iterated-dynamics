@@ -555,7 +555,7 @@ int get_toggles2()
 
     choices[++k] = "Color cycling from color (0 ... 254)";
     uvalues[k].type = 'i';
-    old_rotate_lo = rotate_lo;
+    old_rotate_lo = g_color_cycle_range_lo;
     uvalues[k].uval.ival = old_rotate_lo;
 
     choices[++k] = "              to   color (1 ... 255)";
@@ -659,11 +659,11 @@ int get_toggles2()
     g_invert = (g_inversion[0] == 0.0) ? 0 : 3;
     ++k;
 
-    rotate_lo = uvalues[++k].uval.ival;
+    g_color_cycle_range_lo = uvalues[++k].uval.ival;
     g_color_cycle_range_hi = uvalues[++k].uval.ival;
-    if (rotate_lo < 0 || g_color_cycle_range_hi > 255 || rotate_lo > g_color_cycle_range_hi)
+    if (g_color_cycle_range_lo < 0 || g_color_cycle_range_hi > 255 || g_color_cycle_range_lo > g_color_cycle_range_hi)
     {
-        rotate_lo = old_rotate_lo;
+        g_color_cycle_range_lo = old_rotate_lo;
         g_color_cycle_range_hi = old_rotate_hi;
     }
 

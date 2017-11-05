@@ -2453,7 +2453,7 @@ static void save_history_info()
     current.haze                 = (short)g_haze                      ;
     current.transparent[0]       = (short)transparent[0]            ;
     current.transparent[1]       = (short)transparent[1]            ;
-    current.rotate_lo            = (short)rotate_lo                 ;
+    current.rotate_lo            = (short)g_color_cycle_range_lo                 ;
     current.rotate_hi            = (short)g_color_cycle_range_hi                 ;
     current.distestwidth         = (short)g_distance_estimator_width_factor              ;
     current.mxmaxfp              = g_julibrot_x_max                   ;
@@ -2637,7 +2637,7 @@ static void restore_history_info(int i)
     g_haze                  = last.haze           ;
     transparent[0]        = last.transparent[0] ;
     transparent[1]        = last.transparent[1] ;
-    rotate_lo             = last.rotate_lo      ;
+    g_color_cycle_range_lo             = last.rotate_lo      ;
     g_color_cycle_range_hi             = last.rotate_hi      ;
     g_distance_estimator_width_factor          = last.distestwidth   ;
     g_julibrot_x_max               = last.mxmaxfp        ;

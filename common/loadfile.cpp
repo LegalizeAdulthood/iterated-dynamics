@@ -224,12 +224,12 @@ int read_overlay()      // read overlay/3D files, if reqr'd
         }
     }
 
-    rotate_lo = 1;
+    g_color_cycle_range_lo = 1;
     g_color_cycle_range_hi = 255;
     g_distance_estimator_width_factor = 71;
     if (read_info.version > 5)
     {
-        rotate_lo         = read_info.rotate_lo;
+        g_color_cycle_range_lo         = read_info.rotate_lo;
         g_color_cycle_range_hi         = read_info.rotate_hi;
         g_distance_estimator_width_factor      = read_info.distestwidth;
     }

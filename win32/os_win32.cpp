@@ -401,11 +401,11 @@ void spindac(int dir, int inc)
         return;
     if (g_is_true_color && truemode)
         return;
-    if (dir != 0 && rotate_lo < g_colors && rotate_lo < g_color_cycle_range_hi)
+    if (dir != 0 && g_color_cycle_range_lo < g_colors && g_color_cycle_range_lo < g_color_cycle_range_hi)
     {
         int top = g_color_cycle_range_hi > g_colors ? g_colors - 1 : g_color_cycle_range_hi;
-        dacbot = (unsigned char *) g_dac_box + 3 * rotate_lo;
-        int len = (top - rotate_lo) * 3 * sizeof(unsigned char);
+        dacbot = (unsigned char *) g_dac_box + 3 * g_color_cycle_range_lo;
+        int len = (top - g_color_cycle_range_lo) * 3 * sizeof(unsigned char);
         if (dir > 0)
         {
             for (int i = 0; i < inc; i++)

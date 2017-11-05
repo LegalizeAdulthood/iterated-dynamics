@@ -423,7 +423,7 @@ extern bool                  g_random_seed_flag;
 extern int                   g_rhombus_stack[];
 extern std::vector<DComplex> g_roots;
 extern int                   g_color_cycle_range_hi;
-extern int                   rotate_lo;
+extern int                   g_color_cycle_range_lo;
 extern double                g_newton_r_over_d;
 extern int                   row;
 extern int                   g_row_count;       // row-counter for decoder and out_line

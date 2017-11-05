@@ -77,12 +77,12 @@ void rotate(int direction)      // rotate-the-palette routine
     }
 
     rotate_max = (g_color_cycle_range_hi < g_colors) ? g_color_cycle_range_hi : g_colors-1;
-    rotate_size = rotate_max - rotate_lo + 1;
+    rotate_size = rotate_max - g_color_cycle_range_lo + 1;
     last = rotate_max;                   // last box that was filled
-    next = rotate_lo;                    // next box to be filled
+    next = g_color_cycle_range_lo;                    // next box to be filled
     if (direction < 0)
     {
-        last = rotate_lo;
+        last = g_color_cycle_range_lo;
         next = rotate_max;
     }
 
@@ -107,7 +107,7 @@ void rotate(int direction)      // rotate-the-palette routine
                     for (int istep = 0; istep < step; istep++)
                     {
                         jstep = next + (istep * direction);
-                        while (jstep < rotate_lo)
+                        while (jstep < g_color_cycle_range_lo)
                         {
                             jstep += rotate_size;
                         }
@@ -158,14 +158,14 @@ void rotate(int direction)      // rotate-the-palette routine
             fkey = 0;
             direction = 1;
             last = rotate_max;
-            next = rotate_lo;
+            next = g_color_cycle_range_lo;
             incr = 999;
             break;
         case '-':                      // '-' means rotate backward
         case FIK_LEFT_ARROW:               // LeftArrow = rotate bkwd
             fkey = 0;
             direction = -1;
-            last = rotate_lo;
+            last = g_color_cycle_range_lo;
             next = rotate_max;
             incr = 999;
             break;
@@ -325,7 +325,7 @@ void rotate(int direction)      // rotate-the-palette routine
             if (kbdchar == '>' || kbdchar == '.')
             {
                 direction = -1;
-                last = rotate_lo;
+                last = g_color_cycle_range_lo;
                 next = rotate_max;
                 incr = 999;
             }
@@ -333,7 +333,7 @@ void rotate(int direction)      // rotate-the-palette routine
             {
                 direction = 1;
                 last = rotate_max;
-                next = rotate_lo;
+                next = g_color_cycle_range_lo;
                 incr = 999;
             }
             fkey = 0;

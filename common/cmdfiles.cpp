@@ -105,7 +105,7 @@ bool    usemag = false;         // use center-mag corners
 long    g_bail_out = 0;            // user input bailout value
 bailouts g_bail_out_test;            // test used for determining bailout
 double  g_inversion[3] = { 0.0 }; // radius, xcenter, ycenter
-int     rotate_lo = 0;
+int     g_color_cycle_range_lo = 0;
 int     g_color_cycle_range_hi = 0;          // cycling color range
 std::vector<int> g_iteration_ranges;        // iter->color ranges mapping
 int     g_iteration_ranges_len = 0;          // size of ranges array
@@ -534,7 +534,7 @@ static void initvars_fractal()          // init vars affecting calculation
 
     g_color_state = 0;
     g_colors_preloaded = false;
-    rotate_lo = 1;
+    g_color_cycle_range_lo = 1;
     g_color_cycle_range_hi = 255;      // color cycling default range
     g_orbit_delay = 0;                     // full speed orbits
     g_orbit_interval = 1;                  // plot all orbits
@@ -1694,7 +1694,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         {
             goto badarg;
         }
-        rotate_lo = intval[0];
+        g_color_cycle_range_lo = intval[0];
         g_color_cycle_range_hi = intval[1];
         return CMDARG_NONE;
     }
