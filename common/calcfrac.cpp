@@ -1029,7 +1029,7 @@ static void perform_worklist()
         bf_math = bf_math_type::NONE;
     }
 
-    if (potflag && pot16bit)
+    if (potflag && g_potential_16bit)
     {
         int tmpcalcmode = stdcalcmode;
 
@@ -1038,7 +1038,7 @@ static void perform_worklist()
         {
             if (pot_startdisk() < 0)
             {
-                pot16bit = false;       // startdisk failed or cancelled
+                g_potential_16bit = false;       // startdisk failed or cancelled
                 stdcalcmode = (char)tmpcalcmode;    // maybe we can carry on???
             }
         }
@@ -3423,7 +3423,7 @@ static int potential(double mag, long iterations)
         l_pot = 255;
     }
 
-    if (pot16bit)
+    if (g_potential_16bit)
     {
         if (!driver_diskp())   // if putcolor won't be doing it for us
         {
@@ -4428,7 +4428,7 @@ static void setsymmetry(symmetry_type sym, bool uselist) // set up proper symmet
             return;
         }
     }
-    if ((potflag && pot16bit) || ((g_invert != 0) && g_inversion[2] != 0.0)
+    if ((potflag && g_potential_16bit) || ((g_invert != 0) && g_inversion[2] != 0.0)
             || g_decomp[0] != 0
             || xxmin != xx3rd || yymin != yy3rd)
     {

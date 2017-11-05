@@ -452,7 +452,7 @@ int plasma()
             }
             getpix =  getpot;
             OldPotFlag = potflag;
-            OldPot16bit = pot16bit;
+            OldPot16bit = g_potential_16bit;
         }
         else
         {
@@ -585,7 +585,7 @@ done:
     if (max_plasma != 0)
     {
         potflag = OldPotFlag;
-        pot16bit = OldPot16bit;
+        g_potential_16bit = OldPot16bit;
     }
     g_plot    = putcolor;
     getpix  = (U16(*)(int, int))getcolor;

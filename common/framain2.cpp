@@ -248,7 +248,7 @@ main_state big_while_loop(bool *const kbdmore, bool *const stacked, bool const r
             {
                 g_out_line = cmp_line;
             }
-            else if (pot16bit)
+            else if (g_potential_16bit)
             {
                 // .pot format input file
                 if (pot_startdisk() < 0)
@@ -256,7 +256,7 @@ main_state big_while_loop(bool *const kbdmore, bool *const stacked, bool const r
                     // pot file failed?
                     show_file = 1;
                     potflag  = false;
-                    pot16bit = false;
+                    g_potential_16bit = false;
                     g_init_mode = -1;
                     g_calc_status = calc_status_value::RESUMABLE;         // "resume" without 16-bit
                     driver_set_for_text();
@@ -2264,7 +2264,7 @@ int cmp_line(BYTE *pixels, int linelen)
         cmp_fp = dir_fopen(workdir.c_str(), "cmperr", (g_init_batch != batch_modes::NONE) ? "a" : "w");
         g_out_line_cleanup = cmp_line_cleanup;
     }
-    if (pot16bit)
+    if (g_potential_16bit)
     {
         // 16 bit info, ignore odd numbered rows
         if ((row & 1) != 0)

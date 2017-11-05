@@ -1017,7 +1017,7 @@ void write_batch_parms(char const *colorinf, bool colorsonly, int maxcolor, int 
         {
             put_parm(" %s=%d/%g/%d", "potential",
                      (int)potparam[0], potparam[1], (int)potparam[2]);
-            if (pot16bit)
+            if (g_potential_16bit)
             {
                 put_parm("/%s", "16bit");
             }

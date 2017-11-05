@@ -67,7 +67,7 @@ char    PrintName[FILE_MAX_PATH] = {"fract001.prn"}; // Name for print-to-file
 std::string savename{"fract001"}; // save files using this name
 std::string g_auto_name{"auto.key"}; // record auto keystrokes here
 bool    potflag = false;        // continuous potential enabled?
-bool    pot16bit = false;               // store 16 bit continuous potential values
+bool    g_potential_16bit = false;               // store 16 bit continuous potential values
 bool    g_gif87a_flag = false;    // true if GIF87a format, false otherwise
 bool    g_dither_flag = false;    // true if want to dither GIFs
 bool    g_ask_video = false;       // flag for video prompting
@@ -518,7 +518,7 @@ static void initvars_fractal()          // init vars affecting calculation
     yy3rd = yymin;
     yymax = 1.5;   // initial corner values
     bf_math = bf_math_type::NONE;
-    pot16bit = false;
+    g_potential_16bit = false;
     potflag = false;
     g_log_map_flag = 0;                         // no logarithmic palette
     set_trig_array(0, "sin");             // trigfn defaults
@@ -1872,14 +1872,14 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
             }
             ++value;
         }
-        pot16bit = false;
+        g_potential_16bit = false;
         if (k < 99)
         {
             if (strcmp(value, "16bit"))
             {
                 goto badarg;
             }
-            pot16bit = true;
+            g_potential_16bit = true;
         }
         return CMDARG_FRACTAL_PARAM;
     }

@@ -185,7 +185,7 @@ int line3d(BYTE * pixels, unsigned linelen)
     }
 
     g_current_row = g_row_count;           // use separate variable to allow for pot16bit files
-    if (pot16bit)
+    if (g_potential_16bit)
     {
         g_current_row >>= 1;
     }
@@ -220,7 +220,7 @@ int line3d(BYTE * pixels, unsigned linelen)
     f_old = f_bad;
 
     // copies pixels buffer to float type fraction buffer for fill purposes
-    if (pot16bit)
+    if (g_potential_16bit)
     {
         if (set_pixel_buff(pixels, &fraction[0], linelen))
         {
@@ -334,7 +334,7 @@ int line3d(BYTE * pixels, unsigned linelen)
             cur.color = Real_Color;
             f_cur.color = (float) cur.color;  // "lake"
         }
-        else if (pot16bit)
+        else if (g_potential_16bit)
         {
             f_cur.color += ((float) fraction[col]) / (float)(1 << 8);
         }
@@ -458,7 +458,7 @@ int line3d(BYTE * pixels, unsigned linelen)
                 lv[0] = lv[0] << 16;
                 lv[1] = g_current_row;
                 lv[1] = lv[1] << 16;
-                if (pot16bit)             // don't truncate fractional part
+                if (g_potential_16bit)             // don't truncate fractional part
                 {
                     lv[2] = (long)(f_cur.color * 65536.0);
                 }
@@ -2849,7 +2849,7 @@ static int line3dmem()
         costhetaarray.resize(xdots);
     }
     f_lastrow.resize(xdots);
-    if (pot16bit)
+    if (g_potential_16bit)
     {
         fraction.resize(xdots);
     }
