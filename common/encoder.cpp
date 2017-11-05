@@ -682,7 +682,7 @@ bool encoder()
             osave_info.oxmin     = g_orbit_corner_min_x;
             osave_info.oxmax     = g_orbit_corner_max_x;
             osave_info.oymin     = oymin;
-            osave_info.oymax     = oymax;
+            osave_info.oymax     = g_orbit_corner_max_y;
             osave_info.ox3rd     = g_orbit_corner_3_x;
             osave_info.oy3rd     = g_orbit_corner_3_y;
             osave_info.keep_scrn_coords = (short) (g_keep_screen_coords ? 1 : 0);

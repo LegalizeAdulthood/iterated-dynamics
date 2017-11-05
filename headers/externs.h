@@ -363,7 +363,7 @@ extern double                g_orbit_corner_3_x;
 extern double                g_orbit_corner_max_x;
 extern double                g_orbit_corner_min_x;
 extern double                g_orbit_corner_3_y;
-extern double                oymax;
+extern double                g_orbit_corner_max_y;
 extern double                oymin;
 extern double                param[];
 extern double evolve_x_parameter_range;
