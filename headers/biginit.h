@@ -33,7 +33,7 @@ extern bf_t big_pi;                                           // bflength+2
 // for testing only
 // used by other routines
 extern bf_t bfxmin, bfxmax, bfymin, bfymax, bfx3rd, bfy3rd;   // bflength+2
-extern bf_t g_bf_save_x_min, g_bf_save_x_max, g_bf_save_y_min, bfsymax, bfsx3rd, bfsy3rd;// bflength+2
+extern bf_t g_bf_save_x_min, g_bf_save_x_max, g_bf_save_y_min, g_bf_save_y_max, bfsx3rd, bfsy3rd;// bflength+2
 extern bf_t bfparms[10];                                 // (bflength+2)*10
 extern bf_t bftmp;
 extern bf_t bf10tmp;                                              // dec+4

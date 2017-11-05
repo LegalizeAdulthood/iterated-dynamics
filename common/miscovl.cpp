@@ -2605,8 +2605,8 @@ void flip_image(int key)
         {
             add_bf(g_bf_save_x_min, bfxmax, bfxmin); // sxmin = xxmax + xxmin - xx3rd;
             sub_a_bf(g_bf_save_x_min, bfx3rd);
-            add_bf(bfsymax, bfymax, bfymin); // symax = yymax + yymin - yy3rd;
-            sub_a_bf(bfsymax, bfy3rd);
+            add_bf(g_bf_save_y_max, bfymax, bfymin); // symax = yymax + yymin - yy3rd;
+            sub_a_bf(g_bf_save_y_max, bfy3rd);
             copy_bf(g_bf_save_x_max, bfx3rd);        // sxmax = xx3rd;
             copy_bf(g_bf_save_y_min, bfy3rd);        // symin = yy3rd;
             copy_bf(bfsx3rd, bfxmax);        // sx3rd = xxmax;
@@ -2636,7 +2636,7 @@ void flip_image(int key)
         if (bf_math != bf_math_type::NONE)
         {
             copy_bf(g_bf_save_x_min, bfx3rd);        // sxmin = xx3rd;
-            copy_bf(bfsymax, bfy3rd);        // symax = yy3rd;
+            copy_bf(g_bf_save_y_max, bfy3rd);        // symax = yy3rd;
             add_bf(g_bf_save_x_max, bfxmax, bfxmin); // sxmax = xxmax + xxmin - xx3rd;
             sub_a_bf(g_bf_save_x_max, bfx3rd);
             add_bf(g_bf_save_y_min, bfymax, bfymin); // symin = yymax + yymin - yy3rd;
@@ -2668,7 +2668,7 @@ void flip_image(int key)
         if (bf_math != bf_math_type::NONE)
         {
             copy_bf(g_bf_save_x_min, bfxmax);        // sxmin = xxmax;
-            copy_bf(bfsymax, bfymin);        // symax = yymin;
+            copy_bf(g_bf_save_y_max, bfymin);        // symax = yymin;
             copy_bf(g_bf_save_x_max, bfxmin);        // sxmax = xxmin;
             copy_bf(g_bf_save_y_min, bfymax);        // symin = yymax;
             add_bf(bfsx3rd, bfxmax, bfxmin); // sx3rd = xxmax + xxmin - xx3rd;

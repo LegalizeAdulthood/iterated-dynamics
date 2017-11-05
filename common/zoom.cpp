@@ -140,7 +140,7 @@ void drawbox(bool drawit)
         // do some calcs just once here to reduce fp work a bit
         sub_bf(bffxwidth, g_bf_save_x_max, bfsx3rd);
         sub_bf(bffxskew, bfsx3rd, g_bf_save_x_min);
-        sub_bf(bffydepth, bfsy3rd, bfsymax);
+        sub_bf(bffydepth, bfsy3rd, g_bf_save_y_max);
         sub_bf(bffyskew, g_bf_save_y_min, bfsy3rd);
         floattobf(bffxadj, fxadj);
     }
@@ -162,7 +162,7 @@ void drawbox(bool drawit)
     if (bf_math != bf_math_type::NONE)
     {
         calc_corner(bfxmin, g_bf_save_x_min, ftemp1, bffxwidth, ftemp2, bffxskew);
-        calc_corner(bfymax, bfsymax, ftemp2, bffydepth, ftemp1, bffyskew);
+        calc_corner(bfymax, g_bf_save_y_max, ftemp2, bffydepth, ftemp1, bffyskew);
     }
 
     // calc co-ords of bottom right
@@ -175,7 +175,7 @@ void drawbox(bool drawit)
     if (bf_math != bf_math_type::NONE)
     {
         calc_corner(bfxmax, g_bf_save_x_min, ftemp1, bffxwidth, ftemp2, bffxskew);
-        calc_corner(bfymin, bfsymax, ftemp2, bffydepth, ftemp1, bffyskew);
+        calc_corner(bfymin, g_bf_save_y_max, ftemp2, bffydepth, ftemp1, bffyskew);
     }
     // do the same for botleft & topright
     tmpx = zoom_box_width/-2 - fxadj;
@@ -191,7 +191,7 @@ void drawbox(bool drawit)
     if (bf_math != bf_math_type::NONE)
     {
         calc_corner(bfx3rd, g_bf_save_x_min, ftemp1, bffxwidth, ftemp2, bffxskew);
-        calc_corner(bfy3rd, bfsymax, ftemp2, bffydepth, ftemp1, bffyskew);
+        calc_corner(bfy3rd, g_bf_save_y_max, ftemp2, bffydepth, ftemp1, bffyskew);
         restore_stack(saved);
     }
     ftemp1 = zbx + zoom_box_width - dx + fxadj;
@@ -496,13 +496,13 @@ static void zmo_calcbf(bf_t bfdx, bf_t bfdy,
     add_a_bf(bfnewx, btmp4a);
 
     // *newy = symax + tempy*(sy3rd-symax)/ftemp + tempx*(symin-sy3rd)/ftemp;
-    sub_bf(btmp1, bfsy3rd, bfsymax);
+    sub_bf(btmp1, bfsy3rd, g_bf_save_y_max);
     mult_bf(btmp2, btempy, btmp1);
     div_bf(btmp2a, btmp2, bfftemp);
     sub_bf(btmp3, g_bf_save_y_min, bfsy3rd);
     mult_bf(btmp4, btempx, btmp3);
     div_bf(btmp4a, btmp4, bfftemp);
-    add_bf(bfnewy, bfsymax, btmp2a);
+    add_bf(bfnewy, g_bf_save_y_max, btmp2a);
     add_a_bf(bfnewy, btmp4a);
     restore_stack(saved);
 }
@@ -570,7 +570,7 @@ void zoomoutbf() // for ctl-enter, calc corners for zooming out
     copy_bf(savbfymax, bfymax);
 
     sub_bf(tmp1, g_bf_save_x_min, savbfxmin);
-    sub_bf(tmp2, bfsymax, savbfymax);
+    sub_bf(tmp2, g_bf_save_y_max, savbfymax);
     zmo_calcbf(tmp1, tmp2, bfxmin, bfymax, bfplotmx1, bfplotmx2, bfplotmy1,
                bfplotmy2, bfftemp);
     sub_bf(tmp1, g_bf_save_x_max, savbfxmin);
