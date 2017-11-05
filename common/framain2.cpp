@@ -32,7 +32,7 @@ static void save_history_info();
 int g_finish_row = 0;    // save when this row is finished
 EVOLUTION_INFO g_evolve_info = { 0 };
 bool g_have_evolve_info = false;
-char old_stdcalcmode;
+char g_old_std_calc_mode;
 static  int        historyptr = -1;     // user pointer into history tbl
 static  int        saveptr = 0;         // save ptr into history tbl
 static bool historyflag = false;        // are we backing off in history?
@@ -659,7 +659,7 @@ resumeloop:                             // return here on failed overlays
                                mms_value == main_state::RESTART))
             {
                 quick_calc = false;
-                usr_stdcalcmode = old_stdcalcmode;
+                usr_stdcalcmode = g_old_std_calc_mode;
             }
             if (quick_calc && g_calc_status != calc_status_value::COMPLETED)
             {
@@ -777,11 +777,11 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
     if (quick_calc && g_calc_status == calc_status_value::COMPLETED)
     {
         quick_calc = false;
-        usr_stdcalcmode = old_stdcalcmode;
+        usr_stdcalcmode = g_old_std_calc_mode;
     }
     if (quick_calc && g_calc_status != calc_status_value::COMPLETED)
     {
-        usr_stdcalcmode = old_stdcalcmode;
+        usr_stdcalcmode = g_old_std_calc_mode;
     }
     switch (*kbdchar)
     {
@@ -901,7 +901,7 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
                 outside != ATAN)
         {
             quick_calc = true;
-            old_stdcalcmode = usr_stdcalcmode;
+            g_old_std_calc_mode = usr_stdcalcmode;
             usr_stdcalcmode = '1';
             *kbdmore = false;
             g_calc_status = calc_status_value::RESUMABLE;
