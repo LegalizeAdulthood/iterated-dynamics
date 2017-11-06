@@ -341,7 +341,7 @@ bool encoder()
         startbits++;    // B&W Klooge
     }
 #else
-    if (colors == 2)
+    if (g_colors == 2)
     {
         bitsperpixel = 1;
         startbits = 3;
@@ -437,7 +437,7 @@ bool encoder()
                 goto oops;
             }
 #else
-    if (colors > 2)
+    if (g_colors > 2)
     {
         if (g_got_real_dac || g_fake_lut)
         {
