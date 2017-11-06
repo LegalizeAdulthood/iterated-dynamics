@@ -111,7 +111,7 @@ static XPixel cmap_pixtab[256]; // for faking a LUTs on non-LUT visuals
 static bool cmap_pixtab_alloced = false;
 static unsigned long do_fake_lut(int idx)
 {
-    return fake_lut ? cmap_pixtab[idx] : idx;
+    return g_fake_lut ? cmap_pixtab[idx] : idx;
 }
 #define FAKE_LUT(idx_) do_fake_lut(idx_)
 
@@ -348,7 +348,7 @@ select_visual()
     case StaticColor:
         g_colors = 1 << Xdepth;
         g_got_real_dac = false;
-        fake_lut = false;
+        g_fake_lut = false;
         g_is_true_color = false;
         break;
 
@@ -356,7 +356,7 @@ select_visual()
     case PseudoColor:
         g_colors = 1 << Xdepth;
         g_got_real_dac = true;
-        fake_lut = false;
+        g_fake_lut = false;
         g_is_true_color = false;
         break;
 
@@ -364,7 +364,7 @@ select_visual()
     case DirectColor:
         g_colors = 256;
         g_got_real_dac = false;
-        fake_lut = true;
+        g_fake_lut = true;
         g_is_true_color = false;
         break;
 
@@ -420,7 +420,7 @@ initUnixWindow()
     {
         int offx, offy;
         fastmode = 0;
-        fake_lut = false;
+        g_fake_lut = false;
         g_is_true_color = false;
         g_got_real_dac = true;
         g_colors = 256;
@@ -617,7 +617,7 @@ doneXwindow()
 static void
 clearXwindow()
 {
-    if (fake_lut)
+    if (g_fake_lut)
     {
         for (int j = 0; j < Ximage->height; j++)
             for (int i = 0; i < Ximage->width; i++)
@@ -883,7 +883,7 @@ xcmapstuff()
     if (!g_got_real_dac)
     {
         Xcmap = DefaultColormapOfScreen(Xsc);
-        if (fake_lut)
+        if (g_fake_lut)
             writevideopalette();
     }
     else if (sharecolor)
@@ -1120,7 +1120,7 @@ int readvideo(int x, int y)
         fprintf(stderr, "Bad coord %d %d\n", x, y);
     }
 #endif
-    if (fake_lut)
+    if (g_fake_lut)
     {
         XPixel pixel = XGetPixel(Ximage, x, y);
         for (int i = 0; i < g_colors; i++)
@@ -1181,7 +1181,7 @@ int writevideopalette()
 {
     if (!g_got_real_dac)
     {
-        if (fake_lut)
+        if (g_fake_lut)
         {
             // !g_got_real_dac, fake_lut => truecolor, directcolor displays
             static unsigned char last_dac[256][3];

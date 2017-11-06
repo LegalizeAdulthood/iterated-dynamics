@@ -93,7 +93,7 @@ void make_batch_file()
 #ifndef XFRACT
     if (g_got_real_dac || (g_is_true_color && g_true_mode == true_color_mode::default_color))
 #else
-    if (g_got_real_dac || (g_is_true_color && truemode == 0) || fake_lut)
+    if (g_got_real_dac || (g_is_true_color && truemode == 0) || g_fake_lut)
 #endif
     {
         --maxcolor;
@@ -205,7 +205,7 @@ prompt_user:
 #ifndef XFRACT
         if (g_got_real_dac || (g_is_true_color && g_true_mode == true_color_mode::default_color))
 #else
-        if (g_got_real_dac || (g_is_true_color && truemode == 0) || fake_lut)
+        if (g_got_real_dac || (g_is_true_color && truemode == 0) || g_fake_lut)
 #endif
         {
             choices[promptnum] = "Record colors?";
@@ -265,7 +265,7 @@ prompt_user:
 #ifndef XFRACT
         if (g_got_real_dac || (g_is_true_color && g_true_mode == true_color_mode::default_color))
 #else
-        if (g_got_real_dac || (g_is_true_color && truemode == 0) || fake_lut)
+        if (g_got_real_dac || (g_is_true_color && truemode == 0) || g_fake_lut)
 #endif
         {
             if (paramvalues[maxcolorindex].uval.ival > 0 &&
@@ -1448,7 +1448,7 @@ docolors:
             force = 0;
             curc = force;
 #ifdef XFRACT
-            if (fake_lut && truemode == 0)
+            if (g_fake_lut && truemode == 0)
             {
                 loaddac(); // stupid kludge
             }

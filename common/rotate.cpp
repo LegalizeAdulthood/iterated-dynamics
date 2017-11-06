@@ -47,7 +47,7 @@ void rotate(int direction)      // rotate-the-palette routine
 #ifndef XFRACT
     if (!g_got_real_dac                 // ??? no DAC to rotate!
 #else
-    if (!(g_got_real_dac || fake_lut)   // ??? no DAC to rotate!
+    if (!(g_got_real_dac || g_fake_lut)   // ??? no DAC to rotate!
 #endif
             || g_colors < 16)
     {
