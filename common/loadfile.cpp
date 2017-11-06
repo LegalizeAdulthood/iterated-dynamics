@@ -1763,14 +1763,14 @@ static void drawindow(int colour, window const *info)
         drawlines(info->itl, info->itr, info->ibl.x-info->itl.x, info->ibl.y-info->itl.y); // top & bottom lines
         drawlines(info->itl, info->ibl, info->itr.x-info->itl.x, info->itr.y-info->itl.y); // left & right lines
 #else
-        g_box_x[0] = info->itl.x + sxoffs;
-        g_box_y[0] = info->itl.y + syoffs;
-        g_box_x[1] = info->itr.x + sxoffs;
-        g_box_y[1] = info->itr.y + syoffs;
-        g_box_x[2] = info->ibr.x + sxoffs;
-        g_box_y[2] = info->ibr.y + syoffs;
-        g_box_x[3] = info->ibl.x + sxoffs;
-        g_box_y[3] = info->ibl.y + syoffs;
+        g_box_x[0] = info->itl.x + g_logical_screen_x_offset;
+        g_box_y[0] = info->itl.y + g_logical_screen_y_offset;
+        g_box_x[1] = info->itr.x + g_logical_screen_x_offset;
+        g_box_y[1] = info->itr.y + g_logical_screen_y_offset;
+        g_box_x[2] = info->ibr.x + g_logical_screen_x_offset;
+        g_box_y[2] = info->ibr.y + g_logical_screen_y_offset;
+        g_box_x[3] = info->ibl.x + g_logical_screen_x_offset;
+        g_box_y[3] = info->ibl.y + g_logical_screen_y_offset;
         g_box_count = 4;
 #endif
         dispbox();
