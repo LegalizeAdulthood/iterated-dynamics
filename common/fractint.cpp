@@ -368,7 +368,7 @@ static main_state main_image_start(bool &stacked, bool &resumeflag)
         stacked = false;
     }
 #ifdef XFRACT
-    usr_floatflag = true;
+    g_user_float_falg = true;
 #endif
     g_got_status = -1;                     // for tab_display
 

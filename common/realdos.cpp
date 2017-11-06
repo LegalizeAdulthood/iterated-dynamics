@@ -1367,7 +1367,7 @@ top:
     choices[nextright] = "restart " FRACTINT "        <ins> ";
 
 #ifdef XFRACT
-    if (fullmenu && (g_got_real_dac || g_fake_lut) && colors >= 16)
+    if (fullmenu && (g_got_real_dac || g_fake_lut) && g_colors >= 16)
 #else
     if (fullmenu && g_got_real_dac && g_colors >= 16)
 #endif

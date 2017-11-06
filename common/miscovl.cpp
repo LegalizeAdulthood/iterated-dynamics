@@ -1448,7 +1448,7 @@ docolors:
             force = 0;
             curc = force;
 #ifdef XFRACT
-            if (g_fake_lut && truemode == 0)
+            if (g_fake_lut && g_true_mode == true_color_mode::default_color)
             {
                 loaddac(); // stupid kludge
             }

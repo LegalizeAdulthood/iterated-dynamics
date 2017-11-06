@@ -835,8 +835,8 @@ void Jiim(jiim_types which)
                 {
                     // We want to use the position of the cursor
                     exact = false;
-                    col = Cursor_GetX();
-                    row = Cursor_GetY();
+                    g_col = Cursor_GetX();
+                    g_row = Cursor_GetY();
                 }
 #endif
 
