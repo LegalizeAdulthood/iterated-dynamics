@@ -479,7 +479,7 @@ static void initvars_fractal()          // init vars affecting calculation
 #ifndef XFRACT
     g_user_float_flag = false;              // turn off the float flag
 #else
-    usr_floatflag = true;               // turn on the float flag
+    g_user_float_flag = true;               // turn on the float flag
 #endif
     g_finite_attractor = false;                 // disable finite attractor logic
     fractype = fractal_type::MANDEL;    // initial type Set flag
@@ -2442,7 +2442,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
 #ifndef XFRACT
         g_user_float_flag = yesnoval[0] != 0;
 #else
-        usr_floatflag = true; // must use floating point
+        g_user_float_flag = true; // must use floating point
 #endif
         return CMDARG_FRACTAL_PARAM | CMDARG_3D_PARAM;
     }
