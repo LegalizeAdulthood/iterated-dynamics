@@ -1,12 +1,15 @@
 # Copyright (C) 2015, Richard Thomson
 #
-environment:
-  matrix:
-    - GENERATOR: "Visual Studio 12 2013"
-      CONFIG: Debug
 
-    - GENERATOR: "Visual Studio 12 2013"
-      CONFIG: Release
+image: Visual Studio 2017
+
+environment:
+  GENERATOR: "Visual Studio 15 2017"
+
+  matrix:
+    - CONFIG: Debug
+
+    - CONFIG: Release
 
 build_script:
   - mkdir build
