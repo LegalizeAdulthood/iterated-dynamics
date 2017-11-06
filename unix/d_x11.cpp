@@ -1349,12 +1349,12 @@ ev_button_press(DriverX11 *di, XEvent *xevent)
         bandx1 = bandx0+1;
     if (bandy1 == bandy0)
         bandy1 = bandy0+1;
-    zoom_box_rotation = 0;
-    zoom_box_skew = 0;
-    zbx = (MIN(bandx0, bandx1)-g_logical_screen_x_offset)/x_size_d;
-    zby = (MIN(bandy0, bandy1)-g_logical_screen_y_offset)/y_size_d;
-    zoom_box_width = ABS(bandx1-bandx0)/x_size_d;
-    zoom_box_height = zoom_box_width;
+    g_zoom_box_rotation = 0;
+    g_zoom_box_skew = 0;
+    g_zoom_box_x = (MIN(bandx0, bandx1)-g_logical_screen_x_offset)/x_size_d;
+    g_zoom_box_y = (MIN(bandy0, bandy1)-g_logical_screen_y_offset)/y_size_d;
+    g_zoom_box_width = ABS(bandx1-bandx0)/x_size_d;
+    g_zoom_box_height = g_zoom_box_width;
     if (!g_inside_help)
         di->key_buffer = FIK_ENTER;
     if (di->xlastcolor != -1)

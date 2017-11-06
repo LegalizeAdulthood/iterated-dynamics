@@ -500,7 +500,7 @@ done:
         if (!g_x_zoom_waiting)
         {
             g_box_count = 0;                 // no zoom box yet
-            zoom_box_width = 0;
+            g_zoom_box_width = 0;
         }
 #endif
 
@@ -542,7 +542,7 @@ resumeloop:                             // return here on failed overlays
 #ifndef XFRACT
                 g_look_at_mouse = (g_zoom_box_width == 0 && !g_video_scroll) ? -FIK_PAGE_UP : 3;
 #else
-                g_look_at_mouse = (zoom_box_width == 0) ? -FIK_PAGE_UP : 3;
+                g_look_at_mouse = (g_zoom_box_width == 0) ? -FIK_PAGE_UP : 3;
 #endif
                 if (g_calc_status == calc_status_value::RESUMABLE && g_zoom_box_width == 0 && !driver_key_pressed())
                 {
