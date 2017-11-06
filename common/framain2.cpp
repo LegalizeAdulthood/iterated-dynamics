@@ -495,7 +495,7 @@ done:
         }
 #ifndef XFRACT
         g_box_count = 0;                     // no zoom box yet
-        zoom_box_width = 0;
+        g_zoom_box_width = 0;
 #else
         if (!XZoomWaiting)
         {
@@ -540,11 +540,11 @@ resumeloop:                             // return here on failed overlays
             else if (g_init_batch == batch_modes::NONE)      // not batch mode
             {
 #ifndef XFRACT
-                g_look_at_mouse = (zoom_box_width == 0 && !g_video_scroll) ? -FIK_PAGE_UP : 3;
+                g_look_at_mouse = (g_zoom_box_width == 0 && !g_video_scroll) ? -FIK_PAGE_UP : 3;
 #else
                 g_look_at_mouse = (zoom_box_width == 0) ? -FIK_PAGE_UP : 3;
 #endif
-                if (g_calc_status == calc_status_value::RESUMABLE && zoom_box_width == 0 && !driver_key_pressed())
+                if (g_calc_status == calc_status_value::RESUMABLE && g_zoom_box_width == 0 && !driver_key_pressed())
                 {
                     kbdchar = FIK_ENTER ;  // no visible reason to stop, continue
                 }
@@ -1388,7 +1388,7 @@ do_3d_transform:
         return main_state::RESTORE_START;
     case 'l':
     case 'L':                    // Look for other files within this view
-        if ((zoom_box_width != 0) || driver_diskp())
+        if ((g_zoom_box_width != 0) || driver_diskp())
         {
             g_browsing = false;
             driver_buzzer(buzzer_codes::PROBLEM);             // can't browse if zooming or disk video
@@ -1409,7 +1409,7 @@ do_3d_transform:
 #ifdef XFRACT
         XZoomWaiting = false;
 #endif
-        if (zoom_box_width != 0.0)
+        if (g_zoom_box_width != 0.0)
         {
             // do a zoom
             init_pan_or_recalc(0);
@@ -1477,11 +1477,11 @@ do_3d_transform:
     case FIK_PAGE_UP:                // page up
         if (g_zoom_off)
         {
-            if (zoom_box_width == 0)
+            if (g_zoom_box_width == 0)
             {
                 // start zoombox
                 g_zoom_box_height = 1;
-                zoom_box_width = g_zoom_box_height;
+                g_zoom_box_width = g_zoom_box_height;
                 g_zoom_box_rotation = 0;
                 g_zoom_box_skew = g_zoom_box_rotation;
                 g_zoom_box_x = 0;
@@ -1501,9 +1501,9 @@ do_3d_transform:
     case FIK_PAGE_DOWN:              // page down
         if (g_box_count)
         {
-            if (zoom_box_width >= .999 && g_zoom_box_height >= 0.999)   // end zoombox
+            if (g_zoom_box_width >= .999 && g_zoom_box_height >= 0.999)   // end zoombox
             {
-                zoom_box_width = 0;
+                g_zoom_box_width = 0;
             }
             else
             {
@@ -1855,7 +1855,7 @@ static main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdm
 #ifdef XFRACT
         XZoomWaiting = false;
 #endif
-        if (zoom_box_width != 0.0)
+        if (g_zoom_box_width != 0.0)
         {
             // do a zoom
             init_pan_or_recalc(0);
@@ -1991,11 +1991,11 @@ static main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdm
     case FIK_PAGE_UP:                // page up
         if (g_zoom_off)
         {
-            if (zoom_box_width == 0)
+            if (g_zoom_box_width == 0)
             {
                 // start zoombox
                 g_zoom_box_height = 1;
-                zoom_box_width = g_zoom_box_height;
+                g_zoom_box_width = g_zoom_box_height;
                 g_zoom_box_rotation = 0;
                 g_zoom_box_skew = g_zoom_box_rotation;
                 g_zoom_box_x = 0;
@@ -2022,10 +2022,10 @@ static main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdm
     case FIK_PAGE_DOWN:              // page down
         if (g_box_count)
         {
-            if (zoom_box_width >= .999 && g_zoom_box_height >= 0.999)
+            if (g_zoom_box_width >= .999 && g_zoom_box_height >= 0.999)
             {
                 // end zoombox
-                zoom_box_width = 0;
+                g_zoom_box_width = 0;
                 if (g_evolving&1)
                 {
                     drawparmbox(1); // clear boxes off screen
@@ -2314,7 +2314,7 @@ static void cmp_line_cleanup()
 
 void clear_zoombox()
 {
-    zoom_box_width = 0;
+    g_zoom_box_width = 0;
     drawbox(false);
     reset_zoom_corners();
 }

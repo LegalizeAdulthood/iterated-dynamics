@@ -1043,7 +1043,7 @@ static void adjust_to_limitsbf(double expand)
 
     /* if (g_calc_status == calc_status_value::RESUMABLE && (adjx != 0 || adjy != 0) && (zoom_box_width == 1.0))
        g_calc_status = calc_status_value::PARAMS_CHANGED; */
-    if (g_calc_status == calc_status_value::RESUMABLE && (is_bf_not_zero(badjx)|| is_bf_not_zero(badjy)) && (zoom_box_width == 1.0))
+    if (g_calc_status == calc_status_value::RESUMABLE && (is_bf_not_zero(badjx)|| is_bf_not_zero(badjy)) && (g_zoom_box_width == 1.0))
     {
         g_calc_status = calc_status_value::PARAMS_CHANGED;
     }
@@ -1203,7 +1203,7 @@ static void adjust_to_limits(double expand)
             adjy = ftemp;
         }
     }
-    if (g_calc_status == calc_status_value::RESUMABLE && (adjx != 0 || adjy != 0) && (zoom_box_width == 1.0))
+    if (g_calc_status == calc_status_value::RESUMABLE && (adjx != 0 || adjy != 0) && (g_zoom_box_width == 1.0))
     {
         g_calc_status = calc_status_value::PARAMS_CHANGED;
     }

@@ -103,7 +103,7 @@ void drawbox(bool drawit)
     double fxwidth, fxskew, fydepth, fyskew, fxadj;
     bf_t bffxwidth, bffxskew, bffydepth, bffyskew, bffxadj;
     int saved = 0;
-    if (zoom_box_width == 0)
+    if (g_zoom_box_width == 0)
     {
         // no box to draw
         if (g_box_count != 0)
@@ -133,7 +133,7 @@ void drawbox(bool drawit)
     fxskew  = g_save_x_3rd-g_save_x_min;
     fydepth = g_save_y_3rd-g_save_y_max;
     fyskew  = g_save_y_min-g_save_y_3rd;
-    fxadj   = zoom_box_width*g_zoom_box_skew;
+    fxadj   = g_zoom_box_width*g_zoom_box_skew;
 
     if (bf_math != bf_math_type::NONE)
     {
@@ -146,7 +146,7 @@ void drawbox(bool drawit)
     }
 
     // calc co-ords of topleft & botright corners of box
-    tmpx = zoom_box_width/-2+fxadj; // from zoombox center as origin, on xdots scale
+    tmpx = g_zoom_box_width/-2+fxadj; // from zoombox center as origin, on xdots scale
     tmpy = g_zoom_box_height*g_final_aspect_ratio/2;
     dx = (rotcos*tmpx - rotsin*tmpy) - tmpx; // delta x to rotate topleft
     dy = tmpy - (rotsin*tmpx + rotcos*tmpy); // delta y to rotate topleft
@@ -166,7 +166,7 @@ void drawbox(bool drawit)
     }
 
     // calc co-ords of bottom right
-    ftemp1 = g_zoom_box_x + zoom_box_width - dx - fxadj;
+    ftemp1 = g_zoom_box_x + g_zoom_box_width - dx - fxadj;
     ftemp2 = g_zoom_box_y - dy/g_final_aspect_ratio + g_zoom_box_height;
     br.x   = (int)(ftemp1*(g_logical_screen_x_size_dots+PIXELROUND));
     br.y   = (int)(ftemp2*(g_logical_screen_y_size_dots+PIXELROUND));
@@ -178,7 +178,7 @@ void drawbox(bool drawit)
         calc_corner(g_bf_y_min, g_bf_save_y_max, ftemp2, bffydepth, ftemp1, bffyskew);
     }
     // do the same for botleft & topright
-    tmpx = zoom_box_width/-2 - fxadj;
+    tmpx = g_zoom_box_width/-2 - fxadj;
     tmpy = 0.0-tmpy;
     dx = (rotcos*tmpx - rotsin*tmpy) - tmpx;
     dy = tmpy - (rotsin*tmpx + rotcos*tmpy);
@@ -194,7 +194,7 @@ void drawbox(bool drawit)
         calc_corner(g_bf_y_3rd, g_bf_save_y_max, ftemp2, bffydepth, ftemp1, bffyskew);
         restore_stack(saved);
     }
-    ftemp1 = g_zoom_box_x + zoom_box_width - dx + fxadj;
+    ftemp1 = g_zoom_box_x + g_zoom_box_width - dx + fxadj;
     ftemp2 = g_zoom_box_y - dy/g_final_aspect_ratio;
     tr.x   = (int)(ftemp1*(g_logical_screen_x_size_dots+PIXELROUND));
     tr.y   = (int)(ftemp2*(g_logical_screen_y_size_dots+PIXELROUND));
@@ -330,13 +330,13 @@ void moveboxf(double dx, double dy)
     align = check_pan();
     if (dx != 0.0)
     {
-        if ((g_zoom_box_x += dx) + zoom_box_width/2 < 0)    // center must stay onscreen
+        if ((g_zoom_box_x += dx) + g_zoom_box_width/2 < 0)    // center must stay onscreen
         {
-            g_zoom_box_x = zoom_box_width/-2;
+            g_zoom_box_x = g_zoom_box_width/-2;
         }
-        if (g_zoom_box_x + zoom_box_width/2 > 1)
+        if (g_zoom_box_x + g_zoom_box_width/2 > 1)
         {
-            g_zoom_box_x = 1.0 - zoom_box_width/2;
+            g_zoom_box_x = 1.0 - g_zoom_box_width/2;
         }
         int col;
         if (align != 0
@@ -375,7 +375,7 @@ void moveboxf(double dx, double dy)
 #ifndef XFRACT
     if (g_video_scroll)                 // scroll screen center to the box center
     {
-        int col = (int)((g_zoom_box_x + zoom_box_width/2)*(g_logical_screen_x_size_dots + PIXELROUND)) + g_logical_screen_x_offset;
+        int col = (int)((g_zoom_box_x + g_zoom_box_width/2)*(g_logical_screen_x_size_dots + PIXELROUND)) + g_logical_screen_x_offset;
         int row = (int)((g_zoom_box_y + g_zoom_box_height/2)*(g_logical_screen_y_size_dots + PIXELROUND)) + g_logical_screen_y_offset;
         if (!g_z_scroll)
         {
@@ -404,15 +404,15 @@ void moveboxf(double dx, double dy)
 
 static void chgboxf(double dwidth, double ddepth)
 {
-    if (zoom_box_width+dwidth > 1)
+    if (g_zoom_box_width+dwidth > 1)
     {
-        dwidth = 1.0-zoom_box_width;
+        dwidth = 1.0-g_zoom_box_width;
     }
-    if (zoom_box_width+dwidth < 0.05)
+    if (g_zoom_box_width+dwidth < 0.05)
     {
-        dwidth = 0.05-zoom_box_width;
+        dwidth = 0.05-g_zoom_box_width;
     }
-    zoom_box_width += dwidth;
+    g_zoom_box_width += dwidth;
     if (g_zoom_box_height+ddepth > 1)
     {
         ddepth = 1.0-g_zoom_box_height;
@@ -428,17 +428,17 @@ static void chgboxf(double dwidth, double ddepth)
 void resizebox(int steps)
 {
     double deltax, deltay;
-    if (g_zoom_box_height*g_screen_aspect > zoom_box_width)
+    if (g_zoom_box_height*g_screen_aspect > g_zoom_box_width)
     {
         // box larger on y axis
         deltay = steps * 0.036 / g_screen_aspect;
-        deltax = zoom_box_width * deltay / g_zoom_box_height;
+        deltax = g_zoom_box_width * deltay / g_zoom_box_height;
     }
     else
     {
         // box larger on x axis
         deltax = steps * 0.036;
-        deltay = g_zoom_box_height * deltax / zoom_box_width;
+        deltay = g_zoom_box_height * deltax / g_zoom_box_width;
     }
     chgboxf(deltax, deltay);
 }
@@ -661,7 +661,7 @@ static int check_pan() // return 0 if can't, alignment requirement if can
     {
         return (0); // not a worklist-driven type
     }
-    if (zoom_box_width != 1.0 || g_zoom_box_height != 1.0
+    if (g_zoom_box_width != 1.0 || g_zoom_box_height != 1.0
             || g_zoom_box_skew != 0.0 || g_zoom_box_rotation != 0.0)
     {
         return (0); // not a full size unrotated unskewed zoombox
@@ -750,7 +750,7 @@ int init_pan_or_recalc(int do_zoomout) // decide to recalc, or to chg worklist &
     int col;
     int alignmask;
     int listfull;
-    if (zoom_box_width == 0.0)
+    if (g_zoom_box_width == 0.0)
     {
         return (0); // no zoombox, leave g_calc_status as is
     }
@@ -824,7 +824,7 @@ int init_pan_or_recalc(int do_zoomout) // decide to recalc, or to chg worklist &
                     "Tables full, can't pan current image.\n"
                     "Cancel resumes old image, continue pans and calculates a new one."))
         {
-            zoom_box_width = 0; // cancel the zoombox
+            g_zoom_box_width = 0; // cancel the zoombox
             drawbox(true);
         }
         else
