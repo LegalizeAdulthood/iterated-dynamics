@@ -497,7 +497,7 @@ done:
         g_box_count = 0;                     // no zoom box yet
         g_zoom_box_width = 0;
 #else
-        if (!XZoomWaiting)
+        if (!g_x_zoom_waiting)
         {
             g_box_count = 0;                 // no zoom box yet
             zoom_box_width = 0;
@@ -570,14 +570,14 @@ resumeloop:                             // return here on failed overlays
 #ifndef XFRACT
                         kbdchar = main_menu(1);
 #else
-                        if (XZoomWaiting)
+                        if (g_x_zoom_waiting)
                         {
                             kbdchar = FIK_ENTER;
                         }
                         else
                         {
                             kbdchar = main_menu(1);
-                            if (XZoomWaiting)
+                            if (g_x_zoom_waiting)
                             {
                                 kbdchar = FIK_ENTER;
                             }
@@ -1407,7 +1407,7 @@ do_3d_transform:
     case FIK_ENTER:                  // Enter
     case FIK_ENTER_2:                // Numeric-Keypad Enter
 #ifdef XFRACT
-        XZoomWaiting = false;
+        g_x_zoom_waiting = false;
 #endif
         if (g_zoom_box_width != 0.0)
         {
@@ -1853,7 +1853,7 @@ static main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdm
     case FIK_ENTER:                  // Enter
     case FIK_ENTER_2:                // Numeric-Keypad Enter
 #ifdef XFRACT
-        XZoomWaiting = false;
+        g_x_zoom_waiting = false;
 #endif
         if (g_zoom_box_width != 0.0)
         {

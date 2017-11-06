@@ -584,6 +584,6 @@ extern double                g_zoom_box_skew;
 extern double                g_zoom_box_width;
 #if defined(XFRACT)
 extern bool                  fake_lut;
-extern bool                  XZoomWaiting;
+extern bool                  g_x_zoom_waiting;
 #endif
 #endif
