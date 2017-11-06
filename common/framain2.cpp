@@ -1445,9 +1445,9 @@ do_3d_transform:
         if (g_box_count && (curfractalspecific->flags & NOROTATE) == 0)
         {
             i = key_count(FIK_CTL_HOME);
-            if ((zoom_box_skew -= 0.02 * i) < -0.48)
+            if ((g_zoom_box_skew -= 0.02 * i) < -0.48)
             {
-                zoom_box_skew = -0.48;
+                g_zoom_box_skew = -0.48;
             }
         }
         break;
@@ -1455,9 +1455,9 @@ do_3d_transform:
         if (g_box_count && (curfractalspecific->flags & NOROTATE) == 0)
         {
             i = key_count(FIK_CTL_END);
-            if ((zoom_box_skew += 0.02 * i) > 0.48)
+            if ((g_zoom_box_skew += 0.02 * i) > 0.48)
             {
-                zoom_box_skew = 0.48;
+                g_zoom_box_skew = 0.48;
             }
         }
         break;
@@ -1483,7 +1483,7 @@ do_3d_transform:
                 g_zoom_box_height = 1;
                 zoom_box_width = g_zoom_box_height;
                 g_zoom_box_rotation = 0;
-                zoom_box_skew = g_zoom_box_rotation;
+                g_zoom_box_skew = g_zoom_box_rotation;
                 g_zoom_box_x = 0;
                 g_zoom_box_y = 0;
                 find_special_colors();
@@ -1947,9 +1947,9 @@ static main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdm
         if (g_box_count && (curfractalspecific->flags & NOROTATE) == 0)
         {
             i = key_count(FIK_CTL_HOME);
-            if ((zoom_box_skew -= 0.02 * i) < -0.48)
+            if ((g_zoom_box_skew -= 0.02 * i) < -0.48)
             {
-                zoom_box_skew = -0.48;
+                g_zoom_box_skew = -0.48;
             }
         }
         break;
@@ -1957,9 +1957,9 @@ static main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdm
         if (g_box_count && (curfractalspecific->flags & NOROTATE) == 0)
         {
             i = key_count(FIK_CTL_END);
-            if ((zoom_box_skew += 0.02 * i) > 0.48)
+            if ((g_zoom_box_skew += 0.02 * i) > 0.48)
             {
-                zoom_box_skew = 0.48;
+                g_zoom_box_skew = 0.48;
             }
         }
         break;
@@ -1997,7 +1997,7 @@ static main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdm
                 g_zoom_box_height = 1;
                 zoom_box_width = g_zoom_box_height;
                 g_zoom_box_rotation = 0;
-                zoom_box_skew = g_zoom_box_rotation;
+                g_zoom_box_skew = g_zoom_box_rotation;
                 g_zoom_box_x = 0;
                 g_zoom_box_y = 0;
                 find_special_colors();

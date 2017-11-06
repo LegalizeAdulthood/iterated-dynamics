@@ -133,7 +133,7 @@ void drawbox(bool drawit)
     fxskew  = g_save_x_3rd-g_save_x_min;
     fydepth = g_save_y_3rd-g_save_y_max;
     fyskew  = g_save_y_min-g_save_y_3rd;
-    fxadj   = zoom_box_width*zoom_box_skew;
+    fxadj   = zoom_box_width*g_zoom_box_skew;
 
     if (bf_math != bf_math_type::NONE)
     {
@@ -662,7 +662,7 @@ static int check_pan() // return 0 if can't, alignment requirement if can
         return (0); // not a worklist-driven type
     }
     if (zoom_box_width != 1.0 || g_zoom_box_height != 1.0
-            || zoom_box_skew != 0.0 || g_zoom_box_rotation != 0.0)
+            || g_zoom_box_skew != 0.0 || g_zoom_box_rotation != 0.0)
     {
         return (0); // not a full size unrotated unskewed zoombox
     }
