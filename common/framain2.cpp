@@ -1480,8 +1480,8 @@ do_3d_transform:
             if (zoom_box_width == 0)
             {
                 // start zoombox
-                zoom_box_height = 1;
-                zoom_box_width = zoom_box_height;
+                g_zoom_box_height = 1;
+                zoom_box_width = g_zoom_box_height;
                 zoom_box_rotation = 0;
                 zoom_box_skew = zoom_box_rotation;
                 g_zoom_box_x = 0;
@@ -1501,7 +1501,7 @@ do_3d_transform:
     case FIK_PAGE_DOWN:              // page down
         if (g_box_count)
         {
-            if (zoom_box_width >= .999 && zoom_box_height >= 0.999)   // end zoombox
+            if (zoom_box_width >= .999 && g_zoom_box_height >= 0.999)   // end zoombox
             {
                 zoom_box_width = 0;
             }
@@ -1994,8 +1994,8 @@ static main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdm
             if (zoom_box_width == 0)
             {
                 // start zoombox
-                zoom_box_height = 1;
-                zoom_box_width = zoom_box_height;
+                g_zoom_box_height = 1;
+                zoom_box_width = g_zoom_box_height;
                 zoom_box_rotation = 0;
                 zoom_box_skew = zoom_box_rotation;
                 g_zoom_box_x = 0;
@@ -2022,7 +2022,7 @@ static main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdm
     case FIK_PAGE_DOWN:              // page down
         if (g_box_count)
         {
-            if (zoom_box_width >= .999 && zoom_box_height >= 0.999)
+            if (zoom_box_width >= .999 && g_zoom_box_height >= 0.999)
             {
                 // end zoombox
                 zoom_box_width = 0;

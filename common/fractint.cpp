@@ -49,7 +49,7 @@ long    g_max_iterations;                  // try this many iterations
 int     g_box_count;               // 0 if no zoom-box yet
 int     zoom_box_rotation;                // zoombox rotation
 double  g_zoom_box_x, g_zoom_box_y;               // topleft of zoombox
-double  zoom_box_width, zoom_box_height, zoom_box_skew;  // zoombox size & shape
+double  zoom_box_width, g_zoom_box_height, zoom_box_skew;  // zoombox size & shape
 
 fractal_type fractype;               // if == 0, use Mandelbrot
 char    g_std_calc_mode;            // '1', '2', 'g', 'b'

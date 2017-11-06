@@ -147,7 +147,7 @@ void drawbox(bool drawit)
 
     // calc co-ords of topleft & botright corners of box
     tmpx = zoom_box_width/-2+fxadj; // from zoombox center as origin, on xdots scale
-    tmpy = zoom_box_height*g_final_aspect_ratio/2;
+    tmpy = g_zoom_box_height*g_final_aspect_ratio/2;
     dx = (rotcos*tmpx - rotsin*tmpy) - tmpx; // delta x to rotate topleft
     dy = tmpy - (rotsin*tmpx + rotcos*tmpy); // delta y to rotate topleft
 
@@ -167,7 +167,7 @@ void drawbox(bool drawit)
 
     // calc co-ords of bottom right
     ftemp1 = g_zoom_box_x + zoom_box_width - dx - fxadj;
-    ftemp2 = g_zoom_box_y - dy/g_final_aspect_ratio + zoom_box_height;
+    ftemp2 = g_zoom_box_y - dy/g_final_aspect_ratio + g_zoom_box_height;
     br.x   = (int)(ftemp1*(g_logical_screen_x_size_dots+PIXELROUND));
     br.y   = (int)(ftemp2*(g_logical_screen_y_size_dots+PIXELROUND));
     g_x_max  = g_save_x_min + ftemp1*fxwidth + ftemp2*fxskew;
@@ -183,7 +183,7 @@ void drawbox(bool drawit)
     dx = (rotcos*tmpx - rotsin*tmpy) - tmpx;
     dy = tmpy - (rotsin*tmpx + rotcos*tmpy);
     ftemp1 = g_zoom_box_x + dx - fxadj;
-    ftemp2 = g_zoom_box_y + dy/g_final_aspect_ratio + zoom_box_height;
+    ftemp2 = g_zoom_box_y + dy/g_final_aspect_ratio + g_zoom_box_height;
     bl.x   = (int)(ftemp1*(g_logical_screen_x_size_dots+PIXELROUND));
     bl.y   = (int)(ftemp2*(g_logical_screen_y_size_dots+PIXELROUND));
     g_x_3rd  = g_save_x_min + ftemp1*fxwidth + ftemp2*fxskew;
@@ -352,13 +352,13 @@ void moveboxf(double dx, double dy)
     }
     if (dy != 0.0)
     {
-        if ((g_zoom_box_y += dy) + zoom_box_height/2 < 0)
+        if ((g_zoom_box_y += dy) + g_zoom_box_height/2 < 0)
         {
-            g_zoom_box_y = zoom_box_height/-2;
+            g_zoom_box_y = g_zoom_box_height/-2;
         }
-        if (g_zoom_box_y + zoom_box_height/2 > 1)
+        if (g_zoom_box_y + g_zoom_box_height/2 > 1)
         {
-            g_zoom_box_y = 1.0 - zoom_box_height/2;
+            g_zoom_box_y = 1.0 - g_zoom_box_height/2;
         }
         int row;
         if (align != 0
@@ -376,7 +376,7 @@ void moveboxf(double dx, double dy)
     if (g_video_scroll)                 // scroll screen center to the box center
     {
         int col = (int)((g_zoom_box_x + zoom_box_width/2)*(g_logical_screen_x_size_dots + PIXELROUND)) + g_logical_screen_x_offset;
-        int row = (int)((g_zoom_box_y + zoom_box_height/2)*(g_logical_screen_y_size_dots + PIXELROUND)) + g_logical_screen_y_offset;
+        int row = (int)((g_zoom_box_y + g_zoom_box_height/2)*(g_logical_screen_y_size_dots + PIXELROUND)) + g_logical_screen_y_offset;
         if (!zscroll)
         {
             // fixed - screen center fixed to the zoombox center
@@ -413,32 +413,32 @@ static void chgboxf(double dwidth, double ddepth)
         dwidth = 0.05-zoom_box_width;
     }
     zoom_box_width += dwidth;
-    if (zoom_box_height+ddepth > 1)
+    if (g_zoom_box_height+ddepth > 1)
     {
-        ddepth = 1.0-zoom_box_height;
+        ddepth = 1.0-g_zoom_box_height;
     }
-    if (zoom_box_height+ddepth < 0.05)
+    if (g_zoom_box_height+ddepth < 0.05)
     {
-        ddepth = 0.05-zoom_box_height;
+        ddepth = 0.05-g_zoom_box_height;
     }
-    zoom_box_height += ddepth;
+    g_zoom_box_height += ddepth;
     moveboxf(dwidth/-2, ddepth/-2); // keep it centered & check limits
 }
 
 void resizebox(int steps)
 {
     double deltax, deltay;
-    if (zoom_box_height*g_screen_aspect > zoom_box_width)
+    if (g_zoom_box_height*g_screen_aspect > zoom_box_width)
     {
         // box larger on y axis
         deltay = steps * 0.036 / g_screen_aspect;
-        deltax = zoom_box_width * deltay / zoom_box_height;
+        deltax = zoom_box_width * deltay / g_zoom_box_height;
     }
     else
     {
         // box larger on x axis
         deltax = steps * 0.036;
-        deltay = zoom_box_height * deltax / zoom_box_width;
+        deltay = g_zoom_box_height * deltax / zoom_box_width;
     }
     chgboxf(deltax, deltay);
 }
@@ -661,7 +661,7 @@ static int check_pan() // return 0 if can't, alignment requirement if can
     {
         return (0); // not a worklist-driven type
     }
-    if (zoom_box_width != 1.0 || zoom_box_height != 1.0
+    if (zoom_box_width != 1.0 || g_zoom_box_height != 1.0
             || zoom_box_skew != 0.0 || zoom_box_rotation != 0.0)
     {
         return (0); // not a full size unrotated unskewed zoombox
