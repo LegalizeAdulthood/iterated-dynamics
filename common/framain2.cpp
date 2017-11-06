@@ -303,10 +303,10 @@ main_state big_while_loop(bool *const kbdmore, bool *const stacked, bool const r
             }
         }
 
-        zoomoff = true;                 // zooming is enabled
+        g_zoom_off = true;                 // zooming is enabled
         if (driver_diskp() || (curfractalspecific->flags&NOZOOM) != 0)
         {
-            zoomoff = false;            // for these cases disable zooming
+            g_zoom_off = false;            // for these cases disable zooming
         }
         if (!g_evolving)
         {
@@ -678,7 +678,7 @@ resumeloop:                             // return here on failed overlays
             default:
                 break;
             }
-            if (zoomoff && *kbdmore) // draw/clear a zoom box?
+            if (g_zoom_off && *kbdmore) // draw/clear a zoom box?
             {
                 drawbox(true);
             }
@@ -1138,7 +1138,7 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
                     g_x_3rd *= 3.0;
                     g_y_3rd *= 3.0;
                 }
-                zoomoff = true;
+                g_zoom_off = true;
                 g_calc_status = calc_status_value::PARAMS_CHANGED;
                 *kbdmore = false;
             }
@@ -1169,7 +1169,7 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
                 g_save_c.y = g_params[1];
                 g_params[0] = 0;
                 g_params[1] = 0;
-                zoomoff = true;
+                g_zoom_off = true;
                 g_calc_status = calc_status_value::PARAMS_CHANGED;
                 *kbdmore = false;
             }
@@ -1201,7 +1201,7 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
                 }
             }
             curfractalspecific = &fractalspecific[static_cast<int>(fractype)];
-            zoomoff = true;
+            g_zoom_off = true;
             g_calc_status = calc_status_value::PARAMS_CHANGED;
             *kbdmore = false;
         }
@@ -1256,7 +1256,7 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
                 }
             }
             restore_history_info(historyptr);
-            zoomoff = true;
+            g_zoom_off = true;
             g_init_mode = g_adapter;
             if (curfractalspecific->isinteger != 0 &&
                     curfractalspecific->tofloat != fractal_type::NOFRACTAL)
@@ -1475,7 +1475,7 @@ do_3d_transform:
         break;
 
     case FIK_PAGE_UP:                // page up
-        if (zoomoff)
+        if (g_zoom_off)
         {
             if (zoom_box_width == 0)
             {
@@ -1711,7 +1711,7 @@ static main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdm
                 }
             }
             restore_history_info(historyptr);
-            zoomoff = true;
+            g_zoom_off = true;
             g_init_mode = g_adapter;
             if (curfractalspecific->isinteger != 0 &&
                     curfractalspecific->tofloat != fractal_type::NOFRACTAL)
@@ -1989,7 +1989,7 @@ static main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdm
         break;
 
     case FIK_PAGE_UP:                // page up
-        if (zoomoff)
+        if (g_zoom_off)
         {
             if (zoom_box_width == 0)
             {

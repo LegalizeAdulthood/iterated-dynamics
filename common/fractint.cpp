@@ -122,7 +122,7 @@ calc_status_value g_calc_status = calc_status_value::NO_FRACTAL;
 //  4 completed
 long g_calc_time;
 
-bool zoomoff = false;                   // false when zoom is disabled
+bool g_zoom_off = false;                   // false when zoom is disabled
 int        g_save_dac;                     // save-the-Video DAC flag
 bool g_browsing = false;                  // browse mode flag
 std::string g_file_name_stack[16];        // array of file names used while browsing
@@ -521,7 +521,7 @@ static main_state main_image_start(bool &stacked, bool &resumeflag)
         }
     }
 
-    zoomoff = true;                     // zooming is enabled
+    g_zoom_off = true;                     // zooming is enabled
     g_help_mode = HELPMAIN;                // now use this help mode
     resumeflag = false;                 // allows taking goto inside big_while_loop()
 
