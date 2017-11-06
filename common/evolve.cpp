@@ -1071,14 +1071,14 @@ void drawparmbox(int mode)
     drawlines(tl, tr, bl.x-tl.x, bl.y-tl.y);
     drawlines(tl, bl, tr.x-tl.x, tr.y-tl.y);
 #else
-    g_box_x[0] = tl.x + sxoffs;
-    g_box_y[0] = tl.y + syoffs;
-    g_box_x[1] = tr.x + sxoffs;
-    g_box_y[1] = tr.y + syoffs;
-    g_box_x[2] = br.x + sxoffs;
-    g_box_y[2] = br.y + syoffs;
-    g_box_x[3] = bl.x + sxoffs;
-    g_box_y[3] = bl.y + syoffs;
+    g_box_x[0] = tl.x + g_logical_screen_x_offset;
+    g_box_y[0] = tl.y + g_logical_screen_y_offset;
+    g_box_x[1] = tr.x + g_logical_screen_x_offset;
+    g_box_y[1] = tr.y + g_logical_screen_y_offset;
+    g_box_x[2] = br.x + g_logical_screen_x_offset;
+    g_box_y[2] = br.y + g_logical_screen_y_offset;
+    g_box_x[3] = bl.x + g_logical_screen_x_offset;
+    g_box_y[3] = bl.y + g_logical_screen_y_offset;
     g_box_count = 8;
 #endif
     if (g_box_count)
