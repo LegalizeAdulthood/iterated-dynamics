@@ -1482,8 +1482,8 @@ do_3d_transform:
                 // start zoombox
                 g_zoom_box_height = 1;
                 zoom_box_width = g_zoom_box_height;
-                zoom_box_rotation = 0;
-                zoom_box_skew = zoom_box_rotation;
+                g_zoom_box_rotation = 0;
+                zoom_box_skew = g_zoom_box_rotation;
                 g_zoom_box_x = 0;
                 g_zoom_box_y = 0;
                 find_special_colors();
@@ -1514,13 +1514,13 @@ do_3d_transform:
     case FIK_CTL_MINUS:              // Ctrl-kpad-
         if (g_box_count && (curfractalspecific->flags & NOROTATE) == 0)
         {
-            zoom_box_rotation += key_count(FIK_CTL_MINUS);
+            g_zoom_box_rotation += key_count(FIK_CTL_MINUS);
         }
         break;
     case FIK_CTL_PLUS:               // Ctrl-kpad+
         if (g_box_count && (curfractalspecific->flags & NOROTATE) == 0)
         {
-            zoom_box_rotation -= key_count(FIK_CTL_PLUS);
+            g_zoom_box_rotation -= key_count(FIK_CTL_PLUS);
         }
         break;
     case FIK_CTL_INSERT:             // Ctrl-ins
@@ -1996,8 +1996,8 @@ static main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdm
                 // start zoombox
                 g_zoom_box_height = 1;
                 zoom_box_width = g_zoom_box_height;
-                zoom_box_rotation = 0;
-                zoom_box_skew = zoom_box_rotation;
+                g_zoom_box_rotation = 0;
+                zoom_box_skew = g_zoom_box_rotation;
                 g_zoom_box_x = 0;
                 g_zoom_box_y = 0;
                 find_special_colors();
@@ -2041,13 +2041,13 @@ static main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdm
     case FIK_CTL_MINUS:              // Ctrl-kpad-
         if (g_box_count && (curfractalspecific->flags & NOROTATE) == 0)
         {
-            zoom_box_rotation += key_count(FIK_CTL_MINUS);
+            g_zoom_box_rotation += key_count(FIK_CTL_MINUS);
         }
         break;
     case FIK_CTL_PLUS:               // Ctrl-kpad+
         if (g_box_count && (curfractalspecific->flags & NOROTATE) == 0)
         {
-            zoom_box_rotation -= key_count(FIK_CTL_PLUS);
+            g_zoom_box_rotation -= key_count(FIK_CTL_PLUS);
         }
         break;
     case FIK_CTL_INSERT:             // Ctrl-ins

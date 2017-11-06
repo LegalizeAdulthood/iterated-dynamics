@@ -124,7 +124,7 @@ void drawbox(bool drawit)
         bffyskew  = alloc_stack(rbflength+2);
         bffxadj   = alloc_stack(rbflength+2);
     }
-    ftemp1 = PI*zoom_box_rotation/72; // convert to radians
+    ftemp1 = PI*g_zoom_box_rotation/72; // convert to radians
     rotcos = cos(ftemp1);   // sin & cos of rotation
     rotsin = sin(ftemp1);
 
@@ -662,7 +662,7 @@ static int check_pan() // return 0 if can't, alignment requirement if can
         return (0); // not a worklist-driven type
     }
     if (zoom_box_width != 1.0 || g_zoom_box_height != 1.0
-            || zoom_box_skew != 0.0 || zoom_box_rotation != 0.0)
+            || zoom_box_skew != 0.0 || g_zoom_box_rotation != 0.0)
     {
         return (0); // not a full size unrotated unskewed zoombox
     }

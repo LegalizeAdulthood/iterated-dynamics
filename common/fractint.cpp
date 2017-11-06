@@ -47,7 +47,7 @@ double  g_logical_screen_x_size_dots, g_logical_screen_y_size_dots;         // x
 int     g_colors = 256;           // maximum colors available
 long    g_max_iterations;                  // try this many iterations
 int     g_box_count;               // 0 if no zoom-box yet
-int     zoom_box_rotation;                // zoombox rotation
+int     g_zoom_box_rotation;                // zoombox rotation
 double  g_zoom_box_x, g_zoom_box_y;               // topleft of zoombox
 double  zoom_box_width, g_zoom_box_height, zoom_box_skew;  // zoombox size & shape
 
