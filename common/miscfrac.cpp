@@ -1865,14 +1865,14 @@ int cellular()
     n = g_params[1];
 #else
     // gcc can't manage to convert a big double to an unsigned long properly.
-    if (param[1]>0x7fffffff)
+    if (g_params[1]>0x7fffffff)
     {
-        n = (param[1]-0x7fffffff);
+        n = (g_params[1]-0x7fffffff);
         n += 0x7fffffff;
     }
     else
     {
-        n = param[1];
+        n = g_params[1];
     }
 #endif
     if (n == 0)
