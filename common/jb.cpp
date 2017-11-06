@@ -42,7 +42,7 @@ DComplex jbcfp;
 #ifndef XFRACT
 static double fg, fg16;
 #endif
-int zdots = 128;
+int g_julibrot_z_dots = 128;
 
 float g_julibrot_origin_fp  = 8.0F;
 float g_julibrot_height_fp  = 7.0F;
@@ -75,8 +75,8 @@ JulibrotSetup()
 
     xoffsetfp = (g_x_max + g_x_min) / 2;     // Calculate average
     yoffsetfp = (g_y_max + g_y_min) / 2;     // Calculate average
-    dmxfp = (g_julibrot_x_max - g_julibrot_x_min) / zdots;
-    dmyfp = (g_julibrot_y_max - g_julibrot_y_min) / zdots;
+    dmxfp = (g_julibrot_x_max - g_julibrot_x_min) / g_julibrot_z_dots;
+    dmyfp = (g_julibrot_y_max - g_julibrot_y_min) / g_julibrot_z_dots;
     g_float_param = &jbcfp;
     x_per_inchfp = (g_x_min - g_x_max) / g_julibrot_width_fp;
     y_per_inchfp = (g_y_max - g_y_min) / g_julibrot_height_fp;
@@ -130,8 +130,8 @@ JulibrotSetup()
         dist = (long)(g_julibrot_dist_fp * fg16);
         eyes = (long)(g_eyes_fp * fg16);
         brratio = (long)(brratiofp * fg16);
-        dmx = (mxmax - mxmin) / zdots;
-        dmy = (mymax - mymin) / zdots;
+        dmx = (mxmax - mxmin) / g_julibrot_z_dots;
+        dmy = (mymax - mymin) / g_julibrot_z_dots;
         g_long_param = &jbc;
 
         x_per_inch = (long)((g_x_min - g_x_max) / g_julibrot_width_fp * fg);
@@ -192,7 +192,7 @@ jb_per_pixel()
     jx += xoffset;
     djx = divide(depth, dist, 16);
     djx = multiply(djx, Per->x - xpixel, 16) << (g_bit_shift - 16);
-    djx = multiply(djx, x_per_inch, g_bit_shift) / zdots;
+    djx = multiply(djx, x_per_inch, g_bit_shift) / g_julibrot_z_dots;
 
     jy = multiply(Per->y - ypixel, initz, 16);
     jy = divide(jy, dist, 16) - ypixel;
@@ -200,7 +200,7 @@ jb_per_pixel()
     jy += yoffset;
     djy = divide(depth, dist, 16);
     djy = multiply(djy, Per->y - ypixel, 16) << (g_bit_shift - 16);
-    djy = multiply(djy, y_per_inch, g_bit_shift) / zdots;
+    djy = multiply(djy, y_per_inch, g_bit_shift) / g_julibrot_z_dots;
 
     return (1);
 }
@@ -210,11 +210,11 @@ jbfp_per_pixel()
 {
     jxfp = ((Perfp->x - xpixelfp) * initzfp / g_julibrot_dist_fp - xpixelfp) * x_per_inchfp;
     jxfp += xoffsetfp;
-    djxfp = (g_julibrot_depth_fp / g_julibrot_dist_fp) * (Perfp->x - xpixelfp) * x_per_inchfp / zdots;
+    djxfp = (g_julibrot_depth_fp / g_julibrot_dist_fp) * (Perfp->x - xpixelfp) * x_per_inchfp / g_julibrot_z_dots;
 
     jyfp = ((Perfp->y - ypixelfp) * initzfp / g_julibrot_dist_fp - ypixelfp) * y_per_inchfp;
     jyfp += yoffsetfp;
-    djyfp = g_julibrot_depth_fp / g_julibrot_dist_fp * (Perfp->y - ypixelfp) * y_per_inchfp / zdots;
+    djyfp = g_julibrot_depth_fp / g_julibrot_dist_fp * (Perfp->y - ypixelfp) * y_per_inchfp / g_julibrot_z_dots;
 
     return (1);
 }
@@ -250,7 +250,7 @@ zline(long x, long y)
         break;
     }
     jb_per_pixel();
-    for (zpixel = 0; zpixel < zdots; zpixel++)
+    for (zpixel = 0; zpixel < g_julibrot_z_dots; zpixel++)
     {
         g_l_old_z.x = jx;
         g_l_old_z.y = jy;
@@ -273,7 +273,7 @@ zline(long x, long y)
         {
             if (g_julibrot_3d_mode == 3)
             {
-                g_color = (int)(128l * zpixel / zdots);
+                g_color = (int)(128l * zpixel / g_julibrot_z_dots);
                 if ((g_row + g_col) & 1)
                 {
 
@@ -295,7 +295,7 @@ zline(long x, long y)
             }
             else
             {
-                g_color = (int)(254l * zpixel / zdots);
+                g_color = (int)(254l * zpixel / g_julibrot_z_dots);
                 (*g_plot)(g_col, g_row, g_color + 1);
             }
             plotted = 1;
@@ -340,7 +340,7 @@ zlinefp(double x, double y)
         break;
     }
     jbfp_per_pixel();
-    for (zpixel = 0; zpixel < zdots; zpixel++)
+    for (zpixel = 0; zpixel < g_julibrot_z_dots; zpixel++)
     {
         // Special initialization for Mandelbrot types
         if ((g_new_orbit_type == fractal_type::QUATFP || g_new_orbit_type == fractal_type::HYPERCMPLXFP)
@@ -395,7 +395,7 @@ zlinefp(double x, double y)
         {
             if (g_julibrot_3d_mode == 3)
             {
-                g_color = (int)(128l * zpixel / zdots);
+                g_color = (int)(128l * zpixel / g_julibrot_z_dots);
                 if ((g_row + g_col) & 1)
                 {
                     (*g_plot)(g_col, g_row, 127 - g_color);
@@ -416,7 +416,7 @@ zlinefp(double x, double y)
             }
             else
             {
-                g_color = (int)(254l * zpixel / zdots);
+                g_color = (int)(254l * zpixel / g_julibrot_z_dots);
                 (*g_plot)(g_col, g_row, g_color + 1);
             }
             plotted = 1;

@@ -573,7 +573,7 @@ static void initvars_fractal()          // init vars affecting calculation
     g_eyes_fp = 2.5F;
     g_julibrot_depth_fp = 8;
     g_new_orbit_type = fractal_type::JULIA;
-    zdots = 128;
+    g_julibrot_z_dots = 128;
     initvars_3d();
     g_base_hertz = 440;                     // basic hertz rate
 #ifndef XFRACT
@@ -2017,7 +2017,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         }
         if (totparms > 0)
         {
-            zdots = (int)floatval[0];
+            g_julibrot_z_dots = (int)floatval[0];
         }
         if (totparms > 1)
         {

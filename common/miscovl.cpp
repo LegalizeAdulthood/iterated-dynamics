@@ -634,10 +634,10 @@ void write_batch_parms(char const *colorinf, bool colorsonly, int maxcolor, int 
                      "julibrotfromto", g_julibrot_x_max, g_julibrot_x_min, g_julibrot_y_max, g_julibrot_y_min);
             // these rarely change
             if (g_julibrot_origin_fp != 8 || g_julibrot_height_fp != 7 || g_julibrot_width_fp != 10 || g_julibrot_dist_fp != 24
-                    || g_julibrot_depth_fp != 8 || zdots != 128)
+                    || g_julibrot_depth_fp != 8 || g_julibrot_z_dots != 128)
             {
                 put_parm(" %s=%d/%g/%g/%g/%g/%g", "julibrot3d",
-                         zdots, g_julibrot_origin_fp, g_julibrot_depth_fp, g_julibrot_height_fp, g_julibrot_width_fp, g_julibrot_dist_fp);
+                         g_julibrot_z_dots, g_julibrot_origin_fp, g_julibrot_depth_fp, g_julibrot_height_fp, g_julibrot_width_fp, g_julibrot_dist_fp);
             }
             if (g_eyes_fp != 0)
             {

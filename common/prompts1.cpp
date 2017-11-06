@@ -1852,7 +1852,7 @@ gfp_top:
         paramvalues[promptnum].uval.dval = g_julibrot_y_min;
         paramvalues[promptnum].type = 'f';
         choices[promptnum++] = v3;
-        paramvalues[promptnum].uval.ival = zdots;
+        paramvalues[promptnum].uval.ival = g_julibrot_z_dots;
         paramvalues[promptnum].type = 'i';
         choices[promptnum++] = "Number of z pixels";
 
@@ -2038,7 +2038,7 @@ gfp_top:
         g_julibrot_y_max    = paramvalues[promptnum++].uval.dval;
         g_julibrot_x_min    = paramvalues[promptnum++].uval.dval;
         g_julibrot_y_min    = paramvalues[promptnum++].uval.dval;
-        zdots      = paramvalues[promptnum++].uval.ival;
+        g_julibrot_z_dots      = paramvalues[promptnum++].uval.ival;
         g_julibrot_3d_mode = paramvalues[promptnum++].uval.ch.val;
         g_eyes_fp     = (float)paramvalues[promptnum++].uval.dval;
         g_julibrot_origin_fp   = (float)paramvalues[promptnum++].uval.dval;

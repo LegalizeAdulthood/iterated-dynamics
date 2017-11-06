@@ -251,7 +251,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
         g_julibrot_x_min   =  read_info.mxminfp        ;
         g_julibrot_y_max   =  read_info.mymaxfp        ;
         g_julibrot_y_min   =  read_info.myminfp        ;
-        zdots     =  read_info.zdots          ;
+        g_julibrot_z_dots     =  read_info.zdots          ;
         g_julibrot_origin_fp  =  read_info.originfp       ;
         g_julibrot_depth_fp   =  read_info.depthfp        ;
         g_julibrot_height_fp  =  read_info.heightfp       ;
