@@ -94,7 +94,7 @@ bool    g_view_crop = false;       // true to crop default coords
 float   g_final_aspect_ratio;       // for view shape and rotation
 int     g_view_x_dots, g_view_y_dots;    // explicit view sizing
 bool    g_keep_aspect_ratio = false;  // true to keep virtual aspect
-bool    zscroll = false;        // screen/zoombox false fixed, true relaxed
+bool    g_z_scroll = false;        // screen/zoombox false fixed, true relaxed
 
 // variables defined by the command line/files processor
 bool    g_compare_gif = false;             // compare two gif files flag

@@ -579,7 +579,7 @@ extern double                g_zoom_box_height;
 extern int                   g_julibrot_z_dots;
 extern bool                  g_zoom_off;
 extern int                   g_zoom_box_rotation;
-extern bool                  zscroll;
+extern bool                  g_z_scroll;
 extern double                zoom_box_skew;
 extern double                zoom_box_width;
 #if defined(XFRACT)

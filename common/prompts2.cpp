@@ -928,7 +928,7 @@ get_view_restart:
         uvalues[k].uval.ch.vlen = 7;
         uvalues[k].uval.ch.llen = sizeof(scrolltypes)/sizeof(*scrolltypes);
         uvalues[k].uval.ch.list = scrolltypes;
-        uvalues[k].uval.ch.val = zscroll ? 1 : 0;
+        uvalues[k].uval.ch.val = g_z_scroll ? 1 : 0;
     }
 
     choices[++k] = "";
@@ -971,7 +971,7 @@ get_view_restart:
         g_screen_x_dots = old_sxdots;
         g_screen_y_dots = old_sydots;
         g_keep_aspect_ratio = true;
-        zscroll = true;
+        g_z_scroll = true;
         goto get_view_restart;
     }
 
@@ -993,7 +993,7 @@ get_view_restart:
     g_screen_x_dots = uvalues[++k].uval.ival;
     g_screen_y_dots = uvalues[++k].uval.ival;
     g_keep_aspect_ratio = uvalues[++k].uval.ch.val != 0;
-    zscroll = uvalues[++k].uval.ch.val != 0;
+    g_z_scroll = uvalues[++k].uval.ch.val != 0;
 
     if ((xmax != -1) && (g_screen_x_dots > xmax))
     {

@@ -430,7 +430,7 @@ static void initvars_restart()          // <ins> key init
     g_view_y_dots = 0;
     g_view_x_dots = g_view_y_dots;
     g_keep_aspect_ratio = true;               // keep virtual aspect
-    zscroll = true;                     // relaxed screen scrolling
+    g_z_scroll = true;                     // relaxed screen scrolling
     g_orbit_delay = 0;                    // full speed orbits
     g_orbit_interval = 1;                 // plot all orbits
     g_debug_flag = debug_flags::none;      // debugging flag(s) are off

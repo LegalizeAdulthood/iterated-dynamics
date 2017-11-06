@@ -377,7 +377,7 @@ void moveboxf(double dx, double dy)
     {
         int col = (int)((g_zoom_box_x + zoom_box_width/2)*(g_logical_screen_x_size_dots + PIXELROUND)) + g_logical_screen_x_offset;
         int row = (int)((g_zoom_box_y + g_zoom_box_height/2)*(g_logical_screen_y_size_dots + PIXELROUND)) + g_logical_screen_y_offset;
-        if (!zscroll)
+        if (!g_z_scroll)
         {
             // fixed - screen center fixed to the zoombox center
             scroll_center(col, row);
