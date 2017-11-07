@@ -393,7 +393,6 @@ long readticker()
 */
 void spindac(int dir, int inc)
 {
-    unsigned char tmp[3];
     if (g_colors < 16)
         return;
     if (g_is_true_color && g_true_mode != true_color_mode::default_color)
@@ -401,24 +400,26 @@ void spindac(int dir, int inc)
     if (dir != 0 && g_color_cycle_range_lo < g_colors && g_color_cycle_range_lo < g_color_cycle_range_hi)
     {
         int top = g_color_cycle_range_hi > g_colors ? g_colors - 1 : g_color_cycle_range_hi;
-        unsigned char *dacbot = (unsigned char *) g_dac_box + 3 * g_color_cycle_range_lo;
-        int len = (top - g_color_cycle_range_lo) * 3 * sizeof(unsigned char);
+        unsigned char *dacbot = (unsigned char *) g_dac_box + 3*g_color_cycle_range_lo;
+        int len = (top - g_color_cycle_range_lo)*3*sizeof(unsigned char);
         if (dir > 0)
         {
             for (int i = 0; i < inc; i++)
             {
-                memcpy(tmp, dacbot, 3 * sizeof(unsigned char));
-                memcpy(dacbot, dacbot + 3 * sizeof(unsigned char), len);
-                memcpy(dacbot + len, tmp, 3 * sizeof(unsigned char));
+                unsigned char tmp[3];
+                memcpy(tmp, dacbot, 3*sizeof(unsigned char));
+                memcpy(dacbot, dacbot + 3*sizeof(unsigned char), len);
+                memcpy(dacbot + len, tmp, 3*sizeof(unsigned char));
             }
         }
         else
         {
             for (int i = 0; i < inc; i++)
             {
-                memcpy(tmp, dacbot + len, 3 * sizeof(unsigned char));
-                memcpy(dacbot + 3 * sizeof(unsigned char), dacbot, len);
-                memcpy(dacbot, tmp, 3 * sizeof(unsigned char));
+                unsigned char tmp[3];
+                memcpy(tmp, dacbot + len, 3*sizeof(unsigned char));
+                memcpy(dacbot + 3*sizeof(unsigned char), dacbot, len);
+                memcpy(dacbot, tmp, 3*sizeof(unsigned char));
             }
         }
     }
