@@ -237,7 +237,6 @@ find_special_colors()
     int minb = 9999;
     int med = 0;
     int maxgun, mingun;
-    int brt;
 
     g_color_dark = 0;
     g_color_medium = 7;
@@ -255,7 +254,7 @@ find_special_colors()
 
     for (int i = 0; i < g_colors; i++)
     {
-        brt = (int) g_dac_box[i][0] + (int) g_dac_box[i][1] + (int) g_dac_box[i][2];
+        const int brt = (int) g_dac_box[i][0] + (int) g_dac_box[i][1] + (int) g_dac_box[i][2];
         if (brt > maxb)
         {
             maxb = brt;
