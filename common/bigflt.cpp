@@ -511,7 +511,7 @@ bf_t unsafe_div_bf(bf_t r, bf_t n1, bf_t n2)
 //      n ends up as |n|
 bf_t unsafe_sqrt_bf(bf_t r, bf_t n)
 {
-    int comp, almost_match = 0;
+    int almost_match = 0;
     LDBL f;
     bf_t orig_r, orig_n;
     int  orig_bflength,
@@ -579,15 +579,17 @@ bf_t unsafe_sqrt_bf(bf_t r, bf_t n)
         unsafe_div_bf(bftmp3, n, r);
         unsafe_add_a_bf(r, bftmp3);
         half_a_bf(r);
-        if (bflength == orig_bflength && (comp = abs(cmp_bf(r, bftmp3))) < 8)  // if match or almost match
+        if (bflength == orig_bflength)
         {
-            if (comp < 4  // perfect or near perfect match
-                    || almost_match == 1)   // close enough for 2nd time
+            const int comp = abs(cmp_bf(r, bftmp3));  // if match or almost match
+            if (comp < 8)
             {
-                break;
-            }
-            else     // this is the first time they almost matched
-            {
+                if (comp < 4  // perfect or near perfect match
+                        || almost_match == 1)   // close enough for 2nd time
+                {
+                    break;
+                }
+                // this is the first time they almost matched
                 almost_match++;
             }
         }
@@ -648,7 +650,7 @@ bf_t exp_bf(bf_t r, bf_t n)
 //      n ends up as |n|
 bf_t unsafe_ln_bf(bf_t r, bf_t n)
 {
-    int comp, almost_match = 0;
+    int almost_match = 0;
     LDBL f;
     bf_t orig_r, orig_n, orig_bftmp5;
     int  orig_bflength,
@@ -720,15 +722,17 @@ bf_t unsafe_ln_bf(bf_t r, bf_t n)
         inttobf(bftmp4, 1);
         unsafe_sub_a_bf(bftmp2, bftmp4);   // n*exp(-r) - 1
         unsafe_sub_a_bf(r, bftmp2);        // -r - (n*exp(-r) - 1)
-        if (bflength == orig_bflength && (comp = abs(cmp_bf(r, bftmp5))) < 8)  // if match or almost match
+        if (bflength == orig_bflength)
         {
-            if (comp < 4  // perfect or near perfect match
+            const int comp = abs(cmp_bf(r, bftmp5));
+            if(comp < 8)  // if match or almost match
+            {
+                if (comp < 4  // perfect or near perfect match
                     || almost_match == 1)   // close enough for 2nd time
-            {
-                break;
-            }
-            else     // this is the first time they almost matched
-            {
+                {
+                    break;
+                }
+                // this is the first time they almost matched
                 almost_match++;
             }
         }
@@ -936,7 +940,7 @@ bf_t unsafe_sincos_bf(bf_t s, bf_t c, bf_t n)
 //      n ends up as |n| or 1/|n|
 bf_t unsafe_atan_bf(bf_t r, bf_t n)
 {
-    int comp, almost_match = 0;
+    int almost_match = 0;
     bool signflag = false;
     LDBL f;
     bf_t orig_r, orig_n, orig_bf_pi, orig_bftmp3;
@@ -1033,28 +1037,29 @@ bf_t unsafe_atan_bf(bf_t r, bf_t n)
         putchar('\n');
         bf_hexdump(r);
 #endif
-        if (bflength == orig_bflength && (comp = abs(cmp_bf(r, bftmp3))) < 8)  // if match or almost match
+        if (bflength == orig_bflength)
         {
+            const int comp = abs(cmp_bf(r, bftmp3));
+            if (comp < 8)  // if match or almost match
+            {
 #if defined(CALCULATING_BIG_PI) && !defined(_WIN32)
-            printf("atan() loop comp=%i\n", comp);
+                printf("atan() loop comp=%i\n", comp);
 #endif
-            if (comp < 4  // perfect or near perfect match
-                    || almost_match == 1)   // close enough for 2nd time
-            {
-                break;
-            }
-            else     // this is the first time they almost matched
-            {
+                if (comp < 4  // perfect or near perfect match
+                        || almost_match == 1)   // close enough for 2nd time
+                {
+                    break;
+                }
+                // this is the first time they almost matched
                 almost_match++;
             }
-        }
-
 #if defined(CALCULATING_BIG_PI) && !defined(_WIN32)
-        if (bflength == orig_bflength && comp >= 8)
-        {
-            printf("atan() loop comp=%i\n", comp);
-        }
+            else
+            {
+                printf("atan() loop comp=%i\n", comp);
+            }
 #endif
+        }
 
         copy_bf(bftmp3, r); // make a copy for later comparison
     }
@@ -1364,7 +1369,7 @@ bf_t norm_bf(bf_t r)
         int scale;
         for (scale = 2; scale < bflength && r[bflength-scale] == hi_byte; scale++)
         {
-            ; // do nothing
+            // do nothing
         }
         if (scale == bflength && hi_byte == 0)   // zero
         {
@@ -1514,7 +1519,7 @@ int cmp_bf(bf_t n1, bf_t n2)
 
             return (i+1); // low byte was different
         }
-        else if (value1 < value2)
+        if (value1 < value2)
         {
             // now determine which of the two bytes was different
             if ((value1&0xFF00) < (value2&0xFF00))     // compare just high bytes
