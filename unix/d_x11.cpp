@@ -73,7 +73,7 @@ extern unsigned char g_dac_box[256][3];
 
 extern int g_text_type;
 extern int g_help_mode;
-extern int rotate_hi;
+extern int g_color_cycle_range_hi;
 
 typedef unsigned long XPixel;
 
@@ -1967,8 +1967,8 @@ x11_window(Driver *drv)
         di->Xgc = XCreateGC(di->Xdp, di->Xw, 0, &Xgcvals);
     }
     g_colors = xcmapstuff(di);
-    if (rotate_hi == 255)
-        rotate_hi = g_colors-1;
+    if (g_color_cycle_range_hi == 255)
+        g_color_cycle_range_hi = g_colors-1;
 
     {
         unsigned long event_mask = KeyPressMask | KeyReleaseMask | ExposureMask;

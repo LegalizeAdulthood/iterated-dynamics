@@ -73,7 +73,7 @@ extern unsigned char dacbox[256][3];
 
 extern int g_text_type;
 extern int g_help_mode;
-extern int rotate_hi;
+extern int g_color_cycle_range_hi;
 
 extern void fpe_handler(int signum);
 
@@ -535,8 +535,8 @@ initUnixWindow()
             Xgc = XCreateGC(Xdp, Xw, 0, &Xgcvals);
         }
         g_colors = xcmapstuff();
-        if (rotate_hi == 255)
-            rotate_hi = g_colors-1;
+        if (g_color_cycle_range_hi == 255)
+            g_color_cycle_range_hi = g_colors-1;
 
         XSetWMNormalHints(Xdp, Xw, size_hints);
 

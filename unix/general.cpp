@@ -388,8 +388,8 @@ decode_fractal_info(FRACTAL_INFO *info, int dir)
     getInt(&info->ambient, &bufPtr, dir);
     getInt(&info->haze, &bufPtr, dir);
     getInt(&info->randomize, &bufPtr, dir);
-    getInt(&info->rotate_lo, &bufPtr, dir);
-    getInt(&info->rotate_hi, &bufPtr, dir);
+    getInt(&info->g_color_cycle_range_lo, &bufPtr, dir);
+    getInt(&info->g_color_cycle_range_hi, &bufPtr, dir);
     getInt(&info->distestwidth, &bufPtr, dir);
     getDouble(&info->dparm3, &bufPtr, dir);
     getDouble(&info->dparm4, &bufPtr, dir);
