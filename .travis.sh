@@ -20,6 +20,7 @@ if [ $ANALYZE = "true" ]; then
             --enable=style --force --std=c++11 -j 8 \
             --suppress=incorrectStringBooleanError \
             --suppress=cstyleCast \
+            --suppress=variableScope \
             --suppress=invalidscanf --inline-suppr \
             -I headers hc common headers unix win32 2> cppcheck.txt
         if [ -s cppcheck.txt ]; then
