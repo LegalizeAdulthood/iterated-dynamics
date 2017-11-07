@@ -669,7 +669,7 @@ int expand_dirname(char *dirname, char *drive)
 int abortmsg(char const *file, unsigned int line, int flags, char const *msg)
 {
     char buffer[3*80];
-    sprintf(buffer, "%s(%d):\n%s", file, line, msg);
+    sprintf(buffer, "%s(%u):\n%s", file, line, msg);
     return stopmsg(flags, buffer);
 }
 
@@ -686,7 +686,7 @@ ods(char const *file, unsigned int line, char const *format, ...)
 
     va_start(args, format);
     _vsnprintf(app_msg, MAX_PATH, format, args);
-    _snprintf(full_msg, MAX_PATH, "%s(%d): %s\n", file, line, app_msg);
+    _snprintf(full_msg, MAX_PATH, "%s(%u): %s\n", file, line, app_msg);
     va_end(args);
 
     OutputDebugString(full_msg);
