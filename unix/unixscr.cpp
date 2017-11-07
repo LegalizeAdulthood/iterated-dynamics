@@ -2021,9 +2021,9 @@ xhandleevents()
             }
             g_zoom_box_rotation = 0;
             g_zoom_box_skew = 0;
-            g_zoom_box_x = (MIN(bandx0, bandx1)-g_logical_screen_x_offset)/g_x_size_dots;
-            g_zoom_box_y = (MIN(bandy0, bandy1)-g_logical_screen_y_offset)/g_y_size_dots;
-            g_zoom_box_width = ABS(bandx1-bandx0)/g_x_size_dots;
+            g_zoom_box_x = (MIN(bandx0, bandx1)-g_logical_screen_x_offset)/g_logical_screen_x_size_dots;
+            g_zoom_box_y = (MIN(bandy0, bandy1)-g_logical_screen_y_offset)/g_logical_screen_y_size_dots;
+            g_zoom_box_width = ABS(bandx1-bandx0)/g_logical_screen_x_size_dots;
             g_zoom_box_height = g_zoom_box_width;
             if (!g_inside_help)
             {
