@@ -359,6 +359,7 @@ U16 MemoryAlloc(U16 size, long count, int stored_at)
         handletable[handle].Disk.file = g_disk_targa ?
             dir_fopen(g_working_dir.c_str(), g_light_name.c_str(), "r+b") :
             dir_fopen(g_temp_dir.c_str(), memfile, "r+b");
+        // cppcheck-suppress useClosedFile
         rewind(handletable[handle].Disk.file);
         handletable[handle].Disk.size = toallocate;
         handletable[handle].Disk.stored_at = DISK;
