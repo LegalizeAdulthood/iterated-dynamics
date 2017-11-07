@@ -12,20 +12,11 @@
 #include "drivers.h"
 
 // Global variables (yuck!)
-static char extrasegment[0x18000] = { 0 };
-void *extraseg = &extrasegment[0];
-int fm_attack = 0;
-int fm_decay = 0;
-int fm_release = 0;
-int fm_sustain = 0;
-int fm_vol = 0;
-int fm_wavetype = 0;
 int g_hi_attenuation = 0;
-long linitx = 0;
-long linity = 0;
-int polyphony = 0;
+long g_l_init_x = 0;
+long g_l_init_y = 0;
 long g_save_base = 0;              // base clock ticks
-long saveticks = 0;             // save after this many ticks
+long g_save_ticks = 0;             // save after this many ticks
 
 /* g_video_table
  *
