@@ -933,7 +933,7 @@ handle_esc(DriverX11 *di)
             return FIK_ESC;
         ch2 = (ch2-'0')*10+ch3-'0';
     }
-    else if (ch3 != '~')
+    else if (ch2 != '~')
     {
         return FIK_ESC;
     }
