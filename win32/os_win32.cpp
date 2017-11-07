@@ -639,17 +639,15 @@ int getakeynohelp()
 // converts relative path to absolute path
 int expand_dirname(char *dirname, char *drive)
 {
-    char relative[MAX_PATH];
-    char absolute[MAX_PATH];
-    BOOL status;
-
     if (PathIsRelative(dirname))
     {
+        char relative[MAX_PATH];
         _ASSERTE(strlen(drive) < NUM_OF(relative));
         strcpy(relative, drive);
         _ASSERTE(strlen(relative) + strlen(dirname) < NUM_OF(relative));
         strcat(relative, dirname);
-        status = PathSearchAndQualify(relative, absolute, NUM_OF(absolute));
+        char absolute[MAX_PATH];
+        BOOL status = PathSearchAndQualify(relative, absolute, NUM_OF(absolute));
         _ASSERTE(status);
         if (':' == absolute[1])
         {
