@@ -64,7 +64,9 @@ std::string g_working_dir;            // name of directory for misc files
 std::string g_organize_formulas_dir;          // name of directory for orgfrm files
 std::string g_gif_filename_mask;
 char    PrintName[FILE_MAX_PATH] = {"fract001.prn"}; // Name for print-to-file
+// cppcheck-suppress constStatement
 std::string g_save_filename{"fract001"}; // save files using this name
+// cppcheck-suppress constStatement
 std::string g_auto_name{"auto.key"}; // record auto keystrokes here
 bool    g_potential_flag = false;        // continuous potential enabled?
 bool    g_potential_16bit = false;               // store 16 bit continuous potential values
@@ -3766,6 +3768,7 @@ static void argerror(char const *badarg)      // oops. couldn't decode this
         spillover = std::string(&badarg[0], &badarg[70]);
         badarg = spillover.c_str();
     }
+    // cppcheck-suppress constStatement
     std::string msg{"Oops. I couldn't understand the argument:\n  "};
     msg += badarg;
 

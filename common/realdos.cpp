@@ -349,6 +349,7 @@ int putstringcenter(int row, int col, int width, int attr, char const *msg)
 
 // ------------------------------------------------------------------------
 
+// cppcheck-suppress constStatement
 std::string const g_speed_prompt{"Speed key string"};
 
 /* For file list purposes only, it's a directory name if first

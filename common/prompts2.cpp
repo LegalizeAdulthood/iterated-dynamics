@@ -1097,9 +1097,8 @@ double starfield_values[4] =
     30.0, 100.0, 5.0, 0.0
 };
 
-std::string const g_gray_map_file
-{"altern.map"
-};
+// cppcheck-suppress constStatement
+std::string const g_gray_map_file{"altern.map"};
 
 int starfield()
 {   

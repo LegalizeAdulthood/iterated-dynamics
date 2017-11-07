@@ -115,12 +115,14 @@ int g_ambient;
 int g_randomize_3d;
 int g_haze;
 int Real_V = 0; // Actual value of V for fillytpe>4 monochrome images
+// cppcheck-suppress constStatement
 std::string g_light_name{"fract001"};
 bool g_targa_overlay = false;
 int error;
 char targa_temp[14] = "fractemp.tga";
 int P = 250; // Perspective dist used when viewing light vector
 BYTE g_background_color[3];
+// cppcheck-suppress constStatement
 std::string g_raytrace_filename{"fract001"};
 bool g_preview = false;
 bool g_show_box = false;
