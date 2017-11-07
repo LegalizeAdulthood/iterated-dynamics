@@ -889,11 +889,11 @@ handle_esc(DriverX11 *di)
 {
 #ifdef __hpux
     // HP escape key sequences.
-    int ch1 = getachar();
+    int ch1 = getachar(di);
     if (ch1 == -1)
     {
         driver_delay(250); // Wait 1/4 sec to see if a control sequence follows
-        ch1 = getachar();
+        ch1 = getachar(di);
     }
     if (ch1 == -1)
         return FIK_ESC;
@@ -913,30 +913,30 @@ handle_esc(DriverX11 *di)
     }
     if (ch1 != '[')
         return FIK_ESC;
-    ch1 = getachar();
+    ch1 = getachar(di);
     if (ch1 == -1)
     {
         driver_delay(250); // Wait 1/4 sec to see if a control sequence follows
-        ch1 = getachar();
+        ch1 = getachar(di);
     }
     if (ch1 == -1 || !isdigit(ch1))
         return FIK_ESC;
-    int ch2 = getachar();
+    int ch2 = getachar(di);
     if (ch2 == -1)
     {
         driver_delay(250); // Wait 1/4 sec to see if a control sequence follows
-        ch2 = getachar();
+        ch2 = getachar(di);
     }
     if (ch2 == -1)
         return FIK_ESC;
     int ch3;
     if (isdigit(ch2))
     {
-        ch3 = getachar();
+        ch3 = getachar(di);
         if (ch3 == -1)
         {
             driver_delay(250); // Wait 1/4 sec to see if a control sequence follows
-            ch3 = getachar();
+            ch3 = getachar(di);
         }
         if (ch3 != '~')
             return FIK_ESC;
