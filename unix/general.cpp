@@ -69,7 +69,7 @@ int keypressed()
         g_inside_help = false;
         return 0;
     }
-    else if (ch == FIK_TAB && tab_mode)
+    else if (ch == FIK_TAB && g_tab_mdoe)
     {
         keybuffer = 0;
         tab_display();
@@ -197,7 +197,7 @@ getkeyint(int block)
 void
 buzzer(buzzer_codes buzzertype)
 {
-    if ((soundflag & 7) != 0)
+    if ((g_sound_flag & 7) != 0)
     {
         printf("\007");
         fflush(stdout);
