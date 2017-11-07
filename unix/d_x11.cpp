@@ -1280,7 +1280,7 @@ ev_button_press(DriverX11 *di, XEvent *xevent)
     bool banding = false;
     int bandx0, bandy0, bandx1, bandy1;
 
-    if (g_look_at_mouse == 3 || !zoomoff)
+    if (g_look_at_mouse == 3 || !g_zoom_off)
     {
         di->last_x = xevent->xbutton.x;
         di->last_y = xevent->xbutton.y;
@@ -1351,9 +1351,9 @@ ev_button_press(DriverX11 *di, XEvent *xevent)
         bandy1 = bandy0+1;
     g_zoom_box_rotation = 0;
     g_zoom_box_skew = 0;
-    g_zoom_box_x = (MIN(bandx0, bandx1)-g_logical_screen_x_offset)/x_size_d;
-    g_zoom_box_y = (MIN(bandy0, bandy1)-g_logical_screen_y_offset)/y_size_d;
-    g_zoom_box_width = ABS(bandx1-bandx0)/x_size_d;
+    g_zoom_box_x = (MIN(bandx0, bandx1)-g_logical_screen_x_offset)/g_x_size_dots;
+    g_zoom_box_y = (MIN(bandy0, bandy1)-g_logical_screen_y_offset)/g_y_size_dots;
+    g_zoom_box_width = ABS(bandx1-bandx0)/g_x_size_dots;
     g_zoom_box_height = g_zoom_box_width;
     if (!g_inside_help)
         di->key_buffer = FIK_ENTER;
@@ -1661,7 +1661,7 @@ x11_flush(Driver *drv)
 
 void fpe_handler(int signum)
 {
-    overflow = true;
+    g_overflow = true;
 }
 
 /*----------------------------------------------------------------------
