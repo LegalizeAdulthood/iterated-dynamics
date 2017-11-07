@@ -754,7 +754,7 @@ bn_t unsafe_div_bn(bn_t r, bn_t n1, bn_t n2)
 //      n ends up as |n|
 bn_t sqrt_bn(bn_t r, bn_t n)
 {
-    int comp, almost_match = 0;
+    int almost_match = 0;
     LDBL f;
     bn_t orig_r, orig_n;
     int  orig_bnlength,
@@ -821,15 +821,17 @@ bn_t sqrt_bn(bn_t r, bn_t n)
         unsafe_div_bn(bntmp4, bntmp5, bntmp6);
         add_a_bn(r, bntmp4);
         half_a_bn(r);
-        if (bnlength == orig_bnlength && (comp = abs(cmp_bn(r, bntmp4))) < 8)  // if match or almost match
+        if (bnlength == orig_bnlength)
         {
-            if (comp < 4  // perfect or near perfect match
-                    || almost_match == 1)   // close enough for 2nd time
+            const int comp = abs(cmp_bn(r, bntmp4));
+            if (comp < 8)  // if match or almost match
             {
-                break;
-            }
-            else     // this is the first time they almost matched
-            {
+                if (comp < 4  // perfect or near perfect match
+                        || almost_match == 1)   // close enough for 2nd time
+                {
+                    break;
+                }
+                // this is the first time they almost matched
                 almost_match++;
             }
         }
@@ -884,7 +886,7 @@ bn_t exp_bn(bn_t r, bn_t n)
 //      n ends up as |n|
 bn_t unsafe_ln_bn(bn_t r, bn_t n)
 {
-    int comp, almost_match = 0;
+    int almost_match = 0;
     long maxval;
     LDBL f;
     bn_t orig_r, orig_n, orig_bntmp5, orig_bntmp4;
@@ -968,15 +970,17 @@ bn_t unsafe_ln_bn(bn_t r, bn_t n)
         sub_a_bn(bntmp2+shiftfactor, bntmp4);   // n*exp(-r) - 1
         sub_a_bn(r, bntmp2+shiftfactor);        // -r - (n*exp(-r) - 1)
 
-        if (bnlength == orig_bnlength && (comp = abs(cmp_bn(r, bntmp5))) < 8)  // if match or almost match
+        if (bnlength == orig_bnlength)
         {
-            if (comp < 4  // perfect or near perfect match
-                    || almost_match == 1)   // close enough for 2nd time
+            const int comp = abs(cmp_bn(r, bntmp5));
+            if (comp < 8)  // if match or almost match
             {
-                break;
-            }
-            else     // this is the first time they almost matched
-            {
+                if (comp < 4  // perfect or near perfect match
+                        || almost_match == 1)   // close enough for 2nd time
+                {
+                    break;
+                }
+                // this is the first time they almost matched
                 almost_match++;
             }
         }
@@ -1166,7 +1170,7 @@ bn_t unsafe_sincos_bn(bn_t s, bn_t c, bn_t n)
 //      n ends up as |n| or 1/|n|
 bn_t unsafe_atan_bn(bn_t r, bn_t n)
 {
-    int comp, almost_match = 0;
+    int almost_match = 0;
     LDBL f;
     bn_t orig_r, orig_n, orig_bn_pi, orig_bntmp3;
     int  orig_bnlength,
@@ -1257,28 +1261,31 @@ bn_t unsafe_atan_bn(bn_t r, bn_t n)
         putchar('\n');
         bn_hexdump(r);
 #endif
-        if (bnlength == orig_bnlength && (comp = abs(cmp_bn(r, bntmp3))) < 8)  // if match or almost match
+        if (bnlength == orig_bnlength)
         {
-#ifdef CALCULATING_BIG_PI
-            printf("atan() loop comp=%i\n", comp);
-#endif
-            if (comp < 4  // perfect or near perfect match
-                    || almost_match == 1)   // close enough for 2nd time
+            const int comp = abs(cmp_bn(r, bntmp3));
+            if (comp < 8)  // if match or almost match
             {
-                break;
-            }
-            else     // this is the first time they almost matched
-            {
-                almost_match++;
-            }
-        }
-
 #ifdef CALCULATING_BIG_PI
-        if (bnlength == orig_bnlength && comp >= 8)
-        {
-            printf("atan() loop comp=%i\n", comp);
-        }
+                printf("atan() loop comp=%i\n", comp);
 #endif
+                if (comp < 4  // perfect or near perfect match
+                        || almost_match == 1)   // close enough for 2nd time
+                {
+                    break;
+                }
+                else     // this is the first time they almost matched
+                {
+                    almost_match++;
+                }
+            }
+#ifdef CALCULATING_BIG_PI
+            if (comp >= 8)
+            {
+                printf("atan() loop comp=%i\n", comp);
+            }
+#endif
+        }
 
         copy_bn(bntmp3, r); // make a copy for later comparison
     }
