@@ -19,6 +19,7 @@ if [ $ANALYZE = "true" ]; then
         cppcheck --template "{file}({line}): {severity} ({id}): {message}" \
             --enable=style --force --std=c++11 -j 8 \
             --suppress=incorrectStringBooleanError \
+            --suppress=cstyleCast \
             --suppress=invalidscanf --inline-suppr \
             -I headers hc common headers unix win32 2> cppcheck.txt
         if [ -s cppcheck.txt ]; then
