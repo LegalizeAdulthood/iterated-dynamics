@@ -69,7 +69,7 @@ int keypressed()
         g_inside_help = false;
         return 0;
     }
-    else if (ch == FIK_TAB && g_tab_mdoe)
+    else if (ch == FIK_TAB && g_tab_mode)
     {
         keybuffer = 0;
         tab_display();
