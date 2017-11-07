@@ -925,10 +925,9 @@ handle_esc(DriverX11 *di)
     int ch2 = get_a_char_delay(di);
     if (ch2 == -1)
         return FIK_ESC;
-    int ch3;
     if (isdigit(ch2))
     {
-        ch3 = get_a_char_delay(di);
+        const int ch3 = get_a_char_delay(di);
         if (ch3 != '~')
             return FIK_ESC;
         ch2 = (ch2-'0')*10+ch3-'0';
