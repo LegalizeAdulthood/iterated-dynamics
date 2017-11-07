@@ -1183,7 +1183,7 @@ int writevideopalette()
     {
         if (g_fake_lut)
         {
-            // !g_got_real_dac, fake_lut => truecolor, directcolor displays
+            // !g_got_real_dac, g_fake_lut => truecolor, directcolor displays
             static unsigned char last_dac[256][3];
             static bool last_dac_inited = false;
 
@@ -1219,7 +1219,7 @@ int writevideopalette()
         }
         else
         {
-            // !g_got_real_dac, !fake_lut => static color, static gray displays
+            // !g_got_real_dac, !g_fake_lut => static color, static gray displays
             assert(1);
         }
     }

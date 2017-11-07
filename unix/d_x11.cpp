@@ -106,7 +106,7 @@ struct DriverX11
     int ipixtab[256];
     XPixel cmap_pixtab[256];    // for faking a LUTs on non-LUT visuals
     bool cmap_pixtab_alloced;
-    bool fake_lut;
+    bool g_fake_lut;
 
     bool fastmode;              // = false; Don't draw pixels 1 at a time
     bool alarmon;               // = false; true if the refresh alarm is on
@@ -265,7 +265,7 @@ static const VIDEOINFO modes[] =
 static unsigned long
 do_fake_lut(DriverX11 *di, int idx)
 {
-    return di->fake_lut ? di->cmap_pixtab[idx] : idx;
+    return di->g_fake_lut ? di->cmap_pixtab[idx] : idx;
 }
 #define FAKE_LUT(_di, _idx) do_fake_lut(_di, _idx)
 
@@ -505,21 +505,21 @@ select_visual(DriverX11 *di)
     case StaticColor:
         g_colors = (di->Xdepth <= 8) ? di->Xvi->map_entries : 256;
         g_got_real_dac = false;
-        di->fake_lut = false;
+        di->g_fake_lut = false;
         break;
 
     case GrayScale:
     case PseudoColor:
         g_colors = (di->Xdepth <= 8) ? di->Xvi->map_entries : 256;
         g_got_real_dac = true;
-        di->fake_lut = false;
+        di->g_fake_lut = false;
         break;
 
     case TrueColor:
     case DirectColor:
         g_colors = 256;
         g_got_real_dac = false;
-        di->fake_lut = true;
+        di->g_fake_lut = true;
         break;
 
     default:
@@ -548,7 +548,7 @@ select_visual(DriverX11 *di)
 static void
 clearXwindow(DriverX11 *di)
 {
-    if (di->fake_lut)
+    if (di->g_fake_lut)
     {
         for (int j = 0; j < di->Ximage->height; j++)
             for (int i = 0; i < di->Ximage->width; i++)
@@ -627,7 +627,7 @@ xcmapstuff(DriverX11 *di)
     if (!g_got_real_dac)
     {
         di->Xcmap = DefaultColormapOfScreen(di->Xsc);
-        if (di->fake_lut)
+        if (di->g_fake_lut)
             x11_write_palette(&di->pub);
     }
     else if (di->sharecolor)
@@ -2172,9 +2172,9 @@ x11_write_palette(Driver *drv)
 
     if (!g_got_real_dac)
     {
-        if (di->fake_lut)
+        if (di->g_fake_lut)
         {
-            // !g_got_real_dac, fake_lut => truecolor, directcolor displays
+            // !g_got_real_dac, g_fake_lut => truecolor, directcolor displays
             static unsigned char last_dac[256][3];
             static bool last_dac_inited = false;
 
@@ -2214,7 +2214,7 @@ x11_write_palette(Driver *drv)
         }
         else
         {
-            // !g_got_real_dac, !fake_lut => static color, static gray displays
+            // !g_got_real_dac, !g_fake_lut => static color, static gray displays
             assert(1);
         }
     }
@@ -2255,7 +2255,7 @@ static int
 x11_read_pixel(Driver *drv, int x, int y)
 {
     DIX11(drv);
-    if (di->fake_lut)
+    if (di->g_fake_lut)
     {
         XPixel pixel = XGetPixel(di->Ximage, x, y);
         for (int i = 0; i < 256; i++)
@@ -2949,7 +2949,7 @@ static DriverX11 x11_driver_info = {
     { 0 },                // ipixtab
     { 0L },               // cmap_pixtab
     false,                // cmap_pixtab_alloced
-    false,                // fake_lut
+    false,                // g_fake_lut
     false,                // fastmode
     false,                // alarmon
     false,                // doredraw

@@ -556,7 +556,7 @@ find_special_colors()
         return;
     }
 
-    if (!(g_got_real_dac || fake_lut))
+    if (!(g_got_real_dac || g_fake_lut))
         return;
 
     for (int i = 0; i < g_colors; i++)
