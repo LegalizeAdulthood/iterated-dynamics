@@ -13,7 +13,8 @@ class x11_frame_window
 {
 public:
     x11_frame_window()
-        : timed_out_{},
+        : dpy_{},
+        timed_out_{},
         keypress_count_{},
         keypress_head_{},
         keypress_tail_{},
