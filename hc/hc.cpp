@@ -62,6 +62,7 @@ char const *const DEFAULT_SRC_FNAME = "help.src";
 char const *const DEFAULT_HLP_FNAME = "fractint.hlp";
 char const *const DEFAULT_EXE_FNAME = "fractint.exe";
 char const *const DEFAULT_DOC_FNAME = "fractint.doc";
+// cppcheck-suppress constStatement
 std::string const DEFAULT_HTML_FNAME{"index.html"};
 
 char const *const TEMP_FNAME = "hc.tmp";
