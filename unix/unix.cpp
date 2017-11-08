@@ -272,9 +272,7 @@ void findpath(char const *filename, char *fullpathname)
     if (fd != -1)
     {
         close(fd);
-        return;
     }
-    fullpathname = nullptr;
 }
 
 /*
