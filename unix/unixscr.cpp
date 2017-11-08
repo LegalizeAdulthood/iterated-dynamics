@@ -2198,11 +2198,9 @@ FindRootWindow()
     w_root = pr_dwmroot(dpy, w_root); // search for DEC wm root
 
     {   // search for swm/tvtwm root (from ssetroot by Tom LaStrange)
-        Atom SWM_VROOT = None;
         Window rootReturn, parentReturn, *children;
         unsigned int numChildren;
-
-        SWM_VROOT = XInternAtom(dpy, "__SWM_VROOT", False);
+        Atom SWM_VROOT = XInternAtom(dpy, "__SWM_VROOT", False);
         XQueryTree(dpy, w_root, &rootReturn, &parentReturn, &children, &numChildren);
         for (int i = 0; i < numChildren; i++)
         {
@@ -2210,7 +2208,6 @@ FindRootWindow()
             int actual_format;
             unsigned long nitems, bytesafter;
             Window *newRoot = nullptr;
-
             if (XGetWindowProperty(dpy, children[i], SWM_VROOT, 0L, 1L,
                                    False, XA_WINDOW, &actual_type, &actual_format, &nitems, &bytesafter,
                                    (unsigned char **) &newRoot) == Success && newRoot)
