@@ -21,6 +21,7 @@ if [ $ANALYZE = "true" ]; then
             --suppress=incorrectStringBooleanError \
             --suppress=cstyleCast \
             --suppress=variableScope \
+            --suppress=commaSeparatedReturn \
             --suppress=invalidscanf --inline-suppr \
             -I headers hc common headers unix win32 2> cppcheck.txt
         if [ -s cppcheck.txt ]; then

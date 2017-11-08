@@ -103,7 +103,6 @@ namespace
 {
 inline XColor xcolor_from_rgb(int red, int green, int blue)
 {
-    // cppcheck-suppress commaSeparatedReturn
     return XColor{ 0UL,
             static_cast<unsigned short>(red*256),
             static_cast<unsigned short>(green*256),
