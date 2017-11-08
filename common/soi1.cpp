@@ -11,6 +11,8 @@
  * <URL:http://www.cs.tu-berlin.de/~rms/AlmondBread>.
  *
  */
+#include <cassert>
+
 #include <float.h>
 #include <time.h>
 #if !defined(_WIN32)
@@ -191,7 +193,8 @@ static double zre1, zim1, zre2, zim2, zre3, zim3, zre4, zim4, zre5, zim5,
     zre7 = (ZRE7);zim7 = (ZIM7);\
     zre8 = (ZRE8);zim8 = (ZIM8);\
     zre9 = (ZRE9);zim9 = (ZIM9);\
-    status = rhombus((CRE1), (CRE2), (CIM1), (CIM2), (X1), (X2), (Y1), (Y2), (ITER)) != 0
+    status = rhombus((CRE1), (CRE2), (CIM1), (CIM2), (X1), (X2), (Y1), (Y2), (ITER)) != 0; \
+    assert(status)
 
 namespace
 {
