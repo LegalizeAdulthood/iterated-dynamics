@@ -261,6 +261,7 @@ void frame_init(HINSTANCE instance, LPCSTR title)
 
         status = RegisterClass(&wc) != 0;
     }
+    _ASSERTE(status);
 
     g_frame.keypress_count = 0;
     g_frame.keypress_head  = 0;
