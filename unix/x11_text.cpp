@@ -5,20 +5,28 @@
 #include "x11_text.h"
 
 x11_text_window::x11_text_window()
-        : dpy_{},
-        font_{},
-        parent_{},
-        window_{},
-        char_width_{},
-        char_height_{},
-        char_xchars_{},
-        char_ychars_{},
-        max_width_{},
-        max_height_{},
-        x_{},
-        y_{},
-        colormap_{},
-        buffer_init_{}
+    : dpy_{},
+    screen_num_{},
+    font_{},
+    parent_{},
+    window_{},
+    char_width_{},
+    char_height_{},
+    char_xchars_{},
+    char_ychars_{},
+    max_width_{},
+    max_height_{},
+    text_mode_{},
+    cursor_x_{},
+    cursor_y_{},
+    cursor_type_{},
+    cursor_owned_{},
+    showing_cursor_{},
+    alt_f4_hit_{},
+    x_{},
+    y_{},
+    colormap_{},
+    buffer_init_{}
 {
 #if 0
     bool return_value = GetClassInfo(hInstance, s_window_class, &wc) == TRUE;
