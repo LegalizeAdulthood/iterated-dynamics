@@ -45,13 +45,7 @@ long iteration(LDBL cr, LDBL ci,
     long offset = 0;
     LDBL ren;
     LDBL imn;
-#ifdef INTEL
-    float mag;
-    unsigned long bail = 0x41800000, magi; // bail=16.0
-    unsigned long eq = *(unsigned long *)&equal;
-#else
     LDBL mag;
-#endif
     int exponent;
 
     if (baxinxx)
@@ -138,24 +132,10 @@ long iteration(LDBL cr, LDBL ci,
             im = imn + ci;
             re += cr;
 
-#ifdef INTEL
-            mag = fabsl(sre - re);
-            magi = *(unsigned long *)&mag;
-            if (magi < eq)
-            {
-                mag = fabsl(sim - im);
-                magi = *(unsigned long *)&mag;
-                if (magi < eq)
-                {
-                    return BASIN_COLOR;
-                }
-            }
-#else // INTEL
             if (fabsl(sre - re) < equal && fabsl(sim - im) < equal)
             {
                 return BASIN_COLOR;
             }
-#endif // INTEL
 
             k -= 8;
             if (k <= 0)
@@ -169,15 +149,8 @@ long iteration(LDBL cr, LDBL ci,
             imn = im*im;
             ren = re*re;
             mag = ren + imn;
-#ifdef INTEL
-            magi = *(unsigned long *)&mag;
-#endif
         }
-#ifdef INTEL
-        while (magi < bail && --iter != 0);
-#else
         while (mag < 16.0 && --iter != 0);
-#endif
     }
     else
     {
@@ -262,15 +235,8 @@ long iteration(LDBL cr, LDBL ci,
             imn = im*im;
             ren = re*re;
             mag = ren + imn;
-#ifdef INTEL
-            magi = *(unsigned long *)&mag;
-#endif
         }
-#ifdef INTEL
-        while (magi < bail && --iter != 0);
-#else
         while (mag < 16.0 && --iter != 0);
-#endif
     }
 
     if (iter == 0)
@@ -301,11 +267,7 @@ long iteration(LDBL cr, LDBL ci,
         };
 
         baxinxx = false;
-#ifdef INTEL
-        LDBL d = ren + imn;
-#else
         LDBL d = mag;
-#endif
         frexpl(d, &exponent);
         return (g_max_iterations + offset - (((iter - 1) << 3) + (long)adjust[exponent >> 3]));
     }
