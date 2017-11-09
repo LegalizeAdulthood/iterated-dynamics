@@ -50,20 +50,10 @@ int stopmsg(int flags, char const *msg)
     static bool batchmode = false;
     if (g_debug_flag != debug_flags::none || g_init_batch >= batch_modes::NORMAL)
     {
-        static FILE *fp = nullptr;
-        if (fp == nullptr && g_init_batch == batch_modes::NONE)
-        {
-            fp = dir_fopen(g_working_dir.c_str(), "stopmsg.txt", "w");
-        }
-        else
-        {
-            fp = dir_fopen(g_working_dir.c_str(), "stopmsg.txt", "a");
-        }
-        if (fp != nullptr)
+        if (FILE *fp = dir_fopen(g_working_dir.c_str(), "stopmsg.txt", g_init_batch == batch_modes::NONE ? "w" : "a"))
         {
             fprintf(fp, "%s\n", msg);
             fclose(fp);
-            fp = nullptr;
         }
     }
     if (g_first_init)
