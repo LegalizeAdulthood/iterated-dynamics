@@ -538,7 +538,7 @@ skip_UI:
         }
         if (xm > 1 || ym > 1)
         {
-            fprintf(fpbat, "Fractint makemig=%d/%d\n", xm, ym);
+            fprintf(fpbat, "Fractint makemig=%u/%u\n", xm, ym);
             fprintf(fpbat, "Rem Simplgif fractmig.gif simplgif.gif  in case you need it\n");
             fprintf(fpbat, ":oops\n");
             fclose(fpbat);
@@ -2287,7 +2287,7 @@ void make_mig(unsigned int xmult, unsigned int ymult)
             if (xstep == 0 && ystep == 0)          // first time through?
             {
                 printf(" \n Generating multi-image GIF file %s using", gifout);
-                printf(" %d X and %d Y components\n\n", xmult, ymult);
+                printf(" %u X and %u Y components\n\n", xmult, ymult);
                 // attempt to create the output file
                 out = fopen(gifout, "wb");
                 if (out == nullptr)

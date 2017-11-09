@@ -194,7 +194,7 @@ int common_startdisk(long newrowsize, long newcolsize, int colors)
     if (driver_diskp())
     {
         char buf[50];
-        sprintf(buf, "Cache size: %dK", cache_size);
+        sprintf(buf, "Cache size: %uK", cache_size);
         driver_put_string(BOXROW+6, BOXCOL+4, C_DVID_LO, buf);
     }
 

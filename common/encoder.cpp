@@ -761,7 +761,7 @@ static int put_extend_blk(int block_id, int block_len, char const *block_data)
     int i, j;
     char header[15];
     strcpy(header, "!\377\013fractint");
-    sprintf(&header[11], "%03u", block_id);
+    sprintf(&header[11], "%03d", block_id);
     if (fwrite(header, 14, 1, g_outfile) != 1)
     {
         return (0);

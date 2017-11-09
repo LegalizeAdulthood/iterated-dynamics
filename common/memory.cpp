@@ -266,7 +266,7 @@ void ExitCheck()
             if (handletable[i].Nowhere.stored_at != NOWHERE)
             {
                 char buf[MSGLEN];
-                sprintf(buf, "Memory type %s still allocated.  Handle = %i.",
+                sprintf(buf, "Memory type %s still allocated.  Handle = %u.",
                         memstr[handletable[i].Nowhere.stored_at], i);
                 stopmsg(STOPMSG_NONE, buf);
                 MemoryRelease(i);
@@ -370,7 +370,7 @@ U16 MemoryAlloc(U16 size, long count, int stored_at)
     if (stored_at != use_this_type && g_debug_flag == debug_flags::display_memory_statistics)
     {
         char buf[MSGLEN];
-        sprintf(buf, "Asked for %s, allocated %lu bytes of %s, handle = %u.",
+        sprintf(buf, "Asked for %s, allocated %ld bytes of %s, handle = %u.",
                 memstr[stored_at], toallocate, memstr[use_this_type], handle);
         stopmsg(STOPMSG_INFO_ONLY | STOPMSG_NO_BUZZER, buf);
         DisplayMemory();
