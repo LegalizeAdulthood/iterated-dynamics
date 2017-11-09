@@ -32,9 +32,9 @@ void intro()
     g_look_at_mouse = 0;                    // de-activate full mouse checking
 
     int i = 32767 + read_help_topic(INTRO_AUTHORS, 0, 32767, screen_text);
-    screen_text[i++] = '\0';
+    screen_text[i] = '\0';
     i = 32767 + read_help_topic(INTRO_CREDITS, 0, 32767, credits);
-    credits[i++] = '\0';
+    credits[i] = '\0';
 
     int j = 0;
     authors.push_back(0);               // find the start of each credit-line
