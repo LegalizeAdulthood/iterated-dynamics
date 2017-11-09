@@ -842,6 +842,7 @@ bn_t sqrt_bn(bn_t r, bn_t n)
     padding       = orig_padding;
     rlength       = orig_rlength;
     shiftfactor   = orig_shiftfactor;
+    // cppcheck-suppress uselessAssignmentPtrArg
     r             = orig_r;
 
     return r;

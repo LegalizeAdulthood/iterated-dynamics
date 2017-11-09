@@ -602,6 +602,7 @@ bf_t unsafe_sqrt_bf(bf_t r, bf_t n)
     rlength       = orig_rlength;
     shiftfactor   = orig_shiftfactor;
     rbflength     = orig_rbflength;
+    // cppcheck-suppress uselessAssignmentPtrArg
     r             = orig_r;
 
     return r;
