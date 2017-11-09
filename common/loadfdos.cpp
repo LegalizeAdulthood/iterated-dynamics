@@ -260,6 +260,7 @@ int get_video_mode(FRACTAL_INFO *info, ext_blk_3 *blk_3_info)
             }
         }
         vid[i].entnum = i;
+        // cppcheck-suppress unreadVariable
         vid[i].flags  = tmpflags;
     }
 
