@@ -62,8 +62,9 @@ int stopmsg(int flags, char const *msg)
         if (fp != nullptr)
         {
             fprintf(fp, "%s\n", msg);
+            fclose(fp);
+            fp = nullptr;
         }
-        fclose(fp);
     }
     if (g_first_init)
     {
