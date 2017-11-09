@@ -1825,6 +1825,7 @@ retry_dir:
                     strchr(ext1,   '*') || strchr(ext1,   '?'))
             {
                 makepath(user_file_template, "", "", fname1, ext1);
+                // cppcheck-suppress uselessAssignmentPtrArg
                 file_template = user_file_template;
             }
             else if (isadirectory(flname))
