@@ -684,10 +684,7 @@ int timer(int timertype, int(*subrtn)(), ...)
                 g_logical_screen_y_dots,
                 g_max_iterations);
         fprintf(fp, " time= %ld.%02ld secs\n", g_timer_interval/100, g_timer_interval%100);
-        if (fp != nullptr)
-        {
-            fclose(fp);
-        }
+        fclose(fp);
     }
     return out;
 }
