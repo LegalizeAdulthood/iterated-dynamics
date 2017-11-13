@@ -1053,7 +1053,6 @@ void drawparmbox(int mode)
         return;
     }
 
-    g_box_count =0;
     //draw larger box to show parm zooming range
     bl.x = ((g_evolve_param_grid_x -(int)g_evolve_param_zoom) * (int)(g_logical_screen_x_size_dots+1+grout))-g_logical_screen_x_offset-1;
     tl.x = bl.x;
@@ -1064,6 +1063,7 @@ void drawparmbox(int mode)
     bl.y = ((g_evolve_param_grid_y +1+(int)g_evolve_param_zoom) * (int)(g_logical_screen_y_size_dots+1+grout))-g_logical_screen_y_offset;
     br.y = bl.y;
 #ifndef XFRACT
+    g_box_count = 0;
     addbox(br);
     addbox(tr);
     addbox(bl);
