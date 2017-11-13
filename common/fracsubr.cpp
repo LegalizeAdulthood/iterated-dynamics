@@ -1509,15 +1509,15 @@ sleepexit:
 
 static void sleepms_new(long ms)
 {
-    uclock_t next_time;
     uclock_t now = usec_clock();
-    next_time = now + ms*100;
-    while ((now = usec_clock()) < next_time)
+    const uclock_t next_time = now + ms*100;
+    while (now < next_time)
     {
         if (driver_key_pressed())
         {
             break;
         }
+        now = usec_clock();
     }
 }
 
