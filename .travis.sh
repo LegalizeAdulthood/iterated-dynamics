@@ -23,7 +23,9 @@ if [ $ANALYZE = "true" ]; then
             --suppress=variableScope \
             --suppress=commaSeparatedReturn \
             --suppress=variableHidingEnum \
-            --suppress=invalidscanf --inline-suppr \
+            --suppress=invalidPointerCast \
+            --suppress=invalidscanf \
+            --inline-suppr \
             -I headers hc common headers unix win32 2> cppcheck.txt
         if [ -s cppcheck.txt ]; then
             cat cppcheck.txt
