@@ -5117,6 +5117,7 @@ static int tessrow(int x1, int x2, int y)
     g_col = x1;
     g_reset_periodicity = true;
     rowcolor = (*g_calc_type)();
+    // cppcheck-suppress redundantAssignment
     g_reset_periodicity = false;
     while (++g_col <= x2)
     {
