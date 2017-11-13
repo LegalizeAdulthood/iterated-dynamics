@@ -40,12 +40,10 @@ enum MATH_TYPE { D_MATH};
 extern enum MATH_TYPE MathType;
 #define fDiv(x, y, z) ((*(long*)&z) = RegDivFloat(*(long*)&x, *(long*)&y))
 #define fMul16(x, y, z) ((*(long*)&z) = r16Mul(*(long*)&x, *(long*)&y))
-#define fShift(x, Shift, z) ((*(long*)&z) = \
-   RegSftFloat(*(long*)&x, Shift))
+#define fShift(x, Shift, z) ((*(long*)&z) = RegSftFloat(*(long*)&x, Shift))
 #define Fg2Float(x, f, z) ((*(long*)&z) = RegFg2Float(x, f))
 #define Float2Fg(x, f) RegFloat2Fg(*(long*)&x, f)
-#define fLog14(x, z) ((*(long*)&z) = \
-        RegFg2Float(LogFloat14(*(long*)&x), 16))
+#define fLog14(x, z) ((*(long*)&z) = RegFg2Float(LogFloat14(*(long*)&x), 16))
 #define fExp14(x, z) ((*(long*)&z) = ExpFloat14(*(long*)&x));
 #define fSqrt14(x, z) fLog14(x, z); fShift(z, -1, z); fExp14(z, z)
 // the following are declared 4 dimensional as an experiment
