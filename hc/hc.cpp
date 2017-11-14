@@ -859,7 +859,7 @@ void skip_over(char const *skip)
         {
             break;
         }
-        else if ((ch&0x100) == 0 && strchr(skip, ch) == nullptr)
+        if ((ch&0x100) == 0 && strchr(skip, ch) == nullptr)
         {
             unread_char(ch);
             break;
@@ -1586,18 +1586,15 @@ void read_src(char const *fname)
                 --include_stack_top;
                 continue;
             }
-            else
+            if (in_topic)  // if we're in a topic, finish it
             {
-                if (in_topic)  // if we're in a topic, finish it
-                {
-                    end_topic(&t);
-                }
-                if (num_topic == 0)
-                {
-                    warn(0, ".SRC file has no topics.");
-                }
-                break;
+                end_topic(&t);
             }
+            if (num_topic == 0)
+            {
+                warn(0, ".SRC file has no topics.");
+            }
+            break;
         }
 
         if (ch == '~')   // is is a command?
@@ -1708,7 +1705,7 @@ void read_src(char const *fname)
                     compress_spaces = true;
                     continue;
                 }
-                else if (strnicmp(cmd, "Data=", 5) == 0)
+                if (strnicmp(cmd, "Data=", 5) == 0)
                 {
                     if (in_topic)  // if we're in a topic, finish it
                     {
@@ -1766,7 +1763,7 @@ void read_src(char const *fname)
                     compress_spaces = false;
                     continue;
                 }
-                else if (strnicmp(cmd, "DocContents", 11) == 0)
+                if (strnicmp(cmd, "DocContents", 11) == 0)
                 {
                     check_command_length(eoff, 11);
                     if (in_topic)  // if we're in a topic, finish it
@@ -1787,12 +1784,12 @@ void read_src(char const *fname)
                     in_topic = false;
                     continue;
                 }
-                else if (stricmp(cmd, "Comment") == 0)
+                if (stricmp(cmd, "Comment") == 0)
                 {
                     process_comment();
                     continue;
                 }
-                else if (strnicmp(cmd, "FormatExclude", 13) == 0)
+                if (strnicmp(cmd, "FormatExclude", 13) == 0)
                 {
                     if (cmd[13] == '-')
                     {
@@ -1891,7 +1888,7 @@ void read_src(char const *fname)
 
                     continue;
                 }
-                else if (strnicmp(cmd, "Include ", 8) == 0)
+                if (strnicmp(cmd, "Include ", 8) == 0)
                 {
                     if (include_stack_top >= MAX_INCLUDE_STACK-1)
                     {
@@ -1955,339 +1952,337 @@ void read_src(char const *fname)
                     continue;
                 }
                 // commands allowed only in a topic...
-                else
+                if (strnicmp(cmd, "FF", 2) == 0)
                 {
-                    if (strnicmp(cmd, "FF", 2) == 0)
+                    check_command_length(eoff, 2);
+                    if (in_para)
                     {
-                        check_command_length(eoff, 2);
-                        if (in_para)
+                        *curr++ = '\n';    // finish off current paragraph
+                    }
+                    *curr++ = CMD_FF;
+                    state = S_Start;
+                    in_para = false;
+                    num_spaces = 0;
+                }
+                else if (strnicmp(cmd, "DocFF", 5) == 0)
+                {
+                    check_command_length(eoff, 5);
+                    if (in_para)
+                    {
+                        *curr++ = '\n';    // finish off current paragraph
+                    }
+                    if (!xonline)
+                    {
+                        *curr++ = CMD_XONLINE;
+                    }
+                    *curr++ = CMD_FF;
+                    if (!xonline)
+                    {
+                        *curr++ = CMD_XONLINE;
+                    }
+                    state = S_Start;
+                    in_para = false;
+                    num_spaces = 0;
+                }
+                else if (strnicmp(cmd, "OnlineFF", 8) == 0)
+                {
+                    check_command_length(eoff, 8);
+                    if (in_para)
+                    {
+                        *curr++ = '\n';    // finish off current paragraph
+                    }
+                    if (!xdoc)
+                    {
+                        *curr++ = CMD_XDOC;
+                    }
+                    *curr++ = CMD_FF;
+                    if (!xdoc)
+                    {
+                        *curr++ = CMD_XDOC;
+                    }
+                    state = S_Start;
+                    in_para = false;
+                    num_spaces = 0;
+                }
+                else if (strnicmp(cmd, "Label=", 6) == 0)
+                {
+                    if ((int)strlen(cmd+6) <= 0)
+                    {
+                        error(eoff, "Label has no name.");
+                    }
+                    else if (!validate_label_name(cmd+6))
+                    {
+                        error(eoff, "Label \"%s\" contains illegal characters.", cmd+6);
+                    }
+                    else if (find_label(cmd+6) != nullptr)
+                    {
+                        error(eoff, "Label \"%s\" already exists", cmd+6);
+                    }
+                    else
+                    {
+                        if ((int)strlen(cmd+6) > 32)
                         {
-                            *curr++ = '\n';    // finish off current paragraph
+                            warn(eoff, "Label name is long.");
                         }
-                        *curr++ = CMD_FF;
-                        state = S_Start;
+
+                        if ((t.flags & TF_DATA) && cmd[6] == '@')
+                        {
+                            warn(eoff, "Data topic has a local label.");
+                        }
+
+                        lbl.name      = dupstr(cmd+6, 0);
+                        lbl.topic_num = num_topic;
+                        lbl.topic_off = (unsigned)(curr - &buffer[0]);
+                        lbl.doc_page  = -1;
+                        add_label(&lbl);
+                    }
+                }
+                else if (strnicmp(cmd, "Table=", 6) == 0)
+                {
+                    if (in_para)
+                    {
+                        *curr++ = '\n';  // finish off current paragraph
                         in_para = false;
                         num_spaces = 0;
-                    }
-                    else if (strnicmp(cmd, "DocFF", 5) == 0)
-                    {
-                        check_command_length(eoff, 5);
-                        if (in_para)
-                        {
-                            *curr++ = '\n';    // finish off current paragraph
-                        }
-                        if (!xonline)
-                        {
-                            *curr++ = CMD_XONLINE;
-                        }
-                        *curr++ = CMD_FF;
-                        if (!xonline)
-                        {
-                            *curr++ = CMD_XONLINE;
-                        }
                         state = S_Start;
-                        in_para = false;
-                        num_spaces = 0;
                     }
-                    else if (strnicmp(cmd, "OnlineFF", 8) == 0)
-                    {
-                        check_command_length(eoff, 8);
-                        if (in_para)
-                        {
-                            *curr++ = '\n';    // finish off current paragraph
-                        }
-                        if (!xdoc)
-                        {
-                            *curr++ = CMD_XDOC;
-                        }
-                        *curr++ = CMD_FF;
-                        if (!xdoc)
-                        {
-                            *curr++ = CMD_XDOC;
-                        }
-                        state = S_Start;
-                        in_para = false;
-                        num_spaces = 0;
-                    }
-                    else if (strnicmp(cmd, "Label=", 6) == 0)
-                    {
-                        if ((int)strlen(cmd+6) <= 0)
-                        {
-                            error(eoff, "Label has no name.");
-                        }
-                        else if (!validate_label_name(cmd+6))
-                        {
-                            error(eoff, "Label \"%s\" contains illegal characters.", cmd+6);
-                        }
-                        else if (find_label(cmd+6) != nullptr)
-                        {
-                            error(eoff, "Label \"%s\" already exists", cmd+6);
-                        }
-                        else
-                        {
-                            if ((int)strlen(cmd+6) > 32)
-                            {
-                                warn(eoff, "Label name is long.");
-                            }
 
-                            if ((t.flags & TF_DATA) && cmd[6] == '@')
-                            {
-                                warn(eoff, "Data topic has a local label.");
-                            }
+                    if (!done)
+                    {
+                        if (imbedded)
+                        {
+                            unread_char('(');
+                        }
+                        unread_char('~');
+                        done = true;
+                    }
 
-                            lbl.name      = dupstr(cmd+6, 0);
-                            lbl.topic_num = num_topic;
-                            lbl.topic_off = (unsigned)(curr - &buffer[0]);
-                            lbl.doc_page  = -1;
-                            add_label(&lbl);
-                        }
-                    }
-                    else if (strnicmp(cmd, "Table=", 6) == 0)
+                    create_table();
+                }
+                else if (strnicmp(cmd, "FormatExclude", 12) == 0)
+                {
+                    if (cmd[13] == '-')
                     {
-                        if (in_para)
+                        check_command_length(eoff, 14);
+                        if (lformat_exclude > 0)
                         {
-                            *curr++ = '\n';  // finish off current paragraph
-                            in_para = false;
-                            num_spaces = 0;
-                            state = S_Start;
-                        }
-
-                        if (!done)
-                        {
-                            if (imbedded)
-                            {
-                                unread_char('(');
-                            }
-                            unread_char('~');
-                            done = true;
-                        }
-
-                        create_table();
-                    }
-                    else if (strnicmp(cmd, "FormatExclude", 12) == 0)
-                    {
-                        if (cmd[13] == '-')
-                        {
-                            check_command_length(eoff, 14);
-                            if (lformat_exclude > 0)
-                            {
-                                lformat_exclude = -lformat_exclude;
-                            }
-                            else
-                            {
-                                warn(0, "\"FormatExclude-\" is already in effect.");
-                            }
-                        }
-                        else if (cmd[13] == '+')
-                        {
-                            check_command_length(eoff, 14);
-                            if (lformat_exclude < 0)
-                            {
-                                lformat_exclude = -lformat_exclude;
-                            }
-                            else
-                            {
-                                warn(0, "\"FormatExclude+\" is already in effect.");
-                            }
+                            lformat_exclude = -lformat_exclude;
                         }
                         else
                         {
-                            error(eoff, "Unexpected or invalid argument to FormatExclude.");
+                            warn(0, "\"FormatExclude-\" is already in effect.");
                         }
                     }
-                    else if (strnicmp(cmd, "Format", 6) == 0)
+                    else if (cmd[13] == '+')
                     {
-                        if (cmd[6] == '+')
+                        check_command_length(eoff, 14);
+                        if (lformat_exclude < 0)
                         {
-                            check_command_length(eoff, 7);
-                            if (!formatting)
-                            {
-                                formatting = true;
-                                in_para = false;
-                                num_spaces = 0;
-                                state = S_Start;
-                            }
-                            else
-                            {
-                                warn(eoff, "\"Format+\" is already in effect.");
-                            }
-                        }
-                        else if (cmd[6] == '-')
-                        {
-                            check_command_length(eoff, 7);
-                            if (formatting)
-                            {
-                                if (in_para)
-                                {
-                                    *curr++ = '\n';    // finish off current paragraph
-                                }
-                                in_para = false;
-                                formatting = false;
-                                num_spaces = 0;
-                                state = S_Start;
-                            }
-                            else
-                            {
-                                warn(eoff, "\"Format-\" is already in effect.");
-                            }
+                            lformat_exclude = -lformat_exclude;
                         }
                         else
                         {
-                            error(eoff, "Invalid argument to Format.");
-                        }
-                    }
-                    else if (strnicmp(cmd, "Online", 6) == 0)
-                    {
-                        if (cmd[6] == '+')
-                        {
-                            check_command_length(eoff, 7);
-
-                            if (xonline)
-                            {
-                                *curr++ = CMD_XONLINE;
-                                xonline = false;
-                            }
-                            else
-                            {
-                                warn(eoff, "\"Online+\" already in effect.");
-                            }
-                        }
-                        else if (cmd[6] == '-')
-                        {
-                            check_command_length(eoff, 7);
-                            if (!xonline)
-                            {
-                                *curr++ = CMD_XONLINE;
-                                xonline = true;
-                            }
-                            else
-                            {
-                                warn(eoff, "\"Online-\" already in effect.");
-                            }
-                        }
-                        else
-                        {
-                            error(eoff, "Invalid argument to Online.");
-                        }
-                    }
-                    else if (strnicmp(cmd, "Doc", 3) == 0)
-                    {
-                        if (cmd[3] == '+')
-                        {
-                            check_command_length(eoff, 4);
-                            if (xdoc)
-                            {
-                                *curr++ = CMD_XDOC;
-                                xdoc = false;
-                            }
-                            else
-                            {
-                                warn(eoff, "\"Doc+\" already in effect.");
-                            }
-                        }
-                        else if (cmd[3] == '-')
-                        {
-                            check_command_length(eoff, 4);
-                            if (!xdoc)
-                            {
-                                *curr++ = CMD_XDOC;
-                                xdoc = true;
-                            }
-                            else
-                            {
-                                warn(eoff, "\"Doc-\" already in effect.");
-                            }
-                        }
-                        else
-                        {
-                            error(eoff, "Invalid argument to Doc.");
-                        }
-                    }
-                    else if (strnicmp(cmd, "Center", 6) == 0)
-                    {
-                        if (cmd[6] == '+')
-                        {
-                            check_command_length(eoff, 7);
-                            if (!centering)
-                            {
-                                centering = true;
-                                if (in_para)
-                                {
-                                    *curr++ = '\n';
-                                    in_para = false;
-                                }
-                                state = S_Start;  // for centering FSM
-                            }
-                            else
-                            {
-                                warn(eoff, "\"Center+\" already in effect.");
-                            }
-                        }
-                        else if (cmd[6] == '-')
-                        {
-                            check_command_length(eoff, 7);
-                            if (centering)
-                            {
-                                centering = false;
-                                state = S_Start;  // for centering FSM
-                            }
-                            else
-                            {
-                                warn(eoff, "\"Center-\" already in effect.");
-                            }
-                        }
-                        else
-                        {
-                            error(eoff, "Invalid argument to Center.");
-                        }
-                    }
-                    else if (strnicmp(cmd, "CompressSpaces", 14) == 0)
-                    {
-                        check_command_length(eoff, 15);
-
-                        if (cmd[14] == '+')
-                        {
-                            if (compress_spaces)
-                            {
-                                warn(eoff, "\"CompressSpaces+\" is already in effect.");
-                            }
-                            else
-                            {
-                                compress_spaces = true;
-                            }
-                        }
-                        else if (cmd[14] == '-')
-                        {
-                            if (!compress_spaces)
-                            {
-                                warn(eoff, "\"CompressSpaces-\" is already in effect.");
-                            }
-                            else
-                            {
-                                compress_spaces = false;
-                            }
-                        }
-                        else
-                        {
-                            error(eoff, "Invalid argument to CompressSpaces.");
-                        }
-                    }
-                    else if (strnicmp("BinInc ", cmd, 7) == 0)
-                    {
-                        if (!(t.flags & TF_DATA))
-                        {
-                            error(eoff, "BinInc allowed only in Data topics.");
-                        }
-                        else
-                        {
-                            process_bininc();
+                            warn(0, "\"FormatExclude+\" is already in effect.");
                         }
                     }
                     else
                     {
-                        error(eoff, "Bad or unexpected command \"%s\".", cmd);
+                        error(eoff, "Unexpected or invalid argument to FormatExclude.");
                     }
-                } // else
+                }
+                else if (strnicmp(cmd, "Format", 6) == 0)
+                {
+                    if (cmd[6] == '+')
+                    {
+                        check_command_length(eoff, 7);
+                        if (!formatting)
+                        {
+                            formatting = true;
+                            in_para = false;
+                            num_spaces = 0;
+                            state = S_Start;
+                        }
+                        else
+                        {
+                            warn(eoff, "\"Format+\" is already in effect.");
+                        }
+                    }
+                    else if (cmd[6] == '-')
+                    {
+                        check_command_length(eoff, 7);
+                        if (formatting)
+                        {
+                            if (in_para)
+                            {
+                                *curr++ = '\n';    // finish off current paragraph
+                            }
+                            in_para = false;
+                            formatting = false;
+                            num_spaces = 0;
+                            state = S_Start;
+                        }
+                        else
+                        {
+                            warn(eoff, "\"Format-\" is already in effect.");
+                        }
+                    }
+                    else
+                    {
+                        error(eoff, "Invalid argument to Format.");
+                    }
+                }
+                else if (strnicmp(cmd, "Online", 6) == 0)
+                {
+                    if (cmd[6] == '+')
+                    {
+                        check_command_length(eoff, 7);
+
+                        if (xonline)
+                        {
+                            *curr++ = CMD_XONLINE;
+                            xonline = false;
+                        }
+                        else
+                        {
+                            warn(eoff, "\"Online+\" already in effect.");
+                        }
+                    }
+                    else if (cmd[6] == '-')
+                    {
+                        check_command_length(eoff, 7);
+                        if (!xonline)
+                        {
+                            *curr++ = CMD_XONLINE;
+                            xonline = true;
+                        }
+                        else
+                        {
+                            warn(eoff, "\"Online-\" already in effect.");
+                        }
+                    }
+                    else
+                    {
+                        error(eoff, "Invalid argument to Online.");
+                    }
+                }
+                else if (strnicmp(cmd, "Doc", 3) == 0)
+                {
+                    if (cmd[3] == '+')
+                    {
+                        check_command_length(eoff, 4);
+                        if (xdoc)
+                        {
+                            *curr++ = CMD_XDOC;
+                            xdoc = false;
+                        }
+                        else
+                        {
+                            warn(eoff, "\"Doc+\" already in effect.");
+                        }
+                    }
+                    else if (cmd[3] == '-')
+                    {
+                        check_command_length(eoff, 4);
+                        if (!xdoc)
+                        {
+                            *curr++ = CMD_XDOC;
+                            xdoc = true;
+                        }
+                        else
+                        {
+                            warn(eoff, "\"Doc-\" already in effect.");
+                        }
+                    }
+                    else
+                    {
+                        error(eoff, "Invalid argument to Doc.");
+                    }
+                }
+                else if (strnicmp(cmd, "Center", 6) == 0)
+                {
+                    if (cmd[6] == '+')
+                    {
+                        check_command_length(eoff, 7);
+                        if (!centering)
+                        {
+                            centering = true;
+                            if (in_para)
+                            {
+                                *curr++ = '\n';
+                                in_para = false;
+                            }
+                            state = S_Start;  // for centering FSM
+                        }
+                        else
+                        {
+                            warn(eoff, "\"Center+\" already in effect.");
+                        }
+                    }
+                    else if (cmd[6] == '-')
+                    {
+                        check_command_length(eoff, 7);
+                        if (centering)
+                        {
+                            centering = false;
+                            state = S_Start;  // for centering FSM
+                        }
+                        else
+                        {
+                            warn(eoff, "\"Center-\" already in effect.");
+                        }
+                    }
+                    else
+                    {
+                        error(eoff, "Invalid argument to Center.");
+                    }
+                }
+                else if (strnicmp(cmd, "CompressSpaces", 14) == 0)
+                {
+                    check_command_length(eoff, 15);
+
+                    if (cmd[14] == '+')
+                    {
+                        if (compress_spaces)
+                        {
+                            warn(eoff, "\"CompressSpaces+\" is already in effect.");
+                        }
+                        else
+                        {
+                            compress_spaces = true;
+                        }
+                    }
+                    else if (cmd[14] == '-')
+                    {
+                        if (!compress_spaces)
+                        {
+                            warn(eoff, "\"CompressSpaces-\" is already in effect.");
+                        }
+                        else
+                        {
+                            compress_spaces = false;
+                        }
+                    }
+                    else
+                    {
+                        error(eoff, "Invalid argument to CompressSpaces.");
+                    }
+                }
+                else if (strnicmp("BinInc ", cmd, 7) == 0)
+                {
+                    if (!(t.flags & TF_DATA))
+                    {
+                        error(eoff, "BinInc allowed only in Data topics.");
+                    }
+                    else
+                    {
+                        process_bininc();
+                    }
+                }
+                else
+                {
+                    error(eoff, "Bad or unexpected command \"%s\".", cmd);
+                }
+                // else
 
             } // while (!done)
 
@@ -2995,7 +2990,7 @@ LABEL *find_next_label_by_topic(int t)
             g = temp;
             break;
         }
-        else if (temp->topic_num > t)
+        if (temp->topic_num > t)
         {
             break;
         }
@@ -3009,7 +3004,7 @@ LABEL *find_next_label_by_topic(int t)
             p = temp;
             break;
         }
-        else if (temp->topic_num > t)
+        if (temp->topic_num > t)
         {
             break;
         }
@@ -3024,10 +3019,7 @@ LABEL *find_next_label_by_topic(int t)
     {
         return p;
     }
-    else
-    {
-        return (g->topic_off < p->topic_off) ? g : p;
-    }
+    return (g->topic_off < p->topic_off) ? g : p;
 }
 
 
