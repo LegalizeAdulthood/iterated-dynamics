@@ -984,7 +984,7 @@ void process_contents()
 
             if (cmd[0] == '\"')
             {
-                ptr = cmd+1;
+                ptr = &cmd[1];
                 if (ptr[(int) strlen(ptr)-1] == '\"')
                 {
                     ptr[(int) strlen(ptr)-1] = '\0';
@@ -1031,7 +1031,7 @@ void process_contents()
 
                 if (cmd[0] == '\"')
                 {
-                    ptr = cmd+1;
+                    ptr = &cmd[1];
                     if (ptr[(int) strlen(ptr)-1] == '\"')
                     {
                         ptr[(int) strlen(ptr)-1] = '\0';
@@ -1128,7 +1128,7 @@ int parse_link()   // returns length of link or 0 on error
         if (cmd[1] == '-')
         {
             l.type      = 2;          // type 2 = "special"
-            l.topic_num = atoi(cmd+1);
+            l.topic_num = atoi(&cmd[1]);
             l.topic_off = 0;
             l.name      = nullptr;
         }
@@ -1146,7 +1146,7 @@ int parse_link()   // returns length of link or 0 on error
             }
             else
             {
-                l.name = dupstr(cmd+1, 0);
+                l.name = dupstr(&cmd[1], 0);
             }
         }
         if (len == 0)
@@ -1412,10 +1412,10 @@ void process_bininc()
     int  handle;
     long len;
 
-    handle = open(cmd+7, O_RDONLY|O_BINARY);
+    handle = open(&cmd[7], O_RDONLY|O_BINARY);
     if (handle == -1)
     {
-        error(0, "Unable to open \"%s\"", cmd+7);
+        error(0, "Unable to open \"%s\"", &cmd[7]);
         return ;
     }
 
@@ -1423,7 +1423,7 @@ void process_bininc()
 
     if (len >= BUFFER_SIZE)
     {
-        error(0, "File \"%s\" is too large to BinInc (%dK).", cmd+7, (int)(len >> 10));
+        error(0, "File \"%s\" is too large to BinInc (%dK).", &cmd[7], (int)(len >> 10));
         close(handle);
         return ;
     }
@@ -1672,21 +1672,21 @@ void read_src(char const *fname)
                     {
                         warn(eoff, "Topic has no title.");
                     }
-                    else if ((int)strlen(cmd+6) > 70)
+                    else if ((int)strlen(&cmd[6]) > 70)
                     {
                         error(eoff, "Topic title is too long.");
                     }
-                    else if ((int)strlen(cmd+6) > 60)
+                    else if ((int)strlen(&cmd[6]) > 60)
                     {
                         warn(eoff, "Topic title is long.");
                     }
 
-                    if (find_topic_title(cmd+6) != -1)
+                    if (find_topic_title(&cmd[6]) != -1)
                     {
                         error(eoff, "Topic title already exists.");
                     }
 
-                    start_topic(&t, cmd+6, (unsigned)(ptr-(cmd+6)));
+                    start_topic(&t, &cmd[6], (unsigned)(ptr-(&cmd[6])));
                     formatting = true;
                     centering = false;
                     state = S_Start;
@@ -1714,15 +1714,15 @@ void read_src(char const *fname)
                         warn(eoff, "Data topic has no label.");
                     }
 
-                    if (!validate_label_name(cmd+5))
+                    if (!validate_label_name(&cmd[5]))
                     {
-                        error(eoff, "Label \"%s\" contains illegal characters.", cmd+5);
+                        error(eoff, "Label \"%s\" contains illegal characters.", &cmd[5]);
                         continue;
                     }
 
-                    if (find_label(cmd+5) != nullptr)
+                    if (find_label(&cmd[5]) != nullptr)
                     {
-                        error(eoff, "Label \"%s\" already exists", cmd+5);
+                        error(eoff, "Label \"%s\" already exists", &cmd[5]);
                         continue;
                     }
 
@@ -1734,12 +1734,12 @@ void read_src(char const *fname)
                     start_topic(&t, "", 0);
                     t.flags |= TF_DATA;
 
-                    if ((int)strlen(cmd+5) > 32)
+                    if ((int)strlen(&cmd[5]) > 32)
                     {
                         warn(eoff, "Label name is long.");
                     }
 
-                    lbl.name      = dupstr(cmd+5, 0);
+                    lbl.name      = dupstr(&cmd[5], 0);
                     lbl.topic_num = num_topic;
                     lbl.topic_off = 0;
                     lbl.doc_page  = -1;
@@ -1858,7 +1858,7 @@ void read_src(char const *fname)
                         {
                             int n = ((in_topic ? lformat_exclude : format_exclude) < 0) ? -1 : 1;
 
-                            lformat_exclude = atoi(cmd+14);
+                            lformat_exclude = atoi(&cmd[14]);
 
                             if (lformat_exclude <= 0)
                             {
@@ -1894,13 +1894,13 @@ void read_src(char const *fname)
                         include_stack[include_stack_top].file = srcfile;
                         include_stack[include_stack_top].line = srcline;
                         include_stack[include_stack_top].col  = srccol;
-                        srcfile = fopen(cmd+8, "rt");
+                        srcfile = fopen(&cmd[8], "rt");
                         if (srcfile == nullptr)
                         {
-                            error(eoff, "Unable to open \"%s\"", cmd+8);
+                            error(eoff, "Unable to open \"%s\"", &cmd[8]);
                             srcfile = include_stack[include_stack_top--].file;
                         }
-                        src_cfname = dupstr(cmd+8, 0);  // never deallocate!
+                        src_cfname = dupstr(&cmd[8], 0);  // never deallocate!
                         srcline = 1;
                         srccol = 0;
                     }
@@ -1935,7 +1935,7 @@ void read_src(char const *fname)
                         {
                             warn(eoff, "Help version has already been defined");
                         }
-                        version = atoi(cmd+8);
+                        version = atoi(&cmd[8]);
                     }
                     else
                     {
@@ -1999,21 +1999,21 @@ void read_src(char const *fname)
                 }
                 else if (strnicmp(cmd, "Label=", 6) == 0)
                 {
-                    if ((int)strlen(cmd+6) <= 0)
+                    if ((int)strlen(&cmd[6]) <= 0)
                     {
                         error(eoff, "Label has no name.");
                     }
-                    else if (!validate_label_name(cmd+6))
+                    else if (!validate_label_name(&cmd[6]))
                     {
-                        error(eoff, "Label \"%s\" contains illegal characters.", cmd+6);
+                        error(eoff, "Label \"%s\" contains illegal characters.", &cmd[6]);
                     }
-                    else if (find_label(cmd+6) != nullptr)
+                    else if (find_label(&cmd[6]) != nullptr)
                     {
-                        error(eoff, "Label \"%s\" already exists", cmd+6);
+                        error(eoff, "Label \"%s\" already exists", &cmd[6]);
                     }
                     else
                     {
-                        if ((int)strlen(cmd+6) > 32)
+                        if ((int)strlen(&cmd[6]) > 32)
                         {
                             warn(eoff, "Label name is long.");
                         }
@@ -2023,7 +2023,7 @@ void read_src(char const *fname)
                             warn(eoff, "Data topic has a local label.");
                         }
 
-                        lbl.name      = dupstr(cmd+6, 0);
+                        lbl.name      = dupstr(&cmd[6], 0);
                         lbl.topic_num = num_topic;
                         lbl.topic_off = (unsigned)(curr - &buffer[0]);
                         lbl.doc_page  = -1;
@@ -2285,7 +2285,7 @@ void read_src(char const *fname)
         if (!in_topic)
         {
             cmd[0] = ch;
-            ptr = read_until(cmd+1, 127, "\n~");
+            ptr = read_until(&cmd[1], 127, "\n~");
             if (*ptr == '~')
             {
                 unread_char('~');
