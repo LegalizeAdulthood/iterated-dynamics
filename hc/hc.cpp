@@ -1626,14 +1626,7 @@ void read_src(char const *fname)
                 while (ch == ' ');
                 unread_char(ch);
 
-                if (imbedded)
-                {
-                    ptr = read_until(cmd, 128, ")\n,");
-                }
-                else
-                {
-                    ptr = read_until(cmd, 128, "\n,");
-                }
+                ptr = read_until(cmd, 128, imbedded ? ")\n," : "\n,");
 
                 if (*ptr == '\0')
                 {
