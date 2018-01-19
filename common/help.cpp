@@ -1184,7 +1184,7 @@ static bool print_doc_get_info(int cmd, PD_INFO *pd, void *context)
 
         freader(&t, sizeof(int), 1, help_file);      // read flags
         info->content_pos += sizeof(int);
-        pd->new_page = (t & 1) ? true : false;
+        pd->new_page = (t & 1) != 0;
 
         freader(&ch, sizeof(char), 1, help_file);       // read id len
 
