@@ -819,15 +819,7 @@ int
 LambdaexponentFractal()
 {
     // found this in  "Science of Fractal Images"
-    if (g_save_release > 2002)
-    {
-        // need braces since these are macros
-        FLOATEXPBAILOUT();
-    }
-    else
-    {
-        OLD_FLOATEXPBAILOUT();
-    }
+    FLOATEXPBAILOUT();
     FPUsincos(&g_old_z.y, &siny, &cosy);
 
     if (g_old_z.x >= g_magnitude_limit && cosy >= 0.0)
@@ -2134,17 +2126,8 @@ static int TryFloatFractal(int (*fpFractal)())
     g_temp_sqr_x = sqr(g_old_z.x);
     g_temp_sqr_y = sqr(g_old_z.y);
     fpFractal();
-    if (g_save_release < 1900)
-    {
-        // for backwards compatibility
-        g_l_new_z.x = (long)(g_new_z.x/g_fudge_factor); // this error has been here a long time
-        g_l_new_z.y = (long)(g_new_z.y/g_fudge_factor);
-    }
-    else
-    {
-        g_l_new_z.x = (long)(g_new_z.x*g_fudge_factor);
-        g_l_new_z.y = (long)(g_new_z.y*g_fudge_factor);
-    }
+    g_l_new_z.x = (long)(g_new_z.x*g_fudge_factor);
+    g_l_new_z.y = (long)(g_new_z.y*g_fudge_factor);
     return 0;
 }
 #endif
@@ -2265,8 +2248,7 @@ TrigZsqrdFractal() // this doesn't work very well
     // { z=pixel: z=trig(z*z), |z|<TEST }
     long l16triglim_2 = 8L << 15;
     LCMPLXsqr_old(g_l_temp);
-    if ((labs(g_l_temp.x) > l16triglim_2 || labs(g_l_temp.y) > l16triglim_2) &&
-            g_save_release > 1900)
+    if (labs(g_l_temp.x) > l16triglim_2 || labs(g_l_temp.y) > l16triglim_2)
     {
         g_overflow = true;
     }
@@ -2639,10 +2621,7 @@ int long_mandel_per_pixel()
     // barnsleym1
     // barnsleym2
     g_l_init.x = g_l_x_pixel();
-    if (g_save_release >= 2004)
-    {
-        g_l_init.y = g_l_y_pixel();
-    }
+    g_l_init.y = g_l_y_pixel();
 
     if (g_invert != 0)
     {
@@ -2768,10 +2747,7 @@ int mandel_per_pixel()
     else
     {
         g_l_init.x = g_l_x_pixel();
-        if (g_save_release >= 2004)
-        {
-            g_l_init.y = g_l_y_pixel();
-        }
+        g_l_init.y = g_l_y_pixel();
     }
     switch (fractype)
     {
@@ -2835,10 +2811,7 @@ int marksmandel_per_pixel()
     else
     {
         g_l_init.x = g_l_x_pixel();
-        if (g_save_release >= 2004)
-        {
-            g_l_init.y = g_l_y_pixel();
-        }
+        g_l_init.y = g_l_y_pixel();
     }
 
     if (g_use_init_orbit == init_orbit_mode::value)
@@ -2890,10 +2863,7 @@ int marksmandelfp_per_pixel()
     else
     {
         g_init.x = g_dx_pixel();
-        if (g_save_release >= 2004)
-        {
-            g_init.y = g_dy_pixel();
-        }
+        g_init.y = g_dy_pixel();
     }
 
     if (g_use_init_orbit == init_orbit_mode::value)
@@ -2955,10 +2925,7 @@ int mandelfp_per_pixel()
     else
     {
         g_init.x = g_dx_pixel();
-        if (g_save_release >= 2004)
-        {
-            g_init.y = g_dy_pixel();
-        }
+        g_init.y = g_dy_pixel();
     }
     switch (fractype)
     {
@@ -3065,10 +3032,7 @@ int othermandelfp_per_pixel()
     else
     {
         g_init.x = g_dx_pixel();
-        if (g_save_release >= 2004)
-        {
-            g_init.y = g_dy_pixel();
-        }
+        g_init.y = g_dy_pixel();
     }
 
     if (g_use_init_orbit == init_orbit_mode::value)
@@ -3097,10 +3061,7 @@ int MPCHalley_per_pixel()
     else
     {
         g_init.x = g_dx_pixel();
-        if (g_save_release >= 2004)
-        {
-            g_init.y = g_dy_pixel();
-        }
+        g_init.y = g_dy_pixel();
     }
 
     mpcold.x = *pd2MP(g_init.x);
@@ -3121,10 +3082,7 @@ int Halley_per_pixel()
     else
     {
         g_init.x = g_dx_pixel();
-        if (g_save_release >= 2004)
-        {
-            g_init.y = g_dy_pixel();
-        }
+        g_init.y = g_dy_pixel();
     }
 
     g_old_z = g_init;
@@ -3184,10 +3142,7 @@ int MarksCplxMandperp()
     else
     {
         g_init.x = g_dx_pixel();
-        if (g_save_release >= 2004)
-        {
-            g_init.y = g_dy_pixel();
-        }
+        g_init.y = g_dy_pixel();
     }
     g_old_z.x = g_init.x + g_param_z1.x; // initial pertubation of parameters set
     g_old_z.y = g_init.y + g_param_z1.y;
@@ -3252,10 +3207,7 @@ int long_mandphoenix_per_pixel()
 {
 #if !defined(XFRACT)
     g_l_init.x = g_l_x_pixel();
-    if (g_save_release >= 2004)
-    {
-        g_l_init.y = g_l_y_pixel();
-    }
+    g_l_init.y = g_l_y_pixel();
 
     if (g_invert != 0)
     {
@@ -3303,10 +3255,7 @@ int mandphoenix_per_pixel()
     else
     {
         g_init.x = g_dx_pixel();
-        if (g_save_release >= 2004)
-        {
-            g_init.y = g_dy_pixel();
-        }
+        g_init.y = g_dy_pixel();
     }
 
     if (g_use_init_orbit == init_orbit_mode::value)

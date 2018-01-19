@@ -944,7 +944,7 @@ static void setup_save_info(FRACTAL_INFO *save_info)
 
     if (check_back())
     {
-        save_info->release = (short) std::min(g_save_release, g_release);
+        save_info->release = g_release;
     }
     else
     {

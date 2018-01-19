@@ -492,34 +492,31 @@ void SetupLogTable()
     float l, f, c, m;
     unsigned long limit;
 
-    if (g_save_release > 1920 || g_log_map_fly_calculate == 1)
+    // set up on-the-fly variables
+    if (g_log_map_flag > 0)
     {
-        // set up on-the-fly variables
-        if (g_log_map_flag > 0)
+        // new log function
+        lf = (g_log_map_flag > 1) ? g_log_map_flag : 0;
+        if (lf >= (unsigned long)g_log_map_table_max_size)
         {
-            // new log function
-            lf = (g_log_map_flag > 1) ? g_log_map_flag : 0;
-            if (lf >= (unsigned long)g_log_map_table_max_size)
-            {
-                lf = g_log_map_table_max_size - 1;
-            }
-            mlf = (g_colors - (lf?2:1)) / log(static_cast<double>(g_log_map_table_max_size - lf));
+            lf = g_log_map_table_max_size - 1;
         }
-        else if (g_log_map_flag == -1)
+        mlf = (g_colors - (lf?2:1)) / log(static_cast<double>(g_log_map_table_max_size - lf));
+    }
+    else if (g_log_map_flag == -1)
+    {
+        // old log function
+        mlf = (g_colors - 1) / log(static_cast<double>(g_log_map_table_max_size));
+    }
+    else if (g_log_map_flag <= -2)
+    {
+        // sqrt function
+        lf = 0 - g_log_map_flag;
+        if (lf >= (unsigned long)g_log_map_table_max_size)
         {
-            // old log function
-            mlf = (g_colors - 1) / log(static_cast<double>(g_log_map_table_max_size));
+            lf = g_log_map_table_max_size - 1;
         }
-        else if (g_log_map_flag <= -2)
-        {
-            // sqrt function
-            lf = 0 - g_log_map_flag;
-            if (lf >= (unsigned long)g_log_map_table_max_size)
-            {
-                lf = g_log_map_table_max_size - 1;
-            }
-            mlf = (g_colors - 2) / sqrt(static_cast<double>(g_log_map_table_max_size - lf));
-        }
+        mlf = (g_colors - 2) / sqrt(static_cast<double>(g_log_map_table_max_size - lf));
     }
 
     if (g_log_map_calculate)
@@ -527,7 +524,7 @@ void SetupLogTable()
         return; // LogTable not defined, bail out now
     }
 
-    if (g_save_release > 1920 && !g_log_map_calculate)
+    if (!g_log_map_calculate)
     {
         g_log_map_calculate = true;   // turn it on
         for (unsigned long prev = 0U; prev <= (unsigned long)g_log_map_table_max_size; prev++)
@@ -637,14 +634,7 @@ long logtablecalc(long citer)
         }
         else if ((citer - lf)/log(static_cast<double>(citer - lf)) <= mlf)
         {
-            if (g_save_release < 2002)
-            {
-                ret = (long)(citer - lf + (lf?1:0));
-            }
-            else
-            {
-                ret = (long)(citer - lf);
-            }
+            ret = (long)(citer - lf);
         }
         else
         {

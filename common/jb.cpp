@@ -343,8 +343,7 @@ zlinefp(double x, double y)
     for (zpixel = 0; zpixel < g_julibrot_z_dots; zpixel++)
     {
         // Special initialization for Mandelbrot types
-        if ((g_new_orbit_type == fractal_type::QUATFP || g_new_orbit_type == fractal_type::HYPERCMPLXFP)
-                && g_save_release > 2002)
+        if (g_new_orbit_type == fractal_type::QUATFP || g_new_orbit_type == fractal_type::HYPERCMPLXFP)
         {
             g_old_z.x = 0.0;
             g_old_z.y = 0.0;

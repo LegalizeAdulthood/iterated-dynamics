@@ -118,7 +118,6 @@ int     g_color_state = 0;         // 0, g_dac_box matches default (bios or map=
                                 // 1, g_dac_box matches no known defined map
                                 // 2, g_dac_box matches the colorfile map
 bool    g_colors_preloaded = false; // if g_dac_box preloaded for next mode select
-int     g_save_release = 0;       // release creating PAR file
 bool    g_read_color = true;  // flag for reading color from GIF
 double  g_math_tol[2] = {.05, .05}; // For math transition
 bool g_targa_out = false;                 // 3D fullcolor flag
@@ -414,7 +413,6 @@ static void initvars_run()              // once per run init
 static void initvars_restart()          // <ins> key init
 {
     g_record_colors = record_colors_mode::automatic; // use mapfiles in PARs
-    g_save_release = g_release;           // this release number
     g_gif87a_flag = false;                // turn on GIF89a processing
     g_dither_flag = false;                // no dithering
     g_ask_video = true;                    // turn on video-prompt flag
@@ -1176,17 +1174,9 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         initvars_fractal();
 
         // PAR release unknown unless specified
-        if (numval >= 0)
-        {
-            g_save_release = numval;
-        }
-        else
+        if (numval < 0)
         {
             goto badarg;
-        }
-        if (g_save_release == 0)
-        {
-            g_save_release = 1730; // before start of lyapunov wierdness
         }
         return CMDARG_FRACTAL_PARAM | CMDARG_RESET;
     }
@@ -3535,13 +3525,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
     if (variable == "release")
     {
         // release
-        if (numval < 0)
-        {
-            goto badarg;
-        }
-
-        g_save_release = numval;
-        return CMDARG_3D_PARAM;
+        goto badarg;
     }
 
     if (variable == "curdir")

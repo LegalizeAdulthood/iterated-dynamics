@@ -614,7 +614,7 @@ void write_batch_parms(char const *colorinf, bool colorsonly, int maxcolor, int 
         put_parm(" reset");
         if (check_back())
         {
-            put_parm("=%d", std::min(g_save_release, g_release));
+            put_parm("=%d", g_release);
         }
         else
         {

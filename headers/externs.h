@@ -437,7 +437,6 @@ extern DComplex              g_save_c;
 extern int                   g_save_dac;
 extern std::string           g_save_filename;
 extern long                  g_save_ticks;
-extern int                   g_save_release;
 extern int                   g_save_system;
 extern int                   g_scale_map[];
 extern float                 g_screen_aspect;

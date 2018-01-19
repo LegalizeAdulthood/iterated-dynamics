@@ -200,22 +200,21 @@ bool g_frm_uses_ismand = false;
 unsigned int chars_in_formula;
 
 #if !defined(XFRACT)
-#define ChkLongDenom(denom)                                 \
-    if ((denom == 0 || g_overflow) && g_save_release > 1920)    \
-    {                                                       \
-        g_overflow = true;                                    \
-        return;                                             \
-    }                                                       \
-    else if (denom == 0)                                    \
+#define ChkLongDenom(denom)         \
+    if ((denom == 0 || g_overflow)) \
+    {                               \
+        g_overflow = true;          \
+        return;                     \
+    }                               \
+    else if (denom == 0)            \
         return
 #endif
 
-#define ChkFloatDenom(denom)                                \
-    if (fabs(denom) <= DBL_MIN)                             \
-    {                                                       \
-        if (g_save_release > 1920)                            \
-            g_overflow = true;                                \
-        return;                                             \
+#define ChkFloatDenom(denom)        \
+    if (fabs(denom) <= DBL_MIN)     \
+    {                               \
+        g_overflow = true;          \
+        return;                     \
     }
 
 #define LastSqr v[4].a
@@ -1249,14 +1248,7 @@ void lStkRecip()
     long mod;
     mod = multiply(Arg1->l.x, Arg1->l.x, g_bit_shift)
           + multiply(Arg1->l.y, Arg1->l.y, g_bit_shift);
-    if (g_save_release > 1920)
-    {
-        ChkLongDenom(mod);
-    }
-    else if (mod <= 0L)
-    {
-        return;
-    }
+    ChkLongDenom(mod);
     Arg1->l.x =  divide(Arg1->l.x, mod, g_bit_shift);
     Arg1->l.y = -divide(Arg1->l.y, mod, g_bit_shift);
 }
@@ -2522,14 +2514,7 @@ static bool ParseStr(char const *Str, int pass)
         StkSinh = lStkSinh;
         StkLT = lStkLT;
         StkLTE = lStkLTE;
-        if (g_save_release > 1826)
-        {
-            StkMod = lStkMod;
-        }
-        else
-        {
-            StkMod = lStkModOld;
-        }
+        StkMod = lStkMod;
         StkSqr = lStkSqr;
         StkCos = lStkCos;
         StkCosh = lStkCosh;

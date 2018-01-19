@@ -457,11 +457,7 @@ JuliafpSetup()
                 g_symmetry = symmetry_type::ORIGIN;
             }
         }
-        if (g_save_release <= 1960)
-        {
-            curfractalspecific->orbitcalc = PopcornFractal_Old;
-        }
-        else if (default_functions && g_debug_flag == debug_flags::force_real_popcorn)
+        if (default_functions && g_debug_flag == debug_flags::force_real_popcorn)
         {
             curfractalspecific->orbitcalc = PopcornFractal;
         }
@@ -623,11 +619,7 @@ JulialongSetup()
                 g_symmetry = symmetry_type::ORIGIN;
             }
         }
-        if (g_save_release <= 1960)
-        {
-            curfractalspecific->orbitcalc = LPopcornFractal_Old;
-        }
-        else if (default_functions && g_debug_flag == debug_flags::force_real_popcorn)
+        if (default_functions && g_debug_flag == debug_flags::force_real_popcorn)
         {
             curfractalspecific->orbitcalc = LPopcornFractal;
         }

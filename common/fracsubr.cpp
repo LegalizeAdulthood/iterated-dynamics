@@ -166,9 +166,9 @@ void calcfracinit() // initialize a *pile* of stuff for fractal calculation
     // space req for grid is 2(xdots+ydots)*sizeof(long or double)
     // space available in extraseg is 65536 Bytes
     long xytemp = g_logical_screen_x_dots + g_logical_screen_y_dots;
-    if ((!g_user_float_flag && (xytemp*sizeof(long) > 32768)) ||
-            (g_user_float_flag && (xytemp*sizeof(double) > 32768)) ||
-            g_debug_flag == debug_flags::prevent_coordinate_grid)
+    if ((!g_user_float_flag && (xytemp*sizeof(long) > 32768))
+        || (g_user_float_flag && (xytemp*sizeof(double) > 32768))
+        || g_debug_flag == debug_flags::prevent_coordinate_grid)
     {
         g_use_grid = false;
         g_float_flag = true;
@@ -1075,10 +1075,8 @@ static void adjust_to_limits(double expand)
 
     if (g_integer_fractal)
     {
-        if (g_save_release > 1940)   // let user reproduce old GIF's and PAR's
-        {
-            limit = 1023.99;
-        }
+        // let user reproduce old GIF's and PAR's
+        limit = 1023.99;
         if (g_bit_shift >= 24)
         {
             limit = 31.99;

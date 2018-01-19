@@ -301,18 +301,6 @@ double fmodtest_bailout_or()
 double fmodtest()
 {
     double result;
-    if (g_inside_color == FMODI && g_save_release <= 2000) // for backwards compatibility
-    {
-        if (g_magnitude == 0.0 || g_magnitude_calc || g_integer_fractal)
-        {
-            result = sqr(g_new_z.x)+sqr(g_new_z.y);
-        }
-        else
-        {
-            result = g_magnitude; // don't recalculate
-        }
-        return result;
-    }
 
     switch (g_bail_out_test)
     {
@@ -687,14 +675,13 @@ int calcfract()
     g_log_map_calculate = false;
     // below, INT_MAX = 32767 only when an integer is two bytes.  Which is not true for Xfractint.
     // Since 32767 is what was meant, replaced the instances of INT_MAX with 32767.
-    if (g_log_map_flag && (((g_max_iterations > 32767) && (g_save_release > 1920))
+    if (g_log_map_flag && (((g_max_iterations > 32767))
                     || g_log_map_fly_calculate == 1))
     {
         g_log_map_calculate = true; // calculate on the fly
         SetupLogTable();
     }
-    else if (g_log_map_flag && (((g_max_iterations > 32767) && (g_save_release <= 1920))
-                         || g_log_map_fly_calculate == 2))
+    else if (g_log_map_flag && (g_log_map_fly_calculate == 2))
     {
         g_log_map_table_max_size = 32767;
         g_log_map_calculate = false; // use logtable
@@ -779,14 +766,7 @@ int calcfract()
     }
     lm = 4L << g_bit_shift;                 // CALCMAND magnitude limit
 
-    if (g_save_release > 2002)
-    {
-        atan_colors = g_colors;
-    }
-    else
-    {
-        atan_colors = 180;
-    }
+    atan_colors = g_colors;
 
     // ORBIT stuff
     g_show_orbit = g_start_show_orbit;
@@ -1101,7 +1081,7 @@ static void perform_worklist()
         delxx2 = (g_x_3rd - g_x_min) / d_y_size;
         delyy2 = (g_y_3rd - g_y_min) / d_x_size;
 
-        g_use_old_distance_estimator = g_save_release < 1827;
+        g_use_old_distance_estimator = false;
         g_magnitude_limit = rqlim_save; // just in case changed to DEM_BAILOUT earlier
         if (g_distance_estimator != 1 || g_colors == 2)   // not doing regular outside colors
         {
@@ -1949,27 +1929,13 @@ int calcmand()              // fast per pixel 1/2/b/g, called with row & col set
         if (g_color_iter >= g_colors)
         {
             // don't use color 0 unless from inside/outside
-            if (g_save_release <= 1950)
+            if (g_colors < 16)
             {
-                if (g_colors < 16)
-                {
-                    g_color &= g_and_color;
-                }
-                else
-                {
-                    g_color = ((g_color - 1) % g_and_color) + 1;  // skip color zero
-                }
+                g_color = (int)(g_color_iter & g_and_color);
             }
             else
             {
-                if (g_colors < 16)
-                {
-                    g_color = (int)(g_color_iter & g_and_color);
-                }
-                else
-                {
-                    g_color = (int)(((g_color_iter - 1) % g_and_color) + 1);
-                }
+                g_color = (int)(((g_color_iter - 1) % g_and_color) + 1);
             }
         }
         if (g_debug_flag != debug_flags::force_boundary_trace_error)
@@ -2019,27 +1985,13 @@ int calcmandfp()
         if (g_color_iter >= g_colors)
         {
             // don't use color 0 unless from inside/outside
-            if (g_save_release <= 1950)
+            if (g_colors < 16)
             {
-                if (g_colors < 16)
-                {
-                    g_color &= g_and_color;
-                }
-                else
-                {
-                    g_color = ((g_color - 1) % g_and_color) + 1;  // skip color zero
-                }
+                g_color = (int)(g_color_iter & g_and_color);
             }
             else
             {
-                if (g_colors < 16)
-                {
-                    g_color = (int)(g_color_iter & g_and_color);
-                }
-                else
-                {
-                    g_color = (int)(((g_color_iter - 1) % g_and_color) + 1);
-                }
+                g_color = (int)(((g_color_iter - 1) % g_and_color) + 1);
             }
         }
         if (g_debug_flag != debug_flags::force_boundary_trace_error)
@@ -2108,10 +2060,7 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
         {
             elem = 0.0;
         }
-        if (g_save_release > 1824)
-        {
-            g_max_iterations = 16;
-        }
+        g_max_iterations = 16;
     }
     if (g_periodicity_check == 0 || g_inside_color == ZMAG || g_inside_color == STARTRAIL)
     {
@@ -2302,7 +2251,7 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
                     break;
                 }
             }
-            else if (g_save_release > 1950)
+            else
             {
                 if (std::max(fabs(deriv.x), fabs(deriv.y)) > dem_toobig)
                 {
@@ -2312,7 +2261,7 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
             /* if above exit taken, the later test vs dem_delta will place this
                        point on the boundary, because mag(old)<bailout just now */
 
-            if (curfractalspecific->orbitcalc() || (g_overflow && g_save_release > 1826))
+            if (curfractalspecific->orbitcalc() || g_overflow)
             {
                 if (g_use_old_distance_estimator)
                 {
@@ -2383,29 +2332,26 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
                         g_new_z.y /= g_fudge_factor;
                     }
 
-                    if (g_save_release > 1824)
+                    if (g_new_z.x > STARTRAILMAX)
                     {
-                        if (g_new_z.x > STARTRAILMAX)
-                        {
-                            g_new_z.x = STARTRAILMAX;
-                        }
-                        if (g_new_z.x < -STARTRAILMAX)
-                        {
-                            g_new_z.x = -STARTRAILMAX;
-                        }
-                        if (g_new_z.y > STARTRAILMAX)
-                        {
-                            g_new_z.y = STARTRAILMAX;
-                        }
-                        if (g_new_z.y < -STARTRAILMAX)
-                        {
-                            g_new_z.y = -STARTRAILMAX;
-                        }
-                        g_temp_sqr_x = g_new_z.x * g_new_z.x;
-                        g_temp_sqr_y = g_new_z.y * g_new_z.y;
-                        g_magnitude = g_temp_sqr_x + g_temp_sqr_y;
-                        g_old_z = g_new_z;
+                        g_new_z.x = STARTRAILMAX;
                     }
+                    if (g_new_z.x < -STARTRAILMAX)
+                    {
+                        g_new_z.x = -STARTRAILMAX;
+                    }
+                    if (g_new_z.y > STARTRAILMAX)
+                    {
+                        g_new_z.y = STARTRAILMAX;
+                    }
+                    if (g_new_z.y < -STARTRAILMAX)
+                    {
+                        g_new_z.y = -STARTRAILMAX;
+                    }
+                    g_temp_sqr_x = g_new_z.x * g_new_z.x;
+                    g_temp_sqr_y = g_new_z.y * g_new_z.y;
+                    g_magnitude = g_temp_sqr_x + g_temp_sqr_y;
+                    g_old_z = g_new_z;
                     {
                         int tmpcolor;
                         tmpcolor = (int)(((g_color_iter - 1) % g_and_color) + 1);
@@ -2789,14 +2735,7 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
         // eliminate negative colors & wrap arounds
         if ((g_color_iter <= 0 || g_color_iter > g_max_iterations) && g_outside_color != FMOD)
         {
-            if (g_save_release < 1961)
-            {
-                g_color_iter = 0;
-            }
-            else
-            {
-                g_color_iter = 1;
-            }
+            g_color_iter = 1;
         }
     }
 
@@ -2994,27 +2933,13 @@ plot_pixel:
     if (g_color_iter >= g_colors)
     {
         // don't use color 0 unless from inside/outside
-        if (g_save_release <= 1950)
+        if (g_colors < 16)
         {
-            if (g_colors < 16)
-            {
-                g_color &= g_and_color;
-            }
-            else
-            {
-                g_color = ((g_color - 1) % g_and_color) + 1;  // skip color zero
-            }
+            g_color = (int)(g_color_iter & g_and_color);
         }
         else
         {
-            if (g_colors < 16)
-            {
-                g_color = (int)(g_color_iter & g_and_color);
-            }
-            else
-            {
-                g_color = (int)(((g_color_iter - 1) % g_and_color) + 1);
-            }
+            g_color = (int)(((g_color_iter - 1) % g_and_color) + 1);
         }
     }
     if (g_debug_flag != debug_flags::force_boundary_trace_error)
@@ -3107,7 +3032,7 @@ static void decomposition()
             ++temp;
             g_l_new_z.x = -g_l_new_z.x;
         }
-        if (g_decomp[0] == 2 && g_save_release >= 1827)
+        if (g_decomp[0] == 2)
         {
             save_temp = temp;
             if (temp == 2)
@@ -3212,7 +3137,7 @@ static void decomposition()
             ++temp;
             g_new_z.x = -g_new_z.x;
         }
-        if (g_decomp[0] == 2 && g_save_release >= 1827)
+        if (g_decomp[0] == 2)
         {
             save_temp = temp;
             if (temp == 2)
@@ -3300,7 +3225,7 @@ static void decomposition()
         }
         temp >>= 1;
     }
-    if (g_decomp[0] == 2 && g_save_release >= 1827)
+    if (g_decomp[0] == 2)
     {
         if (save_temp & 2)
         {
@@ -3314,10 +3239,6 @@ static void decomposition()
         {
             g_color_iter++;
         }
-    }
-    else if (g_decomp[0] == 2 && g_save_release < 1827)
-    {
-        g_color_iter &= 1;
     }
     if (g_colors > g_decomp[0])
     {

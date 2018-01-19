@@ -240,14 +240,7 @@ over_bailout_87:
         // check_color
         if ((g_color_iter <= 0 || g_color_iter > g_max_iterations) && g_outside_color != FMOD)
         {
-            if (g_save_release < 1961)
-            {
-                g_color_iter = 0;
-            }
-            else
-            {
-                g_color_iter = 1;
-            }
+            g_color_iter = 1;
         }
     }
 

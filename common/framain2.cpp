@@ -794,7 +794,6 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
         {
             driver_discard_screen();
             g_save_dac = 0;
-            g_save_release = g_release;
             g_magnitude_calc = true;
             g_use_old_periodicity = false;
             g_bad_outside = false;
@@ -1592,7 +1591,6 @@ static main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdm
         {
             driver_discard_screen();
             g_save_dac = 0;
-            g_save_release = g_release;
             g_magnitude_calc = true;
             g_use_old_periodicity = false;
             g_bad_outside = false;
@@ -2446,7 +2444,7 @@ static void save_history_info()
     current.periodicity          = (short)g_periodicity_check          ;
     current.pot16bit             = (short) (g_disk_16_bit ? 1 : 0);
     current.release              = (short)g_release                   ;
-    current.save_release         = (short)g_save_release              ;
+    current.save_release         = (short)g_release              ;
     current.display_3d           = g_display_3d;
     current.ambient              = (short)g_ambient                   ;
     current.randomize            = (short)g_randomize_3d                 ;
@@ -2630,7 +2628,6 @@ static void restore_history_info(int i)
     g_user_periodicity_value  = last.periodicity    ;
     g_disk_16_bit             = last.pot16bit != 0;
     g_release             = last.release        ;
-    g_save_release          = last.save_release   ;
     g_display_3d = last.display_3d;
     g_ambient               = last.ambient        ;
     g_randomize_3d             = last.randomize      ;

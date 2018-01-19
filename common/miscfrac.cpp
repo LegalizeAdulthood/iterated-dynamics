@@ -1566,12 +1566,6 @@ bool lya_setup()
     lyaLength = 1;
 
     i = (long)g_params[0];
-#if !defined(XFRACT)
-    if (g_save_release < 1732)
-    {
-        i &= 0x0FFFFL;    // make it a short to reproduce prior stuff
-    }
-#endif
     lyaRxy[0] = 1;
     int t;
     for (t = 31; t >= 0; t--)
@@ -1586,22 +1580,6 @@ bool lya_setup()
         lyaRxy[lyaLength++] = (i & (1<<t)) != 0;
     }
     lyaRxy[lyaLength++] = 0;
-    if (g_save_release < 1732)                // swap axes prior to 1732
-    {
-        for (t = lyaLength; t >= 0; t--)
-        {
-            lyaRxy[t] = !lyaRxy[t];
-        }
-    }
-    if (g_save_release < 1731)
-    {
-        // ignore inside=, stdcalcmode
-        g_std_calc_mode = '1';
-        if (g_inside_color == 1)
-        {
-            g_inside_color = COLOR_BLACK;
-        }
-    }
     if (g_inside_color < COLOR_BLACK)
     {
         stopmsg(STOPMSG_NONE,
@@ -2283,77 +2261,43 @@ bool froth_setup()
     cos_theta = -0.5;    // cos(2*PI/3)
 
     // for the all important backwards compatibility
-    if (g_save_release <= 1821)   // book version is 18.21
+    if (g_params[0] != 2)
     {
-        // use old release parameters
-
-        fsp.repeat_mapping = ((int)g_params[0] == 6 || (int)g_params[0] == 2); // map 1 or 2 times (3 or 6 basins)
-        fsp.altcolor = (int)g_params[1];
-        g_params[2] = 0; // throw away any value used prior to 18.20
-
-        fsp.attractors = !fsp.repeat_mapping ? 3 : 6;
-
-        // use old values */                /* old names
-        fsp.fl.f.a = 1.02871376822;          // A
-        fsp.fl.f.halfa = fsp.fl.f.a/2;      // A/2
-
-        fsp.fl.f.top_x1 = -1.04368901270;    // X1MIN
-        fsp.fl.f.top_x2 =  1.33928675524;    // X1MAX
-        fsp.fl.f.top_x3 = -0.339286755220;   // XMIDT
-        fsp.fl.f.top_x4 = -0.339286755220;   // XMIDT
-
-        fsp.fl.f.left_x1 =  0.07639837810;   // X3MAX2
-        fsp.fl.f.left_x2 = -1.11508950586;   // X2MIN2
-        fsp.fl.f.left_x3 = -0.27580275066;   // XMIDL
-        fsp.fl.f.left_x4 = -0.27580275066;   // XMIDL
-
-        fsp.fl.f.right_x1 =  0.96729063460;  // X2MAX1
-        fsp.fl.f.right_x2 = -0.22419724936;  // X3MIN1
-        fsp.fl.f.right_x3 =  0.61508950585;  // XMIDR
-        fsp.fl.f.right_x4 =  0.61508950585;  // XMIDR
-
+        g_params[0] = 1;
     }
-    else // use new code
+    fsp.repeat_mapping = (int)g_params[0] == 2;
+    if (g_params[1] != 0)
     {
-        if (g_params[0] != 2)
-        {
-            g_params[0] = 1;
-        }
-        fsp.repeat_mapping = (int)g_params[0] == 2;
-        if (g_params[1] != 0)
-        {
-            g_params[1] = 1;
-        }
-        fsp.altcolor = (int)g_params[1];
-        fsp.fl.f.a = g_params[2];
-
-        fsp.attractors = fabs(fsp.fl.f.a) <= FROTH_CRITICAL_A ? (!fsp.repeat_mapping ? 3 : 6)
-                          : (!fsp.repeat_mapping ? 2 : 3);
-
-        // new improved values
-        // 0.5 is the value that causes the mapping to reach a minimum
-        double x0 = 0.5;
-        // a/2 is the value that causes the y value to be invariant over the mappings
-        fsp.fl.f.halfa = fsp.fl.f.a/2;
-        double y0 = fsp.fl.f.halfa;
-        fsp.fl.f.top_x1 = froth_top_x_mapping(x0);
-        fsp.fl.f.top_x2 = froth_top_x_mapping(fsp.fl.f.top_x1);
-        fsp.fl.f.top_x3 = froth_top_x_mapping(fsp.fl.f.top_x2);
-        fsp.fl.f.top_x4 = froth_top_x_mapping(fsp.fl.f.top_x3);
-
-        // rotate 120 degrees counter-clock-wise
-        fsp.fl.f.left_x1 = fsp.fl.f.top_x1 * cos_theta - y0 * sin_theta;
-        fsp.fl.f.left_x2 = fsp.fl.f.top_x2 * cos_theta - y0 * sin_theta;
-        fsp.fl.f.left_x3 = fsp.fl.f.top_x3 * cos_theta - y0 * sin_theta;
-        fsp.fl.f.left_x4 = fsp.fl.f.top_x4 * cos_theta - y0 * sin_theta;
-
-        // rotate 120 degrees clock-wise
-        fsp.fl.f.right_x1 = fsp.fl.f.top_x1 * cos_theta + y0 * sin_theta;
-        fsp.fl.f.right_x2 = fsp.fl.f.top_x2 * cos_theta + y0 * sin_theta;
-        fsp.fl.f.right_x3 = fsp.fl.f.top_x3 * cos_theta + y0 * sin_theta;
-        fsp.fl.f.right_x4 = fsp.fl.f.top_x4 * cos_theta + y0 * sin_theta;
-
+        g_params[1] = 1;
     }
+    fsp.altcolor = (int)g_params[1];
+    fsp.fl.f.a = g_params[2];
+
+    fsp.attractors = fabs(fsp.fl.f.a) <= FROTH_CRITICAL_A ? (!fsp.repeat_mapping ? 3 : 6)
+                         : (!fsp.repeat_mapping ? 2 : 3);
+
+    // new improved values
+    // 0.5 is the value that causes the mapping to reach a minimum
+    double x0 = 0.5;
+    // a/2 is the value that causes the y value to be invariant over the mappings
+    fsp.fl.f.halfa = fsp.fl.f.a/2;
+    double y0 = fsp.fl.f.halfa;
+    fsp.fl.f.top_x1 = froth_top_x_mapping(x0);
+    fsp.fl.f.top_x2 = froth_top_x_mapping(fsp.fl.f.top_x1);
+    fsp.fl.f.top_x3 = froth_top_x_mapping(fsp.fl.f.top_x2);
+    fsp.fl.f.top_x4 = froth_top_x_mapping(fsp.fl.f.top_x3);
+
+    // rotate 120 degrees counter-clock-wise
+    fsp.fl.f.left_x1 = fsp.fl.f.top_x1 * cos_theta - y0 * sin_theta;
+    fsp.fl.f.left_x2 = fsp.fl.f.top_x2 * cos_theta - y0 * sin_theta;
+    fsp.fl.f.left_x3 = fsp.fl.f.top_x3 * cos_theta - y0 * sin_theta;
+    fsp.fl.f.left_x4 = fsp.fl.f.top_x4 * cos_theta - y0 * sin_theta;
+
+    // rotate 120 degrees clock-wise
+    fsp.fl.f.right_x1 = fsp.fl.f.top_x1 * cos_theta + y0 * sin_theta;
+    fsp.fl.f.right_x2 = fsp.fl.f.top_x2 * cos_theta + y0 * sin_theta;
+    fsp.fl.f.right_x3 = fsp.fl.f.top_x3 * cos_theta + y0 * sin_theta;
+    fsp.fl.f.right_x4 = fsp.fl.f.top_x4 * cos_theta + y0 * sin_theta;
 
     // if 2 attractors, use same shades as 3 attractors
     fsp.shades = (g_colors-1) / std::max(3, fsp.attractors);

@@ -92,7 +92,6 @@ int read_overlay()      // read overlay/3D files, if reqr'd
     g_y_max        = read_info.ymax;
     g_params[0]     = read_info.creal;
     g_params[1]     = read_info.cimag;
-    g_save_release = 1100; // unless we find out better later on
 
     g_invert = 0;
     if (read_info.version > 0)
@@ -128,7 +127,6 @@ int read_overlay()      // read overlay/3D files, if reqr'd
 
     if (read_info.version > 1)
     {
-        g_save_release  = 1200;
         if ((g_display_3d == display_3d_modes::NONE)
                 && (read_info.version <= 4 || read_info.display_3d > 0
                     || (curfractalspecific->flags & PARMS3D)))
@@ -154,7 +152,6 @@ int read_overlay()      // read overlay/3D files, if reqr'd
 
     if (read_info.version > 2)
     {
-        g_save_release = 1300;
         g_outside_color      = read_info.outside;
     }
 
@@ -165,7 +162,6 @@ int read_overlay()      // read overlay/3D files, if reqr'd
     g_calc_time = 0;
     if (read_info.version > 3)
     {
-        g_save_release = 1400;
         g_x_3rd       = read_info.x3rd;
         g_y_3rd       = read_info.y3rd;
         g_calc_status = static_cast<calc_status_value>(read_info.calc_status);
@@ -206,13 +202,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
             g_file_aspect_ratio = g_screen_aspect;
         }
         g_save_system  = read_info.system;
-        g_save_release = read_info.release; // from fmt 5 on we know real number
-        if (read_info.version == 5        // except a few early fmt 5 cases:
-                && (g_save_release <= 0 || g_save_release >= 4000))
-        {
-            g_save_release = 1410;
-            g_save_system = 0;
-        }
+        g_save_system = 0;
         if (g_display_3d == display_3d_modes::NONE && read_info.display_3d > 0)
         {
             g_loaded_3d       = true;
@@ -313,11 +303,6 @@ int read_overlay()      // read overlay/3D files, if reqr'd
                 g_force_symmetry = static_cast<symmetry_type>(1000);
             }
         }
-    }
-    if (g_save_release < 1725 && read_info.version != 0) // pre-version 17.25
-    {
-        set_if_old_bif(); // translate bifurcation types
-        g_new_bifurcation_functions_loaded = true;
     }
 
     if (read_info.version > 9)
@@ -1170,68 +1155,23 @@ void backwards_v18()
     {
         set_if_old_bif(); // old bifs need function set
     }
-    if (fractype == fractal_type::MANDELTRIG && g_user_float_flag
-            && g_save_release < 1800 && g_bail_out == 0)
-    {
-        g_bail_out = 2500;
-    }
-    if (fractype == fractal_type::LAMBDATRIG && g_user_float_flag
-            && g_save_release < 1800 && g_bail_out == 0)
-    {
-        g_bail_out = 2500;
-    }
 }
 
 void backwards_v19()
 {
-    if (fractype == fractal_type::MARKSJULIA && g_save_release < 1825)
-    {
-        if (g_params[2] == 0)
-        {
-            g_params[2] = 2;
-        }
-        else
-        {
-            g_params[2] += 1;
-        }
-    }
-    if (fractype == fractal_type::MARKSJULIAFP && g_save_release < 1825)
-    {
-        if (g_params[2] == 0)
-        {
-            g_params[2] = 2;
-        }
-        else
-        {
-            g_params[2] += 1;
-        }
-    }
-    if ((fractype == fractal_type::FORMULA || fractype == fractal_type::FFORMULA) && g_save_release < 1824)
-    {
-        g_invert = 0;
-        g_inversion[2] = g_invert;
-        g_inversion[1] = g_inversion[2];
-        g_inversion[0] = g_inversion[1];
-    }
     // fractal might have old bof60/61 problem with magnitude
     g_magnitude_calc = !fix_bof();
     // fractal might use old periodicity method
     g_use_old_periodicity = fix_period_bof();
-    g_use_old_distance_estimator = (g_save_release < 1827 && g_distance_estimator);
+    g_use_old_distance_estimator = false;
 }
 
 void backwards_v20()
 {
     // Fractype == FP type is not seen from PAR file ?????
-    g_bad_outside = (fractype == fractal_type::MANDELFP || fractype == fractal_type::JULIAFP ||
-            fractype == fractal_type::MANDEL || fractype == fractal_type::JULIA) &&
-            (g_outside_color <= REAL && g_outside_color >= SUM) && g_save_release <= 1960;
-    g_ld_check = (fractype == fractal_type::FORMULA || fractype == fractal_type::FFORMULA) &&
-            (g_save_release < 1900 || g_debug_flag == debug_flags::force_ld_check);
-    if (g_inside_color == EPSCROSS && g_save_release < 1961)
-    {
-        g_close_proximity = 0.01;
-    }
+    g_bad_outside = false;
+    g_ld_check = (fractype == fractal_type::FORMULA || fractype == fractal_type::FFORMULA)
+        && (g_debug_flag == debug_flags::force_ld_check);
     if (!g_new_bifurcation_functions_loaded)
     {
         set_function_parm_defaults();
@@ -1244,59 +1184,23 @@ bool check_back()
        put the features that need to save the value in save_release for backwards
        compatibility in this routine
     */
-    bool ret = false;
-    if (fractype == fractal_type::LYAPUNOV ||
-            fractype == fractal_type::FROTH || fractype == fractal_type::FROTHFP ||
-            fix_bof() || fix_period_bof() || g_use_old_distance_estimator || g_decomp[0] == 2 ||
-            (fractype == fractal_type::FORMULA && g_save_release <= 1920) ||
-            (fractype == fractal_type::FFORMULA && g_save_release <= 1920) ||
-            (g_log_map_flag != 0 && g_save_release <= 2001) ||
-            (fractype == fractal_type::TRIGSQR && g_save_release < 1900) ||
-            (g_inside_color == STARTRAIL && g_save_release < 1825) ||
-            (g_max_iterations > 32767 && g_save_release <= 1950) ||
-            (g_distance_estimator && g_save_release <=1950) ||
-            ((g_outside_color <= REAL && g_outside_color >= ATAN) &&
-             g_save_release <= 1960) ||
-            (fractype == fractal_type::FPPOPCORN && g_save_release <= 1960) ||
-            (fractype == fractal_type::LPOPCORN && g_save_release <= 1960) ||
-            (fractype == fractal_type::FPPOPCORNJUL && g_save_release <= 1960) ||
-            (fractype == fractal_type::LPOPCORNJUL && g_save_release <= 1960) ||
-            (g_inside_color == FMODI && g_save_release <= 2000) ||
-            ((g_inside_color == ATANI || g_outside_color == ATAN) && g_save_release <= 2002) ||
-            (fractype == fractal_type::LAMBDATRIGFP && trigndx[0] == trig_fn::EXP && g_save_release <= 2002) ||
-            ((fractype == fractal_type::JULIBROT || fractype == fractal_type::JULIBROTFP) &&
-             (g_new_orbit_type == fractal_type::QUATFP || g_new_orbit_type == fractal_type::HYPERCMPLXFP) &&
-             g_save_release <= 2002)
-       )
-    {
-        ret = true;
-    }
-    return ret;
+    return fractype == fractal_type::LYAPUNOV
+        || fractype == fractal_type::FROTH
+        || fractype == fractal_type::FROTHFP
+        || fix_bof()
+        || fix_period_bof()
+        || g_use_old_distance_estimator
+        || g_decomp[0] == 2;
 }
 
 static bool fix_bof()
 {
-    bool ret = false;
-    if (g_inside_color <= BOF60 && g_inside_color >= BOF61 && g_save_release < 1826)
-    {
-        if ((curfractalspecific->calctype == standard_fractal &&
-                (curfractalspecific->flags & BAILTEST) == 0) ||
-                (fractype == fractal_type::FORMULA || fractype == fractal_type::FFORMULA))
-        {
-            ret = true;
-        }
-    }
-    return ret;
+    return false;
 }
 
 static bool fix_period_bof()
 {
-    bool ret = false;
-    if (g_inside_color <= BOF60 && g_inside_color >= BOF61 && g_save_release < 1826)
-    {
-        ret = true;
-    }
-    return ret;
+    return false;
 }
 
 // browse code RB
