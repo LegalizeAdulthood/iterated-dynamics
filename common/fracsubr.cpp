@@ -1480,7 +1480,7 @@ void sleepms_old(long ms)
         // using ftime is probably more accurate
         ms /= 10;
         ftimex(&t1);
-        while (1)
+        while (true)
         {
             if (driver_key_pressed())
             {

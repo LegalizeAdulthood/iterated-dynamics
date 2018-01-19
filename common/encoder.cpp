@@ -90,7 +90,7 @@ restart:
     save16bit = g_disk_16_bit;
     if (g_gif87a_flag)               // not storing non-standard fractal info
     {
-        save16bit = 0;
+        save16bit = false;
     }
 
     strcpy(openfile, filename);  // decode and open the filename

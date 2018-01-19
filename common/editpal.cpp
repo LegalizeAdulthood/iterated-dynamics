@@ -910,7 +910,7 @@ static bool MoveBox_Process(MoveBox *me)
 #ifdef XFRACT
     Cursor_StartMouseTracking();
 #endif
-    while (1)
+    while (true)
     {
         Cursor_WaitKey();
         key = driver_get_key();

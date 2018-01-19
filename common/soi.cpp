@@ -745,7 +745,7 @@ scan:
 
     before = iter;
 
-    while (1)
+    while (true)
     {
         sr1 = zre1;
         si1 = zim1;

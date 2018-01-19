@@ -754,7 +754,7 @@ FnPlusFnSym() // set symmetry matrix for fn+fn type
     {
         g_symmetry = symmetry_type::NONE;
     }
-    return (0);
+    return (false);
 }
 
 bool
@@ -790,7 +790,7 @@ JuliaTrigOrTrigSetup()
         g_symmetry = symmetry_type::NONE;
     }
     get_julia_attractor(0.0, 0.0);       // an attractor?
-    return (1);
+    return (true);
 }
 
 bool

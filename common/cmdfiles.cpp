@@ -683,7 +683,7 @@ static int next_command(
     int cmdlen = 0;
     char *lineptr;
     lineptr = linebuf + *lineoffset;
-    while (1)
+    while (true)
     {
         while (*lineptr <= ' ' || *lineptr == ';')
         {

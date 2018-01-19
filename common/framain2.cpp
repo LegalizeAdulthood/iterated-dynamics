@@ -55,7 +55,7 @@ main_state big_while_loop(bool *const kbdmore, bool *const stacked, bool const r
         goto resumeloop;
     }
 
-    while (1)                    // eternal loop
+    while (true)                    // eternal loop
     {
 #if defined(_WIN32)
         _ASSERTE(_CrtCheckMemory());
@@ -974,7 +974,7 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
         if (get_fract3d_params() >= 0)    // get the parameters
         {
             g_calc_status = calc_status_value::PARAMS_CHANGED;
-            *kbdmore = 0;    // time to redraw
+            *kbdmore = false;    // time to redraw
         }
         break;
     case FIK_CTL_A:                     // ^a Ant

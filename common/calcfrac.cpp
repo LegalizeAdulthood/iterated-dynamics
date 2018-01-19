@@ -3961,7 +3961,7 @@ static bool guessrow(bool firstpass, int y, int blocksize)
             guessed33 = -1;
             guessed32 = guessed33;
         }
-        while (1) // go around till none of 23,32,33 change anymore
+        while (true) // go around till none of 23,32,33 change anymore
         {
             if (guessed33 > 0
                     && (c33 != c44 || c33 != c42 || c33 != c24 || c33 != c32 || c33 != c23))
@@ -4702,7 +4702,7 @@ static int tesseral()
         {
             xsize <<= 1;
         }
-        while (1)
+        while (true)
         {
             tp2 = tp;
             if (tp->x2 - tp->x1 > tp->y2 - tp->y1)

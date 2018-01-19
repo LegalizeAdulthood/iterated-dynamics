@@ -491,7 +491,7 @@ int fullscreen_prompt(      // full-screen prompting routine
                 : "Press ENTER to exit");
         driver_hide_text_cursor();
         g_text_cbase = 2;
-        while (1)
+        while (true)
         {
             if (rewrite_extrainfo)
             {
@@ -854,7 +854,7 @@ int prompt_valuestring(char *buf, fullscreenvalues const *val)
     case 'd':
         ret = 20;
         i = 16;    // cellular needs 16 (was 15)
-        while (1)
+        while (true)
         {
             sprintf(buf, "%.*g", i, val->uval.dval);
             if ((int)strlen(buf) <= ret)
@@ -998,7 +998,7 @@ static int input_field_list(
     }
     curval = initval;
     ret = -1;
-    while (1)
+    while (true)
     {
         strcpy(buf, list[curval]);
         {
@@ -1070,7 +1070,7 @@ int get_fracttype()             // prompt for and select fractal type
     fractal_type t;
     int done = -1;
     fractal_type oldfractype = fractype;
-    while (1)
+    while (true)
     {
         t = select_fracttype(fractype);
         if (t == fractal_type::NOFRACTAL)
@@ -1931,7 +1931,7 @@ gfp_top:
     }
     scroll_row_status = 0; // make sure we start at beginning of entry
     scroll_column_status = 0;
-    while (1)
+    while (true)
     {
         old_help_mode = g_help_mode;
         g_help_mode = curfractalspecific->helptext;
@@ -2143,7 +2143,7 @@ long get_file_entry(int type, char const *title, char const *fmask,
     bool firsttry;
     long entry_pointer;
     bool newfile = false;
-    while (1)
+    while (true)
     {
         firsttry = false;
         // binary mode used here - it is more work, but much faster,
@@ -3455,7 +3455,7 @@ static bool check_mapfile()
         merge_pathnames(buff, funnyglasses_map_name, cmd_file::AT_CMD_LINE);
     }
 
-    while (1)
+    while (true)
     {
         if (askflag)
         {

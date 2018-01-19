@@ -344,7 +344,7 @@ longpersp(LVECTOR lv, LVECTOR lview, int bitshift)
 {
     LVECTOR tmpview;
     long denom;
-    g_overflow = 0;
+    g_overflow = false;
     denom = lview[2] - lv[2];
     if (denom >= 0)              // bail out if point is "behind" us
     {

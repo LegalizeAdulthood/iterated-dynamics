@@ -207,7 +207,7 @@ start:
     }
 
     i = 0;
-    while (1) // get a token
+    while (true) // get a token
     {
         if (i < 80)
         {

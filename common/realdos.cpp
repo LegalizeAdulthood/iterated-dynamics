@@ -1556,7 +1556,7 @@ int input_field(
     bool started = false;
     int offset = 0;
     bool display = true;
-    while (1)
+    while (true)
     {
         strcpy(buf, fld);
         i = (int) strlen(buf);

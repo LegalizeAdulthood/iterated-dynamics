@@ -817,7 +817,7 @@ bf_t unsafe_sincos_bf(bf_t s, bf_t c, bf_t n)
     }
     // 0 <= n < pi/2
 
-    bool switch_sincos = 0;
+    bool switch_sincos = false;
     half_bf(bftmp1, bf_pi); // pi/2
     half_a_bf(bftmp1);      // pi/4
     if (cmp_bf(n, bftmp1) > 0) // if n > pi/4

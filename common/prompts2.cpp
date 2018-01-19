@@ -1221,7 +1221,7 @@ int get_rds_params()
     int ret;
     static char reuse = 0;
     driver_stack_screen();
-    while (1)
+    while (true)
     {
         ret = 0;
 

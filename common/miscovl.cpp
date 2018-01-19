@@ -180,7 +180,7 @@ void make_batch_file()
     }
 
     vidmode_keyname(g_video_entry.keynum, vidmde);
-    while (1)
+    while (true)
     {
 prompt_user:
         promptnum = 0;
@@ -1453,7 +1453,7 @@ docolors:
                 loaddac(); // stupid kludge
             }
 #endif
-            while (1)
+            while (true)
             {
                 // emit color in rgb 3 char encoded form
                 for (int j = 0; j < 3; ++j)

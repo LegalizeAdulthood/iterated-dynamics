@@ -146,7 +146,7 @@ static void display_parse_text(char const *text, unsigned len, int start_margin,
         tok = -1;
     }
 
-    while (1)
+    while (true)
     {
         switch (tok)
         {
@@ -169,7 +169,7 @@ static void display_parse_text(char const *text, unsigned len, int start_margin,
 
             col = indent;
 
-            while (1)
+            while (true)
             {
                 tok = find_token_length(ONLINE, curr, len, &size, &width);
 
@@ -1184,7 +1184,7 @@ static bool print_doc_get_info(int cmd, PD_INFO *pd, void *context)
 
         freader(&t, sizeof(int), 1, help_file);      // read flags
         info->content_pos += sizeof(int);
-        pd->new_page = (t & 1) ? 1 : 0;
+        pd->new_page = (t & 1) ? true : false;
 
         freader(&ch, sizeof(char), 1, help_file);       // read id len
 
@@ -1284,15 +1284,15 @@ static bool print_doc_output(int cmd, PD_INFO *pd, void *context)
         info->margin = 0;
         printerc(info, '\f', 1);
         info->margin = PAGE_INDENT;
-        return (1);
+        return (true);
 
     case PD_PRINT:
         printers(info, pd->s, pd->i);
-        return (1);
+        return (true);
 
     case PD_PRINTN:
         printerc(info, *pd->s, pd->i);
-        return (1);
+        return (true);
 
     case PD_PRINT_SEC:
         info->margin = TITLE_INDENT;
@@ -1304,17 +1304,17 @@ static bool print_doc_output(int cmd, PD_INFO *pd, void *context)
         printers(info, pd->title, 0);
         printerc(info, '\n', 1);
         info->margin = PAGE_INDENT;
-        return (1);
+        return (true);
 
     case PD_START_SECTION:
     case PD_START_TOPIC:
     case PD_SET_SECTION_PAGE:
     case PD_SET_TOPIC_PAGE:
     case PD_PERIODIC:
-        return (1);
+        return (true);
 
     default:
-        return (0);
+        return (false);
     }
 }
 

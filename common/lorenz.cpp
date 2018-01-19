@@ -2047,7 +2047,7 @@ int dynam2dfloat()
     }
 
     ret = 0;
-    while (1)
+    while (true)
     {
         if (driver_key_pressed())
         {
