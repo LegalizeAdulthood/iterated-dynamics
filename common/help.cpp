@@ -285,7 +285,7 @@ static void display_parse_text(char const *text, unsigned len, int start_margin,
         }
 
         tok = find_token_length(ONLINE, curr, len, &size, &width);
-    } // while (1)
+    } // while (true)
 
     g_text_cbase = 0;
     g_text_rbase = 0;

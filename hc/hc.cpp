@@ -618,7 +618,7 @@ int _read_char()
         return (-1);
     }
 
-    while (1)
+    while (true)
     {
         ch = getc(srcfile);
 
@@ -855,7 +855,7 @@ void skip_over(char const *skip)
 {
     int ch;
 
-    while (1)
+    while (true)
     {
         ch = read_char();
 
@@ -959,7 +959,7 @@ void process_contents()
     c.srcline = -1;
     add_content(&c);
 
-    while (1)
+    while (true)
     {
         ch = read_char();
 
@@ -1366,7 +1366,7 @@ void process_comment()
 {
     int ch;
 
-    while (1)
+    while (true)
     {
         ch = read_char();
 
@@ -1577,7 +1577,7 @@ void read_src(char const *fname)
 
     curr = &buffer[0];
 
-    while (1)
+    while (true)
     {
 
         ch = read_char();
@@ -2870,7 +2870,7 @@ void paginate_online()    // paginate the text for on-line help
 
                 col = indent;
 
-                while (1)
+                while (true)
                 {
                     tok = find_token_length(ONLINE, curr, len, &size, &width);
 

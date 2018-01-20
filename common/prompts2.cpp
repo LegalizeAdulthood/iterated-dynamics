@@ -1483,7 +1483,7 @@ int  fr_findnext()              // Find next file (or subdir) meeting above path
     char thisname[FILE_MAX_PATH];
     char tmpname[FILE_MAX_PATH];
     char thisext[FILE_MAX_EXT];
-    while (1)
+    while (true)
     {
         dirEntry = readdir(currdir);
         if (dirEntry == nullptr)
