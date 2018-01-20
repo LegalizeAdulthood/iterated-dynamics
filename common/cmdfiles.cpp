@@ -167,7 +167,7 @@ std::vector<float> g_ifs_definition;            // ifs parameters
 bool g_ifs_type = false;                  // false=2d, true=3d
 slides_mode g_slides = slides_mode::OFF; // PLAY autokey=play, RECORD autokey=record
 
-BYTE txtcolor[] =
+BYTE g_text_color[] =
 {
     BLUE*16+L_WHITE,    // C_TITLE           title background
     BLUE*16+L_GREEN,    // C_TITLE_DEV       development vsn foreground
@@ -3561,36 +3561,36 @@ static void parse_textcolors(char const *value)
     int hexval;
     if (strcmp(value, "mono") == 0)
     {
-        for (auto & elem : txtcolor)
+        for (auto & elem : g_text_color)
         {
             elem = BLACK*16+WHITE;
         }
         /* C_HELP_CURLINK = C_PROMPT_INPUT = C_CHOICE_CURRENT = C_GENERAL_INPUT
                           = C_AUTHDIV1 = C_AUTHDIV2 = WHITE*16+BLACK; */
-        txtcolor[28] = WHITE*16+BLACK;
-        txtcolor[27] = txtcolor[28];
-        txtcolor[20] = txtcolor[27];
-        txtcolor[14] = txtcolor[20];
-        txtcolor[13] = txtcolor[14];
-        txtcolor[12] = txtcolor[13];
-        txtcolor[6] = txtcolor[12];
+        g_text_color[28] = WHITE*16+BLACK;
+        g_text_color[27] = g_text_color[28];
+        g_text_color[20] = g_text_color[27];
+        g_text_color[14] = g_text_color[20];
+        g_text_color[13] = g_text_color[14];
+        g_text_color[12] = g_text_color[13];
+        g_text_color[6] = g_text_color[12];
         /* C_TITLE = C_HELP_HDG = C_HELP_LINK = C_PROMPT_HI = C_CHOICE_SP_KEYIN
                    = C_GENERAL_HI = C_DVID_HI = C_STOP_ERR
                    = C_STOP_INFO = BLACK*16+L_WHITE; */
-        txtcolor[25] = BLACK*16+L_WHITE;
-        txtcolor[24] = txtcolor[25];
-        txtcolor[22] = txtcolor[24];
-        txtcolor[17] = txtcolor[22];
-        txtcolor[16] = txtcolor[17];
-        txtcolor[11] = txtcolor[16];
-        txtcolor[5] = txtcolor[11];
-        txtcolor[2] = txtcolor[5];
-        txtcolor[0] = txtcolor[2];
+        g_text_color[25] = BLACK*16+L_WHITE;
+        g_text_color[24] = g_text_color[25];
+        g_text_color[22] = g_text_color[24];
+        g_text_color[17] = g_text_color[22];
+        g_text_color[16] = g_text_color[17];
+        g_text_color[11] = g_text_color[16];
+        g_text_color[5] = g_text_color[11];
+        g_text_color[2] = g_text_color[5];
+        g_text_color[0] = g_text_color[2];
     }
     else
     {
         int k = 0;
-        while (k < sizeof(txtcolor))
+        while (k < sizeof(g_text_color))
         {
             if (*value == 0)
             {
@@ -3605,7 +3605,7 @@ static void parse_textcolors(char const *value)
                 {
                     j = 15;
                 }
-                txtcolor[k] = (BYTE)(i * 16 + j);
+                g_text_color[k] = (BYTE)(i * 16 + j);
                 value = strchr(value, '/');
                 if (value == nullptr)
                 {
