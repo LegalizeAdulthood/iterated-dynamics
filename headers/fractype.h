@@ -37,7 +37,7 @@ enum class trig_fn
     ONE
 };
 
-extern trig_fn trigndx[];
+extern trig_fn g_trig_index[];
 
 // These MUST match the corresponding indices into the fractalspecific array
 enum class fractal_type

@@ -1765,7 +1765,7 @@ gfp_top:
     for (int i = 0; i < numtrig; i++)
     {
         paramvalues[promptnum].type = 'l';
-        paramvalues[promptnum].uval.ch.val  = static_cast<int>(trigndx[i]);
+        paramvalues[promptnum].uval.ch.val  = static_cast<int>(g_trig_index[i]);
         paramvalues[promptnum].uval.ch.llen = NUMTRIGFN;
         paramvalues[promptnum].uval.ch.vlen = 6;
         paramvalues[promptnum].uval.ch.list = trignameptr;
@@ -1981,7 +1981,7 @@ gfp_top:
 
     for (int i = 0; i < numtrig; i++)
     {
-        if (paramvalues[promptnum].uval.ch.val != (int)trigndx[i])
+        if (paramvalues[promptnum].uval.ch.val != (int)g_trig_index[i])
         {
             set_trig_array(i, trigfn[paramvalues[promptnum].uval.ch.val].name);
             ret = 1;

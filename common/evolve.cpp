@@ -137,10 +137,10 @@ void initgene()
         { &g_inversion[0], varyinv, variations::NONE,     "invert radius", 7 },
         { &g_inversion[1], varyinv, variations::NONE,     "invert center x", 7 },
         { &g_inversion[2], varyinv, variations::NONE,     "invert center y", 7 },
-        { &trigndx[0], varytrig, variations::NONE,      "trig function 1", 5 },
-        { &trigndx[1], varytrig, variations::NONE,      "trig fn 2", 5 },
-        { &trigndx[2], varytrig, variations::NONE,      "trig fn 3", 5 },
-        { &trigndx[3], varytrig, variations::NONE,      "trig fn 4", 5 },
+        { &g_trig_index[0], varytrig, variations::NONE,      "trig function 1", 5 },
+        { &g_trig_index[1], varytrig, variations::NONE,      "trig fn 2", 5 },
+        { &g_trig_index[2], varytrig, variations::NONE,      "trig fn 3", 5 },
+        { &g_trig_index[3], varytrig, variations::NONE,      "trig fn 4", 5 },
         { &g_bail_out_test, varybotest, variations::NONE,    "bailout test", 6 }
     };
 
@@ -171,10 +171,10 @@ void save_param_history()
     oldhistory.invert0 = g_inversion[0];
     oldhistory.invert1 = g_inversion[1];
     oldhistory.invert2 = g_inversion[2];
-    oldhistory.trigndx0 = static_cast<BYTE>(trigndx[0]);
-    oldhistory.trigndx1 = static_cast<BYTE>(trigndx[1]);
-    oldhistory.trigndx2 = static_cast<BYTE>(trigndx[2]);
-    oldhistory.trigndx3 = static_cast<BYTE>(trigndx[3]);
+    oldhistory.trigndx0 = static_cast<BYTE>(g_trig_index[0]);
+    oldhistory.trigndx1 = static_cast<BYTE>(g_trig_index[1]);
+    oldhistory.trigndx2 = static_cast<BYTE>(g_trig_index[2]);
+    oldhistory.trigndx3 = static_cast<BYTE>(g_trig_index[3]);
     oldhistory.bailoutest = g_bail_out_test;
 }
 
@@ -198,10 +198,10 @@ void restore_param_history()
     g_inversion[1] = oldhistory.invert1;
     g_inversion[2] = oldhistory.invert2;
     g_invert = (g_inversion[0] == 0.0) ? 0 : 3;
-    trigndx[0] = static_cast<trig_fn>(oldhistory.trigndx0);
-    trigndx[1] = static_cast<trig_fn>(oldhistory.trigndx1);
-    trigndx[2] = static_cast<trig_fn>(oldhistory.trigndx2);
-    trigndx[3] = static_cast<trig_fn>(oldhistory.trigndx3);
+    g_trig_index[0] = static_cast<trig_fn>(oldhistory.trigndx0);
+    g_trig_index[1] = static_cast<trig_fn>(oldhistory.trigndx1);
+    g_trig_index[2] = static_cast<trig_fn>(oldhistory.trigndx2);
+    g_trig_index[3] = static_cast<trig_fn>(oldhistory.trigndx3);
     g_bail_out_test = static_cast<bailouts>(oldhistory.bailoutest);
 }
 

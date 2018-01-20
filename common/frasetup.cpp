@@ -288,7 +288,7 @@ MandelfpSetup()
         {
             g_symmetry = symmetry_type::NONE;
         }
-        if ((trigndx[0] == trig_fn::LOG) || (trigndx[0] == trig_fn::FLIP))
+        if ((g_trig_index[0] == trig_fn::LOG) || (g_trig_index[0] == trig_fn::FLIP))
         {
             g_symmetry = symmetry_type::NONE;
         }
@@ -306,19 +306,19 @@ MandelfpSetup()
         {
             g_symmetry = symmetry_type::NONE;
         }
-        if (trigndx[0] == trig_fn::FLIP)
+        if (g_trig_index[0] == trig_fn::FLIP)
         {
             g_symmetry = symmetry_type::NONE;
         }
         break;
     case fractal_type::TIMSERRORFP:
-        if (trigndx[0] == trig_fn::FLIP)
+        if (g_trig_index[0] == trig_fn::FLIP)
         {
             g_symmetry = symmetry_type::NONE;
         }
         break;
     case fractal_type::MARKSMANDELPWRFP:
-        if (trigndx[0] == trig_fn::FLIP)
+        if (g_trig_index[0] == trig_fn::FLIP)
         {
             g_symmetry = symmetry_type::NONE;
         }
@@ -416,7 +416,7 @@ JuliafpSetup()
         {
             g_symmetry = symmetry_type::NONE;
         }
-        if ((trigndx[0] == trig_fn::LOG) || (trigndx[0] == trig_fn::FLIP))
+        if ((g_trig_index[0] == trig_fn::LOG) || (g_trig_index[0] == trig_fn::FLIP))
         {
             g_symmetry = symmetry_type::NONE;
         }
@@ -427,7 +427,7 @@ JuliafpSetup()
         {
             g_symmetry = symmetry_type::NONE;
         }
-        if (trigndx[0] != trig_fn::SQR)
+        if (g_trig_index[0] != trig_fn::SQR)
         {
             g_symmetry = symmetry_type::NONE;
         }
@@ -443,10 +443,10 @@ JuliafpSetup()
     case fractal_type::FPPOPCORNJUL:
     {
         bool default_functions = false;
-        if (trigndx[0] == trig_fn::SIN &&
-                trigndx[1] == trig_fn::TAN &&
-                trigndx[2] == trig_fn::SIN &&
-                trigndx[3] == trig_fn::TAN &&
+        if (g_trig_index[0] == trig_fn::SIN &&
+                g_trig_index[1] == trig_fn::TAN &&
+                g_trig_index[2] == trig_fn::SIN &&
+                g_trig_index[3] == trig_fn::TAN &&
                 fabs(g_param_z2.x - 3.0) < .0001 &&
                 g_param_z2.y == 0 &&
                 g_param_z1.y == 0)
@@ -532,21 +532,21 @@ MandellongSetup()
         {
             g_symmetry = symmetry_type::NONE;
         }
-        if ((trigndx[0] == trig_fn::LOG) || (trigndx[0] == trig_fn::FLIP))
+        if ((g_trig_index[0] == trig_fn::LOG) || (g_trig_index[0] == trig_fn::FLIP))
         {
             g_symmetry = symmetry_type::NONE;
         }
     }
     if (g_fractal_type == fractal_type::TIMSERROR)
     {
-        if (trigndx[0] == trig_fn::FLIP)
+        if (g_trig_index[0] == trig_fn::FLIP)
         {
             g_symmetry = symmetry_type::NONE;
         }
     }
     if (g_fractal_type == fractal_type::MARKSMANDELPWR)
     {
-        if (trigndx[0] == trig_fn::FLIP)
+        if (g_trig_index[0] == trig_fn::FLIP)
         {
             g_symmetry = symmetry_type::NONE;
         }
@@ -595,7 +595,7 @@ JulialongSetup()
         {
             g_symmetry = symmetry_type::NONE;
         }
-        if ((trigndx[0] == trig_fn::LOG) || (trigndx[0] == trig_fn::FLIP))
+        if ((g_trig_index[0] == trig_fn::LOG) || (g_trig_index[0] == trig_fn::FLIP))
         {
             g_symmetry = symmetry_type::NONE;
         }
@@ -605,10 +605,10 @@ JulialongSetup()
     case fractal_type::LPOPCORNJUL:
     {
         bool default_functions = false;
-        if (trigndx[0] == trig_fn::SIN &&
-                trigndx[1] == trig_fn::TAN &&
-                trigndx[2] == trig_fn::SIN &&
-                trigndx[3] == trig_fn::TAN &&
+        if (g_trig_index[0] == trig_fn::SIN &&
+                g_trig_index[1] == trig_fn::TAN &&
+                g_trig_index[2] == trig_fn::SIN &&
+                g_trig_index[3] == trig_fn::TAN &&
                 fabs(g_param_z2.x - 3.0) < .0001 &&
                 g_param_z2.y == 0 &&
                 g_param_z1.y == 0)
@@ -680,7 +680,7 @@ bool
 TrigPlusTriglongSetup()
 {
     FnPlusFnSym();
-    if (trigndx[1] == trig_fn::SQR)
+    if (g_trig_index[1] == trig_fn::SQR)
     {
         return TrigPlusSqrlongSetup();
     }
@@ -704,7 +704,7 @@ bool
 TrigPlusTrigfpSetup()
 {
     FnPlusFnSym();
-    if (trigndx[1] == trig_fn::SQR)
+    if (g_trig_index[1] == trig_fn::SQR)
     {
         return TrigPlusSqrfpSetup();
     }
@@ -741,11 +741,11 @@ FnPlusFnSym() // set symmetry matrix for fn+fn type
     };
     if (g_param_z1.y == 0.0 && g_param_z2.y == 0.0)
     {
-        if (trigndx[0] <= trig_fn::SQR && trigndx[1] < trig_fn::SQR)    // bounds of array
+        if (g_trig_index[0] <= trig_fn::SQR && g_trig_index[1] < trig_fn::SQR)    // bounds of array
         {
-            g_symmetry = fnplusfn[static_cast<int>(trigndx[0])][static_cast<int>(trigndx[1])];
+            g_symmetry = fnplusfn[static_cast<int>(g_trig_index[0])][static_cast<int>(g_trig_index[1])];
         }
-        if (trigndx[0] == trig_fn::FLIP || trigndx[1] == trig_fn::FLIP)
+        if (g_trig_index[0] == trig_fn::FLIP || g_trig_index[1] == trig_fn::FLIP)
         {
             g_symmetry = symmetry_type::NONE;
         }
@@ -763,11 +763,11 @@ LambdaTrigOrTrigSetup()
     // default symmetry is ORIGIN
     g_long_param = &g_l_param;
     g_float_param = &g_param_z1;
-    if ((trigndx[0] == trig_fn::EXP) || (trigndx[1] == trig_fn::EXP))
+    if ((g_trig_index[0] == trig_fn::EXP) || (g_trig_index[1] == trig_fn::EXP))
     {
         g_symmetry = symmetry_type::NONE;
     }
-    if ((trigndx[0] == trig_fn::LOG) || (trigndx[1] == trig_fn::LOG))
+    if ((g_trig_index[0] == trig_fn::LOG) || (g_trig_index[1] == trig_fn::LOG))
     {
         g_symmetry = symmetry_type::X_AXIS;
     }
@@ -785,7 +785,7 @@ JuliaTrigOrTrigSetup()
     {
         g_symmetry = symmetry_type::NONE;
     }
-    if (trigndx[0] == trig_fn::FLIP || trigndx[1] == trig_fn::FLIP)
+    if (g_trig_index[0] == trig_fn::FLIP || g_trig_index[1] == trig_fn::FLIP)
     {
         g_symmetry = symmetry_type::NONE;
     }
@@ -800,11 +800,11 @@ ManlamTrigOrTrigSetup()
     // default symmetry is X_AXIS
     g_long_param = &g_l_init;
     g_float_param = &g_init;
-    if (trigndx[0] == trig_fn::SQR)
+    if (g_trig_index[0] == trig_fn::SQR)
     {
         g_symmetry = symmetry_type::NONE;
     }
-    if ((trigndx[0] == trig_fn::LOG) || (trigndx[1] == trig_fn::LOG))
+    if ((g_trig_index[0] == trig_fn::LOG) || (g_trig_index[1] == trig_fn::LOG))
     {
         g_symmetry = symmetry_type::NONE;
     }
@@ -817,7 +817,7 @@ MandelTrigOrTrigSetup()
     // default symmetry is X_AXIS_NO_PARAM
     g_long_param = &g_l_init;
     g_float_param = &g_init;
-    if ((trigndx[0] == trig_fn::FLIP) || (trigndx[1] == trig_fn::FLIP))
+    if ((g_trig_index[0] == trig_fn::FLIP) || (g_trig_index[1] == trig_fn::FLIP))
     {
         g_symmetry = symmetry_type::NONE;
     }
@@ -837,8 +837,8 @@ ZXTrigPlusZSetup()
 
     if (g_params[1] == 0.0 && g_params[3] == 0.0)
     {
-        //      symmetry = ZXTrigPlusZSym1[trigndx[0]];
-        switch (trigndx[0])
+        //      symmetry = ZXTrigPlusZSym1[g_trig_index[0]];
+        switch (g_trig_index[0])
         {
         case trig_fn::COSXX:
         case trig_fn::COSH:
@@ -859,8 +859,8 @@ ZXTrigPlusZSetup()
     }
     else
     {
-        //      symmetry = ZXTrigPlusZSym2[trigndx[0]];
-        switch (trigndx[0])
+        //      symmetry = ZXTrigPlusZSym2[g_trig_index[0]];
+        switch (g_trig_index[0])
         {
         case trig_fn::COSXX:
         case trig_fn::COSH:
@@ -922,7 +922,7 @@ LambdaTrigSetup()
     {
         g_cur_fractal_specific->orbitcalc =  LambdaTrigfpFractal;
     }
-    switch (trigndx[0])
+    switch (g_trig_index[0])
     {
     case trig_fn::SIN:
     case trig_fn::COSXX:
@@ -988,7 +988,7 @@ JuliafnPlusZsqrdSetup()
     // fn1 ->  sin   cos    sinh  cosh   sqr    exp   log
     // sin    {NONE, ORIGIN, NONE, ORIGIN, ORIGIN, NONE, NONE};
 
-    switch (trigndx[0]) // fix sqr symmetry & add additional functions
+    switch (g_trig_index[0]) // fix sqr symmetry & add additional functions
     {
     case trig_fn::COSXX: // cosxx
     case trig_fn::COSH:
@@ -1019,7 +1019,7 @@ SqrTrigSetup()
     //   static char SqrTrigSym[] =
     // fn1 ->  sin    cos    sinh   cosh   sqr    exp   log
     //           {PI_SYM, PI_SYM, XY_AXIS, XY_AXIS, XY_AXIS, X_AXIS, X_AXIS};
-    switch (trigndx[0]) // fix sqr symmetry & add additional functions
+    switch (g_trig_index[0]) // fix sqr symmetry & add additional functions
     {
     case trig_fn::SIN:
     case trig_fn::COSXX: // cosxx
@@ -1056,29 +1056,29 @@ FnXFnSetup()
         /* log */ {symmetry_type::NONE,    symmetry_type::NONE,    symmetry_type::NONE,    symmetry_type::NONE,    symmetry_type::NONE,    symmetry_type::X_AXIS, symmetry_type::NONE},
         /* sqr */ {symmetry_type::XY_AXIS, symmetry_type::XY_AXIS, symmetry_type::XY_AXIS, symmetry_type::XY_AXIS, symmetry_type::XY_AXIS, symmetry_type::NONE,   symmetry_type::XY_AXIS},
     };
-    if (trigndx[0] <= trig_fn::SQR && trigndx[1] <= trig_fn::SQR)    // bounds of array
+    if (g_trig_index[0] <= trig_fn::SQR && g_trig_index[1] <= trig_fn::SQR)    // bounds of array
     {
-        g_symmetry = fnxfn[static_cast<int>(trigndx[0])][static_cast<int>(trigndx[1])];
+        g_symmetry = fnxfn[static_cast<int>(g_trig_index[0])][static_cast<int>(g_trig_index[1])];
         // defaults to X_AXIS symmetry
     }
     else
     {
-        if (trigndx[0] == trig_fn::LOG || trigndx[1] == trig_fn::LOG)
+        if (g_trig_index[0] == trig_fn::LOG || g_trig_index[1] == trig_fn::LOG)
         {
             g_symmetry = symmetry_type::NONE;
         }
-        if (trigndx[0] == trig_fn::COS || trigndx[1] == trig_fn::COS)
+        if (g_trig_index[0] == trig_fn::COS || g_trig_index[1] == trig_fn::COS)
         {
-            if (trigndx[0] == trig_fn::SIN || trigndx[1] == trig_fn::SIN)
+            if (g_trig_index[0] == trig_fn::SIN || g_trig_index[1] == trig_fn::SIN)
             {
                 g_symmetry = symmetry_type::PI_SYM;
             }
-            if (trigndx[0] == trig_fn::COSXX || trigndx[1] == trig_fn::COSXX)
+            if (g_trig_index[0] == trig_fn::COSXX || g_trig_index[1] == trig_fn::COSXX)
             {
                 g_symmetry = symmetry_type::PI_SYM;
             }
         }
-        if (trigndx[0] == trig_fn::COS && trigndx[1] == trig_fn::COS)
+        if (g_trig_index[0] == trig_fn::COS && g_trig_index[1] == trig_fn::COS)
         {
             g_symmetry = symmetry_type::PI_SYM;
         }
@@ -1106,7 +1106,7 @@ MandelTrigSetup()
         g_cur_fractal_specific->orbitcalc =  LambdaTrigfpFractal;
     }
     g_symmetry = symmetry_type::XY_AXIS_NO_PARAM;
-    switch (trigndx[0])
+    switch (g_trig_index[0])
     {
     case trig_fn::SIN:
     case trig_fn::COSXX:

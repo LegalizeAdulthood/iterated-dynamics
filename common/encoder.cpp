@@ -929,10 +929,10 @@ static void setup_save_info(FRACTAL_INFO *save_info)
     }
 
     save_info->calctime = g_calc_time;
-    save_info->trigndx[0] = static_cast<BYTE>(trigndx[0]);
-    save_info->trigndx[1] = static_cast<BYTE>(trigndx[1]);
-    save_info->trigndx[2] = static_cast<BYTE>(trigndx[2]);
-    save_info->trigndx[3] = static_cast<BYTE>(trigndx[3]);
+    save_info->trigndx[0] = static_cast<BYTE>(g_trig_index[0]);
+    save_info->trigndx[1] = static_cast<BYTE>(g_trig_index[1]);
+    save_info->trigndx[2] = static_cast<BYTE>(g_trig_index[2]);
+    save_info->trigndx[3] = static_cast<BYTE>(g_trig_index[3]);
     save_info->finattract = (short) (g_finite_attractor ? 1 : 0);
     save_info->initorbit[0] = g_init_orbit.x;
     save_info->initorbit[1] = g_init_orbit.y;
