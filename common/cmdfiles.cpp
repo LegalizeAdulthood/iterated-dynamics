@@ -482,7 +482,7 @@ static void initvars_fractal()          // init vars affecting calculation
     g_user_float_flag = true;               // turn on the float flag
 #endif
     g_finite_attractor = false;                 // disable finite attractor logic
-    fractype = fractal_type::MANDEL;    // initial type Set flag
+    g_fractal_type = fractal_type::MANDEL;    // initial type Set flag
     curfractalspecific = &fractalspecific[0];
     initcorners = false;
     initparams = false;
@@ -1439,8 +1439,8 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         {
             goto badarg;
         }
-        fractype = static_cast<fractal_type>(k);
-        curfractalspecific = &fractalspecific[static_cast<int>(fractype)];
+        g_fractal_type = static_cast<fractal_type>(k);
+        curfractalspecific = &fractalspecific[static_cast<int>(g_fractal_type)];
         if (!initcorners)
         {
             g_x_min = curfractalspecific->xmin;
@@ -1452,7 +1452,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         }
         if (!initparams)
         {
-            load_params(fractype);
+            load_params(g_fractal_type);
         }
         return CMDARG_FRACTAL_PARAM;
     }
@@ -2060,7 +2060,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
     if (variable == "corners")       // corners=?,?,?,?
     {
         int dec;
-        if (fractype == fractal_type::CELLULAR)
+        if (g_fractal_type == fractal_type::CELLULAR)
         {
             return CMDARG_FRACTAL_PARAM; // skip setting the corners
         }
@@ -2268,7 +2268,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         {
             goto badarg;
         }
-        if (fractype == fractal_type::CELLULAR)
+        if (g_fractal_type == fractal_type::CELLULAR)
         {
             return CMDARG_FRACTAL_PARAM; // skip setting the corners
         }

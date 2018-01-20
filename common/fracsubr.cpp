@@ -142,7 +142,7 @@ void fractal_floattobf()
 
     for (int i = 0; i < MAXPARAMS; i++)
     {
-        if (typehasparm(fractype, i, nullptr))
+        if (typehasparm(g_fractal_type, i, nullptr))
         {
             floattobf(bfparms[i], g_params[i]);
         }
@@ -195,7 +195,7 @@ void calcfracinit() // initialize a *pile* of stuff for fractal calculation
         else if (bf_math != bf_math_type::NONE)
         {
             curfractalspecific = &fractalspecific[static_cast<int>(tofloat)];
-            fractype = tofloat;
+            g_fractal_type = tofloat;
         }
     }
 
@@ -213,30 +213,30 @@ void calcfracinit() // initialize a *pile* of stuff for fractal calculation
             init_bf_dec(gotprec);
         }
     }
-    else if ((fractype == fractal_type::MANDEL || fractype == fractal_type::MANDELFP) && g_debug_flag == debug_flags::force_arbitrary_precision_math)
+    else if ((g_fractal_type == fractal_type::MANDEL || g_fractal_type == fractal_type::MANDELFP) && g_debug_flag == debug_flags::force_arbitrary_precision_math)
     {
-        fractype = fractal_type::MANDELFP;
+        g_fractal_type = fractal_type::MANDELFP;
         curfractalspecific = &fractalspecific[static_cast<int>(fractal_type::MANDELFP)];
         fractal_floattobf();
         g_user_float_flag = true;
     }
-    else if ((fractype == fractal_type::JULIA || fractype == fractal_type::JULIAFP) && g_debug_flag == debug_flags::force_arbitrary_precision_math)
+    else if ((g_fractal_type == fractal_type::JULIA || g_fractal_type == fractal_type::JULIAFP) && g_debug_flag == debug_flags::force_arbitrary_precision_math)
     {
-        fractype = fractal_type::JULIAFP;
+        g_fractal_type = fractal_type::JULIAFP;
         curfractalspecific = &fractalspecific[static_cast<int>(fractal_type::JULIAFP)];
         fractal_floattobf();
         g_user_float_flag = true;
     }
-    else if ((fractype == fractal_type::LMANDELZPOWER || fractype == fractal_type::FPMANDELZPOWER) && g_debug_flag == debug_flags::force_arbitrary_precision_math)
+    else if ((g_fractal_type == fractal_type::LMANDELZPOWER || g_fractal_type == fractal_type::FPMANDELZPOWER) && g_debug_flag == debug_flags::force_arbitrary_precision_math)
     {
-        fractype = fractal_type::FPMANDELZPOWER;
+        g_fractal_type = fractal_type::FPMANDELZPOWER;
         curfractalspecific = &fractalspecific[static_cast<int>(fractal_type::FPMANDELZPOWER)];
         fractal_floattobf();
         g_user_float_flag = true;
     }
-    else if ((fractype == fractal_type::LJULIAZPOWER || fractype == fractal_type::FPJULIAZPOWER) && g_debug_flag == debug_flags::force_arbitrary_precision_math)
+    else if ((g_fractal_type == fractal_type::LJULIAZPOWER || g_fractal_type == fractal_type::FPJULIAZPOWER) && g_debug_flag == debug_flags::force_arbitrary_precision_math)
     {
-        fractype = fractal_type::FPJULIAZPOWER;
+        g_fractal_type = fractal_type::FPJULIAZPOWER;
         curfractalspecific = &fractalspecific[static_cast<int>(fractal_type::FPJULIAZPOWER)];
         fractal_floattobf();
         g_user_float_flag = true;
@@ -265,7 +265,7 @@ void calcfracinit() // initialize a *pile* of stuff for fractal calculation
     }
     if (g_user_std_calc_mode == 's')
     {
-        if (fractype == fractal_type::MANDEL || fractype == fractal_type::MANDELFP)
+        if (g_fractal_type == fractal_type::MANDEL || g_fractal_type == fractal_type::MANDELFP)
         {
             g_float_flag = true;
         }
@@ -314,7 +314,7 @@ init_restart:
         if (curfractalspecific->isinteger != 0
                 && curfractalspecific->tofloat != fractal_type::NOFRACTAL)
         {
-            fractype = curfractalspecific->tofloat;
+            g_fractal_type = curfractalspecific->tofloat;
         }
     }
     else
@@ -322,11 +322,11 @@ init_restart:
         if (curfractalspecific->isinteger == 0
                 && curfractalspecific->tofloat != fractal_type::NOFRACTAL)
         {
-            fractype = curfractalspecific->tofloat;
+            g_fractal_type = curfractalspecific->tofloat;
         }
     }
     // match Julibrot with integer mode of orbit
-    if (fractype == fractal_type::JULIBROTFP && fractalspecific[static_cast<int>(g_new_orbit_type)].isinteger)
+    if (g_fractal_type == fractal_type::JULIBROTFP && fractalspecific[static_cast<int>(g_new_orbit_type)].isinteger)
     {
         fractal_type i = fractalspecific[static_cast<int>(g_new_orbit_type)].tofloat;
         if (i != fractal_type::NOFRACTAL)
@@ -335,10 +335,10 @@ init_restart:
         }
         else
         {
-            fractype = fractal_type::JULIBROT;
+            g_fractal_type = fractal_type::JULIBROT;
         }
     }
-    else if (fractype == fractal_type::JULIBROT && fractalspecific[static_cast<int>(g_new_orbit_type)].isinteger == 0)
+    else if (g_fractal_type == fractal_type::JULIBROT && fractalspecific[static_cast<int>(g_new_orbit_type)].isinteger == 0)
     {
         fractal_type i = fractalspecific[static_cast<int>(g_new_orbit_type)].tofloat;
         if (i != fractal_type::NOFRACTAL)
@@ -347,11 +347,11 @@ init_restart:
         }
         else
         {
-            fractype = fractal_type::JULIBROTFP;
+            g_fractal_type = fractal_type::JULIBROTFP;
         }
     }
 
-    curfractalspecific = &fractalspecific[static_cast<int>(fractype)];
+    curfractalspecific = &fractalspecific[static_cast<int>(g_fractal_type)];
 
     g_integer_fractal = curfractalspecific->isinteger;
 
@@ -421,7 +421,7 @@ init_restart:
         }
     }
     // We want this code if we're using the assembler calcmand
-    if (fractype == fractal_type::MANDEL || fractype == fractal_type::JULIA)
+    if (g_fractal_type == fractal_type::MANDEL || g_fractal_type == fractal_type::JULIA)
     {
         // adjust shift bits if..
         if (!g_potential_flag                                    // not using potential
@@ -459,7 +459,7 @@ init_restart:
         fill_dx_array();
     }
 
-    if (fractype != fractal_type::CELLULAR && fractype != fractal_type::ANT)  // fudgetolong fails w >10 digits in double
+    if (g_fractal_type != fractal_type::CELLULAR && g_fractal_type != fractal_type::ANT)  // fudgetolong fails w >10 digits in double
     {
         g_l_x_min  = fudgetolong(g_x_min);
         g_l_x_max  = fudgetolong(g_x_max);
@@ -477,8 +477,8 @@ init_restart:
     // skip if bf_math to avoid extraseg conflict with dx0 arrays
     // skip if ifs, ifs3d, or lsystem to avoid crash when mathtolerance
     // is set.  These types don't auto switch between float and integer math
-    if (fractype != fractal_type::PLASMA && bf_math == bf_math_type::NONE
-            && fractype != fractal_type::IFS && fractype != fractal_type::IFS3D && fractype != fractal_type::LSYSTEM)
+    if (g_fractal_type != fractal_type::PLASMA && bf_math == bf_math_type::NONE
+            && g_fractal_type != fractal_type::IFS && g_fractal_type != fractal_type::IFS3D && g_fractal_type != fractal_type::LSYSTEM)
     {
         if (g_integer_fractal && (g_invert == 0) && g_use_grid)
         {

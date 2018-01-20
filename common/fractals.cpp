@@ -452,7 +452,7 @@ int NewtonFractal2()
 
     if (DIST1(g_new_z) < g_threshold)
     {
-        if (fractype == fractal_type::NEWTBASIN || fractype == fractal_type::MPNEWTBASIN)
+        if (g_fractal_type == fractal_type::NEWTBASIN || g_fractal_type == fractal_type::MPNEWTBASIN)
         {
             long tmpcolor;
             tmpcolor = -1;
@@ -546,7 +546,7 @@ int MPCNewtonFractal()
     mpctmp1.y = *pMPsub(mpcnew.y, g_mpc_one.y);
     if (pMPcmp(MPCmod(mpctmp1), g_mp_threshold) < 0)
     {
-        if (fractype == fractal_type::MPNEWTBASIN)
+        if (g_fractal_type == fractal_type::MPNEWTBASIN)
         {
             long tmpcolor;
             tmpcolor = -1;
@@ -2749,7 +2749,7 @@ int mandel_per_pixel()
         g_l_init.x = g_l_x_pixel();
         g_l_init.y = g_l_y_pixel();
     }
-    switch (fractype)
+    switch (g_fractal_type)
     {
     case fractal_type::MANDELLAMBDA:              // Critical Value 0.5 + 0.0i
         g_l_old_z.x = g_fudge_half;
@@ -2927,7 +2927,7 @@ int mandelfp_per_pixel()
         g_init.x = g_dx_pixel();
         g_init.y = g_dy_pixel();
     }
-    switch (fractype)
+    switch (g_fractal_type)
     {
     case fractal_type::MAGNET2M:
         FloatPreCalcMagnet2();

@@ -2276,7 +2276,7 @@ bool paramnotused(int parm)
     bool ret = false;
 
     // sanity check
-    if (fractype != fractal_type::FORMULA && fractype != fractal_type::FFORMULA)
+    if (g_fractal_type != fractal_type::FORMULA && g_fractal_type != fractal_type::FFORMULA)
     {
         return false;
     }

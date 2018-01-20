@@ -304,7 +304,7 @@ int get_toggles()
         g_stop_pass = 0;
     }
 
-    if (g_user_std_calc_mode == 'o' && fractype == fractal_type::LYAPUNOV)   // Oops,lyapunov type
+    if (g_user_std_calc_mode == 'o' && g_fractal_type == fractal_type::LYAPUNOV)   // Oops,lyapunov type
     {
         // doesn't use 'new' & breaks orbits
         g_user_std_calc_mode = old_usr_stdcalcmode;

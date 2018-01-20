@@ -504,7 +504,7 @@ done:
         }
 #endif
 
-        if (fractype == fractal_type::PLASMA)
+        if (g_fractal_type == fractal_type::PLASMA)
         {
             g_cycle_limit = 256;              // plasma clouds need quick spins
             g_dac_count = 256;
@@ -982,16 +982,16 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
         {
             int err;
             double oldparm[MAXPARAMS];
-            fractal_type oldtype = fractype;
+            fractal_type oldtype = g_fractal_type;
             for (int i = 0; i < MAXPARAMS; ++i)
             {
                 oldparm[i] = g_params[i];
             }
-            if (fractype != fractal_type::ANT)
+            if (g_fractal_type != fractal_type::ANT)
             {
-                fractype = fractal_type::ANT;
-                curfractalspecific = &fractalspecific[static_cast<int>(fractype)];
-                load_params(fractype);
+                g_fractal_type = fractal_type::ANT;
+                curfractalspecific = &fractalspecific[static_cast<int>(g_fractal_type)];
+                load_params(g_fractal_type);
             }
             if (!fromtext_flag)
             {
@@ -1011,7 +1011,7 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
             {
                 driver_unstack_screen();
             }
-            fractype = oldtype;
+            g_fractal_type = oldtype;
             for (int i = 0; i < MAXPARAMS; ++i)
             {
                 g_params[i] = oldparm[i];
@@ -1048,10 +1048,10 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
     case FIK_CTL_O:                     // ctrl-o
     case 'o':
         // must use standard fractal and have a float variant
-        if ((fractalspecific[static_cast<int>(fractype)].calctype == standard_fractal
-                || fractalspecific[static_cast<int>(fractype)].calctype == calcfroth) &&
-                (fractalspecific[static_cast<int>(fractype)].isinteger == 0 ||
-                 fractalspecific[static_cast<int>(fractype)].tofloat != fractal_type::NOFRACTAL) &&
+        if ((fractalspecific[static_cast<int>(g_fractal_type)].calctype == standard_fractal
+                || fractalspecific[static_cast<int>(g_fractal_type)].calctype == calcfroth) &&
+                (fractalspecific[static_cast<int>(g_fractal_type)].isinteger == 0 ||
+                 fractalspecific[static_cast<int>(g_fractal_type)].tofloat != fractal_type::NOFRACTAL) &&
                 (bf_math == bf_math_type::NONE) && // for now no arbitrary precision support
                 !(g_is_true_color && g_true_mode != true_color_mode::default_color))
         {
@@ -1064,7 +1064,7 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
         {
             break;
         }
-        if (fractype == fractal_type::CELLULAR)
+        if (g_fractal_type == fractal_type::CELLULAR)
         {
             g_cellular_next_screen = !g_cellular_next_screen;
             g_calc_status = calc_status_value::RESUMABLE;
@@ -1072,18 +1072,18 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
         }
         else
         {
-            if (fractype == fractal_type::FORMULA || fractype == fractal_type::FFORMULA)
+            if (g_fractal_type == fractal_type::FORMULA || g_fractal_type == fractal_type::FFORMULA)
             {
                 if (g_is_mandelbrot)
                 {
-                    fractalspecific[static_cast<int>(fractype)].tojulia = fractype;
-                    fractalspecific[static_cast<int>(fractype)].tomandel = fractal_type::NOFRACTAL;
+                    fractalspecific[static_cast<int>(g_fractal_type)].tojulia = g_fractal_type;
+                    fractalspecific[static_cast<int>(g_fractal_type)].tomandel = fractal_type::NOFRACTAL;
                     g_is_mandelbrot = false;
                 }
                 else
                 {
-                    fractalspecific[static_cast<int>(fractype)].tojulia = fractal_type::NOFRACTAL;
-                    fractalspecific[static_cast<int>(fractype)].tomandel = fractype;
+                    fractalspecific[static_cast<int>(g_fractal_type)].tojulia = fractal_type::NOFRACTAL;
+                    fractalspecific[static_cast<int>(g_fractal_type)].tomandel = g_fractal_type;
                     g_is_mandelbrot = true;
                 }
             }
@@ -1092,7 +1092,7 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
             {
                 // switch to corresponding Julia set
                 int key;
-                g_has_inverse = (fractype == fractal_type::MANDEL || fractype == fractal_type::MANDELFP) && bf_math == bf_math_type::NONE;
+                g_has_inverse = (g_fractal_type == fractal_type::MANDEL || g_fractal_type == fractal_type::MANDELFP) && bf_math == bf_math_type::NONE;
                 clear_zoombox();
                 Jiim(jiim_types::JIIM);
                 key = driver_get_key();    // flush keyboard buffer
@@ -1101,8 +1101,8 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
                     driver_unget_key(key);
                     break;
                 }
-                fractype = curfractalspecific->tojulia;
-                curfractalspecific = &fractalspecific[static_cast<int>(fractype)];
+                g_fractal_type = curfractalspecific->tojulia;
+                curfractalspecific = &fractalspecific[static_cast<int>(g_fractal_type)];
                 if (g_julia_c_x == BIG || g_julia_c_y == BIG)
                 {
                     g_params[0] = (g_x_max + g_x_min) / 2;
@@ -1144,8 +1144,8 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
             else if (curfractalspecific->tomandel != fractal_type::NOFRACTAL)
             {
                 // switch to corresponding Mandel set
-                fractype = curfractalspecific->tomandel;
-                curfractalspecific = &fractalspecific[static_cast<int>(fractype)];
+                g_fractal_type = curfractalspecific->tomandel;
+                curfractalspecific = &fractalspecific[static_cast<int>(g_fractal_type)];
                 if (*frommandel)
                 {
                     g_x_min = jxxmin;
@@ -1180,26 +1180,26 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
         break;
     case 'j':                    // inverse julia toggle
         // if the inverse types proliferate, something more elegant will be needed
-        if (fractype == fractal_type::JULIA || fractype == fractal_type::JULIAFP || fractype == fractal_type::INVERSEJULIA)
+        if (g_fractal_type == fractal_type::JULIA || g_fractal_type == fractal_type::JULIAFP || g_fractal_type == fractal_type::INVERSEJULIA)
         {
             static fractal_type oldtype = fractal_type::NOFRACTAL;
-            if (fractype == fractal_type::JULIA || fractype == fractal_type::JULIAFP)
+            if (g_fractal_type == fractal_type::JULIA || g_fractal_type == fractal_type::JULIAFP)
             {
-                oldtype = fractype;
-                fractype = fractal_type::INVERSEJULIA;
+                oldtype = g_fractal_type;
+                g_fractal_type = fractal_type::INVERSEJULIA;
             }
-            else if (fractype == fractal_type::INVERSEJULIA)
+            else if (g_fractal_type == fractal_type::INVERSEJULIA)
             {
                 if (oldtype != fractal_type::NOFRACTAL)
                 {
-                    fractype = oldtype;
+                    g_fractal_type = oldtype;
                 }
                 else
                 {
-                    fractype = fractal_type::JULIA;
+                    g_fractal_type = fractal_type::JULIA;
                 }
             }
-            curfractalspecific = &fractalspecific[static_cast<int>(fractype)];
+            curfractalspecific = &fractalspecific[static_cast<int>(g_fractal_type)];
             g_zoom_off = true;
             g_calc_status = calc_status_value::PARAMS_CHANGED;
             *kbdmore = false;
@@ -2368,7 +2368,7 @@ static void save_history_info()
 
     HISTORY current;
     memset((void *)&current, 0, sizeof(HISTORY));
-    current.fractal_type         = (short)fractype                  ;
+    current.fractal_type         = (short)g_fractal_type                  ;
     current.xmin                 = g_x_min                     ;
     current.xmax                 = g_x_max                     ;
     current.ymin                 = g_y_min                     ;
@@ -2489,7 +2489,7 @@ static void save_history_info()
     current.keep_scrn_coords     = (short) (g_keep_screen_coords ? 1 : 0);
     current.drawmode             = g_draw_mode;
     memcpy(current.dac, g_dac_box, 256*3);
-    switch (fractype)
+    switch (g_fractal_type)
     {
     case fractal_type::FORMULA:
     case fractal_type::FFORMULA:
@@ -2548,7 +2548,7 @@ static void restore_history_info(int i)
     g_invert = 0;
     g_calc_status = calc_status_value::PARAMS_CHANGED;
     g_resuming = false;
-    fractype              = static_cast<fractal_type>(last.fractal_type);
+    g_fractal_type              = static_cast<fractal_type>(last.fractal_type);
     g_x_min                 = last.xmin           ;
     g_x_max                 = last.xmax           ;
     g_y_min                 = last.ymin           ;
@@ -2657,7 +2657,7 @@ static void restore_history_info(int i)
     g_bail_out_test            = static_cast<bailouts>(last.bailoutest);
     g_max_iterations                 = last.iterations     ;
     g_old_demm_colors       = last.old_demm_colors != 0;
-    curfractalspecific    = &fractalspecific[static_cast<int>(fractype)];
+    curfractalspecific    = &fractalspecific[static_cast<int>(g_fractal_type)];
     g_potential_flag               = (g_potential_params[0] != 0.0);
     if (g_inversion[0] != 0.0)
     {
@@ -2694,7 +2694,7 @@ static void restore_history_info(int i)
         }
     }
     spindac(0, 1);
-    if (fractype == fractal_type::JULIBROT || fractype == fractal_type::JULIBROTFP)
+    if (g_fractal_type == fractal_type::JULIBROT || g_fractal_type == fractal_type::JULIBROTFP)
     {
         g_save_dac = 0;
     }
@@ -2702,7 +2702,7 @@ static void restore_history_info(int i)
     {
         g_save_dac = 1;
     }
-    switch (fractype)
+    switch (g_fractal_type)
     {
     case fractal_type::FORMULA:
     case fractal_type::FFORMULA:

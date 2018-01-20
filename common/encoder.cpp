@@ -564,17 +564,17 @@ bool encoder()
         }
         // save_info.fractal_type gets modified in setup_save_info() in float only version, so we need to use fractype.
         //    if (save_info.fractal_type == FORMULA || save_info.fractal_type == FFORMULA)
-        if (fractype == fractal_type::FORMULA || fractype == fractal_type::FFORMULA)
+        if (g_fractal_type == fractal_type::FORMULA || g_fractal_type == fractal_type::FFORMULA)
         {
             save_info.tot_extend_len += store_item_name(g_formula_name.c_str());
         }
         //    if (save_info.fractal_type == LSYSTEM)
-        if (fractype == fractal_type::LSYSTEM)
+        if (g_fractal_type == fractal_type::LSYSTEM)
         {
             save_info.tot_extend_len += store_item_name(g_l_system_name.c_str());
         }
         //    if (save_info.fractal_type == IFS || save_info.fractal_type == IFS3D)
-        if (fractype == fractal_type::IFS || fractype == fractal_type::IFS3D)
+        if (g_fractal_type == fractal_type::IFS || g_fractal_type == fractal_type::IFS3D)
         {
             save_info.tot_extend_len += store_item_name(g_ifs_name.c_str());
         }
@@ -794,7 +794,7 @@ static int store_item_name(char const *nameptr)
         fsave_info.form_name[i] = 0;      // initialize string
     }
     strcpy(fsave_info.form_name, nameptr);
-    if (fractype == fractal_type::FORMULA || fractype == fractal_type::FFORMULA)
+    if (g_fractal_type == fractal_type::FORMULA || g_fractal_type == fractal_type::FFORMULA)
     {
         fsave_info.uses_p1 = (short) (g_frm_uses_p1 ? 1 : 0);
         fsave_info.uses_p2 = (short) (g_frm_uses_p2 ? 1 : 0);
@@ -825,7 +825,7 @@ static int store_item_name(char const *nameptr)
 
 static void setup_save_info(FRACTAL_INFO *save_info)
 {
-    if (fractype != fractal_type::FORMULA && fractype != fractal_type::FFORMULA)
+    if (g_fractal_type != fractal_type::FORMULA && g_fractal_type != fractal_type::FFORMULA)
     {
         g_max_function = 0;
     }
@@ -842,7 +842,7 @@ static void setup_save_info(FRACTAL_INFO *save_info)
         save_info->iterationsold = (short) SHRT_MAX;
     }
 
-    save_info->fractal_type = (short) fractype;
+    save_info->fractal_type = (short) g_fractal_type;
     save_info->xmin = g_x_min;
     save_info->xmax = g_x_max;
     save_info->ymin = g_y_min;

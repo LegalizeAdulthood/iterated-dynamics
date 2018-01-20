@@ -240,6 +240,6 @@ enum class fractal_type
     MANDELBROTMIX4              = 172,
 };
 
-extern fractal_type fractype;
+extern fractal_type g_fractal_type;
 
 #endif

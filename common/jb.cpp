@@ -101,7 +101,7 @@ JulibrotSetup()
     bbase = 128;
 
 #ifndef XFRACT
-    if (fractalspecific[static_cast<int>(fractype)].isinteger > 0)
+    if (fractalspecific[static_cast<int>(g_fractal_type)].isinteger > 0)
     {
         long jxmin, jxmax, jymin, jymax, mxmax, mymax;
         if (fractalspecific[static_cast<int>(g_new_orbit_type)].isinteger == 0)

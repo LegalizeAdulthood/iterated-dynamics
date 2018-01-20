@@ -397,7 +397,7 @@ int get_the_rest()
     copy_genes_from_bank(gene);
 
     numtrig = (curfractalspecific->flags >> 6) & 7;
-    if (fractype == fractal_type::FORMULA || fractype == fractal_type::FFORMULA)
+    if (g_fractal_type == fractal_type::FORMULA || g_fractal_type == fractal_type::FFORMULA)
     {
         numtrig = g_max_function;
     }
@@ -508,7 +508,7 @@ int get_variations()
 
     copy_genes_from_bank(gene);
 
-    if (fractype == fractal_type::FORMULA || fractype == fractal_type::FFORMULA)
+    if (g_fractal_type == fractal_type::FORMULA || g_fractal_type == fractal_type::FFORMULA)
     {
         if (g_frm_uses_p1)    // set first parameter
         {
@@ -556,9 +556,9 @@ int get_variations()
     numparams = 0;
     for (int i = firstparm; i < lastparm; i++)
     {
-        if (typehasparm(g_julibrot ? g_new_orbit_type : fractype, i, nullptr) == 0)
+        if (typehasparm(g_julibrot ? g_new_orbit_type : g_fractal_type, i, nullptr) == 0)
         {
-            if (fractype == fractal_type::FORMULA || fractype == fractal_type::FFORMULA)
+            if (g_fractal_type == fractal_type::FORMULA || g_fractal_type == fractal_type::FFORMULA)
             {
                 if (paramnotused(i))
                 {
@@ -570,7 +570,7 @@ int get_variations()
         numparams++;
     }
 
-    if (fractype != fractal_type::FORMULA && fractype != fractal_type::FFORMULA)
+    if (g_fractal_type != fractal_type::FORMULA && g_fractal_type != fractal_type::FFORMULA)
     {
         lastparm = numparams;
     }
@@ -580,7 +580,7 @@ choose_vars_restart:
     k = -1;
     for (int num = firstparm; num < lastparm; num++)
     {
-        if (fractype == fractal_type::FORMULA || fractype == fractal_type::FFORMULA)
+        if (g_fractal_type == fractal_type::FORMULA || g_fractal_type == fractal_type::FFORMULA)
         {
             if (paramnotused(num))
             {
@@ -643,7 +643,7 @@ choose_vars_restart:
     k = -1;
     for (int num = firstparm; num < lastparm; num++)
     {
-        if (fractype == fractal_type::FORMULA || fractype == fractal_type::FFORMULA)
+        if (g_fractal_type == fractal_type::FORMULA || g_fractal_type == fractal_type::FFORMULA)
         {
             if (paramnotused(num))
             {

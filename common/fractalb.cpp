@@ -264,7 +264,7 @@ void bfcornerstofloat()
     }
     for (int i = 0; i < MAXPARAMS; i++)
     {
-        if (typehasparm(fractype, i, nullptr))
+        if (typehasparm(g_fractal_type, i, nullptr))
         {
             g_params[i] = (double)bftofloat(bfparms[i]);
         }
@@ -592,7 +592,7 @@ bool MandelbnSetup()
     }
 
     g_c_exponent = (int)g_params[2];
-    switch (fractype)
+    switch (g_fractal_type)
     {
     case fractal_type::JULIAFP:
         bftobn(bnparm.x, bfparms[0]);
@@ -679,7 +679,7 @@ bool MandelbfSetup()
     }
 
     g_c_exponent = (int)g_params[2];
-    switch (fractype)
+    switch (g_fractal_type)
     {
     case fractal_type::JULIAFP:
         copy_bf(bfparm.x, bfparms[0]);

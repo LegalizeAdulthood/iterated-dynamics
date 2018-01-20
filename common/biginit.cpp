@@ -109,18 +109,18 @@ static void init_bf_2()
 
     /* at present time one call would suffice, but this logic allows
        multiple kinds of alternate math eg long double */
-    i = find_alternate_math(fractype, bf_math_type::BIGNUM);
+    i = find_alternate_math(g_fractal_type, bf_math_type::BIGNUM);
     if (i > -1)
     {
         bf_math = g_alternate_math[i].math;
     }
-    else if ((i = find_alternate_math(fractype, bf_math_type::BIGFLT)) > -1)
+    else if ((i = find_alternate_math(g_fractal_type, bf_math_type::BIGFLT)) > -1)
     {
         bf_math = g_alternate_math[i].math;
     }
     else
     {
-        bf_math = bf_math_type::BIGNUM; // maybe called from cmdfiles.c and fractype not set
+        bf_math = bf_math_type::BIGNUM; // maybe called from cmdfiles.c and g_fractal_type not set
     }
 
     g_float_flag = true;
@@ -471,7 +471,7 @@ void init_bf_dec(int dec)
         // using 2 doesn't gain much and requires another test
         intlength = 4;
     }
-    else if (fractype == fractal_type::FPMANDELZPOWER || fractype == fractal_type::FPJULIAZPOWER)
+    else if (g_fractal_type == fractal_type::FPMANDELZPOWER || g_fractal_type == fractal_type::FPJULIAZPOWER)
     {
         intlength = 2;
         // the bailout tests need greater dynamic range
@@ -503,7 +503,7 @@ void init_bf_length(int bnl)
         // using 2 doesn't gain much and requires another test
         intlength = 4;
     }
-    else if (fractype == fractal_type::FPMANDELZPOWER || fractype == fractal_type::FPJULIAZPOWER)
+    else if (g_fractal_type == fractal_type::FPMANDELZPOWER || g_fractal_type == fractal_type::FPJULIAZPOWER)
     {
         intlength = 2;
         // the bailout tests need greater dynamic range

@@ -1174,7 +1174,7 @@ top:
         choicekey[nextleft] = 'o';
         attributes[nextleft] = MENU_ITEM;
         choices[nextleft] = "orbits window          <o>  ";
-        if (!(fractype == fractal_type::JULIA || fractype == fractal_type::JULIAFP || fractype == fractal_type::INVERSEJULIA))
+        if (!(g_fractal_type == fractal_type::JULIA || g_fractal_type == fractal_type::JULIAFP || g_fractal_type == fractal_type::INVERSEJULIA))
         {
             nextleft += 2;
         }
@@ -1210,7 +1210,7 @@ top:
             choices[nextleft] = "toggle to/from julia <space>";
             showjuliatoggle = true;
         }
-        if (fractype == fractal_type::JULIA || fractype == fractal_type::JULIAFP || fractype == fractal_type::INVERSEJULIA)
+        if (g_fractal_type == fractal_type::JULIA || g_fractal_type == fractal_type::JULIAFP || g_fractal_type == fractal_type::INVERSEJULIA)
         {
             nextleft += 2;
             choicekey[nextleft] = 'j';

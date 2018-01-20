@@ -51,7 +51,7 @@ int     g_zoom_box_rotation;                // zoombox rotation
 double  g_zoom_box_x, g_zoom_box_y;               // topleft of zoombox
 double  g_zoom_box_width, g_zoom_box_height, g_zoom_box_skew;  // zoombox size & shape
 
-fractal_type fractype;               // if == 0, use Mandelbrot
+fractal_type g_fractal_type;               // if == 0, use Mandelbrot
 char    g_std_calc_mode;            // '1', '2', 'g', 'b'
 long    g_l_delta_x, g_l_delta_y;             // screen pixel increments
 long    g_l_delta_x2, g_l_delta_y2;           // screen pixel increments

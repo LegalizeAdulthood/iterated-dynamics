@@ -82,9 +82,9 @@ int read_overlay()      // read overlay/3D files, if reqr'd
     if (read_fractype < 0 || read_fractype >= g_num_fractal_types)
     {
         sprintf(msg, "Warning: %s has a bad fractal type; using 0", g_read_filename.c_str());
-        fractype = fractal_type::MANDEL;
+        g_fractal_type = fractal_type::MANDEL;
     }
-    fractype = static_cast<fractal_type>(read_fractype);
+    g_fractal_type = static_cast<fractal_type>(read_fractype);
     curfractalspecific = &fractalspecific[read_fractype];
     g_x_min        = read_info.xmin;
     g_x_max        = read_info.xmax;
@@ -344,9 +344,9 @@ int read_overlay()      // read overlay/3D files, if reqr'd
     {
         g_quick_calc   = read_info.quick_calc != 0;
         g_close_proximity    = read_info.closeprox;
-        if (fractype == fractal_type::FPPOPCORN || fractype == fractal_type::LPOPCORN ||
-                fractype == fractal_type::FPPOPCORNJUL || fractype == fractal_type::LPOPCORNJUL ||
-                fractype == fractal_type::LATOO)
+        if (g_fractal_type == fractal_type::FPPOPCORN || g_fractal_type == fractal_type::LPOPCORN ||
+                g_fractal_type == fractal_type::FPPOPCORNJUL || g_fractal_type == fractal_type::LPOPCORNJUL ||
+                g_fractal_type == fractal_type::LATOO)
         {
             g_new_bifurcation_functions_loaded = true;
         }
@@ -423,7 +423,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
     if (g_display_3d != display_3d_modes::NONE)
     {
         g_calc_status = calc_status_value::PARAMS_CHANGED;
-        fractype = fractal_type::PLASMA;
+        g_fractal_type = fractal_type::PLASMA;
         curfractalspecific = &fractalspecific[static_cast<int>(fractal_type::PLASMA)];
         g_params[0] = 0;
         if (g_init_batch == batch_modes::NONE)
@@ -994,94 +994,94 @@ static void skip_ext_blk(int *block_len, int *data_len)
 // switch obsolete fractal types to new generalizations
 static void backwardscompat(FRACTAL_INFO *info)
 {
-    switch (fractype)
+    switch (g_fractal_type)
     {
     case fractal_type::LAMBDASINE:
-        fractype = fractal_type::LAMBDATRIGFP;
+        g_fractal_type = fractal_type::LAMBDATRIGFP;
         trigndx[0] = trig_fn::SIN;
         break;
     case fractal_type::LAMBDACOS:
-        fractype = fractal_type::LAMBDATRIGFP;
+        g_fractal_type = fractal_type::LAMBDATRIGFP;
         trigndx[0] = trig_fn::COSXX;
         break;
     case fractal_type::LAMBDAEXP:
-        fractype = fractal_type::LAMBDATRIGFP;
+        g_fractal_type = fractal_type::LAMBDATRIGFP;
         trigndx[0] = trig_fn::EXP;
         break;
     case fractal_type::MANDELSINE:
-        fractype = fractal_type::MANDELTRIGFP;
+        g_fractal_type = fractal_type::MANDELTRIGFP;
         trigndx[0] = trig_fn::SIN;
         break;
     case fractal_type::MANDELCOS:
-        fractype = fractal_type::MANDELTRIGFP;
+        g_fractal_type = fractal_type::MANDELTRIGFP;
         trigndx[0] = trig_fn::COSXX;
         break;
     case fractal_type::MANDELEXP:
-        fractype = fractal_type::MANDELTRIGFP;
+        g_fractal_type = fractal_type::MANDELTRIGFP;
         trigndx[0] = trig_fn::EXP;
         break;
     case fractal_type::MANDELSINH:
-        fractype = fractal_type::MANDELTRIGFP;
+        g_fractal_type = fractal_type::MANDELTRIGFP;
         trigndx[0] = trig_fn::SINH;
         break;
     case fractal_type::LAMBDASINH:
-        fractype = fractal_type::LAMBDATRIGFP;
+        g_fractal_type = fractal_type::LAMBDATRIGFP;
         trigndx[0] = trig_fn::SINH;
         break;
     case fractal_type::MANDELCOSH:
-        fractype = fractal_type::MANDELTRIGFP;
+        g_fractal_type = fractal_type::MANDELTRIGFP;
         trigndx[0] = trig_fn::COSH;
         break;
     case fractal_type::LAMBDACOSH:
-        fractype = fractal_type::LAMBDATRIGFP;
+        g_fractal_type = fractal_type::LAMBDATRIGFP;
         trigndx[0] = trig_fn::COSH;
         break;
     case fractal_type::LMANDELSINE:
-        fractype = fractal_type::MANDELTRIG;
+        g_fractal_type = fractal_type::MANDELTRIG;
         trigndx[0] = trig_fn::SIN;
         break;
     case fractal_type::LLAMBDASINE:
-        fractype = fractal_type::LAMBDATRIG;
+        g_fractal_type = fractal_type::LAMBDATRIG;
         trigndx[0] = trig_fn::SIN;
         break;
     case fractal_type::LMANDELCOS:
-        fractype = fractal_type::MANDELTRIG;
+        g_fractal_type = fractal_type::MANDELTRIG;
         trigndx[0] = trig_fn::COSXX;
         break;
     case fractal_type::LLAMBDACOS:
-        fractype = fractal_type::LAMBDATRIG;
+        g_fractal_type = fractal_type::LAMBDATRIG;
         trigndx[0] = trig_fn::COSXX;
         break;
     case fractal_type::LMANDELSINH:
-        fractype = fractal_type::MANDELTRIG;
+        g_fractal_type = fractal_type::MANDELTRIG;
         trigndx[0] = trig_fn::SINH;
         break;
     case fractal_type::LLAMBDASINH:
-        fractype = fractal_type::LAMBDATRIG;
+        g_fractal_type = fractal_type::LAMBDATRIG;
         trigndx[0] = trig_fn::SINH;
         break;
     case fractal_type::LMANDELCOSH:
-        fractype = fractal_type::MANDELTRIG;
+        g_fractal_type = fractal_type::MANDELTRIG;
         trigndx[0] = trig_fn::COSH;
         break;
     case fractal_type::LLAMBDACOSH:
-        fractype = fractal_type::LAMBDATRIG;
+        g_fractal_type = fractal_type::LAMBDATRIG;
         trigndx[0] = trig_fn::COSH;
         break;
     case fractal_type::LMANDELEXP:
-        fractype = fractal_type::MANDELTRIG;
+        g_fractal_type = fractal_type::MANDELTRIG;
         trigndx[0] = trig_fn::EXP;
         break;
     case fractal_type::LLAMBDAEXP:
-        fractype = fractal_type::LAMBDATRIG;
+        g_fractal_type = fractal_type::LAMBDATRIG;
         trigndx[0] = trig_fn::EXP;
         break;
     case fractal_type::DEMM:
-        fractype = fractal_type::MANDELFP;
+        g_fractal_type = fractal_type::MANDELFP;
         g_user_distance_estimator_value = (info->ydots - 1) * 2;
         break;
     case fractal_type::DEMJ:
-        fractype = fractal_type::JULIAFP;
+        g_fractal_type = fractal_type::JULIAFP;
         g_user_distance_estimator_value = (info->ydots - 1) * 2;
         break;
     case fractal_type::MANDELLAMBDA:
@@ -1090,7 +1090,7 @@ static void backwardscompat(FRACTAL_INFO *info)
     default:
         break;
     }
-    curfractalspecific = &fractalspecific[static_cast<int>(fractype)];
+    curfractalspecific = &fractalspecific[static_cast<int>(g_fractal_type)];
 }
 
 // switch old bifurcation fractal types to new generalizations
@@ -1099,7 +1099,7 @@ void set_if_old_bif()
     /* set functions if not set already, may need to check 'new_bifurcation_functions_loaded'
        before calling this routine. */
 
-    switch (fractype)
+    switch (g_fractal_type)
     {
     case fractal_type::BIFURCATION:
     case fractal_type::LBIFURCATION:
@@ -1125,7 +1125,7 @@ void set_if_old_bif()
 // miscellaneous function variable defaults
 void set_function_parm_defaults()
 {
-    switch (fractype)
+    switch (g_fractal_type)
     {
     case fractal_type::FPPOPCORN:
     case fractal_type::LPOPCORN:
@@ -1170,7 +1170,7 @@ void backwards_v20()
 {
     // Fractype == FP type is not seen from PAR file ?????
     g_bad_outside = false;
-    g_ld_check = (fractype == fractal_type::FORMULA || fractype == fractal_type::FFORMULA)
+    g_ld_check = (g_fractal_type == fractal_type::FORMULA || g_fractal_type == fractal_type::FFORMULA)
         && (g_debug_flag == debug_flags::force_ld_check);
     if (!g_new_bifurcation_functions_loaded)
     {
@@ -1184,9 +1184,9 @@ bool check_back()
        put the features that need to save the value in save_release for backwards
        compatibility in this routine
     */
-    return fractype == fractal_type::LYAPUNOV
-        || fractype == fractal_type::FROTH
-        || fractype == fractal_type::FROTHFP
+    return g_fractal_type == fractal_type::LYAPUNOV
+        || g_fractal_type == fractal_type::FROTH
+        || g_fractal_type == fractal_type::FROTHFP
         || fix_bof()
         || fix_period_bof()
         || g_use_old_distance_estimator
@@ -2011,7 +2011,7 @@ bool functionOK(FRACTAL_INFO const *info, int numfn)
 bool typeOK(FRACTAL_INFO const *info, ext_blk_3 const *blk_3_info)
 {
     int numfn;
-    if ((fractype == fractal_type::FORMULA || fractype == fractal_type::FFORMULA) &&
+    if ((g_fractal_type == fractal_type::FORMULA || g_fractal_type == fractal_type::FFORMULA) &&
             (info->fractal_type == static_cast<int>(fractal_type::FORMULA) || info->fractal_type == static_cast<int>(fractal_type::FFORMULA)))
     {
         if (!stricmp(blk_3_info->form_name, g_formula_name.c_str()))
@@ -2031,7 +2031,7 @@ bool typeOK(FRACTAL_INFO const *info, ext_blk_3 const *blk_3_info)
             return false; // two formulas but names don't match
         }
     }
-    else if (info->fractal_type == static_cast<int>(fractype) ||
+    else if (info->fractal_type == static_cast<int>(g_fractal_type) ||
              info->fractal_type == static_cast<int>(curfractalspecific->tofloat))
     {
         numfn = (curfractalspecific->flags >> 6) & 7;

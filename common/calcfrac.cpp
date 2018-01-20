@@ -993,7 +993,7 @@ static void perform_worklist()
     int (*sv_orbitcalc)() = nullptr;  // function that calculates one orbit
     int (*sv_per_pixel)() = nullptr;  // once-per-pixel init
     bool (*sv_per_image)() = nullptr;  // once-per-image setup
-    int alt = find_alternate_math(fractype, bf_math);
+    int alt = find_alternate_math(g_fractal_type, bf_math);
 
     if (alt > -1)
     {
@@ -1092,7 +1092,7 @@ static void perform_worklist()
         }
         // must be mandel type, formula, or old PAR/GIF
         dem_mandel = curfractalspecific->tojulia != fractal_type::NOFRACTAL || g_use_old_distance_estimator
-                     || fractype == fractal_type::FORMULA || fractype == fractal_type::FFORMULA;
+                     || g_fractal_type == fractal_type::FORMULA || g_fractal_type == fractal_type::FFORMULA;
         dem_delta = sqr(delxx) + sqr(delyy2);
         ftemp = sqr(delyy) + sqr(delxx2);
         if (ftemp > dem_delta)
@@ -2154,7 +2154,7 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
     }
     g_orbit_save_index = 0;
     g_color_iter = 0;
-    if (fractype == fractal_type::JULIAFP || fractype == fractal_type::JULIA)
+    if (g_fractal_type == fractal_type::JULIAFP || g_fractal_type == fractal_type::JULIA)
     {
         g_color_iter = -1;
     }
@@ -4382,7 +4382,7 @@ static void setsymmetry(symmetry_type sym, bool uselist) // set up proper symmet
     bool parmszero = (g_param_z1.x == 0.0 && g_param_z1.y == 0.0 && g_use_init_orbit != init_orbit_mode::value);
     bool parmsnoreal = (g_param_z1.x == 0.0 && g_use_init_orbit != init_orbit_mode::value);
     bool parmsnoimag = (g_param_z1.y == 0.0 && g_use_init_orbit != init_orbit_mode::value);
-    switch (fractype)
+    switch (g_fractal_type)
     {
     case fractal_type::LMANLAMFNFN:      // These need only P1 checked.
     case fractal_type::FPMANLAMFNFN:     // P2 is used for a switch value

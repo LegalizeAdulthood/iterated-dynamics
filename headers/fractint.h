@@ -811,9 +811,9 @@ inline long lsqr(long x)
 #define CMPLXconj(z)    ((z).y =  -((z).y))
 #define LCMPLXmod(z)    (lsqr((z).x)+lsqr((z).y))
 #define LCMPLXconj(z)   ((z).y =  -((z).y))
-#define PER_IMAGE   (fractalspecific[static_cast<int>(fractype)].per_image)
-#define PER_PIXEL   (fractalspecific[static_cast<int>(fractype)].per_pixel)
-#define ORBITCALC   (fractalspecific[static_cast<int>(fractype)].orbitcalc)
+#define PER_IMAGE   (fractalspecific[static_cast<int>(g_fractal_type)].per_image)
+#define PER_PIXEL   (fractalspecific[static_cast<int>(g_fractal_type)].per_pixel)
+#define ORBITCALC   (fractalspecific[static_cast<int>(g_fractal_type)].orbitcalc)
 
 // 3D stuff - formerly in 3d.h
 #define    CMAX    4   // maximum column (4 x 4 matrix)

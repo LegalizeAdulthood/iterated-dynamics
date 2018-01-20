@@ -67,27 +67,27 @@ NewtonSetup()           // Newton/NewtBasin Routines
 #if !defined(XFRACT)
     if (g_debug_flag != debug_flags::allow_mp_newton_type)
     {
-        if (fractype == fractal_type::MPNEWTON)
+        if (g_fractal_type == fractal_type::MPNEWTON)
         {
-            fractype = fractal_type::NEWTON;
+            g_fractal_type = fractal_type::NEWTON;
         }
-        else if (fractype == fractal_type::MPNEWTBASIN)
+        else if (g_fractal_type == fractal_type::MPNEWTBASIN)
         {
-            fractype = fractal_type::NEWTBASIN;
+            g_fractal_type = fractal_type::NEWTBASIN;
         }
-        curfractalspecific = &fractalspecific[static_cast<int>(fractype)];
+        curfractalspecific = &fractalspecific[static_cast<int>(g_fractal_type)];
     }
 #else
-    if (fractype == fractal_type::MPNEWTON)
+    if (g_fractal_type == fractal_type::MPNEWTON)
     {
-        fractype = fractal_type::NEWTON;
+        g_fractal_type = fractal_type::NEWTON;
     }
-    else if (fractype == fractal_type::MPNEWTBASIN)
+    else if (g_fractal_type == fractal_type::MPNEWTBASIN)
     {
-        fractype = fractal_type::NEWTBASIN;
+        g_fractal_type = fractal_type::NEWTBASIN;
     }
 
-    curfractalspecific = &fractalspecific[static_cast<int>(fractype)];
+    curfractalspecific = &fractalspecific[static_cast<int>(g_fractal_type)];
 #endif
     // set up table of roots of 1 along unit circle
     g_degree = (int)g_param_z1.x;
@@ -102,7 +102,7 @@ NewtonSetup()           // Newton/NewtBasin Routines
     g_max_color     = 0;
     g_threshold    = .3*PI/g_degree; // less than half distance between roots
 #if !defined(XFRACT)
-    if (fractype == fractal_type::MPNEWTON || fractype == fractal_type::MPNEWTBASIN)
+    if (g_fractal_type == fractal_type::MPNEWTON || g_fractal_type == fractal_type::MPNEWTBASIN)
     {
         g_newton_mp_r_over_d     = *pd2MP(g_newton_r_over_d);
         g_mp_degree_minus_1_over_degree    = *pd2MP(g_degree_minus_1_over_degree);
@@ -113,7 +113,7 @@ NewtonSetup()           // Newton/NewtBasin Routines
 
     g_basin = 0;
     g_roots.resize(16);
-    if (fractype == fractal_type::NEWTBASIN)
+    if (g_fractal_type == fractal_type::NEWTBASIN)
     {
         if (g_param_z1.y)
         {
@@ -133,7 +133,7 @@ NewtonSetup()           // Newton/NewtBasin Routines
         }
     }
 #if !defined(XFRACT)
-    else if (fractype == fractal_type::MPNEWTBASIN)
+    else if (g_fractal_type == fractal_type::MPNEWTBASIN)
     {
         if (g_param_z1.y)
         {
@@ -167,7 +167,7 @@ NewtonSetup()           // Newton/NewtBasin Routines
 
     g_calc_type = standard_fractal;
 #if !defined(XFRACT)
-    if (fractype == fractal_type::MPNEWTON || fractype == fractal_type::MPNEWTBASIN)
+    if (g_fractal_type == fractal_type::MPNEWTON || g_fractal_type == fractal_type::MPNEWTBASIN)
     {
         setMPfunctions();
     }
@@ -200,7 +200,7 @@ MandelfpSetup()
     g_power_z.x = g_params[2] - 1.0;
     g_power_z.y = g_params[3];
     g_float_param = &g_init;
-    switch (fractype)
+    switch (g_fractal_type)
     {
     case fractal_type::MARKSMANDELFP:
         if (g_c_exponent < 1)
@@ -255,11 +255,11 @@ MandelfpSetup()
         }
         if (g_params[3] == 0.0 && g_debug_flag != debug_flags::force_complex_power && (double)g_c_exponent == g_params[2])
         {
-            fractalspecific[static_cast<int>(fractype)].orbitcalc = floatZpowerFractal;
+            fractalspecific[static_cast<int>(g_fractal_type)].orbitcalc = floatZpowerFractal;
         }
         else
         {
-            fractalspecific[static_cast<int>(fractype)].orbitcalc = floatCmplxZpowerFractal;
+            fractalspecific[static_cast<int>(g_fractal_type)].orbitcalc = floatCmplxZpowerFractal;
         }
         break;
     case fractal_type::MAGNET1M:
@@ -334,13 +334,13 @@ JuliafpSetup()
 {
     g_c_exponent = (int)g_params[2];
     g_float_param = &g_param_z1;
-    if (fractype == fractal_type::COMPLEXMARKSJUL)
+    if (g_fractal_type == fractal_type::COMPLEXMARKSJUL)
     {
         g_power_z.x = g_params[2] - 1.0;
         g_power_z.y = g_params[3];
         g_marks_coefficient = ComplexPower(*g_float_param, g_power_z);
     }
-    switch (fractype)
+    switch (g_fractal_type)
     {
     case fractal_type::JULIAFP:
         /*
@@ -378,11 +378,11 @@ JuliafpSetup()
         }
         if (g_params[3] == 0.0 && g_debug_flag != debug_flags::force_complex_power && (double)g_c_exponent == g_params[2])
         {
-            fractalspecific[static_cast<int>(fractype)].orbitcalc = floatZpowerFractal;
+            fractalspecific[static_cast<int>(g_fractal_type)].orbitcalc = floatZpowerFractal;
         }
         else
         {
-            fractalspecific[static_cast<int>(fractype)].orbitcalc = floatCmplxZpowerFractal;
+            fractalspecific[static_cast<int>(g_fractal_type)].orbitcalc = floatCmplxZpowerFractal;
         }
         get_julia_attractor(g_params[0], g_params[1]);  // another attractor?
         break;
@@ -452,7 +452,7 @@ JuliafpSetup()
                 g_param_z1.y == 0)
         {
             default_functions = true;
-            if (fractype == fractal_type::FPPOPCORNJUL)
+            if (g_fractal_type == fractal_type::FPPOPCORNJUL)
             {
                 g_symmetry = symmetry_type::ORIGIN;
             }
@@ -488,41 +488,41 @@ MandellongSetup()
 {
     g_fudge_half = g_fudge_factor/2;
     g_c_exponent = (int)g_params[2];
-    if (fractype == fractal_type::MARKSMANDEL && g_c_exponent < 1)
+    if (g_fractal_type == fractal_type::MARKSMANDEL && g_c_exponent < 1)
     {
         g_c_exponent = 1;
         g_params[2] = 1;
     }
-    if ((fractype == fractal_type::MARKSMANDEL   && !(g_c_exponent & 1)) ||
-            (fractype == fractal_type::LMANDELZPOWER && (g_c_exponent & 1)))
+    if ((g_fractal_type == fractal_type::MARKSMANDEL   && !(g_c_exponent & 1)) ||
+            (g_fractal_type == fractal_type::LMANDELZPOWER && (g_c_exponent & 1)))
     {
         g_symmetry = symmetry_type::XY_AXIS_NO_PARAM;    // odd exponents
     }
-    if ((fractype == fractal_type::MARKSMANDEL && (g_c_exponent & 1)) || fractype == fractal_type::LMANDELEXP)
+    if ((g_fractal_type == fractal_type::MARKSMANDEL && (g_c_exponent & 1)) || g_fractal_type == fractal_type::LMANDELEXP)
     {
         g_symmetry = symmetry_type::X_AXIS_NO_PARAM;
     }
-    if (fractype == fractal_type::SPIDER && g_periodicity_check == 1)
+    if (g_fractal_type == fractal_type::SPIDER && g_periodicity_check == 1)
     {
         g_periodicity_check = 4;
     }
     g_long_param = &g_l_init;
-    if (fractype == fractal_type::LMANDELZPOWER)
+    if (g_fractal_type == fractal_type::LMANDELZPOWER)
     {
         if (g_params[3] == 0.0 && g_debug_flag != debug_flags::force_complex_power && (double)g_c_exponent == g_params[2])
         {
-            fractalspecific[static_cast<int>(fractype)].orbitcalc = longZpowerFractal;
+            fractalspecific[static_cast<int>(g_fractal_type)].orbitcalc = longZpowerFractal;
         }
         else
         {
-            fractalspecific[static_cast<int>(fractype)].orbitcalc = longCmplxZpowerFractal;
+            fractalspecific[static_cast<int>(g_fractal_type)].orbitcalc = longCmplxZpowerFractal;
         }
         if (g_params[3] != 0 || (double)g_c_exponent != g_params[2])
         {
             g_symmetry = symmetry_type::NONE;
         }
     }
-    if ((fractype == fractal_type::LMANTRIGPLUSEXP) || (fractype == fractal_type::LMANTRIGPLUSZSQRD))
+    if ((g_fractal_type == fractal_type::LMANTRIGPLUSEXP) || (g_fractal_type == fractal_type::LMANTRIGPLUSZSQRD))
     {
         if (g_param_z1.y == 0.0)
         {
@@ -537,14 +537,14 @@ MandellongSetup()
             g_symmetry = symmetry_type::NONE;
         }
     }
-    if (fractype == fractal_type::TIMSERROR)
+    if (g_fractal_type == fractal_type::TIMSERROR)
     {
         if (trigndx[0] == trig_fn::FLIP)
         {
             g_symmetry = symmetry_type::NONE;
         }
     }
-    if (fractype == fractal_type::MARKSMANDELPWR)
+    if (g_fractal_type == fractal_type::MARKSMANDELPWR)
     {
         if (trigndx[0] == trig_fn::FLIP)
         {
@@ -559,7 +559,7 @@ JulialongSetup()
 {
     g_c_exponent = (int)g_params[2];
     g_long_param = &g_l_param;
-    switch (fractype)
+    switch (g_fractal_type)
     {
     case fractal_type::LJULIAZPOWER:
         if ((g_c_exponent & 1) || g_params[3] != 0.0 || (double)g_c_exponent != g_params[2])
@@ -568,11 +568,11 @@ JulialongSetup()
         }
         if (g_params[3] == 0.0 && g_debug_flag != debug_flags::force_complex_power && (double)g_c_exponent == g_params[2])
         {
-            fractalspecific[static_cast<int>(fractype)].orbitcalc = longZpowerFractal;
+            fractalspecific[static_cast<int>(g_fractal_type)].orbitcalc = longZpowerFractal;
         }
         else
         {
-            fractalspecific[static_cast<int>(fractype)].orbitcalc = longCmplxZpowerFractal;
+            fractalspecific[static_cast<int>(g_fractal_type)].orbitcalc = longCmplxZpowerFractal;
         }
         break;
     case fractal_type::LAMBDA:
@@ -614,7 +614,7 @@ JulialongSetup()
                 g_param_z1.y == 0)
         {
             default_functions = true;
-            if (fractype == fractal_type::LPOPCORNJUL)
+            if (g_fractal_type == fractal_type::LPOPCORNJUL)
             {
                 g_symmetry = symmetry_type::ORIGIN;
             }
@@ -1253,14 +1253,14 @@ HalleySetup()
 
     if (g_user_float_flag)
     {
-        fractype = fractal_type::HALLEY; // float on
+        g_fractal_type = fractal_type::HALLEY; // float on
     }
     else
     {
-        fractype = fractal_type::MPHALLEY;
+        g_fractal_type = fractal_type::MPHALLEY;
     }
 
-    curfractalspecific = &fractalspecific[static_cast<int>(fractype)];
+    curfractalspecific = &fractalspecific[static_cast<int>(g_fractal_type)];
 
     g_degree = (int)g_param_z1.x;
     if (g_degree < 2)
@@ -1274,7 +1274,7 @@ HalleySetup()
     g_halley_a_plus_one_times_degree = g_halley_a_plus_one * g_degree;
 
 #if !defined(XFRACT)
-    if (fractype == fractal_type::MPHALLEY)
+    if (g_fractal_type == fractal_type::MPHALLEY)
     {
         setMPfunctions();
         g_halley_mp_a_plus_one = *pd2MP((double)g_halley_a_plus_one);
@@ -1532,7 +1532,7 @@ MandPhoenixCplxSetup()
 bool
 StandardSetup()
 {
-    if (fractype == fractal_type::UNITYFP)
+    if (g_fractal_type == fractal_type::UNITYFP)
     {
         g_periodicity_check = 0;
     }
