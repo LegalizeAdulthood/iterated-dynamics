@@ -194,7 +194,7 @@ main_state big_while_loop(bool *const kbdmore, bool *const stacked, bool const r
                 }
                 else if (((g_logical_screen_x_dots <= 1) // changed test to 1, so a 2x2 window will
                           || (g_logical_screen_y_dots <= 1)) // work with the sound feature
-                         && !(g_evolving&1))
+                         && !(g_evolving & FIELDMAP))
                 {
                     // so ssg works
                     // but no check if in evolve mode to allow lots of small views
@@ -204,16 +204,16 @@ main_state big_while_loop(bool *const kbdmore, bool *const stacked, bool const r
                     g_logical_screen_x_dots = g_screen_x_dots;
                     g_logical_screen_y_dots = g_screen_y_dots;
                 }
-                if ((g_evolving & 1) && (curfractalspecific->flags & INFCALC))
+                if ((g_evolving & FIELDMAP) && (curfractalspecific->flags & INFCALC))
                 {
                     stopmsg(STOPMSG_NONE,
                         "Fractal doesn't terminate! switching off evolution.");
-                    g_evolving = g_evolving -1;
+                    g_evolving ^= FIELDMAP;
                     g_view_window = false;
                     g_logical_screen_x_dots = g_screen_x_dots;
                     g_logical_screen_y_dots = g_screen_y_dots;
                 }
-                if (g_evolving & 1)
+                if (g_evolving & FIELDMAP)
                 {
                     g_logical_screen_x_dots = (g_screen_x_dots / g_evolve_image_grid_size)-!((g_evolving & NOGROUT)/NOGROUT);
                     g_logical_screen_x_dots = g_logical_screen_x_dots - (g_logical_screen_x_dots % 4); // trim to multiple of 4 for SSG
@@ -364,7 +364,7 @@ main_state big_while_loop(bool *const kbdmore, bool *const stacked, bool const r
             //rb
             g_filename_stack_index = -1;   // reset pointer
             g_browse_name.clear();
-            if (g_view_window && (g_evolving&1) && (g_calc_status != calc_status_value::COMPLETED))
+            if (g_view_window && (g_evolving & FIELDMAP) && (g_calc_status != calc_status_value::COMPLETED))
             {
                 // generate a set of images with varied parameters on each one
                 int grout, ecount, tmpxdots, tmpydots, gridsqr;
@@ -1536,7 +1536,7 @@ do_3d_transform:
     case FIK_ALT_5:
     case FIK_ALT_6:
     case FIK_ALT_7:
-        g_evolving = 1;
+        g_evolving = FIELDMAP;
         g_view_window = true;
         set_mutation_level(*kbdchar - FIK_ALT_1 + 1);
         param_history(0); // save parameter history
@@ -1889,7 +1889,7 @@ static main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdm
         {
             GENEBASE gene[NUMGENES];
             copy_genes_from_bank(gene);
-            if (g_evolving & 1)
+            if (g_evolving & FIELDMAP)
             {
                 if (*kbdchar == FIK_CTL_LEFT_ARROW)
                 {
@@ -2000,7 +2000,7 @@ static main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdm
                 g_zoom_box_y = 0;
                 find_special_colors();
                 g_box_color = g_color_bright;
-                if (g_evolving&1)
+                if (g_evolving & FIELDMAP)
                 {
                     // set screen view params back (previously changed to allow full screen saves in viewwindow mode)
                     int grout = !((g_evolving & NOGROUT) / NOGROUT);
@@ -2024,7 +2024,7 @@ static main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdm
             {
                 // end zoombox
                 g_zoom_box_width = 0;
-                if (g_evolving&1)
+                if (g_evolving & FIELDMAP)
                 {
                     drawparmbox(1); // clear boxes off screen
                     ReleaseParamBox();

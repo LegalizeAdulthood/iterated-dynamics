@@ -710,7 +710,7 @@ get_evol_restart:
 
     choices[++k] = "Evolution mode? (no for full screen)";
     uvalues[k].type = 'y';
-    uvalues[k].uval.ch.val = g_evolving&1;
+    uvalues[k].uval.ch.val = g_evolving & FIELDMAP;
 
     choices[++k] = "Image grid size (odd numbers only)";
     uvalues[k].type = 'i';
@@ -909,7 +909,7 @@ get_evol_restart:
         if (old_variations > 0)
         {
             g_view_window = true;
-            g_evolving |= 1;   // leave other settings alone
+            g_evolving |= FIELDMAP;   // leave other settings alone
         }
         g_evolve_max_random_mutation = 1;
         g_evolve_mutation_reduction_factor = 1.0;

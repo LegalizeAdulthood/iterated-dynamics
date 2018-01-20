@@ -609,7 +609,7 @@ bool encoder()
         }
 
         // Extended parameters block 006
-        if (g_evolving & 1)
+        if (g_evolving & FIELDMAP)
         {
             EVOLUTION_INFO esave_info;
             if (!g_have_evolve_info || g_calc_status == calc_status_value::COMPLETED)
