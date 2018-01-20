@@ -1411,7 +1411,7 @@ do_3d_transform:
         if (g_zoom_box_width != 0.0)
         {
             // do a zoom
-            init_pan_or_recalc(0);
+            init_pan_or_recalc(false);
             *kbdmore = false;
         }
         if (g_calc_status != calc_status_value::COMPLETED)       // don't restart if image complete
@@ -1421,7 +1421,7 @@ do_3d_transform:
         break;
     case FIK_CTL_ENTER:              // control-Enter
     case FIK_CTL_ENTER_2:            // Control-Keypad Enter
-        init_pan_or_recalc(1);
+        init_pan_or_recalc(true);
         *kbdmore = false;
         zoomout();                // calc corners for zooming out
         break;
@@ -1856,7 +1856,7 @@ static main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdm
         if (g_zoom_box_width != 0.0)
         {
             // do a zoom
-            init_pan_or_recalc(0);
+            init_pan_or_recalc(false);
             *kbdmore = false;
         }
         if (g_calc_status != calc_status_value::COMPLETED)       // don't restart if image complete
@@ -1866,7 +1866,7 @@ static main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdm
         break;
     case FIK_CTL_ENTER:              // control-Enter
     case FIK_CTL_ENTER_2:            // Control-Keypad Enter
-        init_pan_or_recalc(1);
+        init_pan_or_recalc(true);
         *kbdmore = false;
         zoomout();                // calc corners for zooming out
         break;

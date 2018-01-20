@@ -744,7 +744,7 @@ static void move_row(int fromrow, int torow, int col)
     put_line(torow, 0, g_logical_screen_x_dots-1, &temp[0]);
 }
 
-int init_pan_or_recalc(int do_zoomout) // decide to recalc, or to chg worklist & pan
+int init_pan_or_recalc(bool do_zoomout) // decide to recalc, or to chg worklist & pan
 {
     int row;
     int col;
