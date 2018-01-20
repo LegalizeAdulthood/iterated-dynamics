@@ -85,7 +85,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
         g_fractal_type = fractal_type::MANDEL;
     }
     g_fractal_type = static_cast<fractal_type>(read_fractype);
-    g_cur_fractal_specific = &fractalspecific[read_fractype];
+    g_cur_fractal_specific = &g_fractal_specific[read_fractype];
     g_x_min        = read_info.xmin;
     g_x_max        = read_info.xmax;
     g_y_min        = read_info.ymin;
@@ -424,7 +424,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
     {
         g_calc_status = calc_status_value::PARAMS_CHANGED;
         g_fractal_type = fractal_type::PLASMA;
-        g_cur_fractal_specific = &fractalspecific[static_cast<int>(fractal_type::PLASMA)];
+        g_cur_fractal_specific = &g_fractal_specific[static_cast<int>(fractal_type::PLASMA)];
         g_params[0] = 0;
         if (g_init_batch == batch_modes::NONE)
         {
@@ -1090,7 +1090,7 @@ static void backwardscompat(FRACTAL_INFO *info)
     default:
         break;
     }
-    g_cur_fractal_specific = &fractalspecific[static_cast<int>(g_fractal_type)];
+    g_cur_fractal_specific = &g_fractal_specific[static_cast<int>(g_fractal_type)];
 }
 
 // switch old bifurcation fractal types to new generalizations

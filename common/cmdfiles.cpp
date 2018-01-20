@@ -483,7 +483,7 @@ static void initvars_fractal()          // init vars affecting calculation
 #endif
     g_finite_attractor = false;                 // disable finite attractor logic
     g_fractal_type = fractal_type::MANDEL;    // initial type Set flag
-    g_cur_fractal_specific = &fractalspecific[0];
+    g_cur_fractal_specific = &g_fractal_specific[0];
     initcorners = false;
     initparams = false;
     g_bail_out = 0;                        // no user-entered bailout
@@ -1428,19 +1428,19 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
             value[3] = 0;
         }
         int k;
-        for (k = 0; fractalspecific[k].name != nullptr; k++)
+        for (k = 0; g_fractal_specific[k].name != nullptr; k++)
         {
-            if (strcmp(value, fractalspecific[k].name) == 0)
+            if (strcmp(value, g_fractal_specific[k].name) == 0)
             {
                 break;
             }
         }
-        if (fractalspecific[k].name == nullptr)
+        if (g_fractal_specific[k].name == nullptr)
         {
             goto badarg;
         }
         g_fractal_type = static_cast<fractal_type>(k);
-        g_cur_fractal_specific = &fractalspecific[static_cast<int>(g_fractal_type)];
+        g_cur_fractal_specific = &g_fractal_specific[static_cast<int>(g_fractal_type)];
         if (!initcorners)
         {
             g_x_min = g_cur_fractal_specific->xmin;

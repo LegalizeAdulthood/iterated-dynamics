@@ -216,7 +216,7 @@ char t_halley[] = "*halley";
 // use next to cast orbitcalcs() that have arguments
 #define VF int(*)()
 
-fractalspecificstuff fractalspecific[] =
+fractalspecificstuff g_fractal_specific[] =
 {
     /*
     {
@@ -2263,7 +2263,7 @@ fractalspecificstuff fractalspecific[] =
     }
 };
 
-int g_num_fractal_types = (sizeof(fractalspecific)/
+int g_num_fractal_types = (sizeof(g_fractal_specific)/
                          sizeof(fractalspecificstuff)) -1;
 
 /*
@@ -2331,7 +2331,7 @@ bool typehasparm(fractal_type type, int parm, char *buf)
     char const *ret = nullptr;
     if (0 <= parm && parm < 4)
     {
-        ret = fractalspecific[static_cast<int>(type)].param[parm];
+        ret = g_fractal_specific[static_cast<int>(type)].param[parm];
     }
     else if (parm >= 4 && parm < MAXPARAMS)
     {

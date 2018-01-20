@@ -1093,7 +1093,7 @@ int get_fracttype()             // prompt for and select fractal type
     {
         g_fractal_type = oldfractype;
     }
-    g_cur_fractal_specific = &fractalspecific[static_cast<int>(g_fractal_type)];
+    g_cur_fractal_specific = &g_fractal_specific[static_cast<int>(g_fractal_type)];
     return done;
 }
 
@@ -1135,20 +1135,20 @@ static fractal_type select_fracttype(fractal_type t) // subrtn of get_fracttype,
     {
         int i = -1;
         int j = -1;
-        while (fractalspecific[++i].name)
+        while (g_fractal_specific[++i].name)
         {
             if (g_julibrot)
             {
-                if (!((fractalspecific[i].flags & OKJB) && *fractalspecific[i].name != '*'))
+                if (!((g_fractal_specific[i].flags & OKJB) && *g_fractal_specific[i].name != '*'))
                 {
                     continue;
                 }
             }
-            if (fractalspecific[i].name[0] == '*')
+            if (g_fractal_specific[i].name[0] == '*')
             {
                 continue;
             }
-            strcpy(choices[++j]->name, fractalspecific[i].name);
+            strcpy(choices[++j]->name, g_fractal_specific[i].name);
             choices[j]->name[14] = 0; // safety
             choices[j]->num = i;      // remember where the real item is
         }
@@ -1159,7 +1159,7 @@ static fractal_type select_fracttype(fractal_type t) // subrtn of get_fracttype,
     for (int i = 0; i < numtypes; ++i)   // find starting choice in sorted list
     {
         if (choices[i]->num == static_cast<int>(t)
-            || choices[i]->num == static_cast<int>(fractalspecific[static_cast<int>(t)].tofloat))
+            || choices[i]->num == static_cast<int>(g_fractal_specific[static_cast<int>(t)].tofloat))
         {
             j = i;
         }
@@ -1201,7 +1201,7 @@ static int sel_fractype_help(int curkey, int choice)
     if (curkey == FIK_F2)
     {
         int old_help_mode = g_help_mode;
-        g_help_mode = fractalspecific[(*(ft_choices+choice))->num].helptext;
+        g_help_mode = g_fractal_specific[(*(ft_choices+choice))->num].helptext;
         help(0);
         g_help_mode = old_help_mode;
     }
@@ -1220,7 +1220,7 @@ bool select_type_params( // prompt for new fractal type parameters
 sel_type_restart:
     ret = false;
     g_fractal_type = newfractype;
-    g_cur_fractal_specific = &fractalspecific[static_cast<int>(g_fractal_type)];
+    g_cur_fractal_specific = &g_fractal_specific[static_cast<int>(g_fractal_type)];
 
     if (g_fractal_type == fractal_type::LSYSTEM)
     {
@@ -1371,15 +1371,15 @@ int build_fractal_list(int fractals[], int *last_val, char const *nameptr[])
     int numfractals = 0;
     for (int i = 0; i < g_num_fractal_types; i++)
     {
-        if ((fractalspecific[i].flags & OKJB) && *fractalspecific[i].name != '*')
+        if ((g_fractal_specific[i].flags & OKJB) && *g_fractal_specific[i].name != '*')
         {
             fractals[numfractals] = i;
             if (i == static_cast<int>(g_new_orbit_type)
-                    || i == static_cast<int>(fractalspecific[static_cast<int>(g_new_orbit_type)].tofloat))
+                    || i == static_cast<int>(g_fractal_specific[static_cast<int>(g_new_orbit_type)].tofloat))
             {
                 *last_val = numfractals;
             }
-            nameptr[numfractals] = fractalspecific[i].name;
+            nameptr[numfractals] = g_fractal_specific[i].name;
             numfractals++;
             if (numfractals >= MAXFRACTALS)
             {
@@ -1524,12 +1524,12 @@ int get_fract_params(int caller)        // prompt for type-specific parms
         int i;
         if (g_cur_fractal_specific->name[0] == '*'
                 && (i = static_cast<int>(g_cur_fractal_specific->tofloat)) != static_cast<int>(fractal_type::NOFRACTAL)
-                && fractalspecific[i].name[0] != '*')
+                && g_fractal_specific[i].name[0] != '*')
         {
             curtype = static_cast<fractal_type>(i);
         }
     }
-    g_cur_fractal_specific = &fractalspecific[static_cast<int>(curtype)];
+    g_cur_fractal_specific = &g_fractal_specific[static_cast<int>(curtype)];
     tstack[0] = 0;
     int help_formula = g_cur_fractal_specific->helpformula;
     if (help_formula < -1)
@@ -1643,7 +1643,7 @@ gfp_top:
         {
             g_new_orbit_type = i;
         }
-        jborbit = &fractalspecific[static_cast<int>(g_new_orbit_type)];
+        jborbit = &g_fractal_specific[static_cast<int>(g_new_orbit_type)];
         juliorbitname = jborbit->name;
     }
 
@@ -2068,7 +2068,7 @@ gfp_top:
         ++promptnum;
     }
 gfp_exit:
-    g_cur_fractal_specific = &fractalspecific[static_cast<int>(g_fractal_type)];
+    g_cur_fractal_specific = &g_fractal_specific[static_cast<int>(g_fractal_type)];
     return ret;
 }
 
@@ -2079,7 +2079,7 @@ int find_extra_param(fractal_type type)
     ret = -1;
     i = -1;
 
-    if (fractalspecific[static_cast<int>(type)].flags & MORE)
+    if (g_fractal_specific[static_cast<int>(type)].flags & MORE)
     {
         while ((curtyp = g_more_fractal_params[++i].type) != type && curtyp != fractal_type::NOFRACTAL);
         if (curtyp == type)
@@ -2094,7 +2094,7 @@ void load_params(fractal_type fractype)
 {
     for (int i = 0; i < 4; ++i)
     {
-        g_params[i] = fractalspecific[static_cast<int>(fractype)].paramvalue[i];
+        g_params[i] = g_fractal_specific[static_cast<int>(fractype)].paramvalue[i];
         if (fractype != fractal_type::CELLULAR && fractype != fractal_type::ANT)
         {
             roundfloatd(&g_params[i]); // don't round cellular or ant
@@ -2194,7 +2194,7 @@ long get_file_entry(int type, char const *title, char const *fmask,
             if (ifsload() == 0)
             {
                 g_fractal_type = !g_ifs_type ? fractal_type::IFS : fractal_type::IFS3D;
-                g_cur_fractal_specific = &fractalspecific[static_cast<int>(g_fractal_type)];
+                g_cur_fractal_specific = &g_fractal_specific[static_cast<int>(g_fractal_type)];
                 set_default_parms(); // to correct them if 3d
                 return 0;
             }
