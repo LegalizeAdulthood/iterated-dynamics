@@ -430,7 +430,6 @@ bn_t unsafe_full_mult_bn(bn_t r, bn_t n1, bn_t n2)
 bn_t unsafe_mult_bn(bn_t r, bn_t n1, bn_t n2)
 {
     bool sign2 = false;
-    int samevar;
     int steps, doublesteps, carry_steps, skips;
     bn_t n1p, n2p;      // pointers for n1, n2
     bn_t rp1, rp2, rp3; // pointers for r
@@ -443,7 +442,7 @@ bn_t unsafe_mult_bn(bn_t r, bn_t n1, bn_t n2)
     {
         neg_a_bn(n1);
     }
-    samevar = (n1 == n2);
+    const bool samevar = (n1 == n2);
     if (!samevar) // check to see if they're the same pointer
     {
         sign2 = is_bn_neg(n2);
