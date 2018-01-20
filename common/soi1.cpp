@@ -201,19 +201,19 @@ namespace
 
 struct soi_double_state
 {
-    int esc1;
-    int esc2;
-    int esc3;
-    int esc4;
-    int esc5;
-    int esc6;
-    int esc7;
-    int esc8;
-    int esc9;
-    int tesc1;
-    int tesc2;
-    int tesc3;
-    int tesc4;
+    bool esc1;
+    bool esc2;
+    bool esc3;
+    bool esc4;
+    bool esc5;
+    bool esc6;
+    bool esc7;
+    bool esc8;
+    bool esc9;
+    bool tesc1;
+    bool tesc2;
+    bool tesc3;
+    bool tesc4;
 
     double re;
     double im;
@@ -283,7 +283,7 @@ struct soi_double_state
     double tiq4;
 };
 
-soi_double_state state = { 0 };
+soi_double_state state = { false };
 
 }
 
@@ -579,7 +579,7 @@ scan:
     (zr) = (rq) - (iq) + (cr);                  \
     (rq) = (zr)*(zr);                           \
     (iq) = (zi)*(zi);                           \
-    (esc) = (((rq) + (iq)) > 16.0)?1:0
+    (esc) = (((rq) + (iq)) > 16.0)
 
         // iterate key values
         SOI_ORBIT(zre1, state.rq1, zim1, state.iq1, cre1, cim1, state.esc1);
