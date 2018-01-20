@@ -41,7 +41,7 @@ void showcornersdbl(char const *s)
             "delx2= %.20Lf dely2= %.20Lf",
             s, xxmin, xxmax, yymin, yymax, xx3rd, yy3rd,
             delxx, delyy, delxx2, delyy2);
-    if (stopmsg(STOPMSG_NONE, msg) == -1)
+    if (stopmsg(STOPMSG_NONE, msg))
     {
         goodbye();
     }
@@ -72,7 +72,7 @@ void showcorners(char const *s)
     bntostr(msg, dec, bny3rd);
     sprintf(msg1, "bny3rd=%s\nyy3rd= %.20f\n\n", msg, yy3rd);
     strcat(msg3, msg1);
-    if (stopmsg(STOPMSG_NONE, msg3) == -1)
+    if (stopmsg(STOPMSG_NONE, msg3))
     {
         goodbye();
     }
@@ -89,7 +89,7 @@ bfdecimals=%d ",
             s, bnstep, bnlength, intlength, rlength, padding,
             shiftfactor, g_decimals, bflength, rbflength,
             bfdecimals);
-    if (stopmsg(STOPMSG_NONE, msg) == -1)
+    if (stopmsg(STOPMSG_NONE, msg))
     {
         goodbye();
     }
@@ -124,7 +124,7 @@ void showcornersbf(char const *s)
     bftostr(msg, dec, bfy3rd);
     sprintf(msg1, "bfy3rd=%s\nyy3rd= %.20f\n\n", msg, yy3rd);
     strcat(msg3, msg1);
-    if (stopmsg(STOPMSG_NONE, msg3) == -1)
+    if (stopmsg(STOPMSG_NONE, msg3))
     {
         goodbye();
     }
@@ -154,7 +154,7 @@ void showcornersbfs(char const *s)
     bftostr(msg, dec, bfsy3rd);
     sprintf(msg1, "bfsy3rd=%s\nyy3rd= %.20f\n\n", msg, yy3rd);
     strcat(msg3, msg1);
-    if (stopmsg(STOPMSG_NONE, msg3) == -1)
+    if (stopmsg(STOPMSG_NONE, msg3))
     {
         goodbye();
     }
@@ -166,7 +166,7 @@ void show_two_bf(char const *s1, bf_t t1, char const *s2, bf_t t2, int digits)
     bftostr_e(msg1, digits, t1);
     bftostr_e(msg2, digits, t2);
     sprintf(msg3, "\n%s->%s\n%s->%s", s1, msg1, s2, msg2);
-    if (stopmsg(STOPMSG_NONE, msg3) == -1)
+    if (stopmsg(STOPMSG_NONE, msg3))
     {
         goodbye();
     }
@@ -179,7 +179,7 @@ void show_three_bf(char const *s1, bf_t t1, char const *s2, bf_t t2, char const 
     bftostr_e(msg2, digits, t2);
     bftostr_e(msg3, digits, t3);
     sprintf(msg4, "\n%s->%s\n%s->%s\n%s->%s", s1, msg1, s2, msg2, s3, msg3);
-    if (stopmsg(STOPMSG_NONE, msg4) == -1)
+    if (stopmsg(STOPMSG_NONE, msg4))
     {
         goodbye();
     }
@@ -203,7 +203,7 @@ void showaspect(char const *s)
             s,
             (yymax-yymin)/(xxmax-xxmin),
             str);
-    if (stopmsg(STOPMSG_NONE, msg) == -1)
+    if (stopmsg(STOPMSG_NONE, msg))
     {
         goodbye();
     }
@@ -217,7 +217,7 @@ void comparevalues(char const *s, LDBL x, bn_t bnx)
     char msg[100], msg1[100];
     bntostr(msg, dec, bnx);
     sprintf(msg1, "%s\nbignum=%s\ndouble=%.20Lf\n\n", s, msg, x);
-    if (stopmsg(STOPMSG_NONE, msg1) == -1)
+    if (stopmsg(STOPMSG_NONE, msg1))
     {
         goodbye();
     }
@@ -229,7 +229,7 @@ void comparevaluesbf(char const *s, LDBL x, bf_t bfx)
     char msg[300], msg1[300];
     bftostr_e(msg, dec, bfx);
     sprintf(msg1, "%s\nbignum=%s\ndouble=%.20Lf\n\n", s, msg, x);
-    if (stopmsg(STOPMSG_NONE, msg1) == -1)
+    if (stopmsg(STOPMSG_NONE, msg1))
     {
         goodbye();
     }
@@ -243,7 +243,7 @@ void show_var_bf(char const *s, bf_t n)
     strcat(msg, " ");
     bftostr_e(msg+strlen(s), 40, n);
     msg[79] = 0;
-    if (stopmsg(STOPMSG_NONE, msg) == -1)
+    if (stopmsg(STOPMSG_NONE, msg))
     {
         goodbye();
     }

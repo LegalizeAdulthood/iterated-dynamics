@@ -666,7 +666,7 @@ int expand_dirname(char *dirname, char *drive)
     return 0;
 }
 
-int abortmsg(char const *file, unsigned int line, int flags, char const *msg)
+bool abortmsg(char const *file, unsigned int line, int flags, char const *msg)
 {
     char buffer[3*80];
     sprintf(buffer, "%s(%u):\n%s", file, line, msg);

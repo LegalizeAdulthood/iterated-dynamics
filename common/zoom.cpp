@@ -821,8 +821,8 @@ int init_pan_or_recalc(bool do_zoomout) // decide to recalc, or to chg worklist 
     if (listfull != 0)
     {
         if (stopmsg(STOPMSG_CANCEL,
-                    "Tables full, can't pan current image.\n"
-                    "Cancel resumes old image, continue pans and calculates a new one."))
+            "Tables full, can't pan current image.\n"
+            "Cancel resumes old image, continue pans and calculates a new one."))
         {
             g_zoom_box_width = 0; // cancel the zoombox
             drawbox(true);

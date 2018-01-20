@@ -902,7 +902,7 @@ extern std::string extract_filename(char const *source);
 extern const char *has_ext(char const *source);
 // realdos -- C file prototypes
 extern int showvidlength();
-extern int stopmsg(int flags, char const *msg);
+extern bool stopmsg(int flags, char const* msg);
 extern void blankrows(int, int, int);
 extern int texttempmsg(char const *);
 extern int fullscreen_choice(
@@ -1020,7 +1020,7 @@ extern void restart_uclock();
 extern void wait_until(int index, uclock_t wait_time);
 extern void init_failure(char const *message);
 extern int expand_dirname(char *dirname, char *drive);
-extern int abortmsg(char const *file, unsigned int line, int flags, char const *msg);
+extern bool abortmsg(char const *file, unsigned int line, int flags, char const *msg);
 #define ABORT(flags_, msg_) abortmsg(__FILE__, __LINE__, flags_, msg_)
 extern long stackavail();
 extern int getcolor(int, int);

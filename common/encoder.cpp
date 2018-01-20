@@ -209,7 +209,7 @@ restart:
             strcat(buf, "retain the original file,\ncontinue to replace original with new partial image.");
         }
         interrupted = 1;
-        if (stopmsg(STOPMSG_CANCEL, buf) < 0)
+        if (stopmsg(STOPMSG_CANCEL, buf))
         {
             interrupted = -1;
             unlink(tmpfile);

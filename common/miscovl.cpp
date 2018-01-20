@@ -399,7 +399,7 @@ skip_UI:
                     _snprintf(buf2, NUM_OF(buf2), "File already has an entry named %s\n%s",
                               g_command_name.c_str(), g_make_parameter_file ?
                               "... Replacing ..." : "Continue to replace it, Cancel to back out");
-                    if (stopmsg(STOPMSG_CANCEL | STOPMSG_INFO_ONLY, buf2) < 0)
+                    if (stopmsg(STOPMSG_CANCEL | STOPMSG_INFO_ONLY, buf2))
                     {
                         // cancel
                         fclose(infile);

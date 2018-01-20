@@ -39,14 +39,16 @@ int xrelease = 304;
        &2 if continue/cancel indication is to be returned;
           when not set, "Any key to continue..." is displayed
           when set, "Escape to cancel, any other key to continue..."
-          -1 is returned for cancel, 0 for continue
+          true is returned for cancel, false for continue
        &4 set to suppress buzzer
        &8 for Fractint for Windows & parser - use a fixed pitch font
       &16 for info only message (green box instead of red in DOS vsn)
    */
-int stopmsg(int flags, char const *msg)
+bool stopmsg(int flags, char const* msg)
 {
-    int ret, toprow, color, old_look_at_mouse;
+    int toprow;
+    int color;
+    int old_look_at_mouse;
     static bool batchmode = false;
     if (g_debug_flag != debug_flags::none || g_init_batch >= batch_modes::NORMAL)
     {
@@ -73,7 +75,7 @@ int stopmsg(int flags, char const *msg)
 #else
         printf("%s\n", msg);
         dopause(1); // pause deferred until after cmdfiles
-        return (0);
+        return false;
 #endif
     }
     if (g_init_batch >= batch_modes::NORMAL || batchmode)
@@ -81,9 +83,8 @@ int stopmsg(int flags, char const *msg)
         // in batch mode
         g_init_batch = batch_modes::BAILOUT_INTERRUPTED_TRY_SAVE; // used to set errorlevel
         batchmode = true; // fixes *second* stopmsg in batch mode bug
-        return (-1);
+        return true;
     }
-    ret = 0;
     old_look_at_mouse = g_look_at_mouse;
     g_look_at_mouse = -13;
     if ((flags & STOPMSG_NO_STACK))
@@ -118,11 +119,12 @@ int stopmsg(int flags, char const *msg)
     {
         driver_get_key();
     }
+    bool ret = false;
     if (g_debug_flag != debug_flags::show_formula_info_after_compile)
     {
         if (getakeynohelp() == FIK_ESC)
         {
-            ret = -1;
+            ret = true;
         }
     }
     if ((flags & STOPMSG_NO_STACK))
