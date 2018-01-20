@@ -963,7 +963,7 @@ struct trig_funct_lst
     void (*mfunct)();
 };
 
-extern trig_funct_lst trigfn[];
+extern trig_funct_lst g_trig_fn[];
 // function prototypes
 extern  void (*g_plot)(int, int, int);
 // for overlay return stack

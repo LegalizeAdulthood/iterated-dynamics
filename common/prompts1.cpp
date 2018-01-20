@@ -1413,7 +1413,7 @@ static char JIIMstr2[] = "Left first or Right first?";
 std::string const g_jiim_left_right[] = {"left", "right"};
 
 // The index into this array must correspond to enum trig_fn
-trig_funct_lst trigfn[] =
+trig_funct_lst g_trig_fn[] =
 // changing the order of these alters meaning of *.fra file
 // maximum 6 characters in function names or recheck all related code
 {
@@ -1450,7 +1450,7 @@ trig_funct_lst trigfn[] =
     {"one",   dStkOne,   dStkOne,   dStkOne   },
 };
 
-#define NUMTRIGFN  sizeof(trigfn)/sizeof(trig_funct_lst)
+#define NUMTRIGFN  sizeof(g_trig_fn)/sizeof(trig_funct_lst)
 
 const int g_num_trig_functions = NUMTRIGFN;
 
@@ -1760,7 +1760,7 @@ gfp_top:
 
     for (int i = NUMTRIGFN-1; i >= 0; --i)
     {
-        trignameptr[i] = trigfn[i].name;
+        trignameptr[i] = g_trig_fn[i].name;
     }
     for (int i = 0; i < numtrig; i++)
     {
@@ -1983,7 +1983,7 @@ gfp_top:
     {
         if (paramvalues[promptnum].uval.ch.val != (int)g_trig_index[i])
         {
-            set_trig_array(i, trigfn[paramvalues[promptnum].uval.ch.val].name);
+            set_trig_array(i, g_trig_fn[paramvalues[promptnum].uval.ch.val].name);
             ret = 1;
         }
         ++promptnum;

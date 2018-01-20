@@ -623,11 +623,11 @@ static void trigdetails(char *buf)
     *buf = 0; // null string if none
     if (numfn > 0)
     {
-        strcpy(buf, trigfn[static_cast<int>(g_trig_index[0])].name);
+        strcpy(buf, g_trig_fn[static_cast<int>(g_trig_index[0])].name);
         int i = 0;
         while (++i < numfn)
         {
-            sprintf(tmpbuf, "/%s", trigfn[static_cast<int>(g_trig_index[i])].name);
+            sprintf(tmpbuf, "/%s", g_trig_fn[static_cast<int>(g_trig_index[i])].name);
             strcat(buf, tmpbuf);
         }
     }
@@ -651,7 +651,7 @@ int set_trig_array(int k, char const *name)
 
     for (int i = 0; i < g_num_trig_functions; i++)
     {
-        if (strcmp(trigname, trigfn[i].name) == 0)
+        if (strcmp(trigname, g_trig_fn[i].name) == 0)
         {
             g_trig_index[k] = static_cast<trig_fn>(i);
             set_trig_pointers(k);
@@ -667,31 +667,31 @@ void set_trig_pointers(int which)
     {
     case 0:
 #if !defined(XFRACT) && !defined(_WIN32)
-        ltrig0 = trigfn[static_cast<int>(g_trig_index[0])].lfunct;
-        mtrig0 = trigfn[static_cast<int>(g_trig_index[0])].mfunct;
+        ltrig0 = g_trig_fn[static_cast<int>(g_trig_index[0])].lfunct;
+        mtrig0 = g_trig_fn[static_cast<int>(g_trig_index[0])].mfunct;
 #endif
-        dtrig0 = trigfn[static_cast<int>(g_trig_index[0])].dfunct;
+        dtrig0 = g_trig_fn[static_cast<int>(g_trig_index[0])].dfunct;
         break;
     case 1:
 #if !defined(XFRACT) && !defined(_WIN32)
-        ltrig1 = trigfn[static_cast<int>(g_trig_index[1])].lfunct;
-        mtrig1 = trigfn[static_cast<int>(g_trig_index[1])].mfunct;
+        ltrig1 = g_trig_fn[static_cast<int>(g_trig_index[1])].lfunct;
+        mtrig1 = g_trig_fn[static_cast<int>(g_trig_index[1])].mfunct;
 #endif
-        dtrig1 = trigfn[static_cast<int>(g_trig_index[1])].dfunct;
+        dtrig1 = g_trig_fn[static_cast<int>(g_trig_index[1])].dfunct;
         break;
     case 2:
 #if !defined(XFRACT) && !defined(_WIN32)
-        ltrig2 = trigfn[static_cast<int>(g_trig_index[2])].lfunct;
-        mtrig2 = trigfn[static_cast<int>(g_trig_index[2])].mfunct;
+        ltrig2 = g_trig_fn[static_cast<int>(g_trig_index[2])].lfunct;
+        mtrig2 = g_trig_fn[static_cast<int>(g_trig_index[2])].mfunct;
 #endif
-        dtrig2 = trigfn[static_cast<int>(g_trig_index[2])].dfunct;
+        dtrig2 = g_trig_fn[static_cast<int>(g_trig_index[2])].dfunct;
         break;
     case 3:
 #if !defined(XFRACT) && !defined(_WIN32)
-        ltrig3 = trigfn[static_cast<int>(g_trig_index[3])].lfunct;
-        mtrig3 = trigfn[static_cast<int>(g_trig_index[3])].mfunct;
+        ltrig3 = g_trig_fn[static_cast<int>(g_trig_index[3])].lfunct;
+        mtrig3 = g_trig_fn[static_cast<int>(g_trig_index[3])].mfunct;
 #endif
-        dtrig3 = trigfn[static_cast<int>(g_trig_index[3])].dfunct;
+        dtrig3 = g_trig_fn[static_cast<int>(g_trig_index[3])].dfunct;
         break;
     default: // do 'em all
         for (int i = 0; i < 4; i++)
