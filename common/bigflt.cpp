@@ -1395,7 +1395,7 @@ bf_t norm_bf(bf_t r)
 // normalize big float with forced sign
 // positive = 1, force to be positive
 //          = 0, force to be negative
-void norm_sign_bf(bf_t r, int positive)
+void norm_sign_bf(bf_t r, bool positive)
 {
     norm_bf(r);
     r[bflength-1] = (BYTE)(positive ? 0x00 : 0xFF);
@@ -1537,7 +1537,7 @@ int cmp_bf(bf_t n1, bf_t n2)
 /********************************************************************/
 // r < 0 ?
 // returns 1 if negative, 0 if positive or zero
-int is_bf_neg(bf_t n)
+bool is_bf_neg(bf_t n)
 {
     return (S8)n[bflength-1] < 0;
 }
@@ -1833,7 +1833,6 @@ bf_t unsafe_full_mult_bf(bf_t r, bf_t n1, bf_t n2)
 // SIDE-EFFECTS: n1 and n2 are changed to their absolute values
 bf_t unsafe_mult_bf(bf_t r, bf_t n1, bf_t n2)
 {
-    int positive;
     int bnl, bfl, rl;
     int rexp;
     S16 *n1exp, *n2exp;
@@ -1849,7 +1848,7 @@ bf_t unsafe_mult_bf(bf_t r, bf_t n1, bf_t n2)
     // add exp's
     rexp = big_accessS16(n1exp) + big_accessS16(n2exp);
 
-    positive = (is_bf_neg(n1) == is_bf_neg(n2)); // are they the same sign?
+    const bool positive = (is_bf_neg(n1) == is_bf_neg(n2)); // are they the same sign?
 
     bnl = bnlength;
     bnlength = bflength;
@@ -1949,7 +1948,7 @@ bf_t unsafe_square_bf(bf_t r, bf_t n)
     bflength = rbflength;
     big_set16(r+bflength, (S16)(rexp+2)); // adjust after mult
 
-    norm_sign_bf(r, 1);
+    norm_sign_bf(r, true);
     bflength = bfl;
     memmove(r, r+padding, bflength+2); // shift back
 
@@ -1961,7 +1960,6 @@ bf_t unsafe_square_bf(bf_t r, bf_t n)
 // SIDE-EFFECTS: n can be "de-normalized" and lose precision
 bf_t unsafe_mult_bf_int(bf_t r, bf_t n, U16 u)
 {
-    int positive;
     int bnl;
     S16 *rexp, *nexp;
 
@@ -1969,7 +1967,7 @@ bf_t unsafe_mult_bf_int(bf_t r, bf_t n, U16 u)
     nexp = (S16 *)(n+bflength);
     big_setS16(rexp, big_accessS16(nexp)); // *rexp = *nexp;
 
-    positive = !is_bf_neg(n);
+    const bool positive = !is_bf_neg(n);
 
     /*
     if u > 0x00FF, then the integer part of the mantissa will overflow the
@@ -1996,12 +1994,11 @@ bf_t unsafe_mult_bf_int(bf_t r, bf_t n, U16 u)
 // r *= u  where u is an unsigned integer
 bf_t mult_a_bf_int(bf_t r, U16 u)
 {
-    int positive;
     int bnl;
     S16 *rexp;
 
     rexp = (S16 *)(r+bflength);
-    positive = !is_bf_neg(r);
+    const bool positive = !is_bf_neg(r);
 
     /*
     if u > 0x00FF, then the integer part of the mantissa will overflow the

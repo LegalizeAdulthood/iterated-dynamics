@@ -207,11 +207,11 @@ extern char  *bf10tostr_e(char *s, int dec, bf10_t n);
 extern char  *bf10tostr_f(char *s, int dec, bf10_t n);
 // functions defined in bigfltc.c
 extern bf_t norm_bf(bf_t r);
-extern void norm_sign_bf(bf_t r, int positive);
+extern void norm_sign_bf(bf_t r, bool positive);
 extern S16 adjust_bf_add(bf_t n1, bf_t n2);
 extern bf_t max_bf(bf_t r);
 extern int cmp_bf(bf_t n1, bf_t n2);
-extern int is_bf_neg(bf_t n);
+extern bool is_bf_neg(bf_t n);
 extern bool is_bf_not_zero(bf_t n);
 extern bf_t unsafe_add_bf(bf_t r, bf_t n1, bf_t n2);
 extern bf_t unsafe_add_a_bf(bf_t r, bf_t n);
