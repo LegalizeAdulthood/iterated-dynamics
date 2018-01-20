@@ -762,9 +762,6 @@ bf_t unsafe_ln_bf(bf_t r, bf_t n)
 bf_t unsafe_sincos_bf(bf_t s, bf_t c, bf_t n)
 {
     U16 fact = 2;
-    bool k = false;
-    int sin_done = 0;
-    int cos_done = 0;
     S16 * testexp, * cexp, * sexp;
 
     testexp = (S16 *)(bftmp1+bflength);
@@ -855,6 +852,9 @@ bf_t unsafe_sincos_bf(bf_t s, bf_t c, bf_t n)
     copy_bf(s, n); // start with s=n
     inttobf(c, 1); // start with c=1
     copy_bf(bftmp1, n); // the current x^n/n!
+    bool sin_done = false;
+    bool cos_done = false;
+    bool k = false;
     do
     {
         // even terms for cosine
