@@ -653,11 +653,11 @@ static int check_pan() // return 0 if can't, alignment requirement if can
     {
         return (0); // not resumable, not complete
     }
-    if (curfractalspecific->calctype != standard_fractal
-            && curfractalspecific->calctype != calcmand
-            && curfractalspecific->calctype != calcmandfp
-            && curfractalspecific->calctype != lyapunov
-            && curfractalspecific->calctype != calcfroth)
+    if (g_cur_fractal_specific->calctype != standard_fractal
+            && g_cur_fractal_specific->calctype != calcmand
+            && g_cur_fractal_specific->calctype != calcmandfp
+            && g_cur_fractal_specific->calctype != lyapunov
+            && g_cur_fractal_specific->calctype != calcfroth)
     {
         return (0); // not a worklist-driven type
     }
@@ -693,7 +693,7 @@ static int check_pan() // return 0 if can't, alignment requirement if can
     {
         return (1); // btm, align on any pixel
     }
-    if (g_std_calc_mode != 'g' || (curfractalspecific->flags&NOGUESS))
+    if (g_std_calc_mode != 'g' || (g_cur_fractal_specific->flags&NOGUESS))
     {
         if (g_std_calc_mode == '2' || g_std_calc_mode == '3')   // align on even pixel for 2pass
         {

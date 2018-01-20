@@ -396,7 +396,7 @@ int get_the_rest()
 
     copy_genes_from_bank(gene);
 
-    numtrig = (curfractalspecific->flags >> 6) & 7;
+    numtrig = (g_cur_fractal_specific->flags >> 6) & 7;
     if (g_fractal_type == fractal_type::FORMULA || g_fractal_type == fractal_type::FFORMULA)
     {
         numtrig = g_max_function;
@@ -425,8 +425,8 @@ choose_vars_restart:
         uvalues[k].uval.ch.val =  static_cast<int>(gene[num].mutate);
     }
 
-    if (curfractalspecific->calctype == standard_fractal &&
-            (curfractalspecific->flags & BAILTEST))
+    if (g_cur_fractal_specific->calctype == standard_fractal &&
+            (g_cur_fractal_specific->flags & BAILTEST))
     {
         choices[++k] = gene[NUMGENES - 1].name;
         uvalues[k].type = 'l';
@@ -485,8 +485,8 @@ choose_vars_restart:
         gene[num].mutate = static_cast<variations>(uvalues[++k].uval.ch.val);
     }
 
-    if (curfractalspecific->calctype == standard_fractal &&
-            (curfractalspecific->flags & BAILTEST))
+    if (g_cur_fractal_specific->calctype == standard_fractal &&
+            (g_cur_fractal_specific->flags & BAILTEST))
     {
         gene[NUMGENES - 1].mutate = static_cast<variations>(uvalues[++k].uval.ch.val);
     }
@@ -947,10 +947,10 @@ void ReleaseParamBox()
 
 void set_current_params()
 {
-    g_evolve_x_parameter_range = curfractalspecific->xmax - curfractalspecific->xmin;
+    g_evolve_x_parameter_range = g_cur_fractal_specific->xmax - g_cur_fractal_specific->xmin;
     g_evolve_new_x_parameter_offset = - (g_evolve_x_parameter_range / 2);
     g_evolve_x_parameter_offset = g_evolve_new_x_parameter_offset;
-    g_evolve_y_parameter_range = curfractalspecific->ymax - curfractalspecific->ymin;
+    g_evolve_y_parameter_range = g_cur_fractal_specific->ymax - g_cur_fractal_specific->ymin;
     g_evolve_new_y_parameter_offset = - (g_evolve_y_parameter_range / 2);
     g_evolve_y_parameter_offset = g_evolve_new_y_parameter_offset;
     return;

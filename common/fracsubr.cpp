@@ -181,9 +181,9 @@ void calcfracinit() // initialize a *pile* of stuff for fractal calculation
 
     set_grid_pointers();
 
-    if (!(curfractalspecific->flags & BF_MATH))
+    if (!(g_cur_fractal_specific->flags & BF_MATH))
     {
-        fractal_type tofloat = curfractalspecific->tofloat;
+        fractal_type tofloat = g_cur_fractal_specific->tofloat;
         if (tofloat == fractal_type::NOFRACTAL)
         {
             bf_math = bf_math_type::NONE;
@@ -194,7 +194,7 @@ void calcfracinit() // initialize a *pile* of stuff for fractal calculation
         }
         else if (bf_math != bf_math_type::NONE)
         {
-            curfractalspecific = &fractalspecific[static_cast<int>(tofloat)];
+            g_cur_fractal_specific = &fractalspecific[static_cast<int>(tofloat)];
             g_fractal_type = tofloat;
         }
     }
@@ -216,28 +216,28 @@ void calcfracinit() // initialize a *pile* of stuff for fractal calculation
     else if ((g_fractal_type == fractal_type::MANDEL || g_fractal_type == fractal_type::MANDELFP) && g_debug_flag == debug_flags::force_arbitrary_precision_math)
     {
         g_fractal_type = fractal_type::MANDELFP;
-        curfractalspecific = &fractalspecific[static_cast<int>(fractal_type::MANDELFP)];
+        g_cur_fractal_specific = &fractalspecific[static_cast<int>(fractal_type::MANDELFP)];
         fractal_floattobf();
         g_user_float_flag = true;
     }
     else if ((g_fractal_type == fractal_type::JULIA || g_fractal_type == fractal_type::JULIAFP) && g_debug_flag == debug_flags::force_arbitrary_precision_math)
     {
         g_fractal_type = fractal_type::JULIAFP;
-        curfractalspecific = &fractalspecific[static_cast<int>(fractal_type::JULIAFP)];
+        g_cur_fractal_specific = &fractalspecific[static_cast<int>(fractal_type::JULIAFP)];
         fractal_floattobf();
         g_user_float_flag = true;
     }
     else if ((g_fractal_type == fractal_type::LMANDELZPOWER || g_fractal_type == fractal_type::FPMANDELZPOWER) && g_debug_flag == debug_flags::force_arbitrary_precision_math)
     {
         g_fractal_type = fractal_type::FPMANDELZPOWER;
-        curfractalspecific = &fractalspecific[static_cast<int>(fractal_type::FPMANDELZPOWER)];
+        g_cur_fractal_specific = &fractalspecific[static_cast<int>(fractal_type::FPMANDELZPOWER)];
         fractal_floattobf();
         g_user_float_flag = true;
     }
     else if ((g_fractal_type == fractal_type::LJULIAZPOWER || g_fractal_type == fractal_type::FPJULIAZPOWER) && g_debug_flag == debug_flags::force_arbitrary_precision_math)
     {
         g_fractal_type = fractal_type::FPJULIAZPOWER;
-        curfractalspecific = &fractalspecific[static_cast<int>(fractal_type::FPJULIAZPOWER)];
+        g_cur_fractal_specific = &fractalspecific[static_cast<int>(fractal_type::FPJULIAZPOWER)];
         fractal_floattobf();
         g_user_float_flag = true;
     }
@@ -256,10 +256,10 @@ void calcfracinit() // initialize a *pile* of stuff for fractal calculation
     if (g_calc_status == calc_status_value::RESUMABLE)
     {
         // on resume, ensure floatflag correct
-        g_float_flag = curfractalspecific->isinteger == 0;
+        g_float_flag = g_cur_fractal_specific->isinteger == 0;
     }
     // if floating pt only, set floatflag for TAB screen
-    if (!curfractalspecific->isinteger && curfractalspecific->tofloat == fractal_type::NOFRACTAL)
+    if (!g_cur_fractal_specific->isinteger && g_cur_fractal_specific->tofloat == fractal_type::NOFRACTAL)
     {
         g_float_flag = true;
     }
@@ -294,9 +294,9 @@ init_restart:
     g_potential_flag = false;
     if (g_potential_params[0] != 0.0
             && g_colors >= 64
-            && (curfractalspecific->calctype == standard_fractal
-                || curfractalspecific->calctype == calcmand
-                || curfractalspecific->calctype == calcmandfp))
+            && (g_cur_fractal_specific->calctype == standard_fractal
+                || g_cur_fractal_specific->calctype == calcmand
+                || g_cur_fractal_specific->calctype == calcmandfp))
     {
         g_potential_flag = true;
         g_user_distance_estimator_value = 0;
@@ -311,18 +311,18 @@ init_restart:
     if (g_float_flag)
     {
         // ensure type matches floatflag
-        if (curfractalspecific->isinteger != 0
-                && curfractalspecific->tofloat != fractal_type::NOFRACTAL)
+        if (g_cur_fractal_specific->isinteger != 0
+                && g_cur_fractal_specific->tofloat != fractal_type::NOFRACTAL)
         {
-            g_fractal_type = curfractalspecific->tofloat;
+            g_fractal_type = g_cur_fractal_specific->tofloat;
         }
     }
     else
     {
-        if (curfractalspecific->isinteger == 0
-                && curfractalspecific->tofloat != fractal_type::NOFRACTAL)
+        if (g_cur_fractal_specific->isinteger == 0
+                && g_cur_fractal_specific->tofloat != fractal_type::NOFRACTAL)
         {
-            g_fractal_type = curfractalspecific->tofloat;
+            g_fractal_type = g_cur_fractal_specific->tofloat;
         }
     }
     // match Julibrot with integer mode of orbit
@@ -351,9 +351,9 @@ init_restart:
         }
     }
 
-    curfractalspecific = &fractalspecific[static_cast<int>(g_fractal_type)];
+    g_cur_fractal_specific = &fractalspecific[static_cast<int>(g_fractal_type)];
 
-    g_integer_fractal = curfractalspecific->isinteger;
+    g_integer_fractal = g_cur_fractal_specific->isinteger;
 
     if (g_potential_flag && g_potential_params[2] != 0.0)
     {
@@ -369,7 +369,7 @@ init_restart:
     }
     else
     {
-        g_magnitude_limit = curfractalspecific->orbit_bailout;
+        g_magnitude_limit = g_cur_fractal_specific->orbit_bailout;
     }
     if (g_integer_fractal)   // the bailout limit mustn't be too high here
     {
@@ -379,7 +379,7 @@ init_restart:
         }
     }
 
-    if ((curfractalspecific->flags&NOROTATE) != 0)
+    if ((g_cur_fractal_specific->flags&NOROTATE) != 0)
     {
         // ensure min<max and unrotated rectangle
         if (g_x_min > g_x_max)
@@ -407,7 +407,7 @@ init_restart:
     if (g_integer_fractal == 0)
     {
         // float?
-        fractal_type i = curfractalspecific->tofloat;
+        fractal_type i = g_cur_fractal_specific->tofloat;
         if (i != fractal_type::NOFRACTAL) // -> int?
         {
             if (fractalspecific[static_cast<int>(i)].isinteger > 1)   // specific shift?
@@ -499,7 +499,7 @@ init_restart:
             {
 expand_retry:
                 if (g_integer_fractal          // integer fractal type?
-                        && curfractalspecific->tofloat != fractal_type::NOFRACTAL)
+                        && g_cur_fractal_specific->tofloat != fractal_type::NOFRACTAL)
                 {
                     g_float_flag = true;       // switch to floating pt
                 }
@@ -596,7 +596,7 @@ expand_retry:
                     if (ratio_bad(testx_try, testx_exact) ||
                             ratio_bad(testy_try, testy_exact))
                     {
-                        if (curfractalspecific->flags & BF_MATH)
+                        if (g_cur_fractal_specific->flags & BF_MATH)
                         {
                             fractal_floattobf();
                             goto init_restart;
@@ -1898,7 +1898,7 @@ void get_julia_attractor(double real, double imag)
     g_overflow = false;
     while (++g_color_iter < g_max_iterations)
     {
-        if (curfractalspecific->orbitcalc() || g_overflow)
+        if (g_cur_fractal_specific->orbitcalc() || g_overflow)
         {
             break;
         }
@@ -1916,7 +1916,7 @@ void get_julia_attractor(double real, double imag)
         for (int i = 0; i < 10; i++)
         {
             g_overflow = false;
-            if (!curfractalspecific->orbitcalc() && !g_overflow) // if it stays in the lake
+            if (!g_cur_fractal_specific->orbitcalc() && !g_overflow) // if it stays in the lake
             {
                 // and doesn't move far, probably
                 if (g_integer_fractal)   //   found a finite attractor

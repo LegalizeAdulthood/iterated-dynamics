@@ -679,7 +679,7 @@ int timer(int timertype, int(*subrtn)(), ...)
         }
         fprintf(fp, "%s type=%s resolution = %dx%d maxiter=%ld",
                 timestring,
-                curfractalspecific->name,
+                g_cur_fractal_specific->name,
                 g_logical_screen_x_dots,
                 g_logical_screen_y_dots,
                 g_max_iterations);

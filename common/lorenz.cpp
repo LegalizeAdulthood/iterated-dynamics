@@ -16,9 +16,9 @@
 
 // orbitcalc is declared with no arguments so jump through hoops here
 #define LORBIT(x, y, z) \
-   (*(int(*)(long *, long *, long *))curfractalspecific->orbitcalc)(x, y, z)
+   (*(int(*)(long *, long *, long *))g_cur_fractal_specific->orbitcalc)(x, y, z)
 #define FORBIT(x, y, z) \
-   (*(int(*)(double*, double*, double*))curfractalspecific->orbitcalc)(x, y, z)
+   (*(int(*)(double*, double*, double*))g_cur_fractal_specific->orbitcalc)(x, y, z)
 
 #define RANDOM(x)  (rand()%(x))
 /* BAD_PIXEL is used to cutoff orbits that are diverging. It might be better
@@ -1328,7 +1328,7 @@ int inverse_julia_per_image()
             Free_Queue();
             return -1;
         }
-        color = curfractalspecific->orbitcalc();
+        color = g_cur_fractal_specific->orbitcalc();
         g_old_z = g_new_z;
     }
     Free_Queue();
@@ -2190,16 +2190,16 @@ int plotorbits2dsetup()
 {
 
 #ifndef XFRACT
-    if (curfractalspecific->isinteger != 0)
+    if (g_cur_fractal_specific->isinteger != 0)
     {
-        fractal_type tofloat = curfractalspecific->tofloat;
+        fractal_type tofloat = g_cur_fractal_specific->tofloat;
         if (tofloat == fractal_type::NOFRACTAL)
         {
             return (-1);
         }
         g_float_flag = true;
         g_user_float_flag = true; // force floating point
-        curfractalspecific = &fractalspecific[static_cast<int>(tofloat)];
+        g_cur_fractal_specific = &fractalspecific[static_cast<int>(tofloat)];
         g_fractal_type = tofloat;
     }
 #endif
@@ -2364,9 +2364,9 @@ int funny_glasses_call(int (*calc)())
             driver_set_video_mode(&g_video_entry);
         }
         g_which_image = stereo_images::BLUE;
-        if (curfractalspecific->flags & INFCALC)
+        if (g_cur_fractal_specific->flags & INFCALC)
         {
-            curfractalspecific->per_image(); // reset for 2nd image
+            g_cur_fractal_specific->per_image(); // reset for 2nd image
         }
         plot_setup();
         g_plot = g_standard_plot;

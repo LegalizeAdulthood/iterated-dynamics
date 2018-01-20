@@ -1313,7 +1313,7 @@ finish:
     show_numbers = 0;
     driver_unget_key(kbdchar);
 
-    if (curfractalspecific->calctype == calcfroth)
+    if (g_cur_fractal_specific->calctype == calcfroth)
     {
         froth_cleanup();
     }

@@ -1579,13 +1579,13 @@ skipfinalopt:  // -------------- end of final optimizations ------------
             (!uses_jump || fpfill_jump_struct() == 0))
     {
         // but only if parse succeeded
-        curfractalspecific->per_pixel = fform_per_pixel;
-        curfractalspecific->orbitcalc = fFormula;
+        g_cur_fractal_specific->per_pixel = fform_per_pixel;
+        g_cur_fractal_specific->orbitcalc = fFormula;
     }
     else
     {
-        curfractalspecific->per_pixel = BadFormula;
-        curfractalspecific->orbitcalc = BadFormula;
+        g_cur_fractal_specific->per_pixel = BadFormula;
+        g_cur_fractal_specific->orbitcalc = BadFormula;
     }
 
     Img_Setup();  // call assembler setup code

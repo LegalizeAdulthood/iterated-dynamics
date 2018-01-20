@@ -2247,12 +2247,12 @@ gc_loop:
     if (prompt_ret == FIK_F4)
     {
         // reset to type defaults
-        g_x_min = curfractalspecific->xmin;
+        g_x_min = g_cur_fractal_specific->xmin;
         g_x_3rd = g_x_min;
-        g_x_max = curfractalspecific->xmax;
-        g_y_min = curfractalspecific->ymin;
+        g_x_max = g_cur_fractal_specific->xmax;
+        g_y_min = g_cur_fractal_specific->ymin;
         g_y_3rd = g_y_min;
-        g_y_max = curfractalspecific->ymax;
+        g_y_max = g_cur_fractal_specific->ymax;
         if (g_view_crop && g_final_aspect_ratio != g_screen_aspect)
         {
             aspectratio_crop(g_screen_aspect, g_final_aspect_ratio);
@@ -2485,12 +2485,12 @@ gsc_loop:
     if (prompt_ret == FIK_F4)
     {
         // reset to type defaults
-        g_orbit_corner_min_x = curfractalspecific->xmin;
+        g_orbit_corner_min_x = g_cur_fractal_specific->xmin;
         g_orbit_corner_3_x = g_orbit_corner_min_x;
-        g_orbit_corner_max_x = curfractalspecific->xmax;
-        g_orbit_corner_min_y = curfractalspecific->ymin;
+        g_orbit_corner_max_x = g_cur_fractal_specific->xmax;
+        g_orbit_corner_min_y = g_cur_fractal_specific->ymin;
         g_orbit_corner_3_y = g_orbit_corner_min_y;
-        g_orbit_corner_max_y = curfractalspecific->ymax;
+        g_orbit_corner_max_y = g_cur_fractal_specific->ymax;
         g_x_min = g_orbit_corner_min_x;
         g_x_max = g_orbit_corner_max_x;
         g_y_min = g_orbit_corner_min_y;

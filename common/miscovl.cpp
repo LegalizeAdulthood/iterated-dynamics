@@ -621,7 +621,7 @@ void write_batch_parms(char const *colorinf, bool colorsonly, int maxcolor, int 
             put_parm("=%d", g_release);
         }
 
-        sptr = curfractalspecific->name;
+        sptr = g_cur_fractal_specific->name;
         if (*sptr == '*')
         {
             ++sptr;
@@ -2567,7 +2567,7 @@ void flip_image(int key)
     int ixhalf, iyhalf, tempdot;
 
     // fractal must be rotate-able and be finished
-    if ((curfractalspecific->flags&NOROTATE) != 0
+    if ((g_cur_fractal_specific->flags&NOROTATE) != 0
             || g_calc_status == calc_status_value::IN_PROGRESS
             || g_calc_status == calc_status_value::RESUMABLE)
     {

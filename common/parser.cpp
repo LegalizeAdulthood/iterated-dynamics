@@ -4227,8 +4227,8 @@ bool RunForm(char const *Name, bool from_prompts1c)
     FILE * entry_file = nullptr;
 
     //  first set the pointers so they point to a fn which always returns 1
-    curfractalspecific->per_pixel = BadFormula;
-    curfractalspecific->orbitcalc = BadFormula;
+    g_cur_fractal_specific->per_pixel = BadFormula;
+    g_cur_fractal_specific->orbitcalc = BadFormula;
 
     if (g_formula_name.empty())
     {
@@ -4260,8 +4260,8 @@ bool RunForm(char const *Name, bool from_prompts1c)
             }
 
             // all parses succeeded so set the pointers back to good functions
-            curfractalspecific->per_pixel = form_per_pixel;
-            curfractalspecific->orbitcalc = Formula;
+            g_cur_fractal_specific->per_pixel = form_per_pixel;
+            g_cur_fractal_specific->orbitcalc = Formula;
             return false;
         }
     }

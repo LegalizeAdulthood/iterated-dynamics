@@ -613,10 +613,10 @@ static void trigdetails(char *buf)
     }
     else
     {
-        numfn = (curfractalspecific->flags >> 6) & 7;
+        numfn = (g_cur_fractal_specific->flags >> 6) & 7;
     }
-    if (curfractalspecific == &fractalspecific[static_cast<int>(fractal_type::FORMULA)] ||
-            curfractalspecific == &fractalspecific[static_cast<int>(fractal_type::FFORMULA)])
+    if (g_cur_fractal_specific == &fractalspecific[static_cast<int>(fractal_type::FORMULA)] ||
+            g_cur_fractal_specific == &fractalspecific[static_cast<int>(fractal_type::FFORMULA)])
     {
         numfn = g_max_function;
     }
@@ -809,10 +809,10 @@ bool tab_display_2(char *msg)
     write_row(row++, "xxstart %d xxstop %d yystart %d yystop %d %s uses_ismand %d",
               g_xx_start, g_xx_stop, g_yy_start, g_yy_stop,
 #if !defined(XFRACT) && !defined(_WIN32)
-              curfractalspecific->orbitcalc == fFormula ? "fast parser" :
+              g_cur_fractal_specific->orbitcalc == fFormula ? "fast parser" :
 #endif
-              curfractalspecific->orbitcalc ==  Formula ? "slow parser" :
-              curfractalspecific->orbitcalc ==  BadFormula ? "bad formula" :
+              g_cur_fractal_specific->orbitcalc ==  Formula ? "slow parser" :
+              g_cur_fractal_specific->orbitcalc ==  BadFormula ? "bad formula" :
               "", g_frm_uses_ismand ? 1 : 0);
     /*
         write_row(row++, "ixstart %d ixstop %d iystart %d iystop %d bitshift %d",
@@ -891,8 +891,8 @@ top:
     else
     {
         driver_put_string(s_row, 16, C_GENERAL_HI,
-                          curfractalspecific->name[0] == '*' ?
-                          &curfractalspecific->name[1] : curfractalspecific->name);
+                          g_cur_fractal_specific->name[0] == '*' ?
+                          &g_cur_fractal_specific->name[1] : g_cur_fractal_specific->name);
         int i = 0;
         if (g_fractal_type == fractal_type::FORMULA || g_fractal_type == fractal_type::FFORMULA)
         {
@@ -1002,7 +1002,7 @@ top:
 
     if (g_calc_status == calc_status_value::IN_PROGRESS || g_calc_status == calc_status_value::RESUMABLE)
     {
-        if (curfractalspecific->flags&NORESUME)
+        if (g_cur_fractal_specific->flags&NORESUME)
         {
             driver_put_string(s_row++, 2, C_GENERAL_HI,
                               "Note: can't resume this type after interrupts other than <tab> and <F1>");
@@ -1102,7 +1102,7 @@ top:
         driver_put_string(-1, -1, C_GENERAL_HI, msg);
     }
 
-    if ((curfractalspecific->flags&INFCALC) && (g_color_iter != 0))
+    if ((g_cur_fractal_specific->flags&INFCALC) && (g_color_iter != 0))
     {
         driver_put_string(s_row, -1, C_GENERAL_MED, " 1000's of points:");
         sprintf(msg, " %ld of %ld", g_color_iter-2, g_max_count);
@@ -1123,7 +1123,7 @@ top:
                 g_video_entry.name, g_video_entry.comment);
         driver_put_string(s_row++, 2, C_GENERAL_MED, msg);
     }
-    if (!(curfractalspecific->flags&NOZOOM))
+    if (!(g_cur_fractal_specific->flags&NOZOOM))
     {
         adjust_corner(); // make bottom left exact if very near exact
         if (bf_math != bf_math_type::NONE)

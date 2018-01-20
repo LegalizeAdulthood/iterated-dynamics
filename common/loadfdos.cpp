@@ -132,7 +132,7 @@ std::string heading_detail(FRACTAL_INFO const *info, ext_blk_3 const *blk_3_info
     }
     else
     {
-        char const *nameptr = curfractalspecific->name;
+        char const *nameptr = g_cur_fractal_specific->name;
         if (*nameptr == '*')
         {
             ++nameptr;

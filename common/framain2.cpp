@@ -204,7 +204,7 @@ main_state big_while_loop(bool *const kbdmore, bool *const stacked, bool const r
                     g_logical_screen_x_dots = g_screen_x_dots;
                     g_logical_screen_y_dots = g_screen_y_dots;
                 }
-                if ((g_evolving & FIELDMAP) && (curfractalspecific->flags & INFCALC))
+                if ((g_evolving & FIELDMAP) && (g_cur_fractal_specific->flags & INFCALC))
                 {
                     stopmsg(STOPMSG_NONE,
                         "Fractal doesn't terminate! switching off evolution.");
@@ -304,7 +304,7 @@ main_state big_while_loop(bool *const kbdmore, bool *const stacked, bool const r
         }
 
         g_zoom_off = true;                 // zooming is enabled
-        if (driver_diskp() || (curfractalspecific->flags&NOZOOM) != 0)
+        if (driver_diskp() || (g_cur_fractal_specific->flags&NOZOOM) != 0)
         {
             g_zoom_off = false;            // for these cases disable zooming
         }
@@ -349,7 +349,7 @@ main_state big_while_loop(bool *const kbdmore, bool *const stacked, bool const r
         {
             // draw an image
             if (g_init_save_time != 0          // autosave and resumable?
-                    && (curfractalspecific->flags&NORESUME) == 0)
+                    && (g_cur_fractal_specific->flags&NORESUME) == 0)
             {
                 g_save_base = readticker(); // calc's start time
                 g_save_ticks = abs(g_init_save_time);
@@ -891,7 +891,7 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
             g_truecolor = false;          // truecolor doesn't play well with the evolver
         }
         if (g_max_iterations > old_maxit && g_inside_color >= COLOR_BLACK && g_calc_status == calc_status_value::COMPLETED &&
-                curfractalspecific->calctype == standard_fractal && !g_log_map_flag &&
+                g_cur_fractal_specific->calctype == standard_fractal && !g_log_map_flag &&
                 !g_truecolor &&    // recalc not yet implemented with truecolor
                 !(g_user_std_calc_mode == 't' && g_fill_color > -1) &&
                 // tesseral with fill doesn't work
@@ -990,7 +990,7 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
             if (g_fractal_type != fractal_type::ANT)
             {
                 g_fractal_type = fractal_type::ANT;
-                curfractalspecific = &fractalspecific[static_cast<int>(g_fractal_type)];
+                g_cur_fractal_specific = &fractalspecific[static_cast<int>(g_fractal_type)];
                 load_params(g_fractal_type);
             }
             if (!fromtext_flag)
@@ -1087,7 +1087,7 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
                     g_is_mandelbrot = true;
                 }
             }
-            if (curfractalspecific->tojulia != fractal_type::NOFRACTAL
+            if (g_cur_fractal_specific->tojulia != fractal_type::NOFRACTAL
                     && g_params[0] == 0.0 && g_params[1] == 0.0)
             {
                 // switch to corresponding Julia set
@@ -1101,8 +1101,8 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
                     driver_unget_key(key);
                     break;
                 }
-                g_fractal_type = curfractalspecific->tojulia;
-                curfractalspecific = &fractalspecific[static_cast<int>(g_fractal_type)];
+                g_fractal_type = g_cur_fractal_specific->tojulia;
+                g_cur_fractal_specific = &fractalspecific[static_cast<int>(g_fractal_type)];
                 if (g_julia_c_x == BIG || g_julia_c_y == BIG)
                 {
                     g_params[0] = (g_x_max + g_x_min) / 2;
@@ -1122,10 +1122,10 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
                 jxx3rd = g_save_x_3rd;
                 jyy3rd = g_save_y_3rd;
                 *frommandel = true;
-                g_x_min = curfractalspecific->xmin;
-                g_x_max = curfractalspecific->xmax;
-                g_y_min = curfractalspecific->ymin;
-                g_y_max = curfractalspecific->ymax;
+                g_x_min = g_cur_fractal_specific->xmin;
+                g_x_max = g_cur_fractal_specific->xmax;
+                g_y_min = g_cur_fractal_specific->ymin;
+                g_y_max = g_cur_fractal_specific->ymax;
                 g_x_3rd = g_x_min;
                 g_y_3rd = g_y_min;
                 if (g_user_distance_estimator_value == 0 && g_user_biomorph_value != -1 && g_bit_shift != 29)
@@ -1141,11 +1141,11 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
                 g_calc_status = calc_status_value::PARAMS_CHANGED;
                 *kbdmore = false;
             }
-            else if (curfractalspecific->tomandel != fractal_type::NOFRACTAL)
+            else if (g_cur_fractal_specific->tomandel != fractal_type::NOFRACTAL)
             {
                 // switch to corresponding Mandel set
-                g_fractal_type = curfractalspecific->tomandel;
-                curfractalspecific = &fractalspecific[static_cast<int>(g_fractal_type)];
+                g_fractal_type = g_cur_fractal_specific->tomandel;
+                g_cur_fractal_specific = &fractalspecific[static_cast<int>(g_fractal_type)];
                 if (*frommandel)
                 {
                     g_x_min = jxxmin;
@@ -1157,12 +1157,12 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
                 }
                 else
                 {
-                    g_x_3rd = curfractalspecific->xmin;
+                    g_x_3rd = g_cur_fractal_specific->xmin;
                     g_x_min = g_x_3rd;
-                    g_x_max = curfractalspecific->xmax;
-                    g_y_3rd = curfractalspecific->ymin;
+                    g_x_max = g_cur_fractal_specific->xmax;
+                    g_y_3rd = g_cur_fractal_specific->ymin;
                     g_y_min = g_y_3rd;
-                    g_y_max = curfractalspecific->ymax;
+                    g_y_max = g_cur_fractal_specific->ymax;
                 }
                 g_save_c.x = g_params[0];
                 g_save_c.y = g_params[1];
@@ -1199,7 +1199,7 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
                     g_fractal_type = fractal_type::JULIA;
                 }
             }
-            curfractalspecific = &fractalspecific[static_cast<int>(g_fractal_type)];
+            g_cur_fractal_specific = &fractalspecific[static_cast<int>(g_fractal_type)];
             g_zoom_off = true;
             g_calc_status = calc_status_value::PARAMS_CHANGED;
             *kbdmore = false;
@@ -1257,13 +1257,13 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
             restore_history_info(historyptr);
             g_zoom_off = true;
             g_init_mode = g_adapter;
-            if (curfractalspecific->isinteger != 0 &&
-                    curfractalspecific->tofloat != fractal_type::NOFRACTAL)
+            if (g_cur_fractal_specific->isinteger != 0 &&
+                    g_cur_fractal_specific->tofloat != fractal_type::NOFRACTAL)
             {
                 g_user_float_flag = false;
             }
-            if (curfractalspecific->isinteger == 0 &&
-                    curfractalspecific->tofloat != fractal_type::NOFRACTAL)
+            if (g_cur_fractal_specific->isinteger == 0 &&
+                    g_cur_fractal_specific->tofloat != fractal_type::NOFRACTAL)
             {
                 g_user_float_flag = true;
             }
@@ -1441,7 +1441,7 @@ do_3d_transform:
         move_zoombox(*kbdchar);
         break;
     case FIK_CTL_HOME:               // Ctrl-home
-        if (g_box_count && (curfractalspecific->flags & NOROTATE) == 0)
+        if (g_box_count && (g_cur_fractal_specific->flags & NOROTATE) == 0)
         {
             i = key_count(FIK_CTL_HOME);
             if ((g_zoom_box_skew -= 0.02 * i) < -0.48)
@@ -1451,7 +1451,7 @@ do_3d_transform:
         }
         break;
     case FIK_CTL_END:                // Ctrl-end
-        if (g_box_count && (curfractalspecific->flags & NOROTATE) == 0)
+        if (g_box_count && (g_cur_fractal_specific->flags & NOROTATE) == 0)
         {
             i = key_count(FIK_CTL_END);
             if ((g_zoom_box_skew += 0.02 * i) > 0.48)
@@ -1511,13 +1511,13 @@ do_3d_transform:
         }
         break;
     case FIK_CTL_MINUS:              // Ctrl-kpad-
-        if (g_box_count && (curfractalspecific->flags & NOROTATE) == 0)
+        if (g_box_count && (g_cur_fractal_specific->flags & NOROTATE) == 0)
         {
             g_zoom_box_rotation += key_count(FIK_CTL_MINUS);
         }
         break;
     case FIK_CTL_PLUS:               // Ctrl-kpad+
-        if (g_box_count && (curfractalspecific->flags & NOROTATE) == 0)
+        if (g_box_count && (g_cur_fractal_specific->flags & NOROTATE) == 0)
         {
             g_zoom_box_rotation -= key_count(FIK_CTL_PLUS);
         }
@@ -1711,13 +1711,13 @@ static main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdm
             restore_history_info(historyptr);
             g_zoom_off = true;
             g_init_mode = g_adapter;
-            if (curfractalspecific->isinteger != 0 &&
-                    curfractalspecific->tofloat != fractal_type::NOFRACTAL)
+            if (g_cur_fractal_specific->isinteger != 0 &&
+                    g_cur_fractal_specific->tofloat != fractal_type::NOFRACTAL)
             {
                 g_user_float_flag = false;
             }
-            if (curfractalspecific->isinteger == 0 &&
-                    curfractalspecific->tofloat != fractal_type::NOFRACTAL)
+            if (g_cur_fractal_specific->isinteger == 0 &&
+                    g_cur_fractal_specific->tofloat != fractal_type::NOFRACTAL)
             {
                 g_user_float_flag = true;
             }
@@ -1942,7 +1942,7 @@ static main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdm
         }
         break;
     case FIK_CTL_HOME:               // Ctrl-home
-        if (g_box_count && (curfractalspecific->flags & NOROTATE) == 0)
+        if (g_box_count && (g_cur_fractal_specific->flags & NOROTATE) == 0)
         {
             i = key_count(FIK_CTL_HOME);
             if ((g_zoom_box_skew -= 0.02 * i) < -0.48)
@@ -1952,7 +1952,7 @@ static main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdm
         }
         break;
     case FIK_CTL_END:                // Ctrl-end
-        if (g_box_count && (curfractalspecific->flags & NOROTATE) == 0)
+        if (g_box_count && (g_cur_fractal_specific->flags & NOROTATE) == 0)
         {
             i = key_count(FIK_CTL_END);
             if ((g_zoom_box_skew += 0.02 * i) > 0.48)
@@ -2037,13 +2037,13 @@ static main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdm
         }
         break;
     case FIK_CTL_MINUS:              // Ctrl-kpad-
-        if (g_box_count && (curfractalspecific->flags & NOROTATE) == 0)
+        if (g_box_count && (g_cur_fractal_specific->flags & NOROTATE) == 0)
         {
             g_zoom_box_rotation += key_count(FIK_CTL_MINUS);
         }
         break;
     case FIK_CTL_PLUS:               // Ctrl-kpad+
-        if (g_box_count && (curfractalspecific->flags & NOROTATE) == 0)
+        if (g_box_count && (g_cur_fractal_specific->flags & NOROTATE) == 0)
         {
             g_zoom_box_rotation -= key_count(FIK_CTL_PLUS);
         }
@@ -2657,7 +2657,7 @@ static void restore_history_info(int i)
     g_bail_out_test            = static_cast<bailouts>(last.bailoutest);
     g_max_iterations                 = last.iterations     ;
     g_old_demm_colors       = last.old_demm_colors != 0;
-    curfractalspecific    = &fractalspecific[static_cast<int>(g_fractal_type)];
+    g_cur_fractal_specific    = &fractalspecific[static_cast<int>(g_fractal_type)];
     g_potential_flag               = (g_potential_params[0] != 0.0);
     if (g_inversion[0] != 0.0)
     {
@@ -2681,7 +2681,7 @@ static void restore_history_info(int i)
         g_set_orbit_corners = true;
     }
     g_draw_mode = last.drawmode;
-    g_user_float_flag = curfractalspecific->isinteger == 0;
+    g_user_float_flag = g_cur_fractal_specific->isinteger == 0;
     memcpy(g_dac_box, last.dac, 256*3);
     memcpy(g_old_dac_box, last.dac, 256*3);
     if (g_map_specified)

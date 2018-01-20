@@ -780,7 +780,7 @@ enum class init_orbit_mode
 #define NOGROUT         8    // no gaps between images
 
 extern fractalspecificstuff fractalspecific[];
-extern fractalspecificstuff *curfractalspecific;
+extern fractalspecificstuff *g_cur_fractal_specific;
 
 #define DEFAULTFRACTALTYPE      ".gif"
 #define ALTERNATEFRACTALTYPE    ".fra"

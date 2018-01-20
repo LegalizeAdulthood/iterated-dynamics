@@ -151,7 +151,7 @@ bool g_first_init = true;                 // first time into cmdfiles?
 static int init_rseed = 0;
 static bool initcorners = false;
 static bool initparams = false;
-fractalspecificstuff *curfractalspecific = nullptr;
+fractalspecificstuff *g_cur_fractal_specific = nullptr;
 
 std::string g_formula_filename;               // file to find (type=)formulas in
 std::string g_formula_name;                   // Name of the Formula (if not null)
@@ -483,7 +483,7 @@ static void initvars_fractal()          // init vars affecting calculation
 #endif
     g_finite_attractor = false;                 // disable finite attractor logic
     g_fractal_type = fractal_type::MANDEL;    // initial type Set flag
-    curfractalspecific = &fractalspecific[0];
+    g_cur_fractal_specific = &fractalspecific[0];
     initcorners = false;
     initparams = false;
     g_bail_out = 0;                        // no user-entered bailout
@@ -541,12 +541,12 @@ static void initvars_fractal()          // init vars affecting calculation
     g_keep_screen_coords = false;
     g_draw_mode = 'r';                      // passes=orbits draw mode
     g_set_orbit_corners = false;
-    g_orbit_corner_min_x = curfractalspecific->xmin;
-    g_orbit_corner_max_x = curfractalspecific->xmax;
-    g_orbit_corner_3_x = curfractalspecific->xmin;
-    g_orbit_corner_min_y = curfractalspecific->ymin;
-    g_orbit_corner_max_y = curfractalspecific->ymax;
-    g_orbit_corner_3_y = curfractalspecific->ymin;
+    g_orbit_corner_min_x = g_cur_fractal_specific->xmin;
+    g_orbit_corner_max_x = g_cur_fractal_specific->xmax;
+    g_orbit_corner_3_x = g_cur_fractal_specific->xmin;
+    g_orbit_corner_min_y = g_cur_fractal_specific->ymin;
+    g_orbit_corner_max_y = g_cur_fractal_specific->ymax;
+    g_orbit_corner_3_y = g_cur_fractal_specific->ymin;
 
     g_math_tol[0] = 0.05;
     g_math_tol[1] = 0.05;
@@ -1440,15 +1440,15 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
             goto badarg;
         }
         g_fractal_type = static_cast<fractal_type>(k);
-        curfractalspecific = &fractalspecific[static_cast<int>(g_fractal_type)];
+        g_cur_fractal_specific = &fractalspecific[static_cast<int>(g_fractal_type)];
         if (!initcorners)
         {
-            g_x_min = curfractalspecific->xmin;
+            g_x_min = g_cur_fractal_specific->xmin;
             g_x_3rd = g_x_min;
-            g_x_max = curfractalspecific->xmax;
-            g_y_min = curfractalspecific->ymin;
+            g_x_max = g_cur_fractal_specific->xmax;
+            g_y_min = g_cur_fractal_specific->ymin;
             g_y_3rd = g_y_min;
-            g_y_max = curfractalspecific->ymax;
+            g_y_max = g_cur_fractal_specific->ymax;
         }
         if (!initparams)
         {

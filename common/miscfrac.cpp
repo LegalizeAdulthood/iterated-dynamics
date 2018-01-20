@@ -1104,7 +1104,7 @@ static void verhulst()          // P. F. Verhulst (1845)
 
     for (unsigned long counter = 0UL; counter < filter_cycles ; counter++)
     {
-        if (curfractalspecific->orbitcalc())
+        if (g_cur_fractal_specific->orbitcalc())
         {
             return;
         }
@@ -1115,7 +1115,7 @@ static void verhulst()          // P. F. Verhulst (1845)
         unsigned long counter;
         for (counter = 0; counter < (unsigned long)g_max_iterations ; counter++)
         {
-            if (curfractalspecific->orbitcalc())
+            if (g_cur_fractal_specific->orbitcalc())
             {
                 return;
             }
@@ -1128,7 +1128,7 @@ static void verhulst()          // P. F. Verhulst (1845)
         {
             for (counter = 0; counter < filter_cycles ; counter++)
             {
-                if (curfractalspecific->orbitcalc())
+                if (g_cur_fractal_specific->orbitcalc())
                 {
                     return;
                 }
@@ -1142,7 +1142,7 @@ static void verhulst()          // P. F. Verhulst (1845)
     }
     for (unsigned long counter = 0UL; counter < (unsigned long)g_max_iterations ; counter++)
     {
-        if (curfractalspecific->orbitcalc())
+        if (g_cur_fractal_specific->orbitcalc())
         {
             return;
         }
@@ -1394,7 +1394,7 @@ bool BifurcMaySetup()
     }
     g_params[2] = (double)beta;
 
-    timer(0, curfractalspecific->calctype);
+    timer(0, g_cur_fractal_specific->calctype);
     return false;
 }
 
@@ -1610,7 +1610,7 @@ int lyapunov_cycles_in_c(long filter_cycles, double a, double b)
         for (int count = 0; count < lyaLength; count++)
         {
             Rate = lyaRxy[count] ? a : b;
-            if (curfractalspecific->orbitcalc())
+            if (g_cur_fractal_specific->orbitcalc())
             {
                 g_overflow = true;
                 goto jumpout;
@@ -1622,7 +1622,7 @@ int lyapunov_cycles_in_c(long filter_cycles, double a, double b)
         for (int count = 0; count < lyaLength; count++)
         {
             Rate = lyaRxy[count] ? a : b;
-            if (curfractalspecific->orbitcalc())
+            if (g_cur_fractal_specific->orbitcalc())
             {
                 g_overflow = true;
                 goto jumpout;
@@ -2101,7 +2101,7 @@ bool CellularSetup()
     {
         g_cellular_next_screen = false; // initialize flag
     }
-    timer(0, curfractalspecific->calctype);
+    timer(0, g_cur_fractal_specific->calctype);
     return false;
 }
 

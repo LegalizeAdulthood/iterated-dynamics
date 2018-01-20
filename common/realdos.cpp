@@ -1200,9 +1200,9 @@ top:
 
     if (fullmenu)
     {
-        if ((curfractalspecific->tojulia != fractal_type::NOFRACTAL
+        if ((g_cur_fractal_specific->tojulia != fractal_type::NOFRACTAL
                 && g_params[0] == 0.0 && g_params[1] == 0.0)
-                || curfractalspecific->tomandel != fractal_type::NOFRACTAL)
+                || g_cur_fractal_specific->tomandel != fractal_type::NOFRACTAL)
         {
             nextleft += 2;
             choicekey[nextleft] = FIK_SPACE;
@@ -1505,9 +1505,9 @@ static int menu_checkkey(int curkey, int /*choice*/)
         }
         if (testkey == ' ')
         {
-            if ((curfractalspecific->tojulia != fractal_type::NOFRACTAL
+            if ((g_cur_fractal_specific->tojulia != fractal_type::NOFRACTAL
                     && g_params[0] == 0.0 && g_params[1] == 0.0)
-                    || curfractalspecific->tomandel != fractal_type::NOFRACTAL)
+                    || g_cur_fractal_specific->tomandel != fractal_type::NOFRACTAL)
             {
                 return (0-testkey);
             }

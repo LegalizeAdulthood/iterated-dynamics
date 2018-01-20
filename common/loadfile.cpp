@@ -85,7 +85,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
         g_fractal_type = fractal_type::MANDEL;
     }
     g_fractal_type = static_cast<fractal_type>(read_fractype);
-    curfractalspecific = &fractalspecific[read_fractype];
+    g_cur_fractal_specific = &fractalspecific[read_fractype];
     g_x_min        = read_info.xmin;
     g_x_max        = read_info.xmax;
     g_y_min        = read_info.ymin;
@@ -129,7 +129,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
     {
         if ((g_display_3d == display_3d_modes::NONE)
                 && (read_info.version <= 4 || read_info.display_3d > 0
-                    || (curfractalspecific->flags & PARMS3D)))
+                    || (g_cur_fractal_specific->flags & PARMS3D)))
         {
             for (int i = 0; i < 16; i++)
             {
@@ -268,7 +268,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
         {
             g_log_map_flag = 2;
         }
-        g_user_float_flag = curfractalspecific->isinteger == 0;
+        g_user_float_flag = g_cur_fractal_specific->isinteger == 0;
     }
 
     if (read_info.version < 5 && read_info.version != 0) // pre-version 15.0?
@@ -424,7 +424,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
     {
         g_calc_status = calc_status_value::PARAMS_CHANGED;
         g_fractal_type = fractal_type::PLASMA;
-        curfractalspecific = &fractalspecific[static_cast<int>(fractal_type::PLASMA)];
+        g_cur_fractal_specific = &fractalspecific[static_cast<int>(fractal_type::PLASMA)];
         g_params[0] = 0;
         if (g_init_batch == batch_modes::NONE)
         {
@@ -1090,7 +1090,7 @@ static void backwardscompat(FRACTAL_INFO *info)
     default:
         break;
     }
-    curfractalspecific = &fractalspecific[static_cast<int>(g_fractal_type)];
+    g_cur_fractal_specific = &fractalspecific[static_cast<int>(g_fractal_type)];
 }
 
 // switch old bifurcation fractal types to new generalizations
@@ -2032,9 +2032,9 @@ bool typeOK(FRACTAL_INFO const *info, ext_blk_3 const *blk_3_info)
         }
     }
     else if (info->fractal_type == static_cast<int>(g_fractal_type) ||
-             info->fractal_type == static_cast<int>(curfractalspecific->tofloat))
+             info->fractal_type == static_cast<int>(g_cur_fractal_specific->tofloat))
     {
-        numfn = (curfractalspecific->flags >> 6) & 7;
+        numfn = (g_cur_fractal_specific->flags >> 6) & 7;
         if (numfn > 0)
         {
             return functionOK(info, numfn);
