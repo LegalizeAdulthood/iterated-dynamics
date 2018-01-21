@@ -10,8 +10,6 @@
 #define _MAX_EXT 4
 #endif
 
-#define bcmp(buf1, buf2, len) memcmp(buf1, buf2, len)
-
 // ftime replacement
 #include <sys/types.h>
 struct timebx
