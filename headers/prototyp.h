@@ -24,9 +24,6 @@ extern int getakeynohelp();
 extern long readticker();
 extern int get_sound_params();
 extern void setnullvideo();
-// decoder -- C file prototypes
-extern short decoder(short);
-extern void set_byte_buff(BYTE *ptr);
 // diskvid -- C file prototypes
 extern int pot_startdisk();
 extern int targa_startdisk(FILE *, int);

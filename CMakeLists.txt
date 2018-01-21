@@ -83,7 +83,7 @@ add_executable(id ${OS_ID_OPTIONS}
     common/miscfrac.cpp
 
     common/cmdfiles.cpp headers/cmdfiles.h
-    common/decoder.cpp
+    common/decoder.cpp headers/decoder.h
     common/diskvid.cpp
     common/editpal.cpp
     common/encoder.cpp

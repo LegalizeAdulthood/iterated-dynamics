@@ -8,14 +8,16 @@
  * GIF and 'Graphics Interchange Format' are trademarks (tm) of
  * Compuserve, Incorporated, an H&R Block Company.
  */
-#include <algorithm>
-#include <vector>
-
-#include <string.h>
-// see Fractint.c for a description of the "include"  hierarchy
 #include "port.h"
 #include "prototyp.h"
+
+#include "decoder.h"
 #include "drivers.h"
+
+#include <string.h>
+
+#include <algorithm>
+#include <vector>
 
 static void close_file();
 

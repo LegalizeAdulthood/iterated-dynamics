@@ -6,6 +6,7 @@
 #include "prototyp.h"
 
 #include "cmdfiles.h"
+#include "decoder.h"
 #include "drivers.h"
 #include "fractype.h"
 #include "helpcom.h"
