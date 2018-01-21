@@ -2,6 +2,7 @@
 #if !defined(FRACSUBR_H)
 #define FRACSUBR_H
 
+extern void wait_until(int index, uclock_t wait_time);
 extern void free_grid_pointers();
 extern void calcfracinit();
 extern void adjust_corner();

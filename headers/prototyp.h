@@ -30,7 +30,6 @@ extern void setnullvideo();
 typedef unsigned long uclock_t;
 extern uclock_t usec_clock();
 extern void restart_uclock();
-extern void wait_until(int index, uclock_t wait_time);
 extern void init_failure(char const *message);
 extern int expand_dirname(char *dirname, char *drive);
 extern bool abortmsg(char const *file, unsigned int line, int flags, char const *msg);
