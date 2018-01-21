@@ -38,5 +38,4 @@ extern long stackavail();
 extern int getcolor(int, int);
 extern int out_line(BYTE *, int);
 extern void putcolor_a(int, int, int);
-extern int startdisk();
 #endif

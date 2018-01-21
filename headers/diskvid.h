@@ -4,6 +4,7 @@
 
 #include <stdio.h>
 
+extern int startdisk();
 extern int pot_startdisk();
 extern int targa_startdisk(FILE *, int);
 extern void enddisk();
