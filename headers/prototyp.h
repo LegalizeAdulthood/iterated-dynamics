@@ -24,9 +24,6 @@ extern int getakeynohelp();
 extern long readticker();
 extern int get_sound_params();
 extern void setnullvideo();
-// stereo -- C file prototypes
-extern bool do_AutoStereo();
-extern int outline_stereo(BYTE *, int);
 // testpt -- C file prototypes
 extern int teststart();
 extern void testend();

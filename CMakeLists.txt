@@ -96,7 +96,7 @@ add_executable(id ${OS_ID_OPTIONS}
     common/parserfp.cpp
     common/rotate.cpp headers/rotate.h
     common/slideshw.cpp headers/slideshw.h
-    common/stereo.cpp
+    common/stereo.cpp headers/stereo.h
 
     common/bigflt.cpp
     common/biginit.cpp headers/biginit.h

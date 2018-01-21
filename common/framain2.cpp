@@ -23,6 +23,7 @@
 #include "prompts2.h"
 #include "realdos.h"
 #include "rotate.h"
+#include "stereo.h"
 
 #include <stdio.h>
 #include <string.h>

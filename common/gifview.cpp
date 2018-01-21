@@ -18,6 +18,7 @@
 #include "framain2.h"
 #include "loadmap.h"
 #include "prompts2.h"
+#include "stereo.h"
 
 #include <string.h>
 
