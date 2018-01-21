@@ -52,9 +52,7 @@ extern int                   g_color_bright;    // brightest color in palette
 extern int                   g_color_dark;      // darkest color in palette
 extern int                   g_color_medium;    // nearest to medbright grey in palette
 
-extern BYTE                  g_dac_box[256][3];
 extern int                   g_dac_count;
-extern bool                  g_dac_learn;
 extern double                g_delta_min;
 extern int                   g_decimals;
 extern long                  g_l_delta_min;
@@ -111,7 +109,6 @@ extern bool                  g_gif87a_flag;
 extern std::string           g_gif_filename_mask;
 extern std::string const     g_glasses1_map;
 extern bool                  g_good_mode;       // video mode ok?
-extern bool                  g_got_real_dac;    // loaddac worked, really got a dac
 extern std::string const     g_gray_map_file;
 extern bool                  g_has_inverse;
 extern unsigned int          g_height;
@@ -177,7 +174,6 @@ extern int                   g_num_affine_transforms;
 extern unsigned              g_num_colors;
 extern const int             g_num_trig_functions;
 extern int                   g_num_fractal_types;
-extern BYTE                  g_old_dac_box[256][3];
 extern char                  g_old_std_calc_mode;
 extern char                  g_evolve_discrete_x_parameter_offset;
 extern char                  g_evolve_discrete_y_parameter_offset;

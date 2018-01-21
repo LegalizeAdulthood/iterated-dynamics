@@ -3,6 +3,7 @@
 
 #include "fractint.h"
 #include "plot3d.h"
+#include "rotate.h"
 
 #include <assert.h>
 #include <crtdbg.h>

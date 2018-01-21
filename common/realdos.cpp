@@ -11,6 +11,7 @@
 #include "miscres.h"
 #include "prompts2.h"
 #include "realdos.h"
+#include "rotate.h"
 #include "zoom.h"
 
 #include <ctype.h>

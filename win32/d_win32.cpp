@@ -13,6 +13,7 @@
 #include "helpdefs.h"
 #include "helpcom.h"
 #include "realdos.h"
+#include "rotate.h"
 #include "slideshw.h"
 
 #include <assert.h>
