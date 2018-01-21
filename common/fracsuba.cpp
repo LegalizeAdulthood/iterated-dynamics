@@ -4,6 +4,8 @@
 #include "port.h"
 #include "prototyp.h"
 
+#include "calcfrac.h"
+
 int asmlMODbailout()
 {
     g_l_temp_sqr_x = lsqr(g_l_new_z.x);

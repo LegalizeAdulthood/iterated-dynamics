@@ -961,8 +961,6 @@ struct trig_funct_lst
 };
 
 extern trig_funct_lst g_trig_fn[];
-// function prototypes
-extern  void (*g_plot)(int, int, int);
 // for overlay return stack
 #define BIG 100000.0
 #define CTL(x) ((x)&0x1f)

@@ -7,15 +7,12 @@
 #include "port.h"
 #include "prototyp.h"
 
+#include "calcfrac.h"
 #include "calmanfp.h"
 #include "cmdfiles.h"
 #include "drivers.h"
 #include "fracsubr.h"
 #include "fractype.h"
-
-extern int atan_colors;
-extern long firstsavedand;
-extern int g_periodicity_next_saved_incr;
 
 static int inside_color, periodicity_color;
 
@@ -53,7 +50,7 @@ long calcmandfpasm()
         g_old_color_iter = g_max_iterations - 255;
     }
 
-    tmpfsd = g_max_iterations - firstsavedand;
+    tmpfsd = g_max_iterations - g_first_saved_and;
     if (g_old_color_iter > tmpfsd) // this defeats checking periodicity immediately
     {
         g_old_color_iter = tmpfsd; // but matches the code in standard_fractal()
@@ -67,7 +64,7 @@ long calcmandfpasm()
     savedy = 0;
 #endif
     g_orbit_save_index = 0;
-    savedand = firstsavedand;
+    savedand = g_first_saved_and;
     savedincr = 1;             // start checking the very first time
     g_keyboard_check_interval--;                // Only check the keyboard sometimes
     if (g_keyboard_check_interval < 0)
@@ -238,7 +235,7 @@ over_bailout_87:
         }
         else if (g_outside_color == ATAN)
         {
-            g_color_iter = (long) fabs(atan2(g_new_z.y, g_new_z.x)*atan_colors/PI);
+            g_color_iter = (long) fabs(atan2(g_new_z.y, g_new_z.x)*g_atan_colors/PI);
         }
         // check_color
         if ((g_color_iter <= 0 || g_color_iter > g_max_iterations) && g_outside_color != FMOD)

@@ -104,6 +104,36 @@ static char dif_lb[] =
 // added for testing autologmap()
 static long autologmap();
 
+static DComplex saved = { 0.0 };
+static double rqlim_save = 0.0;
+static int (*calctypetmp)() = nullptr;
+static unsigned long lm = 0;                   // magnitude limit (CALCMAND)
+static int xxbegin = 0;                        // these are same as worklist,
+static int yybegin = 0;                        // declared as separate items
+static double dem_delta = 0.0;
+static double dem_width = 0.0;          // distance estimator variables
+static double dem_toobig = 0.0;
+static bool dem_mandel = false;
+#define DEM_BAILOUT 535.5
+static int maxblock = 0;
+static int halfblock = 0;
+static bool guessplot = false;          // paint 1st pass row at a time?
+static bool right_guess = false;
+static bool bottom_guess = false;
+#define maxyblk 7    // maxxblk*maxyblk*2 <= 4096, the size of "prefix"
+#define maxxblk 202  // each maxnblk is oversize by 2 for a "border"
+// maxxblk defn must match fracsubr.c
+/* next has a skip bit for each maxblock unit;
+   1st pass sets bit  [1]... off only if block's contents guessed;
+   at end of 1st pass [0]... bits are set if any surrounding block not guessed;
+   bits are numbered [..][y/16+1][x+1]&(1<<(y&15)) */
+// size of next puts a limit of MAXPIXELS pixels across on solid guessing logic
+namespace
+{
+BYTE dstack[4096] = { 0 };              // common temp, two put_line calls
+}
+static unsigned int tprefix[2][maxyblk][maxxblk] = { 0 }; // common temp
+
 // variables exported from this file
 LComplex g_l_init_orbit = { 0 };
 long g_l_magnitude = 0;
@@ -114,7 +144,6 @@ DComplex g_init = { 0.0 };
 DComplex g_tmp_z = { 0.0 };
 DComplex g_old_z = { 0.0 };
 DComplex g_new_z = { 0.0 };
-DComplex saved = { 0.0 };
 int g_color = 0;
 long g_color_iter = 0;
 long g_old_color_iter = 0;
@@ -131,19 +160,16 @@ void (*g_plot)(int, int, int) = putcolor_a;
 double g_magnitude = 0.0;
 double g_magnitude_limit = 0.0;
 double g_magnitude_limit2 = 0.0;
-double rqlim_save = 0.0;
 bool g_magnitude_calc = true;
 bool g_use_old_periodicity = false;
 bool g_use_old_distance_estimator = false;
 bool g_old_demm_colors = false;
 int (*g_calc_type)() = nullptr;
-int (*calctypetmp)() = nullptr;
 bool g_quick_calc = false;
 double g_close_proximity = 0.01;
 
 double g_close_enough = 0.0;
 int g_pi_in_pixels = 0;                        // value of pi in pixels
-unsigned long lm = 0;                   // magnitude limit (CALCMAND)
 
 // ORBIT variables
 bool g_show_orbit = false;                // flag to turn on and off
@@ -165,18 +191,10 @@ int g_num_work_list = 0;                   // resume worklist for standard engin
 WORKLIST g_work_list[MAXCALCWORK] = { 0 };
 int g_xx_start = 0;
 int g_xx_stop = 0;
-int xxbegin = 0;                        // these are same as worklist,
 int g_yy_start = 0;
 int g_yy_stop = 0;
-int yybegin = 0;                        // declared as separate items
 int g_work_pass = 0;
 int g_work_symmetry = 0;                        // for the sake of calcmand
-
-static double dem_delta = 0.0;
-static double dem_width = 0.0;          // distance estimator variables
-static double dem_toobig = 0.0;
-static bool dem_mandel = false;
-#define DEM_BAILOUT 535.5
 
 // variables which must be visible for tab_display
 int g_got_status = -1;                    // -1 if not, 0 for 1or2pass, 1 for ssg,
@@ -188,31 +206,12 @@ int g_current_row = 0;
 int g_current_column = 0;
 
 // static vars for diffusion scan
-unsigned g_diffusion_bits = 0;        // number of bits in the counter
+unsigned int g_diffusion_bits = 0;        // number of bits in the counter
 unsigned long g_diffusion_counter = 0;  // the diffusion counter
 unsigned long g_diffusion_limit = 0;    // the diffusion counter
 
 // static vars for solid_guess & its subroutines
 bool g_three_pass = false;
-static int maxblock = 0;
-static int halfblock = 0;
-static bool guessplot = false;          // paint 1st pass row at a time?
-static bool right_guess = false;
-static bool bottom_guess = false;
-#define maxyblk 7    // maxxblk*maxyblk*2 <= 4096, the size of "prefix"
-#define maxxblk 202  // each maxnblk is oversize by 2 for a "border"
-// maxxblk defn must match fracsubr.c
-/* next has a skip bit for each maxblock unit;
-   1st pass sets bit  [1]... off only if block's contents guessed;
-   at end of 1st pass [0]... bits are set if any surrounding block not guessed;
-   bits are numbered [..][y/16+1][x+1]&(1<<(y&15)) */
-
-// size of next puts a limit of MAXPIXELS pixels across on solid guessing logic
-namespace
-{
-BYTE dstack[4096] = { 0 };              // common temp, two put_line calls
-}
-unsigned int tprefix[2][maxyblk][maxxblk] = { 0 }; // common temp
 
 bool g_cellular_next_screen = false;             // for cellular next screen generation
 int g_attractors = 0;                     // number of finite attractors
@@ -228,9 +227,9 @@ enum class direction
     South,
     West
 };
-direction going_to;
-int trail_row = 0;
-int trail_col = 0;
+static direction going_to;
+static int trail_row = 0;
+static int trail_col = 0;
 
 // --------------------------------------------------------------------
 //              These variables are external for speed's sake only
@@ -240,13 +239,13 @@ int g_periodicity_check = 0;
 
 // For periodicity testing, only in standard_fractal()
 int g_periodicity_next_saved_incr = 0;
-long firstsavedand = 0;
+long g_first_saved_and = 0;
 
 static std::vector<BYTE> savedots;
 static BYTE *fillbuff = nullptr;
 static int savedotslen = 0;
 static int showdotcolor = 0;
-int atan_colors = 180;
+int g_atan_colors = 180;
 
 static int showdot_width = 0;
 
@@ -676,7 +675,7 @@ int calcfract()
     if (g_use_old_periodicity)
     {
         g_periodicity_next_saved_incr = 1;
-        firstsavedand = 1;
+        g_first_saved_and = 1;
     }
     else
     {
@@ -685,7 +684,7 @@ int calcfract()
         {
             g_periodicity_next_saved_incr = 4; // maintains image with low iterations
         }
-        firstsavedand = (long)((g_periodicity_next_saved_incr*2) + 1);
+        g_first_saved_and = (long)((g_periodicity_next_saved_incr*2) + 1);
     }
 
     g_log_map_table.clear();
@@ -784,7 +783,7 @@ int calcfract()
     }
     lm = 4L << g_bit_shift;                 // CALCMAND magnitude limit
 
-    atan_colors = g_colors;
+    g_atan_colors = g_colors;
 
     // ORBIT stuff
     g_show_orbit = g_start_show_orbit;
@@ -2093,9 +2092,9 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
         oldcoloriter = MINSAVEDAND;
     }
 #else
-    if (g_old_color_iter < firstsavedand)   // I like it!
+    if (g_old_color_iter < g_first_saved_and)   // I like it!
     {
-        g_old_color_iter = firstsavedand;
+        g_old_color_iter = g_first_saved_and;
     }
 #endif
     // really fractal specific, but we'll leave it here
@@ -2179,7 +2178,7 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
 #ifdef MINSAVEDAND
         savedand = MINSAVEDAND;
 #else
-        savedand = firstsavedand;                // begin checking every other cycle
+        savedand = g_first_saved_and;                // begin checking every other cycle
 #endif
     }
     savedincr = 1;               // start checking the very first time
@@ -2731,7 +2730,7 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
         }
         else if (g_outside_color == ATAN)              // "atan"
         {
-            g_color_iter = (long)fabs(atan2(g_new_z.y, g_new_z.x)*atan_colors/PI);
+            g_color_iter = (long)fabs(atan2(g_new_z.y, g_new_z.x)*g_atan_colors/PI);
         }
         else if (g_outside_color == FMOD)
         {
@@ -2897,11 +2896,11 @@ plot_inside: // we're "inside"
             {
                 g_new_z.x = ((double)g_l_new_z.x) / g_fudge_factor;
                 g_new_z.y = ((double)g_l_new_z.y) / g_fudge_factor;
-                g_color_iter = (long)fabs(atan2(g_new_z.y, g_new_z.x)*atan_colors/PI);
+                g_color_iter = (long)fabs(atan2(g_new_z.y, g_new_z.x)*g_atan_colors/PI);
             }
             else
             {
-                g_color_iter = (long)fabs(atan2(g_new_z.y, g_new_z.x)*atan_colors/PI);
+                g_color_iter = (long)fabs(atan2(g_new_z.y, g_new_z.x)*g_atan_colors/PI);
             }
         }
         else if (g_inside_color == BOF60)

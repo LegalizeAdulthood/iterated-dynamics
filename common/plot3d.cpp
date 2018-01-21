@@ -5,6 +5,7 @@
 #include "port.h"
 #include "prototyp.h"
 
+#include "calcfrac.h"
 #include "cmdfiles.h"
 #include "diskvid.h"
 #include "fractype.h"

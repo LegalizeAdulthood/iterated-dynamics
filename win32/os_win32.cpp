@@ -1,6 +1,7 @@
 #include "port.h"
 #include "prototyp.h"
 
+#include "calcfrac.h"
 #include "cmdfiles.h"
 #include "cmplx.h"
 #include "diskvid.h"

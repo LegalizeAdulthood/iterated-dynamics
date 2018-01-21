@@ -5,6 +5,7 @@
 #include "prototyp.h"
 
 #include "ant.h"
+#include "calcfrac.h"
 #include "cmdfiles.h"
 #include "diskvid.h"
 #include "drivers.h"
