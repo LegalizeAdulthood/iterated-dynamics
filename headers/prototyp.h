@@ -24,9 +24,6 @@ extern int getakeynohelp();
 extern long readticker();
 extern int get_sound_params();
 extern void setnullvideo();
-// fractint -- C file prototypes
-extern int main(int argc, char **argv);
-extern int elapsed_time(int);
 // framain2 -- C file prototypes
 extern main_state big_while_loop(bool *kbdmore, bool *stacked, bool resume_flag);
 extern bool check_key();
