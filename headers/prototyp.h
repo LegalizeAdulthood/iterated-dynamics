@@ -37,8 +37,6 @@ extern bool abortmsg(char const *file, unsigned int line, int flags, char const 
 extern long stackavail();
 extern int getcolor(int, int);
 extern int out_line(BYTE *, int);
-extern void setvideomode(int, int, int, int);
-extern int pot_startdisk();
 extern void putcolor_a(int, int, int);
 extern int startdisk();
 #endif
