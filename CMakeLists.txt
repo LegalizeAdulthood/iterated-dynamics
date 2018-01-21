@@ -99,7 +99,7 @@ add_executable(id ${OS_ID_OPTIONS}
     common/stereo.cpp
 
     common/bigflt.cpp
-    common/biginit.cpp
+    common/biginit.cpp headers/biginit.h
     common/bignum.cpp
     common/bignumc.cpp
     common/fpu087.cpp headers/fpu087.h

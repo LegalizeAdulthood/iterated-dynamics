@@ -2,7 +2,12 @@
 FRACSUBR.C contains subroutines which belong primarily to CALCFRAC.C and
 FRACTALS.C, i.e. which are non-fractal-specific fractal engine subroutines.
 */
-#include <vector>
+#include "port.h"
+#include "prototyp.h"
+
+#include "biginit.h"
+#include "drivers.h"
+#include "fractype.h"
 
 #include <float.h>
 #include <limits.h>
@@ -15,11 +20,7 @@ FRACTALS.C, i.e. which are non-fractal-specific fractal engine subroutines.
 #include <sys/types.h>
 #include <time.h>
 
-// see Fractint.c for a description of the "include"  hierarchy
-#include "port.h"
-#include "prototyp.h"
-#include "fractype.h"
-#include "drivers.h"
+#include <vector>
 
 #if defined(_WIN32)
 #define ftimex ftime

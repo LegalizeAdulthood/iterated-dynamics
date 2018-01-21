@@ -2,15 +2,17 @@
     zoom.c - routines for zoombox manipulation and for panning
 
 */
-#include <cassert>
-#include <vector>
+#include "port.h"
+#include "prototyp.h"
+
+#include "biginit.h"
+#include "drivers.h"
 
 #include <float.h>
 #include <string.h>
 
-#include "port.h"
-#include "prototyp.h"
-#include "drivers.h"
+#include <cassert>
+#include <vector>
 
 #define PIXELROUND 0.00001
 

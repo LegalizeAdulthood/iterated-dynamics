@@ -1,11 +1,14 @@
 /*
         loadfile.c - load an existing fractal image, control level
 */
-#include <algorithm>
-#include <cassert>
-#include <string>
-#include <system_error>
-#include <vector>
+#include "port.h"
+#include "prototyp.h"
+
+#include "biginit.h"
+#include "drivers.h"
+#include "fractype.h"
+#include "helpdefs.h"
+#include "targa_lc.h"
 
 #include <errno.h>
 #include <string.h>
@@ -14,14 +17,11 @@
 #include <unistd.h>
 #endif
 
-#include "port.h"
-#include "prototyp.h"
-#include "fractype.h"
-#include "helpdefs.h"
-#include "targa_lc.h"
-#include "drivers.h"
-
-// routines in this module
+#include <algorithm>
+#include <cassert>
+#include <string>
+#include <system_error>
+#include <vector>
 
 static int  find_fractal_info(char const *gif_file, FRACTAL_INFO *info,
                              ext_blk_2 *blk_2_info,

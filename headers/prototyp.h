@@ -24,14 +24,6 @@ extern int getakeynohelp();
 extern long readticker();
 extern int get_sound_params();
 extern void setnullvideo();
-// biginit -- C file prototypes
-void free_bf_vars();
-bn_t alloc_stack(size_t size);
-int save_stack();
-void restore_stack(int old_offset);
-void init_bf_dec(int dec);
-void init_bf_length(int bnl);
-void init_big_pi();
 // calcfrac -- C file prototypes
 extern int calcfract();
 extern int calcmand();

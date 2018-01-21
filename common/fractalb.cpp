@@ -4,13 +4,16 @@ This file contains the "big number" high precision versions of the
 fractal routines.
 
 --------------------------------------------------------------------   */
+#include "port.h"
+#include "prototyp.h"
+
+#include "biginit.h"
+#include "fractype.h"
+#include "helpdefs.h"
+
 #include <float.h>
 #include <limits.h>
 #include <string.h>
-#include "port.h"
-#include "prototyp.h"
-#include "helpdefs.h"
-#include "fractype.h"
 
 
 bf_math_type bf_math = bf_math_type::NONE;

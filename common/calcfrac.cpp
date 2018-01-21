@@ -14,6 +14,7 @@ Additional fractal-specific modules are also invoked from CALCFRAC:
 #include "port.h"
 #include "prototyp.h"
 
+#include "biginit.h"
 #include "calcmand.h"
 #include "calmanfp.h"
 #include "drivers.h"

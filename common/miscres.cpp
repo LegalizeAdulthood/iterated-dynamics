@@ -1,9 +1,13 @@
 /*
         Resident odds and ends that don't fit anywhere else.
 */
-#include <algorithm>
-#include <cassert>
-#include <string>
+#include "port.h"
+#include "prototyp.h"
+
+#include "biginit.h"
+#include "drivers.h"
+#include "fractype.h"
+#include "helpdefs.h"
 
 #include <ctype.h>
 #include <stdarg.h>
@@ -13,13 +17,9 @@
 #include <unistd.h>
 #endif
 
-#include "port.h"
-#include "prototyp.h"
-#include "fractype.h"
-#include "helpdefs.h"
-#include "drivers.h"
-
-// routines in this module
+#include <algorithm>
+#include <cassert>
+#include <string>
 
 static void trigdetails(char *buf);
 static void area();

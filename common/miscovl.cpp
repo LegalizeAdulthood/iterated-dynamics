@@ -1,9 +1,13 @@
 /*
         Overlayed odds and ends that don't fit anywhere else.
 */
-#include <algorithm>
-#include <string>
-#include <vector>
+#include "port.h"
+#include "prototyp.h"
+
+#include "biginit.h"
+#include "drivers.h"
+#include "fractype.h"
+#include "helpdefs.h"
 
 #include <ctype.h>
 #include <float.h>
@@ -16,13 +20,9 @@
 #include <process.h>
 #endif
 
-#include "port.h"
-#include "prototyp.h"
-#include "fractype.h"
-#include "helpdefs.h"
-#include "drivers.h"
-
-// routines in this module
+#include <algorithm>
+#include <string>
+#include <vector>
 
 static void put_parm(char const *parm, ...);
 
