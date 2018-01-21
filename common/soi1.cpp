@@ -148,24 +148,12 @@ static void putbox(int x1, int y1, int x2, int y2, int color)
 /* Newton Interpolation.
    It computes the value of the interpolation polynomial given by
    (x0,w0)..(x2,w2) at x:=t */
-static double interpolate(double x0, double x1, double x2,
+static inline double interpolate(double x0, double x1, double x2,
                         double w0, double w1, double w2,
                         double t)
 {
-    double b0 = w0, b1 = w1, b2 = w2, b;
-
-    /*b0=(r0*b1-r1*b0)/(x1-x0);
-    b1=(r1*b2-r2*b1)/(x2-x1);
-    b0=(r0*b1-r2*b0)/(x2-x0);
-
-    return (double)b0;*/
-    b = (b1 - b0)/(x1 - x0);
-    return (double)((((b2 - b1)/(x2 - x1) - b)/(x2 - x0))*(t - x1) + b)*(t - x0) + b0;
-    /*
-    if (t<x1)
-      return w0+((t-x0)/(x1-x0))*(w1-w0);
-    else
-      return w1+((t-x1)/(x2-x1))*(w2-w1);*/
+    const double b = (w1 - w0)/(x1 - x0);
+    return (((w2 - w1)/(x2 - x1) - b)/(x2 - x0)*(t - x1) + b)*(t - x0) + w0;
 }
 
 // SOICompute - Perform simultaneous orbit iteration for a given rectangle
