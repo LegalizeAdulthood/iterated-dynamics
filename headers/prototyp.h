@@ -14,8 +14,6 @@
 #include "winprot.h"
 #endif
 #endif
-extern long multiply(long x, long y, int n);
-extern long divide(long x, long y, int n);
 extern void spindac(int dir, int inc);
 extern void put_line(int row, int startcol, int stopcol, BYTE const *pixels);
 extern void get_line(int row, int startcol, int stopcol, BYTE *pixels);

@@ -19,6 +19,7 @@
 #include "port.h"
 #include "prototyp.h"
 
+#include "calcfrac.h"
 #include "fpu087.h"
 #include "jiim.h"
 #include "mpmath_c.h"

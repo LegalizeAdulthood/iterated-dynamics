@@ -52,12 +52,13 @@ ROTZ(i) =           cosi  sini    0     0
                       0     0     1     0
                       0     0     0     1
 */
-#include <float.h>
-#include <string.h>
-
-// see Fractint.c for a description of the "include"  hierarchy
 #include "port.h"
 #include "prototyp.h"
+
+#include "calcfrac.h"
+
+#include <float.h>
+#include <string.h>
 
 /* initialize a matrix and set to identity matrix
    (all 0's, 1's on diagonal) */

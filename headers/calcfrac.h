@@ -4,6 +4,8 @@
 
 #include "big.h"
 
+extern long multiply(long x, long y, int n);
+extern long divide(long x, long y, int n);
 extern int calcfract();
 extern int calcmand();
 extern int calcmandfp();
