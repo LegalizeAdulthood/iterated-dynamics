@@ -10,6 +10,7 @@
 #include "fracsuba.h"
 #include "fracsubr.h"
 #include "fractalp.h"
+#include "fractals.h"
 #include "fractype.h"
 #include "helpcom.h"
 #include "helpdefs.h"

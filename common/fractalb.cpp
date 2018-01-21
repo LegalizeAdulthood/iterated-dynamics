@@ -9,6 +9,7 @@ fractal routines.
 
 #include "biginit.h"
 #include "fractalp.h"
+#include "fractals.h"
 #include "fractype.h"
 #include "helpdefs.h"
 

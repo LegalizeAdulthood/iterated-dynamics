@@ -42,6 +42,7 @@ an appropriate setup, per_image, per_pixel, and orbit routines.
 #include "externs.h"
 #include "fpu087.h"
 #include "fracsubr.h"
+#include "fractals.h"
 #include "fractype.h"
 #include "helpdefs.h"
 

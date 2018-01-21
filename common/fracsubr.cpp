@@ -10,6 +10,7 @@ FRACTALS.C, i.e. which are non-fractal-specific fractal engine subroutines.
 #include "drivers.h"
 #include "fracsubr.h"
 #include "fractalp.h"
+#include "fractals.h"
 #include "fractype.h"
 
 #include <float.h>

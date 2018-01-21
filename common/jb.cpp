@@ -3,6 +3,7 @@
 
 #include "drivers.h"
 #include "fracsubr.h"
+#include "fractals.h"
 #include "fractype.h"
 #include "helpdefs.h"
 #include "jb.h"
