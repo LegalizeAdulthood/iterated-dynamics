@@ -563,7 +563,7 @@ static void getDouble(double *dst, unsigned char **src, int dir)
     {
         if (*dst == 0)
         {
-            bzero((char *)(*src), 8);
+            std::memset((char *)(*src), 0, 8);
         }
         else
         {
@@ -643,7 +643,7 @@ static void getFloat(float *dst, unsigned char **src, int dir)
     {
         if (*dst == 0)
         {
-            bzero((char *)(*src), 4);
+            std::memset((char *)(*src), 0, 4);
         }
         else
         {

@@ -587,7 +587,7 @@ clearXwindow(DriverX11 *di)
         /*
          * Initialize image to 0's.
          */
-        bzero(di->Ximage->data, di->Ximage->bytes_per_line*di->Ximage->height);
+        std::memset(di->Ximage->data, 0, di->Ximage->bytes_per_line*di->Ximage->height);
     }
     di->xlastcolor = -1;
     XSetForeground(di->Xdp, di->Xgc, FAKE_LUT(di, di->pixtab[0]));
@@ -669,7 +669,7 @@ xcmapstuff(DriverX11 *di)
         di->ipixtab[di->pixtab[i]] = i;
     }
     /* We must make sure if any color uses position 0, that it is 0.
-     * This is so we can clear the image with bzero.
+     * This is so we can clear the image with memset.
      * So, suppose fractint 0 = cmap 42, cmap 0 = fractint 55.
      * Then want fractint 0 = cmap 0, cmap 42 = fractint 55.
      * I.e. pixtab[55] = 42, ipixtab[42] = 55.

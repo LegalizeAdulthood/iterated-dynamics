@@ -657,7 +657,7 @@ clearXwindow()
         /*
          * Initialize image to 0's.
          */
-        bzero(Ximage->data, Ximage->bytes_per_line*Ximage->height);
+        std::memset(Ximage->data, 0, Ximage->bytes_per_line*Ximage->height);
     }
     xlastcolor = -1;
     XSetForeground(Xdp, Xgc, FAKE_LUT(pixtab[0]));
@@ -927,7 +927,7 @@ xcmapstuff()
         ipixtab[pixtab[i]] = i;
     }
     /* We must make sure if any color uses position 0, that it is 0.
-     * This is so we can clear the image with bzero.
+     * This is so we can clear the image with memset.
      * So, suppose fractint 0 = cmap 42, cmap 0 = fractint 55.
      * Then want fractint 0 = cmap 0, cmap 42 = fractint 55.
      * I.e. pixtab[55] = 42, ipixtab[42] = 55.
@@ -2287,7 +2287,7 @@ xgetfont()
     GC font_gc;
 
     fontPtr = (unsigned char *)malloc(128*8);
-    bzero(fontPtr, 128*8);
+    std::memset(fontPtr, 0, 128*8);
 
     xlastcolor = -1;
 #define FONT "-*-*-medium-r-*-*-9-*-*-*-*-*-iso8859-*"
