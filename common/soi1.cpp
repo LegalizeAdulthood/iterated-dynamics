@@ -11,6 +11,7 @@
  * <URL:http://www.cs.tu-berlin.de/~rms/AlmondBread>.
  *
  */
+#include <algorithm>
 #include <cassert>
 
 #include <float.h>
@@ -420,28 +421,15 @@ scan:
         goto rhombus_done;
     }
 
-    state.rq[0].re = zi[0].re*zi[0].re;
-    state.rq[0].im = zi[0].im*zi[0].im;
-    state.rq[1].re = zi[1].re*zi[1].re;
-    state.rq[1].im = zi[1].im*zi[1].im;
-    state.rq[2].re = zi[2].re*zi[2].re;
-    state.rq[2].im = zi[2].im*zi[2].im;
-    state.rq[3].re = zi[3].re*zi[3].re;
-    state.rq[3].im = zi[3].im*zi[3].im;
-    state.rq[4].re = zi[4].re*zi[4].re;
-    state.rq[4].im = zi[4].im*zi[4].im;
-    state.rq[5].re = zi[5].re*zi[5].re;
-    state.rq[5].im = zi[5].im*zi[5].im;
-    state.rq[6].re = zi[6].re*zi[6].re;
-    state.rq[6].im = zi[6].im*zi[6].im;
-    state.rq[7].re = zi[7].re*zi[7].re;
-    state.rq[7].im = zi[7].im*zi[7].im;
-    state.rq[8].re = zi[8].re*zi[8].re;
-    state.rq[8].im = zi[8].im*zi[8].im;
+    for (int i = 0; i < 9; ++i)
+    {
+        state.rq[i].re = zi[i].re*zi[i].re;
+        state.rq[i].im = zi[i].im*zi[i].im;
+    }
 
     state.corner[0].re = 0.75*cre1 + 0.25*cre2;
-    state.corner[1].re = 0.25*cre1 + 0.75*cre2;
     state.corner[0].im = 0.75*cim1 + 0.25*cim2;
+    state.corner[1].re = 0.25*cre1 + 0.75*cre2;
     state.corner[1].im = 0.25*cim1 + 0.75*cim2;
 
     state.tz[0].re = GET_REAL(state.corner[0].re, state.corner[0].im);
@@ -456,41 +444,17 @@ scan:
     state.tz[3].re = GET_REAL(state.corner[1].re, state.corner[1].im);
     state.tz[3].im = GET_IMAG(state.corner[1].re, state.corner[1].im);
 
-    state.tq[0].re = state.tz[0].re*state.tz[0].re;
-    state.tq[0].im = state.tz[0].im*state.tz[0].im;
-
-    state.tq[1].re = state.tz[1].re*state.tz[1].re;
-    state.tq[1].im = state.tz[1].im*state.tz[1].im;
-
-    state.tq[2].re = state.tz[2].re*state.tz[2].re;
-    state.tq[2].im = state.tz[2].im*state.tz[2].im;
-
-    state.tq[3].re = state.tz[3].re*state.tz[3].re;
-    state.tq[3].im = state.tz[3].im*state.tz[3].im;
+    for (int i = 0; i < 4; ++i)
+    {
+        state.tq[i].re = state.tz[i].re*state.tz[i].re;
+        state.tq[i].im = state.tz[i].im*state.tz[i].im;
+    }
 
     before = iter;
 
     while (true)
     {
-        s[0].re = zi[0].re;
-        s[0].im = zi[0].im;
-        s[1].re = zi[1].re;
-        s[1].im = zi[1].im;
-        s[2].re = zi[2].re;
-        s[2].im = zi[2].im;
-        s[3].re = zi[3].re;
-        s[3].im = zi[3].im;
-        s[4].re = zi[4].re;
-        s[4].im = zi[4].im;
-        s[5].re = zi[5].re;
-        s[5].im = zi[5].im;
-        s[6].re = zi[6].re;
-        s[6].im = zi[6].im;
-        s[7].re = zi[7].re;
-        s[7].im = zi[7].im;
-        s[8].re = zi[8].re;
-        s[8].im = zi[8].im;
-
+        std::copy(std::begin(zi), std::end(zi), std::begin(s));
 
 #define SOI_ORBIT1(zr, rq, zi, iq, cr, ci, esc) \
     tempsqrx = rq;                              \
@@ -609,8 +573,8 @@ scan:
         iter++;
 
         // if one of the iterated values bails out, subdivide
-        if (state.esc[0]||state.esc[1]||state.esc[2]||state.esc[3]||state.esc[4]||state.esc[5]||state.esc[6]||state.esc[7]||state.esc[8]||
-                state.tesc[0]||state.tesc[1]||state.tesc[2]||state.tesc[3])
+        if (std::find(std::begin(state.esc), std::end(state.esc), true) != std::end(state.esc)
+            || std::find(std::begin(state.tesc), std::end(state.tesc), true) != std::end(state.tesc))
         {
             break;
         }
@@ -705,24 +669,7 @@ scan:
     // this is a little heuristic I tried to improve performance.
     if (iter - before < 10)
     {
-        zi[0].re = s[0].re;
-        zi[0].im = s[0].im;
-        zi[1].re = s[1].re;
-        zi[1].im = s[1].im;
-        zi[2].re = s[2].re;
-        zi[2].im = s[2].im;
-        zi[3].re = s[3].re;
-        zi[3].im = s[3].im;
-        zi[4].re = s[4].re;
-        zi[4].im = s[4].im;
-        zi[5].re = s[5].re;
-        zi[5].im = s[5].im;
-        zi[6].re = s[6].re;
-        zi[6].im = s[6].im;
-        zi[7].re = s[7].re;
-        zi[7].im = s[7].im;
-        zi[8].re = s[8].re;
-        zi[8].im = s[8].im;
+        std::copy(std::begin(s), std::end(s), std::begin(zi));
         goto scan;
     }
 
