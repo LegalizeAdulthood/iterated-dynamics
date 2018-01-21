@@ -14,6 +14,7 @@
 #include "fractals.h"
 #include "fractype.h"
 #include "helpcom.h"
+#include "line3d.h"
 #include "loadfile.h"
 #include "loadmap.h"
 #include "miscovl.h"

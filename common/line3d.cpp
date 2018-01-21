@@ -113,21 +113,28 @@ static point p1, p2, p3;
 static f_point f_bad;// out of range value
 static point bad;    // out of range value
 static long num_tris; // number of triangles output to ray trace file
+static std::vector<f_point> f_lastrow;
+static int Real_V = 0; // Actual value of V for fillytpe>4 monochrome images
+static int error;
+static char targa_temp[14] = "fractemp.tga";
+static int P = 250; // Perspective dist used when viewing light vector
+static int const bad_check = -3000; // check values against this to determine if good
+static std::vector<point> lastrow; // this array remembers the previous line
+// array of min and max x values used in triangle fill
+static std::vector<minmax> minmax_x;
+static VECTOR cross;
+static VECTOR tmpcross;
+static point oldlast = { 0, 0, 0 }; // old pixels
 
 // global variables defined here
-std::vector<f_point> f_lastrow;
-void (* g_standard_plot)(int, int, int);
+void (*g_standard_plot)(int, int, int);
 MATRIX g_m; // transformation matrix
 int g_ambient;
 int g_randomize_3d;
 int g_haze;
-int Real_V = 0; // Actual value of V for fillytpe>4 monochrome images
 // cppcheck-suppress constStatement
 std::string g_light_name{"fract001"};
 bool g_targa_overlay = false;
-int error;
-char targa_temp[14] = "fractemp.tga";
-int P = 250; // Perspective dist used when viewing light vector
 BYTE g_background_color[3];
 // cppcheck-suppress constStatement
 std::string g_raytrace_filename{"fract001"};
@@ -140,20 +147,11 @@ int g_xx_adjust;
 int g_yy_adjust;
 int g_x_shift;
 int g_y_shift;
-int const g_bad_value = -10000;       // set bad values to this
-static int const bad_check = -3000; // check values against this to determine if good
-std::vector<point> lastrow; // this array remembers the previous line
+extern int const g_bad_value = -10000;       // set bad values to this
 raytrace_formats g_raytrace_format = raytrace_formats::none;                    // Flag to generate Ray trace compatible files in 3d
 bool g_brief = false;             // 1 = short ray trace files
 
-// array of min and max x values used in triangle fill
-static std::vector<minmax> minmax_x;
 VECTOR g_view;                // position of observer for perspective
-VECTOR cross;
-static VECTOR tmpcross;
-
-static point oldlast = { 0, 0, 0 }; // old pixels
-
 
 int line3d(BYTE * pixels, unsigned linelen)
 {

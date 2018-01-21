@@ -56,6 +56,7 @@ ROTZ(i) =           cosi  sini    0     0
 #include "prototyp.h"
 
 #include "calcfrac.h"
+#include "line3d.h"
 
 #include <float.h>
 #include <string.h>
