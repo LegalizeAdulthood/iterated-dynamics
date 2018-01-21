@@ -4,6 +4,7 @@
 #include "port.h"
 #include "prototyp.h"
 
+#include "calcfrac.h"
 #include "drivers.h"
 #include "fracsuba.h"
 #include "fractype.h"

@@ -5,12 +5,14 @@ Note: This is NOT the biginit.c file that come the standard BigNum library,
 but is a customized version specific to Fractint.  The biggest difference
 is in the allocations of memory for the big numbers.
 */
-#include <float.h>
-#include <string.h>
-
 #include "port.h"
 #include "prototyp.h"
+
+#include "calcfrac.h"
 #include "fractype.h"
+
+#include <float.h>
+#include <string.h>
 
 // globals
 int bnstep = 0, bnlength = 0, intlength = 0, rlength = 0, padding = 0, shiftfactor = 0, g_decimals = 0;

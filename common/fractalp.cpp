@@ -6,6 +6,7 @@
 #include "prototyp.h"
 
 #include "ant.h"
+#include "calcfrac.h"
 #include "fractype.h"
 #include "helpdefs.h"
 #include "jb.h"

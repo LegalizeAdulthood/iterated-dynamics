@@ -6,19 +6,19 @@
  *
  *  The J-set is generated in a fixed-size window, a third of the screen.
  */
-#include <algorithm>
-#include <vector>
-
-#include <string.h>
-
-#include <stdarg.h>
-
-// see Fractint.c for a description of the "include"  hierarchy
 #include "port.h"
 #include "prototyp.h"
-#include "helpdefs.h"
-#include "fractype.h"
+
+#include "calcfrac.h"
 #include "drivers.h"
+#include "fractype.h"
+#include "helpdefs.h"
+
+#include <stdarg.h>
+#include <string.h>
+
+#include <algorithm>
+#include <vector>
 
 #define MAXRECT         1024      // largest width of SaveRect/RestoreRect
 

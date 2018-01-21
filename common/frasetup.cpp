@@ -1,6 +1,7 @@
 #include "port.h"
 #include "prototyp.h"
 
+#include "calcfrac.h"
 #include "calmanfp.h"
 #include "fractype.h"
 #include "helpdefs.h"

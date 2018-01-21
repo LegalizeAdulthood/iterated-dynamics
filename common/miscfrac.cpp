@@ -6,6 +6,7 @@ Miscellaneous fractal-specific code (formerly in CALCFRAC.C)
 #include "port.h"
 #include "prototyp.h"
 
+#include "calcfrac.h"
 #include "drivers.h"
 #include "fpu087.h"
 #include "fractype.h"

@@ -1,14 +1,17 @@
-#include <algorithm>
-#include <vector>
+#include "port.h"
+#include "prototyp.h"
+
+#include "calcfrac.h"
+#include "fractype.h"
+#include "helpdefs.h"
 
 #include <float.h>
 #include <stdlib.h>
 #include <string.h>
 
-#include "port.h"
-#include "prototyp.h"
-#include "fractype.h"
-#include "helpdefs.h"
+#include <algorithm>
+#include <vector>
+
 #define PARMBOX 128
 GENEBASE g_gene_bank[NUMGENES];
 
