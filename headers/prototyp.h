@@ -24,9 +24,6 @@ extern int getakeynohelp();
 extern long readticker();
 extern int get_sound_params();
 extern void setnullvideo();
-// tplus_a -- assembler file prototypes
-extern void WriteTPlusBankedPixel(int, int, unsigned long);
-extern unsigned long ReadTPlusBankedPixel(int, int);
 // 3d -- C file prototypes
 extern void identity(MATRIX);
 extern void mat_mul(MATRIX, MATRIX, MATRIX);
