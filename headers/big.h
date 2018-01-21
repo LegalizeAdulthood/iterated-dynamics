@@ -60,6 +60,7 @@ extern bf_t bf_pi;
 extern bf_t bftmp;                                           // rbflength
 extern bf10_t bf10tmp;                                            // dec+4
 extern big_t big_pi;
+
 // functions defined in biginit.c
 big_t big_alloc(size_t size);
 // void big_free(big_t memblock); now defined as a macro above
@@ -247,32 +248,55 @@ extern BNComplex *cplxmul_bn(BNComplex *t, BNComplex *x, BNComplex *y);
 #define NUMVARS       30            // room for this many on stack
 #define CURRENTREZ    1
 #define MAXREZ        0
-// globals
-extern int bnstep, bnlength, intlength, rlength, padding, shiftfactor;
-extern int g_decimals, bflength, rbflength, bfshiftfactor, bfdecimals;
-// used internally by bignum.c routines
-extern bn_t bntmp1, bntmp2, bntmp3, bntmp4, bntmp5, bntmp6;     // rlength
-extern bn_t bntmpcpy1, bntmpcpy2;                               // bnlength
+
 // used by other routines
-extern bn_t bnxmin, bnxmax, bnymin, bnymax, bnx3rd, bny3rd;     // bnlength
-extern bn_t bnxdel, bnydel, bnxdel2, bnydel2, bnclosenuff;      // bnlength
-extern bn_t bntmpsqrx, bntmpsqry, bntmp;                        // rlength
-extern BNComplex bnold, bnparm, bnsaved;                        // bnlength
+// bnlength
+extern bn_t bnxmin;
+extern bn_t bnxmax;
+extern bn_t bnymin;
+extern bn_t bnymax;
+extern bn_t bnx3rd;
+extern bn_t bny3rd;
+extern bn_t bnxdel;
+extern bn_t bnydel;
+extern bn_t bnxdel2;
+extern bn_t bnydel2;
+extern bn_t bnclosenuff;
+// rlength
+extern bn_t bntmpsqrx;
+extern bn_t bntmpsqry;
+// bnlength
+extern BNComplex bnold;
+extern BNComplex bnparm;
+extern BNComplex bnsaved;
 extern BNComplex bnnew;                                         // rlength
-extern bn_t bn_pi;                                        // TAKES NO SPACE
-extern bf_t bftmp1, bftmp2, bftmp3, bftmp4, bftmp5, bftmp6;  // rbflength+2
-extern bf_t bftmpcpy1, bftmpcpy2;                            // rbflength+2
-extern bf_t bfxdel, bfydel, bfxdel2, bfydel2, bfclosenuff;   // rbflength+2
-extern bf_t bftmpsqrx, bftmpsqry;                            // rbflength+2
-extern BFComplex bfparm, bfsaved;                           // bflength+2
-extern BFComplex bfold,  bfnew;                               // rbflength+2
-extern bf_t bf_pi;                                        // TAKES NO SPACE
-extern bf_t big_pi;                                           // bflength+2
+// rbflength+2
+extern bf_t bfxdel;
+extern bf_t bfydel;
+extern bf_t bfxdel2;
+extern bf_t bfydel2;
+extern bf_t bfclosenuff;
+extern bf_t bftmpsqrx;
+extern bf_t bftmpsqry;
+extern BFComplex bfparm;
+extern BFComplex bfsaved;
+extern BFComplex bfold;
+extern BFComplex bfnew;
+
 // for testing only
 // used by other routines
-extern bf_t g_bf_x_min, g_bf_x_max, g_bf_y_min, g_bf_y_max, g_bf_x_3rd, g_bf_y_3rd;   // bflength+2
-extern bf_t g_bf_save_x_min, g_bf_save_x_max, g_bf_save_y_min, g_bf_save_y_max, g_bf_save_x_3rd, g_bf_save_y_3rd;// bflength+2
+// bflength+2
+extern bf_t g_bf_x_min;
+extern bf_t g_bf_x_max;
+extern bf_t g_bf_y_min;
+extern bf_t g_bf_y_max;
+extern bf_t g_bf_x_3rd;
+extern bf_t g_bf_y_3rd;
+extern bf_t g_bf_save_x_min;
+extern bf_t g_bf_save_x_max;
+extern bf_t g_bf_save_y_min;
+extern bf_t g_bf_save_y_max;
+extern bf_t g_bf_save_x_3rd;
+extern bf_t g_bf_save_y_3rd;
 extern bf_t bfparms[10];                                 // (bflength+2)*10
-extern bf_t bftmp;
-extern bf_t bf10tmp;                                              // dec+4
 #endif /* BIG_H */
