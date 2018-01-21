@@ -8,6 +8,7 @@
 #include "diskvid.h"
 #include "fractype.h"
 #include "line3d.h"
+#include "loadmap.h"
 
 #include <float.h>
 

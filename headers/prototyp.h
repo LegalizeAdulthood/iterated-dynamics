@@ -24,10 +24,6 @@ extern int getakeynohelp();
 extern long readticker();
 extern int get_sound_params();
 extern void setnullvideo();
-// loadmap -- C file prototypes
-//extern void SetTgaColors();
-extern bool ValidateLuts(char const *mapname);
-extern void SetColorPaletteName(char const *fn);
 // lorenz -- C file prototypes
 extern bool orbit3dlongsetup();
 extern bool orbit3dfloatsetup();

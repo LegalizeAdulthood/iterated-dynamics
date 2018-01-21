@@ -15,6 +15,7 @@
 #include "helpcom.h"
 #include "helpdefs.h"
 #include "loadfile.h"
+#include "loadmap.h"
 
 #include <ctype.h>
 #include <float.h>

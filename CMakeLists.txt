@@ -91,7 +91,7 @@ add_executable(id ${OS_ID_OPTIONS}
     common/gifview.cpp headers/gifview.h
     common/loadfdos.cpp headers/loadfdos.h
     common/loadfile.cpp headers/loadfile.h
-    common/loadmap.cpp
+    common/loadmap.cpp headers/loadmap.h
     common/parser.cpp
     common/parserfp.cpp
     common/rotate.cpp

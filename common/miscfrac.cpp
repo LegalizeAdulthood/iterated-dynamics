@@ -13,6 +13,7 @@ Miscellaneous fractal-specific code (formerly in CALCFRAC.C)
 #include "fracsubr.h"
 #include "fractype.h"
 #include "framain2.h"
+#include "loadmap.h"
 #include "newton.h"
 #include "targa_lc.h"
 

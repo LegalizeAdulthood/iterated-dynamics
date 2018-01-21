@@ -7,6 +7,7 @@
 #include "fractype.h"
 #include "helpdefs.h"
 #include "jb.h"
+#include "loadmap.h"
 
 // these need to be accessed elsewhere for saving data
 double g_julibrot_x_min = -.83;

@@ -7,6 +7,7 @@
 #include "diskvid.h"
 #include "drivers.h"
 #include "helpdefs.h"
+#include "loadmap.h"
 
 #include <float.h>
 #include <string.h>
