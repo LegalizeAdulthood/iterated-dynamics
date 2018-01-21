@@ -37,9 +37,8 @@ struct WORKLIST;
 extern int                   g_adapter;             // index into g_video_table[]
 extern bool                  g_auto_browse;
 extern int                   g_bad_config;
-
-extern int                   g_bf_save_len;
 extern int                   g_bit_shift;
+
 extern BYTE                  g_block[];
 extern int                   g_blue_bright;
 extern int                   g_blue_crop_left;

@@ -4,7 +4,8 @@
 
 #include "big.h"
 
-// biginit -- C file prototypes
+extern int                   g_bf_save_len;
+
 void free_bf_vars();
 bn_t alloc_stack(size_t size);
 int save_stack();

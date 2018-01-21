@@ -3,11 +3,14 @@
 /*
 Wesley Loewer's Big Numbers.        (C) 1994-95, Wesley B. Loewer
 */
+#include "port.h"
+
+#include "big.h"
+
 #include <float.h>
 #include <memory.h>
 
-#include "port.h"
-#include "big.h"
+#include <cstring>
 
 /********************************************************************
  The following code contains the C versions of the routines from the
@@ -32,7 +35,7 @@ Wesley Loewer's Big Numbers.        (C) 1994-95, Wesley B. Loewer
 // r = 0
 bn_t clear_bn(bn_t r)
 {
-    memset(r, 0, bnlength);  // set array to zero
+    std::memset(r, 0, bnlength);  // set array to zero
     return r;
 }
 
@@ -40,7 +43,7 @@ bn_t clear_bn(bn_t r)
 // r = max positive value
 bn_t max_bn(bn_t r)
 {
-    memset(r, 0xFF, bnlength-1);  // set to max values
+    std::memset(r, 0xFF, bnlength-1);  // set to max values
     r[bnlength-1] = 0x7F;  // turn off the sign bit
     return r;
 }
@@ -49,7 +52,7 @@ bn_t max_bn(bn_t r)
 // r = n
 bn_t copy_bn(bn_t r, bn_t n)
 {
-    memcpy(r, n, bnlength);
+    std::memcpy(r, n, bnlength);
     return r;
 }
 
@@ -912,7 +915,7 @@ LDBL bntofloat(bn_t n)
 // r = 0
 bf_t clear_bf(bf_t r)
 {
-    memset(r, 0, bflength+2);  // set array to zero
+    std::memset(r, 0, bflength+2);  // set array to zero
     return r;
 }
 
@@ -920,7 +923,7 @@ bf_t clear_bf(bf_t r)
 // r = n
 bf_t copy_bf(bf_t r, bf_t n)
 {
-    memcpy(r, n, bflength+2);
+    std::memcpy(r, n, bflength+2);
     return r;
 }
 
