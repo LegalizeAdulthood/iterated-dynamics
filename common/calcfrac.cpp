@@ -27,7 +27,6 @@ Additional fractal-specific modules are also invoked from CALCFRAC:
 #include "line3d.h"
 #include "lorenz.h"
 #include "newton.h"
-#include "targa_lc.h"
 
 #include <limits.h>
 #include <stdlib.h>
