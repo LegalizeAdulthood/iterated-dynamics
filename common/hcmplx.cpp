@@ -1,8 +1,10 @@
 // some hyper complex functions
-#include <float.h>
-
 #include "port.h"
 #include "prototyp.h"
+
+#include "mpmath.h"
+
+#include <float.h>
 
 void HComplexMult(DHyperComplex *arg1, DHyperComplex *arg2, DHyperComplex *out)
 {

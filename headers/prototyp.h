@@ -1,7 +1,6 @@
 #ifndef PROTOTYP_H
 #define PROTOTYP_H
 // includes needed to define the prototypes
-#include "mpmath.h"
 #include "big.h"
 #include "fractint.h"
 #include "externs.h"

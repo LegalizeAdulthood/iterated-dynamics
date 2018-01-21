@@ -2,6 +2,8 @@
 #if !defined(PARSER_H)
 #define PARSER_H
 
+#include "mpmath.h"
+
 // parser -- C file prototypes
 struct fn_operand
 { // function, load, store pointers
