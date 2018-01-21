@@ -16,6 +16,7 @@
 #include "helpdefs.h"
 #include "loadfile.h"
 #include "loadmap.h"
+#include "lsys_fns.h"
 
 #include <ctype.h>
 #include <float.h>

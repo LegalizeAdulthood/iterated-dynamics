@@ -1,10 +1,12 @@
-#include <float.h>
-#include <string.h>
-
 #include "port.h"
 #include "prototyp.h"
-#include "lsys.h"
+
 #include "drivers.h"
+#include "lsys.h"
+#include "lsys_fns.h"
+
+#include <float.h>
+#include <string.h>
 
 #ifdef max
 #undef max

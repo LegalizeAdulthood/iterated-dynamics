@@ -24,11 +24,6 @@ extern int getakeynohelp();
 extern long readticker();
 extern int get_sound_params();
 extern void setnullvideo();
-// lsys -- C file prototypes
-extern LDBL  getnumber(char const **str);
-extern bool ispow2(int);
-extern int Lsystem();
-extern bool LLoad();
 // miscfrac -- C file prototypes
 extern void froth_cleanup();
 // miscovl -- C file prototypes
