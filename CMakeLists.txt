@@ -75,8 +75,8 @@ add_executable(id ${OS_ID_OPTIONS}
     common/soi1.cpp
     common/testpt.cpp
 
-    common/ant.cpp
-    common/jb.cpp
+    common/ant.cpp headers/ant.h
+    common/jb.cpp headers/jb.h
     common/lorenz.cpp
     common/lsys.cpp
     common/lsysf.cpp

@@ -4,6 +4,7 @@
 #include "drivers.h"
 #include "fractype.h"
 #include "helpdefs.h"
+#include "jb.h"
 
 // these need to be accessed elsewhere for saving data
 double g_julibrot_x_min = -.83;
@@ -58,8 +59,7 @@ int g_julibrot_3d_mode = 0;
 
 fractal_type g_new_orbit_type = fractal_type::JULIA;
 
-bool
-JulibrotSetup()
+bool JulibrotSetup()
 {
     int r = 0;
     char const *mapname;

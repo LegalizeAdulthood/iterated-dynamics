@@ -491,15 +491,6 @@ extern int gifview();
 extern void HComplexTrig0(DHyperComplex *, DHyperComplex *);
 // intro -- C file prototypes
 extern void intro();
-// jb -- C file prototypes
-extern bool JulibrotSetup();
-extern bool JulibrotfpSetup();
-extern int jb_per_pixel();
-extern int jbfp_per_pixel();
-extern int zline(long, long);
-extern int zlinefp(double, double);
-extern int Std4dFractal();
-extern int Std4dfpFractal();
 // jiim -- C file prototypes
 extern void Jiim(jiim_types which);
 extern LComplex PopLong();

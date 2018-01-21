@@ -8,6 +8,7 @@
 #include "ant.h"
 #include "fractype.h"
 #include "helpdefs.h"
+#include "jb.h"
 
 // functions defined elsewhere needed for fractalspecific
 // moved to prototyp.h
