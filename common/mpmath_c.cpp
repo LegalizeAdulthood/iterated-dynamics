@@ -24,6 +24,7 @@
 #include "fpu087.h"
 #include "fractals.h"
 #include "jiim.h"
+#include "loadfile.h"
 #include "mpmath_c.h"
 #include "parser.h"
 

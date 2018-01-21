@@ -21,6 +21,7 @@
 
 #include "drivers.h"
 #include "gifview.h"
+#include "loadfile.h"
 
 #include <float.h>
 

@@ -52,9 +52,12 @@ static bool fix_period_bof();
 
 bool g_loaded_3d = false;
 static FILE *fp;
-int g_file_y_dots, g_file_x_dots, g_file_colors;
+int g_file_y_dots;
+int g_file_x_dots;
+int g_file_colors;
 float g_file_aspect_ratio;
-short g_skip_x_dots, g_skip_y_dots;      // for decoder, when reducing image
+short g_skip_x_dots;
+short g_skip_y_dots;      // for decoder, when reducing image
 bool g_bad_outside = false;
 bool g_ld_check = false;
 
@@ -1271,9 +1274,19 @@ inline void restore_box(int num_dots, int which)
 
 // here because must be visible inside several routines
 static affine *cvt;
-static bf_t   bt_a, bt_b, bt_c, bt_d, bt_e, bt_f;
-static bf_t   n_a, n_b, n_c, n_d, n_e, n_f;
-bf_math_type oldbf_math;
+static bf_t bt_a;
+static bf_t bt_b;
+static bf_t bt_c;
+static bf_t bt_d;
+static bf_t bt_e;
+static bf_t bt_f;
+static bf_t n_a;
+static bf_t n_b;
+static bf_t n_c;
+static bf_t n_d;
+static bf_t n_e;
+static bf_t n_f;
+static bf_math_type oldbf_math;
 
 // fgetwindow reads all .GIF files and draws window outlines on the screen
 int fgetwindow()

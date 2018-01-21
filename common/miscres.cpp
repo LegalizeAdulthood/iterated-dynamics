@@ -13,6 +13,7 @@
 #include "fractype.h"
 #include "helpdefs.h"
 #include "line3d.h"
+#include "loadfile.h"
 #include "miscres.h"
 #include "parser.h"
 #include "prompts1.h"

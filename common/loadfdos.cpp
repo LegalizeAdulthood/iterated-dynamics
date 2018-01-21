@@ -33,6 +33,7 @@
 
 #include "cmdfiles.h"
 #include "helpdefs.h"
+#include "loadfile.h"
 #include "realdos.h"
 
 #include <float.h>

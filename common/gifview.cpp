@@ -18,6 +18,7 @@
 #include "drivers.h"
 #include "fracsubr.h"
 #include "framain2.h"
+#include "loadfile.h"
 #include "loadmap.h"
 #include "prompts2.h"
 #include "stereo.h"
