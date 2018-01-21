@@ -24,8 +24,6 @@ extern int getakeynohelp();
 extern long readticker();
 extern int get_sound_params();
 extern void setnullvideo();
-// loadfdos -- C file prototypes
-extern int get_video_mode(FRACTAL_INFO *info, ext_blk_3 *blk_3_info);
 // loadfile -- C file prototypes
 extern int read_overlay();
 extern void set_if_old_bif();

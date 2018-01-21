@@ -11,6 +11,7 @@
 #include "fractype.h"
 #include "framain2.h"
 #include "helpdefs.h"
+#include "loadfdos.h"
 #include "targa_lc.h"
 
 #include <errno.h>
