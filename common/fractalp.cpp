@@ -7,6 +7,8 @@
 
 #include "ant.h"
 #include "calcfrac.h"
+#include "fractalb.h"
+#include "fractalp.h"
 #include "fractals.h"
 #include "fractype.h"
 #include "frasetup.h"

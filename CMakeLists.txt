@@ -67,7 +67,7 @@ add_executable(id ${OS_ID_OPTIONS}
     common/calmanfp.cpp headers/calmanfp.h
     common/fracsuba.cpp headers/fracsuba.h
     common/fracsubr.cpp headers/fracsubr.h
-    common/fractalb.cpp
+    common/fractalb.cpp headers/fractalb.h
     common/fractalp.cpp headers/fractalp.h
     common/fractals.cpp headers/fractals.h
     common/frasetup.cpp headers/frasetup.h

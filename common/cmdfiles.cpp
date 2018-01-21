@@ -9,6 +9,7 @@
 #include "drivers.h"
 #include "fracsuba.h"
 #include "fracsubr.h"
+#include "fractalb.h"
 #include "fractals.h"
 #include "fractype.h"
 #include "helpcom.h"

@@ -9,6 +9,7 @@ FRACTALS.C, i.e. which are non-fractal-specific fractal engine subroutines.
 #include "calcfrac.h"
 #include "drivers.h"
 #include "fracsubr.h"
+#include "fractalb.h"
 #include "fractalp.h"
 #include "fractals.h"
 #include "fractype.h"
