@@ -5,6 +5,7 @@
 #include "prototyp.h"
 
 #include "calcfrac.h"
+#include "fractals.h"
 
 int asmlMODbailout()
 {

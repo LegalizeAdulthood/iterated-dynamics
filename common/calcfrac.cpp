@@ -24,6 +24,7 @@ Additional fractal-specific modules are also invoked from CALCFRAC:
 #include "fpu087.h"
 #include "fracsubr.h"
 #include "fractalp.h"
+#include "fractals.h"
 #include "fractype.h"
 #include "framain2.h"
 #include "line3d.h"

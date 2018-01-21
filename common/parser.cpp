@@ -23,6 +23,7 @@
 #include "cmdfiles.h"
 #include "drivers.h"
 #include "fpu087.h"
+#include "fractals.h"
 #include "jiim.h"
 #include "miscres.h"
 #include "mpmath_c.h"

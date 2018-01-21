@@ -12,6 +12,7 @@ Miscellaneous fractal-specific code (formerly in CALCFRAC.C)
 #include "drivers.h"
 #include "fpu087.h"
 #include "fracsubr.h"
+#include "fractals.h"
 #include "fractype.h"
 #include "framain2.h"
 #include "loadmap.h"

@@ -11,6 +11,7 @@
 #include "cmdfiles.h"
 #include "diskvid.h"
 #include "drivers.h"
+#include "fractals.h"
 #include "miscres.h"
 #include "prompts2.h"
 #include "realdos.h"

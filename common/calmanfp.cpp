@@ -12,6 +12,7 @@
 #include "cmdfiles.h"
 #include "drivers.h"
 #include "fracsubr.h"
+#include "fractals.h"
 #include "fractype.h"
 
 static int inside_color, periodicity_color;

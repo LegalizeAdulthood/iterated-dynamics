@@ -22,6 +22,7 @@
 #include "calcfrac.h"
 #include "cmdfiles.h"
 #include "fpu087.h"
+#include "fractals.h"
 #include "jiim.h"
 #include "mpmath_c.h"
 #include "parser.h"

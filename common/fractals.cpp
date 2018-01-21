@@ -65,14 +65,25 @@ const long l16triglim = 8L << 16;       // domain limit of fast trig functions
 
 } // namespace
 
-LComplex g_l_coefficient, g_l_old_z, g_l_new_z, g_l_param, g_l_init, g_l_temp, ltmp2, g_l_param2;
-long g_l_temp_sqr_x, g_l_temp_sqr_y;
+LComplex g_l_coefficient;
+LComplex g_l_old_z;
+LComplex g_l_new_z;
+LComplex g_l_param;
+LComplex g_l_init;
+LComplex g_l_temp;
+static LComplex ltmp2;
+LComplex g_l_param2;
+long g_l_temp_sqr_x;
+long g_l_temp_sqr_y;
 int g_max_color;
-int g_degree, g_basin;
-double g_newton_r_over_d, g_degree_minus_1_over_degree, g_threshold;
-DComplex tmp2;
+int g_degree;
+int g_basin;
+double g_newton_r_over_d;
+double g_degree_minus_1_over_degree;
+double g_threshold;
+static DComplex tmp2;
 DComplex g_marks_coefficient;
-DComplex  staticroots[16]; // roots array for degree 16 or less
+static DComplex  staticroots[16]; // roots array for degree 16 or less
 std::vector<DComplex> g_roots;
 std::vector<MPC> g_mpc_roots;
 long g_fudge_half;
@@ -90,7 +101,8 @@ int g_c_exponent;
 
 
 // These are local but I don't want to pass them as parameters
-DComplex g_param_z1, g_param_z2;
+DComplex g_param_z1;
+DComplex g_param_z2;
 DComplex *g_float_param;
 LComplex *g_long_param; // used here and in jb.c
 
@@ -98,21 +110,34 @@ LComplex *g_long_param; // used here and in jb.c
 //              These variables are external for speed's sake only
 // --------------------------------------------------------------------
 
-double g_sin_x, g_cos_x;
-double siny, cosy;
-double tmpexp;
-double g_temp_sqr_x, g_temp_sqr_y;
+double g_sin_x;
+double g_cos_x;
+static double siny;
+static double cosy;
+static double tmpexp;
+double g_temp_sqr_x;
+double g_temp_sqr_y;
 
-double foldxinitx, foldyinity, foldxinity, foldyinitx;
-long oldxinitx, oldyinity, oldxinity, oldyinitx;
-long longtmp;
+static double foldxinitx;
+static double foldyinity;
+static double foldxinity;
+static double foldyinitx;
+static long oldxinitx;
+static long oldyinity;
+static long oldxinity;
+static long oldyinitx;
+static long longtmp;
 
-// These are for quaternions
-double g_quaternion_c, g_quaternion_ci, g_quaternion_cj, g_quaternino_ck;
+double g_quaternion_c;
+double g_quaternion_ci;
+double g_quaternion_cj;
+double g_quaternino_ck;
 
 // temporary variables for trig use
-long lcosx, lsinx;
-long lcosy, lsiny;
+static long lcosx;
+static long lsinx;
+static long lcosy;
+static long lsiny;
 
 /*
 **  details of finite attractors (required for Magnet Fractals)
@@ -122,9 +147,9 @@ long lcosy, lsiny;
 /*
 **  pre-calculated values for fractal types Magnet2M & Magnet2J
 */
-DComplex  T_Cm1;        // 3 * (floatparm - 1)
-DComplex  T_Cm2;        // 3 * (floatparm - 2)
-DComplex  T_Cm1Cm2;     // (floatparm - 1) * (floatparm - 2)
+static DComplex  T_Cm1;        // 3 * (floatparm - 1)
+static DComplex  T_Cm2;        // 3 * (floatparm - 2)
+static DComplex  T_Cm1Cm2;     // (floatparm - 1) * (floatparm - 2)
 
 void FloatPreCalcMagnet2() // precalculation for Magnet2 (M & J) for speed
 {
@@ -319,7 +344,10 @@ static int  Halleybailout()
 
 #if !defined(XFRACT)
 #define MPCmod(m) (*pMPadd(*pMPmul((m).x, (m).x), *pMPmul((m).y, (m).y)))
-MPC mpcold, mpcnew, mpctmp, mpctmp1;
+static MPC mpcold;
+static MPC mpcnew;
+static MPC mpctmp;
+static MPC mpctmp1;
 MP g_mp_temp_param2_x;
 
 static int  MPCHalleybailout()
@@ -338,7 +366,9 @@ static int  MPCHalleybailout()
 // --------------------------------------------------------------------
 //              Fractal (once per iteration) routines
 // --------------------------------------------------------------------
-static double xt, yt, t2;
+static double xt;
+static double yt;
+static double t2;
 
 /* Raise complex number (base) to the (exp) power, storing the result
 ** in complex (result).
@@ -385,9 +415,11 @@ void cpower(DComplex *base, int exp, DComplex *result)
 
 #if !defined(XFRACT)
 // long version
-static long lxt, lyt, lt2;
-int
-lcpower(LComplex *base, int exp, LComplex *result, int bitshift)
+static long lxt;
+static long lyt;
+static long lt2;
+
+int lcpower(LComplex *base, int exp, LComplex *result, int bitshift)
 {
     if (exp < 0)
     {
@@ -510,16 +542,14 @@ int NewtonFractal2()
     return 0;
 }
 
-int
-complex_mult(DComplex arg1, DComplex arg2, DComplex *pz)
+int complex_mult(DComplex arg1, DComplex arg2, DComplex *pz)
 {
     pz->x = arg1.x*arg2.x - arg1.y*arg2.y;
     pz->y = arg1.x*arg2.y+arg1.y*arg2.x;
     return 0;
 }
 
-int
-complex_div(DComplex numerator, DComplex denominator, DComplex *pout)
+int complex_div(DComplex numerator, DComplex denominator, DComplex *pout)
 {
     double mod = modulus(denominator);
     if (mod < FLT_MIN)
@@ -534,7 +564,9 @@ complex_div(DComplex numerator, DComplex denominator, DComplex *pout)
 }
 
 #if !defined(XFRACT)
-MP g_newton_mp_r_over_d, g_mp_degree_minus_1_over_degree, g_mp_threshold;
+MP g_newton_mp_r_over_d;
+MP g_mp_degree_minus_1_over_degree;
+MP g_mp_threshold;
 MP g_mp_temp2;
 MP g_mp_one;
 #endif
@@ -594,8 +626,7 @@ int MPCNewtonFractal()
 #endif
 }
 
-int
-Barnsley1Fractal()
+int Barnsley1Fractal()
 {
 #if !defined(XFRACT)
     /* Barnsley's Mandelbrot type M1 from "Fractals
@@ -623,8 +654,7 @@ Barnsley1Fractal()
 #endif
 }
 
-int
-Barnsley1FPFractal()
+int Barnsley1FPFractal()
 {
     /* Barnsley's Mandelbrot type M1 from "Fractals
     Everywhere" by Michael Barnsley, p. 322 */
@@ -649,8 +679,7 @@ Barnsley1FPFractal()
     return floatbailout();
 }
 
-int
-Barnsley2Fractal()
+int Barnsley2Fractal()
 {
 #if !defined(XFRACT)
     /* An unnamed Mandelbrot/Julia function from "Fractals
@@ -680,8 +709,7 @@ Barnsley2Fractal()
 #endif
 }
 
-int
-Barnsley2FPFractal()
+int Barnsley2FPFractal()
 {
     /* An unnamed Mandelbrot/Julia function from "Fractals
     Everywhere" by Michael Barnsley, p. 331, example 4.2 */
@@ -706,8 +734,7 @@ Barnsley2FPFractal()
     return floatbailout();
 }
 
-int
-JuliaFractal()
+int JuliaFractal()
 {
 #if !defined(XFRACT)
     /* used for C prototype of fast integer math routines for classic
@@ -730,8 +757,7 @@ JuliaFractal()
 #endif
 }
 
-int
-JuliafpFractal()
+int JuliafpFractal()
 {
     // floating point version of classical Mandelbrot/Julia
     // note that fast >= 287 equiv in fracsuba.asm must be kept in step
@@ -740,8 +766,7 @@ JuliafpFractal()
     return floatbailout();
 }
 
-int
-LambdaFPFractal()
+int LambdaFPFractal()
 {
     // variation of classical Mandelbrot/Julia
     // note that fast >= 287 equiv in fracsuba.asm must be kept in step
@@ -755,8 +780,7 @@ LambdaFPFractal()
     return floatbailout();
 }
 
-int
-LambdaFractal()
+int LambdaFractal()
 {
 #if !defined(XFRACT)
     // variation of classical Mandelbrot/Julia
@@ -776,8 +800,7 @@ LambdaFractal()
 #endif
 }
 
-int
-SierpinskiFractal()
+int SierpinskiFractal()
 {
 #if !defined(XFRACT)
     /* following code translated from basic - see "Fractals
@@ -799,8 +822,7 @@ SierpinskiFractal()
 #endif
 }
 
-int
-SierpinskiFPFractal()
+int SierpinskiFPFractal()
 {
     /* following code translated from basic - see "Fractals
     Everywhere" by Michael Barnsley, p. 251, Program 7.1.1 */
@@ -820,8 +842,7 @@ SierpinskiFPFractal()
     return floatbailout();
 }
 
-int
-LambdaexponentFractal()
+int LambdaexponentFractal()
 {
     // found this in  "Science of Fractal Images"
     FLOATEXPBAILOUT();
@@ -842,8 +863,7 @@ LambdaexponentFractal()
     return 0;
 }
 
-int
-LongLambdaexponentFractal()
+int LongLambdaexponentFractal()
 {
 #if !defined(XFRACT)
     // found this in  "Science of Fractal Images"
@@ -871,8 +891,7 @@ LongLambdaexponentFractal()
 #endif
 }
 
-int
-FloatTrigPlusExponentFractal()
+int FloatTrigPlusExponentFractal()
 {
     // another Scientific American biomorph type
     // z(n+1) = e**z(n) + trig(z(n)) + C
@@ -891,8 +910,7 @@ FloatTrigPlusExponentFractal()
     return floatbailout();
 }
 
-int
-LongTrigPlusExponentFractal()
+int LongTrigPlusExponentFractal()
 {
 #if !defined(XFRACT)
     // calculate exp(z)
@@ -912,8 +930,7 @@ LongTrigPlusExponentFractal()
 #endif
 }
 
-int
-MarksLambdaFractal()
+int MarksLambdaFractal()
 {
     // Mark Peterson's variation of "lambda" function
 
@@ -933,8 +950,7 @@ MarksLambdaFractal()
 #endif
 }
 
-int
-MarksLambdafpFractal()
+int MarksLambdafpFractal()
 {
     // Mark Peterson's variation of "lambda" function
 
@@ -949,10 +965,11 @@ MarksLambdafpFractal()
 }
 
 
-long g_xx_one, g_fudge_one, g_fudge_two;
+long g_xx_one;
+long g_fudge_one;
+long g_fudge_two;
 
-int
-UnityFractal()
+int UnityFractal()
 {
 #if !defined(XFRACT)
     g_xx_one = multiply(g_l_old_z.x, g_l_old_z.x, g_bit_shift) + multiply(g_l_old_z.y, g_l_old_z.y, g_bit_shift);
@@ -969,8 +986,7 @@ UnityFractal()
 #endif
 }
 
-int
-UnityfpFractal()
+int UnityfpFractal()
 {
     double XXOne;
     XXOne = sqr(g_old_z.x) + sqr(g_old_z.y);
@@ -984,8 +1000,7 @@ UnityfpFractal()
     return 0;
 }
 
-int
-Mandel4Fractal()
+int Mandel4Fractal()
 {
     /*
        this routine calculates the Mandelbrot/Julia set based on the
@@ -1010,8 +1025,7 @@ Mandel4Fractal()
 #endif
 }
 
-int
-Mandel4fpFractal()
+int Mandel4fpFractal()
 {
     // first, compute (x + iy)**2
     g_new_z.x  = g_temp_sqr_x - g_temp_sqr_y;
@@ -1027,8 +1041,7 @@ Mandel4fpFractal()
     return floatbailout();
 }
 
-int
-floatZtozPluszpwrFractal()
+int floatZtozPluszpwrFractal()
 {
     cpower(&g_old_z, (int)g_params[2], &g_new_z);
     g_old_z = ComplexPower(g_old_z, g_old_z);
@@ -1037,8 +1050,7 @@ floatZtozPluszpwrFractal()
     return floatbailout();
 }
 
-int
-longZpowerFractal()
+int longZpowerFractal()
 {
 #if !defined(XFRACT)
     if (lcpower(&g_l_old_z, g_c_exponent, &g_l_new_z, g_bit_shift))
@@ -1054,8 +1066,7 @@ longZpowerFractal()
 #endif
 }
 
-int
-longCmplxZpowerFractal()
+int longCmplxZpowerFractal()
 {
 #if !defined(XFRACT)
     DComplex x, y;
@@ -1082,8 +1093,7 @@ longCmplxZpowerFractal()
 #endif
 }
 
-int
-floatZpowerFractal()
+int floatZpowerFractal()
 {
     cpower(&g_old_z, g_c_exponent, &g_new_z);
     g_new_z.x += g_float_param->x;
@@ -1091,8 +1101,7 @@ floatZpowerFractal()
     return floatbailout();
 }
 
-int
-floatCmplxZpowerFractal()
+int floatCmplxZpowerFractal()
 {
     g_new_z = ComplexPower(g_old_z, g_param_z2);
     g_new_z.x += g_float_param->x;
@@ -1100,8 +1109,7 @@ floatCmplxZpowerFractal()
     return floatbailout();
 }
 
-int
-Barnsley3Fractal()
+int Barnsley3Fractal()
 {
     /* An unnamed Mandelbrot/Julia function from "Fractals
     Everywhere" by Michael Barnsley, p. 292, example 4.1 */
@@ -1135,8 +1143,7 @@ Barnsley3Fractal()
 #endif
 }
 
-int
-Barnsley3FPFractal()
+int Barnsley3FPFractal()
 {
     /* An unnamed Mandelbrot/Julia function from "Fractals
     Everywhere" by Michael Barnsley, p. 292, example 4.1 */
@@ -1166,8 +1173,7 @@ Barnsley3FPFractal()
     return floatbailout();
 }
 
-int
-TrigPlusZsquaredFractal()
+int TrigPlusZsquaredFractal()
 {
 #if !defined(XFRACT)
     // From Scientific American, July 1989
@@ -1182,8 +1188,7 @@ TrigPlusZsquaredFractal()
 #endif
 }
 
-int
-TrigPlusZsquaredfpFractal()
+int TrigPlusZsquaredfpFractal()
 {
     // From Scientific American, July 1989
     // A Biomorph
@@ -1195,8 +1200,7 @@ TrigPlusZsquaredfpFractal()
     return floatbailout();
 }
 
-int
-Richard8fpFractal()
+int Richard8fpFractal()
 {
     //  Richard8 {c = z = pixel: z=sin(z)+sin(pixel),|z|<=50}
     CMPLXtrig0(g_old_z, g_new_z);
@@ -1205,8 +1209,7 @@ Richard8fpFractal()
     return floatbailout();
 }
 
-int
-Richard8Fractal()
+int Richard8Fractal()
 {
 #if !defined(XFRACT)
     //  Richard8 {c = z = pixel: z=sin(z)+sin(pixel),|z|<=50}
@@ -1219,8 +1222,7 @@ Richard8Fractal()
 #endif
 }
 
-int
-PopcornFractal_Old()
+int PopcornFractal_Old()
 {
     g_tmp_z = g_old_z;
     g_tmp_z.x *= 3.0;
@@ -1252,8 +1254,7 @@ PopcornFractal_Old()
     return 0;
 }
 
-int
-PopcornFractal()
+int PopcornFractal()
 {
     g_tmp_z = g_old_z;
     g_tmp_z.x *= 3.0;
@@ -1283,8 +1284,7 @@ PopcornFractal()
     return 0;
 }
 
-int
-LPopcornFractal_Old()
+int LPopcornFractal_Old()
 {
 #if !defined(XFRACT)
     g_l_temp = g_l_old_z;
@@ -1325,8 +1325,7 @@ LPopcornFractal_Old()
 #endif
 }
 
-int
-LPopcornFractal()
+int LPopcornFractal()
 {
 #if !defined(XFRACT)
     g_l_temp = g_l_old_z;
@@ -1368,8 +1367,7 @@ LPopcornFractal()
 
 // Popcorn generalization
 
-int
-PopcornFractalFn()
+int PopcornFractalFn()
 {
     DComplex tmpx;
     DComplex tmpy;
@@ -1418,8 +1416,7 @@ PopcornFractalFn()
         g_overflow = false;           \
    }
 
-int
-LPopcornFractalFn()
+int LPopcornFractalFn()
 {
 #if !defined(XFRACT)
     LComplex ltmpx, ltmpy;
@@ -1488,8 +1485,7 @@ int SpiderfpFractal()
     return floatbailout();
 }
 
-int
-SpiderFractal()
+int SpiderFractal()
 {
 #if !defined(XFRACT)
     // Spider(XAXIS) { c=z=pixel: z=z*z+c; c=c/2+z, |z|<=4 }
@@ -1503,16 +1499,14 @@ SpiderFractal()
 #endif
 }
 
-int
-TetratefpFractal()
+int TetratefpFractal()
 {
     // Tetrate(XAXIS) { c=z=pixel: z=c^z, |z|<=(P1+3) }
     g_new_z = ComplexPower(*g_float_param, g_old_z);
     return floatbailout();
 }
 
-int
-ZXTrigPlusZFractal()
+int ZXTrigPlusZFractal()
 {
 #if !defined(XFRACT)
     // z = (p1*z*trig(z))+p2*z
@@ -1527,8 +1521,7 @@ ZXTrigPlusZFractal()
 #endif
 }
 
-int
-ScottZXTrigPlusZFractal()
+int ScottZXTrigPlusZFractal()
 {
 #if !defined(XFRACT)
     // z = (z*trig(z))+z
@@ -1541,8 +1534,7 @@ ScottZXTrigPlusZFractal()
 #endif
 }
 
-int
-SkinnerZXTrigSubZFractal()
+int SkinnerZXTrigSubZFractal()
 {
 #if !defined(XFRACT)
     // z = (z*trig(z))-z
@@ -1555,8 +1547,7 @@ SkinnerZXTrigSubZFractal()
 #endif
 }
 
-int
-ZXTrigPlusZfpFractal()
+int ZXTrigPlusZfpFractal()
 {
     // z = (p1*z*trig(z))+p2*z
     CMPLXtrig0(g_old_z, g_tmp_z);          // tmp  = trig(old)
@@ -1567,8 +1558,7 @@ ZXTrigPlusZfpFractal()
     return floatbailout();
 }
 
-int
-ScottZXTrigPlusZfpFractal()
+int ScottZXTrigPlusZfpFractal()
 {
     // z = (z*trig(z))+z
     CMPLXtrig0(g_old_z, g_tmp_z);         // tmp  = trig(old)
@@ -1577,8 +1567,7 @@ ScottZXTrigPlusZfpFractal()
     return floatbailout();
 }
 
-int
-SkinnerZXTrigSubZfpFractal()
+int SkinnerZXTrigSubZfpFractal()
 {
     // z = (z*trig(z))-z
     CMPLXtrig0(g_old_z, g_tmp_z);         // tmp  = trig(old)
@@ -1587,8 +1576,7 @@ SkinnerZXTrigSubZfpFractal()
     return floatbailout();
 }
 
-int
-Sqr1overTrigFractal()
+int Sqr1overTrigFractal()
 {
 #if !defined(XFRACT)
     // z = sqr(1/trig(z))
@@ -1601,8 +1589,7 @@ Sqr1overTrigFractal()
 #endif
 }
 
-int
-Sqr1overTrigfpFractal()
+int Sqr1overTrigfpFractal()
 {
     // z = sqr(1/trig(z))
     CMPLXtrig0(g_old_z, g_old_z);
@@ -1611,8 +1598,7 @@ Sqr1overTrigfpFractal()
     return floatbailout();
 }
 
-int
-TrigPlusTrigFractal()
+int TrigPlusTrigFractal()
 {
 #if !defined(XFRACT)
     // z = trig(0,z)*p1+trig1(z)*p2
@@ -1627,8 +1613,7 @@ TrigPlusTrigFractal()
 #endif
 }
 
-int
-TrigPlusTrigfpFractal()
+int TrigPlusTrigfpFractal()
 {
     // z = trig0(z)*p1+trig1(z)*p2
     CMPLXtrig0(g_old_z, g_tmp_z);
@@ -1643,8 +1628,7 @@ TrigPlusTrigfpFractal()
    or alternate calculations.  The shift is made when the mod
    reaches a given value.  */
 
-int
-LambdaTrigOrTrigFractal()
+int LambdaTrigOrTrigFractal()
 {
 #if !defined(XFRACT)
     /* z = trig0(z)*p1 if mod(old) < p2.x and
@@ -1665,8 +1649,7 @@ LambdaTrigOrTrigFractal()
 #endif
 }
 
-int
-LambdaTrigOrTrigfpFractal()
+int LambdaTrigOrTrigfpFractal()
 {
     /* z = trig0(z)*p1 if mod(old) < p2.x and
            trig1(z)*p1 if mod(old) >= p2.x */
@@ -1683,8 +1666,7 @@ LambdaTrigOrTrigfpFractal()
     return floatbailout();
 }
 
-int
-JuliaTrigOrTrigFractal()
+int JuliaTrigOrTrigFractal()
 {
 #if !defined(XFRACT)
     /* z = trig0(z)+p1 if mod(old) < p2.x and
@@ -1705,8 +1687,7 @@ JuliaTrigOrTrigFractal()
 #endif
 }
 
-int
-JuliaTrigOrTrigfpFractal()
+int JuliaTrigOrTrigfpFractal()
 {
     /* z = trig0(z)+p1 if mod(old) < p2.x and
            trig1(z)+p1 if mod(old) >= p2.x */
@@ -1723,8 +1704,10 @@ JuliaTrigOrTrigfpFractal()
     return floatbailout();
 }
 
-int g_halley_a_plus_one, g_halley_a_plus_one_times_degree;
-MP g_halley_mp_a_plus_one, g_halley_mp_a_plus_one_times_degree;
+int g_halley_a_plus_one;
+int g_halley_a_plus_one_times_degree;
+MP g_halley_mp_a_plus_one;
+MP g_halley_mp_a_plus_one_times_degree;
 MPC g_mpc_temp_param;
 
 int MPCHalleyFractal()
@@ -1784,8 +1767,7 @@ int MPCHalleyFractal()
 #endif
 }
 
-int
-HalleyFractal()
+int HalleyFractal()
 {
     //  X(X^a - 1) = 0, Halley Map
     //  a = parm.x = degree, relaxation coeff. = parm.y, epsilon = parm2.x
@@ -1824,8 +1806,7 @@ HalleyFractal()
     return Halleybailout();
 }
 
-int
-LongPhoenixFractal()
+int LongPhoenixFractal()
 {
 #if !defined(XFRACT)
     // z(n+1) = z(n)^2 + p + qy(n),  y(n+1) = z(n)
@@ -1839,8 +1820,7 @@ LongPhoenixFractal()
 #endif
 }
 
-int
-PhoenixFractal()
+int PhoenixFractal()
 {
     // z(n+1) = z(n)^2 + p + qy(n),  y(n+1) = z(n)
     g_tmp_z.x = g_old_z.x * g_old_z.y;
@@ -1850,8 +1830,7 @@ PhoenixFractal()
     return floatbailout();
 }
 
-int
-LongPhoenixFractalcplx()
+int LongPhoenixFractalcplx()
 {
 #if !defined(XFRACT)
     // z(n+1) = z(n)^2 + p + qy(n),  y(n+1) = z(n)
@@ -1865,8 +1844,7 @@ LongPhoenixFractalcplx()
 #endif
 }
 
-int
-PhoenixFractalcplx()
+int PhoenixFractalcplx()
 {
     // z(n+1) = z(n)^2 + p1 + p2*y(n),  y(n+1) = z(n)
     g_tmp_z.x = g_old_z.x * g_old_z.y;
@@ -1876,8 +1854,7 @@ PhoenixFractalcplx()
     return floatbailout();
 }
 
-int
-LongPhoenixPlusFractal()
+int LongPhoenixPlusFractal()
 {
 #if !defined(XFRACT)
     // z(n+1) = z(n)^(degree-1) * (z(n) + p) + qy(n),  y(n+1) = z(n)
@@ -1900,8 +1877,7 @@ LongPhoenixPlusFractal()
 #endif
 }
 
-int
-PhoenixPlusFractal()
+int PhoenixPlusFractal()
 {
     // z(n+1) = z(n)^(degree-1) * (z(n) + p) + qy(n),  y(n+1) = z(n)
     DComplex oldplus, newminus;
@@ -1920,8 +1896,7 @@ PhoenixPlusFractal()
     return floatbailout();
 }
 
-int
-LongPhoenixMinusFractal()
+int LongPhoenixMinusFractal()
 {
 #if !defined(XFRACT)
     // z(n+1) = z(n)^(degree-2) * (z(n)^2 + p) + qy(n),  y(n+1) = z(n)
@@ -1944,8 +1919,7 @@ LongPhoenixMinusFractal()
 #endif
 }
 
-int
-PhoenixMinusFractal()
+int PhoenixMinusFractal()
 {
     // z(n+1) = z(n)^(degree-2) * (z(n)^2 + p) + qy(n),  y(n+1) = z(n)
     DComplex oldsqr, newminus;
@@ -1964,8 +1938,7 @@ PhoenixMinusFractal()
     return floatbailout();
 }
 
-int
-LongPhoenixCplxPlusFractal()
+int LongPhoenixCplxPlusFractal()
 {
 #if !defined(XFRACT)
     // z(n+1) = z(n)^(degree-1) * (z(n) + p) + qy(n),  y(n+1) = z(n)
@@ -1990,8 +1963,7 @@ LongPhoenixCplxPlusFractal()
 #endif
 }
 
-int
-PhoenixCplxPlusFractal()
+int PhoenixCplxPlusFractal()
 {
     // z(n+1) = z(n)^(degree-1) * (z(n) + p) + qy(n),  y(n+1) = z(n)
     DComplex oldplus, newminus;
@@ -2012,8 +1984,7 @@ PhoenixCplxPlusFractal()
     return floatbailout();
 }
 
-int
-LongPhoenixCplxMinusFractal()
+int LongPhoenixCplxMinusFractal()
 {
 #if !defined(XFRACT)
     // z(n+1) = z(n)^(degree-2) * (z(n)^2 + p) + qy(n),  y(n+1) = z(n)
@@ -2038,8 +2009,7 @@ LongPhoenixCplxMinusFractal()
 #endif
 }
 
-int
-PhoenixCplxMinusFractal()
+int PhoenixCplxMinusFractal()
 {
     // z(n+1) = z(n)^(degree-2) * (z(n)^2 + p) + qy(n),  y(n+1) = z(n)
     DComplex oldsqr, newminus;
@@ -2060,8 +2030,7 @@ PhoenixCplxMinusFractal()
     return floatbailout();
 }
 
-int
-ScottTrigPlusTrigFractal()
+int ScottTrigPlusTrigFractal()
 {
 #if !defined(XFRACT)
     // z = trig0(z)+trig1(z)
@@ -2074,8 +2043,7 @@ ScottTrigPlusTrigFractal()
 #endif
 }
 
-int
-ScottTrigPlusTrigfpFractal()
+int ScottTrigPlusTrigfpFractal()
 {
     // z = trig0(z)+trig1(z)
     CMPLXtrig0(g_old_z, g_tmp_z);
@@ -2084,8 +2052,7 @@ ScottTrigPlusTrigfpFractal()
     return floatbailout();
 }
 
-int
-SkinnerTrigSubTrigFractal()
+int SkinnerTrigSubTrigFractal()
 {
 #if !defined(XFRACT)
     // z = trig(0, z)-trig1(z)
@@ -2098,8 +2065,7 @@ SkinnerTrigSubTrigFractal()
 #endif
 }
 
-int
-SkinnerTrigSubTrigfpFractal()
+int SkinnerTrigSubTrigfpFractal()
 {
     // z = trig0(z)-trig1(z)
     CMPLXtrig0(g_old_z, g_tmp_z);
@@ -2108,8 +2074,7 @@ SkinnerTrigSubTrigfpFractal()
     return floatbailout();
 }
 
-int
-TrigXTrigfpFractal()
+int TrigXTrigfpFractal()
 {
     // z = trig0(z)*trig1(z)
     CMPLXtrig0(g_old_z, g_tmp_z);
@@ -2137,8 +2102,7 @@ static int TryFloatFractal(int (*fpFractal)())
 }
 #endif
 
-int
-TrigXTrigFractal()
+int TrigXTrigFractal()
 {
 #if !defined(XFRACT)
     LComplex ltmp2;
@@ -2161,8 +2125,7 @@ TrigXTrigFractal()
 //    special cases written for speed.
 //******************************************************************
 
-int
-TrigPlusSqrFractal() // generalization of Scott and Skinner types
+int TrigPlusSqrFractal() // generalization of Scott and Skinner types
 {
 #if !defined(XFRACT)
     // { z=pixel: z=(p1,p2)*trig(z)+(p3,p4)*sqr(z), |z|<BAILOUT }
@@ -2177,8 +2140,7 @@ TrigPlusSqrFractal() // generalization of Scott and Skinner types
 #endif
 }
 
-int
-TrigPlusSqrfpFractal() // generalization of Scott and Skinner types
+int TrigPlusSqrfpFractal() // generalization of Scott and Skinner types
 {
     // { z=pixel: z=(p1,p2)*trig(z)+(p3,p4)*sqr(z), |z|<BAILOUT }
     CMPLXtrig0(g_old_z, g_tmp_z);     // tmp = trig(old)
@@ -2189,8 +2151,7 @@ TrigPlusSqrfpFractal() // generalization of Scott and Skinner types
     return floatbailout();
 }
 
-int
-ScottTrigPlusSqrFractal()
+int ScottTrigPlusSqrFractal()
 {
 #if !defined(XFRACT)
     //  { z=pixel: z=trig(z)+sqr(z), |z|<BAILOUT }
@@ -2203,8 +2164,7 @@ ScottTrigPlusSqrFractal()
 #endif
 }
 
-int
-ScottTrigPlusSqrfpFractal() // float version
+int ScottTrigPlusSqrfpFractal() // float version
 {
     // { z=pixel: z=sin(z)+sqr(z), |z|<BAILOUT }
     CMPLXtrig0(g_old_z, g_new_z);       // new = trig(old)
@@ -2213,8 +2173,7 @@ ScottTrigPlusSqrfpFractal() // float version
     return floatbailout();
 }
 
-int
-SkinnerTrigSubSqrFractal()
+int SkinnerTrigSubSqrFractal()
 {
 #if !defined(XFRACT)
     // { z=pixel: z=sin(z)-sqr(z), |z|<BAILOUT }
@@ -2227,8 +2186,7 @@ SkinnerTrigSubSqrFractal()
 #endif
 }
 
-int
-SkinnerTrigSubSqrfpFractal()
+int SkinnerTrigSubSqrfpFractal()
 {
     // { z=pixel: z=sin(z)-sqr(z), |z|<BAILOUT }
     CMPLXtrig0(g_old_z, g_new_z);       // new = trig(old)
@@ -2237,8 +2195,7 @@ SkinnerTrigSubSqrfpFractal()
     return floatbailout();
 }
 
-int
-TrigZsqrdfpFractal()
+int TrigZsqrdfpFractal()
 {
     // { z=pixel: z=trig(z*z), |z|<TEST }
     CMPLXsqr_old(g_tmp_z);
@@ -2246,8 +2203,7 @@ TrigZsqrdfpFractal()
     return floatbailout();
 }
 
-int
-TrigZsqrdFractal() // this doesn't work very well
+int TrigZsqrdFractal() // this doesn't work very well
 {
 #if !defined(XFRACT)
     // { z=pixel: z=trig(z*z), |z|<TEST }
@@ -2271,8 +2227,7 @@ TrigZsqrdFractal() // this doesn't work very well
 #endif
 }
 
-int
-SqrTrigFractal()
+int SqrTrigFractal()
 {
 #if !defined(XFRACT)
     // { z=pixel: z=sqr(trig(z)), |z|<TEST}
@@ -2284,8 +2239,7 @@ SqrTrigFractal()
 #endif
 }
 
-int
-SqrTrigfpFractal()
+int SqrTrigfpFractal()
 {
     // SZSB(XYAXIS) { z=pixel, TEST=(p1+3): z=sin(z)*sin(z), |z|<TEST}
     CMPLXtrig0(g_old_z, g_tmp_z);
@@ -2293,8 +2247,7 @@ SqrTrigfpFractal()
     return floatbailout();
 }
 
-int
-Magnet1Fractal()    //    Z = ((Z**2 + C - 1)/(2Z + C - 2))**2
+int Magnet1Fractal()    //    Z = ((Z**2 + C - 1)/(2Z + C - 2))**2
 {
     //  In "Beauty of Fractals", code by Kev Allen.
     DComplex top, bot, tmp;
@@ -2322,8 +2275,7 @@ Magnet1Fractal()    //    Z = ((Z**2 + C - 1)/(2Z + C - 2))**2
     return floatbailout();
 }
 
-int
-Magnet2Fractal()  // Z = ((Z**3 + 3(C-1)Z + (C-1)(C-2)  ) /
+int Magnet2Fractal()  // Z = ((Z**3 + 3(C-1)Z + (C-1)(C-2)  ) /
 //       (3Z**2 + 3(C-2)Z + (C-1)(C-2)+1) )**2
 {
     //   In "Beauty of Fractals", code by Kev Allen.
@@ -2360,8 +2312,7 @@ Magnet2Fractal()  // Z = ((Z**3 + 3(C-1)Z + (C-1)(C-2)  ) /
     return floatbailout();
 }
 
-int
-LambdaTrigFractal()
+int LambdaTrigFractal()
 {
 #if !defined(XFRACT)
     LONGXYTRIGBAILOUT();
@@ -2374,8 +2325,7 @@ LambdaTrigFractal()
 #endif
 }
 
-int
-LambdaTrigfpFractal()
+int LambdaTrigfpFractal()
 {
     FLOATXYTRIGBAILOUT();
     CMPLXtrig0(g_old_z, g_tmp_z);              // tmp = trig(old)
@@ -2385,8 +2335,7 @@ LambdaTrigfpFractal()
 }
 
 // bailouts are different for different trig functions
-int
-LambdaTrigFractal1()
+int LambdaTrigFractal1()
 {
 #if !defined(XFRACT)
     LONGTRIGBAILOUT(); // sin,cos
@@ -2399,8 +2348,7 @@ LambdaTrigFractal1()
 #endif
 }
 
-int
-LambdaTrigfpFractal1()
+int LambdaTrigfpFractal1()
 {
     FLOATTRIGBAILOUT(); // sin,cos
     CMPLXtrig0(g_old_z, g_tmp_z);              // tmp = trig(old)
@@ -2409,8 +2357,7 @@ LambdaTrigfpFractal1()
     return 0;
 }
 
-int
-LambdaTrigFractal2()
+int LambdaTrigFractal2()
 {
 #if !defined(XFRACT)
     LONGHTRIGBAILOUT(); // sinh,cosh
@@ -2423,8 +2370,7 @@ LambdaTrigFractal2()
 #endif
 }
 
-int
-LambdaTrigfpFractal2()
+int LambdaTrigfpFractal2()
 {
 #if !defined(XFRACT)
     FLOATHTRIGBAILOUT(); // sinh,cosh
@@ -2437,8 +2383,7 @@ LambdaTrigfpFractal2()
 #endif
 }
 
-int
-ManOWarFractal()
+int ManOWarFractal()
 {
 #if !defined(XFRACT)
     // From Art Matrix via Lee Skinner
@@ -2451,8 +2396,7 @@ ManOWarFractal()
 #endif
 }
 
-int
-ManOWarfpFractal()
+int ManOWarfpFractal()
 {
     // From Art Matrix via Lee Skinner
     // note that fast >= 287 equiv in fracsuba.asm must be kept in step
@@ -2470,8 +2414,7 @@ ManOWarfpFractal()
    }
 */
 
-int
-MarksMandelPwrfpFractal()
+int MarksMandelPwrfpFractal()
 {
     CMPLXtrig0(g_old_z, g_new_z);
     CMPLXmult(g_tmp_z, g_new_z, g_new_z);
@@ -2480,8 +2423,7 @@ MarksMandelPwrfpFractal()
     return floatbailout();
 }
 
-int
-MarksMandelPwrFractal()
+int MarksMandelPwrFractal()
 {
 #if !defined(XFRACT)
     LCMPLXtrig0(g_l_old_z, g_l_new_z);
@@ -2499,8 +2441,7 @@ MarksMandelPwrFractal()
    I thought I would immortalize myself with this error!
                 Tim Wegner */
 
-int
-TimsErrorfpFractal()
+int TimsErrorfpFractal()
 {
     CMPLXtrig0(g_old_z, g_new_z);
     g_new_z.x = g_new_z.x * g_tmp_z.x - g_new_z.y * g_tmp_z.y;
@@ -2510,8 +2451,7 @@ TimsErrorfpFractal()
     return floatbailout();
 }
 
-int
-TimsErrorFractal()
+int TimsErrorFractal()
 {
 #if !defined(XFRACT)
     LCMPLXtrig0(g_l_old_z, g_l_new_z);
@@ -2525,8 +2465,7 @@ TimsErrorFractal()
 #endif
 }
 
-int
-CirclefpFractal()
+int CirclefpFractal()
 {
     long i;
     i = (long)(g_params[0]*(g_temp_sqr_x+g_temp_sqr_y));
@@ -2705,8 +2644,7 @@ int julia_per_pixel()
     return 0;
 }
 
-int
-marks_mandelpwr_per_pixel()
+int marks_mandelpwr_per_pixel()
 {
 #if !defined(XFRACT)
     mandel_per_pixel();
@@ -2908,8 +2846,7 @@ int marksmandelfp_per_pixel()
     return 1; // 1st iteration has been done
 }
 
-int
-marks_mandelpwrfp_per_pixel()
+int marks_mandelpwrfp_per_pixel()
 {
     mandelfp_per_pixel();
     g_tmp_z = g_old_z;
@@ -3019,8 +2956,7 @@ int MPCjulia_per_pixel()
 #endif
 }
 
-int
-otherrichard8fp_per_pixel()
+int otherrichard8fp_per_pixel()
 {
     othermandelfp_per_pixel();
     CMPLXtrig1(*g_float_param, g_tmp_z);
@@ -3208,6 +3144,7 @@ int phoenix_per_pixel()
     tmp2.y = 0;
     return 0;
 }
+
 int long_mandphoenix_per_pixel()
 {
 #if !defined(XFRACT)
@@ -3251,6 +3188,7 @@ int long_mandphoenix_per_pixel()
     return 0;
 #endif
 }
+
 int mandphoenix_per_pixel()
 {
     if (g_invert != 0)
@@ -3281,8 +3219,7 @@ int mandphoenix_per_pixel()
     return 1; // 1st iteration has been done
 }
 
-int
-QuaternionFPFractal()
+int QuaternionFPFractal()
 {
     double a0, a1, a2, a3, n0, n1, n2, n3;
     a0 = g_old_z.x;
@@ -3309,8 +3246,7 @@ QuaternionFPFractal()
     return 0;
 }
 
-int
-HyperComplexFPFractal()
+int HyperComplexFPFractal()
 {
     DHyperComplex hold, hnew;
     hold.x = g_old_z.x;
@@ -3341,8 +3277,7 @@ HyperComplexFPFractal()
     return 0;
 }
 
-int
-VLfpFractal() // Beauty of Fractals pp. 125 - 127
+int VLfpFractal() // Beauty of Fractals pp. 125 - 127
 {
     double a, b, ab, half, u, w, xy;
 
@@ -3358,8 +3293,7 @@ VLfpFractal() // Beauty of Fractals pp. 125 - 127
     return floatbailout();
 }
 
-int
-EscherfpFractal() // Science of Fractal Images pp. 185, 187
+int EscherfpFractal() // Science of Fractal Images pp. 185, 187
 {
     DComplex oldtest, newtest, testsqr;
     double testsize = 0.0;
@@ -3515,8 +3449,7 @@ int MandelbrotMix4fp_per_pixel()
     return 0; // 1st iteration has been NOT been done
 }
 
-int
-MandelbrotMix4fpFractal() // from formula by Jim Muth
+int MandelbrotMix4fpFractal() // from formula by Jim Muth
 {
     // z=k*((a*(z^b))+(d*(z^f)))+c,
     DComplex z_b, z_f;

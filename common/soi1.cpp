@@ -18,6 +18,7 @@
 #include "cmdfiles.h"
 #include "drivers.h"
 #include "fractalp.h"
+#include "fractals.h"
 #include "fractype.h"
 
 #include <algorithm>

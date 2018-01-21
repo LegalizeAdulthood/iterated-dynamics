@@ -12,6 +12,7 @@
 #include "encoder.h"
 #include "evolve.h"
 #include "fracsubr.h"
+#include "fractals.h"
 #include "fractype.h"
 #include "framain2.h"
 #include "helpcom.h"
