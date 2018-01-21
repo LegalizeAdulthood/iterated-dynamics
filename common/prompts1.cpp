@@ -1,10 +1,15 @@
 /*
         Various routines that prompt for things.
 */
-#include <cassert>
-#include <string>
+#include "port.h"
+#include "prototyp.h"
 
-#include <assert.h>
+#include "drivers.h"
+#include "fracsuba.h"
+#include "fractype.h"
+#include "helpcom.h"
+#include "helpdefs.h"
+
 #include <ctype.h>
 #include <float.h>
 #include <string.h>
@@ -13,18 +18,13 @@
 #include <sys/types.h>
 #endif
 
-#include "port.h"
-#include "prototyp.h"
-#include "fractype.h"
-#include "helpdefs.h"
-#include "helpcom.h"
-
 #ifdef __hpux
 #include <sys/param.h>
 #define getwd(a) getcwd(a, MAXPATHLEN)
 #endif
 
-#include "drivers.h"
+#include <cassert>
+#include <string>
 
 // Routines used in prompts2.c
 

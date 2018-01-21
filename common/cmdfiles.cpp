@@ -1,10 +1,13 @@
 /*
         Command-line / Command-File Parser Routines
 */
-#include <cassert>
-#include <string>
-#include <system_error>
-#include <vector>
+#include "port.h"
+#include "prototyp.h"
+
+#include "drivers.h"
+#include "fracsuba.h"
+#include "fractype.h"
+#include "helpcom.h"
 
 #include <ctype.h>
 #include <float.h>
@@ -13,11 +16,10 @@
 #include <time.h>
 #include <stdio.h>
 
-#include "port.h"
-#include "prototyp.h"
-#include "fractype.h"
-#include "drivers.h"
-#include "helpcom.h"
+#include <cassert>
+#include <string>
+#include <system_error>
+#include <vector>
 
 #ifdef XFRACT
 #define DEFAULT_PRINTER 5       // Assume a Postscript printer
