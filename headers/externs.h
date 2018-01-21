@@ -37,8 +37,6 @@ struct WORKLIST;
 extern int                   g_adapter;             // index into g_video_table[]
 extern bool                  g_auto_browse;
 
-extern int                   g_auto_stereo_depth;
-extern double                g_auto_stereo_width;
 extern int                   g_bad_config;
 extern bool                  g_bad_outside;
 extern int                   g_bf_save_len;
@@ -61,7 +59,6 @@ extern bool                  g_browse_check_fractal_type;
 extern bool                  g_busy;
 extern long                  g_calc_time;
 extern calc_status_value     g_calc_status;
-extern char                  g_calibrate;
 extern int                   g_colors;
 extern int                   g_color_bright;    // brightest color in palette
 extern int                   g_color_dark;      // darkest color in palette
@@ -134,7 +131,6 @@ extern std::string const     g_glasses1_map;
 extern int                   g_glasses_type;
 extern bool                  g_good_mode;       // video mode ok?
 extern bool                  g_got_real_dac;    // loaddac worked, really got a dac
-extern bool                  g_gray_flag;
 extern std::string const     g_gray_map_file;
 extern bool                  g_has_inverse;
 extern unsigned int          g_height;
@@ -142,7 +138,6 @@ extern float                 g_julibrot_height_fp;
 extern int                   g_help_mode;
 extern int                   g_hi_attenuation;
 extern int                   g_image_box_count;
-extern bool                  g_image_map;
 extern int                   g_integer_fractal;
 extern bool                  g_is_true_color;
 extern bool                  g_is_mandelbrot;
@@ -263,7 +258,6 @@ extern int                   g_slope;
 extern std::string const     g_speed_prompt;
 extern bool                  g_started_resaves;
 extern char                  g_std_calc_mode;
-extern std::string           g_stereo_map_filename;
 extern int                   g_store_index;
 extern double                g_save_x_3rd;
 extern int                   g_screen_x_dots;

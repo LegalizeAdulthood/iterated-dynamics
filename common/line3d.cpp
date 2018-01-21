@@ -15,6 +15,7 @@
 #include "miscres.h"
 #include "prompts2.h"
 #include "realdos.h"
+#include "stereo.h"
 
 #include <limits.h>
 #if defined(XFRACT)
