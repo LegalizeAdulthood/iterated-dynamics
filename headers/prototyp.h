@@ -24,22 +24,6 @@ extern int getakeynohelp();
 extern long readticker();
 extern int get_sound_params();
 extern void setnullvideo();
-// 3d -- C file prototypes
-extern void identity(MATRIX);
-extern void mat_mul(MATRIX, MATRIX, MATRIX);
-extern void scale(double, double, double, MATRIX);
-extern void xrot(double, MATRIX);
-extern void yrot(double, MATRIX);
-extern void zrot(double, MATRIX);
-extern void trans(double, double, double, MATRIX);
-extern int cross_product(VECTOR, VECTOR, VECTOR);
-extern bool normalize_vector(VECTOR);
-extern int vmult(VECTOR, MATRIX, VECTOR);
-extern void mult_vec(VECTOR);
-extern int perspective(VECTOR);
-extern int longvmultpersp(LVECTOR, LMATRIX, LVECTOR, LVECTOR, LVECTOR, int);
-extern int longpersp(LVECTOR, LVECTOR, int);
-extern int longvmult(LVECTOR, LMATRIX, LVECTOR, int);
 // biginit -- C file prototypes
 void free_bf_vars();
 bn_t alloc_stack(size_t size);

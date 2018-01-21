@@ -3,17 +3,19 @@
 // by the decoder. The purpose is to apply various 3D transformations
 // before displaying points. Called once per line of the input file.
 //**********************************************************************
-#include <algorithm>
-#include <vector>
+#include "port.h"
+#include "prototyp.h"
+
+#include "3d.h"
+#include "drivers.h"
 
 #include <limits.h>
 #if defined(XFRACT)
 #include <unistd.h>
 #endif
 
-#include "port.h"
-#include "prototyp.h"
-#include "drivers.h"
+#include <algorithm>
+#include <vector>
 
 struct point
 {

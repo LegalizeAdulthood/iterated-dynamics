@@ -3,16 +3,18 @@
    generators - IFS and LORENZ3D, along with code to generate
    red/blue 3D images.
 */
-#include <vector>
+#include "port.h"
+#include "prototyp.h"
+
+#include "3d.h"
+#include "drivers.h"
+#include "fractype.h"
 
 #include <float.h>
 #include <stdlib.h>
 #include <string.h>
 
-#include "port.h"
-#include "prototyp.h"
-#include "fractype.h"
-#include "drivers.h"
+#include <vector>
 
 // orbitcalc is declared with no arguments so jump through hoops here
 #define LORBIT(x, y, z) \
