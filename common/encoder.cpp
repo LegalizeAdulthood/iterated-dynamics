@@ -11,6 +11,7 @@
 #include "framain2.h"
 #include "loadfile.h"
 #include "miscres.h"
+#include "prompts2.h"
 
 #include <limits.h>
 #include <string.h>

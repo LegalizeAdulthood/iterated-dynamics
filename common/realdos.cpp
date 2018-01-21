@@ -8,6 +8,7 @@
 #include "helpcom.h"
 #include "helpdefs.h"
 #include "miscres.h"
+#include "prompts2.h"
 
 #include <ctype.h>
 #include <fcntl.h>

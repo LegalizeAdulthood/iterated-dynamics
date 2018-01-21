@@ -19,6 +19,7 @@
 #include "loadfile.h"
 #include "miscovl.h"
 #include "prompts1.h"
+#include "prompts2.h"
 
 #include <ctype.h>
 #include <signal.h>

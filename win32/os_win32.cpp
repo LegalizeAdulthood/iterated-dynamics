@@ -8,6 +8,7 @@
 #include "fractint.h"
 #include "helpdefs.h"
 #include "mpmath.h"
+#include "prompts2.h"
 
 #include <assert.h>
 #include <direct.h>

@@ -2,6 +2,7 @@
 #include "prototyp.h"
 
 #include "miscres.h"
+#include "prompts2.h"
 
 #include <float.h>
 #include <string.h>

@@ -7,10 +7,13 @@
 
 #include "port.h"
 #include "prototyp.h"
+
+#include "drivers.h"
 #include "fractint.h"
+#include "prompts2.h"
+
 #include "wintext.h"
 #include "frame.h"
-#include "drivers.h"
 
 #define FRAME_TIMER_ID 2
 

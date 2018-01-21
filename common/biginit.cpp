@@ -10,6 +10,7 @@ is in the allocations of memory for the big numbers.
 
 #include "calcfrac.h"
 #include "fractype.h"
+#include "prompts2.h"
 
 #include <float.h>
 #include <string.h>

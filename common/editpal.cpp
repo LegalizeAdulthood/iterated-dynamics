@@ -4,6 +4,15 @@
  * Edits VGA 256-color palettes.
  *
  */
+#include "port.h"
+#include "prototyp.h"
+
+#include "drivers.h"
+#include "prompts2.h"
+
+#include <stdarg.h>
+#include <string.h>
+
 #include <algorithm>
 #include <system_error>
 #include <vector>
@@ -12,15 +21,7 @@
 #include "mdisp.h"
 #endif
 
-#include <string.h>
-
-#include <stdarg.h>
-
 // see Fractint.c for a description of the "include"  hierarchy
-#include "port.h"
-#include "prototyp.h"
-#include "drivers.h"
-
 /*
  * misc. #defines
  */
