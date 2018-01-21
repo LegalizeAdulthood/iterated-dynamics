@@ -24,6 +24,7 @@
 #include "miscfrac.h"
 #include "prompts2.h"
 #include "realdos.h"
+#include "zoom.h"
 
 #include <stdarg.h>
 #include <string.h>

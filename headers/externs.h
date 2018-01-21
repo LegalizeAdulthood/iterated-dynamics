@@ -39,11 +39,7 @@ extern bool                  g_auto_browse;
 extern int                   g_bad_config;
 extern int                   g_bit_shift;
 
-extern int                   g_box_color;
 extern int                   g_box_count;
-extern int                   g_box_values[];
-extern int                   g_box_x[];
-extern int                   g_box_y[];
 extern std::string           g_browse_mask;
 extern bool                  g_browsing;
 extern bool                  g_browse_check_fractal_params;
@@ -281,7 +277,6 @@ extern VIDEOINFO             g_video_entry;
 extern VIDEOINFO             g_video_table[];
 extern int                   g_video_table_len;
 extern bool                  g_keep_aspect_ratio;
-extern bool                  g_video_scroll;
 extern int                   g_video_start_x;
 extern int                   g_video_start_y;
 extern int                   g_video_type;      // video adapter type

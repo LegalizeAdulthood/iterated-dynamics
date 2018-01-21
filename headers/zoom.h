@@ -2,6 +2,12 @@
 #if !defined(ZOOM_H)
 #define ZOOM_H
 
+extern int                   g_box_color;
+extern int                   g_box_values[];
+extern int                   g_box_x[];
+extern int                   g_box_y[];
+extern bool                  g_video_scroll;
+
 extern void drawbox(bool draw_it);
 extern void moveboxf(double, double);
 extern void resizebox(int);
