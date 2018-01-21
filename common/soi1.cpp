@@ -67,6 +67,27 @@ inline double_complex zsqr(double_complex z)
     return { z.re*z.re, z.im*z.im };
 }
 
+/* compute coefficients of Newton polynomial (b0,..,b2) from
+   (x0,w0),..,(x2,w2). */
+inline void interpolate(
+    double x0, double x1, double x2,
+    double w0, double w1, double w2,
+    double &b0, double &b1, double &b2)
+{
+    b0 = w0;
+    b1 = (w1 - w0)/(x1 - x0);
+    b2 = ((w2 - w1)/(x2 - x1) - b1)/(x2 - x0);
+}
+
+// evaluate Newton polynomial given by (x0,b0),(x1,b1) at x:=t
+inline double evaluate(
+    double x0, double x1,
+    double b0, double b1, double b2,
+    double t)
+{
+    return (b2*(t - x1) + b1)*(t - x0) + b0;
+}
+
 double_complex zi[9];
 soi_double_state state{};
 double twidth;
@@ -152,32 +173,22 @@ static void putbox(int x1, int y1, int x2, int y2, int color)
    during scanning. */
 #define GET_SCAN_REAL(x, y) \
     interpolate(cim1, midi, cim2, \
-        EVALUATE(cre1, midr, state.b1[0].re, state.b1[1].re, state.b1[2].re, x), \
-        EVALUATE(cre1, midr, state.b2[0].re, state.b2[1].re, state.b2[2].re, x), \
-        EVALUATE(cre1, midr, state.b3[0].re, state.b3[1].re, state.b3[2].re, x), y)
+        evaluate(cre1, midr, state.b1[0].re, state.b1[1].re, state.b1[2].re, x), \
+        evaluate(cre1, midr, state.b2[0].re, state.b2[1].re, state.b2[2].re, x), \
+        evaluate(cre1, midr, state.b3[0].re, state.b3[1].re, state.b3[2].re, x), y)
 #define GET_SCAN_IMAG(x, y) \
     interpolate(cre1, midr, cre2, \
-        EVALUATE(cim1, midi, state.b1[0].im, state.b1[1].im, state.b1[2].im, y), \
-        EVALUATE(cim1, midi, state.b2[0].im, state.b2[1].im, state.b2[2].im, y), \
-        EVALUATE(cim1, midi, state.b3[0].im, state.b3[1].im, state.b3[2].im, y), x)
-
-/* compute coefficients of Newton polynomial (b0,..,b2) from
-   (x0,w0),..,(x2,w2). */
-#define INTERPOLATE(x0, x1, x2, w0, w1, w2, b0, b1, b2) \
-    (b0) = (w0);                                        \
-    (b1) = ((w1) - (w0))/((x1) - (x0));                 \
-    (b2) = (((w2) - (w1))/((x2) - (x1)) - (b1))/((x2) - (x0))
-
-// evaluate Newton polynomial given by (x0,b0),(x1,b1) at x:=t
-#define EVALUATE(x0, x1, b0, b1, b2, t) \
-    (((b2)*((t) - (x1)) + (b1))*((t) - (x0)) + (b0))
+        evaluate(cim1, midi, state.b1[0].im, state.b1[1].im, state.b1[2].im, y), \
+        evaluate(cim1, midi, state.b2[0].im, state.b2[1].im, state.b2[2].im, y), \
+        evaluate(cim1, midi, state.b3[0].im, state.b3[1].im, state.b3[2].im, y), x)
 
 /* Newton Interpolation.
    It computes the value of the interpolation polynomial given by
    (x0,w0)..(x2,w2) at x:=t */
-static inline double interpolate(double x0, double x1, double x2,
-                        double w0, double w1, double w2,
-                        double t)
+static inline double interpolate(
+    double x0, double x1, double x2,
+    double w0, double w1, double w2,
+    double t)
 {
     const double b = (w1 - w0)/(x1 - x0);
     return (((w2 - w1)/(x2 - x1) - b)/(x2 - x0)*(t - x1) + b)*(t - x0) + w0;
@@ -271,13 +282,13 @@ static int rhombus(double cre1, double cre2, double cim1, double cim2,
     {
         // finish up the image by scanning the rectangle
 scan:
-        INTERPOLATE(cre1, midr, cre2, zi[0].re, zi[4].re, zi[1].re, state.b1[0].re, state.b1[1].re, state.b1[2].re);
-        INTERPOLATE(cre1, midr, cre2, zi[5].re, zi[8].re, zi[6].re, state.b2[0].re, state.b2[1].re, state.b2[2].re);
-        INTERPOLATE(cre1, midr, cre2, zi[2].re, zi[7].re, zi[3].re, state.b3[0].re, state.b3[1].re, state.b3[2].re);
+        interpolate(cre1, midr, cre2, zi[0].re, zi[4].re, zi[1].re, state.b1[0].re, state.b1[1].re, state.b1[2].re);
+        interpolate(cre1, midr, cre2, zi[5].re, zi[8].re, zi[6].re, state.b2[0].re, state.b2[1].re, state.b2[2].re);
+        interpolate(cre1, midr, cre2, zi[2].re, zi[7].re, zi[3].re, state.b3[0].re, state.b3[1].re, state.b3[2].re);
 
-        INTERPOLATE(cim1, midi, cim2, zi[0].im, zi[5].im, zi[2].im, state.b1[0].im, state.b1[1].im, state.b1[2].im);
-        INTERPOLATE(cim1, midi, cim2, zi[4].im, zi[8].im, zi[7].im, state.b2[0].im, state.b2[1].im, state.b2[2].im);
-        INTERPOLATE(cim1, midi, cim2, zi[1].im, zi[6].im, zi[3].im, state.b3[0].im, state.b3[1].im, state.b3[2].im);
+        interpolate(cim1, midi, cim2, zi[0].im, zi[5].im, zi[2].im, state.b1[0].im, state.b1[1].im, state.b1[2].im);
+        interpolate(cim1, midi, cim2, zi[4].im, zi[8].im, zi[7].im, state.b2[0].im, state.b2[1].im, state.b2[2].im);
+        interpolate(cim1, midi, cim2, zi[1].im, zi[6].im, zi[3].im, state.b3[0].im, state.b3[1].im, state.b3[2].im);
 
         state.step.re = (cre2 - cre1)/(x2 - x1);
         state.step.im = (cim2 - cim1)/(y2 - y1);
