@@ -18,6 +18,7 @@
 #include "helpdefs.h"
 #include "jiim.h"
 #include "lorenz.h"
+#include "miscfrac.h"
 
 #include <stdarg.h>
 #include <string.h>

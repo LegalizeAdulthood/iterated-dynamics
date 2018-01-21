@@ -24,8 +24,6 @@ extern int getakeynohelp();
 extern long readticker();
 extern int get_sound_params();
 extern void setnullvideo();
-// miscfrac -- C file prototypes
-extern void froth_cleanup();
 // miscovl -- C file prototypes
 extern void make_batch_file();
 extern void edit_text_colors();

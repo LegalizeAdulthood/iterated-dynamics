@@ -80,7 +80,7 @@ add_executable(id ${OS_ID_OPTIONS}
     common/lorenz.cpp headers/lorenz.h
     common/lsys.cpp headers/lsys_fns.h
     common/lsysf.cpp
-    common/miscfrac.cpp
+    common/miscfrac.cpp headers/miscfrac.h
 
     common/cmdfiles.cpp headers/cmdfiles.h
     common/decoder.cpp headers/decoder.h
