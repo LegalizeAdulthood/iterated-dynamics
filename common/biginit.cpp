@@ -9,6 +9,7 @@ is in the allocations of memory for the big numbers.
 #include "prototyp.h"
 
 #include "calcfrac.h"
+#include "fractalp.h"
 #include "fractype.h"
 #include "prompts2.h"
 #include "realdos.h"

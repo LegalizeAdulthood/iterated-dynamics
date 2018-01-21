@@ -4,6 +4,7 @@
 #include "calcfrac.h"
 #include "drivers.h"
 #include "fracsubr.h"
+#include "fractalp.h"
 #include "fractals.h"
 #include "fractype.h"
 #include "helpdefs.h"

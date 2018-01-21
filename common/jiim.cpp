@@ -14,6 +14,7 @@
 #include "drivers.h"
 #include "editpal.h"
 #include "fracsubr.h"
+#include "fractalp.h"
 #include "fractype.h"
 #include "helpdefs.h"
 #include "jiim.h"

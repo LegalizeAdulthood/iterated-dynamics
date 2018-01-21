@@ -17,6 +17,7 @@
 #include "port.h"
 #include "prototyp.h"
 #include "drivers.h"
+#include "fractalp.h"
 #include "fractype.h"
 
 #define EVERY 15

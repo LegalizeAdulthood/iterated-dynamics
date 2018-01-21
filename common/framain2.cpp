@@ -9,6 +9,7 @@
 #include "encoder.h"
 #include "evolve.h"
 #include "fracsubr.h"
+#include "fractalp.h"
 #include "fractype.h"
 #include "framain2.h"
 #include "gifview.h"

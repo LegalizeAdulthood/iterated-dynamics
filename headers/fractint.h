@@ -779,7 +779,6 @@ enum class init_orbit_mode
 #define RANDPARAM       4    // newparm = constant +- rand()
 #define NOGROUT         8    // no gaps between images
 
-extern fractalspecificstuff g_fractal_specific[];
 extern fractalspecificstuff *g_cur_fractal_specific;
 
 #define DEFAULTFRACTALTYPE      ".gif"

@@ -35,7 +35,6 @@ struct WORKLIST;
 
 // keep var names in column 30 for sorting via sort /+30 <in >out
 extern int                   g_adapter;             // index into g_video_table[]
-extern AlternateMath         g_alternate_math[];    // alternate math function pointers
 extern int                   g_ambient;             // Ambient= parameter value
 extern int                   g_and_color;           // AND mask for iteration to get color index
 extern int                   g_halley_a_plus_one_times_degree;
@@ -307,7 +306,6 @@ extern int                   g_smallest_box_size_shown;
 extern Minor                 g_inverse_julia_minor_method;
 extern int                   g_soi_min_stack;
 extern int                   g_soi_min_stack_available;
-extern MOREPARAMS            g_more_fractal_params[];
 extern MP                    g_halley_mp_a_plus_one_times_degree;
 extern MP                    g_halley_mp_a_plus_one;
 extern MPC                   g_mpc_one;
