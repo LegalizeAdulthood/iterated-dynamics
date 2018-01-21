@@ -16,10 +16,11 @@
     Southington, CT 06489
     (203) 276-9721
 */
-#include <algorithm>
-#include <cassert>
-#include <iterator>
-#include <string>
+#include "port.h"
+#include "prototyp.h"
+
+#include "drivers.h"
+#include "fpu087.h"
 
 #include <ctype.h>
 #include <float.h>
@@ -27,9 +28,10 @@
 #include <string.h>
 #include <time.h>
 
-#include "port.h"
-#include "prototyp.h"
-#include "drivers.h"
+#include <algorithm>
+#include <cassert>
+#include <iterator>
+#include <string>
 
 #ifdef WATCH_MP
 double x1, y1, x2, y2;

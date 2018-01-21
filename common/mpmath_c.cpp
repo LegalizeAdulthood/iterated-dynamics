@@ -16,11 +16,12 @@
      Southington, CT 06489
      (203) 276-9721
 */
-#include <algorithm>
-
-// see Fractint.c for a description of the "include"  hierarchy
 #include "port.h"
 #include "prototyp.h"
+
+#include "fpu087.h"
+
+#include <algorithm>
 
 namespace
 {

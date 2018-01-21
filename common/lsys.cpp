@@ -1,14 +1,16 @@
-#include <cassert>
-#include <string>
-#include <vector>
+#include "port.h"
+#include "prototyp.h"
+
+#include "drivers.h"
+#include "fpu087.h"
+#include "lsys.h"
 
 #include <float.h>
 #include <string.h>
 
-#include "port.h"
-#include "prototyp.h"
-#include "lsys.h"
-#include "drivers.h"
+#include <cassert>
+#include <string>
+#include <vector>
 
 struct lsys_cmd
 {

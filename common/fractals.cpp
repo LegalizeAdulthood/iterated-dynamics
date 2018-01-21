@@ -36,17 +36,18 @@ to the 'fractalspecific' structure, writing (or re-using one of the existing)
 an appropriate setup, per_image, per_pixel, and orbit routines.
 
 --------------------------------------------------------------------   */
+#include "port.h"
+#include "prototyp.h"
+
+#include "externs.h"
+#include "fpu087.h"
+#include "fractype.h"
+#include "helpdefs.h"
+
 #include <float.h>
 #include <limits.h>
 #include <stdlib.h>
 #include <string.h>
-
-#include "port.h"
-#include "prototyp.h"
-#include "helpdefs.h"
-#include "fractype.h"
-#include "externs.h"
-
 
 #define NEWTONDEGREELIMIT  100
 

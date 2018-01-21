@@ -102,7 +102,7 @@ add_executable(id ${OS_ID_OPTIONS}
     common/biginit.cpp
     common/bignum.cpp
     common/bignumc.cpp
-    common/fpu087.cpp
+    common/fpu087.cpp headers/fpu087.h
     common/hcmplx.cpp
     common/mpmath_c.cpp
 
