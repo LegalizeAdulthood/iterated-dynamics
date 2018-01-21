@@ -27,6 +27,7 @@
 #include "loadfile.h"
 #include "mpmath_c.h"
 #include "parser.h"
+#include "prompts2.h"
 
 #include <algorithm>
 

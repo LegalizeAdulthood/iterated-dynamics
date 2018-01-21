@@ -52,7 +52,6 @@ static  int check_f6_key(int curkey, int choice);
 static  int filename_speedstr(int row, int col, int vid,
                              char const *speedstring, int speed_match);
 static  int get_screen_corners();
-int get_corners();
 
 // speed key state values
 #define MATCHING         0      // string matches list - speed key mode

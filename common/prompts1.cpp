@@ -45,7 +45,6 @@
 
 // Routines used in prompts2.c
 
-extern int get_corners();
 int prompt_checkkey(int curkey);
 int prompt_checkkey_scroll(int curkey);
 

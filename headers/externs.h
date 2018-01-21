@@ -43,15 +43,15 @@ extern std::string           g_browse_mask;
 extern bool                  g_browsing;
 extern bool                  g_browse_check_fractal_params;
 extern bool                  g_browse_check_fractal_type;
-
 extern long                  g_calc_time;
 extern calc_status_value     g_calc_status;
 extern int                   g_colors;
+extern bool                  g_compare_gif;
+
 extern int                   g_color_bright;    // brightest color in palette
 extern int                   g_color_dark;      // darkest color in palette
 extern int                   g_color_medium;    // nearest to medbright grey in palette
-extern bool                  g_compare_gif;
-extern long                  g_concentration;
+
 extern BYTE                  g_dac_box[256][3];
 extern int                   g_dac_count;
 extern bool                  g_dac_learn;
