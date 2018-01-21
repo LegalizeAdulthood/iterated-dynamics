@@ -35,6 +35,7 @@
 #include "prototyp.h"
 
 #include "parser.h"
+#include "realdos.h"
 
 #include <ctype.h>
 #include <float.h>

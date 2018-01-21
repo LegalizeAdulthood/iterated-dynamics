@@ -24,9 +24,6 @@ extern int getakeynohelp();
 extern long readticker();
 extern int get_sound_params();
 extern void setnullvideo();
-// realdos -- C file prototypes
-extern int showvidlength();
-extern bool stopmsg(int flags, char const* msg);
 // slideshw -- C file prototypes
 extern int slideshw();
 extern slides_mode startslideshow();

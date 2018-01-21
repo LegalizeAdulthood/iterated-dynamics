@@ -9,6 +9,7 @@
 #include "helpdefs.h"
 #include "mpmath.h"
 #include "prompts2.h"
+#include "realdos.h"
 
 #include <assert.h>
 #include <direct.h>

@@ -11,6 +11,7 @@
 #include "drivers.h"
 #include "miscres.h"
 #include "prompts2.h"
+#include "realdos.h"
 
 #include <limits.h>
 #if defined(XFRACT)

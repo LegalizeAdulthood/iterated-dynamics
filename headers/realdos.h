@@ -39,5 +39,7 @@ extern void vidmode_keyname(int k, char *buf);
 extern void freetempmsg();
 extern void load_videotable(int);
 extern void bad_fractint_cfg_msg();
+extern int showvidlength();
+extern bool stopmsg(int flags, char const* msg);
 
 #endif

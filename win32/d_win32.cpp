@@ -10,6 +10,7 @@
 #include "fractype.h"
 #include "helpdefs.h"
 #include "helpcom.h"
+#include "realdos.h"
 
 #include <assert.h>
 #include <float.h>

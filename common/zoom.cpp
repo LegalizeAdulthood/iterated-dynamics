@@ -10,6 +10,7 @@
 #include "drivers.h"
 #include "fracsubr.h"
 #include "framain2.h"
+#include "realdos.h"
 
 #include <float.h>
 #include <string.h>

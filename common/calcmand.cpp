@@ -1,6 +1,7 @@
-#include <float.h>
 #include "port.h"
 #include "prototyp.h"
+
+#include "realdos.h"
 
 long
 calcmandasm()

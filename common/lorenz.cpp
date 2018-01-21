@@ -15,6 +15,7 @@
 #include "jiim.h"
 #include "miscres.h"
 #include "plot3d.h"
+#include "realdos.h"
 
 #include <float.h>
 #include <stdlib.h>
