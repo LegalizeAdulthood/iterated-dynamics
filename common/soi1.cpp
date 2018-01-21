@@ -241,38 +241,6 @@ static int rhombus(double cre1, double cre2, double cim1, double cim2,
     double midi = (cim1 + cim2)/2;
 
     double_complex s[9];
-    double re10;
-    double re11;
-    double re12;
-    double re13;
-    double re14;
-    double re15;
-    double re16;
-    double re17;
-    double re18;
-    double re19;
-    double re20;
-    double re21;
-    double im10;
-    double im11;
-    double im12;
-    double im13;
-    double im14;
-    double im15;
-    double im16;
-    double im17;
-    double im18;
-    double im19;
-    double im20;
-    double im21;
-    double re91;
-    double re92;
-    double re93;
-    double re94;
-    double im91;
-    double im92;
-    double im93;
-    double im94;
 
     bool status = false;
     g_rhombus_depth++;
@@ -655,51 +623,50 @@ scan:
 
     // compute key values for subsequent rectangles
 
-    re10 = interpolate(cre1, midr, cre2, s[0].re, s[4].re, s[1].re, state.corner[0].re);
-    im10 = interpolate(cre1, midr, cre2, s[0].im, s[4].im, s[1].im, state.corner[0].re);
+    double re10 = interpolate(cre1, midr, cre2, s[0].re, s[4].re, s[1].re, state.corner[0].re);
+    double im10 = interpolate(cre1, midr, cre2, s[0].im, s[4].im, s[1].im, state.corner[0].re);
 
-    re11 = interpolate(cre1, midr, cre2, s[0].re, s[4].re, s[1].re, state.corner[1].re);
-    im11 = interpolate(cre1, midr, cre2, s[0].im, s[4].im, s[1].im, state.corner[1].re);
+    double re11 = interpolate(cre1, midr, cre2, s[0].re, s[4].re, s[1].re, state.corner[1].re);
+    double im11 = interpolate(cre1, midr, cre2, s[0].im, s[4].im, s[1].im, state.corner[1].re);
 
-    re20 = interpolate(cre1, midr, cre2, s[2].re, s[7].re, s[3].re, state.corner[0].re);
-    im20 = interpolate(cre1, midr, cre2, s[2].im, s[7].im, s[3].im, state.corner[0].re);
+    double re20 = interpolate(cre1, midr, cre2, s[2].re, s[7].re, s[3].re, state.corner[0].re);
+    double im20 = interpolate(cre1, midr, cre2, s[2].im, s[7].im, s[3].im, state.corner[0].re);
 
-    re21 = interpolate(cre1, midr, cre2, s[2].re, s[7].re, s[3].re, state.corner[1].re);
-    im21 = interpolate(cre1, midr, cre2, s[2].im, s[7].im, s[3].im, state.corner[1].re);
+    double re21 = interpolate(cre1, midr, cre2, s[2].re, s[7].re, s[3].re, state.corner[1].re);
+    double im21 = interpolate(cre1, midr, cre2, s[2].im, s[7].im, s[3].im, state.corner[1].re);
 
-    re15 = interpolate(cre1, midr, cre2, s[5].re, s[8].re, s[6].re, state.corner[0].re);
-    im15 = interpolate(cre1, midr, cre2, s[5].im, s[8].im, s[6].im, state.corner[0].re);
+    double re15 = interpolate(cre1, midr, cre2, s[5].re, s[8].re, s[6].re, state.corner[0].re);
+    double im15 = interpolate(cre1, midr, cre2, s[5].im, s[8].im, s[6].im, state.corner[0].re);
 
-    re16 = interpolate(cre1, midr, cre2, s[5].re, s[8].re, s[6].re, state.corner[1].re);
-    im16 = interpolate(cre1, midr, cre2, s[5].im, s[8].im, s[6].im, state.corner[1].re);
+    double re16 = interpolate(cre1, midr, cre2, s[5].re, s[8].re, s[6].re, state.corner[1].re);
+    double im16 = interpolate(cre1, midr, cre2, s[5].im, s[8].im, s[6].im, state.corner[1].re);
 
-    re12 = interpolate(cim1, midi, cim2, s[0].re, s[5].re, s[2].re, state.corner[0].im);
-    im12 = interpolate(cim1, midi, cim2, s[0].im, s[5].im, s[2].im, state.corner[0].im);
+    double re12 = interpolate(cim1, midi, cim2, s[0].re, s[5].re, s[2].re, state.corner[0].im);
+    double im12 = interpolate(cim1, midi, cim2, s[0].im, s[5].im, s[2].im, state.corner[0].im);
 
-    re14 = interpolate(cim1, midi, cim2, s[1].re, s[6].re, s[3].re, state.corner[0].im);
-    im14 = interpolate(cim1, midi, cim2, s[1].im, s[6].im, s[3].im, state.corner[0].im);
+    double re14 = interpolate(cim1, midi, cim2, s[1].re, s[6].re, s[3].re, state.corner[0].im);
+    double im14 = interpolate(cim1, midi, cim2, s[1].im, s[6].im, s[3].im, state.corner[0].im);
 
-    re17 = interpolate(cim1, midi, cim2, s[0].re, s[5].re, s[2].re, state.corner[1].im);
-    im17 = interpolate(cim1, midi, cim2, s[0].im, s[5].im, s[2].im, state.corner[1].im);
+    double re17 = interpolate(cim1, midi, cim2, s[0].re, s[5].re, s[2].re, state.corner[1].im);
+    double im17 = interpolate(cim1, midi, cim2, s[0].im, s[5].im, s[2].im, state.corner[1].im);
 
-    re19 = interpolate(cim1, midi, cim2, s[1].re, s[6].re, s[3].re, state.corner[1].im);
-    im19 = interpolate(cim1, midi, cim2, s[1].im, s[6].im, s[3].im, state.corner[1].im);
+    double re19 = interpolate(cim1, midi, cim2, s[1].re, s[6].re, s[3].re, state.corner[1].im);
+    double im19 = interpolate(cim1, midi, cim2, s[1].im, s[6].im, s[3].im, state.corner[1].im);
 
-    re13 = interpolate(cim1, midi, cim2, s[4].re, s[8].re, s[7].re, state.corner[0].im);
-    im13 = interpolate(cim1, midi, cim2, s[4].im, s[8].im, s[7].im, state.corner[0].im);
+    double re13 = interpolate(cim1, midi, cim2, s[4].re, s[8].re, s[7].re, state.corner[0].im);
+    double im13 = interpolate(cim1, midi, cim2, s[4].im, s[8].im, s[7].im, state.corner[0].im);
 
-    re18 = interpolate(cim1, midi, cim2, s[4].re, s[8].re, s[7].re, state.corner[1].im);
-    im18 = interpolate(cim1, midi, cim2, s[4].im, s[8].im, s[7].im, state.corner[1].im);
+    double re18 = interpolate(cim1, midi, cim2, s[4].re, s[8].re, s[7].re, state.corner[1].im);
+    double im18 = interpolate(cim1, midi, cim2, s[4].im, s[8].im, s[7].im, state.corner[1].im);
 
-    re91 = GET_SAVED_REAL(state.corner[0].re, state.corner[0].im);
-    re92 = GET_SAVED_REAL(state.corner[1].re, state.corner[0].im);
-    re93 = GET_SAVED_REAL(state.corner[0].re, state.corner[1].im);
-    re94 = GET_SAVED_REAL(state.corner[1].re, state.corner[1].im);
-
-    im91 = GET_SAVED_IMAG(state.corner[0].re, state.corner[0].im);
-    im92 = GET_SAVED_IMAG(state.corner[1].re, state.corner[0].im);
-    im93 = GET_SAVED_IMAG(state.corner[0].re, state.corner[1].im);
-    im94 = GET_SAVED_IMAG(state.corner[1].re, state.corner[1].im);
+    double re91 = GET_SAVED_REAL(state.corner[0].re, state.corner[0].im);
+    double im91 = GET_SAVED_IMAG(state.corner[0].re, state.corner[0].im);
+    double re92 = GET_SAVED_REAL(state.corner[1].re, state.corner[0].im);
+    double im92 = GET_SAVED_IMAG(state.corner[1].re, state.corner[0].im);
+    double re93 = GET_SAVED_REAL(state.corner[0].re, state.corner[1].im);
+    double im93 = GET_SAVED_IMAG(state.corner[0].re, state.corner[1].im);
+    double re94 = GET_SAVED_REAL(state.corner[1].re, state.corner[1].im);
+    double im94 = GET_SAVED_IMAG(state.corner[1].re, state.corner[1].im);
 
     RHOMBUS(cre1, midr, cim1, midi, x1, ((x1 + x2) >> 1), y1, ((y1 + y2) >> 1),
             s[0].re, s[0].im,
