@@ -17,6 +17,7 @@
 #include "mpmath_c.h"
 #include "newton.h"
 #include "parser.h"
+#include "prompts1.h"
 
 // functions defined elsewhere needed for fractalspecific
 // moved to prototyp.h

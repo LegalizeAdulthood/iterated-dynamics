@@ -7,6 +7,7 @@
 #include "helpdefs.h"
 #include "fractalp.h"
 #include "miscres.h"
+#include "prompts1.h"
 
 #include <float.h>
 #include <stdlib.h>

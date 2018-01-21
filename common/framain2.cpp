@@ -19,6 +19,7 @@
 #include "lorenz.h"
 #include "miscovl.h"
 #include "miscres.h"
+#include "prompts1.h"
 
 #include <stdio.h>
 #include <string.h>

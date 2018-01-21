@@ -15,6 +15,7 @@
 #include "loadfile.h"
 #include "lorenz.h"
 #include "miscres.h"
+#include "prompts1.h"
 
 #include <errno.h>
 #include <string.h>
