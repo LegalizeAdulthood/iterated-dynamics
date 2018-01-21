@@ -21,6 +21,7 @@
 #include "prompts2.h"
 #include "realdos.h"
 #include "slideshw.h"
+#include "zoom.h"
 
 #include <ctype.h>
 #include <string.h>

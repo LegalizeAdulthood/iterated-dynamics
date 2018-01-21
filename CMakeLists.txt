@@ -120,7 +120,7 @@ add_executable(id ${OS_ID_OPTIONS}
     common/prompts1.cpp headers/prompts1.h
     common/prompts2.cpp headers/prompts2.h
     common/realdos.cpp headers/realdos.h
-    common/zoom.cpp
+    common/zoom.cpp headers/zoom.h
 
     headers/big.h
     headers/biginit.h

@@ -11,6 +11,7 @@
 #include "fracsubr.h"
 #include "framain2.h"
 #include "realdos.h"
+#include "zoom.h"
 
 #include <float.h>
 #include <string.h>

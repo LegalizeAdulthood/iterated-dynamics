@@ -24,6 +24,7 @@
 #include "realdos.h"
 #include "rotate.h"
 #include "stereo.h"
+#include "zoom.h"
 
 #include <stdio.h>
 #include <string.h>
