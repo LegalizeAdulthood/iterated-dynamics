@@ -32,6 +32,7 @@ Additional fractal-specific modules are also invoked from CALCFRAC:
 #include "newton.h"
 #include "parser.h"
 #include "realdos.h"
+#include "soi.h"
 
 #include <limits.h>
 #include <stdlib.h>

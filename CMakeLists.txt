@@ -71,7 +71,7 @@ add_executable(id ${OS_ID_OPTIONS}
     common/fractalp.cpp headers/fractalp.h
     common/fractals.cpp headers/fractals.h
     common/frasetup.cpp headers/frasetup.h
-    common/soi.cpp
+    common/soi.cpp headers/soi.h
     common/soi1.cpp
     common/testpt.cpp headers/testpt.h
 

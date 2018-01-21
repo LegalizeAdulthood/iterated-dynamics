@@ -24,8 +24,6 @@ extern int getakeynohelp();
 extern long readticker();
 extern int get_sound_params();
 extern void setnullvideo();
-// soi -- C file prototypes
-extern void soi();
 /*
  *  uclock -- C file prototypes
  *  The  uclock_t typedef placed here because uclock.h
