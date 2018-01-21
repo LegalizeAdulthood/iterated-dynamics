@@ -21,6 +21,7 @@
 
 #include "drivers.h"
 #include "fpu087.h"
+#include "mpmath_c.h"
 
 #include <ctype.h>
 #include <float.h>
