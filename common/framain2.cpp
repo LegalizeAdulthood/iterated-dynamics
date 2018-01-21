@@ -10,6 +10,7 @@
 #include "evolve.h"
 #include "fracsubr.h"
 #include "fractype.h"
+#include "framain2.h"
 #include "helpdefs.h"
 
 #include <stdio.h>

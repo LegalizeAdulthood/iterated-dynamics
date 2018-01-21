@@ -110,7 +110,7 @@ add_executable(id ${OS_ID_OPTIONS}
     common/memory.cpp
 
     common/fractint.cpp
-    common/framain2.cpp
+    common/framain2.cpp headers/framain2.h
     common/help.cpp
     hc/helpcom.cpp
     common/intro.cpp

@@ -11,6 +11,7 @@
 #include "encoder.h"
 #include "fracsubr.h"
 #include "fractype.h"
+#include "framain2.h"
 
 #include <float.h>
 #include <stdlib.h>

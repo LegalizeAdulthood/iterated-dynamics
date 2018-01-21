@@ -9,6 +9,7 @@
 #include "drivers.h"
 #include "fractalp.h"
 #include "fractype.h"
+#include "framain2.h"
 #include "helpdefs.h"
 
 #include <ctype.h>

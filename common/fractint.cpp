@@ -12,6 +12,7 @@
 #include "evolve.h"
 #include "fracsubr.h"
 #include "fractype.h"
+#include "framain2.h"
 #include "helpcom.h"
 #include "helpdefs.h"
 

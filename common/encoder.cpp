@@ -8,6 +8,7 @@
 #include "drivers.h"
 #include "encoder.h"
 #include "fractype.h"
+#include "framain2.h"
 
 #include <limits.h>
 #include <string.h>
