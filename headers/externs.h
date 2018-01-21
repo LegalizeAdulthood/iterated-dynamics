@@ -35,10 +35,8 @@ struct WORKLIST;
 
 // keep var names in column 30 for sorting via sort /+30 <in >out
 extern int                   g_adapter;             // index into g_video_table[]
-
-extern bool                  g_ask_video;
 extern bool                  g_auto_browse;
-extern std::string           g_auto_name;
+
 extern int                   g_auto_stereo_depth;
 extern double                g_auto_stereo_width;
 extern int                   g_bad_config;
