@@ -29,6 +29,12 @@
 #define EVERY 15
 #define BASIN_COLOR 0
 
+int g_rhombus_stack[10];
+int rhombus_depth = 0;
+int g_max_rhombus_depth;
+int g_soi_min_stack_available;
+int g_soi_min_stack = 2200; // and this much stack to not crash when <tab> is pressed
+
 namespace
 {
 
@@ -55,23 +61,34 @@ struct soi_long_double_state
     long_double_complex tq[4];
 };
 
+inline long_double_complex zsqr(long_double_complex z)
+{
+    return { z.re*z.re, z.im*z.im };
+}
+
+/* Newton Interpolation.
+   It computes the value of the interpolation polynomial given by
+   (x0,w0)..(x2,w2) at x:=t */
+static inline LDBL interpolate(LDBL x0, LDBL x1, LDBL x2,
+                        LDBL w0, LDBL w1, LDBL w2,
+                        LDBL t)
+{
+    const LDBL b = (w1 - w0)/(x1 - x0);
+    return (((w2 - w1)/(x2 - x1) - b)/(x2 - x0)*(t - x1) + b)*(t - x0) + w0;
+}
+
+long_double_complex zi[9];
 soi_long_double_state state{};
+LDBL twidth;
+LDBL equal;
+bool baxinxx = false;
 
 } // namespace
 
-int g_rhombus_stack[10];
-int rhombus_depth = 0;
-int g_max_rhombus_depth;
-int g_soi_min_stack_available;
-int g_soi_min_stack = 2200; // and this much stack to not crash when <tab> is pressed
-static LDBL twidth;
-static LDBL equal;
-static bool baxinxx = false;
-
-
-long iteration(LDBL cr, LDBL ci,
-               LDBL re, LDBL im,
-               long start)
+static long iteration(
+    LDBL cr, LDBL ci,
+    LDBL re, LDBL im,
+    long start)
 {
     long iter;
     long offset = 0;
@@ -376,17 +393,6 @@ static void putbox(int x1, int y1, int x2, int y2, int color)
 #define EVALUATE(x0, x1, b0, b1, b2, t) \
     (((b2)*((t) - (x1)) + (b1))*((t) - (x0)) + (b0))
 
-/* Newton Interpolation.
-   It computes the value of the interpolation polynomial given by
-   (x0,w0)..(x2,w2) at x:=t */
-static inline LDBL interpolate(LDBL x0, LDBL x1, LDBL x2,
-                        LDBL w0, LDBL w1, LDBL w2,
-                        LDBL t)
-{
-    const LDBL b = (w1 - w0)/(x1 - x0);
-    return (((w2 - w1)/(x2 - x1) - b)/(x2 - x0)*(t - x1) + b)*(t - x0) + w0;
-}
-
 /* SOICompute - Perform simultaneous orbit iteration for a given rectangle
 
    Input: cre1..cim2 : values defining the four corners of the rectangle
@@ -407,7 +413,6 @@ static inline LDBL interpolate(LDBL x0, LDBL x1, LDBL x2,
 
       iter       : current number of iterations
 */
-static long_double_complex zi[9];
 
 /*
    The purpose of this macro is to reduce the number of parameters of the
@@ -428,11 +433,6 @@ static long_double_complex zi[9];
     zi[8].re = (ZRE9);zi[8].im = (ZIM9);                                                       \
     status = rhombus((CRE1), (CRE2), (CIM1), (CIM2), (X1), (X2), (Y1), (Y2), (ITER)) != 0; \
     assert(status)
-
-static inline long_double_complex zsqr(long_double_complex z)
-{
-    return { z.re*z.re, z.im*z.im };
-}
 
 static int rhombus(LDBL cre1, LDBL cre2, LDBL cim1, LDBL cim2,
                    int x1, int x2, int y1, int y2, long iter)

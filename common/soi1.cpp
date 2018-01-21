@@ -32,8 +32,6 @@ extern int rhombus_depth;
 extern int g_max_rhombus_depth;
 extern int g_soi_min_stack_available;
 extern int g_soi_min_stack; // need this much stack to recurse
-static double twidth;
-static double equal;
 
 namespace
 {
@@ -44,13 +42,42 @@ struct double_complex
     double im;
 };
 
+struct soi_double_state
+{
+    bool esc[9];
+    bool tesc[4];
+
+    double_complex z;
+    double_complex step;
+    double interstep;
+    double helpre;
+    double_complex scan_z;
+    double_complex b1[3];
+    double_complex b2[3];
+    double_complex b3[3];
+    double_complex limit;
+    double_complex rq[9];
+    double_complex corner[2];
+    double_complex tz[4];
+    double_complex tq[4];
+};
+
+inline double_complex zsqr(double_complex z)
+{
+    return { z.re*z.re, z.im*z.im };
+}
+
 double_complex zi[9];
+soi_double_state state{};
+double twidth;
+double equal;
 
 } // namespace
 
-static long iteration(double cr, double ci,
-                      double re, double im,
-                      long start)
+static long iteration(
+    double cr, double ci,
+    double re, double im,
+    long start)
 {
     g_old_z.x = re;
     g_old_z.y = im;
@@ -195,38 +222,6 @@ static inline double interpolate(double x0, double x1, double x2,
     zi[8].re = (ZRE9);zi[8].im = (ZIM9);\
     status = rhombus((CRE1), (CRE2), (CIM1), (CIM2), (X1), (X2), (Y1), (Y2), (ITER)) != 0; \
     assert(status)
-
-namespace
-{
-
-struct soi_double_state
-{
-    bool esc[9];
-    bool tesc[4];
-
-    double_complex z;
-    double_complex step;
-    double interstep;
-    double helpre;
-    double_complex scan_z;
-    double_complex b1[3];
-    double_complex b2[3];
-    double_complex b3[3];
-    double_complex limit;
-    double_complex rq[9];
-    double_complex corner[2];
-    double_complex tz[4];
-    double_complex tq[4];
-};
-
-soi_double_state state{};
-
-inline double_complex zsqr(double_complex z)
-{
-    return { z.re*z.re, z.im*z.im };
-}
-
-}
 
 static int rhombus(double cre1, double cre2, double cim1, double cim2,
                    int x1, int x2, int y1, int y2, long iter)
