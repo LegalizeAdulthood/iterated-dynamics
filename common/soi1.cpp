@@ -28,7 +28,7 @@
 #define BASIN_COLOR 0
 
 extern int g_rhombus_stack[10];
-extern int rhombus_depth;
+extern int g_rhombus_depth;
 extern int g_max_rhombus_depth;
 extern int g_soi_min_stack_available;
 extern int g_soi_min_stack; // need this much stack to recurse
@@ -275,17 +275,17 @@ static int rhombus(double cre1, double cre2, double cim1, double cim2,
     double im94;
 
     bool status = false;
-    rhombus_depth++;
+    g_rhombus_depth++;
     avail = stackavail();
     if (avail < g_soi_min_stack_available)
     {
         g_soi_min_stack_available = avail;
     }
-    if (rhombus_depth > g_max_rhombus_depth)
+    if (g_rhombus_depth > g_max_rhombus_depth)
     {
-        g_max_rhombus_depth = rhombus_depth;
+        g_max_rhombus_depth = g_rhombus_depth;
     }
-    g_rhombus_stack[rhombus_depth] = avail;
+    g_rhombus_stack[g_rhombus_depth] = avail;
 
     if (driver_key_pressed())
     {
@@ -746,7 +746,7 @@ scan:
             re94, im94,
             iter);
 rhombus_done:
-    rhombus_depth--;
+    g_rhombus_depth--;
     return status ? 1 : 0;
 }
 
@@ -758,7 +758,7 @@ void soi()
     double stepx, stepy;
     double xxminl, xxmaxl, yyminl, yymaxl;
     g_soi_min_stack_available = 30000;
-    rhombus_depth = -1;
+    g_rhombus_depth = -1;
     g_max_rhombus_depth = 0;
     if (bf_math != bf_math_type::NONE)
     {
