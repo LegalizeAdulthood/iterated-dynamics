@@ -12,6 +12,7 @@
  * Some of the zoombox code is from Bill Broadley.
  * David Sanderson straightened out a bunch of include file problems.
  */
+#include <cstring>
 #include <string>
 #include <vector>
 
@@ -575,8 +576,10 @@ clearXwindow(DriverX11 *di)
         }
         for (int i = 1; i < di->Ximage->height; i++)
         {
-            bcopy(di->Ximage->data, di->Ximage->data+i*di->Ximage->bytes_per_line,
-                  di->Ximage->bytes_per_line);
+            std::memcpy(
+                di->Ximage->data + i*di->Ximage->bytes_per_line,
+                di->Ximage->data,
+                di->Ximage->bytes_per_line);
         }
     }
     else

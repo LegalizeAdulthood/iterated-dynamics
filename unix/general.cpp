@@ -4,6 +4,7 @@
  * This file Copyright 1991 Ken Shirriff.  It may be used according to the
  * fractint license conditions, blah blah blah.
  */
+#include <cstring>
 #include <vector>
 
 #include <string.h>
@@ -283,14 +284,14 @@ decode_fractal_info(FRACTAL_INFO *info, int dir)
         info_buff.resize(FRACTAL_INFO_SIZE);
         buf = &info_buff[0];
         bufPtr = buf;
-        bcopy((char *)info, (char *)buf, FRACTAL_INFO_SIZE);
+        std::memcpy((char *)buf, (char *)info, FRACTAL_INFO_SIZE);
     }
     else
     {
         info_buff.resize(sizeof(FRACTAL_INFO));
         buf = &info_buff[0];
         bufPtr = buf;
-        bcopy((char *)info, (char *)buf, sizeof(FRACTAL_INFO));
+        std::memcpy((char *)buf, (char *)info, sizeof(FRACTAL_INFO));
     }
 
     if (dir == 1)
@@ -449,7 +450,7 @@ decode_fractal_info(FRACTAL_INFO *info, int dir)
     }
     if (dir == 0)
     {
-        bcopy((char *)buf, (char *)info, FRACTAL_INFO_SIZE);
+        std::memcpy((char *)info, (char *)buf, FRACTAL_INFO_SIZE);
     }
 }
 
@@ -693,14 +694,14 @@ fix_ranges(int *ranges, int num, int dir)
         ranges_buff.resize(num*2);
         buf = &ranges_buff[0];
         bufPtr = buf;
-        bcopy((char *)ranges, (char *)buf, num*2);
+        std::memcpy((char *)buf, (char *)ranges, num*2);
     }
     else
     {
         ranges_buff.resize(num*sizeof(int));
         buf = &ranges_buff[0];
         bufPtr = buf;
-        bcopy((char *)ranges, (char *)buf, num*sizeof(int));
+        std::memcpy((char *)buf, (char *)ranges, num*sizeof(int));
     }
     for (int i = 0; i < num; i++)
     {
@@ -722,14 +723,14 @@ decode_evolver_info(EVOLUTION_INFO *info, int dir)
         evolution_info_buff.resize(EVOLVER_INFO_SIZE);
         buf = &evolution_info_buff[0];
         bufPtr = buf;
-        bcopy((char *)info, (char *)buf, EVOLVER_INFO_SIZE);
+        std::memcpy((char *)buf, (char *)info, EVOLVER_INFO_SIZE);
     }
     else
     {
         evolution_info_buff.resize(sizeof(EVOLUTION_INFO));
         buf = &evolution_info_buff[0];
         bufPtr = buf;
-        bcopy((char *)info, (char *)buf, sizeof(EVOLUTION_INFO));
+        std::memcpy((char *)buf, (char *)info, sizeof(EVOLUTION_INFO));
     }
 
     getInt((short *) &info->evolving, &bufPtr, dir);
@@ -766,7 +767,7 @@ decode_evolver_info(EVOLUTION_INFO *info, int dir)
     }
     if (dir == 0)
     {
-        bcopy((char *)buf, (char *)info, EVOLVER_INFO_SIZE);
+        std::memcpy((char *)info, (char *)buf, EVOLVER_INFO_SIZE);
     }
 }
 
@@ -782,14 +783,14 @@ decode_orbits_info(ORBITS_INFO *info, int dir)
         orbits_info_buff.resize(ORBITS_INFO_SIZE);
         buf = &orbits_info_buff[0];
         bufPtr = buf;
-        bcopy((char *)info, (char *)buf, ORBITS_INFO_SIZE);
+        std::memcpy((char *)buf, (char *)info, ORBITS_INFO_SIZE);
     }
     else
     {
         orbits_info_buff.resize(sizeof(ORBITS_INFO));
         buf = &orbits_info_buff[0];
         bufPtr = buf;
-        bcopy((char *)info, (char *)buf, sizeof(ORBITS_INFO));
+        std::memcpy((char *)buf, (char *)info, sizeof(ORBITS_INFO));
     }
 
     getDouble(&info->oxmin, &bufPtr, dir);
@@ -814,6 +815,6 @@ decode_orbits_info(ORBITS_INFO *info, int dir)
     }
     if (dir == 0)
     {
-        bcopy((char *)buf, (char *)info, ORBITS_INFO_SIZE);
+        std::memcpy((char *)info, (char *)buf, ORBITS_INFO_SIZE);
     }
 }

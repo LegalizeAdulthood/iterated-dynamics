@@ -1,4 +1,4 @@
-//#include <curses.h>
+#include <cstring>
 #include <string.h>
 
 #include "port.h"
@@ -416,18 +416,18 @@ spindac(int dir, int inc)
         {
             for (int i = 0; i < inc; i++)
             {
-                bcopy(dacbot, tmp, 3 * sizeof(unsigned char));
-                bcopy(dacbot + 3 * sizeof(unsigned char), dacbot, len);
-                bcopy(tmp, dacbot + len, 3 * sizeof(unsigned char));
+                std::memcpy(tmp, dacbot, 3*sizeof(unsigned char));
+                std::memcpy(dacbot, dacbot + 3*sizeof(unsigned char), len);
+                std::memcpy(dacbot + len, tmp, 3*sizeof(unsigned char));
             }
         }
         else
         {
             for (int i = 0; i < inc; i++)
             {
-                bcopy(dacbot + len, tmp, 3 * sizeof(unsigned char));
-                bcopy(dacbot, dacbot + 3 * sizeof(unsigned char), len);
-                bcopy(tmp, dacbot, 3 * sizeof(unsigned char));
+                std::memcpy(tmp, dacbot + len, 3*sizeof(unsigned char));
+                std::memcpy(dacbot + 3*sizeof(unsigned char), dacbot, len);
+                std::memcpy(dacbot, tmp, 3*sizeof(unsigned char));
             }
         }
     }

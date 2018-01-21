@@ -5,16 +5,12 @@
  *
  */
 #include <cassert>
-
-#include <string.h>
+#include <cstring>
 
 #include "port.h"
 #include "helpcom.h"
 
-#ifndef XFRACT
-#define getint(ptr) (*(int *)(ptr))
-#define setint(ptr, n) (*(int *)(ptr)) = n
-#else
+#ifdef XFRACT
 /* Get an int from an unaligned pointer
  * This routine is needed because this program uses unaligned 2 byte
  * pointers all over the place.
@@ -22,14 +18,14 @@
 int getint(char const *ptr)
 {
     int s;
-    bcopy(ptr, &s, sizeof(int));
+    std::memcpy(&s, ptr, sizeof(int));
     return s;
 }
 
 /* Set an int to an unaligned pointer */
 void setint(char *ptr, int n)
 {
-    bcopy(&n, ptr, sizeof(int));
+    std::memcpy(ptr, &n, sizeof(int));
 }
 #endif
 

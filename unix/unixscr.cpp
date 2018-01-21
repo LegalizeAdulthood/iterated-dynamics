@@ -12,6 +12,8 @@
  * Some of the zoombox code is from Bill Broadley.
  * David Sanderson straightened out a bunch of include file problems.
  */
+#include <cstring>
+
 #include <assert.h>
 //#include <curses.h>
 #include <fcntl.h>
@@ -644,8 +646,10 @@ clearXwindow()
         }
         for (int i = 1; i < Ximage->height; i++)
         {
-            bcopy(Ximage->data, Ximage->data+i*Ximage->bytes_per_line,
-                  Ximage->bytes_per_line);
+            std::memcpy(
+                Ximage->data + i*Ximage->bytes_per_line,
+                Ximage->data,
+                Ximage->bytes_per_line);
         }
     }
     else

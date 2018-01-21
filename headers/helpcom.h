@@ -116,8 +116,14 @@ extern int init_help();
 extern void end_help();
 extern bool is_hyphen(char const *ptr);
 #ifndef XFRACT
-#define getint(ptr) (*(int *)(ptr))
-#define setint(ptr, n) (*(int *)(ptr)) = n
+inline int getint(char const *ptr)
+{
+    return *reinterpret_cast<const int *>(ptr);
+}
+inline void setint(char *ptr, int n)
+{
+    *reinterpret_cast<int *>(ptr) = n;
+}
 #else
 extern int getint(char const *ptr);
 extern void setint(char *ptr, int n);
