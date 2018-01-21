@@ -24,11 +24,6 @@ extern int getakeynohelp();
 extern long readticker();
 extern int get_sound_params();
 extern void setnullvideo();
-// line3d -- C file prototypes
-extern int line3d(BYTE *, unsigned int);
-extern int targa_color(int, int, int);
-extern bool targa_validate(char const *File_Name);
-bool startdisk1(char const *File_Name2, FILE *Source, bool overlay);
 // loadfdos -- C file prototypes
 extern int get_video_mode(FRACTAL_INFO *info, ext_blk_3 *blk_3_info);
 // loadfile -- C file prototypes

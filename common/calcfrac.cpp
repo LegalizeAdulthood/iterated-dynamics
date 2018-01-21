@@ -24,6 +24,7 @@ Additional fractal-specific modules are also invoked from CALCFRAC:
 #include "fracsubr.h"
 #include "fractype.h"
 #include "framain2.h"
+#include "line3d.h"
 #include "newton.h"
 #include "targa_lc.h"
 
