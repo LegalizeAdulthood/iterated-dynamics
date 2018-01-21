@@ -86,7 +86,7 @@ add_executable(id ${OS_ID_OPTIONS}
     common/decoder.cpp headers/decoder.h
     common/diskvid.cpp headers/diskvid.h
     common/editpal.cpp headers/editpal.h
-    common/encoder.cpp
+    common/encoder.cpp headers/encoder.h
     common/evolve.cpp
     common/gifview.cpp
     common/loadfdos.cpp

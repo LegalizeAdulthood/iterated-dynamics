@@ -3,17 +3,18 @@
     Written in Borland 'C++' by Paul de Leeuw.
     From an idea in "New Scientist" 9 October 1993 pages 26 - 29.
 */
-#include <vector>
+#include "port.h"
+#include "prototyp.h"
+
+#include "drivers.h"
+#include "encoder.h"
+#include "helpdefs.h"
 
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
 
-// see Fractint.c for a description of the "include"  hierarchy
-#include "port.h"
-#include "prototyp.h"
-#include "drivers.h"
-#include "helpdefs.h"
+#include <vector>
 
 std::string g_stereo_map_filename;
 int g_auto_stereo_depth = 100;

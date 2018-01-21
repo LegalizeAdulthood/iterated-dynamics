@@ -6,6 +6,7 @@
 
 #include "diskvid.h"
 #include "drivers.h"
+#include "encoder.h"
 #include "fractype.h"
 
 #include <limits.h>

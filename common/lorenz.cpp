@@ -8,6 +8,7 @@
 
 #include "3d.h"
 #include "drivers.h"
+#include "encoder.h"
 #include "fractype.h"
 
 #include <float.h>
