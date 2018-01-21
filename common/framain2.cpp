@@ -1,18 +1,17 @@
-#include <string>
-#include <vector>
+#include "port.h"
+#include "prototyp.h"
 
+#include "ant.h"
+#include "drivers.h"
+#include "fractype.h"
+#include "helpdefs.h"
+
+#include <stdio.h>
 #include <string.h>
 #include <time.h>
 
-#include <stdarg.h>
-
-#include <ctype.h>
-// see Fractint.c for a description of the "include"  hierarchy
-#include "port.h"
-#include "prototyp.h"
-#include "fractype.h"
-#include "helpdefs.h"
-#include "drivers.h"
+#include <string>
+#include <vector>
 
 // routines in this module
 

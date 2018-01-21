@@ -4,20 +4,18 @@
  * tables for speed, and adds a second ant type, multiple ants, and random
  * rules.
  */
+#include "port.h"
+#include "prototyp.h"
+
+#include "ant.h"
+#include "drivers.h"
+#include "helpdefs.h"
+
 #include <algorithm>
+#include <iomanip>
 #include <sstream>
 #include <string>
 #include <vector>
-
-#include <stdlib.h>
-#include <string.h>
-#include <iomanip>
-
-// see Fractint.c for a description of the "include"  hierarchy
-#include "port.h"
-#include "prototyp.h"
-#include "helpdefs.h"
-#include "drivers.h"
 
 #define RANDOM(n)       ((int)((long)((long)rand() * (long)(n)) >> 15)) /* Generate Random
                                                                          * Number 0 <= r < n */

@@ -410,8 +410,6 @@ extern int bfORbailout();
 extern int bfANDbailout();
 extern int bfMANHbailout();
 extern int bfMANRbailout();
-extern int ant();
-extern void free_ant_storage();
 extern int LongPhoenixFractal();
 extern int PhoenixFractal();
 extern int LongPhoenixFractalcplx();

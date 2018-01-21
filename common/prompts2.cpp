@@ -1,8 +1,14 @@
 /*
         Various routines that prompt for things.
 */
-#include <algorithm>
-#include <string>
+#include "port.h"
+#include "prototyp.h"
+
+#include "ant.h"
+#include "drivers.h"
+#include "fractype.h"
+#include "helpcom.h"
+#include "helpdefs.h"
 
 #include <ctype.h>
 #include <string.h>
@@ -24,14 +30,8 @@
 #include <sys/param.h>
 #endif
 
-#include "port.h"
-#include "prototyp.h"
-#include "fractype.h"
-#include "helpdefs.h"
-#include "drivers.h"
-#include "helpcom.h"
-
-// Routines in this module
+#include <algorithm>
+#include <string>
 
 static  int check_f6_key(int curkey, int choice);
 static  int filename_speedstr(int row, int col, int vid,

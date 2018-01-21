@@ -2,12 +2,12 @@
         This module consists only of the fractalspecific structure
         and a *slew* of defines needed to get it to compile
 */
-#include <float.h>
-#include <string.h>
 #include "port.h"
 #include "prototyp.h"
-#include "helpdefs.h"
+
+#include "ant.h"
 #include "fractype.h"
+#include "helpdefs.h"
 
 // functions defined elsewhere needed for fractalspecific
 // moved to prototyp.h
