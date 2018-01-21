@@ -7,6 +7,7 @@
 #include "biginit.h"
 #include "drivers.h"
 #include "evolve.h"
+#include "fracsubr.h"
 #include "fractype.h"
 #include "helpdefs.h"
 #include "targa_lc.h"

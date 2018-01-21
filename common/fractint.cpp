@@ -10,6 +10,7 @@
 #include "drivers.h"
 #include "encoder.h"
 #include "evolve.h"
+#include "fracsubr.h"
 #include "fractype.h"
 #include "helpcom.h"
 #include "helpdefs.h"

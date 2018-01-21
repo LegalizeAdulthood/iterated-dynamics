@@ -14,6 +14,7 @@
 #include "decoder.h"
 #include "diskvid.h"
 #include "drivers.h"
+#include "fracsubr.h"
 
 #include <string.h>
 

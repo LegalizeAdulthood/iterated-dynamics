@@ -8,6 +8,7 @@
 #include "biginit.h"
 #include "calcfrac.h"
 #include "drivers.h"
+#include "fracsubr.h"
 
 #include <float.h>
 #include <string.h>

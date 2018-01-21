@@ -2,6 +2,7 @@
 #include "prototyp.h"
 
 #include "drivers.h"
+#include "fracsubr.h"
 #include "fractype.h"
 #include "helpdefs.h"
 #include "jb.h"

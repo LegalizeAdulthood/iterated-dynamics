@@ -13,6 +13,7 @@
 #include "diskvid.h"
 #include "drivers.h"
 #include "editpal.h"
+#include "fracsubr.h"
 #include "fractype.h"
 #include "helpdefs.h"
 

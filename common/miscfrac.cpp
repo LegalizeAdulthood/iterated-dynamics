@@ -10,6 +10,7 @@ Miscellaneous fractal-specific code (formerly in CALCFRAC.C)
 #include "diskvid.h"
 #include "drivers.h"
 #include "fpu087.h"
+#include "fracsubr.h"
 #include "fractype.h"
 #include "newton.h"
 #include "targa_lc.h"

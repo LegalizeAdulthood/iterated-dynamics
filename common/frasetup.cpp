@@ -3,6 +3,7 @@
 
 #include "calcfrac.h"
 #include "calmanfp.h"
+#include "fracsubr.h"
 #include "fractype.h"
 #include "helpdefs.h"
 

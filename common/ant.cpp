@@ -9,6 +9,7 @@
 
 #include "ant.h"
 #include "drivers.h"
+#include "fracsubr.h"
 #include "helpdefs.h"
 
 #include <algorithm>

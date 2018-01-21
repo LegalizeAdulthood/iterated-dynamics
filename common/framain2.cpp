@@ -8,6 +8,7 @@
 #include "editpal.h"
 #include "encoder.h"
 #include "evolve.h"
+#include "fracsubr.h"
 #include "fractype.h"
 #include "helpdefs.h"
 

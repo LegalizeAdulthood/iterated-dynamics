@@ -6,6 +6,7 @@
 
 #include "biginit.h"
 #include "drivers.h"
+#include "fracsubr.h"
 #include "fractype.h"
 #include "helpdefs.h"
 

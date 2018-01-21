@@ -9,6 +9,7 @@
 
 #include "calmanfp.h"
 #include "drivers.h"
+#include "fracsubr.h"
 #include "fractype.h"
 
 extern int atan_colors;
