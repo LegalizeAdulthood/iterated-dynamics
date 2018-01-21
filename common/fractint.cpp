@@ -17,6 +17,7 @@
 #include "helpdefs.h"
 #include "intro.h"
 #include "loadfile.h"
+#include "memory.h"
 #include "miscovl.h"
 #include "prompts1.h"
 #include "prompts2.h"

@@ -7,6 +7,7 @@
 #include "fractype.h"
 #include "helpcom.h"
 #include "helpdefs.h"
+#include "memory.h"
 #include "miscres.h"
 #include "prompts2.h"
 #include "realdos.h"

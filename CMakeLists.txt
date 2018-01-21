@@ -107,7 +107,7 @@ add_executable(id ${OS_ID_OPTIONS}
     common/mpmath_c.cpp headers/mpmath_c.h
 
     common/drivers.cpp
-    common/memory.cpp
+    common/memory.cpp headers/memory.h
 
     common/fractint.cpp
     common/framain2.cpp headers/framain2.h

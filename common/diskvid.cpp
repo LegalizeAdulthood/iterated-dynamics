@@ -11,6 +11,7 @@
 
 #include "diskvid.h"
 #include "drivers.h"
+#include "memory.h"
 #include "realdos.h"
 
 #include <float.h>

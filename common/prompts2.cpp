@@ -15,6 +15,7 @@
 #include "helpdefs.h"
 #include "loadfile.h"
 #include "loadmap.h"
+#include "memory.h"
 #include "miscres.h"
 #include "mpmath_c.h"
 #include "prompts1.h"
