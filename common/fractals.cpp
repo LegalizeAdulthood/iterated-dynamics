@@ -44,6 +44,7 @@ an appropriate setup, per_image, per_pixel, and orbit routines.
 #include "fracsubr.h"
 #include "fractals.h"
 #include "fractype.h"
+#include "hcmplx.h"
 #include "helpdefs.h"
 
 #include <float.h>

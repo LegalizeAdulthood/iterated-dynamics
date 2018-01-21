@@ -24,8 +24,6 @@ extern int getakeynohelp();
 extern long readticker();
 extern int get_sound_params();
 extern void setnullvideo();
-// hcmplx -- C file prototypes
-extern void HComplexTrig0(DHyperComplex *, DHyperComplex *);
 // intro -- C file prototypes
 extern void intro();
 // jiim -- C file prototypes
