@@ -19,38 +19,101 @@ is in the allocations of memory for the big numbers.
 #include <string.h>
 
 // globals
-int bnstep = 0, bnlength = 0, intlength = 0, rlength = 0, padding = 0, shiftfactor = 0, g_decimals = 0;
-int bflength = 0, rbflength = 0, bfdecimals = 0;
+int bnstep = 0;
+int bnlength = 0;
+int intlength = 0;
+int rlength = 0;
+int padding = 0;
+int shiftfactor = 0;
+int g_decimals = 0;
+int bflength = 0;
+int rbflength = 0;
+int bfdecimals = 0;
 
 // used internally by bignum.c routines
 static char s_storage[4096];
 static bn_t bnroot = BIG_NULL;
 static bn_t stack_ptr = BIG_NULL; // memory allocator base after global variables
-bn_t bntmp1 = BIG_NULL, bntmp2 = BIG_NULL, bntmp3 = BIG_NULL, bntmp4 = BIG_NULL, bntmp5 = BIG_NULL, bntmp6 = BIG_NULL; // rlength
-bn_t bntmpcpy1 = BIG_NULL, bntmpcpy2 = BIG_NULL;                           // bnlength
+bn_t bntmp1 = BIG_NULL;
+bn_t bntmp2 = BIG_NULL;
+bn_t bntmp3 = BIG_NULL;
+bn_t bntmp4 = BIG_NULL;
+bn_t bntmp5 = BIG_NULL;
+bn_t bntmp6 = BIG_NULL;
+bn_t bntmpcpy1 = BIG_NULL;
+bn_t bntmpcpy2 = BIG_NULL;
 
-// used by other routines
-bn_t bnxmin = BIG_NULL, bnxmax = BIG_NULL, bnymin = BIG_NULL, bnymax = BIG_NULL, bnx3rd = BIG_NULL, bny3rd = BIG_NULL;        // bnlength
-bn_t bnxdel = BIG_NULL, bnydel = BIG_NULL, bnxdel2 = BIG_NULL, bnydel2 = BIG_NULL, bnclosenuff = BIG_NULL;         // bnlength
-bn_t bntmpsqrx = BIG_NULL, bntmpsqry = BIG_NULL, bntmp = BIG_NULL;                           // rlength
-BNComplex bnold = { BIG_NULL, BIG_NULL }, bnparm = { BIG_NULL, BIG_NULL }, bnsaved = { BIG_NULL, BIG_NULL };               // bnlength
-BNComplex bnnew = { BIG_NULL, BIG_NULL };                                              // rlength
-bn_t bn_pi = BIG_NULL;                                           // TAKES NO SPACE
+// used by other routines, bnlength
+bn_t bnxmin = BIG_NULL;
+bn_t bnxmax = BIG_NULL;
+bn_t bnymin = BIG_NULL;
+bn_t bnymax = BIG_NULL;
+bn_t bnx3rd = BIG_NULL;
+bn_t bny3rd = BIG_NULL;
 
-bf_t bftmp1 = BIG_NULL, bftmp2 = BIG_NULL, bftmp3 = BIG_NULL, bftmp4 = BIG_NULL, bftmp5 = BIG_NULL, bftmp6 = BIG_NULL;     // rbflength+2
-bf_t bftmpcpy1 = BIG_NULL, bftmpcpy2 = BIG_NULL;                               // rbflength+2
-bf_t bfxdel = BIG_NULL, bfydel = BIG_NULL, bfxdel2 = BIG_NULL, bfydel2 = BIG_NULL, bfclosenuff = BIG_NULL;      // rbflength+2
-bf_t bftmpsqrx = BIG_NULL, bftmpsqry = BIG_NULL;                               // rbflength+2
-BFComplex bfparm = { BIG_NULL, BIG_NULL }, bfsaved = { BIG_NULL, BIG_NULL };            // bflength+2
-BFComplex bfold = { BIG_NULL, BIG_NULL },  bfnew = { BIG_NULL, BIG_NULL };                                  // rbflength+2
-bf_t bf_pi = BIG_NULL;                                           // TAKES NO SPACE
-bf_t big_pi = BIG_NULL;                                              // bflength+2
+// bnlength
+bn_t bnxdel = BIG_NULL;
+bn_t bnydel = BIG_NULL;
+bn_t bnxdel2 = BIG_NULL;
+bn_t bnydel2 = BIG_NULL;
+bn_t bnclosenuff = BIG_NULL;
+
+// rlength
+bn_t bntmpsqrx = BIG_NULL;
+bn_t bntmpsqry = BIG_NULL;
+bn_t bntmp = BIG_NULL;
+
+// bnlength
+BNComplex bnold = { BIG_NULL, BIG_NULL };
+BNComplex bnparm = { BIG_NULL, BIG_NULL };
+BNComplex bnsaved = { BIG_NULL, BIG_NULL };
+BNComplex bnnew = { BIG_NULL, BIG_NULL };   // rlength
+bn_t bn_pi = BIG_NULL;                      // TAKES NO SPACE
+
+// // rbflength+2
+bf_t bftmp1 = BIG_NULL;
+bf_t bftmp2 = BIG_NULL;
+bf_t bftmp3 = BIG_NULL;
+bf_t bftmp4 = BIG_NULL;
+bf_t bftmp5 = BIG_NULL;
+bf_t bftmp6 = BIG_NULL;
+bf_t bftmpcpy1 = BIG_NULL;
+bf_t bftmpcpy2 = BIG_NULL;
+bf_t bfxdel = BIG_NULL;
+bf_t bfydel = BIG_NULL;
+bf_t bfxdel2 = BIG_NULL;
+bf_t bfydel2 = BIG_NULL;
+bf_t bfclosenuff = BIG_NULL;
+bf_t bftmpsqrx = BIG_NULL;
+bf_t bftmpsqry = BIG_NULL;
+
+// bflength+2
+BFComplex bfparm = { BIG_NULL, BIG_NULL };
+BFComplex bfsaved = { BIG_NULL, BIG_NULL };
+
+// rbflength+2
+BFComplex bfold = { BIG_NULL, BIG_NULL };
+BFComplex bfnew = { BIG_NULL, BIG_NULL };
+
+bf_t bf_pi = BIG_NULL;      // TAKES NO SPACE
+bf_t big_pi = BIG_NULL;     // bflength+2
 
 // for testing only
 
 // used by other routines
-bf_t g_bf_x_min = BIG_NULL, g_bf_x_max = BIG_NULL, g_bf_y_min = BIG_NULL, g_bf_y_max = BIG_NULL, g_bf_x_3rd = BIG_NULL, g_bf_y_3rd = BIG_NULL;      // bflength+2
-bf_t g_bf_save_x_min = BIG_NULL, g_bf_save_x_max = BIG_NULL, g_bf_save_y_min = BIG_NULL, g_bf_save_y_max = BIG_NULL, g_bf_save_x_3rd = BIG_NULL, g_bf_save_y_3rd = BIG_NULL;// bflength+2
+// bflength+2
+bf_t g_bf_x_min = BIG_NULL;
+bf_t g_bf_x_max = BIG_NULL;
+bf_t g_bf_y_min = BIG_NULL;
+bf_t g_bf_y_max = BIG_NULL;
+bf_t g_bf_x_3rd = BIG_NULL;
+bf_t g_bf_y_3rd = BIG_NULL;
+bf_t g_bf_save_x_min = BIG_NULL;
+bf_t g_bf_save_x_max = BIG_NULL;
+bf_t g_bf_save_y_min = BIG_NULL;
+bf_t g_bf_save_y_max = BIG_NULL;
+bf_t g_bf_save_x_3rd = BIG_NULL;
+bf_t g_bf_save_y_3rd = BIG_NULL;
 bf_t bfparms[10];                                    // (bflength+2)*10
 bf_t bftmp = BIG_NULL;
 
