@@ -14,6 +14,7 @@
 #include "framain2.h"
 #include "jiim.h"
 #include "miscres.h"
+#include "plot3d.h"
 
 #include <float.h>
 #include <stdlib.h>

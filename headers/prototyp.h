@@ -24,13 +24,6 @@ extern int getakeynohelp();
 extern long readticker();
 extern int get_sound_params();
 extern void setnullvideo();
-// plot3d -- C file prototypes
-extern void draw_line(int, int, int, int, int);
-extern void plot3dsuperimpose16(int, int, int);
-extern void plot3dsuperimpose256(int, int, int);
-extern void plotIFS3dsuperimpose256(int, int, int);
-extern void plot3dalternate(int, int, int);
-extern void plot_setup();
 // printer -- C file prototypes
 extern void Print_Screen();
 // prompts1 -- C file prototypes

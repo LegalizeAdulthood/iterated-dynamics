@@ -11,6 +11,7 @@
 #include "helpcom.h"
 #include "helpdefs.h"
 #include "miscres.h"
+#include "plot3d.h"
 
 #include <assert.h>
 #include <float.h>

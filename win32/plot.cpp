@@ -1,17 +1,18 @@
+#include "port.h"
+#include "prototyp.h"
+
+#include "fractint.h"
+#include "plot3d.h"
+
 #include <assert.h>
 #include <crtdbg.h>
 #include <float.h>
 #include <stdlib.h>
 #include <string.h>
-
 #define STRICT
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 #include <windowsx.h>
-
-#include "port.h"
-#include "prototyp.h"
-#include "fractint.h"
 
 #include "plot.h"
 #include "ods.h"

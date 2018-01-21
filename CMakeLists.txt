@@ -60,7 +60,7 @@ endif()
 add_executable(id ${OS_ID_OPTIONS}
     common/3d.cpp headers/3d.h
     common/line3d.cpp headers/line3d.h
-    common/plot3d.cpp
+    common/plot3d.cpp headers/plot3d.h
 
     common/calcfrac.cpp headers/calcfrac.h
     common/calcmand.cpp headers/calcmand.h
