@@ -360,7 +360,7 @@ scan:
                     status = true;
                     goto rhombus_done;
                 }
-                else if (color == savecolor)
+                if (color == savecolor)
                 {
                     continue;
                 }
@@ -375,7 +375,7 @@ scan:
                         status = true;
                         goto rhombus_done;
                     }
-                    else if (helpcolor == savecolor)
+                    if (helpcolor == savecolor)
                     {
                         break;
                     }
@@ -405,7 +405,7 @@ scan:
                     status = true;
                     goto rhombus_done;
                 }
-                else if (helpcolor == savecolor)
+                if (helpcolor == savecolor)
                 {
                     break;
                 }
