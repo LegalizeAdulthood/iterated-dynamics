@@ -24,10 +24,6 @@ extern int getakeynohelp();
 extern long readticker();
 extern int get_sound_params();
 extern void setnullvideo();
-// testpt -- C file prototypes
-extern int teststart();
-extern void testend();
-extern int testpt(double, double, double, double, long, int);
 // zoom -- C file prototypes
 extern void drawbox(bool draw_it);
 extern void moveboxf(double, double);

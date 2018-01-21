@@ -19,8 +19,11 @@ must not be called by any part of Fractint other than calcfrac.
 The sample code below is a straightforward Mandelbrot routine.
 
 */
+#include "port.h"
+#include "prototyp.h"
 
-extern int  driver_get_key();
+#include "drivers.h"
+#include "testpt.h"
 
 int teststart()     // this routine is called just before the fractal starts
 {

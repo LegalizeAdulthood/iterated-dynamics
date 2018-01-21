@@ -73,7 +73,7 @@ add_executable(id ${OS_ID_OPTIONS}
     common/frasetup.cpp headers/frasetup.h
     common/soi.cpp
     common/soi1.cpp
-    common/testpt.cpp
+    common/testpt.cpp headers/testpt.h
 
     common/ant.cpp headers/ant.h
     common/jb.cpp headers/jb.h
