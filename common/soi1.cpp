@@ -14,11 +14,6 @@
 #include <algorithm>
 #include <cassert>
 
-#include <float.h>
-#include <time.h>
-#if !defined(_WIN32)
-#include <malloc.h>
-#endif
 #include "port.h"
 #include "prototyp.h"
 #include "drivers.h"
