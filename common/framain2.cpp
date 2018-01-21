@@ -16,6 +16,7 @@
 #include "jiim.h"
 #include "line3d.h"
 #include "loadfile.h"
+#include "lorenz.h"
 
 #include <stdio.h>
 #include <string.h>

@@ -77,7 +77,7 @@ add_executable(id ${OS_ID_OPTIONS}
 
     common/ant.cpp headers/ant.h
     common/jb.cpp headers/jb.h
-    common/lorenz.cpp
+    common/lorenz.cpp headers/lorenz.h
     common/lsys.cpp
     common/lsysf.cpp
     common/miscfrac.cpp

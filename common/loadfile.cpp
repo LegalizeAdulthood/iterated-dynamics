@@ -13,6 +13,7 @@
 #include "helpdefs.h"
 #include "loadfdos.h"
 #include "loadfile.h"
+#include "lorenz.h"
 #include "targa_lc.h"
 
 #include <errno.h>

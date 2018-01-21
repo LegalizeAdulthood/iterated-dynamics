@@ -12,6 +12,7 @@
 #include "frasetup.h"
 #include "helpdefs.h"
 #include "jb.h"
+#include "lorenz.h"
 #include "newton.h"
 
 // functions defined elsewhere needed for fractalspecific

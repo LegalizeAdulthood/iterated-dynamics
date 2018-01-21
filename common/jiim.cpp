@@ -17,6 +17,7 @@
 #include "fractype.h"
 #include "helpdefs.h"
 #include "jiim.h"
+#include "lorenz.h"
 
 #include <stdarg.h>
 #include <string.h>
