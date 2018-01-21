@@ -132,6 +132,7 @@ add_executable(id ${OS_ID_OPTIONS}
     headers/helpcom.h
     headers/lsys.h
     headers/mpmath.h
+    headers/newton.h
     headers/port.h
     headers/prototyp.h
     headers/winprot.h

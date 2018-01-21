@@ -24,9 +24,6 @@ extern int getakeynohelp();
 extern long readticker();
 extern int get_sound_params();
 extern void setnullvideo();
-// newton -- assembler file prototypes
-extern int NewtonFractal2();
-extern void invertz2(DComplex *);
 // tplus_a -- assembler file prototypes
 extern void WriteTPlusBankedPixel(int, int, unsigned long);
 extern unsigned long ReadTPlusBankedPixel(int, int);

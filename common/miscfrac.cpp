@@ -9,6 +9,7 @@ Miscellaneous fractal-specific code (formerly in CALCFRAC.C)
 #include "drivers.h"
 #include "fpu087.h"
 #include "fractype.h"
+#include "newton.h"
 #include "targa_lc.h"
 
 #include <limits.h>

@@ -22,6 +22,7 @@
 #include "drivers.h"
 #include "fpu087.h"
 #include "mpmath_c.h"
+#include "newton.h"
 
 #include <ctype.h>
 #include <float.h>

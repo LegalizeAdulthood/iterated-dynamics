@@ -19,6 +19,7 @@ Additional fractal-specific modules are also invoked from CALCFRAC:
 #include "drivers.h"
 #include "fpu087.h"
 #include "fractype.h"
+#include "newton.h"
 #include "targa_lc.h"
 
 #include <limits.h>

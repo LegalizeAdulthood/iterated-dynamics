@@ -9,6 +9,7 @@
 #include "fractype.h"
 #include "helpdefs.h"
 #include "jb.h"
+#include "newton.h"
 
 // functions defined elsewhere needed for fractalspecific
 // moved to prototyp.h
