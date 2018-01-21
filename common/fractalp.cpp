@@ -16,6 +16,7 @@
 #include "lsys_fns.h"
 #include "mpmath_c.h"
 #include "newton.h"
+#include "parser.h"
 
 // functions defined elsewhere needed for fractalspecific
 // moved to prototyp.h

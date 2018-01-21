@@ -25,6 +25,7 @@
 #include "miscres.h"
 #include "mpmath_c.h"
 #include "newton.h"
+#include "parser.h"
 
 #include <ctype.h>
 #include <float.h>

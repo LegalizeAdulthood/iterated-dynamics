@@ -47,6 +47,7 @@ an appropriate setup, per_image, per_pixel, and orbit routines.
 #include "hcmplx.h"
 #include "helpdefs.h"
 #include "mpmath_c.h"
+#include "parser.h"
 
 #include <float.h>
 #include <limits.h>

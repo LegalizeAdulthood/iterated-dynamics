@@ -22,6 +22,7 @@
 #include "fpu087.h"
 #include "jiim.h"
 #include "mpmath_c.h"
+#include "parser.h"
 
 #include <algorithm>
 

@@ -92,7 +92,7 @@ add_executable(id ${OS_ID_OPTIONS}
     common/loadfdos.cpp headers/loadfdos.h
     common/loadfile.cpp headers/loadfile.h
     common/loadmap.cpp headers/loadmap.h
-    common/parser.cpp
+    common/parser.cpp headers/parser.h
     common/parserfp.cpp
     common/rotate.cpp
     common/slideshw.cpp

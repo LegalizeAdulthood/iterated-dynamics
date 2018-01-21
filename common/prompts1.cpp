@@ -18,6 +18,7 @@
 #include "loadmap.h"
 #include "lsys_fns.h"
 #include "miscres.h"
+#include "parser.h"
 
 #include <ctype.h>
 #include <float.h>

@@ -31,15 +31,17 @@
 
 // Use startup parameter "debugflag=324" to show debug messages after
 //    compiling with above #define uncommented.
-#include <string>
+#include "port.h"
+#include "prototyp.h"
+
+#include "parser.h"
 
 #include <ctype.h>
 #include <float.h>
 #include <string.h>
 #include <time.h>
 
-#include "port.h"
-#include "prototyp.h"
+#include <string>
 
 // global data
 std::vector<fn_operand> g_function_operands;
