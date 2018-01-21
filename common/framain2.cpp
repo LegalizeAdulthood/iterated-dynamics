@@ -22,6 +22,7 @@
 #include "prompts1.h"
 #include "prompts2.h"
 #include "realdos.h"
+#include "rotate.h"
 
 #include <stdio.h>
 #include <string.h>

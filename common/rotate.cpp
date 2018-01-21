@@ -10,6 +10,7 @@
 #include "loadmap.h"
 #include "prompts2.h"
 #include "realdos.h"
+#include "rotate.h"
 
 #include <float.h>
 #include <string.h>

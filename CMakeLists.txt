@@ -94,7 +94,7 @@ add_executable(id ${OS_ID_OPTIONS}
     common/loadmap.cpp headers/loadmap.h
     common/parser.cpp headers/parser.h
     common/parserfp.cpp
-    common/rotate.cpp
+    common/rotate.cpp headers/rotate.h
     common/slideshw.cpp
     common/stereo.cpp
 

@@ -27,10 +27,6 @@ extern void setnullvideo();
 // realdos -- C file prototypes
 extern int showvidlength();
 extern bool stopmsg(int flags, char const* msg);
-// rotate -- C file prototypes
-extern void rotate(int);
-extern void save_palette();
-extern bool load_palette();
 // slideshw -- C file prototypes
 extern int slideshw();
 extern slides_mode startslideshow();
