@@ -20,6 +20,7 @@
 #include "prompts1.h"
 #include "prompts2.h"
 #include "realdos.h"
+#include "slideshw.h"
 
 #include <ctype.h>
 #include <string.h>

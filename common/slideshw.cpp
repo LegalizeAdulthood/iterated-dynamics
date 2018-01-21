@@ -9,6 +9,7 @@
 #include "helpcom.h"
 #include "miscres.h"
 #include "realdos.h"
+#include "slideshw.h"
 
 #include <ctype.h>
 #include <float.h>
