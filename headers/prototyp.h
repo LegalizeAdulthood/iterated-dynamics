@@ -24,8 +24,6 @@ extern int getakeynohelp();
 extern long readticker();
 extern int get_sound_params();
 extern void setnullvideo();
-// printer -- C file prototypes
-extern void Print_Screen();
 // prompts1 -- C file prototypes
 struct fullscreenvalues;
 extern int fullscreen_prompt(
