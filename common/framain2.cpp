@@ -13,6 +13,7 @@
 #include "framain2.h"
 #include "gifview.h"
 #include "helpdefs.h"
+#include "jiim.h"
 
 #include <stdio.h>
 #include <string.h>

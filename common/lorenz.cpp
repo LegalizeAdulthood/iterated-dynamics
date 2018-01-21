@@ -12,6 +12,7 @@
 #include "fracsubr.h"
 #include "fractype.h"
 #include "framain2.h"
+#include "jiim.h"
 
 #include <float.h>
 #include <stdlib.h>

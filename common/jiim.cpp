@@ -16,6 +16,7 @@
 #include "fracsubr.h"
 #include "fractype.h"
 #include "helpdefs.h"
+#include "jiim.h"
 
 #include <stdarg.h>
 #include <string.h>

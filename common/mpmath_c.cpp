@@ -20,6 +20,7 @@
 #include "prototyp.h"
 
 #include "fpu087.h"
+#include "jiim.h"
 #include "mpmath_c.h"
 
 #include <algorithm>
