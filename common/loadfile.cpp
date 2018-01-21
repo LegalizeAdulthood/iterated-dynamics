@@ -8,6 +8,7 @@
 #include "calcfrac.h"
 #include "cmdfiles.h"
 #include "drivers.h"
+#include "encoder.h"
 #include "evolve.h"
 #include "fracsubr.h"
 #include "fractalp.h"

@@ -60,7 +60,8 @@ static int numsaves = 0;        // For adjusting 'save-to-disk' filenames
 static FILE *g_outfile;
 static int last_colorbar;
 static bool save16bit;
-static int outcolor1s, outcolor2s;
+static int outcolor1s;
+static int outcolor2s;
 static int startbits;
 
 static BYTE paletteBW[] =

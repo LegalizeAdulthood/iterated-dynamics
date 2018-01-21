@@ -39,7 +39,6 @@ extern bool                  g_auto_browse;
 extern int                   g_bad_config;
 extern int                   g_bit_shift;
 
-extern BYTE                  g_block[];
 extern int                   g_blue_bright;
 extern int                   g_blue_crop_left;
 extern int                   g_blue_crop_right;

@@ -3,6 +3,8 @@
 
 #include <string>
 
+extern BYTE                  g_block[];
+
 extern int savetodisk(char *filename);
 extern int savetodisk(std::string &filename);
 extern bool encoder();
