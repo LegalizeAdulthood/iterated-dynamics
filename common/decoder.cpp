@@ -16,11 +16,13 @@
  *
  * This routine was modified for use in FRACTINT.
  */
-#include <float.h>
-
 #include "port.h"
 #include "prototyp.h"
+
 #include "drivers.h"
+#include "gifview.h"
+
+#include <float.h>
 
 static short get_next_code();
 

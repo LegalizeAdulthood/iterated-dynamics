@@ -11,6 +11,7 @@
 #include "fracsubr.h"
 #include "fractype.h"
 #include "framain2.h"
+#include "gifview.h"
 #include "helpdefs.h"
 
 #include <stdio.h>

@@ -8,6 +8,7 @@
 
 #include "drivers.h"
 #include "encoder.h"
+#include "gifview.h"
 #include "helpdefs.h"
 
 #include <stdlib.h>

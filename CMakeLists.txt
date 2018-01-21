@@ -88,7 +88,7 @@ add_executable(id ${OS_ID_OPTIONS}
     common/editpal.cpp headers/editpal.h
     common/encoder.cpp headers/encoder.h
     common/evolve.cpp headers/evolve.h
-    common/gifview.cpp
+    common/gifview.cpp headers/gifview.h
     common/loadfdos.cpp
     common/loadfile.cpp
     common/loadmap.cpp

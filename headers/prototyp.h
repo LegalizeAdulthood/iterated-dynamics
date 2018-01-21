@@ -24,10 +24,6 @@ extern int getakeynohelp();
 extern long readticker();
 extern int get_sound_params();
 extern void setnullvideo();
-// gifview -- C file prototypes
-extern int get_byte();
-extern int get_bytes(BYTE *, int);
-extern int gifview();
 // hcmplx -- C file prototypes
 extern void HComplexTrig0(DHyperComplex *, DHyperComplex *);
 // intro -- C file prototypes
