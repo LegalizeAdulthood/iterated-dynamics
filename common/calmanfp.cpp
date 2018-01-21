@@ -8,6 +8,7 @@
 #include "prototyp.h"
 
 #include "calmanfp.h"
+#include "cmdfiles.h"
 #include "drivers.h"
 #include "fracsubr.h"
 #include "fractype.h"

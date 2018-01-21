@@ -34,6 +34,7 @@
 #include "port.h"
 #include "prototyp.h"
 
+#include "cmdfiles.h"
 #include "parser.h"
 #include "realdos.h"
 

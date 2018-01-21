@@ -5,6 +5,7 @@
 #include "prototyp.h"
 
 #include "biginit.h"
+#include "cmdfiles.h"
 #include "drivers.h"
 #include "evolve.h"
 #include "fracsubr.h"

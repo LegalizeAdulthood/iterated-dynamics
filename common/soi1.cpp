@@ -11,14 +11,16 @@
  * <URL:http://www.cs.tu-berlin.de/~rms/AlmondBread>.
  *
  */
-#include <algorithm>
-#include <cassert>
-
 #include "port.h"
 #include "prototyp.h"
+
+#include "cmdfiles.h"
 #include "drivers.h"
 #include "fractalp.h"
 #include "fractype.h"
+
+#include <algorithm>
+#include <cassert>
 
 #define EVERY 15
 #define BASIN_COLOR 0

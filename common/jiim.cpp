@@ -10,6 +10,7 @@
 #include "prototyp.h"
 
 #include "calcfrac.h"
+#include "cmdfiles.h"
 #include "diskvid.h"
 #include "drivers.h"
 #include "editpal.h"

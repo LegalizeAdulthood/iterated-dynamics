@@ -20,6 +20,7 @@
 #include "prototyp.h"
 
 #include "calcfrac.h"
+#include "cmdfiles.h"
 #include "fpu087.h"
 #include "jiim.h"
 #include "mpmath_c.h"

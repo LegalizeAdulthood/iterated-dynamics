@@ -1,6 +1,7 @@
 #include "port.h"
 #include "prototyp.h"
 
+#include "cmdfiles.h"
 #include "drivers.h"
 #include "lsys.h"
 #include "lsys_fns.h"

@@ -8,6 +8,7 @@
 
 #include "3d.h"
 #include "calcfrac.h"
+#include "cmdfiles.h"
 #include "drivers.h"
 #include "encoder.h"
 #include "fracsubr.h"

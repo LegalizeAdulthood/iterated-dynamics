@@ -1,6 +1,7 @@
 #include "port.h"
 #include "prototyp.h"
 
+#include "cmdfiles.h"
 #include "miscres.h"
 #include "prompts2.h"
 #include "realdos.h"

@@ -1,17 +1,19 @@
 /*
  * intro screen (authors & credits)
  */
-#include <vector>
+#include "port.h"
+#include "prototyp.h"
+
+#include "cmdfiles.h"
+#include "drivers.h"
+#include "helpcom.h"
+#include "helpdefs.h"
+#include "realdos.h"
 
 #include <float.h>
 #include <time.h>
 
-#include "port.h"
-#include "prototyp.h"
-#include "helpdefs.h"
-#include "drivers.h"
-#include "helpcom.h"
-#include "realdos.h"
+#include <vector>
 
 bool slowdisplay = false;
 

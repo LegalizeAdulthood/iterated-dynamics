@@ -779,8 +779,6 @@ enum class init_orbit_mode
 #define RANDPARAM       4    // newparm = constant +- rand()
 #define NOGROUT         8    // no gaps between images
 
-extern fractalspecificstuff *g_cur_fractal_specific;
-
 #define DEFAULTFRACTALTYPE      ".gif"
 #define ALTERNATEFRACTALTYPE    ".fra"
 
@@ -1099,7 +1097,6 @@ enum text_colors
     BRIGHT = 0x4000 // when mode 7, bright
 };
 // and their use:
-extern BYTE g_text_color[];
 #define C_TITLE           g_text_color[0]+BRIGHT
 #define C_TITLE_DEV       g_text_color[1]
 #define C_HELP_HDG        g_text_color[2]+BRIGHT

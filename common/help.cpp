@@ -1,6 +1,7 @@
 #include "port.h"
 #include "prototyp.h"
 
+#include "cmdfiles.h"
 #include "drivers.h"
 #include "helpcom.h"
 #include "helpdefs.h"
