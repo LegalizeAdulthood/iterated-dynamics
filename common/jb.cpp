@@ -1,10 +1,9 @@
-#include <float.h>
-
 #include "port.h"
 #include "prototyp.h"
-#include "helpdefs.h"
-#include "fractype.h"
+
 #include "drivers.h"
+#include "fractype.h"
+#include "helpdefs.h"
 
 // these need to be accessed elsewhere for saving data
 double g_julibrot_x_min = -.83;
