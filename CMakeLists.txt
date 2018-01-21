@@ -68,7 +68,7 @@ add_executable(id ${OS_ID_OPTIONS}
     common/fracsuba.cpp headers/fracsuba.h
     common/fracsubr.cpp headers/fracsubr.h
     common/fractalb.cpp
-    common/fractalp.cpp
+    common/fractalp.cpp headers/fractalp.h
     common/fractals.cpp
     common/frasetup.cpp
     common/soi.cpp

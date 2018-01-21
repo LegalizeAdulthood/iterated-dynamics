@@ -24,9 +24,6 @@ extern int getakeynohelp();
 extern long readticker();
 extern int get_sound_params();
 extern void setnullvideo();
-// fractalp -- C file prototypes
-extern bool typehasparm(fractal_type type, int parm, char *buf);
-extern bool paramnotused(int);
 // fractals -- C file prototypes
 extern void FloatPreCalcMagnet2();
 extern void cpower(DComplex *, int, DComplex *);

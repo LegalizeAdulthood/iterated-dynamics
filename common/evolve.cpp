@@ -5,6 +5,7 @@
 #include "evolve.h"
 #include "fractype.h"
 #include "helpdefs.h"
+#include "fractalp.h"
 
 #include <float.h>
 #include <stdlib.h>
