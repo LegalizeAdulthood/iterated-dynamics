@@ -11,6 +11,7 @@
 #include "helpdefs.h"
 #include "drivers.h"
 #include "helpcom.h"
+#include "realdos.h"
 
 bool slowdisplay = false;
 

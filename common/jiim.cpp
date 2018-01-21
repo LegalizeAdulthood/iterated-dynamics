@@ -20,6 +20,7 @@
 #include "lorenz.h"
 #include "miscfrac.h"
 #include "prompts2.h"
+#include "realdos.h"
 
 #include <stdarg.h>
 #include <string.h>

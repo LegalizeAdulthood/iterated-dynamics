@@ -119,7 +119,7 @@ add_executable(id ${OS_ID_OPTIONS}
     common/miscres.cpp headers/miscres.h
     common/prompts1.cpp headers/prompts1.h
     common/prompts2.cpp headers/prompts2.h
-    common/realdos.cpp
+    common/realdos.cpp headers/realdos.h
     common/zoom.cpp
 
     headers/big.h

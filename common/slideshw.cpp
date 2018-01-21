@@ -8,6 +8,7 @@
 #include "drivers.h"
 #include "helpcom.h"
 #include "miscres.h"
+#include "realdos.h"
 
 #include <ctype.h>
 #include <float.h>

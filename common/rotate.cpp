@@ -9,6 +9,7 @@
 #include "helpdefs.h"
 #include "loadmap.h"
 #include "prompts2.h"
+#include "realdos.h"
 
 #include <float.h>
 #include <string.h>

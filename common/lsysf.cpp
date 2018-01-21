@@ -4,6 +4,7 @@
 #include "drivers.h"
 #include "lsys.h"
 #include "lsys_fns.h"
+#include "realdos.h"
 
 #include <float.h>
 #include <string.h>

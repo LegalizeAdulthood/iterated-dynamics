@@ -14,6 +14,7 @@ FRACTALS.C, i.e. which are non-fractal-specific fractal engine subroutines.
 #include "fractype.h"
 #include "miscovl.h"
 #include "miscres.h"
+#include "realdos.h"
 
 #include <float.h>
 #include <limits.h>

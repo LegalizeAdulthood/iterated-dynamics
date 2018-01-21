@@ -17,6 +17,7 @@ Miscellaneous fractal-specific code (formerly in CALCFRAC.C)
 #include "miscres.h"
 #include "newton.h"
 #include "parser.h"
+#include "realdos.h"
 
 #include <limits.h>
 #include <stdlib.h>

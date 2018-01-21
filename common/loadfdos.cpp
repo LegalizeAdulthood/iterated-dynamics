@@ -37,6 +37,7 @@
 #include "port.h"
 #include "prototyp.h"
 #include "helpdefs.h"
+#include "realdos.h"
 
 // routines in this module
 

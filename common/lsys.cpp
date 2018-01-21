@@ -6,6 +6,7 @@
 #include "lsys.h"
 #include "lsys_fns.h"
 #include "miscres.h"
+#include "realdos.h"
 
 #include <float.h>
 #include <string.h>

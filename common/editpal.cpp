@@ -9,6 +9,7 @@
 
 #include "drivers.h"
 #include "prompts2.h"
+#include "realdos.h"
 
 #include <stdarg.h>
 #include <string.h>

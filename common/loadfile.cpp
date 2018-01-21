@@ -17,6 +17,7 @@
 #include "miscres.h"
 #include "prompts1.h"
 #include "prompts2.h"
+#include "realdos.h"
 
 #include <errno.h>
 #include <string.h>

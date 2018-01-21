@@ -19,6 +19,7 @@
 #include "mpmath_c.h"
 #include "prompts1.h"
 #include "prompts2.h"
+#include "realdos.h"
 
 #include <ctype.h>
 #include <string.h>

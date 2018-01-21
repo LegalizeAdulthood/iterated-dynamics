@@ -10,6 +10,7 @@
 #include "encoder.h"
 #include "gifview.h"
 #include "helpdefs.h"
+#include "realdos.h"
 
 #include <stdlib.h>
 #include <string.h>
