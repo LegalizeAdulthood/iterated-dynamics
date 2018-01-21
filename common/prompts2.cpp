@@ -16,6 +16,7 @@
 #include "loadfile.h"
 #include "loadmap.h"
 #include "miscres.h"
+#include "mpmath_c.h"
 
 #include <ctype.h>
 #include <string.h>

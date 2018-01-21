@@ -9,6 +9,7 @@
 #include "framain2.h"
 #include "frasetup.h"
 #include "helpdefs.h"
+#include "mpmath_c.h"
 
 #include <string.h>
 

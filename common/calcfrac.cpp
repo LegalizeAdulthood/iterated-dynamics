@@ -28,6 +28,7 @@ Additional fractal-specific modules are also invoked from CALCFRAC:
 #include "lorenz.h"
 #include "miscfrac.h"
 #include "miscres.h"
+#include "mpmath_c.h"
 #include "newton.h"
 
 #include <limits.h>

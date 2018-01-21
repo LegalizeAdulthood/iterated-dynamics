@@ -14,6 +14,7 @@
 #include "jb.h"
 #include "lorenz.h"
 #include "lsys_fns.h"
+#include "mpmath_c.h"
 #include "newton.h"
 
 // functions defined elsewhere needed for fractalspecific
