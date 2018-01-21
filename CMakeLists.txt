@@ -63,7 +63,7 @@ add_executable(id ${OS_ID_OPTIONS}
     common/plot3d.cpp
 
     common/calcfrac.cpp
-    common/calcmand.cpp
+    common/calcmand.cpp headers/calcmand.h
     common/calmanfp.cpp
     common/fracsuba.cpp
     common/fracsubr.cpp

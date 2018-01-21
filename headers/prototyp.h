@@ -24,8 +24,6 @@ extern int getakeynohelp();
 extern long readticker();
 extern int get_sound_params();
 extern void setnullvideo();
-// calcmand -- assembler file prototypes
-extern long calcmandasm();
 // calmanfp -- assembler file prototypes
 extern void calcmandfpasmstart();
 extern long calcmandfpasm();

@@ -11,20 +11,21 @@ Additional fractal-specific modules are also invoked from CALCFRAC:
   PARSER.C      formula fractals
   and more
  -------------------------------------------------------------------- */
-#include <algorithm>
-#include <vector>
+#include "port.h"
+#include "prototyp.h"
+
+#include "calcmand.h"
+#include "drivers.h"
+#include "fractype.h"
+#include "targa_lc.h"
 
 #include <limits.h>
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
 
-// see Fractint.c for a description of the "include"  hierarchy
-#include "port.h"
-#include "prototyp.h"
-#include "fractype.h"
-#include "targa_lc.h"
-#include "drivers.h"
+#include <algorithm>
+#include <vector>
 
 // routines in this module
 static void perform_worklist();
