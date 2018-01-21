@@ -2,10 +2,13 @@
     This file includes miscellaneous plot functions and logic
     for 3D, used by lorenz.c and line3d.c
 */
-#include <float.h>
 #include "port.h"
 #include "prototyp.h"
+
+#include "diskvid.h"
 #include "fractype.h"
+
+#include <float.h>
 
 // Use these palette indices for red/blue - same on ega/vga
 #define PAL_BLUE    1

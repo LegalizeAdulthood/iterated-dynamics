@@ -2,21 +2,22 @@
  *
  * Routines for a Win32 GDI driver for fractint.
  */
+#include "port.h"
+#include "prototyp.h"
+
+#include "diskvid.h"
+#include "drivers.h"
+#include "fractype.h"
+#include "helpdefs.h"
+#include "helpcom.h"
+
 #include <assert.h>
 #include <float.h>
 #include <stdio.h>
 #include <time.h>
-
 #define WIN32_LEAN_AND_MEAN
 #define STRICT
 #include <windows.h>
-
-#include "port.h"
-#include "prototyp.h"
-#include "fractype.h"
-#include "helpdefs.h"
-#include "drivers.h"
-#include "helpcom.h"
 
 #include "WinText.h"
 #include "frame.h"

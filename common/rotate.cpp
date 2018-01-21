@@ -1,16 +1,16 @@
 /*
     rotate.c - Routines that manipulate the Video DAC on VGA Adapters
 */
+#include "port.h"
+#include "prototyp.h"
+
+#include "diskvid.h"
+#include "drivers.h"
+#include "helpdefs.h"
+
 #include <float.h>
 #include <string.h>
 #include <time.h>
-
-#include "port.h"
-#include "prototyp.h"
-#include "helpdefs.h"
-#include "drivers.h"
-
-// routines in this module
 
 static void pauserotate();
 static void set_palette(BYTE start[3], BYTE finish[3]);

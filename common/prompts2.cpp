@@ -6,6 +6,7 @@
 
 #include "ant.h"
 #include "cmdfiles.h"
+#include "diskvid.h"
 #include "drivers.h"
 #include "fractype.h"
 #include "helpcom.h"

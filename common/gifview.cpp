@@ -12,6 +12,7 @@
 #include "prototyp.h"
 
 #include "decoder.h"
+#include "diskvid.h"
 #include "drivers.h"
 
 #include <string.h>

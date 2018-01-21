@@ -1,3 +1,14 @@
+#include "port.h"
+#include "prototyp.h"
+
+#include "cmplx.h"
+#include "diskvid.h"
+#include "drivers.h"
+#include "externs.h"
+#include "fractint.h"
+#include "helpdefs.h"
+#include "mpmath.h"
+
 #include <assert.h>
 #include <direct.h>
 #include <float.h>
@@ -5,22 +16,13 @@
 #include <string.h>
 #include <sys/timeb.h>
 #include <time.h>
-
 #define WIN32_LEAN_AND_MEAN
 #define STRICT
 #include <windows.h>
 #include <shlwapi.h>
 #include <dbghelp.h>
 
-#include "port.h"
-#include "cmplx.h"
-#include "fractint.h"
-#include "drivers.h"
-#include "externs.h"
-#include "prototyp.h"
-#include "helpdefs.h"
 #include "frame.h"
-#include "mpmath.h"
 
 // External declarations
 extern void check_samename();

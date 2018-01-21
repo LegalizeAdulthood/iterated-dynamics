@@ -7,6 +7,7 @@
 #include "prototyp.h"
 
 #include "3d.h"
+#include "diskvid.h"
 #include "drivers.h"
 
 #include <limits.h>

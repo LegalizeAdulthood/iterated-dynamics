@@ -1,8 +1,12 @@
 /*
         encoder.c - GIF Encoder and associated routines
 */
-#include <algorithm>
-#include <string>
+#include "port.h"
+#include "prototyp.h"
+
+#include "diskvid.h"
+#include "drivers.h"
+#include "fractype.h"
 
 #include <limits.h>
 #include <string.h>
@@ -10,10 +14,8 @@
 #include <unistd.h>
 #endif
 
-#include "port.h"
-#include "prototyp.h"
-#include "fractype.h"
-#include "drivers.h"
+#include <algorithm>
+#include <string>
 
 static bool compress(int rowlimit);
 static int shftwrite(BYTE const *color, int numcolors);

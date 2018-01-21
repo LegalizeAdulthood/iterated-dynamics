@@ -6,14 +6,16 @@
    Do timing tests for a variety of situations after any change.
 
 */
-#include <vector>
+#include "port.h"
+#include "prototyp.h"
+
+#include "diskvid.h"
+#include "drivers.h"
 
 #include <float.h>
 #include <string.h>
 
-#include "port.h"
-#include "prototyp.h"
-#include "drivers.h"
+#include <vector>
 
 #define BOXROW   6
 #define BOXCOL   11

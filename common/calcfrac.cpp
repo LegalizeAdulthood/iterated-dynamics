@@ -18,6 +18,7 @@ Additional fractal-specific modules are also invoked from CALCFRAC:
 #include "calcfrac.h"
 #include "calcmand.h"
 #include "calmanfp.h"
+#include "diskvid.h"
 #include "drivers.h"
 #include "fpu087.h"
 #include "fractype.h"
