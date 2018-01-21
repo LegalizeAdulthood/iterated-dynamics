@@ -24,8 +24,6 @@ extern int getakeynohelp();
 extern long readticker();
 extern int get_sound_params();
 extern void setnullvideo();
-// msccos -- C file prototypes
-extern double _cos(double);
 // parser -- C file prototypes
 struct fn_operand
 { // function, load, store pointers
