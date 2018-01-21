@@ -2,25 +2,26 @@
         FRACTINT - The Ultimate Fractal Generator
                         Main Routine
 */
-#include <cassert>
-#include <vector>
+#include "port.h"
+#include "prototyp.h"
+
+#include "cmdfiles.h"
+#include "drivers.h"
+#include "fractype.h"
+#include "helpcom.h"
+#include "helpdefs.h"
 
 #include <ctype.h>
 #include <signal.h>
 #include <stdarg.h>
 #include <string.h>
 #include <time.h>
-
 #if defined(XFRACT)
 #include <unistd.h>
 #endif
 
-#include "port.h"
-#include "prototyp.h"
-#include "fractype.h"
-#include "helpdefs.h"
-#include "drivers.h"
-#include "helpcom.h"
+#include <cassert>
+#include <vector>
 
 VIDEOINFO g_video_entry;
 int g_help_mode;

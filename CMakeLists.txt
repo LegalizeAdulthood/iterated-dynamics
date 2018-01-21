@@ -82,7 +82,7 @@ add_executable(id ${OS_ID_OPTIONS}
     common/lsysf.cpp
     common/miscfrac.cpp
 
-    common/cmdfiles.cpp
+    common/cmdfiles.cpp headers/cmdfiles.h
     common/decoder.cpp
     common/diskvid.cpp
     common/editpal.cpp

@@ -1,5 +1,11 @@
-#include <cassert>
-#include <vector>
+#include "port.h"
+#include "prototyp.h"
+
+#include "cmdfiles.h"
+#include "drivers.h"
+#include "fractype.h"
+#include "helpcom.h"
+#include "helpdefs.h"
 
 #include <ctype.h>
 #include <fcntl.h>
@@ -13,12 +19,8 @@
 #include <process.h>
 #endif
 
-#include "port.h"
-#include "prototyp.h"
-#include "fractype.h"
-#include "helpdefs.h"
-#include "drivers.h"
-#include "helpcom.h"
+#include <cassert>
+#include <vector>
 
 static int menu_checkkey(int curkey, int choice);
 

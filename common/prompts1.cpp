@@ -5,6 +5,7 @@
 #include "prototyp.h"
 
 #include "calcfrac.h"
+#include "cmdfiles.h"
 #include "drivers.h"
 #include "fracsuba.h"
 #include "fractype.h"

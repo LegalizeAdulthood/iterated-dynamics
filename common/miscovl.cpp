@@ -5,6 +5,7 @@
 #include "prototyp.h"
 
 #include "biginit.h"
+#include "cmdfiles.h"
 #include "drivers.h"
 #include "fractype.h"
 #include "helpdefs.h"
