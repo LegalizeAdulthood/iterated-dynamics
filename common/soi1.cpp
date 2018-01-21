@@ -233,6 +233,11 @@ struct soi_double_state
 
 soi_double_state state{};
 
+inline double_complex zsqr(double_complex z)
+{
+    return { z.re*z.re, z.im*z.im };
+}
+
 }
 
 static int rhombus(double cre1, double cre2, double cim1, double cim2,
@@ -421,11 +426,7 @@ scan:
         goto rhombus_done;
     }
 
-    for (int i = 0; i < 9; ++i)
-    {
-        state.rq[i].re = zi[i].re*zi[i].re;
-        state.rq[i].im = zi[i].im*zi[i].im;
-    }
+    std::transform(std::begin(zi), std::end(zi), std::begin(state.rq), zsqr);
 
     state.corner[0].re = 0.75*cre1 + 0.25*cre2;
     state.corner[0].im = 0.75*cim1 + 0.25*cim2;
@@ -444,11 +445,7 @@ scan:
     state.tz[3].re = GET_REAL(state.corner[1].re, state.corner[1].im);
     state.tz[3].im = GET_IMAG(state.corner[1].re, state.corner[1].im);
 
-    for (int i = 0; i < 4; ++i)
-    {
-        state.tq[i].re = state.tz[i].re*state.tz[i].re;
-        state.tq[i].im = state.tz[i].im*state.tz[i].im;
-    }
+    std::transform(std::begin(state.tz), std::end(state.tz), std::begin(state.tq), zsqr);
 
     before = iter;
 
