@@ -10,6 +10,7 @@
 #include "fractalp.h"
 #include "fractype.h"
 #include "helpdefs.h"
+#include "miscres.h"
 
 #include <ctype.h>
 #include <stdarg.h>

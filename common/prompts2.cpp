@@ -15,6 +15,7 @@
 #include "helpdefs.h"
 #include "loadfile.h"
 #include "loadmap.h"
+#include "miscres.h"
 
 #include <ctype.h>
 #include <string.h>

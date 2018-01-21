@@ -6,6 +6,7 @@
 #include "fractype.h"
 #include "helpdefs.h"
 #include "fractalp.h"
+#include "miscres.h"
 
 #include <float.h>
 #include <stdlib.h>

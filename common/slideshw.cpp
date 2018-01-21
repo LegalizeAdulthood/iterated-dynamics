@@ -2,18 +2,20 @@
 // These routines are called by driver_get_key to allow keystrokes to control
 // Fractint to be read from a file.
 //*********************************************************************
-#include <sstream>
-#include <system_error>
+#include "port.h"
+#include "prototyp.h"
+
+#include "drivers.h"
+#include "helpcom.h"
+#include "miscres.h"
 
 #include <ctype.h>
 #include <float.h>
 #include <string.h>
 #include <time.h>
 
-#include "port.h"
-#include "prototyp.h"
-#include "drivers.h"
-#include "helpcom.h"
+#include <sstream>
+#include <system_error>
 
 static void sleep_secs(int);
 static int showtempmsg_txt(int row, int col, int attr, int secs, const char *txt);

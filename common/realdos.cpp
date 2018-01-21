@@ -7,6 +7,7 @@
 #include "fractype.h"
 #include "helpcom.h"
 #include "helpdefs.h"
+#include "miscres.h"
 
 #include <ctype.h>
 #include <fcntl.h>

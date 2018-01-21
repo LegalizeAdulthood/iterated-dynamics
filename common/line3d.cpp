@@ -9,6 +9,7 @@
 #include "3d.h"
 #include "diskvid.h"
 #include "drivers.h"
+#include "miscres.h"
 
 #include <limits.h>
 #if defined(XFRACT)

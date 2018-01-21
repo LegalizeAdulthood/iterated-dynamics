@@ -1,8 +1,10 @@
-#include <float.h>
-#include <string.h>
-
 #include "port.h"
 #include "prototyp.h"
+
+#include "miscres.h"
+
+#include <float.h>
+#include <string.h>
 
 //*************************************************************************
 

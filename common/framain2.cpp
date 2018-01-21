@@ -18,6 +18,7 @@
 #include "loadfile.h"
 #include "lorenz.h"
 #include "miscovl.h"
+#include "miscres.h"
 
 #include <stdio.h>
 #include <string.h>

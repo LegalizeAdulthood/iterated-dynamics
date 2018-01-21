@@ -15,6 +15,7 @@
 #include "loadfile.h"
 #include "loadmap.h"
 #include "miscovl.h"
+#include "miscres.h"
 
 #include <ctype.h>
 #include <float.h>

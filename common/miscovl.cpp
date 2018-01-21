@@ -13,6 +13,7 @@
 #include "helpdefs.h"
 #include "loadfile.h"
 #include "miscovl.h"
+#include "miscres.h"
 
 #include <ctype.h>
 #include <float.h>

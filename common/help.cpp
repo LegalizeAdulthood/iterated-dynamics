@@ -1,9 +1,10 @@
-#include <system_error>
-#include <vector>
+#include "port.h"
+#include "prototyp.h"
 
-#ifndef TEST // kills all those assert macros in production version
-#define NDEBUG
-#endif
+#include "drivers.h"
+#include "helpcom.h"
+#include "helpdefs.h"
+#include "miscres.h"
 
 #include <assert.h>
 #include <fcntl.h>
@@ -15,11 +16,12 @@
 #include <unistd.h>
 #endif
 
-#include "port.h"
-#include "prototyp.h"
-#include "helpdefs.h"
-#include "drivers.h"
-#include "helpcom.h"
+#include <system_error>
+#include <vector>
+
+#ifndef TEST // kills all those assert macros in production version
+#define NDEBUG
+#endif
 
 #define MAX_HIST           16        // number of pages we'll remember
 #define ACTION_CALL         0        // values returned by help_topic()

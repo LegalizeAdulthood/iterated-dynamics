@@ -10,6 +10,7 @@
 #include "fractype.h"
 #include "framain2.h"
 #include "loadfile.h"
+#include "miscres.h"
 
 #include <limits.h>
 #include <string.h>

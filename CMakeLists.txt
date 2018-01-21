@@ -116,7 +116,7 @@ add_executable(id ${OS_ID_OPTIONS}
     common/intro.cpp headers/intro.h
     common/jiim.cpp headers/jiim.h
     common/miscovl.cpp headers/miscovl.h
-    common/miscres.cpp
+    common/miscres.cpp headers/miscres.h
     common/prompts1.cpp
     common/prompts2.cpp
     common/realdos.cpp

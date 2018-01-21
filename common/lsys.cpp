@@ -5,6 +5,7 @@
 #include "fpu087.h"
 #include "lsys.h"
 #include "lsys_fns.h"
+#include "miscres.h"
 
 #include <float.h>
 #include <string.h>

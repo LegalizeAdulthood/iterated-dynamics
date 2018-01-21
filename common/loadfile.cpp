@@ -14,6 +14,7 @@
 #include "loadfdos.h"
 #include "loadfile.h"
 #include "lorenz.h"
+#include "miscres.h"
 
 #include <errno.h>
 #include <string.h>
