@@ -90,7 +90,7 @@ add_executable(id ${OS_ID_OPTIONS}
     common/evolve.cpp headers/evolve.h
     common/gifview.cpp headers/gifview.h
     common/loadfdos.cpp headers/loadfdos.h
-    common/loadfile.cpp
+    common/loadfile.cpp headers/loadfile.h
     common/loadmap.cpp
     common/parser.cpp
     common/parserfp.cpp

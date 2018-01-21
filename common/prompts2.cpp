@@ -13,6 +13,7 @@
 #include "fractype.h"
 #include "helpcom.h"
 #include "helpdefs.h"
+#include "loadfile.h"
 
 #include <ctype.h>
 #include <string.h>

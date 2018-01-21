@@ -9,6 +9,7 @@
 #include "encoder.h"
 #include "fractype.h"
 #include "framain2.h"
+#include "loadfile.h"
 
 #include <limits.h>
 #include <string.h>

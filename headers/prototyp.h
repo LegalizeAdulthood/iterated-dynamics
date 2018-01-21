@@ -24,15 +24,6 @@ extern int getakeynohelp();
 extern long readticker();
 extern int get_sound_params();
 extern void setnullvideo();
-// loadfile -- C file prototypes
-extern int read_overlay();
-extern void set_if_old_bif();
-extern void set_function_parm_defaults();
-extern int fgetwindow();
-extern void backwards_v18();
-extern void backwards_v19();
-extern void backwards_v20();
-extern bool check_back();
 // loadmap -- C file prototypes
 //extern void SetTgaColors();
 extern bool ValidateLuts(char const *mapname);

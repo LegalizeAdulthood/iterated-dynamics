@@ -16,6 +16,7 @@
 #include "helpcom.h"
 #include "helpdefs.h"
 #include "intro.h"
+#include "loadfile.h"
 
 #include <ctype.h>
 #include <signal.h>

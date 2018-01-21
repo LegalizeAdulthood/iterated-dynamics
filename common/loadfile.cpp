@@ -12,6 +12,7 @@
 #include "framain2.h"
 #include "helpdefs.h"
 #include "loadfdos.h"
+#include "loadfile.h"
 #include "targa_lc.h"
 
 #include <errno.h>

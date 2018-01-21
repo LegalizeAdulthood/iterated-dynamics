@@ -12,6 +12,7 @@
 #include "fractals.h"
 #include "fractype.h"
 #include "helpcom.h"
+#include "loadfile.h"
 
 #include <ctype.h>
 #include <float.h>
