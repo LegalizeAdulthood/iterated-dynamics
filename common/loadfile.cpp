@@ -20,6 +20,7 @@
 #include "loadfile.h"
 #include "lorenz.h"
 #include "miscres.h"
+#include "plot3d.h"
 #include "prompts1.h"
 #include "prompts2.h"
 #include "realdos.h"

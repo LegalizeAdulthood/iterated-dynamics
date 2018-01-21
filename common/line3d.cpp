@@ -14,6 +14,7 @@
 #include "fractals.h"
 #include "loadfile.h"
 #include "miscres.h"
+#include "plot3d.h"
 #include "prompts2.h"
 #include "realdos.h"
 #include "stereo.h"
