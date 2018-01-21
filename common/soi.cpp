@@ -30,7 +30,7 @@
 #define BASIN_COLOR 0
 
 int g_rhombus_stack[10];
-int rhombus_depth = 0;
+int g_rhombus_depth = 0;
 int g_max_rhombus_depth;
 int g_soi_min_stack_available;
 int g_soi_min_stack = 2200; // and this much stack to not crash when <tab> is pressed
@@ -486,17 +486,17 @@ static int rhombus(LDBL cre1, LDBL cre2, LDBL cim1, LDBL cim2,
     LDBL im94;
 
     bool status = false;
-    rhombus_depth++;
+    g_rhombus_depth++;
     avail = stackavail();
     if (avail < g_soi_min_stack_available)
     {
         g_soi_min_stack_available = avail;
     }
-    if (rhombus_depth > g_max_rhombus_depth)
+    if (g_rhombus_depth > g_max_rhombus_depth)
     {
-        g_max_rhombus_depth = rhombus_depth;
+        g_max_rhombus_depth = g_rhombus_depth;
     }
-    g_rhombus_stack[rhombus_depth] = avail;
+    g_rhombus_stack[g_rhombus_depth] = avail;
 
     if (driver_key_pressed())
     {
@@ -914,7 +914,7 @@ scan:
             re94, im94,
             iter);
 rhombus_done:
-    rhombus_depth--;
+    g_rhombus_depth--;
     return status ? 1 : 0;
 }
 
@@ -926,7 +926,7 @@ void soi_ldbl()
     LDBL stepx, stepy;
     LDBL xxminl, xxmaxl, yyminl, yymaxl;
     g_soi_min_stack_available = 30000;
-    rhombus_depth = -1;
+    g_rhombus_depth = -1;
     g_max_rhombus_depth = 0;
     if (bf_math != bf_math_type::NONE)
     {
