@@ -1,14 +1,11 @@
-#include <float.h>
-#include <limits.h>
-#include <string.h>
-#if !defined(_WIN32)
-#include <malloc.h>
-#endif
-
 #include "port.h"
 #include "prototyp.h"
-#include "helpdefs.h"
+
+#include "calmanfp.h"
 #include "fractype.h"
+#include "helpdefs.h"
+
+#include <string.h>
 
 #if !defined(XFRACT)
 #define MPCmod(m) (*pMPadd(*pMPmul((m).x, (m).x), *pMPmul((m).y, (m).y)))

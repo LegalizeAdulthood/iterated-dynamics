@@ -24,9 +24,6 @@ extern int getakeynohelp();
 extern long readticker();
 extern int get_sound_params();
 extern void setnullvideo();
-// calmanfp -- assembler file prototypes
-extern void calcmandfpasmstart();
-extern long calcmandfpasm();
 // fpu087 -- assembler file prototypes
 extern void FPUcplxmul(DComplex const *x, DComplex const *y, DComplex *z);
 extern void FPUcplxdiv(DComplex const *x, DComplex const *y, DComplex *z);
