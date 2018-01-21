@@ -9,6 +9,7 @@
 #include "calcfrac.h"
 #include "fractals.h"
 #include "fractype.h"
+#include "frasetup.h"
 #include "helpdefs.h"
 #include "jb.h"
 #include "newton.h"

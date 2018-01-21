@@ -7,6 +7,7 @@
 #include "fractals.h"
 #include "fractype.h"
 #include "framain2.h"
+#include "frasetup.h"
 #include "helpdefs.h"
 
 #include <string.h>
