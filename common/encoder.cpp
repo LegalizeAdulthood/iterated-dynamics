@@ -8,8 +8,6 @@
 #include <string.h>
 #if defined(XFRACT)
 #include <unistd.h>
-#else
-#include <io.h>
 #endif
 
 #include "port.h"

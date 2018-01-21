@@ -51,7 +51,6 @@ extern int _splitpath(char const *file_template, char *drive, char *dir, char *f
 #define SHOW_ERROR_LINE
 
 #if defined(_WIN32)
-#include <io.h>
 // disable unsafe CRT warnings
 #pragma warning(disable: 4996)
 #endif
@@ -4068,7 +4067,7 @@ public:
         if (swapfile != nullptr)
         {
             fclose(swapfile);
-            remove(swappath.c_str());
+            id_fs_remove(swappath.c_str());
         }
     }
 

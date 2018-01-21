@@ -893,7 +893,7 @@ loopbottom:
                 if (ferror(File_Ptr1))
                 {
                     fclose(File_Ptr1);
-                    remove(g_light_name.c_str());
+                    id_fs_remove(g_light_name.c_str());
                     File_Error(g_raytrace_filename.c_str(), 2);
                     return -1;
                 }

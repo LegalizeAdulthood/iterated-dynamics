@@ -13,8 +13,6 @@
 #include <time.h>
 #if defined(XFRACT)
 #include <unistd.h>
-#else
-#include <io.h>
 #endif
 
 #include "port.h"
@@ -1455,7 +1453,7 @@ ErrorAbort:
     if (temp_file != nullptr)
     {
         fclose(temp_file);
-        remove(TEMP_FILE_NAME);
+        id_fs_remove(TEMP_FILE_NAME);
         temp_file = nullptr;
     }
 

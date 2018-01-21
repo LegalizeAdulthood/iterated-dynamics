@@ -12,8 +12,6 @@
 #if defined(XFRACT)
 #include <malloc.h>
 #include <unistd.h>
-#else
-#include <io.h>
 #endif
 
 #include "port.h"

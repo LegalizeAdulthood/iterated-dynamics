@@ -4,10 +4,6 @@
 #include <string.h>
 #include <time.h>
 
-#ifndef XFRACT
-#include <io.h>
-#endif
-
 #include <stdarg.h>
 
 #include <ctype.h>

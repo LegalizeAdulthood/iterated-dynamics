@@ -5,7 +5,7 @@
 #define O_BINARY 0
 #endif
 typedef float FLOAT4;
-#define remove(x) unlink(x)
+#define id_fs_remove(x) unlink(x)
 #if !defined(_MAX_FNAME)
 #define _MAX_FNAME 20
 #endif

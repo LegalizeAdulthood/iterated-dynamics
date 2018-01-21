@@ -2,7 +2,11 @@
 #ifndef WIN32_H
 #define WIN32_H
 
-#define remove(x) unlink(x)
+// required for _unlink
+#include <io.h>
+#include <stdio.h>
+
+#define id_fs_remove(x) _unlink(x)
 #if !defined(_MAX_FNAME)
 #define _MAX_FNAME 20
 #endif

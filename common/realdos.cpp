@@ -10,7 +10,6 @@
 #if defined(XFRACT)
 #include <unistd.h>
 #else
-#include <io.h>
 #include <process.h>
 #endif
 

@@ -13,7 +13,6 @@
 #if defined(XFRACT)
 #include <unistd.h>
 #else
-#include <io.h>
 #include <process.h>
 #endif
 
@@ -2546,7 +2545,7 @@ void make_mig(unsigned int xmult, unsigned int ymult)
             for (unsigned xstep = 0U; xstep < xmult; xstep++)
             {
                 sprintf(gifin, "frmig_%c%c.gif", PAR_KEY(xstep), PAR_KEY(ystep));
-                remove(gifin);
+                id_fs_remove(gifin);
             }
         }
     }
