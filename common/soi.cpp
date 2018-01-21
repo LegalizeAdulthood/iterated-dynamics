@@ -28,6 +28,36 @@
 #define EVERY 15
 #define BASIN_COLOR 0
 
+namespace
+{
+
+struct long_double_complex
+{
+    LDBL re;
+    LDBL im;
+};
+
+struct soi_long_double_state
+{
+    long_double_complex z;
+    long_double_complex step;
+    LDBL interstep;
+    LDBL helpre;
+    long_double_complex scan_z;
+    long_double_complex b1[3];
+    long_double_complex b2[3];
+    long_double_complex b3[3];
+    long_double_complex limit;
+    long_double_complex rq[9];
+    long_double_complex corner[2];
+    long_double_complex tz[4];
+    long_double_complex tq[4];
+};
+
+soi_long_double_state state{};
+
+} // namespace
+
 int g_rhombus_stack[10];
 int rhombus_depth = 0;
 int g_max_rhombus_depth;
@@ -300,27 +330,27 @@ static void putbox(int x1, int y1, int x2, int y2, int color)
 // compute the value of the interpolation polynomial at (x,y)
 #define GET_REAL(x, y) \
     interpolate(cim1, midi, cim2, \
-        interpolate(cre1, midr, cre2, zre1, zre5, zre2, x), \
-        interpolate(cre1, midr, cre2, zre6, zre9, zre7, x), \
-        interpolate(cre1, midr, cre2, zre3, zre8, zre4, x), y)
+        interpolate(cre1, midr, cre2, zi[0].re, zi[4].re, zi[1].re, x), \
+        interpolate(cre1, midr, cre2, zi[5].re, zi[8].re, zi[6].re, x), \
+        interpolate(cre1, midr, cre2, zi[2].re, zi[7].re, zi[3].re, x), y)
 #define GET_IMAG(x, y) \
     interpolate(cre1, midr, cre2, \
-        interpolate(cim1, midi, cim2, zim1, zim6, zim3, y), \
-        interpolate(cim1, midi, cim2, zim5, zim9, zim8, y), \
-        interpolate(cim1, midi, cim2, zim2, zim7, zim4, y), x)
+        interpolate(cim1, midi, cim2, zi[0].im, zi[5].im, zi[2].im, y), \
+        interpolate(cim1, midi, cim2, zi[4].im, zi[8].im, zi[7].im, y), \
+        interpolate(cim1, midi, cim2, zi[1].im, zi[6].im, zi[3].im, y), x)
 
 /* compute the value of the interpolation polynomial at (x,y)
    from saved values before interpolation failed to stay within tolerance */
 #define GET_SAVED_REAL(x, y) \
     interpolate(cim1, midi, cim2, \
-        interpolate(cre1, midr, cre2, sr1, sr5, sr2, x), \
-        interpolate(cre1, midr, cre2, sr6, sr9, sr7, x), \
-        interpolate(cre1, midr, cre2, sr3, sr8, sr4, x), y)
+        interpolate(cre1, midr, cre2, s[0].re, s[4].re, s[1].re, x), \
+        interpolate(cre1, midr, cre2, s[5].re, s[8].re, s[6].re, x), \
+        interpolate(cre1, midr, cre2, s[2].re, s[7].re, s[3].re, x), y)
 #define GET_SAVED_IMAG(x, y) \
     interpolate(cre1, midr, cre2, \
-        interpolate(cim1, midi, cim2, si1, si6, si3, y), \
-        interpolate(cim1, midi, cim2, si5, si9, si8, y), \
-        interpolate(cim1, midi, cim2, si2, si7, si4, y), x)
+        interpolate(cim1, midi, cim2, s[0].im, s[5].im, s[2].im, y), \
+        interpolate(cim1, midi, cim2, s[4].im, s[8].im, s[7].im, y), \
+        interpolate(cim1, midi, cim2, s[1].im, s[6].im, s[3].im, y), x)
 
 /* compute the value of the interpolation polynomial at (x,y)
    during scanning. Here, key values do not change, so we can precompute
@@ -328,14 +358,14 @@ static void putbox(int x1, int y1, int x2, int y2, int color)
    during scanning. */
 #define GET_SCAN_REAL(x, y) \
     interpolate(cim1, midi, cim2, \
-        EVALUATE(cre1, midr, state.br10, state.br11, state.br12, x), \
-        EVALUATE(cre1, midr, state.br20, state.br21, state.br22, x), \
-        EVALUATE(cre1, midr, state.br30, state.br31, state.br32, x), y)
+        EVALUATE(cre1, midr, state.b1[0].re, state.b1[1].re, state.b1[2].re, x), \
+        EVALUATE(cre1, midr, state.b2[0].re, state.b2[1].re, state.b2[2].re, x), \
+        EVALUATE(cre1, midr, state.b3[0].re, state.b3[1].re, state.b3[2].re, x), y)
 #define GET_SCAN_IMAG(x, y) \
     interpolate(cre1, midr, cre2, \
-        EVALUATE(cim1, midi, state.bi10, state.bi11, state.bi12, y), \
-        EVALUATE(cim1, midi, state.bi20, state.bi21, state.bi22, y), \
-        EVALUATE(cim1, midi, state.bi30, state.bi31, state.bi32, y), x)
+        EVALUATE(cim1, midi, state.b1[0].im, state.b1[1].im, state.b1[2].im, y), \
+        EVALUATE(cim1, midi, state.b2[0].im, state.b2[1].im, state.b2[2].im, y), \
+        EVALUATE(cim1, midi, state.b3[0].im, state.b3[1].im, state.b3[2].im, y), x)
 
 /* compute coefficients of Newton polynomial (b0,..,b2) from
    (x0,w0),..,(x2,w2). */
@@ -390,9 +420,9 @@ static LDBL interpolate(LDBL x0, LDBL x1, LDBL x2,
       (cre1,cim2)               (cre2,cim2)
 
       iter       : current number of iterations
-      */
-static LDBL zre1, zim1, zre2, zim2, zre3, zim3, zre4, zim4, zre5, zim5,
-       zre6, zim6, zre7, zim7, zre8, zim8, zre9, zim9;
+*/
+static long_double_complex zi[9];
+
 /*
    The purpose of this macro is to reduce the number of parameters of the
    function rhombus(), since this is a recursive function, and stack space
@@ -401,94 +431,17 @@ static LDBL zre1, zim1, zre2, zim2, zre3, zim3, zre4, zim4, zre5, zim5,
 
 #define RHOMBUS(CRE1, CRE2, CIM1, CIM2, X1, X2, Y1, Y2, ZRE1, ZIM1, ZRE2, ZIM2, ZRE3, ZIM3,  \
     ZRE4, ZIM4, ZRE5, ZIM5, ZRE6, ZIM6, ZRE7, ZIM7, ZRE8, ZIM8, ZRE9, ZIM9, ITER)    \
-    zre1 = (ZRE1);zim1 = (ZIM1);                                                       \
-    zre2 = (ZRE2);zim2 = (ZIM2);                                                       \
-    zre3 = (ZRE3);zim3 = (ZIM3);                                                       \
-    zre4 = (ZRE4);zim4 = (ZIM4);                                                       \
-    zre5 = (ZRE5);zim5 = (ZIM5);                                                       \
-    zre6 = (ZRE6);zim6 = (ZIM6);                                                       \
-    zre7 = (ZRE7);zim7 = (ZIM7);                                                       \
-    zre8 = (ZRE8);zim8 = (ZIM8);                                                       \
-    zre9 = (ZRE9);zim9 = (ZIM9);                                                       \
+    zi[0].re = (ZRE1);zi[0].im = (ZIM1);                                                       \
+    zi[1].re = (ZRE2);zi[1].im = (ZIM2);                                                       \
+    zi[2].re = (ZRE3);zi[2].im = (ZIM3);                                                       \
+    zi[3].re = (ZRE4);zi[3].im = (ZIM4);                                                       \
+    zi[4].re = (ZRE5);zi[4].im = (ZIM5);                                                       \
+    zi[5].re = (ZRE6);zi[5].im = (ZIM6);                                                       \
+    zi[6].re = (ZRE7);zi[6].im = (ZIM7);                                                       \
+    zi[7].re = (ZRE8);zi[7].im = (ZIM8);                                                       \
+    zi[8].re = (ZRE9);zi[8].im = (ZIM9);                                                       \
     status = rhombus((CRE1), (CRE2), (CIM1), (CIM2), (X1), (X2), (Y1), (Y2), (ITER)) != 0; \
     assert(status)
-
-namespace
-{
-
-struct soi_long_double_state
-{
-    LDBL re;
-    LDBL im;
-    LDBL restep;
-    LDBL imstep;
-    LDBL interstep;
-    LDBL helpre;
-    LDBL zre;
-    LDBL zim;
-    LDBL br10;
-    LDBL br11;
-    LDBL br12;
-    LDBL br20;
-    LDBL br21;
-    LDBL br22;
-    LDBL br30;
-    LDBL br31;
-    LDBL br32;
-    LDBL bi10;
-    LDBL bi11;
-    LDBL bi12;
-    LDBL bi20;
-    LDBL bi21;
-    LDBL bi22;
-    LDBL bi30;
-    LDBL bi31;
-    LDBL bi32;
-    LDBL l1;
-    LDBL l2;
-    LDBL rq1;
-    LDBL iq1;
-    LDBL rq2;
-    LDBL iq2;
-    LDBL rq3;
-    LDBL iq3;
-    LDBL rq4;
-    LDBL iq4;
-    LDBL rq5;
-    LDBL iq5;
-    LDBL rq6;
-    LDBL iq6;
-    LDBL rq7;
-    LDBL iq7;
-    LDBL rq8;
-    LDBL iq8;
-    LDBL rq9;
-    LDBL iq9;
-    LDBL cr1;
-    LDBL cr2;
-    LDBL ci1;
-    LDBL ci2;
-    LDBL tzr1;
-    LDBL tzi1;
-    LDBL tzr2;
-    LDBL tzi2;
-    LDBL tzr3;
-    LDBL tzi3;
-    LDBL tzr4;
-    LDBL tzi4;
-    LDBL trq1;
-    LDBL tiq1;
-    LDBL trq2;
-    LDBL tiq2;
-    LDBL trq3;
-    LDBL tiq3;
-    LDBL trq4;
-    LDBL tiq4;
-};
-
-soi_long_double_state state = { 0.0 };
-
-}
 
 static int rhombus(LDBL cre1, LDBL cre2, LDBL cim1, LDBL cim2,
                    int x1, int x2, int y1, int y2, long iter)
@@ -505,24 +458,7 @@ static int rhombus(LDBL cre1, LDBL cre2, LDBL cim1, LDBL cim2,
     // the variables below need to have local copies for recursive calls
     // center of rectangle
     LDBL midr = (cre1 + cre2)/2, midi = (cim1 + cim2)/2;
-    LDBL sr1;
-    LDBL si1;
-    LDBL sr2;
-    LDBL si2;
-    LDBL sr3;
-    LDBL si3;
-    LDBL sr4;
-    LDBL si4;
-    LDBL sr5;
-    LDBL si5;
-    LDBL sr6;
-    LDBL si6;
-    LDBL sr7;
-    LDBL si7;
-    LDBL sr8;
-    LDBL si8;
-    LDBL sr9;
-    LDBL si9;
+    long_double_complex s[9];
     LDBL re10;
     LDBL re11;
     LDBL re12;
@@ -585,41 +521,41 @@ static int rhombus(LDBL cre1, LDBL cre2, LDBL cim1, LDBL cim2,
     {
         // finish up the image by scanning the rectangle
 scan:
-        INTERPOLATE(cre1, midr, cre2, zre1, zre5, zre2, state.br10, state.br11, state.br12);
-        INTERPOLATE(cre1, midr, cre2, zre6, zre9, zre7, state.br20, state.br21, state.br22);
-        INTERPOLATE(cre1, midr, cre2, zre3, zre8, zre4, state.br30, state.br31, state.br32);
+        INTERPOLATE(cre1, midr, cre2, zi[0].re, zi[4].re, zi[1].re, state.b1[0].re, state.b1[1].re, state.b1[2].re);
+        INTERPOLATE(cre1, midr, cre2, zi[5].re, zi[8].re, zi[6].re, state.b2[0].re, state.b2[1].re, state.b2[2].re);
+        INTERPOLATE(cre1, midr, cre2, zi[2].re, zi[7].re, zi[3].re, state.b3[0].re, state.b3[1].re, state.b3[2].re);
 
-        INTERPOLATE(cim1, midi, cim2, zim1, zim6, zim3, state.bi10, state.bi11, state.bi12);
-        INTERPOLATE(cim1, midi, cim2, zim5, zim9, zim8, state.bi20, state.bi21, state.bi22);
-        INTERPOLATE(cim1, midi, cim2, zim2, zim7, zim4, state.bi30, state.bi31, state.bi32);
+        INTERPOLATE(cim1, midi, cim2, zi[0].im, zi[5].im, zi[2].im, state.b1[0].im, state.b1[1].im, state.b1[2].im);
+        INTERPOLATE(cim1, midi, cim2, zi[4].im, zi[8].im, zi[7].im, state.b2[0].im, state.b2[1].im, state.b2[2].im);
+        INTERPOLATE(cim1, midi, cim2, zi[1].im, zi[6].im, zi[3].im, state.b3[0].im, state.b3[1].im, state.b3[2].im);
 
-        state.restep = (cre2 - cre1)/(x2 - x1);
-        state.imstep = (cim2 - cim1)/(y2 - y1);
-        state.interstep = INTERLEAVE*state.restep;
+        state.step.re = (cre2 - cre1)/(x2 - x1);
+        state.step.im = (cim2 - cim1)/(y2 - y1);
+        state.interstep = INTERLEAVE*state.step.re;
 
-        for (y = y1, state.im = cim1; y < y2; y++, state.im += state.imstep)
+        for (y = y1, state.z.im = cim1; y < y2; y++, state.z.im += state.step.im)
         {
             if (driver_key_pressed())
             {
                 status = true;
                 goto rhombus_done;
             }
-            state.zre = GET_SCAN_REAL(cre1, state.im);
-            state.zim = GET_SCAN_IMAG(cre1, state.im);
-            savecolor = iteration(cre1, state.im, state.zre, state.zim, iter);
+            state.scan_z.re = GET_SCAN_REAL(cre1, state.z.im);
+            state.scan_z.im = GET_SCAN_IMAG(cre1, state.z.im);
+            savecolor = iteration(cre1, state.z.im, state.scan_z.re, state.scan_z.im, iter);
             if (savecolor < 0)
             {
                 status = true;
                 goto rhombus_done;
             }
             savex = x1;
-            for (x = x1 + INTERLEAVE, state.re = cre1 + state.interstep; x < x2;
-                    x += INTERLEAVE, state.re += state.interstep)
+            for (x = x1 + INTERLEAVE, state.z.re = cre1 + state.interstep; x < x2;
+                    x += INTERLEAVE, state.z.re += state.interstep)
             {
-                state.zre = GET_SCAN_REAL(state.re, state.im);
-                state.zim = GET_SCAN_IMAG(state.re, state.im);
+                state.scan_z.re = GET_SCAN_REAL(state.z.re, state.z.im);
+                state.scan_z.im = GET_SCAN_IMAG(state.z.re, state.z.im);
 
-                color = iteration(state.re, state.im, state.zre, state.zim, iter);
+                color = iteration(state.z.re, state.z.im, state.scan_z.re, state.scan_z.im, iter);
                 if (color < 0)
                 {
                     status = true;
@@ -630,13 +566,13 @@ scan:
                     continue;
                 }
 
-                for (z = x - 1, state.helpre = state.re - state.restep;
+                for (z = x - 1, state.helpre = state.z.re - state.step.re;
                         z > x - INTERLEAVE;
-                        z--, state.helpre -= state.restep)
+                        z--, state.helpre -= state.step.re)
                 {
-                    state.zre = GET_SCAN_REAL(state.helpre, state.im);
-                    state.zim = GET_SCAN_IMAG(state.helpre, state.im);
-                    helpcolor = iteration(state.helpre, state.im, state.zre, state.zim, iter);
+                    state.scan_z.re = GET_SCAN_REAL(state.helpre, state.z.im);
+                    state.scan_z.im = GET_SCAN_IMAG(state.helpre, state.z.im);
+                    helpcolor = iteration(state.helpre, state.z.im, state.scan_z.re, state.scan_z.im, iter);
                     if (helpcolor < 0)
                     {
                         status = true;
@@ -662,13 +598,13 @@ scan:
                 savecolor = color;
             }
 
-            for (z = x2 - 1, state.helpre = cre2 - state.restep;
+            for (z = x2 - 1, state.helpre = cre2 - state.step.re;
                 z > savex;
-                z--, state.helpre -= state.restep)
+                z--, state.helpre -= state.step.re)
             {
-                state.zre = GET_SCAN_REAL(state.helpre, state.im);
-                state.zim = GET_SCAN_IMAG(state.helpre, state.im);
-                helpcolor = iteration(state.helpre, state.im, state.zre, state.zim, iter);
+                state.scan_z.re = GET_SCAN_REAL(state.helpre, state.z.im);
+                state.scan_z.im = GET_SCAN_IMAG(state.helpre, state.z.im);
+                helpcolor = iteration(state.helpre, state.z.im, state.scan_z.re, state.scan_z.im, iter);
                 if (helpcolor < 0)
                 {
                     status = true;
@@ -695,160 +631,160 @@ scan:
         goto rhombus_done;
     }
 
-    state.rq1 = zre1*zre1;
-    state.iq1 = zim1*zim1;
-    state.rq2 = zre2*zre2;
-    state.iq2 = zim2*zim2;
-    state.rq3 = zre3*zre3;
-    state.iq3 = zim3*zim3;
-    state.rq4 = zre4*zre4;
-    state.iq4 = zim4*zim4;
-    state.rq5 = zre5*zre5;
-    state.iq5 = zim5*zim5;
-    state.rq6 = zre6*zre6;
-    state.iq6 = zim6*zim6;
-    state.rq7 = zre7*zre7;
-    state.iq7 = zim7*zim7;
-    state.rq8 = zre8*zre8;
-    state.iq8 = zim8*zim8;
-    state.rq9 = zre9*zre9;
-    state.iq9 = zim9*zim9;
+    state.rq[0].re = zi[0].re*zi[0].re;
+    state.rq[0].im = zi[0].im*zi[0].im;
+    state.rq[1].re = zi[1].re*zi[1].re;
+    state.rq[1].im = zi[1].im*zi[1].im;
+    state.rq[2].re = zi[2].re*zi[2].re;
+    state.rq[2].im = zi[2].im*zi[2].im;
+    state.rq[3].re = zi[3].re*zi[3].re;
+    state.rq[3].im = zi[3].im*zi[3].im;
+    state.rq[4].re = zi[4].re*zi[4].re;
+    state.rq[4].im = zi[4].im*zi[4].im;
+    state.rq[5].re = zi[5].re*zi[5].re;
+    state.rq[5].im = zi[5].im*zi[5].im;
+    state.rq[6].re = zi[6].re*zi[6].re;
+    state.rq[6].im = zi[6].im*zi[6].im;
+    state.rq[7].re = zi[7].re*zi[7].re;
+    state.rq[7].im = zi[7].im*zi[7].im;
+    state.rq[8].re = zi[8].re*zi[8].re;
+    state.rq[8].im = zi[8].im*zi[8].im;
 
-    state.cr1 = 0.75*cre1 + 0.25*cre2;
-    state.cr2 = 0.25*cre1 + 0.75*cre2;
-    state.ci1 = 0.75*cim1 + 0.25*cim2;
-    state.ci2 = 0.25*cim1 + 0.75*cim2;
+    state.corner[0].re = 0.75*cre1 + 0.25*cre2;
+    state.corner[1].re = 0.25*cre1 + 0.75*cre2;
+    state.corner[0].im = 0.75*cim1 + 0.25*cim2;
+    state.corner[1].im = 0.25*cim1 + 0.75*cim2;
 
-    state.tzr1 = GET_REAL(state.cr1, state.ci1);
-    state.tzi1 = GET_IMAG(state.cr1, state.ci1);
+    state.tz[0].re = GET_REAL(state.corner[0].re, state.corner[0].im);
+    state.tz[0].im = GET_IMAG(state.corner[0].re, state.corner[0].im);
 
-    state.tzr2 = GET_REAL(state.cr2, state.ci1);
-    state.tzi2 = GET_IMAG(state.cr2, state.ci1);
+    state.tz[1].re = GET_REAL(state.corner[1].re, state.corner[0].im);
+    state.tz[1].im = GET_IMAG(state.corner[1].re, state.corner[0].im);
 
-    state.tzr3 = GET_REAL(state.cr1, state.ci2);
-    state.tzi3 = GET_IMAG(state.cr1, state.ci2);
+    state.tz[2].re = GET_REAL(state.corner[0].re, state.corner[1].im);
+    state.tz[2].im = GET_IMAG(state.corner[0].re, state.corner[1].im);
 
-    state.tzr4 = GET_REAL(state.cr2, state.ci2);
-    state.tzi4 = GET_IMAG(state.cr2, state.ci2);
+    state.tz[3].re = GET_REAL(state.corner[1].re, state.corner[1].im);
+    state.tz[3].im = GET_IMAG(state.corner[1].re, state.corner[1].im);
 
-    state.trq1 = state.tzr1*state.tzr1;
-    state.tiq1 = state.tzi1*state.tzi1;
+    state.tq[0].re = state.tz[0].re*state.tz[0].re;
+    state.tq[0].im = state.tz[0].im*state.tz[0].im;
 
-    state.trq2 = state.tzr2*state.tzr2;
-    state.tiq2 = state.tzi2*state.tzi2;
+    state.tq[1].re = state.tz[1].re*state.tz[1].re;
+    state.tq[1].im = state.tz[1].im*state.tz[1].im;
 
-    state.trq3 = state.tzr3*state.tzr3;
-    state.tiq3 = state.tzi3*state.tzi3;
+    state.tq[2].re = state.tz[2].re*state.tz[2].re;
+    state.tq[2].im = state.tz[2].im*state.tz[2].im;
 
-    state.trq4 = state.tzr4*state.tzr4;
-    state.tiq4 = state.tzi4*state.tzi4;
+    state.tq[3].re = state.tz[3].re*state.tz[3].re;
+    state.tq[3].im = state.tz[3].im*state.tz[3].im;
 
     before = iter;
 
     while (true)
     {
-        sr1 = zre1;
-        si1 = zim1;
-        sr2 = zre2;
-        si2 = zim2;
-        sr3 = zre3;
-        si3 = zim3;
-        sr4 = zre4;
-        si4 = zim4;
-        sr5 = zre5;
-        si5 = zim5;
-        sr6 = zre6;
-        si6 = zim6;
-        sr7 = zre7;
-        si7 = zim7;
-        sr8 = zre8;
-        si8 = zim8;
-        sr9 = zre9;
-        si9 = zim9;
+        s[0].re = zi[0].re;
+        s[0].im = zi[0].im;
+        s[1].re = zi[1].re;
+        s[1].im = zi[1].im;
+        s[2].re = zi[2].re;
+        s[2].im = zi[2].im;
+        s[3].re = zi[3].re;
+        s[3].im = zi[3].im;
+        s[4].re = zi[4].re;
+        s[4].im = zi[4].im;
+        s[5].re = zi[5].re;
+        s[5].im = zi[5].im;
+        s[6].re = zi[6].re;
+        s[6].im = zi[6].im;
+        s[7].re = zi[7].re;
+        s[7].im = zi[7].im;
+        s[8].re = zi[8].re;
+        s[8].im = zi[8].im;
 
         // iterate key values
-        zim1 = (zim1 + zim1)*zre1 + cim1;
-        zre1 = state.rq1 - state.iq1 + cre1;
-        state.rq1 = zre1*zre1;
-        state.iq1 = zim1*zim1;
+        zi[0].im = (zi[0].im + zi[0].im)*zi[0].re + cim1;
+        zi[0].re = state.rq[0].re - state.rq[0].im + cre1;
+        state.rq[0].re = zi[0].re*zi[0].re;
+        state.rq[0].im = zi[0].im*zi[0].im;
 
-        zim2 = (zim2 + zim2)*zre2 + cim1;
-        zre2 = state.rq2 - state.iq2 + cre2;
-        state.rq2 = zre2*zre2;
-        state.iq2 = zim2*zim2;
+        zi[1].im = (zi[1].im + zi[1].im)*zi[1].re + cim1;
+        zi[1].re = state.rq[1].re - state.rq[1].im + cre2;
+        state.rq[1].re = zi[1].re*zi[1].re;
+        state.rq[1].im = zi[1].im*zi[1].im;
 
-        zim3 = (zim3 + zim3)*zre3 + cim2;
-        zre3 = state.rq3 - state.iq3 + cre1;
-        state.rq3 = zre3*zre3;
-        state.iq3 = zim3*zim3;
+        zi[2].im = (zi[2].im + zi[2].im)*zi[2].re + cim2;
+        zi[2].re = state.rq[2].re - state.rq[2].im + cre1;
+        state.rq[2].re = zi[2].re*zi[2].re;
+        state.rq[2].im = zi[2].im*zi[2].im;
 
-        zim4 = (zim4 + zim4)*zre4 + cim2;
-        zre4 = state.rq4 - state.iq4 + cre2;
-        state.rq4 = zre4*zre4;
-        state.iq4 = zim4*zim4;
+        zi[3].im = (zi[3].im + zi[3].im)*zi[3].re + cim2;
+        zi[3].re = state.rq[3].re - state.rq[3].im + cre2;
+        state.rq[3].re = zi[3].re*zi[3].re;
+        state.rq[3].im = zi[3].im*zi[3].im;
 
-        zim5 = (zim5 + zim5)*zre5 + cim1;
-        zre5 = state.rq5 - state.iq5 + midr;
-        state.rq5 = zre5*zre5;
-        state.iq5 = zim5*zim5;
+        zi[4].im = (zi[4].im + zi[4].im)*zi[4].re + cim1;
+        zi[4].re = state.rq[4].re - state.rq[4].im + midr;
+        state.rq[4].re = zi[4].re*zi[4].re;
+        state.rq[4].im = zi[4].im*zi[4].im;
 
-        zim6 = (zim6 + zim6)*zre6 + midi;
-        zre6 = state.rq6 - state.iq6 + cre1;
-        state.rq6 = zre6*zre6;
-        state.iq6 = zim6*zim6;
+        zi[5].im = (zi[5].im + zi[5].im)*zi[5].re + midi;
+        zi[5].re = state.rq[5].re - state.rq[5].im + cre1;
+        state.rq[5].re = zi[5].re*zi[5].re;
+        state.rq[5].im = zi[5].im*zi[5].im;
 
-        zim7 = (zim7 + zim7)*zre7 + midi;
-        zre7 = state.rq7 - state.iq7 + cre2;
-        state.rq7 = zre7*zre7;
-        state.iq7 = zim7*zim7;
+        zi[6].im = (zi[6].im + zi[6].im)*zi[6].re + midi;
+        zi[6].re = state.rq[6].re - state.rq[6].im + cre2;
+        state.rq[6].re = zi[6].re*zi[6].re;
+        state.rq[6].im = zi[6].im*zi[6].im;
 
-        zim8 = (zim8 + zim8)*zre8 + cim2;
-        zre8 = state.rq8 - state.iq8 + midr;
-        state.rq8 = zre8*zre8;
-        state.iq8 = zim8*zim8;
+        zi[7].im = (zi[7].im + zi[7].im)*zi[7].re + cim2;
+        zi[7].re = state.rq[7].re - state.rq[7].im + midr;
+        state.rq[7].re = zi[7].re*zi[7].re;
+        state.rq[7].im = zi[7].im*zi[7].im;
 
-        zim9 = (zim9 + zim9)*zre9 + midi;
-        zre9 = state.rq9 - state.iq9 + midr;
-        state.rq9 = zre9*zre9;
-        state.iq9 = zim9*zim9;
+        zi[8].im = (zi[8].im + zi[8].im)*zi[8].re + midi;
+        zi[8].re = state.rq[8].re - state.rq[8].im + midr;
+        state.rq[8].re = zi[8].re*zi[8].re;
+        state.rq[8].im = zi[8].im*zi[8].im;
 
         // iterate test point
-        state.tzi1 = (state.tzi1 + state.tzi1)*state.tzr1 + state.ci1;
-        state.tzr1 = state.trq1 - state.tiq1 + state.cr1;
-        state.trq1 = state.tzr1*state.tzr1;
-        state.tiq1 = state.tzi1*state.tzi1;
+        state.tz[0].im = (state.tz[0].im + state.tz[0].im)*state.tz[0].re + state.corner[0].im;
+        state.tz[0].re = state.tq[0].re - state.tq[0].im + state.corner[0].re;
+        state.tq[0].re = state.tz[0].re*state.tz[0].re;
+        state.tq[0].im = state.tz[0].im*state.tz[0].im;
 
-        state.tzi2 = (state.tzi2 + state.tzi2)*state.tzr2 + state.ci1;
-        state.tzr2 = state.trq2 - state.tiq2 + state.cr2;
-        state.trq2 = state.tzr2*state.tzr2;
-        state.tiq2 = state.tzi2*state.tzi2;
+        state.tz[1].im = (state.tz[1].im + state.tz[1].im)*state.tz[1].re + state.corner[0].im;
+        state.tz[1].re = state.tq[1].re - state.tq[1].im + state.corner[1].re;
+        state.tq[1].re = state.tz[1].re*state.tz[1].re;
+        state.tq[1].im = state.tz[1].im*state.tz[1].im;
 
-        state.tzi3 = (state.tzi3 + state.tzi3)*state.tzr3 + state.ci2;
-        state.tzr3 = state.trq3 - state.tiq3 + state.cr1;
-        state.trq3 = state.tzr3*state.tzr3;
-        state.tiq3 = state.tzi3*state.tzi3;
+        state.tz[2].im = (state.tz[2].im + state.tz[2].im)*state.tz[2].re + state.corner[1].im;
+        state.tz[2].re = state.tq[2].re - state.tq[2].im + state.corner[0].re;
+        state.tq[2].re = state.tz[2].re*state.tz[2].re;
+        state.tq[2].im = state.tz[2].im*state.tz[2].im;
 
-        state.tzi4 = (state.tzi4 + state.tzi4)*state.tzr4 + state.ci2;
-        state.tzr4 = state.trq4 - state.tiq4 + state.cr2;
-        state.trq4 = state.tzr4*state.tzr4;
-        state.tiq4 = state.tzi4*state.tzi4;
+        state.tz[3].im = (state.tz[3].im + state.tz[3].im)*state.tz[3].re + state.corner[1].im;
+        state.tz[3].re = state.tq[3].re - state.tq[3].im + state.corner[1].re;
+        state.tq[3].re = state.tz[3].re*state.tz[3].re;
+        state.tq[3].im = state.tz[3].im*state.tz[3].im;
 
         iter++;
 
         // if one of the iterated values bails out, subdivide
-        if ((state.rq1 + state.iq1) > 16.0 ||
-                (state.rq2 + state.iq2) > 16.0 ||
-                (state.rq3 + state.iq3) > 16.0 ||
-                (state.rq4 + state.iq4) > 16.0 ||
-                (state.rq5 + state.iq5) > 16.0 ||
-                (state.rq6 + state.iq6) > 16.0 ||
-                (state.rq7 + state.iq7) > 16.0 ||
-                (state.rq8 + state.iq8) > 16.0 ||
-                (state.rq9 + state.iq9) > 16.0 ||
-                (state.trq1 + state.tiq1) > 16.0 ||
-                (state.trq2 + state.tiq2) > 16.0 ||
-                (state.trq3 + state.tiq3) > 16.0 ||
-                (state.trq4 + state.tiq4) > 16.0)
+        if ((state.rq[0].re + state.rq[0].im) > 16.0 ||
+                (state.rq[1].re + state.rq[1].im) > 16.0 ||
+                (state.rq[2].re + state.rq[2].im) > 16.0 ||
+                (state.rq[3].re + state.rq[3].im) > 16.0 ||
+                (state.rq[4].re + state.rq[4].im) > 16.0 ||
+                (state.rq[5].re + state.rq[5].im) > 16.0 ||
+                (state.rq[6].re + state.rq[6].im) > 16.0 ||
+                (state.rq[7].re + state.rq[7].im) > 16.0 ||
+                (state.rq[8].re + state.rq[8].im) > 16.0 ||
+                (state.tq[0].re + state.tq[0].im) > 16.0 ||
+                (state.tq[1].re + state.tq[1].im) > 16.0 ||
+                (state.tq[2].re + state.tq[2].im) > 16.0 ||
+                (state.tq[3].re + state.tq[3].im) > 16.0)
         {
             break;
         }
@@ -865,74 +801,74 @@ scan:
 
         /* now for all test points, check whether they exceed the
         allowed tolerance. if so, subdivide */
-        state.l1 = GET_REAL(state.cr1, state.ci1);
-        state.l1 = (state.tzr1 == 0.0)?
-           (state.l1 == 0.0)?1.0:1000.0:
-           state.l1/state.tzr1;
-        if (fabsl(1.0 - state.l1) > twidth)
+        state.limit.re = GET_REAL(state.corner[0].re, state.corner[0].im);
+        state.limit.re = (state.tz[0].re == 0.0)?
+           (state.limit.re == 0.0)?1.0:1000.0:
+           state.limit.re/state.tz[0].re;
+        if (fabsl(1.0 - state.limit.re) > twidth)
         {
             break;
         }
 
-        state.l2 = GET_IMAG(state.cr1, state.ci1);
-        state.l2 = (state.tzi1 == 0.0)?
-           (state.l2 == 0.0)?1.0:1000.0:
-           state.l2/state.tzi1;
-        if (fabsl(1.0 - state.l2) > twidth)
+        state.limit.im = GET_IMAG(state.corner[0].re, state.corner[0].im);
+        state.limit.im = (state.tz[0].im == 0.0)?
+           (state.limit.im == 0.0)?1.0:1000.0:
+           state.limit.im/state.tz[0].im;
+        if (fabsl(1.0 - state.limit.im) > twidth)
         {
             break;
         }
 
-        state.l1 = GET_REAL(state.cr2, state.ci1);
-        state.l1 = (state.tzr2 == 0.0)?
-           (state.l1 == 0.0)?1.0:1000.0:
-           state.l1/state.tzr2;
-        if (fabsl(1.0 - state.l1) > twidth)
+        state.limit.re = GET_REAL(state.corner[1].re, state.corner[0].im);
+        state.limit.re = (state.tz[1].re == 0.0)?
+           (state.limit.re == 0.0)?1.0:1000.0:
+           state.limit.re/state.tz[1].re;
+        if (fabsl(1.0 - state.limit.re) > twidth)
         {
             break;
         }
 
-        state.l2 = GET_IMAG(state.cr2, state.ci1);
-        state.l2 = (state.tzi2 == 0.0)?
-           (state.l2 == 0.0)?1.0:1000.0:
-           state.l2/state.tzi2;
-        if (fabsl(1.0 - state.l2) > twidth)
+        state.limit.im = GET_IMAG(state.corner[1].re, state.corner[0].im);
+        state.limit.im = (state.tz[1].im == 0.0)?
+           (state.limit.im == 0.0)?1.0:1000.0:
+           state.limit.im/state.tz[1].im;
+        if (fabsl(1.0 - state.limit.im) > twidth)
         {
             break;
         }
 
-        state.l1 = GET_REAL(state.cr1, state.ci2);
-        state.l1 = (state.tzr3 == 0.0)?
-           (state.l1 == 0.0)?1.0:1000.0:
-           state.l1/state.tzr3;
-        if (fabsl(1.0 - state.l1) > twidth)
+        state.limit.re = GET_REAL(state.corner[0].re, state.corner[1].im);
+        state.limit.re = (state.tz[2].re == 0.0)?
+           (state.limit.re == 0.0)?1.0:1000.0:
+           state.limit.re/state.tz[2].re;
+        if (fabsl(1.0 - state.limit.re) > twidth)
         {
             break;
         }
 
-        state.l2 = GET_IMAG(state.cr1, state.ci2);
-        state.l2 = (state.tzi3 == 0.0)?
-           (state.l2 == 0.0)?1.0:1000.0:
-           state.l2/state.tzi3;
-        if (fabsl(1.0 - state.l2) > twidth)
+        state.limit.im = GET_IMAG(state.corner[0].re, state.corner[1].im);
+        state.limit.im = (state.tz[2].im == 0.0)?
+           (state.limit.im == 0.0)?1.0:1000.0:
+           state.limit.im/state.tz[2].im;
+        if (fabsl(1.0 - state.limit.im) > twidth)
         {
             break;
         }
 
-        state.l1 = GET_REAL(state.cr2, state.ci2);
-        state.l1 = (state.tzr4 == 0.0)?
-           (state.l1 == 0.0)?1.0:1000.0:
-           state.l1/state.tzr4;
-        if (fabsl(1.0 - state.l1) > twidth)
+        state.limit.re = GET_REAL(state.corner[1].re, state.corner[1].im);
+        state.limit.re = (state.tz[3].re == 0.0)?
+           (state.limit.re == 0.0)?1.0:1000.0:
+           state.limit.re/state.tz[3].re;
+        if (fabsl(1.0 - state.limit.re) > twidth)
         {
             break;
         }
 
-        state.l2 = GET_IMAG(state.cr2, state.ci2);
-        state.l2 = (state.tzi4 == 0.0)?
-           (state.l2 == 0.0)?1.0:1000.0:
-           state.l2/state.tzi4;
-        if (fabsl(1.0 - state.l2) > twidth)
+        state.limit.im = GET_IMAG(state.corner[1].re, state.corner[1].im);
+        state.limit.im = (state.tz[3].im == 0.0)?
+           (state.limit.im == 0.0)?1.0:1000.0:
+           state.limit.im/state.tz[3].im;
+        if (fabsl(1.0 - state.limit.im) > twidth)
         {
             break;
         }
@@ -943,80 +879,80 @@ scan:
     // this is a little heuristic I tried to improve performance.
     if (iter - before < 10)
     {
-        zre1 = sr1;
-        zim1 = si1;
-        zre2 = sr2;
-        zim2 = si2;
-        zre3 = sr3;
-        zim3 = si3;
-        zre4 = sr4;
-        zim4 = si4;
-        zre5 = sr5;
-        zim5 = si5;
-        zre6 = sr6;
-        zim6 = si6;
-        zre7 = sr7;
-        zim7 = si7;
-        zre8 = sr8;
-        zim8 = si8;
-        zre9 = sr9;
-        zim9 = si9;
+        zi[0].re = s[0].re;
+        zi[0].im = s[0].im;
+        zi[1].re = s[1].re;
+        zi[1].im = s[1].im;
+        zi[2].re = s[2].re;
+        zi[2].im = s[2].im;
+        zi[3].re = s[3].re;
+        zi[3].im = s[3].im;
+        zi[4].re = s[4].re;
+        zi[4].im = s[4].im;
+        zi[5].re = s[5].re;
+        zi[5].im = s[5].im;
+        zi[6].re = s[6].re;
+        zi[6].im = s[6].im;
+        zi[7].re = s[7].re;
+        zi[7].im = s[7].im;
+        zi[8].re = s[8].re;
+        zi[8].im = s[8].im;
         goto scan;
     }
 
     // compute key values for subsequent rectangles
 
-    re10 = interpolate(cre1, midr, cre2, sr1, sr5, sr2, state.cr1);
-    im10 = interpolate(cre1, midr, cre2, si1, si5, si2, state.cr1);
+    re10 = interpolate(cre1, midr, cre2, s[0].re, s[4].re, s[1].re, state.corner[0].re);
+    im10 = interpolate(cre1, midr, cre2, s[0].im, s[4].im, s[1].im, state.corner[0].re);
 
-    re11 = interpolate(cre1, midr, cre2, sr1, sr5, sr2, state.cr2);
-    im11 = interpolate(cre1, midr, cre2, si1, si5, si2, state.cr2);
+    re11 = interpolate(cre1, midr, cre2, s[0].re, s[4].re, s[1].re, state.corner[1].re);
+    im11 = interpolate(cre1, midr, cre2, s[0].im, s[4].im, s[1].im, state.corner[1].re);
 
-    re20 = interpolate(cre1, midr, cre2, sr3, sr8, sr4, state.cr1);
-    im20 = interpolate(cre1, midr, cre2, si3, si8, si4, state.cr1);
+    re20 = interpolate(cre1, midr, cre2, s[2].re, s[7].re, s[3].re, state.corner[0].re);
+    im20 = interpolate(cre1, midr, cre2, s[2].im, s[7].im, s[3].im, state.corner[0].re);
 
-    re21 = interpolate(cre1, midr, cre2, sr3, sr8, sr4, state.cr2);
-    im21 = interpolate(cre1, midr, cre2, si3, si8, si4, state.cr2);
+    re21 = interpolate(cre1, midr, cre2, s[2].re, s[7].re, s[3].re, state.corner[1].re);
+    im21 = interpolate(cre1, midr, cre2, s[2].im, s[7].im, s[3].im, state.corner[1].re);
 
-    re15 = interpolate(cre1, midr, cre2, sr6, sr9, sr7, state.cr1);
-    im15 = interpolate(cre1, midr, cre2, si6, si9, si7, state.cr1);
+    re15 = interpolate(cre1, midr, cre2, s[5].re, s[8].re, s[6].re, state.corner[0].re);
+    im15 = interpolate(cre1, midr, cre2, s[5].im, s[8].im, s[6].im, state.corner[0].re);
 
-    re16 = interpolate(cre1, midr, cre2, sr6, sr9, sr7, state.cr2);
-    im16 = interpolate(cre1, midr, cre2, si6, si9, si7, state.cr2);
+    re16 = interpolate(cre1, midr, cre2, s[5].re, s[8].re, s[6].re, state.corner[1].re);
+    im16 = interpolate(cre1, midr, cre2, s[5].im, s[8].im, s[6].im, state.corner[1].re);
 
-    re12 = interpolate(cim1, midi, cim2, sr1, sr6, sr3, state.ci1);
-    im12 = interpolate(cim1, midi, cim2, si1, si6, si3, state.ci1);
+    re12 = interpolate(cim1, midi, cim2, s[0].re, s[5].re, s[2].re, state.corner[0].im);
+    im12 = interpolate(cim1, midi, cim2, s[0].im, s[5].im, s[2].im, state.corner[0].im);
 
-    re14 = interpolate(cim1, midi, cim2, sr2, sr7, sr4, state.ci1);
-    im14 = interpolate(cim1, midi, cim2, si2, si7, si4, state.ci1);
+    re14 = interpolate(cim1, midi, cim2, s[1].re, s[6].re, s[3].re, state.corner[0].im);
+    im14 = interpolate(cim1, midi, cim2, s[1].im, s[6].im, s[3].im, state.corner[0].im);
 
-    re17 = interpolate(cim1, midi, cim2, sr1, sr6, sr3, state.ci2);
-    im17 = interpolate(cim1, midi, cim2, si1, si6, si3, state.ci2);
+    re17 = interpolate(cim1, midi, cim2, s[0].re, s[5].re, s[2].re, state.corner[1].im);
+    im17 = interpolate(cim1, midi, cim2, s[0].im, s[5].im, s[2].im, state.corner[1].im);
 
-    re19 = interpolate(cim1, midi, cim2, sr2, sr7, sr4, state.ci2);
-    im19 = interpolate(cim1, midi, cim2, si2, si7, si4, state.ci2);
+    re19 = interpolate(cim1, midi, cim2, s[1].re, s[6].re, s[3].re, state.corner[1].im);
+    im19 = interpolate(cim1, midi, cim2, s[1].im, s[6].im, s[3].im, state.corner[1].im);
 
-    re13 = interpolate(cim1, midi, cim2, sr5, sr9, sr8, state.ci1);
-    im13 = interpolate(cim1, midi, cim2, si5, si9, si8, state.ci1);
+    re13 = interpolate(cim1, midi, cim2, s[4].re, s[8].re, s[7].re, state.corner[0].im);
+    im13 = interpolate(cim1, midi, cim2, s[4].im, s[8].im, s[7].im, state.corner[0].im);
 
-    re18 = interpolate(cim1, midi, cim2, sr5, sr9, sr8, state.ci2);
-    im18 = interpolate(cim1, midi, cim2, si5, si9, si8, state.ci2);
+    re18 = interpolate(cim1, midi, cim2, s[4].re, s[8].re, s[7].re, state.corner[1].im);
+    im18 = interpolate(cim1, midi, cim2, s[4].im, s[8].im, s[7].im, state.corner[1].im);
 
-    re91 = GET_SAVED_REAL(state.cr1, state.ci1);
-    re92 = GET_SAVED_REAL(state.cr2, state.ci1);
-    re93 = GET_SAVED_REAL(state.cr1, state.ci2);
-    re94 = GET_SAVED_REAL(state.cr2, state.ci2);
+    re91 = GET_SAVED_REAL(state.corner[0].re, state.corner[0].im);
+    re92 = GET_SAVED_REAL(state.corner[1].re, state.corner[0].im);
+    re93 = GET_SAVED_REAL(state.corner[0].re, state.corner[1].im);
+    re94 = GET_SAVED_REAL(state.corner[1].re, state.corner[1].im);
 
-    im91 = GET_SAVED_IMAG(state.cr1, state.ci1);
-    im92 = GET_SAVED_IMAG(state.cr2, state.ci1);
-    im93 = GET_SAVED_IMAG(state.cr1, state.ci2);
-    im94 = GET_SAVED_IMAG(state.cr2, state.ci2);
+    im91 = GET_SAVED_IMAG(state.corner[0].re, state.corner[0].im);
+    im92 = GET_SAVED_IMAG(state.corner[1].re, state.corner[0].im);
+    im93 = GET_SAVED_IMAG(state.corner[0].re, state.corner[1].im);
+    im94 = GET_SAVED_IMAG(state.corner[1].re, state.corner[1].im);
 
     RHOMBUS(cre1, midr, cim1, midi, x1, ((x1 + x2) >> 1), y1, ((y1 + y2) >> 1),
-            sr1, si1,
-            sr5, si5,
-            sr6, si6,
-            sr9, si9,
+            s[0].re, s[0].im,
+            s[4].re, s[4].im,
+            s[5].re, s[5].im,
+            s[8].re, s[8].im,
             re10, im10,
             re12, im12,
             re13, im13,
@@ -1024,10 +960,10 @@ scan:
             re91, im91,
             iter);
     RHOMBUS(midr, cre2, cim1, midi, (x1 + x2) >> 1, x2, y1, (y1 + y2) >> 1,
-            sr5, si5,
-            sr2, si2,
-            sr9, si9,
-            sr7, si7,
+            s[4].re, s[4].im,
+            s[1].re, s[1].im,
+            s[8].re, s[8].im,
+            s[6].re, s[6].im,
             re11, im11,
             re13, im13,
             re14, im14,
@@ -1035,10 +971,10 @@ scan:
             re92, im92,
             iter);
     RHOMBUS(cre1, midr, midi, cim2, x1, (x1 + x2) >> 1, (y1 + y2) >> 1, y2,
-            sr6, si6,
-            sr9, si9,
-            sr3, si3,
-            sr8, si8,
+            s[5].re, s[5].im,
+            s[8].re, s[8].im,
+            s[2].re, s[2].im,
+            s[7].re, s[7].im,
             re15, im15,
             re17, im17,
             re18, im18,
@@ -1046,10 +982,10 @@ scan:
             re93, im93,
             iter);
     RHOMBUS(midr, cre2, midi, cim2, (x1 + x2) >> 1, x2, (y1 + y2) >> 1, y2,
-            sr9, si9,
-            sr7, si7,
-            sr8, si8,
-            sr4, si4,
+            s[8].re, s[8].im,
+            s[6].re, s[6].im,
+            s[7].re, s[7].im,
+            s[3].re, s[3].im,
             re16, im16,
             re18, im18,
             re19, im19,
