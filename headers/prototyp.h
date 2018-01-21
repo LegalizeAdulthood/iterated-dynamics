@@ -24,8 +24,6 @@ extern int getakeynohelp();
 extern long readticker();
 extern int get_sound_params();
 extern void setnullvideo();
-// intro -- C file prototypes
-extern void intro();
 // jiim -- C file prototypes
 extern void Jiim(jiim_types which);
 extern LComplex PopLong();

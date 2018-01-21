@@ -15,6 +15,7 @@
 #include "framain2.h"
 #include "helpcom.h"
 #include "helpdefs.h"
+#include "intro.h"
 
 #include <ctype.h>
 #include <signal.h>

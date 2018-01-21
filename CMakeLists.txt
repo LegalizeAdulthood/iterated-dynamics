@@ -113,7 +113,7 @@ add_executable(id ${OS_ID_OPTIONS}
     common/framain2.cpp headers/framain2.h
     common/help.cpp
     hc/helpcom.cpp
-    common/intro.cpp
+    common/intro.cpp headers/intro.h
     common/jiim.cpp
     common/miscovl.cpp
     common/miscres.cpp
