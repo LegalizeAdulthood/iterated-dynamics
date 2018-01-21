@@ -14,6 +14,7 @@
 #include "helpcom.h"
 #include "loadfile.h"
 #include "loadmap.h"
+#include "miscovl.h"
 
 #include <ctype.h>
 #include <float.h>

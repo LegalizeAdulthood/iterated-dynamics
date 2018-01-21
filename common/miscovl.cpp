@@ -12,6 +12,7 @@
 #include "framain2.h"
 #include "helpdefs.h"
 #include "loadfile.h"
+#include "miscovl.h"
 
 #include <ctype.h>
 #include <float.h>
