@@ -38,9 +38,6 @@ an appropriate setup, per_image, per_pixel, and orbit routines.
 --------------------------------------------------------------------   */
 #include <float.h>
 #include <limits.h>
-#if !defined(_WIN32)
-#include <malloc.h>
-#endif
 #include <stdlib.h>
 #include <string.h>
 

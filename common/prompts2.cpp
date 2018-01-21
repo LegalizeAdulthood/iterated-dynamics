@@ -14,7 +14,6 @@
 #include <string.h>
 #if defined(XFRACT)
 #include <fcntl.h>
-#include <malloc.h>
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <unistd.h>

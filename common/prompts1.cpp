@@ -12,9 +12,6 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 #endif
-#if !defined(_WIN32)
-#include <malloc.h>
-#endif
 
 #include "port.h"
 #include "prototyp.h"

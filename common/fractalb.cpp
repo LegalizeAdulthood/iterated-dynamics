@@ -7,9 +7,6 @@ fractal routines.
 #include <float.h>
 #include <limits.h>
 #include <string.h>
-#if !defined(_WIN32)
-#include <malloc.h>
-#endif
 #include "port.h"
 #include "prototyp.h"
 #include "helpdefs.h"

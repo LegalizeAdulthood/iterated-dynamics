@@ -2,9 +2,6 @@
 #include <errno.h>
 #include <float.h>
 #include <limits.h>
-#if !defined(_WIN32)
-#include <malloc.h>
-#endif
 #include <string.h>
 #include <stdarg.h>
 

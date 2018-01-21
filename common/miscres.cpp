@@ -10,7 +10,6 @@
 #include <string.h>
 #include <time.h>
 #if defined(XFRACT)
-#include <malloc.h>
 #include <unistd.h>
 #endif
 
