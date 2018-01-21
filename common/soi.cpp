@@ -457,7 +457,9 @@ static int rhombus(LDBL cre1, LDBL cre2, LDBL cim1, LDBL cim2,
 
     // the variables below need to have local copies for recursive calls
     // center of rectangle
-    LDBL midr = (cre1 + cre2)/2, midi = (cim1 + cim2)/2;
+    LDBL midr = (cre1 + cre2)/2;
+    LDBL midi = (cim1 + cim2)/2;
+
     long_double_complex s[9];
     LDBL re10;
     LDBL re11;
@@ -491,9 +493,9 @@ static int rhombus(LDBL cre1, LDBL cre2, LDBL cim1, LDBL cim2,
     LDBL im92;
     LDBL im93;
     LDBL im94;
+
     bool status = false;
     rhombus_depth++;
-
     avail = stackavail();
     if (avail < g_soi_min_stack_available)
     {
