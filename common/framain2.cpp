@@ -7,6 +7,7 @@
 #include "drivers.h"
 #include "editpal.h"
 #include "encoder.h"
+#include "evolve.h"
 #include "fractype.h"
 #include "helpdefs.h"
 

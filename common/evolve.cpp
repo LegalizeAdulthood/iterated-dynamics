@@ -2,6 +2,7 @@
 #include "prototyp.h"
 
 #include "calcfrac.h"
+#include "evolve.h"
 #include "fractype.h"
 #include "helpdefs.h"
 

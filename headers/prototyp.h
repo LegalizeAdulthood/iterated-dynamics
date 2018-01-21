@@ -24,22 +24,6 @@ extern int getakeynohelp();
 extern long readticker();
 extern int get_sound_params();
 extern void setnullvideo();
-// evolve -- C file prototypes
-extern void copy_genes_to_bank(GENEBASE const gene[NUMGENES]);
-extern void copy_genes_from_bank(GENEBASE gene[NUMGENES]);
-extern  void initgene();
-extern  void param_history(int);
-extern  int get_variations();
-extern  int get_evolve_Parms();
-extern  void set_current_params();
-extern  void fiddleparms(GENEBASE gene[], int ecount);
-extern  void set_evolve_ranges();
-extern  void set_mutation_level(int);
-extern  void drawparmbox(int);
-extern  void spiralmap(int);
-extern  int unspiralmap();
-extern  void SetupParamBox();
-extern  void ReleaseParamBox();
 // fracsubr -- C file prototypes
 extern void free_grid_pointers();
 extern void calcfracinit();

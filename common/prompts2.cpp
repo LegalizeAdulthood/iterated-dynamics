@@ -8,6 +8,7 @@
 #include "cmdfiles.h"
 #include "diskvid.h"
 #include "drivers.h"
+#include "evolve.h"
 #include "fractype.h"
 #include "helpcom.h"
 #include "helpdefs.h"
