@@ -725,6 +725,13 @@ rhombus_done:
 
 void soi()
 {
+    if (g_debug_flag == debug_flags::use_soi_long_double)
+    {
+        extern void soi_ldbl();
+        soi_ldbl();
+        return;
+    }
+
     // cppcheck-suppress unreadVariable
     bool status;
     double tolerance = 0.1;

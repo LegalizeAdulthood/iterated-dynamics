@@ -1008,7 +1008,6 @@ extern bool CopyFromHandleToMemory(BYTE *buffer, U16 size, long count, long offs
 extern bool SetMemory(int value, U16 size, long count, long offset, U16 handle);
 // soi -- C file prototypes
 extern void soi();
-extern void soi_ldbl();
 /*
  *  uclock -- C file prototypes
  *  The  uclock_t typedef placed here because uclock.h

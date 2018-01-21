@@ -1262,14 +1262,7 @@ static void perform_worklist()
         switch (g_std_calc_mode)
         {
         case 's':
-            if (g_debug_flag == debug_flags::use_soi_long_double)
-            {
-                soi_ldbl();
-            }
-            else
-            {
-                soi();
-            }
+            soi();
             break;
         case 't':
             tesseral();
