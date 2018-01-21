@@ -323,8 +323,7 @@ start:
     return (last1 = out);
 }
 
-slides_mode
-startslideshow()
+slides_mode startslideshow()
 {
     fpss = fopen(g_auto_name.c_str(), "r");
     if (fpss == nullptr)

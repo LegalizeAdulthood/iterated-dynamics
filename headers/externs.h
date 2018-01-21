@@ -38,13 +38,12 @@ extern int                   g_adapter;             // index into g_video_table[
 extern bool                  g_auto_browse;
 extern int                   g_bad_config;
 extern int                   g_bit_shift;
-
 extern int                   g_box_count;
 extern std::string           g_browse_mask;
 extern bool                  g_browsing;
 extern bool                  g_browse_check_fractal_params;
 extern bool                  g_browse_check_fractal_type;
-extern bool                  g_busy;
+
 extern long                  g_calc_time;
 extern calc_status_value     g_calc_status;
 extern int                   g_colors;

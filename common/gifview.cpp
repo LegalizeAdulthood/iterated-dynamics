@@ -22,6 +22,7 @@
 #include "loadmap.h"
 #include "plot3d.h"
 #include "prompts2.h"
+#include "slideshw.h"
 #include "stereo.h"
 
 #include <string.h>
