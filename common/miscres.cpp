@@ -745,8 +745,7 @@ static void show_str_var(char const *name, char const *var, int *row, char *msg)
     }
 }
 
-static void
-write_row(int row, char const *format, ...)
+static void write_row(int row, char const *format, ...)
 {
     char text[78] = { 0 };
     va_list args;

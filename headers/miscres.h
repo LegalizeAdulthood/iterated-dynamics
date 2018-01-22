@@ -4,6 +4,8 @@
 
 #include <stdio.h>
 
+extern int                   g_num_affine_transforms;
+
 extern void restore_active_ovly();
 extern void findpath(char const *filename, char *fullpathname);
 extern void notdiskmsg();
