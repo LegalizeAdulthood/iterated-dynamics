@@ -748,13 +748,6 @@ enum class true_color_mode
     iterate = 1
 };
 
-enum class init_orbit_mode
-{
-    normal = 0,
-    value = 1,
-    pixel = 2
-};
-
 // bitmask defines for fractalspecific flags
 #define  NOZOOM         1    // zoombox not allowed at all
 #define  NOGUESS        2    // solid guessing not allowed

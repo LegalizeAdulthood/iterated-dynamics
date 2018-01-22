@@ -78,6 +78,13 @@ enum text_colors
 #define C_PRIMARY         (g_text_color[29])
 #define C_CONTRIB         (g_text_color[30])
 
+enum class init_orbit_mode
+{
+    normal = 0,
+    value = 1,
+    pixel = 2
+};
+
 extern bool                  g_ask_video;
 extern float                 g_aspect_drift;
 extern std::string           g_auto_name;
