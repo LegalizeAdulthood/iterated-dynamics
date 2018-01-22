@@ -6,6 +6,23 @@
 
 #include <string>
 
+#define   FILEATTR       0x37      // File attributes; select all but volume labels
+#define   HIDDEN         2
+#define   SYSTEM         4
+#define   SUBDIR         16
+
+struct DIR_SEARCH               // Allocate DTA and define structure
+{
+    char path[FILE_MAX_PATH];       // DOS path and filespec
+    char attribute;             // File attributes wanted
+    int  ftime;                 // File creation time
+    int  fdate;                 // File creation date
+    long size;                  // File size in bytes
+    char filename[FILE_MAX_PATH];   // Filename and extension
+};
+
+extern DIR_SEARCH DTA;          // Disk Transfer Area
+
 extern long                  g_concentration;
 extern std::string const     g_gray_map_file;
 
