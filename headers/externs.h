@@ -88,6 +88,7 @@ extern double                g_plot_my2;
 extern double                g_params[];
 extern double                g_potential_params[];
 extern int                   g_resave_flag;
+extern int                   g_save_dac;
 extern int                   g_smallest_box_size_shown;
 
 extern int                   g_color_bright;    // brightest color in palette
@@ -107,12 +108,9 @@ extern int                   g_polyphony;
 extern int                   g_row_count;       // row-counter for decoder and out_line
 extern long                  g_save_base;
 
-extern int                   g_save_dac;
-extern std::string           g_save_filename;
 extern long                  g_save_ticks;
 extern int                   g_save_system;
 extern int                   g_scale_map[];
-extern int                   g_size_dot;
 extern bool                  g_started_resaves;
 extern char                  g_std_calc_mode;
 extern double                g_save_x_3rd;
@@ -133,9 +131,7 @@ extern int                   g_text_row;        // current row in text mode
 extern int                   g_timed_save;
 extern long                  g_timer_interval;
 extern long                  g_timer_start;
-extern std::string           g_temp_dir;
 extern double                g_smallest_window_display_size;
-extern int                   g_user_biomorph_value;
 extern long                  g_user_distance_estimator_value;
 extern bool                  g_user_float_flag;
 extern int                   g_user_periodicity_value;
@@ -153,7 +149,6 @@ extern float                 g_view_reduction;
 extern bool                  g_view_window;
 extern int                   g_view_x_dots;
 extern int                   g_view_y_dots;
-extern std::string           g_working_dir;
 extern long                  g_l_x_3rd;
 extern int                   g_logical_screen_x_dots;
 extern long                  g_l_x_max;

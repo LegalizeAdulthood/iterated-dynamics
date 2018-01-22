@@ -7,6 +7,7 @@
 #include "prototyp.h"
 
 #include "calcfrac.h"
+#include "cmdfiles.h"
 #include "decoder.h"
 #include "drivers.h"
 #include "encoder.h"
