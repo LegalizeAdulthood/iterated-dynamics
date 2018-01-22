@@ -110,13 +110,6 @@ enum class cmd_file
     AT_CMD_LINE_SET_NAME = 3
 };
 
-enum input_field_flags
-{
-    INPUTFIELD_NUMERIC  = 1,
-    INPUTFIELD_INTEGER  = 2,
-    INPUTFIELD_DOUBLE   = 4
-};
-
 // these are used to declare arrays for file names
 #if defined(_WIN32)
 #define FILE_MAX_PATH _MAX_PATH

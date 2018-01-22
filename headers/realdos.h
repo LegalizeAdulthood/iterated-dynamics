@@ -2,6 +2,13 @@
 #if !defined(REALDOS_H)
 #define REALDOS_H
 
+enum input_field_flags
+{
+    INPUTFIELD_NUMERIC  = 1,
+    INPUTFIELD_INTEGER  = 2,
+    INPUTFIELD_DOUBLE   = 4
+};
+
 extern int                   g_cfg_line_nums[];
 extern int                   g_patch_level;
 extern int                   g_release;
