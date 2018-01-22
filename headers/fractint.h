@@ -594,13 +594,6 @@ extern  double   g_f_at_rad;      // finite attractor radius
 
 enum class fractal_type;
 
-struct MOREPARAMS
-{
-    fractal_type type;                      // index in fractalname of the fractal
-    char const *param[MAX_PARAMS-4];     // name of the parameters
-    double   paramvalue[MAX_PARAMS-4];   // default parameter values
-};
-
 enum class symmetry_type
 {
     NONE                = 0,

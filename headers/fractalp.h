@@ -13,6 +13,13 @@ struct AlternateMath
     bool (*per_image)();                // once-per-image setup
 };
 
+struct MOREPARAMS
+{
+    fractal_type type;                      // index in fractalname of the fractal
+    char const *param[MAX_PARAMS-4];     // name of the parameters
+    double   paramvalue[MAX_PARAMS-4];   // default parameter values
+};
+
 extern AlternateMath         g_alternate_math[];    // alternate math function pointers
 extern fractalspecificstuff  g_fractal_specific[];
 extern MOREPARAMS            g_more_fractal_params[];
