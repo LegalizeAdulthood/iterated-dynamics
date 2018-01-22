@@ -11,6 +11,7 @@
 #include "encoder.h"
 #include "fractype.h"
 #include "framain2.h"
+#include "jb.h"
 #include "line3d.h"
 #include "loadfile.h"
 #include "miscres.h"

@@ -12,6 +12,7 @@
 #include "fractype.h"
 #include "framain2.h"
 #include "helpdefs.h"
+#include "jb.h"
 #include "line3d.h"
 #include "loadfile.h"
 #include "miscovl.h"

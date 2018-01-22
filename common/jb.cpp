@@ -19,35 +19,73 @@ double g_julibrot_y_min = -.25;
 double g_julibrot_x_max = -.83;
 double g_julibrot_y_max =  .25;
 
-static long mxmin, mymin;
-static long x_per_inch, y_per_inch, inch_per_xdot, inch_per_ydot;
-static double x_per_inchfp, y_per_inchfp, inch_per_xdotfp, inch_per_ydotfp;
+static long mxmin;
+static long mymin;
+static long x_per_inch;
+static long y_per_inch;
+static long inch_per_xdot;
+static long inch_per_ydot;
+static double x_per_inchfp;
+static double y_per_inchfp;
+static double inch_per_xdotfp;
+static double inch_per_ydotfp;
 static int bbase;
-static long xpixel, ypixel;
-static double xpixelfp, ypixelfp;
-static long initz, djx, djy, dmx, dmy;
-static double initzfp, djxfp, djyfp, dmxfp, dmyfp;
-static long jx, jy, mx, my, xoffset, yoffset;
-static double jxfp, jyfp, mxfp, myfp, xoffsetfp, yoffsetfp;
+static long xpixel;
+static long ypixel;
+static double xpixelfp;
+static double ypixelfp;
+static long initz;
+static long djx;
+static long djy;
+static long dmx;
+static long dmy;
+static double initzfp;
+static double djxfp;
+static double djyfp;
+static double dmxfp;
+static double dmyfp;
+static long jx;
+static long jy;
+static long mx;
+static long my;
+static long xoffset;
+static long yoffset;
+static double jxfp;
+static double jyfp;
+static double mxfp;
+static double myfp;
+static double xoffsetfp;
+static double yoffsetfp;
 
 struct Perspective
 {
-    long x, y, zx, zy;
+    long x;
+    long y;
+    long zx;
+    long zy;
 };
 
 struct Perspectivefp
 {
-    double x, y, zx, zy;
+    double x;
+    double y;
+    double zx;
+    double zy;
 };
 
-Perspective LeftEye, RightEye, *Per;
-Perspectivefp LeftEyefp, RightEyefp, *Perfp;
+static Perspective LeftEye;
+static Perspective RightEye;
+static Perspective *Per;
+static Perspectivefp LeftEyefp;
+static Perspectivefp RightEyefp;
+static Perspectivefp *Perfp;
 
-LComplex jbc;
-DComplex jbcfp;
+static LComplex jbc;
+static DComplex jbcfp;
 
 #ifndef XFRACT
-static double fg, fg16;
+static double fg;
+static double fg16;
 #endif
 int g_julibrot_z_dots = 128;
 
@@ -57,8 +95,11 @@ float g_julibrot_width_fp   = 10.0F;
 float g_julibrot_dist_fp    = 24.0F;
 float g_eyes_fp    = 2.5F;
 float g_julibrot_depth_fp   = 8.0F;
-float brratiofp = 1.0F;
-static long width, dist, depth, brratio;
+static float brratiofp = 1.0F;
+static long width;
+static long dist;
+static long depth;
+static long brratio;
 #ifndef XFRACT
 static long eyes;
 #endif
@@ -189,8 +230,7 @@ bool JulibrotSetup()
 }
 
 
-int
-jb_per_pixel()
+int jb_per_pixel()
 {
     jx = multiply(Per->x - xpixel, initz, 16);
     jx = divide(jx, dist, 16) - xpixel;
@@ -211,8 +251,7 @@ jb_per_pixel()
     return (1);
 }
 
-int
-jbfp_per_pixel()
+int jbfp_per_pixel()
 {
     jxfp = ((Perfp->x - xpixelfp) * initzfp / g_julibrot_dist_fp - xpixelfp) * x_per_inchfp;
     jxfp += xoffsetfp;
@@ -225,11 +264,11 @@ jbfp_per_pixel()
     return (1);
 }
 
-static int zpixel, plotted;
+static int zpixel;
+static int plotted;
 static long n;
 
-int
-zline(long x, long y)
+int zline(long x, long y)
 {
     xpixel = x;
     ypixel = y;
@@ -315,8 +354,7 @@ zline(long x, long y)
     return (0);
 }
 
-int
-zlinefp(double x, double y)
+int zlinefp(double x, double y)
 {
 #ifdef XFRACT
     static int keychk = 0;
@@ -435,8 +473,7 @@ zlinefp(double x, double y)
     return (0);
 }
 
-int
-Std4dFractal()
+int Std4dFractal()
 {
     long x;
     g_c_exponent = (int)g_params[2];
@@ -490,8 +527,8 @@ Std4dFractal()
     }
     return (0);
 }
-int
-Std4dfpFractal()
+
+int Std4dfpFractal()
 {
     double x;
     g_c_exponent = (int)g_params[2];

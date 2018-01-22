@@ -7,6 +7,7 @@
 #include "fractype.h"
 #include "helpdefs.h"
 #include "fractalp.h"
+#include "jb.h"
 #include "miscres.h"
 #include "prompts1.h"
 #include "zoom.h"

@@ -47,14 +47,7 @@ extern long                  g_calc_time;
 extern calc_status_value     g_calc_status;
 extern int                   g_colors;
 extern bool                  g_compare_gif;
-
-extern int                   g_color_bright;    // brightest color in palette
-extern int                   g_color_dark;      // darkest color in palette
-extern int                   g_color_medium;    // nearest to medbright grey in palette
-
-extern int                   g_dac_count;
 extern double                g_delta_min;
-extern int                   g_decimals;
 extern long                  g_l_delta_min;
 extern long                  g_l_delta_x2;
 extern long                  g_l_delta_x;
@@ -64,11 +57,15 @@ extern long                  g_l_delta_y2;
 extern long                  g_l_delta_y;
 extern LDBL                  g_delta_y2;
 extern LDBL                  g_delta_y;
-extern float                 g_julibrot_depth_fp;
+
+extern int                   g_color_bright;    // brightest color in palette
+extern int                   g_color_dark;      // darkest color in palette
+extern int                   g_color_medium;    // nearest to medbright grey in palette
+extern int                   g_dac_count;
+
 extern bool                  g_disk_16_bit;
 extern bool                  g_disk_flag;       // disk video active flag
 extern bool                  g_disk_targa;
-extern float                 g_julibrot_dist_fp;
 extern int                   g_distribution;
 extern bool                  g_dither_flag;
 extern int                   g_dot_mode;
@@ -85,7 +82,6 @@ extern double                g_logical_screen_y_size_dots;
 extern int                   g_evolving;
 extern bool                  g_have_evolve_info;
 extern EVOLUTION_INFO        g_evolve_info;
-extern float                 g_eyes_fp;
 extern double                g_fudge_limit;
 extern int                   g_evolve_image_grid_size;
 extern double                g_evolve_max_random_mutation;
@@ -112,7 +108,6 @@ extern bool                  g_good_mode;       // video mode ok?
 extern std::string const     g_gray_map_file;
 extern bool                  g_has_inverse;
 extern unsigned int          g_height;
-extern float                 g_julibrot_height_fp;
 extern int                   g_help_mode;
 extern int                   g_hi_attenuation;
 extern int                   g_image_box_count;
@@ -121,7 +116,6 @@ extern bool                  g_is_true_color;
 extern bool                  g_is_mandelbrot;
 extern std::string const     g_jiim_left_right[];
 extern std::string const     g_jiim_method[];
-extern int                   g_julibrot_3d_mode;
 extern std::string const     g_julibrot_3d_options[];
 extern bool                  g_julibrot;
 extern bool                  g_keep_screen_coords;
@@ -159,16 +153,11 @@ extern int                   g_soi_min_stack;
 extern int                   g_soi_min_stack_available;
 extern MPC                   g_mpc_one;
 extern int                   g_mp_overflow;
-extern double                g_julibrot_x_max;
-extern double                g_julibrot_x_min;
-extern double                g_julibrot_y_max;
-extern double                g_julibrot_y_min;
 extern int                   g_filename_stack_index;
 extern char                  g_evolve_new_discrete_x_parameter_offset;
 extern char                  g_evolve_new_discrete_y_parameter_offset;
 extern double                g_evolve_new_x_parameter_offset;
 extern double                g_evolve_new_y_parameter_offset;
-extern fractal_type          g_new_orbit_type;
 extern bool                  g_browse_sub_images;
 extern int                   g_num_affine_transforms;
 extern unsigned              g_num_colors;
@@ -181,7 +170,6 @@ extern double                g_evolve_x_parameter_offset;
 extern double                g_evolve_y_parameter_offset;
 extern long                  g_orbit_interval;
 extern std::string           g_organize_formulas_dir;
-extern float                 g_julibrot_origin_fp;
 extern int                 (*g_out_line)(BYTE *, int);
 extern void                (*g_out_line_cleanup)();
 extern double                g_orbit_corner_3_x;
@@ -282,7 +270,6 @@ extern int                   g_view_x_dots;
 extern int                   g_view_y_dots;
 extern bool                  g_virtual_screens;
 extern unsigned              g_variable_index;
-extern float                 g_julibrot_width_fp;
 extern std::string           g_working_dir;
 extern long                  g_l_x_3rd;
 extern double                g_julia_c_x;
@@ -303,7 +290,6 @@ extern double                g_y_min;
 extern double                g_zoom_box_x;
 extern double                g_zoom_box_y;
 extern double                g_zoom_box_height;
-extern int                   g_julibrot_z_dots;
 extern bool                  g_zoom_off;
 extern int                   g_zoom_box_rotation;
 extern bool                  g_z_scroll;
