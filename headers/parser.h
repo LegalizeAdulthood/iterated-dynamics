@@ -6,6 +6,22 @@
 
 #include <vector>
 
+#define MAX_JUMPS 200  // size of JUMP_CONTROL array
+
+struct JUMP_PTRS_ST
+{
+    int      JumpOpPtr;
+    int      JumpLodPtr;
+    int      JumpStoPtr;
+};
+
+struct JUMP_CONTROL_ST
+{
+    int      type;
+    JUMP_PTRS_ST ptrs;
+    int      DestJumpIndex;
+};
+
 // function, load, store pointers
 struct fn_operand
 {
