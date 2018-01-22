@@ -17,6 +17,7 @@
 #include "loadfile.h"
 #include "loadmap.h"
 #include "memory.h"
+#include "miscovl.h"
 #include "miscres.h"
 #include "mpmath.h"
 #include "mpmath_c.h"

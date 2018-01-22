@@ -64,6 +64,8 @@ extern std::vector<double>   g_grid_x1;
 extern std::vector<double>   g_grid_y0;
 extern std::vector<double>   g_grid_y1;
 extern bool                  g_has_inverse;
+extern int                   g_help_mode;
+extern int                   g_integer_fractal;
 extern long                  g_l_delta_min;
 extern long                  g_l_delta_x2;
 extern long                  g_l_delta_x;
@@ -82,11 +84,8 @@ extern int                   g_fm_release;
 extern int                   g_fm_sustain;
 extern int                   g_fm_wavetype;
 extern int                   g_fm_volume;            // volume of OPL-3 soundcard output
-
-extern int                   g_help_mode;
 extern int                   g_hi_attenuation;
-extern int                   g_integer_fractal;
-extern bool                  g_is_true_color;
+
 extern bool                  g_keep_screen_coords;
 extern std::vector<BYTE>     g_line_buff;
 extern long                  g_l_init_x;
@@ -100,7 +99,6 @@ extern MATRIX                g_m;
 extern Major                 g_major_method;
 extern long                  g_max_count;
 extern long                  g_max_iterations;
-extern int                   g_max_line_length;
 extern long                  g_bignum_max_stack_addr;
 extern int                   g_max_rhombus_depth;
 extern int                   g_smallest_box_size_shown;
@@ -160,8 +158,6 @@ extern int                   g_screen_y_dots;
 extern double                g_save_y_max;
 extern double                g_save_y_min;
 extern int                   g_logical_screen_y_offset;
-extern bool                  g_make_parameter_file;
-extern bool                  g_make_parameter_file_map;
 extern bool                  g_tab_mode;
 extern bool                  g_tab_or_help;
 extern int                   g_text_cbase;      // g_text_col is relative to this

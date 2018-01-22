@@ -4,6 +4,11 @@
 
 #include <string>
 
+extern bool                  g_is_true_color;
+extern bool                  g_make_parameter_file;
+extern bool                  g_make_parameter_file_map;
+extern int                   g_max_line_length;
+
 extern void make_batch_file();
 extern void edit_text_colors();
 extern int select_video_mode(int);

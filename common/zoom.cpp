@@ -12,6 +12,7 @@
 #include "evolve.h"
 #include "fracsubr.h"
 #include "framain2.h"
+#include "miscovl.h"
 #include "realdos.h"
 #include "zoom.h"
 

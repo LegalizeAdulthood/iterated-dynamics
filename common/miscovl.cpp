@@ -57,11 +57,11 @@ bool g_is_true_color = false;
 bool g_make_parameter_file = false;
 bool g_make_parameter_file_map = false;
 
-char par_comment[4][MAXCMT];
+static char par_comment[4][MAXCMT];
 
 // JIIM
 
-FILE *parmfile;
+static FILE *parmfile;
 
 #define PAR_KEY(x)  ( x < 10 ? '0' + x : 'a' - 10 + x)
 

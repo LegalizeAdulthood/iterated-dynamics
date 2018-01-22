@@ -20,6 +20,7 @@
 #include "loadfdos.h"
 #include "loadfile.h"
 #include "lorenz.h"
+#include "miscovl.h"
 #include "miscres.h"
 #include "parser.h"
 #include "plot3d.h"

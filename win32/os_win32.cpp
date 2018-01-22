@@ -9,6 +9,7 @@
 #include "externs.h"
 #include "fractint.h"
 #include "helpdefs.h"
+#include "miscovl.h"
 #include "mpmath.h"
 #include "prompts2.h"
 #include "realdos.h"

@@ -12,6 +12,7 @@
 #include "fractype.h"
 #include "helpcom.h"
 #include "helpdefs.h"
+#include "miscovl.h"
 #include "miscres.h"
 #include "realdos.h"
 #include "rotate.h"
