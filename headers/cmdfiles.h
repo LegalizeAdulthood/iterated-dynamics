@@ -116,6 +116,21 @@ enum class bailouts
     Manr
 };
 
+enum sound_flags
+{
+    SOUNDFLAG_OFF       = 0,
+    SOUNDFLAG_BEEP      = 1,
+    SOUNDFLAG_X         = 2,
+    SOUNDFLAG_Y         = 3,
+    SOUNDFLAG_Z         = 4,
+    SOUNDFLAG_ORBITMASK = 0x07,
+    SOUNDFLAG_SPEAKER   = 8,
+    SOUNDFLAG_OPL3_FM   = 16,
+    SOUNDFLAG_MIDI      = 32,
+    SOUNDFLAG_QUANTIZED = 64,
+    SOUNDFLAG_MASK      = 0x7F
+};
+
 extern bool                  g_ask_video;
 extern float                 g_aspect_drift;
 extern std::string           g_auto_name;
