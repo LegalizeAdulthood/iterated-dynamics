@@ -6,6 +6,13 @@
 
 #include <vector>
 
+// function, load, store pointers
+struct fn_operand
+{
+    void (*function)();
+    Arg *operand;
+};
+
 extern bool                  g_frm_uses_ismand;
 extern bool                  g_frm_uses_p1;
 extern bool                  g_frm_uses_p2;
@@ -25,12 +32,6 @@ extern unsigned              g_operation_index;
 extern int                   g_store_index;
 extern unsigned              g_variable_index;
 
-// parser -- C file prototypes
-struct fn_operand
-{ // function, load, store pointers
-    void (*function)();
-    Arg *operand;
-};
 extern unsigned long NewRandNum();
 extern void lRandom();
 extern void dRandom();

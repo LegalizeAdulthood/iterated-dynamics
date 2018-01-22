@@ -2,6 +2,13 @@
 #if !defined(FRACTALS_H)
 #define FRACTALS_H
 
+#include <vector>
+
+struct DComplex;
+struct LComplex;
+struct MP;
+struct MPC;
+
 extern int                   g_basin;
 extern int                   g_bit_shift_less_1;
 extern int                   g_c_exponent;

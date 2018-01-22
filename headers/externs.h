@@ -3,35 +3,8 @@
 #include <string>
 #include <vector>
 
-struct AlternateMath;
-enum class bailouts;
-enum class batch_modes;
 enum class calc_status_value;
-struct DComplex;
-enum display_3d_modes;
-struct EVOLUTION_INFO;
-struct fn_operand;
-enum class fractal_type;
-struct GENEBASE;
-enum class init_orbit_mode;
-struct LComplex;
-enum class Major;
-enum class Minor;
-struct MOREPARAMS;
-struct MP;
-struct MPC;
-enum class raytrace_formats;
-enum class record_colors_mode;
-namespace id
-{
-struct SearchPath;
-}
-enum class slides_mode;
-enum class stereo_images;
-enum class symmetry_type;
-enum class true_color_mode;
 struct VIDEOINFO;
-struct WORKLIST;
 
 // keep var names in column 30 for sorting via sort /+30 <in >out
 extern int                   g_adapter;             // index into g_video_table[]
@@ -68,16 +41,27 @@ extern std::vector<double>   g_grid_y1;
 extern bool                  g_has_inverse;
 extern int                   g_help_mode;
 extern int                   g_integer_fractal;
+extern bool                  g_keep_aspect_ratio;
 extern long                  g_l_delta_min;
 extern long                  g_l_delta_x2;
 extern long                  g_l_delta_x;
 extern long                  g_l_delta_y2;
 extern long                  g_l_delta_y;
+extern long                  g_l_x_3rd;
+extern long                  g_l_x_max;
+extern long                  g_l_x_min;
 extern std::vector<long>     g_l_x0;
 extern std::vector<long>     g_l_x1;
+extern long                  g_l_y_3rd;
+extern long                  g_l_y_max;
+extern long                  g_l_y_min;
 extern std::vector<long>     g_l_y0;
 extern std::vector<long>     g_l_y1;
+extern int                   g_logical_screen_x_dots;
+extern int                   g_logical_screen_x_offset;
 extern double                g_logical_screen_x_size_dots;
+extern int                   g_logical_screen_y_dots;
+extern int                   g_logical_screen_y_offset;
 extern double                g_logical_screen_y_size_dots;
 extern int                   g_look_at_mouse;
 extern long                  g_max_iterations;
@@ -89,7 +73,48 @@ extern double                g_params[];
 extern double                g_potential_params[];
 extern int                   g_resave_flag;
 extern int                   g_save_dac;
+extern int                   g_save_system;
+extern double                g_save_x_3rd;
+extern double                g_save_x_max;
+extern double                g_save_x_min;
+extern double                g_save_y_3rd;
+extern double                g_save_y_max;
+extern double                g_save_y_min;
+extern int                   g_scale_map[];
+extern int                   g_screen_x_dots;
+extern int                   g_screen_y_dots;
 extern int                   g_smallest_box_size_shown;
+extern bool                  g_started_resaves;
+extern char                  g_std_calc_mode;
+extern bool                  g_tab_mode;
+extern int                   g_timed_save;
+extern long                  g_timer_interval;
+extern long                  g_timer_start;
+extern double                g_smallest_window_display_size;
+extern long                  g_user_distance_estimator_value;
+extern bool                  g_user_float_flag;
+extern int                   g_user_periodicity_value;
+extern char                  g_user_std_calc_mode;
+extern VIDEOINFO             g_video_entry;
+extern bool                  g_view_crop;
+extern float                 g_view_reduction;
+extern bool                  g_view_window;
+extern int                   g_view_x_dots;
+extern int                   g_view_y_dots;
+extern double                g_x_3rd;
+extern double                g_x_max;
+extern double                g_x_min;
+extern double                g_y_3rd;
+extern double                g_y_max;
+extern double                g_y_min;
+extern bool                  g_z_scroll;
+extern double                g_zoom_box_height;
+extern int                   g_zoom_box_rotation;
+extern double                g_zoom_box_skew;
+extern double                g_zoom_box_width;
+extern double                g_zoom_box_x;
+extern double                g_zoom_box_y;
+extern bool                  g_zoom_off;
 
 extern int                   g_color_bright;    // brightest color in palette
 extern int                   g_color_dark;      // darkest color in palette
@@ -107,70 +132,17 @@ extern long                  g_l_init_y;
 extern int                   g_polyphony;
 extern int                   g_row_count;       // row-counter for decoder and out_line
 extern long                  g_save_base;
-
 extern long                  g_save_ticks;
-extern int                   g_save_system;
-extern int                   g_scale_map[];
-extern bool                  g_started_resaves;
-extern char                  g_std_calc_mode;
-extern double                g_save_x_3rd;
-extern int                   g_screen_x_dots;
-extern double                g_save_x_max;
-extern double                g_save_x_min;
-extern int                   g_logical_screen_x_offset;
-extern double                g_save_y_3rd;
-extern int                   g_screen_y_dots;
-extern double                g_save_y_max;
-extern double                g_save_y_min;
-extern int                   g_logical_screen_y_offset;
-extern bool                  g_tab_mode;
 extern int                   g_text_cbase;      // g_text_col is relative to this
 extern int                   g_text_col;        // current column in text mode
 extern int                   g_text_rbase;      // g_text_row is relative to this
 extern int                   g_text_row;        // current row in text mode
-extern int                   g_timed_save;
-extern long                  g_timer_interval;
-extern long                  g_timer_start;
-extern double                g_smallest_window_display_size;
-extern long                  g_user_distance_estimator_value;
-extern bool                  g_user_float_flag;
-extern int                   g_user_periodicity_value;
-extern char                  g_user_std_calc_mode;
 extern int                   g_vesa_x_res;
 extern int                   g_vesa_y_res;
-extern VIDEOINFO             g_video_entry;
-extern VIDEOINFO             g_video_table[];
-extern bool                  g_keep_aspect_ratio;
 extern int                   g_video_start_x;
 extern int                   g_video_start_y;
-extern int                   g_video_type;      // video adapter type
-extern bool                  g_view_crop;
-extern float                 g_view_reduction;
-extern bool                  g_view_window;
-extern int                   g_view_x_dots;
-extern int                   g_view_y_dots;
-extern long                  g_l_x_3rd;
-extern int                   g_logical_screen_x_dots;
-extern long                  g_l_x_max;
-extern long                  g_l_x_min;
-extern double                g_x_3rd;
-extern double                g_x_max;
-extern double                g_x_min;
-extern long                  g_l_y_3rd;
-extern int                   g_logical_screen_y_dots;
-extern long                  g_l_y_max;
-extern long                  g_l_y_min;
-extern double                g_y_3rd;
-extern double                g_y_max;
-extern double                g_y_min;
-extern double                g_zoom_box_x;
-extern double                g_zoom_box_y;
-extern double                g_zoom_box_height;
-extern bool                  g_zoom_off;
-extern int                   g_zoom_box_rotation;
-extern bool                  g_z_scroll;
-extern double                g_zoom_box_skew;
-extern double                g_zoom_box_width;
+extern VIDEOINFO             g_video_table[];
+
 #if defined(XFRACT)
 extern bool                  g_fake_lut;
 extern bool                  g_x_zoom_waiting;
