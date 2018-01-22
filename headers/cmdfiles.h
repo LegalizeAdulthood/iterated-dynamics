@@ -99,6 +99,12 @@ enum class record_colors_mode
     yes = 'y'
 };
 
+enum orbit_save_flags
+{
+    osf_raw = 1,
+    osf_midi = 2
+};
+
 extern bool                  g_ask_video;
 extern float                 g_aspect_drift;
 extern std::string           g_auto_name;

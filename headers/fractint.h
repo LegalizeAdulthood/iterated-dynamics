@@ -716,12 +716,6 @@ enum class Minor
     right_first
 };
 
-enum orbit_save_flags
-{
-    osf_raw = 1,
-    osf_midi = 2
-};
-
 // bitmask defines for fractalspecific flags
 #define  NOZOOM         1    // zoombox not allowed at all
 #define  NOGUESS        2    // solid guessing not allowed
