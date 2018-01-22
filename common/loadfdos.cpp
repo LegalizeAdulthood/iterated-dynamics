@@ -32,6 +32,7 @@
 #include "prototyp.h"
 
 #include "cmdfiles.h"
+#include "fractalp.h"
 #include "helpdefs.h"
 #include "id_data.h"
 #include "loadfile.h"

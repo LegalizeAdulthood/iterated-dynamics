@@ -35,6 +35,7 @@
 #include "prototyp.h"
 
 #include "cmdfiles.h"
+#include "fractalp.h"
 #include "parser.h"
 #include "realdos.h"
 

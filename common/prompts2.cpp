@@ -11,6 +11,7 @@
 #include "drivers.h"
 #include "evolve.h"
 #include "fracsubr.h"
+#include "fractalp.h"
 #include "fractype.h"
 #include "helpcom.h"
 #include "helpdefs.h"

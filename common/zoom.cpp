@@ -11,6 +11,7 @@
 #include "drivers.h"
 #include "evolve.h"
 #include "fracsubr.h"
+#include "fractalp.h"
 #include "framain2.h"
 #include "id_data.h"
 #include "miscovl.h"

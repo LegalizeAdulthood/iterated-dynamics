@@ -5,6 +5,8 @@
 #include <string>
 #include <vector>
 
+struct fractalspecificstuff;
+
 namespace id
 {
 

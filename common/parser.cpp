@@ -23,6 +23,7 @@
 #include "cmdfiles.h"
 #include "drivers.h"
 #include "fpu087.h"
+#include "fractalp.h"
 #include "fractals.h"
 #include "id_data.h"
 #include "jiim.h"
