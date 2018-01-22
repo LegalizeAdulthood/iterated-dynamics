@@ -165,31 +165,7 @@ struct EVOLUTION_INFO      // for saving evolution data in a GIF file
     short ecount; // count of how many images have been calc'ed so far
     short future[68 - NUM_GENES];      // total of 200 bytes
 };
-/*
- * Note: because non-MSDOS machines store structures differently, we have
- * to do special processing of the orbits_info structure in loadfile.c and
- * encoder.c.  See decode_orbits_info() in general.c.
- * Make sure changes to the structure here get reflected there.
- */
-#ifndef XFRACT
-#define ORBITS_INFO_SIZE sizeof(orbits_info)
-#else
-// This value should be the MSDOS size, not the Unix size.
-#define ORBITS_INFO_SIZE 200
-#endif
-struct ORBITS_INFO      // for saving orbits data in a GIF file
-{
-    double oxmin;
-    double oxmax;
-    double oymin;
-    double oymax;
-    double ox3rd;
-    double oy3rd;
-    short keep_scrn_coords;
-    char drawmode;
-    char dummy; // need an even number of bytes
-    short future[74];      // total of 200 bytes
-};
+
 #define MAX_VIDEO_MODES 300       // maximum entries in fractint.cfg
 #define AUTO_INVERT -123456.789
 #define MAX_NUM_ATTRACTORS 8

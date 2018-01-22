@@ -175,6 +175,32 @@ struct ext_blk_3
     short uses_p4;
     short uses_p5;
 };
+
+/*
+ * Note: because non-MSDOS machines store structures differently, we have
+ * to do special processing of the orbits_info structure in loadfile.c and
+ * encoder.c.  See decode_orbits_info() in general.c.
+ * Make sure changes to the structure here get reflected there.
+ */
+#ifndef XFRACT
+#define ORBITS_INFO_SIZE sizeof(orbits_info)
+#else
+// This value should be the MSDOS size, not the Unix size.
+#define ORBITS_INFO_SIZE 200
+#endif
+struct ORBITS_INFO      // for saving orbits data in a GIF file
+{
+    double oxmin;
+    double oxmax;
+    double oymin;
+    double oymax;
+    double ox3rd;
+    double oy3rd;
+    short keep_scrn_coords;
+    char drawmode;
+    char dummy; // need an even number of bytes
+    short future[74];      // total of 200 bytes
+};
 #if defined(_WIN32)
 #pragma pack(pop)
 #endif
