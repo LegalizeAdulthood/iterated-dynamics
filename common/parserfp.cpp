@@ -53,15 +53,16 @@ std::vector<fn_operand> g_function_operands;
 /* not moved to PROTOTYPE.H because these only communicate within
    PARSER.C and other parser modules */
 
-extern Arg *Arg1, *Arg2;
-extern double _1_, _2_;
+extern double _1_;
+extern double _2_;
 extern Arg s[20];
 extern std::vector<Arg *> Store;
 extern std::vector<Arg *> Load;
-extern int g_store_index, g_load_index, OpPtr;
-extern unsigned int g_variable_index, g_last_op;
+extern int OpPtr;
 extern std::vector<ConstArg> v;
-extern int InitLodPtr, InitStoPtr, InitOpPtr, g_last_init_op;
+extern int InitLodPtr;
+extern int InitStoPtr;
+extern int InitOpPtr;
 extern std::vector<void (*)()> f;
 extern JUMP_CONTROL_ST *jump_control;
 extern bool uses_jump;
@@ -69,89 +70,187 @@ extern int jump_index;
 
 typedef void OLD_FN();  // old C functions
 
-OLD_FN  StkLod, StkClr, StkSto, EndInit, StkJumpLabel;
-OLD_FN  dStkAdd, dStkSub, dStkMul, dStkDiv;
-OLD_FN  dStkSqr, dStkMod;
-OLD_FN  dStkSin, dStkCos, dStkSinh, dStkCosh, dStkCosXX;
-OLD_FN  dStkTan, dStkTanh, dStkCoTan, dStkCoTanh;
-OLD_FN  dStkLog, dStkExp, dStkPwr;
-OLD_FN  dStkLT, dStkLTE;
-OLD_FN  dStkFlip, dStkReal, dStkImag;
-OLD_FN  dStkConj, dStkNeg, dStkAbs;
-OLD_FN  dStkRecip, StkIdent;
-OLD_FN  dStkGT, dStkGTE, dStkNE, dStkEQ;
-OLD_FN  dStkAND, dStkOR;
-OLD_FN  dStkZero;
-OLD_FN  dStkSqrt;
-OLD_FN  dStkASin, dStkACos, dStkASinh, dStkACosh;
-OLD_FN  dStkATanh, dStkATan;
-OLD_FN  dStkCAbs;
-OLD_FN  dStkFloor;
-OLD_FN  dStkCeil;
-OLD_FN  dStkTrunc;
-OLD_FN  dStkRound;
-OLD_FN  StkJump, dStkJumpOnTrue, dStkJumpOnFalse;
-OLD_FN  dStkOne;
+OLD_FN StkLod;
+OLD_FN StkClr;
+OLD_FN StkSto;
+OLD_FN EndInit;
+OLD_FN StkJumpLabel;
+OLD_FN dStkAdd;
+OLD_FN dStkSub;
+OLD_FN dStkMul;
+OLD_FN dStkDiv;
+OLD_FN dStkSqr;
+OLD_FN dStkMod;
+OLD_FN dStkSin;
+OLD_FN dStkCos;
+OLD_FN dStkSinh;
+OLD_FN dStkCosh;
+OLD_FN dStkCosXX;
+OLD_FN dStkTan;
+OLD_FN dStkTanh;
+OLD_FN dStkCoTan;
+OLD_FN dStkCoTanh;
+OLD_FN dStkLog;
+OLD_FN dStkExp;
+OLD_FN dStkPwr;
+OLD_FN dStkLT;
+OLD_FN dStkLTE;
+OLD_FN dStkFlip;
+OLD_FN dStkReal;
+OLD_FN dStkImag;
+OLD_FN dStkConj;
+OLD_FN dStkNeg;
+OLD_FN dStkAbs;
+OLD_FN dStkRecip;
+OLD_FN StkIdent;
+OLD_FN dStkGT;
+OLD_FN dStkGTE;
+OLD_FN dStkNE;
+OLD_FN dStkEQ;
+OLD_FN dStkAND;
+OLD_FN dStkOR;
+OLD_FN dStkZero;
+OLD_FN dStkSqrt;
+OLD_FN dStkASin;
+OLD_FN dStkACos;
+OLD_FN dStkASinh;
+OLD_FN dStkACosh;
+OLD_FN dStkATanh;
+OLD_FN dStkATan;
+OLD_FN dStkCAbs;
+OLD_FN dStkFloor;
+OLD_FN dStkCeil;
+OLD_FN dStkTrunc;
+OLD_FN dStkRound;
+OLD_FN StkJump;
+OLD_FN dStkJumpOnTrue;
+OLD_FN dStkJumpOnFalse;
+OLD_FN dStkOne;
 
 typedef void (NEW_FN)();   // new 387-only ASM functions
 
-NEW_FN  fStkPull2;  // pull up fpu stack from 2 to 4
-NEW_FN  fStkPush2;  // push down fpu stack from 8 to 6
-NEW_FN  fStkPush2a;  // push down fpu stack from 6 to 4
-NEW_FN  fStkPush4;  // push down fpu stack from 8 to 4
-NEW_FN  fStkLodDup;  // lod, dup
-NEW_FN  fStkLodSqr;  // lod, sqr, dont save magnitude(i.e. lastsqr)
-NEW_FN  fStkLodSqr2;  // lod, sqr, save lastsqr
-NEW_FN  fStkStoDup;  // store, duplicate
-NEW_FN  fStkStoSqr;  // store, sqr, save lastsqr
-NEW_FN  fStkStoSqr0;  // store, sqr, dont save lastsqr
-NEW_FN  fStkLodDbl;  // load, double
-NEW_FN  fStkStoDbl;  // store, double
-NEW_FN  fStkReal2;  // fast ver. of real
-NEW_FN  fStkSqr;  // sqr, save magnitude in lastsqr
-NEW_FN  fStkSqr0;  // sqr, no save magnitude
-NEW_FN  fStkClr1;  // clear fpu
-NEW_FN  fStkClr2;  // test stack top, clear fpu
-NEW_FN  fStkStoClr1;  // store, clr1
-NEW_FN  fStkAdd, fStkSub;
-NEW_FN  fStkSto, fStkSto2;  // fast ver. of sto
-NEW_FN  fStkLod, fStkEndInit;
-NEW_FN  fStkMod, fStkMod2;  // faster mod
-NEW_FN  fStkLodMod2, fStkStoMod2;
-NEW_FN  fStkLTE, fStkLodLTEMul, fStkLTE2, fStkLodLTE;
-NEW_FN  fStkLodLTE2, fStkLodLTEAnd2;
-NEW_FN  fStkLT, fStkLodLTMul, fStkLT2, fStkLodLT;
-NEW_FN  fStkLodLT2;
-NEW_FN  fStkGTE, fStkLodGTE, fStkLodGTE2;
-NEW_FN  fStkGT, fStkGT2, fStkLodGT, fStkLodGT2;
-NEW_FN  fStkEQ, fStkLodEQ, fStkNE, fStkLodNE;
-NEW_FN  fStkAND, fStkANDClr2, fStkOR, fStkORClr2;
-NEW_FN  fStkSin, fStkSinh, fStkCos, fStkCosh, fStkCosXX;
-NEW_FN  fStkTan, fStkTanh, fStkCoTan, fStkCoTanh;
-NEW_FN  fStkLog, fStkExp, fStkPwr;
-NEW_FN  fStkMul, fStkDiv;
-NEW_FN  fStkFlip, fStkReal, fStkImag, fStkRealFlip, fStkImagFlip;
-NEW_FN  fStkConj, fStkNeg, fStkAbs, fStkRecip;
-NEW_FN  fStkLodReal, fStkLodRealC, fStkLodImag;
-NEW_FN  fStkLodRealFlip, fStkLodRealAbs;
-NEW_FN  fStkLodRealMul, fStkLodRealAdd, fStkLodRealSub, fStkLodRealPwr;
-NEW_FN  fStkLodImagMul, fStkLodImagAdd, fStkLodImagSub;
-NEW_FN  fStkLodImagFlip, fStkLodImagAbs;
-NEW_FN  fStkLodConj;
-NEW_FN  fStkLodAdd, fStkLodSub, fStkLodSubMod, fStkLodMul;
-NEW_FN  fStkPLodAdd, fStkPLodSub;  // push-lod-add/sub
-NEW_FN  fStkIdent;
-NEW_FN  fStkStoClr2;  // store, clear stack by popping
-NEW_FN  fStkZero;  // to support new parser fn.
-NEW_FN  fStkDbl;  // double the stack top
-NEW_FN  fStkSqr3;  // sqr3 is sqr/mag of a real
-NEW_FN  fStkSqrt;
-NEW_FN  fStkASin, fStkACos, fStkASinh, fStkACosh;
-NEW_FN  fStkATanh, fStkATan;
-NEW_FN  fStkCAbs;
-NEW_FN  fStkFloor, fStkCeil, fStkTrunc, fStkRound; // rounding functions
-NEW_FN  fStkJump, fStkJumpOnTrue, fStkJumpOnFalse, fStkJumpLabel; // flow
-NEW_FN  fStkOne;   // to support new parser fn.
+NEW_FN fStkPull2;  // pull up fpu stack from 2 to 4
+NEW_FN fStkPush2;  // push down fpu stack from 8 to 6
+NEW_FN fStkPush2a;  // push down fpu stack from 6 to 4
+NEW_FN fStkPush4;  // push down fpu stack from 8 to 4
+NEW_FN fStkLodDup;  // lod, dup
+NEW_FN fStkLodSqr;  // lod, sqr, dont save magnitude(i.e. lastsqr)
+NEW_FN fStkLodSqr2;  // lod, sqr, save lastsqr
+NEW_FN fStkStoDup;  // store, duplicate
+NEW_FN fStkStoSqr;  // store, sqr, save lastsqr
+NEW_FN fStkStoSqr0;  // store, sqr, dont save lastsqr
+NEW_FN fStkLodDbl;  // load, double
+NEW_FN fStkStoDbl;  // store, double
+NEW_FN fStkReal2;  // fast ver. of real
+NEW_FN fStkSqr;  // sqr, save magnitude in lastsqr
+NEW_FN fStkSqr0;  // sqr, no save magnitude
+NEW_FN fStkClr1;  // clear fpu
+NEW_FN fStkClr2;  // test stack top, clear fpu
+NEW_FN fStkStoClr1;  // store, clr1
+NEW_FN fStkAdd;
+NEW_FN fStkSub;
+NEW_FN fStkSto;
+NEW_FN fStkSto2; // faster store
+NEW_FN fStkLod;
+NEW_FN fStkEndInit;
+NEW_FN fStkMod;
+NEW_FN fStkMod2; // faster mod
+NEW_FN fStkLodMod2;
+NEW_FN fStkStoMod2;
+NEW_FN fStkLTE;
+NEW_FN fStkLodLTEMul;
+NEW_FN fStkLTE2;
+NEW_FN fStkLodLTE;
+NEW_FN fStkLodLTE2;
+NEW_FN fStkLodLTEAnd2;
+NEW_FN fStkLT;
+NEW_FN fStkLodLTMul;
+NEW_FN fStkLT2;
+NEW_FN fStkLodLT;
+NEW_FN fStkLodLT2;
+NEW_FN fStkGTE;
+NEW_FN fStkLodGTE;
+NEW_FN fStkLodGTE2;
+NEW_FN fStkGT;
+NEW_FN fStkGT2;
+NEW_FN fStkLodGT;
+NEW_FN fStkLodGT2;
+NEW_FN fStkEQ;
+NEW_FN fStkLodEQ;
+NEW_FN fStkNE;
+NEW_FN fStkLodNE;
+NEW_FN fStkAND;
+NEW_FN fStkANDClr2;
+NEW_FN fStkOR;
+NEW_FN fStkORClr2;
+NEW_FN fStkSin;
+NEW_FN fStkSinh;
+NEW_FN fStkCos;
+NEW_FN fStkCosh;
+NEW_FN fStkCosXX;
+NEW_FN fStkTan;
+NEW_FN fStkTanh;
+NEW_FN fStkCoTan;
+NEW_FN fStkCoTanh;
+NEW_FN fStkLog;
+NEW_FN fStkExp;
+NEW_FN fStkPwr;
+NEW_FN fStkMul;
+NEW_FN fStkDiv;
+NEW_FN fStkFlip;
+NEW_FN fStkReal;
+NEW_FN fStkImag;
+NEW_FN fStkRealFlip;
+NEW_FN fStkImagFlip;
+NEW_FN fStkConj;
+NEW_FN fStkNeg;
+NEW_FN fStkAbs;
+NEW_FN fStkRecip;
+NEW_FN fStkLodReal;
+NEW_FN fStkLodRealC;
+NEW_FN fStkLodImag;
+NEW_FN fStkLodRealFlip;
+NEW_FN fStkLodRealAbs;
+NEW_FN fStkLodRealMul;
+NEW_FN fStkLodRealAdd;
+NEW_FN fStkLodRealSub;
+NEW_FN fStkLodRealPwr;
+NEW_FN fStkLodImagMul;
+NEW_FN fStkLodImagAdd;
+NEW_FN fStkLodImagSub;
+NEW_FN fStkLodImagFlip;
+NEW_FN fStkLodImagAbs;
+NEW_FN fStkLodConj;
+NEW_FN fStkLodAdd;
+NEW_FN fStkLodSub;
+NEW_FN fStkLodSubMod;
+NEW_FN fStkLodMul;
+NEW_FN fStkPLodAdd;
+NEW_FN fStkPLodSub;  // push-lod-add/sub
+NEW_FN fStkIdent;
+NEW_FN fStkStoClr2;  // store, clear stack by popping
+NEW_FN fStkZero;  // to support new parser fn.
+NEW_FN fStkDbl;  // double the stack top
+NEW_FN fStkSqr3;  // sqr3 is sqr/mag of a real
+NEW_FN fStkSqrt;
+NEW_FN fStkASin;
+NEW_FN fStkACos;
+NEW_FN fStkASinh;
+NEW_FN fStkACosh;
+NEW_FN fStkATanh;
+NEW_FN fStkATan;
+NEW_FN fStkCAbs;
+// rounding functions
+NEW_FN fStkFloor;
+NEW_FN fStkCeil;
+NEW_FN fStkTrunc;
+NEW_FN fStkRound;
+// flow
+NEW_FN fStkJump;
+NEW_FN fStkJumpOnTrue;
+NEW_FN fStkJumpOnFalse;
+NEW_FN fStkJumpLabel;
+NEW_FN fStkOne;   // to support new parser fn.
 
 // check to see if a const is being loaded
 // the really awful hack below gets the first char of the name
@@ -334,8 +433,7 @@ static unsigned char p3const;       // ...and p3?
 static unsigned char p4const;       // ...and p4?
 static unsigned char p5const;       // ...and p5?
 
-static unsigned int
-cvtptrx;      // subscript of next free entry in g_function_operands
+static unsigned int cvtptrx;      // subscript of next free entry in g_function_operands
 
 static void (*prevfptr)();    // previous function pointer
 
@@ -361,6 +459,7 @@ struct fn_entry
     char delta;  // net change to # of values on the fp stack
     // (legal values are -2, 0, +2)
 };
+
 static fn_entry afe[NUM_OLD_FNS] =
 {
     // array of function entries
@@ -1297,7 +1396,7 @@ int fpfill_jump_struct()
     // On entry, jump_index is the number of jump functions in the formula
     int i = 0;
     int checkforelse = 0;
-    NEW_FN  * JumpFunc = nullptr;
+    NEW_FN * JumpFunc = nullptr;
     bool find_new_func = true;
     JUMP_PTRS_ST jump_data[MAX_JUMPS];
 
@@ -1357,7 +1456,7 @@ int fpfill_jump_struct()
 
 int fform_per_pixel();       // these fns are in parsera.asm
 int BadFormula();
-void (Img_Setup)();
+void Img_Setup();
 
 // convert the array of ptrs
 int CvtStk()

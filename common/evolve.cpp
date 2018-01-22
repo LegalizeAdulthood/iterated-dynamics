@@ -9,6 +9,7 @@
 #include "fractalp.h"
 #include "jb.h"
 #include "miscres.h"
+#include "parser.h"
 #include "prompts1.h"
 #include "zoom.h"
 

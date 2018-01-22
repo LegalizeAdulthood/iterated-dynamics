@@ -16,6 +16,7 @@
 #include "line3d.h"
 #include "loadfile.h"
 #include "miscres.h"
+#include "parser.h"
 #include "plot3d.h"
 #include "prompts2.h"
 #include "realdos.h"

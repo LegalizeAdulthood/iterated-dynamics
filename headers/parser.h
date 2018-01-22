@@ -4,6 +4,27 @@
 
 #include "mpmath.h"
 
+#include <vector>
+
+extern bool                  g_frm_uses_ismand;
+extern bool                  g_frm_uses_p1;
+extern bool                  g_frm_uses_p2;
+extern bool                  g_frm_uses_p3;
+extern bool                  g_frm_uses_p4;
+extern bool                  g_frm_uses_p5;
+extern double                g_fudge_limit;
+extern std::vector<fn_operand> g_function_operands;
+extern bool                  g_is_mandelbrot;
+extern int                   g_last_init_op;
+extern unsigned              g_last_op;
+extern int                   g_load_index;
+extern char                  g_max_function;
+extern unsigned              g_max_function_args;
+extern unsigned              g_max_function_ops;
+extern unsigned              g_operation_index;
+extern int                   g_store_index;
+extern unsigned              g_variable_index;
+
 // parser -- C file prototypes
 struct fn_operand
 { // function, load, store pointers

@@ -51,10 +51,13 @@ enum MATH_TYPE MathType = D_MATH;
 #define MAX_OPS 250
 #define MAX_ARGS 100
 
-unsigned g_max_function_ops  = MAX_OPS;
-unsigned g_max_function_args = MAX_ARGS;
+unsigned int g_max_function_ops  = MAX_OPS;
+unsigned int g_max_function_args = MAX_ARGS;
 
-unsigned long number_of_ops, number_of_loads, number_of_stores, number_of_jumps;
+static unsigned long number_of_ops;
+static unsigned long number_of_loads;
+static unsigned long number_of_stores;
+static unsigned long number_of_jumps;
 
 struct PEND_OP
 {
@@ -64,8 +67,7 @@ struct PEND_OP
 
 JUMP_CONTROL_ST jump_control[MAX_JUMPS];
 int jump_index;
-
-int InitJumpIndex;
+static int InitJumpIndex;
 
 static bool frm_prescan(FILE * open_file);
 
@@ -175,25 +177,29 @@ Arg *Arg1;
 Arg *Arg2;
 
 // Some of these variables should be renamed for safety
-Arg s[20];
+static Arg s[20];
 std::vector<Arg *> Store;
 std::vector<Arg *> Load;
 int OpPtr;
 std::vector<void (*)()> f;
 std::vector<ConstArg> v;
-int g_store_index, g_load_index;
-int complx_count;
-int real_count;
-
-
-
+int g_store_index;
+int g_load_index;
+static int complx_count;
+static int real_count;
 bool g_is_mandelbrot = true;
-
-unsigned int g_operation_index, g_variable_index, g_last_op;
-static unsigned int n, NextOp, InitN;
+unsigned int g_operation_index;
+unsigned int g_variable_index;
+unsigned int g_last_op;
+static unsigned int n;
+static unsigned int NextOp;
+static unsigned int InitN;
 static int paren;
 static bool ExpectingArg = false;
-int InitLodPtr, InitStoPtr, InitOpPtr, g_last_init_op;
+int InitLodPtr;
+int InitStoPtr;
+int InitOpPtr;
+int g_last_init_op;
 static int Delta16;
 double g_fudge_limit;
 static double fg;
@@ -208,7 +214,7 @@ bool g_frm_uses_p4 = false;
 bool g_frm_uses_p5 = false;
 bool uses_jump = false;
 bool g_frm_uses_ismand = false;
-unsigned int chars_in_formula;
+static unsigned int chars_in_formula;
 
 #if !defined(XFRACT)
 #define ChkLongDenom(denom)         \
@@ -467,7 +473,6 @@ void dStkSRand()
 }
 
 void (*StkSRand)() = dStkSRand;
-
 
 void dStkLodDup()
 {
@@ -2160,20 +2165,13 @@ ConstArg *isconst(char const *Str, int Len)
     return &v[g_variable_index++];
 }
 
-}
-
 struct FNCT_LIST
 {
     char const *s;
     void (**ptr)();
 };
 
-void (*StkTrig0)() = dStkSin;
-void (*StkTrig1)() = dStkSqr;
-void (*StkTrig2)() = dStkSinh;
-void (*StkTrig3)() = dStkCosh;
-
-char const * JumpList[] =
+char const *JumpList[] =
 {
     "if",
     "elseif",
@@ -2182,7 +2180,12 @@ char const * JumpList[] =
     ""
 };
 
+} // namespace
 
+void (*StkTrig0)() = dStkSin;
+void (*StkTrig1)() = dStkSqr;
+void (*StkTrig2)() = dStkSinh;
+void (*StkTrig3)() = dStkCosh;
 
 /* return values
     0 - Not a jump
@@ -2206,10 +2209,9 @@ int isjump(char const *Str, int Len)
     return 0;
 }
 
-
 char g_max_function = 0;
 
-FNCT_LIST FnctList[] =
+static FNCT_LIST FnctList[] =
 {
     {"sin",   &StkSin},
     {"sinh",  &StkSinh},
@@ -2247,7 +2249,7 @@ FNCT_LIST FnctList[] =
     {"round", &StkRound},
 };
 
-char const *OPList[] =
+static char const *OPList[] =
 {
     ",",    //  0
     "!=",   //  1
@@ -2272,6 +2274,7 @@ char const *OPList[] =
 void NotAFnct()
 {
 }
+
 void FnctNotFound()
 {
 }
@@ -2371,7 +2374,8 @@ struct SYMETRY
     char const *s;
     symmetry_type n;
 };
-SYMETRY SymStr[] =
+
+static SYMETRY SymStr[] =
 {
     { "NOSYM",         symmetry_type::NONE },
     { "XAXIS_NOPARM",  symmetry_type::X_AXIS_NO_PARAM },
@@ -3354,7 +3358,7 @@ void getvarinfo(token_st * tok)
         of a complex constant. See is_complex_constant() below. */
 
 // returns 1 on success, 0 on NOT_A_TOKEN
-static bool  frmgetconstant(FILE * openfile, token_st * tok)
+static bool frmgetconstant(FILE * openfile, token_st * tok)
 {
     int c;
     int i = 1;
@@ -4391,15 +4395,14 @@ void free_workarea()
     g_function_operands.clear();
 }
 
-
 struct error_data_st
 {
     long start_pos;
     long error_pos;
     int error_number;
 };
-error_data_st errors[3];
 
+static error_data_st errors[3];
 
 void frm_error(FILE * open_file, long begin_frm)
 {
