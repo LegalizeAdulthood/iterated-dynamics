@@ -2,6 +2,10 @@
 #if !defined(JIIM_H)
 #define JIIM_H
 
+extern double                g_julia_c_x;
+extern double                g_julia_c_y;
+extern DComplex              g_save_c;
+
 extern void Jiim(jiim_types which);
 extern LComplex PopLong();
 extern DComplex PopFloat();

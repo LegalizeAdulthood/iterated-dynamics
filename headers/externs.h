@@ -104,10 +104,9 @@ extern int                   g_hi_attenuation;
 extern long                  g_l_init_x;
 extern long                  g_l_init_y;
 extern int                   g_polyphony;
-
 extern int                   g_row_count;       // row-counter for decoder and out_line
 extern long                  g_save_base;
-extern DComplex              g_save_c;
+
 extern int                   g_save_dac;
 extern std::string           g_save_filename;
 extern long                  g_save_ticks;
@@ -156,7 +155,6 @@ extern int                   g_view_x_dots;
 extern int                   g_view_y_dots;
 extern std::string           g_working_dir;
 extern long                  g_l_x_3rd;
-extern double                g_julia_c_x;
 extern int                   g_logical_screen_x_dots;
 extern long                  g_l_x_max;
 extern long                  g_l_x_min;
@@ -164,7 +162,6 @@ extern double                g_x_3rd;
 extern double                g_x_max;
 extern double                g_x_min;
 extern long                  g_l_y_3rd;
-extern double                g_julia_c_y;
 extern int                   g_logical_screen_y_dots;
 extern long                  g_l_y_max;
 extern long                  g_l_y_min;

@@ -34,18 +34,18 @@
 
 #define MAXRECT         1024      // largest width of SaveRect/RestoreRect
 
-int show_numbers =0;              // toggle for display of coords
-std::vector<char> screen_rect;
-int windows = 0;               // windows management system
+static int show_numbers = 0;              // toggle for display of coords
+static std::vector<char> screen_rect;
+static int windows = 0;               // windows management system
 
-int xc, yc;                       // corners of the window
-int xd, yd;                       // dots in the window
+static int xc, yc;                       // corners of the window
+static int xd, yd;                       // dots in the window
 double g_julia_c_x = BIG;
 double g_julia_c_y = BIG;
 
 // circle routines from Dr. Dobbs June 1990
-int xbase, ybase;
-unsigned int xAspect, yAspect;
+static int xbase, ybase;
+static unsigned int xAspect, yAspect;
 
 void SetAspect(double aspect)
 {
@@ -173,12 +173,12 @@ void circle(int radius, int color)
  */
 
 
-long   ListFront, ListBack, ListSize;  // head, tail, size of MIIM Queue
-long   lsize, lmax;                    // how many in queue (now, ever)
-int    maxhits = 1;
-bool   OKtoMIIM = false;
-int    SecretExperimentalMode;
-float  luckyx = 0, luckyy = 0;
+static long   ListFront, ListBack, ListSize;  // head, tail, size of MIIM Queue
+static long   lsize, lmax;                    // how many in queue (now, ever)
+static int    maxhits = 1;
+static bool   OKtoMIIM = false;
+static int    SecretExperimentalMode;
+static float  luckyx = 0, luckyy = 0;
 
 static void fillrect(int x, int y, int width, int depth, int color)
 {
@@ -204,20 +204,17 @@ static void fillrect(int x, int y, int width, int depth, int color)
  * Defines a buffer that can be used as a FIFO queue or LIFO stack.
  */
 
-int
-QueueEmpty()            // True if NO points remain in queue
+int QueueEmpty()            // True if NO points remain in queue
 {
     return (ListFront == ListBack);
 }
 
-int
-QueueFullAlmost()       // True if room for ONE more point in queue
+int QueueFullAlmost()       // True if room for ONE more point in queue
 {
     return (((ListFront + 2) % ListSize) == ListBack);
 }
 
-void
-ClearQueue()
+void ClearQueue()
 {
     lmax = 0;
     lsize = lmax;
@@ -263,8 +260,7 @@ bool Init_Queue(unsigned long request)
     return false;
 }
 
-void
-Free_Queue()
+void Free_Queue()
 {
     enddisk();
     lmax = 0;
@@ -274,8 +270,7 @@ Free_Queue()
     ListFront = ListBack;
 }
 
-int
-PushLong(long x, long y)
+int PushLong(long x, long y)
 {
     if (((ListFront + 1) % ListSize) != ListBack)
     {
@@ -295,8 +290,7 @@ PushLong(long x, long y)
     return 0;                    // fail
 }
 
-int
-PushFloat(float x, float y)
+int PushFloat(float x, float y)
 {
     if (((ListFront + 1) % ListSize) != ListBack)
     {
@@ -316,8 +310,7 @@ PushFloat(float x, float y)
     return 0;                    // fail
 }
 
-DComplex
-PopFloat()
+DComplex PopFloat()
 {
     DComplex pop;
     float  popx, popy;
@@ -343,8 +336,7 @@ PopFloat()
     return pop;
 }
 
-LComplex
-PopLong()
+LComplex PopLong()
 {
     LComplex pop;
 
@@ -367,20 +359,17 @@ PopLong()
     return pop;
 }
 
-int
-EnQueueFloat(float x, float y)
+int EnQueueFloat(float x, float y)
 {
     return PushFloat(x, y);
 }
 
-int
-EnQueueLong(long x, long y)
+int EnQueueLong(long x, long y)
 {
     return PushLong(x, y);
 }
 
-DComplex
-DeQueueFloat()
+DComplex DeQueueFloat()
 {
     DComplex out;
     float outx, outy;
@@ -402,8 +391,7 @@ DeQueueFloat()
     return out;
 }
 
-LComplex
-DeQueueLong()
+LComplex DeQueueLong()
 {
     LComplex out;
     out.x = 0;
