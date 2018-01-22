@@ -2,6 +2,22 @@
 #if !defined(CMDFILES_H)
 #define CMDFILES_H
 
+#include <string>
+#include <vector>
+
+namespace id
+{
+
+struct SearchPath
+{
+    char par[FILE_MAX_PATH];
+    char frm[FILE_MAX_PATH];
+    char ifs[FILE_MAX_PATH];
+    char lsys[FILE_MAX_PATH];
+};
+
+} // namespace id
+
 extern bool                  g_ask_video;
 extern float                 g_aspect_drift;
 extern std::string           g_auto_name;
