@@ -9,6 +9,7 @@
 #include "calcfrac.h"
 #include "cmdfiles.h"
 #include "drivers.h"
+#include "evolve.h"
 #include "fracsubr.h"
 #include "framain2.h"
 #include "realdos.h"

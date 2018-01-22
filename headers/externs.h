@@ -57,17 +57,14 @@ extern long                  g_l_delta_y2;
 extern long                  g_l_delta_y;
 extern LDBL                  g_delta_y2;
 extern LDBL                  g_delta_y;
+extern int                   g_dot_mode;
+extern bool                  g_confirm_file_deletes;
 
 extern int                   g_color_bright;    // brightest color in palette
 extern int                   g_color_dark;      // darkest color in palette
 extern int                   g_color_medium;    // nearest to medbright grey in palette
 extern int                   g_dac_count;
 
-extern bool                  g_dither_flag;
-extern int                   g_dot_mode;
-extern bool                  g_confirm_file_deletes;
-extern double                g_evolve_dist_per_x;
-extern double                g_evolve_dist_per_y;
 extern char                  g_draw_mode;
 extern std::vector<double>   g_grid_x0;
 extern std::vector<double>   g_grid_x1;
@@ -75,13 +72,9 @@ extern double                g_logical_screen_x_size_dots;
 extern std::vector<double>   g_grid_y0;
 extern std::vector<double>   g_grid_y1;
 extern double                g_logical_screen_y_size_dots;
-extern int                   g_evolving;
 extern bool                  g_have_evolve_info;
 extern EVOLUTION_INFO        g_evolve_info;
 extern double                g_fudge_limit;
-extern int                   g_evolve_image_grid_size;
-extern double                g_evolve_max_random_mutation;
-extern double                g_evolve_mutation_reduction_factor;
 extern std::string           g_file_name_stack[16];
 extern float                 g_final_aspect_ratio;
 extern int                   g_finish_row;
@@ -96,7 +89,6 @@ extern char const *          g_fractal_search_dir1;
 extern char const *          g_fractal_search_dir2;
 extern long                  g_fudge_factor;
 extern double                g_f_at_rad;
-extern GENEBASE              g_gene_bank[NUMGENES];
 extern bool                  g_gif87a_flag;
 extern std::string           g_gif_filename_mask;
 extern std::string const     g_glasses1_map;
@@ -105,7 +97,6 @@ extern bool                  g_has_inverse;
 extern unsigned int          g_height;
 extern int                   g_help_mode;
 extern int                   g_hi_attenuation;
-extern int                   g_image_box_count;
 extern int                   g_integer_fractal;
 extern bool                  g_is_true_color;
 extern bool                  g_is_mandelbrot;
@@ -145,20 +136,12 @@ extern int                   g_soi_min_stack;
 extern int                   g_soi_min_stack_available;
 extern MPC                   g_mpc_one;
 extern int                   g_filename_stack_index;
-extern char                  g_evolve_new_discrete_x_parameter_offset;
-extern char                  g_evolve_new_discrete_y_parameter_offset;
-extern double                g_evolve_new_x_parameter_offset;
-extern double                g_evolve_new_y_parameter_offset;
 extern bool                  g_browse_sub_images;
 extern int                   g_num_affine_transforms;
 extern unsigned              g_num_colors;
 extern const int             g_num_trig_functions;
 extern int                   g_num_fractal_types;
 extern char                  g_old_std_calc_mode;
-extern char                  g_evolve_discrete_x_parameter_offset;
-extern char                  g_evolve_discrete_y_parameter_offset;
-extern double                g_evolve_x_parameter_offset;
-extern double                g_evolve_y_parameter_offset;
 extern long                  g_orbit_interval;
 extern std::string           g_organize_formulas_dir;
 extern int                 (*g_out_line)(BYTE *, int);
@@ -170,9 +153,6 @@ extern double                g_orbit_corner_3_y;
 extern double                g_orbit_corner_max_y;
 extern double                g_orbit_corner_min_y;
 extern double                g_params[];
-extern double                g_evolve_x_parameter_range;
-extern double                g_evolve_y_parameter_range;
-extern double                g_evolve_param_zoom;
 extern int                   g_patch_level;
 extern std::vector<fn_operand> g_function_operands;
 extern double                g_plot_mx1;
@@ -184,9 +164,6 @@ extern unsigned              g_operation_index;
 extern bool                  g_potential_16bit;
 extern bool                  g_potential_flag;
 extern double                g_potential_params[];
-extern int                   g_evolve_param_grid_x;
-extern int                   g_evolve_param_grid_y;
-extern int                   g_evolve_param_box_count;
 extern std::string           g_read_filename;
 extern record_colors_mode    g_record_colors;
 extern int                   g_release;
@@ -225,7 +202,6 @@ extern int                   g_text_cbase;      // g_text_col is relative to thi
 extern int                   g_text_col;        // current column in text mode
 extern int                   g_text_rbase;      // g_text_row is relative to this
 extern int                   g_text_row;        // current row in text mode
-extern unsigned int          g_evolve_this_generation_random_seed;
 extern int                   g_timed_save;
 extern long                  g_timer_interval;
 extern long                  g_timer_start;

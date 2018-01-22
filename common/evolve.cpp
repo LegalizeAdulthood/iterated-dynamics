@@ -24,7 +24,11 @@ GENEBASE g_gene_bank[NUMGENES];
 
 // px and py are coordinates in the parameter grid (small images on screen)
 // evolving = flag, evolve_image_grid_size = dimensions of image grid (evolve_image_grid_size x evolve_image_grid_size)
-int g_evolve_param_grid_x, g_evolve_param_grid_y, g_evolving, g_evolve_image_grid_size;
+int g_evolve_param_grid_x;
+int g_evolve_param_grid_y;
+int g_evolving;
+int g_evolve_image_grid_size;
+
 #define EVOLVE_MAX_GRID_SIZE 51  // This is arbitrary, = 1024/20
 static int ecountbox[EVOLVE_MAX_GRID_SIZE][EVOLVE_MAX_GRID_SIZE];
 
@@ -60,13 +64,13 @@ char g_evolve_new_discrete_x_parameter_offset;
 char g_evolve_new_discrete_y_parameter_offset;
 
 int g_evolve_param_box_count;
-std::vector<int> param_box_x;
-std::vector<int> param_box_y;
-std::vector<int> param_box_values;
-int g_image_box_count;
-std::vector<int> image_box_x;
-std::vector<int> image_box_y;
-std::vector<int> image_box_values;
+static std::vector<int> param_box_x;
+static std::vector<int> param_box_y;
+static std::vector<int> param_box_values;
+static int s_image_box_count;
+static std::vector<int> image_box_x;
+static std::vector<int> image_box_y;
+static std::vector<int> image_box_values;
 
 // for saving evolution data of center image
 struct PARAMHIST
@@ -1037,7 +1041,7 @@ void drawparmbox(int mode)
         return; // don't draw if not asked to!
     }
     grout = !((g_evolving & NOGROUT)/NOGROUT) ;
-    g_image_box_count = g_box_count;
+    s_image_box_count = g_box_count;
     if (g_box_count)
     {
         // stash normal zoombox pixels
@@ -1058,7 +1062,7 @@ void drawparmbox(int mode)
 
     if (mode == 1)
     {
-        g_box_count = g_image_box_count;
+        g_box_count = s_image_box_count;
         g_evolve_param_box_count = 0;
         return;
     }
@@ -1100,8 +1104,8 @@ void drawparmbox(int mode)
         std::copy(&g_box_values[0], &g_box_values[g_box_count], &param_box_values[0]);
     }
     g_evolve_param_box_count = g_box_count;
-    g_box_count = g_image_box_count;
-    if (g_image_box_count)
+    g_box_count = s_image_box_count;
+    if (s_image_box_count)
     {
         // and move back old values so that everything can proceed as normal
         std::copy(&image_box_x[0], &image_box_x[g_box_count*2], &g_box_x[0]);
