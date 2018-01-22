@@ -1129,15 +1129,6 @@ enum text_colors
 #define C_AUTHDIV2        g_text_color[28]+INVERSE
 #define C_PRIMARY         g_text_color[29]
 #define C_CONTRIB         g_text_color[30]
-// structure for xmmmoveextended parameter
-struct XMM_Move
-{
-    unsigned long   Length;
-    unsigned int    SourceHandle;
-    unsigned long   SourceOffset;
-    unsigned int    DestHandle;
-    unsigned long   DestOffset;
-};
 
 template <typename T>
 int sign(T x)
