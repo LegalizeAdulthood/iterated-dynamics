@@ -504,19 +504,6 @@ struct HISTORY
     char drawmode;
 };
 
-struct formula_info         // for saving formula data in GIF file
-{
-    char  form_name[40];
-    short uses_p1;
-    short uses_p2;
-    short uses_p3;
-    short uses_ismand;
-    short ismand;
-    short uses_p4;
-    short uses_p5;
-    short future[6];       // for stuff we haven't thought of, yet
-};
-
 #define NUM_GENES 21
 /*
  * Note: because non-MSDOS machines store structures differently, we have
