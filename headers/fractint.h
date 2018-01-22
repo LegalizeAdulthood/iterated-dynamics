@@ -53,16 +53,6 @@ enum stopmsg_flags
     STOPMSG_INFO_ONLY   = 16
 };
 
-// for gotos in former FRACTINT.C pieces
-enum class main_state
-{
-    NOTHING = 0,
-    RESTART,
-    IMAGE_START,
-    RESTORE_START,
-    CONTINUE
-};
-
 // these are used to declare arrays for file names
 #if defined(_WIN32)
 #define FILE_MAX_PATH _MAX_PATH

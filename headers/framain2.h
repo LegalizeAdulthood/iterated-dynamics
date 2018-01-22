@@ -2,6 +2,15 @@
 #if !defined(FRAMAIN2_H)
 #define FRAMAIN2_H
 
+enum class main_state
+{
+    NOTHING = 0,
+    RESTART,
+    IMAGE_START,
+    RESTORE_START,
+    CONTINUE
+};
+
 extern EVOLUTION_INFO        g_evolve_info;
 extern int                   g_finish_row;
 extern bool                  g_have_evolve_info;
