@@ -2,6 +2,18 @@
 #if !defined(LINE3D_H)
 #define LINE3D_H
 
+enum class raytrace_formats
+{
+    none = 0,
+    povray = 1,
+    vivid = 2,
+    raw = 3,
+    mtv = 4,
+    rayshade = 5,
+    acrospin = 6,
+    dxf = 7
+};
+
 extern int                   g_ambient;             // Ambient= parameter value
 extern int const             g_bad_value;
 extern BYTE                  g_background_color[];
