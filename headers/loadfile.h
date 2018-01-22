@@ -2,6 +2,28 @@
 #if !defined(LOADFILE_H)
 #define LOADFILE_H
 
+#include <string>
+
+#if defined(_WIN32)
+#pragma pack(push, 1)
+#endif
+struct ext_blk_3
+{
+    bool got_data;
+    int length;
+    char form_name[40];
+    short uses_p1;
+    short uses_p2;
+    short uses_p3;
+    short uses_ismand;
+    short ismand;
+    short uses_p4;
+    short uses_p5;
+};
+#if defined(_WIN32)
+#pragma pack(pop)
+#endif
+
 extern bool                  g_bad_outside;
 extern std::string           g_browse_name;
 extern float                 g_file_aspect_ratio;

@@ -45,6 +45,77 @@
 #include <system_error>
 #include <vector>
 
+namespace
+{
+
+#if defined(_WIN32)
+#pragma pack(push, 1)
+#endif
+struct ext_blk_2
+{
+    bool got_data;
+    int length;
+    std::vector<BYTE> resume_data;
+};
+
+struct ext_blk_4
+{
+    bool got_data;
+    int length;
+    std::vector<int> range_data;
+};
+
+struct ext_blk_5
+{
+    bool got_data;
+    int length;
+    std::vector<char> apm_data;
+};
+
+// parameter evolution stuff
+struct ext_blk_6
+{
+    bool got_data;
+    int length;
+    short evolving;
+    short image_grid_size;
+    unsigned short this_generation_random_seed;
+    double max_random_mutation;
+    double x_parameter_range;
+    double y_parameter_range;
+    double x_parameter_offset;
+    double y_parameter_offset;
+    short discrete_x_parameter_offset;
+    short discrete_y_parameter_offset;
+    short  px;
+    short  py;
+    short  sxoffs;
+    short  syoffs;
+    short  xdots;
+    short  ydots;
+    short  ecount;
+    short  mutate[NUM_GENES];
+};
+
+struct ext_blk_7
+{
+    bool got_data;
+    int length;
+    double oxmin;
+    double oxmax;
+    double oymin;
+    double oymax;
+    double ox3rd;
+    double oy3rd;
+    short keep_scrn_coords;
+    char drawmode;
+};
+#if defined(_WIN32)
+#pragma pack(pop)
+#endif
+
+} // namespace
+
 static int  find_fractal_info(char const *gif_file, FRACTAL_INFO *info,
                              ext_blk_2 *blk_2_info,
                              ext_blk_3 *blk_3_info,
