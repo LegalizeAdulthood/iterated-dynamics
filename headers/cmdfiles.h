@@ -131,6 +131,14 @@ enum sound_flags
     SOUNDFLAG_MASK      = 0x7F
 };
 
+enum class cmd_file
+{
+    AT_CMD_LINE = 0,
+    SSTOOLS_INI = 1,
+    AT_AFTER_STARTUP = 2,
+    AT_CMD_LINE_SET_NAME = 3
+};
+
 extern bool                  g_ask_video;
 extern float                 g_aspect_drift;
 extern std::string           g_auto_name;

@@ -6,6 +6,8 @@
 
 #include <string>
 
+enum class cmd_file;
+
 #define   FILEATTR       0x37      // File attributes; select all but volume labels
 #define   HIDDEN         2
 #define   SYSTEM         4

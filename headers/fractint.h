@@ -102,14 +102,6 @@ enum cmdarg_flags
     CMDARG_RESET            = 8
 };
 
-enum class cmd_file
-{
-    AT_CMD_LINE = 0,
-    SSTOOLS_INI = 1,
-    AT_AFTER_STARTUP = 2,
-    AT_CMD_LINE_SET_NAME = 3
-};
-
 // these are used to declare arrays for file names
 #if defined(_WIN32)
 #define FILE_MAX_PATH _MAX_PATH
