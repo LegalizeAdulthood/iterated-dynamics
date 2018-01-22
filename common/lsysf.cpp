@@ -4,6 +4,7 @@
 #include "cmdfiles.h"
 #include "drivers.h"
 #include "fractals.h"
+#include "id_data.h"
 #include "lsys.h"
 #include "lsys_fns.h"
 #include "realdos.h"

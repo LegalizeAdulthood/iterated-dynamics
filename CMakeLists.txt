@@ -128,8 +128,8 @@ add_executable(id ${OS_ID_OPTIONS}
     headers/biginit.h
     headers/cmplx.h
     headers/drivers.h
-    headers/externs.h
     headers/fractint.h
+    headers/id_data.h
     headers/fractype.h
     headers/helpcom.h
     headers/lsys.h

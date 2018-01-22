@@ -15,6 +15,7 @@ Miscellaneous fractal-specific code (formerly in CALCFRAC.C)
 #include "fractals.h"
 #include "fractype.h"
 #include "framain2.h"
+#include "id_data.h"
 #include "loadmap.h"
 #include "miscres.h"
 #include "newton.h"

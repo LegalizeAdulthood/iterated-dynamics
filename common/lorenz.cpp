@@ -16,6 +16,7 @@
 #include "fractals.h"
 #include "fractype.h"
 #include "framain2.h"
+#include "id_data.h"
 #include "jiim.h"
 #include "line3d.h"
 #include "miscres.h"

@@ -14,6 +14,7 @@
 #include "fractype.h"
 #include "helpcom.h"
 #include "helpdefs.h"
+#include "id_data.h"
 #include "jb.h"
 #include "line3d.h"
 #include "loadfile.h"

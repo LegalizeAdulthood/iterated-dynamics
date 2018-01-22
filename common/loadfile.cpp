@@ -15,6 +15,7 @@
 #include "fractype.h"
 #include "framain2.h"
 #include "helpdefs.h"
+#include "id_data.h"
 #include "jb.h"
 #include "line3d.h"
 #include "loadfdos.h"

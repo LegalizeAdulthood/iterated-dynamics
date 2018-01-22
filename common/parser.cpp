@@ -24,6 +24,7 @@
 #include "drivers.h"
 #include "fpu087.h"
 #include "fractals.h"
+#include "id_data.h"
 #include "jiim.h"
 #include "miscres.h"
 #include "mpmath_c.h"

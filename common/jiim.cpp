@@ -19,6 +19,7 @@
 #include "fractals.h"
 #include "fractype.h"
 #include "helpdefs.h"
+#include "id_data.h"
 #include "jiim.h"
 #include "lorenz.h"
 #include "miscfrac.h"

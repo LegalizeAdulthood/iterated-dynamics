@@ -18,6 +18,7 @@
 #include "drivers.h"
 #include "fracsubr.h"
 #include "framain2.h"
+#include "id_data.h"
 #include "loadfile.h"
 #include "loadmap.h"
 #include "os.h"

@@ -20,6 +20,7 @@
 #include "fractalp.h"
 #include "fractals.h"
 #include "fractype.h"
+#include "id_data.h"
 #include "soi.h"
 
 #include <algorithm>

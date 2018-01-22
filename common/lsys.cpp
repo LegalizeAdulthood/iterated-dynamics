@@ -6,6 +6,7 @@
 #include "drivers.h"
 #include "fpu087.h"
 #include "fractals.h"
+#include "id_data.h"
 #include "lsys.h"
 #include "lsys_fns.h"
 #include "miscres.h"

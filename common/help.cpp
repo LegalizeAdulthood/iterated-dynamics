@@ -5,6 +5,7 @@
 #include "drivers.h"
 #include "helpcom.h"
 #include "helpdefs.h"
+#include "id_data.h"
 #include "miscres.h"
 #include "os.h"
 #include "realdos.h"

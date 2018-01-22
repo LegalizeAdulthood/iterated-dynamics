@@ -8,6 +8,7 @@
 #include "diskvid.h"
 #include "drivers.h"
 #include "helpdefs.h"
+#include "id_data.h"
 #include "loadmap.h"
 #include "os.h"
 #include "prompts1.h"

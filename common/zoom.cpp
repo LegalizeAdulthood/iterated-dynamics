@@ -12,6 +12,7 @@
 #include "evolve.h"
 #include "fracsubr.h"
 #include "framain2.h"
+#include "id_data.h"
 #include "miscovl.h"
 #include "os.h"
 #include "realdos.h"

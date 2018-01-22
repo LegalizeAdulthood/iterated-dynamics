@@ -14,6 +14,7 @@
 #include "fracsubr.h"
 #include "fractals.h"
 #include "fractype.h"
+#include "id_data.h"
 
 static int inside_color, periodicity_color;
 

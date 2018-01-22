@@ -12,6 +12,7 @@
 #include "fractype.h"
 #include "helpdefs.h"
 #include "helpcom.h"
+#include "id_data.h"
 #include "miscovl.h"
 #include "os.h"
 #include "realdos.h"

@@ -2,6 +2,7 @@
 #include "prototyp.h"
 
 #include "fractint.h"
+#include "id_data.h"
 #include "plot3d.h"
 #include "rotate.h"
 

@@ -10,6 +10,7 @@
 #include "calcfrac.h"
 #include "cmdfiles.h"
 #include "drivers.h"
+#include "id_data.h"
 #include "os.h"
 #include "prompts2.h"
 #include "realdos.h"

@@ -41,13 +41,13 @@ an appropriate setup, per_image, per_pixel, and orbit routines.
 
 #include "calcfrac.h"
 #include "cmdfiles.h"
-#include "externs.h"
 #include "fpu087.h"
 #include "fracsubr.h"
 #include "fractals.h"
 #include "fractype.h"
 #include "hcmplx.h"
 #include "helpdefs.h"
+#include "id_data.h"
 #include "mpmath_c.h"
 #include "parser.h"
 

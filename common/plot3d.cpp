@@ -9,6 +9,7 @@
 #include "cmdfiles.h"
 #include "diskvid.h"
 #include "fractype.h"
+#include "id_data.h"
 #include "line3d.h"
 #include "loadmap.h"
 #include "os.h"

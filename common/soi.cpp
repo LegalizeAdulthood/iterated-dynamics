@@ -16,6 +16,7 @@
 
 #include "calcfrac.h"
 #include "drivers.h"
+#include "id_data.h"
 
 #include <algorithm>
 #include <cassert>

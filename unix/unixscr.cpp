@@ -44,7 +44,6 @@
 #include "port.h"
 #include "prototyp.h"
 #include "drivers.h"
-#include "externs.h"
 
 #ifdef LINUX
 #ifndef FNDELAY

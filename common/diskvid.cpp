@@ -12,6 +12,7 @@
 #include "cmdfiles.h"
 #include "diskvid.h"
 #include "drivers.h"
+#include "id_data.h"
 #include "memory.h"
 #include "realdos.h"
 

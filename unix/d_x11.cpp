@@ -43,7 +43,6 @@
 #include "port.h"
 #include "prototyp.h"
 #include "drivers.h"
-#include "externs.h"
 #include "x11_frame.h"
 #include "x11_text.h"
 #include "x11_plot.h"

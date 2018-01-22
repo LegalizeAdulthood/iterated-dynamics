@@ -1,7 +1,6 @@
 #include "port.h"
 #include "prototyp.h"
 
-#include "externs.h"
 #include "cmplx.h"
 #include "drivers.h"
 #include "os.h"

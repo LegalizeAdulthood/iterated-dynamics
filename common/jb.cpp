@@ -9,6 +9,7 @@
 #include "fractals.h"
 #include "fractype.h"
 #include "helpdefs.h"
+#include "id_data.h"
 #include "jb.h"
 #include "loadmap.h"
 #include "prompts1.h"

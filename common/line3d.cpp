@@ -14,6 +14,7 @@
 #include "fractals.h"
 #include "framain2.h"
 #include "gifview.h"
+#include "id_data.h"
 #include "loadfile.h"
 #include "miscres.h"
 #include "os.h"

@@ -14,6 +14,7 @@ fractal routines.
 #include "fractals.h"
 #include "fractype.h"
 #include "helpdefs.h"
+#include "id_data.h"
 
 #include <float.h>
 #include <limits.h>
