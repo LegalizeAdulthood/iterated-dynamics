@@ -2,6 +2,8 @@
 #if !defined(FRAMAIN2_H)
 #define FRAMAIN2_H
 
+struct EVOLUTION_INFO;
+
 enum class main_state
 {
     NOTHING = 0,

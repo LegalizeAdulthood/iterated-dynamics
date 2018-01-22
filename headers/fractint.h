@@ -131,40 +131,6 @@ struct VIDEOINFO
 #define ITEM_NAME_LEN 18   // max length of names in .frm/.l/.ifs/.fc
 
 #define NUM_GENES 21
-/*
- * Note: because non-MSDOS machines store structures differently, we have
- * to do special processing of the evolution_info structure in loadfile.c and
- * encoder.c.  See decode_evolver_info() in general.c.
- * Make sure changes to the structure here get reflected there.
- */
-#ifndef XFRACT
-#define EVOLVER_INFO_SIZE sizeof(evolution_info)
-#else
-// This value should be the MSDOS size, not the Unix size.
-#define EVOLVER_INFO_SIZE 200
-#endif
-struct EVOLUTION_INFO      // for saving evolution data in a GIF file
-{
-    short evolving;
-    short image_grid_size;
-    unsigned short this_generation_random_seed;
-    double max_random_mutation;
-    double x_parameter_range;
-    double y_parameter_range;
-    double x_parameter_offset;
-    double y_parameter_offset;
-    short discrete_x_parameter_offset;
-    short discrete_y_paramter_offset;
-    short px;
-    short py;
-    short sxoffs;
-    short syoffs;
-    short xdots;
-    short ydots;
-    short mutate[NUM_GENES];
-    short ecount; // count of how many images have been calc'ed so far
-    short future[68 - NUM_GENES];      // total of 200 bytes
-};
 
 #define MAX_VIDEO_MODES 300       // maximum entries in fractint.cfg
 #define AUTO_INVERT -123456.789
