@@ -944,11 +944,6 @@ struct coords
     int x, y;
 };
 
-struct dblcoords
-{
-    double x, y;
-};
-
 // for overlay return stack
 #define BIG 100000.0
 

@@ -114,6 +114,12 @@ struct ext_blk_7
 #pragma pack(pop)
 #endif
 
+struct dblcoords
+{
+    double x;
+    double y;
+};
+
 } // namespace
 
 static int  find_fractal_info(char const *gif_file, FRACTAL_INFO *info,
