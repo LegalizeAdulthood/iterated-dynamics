@@ -920,12 +920,6 @@ inline double dot_product(VECTOR v1, VECTOR v2)
 #define FRACTINT  "XFRACTINT"
 #endif
 
-enum class jiim_types
-{
-    JIIM = 0,
-    ORBIT
-};
-
 // for overlay return stack
 #define BIG 100000.0
 

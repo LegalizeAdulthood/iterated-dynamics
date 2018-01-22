@@ -2,6 +2,12 @@
 #if !defined(JIIM_H)
 #define JIIM_H
 
+enum class jiim_types
+{
+    JIIM = 0,
+    ORBIT
+};
+
 extern double                g_julia_c_x;
 extern double                g_julia_c_y;
 extern DComplex              g_save_c;
