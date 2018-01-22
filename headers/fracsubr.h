@@ -2,6 +2,10 @@
 #if !defined(FRACSUBR_H)
 #define FRACSUBR_H
 
+extern int                   g_resume_len;
+extern bool                  g_tab_or_help;
+extern bool                  g_use_grid;
+
 extern void wait_until(int index, uclock_t wait_time);
 extern void free_grid_pointers();
 extern void calcfracinit();

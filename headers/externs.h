@@ -105,7 +105,6 @@ extern long                  g_l_init_x;
 extern long                  g_l_init_y;
 extern int                   g_polyphony;
 
-extern int                   g_resume_len;
 extern int                   g_row_count;       // row-counter for decoder and out_line
 extern long                  g_save_base;
 extern DComplex              g_save_c;
@@ -128,7 +127,6 @@ extern double                g_save_y_max;
 extern double                g_save_y_min;
 extern int                   g_logical_screen_y_offset;
 extern bool                  g_tab_mode;
-extern bool                  g_tab_or_help;
 extern int                   g_text_cbase;      // g_text_col is relative to this
 extern int                   g_text_col;        // current column in text mode
 extern int                   g_text_rbase;      // g_text_row is relative to this
@@ -138,7 +136,6 @@ extern long                  g_timer_interval;
 extern long                  g_timer_start;
 extern std::string           g_temp_dir;
 extern double                g_smallest_window_display_size;
-extern bool                  g_use_grid;
 extern int                   g_user_biomorph_value;
 extern long                  g_user_distance_estimator_value;
 extern bool                  g_user_float_flag;

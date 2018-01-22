@@ -10,6 +10,7 @@
 #include "drivers.h"
 #include "encoder.h"
 #include "evolve.h"
+#include "fracsubr.h"
 #include "fractype.h"
 #include "framain2.h"
 #include "jb.h"
