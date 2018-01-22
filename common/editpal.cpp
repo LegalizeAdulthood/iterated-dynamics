@@ -47,7 +47,7 @@
 
 #define MAX_WIDTH        1024     // palette editor cannot be wider than this
 
-char undofile[] = "FRACTINT.$$2";  // file where undo list is stored
+static char undofile[] = "FRACTINT.$$2";  // file where undo list is stored
 #define TITLE   "FRACTINT"
 
 #define TITLE_LEN (8)
@@ -69,9 +69,9 @@ bool g_using_jiim = false;
 
 struct PALENTRY
 {
-    BYTE red,
-         green,
-         blue;
+    BYTE red;
+    BYTE green;
+    BYTE blue;
 };
 
 
@@ -82,8 +82,8 @@ struct PALENTRY
 
 
 std::vector<BYTE> g_line_buff;
-static BYTE       fg_color,
-       bg_color;
+static BYTE fg_color;
+static BYTE bg_color;
 static bool reserve_colors = false;
 static bool inverse = false;
 
@@ -483,7 +483,8 @@ static void draw_diamond(int x, int y, int color)
 
 struct Cursor
 {
-    int     x, y;
+    int x;
+    int y;
     int     hidden;       // >0 if mouse hidden
     long    last_blink;
     bool blink;
@@ -680,9 +681,10 @@ int Cursor_WaitKey()   // blink cursor while waiting for a key
 
 struct MoveBox
 {
-    int      x, y;
-    int      base_width,
-             base_depth;
+    int x;
+    int y;
+    int base_width;
+    int base_depth;
     int      csize;
     bool moved;
     bool should_hide;
@@ -1027,7 +1029,8 @@ static bool MoveBox_Process(MoveBox *me)
 
 struct CEditor
 {
-    int       x, y;
+    int x;
+    int y;
     char      letter;
     int       val;
     bool done;
@@ -1262,7 +1265,8 @@ static int CEditor_Edit(CEditor *me)
 
 struct RGBEditor
 {
-    int       x, y;            // position
+    int x;
+    int y;
     int       curr;            // 0=r, 1=g, 2=b
     int       pal;             // palette number
     bool done;
@@ -1585,7 +1589,8 @@ Modes:
 */
 struct PalTable
 {
-    int           x, y;
+    int x;
+    int y;
     int           csize;
     int           active;   // which RGBEditor is active (0,1)
     int           curr[2];

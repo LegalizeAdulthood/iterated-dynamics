@@ -2,6 +2,11 @@
 #if !defined(EDITPAL_H)
 #define EDITPAL_H
 
+#include <vector>
+
+extern std::vector<BYTE>     g_line_buff;
+extern bool                  g_using_jiim;
+
 extern void EditPalette();
 void putrow(int x, int y, int width, char const *buff);
 void getrow(int x, int y, int width, char *buff);

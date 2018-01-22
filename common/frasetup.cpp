@@ -4,6 +4,7 @@
 #include "calcfrac.h"
 #include "calmanfp.h"
 #include "cmdfiles.h"
+#include "editpal.h"
 #include "fracsubr.h"
 #include "fractalp.h"
 #include "fractals.h"

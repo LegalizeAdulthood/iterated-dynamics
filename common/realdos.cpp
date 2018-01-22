@@ -4,6 +4,7 @@
 #include "cmdfiles.h"
 #include "diskvid.h"
 #include "drivers.h"
+#include "editpal.h"
 #include "fractype.h"
 #include "helpcom.h"
 #include "helpdefs.h"

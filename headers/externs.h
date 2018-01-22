@@ -86,7 +86,6 @@ extern int                   g_fm_wavetype;
 extern int                   g_fm_volume;            // volume of OPL-3 soundcard output
 extern int                   g_hi_attenuation;
 
-extern std::vector<BYTE>     g_line_buff;
 extern long                  g_l_init_x;
 extern long                  g_l_init_y;
 extern int                   g_look_at_mouse;
@@ -155,7 +154,6 @@ extern long                  g_timer_start;
 extern std::string           g_temp_dir;
 extern double                g_smallest_window_display_size;
 extern bool                  g_use_grid;
-extern bool                  g_using_jiim;
 extern int                   g_user_biomorph_value;
 extern long                  g_user_distance_estimator_value;
 extern bool                  g_user_float_flag;
