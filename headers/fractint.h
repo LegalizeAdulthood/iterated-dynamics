@@ -952,14 +952,6 @@ struct dblcoords
 extern void (*ltrig0)(), (*ltrig1)(), (*ltrig2)(), (*ltrig3)();
 extern void (*dtrig0)(), (*dtrig1)(), (*dtrig2)(), (*dtrig3)();
 
-struct trig_funct_lst
-{
-    char const *name;
-    void (*lfunct)();
-    void (*dfunct)();
-    void (*mfunct)();
-};
-
 // for overlay return stack
 #define BIG 100000.0
 

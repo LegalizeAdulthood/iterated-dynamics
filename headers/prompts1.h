@@ -4,6 +4,14 @@
 
 #include <string>
 
+struct trig_funct_lst
+{
+    char const *name;
+    void (*lfunct)();
+    void (*dfunct)();
+    void (*mfunct)();
+};
+
 // structure passed to fullscreen_prompts
 struct fullscreenvalues
 {
