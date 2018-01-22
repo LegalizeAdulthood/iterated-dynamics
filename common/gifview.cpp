@@ -180,7 +180,7 @@ int gifview()
                 close_file();
                 return (-1);
             }
-            if ((!g_display_3d || (g_glasses_type != 1 && g_glasses_type != 2))
+            if ((g_display_3d == display_3d_modes::NONE || (g_glasses_type != 1 && g_glasses_type != 2))
                     && g_read_color)
             {
                 g_dac_box[i][j] = (BYTE)(k >> 2); // TODO: don't right shift color table by 2

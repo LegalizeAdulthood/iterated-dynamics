@@ -15,7 +15,7 @@
 #endif
 #define NUM_BOX_POINTS 4096
 
-enum display_3d_modes
+enum class display_3d_modes
 {
     MINUS_ONE = -1,
     NONE = 0,
