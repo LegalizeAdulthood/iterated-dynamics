@@ -97,7 +97,6 @@ extern int                   g_hi_attenuation;
 extern long                  g_l_init_x;
 extern long                  g_l_init_y;
 
-extern int                   g_num_fractal_types;
 extern std::string           g_organize_formulas_dir;
 extern int                 (*g_out_line)(BYTE *, int);
 extern double                g_params[];
