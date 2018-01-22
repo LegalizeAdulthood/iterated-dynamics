@@ -168,6 +168,14 @@ enum class batch_modes
     BAILOUT_INTERRUPTED_SAVE
 };
 
+enum class display_3d_modes
+{
+    MINUS_ONE = -1,
+    NONE = 0,
+    YES = 1,
+    B_COMMAND = 2
+};
+
 extern bool                  g_ask_video;
 extern float                 g_aspect_drift;
 extern std::string           g_auto_name;

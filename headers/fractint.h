@@ -15,14 +15,6 @@
 #endif
 #define NUM_BOX_POINTS 4096
 
-enum class display_3d_modes
-{
-    MINUS_ONE = -1,
-    NONE = 0,
-    YES = 1,
-    B_COMMAND = 2
-};
-
 // these are used to declare arrays for file names
 #if defined(_WIN32)
 #define FILE_MAX_PATH _MAX_PATH
