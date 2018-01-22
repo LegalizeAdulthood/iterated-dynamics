@@ -71,8 +71,14 @@ extern long                  g_l_delta_x2;
 extern long                  g_l_delta_x;
 extern long                  g_l_delta_y2;
 extern long                  g_l_delta_y;
+extern std::vector<long>     g_l_x0;
+extern std::vector<long>     g_l_x1;
+extern std::vector<long>     g_l_y0;
+extern std::vector<long>     g_l_y1;
 extern double                g_logical_screen_x_size_dots;
 extern double                g_logical_screen_y_size_dots;
+extern int                   g_look_at_mouse;
+extern long                  g_max_iterations;
 
 extern int                   g_color_bright;    // brightest color in palette
 extern int                   g_color_dark;      // darkest color in palette
@@ -85,17 +91,9 @@ extern int                   g_fm_sustain;
 extern int                   g_fm_wavetype;
 extern int                   g_fm_volume;            // volume of OPL-3 soundcard output
 extern int                   g_hi_attenuation;
-
 extern long                  g_l_init_x;
 extern long                  g_l_init_y;
-extern int                   g_look_at_mouse;
-extern std::vector<long>     g_l_x0;
-extern std::vector<long>     g_l_x1;
-extern std::vector<long>     g_l_y0;
-extern std::vector<long>     g_l_y1;
-extern MATRIX                g_m;
-extern long                  g_max_iterations;
-extern long                  g_bignum_max_stack_addr;
+
 extern int                   g_max_rhombus_depth;
 extern int                   g_smallest_box_size_shown;
 extern int                   g_soi_min_stack;

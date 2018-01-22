@@ -5,6 +5,7 @@
 #include "big.h"
 
 extern int                   g_bf_save_len;
+extern long                  g_bignum_max_stack_addr;
 
 void free_bf_vars();
 bn_t alloc_stack(size_t size);
