@@ -2,6 +2,12 @@
 #if !defined(ZOOM_H)
 #define ZOOM_H
 
+struct coords
+{
+    int x;
+    int y;
+};
+
 extern int                   g_box_color;
 extern int                   g_box_values[];
 extern int                   g_box_x[];
@@ -15,8 +21,8 @@ extern void chgboxi(int, int);
 extern void zoomout();
 extern void aspectratio_crop(float, float);
 extern int init_pan_or_recalc(bool);
-extern void drawlines(struct coords, struct coords, int, int);
-extern void addbox(struct coords);
+extern void drawlines(coords, coords, int, int);
+extern void addbox(coords);
 extern void clearbox();
 extern void dispbox();
 

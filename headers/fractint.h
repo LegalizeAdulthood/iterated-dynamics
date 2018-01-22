@@ -938,11 +938,6 @@ struct WORKLIST     // work list entry for std escape time engines
     int xxbegin;    // start col within window, =0 except on resume
 };
 
-struct coords
-{
-    int x, y;
-};
-
 // for overlay return stack
 #define BIG 100000.0
 
