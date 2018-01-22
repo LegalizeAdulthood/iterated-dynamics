@@ -962,7 +962,7 @@ struct trig_funct_lst
 
 // for overlay return stack
 #define BIG 100000.0
-#define CTL(x) ((x)&0x1f)
+
 // nonalpha tests if we have a control character
 inline bool nonalpha(int c)
 {
