@@ -176,7 +176,7 @@ std::string save_release_detail()
 
 int get_video_mode(FRACTAL_INFO *info, ext_blk_3 *blk_3_info)
 {
-    vidinf vid[MAXVIDEOMODES];
+    vidinf vid[MAX_VIDEO_MODES];
     bool gotrealmode;
     double ftemp;
     unsigned tmpflags;
@@ -359,21 +359,21 @@ int get_video_mode(FRACTAL_INFO *info, ext_blk_3 *blk_3_info)
         int j = g_video_table[i].keynum;
         if (j != 0)
         {
-            for (g_init_mode = 0; g_init_mode < MAXVIDEOMODES-1; ++g_init_mode)
+            for (g_init_mode = 0; g_init_mode < MAX_VIDEO_MODES-1; ++g_init_mode)
             {
                 if (g_video_table[g_init_mode].keynum == j)
                 {
                     break;
                 }
             }
-            if (g_init_mode >= MAXVIDEOMODES-1)
+            if (g_init_mode >= MAX_VIDEO_MODES-1)
             {
                 j = 0;
             }
         }
         if (j == 0) // mode has no key, add to reserved slot at end
         {
-            memcpy((char *)&g_video_table[g_init_mode = MAXVIDEOMODES-1],
+            memcpy((char *)&g_video_table[g_init_mode = MAX_VIDEO_MODES-1],
                    (char *)&g_video_table[i], sizeof(*g_video_table));
         }
     }

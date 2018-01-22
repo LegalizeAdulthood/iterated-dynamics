@@ -153,7 +153,7 @@ int g_video_start_y = 0;
  *  |------INT 10H------|Dot-|--Resolution---|
  *  |key|--AX---BX---CX---DX|Mode|--X-|--Y-|Color|
  */
-VIDEOINFO g_video_table[MAXVIDEOMODES] = { 0 };
+VIDEOINFO g_video_table[MAX_VIDEO_MODES] = { 0 };
 
 /* Global functions
  *

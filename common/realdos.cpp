@@ -280,7 +280,7 @@ void blankrows(int row, int rows, int attr)
 
 void helptitle()
 {
-    char msg[MSGLEN], buf[MSGLEN];
+    char msg[MSG_LEN], buf[MSG_LEN];
     driver_set_clear(); // clear the screen
     sprintf(msg, "FRACTINT Version %d.%01d", g_release/100, (g_release%100)/10);
     if (g_release%10)
@@ -1895,11 +1895,11 @@ int g_video_table_len;                 // number of entries in above
 int showvidlength()
 {
     int sz;
-    sz = (sizeof(VIDEOINFO)+sizeof(int))*MAXVIDEOMODES;
+    sz = (sizeof(VIDEOINFO)+sizeof(int))*MAX_VIDEO_MODES;
     return (sz);
 }
 
-int g_cfg_line_nums[MAXVIDEOMODES] = { 0 };
+int g_cfg_line_nums[MAX_VIDEO_MODES] = { 0 };
 
 /* load_fractint_config
  *
@@ -1930,7 +1930,7 @@ void load_fractint_config()
     }
 
     linenum = 0;
-    while (g_video_table_len < MAXVIDEOMODES
+    while (g_video_table_len < MAX_VIDEO_MODES
             && fgets(tempstring, 120, cfgfile))
     {
         if (strchr(tempstring, '\n') == nullptr)
@@ -2009,8 +2009,8 @@ void load_fractint_config()
                 keynum < 0 ||
                 dotmode < 0 || dotmode > 30 ||
                 textsafe2 < 0 || textsafe2 > 4 ||
-                xdots < MINPIXELS || xdots > MAXPIXELS ||
-                ydots < MINPIXELS || ydots > MAXPIXELS ||
+                xdots < MIN_PIXELS || xdots > MAX_PIXELS ||
+                ydots < MIN_PIXELS || ydots > MAX_PIXELS ||
                 (colors != 0 && colors != 2 && colors != 4 && colors != 16 &&
                  colors != 256)
            )
@@ -2087,14 +2087,14 @@ int check_vidmode_key(int option, int k)
     // function key currently assigned to a video mode, -1 otherwise
     if (k == 1400)                // special value from select_vid_mode
     {
-        return (MAXVIDEOMODES-1); // for last entry with no key assigned
+        return (MAX_VIDEO_MODES-1); // for last entry with no key assigned
     }
     if (k != 0)
     {
         if (option == 0)
         {
             // check resident video mode table
-            for (int i = 0; i < MAXVIDEOMODES; ++i)
+            for (int i = 0; i < MAX_VIDEO_MODES; ++i)
             {
                 if (g_video_table[i].keynum == k)
                 {

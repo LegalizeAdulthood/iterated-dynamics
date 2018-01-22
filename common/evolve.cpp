@@ -22,7 +22,7 @@
 #include <vector>
 
 #define PARMBOX 128
-GENEBASE g_gene_bank[NUMGENES];
+GENEBASE g_gene_bank[NUM_GENES];
 
 // px and py are coordinates in the parameter grid (small images on screen)
 // evolving = flag, evolve_image_grid_size = dimensions of image grid (evolve_image_grid_size x evolve_image_grid_size)
@@ -117,25 +117,25 @@ void set_mutation_level(int);
 void SetupParamBox();
 void ReleaseParamBox();
 
-void copy_genes_from_bank(GENEBASE gene[NUMGENES])
+void copy_genes_from_bank(GENEBASE gene[NUM_GENES])
 {
-    std::copy(&g_gene_bank[0], &g_gene_bank[NUMGENES], &gene[0]);
+    std::copy(&g_gene_bank[0], &g_gene_bank[NUM_GENES], &gene[0]);
 }
 
-void copy_genes_to_bank(GENEBASE const gene[NUMGENES])
+void copy_genes_to_bank(GENEBASE const gene[NUM_GENES])
 {
     // cppcheck-suppress arrayIndexOutOfBounds
-    std::copy(&gene[0], &gene[NUMGENES], &g_gene_bank[0]);
+    std::copy(&gene[0], &gene[NUM_GENES], &g_gene_bank[0]);
 }
 
 // set up pointers and mutation params for all usable image
 // control variables in fractint... revise as necessary when
-// new vars come along... don't forget to increment NUMGENES
+// new vars come along... don't forget to increment NUM_GENES
 // (in fractint.h ) as well
 void initgene()
 {
     //                        Use only 15 letters below: 123456789012345
-    GENEBASE gene[NUMGENES] =
+    GENEBASE gene[NUM_GENES] =
     {
         { &g_params[0], varydbl, variations::RANDOM,       "Param 1 real", 1 },
         { &g_params[1], varydbl, variations::RANDOM,       "Param 1 imag", 1 },
@@ -408,7 +408,7 @@ int get_the_rest()
     int i, k, numtrig;
     char const *choices[20];
     fullscreenvalues uvalues[20];
-    GENEBASE gene[NUMGENES];
+    GENEBASE gene[NUM_GENES];
 
     copy_genes_from_bank(gene);
 
@@ -421,7 +421,7 @@ int get_the_rest()
 choose_vars_restart:
 
     k = -1;
-    for (int num = MAXPARAMS; num < (NUMGENES - 5); num++)
+    for (int num = MAX_PARAMS; num < (NUM_GENES - 5); num++)
     {
         choices[++k] = gene[num].name;
         uvalues[k].type = 'l';
@@ -431,7 +431,7 @@ choose_vars_restart:
         uvalues[k].uval.ch.val =  static_cast<int>(gene[num].mutate);
     }
 
-    for (int num = (NUMGENES - 5); num < (NUMGENES - 5 + numtrig); num++)
+    for (int num = (NUM_GENES - 5); num < (NUM_GENES - 5 + numtrig); num++)
     {
         choices[++k] = gene[num].name;
         uvalues[k].type = 'l';
@@ -444,12 +444,12 @@ choose_vars_restart:
     if (g_cur_fractal_specific->calctype == standard_fractal &&
             (g_cur_fractal_specific->flags & BAILTEST))
     {
-        choices[++k] = gene[NUMGENES - 1].name;
+        choices[++k] = gene[NUM_GENES - 1].name;
         uvalues[k].type = 'l';
         uvalues[k].uval.ch.vlen = 7;
         uvalues[k].uval.ch.llen = 7;
         uvalues[k].uval.ch.list = evolvmodes;
-        uvalues[k].uval.ch.val = static_cast<int>(gene[NUMGENES - 1].mutate);
+        uvalues[k].uval.ch.val = static_cast<int>(gene[NUM_GENES - 1].mutate);
     }
 
     choices[++k] = "";
@@ -466,19 +466,19 @@ choose_vars_restart:
     switch (i)
     {
     case FIK_F2: // set all off
-        for (int num = MAXPARAMS; num < NUMGENES; num++)
+        for (int num = MAX_PARAMS; num < NUM_GENES; num++)
         {
             gene[num].mutate = variations::NONE;
         }
         goto choose_vars_restart;
     case FIK_F3: // set all on..alternate x and y for field map
-        for (int num = MAXPARAMS; num < NUMGENES; num ++)
+        for (int num = MAX_PARAMS; num < NUM_GENES; num ++)
         {
             gene[num].mutate = static_cast<variations>((num % 2) + 1);
         }
         goto choose_vars_restart;
     case FIK_F4: // Randomize all
-        for (int num = MAXPARAMS; num < NUMGENES; num ++)
+        for (int num = MAX_PARAMS; num < NUM_GENES; num ++)
         {
             gene[num].mutate = static_cast<variations>(rand() % static_cast<int>(variations::NUM));
         }
@@ -491,12 +491,12 @@ choose_vars_restart:
 
     // read out values
     k = -1;
-    for (int num = MAXPARAMS; num < (NUMGENES - 5); num++)
+    for (int num = MAX_PARAMS; num < (NUM_GENES - 5); num++)
     {
         gene[num].mutate = static_cast<variations>(uvalues[++k].uval.ch.val);
     }
 
-    for (int num = (NUMGENES - 5); num < (NUMGENES - 5 + numtrig); num++)
+    for (int num = (NUM_GENES - 5); num < (NUM_GENES - 5 + numtrig); num++)
     {
         gene[num].mutate = static_cast<variations>(uvalues[++k].uval.ch.val);
     }
@@ -504,7 +504,7 @@ choose_vars_restart:
     if (g_cur_fractal_specific->calctype == standard_fractal &&
             (g_cur_fractal_specific->flags & BAILTEST))
     {
-        gene[NUMGENES - 1].mutate = static_cast<variations>(uvalues[++k].uval.ch.val);
+        gene[NUM_GENES - 1].mutate = static_cast<variations>(uvalues[++k].uval.ch.val);
     }
 
     copy_genes_to_bank(gene);
@@ -517,9 +517,9 @@ int get_variations()
     int k, numparams;
     char const *choices[20];
     fullscreenvalues uvalues[20];
-    GENEBASE gene[NUMGENES];
+    GENEBASE gene[NUM_GENES];
     int firstparm = 0;
-    int lastparm  = MAXPARAMS;
+    int lastparm  = MAX_PARAMS;
     int chngd = -1;
 
     copy_genes_from_bank(gene);
@@ -627,19 +627,19 @@ choose_vars_restart:
     switch (i)
     {
     case FIK_F2: // set all off
-        for (int num = 0; num < MAXPARAMS; num++)
+        for (int num = 0; num < MAX_PARAMS; num++)
         {
             gene[num].mutate = variations::NONE;
         }
         goto choose_vars_restart;
     case FIK_F3: // set all on..alternate x and y for field map
-        for (int num = 0; num < MAXPARAMS; num ++)
+        for (int num = 0; num < MAX_PARAMS; num ++)
         {
             gene[num].mutate = static_cast<variations>((num % 2) + 1);
         }
         goto choose_vars_restart;
     case FIK_F4: // Randomize all
-        for (int num =0; num < MAXPARAMS; num ++)
+        for (int num =0; num < MAX_PARAMS; num ++)
         {
             gene[num].mutate = static_cast<variations>(rand() % static_cast<int>(variations::NUM));
         }
@@ -849,7 +849,7 @@ get_evol_restart:
     }
 
     g_evolve_image_grid_size = uvalues[++k].uval.ival;
-    tmp = g_screen_x_dots / (MINPIXELS << 1);
+    tmp = g_screen_x_dots / (MIN_PIXELS << 1);
     // (sxdots / 20), max # of subimages @ 20 pixels per subimage
     // EVOLVE_MAX_GRID_SIZE == 1024 / 20 == 51
     if (g_evolve_image_grid_size > EVOLVE_MAX_GRID_SIZE)
@@ -994,7 +994,7 @@ void fiddleparms(GENEBASE gene[], int ecount)
 
     set_random(ecount);   // generate the right number of pseudo randoms
 
-    for (int i = 0; i < NUMGENES; i++)
+    for (int i = 0; i < NUM_GENES; i++)
     {
         (*(gene[i].varyfunc))(gene, rand(), i);
     }
@@ -1010,7 +1010,7 @@ static void set_random(int ecount)
     srand(g_evolve_this_generation_random_seed);
     for (int index = 0; index < ecount; index++)
     {
-        for (int i = 0; i < NUMGENES; i++)
+        for (int i = 0; i < NUM_GENES; i++)
         {
             rand();
         }

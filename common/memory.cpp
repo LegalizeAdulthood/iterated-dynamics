@@ -89,7 +89,7 @@ static void WhichDiskError(int I_O)
 {
     // Set I_O == 1 after a file create, I_O == 2 after a file set value
     // Set I_O == 3 after a file write, I_O == 4 after a file read
-    char buf[MSGLEN];
+    char buf[MSG_LEN];
     char const *pats[4] =
     {
         "Create file error %d:  %s",
@@ -118,7 +118,7 @@ static void DisplayError(int stored_at, long howmuch)
     // memory type cannot be allocated due to insufficient memory, AND there
     // is also insufficient disk space to use as memory.
 
-    char buf[MSGLEN*2];
+    char buf[MSG_LEN*2];
     sprintf(buf, "Allocating %ld Bytes of %s memory failed.\n"
             "Alternate disk space is also insufficient. Goodbye",
             howmuch, memstr[stored_at]);
@@ -230,7 +230,7 @@ unsigned long get_disk_space();
 
 void DisplayMemory()
 {
-    char buf[MSGLEN];
+    char buf[MSG_LEN];
 
     sprintf(buf, "disk=%lu", get_disk_space());
     stopmsg(STOPMSG_INFO_ONLY | STOPMSG_NO_BUZZER, buf);
@@ -238,7 +238,7 @@ void DisplayMemory()
 
 void DisplayHandle(U16 handle)
 {
-    char buf[MSGLEN];
+    char buf[MSG_LEN];
 
     sprintf(buf, "Handle %u, type %s, size %li", handle, memstr[handletable[handle].Nowhere.stored_at],
             handletable[handle].Nowhere.size);
@@ -268,7 +268,7 @@ void ExitCheck()
         {
             if (handletable[i].Nowhere.stored_at != NOWHERE)
             {
-                char buf[MSGLEN];
+                char buf[MSG_LEN];
                 sprintf(buf, "Memory type %s still allocated.  Handle = %u.",
                         memstr[handletable[i].Nowhere.stored_at], i);
                 stopmsg(STOPMSG_NONE, buf);
@@ -372,7 +372,7 @@ U16 MemoryAlloc(U16 size, long count, int stored_at)
 
     if (stored_at != use_this_type && g_debug_flag == debug_flags::display_memory_statistics)
     {
-        char buf[MSGLEN];
+        char buf[MSG_LEN];
         sprintf(buf, "Asked for %s, allocated %ld bytes of %s, handle = %u.",
                 memstr[stored_at], toallocate, memstr[use_this_type], handle);
         stopmsg(STOPMSG_INFO_ONLY | STOPMSG_NO_BUZZER, buf);

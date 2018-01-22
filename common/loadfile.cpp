@@ -471,7 +471,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
 
     if (blk_3_info.got_data)
     {
-        blk_3_info.form_name[ITEMNAMELEN] = 0;
+        blk_3_info.form_name[ITEM_NAME_LEN] = 0;
         switch (static_cast<fractal_type>(read_info.fractal_type))
         {
         case fractal_type::LSYSTEM:
@@ -522,13 +522,13 @@ int read_overlay()      // read overlay/3D files, if reqr'd
 
     if (blk_6_info.got_data)
     {
-        GENEBASE gene[NUMGENES];
+        GENEBASE gene[NUM_GENES];
         copy_genes_from_bank(gene);
         if (read_info.version < 15)
         {
-            // Increasing NUMGENES moves ecount in the data structure
-            // We added 4 to NUMGENES, so ecount is at NUMGENES-4
-            blk_6_info.ecount = blk_6_info.mutate[NUMGENES - 4];
+            // Increasing NUM_GENES moves ecount in the data structure
+            // We added 4 to NUM_GENES, so ecount is at NUM_GENES-4
+            blk_6_info.ecount = blk_6_info.mutate[NUM_GENES - 4];
         }
         if (blk_6_info.ecount != blk_6_info.image_grid_size *blk_6_info.image_grid_size
                 && g_calc_status != calc_status_value::COMPLETED)
@@ -583,7 +583,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
         g_evolve_dist_per_y = g_evolve_y_parameter_range /(g_evolve_image_grid_size - 1);
         if (read_info.version > 14)
         {
-            for (int i = 0; i < NUMGENES; i++)
+            for (int i = 0; i < NUM_GENES; i++)
             {
                 gene[i].mutate = static_cast<variations>(blk_6_info.mutate[i]);
             }
@@ -598,7 +598,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
             {
                 gene[i].mutate = variations::NONE;
             }
-            for (int i = 10; i < NUMGENES; i++)
+            for (int i = 10; i < NUM_GENES; i++)
             {
                 gene[i].mutate = static_cast<variations>(blk_6_info.mutate[i-4]);
             }
@@ -921,7 +921,7 @@ static int find_fractal_info(char const *gif_file, FRACTAL_INFO *info,
                     blk_6_info->this_generation_random_seed = eload_info.this_generation_random_seed;
                     blk_6_info->max_random_mutation = eload_info.max_random_mutation;
                     blk_6_info->ecount          = eload_info.ecount;
-                    for (int i = 0; i < NUMGENES; i++)
+                    for (int i = 0; i < NUM_GENES; i++)
                     {
                         blk_6_info->mutate[i]    = eload_info.mutate[i];
                     }

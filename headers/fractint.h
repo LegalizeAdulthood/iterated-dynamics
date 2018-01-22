@@ -160,18 +160,18 @@ nearly-brain-dead DOS operating system, quite a few things
 in the UI would break if file names were bigger than DOS 8-3
 names. So for now humor us and let's keep the names short.
 */
-#define FILE_MAX_FNAME  64       // max length of filename
-#define FILE_MAX_EXT    64       // max length of extension
-#define MAXMAXLINELENGTH  128   // upper limit for g_max_line_length for PARs
-#define MINMAXLINELENGTH  40    // lower limit for g_max_line_length for PARs
-#define MSGLEN 80               // handy buffer size for messages
-#define MAXCMT 57               // length of par comments
-#define MAXPARAMS 10            // maximum number of parameters
-#define MAXPIXELS   32767       // Maximum pixel count across/down the screen
-#define OLDMAXPIXELS 2048       // Limit of some old fixed arrays
-#define MINPIXELS 10            // Minimum pixel count across/down the screen
-#define DEFAULTASPECT 1.0F      // Assumed overall screen dimensions, y/x
-#define DEFAULTASPECTDRIFT 0.02F // drift of < 2% is forced to 0%
+#define FILE_MAX_FNAME  64          // max length of filename
+#define FILE_MAX_EXT    64          // max length of extension
+#define MAX_MAX_LINE_LENGTH  128    // upper limit for g_max_line_length for PARs
+#define MIN_MAX_LINE_LENGTH  40     // lower limit for g_max_line_length for PARs
+#define MSG_LEN 80                  // handy buffer size for messages
+#define MAX_COMMENT_LEN 57          // length of par comments
+#define MAX_PARAMS 10               // maximum number of parameters
+#define MAX_PIXELS   32767          // Maximum pixel count across/down the screen
+#define OLD_MAX_PIXELS 2048         // Limit of some old fixed arrays
+#define MIN_PIXELS 10               // Minimum pixel count across/down the screen
+#define DEFAULT_ASPECT 1.0F         // Assumed overall screen dimensions, y/x
+#define DEFAULT_ASPECT_DRIFT 0.02F  // drift of < 2% is forced to 0%
 
 enum debug_flags
 {
@@ -396,7 +396,7 @@ struct FRACTAL_INFO         // for saving data in GIF file
 #if defined(_WIN32)
 #pragma pack(pop)
 #endif
-#define ITEMNAMELEN 18   // max length of names in .frm/.l/.ifs/.fc
+#define ITEM_NAME_LEN 18   // max length of names in .frm/.l/.ifs/.fc
 struct HISTORY
 {
     short fractal_type;
@@ -480,7 +480,7 @@ struct HISTORY
     short yadjust;
     short old_demm_colors;
     char filename[FILE_MAX_PATH];
-    char itemname[ITEMNAMELEN+1];
+    char itemname[ITEM_NAME_LEN+1];
     unsigned char dac[256][3];
     char  maxfn;
     char stdcalcmode;
@@ -523,7 +523,7 @@ enum stored_at_values
     MEMORY,
     DISK
 };
-#define NUMGENES 21
+#define NUM_GENES 21
 /*
  * Note: because non-MSDOS machines store structures differently, we have
  * to do special processing of the evolution_info structure in loadfile.c and
@@ -554,9 +554,9 @@ struct EVOLUTION_INFO      // for saving evolution data in a GIF file
     short syoffs;
     short xdots;
     short ydots;
-    short mutate[NUMGENES];
+    short mutate[NUM_GENES];
     short ecount; // count of how many images have been calc'ed so far
-    short future[68 - NUMGENES];      // total of 200 bytes
+    short future[68 - NUM_GENES];      // total of 200 bytes
 };
 /*
  * Note: because non-MSDOS machines store structures differently, we have
@@ -583,8 +583,8 @@ struct ORBITS_INFO      // for saving orbits data in a GIF file
     char dummy; // need an even number of bytes
     short future[74];      // total of 200 bytes
 };
-#define MAXVIDEOMODES 300       // maximum entries in fractint.cfg
-#define AUTOINVERT -123456.789
+#define MAX_VIDEO_MODES 300       // maximum entries in fractint.cfg
+#define AUTO_INVERT -123456.789
 #define MAX_NUM_ATTRACTORS 8
 extern  long     g_l_at_rad;      // finite attractor radius
 extern  double   g_f_at_rad;      // finite attractor radius
@@ -597,8 +597,8 @@ enum class fractal_type;
 struct MOREPARAMS
 {
     fractal_type type;                      // index in fractalname of the fractal
-    char const *param[MAXPARAMS-4];     // name of the parameters
-    double   paramvalue[MAXPARAMS-4];   // default parameter values
+    char const *param[MAX_PARAMS-4];     // name of the parameters
+    double   paramvalue[MAX_PARAMS-4];   // default parameter values
 };
 
 enum class symmetry_type
@@ -779,8 +779,8 @@ enum class init_orbit_mode
 #define RANDPARAM       4    // newparm = constant +- rand()
 #define NOGROUT         8    // no gaps between images
 
-#define DEFAULTFRACTALTYPE      ".gif"
-#define ALTERNATEFRACTALTYPE    ".fra"
+#define DEFAULT_FRACTAL_TYPE      ".gif"
+#define ALTERNATE_FRACTAL_TYPE    ".fra"
 
 inline int sqr(int x)
 {
@@ -810,7 +810,7 @@ inline long lsqr(long x)
 #define LCMPLXconj(z)   ((z).y =  -((z).y))
 #define PER_IMAGE   (g_fractal_specific[static_cast<int>(g_fractal_type)].per_image)
 #define PER_PIXEL   (g_fractal_specific[static_cast<int>(g_fractal_type)].per_pixel)
-#define ORBITCALC   (g_fractal_specific[static_cast<int>(g_fractal_type)].orbitcalc)
+#define ORBIT_CALC   (g_fractal_specific[static_cast<int>(g_fractal_type)].orbitcalc)
 
 // 3D stuff - formerly in 3d.h
 #define    CMAX    4   // maximum column (4 x 4 matrix)
@@ -1263,7 +1263,7 @@ struct ext_blk_6
     short  xdots;
     short  ydots;
     short  ecount;
-    short  mutate[NUMGENES];
+    short  mutate[NUM_GENES];
 };
 
 struct ext_blk_7

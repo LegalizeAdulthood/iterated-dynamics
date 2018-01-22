@@ -1208,7 +1208,7 @@ void Jiim(jiim_types which)
                 }
                 x = (int)((g_old_z.x - g_init.x) * xfactor * 3 * zoom + xoff);
                 y = (int)((g_old_z.y - g_init.y) * yfactor * 3 * zoom + yoff);
-                if ((*ORBITCALC)())
+                if ((*ORBIT_CALC)())
                 {
                     iter = g_max_iterations;
                 }

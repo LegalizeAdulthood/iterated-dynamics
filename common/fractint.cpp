@@ -73,7 +73,7 @@ LDBL    g_delta_x, g_delta_y;           // screen pixel increments
 LDBL    g_delta_x2, g_delta_y2;         // screen pixel increments
 long    g_l_delta_min;                 // for calcfrac/calcmand
 double  g_delta_min;                // same as a double
-double  g_params[MAXPARAMS];       // parameters
+double  g_params[MAX_PARAMS];       // parameters
 double  g_potential_params[3];            // three potential parameters
 long    g_fudge_factor;                  // 2**fudgefactor
 long    g_l_at_rad;               // finite attractor radius

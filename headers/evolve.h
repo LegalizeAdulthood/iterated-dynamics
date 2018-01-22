@@ -25,10 +25,10 @@ extern double                g_evolve_x_parameter_range;
 extern double                g_evolve_y_parameter_offset;
 extern double                g_evolve_y_parameter_range;
 extern int                   g_evolving;
-extern GENEBASE              g_gene_bank[NUMGENES];
+extern GENEBASE              g_gene_bank[NUM_GENES];
 
-extern void copy_genes_to_bank(GENEBASE const gene[NUMGENES]);
-extern void copy_genes_from_bank(GENEBASE gene[NUMGENES]);
+extern void copy_genes_to_bank(GENEBASE const gene[NUM_GENES]);
+extern void copy_genes_from_bank(GENEBASE gene[NUM_GENES]);
 extern  void initgene();
 extern  void param_history(int);
 extern  int get_variations();

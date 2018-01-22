@@ -1362,7 +1362,7 @@ void set_default_parms()
     int extra = find_extra_param(g_fractal_type);
     if (extra > -1)
     {
-        for (int i = 0; i < MAXPARAMS-4; i++)
+        for (int i = 0; i < MAX_PARAMS-4; i++)
         {
             g_params[i+4] = g_more_fractal_params[extra].paramvalue[i];
         }
@@ -1511,7 +1511,7 @@ int get_fract_params(int caller)        // prompt for type-specific parms
     char bailoutmsg[50];
     int ret = 0;
     int old_help_mode;
-    char parmprompt[MAXPARAMS][55];
+    char parmprompt[MAX_PARAMS][55];
     static char const *trg[] =
     {
         "First Function", "Second Function", "Third Function", "Fourth Function"
@@ -1526,8 +1526,8 @@ int get_fract_params(int caller)        // prompt for type-specific parms
     char const *bailnameptr[] = {"mod", "real", "imag", "or", "and", "manh", "manr"};
     fractalspecificstuff *jborbit = nullptr;
     int firstparm = 0;
-    int lastparm  = MAXPARAMS;
-    double oldparam[MAXPARAMS];
+    int lastparm  = MAX_PARAMS;
+    double oldparam[MAX_PARAMS];
     int fkeymask = 0;
 
     oldbailout = g_bail_out;
@@ -2116,7 +2116,7 @@ void load_params(fractal_type fractype)
     int extra = find_extra_param(fractype);
     if (extra > -1)
     {
-        for (int i = 0; i < MAXPARAMS-4; i++)
+        for (int i = 0; i < MAX_PARAMS-4; i++)
         {
             g_params[i+4] = g_more_fractal_params[extra].paramvalue[i];
         }
@@ -2237,9 +2237,9 @@ long get_file_entry(int type, char const *title, char const *fmask,
     assert(filename.size() < FILE_MAX_PATH);
     strncpy(buf, filename.c_str(), FILE_MAX_PATH);
     buf[FILE_MAX_PATH - 1] = 0;
-    char name_buf[ITEMNAMELEN];
-    strncpy(name_buf, entryname.c_str(), ITEMNAMELEN);
-    name_buf[ITEMNAMELEN - 1] = 0;
+    char name_buf[ITEM_NAME_LEN];
+    strncpy(name_buf, entryname.c_str(), ITEM_NAME_LEN);
+    name_buf[ITEM_NAME_LEN - 1] = 0;
     long const result = get_file_entry(type, title, fmask, buf, name_buf);
     filename = buf;
     entryname = name_buf;
@@ -2248,7 +2248,7 @@ long get_file_entry(int type, char const *title, char const *fmask,
 
 struct entryinfo
 {
-    char name[ITEMNAMELEN+2];
+    char name[ITEM_NAME_LEN+2];
     long point; // points to the ( or the { following the name
 };
 static entryinfo **gfe_choices; // for format_getparm_line
@@ -2398,7 +2398,7 @@ top:
                 exclude_entry = 0;
             }
 
-            buf[ITEMNAMELEN + exclude_entry] = 0;
+            buf[ITEM_NAME_LEN + exclude_entry] = 0;
             if (itemname != nullptr)  // looking for one entry
             {
                 if (stricmp(buf, itemname) == 0)

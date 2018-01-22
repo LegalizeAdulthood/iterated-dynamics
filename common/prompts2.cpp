@@ -559,7 +559,7 @@ int get_toggles2()
     {
         uvalues[++k].type = 's';
         old_inversion[i] = g_inversion[i];
-        if (g_inversion[i] == AUTOINVERT)
+        if (g_inversion[i] == AUTO_INVERT)
         {
             sprintf(uvalues[k].uval.sval, "auto");
         }
@@ -662,7 +662,7 @@ int get_toggles2()
     {
         if (uvalues[++k].uval.sval[0] == 'a' || uvalues[k].uval.sval[0] == 'A')
         {
-            g_inversion[i] = AUTOINVERT;
+            g_inversion[i] = AUTO_INVERT;
         }
         else
         {

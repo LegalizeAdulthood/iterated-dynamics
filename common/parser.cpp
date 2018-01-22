@@ -4006,7 +4006,7 @@ static bool frm_check_name_and_sym(FILE * open_file, bool report_bad_sym)
         }
     }
 
-    if (i > ITEMNAMELEN)
+    if (i > ITEM_NAME_LEN)
     {
         int j;
         int k = (int) strlen(ParseErrs(PE_FORMULA_NAME_TOO_LARGE));

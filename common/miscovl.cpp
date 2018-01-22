@@ -60,7 +60,7 @@ bool g_is_true_color = false;
 bool g_make_parameter_file = false;
 bool g_make_parameter_file_map = false;
 
-static char par_comment[4][MAXCMT];
+static char par_comment[4][MAX_COMMENT_LEN];
 
 // JIIM
 
@@ -83,8 +83,8 @@ void make_batch_file()
     int promptnum;
     int piecespromts;
     bool have3rd = false;
-    char inpcommandfile[80], inpcommandname[ITEMNAMELEN+1];
-    char inpcomment[4][MAXCMT];
+    char inpcommandfile[80], inpcommandname[ITEM_NAME_LEN+1];
+    char inpcomment[4][MAX_COMMENT_LEN];
     fullscreenvalues paramvalues[18];
     char const *choices[MAXPROMPTS];
     char outname[FILE_MAX_PATH+1], buf[256], buf2[128];
@@ -203,22 +203,22 @@ void make_batch_file()
 prompt_user:
         promptnum = 0;
         choices[promptnum] = "Parameter file";
-        paramvalues[promptnum].type = 0x100 + MAXCMT - 1;
+        paramvalues[promptnum].type = 0x100 + MAX_COMMENT_LEN - 1;
         paramvalues[promptnum++].uval.sbuf = inpcommandfile;
         choices[promptnum] = "Name";
-        paramvalues[promptnum].type = 0x100 + ITEMNAMELEN;
+        paramvalues[promptnum].type = 0x100 + ITEM_NAME_LEN;
         paramvalues[promptnum++].uval.sbuf = inpcommandname;
         choices[promptnum] = "Main comment";
-        paramvalues[promptnum].type = 0x100 + MAXCMT - 1;
+        paramvalues[promptnum].type = 0x100 + MAX_COMMENT_LEN - 1;
         paramvalues[promptnum++].uval.sbuf = inpcomment[0];
         choices[promptnum] = "Second comment";
-        paramvalues[promptnum].type = 0x100 + MAXCMT - 1;
+        paramvalues[promptnum].type = 0x100 + MAX_COMMENT_LEN - 1;
         paramvalues[promptnum++].uval.sbuf = inpcomment[1];
         choices[promptnum] = "Third comment";
-        paramvalues[promptnum].type = 0x100 + MAXCMT - 1;
+        paramvalues[promptnum].type = 0x100 + MAX_COMMENT_LEN - 1;
         paramvalues[promptnum++].uval.sbuf = inpcomment[2];
         choices[promptnum] = "Fourth comment";
-        paramvalues[promptnum].type = 0x100 + MAXCMT - 1;
+        paramvalues[promptnum].type = 0x100 + MAX_COMMENT_LEN - 1;
         paramvalues[promptnum++].uval.sbuf = inpcomment[3];
 #ifndef XFRACT
         if (g_got_real_dac || (g_is_true_color && g_true_mode == true_color_mode::default_color))
@@ -298,8 +298,8 @@ prompt_user:
             int newmaxlinelength;
             newmaxlinelength = paramvalues[promptnum-3].uval.ival;
             if (g_max_line_length != newmaxlinelength &&
-                    newmaxlinelength >= MINMAXLINELENGTH &&
-                    newmaxlinelength <= MAXMAXLINELENGTH)
+                    newmaxlinelength >= MIN_MAX_LINE_LENGTH &&
+                    newmaxlinelength <= MAX_MAX_LINE_LENGTH)
             {
                 g_max_line_length = newmaxlinelength;
             }
@@ -808,7 +808,7 @@ void write_batch_parms(char const *colorinf, bool colorsonly, int maxcolor, int 
         }
 
         int i;
-        for (i = (MAXPARAMS-1); i >= 0; --i)
+        for (i = (MAX_PARAMS-1); i >= 0; --i)
         {
             if (typehasparm((g_fractal_type == fractal_type::JULIBROT || g_fractal_type == fractal_type::JULIBROTFP)
                             ?g_new_orbit_type:g_fractal_type, i, nullptr))
@@ -1759,7 +1759,7 @@ static int getprec(double a, double b, double c)
 }
 
 /* This function calculates the precision needed to distiguish adjacent
-   pixels at Fractint's maximum resolution of MAXPIXELS by MAXPIXELS
+   pixels at Fractint's maximum resolution of MAX_PIXELS by MAX_PIXELS
    (if rez==MAXREZ) or at current resolution (if rez==CURRENTREZ)    */
 int getprecbf(int rezflag)
 {
@@ -1778,7 +1778,7 @@ int getprecbf(int rezflag)
     floattobf(one, 1.0);
     if (rezflag == MAXREZ)
     {
-        rez = OLDMAXPIXELS -1;
+        rez = OLD_MAX_PIXELS -1;
     }
     else
     {
@@ -1830,7 +1830,7 @@ int getprecbf(int rezflag)
 }
 
 /* This function calculates the precision needed to distinguish adjacent
-   pixels at Fractint's maximum resolution of MAXPIXELS by MAXPIXELS
+   pixels at Fractint's maximum resolution of MAX_PIXELS by MAX_PIXELS
    (if rez==MAXREZ) or at current resolution (if rez==CURRENTREZ)    */
 int getprecdbl(int rezflag)
 {
@@ -1839,7 +1839,7 @@ int getprecdbl(int rezflag)
     LDBL rez;
     if (rezflag == MAXREZ)
     {
-        rez = OLDMAXPIXELS -1;
+        rez = OLD_MAX_PIXELS -1;
     }
     else
     {
@@ -1955,12 +1955,12 @@ static void put_bf(int slash, bf_t r, int prec)
     put_parm(&buf[0]);
 }
 
-static int entnums[MAXVIDEOMODES];
+static int entnums[MAX_VIDEO_MODES];
 static bool modes_changed = false;
 
 int select_video_mode(int curmode)
 {
-    int attributes[MAXVIDEOMODES];
+    int attributes[MAX_VIDEO_MODES];
     int ret;
     int old_help_mode;
 
@@ -2042,7 +2042,7 @@ int select_video_mode(int curmode)
     ret = k;
     if (k == 0)  // selected entry not a copied (assigned to key) one
     {
-        memcpy((char *)&g_video_table[MAXVIDEOMODES-1],
+        memcpy((char *)&g_video_table[MAX_VIDEO_MODES-1],
                (char *)&g_video_entry, sizeof(*g_video_table));
         ret = 1400; // special value for check_vidmode_key
     }
@@ -2810,7 +2810,7 @@ std::string expand_comments(char const *source)
     int i = 0;
     oldc = 0;
     std::string target;
-    while (i < MAXCMT && (c = *(source + i++)) != '\0')
+    while (i < MAX_COMMENT_LEN && (c = *(source + i++)) != '\0')
     {
         if (c == '\\' && oldc != '\\')
         {
@@ -2873,7 +2873,7 @@ void parse_comments(char *value)
                 save = *next;
                 *next = '\0';
             }
-            strncpy(elem, value, MAXCMT);
+            strncpy(elem, value, MAX_COMMENT_LEN);
         }
         if (next == nullptr)
         {

@@ -131,7 +131,7 @@ static bool bottom_guess = false;
    1st pass sets bit  [1]... off only if block's contents guessed;
    at end of 1st pass [0]... bits are set if any surrounding block not guessed;
    bits are numbered [..][y/16+1][x+1]&(1<<(y&15)) */
-// size of next puts a limit of MAXPIXELS pixels across on solid guessing logic
+// size of next puts a limit of MAX_PIXELS pixels across on solid guessing logic
 namespace
 {
 BYTE dstack[4096] = { 0 };              // common temp, two put_line calls
@@ -804,7 +804,7 @@ int calcfract()
         g_f_x_center   = g_inversion[1];
         g_f_y_center   = g_inversion[2];
 
-        if (g_inversion[0] == AUTOINVERT)  //  auto calc radius 1/6 screen
+        if (g_inversion[0] == AUTO_INVERT)  //  auto calc radius 1/6 screen
         {
             g_inversion[0] = std::min(fabs(g_x_max - g_x_min),
                                     fabs(g_y_max - g_y_min)) / 6.0;
@@ -812,7 +812,7 @@ int calcfract()
             g_f_radius = g_inversion[0];
         }
 
-        if (g_invert < 2 || g_inversion[1] == AUTOINVERT)  // xcenter not already set
+        if (g_invert < 2 || g_inversion[1] == AUTO_INVERT)  // xcenter not already set
         {
             g_inversion[1] = (g_x_min + g_x_max) / 2.0;
             fix_inversion(&g_inversion[1]);
@@ -824,7 +824,7 @@ int calcfract()
             }
         }
 
-        if (g_invert < 3 || g_inversion[2] == AUTOINVERT)  // ycenter not already set
+        if (g_invert < 3 || g_inversion[2] == AUTO_INVERT)  // ycenter not already set
         {
             g_inversion[2] = (g_y_min + g_y_max) / 2.0;
             fix_inversion(&g_inversion[2]);
@@ -4125,7 +4125,7 @@ static bool guessrow(bool firstpass, int y, int blocksize)
         j = y+i+halfblock;
         if (j <= g_i_y_stop)
         {
-            put_line(j, g_xx_start, g_i_x_stop, &dstack[g_xx_start+OLDMAXPIXELS]);
+            put_line(j, g_xx_start, g_i_x_stop, &dstack[g_xx_start+OLD_MAX_PIXELS]);
         }
         if (driver_key_pressed())
         {
@@ -4142,9 +4142,9 @@ static bool guessrow(bool firstpass, int y, int blocksize)
                 j = g_i_x_stop - (i - g_xx_start);
                 dstack[i] = dstack[j];
                 dstack[j] = (BYTE)color;
-                j += OLDMAXPIXELS;
-                color = dstack[i + OLDMAXPIXELS];
-                dstack[i + OLDMAXPIXELS] = dstack[j];
+                j += OLD_MAX_PIXELS;
+                color = dstack[i + OLD_MAX_PIXELS];
+                dstack[i + OLD_MAX_PIXELS] = dstack[j];
                 dstack[j] = (BYTE)color;
             }
         }
@@ -4158,7 +4158,7 @@ static bool guessrow(bool firstpass, int y, int blocksize)
             j = g_yy_stop-(y+i+halfblock-g_yy_start);
             if (j > g_i_y_stop && j < g_logical_screen_y_dots)
             {
-                put_line(j, g_xx_start, g_i_x_stop, &dstack[g_xx_start+OLDMAXPIXELS]);
+                put_line(j, g_xx_start, g_i_x_stop, &dstack[g_xx_start+OLD_MAX_PIXELS]);
             }
             if (driver_key_pressed())
             {
@@ -4191,7 +4191,7 @@ static void plotblock(int buildrow, int x, int y, int color)
         {
             for (int i = x; i < xlim; ++i)
             {
-                dstack[i+OLDMAXPIXELS] = (BYTE)color;
+                dstack[i+OLD_MAX_PIXELS] = (BYTE)color;
             }
         }
         if (x >= g_xx_start)   // when x reduced for alignment, paint those dots too
@@ -4855,16 +4855,16 @@ static int tesseral()
                 else
                 {
                     // use put_line for speed
-                    memset(&dstack[OLDMAXPIXELS], tp->top, j);
+                    memset(&dstack[OLD_MAX_PIXELS], tp->top, j);
                     for (g_row = tp->y1 + 1; g_row < tp->y2; g_row++)
                     {
-                        put_line(g_row, tp->x1+1, tp->x2-1, &dstack[OLDMAXPIXELS]);
+                        put_line(g_row, tp->x1+1, tp->x2-1, &dstack[OLD_MAX_PIXELS]);
                         if (g_plot != g_put_color) // symmetry
                         {
                             j = g_yy_stop-(g_row-g_yy_start);
                             if (j > g_i_y_stop && j < g_logical_screen_y_dots)
                             {
-                                put_line(j, tp->x1+1, tp->x2-1, &dstack[OLDMAXPIXELS]);
+                                put_line(j, tp->x1+1, tp->x2-1, &dstack[OLD_MAX_PIXELS]);
                             }
                         }
                         if (++i > 25)

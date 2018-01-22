@@ -2340,7 +2340,7 @@ int plotorbits2dfloat()
 
     for (count = 0; count < g_max_iterations; count++)
     {
-        if (ORBITCALC() == 1 && g_periodicity_check)
+        if (ORBIT_CALC() == 1 && g_periodicity_check)
         {
             continue;  // bailed out, don't plot
         }

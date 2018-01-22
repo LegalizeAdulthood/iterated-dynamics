@@ -70,7 +70,7 @@ void
 add_video_mode(Driver *drv, VIDEOINFO *mode)
 {
 #if defined(_WIN32)
-    _ASSERTE(g_video_table_len < MAXVIDEOMODES);
+    _ASSERTE(g_video_table_len < MAX_VIDEO_MODES);
 #endif
     // stash away driver pointer so we can init driver for selected mode
     mode->driver = drv;

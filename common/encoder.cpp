@@ -113,7 +113,7 @@ restart:
     }
 
     strcpy(openfile, filename);  // decode and open the filename
-    strcpy(openfiletype, DEFAULTFRACTALTYPE);    // determine the file extension
+    strcpy(openfiletype, DEFAULT_FRACTAL_TYPE);    // determine the file extension
     if (save16bit)
     {
         strcpy(openfiletype, ".pot");
@@ -672,7 +672,7 @@ bool encoder()
                 esave_info.max_random_mutation = g_evolve_info.max_random_mutation;
                 esave_info.ecount          = g_evolve_info.ecount;
             }
-            for (int i = 0; i < NUMGENES; i++)
+            for (int i = 0; i < NUM_GENES; i++)
             {
                 esave_info.mutate[i] = (short)g_gene_bank[i].mutate;
             }

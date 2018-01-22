@@ -264,7 +264,7 @@ bool do_AutoStereo()
     driver_save_graphics();                      // save graphics image
     memcpy(savedacbox, g_dac_box, 256 * 3);  // save colors
 
-    if (g_logical_screen_x_dots > OLDMAXPIXELS)
+    if (g_logical_screen_x_dots > OLD_MAX_PIXELS)
     {
         stopmsg(STOPMSG_NONE,
             "Stereo not allowed with resolution > 2048 pixels wide");

@@ -152,8 +152,8 @@ bool g_truecolor = false;                 // escape time truecolor flag
 true_color_mode g_true_mode = true_color_mode::default_color;               // truecolor coloring scheme
 std::string g_color_file;          // from last <l> <s> or colors=@filename
 bool g_new_bifurcation_functions_loaded = false; // if function loaded for new bifs
-float   g_screen_aspect = DEFAULTASPECT;   // aspect ratio of the screen
-float   g_aspect_drift = DEFAULTASPECTDRIFT;  // how much drift is allowed and
+float   g_screen_aspect = DEFAULT_ASPECT;   // aspect ratio of the screen
+float   g_aspect_drift = DEFAULT_ASPECT_DRIFT;  // how much drift is allowed and
                                 // still forced to screenaspect
 bool g_fast_restore = false;       /* true - reset viewwindows prior to a restore
                                      and do not display warnings when video
@@ -516,7 +516,7 @@ static void initvars_fractal()          // init vars affecting calculation
     g_bail_out = 0;                        // no user-entered bailout
     g_bof_match_book_images = true;         // use normal bof initialization to make bof images
     g_use_init_orbit = init_orbit_mode::normal;
-    for (int i = 0; i < MAXPARAMS; i++)
+    for (int i = 0; i < MAX_PARAMS; i++)
     {
         g_params[i] = 0.0;     // initial parameter values
     }
@@ -738,9 +738,9 @@ static int next_command(
                     }
                     if (*lineptr)
                     {
-                        if ((int)strlen(lineptr) >= MAXCMT)
+                        if ((int)strlen(lineptr) >= MAX_COMMENT_LEN)
                         {
-                            *(lineptr+MAXCMT-1) = 0;
+                            *(lineptr+MAX_COMMENT_LEN-1) = 0;
                         }
                         for (auto &elem : g_command_comment)
                         {
@@ -1164,10 +1164,10 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
             else
             {
                 g_command_name = next;
-                assert(g_command_name.length() <= ITEMNAMELEN);
-                if (g_command_name.length() > ITEMNAMELEN)
+                assert(g_command_name.length() <= ITEM_NAME_LEN);
+                if (g_command_name.length() > ITEM_NAME_LEN)
                 {
-                    g_command_name.resize(ITEMNAMELEN);
+                    g_command_name.resize(ITEM_NAME_LEN);
                 }
             }
             g_make_parameter_file = true;
@@ -1254,7 +1254,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
             goto badarg;
         }
         g_init_mode = -1;
-        for (int i = 0; i < MAXVIDEOMODES; ++i)
+        for (int i = 0; i < MAX_VIDEO_MODES; ++i)
         {
             if (g_video_table[i].keynum == k)
             {
@@ -1311,7 +1311,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
 
     if (variable == "maxlinelength")  // maxlinelength=
     {
-        if (numval < MINMAXLINELENGTH || numval > MAXMAXLINELENGTH)
+        if (numval < MIN_MAX_LINE_LENGTH || numval > MAX_MAX_LINE_LENGTH)
         {
             goto badarg;
         }
@@ -1905,18 +1905,18 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
 
     if (variable == "params")        // params=?,?
     {
-        if (totparms != floatparms || totparms > MAXPARAMS)
+        if (totparms != floatparms || totparms > MAX_PARAMS)
         {
             goto badarg;
         }
         initparams = true;
-        for (int k = 0; k < MAXPARAMS; ++k)
+        for (int k = 0; k < MAX_PARAMS; ++k)
         {
             g_params[k] = (k < totparms) ? floatval[k] : 0.0;
         }
         if (bf_math != bf_math_type::NONE)
         {
-            for (int k = 0; k < MAXPARAMS; k++)
+            for (int k = 0; k < MAX_PARAMS; k++)
             {
                 floattobf(bfparms[k], g_params[k]);
             }
@@ -2114,7 +2114,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
             }
             if (old_bf_math == bf_math_type::NONE)
             {
-                for (int k = 0; k < MAXPARAMS; k++)
+                for (int k = 0; k < MAX_PARAMS; k++)
                 {
                     floattobf(bfparms[k], g_params[k]);
                 }
@@ -2158,7 +2158,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
 
                 /* now get parameters and corners all over again at new
                 decimal setting */
-                for (int k = 0; k < MAXPARAMS; k++)
+                for (int k = 0; k < MAX_PARAMS; k++)
                 {
                     floattobf(bfparms[k], g_params[k]);
                 }
@@ -2358,7 +2358,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         }
         if (old_bf_math == bf_math_type::NONE)
         {
-            for (int k = 0; k < MAXPARAMS; k++)
+            for (int k = 0; k < MAX_PARAMS; k++)
             {
                 floattobf(bfparms[k], g_params[k]);
             }
@@ -3023,7 +3023,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
     if (variable == "formulaname")
     {
         // formulaname=?
-        if (valuelen > ITEMNAMELEN)
+        if (valuelen > ITEM_NAME_LEN)
         {
             goto badarg;
         }
@@ -3047,7 +3047,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
 
     if (variable == "lname")
     {
-        if (valuelen > ITEMNAMELEN)
+        if (valuelen > ITEM_NAME_LEN)
         {
             goto badarg;
         }
@@ -3079,7 +3079,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
     if (variable == "ifs" || variable == "ifs3d")
     {
         // ifs3d for old time's sake
-        if (valuelen > ITEMNAMELEN)
+        if (valuelen > ITEM_NAME_LEN)
         {
             goto badarg;
         }

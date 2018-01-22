@@ -2345,7 +2345,7 @@ bool typehasparm(fractal_type type, int parm, char *buf)
     {
         ret = g_fractal_specific[static_cast<int>(type)].param[parm];
     }
-    else if (parm >= 4 && parm < MAXPARAMS)
+    else if (parm >= 4 && parm < MAX_PARAMS)
     {
         int const extra = find_extra_param(type);
         if (extra > -1)

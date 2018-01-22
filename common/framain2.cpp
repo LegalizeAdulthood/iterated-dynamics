@@ -298,7 +298,7 @@ main_state big_while_loop(bool *const kbdmore, bool *const stacked, bool const r
             }
             if (g_debug_flag == debug_flags::show_float_flag)
             {
-                char msg[MSGLEN];
+                char msg[MSG_LEN];
                 sprintf(msg, "floatflag=%d", g_user_float_flag ? 1 : 0);
                 stopmsg(STOPMSG_NO_BUZZER, msg);
             }
@@ -391,7 +391,7 @@ main_state big_while_loop(bool *const kbdmore, bool *const stacked, bool const r
             {
                 // generate a set of images with varied parameters on each one
                 int grout, ecount, tmpxdots, tmpydots, gridsqr;
-                GENEBASE gene[NUMGENES];
+                GENEBASE gene[NUM_GENES];
                 copy_genes_from_bank(gene);
                 if (g_have_evolve_info && (g_calc_status == calc_status_value::RESUMABLE))
                 {
@@ -1004,9 +1004,9 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
         clear_zoombox();
         {
             int err;
-            double oldparm[MAXPARAMS];
+            double oldparm[MAX_PARAMS];
             fractal_type oldtype = g_fractal_type;
-            for (int i = 0; i < MAXPARAMS; ++i)
+            for (int i = 0; i < MAX_PARAMS; ++i)
             {
                 oldparm[i] = g_params[i];
             }
@@ -1035,7 +1035,7 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
                 driver_unstack_screen();
             }
             g_fractal_type = oldtype;
-            for (int i = 0; i < MAXPARAMS; ++i)
+            for (int i = 0; i < MAX_PARAMS; ++i)
             {
                 g_params[i] = oldparm[i];
             }
@@ -1799,7 +1799,7 @@ static main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdm
         }
 
         int oldsxoffs, oldsyoffs, oldxdots, oldydots, oldpx, oldpy;
-        GENEBASE gene[NUMGENES];
+        GENEBASE gene[NUM_GENES];
         copy_genes_from_bank(gene);
         oldsxoffs = g_logical_screen_x_offset;
         oldsyoffs = g_logical_screen_y_offset;
@@ -1910,7 +1910,7 @@ static main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdm
         // in evolver mode
         if (g_box_count)
         {
-            GENEBASE gene[NUMGENES];
+            GENEBASE gene[NUM_GENES];
             copy_genes_from_bank(gene);
             if (g_evolving & FIELDMAP)
             {
@@ -2116,7 +2116,7 @@ static main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdm
         break;
 
     case FIK_F5: // increment gridsize and regen
-        if (g_evolve_image_grid_size < (g_screen_x_dots / (MINPIXELS << 1)))
+        if (g_evolve_image_grid_size < (g_screen_x_dots / (MIN_PIXELS << 1)))
         {
             g_evolve_image_grid_size = g_evolve_image_grid_size + 2;
             *kbdmore = false;
@@ -2517,16 +2517,16 @@ static void save_history_info()
     case fractal_type::FORMULA:
     case fractal_type::FFORMULA:
         strncpy(current.filename, g_formula_filename.c_str(), FILE_MAX_PATH);
-        strncpy(current.itemname, g_formula_name.c_str(), ITEMNAMELEN+1);
+        strncpy(current.itemname, g_formula_name.c_str(), ITEM_NAME_LEN+1);
         break;
     case fractal_type::IFS:
     case fractal_type::IFS3D:
         strncpy(current.filename, g_ifs_filename.c_str(), FILE_MAX_PATH);
-        strncpy(current.itemname, g_ifs_name.c_str(), ITEMNAMELEN+1);
+        strncpy(current.itemname, g_ifs_name.c_str(), ITEM_NAME_LEN+1);
         break;
     case fractal_type::LSYSTEM:
         strncpy(current.filename, g_l_system_filename.c_str(), FILE_MAX_PATH);
-        strncpy(current.itemname, g_l_system_name.c_str(), ITEMNAMELEN+1);
+        strncpy(current.itemname, g_l_system_name.c_str(), ITEM_NAME_LEN+1);
         break;
     default:
         *(current.filename) = 0;
@@ -2731,26 +2731,26 @@ static void restore_history_info(int i)
     case fractal_type::FFORMULA:
         g_formula_filename = last.filename;
         g_formula_name = last.itemname;
-        if (g_formula_name.length() > ITEMNAMELEN)
+        if (g_formula_name.length() > ITEM_NAME_LEN)
         {
-            g_formula_name.resize(ITEMNAMELEN);
+            g_formula_name.resize(ITEM_NAME_LEN);
         }
         break;
     case fractal_type::IFS:
     case fractal_type::IFS3D:
         g_ifs_filename = last.filename;
         g_ifs_name = last.itemname;
-        if (g_ifs_name.length() > ITEMNAMELEN)
+        if (g_ifs_name.length() > ITEM_NAME_LEN)
         {
-            g_ifs_name.resize(ITEMNAMELEN);
+            g_ifs_name.resize(ITEM_NAME_LEN);
         }
         break;
     case fractal_type::LSYSTEM:
         g_l_system_filename = last.filename;
         g_l_system_name = last.itemname;
-        if (g_l_system_name.length() > ITEMNAMELEN)
+        if (g_l_system_name.length() > ITEM_NAME_LEN)
         {
-            g_l_system_name.resize(ITEMNAMELEN);
+            g_l_system_name.resize(ITEM_NAME_LEN);
         }
         break;
     default:

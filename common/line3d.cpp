@@ -220,7 +220,7 @@ int line3d(BYTE * pixels, unsigned linelen)
         {
             return err;
         }
-        if (g_logical_screen_x_dots > OLDMAXPIXELS)
+        if (g_logical_screen_x_dots > OLD_MAX_PIXELS)
         {
             return -1;
         }
@@ -2872,7 +2872,7 @@ static int line3dmem()
     // these fill types call putatriangle which uses minmax_x
     if (FILLTYPE == 2 || FILLTYPE == 3 || FILLTYPE == 5 || FILLTYPE == 6)
     {
-        minmax_x.resize(OLDMAXPIXELS);
+        minmax_x.resize(OLD_MAX_PIXELS);
     }
 
     return 0;

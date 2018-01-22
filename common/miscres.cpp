@@ -142,7 +142,7 @@ void cvtcentermag(double *Xctr, double *Yctr, LDBL *Magnification, double *Xmagf
         *Xctr = (g_x_min + g_x_max)/2.0;
         *Yctr = (g_y_min + g_y_max)/2.0;
         *Magnification  = 2.0/Height;
-        *Xmagfactor =  Height / (DEFAULTASPECT * Width);
+        *Xmagfactor =  Height / (DEFAULT_ASPECT * Width);
         *Rotation = 0.0;
         *Skew = 0.0;
     }
@@ -174,7 +174,7 @@ void cvtcentermag(double *Xctr, double *Yctr, LDBL *Magnification, double *Xmagf
         Height = b * sin(tmpa);
 
         *Magnification  = 2.0/Height; // 1/(h/2)
-        *Xmagfactor = Height / (DEFAULTASPECT * a);
+        *Xmagfactor = Height / (DEFAULT_ASPECT * a);
 
         // if vector_a cross vector_b is negative
         // then adjust for left-hand coordinate system
@@ -238,7 +238,7 @@ void cvtcorners(double Xctr, double Yctr, LDBL Magnification, double Xmagfactor,
     }
 
     h = (double)(1/Magnification);
-    w = h / (DEFAULTASPECT * Xmagfactor);
+    w = h / (DEFAULT_ASPECT * Xmagfactor);
 
     if (Rotation == 0.0 && Skew == 0.0)
     {
@@ -318,7 +318,7 @@ void cvtcentermagbf(bf_t Xctr, bf_t Yctr, LDBL *Magnification, double *Xmagfacto
         add_bf(Yctr, g_bf_y_min, g_bf_y_max);
         half_a_bf(Yctr);
         *Magnification  = 2/Height;
-        *Xmagfactor = (double)(Height / (DEFAULTASPECT * Width));
+        *Xmagfactor = (double)(Height / (DEFAULT_ASPECT * Width));
         *Rotation = 0.0;
         *Skew = 0.0;
     }
@@ -381,7 +381,7 @@ void cvtcentermagbf(bf_t Xctr, bf_t Yctr, LDBL *Magnification, double *Xmagfacto
 
         Height = b * sin(tmpa);
         *Magnification  = 2/Height; // 1/(h/2)
-        *Xmagfactor = (double)(Height / (DEFAULTASPECT * a));
+        *Xmagfactor = (double)(Height / (DEFAULT_ASPECT * a));
 
         // if vector_a cross vector_b is negative
         // then adjust for left-hand coordinate system
@@ -425,7 +425,7 @@ void cvtcornersbf(bf_t Xctr, bf_t Yctr, LDBL Magnification, double Xmagfactor, d
 
     h = 1/Magnification;
     floattobf(bfh, h);
-    w = h / (DEFAULTASPECT * Xmagfactor);
+    w = h / (DEFAULT_ASPECT * Xmagfactor);
     floattobf(bfw, w);
 
     if (Rotation == 0.0 && Skew == 0.0)
@@ -879,7 +879,7 @@ int tab_display()       // display the status of the current image
     }
     if (g_fractal_type == fractal_type::FORMULA || g_fractal_type == fractal_type::FFORMULA)
     {
-        for (int i = 0; i < MAXPARAMS; i += 2)
+        for (int i = 0; i < MAX_PARAMS; i += 2)
         {
             if (!paramnotused(i))
             {
@@ -1214,7 +1214,7 @@ top:
 
     if (typehasparm(g_fractal_type, 0, msg) || hasformparam)
     {
-        for (int i = 0; i < MAXPARAMS; i++)
+        for (int i = 0; i < MAX_PARAMS; i++)
         {
             char p[50];
             if (typehasparm(g_fractal_type, i, p))
@@ -1491,7 +1491,7 @@ bool find_file_item(char *filename, char const *itemname, FILE **fileptr, int it
 {
     FILE *infile = nullptr;
     bool found = false;
-    char parsearchname[ITEMNAMELEN + 6];
+    char parsearchname[ITEM_NAME_LEN + 6];
     char drive[FILE_MAX_DRIVE];
     char dir[FILE_MAX_DIR];
     char fname[FILE_MAX_FNAME];
@@ -1543,27 +1543,27 @@ bool find_file_item(char *filename, char const *itemname, FILE **fileptr, int it
     case 1:
         strcpy(parsearchname, "frm:");
         strcat(parsearchname, itemname);
-        parsearchname[ITEMNAMELEN + 5] = (char) 0; //safety
+        parsearchname[ITEM_NAME_LEN + 5] = (char) 0; //safety
         strcpy(defaultextension, ".frm");
         splitpath(g_search_for.frm, drive, dir, nullptr, nullptr);
         break;
     case 2:
         strcpy(parsearchname, "lsys:");
         strcat(parsearchname, itemname);
-        parsearchname[ITEMNAMELEN + 5] = (char) 0; //safety
+        parsearchname[ITEM_NAME_LEN + 5] = (char) 0; //safety
         strcpy(defaultextension, ".l");
         splitpath(g_search_for.lsys, drive, dir, nullptr, nullptr);
         break;
     case 3:
         strcpy(parsearchname, "ifs:");
         strcat(parsearchname, itemname);
-        parsearchname[ITEMNAMELEN + 5] = (char) 0; //safety
+        parsearchname[ITEM_NAME_LEN + 5] = (char) 0; //safety
         strcpy(defaultextension, ".ifs");
         splitpath(g_search_for.ifs, drive, dir, nullptr, nullptr);
         break;
     default:
         strcpy(parsearchname, itemname);
-        parsearchname[ITEMNAMELEN + 5] = (char) 0; //safety
+        parsearchname[ITEM_NAME_LEN + 5] = (char) 0; //safety
         strcpy(defaultextension, ".par");
         splitpath(g_search_for.par, drive, dir, nullptr, nullptr);
         break;

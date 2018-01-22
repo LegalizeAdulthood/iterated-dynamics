@@ -94,7 +94,7 @@ static BYTE suffix[10000] = { 0 };
 namespace
 {
 int bad_code_count = 0;
-BYTE decoderline[MAXPIXELS];
+BYTE decoderline[MAX_PIXELS];
 }
 
 /* The reason we have these separated like this instead of using

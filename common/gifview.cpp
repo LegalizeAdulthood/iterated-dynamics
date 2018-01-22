@@ -72,7 +72,7 @@ int get_bytes(BYTE *where, int how_many)
  * The skipxdots and skipydots logic assumes that the buffer holds one line.
  */
 
-#define DECODERLINE_WIDTH MAXPIXELS
+#define DECODERLINE_WIDTH MAX_PIXELS
 
 static std::vector<char> ditherbuf;
 
@@ -107,7 +107,7 @@ int gifview()
     }
     if (has_ext(temp1) == nullptr)
     {
-        strcat(temp1, DEFAULTFRACTALTYPE);
+        strcat(temp1, DEFAULT_FRACTAL_TYPE);
         fpin = fopen(temp1, "rb");
         if (fpin != nullptr)
         {
@@ -123,7 +123,7 @@ int gifview()
             {
                 strcpy(temp1, g_read_filename.c_str());
             }
-            strcat(temp1, ALTERNATEFRACTALTYPE);
+            strcat(temp1, ALTERNATE_FRACTAL_TYPE);
         }
     }
     fpin = fopen(temp1, "rb");
