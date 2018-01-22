@@ -63,9 +63,6 @@ extern int                   g_color_dark;      // darkest color in palette
 extern int                   g_color_medium;    // nearest to medbright grey in palette
 extern int                   g_dac_count;
 
-extern bool                  g_disk_16_bit;
-extern bool                  g_disk_flag;       // disk video active flag
-extern bool                  g_disk_targa;
 extern int                   g_distribution;
 extern bool                  g_dither_flag;
 extern int                   g_dot_mode;
@@ -104,7 +101,6 @@ extern GENEBASE              g_gene_bank[NUMGENES];
 extern bool                  g_gif87a_flag;
 extern std::string           g_gif_filename_mask;
 extern std::string const     g_glasses1_map;
-extern bool                  g_good_mode;       // video mode ok?
 extern std::string const     g_gray_map_file;
 extern bool                  g_has_inverse;
 extern unsigned int          g_height;

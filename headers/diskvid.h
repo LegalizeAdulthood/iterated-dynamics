@@ -4,6 +4,11 @@
 
 #include <stdio.h>
 
+extern bool                  g_disk_16_bit;
+extern bool                  g_disk_flag;       // disk video active flag
+extern bool                  g_disk_targa;
+extern bool                  g_good_mode;       // video mode ok?
+
 extern int startdisk();
 extern int pot_startdisk();
 extern int targa_startdisk(FILE *, int);

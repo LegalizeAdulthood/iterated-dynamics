@@ -2,6 +2,7 @@
 #include "prototyp.h"
 
 #include "cmdfiles.h"
+#include "diskvid.h"
 #include "drivers.h"
 #include "line3d.h"
 #include "prompts2.h"
