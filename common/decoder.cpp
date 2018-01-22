@@ -127,7 +127,7 @@ BYTE decoderline[MAXPIXELS];
  */
 
 // moved sizeofstring here for possible re-use elsewhere
-short sizeofstring[MAX_CODES + 1];  // size of string list
+static short sizeofstring[MAX_CODES + 1];  // size of string list
 
 short decoder(short linewidth)
 {
