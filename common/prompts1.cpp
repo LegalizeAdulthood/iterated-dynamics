@@ -45,19 +45,14 @@
 #include <cassert>
 #include <string>
 
-// Routines used in prompts2.c
-
-int prompt_checkkey(int curkey);
-int prompt_checkkey_scroll(int curkey);
-
-// Routines in this module
-
+static int prompt_checkkey(int curkey);
+static int prompt_checkkey_scroll(int curkey);
 static  int input_field_list(int attr, char *fld, int vlen, char const **list, int llen,
                              int row, int col, int (*checkkey)(int));
 static  fractal_type select_fracttype(fractal_type t);
 static  int sel_fractype_help(int curkey, int choice);
 static bool select_type_params(fractal_type newfractype, fractal_type oldfractype);
-void set_default_parms();
+static void set_default_parms();
 static long gfe_choose_entry(int type, char const *title, char const *filename, char *entryname);
 static  int check_gfe_key(int curkey, int choice);
 static  void load_entry_text(FILE *entfile, char *buf, int maxlines, int startrow, int startcol);
@@ -72,9 +67,9 @@ static  bool get_funny_glasses_params();
 #define GETPARM    3
 
 static char funnyglasses_map_name[16];
-char ifsmask[13]     = {"*.ifs"};
-char formmask[13]    = {"*.frm"};
-char lsysmask[13]    = {"*.l"};
+static char ifsmask[13]     = {"*.ifs"};
+static char formmask[13]    = {"*.frm"};
+static char lsysmask[13]    = {"*.l"};
 std::string const g_glasses1_map = "glasses1.map";
 std::string g_map_name;
 bool g_map_set = false;
@@ -82,12 +77,12 @@ bool g_julibrot = false;                  // flag for julibrot
 
 // ---------------------------------------------------------------------
 
-int promptfkeys;
+static int promptfkeys;
 
 // These need to be global because F6 exits fullscreen_prompt()
-int scroll_row_status;    /* will be set to first line of extra info to
+static int scroll_row_status;    /* will be set to first line of extra info to
                              be displayed ( 0 = top line) */
-int scroll_column_status; /* will be set to first column of extra info to
+static int scroll_column_status; /* will be set to first column of extra info to
                              be displayed ( 0 = leftmost column )*/
 
 int fullscreen_prompt(      // full-screen prompting routine
@@ -1119,8 +1114,8 @@ struct FT_CHOICE
 };
 static FT_CHOICE **ft_choices; // for sel_fractype_help subrtn
 
-static fractal_type select_fracttype(fractal_type t) // subrtn of get_fracttype, separated
-// so that storage gets freed up
+// subrtn of get_fracttype, separated so that storage gets freed up
+static fractal_type select_fracttype(fractal_type t)
 {
     int old_help_mode;
     int numtypes;
@@ -1467,9 +1462,9 @@ trig_funct_lst g_trig_fn[] =
 
 #define NUMTRIGFN  sizeof(g_trig_fn)/sizeof(trig_funct_lst)
 
-const int g_num_trig_functions = NUMTRIGFN;
+extern const int g_num_trig_functions = NUMTRIGFN;
 
-char tstack[4096] = { 0 };
+static char tstack[4096] = { 0 };
 
 namespace
 {

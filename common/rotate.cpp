@@ -9,6 +9,7 @@
 #include "drivers.h"
 #include "helpdefs.h"
 #include "loadmap.h"
+#include "prompts1.h"
 #include "prompts2.h"
 #include "realdos.h"
 #include "rotate.h"

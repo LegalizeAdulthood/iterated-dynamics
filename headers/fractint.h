@@ -960,7 +960,6 @@ struct trig_funct_lst
     void (*mfunct)();
 };
 
-extern trig_funct_lst g_trig_fn[];
 // for overlay return stack
 #define BIG 100000.0
 #define CTL(x) ((x)&0x1f)

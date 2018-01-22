@@ -2,6 +2,18 @@
 #if !defined(PROMPTS1_H)
 #define PROMPTS1_H
 
+#include <string>
+
+extern std::string const     g_glasses1_map;
+extern std::string const     g_jiim_left_right[];
+extern std::string const     g_jiim_method[];
+extern bool                  g_julibrot;
+extern std::string const     g_julibrot_3d_options[];
+extern std::string           g_map_name;
+extern bool                  g_map_set;
+extern const int             g_num_trig_functions;
+extern trig_funct_lst        g_trig_fn[];
+
 struct fullscreenvalues;
 extern int fullscreen_prompt(
     char const *hdg,
