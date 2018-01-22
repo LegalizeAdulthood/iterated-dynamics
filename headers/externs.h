@@ -79,6 +79,7 @@ extern double                g_logical_screen_x_size_dots;
 extern double                g_logical_screen_y_size_dots;
 extern int                   g_look_at_mouse;
 extern long                  g_max_iterations;
+extern int                   g_smallest_box_size_shown;
 
 extern int                   g_color_bright;    // brightest color in palette
 extern int                   g_color_dark;      // darkest color in palette
@@ -94,8 +95,6 @@ extern int                   g_hi_attenuation;
 extern long                  g_l_init_x;
 extern long                  g_l_init_y;
 
-extern int                   g_smallest_box_size_shown;
-extern MPC                   g_mpc_one;
 extern int                   g_filename_stack_index;
 extern bool                  g_browse_sub_images;
 extern int                   g_num_affine_transforms;
