@@ -13,6 +13,18 @@
 
 //*************************************************************************
 
+namespace
+{
+
+struct Palettetype
+{
+    BYTE red;
+    BYTE green;
+    BYTE blue;
+};
+
+} // namespace
+
 #define dac ((Palettetype *)g_dac_box)
 
 bool ValidateLuts(char const *fn)

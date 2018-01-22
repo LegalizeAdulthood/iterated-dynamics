@@ -1180,13 +1180,6 @@ struct DIR_SEARCH               // Allocate DTA and define structure
 
 extern DIR_SEARCH DTA;          // Disk Transfer Area
 
-struct Palettetype
-{
-    BYTE red;
-    BYTE green;
-    BYTE blue;
-};
-
 template <typename T>
 int sign(T x)
 {
