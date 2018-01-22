@@ -105,6 +105,17 @@ enum orbit_save_flags
     osf_midi = 2
 };
 
+enum class bailouts
+{
+    Mod,
+    Real,
+    Imag,
+    Or,
+    And,
+    Manh,
+    Manr
+};
+
 extern bool                  g_ask_video;
 extern float                 g_aspect_drift;
 extern std::string           g_auto_name;

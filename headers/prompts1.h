@@ -4,6 +4,8 @@
 
 #include <string>
 
+enum class bailouts;
+
 struct trig_funct_lst
 {
     char const *name;

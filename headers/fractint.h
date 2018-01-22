@@ -690,18 +690,6 @@ struct AlternateMath
 #define FMODI     -103
 #define ATANI     -104
 
-// for bailoutest
-enum class bailouts
-{
-    Mod,
-    Real,
-    Imag,
-    Or,
-    And,
-    Manh,
-    Manr
-};
-
 // bitmask defines for fractalspecific flags
 #define  NOZOOM         1    // zoombox not allowed at all
 #define  NOGUESS        2    // solid guessing not allowed
