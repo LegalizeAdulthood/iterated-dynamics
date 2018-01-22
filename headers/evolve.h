@@ -2,7 +2,28 @@
 #if !defined(EVOLVE_H)
 #define EVOLVE_H
 
-#include "fractint.h"
+enum class variations
+{
+    NONE = 0,       // don't vary
+    X,              // vary with x axis
+    Y,              // vary with y axis
+    X_PLUS_Y,       // vary with x+y
+    X_MINUS_Y,      // vary with x-y
+    RANDOM,         // vary randomly
+    WEIGHTED_RANDOM, // weighted random mutation, further out = further change
+    NUM             // number of variation schemes
+};
+
+// smallest part of a fractint 'gene'
+struct GENEBASE
+{
+    void *addr;             // address of variable to be referenced
+    void (*varyfunc)(GENEBASE *genes, int randval, int gene); // pointer to func used to vary it
+                            // takes random number and pointer to var
+    variations mutate;      // flag to switch on variation of this variable
+    char name[16];          // name of variable (for menu )
+    char level;             // mutation level at which this should become active
+};
 
 extern char                  g_evolve_discrete_x_parameter_offset;
 extern char                  g_evolve_discrete_y_parameter_offset;
