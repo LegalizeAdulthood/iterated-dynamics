@@ -968,107 +968,111 @@ inline bool nonalpha(int c)
 {
     return c < 32 || c > 127;
 }
+
 /* keys; FIK = "FractInt Key"
  * Use this prefix to disambiguate key name symbols used in the fractint source
  * from symbols defined by the external environment, i.e. "DELETE" on Win32
  */
-#define FIK_ALT_A           1030
-#define FIK_ALT_S           1031
-#define FIK_ALT_F1          1104
-#define FIK_ALT_F2          1105
-#define FIK_ALT_F3          1106
-#define FIK_ALT_F4          1107
-#define FIK_ALT_F5          1108
-#define FIK_ALT_F6          1109
-#define FIK_ALT_F7          1110
-#define FIK_ALT_F8          1111
-#define FIK_ALT_F9          1112
-#define FIK_ALT_F10         1113
-#define FIK_CTL_A           1
-#define FIK_CTL_B           2
-#define FIK_CTL_E           5
-#define FIK_CTL_F           6
-#define FIK_CTL_G           7
-#define FIK_CTL_H           8
-#define FIK_CTL_O           15
-#define FIK_CTL_P           16
-#define FIK_CTL_S           19
-#define FIK_CTL_U           21
-#define FIK_CTL_X           24
-#define FIK_CTL_Y           25
-#define FIK_CTL_Z           26
-#define FIK_CTL_BACKSLASH   28
-#define FIK_CTL_DEL         1147
-#define FIK_CTL_DOWN_ARROW  1145
-#define FIK_CTL_END         1117
-#define FIK_CTL_ENTER       10
-#define FIK_CTL_ENTER_2     1010
-#define FIK_CTL_F1          1094
-#define FIK_CTL_F2          1095
-#define FIK_CTL_F3          1096
-#define FIK_CTL_F4          1097
-#define FIK_CTL_F5          1098
-#define FIK_CTL_F6          1099
-#define FIK_CTL_F7          1100
-#define FIK_CTL_F8          1101
-#define FIK_CTL_F9          1102
-#define FIK_CTL_F10         1103
-#define FIK_CTL_HOME        1119
-#define FIK_CTL_INSERT      1146
-#define FIK_CTL_LEFT_ARROW  1115
-#define FIK_CTL_MINUS       1142
-#define FIK_CTL_PAGE_DOWN   1118
-#define FIK_CTL_PAGE_UP     1132
-#define FIK_CTL_PLUS        1144
-#define FIK_CTL_RIGHT_ARROW 1116
-#define FIK_CTL_TAB         1148
-#define FIK_CTL_UP_ARROW    1141
-#define FIK_SHF_TAB         1015  // shift tab aka BACKTAB
-#define FIK_BACKSPACE       8
-#define FIK_DELETE          1083
-#define FIK_DOWN_ARROW      1080
-#define FIK_END             1079
-#define FIK_ENTER           13
-#define FIK_ENTER_2         1013
-#define FIK_ESC             27
-#define FIK_F1              1059
-#define FIK_F2              1060
-#define FIK_F3              1061
-#define FIK_F4              1062
-#define FIK_F5              1063
-#define FIK_F6              1064
-#define FIK_F7              1065
-#define FIK_F8              1066
-#define FIK_F9              1067
-#define FIK_F10             1068
-#define FIK_HOME            1071
-#define FIK_INSERT          1082
-#define FIK_LEFT_ARROW      1075
-#define FIK_PAGE_DOWN       1081
-#define FIK_PAGE_UP         1073
-#define FIK_RIGHT_ARROW     1077
-#define FIK_SPACE           32
-#define FIK_SF1             1084
-#define FIK_SF2             1085
-#define FIK_SF3             1086
-#define FIK_SF4             1087
-#define FIK_SF5             1088
-#define FIK_SF6             1089
-#define FIK_SF7             1090
-#define FIK_SF8             1091
-#define FIK_SF9             1092
-#define FIK_SF10            1093
-#define FIK_TAB             9
-#define FIK_UP_ARROW        1072
-#define FIK_ALT_1           1120
-#define FIK_ALT_2           1121
-#define FIK_ALT_3           1122
-#define FIK_ALT_4           1123
-#define FIK_ALT_5           1124
-#define FIK_ALT_6           1125
-#define FIK_ALT_7           1126
-#define FIK_CTL_KEYPAD_5    1143
-#define FIK_KEYPAD_5        1076
+enum
+{
+    FIK_ALT_A           = 1030,
+    FIK_ALT_S           = 1031,
+    FIK_ALT_F1          = 1104,
+    FIK_ALT_F2          = 1105,
+    FIK_ALT_F3          = 1106,
+    FIK_ALT_F4          = 1107,
+    FIK_ALT_F5          = 1108,
+    FIK_ALT_F6          = 1109,
+    FIK_ALT_F7          = 1110,
+    FIK_ALT_F8          = 1111,
+    FIK_ALT_F9          = 1112,
+    FIK_ALT_F10         = 1113,
+    FIK_CTL_A           = 1,
+    FIK_CTL_B           = 2,
+    FIK_CTL_E           = 5,
+    FIK_CTL_F           = 6,
+    FIK_CTL_G           = 7,
+    FIK_CTL_H           = 8,
+    FIK_CTL_O           = 15,
+    FIK_CTL_P           = 16,
+    FIK_CTL_S           = 19,
+    FIK_CTL_U           = 21,
+    FIK_CTL_X           = 24,
+    FIK_CTL_Y           = 25,
+    FIK_CTL_Z           = 26,
+    FIK_CTL_BACKSLASH   = 28,
+    FIK_CTL_DEL         = 1147,
+    FIK_CTL_DOWN_ARROW  = 1145,
+    FIK_CTL_END         = 1117,
+    FIK_CTL_ENTER       = 10,
+    FIK_CTL_ENTER_2     = 1010,
+    FIK_CTL_F1          = 1094,
+    FIK_CTL_F2          = 1095,
+    FIK_CTL_F3          = 1096,
+    FIK_CTL_F4          = 1097,
+    FIK_CTL_F5          = 1098,
+    FIK_CTL_F6          = 1099,
+    FIK_CTL_F7          = 1100,
+    FIK_CTL_F8          = 1101,
+    FIK_CTL_F9          = 1102,
+    FIK_CTL_F10         = 1103,
+    FIK_CTL_HOME        = 1119,
+    FIK_CTL_INSERT      = 1146,
+    FIK_CTL_LEFT_ARROW  = 1115,
+    FIK_CTL_MINUS       = 1142,
+    FIK_CTL_PAGE_DOWN   = 1118,
+    FIK_CTL_PAGE_UP     = 1132,
+    FIK_CTL_PLUS        = 1144,
+    FIK_CTL_RIGHT_ARROW = 1116,
+    FIK_CTL_TAB         = 1148,
+    FIK_CTL_UP_ARROW    = 1141,
+    FIK_SHF_TAB         = 1015,  // shift tab aka BACKTAB
+    FIK_BACKSPACE       = 8,
+    FIK_DELETE          = 1083,
+    FIK_DOWN_ARROW      = 1080,
+    FIK_END             = 1079,
+    FIK_ENTER           = 13,
+    FIK_ENTER_2         = 1013,
+    FIK_ESC             = 27,
+    FIK_F1              = 1059,
+    FIK_F2              = 1060,
+    FIK_F3              = 1061,
+    FIK_F4              = 1062,
+    FIK_F5              = 1063,
+    FIK_F6              = 1064,
+    FIK_F7              = 1065,
+    FIK_F8              = 1066,
+    FIK_F9              = 1067,
+    FIK_F10             = 1068,
+    FIK_HOME            = 1071,
+    FIK_INSERT          = 1082,
+    FIK_LEFT_ARROW      = 1075,
+    FIK_PAGE_DOWN       = 1081,
+    FIK_PAGE_UP         = 1073,
+    FIK_RIGHT_ARROW     = 1077,
+    FIK_SPACE           = 32,
+    FIK_SF1             = 1084,
+    FIK_SF2             = 1085,
+    FIK_SF3             = 1086,
+    FIK_SF4             = 1087,
+    FIK_SF5             = 1088,
+    FIK_SF6             = 1089,
+    FIK_SF7             = 1090,
+    FIK_SF8             = 1091,
+    FIK_SF9             = 1092,
+    FIK_SF10            = 1093,
+    FIK_TAB             = 9,
+    FIK_UP_ARROW        = 1072,
+    FIK_ALT_1           = 1120,
+    FIK_ALT_2           = 1121,
+    FIK_ALT_3           = 1122,
+    FIK_ALT_4           = 1123,
+    FIK_ALT_5           = 1124,
+    FIK_ALT_6           = 1125,
+    FIK_ALT_7           = 1126,
+    FIK_CTL_KEYPAD_5    = 1143,
+    FIK_KEYPAD_5        = 1076
+};
 
 template <typename T>
 int sign(T x)
