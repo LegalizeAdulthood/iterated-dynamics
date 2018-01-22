@@ -63,7 +63,6 @@ extern int                   g_color_dark;      // darkest color in palette
 extern int                   g_color_medium;    // nearest to medbright grey in palette
 extern int                   g_dac_count;
 
-extern int                   g_distribution;
 extern bool                  g_dither_flag;
 extern int                   g_dot_mode;
 extern bool                  g_confirm_file_deletes;
@@ -121,9 +120,6 @@ extern std::vector<BYTE>     g_line_buff;
 extern long                  g_l_init_x;
 extern long                  g_l_init_y;
 extern int                   g_load_index;
-extern bool                  g_log_map_calculate;
-extern std::vector<BYTE>     g_log_map_table;
-extern long                  g_log_map_table_max_size;
 extern int                   g_look_at_mouse;
 extern std::vector<long>     g_l_x0;
 extern std::vector<long>     g_l_x1;
@@ -148,7 +144,6 @@ extern Minor                 g_inverse_julia_minor_method;
 extern int                   g_soi_min_stack;
 extern int                   g_soi_min_stack_available;
 extern MPC                   g_mpc_one;
-extern int                   g_mp_overflow;
 extern int                   g_filename_stack_index;
 extern char                  g_evolve_new_discrete_x_parameter_offset;
 extern char                  g_evolve_new_discrete_y_parameter_offset;
@@ -208,7 +203,6 @@ extern int                   g_save_system;
 extern int                   g_scale_map[];
 extern bool                  g_set_orbit_corners;
 extern int                   g_size_dot;
-extern int                   g_slope;
 extern std::string const     g_speed_prompt;
 extern bool                  g_started_resaves;
 extern char                  g_std_calc_mode;

@@ -437,6 +437,7 @@ long lsqrt(long f)
     }
 }
 #endif
+
 LComplex ComplexSqrtLong(long x, long y)
 {
     double theta;
@@ -692,9 +693,11 @@ long ExpFloat14(long xx)
     return (RegFg2Float(Ans, (char)f));
 }
 
-double TwoPi;
-DComplex temp, BaseLog;
-DComplex cdegree = { 3.0, 0.0 }, croot   = { 1.0, 0.0 };
+static double TwoPi;
+static DComplex temp;
+static DComplex BaseLog;
+static DComplex cdegree = { 3.0, 0.0 };
+static DComplex croot   = { 1.0, 0.0 };
 
 bool ComplexNewtonSetup()
 {
@@ -820,10 +823,12 @@ int ComplexBasin()
  */
 int g_distribution = 30;
 int g_slope = 25;
+
 namespace
 {
 int Offset = 0;
 }
+
 int GausianNumber(int Probability, int Range)
 {
     long p;
@@ -2056,8 +2061,6 @@ MP *MPmul386(MP x, MP y)
     _ASSERTE(0 && "MPmul386 called.");
     return &Ans;
 }
-
-//
 
 MP *d2MP(double x)
 {

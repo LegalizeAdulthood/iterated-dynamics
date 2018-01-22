@@ -1,8 +1,10 @@
 #ifndef MPMATH_H
 #define MPMATH_H
+
 #ifndef CMPLX_H_DEFINED
 #include "cmplx.h"
 #endif
+
 #if !defined(XFRACT)
 struct MP
 {
@@ -15,12 +17,20 @@ struct MP
     double val;
 };
 #endif
+
 struct MPC
 {
     MP x;
     MP y;
 };
-extern int g_mp_overflow;
+
+extern int                   g_distribution;
+extern bool                  g_log_map_calculate;
+extern std::vector<BYTE>     g_log_map_table;
+extern long                  g_log_map_table_max_size;
+extern int                   g_mp_overflow;
+extern int                   g_slope;
+
 /* Mark Peterson's expanded floating point operators. If
    the operation results in an overflow (result < 2**(2**14), or division
    by zero) the global 'MPoverflow' is set to one. */
@@ -31,13 +41,16 @@ extern MP  *(*pMPadd)(MP , MP);
 extern MP  *(*pMPsub)(MP , MP);
 extern MP  *(*pd2MP)(double)                ;
 extern double     *(*pMP2d)(MP)             ;
+
 // ** Formula Declarations **
 #if !defined(XFRACT)
 enum MATH_TYPE { D_MATH, M_MATH, L_MATH };
 #else
 enum MATH_TYPE { D_MATH};
 #endif
+
 extern enum MATH_TYPE MathType;
+
 #define fDiv(x, y, z) ((*(long*)&z) = RegDivFloat(*(long*)&x, *(long*)&y))
 #define fMul16(x, y, z) ((*(long*)&z) = r16Mul(*(long*)&x, *(long*)&y))
 #define fShift(x, Shift, z) ((*(long*)&z) = RegSftFloat(*(long*)&x, Shift))
@@ -46,6 +59,7 @@ extern enum MATH_TYPE MathType;
 #define fLog14(x, z) ((*reinterpret_cast<long*>(&z)) = RegFg2Float(LogFloat14(*reinterpret_cast<long*>(&x)), 16))
 #define fExp14(x, z) ((*(long*)&z) = ExpFloat14(*(long*)&x));
 #define fSqrt14(x, z) fLog14(x, z); fShift(z, -1, z); fExp14(z, z)
+
 // the following are declared 4 dimensional as an experiment
 // changeing declarations to DComplex and LComplex restores the code
 // to 2D
@@ -55,13 +69,16 @@ union Arg
     MPC m;
     LComplex    l;
 };
+
 struct ConstArg
 {
     char const *s;
     int len;
     Arg a;
 };
+
 extern Arg *Arg1, *Arg2;
+
 extern void lStkSin(), lStkCos(), lStkSinh(), lStkCosh(), lStkLog(), lStkExp(), lStkSqr();
 extern void dStkSin(), dStkCos(), dStkSinh(), dStkCosh(), dStkLog(), dStkExp(), dStkSqr();
 extern void (*ltrig0)();
@@ -72,6 +89,7 @@ extern void (*dtrig0)();
 extern void (*dtrig1)();
 extern void (*dtrig2)();
 extern void (*dtrig3)();
+
 // --------------------------------------------------------------------
 // The following #defines allow the complex transcendental functions
 // in parser.c to be used here thus avoiding duplicated code.
@@ -177,4 +195,5 @@ extern void (*dtrig3)();
         }                                       \
     }
 #define CMPLXneg(arg, out)  (out).x = -(arg).x; (out).y = -(arg).y
+
 #endif
