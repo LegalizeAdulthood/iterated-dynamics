@@ -20,6 +20,17 @@ enum choice_flags
     CHOICE_NOT_SORTED   = 32
 };
 
+// stopmsg() flags
+enum stopmsg_flags
+{
+    STOPMSG_NONE        = 0,
+    STOPMSG_NO_STACK    = 1,
+    STOPMSG_CANCEL      = 2,
+    STOPMSG_NO_BUZZER   = 4,
+    STOPMSG_FIXED_FONT  = 8,
+    STOPMSG_INFO_ONLY   = 16
+};
+
 extern int                   g_cfg_line_nums[];
 extern int                   g_patch_level;
 extern int                   g_release;

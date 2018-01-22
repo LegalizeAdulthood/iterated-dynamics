@@ -42,17 +42,6 @@ enum class buzzer_codes
     PROBLEM = 2
 };
 
-// stopmsg() flags
-enum stopmsg_flags
-{
-    STOPMSG_NONE        = 0,
-    STOPMSG_NO_STACK    = 1,
-    STOPMSG_CANCEL      = 2,
-    STOPMSG_NO_BUZZER   = 4,
-    STOPMSG_FIXED_FONT  = 8,
-    STOPMSG_INFO_ONLY   = 16
-};
-
 // these are used to declare arrays for file names
 #if defined(_WIN32)
 #define FILE_MAX_PATH _MAX_PATH
