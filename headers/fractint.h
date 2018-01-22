@@ -702,20 +702,6 @@ enum class bailouts
     Manr
 };
 
-enum class Major
-{
-    breadth_first,
-    depth_first,
-    random_walk,
-    random_run
-};
-
-enum class Minor
-{
-    left_first,
-    right_first
-};
-
 // bitmask defines for fractalspecific flags
 #define  NOZOOM         1    // zoombox not allowed at all
 #define  NOGUESS        2    // solid guessing not allowed

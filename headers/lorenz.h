@@ -13,6 +13,20 @@ struct affine
     double f;
 };
 
+enum class Major
+{
+    breadth_first,
+    depth_first,
+    random_walk,
+    random_run
+};
+
+enum class Minor
+{
+    left_first,
+    right_first
+};
+
 extern Minor                 g_inverse_julia_minor_method;
 extern bool                  g_keep_screen_coords;
 extern Major                 g_major_method;
