@@ -3,8 +3,17 @@
 #include <string>
 #include <vector>
 
-enum class calc_status_value;
 struct VIDEOINFO;
+
+enum class calc_status_value
+{
+    NO_FRACTAL = -1,
+    PARAMS_CHANGED = 0,
+    IN_PROGRESS = 1,
+    RESUMABLE = 2,
+    NON_RESUMABLE = 3,
+    COMPLETED = 4
+};
 
 extern int                   g_adapter;             // index into g_video_table[]
 extern bool                  g_auto_browse;

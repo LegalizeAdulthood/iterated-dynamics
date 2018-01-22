@@ -17,6 +17,7 @@
 #include "framain2.h"
 #include "helpcom.h"
 #include "helpdefs.h"
+#include "id_data.h"
 #include "intro.h"
 #include "loadfile.h"
 #include "memory.h"

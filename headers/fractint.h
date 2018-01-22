@@ -81,17 +81,6 @@ enum choice_flags
     CHOICE_NOT_SORTED   = 32
 };
 
-// g_calc_status values
-enum class calc_status_value
-{
-    NO_FRACTAL = -1,
-    PARAMS_CHANGED = 0,
-    IN_PROGRESS = 1,
-    RESUMABLE = 2,
-    NON_RESUMABLE = 3,
-    COMPLETED = 4
-};
-
 // these are used to declare arrays for file names
 #if defined(_WIN32)
 #define FILE_MAX_PATH _MAX_PATH
