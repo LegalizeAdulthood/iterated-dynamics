@@ -156,6 +156,18 @@ enum class slides_mode
     RECORD = 2
 };
 
+// for init_batch
+enum class batch_modes
+{
+    FINISH_CALC_BEFORE_SAVE = -1,
+    NONE,
+    NORMAL,
+    SAVE,
+    BAILOUT_ERROR_NO_SAVE,
+    BAILOUT_INTERRUPTED_TRY_SAVE,
+    BAILOUT_INTERRUPTED_SAVE
+};
+
 extern bool                  g_ask_video;
 extern float                 g_aspect_drift;
 extern std::string           g_auto_name;

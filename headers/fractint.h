@@ -23,18 +23,6 @@ enum class display_3d_modes
     B_COMMAND = 2
 };
 
-// for init_batch
-enum class batch_modes
-{
-    FINISH_CALC_BEFORE_SAVE = -1,
-    NONE,
-    NORMAL,
-    SAVE,
-    BAILOUT_ERROR_NO_SAVE,
-    BAILOUT_INTERRUPTED_TRY_SAVE,
-    BAILOUT_INTERRUPTED_SAVE
-};
-
 // these are used to declare arrays for file names
 #if defined(_WIN32)
 #define FILE_MAX_PATH _MAX_PATH
