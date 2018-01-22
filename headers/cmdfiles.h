@@ -85,6 +85,20 @@ enum class init_orbit_mode
     pixel = 2
 };
 
+enum class true_color_mode
+{
+    default_color = 0,
+    iterate = 1
+};
+
+enum class record_colors_mode
+{
+    none = 0,
+    automatic = 'a',
+    comment = 'c',
+    yes = 'y'
+};
+
 extern bool                  g_ask_video;
 extern float                 g_aspect_drift;
 extern std::string           g_auto_name;
