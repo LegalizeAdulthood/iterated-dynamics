@@ -2,6 +2,13 @@
 #if !defined(PLOT3D_H)
 #define PLOT3D_H
 
+enum class stereo_images
+{
+    NONE,
+    RED,
+    BLUE
+};
+
 extern int                   g_adjust_3d_x;
 extern int                   g_adjust_3d_y;
 extern int                   g_blue_bright;
