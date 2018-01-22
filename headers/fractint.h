@@ -92,16 +92,6 @@ enum class calc_status_value
     COMPLETED = 4
 };
 
-enum cmdarg_flags
-{
-    CMDARG_ERROR            = -1,
-    CMDARG_NONE             = 0,
-    CMDARG_FRACTAL_PARAM    = 1,
-    CMDARG_3D_PARAM         = 2,
-    CMDARG_3D_YES           = 4,
-    CMDARG_RESET            = 8
-};
-
 // these are used to declare arrays for file names
 #if defined(_WIN32)
 #define FILE_MAX_PATH _MAX_PATH

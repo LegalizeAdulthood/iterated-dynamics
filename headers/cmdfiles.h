@@ -139,6 +139,16 @@ enum class cmd_file
     AT_CMD_LINE_SET_NAME = 3
 };
 
+enum cmdarg_flags
+{
+    CMDARG_ERROR            = -1,
+    CMDARG_NONE             = 0,
+    CMDARG_FRACTAL_PARAM    = 1,
+    CMDARG_3D_PARAM         = 2,
+    CMDARG_3D_YES           = 4,
+    CMDARG_RESET            = 8
+};
+
 extern bool                  g_ask_video;
 extern float                 g_aspect_drift;
 extern std::string           g_auto_name;
