@@ -38,7 +38,7 @@ static void close_file();
 
 static FILE *fpin = nullptr;       // FILE pointer
 unsigned int g_height;
-unsigned g_num_colors;
+unsigned int g_num_colors;
 
 static int out_line_dither(BYTE *, int);
 static int out_line_migs(BYTE *, int);

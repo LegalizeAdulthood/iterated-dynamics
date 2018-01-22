@@ -13,6 +13,7 @@
 #include "drivers.h"
 #include "fractals.h"
 #include "framain2.h"
+#include "gifview.h"
 #include "loadfile.h"
 #include "miscres.h"
 #include "plot3d.h"

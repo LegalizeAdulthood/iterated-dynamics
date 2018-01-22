@@ -63,6 +63,7 @@ extern std::vector<double>   g_grid_x0;
 extern std::vector<double>   g_grid_x1;
 extern std::vector<double>   g_grid_y0;
 extern std::vector<double>   g_grid_y1;
+extern bool                  g_has_inverse;
 extern long                  g_l_delta_min;
 extern long                  g_l_delta_x2;
 extern long                  g_l_delta_x;
@@ -82,8 +83,6 @@ extern int                   g_fm_sustain;
 extern int                   g_fm_wavetype;
 extern int                   g_fm_volume;            // volume of OPL-3 soundcard output
 
-extern bool                  g_has_inverse;
-extern unsigned int          g_height;
 extern int                   g_help_mode;
 extern int                   g_hi_attenuation;
 extern int                   g_integer_fractal;
@@ -112,7 +111,6 @@ extern MPC                   g_mpc_one;
 extern int                   g_filename_stack_index;
 extern bool                  g_browse_sub_images;
 extern int                   g_num_affine_transforms;
-extern unsigned              g_num_colors;
 extern int                   g_num_fractal_types;
 extern long                  g_orbit_interval;
 extern std::string           g_organize_formulas_dir;
