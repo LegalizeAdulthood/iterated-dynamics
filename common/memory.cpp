@@ -31,20 +31,20 @@ char memstr[3][9] = {{"nowhere"}, {"memory"}, {"disk"}};
 
 struct nowhere
 {
-    enum stored_at_values stored_at; // first 2 entries must be the same
+    stored_at_values stored_at; // first 2 entries must be the same
     long size;                       // for each of these data structures
 };
 
 struct linearmem
 {
-    enum stored_at_values stored_at;
+    stored_at_values stored_at;
     long size;
     BYTE *memory;
 };
 
 struct disk
 {
-    enum stored_at_values stored_at;
+    stored_at_values stored_at;
     long size;
     FILE *file;
 };
