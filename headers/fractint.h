@@ -662,15 +662,6 @@ struct fractalspecificstuff
 
 enum class fractal_type;
 
-struct AlternateMath
-{
-    fractal_type type;                  // index in fractalname of the fractal
-    bf_math_type math;                  // kind of math used
-    int (*orbitcalc)();                 // function that calculates one orbit
-    int (*per_pixel)();                 // once-per-pixel init
-    bool (*per_image)();                // once-per-image setup
-};
-
 // defines for inside/outside
 #define COLOR_BLACK 0
 #define ITER        -1

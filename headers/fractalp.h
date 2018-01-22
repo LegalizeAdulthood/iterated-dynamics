@@ -2,6 +2,17 @@
 #if !defined(FRACTALP_H)
 #define FRACTALP_H
 
+#include "big.h"
+
+struct AlternateMath
+{
+    fractal_type type;                  // index in fractalname of the fractal
+    bf_math_type math;                  // kind of math used
+    int (*orbitcalc)();                 // function that calculates one orbit
+    int (*per_pixel)();                 // once-per-pixel init
+    bool (*per_image)();                // once-per-image setup
+};
+
 extern AlternateMath         g_alternate_math[];    // alternate math function pointers
 extern fractalspecificstuff  g_fractal_specific[];
 extern MOREPARAMS            g_more_fractal_params[];
