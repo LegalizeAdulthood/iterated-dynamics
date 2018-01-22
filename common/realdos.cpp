@@ -33,9 +33,6 @@ static int menu_checkkey(int curkey, int choice);
 
 int g_release = 2099;   // this has 2 implied decimals; increment it every synch
 int g_patch_level = 8;  // patchlevel for DOS version
-#ifdef XFRACT
-int xrelease = 304;
-#endif
 
 /* int stopmsg(flags,message) displays message and waits for a key:
      message should be a max of 9 lines with \n's separating them;
@@ -149,7 +146,8 @@ bool stopmsg(int flags, char const* msg)
 
 
 static std::vector<BYTE> temptextsave;
-static int  textxdots, textydots;
+static int textxdots;
+static int textydots;
 
 /* texttempmsg(msg) displays a text message of up to 40 characters, waits
       for a key press, restores the prior display, and returns (without
@@ -309,7 +307,7 @@ void footer_msg(int *i, int options, char const *speedstring)
                        : "Press ENTER for highlighted choice, or ESCAPE to back out"));
 }
 
-}
+} // namespace
 
 int putstringcenter(int row, int col, int width, int attr, char const *msg)
 {
@@ -412,7 +410,7 @@ void show_speedstring(
     }
 }
 
-}
+} // namespace
 
 void process_speedstring(char    *speedstring,
                          char const **choices,         // array of choice strings
@@ -1872,13 +1870,13 @@ bool thinking(int options, char const *msg)
 
 // savegraphics/restoregraphics: video.asm subroutines
 
-unsigned long swaptotlen;
-unsigned long swapoffset;
-BYTE *swapvidbuf;
-int swaplength;
+static unsigned long swaptotlen;
+static unsigned long swapoffset;
+static BYTE *swapvidbuf;
+static int swaplength;
 
 #define SWAPBLKLEN 4096 // must be a power of 2
-U16 memhandle = 0;
+static U16 memhandle = 0;
 
 void discardgraphics() // release expanded/extended memory if any in use
 {

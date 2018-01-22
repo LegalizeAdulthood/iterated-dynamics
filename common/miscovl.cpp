@@ -2151,8 +2151,6 @@ static int entcompare(VOIDCONSTPTR p1, VOIDCONSTPTR p2)
     return (1);
 }
 
-extern int g_cfg_line_nums[];
-
 static void update_fractint_cfg()
 {
 #ifndef XFRACT

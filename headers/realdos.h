@@ -2,6 +2,12 @@
 #if !defined(REALDOS_H)
 #define REALDOS_H
 
+extern int                   g_cfg_line_nums[];
+extern int                   g_patch_level;
+extern int                   g_release;
+extern std::string const     g_speed_prompt;
+extern int                   g_video_table_len;
+
 extern void blankrows(int, int, int);
 extern int texttempmsg(char const *);
 extern int fullscreen_choice(
