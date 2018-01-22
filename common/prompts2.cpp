@@ -16,6 +16,7 @@
 #include "helpdefs.h"
 #include "loadfile.h"
 #include "loadmap.h"
+#include "lorenz.h"
 #include "memory.h"
 #include "miscovl.h"
 #include "miscres.h"

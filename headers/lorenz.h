@@ -4,6 +4,19 @@
 
 struct affine;
 
+extern Minor                 g_inverse_julia_minor_method;
+extern bool                  g_keep_screen_coords;
+extern Major                 g_major_method;
+extern long                  g_max_count;
+extern double                g_orbit_corner_3_x;
+extern double                g_orbit_corner_3_y;
+extern double                g_orbit_corner_max_x;
+extern double                g_orbit_corner_max_y;
+extern double                g_orbit_corner_min_x;
+extern double                g_orbit_corner_min_y;
+extern long                  g_orbit_interval;
+extern bool                  g_set_orbit_corners;
+
 extern bool orbit3dlongsetup();
 extern bool orbit3dfloatsetup();
 extern int lorenz3dlongorbit(long *, long *, long *);

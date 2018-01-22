@@ -55,6 +55,7 @@ struct l_affine
     long d;
     long f;
 };
+
 struct long3dvtinf // data used by 3d view transform subroutine
 {
     long orbit[3];       // interated function orbit value
@@ -102,12 +103,35 @@ static bool realtime = false;
 
 S32 g_max_count;
 static int t;
-static long l_dx, l_dy, l_dz, l_dt, l_a, l_b, l_c, l_d;
-static long l_adt, l_bdt, l_cdt, l_xdt, l_ydt;
+static long l_dx;
+static long l_dy;
+static long l_dz;
+static long l_dt;
+static long l_a;
+static long l_b;
+static long l_c;
+static long l_d;
+static long l_adt;
+static long l_bdt;
+static long l_cdt;
+static long l_xdt;
+static long l_ydt;
 static long initorbitlong[3];
 
-static double dx, dy, dz, dt, a, b, c, d;
-static double adt, bdt, cdt, xdt, ydt, zdt;
+static double dx;
+static double dy;
+static double dz;
+static double dt;
+static double a;
+static double b;
+static double c;
+static double d;
+static double adt;
+static double bdt;
+static double cdt;
+static double xdt;
+static double ydt;
+static double zdt;
 static double initorbitfp[3];
 
 // The following declarations used for Inverse Julia.
@@ -116,14 +140,16 @@ static char NoQueue[] =
     "Not enough memory: switching to random walk.\n";
 
 static int    mxhits;
-int    run_length;
+static int    run_length;
 Major g_major_method;
 Minor g_inverse_julia_minor_method;
-affine cvt;
-l_affine lcvt;
+static affine cvt;
+static l_affine lcvt;
 
-double Cx, Cy;
-long   CxLong, CyLong;
+static double Cx;
+static double Cy;
+static long CxLong;
+static long CyLong;
 
 /*
  * end of Inverse Julia declarations;
@@ -132,8 +158,8 @@ long   CxLong, CyLong;
 // these are potential user parameters
 static bool connect = true;     // flag to connect points with a line
 static bool euler = false;      // use implicit euler approximation for dynamic system
-int waste = 100;    // waste this many points before plotting
-int projection = 2; // projection plane - default is to plot x-y
+static int waste = 100;    // waste this many points before plotting
+static int projection = 2; // projection plane - default is to plot x-y
 
 //****************************************************************
 //                 zoom box conversion functions
@@ -273,8 +299,9 @@ static bool l_setup_convert_to_screen(l_affine *l_cvt)
 //****************************************************************
 
 static double orbit;
-static long   l_orbit;
-static long l_sinx, l_cosx;
+static long l_orbit;
+static long l_sinx;
+static long l_cosx;
 
 bool orbit3dlongsetup()
 {
@@ -625,8 +652,7 @@ rwalk:
 //   orbit functions - put in fractalspecific[fractype].orbitcalc
 //****************************************************************
 
-int
-Minverse_julia_orbit()
+int Minverse_julia_orbit()
 {
     static int   random_dir = 0, random_len = 0;
     int    newrow, newcol;
@@ -773,8 +799,7 @@ Minverse_julia_orbit()
 
 }
 
-int
-Linverse_julia_orbit()
+int Linverse_julia_orbit()
 {
     static int   random_dir = 0, random_len = 0;
     int    newrow, newcol;
@@ -1082,6 +1107,7 @@ int pickoverfloatorbit(double *x, double *y, double *z)
     *z = newz;
     return (0);
 }
+
 // page 149 "Science of Fractal Images"
 int gingerbreadfloatorbit(double *x, double *y, double * /*z*/)
 {
@@ -1113,8 +1139,6 @@ int rosslerlongorbit(long *l_x, long *l_y, long *l_z)
 // NTURNS = Outside Orbit
 // TURN2  = Points per orbit
 // a      = Angle
-
-
 int kamtorusfloatorbit(double *r, double *s, double *z)
 {
     double srr;
@@ -2171,8 +2195,13 @@ int dynam2dfloat()
 bool g_keep_screen_coords = false;
 bool g_set_orbit_corners = false;
 long g_orbit_interval;
-double g_orbit_corner_min_x, g_orbit_corner_min_y, g_orbit_corner_max_x, g_orbit_corner_max_y, g_orbit_corner_3_x, g_orbit_corner_3_y;
-affine o_cvt;
+double g_orbit_corner_min_x;
+double g_orbit_corner_min_y;
+double g_orbit_corner_max_x;
+double g_orbit_corner_max_y;
+double g_orbit_corner_3_x;
+double g_orbit_corner_3_y;
+static affine o_cvt;
 static int o_color;
 
 int setup_orbits_to_screen(affine *scrn_cnvt)

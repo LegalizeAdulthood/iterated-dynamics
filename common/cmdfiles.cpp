@@ -20,6 +20,7 @@
 #include "line3d.h"
 #include "loadfile.h"
 #include "loadmap.h"
+#include "lorenz.h"
 #include "miscovl.h"
 #include "miscres.h"
 #include "parser.h"
