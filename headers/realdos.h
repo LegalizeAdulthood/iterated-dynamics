@@ -9,6 +9,17 @@ enum input_field_flags
     INPUTFIELD_DOUBLE   = 4
 };
 
+// fullscreen_choice options
+enum choice_flags
+{
+    CHOICE_RETURN_KEY   = 1,
+    CHOICE_MENU         = 2,
+    CHOICE_HELP         = 4,
+    CHOICE_INSTRUCTIONS = 8,
+    CHOICE_CRUNCH       = 16,
+    CHOICE_NOT_SORTED   = 32
+};
+
 extern int                   g_cfg_line_nums[];
 extern int                   g_patch_level;
 extern int                   g_release;

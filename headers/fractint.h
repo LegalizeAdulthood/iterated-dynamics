@@ -70,17 +70,6 @@ enum class slides_mode
     RECORD = 2
 };
 
-// fullscreen_choice options
-enum choice_flags
-{
-    CHOICE_RETURN_KEY   = 1,
-    CHOICE_MENU         = 2,
-    CHOICE_HELP         = 4,
-    CHOICE_INSTRUCTIONS = 8,
-    CHOICE_CRUNCH       = 16,
-    CHOICE_NOT_SORTED   = 32
-};
-
 // these are used to declare arrays for file names
 #if defined(_WIN32)
 #define FILE_MAX_PATH _MAX_PATH
