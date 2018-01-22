@@ -1295,6 +1295,10 @@ struct affine
     double f;
 };
 
-#define sign(x) (((x) < 0) ? -1 : ((x) != 0)  ? 1 : 0)
+template <typename T>
+int sign(T x)
+{
+    return (T{} < x) - (x < T{});
+}
 
 #endif
