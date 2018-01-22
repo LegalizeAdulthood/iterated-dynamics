@@ -65,7 +65,6 @@ extern int                   g_color_dark;      // darkest color in palette
 extern int                   g_color_medium;    // nearest to medbright grey in palette
 extern int                   g_dac_count;
 
-extern char                  g_draw_mode;
 extern std::vector<double>   g_grid_x0;
 extern std::vector<double>   g_grid_x1;
 extern double                g_logical_screen_x_size_dots;

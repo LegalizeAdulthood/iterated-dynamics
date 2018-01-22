@@ -22,6 +22,7 @@ extern int                   g_current_row;
 extern unsigned int          g_diffusion_bits;
 extern unsigned long         g_diffusion_counter;
 extern unsigned long         g_diffusion_limit;
+extern char                  g_draw_mode;
 extern double                g_f_radius;
 extern double                g_f_x_center;
 extern double                g_f_y_center;

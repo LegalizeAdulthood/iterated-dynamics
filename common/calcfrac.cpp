@@ -3387,8 +3387,7 @@ inline void advance_no_match()
     going_to = advance(going_to, 1);
 }
 
-static
-int  bound_trace_main()
+static int bound_trace_main()
 {
     direction coming_from;
     unsigned int matches_found;
