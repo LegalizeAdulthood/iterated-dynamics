@@ -1284,17 +1284,6 @@ struct ext_blk_7
 #pragma pack(pop)
 #endif
 
-struct affine
-{
-    // weird order so a,b,e and c,d,f are vectors
-    double a;
-    double b;
-    double e;
-    double c;
-    double d;
-    double f;
-};
-
 template <typename T>
 int sign(T x)
 {

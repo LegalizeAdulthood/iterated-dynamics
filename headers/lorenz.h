@@ -2,7 +2,16 @@
 #if !defined(LORENZ_H)
 #define LORENZ_H
 
-struct affine;
+struct affine
+{
+    // weird order so a,b,e and c,d,f are vectors
+    double a;
+    double b;
+    double e;
+    double c;
+    double d;
+    double f;
+};
 
 extern Minor                 g_inverse_julia_minor_method;
 extern bool                  g_keep_screen_coords;

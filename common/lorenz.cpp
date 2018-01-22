@@ -19,6 +19,7 @@
 #include "id_data.h"
 #include "jiim.h"
 #include "line3d.h"
+#include "lorenz.h"
 #include "miscres.h"
 #include "mpmath.h"
 #include "plot3d.h"
