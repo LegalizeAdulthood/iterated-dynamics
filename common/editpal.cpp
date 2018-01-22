@@ -11,6 +11,7 @@
 #include "cmdfiles.h"
 #include "drivers.h"
 #include "id_data.h"
+#include "memory.h"
 #include "os.h"
 #include "prompts2.h"
 #include "realdos.h"

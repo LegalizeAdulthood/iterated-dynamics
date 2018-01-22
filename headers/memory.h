@@ -2,6 +2,13 @@
 #if !defined(FI_MEMORY_H)
 #define FI_MEMORY_H
 
+enum stored_at_values
+{
+    NOWHERE,
+    MEMORY,
+    DISK
+};
+
 // memory -- C file prototypes
 // TODO: Get rid of this and use regular memory routines;
 // see about creating standard disk memory routines for disk video

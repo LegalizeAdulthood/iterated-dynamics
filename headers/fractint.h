@@ -517,12 +517,6 @@ struct formula_info         // for saving formula data in GIF file
     short future[6];       // for stuff we haven't thought of, yet
 };
 
-enum stored_at_values
-{
-    NOWHERE,
-    MEMORY,
-    DISK
-};
 #define NUM_GENES 21
 /*
  * Note: because non-MSDOS machines store structures differently, we have
