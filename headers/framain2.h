@@ -2,6 +2,14 @@
 #if !defined(FRAMAIN2_H)
 #define FRAMAIN2_H
 
+extern EVOLUTION_INFO        g_evolve_info;
+extern int                   g_finish_row;
+extern bool                  g_have_evolve_info;
+extern int                   g_max_image_history;
+extern char                  g_old_std_calc_mode;
+extern void                (*g_out_line_cleanup)();
+extern bool                  g_virtual_screens;
+
 extern main_state big_while_loop(bool *kbdmore, bool *stacked, bool resume_flag);
 extern bool check_key();
 extern int cmp_line(BYTE *, int);

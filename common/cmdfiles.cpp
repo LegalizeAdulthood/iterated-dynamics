@@ -14,6 +14,7 @@
 #include "fractalp.h"
 #include "fractals.h"
 #include "fractype.h"
+#include "framain2.h"
 #include "helpcom.h"
 #include "jb.h"
 #include "line3d.h"

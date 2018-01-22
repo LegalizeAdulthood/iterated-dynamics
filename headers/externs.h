@@ -59,24 +59,21 @@ extern LDBL                  g_delta_y2;
 extern LDBL                  g_delta_y;
 extern int                   g_dot_mode;
 extern bool                  g_confirm_file_deletes;
+extern std::vector<double>   g_grid_x0;
+extern std::vector<double>   g_grid_x1;
+extern std::vector<double>   g_grid_y0;
+extern std::vector<double>   g_grid_y1;
+extern double                g_logical_screen_x_size_dots;
+extern double                g_logical_screen_y_size_dots;
 
 extern int                   g_color_bright;    // brightest color in palette
 extern int                   g_color_dark;      // darkest color in palette
 extern int                   g_color_medium;    // nearest to medbright grey in palette
 extern int                   g_dac_count;
 
-extern std::vector<double>   g_grid_x0;
-extern std::vector<double>   g_grid_x1;
-extern double                g_logical_screen_x_size_dots;
-extern std::vector<double>   g_grid_y0;
-extern std::vector<double>   g_grid_y1;
-extern double                g_logical_screen_y_size_dots;
-extern bool                  g_have_evolve_info;
-extern EVOLUTION_INFO        g_evolve_info;
 extern double                g_fudge_limit;
 extern std::string           g_file_name_stack[16];
 extern float                 g_final_aspect_ratio;
-extern int                   g_finish_row;
 extern bool                  g_float_flag;
 extern int                   g_fm_attack;
 extern int                   g_fm_decay;
@@ -127,7 +124,6 @@ extern int                   g_max_line_length;
 extern unsigned              g_max_function_args;
 extern unsigned              g_max_function_ops;
 extern long                  g_bignum_max_stack_addr;
-extern int                   g_max_image_history;
 extern int                   g_max_rhombus_depth;
 extern int                   g_smallest_box_size_shown;
 extern Minor                 g_inverse_julia_minor_method;
@@ -140,11 +136,9 @@ extern int                   g_num_affine_transforms;
 extern unsigned              g_num_colors;
 extern const int             g_num_trig_functions;
 extern int                   g_num_fractal_types;
-extern char                  g_old_std_calc_mode;
 extern long                  g_orbit_interval;
 extern std::string           g_organize_formulas_dir;
 extern int                 (*g_out_line)(BYTE *, int);
-extern void                (*g_out_line_cleanup)();
 extern double                g_orbit_corner_3_x;
 extern double                g_orbit_corner_max_x;
 extern double                g_orbit_corner_min_x;
@@ -233,7 +227,6 @@ extern float                 g_view_reduction;
 extern bool                  g_view_window;
 extern int                   g_view_x_dots;
 extern int                   g_view_y_dots;
-extern bool                  g_virtual_screens;
 extern unsigned              g_variable_index;
 extern std::string           g_working_dir;
 extern long                  g_l_x_3rd;
