@@ -81,6 +81,13 @@ extern double                g_logical_screen_x_size_dots;
 extern double                g_logical_screen_y_size_dots;
 extern int                   g_look_at_mouse;
 extern long                  g_max_iterations;
+extern double                g_plot_mx1;
+extern double                g_plot_mx2;
+extern double                g_plot_my1;
+extern double                g_plot_my2;
+extern double                g_params[];
+extern double                g_potential_params[];
+extern int                   g_resave_flag;
 extern int                   g_smallest_box_size_shown;
 
 extern int                   g_color_bright;    // brightest color in palette
@@ -96,19 +103,8 @@ extern int                   g_fm_volume;            // volume of OPL-3 soundcar
 extern int                   g_hi_attenuation;
 extern long                  g_l_init_x;
 extern long                  g_l_init_y;
-
-extern double                g_params[];
-extern double                g_plot_mx1;
-extern double                g_plot_mx2;
-extern double                g_plot_my1;
-extern double                g_plot_my2;
 extern int                   g_polyphony;
-extern bool                  g_potential_16bit;
-extern bool                  g_potential_flag;
-extern double                g_potential_params[];
-extern std::string           g_read_filename;
-extern record_colors_mode    g_record_colors;
-extern int                   g_resave_flag;
+
 extern int                   g_resume_len;
 extern int                   g_row_count;       // row-counter for decoder and out_line
 extern long                  g_save_base;
