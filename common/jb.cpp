@@ -12,6 +12,7 @@
 #include "jb.h"
 #include "loadmap.h"
 #include "prompts1.h"
+#include "prompts2.h"
 #include "realdos.h"
 
 // these need to be accessed elsewhere for saving data

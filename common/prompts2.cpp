@@ -72,7 +72,7 @@ DIR_SEARCH DTA;          // Allocate DTA and define structure
 #define GETIFS     2
 #define GETPARM    3
 
-char commandmask[13] = {"*.par"};
+static char commandmask[13] = {"*.par"};
 
 // ---------------------------------------------------------------------
 /*
@@ -1106,7 +1106,7 @@ int get_cmd_string()
 long g_concentration;
 
 
-double starfield_values[4] =
+static double starfield_values[4] =
 {
     30.0, 100.0, 5.0, 0.0
 };

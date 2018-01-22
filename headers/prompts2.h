@@ -7,6 +7,7 @@
 #include <string>
 
 extern long                  g_concentration;
+extern std::string const     g_gray_map_file;
 
 extern int get_corners();
 extern int get_toggles();

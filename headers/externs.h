@@ -82,7 +82,6 @@ extern int                   g_fm_sustain;
 extern int                   g_fm_wavetype;
 extern int                   g_fm_volume;            // volume of OPL-3 soundcard output
 
-extern std::string const     g_gray_map_file;
 extern bool                  g_has_inverse;
 extern unsigned int          g_height;
 extern int                   g_help_mode;
