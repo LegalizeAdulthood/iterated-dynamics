@@ -10,6 +10,7 @@
 #include "calcfrac.h"
 #include "cmdfiles.h"
 #include "drivers.h"
+#include "os.h"
 #include "prompts2.h"
 #include "realdos.h"
 #include "rotate.h"

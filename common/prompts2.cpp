@@ -22,6 +22,7 @@
 #include "miscres.h"
 #include "mpmath.h"
 #include "mpmath_c.h"
+#include "os.h"
 #include "prompts1.h"
 #include "prompts2.h"
 #include "realdos.h"

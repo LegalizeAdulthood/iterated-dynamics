@@ -14,6 +14,7 @@
 #include "helpdefs.h"
 #include "miscovl.h"
 #include "miscres.h"
+#include "os.h"
 #include "realdos.h"
 #include "rotate.h"
 #include "slideshw.h"

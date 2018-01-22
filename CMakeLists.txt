@@ -58,6 +58,8 @@ if("${CMAKE_CXX_COMPILER_ID}" MATCHES "(GNU|Clang)")
 endif()
 
 add_executable(id ${OS_ID_OPTIONS}
+    headers/os.h
+
     common/3d.cpp headers/3d.h
     common/line3d.cpp headers/line3d.h
     common/plot3d.cpp headers/plot3d.h

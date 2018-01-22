@@ -11,6 +11,7 @@
 #include "fractype.h"
 #include "line3d.h"
 #include "loadmap.h"
+#include "os.h"
 #include "prompts1.h"
 #include "rotate.h"
 

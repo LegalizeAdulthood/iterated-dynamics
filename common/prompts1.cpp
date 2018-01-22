@@ -21,6 +21,7 @@
 #include "lorenz.h"
 #include "lsys_fns.h"
 #include "miscres.h"
+#include "os.h"
 #include "parser.h"
 #include "plot3d.h"
 #include "prompts1.h"

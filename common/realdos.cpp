@@ -10,6 +10,7 @@
 #include "helpdefs.h"
 #include "memory.h"
 #include "miscres.h"
+#include "os.h"
 #include "prompts2.h"
 #include "realdos.h"
 #include "rotate.h"

@@ -35,6 +35,7 @@
 #include "helpdefs.h"
 #include "loadfile.h"
 #include "miscovl.h"
+#include "os.h"
 #include "realdos.h"
 
 #include <float.h>

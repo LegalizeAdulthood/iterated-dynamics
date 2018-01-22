@@ -33,6 +33,7 @@ Additional fractal-specific modules are also invoked from CALCFRAC:
 #include "miscovl.h"
 #include "miscres.h"
 #include "mpmath_c.h"
+#include "os.h"
 #include "newton.h"
 #include "parser.h"
 #include "realdos.h"

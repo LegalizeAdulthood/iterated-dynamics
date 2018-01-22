@@ -22,6 +22,7 @@
 #include "jiim.h"
 #include "lorenz.h"
 #include "miscfrac.h"
+#include "os.h"
 #include "prompts2.h"
 #include "realdos.h"
 #include "zoom.h"

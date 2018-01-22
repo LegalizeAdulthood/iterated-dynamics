@@ -13,6 +13,7 @@
 #include "fracsubr.h"
 #include "framain2.h"
 #include "miscovl.h"
+#include "os.h"
 #include "realdos.h"
 #include "zoom.h"
 

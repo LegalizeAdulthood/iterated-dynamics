@@ -13,6 +13,7 @@
 #include "encoder.h"
 #include "gifview.h"
 #include "helpdefs.h"
+#include "os.h"
 #include "realdos.h"
 #include "rotate.h"
 

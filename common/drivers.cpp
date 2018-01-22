@@ -4,6 +4,7 @@
 #include "externs.h"
 #include "cmplx.h"
 #include "drivers.h"
+#include "os.h"
 #include "realdos.h"
 
 #include <float.h>
