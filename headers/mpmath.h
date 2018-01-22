@@ -82,14 +82,6 @@ extern Arg *Arg1, *Arg2;
 
 extern void lStkSin(), lStkCos(), lStkSinh(), lStkCosh(), lStkLog(), lStkExp(), lStkSqr();
 extern void dStkSin(), dStkCos(), dStkSinh(), dStkCosh(), dStkLog(), dStkExp(), dStkSqr();
-extern void (*ltrig0)();
-extern void (*ltrig1)();
-extern void (*ltrig2)();
-extern void (*ltrig3)();
-extern void (*dtrig0)();
-extern void (*dtrig1)();
-extern void (*dtrig2)();
-extern void (*dtrig3)();
 
 // --------------------------------------------------------------------
 // The following #defines allow the complex transcendental functions

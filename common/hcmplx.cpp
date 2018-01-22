@@ -2,6 +2,7 @@
 #include "port.h"
 #include "prototyp.h"
 
+#include "miscres.h"
 #include "mpmath.h"
 
 #include <float.h>

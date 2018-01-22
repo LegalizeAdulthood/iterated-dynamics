@@ -949,9 +949,6 @@ struct dblcoords
     double x, y;
 };
 
-extern void (*ltrig0)(), (*ltrig1)(), (*ltrig2)(), (*ltrig3)();
-extern void (*dtrig0)(), (*dtrig1)(), (*dtrig2)(), (*dtrig3)();
-
 // for overlay return stack
 #define BIG 100000.0
 

@@ -6,6 +6,19 @@
 
 extern int                   g_num_affine_transforms;
 
+extern void (*ltrig0)();
+extern void (*ltrig1)();
+extern void (*ltrig2)();
+extern void (*ltrig3)();
+extern void (*dtrig0)();
+extern void (*dtrig1)();
+extern void (*dtrig2)();
+extern void (*dtrig3)();
+extern void (*mtrig0)();
+extern void (*mtrig1)();
+extern void (*mtrig2)();
+extern void (*mtrig3)();
+
 extern void restore_active_ovly();
 extern void findpath(char const *filename, char *fullpathname);
 extern void notdiskmsg();
