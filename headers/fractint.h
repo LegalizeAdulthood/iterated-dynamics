@@ -938,7 +938,6 @@ struct WORKLIST     // work list entry for std escape time engines
     int xxbegin;    // start col within window, =0 except on resume
 };
 
-#define MAXCALCWORK 12
 struct coords
 {
     int x, y;

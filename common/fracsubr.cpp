@@ -1764,7 +1764,7 @@ int add_worklist(int xfrom, int xto, int xbegin,
                  int yfrom, int yto, int ybegin,
                  int pass, int sym)
 {
-    if (g_num_work_list >= MAXCALCWORK)
+    if (g_num_work_list >= MAX_CALC_WORK)
     {
         return (-1);
     }

@@ -192,7 +192,7 @@ int g_max_keyboard_check_interval = 0;                   // avoids checking keyb
 std::vector<BYTE> g_resume_data;          // resume info
 bool g_resuming = false;                  // true if resuming after interrupt
 int g_num_work_list = 0;                   // resume worklist for standard engine
-WORKLIST g_work_list[MAXCALCWORK] = { 0 };
+WORKLIST g_work_list[MAX_CALC_WORK] = { 0 };
 int g_xx_start = 0;
 int g_xx_stop = 0;
 int g_yy_start = 0;
@@ -4249,7 +4249,7 @@ static bool xsym_split(int xaxis_row, bool xaxis_between)
         }
         if (i > g_yy_stop) // split into 2 pieces, bottom has the symmetry
         {
-            if (g_num_work_list >= MAXCALCWORK-1)   // no room to split
+            if (g_num_work_list >= MAX_CALC_WORK-1)   // no room to split
             {
                 return true;
             }
@@ -4264,7 +4264,7 @@ static bool xsym_split(int xaxis_row, bool xaxis_between)
         }
         if (i < g_yy_stop) // split into 2 pieces, top has the symmetry
         {
-            if (g_num_work_list >= MAXCALCWORK-1)   // no room to split
+            if (g_num_work_list >= MAX_CALC_WORK-1)   // no room to split
             {
                 return true;
             }
@@ -4302,7 +4302,7 @@ static bool ysym_split(int yaxis_col, bool yaxis_between)
         }
         if (i > g_xx_stop) // split into 2 pieces, right has the symmetry
         {
-            if (g_num_work_list >= MAXCALCWORK-1)   // no room to split
+            if (g_num_work_list >= MAX_CALC_WORK-1)   // no room to split
             {
                 return true;
             }
@@ -4317,7 +4317,7 @@ static bool ysym_split(int yaxis_col, bool yaxis_between)
         }
         if (i < g_xx_stop) // split into 2 pieces, left has the symmetry
         {
-            if (g_num_work_list >= MAXCALCWORK-1)   // no room to split
+            if (g_num_work_list >= MAX_CALC_WORK-1)   // no room to split
             {
                 return true;
             }

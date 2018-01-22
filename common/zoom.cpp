@@ -933,7 +933,7 @@ static void fix_worklist() // fix out of bounds and symmetry related stuff
                 // xaxis symmetry
                 int j = wk->yystop + wk->yystart;
                 if (j > 0
-                        && g_num_work_list < MAXCALCWORK)
+                        && g_num_work_list < MAX_CALC_WORK)
                 {
                     // split the sym part
                     g_work_list[g_num_work_list] = g_work_list[i];
@@ -958,7 +958,7 @@ static void fix_worklist() // fix out of bounds and symmetry related stuff
                 int k = wk->yystart + (wk->yystop - j);
                 if (k < j)
                 {
-                    if (g_num_work_list >= MAXCALCWORK)   // no room to split
+                    if (g_num_work_list >= MAX_CALC_WORK)   // no room to split
                     {
                         restart_window(i);
                     }
@@ -987,7 +987,7 @@ static void fix_worklist() // fix out of bounds and symmetry related stuff
                 // yaxis symmetry
                 int j = wk->xxstop + wk->xxstart;
                 if (j > 0
-                        && g_num_work_list < MAXCALCWORK)
+                        && g_num_work_list < MAX_CALC_WORK)
                 {
                     // split the sym part
                     g_work_list[g_num_work_list] = g_work_list[i];
@@ -1012,7 +1012,7 @@ static void fix_worklist() // fix out of bounds and symmetry related stuff
                 int k = wk->xxstart + (wk->xxstop - j);
                 if (k < j)
                 {
-                    if (g_num_work_list >= MAXCALCWORK)   // no room to split
+                    if (g_num_work_list >= MAX_CALC_WORK)   // no room to split
                     {
                         restart_window(i);
                     }

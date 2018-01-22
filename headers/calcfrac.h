@@ -4,6 +4,8 @@
 
 #include "big.h"
 
+#define MAX_CALC_WORK 12
+
 extern int                   g_and_color;           // AND mask for iteration to get color index
 extern int                   g_atan_colors;
 extern DComplex              g_attractor[];
@@ -71,7 +73,7 @@ extern int                   g_total_passes;
 extern DComplex              g_tmp_z;
 extern bool                  g_use_old_periodicity;
 extern bool                  g_use_old_distance_estimator;
-extern WORKLIST              g_work_list[MAXCALCWORK];
+extern WORKLIST              g_work_list[MAX_CALC_WORK];
 extern int                   g_work_pass;
 extern int                   g_work_symmetry;
 extern int                   g_xx_start;
