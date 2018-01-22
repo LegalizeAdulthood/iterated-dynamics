@@ -1,5 +1,13 @@
 #if !defined(DRIVERS_H)
 #define DRIVERS_H
+
+enum class buzzer_codes
+{
+    COMPLETE = 0,
+    INTERRUPT = 1,
+    PROBLEM = 2
+};
+
 /*------------------------------------------------------------
  * Driver Methods:
  *

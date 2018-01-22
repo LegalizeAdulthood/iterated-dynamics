@@ -35,13 +35,6 @@ enum class batch_modes
     BAILOUT_INTERRUPTED_SAVE
 };
 
-enum class buzzer_codes
-{
-    COMPLETE = 0,
-    INTERRUPT = 1,
-    PROBLEM = 2
-};
-
 // these are used to declare arrays for file names
 #if defined(_WIN32)
 #define FILE_MAX_PATH _MAX_PATH
