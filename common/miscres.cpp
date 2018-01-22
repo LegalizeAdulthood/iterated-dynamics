@@ -21,6 +21,7 @@
 #include "prompts1.h"
 #include "prompts2.h"
 #include "realdos.h"
+#include "soi.h"
 
 #include <ctype.h>
 #include <stdarg.h>

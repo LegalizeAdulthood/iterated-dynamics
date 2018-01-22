@@ -20,18 +20,13 @@
 #include "fractalp.h"
 #include "fractals.h"
 #include "fractype.h"
+#include "soi.h"
 
 #include <algorithm>
 #include <cassert>
 
 #define EVERY 15
 #define BASIN_COLOR 0
-
-extern int g_rhombus_stack[10];
-extern int g_rhombus_depth;
-extern int g_max_rhombus_depth;
-extern int g_soi_min_stack_available;
-extern int g_soi_min_stack; // need this much stack to recurse
 
 namespace
 {

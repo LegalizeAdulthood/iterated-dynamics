@@ -94,10 +94,7 @@ extern int                   g_hi_attenuation;
 extern long                  g_l_init_x;
 extern long                  g_l_init_y;
 
-extern int                   g_max_rhombus_depth;
 extern int                   g_smallest_box_size_shown;
-extern int                   g_soi_min_stack;
-extern int                   g_soi_min_stack_available;
 extern MPC                   g_mpc_one;
 extern int                   g_filename_stack_index;
 extern bool                  g_browse_sub_images;
@@ -118,7 +115,6 @@ extern std::string           g_read_filename;
 extern record_colors_mode    g_record_colors;
 extern int                   g_resave_flag;
 extern int                   g_resume_len;
-extern int                   g_rhombus_stack[];
 extern int                   g_row_count;       // row-counter for decoder and out_line
 extern long                  g_save_base;
 extern DComplex              g_save_c;

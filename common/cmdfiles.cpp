@@ -29,6 +29,7 @@
 #include "prompts2.h"
 #include "realdos.h"
 #include "rotate.h"
+#include "soi.h"
 #include "stereo.h"
 
 #include <ctype.h>
