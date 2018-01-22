@@ -149,6 +149,13 @@ enum cmdarg_flags
     CMDARG_RESET            = 8
 };
 
+enum class slides_mode
+{
+    OFF = 0,
+    PLAY = 1,
+    RECORD = 2
+};
+
 extern bool                  g_ask_video;
 extern float                 g_aspect_drift;
 extern std::string           g_auto_name;

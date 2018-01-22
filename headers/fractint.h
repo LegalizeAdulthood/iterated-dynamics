@@ -63,13 +63,6 @@ enum class main_state
     CONTINUE
 };
 
-enum class slides_mode
-{
-    OFF = 0,
-    PLAY = 1,
-    RECORD = 2
-};
-
 // these are used to declare arrays for file names
 #if defined(_WIN32)
 #define FILE_MAX_PATH _MAX_PATH
