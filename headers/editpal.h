@@ -23,4 +23,9 @@ void Cursor_Hide();
 void Cursor_Show();
 extern void displayc(int, int, int, int, int);
 
+#if defined(XFRACT)
+void Cursor_StartMouseTracking();
+void Cursor_EndMouseTracking();
+#endif
+
 #endif

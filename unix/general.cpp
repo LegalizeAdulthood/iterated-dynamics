@@ -4,8 +4,11 @@
  * This file Copyright 1991 Ken Shirriff.  It may be used according to the
  * fractint license conditions, blah blah blah.
  */
-#include <cstring>
-#include <vector>
+#include "port.h"
+#include "prototyp.h"
+
+#include "helpcom.h"
+#include "loadfile.h"
 
 #include <string.h>
 #ifndef NOBSTRING
@@ -19,9 +22,8 @@
 #include <sys/types.h>
 #include <sys/time.h>
 
-#include "port.h"
-#include "prototyp.h"
-#include "helpcom.h"
+#include <cstring>
+#include <vector>
 
 // ********************** Mouse Support Variables **************************
 
@@ -271,8 +273,7 @@ static void getLong(long *dst, unsigned char **src, int dir);
 static void getFloat(float *dst, unsigned char **src, int dir);
 static void getDouble(double *dst, unsigned char **src, int dir);
 
-void
-decode_fractal_info(FRACTAL_INFO *info, int dir)
+void decode_fractal_info(FRACTAL_INFO *info, int dir)
 {
     std::vector<unsigned char> info_buff;
     unsigned char *buf;
