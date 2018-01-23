@@ -51,6 +51,7 @@ an appropriate setup, per_image, per_pixel, and orbit routines.
 #include "miscres.h"
 #include "mpmath_c.h"
 #include "parser.h"
+#include "realdos.h"
 
 #include <float.h>
 #include <limits.h>
