@@ -230,8 +230,13 @@ static inline double interpolate(
     status = rhombus((CRE1), (CRE2), (CIM1), (CIM2), (X1), (X2), (Y1), (Y2), (ITER)) != 0; \
     assert(status)
 
-static int rhombus(double cre1, double cre2, double cim1, double cim2,
-                   int x1, int x2, int y1, int y2, long iter)
+static int rhombus(
+    double cre1, double cre2, double cim1, double cim2,
+    int x1, int x2, int y1, int y2, long iter);
+
+static int rhombus_aux(
+    double cre1, double cre2, double cim1, double cim2,
+    int x1, int x2, int y1, int y2, long iter)
 {
     // The following variables do not need their values saved
     // used in scanning
@@ -250,7 +255,6 @@ static int rhombus(double cre1, double cre2, double cim1, double cim2,
     double_complex s[9];
 
     bool status = false;
-    g_rhombus_depth++;
     avail = stackavail();
     if (avail < g_soi_min_stack_available)
     {
@@ -264,14 +268,12 @@ static int rhombus(double cre1, double cre2, double cim1, double cim2,
 
     if (driver_key_pressed())
     {
-        status = true;
-        goto rhombus_done;
+        return 1;
     }
     if (iter > g_max_iterations)
     {
         putbox(x1, y1, x2, y2, 0);
-        status = false;
-        goto rhombus_done;
+        return 0;
     }
 
     if ((y2 - y1 <= SCAN) || (avail < g_soi_min_stack))
@@ -294,16 +296,14 @@ scan:
         {
             if (driver_key_pressed())
             {
-                status = true;
-                goto rhombus_done;
+                return 1;
             }
             state.scan_z.re = GET_SCAN_REAL(cre1, state.z.im);
             state.scan_z.im = GET_SCAN_IMAG(cre1, state.z.im);
             savecolor = iteration(cre1, state.z.im, state.scan_z.re, state.scan_z.im, iter);
             if (savecolor < 0)
             {
-                status = true;
-                goto rhombus_done;
+                return 1;
             }
             savex = x1;
             for (x = x1 + INTERLEAVE, state.z.re = cre1 + state.interstep; x < x2;
@@ -315,8 +315,7 @@ scan:
                 color = iteration(state.z.re, state.z.im, state.scan_z.re, state.scan_z.im, iter);
                 if (color < 0)
                 {
-                    status = true;
-                    goto rhombus_done;
+                    return 1;
                 }
                 if (color == savecolor)
                 {
@@ -330,8 +329,7 @@ scan:
                     helpcolor = iteration(state.helpre, state.z.im, state.scan_z.re, state.scan_z.im, iter);
                     if (helpcolor < 0)
                     {
-                        status = true;
-                        goto rhombus_done;
+                        return 1;
                     }
                     if (helpcolor == savecolor)
                     {
@@ -360,8 +358,7 @@ scan:
                 helpcolor = iteration(state.helpre, state.z.im, state.scan_z.re, state.scan_z.im, iter);
                 if (helpcolor < 0)
                 {
-                    status = true;
-                    goto rhombus_done;
+                    return 1;
                 }
                 if (helpcolor == savecolor)
                 {
@@ -380,8 +377,8 @@ scan:
                 (*g_plot)(savex, y, (int)(savecolor&255));
             }
         }
-        status = false;
-        goto rhombus_done;
+
+        return 0;
     }
 
     std::transform(std::begin(zi), std::end(zi), std::begin(state.rq), zsqr);
@@ -540,8 +537,7 @@ scan:
         if (iter > g_max_iterations)
         {
             putbox(x1, y1, x2, y2, 0);
-            status = false;
-            goto rhombus_done;
+            return 0;
         }
 
         /* now for all test points, check whether they exceed the
@@ -719,9 +715,18 @@ scan:
             re21, im21,
             re94, im94,
             iter);
-rhombus_done:
-    g_rhombus_depth--;
+
     return status ? 1 : 0;
+}
+
+static int rhombus(
+    double cre1, double cre2, double cim1, double cim2,
+    int x1, int x2, int y1, int y2, long iter)
+{
+    ++g_rhombus_depth;
+    const int result = rhombus_aux(cre1, cre2, cim1, cim2, x1, x2, y1, y2, iter);
+    --g_rhombus_depth;
+    return result;
 }
 
 void soi()
