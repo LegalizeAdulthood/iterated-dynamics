@@ -21,6 +21,8 @@
 #include "parser.h"
 #include "prompts1.h"
 
+#include <cstring>
+
 // functions defined elsewhere needed for fractalspecific
 // moved to prototyp.h
 
@@ -2371,7 +2373,7 @@ bool typehasparm(fractal_type type, int parm, char *buf)
 
     if (ret && buf != nullptr)
     {
-        strcpy(buf, ret);
+        std::strcpy(buf, ret);
     }
     return ret != nullptr;
 }
