@@ -95,7 +95,7 @@ NewtonSetup()           // Newton/NewtBasin Routines
         g_fractal_type = fractal_type::NEWTBASIN;
     }
 
-    g_cur_fractal_specific = &fractalspecific[static_cast<int>(g_fractal_type)];
+    g_cur_fractal_specific = &g_fractal_specific[static_cast<int>(g_fractal_type)];
 #endif
     // set up table of roots of 1 along unit circle
     g_degree = (int)g_param_z1.x;
