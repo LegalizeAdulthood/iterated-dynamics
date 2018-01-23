@@ -5,6 +5,8 @@
 #include "cmplx.h"
 #endif
 
+#include <vector>
+
 #if !defined(XFRACT)
 struct MP
 {

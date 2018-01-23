@@ -4,6 +4,8 @@
 
 #include "big.h"
 
+#include <vector>
+
 #define MAX_CALC_WORK 12
 
 struct WORKLIST     // work list entry for std escape time engines

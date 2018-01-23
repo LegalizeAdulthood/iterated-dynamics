@@ -2,6 +2,8 @@
 #if !defined(LINE3D_H)
 #define LINE3D_H
 
+#include <string>
+
 enum class raytrace_formats
 {
     none = 0,

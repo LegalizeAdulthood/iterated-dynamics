@@ -2,6 +2,8 @@
 #if !defined(REALDOS_H)
 #define REALDOS_H
 
+#include <string>
+
 enum input_field_flags
 {
     INPUTFIELD_NUMERIC  = 1,

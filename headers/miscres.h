@@ -4,6 +4,8 @@
 
 #include <stdio.h>
 
+#include <string>
+
 extern int                   g_num_affine_transforms;
 
 extern void (*ltrig0)();

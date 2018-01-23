@@ -1,5 +1,6 @@
-#ifndef EXTERNS_H
-#define EXTERNS_H
+#if !defined(ID_DATA_H)
+#define ID_DATA_H
+
 #include <string>
 #include <vector>
 
