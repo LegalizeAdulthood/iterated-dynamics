@@ -1,9 +1,7 @@
 #ifndef MPMATH_H
 #define MPMATH_H
 
-#ifndef CMPLX_H_DEFINED
 #include "cmplx.h"
-#endif
 
 #include <vector>
 
@@ -158,8 +156,16 @@ extern void dStkSin(), dStkCos(), dStkSinh(), dStkCosh(), dStkLog(), dStkExp(), 
    (out).y = (g_old_z.x+g_old_z.x) * g_old_z.y;\
    (out).x = g_temp_sqr_x - g_temp_sqr_y
 #define CMPLXpwr(arg1, arg2, out)   (out)= ComplexPower((arg1), (arg2))
-#define CMPLXmult1(arg1, arg2, out)    Arg2->d = (arg1); Arg1->d = (arg2);\
-         dStkMul(); Arg1++; Arg2++; (out) = Arg2->d
+inline void CMPLXmult1(const DComplex &arg1, const DComplex &arg2, DComplex &out)
+{
+    extern void dStkMul();
+    Arg2->d = arg1;
+    Arg1->d = arg2;
+    dStkMul();
+    Arg1++;
+    Arg2++;
+    out = Arg2->d;
+}
 inline void CMPLXmult(const DComplex &arg1, const DComplex &arg2, DComplex &out)
 {
     DComplex tmp;
