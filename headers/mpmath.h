@@ -193,6 +193,10 @@ inline void CMPLXrecip(const DComplex &arg, DComplex &out)
         out.y = -arg.y / denom;
     }
 }
-#define CMPLXneg(arg, out)  (out).x = -(arg).x; (out).y = -(arg).y
+inline void CMPLXneg(const DComplex &arg, DComplex &out)
+{
+    out.x = -arg.x;
+    out.y = -arg.y;
+}
 
 #endif
