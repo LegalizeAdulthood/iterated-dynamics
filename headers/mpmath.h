@@ -129,8 +129,16 @@ inline void LCMPLXsqr(const LComplex &arg, LComplex &out)
    (out).x = g_l_temp_sqr_x - g_l_temp_sqr_y
 #define LCMPLXpwr(arg1, arg2, out)    Arg2->l = (arg1); Arg1->l = (arg2);\
          lStkPwr(); Arg1++; Arg2++; (out) = Arg2->l
-#define LCMPLXmult(arg1, arg2, out)    Arg2->l = (arg1); Arg1->l = (arg2);\
-         lStkMul(); Arg1++; Arg2++; (out) = Arg2->l
+inline void LCMPLXmult(const LComplex &arg1, const LComplex &arg2, LComplex &out)
+{
+    extern void lStkMul();
+    Arg1->l = arg1;
+    Arg2->l = arg2;
+    lStkMul();
+    Arg1++;
+    Arg2++;
+    out = Arg2->l;
+}
 inline void LCMPLXadd(const LComplex &arg1, const LComplex &arg2, LComplex &out)
 {
     out = arg1 + arg2;
