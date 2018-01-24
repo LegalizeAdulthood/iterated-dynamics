@@ -52,7 +52,7 @@ enum MATH_TYPE { D_MATH, M_MATH, L_MATH };
 enum MATH_TYPE { D_MATH};
 #endif
 
-extern enum MATH_TYPE MathType;
+extern MATH_TYPE MathType;
 
 #define fDiv(x, y, z) ((*(long*)&z) = RegDivFloat(*(long*)&x, *(long*)&y))
 #define fMul16(x, y, z) ((*(long*)&z) = r16Mul(*(long*)&x, *(long*)&y))
@@ -68,9 +68,9 @@ extern enum MATH_TYPE MathType;
 // to 2D
 union Arg
 {
-    DComplex     d;
+    DComplex d;
     MPC m;
-    LComplex    l;
+    LComplex l;
 };
 
 struct ConstArg
@@ -80,10 +80,23 @@ struct ConstArg
     Arg a;
 };
 
-extern Arg *Arg1, *Arg2;
+extern Arg *Arg1;
+extern Arg *Arg2;
 
-extern void lStkSin(), lStkCos(), lStkSinh(), lStkCosh(), lStkLog(), lStkExp(), lStkSqr();
-extern void dStkSin(), dStkCos(), dStkSinh(), dStkCosh(), dStkLog(), dStkExp(), dStkSqr();
+extern void lStkSin();
+extern void lStkCos();
+extern void lStkSinh();
+extern void lStkCosh();
+extern void lStkLog();
+extern void lStkExp();
+extern void lStkSqr();
+extern void dStkSin();
+extern void dStkCos();
+extern void dStkSinh();
+extern void dStkCosh();
+extern void dStkLog();
+extern void dStkExp();
+extern void dStkSqr();
 
 // --------------------------------------------------------------------
 // The following #defines allow the complex transcendental functions
