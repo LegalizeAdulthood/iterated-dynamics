@@ -160,14 +160,13 @@ extern void dStkSin(), dStkCos(), dStkSinh(), dStkCosh(), dStkLog(), dStkExp(), 
 #define CMPLXpwr(arg1, arg2, out)   (out)= ComplexPower((arg1), (arg2))
 #define CMPLXmult1(arg1, arg2, out)    Arg2->d = (arg1); Arg1->d = (arg2);\
          dStkMul(); Arg1++; Arg2++; (out) = Arg2->d
-#define CMPLXmult(arg1, arg2, out)  \
-        {\
-           DComplex TmP;\
-           TmP.x = (arg1).x*(arg2).x - (arg1).y*(arg2).y;\
-           TmP.y = (arg1).x*(arg2).y + (arg1).y*(arg2).x;\
-           (out) = TmP;\
-         }
-
+inline void CMPLXmult(const DComplex &arg1, const DComplex &arg2, DComplex &out)
+{
+    DComplex tmp;
+    tmp.x = arg1.x*arg2.x - arg1.y*arg2.y;
+    tmp.y = arg1.x*arg2.y + arg1.y*arg2.x;
+    out = tmp;
+}
 inline void CMPLXadd(const DComplex &arg1, const DComplex &arg2, DComplex &out)
 {
     out = arg1 + arg2;
