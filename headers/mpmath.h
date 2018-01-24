@@ -90,7 +90,6 @@ extern void lStkCosh();
 extern void lStkLog();
 extern void lStkExp();
 extern void lStkSqr();
-extern void dStkLog();
 extern void dStkExp();
 extern void dStkSqr();
 
@@ -178,7 +177,13 @@ inline void CMPLXcosh(const DComplex &arg, DComplex &out)
     dStkCosh();
     out = Arg1->d;
 }
-#define CMPLXlog(arg, out)    Arg1->d = (arg); dStkLog();  (out) = Arg1->d
+inline void CMPLXlog(const DComplex &arg, DComplex &out)
+{
+    Arg1->d = arg;
+    extern void dStkLog();
+    dStkLog();
+    out = Arg1->d;
+}
 #define CMPLXexp(arg, out)    FPUcplxexp(&(arg), &(out))
 inline void CMPLXsqr(const DComplex &arg, DComplex &out)
 {
