@@ -4,6 +4,7 @@
 #include "calcfrac.h"
 #include "cmplx.h"
 #include "fractals.h"
+#include "id_data.h"
 
 #include <vector>
 
@@ -137,17 +138,19 @@ inline void LCMPLXsqr(const LComplex &arg, LComplex &out)
 #define LCMPLXtimesreal(arg, real, out)   \
     (out).x = multiply((arg).x, (real), g_bit_shift);\
     (out).y = multiply((arg).y, (real), g_bit_shift)
-#define LCMPLXrecip(arg, out)                            \
-    {                                                   \
-        long denom = lsqr((arg).x) + lsqr((arg).y);     \
-        if (denom == 0L)                                  \
-            g_overflow = true;                            \
-        else                                            \
-        {                                               \
-            (out).x = divide((arg).x, denom, g_bit_shift);   \
-            (out).y = -divide((arg).y, denom, g_bit_shift);  \
-        }                                               \
+inline void LCMPLXrecip(const LComplex &arg, LComplex &out)
+{
+    const long denom = lsqr(arg.x) + lsqr(arg.y);
+    if (denom == 0L)
+    {
+        g_overflow = true;
     }
+    else
+    {
+        out.x = divide(arg.x, denom, g_bit_shift);
+        out.y = -divide(arg.y, denom, g_bit_shift);
+    }
+}
 #endif /* XFRACT */
 inline void CMPLXsin(const DComplex &arg, DComplex &out)
 {
