@@ -180,22 +180,19 @@ inline void CMPLXtimesreal(const DComplex &arg, double real, DComplex &out)
 {
     out = arg*real;
 }
-
-#define CMPLXrecip(arg, out)                    \
-    {                                           \
-        double denom;                           \
-        denom = sqr((arg).x) + sqr((arg).y);    \
-        if(denom == 0.0)                        \
-        {                                       \
-            (out).x = 1.0e10;                   \
-            (out).y = 1.0e10;                   \
-        }                                       \
-        else                                    \
-        {                                       \
-            (out).x =  (arg).x/denom;           \
-            (out).y = -(arg).y/denom;           \
-        }                                       \
+inline void CMPLXrecip(const DComplex &arg, DComplex &out)
+{
+    const double denom = sqr(arg.x) + sqr(arg.y);
+    if (denom == 0.0)
+    {
+        out = {1.0e10, 1.0e10};
     }
+    else
+    {
+        out.x = arg.x / denom;
+        out.y = -arg.y / denom;
+    }
+}
 #define CMPLXneg(arg, out)  (out).x = -(arg).x; (out).y = -(arg).y
 
 #endif
