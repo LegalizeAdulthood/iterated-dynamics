@@ -1809,7 +1809,7 @@ void lStkLog()
 
 void (*StkLog)() = dStkLog;
 
-void FPUcplxexp(DComplex *x, DComplex *z)
+void FPUcplxexp(const DComplex *x, DComplex *z)
 {
     double pow, y;
     y = x->y;

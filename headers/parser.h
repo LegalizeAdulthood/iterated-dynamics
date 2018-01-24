@@ -160,7 +160,7 @@ extern void lStkAND();
 extern void dStkLog();
 extern void mStkLog();
 extern void lStkLog();
-extern void FPUcplxexp(DComplex *, DComplex *);
+extern void FPUcplxexp(const DComplex*, DComplex *);
 extern void dStkExp();
 extern void mStkExp();
 extern void lStkExp();
