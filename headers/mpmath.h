@@ -84,7 +84,6 @@ struct ConstArg
 extern Arg *Arg1;
 extern Arg *Arg2;
 
-extern void lStkSin();
 extern void lStkCos();
 extern void lStkSinh();
 extern void lStkCosh();
@@ -113,7 +112,13 @@ extern void dStkSqr();
 #define  CMPLXtrig2(arg, out) Arg1->d = (arg); dtrig2(); (out) = Arg1->d
 #define  CMPLXtrig3(arg, out) Arg1->d = (arg); dtrig3(); (out) = Arg1->d
 #if !defined(XFRACT)
-#define LCMPLXsin(arg, out)   Arg1->l = (arg); lStkSin();  (out) = Arg1->l
+inline void LCMPLXsin(const LComplex &arg, LComplex &out)
+{
+    Arg1->l = arg;
+    extern void lStkSin();
+    lStkSin();
+    (out) = Arg1->l;
+}
 #define LCMPLXcos(arg, out)   Arg1->l = (arg); lStkCos();  (out) = Arg1->l
 #define LCMPLXsinh(arg, out)  Arg1->l = (arg); lStkSinh(); (out) = Arg1->l
 #define LCMPLXcosh(arg, out)  Arg1->l = (arg); lStkCosh(); (out) = Arg1->l
