@@ -77,7 +77,7 @@ extern int g_color_cycle_range_hi;
 
 typedef unsigned long XPixel;
 
-inline int ctl(int code)
+constexpr inline int ctl(int code)
 {
     return code & 0x1f;
 }
