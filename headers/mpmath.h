@@ -133,8 +133,10 @@ inline void LCMPLXsqr(const LComplex &arg, LComplex &out)
          lStkMul(); Arg1++; Arg2++; (out) = Arg2->l
 #define LCMPLXadd(arg1, arg2, out)    \
     (out).x = (arg1).x + (arg2).x; (out).y = (arg1).y + (arg2).y
-#define LCMPLXsub(arg1, arg2, out)    \
-    (out).x = (arg1).x - (arg2).x; (out).y = (arg1).y - (arg2).y
+inline void LCMPLXsub(const LComplex &arg1, const LComplex &arg2, LComplex &out)
+{
+    out = arg1 - arg2;
+}
 inline void LCMPLXtimesreal(const LComplex &arg, long real, LComplex &out)
 {
     out.x = multiply(arg.x, real, g_bit_shift);
