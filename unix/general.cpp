@@ -754,7 +754,7 @@ decode_evolver_info(EVOLUTION_INFO *info, int dir)
     getInt(&info->syoffs, &bufPtr, dir);
     getInt(&info->xdots, &bufPtr, dir);
     getInt(&info->ydots, &bufPtr, dir);
-    for (int i = 0; i < NUMGENES; i++)
+    for (int i = 0; i < NUM_GENES; i++)
     {
         getInt(&info->mutate[i], &bufPtr, dir);
     }
