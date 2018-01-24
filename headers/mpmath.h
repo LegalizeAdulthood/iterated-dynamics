@@ -146,12 +146,11 @@ extern void dStkSin(), dStkCos(), dStkSinh(), dStkCosh(), dStkLog(), dStkExp(), 
 #define CMPLXcosh(arg, out)   Arg1->d = (arg); dStkCosh(); (out) = Arg1->d
 #define CMPLXlog(arg, out)    Arg1->d = (arg); dStkLog();  (out) = Arg1->d
 #define CMPLXexp(arg, out)    FPUcplxexp(&(arg), &(out))
-/*
-#define CMPLXsqr(arg, out)    Arg1->d = (arg); dStkSqr();  (out) = Arg1->d
-*/
-#define CMPLXsqr(arg, out)    \
-   (out).x = sqr((arg).x) - sqr((arg).y);\
-   (out).y = ((arg).x+(arg).x) * (arg).y
+inline void CMPLXsqr(const DComplex &arg, DComplex &out)
+{
+   out.x = sqr(arg.x) - sqr(arg.y);
+   out.y = (arg.x + arg.x) * arg.y;
+}
 #define CMPLXsqr_old(out)       \
    (out).y = (g_old_z.x+g_old_z.x) * g_old_z.y;\
    (out).x = g_temp_sqr_x - g_temp_sqr_y
