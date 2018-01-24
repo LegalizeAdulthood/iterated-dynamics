@@ -143,7 +143,12 @@ inline void LCMPLXlog(const LComplex &arg, LComplex &out)
     lStkLog();
     out = Arg1->l;
 }
-#define LCMPLXexp(arg, out)   Arg1->l = (arg); lStkExp();  (out) = Arg1->l
+inline void LCMPLXexp(const LComplex &arg, LComplex &out)
+{
+    Arg1->l = arg;
+    lStkExp();
+    out = Arg1->l;
+}
 inline void LCMPLXsqr(const LComplex &arg, LComplex &out)
 {
    out.x = lsqr(arg.x) - lsqr(arg.y);
