@@ -19,6 +19,7 @@
 #include "calcmand.h"
 #include "calmanfp.h"
 #include "cmdfiles.h"
+#include "cmplx.h"
 #include "diskvid.h"
 #include "drivers.h"
 #include "fpu087.h"
@@ -108,7 +109,7 @@ static char dif_lb[] =
 // added for testing autologmap()
 static long autologmap();
 
-static DComplex saved = { 0.0 };
+static DComplex saved{};
 static double rqlim_save = 0.0;
 static int (*calctypetmp)() = nullptr;
 static unsigned long lm = 0;                   // magnitude limit (CALCMAND)

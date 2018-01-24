@@ -2,10 +2,10 @@
 #if !defined(FRACTALS_H)
 #define FRACTALS_H
 
+#include "cmplx.h"
+
 #include <vector>
 
-struct DComplex;
-struct LComplex;
 struct MP;
 struct MPC;
 

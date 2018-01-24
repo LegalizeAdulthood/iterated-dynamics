@@ -1,26 +1,33 @@
 // various complex number defs
-#ifndef CMPLX_H_DEFINED
-#define CMPLX_H_DEFINED
-struct DHyperComplex
+#if !defined(CMPLX_H)
+#define CMPLX_H
+
+namespace id
 {
-    double x, y;
-    double z, t;
-};
-struct LHyperComplex
+
+template <typename T>
+struct hyper_complex
 {
-    long x, y;
-    long z, t;
+    T x;
+    T y;
+    T z;
+    T t;
 };
-struct DComplex
+
+template <typename T>
+struct complex
 {
-    double x, y;
+    T x;
+    T y;
 };
-struct LDComplex
-{
-    LDBL x, y;
-};
-struct LComplex
-{
-    long x, y;
-};
+
+}
+
+using DHyperComplex = id::hyper_complex<double>;
+using LHyperComplex = id::hyper_complex<long>;
+
+using DComplex = id::complex<double>;
+using LDComplex = id::complex<LDBL>;
+using LComplex = id::complex<long>;
+
 #endif
