@@ -184,7 +184,11 @@ inline void CMPLXlog(const DComplex &arg, DComplex &out)
     dStkLog();
     out = Arg1->d;
 }
-#define CMPLXexp(arg, out)    FPUcplxexp(&(arg), &(out))
+inline void CMPLXexp(const DComplex &arg, DComplex &out)
+{
+    extern void FPUcplxexp(const DComplex *, DComplex *);
+    FPUcplxexp(&(arg), &(out));
+}
 inline void CMPLXsqr(const DComplex &arg, DComplex &out)
 {
    out.x = sqr(arg.x) - sqr(arg.y);
