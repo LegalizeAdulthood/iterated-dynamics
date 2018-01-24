@@ -1,9 +1,18 @@
-#include <cstring>
-#include <string.h>
-
 #include "port.h"
 #include "prototyp.h"
+
+#include "calcfrac.h"
+#include "cmdfiles.h"
 #include "drivers.h"
+#include "id_data.h"
+#include "miscovl.h"
+#include "rotate.h"
+#include "zoom.h"
+
+#include <string.h>
+
+#include <cstring>
+
 /*
  * This file contains Unix versions of the routines in video.asm
  * Copyright 1992 Ken Shirriff
