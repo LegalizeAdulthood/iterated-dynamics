@@ -19,7 +19,9 @@
 #include "loadfile.h"
 #include "lorenz.h"
 #include "miscres.h"
+#if defined(XFRACT)
 #include "os.h"
+#endif
 #include "parser.h"
 #include "plot3d.h"
 #include "prompts2.h"

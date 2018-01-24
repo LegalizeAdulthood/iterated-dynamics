@@ -12,10 +12,14 @@
  * Some of the zoombox code is from Bill Broadley.
  * David Sanderson straightened out a bunch of include file problems.
  */
-#include <cstring>
+#include "port.h"
+#include "prototyp.h"
+
+#include "drivers.h"
+#include "helpdefs.h"
+#include "prompts2.h"
 
 #include <assert.h>
-//#include <curses.h>
 #include <fcntl.h>
 #include <signal.h>
 #include <stdio.h>
@@ -40,10 +44,7 @@
 #include <sys/file.h>
 #endif
 
-#include "helpdefs.h"
-#include "port.h"
-#include "prototyp.h"
-#include "drivers.h"
+#include <cstring>
 
 #ifdef LINUX
 #ifndef FNDELAY

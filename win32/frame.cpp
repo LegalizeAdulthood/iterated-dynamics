@@ -1,16 +1,15 @@
-#include <float.h>
-
-#define WIN32_LEAN_AND_MEAN
-#define STRICT
-#include <windows.h>
-#include <windowsx.h>
-
 #include "port.h"
 #include "prototyp.h"
 
 #include "drivers.h"
 #include "fractint.h"
 #include "prompts2.h"
+
+#include <float.h>
+#define WIN32_LEAN_AND_MEAN
+#define STRICT
+#include <windows.h>
+#include <windowsx.h>
 
 #include "wintext.h"
 #include "frame.h"
