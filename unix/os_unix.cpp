@@ -1,15 +1,17 @@
-#include <cassert>
-#include <string>
+#include "port.h"
+#include "prototyp.h"
+
+#include "cmplx.h"
+#include "drivers.h"
+#include "fractint.h"
+#include "mpmath.h"
+#include "prompts2.h"
 
 #include <string.h>
 #include <sys/statvfs.h>
 
-#include "port.h"
-#include "cmplx.h"
-#include "fractint.h"
-#include "mpmath.h"
-#include "prototyp.h"
-#include "drivers.h"
+#include <cassert>
+#include <string>
 
 // Global variables (yuck!)
 int g_hi_attenuation = 0;
@@ -24,7 +26,7 @@ long g_save_ticks = 0;             // save after this many ticks
  *  |------INT 10H------|Dot-|--Resolution---|
  *  |key|--AX---BX---CX---DX|Mode|--X-|--Y-|Color|
  */
-VIDEOINFO g_video_table[MAXVIDEOMODES] = { 0 };
+VIDEOINFO g_video_table[MAX_VIDEO_MODES]{};
 
 // Global variables that should be phased out (old video mode stuff)
 int g_video_vram = 0;
