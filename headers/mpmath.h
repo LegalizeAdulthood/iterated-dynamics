@@ -84,18 +84,12 @@ struct ConstArg
 extern Arg *Arg1;
 extern Arg *Arg2;
 
-extern void lStkExp();
-extern void lStkSqr();
-extern void dStkExp();
-extern void dStkSqr();
-
 // --------------------------------------------------------------------
 // The following #defines allow the complex transcendental functions
 // in parser.c to be used here thus avoiding duplicated code.
 // --------------------------------------------------------------------
 #if !defined(XFRACT)
 #define CMPLXmod(z)       (sqr((z).x)+sqr((z).y))
-#define CMPLXconj(z)    ((z).y =  -((z).y))
 #define LCMPLXmod(z)       (lsqr((z).x)+lsqr((z).y))
 #define LCMPLXconj(z)   ((z).y =  -((z).y))
 #define LCMPLXtrig0(arg, out) Arg1->l = (arg); ltrig0(); (out) = Arg1->l
@@ -146,6 +140,7 @@ inline void LCMPLXlog(const LComplex &arg, LComplex &out)
 inline void LCMPLXexp(const LComplex &arg, LComplex &out)
 {
     Arg1->l = arg;
+    extern void lStkExp();
     lStkExp();
     out = Arg1->l;
 }
