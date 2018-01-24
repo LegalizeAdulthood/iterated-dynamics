@@ -90,7 +90,6 @@ extern void lStkCosh();
 extern void lStkLog();
 extern void lStkExp();
 extern void lStkSqr();
-extern void dStkSin();
 extern void dStkCos();
 extern void dStkSinh();
 extern void dStkCosh();
@@ -154,7 +153,13 @@ inline void LCMPLXsqr(const LComplex &arg, LComplex &out)
         }                                               \
     }
 #endif /* XFRACT */
-#define CMPLXsin(arg, out)    Arg1->d = (arg); dStkSin();  (out) = Arg1->d
+inline void CMPLXsin(const DComplex &arg, DComplex &out)
+{
+    Arg1->d = arg;
+    extern void dStkSin();
+    dStkSin();
+    out = Arg1->d;
+}
 #define CMPLXcos(arg, out)    Arg1->d = (arg); dStkCos();  (out) = Arg1->d
 #define CMPLXsinh(arg, out)   Arg1->d = (arg); dStkSinh(); (out) = Arg1->d
 #define CMPLXcosh(arg, out)   Arg1->d = (arg); dStkCosh(); (out) = Arg1->d
