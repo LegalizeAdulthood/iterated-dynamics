@@ -1,7 +1,9 @@
 #ifndef MPMATH_H
 #define MPMATH_H
 
+#include "calcfrac.h"
 #include "cmplx.h"
+#include "fractals.h"
 
 #include <vector>
 
@@ -108,12 +110,11 @@ extern void dStkSin(), dStkCos(), dStkSinh(), dStkCosh(), dStkLog(), dStkExp(), 
 #define LCMPLXcosh(arg, out)  Arg1->l = (arg); lStkCosh(); (out) = Arg1->l
 #define LCMPLXlog(arg, out)   Arg1->l = (arg); lStkLog();  (out) = Arg1->l
 #define LCMPLXexp(arg, out)   Arg1->l = (arg); lStkExp();  (out) = Arg1->l
-/*
-#define LCMPLXsqr(arg, out)   Arg1->l = (arg); lStkSqr();  (out) = Arg1->l
-*/
-#define LCMPLXsqr(arg, out)   \
-   (out).x = lsqr((arg).x) - lsqr((arg).y);\
-   (out).y = multiply((arg).x, (arg).y, g_bit_shift_less_1)
+inline void LCMPLXsqr(const LComplex &arg, LComplex &out)
+{
+   out.x = lsqr(arg.x) - lsqr(arg.y);
+   out.y = multiply(arg.x, arg.y, g_bit_shift_less_1);
+}
 #define LCMPLXsqr_old(out)       \
    (out).y = multiply(g_l_old_z.x, g_l_old_z.y, g_bit_shift_less_1);\
    (out).x = g_l_temp_sqr_x - g_l_temp_sqr_y
