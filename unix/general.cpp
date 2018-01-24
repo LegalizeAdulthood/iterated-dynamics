@@ -7,8 +7,13 @@
 #include "port.h"
 #include "prototyp.h"
 
+#include "cmdfiles.h"
+#include "drivers.h"
 #include "helpcom.h"
+#include "id_data.h"
 #include "loadfile.h"
+#include "miscres.h"
+#include "slideshw.h"
 
 #include <string.h>
 #ifndef NOBSTRING
