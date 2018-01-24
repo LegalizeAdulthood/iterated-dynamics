@@ -2,6 +2,8 @@
 #if !defined(SLIDESHW_H)
 #define SLIDESHW_H
 
+#include "cmdfiles.h"
+
 extern bool                  g_busy;
 
 extern int slideshw();
