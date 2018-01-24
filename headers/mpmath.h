@@ -89,7 +89,10 @@ extern Arg *Arg2;
 // in parser.c to be used here thus avoiding duplicated code.
 // --------------------------------------------------------------------
 #if !defined(XFRACT)
-#define CMPLXmod(z)       (sqr((z).x)+sqr((z).y))
+inline double CMPLXmod(const DComplex &z)
+{
+    return sqr(z.x) + sqr(z.y);
+}
 #define LCMPLXmod(z)       (lsqr((z).x)+lsqr((z).y))
 #define LCMPLXconj(z)   ((z).y =  -((z).y))
 #define LCMPLXtrig0(arg, out) Arg1->l = (arg); ltrig0(); (out) = Arg1->l
