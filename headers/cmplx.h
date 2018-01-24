@@ -33,6 +33,13 @@ struct complex
         y -= rhs.y;
         return *this;
     }
+
+    complex &operator*=(T rhs)
+    {
+        x *= rhs;
+        y *= rhs;
+        return *this;
+    }
 };
 
 template <typename T>
@@ -48,6 +55,22 @@ complex<T> operator-(const complex<T> &lhs, const complex<T> &rhs)
 {
     complex<T> result{lhs};
     result -= rhs;
+    return result;
+}
+
+template <typename T>
+complex<T> operator*(const complex<T> &lhs, double rhs)
+{
+    complex<T> result{lhs};
+    result *= rhs;
+    return result;
+}
+
+template <typename T>
+complex<T> operator*(double lhs, const complex<T> &rhs)
+{
+    complex<T> result{rhs};
+    result *= lhs;
     return result;
 }
 

@@ -167,6 +167,7 @@ extern void dStkSin(), dStkCos(), dStkSinh(), dStkCosh(), dStkLog(), dStkExp(), 
            TmP.y = (arg1).x*(arg2).y + (arg1).y*(arg2).x;\
            (out) = TmP;\
          }
+
 inline void CMPLXadd(const DComplex &arg1, const DComplex &arg2, DComplex &out)
 {
     out = arg1 + arg2;
@@ -175,9 +176,11 @@ inline void CMPLXsub(const DComplex &arg1, const DComplex &arg2, DComplex &out)
 {
     out = arg1 - arg2;
 }
-#define CMPLXtimesreal(arg, real, out)   \
-    (out).x = (arg).x*(real);\
-    (out).y = (arg).y*(real)
+inline void CMPLXtimesreal(const DComplex &arg, double real, DComplex &out)
+{
+    out = arg*real;
+}
+
 #define CMPLXrecip(arg, out)                    \
     {                                           \
         double denom;                           \
