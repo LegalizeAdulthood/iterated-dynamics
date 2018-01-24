@@ -84,7 +84,6 @@ struct ConstArg
 extern Arg *Arg1;
 extern Arg *Arg2;
 
-extern void lStkCosh();
 extern void lStkLog();
 extern void lStkExp();
 extern void lStkSqr();
@@ -131,7 +130,13 @@ inline void LCMPLXsinh(const LComplex &arg, LComplex &out)
     lStkSinh();
     out = Arg1->l;
 }
-#define LCMPLXcosh(arg, out)  Arg1->l = (arg); lStkCosh(); (out) = Arg1->l
+inline void LCMPLXcosh(const LComplex &arg, LComplex &out)
+{
+    Arg1->l = arg;
+    extern void lStkCosh();
+    lStkCosh();
+    out = Arg1->l;
+}
 #define LCMPLXlog(arg, out)   Arg1->l = (arg); lStkLog();  (out) = Arg1->l
 #define LCMPLXexp(arg, out)   Arg1->l = (arg); lStkExp();  (out) = Arg1->l
 inline void LCMPLXsqr(const LComplex &arg, LComplex &out)
