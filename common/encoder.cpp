@@ -1,6 +1,6 @@
-/*
-        encoder.c - GIF Encoder and associated routines
-*/
+//
+//      encoder.c - GIF Encoder and associated routines
+//
 #include "port.h"
 #include "prototyp.h"
 
@@ -45,28 +45,27 @@ static int put_extend_blk(int block_id, int block_len, char const *block_data);
 static int store_item_name(char const *name);
 static void setup_save_info(FRACTAL_INFO *save_info);
 
-/*
-                        Save-To-Disk Routines (GIF)
-
-The following routines perform the GIF encoding when the 's' key is pressed.
-
-The compression logic in this file has been replaced by the classic
-UNIX compress code. We have extensively modified the sources to fit
-Fractint's needs, but have left the original credits where they
-appear. Thanks to the original authors for making available these
-classic and reliable sources. Of course, they are not responsible for
-all the changes we have made to integrate their sources into Fractint.
-
-MEMORY ALLOCATION
-
-There are two large arrays:
-
-   long htab[HSIZE]              (5003*4 = 20012 bytes)
-   unsigned short codetab[HSIZE] (5003*2 = 10006 bytes)
-
-At the moment these arrays reuse extraseg and strlocn, respectively.
-
-*/
+//                        Save-To-Disk Routines (GIF)
+//
+// The following routines perform the GIF encoding when the 's' key is pressed.
+//
+// The compression logic in this file has been replaced by the classic
+// UNIX compress code. We have extensively modified the sources to fit
+// Fractint's needs, but have left the original credits where they
+// appear. Thanks to the original authors for making available these
+// classic and reliable sources. Of course, they are not responsible for
+// all the changes we have made to integrate their sources into Fractint.
+//
+// MEMORY ALLOCATION
+//
+// There are two large arrays:
+//
+//    long htab[HSIZE]              (5003*4 = 20012 bytes)
+//    unsigned short codetab[HSIZE] (5003*2 = 10006 bytes)
+//
+// At the moment these arrays reuse extraseg and strlocn, respectively.
+//
+//
 
 static int numsaves = 0;        // For adjusting 'save-to-disk' filenames
 static FILE *g_outfile;
@@ -395,10 +394,10 @@ bool encoder()
     rowlimit = g_logical_screen_y_dots;
     if (save16bit)
     {
-        /* pot16bit info is stored as: file:    double width rows, right side
-         * of row is low 8 bits diskvid: ydots rows of colors followed by ydots
-         * rows of low 8 bits decoder: returns (row of color info then row of
-         * low 8 bits) * ydots */
+        // pot16bit info is stored as: file:    double width rows, right side
+        // of row is low 8 bits diskvid: ydots rows of colors followed by ydots
+        // rows of low 8 bits decoder: returns (row of color info then row of
+        // low 8 bits) * ydots
         rowlimit <<= 1;
         width <<= 1;
     }
@@ -622,8 +621,8 @@ bool encoder()
         if (bf_math != bf_math_type::NONE)
         {
             save_info.tot_extend_len += extend_blk_len(22 * (bflength + 2));
-            /* note: this assumes variables allocated in order starting with
-             * bfxmin in init_bf2() in BIGNUM.C */
+            // note: this assumes variables allocated in order starting with
+            // bfxmin in init_bf2() in BIGNUM.C
             if (!put_extend_blk(5, 22 * (bflength + 2), (char *) g_bf_x_min))
             {
                 goto oops;
@@ -1024,33 +1023,29 @@ static void setup_save_info(FRACTAL_INFO *save_info)
 
 }
 
-/***************************************************************************
- *
- *  GIFENCOD.C       - GIF Image compression routines
- *
- *  Lempel-Ziv compression based on 'compress'.  GIF modifications by
- *  David Rowley (mgardi@watdcsu.waterloo.edu).
- *  Thoroughly massaged by the Stone Soup team for Fractint's purposes.
- *
- ***************************************************************************/
+//
+//  GIFENCOD.C       - GIF Image compression routines
+//
+//  Lempel-Ziv compression based on 'compress'.  GIF modifications by
+//  David Rowley (mgardi@watdcsu.waterloo.edu).
+//  Thoroughly massaged by the Stone Soup team for Fractint's purposes.
+//
+//
 
 #define BITSF   12
 #define HSIZE  5003            // 80% occupancy
 
-/*
- *
- * GIF Image compression - modified 'compress'
- *
- * Based on: compress.c - File compression ala IEEE Computer, June 1984.
- *
- * By Authors:  Spencer W. Thomas       (decvax!harpo!utah-cs!utah-gr!thomas)
- *              Jim McKie               (decvax!mcvax!jim)
- *              Steve Davies            (decvax!vax135!petsd!peora!srd)
- *              Ken Turkowski           (decvax!decwrl!turtlevax!ken)
- *              James A. Woods          (decvax!ihnp4!ames!jaw)
- *              Joe Orost               (decvax!vax135!petsd!joe)
- *
- */
+// GIF Image compression - modified 'compress'
+//
+// Based on: compress.c - File compression ala IEEE Computer, June 1984.
+//
+// By Authors:  Spencer W. Thomas       (decvax!harpo!utah-cs!utah-gr!thomas)
+//              Jim McKie               (decvax!mcvax!jim)
+//              Steve Davies            (decvax!vax135!petsd!peora!srd)
+//              Ken Turkowski           (decvax!decwrl!turtlevax!ken)
+//              James A. Woods          (decvax!ihnp4!ames!jaw)
+//              Joe Orost               (decvax!vax135!petsd!joe)
+//
 
 // prototypes
 
@@ -1070,14 +1065,12 @@ BYTE g_block[4096] = { 0 };
 static long htab[HSIZE];
 static unsigned short codetab[10240] = { 0 };
 
-/*
- * To save much memory, we overlay the table used by compress() with those
- * used by decompress().  The tab_prefix table is the same size and type
- * as the codetab.  The tab_suffix table needs 2**BITSF characters.  We
- * get this from the beginning of htab.  The output stack uses the rest
- * of htab, and contains characters.  There is plenty of room for any
- * possible stack (stack used to be 8000 characters).
- */
+// To save much memory, we overlay the table used by compress() with those
+// used by decompress().  The tab_prefix table is the same size and type
+// as the codetab.  The tab_suffix table needs 2**BITSF characters.  We
+// get this from the beginning of htab.  The output stack uses the rest
+// of htab, and contains characters.  There is plenty of room for any
+// possible stack (stack used to be 8000 characters).
 
 #define tab_prefixof(i)   codetab[i]
 #define tab_suffixof(i)   ((char_type *)(htab))[i]
@@ -1085,27 +1078,25 @@ static unsigned short codetab[10240] = { 0 };
 
 static int free_ent;                  // first unused entry
 
-/*
- * block compression parameters -- after all codes are used up,
- * and compression rate changes, start over.
- */
+// block compression parameters -- after all codes are used up,
+// and compression rate changes, start over.
 static bool clear_flg = false;
 
-/*
- * compress stdin to stdout
- *
- * Algorithm:  use open addressing double hashing (no chaining) on the
- * prefix code / next character combination.  We do a variant of Knuth's
- * algorithm D (vol. 3, sec. 6.4) along with G. Knott's relatively-prime
- * secondary probe.  Here, the modular division first probe is gives way
- * to a faster exclusive-or manipulation.  Also do block compression with
- * an adaptive reset, whereby the code table is cleared when the compression
- * ratio decreases, but after the table fills.  The variable-length output
- * codes are re-sized at this point, and a special CLEAR code is generated
- * for the decompressor.  Late addition:  construct the table according to
- * file size for noticeable speed improvement on small files.  Please direct
- * questions about this implementation to ames!jaw.
- */
+//
+// compress stdin to stdout
+//
+// Algorithm:  use open addressing double hashing (no chaining) on the
+// prefix code / next character combination.  We do a variant of Knuth's
+// algorithm D (vol. 3, sec. 6.4) along with G. Knott's relatively-prime
+// secondary probe.  Here, the modular division first probe is gives way
+// to a faster exclusive-or manipulation.  Also do block compression with
+// an adaptive reset, whereby the code table is cleared when the compression
+// ratio decreases, but after the table fills.  The variable-length output
+// codes are re-sized at this point, and a special CLEAR code is generated
+// for the decompressor.  Late addition:  construct the table according to
+// file size for noticeable speed improvement on small files.  Please direct
+// questions about this implementation to ames!jaw.
+//
 
 static int ClearCode;
 static int EOFCode;
@@ -1113,9 +1104,9 @@ static int a_count; // Number of characters so far in this 'packet'
 static unsigned long cur_accum = 0;
 static int  cur_bits = 0;
 
-/*
- * Define the storage for the packet accumulator
- */
+//
+// Define the storage for the packet accumulator
+//
 static char accum[256];
 
 static bool compress(int rowlimit)
@@ -1284,22 +1275,22 @@ nomatch:
     return interrupted;
 }
 
-/*****************************************************************
- * TAG(output)
- *
- * Output the given code.
- * Inputs:
- *      code:   A n_bits-bit integer.  If == -1, then EOF.  This assumes
- *              that n_bits =< (long)wordsize - 1.
- * Outputs:
- *      Outputs code to the file.
- * Assumptions:
- *      Chars are 8 bits long.
- * Algorithm:
- *      Maintain a BITSF character long buffer (so that 8 codes will
- * fit in it exactly).  Use the VAX insv instruction to insert each
- * code in turn.  When the buffer fills up empty it and start over.
- */
+//****************************************************************
+// TAG(output)
+//
+// Output the given code.
+// Inputs:
+//      code:   A n_bits-bit integer.  If == -1, then EOF.  This assumes
+//              that n_bits =< (long)wordsize - 1.
+// Outputs:
+//      Outputs code to the file.
+// Assumptions:
+//      Chars are 8 bits long.
+// Algorithm:
+//      Maintain a BITSF character long buffer (so that 8 codes will
+// fit in it exactly).  Use the VAX insv instruction to insert each
+// code in turn.  When the buffer fills up empty it and start over.
+//
 
 
 static void output(int code)
@@ -1332,10 +1323,8 @@ static void output(int code)
         cur_bits -= 8;
     }
 
-    /*
-     * If the next entry is going to be too big for the code size,
-     * then increase it, if possible.
-     */
+    // If the next entry is going to be too big for the code size,
+    // then increase it, if possible.
     if (free_ent > maxcode || clear_flg)
     {
         if (clear_flg)
@@ -1374,9 +1363,9 @@ static void output(int code)
     }
 }
 
-/*
- * Clear out the hash table
- */
+//
+// Clear out the hash table
+//
 static void cl_block()             // table clear for block compress
 {
     memset(htab, 0xff, (unsigned)HSIZE*sizeof(long));
@@ -1385,10 +1374,10 @@ static void cl_block()             // table clear for block compress
     output((int)ClearCode);
 }
 
-/*
- * Add a character to the end of the current packet, and if it is 254
- * characters, flush the packet to disk.
- */
+//
+// Add a character to the end of the current packet, and if it is 254
+// characters, flush the packet to disk.
+//
 static void char_out(int c)
 {
     accum[ a_count++ ] = (char)c;
@@ -1398,9 +1387,9 @@ static void char_out(int c)
     }
 }
 
-/*
- * Flush the packet to disk, and reset the accumulator
- */
+//
+// Flush the packet to disk, and reset the accumulator
+//
 static void flush_char()
 {
     if (a_count > 0)

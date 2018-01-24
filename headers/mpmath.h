@@ -36,7 +36,7 @@ extern int                   g_slope;
 
 /* Mark Peterson's expanded floating point operators. If
    the operation results in an overflow (result < 2**(2**14), or division
-   by zero) the global 'MPoverflow' is set to one. */
+   by zero) the global 'g_mp_overflow' is set to one. */
 extern int (*pMPcmp)(MP , MP);
 extern MP  *(*pMPmul)(MP , MP);
 extern MP  *(*pMPdiv)(MP , MP);

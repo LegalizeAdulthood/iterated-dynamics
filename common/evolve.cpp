@@ -395,13 +395,13 @@ void varyinv(GENEBASE gene[], int randval, int i)
 }
 
 // ---------------------------------------------------------------------
-/*
-    get_evolve_params() is called from FRACTINT.C whenever the 'ctrl_e' key
-    is pressed.  Return codes are:
-      -1  routine was ESCAPEd - no need to re-generate the images
-     0  minor variable changed.  No need to re-generate the image.
-       1  major parms changed.  Re-generate the images.
-*/
+//
+//  get_evolve_params() is called from FRACTINT.C whenever the 'ctrl_e' key
+//  is pressed.  Return codes are:
+//    -1  routine was ESCAPEd - no need to re-generate the images
+//     0  minor variable changed.  No need to re-generate the image.
+//     1  major parms changed.  Re-generate the images.
+//
 int get_the_rest()
 {
     char const *evolvmodes[] = {"no", "x", "y", "x+y", "x-y", "random", "spread"};
@@ -977,15 +977,15 @@ void fiddleparms(GENEBASE gene[], int ecount)
     // call with px, py ... parameter set co-ords
     // set random seed then call rnd enough times to get to px, py
 
-    /* when writing routines to vary param types make sure that rand() gets called
-    the same number of times whether gene[].mutate is set or not to allow
-    user to change it between generations without screwing up the duplicability
-    of the sequence and starting from the wrong point */
+    // when writing routines to vary param types make sure that rand() gets called
+    // the same number of times whether gene[].mutate is set or not to allow
+    // user to change it between generations without screwing up the duplicability
+    // of the sequence and starting from the wrong point
 
-    /* this function has got simpler and simpler throughout the construction of the
-     evolver feature and now consists of just these few lines to loop through all
-     the variables referenced in the gene array and call the functions required
-     to vary them, aren't pointers marvellous! */
+    // this function has got simpler and simpler throughout the construction of the
+    // evolver feature and now consists of just these few lines to loop through all
+    // the variables referenced in the gene array and call the functions required
+    // to vary them, aren't pointers marvellous!
 
     if ((g_evolve_param_grid_x == g_evolve_image_grid_size / 2) && (g_evolve_param_grid_y == g_evolve_image_grid_size / 2))   // return if middle image
     {

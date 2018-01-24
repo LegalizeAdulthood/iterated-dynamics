@@ -1,25 +1,20 @@
-/* Fpu087.c
- * This file contains routines to replace fpu087.asm.
- *
- * This file Copyright 1991 Ken Shirriff.  It may be used according to the
- * fractint license conditions, blah blah blah.
- */
+// Fpu087.c
+// This file contains routines to replace fpu087.asm.
+//
+// This file Copyright 1991 Ken Shirriff.  It may be used according to the
+// fractint license conditions, blah blah blah.
+//
 #include "port.h"
 #include "prototyp.h"
 
 #include "fpu087.h"
 
-/*
- *----------------------------------------------------------------------
- *
- * xxx086 --
- *
- *  Simulate integer math routines using floating point.
- *  This will of course slow things down, so this should all be
- *  changed at some point.
- *
- *----------------------------------------------------------------------
- */
+// xxx086 --
+//
+//  Simulate integer math routines using floating point.
+//  This will of course slow things down, so this should all be
+//  changed at some point.
+//
 
 double _2_ = 2.0;
 double _1_ = 1.0;
@@ -97,9 +92,7 @@ long Exp086(long x)
 #define em2float(l) (*(float *) &(l))
 #define float2em(f) (*(long *) &(f))
 
-/*
- * Input is a 16 bit offset number.  Output is shifted by Fudge.
- */
+// Input is a 16 bit offset number.  Output is shifted by Fudge.
 unsigned long ExpFudged(long x, int Fudge)
 {
     return (long)(exp((double) x / (double)(1 << 16))*(double)(1 << Fudge));
@@ -125,21 +118,19 @@ long RegDivFloat(long x, long y)
     return float2em(f);
 }
 
-/*
- * This routine on the IBM converts shifted integer x, FudgeFact to
- * the 4 byte number: exp, mant, mant, mant
- * Instead of using exp/mant format, we'll just use floats.
- * Note: If sizeof(float) != sizeof(long), we're hosed.
- */
+// This routine on the IBM converts shifted integer x, FudgeFact to
+// the 4 byte number: exp, mant, mant, mant
+// Instead of using exp/mant format, we'll just use floats.
+// Note: If sizeof(float) != sizeof(long), we're hosed.
+//
 long RegFg2Float(long x, int FudgeFact)
 {
     float f = (float) x / (float)(1 << FudgeFact);
     return float2em(f);
 }
 
-/*
- * This converts em to shifted integer format.
- */
+// This converts em to shifted integer format.
+//
 long RegFloat2Fg(long x, int Fudge)
 {
     return (long)(em2float(x)*(float)(1 << Fudge));

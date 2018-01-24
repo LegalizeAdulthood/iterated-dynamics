@@ -1,9 +1,9 @@
-/* The Ant Automaton is based on an article in Scientific American, July 1994.
- * The original Fractint implementation was by Tim Wegner in Fractint 19.0.
- * This routine is a major rewrite by Luciano Genero & Fulvio Cappelli using
- * tables for speed, and adds a second ant type, multiple ants, and random
- * rules.
- */
+// The Ant Automaton is based on an article in Scientific American, July 1994.
+// The original Fractint implementation was by Tim Wegner in Fractint 19.0.
+// This routine is a major rewrite by Luciano Genero & Fulvio Cappelli using
+// tables for speed, and adds a second ant type, multiple ants, and random
+// rules.
+//
 #include "port.h"
 #include "prototyp.h"
 
@@ -22,25 +22,24 @@
 #include <string>
 #include <vector>
 
-#define RANDOM(n)       ((int)((long)((long)rand() * (long)(n)) >> 15)) /* Generate Random
-                                                                         * Number 0 <= r < n */
+// Generate Random Number 0 <= r < n
+#define RANDOM(n)       ((int)((long)((long)rand() * (long)(n)) >> 15))
 #define MAX_ANTS        256
 #define XO              (g_logical_screen_x_dots/2)
 #define YO              (g_logical_screen_y_dots/2)
 #define DIRS            4
 #define INNER_LOOP      100
 
-/* possible value of idir e relative movement in the 4 directions
- * for x 0, 1, 0, -1
- * for y 1, 0, -1, 0
- */
+// possible value of idir e relative movement in the 4 directions
+// for x 0, 1, 0, -1
+// for y 1, 0, -1, 0
+//
 static std::vector<int> s_incx[DIRS];   // table for 4 directions
 static std::vector<int> s_incy[DIRS];
 static int s_last_xdots = 0;
 static int s_last_ydots = 0;
 
-void
-setwait(long *wait)
+void setwait(long *wait)
 {
     int kbdchar;
 
@@ -79,9 +78,9 @@ setwait(long *wait)
     }
 }
 
-/* turkmite from scientific american july 1994 pag 91
- * Tweaked by Luciano Genero & Fulvio Cappelli
- */
+// turkmite from scientific american july 1994 pag 91
+// Tweaked by Luciano Genero & Fulvio Cappelli
+//
 void TurkMite1(int maxtur, int rule_len, char const *ru, long maxpts, long wait)
 {
     int ix, iy, idir, pixel;
@@ -104,8 +103,8 @@ void TurkMite1(int maxtur, int rule_len, char const *ru, long maxpts, long wait)
         // random rule
         for (g_color = 0; g_color < MAX_ANTS; g_color++)
         {
-            /* init the rules and colors for the
-             * turkmites: 1 turn left, -1 turn right */
+            // init the rules and colors for the
+            // turkmites: 1 turn left, -1 turn right
             rule[g_color] = 1 - (RANDOM(2) * 2);
             next_col[g_color] = g_color + 1;
         }
@@ -117,16 +116,16 @@ void TurkMite1(int maxtur, int rule_len, char const *ru, long maxpts, long wait)
         // user defined rule
         for (g_color = 0; g_color < rule_len; g_color++)
         {
-            /* init the rules and colors for the
-             * turkmites: 1 turn left, -1 turn right */
+            // init the rules and colors for the
+            // turkmites: 1 turn left, -1 turn right
             rule[g_color] = (ru[g_color] * 2) - 1;
             next_col[g_color] = g_color + 1;
         }
         // repeats to last color
         for (g_color = rule_len; g_color < MAX_ANTS; g_color++)
         {
-            /* init the rules and colors for the
-             * turkmites: 1 turn left, -1 turn right */
+            // init the rules and colors for the
+            // turkmites: 1 turn left, -1 turn right
             rule[g_color] = rule[g_color % rule_len];
             next_col[g_color] = g_color + 1;
         }
@@ -135,8 +134,8 @@ void TurkMite1(int maxtur, int rule_len, char const *ru, long maxpts, long wait)
     }
     for (g_color = maxtur; g_color; g_color--)
     {
-        /* init the various turmites N.B. non usa
-         * x[0], y[0], dir[0] */
+        // init the various turmites N.B. non usa
+        // x[0], y[0], dir[0]
         if (rule_len)
         {
             dir[g_color] = 1;
@@ -293,8 +292,8 @@ void TurkMite2(int maxtur, int rule_len, char const *ru, long maxpts, long wait)
         // random rule
         for (int color = MAX_ANTS-1; color; color--)
         {
-            /* init the various turmites N.B. don't use
-             * x[0], y[0], dir[0] */
+            // init the various turmites N.B. don't use
+            // x[0], y[0], dir[0]
             dir[color] = RANDOM(DIRS);
             rule[color] = (rand() << RANDOM(2)) | RANDOM(2);
             x[color] = RANDOM(g_logical_screen_x_dots);
@@ -303,8 +302,8 @@ void TurkMite2(int maxtur, int rule_len, char const *ru, long maxpts, long wait)
     }
     else
     {
-        /* the same rule the user wants for every
-         * turkmite (max rule_len = 16 bit) */
+        // the same rule the user wants for every
+        // turkmite (max rule_len = 16 bit)
         rule_len = static_cast<int>(std::min(static_cast<size_t>(rule_len), 8*sizeof(int)));
         rule[0] = 0;
         for (int i = 0; i < rule_len; i++)
@@ -313,8 +312,8 @@ void TurkMite2(int maxtur, int rule_len, char const *ru, long maxpts, long wait)
         }
         for (int color = MAX_ANTS-1; color; color--)
         {
-            /* init the various turmites N.B. non usa
-             * x[0], y[0], dir[0] */
+            // init the various turmites N.B. non usa
+            // x[0], y[0], dir[0]
             dir[color] = 0;
             rule[color] = rule[0];
             x[color] = XO;
@@ -429,12 +428,14 @@ void free_ant_storage()
 
 namespace
 {
+
 std::string get_rule()
 {
     std::ostringstream buff;
     buff << std::setprecision(17) << std::fixed << g_params[0];
     return buff.str();
 }
+
 }
 
 int ant()
@@ -452,9 +453,8 @@ int ant()
         }
     }
 
-    /* In this vectors put all the possible point that the ants can visit.
-     * Wrap them from a side to the other instead of simply end calculation
-     */
+    // In this vectors put all the possible point that the ants can visit.
+    // Wrap them from a side to the other instead of simply end calculation
     for (int i = 0; i < g_logical_screen_x_dots; i++)
     {
         s_incx[0][i] = i;

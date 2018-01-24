@@ -1,9 +1,9 @@
-/* calmanfp.c
- * This file contains routines to replace calmanfp.asm.
- *
- * This file Copyright 1992 Ken Shirriff.  It may be used according to the
- * fractint license conditions, blah blah blah.
- */
+// calmanfp.c
+// This file contains routines to replace calmanfp.asm.
+//
+// This file Copyright 1992 Ken Shirriff.  It may be used according to the
+// fractint license conditions, blah blah blah.
+//
 #include "port.h"
 #include "prototyp.h"
 
@@ -27,8 +27,8 @@ void calcmandfpasmstart()
 
 #define ABS(x) ((x) < 0?-(x):(x))
 
-/* If USE_NEW is 1, the magnitude is used for periodicity checking instead
-   of the x and y values.  This is experimental. */
+// If USE_NEW is 1, the magnitude is used for periodicity checking instead
+// of the x and y values.  This is experimental.
 #define USE_NEW 0
 
 long calcmandfpasm()

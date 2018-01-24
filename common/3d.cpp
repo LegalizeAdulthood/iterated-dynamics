@@ -1,57 +1,57 @@
-/*
-A word about the 3D library. Even though this library supports
-three dimensions, the matrices are 4x4 for the following reason.
-With normal 3 dimensional vectors, translation is an ADDITION,
-and rotation is a MULTIPLICATION. A vector {x,y,z} is represented
-as a 4-tuple {x,y,z,1}. It is then possible to define a 4x4
-matrix such that multiplying the vector by the matrix translates
-the vector. This allows combinations of translation and rotation
-to be obtained in a single matrix by multiplying a translation
-matrix and a rotation matrix together. Note that in the code,
-vectors have three components; since the fourth component is
-always 1, that value is not included in the vector variable to
-save space, but the routines make use of the fourth component
-(see vec_mult()). Similarly, the fourth column of EVERY matrix is
-always
-         0
-         0
-         0
-         1
-but currently the C version of a matrix includes this even though
-it could be left out of the data structure and assumed in the
-routines. Vectors are ROW vectors, and are always multiplied with
-matrices FROM THE LEFT (e.g. vector*matrix). Also note the order
-of indices of a matrix is matrix[row][column], and in usual C
-fashion, numbering starts with 0.
-
-TRANSLATION MATRIX =  1     0     0     0
-                      0     1     0     0
-                      0     0     1     0
-                      Tx    Ty    Tz    1
-
-SCALE MATRIX =        Sx    0     0     0
-                      0     Sy    0     0
-                      0     0     Sz    0
-                      0     0     0     1
-
-Rotation about x axis i degrees:
-ROTX(i) =             1     0     0     0
-                      0   cosi  sini    0
-                      0  -sini  cosi    0
-                      0     0     0     1
-
-Rotation about y axis i degrees:
-ROTY(i) =           cosi    0  -sini    0
-                      0     1     0     0
-                    sini    0   cosi    0
-                      0     0     0     1
-
-Rotation about z axis i degrees:
-ROTZ(i) =           cosi  sini    0     0
-                   -sini  cosi    0     0
-                      0     0     1     0
-                      0     0     0     1
-*/
+//
+// A word about the 3D library. Even though this library supports
+// three dimensions, the matrices are 4x4 for the following reason.
+// With normal 3 dimensional vectors, translation is an ADDITION,
+// and rotation is a MULTIPLICATION. A vector {x,y,z} is represented
+// as a 4-tuple {x,y,z,1}. It is then possible to define a 4x4
+// matrix such that multiplying the vector by the matrix translates
+// the vector. This allows combinations of translation and rotation
+// to be obtained in a single matrix by multiplying a translation
+// matrix and a rotation matrix together. Note that in the code,
+// vectors have three components; since the fourth component is
+// always 1, that value is not included in the vector variable to
+// save space, but the routines make use of the fourth component
+// (see vec_mult()). Similarly, the fourth column of EVERY matrix is
+// always
+//          0
+//          0
+//          0
+//          1
+// but currently the C version of a matrix includes this even though
+// it could be left out of the data structure and assumed in the
+// routines. Vectors are ROW vectors, and are always multiplied with
+// matrices FROM THE LEFT (e.g. vector*matrix). Also note the order
+// of indices of a matrix is matrix[row][column], and in usual C
+// fashion, numbering starts with 0.
+//
+// TRANSLATION MATRIX =  1     0     0     0
+//                       0     1     0     0
+//                       0     0     1     0
+//                       Tx    Ty    Tz    1
+//
+// SCALE MATRIX =        Sx    0     0     0
+//                       0     Sy    0     0
+//                       0     0     Sz    0
+//                       0     0     0     1
+//
+// Rotation about x axis i degrees:
+// ROTX(i) =             1     0     0     0
+//                       0   cosi  sini    0
+//                       0  -sini  cosi    0
+//                       0     0     0     1
+//
+// Rotation about y axis i degrees:
+// ROTY(i) =           cosi    0  -sini    0
+//                       0     1     0     0
+//                     sini    0   cosi    0
+//                       0     0     0     1
+//
+// Rotation about z axis i degrees:
+// ROTZ(i) =           cosi  sini    0     0
+//                    -sini  cosi    0     0
+//                       0     0     1     0
+//                       0     0     0     1
+//
 #include "port.h"
 #include "prototyp.h"
 
@@ -62,8 +62,7 @@ ROTZ(i) =           cosi  sini    0     0
 #include <float.h>
 #include <string.h>
 
-/* initialize a matrix and set to identity matrix
-   (all 0's, 1's on diagonal) */
+// initialize a matrix and set to identity matrix (all 0's, 1's on diagonal)
 void identity(MATRIX m)
 {
     for (int i = 0 ; i < CMAX; i++)
@@ -85,8 +84,8 @@ void identity(MATRIX m)
 // Multiply two matrices
 void mat_mul(MATRIX mat1, MATRIX mat2, MATRIX mat3)
 {
-    /* result stored in MATRIX new to avoid problems
-       in case parameter mat3 == mat2 or mat 1 */
+    // result stored in MATRIX new to avoid problems
+    //  in case parameter mat3 == mat2 or mat 1
     MATRIX newmat;
     for (int i = 0; i < 4; i++)
     {
@@ -246,8 +245,7 @@ void mult_vec(VECTOR s)
 }
 
 // perspective projection of vector v with respect to viewpont vector view
-int
-perspective(VECTOR v)
+int perspective(VECTOR v)
 {
     double denom;
     denom = g_view[2] - v[2];
@@ -268,9 +266,8 @@ perspective(VECTOR v)
 }
 
 // long version of vmult and perspective combined for speed
-int
-longvmultpersp(LVECTOR s, LMATRIX m, LVECTOR t0, LVECTOR t, LVECTOR lview,
-               int bitshift)
+int longvmultpersp(
+    LVECTOR s, LMATRIX m, LVECTOR t0, LVECTOR t, LVECTOR lview, int bitshift)
 {
     // s: source vector
     // m: transformation matrix
@@ -340,10 +337,9 @@ longvmultpersp(LVECTOR s, LMATRIX m, LVECTOR t0, LVECTOR t, LVECTOR lview,
     return g_overflow ? 1 : 0;
 }
 
-/* Long version of perspective. Because of use of fixed point math, there
-   is danger of overflow and underflow */
-int
-longpersp(LVECTOR lv, LVECTOR lview, int bitshift)
+// Long version of perspective. Because of use of fixed point math, there
+// is danger of overflow and underflow
+int longpersp(LVECTOR lv, LVECTOR lview, int bitshift)
 {
     LVECTOR tmpview;
     long denom;

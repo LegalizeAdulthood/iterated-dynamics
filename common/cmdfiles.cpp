@@ -1,6 +1,5 @@
-/*
-        Command-line / Command-File Parser Routines
-*/
+// Command-line / Command-File Parser Routines
+//
 #include "port.h"
 #include "prototyp.h"
 
@@ -155,12 +154,13 @@ bool g_new_bifurcation_functions_loaded = false; // if function loaded for new b
 float   g_screen_aspect = DEFAULT_ASPECT;   // aspect ratio of the screen
 float   g_aspect_drift = DEFAULT_ASPECT_DRIFT;  // how much drift is allowed and
                                 // still forced to screenaspect
-bool g_fast_restore = false;       /* true - reset viewwindows prior to a restore
-                                     and do not display warnings when video
-                                     mode changes during restore */
 
-bool g_organize_formulas_search = false;      /* 1 - user has specified a directory for
-                                     Orgform formula compilation files */
+// true - reset viewwindows prior to a restore and
+// do not display warnings when video mode changes during restore
+bool g_fast_restore = false;
+
+// true: user has specified a directory for Orgform formula compilation files
+bool g_organize_formulas_search = false;
 
 int     g_orbit_save_flags = 0;          // for IFS and LORENZ to output acrospin file
 int g_orbit_delay = 0;            // clock ticks delating orbit release
@@ -229,11 +229,9 @@ BYTE g_text_color[] =
     BLACK*16+WHITE      // C_CONTRIB         contributing authors
 };
 
-/*
-        cmdfiles(argc,argv) process the command-line arguments
-                it also processes the 'sstools.ini' file and any
-                indirect files ('fractint @myfile')
-*/
+// cmdfiles(argc,argv) process the command-line arguments
+// it also processes the 'sstools.ini' file and any
+// indirect files ('fractint @myfile')
 
 // This probably ought to go somewhere else, but it's used here.
 // getpower10(x) returns the magnitude of x.  This rounds
@@ -813,16 +811,14 @@ static bool next_line(FILE *handle, char *linebuf, cmd_file mode)
     return true;
 }
 
-/*
-  cmdarg(string,mode) processes a single command-line/command-file argument
-    return:
-      -1 error, >= 0 ok
-      if ok, return value:
-        | 1 means fractal parm has been set
-        | 2 means 3d parm has been set
-        | 4 means 3d=yes specified
-        | 8 means reset specified
-*/
+// cmdarg(string,mode) processes a single command-line/command-file argument
+//  return:
+//    -1 error, >= 0 ok
+//    if ok, return value:
+//      | 1 means fractal parm has been set
+//      | 2 means 3d parm has been set
+//      | 4 means 3d=yes specified
+//      | 8 means reset specified
 
 #define NONNUMERIC -32767
 
@@ -2156,8 +2152,8 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
             {
                 init_bf_dec(dec);
 
-                /* now get parameters and corners all over again at new
-                decimal setting */
+                // now get parameters and corners all over again at new
+                // decimal setting
                 for (int k = 0; k < MAX_PARAMS; k++)
                 {
                     floattobf(bfparms[k], g_params[k]);
@@ -2629,15 +2625,14 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
             g_sound_flag = SOUNDFLAG_SPEAKER; // old command, default to PC speaker
         }
 
-        /* soundflag is used as a bitfield... bit 0,1,2 used for whether sound
-           is modified by an orbits x,y,or z component. and also to turn it on
-           or off (0==off, 1==beep (or yes), 2==x, 3==y, 4==z),
-           Bit 3 is used for flagging the PC speaker sound,
-           Bit 4 for OPL3 FM soundcard output,
-           Bit 5 will be for midi output (not yet),
-           Bit 6 for whether the tone is quantised to the nearest 'proper' note
-            (according to the western, even tempered system anyway) */
-
+        // soundflag is used as a bitfield... bit 0,1,2 used for whether sound
+        // is modified by an orbits x,y,or z component. and also to turn it on
+        // or off (0==off, 1==beep (or yes), 2==x, 3==y, 4==z),
+        // Bit 3 is used for flagging the PC speaker sound,
+        // Bit 4 for OPL3 FM soundcard output,
+        // Bit 5 will be for midi output (not yet),
+        // Bit 6 for whether the tone is quantised to the nearest 'proper' note
+        //  (according to the western, even tempered system anyway)
         if (charval[0] == 'n' || charval[0] == 'o')
         {
             g_sound_flag &= ~SOUNDFLAG_ORBITMASK;
@@ -3581,8 +3576,6 @@ badarg:
     return CMDARG_ERROR;
 }
 
-// Some routines broken out of above so compiler doesn't run out of heap:
-
 static void parse_textcolors(char const *value)
 {
     int hexval;
@@ -3590,29 +3583,24 @@ static void parse_textcolors(char const *value)
     {
         for (auto & elem : g_text_color)
         {
-            elem = BLACK*16+WHITE;
+            elem = BLACK*16 + WHITE;
         }
-        /* C_HELP_CURLINK = C_PROMPT_INPUT = C_CHOICE_CURRENT = C_GENERAL_INPUT
-                          = C_AUTHDIV1 = C_AUTHDIV2 = WHITE*16+BLACK; */
-        g_text_color[28] = WHITE*16+BLACK;
-        g_text_color[27] = g_text_color[28];
-        g_text_color[20] = g_text_color[27];
-        g_text_color[14] = g_text_color[20];
-        g_text_color[13] = g_text_color[14];
-        g_text_color[12] = g_text_color[13];
-        g_text_color[6] = g_text_color[12];
-        /* C_TITLE = C_HELP_HDG = C_HELP_LINK = C_PROMPT_HI = C_CHOICE_SP_KEYIN
-                   = C_GENERAL_HI = C_DVID_HI = C_STOP_ERR
-                   = C_STOP_INFO = BLACK*16+L_WHITE; */
-        g_text_color[25] = BLACK*16+L_WHITE;
-        g_text_color[24] = g_text_color[25];
-        g_text_color[22] = g_text_color[24];
-        g_text_color[17] = g_text_color[22];
-        g_text_color[16] = g_text_color[17];
-        g_text_color[11] = g_text_color[16];
-        g_text_color[5] = g_text_color[11];
-        g_text_color[2] = g_text_color[5];
-        g_text_color[0] = g_text_color[2];
+        g_text_color[28] = WHITE*16 + BLACK;
+        g_text_color[27] = WHITE*16 + BLACK;
+        g_text_color[20] = WHITE*16 + BLACK;
+        g_text_color[14] = WHITE*16 + BLACK;
+        g_text_color[13] = WHITE*16 + BLACK;
+        g_text_color[12] = WHITE*16 + BLACK;
+        g_text_color[6] = WHITE*16 + BLACK;
+        g_text_color[25] = BLACK*16 + L_WHITE;
+        g_text_color[24] = BLACK*16 + L_WHITE;
+        g_text_color[22] = BLACK*16 + L_WHITE;
+        g_text_color[17] = BLACK*16 + L_WHITE;
+        g_text_color[16] = BLACK*16 + L_WHITE;
+        g_text_color[11] = BLACK*16 + L_WHITE;
+        g_text_color[5] = BLACK*16 + L_WHITE;
+        g_text_color[2] = BLACK*16 + L_WHITE;
+        g_text_color[0] = BLACK*16 + L_WHITE;
     }
     else
     {
@@ -3981,10 +3969,8 @@ void dopause(int action)
     }
 }
 
-/*
-   Crude function to detect a floating point number. Intended for
-   use with arbitrary precision.
-*/
+// Crude function to detect a floating point number. Intended for
+// use with arbitrary precision.
 static bool isabigfloat(char const *str)
 {
     // [+|-]numbers][.]numbers[+|-][e|g]numbers

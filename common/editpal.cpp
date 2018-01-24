@@ -1,9 +1,9 @@
-/*
- * editpal.c
- *
- * Edits VGA 256-color palettes.
- *
- */
+//
+// editpal.c
+//
+// Edits VGA 256-color palettes.
+//
+//
 #include "port.h"
 #include "prototyp.h"
 
@@ -30,9 +30,9 @@
 #endif
 
 // see Fractint.c for a description of the "include"  hierarchy
-/*
- * misc. #defines
- */
+//
+// misc. #defines
+//
 
 #define FONT_DEPTH          8     // font size
 
@@ -61,27 +61,16 @@ bool editpal_cursor = false;
 #endif
 
 
-/*
- * Stuff from fractint
- */
+// Stuff from fractint
 bool g_using_jiim = false;
 
-/*
- * basic data types
- */
-
+// basic data types
 struct PALENTRY
 {
     BYTE red;
     BYTE green;
     BYTE blue;
 };
-
-
-
-/*
- * static data
- */
 
 
 std::vector<BYTE> g_line_buff;
@@ -93,10 +82,7 @@ static bool inverse = false;
 static float    gamma_val = 1;
 
 
-/*
- * Interface to FRACTINT's graphics stuff
- */
-
+// Interface to FRACTINT's graphics stuff
 
 static void setpal(int pal, int r, int g, int b)
 {
@@ -305,9 +291,7 @@ static void displayf(int x, int y, int fg, int bg, char const *format, ...)
 }
 
 
-/*
- * create smooth shades between two colors
- */
+// create smooth shades between two colors
 
 
 static void mkpalrange(PALENTRY *p1, PALENTRY *p2, PALENTRY pal[], int num, int skip)
@@ -375,9 +359,7 @@ static void rotcolbr(PALENTRY pal[], int num)
 }
 
 
-/*
- * convert a range of colors to grey scale
- */
+// convert a range of colors to grey scale
 
 
 static void palrangetogrey(PALENTRY pal[], int first, int how_many)
@@ -391,9 +373,7 @@ static void palrangetogrey(PALENTRY pal[], int first, int how_many)
     }
 }
 
-/*
- * convert a range of colors to their inverse
- */
+// convert a range of colors to their inverse
 
 
 static void palrangetonegative(PALENTRY pal[], int first, int how_many)
@@ -407,9 +387,7 @@ static void palrangetonegative(PALENTRY pal[], int first, int how_many)
 }
 
 
-/*
- * draw and horizontal/vertical dotted lines
- */
+// draw and horizontal/vertical dotted lines
 
 
 static void hdline(int x, int y, int width)
@@ -443,10 +421,7 @@ static void drect(int x, int y, int width, int depth)
 }
 
 
-/*
- * misc. routines
- *
- */
+// misc. routines
 
 
 static bool is_reserved(int color)
@@ -474,15 +449,15 @@ static void draw_diamond(int x, int y, int color)
 
 
 
-/*
- * Class:     Cursor
- *
- * Purpose:   Draw the blinking cross-hair cursor.
- *
- * Note:      Only one Cursor exists (referenced through the_cursor).
- *            IMPORTANT: Call Cursor_Construct before you use any other
- *            Cursor_ function!
- */
+//
+// Class:     Cursor
+//
+// Purpose:   Draw the blinking cross-hair cursor.
+//
+// Note:      Only one Cursor exists (referenced through the_cursor).
+//            IMPORTANT: Call Cursor_Construct before you use any other
+//            Cursor_ function!
+//
 
 struct Cursor
 {
@@ -676,11 +651,11 @@ int Cursor_WaitKey()   // blink cursor while waiting for a key
     return driver_key_pressed();
 }
 
-/*
- * Class:     MoveBox
- *
- * Purpose:   Handles the rectangular move/resize box.
- */
+//
+// Class:     MoveBox
+//
+// Purpose:   Handles the rectangular move/resize box.
+//
 
 struct MoveBox
 {
@@ -1020,15 +995,15 @@ static bool MoveBox_Process(MoveBox *me)
 
 
 
-/*
- * Class:     CEditor
- *
- * Purpose:   Edits a single color component (R, G or B)
- *
- * Note:      Calls the "other_key" function to process keys it doesn't use.
- *            The "change" function is called whenever the value is changed
- *            by the CEditor.
- */
+//
+// Class:     CEditor
+//
+// Purpose:   Edits a single color component (R, G or B)
+//
+// Note:      Calls the "other_key" function to process keys it doesn't use.
+//            The "change" function is called whenever the value is changed
+//            by the CEditor.
+//
 
 struct CEditor
 {
@@ -1260,11 +1235,11 @@ static int CEditor_Edit(CEditor *me)
 
 
 
-/*
- * Class:     RGBEditor
- *
- * Purpose:   Edits a complete color using three CEditors for R, G and B
- */
+//
+// Class:     RGBEditor
+//
+// Purpose:   Edits a complete color using three CEditors for R, G and B
+//
 
 struct RGBEditor
 {
@@ -1562,34 +1537,24 @@ static PALENTRY RGBEditor_GetRGB(RGBEditor *me)
 
 
 
-/*
- * Class:     PalTable
- *
- * Purpose:   This is where it all comes together.  Creates the two RGBEditors
- *            and the palette. Moves the cursor, hides/restores the screen,
- *            handles (S)hading, (C)opying, e(X)clude mode, the "Y" exclusion
- *            mode, (Z)oom option, (H)ide palette, rotation, etc.
- *
- */
+//
+// Class:     PalTable
+//
+// Purpose:   This is where it all comes together.  Creates the two RGBEditors
+//            and the palette. Moves the cursor, hides/restores the screen,
+//            handles (S)hading, (C)opying, e(X)clude mode, the "Y" exclusion
+//            mode, (Z)oom option, (H)ide palette, rotation, etc.
+//
+//
 
-/*
-enum stored_at_values
-   {
-   NOWHERE,
-   DISK,
-   MEMORY
-   } ;
-*/
-
-/*
-
-Modes:
-   Auto:          "A", " "
-   Exclusion:     "X", "Y", " "
-   Freestyle:     "F", " "
-   S(t)ripe mode: "T", " "
-
-*/
+//
+// Modes:
+//   Auto:          "A", " "
+//   Exclusion:     "X", "Y", " "
+//   Freestyle:     "F", " "
+//   S(t)ripe mode: "T", " "
+//
+//
 struct PalTable
 {
     int x;

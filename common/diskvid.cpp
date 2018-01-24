@@ -1,11 +1,11 @@
-/*
-   "Disk-Video" routines
-
-   Caution when modifying any code in here:  bugs are possible which
-   slow the cache substantially but don't cause incorrect results.
-   Do timing tests for a variety of situations after any change.
-
-*/
+//
+// "Disk-Video" routines
+//
+// Caution when modifying any code in here:  bugs are possible which
+// slow the cache substantially but don't cause incorrect results.
+// Do timing tests for a variety of situations after any change.
+//
+//
 #include "port.h"
 #include "prototyp.h"
 
@@ -689,11 +689,11 @@ write_stuff:
     seek_offset = -1; // force a seek before next read
 }
 
-/* Seek, mem_getc, mem_putc routines follow.
-   Note that the calling logic always separates mem_getc and mem_putc
-   sequences with a seek between them.  A mem_getc is never followed by
-   a mem_putc nor v.v. without a seek between them.
-   */
+// Seek, mem_getc, mem_putc routines follow.
+// Note that the calling logic always separates mem_getc and mem_putc
+// sequences with a seek between them.  A mem_getc is never followed by
+// a mem_putc nor v.v. without a seek between them.
+//
 static void mem_seek(long offset)        // mem seek
 {
     offset += headerlength;

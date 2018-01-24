@@ -1,16 +1,16 @@
-/*
-CALCFRAC.C contains the high level ("engine") code for calculating the
-fractal images (well, SOMEBODY had to do it!).
-The following modules work very closely with CALCFRAC.C:
-  FRACTALS.C    the fractal-specific code for escape-time fractals.
-  FRACSUBR.C    assorted subroutines belonging mainly to calcfrac.
-  CALCMAND.ASM  fast Mandelbrot/Julia integer implementation
-Additional fractal-specific modules are also invoked from CALCFRAC:
-  LORENZ.C      engine level and fractal specific code for attractors.
-  JB.C          julibrot logic
-  PARSER.C      formula fractals
-  and more
- -------------------------------------------------------------------- */
+//
+// CALCFRAC.C contains the high level ("engine") code for calculating the
+// fractal images (well, SOMEBODY had to do it!).
+// The following modules work very closely with CALCFRAC.C:
+//   FRACTALS.C    the fractal-specific code for escape-time fractals.
+//   FRACSUBR.C    assorted subroutines belonging mainly to calcfrac.
+//   CALCMAND.ASM  fast Mandelbrot/Julia integer implementation
+// Additional fractal-specific modules are also invoked from CALCFRAC:
+//   LORENZ.C      engine level and fractal specific code for attractors.
+//   JB.C          julibrot logic
+//   PARSER.C      formula fractals
+//   and more
+//
 #include "port.h"
 #include "prototyp.h"
 
@@ -127,10 +127,10 @@ static bool bottom_guess = false;
 #define maxyblk 7    // maxxblk*maxyblk*2 <= 4096, the size of "prefix"
 #define maxxblk 202  // each maxnblk is oversize by 2 for a "border"
 // maxxblk defn must match fracsubr.c
-/* next has a skip bit for each maxblock unit;
-   1st pass sets bit  [1]... off only if block's contents guessed;
-   at end of 1st pass [0]... bits are set if any surrounding block not guessed;
-   bits are numbered [..][y/16+1][x+1]&(1<<(y&15)) */
+// next has a skip bit for each maxblock unit;
+//   1st pass sets bit  [1]... off only if block's contents guessed;
+//   at end of 1st pass [0]... bits are set if any surrounding block not guessed;
+//   bits are numbered [..][y/16+1][x+1]&(1<<(y&15))
 // size of next puts a limit of MAX_PIXELS pixels across on solid guessing logic
 namespace
 {
@@ -223,7 +223,6 @@ DComplex g_attractor[MAX_NUM_ATTRACTORS] = { 0.0 };        // finite attractor v
 LComplex g_l_attractor[MAX_NUM_ATTRACTORS] = { 0 };         // finite attractor vals (int)
 int g_attractor_period[MAX_NUM_ATTRACTORS] = { 0 };         // period of the finite attractor
 
-/***** vars for new btm *****/
 enum class direction
 {
     North,
@@ -270,24 +269,20 @@ enum class show_dot_direction
 
 int g_and_color = 0;        // "and" value used for color selection
 
-/*
-;
-;       32-bit integer divide routine with an 'n'-bit shift.
-;       Overflow condition returns 0x7fffh with overflow = 1;
-;
-;       z = divide(x, y, n);       z = x / y;
-*/
+//       32-bit integer divide routine with an 'n'-bit shift.
+//       Overflow condition returns 0x7fffh with overflow = 1;
+//
+//       z = divide(x, y, n);       z = x / y;
+//
 long divide(long x, long y, int n)
 {
     return (long)(((float) x) / ((float) y)*(float)(1 << n));
 }
 
-/*
- * 32 bit integer multiply with n bit shift.
- * Note that we fake integer multiplication with floating point
- * multiplication.
- * Overflow condition returns 0x7fffffffh with overflow = 1;
- */
+//  32 bit integer multiply with n bit shift.
+//  Note that we fake integer multiplication with floating point
+//  multiplication.
+//  Overflow condition returns 0x7fffffffh with overflow = 1;
 long multiply(long x, long y, int n)
 {
     long l = (long)(((float) x) * ((float) y)/(float)(1 << n));
@@ -314,11 +309,11 @@ double fmodtest_bailout_or()
 }
 
 // FMODTEST routine.
-/* Makes the test condition for the FMOD coloring type
-   that of the current bailout method. 'or' and 'and'
-   methods are not used - in these cases a normal
-   modulus test is used                              */
-
+// Makes the test condition for the FMOD coloring type
+//   that of the current bailout method. 'or' and 'and'
+//   methods are not used - in these cases a normal
+//   modulus test is used
+//
 double fmodtest()
 {
     double result;
@@ -364,15 +359,13 @@ double fmodtest()
     return result;
 }
 
-/*
-   The sym_fill_line() routine was pulled out of the boundary tracing
-   code for re-use with show_dot. It's purpose is to fill a line with a
-   solid color. This assumes that BYTE *str is already filled
-   with the color. The routine does write the line using symmetry
-   in all cases, however the symmetry logic assumes that the line
-   is one color; it is not general enough to handle a row of
-   pixels of different colors.
-*/
+// The sym_fill_line() routine was pulled out of the boundary tracing
+// code for re-use with show_dot. It's purpose is to fill a line with a
+// solid color. This assumes that BYTE *str is already filled
+// with the color. The routine does write the line using symmetry
+// in all cases, however the symmetry logic assumes that the line
+// is one color; it is not general enough to handle a row of
+// pixels of different colors.
 static void sym_fill_line(int row, int left, int right, BYTE *str)
 {
     int length;
@@ -437,11 +430,9 @@ static void sym_fill_line(int row, int left, int right, BYTE *str)
     }
 }
 
-/*
-  The sym_put_line() routine is the symmetry-aware version of put_line().
-  It only works efficiently in the no symmetry or X_AXIS symmetry case,
-  otherwise it just writes the pixels one-by-one.
-*/
+// The sym_put_line() routine is the symmetry-aware version of put_line().
+// It only works efficiently in the no symmetry or X_AXIS symmetry case,
+// otherwise it just writes the pixels one-by-one.
 static void sym_put_line(int row, int left, int right, BYTE *str)
 {
     int length = right-left+1;
@@ -618,8 +609,7 @@ int calctypeshowdot()
     return out;
 }
 
-/******* calcfract - the top level routine for generating an image *******/
-
+// calcfract - the top level routine for generating an image
 int calcfract()
 {
     g_attractors = 0;          // default to no known finite attractors
@@ -1007,8 +997,7 @@ int find_alternate_math(fractal_type type, bf_math_type math)
 }
 
 
-/**************** general escape-time engine routines *********************/
-
+// general escape-time engine routines
 static void perform_worklist()
 {
     int (*sv_orbitcalc)() = nullptr;  // function that calculates one orbit
@@ -1204,10 +1193,9 @@ static void perform_worklist()
             {
                 double dshowdot_width;
                 dshowdot_width = (double)g_size_dot*g_logical_screen_x_dots/1024.0;
-                /*
-                   Arbitrary sanity limit, however showdot_width will
-                   overflow if dshowdot width gets near 256.
-                */
+
+                // Arbitrary sanity limit, however showdot_width will
+                // overflow if dshowdot width gets near 256.
                 if (dshowdot_width > 150.0)
                 {
                     showdot_width = 150;
@@ -1223,13 +1211,11 @@ static void perform_worklist()
             }
             while (showdot_width >= 0)
             {
-                /*
-                   We're using near memory, so get the amount down
-                   to something reasonable. The polynomial used to
-                   calculate savedotslen is exactly right for the
-                   triangular-shaped shotdot cursor. The that cursor
-                   is changed, this formula must match.
-                */
+                // We're using near memory, so get the amount down
+                // to something reasonable. The polynomial used to
+                // calculate savedotslen is exactly right for the
+                // triangular-shaped shotdot cursor. The that cursor
+                // is changed, this formula must match.
                 while ((savedotslen = sqr(showdot_width) + 5*showdot_width + 4) > 1000)
                 {
                     showdot_width--;
@@ -1251,10 +1237,8 @@ static void perform_worklist()
                     memset(fillbuff, showdotcolor, savedotslen);
                     break;
                 }
-                /*
-                   There's even less free memory than we thought, so reduce
-                   showdot_width still more
-                */
+                // There's even less free memory than we thought, so reduce
+                // showdot_width still more
                 showdot_width--;
             }
             if (savedots.empty())
@@ -1360,8 +1344,8 @@ static int diffusion_scan()
     return 0;
 }
 
-/* little macro that plots a filled square of color c, size s with
-   top left cornet at (x,y) with optimization from sym_fill_line */
+// little macro that plots a filled square of color c, size s with
+// top left cornet at (x,y) with optimization from sym_fill_line
 #define plot_block(x, y, s, c) \
     memset(dstack, (c), (s)); \
     for (int ty = (y); ty < (y)+(s); ty++) \
@@ -1440,7 +1424,6 @@ static int diffusion_engine()
     dif_offset = 12-(g_diffusion_bits/2); // offset to adjust coordinates
     // (*) for 4 bytes use 16 for 3 use 12 etc.
 
-    /*************************************/
     // only the points (dithering only) :
     if (g_fill_color == 0)
     {
@@ -1462,8 +1445,7 @@ static int diffusion_engine()
                     g_row += s;                  // next tile
                 }
                 while (j < ny);
-                /* in the last y tile we may not need to plot the point
-                 */
+                // in the last y tile we may not need to plot the point
                 if (rowo < rem_y)
                 {
                     calculate;
@@ -1473,7 +1455,7 @@ static int diffusion_engine()
                 g_col += s;
             }
             while (i < nx);
-            /* in the last x tiles we may not need to plot the point */
+            // in the last x tiles we may not need to plot the point
             if (colo < rem_x)
             {
                 g_row = g_i_y_start + rowo;
@@ -1497,7 +1479,6 @@ static int diffusion_engine()
     }
     else
     {
-        /*********************************/
         // with progressive filling :
         while (g_diffusion_counter < (g_diffusion_limit >> 1))
         {
@@ -1968,11 +1949,9 @@ int calcmand()              // fast per pixel 1/2/b/g, called with row & col set
     return g_color;
 }
 
-/************************************************************************/
 // sort of a floating point version of calcmand()
 // can also handle invert, any rqlim, potflag, zmag, epsilon cross,
 // and all the current outside options
-/************************************************************************/
 int calcmandfp()
 {
     if (g_invert != 0)
@@ -2272,8 +2251,8 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
                     break;
                 }
             }
-            /* if above exit taken, the later test vs dem_delta will place this
-                       point on the boundary, because mag(old)<bailout just now */
+            // if above exit taken, the later test vs dem_delta will place this
+            // point on the boundary, because mag(old)<bailout just now
 
             if (g_cur_fractal_specific->orbitcalc() || g_overflow)
             {
@@ -2919,11 +2898,6 @@ plot_inside: // we're "inside"
         {
             if (g_integer_fractal)
             {
-                /*
-                g_new_z.x = ((double)lnew.x) / fudge;
-                g_new_z.y = ((double)lnew.y) / fudge;
-                g_color_iter = (long)((((double)lsqr(lnew.x))/fudge + ((double)lsqr(lnew.y))/fudge) * (maxit>>1) + 1);
-                */
                 g_color_iter = (long)(((double)g_l_magnitude/g_fudge_factor) * (g_max_iterations >> 1) + 1);
             }
             else
@@ -2981,10 +2955,10 @@ plot_pixel:
 #define cos45  sin45
 #define lcos45 lsin45
 
-/**************** standardfractal doodad subroutines *********************/
+// standardfractal doodad subroutines
 static void decomposition()
 {
-    // static double cos45     = 0.70710678118654750; */ /* cos 45  degrees
+    // static double cos45     = 0.70710678118654750; // cos 45  degrees
     static double sin45     = 0.70710678118654750; // sin 45     degrees
     static double cos22_5   = 0.92387953251128670; // cos 22.5   degrees
     static double sin22_5   = 0.38268343236508980; // sin 22.5   degrees
@@ -2997,19 +2971,19 @@ static void decomposition()
     static double tan5_625  = 0.09849140335716425; // tan 5.625  degrees
     static double tan2_8125 = 0.04912684976946725; // tan 2.8125 degrees
     static double tan1_4063 = 0.02454862210892544; // tan 1.4063 degrees
-    // static long lcos45     ;*/ /* cos 45   degrees
-    static long lsin45     ; // sin 45     degrees
-    static long lcos22_5   ; // cos 22.5   degrees
-    static long lsin22_5   ; // sin 22.5   degrees
-    static long lcos11_25  ; // cos 11.25  degrees
-    static long lsin11_25  ; // sin 11.25  degrees
-    static long lcos5_625  ; // cos 5.625  degrees
-    static long lsin5_625  ; // sin 5.625  degrees
-    static long ltan22_5   ; // tan 22.5   degrees
-    static long ltan11_25  ; // tan 11.25  degrees
-    static long ltan5_625  ; // tan 5.625  degrees
-    static long ltan2_8125 ; // tan 2.8125 degrees
-    static long ltan1_4063 ; // tan 1.4063 degrees
+    // static long lcos45;      // cos 45   degrees
+    static long lsin45;         // sin 45     degrees
+    static long lcos22_5;       // cos 22.5   degrees
+    static long lsin22_5;       // sin 22.5   degrees
+    static long lcos11_25;      // cos 11.25  degrees
+    static long lsin11_25;      // sin 11.25  degrees
+    static long lcos5_625;      // cos 5.625  degrees
+    static long lsin5_625;      // sin 5.625  degrees
+    static long ltan22_5;       // tan 22.5   degrees
+    static long ltan11_25;      // tan 11.25  degrees
+    static long ltan5_625;      // tan 5.625  degrees
+    static long ltan2_8125;     // tan 2.8125 degrees
+    static long ltan1_4063;     // tan 1.4063 degrees
     static long reset_fudge = -1;
     int temp = 0;
     int save_temp = 0;
@@ -3260,7 +3234,6 @@ static void decomposition()
     }
 }
 
-/******************************************************************/
 // Continuous potential calculation for Mandelbrot and Julia
 // Reference: Science of Fractal Images p. 190.
 // Special thanks to Mark Peterson for his "MtMand" program that
@@ -3276,8 +3249,6 @@ static void decomposition()
 // controlling the level and slope of the continuous potential
 // surface. Returns color.
 //
-/******************************************************************/
-
 static int potential(double mag, long iterations)
 {
     float f_mag, f_tmp, pot;
@@ -3313,12 +3284,12 @@ static int potential(double mag, long iterations)
                 }
             }
         }
-        // following transformation strictly for aesthetic reasons
-        /* meaning of parameters:
-              potparam[0] -- zero potential level - highest color -
-              potparam[1] -- slope multiplier -- higher is steeper
-              potparam[2] -- rqlim value if changeable (bailout for modulus) */
 
+        // following transformation strictly for aesthetic reasons
+        // meaning of parameters:
+        //    potparam[0] -- zero potential level - highest color -
+        //    potparam[1] -- slope multiplier -- higher is steeper
+        //    potparam[2] -- rqlim value if changeable (bailout for modulus)
         if (pot > 0.0)
         {
             if (g_float_flag)
@@ -3371,7 +3342,7 @@ static int potential(double mag, long iterations)
 }
 
 
-/******************* boundary trace method ***************************/
+// boundary trace method
 #define bkcolor 0
 
 inline direction advance(direction dir, int increment)
@@ -3439,10 +3410,8 @@ static int bound_trace_main()
             }
             g_reset_periodicity = false; // normal periodicity checking
 
-            /*
-            This next line may cause a few more pixels to be calculated,
-            but at the savings of quite a bit of overhead
-            */
+            // This next line may cause a few more pixels to be calculated,
+            // but at the savings of quite a bit of overhead
             if (g_color != trail_color)
             {
                 continue;
@@ -3513,10 +3482,8 @@ static int bound_trace_main()
                 continue;
             }
 
-            /*
-            Fill in region by looping around again, filling lines to the left
-            whenever going_to is South or West
-            */
+            // Fill in region by looping around again, filling lines to the left
+            // whenever going_to is South or West
             trail_row = currow;
             trail_col = curcol;
             coming_from = direction::West;
@@ -3604,7 +3571,6 @@ static int bound_trace_main()
     return 0;
 }
 
-/*******************************************************************/
 // take one step in the direction of going_to
 static void step_col_row()
 {
@@ -3629,20 +3595,17 @@ static void step_col_row()
     }
 }
 
-/******************* end of boundary trace method *******************/
+// end of boundary trace method
 
 
-/************************ super solid guessing *****************************/
+// super solid guessing
 
-/*
-   I, Timothy Wegner, invented this solidguessing idea and implemented it in
-   more or less the overall framework you see here.  I am adding this note
-   now in a possibly vain attempt to secure my place in history, because
-   Pieter Branderhorst has totally rewritten this routine, incorporating
-   a *MUCH* more sophisticated algorithm.  His revised code is not only
-   faster, but is also more accurate. Harrumph!
-*/
-
+// I, Timothy Wegner, invented this solidguessing idea and implemented it in
+// more or less the overall framework you see here.  I am adding this note
+// now in a possibly vain attempt to secure my place in history, because
+// Pieter Branderhorst has totally rewritten this routine, incorporating
+// a *MUCH* more sophisticated algorithm.  His revised code is not only
+// faster, but is also more accurate. Harrumph!
 static int solid_guess()
 {
     int i;
@@ -3674,9 +3637,9 @@ static int solid_guess()
         ++g_total_passes;
     }
 
-    /* ensure window top and left are on required boundary, treat window
-          as larger than it really is if necessary (this is the reason symplot
-          routines must check for > xdots/ydots before plotting sym points) */
+    // ensure window top and left are on required boundary, treat window
+    // as larger than it really is if necessary (this is the reason symplot
+    // routines must check for > xdots/ydots before plotting sym points)
     g_i_x_start &= -1 - (maxblock-1);
     g_i_y_start = yybegin;
     g_i_y_start &= -1 - (maxblock-1);
@@ -4223,8 +4186,7 @@ static void plotblock(int buildrow, int x, int y, int color)
 }
 
 
-/************************* symmetry plot setup ************************/
-
+// symmetry plot setup
 static bool xsym_split(int xaxis_row, bool xaxis_between)
 {
     if ((g_work_symmetry&0x11) == 0x10)   // already decided not sym
@@ -4661,7 +4623,7 @@ originsym:
     }
 }
 
-/**************** tesseral method by CJLT begins here*********************/
+// tesseral method by CJLT begins here
 
 struct tess             // one of these per box to be done gets stacked
 {
@@ -5093,7 +5055,7 @@ static long autologmap()
         if (g_real_color_iter < mincolour)
         {
             mincolour = g_real_color_iter ;
-            g_max_iterations = std::max(2L, mincolour); /*speedup for when edges overlap lakes */
+            g_max_iterations = std::max(2L, mincolour); // speedup for when edges overlap lakes
         }
         if (g_col >=32)
         {
@@ -5116,7 +5078,7 @@ static long autologmap()
         if (g_real_color_iter < mincolour)
         {
             mincolour = g_real_color_iter ;
-            g_max_iterations = std::max(2L, mincolour); /*speedup for when edges overlap lakes */
+            g_max_iterations = std::max(2L, mincolour); // speedup for when edges overlap lakes
         }
         if (g_row >=32)
         {
@@ -5139,7 +5101,7 @@ static long autologmap()
         if (g_real_color_iter < mincolour)
         {
             mincolour = g_real_color_iter ;
-            g_max_iterations = std::max(2L, mincolour); /*speedup for when edges overlap lakes */
+            g_max_iterations = std::max(2L, mincolour); // speedup for when edges overlap lakes
         }
         if (g_row >=32)
         {
@@ -5162,7 +5124,7 @@ static long autologmap()
         if (g_real_color_iter < mincolour)
         {
             mincolour = g_real_color_iter ;
-            g_max_iterations = std::max(2L, mincolour); /*speedup for when edges overlap lakes */
+            g_max_iterations = std::max(2L, mincolour); // speedup for when edges overlap lakes
         }
         if (g_col >=32)
         {

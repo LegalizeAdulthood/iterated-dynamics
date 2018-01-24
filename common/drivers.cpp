@@ -38,14 +38,13 @@ load_driver(Driver *drv, int *argc, char **argv)
     }
 }
 
-/*------------------------------------------------------------
- * init_drivers
- *
- * Go through the static list of drivers defined and try to initialize
- * them one at a time.  Returns the number of drivers initialized.
- */
-int
-init_drivers(int *argc, char **argv)
+//------------------------------------------------------------
+// init_drivers
+//
+// Go through the static list of drivers defined and try to initialize
+// them one at a time.  Returns the number of drivers initialized.
+//
+int init_drivers(int *argc, char **argv)
 {
 #if HAVE_X11_DRIVER
     load_driver(x11_driver, argc, argv);
@@ -62,10 +61,10 @@ init_drivers(int *argc, char **argv)
     return num_drivers;     // number of drivers supported at runtime
 }
 
-/* add_video_mode
- *
- * a driver uses this to inform the system of an available video mode
- */
+// add_video_mode
+//
+// a driver uses this to inform the system of an available video mode
+//
 void
 add_video_mode(Driver *drv, VIDEOINFO *mode)
 {
