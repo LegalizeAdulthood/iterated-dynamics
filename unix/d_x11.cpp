@@ -15,9 +15,16 @@
 #include "port.h"
 #include "prototyp.h"
 
+#include "diskvid.h"
 #include "drivers.h"
+#include "editpal.h"
+#include "fractals.h"
 #include "helpdefs.h"
+#include "id_data.h"
+#include "os.h"
 #include "prompts2.h"
+#include "slideshw.h"
+#include "zoom.h"
 
 #include <signal.h>
 #include <stdio.h>
