@@ -127,13 +127,22 @@ inline void LCMPLXsqr(const LComplex &arg, LComplex &out)
 #define LCMPLXsqr_old(out)       \
    (out).y = multiply(g_l_old_z.x, g_l_old_z.y, g_bit_shift_less_1);\
    (out).x = g_l_temp_sqr_x - g_l_temp_sqr_y
-#define LCMPLXpwr(arg1, arg2, out)    Arg2->l = (arg1); Arg1->l = (arg2);\
-         lStkPwr(); Arg1++; Arg2++; (out) = Arg2->l
+inline void LCMPLXpwr(const LComplex &arg1, const LComplex &arg2, LComplex &out)
+{
+    Arg2->l = arg1;
+    Arg1->l = arg2;
+    extern void lStkPwr();
+    lStkPwr();
+    Arg1++;
+    Arg2++;
+    out = Arg2->l;
+}
+
 inline void LCMPLXmult(const LComplex &arg1, const LComplex &arg2, LComplex &out)
 {
-    extern void lStkMul();
     Arg1->l = arg1;
     Arg2->l = arg2;
+    extern void lStkMul();
     lStkMul();
     Arg1++;
     Arg2++;
