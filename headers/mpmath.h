@@ -155,7 +155,11 @@ extern void dStkSin(), dStkCos(), dStkSinh(), dStkCosh(), dStkLog(), dStkExp(), 
 #define CMPLXsqr_old(out)       \
    (out).y = (g_old_z.x+g_old_z.x) * g_old_z.y;\
    (out).x = g_temp_sqr_x - g_temp_sqr_y
-#define CMPLXpwr(arg1, arg2, out)   (out)= ComplexPower((arg1), (arg2))
+inline void CMPLXpwr(const DComplex &arg1, const DComplex &arg2, DComplex &out)
+{
+    extern DComplex ComplexPower(DComplex, DComplex);
+    out = ComplexPower(arg1, arg2);
+}
 inline void CMPLXmult1(const DComplex &arg1, const DComplex &arg2, DComplex &out)
 {
     extern void dStkMul();
