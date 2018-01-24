@@ -135,9 +135,11 @@ inline void LCMPLXsqr(const LComplex &arg, LComplex &out)
     (out).x = (arg1).x + (arg2).x; (out).y = (arg1).y + (arg2).y
 #define LCMPLXsub(arg1, arg2, out)    \
     (out).x = (arg1).x - (arg2).x; (out).y = (arg1).y - (arg2).y
-#define LCMPLXtimesreal(arg, real, out)   \
-    (out).x = multiply((arg).x, (real), g_bit_shift);\
-    (out).y = multiply((arg).y, (real), g_bit_shift)
+inline void LCMPLXtimesreal(const LComplex &arg, long real, LComplex &out)
+{
+    out.x = multiply(arg.x, real, g_bit_shift);
+    out.y = multiply(arg.y, real, g_bit_shift);
+}
 inline void LCMPLXrecip(const LComplex &arg, LComplex &out)
 {
     const long denom = lsqr(arg.x) + lsqr(arg.y);
