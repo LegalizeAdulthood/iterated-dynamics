@@ -15,6 +15,7 @@
 #include "port.h"
 #include "prototyp.h"
 
+#include "calcfrac.h"
 #include "diskvid.h"
 #include "drivers.h"
 #include "editpal.h"
