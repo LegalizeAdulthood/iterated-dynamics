@@ -77,7 +77,13 @@ extern int g_color_cycle_range_hi;
 
 typedef unsigned long XPixel;
 
-enum {
+inline int ctl(int code)
+{
+    return code & 0x1f;
+}
+
+enum
+{
     TEXT_WIDTH = 80,
     TEXT_HEIGHT = 25,
     MOUSE_SCALE = 1
@@ -805,9 +811,9 @@ translate_key(int ch)
             return FIK_PAGE_UP;
         case 'N':
             return FIK_PAGE_DOWN;
-        case CTL('O'):
+        case ctl('O'):
             return FIK_CTL_HOME;
-        case CTL('E'):
+        case ctl('E'):
             return FIK_CTL_END;
         case 'H':
             return FIK_LEFT_ARROW;
@@ -831,19 +837,19 @@ translate_key(int ch)
             return FIK_END;
         case '\n':
             return FIK_ENTER;
-        case CTL('T'):
+        case ctl('T'):
             return FIK_CTL_ENTER;
         case -2:
             return FIK_CTL_ENTER_2;
-        case CTL('U'):
+        case ctl('U'):
             return FIK_CTL_PAGE_UP;
-        case CTL('N'):
+        case ctl('N'):
             return FIK_CTL_PAGE_DOWN;
         case '{':
             return FIK_CTL_MINUS;
         case '}':
             return FIK_CTL_PLUS;
-        case CTL('D'):
+        case ctl('D'):
             return FIK_CTL_DEL;
         case '!':
             return FIK_F1;
@@ -1177,7 +1183,7 @@ ev_key_press(DriverX11 *di, XKeyEvent *xevent)
         break;
     case XK_Return:
     case XK_KP_Enter:
-        di->key_buffer = di->ctl_mode ? CTL('T') : '\n';
+        di->key_buffer = di->ctl_mode ? ctl('T') : '\n';
         return 1;
     }
     if (charcount == 1)
