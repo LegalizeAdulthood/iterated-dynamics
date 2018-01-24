@@ -97,7 +97,6 @@ inline long LCMPLXmod(const LComplex &z)
 {
     return lsqr(z.x) + lsqr(z.y);
 }
-#define LCMPLXconj(z)   ((z).y =  -((z).y))
 #define LCMPLXtrig0(arg, out) Arg1->l = (arg); ltrig0(); (out) = Arg1->l
 #define LCMPLXtrig1(arg, out) Arg1->l = (arg); ltrig1(); (out) = Arg1->l
 #define LCMPLXtrig2(arg, out) Arg1->l = (arg); ltrig2(); (out) = Arg1->l
