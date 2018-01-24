@@ -15,9 +15,16 @@
 #include "port.h"
 #include "prototyp.h"
 
+#include "cmdfiles.h"
 #include "drivers.h"
+#include "editpal.h"
 #include "helpdefs.h"
+#include "id_data.h"
+#include "miscovl.h"
+#include "os.h"
 #include "prompts2.h"
+#include "rotate.h"
+#include "zoom.h"
 
 #include <assert.h>
 #include <fcntl.h>
@@ -51,6 +58,11 @@
 #define FNDELAY O_NDELAY
 #endif
 #endif
+
+constexpr int ctl(int code)
+{
+    return code & 0x1f;
+}
 
 // Check if there is a character waiting for us.
 #define input_pending() (ioctl(0, FIONREAD, &iocount), (int)iocount)
@@ -1505,7 +1517,7 @@ translatekey(int ch)
             return FIK_PAGE_UP;
         case 'N':
             return FIK_PAGE_DOWN;
-        case CTL('O'):
+        case ctl('O'):
             return FIK_CTL_HOME;
         case 'H':
             return FIK_LEFT_ARROW;
@@ -1529,20 +1541,20 @@ translatekey(int ch)
             return FIK_END;
         case '\n':
             return FIK_ENTER;
-        case CTL('T'):
+        case ctl('T'):
             return FIK_CTL_ENTER;
         case -2:
             return FIK_CTL_ENTER_2;
-        case CTL('U'):
+        case ctl('U'):
             return FIK_CTL_PAGE_UP;
-        case CTL('N'):
+        case ctl('N'):
             return FIK_CTL_PAGE_DOWN;
         case '{':
             return FIK_CTL_MINUS;
         case '}':
             return FIK_CTL_PLUS;
             // we need ^I for tab
-        case CTL('D'):
+        case ctl('D'):
             return FIK_CTL_DEL;
         case '!':
             return FIK_F1;
@@ -1880,7 +1892,7 @@ xhandleevents()
                 break;
             case XK_Return:
             case XK_KP_Enter:
-                xbufkey = ctl_mode ? CTL('T') : '\n';
+                xbufkey = ctl_mode ? ctl('T') : '\n';
                 return;
             }
             if (charcount == 1)
