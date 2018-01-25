@@ -171,7 +171,13 @@ inline void CMPLXtrig2(const DComplex &arg, DComplex &out)
     dtrig2();
     out = Arg1->d;
 }
-#define  CMPLXtrig3(arg, out) Arg1->d = (arg); dtrig3(); (out) = Arg1->d
+inline void CMPLXtrig3(const DComplex &arg, DComplex &out)
+{
+    Arg1->d = (arg);
+    extern void (*dtrig3)();
+    dtrig3();
+    (out) = Arg1->d;
+}
 #if !defined(XFRACT)
 inline void LCMPLXsin(const LComplex &arg, LComplex &out)
 {
