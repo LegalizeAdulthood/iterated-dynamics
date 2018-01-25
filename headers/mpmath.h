@@ -77,7 +77,10 @@ inline long Float2Fg(float x, int f)
 {
     return RegFloat2Fg(*(long*)&x, f);
 }
-#define fLog14(x, z) ((*reinterpret_cast<long*>(&z)) = RegFg2Float(LogFloat14(*reinterpret_cast<long*>(&x)), 16))
+inline void fLog14(float x, float &z)
+{
+    *reinterpret_cast<long*>(&z) = RegFg2Float(LogFloat14(*reinterpret_cast<long*>(&x)), 16);
+}
 #define fExp14(x, z) ((*(long*)&z) = ExpFloat14(*(long*)&x));
 inline void fSqrt14(float x, float &z)
 {
