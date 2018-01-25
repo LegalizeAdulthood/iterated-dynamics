@@ -66,7 +66,10 @@ inline void fMul16(float x, float y, float &z)
     *(long*)&z = r16Mul(*(long*)&x, *(long*)&y);
 }
 #define fShift(x, Shift, z) ((*(long*)&z) = RegSftFloat(*(long*)&x, Shift))
-#define Fg2Float(x, f, z) ((*(long*)&z) = RegFg2Float(x, f))
+inline void Fg2Float(int x, long f, float &z)
+{
+    *(long*)&z = RegFg2Float(x, f);
+}
 #define Float2Fg(x, f) RegFloat2Fg(*(long*)&x, f)
 #define fLog14(x, z) ((*reinterpret_cast<long*>(&z)) = RegFg2Float(LogFloat14(*reinterpret_cast<long*>(&x)), 16))
 #define fExp14(x, z) ((*(long*)&z) = ExpFloat14(*(long*)&x));
