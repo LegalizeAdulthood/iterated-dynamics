@@ -113,7 +113,7 @@ extern Arg *Arg1;
 extern Arg *Arg2;
 
 // --------------------------------------------------------------------
-// The following #defines allow the complex transcendental functions
+// The following functions allow the complex transcendental functions
 // in parser.c to be used here thus avoiding duplicated code.
 // --------------------------------------------------------------------
 #if !defined(XFRACT)
@@ -223,8 +223,8 @@ inline void LCMPLXexp(const LComplex &arg, LComplex &out)
 }
 inline void LCMPLXsqr(const LComplex &arg, LComplex &out)
 {
-   out.x = lsqr(arg.x) - lsqr(arg.y);
-   out.y = multiply(arg.x, arg.y, g_bit_shift_less_1);
+    out.x = lsqr(arg.x) - lsqr(arg.y);
+    out.y = multiply(arg.x, arg.y, g_bit_shift_less_1);
 }
 inline void LCMPLXsqr_old(LComplex &out)
 {
