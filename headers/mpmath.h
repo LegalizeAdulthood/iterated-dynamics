@@ -3,6 +3,7 @@
 
 #include "calcfrac.h"
 #include "cmplx.h"
+#include "fpu087.h"
 #include "fractals.h"
 #include "id_data.h"
 
@@ -45,6 +46,7 @@ extern MP  *(*pMPadd)(MP , MP);
 extern MP  *(*pMPsub)(MP , MP);
 extern MP  *(*pd2MP)(double)                ;
 extern double     *(*pMP2d)(MP)             ;
+extern long ExpFloat14(long);
 
 // ** Formula Declarations **
 #if !defined(XFRACT)
@@ -62,7 +64,12 @@ extern MATH_TYPE MathType;
 #define Float2Fg(x, f) RegFloat2Fg(*(long*)&x, f)
 #define fLog14(x, z) ((*reinterpret_cast<long*>(&z)) = RegFg2Float(LogFloat14(*reinterpret_cast<long*>(&x)), 16))
 #define fExp14(x, z) ((*(long*)&z) = ExpFloat14(*(long*)&x));
-#define fSqrt14(x, z) fLog14(x, z); fShift(z, -1, z); fExp14(z, z)
+inline void fSqrt14(float x, float &z)
+{
+    fLog14(x, z);
+    fShift(z, -1, z);
+    fExp14(z, z);
+}
 
 // the following are declared 4 dimensional as an experiment
 // changeing declarations to DComplex and LComplex restores the code
