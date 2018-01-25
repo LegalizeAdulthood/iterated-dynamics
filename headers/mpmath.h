@@ -89,10 +89,6 @@ extern Arg *Arg2;
 // in parser.c to be used here thus avoiding duplicated code.
 // --------------------------------------------------------------------
 #if !defined(XFRACT)
-inline double CMPLXmod(const DComplex &z)
-{
-    return sqr(z.x) + sqr(z.y);
-}
 inline long LCMPLXmod(const LComplex &z)
 {
     return lsqr(z.x) + lsqr(z.y);
@@ -211,6 +207,10 @@ inline void LCMPLXrecip(const LComplex &arg, LComplex &out)
     }
 }
 #endif /* XFRACT */
+inline double CMPLXmod(const DComplex &z)
+{
+    return sqr(z.x) + sqr(z.y);
+}
 inline void CMPLXsin(const DComplex &arg, DComplex &out)
 {
     Arg1->d = arg;
