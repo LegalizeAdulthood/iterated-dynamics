@@ -226,9 +226,11 @@ inline void LCMPLXsqr(const LComplex &arg, LComplex &out)
    out.x = lsqr(arg.x) - lsqr(arg.y);
    out.y = multiply(arg.x, arg.y, g_bit_shift_less_1);
 }
-#define LCMPLXsqr_old(out)       \
-   (out).y = multiply(g_l_old_z.x, g_l_old_z.y, g_bit_shift_less_1);\
-   (out).x = g_l_temp_sqr_x - g_l_temp_sqr_y
+inline void LCMPLXsqr_old(LComplex &out)
+{
+    out.y = multiply(g_l_old_z.x, g_l_old_z.y, g_bit_shift_less_1);
+    out.x = g_l_temp_sqr_x - g_l_temp_sqr_y;
+}
 inline void LCMPLXpwr(const LComplex &arg1, const LComplex &arg2, LComplex &out)
 {
     Arg2->l = arg1;
