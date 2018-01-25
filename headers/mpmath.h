@@ -150,7 +150,13 @@ inline void LCMPLXtrig3(const LComplex &arg, LComplex &out)
     out = Arg1->l;
 }
 #endif /* XFRACT */
-#define  CMPLXtrig0(arg, out) Arg1->d = (arg); dtrig0(); (out) = Arg1->d
+inline void CMPLXtrig0(const DComplex &arg, DComplex &out)
+{
+    Arg1->d = arg;
+    extern void (*dtrig0)();
+    dtrig0();
+    out = Arg1->d;
+}
 #define  CMPLXtrig1(arg, out) Arg1->d = (arg); dtrig1(); (out) = Arg1->d
 #define  CMPLXtrig2(arg, out) Arg1->d = (arg); dtrig2(); (out) = Arg1->d
 #define  CMPLXtrig3(arg, out) Arg1->d = (arg); dtrig3(); (out) = Arg1->d
