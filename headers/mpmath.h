@@ -6,6 +6,7 @@
 #include "fpu087.h"
 #include "fractals.h"
 #include "id_data.h"
+#include "miscres.h"
 
 #include <vector>
 
@@ -128,7 +129,12 @@ inline void LCMPLXtrig0(const LComplex &arg, LComplex &out)
     ltrig0();
     out = Arg1->l;
 }
-#define LCMPLXtrig1(arg, out) Arg1->l = (arg); ltrig1(); (out) = Arg1->l
+inline void LCMPLXtrig1(const LComplex &arg, LComplex &out)
+{
+    Arg1->l = arg;
+    ltrig1();
+    out = Arg1->l;
+}
 #define LCMPLXtrig2(arg, out) Arg1->l = (arg); ltrig2(); (out) = Arg1->l
 #define LCMPLXtrig3(arg, out) Arg1->l = (arg); ltrig3(); (out) = Arg1->l
 #endif /* XFRACT */
