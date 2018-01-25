@@ -325,12 +325,14 @@ inline void CMPLXexp(const DComplex &arg, DComplex &out)
 }
 inline void CMPLXsqr(const DComplex &arg, DComplex &out)
 {
-   out.x = sqr(arg.x) - sqr(arg.y);
-   out.y = (arg.x + arg.x) * arg.y;
+    out.x = sqr(arg.x) - sqr(arg.y);
+    out.y = (arg.x + arg.x) * arg.y;
 }
-#define CMPLXsqr_old(out)       \
-   (out).y = (g_old_z.x+g_old_z.x) * g_old_z.y;\
-   (out).x = g_temp_sqr_x - g_temp_sqr_y
+inline void CMPLXsqr_old(DComplex &out)
+{
+    out.y = (g_old_z.x+g_old_z.x) * g_old_z.y;
+    out.x = g_temp_sqr_x - g_temp_sqr_y;
+}
 inline void CMPLXpwr(const DComplex &arg1, const DComplex &arg2, DComplex &out)
 {
     extern DComplex ComplexPower(DComplex, DComplex);
