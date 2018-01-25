@@ -65,7 +65,10 @@ inline void fMul16(float x, float y, float &z)
 {
     *(long*)&z = r16Mul(*(long*)&x, *(long*)&y);
 }
-#define fShift(x, Shift, z) ((*(long*)&z) = RegSftFloat(*(long*)&x, Shift))
+inline void fShift(float x, int shift, float &z)
+{
+    *(long*)&z = RegSftFloat(*(long*)&x, shift);
+}
 inline void Fg2Float(int x, long f, float &z)
 {
     *(long*)&z = RegFg2Float(x, f);
