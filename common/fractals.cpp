@@ -1375,14 +1375,14 @@ int PopcornFractalFn()
     DComplex tmpy;
 
     // tmpx contains the generalized value of the old real "x" equation
-    CMPLXtimesreal(g_param_z2, g_old_z.y, g_tmp_z);  // tmp = (C * old.y)
+    g_tmp_z = g_param_z2*g_old_z.y;  // tmp = (C * old.y)
     CMPLXtrig1(g_tmp_z, tmpx);             // tmpx = trig1(tmp)
     tmpx.x += g_old_z.y;                  // tmpx = old.y + trig1(tmp)
     CMPLXtrig0(tmpx, g_tmp_z);             // tmp = trig0(tmpx)
     CMPLXmult(g_tmp_z, g_param_z1, tmpx);         // tmpx = tmp * h
 
     // tmpy contains the generalized value of the old real "y" equation
-    CMPLXtimesreal(g_param_z2, g_old_z.x, g_tmp_z);  // tmp = (C * old.x)
+    g_tmp_z = g_param_z2*g_old_z.x;  // tmp = (C * old.x)
     CMPLXtrig3(g_tmp_z, tmpy);             // tmpy = trig3(tmp)
     tmpy.x += g_old_z.x;                  // tmpy = old.x + trig1(tmp)
     CMPLXtrig2(tmpy, g_tmp_z);             // tmp = trig2(tmpy)
