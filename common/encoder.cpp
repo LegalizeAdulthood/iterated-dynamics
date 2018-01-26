@@ -962,16 +962,7 @@ static void setup_save_info(FRACTAL_INFO *save_info)
     save_info->pot16bit = (short) (g_disk_16_bit ? 1 : 0);
     save_info->faspectratio = g_final_aspect_ratio;
     save_info->system = (short) g_save_system;
-
-    if (check_back())
-    {
-        save_info->release = g_release;
-    }
-    else
-    {
-        save_info->release = (short) g_release;
-    }
-
+    save_info->release = g_release;
     save_info->display_3d = (short) g_display_3d;
     save_info->ambient = (short) g_ambient;
     save_info->randomize = (short) g_randomize_3d;

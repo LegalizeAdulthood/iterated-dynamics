@@ -630,14 +630,7 @@ void write_batch_parms(char const *colorinf, bool colorsonly, int maxcolor, int 
 
         //***** fractal only parameters in this section ******
         put_parm(" reset");
-        if (check_back())
-        {
-            put_parm("=%d", g_release);
-        }
-        else
-        {
-            put_parm("=%d", g_release);
-        }
+        put_parm("=%d", g_release);
 
         sptr = g_cur_fractal_specific->name;
         if (*sptr == '*')

@@ -1280,21 +1280,6 @@ void backwards_v20()
     }
 }
 
-bool check_back()
-{
-    /*
-       put the features that need to save the value in save_release for backwards
-       compatibility in this routine
-    */
-    return g_fractal_type == fractal_type::LYAPUNOV
-        || g_fractal_type == fractal_type::FROTH
-        || g_fractal_type == fractal_type::FROTHFP
-        || fix_bof()
-        || fix_period_bof()
-        || g_use_old_distance_estimator
-        || g_decomp[0] == 2;
-}
-
 static bool fix_bof()
 {
     return false;
