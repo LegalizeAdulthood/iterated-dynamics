@@ -368,9 +368,5 @@ inline void CMPLXrecip(const DComplex &arg, DComplex &out)
         out.y = -arg.y / denom;
     }
 }
-inline void CMPLXneg(const DComplex &arg, DComplex &out)
-{
-    out = -arg;
-}
 
 #endif

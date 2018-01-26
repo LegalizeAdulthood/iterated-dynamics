@@ -3362,7 +3362,7 @@ bool MandelbrotMix4Setup()
     CMPLXrecip(D, H);                // h=1/d,
     g_tmp_z = F - B;              // tmp = f-b
     CMPLXrecip(g_tmp_z, J);              // j = 1/(f-b)
-    CMPLXneg(A, g_tmp_z);
+    g_tmp_z = -A;
     CMPLXmult(g_tmp_z, B, g_tmp_z);           // z=(-a*b*g*h)^j,
     CMPLXmult(g_tmp_z, G, g_tmp_z);
     CMPLXmult(g_tmp_z, H, g_tmp_z);
