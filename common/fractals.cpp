@@ -1574,7 +1574,7 @@ int SkinnerZXTrigSubZfpFractal()
     // z = (z*trig(z))-z
     CMPLXtrig0(g_old_z, g_tmp_z);         // tmp  = trig(old)
     CMPLXmult(g_old_z, g_tmp_z, g_new_z);       // new  = old*trig(old)
-    CMPLXsub(g_new_z, g_old_z, g_new_z);        // new  = trig(old) - old
+    g_new_z -= g_old_z;        // new  = trig(old) - old
     return floatbailout();
 }
 
@@ -1785,7 +1785,7 @@ int HalleyFractal()
     FPUcplxmul(&g_old_z, &XtoAlessOne, &XtoA);
     FPUcplxmul(&g_old_z, &XtoA, &XtoAplusOne);
 
-    CMPLXsub(XtoAplusOne, g_old_z, FX);        // FX = X^(a+1) - X  = F
+    FX = XtoAplusOne - g_old_z;        // FX = X^(a+1) - X  = F
     F2prime.x = g_halley_a_plus_one_times_degree * XtoAlessOne.x; // g_halley_a_plus_one_times_degree in setup
     F2prime.y = g_halley_a_plus_one_times_degree * XtoAlessOne.y;        // F"
 
@@ -1797,7 +1797,7 @@ int HalleyFractal()
     Haldenom.y = F1prime.y + F1prime.y;                     //  2 * F'
 
     FPUcplxdiv(&Halnumer1, &Haldenom, &Halnumer1);         //  F"F/2F'
-    CMPLXsub(F1prime, Halnumer1, Halnumer2);          //  F' - F"F/2F'
+    Halnumer2 = F1prime - Halnumer1;          //  F' - F"F/2F'
     FPUcplxdiv(&FX, &Halnumer2, &Halnumer2);
     // parm.y is relaxation coef.
     relax.x = g_param_z1.y;
@@ -2072,7 +2072,7 @@ int SkinnerTrigSubTrigfpFractal()
     // z = trig0(z)-trig1(z)
     CMPLXtrig0(g_old_z, g_tmp_z);
     CMPLXtrig1(g_old_z, tmp2);
-    CMPLXsub(g_tmp_z, tmp2, g_new_z);
+    g_new_z = g_tmp_z - tmp2;
     return floatbailout();
 }
 
@@ -2191,9 +2191,9 @@ int SkinnerTrigSubSqrFractal()
 int SkinnerTrigSubSqrfpFractal()
 {
     // { z=pixel: z=sin(z)-sqr(z), |z|<BAILOUT }
-    CMPLXtrig0(g_old_z, g_new_z);       // new = trig(old)
+    CMPLXtrig0(g_old_z, g_new_z);   // new = trig(old)
     CMPLXsqr_old(g_tmp_z);          // old = sqr(old)
-    CMPLXsub(g_new_z, g_tmp_z, g_new_z);      // new = trig(old)-sqr(old)
+    g_new_z -= g_tmp_z;             // new = trig(old)-sqr(old)
     return floatbailout();
 }
 
@@ -3360,7 +3360,7 @@ bool MandelbrotMix4Setup()
     L.y = 0.0;    // l=imag(p3)+100,
     CMPLXrecip(F, G);                // g=1/f,
     CMPLXrecip(D, H);                // h=1/d,
-    CMPLXsub(F, B, g_tmp_z);              // tmp = f-b
+    g_tmp_z = F - B;              // tmp = f-b
     CMPLXrecip(g_tmp_z, J);              // j = 1/(f-b)
     CMPLXneg(A, g_tmp_z);
     CMPLXmult(g_tmp_z, B, g_tmp_z);           // z=(-a*b*g*h)^j,
