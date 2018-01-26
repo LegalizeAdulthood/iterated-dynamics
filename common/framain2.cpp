@@ -79,7 +79,6 @@ struct HISTORY
     double x3rd;
     double y3rd;
     long distest;
-    short bailoutold;
     BYTE trigndx[4];
     short finattract;
     double initorbit[2];
@@ -122,8 +121,6 @@ struct HISTORY
     long bailout;
     short bailoutest;
     long iterations;
-    short bf_math;
-    short bflength;
     short yadjust;
     short old_demm_colors;
     char filename[FILE_MAX_PATH];
@@ -138,7 +135,6 @@ struct HISTORY
     short ismand;
     double closeprox;
     short nobof;
-    double math_tol[2];
     short orbit_delay;
     long orbit_interval;
     double oxmin;
