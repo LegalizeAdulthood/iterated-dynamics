@@ -43,6 +43,18 @@ struct complex
 };
 
 template <typename T>
+complex<T> operator+(const complex<T> &val)
+{
+    return val;
+}
+
+template <typename T>
+complex<T> operator-(const complex<T> &val)
+{
+    return {-val.x, -val.y};
+}
+
+template <typename T>
 complex<T> operator+(const complex<T> &lhs, const complex<T> &rhs)
 {
     complex<T> result = lhs;

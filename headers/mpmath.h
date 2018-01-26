@@ -370,8 +370,7 @@ inline void CMPLXrecip(const DComplex &arg, DComplex &out)
 }
 inline void CMPLXneg(const DComplex &arg, DComplex &out)
 {
-    out.x = -arg.x;
-    out.y = -arg.y;
+    out = -arg;
 }
 
 #endif
