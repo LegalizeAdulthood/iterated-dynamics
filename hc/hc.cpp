@@ -457,7 +457,7 @@ int add_page(TOPIC *t, PAGE const *p)
     {
         t->page = static_cast<PAGE *>(renewx(t->page, sizeof(PAGE) * (t->num_page+PAGE_ALLOC_SIZE)));
     }
-
+    assert(t->page);
     t->page[t->num_page] = *p;
 
     return (t->num_page++);
