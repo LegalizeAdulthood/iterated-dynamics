@@ -303,7 +303,6 @@ int read_overlay()      // read overlay/3D files, if reqr'd
         {
             g_file_aspect_ratio = g_screen_aspect;
         }
-        g_save_system  = read_info.system;
         g_save_system = 0;
         if (g_display_3d == display_3d_modes::NONE && read_info.display_3d > 0)
         {
