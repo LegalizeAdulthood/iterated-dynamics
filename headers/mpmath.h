@@ -355,10 +355,6 @@ inline void CMPLXmult(const DComplex &arg1, const DComplex &arg2, DComplex &out)
     tmp.y = arg1.x*arg2.y + arg1.y*arg2.x;
     out = tmp;
 }
-inline void CMPLXadd(const DComplex &arg1, const DComplex &arg2, DComplex &out)
-{
-    out = arg1 + arg2;
-}
 inline void CMPLXsub(const DComplex &arg1, const DComplex &arg2, DComplex &out)
 {
     out = arg1 - arg2;

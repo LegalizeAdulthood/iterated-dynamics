@@ -1556,7 +1556,7 @@ int ZXTrigPlusZfpFractal()
     CMPLXmult(g_param_z1, g_tmp_z, g_tmp_z);      // tmp  = p1*trig(old)
     CMPLXmult(g_old_z, g_tmp_z, tmp2);      // tmp2 = p1*old*trig(old)
     CMPLXmult(g_param_z2, g_old_z, g_tmp_z);     // tmp  = p2*old
-    CMPLXadd(tmp2, g_tmp_z, g_new_z);       // new  = p1*trig(old) + p2*old
+    g_new_z = tmp2 + g_tmp_z;       // new  = p1*trig(old) + p2*old
     return floatbailout();
 }
 
@@ -1565,7 +1565,7 @@ int ScottZXTrigPlusZfpFractal()
     // z = (z*trig(z))+z
     CMPLXtrig0(g_old_z, g_tmp_z);         // tmp  = trig(old)
     CMPLXmult(g_old_z, g_tmp_z, g_new_z);       // new  = old*trig(old)
-    CMPLXadd(g_new_z, g_old_z, g_new_z);        // new  = trig(old) + old
+    g_new_z += g_old_z;        // new  = trig(old) + old
     return floatbailout();
 }
 
@@ -1622,7 +1622,7 @@ int TrigPlusTrigfpFractal()
     CMPLXmult(g_param_z1, g_tmp_z, g_tmp_z);
     CMPLXtrig1(g_old_z, g_old_z);
     CMPLXmult(g_param_z2, g_old_z, g_old_z);
-    CMPLXadd(g_tmp_z, g_old_z, g_new_z);
+    g_new_z = g_tmp_z + g_old_z;
     return floatbailout();
 }
 
@@ -1696,12 +1696,12 @@ int JuliaTrigOrTrigfpFractal()
     if (CMPLXmod(g_old_z) < g_param_z2.x)
     {
         CMPLXtrig0(g_old_z, g_old_z);
-        CMPLXadd(*g_float_param, g_old_z, g_new_z);
+        g_new_z = *g_float_param + g_old_z;
     }
     else
     {
         CMPLXtrig1(g_old_z, g_old_z);
-        CMPLXadd(*g_float_param, g_old_z, g_new_z);
+        g_new_z = *g_float_param + g_old_z;
     }
     return floatbailout();
 }
@@ -2050,7 +2050,7 @@ int ScottTrigPlusTrigfpFractal()
     // z = trig0(z)+trig1(z)
     CMPLXtrig0(g_old_z, g_tmp_z);
     CMPLXtrig1(g_old_z, tmp2);
-    CMPLXadd(g_tmp_z, tmp2, g_new_z);
+    g_new_z = g_tmp_z + tmp2;
     return floatbailout();
 }
 
@@ -2149,7 +2149,7 @@ int TrigPlusSqrfpFractal() // generalization of Scott and Skinner types
     CMPLXmult(g_param_z1, g_tmp_z, g_new_z); // new = parm*trig(old)
     CMPLXsqr_old(g_tmp_z);        // tmp = sqr(old)
     CMPLXmult(g_param_z2, g_tmp_z, tmp2); // tmp = parm2*sqr(old)
-    CMPLXadd(g_new_z, tmp2, g_new_z);    // new = parm*trig(old)+parm2*sqr(old)
+    g_new_z += tmp2;    // new = parm*trig(old)+parm2*sqr(old)
     return floatbailout();
 }
 
@@ -2171,7 +2171,7 @@ int ScottTrigPlusSqrfpFractal() // float version
     // { z=pixel: z=sin(z)+sqr(z), |z|<BAILOUT }
     CMPLXtrig0(g_old_z, g_new_z);       // new = trig(old)
     CMPLXsqr_old(g_tmp_z);          // tmp = sqr(old)
-    CMPLXadd(g_new_z, g_tmp_z, g_new_z);      // new = trig(old)+sqr(old)
+    g_new_z += g_tmp_z;      // new = trig(old)+sqr(old)
     return floatbailout();
 }
 
