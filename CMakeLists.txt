@@ -145,10 +145,30 @@ add_executable(id ${OS_ID_OPTIONS}
     ${OS_DRIVER_HEADERS}
 )
 
+source_group("Header Files\\common\\3d" FILES
+    headers/3d.h
+    headers/line3d.h
+    headers/plot3d.h
+)
 source_group("Source Files\\common\\3d" FILES
     common/3d.cpp
     common/line3d.cpp
     common/plot3d.cpp
+)
+source_group("Header Files\\common\\engine" FILES
+    headers/calcfrac.h
+    headers/calcmand.h
+    headers/calmanfp.h
+    headers/fracsuba.h
+    headers/fracsubr.h
+    headers/fractalb.h
+    headers/fractalp.h
+    headers/fractals.h
+    headers/fractype.h
+    headers/frasetup.h
+    headers/id_data.h
+    headers/soi.h
+    headers/testpt.h
 )
 source_group("Source Files\\common\\engine" FILES
     common/calcfrac.cpp
@@ -164,6 +184,16 @@ source_group("Source Files\\common\\engine" FILES
     common/soi1.cpp
     common/testpt.cpp
 )
+source_group("Header Files\\common\\fractal specific" FILES
+    headers/ant.h
+    headers/jb.h
+    headers/lorenz.h
+    headers/lsys.h
+    headers/lsysf.h
+    headers/lsys_fns.h
+    headers/miscfrac.h
+    headers/newton.h
+)
 source_group("Source Files\\common\\fractal specific" FILES
     common/ant.cpp
     common/jb.cpp
@@ -172,6 +202,22 @@ source_group("Source Files\\common\\fractal specific" FILES
     common/lsysf.cpp
     common/miscfrac.cpp
 )
+source_group("Header Files\\common\\i/o" FILES
+    headers/cmdfiles.h
+    headers/decoder.h
+    headers/diskvid.h
+    headers/editpal.h
+    headers/encoder.h
+    headers/evolve.h
+    headers/gifview.h
+    headers/loadfdos.h
+    headers/loadfile.h
+    headers/loadmap.h
+    headers/parser.h
+    headers/rotate.h
+    headers/slideshw.h
+    headers/stereo.h
+)
 source_group("Source Files\\common\\i/o" FILES
     common/cmdfiles.cpp
     common/decoder.cpp
@@ -179,7 +225,6 @@ source_group("Source Files\\common\\i/o" FILES
     common/editpal.cpp
     common/encoder.cpp
     common/evolve.cpp
-    common/f16.cpp
     common/gifview.cpp
     common/loadfdos.cpp
     common/loadfile.cpp
@@ -190,6 +235,15 @@ source_group("Source Files\\common\\i/o" FILES
     common/slideshw.cpp
     common/stereo.cpp
 )
+source_group("Header Files\\common\\math" FILES
+    headers/big.h
+    headers/biginit.h
+    headers/cmplx.h
+    headers/fpu087.h
+    headers/hcmplx.h
+    headers/mpmath.h
+    headers/mpmath_c.h
+)
 source_group("Source Files\\common\\math" FILES
     common/bigflt.cpp
     common/biginit.cpp
@@ -199,9 +253,28 @@ source_group("Source Files\\common\\math" FILES
     common/hcmplx.cpp
     common/mpmath_c.cpp
 )
+source_group("Header Files\\common\\plumbing" FILES
+    headers/drivers.h
+    headers/memory.h
+)
 source_group("Source Files\\common\\plumbing" FILES
     common/drivers.cpp
     common/memory.cpp
+)
+source_group("Headers Files\\common\\ui" FILES
+    headers/fractint.h
+    headers/framain2.h
+    headers/help.h
+    headers/helpcom.h
+    headers/helpdefs.h
+    headers/intro.h
+    headers/jiim.h
+    headers/miscovl.h
+    headers/miscres.h
+    headers/prompts1.h
+    headers/prompts2.h
+    headers/realdos.h
+    headers/zoom.h
 )
 source_group("Source Files\\common\\ui" FILES
     common/fractint.cpp
