@@ -976,38 +976,10 @@ static bool can_read_file(char const *path)
 
 static bool exe_path(char const *filename, char *path)
 {
-#if !defined(XFRACT) && !defined(_WIN32)
-    char *ptr;
-
-    if (dos_version() >= 300)  // DOS version 3.00+ ?
-    {
-        extern char **__argv;
-        strcpy(path, __argv[0]);   // note: __argv may be undocumented in MSC
-        if (strcmp(filename, "FRACTINT.EXE") == 0)
-            if (can_read_file(path))
-            {
-                return true;
-            }
-        ptr = strrchr(path, SLASHC);
-        if (ptr == nullptr)
-        {
-            ptr = path;
-        }
-        else
-        {
-            ++ptr;
-        }
-        strcpy(ptr, filename);
-        return true;
-    }
-
-    return false;
-#else
     strcpy(path, SRCDIR);
     strcat(path, "/");
     strcat(path, filename);
     return true;
-#endif
 }
 
 static bool find_file(char const *filename, char *path)
