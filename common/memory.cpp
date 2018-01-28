@@ -176,7 +176,7 @@ static int check_for_mem(int stored_at, long howmuch)
 
     } // end of switch
 
-    return (use_this_type);
+    return use_this_type;
 }
 
 static U16 next_handle()
@@ -188,7 +188,7 @@ static U16 next_handle()
     {
         counter++;
     }
-    return (counter);
+    return counter;
 }
 
 static int CheckBounds(long start, long length, U16 handle)
@@ -197,34 +197,34 @@ static int CheckBounds(long start, long length, U16 handle)
     {
         stopmsg(STOPMSG_INFO_ONLY | STOPMSG_NO_BUZZER, "Memory reference out of bounds.");
         DisplayHandle(handle);
-        return (1);
+        return 1;
     }
     if (length > (long)USHRT_MAX)
     {
         stopmsg(STOPMSG_INFO_ONLY | STOPMSG_NO_BUZZER, "Tried to move > 65,535 bytes.");
         DisplayHandle(handle);
-        return (1);
+        return 1;
     }
     if (handletable[handle].Nowhere.stored_at == DISK &&
             (stackavail() <= DISKWRITELEN))
     {
         stopmsg(STOPMSG_INFO_ONLY | STOPMSG_NO_BUZZER, "Stack space insufficient for disk memory.");
         DisplayHandle(handle);
-        return (1);
+        return 1;
     }
     if (length <= 0)
     {
         stopmsg(STOPMSG_INFO_ONLY | STOPMSG_NO_BUZZER, "Zero or negative length.");
         DisplayHandle(handle);
-        return (1);
+        return 1;
     }
     if (start < 0)
     {
         stopmsg(STOPMSG_INFO_ONLY | STOPMSG_NO_BUZZER, "Negative offset.");
         DisplayHandle(handle);
-        return (1);
+        return 1;
     }
-    return (0);
+    return 0;
 }
 
 unsigned long get_disk_space();
@@ -382,7 +382,7 @@ U16 MemoryAlloc(U16 size, long count, int stored_at)
 
     if (success)
     {
-        return (handle);
+        return handle;
     }
     else          // return 0 if failure
     {

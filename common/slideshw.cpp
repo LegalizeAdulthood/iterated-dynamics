@@ -114,7 +114,7 @@ static int showtempmsg_txt(int row, int col, int attr, int secs, const char *txt
         driver_move_cursor(row, i);
         driver_put_char_attr(savescrn[i]);
     }
-    return (0);
+    return 0;
 }
 
 static void message(int secs, char const *buf)
@@ -138,7 +138,7 @@ int slideshw()
     {
         if (g_calc_status == calc_status_value::IN_PROGRESS || g_busy)   // restart timer - process not done
         {
-            return (0); // wait for calc to finish before reading more keystrokes
+            return 0; // wait for calc to finish before reading more keystrokes
         }
         calcwait = false;
     }
@@ -147,7 +147,7 @@ int slideshw()
         if (startslideshow() == slides_mode::OFF)
         {
             stopslideshow();
-            return (0);
+            return 0;
         }
     }
 
@@ -155,7 +155,7 @@ int slideshw()
     {
         if (clock_ticks() - starttick < ticks)   // haven't waited long enough
         {
-            return (0);
+            return 0;
         }
         ticks = 0;
     }
@@ -171,7 +171,7 @@ int slideshw()
     if (repeats > 0)
     {
         repeats--;
-        return (last1);
+        return last1;
     }
 start:
     if (quotes) // reading a quoted string
@@ -179,7 +179,8 @@ start:
         out = fgetc(fpss);
         if (out != '\"' && out != EOF)
         {
-            return (last1 = out);
+            last1 = out;
+            return out;
         }
         quotes = false;
     }
@@ -191,7 +192,7 @@ start:
     {
     case EOF:
         stopslideshow();
-        return (0);
+        return 0;
     case '\"':        // begin quoted string
         quotes = true;
         goto start;
@@ -209,7 +210,8 @@ start:
             last1 = repeats;
         }
         repeats -= 2;
-        return (out = last1);
+        out = last1;
+        return out;
     }
 
     i = 0;
@@ -277,7 +279,7 @@ start:
             if (feof(fpss))
             {
                 slideshowerr("GOTO target not found");
-                return (0);
+                return 0;
             }
             goto start;
         }
@@ -321,7 +323,8 @@ start:
         slideshowerr(msg.str().c_str());
         out = 0;
     }
-    return (last1 = out);
+    last1 = out;
+    return out;
 }
 
 slides_mode startslideshow()

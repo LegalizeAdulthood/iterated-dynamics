@@ -351,7 +351,7 @@ int splitpath(char const *file_template, char *drive, char *dir, char *fname, ch
 
     length = strlen(file_template);
     if (length == 0)
-        return (0);
+        return 0;
     offset = 0;
 
     // get drive
@@ -387,7 +387,7 @@ int splitpath(char const *file_template, char *drive, char *dir, char *fname, ch
         }
     }
     else
-        return (0);
+        return 0;
 
     // get fname
     if (offset < length)
@@ -422,7 +422,7 @@ int splitpath(char const *file_template, char *drive, char *dir, char *fname, ch
             fname[FILE_MAX_FNAME-1] = 0;
         }
     }
-    return (0);
+    return 0;
 }
 
 int
@@ -451,7 +451,7 @@ void ftimex(struct timebx *tp)
 // sound.c file prototypes
 int get_sound_params()
 {
-    return (0);
+    return 0;
 }
 
 // tenths of millisecond timer routine
@@ -480,5 +480,5 @@ uclock_t usec_clock()
         elapsed.tv_sec--;
     }
     result  = (unsigned long)(elapsed.tv_sec*10000 +  elapsed.tv_usec/100);
-    return (result);
+    return result;
 }

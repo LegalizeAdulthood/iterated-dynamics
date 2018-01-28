@@ -76,11 +76,11 @@ int cmp_bn(bn_t n1, bn_t n2)
         // now determine which of the two bytes was different
         if ((S16)(Svalue1&0xFF00) > (S16)(Svalue2&0xFF00))     // compare just high bytes
         {
-            return (bnlength); // high byte was different
+            return bnlength; // high byte was different
         }
 
 
-        return (bnlength-1); // low byte was different
+        return bnlength-1; // low byte was different
 
     }
     else if (Svalue1 < Svalue2)
@@ -106,12 +106,10 @@ int cmp_bn(bn_t n1, bn_t n2)
             // now determine which of the two bytes was different
             if ((value1&0xFF00) > (value2&0xFF00))     // compare just high bytes
             {
-                return (i+2); // high byte was different
+                return i+2; // high byte was different
             }
 
-
-            return (i+1); // low byte was different
-
+            return i+1; // low byte was different
         }
         else if (value1 < value2)
         {

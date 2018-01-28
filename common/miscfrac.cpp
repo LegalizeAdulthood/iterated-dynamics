@@ -60,7 +60,7 @@ int test()
     }
     if (teststart())   // assume it was stand-alone, doesn't want passes logic
     {
-        return (0);
+        return 0;
     }
     int numpasses = (g_std_calc_mode == '1') ? 0 : 1;
     for (int passes = startpass; passes <= numpasses ; passes++)
@@ -77,7 +77,7 @@ int test()
                     testend();
                     alloc_resume(20, 1);
                     put_resume(sizeof(g_row), &g_row, sizeof(passes), &passes, 0);
-                    return (-1);
+                    return -1;
                 }
                 color = testpt(g_init.x, g_init.y, g_param_z1.x, g_param_z1.y, g_max_iterations, g_inside_color);
                 if (color >= g_colors)
@@ -102,7 +102,7 @@ int test()
         startrow = passes + 1;
     }
     testend();
-    return (0);
+    return 0;
 }
 
 //**************** standalone engine for "plasma" *******************
@@ -125,7 +125,7 @@ U16 rand16()
     {
         value = 1;
     }
-    return (value);
+    return value;
 }
 
 void putpot(int x, int y, U16 color)
@@ -174,7 +174,7 @@ U16 getpot(int x, int y)
 
     color = (U16)readdisk(x+g_logical_screen_x_offset, y+g_logical_screen_y_offset);
     color = (U16)((color << 8) + (U16) readdisk(x+g_logical_screen_x_offset, y+g_screen_y_dots+g_logical_screen_y_offset));
-    return (color);
+    return color;
 }
 
 static int plasma_check;                        // to limit kbd checking
@@ -202,7 +202,7 @@ static U16 adjust(int xa, int ya, int x, int y, int xb, int yb)
         pseudorandom = 1;
     }
     g_plot(x, y, (U16)pseudorandom);
-    return ((U16)pseudorandom);
+    return (U16)pseudorandom;
 }
 
 
@@ -405,7 +405,7 @@ int plasma()
                 "Plasma Clouds can currently only be run in a 4-or-more-color video\n"
                 "mode (and color-cycled only on VGA adapters [or EGA adapters in their\n"
                 "640x350x16 mode]).");
-        return (-1);
+        return -1;
     }
     iparmx = (int)(g_params[0] * 8);
     if (g_param_z1.x <= 0.0)
@@ -604,7 +604,7 @@ done:
     }
     g_plot    = g_put_color;
     getpix  = (U16(*)(int, int))getcolor;
-    return (n);
+    return n;
 }
 
 static void set_Plasma_palette()
@@ -1012,7 +1012,7 @@ int Bifurcation()
     if (!resized)
     {
         stopmsg(STOPMSG_NONE, "Insufficient free memory for calculation.");
-        return (-1);
+        return -1;
     }
 
     LPI = (long)(PI * g_fudge_factor);
@@ -1064,7 +1064,7 @@ int Bifurcation()
             verhulst_array.clear();
             alloc_resume(10, 1);
             put_resume(sizeof(x), &x, 0);
-            return (-1);
+            return -1;
         }
 
         if (g_integer_fractal)
@@ -1099,7 +1099,7 @@ int Bifurcation()
         x++;
     }
     verhulst_array.clear();
-    return (0);
+    return 0;
 }
 
 static void verhulst()          // P. F. Verhulst (1845)
@@ -1257,7 +1257,7 @@ static bool Bif_Periodic(long time)
 int BifurcLambda() // Used by lyanupov
 {
     Population = Rate * Population * (1 - Population);
-    return (fabs(Population) > BIG);
+    return fabs(Population) > BIG;
 }
 #endif
 
@@ -1271,7 +1271,7 @@ int BifurcVerhulstTrig()
     g_tmp_z.y = 0;
     CMPLXtrig0(g_tmp_z, g_tmp_z);
     Population += Rate * g_tmp_z.x * (1 - g_tmp_z.x);
-    return (fabs(Population) > BIG);
+    return fabs(Population) > BIG;
 }
 
 int LongBifurcVerhulstTrig()
@@ -1283,7 +1283,7 @@ int LongBifurcVerhulstTrig()
     g_l_temp.y = g_l_temp.x - multiply(g_l_temp.x, g_l_temp.x, g_bit_shift);
     lPopulation += multiply(lRate, g_l_temp.y, g_bit_shift);
 #endif
-    return (g_overflow);
+    return g_overflow;
 }
 
 int BifurcStewartTrig()
@@ -1293,7 +1293,7 @@ int BifurcStewartTrig()
     g_tmp_z.y = 0;
     CMPLXtrig0(g_tmp_z, g_tmp_z);
     Population = (Rate * g_tmp_z.x * g_tmp_z.x) - 1.0;
-    return (fabs(Population) > BIG);
+    return fabs(Population) > BIG;
 }
 
 int LongBifurcStewartTrig()
@@ -1306,7 +1306,7 @@ int LongBifurcStewartTrig()
     lPopulation = multiply(lPopulation, lRate,      g_bit_shift);
     lPopulation -= g_fudge_factor;
 #endif
-    return (g_overflow);
+    return g_overflow;
 }
 
 int BifurcSetTrigPi()
@@ -1315,7 +1315,7 @@ int BifurcSetTrigPi()
     g_tmp_z.y = 0;
     CMPLXtrig0(g_tmp_z, g_tmp_z);
     Population = Rate * g_tmp_z.x;
-    return (fabs(Population) > BIG);
+    return fabs(Population) > BIG;
 }
 
 int LongBifurcSetTrigPi()
@@ -1326,7 +1326,7 @@ int LongBifurcSetTrigPi()
     LCMPLXtrig0(g_l_temp, g_l_temp);
     lPopulation = multiply(lRate, g_l_temp.x, g_bit_shift);
 #endif
-    return (g_overflow);
+    return g_overflow;
 }
 
 int BifurcAddTrigPi()
@@ -1335,7 +1335,7 @@ int BifurcAddTrigPi()
     g_tmp_z.y = 0;
     CMPLXtrig0(g_tmp_z, g_tmp_z);
     Population += Rate * g_tmp_z.x;
-    return (fabs(Population) > BIG);
+    return fabs(Population) > BIG;
 }
 
 int LongBifurcAddTrigPi()
@@ -1346,7 +1346,7 @@ int LongBifurcAddTrigPi()
     LCMPLXtrig0(g_l_temp, g_l_temp);
     lPopulation += multiply(lRate, g_l_temp.x, g_bit_shift);
 #endif
-    return (g_overflow);
+    return g_overflow;
 }
 
 int BifurcLambdaTrig()
@@ -1356,7 +1356,7 @@ int BifurcLambdaTrig()
     g_tmp_z.y = 0;
     CMPLXtrig0(g_tmp_z, g_tmp_z);
     Population = Rate * g_tmp_z.x * (1 - g_tmp_z.x);
-    return (fabs(Population) > BIG);
+    return fabs(Population) > BIG;
 }
 
 int LongBifurcLambdaTrig()
@@ -1368,7 +1368,7 @@ int LongBifurcLambdaTrig()
     g_l_temp.y = g_l_temp.x - multiply(g_l_temp.x, g_l_temp.x, g_bit_shift);
     lPopulation = multiply(lRate, g_l_temp.y, g_bit_shift);
 #endif
-    return (g_overflow);
+    return g_overflow;
 }
 
 #define LCMPLXpwr(arg1, arg2, out)    Arg2->l = (arg1); Arg1->l = (arg2);\
@@ -1383,7 +1383,7 @@ int BifurcMay()
     g_tmp_z.x = 1.0 + Population;
     g_tmp_z.x = pow(g_tmp_z.x, -beta); // pow in math.h included with mpmath.h
     Population = (Rate * Population) * g_tmp_z.x;
-    return (fabs(Population) > BIG);
+    return fabs(Population) > BIG;
 }
 
 int LongBifurcMay()
@@ -1396,7 +1396,7 @@ int LongBifurcMay()
     lPopulation = multiply(lRate, lPopulation, g_bit_shift);
     lPopulation = divide(lPopulation, g_l_temp.x, g_bit_shift);
 #endif
-    return (g_overflow);
+    return g_overflow;
 }
 
 bool BifurcMaySetup()
@@ -1443,13 +1443,13 @@ int popcorn()   // subset of std engine
             {
                 alloc_resume(10, 1);
                 put_resume(sizeof(g_row), &g_row, 0);
-                return (-1);
+                return -1;
             }
             g_reset_periodicity = false;
         }
     }
     g_calc_status = calc_status_value::COMPLETED;
-    return (0);
+    return 0;
 }
 
 //****************** standalone engine for "lyapunov" ********************
@@ -1917,7 +1917,7 @@ int cellular()
     if (!resized)
     {
         abort_cellular(BAD_MEM, 0);
-        return (-1);
+        return -1;
     }
 
     // nxtscreenflag toggled by space bar in fractint.c, true for continuous
@@ -2006,7 +2006,7 @@ int cellular()
             {
                 thinking(0, nullptr);
                 abort_cellular(BAD_T, t);
-                return (-1);
+                return -1;
             }
             cell_array[notfilled][r] = (BYTE)cell_table[t];
 
@@ -2019,7 +2019,7 @@ int cellular()
                 {
                     thinking(0, nullptr);
                     abort_cellular(BAD_T, t);
-                    return (-1);
+                    return -1;
                 }
                 cell_array[notfilled][g_col] = (BYTE)cell_table[t];
             }
@@ -2071,7 +2071,7 @@ contloop:
         {
             thinking(0, nullptr);
             abort_cellular(BAD_T, t);
-            return (-1);
+            return -1;
         }
         cell_array[notfilled][r] = (BYTE)cell_table[t];
 
@@ -2084,7 +2084,7 @@ contloop:
             {
                 thinking(0, nullptr);
                 abort_cellular(BAD_T, t);
-                return (-1);
+                return -1;
             }
             cell_array[notfilled][g_col] = (BYTE)cell_table[t];
         }
@@ -2666,7 +2666,7 @@ int calcfroth()   // per pixel 1/2/g, called with row & col set
     {
         if (check_key())
         {
-            return (-1);
+            return -1;
         }
         g_keyboard_check_interval = g_max_keyboard_check_interval;
     }

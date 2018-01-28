@@ -46,26 +46,26 @@ int g_mp_overflow = 0;
 MP *MPsub(MP x, MP y)
 {
     y.Exp ^= 0x8000;
-    return (MPadd(x, y));
+    return MPadd(x, y);
 }
 
 MP *MPsub086(MP x, MP y)
 {
     y.Exp ^= 0x8000;
-    return (MPadd086(x, y));
+    return MPadd086(x, y);
 }
 
 MP *MPsub386(MP x, MP y)
 {
     y.Exp ^= 0x8000;
-    return (MPadd386(x, y));
+    return MPadd386(x, y);
 }
 
 MP *MPabs(MP x)
 {
     Ans = x;
     Ans.Exp &= 0x7fff;
-    return (&Ans);
+    return &Ans;
 }
 
 MPC MPCsqr(MPC x)
@@ -75,12 +75,12 @@ MPC MPCsqr(MPC x)
     z.x = *pMPsub(*pMPmul(x.x, x.x), *pMPmul(x.y, x.y));
     z.y = *pMPmul(x.x, x.y);
     z.y.Exp++;
-    return (z);
+    return z;
 }
 
 MP MPCmod(MPC x)
 {
-    return (*pMPadd(*pMPmul(x.x, x.x), *pMPmul(x.y, x.y)));
+    return *pMPadd(*pMPmul(x.x, x.x), *pMPmul(x.y, x.y));
 }
 
 MPC MPCmul(MPC x, MPC y)
@@ -89,7 +89,7 @@ MPC MPCmul(MPC x, MPC y)
 
     z.x = *pMPsub(*pMPmul(x.x, y.x), *pMPmul(x.y, y.y));
     z.y = *pMPadd(*pMPmul(x.x, y.y), *pMPmul(x.y, y.x));
-    return (z);
+    return z;
 }
 
 MPC MPCdiv(MPC x, MPC y)
@@ -100,7 +100,7 @@ MPC MPCdiv(MPC x, MPC y)
     y.y.Exp ^= 0x8000;
     y.x = *pMPdiv(y.x, mod);
     y.y = *pMPdiv(y.y, mod);
-    return (MPCmul(x, y));
+    return MPCmul(x, y);
 }
 
 MPC MPCadd(MPC x, MPC y)
@@ -109,7 +109,7 @@ MPC MPCadd(MPC x, MPC y)
 
     z.x = *pMPadd(x.x, y.x);
     z.y = *pMPadd(x.y, y.y);
-    return (z);
+    return z;
 }
 
 MPC MPCsub(MPC x, MPC y)
@@ -118,7 +118,7 @@ MPC MPCsub(MPC x, MPC y)
 
     z.x = *pMPsub(x.x, y.x);
     z.y = *pMPsub(x.y, y.y);
-    return (z);
+    return z;
 }
 
 MPC g_mpc_one =
@@ -155,7 +155,7 @@ MPC MPCpow(MPC x, int exp)
         }
         exp >>= 1;
     }
-    return (z);
+    return z;
 }
 
 int MPCcmp(MPC x, MPC y)
@@ -166,11 +166,11 @@ int MPCcmp(MPC x, MPC y)
     {
         z.x = MPCmod(x);
         z.y = MPCmod(y);
-        return (pMPcmp(z.x, z.y));
+        return pMPcmp(z.x, z.y);
     }
     else
     {
-        return (0);
+        return 0;
     }
 }
 
@@ -180,7 +180,7 @@ DComplex MPC2cmplx(MPC x)
 
     z.x = *pMP2d(x.x);
     z.y = *pMP2d(x.y);
-    return (z);
+    return z;
 }
 
 MPC cmplx2MPC(DComplex z)
@@ -189,7 +189,7 @@ MPC cmplx2MPC(DComplex z)
 
     x.x = *pd2MP(z.x);
     x.y = *pd2MP(z.y);
-    return (x);
+    return x;
 }
 
 int (*pMPcmp)(MP x, MP y) = MPcmp086;
@@ -224,14 +224,14 @@ DComplex ComplexPower(DComplex xx, DComplex yy)
         {
             z.y = 0.0;
             z.x = z.y;
-            return (z);
+            return z;
         }
     }
 
     FPUcplxlog(&xx, &cLog);
     FPUcplxmul(&cLog, &yy, &t);
     FPUcplxexp(&t, &z);
-    return (z);
+    return z;
 }
 
 /*
@@ -629,11 +629,11 @@ long logtablecalc(long citer)
 
     if (g_log_map_flag == 0 && !g_iteration_ranges_len)   // Oops, how did we get here?
     {
-        return (citer);
+        return citer;
     }
     if (!g_log_map_table.empty() && !g_log_map_calculate)
     {
-        return (g_log_map_table[(long)std::min(citer, g_log_map_table_max_size)]);
+        return g_log_map_table[(long)std::min(citer, g_log_map_table_max_size)];
     }
 
     if (g_log_map_flag > 0)
@@ -680,7 +680,7 @@ long logtablecalc(long citer)
             ret = (long)(mlf * sqrt(static_cast<double>(citer - lf))) + 1;
         }
     }
-    return (ret);
+    return ret;
 }
 
 long ExpFloat14(long xx)
@@ -691,7 +691,7 @@ long ExpFloat14(long xx)
 
     f = 23 - (int)RegFloat2Fg(RegDivFloat(xx, *(long*)&fLogTwo), 0);
     Ans = ExpFudged(RegFloat2Fg(xx, 16), f);
-    return (RegFg2Float(Ans, (char)f));
+    return RegFg2Float(Ans, (char)f);
 }
 
 static double TwoPi;
@@ -735,7 +735,7 @@ int ComplexNewton()
     g_tmp_z.y = g_new_z.y - croot.y;
     if ((sqr(g_tmp_z.x) + sqr(g_tmp_z.y)) < g_threshold)
     {
-        return (1);
+        return 1;
     }
 
     FPUcplxmul(&g_new_z, &cd1, &g_tmp_z);
@@ -746,10 +746,10 @@ int ComplexNewton()
     FPUcplxdiv(&g_tmp_z, &cd1, &g_old_z);
     if (g_overflow)
     {
-        return (1);
+        return 1;
     }
     g_new_z = g_old_z;
-    return (0);
+    return 0;
 }
 
 int ComplexBasin()
@@ -794,7 +794,7 @@ int ComplexBasin()
         {
             g_color_iter += 128;
         }
-        return (1);
+        return 1;
     }
 
     FPUcplxmul(&g_new_z, &cd1, &g_tmp_z);
@@ -805,10 +805,10 @@ int ComplexBasin()
     FPUcplxdiv(&g_tmp_z, &cd1, &g_old_z);
     if (g_overflow)
     {
-        return (1);
+        return 1;
     }
     g_new_z = g_old_z;
-    return (0);
+    return 0;
 }
 
 /*
@@ -851,9 +851,9 @@ int GausianNumber(int Probability, int Range)
         {
             r = -r;
         }
-        return (Range - r + Offset);
+        return Range - r + Offset;
     }
-    return (Offset);
+    return Offset;
 }
 
 #endif

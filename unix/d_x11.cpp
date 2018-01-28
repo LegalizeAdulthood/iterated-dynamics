@@ -1522,7 +1522,7 @@ pr_dwmroot(DriverX11 *di, Display *dpy, Window pwin)
             if (pxwa.width == cxwa.width && pxwa.height == cxwa.height)
                 return pr_dwmroot(di, dpy, child[i]);
         }
-        return (pwin);
+        return pwin;
     }
     else
     {

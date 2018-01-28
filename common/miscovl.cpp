@@ -1703,11 +1703,11 @@ int getprecbf_mag()
     // be used in case compiler's LDBL_MAX is not big enough
     if (Magnification > LDBL_MAX || Magnification < -LDBL_MAX)
     {
-        return (-1);
+        return -1;
     }
 
     dec = getpower10(Magnification) + 4; // 4 digits of padding sounds good
-    return (dec);
+    return dec;
 }
 
 static int getprec(double a, double b, double c)
@@ -1748,7 +1748,7 @@ static int getprec(double a, double b, double c)
         diff *= 10;
         ++digits;
     }
-    return (digits);
+    return digits;
 }
 
 /* This function calculates the precision needed to distiguish adjacent
@@ -1808,7 +1808,7 @@ int getprecbf(int rezflag)
     if (cmp_bf(del1, clear_bf(del2)) == 0)
     {
         restore_stack(saved);
-        return (-1);
+        return -1;
     }
     digits = 1;
     while (cmp_bf(del1, one) < 0)
@@ -1819,7 +1819,7 @@ int getprecbf(int rezflag)
     digits = std::max(digits, 3);
     restore_stack(saved);
     dec = getprecbf_mag();
-    return (std::max(digits, dec));
+    return std::max(digits, dec);
 }
 
 /* This function calculates the precision needed to distinguish adjacent
@@ -1861,7 +1861,7 @@ int getprecdbl(int rezflag)
 #ifdef DEBUG
         showcornersdbl("getprecdbl");
 #endif
-        return (-1);
+        return -1;
     }
     digits = 1;
     while (del1 < 1.0)
@@ -1870,7 +1870,7 @@ int getprecdbl(int rezflag)
         del1 *= 10;
     }
     digits = std::max(digits, 3);
-    return (digits);
+    return digits;
 }
 
 /*
@@ -2082,7 +2082,7 @@ static int check_modekey(int curkey, int choice)
     int i = check_vidmode_key(1, curkey);
     if (i >= 0)
     {
-        return (-1-i);
+        return -1-i;
     }
     i = entnums[choice];
     int ret = 0;
@@ -2124,7 +2124,7 @@ static int check_modekey(int curkey, int choice)
             }
         }
     }
-    return (ret);
+    return ret;
 }
 
 static int entcompare(VOIDCONSTPTR p1, VOIDCONSTPTR p2)
@@ -2142,9 +2142,9 @@ static int entcompare(VOIDCONSTPTR p1, VOIDCONSTPTR p2)
     }
     if (i < j || (i == j && *((int *)p1) < *((int *)p2)))
     {
-        return (-1);
+        return -1;
     }
-    return (1);
+    return 1;
 }
 
 static void update_fractint_cfg()
@@ -2787,7 +2787,7 @@ static char const *expand_var(char const *var, char *buf)
         stopmsg(STOPMSG_NONE, buff);
         out = "";
     }
-    return (out);
+    return out;
 }
 
 #define MAXVNAME  13

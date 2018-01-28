@@ -2331,7 +2331,7 @@ bool paramnotused(int parm)
         ret = false;
         break;
     }
-    return (ret);
+    return ret;
 }
 
 /*

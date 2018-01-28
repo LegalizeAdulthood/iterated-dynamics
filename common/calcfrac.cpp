@@ -277,7 +277,7 @@ int g_and_color = 0;        // "and" value used for color selection
 //
 long divide(long x, long y, int n)
 {
-    return (long)(((float) x) / ((float) y)*(float)(1 << n));
+    return (long) (((float) x) / ((float) y)*(float)(1 << n));
 }
 
 //  32 bit integer multiply with n bit shift.
@@ -973,7 +973,7 @@ int calcfract()
     {
         enddisk();
     }
-    return (g_calc_status == calc_status_value::COMPLETED) ? 0 : -1;
+    return g_calc_status == calc_status_value::COMPLETED ? 0 : -1;
 }
 
 // locate alternate math record

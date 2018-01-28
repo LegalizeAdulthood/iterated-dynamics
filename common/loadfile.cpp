@@ -744,14 +744,14 @@ static int find_fractal_info(char const *gif_file, FRACTAL_INFO *info,
     fp = fopen(gif_file, "rb");
     if (fp == nullptr)
     {
-        return (-1);
+        return -1;
     }
     freader(gifstart, 13, 1, fp);
     if (strncmp((char *)gifstart, "GIF", 3) != 0)
     {
         // not GIF, maybe old .tga?
         fclose(fp);
-        return (-1);
+        return -1;
     }
 
     GET16(gifstart[6], g_file_x_dots);
@@ -1029,7 +1029,7 @@ static int find_fractal_info(char const *gif_file, FRACTAL_INFO *info,
 
         fclose(fp);
         g_file_aspect_ratio = g_screen_aspect; // if not >= v15, this is correct
-        return (0);
+        return 0;
     }
 
     strcpy(info->info_id, "GIFFILE");
@@ -1056,7 +1056,7 @@ static int find_fractal_info(char const *gif_file, FRACTAL_INFO *info,
 
     // zero means we won
     fclose(fp);
-    return (0);
+    return 0;
 }
 
 static void load_ext_blk(char *loadptr, int loadlen)
@@ -1739,7 +1739,7 @@ rescan:  // entry for changed browse parms
     bf_math = oldbf_math;
     g_float_flag = g_user_float_flag;
 
-    return (c);
+    return c;
 }
 
 

@@ -335,7 +335,7 @@ int  bnIMAGbailout()
     }
     copy_bn(bnold.x, bnnew.x);
     copy_bn(bnold.y, bnnew.y);
-    return (0);
+    return 0;
 }
 
 int  bnORbailout()
@@ -352,7 +352,7 @@ int  bnORbailout()
     }
     copy_bn(bnold.x, bnnew.x);
     copy_bn(bnold.y, bnnew.y);
-    return (0);
+    return 0;
 }
 
 int  bnANDbailout()
@@ -369,7 +369,7 @@ int  bnANDbailout()
     }
     copy_bn(bnold.x, bnnew.x);
     copy_bn(bnold.y, bnnew.y);
-    return (0);
+    return 0;
 }
 
 int  bnMANHbailout()
@@ -390,7 +390,7 @@ int  bnMANHbailout()
     }
     copy_bn(bnold.x, bnnew.x);
     copy_bn(bnold.y, bnnew.y);
-    return (0);
+    return 0;
 }
 
 int  bnMANRbailout()
@@ -409,7 +409,7 @@ int  bnMANRbailout()
     }
     copy_bn(bnold.x, bnnew.x);
     copy_bn(bnold.y, bnnew.y);
-    return (0);
+    return 0;
 }
 
 int  bfMODbailout()
@@ -460,7 +460,7 @@ int  bfIMAGbailout()
     }
     copy_bf(bfold.x, bfnew.x);
     copy_bf(bfold.y, bfnew.y);
-    return (0);
+    return 0;
 }
 
 int  bfORbailout()
@@ -477,7 +477,7 @@ int  bfORbailout()
     }
     copy_bf(bfold.x, bfnew.x);
     copy_bf(bfold.y, bfnew.y);
-    return (0);
+    return 0;
 }
 
 int  bfANDbailout()
@@ -494,7 +494,7 @@ int  bfANDbailout()
     }
     copy_bf(bfold.x, bfnew.x);
     copy_bf(bfold.y, bfnew.y);
-    return (0);
+    return 0;
 }
 
 int  bfMANHbailout()
@@ -515,7 +515,7 @@ int  bfMANHbailout()
     }
     copy_bf(bfold.x, bfnew.x);
     copy_bf(bfold.y, bfnew.y);
-    return (0);
+    return 0;
 }
 
 int  bfMANRbailout()
@@ -534,7 +534,7 @@ int  bfMANRbailout()
     }
     copy_bf(bfold.x, bfnew.x);
     copy_bf(bfold.y, bfnew.y);
-    return (0);
+    return 0;
 }
 
 bool MandelbnSetup()
@@ -761,7 +761,7 @@ int mandelbn_per_pixel()
     square_bn(bntmpsqrx, bnnew.x);
     square_bn(bntmpsqry, bnnew.y);
 
-    return (1);                  // 1st iteration has been done
+    return 1;                  // 1st iteration has been done
 }
 
 int mandelbf_per_pixel()
@@ -807,7 +807,7 @@ int mandelbf_per_pixel()
     square_bf(bftmpsqrx, bfnew.x);
     square_bf(bftmpsqry, bfnew.y);
 
-    return (1);                  // 1st iteration has been done
+    return 1;                  // 1st iteration has been done
 }
 
 int
@@ -835,7 +835,7 @@ juliabn_per_pixel()
     square_bn(bntmpsqrx, bnnew.x);
     square_bn(bntmpsqry, bnnew.y);
 
-    return (1);                  // 1st iteration has been done
+    return 1;                  // 1st iteration has been done
 }
 
 int
@@ -863,7 +863,7 @@ juliabf_per_pixel()
     square_bf(bftmpsqrx, bfnew.x);
     square_bf(bftmpsqry, bfnew.y);
 
-    return (1);                  // 1st iteration has been done
+    return 1;                  // 1st iteration has been done
 }
 
 int
@@ -944,7 +944,7 @@ DComplex cmplxbntofloat(BNComplex *s)
     DComplex t;
     t.x = (double)bntofloat(s->x);
     t.y = (double)bntofloat(s->y);
-    return (t);
+    return t;
 }
 
 DComplex cmplxbftofloat(BFComplex *s)
@@ -952,7 +952,7 @@ DComplex cmplxbftofloat(BFComplex *s)
     DComplex t;
     t.x = (double)bftofloat(s->x);
     t.y = (double)bftofloat(s->y);
-    return (t);
+    return t;
 }
 
 BFComplex *cmplxlog_bf(BFComplex *t, BFComplex *s)
@@ -963,7 +963,7 @@ BFComplex *cmplxlog_bf(BFComplex *t, BFComplex *s)
     ln_bf(t->x, t->x);
     half_a_bf(t->x);
     atan2_bf(t->y, s->y, s->x);
-    return (t);
+    return t;
 }
 
 BFComplex *cplxmul_bf(BFComplex *t, BFComplex *x, BFComplex *y)
@@ -980,7 +980,7 @@ BFComplex *cplxmul_bf(BFComplex *t, BFComplex *x, BFComplex *y)
     mult_bf(t->y, x->y, y->x);
     add_bf(t->y, tmp1, t->y);
     restore_stack(saved);
-    return (t);
+    return t;
 }
 
 BFComplex *ComplexPower_bf(BFComplex *t, BFComplex *xx, BFComplex *yy)
@@ -1000,7 +1000,7 @@ BFComplex *ComplexPower_bf(BFComplex *t, BFComplex *xx, BFComplex *yy)
     {
         clear_bf(t->x);
         clear_bf(t->y);
-        return (t);
+        return t;
     }
 
     cmplxlog_bf(t, xx);
@@ -1010,7 +1010,7 @@ BFComplex *ComplexPower_bf(BFComplex *t, BFComplex *xx, BFComplex *yy)
     mult_bf(t->x, e2x, cosy);
     mult_bf(t->y, e2x, siny);
     restore_stack(saved);
-    return (t);
+    return t;
 }
 
 BNComplex *cmplxlog_bn(BNComplex *t, BNComplex *s)
@@ -1021,7 +1021,7 @@ BNComplex *cmplxlog_bn(BNComplex *t, BNComplex *s)
     ln_bn(t->x, t->x+shiftfactor);
     half_a_bn(t->x);
     atan2_bn(t->y, s->y, s->x);
-    return (t);
+    return t;
 }
 
 BNComplex *cplxmul_bn(BNComplex *t, BNComplex *x, BNComplex *y)
@@ -1038,7 +1038,7 @@ BNComplex *cplxmul_bn(BNComplex *t, BNComplex *x, BNComplex *y)
     mult_bn(t->y, x->y, y->x);
     add_bn(t->y, tmp1+shiftfactor, t->y+shiftfactor);
     restore_stack(saved);
-    return (t);
+    return t;
 }
 
 // note: ComplexPower_bn() returns need to be +shiftfactor'ed
@@ -1059,7 +1059,7 @@ BNComplex *ComplexPower_bn(BNComplex *t, BNComplex *xx, BNComplex *yy)
     {
         clear_bn(t->x);
         clear_bn(t->y);
-        return (t);
+        return t;
     }
 
     cmplxlog_bn(t, xx);
@@ -1069,5 +1069,5 @@ BNComplex *ComplexPower_bn(BNComplex *t, BNComplex *xx, BNComplex *yy)
     mult_bn(t->x, e2x, cosy);
     mult_bn(t->y, e2x, siny);
     restore_stack(saved);
-    return (t);
+    return t;
 }

@@ -670,7 +670,7 @@ int set_trig_array(int k, char const *name)
             break;
         }
     }
-    return (0);
+    return 0;
 }
 void set_trig_pointers(int which)
 {
@@ -841,7 +841,7 @@ bool tab_display_2(char *msg)
         key = getakeynohelp();
         sprintf(msg, "%d (0x%04x)      ", key, key);
     }
-    return (key != FIK_ESC);
+    return key != FIK_ESC;
 }
 
 int tab_display()       // display the status of the current image
@@ -1358,10 +1358,10 @@ int endswithslash(char const *fl)
     {
         if (fl[--len] == SLASHC)
         {
-            return (1);
+            return 1;
         }
     }
-    return (0);
+    return 0;
 }
 
 // ---------------------------------------------------------------------
@@ -1373,7 +1373,7 @@ char *get_ifs_token(char *buf, FILE *ifsfile)
     {
         if (file_gets(buf, 200, ifsfile) < 0)
         {
-            return (nullptr);
+            return nullptr;
         }
         else
         {
@@ -1385,7 +1385,7 @@ char *get_ifs_token(char *buf, FILE *ifsfile)
             bufptr = strtok(buf, seps);
             if (bufptr != nullptr)
             {
-                return (bufptr);
+                return bufptr;
             }
         }
     }
@@ -1409,7 +1409,7 @@ int ifsload()                   // read in IFS parameters
     rowsize = NUM_IFS_PARAMS;
     if (find_file_item(g_ifs_filename, g_ifs_name.c_str(), &ifsfile, 3))
     {
-        return (-1);
+        return -1;
     }
 
     file_gets(buf, 200, ifsfile);
@@ -1484,7 +1484,7 @@ int ifsload()                   // read in IFS parameters
     {
         g_num_affine_transforms = i/rowsize;
     }
-    return (ret);
+    return ret;
 }
 
 bool find_file_item(char *filename, char const *itemname, FILE **fileptr, int itemtype)

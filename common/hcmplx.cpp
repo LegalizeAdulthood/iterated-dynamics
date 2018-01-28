@@ -37,7 +37,7 @@ int HComplexInv(DHyperComplex *arg, DHyperComplex *out)
 
     if (det == 0.0)
     {
-        return (-1);
+        return -1;
     }
     mod = sqr(arg->x) + sqr(arg->y) + sqr(arg->z) + sqr(arg->t);
     xt_minus_yz = arg->x * arg->t - arg->y * arg->z;
@@ -46,7 +46,7 @@ int HComplexInv(DHyperComplex *arg, DHyperComplex *out)
     out->y = (-arg->y * mod - 2 * arg->z * xt_minus_yz)/det;
     out->z = (-arg->z * mod - 2 * arg->y * xt_minus_yz)/det;
     out->t = (arg->t * mod - 2 * arg->x * xt_minus_yz)/det;
-    return (0);
+    return 0;
 }
 
 void HComplexAdd(DHyperComplex *arg1, DHyperComplex *arg2, DHyperComplex *out)

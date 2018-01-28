@@ -583,7 +583,7 @@ static cache *find_cache(long offset)
         ptr1 = (cache *)((char *)cache_start + tbloffset);
         if (ptr1->offset == offset)
         {
-            return (ptr1);
+            return ptr1;
         }
         tbloffset = ptr1->hashlink;
     }
@@ -717,7 +717,7 @@ static BYTE  mem_getc()                     // memory get_char
         membufptr = &membuf[0];
         oldmemoffset = memoffset;
     }
-    return (*(membufptr++));
+    return *(membufptr++);
 }
 
 static void mem_putc(BYTE c)     // memory get_char

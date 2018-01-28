@@ -288,7 +288,7 @@ static int errhand(Display *dp, XErrorEvent *xe)
            xe->request_code, xe->minor_code);
     XGetErrorText(dp, xe->error_code, buf, 200);
     printf("%s\n", buf);
-    return (0);
+    return 0;
 }
 
 #ifdef FPUERR
@@ -756,12 +756,12 @@ initdacbox()
 int startvideo()
 {
     clearXwindow();
-    return (0);
+    return 0;
 }
 
 int endvideo()
 {
-    return (0);             // set flag: video ended
+    return 0;             // set flag: video ended
 
 }
 
@@ -2180,10 +2180,10 @@ pr_dwmroot(Display *dpy, Window pwin)
             }
             if (pxwa.width == cxwa.width && pxwa.height == cxwa.height)
             {
-                return (pr_dwmroot(dpy, child[i]));
+                return pr_dwmroot(dpy, child[i]);
             }
         }
-        return (pwin);
+        return pwin;
     }
     else
     {

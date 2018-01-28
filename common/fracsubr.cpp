@@ -1259,21 +1259,21 @@ static int ratio_bad(double actual, double desired)
     }
     if (tol <= 0.0)
     {
-        return (1);
+        return 1;
     }
     else if (tol >= 1.0)
     {
-        return (0);
+        return 0;
     }
     if (desired != 0 && g_debug_flag != debug_flags::prevent_arbitrary_precision_math)
     {
         double ftemp = actual / desired;
         if (ftemp < (1.0-tol) || ftemp > (1.0+tol))
         {
-            return (1);
+            return 1;
         }
     }
-    return (0);
+    return 0;
 }
 
 
@@ -1344,7 +1344,7 @@ int put_resume(int len, ...)
 
     if (g_resume_data.empty())
     {
-        return (-1);
+        return -1;
     }
 
     va_start(arg_marker, len);
@@ -1356,7 +1356,7 @@ int put_resume(int len, ...)
         len = va_arg(arg_marker, int);
     }
     va_end(arg_marker);
-    return (0);
+    return 0;
 }
 
 int alloc_resume(int alloclen, int version)
@@ -1366,7 +1366,7 @@ int alloc_resume(int alloclen, int version)
     g_resume_len = 0;
     put_resume(sizeof(version), &version, 0);
     g_calc_status = calc_status_value::RESUMABLE;
-    return (0);
+    return 0;
 }
 
 int get_resume(int len, ...)
@@ -1375,7 +1375,7 @@ int get_resume(int len, ...)
 
     if (g_resume_data.empty())
     {
-        return (-1);
+        return -1;
     }
     va_start(arg_marker, len);
     while (len)
@@ -1386,7 +1386,7 @@ int get_resume(int len, ...)
         len = va_arg(arg_marker, int);
     }
     va_end(arg_marker);
-    return (0);
+    return 0;
 }
 
 int start_resume()
@@ -1394,11 +1394,11 @@ int start_resume()
     int version;
     if (g_resume_data.empty())
     {
-        return (-1);
+        return -1;
     }
     resume_offset = 0;
     get_resume(sizeof(version), &version, 0);
-    return (version);
+    return version;
 }
 
 void end_resume()
@@ -1599,7 +1599,7 @@ bool snd_open()
             updatesavename(soundname);
         }
     }
-    return (snd_fp != nullptr);
+    return snd_fp != nullptr;
 }
 
 /* This routine plays a tone in the speaker and optionally writes a file
@@ -1765,7 +1765,7 @@ int add_worklist(int xfrom, int xto, int xbegin,
 {
     if (g_num_work_list >= MAX_CALC_WORK)
     {
-        return (-1);
+        return -1;
     }
     g_work_list[g_num_work_list].xxstart = xfrom;
     g_work_list[g_num_work_list].xxstop  = xto;
@@ -1777,7 +1777,7 @@ int add_worklist(int xfrom, int xto, int xbegin,
     g_work_list[g_num_work_list].sym     = sym;
     ++g_num_work_list;
     tidy_worklist();
-    return (0);
+    return 0;
 }
 
 static int combine_worklist() // look for 2 entries which can freely merge
@@ -1800,13 +1800,13 @@ static int combine_worklist() // look for 2 entries which can freely merge
                         if (g_work_list[i].yystop+1 == g_work_list[j].yystart)
                         {
                             g_work_list[i].yystop = g_work_list[j].yystop;
-                            return (j);
+                            return j;
                         }
                         if (g_work_list[j].yystop+1 == g_work_list[i].yystart)
                         {
                             g_work_list[i].yystart = g_work_list[j].yystart;
                             g_work_list[i].yybegin = g_work_list[j].yybegin;
-                            return (j);
+                            return j;
                         }
                     }
                     if (g_work_list[i].yystart == g_work_list[j].yystart
@@ -1816,20 +1816,20 @@ static int combine_worklist() // look for 2 entries which can freely merge
                         if (g_work_list[i].xxstop+1 == g_work_list[j].xxstart)
                         {
                             g_work_list[i].xxstop = g_work_list[j].xxstop;
-                            return (j);
+                            return j;
                         }
                         if (g_work_list[j].xxstop+1 == g_work_list[i].xxstart)
                         {
                             g_work_list[i].xxstart = g_work_list[j].xxstart;
                             g_work_list[i].xxbegin = g_work_list[j].xxbegin;
-                            return (j);
+                            return j;
                         }
                     }
                 }
             }
         }
     }
-    return (0); // nothing combined
+    return 0; // nothing combined
 }
 
 // combine mergeable entries, resort
@@ -1986,5 +1986,5 @@ int ssg_blocksize() // used by solidguessing and by zoom panning
     {
         blocksize += blocksize;
     }
-    return (blocksize);
+    return blocksize;
 }

@@ -208,12 +208,12 @@ static void fillrect(int x, int y, int width, int depth, int color)
 
 int QueueEmpty()            // True if NO points remain in queue
 {
-    return (ListFront == ListBack);
+    return ListFront == ListBack;
 }
 
 int QueueFullAlmost()       // True if room for ONE more point in queue
 {
-    return (((ListFront + 2) % ListSize) == ListBack);
+    return ((ListFront + 2) % ListSize) == ListBack;
 }
 
 void ClearQueue()

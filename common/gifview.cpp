@@ -53,7 +53,7 @@ static unsigned int gifview_image_twidth; // (for migs)
 
 int get_byte()
 {
-    return (getc(fpin)); // EOF is -1, as desired
+    return getc(fpin); // EOF is -1, as desired
 }
 
 int get_bytes(BYTE *where, int how_many)
@@ -129,7 +129,7 @@ int gifview()
     fpin = fopen(temp1, "rb");
     if (fpin == nullptr)
     {
-        return (-1);
+        return -1;
     }
 
     // Get the screen description
@@ -140,7 +140,7 @@ int gifview()
         if (tmp < 0)
         {
             close_file();
-            return (-1);
+            return -1;
         }
     }
 
@@ -150,7 +150,7 @@ int gifview()
             buffer[5] < 'A' || buffer[5] > 'z')
     {
         close_file();
-        return (-1);
+        return -1;
     }
 
     width  = buffer[6] | (buffer[7] << 8);
@@ -161,7 +161,7 @@ int gifview()
     if ((buffer[10] & 0x80) == 0)    // color map (better be!)
     {
         close_file();
-        return (-1);
+        return -1;
     }
     g_num_colors = 1 << planes;
 
@@ -178,7 +178,7 @@ int gifview()
             if (k < 0)
             {
                 close_file();
-                return (-1);
+                return -1;
             }
             if ((g_display_3d == display_3d_modes::NONE || (g_glasses_type != 1 && g_glasses_type != 2))
                     && g_read_color)
@@ -309,7 +309,7 @@ int gifview()
                         if (get_byte() < 0)
                         {
                             close_file();
-                            return (-1);
+                            return -1;
                         }
                     }
                 }
@@ -367,7 +367,7 @@ int gifview()
         dvid_status(1, "");
     }
 
-    return (status);
+    return status;
 }
 
 static void close_file()
@@ -388,7 +388,7 @@ static int out_line_migs(BYTE *pixels, int linelen)
     put_line(row, startcol, stopcol, pixels);
     g_row_count++;
 
-    return (0);
+    return 0;
 }
 
 static int out_line_dither(BYTE *pixels, int linelen)
@@ -448,7 +448,7 @@ static int out_line_too_wide(BYTE *pixels, int linelen)
             g_row_count++;
         }
     }
-    return (0);
+    return 0;
 }
 
 static bool put_sound_line(int row, int colstart, int colstop, BYTE *pixels)
@@ -508,7 +508,7 @@ int sound_line(BYTE *pixels, int linelen)
     {
         ret = -1;
     }
-    return (ret);
+    return ret;
 }
 
 int pot_line(BYTE *pixels, int linelen)
@@ -537,5 +537,5 @@ int pot_line(BYTE *pixels, int linelen)
         writedisk(col+g_logical_screen_x_offset, row+g_logical_screen_y_offset, *(pixels+col));
     }
     g_row_count = saverowcount + 1;
-    return (0);
+    return 0;
 }

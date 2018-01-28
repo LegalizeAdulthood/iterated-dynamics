@@ -100,7 +100,7 @@ static int getdepth(int xd, int yd)
                (int) dac[pal][2] * 28);
         pal >>= 6;
     }
-    return (pal);
+    return pal;
 }
 
 /*
@@ -165,7 +165,7 @@ int outline_stereo(BYTE *pixels, int linelen)
 {
     if ((Y) >= g_logical_screen_y_dots)
     {
-        return (1);
+        return 1;
     }
 
     std::vector<int> same;
@@ -229,7 +229,7 @@ int outline_stereo(BYTE *pixels, int linelen)
         g_put_color(x, Y, colour[x]);
     }
     (Y)++;
-    return (0);
+    return 0;
 }
 
 

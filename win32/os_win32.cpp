@@ -925,8 +925,8 @@ int strncasecmp(char const *s, char const *t, int ct)
     {
         if (*s == '\0')
         {
-            return (0);
+            return 0;
         }
     }
-    return (tolower(*s) - tolower(*t));
+    return tolower(*s) - tolower(*t);
 }

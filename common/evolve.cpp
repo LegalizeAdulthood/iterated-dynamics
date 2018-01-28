@@ -306,7 +306,7 @@ int varyint(int randvalue, int limit, variations mode)
         break;
     }
     }
-    return (ret);
+    return ret;
 }
 
 int wrapped_positive_varyint(int randvalue, int limit, variations mode)
@@ -315,11 +315,11 @@ int wrapped_positive_varyint(int randvalue, int limit, variations mode)
     i = varyint(randvalue, limit, mode);
     if (i < 0)
     {
-        return (limit + i);
+        return limit + i;
     }
     else
     {
-        return (i);
+        return i;
     }
 }
 
@@ -484,7 +484,7 @@ choose_vars_restart:
         }
         goto choose_vars_restart;
     case -1:
-        return (-1);
+        return -1;
     default:
         break;
     }
@@ -508,7 +508,7 @@ choose_vars_restart:
     }
 
     copy_genes_to_bank(gene);
-    return (1); // if you were here, you want to regenerate
+    return 1; // if you were here, you want to regenerate
 }
 
 int get_variations()
@@ -650,7 +650,7 @@ choose_vars_restart:
         copy_genes_from_bank(gene);
         goto choose_vars_restart;
     case -1:
-        return (chngd);
+        return chngd;
     default:
         break;
     }
@@ -670,7 +670,7 @@ choose_vars_restart:
     }
 
     copy_genes_to_bank(gene);
-    return (1); // if you were here, you want to regenerate
+    return 1; // if you were here, you want to regenerate
 }
 
 void set_mutation_level(int strength)
@@ -798,7 +798,7 @@ get_evol_restart:
         g_evolve_y_parameter_offset = old_y_parameter_offset;
         g_evolve_max_random_mutation = old_max_random_mutation;
 
-        return (-1);
+        return -1;
     }
 
     if (i == FIK_F4)
@@ -845,7 +845,7 @@ get_evol_restart:
 
     if (!g_evolving && i != FIK_F6)    // don't need any of the other parameters
     {
-        return (1);             // the following code can set evolving even if it's off
+        return 1;             // the following code can set evolving even if it's off
     }
 
     g_evolve_image_grid_size = uvalues[++k].uval.ival;
@@ -931,7 +931,7 @@ get_evol_restart:
         g_evolve_mutation_reduction_factor = 1.0;
         goto get_evol_restart;
     }
-    return (i);
+    return i;
 }
 
 void SetupParamBox()
@@ -1211,7 +1211,7 @@ int unspiralmap()
         old_image_grid_size = g_evolve_image_grid_size;
         g_evolve_param_grid_y = mid;
         g_evolve_param_grid_x = g_evolve_param_grid_y;
-        return (0);
+        return 0;
     }
-    return (ecountbox[g_evolve_param_grid_x][g_evolve_param_grid_y]);
+    return ecountbox[g_evolve_param_grid_x][g_evolve_param_grid_y];
 }

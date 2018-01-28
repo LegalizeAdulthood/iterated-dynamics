@@ -251,7 +251,7 @@ int jb_per_pixel()
     djy = multiply(djy, Per->y - ypixel, 16) << (g_bit_shift - 16);
     djy = multiply(djy, y_per_inch, g_bit_shift) / g_julibrot_z_dots;
 
-    return (1);
+    return 1;
 }
 
 int jbfp_per_pixel()
@@ -264,7 +264,7 @@ int jbfp_per_pixel()
     jyfp += yoffsetfp;
     djyfp = g_julibrot_depth_fp / g_julibrot_dist_fp * (Perfp->y - ypixelfp) * y_per_inchfp / g_julibrot_z_dots;
 
-    return (1);
+    return 1;
 }
 
 static int zpixel;
@@ -306,7 +306,7 @@ int zline(long x, long y)
         jbc.y = my;
         if (driver_key_pressed())
         {
-            return (-1);
+            return -1;
         }
         g_l_temp_sqr_x = multiply(g_l_old_z.x, g_l_old_z.x, g_bit_shift);
         g_l_temp_sqr_y = multiply(g_l_old_z.y, g_l_old_z.y, g_bit_shift);
@@ -354,7 +354,7 @@ int zline(long x, long y)
         jx += djx;
         jy += djy;
     }
-    return (0);
+    return 0;
 }
 
 int zlinefp(double x, double y)
@@ -418,13 +418,13 @@ int zlinefp(double x, double y)
             keychk = 0;
             if (driver_key_pressed())
             {
-                return (-1);
+                return -1;
             }
         }
 #else
         if (driver_key_pressed())
         {
-            return (-1);
+            return -1;
         }
 #endif
         g_temp_sqr_x = sqr(g_old_z.x);
@@ -473,7 +473,7 @@ int zlinefp(double x, double y)
         jxfp += djxfp;
         jyfp += djyfp;
     }
-    return (0);
+    return 0;
 }
 
 int Std4dFractal()
@@ -507,13 +507,13 @@ int Std4dFractal()
             g_row = ydot;
             if (zline(x, y) < 0)
             {
-                return (-1);
+                return -1;
             }
             g_col = g_logical_screen_x_dots - g_col - 1;
             g_row = g_logical_screen_y_dots - g_row - 1;
             if (zline(-x, -y) < 0)
             {
-                return (-1);
+                return -1;
             }
         }
         if (plotted == 0)
@@ -528,7 +528,7 @@ int Std4dFractal()
             }
         }
     }
-    return (0);
+    return 0;
 }
 
 int Std4dfpFractal()
@@ -560,13 +560,13 @@ int Std4dfpFractal()
             g_row = ydot;
             if (zlinefp(x, y) < 0)
             {
-                return (-1);
+                return -1;
             }
             g_col = g_logical_screen_x_dots - g_col - 1;
             g_row = g_logical_screen_y_dots - g_row - 1;
             if (zlinefp(-x, -y) < 0)
             {
-                return (-1);
+                return -1;
             }
         }
         if (plotted == 0)
@@ -581,5 +581,5 @@ int Std4dfpFractal()
             }
         }
     }
-    return (0);
+    return 0;
 }

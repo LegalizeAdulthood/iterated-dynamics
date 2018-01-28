@@ -318,7 +318,7 @@ findsize(lsysf_cmd *command, lsys_turtlestatef *ts, lsysf_cmd **rules, int depth
                     tran = true;
                     if (findsize((*rulind)+1, ts, rules, depth-1) == nullptr)
                     {
-                        return (nullptr);
+                        return nullptr;
                     }
                 }
             }
@@ -351,7 +351,7 @@ findsize(lsysf_cmd *command, lsys_turtlestatef *ts, lsysf_cmd **rules, int depth
                 command = findsize(command+1, ts, rules, depth);
                 if (command == nullptr)
                 {
-                    return (nullptr);
+                    return nullptr;
                 }
                 ts->angle = saveang;
                 ts->reverse = saverev;
@@ -505,7 +505,7 @@ drawLSysF(lsysf_cmd *command, lsys_turtlestatef *ts, lsysf_cmd **rules, int dept
                 command = drawLSysF(command+1, ts, rules, depth);
                 if (command == nullptr)
                 {
-                    return (nullptr);
+                    return nullptr;
                 }
                 ts->angle = saveang;
                 ts->reverse = saverev;

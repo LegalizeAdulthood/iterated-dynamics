@@ -388,7 +388,7 @@ VOIDPTR newx(unsigned size)
         fatal(0, "Out of memory!");
     }
 
-    return (ptr);
+    return ptr;
 }
 
 
@@ -401,7 +401,7 @@ VOIDPTR renewx(VOIDPTR ptr, unsigned size)
         fatal(0, "Out of memory!");
     }
 
-    return (ptr);
+    return ptr;
 }
 
 
@@ -418,7 +418,7 @@ char *dupstr(char const *s, unsigned len)
 
     memcpy(ptr, s, len);
 
-    return (ptr);
+    return ptr;
 }
 
 
@@ -439,7 +439,7 @@ int add_link(LINK *l)
 
     a_link[num_link] = *l;
 
-    return (num_link++);
+    return num_link++;
 }
 
 
@@ -460,7 +460,7 @@ int add_page(TOPIC *t, PAGE const *p)
     assert(t->page);
     t->page[t->num_page] = *p;
 
-    return (t->num_page++);
+    return t->num_page++;
 }
 
 
@@ -481,7 +481,7 @@ int add_topic(TOPIC const *t)
 
     topic[num_topic] = *t;
 
-    return (num_topic++);
+    return num_topic++;
 }
 
 
@@ -504,7 +504,7 @@ int add_label(LABEL const *l)
 
         plabel[num_plabel] = *l;
 
-        return (num_plabel++);
+        return num_plabel++;
     }
 
     if (num_label == 0)
@@ -519,7 +519,7 @@ int add_label(LABEL const *l)
 
     label[num_label] = *l;
 
-    return (num_label++);
+    return num_label++;
 }
 
 
@@ -540,7 +540,7 @@ int add_content(CONTENT const *c)
 
     contents[num_contents] = *c;
 
-    return (num_contents++);
+    return num_contents++;
 }
 
 
@@ -586,7 +586,7 @@ void unread_string(char const *s)
 
 int eos()    // end-of-source ?
 {
-    return (!((read_char_sp == 0) && (read_char_buff_pos == 0) && feof(srcfile)));
+    return !(read_char_sp == 0 && read_char_buff_pos == 0 && feof(srcfile));
 }
 
 
@@ -603,18 +603,18 @@ int _read_char()
     if (read_char_buff_pos >= 0)
     {
         ++srccol;
-        return (read_char_buff[read_char_buff_pos--]);
+        return read_char_buff[read_char_buff_pos--];
     }
 
     if (read_char_sp > 0)
     {
         --read_char_sp;
-        return (' ');
+        return ' ';
     }
 
     if (feof(srcfile))
     {
-        return (-1);
+        return -1;
     }
 
     while (true)
@@ -641,26 +641,26 @@ int _read_char()
             read_char_sp = 0;   // delete spaces before a \n
             srccol = 0;
             ++srcline;
-            return ('\n');
+            return '\n';
 
         case -1:               // EOF
             if (read_char_sp > 0)
             {
                 --read_char_sp;
-                return (' ');
+                return ' ';
             }
-            return (-1);
+            return -1;
 
         default:
             if (read_char_sp > 0)
             {
                 ungetc(ch, srcfile);
                 --read_char_sp;
-                return (' ');
+                return ' ';
             }
 
             ++srccol;
-            return (ch);
+            return ch;
 
         } // switch
     }
@@ -725,7 +725,7 @@ int read_char()
         //   the value we return doesn't really matter
     }
 
-    return (ch);
+    return ch;
 }
 
 
@@ -743,7 +743,7 @@ LABEL *find_label(char const *name)
         {
             if (strcmp(name, lp->name) == 0)
             {
-                return (lp);
+                return lp;
             }
         }
     }
@@ -754,12 +754,12 @@ LABEL *find_label(char const *name)
         {
             if (strcmp(name, lp->name) == 0)
             {
-                return (lp);
+                return lp;
             }
         }
     }
 
-    return (nullptr);
+    return nullptr;
 }
 
 
@@ -789,11 +789,11 @@ int find_topic_title(char const *title)
         if ((int) strlen(topic[t].title) == len &&
                 strnicmp(title, topic[t].title, len) == 0)
         {
-            return (t);
+            return t;
         }
     }
 
-    return (-1);   // not found
+    return -1;   // not found
 }
 
 
@@ -846,7 +846,7 @@ char *read_until(char *buff, int len, char const *stop_chars)
         }
     }
 
-    return (buff-1);
+    return buff-1;
 }
 
 
@@ -885,7 +885,7 @@ char *pchar(int ch)
         sprintf(buff, "\'\\x%02X\'", ch&0xFF);
     }
 
-    return (buff);
+    return buff;
 }
 
 
@@ -1101,7 +1101,7 @@ int parse_link()   // returns length of link or 0 on error
     if (*end == '\0')
     {
         error(0, "Unexpected EOF in hot-link.");
-        return (0);
+        return 0;
     }
 
     if (*end == '\n')
@@ -1184,10 +1184,10 @@ int parse_link()   // returns length of link or 0 on error
         memcpy(curr, ptr, len);
         curr += len;
         *curr++ = CMD_LINK;
-        return (len);
+        return len;
     }
 
-    return (0);
+    return 0;
 }
 
 
@@ -1213,7 +1213,7 @@ int create_table()
 
     if (ptr == nullptr)
     {
-        return (0);    // should never happen!
+        return 0;    // should never happen!
     }
 
     ptr++;
@@ -1223,13 +1223,13 @@ int create_table()
     if (len < 3)
     {
         error(1, "Too few arguments to Table.");
-        return (0);
+        return 0;
     }
 
     if (width <= 0 || width > 78 || cols <= 0 || start_off < 0 || start_off > 78)
     {
         error(1, "Argument out of range.");
-        return (0);
+        return 0;
     }
 
     bool done = false;
@@ -1257,7 +1257,7 @@ int create_table()
         {
         case -1:
             error(0, "Unexpected EOF in a Table.");
-            return (0);
+            return 0;
 
         case '{':
             if (count >= MAX_TABLE_SIZE)
@@ -1357,7 +1357,7 @@ int create_table()
         *curr++ = '\n';
     }
 
-    return (1);
+    return 1;
 }
 
 
@@ -1484,7 +1484,7 @@ bool end_of_sentence(char const *ptr)  // true if ptr is at the end of a sentenc
         --ptr;
     }
 
-    return (*ptr == '.' || *ptr == '?' || *ptr == '!');
+    return *ptr == '.' || *ptr == '?' || *ptr == '!';
 }
 
 
@@ -3050,17 +3050,17 @@ LABEL *find_next_label_by_topic(int t)
 
     if (p == nullptr)
     {
-        return (g);
+        return g;
     }
 
     if (g == nullptr)
     {
-        return (p);
+        return p;
     }
 
     else
     {
-        return ((g->topic_off < p->topic_off) ? g : p);
+        return (g->topic_off < p->topic_off) ? g : p;
     }
 }
 
@@ -3288,20 +3288,20 @@ int fcmp_LABEL(VOIDCONSTPTR a, VOIDCONSTPTR b)
     diff = strcmp(an, bn);
     if (diff == 0)
     {
-        return (0);
+        return 0;
     }
 
     if (strcmp(an, INDEX_LABEL) == 0)
     {
-        return (-1);
+        return -1;
     }
 
     if (strcmp(bn, INDEX_LABEL) == 0)
     {
-        return (1);
+        return 1;
     }
 
-    return (diff);
+    return diff;
 }
 
 
@@ -4261,7 +4261,7 @@ int compiler::process()
         break;
     }
 
-    return (errors);     // return the number of errors
+    return errors;     // return the number of errors
 }
 
 void compiler::usage()

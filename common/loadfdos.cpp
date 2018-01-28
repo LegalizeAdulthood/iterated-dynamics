@@ -81,25 +81,25 @@ static int vidcompare(VOIDCONSTPTR p1, VOIDCONSTPTR p2)
     ptr2 = (vidinf CONST *)p2;
     if (ptr1->flags < ptr2->flags)
     {
-        return (-1);
+        return -1;
     }
     if (ptr1->flags > ptr2->flags)
     {
-        return (1);
+        return 1;
     }
     if (g_video_table[ptr1->entnum].keynum < g_video_table[ptr2->entnum].keynum)
     {
-        return (-1);
+        return -1;
     }
     if (g_video_table[ptr1->entnum].keynum > g_video_table[ptr2->entnum].keynum)
     {
-        return (1);
+        return 1;
     }
     if (ptr1->entnum < ptr2->entnum)
     {
-        return (-1);
+        return -1;
     }
-    return (1);
+    return 1;
 }
 
 static void format_vid_inf(int i, char *err, char *buf)
@@ -569,6 +569,6 @@ static void format_item(int choice, char *buf)
 static int check_modekey(int curkey, int /*choice*/)
 {
     int i = check_vidmode_key(0, curkey);
-    return ((i >= 0) ? -100-i : 0);
+    return i >= 0 ? -100-i : 0;
 }
 #endif

@@ -151,7 +151,7 @@ int strlen_needed_bf()
     length += 2;         // e and sign
     length += 4;         // exponent
     length += 4;         // null and a little extra for safety
-    return (length);
+    return length;
 }
 
 /********************************************************************/
@@ -1110,7 +1110,7 @@ bf_t unsafe_atan2_bf(bf_t r, bf_t ny, bf_t nx)
         {
             clear_bf(r);
         }
-        return (r);
+        return r;
     }
     if (signx == 0)
     {
@@ -1120,7 +1120,7 @@ bf_t unsafe_atan2_bf(bf_t r, bf_t ny, bf_t nx)
         {
             neg_a_bf(r);    // -90 deg
         }
-        return (r);
+        return r;
     }
 
     if (signy < 0)
@@ -1141,7 +1141,7 @@ bf_t unsafe_atan2_bf(bf_t r, bf_t ny, bf_t nx)
     {
         neg_a_bf(r);
     }
-    return (r);
+    return r;
 }
 
 /**********************************************************************/
@@ -1342,7 +1342,7 @@ int convert_bf(bf_t newnum, bf_t old, int newbflength, int oldbflength)
     {
         memcpy(newnum, old+oldbflength-newbflength, newbflength+2);
     }
-    return (0);
+    return 0;
 }
 
 // The following used to be in bigfltc.c
@@ -1515,10 +1515,10 @@ int cmp_bf(bf_t n1, bf_t n2)
             // now determine which of the two bytes was different
             if ((value1&0xFF00) > (value2&0xFF00))     // compare just high bytes
             {
-                return (i+2); // high byte was different
+                return i+2; // high byte was different
             }
 
-            return (i+1); // low byte was different
+            return i+1; // low byte was different
         }
         if (value1 < value2)
         {

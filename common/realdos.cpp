@@ -330,7 +330,7 @@ int putstringcenter(int row, int col, int width, int attr, char const *msg)
     }
     if (i == 0)
     {
-        return (-1);
+        return -1;
     }
     if (i >= width)
     {
@@ -1491,7 +1491,7 @@ static int menu_checkkey(int curkey, int /*choice*/)
     // We use F2 for shift-@, annoyingly enough
     if (testkey == FIK_F2)
     {
-        return (0-testkey);
+        return -testkey;
     }
 #endif
     if (testkey == '2')
@@ -1502,7 +1502,7 @@ static int menu_checkkey(int curkey, int /*choice*/)
     if (strchr("#@2txyzgvir3dj", testkey) || testkey == FIK_INSERT || testkey == FIK_CTL_B
             || testkey == FIK_ESC || testkey == FIK_DELETE || testkey == FIK_CTL_F)
     {
-        return (0-testkey);
+        return -testkey;
     }
     if (menutype)
     {
@@ -1511,7 +1511,7 @@ static int menu_checkkey(int curkey, int /*choice*/)
                 || testkey == FIK_CTL_P
                 || testkey == FIK_CTL_S || testkey == FIK_CTL_U)   // ctrl-A, E, H, P, S, U
         {
-            return (0-testkey);
+            return -testkey;
         }
         if (testkey == ' ')
         {
@@ -1519,31 +1519,31 @@ static int menu_checkkey(int curkey, int /*choice*/)
                     && g_params[0] == 0.0 && g_params[1] == 0.0)
                     || g_cur_fractal_specific->tomandel != fractal_type::NOFRACTAL)
             {
-                return (0-testkey);
+                return -testkey;
             }
         }
         if (g_got_real_dac && g_colors >= 16)
         {
             if (strchr("c+-", testkey))
             {
-                return (0-testkey);
+                return -testkey;
             }
             if (g_colors > 16 && (testkey == 'a' || (testkey == 'e')))
             {
-                return (0-testkey);
+                return -testkey;
             }
         }
         // Alt-A and Alt-S
         if (testkey == FIK_ALT_A || testkey == FIK_ALT_S)
         {
-            return (0-testkey);
+            return -testkey;
         }
     }
     if (check_vidmode_key(0, testkey) >= 0)
     {
-        return (0-testkey);
+        return -testkey;
     }
-    return (0);
+    return 0;
 }
 
 int input_field(
@@ -1739,7 +1739,7 @@ int input_field(
     }
 inpfld_end:
     g_look_at_mouse = old_look_at_mouse;
-    return (ret);
+    return ret;
 }
 
 int field_prompt(
@@ -1897,7 +1897,7 @@ int showvidlength()
 {
     int sz;
     sz = (sizeof(VIDEOINFO)+sizeof(int))*MAX_VIDEO_MODES;
-    return (sz);
+    return sz;
 }
 
 int g_cfg_line_nums[MAX_VIDEO_MODES] = { 0 };
@@ -2088,7 +2088,7 @@ int check_vidmode_key(int option, int k)
     // function key currently assigned to a video mode, -1 otherwise
     if (k == 1400)                // special value from select_vid_mode
     {
-        return (MAX_VIDEO_MODES-1); // for last entry with no key assigned
+        return MAX_VIDEO_MODES-1; // for last entry with no key assigned
     }
     if (k != 0)
     {
@@ -2099,7 +2099,7 @@ int check_vidmode_key(int option, int k)
             {
                 if (g_video_table[i].keynum == k)
                 {
-                    return (i);
+                    return i;
                 }
             }
         }
@@ -2110,12 +2110,12 @@ int check_vidmode_key(int option, int k)
             {
                 if (g_video_table[i].keynum == k)
                 {
-                    return (i);
+                    return i;
                 }
             }
         }
     }
-    return (-1);
+    return -1;
 }
 
 int check_vidmode_keyname(char const *kname)
@@ -2140,18 +2140,18 @@ int check_vidmode_keyname(char const *kname)
     }
     if (*kname != 'F' && *kname != 'f')
     {
-        return (0);
+        return 0;
     }
     if (*++kname < '1' || *kname > '9')
     {
-        return (0);
+        return 0;
     }
     i = *kname - '0';
     if (*++kname != 0 && *kname != ' ')
     {
         if (*kname != '0' || i != 1)
         {
-            return (0);
+            return 0;
         }
         i = 10;
         ++kname;
@@ -2160,14 +2160,14 @@ int check_vidmode_keyname(char const *kname)
     {
         if (*(kname++) != ' ')
         {
-            return (0);
+            return 0;
         }
     }
     if ((i += keyset) < 2)
     {
         i = 0;
     }
-    return (i);
+    return i;
 }
 
 void vidmode_keyname(int k, char *buf)

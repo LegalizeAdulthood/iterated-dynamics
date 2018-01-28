@@ -308,7 +308,7 @@ int get_toggles()
     g_help_mode = old_help_mode;
     if (i < 0)
     {
-        return (-1);
+        return -1;
     }
 
     // now check out the results (*hopefully* in the same order <grin>)
@@ -500,7 +500,7 @@ int get_toggles()
         j++;
     }
 
-    return (j);
+    return j;
 }
 
 /*
@@ -591,7 +591,7 @@ int get_toggles2()
         g_help_mode = old_help_mode;
         if (i < 0)
         {
-            return (-1);
+            return -1;
         }
     }
 
@@ -752,7 +752,7 @@ pass_option_restart:
     g_help_mode = old_help_mode;
     if (i < 0)
     {
-        return (-1);
+        return -1;
     }
 
     // now check out the results (*hopefully* in the same order <grin>)
@@ -852,7 +852,7 @@ pass_option_restart:
         goto pass_option_restart;
     }
 
-    return (j + ret);
+    return j + ret;
 }
 
 
@@ -1102,7 +1102,7 @@ int get_cmd_string()
         }
     }
 
-    return (i);
+    return i;
 }
 
 
@@ -1156,7 +1156,7 @@ int starfield()
     {
         stopmsg(STOPMSG_NONE, "Unable to load ALTERN.MAP");
         g_busy = false;
-        return (-1);
+        return -1;
     }
     spindac(0, 1);                 // load it, but don't spin
     for (g_row = 0; g_row < g_logical_screen_y_dots; g_row++)
@@ -1167,7 +1167,7 @@ int starfield()
             {
                 driver_buzzer(buzzer_codes::INTERRUPT);
                 g_busy = false;
-                return (1);
+                return 1;
             }
             c = getcolor(g_col, g_row);
             if (c == g_inside_color)
@@ -1179,7 +1179,7 @@ int starfield()
     }
     driver_buzzer(buzzer_codes::COMPLETE);
     g_busy = false;
-    return (0);
+    return 0;
 }
 
 int get_starfield_params()
@@ -1195,7 +1195,7 @@ int get_starfield_params()
     if (g_colors < 255)
     {
         stopmsg(STOPMSG_NONE, "starfield requires 256 color mode");
-        return (-1);
+        return -1;
     }
     for (int i = 0; i < 3; i++)
     {
@@ -1210,14 +1210,14 @@ int get_starfield_params()
     driver_unstack_screen();
     if (choice < 0)
     {
-        return (-1);
+        return -1;
     }
     for (int i = 0; i < 3; i++)
     {
         starfield_values[i] = uvalues[i].uval.dval;
     }
 
-    return (0);
+    return 0;
 }
 
 static char const *masks[] = {"*.pot", "*.gif"};
@@ -1331,7 +1331,7 @@ int get_rds_params()
         break;
     }
     driver_unstack_screen();
-    return (ret);
+    return ret;
 }
 
 int get_a_number(double *x, double *y)
@@ -1358,7 +1358,7 @@ int get_a_number(double *x, double *y)
     if (i < 0)
     {
         driver_unstack_screen();
-        return (-1);
+        return -1;
     }
 
     // now check out the results (*hopefully* in the same order <grin>)
@@ -1368,7 +1368,7 @@ int get_a_number(double *x, double *y)
     *y = uvalues[++k].uval.dval;
 
     driver_unstack_screen();
-    return (i);
+    return i;
 }
 
 // ---------------------------------------------------------------------
@@ -1387,7 +1387,7 @@ int get_commands()              // execute commands from file
         ret = load_commands(parmfile);
     }
     g_help_mode = old_help_mode;
-    return (ret);
+    return ret;
 }
 
 // ---------------------------------------------------------------------
@@ -1457,7 +1457,7 @@ int  fr_findfirst(char const *path)       // Find 1st file (or subdir) meeting p
     regs.x.dx = (unsigned)path;
     regs.x.cx = FILEATTR;
     intdos(&regs, &regs);
-    return (regs.x.ax);           // Return error code
+    return regs.x.ax;           // Return error code
 #else
     if (currdir != nullptr)
     {
@@ -1491,7 +1491,7 @@ int  fr_findnext()              // Find next file (or subdir) meeting above path
     regs.h.ah = 0x4F;             // Find next file meeting path
     regs.x.dx = (unsigned)&DTA;
     intdos(&regs, &regs);
-    return (regs.x.ax);
+    return regs.x.ax;
 #else
 #ifdef DIRENT
     struct dirent *dirEntry;
@@ -1922,7 +1922,7 @@ static int filename_speedstr(int row, int col, int vid,
         prompt = g_speed_prompt.c_str();
     }
     driver_put_string(row, col, vid, prompt);
-    return ((int) strlen(prompt));
+    return (int) strlen(prompt);
 }
 
 #ifndef XFRACT  // This routine moved to unix.c so we can use it in hc.c
@@ -1952,7 +1952,7 @@ int splitpath(char const *file_template, char *drive, char *dir, char *fname, ch
     length = (int) strlen(file_template);
     if (length == 0)
     {
-        return (0);
+        return 0;
     }
 
     offset = 0;
@@ -1997,7 +1997,7 @@ int splitpath(char const *file_template, char *drive, char *dir, char *fname, ch
     }
     else
     {
-        return (0);
+        return 0;
     }
 
     // get fname
@@ -2048,7 +2048,7 @@ int makepath(char *template_str, char const *drive, char const *dir, char const 
     }
     else
     {
-        return (-1);
+        return -1;
     }
 #ifndef XFRACT
     if (drive)
@@ -2110,7 +2110,7 @@ int dir_remove(char const *dir, char const *filename)
 {
     char tmp[FILE_MAX_PATH];
     dir_name(tmp, dir, filename);
-    return (id_fs_remove(tmp));
+    return id_fs_remove(tmp);
 }
 
 // fopens file in dir directory
@@ -2118,7 +2118,7 @@ FILE *dir_fopen(char const *dir, char const *filename, char const *mode)
 {
     char tmp[FILE_MAX_PATH];
     dir_name(tmp, dir, filename);
-    return (fopen(tmp, mode));
+    return fopen(tmp, mode);
 }
 
 /*
@@ -2138,7 +2138,7 @@ int cmpdbl(double old, double new_val)
     prompt_valuestring(buf, &val);   // convert "old" to string
 
     old = atof(buf);                // convert back
-    return (fabs(old-new_val) < DBL_EPSILON?0:1); // zero if same
+    return fabs(old-new_val) < DBL_EPSILON ? 0 : 1; // zero if same
 }
 
 int get_corners()
@@ -2260,7 +2260,7 @@ gc_loop:
         g_y_max = oyymax;
         g_x_3rd = oxx3rd;
         g_y_3rd = oyy3rd;
-        return (-1);
+        return -1;
     }
 
     if (prompt_ret == FIK_F4)
@@ -2365,7 +2365,7 @@ gc_loop:
     }
     else
     {
-        return (1);
+        return 1;
     }
 }
 
@@ -2498,7 +2498,7 @@ gsc_loop:
         g_y_max = svyymax;
         g_x_3rd = svxx3rd;
         g_y_3rd = svyy3rd;
-        return (-1);
+        return -1;
     }
 
     if (prompt_ret == FIK_F4)
@@ -2622,7 +2622,7 @@ gsc_loop:
         g_y_max = svyymax;
         g_x_3rd = svxx3rd;
         g_y_3rd = svyy3rd;
-        return (1);
+        return 1;
     }
 }
 
@@ -2690,7 +2690,7 @@ get_brws_restart:
     g_help_mode = old_help_mode;     // re-enable HELP
     if (i < 0)
     {
-        return (0);
+        return 0;
     }
 
     if (i == FIK_F4)
@@ -2750,7 +2750,7 @@ get_brws_restart:
         i = 0;
     }
 
-    return (i);
+    return i;
 }
 
 // merge existing full path with new one

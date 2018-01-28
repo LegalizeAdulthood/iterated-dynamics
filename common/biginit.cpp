@@ -414,7 +414,7 @@ static int save_bf_vars()
         g_bf_save_len = 0;
         ret = -1;
     }
-    return (ret);
+    return ret;
 }
 
 /************************************************************************/
@@ -424,7 +424,7 @@ static int restore_bf_vars()
     bf_t ptr;
     if (g_bf_save_len == 0)
     {
-        return (-1);
+        return -1;
     }
     ptr  = bnroot;
     convert_bf(g_bf_x_min, ptr, bflength, g_bf_save_len);
@@ -458,7 +458,7 @@ static int restore_bf_vars()
 
     // scrub save area
     memset(bnroot, 0, (g_bf_save_len+2)*22);
-    return (0);
+    return 0;
 }
 
 /*******************************************/
@@ -480,7 +480,7 @@ bn_t alloc_stack(size_t size)
     if (bf_math == bf_math_type::NONE)
     {
         stopmsg(STOPMSG_NONE, "alloc_stack called with bf_math==0");
-        return (nullptr);
+        return nullptr;
     }
     const long stack_addr = (long)((stack_ptr-bnroot)+size); // part of bnroot
 
@@ -495,7 +495,7 @@ bn_t alloc_stack(size_t size)
         g_bignum_max_stack_addr = stack_addr;
     }
     stack_ptr += size;   // increment stack pointer
-    return (stack_ptr - size);
+    return stack_ptr - size;
 }
 
 /************************************************************************/

@@ -440,7 +440,7 @@ static int dist1(int a, int b)
 {
     int t = a - b;
 
-    return (abs(t));
+    return abs(t);
 }
 
 static int find_link_updown(LINK *link, int num_link, int curr_link, int up)
@@ -548,12 +548,12 @@ static int find_link_key(LINK * /*link*/, int num_link, int curr_link, int key)
     switch (key)
     {
     case FIK_TAB:
-        return ((curr_link >= num_link-1) ? -1 : curr_link+1);
+        return (curr_link >= num_link-1) ? -1 : curr_link+1;
     case FIK_SHF_TAB:
-        return ((curr_link <= 0)          ? -1 : curr_link-1);
+        return (curr_link <= 0)          ? -1 : curr_link-1;
     default:
         assert(0);
-        return (-1);
+        return -1;
     }
 }
 
@@ -576,11 +576,11 @@ static int do_move_link(LINK *link, int num_link, int *curr, int (*f)(LINK *, in
             color_link(&link[*curr], C_HELP_LINK);
             *curr = t;
             color_link(&link[*curr], C_HELP_CURLINK);
-            return (1);
+            return 1;
         }
     }
 
-    return (0);
+    return 0;
 }
 
 inline void freader(void *ptr, size_t size, size_t nmemb, FILE *stream)
@@ -793,7 +793,7 @@ static int help_topic(HIST *curr, HIST *next, int flags)
     curr->topic_off = page_table[page].offset;
     curr->link      = curr_link;
 
-    return (action);
+    return action;
 }
 
 int help(int action)
@@ -1041,7 +1041,7 @@ static int _read_help_topic(int topic, int off, int len, VOIDPTR buf)
         freader(buf, sizeof(char), read_len, help_file);
     }
 
-    return (curr_len - (off+len));
+    return curr_len - (off+len);
 }
 
 int read_help_topic(int label_num, int off, int len, VOIDPTR buf)
@@ -1054,7 +1054,7 @@ int read_help_topic(int label_num, int off, int len, VOIDPTR buf)
     int ret;
     ret = _read_help_topic(label[label_num].topic_num,
                            label[label_num].topic_off + off, len, buf);
-    return (ret);
+    return ret;
 }
 
 #define PRINT_BUFFER_SIZE  (32767)       // max. size of help topic in doc.
@@ -1206,7 +1206,7 @@ static bool print_doc_get_info(int cmd, PD_INFO *pd, void *context)
 
     case PD_GET_LINK_PAGE:
         pd->i = getint(pd->s+sizeof(long));
-        return (pd->i != -1);
+        return pd->i != -1;
 
     case PD_RELEASE_TOPIC:
         return true;
@@ -1260,15 +1260,15 @@ static bool print_doc_output(int cmd, PD_INFO *pd, void *context)
         info->margin = 0;
         printerc(info, '\f', 1);
         info->margin = PAGE_INDENT;
-        return (true);
+        return true;
 
     case PD_PRINT:
         printers(info, pd->s, pd->i);
-        return (true);
+        return true;
 
     case PD_PRINTN:
         printerc(info, *pd->s, pd->i);
-        return (true);
+        return true;
 
     case PD_PRINT_SEC:
         info->margin = TITLE_INDENT;
@@ -1280,17 +1280,17 @@ static bool print_doc_output(int cmd, PD_INFO *pd, void *context)
         printers(info, pd->title, 0);
         printerc(info, '\n', 1);
         info->margin = PAGE_INDENT;
-        return (true);
+        return true;
 
     case PD_START_SECTION:
     case PD_START_TOPIC:
     case PD_SET_SECTION_PAGE:
     case PD_SET_TOPIC_PAGE:
     case PD_PERIODIC:
-        return (true);
+        return true;
 
     default:
-        return (false);
+        return false;
     }
 }
 
@@ -1522,7 +1522,7 @@ int init_help()
         help_file = nullptr;
         stopmsg(STOPMSG_NO_STACK, "Not enough memory for help system!\n");
 
-        return (-2);
+        return -2;
     }
 
     // read in the tables...

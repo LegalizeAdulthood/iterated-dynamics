@@ -155,11 +155,11 @@ short decoder(short linewidth)
     size = (short) get_byte();
     if (size < 0)
     {
-        return (size);
+        return size;
     }
     if (size < 2 || 9 < size)
     {
-        return (BAD_CODE_SIZE);
+        return BAD_CODE_SIZE;
     }
 
     curr_size = (short)(size + 1);
@@ -201,7 +201,7 @@ short decoder(short linewidth)
         // If we had a file error, return without completing the decode
         if (c < 0)
         {
-            return (0);
+            return 0;
         }
 
         // If the code is a clear code, reinitialize all necessary items.
@@ -295,13 +295,13 @@ short decoder(short linewidth)
                             ret = (short)((*g_out_line)(decoderline, (int)(bufptr - decoderline)));
                             if (ret < 0)
                             {
-                                return (ret);
+                                return ret;
                             }
                             yskip = g_skip_y_dots;
                         }
                         if (driver_key_pressed())
                         {
-                            return (-1);
+                            return -1;
                         }
                         bufptr = decoderline;
                         bufcnt = linewidth;
@@ -358,13 +358,13 @@ short decoder(short linewidth)
                     ret = (short)((*g_out_line)(decoderline, (int)(bufptr - decoderline)));
                     if (ret < 0)
                     {
-                        return (ret);
+                        return ret;
                     }
                     yskip = g_skip_y_dots;
                 }
                 if (driver_key_pressed())
                 {
-                    return (-1);
+                    return -1;
                 }
                 bufptr = decoderline;
                 bufcnt = linewidth;
@@ -372,7 +372,7 @@ short decoder(short linewidth)
             }
         }
     }
-    return (0);
+    return 0;
 }
 
 // get_next_code()
@@ -394,7 +394,7 @@ static short get_next_code()
             navail_bytes = (short) get_byte();
             if (navail_bytes < 0)
             {
-                return (navail_bytes);
+                return navail_bytes;
             }
             else if (navail_bytes)
             {
@@ -417,7 +417,7 @@ static short get_next_code()
             navail_bytes = (short) get_byte();
             if (navail_bytes < 0)
             {
-                return (navail_bytes);
+                return navail_bytes;
             }
             else if (navail_bytes)
             {
@@ -430,7 +430,7 @@ static short get_next_code()
         --navail_bytes;
     }
     nbits_left -= curr_size;
-    return ((short)(ret_code & code_mask[curr_size]));
+    return (short)(ret_code & code_mask[curr_size]);
 }
 
 // called in parent reoutine to set byte_buff

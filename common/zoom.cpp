@@ -664,7 +664,7 @@ static int check_pan() // return 0 if can't, alignment requirement if can
 {
     if ((g_calc_status != calc_status_value::RESUMABLE && g_calc_status != calc_status_value::COMPLETED) || g_evolving)
     {
-        return (0); // not resumable, not complete
+        return 0; // not resumable, not complete
     }
     if (g_cur_fractal_specific->calctype != standard_fractal
             && g_cur_fractal_specific->calctype != calcmand
@@ -672,47 +672,47 @@ static int check_pan() // return 0 if can't, alignment requirement if can
             && g_cur_fractal_specific->calctype != lyapunov
             && g_cur_fractal_specific->calctype != calcfroth)
     {
-        return (0); // not a worklist-driven type
+        return 0; // not a worklist-driven type
     }
     if (g_zoom_box_width != 1.0 || g_zoom_box_height != 1.0
             || g_zoom_box_skew != 0.0 || g_zoom_box_rotation != 0.0)
     {
-        return (0); // not a full size unrotated unskewed zoombox
+        return 0; // not a full size unrotated unskewed zoombox
     }
     if (g_std_calc_mode == 't')
     {
-        return (0); // tesselate, can't do it
+        return 0; // tesselate, can't do it
     }
     if (g_std_calc_mode == 'd')
     {
-        return (0); // diffusion scan: can't do it either
+        return 0; // diffusion scan: can't do it either
     }
     if (g_std_calc_mode == 'o')
     {
-        return (0); // orbits, can't do it
+        return 0; // orbits, can't do it
     }
 
     // can pan if we get this far
 
     if (g_calc_status == calc_status_value::COMPLETED)
     {
-        return (1); // image completed, align on any pixel
+        return 1; // image completed, align on any pixel
     }
     if (g_potential_flag && g_potential_16bit)
     {
-        return (1); // 1 pass forced so align on any pixel
+        return 1; // 1 pass forced so align on any pixel
     }
     if (g_std_calc_mode == 'b')
     {
-        return (1); // btm, align on any pixel
+        return 1; // btm, align on any pixel
     }
     if (g_std_calc_mode != 'g' || (g_cur_fractal_specific->flags&NOGUESS))
     {
         if (g_std_calc_mode == '2' || g_std_calc_mode == '3')   // align on even pixel for 2pass
         {
-            return (2);
+            return 2;
         }
-        return (1); // assume 1pass
+        return 1; // assume 1pass
     }
     // solid guessing
     start_resume();
@@ -731,7 +731,7 @@ static int check_pan() // return 0 if can't, alignment requirement if can
     {
         j = j >> 1; // reduce requirement
     }
-    return (j);
+    return j;
 }
 
 // move a row on the screen
@@ -765,19 +765,19 @@ int init_pan_or_recalc(bool do_zoomout) // decide to recalc, or to chg worklist 
     int listfull;
     if (g_zoom_box_width == 0.0)
     {
-        return (0); // no zoombox, leave g_calc_status as is
+        return 0; // no zoombox, leave g_calc_status as is
     }
     // got a zoombox
     alignmask = check_pan()-1;
     if (alignmask < 0 || g_evolving)
     {
         g_calc_status = calc_status_value::PARAMS_CHANGED; // can't pan, trigger recalc
-        return (0);
+        return 0;
     }
     if (g_zoom_box_x == 0.0 && g_zoom_box_y == 0.0)
     {
         clearbox();
-        return (0);
+        return 0;
     } // box is full screen, leave g_calc_status as is
     col = (int)(g_zoom_box_x*(g_logical_screen_x_size_dots+PIXELROUND)); // calc dest col,row of topleft pixel
     row = (int)(g_zoom_box_y*(g_logical_screen_y_size_dots+PIXELROUND));
@@ -790,7 +790,7 @@ int init_pan_or_recalc(bool do_zoomout) // decide to recalc, or to chg worklist 
     if ((row&alignmask) != 0 || (col&alignmask) != 0)
     {
         g_calc_status = calc_status_value::PARAMS_CHANGED; // not on useable pixel alignment, trigger recalc
-        return (0);
+        return 0;
     }
     // pan
     g_num_work_list = 0;
@@ -844,7 +844,7 @@ int init_pan_or_recalc(bool do_zoomout) // decide to recalc, or to chg worklist 
         {
             g_calc_status = calc_status_value::PARAMS_CHANGED; // trigger recalc
         }
-        return (0);
+        return 0;
     }
     // now we're committed
     g_calc_status = calc_status_value::RESUMABLE;
@@ -866,7 +866,7 @@ int init_pan_or_recalc(bool do_zoomout) // decide to recalc, or to chg worklist 
     fix_worklist(); // fixup any out of bounds worklist entries
     alloc_resume(sizeof(g_work_list)+20, 2); // post the new worklist
     put_resume(sizeof(g_num_work_list), &g_num_work_list, sizeof(g_work_list), g_work_list, 0);
-    return (0);
+    return 0;
 }
 
 static void restart_window(int wknum)

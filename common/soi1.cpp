@@ -111,7 +111,7 @@ static long iteration(
     {
         start = BASIN_COLOR;
     }
-    return (start);
+    return start;
 }
 
 static void puthline(int x1, int y1, int x2, int color)

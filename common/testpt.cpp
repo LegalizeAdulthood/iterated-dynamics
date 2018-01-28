@@ -27,7 +27,7 @@ The sample code below is a straightforward Mandelbrot routine.
 
 int teststart()     // this routine is called just before the fractal starts
 {
-    return (0);
+    return 0;
 }
 
 void testend()       // this routine is called just after the fractal ends
@@ -59,5 +59,5 @@ int testpt(double initreal, double initimag, double parm1, double parm2,
     {
         color = inside;
     }
-    return ((int)color);
+    return (int)color;
 }

@@ -40,7 +40,7 @@ bool is_hyphen(char const *ptr)   /* true if ptr points to a real hyphen */
 
     --ptr;
 
-    return (*ptr != ' ' && *ptr != '-');
+    return *ptr != ' ' && *ptr != '-';
 }
 
 
@@ -187,7 +187,7 @@ int _find_token_length(char const *curr, unsigned len, int *size, int *width)
         *width = _width;
     }
 
-    return (tok);
+    return tok;
 }
 
 
@@ -232,7 +232,7 @@ int find_token_length(int mode, char const *curr, unsigned len, int *size, int *
         *size = _size;
     }
 
-    return (tok);
+    return tok;
 }
 
 
@@ -273,7 +273,7 @@ int find_line_width(int mode, char const *curr, unsigned len)
     }
     while (!done);
 
-    return (lwidth);
+    return lwidth;
 }
 
 

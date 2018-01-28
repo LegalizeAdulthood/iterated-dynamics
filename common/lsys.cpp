@@ -72,7 +72,7 @@ char maxangle;
 
 bool ispow2(int n)
 {
-    return (n == (n & -n));
+    return n == (n & -n);
 }
 
 LDBL getnumber(char const **str)
@@ -777,7 +777,7 @@ lsys_cmd *findsize(lsys_cmd *command, lsys_turtlestatei *ts, lsys_cmd **rules, i
                     tran = true;
                     if (findsize((*rulind)+1, ts, rules, depth-1) == nullptr)
                     {
-                        return (nullptr);
+                        return nullptr;
                     }
                 }
             }
@@ -800,7 +800,7 @@ lsys_cmd *findsize(lsys_cmd *command, lsys_turtlestatei *ts, lsys_cmd **rules, i
                 command = findsize(command+1, ts, rules, depth);
                 if (command == nullptr)
                 {
-                    return (nullptr);
+                    return nullptr;
                 }
                 ts->angle = saveang;
                 ts->reverse = saverev;
@@ -948,7 +948,7 @@ lsys_cmd *drawLSysI(lsys_cmd *command, lsys_turtlestatei *ts, lsys_cmd **rules, 
                 command = drawLSysI(command+1, ts, rules, depth);
                 if (command == nullptr)
                 {
-                    return (nullptr);
+                    return nullptr;
                 }
                 ts->angle = saveang;
                 ts->reverse = saverev;

@@ -764,16 +764,16 @@ static int shftwrite(BYTE const *color, int numcolors)
             thiscolor = (BYTE)(thiscolor + (BYTE)(thiscolor >> 6));
             if (fputc(thiscolor, g_outfile) != (int) thiscolor)
             {
-                return (0);
+                return 0;
             }
         }
     }
-    return (1);
+    return 1;
 }
 
 static int extend_blk_len(int datalen)
 {
-    return (datalen + (datalen + 254) / 255 + 15);
+    return datalen + (datalen + 254) / 255 + 15;
     // data   +     1.per.block   + 14 for id + 1 for null at end
 }
 
@@ -785,7 +785,7 @@ static int put_extend_blk(int block_id, int block_len, char const *block_data)
     sprintf(&header[11], "%03d", block_id);
     if (fwrite(header, 14, 1, g_outfile) != 1)
     {
-        return (0);
+        return 0;
     }
     i = (block_len + 254) / 255;
     while (--i >= 0)
@@ -793,7 +793,7 @@ static int put_extend_blk(int block_id, int block_len, char const *block_data)
         block_len -= (j = std::min(block_len, 255));
         if (fputc(j, g_outfile) != j)
         {
-            return (0);
+            return 0;
         }
         while (--j >= 0)
         {
@@ -802,9 +802,9 @@ static int put_extend_blk(int block_id, int block_len, char const *block_data)
     }
     if (fputc(0, g_outfile) != 0)
     {
-        return (0);
+        return 0;
     }
-    return (1);
+    return 1;
 }
 
 static int store_item_name(char const *nameptr)
@@ -841,7 +841,7 @@ static int store_item_name(char const *nameptr)
     }
     // formula/lsys/ifs info block, 003
     put_extend_blk(3, sizeof(fsave_info), (char *) &fsave_info);
-    return (extend_blk_len(sizeof(fsave_info)));
+    return extend_blk_len(sizeof(fsave_info));
 }
 
 static void setup_save_info(FRACTAL_INFO *save_info)

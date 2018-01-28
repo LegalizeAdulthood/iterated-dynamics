@@ -333,7 +333,7 @@ static long iteration(
     baxinxx = false;
     LDBL d = mag;
     frexpl(d, &exponent);
-    return (g_max_iterations + offset - (((iter - 1) << 3) + (long)adjust[exponent >> 3]));
+    return g_max_iterations + offset - (((iter - 1) << 3) + (long)adjust[exponent >> 3]);
 }
 
 static void puthline(int x1, int y1, int x2, int color)
