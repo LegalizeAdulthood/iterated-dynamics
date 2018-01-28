@@ -40,6 +40,7 @@
 #include <time.h>
 #include <stdio.h>
 
+#include <algorithm>
 #include <cassert>
 #include <string>
 #include <system_error>
@@ -514,23 +515,14 @@ static void initvars_fractal()          // init vars affecting calculation
     g_bail_out = 0;                        // no user-entered bailout
     g_bof_match_book_images = true;         // use normal bof initialization to make bof images
     g_use_init_orbit = init_orbit_mode::normal;
-    for (int i = 0; i < MAX_PARAMS; i++)
-    {
-        g_params[i] = 0.0;     // initial parameter values
-    }
-    for (int i = 0; i < 3; i++)
-    {
-        g_potential_params[i]  = 0.0; // initial potential values
-    }
-    for (auto &elem : g_inversion)
-    {
-        elem = 0.0;  // initial invert values
-    }
+    std::fill(&g_params[0], &g_params[MAX_PARAMS], 0.0); // initial parameter values
+    std::fill(&g_potential_params[0], &g_potential_params[3], 0.0); // initial potential values
+    std::fill(std::begin(g_inversion), std::end(g_inversion), 0.0); // initial invert values
     g_init_orbit.y = 0.0;
     g_init_orbit.x = g_init_orbit.y;     // initial orbit values
     g_invert = 0;
+    g_decomp[0] = 0;
     g_decomp[1] = 0;
-    g_decomp[0] = g_decomp[1];
     g_user_distance_estimator_value = 0;
     g_distance_estimator_x_dots = 0;
     g_distance_estimator_y_dots = 0;
