@@ -8,6 +8,7 @@
 #include <float.h>
 #define WIN32_LEAN_AND_MEAN
 #define STRICT
+#include <tchar.h>
 #include <windows.h>
 #include <windowsx.h>
 
@@ -241,10 +242,10 @@ static LRESULT CALLBACK frame_proc(HWND window, UINT message, WPARAM wp, LPARAM 
 
 void frame_init(HINSTANCE instance, LPCSTR title)
 {
-    LPCSTR windowClass = "FractintFrame";
+    LPCTSTR windowClass = _T("FractintFrame");
     WNDCLASS  wc;
 
-    bool status = GetClassInfo(instance, windowClass, &wc) == TRUE;
+    bool status = GetClassInfo(instance, windowClass, &wc) != 0;
     if (!status)
     {
         g_frame.instance = instance;
