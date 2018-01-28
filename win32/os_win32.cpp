@@ -879,45 +879,45 @@ void findpath(char const *filename, char *fullpathname) // return full pathnames
     char ext[FILE_MAX_EXT];
     char temp_path[FILE_MAX_PATH];
 
-    splitpath(filename ,nullptr,nullptr,fname,ext);
-    makepath(temp_path,""   ,"" ,fname,ext);
+    splitpath(filename , nullptr, nullptr, fname, ext);
+    makepath(temp_path, ""   , "" , fname, ext);
 
-    if (g_check_cur_dir && access(temp_path,0) == 0)   // file exists
+    if (g_check_cur_dir && access(temp_path, 0) == 0)   // file exists
     {
-        strcpy(fullpathname,temp_path);
+        strcpy(fullpathname, temp_path);
         return;
     }
 
-    strcpy(temp_path,filename);   // avoid side effect changes to filename
+    strcpy(temp_path, filename);   // avoid side effect changes to filename
 
     if (temp_path[0] == SLASHC || (temp_path[0] && temp_path[1] == ':'))
     {
-        if (access(temp_path,0) == 0)   // file exists
+        if (access(temp_path, 0) == 0)   // file exists
         {
-            strcpy(fullpathname,temp_path);
+            strcpy(fullpathname, temp_path);
             return;
         }
         else
         {
-            splitpath(temp_path ,nullptr,nullptr,fname,ext);
-            makepath(temp_path,""   ,"" ,fname,ext);
+            splitpath(temp_path , nullptr, nullptr, fname, ext);
+            makepath(temp_path, ""   , "" , fname, ext);
         }
     }
     fullpathname[0] = 0;                         // indicate none found
-    _searchenv(temp_path,"PATH",fullpathname);
+    _searchenv(temp_path, "PATH", fullpathname);
     if (fullpathname[0] != 0)                    // found it!
     {
-        if (strncmp(&fullpathname[2],SLASHSLASH,2) == 0) // stupid klooge!
+        if (strncmp(&fullpathname[2], SLASHSLASH, 2) == 0) // stupid klooge!
         {
-            strcpy(&fullpathname[3],temp_path);
+            strcpy(&fullpathname[3], temp_path);
         }
     }
 }
 
 // case independent version of strncmp
-int strncasecmp(char const *s, char const *t,int ct)
+int strncasecmp(char const *s, char const *t, int ct)
 {
-    for (; (tolower(*s) == tolower(*t)) && --ct ; s++,t++)
+    for (; (tolower(*s) == tolower(*t)) && --ct ; s++, t++)
         if (*s == '\0')
             return (0);
     return (tolower(*s) - tolower(*t));
