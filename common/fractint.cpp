@@ -232,7 +232,7 @@ static void main_restart(int const argc, char const *const argv[], bool &stacked
 #ifdef SRCDIR
     g_fractal_search_dir2 = SRCDIR;
 #else
-    fract_dir2 = ".";
+    g_fractal_search_dir2 = ".";
 #endif
 
     cmdfiles(argc, argv);         // process the command-line
