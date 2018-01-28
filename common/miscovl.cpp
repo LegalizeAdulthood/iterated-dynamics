@@ -2885,6 +2885,5 @@ void init_comments()
     for (auto &elem : par_comment)
     {
         elem[0] = '\0';
-
     }
 }
