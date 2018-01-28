@@ -730,7 +730,9 @@ void get_line(int row, int startcol, int stopcol, BYTE *pixels)
 void put_line(int row, int startcol, int stopcol, BYTE const *pixels)
 {
     if (startcol + g_logical_screen_x_offset >= g_screen_x_dots || row + g_logical_screen_y_offset > g_screen_y_dots)
+    {
         return;
+    }
     _ASSERTE(linewrite);
     (*linewrite)(row + g_logical_screen_y_offset, startcol + g_logical_screen_x_offset, stopcol + g_logical_screen_x_offset, pixels);
 }
@@ -828,7 +830,9 @@ int getcolor(int xdot, int ydot)
     _ASSERTE(x1 >= 0 && x1 <= g_screen_x_dots);
     _ASSERTE(y1 >= 0 && y1 <= g_screen_y_dots);
     if (x1 < 0 || y1 < 0 || x1 >= g_screen_x_dots || y1 >= g_screen_y_dots)
+    {
         return 0;
+    }
     _ASSERTE(dotread);
     return (*dotread)(x1, y1);
 }
@@ -918,7 +922,11 @@ void findpath(char const *filename, char *fullpathname) // return full pathnames
 int strncasecmp(char const *s, char const *t, int ct)
 {
     for (; (tolower(*s) == tolower(*t)) && --ct ; s++, t++)
+    {
         if (*s == '\0')
+        {
             return (0);
+        }
+    }
     return (tolower(*s) - tolower(*t));
 }
