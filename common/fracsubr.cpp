@@ -32,6 +32,8 @@ FRACTALS.C, i.e. which are non-fractal-specific fractal engine subroutines.
 #include <sys/types.h>
 #include <time.h>
 
+#include <algorithm>
+#include <iterator>
 #include <vector>
 
 #if defined(_WIN32)
@@ -1573,10 +1575,7 @@ void wait_until(int index, uclock_t wait_time)
 void reset_clock()
 {
     restart_uclock();
-    for (auto &elem : next_time)
-    {
-        elem = 0;
-    }
+    std::fill(std::begin(next_time), std::end(next_time), 0);
 }
 
 #define LOG2  0.693147180F

@@ -2050,10 +2050,7 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
 #endif
     if (g_inside_color == STARTRAIL)
     {
-        for (auto &elem : tantable)
-        {
-            elem = 0.0;
-        }
+        std::fill(std::begin(tantable), std::end(tantable), 0.0);
         g_max_iterations = 16;
     }
     if (g_periodicity_check == 0 || g_inside_color == ZMAG || g_inside_color == STARTRAIL)
@@ -4146,17 +4143,11 @@ static void plotblock(int buildrow, int x, int y, int color)
     {
         if (buildrow == 0)
         {
-            for (int i = x; i < xlim; ++i)
-            {
-                dstack[i] = (BYTE)color;
-            }
+            std::fill(&dstack[x], &dstack[xlim], (BYTE) color);
         }
         else
         {
-            for (int i = x; i < xlim; ++i)
-            {
-                dstack[i+OLD_MAX_PIXELS] = (BYTE)color;
-            }
+            std::fill(&dstack[x + OLD_MAX_PIXELS], &dstack[xlim + OLD_MAX_PIXELS], (BYTE) color);
         }
         if (x >= g_xx_start)   // when x reduced for alignment, paint those dots too
         {
