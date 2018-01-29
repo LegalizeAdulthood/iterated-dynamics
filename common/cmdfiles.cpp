@@ -790,7 +790,7 @@ static bool next_line(FILE *handle, char *linebuf, cmd_file mode)
             strncpy(tmpbuf, &linebuf[1], 10);
             tmpbuf[10] = 0;
             strlwr(tmpbuf);
-            toolssection = strncmp(tmpbuf, "xfractint]", 10) == 0;
+            tools_section = strncmp(tmpbuf, "xfractint]", 10) == 0;
 #endif
             continue;                              // skip tools section heading
         }
