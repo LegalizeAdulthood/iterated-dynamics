@@ -15,6 +15,7 @@
 #include "miscres.h"
 #include "slideshw.h"
 
+#include <fcntl.h>
 #include <string.h>
 #ifndef NOBSTRING
 #ifndef sun
