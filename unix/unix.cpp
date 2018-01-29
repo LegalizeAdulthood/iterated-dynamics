@@ -22,12 +22,6 @@
 
 #include <algorithm>
 
-#define FILE_MAX_PATH  256       // max length of path+filename
-#define FILE_MAX_DIR   256       // max length of directory name
-#define FILE_MAX_DRIVE  3       // max length of drive letter
-#define FILE_MAX_FNAME  9       // max length of filename
-#define FILE_MAX_EXT    5       // max length of extension
-
 int iocount;
 
 /*
