@@ -780,8 +780,8 @@ int find_topic_title(char const *title)
 
     for (int t = 0; t < num_topic; t++)
     {
-        if ((int) strlen(topic[t].title) == len &&
-                strnicmp(title, topic[t].title, len) == 0)
+        if ((int) strlen(topic[t].title) == len
+            && strnicmp(title, topic[t].title, len) == 0)
         {
             return t;
         }
@@ -804,10 +804,12 @@ bool validate_label_name(char const *name)
     }
 
     while (*(++name) != '\0')
+    {
         if (!isalpha(*name) && !isdigit(*name) && *name != '_')
         {
             return false;    // invalid
         }
+    }
 
     return true;  // valid
 }
@@ -2315,7 +2317,9 @@ void read_src(char const *fname)
                 {
                 case S_Start:
                     if (ch == ' ')
+                    {
                         ; // do nothing
+                    }
                     else if ((ch&0xFF) == '\n')
                     {
                         *curr++ = ch;    // no need to center blank lines.
@@ -2654,8 +2658,10 @@ void make_hot_links()
                     {
                         c->topic_num[ctr] = lbl->topic_num;
                         if (topic[lbl->topic_num].flags & TF_IN_DOC)
+                        {
                             warn(0, "Topic \"%s\" appears in document more than once.",
-                                 topic[lbl->topic_num].title);
+                                topic[lbl->topic_num].title);
+                        }
                         else
                         {
                             topic[lbl->topic_num].flags |= TF_IN_DOC;
@@ -2678,8 +2684,10 @@ void make_hot_links()
                 {
                     c->topic_num[ctr] = t;
                     if (topic[t].flags & TF_IN_DOC)
+                    {
                         warn(0, "Topic \"%s\" appears in document more than once.",
-                             topic[t].title);
+                            topic[t].title);
+                    }
                     else
                     {
                         topic[t].flags |= TF_IN_DOC;
@@ -3215,7 +3223,7 @@ void paginate_document()
 
     if (num_contents == 0)
     {
-        return ;
+        return;
     }
 
     msg("Paginating document.");
@@ -3283,10 +3291,12 @@ bool compare_files(FILE *f1, FILE *f2)
     }
 
     while (!feof(f1) && !feof(f2))
+    {
         if (getc(f1) != getc(f2))
         {
             return true;
         }
+    }
 
     return !(feof(f1) && feof(f2));
 }
