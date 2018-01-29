@@ -431,7 +431,6 @@ int add_link(LINK *l)
     {
         a_link = static_cast<LINK *>(newx(sizeof(LINK)*LINK_ALLOC_SIZE));
     }
-
     else if (num_link%LINK_ALLOC_SIZE == 0)
     {
         a_link = static_cast<LINK *>(renewx(a_link, sizeof(LINK) * (num_link+LINK_ALLOC_SIZE)));
@@ -452,7 +451,6 @@ int add_page(TOPIC *t, PAGE const *p)
     {
         t->page = static_cast<PAGE *>(newx(sizeof(PAGE)*PAGE_ALLOC_SIZE));
     }
-
     else if (t->num_page%PAGE_ALLOC_SIZE == 0)
     {
         t->page = static_cast<PAGE *>(renewx(t->page, sizeof(PAGE) * (t->num_page+PAGE_ALLOC_SIZE)));
@@ -473,7 +471,6 @@ int add_topic(TOPIC const *t)
     {
         topic = static_cast<TOPIC *>(newx(sizeof(TOPIC)*TOPIC_ALLOC_SIZE));
     }
-
     else if (num_topic%TOPIC_ALLOC_SIZE == 0)
     {
         topic = static_cast<TOPIC *>(renewx(topic, sizeof(TOPIC) * (num_topic+TOPIC_ALLOC_SIZE)));
@@ -496,7 +493,6 @@ int add_label(LABEL const *l)
         {
             plabel = static_cast<LABEL *>(newx(sizeof(LABEL)*LABEL_ALLOC_SIZE));
         }
-
         else if (num_plabel%LABEL_ALLOC_SIZE == 0)
         {
             plabel = static_cast<LABEL *>(renewx(plabel, sizeof(LABEL) * (num_plabel+LABEL_ALLOC_SIZE)));
@@ -511,7 +507,6 @@ int add_label(LABEL const *l)
     {
         label = static_cast<LABEL *>(newx(sizeof(LABEL)*LABEL_ALLOC_SIZE));
     }
-
     else if (num_label%LABEL_ALLOC_SIZE == 0)
     {
         label = static_cast<LABEL *>(renewx(label, sizeof(LABEL) * (num_label+LABEL_ALLOC_SIZE)));
@@ -532,7 +527,6 @@ int add_content(CONTENT const *c)
     {
         contents = static_cast<CONTENT *>(newx(sizeof(CONTENT)*CONTENTS_ALLOC_SIZE));
     }
-
     else if (num_contents%CONTENTS_ALLOC_SIZE == 0)
     {
         contents = static_cast<CONTENT *>(renewx(contents, sizeof(CONTENT) * (num_contents+CONTENTS_ALLOC_SIZE)));
@@ -862,7 +856,6 @@ void skip_over(char const *skip)
         {
             break;
         }
-
         else if ((ch&0x100) == 0 && strchr(skip, ch) == nullptr)
         {
             unread_char(ch);
@@ -1063,13 +1056,11 @@ void process_contents()
 
             add_content(&c);
         }
-
         else if (ch == '~')   // end at any command
         {
             unread_char(ch);
             break;
         }
-
         else
         {
             *curr++ = ch;
@@ -1404,7 +1395,6 @@ void process_comment()
                 break;
             }
         }
-
         else if (ch == -1)
         {
             error(0, "Unexpected EOF in Comment");
@@ -1689,12 +1679,10 @@ void read_src(char const *fname)
                     {
                         warn(eoff, "Topic has no title.");
                     }
-
                     else if ((int)strlen(cmd+6) > 70)
                     {
                         error(eoff, "Topic title is too long.");
                     }
-
                     else if ((int)strlen(cmd+6) > 60)
                     {
                         warn(eoff, "Topic title is long.");
@@ -1717,7 +1705,6 @@ void read_src(char const *fname)
                     compress_spaces = true;
                     continue;
                 }
-
                 else if (strnicmp(cmd, "Data=", 5) == 0)
                 {
                     if (in_topic)  // if we're in a topic, finish it
@@ -1776,7 +1763,6 @@ void read_src(char const *fname)
                     compress_spaces = false;
                     continue;
                 }
-
                 else if (strnicmp(cmd, "DocContents", 11) == 0)
                 {
                     check_command_length(eoff, 11);
@@ -1798,13 +1784,11 @@ void read_src(char const *fname)
                     in_topic = false;
                     continue;
                 }
-
                 else if (stricmp(cmd, "Comment") == 0)
                 {
                     process_comment();
                     continue;
                 }
-
                 else if (strnicmp(cmd, "FormatExclude", 13) == 0)
                 {
                     if (cmd[13] == '-')
@@ -1904,7 +1888,6 @@ void read_src(char const *fname)
 
                     continue;
                 }
-
                 else if (strnicmp(cmd, "Include ", 8) == 0)
                 {
                     if (include_stack_top >= MAX_INCLUDE_STACK-1)
@@ -1945,7 +1928,6 @@ void read_src(char const *fname)
                         }
                         hdr_fname = &cmd[8];
                     }
-
                     else if (strnicmp(cmd, "HlpFile=", 8) == 0)
                     {
                         if (!hlp_fname.empty())
@@ -1954,7 +1936,6 @@ void read_src(char const *fname)
                         }
                         hlp_fname = &cmd[8];
                     }
-
                     else if (strnicmp(cmd, "Version=", 8) == 0)
                     {
                         if (version != -1)   // an unlikely value
@@ -1963,7 +1944,6 @@ void read_src(char const *fname)
                         }
                         version = atoi(cmd+8);
                     }
-
                     else
                     {
                         error(eoff, "Bad or unexpected command \"%s\"", cmd);
@@ -1971,10 +1951,7 @@ void read_src(char const *fname)
 
                     continue;
                 }
-
-
                 // commands allowed only in a topic...
-
                 else
                 {
                     if (strnicmp(cmd, "FF", 2) == 0)
@@ -1989,7 +1966,6 @@ void read_src(char const *fname)
                         in_para = false;
                         num_spaces = 0;
                     }
-
                     else if (strnicmp(cmd, "DocFF", 5) == 0)
                     {
                         check_command_length(eoff, 5);
@@ -2010,7 +1986,6 @@ void read_src(char const *fname)
                         in_para = false;
                         num_spaces = 0;
                     }
-
                     else if (strnicmp(cmd, "OnlineFF", 8) == 0)
                     {
                         check_command_length(eoff, 8);
@@ -2031,24 +2006,20 @@ void read_src(char const *fname)
                         in_para = false;
                         num_spaces = 0;
                     }
-
                     else if (strnicmp(cmd, "Label=", 6) == 0)
                     {
                         if ((int)strlen(cmd+6) <= 0)
                         {
                             error(eoff, "Label has no name.");
                         }
-
                         else if (!validate_label_name(cmd+6))
                         {
                             error(eoff, "Label \"%s\" contains illegal characters.", cmd+6);
                         }
-
                         else if (find_label(cmd+6) != nullptr)
                         {
                             error(eoff, "Label \"%s\" already exists", cmd+6);
                         }
-
                         else
                         {
                             if ((int)strlen(cmd+6) > 32)
@@ -2068,7 +2039,6 @@ void read_src(char const *fname)
                             add_label(&lbl);
                         }
                     }
-
                     else if (strnicmp(cmd, "Table=", 6) == 0)
                     {
                         if (in_para)
@@ -2091,7 +2061,6 @@ void read_src(char const *fname)
 
                         create_table();
                     }
-
                     else if (strnicmp(cmd, "FormatExclude", 12) == 0)
                     {
                         if (cmd[13] == '-')
@@ -2123,7 +2092,6 @@ void read_src(char const *fname)
                             error(eoff, "Unexpected or invalid argument to FormatExclude.");
                         }
                     }
-
                     else if (strnicmp(cmd, "Format", 6) == 0)
                     {
                         if (cmd[6] == '+')
@@ -2165,7 +2133,6 @@ void read_src(char const *fname)
                             error(eoff, "Invalid argument to Format.");
                         }
                     }
-
                     else if (strnicmp(cmd, "Online", 6) == 0)
                     {
                         if (cmd[6] == '+')
@@ -2200,7 +2167,6 @@ void read_src(char const *fname)
                             error(eoff, "Invalid argument to Online.");
                         }
                     }
-
                     else if (strnicmp(cmd, "Doc", 3) == 0)
                     {
                         if (cmd[3] == '+')
@@ -2234,7 +2200,6 @@ void read_src(char const *fname)
                             error(eoff, "Invalid argument to Doc.");
                         }
                     }
-
                     else if (strnicmp(cmd, "Center", 6) == 0)
                     {
                         if (cmd[6] == '+')
@@ -2273,7 +2238,6 @@ void read_src(char const *fname)
                             error(eoff, "Invalid argument to Center.");
                         }
                     }
-
                     else if (strnicmp(cmd, "CompressSpaces", 14) == 0)
                     {
                         check_command_length(eoff, 15);
@@ -2305,7 +2269,6 @@ void read_src(char const *fname)
                             error(eoff, "Invalid argument to CompressSpaces.");
                         }
                     }
-
                     else if (strnicmp("BinInc ", cmd, 7) == 0)
                     {
                         if (!(t.flags & TF_DATA))
@@ -2317,7 +2280,6 @@ void read_src(char const *fname)
                             process_bininc();
                         }
                     }
-
                     else
                     {
                         error(eoff, "Bad or unexpected command \"%s\".", cmd);
@@ -2377,7 +2339,6 @@ void read_src(char const *fname)
             }
             while (again);
         }
-
         else if (formatting)
         {
             bool again;
@@ -2406,7 +2367,6 @@ void read_src(char const *fname)
                     {
                         ++num_spaces;
                     }
-
                     else
                     {
                         if (lformat_exclude > 0 && num_spaces >= lformat_exclude)
@@ -2598,7 +2558,6 @@ void read_src(char const *fname)
             }
             while (again);
         }
-
         else
         {
             bool again;
@@ -2703,7 +2662,6 @@ void make_hot_links()
                         }
                     }
                 }
-
             }
             else
             {
@@ -3057,7 +3015,6 @@ LABEL *find_next_label_by_topic(int t)
     {
         return p;
     }
-
     else
     {
         return (g->topic_off < p->topic_off) ? g : p;
@@ -3644,14 +3601,12 @@ void printerc(PRINT_DOC_INFO *info, int c, int n)
         {
             ++info->spaces;
         }
-
         else if (c == '\n' || c == '\f')
         {
             info->start_of_line = true;
             info->spaces = 0;   // strip spaces before a new-line
             putc(c, info->file);
         }
-
         else
         {
             if (info->start_of_line)
