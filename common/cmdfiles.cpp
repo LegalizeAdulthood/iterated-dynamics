@@ -775,27 +775,26 @@ static int next_command(
 
 static bool next_line(FILE *handle, char *linebuf, cmd_file mode)
 {
-    int toolssection;
-    char tmpbuf[11];
-    toolssection = 0;
+    bool tools_section = false;
     while (file_gets(linebuf, 512, handle) >= 0)
     {
         if (mode == cmd_file::SSTOOLS_INI && linebuf[0] == '[')   // check for [fractint]
         {
+            char tmpbuf[11];
 #ifndef XFRACT
             strncpy(tmpbuf, &linebuf[1], 9);
             tmpbuf[9] = 0;
             strlwr(tmpbuf);
-            toolssection = strncmp(tmpbuf, "fractint]", 9);
+            tools_section = strncmp(tmpbuf, "fractint]", 9) == 0;
 #else
             strncpy(tmpbuf, &linebuf[1], 10);
             tmpbuf[10] = 0;
             strlwr(tmpbuf);
-            toolssection = strncmp(tmpbuf, "xfractint]", 10);
+            toolssection = strncmp(tmpbuf, "xfractint]", 10) == 0;
 #endif
             continue;                              // skip tools section heading
         }
-        if (toolssection == 0)
+        if (tools_section)
         {
             return false;
         }
