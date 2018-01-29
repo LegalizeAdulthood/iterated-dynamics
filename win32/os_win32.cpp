@@ -877,37 +877,72 @@ void init_failure(char const *message)
     MessageBox(nullptr, message, "FractInt: Fatal Error", MB_OK);
 }
 
+/*
+ *----------------------------------------------------------------------
+ *
+ * findpath --
+ *
+ *      Find where a file is.
+ *  We return filename if it is an absolute path.
+ *  Otherwise we first try FRACTDIR/filename, SRCDIR/filename,
+ *      and then ./filename.
+ *
+ * Results:
+ *      Returns full pathname in fullpathname.
+ *
+ * Side effects:
+ *      None.
+ *
+ *----------------------------------------------------------------------
+ */
 void findpath(char const *filename, char *fullpathname) // return full pathnames
 {
+    fullpathname[0] = 0;                         // indicate none found
+
     char fname[FILE_MAX_FNAME];
     char ext[FILE_MAX_EXT];
     char temp_path[FILE_MAX_PATH];
 
-    splitpath(filename , nullptr, nullptr, fname, ext);
-    makepath(temp_path, ""   , "" , fname, ext);
-
-    if (g_check_cur_dir && access(temp_path, 0) == 0)   // file exists
+    // check current directory if curdir= parameter set
+    splitpath(filename, nullptr, nullptr, fname, ext);
+    makepath(temp_path, "", "", fname, ext);
+    if (g_check_cur_dir && _access(temp_path, 0) == 0)   // file exists
     {
         strcpy(fullpathname, temp_path);
         return;
     }
 
+    // check for absolute path
     strcpy(temp_path, filename);   // avoid side effect changes to filename
-
     if (temp_path[0] == SLASHC || (temp_path[0] && temp_path[1] == ':'))
     {
-        if (access(temp_path, 0) == 0)   // file exists
+        if (_access(temp_path, 0) == 0)   // file exists
         {
             strcpy(fullpathname, temp_path);
             return;
         }
-        else
-        {
-            splitpath(temp_path , nullptr, nullptr, fname, ext);
-            makepath(temp_path, ""   , "" , fname, ext);
-        }
+
+        splitpath(temp_path, nullptr, nullptr, fname, ext);
+        makepath(temp_path, "", "", fname, ext);
     }
-    fullpathname[0] = 0;                         // indicate none found
+
+    // check FRACTDIR
+    makepath(temp_path, "", g_fractal_search_dir1, fname, ext);
+    if (_access(temp_path, 0) == 0)
+    {
+        strcpy(fullpathname, temp_path);
+        return;
+    }
+
+    // check SRCDIR
+    makepath(temp_path, "", g_fractal_search_dir2, fname, ext);
+    if (_access(temp_path, 0) == 0)
+    {
+        strcpy(fullpathname, temp_path);
+        return;
+    }
+
+    // check PATH
     _searchenv(temp_path, "PATH", fullpathname);
     if (fullpathname[0] != 0)                    // found it!
     {
