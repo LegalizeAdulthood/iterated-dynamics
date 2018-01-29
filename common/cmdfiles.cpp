@@ -802,6 +802,28 @@ static bool next_line(FILE *handle, char *linebuf, cmd_file mode)
     return true;
 }
 
+static void lowerize_command(char *curarg)
+{
+    char *argptr = curarg;
+    while (*argptr)
+    {
+        // convert to lower case
+        if (*argptr >= 'A' && *argptr <= 'Z')
+        {
+            *argptr += 'a' - 'A';
+        }
+        else if (*argptr == '=')
+        {
+            // don't convert colors=value or comment=value
+            if ((strncmp(curarg, "colors=", 7) == 0) || (strncmp(curarg, "comment", 7) == 0))
+            {
+                break;
+            }
+        }
+        ++argptr;
+    }
+}
+
 // cmdarg(string,mode) processes a single command-line/command-file argument
 //  return:
 //    -1 error, >= 0 ok
@@ -838,24 +860,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
     bf_t bXctr;
     bf_t bYctr;
 
-    char *argptr = curarg;
-    while (*argptr)
-    {
-        // convert to lower case
-        if (*argptr >= 'A' && *argptr <= 'Z')
-        {
-            *argptr += 'a' - 'A';
-        }
-        else if (*argptr == '=')
-        {
-            // don't convert colors=value or comment=value
-            if ((strncmp(curarg, "colors=", 7) == 0) || (strncmp(curarg, "comment", 7) == 0))
-            {
-                break;
-            }
-        }
-        ++argptr;
-    }
+    lowerize_command(curarg);
 
     int j;
     char *value = strchr(&curarg[1], '=');
@@ -890,7 +895,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         yesnoval[0] = 1;
     }
 
-    argptr = value;
+    char *argptr = value;
     floatparms = 0;
     intparms = floatparms;
     totparms = intparms;
