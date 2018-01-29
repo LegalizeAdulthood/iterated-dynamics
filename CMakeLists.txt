@@ -297,7 +297,6 @@ set_src_dir(common/help.cpp)
 set_src_dir(common/fractint.cpp)
 
 add_executable(hc
-    hc/helpdefs.h
     hc/hc.cpp
     hc/helpcom.cpp
     headers/helpcom.h
