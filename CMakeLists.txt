@@ -261,7 +261,7 @@ source_group("Source Files\\common\\plumbing" FILES
     common/drivers.cpp
     common/memory.cpp
 )
-source_group("Headers Files\\common\\ui" FILES
+source_group("Header Files\\common\\ui" FILES
     headers/fractint.h
     headers/framain2.h
     headers/help.h
