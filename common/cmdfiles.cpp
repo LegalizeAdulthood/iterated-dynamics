@@ -866,11 +866,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
     char *value = strchr(&curarg[1], '=');
     if (value != nullptr)
     {
-        j = (int)((value++) - curarg);
-        if (j > 1 && curarg[j-1] == ':')
-        {
-            --j;                           // treat := same as =
-        }
+        j = (int)(value++ - curarg);
     }
     else
     {
