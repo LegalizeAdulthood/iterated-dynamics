@@ -224,17 +224,6 @@ static void main_restart(int const argc, char const *const argv[], bool &stacked
     g_show_dot = -1; // turn off show_dot if entered with <g> command
     g_calc_status = calc_status_value::NO_FRACTAL;                    // no active fractal image
 
-    g_fractal_search_dir1 = getenv("FRACTDIR");
-    if (g_fractal_search_dir1 == nullptr)
-    {
-        g_fractal_search_dir1 = ".";
-    }
-#ifdef SRCDIR
-    g_fractal_search_dir2 = SRCDIR;
-#else
-    g_fractal_search_dir2 = ".";
-#endif
-
     cmdfiles(argc, argv);         // process the command-line
     dopause(0);                  // pause for error msg if not batch
     init_msg("", nullptr, cmd_file::AT_CMD_LINE);  // this causes driver_get_key if init_msg called on runup
@@ -546,6 +535,17 @@ static main_state main_image_start(bool &stacked, bool &resumeflag)
 
 int main(int argc, char **argv)
 {
+    g_fractal_search_dir1 = getenv("FRACTDIR");
+    if (g_fractal_search_dir1 == nullptr)
+    {
+        g_fractal_search_dir1 = ".";
+    }
+#ifdef SRCDIR
+    g_fractal_search_dir2 = SRCDIR;
+#else
+    g_fractal_search_dir2 = ".";
+#endif
+
     bool resumeflag = false;
     bool kbdmore = false;               // continuation variable
     bool stacked = false;               // flag to indicate screen stacked
