@@ -1278,7 +1278,8 @@ int PopcornFractal()
     g_temp_sqr_y = sqr(g_new_z.y);
     g_magnitude = g_temp_sqr_x + g_temp_sqr_y;
     if (g_magnitude >= g_magnitude_limit
-            || fabs(g_new_z.x) > g_magnitude_limit2 || fabs(g_new_z.y) > g_magnitude_limit2)
+        || fabs(g_new_z.x) > g_magnitude_limit2
+        || fabs(g_new_z.y) > g_magnitude_limit2)
     {
         return 1;
     }
@@ -1315,8 +1316,10 @@ int LPopcornFractal_Old()
         g_l_temp_sqr_y = lsqr(g_l_new_z.y);
     }
     g_l_magnitude = g_l_temp_sqr_x + g_l_temp_sqr_y;
-    if (g_l_magnitude >= g_l_magnitude_limit || g_l_magnitude < 0 || labs(g_l_new_z.x) > g_l_magnitude_limit2
-            || labs(g_l_new_z.y) > g_l_magnitude_limit2)
+    if (g_l_magnitude >= g_l_magnitude_limit
+        || g_l_magnitude < 0
+        || labs(g_l_new_z.x) > g_l_magnitude_limit2
+        || labs(g_l_new_z.y) > g_l_magnitude_limit2)
     {
         return 1;
     }
@@ -1354,9 +1357,10 @@ int LPopcornFractal()
     g_l_temp_sqr_x = lsqr(g_l_new_z.x);
     g_l_temp_sqr_y = lsqr(g_l_new_z.y);
     g_l_magnitude = g_l_temp_sqr_x + g_l_temp_sqr_y;
-    if (g_l_magnitude >= g_l_magnitude_limit || g_l_magnitude < 0
-            || labs(g_l_new_z.x) > g_l_magnitude_limit2
-            || labs(g_l_new_z.y) > g_l_magnitude_limit2)
+    if (g_l_magnitude >= g_l_magnitude_limit
+        || g_l_magnitude < 0
+        || labs(g_l_new_z.x) > g_l_magnitude_limit2
+        || labs(g_l_new_z.y) > g_l_magnitude_limit2)
     {
         return 1;
     }
@@ -1402,7 +1406,8 @@ int PopcornFractalFn()
     g_temp_sqr_y = sqr(g_new_z.y);
     g_magnitude = g_temp_sqr_x + g_temp_sqr_y;
     if (g_magnitude >= g_magnitude_limit
-            || fabs(g_new_z.x) > g_magnitude_limit2 || fabs(g_new_z.y) > g_magnitude_limit2)
+        || fabs(g_new_z.x) > g_magnitude_limit2
+        || fabs(g_new_z.y) > g_magnitude_limit2)
     {
         return 1;
     }
@@ -1454,9 +1459,10 @@ int LPopcornFractalFn()
     g_l_temp_sqr_x = lsqr(g_l_new_z.x);
     g_l_temp_sqr_y = lsqr(g_l_new_z.y);
     g_l_magnitude = g_l_temp_sqr_x + g_l_temp_sqr_y;
-    if (g_l_magnitude >= g_l_magnitude_limit || g_l_magnitude < 0
-            || labs(g_l_new_z.x) > g_l_magnitude_limit2
-            || labs(g_l_new_z.y) > g_l_magnitude_limit2)
+    if (g_l_magnitude >= g_l_magnitude_limit
+        || g_l_magnitude < 0
+        || labs(g_l_new_z.x) > g_l_magnitude_limit2
+        || labs(g_l_new_z.y) > g_l_magnitude_limit2)
     {
         return 1;
     }
@@ -1763,7 +1769,7 @@ int MPCHalleyFractal()
     // relaxation coef.
     mpcnew = MPCsub(mpcold, mpctmp);
     g_new_z    = MPC2cmplx(mpcnew);
-    return MPCHalleybailout()||g_mp_overflow;
+    return MPCHalleybailout() || g_mp_overflow;
 #else
     return 0;
 #endif

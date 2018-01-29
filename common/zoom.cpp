@@ -328,8 +328,8 @@ void addbox(coords point)
     assert(g_box_count < NUM_BOX_POINTS);
     point.x += g_logical_screen_x_offset;
     point.y += g_logical_screen_y_offset;
-    if (point.x >= 0 && point.x < g_screen_x_dots &&
-            point.y >= 0 && point.y < g_screen_y_dots)
+    if (point.x >= 0 && point.x < g_screen_x_dots
+        && point.y >= 0 && point.y < g_screen_y_dots)
     {
         g_box_x[g_box_count] = point.x;
         g_box_y[g_box_count] = point.y;
@@ -353,7 +353,7 @@ void moveboxf(double dx, double dy)
         }
         int col;
         if (align != 0
-                && ((col = (int)(g_zoom_box_x*(g_logical_screen_x_size_dots+PIXELROUND))) & (align-1)) != 0)
+            && ((col = (int)(g_zoom_box_x*(g_logical_screen_x_size_dots+PIXELROUND))) & (align-1)) != 0)
         {
             if (dx > 0)
             {
@@ -375,7 +375,7 @@ void moveboxf(double dx, double dy)
         }
         int row;
         if (align != 0
-                && ((row = (int)(g_zoom_box_y*(g_logical_screen_y_size_dots+PIXELROUND))) & (align-1)) != 0)
+            && ((row = (int)(g_zoom_box_y*(g_logical_screen_y_size_dots+PIXELROUND))) & (align-1)) != 0)
         {
             if (dy > 0)
             {
@@ -667,15 +667,15 @@ static int check_pan() // return 0 if can't, alignment requirement if can
         return 0; // not resumable, not complete
     }
     if (g_cur_fractal_specific->calctype != standard_fractal
-            && g_cur_fractal_specific->calctype != calcmand
-            && g_cur_fractal_specific->calctype != calcmandfp
-            && g_cur_fractal_specific->calctype != lyapunov
-            && g_cur_fractal_specific->calctype != calcfroth)
+        && g_cur_fractal_specific->calctype != calcmand
+        && g_cur_fractal_specific->calctype != calcmandfp
+        && g_cur_fractal_specific->calctype != lyapunov
+        && g_cur_fractal_specific->calctype != calcfroth)
     {
         return 0; // not a worklist-driven type
     }
     if (g_zoom_box_width != 1.0 || g_zoom_box_height != 1.0
-            || g_zoom_box_skew != 0.0 || g_zoom_box_rotation != 0.0)
+        || g_zoom_box_skew != 0.0 || g_zoom_box_rotation != 0.0)
     {
         return 0; // not a full size unrotated unskewed zoombox
     }
@@ -909,7 +909,7 @@ static void fix_worklist() // fix out of bounds and symmetry related stuff
     {
         WORKLIST *wk = &g_work_list[i];
         if (wk->yystart >= g_logical_screen_y_dots || wk->yystop < 0
-                || wk->xxstart >= g_logical_screen_x_dots || wk->xxstop < 0)
+            || wk->xxstart >= g_logical_screen_x_dots || wk->xxstop < 0)
         {
             // offscreen, delete
             for (int j = i+1; j < g_num_work_list; ++j)
@@ -933,8 +933,7 @@ static void fix_worklist() // fix out of bounds and symmetry related stuff
             {
                 // xaxis symmetry
                 int j = wk->yystop + wk->yystart;
-                if (j > 0
-                        && g_num_work_list < MAX_CALC_WORK)
+                if (j > 0 && g_num_work_list < MAX_CALC_WORK)
                 {
                     // split the sym part
                     g_work_list[g_num_work_list] = g_work_list[i];
@@ -987,8 +986,7 @@ static void fix_worklist() // fix out of bounds and symmetry related stuff
             {
                 // yaxis symmetry
                 int j = wk->xxstop + wk->xxstart;
-                if (j > 0
-                        && g_num_work_list < MAX_CALC_WORK)
+                if (j > 0 && g_num_work_list < MAX_CALC_WORK)
                 {
                     // split the sym part
                     g_work_list[g_num_work_list] = g_work_list[i];

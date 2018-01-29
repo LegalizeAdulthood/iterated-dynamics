@@ -421,7 +421,7 @@ bool encoder()
 
     // TODO: pixel aspect ratio should be 1:1?
     if (g_view_window                               // less than full screen?
-            && (g_view_x_dots == 0 || g_view_y_dots == 0))     // and we picked the dots?
+        && (g_view_x_dots == 0 || g_view_y_dots == 0))     // and we picked the dots?
     {
         i = (int)(((double) g_screen_y_dots / (double) g_screen_x_dots) * 64.0 / g_screen_aspect - 14.5);
     }
@@ -1223,7 +1223,7 @@ nomatch:
                 }
             } // end for xdot
             if (! driver_diskp()       // supress this on disk-video
-                    && ydot == rownum)
+                && ydot == rownum)
             {
                 if ((ydot & 4) == 0)
                 {

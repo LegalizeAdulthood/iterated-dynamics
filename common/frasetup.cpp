@@ -30,11 +30,18 @@ bool
 MandelSetup()           // Mandelbrot Routine
 {
     if (g_debug_flag != debug_flags::force_standard_fractal
-            && (g_invert == 0) && g_decomp[0] == 0 && g_magnitude_limit == 4.0
-            && g_bit_shift == 29 && !g_potential_flag
-            && g_biomorph == -1 && g_inside_color > ZMAG && g_outside_color >= ITER
-            && g_use_init_orbit != init_orbit_mode::value && !g_using_jiim && g_bail_out_test == bailouts::Mod
-            && (g_orbit_save_flags & osf_midi) == 0)
+        && (g_invert == 0)
+        && g_decomp[0] == 0
+        && g_magnitude_limit == 4.0
+        && g_bit_shift == 29
+        && !g_potential_flag
+        && g_biomorph == -1
+        && g_inside_color > ZMAG
+        && g_outside_color >= ITER
+        && g_use_init_orbit != init_orbit_mode::value
+        && !g_using_jiim
+        && g_bail_out_test == bailouts::Mod
+        && (g_orbit_save_flags & osf_midi) == 0)
     {
         g_calc_type = calcmand; // the normal case - use CALCMAND
     }
@@ -51,11 +58,18 @@ bool
 JuliaSetup()            // Julia Routine
 {
     if (g_debug_flag != debug_flags::force_standard_fractal
-            && (g_invert == 0) && g_decomp[0] == 0 && g_magnitude_limit == 4.0
-            && g_bit_shift == 29 && !g_potential_flag
-            && g_biomorph == -1 && g_inside_color > ZMAG && g_outside_color >= ITER
-            && !g_finite_attractor && !g_using_jiim && g_bail_out_test == bailouts::Mod
-            && (g_orbit_save_flags & osf_midi) == 0)
+        && (g_invert == 0)
+        && g_decomp[0] == 0
+        && g_magnitude_limit == 4.0
+        && g_bit_shift == 29
+        && !g_potential_flag
+        && g_biomorph == -1
+        && g_inside_color > ZMAG
+        && g_outside_color >= ITER
+        && !g_finite_attractor
+        && !g_using_jiim
+        && g_bail_out_test == bailouts::Mod
+        && (g_orbit_save_flags & osf_midi) == 0)
     {
         g_calc_type = calcmand; // the normal case - use CALCMAND
     }
@@ -233,15 +247,16 @@ MandelfpSetup()
            zmag, epsilon cross, and all the current outside options
         */
         if (g_debug_flag != debug_flags::force_standard_fractal
-                && !g_distance_estimator
-                && g_decomp[0] == 0
-                && g_biomorph == -1
-                && (g_inside_color >= ITER)
-                && g_outside_color >= ATAN
-                && g_use_init_orbit != init_orbit_mode::value
-                && (g_sound_flag & SOUNDFLAG_ORBITMASK) < SOUNDFLAG_X
-                && !g_using_jiim && g_bail_out_test == bailouts::Mod
-                && (g_orbit_save_flags & osf_midi) == 0)
+            && !g_distance_estimator
+            && g_decomp[0] == 0
+            && g_biomorph == -1
+            && (g_inside_color >= ITER)
+            && g_outside_color >= ATAN
+            && g_use_init_orbit != init_orbit_mode::value
+            && (g_sound_flag & SOUNDFLAG_ORBITMASK) < SOUNDFLAG_X
+            && !g_using_jiim
+            && g_bail_out_test == bailouts::Mod
+            && (g_orbit_save_flags & osf_midi) == 0)
         {
             g_calc_type = calcmandfp; // the normal case - use calcmandfp
             calcmandfpasmstart();
@@ -358,16 +373,17 @@ JuliafpSetup()
            zmag, epsilon cross, and all the current outside options
         */
         if (g_debug_flag != debug_flags::force_standard_fractal
-                && !g_distance_estimator
-                && g_decomp[0] == 0
-                && g_biomorph == -1
-                && (g_inside_color >= ITER)
-                && g_outside_color >= ATAN
-                && g_use_init_orbit != init_orbit_mode::value
-                && (g_sound_flag & SOUNDFLAG_ORBITMASK) < SOUNDFLAG_X
-                && !g_finite_attractor
-                && !g_using_jiim && g_bail_out_test == bailouts::Mod
-                && (g_orbit_save_flags & osf_midi) == 0)
+            && !g_distance_estimator
+            && g_decomp[0] == 0
+            && g_biomorph == -1
+            && (g_inside_color >= ITER)
+            && g_outside_color >= ATAN
+            && g_use_init_orbit != init_orbit_mode::value
+            && (g_sound_flag & SOUNDFLAG_ORBITMASK) < SOUNDFLAG_X
+            && !g_finite_attractor
+            && !g_using_jiim
+            && g_bail_out_test == bailouts::Mod
+            && (g_orbit_save_flags & osf_midi) == 0)
         {
             g_calc_type = calcmandfp; // the normal case - use calcmandfp
             calcmandfpasmstart();
@@ -451,13 +467,13 @@ JuliafpSetup()
     case fractal_type::FPPOPCORNJUL:
     {
         bool default_functions = false;
-        if (g_trig_index[0] == trig_fn::SIN &&
-                g_trig_index[1] == trig_fn::TAN &&
-                g_trig_index[2] == trig_fn::SIN &&
-                g_trig_index[3] == trig_fn::TAN &&
-                fabs(g_param_z2.x - 3.0) < .0001 &&
-                g_param_z2.y == 0 &&
-                g_param_z1.y == 0)
+        if (g_trig_index[0] == trig_fn::SIN
+            && g_trig_index[1] == trig_fn::TAN
+            && g_trig_index[2] == trig_fn::SIN
+            && g_trig_index[3] == trig_fn::TAN
+            && fabs(g_param_z2.x - 3.0) < .0001
+            && g_param_z2.y == 0
+            && g_param_z1.y == 0)
         {
             default_functions = true;
             if (g_fractal_type == fractal_type::FPPOPCORNJUL)
@@ -501,8 +517,8 @@ MandellongSetup()
         g_c_exponent = 1;
         g_params[2] = 1;
     }
-    if ((g_fractal_type == fractal_type::MARKSMANDEL   && !(g_c_exponent & 1)) ||
-            (g_fractal_type == fractal_type::LMANDELZPOWER && (g_c_exponent & 1)))
+    if ((g_fractal_type == fractal_type::MARKSMANDEL && !(g_c_exponent & 1))
+        || (g_fractal_type == fractal_type::LMANDELZPOWER && (g_c_exponent & 1)))
     {
         g_symmetry = symmetry_type::XY_AXIS_NO_PARAM;    // odd exponents
     }
@@ -613,13 +629,13 @@ JulialongSetup()
     case fractal_type::LPOPCORNJUL:
     {
         bool default_functions = false;
-        if (g_trig_index[0] == trig_fn::SIN &&
-                g_trig_index[1] == trig_fn::TAN &&
-                g_trig_index[2] == trig_fn::SIN &&
-                g_trig_index[3] == trig_fn::TAN &&
-                fabs(g_param_z2.x - 3.0) < .0001 &&
-                g_param_z2.y == 0 &&
-                g_param_z1.y == 0)
+        if (g_trig_index[0] == trig_fn::SIN
+            && g_trig_index[1] == trig_fn::TAN
+            && g_trig_index[2] == trig_fn::SIN
+            && g_trig_index[3] == trig_fn::TAN
+            && fabs(g_param_z2.x - 3.0) < .0001
+            && g_param_z2.y == 0
+            && g_param_z1.y == 0)
         {
             default_functions = true;
             if (g_fractal_type == fractal_type::LPOPCORNJUL)

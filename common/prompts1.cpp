@@ -259,9 +259,9 @@ int fullscreen_prompt(      // full-screen prompting routine
 
     // if entry fits in available space, shut off scrolling
     if (in_scrolling_mode && scroll_row_status == 0
-            && lines_in_entry == extralines - 2
-            && scroll_column_status == 0
-            && strchr(extrainfo, '\021') == nullptr)
+        && lines_in_entry == extralines - 2
+        && scroll_column_status == 0
+        && strchr(extrainfo, '\021') == nullptr)
     {
         in_scrolling_mode = false;
         fclose(scroll_file);
@@ -1188,17 +1188,17 @@ static fractal_type select_fracttype(fractal_type t)
     {
         result = static_cast<fractal_type>(choices[done]->num);
         if ((result == fractal_type::FORMULA || result == fractal_type::FFORMULA)
-                && g_formula_filename == g_command_file)
+            && g_formula_filename == g_command_file)
         {
             g_formula_filename = g_search_for.frm;
         }
         if (result == fractal_type::LSYSTEM
-                && g_l_system_filename == g_command_file)
+            && g_l_system_filename == g_command_file)
         {
             g_l_system_filename = g_search_for.lsys;
         }
         if ((result == fractal_type::IFS || result == fractal_type::IFS3D)
-                && g_ifs_filename == g_command_file)
+            && g_ifs_filename == g_command_file)
         {
             g_ifs_filename = g_search_for.ifs;
         }
@@ -1263,28 +1263,28 @@ sel_type_restart:
         }
     }
 
-    if (((g_fractal_type == fractal_type::BIFURCATION) || (g_fractal_type == fractal_type::LBIFURCATION)) &&
-            !((oldfractype == fractal_type::BIFURCATION) || (oldfractype == fractal_type::LBIFURCATION)))
+    if (((g_fractal_type == fractal_type::BIFURCATION) || (g_fractal_type == fractal_type::LBIFURCATION))
+        && !((oldfractype == fractal_type::BIFURCATION) || (oldfractype == fractal_type::LBIFURCATION)))
     {
         set_trig_array(0, "ident");
     }
-    if (((g_fractal_type == fractal_type::BIFSTEWART) || (g_fractal_type == fractal_type::LBIFSTEWART)) &&
-            !((oldfractype == fractal_type::BIFSTEWART) || (oldfractype == fractal_type::LBIFSTEWART)))
+    if (((g_fractal_type == fractal_type::BIFSTEWART) || (g_fractal_type == fractal_type::LBIFSTEWART))
+        && !((oldfractype == fractal_type::BIFSTEWART) || (oldfractype == fractal_type::LBIFSTEWART)))
     {
         set_trig_array(0, "ident");
     }
-    if (((g_fractal_type == fractal_type::BIFLAMBDA) || (g_fractal_type == fractal_type::LBIFLAMBDA)) &&
-            !((oldfractype == fractal_type::BIFLAMBDA) || (oldfractype == fractal_type::LBIFLAMBDA)))
+    if (((g_fractal_type == fractal_type::BIFLAMBDA) || (g_fractal_type == fractal_type::LBIFLAMBDA))
+        && !((oldfractype == fractal_type::BIFLAMBDA) || (oldfractype == fractal_type::LBIFLAMBDA)))
     {
         set_trig_array(0, "ident");
     }
-    if (((g_fractal_type == fractal_type::BIFEQSINPI) || (g_fractal_type == fractal_type::LBIFEQSINPI)) &&
-            !((oldfractype == fractal_type::BIFEQSINPI) || (oldfractype == fractal_type::LBIFEQSINPI)))
+    if (((g_fractal_type == fractal_type::BIFEQSINPI) || (g_fractal_type == fractal_type::LBIFEQSINPI))
+        && !((oldfractype == fractal_type::BIFEQSINPI) || (oldfractype == fractal_type::LBIFEQSINPI)))
     {
         set_trig_array(0, "sin");
     }
-    if (((g_fractal_type == fractal_type::BIFADSINPI) || (g_fractal_type == fractal_type::LBIFADSINPI)) &&
-            !((oldfractype == fractal_type::BIFADSINPI) || (oldfractype == fractal_type::LBIFADSINPI)))
+    if (((g_fractal_type == fractal_type::BIFADSINPI) || (g_fractal_type == fractal_type::LBIFADSINPI))
+        && !((oldfractype == fractal_type::BIFADSINPI) || (oldfractype == fractal_type::LBIFADSINPI)))
     {
         set_trig_array(0, "sin");
     }
@@ -1293,10 +1293,14 @@ sel_type_restart:
      * Next assumes that user going between popcorn and popcornjul
      * might not want to change function variables
      */
-    if (((g_fractal_type    == fractal_type::FPPOPCORN) || (g_fractal_type    == fractal_type::LPOPCORN) ||
-            (g_fractal_type    == fractal_type::FPPOPCORNJUL) || (g_fractal_type    == fractal_type::LPOPCORNJUL)) &&
-            !((oldfractype == fractal_type::FPPOPCORN) || (oldfractype == fractal_type::LPOPCORN) ||
-              (oldfractype == fractal_type::FPPOPCORNJUL) || (oldfractype == fractal_type::LPOPCORNJUL)))
+    if (((g_fractal_type == fractal_type::FPPOPCORN)
+            || (g_fractal_type == fractal_type::LPOPCORN)
+            || (g_fractal_type == fractal_type::FPPOPCORNJUL)
+            || (g_fractal_type == fractal_type::LPOPCORNJUL))
+        && !((oldfractype == fractal_type::FPPOPCORN)
+            || (oldfractype == fractal_type::LPOPCORN)
+            || (oldfractype == fractal_type::FPPOPCORNJUL)
+            || (oldfractype == fractal_type::LPOPCORNJUL)))
     {
         set_function_parm_defaults();
     }
@@ -1310,9 +1314,9 @@ sel_type_restart:
 
     if (get_fract_params(0) < 0)
     {
-        if (g_fractal_type == fractal_type::FORMULA || g_fractal_type == fractal_type::FFORMULA ||
-                g_fractal_type == fractal_type::IFS || g_fractal_type == fractal_type::IFS3D ||
-                g_fractal_type == fractal_type::LSYSTEM)
+        if (g_fractal_type == fractal_type::FORMULA || g_fractal_type == fractal_type::FFORMULA
+            || g_fractal_type == fractal_type::IFS || g_fractal_type == fractal_type::IFS3D
+            || g_fractal_type == fractal_type::LSYSTEM)
         {
             goto sel_type_restart;
         }
@@ -1353,8 +1357,10 @@ void set_default_parms()
     for (int i = 0; i < 4; i++)
     {
         g_params[i] = g_cur_fractal_specific->paramvalue[i];
-        if (g_fractal_type != fractal_type::CELLULAR && g_fractal_type != fractal_type::FROTH && g_fractal_type != fractal_type::FROTHFP &&
-                g_fractal_type != fractal_type::ANT)
+        if (g_fractal_type != fractal_type::CELLULAR
+            && g_fractal_type != fractal_type::FROTH
+            && g_fractal_type != fractal_type::FROTHFP
+            && g_fractal_type != fractal_type::ANT)
         {
             roundfloatd(&g_params[i]); // don't round cellular, frothybasin or ant
         }
@@ -1536,8 +1542,8 @@ int get_fract_params(int caller)        // prompt for type-specific parms
     {
         int i;
         if (g_cur_fractal_specific->name[0] == '*'
-                && (i = static_cast<int>(g_cur_fractal_specific->tofloat)) != static_cast<int>(fractal_type::NOFRACTAL)
-                && g_fractal_specific[i].name[0] != '*')
+            && (i = static_cast<int>(g_cur_fractal_specific->tofloat)) != static_cast<int>(fractal_type::NOFRACTAL)
+            && g_fractal_specific[i].name[0] != '*')
         {
             curtype = static_cast<fractal_type>(i);
         }
@@ -1709,14 +1715,14 @@ gfp_top:
     {
         g_cur_fractal_specific = jborbit;
         firstparm = 2; // in most case Julibrot does not need first two parms
-        if (g_new_orbit_type == fractal_type::QUATJULFP     ||   // all parameters needed
-                g_new_orbit_type == fractal_type::HYPERCMPLXJFP)
+        if (g_new_orbit_type == fractal_type::QUATJULFP        // all parameters needed
+            || g_new_orbit_type == fractal_type::HYPERCMPLXJFP)
         {
             firstparm = 0;
             lastparm = 4;
         }
-        if (g_new_orbit_type == fractal_type::QUATFP        ||   // no parameters needed
-                g_new_orbit_type == fractal_type::HYPERCMPLXFP)
+        if (g_new_orbit_type == fractal_type::QUATFP           // no parameters needed
+            || g_new_orbit_type == fractal_type::HYPERCMPLXFP)
         {
             firstparm = 4;
         }
@@ -1791,8 +1797,9 @@ gfp_top:
     }
 
     orbit_bailout = g_cur_fractal_specific->orbit_bailout;
-    if (orbit_bailout != 0 && g_cur_fractal_specific->calctype == standard_fractal &&
-            (g_cur_fractal_specific->flags & BAILTEST))
+    if (orbit_bailout != 0
+        && g_cur_fractal_specific->calctype == standard_fractal
+        && (g_cur_fractal_specific->flags & BAILTEST))
     {
         paramvalues[promptnum].type = 'l';
         paramvalues[promptnum].uval.ch.val  = static_cast<int>(g_bail_out_test);
@@ -2008,8 +2015,9 @@ gfp_top:
     }
 
     orbit_bailout = g_cur_fractal_specific->orbit_bailout;
-    if (orbit_bailout != 0 && g_cur_fractal_specific->calctype == standard_fractal &&
-            (g_cur_fractal_specific->flags & BAILTEST))
+    if (orbit_bailout != 0
+        && g_cur_fractal_specific->calctype == standard_fractal
+        && (g_cur_fractal_specific->flags & BAILTEST))
     {
         if (paramvalues[promptnum].uval.ch.val != static_cast<int>(g_bail_out_test))
         {
@@ -2063,8 +2071,8 @@ gfp_top:
     }
     if (curtype == fractal_type::INVERSEJULIA || curtype == fractal_type::INVERSEJULIAFP)
     {
-        if (paramvalues[promptnum].uval.ch.val != static_cast<int>(g_major_method) ||
-                paramvalues[promptnum+1].uval.ch.val != static_cast<int>(g_inverse_julia_minor_method))
+        if (paramvalues[promptnum].uval.ch.val != static_cast<int>(g_major_method)
+            || paramvalues[promptnum+1].uval.ch.val != static_cast<int>(g_inverse_julia_minor_method))
         {
             ret = 1;
         }
@@ -2316,7 +2324,7 @@ top:
         len = 0;
         // allow spaces in entry names in next
         while (c != ' ' && c != '\t' && c != '(' && c != ';'
-                && c != '{' && c != '\n' && c != '\r' && c != EOF && c != '\032')
+            && c != '{' && c != '\n' && c != '\r' && c != EOF && c != '\032')
         {
             if (len < 40)
             {
@@ -2620,13 +2628,13 @@ static int check_gfe_key(int curkey, int choice)
             }
             int i = getakeynohelp();
             if (i == FIK_DOWN_ARROW        || i == FIK_CTL_DOWN_ARROW
-                    || i == FIK_UP_ARROW       || i == FIK_CTL_UP_ARROW
-                    || i == FIK_LEFT_ARROW     || i == FIK_CTL_LEFT_ARROW
-                    || i == FIK_RIGHT_ARROW    || i == FIK_CTL_RIGHT_ARROW
-                    || i == FIK_HOME           || i == FIK_CTL_HOME
-                    || i == FIK_END            || i == FIK_CTL_END
-                    || i == FIK_PAGE_UP        || i == FIK_CTL_PAGE_UP
-                    || i == FIK_PAGE_DOWN      || i == FIK_CTL_PAGE_DOWN)
+                || i == FIK_UP_ARROW       || i == FIK_CTL_UP_ARROW
+                || i == FIK_LEFT_ARROW     || i == FIK_CTL_LEFT_ARROW
+                || i == FIK_RIGHT_ARROW    || i == FIK_CTL_RIGHT_ARROW
+                || i == FIK_HOME           || i == FIK_CTL_HOME
+                || i == FIK_END            || i == FIK_CTL_END
+                || i == FIK_PAGE_UP        || i == FIK_CTL_PAGE_UP
+                || i == FIK_PAGE_DOWN      || i == FIK_CTL_PAGE_DOWN)
             {
                 switch (i)
                 {

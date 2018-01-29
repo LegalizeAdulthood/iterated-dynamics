@@ -57,7 +57,7 @@ void rotate(int direction)      // rotate-the-palette routine
 #else
     if (!(g_got_real_dac || g_fake_lut)   // ??? no DAC to rotate!
 #endif
-            || g_colors < 16)
+        || g_colors < 16)
     {
         // strange things happen in 2x modes
         driver_buzzer(buzzer_codes::PROBLEM);
@@ -152,10 +152,11 @@ void rotate(int direction)      // rotate-the-palette routine
             step = oldstep;
         }
         kbdchar = driver_get_key();
-        if (paused && (kbdchar != ' '
-                       && kbdchar != 'c'
-                       && kbdchar != FIK_HOME
-                       && kbdchar != 'C'))
+        if (paused
+            && (kbdchar != ' '
+                && kbdchar != 'c'
+                && kbdchar != FIK_HOME
+                && kbdchar != 'C'))
         {
             paused = false;                 // clear paused condition
         }

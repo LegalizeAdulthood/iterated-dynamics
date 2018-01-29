@@ -442,7 +442,7 @@ void process_speedstring(char    *speedstring,
         *pcurrent = 0;
         int comp_result;
         while (*pcurrent < numchoices
-                && (comp_result = strncasecmp(speedstring, choices[*pcurrent], i)) != 0)
+            && (comp_result = strncasecmp(speedstring, choices[*pcurrent], i)) != 0)
         {
             if (comp_result < 0 && !is_unsorted)
             {
@@ -668,7 +668,7 @@ int fullscreen_choice(
                 // sort-of-wide is 2nd choice
                 boxwidth = 60 / (colwidth + 1);
                 if (boxwidth == 0
-                        || (boxdepth = (numchoices + boxwidth - 1)/boxwidth) > max_depth - 2)
+                    || (boxdepth = (numchoices + boxwidth - 1)/boxwidth) > max_depth - 2)
                 {
                     boxwidth = 80 / (colwidth + 1); // last gasp, full width
                     boxdepth = (numchoices + boxwidth - 1)/boxwidth;
@@ -775,8 +775,8 @@ int fullscreen_choice(
     boxitems = boxwidth * boxdepth;
     topleftchoice = 0;                      // pick topleft for init display
     while (current - topleftchoice >= boxitems
-            || (current - topleftchoice > boxitems/2
-                && topleftchoice + boxitems < numchoices))
+        || (current - topleftchoice > boxitems/2
+            && topleftchoice + boxitems < numchoices))
     {
         topleftchoice += boxwidth;
     }
@@ -1210,9 +1210,8 @@ top:
 
     if (fullmenu)
     {
-        if ((g_cur_fractal_specific->tojulia != fractal_type::NOFRACTAL
-                && g_params[0] == 0.0 && g_params[1] == 0.0)
-                || g_cur_fractal_specific->tomandel != fractal_type::NOFRACTAL)
+        if ((g_cur_fractal_specific->tojulia != fractal_type::NOFRACTAL && g_params[0] == 0.0 && g_params[1] == 0.0)
+            || g_cur_fractal_specific->tomandel != fractal_type::NOFRACTAL)
         {
             nextleft += 2;
             choicekey[nextleft] = FIK_SPACE;
@@ -1220,7 +1219,8 @@ top:
             choices[nextleft] = "toggle to/from julia <space>";
             showjuliatoggle = true;
         }
-        if (g_fractal_type == fractal_type::JULIA || g_fractal_type == fractal_type::JULIAFP || g_fractal_type == fractal_type::INVERSEJULIA)
+        if (g_fractal_type == fractal_type::JULIA || g_fractal_type == fractal_type::JULIAFP
+            || g_fractal_type == fractal_type::INVERSEJULIA)
         {
             nextleft += 2;
             choicekey[nextleft] = 'j';
@@ -1499,25 +1499,27 @@ static int menu_checkkey(int curkey, int /*choice*/)
         testkey = '@';
 
     }
-    if (strchr("#@2txyzgvir3dj", testkey) || testkey == FIK_INSERT || testkey == FIK_CTL_B
-            || testkey == FIK_ESC || testkey == FIK_DELETE || testkey == FIK_CTL_F)
+    if (strchr("#@2txyzgvir3dj", testkey)
+        || testkey == FIK_INSERT || testkey == FIK_CTL_B
+        || testkey == FIK_ESC || testkey == FIK_DELETE
+        || testkey == FIK_CTL_F)
     {
         return -testkey;
     }
     if (menutype)
     {
-        if (strchr("\\sobpkrh", testkey) || testkey == FIK_TAB
-                || testkey == FIK_CTL_A || testkey == FIK_CTL_E || testkey == FIK_BACKSPACE
-                || testkey == FIK_CTL_P
-                || testkey == FIK_CTL_S || testkey == FIK_CTL_U)   // ctrl-A, E, H, P, S, U
+        if (strchr("\\sobpkrh", testkey)
+            || testkey == FIK_TAB || testkey == FIK_CTL_A
+            || testkey == FIK_CTL_E || testkey == FIK_BACKSPACE
+            || testkey == FIK_CTL_P || testkey == FIK_CTL_S
+            || testkey == FIK_CTL_U)   // ctrl-A, E, H, P, S, U
         {
             return -testkey;
         }
         if (testkey == ' ')
         {
-            if ((g_cur_fractal_specific->tojulia != fractal_type::NOFRACTAL
-                    && g_params[0] == 0.0 && g_params[1] == 0.0)
-                    || g_cur_fractal_specific->tomandel != fractal_type::NOFRACTAL)
+            if ((g_cur_fractal_specific->tojulia != fractal_type::NOFRACTAL && g_params[0] == 0.0 && g_params[1] == 0.0)
+                || g_cur_fractal_specific->tomandel != fractal_type::NOFRACTAL)
             {
                 return -testkey;
             }
@@ -1671,8 +1673,8 @@ int input_field(
                 break;                                // insert & full
             }
             if ((options & INPUTFIELD_NUMERIC)
-                    && (curkey < '0' || curkey > '9')
-                    && curkey != '+' && curkey != '-')
+                && (curkey < '0' || curkey > '9')
+                && curkey != '+' && curkey != '-')
             {
                 if (options & INPUTFIELD_INTEGER)
                 {
@@ -1680,8 +1682,8 @@ int input_field(
                 }
                 // allow scientific notation, and specials "e" and "p"
                 if (((curkey != 'e' && curkey != 'E') || offset >= 18)
-                        && ((curkey != 'p' && curkey != 'P') || offset != 0)
-                        && curkey != '.')
+                    && ((curkey != 'p' && curkey != 'P') || offset != 0)
+                    && curkey != '.')
                 {
                     break;
                 }
@@ -1925,14 +1927,14 @@ void load_fractint_config()
 
     findpath("fractint.cfg", tempstring);
     if (tempstring[0] == 0                            // can't find the file
-            || (cfgfile = fopen(tempstring, "r")) == nullptr)   // can't open it
+        || (cfgfile = fopen(tempstring, "r")) == nullptr)   // can't open it
     {
         goto bad_fractint_cfg;
     }
 
     linenum = 0;
     while (g_video_table_len < MAX_VIDEO_MODES
-            && fgets(tempstring, 120, cfgfile))
+        && fgets(tempstring, 120, cfgfile))
     {
         if (strchr(tempstring, '\n') == nullptr)
         {
@@ -2046,9 +2048,9 @@ void load_fractint_config()
                 for (int m = 0; m < g_video_table_len; m++)
                 {
                     VIDEOINFO *mode = &g_video_table[m];
-                    if ((mode->driver == vident.driver) && (mode->colors == vident.colors) &&
-                            (mode->xdots == vident.xdots) && (mode->ydots == vident.ydots) &&
-                            (mode->dotmode == vident.dotmode))
+                    if ((mode->driver == vident.driver) && (mode->colors == vident.colors)
+                        && (mode->xdots == vident.xdots) && (mode->ydots == vident.ydots)
+                        && (mode->dotmode == vident.dotmode))
                     {
                         if (0 == mode->keynum)
                         {

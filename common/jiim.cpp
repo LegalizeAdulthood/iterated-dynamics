@@ -276,8 +276,8 @@ int PushLong(long x, long y)
 {
     if (((ListFront + 1) % ListSize) != ListBack)
     {
-        if (ToMemDisk(8*ListFront, sizeof(x), &x) &&
-                ToMemDisk(8*ListFront +sizeof(x), sizeof(y), &y))
+        if (ToMemDisk(8*ListFront, sizeof(x), &x)
+            && ToMemDisk(8*ListFront +sizeof(x), sizeof(y), &y))
         {
             ListFront = (ListFront + 1) % ListSize;
             if (++lsize > lmax)
@@ -296,8 +296,8 @@ int PushFloat(float x, float y)
 {
     if (((ListFront + 1) % ListSize) != ListBack)
     {
-        if (ToMemDisk(8*ListFront, sizeof(x), &x) &&
-                ToMemDisk(8*ListFront +sizeof(x), sizeof(y), &y))
+        if (ToMemDisk(8*ListFront, sizeof(x), &x)
+            && ToMemDisk(8*ListFront +sizeof(x), sizeof(y), &y))
         {
             ListFront = (ListFront + 1) % ListSize;
             if (++lsize > lmax)
@@ -324,8 +324,8 @@ DComplex PopFloat()
         {
             ListFront = ListSize - 1;
         }
-        if (FromMemDisk(8*ListFront, sizeof(popx), &popx) &&
-                FromMemDisk(8*ListFront +sizeof(popx), sizeof(popy), &popy))
+        if (FromMemDisk(8*ListFront, sizeof(popx), &popx)
+            && FromMemDisk(8*ListFront +sizeof(popx), sizeof(popy), &popy))
         {
             pop.x = popx;
             pop.y = popy;
@@ -349,8 +349,8 @@ LComplex PopLong()
         {
             ListFront = ListSize - 1;
         }
-        if (FromMemDisk(8*ListFront, sizeof(pop.x), &pop.x) &&
-                FromMemDisk(8*ListFront +sizeof(pop.x), sizeof(pop.y), &pop.y))
+        if (FromMemDisk(8*ListFront, sizeof(pop.x), &pop.x)
+            && FromMemDisk(8*ListFront +sizeof(pop.x), sizeof(pop.y), &pop.y))
         {
             --lsize;
         }
@@ -378,8 +378,8 @@ DComplex DeQueueFloat()
 
     if (ListBack != ListFront)
     {
-        if (FromMemDisk(8*ListBack, sizeof(outx), &outx) &&
-                FromMemDisk(8*ListBack +sizeof(outx), sizeof(outy), &outy))
+        if (FromMemDisk(8*ListBack, sizeof(outx), &outx)
+            && FromMemDisk(8*ListBack +sizeof(outx), sizeof(outy), &outy))
         {
             ListBack = (ListBack + 1) % ListSize;
             out.x = outx;
@@ -401,8 +401,8 @@ LComplex DeQueueLong()
 
     if (ListBack != ListFront)
     {
-        if (FromMemDisk(8*ListBack, sizeof(out.x), &out.x) &&
-                FromMemDisk(8*ListBack +sizeof(out.x), sizeof(out.y), &out.y))
+        if (FromMemDisk(8*ListBack, sizeof(out.x), &out.x)
+            && FromMemDisk(8*ListBack +sizeof(out.x), sizeof(out.y), &out.y))
         {
             ListBack = (ListBack + 1) % ListSize;
             lsize--;
@@ -492,7 +492,7 @@ void Jiim(jiim_types which)
     old_debugflag = g_debug_flag;
     // must use standard fractal or be calcfroth
     if (g_fractal_specific[static_cast<int>(g_fractal_type)].calctype != standard_fractal
-            && g_fractal_specific[static_cast<int>(g_fractal_type)].calctype != calcfroth)
+        && g_fractal_specific[static_cast<int>(g_fractal_type)].calctype != calcfroth)
     {
         return;
     }
@@ -561,10 +561,11 @@ void Jiim(jiim_types which)
         g_has_inverse = savehasinverse;
     }
 
-    if (g_logical_screen_x_dots == g_vesa_x_res || g_logical_screen_y_dots == g_vesa_y_res ||
-            g_vesa_x_res-g_logical_screen_x_dots < g_vesa_x_res/3 ||
-            g_vesa_y_res-g_logical_screen_y_dots < g_vesa_y_res/3 ||
-            g_logical_screen_x_dots >= MAXRECT)
+    if (g_logical_screen_x_dots == g_vesa_x_res
+        || g_logical_screen_y_dots == g_vesa_y_res
+        || g_vesa_x_res-g_logical_screen_x_dots < g_vesa_x_res/3
+        || g_vesa_y_res-g_logical_screen_y_dots < g_vesa_y_res/3
+        || g_logical_screen_x_dots >= MAXRECT)
     {
         /* this mode puts orbit/julia in an overlapping window 1/3 the size of
            the physical screen */
@@ -622,8 +623,8 @@ void Jiim(jiim_types which)
     // reuse last location if inside window
     g_col = (int)(cvt.a*g_save_c.x + cvt.b*g_save_c.y + cvt.e + .5);
     g_row = (int)(cvt.c*g_save_c.x + cvt.d*g_save_c.y + cvt.f + .5);
-    if (g_col < 0 || g_col >= g_logical_screen_x_dots ||
-            g_row < 0 || g_row >= g_logical_screen_y_dots)
+    if (g_col < 0 || g_col >= g_logical_screen_x_dots
+        || g_row < 0 || g_row >= g_logical_screen_y_dots)
     {
         cr = (g_x_max + g_x_min) / 2.0;
         ci = (g_y_max + g_y_min) / 2.0;
@@ -987,8 +988,9 @@ void Jiim(jiim_types which)
             {
                 if (QueueEmpty())
                 {
-                    if (maxhits < g_colors - 1 && maxhits < 5 &&
-                            (luckyx != 0.0 || luckyy != 0.0))
+                    if (maxhits < g_colors - 1
+                        && maxhits < 5
+                        && (luckyx != 0.0 || luckyy != 0.0))
                     {
                         lmax = 0;
                         lsize = lmax;

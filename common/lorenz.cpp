@@ -311,8 +311,10 @@ bool orbit3dlongsetup()
     connect = true;
     waste = 100;
     projection = 2;
-    if (g_fractal_type == fractal_type::LHENON || g_fractal_type == fractal_type::KAM || g_fractal_type == fractal_type::KAM3D ||
-            g_fractal_type == fractal_type::INVERSEJULIA)
+    if (g_fractal_type == fractal_type::LHENON
+        || g_fractal_type == fractal_type::KAM
+        || g_fractal_type == fractal_type::KAM3D
+        || g_fractal_type == fractal_type::INVERSEJULIA)
     {
         connect = false;
     }
@@ -461,14 +463,19 @@ bool orbit3dfloatsetup()
     waste = 100;
     projection = 2;
 
-    if (g_fractal_type == fractal_type::FPHENON || g_fractal_type == fractal_type::FPPICKOVER || g_fractal_type == fractal_type::FPGINGERBREAD
-            || g_fractal_type == fractal_type::KAMFP || g_fractal_type == fractal_type::KAM3DFP
-            || g_fractal_type == fractal_type::FPHOPALONG || g_fractal_type == fractal_type::INVERSEJULIAFP)
+    if (g_fractal_type == fractal_type::FPHENON
+        || g_fractal_type == fractal_type::FPPICKOVER
+        || g_fractal_type == fractal_type::FPGINGERBREAD
+        || g_fractal_type == fractal_type::KAMFP
+        || g_fractal_type == fractal_type::KAM3DFP
+        || g_fractal_type == fractal_type::FPHOPALONG
+        || g_fractal_type == fractal_type::INVERSEJULIAFP)
     {
         connect = false;
     }
-    if (g_fractal_type == fractal_type::FPLORENZ3D1 || g_fractal_type == fractal_type::FPLORENZ3D3 ||
-            g_fractal_type == fractal_type::FPLORENZ3D4)
+    if (g_fractal_type == fractal_type::FPLORENZ3D1
+        || g_fractal_type == fractal_type::FPLORENZ3D3
+        || g_fractal_type == fractal_type::FPLORENZ3D4)
     {
         waste = 750;
     }

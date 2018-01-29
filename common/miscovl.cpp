@@ -297,9 +297,9 @@ prompt_user:
         {
             int newmaxlinelength;
             newmaxlinelength = paramvalues[promptnum-3].uval.ival;
-            if (g_max_line_length != newmaxlinelength &&
-                    newmaxlinelength >= MIN_MAX_LINE_LENGTH &&
-                    newmaxlinelength <= MAX_MAX_LINE_LENGTH)
+            if (g_max_line_length != newmaxlinelength
+                && newmaxlinelength >= MIN_MAX_LINE_LENGTH
+                && newmaxlinelength <= MAX_MAX_LINE_LENGTH)
             {
                 g_max_line_length = newmaxlinelength;
             }
@@ -410,8 +410,8 @@ skip_UI:
             while (file_gets(buf, 255, infile) >= 0)
             {
                 if (strchr(buf, '{')// entry heading?
-                        && sscanf(buf, " %40[^ \t({]", buf2)
-                        && stricmp(buf2, g_command_name.c_str()) == 0)
+                    && sscanf(buf, " %40[^ \t({]", buf2)
+                    && stricmp(buf2, g_command_name.c_str()) == 0)
                 {
                     // entry with same name
                     _snprintf(buf2, NUM_OF(buf2), "File already has an entry named %s\n%s",
@@ -426,7 +426,7 @@ skip_UI:
                         goto prompt_user;
                     }
                     while (strchr(buf, '}') == nullptr
-                            && file_gets(buf, 255, infile) > 0)
+                        && file_gets(buf, 255, infile) > 0)
                     {
                         ; // skip to end of set
                     }
@@ -644,8 +644,12 @@ void write_batch_parms(char const *colorinf, bool colorsonly, int maxcolor, int 
             put_parm(" %s=%.15g/%.15g/%.15g/%.15g",
                      "julibrotfromto", g_julibrot_x_max, g_julibrot_x_min, g_julibrot_y_max, g_julibrot_y_min);
             // these rarely change
-            if (g_julibrot_origin_fp != 8 || g_julibrot_height_fp != 7 || g_julibrot_width_fp != 10 || g_julibrot_dist_fp != 24
-                    || g_julibrot_depth_fp != 8 || g_julibrot_z_dots != 128)
+            if (g_julibrot_origin_fp != 8
+                || g_julibrot_height_fp != 7
+                || g_julibrot_width_fp != 10
+                || g_julibrot_dist_fp != 24
+                || g_julibrot_depth_fp != 8
+                || g_julibrot_z_dots != 128)
             {
                 put_parm(" %s=%d/%g/%g/%g/%g/%g", "julibrot3d",
                          g_julibrot_z_dots, g_julibrot_origin_fp, g_julibrot_depth_fp, g_julibrot_height_fp, g_julibrot_width_fp, g_julibrot_dist_fp);
@@ -952,8 +956,8 @@ void write_batch_parms(char const *colorinf, bool colorsonly, int maxcolor, int 
                 put_parm("%d", g_inside_color);
             }
         }
-        if (g_close_proximity != 0.01 && (g_inside_color == EPSCROSS || g_inside_color == FMODI
-                                  || g_outside_color == FMOD))
+        if (g_close_proximity != 0.01
+            && (g_inside_color == EPSCROSS || g_inside_color == FMODI || g_outside_color == FMOD))
         {
             put_parm(" %s=%.15g", "proximity", g_close_proximity);
         }
@@ -1525,7 +1529,7 @@ docolors:
                         {
                             // check pattern of chg per color
                             if (g_debug_flag != debug_flags::allow_large_colormap_changes
-                                    && scanc > (curc+4) && scanc < maxcolor-5)
+                                && scanc > (curc+4) && scanc < maxcolor-5)
                             {
                                 if (abs(2*g_dac_box[scanc][j] - g_dac_box[scanc-5][j]
                                         - g_dac_box[scanc+5][j]) >= 2)
@@ -1626,7 +1630,7 @@ static void put_parm(char const *parm, ...)
 
     va_start(args, parm);
     if (*parm == ' '             // starting a new parm
-            && s_wbdata.len == 0)         // skip leading space
+        && s_wbdata.len == 0)         // skip leading space
     {
         ++parm;
     }
@@ -1662,7 +1666,8 @@ static void put_parm_line()
         {
             len = nice_line_length()-1;
             while (++len < g_max_line_length
-                    && s_wbdata.buf[len] && s_wbdata.buf[len] != ' ')
+                && s_wbdata.buf[len]
+                && s_wbdata.buf[len] != ' ')
             {
             }
         }
@@ -1978,10 +1983,10 @@ int select_video_mode(int curmode)
     int i;
     for (i = 0; i < g_video_table_len; ++i)  // find default mode
     {
-        if (g_video_entry.videomodeax == g_video_table[entnums[i]].videomodeax &&
-                g_video_entry.colors      == g_video_table[entnums[i]].colors &&
-                (curmode < 0 ||
-                 memcmp((char *) &g_video_entry, (char *) &g_video_table[entnums[i]], sizeof(g_video_entry)) == 0))
+        if (g_video_entry.videomodeax == g_video_table[entnums[i]].videomodeax
+            && g_video_entry.colors == g_video_table[entnums[i]].colors
+            && (curmode < 0
+                || memcmp((char *) &g_video_entry, (char *) &g_video_table[entnums[i]], sizeof(g_video_entry)) == 0))
         {
             break;
         }
@@ -2006,9 +2011,10 @@ int select_video_mode(int curmode)
     if (i == -1)
     {
         // update fractint.cfg for new key assignments
-        if (modes_changed && g_bad_config == 0 &&
-                stopmsg(STOPMSG_CANCEL | STOPMSG_NO_BUZZER | STOPMSG_INFO_ONLY,
-                        "Save new function key assignments or cancel changes?") == 0)
+        if (modes_changed
+            && g_bad_config == 0
+            && stopmsg(STOPMSG_CANCEL | STOPMSG_NO_BUZZER | STOPMSG_INFO_ONLY,
+                "Save new function key assignments or cancel changes?") == 0)
         {
             update_fractint_cfg();
         }
@@ -2025,8 +2031,7 @@ int select_video_mode(int curmode)
     {
         if (g_video_table[i].keynum > 0)
         {
-            if (memcmp((char *)&g_video_entry, (char *)&g_video_table[i],
-                       sizeof(g_video_entry)) == 0)
+            if (memcmp((char *)&g_video_entry, (char *)&g_video_table[i], sizeof(g_video_entry)) == 0)
             {
                 k = g_video_table[i].keynum;
             }
@@ -2087,7 +2092,7 @@ static int check_modekey(int curkey, int choice)
     i = entnums[choice];
     int ret = 0;
     if ((curkey == '-' || curkey == '+')
-            && (g_video_table[i].keynum == 0 || g_video_table[i].keynum >= 1084))
+        && (g_video_table[i].keynum == 0 || g_video_table[i].keynum >= 1084))
     {
         if (g_bad_config)
         {
@@ -2577,8 +2582,8 @@ void flip_image(int key)
 
     // fractal must be rotate-able and be finished
     if ((g_cur_fractal_specific->flags&NOROTATE) != 0
-            || g_calc_status == calc_status_value::IN_PROGRESS
-            || g_calc_status == calc_status_value::RESUMABLE)
+        || g_calc_status == calc_status_value::IN_PROGRESS
+        || g_calc_status == calc_status_value::RESUMABLE)
     {
         return;
     }

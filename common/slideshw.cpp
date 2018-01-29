@@ -203,7 +203,9 @@ start:
         goto start;
     case '*':
         if (fscanf(fpss, "%d", &repeats) != 1
-                || repeats <= 1 || repeats >= 256 || feof(fpss))
+            || repeats <= 1
+            || repeats >= 256
+            || feof(fpss))
         {
             slideshowerr("error in * argument");
             repeats = 0;

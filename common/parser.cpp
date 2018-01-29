@@ -2021,8 +2021,8 @@ static bool isconst_pair(char const *Str)
     {
         j = n + SkipWhiteSpace(&Str[n+1]) + 1;
         if (isdigit(Str[j])
-                || (Str[j] == '-' && (isdigit(Str[j+1]) || Str[j+1] == '.'))
-                || Str[j] == '.')
+            || (Str[j] == '-' && (isdigit(Str[j+1]) || Str[j+1] == '.'))
+            || Str[j] == '.')
         {
             answer = true;
         }
@@ -2110,8 +2110,8 @@ ConstArg *isconst(char const *Str, int Len)
 #endif
 
     if (isdigit(Str[0])
-            || (Str[0] == '-' && (isdigit(Str[1]) || Str[1] == '.'))
-            || Str[0] == '.')
+        || (Str[0] == '-' && (isdigit(Str[1]) || Str[1] == '.'))
+        || Str[0] == '.')
     {
         if (o[g_operation_index-1].f == StkNeg)
         {
@@ -2128,8 +2128,8 @@ ConstArg *isconst(char const *Str, int Len)
         {
             unsigned j = n + SkipWhiteSpace(&Str[n+1]) + 1;
             if (isdigit(Str[j])
-                    || (Str[j] == '-' && (isdigit(Str[j+1]) || Str[j+1] == '.'))
-                    || Str[j] == '.')
+                || (Str[j] == '-' && (isdigit(Str[j+1]) || Str[j+1] == '.'))
+                || Str[j] == '.')
             {
                 z.y = atof(&Str[j]);
                 for (; isdigit(Str[j]) || Str[j] == '.' || Str[j] == '-'; j++)
@@ -3236,8 +3236,9 @@ static bool fill_jump_struct()
     }
 
     // Following for safety only; all should always be false
-    if (i != jump_index || jump_control[i - 1].type != 4
-            || jump_control[0].type != 1)
+    if (i != jump_index
+        || jump_control[i - 1].type != 4
+        || jump_control[0].type != 1)
     {
         return true;
     }
@@ -3808,8 +3809,8 @@ CASE_TERMINATOR:
             this_token->token_id   = 0;
         }
         else if (this_token->token_str[0] == '\n'
-                 || this_token->token_str[0] == ','
-                 || this_token->token_str[0] == ':')
+            || this_token->token_str[0] == ','
+            || this_token->token_str[0] == ':')
         {
             frm_get_eos(openfile, this_token);
         }
@@ -4295,8 +4296,11 @@ bool fpFormulaSetup()
 #if !defined(XFRACT) && !defined(_WIN32)
     MathType = D_MATH;
     bool RunFormRes = !RunForm(g_formula_name.c_str(), false); // RunForm() returns true for failure
-    if (RunFormRes && fpu >=387 && g_debug_flag != debug_flags::force_standard_fractal && (orbitsave&2) == 0
-            && !Randomized)
+    if (RunFormRes
+        && fpu >=387
+        && g_debug_flag != debug_flags::force_standard_fractal
+        && (orbitsave&2) == 0
+        && !Randomized)
     {
         return CvtStk() != 0;    // run fast assembler code in parsera.asm
     }
@@ -4459,9 +4463,8 @@ void frm_error(FILE * open_file, long begin_frm)
                 token_count++;
             }
             if ((tok.token_type == END_OF_FORMULA)
-                    || (tok.token_type == OPERATOR
-                        && (tok.token_id == 0 || tok.token_id == 11))
-                    || (tok.token_type == NOT_A_TOKEN && tok.token_id == END_OF_FILE))
+                || (tok.token_type == OPERATOR && (tok.token_id == 0 || tok.token_id == 11))
+                || (tok.token_type == NOT_A_TOKEN && tok.token_id == END_OF_FILE))
             {
                 done = true;
                 if (token_count > 1 && !initialization_error)

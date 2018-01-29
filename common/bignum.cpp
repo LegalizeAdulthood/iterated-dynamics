@@ -827,7 +827,7 @@ bn_t sqrt_bn(bn_t r, bn_t n)
             if (comp < 8)  // if match or almost match
             {
                 if (comp < 4  // perfect or near perfect match
-                        || almost_match == 1)   // close enough for 2nd time
+                    || almost_match == 1)   // close enough for 2nd time
                 {
                     break;
                 }
@@ -977,7 +977,7 @@ bn_t unsafe_ln_bn(bn_t r, bn_t n)
             if (comp < 8)  // if match or almost match
             {
                 if (comp < 4  // perfect or near perfect match
-                        || almost_match == 1)   // close enough for 2nd time
+                    || almost_match == 1)   // close enough for 2nd time
                 {
                     break;
                 }
@@ -1271,7 +1271,7 @@ bn_t unsafe_atan_bn(bn_t r, bn_t n)
                 printf("atan() loop comp=%i\n", comp);
 #endif
                 if (comp < 4  // perfect or near perfect match
-                        || almost_match == 1)   // close enough for 2nd time
+                    || almost_match == 1)   // close enough for 2nd time
                 {
                     break;
                 }

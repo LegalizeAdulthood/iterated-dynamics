@@ -441,8 +441,8 @@ choose_vars_restart:
         uvalues[k].uval.ch.val =  static_cast<int>(gene[num].mutate);
     }
 
-    if (g_cur_fractal_specific->calctype == standard_fractal &&
-            (g_cur_fractal_specific->flags & BAILTEST))
+    if (g_cur_fractal_specific->calctype == standard_fractal
+        && (g_cur_fractal_specific->flags & BAILTEST))
     {
         choices[++k] = gene[NUM_GENES - 1].name;
         uvalues[k].type = 'l';
@@ -501,8 +501,8 @@ choose_vars_restart:
         gene[num].mutate = static_cast<variations>(uvalues[++k].uval.ch.val);
     }
 
-    if (g_cur_fractal_specific->calctype == standard_fractal &&
-            (g_cur_fractal_specific->flags & BAILTEST))
+    if (g_cur_fractal_specific->calctype == standard_fractal
+        && (g_cur_fractal_specific->flags & BAILTEST))
     {
         gene[NUM_GENES - 1].mutate = static_cast<variations>(uvalues[++k].uval.ch.val);
     }
@@ -900,10 +900,13 @@ get_evol_restart:
     i = 0;
 
     if (g_evolving != old_evolving
-            || (g_evolve_image_grid_size != old_image_grid_size) || (g_evolve_x_parameter_range != old_x_parameter_range)
-            || (g_evolve_x_parameter_offset != old_x_parameter_offset) || (g_evolve_y_parameter_range != old_y_parameter_range)
-            || (g_evolve_y_parameter_offset != old_y_parameter_offset)  || (g_evolve_max_random_mutation != old_max_random_mutation)
-            || (old_variations > 0))
+        || (g_evolve_image_grid_size != old_image_grid_size)
+        || (g_evolve_x_parameter_range != old_x_parameter_range)
+        || (g_evolve_x_parameter_offset != old_x_parameter_offset)
+        || (g_evolve_y_parameter_range != old_y_parameter_range)
+        || (g_evolve_y_parameter_offset != old_y_parameter_offset)
+        || (g_evolve_max_random_mutation != old_max_random_mutation)
+        || (old_variations > 0))
     {
         i = 1;
     }
@@ -987,7 +990,9 @@ void fiddleparms(GENEBASE gene[], int ecount)
     // the variables referenced in the gene array and call the functions required
     // to vary them, aren't pointers marvellous!
 
-    if ((g_evolve_param_grid_x == g_evolve_image_grid_size / 2) && (g_evolve_param_grid_y == g_evolve_image_grid_size / 2))   // return if middle image
+    // return if middle image
+    if ((g_evolve_param_grid_x == g_evolve_image_grid_size / 2)
+        && (g_evolve_param_grid_y == g_evolve_image_grid_size / 2))
     {
         return;
     }

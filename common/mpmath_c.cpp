@@ -704,8 +704,10 @@ bool ComplexNewtonSetup()
 {
     g_threshold = .001;
     g_periodicity_check = 0;
-    if (g_params[0] != 0.0 || g_params[1] != 0.0 || g_params[2] != 0.0 ||
-            g_params[3] != 0.0)
+    if (g_params[0] != 0.0
+        || g_params[1] != 0.0
+        || g_params[2] != 0.0
+        || g_params[3] != 0.0)
     {
         croot.x = g_params[2];
         croot.y = g_params[3];

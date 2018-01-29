@@ -456,8 +456,8 @@ static int find_link_updown(LINK *link, int num_link, int curr_link, int up)
     LINK *temp = link;
     for (int ctr = 0; ctr < num_link; ctr++, temp++)
     {
-        if (ctr != curr_link &&
-                ((up && temp->r < curr->r) || (!up && temp->r > curr->r)))
+        if (ctr != curr_link
+            && ((up && temp->r < curr->r) || (!up && temp->r > curr->r)))
         {
             temp_overlap = overlap(curr->c, curr_c2, temp->c, temp->c+temp->width-1);
             // if >= 3 lines between, prioritize on vertical distance:
@@ -511,8 +511,8 @@ static int find_link_leftright(LINK *link, int num_link, int curr_link, int left
     {
         temp_c2 = temp->c + temp->width - 1;
 
-        if (ctr != curr_link &&
-                ((left && temp_c2 < (int) curr->c) || (!left && (int) temp->c > curr_c2)))
+        if (ctr != curr_link
+            && ((left && temp_c2 < (int) curr->c) || (!left && (int) temp->c > curr_c2)))
         {
             temp_dist = dist1(curr->r, temp->r);
 
@@ -520,8 +520,8 @@ static int find_link_leftright(LINK *link, int num_link, int curr_link, int left
             {
                 if (best_dist == 0 && temp_dist == 0)  // if both on curr's line...
                 {
-                    if ((left && dist1(curr->c, best_c2) > dist1(curr->c, temp_c2)) ||
-                            (!left && dist1(curr_c2, best->c) > dist1(curr_c2, temp->c)))
+                    if ((left && dist1(curr->c, best_c2) > dist1(curr->c, temp_c2))
+                        || (!left && dist1(curr_c2, best->c) > dist1(curr_c2, temp->c)))
                     {
                         best = nullptr;
                     }
@@ -626,8 +626,8 @@ static int help_topic(HIST *curr, HIST *next, int flags)
     int page;
     for (page = 0; page < num_pages; page++)
     {
-        if (curr->topic_off >= page_table[page].offset &&
-                curr->topic_off <  page_table[page].offset+page_table[page].len)
+        if (curr->topic_off >= page_table[page].offset
+            && curr->topic_off <  page_table[page].offset+page_table[page].len)
         {
             break;
         }
@@ -715,8 +715,8 @@ static int help_topic(HIST *curr, HIST *next, int flags)
             break;
 
         case FIK_TAB:
-            if (!do_move_link(&link_table[0], num_link, &curr_link, find_link_key, key) &&
-                    page < num_pages-1)
+            if (!do_move_link(&link_table[0], num_link, &curr_link, find_link_key, key)
+                && page < num_pages-1)
             {
                 ++page;
                 draw_page = 1;
@@ -724,8 +724,8 @@ static int help_topic(HIST *curr, HIST *next, int flags)
             break;
 
         case FIK_SHF_TAB:
-            if (!do_move_link(&link_table[0], num_link, &curr_link, find_link_key, key) &&
-                    page > 0)
+            if (!do_move_link(&link_table[0], num_link, &curr_link, find_link_key, key)
+                && page > 0)
             {
                 --page;
                 draw_page = 3;
@@ -733,8 +733,8 @@ static int help_topic(HIST *curr, HIST *next, int flags)
             break;
 
         case FIK_DOWN_ARROW:
-            if (!do_move_link(&link_table[0], num_link, &curr_link, find_link_updown, 0) &&
-                    page < num_pages-1)
+            if (!do_move_link(&link_table[0], num_link, &curr_link, find_link_updown, 0)
+                && page < num_pages-1)
             {
                 ++page;
                 draw_page = 1;
@@ -742,8 +742,8 @@ static int help_topic(HIST *curr, HIST *next, int flags)
             break;
 
         case FIK_UP_ARROW:
-            if (!do_move_link(&link_table[0], num_link, &curr_link, find_link_updown, 1) &&
-                    page > 0)
+            if (!do_move_link(&link_table[0], num_link, &curr_link, find_link_updown, 1)
+                && page > 0)
             {
                 --page;
                 draw_page = 3;

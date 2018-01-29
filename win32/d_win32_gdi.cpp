@@ -338,8 +338,8 @@ static bool gdi_init(Driver *drv, int *argc, char **argv)
 
         for (int m = 0; m < NUM_OF(modes); m++)
         {
-            if ((modes[m].xdots <= width) &&
-                    (modes[m].ydots <= height))
+            if ((modes[m].xdots <= width)
+                && (modes[m].ydots <= height))
             {
                 add_video_mode(drv, &modes[m]);
             }
@@ -363,9 +363,9 @@ gdi_resize(Driver *drv)
 
     max_size(di, &width, &height, &center_graphics_x, &center_graphics_y);
     if ((g_video_table[g_adapter].xdots == di->plot.width)
-            && (g_video_table[g_adapter].ydots == di->plot.height)
-            && (width == g_frame.width)
-            && (height == g_frame.height))
+        && (g_video_table[g_adapter].ydots == di->plot.height)
+        && (width == g_frame.width)
+        && (height == g_frame.height))
     {
         return false;
     }
@@ -865,14 +865,14 @@ gdi_validate_mode(Driver *drv, VIDEOINFO *mode)
 
     /* allow modes <= size of screen with 256 colors and dotmode=19
        ax/bx/cx/dx must be zero. */
-    return (mode->xdots <= width) &&
-           (mode->ydots <= height) &&
-           (mode->colors == 256) &&
-           (mode->videomodeax == 0) &&
-           (mode->videomodebx == 0) &&
-           (mode->videomodecx == 0) &&
-           (mode->videomodedx == 0) &&
-           (mode->dotmode == 19);
+    return (mode->xdots <= width)
+        && (mode->ydots <= height)
+        && (mode->colors == 256)
+        && (mode->videomodeax == 0)
+        && (mode->videomodebx == 0)
+        && (mode->videomodecx == 0)
+        && (mode->videomodedx == 0)
+        && (mode->dotmode == 19);
 }
 
 static void

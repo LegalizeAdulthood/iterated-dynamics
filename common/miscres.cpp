@@ -179,7 +179,7 @@ void cvtcentermag(double *Xctr, double *Yctr, LDBL *Magnification, double *Xmagf
         // if vector_a cross vector_b is negative
         // then adjust for left-hand coordinate system
         if (tmpx1*tmpy2 - tmpx2*tmpy1 < 0
-                && g_debug_flag != debug_flags::allow_negative_cross_product)
+            && g_debug_flag != debug_flags::allow_negative_cross_product)
         {
             *Skew = -*Skew;
             *Xmagfactor = -*Xmagfactor;
@@ -386,7 +386,7 @@ void cvtcentermagbf(bf_t Xctr, bf_t Yctr, LDBL *Magnification, double *Xmagfacto
         // if vector_a cross vector_b is negative
         // then adjust for left-hand coordinate system
         if (tmpx1*tmpy2 - tmpx2*tmpy1 < 0
-                && g_debug_flag != debug_flags::allow_negative_cross_product)
+            && g_debug_flag != debug_flags::allow_negative_cross_product)
         {
             *Skew = -*Skew;
             *Xmagfactor = -*Xmagfactor;
@@ -627,8 +627,8 @@ static void trigdetails(char *buf)
     {
         numfn = (g_cur_fractal_specific->flags >> 6) & 7;
     }
-    if (g_cur_fractal_specific == &g_fractal_specific[static_cast<int>(fractal_type::FORMULA)] ||
-            g_cur_fractal_specific == &g_fractal_specific[static_cast<int>(fractal_type::FFORMULA)])
+    if (g_cur_fractal_specific == &g_fractal_specific[static_cast<int>(fractal_type::FORMULA)]
+        || g_cur_fractal_specific == &g_fractal_specific[static_cast<int>(fractal_type::FFORMULA)])
     {
         numfn = g_max_function;
     }
@@ -1618,9 +1618,9 @@ bool find_file_item(char *filename, char const *itemname, FILE **fileptr, int it
             DTA.filename[FILE_MAX_FNAME+FILE_MAX_EXT-2] = 0;
             sprintf(msg, "Searching %13s for %s      ", DTA.filename, itemname);
             showtempmsg(msg);
-            if (!(DTA.attribute & SUBDIR) &&
-                    strcmp(DTA.filename, ".") &&
-                    strcmp(DTA.filename, ".."))
+            if (!(DTA.attribute & SUBDIR)
+                && strcmp(DTA.filename, ".")
+                && strcmp(DTA.filename, ".."))
             {
                 splitpath(DTA.filename, nullptr, nullptr, fname, ext);
                 makepath(fullpath, drive, dir, fname, ext);

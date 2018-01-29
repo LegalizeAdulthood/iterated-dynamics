@@ -126,21 +126,22 @@ int get_toggles()
     uvalues[k].uval.ch.vlen = 3;
     uvalues[k].uval.ch.llen = sizeof(calcmodes)/sizeof(*calcmodes);
     uvalues[k].uval.ch.list = calcmodes;
-    uvalues[k].uval.ch.val = (g_user_std_calc_mode == '1') ? 0
-                             : (g_user_std_calc_mode == '2') ? 1
-                             : (g_user_std_calc_mode == '3') ? 2
-                             : (g_user_std_calc_mode == 'g' && g_stop_pass == 0) ? 3
-                             : (g_user_std_calc_mode == 'g' && g_stop_pass == 1) ? 4
-                             : (g_user_std_calc_mode == 'g' && g_stop_pass == 2) ? 5
-                             : (g_user_std_calc_mode == 'g' && g_stop_pass == 3) ? 6
-                             : (g_user_std_calc_mode == 'g' && g_stop_pass == 4) ? 7
-                             : (g_user_std_calc_mode == 'g' && g_stop_pass == 5) ? 8
-                             : (g_user_std_calc_mode == 'g' && g_stop_pass == 6) ? 9
-                             : (g_user_std_calc_mode == 'b') ? 10
-                             : (g_user_std_calc_mode == 's') ? 11
-                             : (g_user_std_calc_mode == 't') ? 12
-                             : (g_user_std_calc_mode == 'd') ? 13
-                             :        /* "o"rbits */      14;
+    uvalues[k].uval.ch.val =
+        (g_user_std_calc_mode == '1') ? 0
+        : (g_user_std_calc_mode == '2') ? 1
+        : (g_user_std_calc_mode == '3') ? 2
+        : (g_user_std_calc_mode == 'g' && g_stop_pass == 0) ? 3
+        : (g_user_std_calc_mode == 'g' && g_stop_pass == 1) ? 4
+        : (g_user_std_calc_mode == 'g' && g_stop_pass == 2) ? 5
+        : (g_user_std_calc_mode == 'g' && g_stop_pass == 3) ? 6
+        : (g_user_std_calc_mode == 'g' && g_stop_pass == 4) ? 7
+        : (g_user_std_calc_mode == 'g' && g_stop_pass == 5) ? 8
+        : (g_user_std_calc_mode == 'g' && g_stop_pass == 6) ? 9
+        : (g_user_std_calc_mode == 'b') ? 10
+        : (g_user_std_calc_mode == 's') ? 11
+        : (g_user_std_calc_mode == 't') ? 12
+        : (g_user_std_calc_mode == 'd') ? 13
+        :        /* "o"rbits */      14;
     old_usr_stdcalcmode = g_user_std_calc_mode;
     old_stoppass = g_stop_pass;
 #ifndef XFRACT
@@ -670,7 +671,7 @@ int get_toggles2()
             g_inversion[i] = atof(uvalues[k].uval.sval);
         }
         if (old_inversion[i] != g_inversion[i]
-                && (i == 0 || g_inversion[0] != 0.0))
+            && (i == 0 || g_inversion[0] != 0.0))
         {
             changed = true;
         }
@@ -1616,8 +1617,8 @@ retry_dir:
         int j = (int) strlen(tmpmask) - 1;
         tmpmask[j] = 0; // strip trailing backslash
         if (strchr(tmpmask, '*') || strchr(tmpmask, '?')
-                || fr_findfirst(tmpmask) != 0
-                || (DTA.attribute & SUBDIR) == 0)
+            || fr_findfirst(tmpmask) != 0
+            || (DTA.attribute & SUBDIR) == 0)
         {
             strcpy(dir, DOTSLASH);
             ++retried;
@@ -1814,9 +1815,9 @@ retry_dir:
     else
     {
         if (speedstate == SEARCHPATH
-                && strchr(speedstr, '*') == nullptr && strchr(speedstr, '?') == nullptr
-                && ((fr_findfirst(speedstr) == 0
-                     && (DTA.attribute & SUBDIR))|| strcmp(speedstr, SLASH) == 0)) // it is a directory
+            && strchr(speedstr, '*') == nullptr && strchr(speedstr, '?') == nullptr
+            && ((fr_findfirst(speedstr) == 0 && (DTA.attribute & SUBDIR))
+                || strcmp(speedstr, SLASH) == 0)) // it is a directory
         {
             speedstate = TEMPLATE;
         }
@@ -1905,8 +1906,8 @@ static int filename_speedstr(int row, int col, int vid,
 {
     char const *prompt;
     if (strchr(speedstring, ':')
-            || strchr(speedstring, '*') || strchr(speedstring, '*')
-            || strchr(speedstring, '?'))
+        || strchr(speedstring, '*') || strchr(speedstring, '*')
+        || strchr(speedstring, '?'))
     {
         speedstate = TEMPLATE;  // template
         prompt = "File Template";
@@ -2290,11 +2291,11 @@ gc_loop:
     if (cmag)
     {
         if (cmpdbl(Xctr         , values[0].uval.dval)
-                || cmpdbl(Yctr         , values[1].uval.dval)
-                || cmpdbl((double)Magnification, values[2].uval.dval)
-                || cmpdbl(Xmagfactor   , values[3].uval.dval)
-                || cmpdbl(Rotation     , values[4].uval.dval)
-                || cmpdbl(Skew         , values[5].uval.dval))
+            || cmpdbl(Yctr         , values[1].uval.dval)
+            || cmpdbl((double)Magnification, values[2].uval.dval)
+            || cmpdbl(Xmagfactor   , values[3].uval.dval)
+            || cmpdbl(Rotation     , values[4].uval.dval)
+            || cmpdbl(Skew         , values[5].uval.dval))
         {
             Xctr          = values[0].uval.dval;
             Yctr          = values[1].uval.dval;
@@ -2537,11 +2538,11 @@ gsc_loop:
     if (cmag)
     {
         if (cmpdbl(Xctr         , values[0].uval.dval)
-                || cmpdbl(Yctr         , values[1].uval.dval)
-                || cmpdbl((double)Magnification, values[2].uval.dval)
-                || cmpdbl(Xmagfactor   , values[3].uval.dval)
-                || cmpdbl(Rotation     , values[4].uval.dval)
-                || cmpdbl(Skew         , values[5].uval.dval))
+            || cmpdbl(Yctr         , values[1].uval.dval)
+            || cmpdbl((double)Magnification, values[2].uval.dval)
+            || cmpdbl(Xmagfactor   , values[3].uval.dval)
+            || cmpdbl(Rotation     , values[4].uval.dval)
+            || cmpdbl(Skew         , values[5].uval.dval))
         {
             Xctr          = values[0].uval.dval;
             Yctr          = values[1].uval.dval;
@@ -2792,7 +2793,7 @@ int merge_pathnames(char *oldfullpath, char const *filename, cmd_file mode)
 
     // no dot or slash so assume a file
     bool isafile = strchr(newfilename, '.') == nullptr
-                   && strchr(newfilename, SLASHC) == nullptr;
+        && strchr(newfilename, SLASHC) == nullptr;
     bool isadir = isadirectory(newfilename);
     if (isadir)
     {
@@ -2800,23 +2801,19 @@ int merge_pathnames(char *oldfullpath, char const *filename, cmd_file mode)
     }
 #ifndef XFRACT
     // if drive, colon, slash, is a directory
-    if ((int) strlen(newfilename) == 3 &&
-            newfilename[1] == ':' &&
-            newfilename[2] == SLASHC)
+    if ((int) strlen(newfilename) == 3 && newfilename[1] == ':' && newfilename[2] == SLASHC)
     {
         isadir = true;
     }
     // if drive, colon, with no slash, is a directory
-    if ((int) strlen(newfilename) == 2 &&
-            newfilename[1] == ':')
+    if ((int) strlen(newfilename) == 2 && newfilename[1] == ':')
     {
         newfilename[2] = SLASHC;
         newfilename[3] = 0;
         isadir = true;
     }
     // if dot, slash, '0', its the current directory, set up full path
-    if (newfilename[0] == '.' &&
-            newfilename[1] == SLASHC && newfilename[2] == 0)
+    if (newfilename[0] == '.' && newfilename[1] == SLASHC && newfilename[2] == 0)
     {
         temp_path[0] = (char)('a' + _getdrive() - 1);
         temp_path[1] = ':';
@@ -2827,8 +2824,7 @@ int merge_pathnames(char *oldfullpath, char const *filename, cmd_file mode)
         isadir = true;
     }
     // if dot, slash, its relative to the current directory, set up full path
-    if (newfilename[0] == '.' &&
-            newfilename[1] == SLASHC)
+    if (newfilename[0] == '.' && newfilename[1] == SLASHC)
     {
         bool test_dir = false;
         temp_path[0] = (char)('a' + _getdrive() - 1);
@@ -2871,8 +2867,7 @@ int merge_pathnames(char *oldfullpath, char const *filename, cmd_file mode)
 
     splitpath(newfilename, drive, dir, fname, ext);
     splitpath(oldfullpath, drive1, dir1, fname1, ext1);
-    bool const get_path = (mode == cmd_file::AT_CMD_LINE)
-        || (mode == cmd_file::SSTOOLS_INI);
+    bool const get_path = (mode == cmd_file::AT_CMD_LINE) || (mode == cmd_file::SSTOOLS_INI);
     if ((int) strlen(drive) != 0 && get_path)
     {
         strcpy(drive1, drive);

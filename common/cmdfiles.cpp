@@ -289,10 +289,10 @@ void process_simple_command(char *curarg)
                 throw std::system_error(errno, std::system_category(), "process_simple_command failed fread");
             }
             if (tempstring[0] == 'G'
-                    && tempstring[1] == 'I'
-                    && tempstring[2] == 'F'
-                    && tempstring[3] >= '8' && tempstring[3] <= '9'
-                    && tempstring[4] >= '0' && tempstring[4] <= '9')
+                && tempstring[1] == 'I'
+                && tempstring[2] == 'F'
+                && tempstring[3] >= '8' && tempstring[3] <= '9'
+                && tempstring[4] >= '0' && tempstring[4] <= '9')
             {
                 g_read_filename = curarg;
                 g_browse_name = extract_filename(g_read_filename.c_str());
@@ -717,13 +717,12 @@ static int next_command(
             if (*lineptr == ';' || *lineptr == 0)
             {
                 if (*lineptr == ';'
-                        && (mode == cmd_file::AT_AFTER_STARTUP || mode == cmd_file::AT_CMD_LINE_SET_NAME)
-                        && (g_command_comment[0].empty() || g_command_comment[1].empty() ||
-                            g_command_comment[2].empty() || g_command_comment[3].empty()))
+                    && (mode == cmd_file::AT_AFTER_STARTUP || mode == cmd_file::AT_CMD_LINE_SET_NAME)
+                    && (g_command_comment[0].empty() || g_command_comment[1].empty()
+                        || g_command_comment[2].empty() || g_command_comment[3].empty()))
                 {
                     // save comment
-                    while (*(++lineptr)
-                            && (*lineptr == ' ' || *lineptr == '\t'))
+                    while (*(++lineptr) && (*lineptr == ' ' || *lineptr == '\t'))
                     {
                     }
                     if (*lineptr)
@@ -749,8 +748,7 @@ static int next_command(
                 lineptr = linebuf; // start new line
             }
         }
-        if (*lineptr == '\\'              // continuation onto next line?
-                && *(lineptr+1) == 0)
+        if (*lineptr == '\\' && *(lineptr+1) == 0)              // continuation onto next line?
         {
             if (next_line(handle, linebuf, mode))
             {
@@ -925,7 +923,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         }
         char next = 0;
         if (sscanf(argptr, "%c%c", &next, &tmpc) > 0    // NULL entry
-                && (next == '/' || next == '=') && tmpc == '/')
+            && (next == '/' || next == '=') && tmpc == '/')
         {
             j = 0;
             ++floatparms;
@@ -945,7 +943,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
             }
         }
         else if (sscanf(argptr, "%ld%c", &ll, &tmpc) > 0       // got an integer
-                 && tmpc == '/')        // needs a long int, ll, here for lyapunov
+            && tmpc == '/')        // needs a long int, ll, here for lyapunov
         {
             ++floatparms;
             ++intparms;
@@ -968,7 +966,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
 #else
         else if (sscanf(argptr, "%lf%c", &ftemp, &tmpc) > 0  // got a float
 #endif
-                 && tmpc == '/')
+            && tmpc == '/')
         {
             ++floatparms;
             if (totparms < 16)
@@ -979,9 +977,8 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         }
         // using arbitrary precision and above failed
         else if (((int) strlen(argptr) > 513)  // very long command
-                 || (totparms > 0 && floatval[totparms-1] == FLT_MAX
-                     && totparms < 6)
-                 || isabigfloat(argptr))
+            || (totparms > 0 && floatval[totparms-1] == FLT_MAX && totparms < 6)
+            || isabigfloat(argptr))
         {
             ++floatparms;
             floatval[totparms] = FLT_MAX;
@@ -1035,9 +1032,9 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         if (variable == "adapter")    // adapter==?
         {
             // adapter parameter no longer used; check for bad argument anyway
-            if ((strcmp(value, "egamono") != 0) && (strcmp(value, "hgc") != 0) &&
-                    (strcmp(value, "ega") != 0)     && (strcmp(value, "cga") != 0) &&
-                    (strcmp(value, "mcga") != 0)    && (strcmp(value, "vga") != 0))
+            if ((strcmp(value, "egamono") != 0) && (strcmp(value, "hgc") != 0)
+                && (strcmp(value, "ega") != 0) && (strcmp(value, "cga") != 0)
+                && (strcmp(value, "mcga") != 0) && (strcmp(value, "vga") != 0))
             {
                 goto badarg;
             }
@@ -1056,9 +1053,9 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
             if (g_first_init)
             {
                 if (!((charval[0] == 'n')   // no
-                        || (charval[0] == 'y')  // yes
-                        || (charval[0] == 'b')  // bios
-                        || (charval[0] == 's'))) // save
+                    || (charval[0] == 'y')  // yes
+                    || (charval[0] == 'b')  // bios
+                    || (charval[0] == 's'))) // save
                 {
                     goto badarg;
                 }
@@ -1336,8 +1333,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
     // maxcolorres no longer used, validate value and gobble argument
     if (variable == "maxcolorres") // Change default color resolution
     {
-        if (numval == 1 || numval == 4 || numval == 8 ||
-                numval == 16 || numval == 24)
+        if (numval == 1 || numval == 4 || numval == 8 || numval == 16 || numval == 24)
         {
             return CMDARG_NONE;
         }
@@ -1635,9 +1631,9 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
     if (variable == "passes")        // passes=?
     {
         if (charval[0] != '1' && charval[0] != '2' && charval[0] != '3'
-                && charval[0] != 'g' && charval[0] != 'b'
-                && charval[0] != 't' && charval[0] != 's'
-                && charval[0] != 'd' && charval[0] != 'o')
+            && charval[0] != 'g' && charval[0] != 'b'
+            && charval[0] != 't' && charval[0] != 's'
+            && charval[0] != 'd' && charval[0] != 'o')
         {
             goto badarg;
         }
@@ -1697,7 +1693,9 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
             intval[0] = 1;
         }
         if (totparms != intparms
-                || intval[0] < 0 || intval[1] > 255 || intval[0] > intval[1])
+            || intval[0] < 0
+            || intval[1] > 255
+            || intval[0] > intval[1])
         {
             goto badarg;
         }
@@ -2080,7 +2078,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
             return CMDARG_FRACTAL_PARAM; // skip setting the corners
         }
         if (floatparms != totparms
-                || (totparms != 0 && totparms != 4 && totparms != 6))
+            || (totparms != 0 && totparms != 4 && totparms != 6))
         {
             goto badarg;
         }
@@ -2093,7 +2091,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         // good first approx, but dec could be too big
         dec = get_max_curarg_len(floatvalstr, totparms) + 1;
         if ((dec > DBL_DIG+1 || g_debug_flag == debug_flags::force_arbitrary_precision_math)
-                && g_debug_flag != debug_flags::prevent_arbitrary_precision_math)
+            && g_debug_flag != debug_flags::prevent_arbitrary_precision_math)
         {
             bf_math_type old_bf_math = bf_math;
             if (bf_math == bf_math_type::NONE || dec > g_decimals)
@@ -2194,7 +2192,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
     {
         g_set_orbit_corners = false;
         if (floatparms != totparms
-                || (totparms != 0 && totparms != 4 && totparms != 6))
+            || (totparms != 0 && totparms != 4 && totparms != 6))
         {
             goto badarg;
         }
@@ -2278,8 +2276,8 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         int dec;
 
         if ((totparms != floatparms)
-                || (totparms != 0 && totparms < 3)
-                || (totparms >= 3 && floatval[2] == 0.0))
+            || (totparms != 0 && totparms < 3)
+            || (totparms >= 3 && floatval[2] == 0.0))
         {
             goto badarg;
         }
@@ -2306,7 +2304,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         dec = getpower10(Magnification) + 4; // 4 digits of padding sounds good
 
         if ((dec <= DBL_DIG+1 && g_debug_flag != debug_flags::force_arbitrary_precision_math)
-                || g_debug_flag == debug_flags::prevent_arbitrary_precision_math)
+            || g_debug_flag == debug_flags::prevent_arbitrary_precision_math)
         {
             // rough estimate that double is OK
             Xctr = floatval[0];
@@ -2590,16 +2588,16 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
 
     // deprecated print parameters
     if ((variable == "printer")
-            || (variable == "printfile")
-            || (variable == "rleps")
-            || (variable == "colorps")
-            || (variable == "epsf")
-            || (variable == "title")
-            || (variable == "translate")
-            || (variable == "plotstyle")
-            || (variable == "halftone")
-            || (variable == "linefeed")
-            || (variable == "comport"))
+        || (variable == "printfile")
+        || (variable == "rleps")
+        || (variable == "colorps")
+        || (variable == "epsf")
+        || (variable == "title")
+        || (variable == "translate")
+        || (variable == "plotstyle")
+        || (variable == "halftone")
+        || (variable == "linefeed")
+        || (variable == "comport"))
     {
         return CMDARG_NONE;
     }
@@ -2782,7 +2780,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         }
         for (int counter = 0; counter <= 11; counter++)
             if ((totparms > counter) && (intval[counter] > 0)
-                    && (intval[counter] < 13))
+                && (intval[counter] < 13))
             {
                 g_scale_map[counter] = intval[counter];
             }
@@ -2872,8 +2870,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         return CMDARG_FRACTAL_PARAM;
     }
 
-    if (variable == "debugflag"
-            || variable == "debug")
+    if (variable == "debugflag" || variable == "debug")
     {
         // internal use only
         g_debug_flag = numval;
@@ -3154,10 +3151,10 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
     {
         // crop=?
         if (totparms != 4 || intparms != 4
-                || intval[0] < 0 || intval[0] > 100
-                || intval[1] < 0 || intval[1] > 100
-                || intval[2] < 0 || intval[2] > 100
-                || intval[3] < 0 || intval[3] > 100)
+            || intval[0] < 0 || intval[0] > 100
+            || intval[1] < 0 || intval[1] > 100
+            || intval[2] < 0 || intval[2] > 100
+            || intval[3] < 0 || intval[3] > 100)
         {
             goto badarg;
         }
@@ -3662,9 +3659,10 @@ static int parse_colors(char const *value)
             }
             if (*value == '<')
             {
-                if (i == 0 || smooth
-                        || (smooth = atoi(value+1)) < 2
-                        || (value = strchr(value, '>')) == nullptr)
+                if (i == 0
+                    || smooth
+                    || (smooth = atoi(value+1)) < 2
+                    || (value = strchr(value, '>')) == nullptr)
                 {
                     goto badcolor;
                 }

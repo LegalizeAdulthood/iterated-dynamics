@@ -539,8 +539,8 @@ static int CvtFptr(void (* ffptr)(), int MinStk, int FreeStk,
 
     // first do some sanity checks
     if ((Delta != -2 && Delta != 0 && Delta != 2 && Delta != CLEAR_STK)
-            || (FreeStk != 0 && FreeStk != 2 && FreeStk != 4)
-            || (MinStk != 0 && MinStk != 2 && MinStk != 4))
+        || (FreeStk != 0 && FreeStk != 2 && FreeStk != 4)
+        || (MinStk != 0 && MinStk != 2 && MinStk != 4))
     {
 awful_error:
         stopmsg(STOPMSG_NONE, "FATAL INTERNAL PARSER ERROR!");
@@ -661,7 +661,7 @@ awful_error:
             ffptr = fStkLodDup;
         }
         else if (prevfptr == fStkSto2
-                 && Store[g_store_index-1] == Load[g_load_index])
+            && Store[g_store_index-1] == Load[g_load_index])
         {
             // store, load of same value
             // only one operand on stack here when prev oper is Sto2
@@ -673,7 +673,7 @@ awful_error:
         //  use the rounded value that was stored here, while the next
         //  operator uses the more accurate internal value.
         else if (prevfptr == fStkStoClr2
-                 && Store[g_store_index-1] == Load[g_load_index])
+            && Store[g_store_index-1] == Load[g_load_index])
         {
             // store, clear, load same value found
             // only one operand was on stack so this is safe
@@ -890,13 +890,13 @@ awful_error:
 
             FNPTR(cvtptrx) = NO_FUNCTION;  // mark the pending fn as null
             if (FNPTR(cvtptrx-1) == fStkPush4
-                    || FNPTR(cvtptrx-1) == fStkPush2a)
+                || FNPTR(cvtptrx-1) == fStkPush2a)
             {
                 --cvtptrx;  // look back past this push
             }
 
             if (FNPTR(cvtptrx-1) == fStkLodRealC
-                    && Load[g_load_index-2]->d.x == _2_)
+                && Load[g_load_index-2]->d.x == _2_)
             {
                 // -- Convert '2*a' into 'a+a'.
                 if (FNPTR(cvtptrx) == NO_FUNCTION)
@@ -923,7 +923,7 @@ awful_error:
                 ffptr = fStkLodDbl;
             }
             else if (FNPTR(cvtptrx-1) == fStkLodReal
-                     || FNPTR(cvtptrx-1) == fStkLodRealC)
+                || FNPTR(cvtptrx-1) == fStkLodRealC)
             {
                 // lodreal *?push?? (*?lodmul)
                 otemp = OPPTR(cvtptrx-1);  // save previous fn's operand
@@ -981,7 +981,7 @@ awful_error:
             ffptr = fStkLodRealMul;
 
             if (prevfptr == fStkLodRealC  // use prevfptr here
-                    && Load[g_load_index-1]->d.x == _2_)
+                && Load[g_load_index-1]->d.x == _2_)
             {
                 if (FNPTR(cvtptrx) == fStkPush2)
                 {
@@ -1300,7 +1300,8 @@ awful_error:
     {
 
         if (prevfptr == fStkLod
-                || prevfptr == fStkLodReal || prevfptr == fStkLodRealC)
+            || prevfptr == fStkLodReal
+            || prevfptr == fStkLodRealC)
         {
             DBUGMSG("Lod (*LTE) -> (*LodLTE)");
             --cvtptrx;
@@ -1311,8 +1312,9 @@ awful_error:
     else if (ffptr == fStkLT)
     {
 
-        if (prevfptr == fStkLod || prevfptr == fStkLodReal
-                || prevfptr == fStkLodRealC)
+        if (prevfptr == fStkLod
+            || prevfptr == fStkLodReal
+            || prevfptr == fStkLodRealC)
         {
             DBUGMSG("Lod (*LT) -> (*LodLT)");
             --cvtptrx;
@@ -1324,7 +1326,8 @@ awful_error:
     {
 
         if (prevfptr == fStkLod
-                || prevfptr == fStkLodReal || prevfptr == fStkLodRealC)
+            || prevfptr == fStkLodReal
+            || prevfptr == fStkLodRealC)
         {
             DBUGMSG("Lod (*GT) -> (*LodGT)");
             --cvtptrx;
@@ -1336,7 +1339,8 @@ awful_error:
     {
 
         if (prevfptr == fStkLod
-                || prevfptr == fStkLodReal || prevfptr == fStkLodRealC)
+            || prevfptr == fStkLodReal
+            || prevfptr == fStkLodRealC)
         {
             DBUGMSG("Lod (*GTE) -> (*LodGTE)");
             --cvtptrx;
@@ -1348,7 +1352,8 @@ awful_error:
     {
 
         if (prevfptr == fStkLod
-                || prevfptr == fStkLodReal || prevfptr == fStkLodRealC)
+            || prevfptr == fStkLodReal
+            || prevfptr == fStkLodRealC)
         {
             DBUGMSG("Lod (*NE) -> (*LodNE)");
             --cvtptrx;
@@ -1360,7 +1365,8 @@ awful_error:
     {
 
         if (prevfptr == fStkLod
-                || prevfptr == fStkLodReal || prevfptr == fStkLodRealC)
+            || prevfptr == fStkLodReal
+            || prevfptr == fStkLodRealC)
         {
             DBUGMSG("Lod (*EQ) -> (*LodEQ)");
             --cvtptrx;
@@ -1441,8 +1447,9 @@ int fpfill_jump_struct()
     }
 
     // Following for safety only; all should always be false
-    if (i != jump_index || jump_control[i - 1].type != 4
-            || jump_control[0].type != 1)
+    if (i != jump_index
+        || jump_control[i - 1].type != 4
+        || jump_control[0].type != 1)
     {
         return 1;
     }
@@ -1589,10 +1596,7 @@ int CvtStk()
                              (int)(pfe->min_regs),
                              (int)(pfe->free_regs),
                              (int)(pfe->delta));
-                    if (!CvtFptr(ntst,
-                                 pfe->min_regs,
-                                 pfe->free_regs,
-                                 pfe->delta))
+                    if (!CvtFptr(ntst, pfe->min_regs, pfe->free_regs, pfe->delta))
                     {
                         return 1;
                     }
@@ -1679,8 +1683,8 @@ skipfinalopt:  // -------------- end of final optimizations ------------
     LASTSQR.d.y = 0.0;  // do this once per image
 
     // now change the pointers
-    if (!g_formula_name.empty() &&
-            (!uses_jump || fpfill_jump_struct() == 0))
+    if (!g_formula_name.empty()
+        && (!uses_jump || fpfill_jump_struct() == 0))
     {
         // but only if parse succeeded
         g_cur_fractal_specific->per_pixel = fform_per_pixel;

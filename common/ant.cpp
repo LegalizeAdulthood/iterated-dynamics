@@ -211,10 +211,10 @@ void TurkMite1(int maxtur, int rule_len, char const *ru, long maxpts, long wait)
                     idir &= 3;
                     if (!antwrap)
                     {
-                        if ((idir == 0 && iy == g_logical_screen_y_dots - 1) ||
-                                (idir == 1 && ix == g_logical_screen_x_dots - 1) ||
-                                (idir == 2 && iy == 0) ||
-                                (idir == 3 && ix == 0))
+                        if ((idir == 0 && iy == g_logical_screen_y_dots - 1)
+                            || (idir == 1 && ix == g_logical_screen_x_dots - 1)
+                            || (idir == 2 && iy == 0)
+                            || (idir == 3 && ix == 0))
                         {
                             goto exit_ant;
                         }
@@ -238,10 +238,10 @@ void TurkMite1(int maxtur, int rule_len, char const *ru, long maxpts, long wait)
                     idir &= 3;
                     if (!antwrap)
                     {
-                        if ((idir == 0 && iy == g_logical_screen_y_dots - 1) ||
-                                (idir == 1 && ix == g_logical_screen_x_dots - 1) ||
-                                (idir == 2 && iy == 0) ||
-                                (idir == 3 && ix == 0))
+                        if ((idir == 0 && iy == g_logical_screen_y_dots - 1)
+                            || (idir == 1 && ix == g_logical_screen_x_dots - 1)
+                            || (idir == 2 && iy == 0)
+                            || (idir == 3 && ix == 0))
                         {
                             goto exit_ant;
                         }
@@ -398,10 +398,10 @@ void TurkMite2(int maxtur, int rule_len, char const *ru, long maxpts, long wait)
                 idir &= 3;
                 if (!antwrap)
                 {
-                    if ((idir == 0 && iy == g_logical_screen_y_dots - 1) ||
-                            (idir == 1 && ix == g_logical_screen_x_dots - 1) ||
-                            (idir == 2 && iy == 0) ||
-                            (idir == 3 && ix == 0))
+                    if ((idir == 0 && iy == g_logical_screen_y_dots - 1)
+                        || (idir == 1 && ix == g_logical_screen_x_dots - 1)
+                        || (idir == 2 && iy == 0)
+                        || (idir == 3 && ix == 0))
                     {
                         goto exit_ant;
                     }

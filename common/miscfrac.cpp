@@ -793,10 +793,10 @@ int diffusion()
         // Loop as long as the point (x,y) is surrounded by color 0
         // on all eight sides
 
-        while ((getcolor(x+1, y+1) == 0) && (getcolor(x+1, y) == 0) &&
-                (getcolor(x+1, y-1) == 0) && (getcolor(x  , y+1) == 0) &&
-                (getcolor(x  , y-1) == 0) && (getcolor(x-1, y+1) == 0) &&
-                (getcolor(x-1, y) == 0) && (getcolor(x-1, y-1) == 0))
+        while ((getcolor(x+1, y+1) == 0) && (getcolor(x+1, y) == 0)
+            && (getcolor(x+1, y-1) == 0) && (getcolor(x  , y+1) == 0)
+            && (getcolor(x  , y-1) == 0) && (getcolor(x-1, y+1) == 0)
+            && (getcolor(x-1, y) == 0) && (getcolor(x-1, y-1) == 0))
         {
             // Erase moving point
             if (g_show_orbit)
@@ -904,7 +904,7 @@ int diffusion()
         {
         case 0:
             if (((x+border) > xmax) || ((x-border) < xmin)
-                    || ((y-border) < ymin) || ((y+border) > ymax))
+                || ((y-border) < ymin) || ((y+border) > ymax))
             {
                 // Increase box size, but not past the edge of the screen
                 ymin--;
@@ -2391,8 +2391,8 @@ int calcfroth()   // per pixel 1/2/g, called with row & col set
         g_temp_sqr_x = sqr(g_old_z.x);
         g_temp_sqr_y = sqr(g_old_z.y);
         while (!found_attractor
-                && (g_temp_sqr_x + g_temp_sqr_y < g_magnitude_limit)
-                && (g_color_iter < g_max_iterations))
+            && (g_temp_sqr_x + g_temp_sqr_y < g_magnitude_limit)
+            && (g_color_iter < g_max_iterations))
         {
             // simple formula: z = z^2 + conj(z*(-1+ai))
             // but it's the attractor that makes this so interesting
@@ -2418,10 +2418,11 @@ int calcfroth()   // per pixel 1/2/g, called with row & col set
             }
 
             if (fabs(fsp.fl.f.halfa-g_old_z.y) < FROTH_CLOSE
-                    && g_old_z.x >= fsp.fl.f.top_x1 && g_old_z.x <= fsp.fl.f.top_x2)
+                && g_old_z.x >= fsp.fl.f.top_x1
+                && g_old_z.x <= fsp.fl.f.top_x2)
             {
                 if ((!fsp.repeat_mapping && fsp.attractors == 2)
-                        || (fsp.repeat_mapping && fsp.attractors == 3))
+                    || (fsp.repeat_mapping && fsp.attractors == 3))
                 {
                     found_attractor = 1;
                 }
@@ -2442,7 +2443,8 @@ int calcfroth()   // per pixel 1/2/g, called with row & col set
                 }
             }
             else if (fabs(FROTH_SLOPE*g_old_z.x - fsp.fl.f.a - g_old_z.y) < FROTH_CLOSE
-                     && g_old_z.x <= fsp.fl.f.right_x1 && g_old_z.x >= fsp.fl.f.right_x2)
+                && g_old_z.x <= fsp.fl.f.right_x1
+                && g_old_z.x >= fsp.fl.f.right_x2)
             {
                 if (!fsp.repeat_mapping && fsp.attractors == 2)
                 {
@@ -2476,7 +2478,8 @@ int calcfroth()   // per pixel 1/2/g, called with row & col set
                 }
             }
             else if (fabs(-FROTH_SLOPE*g_old_z.x - fsp.fl.f.a - g_old_z.y) < FROTH_CLOSE
-                     && g_old_z.x <= fsp.fl.f.left_x1 && g_old_z.x >= fsp.fl.f.left_x2)
+                && g_old_z.x <= fsp.fl.f.left_x1
+                && g_old_z.x >= fsp.fl.f.left_x2)
             {
                 if (!fsp.repeat_mapping && fsp.attractors == 2)
                 {
@@ -2530,8 +2533,10 @@ int calcfroth()   // per pixel 1/2/g, called with row & col set
         g_l_temp_sqr_x = lsqr(g_l_old_z.x);
         g_l_temp_sqr_y = lsqr(g_l_old_z.y);
         g_l_magnitude = g_l_temp_sqr_x + g_l_temp_sqr_y;
-        while (!found_attractor && (g_l_magnitude < g_l_magnitude_limit)
-                && (g_l_magnitude >= 0) && (g_color_iter < g_max_iterations))
+        while (!found_attractor
+            && (g_l_magnitude < g_l_magnitude_limit)
+            && (g_l_magnitude >= 0)
+            && (g_color_iter < g_max_iterations))
         {
             // simple formula: z = z^2 + conj(z*(-1+ai))
             // but it's the attractor that makes this so interesting
@@ -2561,10 +2566,11 @@ int calcfroth()   // per pixel 1/2/g, called with row & col set
             }
 
             if (labs(fsp.fl.l.halfa-g_l_old_z.y) < FROTH_LCLOSE
-                    && g_l_old_z.x > fsp.fl.l.top_x1 && g_l_old_z.x < fsp.fl.l.top_x2)
+                && g_l_old_z.x > fsp.fl.l.top_x1
+                && g_l_old_z.x < fsp.fl.l.top_x2)
             {
                 if ((!fsp.repeat_mapping && fsp.attractors == 2)
-                        || (fsp.repeat_mapping && fsp.attractors == 3))
+                    || (fsp.repeat_mapping && fsp.attractors == 3))
                 {
                     found_attractor = 1;
                 }
@@ -2585,7 +2591,8 @@ int calcfroth()   // per pixel 1/2/g, called with row & col set
                 }
             }
             else if (labs(multiply(FROTH_LSLOPE, g_l_old_z.x, g_bit_shift)-fsp.fl.l.a-g_l_old_z.y) < FROTH_LCLOSE
-                     && g_l_old_z.x <= fsp.fl.l.right_x1 && g_l_old_z.x >= fsp.fl.l.right_x2)
+                && g_l_old_z.x <= fsp.fl.l.right_x1
+                && g_l_old_z.x >= fsp.fl.l.right_x2)
             {
                 if (!fsp.repeat_mapping && fsp.attractors == 2)
                 {

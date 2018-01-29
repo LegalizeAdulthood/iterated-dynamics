@@ -321,9 +321,9 @@ main_state big_while_loop(bool *const kbdmore, bool *const stacked, bool const r
                     g_view_y_dots = g_screen_y_dots;
                     g_logical_screen_y_dots = g_view_y_dots;
                 }
-                else if (((g_logical_screen_x_dots <= 1) // changed test to 1, so a 2x2 window will
-                          || (g_logical_screen_y_dots <= 1)) // work with the sound feature
-                         && !(g_evolving & FIELDMAP))
+                // changed test to 1, so a 2x2 window will work with the sound feature
+                else if (((g_logical_screen_x_dots <= 1) || (g_logical_screen_y_dots <= 1))
+                    && !(g_evolving & FIELDMAP))
                 {
                     // so ssg works
                     // but no check if in evolve mode to allow lots of small views
@@ -478,7 +478,7 @@ main_state big_while_loop(bool *const kbdmore, bool *const stacked, bool const r
         {
             // draw an image
             if (g_init_save_time != 0          // autosave and resumable?
-                    && (g_cur_fractal_specific->flags&NORESUME) == 0)
+                && (g_cur_fractal_specific->flags&NORESUME) == 0)
             {
                 g_save_base = readticker(); // calc's start time
                 g_save_ticks = abs(g_init_save_time);
@@ -712,16 +712,16 @@ resumeloop:                             // return here on failed overlays
                             }
                         }
 #endif
-                        if (kbdchar == '\\' || kbdchar == FIK_CTL_BACKSLASH ||
-                                kbdchar == 'h' || kbdchar == FIK_CTL_H ||
-                                check_vidmode_key(0, kbdchar) >= 0)
+                        if (kbdchar == '\\' || kbdchar == FIK_CTL_BACKSLASH
+                            || kbdchar == 'h' || kbdchar == FIK_CTL_H
+                            || check_vidmode_key(0, kbdchar) >= 0)
                         {
                             driver_discard_screen();
                         }
-                        else if (kbdchar == 'x' || kbdchar == 'y' ||
-                                 kbdchar == 'z' || kbdchar == 'g' ||
-                                 kbdchar == 'v' || kbdchar == FIK_CTL_B ||
-                                 kbdchar == FIK_CTL_E || kbdchar == FIK_CTL_F)
+                        else if (kbdchar == 'x' || kbdchar == 'y'
+                            || kbdchar == 'z' || kbdchar == 'g'
+                            || kbdchar == 'v' || kbdchar == FIK_CTL_B
+                            || kbdchar == FIK_CTL_E || kbdchar == FIK_CTL_F)
                         {
                             fromtext_flag = true;
                         }
@@ -783,9 +783,10 @@ resumeloop:                             // return here on failed overlays
             {
                 mms_value = main_menu_switch(&kbdchar, &frommandel, kbdmore, stacked);
             }
-            if (g_quick_calc && (mms_value == main_state::IMAGE_START ||
-                               mms_value == main_state::RESTORE_START ||
-                               mms_value == main_state::RESTART))
+            if (g_quick_calc
+                && (mms_value == main_state::IMAGE_START
+                    || mms_value == main_state::RESTORE_START
+                    || mms_value == main_state::RESTART))
             {
                 g_quick_calc = false;
                 g_user_std_calc_mode = g_old_std_calc_mode;
@@ -857,7 +858,7 @@ static bool look(bool *stacked)
             // go back one file if somewhere to go (ie. browsing)
             g_filename_stack_index--;
             while (g_file_name_stack[g_filename_stack_index].empty()
-                    && g_filename_stack_index >= 0)
+                && g_filename_stack_index >= 0)
             {
                 g_filename_stack_index--;
             }
@@ -1019,14 +1020,16 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
         {
             g_truecolor = false;          // truecolor doesn't play well with the evolver
         }
-        if (g_max_iterations > old_maxit && g_inside_color >= COLOR_BLACK && g_calc_status == calc_status_value::COMPLETED &&
-                g_cur_fractal_specific->calctype == standard_fractal && !g_log_map_flag &&
-                !g_truecolor &&    // recalc not yet implemented with truecolor
-                !(g_user_std_calc_mode == 't' && g_fill_color > -1) &&
-                // tesseral with fill doesn't work
-                !(g_user_std_calc_mode == 'o') &&
-                i == 1 && // nothing else changed
-                g_outside_color != ATAN)
+        if (g_max_iterations > old_maxit
+            && g_inside_color >= COLOR_BLACK
+            && g_calc_status == calc_status_value::COMPLETED
+            && g_cur_fractal_specific->calctype == standard_fractal
+            && !g_log_map_flag
+            && !g_truecolor     // recalc not yet implemented with truecolor
+            && !(g_user_std_calc_mode == 't' && g_fill_color > -1) // tesseral with fill doesn't work
+            && !(g_user_std_calc_mode == 'o')
+            && i == 1 // nothing else changed
+            && g_outside_color != ATAN)
         {
             g_quick_calc = true;
             g_old_std_calc_mode = g_user_std_calc_mode;
@@ -1178,11 +1181,11 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
     case 'o':
         // must use standard fractal and have a float variant
         if ((g_fractal_specific[static_cast<int>(g_fractal_type)].calctype == standard_fractal
-                || g_fractal_specific[static_cast<int>(g_fractal_type)].calctype == calcfroth) &&
-                (g_fractal_specific[static_cast<int>(g_fractal_type)].isinteger == 0 ||
-                 g_fractal_specific[static_cast<int>(g_fractal_type)].tofloat != fractal_type::NOFRACTAL) &&
-                (bf_math == bf_math_type::NONE) && // for now no arbitrary precision support
-                !(g_is_true_color && g_true_mode != true_color_mode::default_color))
+                || g_fractal_specific[static_cast<int>(g_fractal_type)].calctype == calcfroth)
+            && (g_fractal_specific[static_cast<int>(g_fractal_type)].isinteger == 0 ||
+                 g_fractal_specific[static_cast<int>(g_fractal_type)].tofloat != fractal_type::NOFRACTAL)
+            && (bf_math == bf_math_type::NONE) // for now no arbitrary precision support
+            && !(g_is_true_color && g_true_mode != true_color_mode::default_color))
         {
             clear_zoombox();
             Jiim(jiim_types::ORBIT);
@@ -1217,7 +1220,8 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
                 }
             }
             if (g_cur_fractal_specific->tojulia != fractal_type::NOFRACTAL
-                    && g_params[0] == 0.0 && g_params[1] == 0.0)
+                && g_params[0] == 0.0
+                && g_params[1] == 0.0)
             {
                 // switch to corresponding Julia set
                 int key;
@@ -1347,7 +1351,7 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
             // go back one file if somewhere to go (ie. browsing)
             g_filename_stack_index--;
             while (g_file_name_stack[g_filename_stack_index].empty()
-                    && g_filename_stack_index >= 0)
+                && g_filename_stack_index >= 0)
             {
                 g_filename_stack_index--;
             }
@@ -1386,13 +1390,13 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
             restore_history_info(historyptr);
             g_zoom_off = true;
             g_init_mode = g_adapter;
-            if (g_cur_fractal_specific->isinteger != 0 &&
-                    g_cur_fractal_specific->tofloat != fractal_type::NOFRACTAL)
+            if (g_cur_fractal_specific->isinteger != 0
+                && g_cur_fractal_specific->tofloat != fractal_type::NOFRACTAL)
             {
                 g_user_float_flag = false;
             }
-            if (g_cur_fractal_specific->isinteger == 0 &&
-                    g_cur_fractal_specific->tofloat != fractal_type::NOFRACTAL)
+            if (g_cur_fractal_specific->isinteger == 0
+                && g_cur_fractal_specific->tofloat != fractal_type::NOFRACTAL)
             {
                 g_user_float_flag = true;
             }
@@ -1840,13 +1844,13 @@ static main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdm
             restore_history_info(historyptr);
             g_zoom_off = true;
             g_init_mode = g_adapter;
-            if (g_cur_fractal_specific->isinteger != 0 &&
-                    g_cur_fractal_specific->tofloat != fractal_type::NOFRACTAL)
+            if (g_cur_fractal_specific->isinteger != 0
+                && g_cur_fractal_specific->tofloat != fractal_type::NOFRACTAL)
             {
                 g_user_float_flag = false;
             }
-            if (g_cur_fractal_specific->isinteger == 0 &&
-                    g_cur_fractal_specific->tofloat != fractal_type::NOFRACTAL)
+            if (g_cur_fractal_specific->isinteger == 0
+                && g_cur_fractal_specific->tofloat != fractal_type::NOFRACTAL)
             {
                 g_user_float_flag = true;
             }

@@ -687,8 +687,8 @@ int calcfract()
     g_log_map_calculate = false;
     // below, INT_MAX = 32767 only when an integer is two bytes.  Which is not true for Xfractint.
     // Since 32767 is what was meant, replaced the instances of INT_MAX with 32767.
-    if (g_log_map_flag && (((g_max_iterations > 32767))
-                    || g_log_map_fly_calculate == 1))
+    if (g_log_map_flag
+        && ((g_max_iterations > 32767) || g_log_map_fly_calculate == 1))
     {
         g_log_map_calculate = true; // calculate on the fly
         SetupLogTable();
@@ -863,10 +863,10 @@ int calcfract()
     }
 
     if (g_cur_fractal_specific->calctype != standard_fractal
-            && g_cur_fractal_specific->calctype != calcmand
-            && g_cur_fractal_specific->calctype != calcmandfp
-            && g_cur_fractal_specific->calctype != lyapunov
-            && g_cur_fractal_specific->calctype != calcfroth)
+        && g_cur_fractal_specific->calctype != calcmand
+        && g_cur_fractal_specific->calctype != calcmandfp
+        && g_cur_fractal_specific->calctype != lyapunov
+        && g_cur_fractal_specific->calctype != calcfroth)
     {
         g_calc_type = g_cur_fractal_specific->calctype; // per_image can override
         g_symmetry = g_cur_fractal_specific->symmetry; //   calctype & symmetry
@@ -987,7 +987,6 @@ int find_alternate_math(fractal_type type, bf_math_type math)
     fractal_type curtype;
     while ((curtype = g_alternate_math[++i].type) != type && curtype != fractal_type::NOFRACTAL)
     {
-        ;
     }
     int ret = -1;
     if (curtype == type && g_alternate_math[i].math != bf_math_type::NONE)
@@ -1102,8 +1101,10 @@ static void perform_worklist()
             }
         }
         // must be mandel type, formula, or old PAR/GIF
-        dem_mandel = g_cur_fractal_specific->tojulia != fractal_type::NOFRACTAL || g_use_old_distance_estimator
-                     || g_fractal_type == fractal_type::FORMULA || g_fractal_type == fractal_type::FFORMULA;
+        dem_mandel = g_cur_fractal_specific->tojulia != fractal_type::NOFRACTAL
+            || g_use_old_distance_estimator
+            || g_fractal_type == fractal_type::FORMULA
+            || g_fractal_type == fractal_type::FFORMULA;
         dem_delta = sqr(delxx) + sqr(delyy2);
         ftemp = sqr(delyy) + sqr(delxx2);
         if (ftemp > dem_delta)
@@ -1917,7 +1918,8 @@ int calcmand()              // fast per pixel 1/2/b/g, called with row & col set
     if (calcmandasm() >= 0)
     {
         if ((!g_log_map_table.empty() || g_log_map_calculate) // map color, but not if maxit & adjusted for inside,etc
-                && (g_real_color_iter < g_max_iterations || (g_inside_color < COLOR_BLACK && g_color_iter == g_max_iterations)))
+            && (g_real_color_iter < g_max_iterations
+                || (g_inside_color < COLOR_BLACK && g_color_iter == g_max_iterations)))
         {
             g_color_iter = logtablecalc(g_color_iter);
         }
@@ -1971,7 +1973,8 @@ int calcmandfp()
             g_color_iter = potential(g_magnitude, g_real_color_iter);
         }
         if ((!g_log_map_table.empty() || g_log_map_calculate) // map color, but not if maxit & adjusted for inside,etc
-                && (g_real_color_iter < g_max_iterations || (g_inside_color < COLOR_BLACK && g_color_iter == g_max_iterations)))
+            && (g_real_color_iter < g_max_iterations
+                || (g_inside_color < COLOR_BLACK && g_color_iter == g_max_iterations)))
         {
             g_color_iter = logtablecalc(g_color_iter);
         }
@@ -2262,8 +2265,8 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
                         dem_new = g_new_z;
                     }
                     if (g_magnitude_limit >= DEM_BAILOUT
-                            || g_magnitude >= (g_magnitude_limit = DEM_BAILOUT)
-                            || g_magnitude == 0)
+                        || g_magnitude >= (g_magnitude_limit = DEM_BAILOUT)
+                        || g_magnitude == 0)
                     {
                         break;
                     }
@@ -2277,8 +2280,7 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
         }
 
         // the usual case
-        else if ((g_cur_fractal_specific->orbitcalc() && g_inside_color != STARTRAIL)
-                 || g_overflow)
+        else if ((g_cur_fractal_specific->orbitcalc() && g_inside_color != STARTRAIL) || g_overflow)
         {
             break;
         }
@@ -3428,9 +3430,9 @@ static int bound_trace_main()
             {
                 step_col_row();
                 if (g_row >= currow
-                        && g_col >= g_i_x_start
-                        && g_col <= g_i_x_stop
-                        && g_row <= g_i_y_stop)
+                    && g_col >= g_i_x_start
+                    && g_col <= g_i_x_stop
+                    && g_row <= g_i_y_stop)
                 {
                     // the order of operations in this next line is critical
                     g_color = getcolor(g_col, g_row);
@@ -3493,14 +3495,14 @@ static int bound_trace_main()
                 {
                     step_col_row();
                     if (g_row >= currow
-                            && g_col >= g_i_x_start
-                            && g_col <= g_i_x_stop
-                            && g_row <= g_i_y_stop
-                            && getcolor(g_col, g_row) == trail_color)
+                        && g_col >= g_i_x_start
+                        && g_col <= g_i_x_stop
+                        && g_row <= g_i_y_stop
+                        && getcolor(g_col, g_row) == trail_color)
                         // getcolor() must be last
                     {
                         if (going_to == direction::South
-                                || (going_to == direction::West && coming_from != direction::East))
+                            || (going_to == direction::West && coming_from != direction::East))
                         {
                             // fill a row, but only once
                             right = g_col;
@@ -3617,7 +3619,7 @@ static int solid_guess()
     // check if guessing at bottom & right edges is ok
     bottom_guess = (g_plot == symplot2 || (g_plot == g_put_color && g_i_y_stop+1 == g_logical_screen_y_dots));
     right_guess  = (g_plot == symplot2J
-                    || ((g_plot == g_put_color || g_plot == symplot2) && g_i_x_stop+1 == g_logical_screen_x_dots));
+        || ((g_plot == g_put_color || g_plot == symplot2) && g_i_x_stop+1 == g_logical_screen_x_dots));
 
     // there seems to be a bug in solid guessing at bottom and side
     if (g_debug_flag != debug_flags::force_solid_guess_error)
@@ -3784,7 +3786,7 @@ static int solid_guess()
         }
         ++g_work_pass;
         if (g_num_work_list // work list not empty, do one pass at a time
-                && blocksize > 2) // if 2, we just did last pass
+            && blocksize > 2) // if 2, we just did last pass
         {
             add_worklist(g_xx_start, g_xx_stop, g_xx_start, g_yy_start, g_yy_stop, g_yy_start, g_work_pass, g_work_symmetry);
             goto exit_solidguess;
@@ -3938,21 +3940,20 @@ static bool guessrow(bool firstpass, int y, int blocksize)
         while (true) // go around till none of 23,32,33 change anymore
         {
             if (guessed33 > 0
-                    && (c33 != c44 || c33 != c42 || c33 != c24 || c33 != c32 || c33 != c23))
+                && (c33 != c44 || c33 != c42 || c33 != c24 || c33 != c32 || c33 != c23))
             {
                 calcadot(c33, xplushalf, yplushalf);
                 guessed33 = 0;
             }
             if (guessed32 > 0
-                    && (c32 != c33 || c32 != c42 || c32 != c31 || c32 != c21
-                        || c32 != c41 || c32 != c23))
+                && (c32 != c33 || c32 != c42 || c32 != c31 || c32 != c21 || c32 != c41 || c32 != c23))
             {
                 calcadot(c32, xplushalf, y);
                 guessed32 = 0;
                 continue;
             }
             if (guessed23 > 0
-                    && (c23 != c33 || c23 != c24 || c23 != c13 || c23 != c12 || c23 != c32))
+                && (c23 != c33 || c23 != c24 || c23 != c13 || c23 != c12 || c23 != c32))
             {
                 calcadot(c23, x, yplushalf);
                 guessed23 = 0;
@@ -4012,17 +4013,17 @@ static bool guessrow(bool firstpass, int y, int blocksize)
 
         // check if some calcs in this block mean earlier guesses need fixing
         fix21 = ((c22 != c12 || c22 != c32)
-                 && c21 == c22 && c21 == c31 && c21 == prev11
-                 && y > 0
-                 && (x == g_i_x_start || c21 == getcolor(x-halfblock, ylessblock))
-                 && (xplushalf > g_i_x_stop || c21 == getcolor(xplushalf, ylessblock))
-                 && c21 == getcolor(x, ylessblock));
+            && c21 == c22 && c21 == c31 && c21 == prev11
+            && y > 0
+            && (x == g_i_x_start || c21 == getcolor(x-halfblock, ylessblock))
+            && (xplushalf > g_i_x_stop || c21 == getcolor(xplushalf, ylessblock))
+            && c21 == getcolor(x, ylessblock));
         fix31 = (c22 != c32
-                 && c31 == c22 && c31 == c42 && c31 == c21 && c31 == c41
-                 && y > 0 && xplushalf <= g_i_x_stop
-                 && c31 == getcolor(xplushalf, ylessblock)
-                 && (xplusblock > g_i_x_stop || c31 == getcolor(xplusblock, ylessblock))
-                 && c31 == getcolor(x, ylessblock));
+            && c31 == c22 && c31 == c42 && c31 == c21 && c31 == c41
+            && y > 0 && xplushalf <= g_i_x_stop
+            && c31 == getcolor(xplushalf, ylessblock)
+            && (xplusblock > g_i_x_stop || c31 == getcolor(xplusblock, ylessblock))
+            && c31 == getcolor(x, ylessblock));
         prev11 = c31; // for next time around
         if (fix21)
         {
@@ -4317,15 +4318,15 @@ static void setsymmetry(symmetry_type sym, bool uselist) // set up proper symmet
         }
     }
     if ((g_potential_flag && g_potential_16bit) || ((g_invert != 0) && g_inversion[2] != 0.0)
-            || g_decomp[0] != 0
-            || g_x_min != g_x_3rd || g_y_min != g_y_3rd)
+        || g_decomp[0] != 0
+        || g_x_min != g_x_3rd || g_y_min != g_y_3rd)
     {
         return;
     }
     if (sym != symmetry_type::X_AXIS
-            && sym != symmetry_type::X_AXIS_NO_PARAM
-            && g_inversion[1] != 0.0
-            && g_force_symmetry == symmetry_type::NOT_FORCED)
+        && sym != symmetry_type::X_AXIS_NO_PARAM
+        && g_inversion[1] != 0.0
+        && g_force_symmetry == symmetry_type::NOT_FORCED)
     {
         return;
     }
@@ -4337,8 +4338,13 @@ static void setsymmetry(symmetry_type sym, bool uselist) // set up proper symmet
     {
         g_force_symmetry = sym;  // for backwards compatibility
     }
-    else if (g_outside_color == REAL || g_outside_color == IMAG || g_outside_color == MULT || g_outside_color == SUM
-             || g_outside_color == ATAN || g_bail_out_test == bailouts::Manr || g_outside_color == FMOD)
+    else if (g_outside_color == REAL
+        || g_outside_color == IMAG
+        || g_outside_color == MULT
+        || g_outside_color == SUM
+        || g_outside_color == ATAN
+        || g_bail_out_test == bailouts::Manr
+        || g_outside_color == FMOD)
     {
         return;
     }
@@ -4366,13 +4372,13 @@ static void setsymmetry(symmetry_type sym, bool uselist) // set up proper symmet
     case fractal_type::FORMULA:  // Check P2, P3, P4 and P5
     case fractal_type::FFORMULA:
         parmszero = (parmszero && g_params[2] == 0.0 && g_params[3] == 0.0
-                     && g_params[4] == 0.0 && g_params[5] == 0.0
-                     && g_params[6] == 0.0 && g_params[7] == 0.0
-                     && g_params[8] == 0.0 && g_params[9] == 0.0);
+            && g_params[4] == 0.0 && g_params[5] == 0.0
+            && g_params[6] == 0.0 && g_params[7] == 0.0
+            && g_params[8] == 0.0 && g_params[9] == 0.0);
         parmsnoreal = (parmsnoreal && g_params[2] == 0.0 && g_params[4] == 0.0
-                       && g_params[6] == 0.0 && g_params[8] == 0.0);
+            && g_params[6] == 0.0 && g_params[8] == 0.0);
         parmsnoimag = (parmsnoimag && g_params[3] == 0.0 && g_params[5] == 0.0
-                       && g_params[7] == 0.0 && g_params[9] == 0.0);
+            && g_params[7] == 0.0 && g_params[9] == 0.0);
         break;
     default:   // Check P2 for the rest
         parmszero = (parmszero && g_param_z2.x == 0.0 && g_param_z2.y == 0.0);
@@ -4529,7 +4535,7 @@ xsym:
     case symmetry_type::ORIGIN:                      // Origin Symmetry
 originsym:
         if (!xsym_split(xaxis_row, xaxis_between)
-                && !ysym_split(yaxis_col, yaxis_between))
+            && !ysym_split(yaxis_col, yaxis_between))
         {
             g_plot = symplot2J;
             g_i_x_stop = g_xx_stop; // didn't want this changed
@@ -4568,7 +4574,7 @@ originsym:
         g_plot = symPIplot ;
         g_symmetry = symmetry_type::NONE;
         if (!xsym_split(xaxis_row, xaxis_between)
-                && !ysym_split(yaxis_col, yaxis_between))
+            && !ysym_split(yaxis_col, yaxis_between))
         {
             if (g_param_z1.y == 0.0)
             {
@@ -5156,7 +5162,7 @@ void symPIplot2J(int x, int y, int color)
         g_put_color(x, y, color) ;
         i = g_yy_stop-(y-g_yy_start);
         if (i > g_i_y_stop && i < g_logical_screen_y_dots
-                && (j = g_xx_stop-(x-g_xx_start)) < g_logical_screen_x_dots)
+            && (j = g_xx_stop-(x-g_xx_start)) < g_logical_screen_x_dots)
         {
             g_put_color(j, i, color) ;
         }
@@ -5219,7 +5225,7 @@ void symplot2J(int x, int y, int color)
     g_put_color(x, y, color) ;
     i = g_yy_stop-(y-g_yy_start);
     if (i > g_i_y_stop && i < g_logical_screen_y_dots
-            && (j = g_xx_stop-(x-g_xx_start)) < g_logical_screen_x_dots)
+        && (j = g_xx_stop-(x-g_xx_start)) < g_logical_screen_x_dots)
     {
         g_put_color(j, i, color) ;
     }

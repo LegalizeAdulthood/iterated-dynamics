@@ -228,28 +228,32 @@ void calcfracinit() // initialize a *pile* of stuff for fractal calculation
             init_bf_dec(gotprec);
         }
     }
-    else if ((g_fractal_type == fractal_type::MANDEL || g_fractal_type == fractal_type::MANDELFP) && g_debug_flag == debug_flags::force_arbitrary_precision_math)
+    else if ((g_fractal_type == fractal_type::MANDEL || g_fractal_type == fractal_type::MANDELFP)
+        && g_debug_flag == debug_flags::force_arbitrary_precision_math)
     {
         g_fractal_type = fractal_type::MANDELFP;
         g_cur_fractal_specific = &g_fractal_specific[static_cast<int>(fractal_type::MANDELFP)];
         fractal_floattobf();
         g_user_float_flag = true;
     }
-    else if ((g_fractal_type == fractal_type::JULIA || g_fractal_type == fractal_type::JULIAFP) && g_debug_flag == debug_flags::force_arbitrary_precision_math)
+    else if ((g_fractal_type == fractal_type::JULIA || g_fractal_type == fractal_type::JULIAFP)
+        && g_debug_flag == debug_flags::force_arbitrary_precision_math)
     {
         g_fractal_type = fractal_type::JULIAFP;
         g_cur_fractal_specific = &g_fractal_specific[static_cast<int>(fractal_type::JULIAFP)];
         fractal_floattobf();
         g_user_float_flag = true;
     }
-    else if ((g_fractal_type == fractal_type::LMANDELZPOWER || g_fractal_type == fractal_type::FPMANDELZPOWER) && g_debug_flag == debug_flags::force_arbitrary_precision_math)
+    else if ((g_fractal_type == fractal_type::LMANDELZPOWER || g_fractal_type == fractal_type::FPMANDELZPOWER)
+        && g_debug_flag == debug_flags::force_arbitrary_precision_math)
     {
         g_fractal_type = fractal_type::FPMANDELZPOWER;
         g_cur_fractal_specific = &g_fractal_specific[static_cast<int>(fractal_type::FPMANDELZPOWER)];
         fractal_floattobf();
         g_user_float_flag = true;
     }
-    else if ((g_fractal_type == fractal_type::LJULIAZPOWER || g_fractal_type == fractal_type::FPJULIAZPOWER) && g_debug_flag == debug_flags::force_arbitrary_precision_math)
+    else if ((g_fractal_type == fractal_type::LJULIAZPOWER || g_fractal_type == fractal_type::FPJULIAZPOWER)
+        && g_debug_flag == debug_flags::force_arbitrary_precision_math)
     {
         g_fractal_type = fractal_type::FPJULIAZPOWER;
         g_cur_fractal_specific = &g_fractal_specific[static_cast<int>(fractal_type::FPJULIAZPOWER)];
@@ -308,10 +312,10 @@ init_restart:
 
     g_potential_flag = false;
     if (g_potential_params[0] != 0.0
-            && g_colors >= 64
-            && (g_cur_fractal_specific->calctype == standard_fractal
-                || g_cur_fractal_specific->calctype == calcmand
-                || g_cur_fractal_specific->calctype == calcmandfp))
+        && g_colors >= 64
+        && (g_cur_fractal_specific->calctype == standard_fractal
+            || g_cur_fractal_specific->calctype == calcmand
+            || g_cur_fractal_specific->calctype == calcmandfp))
     {
         g_potential_flag = true;
         g_user_distance_estimator_value = 0;
@@ -327,7 +331,7 @@ init_restart:
     {
         // ensure type matches floatflag
         if (g_cur_fractal_specific->isinteger != 0
-                && g_cur_fractal_specific->tofloat != fractal_type::NOFRACTAL)
+            && g_cur_fractal_specific->tofloat != fractal_type::NOFRACTAL)
         {
             g_fractal_type = g_cur_fractal_specific->tofloat;
         }
@@ -335,7 +339,7 @@ init_restart:
     else
     {
         if (g_cur_fractal_specific->isinteger == 0
-                && g_cur_fractal_specific->tofloat != fractal_type::NOFRACTAL)
+            && g_cur_fractal_specific->tofloat != fractal_type::NOFRACTAL)
         {
             g_fractal_type = g_cur_fractal_specific->tofloat;
         }
@@ -440,15 +444,15 @@ init_restart:
     {
         // adjust shift bits if..
         if (!g_potential_flag                                    // not using potential
-                && (g_params[0] > -2.0 && g_params[0] < 2.0)  // parameters not too large
-                && (g_params[1] > -2.0 && g_params[1] < 2.0)
-                && (g_invert == 0)                        // and not inverting
-                && g_biomorph == -1                     // and not biomorphing
-                && g_magnitude_limit <= 4.0                         // and bailout not too high
-                && (g_outside_color > REAL || g_outside_color < ATAN)   // and no funny outside stuff
-                && g_debug_flag != debug_flags::force_smaller_bitshift // and not debugging
-                && g_close_proximity <= 2.0             // and g_close_proximity not too large
-                && g_bail_out_test == bailouts::Mod)    // and bailout test = mod
+            && (g_params[0] > -2.0 && g_params[0] < 2.0)  // parameters not too large
+            && (g_params[1] > -2.0 && g_params[1] < 2.0)
+            && (g_invert == 0)                        // and not inverting
+            && g_biomorph == -1                     // and not biomorphing
+            && g_magnitude_limit <= 4.0                         // and bailout not too high
+            && (g_outside_color > REAL || g_outside_color < ATAN)   // and no funny outside stuff
+            && g_debug_flag != debug_flags::force_smaller_bitshift // and not debugging
+            && g_close_proximity <= 2.0             // and g_close_proximity not too large
+            && g_bail_out_test == bailouts::Mod)    // and bailout test = mod
         {
             g_bit_shift = FUDGEFACTOR;                     // use the larger bitshift
         }
@@ -492,15 +496,18 @@ init_restart:
     // skip if bf_math to avoid extraseg conflict with dx0 arrays
     // skip if ifs, ifs3d, or lsystem to avoid crash when mathtolerance
     // is set.  These types don't auto switch between float and integer math
-    if (g_fractal_type != fractal_type::PLASMA && bf_math == bf_math_type::NONE
-            && g_fractal_type != fractal_type::IFS && g_fractal_type != fractal_type::IFS3D && g_fractal_type != fractal_type::LSYSTEM)
+    if (g_fractal_type != fractal_type::PLASMA
+        && bf_math == bf_math_type::NONE
+        && g_fractal_type != fractal_type::IFS
+        && g_fractal_type != fractal_type::IFS3D
+        && g_fractal_type != fractal_type::LSYSTEM)
     {
         if (g_integer_fractal && (g_invert == 0) && g_use_grid)
         {
             if ((g_l_delta_x  == 0 && g_delta_x  != 0.0)
-                    || (g_l_delta_x2 == 0 && g_delta_x2 != 0.0)
-                    || (g_l_delta_y  == 0 && g_delta_y  != 0.0)
-                    || (g_l_delta_y2 == 0 && g_delta_y2 != 0.0))
+                || (g_l_delta_x2 == 0 && g_delta_x2 != 0.0)
+                || (g_l_delta_y  == 0 && g_delta_y  != 0.0)
+                || (g_l_delta_y2 == 0 && g_delta_y2 != 0.0))
             {
                 goto expand_retry;
             }
@@ -508,13 +515,13 @@ init_restart:
             fill_lx_array();   // fill up the x,y grids
             // past max res?  check corners within 10% of expected
             if (ratio_bad((double)g_l_x0[g_logical_screen_x_dots-1]-g_l_x_min, (double)g_l_x_max-g_l_x_3rd)
-                    || ratio_bad((double)g_l_y0[g_logical_screen_y_dots-1]-g_l_y_max, (double)g_l_y_3rd-g_l_y_max)
-                    || ratio_bad((double)g_l_x1[(g_logical_screen_y_dots >> 1)-1], ((double)g_l_x_3rd-g_l_x_min)/2)
-                    || ratio_bad((double)g_l_y1[(g_logical_screen_x_dots >> 1)-1], ((double)g_l_y_min-g_l_y_3rd)/2))
+                || ratio_bad((double)g_l_y0[g_logical_screen_y_dots-1]-g_l_y_max, (double)g_l_y_3rd-g_l_y_max)
+                || ratio_bad((double)g_l_x1[(g_logical_screen_y_dots >> 1)-1], ((double)g_l_x_3rd-g_l_x_min)/2)
+                || ratio_bad((double)g_l_y1[(g_logical_screen_x_dots >> 1)-1], ((double)g_l_y_min-g_l_y_3rd)/2))
             {
 expand_retry:
                 if (g_integer_fractal          // integer fractal type?
-                        && g_cur_fractal_specific->tofloat != fractal_type::NOFRACTAL)
+                    && g_cur_fractal_specific->tofloat != fractal_type::NOFRACTAL)
                 {
                     g_float_flag = true;       // switch to floating pt
                 }
@@ -608,8 +615,8 @@ expand_retry:
                         testy_exact = g_y_min-g_y_3rd;
                         testy_try   = dy1;
                     }
-                    if (ratio_bad(testx_try, testx_exact) ||
-                            ratio_bad(testy_try, testy_exact))
+                    if (ratio_bad(testx_try, testx_exact)
+                        || ratio_bad(testy_try, testy_exact))
                     {
                         if (g_cur_fractal_specific->flags & BF_MATH)
                         {
@@ -733,7 +740,7 @@ void adjust_cornerbf()
     {
         // if (ftemp*10000 < ftemp2 && yy3rd != yymax)
         if (cmp_bf(mult_bf_int(btmp1, bftemp, 10000), bftemp2) < 0
-                && cmp_bf(g_bf_y_3rd, g_bf_y_max) != 0)
+            && cmp_bf(g_bf_y_3rd, g_bf_y_max) != 0)
         {
             // xx3rd = xxmin;
             copy_bf(g_bf_x_3rd, g_bf_x_min);
@@ -742,7 +749,7 @@ void adjust_cornerbf()
 
     // else if (ftemp2*10000 < ftemp && yy3rd != yymin)
     if (cmp_bf(mult_bf_int(btmp1, bftemp2, 10000), bftemp) < 0
-            && cmp_bf(g_bf_y_3rd, g_bf_y_min) != 0)
+        && cmp_bf(g_bf_y_3rd, g_bf_y_min) != 0)
     {
         // xx3rd = xxmax;
         copy_bf(g_bf_x_3rd, g_bf_x_max);
@@ -759,7 +766,7 @@ void adjust_cornerbf()
     {
         // if (ftemp*10000 < ftemp2 && xx3rd != xxmax)
         if (cmp_bf(mult_bf_int(btmp1, bftemp, 10000), bftemp2) < 0
-                && cmp_bf(g_bf_x_3rd, g_bf_x_max) != 0)
+            && cmp_bf(g_bf_x_3rd, g_bf_x_max) != 0)
         {
             // yy3rd = yymin;
             copy_bf(g_bf_y_3rd, g_bf_y_min);
@@ -768,7 +775,7 @@ void adjust_cornerbf()
 
     // else if (ftemp2*10000 < ftemp && xx3rd != xxmin)
     if (cmp_bf(mult_bf_int(btmp1, bftemp2, 10000), bftemp) < 0
-            && cmp_bf(g_bf_x_3rd, g_bf_x_min) != 0)
+        && cmp_bf(g_bf_x_3rd, g_bf_x_min) != 0)
     {
         // yy3rd = yymax;
         copy_bf(g_bf_y_3rd, g_bf_y_max);
@@ -1025,32 +1032,32 @@ static void adjust_to_limitsbf(double expand)
     {
         /* if (cornerx[i] > limit && (ftemp = cornerx[i] - limit) > adjx)
            adjx = ftemp; */
-        if (cmp_bf(bcornerx[i], blimit) > 0 &&
-                cmp_bf(sub_bf(bftemp, bcornerx[i], blimit), badjx) > 0)
+        if (cmp_bf(bcornerx[i], blimit) > 0
+            && cmp_bf(sub_bf(bftemp, bcornerx[i], blimit), badjx) > 0)
         {
             copy_bf(badjx, bftemp);
         }
 
         /* if (cornerx[i] < 0.0-limit && (ftemp = cornerx[i] + limit) < adjx)
            adjx = ftemp; */
-        if (cmp_bf(bcornerx[i], neg_bf(btmp1, blimit)) < 0 &&
-                cmp_bf(add_bf(bftemp, bcornerx[i], blimit), badjx) < 0)
+        if (cmp_bf(bcornerx[i], neg_bf(btmp1, blimit)) < 0
+            && cmp_bf(add_bf(bftemp, bcornerx[i], blimit), badjx) < 0)
         {
             copy_bf(badjx, bftemp);
         }
 
         /* if (cornery[i] > limit  && (ftemp = cornery[i] - limit) > adjy)
            adjy = ftemp; */
-        if (cmp_bf(bcornery[i], blimit) > 0 &&
-                cmp_bf(sub_bf(bftemp, bcornery[i], blimit), badjy) > 0)
+        if (cmp_bf(bcornery[i], blimit) > 0
+            && cmp_bf(sub_bf(bftemp, bcornery[i], blimit), badjy) > 0)
         {
             copy_bf(badjy, bftemp);
         }
 
         /* if (cornery[i] < 0.0-limit && (ftemp = cornery[i] + limit) < adjy)
            adjy = ftemp; */
-        if (cmp_bf(bcornery[i], neg_bf(btmp1, blimit)) < 0 &&
-                cmp_bf(add_bf(bftemp, bcornery[i], blimit), badjy) < 0)
+        if (cmp_bf(bcornery[i], neg_bf(btmp1, blimit)) < 0
+            && cmp_bf(add_bf(bftemp, bcornery[i], blimit), badjy) < 0)
         {
             copy_bf(badjy, bftemp);
         }
@@ -1058,7 +1065,9 @@ static void adjust_to_limitsbf(double expand)
 
     /* if (g_calc_status == calc_status_value::RESUMABLE && (adjx != 0 || adjy != 0) && (zoom_box_width == 1.0))
        g_calc_status = calc_status_value::PARAMS_CHANGED; */
-    if (g_calc_status == calc_status_value::RESUMABLE && (is_bf_not_zero(badjx)|| is_bf_not_zero(badjy)) && (g_zoom_box_width == 1.0))
+    if (g_calc_status == calc_status_value::RESUMABLE
+        && (is_bf_not_zero(badjx)|| is_bf_not_zero(badjy))
+        && (g_zoom_box_width == 1.0))
     {
         g_calc_status = calc_status_value::PARAMS_CHANGED;
     }
@@ -1789,13 +1798,13 @@ static int combine_worklist() // look for 2 entries which can freely merge
             for (int j = i+1; j < g_num_work_list; ++j)
             {
                 if (g_work_list[j].sym == g_work_list[i].sym
-                        && g_work_list[j].yystart == g_work_list[j].yybegin
-                        && g_work_list[j].xxstart == g_work_list[j].xxbegin
-                        && g_work_list[i].pass == g_work_list[j].pass)
+                    && g_work_list[j].yystart == g_work_list[j].yybegin
+                    && g_work_list[j].xxstart == g_work_list[j].xxbegin
+                    && g_work_list[i].pass == g_work_list[j].pass)
                 {
                     if (g_work_list[i].xxstart == g_work_list[j].xxstart
-                            && g_work_list[i].xxbegin == g_work_list[j].xxbegin
-                            && g_work_list[i].xxstop  == g_work_list[j].xxstop)
+                        && g_work_list[i].xxbegin == g_work_list[j].xxbegin
+                        && g_work_list[i].xxstop  == g_work_list[j].xxstop)
                     {
                         if (g_work_list[i].yystop+1 == g_work_list[j].yystart)
                         {
@@ -1810,8 +1819,8 @@ static int combine_worklist() // look for 2 entries which can freely merge
                         }
                     }
                     if (g_work_list[i].yystart == g_work_list[j].yystart
-                            && g_work_list[i].yybegin == g_work_list[j].yybegin
-                            && g_work_list[i].yystop  == g_work_list[j].yystop)
+                        && g_work_list[i].yybegin == g_work_list[j].yybegin
+                        && g_work_list[i].yystop  == g_work_list[j].yystop)
                     {
                         if (g_work_list[i].xxstop+1 == g_work_list[j].xxstart)
                         {
@@ -1852,10 +1861,10 @@ void tidy_worklist()
         for (int j = i+1; j < g_num_work_list; ++j)
         {
             if (g_work_list[j].pass < g_work_list[i].pass
-                    || (g_work_list[j].pass == g_work_list[i].pass
-                        && (g_work_list[j].yystart < g_work_list[i].yystart
-                            || (g_work_list[j].yystart == g_work_list[i].yystart
-                                && g_work_list[j].xxstart <  g_work_list[i].xxstart))))
+                || (g_work_list[j].pass == g_work_list[i].pass
+                    && (g_work_list[j].yystart < g_work_list[i].yystart
+                        || (g_work_list[j].yystart == g_work_list[i].yystart
+                            && g_work_list[j].xxstart <  g_work_list[i].xxstart))))
             {
                 // dumb sort, swap 2 entries to correct order
                 WORKLIST tempwork = g_work_list[i];
@@ -1934,7 +1943,7 @@ void get_julia_attractor(double real, double imag)
                 if (g_integer_fractal)   //   found a finite attractor
                 {
                     if (labs(lresult.x-g_l_new_z.x) < g_l_close_enough
-                            && labs(lresult.y-g_l_new_z.y) < g_l_close_enough)
+                        && labs(lresult.y-g_l_new_z.y) < g_l_close_enough)
                     {
                         g_l_attractor[g_attractors] = g_l_new_z;
                         g_attractor_period[g_attractors] = i+1;
@@ -1945,7 +1954,7 @@ void get_julia_attractor(double real, double imag)
                 else
                 {
                     if (fabs(result.x-g_new_z.x) < g_close_enough
-                            && fabs(result.y-g_new_z.y) < g_close_enough)
+                        && fabs(result.y-g_new_z.y) < g_close_enough)
                     {
                         g_attractor[g_attractors] = g_new_z;
                         g_attractor_period[g_attractors] = i+1;

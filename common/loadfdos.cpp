@@ -150,9 +150,9 @@ std::string heading_detail(FRACTAL_INFO const *info, ext_blk_3 const *blk_3_info
             nameptr = "3D Transform";
         }
         result << "Type: " << nameptr;
-        if ((!strcmp(nameptr, "formula")) ||
-                (!strcmp(nameptr, "lsystem")) ||
-                (!strncmp(nameptr, "ifs", 3))) // for ifs and ifs3d
+        if ((!strcmp(nameptr, "formula"))
+            || (!strcmp(nameptr, "lsystem"))
+            || (!strncmp(nameptr, "ifs", 3))) // for ifs and ifs3d
         {
             result << " -> " << blk_3_info->form_name;
         }
@@ -188,8 +188,9 @@ int get_video_mode(FRACTAL_INFO *info, ext_blk_3 *blk_3_info)
     for (int i = 0; i < g_video_table_len; ++i)
     {
         VIDEOINFO *vident = &g_video_table[i];
-        if (info->xdots == vident->xdots && info->ydots == vident->ydots
-                && g_file_colors == vident->colors)
+        if (info->xdots == vident->xdots
+            && info->ydots == vident->ydots
+            && g_file_colors == vident->colors)
         {
             g_init_mode = i;
             break;
@@ -207,8 +208,9 @@ int get_video_mode(FRACTAL_INFO *info, ext_blk_3 *blk_3_info)
         for (int i = 0; i < g_video_table_len; ++i)
         {
             VIDEOINFO *vident = &g_video_table[i];
-            if (info->xdots == vident->xdots && info->ydots == vident->ydots
-                    && g_file_colors == vident->colors)
+            if (info->xdots == vident->xdots
+                && info->ydots == vident->ydots
+                && g_file_colors == vident->colors)
             {
                 g_init_mode = i;
                 break;
@@ -257,8 +259,8 @@ int get_video_mode(FRACTAL_INFO *info, ext_blk_3 *blk_3_info)
         if (g_file_aspect_ratio != 0 && (tmpflags & VI_VSMALL) == 0)
         {
             ftemp = vid_aspect(g_file_x_dots, g_file_y_dots);
-            if (ftemp < g_file_aspect_ratio * 0.98 ||
-                    ftemp > g_file_aspect_ratio * 1.02)
+            if (ftemp < g_file_aspect_ratio * 0.98
+                || ftemp > g_file_aspect_ratio * 1.02)
             {
                 tmpflags |= VI_ASPECT;
             }
@@ -383,8 +385,9 @@ int get_video_mode(FRACTAL_INFO *info, ext_blk_3 *blk_3_info)
     memcpy((char *)&g_video_entry, (char *)&g_video_table[g_init_mode],
            sizeof(g_video_entry));
 
-    if (g_view_window &&
-            g_file_x_dots == g_video_entry.xdots && g_file_y_dots == g_video_entry.ydots)
+    if (g_view_window
+        && g_file_x_dots == g_video_entry.xdots
+        && g_file_y_dots == g_video_entry.ydots)
     {
         // pull image into a view window
         if (g_calc_status != calc_status_value::COMPLETED) // if not complete
@@ -439,8 +442,8 @@ int get_video_mode(FRACTAL_INFO *info, ext_blk_3 *blk_3_info)
                     break; // already reduced x, don't reduce y
                 }
                 double const ftemp2 = vid_aspect(tmpxdots, (g_file_y_dots+g_skip_y_dots)/(g_skip_y_dots+1));
-                if (ftemp2 < g_file_aspect_ratio &&
-                        ftemp/g_file_aspect_ratio *0.9 <= g_file_aspect_ratio/ftemp2)
+                if (ftemp2 < g_file_aspect_ratio
+                    && ftemp/g_file_aspect_ratio *0.9 <= g_file_aspect_ratio/ftemp2)
                 {
                     break; // further y reduction is worse
                 }
@@ -454,8 +457,8 @@ int get_video_mode(FRACTAL_INFO *info, ext_blk_3 *blk_3_info)
                     break; // already reduced y, don't reduce x
                 }
                 double const ftemp2 = vid_aspect((g_file_x_dots+g_skip_x_dots)/(g_skip_x_dots+1), tmpydots);
-                if (ftemp2 > g_file_aspect_ratio &&
-                        g_file_aspect_ratio/ftemp *0.9 <= ftemp2/g_file_aspect_ratio)
+                if (ftemp2 > g_file_aspect_ratio
+                    && g_file_aspect_ratio/ftemp *0.9 <= ftemp2/g_file_aspect_ratio)
                 {
                     break; // further x reduction is worse
                 }
@@ -475,7 +478,7 @@ int get_video_mode(FRACTAL_INFO *info, ext_blk_3 *blk_3_info)
         g_final_aspect_ratio = (float)vid_aspect(g_file_x_dots, g_file_y_dots);
     }
     if (g_final_aspect_ratio >= g_screen_aspect-0.02
-            && g_final_aspect_ratio <= g_screen_aspect+0.02)
+        && g_final_aspect_ratio <= g_screen_aspect+0.02)
     {
         g_final_aspect_ratio = g_screen_aspect;
     }
@@ -522,8 +525,10 @@ int get_video_mode(FRACTAL_INFO *info, ext_blk_3 *blk_3_info)
             g_view_reduction = tmpreduce; // ok, this works
         }
     }
-    if (!g_make_parameter_file && !g_fast_restore && (g_init_batch == batch_modes::NONE) &&
-            (fabs(g_final_aspect_ratio - g_screen_aspect) > .00001 || g_view_x_dots != 0))
+    if (!g_make_parameter_file
+        && !g_fast_restore
+        && (g_init_batch == batch_modes::NONE)
+        && (fabs(g_final_aspect_ratio - g_screen_aspect) > .00001 || g_view_x_dots != 0))
     {
         stopmsg(STOPMSG_NO_BUZZER,
                 "Warning: <V>iew parameters are being set to non-standard values.\n"

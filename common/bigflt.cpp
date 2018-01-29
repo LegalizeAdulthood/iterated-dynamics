@@ -585,7 +585,7 @@ bf_t unsafe_sqrt_bf(bf_t r, bf_t n)
             if (comp < 8)
             {
                 if (comp < 4  // perfect or near perfect match
-                        || almost_match == 1)   // close enough for 2nd time
+                    || almost_match == 1)   // close enough for 2nd time
                 {
                     break;
                 }
@@ -1047,7 +1047,7 @@ bf_t unsafe_atan_bf(bf_t r, bf_t n)
                 printf("atan() loop comp=%i\n", comp);
 #endif
                 if (comp < 4  // perfect or near perfect match
-                        || almost_match == 1)   // close enough for 2nd time
+                    || almost_match == 1)   // close enough for 2nd time
                 {
                     break;
                 }

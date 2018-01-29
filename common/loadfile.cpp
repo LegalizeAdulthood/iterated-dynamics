@@ -170,8 +170,10 @@ int read_overlay()      // read overlay/3D files, if reqr'd
         g_read_filename += ".gif";
     }
 
-    if (find_fractal_info(g_read_filename.c_str(), &read_info, &blk_2_info, &blk_3_info,
-                          &blk_4_info, &blk_5_info, &blk_6_info, &blk_7_info))
+    if (find_fractal_info(
+        g_read_filename.c_str(),
+        &read_info, &blk_2_info, &blk_3_info,
+        &blk_4_info, &blk_5_info, &blk_6_info, &blk_7_info))
     {
         // didn't find a useable file
         sprintf(msg, "Sorry, %s isn't a file I can decode.", g_read_filename.c_str());
@@ -230,8 +232,9 @@ int read_overlay()      // read overlay/3D files, if reqr'd
     if (read_info.version > 1)
     {
         if ((g_display_3d == display_3d_modes::NONE)
-                && (read_info.version <= 4 || read_info.display_3d > 0
-                    || (g_cur_fractal_specific->flags & PARMS3D)))
+            && (read_info.version <= 4
+                || read_info.display_3d > 0
+                || (g_cur_fractal_specific->flags & PARMS3D) != 0))
         {
             for (int i = 0; i < 16; i++)
             {
@@ -396,8 +399,11 @@ int read_overlay()      // read overlay/3D files, if reqr'd
     {
         /* forcesymmetry==1000 means we want to force symmetry but don't
             know which symmetry yet, will find out in setsymmetry() */
-        if (g_outside_color == REAL || g_outside_color == IMAG || g_outside_color == MULT || g_outside_color == SUM
-                || g_outside_color == ATAN)
+        if (g_outside_color == REAL
+            || g_outside_color == IMAG
+            || g_outside_color == MULT
+            || g_outside_color == SUM
+            || g_outside_color == ATAN)
         {
             if (g_force_symmetry == symmetry_type::NOT_FORCED)
             {
@@ -607,7 +613,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
             blk_6_info.ecount = blk_6_info.mutate[NUM_GENES - 4];
         }
         if (blk_6_info.ecount != blk_6_info.image_grid_size *blk_6_info.image_grid_size
-                && g_calc_status != calc_status_value::COMPLETED)
+            && g_calc_status != calc_status_value::COMPLETED)
         {
             g_calc_status = calc_status_value::RESUMABLE;
             g_evolve_info.x_parameter_range = blk_6_info.x_parameter_range;
@@ -764,7 +770,7 @@ static int find_fractal_info(char const *gif_file, FRACTAL_INFO *info,
         g_file_aspect_ratio = (float)((64.0 / ((double)(gifstart[12]) + 15.0))
                                   * (double)g_file_y_dots / (double)g_file_x_dots);
         if (g_file_aspect_ratio > g_screen_aspect-0.03
-                && g_file_aspect_ratio < g_screen_aspect+0.03)
+            && g_file_aspect_ratio < g_screen_aspect+0.03)
         {
             g_file_aspect_ratio = g_screen_aspect;
         }
@@ -882,8 +888,8 @@ static int find_fractal_info(char const *gif_file, FRACTAL_INFO *info,
             while (scan_extend)
             {
                 if (fgetc(fp) != '!' // if not what we expect just give up
-                        || fread(temp1, 1, 13, fp) != 13
-                        || strncmp(&temp1[2], "fractint", 8))
+                    || fread(temp1, 1, 13, fp) != 13
+                    || strncmp(&temp1[2], "fractint", 8))
                 {
                     break;
                 }
@@ -1452,14 +1458,12 @@ rescan:  // entry for changed browse parms
         ext_blk_6 blk_6_info;
         ext_blk_7 blk_7_info;
         if (!find_fractal_info(tmpmask, &read_info, &blk_2_info, &blk_3_info,
-                               &blk_4_info, &blk_5_info, &blk_6_info,
-                               &blk_7_info) &&
-                (typeOK(&read_info, &blk_3_info) || !g_browse_check_fractal_type) &&
-                (paramsOK(&read_info) || !g_browse_check_fractal_params) &&
-                stricmp(g_browse_name.c_str(), DTA.filename) &&
-                !blk_6_info.got_data &&
-                is_visible_window(&winlist, &read_info, &blk_5_info)
-           )
+                &blk_4_info, &blk_5_info, &blk_6_info, &blk_7_info)
+            && (typeOK(&read_info, &blk_3_info) || !g_browse_check_fractal_type)
+            && (paramsOK(&read_info) || !g_browse_check_fractal_params)
+            && stricmp(g_browse_name.c_str(), DTA.filename)
+            && !blk_6_info.got_data
+            && is_visible_window(&winlist, &read_info, &blk_5_info))
         {
             strcpy(winlist.name, DTA.filename);
             drawindow(color_of_box, &winlist);
@@ -2013,19 +2017,23 @@ bool is_visible_window(
     }
 
     // now see how many corners are on the screen, accept if one or more
-    if (tl.x >= (0-g_logical_screen_x_offset) && tl.x <= (g_screen_x_dots-g_logical_screen_x_offset) && tl.y >= (0-g_logical_screen_y_offset) && tl.y <= (g_screen_y_dots-g_logical_screen_y_offset))
+    if (tl.x >= (0-g_logical_screen_x_offset) && tl.x <= (g_screen_x_dots-g_logical_screen_x_offset)
+        && tl.y >= (0-g_logical_screen_y_offset) && tl.y <= (g_screen_y_dots-g_logical_screen_y_offset))
     {
         cornercount++;
     }
-    if (bl.x >= (0-g_logical_screen_x_offset) && bl.x <= (g_screen_x_dots-g_logical_screen_x_offset) && bl.y >= (0-g_logical_screen_y_offset) && bl.y <= (g_screen_y_dots-g_logical_screen_y_offset))
+    if (bl.x >= (0-g_logical_screen_x_offset) && bl.x <= (g_screen_x_dots-g_logical_screen_x_offset)
+        && bl.y >= (0-g_logical_screen_y_offset) && bl.y <= (g_screen_y_dots-g_logical_screen_y_offset))
     {
         cornercount++;
     }
-    if (tr.x >= (0-g_logical_screen_x_offset) && tr.x <= (g_screen_x_dots-g_logical_screen_x_offset) && tr.y >= (0-g_logical_screen_y_offset) && tr.y <= (g_screen_y_dots-g_logical_screen_y_offset))
+    if (tr.x >= (0-g_logical_screen_x_offset) && tr.x <= (g_screen_x_dots-g_logical_screen_x_offset)
+        && tr.y >= (0-g_logical_screen_y_offset) && tr.y <= (g_screen_y_dots-g_logical_screen_y_offset))
     {
         cornercount++;
     }
-    if (br.x >= (0-g_logical_screen_x_offset) && br.x <= (g_screen_x_dots-g_logical_screen_x_offset) && br.y >= (0-g_logical_screen_y_offset) && br.y <= (g_screen_y_dots-g_logical_screen_y_offset))
+    if (br.x >= (0-g_logical_screen_x_offset) && br.x <= (g_screen_x_dots-g_logical_screen_x_offset)
+        && br.y >= (0-g_logical_screen_y_offset) && br.y <= (g_screen_y_dots-g_logical_screen_y_offset))
     {
         cornercount++;
     }
@@ -2071,17 +2079,17 @@ bool paramsOK(FRACTAL_INFO const *info)
         tmpparm9 = 0.0;
         tmpparm10 = 0.0;
     }
-    if (fabs(info->creal - g_params[0]) < MINDIF &&
-            fabs(info->cimag - g_params[1]) < MINDIF &&
-            fabs(tmpparm3 - g_params[2]) < MINDIF &&
-            fabs(tmpparm4 - g_params[3]) < MINDIF &&
-            fabs(tmpparm5 - g_params[4]) < MINDIF &&
-            fabs(tmpparm6 - g_params[5]) < MINDIF &&
-            fabs(tmpparm7 - g_params[6]) < MINDIF &&
-            fabs(tmpparm8 - g_params[7]) < MINDIF &&
-            fabs(tmpparm9 - g_params[8]) < MINDIF &&
-            fabs(tmpparm10 - g_params[9]) < MINDIF &&
-            info->invert[0] - g_inversion[0] < MINDIF)
+    if (fabs(info->creal - g_params[0]) < MINDIF
+        && fabs(info->cimag - g_params[1]) < MINDIF
+        && fabs(tmpparm3 - g_params[2]) < MINDIF
+        && fabs(tmpparm4 - g_params[3]) < MINDIF
+        && fabs(tmpparm5 - g_params[4]) < MINDIF
+        && fabs(tmpparm6 - g_params[5]) < MINDIF
+        && fabs(tmpparm7 - g_params[6]) < MINDIF
+        && fabs(tmpparm8 - g_params[7]) < MINDIF
+        && fabs(tmpparm9 - g_params[8]) < MINDIF
+        && fabs(tmpparm10 - g_params[9]) < MINDIF
+        && info->invert[0] - g_inversion[0] < MINDIF)
     {
         return true; // parameters are in range
     }
@@ -2107,8 +2115,9 @@ bool functionOK(FRACTAL_INFO const *info, int numfn)
 bool typeOK(FRACTAL_INFO const *info, ext_blk_3 const *blk_3_info)
 {
     int numfn;
-    if ((g_fractal_type == fractal_type::FORMULA || g_fractal_type == fractal_type::FFORMULA) &&
-            (info->fractal_type == static_cast<int>(fractal_type::FORMULA) || info->fractal_type == static_cast<int>(fractal_type::FFORMULA)))
+    if ((g_fractal_type == fractal_type::FORMULA || g_fractal_type == fractal_type::FFORMULA)
+        && (info->fractal_type == static_cast<int>(fractal_type::FORMULA)
+            || info->fractal_type == static_cast<int>(fractal_type::FFORMULA)))
     {
         if (!stricmp(blk_3_info->form_name, g_formula_name.c_str()))
         {
@@ -2127,8 +2136,8 @@ bool typeOK(FRACTAL_INFO const *info, ext_blk_3 const *blk_3_info)
             return false; // two formulas but names don't match
         }
     }
-    else if (info->fractal_type == static_cast<int>(g_fractal_type) ||
-             info->fractal_type == static_cast<int>(g_cur_fractal_specific->tofloat))
+    else if (info->fractal_type == static_cast<int>(g_fractal_type)
+        || info->fractal_type == static_cast<int>(g_cur_fractal_specific->tofloat))
     {
         numfn = (g_cur_fractal_specific->flags >> 6) & 7;
         if (numfn > 0)

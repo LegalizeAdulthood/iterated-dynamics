@@ -952,8 +952,8 @@ static bool MoveBox_Process(MoveBox *me)
         {
             int max_width = std::min(g_screen_x_dots, MAX_WIDTH);
 
-            if (me->base_depth+(me->csize+CSIZE_INC)*16+1 < g_screen_y_dots  &&
-                    me->base_width+(me->csize+CSIZE_INC)*16+1 < max_width)
+            if (me->base_depth+(me->csize+CSIZE_INC)*16+1 < g_screen_y_dots
+                && me->base_width+(me->csize+CSIZE_INC)*16+1 < max_width)
             {
                 MoveBox__Erase(me);
                 me->x -= (CSIZE_INC*16) / 2;

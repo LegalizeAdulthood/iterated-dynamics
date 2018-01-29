@@ -299,7 +299,7 @@ disk_resize(Driver *drv)
 
     frame_resize(di->base.wintext.max_width, di->base.wintext.max_height);
     if ((g_video_table[g_adapter].xdots == di->width)
-            && (g_video_table[g_adapter].ydots == di->height))
+        && (g_video_table[g_adapter].ydots == di->height))
     {
         return false;
     }
@@ -940,12 +940,12 @@ disk_validate_mode(Driver *drv, VIDEOINFO *mode)
 {
     /* allow modes of any size with 256 colors and dotmode=19
        ax/bx/cx/dx must be zero. */
-    return (mode->colors == 256) &&
-           (mode->videomodeax == 0) &&
-           (mode->videomodebx == 0) &&
-           (mode->videomodecx == 0) &&
-           (mode->videomodedx == 0) &&
-           (mode->dotmode == 19);
+    return (mode->colors == 256)
+        && (mode->videomodeax == 0)
+        && (mode->videomodebx == 0)
+        && (mode->videomodecx == 0)
+        && (mode->videomodedx == 0)
+        && (mode->dotmode == 19);
 }
 
 static void

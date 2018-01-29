@@ -283,8 +283,8 @@ int frame_pump_messages(bool waitflag)
         {
             // no messages waiting
             if (!waitflag
-                    || (g_frame.keypress_count != 0)
-                    || (waitflag && g_frame.timed_out))
+                || (g_frame.keypress_count != 0)
+                || (waitflag && g_frame.timed_out))
             {
                 return (g_frame.keypress_count > 0) ? 1 : 0;
             }

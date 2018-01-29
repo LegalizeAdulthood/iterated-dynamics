@@ -295,9 +295,11 @@ int line3d(BYTE * pixels, unsigned linelen)
 
     bool tout = false;          // triangle has been sent to ray trace file
     // Insure last line is drawn in preview and filltypes <0
-    if ((g_raytrace_format != raytrace_formats::none|| g_preview || FILLTYPE < 0) && (g_current_row != g_logical_screen_y_dots - 1) &&
-            (g_current_row % localpreviewfactor) && // Draw mod preview lines
-            !(g_raytrace_format == raytrace_formats::none && (FILLTYPE > 4) && (g_current_row == 1)))
+    // Draw mod preview lines
+    if ((g_raytrace_format != raytrace_formats::none || g_preview || FILLTYPE < 0)
+        && (g_current_row != g_logical_screen_y_dots - 1)
+        && (g_current_row % localpreviewfactor)
+        && !(g_raytrace_format == raytrace_formats::none && (FILLTYPE > 4) && (g_current_row == 1)))
     {
         // Get init geometry in lightsource modes
         goto reallythebottom;     // skip over most of the line3d calcs
@@ -316,11 +318,11 @@ int line3d(BYTE * pixels, unsigned linelen)
     // PROCESS ROW LOOP BEGINS HERE
     while (col < (int) linelen)
     {
-        if ((g_raytrace_format != raytrace_formats::none || g_preview || FILLTYPE < 0) &&
-                (col != lastdot) &&// if this is not the last col
-                // if not the 1st or mod factor col
-                (col % (int)(aspect * localpreviewfactor)) &&
-                (!(g_raytrace_format == raytrace_formats::none && FILLTYPE > 4 && col == 1)))
+        if ((g_raytrace_format != raytrace_formats::none || g_preview || FILLTYPE < 0)
+            && (col != lastdot)             // if this is not the last col
+                                            // if not the 1st or mod factor col
+            && (col % (int)(aspect * localpreviewfactor))
+            && !(g_raytrace_format == raytrace_formats::none && FILLTYPE > 4 && col == 1))
         {
             goto loopbottom;
         }
@@ -575,19 +577,19 @@ int line3d(BYTE * pixels, unsigned linelen)
 
         if (g_raytrace_format != raytrace_formats::none)
         {
-            if (col && g_current_row &&
-                    old.x > bad_check &&
-                    old.x < (g_logical_screen_x_dots - bad_check) &&
-                    lastrow[col].x > bad_check &&
-                    lastrow[col].y > bad_check &&
-                    lastrow[col].x < (g_logical_screen_x_dots - bad_check) &&
-                    lastrow[col].y < (g_logical_screen_y_dots - bad_check))
+            if (col && g_current_row
+                && old.x > bad_check
+                && old.x < (g_logical_screen_x_dots - bad_check)
+                && lastrow[col].x > bad_check
+                && lastrow[col].y > bad_check
+                && lastrow[col].x < (g_logical_screen_x_dots - bad_check)
+                && lastrow[col].y < (g_logical_screen_y_dots - bad_check))
             {
                 // Get rid of all the triangles in the plane at the base of the object
 
-                if (f_cur.color == f_water &&
-                        f_lastrow[col].color == f_water &&
-                        f_lastrow[next].color == f_water)
+                if (f_cur.color == f_water
+                    && f_lastrow[col].color == f_water
+                    && f_lastrow[next].color == f_water)
                 {
                     goto loopbottom;
                 }
@@ -608,21 +610,21 @@ int line3d(BYTE * pixels, unsigned linelen)
                 num_tris++;
             }
 
-            if (col < lastdot && g_current_row &&
-                    lastrow[col].x > bad_check &&
-                    lastrow[col].y > bad_check &&
-                    lastrow[col].x < (g_logical_screen_x_dots - bad_check) &&
-                    lastrow[col].y < (g_logical_screen_y_dots - bad_check) &&
-                    lastrow[next].x > bad_check &&
-                    lastrow[next].y > bad_check &&
-                    lastrow[next].x < (g_logical_screen_x_dots - bad_check) &&
-                    lastrow[next].y < (g_logical_screen_y_dots - bad_check))
+            if (col < lastdot && g_current_row
+                && lastrow[col].x > bad_check
+                && lastrow[col].y > bad_check
+                && lastrow[col].x < (g_logical_screen_x_dots - bad_check)
+                && lastrow[col].y < (g_logical_screen_y_dots - bad_check)
+                && lastrow[next].x > bad_check
+                && lastrow[next].y > bad_check
+                && lastrow[next].x < (g_logical_screen_x_dots - bad_check)
+                && lastrow[next].y < (g_logical_screen_y_dots - bad_check))
             {
                 // Get rid of all the triangles in the plane at the base of the object
 
-                if (f_cur.color == f_water &&
-                        f_lastrow[col].color == f_water &&
-                        f_lastrow[next].color == f_water)
+                if (f_cur.color == f_water
+                    && f_lastrow[col].color == f_water
+                    && f_lastrow[next].color == f_water)
                 {
                     goto loopbottom;
                 }
@@ -660,17 +662,17 @@ int line3d(BYTE * pixels, unsigned linelen)
         switch (FILLTYPE)
         {
         case -1:
-            if (col &&
-                    old.x > bad_check &&
-                    old.x < (g_logical_screen_x_dots - bad_check))
+            if (col
+                && old.x > bad_check
+                && old.x < (g_logical_screen_x_dots - bad_check))
             {
                 driver_draw_line(old.x, old.y, cur.x, cur.y, cur.color);
             }
-            if (g_current_row &&
-                    lastrow[col].x > bad_check &&
-                    lastrow[col].y > bad_check &&
-                    lastrow[col].x < (g_logical_screen_x_dots - bad_check) &&
-                    lastrow[col].y < (g_logical_screen_y_dots - bad_check))
+            if (g_current_row
+                && lastrow[col].x > bad_check
+                && lastrow[col].y > bad_check
+                && lastrow[col].x < (g_logical_screen_x_dots - bad_check)
+                && lastrow[col].y < (g_logical_screen_y_dots - bad_check))
             {
                 driver_draw_line(lastrow[col].x, lastrow[col].y, cur.x,
                                  cur.y, cur.color);
@@ -682,9 +684,9 @@ int line3d(BYTE * pixels, unsigned linelen)
             break;
 
         case 1:                // connect-a-dot
-            if ((old.x < g_logical_screen_x_dots) && (col) &&
-                    old.x > bad_check &&
-                    old.y > bad_check)        // Don't draw from old to cur on col 0
+            if (old.x < g_logical_screen_x_dots && col
+                && old.x > bad_check
+                && old.y > bad_check)        // Don't draw from old to cur on col 0
             {
                 driver_draw_line(old.x, old.y, cur.x, cur.y, cur.color);
             }
@@ -1175,8 +1177,8 @@ static void draw_rect(VECTOR V0, VECTOR V1, VECTOR V2, VECTOR V3, int color, boo
     {
         for (int i = 0; i < 4; i++)
         {
-            if (fabs(V[i][0] - V[(i + 1) % 4][0]) < -2 * bad_check &&
-                    fabs(V[i][1] - V[(i + 1) % 4][1]) < -2 * bad_check)
+            if (fabs(V[i][0] - V[(i + 1) % 4][0]) < -2 * bad_check
+                && fabs(V[i][1] - V[(i + 1) % 4][1]) < -2 * bad_check)
             {
                 vdraw_line(V[i], V[(i + 1) % 4], color);
             }
@@ -1187,8 +1189,8 @@ static void draw_rect(VECTOR V0, VECTOR V1, VECTOR V2, VECTOR V3, int color, boo
     {
         for (int i = 0; i < 3; i += 2)
         {
-            if (fabs(V[i][0] - V[i + 1][0]) < -2 * bad_check &&
-                    fabs(V[i][1] - V[i + 1][1]) < -2 * bad_check)
+            if (fabs(V[i][0] - V[i + 1][0]) < -2 * bad_check
+                && fabs(V[i][1] - V[i + 1][1]) < -2 * bad_check)
             {
                 vdraw_line(V[i], V[i + 1], color);
             }
@@ -1338,9 +1340,9 @@ static int offscreen(point pt)
 
 static void clipcolor(int x, int y, int color)
 {
-    if (0 <= x && x < g_logical_screen_x_dots &&
-            0 <= y && y < g_logical_screen_y_dots &&
-            0 <= color && color < g_file_colors)
+    if (0 <= x && x < g_logical_screen_x_dots
+        && 0 <= y && y < g_logical_screen_y_dots
+        && 0 <= color && color < g_file_colors)
     {
         g_standard_plot(x, y, color);
 
@@ -1363,11 +1365,11 @@ static void clipcolor(int x, int y, int color)
 
 static void T_clipcolor(int x, int y, int color)
 {
-    if (0 <= x && x < g_logical_screen_x_dots &&   // is the point on screen?
-            0 <= y && y < g_logical_screen_y_dots &&   // Yes?
-            0 <= color && color < g_colors &&  // Colors in valid range?
-            // Lets make sure its not a transparent color
-            (g_transparent_color_3d[0] > color || color > g_transparent_color_3d[1]))
+    if (0 <= x && x < g_logical_screen_x_dots       // is the point on screen?
+        && 0 <= y && y < g_logical_screen_y_dots    // Yes?
+        && 0 <= color && color < g_colors           // Colors in valid range?
+        // Lets make sure its not a transparent color
+        && (g_transparent_color_3d[0] > color || color > g_transparent_color_3d[1]))
     {
         g_standard_plot(x, y, color);// I guess we can plot then
         if (g_targa_out)
@@ -1412,11 +1414,12 @@ static void interpcolor(int x, int y, int color)
                        (long)(d1 + d2) * (long) p3.color) / D);
     }
 
-    if (0 <= x && x < g_logical_screen_x_dots &&
-            0 <= y && y < g_logical_screen_y_dots &&
-            0 <= color && color < g_colors &&
-            (g_transparent_color_3d[1] == 0 || (int) Real_Color > g_transparent_color_3d[1] ||
-             g_transparent_color_3d[0] > (int) Real_Color))
+    if (0 <= x && x < g_logical_screen_x_dots
+        && 0 <= y && y < g_logical_screen_y_dots
+        && 0 <= color && color < g_colors
+        && (g_transparent_color_3d[1] == 0
+            || (int) Real_Color > g_transparent_color_3d[1]
+            || g_transparent_color_3d[0] > (int) Real_Color))
     {
         if (g_targa_out)
         {
@@ -2065,17 +2068,9 @@ static int out_triangle(f_point pt1, f_point pt2, f_point pt3, int c1, int c2, i
     }
 
     // get rid of degenerate triangles: any two points equal
-    if ((pt_t[0][0] == pt_t[1][0] &&
-            pt_t[0][1] == pt_t[1][1] &&
-            pt_t[0][2] == pt_t[1][2]) ||
-
-            (pt_t[0][0] == pt_t[2][0] &&
-             pt_t[0][1] == pt_t[2][1] &&
-             pt_t[0][2] == pt_t[2][2]) ||
-
-            (pt_t[2][0] == pt_t[1][0] &&
-             pt_t[2][1] == pt_t[1][1] &&
-             pt_t[2][2] == pt_t[1][2]))
+    if ((pt_t[0][0] == pt_t[1][0] && pt_t[0][1] == pt_t[1][1] && pt_t[0][2] == pt_t[1][2])
+        || (pt_t[0][0] == pt_t[2][0] && pt_t[0][1] == pt_t[2][1] && pt_t[0][2] == pt_t[2][2])
+        || (pt_t[2][0] == pt_t[1][0] && pt_t[2][1] == pt_t[1][1] && pt_t[2][2] == pt_t[1][2]))
     {
         return 0;
     }
@@ -2464,8 +2459,9 @@ static int first_time(int linelen, VECTOR v)
         T_Safe = false; // Not safe yet to mess with the source image
     }
 
-    if (g_targa_out && !((g_glasses_type == 1 || g_glasses_type == 2)
-                       && g_which_image == stereo_images::BLUE))
+    if (g_targa_out
+        && !((g_glasses_type == 1 || g_glasses_type == 2)
+            && g_which_image == stereo_images::BLUE))
     {
         if (g_targa_overlay)
         {

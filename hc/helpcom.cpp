@@ -150,8 +150,7 @@ int _find_token_length(char const *curr, unsigned len, int *size, int *width)
                     assert(0);
                 }
 
-                else if ((unsigned)*curr <= MAX_CMD || *curr == ' ' ||
-                         *curr == '\n')
+                else if ((unsigned)*curr <= MAX_CMD || *curr == ' ' || *curr == '\n')
                 {
                     break;
                 }
@@ -199,8 +198,8 @@ int find_token_length(int mode, char const *curr, unsigned len, int *size, int *
 
     tok = _find_token_length(curr, len, &t, width);
 
-    if ((tok == TOK_XONLINE && mode == ONLINE) ||
-            (tok == TOK_XDOC    && mode == DOC))
+    if ((tok == TOK_XONLINE && mode == ONLINE)
+        || (tok == TOK_XDOC && mode == DOC))
     {
         _size = 0;
 
@@ -212,9 +211,9 @@ int find_token_length(int mode, char const *curr, unsigned len, int *size, int *
 
             tok = _find_token_length(curr, len, &t, nullptr);
 
-            if ((tok == TOK_XONLINE && mode == ONLINE) ||
-                    (tok == TOK_XDOC    && mode == DOC)    ||
-                    (tok == TOK_DONE))
+            if ((tok == TOK_XONLINE && mode == ONLINE)
+                || (tok == TOK_XDOC && mode == DOC)
+                || (tok == TOK_DONE))
             {
                 break;
             }
@@ -378,8 +377,10 @@ bool process_document(PD_FUNC get_info, PD_FUNC output, VOIDPTR info)
                 while (pd.len > 0)
                 {
                     tok = find_token_length(DOC, pd.curr, pd.len, &size, nullptr);
-                    if (tok != TOK_XDOC && tok != TOK_XONLINE &&
-                            tok != TOK_NL   && tok != TOK_DONE)
+                    if (tok != TOK_XDOC
+                        && tok != TOK_XONLINE
+                        && tok != TOK_NL
+                        && tok != TOK_DONE)
                     {
                         break;
                     }
@@ -679,8 +680,7 @@ bool process_document(PD_FUNC get_info, PD_FUNC output, VOIDPTR info)
 
                 case TOK_LINK:
                     skip_blanks = false;
-                    if (!DO_PRINT(pd.curr+1+3*sizeof(int),
-                                  size-3*sizeof(int)-2))
+                    if (!DO_PRINT(pd.curr+1+3*sizeof(int), size-3*sizeof(int)-2))
                     {
                         return false;
                     }
