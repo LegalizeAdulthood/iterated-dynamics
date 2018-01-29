@@ -48,7 +48,7 @@ else()
     set(HAVE_OS_DEFINITIONS true)
     set_src_dir(unix/unix.cpp)
     set(DISK_VID "")
-    set(OS_HC_FILES "")
+    set(OS_HC_FILES "unix/unix.cpp")
     set(OS_ID_OPTIONS "")
 endif()
 

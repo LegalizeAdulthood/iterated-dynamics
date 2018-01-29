@@ -5,10 +5,6 @@
  * fractint license conditions, blah blah blah.
  */
 #include "port.h"
-#include "prototyp.h"
-
-#include "cmdfiles.h"
-#include "id_data.h"
 
 #include <ctype.h>
 #include <stdio.h>
@@ -205,79 +201,6 @@ strupr(char *s)
         sptr++;
     }
     return s;
-}
-
-static bool path_exists(const char *path)
-{
-    int fd = open(path, O_RDONLY);
-    if (fd != -1)
-    {
-        close(fd);
-    }
-    return fd != -1;
-}
-
-/*
- *----------------------------------------------------------------------
- *
- * findpath --
- *
- *      Find where a file is.
- *  We return filename if it is an absolute path.
- *  Otherwise we first try FRACTDIR/filename, SRCDIR/filename,
- *      and then ./filename.
- *
- * Results:
- *      Returns full pathname in fullpathname.
- *
- * Side effects:
- *      None.
- *
- *----------------------------------------------------------------------
- */
-void findpath(char const *filename, char *fullpathname)
-{
-    // check current directory if curdir= parameter set
-    if (g_check_cur_dir)
-    {
-        // check for current dir
-        strcpy(fullpathname, "./");
-        strcat(fullpathname, filename);
-        if (path_exists(fullpathname))
-        {
-            return;
-        }
-    }
-
-    // check for absolute path
-    if (filename[0] == '/')
-    {
-        strcpy(fullpathname, filename);
-        if (path_exists(fullpathname))
-        {
-            return;
-        }
-    }
-
-    // check for FRACTDIR
-    strcpy(fullpathname, g_fractal_search_dir1);
-    strcat(fullpathname, "/");
-    strcat(fullpathname, filename);
-    if (path_exists(fullpathname))
-    {
-        return;
-    }
-
-    // check for SRCDIR
-    strcpy(fullpathname, g_fractal_search_dir2);
-    strcat(fullpathname, "/");
-    strcat(fullpathname, filename);
-    if (path_exists(fullpathname))
-    {
-        return;
-    }
-
-    fullpathname[0] = 0;
 }
 
 /*
