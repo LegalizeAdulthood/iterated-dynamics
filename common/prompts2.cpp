@@ -2059,6 +2059,10 @@ int makepath(char *template_str, char const *drive, char const *dir, char const 
     if (dir)
     {
         strcat(template_str, dir);
+        if (dir[strlen(dir)-1] != '/')
+        {
+            strcat(template_str, "/");
+        }
     }
     if (fname)
     {
