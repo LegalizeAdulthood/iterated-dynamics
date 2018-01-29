@@ -16,7 +16,6 @@ typedef float FLOAT4;
 // We get a problem with connect, since it is used by X
 #define connect connect1
 typedef void (*SignalHandler)(int);
-extern int iocount;
 char *strlwr(char *s);
 char *strupr(char *s);
 // ftime replacement

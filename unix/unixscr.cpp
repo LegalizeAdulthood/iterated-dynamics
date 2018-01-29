@@ -64,6 +64,8 @@ constexpr int ctl(int code)
     return code & 0x1f;
 }
 
+static int iocount;
+
 // Check if there is a character waiting for us.
 #define input_pending() (ioctl(0, FIONREAD, &iocount), (int)iocount)
 
