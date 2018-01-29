@@ -209,7 +209,7 @@ strupr(char *s)
 
 static bool path_exists(const char *path)
 {
-    int fd = open(fullpathname, O_RDONLY);
+    int fd = open(path, O_RDONLY);
     if (fd != -1)
     {
         close(fd);
