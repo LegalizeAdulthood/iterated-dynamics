@@ -4,7 +4,11 @@
  * This file Copyright 1991 Ken Shirriff.  It may be used according to the
  * fractint license conditions, blah blah blah.
  */
-#include <algorithm>
+#include "port.h"
+#include "prototyp.h"
+
+#include "cmdfiles.h"
+#include "id_data.h"
 
 #include <ctype.h>
 #include <stdio.h>
@@ -16,7 +20,7 @@
 #include <sys/types.h>
 #include <unistd.h>
 
-#include "port.h"
+#include <algorithm>
 
 #define FILE_MAX_PATH  256       // max length of path+filename
 #define FILE_MAX_DIR   256       // max length of directory name
@@ -211,6 +215,16 @@ strupr(char *s)
     return s;
 }
 
+static bool path_exists(const char *path)
+{
+    int fd = open(fullpathname, O_RDONLY);
+    if (fd != -1)
+    {
+        close(fd);
+    }
+    return fd != -1;
+}
+
 /*
  *----------------------------------------------------------------------
  *
@@ -231,48 +245,47 @@ strupr(char *s)
  */
 void findpath(char const *filename, char *fullpathname)
 {
-    int fd;
-    char *fractdir;
+    // check current directory if curdir= parameter set
+    if (g_check_cur_dir)
+    {
+        // check for current dir
+        strcpy(fullpathname, "./");
+        strcat(fullpathname, filename);
+        if (path_exists(fullpathname))
+        {
+            return;
+        }
+    }
 
+    // check for absolute path
     if (filename[0] == '/')
     {
         strcpy(fullpathname, filename);
-        fd = open(fullpathname, O_RDONLY);
-        if (fd != -1)
+        if (path_exists(fullpathname))
         {
-            close(fd);
             return;
         }
     }
-    fractdir = getenv("FRACTDIR");
-    if (fractdir != nullptr)
-    {
-        strcpy(fullpathname, fractdir);
-        strcat(fullpathname, "/");
-        strcat(fullpathname, filename);
-        fd = open(fullpathname, O_RDONLY);
-        if (fd != -1)
-        {
-            close(fd);
-            return;
-        }
-    }
-    strcpy(fullpathname, SRCDIR);
+
+    // check for FRACTDIR
+    strcpy(fullpathname, g_fractal_search_dir1);
     strcat(fullpathname, "/");
     strcat(fullpathname, filename);
-    fd = open(fullpathname, O_RDONLY);
-    if (fd != -1)
+    if (path_exists(fullpathname))
     {
-        close(fd);
         return;
     }
-    strcpy(fullpathname, "./");
+
+    // check for SRCDIR
+    strcpy(fullpathname, g_fractal_search_dir2);
+    strcat(fullpathname, "/");
     strcat(fullpathname, filename);
-    fd = open(fullpathname, O_RDONLY);
-    if (fd != -1)
+    if (path_exists(fullpathname))
     {
-        close(fd);
+        return;
     }
+
+    fullpathname[0] = 0;
 }
 
 /*
