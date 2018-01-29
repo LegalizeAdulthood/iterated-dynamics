@@ -296,7 +296,12 @@ source_group("Source Files\\Win32" FILES ${OS_DRIVER_SOURCES})
 set_src_dir(common/help.cpp)
 set_src_dir(common/fractint.cpp)
 
-add_executable(hc hc/hc.cpp hc/helpcom.cpp ${OS_HC_FILES})
+add_executable(hc
+    hc/helpdefs.h
+    hc/hc.cpp
+    hc/helpcom.cpp
+    headers/helpcom.h
+    ${OS_HC_FILES})
 target_include_directories(hc PRIVATE headers)
 if(${HAVE_OS_DEFINITIONS})
     target_compile_definitions(hc PRIVATE ${OS_DEFINITIONS})
