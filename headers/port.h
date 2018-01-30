@@ -18,8 +18,6 @@ using U32 = std::uint32_t;
 using S32 = std::int32_t;
 using BYTE = U8;
 
-#define CONST const
-
 #if defined(_WIN32)
 #include <crtdbg.h>
 // disable deprecated CRT warnings

@@ -76,9 +76,9 @@ struct vidinf
 #ifndef XFRACT
 static int vidcompare(const void *p1, const void *p2)
 {
-    vidinf CONST *ptr1, *ptr2;
-    ptr1 = (vidinf CONST *)p1;
-    ptr2 = (vidinf CONST *)p2;
+    vidinf const *ptr1, *ptr2;
+    ptr1 = (vidinf const *)p1;
+    ptr2 = (vidinf const *)p2;
     if (ptr1->flags < ptr2->flags)
     {
         return -1;
