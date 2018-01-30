@@ -113,5 +113,5 @@ typedef int sigfunc(int);
 #define GET16(c, i)              (i) = (*(unsigned char *)&(c))+\
                                 ((*((unsigned char*)&(c)+1)) << 8)
 #endif
-typedef long double LDBL;
+using LDBL = long double;
 #endif  /* PORT_H */
