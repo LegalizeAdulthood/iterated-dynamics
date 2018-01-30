@@ -6,7 +6,9 @@
 #ifndef PORT_H
 #define PORT_H
 
+#include <stdio.h>
 #include <stdlib.h>
+#include <math.h>
 
 #include <cstdint>
 
@@ -23,8 +25,7 @@ using BYTE = U8;
 // disable deprecated CRT warnings
 #pragma warning(disable: 4996)
 #endif
-#include <stdio.h>
-#include <math.h>
+
 // If endian.h is not present, it can be handled in the code below,
 // but if you have this file, it can make it more fool proof.
 #if (defined(XFRACT) && !defined(__sun))
@@ -34,12 +35,14 @@ using BYTE = U8;
 #    include <endian.h>
 #  endif
 #endif
+
 #ifndef BIG_ENDIAN
 #  define BIG_ENDIAN    4321  // to show byte order (taken from gcc)
 #endif
 #ifndef LITTLE_ENDIAN
 #  define LITTLE_ENDIAN 1234
 #endif
+
 #if defined(_WIN32)
 // ================================== Win32 definitions
 #define PRINTER        "PRT:"
