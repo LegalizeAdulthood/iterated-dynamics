@@ -103,7 +103,7 @@ static FILE *open_orbitsave();
 static void plothist(int x, int y, int color);
 static bool realtime = false;
 
-S32 g_max_count;
+long g_max_count;
 static int t;
 static long l_dx;
 static long l_dy;
