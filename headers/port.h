@@ -38,7 +38,6 @@ typedef unsigned long  U32;
 typedef signed long    S32;
 typedef unsigned char  BYTE;
 typedef void          *VOIDPTR;
-typedef const void    *VOIDCONSTPTR;
 #define CONST          const
 #define PRINTER        "PRT:"
 #define LOBYTEFIRST    1
@@ -78,7 +77,6 @@ typedef long           S32;
 typedef unsigned char  BYTE;
 typedef char           CHAR;
 typedef void          *VOIDPTR;
-typedef const void    *VOIDCONSTPTR;
 typedef int sigfunc(int);
 #ifndef BYTE_ORDER
 // change for little endians that don't have this defined elsewhere (endian.h)

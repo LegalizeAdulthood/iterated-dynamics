@@ -49,7 +49,7 @@
 // routines in this module
 
 #ifndef XFRACT
-static int    vidcompare(VOIDCONSTPTR , VOIDCONSTPTR);
+static int    vidcompare(const void *, const void *);
 static void   format_item(int, char *);
 static int    check_modekey(int, int);
 static void   format_vid_inf(int i, char *err, char *buf);
@@ -74,7 +74,7 @@ struct vidinf
 #define VI_ASPECT    1  // aspect ratio bad
 
 #ifndef XFRACT
-static int vidcompare(VOIDCONSTPTR p1, VOIDCONSTPTR p2)
+static int vidcompare(const void *p1, const void *p2)
 {
     vidinf CONST *ptr1, *ptr2;
     ptr1 = (vidinf CONST *)p1;

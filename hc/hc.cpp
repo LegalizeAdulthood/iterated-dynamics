@@ -3243,7 +3243,7 @@ void paginate_document()
  * label sorting stuff
  */
 
-int fcmp_LABEL(VOIDCONSTPTR a, VOIDCONSTPTR b)
+int fcmp_LABEL(const void *a, const void *b)
 {
     char *an = ((LABEL *)a)->name,
           *bn = ((LABEL *)b)->name;

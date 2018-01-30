@@ -52,7 +52,7 @@ static void put_float(int, double, int);
 static void put_bf(int slash, bf_t r, int prec);
 static void put_filename(char const *keyword, char const *fname);
 static int check_modekey(int curkey, int choice);
-static int entcompare(VOIDCONSTPTR p1, VOIDCONSTPTR p2);
+static int entcompare(const void *p1, const void *p2);
 static void update_fractint_cfg();
 static void strip_zeros(char *buf);
 
@@ -2132,7 +2132,7 @@ static int check_modekey(int curkey, int choice)
     return ret;
 }
 
-static int entcompare(VOIDCONSTPTR p1, VOIDCONSTPTR p2)
+static int entcompare(const void *p1, const void *p2)
 {
     int i, j;
     i = g_video_table[*((int *)p1)].keynum;
