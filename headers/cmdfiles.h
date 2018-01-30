@@ -2,6 +2,8 @@
 #if !defined(CMDFILES_H)
 #define CMDFILES_H
 
+#include <stdio.h>
+
 #include <string>
 #include <vector>
 

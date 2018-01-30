@@ -2,6 +2,8 @@
 #if !defined(PROMPTS1_H)
 #define PROMPTS1_H
 
+#include <stdio.h>
+
 #include <string>
 
 enum class bailouts;
