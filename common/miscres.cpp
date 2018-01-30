@@ -1241,7 +1241,7 @@ top:
                 }
                 else if (*p == '#')
                 {
-                    sprintf(msg, "%-12lu", (U32)g_params[i]);
+                    sprintf(msg, "%-12u", (U32)g_params[i]);
                 }
                 else
                 {
