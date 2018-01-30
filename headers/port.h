@@ -5,7 +5,21 @@
 */
 #ifndef PORT_H
 #define PORT_H
+
 #include <stdlib.h>
+
+#include <cstdint>
+
+using U8 = std::uint8_t;
+using S8 = std::int8_t;
+using U16 = std::uint16_t;
+using S16 = std::int16_t;
+using U32 = std::uint32_t;
+using S32 = std::int32_t;
+using BYTE = U8;
+
+#define CONST const
+
 #if defined(_WIN32)
 #include <crtdbg.h>
 // disable deprecated CRT warnings
@@ -30,14 +44,6 @@
 #endif
 #if defined(_WIN32)
 // ================================== Win32 definitions
-typedef unsigned char  U8;
-typedef signed char    S8;
-typedef unsigned short U16;
-typedef signed short   S16;
-typedef unsigned long  U32;
-typedef signed long    S32;
-typedef unsigned char  BYTE;
-#define CONST          const
 #define PRINTER        "PRT:"
 #define LOBYTEFIRST    1
 #define SLASHC         '\\'
@@ -66,15 +72,8 @@ typedef unsigned char  BYTE;
 #define unix
 #endif
 #endif
-#    ifdef unix                     // Unix machine
-typedef unsigned char  U8;
-typedef signed char    S8;
-typedef unsigned short U16;
-typedef short          S16;
-typedef unsigned long  U32;
-typedef long           S32;
-typedef unsigned char  BYTE;
-typedef char           CHAR;
+
+#ifdef unix                     // Unix machine
 typedef int sigfunc(int);
 #ifndef BYTE_ORDER
 // change for little endians that don't have this defined elsewhere (endian.h)
@@ -84,7 +83,6 @@ typedef int sigfunc(int);
 #define BYTE_ORDER BIG_ENDIAN // the usual case
 #endif
 #endif
-#       define CONST          const
 #       define PRINTER        "/dev/lp"
 #       define SLASHC         '/'
 #       define SLASH          "/"
