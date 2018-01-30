@@ -49,7 +49,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'Iterated Dynamics'
-copyright = u'2015, Richard Thomson'
+copyright = u'2017, Richard Thomson'
 author = u'Richard Thomson'
 
 # The version info for the project you're documenting, acts as replacement for

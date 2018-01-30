@@ -1,2 +1,0 @@
-Disk Video Modes
-================

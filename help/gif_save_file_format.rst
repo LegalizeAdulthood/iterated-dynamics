@@ -1,2 +1,0 @@
-GIF Save File Format
-====================

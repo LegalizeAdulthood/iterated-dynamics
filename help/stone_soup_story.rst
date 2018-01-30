@@ -1,2 +1,0 @@
-The Stone Soup Story
-====================

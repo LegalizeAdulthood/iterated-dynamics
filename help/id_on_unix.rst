@@ -1,2 +1,0 @@
-Iterated Dynamics on Unix
-=========================

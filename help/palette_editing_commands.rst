@@ -1,2 +1,0 @@
-Palette Editing Commands
-========================

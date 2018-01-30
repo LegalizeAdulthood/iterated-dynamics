@@ -1,2 +1,0 @@
-Fractals and the PC
-===================

@@ -6,6 +6,7 @@ function processCommand(state, cmd) {
     var matches;
     var command;
     var arg;
+    console.log('cmd: ' + cmd);
     if (matches = cmd.match(/^([^=]+)=(.+)$/)) {
         command = matches[1];
         arg = matches[2];
@@ -98,6 +99,14 @@ function processCommand(state, cmd) {
     ++state.commandCount;
 }
 
+function pushTopic(state, line) {
+    if (!state.topic.length) {
+        throw 'Content line "' + line + '" has no topic!';
+    }
+    ++state.contentCount;
+    state.topics[state.topic].push(line);
+}
+
 function processLine(state, line) {
     if (line.match(/^;/)) {
         return;
@@ -110,18 +119,14 @@ function processLine(state, line) {
             processCommand(state, line.substr(1));
         }
     } else {
+        console.log(state.content + '>> ' + line);
         // content line
         switch (state.content) {
         case 'toc':
             state.tableOfContents.push(line);
             break;
         case 'topic':
-            ++state.contentCount;
-            if (state.topic.length) {
-                state.topics[state.topic].push(line);
-            } else {
-                throw 'Content line "' + line + '" has no topic!';
-            }
+            pushTopic(state, line);
             break;
         case 'table':
             state.tables[state.table].push(line);
@@ -136,10 +141,14 @@ function processLine(state, line) {
 }
 
 function writeRst(state) {
-    var i, fileName;
+    var i, j, fileName, topic;
     for (i = 0; i < state.topicNames.length; ++i) {
-        fileName = state.topicNames[i].toLowerCase().replace(/[^0-9a-z-]+/g, '_') + '.rst';
-        console.log('Topic: ' + state.topicNames[i] + ', file: ' + fileName);
+        topic = state.topicNames[i];
+        fileName = topic.toLowerCase().replace(/[^0-9a-z-]+/g, '_') + '.rst';
+        console.log('Topic: ' + topic + ', file: ' + fileName);
+        for (j = 0; j < state.topics[topic].length; ++j) {
+            console.log('    ' + state.topics[topic][j]);
+        }
     }
     console.log(state.contentCount + ' lines, '
         + state.commandCount + ' commands, '
