@@ -25,6 +25,7 @@ FRACTALS.C, i.e. which are non-fractal-specific fractal engine subroutines.
 #include <limits.h>
 #include <memory.h>
 #include <stdarg.h>
+#include <stdio.h>
 #include <stdlib.h>
 #ifndef XFRACT
 #include <sys/timeb.h>

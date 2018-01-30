@@ -16,6 +16,7 @@ is in the allocations of memory for the big numbers.
 #include "realdos.h"
 
 #include <float.h>
+#include <stdio.h>
 #include <string.h>
 
 // globals

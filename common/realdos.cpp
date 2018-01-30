@@ -21,6 +21,7 @@
 #include <ctype.h>
 #include <fcntl.h>
 #include <float.h>
+#include <stdio.h>
 #include <string.h>
 #include <sys/stat.h>
 #include <sys/types.h>

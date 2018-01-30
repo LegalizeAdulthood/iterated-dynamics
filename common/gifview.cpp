@@ -29,6 +29,7 @@
 #include "slideshw.h"
 #include "stereo.h"
 
+#include <stdio.h>
 #include <string.h>
 
 #include <algorithm>

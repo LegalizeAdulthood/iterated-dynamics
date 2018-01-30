@@ -18,8 +18,8 @@ fractal routines.
 
 #include <float.h>
 #include <limits.h>
+#include <stdio.h>
 #include <string.h>
-
 
 bf_math_type bf_math = bf_math_type::NONE;
 

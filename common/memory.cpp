@@ -13,8 +13,9 @@
 #include <errno.h>
 #include <float.h>
 #include <limits.h>
-#include <string.h>
 #include <stdarg.h>
+#include <stdio.h>
+#include <string.h>
 
 // Memory allocation routines.
 

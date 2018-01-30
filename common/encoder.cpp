@@ -30,6 +30,7 @@
 #include "slideshw.h"
 
 #include <limits.h>
+#include <stdio.h>
 #include <string.h>
 #if defined(XFRACT)
 #include <unistd.h>

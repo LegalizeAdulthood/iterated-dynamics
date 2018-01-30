@@ -3,11 +3,12 @@
 /*
 Wesley Loewer's Big Numbers.        (C) 1994-95, Wesley B. Loewer
 */
-#include <float.h>
-#include <string.h>
-
 #include "port.h"
 #include "big.h"
+
+#include <float.h>
+#include <stdio.h>
+#include <string.h>
 
 #define LOG10_256 2.4082399653118
 #define LOG_256   5.5451774444795

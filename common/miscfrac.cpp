@@ -26,6 +26,7 @@ Miscellaneous fractal-specific code (formerly in CALCFRAC.C)
 #include "testpt.h"
 
 #include <limits.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 

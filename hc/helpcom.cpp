@@ -4,11 +4,13 @@
  * Common code for hc.cpp and help.cpp
  *
  */
-#include <cassert>
-#include <cstring>
-
 #include "port.h"
 #include "helpcom.h"
+
+#include <stdio.h>
+
+#include <cassert>
+#include <cstring>
 
 #ifdef XFRACT
 /* Get an int from an unaligned pointer

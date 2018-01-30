@@ -20,6 +20,7 @@
 #include <direct.h>
 #include <float.h>
 #include <signal.h>
+#include <stdio.h>
 #include <string.h>
 #include <sys/timeb.h>
 #include <time.h>
