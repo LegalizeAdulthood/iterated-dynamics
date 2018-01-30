@@ -1038,8 +1038,8 @@ static int  CEditor_Edit(CEditor *me);
 
 
 static CEditor *CEditor_Construct(int x, int y, char letter,
-                                  void (*other_key)(int, CEditor*, VOIDPTR),
-                                  void (*change)(CEditor*, VOIDPTR), void *info)
+                                  void (*other_key)(int, CEditor*, void *),
+                                  void (*change)(CEditor*, void *), void *info)
 {
     CEditor *me = new CEditor;
 

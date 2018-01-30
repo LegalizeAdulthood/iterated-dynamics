@@ -280,7 +280,7 @@ int find_line_width(int mode, char const *curr, unsigned len)
 #define DO_PRINT(str, n)  ( pd.s = (str), pd.i = (n), output(PD_PRINT, &pd, info) )
 
 
-bool process_document(PD_FUNC get_info, PD_FUNC output, VOIDPTR info)
+bool process_document(PD_FUNC get_info, PD_FUNC output, void *info)
 {
     int       tok;
     int       size,

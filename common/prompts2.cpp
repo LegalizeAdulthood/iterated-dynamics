@@ -1548,7 +1548,7 @@ struct CHOICE
     char type;
 };
 
-int lccompare(VOIDPTR arg1, VOIDPTR arg2) // for sort
+int lccompare(void *arg1, void *arg2) // for sort
 {
     char **choice1 = (char **) arg1;
     char **choice2 = (char **) arg2;
@@ -2948,7 +2948,7 @@ char const *has_ext(char const *source)
     return ret;
 }
 
-void shell_sort(void *v1, int n, unsigned sz, int (*fct)(VOIDPTR arg1, VOIDPTR arg2))
+void shell_sort(void *v1, int n, unsigned sz, int (*fct)(void *arg1, void *arg2))
 {
     void *temp;
     char *v;

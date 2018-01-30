@@ -103,13 +103,13 @@ enum  PD_COMMANDS
     PD_RELEASE_TOPIC,
     PD_GET_LINK_PAGE
 };
-typedef bool (*PD_FUNC)(int cmd, PD_INFO *pd, VOIDPTR info);
+typedef bool (*PD_FUNC)(int cmd, PD_INFO *pd, void *info);
 extern int _find_token_length(char const *curr, unsigned len, int *size, int *width);
 extern int find_token_length(int mode, char const *curr, unsigned len, int *size, int *width);
 extern int find_line_width(int mode, char const *curr, unsigned len);
-extern bool process_document(PD_FUNC get_info, PD_FUNC output, VOIDPTR info);
+extern bool process_document(PD_FUNC get_info, PD_FUNC output, void *info);
 extern int help(int);
-extern int read_help_topic(int , int , int , VOIDPTR);
+extern int read_help_topic(int , int , int , void *);
 extern bool makedoc_msg_func(int pnum, int num_pages);
 extern void print_document(char const *outfname, bool (*msg_func)(int, int), int save_extraseg);
 extern int init_help();

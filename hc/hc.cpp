@@ -377,9 +377,9 @@ void release_topic_text(TOPIC const *t, int save)
  */
 
 
-VOIDPTR newx(unsigned size)
+void *newx(unsigned size)
 {
-    VOIDPTR ptr;
+    void *ptr;
 
     ptr = malloc(size);
 
@@ -392,7 +392,7 @@ VOIDPTR newx(unsigned size)
 }
 
 
-VOIDPTR renewx(VOIDPTR ptr, unsigned size)
+void *renewx(void *ptr, unsigned size)
 {
     ptr = realloc(ptr, size);
 
