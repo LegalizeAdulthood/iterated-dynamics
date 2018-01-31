@@ -7,12 +7,6 @@
 #include <stdio.h>
 
 #define id_fs_remove(x) _unlink(x)
-#if !defined(_MAX_FNAME)
-#define _MAX_FNAME 20
-#endif
-#if !defined(_MAX_EXT)
-#define _MAX_EXT 4
-#endif
 
 // ftime replacement
 #include <sys/types.h>

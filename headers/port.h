@@ -6,9 +6,6 @@
 #ifndef PORT_H
 #define PORT_H
 
-#include <stdlib.h>
-#include <math.h>
-
 #include <cstdint>
 
 using U8 = std::uint8_t;

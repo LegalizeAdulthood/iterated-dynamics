@@ -36,6 +36,7 @@
 #include <ctype.h>
 #include <float.h>
 #include <math.h>
+#include <stdlib.h>
 #include <string.h>
 #include <time.h>
 #include <stdio.h>

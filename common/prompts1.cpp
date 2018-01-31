@@ -34,6 +34,7 @@
 
 #include <ctype.h>
 #include <float.h>
+#include <stdlib.h>
 #include <string.h>
 #ifdef   XFRACT
 #include <sys/stat.h>
