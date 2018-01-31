@@ -16,6 +16,7 @@
 #include "mpmath.h"
 #include "mpmath_c.h"
 
+#include <math.h>
 #include <string.h>
 
 #if !defined(XFRACT)

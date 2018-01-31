@@ -60,6 +60,7 @@
 #include "line3d.h"
 
 #include <float.h>
+#include <math.h>
 #include <string.h>
 
 // initialize a matrix and set to identity matrix (all 0's, 1's on diagonal)

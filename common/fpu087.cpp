@@ -9,6 +9,8 @@
 
 #include "fpu087.h"
 
+#include <math.h>
+
 // xxx086 --
 //
 //  Simulate integer math routines using floating point.

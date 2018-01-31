@@ -10,6 +10,7 @@
 #include "realdos.h"
 
 #include <float.h>
+#include <math.h>
 #include <string.h>
 
 #ifdef max

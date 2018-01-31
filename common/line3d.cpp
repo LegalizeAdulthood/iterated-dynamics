@@ -26,6 +26,7 @@
 #include "stereo.h"
 
 #include <limits.h>
+#include <math.h>
 #if defined(XFRACT)
 #include <unistd.h>
 #endif
