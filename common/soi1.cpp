@@ -23,6 +23,8 @@
 #include "id_data.h"
 #include "soi.h"
 
+#include <math.h>
+
 #include <algorithm>
 #include <cassert>
 

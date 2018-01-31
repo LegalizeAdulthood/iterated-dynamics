@@ -55,6 +55,7 @@ an appropriate setup, per_image, per_pixel, and orbit routines.
 
 #include <float.h>
 #include <limits.h>
+#include <math.h>
 #include <stdlib.h>
 #include <string.h>
 

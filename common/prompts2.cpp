@@ -33,6 +33,7 @@
 #include "zoom.h"
 
 #include <ctype.h>
+#include <math.h>
 #include <stdlib.h>
 #include <string.h>
 #if defined(XFRACT)

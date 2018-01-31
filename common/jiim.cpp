@@ -28,6 +28,7 @@
 #include "realdos.h"
 #include "zoom.h"
 
+#include <math.h>
 #include <stdarg.h>
 #include <stdio.h>
 #include <string.h>

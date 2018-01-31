@@ -1,11 +1,12 @@
-#include <float.h>
-#include <stdlib.h>
-
 #include "port.h"
 #include "prototyp.h"
 
 #include "calcfrac.h"
 #include "fractals.h"
+
+#include <float.h>
+#include <math.h>
+#include <stdlib.h>
 
 int asmlMODbailout()
 {
