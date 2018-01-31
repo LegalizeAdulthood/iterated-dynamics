@@ -16,6 +16,8 @@
 #include "fractype.h"
 #include "id_data.h"
 
+#include <math.h>
+
 static int inside_color, periodicity_color;
 
 void calcmandfpasmstart()

@@ -30,6 +30,8 @@
 #include "parser.h"
 #include "prompts2.h"
 
+#include <math.h>
+
 #include <algorithm>
 
 namespace
