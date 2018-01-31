@@ -16,6 +16,7 @@
 #include "slideshw.h"
 
 #include <fcntl.h>
+#include <math.h>
 #include <string.h>
 #ifndef NOBSTRING
 #ifndef sun
