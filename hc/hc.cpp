@@ -4065,6 +4065,10 @@ void compiler::parse_arguments()
                 {
                     mode = modes::HTML;
                 }
+                else
+                {
+                    fatal(0, "Cannot have /h with /a, /c, /d or /p");
+                }
                 break;
 
             case 'c':
@@ -4074,7 +4078,7 @@ void compiler::parse_arguments()
                 }
                 else
                 {
-                    fatal(0, "Cannot have /c with /a, /d or /p");
+                    fatal(0, "Cannot have /c with /a, /d, /h or /p");
                 }
                 break;
 
@@ -4085,7 +4089,7 @@ void compiler::parse_arguments()
                 }
                 else
                 {
-                    fatal(0, "Cannot have /a with /c, /d or /p");
+                    fatal(0, "Cannot have /a with /c, /d, /h or /p");
                 }
                 break;
 
@@ -4096,7 +4100,7 @@ void compiler::parse_arguments()
                 }
                 else
                 {
-                    fatal(0, "Cannot have /d with /c, /a or /p");
+                    fatal(0, "Cannot have /d with /a, /c, /h or /p");
                 }
                 break;
 
@@ -4107,7 +4111,7 @@ void compiler::parse_arguments()
                 }
                 else
                 {
-                    fatal(0, "Cannot have /p with /c, /a or /d");
+                    fatal(0, "Cannot have /p with /a, /c, /h or /d");
                 }
                 break;
 
