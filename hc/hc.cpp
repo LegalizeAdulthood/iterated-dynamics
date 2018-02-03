@@ -464,7 +464,7 @@ void unread_char(int ch)
 }
 
 
-int _read_char()
+int read_char_aux()
 {
     int ch;
 
@@ -545,23 +545,23 @@ int read_char()
 {
     int ch;
 
-    ch = _read_char();
+    ch = read_char_aux();
 
     while (ch == ';' && srccol == 1)    // skip over comments
     {
-        ch = _read_char();
+        ch = read_char_aux();
 
         while (ch != '\n' && ch != -1)
         {
-            ch = _read_char();
+            ch = read_char_aux();
         }
 
-        ch = _read_char();
+        ch = read_char_aux();
     }
 
     if (ch == '\\')   // process an escape code
     {
-        ch = _read_char();
+        ch = read_char_aux();
 
         if (ch >= '0' && ch <= '9')
         {
@@ -576,7 +576,7 @@ int read_char()
                     break;
                 }
                 buff[ctr] = ch;
-                ch = _read_char();
+                ch = read_char_aux();
             }
             buff[ctr] = '\0';
             ch = atoi(buff);
