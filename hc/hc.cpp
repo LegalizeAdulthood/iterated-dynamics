@@ -1653,9 +1653,7 @@ void read_src(char const *fname)
 
                 *ptr = '\0';
 
-
                 // commands allowed anytime...
-
                 if (strnicmp(cmd, "Topic=", 6) == 0)
                 {
                     if (in_topic)  // if we're in a topic, finish it
@@ -1667,25 +1665,26 @@ void read_src(char const *fname)
                         in_topic = true;
                     }
 
-                    if (cmd[6] == '\0')
+                    char const *topic_title = &cmd[6];
+                    if (*topic_title == '\0')
                     {
                         warn(eoff, "Topic has no title.");
                     }
-                    else if ((int)strlen(&cmd[6]) > 70)
+                    else if ((int)strlen(topic_title) > 70)
                     {
                         error(eoff, "Topic title is too long.");
                     }
-                    else if ((int)strlen(&cmd[6]) > 60)
+                    else if ((int)strlen(topic_title) > 60)
                     {
                         warn(eoff, "Topic title is long.");
                     }
 
-                    if (find_topic_title(&cmd[6]) != -1)
+                    if (find_topic_title(topic_title) != -1)
                     {
                         error(eoff, "Topic title already exists.");
                     }
 
-                    start_topic(&t, &cmd[6], (unsigned)(ptr-(&cmd[6])));
+                    start_topic(&t, topic_title, (unsigned)(ptr-topic_title));
                     formatting = true;
                     centering = false;
                     state = S_Start;
@@ -1708,20 +1707,21 @@ void read_src(char const *fname)
                         in_topic = true;
                     }
 
-                    if (cmd[5] == '\0')
+                    char const *data = &cmd[5];
+                    if (data[0] == '\0')
                     {
                         warn(eoff, "Data topic has no label.");
                     }
 
-                    if (!validate_label_name(&cmd[5]))
+                    if (!validate_label_name(data))
                     {
-                        error(eoff, "Label \"%s\" contains illegal characters.", &cmd[5]);
+                        error(eoff, "Label \"%s\" contains illegal characters.", data);
                         continue;
                     }
 
-                    if (find_label(&cmd[5]) != nullptr)
+                    if (find_label(data) != nullptr)
                     {
-                        error(eoff, "Label \"%s\" already exists", &cmd[5]);
+                        error(eoff, "Label \"%s\" already exists", data);
                         continue;
                     }
 
@@ -1733,12 +1733,12 @@ void read_src(char const *fname)
                     start_topic(&t, "", 0);
                     t.flags |= TF_DATA;
 
-                    if ((int)strlen(&cmd[5]) > 32)
+                    if ((int)strlen(data) > 32)
                     {
                         warn(eoff, "Label name is long.");
                     }
 
-                    lbl.name      = dupstr(&cmd[5], 0);
+                    lbl.name      = dupstr(data, 0);
                     lbl.topic_num = num_topic;
                     lbl.topic_off = 0;
                     lbl.doc_page  = -1;
@@ -1998,21 +1998,22 @@ void read_src(char const *fname)
                 }
                 else if (strnicmp(cmd, "Label=", 6) == 0)
                 {
-                    if ((int)strlen(&cmd[6]) <= 0)
+                    char const *label_name = &cmd[6];
+                    if ((int)strlen(label_name) <= 0)
                     {
                         error(eoff, "Label has no name.");
                     }
-                    else if (!validate_label_name(&cmd[6]))
+                    else if (!validate_label_name(label_name))
                     {
-                        error(eoff, "Label \"%s\" contains illegal characters.", &cmd[6]);
+                        error(eoff, "Label \"%s\" contains illegal characters.", label_name);
                     }
-                    else if (find_label(&cmd[6]) != nullptr)
+                    else if (find_label(label_name) != nullptr)
                     {
-                        error(eoff, "Label \"%s\" already exists", &cmd[6]);
+                        error(eoff, "Label \"%s\" already exists", label_name);
                     }
                     else
                     {
-                        if ((int)strlen(&cmd[6]) > 32)
+                        if ((int)strlen(label_name) > 32)
                         {
                             warn(eoff, "Label name is long.");
                         }
@@ -2022,7 +2023,7 @@ void read_src(char const *fname)
                             warn(eoff, "Data topic has a local label.");
                         }
 
-                        lbl.name      = dupstr(&cmd[6], 0);
+                        lbl.name      = dupstr(label_name, 0);
                         lbl.topic_num = num_topic;
                         lbl.topic_off = (unsigned)(curr - &buffer[0]);
                         lbl.doc_page  = -1;
