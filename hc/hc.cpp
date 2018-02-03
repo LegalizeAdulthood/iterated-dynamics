@@ -1666,15 +1666,16 @@ void read_src(char const *fname)
                     }
 
                     char const *topic_title = &cmd[6];
-                    if (*topic_title == '\0')
+                    size_t const title_len = strlen(topic_title);
+                    if (title_len == 0)
                     {
                         warn(eoff, "Topic has no title.");
                     }
-                    else if ((int)strlen(topic_title) > 70)
+                    else if (title_len > 70)
                     {
                         error(eoff, "Topic title is too long.");
                     }
-                    else if ((int)strlen(topic_title) > 60)
+                    else if (title_len > 60)
                     {
                         warn(eoff, "Topic title is long.");
                     }
@@ -1684,7 +1685,7 @@ void read_src(char const *fname)
                         error(eoff, "Topic title already exists.");
                     }
 
-                    start_topic(&t, topic_title, (unsigned)(ptr-topic_title));
+                    start_topic(&t, topic_title, static_cast<int>(title_len));
                     formatting = true;
                     centering = false;
                     state = S_Start;
