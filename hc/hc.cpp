@@ -117,7 +117,7 @@ struct TOPIC
     unsigned  title_len;      // length of title
     char     *title;          // title for this topic
     int       num_page;       // number of pages
-    PAGE     *page;           // list of pages
+    std::vector<PAGE> page;   // list of pages
     unsigned  text_len;       // length of topic text
     long      text;           // topic text (all pages)
     long      offset;         // offset to topic from start of file
@@ -166,19 +166,19 @@ struct help_sig_info
 
 
 int      num_topic        = 0;    // topics
-TOPIC   *topic;
+std::vector<TOPIC> topic;
 
 int      num_label        = 0;    // labels
-LABEL   *label;
+std::vector<LABEL> label;
 
 int      num_plabel       = 0;    // private labels
-LABEL   *plabel;
+std::vector<LABEL> plabel;
 
 int      num_link         = 0;    // all links
-LINK    *a_link           = nullptr;
+std::vector<LINK> a_link;
 
 int      num_contents     = 0;    // the table-of-contents
-CONTENT *contents;
+std::vector<CONTENT> contents;
 
 bool quiet_mode = false;          // true if "/Q" option used
 
@@ -381,163 +381,56 @@ void release_topic_text(TOPIC const *t, int save)
  */
 
 
-void *newx(unsigned size)
-{
-    void *ptr;
-
-    ptr = malloc(size);
-
-    if (ptr == nullptr)
-    {
-        fatal(0, "Out of memory!");
-    }
-
-    return ptr;
-}
-
-
-void *renewx(void *ptr, unsigned size)
-{
-    ptr = realloc(ptr, size);
-
-    if (ptr == nullptr)
-    {
-        fatal(0, "Out of memory!");
-    }
-
-    return ptr;
-}
-
-
 char *dupstr(char const *s, unsigned len)
 {
-    char *ptr;
-
     if (len == 0)
     {
         len = (int) strlen(s) + 1;
     }
 
-    ptr = static_cast<char *>(newx(len));
-
-    memcpy(ptr, s, len);
-
+    char *ptr = static_cast<char *>(malloc(len));
+    std::copy(&s[0], &s[len], ptr);
     return ptr;
 }
 
 
-#define LINK_ALLOC_SIZE (16)
-
-
 int add_link(LINK *l)
 {
-    if (num_link == 0)
-    {
-        a_link = static_cast<LINK *>(newx(sizeof(LINK)*LINK_ALLOC_SIZE));
-    }
-    else if (num_link%LINK_ALLOC_SIZE == 0)
-    {
-        a_link = static_cast<LINK *>(renewx(a_link, sizeof(LINK) * (num_link+LINK_ALLOC_SIZE)));
-    }
-
-    a_link[num_link] = *l;
-
+    a_link.push_back(*l);
     return num_link++;
 }
 
 
-#define PAGE_ALLOC_SIZE (4)
-
-
 int add_page(TOPIC *t, PAGE const *p)
 {
-    if (t->num_page == 0)
-    {
-        t->page = static_cast<PAGE *>(newx(sizeof(PAGE)*PAGE_ALLOC_SIZE));
-    }
-    else if (t->num_page%PAGE_ALLOC_SIZE == 0)
-    {
-        t->page = static_cast<PAGE *>(renewx(t->page, sizeof(PAGE) * (t->num_page+PAGE_ALLOC_SIZE)));
-    }
-    assert(t->page);
-    t->page[t->num_page] = *p;
-
+    t->page.push_back(*p);
     return t->num_page++;
 }
 
 
-#define TOPIC_ALLOC_SIZE (16)
-
-
 int add_topic(TOPIC const *t)
 {
-    if (num_topic == 0)
-    {
-        topic = static_cast<TOPIC *>(newx(sizeof(TOPIC)*TOPIC_ALLOC_SIZE));
-    }
-    else if (num_topic%TOPIC_ALLOC_SIZE == 0)
-    {
-        topic = static_cast<TOPIC *>(renewx(topic, sizeof(TOPIC) * (num_topic+TOPIC_ALLOC_SIZE)));
-    }
-
-    topic[num_topic] = *t;
-
+    topic.push_back(*t);
     return num_topic++;
 }
-
-
-#define LABEL_ALLOC_SIZE (16)
 
 
 int add_label(LABEL const *l)
 {
     if (l->name[0] == '@')    // if it's a private label...
     {
-        if (num_plabel == 0)
-        {
-            plabel = static_cast<LABEL *>(newx(sizeof(LABEL)*LABEL_ALLOC_SIZE));
-        }
-        else if (num_plabel%LABEL_ALLOC_SIZE == 0)
-        {
-            plabel = static_cast<LABEL *>(renewx(plabel, sizeof(LABEL) * (num_plabel+LABEL_ALLOC_SIZE)));
-        }
-
-        plabel[num_plabel] = *l;
-
+        plabel.push_back(*l);
         return num_plabel++;
     }
 
-    if (num_label == 0)
-    {
-        label = static_cast<LABEL *>(newx(sizeof(LABEL)*LABEL_ALLOC_SIZE));
-    }
-    else if (num_label%LABEL_ALLOC_SIZE == 0)
-    {
-        label = static_cast<LABEL *>(renewx(label, sizeof(LABEL) * (num_label+LABEL_ALLOC_SIZE)));
-    }
-
-    label[num_label] = *l;
-
+    label.push_back(*l);
     return num_label++;
 }
 
 
-#define CONTENTS_ALLOC_SIZE (16)
-
-
 int add_content(CONTENT const *c)
 {
-    if (num_contents == 0)
-    {
-        contents = static_cast<CONTENT *>(newx(sizeof(CONTENT)*CONTENTS_ALLOC_SIZE));
-    }
-    else if (num_contents%CONTENTS_ALLOC_SIZE == 0)
-    {
-        contents = static_cast<CONTENT *>(renewx(contents, sizeof(CONTENT) * (num_contents+CONTENTS_ALLOC_SIZE)));
-    }
-
-    contents[num_contents] = *c;
-
+    contents.push_back(*c);
     return num_contents++;
 }
 
@@ -736,23 +629,21 @@ LABEL *find_label(char const *name)
 {
     if (*name == '@')
     {
-        LABEL *lp = plabel;
-        for (int l = 0; l < num_plabel; l++, lp++)
+        for (auto &pl : plabel)
         {
-            if (strcmp(name, lp->name) == 0)
+            if (strcmp(name, pl.name) == 0)
             {
-                return lp;
+                return &pl;
             }
         }
     }
     else
     {
-        LABEL *lp = label;
-        for (int l = 0; l < num_label; l++, lp++)
+        for (auto &l : label)
         {
-            if (strcmp(name, lp->name) == 0)
+            if (strcmp(name, l.name) == 0)
             {
-                return lp;
+                return &l;
             }
         }
     }
@@ -2613,7 +2504,6 @@ void read_src(char const *fname)
  */
 void make_hot_links()
 {
-    LINK    *l;
     LABEL   *lbl;
     int      t;
 
@@ -2623,9 +2513,9 @@ void make_hot_links()
      * Calculate topic_num for all entries in DocContents.  Also set
      * "TF_IN_DOC" flag for all topics included in the document.
      */
-    CONTENT *c = contents;
-    for (int lctr = 0; lctr < num_contents; lctr++, c++)
+    for (int lctr = 0; lctr < num_contents; lctr++)
     {
+        CONTENT *c = &contents[lctr];
         for (int ctr = 0; ctr < c->num_topic; ctr++)
         {
             if (c->is_label[ctr])
@@ -2694,9 +2584,9 @@ void make_hot_links()
      * Find topic_num and topic_off for all hot-links.  Also flag all hot-
      * links which will (probably) appear in the document.
      */
-    l = a_link;
-    for (int lctr = 0; lctr < num_link; l++, lctr++)
+    for (int lctr = 0; lctr < num_link; lctr++)
     {
+        LINK *l = &a_link[lctr];
         switch (l->type)
         {
         case 0:      // name is the title of the topic
@@ -2789,9 +2679,9 @@ void paginate_online()    // paginate the text for on-line help
 
     msg("Paginating online help.");
 
-    TOPIC *t = topic;
-    for (int tctr = 0; tctr < num_topic; t++, tctr++)
+    for (int tctr = 0; tctr < num_topic; tctr++)
     {
+        TOPIC *t = &topic[tctr];
         if (t->flags & TF_DATA)
         {
             continue;    // don't paginate data topics
@@ -2976,10 +2866,9 @@ struct PAGINATE_DOC_INFO : public DOC_INFO
 
 LABEL *find_next_label_by_topic(int t)
 {
-    LABEL *temp, *g, *p;
-    p = nullptr;
-    g = p;
-    temp = label;
+    LABEL *p = nullptr;
+    LABEL *g = nullptr;
+    LABEL *temp = &label[0];
     for (int ctr = 0; ctr < num_label; ctr++, temp++)
     {
         if (temp->topic_num == t && temp->doc_page == -1)
@@ -2993,7 +2882,7 @@ LABEL *find_next_label_by_topic(int t)
         }
     }
 
-    temp = plabel;
+    temp = &plabel[0];
     for (int ctr = 0; ctr < num_plabel; ctr++, temp++)
     {
         if (temp->topic_num == t && temp->doc_page == -1)
@@ -3025,13 +2914,12 @@ LABEL *find_next_label_by_topic(int t)
  */
 void set_hot_link_doc_page()
 {
-    LINK  *l;
     LABEL *lbl;
     int    t;
 
-    l = a_link;
-    for (int lctr = 0; lctr < num_link; l++, lctr++)
+    for (int lctr = 0; lctr < num_link; lctr++)
     {
+        LINK *l = &a_link[lctr];
         switch (l->type)
         {
         case 0:      // name is the title of the topic
@@ -3076,21 +2964,18 @@ void set_hot_link_doc_page()
  */
 void set_content_doc_page()
 {
-    TOPIC   *t;
-    char    *base;
-    int      tnum;
     char     buf[4];
     int      len;
 
-    tnum = find_topic_title(DOCCONTENTS_TITLE);
+    int tnum = find_topic_title(DOCCONTENTS_TITLE);
     assert(tnum >= 0);
-    t = &topic[tnum];
+    TOPIC *t = &topic[tnum];
 
-    base = get_topic_text(t);
+    char *base = get_topic_text(t);
 
-    CONTENT *c = contents+1;
-    for (int ctr = 1; ctr < num_contents; ctr++, c++)
+    for (int ctr = 1; ctr < num_contents; ctr++)
     {
+        CONTENT *c = &contents[ctr];
         assert(c->doc_page >= 1);
         sprintf(buf, "%d", c->doc_page);
         len = (int) strlen(buf);
@@ -3262,8 +3147,8 @@ int fcmp_LABEL(const void *a, const void *b)
 
 void sort_labels()
 {
-    qsort(label,  num_label,  sizeof(LABEL), fcmp_LABEL);
-    qsort(plabel, num_plabel, sizeof(LABEL), fcmp_LABEL);
+    qsort(&label[0],  num_label,  sizeof(LABEL), fcmp_LABEL);
+    qsort(&plabel[0], num_plabel, sizeof(LABEL), fcmp_LABEL);
 }
 
 
@@ -3399,9 +3284,9 @@ void calc_offsets()    // calc file offset to each topic
              num_topic*sizeof(long) +// offsets to each topic
              num_label*2*sizeof(int);// topic_num/topic_off for all public labels
 
-    CONTENT *cp = contents;
-    for (int c = 0; c < num_contents; c++, cp++)
+    for (int c = 0; c < num_contents; c++)
     {
+        CONTENT *cp = &contents[c];
         offset += sizeof(int) +       // flags
                   1 +                 // id length
                   (int) strlen(cp->id) +    // id text
@@ -3411,9 +3296,9 @@ void calc_offsets()    // calc file offset to each topic
                   cp->num_topic*sizeof(int);    // topic numbers
     }
 
-    TOPIC *tp = topic;
-    for (int t = 0; t < num_topic; t++, tp++)
+    for (int t = 0; t < num_topic; t++)
     {
+        TOPIC *tp = &topic[t];
         tp->offset = offset;
         offset += (long)sizeof(int) + // topic flags
                   sizeof(int) +       // number of pages
@@ -3433,17 +3318,14 @@ void calc_offsets()    // calc file offset to each topic
  */
 void insert_real_link_info(char *curr, unsigned len)
 {
-    int       size;
-    int       tok;
-    LINK     *l;
-
     while (len > 0)
     {
-        tok = find_token_length(0, curr, len, &size, nullptr);
+        int size = 0;
+        int tok = find_token_length(0, curr, len, &size, nullptr);
 
         if (tok == TOK_LINK)
         {
-            l = &a_link[ getint(curr+1) ];
+            LINK *l = &a_link[ getint(curr+1) ];
             setint(curr+1, l->topic_num);
             setint(curr+1+sizeof(int), l->topic_off);
             setint(curr+1+2*sizeof(int), l->doc_page);
@@ -3458,8 +3340,6 @@ void insert_real_link_info(char *curr, unsigned len)
 void _write_help(FILE *file)
 {
     char                 *text;
-    TOPIC                *tp;
-    CONTENT              *cp;
     help_sig_info  hs;
 
     // write the signature and version
@@ -3500,9 +3380,9 @@ void _write_help(FILE *file)
     }
 
     // write contents
-    cp = contents;
-    for (int c = 0; c < num_contents; c++, cp++)
+    for (int c = 0; c < num_contents; c++)
     {
+        CONTENT *cp = &contents[c];
         putw(cp->flags, file);
 
         int t = (int) strlen(cp->id);
@@ -3518,11 +3398,11 @@ void _write_help(FILE *file)
     }
 
     // write topics
-    tp = topic;
-    for (int t = 0; t < num_topic; t++, tp++)
+    for (int t = 0; t < num_topic; t++)
     {
-        // write the topics flags
+        TOPIC *tp = &topic[t];
 
+        // write the topics flags
         putw(tp->flags, file);
 
         // write offset, length and starting margin for each page
@@ -3556,7 +3436,6 @@ void _write_help(FILE *file)
         // insert_real_link_info() modified it
         // because we don't access the info after
         // this.
-
     }
 }
 
@@ -3752,7 +3631,8 @@ void report_memory()
         text   += topic[ctr].text_len;
         data   += topic[ctr].num_page * sizeof(PAGE);
 
-        dead   += (PAGE_ALLOC_SIZE-(topic[ctr].num_page%PAGE_ALLOC_SIZE)) * sizeof(PAGE);
+        const std::vector<PAGE> &pages = topic[ctr].page;
+        dead   += (pages.capacity() - pages.size())*sizeof(PAGE);
     }
 
     for (int ctr = 0; ctr < num_link; ctr++)
@@ -3761,10 +3641,7 @@ void report_memory()
         bytes_in_strings += (long) strlen(a_link[ctr].name);
     }
 
-    if (num_link > 0)
-    {
-        dead += (LINK_ALLOC_SIZE-(num_link%LINK_ALLOC_SIZE)) * sizeof(LINK);
-    }
+    dead += (a_link.capacity() - a_link.size())*sizeof(LINK);
 
     for (int ctr = 0; ctr < num_label; ctr++)
     {
@@ -3772,10 +3649,7 @@ void report_memory()
         bytes_in_strings += (long) strlen(label[ctr].name) + 1;
     }
 
-    if (num_label > 0)
-    {
-        dead += (LABEL_ALLOC_SIZE-(num_label%LABEL_ALLOC_SIZE)) * sizeof(LABEL);
-    }
+    dead += (label.capacity() - label.size())*sizeof(LABEL);
 
     for (int ctr = 0; ctr < num_plabel; ctr++)
     {
@@ -3783,10 +3657,7 @@ void report_memory()
         bytes_in_strings += (long) strlen(plabel[ctr].name) + 1;
     }
 
-    if (num_plabel > 0)
-    {
-        dead += (LABEL_ALLOC_SIZE-(num_plabel%LABEL_ALLOC_SIZE)) * sizeof(LABEL);
-    }
+    dead += (plabel.capacity() - plabel.size())*sizeof(LABEL);
 
     for (int ctr = 0; ctr < num_contents; ctr++)
     {
@@ -3806,7 +3677,7 @@ void report_memory()
         }
     }
 
-    dead += (CONTENTS_ALLOC_SIZE-(num_contents%CONTENTS_ALLOC_SIZE)) * sizeof(CONTENT);
+    dead += (contents.capacity() - contents.size())*sizeof(CONTENT);
 
     printf("\n");
     printf("Memory Usage:\n");
