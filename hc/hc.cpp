@@ -58,6 +58,9 @@ extern int _splitpath(char const *file_template, char *drive, char *dir, char *f
 
 #endif
 
+namespace
+{
+
 char const *const DEFAULT_SRC_FNAME = "help.src";
 char const *const DEFAULT_HLP_FNAME = "fractint.hlp";
 char const *const DEFAULT_EXE_FNAME = "fractint.exe";
@@ -4046,11 +4049,6 @@ private:
     std::string swappath;
 };
 
-int main(int argc, char *argv[])
-{
-    return compiler(argc, argv).process();
-}
-
 void compiler::parse_arguments()
 {
     for (char **arg = &argv[1]; argc > 1; argc--, arg++)
@@ -4651,3 +4649,10 @@ void check_buffer(char const *curr, unsigned off, char const *buffer)
 #if defined(_WIN32)
 #pragma warning(pop)
 #endif
+
+} // namespace
+
+int main(int argc, char *argv[])
+{
+    return compiler(argc, argv).process();
+}
