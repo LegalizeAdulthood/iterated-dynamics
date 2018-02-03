@@ -1571,7 +1571,6 @@ void read_src(char const *fname)
 
     while (true)
     {
-
         ch = read_char();
 
         if (ch == -1)     // EOF?
