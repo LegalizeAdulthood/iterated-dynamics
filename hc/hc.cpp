@@ -464,23 +464,6 @@ void unread_char(int ch)
 }
 
 
-void unread_string(char const *s)
-{
-    int p = (int) strlen(s);
-
-    while (p-- > 0)
-    {
-        unread_char(s[p]);
-    }
-}
-
-
-int eos()    // end-of-source ?
-{
-    return !(read_char_sp == 0 && read_char_buff_pos == 0 && feof(srcfile));
-}
-
-
 int _read_char()
 {
     int ch;
