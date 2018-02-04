@@ -901,7 +901,6 @@ void process_doc_contents()
             while (!last)
             {
                 last = get_next_item();
-
                 if (stricmp(cmd, "FF") == 0)
                 {
                     if (c.flags & CF_NEW_PAGE)
