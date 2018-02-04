@@ -13,15 +13,18 @@
 /*
  * commands embedded in the help text
  */
-#define CMD_LITERAL       1   // next char taken literally
-#define CMD_PARA          2   // paragraph start code
-#define CMD_LINK          3   // hot-link start/end code
-#define CMD_FF            4   // force a form-feed
-#define CMD_XONLINE       5   // exclude from online help on/off
-#define CMD_XDOC          6   // exclude from printed document on/off
-#define CMD_CENTER        7   // center this line
-#define CMD_SPACE         8   // next byte is count of spaces
-#define MAX_CMD           8
+enum help_commands
+{
+    CMD_LITERAL = 1,    // next char taken literally
+    CMD_PARA = 2,       // paragraph start code
+    CMD_LINK = 3,       // hot-link start/end code
+    CMD_FF = 4,         // force a form-feed
+    CMD_XONLINE = 5,    // exclude from online help on/off
+    CMD_XDOC = 6,       // exclude from printed document on/off
+    CMD_CENTER = 7,     // center this line
+    CMD_SPACE = 8,      // next byte is count of spaces
+    MAX_CMD = 8
+};
 /*
  * on-line help dimensions
  */
