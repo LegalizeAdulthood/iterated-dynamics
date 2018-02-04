@@ -80,10 +80,16 @@ char const *const DOCCONTENTS_TITLE = "DocContent";
 
 const int BUFFER_SIZE = (1024*1024);    // 1 MB
 
+enum class link_types
+{
+    TOPIC,
+    LABEL,
+    SPECIAL
+};
 
 struct LINK
 {
-    int      type;          // 0 = name is topic title, 1 = name is label,
+    link_types type;        // 0 = name is topic title, 1 = name is label,
                             //   2 = "special topic"; name is nullptr and
                             //   topic_num/topic_off is valid
     int      topic_num;     // topic number to link to
@@ -1004,14 +1010,14 @@ int parse_link()   // returns length of link or 0 on error
 
         if (cmd[1] == '-')
         {
-            l.type      = 2;          // type 2 = "special"
+            l.type      = link_types::SPECIAL;
             l.topic_num = atoi(&cmd[1]);
             l.topic_off = 0;
             l.name      = nullptr;
         }
         else
         {
-            l.type = 1;           // type 1 = to a label
+            l.type = link_types::LABEL;
             if ((int)strlen(cmd) > 32)
             {
                 warn(err_off, "Label is long.");
@@ -1034,7 +1040,7 @@ int parse_link()   // returns length of link or 0 on error
     else
     {
         ptr = cmd;
-        l.type = 0;   // type 0 = topic title
+        l.type = link_types::TOPIC;
         len = (int)(end - ptr);
         if (len == 0)
         {
@@ -2617,17 +2623,17 @@ void make_hot_links()
     for (LINK &l : a_link)
     {
         // name is the title of the topic
-        if (l.type == 0)
+        if (l.type == link_types::TOPIC)
         {
             link_topic(l);
         }
         // name is the name of a label
-        else if (l.type == 1)
+        else if (l.type == link_types::LABEL)
         {
             link_label(l);
         }
         // it's a "special" link; topic_off already has the value
-        else if (l.type == 2)
+        else if (l.type == link_types::SPECIAL)
         {
         }
     }
@@ -2911,7 +2917,7 @@ void set_hot_link_doc_page()
     {
         switch (l.type)
         {
-        case 0:      // name is the title of the topic
+        case link_types::TOPIC:
             t = find_topic_title(l.name);
             if (t == -1)
             {
@@ -2926,7 +2932,7 @@ void set_hot_link_doc_page()
             }
             break;
 
-        case 1:  // name is the name of a label
+        case link_types::LABEL:
             lbl = find_label(l.name);
             if (lbl == nullptr)
             {
@@ -2941,7 +2947,8 @@ void set_hot_link_doc_page()
             }
             break;
 
-        case 2:   // special topics don't appear in the document
+        case link_types::SPECIAL:
+            // special topics don't appear in the document
             break;
         }
     }
