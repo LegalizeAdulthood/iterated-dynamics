@@ -155,7 +155,7 @@ struct CONTENT
     int       doc_page;
     unsigned  page_num_pos;
     int       num_topic;
-    char      is_label[MAX_CONTENT_TOPIC];
+    bool      is_label[MAX_CONTENT_TOPIC];
     char     *topic_name[MAX_CONTENT_TOPIC];
     int       topic_num[MAX_CONTENT_TOPIC];
     char const *srcfile;
@@ -828,7 +828,7 @@ void process_doc_contents()
     c.doc_page = -1;
     c.page_num_pos = 0;
     c.num_topic = 1;
-    c.is_label[0] = 0;
+    c.is_label[0] = false;
     c.topic_name[0] = dupstr(DOCCONTENTS_TITLE, 0);
     c.srcline = -1;
     add_content(&c);
@@ -872,7 +872,7 @@ void process_doc_contents()
                     warn(0, "Missing ending quote.");
                 }
 
-                c.is_label[c.num_topic] = 0;
+                c.is_label[c.num_topic] = false;
                 c.topic_name[c.num_topic] = dupstr(ptr, 0);
                 ++c.num_topic;
                 c.name = dupstr(ptr, 0);
@@ -919,12 +919,12 @@ void process_doc_contents()
                         warn(0, "Missing ending quote.");
                     }
 
-                    c.is_label[c.num_topic] = 0;
+                    c.is_label[c.num_topic] = false;
                     c.topic_name[c.num_topic] = dupstr(ptr, 0);
                 }
                 else
                 {
-                    c.is_label[c.num_topic] = 1;
+                    c.is_label[c.num_topic] = true;
                     c.topic_name[c.num_topic] = dupstr(cmd, 0);
                 }
 
