@@ -4223,25 +4223,151 @@ void compiler::render_html()
     }
 }
 
-void compiler::paginate_html_document()
+class html_paginator
 {
-    PAGINATE_DOC_INFO info;
+public:
+    html_paginator()
+    {
+        m_info.tnum = -1;
+        m_info.cnum = m_info.tnum;
+        m_info.link_dest_warn = true;
+    }
 
+    void process();
+
+private:
+    bool get_info(int cmd, PD_INFO *pd);
+    bool output(int cmd, PD_INFO *pd);
+    static bool get_info_(int cmd, PD_INFO *pd, void *context)
+    {
+        return static_cast<html_paginator *>(context)->get_info(cmd, pd);
+    }
+    static bool output_(int cmd, PD_INFO *pd, void *context)
+    {
+        return static_cast<html_paginator *>(context)->output(cmd, pd);
+    }
+
+    PAGINATE_DOC_INFO m_info;
+};
+
+void html_paginator::process()
+{
     if (num_contents == 0)
     {
-        return ;
+        return;
     }
 
     msg("Paginating document.");
 
-    info.tnum = -1;
-    info.cnum = info.tnum;
-    info.link_dest_warn = true;
-
-    process_document(pd_get_info, paginate_doc_output, &info);
+    process_document(get_info_, output_, this);
 
     set_hot_link_doc_page();
     set_content_doc_page();
+}
+
+bool html_paginator::get_info(int cmd, PD_INFO *pd)
+{
+    CONTENT const *c;
+
+    switch (cmd)
+    {
+    case PD_GET_CONTENT:
+        if (++m_info.cnum >= num_contents)
+        {
+            return false;
+        }
+        c = &contents[m_info.cnum];
+        m_info.tnum = -1;
+        pd->id       = c->id;
+        pd->title    = c->name;
+        pd->new_page = (c->flags & CF_NEW_PAGE) != 0;
+        return true;
+
+    case PD_GET_TOPIC:
+        c = &contents[m_info.cnum];
+        if (++m_info.tnum >= c->num_topic)
+        {
+            return false;
+        }
+        pd->curr = get_topic_text(&topic[c->topic_num[m_info.tnum]]);
+        pd->len = topic[c->topic_num[m_info.tnum]].text_len;
+        return true;
+
+    case PD_GET_LINK_PAGE:
+    {
+        LINK const &link = a_link[getint(pd->s)];
+        if (link.doc_page == -1)
+        {
+            if (m_info.link_dest_warn)
+            {
+                src_cfname = link.srcfile;
+                srcline    = link.srcline;
+                warn(0, "Hot-link destination is not in the document.");
+                srcline = -1;
+            }
+            return false;
+        }
+        pd->i = a_link[getint(pd->s)].doc_page;
+        return true;
+    }
+
+    case PD_RELEASE_TOPIC:
+        c = &contents[m_info.cnum];
+        release_topic_text(&topic[c->topic_num[m_info.tnum]], 0);
+        return true;
+
+    default:
+        return false;
+    }
+}
+
+bool html_paginator::output(int cmd, PD_INFO *pd)
+{
+    switch (cmd)
+    {
+    case PD_FOOTING:
+    case PD_PRINT:
+    case PD_PRINTN:
+    case PD_PRINT_SEC:
+        return true;
+
+    case PD_HEADING:
+        ++num_doc_pages;
+        return true;
+
+    case PD_START_SECTION:
+        m_info.c = &contents[m_info.cnum];
+        return true;
+
+    case PD_START_TOPIC:
+        m_info.start = pd->curr;
+        m_info.lbl = find_next_label_by_topic(m_info.c->topic_num[m_info.tnum]);
+        return true;
+
+    case PD_SET_SECTION_PAGE:
+        m_info.c->doc_page = pd->pnum;
+        return true;
+
+    case PD_SET_TOPIC_PAGE:
+        topic[m_info.c->topic_num[m_info.tnum]].doc_page = pd->pnum;
+        return true;
+
+    case PD_PERIODIC:
+        while (m_info.lbl != nullptr && (unsigned)(pd->curr - m_info.start) >= m_info.lbl->topic_off)
+        {
+            m_info.lbl->doc_page = pd->pnum;
+            m_info.lbl = find_next_label_by_topic(m_info.c->topic_num[m_info.tnum]);
+        }
+        return true;
+
+    default:
+        return false;
+    }
+}
+
+void compiler::paginate_html_document()
+{
+    html_paginator().process();
 }
 
 class html_processor
@@ -4276,6 +4402,7 @@ private:
 
     std::string const &m_fname;
     PRINT_DOC_INFO m_info;
+    int m_current_topic = 0;
 };
 
 void compiler::print_html_document(std::string const &fname)
