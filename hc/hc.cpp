@@ -2480,7 +2480,109 @@ void read_src(char const *fname)
 /*
  * stuff to resolve hot-link references.
  */
+void link_topic(LINK &l)
+{
+    const int t = find_topic_title(l.name);
+    if (t == -1)
+    {
+        src_cfname = l.srcfile;
+        srcline = l.srcline; // pretend we are still in the source...
+        error(0, "Cannot find implicit hot-link \"%s\".", l.name);
+        srcline = -1;  // back to reality
+    }
+    else
+    {
+        l.topic_num = t;
+        l.topic_off = 0;
+        l.doc_page = (topic[t].flags & TF_IN_DOC) ? 0 : -1;
+    }
+}
 
+void link_label(LINK &l)
+{
+    if (LABEL *lbl = find_label(l.name))
+    {
+        if (topic[lbl->topic_num].flags & TF_DATA)
+        {
+            src_cfname = l.srcfile;
+            srcline = l.srcline;
+            error(0, "Label \"%s\" is a data-only topic.", l.name);
+            srcline = -1;
+        }
+        else
+        {
+            l.topic_num = lbl->topic_num;
+            l.topic_off = lbl->topic_off;
+            l.doc_page  = (topic[lbl->topic_num].flags & TF_IN_DOC) ? 0 : -1;
+        }
+    }
+    else
+    {
+        src_cfname = l.srcfile;
+        srcline = l.srcline; // pretend again
+        error(0, "Cannot find explicit hot-link \"%s\".", l.name);
+        srcline = -1;
+    }
+}
+
+void label_topic(CONTENT &c, int ctr)
+{
+    if (LABEL *lbl = find_label(c.topic_name[ctr]))
+    {
+        if (topic[lbl->topic_num].flags & TF_DATA)
+        {
+            src_cfname = c.srcfile;
+            srcline = c.srcline;
+            error(0, "Label \"%s\" is a data-only topic.", c.topic_name[ctr]);
+            srcline = -1;
+        }
+        else
+        {
+            c.topic_num[ctr] = lbl->topic_num;
+            if (topic[lbl->topic_num].flags & TF_IN_DOC)
+            {
+                warn(0, "Topic \"%s\" appears in document more than once.",
+                    topic[lbl->topic_num].title);
+            }
+            else
+            {
+                topic[lbl->topic_num].flags |= TF_IN_DOC;
+            }
+        }
+    }
+    else
+    {
+        src_cfname = c.srcfile;
+        srcline = c.srcline;
+        error(0, "Cannot find DocContent label \"%s\".", c.topic_name[ctr]);
+        srcline = -1;
+    }
+}
+
+void content_topic(CONTENT &c, int ctr)
+{
+    const int t = find_topic_title(c.topic_name[ctr]);
+    if (t == -1)
+    {
+        src_cfname = c.srcfile;
+        srcline = c.srcline;
+        error(0, "Cannot find DocContent topic \"%s\".", c.topic_name[ctr]);
+        srcline = -1;  // back to reality
+    }
+    else
+    {
+        c.topic_num[ctr] = t;
+        if (topic[t].flags & TF_IN_DOC)
+        {
+            warn(0, "Topic \"%s\" appears in document more than once.",
+                topic[t].title);
+        }
+        else
+        {
+            topic[t].flags |= TF_IN_DOC;
+        }
+    }
+}
 
 /*
  * calculate topic_num/topic_off for each link.
@@ -2499,60 +2601,11 @@ void make_hot_links()
         {
             if (c.is_label[ctr])
             {
-                if (LABEL *lbl = find_label(c.topic_name[ctr]))
-                {
-                    if (topic[lbl->topic_num].flags & TF_DATA)
-                    {
-                        src_cfname = c.srcfile;
-                        srcline = c.srcline;
-                        error(0, "Label \"%s\" is a data-only topic.", c.topic_name[ctr]);
-                        srcline = -1;
-                    }
-                    else
-                    {
-                        c.topic_num[ctr] = lbl->topic_num;
-                        if (topic[lbl->topic_num].flags & TF_IN_DOC)
-                        {
-                            warn(0, "Topic \"%s\" appears in document more than once.",
-                                topic[lbl->topic_num].title);
-                        }
-                        else
-                        {
-                            topic[lbl->topic_num].flags |= TF_IN_DOC;
-                        }
-                    }
-                }
-                else
-                {
-                    src_cfname = c.srcfile;
-                    srcline = c.srcline;
-                    error(0, "Cannot find DocContent label \"%s\".", c.topic_name[ctr]);
-                    srcline = -1;
-                }
+                label_topic(c, ctr);
             }
             else
             {
-                const int t = find_topic_title(c.topic_name[ctr]);
-                if (t == -1)
-                {
-                    src_cfname = c.srcfile;
-                    srcline = c.srcline;
-                    error(0, "Cannot find DocContent topic \"%s\".", c.topic_name[ctr]);
-                    srcline = -1;  // back to reality
-                }
-                else
-                {
-                    c.topic_num[ctr] = t;
-                    if (topic[t].flags & TF_IN_DOC)
-                    {
-                        warn(0, "Topic \"%s\" appears in document more than once.",
-                            topic[t].title);
-                    }
-                    else
-                    {
-                        topic[t].flags |= TF_IN_DOC;
-                    }
-                }
+                content_topic(c, ctr);
             }
         }
     }
@@ -2566,47 +2619,12 @@ void make_hot_links()
         // name is the title of the topic
         if (l.type == 0)
         {
-            const int t = find_topic_title(l.name);
-            if (t == -1)
-            {
-                src_cfname = l.srcfile;
-                srcline = l.srcline; // pretend we are still in the source...
-                error(0, "Cannot find implicit hot-link \"%s\".", l.name);
-                srcline = -1;  // back to reality
-            }
-            else
-            {
-                l.topic_num = t;
-                l.topic_off = 0;
-                l.doc_page = (topic[t].flags & TF_IN_DOC) ? 0 : -1;
-            }
+            link_topic(l);
         }
         // name is the name of a label
         else if (l.type == 1)
         {
-            if (LABEL *lbl = find_label(l.name))
-            {
-                if (topic[lbl->topic_num].flags & TF_DATA)
-                {
-                    src_cfname = l.srcfile;
-                    srcline = l.srcline;
-                    error(0, "Label \"%s\" is a data-only topic.", l.name);
-                    srcline = -1;
-                }
-                else
-                {
-                    l.topic_num = lbl->topic_num;
-                    l.topic_off = lbl->topic_off;
-                    l.doc_page  = (topic[lbl->topic_num].flags & TF_IN_DOC) ? 0 : -1;
-                }
-            }
-            else
-            {
-                src_cfname = l.srcfile;
-                srcline = l.srcline; // pretend again
-                error(0, "Cannot find explicit hot-link \"%s\".", l.name);
-                srcline = -1;
-            }
+            link_label(l);
         }
         // it's a "special" link; topic_off already has the value
         else if (l.type == 2)
