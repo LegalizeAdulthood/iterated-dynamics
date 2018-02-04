@@ -2986,7 +2986,7 @@ void set_content_doc_page()
 bool pd_get_info(int cmd, PD_INFO *pd, void *context)
 {
     DOC_INFO &info = *static_cast<DOC_INFO *>(context);
-    CONTENT *c;
+    CONTENT const *c;
 
     switch (cmd)
     {
@@ -3014,7 +3014,7 @@ bool pd_get_info(int cmd, PD_INFO *pd, void *context)
 
     case PD_GET_LINK_PAGE:
     {
-        LINK &link = a_link[getint(pd->s)];
+        LINK const &link = a_link[getint(pd->s)];
         if (link.doc_page == -1)
         {
             if (info.link_dest_warn)
