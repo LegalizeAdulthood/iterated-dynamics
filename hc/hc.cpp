@@ -812,12 +812,9 @@ bool get_next_item()
 
 void process_contents()
 {
-    CONTENT c;
     char   *ptr;
-    int     indent;
-    int     ch;
-    TOPIC   t;
 
+    TOPIC t;
     t.flags     = 0;
     t.title_len = (unsigned) strlen(DOCCONTENTS_TITLE)+1;
     t.title     = dupstr(DOCCONTENTS_TITLE, t.title_len);
@@ -826,6 +823,7 @@ void process_contents()
 
     curr = &buffer[0];
 
+    CONTENT c{};
     c.flags = 0;
     c.id = dupstr("", 1);
     c.name = dupstr("", 1);
@@ -839,8 +837,7 @@ void process_contents()
 
     while (true)
     {
-        ch = read_char();
-
+        int const ch = read_char();
         if (ch == '{')   // process a CONTENT entry
         {
             c.flags = 0;
@@ -861,7 +858,7 @@ void process_contents()
                 error(0, "Unexpected end of DocContent entry.");
                 continue;
             }
-            indent = atoi(cmd);
+            int const indent = atoi(cmd);
 
             bool last = get_next_item();
 
