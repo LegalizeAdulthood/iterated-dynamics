@@ -4248,14 +4248,14 @@ class html_processor
 {
 public:
     html_processor(std::string const &fname)
-        : fname_(fname)
+        : m_fname(fname)
     {
-        info.tnum = -1;
-        info.cnum = -1;
-        info.link_dest_warn = false;
-        info.margin = PAGE_INDENT;
-        info.start_of_line = true;
-        info.spaces = 0;
+        m_info.tnum = -1;
+        m_info.cnum = -1;
+        m_info.link_dest_warn = false;
+        m_info.margin = PAGE_INDENT;
+        m_info.start_of_line = true;
+        m_info.spaces = 0;
     }
 
     void process();
@@ -4274,8 +4274,8 @@ private:
     void print_char(int c, int n);
     void print_string(char const *s, int n);
 
-    std::string const &fname_;
-    PRINT_DOC_INFO info;
+    std::string const &m_fname;
+    PRINT_DOC_INFO m_info;
 };
 
 void compiler::print_html_document(std::string const &fname)
@@ -4290,25 +4290,25 @@ bool html_processor::get_info(int cmd, PD_INFO *pd)
     switch (cmd)
     {
     case PD_GET_CONTENT:
-        if (++info.cnum >= num_contents)
+        if (++m_info.cnum >= num_contents)
         {
             return false;
         }
-        c = &contents[info.cnum];
-        info.tnum = -1;
+        c = &contents[m_info.cnum];
+        m_info.tnum = -1;
         pd->id       = c->id;
         pd->title    = c->name;
         pd->new_page = (c->flags & CF_NEW_PAGE) != 0;
         return true;
 
     case PD_GET_TOPIC:
-        c = &contents[info.cnum];
-        if (++info.tnum >= c->num_topic)
+        c = &contents[m_info.cnum];
+        if (++m_info.tnum >= c->num_topic)
         {
             return false;
         }
-        pd->curr = get_topic_text(&topic[c->topic_num[info.tnum]]);
-        pd->len = topic[c->topic_num[info.tnum]].text_len;
+        pd->curr = get_topic_text(&topic[c->topic_num[m_info.tnum]]);
+        pd->len = topic[c->topic_num[m_info.tnum]].text_len;
         return true;
 
     case PD_GET_LINK_PAGE:
@@ -4316,7 +4316,7 @@ bool html_processor::get_info(int cmd, PD_INFO *pd)
         LINK &link = a_link[getint(pd->s)];
         if (link.doc_page == -1)
         {
-            if (info.link_dest_warn)
+            if (m_info.link_dest_warn)
             {
                 src_cfname = link.srcfile;
                 srcline    = link.srcline;
@@ -4330,8 +4330,8 @@ bool html_processor::get_info(int cmd, PD_INFO *pd)
     }
 
     case PD_RELEASE_TOPIC:
-        c = &contents[info.cnum];
-        release_topic_text(&topic[c->topic_num[info.tnum]], 0);
+        c = &contents[m_info.cnum];
+        release_topic_text(&topic[c->topic_num[m_info.tnum]], 0);
         return true;
 
     default:
@@ -4346,19 +4346,19 @@ bool html_processor::print_html(int cmd, PD_INFO *pd)
     case PD_HEADING:
     {
         std::ostringstream buff;
-        info.margin = 0;
+        m_info.margin = 0;
         buff << "\n"
             "                  Iterated Dynamics Version 1.0                 Page "
             << pd->pnum << "\n\n";
         print_string(buff.str().c_str(), 0);
-        info.margin = PAGE_INDENT;
+        m_info.margin = PAGE_INDENT;
         return true;
     }
 
     case PD_FOOTING:
-        info.margin = 0;
+        m_info.margin = 0;
         print_char('\f', 1);
-        info.margin = PAGE_INDENT;
+        m_info.margin = PAGE_INDENT;
         return true;
 
     case PD_PRINT:
@@ -4370,7 +4370,7 @@ bool html_processor::print_html(int cmd, PD_INFO *pd)
         return true;
 
     case PD_PRINT_SEC:
-        info.margin = TITLE_INDENT;
+        m_info.margin = TITLE_INDENT;
         if (pd->id[0] != '\0')
         {
             print_string(pd->id, 0);
@@ -4378,13 +4378,21 @@ bool html_processor::print_html(int cmd, PD_INFO *pd)
         }
         print_string(pd->title, 0);
         print_char('\n', 1);
-        info.margin = PAGE_INDENT;
+        m_info.margin = PAGE_INDENT;
         return true;
 
     case PD_START_SECTION:
+        return true;
+
     case PD_START_TOPIC:
+        return true;
+
     case PD_SET_SECTION_PAGE:
+        return true;
+
     case PD_SET_TOPIC_PAGE:
+        return true;
+
     case PD_PERIODIC:
         return true;
 
@@ -4399,42 +4407,42 @@ void html_processor::print_char(int c, int n)
     {
         if (c == ' ')
         {
-            ++info.spaces;
+            ++m_info.spaces;
         }
         else if (c == '\n' || c == '\f')
         {
-            info.start_of_line = true;
-            info.spaces = 0;   // strip spaces before a new-line
-            putc(c, info.file);
+            m_info.start_of_line = true;
+            m_info.spaces = 0;   // strip spaces before a new-line
+            putc(c, m_info.file);
         }
         else
         {
-            if (info.start_of_line)
+            if (m_info.start_of_line)
             {
-                info.spaces += info.margin;
-                info.start_of_line = false;
+                m_info.spaces += m_info.margin;
+                m_info.start_of_line = false;
             }
-            while (info.spaces > 0)
+            while (m_info.spaces > 0)
             {
-                fputc(' ', info.file);
-                --info.spaces;
+                fputc(' ', m_info.file);
+                --m_info.spaces;
             }
 
             if (c == '&')
             {
-                fputs("&amp;", info.file);
+                fputs("&amp;", m_info.file);
             }
             else if (c == '<')
             {
-                fputs("&lt;", info.file);
+                fputs("&lt;", m_info.file);
             }
             else if (c == '>')
             {
-                fputs("&gt;", info.file);
+                fputs("&gt;", m_info.file);
             }
             else
             {
-                fputc(c, info.file);
+                fputc(c, m_info.file);
             }
         }
     }
@@ -4465,12 +4473,12 @@ void html_processor::process()
         fatal(0, ".SRC has no DocContents.");
     }
 
-    msg("Printing to: %s", fname_.c_str());
+    msg("Printing to: %s", m_fname.c_str());
 
-    info.file = fopen(fname_.c_str(), "wt");
-    if (info.file == nullptr)
+    m_info.file = fopen(m_fname.c_str(), "wt");
+    if (m_info.file == nullptr)
     {
-        fatal(0, "Couldn't create \"%s\"", fname_.c_str());
+        fatal(0, "Couldn't create \"%s\"", m_fname.c_str());
     }
     fputs("<html>\n"
         "<head>\n"
@@ -4478,16 +4486,16 @@ void html_processor::process()
         "</head>\n"
         "<body>\n"
         "<pre>\n",
-        info.file);
+        m_info.file);
 
     process_document(get_info_, print_html_, this);
 
     fputs("</pre>\n"
         "</body>\n"
         "</html>\n",
-        info.file);
+        m_info.file);
 
-    fclose(info.file);
+    fclose(m_info.file);
 }
 
 #if defined(_WIN32)
