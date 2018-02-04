@@ -302,8 +302,8 @@ bool process_document(PD_FUNC get_info, PD_FUNC output, void *info)
               sp = ' ';
     bool first_topic;
 
-    pd.pnum = 1;
-    pd.lnum = 0;
+    pd.page_num = 1;
+    pd.line_num = 0;
 
     output(PD_HEADING, &pd, info);
 
@@ -316,14 +316,14 @@ bool process_document(PD_FUNC get_info, PD_FUNC output, void *info)
             return false;
         }
 
-        if (pd.new_page && pd.lnum != 0)
+        if (pd.new_page && pd.line_num != 0)
         {
             if (!output(PD_FOOTING, &pd, info))
             {
                 return false;
             }
-            ++pd.pnum;
-            pd.lnum = 0;
+            ++pd.page_num;
+            pd.line_num = 0;
             if (!output(PD_HEADING, &pd, info))
             {
                 return false;
@@ -332,26 +332,26 @@ bool process_document(PD_FUNC get_info, PD_FUNC output, void *info)
 
         else
         {
-            if (pd.lnum+2 > PAGE_DEPTH-CONTENT_BREAK)
+            if (pd.line_num + 2 > PAGE_DEPTH-CONTENT_BREAK)
             {
                 if (!output(PD_FOOTING, &pd, info))
                 {
                     return false;
                 }
-                ++pd.pnum;
-                pd.lnum = 0;
+                ++pd.page_num;
+                pd.line_num = 0;
                 if (!output(PD_HEADING, &pd, info))
                 {
                     return false;
                 }
             }
-            else if (pd.lnum > 0)
+            else if (pd.line_num > 0)
             {
                 if (!do_print_n(nl, 2))
                 {
                     return false;
                 }
-                pd.lnum += 2;
+                pd.line_num += 2;
             }
         }
 
@@ -366,7 +366,7 @@ bool process_document(PD_FUNC get_info, PD_FUNC output, void *info)
             {
                 return false;
             }
-            ++pd.lnum;
+            ++pd.line_num;
         }
 
         first_topic = true;
@@ -403,18 +403,18 @@ bool process_document(PD_FUNC get_info, PD_FUNC output, void *info)
                     {
                         return false;
                     }
-                    ++pd.lnum;
+                    ++pd.line_num;
                 }
             }
 
-            if (pd.lnum > PAGE_DEPTH-TOPIC_BREAK)
+            if (pd.line_num > PAGE_DEPTH-TOPIC_BREAK)
             {
                 if (!output(PD_FOOTING, &pd, info))
                 {
                     return false;
                 }
-                ++pd.pnum;
-                pd.lnum = 0;
+                ++pd.page_num;
+                pd.line_num = 0;
                 if (!output(PD_HEADING, &pd, info))
                 {
                     return false;
@@ -426,7 +426,7 @@ bool process_document(PD_FUNC get_info, PD_FUNC output, void *info)
                 {
                     return false;
                 }
-                pd.lnum++;
+                ++pd.line_num;
             }
 
             if (!output(PD_SET_TOPIC_PAGE, &pd, info))
@@ -486,7 +486,7 @@ bool process_document(PD_FUNC get_info, PD_FUNC output, void *info)
                             if (in_link == 0)
                             {
                                 col = 0;
-                                ++pd.lnum;
+                                ++pd.line_num;
                                 if (!do_print_n(nl, 1))
                                 {
                                     return false;
@@ -524,7 +524,7 @@ bool process_document(PD_FUNC get_info, PD_FUNC output, void *info)
                         if (tok == TOK_PARA)
                         {
                             col = 0;   /* fake a nl */
-                            ++pd.lnum;
+                            ++pd.line_num;
                             if (!do_print_n(nl, 1))
                             {
                                 return false;
@@ -567,14 +567,14 @@ bool process_document(PD_FUNC get_info, PD_FUNC output, void *info)
                             {
                                 return false;
                             }
-                            if (++pd.lnum >= PAGE_DEPTH)
+                            if (++pd.line_num >= PAGE_DEPTH)
                             {
                                 if (!output(PD_FOOTING, &pd, info))
                                 {
                                     return false;
                                 }
-                                ++pd.pnum;
-                                pd.lnum = 0;
+                                ++pd.page_num;
+                                pd.line_num = 0;
                                 if (!output(PD_HEADING, &pd, info))
                                 {
                                     return false;
@@ -628,9 +628,9 @@ bool process_document(PD_FUNC get_info, PD_FUNC output, void *info)
                         break;
                     }
 
-                    ++pd.lnum;
+                    ++pd.line_num;
 
-                    if (pd.lnum >= PAGE_DEPTH || (col == 0 && pd.lnum >= PAGE_DEPTH-BLANK_BREAK))
+                    if (pd.line_num >= PAGE_DEPTH || (col == 0 && pd.line_num >= PAGE_DEPTH-BLANK_BREAK))
                     {
                         if (col != 0)      /* if last wasn't a blank line... */
                         {
@@ -643,8 +643,8 @@ bool process_document(PD_FUNC get_info, PD_FUNC output, void *info)
                         {
                             return false;
                         }
-                        ++pd.pnum;
-                        pd.lnum = 0;
+                        ++pd.page_num;
+                        pd.line_num = 0;
                         skip_blanks = true;
                         if (!output(PD_HEADING, &pd, info))
                         {
@@ -672,8 +672,8 @@ bool process_document(PD_FUNC get_info, PD_FUNC output, void *info)
                         return false;
                     }
                     col = 0;
-                    pd.lnum = 0;
-                    ++pd.pnum;
+                    pd.line_num = 0;
+                    ++pd.page_num;
                     if (!output(PD_HEADING, &pd, info))
                     {
                         return false;

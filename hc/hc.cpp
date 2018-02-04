@@ -3066,17 +3066,17 @@ bool paginate_doc_output(int cmd, PD_INFO *pd, void *context)
         return true;
 
     case PD_SET_SECTION_PAGE:
-        info->c->doc_page = pd->pnum;
+        info->c->doc_page = pd->page_num;
         return true;
 
     case PD_SET_TOPIC_PAGE:
-        topic[info->c->topic_num[info->topic_num]].doc_page = pd->pnum;
+        topic[info->c->topic_num[info->topic_num]].doc_page = pd->page_num;
         return true;
 
     case PD_PERIODIC:
         while (info->lbl != nullptr && (unsigned)(pd->curr - info->start) >= info->lbl->topic_off)
         {
-            info->lbl->doc_page = pd->pnum;
+            info->lbl->doc_page = pd->page_num;
             info->lbl = find_next_label_by_topic(info->c->topic_num[info->topic_num]);
         }
         return true;
@@ -3524,7 +3524,7 @@ bool print_doc_output(int cmd, PD_INFO *pd, void *context)
         info->margin = 0;
         buff << "\n"
             "                  Iterated Dynamics Version 1.0                 Page "
-            << pd->pnum << "\n\n";
+            << pd->page_num << "\n\n";
         printers(info, buff.str().c_str(), 0);
         info->margin = PAGE_INDENT;
         return true;
@@ -4345,17 +4345,17 @@ bool html_paginator::output(int cmd, PD_INFO *pd)
         return true;
 
     case PD_SET_SECTION_PAGE:
-        m_info.c->doc_page = pd->pnum;
+        m_info.c->doc_page = pd->page_num;
         return true;
 
     case PD_SET_TOPIC_PAGE:
-        topic[m_info.c->topic_num[m_info.topic_num]].doc_page = pd->pnum;
+        topic[m_info.c->topic_num[m_info.topic_num]].doc_page = pd->page_num;
         return true;
 
     case PD_PERIODIC:
         while (m_info.lbl != nullptr && (unsigned)(pd->curr - m_info.start) >= m_info.lbl->topic_off)
         {
-            m_info.lbl->doc_page = pd->pnum;
+            m_info.lbl->doc_page = pd->page_num;
             m_info.lbl = find_next_label_by_topic(m_info.c->topic_num[m_info.topic_num]);
         }
         return true;
@@ -4476,7 +4476,7 @@ bool html_processor::print_html(int cmd, PD_INFO *pd)
         m_info.margin = 0;
         buff << "\n"
             "                  Iterated Dynamics Version 1.0                 Page "
-            << pd->pnum << "\n\n";
+            << pd->page_num << "\n\n";
         print_string(buff.str().c_str(), 0);
         m_info.margin = PAGE_INDENT;
         return true;

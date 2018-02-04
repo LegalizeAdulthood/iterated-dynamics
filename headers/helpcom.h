@@ -68,8 +68,8 @@
 struct PD_INFO
 {
     // used by process_document -- look but don't touch!
-    int pnum;
-    int lnum;
+    int page_num;
+    int line_num;
     // PD_GET_TOPIC is allowed to change these
     char *curr;
     unsigned  len;

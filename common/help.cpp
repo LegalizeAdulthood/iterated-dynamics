@@ -1231,7 +1231,7 @@ static bool print_doc_output(int cmd, PD_INFO *pd, void *context)
 
         if (info->msg_func != nullptr)
         {
-            keep_going = (*info->msg_func)(pd->pnum, info->num_page) != 0;
+            keep_going = (*info->msg_func)(pd->page_num, info->num_page) != 0;
         }
         else
         {
@@ -1245,7 +1245,7 @@ static bool print_doc_output(int cmd, PD_INFO *pd, void *context)
                 ((g_release%10) ? '0'+(g_release%10) : ' '));
         memmove(line + ((width-(int)(strlen(buff))) / 2)-4, buff, strlen(buff));
 
-        sprintf(buff, "Page %d", pd->pnum);
+        sprintf(buff, "Page %d", pd->page_num);
         memmove(line + (width - (int)strlen(buff)), buff, strlen(buff));
 
         printerc(info, '\n', 1);
