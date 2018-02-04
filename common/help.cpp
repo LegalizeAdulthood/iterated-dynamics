@@ -129,7 +129,7 @@ static void display_parse_text(char const *text, unsigned len, int start_margin,
 {
     char const *curr;
     int row, col;
-    int tok;
+    token_types tok;
     int size, width;
 
     g_text_cbase = SCREEN_INDENT;
@@ -144,18 +144,18 @@ static void display_parse_text(char const *text, unsigned len, int start_margin,
 
     if (start_margin >= 0)
     {
-        tok = TOK_PARA;
+        tok = token_types::PARA;
     }
     else
     {
-        tok = -1;
+        tok = static_cast<token_types>(-1);
     }
 
     while (true)
     {
         switch (tok)
         {
-        case TOK_PARA:
+        case token_types::PARA:
         {
             int indent, margin;
 
@@ -178,26 +178,26 @@ static void display_parse_text(char const *text, unsigned len, int start_margin,
             {
                 tok = find_token_length(token_modes::ONLINE, curr, len, &size, &width);
 
-                if (tok == TOK_DONE || tok == TOK_NL || tok == TOK_FF)
+                if (tok == token_types::DONE || tok == token_types::NL || tok == token_types::FF)
                 {
                     break;
                 }
 
-                if (tok == TOK_PARA)
+                if (tok == token_types::PARA)
                 {
                     col = 0;   // fake a new-line
                     row++;
                     break;
                 }
 
-                if (tok == TOK_XONLINE || tok == TOK_XDOC)
+                if (tok == token_types::XONLINE || tok == token_types::XDOC)
                 {
                     curr += size;
                     len  -= size;
                     continue;
                 }
 
-                // now tok is TOK_SPACE or TOK_LINK or TOK_WORD
+                // now tok is SPACE or LINK or WORD
 
                 if (col+width > SCREEN_WIDTH)
                 {
@@ -205,13 +205,13 @@ static void display_parse_text(char const *text, unsigned len, int start_margin,
                     col = margin;
                     ++row;
 
-                    if (tok == TOK_SPACE)
+                    if (tok == token_types::SPACE)
                     {
                         width = 0;   // skip spaces at start of a line
                     }
                 }
 
-                if (tok == TOK_LINK)
+                if (tok == token_types::LINK)
                 {
                     display_text(row, col, C_HELP_LINK, curr+1+3*sizeof(int), width);
                     if (num_link != nullptr)
@@ -225,7 +225,7 @@ static void display_parse_text(char const *text, unsigned len, int start_margin,
                         ++(*num_link);
                     }
                 }
-                else if (tok == TOK_WORD)
+                else if (tok == token_types::WORD)
                 {
                     display_text(row, col, C_HELP_BODY, curr, width);
                 }
@@ -240,7 +240,7 @@ static void display_parse_text(char const *text, unsigned len, int start_margin,
             break;
         }
 
-        case TOK_CENTER:
+        case token_types::CENTER:
             col = find_line_width(token_modes::ONLINE, curr, len);
             col = (SCREEN_WIDTH - col)/2;
             if (col < 0)
@@ -249,12 +249,12 @@ static void display_parse_text(char const *text, unsigned len, int start_margin,
             }
             break;
 
-        case TOK_NL:
+        case token_types::NL:
             col = 0;
             ++row;
             break;
 
-        case TOK_LINK:
+        case token_types::LINK:
             display_text(row, col, C_HELP_LINK, curr+1+3*sizeof(int), width);
             if (num_link != nullptr)
             {
@@ -268,14 +268,14 @@ static void display_parse_text(char const *text, unsigned len, int start_margin,
             }
             break;
 
-        case TOK_XONLINE:  // skip
-        case TOK_FF:       // ignore
-        case TOK_XDOC:     // ignore
-        case TOK_DONE:
-        case TOK_SPACE:
+        case token_types::XONLINE:  // skip
+        case token_types::FF:       // ignore
+        case token_types::XDOC:     // ignore
+        case token_types::DONE:
+        case token_types::SPACE:
             break;
 
-        case TOK_WORD:
+        case token_types::WORD:
             display_text(row, col, C_HELP_BODY, curr, width);
             break;
         } // switch

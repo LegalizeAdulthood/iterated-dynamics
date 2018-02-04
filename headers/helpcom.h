@@ -47,16 +47,19 @@
 /*
  * tokens returned by find_token_length
  */
-#define TOK_DONE    (0)   // len == 0
-#define TOK_SPACE   (1)   // a run of spaces
-#define TOK_LINK    (2)   // an entire link
-#define TOK_PARA    (3)   // a CMD_PARA
-#define TOK_NL      (4)   // a new-line ('\n')
-#define TOK_FF      (5)   // a form-feed (CMD_FF)
-#define TOK_WORD    (6)   // a word
-#define TOK_XONLINE (7)   // a CMD_XONLINE
-#define TOK_XDOC    (8)   // a CMD_XDOC
-#define TOK_CENTER  (9)   // a CMD_CENTER
+enum class token_types
+{
+    DONE = 0,       // len == 0
+    SPACE = 1,      // a run of spaces
+    LINK = 2,       // an entire link
+    PARA = 3,       // a CMD_PARA
+    NL = 4,         // a new-line ('\n')
+    FF = 5,         // a form-feed (CMD_FF)
+    WORD = 6,       // a word
+    XONLINE = 7,    // a CMD_XONLINE
+    XDOC = 8,       // a CMD_XDOC
+    CENTER = 9      // a CMD_CENTER
+};
 /*
  * modes for find_token_length() and find_line_width()
  */
@@ -108,8 +111,8 @@ enum  PD_COMMANDS
     PD_GET_LINK_PAGE
 };
 typedef bool (*PD_FUNC)(int cmd, PD_INFO *pd, void *info);
-extern int _find_token_length(char const *curr, unsigned len, int *size, int *width);
-extern int find_token_length(token_modes mode, char const *curr, unsigned len, int *size, int *width);
+extern token_types _find_token_length(char const *curr, unsigned len, int *size, int *width);
+extern token_types find_token_length(token_modes mode, char const *curr, unsigned len, int *size, int *width);
 extern int find_line_width(token_modes mode, char const *curr, unsigned len);
 extern bool process_document(PD_FUNC get_info, PD_FUNC output, void *info);
 extern int help(int);
