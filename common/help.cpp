@@ -176,7 +176,7 @@ static void display_parse_text(char const *text, unsigned len, int start_margin,
 
             while (true)
             {
-                tok = find_token_length(ONLINE, curr, len, &size, &width);
+                tok = find_token_length(token_modes::ONLINE, curr, len, &size, &width);
 
                 if (tok == TOK_DONE || tok == TOK_NL || tok == TOK_FF)
                 {
@@ -241,7 +241,7 @@ static void display_parse_text(char const *text, unsigned len, int start_margin,
         }
 
         case TOK_CENTER:
-            col = find_line_width(ONLINE, curr, len);
+            col = find_line_width(token_modes::ONLINE, curr, len);
             col = (SCREEN_WIDTH - col)/2;
             if (col < 0)
             {
@@ -289,7 +289,7 @@ static void display_parse_text(char const *text, unsigned len, int start_margin,
             break;
         }
 
-        tok = find_token_length(ONLINE, curr, len, &size, &width);
+        tok = find_token_length(token_modes::ONLINE, curr, len, &size, &width);
     } // while (true)
 
     g_text_cbase = 0;

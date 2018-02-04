@@ -60,8 +60,12 @@
 /*
  * modes for find_token_length() and find_line_width()
  */
-#define ONLINE 1
-#define DOC    2
+enum class token_modes
+{
+    NONE = 0,
+    ONLINE = 1,
+    DOC = 2
+};
 /*
  * struct PD_INFO used by process_document()
  */
@@ -105,8 +109,8 @@ enum  PD_COMMANDS
 };
 typedef bool (*PD_FUNC)(int cmd, PD_INFO *pd, void *info);
 extern int _find_token_length(char const *curr, unsigned len, int *size, int *width);
-extern int find_token_length(int mode, char const *curr, unsigned len, int *size, int *width);
-extern int find_line_width(int mode, char const *curr, unsigned len);
+extern int find_token_length(token_modes mode, char const *curr, unsigned len, int *size, int *width);
+extern int find_line_width(token_modes mode, char const *curr, unsigned len);
 extern bool process_document(PD_FUNC get_info, PD_FUNC output, void *info);
 extern int help(int);
 extern int read_help_topic(int , int , int , void *);

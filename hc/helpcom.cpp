@@ -192,7 +192,7 @@ int _find_token_length(char const *curr, unsigned len, int *size, int *width)
 }
 
 
-int find_token_length(int mode, char const *curr, unsigned len, int *size, int *width)
+int find_token_length(token_modes mode, char const *curr, unsigned len, int *size, int *width)
 {
     int tok;
     int t;
@@ -200,8 +200,8 @@ int find_token_length(int mode, char const *curr, unsigned len, int *size, int *
 
     tok = _find_token_length(curr, len, &t, width);
 
-    if ((tok == TOK_XONLINE && mode == ONLINE)
-        || (tok == TOK_XDOC && mode == DOC))
+    if ((tok == TOK_XONLINE && mode == token_modes::ONLINE)
+        || (tok == TOK_XDOC && mode == token_modes::DOC))
     {
         _size = 0;
 
@@ -213,8 +213,8 @@ int find_token_length(int mode, char const *curr, unsigned len, int *size, int *
 
             tok = _find_token_length(curr, len, &t, nullptr);
 
-            if ((tok == TOK_XONLINE && mode == ONLINE)
-                || (tok == TOK_XDOC && mode == DOC)
+            if ((tok == TOK_XONLINE && mode == token_modes::ONLINE)
+                || (tok == TOK_XDOC && mode == token_modes::DOC)
                 || (tok == TOK_DONE))
             {
                 break;
@@ -237,7 +237,7 @@ int find_token_length(int mode, char const *curr, unsigned len, int *size, int *
 }
 
 
-int find_line_width(int mode, char const *curr, unsigned len)
+int find_line_width(token_modes mode, char const *curr, unsigned len)
 {
     int size   = 0;
     int width  = 0;
@@ -386,7 +386,7 @@ bool process_document(PD_FUNC get_info, PD_FUNC output, void *info)
             {
                 while (pd.len > 0)
                 {
-                    tok = find_token_length(DOC, pd.curr, pd.len, &size, nullptr);
+                    tok = find_token_length(token_modes::DOC, pd.curr, pd.len, &size, nullptr);
                     if (tok != TOK_XDOC
                         && tok != TOK_XONLINE
                         && tok != TOK_NL
@@ -441,7 +441,7 @@ bool process_document(PD_FUNC get_info, PD_FUNC output, void *info)
                     return false;
                 }
 
-                tok = find_token_length(DOC, pd.curr, pd.len, &size, &width);
+                tok = find_token_length(token_modes::DOC, pd.curr, pd.len, &size, &width);
 
                 switch (tok)
                 {
@@ -474,7 +474,7 @@ bool process_document(PD_FUNC get_info, PD_FUNC output, void *info)
                             return false;
                         }
 
-                        tok = find_token_length(DOC, pd.curr, pd.len, &size, &width);
+                        tok = find_token_length(token_modes::DOC, pd.curr, pd.len, &size, &width);
 
                         if (tok == TOK_NL || tok == TOK_FF)
                         {
@@ -681,7 +681,7 @@ bool process_document(PD_FUNC get_info, PD_FUNC output, void *info)
                     break;
 
                 case TOK_CENTER:
-                    width = (PAGE_WIDTH - find_line_width(DOC, pd.curr, pd.len)) / 2;
+                    width = (PAGE_WIDTH - find_line_width(token_modes::DOC, pd.curr, pd.len)) / 2;
                     if (!do_print_n(sp, width))
                     {
                         return false;

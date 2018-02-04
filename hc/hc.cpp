@@ -2698,7 +2698,7 @@ void paginate_online()    // paginate the text for on-line help
 
         while (len > 0)
         {
-            tok = find_token_length(ONLINE, curr, len, &size, &width);
+            tok = find_token_length(token_modes::ONLINE, curr, len, &size, &width);
 
             switch (tok)
             {
@@ -2718,7 +2718,7 @@ void paginate_online()    // paginate the text for on-line help
 
                 while (true)
                 {
-                    tok = find_token_length(ONLINE, curr, len, &size, &width);
+                    tok = find_token_length(token_modes::ONLINE, curr, len, &size, &width);
 
                     if (tok == TOK_DONE || tok == TOK_NL || tok == TOK_FF)
                     {
@@ -3314,7 +3314,7 @@ void insert_real_link_info(char *curr, unsigned len)
     while (len > 0)
     {
         int size = 0;
-        int tok = find_token_length(0, curr, len, &size, nullptr);
+        int tok = find_token_length(token_modes::NONE, curr, len, &size, nullptr);
 
         if (tok == TOK_LINK)
         {
