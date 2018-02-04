@@ -57,6 +57,11 @@ if("${CMAKE_CXX_COMPILER_ID}" MATCHES "(GNU|Clang)")
     set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS} -g")
 endif()
 
+add_library(helpcom STATIC
+    hc/helpcom.cpp
+    headers/helpcom.h)
+target_include_directories(helpcom PUBLIC headers)
+
 add_executable(id ${OS_ID_OPTIONS}
     headers/os.h
 
@@ -114,7 +119,6 @@ add_executable(id ${OS_ID_OPTIONS}
     common/fractint.cpp
     common/framain2.cpp headers/framain2.h
     common/help.cpp
-    hc/helpcom.cpp
     common/intro.cpp headers/intro.h
     common/jiim.cpp headers/jiim.h
     common/miscovl.cpp headers/miscovl.h
@@ -131,7 +135,6 @@ add_executable(id ${OS_ID_OPTIONS}
     headers/fractint.h
     headers/id_data.h
     headers/fractype.h
-    headers/helpcom.h
     headers/lsys.h
     headers/mpmath.h
     headers/newton.h
@@ -265,7 +268,6 @@ source_group("Header Files\\common\\ui" FILES
     headers/fractint.h
     headers/framain2.h
     headers/help.h
-    headers/helpcom.h
     headers/helpdefs.h
     headers/intro.h
     headers/jiim.h
@@ -280,7 +282,6 @@ source_group("Source Files\\common\\ui" FILES
     common/fractint.cpp
     common/framain2.cpp
     common/help.cpp
-    hc/helpcom.cpp
     common/intro.cpp
     common/jiim.cpp
     common/miscovl.cpp
@@ -298,8 +299,6 @@ set_src_dir(common/fractint.cpp)
 
 add_executable(hc
     hc/hc.cpp
-    hc/helpcom.cpp
-    headers/helpcom.h
     ${OS_HC_FILES})
 target_include_directories(hc PRIVATE headers)
 if(${HAVE_OS_DEFINITIONS})
@@ -308,9 +307,10 @@ endif()
 if(WIN32)
     target_compile_definitions(hc PRIVATE _SCL_SECURE_NO_WARNINGS)
 endif()
+target_link_libraries(hc PRIVATE helpcom)
 
 target_include_directories(id PRIVATE headers)
-target_link_libraries(id ${OS_DRIVER_LIBRARIES})
+target_link_libraries(id PRIVATE helpcom ${OS_DRIVER_LIBRARIES})
 if(${HAVE_OS_DEFINITIONS})
     target_compile_definitions(id PRIVATE ${OS_DEFINITIONS})
 endif()
