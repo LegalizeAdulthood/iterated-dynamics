@@ -808,7 +808,7 @@ bool get_next_item()
 }
 
 
-void process_contents()
+void process_doc_contents()
 {
     char   *ptr;
 
@@ -1651,7 +1651,7 @@ void read_src(char const *fname)
                         done = true;
                     }
                     compress_spaces = true;
-                    process_contents();
+                    process_doc_contents();
                     in_topic = false;
                     continue;
                 }
