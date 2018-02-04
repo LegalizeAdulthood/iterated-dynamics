@@ -810,8 +810,6 @@ bool get_next_item()
 
 void process_doc_contents()
 {
-    char   *ptr;
-
     TOPIC t;
     t.flags     = 0;
     t.title_len = (unsigned) strlen(DOCCONTENTS_TITLE)+1;
@@ -862,7 +860,7 @@ void process_doc_contents()
 
             if (cmd[0] == '\"')
             {
-                ptr = &cmd[1];
+                char *ptr = &cmd[1];
                 if (ptr[(int) strlen(ptr)-1] == '\"')
                 {
                     ptr[(int) strlen(ptr)-1] = '\0';
@@ -883,15 +881,16 @@ void process_doc_contents()
             }
 
             // now, make the entry in the buffer
-
-            sprintf(curr, "%-5s %*.0s%s", c.id, indent*2, "", c.name);
-            ptr = curr + (int) strlen(curr);
-            while ((ptr-curr) < PAGE_WIDTH-10)
             {
-                *ptr++ = '.';
+                sprintf(curr, "%-5s %*.0s%s", c.id, indent*2, "", c.name);
+                char *ptr = curr + (int) strlen(curr);
+                while ((ptr-curr) < PAGE_WIDTH-10)
+                {
+                    *ptr++ = '.';
+                }
+                c.page_num_pos = (unsigned)((ptr-3) - &buffer[0]);
+                curr = ptr;
             }
-            c.page_num_pos = (unsigned)((ptr-3) - &buffer[0]);
-            curr = ptr;
 
             while (!last)
             {
@@ -909,7 +908,7 @@ void process_doc_contents()
 
                 if (cmd[0] == '\"')
                 {
-                    ptr = &cmd[1];
+                    char *ptr = &cmd[1];
                     if (ptr[(int) strlen(ptr)-1] == '\"')
                     {
                         ptr[(int) strlen(ptr)-1] = '\0';
