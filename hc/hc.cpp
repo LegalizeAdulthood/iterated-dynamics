@@ -9,6 +9,7 @@
 #include <algorithm>
 #include <cerrno>
 #include <cstdarg>
+#include <numeric>
 #include <sstream>
 #include <string>
 #include <system_error>
@@ -232,7 +233,10 @@ int include_stack_top = -1;
 
 void check_buffer(char const *curr, unsigned off, char const *buffer);
 
-#define CHK_BUFFER(off) check_buffer(curr, off, &buffer[0])
+inline void check_buffer(unsigned off)
+{
+    check_buffer(curr, off, &buffer[0]);
+}
 
 #ifdef XFRACT
 #define putw( x1, x2 )  fwrite( &(x1), 1, sizeof(int), x2);
@@ -946,7 +950,7 @@ void process_doc_contents()
             *curr++ = ch;
         }
 
-        CHK_BUFFER(0);
+        check_buffer(0);
     }
 
     alloc_topic_text(&t, (unsigned)(curr - &buffer[0]));
@@ -1047,7 +1051,7 @@ int parse_link()   // returns length of link or 0 on error
 
     if (!bad)
     {
-        CHK_BUFFER(1+3*sizeof(int)+len+1);
+        check_buffer(1+3*sizeof(int)+len+1);
         int const lnum = add_link(&l);
         *curr++ = CMD_LINK;
         setint(curr, lnum);
@@ -1310,7 +1314,7 @@ void process_bininc()
      * 64K) we can treat it as an unsigned.
      */
 
-    CHK_BUFFER((unsigned)len);
+    check_buffer((unsigned)len);
 
     if (read(handle, curr, (unsigned)len) != len)
     {
@@ -2468,7 +2472,7 @@ void read_src(char const *fname)
             while (again);
         }
 
-        CHK_BUFFER(0);
+        check_buffer(0);
     } // while ( 1 )
 
     fclose(srcfile);
@@ -3674,7 +3678,6 @@ void report_memory()
 void report_stats()
 {
     int  pages = 0;
-
     for (const TOPIC &t : topic)
     {
         pages += t.num_page;
