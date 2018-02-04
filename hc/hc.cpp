@@ -2487,9 +2487,6 @@ void read_src(char const *fname)
  */
 void make_hot_links()
 {
-    LABEL   *lbl;
-    int      t;
-
     msg("Making hot-links.");
 
     /*
@@ -2502,15 +2499,7 @@ void make_hot_links()
         {
             if (c.is_label[ctr])
             {
-                lbl = find_label(c.topic_name[ctr]);
-                if (lbl == nullptr)
-                {
-                    src_cfname = c.srcfile;
-                    srcline = c.srcline;
-                    error(0, "Cannot find DocContent label \"%s\".", c.topic_name[ctr]);
-                    srcline = -1;
-                }
-                else
+                if (LABEL *lbl = find_label(c.topic_name[ctr]))
                 {
                     if (topic[lbl->topic_num].flags & TF_DATA)
                     {
@@ -2533,11 +2522,17 @@ void make_hot_links()
                         }
                     }
                 }
+                else
+                {
+                    src_cfname = c.srcfile;
+                    srcline = c.srcline;
+                    error(0, "Cannot find DocContent label \"%s\".", c.topic_name[ctr]);
+                    srcline = -1;
+                }
             }
             else
             {
-                t = find_topic_title(c.topic_name[ctr]);
-
+                const int t = find_topic_title(c.topic_name[ctr]);
                 if (t == -1)
                 {
                     src_cfname = c.srcfile;
@@ -2568,10 +2563,10 @@ void make_hot_links()
      */
     for (LINK &l : a_link)
     {
-        switch (l.type)
+        // name is the title of the topic
+        if (l.type == 0)
         {
-        case 0:      // name is the title of the topic
-            t = find_topic_title(l.name);
+            const int t = find_topic_title(l.name);
             if (t == -1)
             {
                 src_cfname = l.srcfile;
@@ -2585,18 +2580,11 @@ void make_hot_links()
                 l.topic_off = 0;
                 l.doc_page = (topic[t].flags & TF_IN_DOC) ? 0 : -1;
             }
-            break;
-
-        case 1:  // name is the name of a label
-            lbl = find_label(l.name);
-            if (lbl == nullptr)
-            {
-                src_cfname = l.srcfile;
-                srcline = l.srcline; // pretend again
-                error(0, "Cannot find explicit hot-link \"%s\".", l.name);
-                srcline = -1;
-            }
-            else
+        }
+        // name is the name of a label
+        else if (l.type == 1)
+        {
+            if (LABEL *lbl = find_label(l.name))
             {
                 if (topic[lbl->topic_num].flags & TF_DATA)
                 {
@@ -2612,13 +2600,19 @@ void make_hot_links()
                     l.doc_page  = (topic[lbl->topic_num].flags & TF_IN_DOC) ? 0 : -1;
                 }
             }
-            break;
-
-        case 2:   // it's a "special" link; topic_off already has the value
-            break;
+            else
+            {
+                src_cfname = l.srcfile;
+                srcline = l.srcline; // pretend again
+                error(0, "Cannot find explicit hot-link \"%s\".", l.name);
+                srcline = -1;
+            }
+        }
+        // it's a "special" link; topic_off already has the value
+        else if (l.type == 2)
+        {
         }
     }
-
 }
 
 
