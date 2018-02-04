@@ -794,10 +794,8 @@ void put_spaces(int how_many)
 // used by parse_contents()
 bool get_next_item()
 {
-    char *ptr;
-
     skip_over(" \t\n");
-    ptr = read_until(cmd, 128, ",}");
+    char *ptr = read_until(cmd, 128, ",}");
     bool last = (*ptr == '}');
     --ptr;
     while (ptr >= cmd && strchr(" \t\n", *ptr))     // strip trailing spaces
