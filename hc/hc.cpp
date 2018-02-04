@@ -112,10 +112,11 @@ struct PAGE
 
 
 // values for TOPIC.flags
-
-#define TF_IN_DOC  (1)       // 1 if topic is part of the printed document
-#define TF_DATA    (2)       // 1 if it is a "data" topic
-
+enum topic_flags
+{
+    TF_IN_DOC = 1,          // 1 if topic is part of the printed document
+    TF_DATA = 2             // 1 if it is a "data" topic
+};
 
 struct TOPIC
 {
@@ -141,11 +142,12 @@ struct LABEL
 
 
 // values for CONTENT.flags
+enum content_flags
+{
+    CF_NEW_PAGE = 1         // true if section starts on a new page
+};
 
-#define CF_NEW_PAGE  (1)     // true if section starts on a new page
-
-
-#define MAX_CONTENT_TOPIC (10)
+int const MAX_CONTENT_TOPIC = 10;
 
 
 struct CONTENT
@@ -219,7 +221,7 @@ bool compress_spaces = false;
 bool xonline = false;
 bool xdoc = false;
 
-#define  MAX_INCLUDE_STACK (5)    // allow 5 nested includes
+const int MAX_INCLUDE_STACK = 5;    // allow 5 nested includes
 
 struct include_stack_entry
 {
@@ -450,7 +452,7 @@ int add_content(CONTENT const *c)
  */
 
 
-#define READ_CHAR_BUFF_SIZE (32)
+int const READ_CHAR_BUFF_SIZE = 32;
 
 
 int  read_char_buff[READ_CHAR_BUFF_SIZE];
@@ -1066,7 +1068,7 @@ int parse_link()   // returns length of link or 0 on error
 }
 
 
-#define MAX_TABLE_SIZE (100)
+int const MAX_TABLE_SIZE = 100;
 
 
 int create_table()
