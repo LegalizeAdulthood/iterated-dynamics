@@ -278,10 +278,6 @@ int find_line_width(int mode, char const *curr, unsigned len)
 }
 
 
-#define DO_PRINTN(ch, n)  ( pd.s = &(ch), pd.i = (n), output(PD_PRINTN, &pd, info) )
-#define DO_PRINT(str, n)  ( pd.s = (str), pd.i = (n), output(PD_PRINT, &pd, info) )
-
-
 bool process_document(PD_FUNC get_info, PD_FUNC output, void *info)
 {
     int       tok;
@@ -290,6 +286,18 @@ bool process_document(PD_FUNC get_info, PD_FUNC output, void *info)
     int       col;
     char      page_text[10];
     PD_INFO   pd;
+    auto const do_print = [=, &pd](char *str, int n)
+    {
+        pd.s = str;
+        pd.i = n;
+        return output(PD_PRINT, &pd, info);
+    };
+    auto const do_print_n = [=, &pd](char ch, int n)
+    {
+        pd.s = &ch;
+        pd.i = n;
+        return output(PD_PRINTN, &pd, info);
+    };
     char      nl = '\n',
               sp = ' ';
     bool first_topic;
@@ -339,7 +347,7 @@ bool process_document(PD_FUNC get_info, PD_FUNC output, void *info)
             }
             else if (pd.lnum > 0)
             {
-                if (!DO_PRINTN(nl, 2))
+                if (!do_print_n(nl, 2))
                 {
                     return false;
                 }
@@ -391,7 +399,7 @@ bool process_document(PD_FUNC get_info, PD_FUNC output, void *info)
                 }
                 if (first_topic && pd.len != 0)
                 {
-                    if (!DO_PRINTN(nl, 1))
+                    if (!do_print_n(nl, 1))
                     {
                         return false;
                     }
@@ -414,7 +422,7 @@ bool process_document(PD_FUNC get_info, PD_FUNC output, void *info)
             }
             else if (!first_topic)
             {
-                if (!DO_PRINTN(nl, 1))
+                if (!do_print_n(nl, 1))
                 {
                     return false;
                 }
@@ -452,7 +460,7 @@ bool process_document(PD_FUNC get_info, PD_FUNC output, void *info)
 
                     pd.len -= 3;
 
-                    if (!DO_PRINTN(sp, indent))
+                    if (!do_print_n(sp, indent))
                     {
                         return false;
                     }
@@ -479,7 +487,7 @@ bool process_document(PD_FUNC get_info, PD_FUNC output, void *info)
                             {
                                 col = 0;
                                 ++pd.lnum;
-                                if (!DO_PRINTN(nl, 1))
+                                if (!do_print_n(nl, 1))
                                 {
                                     return false;
                                 }
@@ -517,7 +525,7 @@ bool process_document(PD_FUNC get_info, PD_FUNC output, void *info)
                         {
                             col = 0;   /* fake a nl */
                             ++pd.lnum;
-                            if (!DO_PRINTN(nl, 1))
+                            if (!do_print_n(nl, 1))
                             {
                                 return false;
                             }
@@ -555,7 +563,7 @@ bool process_document(PD_FUNC get_info, PD_FUNC output, void *info)
                         if (col+width > PAGE_WIDTH)
                         {
                             /* go to next line... */
-                            if (!DO_PRINTN(nl, 1))
+                            if (!do_print_n(nl, 1))
                             {
                                 return false;
                             }
@@ -578,7 +586,7 @@ bool process_document(PD_FUNC get_info, PD_FUNC output, void *info)
                                 width = 0;    /* skip spaces at start of a line */
                             }
 
-                            if (!DO_PRINTN(sp, margin))
+                            if (!do_print_n(sp, margin))
                             {
                                 return false;
                             }
@@ -589,14 +597,14 @@ bool process_document(PD_FUNC get_info, PD_FUNC output, void *info)
                         {
                             if (tok == TOK_SPACE)
                             {
-                                if (!DO_PRINTN(sp, width))
+                                if (!do_print_n(sp, width))
                                 {
                                     return false;
                                 }
                             }
                             else
                             {
-                                if (!DO_PRINT(pd.curr, (size == 0) ? width : size))
+                                if (!do_print(pd.curr, (size == 0) ? width : size))
                                 {
                                     return false;
                                 }
@@ -626,7 +634,7 @@ bool process_document(PD_FUNC get_info, PD_FUNC output, void *info)
                     {
                         if (col != 0)      /* if last wasn't a blank line... */
                         {
-                            if (!DO_PRINTN(nl, 1))
+                            if (!do_print_n(nl, 1))
                             {
                                 return false;
                             }
@@ -645,7 +653,7 @@ bool process_document(PD_FUNC get_info, PD_FUNC output, void *info)
                     }
                     else
                     {
-                        if (!DO_PRINTN(nl, 1))
+                        if (!do_print_n(nl, 1))
                         {
                             return false;
                         }
@@ -674,7 +682,7 @@ bool process_document(PD_FUNC get_info, PD_FUNC output, void *info)
 
                 case TOK_CENTER:
                     width = (PAGE_WIDTH - find_line_width(DOC, pd.curr, pd.len)) / 2;
-                    if (!DO_PRINTN(sp, width))
+                    if (!do_print_n(sp, width))
                     {
                         return false;
                     }
@@ -682,7 +690,7 @@ bool process_document(PD_FUNC get_info, PD_FUNC output, void *info)
 
                 case TOK_LINK:
                     skip_blanks = false;
-                    if (!DO_PRINT(pd.curr+1+3*sizeof(int), size-3*sizeof(int)-2))
+                    if (!do_print(pd.curr+1+3*sizeof(int), size-3*sizeof(int)-2))
                     {
                         return false;
                     }
@@ -691,7 +699,7 @@ bool process_document(PD_FUNC get_info, PD_FUNC output, void *info)
                     {
                         width += 9;
                         sprintf(page_text, " (p. %d)", pd.i);
-                        if (!DO_PRINT(page_text, (int) strlen(page_text)))
+                        if (!do_print(page_text, (int) strlen(page_text)))
                         {
                             return false;
                         }
@@ -700,7 +708,7 @@ bool process_document(PD_FUNC get_info, PD_FUNC output, void *info)
 
                 case TOK_WORD:
                     skip_blanks = false;
-                    if (!DO_PRINT(pd.curr, size))
+                    if (!do_print(pd.curr, size))
                     {
                         return false;
                     }
@@ -708,7 +716,7 @@ bool process_document(PD_FUNC get_info, PD_FUNC output, void *info)
 
                 case TOK_SPACE:
                     skip_blanks = false;
-                    if (!DO_PRINTN(sp, width))
+                    if (!do_print_n(sp, width))
                     {
                         return false;
                     }
@@ -737,6 +745,3 @@ bool process_document(PD_FUNC get_info, PD_FUNC output, void *info)
 
     return output(PD_FOOTING, &pd, info);
 }
-
-#undef DO_PRINT
-#undef DO_PRINTN
