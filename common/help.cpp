@@ -144,7 +144,7 @@ static void display_parse_text(char const *text, unsigned len, int start_margin,
 
     if (start_margin >= 0)
     {
-        tok = token_types::PARA;
+        tok = token_types::TOK_PARA;
     }
     else
     {
@@ -155,7 +155,7 @@ static void display_parse_text(char const *text, unsigned len, int start_margin,
     {
         switch (tok)
         {
-        case token_types::PARA:
+        case token_types::TOK_PARA:
         {
             int indent, margin;
 
@@ -178,19 +178,19 @@ static void display_parse_text(char const *text, unsigned len, int start_margin,
             {
                 tok = find_token_length(token_modes::ONLINE, curr, len, &size, &width);
 
-                if (tok == token_types::DONE || tok == token_types::NL || tok == token_types::FF)
+                if (tok == token_types::TOK_DONE || tok == token_types::TOK_NL || tok == token_types::TOK_FF)
                 {
                     break;
                 }
 
-                if (tok == token_types::PARA)
+                if (tok == token_types::TOK_PARA)
                 {
                     col = 0;   // fake a new-line
                     row++;
                     break;
                 }
 
-                if (tok == token_types::XONLINE || tok == token_types::XDOC)
+                if (tok == token_types::TOK_XONLINE || tok == token_types::TOK_XDOC)
                 {
                     curr += size;
                     len  -= size;
@@ -205,13 +205,13 @@ static void display_parse_text(char const *text, unsigned len, int start_margin,
                     col = margin;
                     ++row;
 
-                    if (tok == token_types::SPACE)
+                    if (tok == token_types::TOK_SPACE)
                     {
                         width = 0;   // skip spaces at start of a line
                     }
                 }
 
-                if (tok == token_types::LINK)
+                if (tok == token_types::TOK_LINK)
                 {
                     display_text(row, col, C_HELP_LINK, curr+1+3*sizeof(int), width);
                     if (num_link != nullptr)
@@ -225,7 +225,7 @@ static void display_parse_text(char const *text, unsigned len, int start_margin,
                         ++(*num_link);
                     }
                 }
-                else if (tok == token_types::WORD)
+                else if (tok == token_types::TOK_WORD)
                 {
                     display_text(row, col, C_HELP_BODY, curr, width);
                 }
@@ -240,7 +240,7 @@ static void display_parse_text(char const *text, unsigned len, int start_margin,
             break;
         }
 
-        case token_types::CENTER:
+        case token_types::TOK_CENTER:
             col = find_line_width(token_modes::ONLINE, curr, len);
             col = (SCREEN_WIDTH - col)/2;
             if (col < 0)
@@ -249,12 +249,12 @@ static void display_parse_text(char const *text, unsigned len, int start_margin,
             }
             break;
 
-        case token_types::NL:
+        case token_types::TOK_NL:
             col = 0;
             ++row;
             break;
 
-        case token_types::LINK:
+        case token_types::TOK_LINK:
             display_text(row, col, C_HELP_LINK, curr+1+3*sizeof(int), width);
             if (num_link != nullptr)
             {
@@ -268,14 +268,14 @@ static void display_parse_text(char const *text, unsigned len, int start_margin,
             }
             break;
 
-        case token_types::XONLINE:  // skip
-        case token_types::FF:       // ignore
-        case token_types::XDOC:     // ignore
-        case token_types::DONE:
-        case token_types::SPACE:
+        case token_types::TOK_XONLINE:  // skip
+        case token_types::TOK_FF:       // ignore
+        case token_types::TOK_XDOC:     // ignore
+        case token_types::TOK_DONE:
+        case token_types::TOK_SPACE:
             break;
 
-        case token_types::WORD:
+        case token_types::TOK_WORD:
             display_text(row, col, C_HELP_BODY, curr, width);
             break;
         } // switch

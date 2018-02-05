@@ -54,14 +54,14 @@ token_types _find_token_length(char const *curr, unsigned len, int *size, int *w
 
     if (len == 0)
     {
-        tok = token_types::DONE;
+        tok = token_types::TOK_DONE;
     }
     else
     {
         switch (*curr)
         {
         case ' ':    /* it's a run of spaces */
-            tok = token_types::SPACE;
+            tok = token_types::TOK_SPACE;
             while (*curr == ' ' && _size < (int)len)
             {
                 ++curr;
@@ -71,7 +71,7 @@ token_types _find_token_length(char const *curr, unsigned len, int *size, int *w
             break;
 
         case CMD_SPACE:
-            tok = token_types::SPACE;
+            tok = token_types::TOK_SPACE;
             ++curr;
             ++_size;
             _width = *curr;
@@ -80,7 +80,7 @@ token_types _find_token_length(char const *curr, unsigned len, int *size, int *w
             break;
 
         case CMD_LINK:
-            tok = token_types::LINK;
+            tok = token_types::TOK_LINK;
             _size += 1+3*sizeof(int); /* skip CMD_LINK + topic_num + topic_off + page_num */
             curr += 1+3*sizeof(int);
 
@@ -101,37 +101,37 @@ token_types _find_token_length(char const *curr, unsigned len, int *size, int *w
             break;
 
         case CMD_PARA:
-            tok = token_types::PARA;
+            tok = token_types::TOK_PARA;
             _size += 3;     /* skip CMD_PARA + indent + margin */
             break;
 
         case CMD_XONLINE:
-            tok = token_types::XONLINE;
+            tok = token_types::TOK_XONLINE;
             ++_size;
             break;
 
         case CMD_XDOC:
-            tok = token_types::XDOC;
+            tok = token_types::TOK_XDOC;
             ++_size;
             break;
 
         case CMD_CENTER:
-            tok = token_types::CENTER;
+            tok = token_types::TOK_CENTER;
             ++_size;
             break;
 
         case '\n':
-            tok = token_types::NL;
+            tok = token_types::TOK_NL;
             ++_size;
             break;
 
         case CMD_FF:
-            tok = token_types::FF;
+            tok = token_types::TOK_FF;
             ++_size;
             break;
 
         default:   /* it must be a word */
-            tok = token_types::WORD;
+            tok = token_types::TOK_WORD;
             while (true)
             {
                 if (_size >= (int)len)
@@ -198,8 +198,8 @@ token_types find_token_length(token_modes mode, char const *curr, unsigned len, 
 
     token_types tok = _find_token_length(curr, len, &t, width);
 
-    if ((tok == token_types::XONLINE && mode == token_modes::ONLINE)
-        || (tok == token_types::XDOC && mode == token_modes::DOC))
+    if ((tok == token_types::TOK_XONLINE && mode == token_modes::ONLINE)
+        || (tok == token_types::TOK_XDOC && mode == token_modes::DOC))
     {
         _size = 0;
 
@@ -211,9 +211,9 @@ token_types find_token_length(token_modes mode, char const *curr, unsigned len, 
 
             tok = _find_token_length(curr, len, &t, nullptr);
 
-            if ((tok == token_types::XONLINE && mode == token_modes::ONLINE)
-                || (tok == token_types::XDOC && mode == token_modes::DOC)
-                || (tok == token_types::DONE))
+            if ((tok == token_types::TOK_XONLINE && mode == token_modes::ONLINE)
+                || (tok == token_types::TOK_XDOC && mode == token_modes::DOC)
+                || (tok == token_types::TOK_DONE))
             {
                 break;
             }
@@ -246,16 +246,16 @@ int find_line_width(token_modes mode, char const *curr, unsigned len)
     {
         switch (find_token_length(mode, curr, len, &size, &width))
         {
-        case token_types::DONE:
-        case token_types::PARA:
-        case token_types::NL:
-        case token_types::FF:
+        case token_types::TOK_DONE:
+        case token_types::TOK_PARA:
+        case token_types::TOK_NL:
+        case token_types::TOK_FF:
             done = true;
             break;
 
-        case token_types::XONLINE:
-        case token_types::XDOC:
-        case token_types::CENTER:
+        case token_types::TOK_XONLINE:
+        case token_types::TOK_XDOC:
+        case token_types::TOK_CENTER:
             curr += size;
             len -= size;
             break;
@@ -369,10 +369,10 @@ bool process_document(PD_FUNC get_info, PD_FUNC output, void *info)
                 {
                     int size = 0;
                     token_types tok = find_token_length(token_modes::DOC, pd.curr, pd.len, &size, nullptr);
-                    if (tok != token_types::XDOC
-                        && tok != token_types::XONLINE
-                        && tok != token_types::NL
-                        && tok != token_types::DONE)
+                    if (tok != token_types::TOK_XDOC
+                        && tok != token_types::TOK_XONLINE
+                        && tok != token_types::TOK_NL
+                        && tok != token_types::TOK_DONE)
                     {
                         break;
                     }
@@ -430,7 +430,7 @@ bool process_document(PD_FUNC get_info, PD_FUNC output, void *info)
                 token_types tok = find_token_length(token_modes::DOC, pd.curr, pd.len, &size, &width);
                 switch (tok)
                 {
-                case token_types::PARA:
+                case token_types::TOK_PARA:
                 {
                     unsigned int holdlen = 0;
                     char *holdcurr = nullptr;
@@ -459,12 +459,12 @@ bool process_document(PD_FUNC get_info, PD_FUNC output, void *info)
 
                         tok = find_token_length(token_modes::DOC, pd.curr, pd.len, &size, &width);
 
-                        if (tok == token_types::NL || tok == token_types::FF)
+                        if (tok == token_types::TOK_NL || tok == token_types::TOK_FF)
                         {
                             break;
                         }
 
-                        if (tok == token_types::DONE)
+                        if (tok == token_types::TOK_DONE)
                         {
                             if (in_link == 0)
                             {
@@ -479,7 +479,7 @@ bool process_document(PD_FUNC get_info, PD_FUNC output, void *info)
 
                             else if (in_link == 1)
                             {
-                                tok = token_types::SPACE;
+                                tok = token_types::TOK_SPACE;
                                 width = 1;
                                 size = 0;
                                 ++in_link;
@@ -487,7 +487,7 @@ bool process_document(PD_FUNC get_info, PD_FUNC output, void *info)
 
                             else if (in_link == 2)
                             {
-                                tok = token_types::WORD;
+                                tok = token_types::TOK_WORD;
                                 width = (int) strlen(page_text);
                                 col += 8 - width;
                                 size = 0;
@@ -504,7 +504,7 @@ bool process_document(PD_FUNC get_info, PD_FUNC output, void *info)
                             }
                         }
 
-                        if (tok == token_types::PARA)
+                        if (tok == token_types::TOK_PARA)
                         {
                             col = 0;   /* fake a nl */
                             ++pd.line_num;
@@ -515,14 +515,14 @@ bool process_document(PD_FUNC get_info, PD_FUNC output, void *info)
                             break;
                         }
 
-                        if (tok == token_types::XONLINE || tok == token_types::XDOC)
+                        if (tok == token_types::TOK_XONLINE || tok == token_types::TOK_XDOC)
                         {
                             pd.curr += size;
                             pd.len -= size;
                             continue;
                         }
 
-                        if (tok == token_types::LINK)
+                        if (tok == token_types::TOK_LINK)
                         {
                             pd.s = pd.curr+1;
                             if (get_info(PD_GET_LINK_PAGE, &pd, info))
@@ -541,7 +541,7 @@ bool process_document(PD_FUNC get_info, PD_FUNC output, void *info)
                             continue;
                         }
 
-                        /* now tok is token_types::SPACE or token_types::WORD */
+                        // now tok is SPACE or WORD
 
                         if (col+width > PAGE_WIDTH)
                         {
@@ -564,7 +564,7 @@ bool process_document(PD_FUNC get_info, PD_FUNC output, void *info)
                                 }
                             }
 
-                            if (tok == token_types::SPACE)
+                            if (tok == token_types::TOK_SPACE)
                             {
                                 width = 0;    /* skip spaces at start of a line */
                             }
@@ -578,7 +578,7 @@ bool process_document(PD_FUNC get_info, PD_FUNC output, void *info)
 
                         if (width > 0)
                         {
-                            if (tok == token_types::SPACE)
+                            if (tok == token_types::TOK_SPACE)
                             {
                                 if (!do_print_n(static_cast<char const>(' '), width))
                                 {
@@ -605,7 +605,7 @@ bool process_document(PD_FUNC get_info, PD_FUNC output, void *info)
                     break;
                 }
 
-                case token_types::NL:
+                case token_types::TOK_NL:
                     if (skip_blanks && col == 0)
                     {
                         break;
@@ -645,7 +645,7 @@ bool process_document(PD_FUNC get_info, PD_FUNC output, void *info)
                     col = 0;
                     break;
 
-                case token_types::FF:
+                case token_types::TOK_FF:
                     if (skip_blanks)
                     {
                         break;
@@ -663,7 +663,7 @@ bool process_document(PD_FUNC get_info, PD_FUNC output, void *info)
                     }
                     break;
 
-                case token_types::CENTER:
+                case token_types::TOK_CENTER:
                     width = (PAGE_WIDTH - find_line_width(token_modes::DOC, pd.curr, pd.len)) / 2;
                     if (!do_print_n(static_cast<char const>(' '), width))
                     {
@@ -671,7 +671,7 @@ bool process_document(PD_FUNC get_info, PD_FUNC output, void *info)
                     }
                     break;
 
-                case token_types::LINK:
+                case token_types::TOK_LINK:
                     skip_blanks = false;
                     if (!do_print(pd.curr+1+3*sizeof(int), size-3*sizeof(int)-2))
                     {
@@ -689,7 +689,7 @@ bool process_document(PD_FUNC get_info, PD_FUNC output, void *info)
                     }
                     break;
 
-                case token_types::WORD:
+                case token_types::TOK_WORD:
                     skip_blanks = false;
                     if (!do_print(pd.curr, size))
                     {
@@ -697,7 +697,7 @@ bool process_document(PD_FUNC get_info, PD_FUNC output, void *info)
                     }
                     break;
 
-                case token_types::SPACE:
+                case token_types::TOK_SPACE:
                     skip_blanks = false;
                     if (!do_print_n(static_cast<char const>(' '), width))
                     {
@@ -705,9 +705,9 @@ bool process_document(PD_FUNC get_info, PD_FUNC output, void *info)
                     }
                     break;
 
-                case token_types::DONE:
-                case token_types::XONLINE:   /* skip */
-                case token_types::XDOC:      /* ignore */
+                case token_types::TOK_DONE:
+                case token_types::TOK_XONLINE:   /* skip */
+                case token_types::TOK_XDOC:      /* ignore */
                     break;
 
                 } /* switch */

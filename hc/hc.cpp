@@ -2701,7 +2701,7 @@ void paginate_online()    // paginate the text for on-line help
 
             switch (tok)
             {
-            case token_types::PARA:
+            case token_types::TOK_PARA:
             {
                 int indent,
                     margin;
@@ -2719,19 +2719,19 @@ void paginate_online()    // paginate the text for on-line help
                 {
                     tok = find_token_length(token_modes::ONLINE, curr, len, &size, &width);
 
-                    if (tok == token_types::DONE || tok == token_types::NL || tok == token_types::FF)
+                    if (tok == token_types::TOK_DONE || tok == token_types::TOK_NL || tok == token_types::TOK_FF)
                     {
                         break;
                     }
 
-                    if (tok == token_types::PARA)
+                    if (tok == token_types::TOK_PARA)
                     {
                         col = 0;   // fake a nl
                         ++lnum;
                         break;
                     }
 
-                    if (tok == token_types::XONLINE || tok == token_types::XDOC)
+                    if (tok == token_types::TOK_XONLINE || tok == token_types::TOK_XDOC)
                     {
                         curr += size;
                         len -= size;
@@ -2747,12 +2747,12 @@ void paginate_online()    // paginate the text for on-line help
                         {
                             // go to next page...
                             add_page_break(&t, start_margin, text, start, curr, num_links);
-                            start = curr + ((tok == token_types::SPACE) ? size : 0);
+                            start = curr + ((tok == token_types::TOK_SPACE) ? size : 0);
                             start_margin = margin;
                             lnum = 0;
                             num_links = 0;
                         }
-                        if (tok == token_types::SPACE)
+                        if (tok == token_types::TOK_SPACE)
                         {
                             width = 0;    // skip spaces at start of a line
                         }
@@ -2771,7 +2771,7 @@ void paginate_online()    // paginate the text for on-line help
                 break;
             }
 
-            case token_types::NL:
+            case token_types::TOK_NL:
                 if (skip_blanks && col == 0)
                 {
                     start += size;
@@ -2790,7 +2790,7 @@ void paginate_online()    // paginate the text for on-line help
                 col = 0;
                 break;
 
-            case token_types::FF:
+            case token_types::TOK_FF:
                 col = 0;
                 if (skip_blanks)
                 {
@@ -2804,13 +2804,13 @@ void paginate_online()    // paginate the text for on-line help
                 num_links = 0;
                 break;
 
-            case token_types::DONE:
-            case token_types::XONLINE:   // skip
-            case token_types::XDOC:      // ignore
-            case token_types::CENTER:    // ignore
+            case token_types::TOK_DONE:
+            case token_types::TOK_XONLINE:   // skip
+            case token_types::TOK_XDOC:      // ignore
+            case token_types::TOK_CENTER:    // ignore
                 break;
 
-            case token_types::LINK:
+            case token_types::TOK_LINK:
                 ++num_links;
 
                 // fall-through
@@ -3315,7 +3315,7 @@ void insert_real_link_info(char *curr, unsigned len)
         int size = 0;
         token_types tok = find_token_length(token_modes::NONE, curr, len, &size, nullptr);
 
-        if (tok == token_types::LINK)
+        if (tok == token_types::TOK_LINK)
         {
             LINK *l = &a_link[ getint(curr+1) ];
             setint(curr+1, l->topic_num);

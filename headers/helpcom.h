@@ -52,16 +52,16 @@ enum help_commands
  */
 enum class token_types
 {
-    DONE = 0,       // len == 0
-    SPACE = 1,      // a run of spaces
-    LINK = 2,       // an entire link
-    PARA = 3,       // a CMD_PARA
-    NL = 4,         // a new-line ('\n')
-    FF = 5,         // a form-feed (CMD_FF)
-    WORD = 6,       // a word
-    XONLINE = 7,    // a CMD_XONLINE
-    XDOC = 8,       // a CMD_XDOC
-    CENTER = 9      // a CMD_CENTER
+    TOK_DONE = 0,       // len == 0
+    TOK_SPACE = 1,      // a run of spaces
+    TOK_LINK = 2,       // an entire link
+    TOK_PARA = 3,       // a CMD_PARA
+    TOK_NL = 4,         // a new-line ('\n')
+    TOK_FF = 5,         // a form-feed (CMD_FF)
+    TOK_WORD = 6,       // a word
+    TOK_XONLINE = 7,    // a CMD_XONLINE
+    TOK_XDOC = 8,       // a CMD_XDOC
+    TOK_CENTER = 9      // a CMD_CENTER
 };
 /*
  * modes for find_token_length() and find_line_width()
