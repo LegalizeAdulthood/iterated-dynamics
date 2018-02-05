@@ -83,9 +83,9 @@ const int BUFFER_SIZE = (1024*1024);    // 1 MB
 
 enum class link_types
 {
-    TOPIC,
-    LABEL,
-    SPECIAL
+    LT_TOPIC,
+    LT_LABEL,
+    LT_SPECIAL
 };
 
 struct LINK
@@ -1009,14 +1009,14 @@ int parse_link()   // returns length of link or 0 on error
 
         if (cmd[1] == '-')
         {
-            l.type      = link_types::SPECIAL;
+            l.type      = link_types::LT_SPECIAL;
             l.topic_num = atoi(&cmd[1]);
             l.topic_off = 0;
             l.name      = nullptr;
         }
         else
         {
-            l.type = link_types::LABEL;
+            l.type = link_types::LT_LABEL;
             if ((int)strlen(cmd) > 32)
             {
                 warn(err_off, "Label is long.");
@@ -1039,7 +1039,7 @@ int parse_link()   // returns length of link or 0 on error
     else
     {
         ptr = cmd;
-        l.type = link_types::TOPIC;
+        l.type = link_types::LT_TOPIC;
         len = (int)(end - ptr);
         if (len == 0)
         {
@@ -2622,17 +2622,17 @@ void make_hot_links()
     for (LINK &l : a_link)
     {
         // name is the title of the topic
-        if (l.type == link_types::TOPIC)
+        if (l.type == link_types::LT_TOPIC)
         {
             link_topic(l);
         }
         // name is the name of a label
-        else if (l.type == link_types::LABEL)
+        else if (l.type == link_types::LT_LABEL)
         {
             link_label(l);
         }
         // it's a "special" link; topic_off already has the value
-        else if (l.type == link_types::SPECIAL)
+        else if (l.type == link_types::LT_SPECIAL)
         {
         }
     }
@@ -2916,7 +2916,7 @@ void set_hot_link_doc_page()
     {
         switch (l.type)
         {
-        case link_types::TOPIC:
+        case link_types::LT_TOPIC:
             t = find_topic_title(l.name);
             if (t == -1)
             {
@@ -2931,7 +2931,7 @@ void set_hot_link_doc_page()
             }
             break;
 
-        case link_types::LABEL:
+        case link_types::LT_LABEL:
             lbl = find_label(l.name);
             if (lbl == nullptr)
             {
@@ -2946,7 +2946,7 @@ void set_hot_link_doc_page()
             }
             break;
 
-        case link_types::SPECIAL:
+        case link_types::LT_SPECIAL:
             // special topics don't appear in the document
             break;
         }
