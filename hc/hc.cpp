@@ -1047,8 +1047,8 @@ int parse_link()   // returns length of link or 0 on error
         }
 #ifndef __clang_analyzer__
         l.name = dupstr(ptr, len+1);
-#endif
         l.name[len] = '\0';
+#endif
     }
 
     if (!bad)
