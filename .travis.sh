@@ -34,5 +34,5 @@ if [ $ANALYZE = "true" ]; then
     fi
 else
     cmake -G "Unix Makefiles" ..
-    make VERBOSE=1
+    make
 fi
