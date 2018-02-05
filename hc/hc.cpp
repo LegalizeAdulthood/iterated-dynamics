@@ -962,17 +962,16 @@ void process_doc_contents()
 int parse_link()   // returns length of link or 0 on error
 {
     char *ptr;
-    char *end;
     bool bad = false;
     int   len;
-    LINK  l;
     int   err_off;
 
+    LINK l;
     l.srcfile  = src_cfname;
     l.srcline  = srcline;
     l.doc_page = -1;
 
-    end = read_until(cmd, 128, "}\n");   // get the entire hot-link
+    char *end = read_until(cmd, 128, "}\n");   // get the entire hot-link
 
     if (*end == '\0')
     {
