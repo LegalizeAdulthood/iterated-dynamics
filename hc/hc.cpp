@@ -1045,7 +1045,9 @@ int parse_link()   // returns length of link or 0 on error
             error(err_off, "Implicit hot-link has no title.");
             bad = true;
         }
+#ifndef __clang_analyzer__
         l.name = dupstr(ptr, len+1);
+#endif
         l.name[len] = '\0';
     }
 
