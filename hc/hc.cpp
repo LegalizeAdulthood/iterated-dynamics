@@ -347,7 +347,7 @@ void msg(char const *format, ...)
 #   define error  (printf("[%04d] ", __LINE__), error)
 #   define warn   (printf("[%04d] ", __LINE__), warn)
 #   define notice (printf("[%04d] ", __LINE__), notice)
-#   define msg    (printf(quiet_mode ? "" : "[%04d] ", __LINE__), msg)
+#   define msg    (quiet_mode ? 0 : printf("[%04d] ", __LINE__), msg)
 #endif
 
 
