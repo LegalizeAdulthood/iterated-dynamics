@@ -111,7 +111,7 @@ struct PAGE
 
 
 // values for TOPIC.flags
-enum topic_flags
+enum
 {
     TF_IN_DOC = 1,          // 1 if topic is part of the printed document
     TF_DATA = 2             // 1 if it is a "data" topic
@@ -141,7 +141,7 @@ struct LABEL
 
 
 // values for CONTENT.flags
-enum content_flags
+enum
 {
     CF_NEW_PAGE = 1         // true if section starts on a new page
 };
