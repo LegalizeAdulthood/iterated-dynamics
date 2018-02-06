@@ -297,7 +297,7 @@ void error(int diff, char const *format, ...)
     print_msg("Error", srcline-diff, format, arg);
     va_end(arg);
 
-    if (++errors >= MAX_ERRORS && MAX_ERRORS > 0)
+    if (++errors >= MAX_ERRORS)
     {
         fatal(0, "Too many errors!");
     }
@@ -312,7 +312,7 @@ void warn(int diff, char const *format, ...)
     print_msg("Warning", srcline-diff, format, arg);
     va_end(arg);
 
-    if (++warnings >= MAX_WARNINGS && MAX_WARNINGS > 0)
+    if (++warnings >= MAX_WARNINGS)
     {
         fatal(0, "Too many warnings!");
     }
