@@ -156,7 +156,7 @@ handle_special_keys(int ch)
         recordshw(ch);
     }
 
-    if (FIK_F1 == ch && g_help_mode && !inside_help)
+    if (FIK_F1 == ch && g_help_mode != help_labels::IDHELP_INDEX && !inside_help)
     {
         inside_help = true;
         help(0);

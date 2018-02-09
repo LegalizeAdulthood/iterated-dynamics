@@ -1445,13 +1445,13 @@ void end_resume()
 void sleepms_old(long ms)
 {
     static long scalems = 0L;
-    int old_help_mode;
+    help_labels old_help_mode;
     timebx t1, t2;
 #define SLEEPINIT 250 // milliseconds for calibration
     bool const save_tab_mode = g_tab_mode;
     old_help_mode = g_help_mode;
     g_tab_mode = false;
-    g_help_mode = -1;
+    g_help_mode = help_labels::NONE;
     if (scalems == 0L) // calibrate
     {
         /* selects a value of scalems that makes the units

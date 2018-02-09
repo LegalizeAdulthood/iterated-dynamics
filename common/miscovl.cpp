@@ -97,7 +97,6 @@ void make_batch_file()
     int maxcolorindex = 0;
     char const *sptr = nullptr;
     char const *sptr2;
-    int old_help_mode;
 
     if (g_make_parameter_file_map)   // makepar map case
     {
@@ -105,8 +104,8 @@ void make_batch_file()
     }
 
     driver_stack_screen();
-    old_help_mode = g_help_mode;
-    g_help_mode = HELPPARMFILE;
+    help_labels const old_help_mode = g_help_mode;
+    g_help_mode = help_labels::HELPPARMFILE;
 
     maxcolor = g_colors;
     strcpy(colorspec, "y");
@@ -1962,7 +1961,6 @@ int select_video_mode(int curmode)
 {
     int attributes[MAX_VIDEO_MODES];
     int ret;
-    int old_help_mode;
 
     for (int i = 0; i < g_video_table_len; ++i)  // init tables
     {
@@ -1999,10 +1997,10 @@ int select_video_mode(int curmode)
     }
 
     bool const old_tab_mode = g_tab_mode;
-    old_help_mode = g_help_mode;
+    help_labels const old_help_mode = g_help_mode;
     modes_changed = false;
     g_tab_mode = false;
-    g_help_mode = HELPVIDSEL;
+    g_help_mode = help_labels::HELPVIDSEL;
     i = fullscreen_choice(CHOICE_HELP,
                           "Select Video Mode",
                           "key...name.......................xdot..ydot.colr.driver......comment......",

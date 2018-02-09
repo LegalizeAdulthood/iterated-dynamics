@@ -183,7 +183,7 @@ handle_help_tab(int ch)
 {
     static bool inside_help = false;
 
-    if (FIK_F1 == ch && g_help_mode && !inside_help)
+    if (FIK_F1 == ch && g_help_mode != help_labels::IDHELP_INDEX && !inside_help)
     {
         inside_help = true;
         help(0);

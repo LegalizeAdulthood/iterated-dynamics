@@ -467,7 +467,6 @@ void Jiim(jiim_types which)
 {
     affine cvt;
     bool exact = false;
-    int old_help_mode;
     int count = 0;            // coloring julia
     static int mode = 0;      // point, circle, ...
     int       old_look_at_mouse = g_look_at_mouse;
@@ -498,14 +497,14 @@ void Jiim(jiim_types which)
     {
         return;
     }
-    old_help_mode = g_help_mode;
+    help_labels const old_help_mode = g_help_mode;
     if (which == jiim_types::JIIM)
     {
-        g_help_mode = HELP_JIIM;
+        g_help_mode = help_labels::HELP_JIIM;
     }
     else
     {
-        g_help_mode = HELP_ORBITS;
+        g_help_mode = help_labels::HELP_ORBITS;
         g_has_inverse = true;
     }
     oldsxoffs = g_logical_screen_x_offset;

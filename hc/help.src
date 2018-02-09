@@ -10,7 +10,7 @@
 ;
 ;
 ~Topic=Main Help Index, Label=HELPMENU
-~Label=FIHELP_INDEX
+~Label=IDHELP_INDEX
 
 ~Format-
    { Using Help }                           { Fractals and the PC }

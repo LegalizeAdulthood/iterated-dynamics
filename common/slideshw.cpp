@@ -8,6 +8,7 @@
 #include "cmdfiles.h"
 #include "drivers.h"
 #include "helpcom.h"
+#include "helpdefs.h"
 #include "id_data.h"
 #include "miscres.h"
 #include "realdos.h"
@@ -466,7 +467,7 @@ int handle_special_keys(int ch)
     }
 
     static bool inside_help = false;
-    if (FIK_F1 == ch && g_help_mode && !inside_help)
+    if (FIK_F1 == ch && g_help_mode != help_labels::IDHELP_INDEX && !inside_help)
     {
         inside_help = true;
         help(0);

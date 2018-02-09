@@ -822,9 +822,8 @@ resumeloop:                             // return here on failed overlays
 
 static bool look(bool *stacked)
 {
-    int old_help_mode;
-    old_help_mode = g_help_mode;
-    g_help_mode = HELPBROWSE;
+    help_labels const old_help_mode = g_help_mode;
+    g_help_mode = help_labels::HELPBROWSE;
     switch (fgetwindow())
     {
     case FIK_ENTER:
@@ -1440,10 +1439,9 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
         clear_zoombox();
         if (g_dac_box[0][0] != 255 && g_colors >= 16 && !driver_diskp())
         {
-            int old_help_mode;
-            old_help_mode = g_help_mode;
+            help_labels const old_help_mode = g_help_mode;
             memcpy(g_old_dac_box, g_dac_box, 256 * 3);
-            g_help_mode = HELPXHAIR;
+            g_help_mode = help_labels::HELPXHAIR;
             EditPalette();
             g_help_mode = old_help_mode;
             if (memcmp(g_old_dac_box, g_dac_box, 256 * 3))
@@ -1888,10 +1886,9 @@ static main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdm
         clear_zoombox();
         if (g_dac_box[0][0] != 255 && g_colors >= 16 && !driver_diskp())
         {
-            int old_help_mode;
-            old_help_mode = g_help_mode;
+            help_labels const old_help_mode = g_help_mode;
             memcpy(g_old_dac_box, g_dac_box, 256 * 3);
-            g_help_mode = HELPXHAIR;
+            g_help_mode = help_labels::HELPXHAIR;
             EditPalette();
             g_help_mode = old_help_mode;
             if (memcmp(g_old_dac_box, g_dac_box, 256 * 3))

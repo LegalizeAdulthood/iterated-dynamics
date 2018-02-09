@@ -488,8 +488,8 @@ int ant()
         s_incy[2][i] = i - 1;
     }
     s_incy[2][0] = g_logical_screen_y_dots - 1; // wrap from the bottom of the screen to the top
-    int const old_help_mode = g_help_mode;
-    g_help_mode = ANTCOMMANDS;
+    help_labels const old_help_mode = g_help_mode;
+    g_help_mode = help_labels::ANTCOMMANDS;
     long const maxpts = labs(static_cast<long>(g_params[1]));
     long const wait = abs(g_orbit_delay);
     std::string rule{get_rule()};

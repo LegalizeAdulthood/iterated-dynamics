@@ -48,7 +48,7 @@ void rotate(int direction)      // rotate-the-palette routine
     int fkey, step, fstep, jstep, oldstep;
     int incr, fromred = 0, fromblue = 0, fromgreen = 0, tored = 0, toblue = 0, togreen = 0;
     int changecolor, changedirection;
-    int old_help_mode;
+    help_labels old_help_mode;
     int rotate_max, rotate_size;
 
     static int fsteps[] = {2, 4, 8, 12, 16, 24, 32, 40, 54, 100}; // (for Fkeys)
@@ -66,7 +66,7 @@ void rotate(int direction)      // rotate-the-palette routine
     }
 
     old_help_mode = g_help_mode;              // save the old help mode
-    g_help_mode = HELPCYCLING;              // new help mode
+    g_help_mode = help_labels::HELPCYCLING;              // new help mode
 
     paused = false;                      // not paused
     fkey = 0;                            // no random coloring
@@ -609,12 +609,12 @@ void save_palette()
 {
     char palname[FILE_MAX_PATH];
     FILE *dacfile;
-    int i, old_help_mode;
+    int i;
     strcpy(palname, g_map_name.c_str());
-    old_help_mode = g_help_mode;
+    help_labels const old_help_mode = g_help_mode;
     driver_stack_screen();
     char filename[256] = { 0 };
-    g_help_mode = HELPCOLORMAP;
+    g_help_mode = help_labels::HELPCOLORMAP;
     i = field_prompt("Name of map file to write", nullptr, filename, 60, nullptr);
     driver_unstack_screen();
     if (i != -1 && filename[0])
@@ -654,12 +654,11 @@ void save_palette()
 
 bool load_palette()
 {
-    int old_help_mode;
     char filename[FILE_MAX_PATH];
-    old_help_mode = g_help_mode;
+    help_labels const old_help_mode = g_help_mode;
     strcpy(filename, g_map_name.c_str());
     driver_stack_screen();
-    g_help_mode = HELPCOLORMAP;
+    g_help_mode = help_labels::HELPCOLORMAP;
     bool i = getafilename("Select a MAP File", mapmask, filename);
     driver_unstack_screen();
     if (!i)

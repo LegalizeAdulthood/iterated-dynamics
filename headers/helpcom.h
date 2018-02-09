@@ -10,6 +10,9 @@
  * help file signature
  */
 #define HELP_SIG           (0xAFBC1823UL)
+
+enum class help_labels;
+
 /*
  * commands embedded in the help text
  */
@@ -119,7 +122,7 @@ extern token_types find_token_length(token_modes mode, char const *curr, unsigne
 extern int find_line_width(token_modes mode, char const *curr, unsigned len);
 extern bool process_document(PD_FUNC get_info, PD_FUNC output, void *info);
 extern int help(int);
-extern int read_help_topic(int , int , int , void *);
+extern int read_help_topic(help_labels label, int , int , void *);
 extern bool makedoc_msg_func(int pnum, int num_pages);
 extern void print_document(char const *outfname, bool (*msg_func)(int, int), int save_extraseg);
 extern int init_help();

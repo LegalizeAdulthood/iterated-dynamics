@@ -28,16 +28,15 @@ void intro()
     char credits[32768] = { 0 };
     char screen_text[32768];
     int old_look_at_mouse;
-    int old_help_mode;
 
     g_timer_start -= clock_ticks();       // "time out" during help
     old_look_at_mouse = g_look_at_mouse;
-    old_help_mode = g_help_mode;
+    help_labels const old_help_mode = g_help_mode;
     g_look_at_mouse = 0;                    // de-activate full mouse checking
 
-    int i = 32767 + read_help_topic(INTRO_AUTHORS, 0, 32767, screen_text);
+    int i = 32767 + read_help_topic(help_labels::INTRO_AUTHORS, 0, 32767, screen_text);
     screen_text[i] = '\0';
-    i = 32767 + read_help_topic(INTRO_CREDITS, 0, 32767, credits);
+    i = 32767 + read_help_topic(help_labels::INTRO_CREDITS, 0, 32767, credits);
     credits[i] = '\0';
 
     int j = 0;
@@ -77,7 +76,7 @@ void intro()
     credits[authors.at(i+1)] = oldchar;
     delaymax = 10;
     driver_hide_text_cursor();
-    g_help_mode = HELPMENU;
+    g_help_mode = help_labels::HELPMENU;
     while (! driver_key_pressed())
     {
         if (slowdisplay)
@@ -115,5 +114,4 @@ void intro()
 
     g_look_at_mouse = old_look_at_mouse;                // restore the mouse-checking
     g_help_mode = old_help_mode;
-    return;
 }

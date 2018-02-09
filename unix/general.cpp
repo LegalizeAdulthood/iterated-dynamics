@@ -10,6 +10,7 @@
 #include "cmdfiles.h"
 #include "drivers.h"
 #include "helpcom.h"
+#include "helpdefs.h"
 #include "id_data.h"
 #include "loadfile.h"
 #include "miscres.h"
@@ -71,7 +72,7 @@ int keypressed()
     if (!ch)
         return 0;
     keybuffer = ch;
-    if (ch == FIK_F1 && g_help_mode)
+    if (ch == FIK_F1 && g_help_mode != help_labels::IDHELP_INDEX)
     {
         keybuffer = 0;
         g_inside_help = true;

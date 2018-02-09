@@ -241,7 +241,6 @@ bool do_AutoStereo()
 {
     static_vars v;
     BYTE savedacbox[256*3];
-    int old_help_mode;
     bool ret = false;
     bool bars;
     int ct;
@@ -259,8 +258,8 @@ bool do_AutoStereo()
     time(&ltime);
     srand((unsigned int)ltime);
 
-    old_help_mode = g_help_mode;
-    g_help_mode = RDSKEYS;
+    help_labels const old_help_mode = g_help_mode;
+    g_help_mode = help_labels::RDSKEYS;
     driver_save_graphics();                      // save graphics image
     memcpy(savedacbox, g_dac_box, 256 * 3);  // save colors
 

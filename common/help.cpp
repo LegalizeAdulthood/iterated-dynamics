@@ -801,11 +801,10 @@ int help(int action)
 {
     HIST      curr = { -1 };
     int old_look_at_mouse;
-    int old_help_mode;
     int       flags;
     HIST      next;
 
-    if (g_help_mode == -1)   // is help disabled?
+    if (g_help_mode == help_labels::NONE)   // is help disabled?
     {
         return 0;
     }
@@ -838,18 +837,18 @@ int help(int action)
     g_timer_start -= clock_ticks();
     driver_stack_screen();
 
-    if (g_help_mode >= 0)
+    if (g_help_mode >= help_labels::IDHELP_INDEX)
     {
-        next.topic_num = label[g_help_mode].topic_num;
-        next.topic_off = label[g_help_mode].topic_off;
+        next.topic_num = label[static_cast<int>(g_help_mode)].topic_num;
+        next.topic_off = label[static_cast<int>(g_help_mode)].topic_off;
     }
     else
     {
-        next.topic_num = g_help_mode;
+        next.topic_num = static_cast<int>(g_help_mode);
         next.topic_off = 0;
     }
 
-    old_help_mode = g_help_mode;
+    help_labels const old_help_mode = g_help_mode;
 
     if (curr_hist <= 0)
     {
@@ -878,8 +877,8 @@ int help(int action)
             break;
 
         case ACTION_INDEX:
-            next.topic_num = label[FIHELP_INDEX].topic_num;
-            next.topic_off = label[FIHELP_INDEX].topic_off;
+            next.topic_num = label[static_cast<int>(help_labels::IDHELP_INDEX)].topic_num;
+            next.topic_off = label[static_cast<int>(help_labels::IDHELP_INDEX)].topic_off;
             // fall-through
 
         case ACTION_CALL:
@@ -889,7 +888,7 @@ int help(int action)
         } // switch
 
         flags = 0;
-        if (curr.topic_num == label[FIHELP_INDEX].topic_num)
+        if (curr.topic_num == label[static_cast<int>(help_labels::IDHELP_INDEX)].topic_num)
         {
             flags |= F_INDEX;
         }
@@ -1045,7 +1044,7 @@ static int _read_help_topic(int topic, int off, int len, void *buf)
     return curr_len - (off+len);
 }
 
-int read_help_topic(int label_num, int off, int len, void *buf)
+int read_help_topic(help_labels label_num, int off, int len, void *buf)
 /*
  * reads text from a help topic.  Returns number of bytes from (off+len)
  * to end of topic.  On "EOF" returns a negative number representing
@@ -1053,8 +1052,8 @@ int read_help_topic(int label_num, int off, int len, void *buf)
  */
 {
     int ret;
-    ret = _read_help_topic(label[label_num].topic_num,
-                           label[label_num].topic_off + off, len, buf);
+    ret = _read_help_topic(label[static_cast<int>(label_num)].topic_num,
+                           label[static_cast<int>(label_num)].topic_off + off, len, buf);
     return ret;
 }
 
@@ -1467,7 +1466,7 @@ int init_help()
                 fclose(help_file);
                 stopmsg(STOPMSG_NO_STACK, "Invalid help signature in FRACTINT.HLP!\n");
             }
-            else if (hs.version != FIHELP_VERSION)
+            else if (hs.version != IDHELP_VERSION)
             {
                 fclose(help_file);
                 stopmsg(STOPMSG_NO_STACK, "Wrong help version in FRACTINT.HLP!\n");

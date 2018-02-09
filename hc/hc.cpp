@@ -75,7 +75,7 @@ const int MAX_ERRORS = (25);            // stop after this many errors
 const int MAX_WARNINGS = (25);          // stop after this many warnings
                                         // 0 = never stop
 
-char const *const INDEX_LABEL       = "FIHELP_INDEX";
+char const *const INDEX_LABEL       = "IDHELP_INDEX";
 char const *const DOCCONTENTS_TITLE = "DocContent";
 
 const int BUFFER_SIZE = (1024*1024);    // 1 MB
@@ -3186,16 +3186,23 @@ void _write_hdr(char const *fname, FILE *file)
 
     fprintf(file, "/* current help file version */\n");
     fprintf(file, "\n");
-    fprintf(file, "#define %-32s %3d\n", "FIHELP_VERSION", version);
+    fprintf(file, "#define %-32s %3d\n", "IDHELP_VERSION", version);
     fprintf(file, "\n\n");
 
-    fprintf(file, "/* labels */\n\n");
+    fprintf(file, "/* labels */\n"
+        "\n"
+        "enum class help_labels\n"
+        "{\n"
+        "    SPECIAL_IFS                      =  -4,\n"
+        "    SPECIAL_L_SYSTEM                 =  -3,\n"
+        "    SPECIAL_FORMULA                  =  -2,\n"
+        "    NONE                             =  -1,\n");
 
     for (int ctr = 0; ctr < num_label; ctr++)
     {
         if (label[ctr].name[0] != '@')  // if it's not a local label...
         {
-            fprintf(file, "#define %-32s %3d", label[ctr].name, ctr);
+            fprintf(file, "    %-32s = %3d%s", label[ctr].name, ctr, ctr != num_label-1 ? "," : "");
             if (strcmp(label[ctr].name, INDEX_LABEL) == 0)
             {
                 fprintf(file, "        /* index */");
@@ -3203,8 +3210,9 @@ void _write_hdr(char const *fname, FILE *file)
             fprintf(file, "\n");
         }
     }
-
-    fprintf(file, "\n\n"
+    fprintf(file, "};\n"
+        "\n"
+        "\n"
         "#endif\n");
 }
 

@@ -3,6 +3,7 @@
 #define FRACTALP_H
 
 #include "big.h"
+#include "helpdefs.h"
 
 struct AlternateMath
 {
@@ -26,8 +27,8 @@ struct fractalspecificstuff
                                         // (leading "*" supresses name display)
     char const  *param[4];              // name of the parameters
     double paramvalue[4];               // default parameter values
-    int   helptext;                     // helpdefs.h HT_xxxx, -1 for none
-    int   helpformula;                  // helpdefs.h HF_xxxx, -1 for none
+    help_labels helptext;               // helpdefs.h HT_xxxx, -1 for none
+    help_labels helpformula;            // helpdefs.h HF_xxxx, -1 for none
     unsigned flags;                     // constraints, bits defined below
     float xmin;                         // default XMIN corner
     float xmax;                         // default XMAX corner

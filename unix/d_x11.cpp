@@ -83,7 +83,6 @@ extern VIDEOINFO x11_video_table[];
 extern unsigned char g_dac_box[256][3];
 
 extern int g_text_type;
-extern int g_help_mode;
 extern int g_color_cycle_range_hi;
 
 typedef unsigned long XPixel;
@@ -2290,7 +2289,7 @@ x11_write_pixel(Driver *drv, int x, int y, int color)
         di->xlastcolor = color;
     }
     XPutPixel(di->Ximage, x, y, FAKE_LUT(di, di->pixtab[color]));
-    if (di->fastmode && g_help_mode != HELPXHAIR)
+    if (di->fastmode && g_help_mode != help_labels::HELPXHAIR)
     {
         if (!di->alarmon)
         {
@@ -2377,7 +2376,7 @@ x11_write_span(Driver *drv, int y, int x, int lastx, BYTE *pixels)
     {
         XPutPixel(di->Ximage, x+i, y, FAKE_LUT(di, pixline[i]));
     }
-    if (di->fastmode && g_help_mode != HELPXHAIR)
+    if (di->fastmode && g_help_mode != help_labels::HELPXHAIR)
     {
         if (!di->alarmon)
         {

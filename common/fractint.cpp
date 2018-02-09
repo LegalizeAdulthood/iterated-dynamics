@@ -42,7 +42,7 @@
 #include <vector>
 
 VIDEOINFO g_video_entry;
-int g_help_mode;
+help_labels g_help_mode;
 
 int g_look_at_mouse = 0;  // see notes at mouseread routine
 
@@ -291,17 +291,17 @@ static bool main_restore_start(bool &stacked, bool &resumeflag)
             if (g_overlay_3d)
             {
                 hdg = "Select File for 3D Overlay";
-                g_help_mode = HELP3DOVLY;
+                g_help_mode = help_labels::HELP3DOVLY;
             }
             else if (g_display_3d != display_3d_modes::NONE)
             {
                 hdg = "Select File for 3D Transform";
-                g_help_mode = HELP3D;
+                g_help_mode = help_labels::HELP3D;
             }
             else
             {
                 hdg = "Select File to Restore";
-                g_help_mode = HELPSAVEREST;
+                g_help_mode = help_labels::HELPSAVEREST;
             }
             if (g_show_file < 0 && getafilename(hdg, g_gif_filename_mask.c_str(), g_read_filename))
             {
@@ -317,7 +317,7 @@ static bool main_restore_start(bool &stacked, bool &resumeflag)
         g_evolving = 0;
         g_view_window = false;
         g_show_file = 0;
-        g_help_mode = -1;
+        g_help_mode = help_labels::NONE;
         g_tab_mode = true;
         if (stacked)
         {
@@ -339,7 +339,7 @@ static bool main_restore_start(bool &stacked, bool &resumeflag)
         }
     }
 
-    g_help_mode = HELPMENU;                 // now use this help mode
+    g_help_mode = help_labels::HELPMENU;                 // now use this help mode
     g_tab_mode = true;
     g_look_at_mouse = 0;                     // ignore mouse
 
@@ -528,7 +528,7 @@ static main_state main_image_start(bool &stacked, bool &resumeflag)
     }
 
     g_zoom_off = true;                     // zooming is enabled
-    g_help_mode = HELPMAIN;                // now use this help mode
+    g_help_mode = help_labels::HELPMAIN;                // now use this help mode
     resumeflag = false;                 // allows taking goto inside big_while_loop()
 
     return main_state::CONTINUE;

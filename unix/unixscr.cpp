@@ -88,7 +88,6 @@ extern VIDEOINFO x11_video_table[];
 extern unsigned char dacbox[256][3];
 
 extern int g_text_type;
-extern int g_help_mode;
 extern int g_color_cycle_range_hi;
 
 extern void fpe_handler(int signum);
@@ -1017,7 +1016,7 @@ writevideoline(int y, int x, int lastx, BYTE const *pixels)
     {
         XPutPixel(Ximage, x+i, y, FAKE_LUT(pixline[i]));
     }
-    if (fastmode == 1 && g_help_mode != HELPXHAIR)
+    if (fastmode == 1 && g_help_mode != help_labels::HELPXHAIR)
     {
         if (!alarmon)
         {
@@ -1098,7 +1097,7 @@ void writevideo(int x, int y, int color)
         xlastcolor = color;
     }
     XPutPixel(Ximage, x, y, FAKE_LUT(pixtab[color]));
-    if (fastmode == 1 && g_help_mode != HELPXHAIR)
+    if (fastmode == 1 && g_help_mode != help_labels::HELPXHAIR)
     {
         if (!alarmon)
         {

@@ -16,6 +16,8 @@ enum class calc_status_value
     COMPLETED = 4
 };
 
+enum class help_labels;
+
 extern int                   g_adapter;             // index into g_video_table[]
 extern bool                  g_auto_browse;
 extern int                   g_bad_config;
@@ -48,7 +50,7 @@ extern std::vector<double>   g_grid_x1;
 extern std::vector<double>   g_grid_y0;
 extern std::vector<double>   g_grid_y1;
 extern bool                  g_has_inverse;
-extern int                   g_help_mode;
+extern help_labels           g_help_mode;
 extern int                   g_integer_fractal;
 extern bool                  g_keep_aspect_ratio;
 extern long                  g_l_delta_min;

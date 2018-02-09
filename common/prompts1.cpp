@@ -500,7 +500,7 @@ int fullscreen_prompt(      // full-screen prompting routine
         putstringcenter(instrrow++, 0, 80, C_PROMPT_BKGRD,
                         "No changeable parameters;");
         putstringcenter(instrrow, 0, 80, C_PROMPT_BKGRD,
-                (g_help_mode > 0) ?
+                (g_help_mode > help_labels::IDHELP_INDEX) ?
                 "Press ENTER to exit, ESC to back out, " FK_F1 " for help"
                 : "Press ENTER to exit");
         driver_hide_text_cursor();
@@ -622,7 +622,7 @@ int fullscreen_prompt(      // full-screen prompting routine
                         "Use " UPARR1 " and " DNARR1 " to select values to change");
     }
     putstringcenter(instrrow+1, 0, 80, C_PROMPT_BKGRD,
-            (g_help_mode > 0) ?
+            (g_help_mode > help_labels::IDHELP_INDEX) ?
             "Press ENTER when finished, ESCAPE to back out, or " FK_F1 " for help"
             : "Press ENTER when finished (or ESCAPE to back out)");
 
@@ -1121,7 +1121,6 @@ static FT_CHOICE **ft_choices; // for sel_fractype_help subrtn
 // subrtn of get_fracttype, separated so that storage gets freed up
 static fractal_type select_fracttype(fractal_type t)
 {
-    int old_help_mode;
     int numtypes;
 #define MAXFTYPES 200
     char tname[40];
@@ -1140,8 +1139,8 @@ static fractal_type select_fracttype(fractal_type t)
     ft_choices = &choices[0];
 
     // setup context sensitive help
-    old_help_mode = g_help_mode;
-    g_help_mode = HELPFRACTALS;
+    help_labels const old_help_mode = g_help_mode;
+    g_help_mode = help_labels::HELPFRACTALS;
     if (t == fractal_type::IFS3D)
     {
         t = fractal_type::IFS;
@@ -1214,7 +1213,7 @@ static int sel_fractype_help(int curkey, int choice)
 {
     if (curkey == FIK_F2)
     {
-        int old_help_mode = g_help_mode;
+        help_labels const old_help_mode = g_help_mode;
         g_help_mode = g_fractal_specific[(*(ft_choices+choice))->num].helptext;
         help(0);
         g_help_mode = old_help_mode;
@@ -1229,7 +1228,7 @@ bool select_type_params( // prompt for new fractal type parameters
 {
     bool ret;
 
-    int old_help_mode = g_help_mode;
+    help_labels const old_help_mode = g_help_mode;
 
 sel_type_restart:
     ret = false;
@@ -1238,7 +1237,7 @@ sel_type_restart:
 
     if (g_fractal_type == fractal_type::LSYSTEM)
     {
-        g_help_mode = HT_LSYS;
+        g_help_mode = help_labels::HT_LSYS;
         if (get_file_entry(GETLSYS, "L-System", lsysmask, g_l_system_filename, g_l_system_name) < 0)
         {
             ret = true;
@@ -1247,7 +1246,7 @@ sel_type_restart:
     }
     if (g_fractal_type == fractal_type::FORMULA || g_fractal_type == fractal_type::FFORMULA)
     {
-        g_help_mode = HT_FORMULA;
+        g_help_mode = help_labels::HT_FORMULA;
         if (get_file_entry(GETFORMULA, "Formula", formmask, g_formula_filename, g_formula_name) < 0)
         {
             ret = true;
@@ -1256,7 +1255,7 @@ sel_type_restart:
     }
     if (g_fractal_type == fractal_type::IFS || g_fractal_type == fractal_type::IFS3D)
     {
-        g_help_mode = HT_IFS;
+        g_help_mode = help_labels::HT_IFS;
         if (get_file_entry(GETIFS, "IFS", ifsmask, g_ifs_filename, g_ifs_name) < 0)
         {
             ret = true;
@@ -1517,7 +1516,7 @@ int get_fract_params(int caller)        // prompt for type-specific parms
     char const *tmpptr;
     char bailoutmsg[50];
     int ret = 0;
-    int old_help_mode;
+    help_labels old_help_mode;
     char parmprompt[MAX_PARAMS][55];
     static char const *trg[] =
     {
@@ -1551,25 +1550,25 @@ int get_fract_params(int caller)        // prompt for type-specific parms
     }
     g_cur_fractal_specific = &g_fractal_specific[static_cast<int>(curtype)];
     tstack[0] = 0;
-    int help_formula = g_cur_fractal_specific->helpformula;
-    if (help_formula < -1)
+    help_labels help_formula = g_cur_fractal_specific->helpformula;
+    if (help_formula < help_labels::NONE)
     {
         bool use_filename_ref = false;
         std::string &filename_ref = g_formula_filename;
-        if (help_formula == -2)
+        if (help_formula == help_labels::SPECIAL_FORMULA)
         {
             // special for formula
             use_filename_ref = true;
             entryname = g_formula_name.c_str();
         }
-        else if (help_formula == -3)
+        else if (help_formula == help_labels::SPECIAL_L_SYSTEM)
         {
             // special for lsystem
             use_filename_ref = true;
             filename_ref = g_l_system_filename;
             entryname = g_l_system_name.c_str();
         }
-        else if (help_formula == -4)
+        else if (help_formula == help_labels::SPECIAL_IFS)
         {
             // special for ifs
             use_filename_ref = true;
@@ -1582,8 +1581,8 @@ int get_fract_params(int caller)        // prompt for type-specific parms
             filename = nullptr;
             entryname = nullptr;
         }
-        if ((!use_filename_ref && find_file_item(filename, entryname, &entryfile, -1-help_formula) == 0)
-            || (use_filename_ref && find_file_item(filename_ref, entryname, &entryfile, -1-help_formula) == 0))
+        if ((!use_filename_ref && find_file_item(filename, entryname, &entryfile, -1-static_cast<int>(help_formula)) == 0)
+            || (use_filename_ref && find_file_item(filename_ref, entryname, &entryfile, -1-static_cast<int>(help_formula)) == 0))
         {
             load_entry_text(entryfile, tstack, 17, 0, 0);
             fclose(entryfile);
@@ -1593,11 +1592,11 @@ int get_fract_params(int caller)        // prompt for type-specific parms
             }
         }
     }
-    else if (help_formula >= 0)
+    else if (help_formula >= help_labels::IDHELP_INDEX)
     {
         int c, lines;
         read_help_topic(help_formula, 0, 2000, tstack); // need error handling here ??
-        tstack[2000-help_formula] = 0;
+        tstack[2000-static_cast<int>(help_formula)] = 0;
         int i = 0;
         lines = 0;
         int j = 0;
@@ -2921,7 +2920,9 @@ static void format_parmfile_line(int choice, char *buf)
 
 int get_fract3d_params() // prompt for 3D fractal parameters
 {
-    int i, k, ret, old_help_mode;
+    int i;
+    int k;
+    int ret;
     fullscreenvalues uvalues[20];
     char const *ifs3d_prompts[7] =
     {
@@ -2951,8 +2952,8 @@ int get_fract3d_params() // prompt for 3D fractal parameters
     uvalues[k].type = 'i';
     uvalues[k++].uval.ival = g_glasses_type;
 
-    old_help_mode = g_help_mode;
-    g_help_mode = HELP3DFRACT;
+    help_labels const old_help_mode = g_help_mode;
+    g_help_mode = help_labels::HELP3DFRACT;
     i = fullscreen_prompt("3D Parameters", k, ifs3d_prompts, uvalues, 0, nullptr);
     g_help_mode = old_help_mode;
     if (i < 0)
@@ -2999,7 +3000,6 @@ int get_3d_params()     // prompt for 3D parameters
     char const *prompts3d[21];
     fullscreenvalues uvalues[21];
     int k;
-    int old_help_mode;
 
 restart_1:
     if (g_targa_out && g_overlay_3d)
@@ -3057,8 +3057,8 @@ restart_1:
     uvalues[k].type = 'y';
     uvalues[k].uval.ch.val = g_gray_flag ? 1 : 0;
 
-    old_help_mode = g_help_mode;
-    g_help_mode = HELP3DMODE;
+    help_labels const old_help_mode = g_help_mode;
+    g_help_mode = help_labels::HELP3DMODE;
 
     k = fullscreen_prompt("3D Mode Selection", k+1, prompts3d, uvalues, 0, nullptr);
     g_help_mode = old_help_mode;
@@ -3156,7 +3156,7 @@ restart_1:
         {
             attributes[i] = 1;
         }
-        g_help_mode = HELP3DFILL;
+        g_help_mode = help_labels::HELP3DFILL;
         int i = fullscreen_choice(CHOICE_HELP, "Select 3D Fill Type",
                 nullptr, nullptr, k, (char const **)choices, attributes,
                 0, 0, 0, FILLTYPE+1, nullptr, nullptr, nullptr, nullptr);
@@ -3275,7 +3275,7 @@ restart_3:
 
 
     }
-    g_help_mode = HELP3DPARMS;
+    g_help_mode = help_labels::HELP3DPARMS;
     k = fullscreen_prompt(s, k, prompts3d, uvalues, 0, nullptr);
     g_help_mode = old_help_mode;
     if (k < 0)
@@ -3331,7 +3331,6 @@ static bool get_light_params()
     fullscreenvalues uvalues[13];
 
     int k;
-    int old_help_mode;
 
     // defaults go here
 
@@ -3400,8 +3399,8 @@ static bool get_light_params()
 
     prompts3d[++k] = "";
 
-    old_help_mode = g_help_mode;
-    g_help_mode = HELP3DLIGHT;
+    help_labels const old_help_mode = g_help_mode;
+    g_help_mode = help_labels::HELP3DLIGHT;
     k = fullscreen_prompt("Light Source Parameters", k, prompts3d, uvalues, 0, nullptr);
     g_help_mode = old_help_mode;
     if (k < 0)
@@ -3458,7 +3457,7 @@ static bool get_light_params()
 static bool check_mapfile()
 {
     bool askflag = false;
-    int i, old_help_mode;
+    int i;
     if (!g_read_color)
     {
         return false;
@@ -3481,8 +3480,8 @@ static bool check_mapfile()
     {
         if (askflag)
         {
-            old_help_mode = g_help_mode;
-            g_help_mode = -1;
+            help_labels const old_help_mode = g_help_mode;
+            g_help_mode = help_labels::NONE;
             i = field_prompt("Enter name of .MAP file to use,\n"
                              "or '*' to use palette from the image to be loaded.",
                              nullptr, buff, 60, nullptr);
@@ -3519,7 +3518,6 @@ static bool get_funny_glasses_params()
     fullscreenvalues uvalues[10];
 
     int k;
-    int old_help_mode;
 
     // defaults
     if (ZVIEWER == 0)
@@ -3598,8 +3596,8 @@ static bool get_funny_glasses_params()
         strcpy(uvalues[k].uval.sval, funnyglasses_map_name);
     }
 
-    old_help_mode = g_help_mode;
-    g_help_mode = HELP3DGLASSES;
+    help_labels const old_help_mode = g_help_mode;
+    g_help_mode = help_labels::HELP3DGLASSES;
     k = fullscreen_prompt("Funny Glasses Parameters", k+1, prompts3d, uvalues, 0, nullptr);
     g_help_mode = old_help_mode;
     if (k < 0)
