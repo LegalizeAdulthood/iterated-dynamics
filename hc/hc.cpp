@@ -104,18 +104,18 @@ struct LINK
 
 struct PAGE
 {
-    unsigned offset;     // offset from start of topic text
-    unsigned length;     // length of page (in chars)
-    int      margin;     // if > 0 then page starts in_para and text
-    // should be indented by this much
+    unsigned offset;    // offset from start of topic text
+    unsigned length;    // length of page (in chars)
+    int      margin;    // if > 0 then page starts in_para and text
+                        // should be indented by this much
 };
 
 
 // values for TOPIC.flags
 enum
 {
-    TF_IN_DOC = 1,          // 1 if topic is part of the printed document
-    TF_DATA = 2             // 1 if it is a "data" topic
+    TF_IN_DOC = 1,          // set if topic is part of the printed document
+    TF_DATA = 2             // set if it is a "data" topic
 };
 
 struct TOPIC
@@ -128,7 +128,7 @@ struct TOPIC
     std::vector<PAGE> page;   // list of pages
     unsigned  text_len;       // length of topic text
     long      text;           // topic text (all pages)
-    long      offset;         // offset to topic from start of file
+    long      offset;         // offset from start of file to topic
 };
 
 
