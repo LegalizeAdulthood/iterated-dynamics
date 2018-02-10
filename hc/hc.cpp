@@ -1438,7 +1438,7 @@ void put_a_char(int ch, TOPIC const *t)
 }
 
 
-enum STATES   // states for FSM's
+enum class STATES   // states for FSM's
 {
     S_Start,                 // initial state, between paragraphs
     S_StartFirstLine,        // spaces at start of first line
@@ -1472,7 +1472,7 @@ void read_src(char const *fname)
     char  *margin_pos = nullptr;
     bool in_topic = false;
     bool formatting = true;
-    int    state      = S_Start;
+    STATES state = STATES::S_Start;
     int    num_spaces = 0;
     int    margin     = 0;
     bool in_para = false;
@@ -1615,7 +1615,7 @@ void read_src(char const *fname)
                     start_topic(&t, topic_title, static_cast<int>(title_len));
                     formatting = true;
                     centering = false;
-                    state = S_Start;
+                    state = STATES::S_Start;
                     in_para = false;
                     num_spaces = 0;
                     xonline = false;
@@ -1674,7 +1674,7 @@ void read_src(char const *fname)
 
                     formatting = false;
                     centering = false;
-                    state = S_Start;
+                    state = STATES::S_Start;
                     in_para = false;
                     num_spaces = 0;
                     xonline = false;
@@ -1880,7 +1880,7 @@ void read_src(char const *fname)
                         *curr++ = '\n';    // finish off current paragraph
                     }
                     *curr++ = CMD_FF;
-                    state = S_Start;
+                    state = STATES::S_Start;
                     in_para = false;
                     num_spaces = 0;
                 }
@@ -1900,7 +1900,7 @@ void read_src(char const *fname)
                     {
                         *curr++ = CMD_XONLINE;
                     }
-                    state = S_Start;
+                    state = STATES::S_Start;
                     in_para = false;
                     num_spaces = 0;
                 }
@@ -1920,7 +1920,7 @@ void read_src(char const *fname)
                     {
                         *curr++ = CMD_XDOC;
                     }
-                    state = S_Start;
+                    state = STATES::S_Start;
                     in_para = false;
                     num_spaces = 0;
                 }
@@ -1965,7 +1965,7 @@ void read_src(char const *fname)
                         *curr++ = '\n';  // finish off current paragraph
                         in_para = false;
                         num_spaces = 0;
-                        state = S_Start;
+                        state = STATES::S_Start;
                     }
 
                     if (!done)
@@ -2021,7 +2021,7 @@ void read_src(char const *fname)
                             formatting = true;
                             in_para = false;
                             num_spaces = 0;
-                            state = S_Start;
+                            state = STATES::S_Start;
                         }
                         else
                         {
@@ -2040,7 +2040,7 @@ void read_src(char const *fname)
                             in_para = false;
                             formatting = false;
                             num_spaces = 0;
-                            state = S_Start;
+                            state = STATES::S_Start;
                         }
                         else
                         {
@@ -2132,7 +2132,7 @@ void read_src(char const *fname)
                                 *curr++ = '\n';
                                 in_para = false;
                             }
-                            state = S_Start;  // for centering FSM
+                            state = STATES::S_Start;  // for centering FSM
                         }
                         else
                         {
@@ -2145,7 +2145,7 @@ void read_src(char const *fname)
                         if (centering)
                         {
                             centering = false;
-                            state = S_Start;  // for centering FSM
+                            state = STATES::S_Start;  // for centering FSM
                         }
                         else
                         {
@@ -2232,7 +2232,7 @@ void read_src(char const *fname)
 
                 switch (state)
                 {
-                case S_Start:
+                case STATES::S_Start:
                     if (ch == ' ')
                     {
                         ; // do nothing
@@ -2244,16 +2244,16 @@ void read_src(char const *fname)
                     else
                     {
                         *curr++ = CMD_CENTER;
-                        state = S_Line;
+                        state = STATES::S_Line;
                         again = true;
                     }
                     break;
 
-                case S_Line:
+                case STATES::S_Line:
                     put_a_char(ch, &t);
                     if ((ch&0xFF) == '\n')
                     {
-                        state = S_Start;
+                        state = STATES::S_Start;
                     }
                     break;
                 } // switch
@@ -2270,20 +2270,20 @@ void read_src(char const *fname)
 
                 switch (state)
                 {
-                case S_Start:
+                case STATES::S_Start:
                     if ((ch&0xFF) == '\n')
                     {
                         *curr++ = ch;
                     }
                     else
                     {
-                        state = S_StartFirstLine;
+                        state = STATES::S_StartFirstLine;
                         num_spaces = 0;
                         again = true;
                     }
                     break;
 
-                case S_StartFirstLine:
+                case STATES::S_StartFirstLine:
                     if (ch == ' ')
                     {
                         ++num_spaces;
@@ -2294,7 +2294,7 @@ void read_src(char const *fname)
                         {
                             put_spaces(num_spaces);
                             num_spaces = 0;
-                            state = S_FormatDisabled;
+                            state = STATES::S_FormatDisabled;
                             again = true;
                         }
                         else
@@ -2303,28 +2303,28 @@ void read_src(char const *fname)
                             *curr++ = (char)num_spaces;
                             *curr++ = (char)num_spaces;
                             margin_pos = curr - 1;
-                            state = S_FirstLine;
+                            state = STATES::S_FirstLine;
                             again = true;
                             in_para = true;
                         }
                     }
                     break;
 
-                case S_FirstLine:
+                case STATES::S_FirstLine:
                     if (ch == '\n')
                     {
-                        state = S_StartSecondLine;
+                        state = STATES::S_StartSecondLine;
                         num_spaces = 0;
                     }
                     else if (ch == ('\n'|0x100))    // force end of para ?
                     {
                         *curr++ = '\n';
                         in_para = false;
-                        state = S_Start;
+                        state = STATES::S_Start;
                     }
                     else if (ch == ' ')
                     {
-                        state = S_FirstLineSpaces;
+                        state = STATES::S_FirstLineSpaces;
                         num_spaces = 1;
                     }
                     else
@@ -2333,7 +2333,7 @@ void read_src(char const *fname)
                     }
                     break;
 
-                case S_FirstLineSpaces:
+                case STATES::S_FirstLineSpaces:
                     if (ch == ' ')
                     {
                         ++num_spaces;
@@ -2341,12 +2341,12 @@ void read_src(char const *fname)
                     else
                     {
                         put_spaces(num_spaces);
-                        state = S_FirstLine;
+                        state = STATES::S_FirstLine;
                         again = true;
                     }
                     break;
 
-                case S_StartSecondLine:
+                case STATES::S_StartSecondLine:
                     if (ch == ' ')
                     {
                         ++num_spaces;
@@ -2356,7 +2356,7 @@ void read_src(char const *fname)
                         *curr++ = '\n';   // end the para
                         *curr++ = '\n';   // for the blank line
                         in_para = false;
-                        state = S_Start;
+                        state = STATES::S_Start;
                     }
                     else
                     {
@@ -2366,7 +2366,7 @@ void read_src(char const *fname)
                             in_para = false;
                             put_spaces(num_spaces);
                             num_spaces = 0;
-                            state = S_FormatDisabled;
+                            state = STATES::S_FormatDisabled;
                             again = true;
                         }
                         else
@@ -2374,27 +2374,27 @@ void read_src(char const *fname)
                             add_blank_for_split();
                             margin = num_spaces;
                             *margin_pos = (char)num_spaces;
-                            state = S_Line;
+                            state = STATES::S_Line;
                             again = true;
                         }
                     }
                     break;
 
-                case S_Line:   // all lines after the first
+                case STATES::S_Line:   // all lines after the first
                     if (ch == '\n')
                     {
-                        state = S_StartLine;
+                        state = STATES::S_StartLine;
                         num_spaces = 0;
                     }
                     else if (ch == ('\n' | 0x100))    // force end of para ?
                     {
                         *curr++ = '\n';
                         in_para = false;
-                        state = S_Start;
+                        state = STATES::S_Start;
                     }
                     else if (ch == ' ')
                     {
-                        state = S_LineSpaces;
+                        state = STATES::S_LineSpaces;
                         num_spaces = 1;
                     }
                     else
@@ -2403,7 +2403,7 @@ void read_src(char const *fname)
                     }
                     break;
 
-                case S_LineSpaces:
+                case STATES::S_LineSpaces:
                     if (ch == ' ')
                     {
                         ++num_spaces;
@@ -2411,12 +2411,12 @@ void read_src(char const *fname)
                     else
                     {
                         put_spaces(num_spaces);
-                        state = S_Line;
+                        state = STATES::S_Line;
                         again = true;
                     }
                     break;
 
-                case S_StartLine:   // for all lines after the second
+                case STATES::S_StartLine:   // for all lines after the second
                     if (ch == ' ')
                     {
                         ++num_spaces;
@@ -2426,7 +2426,7 @@ void read_src(char const *fname)
                         *curr++ = '\n';   // end the para
                         *curr++ = '\n';   // for the blank line
                         in_para = false;
-                        state = S_Start;
+                        state = STATES::S_Start;
                     }
                     else
                     {
@@ -2434,34 +2434,34 @@ void read_src(char const *fname)
                         {
                             *curr++ = '\n';
                             in_para = false;
-                            state = S_StartFirstLine;  // with current num_spaces
+                            state = STATES::S_StartFirstLine;  // with current num_spaces
                         }
                         else
                         {
                             add_blank_for_split();
-                            state = S_Line;
+                            state = STATES::S_Line;
                         }
                         again = true;
                     }
                     break;
 
-                case S_FormatDisabled:
+                case STATES::S_FormatDisabled:
                     if (ch == ' ')
                     {
-                        state = S_FormatDisabledSpaces;
+                        state = STATES::S_FormatDisabledSpaces;
                         num_spaces = 1;
                     }
                     else
                     {
                         if ((ch&0xFF) == '\n')
                         {
-                            state = S_Start;
+                            state = STATES::S_Start;
                         }
                         put_a_char(ch, &t);
                     }
                     break;
 
-                case S_FormatDisabledSpaces:
+                case STATES::S_FormatDisabledSpaces:
                     if (ch == ' ')
                     {
                         ++num_spaces;
@@ -2470,7 +2470,7 @@ void read_src(char const *fname)
                     {
                         put_spaces(num_spaces);
                         num_spaces = 0;    // is this needed?
-                        state = S_FormatDisabled;
+                        state = STATES::S_FormatDisabled;
                         again = true;
                     }
                     break;
@@ -2488,10 +2488,10 @@ void read_src(char const *fname)
 
                 switch (state)
                 {
-                case S_Start:
+                case STATES::S_Start:
                     if (ch == ' ')
                     {
-                        state = S_Spaces;
+                        state = STATES::S_Spaces;
                         num_spaces = 1;
                     }
                     else
@@ -2500,7 +2500,7 @@ void read_src(char const *fname)
                     }
                     break;
 
-                case S_Spaces:
+                case STATES::S_Spaces:
                     if (ch == ' ')
                     {
                         ++num_spaces;
@@ -2509,7 +2509,7 @@ void read_src(char const *fname)
                     {
                         put_spaces(num_spaces);
                         num_spaces = 0;     // is this needed?
-                        state = S_Start;
+                        state = STATES::S_Start;
                         again = true;
                     }
                     break;
