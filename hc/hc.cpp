@@ -9,6 +9,7 @@
 #include <algorithm>
 #include <cerrno>
 #include <cstdarg>
+#include <iostream>
 #include <numeric>
 #include <sstream>
 #include <string>
@@ -242,6 +243,50 @@ inline void check_buffer(unsigned off)
 #ifdef XFRACT
 #define putw( x1, x2 )  fwrite( &(x1), 1, sizeof(int), x2);
 #endif
+
+const char *str_or_empty(const char *str)
+{
+    return str != nullptr ? str : "";
+}
+
+std::ostream &operator<<(std::ostream &str, const CONTENT &content)
+{
+    str << "Flags: " << std::hex << content.flags << std::dec << '\n'
+        << "Id: <" << content.id << ">\n"
+        << "Name: <" << content.name << ">\n"
+        << "Doc Page: " << content.doc_page << '\n'
+        << "Page Num Pos: " << content.page_num_pos << '\n'
+        << "Num Topic: " << content.num_topic << '\n';
+    for (int i = 0; i < content.num_topic; ++i)
+    {
+        str << "    Label? " << std::boolalpha << content.is_label[i] << '\n'
+            << "    Name: <" << str_or_empty(content.topic_name[i]) << ">\n"
+            << "    Topic Num: " << content.topic_num[i] << '\n';
+    }
+    return str << "Source File: <" << str_or_empty(content.srcfile) << ">\n"
+        << "Source Line: " << content.srcline << '\n';
+}
+
+std::ostream &operator<<(std::ostream &str, const PAGE &page)
+{
+    return str << "Offset: " << page.offset << ", Length: " << page.length << ", Margin: " << page.margin << '\n';
+}
+
+std::ostream &operator<<(std::ostream &str, const TOPIC &topic)
+{
+    str << "Flags: " << std::hex << topic.flags << std::dec << '\n'
+        << "Doc Page: " << topic.doc_page << '\n'
+        << "Title Len: " << topic.title_len << '\n'
+        << "Title: <" << str_or_empty(topic.title) << ">\n"
+        << "Num Page: " << topic.num_page << '\n';
+    for (const PAGE &page : topic.page)
+    {
+        str << "    " << page;
+    }
+    return str << "Text Len: " << topic.text_len << '\n'
+        << "Text: " << topic.text << '\n'
+        << "Offset: " << topic.offset << '\n';
+}
 
 /*
  * error/warning/message reporting functions.
@@ -4396,6 +4441,7 @@ public:
     void process();
 
 private:
+    void write_index_html();
     bool get_info(int cmd, PD_INFO *pd);
     bool print_html(int cmd, PD_INFO *pd);
     static bool get_info_(int cmd, PD_INFO *pd, void *info)
@@ -4609,6 +4655,7 @@ void html_processor::process()
         fatal(0, ".SRC has no DocContents.");
     }
 
+    write_index_html();
     msg("Printing to: %s", m_fname.c_str());
 
     m_info.file = fopen(m_fname.c_str(), "wt");
@@ -4632,6 +4679,22 @@ void html_processor::process()
         m_info.file);
 
     fclose(m_info.file);
+}
+
+void html_processor::write_index_html()
+{
+    using namespace std::string_literals;
+    const CONTENT &toc = contents[0];
+    if (toc.num_topic != 1 || toc.topic_name[0] != "DocContent"s)
+    {
+        throw std::runtime_error("First content block contains multiple topics or doesn't contain DocContents.");
+    }
+    const TOPIC &toc_topic = topic[toc.topic_num[0]];
+    std::cout << "DocContents\n"
+        << toc
+        << "Topic:\n"
+        << toc_topic
+        << '\n';
 }
 
 #if defined(_WIN32)
