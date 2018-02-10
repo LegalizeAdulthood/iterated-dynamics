@@ -4292,12 +4292,138 @@ void html_paginator::process()
         return;
     }
 
-    msg("Paginating document.");
+    int size;
+    int width;
 
-    process_document(get_info_, output_, this);
+    msg("Paginating HTML.");
 
-    set_hot_link_doc_page();
-    set_content_doc_page();
+    for (TOPIC &t : topic)
+    {
+        if (t.flags & TF_DATA)
+        {
+            continue;    // don't paginate data topics
+        }
+
+        char *text = get_topic_text(&t);
+        char *curr = text;
+        unsigned len = t.text_len;
+
+        char *start = curr;
+        bool skip_blanks = false;
+        int lnum = 0;
+        int num_links = 0;
+        int col = 0;
+        int start_margin = -1;
+
+        while (len > 0)
+        {
+            token_types tok = find_token_length(token_modes::ONLINE, curr, len, &size, &width);
+
+            switch (tok)
+            {
+            case token_types::TOK_PARA:
+            {
+                ++curr;
+                int const indent = *curr++;
+                int const margin = *curr++;
+                len -= 3;
+                col = indent;
+                while (true)
+                {
+                    tok = find_token_length(token_modes::ONLINE, curr, len, &size, &width);
+
+                    if (tok == token_types::TOK_DONE || tok == token_types::TOK_NL || tok == token_types::TOK_FF)
+                    {
+                        break;
+                    }
+
+                    if (tok == token_types::TOK_PARA)
+                    {
+                        col = 0;   // fake a nl
+                        ++lnum;
+                        break;
+                    }
+
+                    if (tok == token_types::TOK_XONLINE || tok == token_types::TOK_XDOC)
+                    {
+                        curr += size;
+                        len -= size;
+                        continue;
+                    }
+
+                    // now tok is SPACE or LINK or WORD
+                    if (col+width > SCREEN_WIDTH)
+                    {
+                        // go to next line...
+                        if (tok == token_types::TOK_SPACE)
+                        {
+                            width = 0;    // skip spaces at start of a line
+                        }
+
+                        col = margin;
+                    }
+
+                    col += width;
+                    curr += size;
+                    len -= size;
+                }
+
+                skip_blanks = false;
+                size = 0;
+                width = size;
+                break;
+            }
+
+            case token_types::TOK_NL:
+                if (skip_blanks && col == 0)
+                {
+                    start += size;
+                    break;
+                }
+                ++lnum;
+                col = 0;
+                break;
+
+            case token_types::TOK_FF:
+                col = 0;
+                if (skip_blanks)
+                {
+                    start += size;
+                    break;
+                }
+                start = curr + size;
+                num_links = 0;
+                break;
+
+            case token_types::TOK_DONE:
+            case token_types::TOK_XONLINE:   // skip
+            case token_types::TOK_XDOC:      // ignore
+            case token_types::TOK_CENTER:    // ignore
+                break;
+
+            case token_types::TOK_LINK:
+                ++num_links;
+
+                // fall-through
+
+            default:    // SPACE, LINK, WORD
+                skip_blanks = false;
+                break;
+
+            } // switch
+
+            curr += size;
+            len  -= size;
+            col  += width;
+        } // while
+
+        if (max_pages < t.num_page)
+        {
+            max_pages = t.num_page;
+        }
+
+        release_topic_text(&t, 0);
+    } // for
 }
 
 bool html_paginator::get_info(int cmd, PD_INFO *pd)
@@ -4635,6 +4761,8 @@ void html_processor::process()
     {
         fatal(0, ".SRC has no DocContents.");
     }
+
+    make_hot_links();
 
     write_index_html();
     msg("Printing to: %s", m_fname.c_str());
