@@ -2692,7 +2692,6 @@ void make_hot_links()
 void add_page_break(TOPIC *t, int margin, char const *text, char const *start, char const *curr, int num_links)
 {
     PAGE p;
-
     p.offset = (unsigned)(start - text);
     p.length = (unsigned)(curr - start);
     p.margin = margin;
@@ -2707,18 +2706,8 @@ void add_page_break(TOPIC *t, int margin, char const *text, char const *start, c
 
 void paginate_online()    // paginate the text for on-line help
 {
-    // also calculates max_pages and max_links
-    int       lnum;
-    char     *start;
-    char     *curr;
-    char     *text;
-    unsigned  len;
-    int       num_links;
-    int       col;
-    token_types tok;
-    int       size,
-              width;
-    int       start_margin;
+    int size;
+    int width;
 
     msg("Paginating online help.");
 
@@ -2729,37 +2718,30 @@ void paginate_online()    // paginate the text for on-line help
             continue;    // don't paginate data topics
         }
 
-        text = get_topic_text(&t);
-        curr = text;
-        len  = t.text_len;
+        char *text = get_topic_text(&t);
+        char *curr = text;
+        unsigned len = t.text_len;
 
-        start = curr;
+        char *start = curr;
         bool skip_blanks = false;
-        lnum = 0;
-        num_links = 0;
-        col = 0;
-        start_margin = -1;
+        int lnum = 0;
+        int num_links = 0;
+        int col = 0;
+        int start_margin = -1;
 
         while (len > 0)
         {
-            tok = find_token_length(token_modes::ONLINE, curr, len, &size, &width);
+            token_types tok = find_token_length(token_modes::ONLINE, curr, len, &size, &width);
 
             switch (tok)
             {
             case token_types::TOK_PARA:
             {
-                int indent,
-                    margin;
-
                 ++curr;
-
-                indent = *curr++;
-                margin = *curr++;
-
+                int const indent = *curr++;
+                int const margin = *curr++;
                 len -= 3;
-
                 col = indent;
-
                 while (true)
                 {
                     tok = find_token_length(token_modes::ONLINE, curr, len, &size, &width);
@@ -2784,7 +2766,6 @@ void paginate_online()    // paginate the text for on-line help
                     }
 
                     // now tok is SPACE or LINK or WORD
-
                     if (col+width > SCREEN_WIDTH)
                     {
                         // go to next line...
