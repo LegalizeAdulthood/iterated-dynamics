@@ -3306,38 +3306,37 @@ void write_hdr(char const *fname)
 void calc_offsets()    // calc file offset to each topic
 {
     // NOTE: offsets do NOT include 6 bytes for signature & version!
-    long offset = sizeof(int) +      // max_pages
-             sizeof(int) +           // max_links
-             sizeof(int) +           // num_topic
-             sizeof(int) +           // num_label
-             sizeof(int) +           // num_contents
-             sizeof(int) +           // num_doc_pages
-             num_topic*sizeof(long) +// offsets to each topic
-             num_label*2*sizeof(int);// topic_num/topic_off for all public labels
+    long offset = sizeof(int) +     // max_pages
+        sizeof(int) +               // max_links
+        sizeof(int) +               // num_topic
+        sizeof(int) +               // num_label
+        sizeof(int) +               // num_contents
+        sizeof(int) +               // num_doc_pages
+        num_topic*sizeof(long) +    // offsets to each topic
+        num_label*2*sizeof(int);    // topic_num/topic_off for all public labels
 
     for (const CONTENT &cp : contents)
     {
-        offset += sizeof(int) +       // flags
-                  1 +                 // id length
-                  (int) strlen(cp.id) +    // id text
-                  1 +                 // name length
-                  (int) strlen(cp.name) +  // name text
-                  1 +                 // number of topics
-                  cp.num_topic*sizeof(int);    // topic numbers
+        offset += sizeof(int) +         // flags
+            1 +                         // id length
+            (int) strlen(cp.id) +       // id text
+            1 +                         // name length
+            (int) strlen(cp.name) +     // name text
+            1 +                         // number of topics
+            cp.num_topic*sizeof(int);   // topic numbers
     }
 
     for (TOPIC &tp : topic)
     {
         tp.offset = offset;
-        offset += (long)sizeof(int) + // topic flags
-                  sizeof(int) +       // number of pages
-                  tp.num_page*3*sizeof(int) +   // page offset, length & starting margin
-                  1 +                 // length of title
-                  tp.title_len +     // title
-                  sizeof(int) +       // length of text
-                  tp.text_len;       // text
+        offset += (long)sizeof(int) +       // topic flags
+            sizeof(int) +                   // number of pages
+            tp.num_page*3*sizeof(int) +     // page offset, length & starting margin
+            1 +                             // length of title
+            tp.title_len +                  // title
+            sizeof(int) +                   // length of text
+            tp.text_len;                    // text
     }
-
 }
 
 
