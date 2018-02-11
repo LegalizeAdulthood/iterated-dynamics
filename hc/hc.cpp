@@ -4171,8 +4171,7 @@ void compiler::compile()
 
     // order of these is very important...
 
-    make_hot_links();  // do even if errors since it may report
-    // more...
+    make_hot_links();  // do even if errors since it may report more...
 
     if (!errors)
     {
