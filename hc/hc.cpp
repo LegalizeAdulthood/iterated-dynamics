@@ -4243,12 +4243,18 @@ void compiler::render_html()
     {
         paginate_html_document();
     }
-
+    if (!errors)
+    {
+        calc_offsets();
+    }
+    if (!errors)
+    {
+        sort_labels();
+    }
     if (errors == 0)
     {
         print_html_document(fname2.empty() ? DEFAULT_HTML_FNAME : fname2);
     }
-
     if (errors > 0 || warnings > 0)
     {
         report_errors();
