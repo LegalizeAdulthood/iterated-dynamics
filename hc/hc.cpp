@@ -4764,8 +4764,6 @@ void html_processor::process()
         fatal(0, ".SRC has no DocContents.");
     }
 
-    make_hot_links();
-
     write_index_html();
     msg("Printing to: %s", m_fname.c_str());
 
