@@ -3314,16 +3314,15 @@ void calc_offsets()    // calc file offset to each topic
         num_topic*sizeof(long) +    // offsets to each topic
         num_label*2*sizeof(int);    // topic_num/topic_off for all public labels
 
-    for (const CONTENT &cp : contents)
-    {
-        offset += sizeof(int) +         // flags
+    offset = std::accumulate(contents.begin(), contents.end(), offset, [](long offset, const CONTENT &cp) {
+        return offset += sizeof(int) +  // flags
             1 +                         // id length
             (int) strlen(cp.id) +       // id text
             1 +                         // name length
             (int) strlen(cp.name) +     // name text
             1 +                         // number of topics
             cp.num_topic*sizeof(int);   // topic numbers
-    }
+    });
 
     for (TOPIC &tp : topic)
     {
