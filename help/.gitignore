@@ -1,6 +1,1 @@
 _build
-node_modules
-*.suo
-bin
-obj
-.ntvs_analysis.dat
