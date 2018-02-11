@@ -3140,12 +3140,11 @@ void paginate_document()
 
 int fcmp_LABEL(const void *a, const void *b)
 {
-    char *an = ((LABEL *)a)->name,
-          *bn = ((LABEL *)b)->name;
-    int   diff;
+    char const *an = static_cast<LABEL const *>(a)->name;
+    char const *bn = static_cast<LABEL const *>(b)->name;
 
     // compare the names, making sure that the index goes first
-    diff = strcmp(an, bn);
+    int const diff = strcmp(an, bn);
     if (diff == 0)
     {
         return 0;
