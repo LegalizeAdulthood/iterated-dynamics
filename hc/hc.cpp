@@ -62,6 +62,16 @@ extern int _splitpath(char const *file_template, char *drive, char *dir, char *f
 namespace
 {
 
+enum class modes
+{
+    NONE = 0,
+    COMPILE,
+    PRINT,
+    APPEND,
+    DELETE,
+    HTML
+};
+
 char const *const DEFAULT_SRC_FNAME = "help.src";
 char const *const DEFAULT_HLP_FNAME = "fractint.hlp";
 char const *const DEFAULT_EXE_FNAME = "fractint.exe";
@@ -858,7 +868,7 @@ bool get_next_item()
 }
 
 
-void process_doc_contents()
+void process_doc_contents(modes mode)
 {
     TOPIC t;
     t.flags     = 0;
@@ -931,6 +941,14 @@ void process_doc_contents()
             }
 
             // now, make the entry in the buffer
+            if (mode == modes::HTML)
+            {
+                sprintf(curr, "%s %s", c.id, c.name);
+                char *ptr = curr + (int) strlen(curr);
+                c.page_num_pos = 0U;
+                curr = ptr;
+            }
+            else
             {
                 sprintf(curr, "%-5s %*.0s%s", c.id, indent*2, "", c.name);
                 char *ptr = curr + (int) strlen(curr);
@@ -1463,7 +1481,7 @@ void check_command_length(int eoff, int len)
 }
 
 
-void read_src(char const *fname)
+void read_src(char const *fname, modes mode)
 {
     int    ch;
     char  *ptr;
@@ -1700,7 +1718,7 @@ void read_src(char const *fname)
                         done = true;
                     }
                     compress_spaces = true;
-                    process_doc_contents();
+                    process_doc_contents(mode);
                     in_topic = false;
                     continue;
                 }
@@ -3882,16 +3900,6 @@ void delete_hlp_from_exe(char const *exe_fname)
  * command-line parser, etc.
  */
 
-enum class modes
-{
-    NONE = 0,
-    COMPILE,
-    PRINT,
-    APPEND,
-    DELETE,
-    HTML
-};
-
 class compiler
 {
 public:
@@ -3917,7 +3925,7 @@ public:
 
 private:
     void parse_arguments();
-    void read_source_file();
+    void read_source_file(modes mode);
     void usage();
     void compile();
     void print();
@@ -4130,7 +4138,7 @@ void compiler::usage()
     printf("Use \"/q\" for quiet mode. (No status messages.)\n");
 }
 
-void compiler::read_source_file()
+void compiler::read_source_file(modes mode)
 {
     src_fname = fname1.empty() ? DEFAULT_SRC_FNAME : fname1;
 
@@ -4143,7 +4151,7 @@ void compiler::read_source_file()
     }
     swappos = 0;
 
-    read_src(src_fname.c_str());
+    read_src(src_fname.c_str(), mode);
 }
 
 void compiler::compile()
@@ -4153,7 +4161,7 @@ void compiler::compile()
         fatal(0, "Unexpected command-line argument \"%s\"", fname2.c_str());
     }
 
-    read_source_file();
+    read_source_file(mode);
 
     if (hdr_fname.empty())
     {
@@ -4215,7 +4223,7 @@ void compiler::compile()
 
 void compiler::print()
 {
-    read_source_file();
+    read_source_file(mode);
     make_hot_links();
 
     if (!errors)
@@ -4235,7 +4243,7 @@ void compiler::print()
 
 void compiler::render_html()
 {
-    read_source_file();
+    read_source_file(mode);
     make_hot_links();
 
     if (errors == 0)
@@ -4796,10 +4804,10 @@ void html_processor::write_index_html()
     const CONTENT &toc = contents[0];
     if (toc.num_topic != 1 || toc.topic_name[0] != "DocContent"s)
     {
-        throw std::runtime_error("First content block contains multiple topics or doesn't contain DocContents.");
+        throw std::runtime_error("First content block contains multiple topics or doesn't contain DocContent.");
     }
     const TOPIC &toc_topic = topic[toc.topic_num[0]];
-    std::cout << "DocContents\n"
+    std::cout << "DocContent\n"
         << toc
         << "Topic:\n"
         << toc_topic
