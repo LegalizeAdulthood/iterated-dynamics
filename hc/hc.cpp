@@ -4773,7 +4773,25 @@ void html_processor::process()
     }
 
     write_index_html();
+    process_document(get_info_, print_html_, this);
+}
+
+void html_processor::write_index_html()
+{
     msg("Printing to: %s", m_fname.c_str());
+
+    using namespace std::string_literals;
+    const CONTENT &toc = contents[0];
+    if (toc.num_topic != 1 || toc.topic_name[0] != "DocContent"s)
+    {
+        throw std::runtime_error("First content block contains multiple topics or doesn't contain DocContent.");
+    }
+    const TOPIC &toc_topic = topic[toc.topic_num[0]];
+    std::cout << "DocContent\n"
+        << toc
+        << "Topic:\n"
+        << toc_topic
+        << '\n';
 
     m_info.file = fopen(m_fname.c_str(), "wt");
     if (m_info.file == nullptr)
@@ -4788,30 +4806,12 @@ void html_processor::process()
         "<pre>\n",
         m_info.file);
 
-    process_document(get_info_, print_html_, this);
-
     fputs("</pre>\n"
         "</body>\n"
         "</html>\n",
         m_info.file);
 
     fclose(m_info.file);
-}
-
-void html_processor::write_index_html()
-{
-    using namespace std::string_literals;
-    const CONTENT &toc = contents[0];
-    if (toc.num_topic != 1 || toc.topic_name[0] != "DocContent"s)
-    {
-        throw std::runtime_error("First content block contains multiple topics or doesn't contain DocContent.");
-    }
-    const TOPIC &toc_topic = topic[toc.topic_num[0]];
-    std::cout << "DocContent\n"
-        << toc
-        << "Topic:\n"
-        << toc_topic
-        << '\n';
 }
 
 #if defined(_WIN32)
