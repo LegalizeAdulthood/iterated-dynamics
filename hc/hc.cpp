@@ -217,7 +217,7 @@ int      errors           = 0,    // number of errors reported
 std::string src_fname;            // command-line .SRC filename
 std::string hdr_fname;            // .H filename
 std::string hlp_fname;            // .HLP filename
-char const *src_cfname = nullptr; // current .SRC filename
+std::string src_cfname;           // current .SRC filename
 
 int      format_exclude   = 0;    // disable formatting at this col, 0 to
 //    never disable formatting
@@ -319,7 +319,7 @@ void print_msg(char const *type, int lnum, char const *format, va_list arg)
         printf("   %s", type);
         if (lnum > 0)
         {
-            printf(" %s %d", src_cfname, lnum);
+            printf(" %s %d", src_cfname.c_str(), lnum);
         }
         printf(": ");
     }
@@ -899,7 +899,7 @@ void process_doc_contents(modes mode)
             c.flags = 0;
             c.num_topic = 0;
             c.doc_page = -1;
-            c.srcfile = src_cfname;
+            c.srcfile = src_cfname.c_str();
             c.srcline = srcline;
 
             if (get_next_item())
@@ -1029,7 +1029,7 @@ int parse_link()   // returns length of link or 0 on error
     int   err_off;
 
     LINK l;
-    l.srcfile  = src_cfname;
+    l.srcfile  = src_cfname.c_str();
     l.srcline  = srcline;
     l.doc_page = -1;
 
@@ -1835,7 +1835,7 @@ void read_src(char const *fname, modes mode)
                     else
                     {
                         ++include_stack_top;
-                        include_stack[include_stack_top].fname = src_cfname;
+                        include_stack[include_stack_top].fname = src_cfname.c_str();
                         include_stack[include_stack_top].file = srcfile;
                         include_stack[include_stack_top].line = srcline;
                         include_stack[include_stack_top].col  = srccol;
@@ -1845,7 +1845,7 @@ void read_src(char const *fname, modes mode)
                             error(eoff, "Unable to open \"%s\"", &cmd[8]);
                             srcfile = include_stack[include_stack_top--].file;
                         }
-                        src_cfname = dupstr(&cmd[8], 0);  // never deallocate!
+                        src_cfname = &cmd[8];
                         srcline = 1;
                         srccol = 0;
                     }
