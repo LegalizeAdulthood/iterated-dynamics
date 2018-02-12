@@ -3,6 +3,8 @@ cmake_minimum_required(VERSION 2.8.11)
 project(iterated-dynamics CXX)
 
 set(home_dir "${CMAKE_SOURCE_DIR}/home")
+set(ID_DIR ${CMAKE_CURRENT_SOURCE_DIR})
+set(HELP_SRC_DIR ${ID_DIR}/hc)
 
 function(set_src_dir src_file)
     set_source_files_properties(${src_file}
@@ -57,11 +59,7 @@ if("${CMAKE_CXX_COMPILER_ID}" MATCHES "(GNU|Clang)")
     set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS} -g")
 endif()
 
-add_library(helpcom STATIC
-    hc/helpcom.cpp
-    headers/helpcom.h)
-target_include_directories(helpcom PUBLIC headers)
-target_compile_definitions(helpcom PRIVATE ${OS_DEFINITIONS})
+add_subdirectory(hc)
 
 add_executable(id ${OS_ID_OPTIONS}
     headers/os.h
@@ -298,18 +296,6 @@ source_group("Source Files\\Win32" FILES ${OS_DRIVER_SOURCES})
 set_src_dir(common/help.cpp)
 set_src_dir(common/fractint.cpp)
 
-add_executable(hc
-    hc/hc.cpp
-    ${OS_HC_FILES})
-target_include_directories(hc PRIVATE headers)
-if(${HAVE_OS_DEFINITIONS})
-    target_compile_definitions(hc PRIVATE ${OS_DEFINITIONS})
-endif()
-if(WIN32)
-    target_compile_definitions(hc PRIVATE _SCL_SECURE_NO_WARNINGS)
-endif()
-target_link_libraries(hc PRIVATE helpcom)
-
 target_include_directories(id PRIVATE headers)
 target_link_libraries(id PRIVATE helpcom ${OS_DRIVER_LIBRARIES})
 if(${HAVE_OS_DEFINITIONS})
@@ -317,8 +303,6 @@ if(${HAVE_OS_DEFINITIONS})
 endif()
 add_dependencies(id hc)
 
-set(ID_DIR ${CMAKE_CURRENT_SOURCE_DIR})
-set(HELP_SRC_DIR ${ID_DIR}/hc)
 add_custom_command(
     OUTPUT ${ID_DIR}/headers/helpdefs.h ${home_dir}/fractint.hlp
     WORKING_DIRECTORY ${HELP_SRC_DIR}
