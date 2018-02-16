@@ -4780,9 +4780,8 @@ void html_processor::write_index_html()
 {
     msg("Printing to: %s", m_fname.c_str());
 
-    using namespace std::string_literals;
     const CONTENT &toc = contents[0];
-    if (toc.num_topic != 1 || toc.topic_name[0] != "DocContent"s)
+    if (toc.num_topic != 1 || toc.topic_name[0] != std::string("DocContent"))
     {
         throw std::runtime_error("First content block contains multiple topics or doesn't contain DocContent.");
     }
