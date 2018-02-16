@@ -104,8 +104,6 @@ add_executable(id ${OS_ID_OPTIONS}
     headers/port.h
     headers/prototyp.h
     headers/winprot.h
-
-    headers/helpdefs.h
 )
 
 source_group("Header Files\\common\\3d" FILES
