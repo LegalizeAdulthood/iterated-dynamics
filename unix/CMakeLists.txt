@@ -2,7 +2,7 @@
 
 if(NOT "${CMAKE_SYSTEM_NAME}" STREQUAL "Windows")
     add_library(os_hc STATIC unix.cpp)
-    target_compile_definitions(os_hc PUBLIC XFRACT NOBSTRING LINUX)
+    target_compile_definitions(os_hc PUBLIC ${OS_DEFINITIONS})
     target_include_directories(os_hc PRIVATE ../headers)
 
     add_library(os STATIC
@@ -15,7 +15,7 @@ if(NOT "${CMAKE_SYSTEM_NAME}" STREQUAL "Windows")
         unixscr.cpp
         video.cpp)
     target_link_libraries(os PUBLIC os_hc X11 m)
-    target_compile_definitions(os PUBLIC XFRACT NOBSTRING LINUX)
+    target_compile_definitions(os PUBLIC ${OS_DEFINITIONS})
     target_include_directories(os PRIVATE ../headers)
     set_src_dir(unix.cpp)
     add_dependencies(os native_help)

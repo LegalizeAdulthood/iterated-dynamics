@@ -4,7 +4,7 @@ add_library(helpcom STATIC
     helpcom.cpp
     ../headers/helpcom.h)
 target_include_directories(helpcom PUBLIC ../headers)
-target_compile_definitions(helpcom PRIVATE ${OS_DEFINITIONS})
+target_compile_definitions(helpcom PUBLIC ${OS_DEFINITIONS})
 
 add_executable(hc
     hc.cpp

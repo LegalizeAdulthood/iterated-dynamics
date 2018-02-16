@@ -11,8 +11,10 @@ function(set_src_dir src_file)
 endfunction()
 
 if("${CMAKE_SYSTEM_NAME}" STREQUAL "Windows")
+    set(OS_DEFINITIONS "")
     set(OS_ID_OPTIONS "WIN32")
 else()
+    set(OS_DEFINITIONS XFRACT NOBSTRING LINUX)
     set(OS_ID_OPTIONS "")
 endif()
 
