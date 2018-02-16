@@ -16,7 +16,7 @@ endif()
 if(WIN32)
     target_compile_definitions(hc PRIVATE _SCL_SECURE_NO_WARNINGS)
 endif()
-target_link_libraries(hc PRIVATE helpcom)
+target_link_libraries(hc PRIVATE helpcom os_hc)
 
 add_custom_target(native_help
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}

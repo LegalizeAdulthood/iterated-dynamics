@@ -11,45 +11,8 @@ function(set_src_dir src_file)
 endfunction()
 
 if("${CMAKE_SYSTEM_NAME}" STREQUAL "Windows")
-    set(OS_DRIVER_SOURCES
-        win32/d_win32.cpp
-        win32/d_win32_disk.cpp
-        win32/d_win32_gdi.cpp
-        win32/frame.cpp
-        win32/os_win32.cpp
-        win32/parsera.cpp
-        win32/plot.cpp
-        win32/WinText.cpp
-        win32/fractint.rc)
-    set(OS_DRIVER_HEADERS
-        win32/d_win32.h
-        win32/frame.h
-        win32/ods.h
-        win32/plot.h
-        win32/resource.h
-        win32/WinText.h)
-    set(OS_DRIVER_LIBRARIES
-        gdi32.lib user32.lib shlwapi.lib)
-    set(HAVE_OS_DEFINITIONS false)
-    set(OS_HC_FILES "")
     set(OS_ID_OPTIONS "WIN32")
 else()
-    set(OS_DRIVER_SOURCES
-        unix/d_x11.cpp
-        unix/x11_frame.cpp
-        unix/x11_text.cpp
-        unix/x11_plot.cpp
-        unix/general.cpp
-        unix/os_unix.cpp
-        unix/unix.cpp
-        unix/unixscr.cpp
-        unix/video.cpp)
-    set(OS_DRIVER_LIBRARIES X11 m)
-    set(OS_DEFINITIONS "XFRACT" "NOBSTRING" "LINUX")
-    set(HAVE_OS_DEFINITIONS true)
-    set_src_dir(unix/unix.cpp)
-    set(DISK_VID "")
-    set(OS_HC_FILES "unix/unix.cpp")
     set(OS_ID_OPTIONS "")
 endif()
 
@@ -58,6 +21,8 @@ if("${CMAKE_CXX_COMPILER_ID}" MATCHES "(GNU|Clang)")
     set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS} -g")
 endif()
 
+add_subdirectory(unix)
+add_subdirectory(win32)
 add_subdirectory(hc)
 
 add_executable(id ${OS_ID_OPTIONS}
@@ -141,9 +106,6 @@ add_executable(id ${OS_ID_OPTIONS}
     headers/winprot.h
 
     headers/helpdefs.h
-
-    ${OS_DRIVER_SOURCES}
-    ${OS_DRIVER_HEADERS}
 )
 
 source_group("Header Files\\common\\3d" FILES
@@ -289,17 +251,12 @@ source_group("Source Files\\common\\ui" FILES
     common/realdos.cpp
     common/zoom.cpp
 )
-source_group("Header Files\\Win32" FILES ${OS_DRIVER_HEADERS})
-source_group("Source Files\\Win32" FILES ${OS_DRIVER_SOURCES})
 
 set_src_dir(common/help.cpp)
 set_src_dir(common/fractint.cpp)
 
 target_include_directories(id PRIVATE headers)
-target_link_libraries(id PRIVATE helpcom ${OS_DRIVER_LIBRARIES})
-if(${HAVE_OS_DEFINITIONS})
-    target_compile_definitions(id PRIVATE ${OS_DEFINITIONS})
-endif()
+target_link_libraries(id PRIVATE helpcom os)
 add_dependencies(id native_help)
 
 # In debug builds, tell MSVC to:
