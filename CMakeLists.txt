@@ -4,7 +4,6 @@ project(iterated-dynamics CXX)
 
 set(home_dir "${CMAKE_SOURCE_DIR}/home")
 set(ID_DIR ${CMAKE_CURRENT_SOURCE_DIR})
-set(HELP_SRC_DIR ${ID_DIR}/hc)
 
 function(set_src_dir src_file)
     set_source_files_properties(${src_file}
@@ -301,19 +300,7 @@ target_link_libraries(id PRIVATE helpcom ${OS_DRIVER_LIBRARIES})
 if(${HAVE_OS_DEFINITIONS})
     target_compile_definitions(id PRIVATE ${OS_DEFINITIONS})
 endif()
-add_dependencies(id hc)
-
-add_custom_command(
-    OUTPUT ${ID_DIR}/headers/helpdefs.h ${home_dir}/fractint.hlp
-    WORKING_DIRECTORY ${HELP_SRC_DIR}
-    COMMAND hc /c
-    COMMAND ${CMAKE_COMMAND} -E copy helpdefs.h ${ID_DIR}/headers
-    COMMAND ${CMAKE_COMMAND} -E copy fractint.hlp ${home_dir}
-    COMMAND ${CMAKE_COMMAND} -E copy fractint.hlp ${CMAKE_CURRENT_BINARY_DIR}
-    DEPENDS hc
-        ${HELP_SRC_DIR}/help.src ${HELP_SRC_DIR}/help2.src
-        ${HELP_SRC_DIR}/help3.src ${HELP_SRC_DIR}/help4.src
-        ${HELP_SRC_DIR}/help5.src)
+add_dependencies(id native_help)
 
 # In debug builds, tell MSVC to:
 #   - not warn us about unchecked iterators
