@@ -2491,6 +2491,8 @@ void read_src(char const *fname, modes mode)
                     }
                     break;
 
+                case STATES::S_Spaces:
+                    break;
                 } // switch (state)
             }
             while (again);
