@@ -2248,9 +2248,8 @@ void read_src(char const *fname, modes mode)
             {
                 again = false;   // default
 
-                switch (state)
+                if (state == STATES::S_Start)
                 {
-                case STATES::S_Start:
                     if (ch == ' ')
                     {
                         ; // do nothing
@@ -2265,16 +2264,15 @@ void read_src(char const *fname, modes mode)
                         state = STATES::S_Line;
                         again = true;
                     }
-                    break;
-
-                case STATES::S_Line:
+                }
+                else if (state == STATES::S_Line)
+                {
                     put_a_char(ch, &t);
                     if ((ch&0xFF) == '\n')
                     {
                         state = STATES::S_Start;
                     }
-                    break;
-                } // switch
+                }
             }
             while (again);
         }
