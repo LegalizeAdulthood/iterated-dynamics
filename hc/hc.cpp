@@ -2504,9 +2504,8 @@ void read_src(char const *fname, modes mode)
             {
                 again = false;   // default
 
-                switch (state)
+                if (state == STATES::S_Start)
                 {
-                case STATES::S_Start:
                     if (ch == ' ')
                     {
                         state = STATES::S_Spaces;
@@ -2516,9 +2515,9 @@ void read_src(char const *fname, modes mode)
                     {
                         put_a_char(ch, &t);
                     }
-                    break;
-
-                case STATES::S_Spaces:
+                }
+                else if (state == STATES::S_Spaces)
+                {
                     if (ch == ' ')
                     {
                         ++num_spaces;
@@ -2530,8 +2529,7 @@ void read_src(char const *fname, modes mode)
                         state = STATES::S_Start;
                         again = true;
                     }
-                    break;
-                } // switch
+                }
             }
             while (again);
         }
