@@ -1,8 +1,6 @@
 build
-hc/fractint.hlp
-hc/helpdefs.h
-fractint.hlp
 headers/helpdefs.h
+home/fractint.hlp
 *.gif
 *.tmp
 hc/fractint.doc
