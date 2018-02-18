@@ -191,7 +191,7 @@ token_types _find_token_length(char const *curr, unsigned len, int *size, int *w
 }
 
 
-token_types find_token_length(token_modes mode, char const *curr, unsigned len, int *size, int *width)
+token_types find_token_length(token_modes mode, char const *curr, unsigned int len, int *size, int *width)
 {
     int t;
     int _size;
@@ -699,7 +699,7 @@ bool process_document(PD_FUNC get_info, PD_FUNC output, void *info)
 
                 case token_types::TOK_SPACE:
                     skip_blanks = false;
-                    if (!do_print_n(static_cast<char const>(' '), width))
+                    if (!do_print_n(' ', width))
                     {
                         return false;
                     }
