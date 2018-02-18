@@ -244,6 +244,8 @@ struct include_stack_entry
 include_stack_entry include_stack[MAX_INCLUDE_STACK];
 int include_stack_top = -1;
 
+std::vector<std::string> g_include_paths;
+
 char *get_topic_text(TOPIC const *t);
 
 void check_buffer(char const *curr, unsigned off, char const *buffer);
@@ -1542,7 +1544,25 @@ void check_command_length(int eoff, int len)
 }
 
 
-void read_src(char const *fname, modes mode)
+FILE *open_include(const std::string &file_name)
+{
+    FILE *result = fopen(file_name.c_str(), "rt");
+    if (result == nullptr)
+    {
+        for (const std::string &dir : g_include_paths)
+        {
+            const std::string path{dir + '/' + file_name};
+            result = fopen(path.c_str(), "rt");
+            if (result != nullptr)
+            {
+                return result;
+            }
+        }
+    }
+    return result;
+}
+
+void read_src(std::string const &fname, modes mode)
 {
     int    ch;
     char  *ptr;
@@ -1563,13 +1583,13 @@ void read_src(char const *fname, modes mode)
 
     src_cfname = fname;
 
-    srcfile = fopen(fname, "rt");
+    srcfile = open_include(fname);
     if (srcfile == nullptr)
     {
-        fatal(0, "Unable to open \"%s\"", fname);
+        fatal(0, "Unable to open \"%s\"", fname.c_str());
     }
 
-    msg("Compiling: %s", fname);
+    msg("Compiling: %s", fname.c_str());
 
     in_topic = false;
 
@@ -1900,13 +1920,14 @@ void read_src(char const *fname, modes mode)
                         include_stack[include_stack_top].file = srcfile;
                         include_stack[include_stack_top].line = srcline;
                         include_stack[include_stack_top].col  = srccol;
-                        srcfile = fopen(&cmd[8], "rt");
+                        const std::string file_name = &cmd[8];
+                        srcfile = open_include(file_name);
                         if (srcfile == nullptr)
                         {
-                            error(eoff, "Unable to open \"%s\"", &cmd[8]);
+                            error(eoff, "Unable to open \"%s\"", file_name.c_str());
                             srcfile = include_stack[include_stack_top--].file;
                         }
-                        src_cfname = &cmd[8];
+                        src_cfname = file_name;
                         srcline = 1;
                         srccol = 0;
                     }
@@ -4007,11 +4028,11 @@ void compiler::parse_arguments()
 {
     for (char **arg = &argv[1]; argc > 1; argc--, arg++)
     {
-        switch ((*arg)[0])
+        switch (arg[0][0])
         {
         case '/':
         case '-':
-            switch ((*arg)[1])
+            switch (arg[0][1])
             {
             case 'a':
                 if (mode == modes::NONE)
@@ -4054,6 +4075,19 @@ void compiler::parse_arguments()
                 else
                 {
                     fatal(0, "Cannot have /h with /a, /c, /d or /p");
+                }
+                break;
+
+            case 'i':
+                if (argc > 2)
+                {
+                    g_include_paths.emplace_back(arg[1]);
+                    --argc;
+                    ++arg;
+                }
+                else
+                {
+                    fatal(0, "Missing argument for /i");
                 }
                 break;
 
@@ -4210,7 +4244,7 @@ void compiler::read_source_file(modes mode)
     }
     swappos = 0;
 
-    read_src(src_fname.c_str(), mode);
+    read_src(src_fname, mode);
 }
 
 void compiler::compile()
