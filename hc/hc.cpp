@@ -9,6 +9,7 @@
 #include <algorithm>
 #include <cerrno>
 #include <cstdarg>
+#include <fstream>
 #include <iostream>
 #include <numeric>
 #include <sstream>
@@ -243,6 +244,8 @@ struct include_stack_entry
 include_stack_entry include_stack[MAX_INCLUDE_STACK];
 int include_stack_top = -1;
 
+char *get_topic_text(TOPIC const *t);
+
 void check_buffer(char const *curr, unsigned off, char const *buffer);
 
 inline void check_buffer(unsigned off)
@@ -279,7 +282,7 @@ std::ostream &operator<<(std::ostream &str, const CONTENT &content)
 
 std::ostream &operator<<(std::ostream &str, const PAGE &page)
 {
-    return str << "Offset: " << page.offset << ", Length: " << page.length << ", Margin: " << page.margin << '\n';
+    return str << "Offset: " << page.offset << ", Length: " << page.length << ", Margin: " << page.margin;
 }
 
 std::ostream &operator<<(std::ostream &str, const TOPIC &topic)
@@ -291,11 +294,69 @@ std::ostream &operator<<(std::ostream &str, const TOPIC &topic)
         << "Num Page: " << topic.num_page << '\n';
     for (const PAGE &page : topic.page)
     {
-        str << "    " << page;
+        str << "    " << page << '\n';
     }
-    return str << "Text Len: " << topic.text_len << '\n'
+    str << "Text Len: " << topic.text_len << '\n'
         << "Text: " << topic.text << '\n'
-        << "Offset: " << topic.offset << '\n';
+        << "Offset: " << topic.offset << '\n'
+        << "Tokens:\n";
+
+    const char *text = get_topic_text(&topic);
+    const char *curr = text;
+    unsigned len = topic.text_len;
+
+    const char *start = curr;
+    bool skip_blanks = false;
+    int lnum = 0;
+    int num_links = 0;
+    int col = 0;
+    int start_margin = -1;
+
+    while (len > 0)
+    {
+        int size = 0;
+        int width = 0;
+        const token_types tok = find_token_length(token_modes::ONLINE, curr, len, &size, &width);
+
+        switch (tok)
+        {
+        case token_types::TOK_DONE:
+            str << "  done\n";
+            break;
+        case token_types::TOK_SPACE:
+            str << std::string(width, ' ');
+            // str << "  space " << width << '\n';
+            break;
+        case token_types::TOK_LINK:
+            str << "  link\n";
+            break;
+        case token_types::TOK_PARA:
+            str << "  para\n";
+            break;
+        case token_types::TOK_NL:
+            str << '\n';
+            break;
+        case token_types::TOK_FF:
+            str << "  ff\n";
+            break;
+        case token_types::TOK_WORD:
+            str << std::string(curr, width);
+            break;
+        case token_types::TOK_XONLINE:
+            str << "  xonline\n";
+            break;
+        case token_types::TOK_XDOC:
+            str << "  xdoc\n";
+            break;
+        case token_types::TOK_CENTER:
+            str << "  center\n";
+            break;
+        }
+        len -= size;
+        curr += size;
+    }
+
+    return str;
 }
 
 /*
@@ -4657,25 +4718,41 @@ void html_processor::write_index_html()
         << toc_topic
         << '\n';
 
-    m_info.file = fopen(m_fname.c_str(), "wt");
-    if (m_info.file == nullptr)
+    std::ofstream str("index.rst");
+    str << ".. toctree::\n";
+    const char *text = get_topic_text(&toc_topic);
+    const char *curr = text;
+    unsigned len = toc_topic.text_len;
+    bool toc_line_started = false;
+    while (len > 0)
     {
-        fatal(0, "Couldn't create \"%s\"", m_fname.c_str());
+        if (!toc_line_started)
+        {
+            str << "   ";
+            toc_line_started = true;
+        }
+        int size = 0;
+        int width = 0;
+        const token_types tok = find_token_length(token_modes::ONLINE, curr, len, &size, &width);
+
+        switch (tok)
+        {
+        case token_types::TOK_SPACE:
+            str << std::string(width, ' ');
+            break;
+        case token_types::TOK_NL:
+            str << '\n';
+            toc_line_started = false;
+            break;
+        case token_types::TOK_WORD:
+            str << std::string(curr, width);
+            break;
+        default:
+            throw std::runtime_error("Unexpected token in table of contents.");
+        }
+        len -= size;
+        curr += size;
     }
-    fputs("<html>\n"
-        "<head>\n"
-        "<title>Iterated Dynamics</title>\n"
-        "</head>\n"
-        "<body>\n"
-        "<pre>\n",
-        m_info.file);
-
-    fputs("</pre>\n"
-        "</body>\n"
-        "</html>\n",
-        m_info.file);
-
-    fclose(m_info.file);
 }
 
 #if defined(_WIN32)
