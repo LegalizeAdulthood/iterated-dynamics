@@ -108,7 +108,7 @@ struct LINK
     unsigned topic_off;     // offset into topic to link to
     int      doc_page;      // document page # to link to
     char    *name;          // name of label or title of topic to link to
-    char const *srcfile;       // .SRC file link appears in
+    std::string srcfile;    // .SRC file link appears in
     int      srcline;       // .SRC file line # link appears in
 };
 
@@ -172,7 +172,7 @@ struct CONTENT
     bool      is_label[MAX_CONTENT_TOPIC];
     char     *topic_name[MAX_CONTENT_TOPIC];
     int       topic_num[MAX_CONTENT_TOPIC];
-    char const *srcfile;
+    std::string srcfile;
     int       srcline;
 };
 
@@ -236,7 +236,7 @@ const int MAX_INCLUDE_STACK = 5;    // allow 5 nested includes
 
 struct include_stack_entry
 {
-    char const *fname;
+    std::string fname;
     FILE *file;
     int   line;
     int   col;
@@ -276,7 +276,7 @@ std::ostream &operator<<(std::ostream &str, const CONTENT &content)
             << "    Name: <" << str_or_empty(content.topic_name[i]) << ">\n"
             << "    Topic Num: " << content.topic_num[i] << '\n';
     }
-    return str << "Source File: <" << str_or_empty(content.srcfile) << ">\n"
+    return str << "Source File: <" << content.srcfile << ">\n"
         << "Source Line: " << content.srcline << '\n';
 }
 
@@ -960,7 +960,7 @@ void process_doc_contents(modes mode)
             c.flags = 0;
             c.num_topic = 0;
             c.doc_page = -1;
-            c.srcfile = src_cfname.c_str();
+            c.srcfile = src_cfname;
             c.srcline = srcline;
 
             if (get_next_item())
@@ -1090,7 +1090,7 @@ int parse_link()   // returns length of link or 0 on error
     int   err_off;
 
     LINK l;
-    l.srcfile  = src_cfname.c_str();
+    l.srcfile  = src_cfname;
     l.srcline  = srcline;
     l.doc_page = -1;
 
@@ -1896,7 +1896,7 @@ void read_src(char const *fname, modes mode)
                     else
                     {
                         ++include_stack_top;
-                        include_stack[include_stack_top].fname = src_cfname.c_str();
+                        include_stack[include_stack_top].fname = src_cfname;
                         include_stack[include_stack_top].file = srcfile;
                         include_stack[include_stack_top].line = srcline;
                         include_stack[include_stack_top].col  = srccol;
