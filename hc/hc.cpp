@@ -4013,14 +4013,14 @@ void compiler::parse_arguments()
         case '-':
             switch ((*arg)[1])
             {
-            case 'h':
+            case 'a':
                 if (mode == modes::NONE)
                 {
-                    mode = modes::HTML;
+                    mode = modes::APPEND;
                 }
                 else
                 {
-                    fatal(0, "Cannot have /h with /a, /c, /d or /p");
+                    fatal(0, "Cannot have /a with /c, /d, /h or /p");
                 }
                 break;
 
@@ -4035,17 +4035,6 @@ void compiler::parse_arguments()
                 }
                 break;
 
-            case 'a':
-                if (mode == modes::NONE)
-                {
-                    mode = modes::APPEND;
-                }
-                else
-                {
-                    fatal(0, "Cannot have /a with /c, /d, /h or /p");
-                }
-                break;
-
             case 'd':
                 if (mode == modes::NONE)
                 {
@@ -4054,6 +4043,17 @@ void compiler::parse_arguments()
                 else
                 {
                     fatal(0, "Cannot have /d with /a, /c, /h or /p");
+                }
+                break;
+
+            case 'h':
+                if (mode == modes::NONE)
+                {
+                    mode = modes::HTML;
+                }
+                else
+                {
+                    fatal(0, "Cannot have /h with /a, /c, /d or /p");
                 }
                 break;
 
