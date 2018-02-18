@@ -34,7 +34,8 @@ add_custom_command(
     COMMAND hc /c help.src
     COMMAND ${CMAKE_COMMAND} -E copy helpdefs.h ${ID_DIR}/headers
     COMMAND ${CMAKE_COMMAND} -E copy fractint.hlp ${home_dir}
-    DEPENDS help.src
+    DEPENDS hc
+        help.src
         help2.src
         help3.src
         help4.src
