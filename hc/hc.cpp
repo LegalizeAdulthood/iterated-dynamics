@@ -83,14 +83,14 @@ std::string const DEFAULT_HTML_FNAME{"index.html"};
 char const *const TEMP_FNAME = "hc.tmp";
 char const *const SWAP_FNAME = "hcswap.tmp";
 
-const int MAX_ERRORS = (25);            // stop after this many errors
-const int MAX_WARNINGS = (25);          // stop after this many warnings
+int const MAX_ERRORS = (25);            // stop after this many errors
+int const MAX_WARNINGS = (25);          // stop after this many warnings
                                         // 0 = never stop
 
 char const *const INDEX_LABEL       = "IDHELP_INDEX";
 char const *const DOCCONTENTS_TITLE = "DocContent";
 
-const int BUFFER_SIZE = (1024*1024);    // 1 MB
+int const BUFFER_SIZE = (1024*1024);    // 1 MB
 
 enum class link_types
 {
@@ -232,7 +232,7 @@ bool compress_spaces = false;
 bool xonline = false;
 bool xdoc = false;
 
-const int MAX_INCLUDE_STACK = 5;    // allow 5 nested includes
+int const MAX_INCLUDE_STACK = 5;    // allow 5 nested includes
 
 struct include_stack_entry
 {
@@ -259,12 +259,12 @@ inline void check_buffer(unsigned off)
 #define putw( x1, x2 )  fwrite( &(x1), 1, sizeof(int), x2);
 #endif
 
-const char *str_or_empty(const char *str)
+char const *str_or_empty(char const *str)
 {
     return str != nullptr ? str : "";
 }
 
-std::ostream &operator<<(std::ostream &str, const CONTENT &content)
+std::ostream &operator<<(std::ostream &str, CONTENT const &content)
 {
     str << "Flags: " << std::hex << content.flags << std::dec << '\n'
         << "Id: <" << content.id << ">\n"
@@ -282,19 +282,19 @@ std::ostream &operator<<(std::ostream &str, const CONTENT &content)
         << "Source Line: " << content.srcline << '\n';
 }
 
-std::ostream &operator<<(std::ostream &str, const PAGE &page)
+std::ostream &operator<<(std::ostream &str, PAGE const &page)
 {
     return str << "Offset: " << page.offset << ", Length: " << page.length << ", Margin: " << page.margin;
 }
 
-std::ostream &operator<<(std::ostream &str, const TOPIC &topic)
+std::ostream &operator<<(std::ostream &str, TOPIC const &topic)
 {
     str << "Flags: " << std::hex << topic.flags << std::dec << '\n'
         << "Doc Page: " << topic.doc_page << '\n'
         << "Title Len: " << topic.title_len << '\n'
         << "Title: <" << str_or_empty(topic.title) << ">\n"
         << "Num Page: " << topic.num_page << '\n';
-    for (const PAGE &page : topic.page)
+    for (PAGE const &page : topic.page)
     {
         str << "    " << page << '\n';
     }
@@ -303,22 +303,15 @@ std::ostream &operator<<(std::ostream &str, const TOPIC &topic)
         << "Offset: " << topic.offset << '\n'
         << "Tokens:\n";
 
-    const char *text = get_topic_text(&topic);
-    const char *curr = text;
-    unsigned len = topic.text_len;
-
-    const char *start = curr;
-    bool skip_blanks = false;
-    int lnum = 0;
-    int num_links = 0;
-    int col = 0;
-    int start_margin = -1;
+    char const *text = get_topic_text(&topic);
+    char const *curr = text;
+    unsigned int len = topic.text_len;
 
     while (len > 0)
     {
         int size = 0;
         int width = 0;
-        const token_types tok = find_token_length(token_modes::ONLINE, curr, len, &size, &width);
+        token_types const tok = find_token_length(token_modes::ONLINE, curr, len, &size, &width);
 
         switch (tok)
         {
@@ -510,7 +503,7 @@ void release_topic_text(TOPIC const *t, int save)
  */
 
 
-char *dupstr(char const *s, unsigned len)
+char *dupstr(char const *s, unsigned int len)
 {
     if (len == 0)
     {
@@ -1544,14 +1537,14 @@ void check_command_length(int eoff, int len)
 }
 
 
-FILE *open_include(const std::string &file_name)
+FILE *open_include(std::string const &file_name)
 {
     FILE *result = fopen(file_name.c_str(), "rt");
     if (result == nullptr)
     {
-        for (const std::string &dir : g_include_paths)
+        for (std::string const &dir : g_include_paths)
         {
-            const std::string path{dir + '/' + file_name};
+            std::string const path{dir + '/' + file_name};
             result = fopen(path.c_str(), "rt");
             if (result != nullptr)
             {
@@ -1920,7 +1913,7 @@ void read_src(std::string const &fname, modes mode)
                         include_stack[include_stack_top].file = srcfile;
                         include_stack[include_stack_top].line = srcline;
                         include_stack[include_stack_top].col  = srccol;
-                        const std::string file_name = &cmd[8];
+                        std::string const file_name = &cmd[8];
                         srcfile = open_include(file_name);
                         if (srcfile == nullptr)
                         {
@@ -2630,7 +2623,7 @@ void read_src(std::string const &fname, modes mode)
  */
 void link_topic(LINK &l)
 {
-    const int t = find_topic_title(l.name);
+    int const t = find_topic_title(l.name);
     if (t == -1)
     {
         src_cfname = l.srcfile;
@@ -2709,7 +2702,7 @@ void label_topic(CONTENT &c, int ctr)
 
 void content_topic(CONTENT &c, int ctr)
 {
-    const int t = find_topic_title(c.topic_name[ctr]);
+    int const t = find_topic_title(c.topic_name[ctr]);
     if (t == -1)
     {
         src_cfname = c.srcfile;
@@ -2818,7 +2811,7 @@ void paginate_online()    // paginate the text for on-line help
 
         char *text = get_topic_text(&t);
         char *curr = text;
-        unsigned len = t.text_len;
+        unsigned int len = t.text_len;
 
         char *start = curr;
         bool skip_blanks = false;
@@ -3092,7 +3085,7 @@ void set_content_doc_page()
 
     char *base = get_topic_text(t);
 
-    for (const CONTENT &c : contents)
+    for (CONTENT const &c : contents)
     {
         assert(c.doc_page >= 1);
         sprintf(buf, "%d", c.doc_page);
@@ -3236,7 +3229,7 @@ void paginate_document()
  * label sorting stuff
  */
 
-int fcmp_LABEL(const void *a, const void *b)
+int fcmp_LABEL(void const *a, void const *b)
 {
     char const *an = static_cast<LABEL const *>(a)->name;
     char const *bn = static_cast<LABEL const *>(b)->name;
@@ -3412,7 +3405,7 @@ void calc_offsets()    // calc file offset to each topic
         num_topic*sizeof(long) +    // offsets to each topic
         num_label*2*sizeof(int);    // topic_num/topic_off for all public labels
 
-    offset = std::accumulate(contents.begin(), contents.end(), offset, [](long offset, const CONTENT &cp) {
+    offset = std::accumulate(contents.begin(), contents.end(), offset, [](long offset, CONTENT const &cp) {
         return offset += sizeof(int) +  // flags
             1 +                         // id length
             (int) strlen(cp.id) +       // id text
@@ -3440,7 +3433,7 @@ void calc_offsets()    // calc file offset to each topic
  * Replaces link indexes in the help text with topic_num, topic_off and
  * doc_page info.
  */
-void insert_real_link_info(char *curr, unsigned len)
+void insert_real_link_info(char *curr, unsigned int len)
 {
     while (len > 0)
     {
@@ -3489,20 +3482,20 @@ void _write_help(FILE *file)
     putw(num_doc_pages, file);
 
     // write the offsets to each topic
-    for (const TOPIC &t : topic)
+    for (TOPIC const &t : topic)
     {
         fwrite(&t.offset, sizeof(long), 1, file);
     }
 
     // write all public labels
-    for (const LABEL &l : label)
+    for (LABEL const &l : label)
     {
         putw(l.topic_num, file);
         putw(l.topic_off, file);
     }
 
     // write contents
-    for (const CONTENT &cp : contents)
+    for (CONTENT const &cp : contents)
     {
         putw(cp.flags, file);
 
@@ -3519,7 +3512,7 @@ void _write_help(FILE *file)
     }
 
     // write topics
-    for (const TOPIC &tp : topic)
+    for (TOPIC const &tp : topic)
     {
         // write the topics flags
         putw(tp.flags, file);
@@ -3527,7 +3520,7 @@ void _write_help(FILE *file)
         // write offset, length and starting margin for each page
 
         putw(tp.num_page, file);
-        for (const PAGE &p : tp.page)
+        for (PAGE const &p : tp.page)
         {
             putw(p.offset, file);
             putw(p.length, file);
@@ -3743,18 +3736,18 @@ void report_memory()
          data   = 0,   // bytes in active data structure
          dead   = 0;   // bytes in unused data structure
 
-    for (const TOPIC &t : topic)
+    for (TOPIC const &t : topic)
     {
         data   += sizeof(TOPIC);
         bytes_in_strings += t.title_len;
         text   += t.text_len;
         data   += t.num_page * sizeof(PAGE);
 
-        const std::vector<PAGE> &pages = t.page;
+        std::vector<PAGE> const &pages = t.page;
         dead   += (pages.capacity() - pages.size())*sizeof(PAGE);
     }
 
-    for (const LINK &l : a_link)
+    for (LINK const &l : a_link)
     {
         data += sizeof(LINK);
         bytes_in_strings += (long) strlen(l.name);
@@ -3762,7 +3755,7 @@ void report_memory()
 
     dead += (a_link.capacity() - a_link.size())*sizeof(LINK);
 
-    for (const LABEL &l : label)
+    for (LABEL const &l : label)
     {
         data   += sizeof(LABEL);
         bytes_in_strings += (long) strlen(l.name) + 1;
@@ -3770,7 +3763,7 @@ void report_memory()
 
     dead += (label.capacity() - label.size())*sizeof(LABEL);
 
-    for (const LABEL &l : plabel)
+    for (LABEL const &l : plabel)
     {
         data   += sizeof(LABEL);
         bytes_in_strings += (long) strlen(l.name) + 1;
@@ -3778,7 +3771,7 @@ void report_memory()
 
     dead += (plabel.capacity() - plabel.size())*sizeof(LABEL);
 
-    for (const CONTENT &c : contents)
+    for (CONTENT const &c : contents)
     {
         int t = (MAX_CONTENT_TOPIC - c.num_topic) *
             (sizeof(contents[0].is_label[0]) + sizeof(contents[0].topic_name[0]) + sizeof(contents[0].topic_num[0]));
@@ -3811,7 +3804,7 @@ void report_memory()
 void report_stats()
 {
     int  pages = 0;
-    for (const TOPIC &t : topic)
+    for (TOPIC const &t : topic)
     {
         pages += t.num_page;
     }
@@ -4382,7 +4375,7 @@ void compiler::paginate_html_document()
 
         char *text = get_topic_text(&t);
         char *curr = text;
-        unsigned len = t.text_len;
+        unsigned int len = t.text_len;
 
         char *start = curr;
         bool skip_blanks = false;
@@ -4532,7 +4525,7 @@ private:
     void print_char(int c, int n);
     void print_string(char const *s, int n);
 
-    std::string const &m_fname;
+    std::string m_fname;
     PRINT_DOC_INFO m_info;
     int m_current_topic = 0;
 };
@@ -4740,12 +4733,12 @@ void html_processor::write_index_html()
 {
     msg("Printing to: %s", m_fname.c_str());
 
-    const CONTENT &toc = contents[0];
+    CONTENT const &toc = contents[0];
     if (toc.num_topic != 1 || toc.topic_name[0] != std::string("DocContent"))
     {
         throw std::runtime_error("First content block contains multiple topics or doesn't contain DocContent.");
     }
-    const TOPIC &toc_topic = topic[toc.topic_num[0]];
+    TOPIC const &toc_topic = topic[toc.topic_num[0]];
     std::cout << "DocContent\n"
         << toc
         << "Topic:\n"
@@ -4754,9 +4747,9 @@ void html_processor::write_index_html()
 
     std::ofstream str("index.rst");
     str << ".. toctree::\n";
-    const char *text = get_topic_text(&toc_topic);
-    const char *curr = text;
-    unsigned len = toc_topic.text_len;
+    char const *text = get_topic_text(&toc_topic);
+    char const *curr = text;
+    unsigned int len = toc_topic.text_len;
     bool toc_line_started = false;
     while (len > 0)
     {
@@ -4767,7 +4760,7 @@ void html_processor::write_index_html()
         }
         int size = 0;
         int width = 0;
-        const token_types tok = find_token_length(token_modes::ONLINE, curr, len, &size, &width);
+        token_types const tok = find_token_length(token_modes::ONLINE, curr, len, &size, &width);
 
         switch (tok)
         {
@@ -4793,7 +4786,7 @@ void html_processor::write_index_html()
 #pragma warning(push)
 #pragma warning(disable : 4311)
 #endif
-void check_buffer(char const *curr, unsigned off, char const *buffer)
+void check_buffer(char const *curr, unsigned int off, char const *buffer)
 {
     if ((unsigned)(curr + off - buffer) >= (BUFFER_SIZE-1024))
     {
