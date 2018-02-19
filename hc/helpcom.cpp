@@ -278,7 +278,7 @@ bool process_document(PD_FUNC get_info, PD_FUNC output, void *info)
     PD_INFO pd{};
     pd.page_num = 1;
 
-    auto const do_print = [=, &pd](char *str, int n)
+    auto const do_print = [=, &pd](char const *str, int n)
     {
         pd.s = str;
         pd.i = n;
@@ -433,7 +433,7 @@ bool process_document(PD_FUNC get_info, PD_FUNC output, void *info)
                 case token_types::TOK_PARA:
                 {
                     unsigned int holdlen = 0;
-                    char *holdcurr = nullptr;
+                    char const *holdcurr = nullptr;
                     int in_link = 0;
 
                     ++pd.curr;

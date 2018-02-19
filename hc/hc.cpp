@@ -107,7 +107,7 @@ struct LINK
     int      topic_num;     // topic number to link to
     unsigned topic_off;     // offset into topic to link to
     int      doc_page;      // document page # to link to
-    char    *name;          // name of label or title of topic to link to
+    std::string name;       // name of label or title of topic to link to
     std::string srcfile;    // .SRC file link appears in
     int      srcline;       // .SRC file line # link appears in
 };
@@ -134,7 +134,7 @@ struct TOPIC
     unsigned  flags;          // see #defines for TF_???
     int       doc_page;       // page number in document where topic starts
     unsigned  title_len;      // length of title
-    char     *title;          // title for this topic
+    std::string title;        // title for this topic
     int       num_page;       // number of pages
     std::vector<PAGE> page;   // list of pages
     unsigned  text_len;       // length of topic text
@@ -145,7 +145,7 @@ struct TOPIC
 
 struct LABEL
 {
-    char    *name;            // its name
+    std::string name;         // its name
     int      topic_num;       // topic number
     unsigned topic_off;       // offset of label in the topic's text
     int      doc_page;
@@ -164,13 +164,13 @@ int const MAX_CONTENT_TOPIC = 10;
 struct CONTENT
 {
     unsigned  flags;
-    char     *id;
-    char     *name;
+    std::string id;
+    std::string name;
     int       doc_page;
     unsigned  page_num_pos;
     int       num_topic;
     bool      is_label[MAX_CONTENT_TOPIC];
-    char     *topic_name[MAX_CONTENT_TOPIC];
+    std::string topic_name[MAX_CONTENT_TOPIC];
     int       topic_num[MAX_CONTENT_TOPIC];
     std::string srcfile;
     int       srcline;
@@ -275,7 +275,7 @@ std::ostream &operator<<(std::ostream &str, CONTENT const &content)
     for (int i = 0; i < content.num_topic; ++i)
     {
         str << "    Label? " << std::boolalpha << content.is_label[i] << '\n'
-            << "    Name: <" << str_or_empty(content.topic_name[i]) << ">\n"
+            << "    Name: <" << content.topic_name[i] << ">\n"
             << "    Topic Num: " << content.topic_num[i] << '\n';
     }
     return str << "Source File: <" << content.srcfile << ">\n"
@@ -292,7 +292,7 @@ std::ostream &operator<<(std::ostream &str, TOPIC const &topic)
     str << "Flags: " << std::hex << topic.flags << std::dec << '\n'
         << "Doc Page: " << topic.doc_page << '\n'
         << "Title Len: " << topic.title_len << '\n'
-        << "Title: <" << str_or_empty(topic.title) << ">\n"
+        << "Title: <" << topic.title << ">\n"
         << "Num Page: " << topic.num_page << '\n';
     for (PAGE const &page : topic.page)
     {
@@ -501,19 +501,6 @@ void release_topic_text(TOPIC const *t, int save)
 /*
  * memory-allocation functions.
  */
-
-
-char *dupstr(char const *s, unsigned int len)
-{
-    if (len == 0)
-    {
-        len = (int) strlen(s) + 1;
-    }
-
-    char *ptr = static_cast<char *>(malloc(len));
-    std::copy(&s[0], &s[len], ptr);
-    return ptr;
-}
 
 
 int add_link(LINK *l)
@@ -736,7 +723,7 @@ LABEL *find_label(char const *name)
     {
         for (LABEL &pl : plabel)
         {
-            if (strcmp(name, pl.name) == 0)
+            if (name == pl.name)
             {
                 return &pl;
             }
@@ -746,7 +733,7 @@ LABEL *find_label(char const *name)
     {
         for (LABEL &l : label)
         {
-            if (strcmp(name, l.name) == 0)
+            if (name == l.name)
             {
                 return &l;
             }
@@ -780,8 +767,8 @@ int find_topic_title(char const *title)
 
     for (int t = 0; t < num_topic; t++)
     {
-        if ((int) strlen(topic[t].title) == len
-            && strnicmp(title, topic[t].title, len) == 0)
+        if ((int) topic[t].title.length() == len
+            && strnicmp(title, topic[t].title.c_str(), len) == 0)
         {
             return t;
         }
@@ -929,7 +916,7 @@ void process_doc_contents(modes mode)
     TOPIC t;
     t.flags     = 0;
     t.title_len = (unsigned) strlen(DOCCONTENTS_TITLE)+1;
-    t.title     = dupstr(DOCCONTENTS_TITLE, t.title_len);
+    t.title     = DOCCONTENTS_TITLE;
     t.doc_page  = -1;
     t.num_page  = 0;
 
@@ -937,13 +924,13 @@ void process_doc_contents(modes mode)
 
     CONTENT c{};
     c.flags = 0;
-    c.id = dupstr("", 1);
-    c.name = dupstr("", 1);
+    c.id.clear();
+    c.name.clear();
     c.doc_page = -1;
     c.page_num_pos = 0;
     c.num_topic = 1;
     c.is_label[0] = false;
-    c.topic_name[0] = dupstr(DOCCONTENTS_TITLE, 0);
+    c.topic_name[0] = DOCCONTENTS_TITLE;
     c.srcline = -1;
     add_content(&c);
 
@@ -963,7 +950,7 @@ void process_doc_contents(modes mode)
                 error(0, "Unexpected end of DocContent entry.");
                 continue;
             }
-            c.id = dupstr(cmd, 0);
+            c.id = cmd;
 
             if (get_next_item())
             {
@@ -987,26 +974,26 @@ void process_doc_contents(modes mode)
                 }
 
                 c.is_label[c.num_topic] = false;
-                c.topic_name[c.num_topic] = dupstr(ptr, 0);
+                c.topic_name[c.num_topic] = ptr;
                 ++c.num_topic;
-                c.name = dupstr(ptr, 0);
+                c.name = ptr;
             }
             else
             {
-                c.name = dupstr(cmd, 0);
+                c.name = cmd;
             }
 
             // now, make the entry in the buffer
             if (mode == modes::HTML)
             {
-                sprintf(curr, "%s %s", c.id, c.name);
+                sprintf(curr, "%s %s", c.id.c_str(), c.name.c_str());
                 char *ptr = curr + (int) strlen(curr);
                 c.page_num_pos = 0U;
                 curr = ptr;
             }
             else
             {
-                sprintf(curr, "%-5s %*.0s%s", c.id, indent*2, "", c.name);
+                sprintf(curr, "%-5s %*.0s%s", c.id.c_str(), indent*2, "", c.name.c_str());
                 char *ptr = curr + (int) strlen(curr);
                 while ((ptr-curr) < PAGE_WIDTH-10)
                 {
@@ -1042,12 +1029,12 @@ void process_doc_contents(modes mode)
                     }
 
                     c.is_label[c.num_topic] = false;
-                    c.topic_name[c.num_topic] = dupstr(ptr, 0);
+                    c.topic_name[c.num_topic] = ptr;
                 }
                 else
                 {
                     c.is_label[c.num_topic] = true;
-                    c.topic_name[c.num_topic] = dupstr(cmd, 0);
+                    c.topic_name[c.num_topic] = cmd;
                 }
 
                 if (++c.num_topic >= MAX_CONTENT_TOPIC)
@@ -1129,7 +1116,7 @@ int parse_link()   // returns length of link or 0 on error
             l.type      = link_types::LT_SPECIAL;
             l.topic_num = atoi(&cmd[1]);
             l.topic_off = 0;
-            l.name      = nullptr;
+            l.name.clear();
         }
         else
         {
@@ -1145,7 +1132,7 @@ int parse_link()   // returns length of link or 0 on error
             }
             else
             {
-                l.name = dupstr(&cmd[1], 0);
+                l.name = &cmd[1];
             }
         }
         if (len == 0)
@@ -1163,10 +1150,7 @@ int parse_link()   // returns length of link or 0 on error
             error(err_off, "Implicit hot-link has no title.");
             bad = true;
         }
-#ifndef __clang_analyzer__
-        l.name = dupstr(ptr, len+1);
-        l.name[len] = '\0';
-#endif
+        l.name.assign(ptr, len);
     }
 
     if (!bad)
@@ -1451,8 +1435,7 @@ void start_topic(TOPIC *t, char const *title, int title_len)
 {
     t->flags = 0;
     t->title_len = title_len;
-    t->title = dupstr(title, title_len+1);
-    t->title[title_len] = '\0';
+    t->title.assign(title, title_len);
     t->doc_page = -1;
     t->num_page = 0;
     curr = &buffer[0];
@@ -1758,7 +1741,7 @@ void read_src(std::string const &fname, modes mode)
                         warn(eoff, "Label name is long.");
                     }
 
-                    lbl.name      = dupstr(data, 0);
+                    lbl.name      = data;
                     lbl.topic_num = num_topic;
                     lbl.topic_off = 0;
                     lbl.doc_page  = -1;
@@ -2044,7 +2027,7 @@ void read_src(std::string const &fname, modes mode)
                             warn(eoff, "Data topic has a local label.");
                         }
 
-                        lbl.name      = dupstr(label_name, 0);
+                        lbl.name      = label_name;
                         lbl.topic_num = num_topic;
                         lbl.topic_off = (unsigned)(curr - &buffer[0]);
                         lbl.doc_page  = -1;
@@ -2623,12 +2606,12 @@ void read_src(std::string const &fname, modes mode)
  */
 void link_topic(LINK &l)
 {
-    int const t = find_topic_title(l.name);
+    int const t = find_topic_title(l.name.c_str());
     if (t == -1)
     {
         src_cfname = l.srcfile;
         srcline = l.srcline; // pretend we are still in the source...
-        error(0, "Cannot find implicit hot-link \"%s\".", l.name);
+        error(0, "Cannot find implicit hot-link \"%s\".", l.name.c_str());
         srcline = -1;  // back to reality
     }
     else
@@ -2641,13 +2624,13 @@ void link_topic(LINK &l)
 
 void link_label(LINK &l)
 {
-    if (LABEL *lbl = find_label(l.name))
+    if (LABEL *lbl = find_label(l.name.c_str()))
     {
         if (topic[lbl->topic_num].flags & TF_DATA)
         {
             src_cfname = l.srcfile;
             srcline = l.srcline;
-            error(0, "Label \"%s\" is a data-only topic.", l.name);
+            error(0, "Label \"%s\" is a data-only topic.", l.name.c_str());
             srcline = -1;
         }
         else
@@ -2661,20 +2644,20 @@ void link_label(LINK &l)
     {
         src_cfname = l.srcfile;
         srcline = l.srcline; // pretend again
-        error(0, "Cannot find explicit hot-link \"%s\".", l.name);
+        error(0, "Cannot find explicit hot-link \"%s\".", l.name.c_str());
         srcline = -1;
     }
 }
 
 void label_topic(CONTENT &c, int ctr)
 {
-    if (LABEL *lbl = find_label(c.topic_name[ctr]))
+    if (LABEL *lbl = find_label(c.topic_name[ctr].c_str()))
     {
         if (topic[lbl->topic_num].flags & TF_DATA)
         {
             src_cfname = c.srcfile;
             srcline = c.srcline;
-            error(0, "Label \"%s\" is a data-only topic.", c.topic_name[ctr]);
+            error(0, "Label \"%s\" is a data-only topic.", c.topic_name[ctr].c_str());
             srcline = -1;
         }
         else
@@ -2683,7 +2666,7 @@ void label_topic(CONTENT &c, int ctr)
             if (topic[lbl->topic_num].flags & TF_IN_DOC)
             {
                 warn(0, "Topic \"%s\" appears in document more than once.",
-                    topic[lbl->topic_num].title);
+                    topic[lbl->topic_num].title.c_str());
             }
             else
             {
@@ -2695,19 +2678,19 @@ void label_topic(CONTENT &c, int ctr)
     {
         src_cfname = c.srcfile;
         srcline = c.srcline;
-        error(0, "Cannot find DocContent label \"%s\".", c.topic_name[ctr]);
+        error(0, "Cannot find DocContent label \"%s\".", c.topic_name[ctr].c_str());
         srcline = -1;
     }
 }
 
 void content_topic(CONTENT &c, int ctr)
 {
-    int const t = find_topic_title(c.topic_name[ctr]);
+    int const t = find_topic_title(c.topic_name[ctr].c_str());
     if (t == -1)
     {
         src_cfname = c.srcfile;
         srcline = c.srcline;
-        error(0, "Cannot find DocContent topic \"%s\".", c.topic_name[ctr]);
+        error(0, "Cannot find DocContent topic \"%s\".", c.topic_name[ctr].c_str());
         srcline = -1;  // back to reality
     }
     else
@@ -2716,7 +2699,7 @@ void content_topic(CONTENT &c, int ctr)
         if (topic[t].flags & TF_IN_DOC)
         {
             warn(0, "Topic \"%s\" appears in document more than once.",
-                topic[t].title);
+                topic[t].title.c_str());
         }
         else
         {
@@ -2972,7 +2955,7 @@ struct DOC_INFO
 
 struct PAGINATE_DOC_INFO : public DOC_INFO
 {
-    char *start;
+    char const *start;
     CONTENT  *c;
     LABEL    *lbl;
 };
@@ -3034,12 +3017,12 @@ void set_hot_link_doc_page()
         switch (l.type)
         {
         case link_types::LT_TOPIC:
-            t = find_topic_title(l.name);
+            t = find_topic_title(l.name.c_str());
             if (t == -1)
             {
                 src_cfname = l.srcfile;
                 srcline = l.srcline; // pretend we are still in the source...
-                error(0, "Cannot find implicit hot-link \"%s\".", l.name);
+                error(0, "Cannot find implicit hot-link \"%s\".", l.name.c_str());
                 srcline = -1;  // back to reality
             }
             else
@@ -3049,12 +3032,12 @@ void set_hot_link_doc_page()
             break;
 
         case link_types::LT_LABEL:
-            lbl = find_label(l.name);
+            lbl = find_label(l.name.c_str());
             if (lbl == nullptr)
             {
                 src_cfname = l.srcfile;
                 srcline = l.srcline; // pretend again
-                error(0, "Cannot find explicit hot-link \"%s\".", l.name);
+                error(0, "Cannot find explicit hot-link \"%s\".", l.name.c_str());
                 srcline = -1;
             }
             else
@@ -3113,8 +3096,8 @@ bool pd_get_info(int cmd, PD_INFO *pd, void *context)
         }
         c = &contents[info.content_num];
         info.topic_num = -1;
-        pd->id       = c->id;
-        pd->title    = c->name;
+        pd->id       = c->id.c_str();
+        pd->title    = c->name.c_str();
         pd->new_page = (c->flags & CF_NEW_PAGE) != 0;
         return true;
 
@@ -3231,8 +3214,8 @@ void paginate_document()
 
 int fcmp_LABEL(void const *a, void const *b)
 {
-    char const *an = static_cast<LABEL const *>(a)->name;
-    char const *bn = static_cast<LABEL const *>(b)->name;
+    char const *an = static_cast<LABEL const *>(a)->name.c_str();
+    char const *bn = static_cast<LABEL const *>(b)->name.c_str();
 
     // compare the names, making sure that the index goes first
     int const diff = strcmp(an, bn);
@@ -3318,8 +3301,8 @@ void _write_hdr(char const *fname, FILE *file)
     {
         if (label[ctr].name[0] != '@')  // if it's not a local label...
         {
-            fprintf(file, "    %-32s = %3d%s", label[ctr].name, ctr, ctr != num_label-1 ? "," : "");
-            if (strcmp(label[ctr].name, INDEX_LABEL) == 0)
+            fprintf(file, "    %-32s = %3d%s", label[ctr].name.c_str(), ctr, ctr != num_label-1 ? "," : "");
+            if (label[ctr].name == INDEX_LABEL)
             {
                 fprintf(file, "        /* index */");
             }
@@ -3408,9 +3391,9 @@ void calc_offsets()    // calc file offset to each topic
     offset = std::accumulate(contents.begin(), contents.end(), offset, [](long offset, CONTENT const &cp) {
         return offset += sizeof(int) +  // flags
             1 +                         // id length
-            (int) strlen(cp.id) +       // id text
+            (int) cp.id.length() +      // id text
             1 +                         // name length
-            (int) strlen(cp.name) +     // name text
+            (int) cp.name.length() +    // name text
             1 +                         // number of topics
             cp.num_topic*sizeof(int);   // topic numbers
     });
@@ -3499,13 +3482,13 @@ void _write_help(FILE *file)
     {
         putw(cp.flags, file);
 
-        int t = (int) strlen(cp.id);
+        int t = (int) cp.id.length();
         putc((BYTE)t, file);
-        fwrite(cp.id, 1, t, file);
+        fwrite(cp.id.c_str(), 1, t, file);
 
-        t = (int) strlen(cp.name);
+        t = (int) cp.name.length();
         putc((BYTE)t, file);
-        fwrite(cp.name, 1, t, file);
+        fwrite(cp.name.c_str(), 1, t, file);
 
         putc((BYTE)cp.num_topic, file);
         fwrite(cp.topic_num, sizeof(int), cp.num_topic, file);
@@ -3530,7 +3513,7 @@ void _write_help(FILE *file)
         // write the help title
 
         putc((BYTE)tp.title_len, file);
-        fwrite(tp.title, 1, tp.title_len, file);
+        fwrite(tp.title.c_str(), 1, tp.title_len, file);
 
         // insert hot-link info & write the help text
 
@@ -3750,7 +3733,7 @@ void report_memory()
     for (LINK const &l : a_link)
     {
         data += sizeof(LINK);
-        bytes_in_strings += (long) strlen(l.name);
+        bytes_in_strings += (long) l.name.length();
     }
 
     dead += (a_link.capacity() - a_link.size())*sizeof(LINK);
@@ -3758,7 +3741,7 @@ void report_memory()
     for (LABEL const &l : label)
     {
         data   += sizeof(LABEL);
-        bytes_in_strings += (long) strlen(l.name) + 1;
+        bytes_in_strings += (long) l.name.length() + 1;
     }
 
     dead += (label.capacity() - label.size())*sizeof(LABEL);
@@ -3766,7 +3749,7 @@ void report_memory()
     for (LABEL const &l : plabel)
     {
         data   += sizeof(LABEL);
-        bytes_in_strings += (long) strlen(l.name) + 1;
+        bytes_in_strings += (long) l.name.length() + 1;
     }
 
     dead += (plabel.capacity() - plabel.size())*sizeof(LABEL);
@@ -3777,11 +3760,11 @@ void report_memory()
             (sizeof(contents[0].is_label[0]) + sizeof(contents[0].topic_name[0]) + sizeof(contents[0].topic_num[0]));
         data += sizeof(CONTENT) - t;
         dead += t;
-        bytes_in_strings += (long) strlen(c.id) + 1;
-        bytes_in_strings += (long) strlen(c.name) + 1;
+        bytes_in_strings += (long) c.id.length() + 1;
+        bytes_in_strings += (long) c.name.length() + 1;
         for (int ctr2 = 0; ctr2 < c.num_topic; ctr2++)
         {
-            bytes_in_strings += (long) strlen(c.topic_name[ctr2]) + 1;
+            bytes_in_strings += (long) c.topic_name[ctr2].length() + 1;
         }
     }
 
@@ -4548,8 +4531,8 @@ bool html_processor::get_info(int cmd, PD_INFO *pd)
         }
         c = &contents[m_info.content_num];
         m_info.topic_num = -1;
-        pd->id       = c->id;
-        pd->title    = c->name;
+        pd->id       = c->id.c_str();
+        pd->title    = c->name.c_str();
         pd->new_page = (c->flags & CF_NEW_PAGE) != 0;
         return true;
 
@@ -4734,7 +4717,7 @@ void html_processor::write_index_html()
     msg("Printing to: %s", m_fname.c_str());
 
     CONTENT const &toc = contents[0];
-    if (toc.num_topic != 1 || toc.topic_name[0] != std::string("DocContent"))
+    if (toc.num_topic != 1 || toc.topic_name[0] != "DocContent")
     {
         throw std::runtime_error("First content block contains multiple topics or doesn't contain DocContent.");
     }

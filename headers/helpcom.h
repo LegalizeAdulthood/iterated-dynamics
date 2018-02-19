@@ -84,14 +84,14 @@ struct PD_INFO
     int page_num;
     int line_num;
     // PD_GET_TOPIC is allowed to change these
-    char *curr;
+    char const *curr;
     unsigned  len;
     // PD_GET_CONTENT is allowed to change these
-    char *id;
-    char *title;
+    char const *id;
+    char const *title;
     bool new_page;
     // general parameters
-    char *s;
+    char const *s;
     int i;
 };
 /*
