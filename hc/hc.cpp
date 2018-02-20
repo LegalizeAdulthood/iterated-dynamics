@@ -190,9 +190,7 @@ std::vector<TOPIC> g_topics;
 std::vector<LABEL> g_labels;
 std::vector<LABEL> g_private_labels;
 std::vector<LINK> g_all_links;
-
-int      num_contents     = 0;    // the table-of-contents
-std::vector<CONTENT> contents;
+std::vector<CONTENT> contents;    // the table-of-contents
 
 bool quiet_mode = false;          // true if "/Q" option used
 
@@ -533,7 +531,7 @@ int add_label(LABEL const *l)
 int add_content(CONTENT const *c)
 {
     contents.push_back(*c);
-    return num_contents++;
+    return static_cast<int>(contents.size() - 1);
 }
 
 
@@ -3108,7 +3106,7 @@ bool pd_get_info(int cmd, PD_INFO *pd, void *context)
     switch (cmd)
     {
     case PD_GET_CONTENT:
-        if (++info.content_num >= num_contents)
+        if (++info.content_num >= static_cast<int>(contents.size()))
         {
             return false;
         }
@@ -3208,7 +3206,7 @@ void paginate_document()
 {
     PAGINATE_DOC_INFO info;
 
-    if (num_contents == 0)
+    if (contents.empty())
     {
         return;
     }
@@ -3476,7 +3474,7 @@ void _write_help(FILE *file)
 
     putw(static_cast<int>(g_topics.size()), file);
     putw(static_cast<int>(g_labels.size()), file);
-    putw(num_contents, file);
+    putw(static_cast<int>(contents.size()), file);
 
     // write num_doc_page
 
@@ -3698,7 +3696,7 @@ void print_document(char const *fname)
 {
     PRINT_DOC_INFO info;
 
-    if (num_contents == 0)
+    if (contents.empty())
     {
         fatal(0, ".SRC has no DocContents.");
     }
@@ -3816,7 +3814,7 @@ void report_stats()
     printf("%8d Links\n", static_cast<int>(g_all_links.size()));
     printf("%8d Labels\n", static_cast<int>(g_labels.size()));
     printf("%8d Private labels\n", static_cast<int>(g_private_labels.size()));
-    printf("%8d Table of contents (DocContent) entries\n", num_contents);
+    printf("%8d Table of contents (DocContent) entries\n", static_cast<int>(contents.size()));
     printf("%8d Online help pages\n", pages);
     printf("%8d Document pages\n", num_doc_pages);
 }
@@ -4357,7 +4355,7 @@ void compiler::render_html()
 
 void compiler::paginate_html_document()
 {
-    if (num_contents == 0)
+    if (contents.empty())
     {
         return;
     }
@@ -4518,7 +4516,7 @@ void compiler::print_html_document(std::string const &fname)
 
 void html_processor::process()
 {
-    if (num_contents == 0)
+    if (contents.empty())
     {
         fatal(0, ".SRC has no DocContents.");
     }
