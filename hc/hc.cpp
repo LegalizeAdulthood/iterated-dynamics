@@ -186,7 +186,6 @@ struct help_sig_info
 };
 
 
-int      num_topic        = 0;    // topics
 std::vector<TOPIC> topic;
 
 int      num_label        = 0;    // labels
@@ -520,7 +519,7 @@ int add_page(TOPIC *t, PAGE const *p)
 int add_topic(TOPIC const *t)
 {
     topic.push_back(*t);
-    return num_topic++;
+    return static_cast<int>(topic.size() - 1);
 }
 
 
@@ -765,7 +764,7 @@ int find_topic_title(char const *title)
         len -= 2;
     }
 
-    for (int t = 0; t < num_topic; t++)
+    for (int t = 0; t < static_cast<int>(topic.size()); t++)
     {
         if ((int) topic[t].title.length() == len
             && strnicmp(title, topic[t].title.c_str(), len) == 0)
@@ -1616,7 +1615,7 @@ void read_src(std::string const &fname, modes mode)
             {
                 end_topic(&t);
             }
-            if (num_topic == 0)
+            if (topic.empty())
             {
                 warn(0, ".SRC file has no topics.");
             }
@@ -1767,7 +1766,7 @@ void read_src(std::string const &fname, modes mode)
                     }
 
                     lbl.name      = data;
-                    lbl.topic_num = num_topic;
+                    lbl.topic_num = static_cast<int>(topic.size());
                     lbl.topic_off = 0;
                     lbl.doc_page  = -1;
                     add_label(&lbl);
@@ -2053,7 +2052,7 @@ void read_src(std::string const &fname, modes mode)
                         }
 
                         lbl.name      = label_name;
-                        lbl.topic_num = num_topic;
+                        lbl.topic_num = static_cast<int>(topic.size());
                         lbl.topic_off = (unsigned)(curr - &buffer[0]);
                         lbl.doc_page  = -1;
                         add_label(&lbl);
@@ -3410,7 +3409,7 @@ void calc_offsets()    // calc file offset to each topic
         sizeof(int) +               // num_label
         sizeof(int) +               // num_contents
         sizeof(int) +               // num_doc_pages
-        num_topic*sizeof(long) +    // offsets to each topic
+        topic.size()*sizeof(long) + // offsets to each topic
         num_label*2*sizeof(int);    // topic_num/topic_off for all public labels
 
     offset = std::accumulate(contents.begin(), contents.end(), offset, [](long offset, CONTENT const &cp) {
@@ -3481,7 +3480,7 @@ void _write_help(FILE *file)
 
     // write num_topic, num_label and num_contents
 
-    putw(num_topic, file);
+    putw(static_cast<int>(topic.size()), file);
     putw(num_label, file);
     putw(num_contents, file);
 
@@ -3819,7 +3818,7 @@ void report_stats()
 
     printf("\n");
     printf("Statistics:\n");
-    printf("%8d Topics\n", num_topic);
+    printf("%8d Topics\n", static_cast<int>(topic.size()));
     printf("%8d Links\n", num_link);
     printf("%8d Labels\n", num_label);
     printf("%8d Private labels\n", num_plabel);
