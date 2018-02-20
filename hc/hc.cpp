@@ -301,30 +301,39 @@ std::ostream &operator<<(std::ostream &str, TOPIC const &topic)
         case token_types::TOK_DONE:
             str << "  done\n";
             break;
+
         case token_types::TOK_SPACE:
             str << std::string(width, ' ');
             break;
+
         case token_types::TOK_LINK:
             str << "  link\n";
             break;
+
         case token_types::TOK_PARA:
             str << "  para\n";
             break;
+
         case token_types::TOK_NL:
             str << '\n';
             break;
+
         case token_types::TOK_FF:
             str << "  ff\n";
             break;
+
         case token_types::TOK_WORD:
             str << std::string(curr, width);
             break;
+
         case token_types::TOK_XONLINE:
             str << "  xonline\n";
             break;
+
         case token_types::TOK_XDOC:
             str << "  xdoc\n";
             break;
+
         case token_types::TOK_CENTER:
             str << "  center\n";
             break;
@@ -2919,13 +2928,11 @@ void paginate_online()    // paginate the text for on-line help
 
             case token_types::TOK_LINK:
                 ++num_links;
-
                 // fall-through
 
             default:    // SPACE, LINK, WORD
                 skip_blanks = false;
                 break;
-
             } // switch
 
             curr += size;
@@ -4552,13 +4559,16 @@ void html_processor::write_index_html()
         case token_types::TOK_SPACE:
             str << std::string(width, ' ');
             break;
+
         case token_types::TOK_NL:
             str << '\n';
             toc_line_started = false;
             break;
+
         case token_types::TOK_WORD:
             str << std::string(curr, width);
             break;
+
         default:
             throw std::runtime_error("Unexpected token in table of contents.");
         }
