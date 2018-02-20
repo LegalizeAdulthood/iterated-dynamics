@@ -186,7 +186,7 @@ struct help_sig_info
 };
 
 
-std::vector<TOPIC> topic;
+std::vector<TOPIC> g_topics;
 
 int      num_label        = 0;    // labels
 std::vector<LABEL> label;
@@ -518,8 +518,8 @@ int add_page(TOPIC *t, PAGE const *p)
 
 int add_topic(TOPIC const *t)
 {
-    topic.push_back(*t);
-    return static_cast<int>(topic.size() - 1);
+    g_topics.push_back(*t);
+    return static_cast<int>(g_topics.size() - 1);
 }
 
 
@@ -764,10 +764,10 @@ int find_topic_title(char const *title)
         len -= 2;
     }
 
-    for (int t = 0; t < static_cast<int>(topic.size()); t++)
+    for (int t = 0; t < static_cast<int>(g_topics.size()); t++)
     {
-        if ((int) topic[t].title.length() == len
-            && strnicmp(title, topic[t].title.c_str(), len) == 0)
+        if ((int) g_topics[t].title.length() == len
+            && strnicmp(title, g_topics[t].title.c_str(), len) == 0)
         {
             return t;
         }
@@ -1615,7 +1615,7 @@ void read_src(std::string const &fname, modes mode)
             {
                 end_topic(&t);
             }
-            if (topic.empty())
+            if (g_topics.empty())
             {
                 warn(0, ".SRC file has no topics.");
             }
@@ -1766,7 +1766,7 @@ void read_src(std::string const &fname, modes mode)
                     }
 
                     lbl.name      = data;
-                    lbl.topic_num = static_cast<int>(topic.size());
+                    lbl.topic_num = static_cast<int>(g_topics.size());
                     lbl.topic_off = 0;
                     lbl.doc_page  = -1;
                     add_label(&lbl);
@@ -2052,7 +2052,7 @@ void read_src(std::string const &fname, modes mode)
                         }
 
                         lbl.name      = label_name;
-                        lbl.topic_num = static_cast<int>(topic.size());
+                        lbl.topic_num = static_cast<int>(g_topics.size());
                         lbl.topic_off = (unsigned)(curr - &buffer[0]);
                         lbl.doc_page  = -1;
                         add_label(&lbl);
@@ -2642,7 +2642,7 @@ void link_topic(LINK &l)
     {
         l.topic_num = t;
         l.topic_off = 0;
-        l.doc_page = (topic[t].flags & TF_IN_DOC) ? 0 : -1;
+        l.doc_page = (g_topics[t].flags & TF_IN_DOC) ? 0 : -1;
     }
 }
 
@@ -2650,7 +2650,7 @@ void link_label(LINK &l)
 {
     if (LABEL *lbl = find_label(l.name.c_str()))
     {
-        if (topic[lbl->topic_num].flags & TF_DATA)
+        if (g_topics[lbl->topic_num].flags & TF_DATA)
         {
             src_cfname = l.srcfile;
             srcline = l.srcline;
@@ -2661,7 +2661,7 @@ void link_label(LINK &l)
         {
             l.topic_num = lbl->topic_num;
             l.topic_off = lbl->topic_off;
-            l.doc_page  = (topic[lbl->topic_num].flags & TF_IN_DOC) ? 0 : -1;
+            l.doc_page  = (g_topics[lbl->topic_num].flags & TF_IN_DOC) ? 0 : -1;
         }
     }
     else
@@ -2677,7 +2677,7 @@ void label_topic(CONTENT &c, int ctr)
 {
     if (LABEL *lbl = find_label(c.topic_name[ctr].c_str()))
     {
-        if (topic[lbl->topic_num].flags & TF_DATA)
+        if (g_topics[lbl->topic_num].flags & TF_DATA)
         {
             src_cfname = c.srcfile;
             srcline = c.srcline;
@@ -2687,14 +2687,14 @@ void label_topic(CONTENT &c, int ctr)
         else
         {
             c.topic_num[ctr] = lbl->topic_num;
-            if (topic[lbl->topic_num].flags & TF_IN_DOC)
+            if (g_topics[lbl->topic_num].flags & TF_IN_DOC)
             {
                 warn(0, "Topic \"%s\" appears in document more than once.",
-                    topic[lbl->topic_num].title.c_str());
+                    g_topics[lbl->topic_num].title.c_str());
             }
             else
             {
-                topic[lbl->topic_num].flags |= TF_IN_DOC;
+                g_topics[lbl->topic_num].flags |= TF_IN_DOC;
             }
         }
     }
@@ -2720,14 +2720,14 @@ void content_topic(CONTENT &c, int ctr)
     else
     {
         c.topic_num[ctr] = t;
-        if (topic[t].flags & TF_IN_DOC)
+        if (g_topics[t].flags & TF_IN_DOC)
         {
             warn(0, "Topic \"%s\" appears in document more than once.",
-                topic[t].title.c_str());
+                g_topics[t].title.c_str());
         }
         else
         {
-            topic[t].flags |= TF_IN_DOC;
+            g_topics[t].flags |= TF_IN_DOC;
         }
     }
 }
@@ -2809,7 +2809,7 @@ void paginate_online()    // paginate the text for on-line help
 
     msg("Paginating online help.");
 
-    for (TOPIC &t : topic)
+    for (TOPIC &t : g_topics)
     {
         if (t.flags & TF_DATA)
         {
@@ -3051,7 +3051,7 @@ void set_hot_link_doc_page()
             }
             else
             {
-                l.doc_page = topic[t].doc_page;
+                l.doc_page = g_topics[t].doc_page;
             }
             break;
 
@@ -3088,7 +3088,7 @@ void set_content_doc_page()
 
     int tnum = find_topic_title(DOCCONTENTS_TITLE);
     assert(tnum >= 0);
-    TOPIC *t = &topic[tnum];
+    TOPIC *t = &g_topics[tnum];
 
     char *base = get_topic_text(t);
 
@@ -3131,8 +3131,8 @@ bool pd_get_info(int cmd, PD_INFO *pd, void *context)
         {
             return false;
         }
-        pd->curr = get_topic_text(&topic[c->topic_num[info.topic_num]]);
-        pd->len = topic[c->topic_num[info.topic_num]].text_len;
+        pd->curr = get_topic_text(&g_topics[c->topic_num[info.topic_num]]);
+        pd->len = g_topics[c->topic_num[info.topic_num]].text_len;
         return true;
 
     case PD_GET_LINK_PAGE:
@@ -3155,7 +3155,7 @@ bool pd_get_info(int cmd, PD_INFO *pd, void *context)
 
     case PD_RELEASE_TOPIC:
         c = &contents[info.content_num];
-        release_topic_text(&topic[c->topic_num[info.topic_num]], 0);
+        release_topic_text(&g_topics[c->topic_num[info.topic_num]], 0);
         return true;
 
     default:
@@ -3193,7 +3193,7 @@ bool paginate_doc_output(int cmd, PD_INFO *pd, void *context)
         return true;
 
     case PD_SET_TOPIC_PAGE:
-        topic[info->c->topic_num[info->topic_num]].doc_page = pd->page_num;
+        g_topics[info->c->topic_num[info->topic_num]].doc_page = pd->page_num;
         return true;
 
     case PD_PERIODIC:
@@ -3409,7 +3409,7 @@ void calc_offsets()    // calc file offset to each topic
         sizeof(int) +               // num_label
         sizeof(int) +               // num_contents
         sizeof(int) +               // num_doc_pages
-        topic.size()*sizeof(long) + // offsets to each topic
+        g_topics.size()*sizeof(long) + // offsets to each topic
         num_label*2*sizeof(int);    // topic_num/topic_off for all public labels
 
     offset = std::accumulate(contents.begin(), contents.end(), offset, [](long offset, CONTENT const &cp) {
@@ -3422,7 +3422,7 @@ void calc_offsets()    // calc file offset to each topic
             cp.num_topic*sizeof(int);   // topic numbers
     });
 
-    for (TOPIC &tp : topic)
+    for (TOPIC &tp : g_topics)
     {
         tp.offset = offset;
         offset += (long)sizeof(int) +       // topic flags
@@ -3480,7 +3480,7 @@ void _write_help(FILE *file)
 
     // write num_topic, num_label and num_contents
 
-    putw(static_cast<int>(topic.size()), file);
+    putw(static_cast<int>(g_topics.size()), file);
     putw(num_label, file);
     putw(num_contents, file);
 
@@ -3489,7 +3489,7 @@ void _write_help(FILE *file)
     putw(num_doc_pages, file);
 
     // write the offsets to each topic
-    for (TOPIC const &t : topic)
+    for (TOPIC const &t : g_topics)
     {
         fwrite(&t.offset, sizeof(long), 1, file);
     }
@@ -3519,7 +3519,7 @@ void _write_help(FILE *file)
     }
 
     // write topics
-    for (TOPIC const &tp : topic)
+    for (TOPIC const &tp : g_topics)
     {
         // write the topics flags
         putw(tp.flags, file);
@@ -3743,7 +3743,7 @@ void report_memory()
          data   = 0,   // bytes in active data structure
          dead   = 0;   // bytes in unused data structure
 
-    for (TOPIC const &t : topic)
+    for (TOPIC const &t : g_topics)
     {
         data   += sizeof(TOPIC);
         bytes_in_strings += t.title_len;
@@ -3811,14 +3811,14 @@ void report_memory()
 void report_stats()
 {
     int  pages = 0;
-    for (TOPIC const &t : topic)
+    for (TOPIC const &t : g_topics)
     {
         pages += t.num_page;
     }
 
     printf("\n");
     printf("Statistics:\n");
-    printf("%8d Topics\n", static_cast<int>(topic.size()));
+    printf("%8d Topics\n", static_cast<int>(g_topics.size()));
     printf("%8d Links\n", num_link);
     printf("%8d Labels\n", num_label);
     printf("%8d Private labels\n", num_plabel);
@@ -4373,7 +4373,7 @@ void compiler::paginate_html_document()
 
     msg("Paginating HTML.");
 
-    for (TOPIC &t : topic)
+    for (TOPIC &t : g_topics)
     {
         if (t.flags & TF_DATA)
         {
@@ -4546,7 +4546,7 @@ void html_processor::write_index_html()
         throw std::runtime_error("First content block doesn't contain DocContent.");
     }
 
-    TOPIC const &toc_topic = topic[toc.topic_num[0]];
+    TOPIC const &toc_topic = g_topics[toc.topic_num[0]];
     std::ofstream str("index.rst");
     str << ".. toctree::\n";
     char const *text = get_topic_text(&toc_topic);
