@@ -190,7 +190,6 @@ std::vector<TOPIC> g_topics;
 std::vector<LABEL> g_labels;
 std::vector<LABEL> g_private_labels;
 
-int      num_link         = 0;    // all links
 std::vector<LINK> a_link;
 
 int      num_contents     = 0;    // the table-of-contents
@@ -501,7 +500,7 @@ void release_topic_text(TOPIC const *t, int save)
 int add_link(LINK *l)
 {
     a_link.push_back(*l);
-    return num_link++;
+    return static_cast<int>(a_link.size() - 1);
 }
 
 
@@ -1233,7 +1232,7 @@ int create_table()
 
     bool done = false;
 
-    first_link = num_link;
+    first_link = static_cast<int>(a_link.size());
     table_start = curr;
     count = 0;
 
@@ -1335,7 +1334,7 @@ int create_table()
         {
             lnum = c*rows + r;
 
-            if (first_link+lnum >= num_link)
+            if (first_link+lnum >= static_cast<int>(a_link.size()))
             {
                 break;
             }
@@ -3815,7 +3814,7 @@ void report_stats()
     printf("\n");
     printf("Statistics:\n");
     printf("%8d Topics\n", static_cast<int>(g_topics.size()));
-    printf("%8d Links\n", num_link);
+    printf("%8d Links\n", static_cast<int>(a_link.size()));
     printf("%8d Labels\n", static_cast<int>(g_labels.size()));
     printf("%8d Private labels\n", static_cast<int>(g_private_labels.size()));
     printf("%8d Table of contents (DocContent) entries\n", num_contents);
