@@ -248,13 +248,11 @@ inline void check_buffer(unsigned off)
 }
 
 #ifdef XFRACT
-#define putw( x1, x2 )  fwrite( &(x1), 1, sizeof(int), x2);
-#endif
-
-char const *str_or_empty(char const *str)
+inline void putw( int val, FILE *file)
 {
-    return str != nullptr ? str : "";
+    fwrite( &val, sizeof(int), 1, file);
 }
+#endif
 
 std::ostream &operator<<(std::ostream &str, CONTENT const &content)
 {
