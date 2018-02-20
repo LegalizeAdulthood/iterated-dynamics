@@ -190,7 +190,7 @@ std::vector<TOPIC> g_topics;
 std::vector<LABEL> g_labels;
 std::vector<LABEL> g_private_labels;
 std::vector<LINK> g_all_links;
-std::vector<CONTENT> contents;    // the table-of-contents
+std::vector<CONTENT> g_contents;    // the table-of-contents
 
 bool quiet_mode = false;          // true if "/Q" option used
 
@@ -530,8 +530,8 @@ int add_label(LABEL const *l)
 
 int add_content(CONTENT const *c)
 {
-    contents.push_back(*c);
-    return static_cast<int>(contents.size() - 1);
+    g_contents.push_back(*c);
+    return static_cast<int>(g_contents.size() - 1);
 }
 
 
@@ -2735,7 +2735,7 @@ void make_hot_links()
      * Calculate topic_num for all entries in DocContents.  Also set
      * "TF_IN_DOC" flag for all topics included in the document.
      */
-    for (CONTENT &c : contents)
+    for (CONTENT &c : g_contents)
     {
         for (int ctr = 0; ctr < c.num_topic; ctr++)
         {
@@ -3084,7 +3084,7 @@ void set_content_doc_page()
 
     char *base = get_topic_text(t);
 
-    for (CONTENT const &c : contents)
+    for (CONTENT const &c : g_contents)
     {
         assert(c.doc_page >= 1);
         sprintf(buf, "%d", c.doc_page);
@@ -3106,11 +3106,11 @@ bool pd_get_info(int cmd, PD_INFO *pd, void *context)
     switch (cmd)
     {
     case PD_GET_CONTENT:
-        if (++info.content_num >= static_cast<int>(contents.size()))
+        if (++info.content_num >= static_cast<int>(g_contents.size()))
         {
             return false;
         }
-        c = &contents[info.content_num];
+        c = &g_contents[info.content_num];
         info.topic_num = -1;
         pd->id       = c->id.c_str();
         pd->title    = c->name.c_str();
@@ -3118,7 +3118,7 @@ bool pd_get_info(int cmd, PD_INFO *pd, void *context)
         return true;
 
     case PD_GET_TOPIC:
-        c = &contents[info.content_num];
+        c = &g_contents[info.content_num];
         if (++info.topic_num >= c->num_topic)
         {
             return false;
@@ -3146,7 +3146,7 @@ bool pd_get_info(int cmd, PD_INFO *pd, void *context)
     }
 
     case PD_RELEASE_TOPIC:
-        c = &contents[info.content_num];
+        c = &g_contents[info.content_num];
         release_topic_text(&g_topics[c->topic_num[info.topic_num]], 0);
         return true;
 
@@ -3172,7 +3172,7 @@ bool paginate_doc_output(int cmd, PD_INFO *pd, void *context)
         return true;
 
     case PD_START_SECTION:
-        info->c = &contents[info->content_num];
+        info->c = &g_contents[info->content_num];
         return true;
 
     case PD_START_TOPIC:
@@ -3206,7 +3206,7 @@ void paginate_document()
 {
     PAGINATE_DOC_INFO info;
 
-    if (contents.empty())
+    if (g_contents.empty())
     {
         return;
     }
@@ -3404,7 +3404,7 @@ void calc_offsets()    // calc file offset to each topic
         g_topics.size()*sizeof(long) + // offsets to each topic
         g_labels.size()*2*sizeof(int);    // topic_num/topic_off for all public labels
 
-    offset = std::accumulate(contents.begin(), contents.end(), offset, [](long offset, CONTENT const &cp) {
+    offset = std::accumulate(g_contents.begin(), g_contents.end(), offset, [](long offset, CONTENT const &cp) {
         return offset += sizeof(int) +  // flags
             1 +                         // id length
             (int) cp.id.length() +      // id text
@@ -3474,7 +3474,7 @@ void _write_help(FILE *file)
 
     putw(static_cast<int>(g_topics.size()), file);
     putw(static_cast<int>(g_labels.size()), file);
-    putw(static_cast<int>(contents.size()), file);
+    putw(static_cast<int>(g_contents.size()), file);
 
     // write num_doc_page
 
@@ -3494,7 +3494,7 @@ void _write_help(FILE *file)
     }
 
     // write contents
-    for (CONTENT const &cp : contents)
+    for (CONTENT const &cp : g_contents)
     {
         putw(cp.flags, file);
 
@@ -3696,7 +3696,7 @@ void print_document(char const *fname)
 {
     PRINT_DOC_INFO info;
 
-    if (contents.empty())
+    if (g_contents.empty())
     {
         fatal(0, ".SRC has no DocContents.");
     }
@@ -3770,10 +3770,10 @@ void report_memory()
 
     dead += (g_private_labels.capacity() - g_private_labels.size())*sizeof(LABEL);
 
-    for (CONTENT const &c : contents)
+    for (CONTENT const &c : g_contents)
     {
         int t = (MAX_CONTENT_TOPIC - c.num_topic) *
-            (sizeof(contents[0].is_label[0]) + sizeof(contents[0].topic_name[0]) + sizeof(contents[0].topic_num[0]));
+            (sizeof(g_contents[0].is_label[0]) + sizeof(g_contents[0].topic_name[0]) + sizeof(g_contents[0].topic_num[0]));
         data += sizeof(CONTENT) - t;
         dead += t;
         bytes_in_strings += (long) c.id.length() + 1;
@@ -3784,7 +3784,7 @@ void report_memory()
         }
     }
 
-    dead += (contents.capacity() - contents.size())*sizeof(CONTENT);
+    dead += (g_contents.capacity() - g_contents.size())*sizeof(CONTENT);
 
     printf("\n");
     printf("Memory Usage:\n");
@@ -3814,7 +3814,7 @@ void report_stats()
     printf("%8d Links\n", static_cast<int>(g_all_links.size()));
     printf("%8d Labels\n", static_cast<int>(g_labels.size()));
     printf("%8d Private labels\n", static_cast<int>(g_private_labels.size()));
-    printf("%8d Table of contents (DocContent) entries\n", static_cast<int>(contents.size()));
+    printf("%8d Table of contents (DocContent) entries\n", static_cast<int>(g_contents.size()));
     printf("%8d Online help pages\n", pages);
     printf("%8d Document pages\n", num_doc_pages);
 }
@@ -4355,7 +4355,7 @@ void compiler::render_html()
 
 void compiler::paginate_html_document()
 {
-    if (contents.empty())
+    if (g_contents.empty())
     {
         return;
     }
@@ -4516,7 +4516,7 @@ void compiler::print_html_document(std::string const &fname)
 
 void html_processor::process()
 {
-    if (contents.empty())
+    if (g_contents.empty())
     {
         fatal(0, ".SRC has no DocContents.");
     }
@@ -4528,7 +4528,7 @@ void html_processor::write_index_html()
 {
     msg("Printing to: %s", m_fname.c_str());
 
-    CONTENT const &toc = contents[0];
+    CONTENT const &toc = g_contents[0];
     if (toc.num_topic != 1)
     {
         throw std::runtime_error("First content block contains multiple topics.");
