@@ -188,8 +188,6 @@ struct help_sig_info
 
 std::vector<TOPIC> g_topics;
 std::vector<LABEL> g_labels;
-
-int      num_plabel       = 0;    // private labels
 std::vector<LABEL> plabel;
 
 int      num_link         = 0;    // all links
@@ -526,7 +524,7 @@ int add_label(LABEL const *l)
     if (l->name[0] == '@')    // if it's a private label...
     {
         plabel.push_back(*l);
-        return num_plabel++;
+        return static_cast<int>(plabel.size() - 1);
     }
 
     g_labels.push_back(*l);
@@ -3262,8 +3260,8 @@ int fcmp_LABEL(void const *a, void const *b)
 
 void sort_labels()
 {
-    qsort(&g_labels[0],  static_cast<int>(g_labels.size()),  sizeof(LABEL), fcmp_LABEL);
-    qsort(&plabel[0], num_plabel, sizeof(LABEL), fcmp_LABEL);
+    qsort(&g_labels[0], static_cast<int>(g_labels.size()),  sizeof(LABEL), fcmp_LABEL);
+    qsort(&plabel[0], static_cast<int>(plabel.size()), sizeof(LABEL), fcmp_LABEL);
 }
 
 
@@ -3819,7 +3817,7 @@ void report_stats()
     printf("%8d Topics\n", static_cast<int>(g_topics.size()));
     printf("%8d Links\n", num_link);
     printf("%8d Labels\n", static_cast<int>(g_labels.size()));
-    printf("%8d Private labels\n", num_plabel);
+    printf("%8d Private labels\n", static_cast<int>(plabel.size()));
     printf("%8d Table of contents (DocContent) entries\n", num_contents);
     printf("%8d Online help pages\n", pages);
     printf("%8d Document pages\n", num_doc_pages);
