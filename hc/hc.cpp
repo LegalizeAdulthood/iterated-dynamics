@@ -4531,7 +4531,7 @@ void html_processor::write_index_html()
     {
         throw std::runtime_error("First content block contains multiple topics.");
     }
-    if (toc.topic_name[0] != "DocContent")
+    if (toc.topic_name[0] != DOCCONTENTS_TITLE)
     {
         throw std::runtime_error("First content block doesn't contain DocContent.");
     }
