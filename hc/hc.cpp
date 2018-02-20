@@ -7,10 +7,12 @@
  *
  */
 #include <algorithm>
+#include <cctype>
 #include <cerrno>
 #include <cstdarg>
 #include <fstream>
 #include <iostream>
+#include <iterator>
 #include <numeric>
 #include <sstream>
 #include <string>
@@ -18,7 +20,6 @@
 #include <vector>
 
 #include <assert.h>
-#include <ctype.h>
 #include <fcntl.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -320,7 +321,6 @@ std::ostream &operator<<(std::ostream &str, TOPIC const &topic)
             break;
         case token_types::TOK_SPACE:
             str << std::string(width, ' ');
-            // str << "  space " << width << '\n';
             break;
         case token_types::TOK_LINK:
             str << "  link\n";
@@ -785,14 +785,14 @@ int find_topic_title(char const *title)
 
 bool validate_label_name(char const *name)
 {
-    if (!isalpha(*name) && *name != '@' && *name != '_')
+    if (!std::isalpha(*name) && *name != '@' && *name != '_')
     {
         return false;    // invalid
     }
 
     while (*(++name) != '\0')
     {
-        if (!isalpha(*name) && !isdigit(*name) && *name != '_')
+        if (!std::isalpha(*name) && !std::isdigit(*name) && *name != '_')
         {
             return false;    // invalid
         }
@@ -910,6 +910,31 @@ bool get_next_item()
     return last;
 }
 
+std::string rst_name(std::string const &content_name)
+{
+    std::string name;
+    name.reserve(content_name.length());
+    bool underscore = true;     // can't start with an underscore
+    for (unsigned char c : content_name)
+    {
+        if (std::isalnum(c) != 0)
+        {
+            name += static_cast<char>(std::tolower(c));
+            underscore = false;
+        }
+        else if (!underscore)
+        {
+            name += '_';
+            underscore = true;
+        }
+    }
+    auto pos = name.find_last_not_of('_');
+    if (pos != std::string::npos)
+    {
+        name.erase(pos + 1);
+    }
+    return name;
+}
 
 void process_doc_contents(modes mode)
 {
@@ -986,7 +1011,7 @@ void process_doc_contents(modes mode)
             // now, make the entry in the buffer
             if (mode == modes::HTML)
             {
-                sprintf(curr, "%s %s", c.id.c_str(), c.name.c_str());
+                sprintf(curr, "%s", rst_name(c.name).c_str());
                 char *ptr = curr + (int) strlen(curr);
                 c.page_num_pos = 0U;
                 curr = ptr;
@@ -4483,222 +4508,19 @@ public:
     html_processor(std::string const &fname)
         : m_fname(fname)
     {
-        m_info.topic_num = -1;
-        m_info.content_num = -1;
-        m_info.link_dest_warn = false;
-        m_info.margin = PAGE_INDENT;
-        m_info.start_of_line = true;
-        m_info.spaces = 0;
     }
 
     void process();
 
 private:
     void write_index_html();
-    bool get_info(int cmd, PD_INFO *pd);
-    bool print_html(int cmd, PD_INFO *pd);
-    static bool get_info_(int cmd, PD_INFO *pd, void *info)
-    {
-        return static_cast<html_processor *>(info)->get_info(cmd, pd);
-    }
-    static bool print_html_(int cmd, PD_INFO *pd, void *info)
-    {
-        return static_cast<html_processor *>(info)->print_html(cmd, pd);
-    }
-    void print_char(int c, int n);
-    void print_string(char const *s, int n);
 
     std::string m_fname;
-    PRINT_DOC_INFO m_info;
-    int m_current_topic = 0;
 };
 
 void compiler::print_html_document(std::string const &fname)
 {
     html_processor(fname).process();
-}
-
-bool html_processor::get_info(int cmd, PD_INFO *pd)
-{
-    CONTENT *c;
-
-    switch (cmd)
-    {
-    case PD_GET_CONTENT:
-        if (++m_info.content_num >= num_contents)
-        {
-            return false;
-        }
-        c = &contents[m_info.content_num];
-        m_info.topic_num = -1;
-        pd->id       = c->id.c_str();
-        pd->title    = c->name.c_str();
-        pd->new_page = (c->flags & CF_NEW_PAGE) != 0;
-        return true;
-
-    case PD_GET_TOPIC:
-        c = &contents[m_info.content_num];
-        if (++m_info.topic_num >= c->num_topic)
-        {
-            return false;
-        }
-        pd->curr = get_topic_text(&topic[c->topic_num[m_info.topic_num]]);
-        pd->len = topic[c->topic_num[m_info.topic_num]].text_len;
-        return true;
-
-    case PD_GET_LINK_PAGE:
-    {
-        LINK &link = a_link[getint(pd->s)];
-        if (link.doc_page == -1)
-        {
-            if (m_info.link_dest_warn)
-            {
-                src_cfname = link.srcfile;
-                srcline    = link.srcline;
-                warn(0, "Hot-link destination is not in the document.");
-                srcline = -1;
-            }
-            return false;
-        }
-        pd->i = a_link[getint(pd->s)].doc_page;
-        return true;
-    }
-
-    case PD_RELEASE_TOPIC:
-        c = &contents[m_info.content_num];
-        release_topic_text(&topic[c->topic_num[m_info.topic_num]], 0);
-        return true;
-
-    default:
-        return false;
-    }
-}
-
-bool html_processor::print_html(int cmd, PD_INFO *pd)
-{
-    switch (cmd)
-    {
-    case PD_HEADING:
-    {
-        std::ostringstream buff;
-        m_info.margin = 0;
-        buff << "\n"
-            "                  Iterated Dynamics Version 1.0                 Page "
-            << pd->page_num << "\n\n";
-        print_string(buff.str().c_str(), 0);
-        m_info.margin = PAGE_INDENT;
-        return true;
-    }
-
-    case PD_FOOTING:
-        m_info.margin = 0;
-        print_char('\f', 1);
-        m_info.margin = PAGE_INDENT;
-        return true;
-
-    case PD_PRINT:
-        print_string(pd->s, pd->i);
-        return true;
-
-    case PD_PRINTN:
-        print_char(*pd->s, pd->i);
-        return true;
-
-    case PD_PRINT_SEC:
-        m_info.margin = TITLE_INDENT;
-        if (pd->id[0] != '\0')
-        {
-            print_string(pd->id, 0);
-            print_char(' ', 1);
-        }
-        print_string(pd->title, 0);
-        print_char('\n', 1);
-        m_info.margin = PAGE_INDENT;
-        return true;
-
-    case PD_START_SECTION:
-        return true;
-
-    case PD_START_TOPIC:
-        return true;
-
-    case PD_SET_SECTION_PAGE:
-        return true;
-
-    case PD_SET_TOPIC_PAGE:
-        return true;
-
-    case PD_PERIODIC:
-        return true;
-
-    default:
-        return false;
-    }
-}
-
-void html_processor::print_char(int c, int n)
-{
-    while (n-- > 0)
-    {
-        if (c == ' ')
-        {
-            ++m_info.spaces;
-        }
-        else if (c == '\n' || c == '\f')
-        {
-            m_info.start_of_line = true;
-            m_info.spaces = 0;   // strip spaces before a new-line
-            putc(c, m_info.file);
-        }
-        else
-        {
-            if (m_info.start_of_line)
-            {
-                m_info.spaces += m_info.margin;
-                m_info.start_of_line = false;
-            }
-            while (m_info.spaces > 0)
-            {
-                fputc(' ', m_info.file);
-                --m_info.spaces;
-            }
-
-            if (c == '&')
-            {
-                fputs("&amp;", m_info.file);
-            }
-            else if (c == '<')
-            {
-                fputs("&lt;", m_info.file);
-            }
-            else if (c == '>')
-            {
-                fputs("&gt;", m_info.file);
-            }
-            else
-            {
-                fputc(c, m_info.file);
-            }
-        }
-    }
-}
-
-void html_processor::print_string(char const *s, int n)
-{
-    if (n > 0)
-    {
-        while (n-- > 0)
-        {
-            print_char(*s++, 1);
-        }
-    }
-    else
-    {
-        while (*s != '\0')
-        {
-            print_char(*s++, 1);
-        }
-    }
 }
 
 void html_processor::process()
@@ -4709,7 +4531,6 @@ void html_processor::process()
     }
 
     write_index_html();
-    process_document(get_info_, print_html_, this);
 }
 
 void html_processor::write_index_html()
@@ -4717,17 +4538,16 @@ void html_processor::write_index_html()
     msg("Printing to: %s", m_fname.c_str());
 
     CONTENT const &toc = contents[0];
-    if (toc.num_topic != 1 || toc.topic_name[0] != "DocContent")
+    if (toc.num_topic != 1)
     {
-        throw std::runtime_error("First content block contains multiple topics or doesn't contain DocContent.");
+        throw std::runtime_error("First content block contains multiple topics.");
     }
-    TOPIC const &toc_topic = topic[toc.topic_num[0]];
-    std::cout << "DocContent\n"
-        << toc
-        << "Topic:\n"
-        << toc_topic
-        << '\n';
+    if (toc.topic_name[0] != "DocContent")
+    {
+        throw std::runtime_error("First content block doesn't contain DocContent.");
+    }
 
+    TOPIC const &toc_topic = topic[toc.topic_num[0]];
     std::ofstream str("index.rst");
     str << ".. toctree::\n";
     char const *text = get_topic_text(&toc_topic);
