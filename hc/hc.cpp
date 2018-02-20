@@ -247,13 +247,6 @@ inline void check_buffer(unsigned off)
     check_buffer(curr, off, &buffer[0]);
 }
 
-#ifdef XFRACT
-inline void putw( int val, FILE *file)
-{
-    fwrite( &val, sizeof(int), 1, file);
-}
-#endif
-
 std::ostream &operator<<(std::ostream &str, CONTENT const &content)
 {
     str << "Flags: " << std::hex << content.flags << std::dec << '\n'
