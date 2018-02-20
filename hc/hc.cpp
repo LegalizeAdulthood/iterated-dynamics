@@ -189,8 +189,7 @@ struct help_sig_info
 std::vector<TOPIC> g_topics;
 std::vector<LABEL> g_labels;
 std::vector<LABEL> g_private_labels;
-
-std::vector<LINK> a_link;
+std::vector<LINK> g_all_links;
 
 int      num_contents     = 0;    // the table-of-contents
 std::vector<CONTENT> contents;
@@ -499,8 +498,8 @@ void release_topic_text(TOPIC const *t, int save)
 
 int add_link(LINK *l)
 {
-    a_link.push_back(*l);
-    return static_cast<int>(a_link.size() - 1);
+    g_all_links.push_back(*l);
+    return static_cast<int>(g_all_links.size() - 1);
 }
 
 
@@ -1232,7 +1231,7 @@ int create_table()
 
     bool done = false;
 
-    first_link = static_cast<int>(a_link.size());
+    first_link = static_cast<int>(g_all_links.size());
     table_start = curr;
     count = 0;
 
@@ -1334,7 +1333,7 @@ int create_table()
         {
             lnum = c*rows + r;
 
-            if (first_link+lnum >= static_cast<int>(a_link.size()))
+            if (first_link+lnum >= static_cast<int>(g_all_links.size()))
             {
                 break;
             }
@@ -2757,7 +2756,7 @@ void make_hot_links()
      * Find topic_num and topic_off for all hot-links.  Also flag all hot-
      * links which will (probably) appear in the document.
      */
-    for (LINK &l : a_link)
+    for (LINK &l : g_all_links)
     {
         // name is the title of the topic
         if (l.type == link_types::LT_TOPIC)
@@ -3031,7 +3030,7 @@ void set_hot_link_doc_page()
     LABEL *lbl;
     int    t;
 
-    for (LINK &l : a_link)
+    for (LINK &l : g_all_links)
     {
         switch (l.type)
         {
@@ -3132,7 +3131,7 @@ bool pd_get_info(int cmd, PD_INFO *pd, void *context)
 
     case PD_GET_LINK_PAGE:
     {
-        LINK const &link = a_link[getint(pd->s)];
+        LINK const &link = g_all_links[getint(pd->s)];
         if (link.doc_page == -1)
         {
             if (info.link_dest_warn)
@@ -3144,7 +3143,7 @@ bool pd_get_info(int cmd, PD_INFO *pd, void *context)
             }
             return false;
         }
-        pd->i = a_link[getint(pd->s)].doc_page;
+        pd->i = g_all_links[getint(pd->s)].doc_page;
         return true;
     }
 
@@ -3444,7 +3443,7 @@ void insert_real_link_info(char *curr, unsigned int len)
 
         if (tok == token_types::TOK_LINK)
         {
-            LINK *l = &a_link[ getint(curr+1) ];
+            LINK *l = &g_all_links[ getint(curr+1) ];
             setint(curr+1, l->topic_num);
             setint(curr+1+sizeof(int), l->topic_off);
             setint(curr+1+2*sizeof(int), l->doc_page);
@@ -3749,13 +3748,13 @@ void report_memory()
         dead   += (pages.capacity() - pages.size())*sizeof(PAGE);
     }
 
-    for (LINK const &l : a_link)
+    for (LINK const &l : g_all_links)
     {
         data += sizeof(LINK);
         bytes_in_strings += (long) l.name.length();
     }
 
-    dead += (a_link.capacity() - a_link.size())*sizeof(LINK);
+    dead += (g_all_links.capacity() - g_all_links.size())*sizeof(LINK);
 
     for (LABEL const &l : g_labels)
     {
@@ -3814,7 +3813,7 @@ void report_stats()
     printf("\n");
     printf("Statistics:\n");
     printf("%8d Topics\n", static_cast<int>(g_topics.size()));
-    printf("%8d Links\n", static_cast<int>(a_link.size()));
+    printf("%8d Links\n", static_cast<int>(g_all_links.size()));
     printf("%8d Labels\n", static_cast<int>(g_labels.size()));
     printf("%8d Private labels\n", static_cast<int>(g_private_labels.size()));
     printf("%8d Table of contents (DocContent) entries\n", num_contents);
