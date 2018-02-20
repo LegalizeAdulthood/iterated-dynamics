@@ -187,8 +187,6 @@ struct help_sig_info
 
 
 std::vector<TOPIC> g_topics;
-
-int      num_label        = 0;    // labels
 std::vector<LABEL> label;
 
 int      num_plabel       = 0;    // private labels
@@ -532,7 +530,7 @@ int add_label(LABEL const *l)
     }
 
     label.push_back(*l);
-    return num_label++;
+    return static_cast<int>(label.size() - 1);
 }
 
 
@@ -3264,7 +3262,7 @@ int fcmp_LABEL(void const *a, void const *b)
 
 void sort_labels()
 {
-    qsort(&label[0],  num_label,  sizeof(LABEL), fcmp_LABEL);
+    qsort(&label[0],  static_cast<int>(label.size()),  sizeof(LABEL), fcmp_LABEL);
     qsort(&plabel[0], num_plabel, sizeof(LABEL), fcmp_LABEL);
 }
 
@@ -3321,11 +3319,11 @@ void _write_hdr(char const *fname, FILE *file)
         "    SPECIAL_FORMULA                  =  -2,\n"
         "    NONE                             =  -1,\n");
 
-    for (int ctr = 0; ctr < num_label; ctr++)
+    for (int ctr = 0; ctr < static_cast<int>(label.size()); ctr++)
     {
         if (label[ctr].name[0] != '@')  // if it's not a local label...
         {
-            fprintf(file, "    %-32s = %3d%s", label[ctr].name.c_str(), ctr, ctr != num_label-1 ? "," : "");
+            fprintf(file, "    %-32s = %3d%s", label[ctr].name.c_str(), ctr, ctr != static_cast<int>(label.size())-1 ? "," : "");
             if (label[ctr].name == INDEX_LABEL)
             {
                 fprintf(file, "        /* index */");
@@ -3410,7 +3408,7 @@ void calc_offsets()    // calc file offset to each topic
         sizeof(int) +               // num_contents
         sizeof(int) +               // num_doc_pages
         g_topics.size()*sizeof(long) + // offsets to each topic
-        num_label*2*sizeof(int);    // topic_num/topic_off for all public labels
+        label.size()*2*sizeof(int);    // topic_num/topic_off for all public labels
 
     offset = std::accumulate(contents.begin(), contents.end(), offset, [](long offset, CONTENT const &cp) {
         return offset += sizeof(int) +  // flags
@@ -3481,7 +3479,7 @@ void _write_help(FILE *file)
     // write num_topic, num_label and num_contents
 
     putw(static_cast<int>(g_topics.size()), file);
-    putw(num_label, file);
+    putw(static_cast<int>(label.size()), file);
     putw(num_contents, file);
 
     // write num_doc_page
@@ -3820,7 +3818,7 @@ void report_stats()
     printf("Statistics:\n");
     printf("%8d Topics\n", static_cast<int>(g_topics.size()));
     printf("%8d Links\n", num_link);
-    printf("%8d Labels\n", num_label);
+    printf("%8d Labels\n", static_cast<int>(label.size()));
     printf("%8d Private labels\n", num_plabel);
     printf("%8d Table of contents (DocContent) entries\n", num_contents);
     printf("%8d Online help pages\n", pages);
