@@ -75,7 +75,6 @@ token_types _find_token_length(char const *curr, unsigned len, int *size, int *w
             ++curr;
             ++_size;
             _width = *curr;
-            ++curr;
             ++_size;
             break;
 
