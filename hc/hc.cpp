@@ -4567,7 +4567,6 @@ void html_processor::write_index_html()
     char const *text = get_topic_text(&toc_topic);
     char const *curr = text;
     unsigned int len = toc_topic.text_len;
-    std::string spaces;
     while (len > 0)
     {
         int size = 0;
