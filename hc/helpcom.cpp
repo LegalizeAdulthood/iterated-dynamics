@@ -137,7 +137,7 @@ token_types _find_token_length(char const *curr, unsigned len, int *size, int *w
                 {
                     break;
                 }
-                else if (*curr == CMD_LITERAL)
+                if (*curr == CMD_LITERAL)
                 {
                     curr += 2;
                     _size += 2;
