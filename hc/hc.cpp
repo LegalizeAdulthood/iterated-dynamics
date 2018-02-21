@@ -4687,8 +4687,8 @@ void html_processor::write_topic(TOPIC const &t)
                 int const link_num = getint(data);
                 int const link_topic = g_all_links[link_num].topic_num;
                 data += 3*sizeof(int);
-                std::string const link_text{":doc:`" + std::string(data, width) +
-                    " <" + rst_name(g_topics[link_topic].title) + ">`"};
+                std::string const link_text(":doc:`" + std::string(data, width) +
+                    " <" + rst_name(g_topics[link_topic].title) + ">`");
                 if (!nl(link_text.length()) && !spaces.empty())
                 {
                     str << spaces;
