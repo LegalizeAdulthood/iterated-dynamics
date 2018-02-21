@@ -237,6 +237,8 @@ int include_stack_top = -1;
 
 std::vector<std::string> g_include_paths;
 
+std::string g_html_output_dir = ".";
+
 char *get_topic_text(TOPIC const *t);
 
 void check_buffer(char const *curr, unsigned off, char const *buffer);
@@ -4080,17 +4082,6 @@ void compiler::parse_arguments()
                 }
                 break;
 
-            case 'p':
-                if (mode == modes::NONE)
-                {
-                    mode = modes::PRINT;
-                }
-                else
-                {
-                    fatal(0, "Cannot have /p with /a, /c, /h or /d");
-                }
-                break;
-
             case 'm':
                 if (mode == modes::COMPILE)
                 {
@@ -4099,6 +4090,37 @@ void compiler::parse_arguments()
                 else
                 {
                     fatal(0, "/m switch allowed only when compiling (/c)");
+                }
+                break;
+
+            case 'o':
+                if (mode == modes::HTML)
+                {
+                    if (argc > 2)
+                    {
+                        g_html_output_dir = arg[1];
+                        --argc;
+                        ++arg;
+                    }
+                    else
+                    {
+                        fatal(0, "Missing argument for /o");
+                    }
+                }
+                else
+                {
+                    fatal(0, "/o switch allowed only when writing HTML (/h)");
+                }
+                break;
+
+            case 'p':
+                if (mode == modes::NONE)
+                {
+                    mode = modes::PRINT;
+                }
+                else
+                {
+                    fatal(0, "Cannot have /p with /a, /c, /h or /d");
                 }
                 break;
 
@@ -4540,7 +4562,7 @@ void html_processor::write_index_html()
     }
 
     TOPIC const &toc_topic = g_topics[toc.topic_num[0]];
-    std::ofstream str("index.rst");
+    std::ofstream str(g_html_output_dir + "/index.rst");
     str << ".. toctree::\n";
     char const *text = get_topic_text(&toc_topic);
     char const *curr = text;
@@ -4606,7 +4628,7 @@ void html_processor::write_topic(TOPIC const &t)
 {
     std::string const filename = rst_name(t.title) + ".rst";
     msg("Writing %s", filename.c_str());
-    std::ofstream str(filename);
+    std::ofstream str(g_html_output_dir + '/' + filename);
     char const *text = get_topic_text(&t);
     char const *curr = text;
     unsigned int len = t.text_len;
