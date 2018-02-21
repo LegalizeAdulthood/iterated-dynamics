@@ -78,8 +78,7 @@ char const *const DEFAULT_SRC_FNAME = "help.src";
 char const *const DEFAULT_HLP_FNAME = "fractint.hlp";
 char const *const DEFAULT_EXE_FNAME = "fractint.exe";
 char const *const DEFAULT_DOC_FNAME = "fractint.doc";
-// cppcheck-suppress constStatement
-std::string const DEFAULT_HTML_FNAME{"index.html"};
+std::string const DEFAULT_HTML_FNAME = "index.rst";
 
 char const *const TEMP_FNAME = "hc.tmp";
 char const *const SWAP_FNAME = "hcswap.tmp";
@@ -4503,6 +4502,9 @@ public:
 
 private:
     void write_index_html();
+    void write_contents();
+    void write_content(CONTENT const &c);
+    void write_topic(TOPIC const &t);
 
     std::string m_fname;
 };
@@ -4520,11 +4522,12 @@ void html_processor::process()
     }
 
     write_index_html();
+    write_contents();
 }
 
 void html_processor::write_index_html()
 {
-    msg("Printing to: %s", m_fname.c_str());
+    msg("Writing index.rst");
 
     CONTENT const &toc = g_contents[0];
     if (toc.num_topic != 1)
@@ -4571,6 +4574,124 @@ void html_processor::write_index_html()
 
         default:
             throw std::runtime_error("Unexpected token in table of contents.");
+        }
+        len -= size;
+        curr += size;
+    }
+}
+
+void html_processor::write_contents()
+{
+    for (CONTENT const &c : g_contents)
+    {
+        write_content(c);
+    }
+}
+
+void html_processor::write_content(CONTENT const &c)
+{
+    for (int i = 0; i < c.num_topic; ++i)
+    {
+        TOPIC const &t = g_topics[c.topic_num[i]];
+        if (t.title == DOCCONTENTS_TITLE)
+        {
+            continue;
+        }
+
+        write_topic(t);
+    }
+}
+
+void html_processor::write_topic(TOPIC const &t)
+{
+    std::string const filename = rst_name(t.title) + ".rst";
+    msg("Writing %s", filename.c_str());
+    std::ofstream str(filename);
+    char const *text = get_topic_text(&t);
+    char const *curr = text;
+    unsigned int len = t.text_len;
+    unsigned int column = 0;
+    std::string spaces;
+    auto const nl = [&str, &column](int width)
+    {
+        if (column + width > 70)
+        {
+            str << '\n';
+            column = 0;
+            return true;
+        }
+        return false;
+    };
+    while (len > 0)
+    {
+        int size = 0;
+        int width = 0;
+        token_types const tok = find_token_length(token_modes::ONLINE, curr, len, &size, &width);
+
+        switch (tok)
+        {
+        case token_types::TOK_SPACE:
+            if (!nl(width))
+            {
+                spaces = std::string(width, ' ');
+                column += width;
+            }
+            else
+            {
+                spaces.clear();
+            }
+            break;
+
+        case token_types::TOK_NL:
+            str << '\n';
+            spaces.clear();
+            column = 0;
+            break;
+
+        case token_types::TOK_WORD:
+            if (!nl(width) && !spaces.empty())
+            {
+                str << spaces;
+                spaces.clear();
+            }
+            str << std::string(curr, width);
+            column += width;
+            break;
+
+        case token_types::TOK_PARA:
+            if (column > 0)
+            {
+                str << '\n';
+            }
+            column = 0;
+            spaces.clear();
+            break;
+
+        case token_types::TOK_LINK:
+            {
+                char const *data = &curr[1];
+                int const link_num = getint(data);
+                int const link_topic = g_all_links[link_num].topic_num;
+                data += 3*sizeof(int);
+                std::string const link_text{":doc:`" + std::string(data, width) +
+                    " <" + rst_name(g_topics[link_topic].title) + ">`"};
+                if (!nl(link_text.length()) && !spaces.empty())
+                {
+                    str << spaces;
+                    spaces.clear();
+                }
+                str << link_text;
+                column += link_text.length();
+            }
+            break;
+
+        case token_types::TOK_FF:
+        case token_types::TOK_XONLINE:
+        case token_types::TOK_XDOC:
+            break;
+
+        default:
+            throw std::runtime_error("Unexpected token in topic.");
         }
         len -= size;
         curr += size;
