@@ -4567,14 +4567,9 @@ void html_processor::write_index_html()
     char const *text = get_topic_text(&toc_topic);
     char const *curr = text;
     unsigned int len = toc_topic.text_len;
-    bool toc_line_started = false;
+    std::string spaces;
     while (len > 0)
     {
-        if (!toc_line_started)
-        {
-            str << "   ";
-            toc_line_started = true;
-        }
         int size = 0;
         int width = 0;
         token_types const tok = find_token_length(token_modes::ONLINE, curr, len, &size, &width);
@@ -4582,16 +4577,14 @@ void html_processor::write_index_html()
         switch (tok)
         {
         case token_types::TOK_SPACE:
-            str << std::string(width, ' ');
             break;
 
         case token_types::TOK_NL:
             str << '\n';
-            toc_line_started = false;
             break;
 
         case token_types::TOK_WORD:
-            str << std::string(curr, width);
+            str << "   " << std::string(curr, width);
             break;
 
         default:
