@@ -138,24 +138,20 @@ token_types _find_token_length(char const *curr, unsigned len, int *size, int *w
                 {
                     break;
                 }
-
                 else if (*curr == CMD_LITERAL)
                 {
                     curr += 2;
                     _size += 2;
                     _width += 1;
                 }
-
                 else if (*curr == '\0')
                 {
                     assert(0);
                 }
-
                 else if ((unsigned)*curr <= MAX_CMD || *curr == ' ' || *curr == '\n')
                 {
                     break;
                 }
-
                 else if (*curr == '-')
                 {
                     ++curr;
@@ -166,7 +162,6 @@ token_types _find_token_length(char const *curr, unsigned len, int *size, int *w
                         break;
                     }
                 }
-
                 else
                 {
                     ++curr;
@@ -315,7 +310,6 @@ bool process_document(PD_FUNC get_info, PD_FUNC output, void *info)
                 return false;
             }
         }
-
         else
         {
             if (pd.line_num + 2 > PAGE_DEPTH-CONTENT_BREAK)
@@ -477,14 +471,13 @@ bool process_document(PD_FUNC get_info, PD_FUNC output, void *info)
                                 break;
                             }
 
-                            else if (in_link == 1)
+                            if (in_link == 1)
                             {
                                 tok = token_types::TOK_SPACE;
                                 width = 1;
                                 size = 0;
                                 ++in_link;
                             }
-
                             else if (in_link == 2)
                             {
                                 tok = token_types::TOK_WORD;
@@ -494,7 +487,6 @@ bool process_document(PD_FUNC get_info, PD_FUNC output, void *info)
                                 pd.curr = page_text;
                                 ++in_link;
                             }
-
                             else if (in_link == 3)
                             {
                                 pd.curr = holdcurr;
