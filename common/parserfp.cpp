@@ -66,7 +66,7 @@ extern int InitLodPtr;
 extern int InitStoPtr;
 extern int InitOpPtr;
 extern std::vector<void (*)()> f;
-extern JUMP_CONTROL_ST *jump_control;
+extern JUMP_CONTROL_ST jump_control[];
 extern bool uses_jump;
 extern int jump_index;
 
