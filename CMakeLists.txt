@@ -18,9 +18,24 @@ else()
     set(OS_ID_OPTIONS "")
 endif()
 
-if("${CMAKE_CXX_COMPILER_ID}" MATCHES "(GNU|Clang)")
+if(NOT MSVC AND ("${CMAKE_CXX_COMPILER_ID}" MATCHES "(GNU|Clang)"))
     set(CMAKE_CXX_FLAGS "-std=c++11 -Werror")
     set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS} -g")
+endif()
+
+
+# In debug builds, tell MSVC to:
+#   - not warn us about unchecked iterators
+#   - not warn us about deprecated CRT functions
+#   - not warn us about possibly unsafe CRT functions
+#   - store source code location information for memory allocations
+if(${MSVC})
+    set(MSVC_DEFINITIONS
+        "/D_SCL_SECURE_NO_WARNINGS"
+        "/D_CRT_SECURE_NO_DEPRECATE"
+        "/D_CRT_SECURE_NO_WARNINGS"
+        "/D_CRTDBG_MAP_ALLOC")
+    set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} ${MSVC_DEFINITIONS}")
 endif()
 
 add_subdirectory(unix)
@@ -258,18 +273,3 @@ set_src_dir(common/fractint.cpp)
 target_include_directories(id PRIVATE headers)
 target_link_libraries(id PRIVATE helpcom os)
 add_dependencies(id native_help)
-
-# In debug builds, tell MSVC to:
-#   - not warn us about unchecked iterators
-#   - not warn us about deprecated CRT functions
-#   - not warn us about possibly unsafe CRT functions
-#   - store source code location information for memory allocations
-if(${MSVC})
-    set(MSVC_DEFINITIONS
-        "_SCL_SECURE_NO_WARNINGS"
-        "_CRT_SECURE_NO_DEPRECATE"
-        "_CRT_SECURE_NO_WARNINGS"
-        "_CRTDBG_MAP_ALLOC")
-    set_target_properties(id PROPERTIES
-        COMPILE_DEFINITIONS_DEBUG "${MSVC_DEFINITIONS}")
-endif()
