@@ -121,60 +121,6 @@ check_arg(GDIDriver *di, char *arg)
     return false;
 }
 
-/* handle_special_keys
- *
- * First, do some slideshow processing.  Then handle F1 and TAB display.
- *
- * Because we want context sensitive help to work everywhere, with the
- * help to display indicated by a non-zero value in helpmode, we need
- * to trap the F1 key at a very low level.  The same is true of the
- * TAB display.
- *
- * What we do here is check for these keys and invoke their displays.
- * To avoid a recursive invoke of help(), a static is used to avoid
- * recursing on ourselves as help will invoke get key!
- */
-static int
-handle_special_keys(int ch)
-{
-    static bool inside_help = false;
-
-    if (slides_mode::PLAY == g_slides)
-    {
-        if (ch == FIK_ESC)
-        {
-            stopslideshow();
-            ch = 0;
-        }
-        else if (!ch)
-        {
-            ch = slideshw();
-        }
-    }
-    else if ((slides_mode::RECORD == g_slides) && ch)
-    {
-        recordshw(ch);
-    }
-
-    if (FIK_F1 == ch && g_help_mode != help_labels::IDHELP_INDEX && !inside_help)
-    {
-        inside_help = true;
-        help(0);
-        inside_help = false;
-        ch = 0;
-    }
-    else if (FIK_TAB == ch && g_tab_mode)
-    {
-        bool const old_tab_mode = g_tab_mode;
-        g_tab_mode = false;
-        tab_display();
-        g_tab_mode = old_tab_mode;
-        ch = 0;
-    }
-
-    return ch;
-}
-
 static void
 parse_geometry(char const *spec, int *x, int *y, int *width, int *height)
 {
