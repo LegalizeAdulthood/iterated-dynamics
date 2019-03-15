@@ -79,7 +79,7 @@ struct Win32DiskDriver
 //         int     colors;         number of colors available
 
 #define DRIVER_MODE(name_, comment_, key_, width_, height_, mode_) \
-    { name_, comment_, key_, 0, 0, 0, 0, mode_, width_, height_, 256 }
+    { name_, comment_, key_, 0, 0, 0, 0, mode_, width_, height_, 256, nullptr }
 #define MODE19(n_, c_, k_, w_, h_) DRIVER_MODE(n_, c_, k_, w_, h_, 19)
 static VIDEOINFO modes[] =
 {
