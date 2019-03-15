@@ -204,9 +204,9 @@ static bool disk_init(Driver *drv, int *argc, char **argv)
     }
 
     // add default list of video modes
-    for (int m = 0; m < NUM_OF(modes); m++)
+    for (VIDEOINFO &mode : modes)
     {
-        add_video_mode(drv, &modes[m]);
+        add_video_mode(drv, &mode);
     }
 
     return true;
