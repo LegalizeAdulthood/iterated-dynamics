@@ -509,7 +509,7 @@ void plot_display_string(Plot *me, int x, int y, int fg, int bg, char const *tex
         {
             int x1 = x;
             int col = 8;
-            BYTE pixel = font_8x8[row][*text];
+            BYTE pixel = font_8x8[row][static_cast<unsigned char>(*text)];
             while (col-- > 0)
             {
                 int color = (pixel & (1 << col)) ? fg : bg;
