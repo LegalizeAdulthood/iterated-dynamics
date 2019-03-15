@@ -54,7 +54,7 @@
 static int    vidcompare(const void *, const void *);
 static void   format_item(int, char *);
 static int    check_modekey(int, int);
-static void   format_vid_inf(int i, char *err, char *buf);
+static void   format_vid_inf(int i, char const *err, char *buf);
 #endif
 static double vid_aspect(int tryxdots, int tryydots);
 
@@ -104,7 +104,7 @@ static int vidcompare(const void *p1, const void *p2)
     return 1;
 }
 
-static void format_vid_inf(int i, char *err, char *buf)
+static void format_vid_inf(int i, char const *err, char *buf)
 {
     char kname[5];
     memcpy((char *)&g_video_entry, (char *)&g_video_table[i],
