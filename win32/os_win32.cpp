@@ -163,67 +163,6 @@ VIDEOINFO g_video_table[MAX_VIDEO_MODES] = { 0 };
  * here in a slower C form for portability.
  */
 
-/* keyboard_event
-**
-** Map a keypress into an event id.
-*/
-static fractint_event keyboard_event(int key)
-{
-    struct
-    {
-        int key;
-        fractint_event event;
-    }
-    mapping[] =
-    {
-        FIK_CTL_A,  FE_ANT_AUTOMATON,
-        FIK_CTL_B,  FE_BROWSE_PARAMS,
-        FIK_CTL_E,  FE_EVOLVER_PARAMS,
-        FIK_CTL_F,  FE_SOUND_PARAMS,
-        FIK_BACKSPACE,  FE_REVERSE_HISTORY,
-        FIK_TAB,        FE_IMAGE_INFO,
-        FIK_CTL_P,  FE_PRINT_IMAGE,
-        FIK_CTL_S,  FE_STEREOGRAM,
-        FIK_ESC,        FE_QUIT,
-        FIK_SPACE,  FE_TOGGLE_JULIA,
-        FIK_INSERT,     FE_RESTART,
-        DELETE,     FE_SELECT_VIDEO_MODE,
-        '@',        FE_EXECUTE_COMMANDS,
-        '#',        FE_3D_OVERLAY,
-        '3',        FE_3D_TRANSFORM,
-        'a',        FE_MAKE_STARFIELD,
-        'b',        FE_SAVE_CURRENT_PARAMS,
-        'c',        FE_COLOR_CYCLING_MODE,
-        'd',        FE_COMMAND_SHELL,
-        'e',        FE_EDIT_PALETTE,
-        'g',        FE_GIVE_COMMAND_STRING,
-        'h',        FE_PRIOR_IMAGE,
-        'j',        FE_TOGGLE_INVERSE,
-        'i',        FE_3D_PARAMS,
-        'o',        FE_ORBITS_WINDOW,
-        'p',        FE_PASSES_OPTIONS,
-        'r',        FE_LOAD_IMAGE,
-        's',        FE_SAVE_IMAGE,
-        't',        FE_SELECT_FRACTAL_TYPE,
-        'v',        FE_VIEW_WINDOW_OPTIONS,
-        'x',        FE_BASIC_OPTIONS,
-        'y',        FE_EXTENDED_OPTIONS,
-        'z',        FE_TYPE_SPECIFIC_PARAMS,
-        '-',        FE_ROTATE_PALETTE_DOWN,
-        '+',        FE_ROTATE_PALETTE_UP
-    };
-    key = tolower(key);
-    for (int i = 0; i < NUM_OF(mapping); i++)
-    {
-        if (mapping[i].key == key)
-        {
-            return mapping[i].event;
-        }
-    }
-
-    return FE_UNKNOWN;
-}
-
 static char *g_tos = nullptr;
 #define WIN32_STACK_SIZE 1024*1024
 // Return available stack space ... shouldn't be needed in Win32, should it?

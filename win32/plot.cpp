@@ -287,48 +287,6 @@ static LRESULT CALLBACK plot_proc(HWND window, UINT message, WPARAM wp, LPARAM l
     return 0;
 }
 
-/*----------------------------------------------------------------------
-*
-* init_clut --
-*
-* Put something nice in the dac.
-*
-* The conditions are:
-*   Colors 1 and 2 should be bright so ifs fractals show up.
-*   Color 15 should be bright for lsystem.
-*   Color 1 should be bright for bifurcation.
-*   Colors 1, 2, 3 should be distinct for periodicity.
-*   The color map should look good for mandelbrot.
-*   The color map should be good if only 128 colors are used.
-*
-* Results:
-*   None.
-*
-* Side effects:
-*   Loads the dac.
-*
-*----------------------------------------------------------------------
-*/
-static void
-init_clut(BYTE clut[256][3])
-{
-    for (int i = 0; i < 256; i++)
-    {
-        clut[i][0] = (i >> 5)*8+7;
-        clut[i][1] = (((i+16) & 28) >> 2)*8+7;
-        clut[i][2] = (((i+2) & 3))*16+15;
-    }
-    clut[0][2] = 0;
-    clut[0][1] = clut[0][2];
-    clut[0][0] = clut[0][1];
-    clut[1][2] = 63;
-    clut[1][1] = clut[1][2];
-    clut[1][0] = clut[1][1];
-    clut[2][0] = 47;
-    clut[2][2] = 63;
-    clut[2][1] = clut[2][2];
-}
-
 int plot_init(Plot *me, HINSTANCE instance, LPCSTR title)
 {
     WNDCLASS  wc;

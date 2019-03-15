@@ -162,70 +162,6 @@ initdacbox()
     g_dac_box[2][1] = g_dac_box[2][2];
 }
 
-/* handle_help_tab
- *
- * Because we want context sensitive help to work everywhere, with the
- * help to display indicated by a non-zero value in helpmode, we need
- * to trap the F1 key at a very low level.  The same is true of the
- * TAB display.
- *
- * What we do here is check for these keys and invoke their displays.
- * To avoid a recursive invoke of help(), a static is used to avoid
- * recursing on ourselves as help will invoke get key!
- */
-static int
-handle_help_tab(int ch)
-{
-    static bool inside_help = false;
-
-    if (FIK_F1 == ch && g_help_mode != help_labels::IDHELP_INDEX && !inside_help)
-    {
-        inside_help = true;
-        help(0);
-        inside_help = false;
-        ch = 0;
-    }
-    else if (FIK_TAB == ch && g_tab_mode)
-    {
-        bool const old_tab_mode = g_tab_mode;
-        g_tab_mode = false;
-        tab_display();
-        g_tab_mode = old_tab_mode;
-        ch = 0;
-    }
-
-    return ch;
-}
-
-static void win32_dot_writer(int x, int y, int color)
-{
-    driver_write_pixel(x, y, color);
-}
-static int win32_dot_reader(int x, int y)
-{
-    return driver_read_pixel(x, y);
-}
-static void win32_line_writer(int row, int col, int lastcol, BYTE *pixels)
-{
-    driver_write_span(row, col, lastcol, pixels);
-}
-static void win32_line_reader(int row, int col, int lastcol, BYTE *pixels)
-{
-    driver_read_span(row, col, lastcol, pixels);
-}
-
-static void
-parse_geometry(char const *spec, int *x, int *y, int *width, int *height)
-{
-    // do something like XParseGeometry()
-    if (2 == sscanf(spec, "%dx%d", width, height))
-    {
-        // all we care about is width and height for disk output
-        *x = 0;
-        *y = 0;
-    }
-}
-
 /***********************************************************************
 ////////////////////////////////////////////////////////////////////////
 \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
@@ -525,32 +461,6 @@ disk_redraw(Driver *drv)
     wintext_paintscreen(&di->base.wintext, 0, 80, 0, 25);
 }
 
-/* disk_key_pressed
- *
- * Return 0 if no key has been pressed, or the FIK value if it has.
- * driver_get_key() must still be called to eat the key; this routine
- * only peeks ahead.
- *
- * When a keystroke has been found by the underlying wintext_xxx
- * message pump, stash it in the one key buffer for later use by
- * get_key.
- */
-static int
-disk_key_pressed(Driver *drv)
-{
-    DI(di);
-    int ch = di->base.key_buffer;
-    if (ch)
-    {
-        return ch;
-    }
-    ch = frame_get_key_press(0);
-    ch = handle_help_tab(ch);
-    di->base.key_buffer = ch;
-
-    return ch;
-}
-
 /* disk_unget_key
  *
  * Unread a key!  The key buffer is only one character deep, so we
@@ -561,36 +471,6 @@ void disk_unget_key(Driver *drv, int key)
     DI(di);
     _ASSERTE(0 == di->base.key_buffer);
     di->base.key_buffer = key;
-}
-
-/* disk_get_key
- *
- * Get a keystroke, blocking if necessary.  First, check the key buffer
- * and if that's empty ask the wintext window to pump a keystroke for us.
- * If we get it, pass it off to handle tab and help displays.  If those
- * displays ate the key, then get another one.
- */
-static int
-disk_get_key(Driver *drv)
-{
-    DI(di);
-    int ch;
-
-    do
-    {
-        if (di->base.key_buffer)
-        {
-            ch = di->base.key_buffer;
-            di->base.key_buffer = 0;
-        }
-        else
-        {
-            ch = handle_help_tab(frame_get_key_press(1));
-        }
-    }
-    while (ch == 0);
-
-    return ch;
 }
 
 static void
@@ -643,34 +523,6 @@ disk_set_video_mode(Driver *drv, VIDEOINFO *mode)
     set_normal_line();
 }
 
-/*
-; PUTSTR.asm puts a string directly to video display memory. Called from C by:
-;    putstring(row, col, attr, string) where
-;         row, col = row and column to start printing.
-;         attr = color attribute.
-;         string = pointer to the null terminated string to print.
-*/
-static void
-disk_put_string(Driver *drv, int row, int col, int attr, char const *msg)
-{
-    DI(di);
-    if (-1 != row)
-    {
-        g_text_row = row;
-    }
-    if (-1 != col)
-    {
-        g_text_col = col;
-    }
-    {
-        int abs_row = g_text_rbase + g_text_row;
-        int abs_col = g_text_cbase + g_text_col;
-        _ASSERTE(abs_row >= 0 && abs_row < WINTEXT_MAX_ROW);
-        _ASSERTE(abs_col >= 0 && abs_col < WINTEXT_MAX_COL);
-        wintext_putstring(&di->base.wintext, abs_col, abs_row, attr, msg, &g_text_row, &g_text_col);
-    }
-}
-
 static void
 disk_set_clear(Driver *drv)
 {
@@ -678,58 +530,9 @@ disk_set_clear(Driver *drv)
     wintext_clear(&di->base.wintext);
 }
 
-/************** Function scrollup(toprow, botrow) ******************
-*
-*       Scroll the screen up (from toprow to botrow)
-*/
-static void
-disk_scroll_up(Driver *drv, int top, int bot)
-{
-    DI(di);
-    ODS2("disk_scroll_up %d, %d", top, bot);
-    wintext_scroll_up(&di->base.wintext, top, bot);
-}
-
 static void
 disk_display_string(Driver *drv, int x, int y, int fg, int bg, char const *text)
 {
-}
-
-static void
-disk_move_cursor(Driver *drv, int row, int col)
-{
-    DI(di);
-    ODS2("disk_move_cursor %d,%d", row, col);
-
-    if (row != -1)
-    {
-        di->base.cursor_row = row;
-        g_text_row = row;
-    }
-    if (col != -1)
-    {
-        di->base.cursor_col = col;
-        g_text_col = col;
-    }
-    row = di->base.cursor_row;
-    col = di->base.cursor_col;
-    wintext_cursor(&di->base.wintext, g_text_cbase + col, g_text_rbase + row, 1);
-    di->base.cursor_shown = true;
-}
-
-static void
-disk_set_attr(Driver *drv, int row, int col, int attr, int count)
-{
-    DI(di);
-    if (-1 != row)
-    {
-        g_text_row = row;
-    }
-    if (-1 != col)
-    {
-        g_text_col = col;
-    }
-    wintext_set_attr(&di->base.wintext, g_text_rbase + g_text_row, g_text_cbase + g_text_col, attr, count);
 }
 
 static void
@@ -755,179 +558,10 @@ disk_set_for_graphics(Driver *drv)
     disk_hide_text_cursor(drv);
 }
 
-/*
-* Implement stack and unstack window functions by using multiple curses
-* windows.
-*/
-static void
-disk_stack_screen(Driver *drv)
-{
-    Win32DiskDriver *di = (Win32DiskDriver *) drv;
-    ODS("disk_stack_screen");
-
-    di->base.saved_cursor[di->base.screen_count+1] = g_text_row*80 + g_text_col;
-    if (++di->base.screen_count)
-    {
-        // already have some stacked
-        int i = di->base.screen_count - 1;
-
-        _ASSERTE(i < WIN32_MAXSCREENS);
-        if (i >= WIN32_MAXSCREENS)
-        {
-            // bug, missing unstack?
-            stopmsg(STOPMSG_NO_STACK, "disk_stack_screen overflow");
-            exit(1);
-        }
-        di->base.saved_screens[i] = wintext_screen_get(&di->base.wintext);
-        disk_set_clear(drv);
-    }
-    else
-    {
-        disk_set_for_text(drv);
-    }
-}
-
-static void
-disk_unstack_screen(Driver *drv)
-{
-    Win32DiskDriver *di = (Win32DiskDriver *) drv;
-
-    ODS("disk_unstack_screen");
-    _ASSERTE(di->base.screen_count >= 0);
-    g_text_row = di->base.saved_cursor[di->base.screen_count] / 80;
-    g_text_col = di->base.saved_cursor[di->base.screen_count] % 80;
-    if (--di->base.screen_count >= 0)
-    {   // unstack
-        wintext_screen_set(&di->base.wintext, di->base.saved_screens[di->base.screen_count]);
-        free(di->base.saved_screens[di->base.screen_count]);
-        di->base.saved_screens[di->base.screen_count] = nullptr;
-    }
-    else
-    {
-        disk_set_for_graphics(drv);
-    }
-    disk_move_cursor(drv, -1, -1);
-}
-
-static void
-disk_discard_screen(Driver *drv)
-{
-    Win32DiskDriver *di = (Win32DiskDriver *) drv;
-
-    _ASSERTE(di->base.screen_count > 0);
-    if (--di->base.screen_count >= 0)
-    {   // unstack
-        if (di->base.saved_screens[di->base.screen_count])
-        {
-            free(di->base.saved_screens[di->base.screen_count]);
-            di->base.saved_screens[di->base.screen_count] = nullptr;
-        }
-    }
-}
-
-static int
-disk_init_fm(Driver *drv)
-{
-    ODS("disk_init_fm");
-    return 0;
-}
-
-static void
-disk_buzzer(Driver *drv, buzzer_codes kind)
-{
-    ODS1("disk_buzzer %d", kind);
-    MessageBeep(MB_OK);
-}
-
-static bool disk_sound_on(Driver *drv, int freq)
-{
-    ODS1("disk_sound_on %d", freq);
-    return false;
-}
-
-static void
-disk_sound_off(Driver *drv)
-{
-    ODS("disk_sound_off");
-}
-
-static void
-disk_mute(Driver *drv)
-{
-    ODS("disk_mute");
-}
-
 static bool
 disk_diskp(Driver *drv)
 {
     return true;
-}
-
-static int
-disk_key_cursor(Driver *drv, int row, int col)
-{
-    DI(di);
-    int result;
-
-    ODS2("disk_key_cursor %d,%d", row, col);
-    if (-1 != row)
-    {
-        di->base.cursor_row = row;
-        g_text_row = row;
-    }
-    if (-1 != col)
-    {
-        di->base.cursor_col = col;
-        g_text_col = col;
-    }
-
-    col = di->base.cursor_col;
-    row = di->base.cursor_row;
-
-    if (disk_key_pressed(drv))
-    {
-        result = disk_get_key(drv);
-    }
-    else
-    {
-        di->base.cursor_shown = true;
-        wintext_cursor(&di->base.wintext, col, row, 1);
-        result = disk_get_key(drv);
-        disk_hide_text_cursor(drv);
-        di->base.cursor_shown = false;
-    }
-
-    return result;
-}
-
-static int
-disk_wait_key_pressed(Driver *drv, int timeout)
-{
-    int count = 10;
-    while (!driver_key_pressed())
-    {
-        Sleep(25);
-        if (timeout && (--count == 0))
-        {
-            break;
-        }
-    }
-
-    return driver_key_pressed();
-}
-
-static int
-disk_get_char_attr(Driver *drv)
-{
-    DI(di);
-    return wintext_get_char_attr(&di->base.wintext, g_text_row, g_text_col);
-}
-
-static void
-disk_put_char_attr(Driver *drv, int char_attr)
-{
-    DI(di);
-    wintext_put_char_attr(&di->base.wintext, g_text_row, g_text_col, char_attr);
 }
 
 static bool
@@ -969,16 +603,6 @@ disk_resume(Driver *drv)
     wintext_resume(&di->base.wintext);
 }
 
-static void
-disk_get_truecolor(Driver *drv, int x, int y, int *r, int *g, int *b, int *a)
-{
-}
-
-static void
-disk_put_truecolor(Driver *drv, int x, int y, int r, int g, int b, int a)
-{
-}
-
 static void disk_save_graphics(Driver *drv)
 {
 }
@@ -997,10 +621,6 @@ static void disk_get_max_screen(Driver *drv, int *xmax, int *ymax)
     {
         *ymax = -1;
     }
-}
-
-static void disk_set_keyboard_timeout(Driver *drv, int ms)
-{
 }
 
 static void disk_flush(Driver *drv)
