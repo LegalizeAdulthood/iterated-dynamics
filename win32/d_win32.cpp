@@ -230,13 +230,14 @@ win32_shell(Driver *drv)
         sizeof(si)
     };
     PROCESS_INFORMATION pi = { 0 };
-    char *comspec = getenv("COMSPEC");
-
-    if (nullptr == comspec)
+    const char *comspec = getenv("COMSPEC");
+    if (comspec == nullptr)
     {
         comspec = "cmd.exe";
     }
-    if (CreateProcess(nullptr, comspec, nullptr, nullptr, FALSE, CREATE_NEW_CONSOLE, nullptr, nullptr, &si, &pi))
+    const std::string command_line{comspec};
+    std::vector<char> buffer{command_line.begin(), command_line.end()};
+    if (CreateProcessA(nullptr, buffer.data(), nullptr, nullptr, FALSE, CREATE_NEW_CONSOLE, nullptr, nullptr, &si, &pi))
     {
         DWORD status = WaitForSingleObject(pi.hProcess, 1000);
         while (WAIT_TIMEOUT == status)
