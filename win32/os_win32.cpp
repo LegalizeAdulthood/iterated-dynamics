@@ -528,7 +528,7 @@ static void CreateMiniDump(EXCEPTION_POINTERS *ep)
     if (!status)
     {
         char msg[100];
-        sprintf(msg, "MiniDumpWriteDump failed with %08x", GetLastError());
+        sprintf(msg, "MiniDumpWriteDump failed with %08lx", GetLastError());
         MessageBox(nullptr, msg, "Ugh", MB_OK);
     }
     else
