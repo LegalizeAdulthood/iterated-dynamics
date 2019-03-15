@@ -27,10 +27,10 @@
 #include "ods.h"
 
 // read/write-a-dot/line routines
-typedef void t_dotwriter(int, int, int);
-typedef int  t_dotreader(int, int);
-typedef void t_linewriter(int y, int x, int lastx, BYTE *pixels);
-typedef void t_linereader(int y, int x, int lastx, BYTE *pixels);
+using t_dotwriter = void(int, int, int);
+using t_dotreader = int(int, int);
+using t_linewriter = void(int y, int x, int lastx, BYTE *pixels);
+using t_linereader = void(int y, int x, int lastx, BYTE *pixels);
 
 extern HINSTANCE g_instance;
 
