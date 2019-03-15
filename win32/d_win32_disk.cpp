@@ -9,19 +9,13 @@
 #include "cmdfiles.h"
 #include "diskvid.h"
 #include "drivers.h"
-#include "fractype.h"
-#include "helpcom.h"
-#include "helpdefs.h"
 #include "id_data.h"
 #include "miscovl.h"
-#include "miscres.h"
 #include "os.h"
 #include "plot3d.h"
-#include "realdos.h"
 #include "rotate.h"
 
 #include <assert.h>
-#include <float.h>
 #include <stdio.h>
 #define WIN32_LEAN_AND_MEAN
 #define STRICT
