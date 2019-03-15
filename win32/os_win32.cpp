@@ -273,14 +273,15 @@ int fr_findfirst(char const *path)       // Find 1st file (or subdir) meeting pa
 {
     if (s_find_context != INVALID_HANDLE_VALUE)
     {
-        BOOL result = FindClose(s_find_context);
+        BOOL const result = FindClose(s_find_context);
         _ASSERTE(result);
     }
     SetLastError(0);
     s_find_context = FindFirstFile(path, &s_find_data);
     if (INVALID_HANDLE_VALUE == s_find_context)
     {
-        return GetLastError() || -1;
+        DWORD const last_error = GetLastError();
+        return last_error != 0 ? last_error : -1;
     }
 
     _ASSERTE(strlen(path) < NUM_OF(s_find_base));
