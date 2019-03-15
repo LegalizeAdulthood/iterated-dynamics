@@ -2106,6 +2106,8 @@ ConstArg *isconst(char const *Str, int Len)
         v[g_variable_index].a.l.y = 0;
         v[g_variable_index].a.l.x = v[g_variable_index].a.l.y;
         break;
+    case D_MATH:
+        break;
     }
 #endif
 
