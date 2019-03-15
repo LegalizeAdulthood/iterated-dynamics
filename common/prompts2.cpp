@@ -1733,7 +1733,7 @@ retry_dir:
     std::string const heading{std::string{hdg} + "\n"
         + "Template: " + tmpmask};
     strcpy(speedstr, filename);
-    int i;
+    int i = 0;
     if (speedstr[0] == 0)
     {
         for (i = 0; i < filecount; i++) // find first file
