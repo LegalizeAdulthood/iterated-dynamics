@@ -53,11 +53,6 @@ struct Win32DiskDriver
     unsigned char clut[256][3];
 };
 
-static t_dotwriter win32_dot_writer;
-static t_dotreader win32_dot_reader;
-static t_linewriter win32_line_writer;
-static t_linereader win32_line_reader;
-
 // VIDEOINFO:
 //         char    name[26];       Adapter name (IBM EGA, etc)
 //         char    comment[26];    Comments (UNTESTED, etc)

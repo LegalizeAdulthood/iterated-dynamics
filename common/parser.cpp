@@ -189,8 +189,6 @@ std::vector<void (*)()> f;
 std::vector<ConstArg> v;
 int g_store_index;
 int g_load_index;
-static int complx_count;
-static int real_count;
 bool g_is_mandelbrot = true;
 unsigned int g_operation_index;
 unsigned int g_variable_index;

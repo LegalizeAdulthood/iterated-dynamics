@@ -1879,11 +1879,6 @@ bool thinking(int options, char const *msg)
 
 // savegraphics/restoregraphics: video.asm subroutines
 
-static unsigned long swaptotlen;
-static unsigned long swapoffset;
-static BYTE *swapvidbuf;
-static int swaplength;
-
 #define SWAPBLKLEN 4096 // must be a power of 2
 static U16 memhandle = 0;
 

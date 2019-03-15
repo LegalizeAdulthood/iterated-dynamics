@@ -18,8 +18,6 @@
 
 #define TIMER_ID 1
 
-static int s_showing_cursor = FALSE;
-
 #if defined(RT_VERBOSE)
 static int carrot_count = 0;
 #endif
