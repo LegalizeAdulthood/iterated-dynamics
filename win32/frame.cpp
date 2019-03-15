@@ -12,7 +12,7 @@
 #include <windows.h>
 #include <windowsx.h>
 
-#include "wintext.h"
+#include "WinText.h"
 #include "frame.h"
 
 #define FRAME_TIMER_ID 2
