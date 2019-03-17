@@ -7,10 +7,10 @@
 #include "mpmath.h"
 #include "prompts2.h"
 
-#include <string.h>
 #include <sys/statvfs.h>
 
 #include <cassert>
+#include <cstring>
 #include <string>
 
 // Global variables (yuck!)
@@ -35,10 +35,10 @@ bool isadirectory(char const *s)
 {
     int len;
     char sv;
-    if (strchr(s, '*') || strchr(s, '?'))
+    if (std::strchr(s, '*') || std::strchr(s, '?'))
         return false; // for my purposes, not a directory
 
-    len = (int) strlen(s);
+    len = (int) std::strlen(s);
     if (len > 0)
         sv = s[len-1];   // last char
     else

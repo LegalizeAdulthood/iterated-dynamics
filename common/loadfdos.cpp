@@ -43,8 +43,8 @@
 #include <float.h>
 #include <math.h>
 #include <stdio.h>
-#include <string.h>
 
+#include <cstring>
 #include <sstream>
 #include <string>
 
@@ -107,7 +107,7 @@ static int vidcompare(const void *p1, const void *p2)
 static void format_vid_inf(int i, char const *err, char *buf)
 {
     char kname[5];
-    memcpy((char *)&g_video_entry, (char *)&g_video_table[i],
+    std::memcpy((char *)&g_video_entry, (char *)&g_video_table[i],
            sizeof(g_video_entry));
     vidmode_keyname(g_video_entry.keynum, kname);
     sprintf(buf, "%-5s %-25s %-4s %5d %5d %3d %-25s",  // 78 chars
@@ -152,9 +152,9 @@ std::string heading_detail(FRACTAL_INFO const *info, ext_blk_3 const *blk_3_info
             nameptr = "3D Transform";
         }
         result << "Type: " << nameptr;
-        if ((!strcmp(nameptr, "formula"))
-            || (!strcmp(nameptr, "lsystem"))
-            || (!strncmp(nameptr, "ifs", 3))) // for ifs and ifs3d
+        if ((!std::strcmp(nameptr, "formula"))
+            || (!std::strcmp(nameptr, "lsystem"))
+            || (!std::strncmp(nameptr, "ifs", 3))) // for ifs and ifs3d
         {
             result << " -> " << blk_3_info->form_name;
         }
@@ -168,7 +168,7 @@ std::string save_release_detail()
     sprintf(buff, "v%d.%01d", g_release/100, (g_release%100)/10);
     if (g_release%100)
     {
-        int i = (int) strlen(buff);
+        int i = (int) std::strlen(buff);
         buff[i] = (char)((g_release%10) + '0');
         buff[i+1] = 0;
     }
@@ -223,7 +223,7 @@ int get_video_mode(FRACTAL_INFO *info, ext_blk_3 *blk_3_info)
     // setup table entry for each vid mode, flagged for how well it matches
     for (int i = 0; i < g_video_table_len; ++i)
     {
-        memcpy((char *)&g_video_entry, (char *)&g_video_table[i],
+        std::memcpy((char *)&g_video_entry, (char *)&g_video_table[i],
                sizeof(g_video_entry));
         tmpflags = VI_EXACT;
         if (g_video_entry.keynum == 0)
@@ -297,30 +297,30 @@ int get_video_mode(FRACTAL_INFO *info, ext_blk_3 *blk_3_info)
         {
             if (g_save_system)
             {
-                strcat(heading, "WinFract ");
+                std::strcat(heading, "WinFract ");
             }
-            strcat(heading, save_release_detail().c_str());
+            std::strcat(heading, save_release_detail().c_str());
         }
-        strcat(heading, "\n");
+        std::strcat(heading, "\n");
         if (info->info_id[0] != 'G' && g_save_system == 0)
         {
             if (g_init_mode < 0)
             {
-                strcat(heading, "Saved in unknown video mode.");
+                std::strcat(heading, "Saved in unknown video mode.");
             }
             else
             {
                 char buff[80];
                 format_vid_inf(g_init_mode, "", buff);
-                strcat(heading, buff);
+                std::strcat(heading, buff);
             }
         }
         if (g_file_aspect_ratio != 0 && g_file_aspect_ratio != g_screen_aspect)
         {
-            strcat(heading,
+            std::strcat(heading,
                    "\nWARNING: non-standard aspect ratio; loading will change your <v>iew settings");
         }
-        strcat(heading, "\n");
+        std::strcat(heading, "\n");
         // set up instructions
         // cppcheck-suppress constStatement
         std::string instructions{"Select a video mode.  Use the cursor keypad to move the pointer.\n"
@@ -378,13 +378,13 @@ int get_video_mode(FRACTAL_INFO *info, ext_blk_3 *blk_3_info)
         }
         if (j == 0) // mode has no key, add to reserved slot at end
         {
-            memcpy((char *)&g_video_table[g_init_mode = MAX_VIDEO_MODES-1],
+            std::memcpy((char *)&g_video_table[g_init_mode = MAX_VIDEO_MODES-1],
                    (char *)&g_video_table[i], sizeof(*g_video_table));
         }
     }
 
     // ok, we're going to return with a video mode
-    memcpy((char *)&g_video_entry, (char *)&g_video_table[g_init_mode],
+    std::memcpy((char *)&g_video_entry, (char *)&g_video_table[g_init_mode],
            sizeof(g_video_entry));
 
     if (g_view_window
@@ -548,27 +548,27 @@ static void format_item(int choice, char *buf)
     tmpflags = vidptr[choice].flags;
     if (tmpflags & (VI_VSMALL+VI_CSMALL+VI_ASPECT))
     {
-        strcat(errbuf, "*");
+        std::strcat(errbuf, "*");
     }
     if (tmpflags & VI_VSMALL)
     {
-        strcat(errbuf, "R");
+        std::strcat(errbuf, "R");
     }
     if (tmpflags & VI_CSMALL)
     {
-        strcat(errbuf, "C");
+        std::strcat(errbuf, "C");
     }
     if (tmpflags & VI_ASPECT)
     {
-        strcat(errbuf, "A");
+        std::strcat(errbuf, "A");
     }
     if (tmpflags & VI_VBIG)
     {
-        strcat(errbuf, "v");
+        std::strcat(errbuf, "v");
     }
     if (tmpflags & VI_CBIG)
     {
-        strcat(errbuf, "c");
+        std::strcat(errbuf, "c");
     }
     format_vid_inf(vidptr[choice].entnum, errbuf, buf);
 }

@@ -19,7 +19,8 @@ fractal routines.
 #include <float.h>
 #include <limits.h>
 #include <stdio.h>
-#include <string.h>
+
+#include <cstring>
 
 bf_math_type bf_math = bf_math_type::NONE;
 
@@ -28,9 +29,9 @@ bf_math_type bf_math = bf_math_type::NONE;
 void show_var_bn(char const *s, bn_t n)
 {
     char msg[200];
-    strcpy(msg, s);
-    strcat(msg, " ");
-    bntostr(msg+strlen(s), 40, n);
+    std::strcpy(msg, s);
+    std::strcat(msg, " ");
+    bntostr(msg + std::strlen(s), 40, n);
     msg[79] = 0;
     stopmsg(STOPMSG_NONE, msg);
 }
@@ -59,24 +60,24 @@ void showcorners(char const *s)
     char msg[100], msg1[100], msg3[100];
     bntostr(msg, dec, bnxmin);
     sprintf(msg1, "bnxmin=%s\nxxmin= %.20f\n\n", msg, xxmin);
-    strcpy(msg3, s);
-    strcat(msg3, "\n");
-    strcat(msg3, msg1);
+    std::strcpy(msg3, s);
+    std::strcat(msg3, "\n");
+    std::strcat(msg3, msg1);
     bntostr(msg, dec, bnxmax);
     sprintf(msg1, "bnxmax=%s\nxxmax= %.20f\n\n", msg, xxmax);
-    strcat(msg3, msg1);
+    std::strcat(msg3, msg1);
     bntostr(msg, dec, bnymin);
     sprintf(msg1, "bnymin=%s\nyymin= %.20f\n\n", msg, yymin);
-    strcat(msg3, msg1);
+    std::strcat(msg3, msg1);
     bntostr(msg, dec, bnymax);
     sprintf(msg1, "bnymax=%s\nyymax= %.20f\n\n", msg, yymax);
-    strcat(msg3, msg1);
+    std::strcat(msg3, msg1);
     bntostr(msg, dec, bnx3rd);
     sprintf(msg1, "bnx3rd=%s\nxx3rd= %.20f\n\n", msg, xx3rd);
-    strcat(msg3, msg1);
+    std::strcat(msg3, msg1);
     bntostr(msg, dec, bny3rd);
     sprintf(msg1, "bny3rd=%s\nyy3rd= %.20f\n\n", msg, yy3rd);
-    strcat(msg3, msg1);
+    std::strcat(msg3, msg1);
     if (stopmsg(STOPMSG_NONE, msg3))
     {
         goodbye();
@@ -111,24 +112,24 @@ void showcornersbf(char const *s)
     bftostr(msg, dec, bfxmin);
     sprintf(msg1, "bfxmin=%s\nxxmin= %.20f decimals %d bflength %d\n\n",
             msg, xxmin, g_decimals, bflength);
-    strcpy(msg3, s);
-    strcat(msg3, "\n");
-    strcat(msg3, msg1);
+    std::strcpy(msg3, s);
+    std::strcat(msg3, "\n");
+    std::strcat(msg3, msg1);
     bftostr(msg, dec, bfxmax);
     sprintf(msg1, "bfxmax=%s\nxxmax= %.20f\n\n", msg, xxmax);
-    strcat(msg3, msg1);
+    std::strcat(msg3, msg1);
     bftostr(msg, dec, bfymin);
     sprintf(msg1, "bfymin=%s\nyymin= %.20f\n\n", msg, yymin);
-    strcat(msg3, msg1);
+    std::strcat(msg3, msg1);
     bftostr(msg, dec, bfymax);
     sprintf(msg1, "bfymax=%s\nyymax= %.20f\n\n", msg, yymax);
-    strcat(msg3, msg1);
+    std::strcat(msg3, msg1);
     bftostr(msg, dec, bfx3rd);
     sprintf(msg1, "bfx3rd=%s\nxx3rd= %.20f\n\n", msg, xx3rd);
-    strcat(msg3, msg1);
+    std::strcat(msg3, msg1);
     bftostr(msg, dec, bfy3rd);
     sprintf(msg1, "bfy3rd=%s\nyy3rd= %.20f\n\n", msg, yy3rd);
-    strcat(msg3, msg1);
+    std::strcat(msg3, msg1);
     if (stopmsg(STOPMSG_NONE, msg3))
     {
         goodbye();
@@ -141,24 +142,24 @@ void showcornersbfs(char const *s)
     char msg[100], msg1[100], msg3[500];
     bftostr(msg, dec, bfsxmin);
     sprintf(msg1, "bfsxmin=%s\nxxmin= %.20f\n\n", msg, xxmin);
-    strcpy(msg3, s);
-    strcat(msg3, "\n");
-    strcat(msg3, msg1);
+    std::strcpy(msg3, s);
+    std::strcat(msg3, "\n");
+    std::strcat(msg3, msg1);
     bftostr(msg, dec, bfsxmax);
     sprintf(msg1, "bfsxmax=%s\nxxmax= %.20f\n\n", msg, xxmax);
-    strcat(msg3, msg1);
+    std::strcat(msg3, msg1);
     bftostr(msg, dec, bfsymin);
     sprintf(msg1, "bfsymin=%s\nyymin= %.20f\n\n", msg, yymin);
-    strcat(msg3, msg1);
+    std::strcat(msg3, msg1);
     bftostr(msg, dec, bfsymax);
     sprintf(msg1, "bfsymax=%s\nyymax= %.20f\n\n", msg, yymax);
-    strcat(msg3, msg1);
+    std::strcat(msg3, msg1);
     bftostr(msg, dec, bfsx3rd);
     sprintf(msg1, "bfsx3rd=%s\nxx3rd= %.20f\n\n", msg, xx3rd);
-    strcat(msg3, msg1);
+    std::strcat(msg3, msg1);
     bftostr(msg, dec, bfsy3rd);
     sprintf(msg1, "bfsy3rd=%s\nyy3rd= %.20f\n\n", msg, yy3rd);
-    strcat(msg3, msg1);
+    std::strcat(msg3, msg1);
     if (stopmsg(STOPMSG_NONE, msg3))
     {
         goodbye();
@@ -244,9 +245,9 @@ void comparevaluesbf(char const *s, LDBL x, bf_t bfx)
 void show_var_bf(char const *s, bf_t n)
 {
     char msg[200];
-    strcpy(msg, s);
-    strcat(msg, " ");
-    bftostr_e(msg+strlen(s), 40, n);
+    std::strcpy(msg, s);
+    std::strcat(msg, " ");
+    bftostr_e(msg+std::strlen(s), 40, n);
     msg[79] = 0;
     if (stopmsg(STOPMSG_NONE, msg))
     {

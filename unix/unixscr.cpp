@@ -31,7 +31,6 @@
 #include <signal.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
 #include <sys/ioctl.h>
 #include <sys/time.h>
 #include <sys/types.h>
@@ -940,7 +939,7 @@ xcmapstuff()
         ipixtab[pixtab[i]] = i;
     }
     /* We must make sure if any color uses position 0, that it is 0.
-     * This is so we can clear the image with memset.
+     * This is so we can clear the image with std::memset.
      * So, suppose fractint 0 = cmap 42, cmap 0 = fractint 55.
      * Then want fractint 0 = cmap 0, cmap 42 = fractint 55.
      * I.e. pixtab[55] = 42, ipixtab[42] = 55.

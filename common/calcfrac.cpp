@@ -45,7 +45,7 @@
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
+#include <cstring>
 #include <time.h>
 
 #include <algorithm>
@@ -1238,7 +1238,7 @@ static void perform_worklist()
                 {
                     savedotslen /= 2;
                     fillbuff = &savedots[0] + savedotslen;
-                    memset(fillbuff, showdotcolor, savedotslen);
+                    std::memset(fillbuff, showdotcolor, savedotslen);
                     break;
                 }
                 // There's even less free memory than we thought, so reduce
@@ -1351,13 +1351,13 @@ static int diffusion_scan()
 // little macro that plots a filled square of color c, size s with
 // top left cornet at (x,y) with optimization from sym_fill_line
 #define plot_block(x, y, s, c) \
-    memset(dstack, (c), (s)); \
+    std::memset(dstack, (c), (s)); \
     for (int ty = (y); ty < (y)+(s); ty++) \
        sym_fill_line(ty, (x), (x)+(s)-1, dstack)
 
 // macro that does the same as above, but checks the limits in x and y
 #define plot_block_lim(x, y, s, c) \
-    memset(dstack, (c), (s)); \
+    std::memset(dstack, (c), (s)); \
     for (int ty = (y); ty < std::min((y)+(s), g_i_y_stop+1); ty++) \
        sym_fill_line(ty, (x), std::min((x)+(s)-1, g_i_x_stop), dstack)
 
@@ -3536,7 +3536,7 @@ static int bound_trace_main()
                                     if (fillcolor_used != last_fillcolor_used || length > max_putline_length)
                                     {
                                         // only reset dstack if necessary
-                                        memset(dstack, fillcolor_used, length);
+                                        std::memset(dstack, fillcolor_used, length);
                                         last_fillcolor_used = fillcolor_used;
                                         max_putline_length = length;
                                     }
@@ -3655,7 +3655,7 @@ static int solid_guess()
         if (g_i_y_start <= g_yy_start) // first time for this window, init it
         {
             g_current_row = 0;
-            memset(&tprefix[1][0][0], 0, maxxblk*maxyblk*2); // noskip flags off
+            std::memset(&tprefix[1][0][0], 0, maxxblk*maxyblk*2); // noskip flags off
             g_reset_periodicity = true;
             g_row = g_i_y_start;
             for (g_col = g_i_x_start; g_col <= g_i_x_stop; g_col += maxblock)
@@ -3671,7 +3671,7 @@ static int solid_guess()
         }
         else
         {
-            memset(&tprefix[1][0][0], -1, maxxblk*maxyblk*2); // noskip flags on
+            std::memset(&tprefix[1][0][0], -1, maxxblk*maxyblk*2); // noskip flags on
         }
         for (int y = g_i_y_start; y <= g_i_y_stop; y += blocksize)
         {
@@ -3749,7 +3749,7 @@ static int solid_guess()
     }
     else   // first pass already done
     {
-        memset(&tprefix[0][0][0], -1, maxxblk*maxyblk*2); // noskip flags on
+        std::memset(&tprefix[0][0][0], -1, maxxblk*maxyblk*2); // noskip flags on
     }
     if (g_three_pass)
     {
@@ -4691,7 +4691,7 @@ static int tesseral()
                 if (mid > curx)
                 {
                     // stack right part
-                    memcpy(++tp, tp2, sizeof(*tp));
+                    std::memcpy(++tp, tp2, sizeof(*tp));
                     tp->x2 = mid;
                 }
                 tp2->x1 = mid;
@@ -4707,7 +4707,7 @@ static int tesseral()
                 if (mid > cury)
                 {
                     // stack bottom part
-                    memcpy(++tp, tp2, sizeof(*tp));
+                    std::memcpy(++tp, tp2, sizeof(*tp));
                     tp->y2 = mid;
                 }
                 tp2->y1 = mid;
@@ -4817,7 +4817,7 @@ static int tesseral()
                 else
                 {
                     // use put_line for speed
-                    memset(&dstack[OLD_MAX_PIXELS], tp->top, j);
+                    std::memset(&dstack[OLD_MAX_PIXELS], tp->top, j);
                     for (g_row = tp->y1 + 1; g_row < tp->y2; g_row++)
                     {
                         put_line(g_row, tp->x1+1, tp->x2-1, &dstack[OLD_MAX_PIXELS]);
@@ -4873,7 +4873,7 @@ tess_split:
                     if (mid - tp->x1 > 1)
                     {
                         // left part >= 1 col, stack right
-                        memcpy(++tp, tp2, sizeof(*tp));
+                        std::memcpy(++tp, tp2, sizeof(*tp));
                         tp->x2 = mid;
                         tp->rgt = midcolor;
                     }
@@ -4909,7 +4909,7 @@ tess_split:
                     if (mid - tp->y1 > 1)
                     {
                         // top also >= 1 col, stack bottom
-                        memcpy(++tp, tp2, sizeof(*tp));
+                        std::memcpy(++tp, tp2, sizeof(*tp));
                         tp->y2 = mid;
                         tp->bot = midcolor;
                     }

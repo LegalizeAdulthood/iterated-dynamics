@@ -21,7 +21,6 @@
 #include <float.h>
 #include <signal.h>
 #include <stdio.h>
-#include <string.h>
 #include <sys/timeb.h>
 #include <time.h>
 #define WIN32_LEAN_AND_MEAN
@@ -29,6 +28,8 @@
 #include <windows.h>
 #include <shlwapi.h>
 #include <dbghelp.h>
+
+#include <cstring>
 
 #include "frame.h"
 
@@ -259,7 +260,7 @@ static void fill_dta()
     DTA.attribute = DTA_FLAG(FILE_ATTRIBUTE_DIRECTORY, SUBDIR) |
                     DTA_FLAG(FILE_ATTRIBUTE_SYSTEM, SYSTEM) |
                     DTA_FLAG(FILE_ATTRIBUTE_HIDDEN, HIDDEN);
-    strcpy(DTA.filename, s_find_data.cFileName);
+    std::strcpy(DTA.filename, s_find_data.cFileName);
 }
 #undef DTA_FLAG
 
@@ -284,10 +285,10 @@ int fr_findfirst(char const *path)       // Find 1st file (or subdir) meeting pa
         return last_error != 0 ? last_error : -1;
     }
 
-    _ASSERTE(strlen(path) < NUM_OF(s_find_base));
-    strcpy(s_find_base, path);
+    _ASSERTE(std::strlen(path) < NUM_OF(s_find_base));
+    std::strcpy(s_find_base, path);
     {
-        char *whack = strrchr(s_find_base, '\\');
+        char *whack = std::strrchr(s_find_base, '\\');
         if (whack != nullptr)
         {
             whack[1] = 0;
@@ -356,9 +357,9 @@ void spindac(int dir, int inc)
             for (int i = 0; i < inc; i++)
             {
                 unsigned char tmp[3];
-                memcpy(tmp, dacbot, 3*sizeof(unsigned char));
-                memcpy(dacbot, dacbot + 3*sizeof(unsigned char), len);
-                memcpy(dacbot + len, tmp, 3*sizeof(unsigned char));
+                std::memcpy(tmp, dacbot, 3*sizeof(unsigned char));
+                std::memcpy(dacbot, dacbot + 3*sizeof(unsigned char), len);
+                std::memcpy(dacbot + len, tmp, 3*sizeof(unsigned char));
             }
         }
         else
@@ -366,9 +367,9 @@ void spindac(int dir, int inc)
             for (int i = 0; i < inc; i++)
             {
                 unsigned char tmp[3];
-                memcpy(tmp, dacbot + len, 3*sizeof(unsigned char));
-                memcpy(dacbot + 3*sizeof(unsigned char), dacbot, len);
-                memcpy(dacbot, tmp, 3*sizeof(unsigned char));
+                std::memcpy(tmp, dacbot + len, 3*sizeof(unsigned char));
+                std::memcpy(dacbot + 3*sizeof(unsigned char), dacbot, len);
+                std::memcpy(dacbot, tmp, 3*sizeof(unsigned char));
             }
         }
     }
@@ -592,10 +593,10 @@ int expand_dirname(char *dirname, char *drive)
     if (PathIsRelative(dirname))
     {
         char relative[MAX_PATH];
-        _ASSERTE(strlen(drive) < NUM_OF(relative));
-        strcpy(relative, drive);
-        _ASSERTE(strlen(relative) + strlen(dirname) < NUM_OF(relative));
-        strcat(relative, dirname);
+        _ASSERTE(std::strlen(drive) < NUM_OF(relative));
+        std::strcpy(relative, drive);
+        _ASSERTE(std::strlen(relative) + std::strlen(dirname) < NUM_OF(relative));
+        std::strcat(relative, dirname);
         char absolute[MAX_PATH];
         BOOL status = PathSearchAndQualify(relative, absolute, NUM_OF(absolute));
         _ASSERTE(status);
@@ -604,11 +605,11 @@ int expand_dirname(char *dirname, char *drive)
             drive[0] = absolute[0];
             drive[1] = absolute[1];
             drive[2] = 0;
-            strcpy(dirname, &absolute[2]);
+            std::strcpy(dirname, &absolute[2]);
         }
         else
         {
-            strcpy(dirname, absolute);
+            std::strcpy(dirname, absolute);
         }
     }
     fix_dirname(dirname);
@@ -849,17 +850,17 @@ void findpath(char const *filename, char *fullpathname) // return full pathnames
     makepath(temp_path, "", "", fname, ext);
     if (g_check_cur_dir && _access(temp_path, 0) == 0)   // file exists
     {
-        strcpy(fullpathname, temp_path);
+        std::strcpy(fullpathname, temp_path);
         return;
     }
 
     // check for absolute path
-    strcpy(temp_path, filename);   // avoid side effect changes to filename
+    std::strcpy(temp_path, filename);   // avoid side effect changes to filename
     if (temp_path[0] == SLASHC || (temp_path[0] && temp_path[1] == ':'))
     {
         if (_access(temp_path, 0) == 0)   // file exists
         {
-            strcpy(fullpathname, temp_path);
+            std::strcpy(fullpathname, temp_path);
             return;
         }
 
@@ -871,7 +872,7 @@ void findpath(char const *filename, char *fullpathname) // return full pathnames
     makepath(temp_path, "", g_fractal_search_dir1, fname, ext);
     if (_access(temp_path, 0) == 0)
     {
-        strcpy(fullpathname, temp_path);
+        std::strcpy(fullpathname, temp_path);
         return;
     }
 
@@ -879,7 +880,7 @@ void findpath(char const *filename, char *fullpathname) // return full pathnames
     makepath(temp_path, "", g_fractal_search_dir2, fname, ext);
     if (_access(temp_path, 0) == 0)
     {
-        strcpy(fullpathname, temp_path);
+        std::strcpy(fullpathname, temp_path);
         return;
     }
 
@@ -887,14 +888,14 @@ void findpath(char const *filename, char *fullpathname) // return full pathnames
     _searchenv(temp_path, "PATH", fullpathname);
     if (fullpathname[0] != 0)                    // found it!
     {
-        if (strncmp(&fullpathname[2], SLASHSLASH, 2) == 0) // stupid klooge!
+        if (std::strncmp(&fullpathname[2], SLASHSLASH, 2) == 0) // stupid klooge!
         {
-            strcpy(&fullpathname[3], temp_path);
+            std::strcpy(&fullpathname[3], temp_path);
         }
     }
 }
 
-// case independent version of strncmp
+// case independent version of std::strncmp
 int strncasecmp(char const *s, char const *t, int ct)
 {
     for (; (tolower(*s) == tolower(*t)) && --ct ; s++, t++)

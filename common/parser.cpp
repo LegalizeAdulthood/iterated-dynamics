@@ -38,11 +38,11 @@
 #include <math.h>
 #include <stdlib.h>
 #include <stdio.h>
-#include <string.h>
 #include <time.h>
 
 #include <algorithm>
 #include <cassert>
+#include <cstring>
 #include <iterator>
 #include <string>
 
@@ -2202,7 +2202,7 @@ int isjump(char const *Str, int Len)
 {
     for (int i = 0; *JumpList[i]; i++)
     {
-        if ((int) strlen(JumpList[i]) == Len)
+        if ((int) std::strlen(JumpList[i]) == Len)
         {
             if (!strnicmp(JumpList[i], Str, Len))
             {
@@ -2316,7 +2316,7 @@ void (*isfunct(char const *Str, int Len))()
     {
         for (n = 0; n < sizeof(FnctList)/sizeof(FNCT_LIST); n++)
         {
-            if ((int) strlen(FnctList[n].s) == Len)
+            if ((int) std::strlen(FnctList[n].s) == Len)
             {
                 if (!strnicmp(FnctList[n].s, Str, Len))
                 {
@@ -2584,7 +2584,7 @@ static bool ParseStr(char const *Str, int pass)
     for (g_variable_index = 0; g_variable_index < sizeof(Constants) / sizeof(char*); g_variable_index++)
     {
         v[g_variable_index].s = Constants[g_variable_index];
-        v[g_variable_index].len = (int) strlen(Constants[g_variable_index]);
+        v[g_variable_index].len = (int) std::strlen(Constants[g_variable_index]);
     }
     cvtcentermag(&Xctr, &Yctr, &Magnification, &Xmagfactor, &Rotation, &Skew);
     const_pi = atan(1.0) * 4;
@@ -3301,7 +3301,7 @@ void getfuncinfo(token_st * tok)
 {
     for (int i = 0; i < sizeof(FnctList)/sizeof(FNCT_LIST); i++)
     {
-        if (!strcmp(FnctList[i].s, tok->token_str))
+        if (!std::strcmp(FnctList[i].s, tok->token_str))
         {
             tok->token_id = i;
             if (i >= 11 && i <= 14)
@@ -3318,7 +3318,7 @@ void getfuncinfo(token_st * tok)
 
     for (int i = 0; i < 4; i++)        //pick up flow control
     {
-        if (!strcmp(JumpList[i], tok->token_str))
+        if (!std::strcmp(JumpList[i], tok->token_str))
         {
             tok->token_type = FLOW_CONTROL;
             tok->token_id   = i + 1;
@@ -3334,7 +3334,7 @@ void getvarinfo(token_st * tok)
 {
     for (int i = 0; i < sizeof(Constants)/sizeof(char*); i++)
     {
-        if (!strcmp(Constants[i], tok->token_str))
+        if (!std::strcmp(Constants[i], tok->token_str))
         {
             tok->token_id = i;
             switch (i)
@@ -3542,10 +3542,10 @@ CASE_NUM :
             {
                 if (sign_value == -1)
                 {
-                    strcat(tok->token_str, "-");
+                    std::strcat(tok->token_str, "-");
                 }
-                strcat(tok->token_str, temp_tok.token_str);
-                strcat(tok->token_str, ",");
+                std::strcat(tok->token_str, temp_tok.token_str);
+                std::strcat(tok->token_str, ",");
                 tok->token_const.x = temp_tok.token_const.x * sign_value;
                 getting_real = false;
                 sign_value = 1;
@@ -3554,10 +3554,10 @@ CASE_NUM :
             {
                 if (sign_value == -1)
                 {
-                    strcat(tok->token_str, "-");
+                    std::strcat(tok->token_str, "-");
                 }
-                strcat(tok->token_str, temp_tok.token_str);
-                strcat(tok->token_str, ")");
+                std::strcat(tok->token_str, temp_tok.token_str);
+                std::strcat(tok->token_str, ")");
                 tok->token_const.y = temp_tok.token_const.x * sign_value;
                 tok->token_type = tok->token_const.y ? COMPLEX_CONSTANT : REAL_CONSTANT;
                 tok->token_id   = 0;
@@ -3834,7 +3834,7 @@ CASE_TERMINATOR:
         {
             for (int i = 0; i < sizeof(OPList)/sizeof(OPList[0]); i++)
             {
-                if (!strcmp(OPList[i], this_token->token_str))
+                if (!std::strcmp(OPList[i], this_token->token_str))
                 {
                     this_token->token_id = i;
                 }
@@ -4013,10 +4013,10 @@ static bool frm_check_name_and_sym(FILE * open_file, bool report_bad_sym)
     if (i > ITEM_NAME_LEN)
     {
         int j;
-        int k = (int) strlen(ParseErrs(PE_FORMULA_NAME_TOO_LARGE));
+        int k = (int) std::strlen(ParseErrs(PE_FORMULA_NAME_TOO_LARGE));
         char msgbuf[100];
-        strcpy(msgbuf, ParseErrs(PE_FORMULA_NAME_TOO_LARGE));
-        strcat(msgbuf, ":\n   ");
+        std::strcpy(msgbuf, ParseErrs(PE_FORMULA_NAME_TOO_LARGE));
+        std::strcat(msgbuf, ":\n   ");
         fseek(open_file, filepos, SEEK_SET);
         for (j = 0; j < i && j < 25; j++)
         {
@@ -4419,7 +4419,7 @@ void frm_error(FILE * open_file, long begin_frm)
     int statement_len, line_number;
     char msgbuf[900];
     long filepos;
-    strcpy(msgbuf, "\n");
+    std::strcpy(msgbuf, "\n");
 
     for (int j = 0; j < 3 && errors[j].start_pos; j++)
     {
@@ -4441,8 +4441,8 @@ void frm_error(FILE * open_file, long begin_frm)
                 return;
             }
         }
-        sprintf(&msgbuf[(int) strlen(msgbuf)], "Error(%d) at line %d:  %s\n  ", errors[j].error_number, line_number, ParseErrs(errors[j].error_number));
-        int i = (int) strlen(msgbuf);
+        sprintf(&msgbuf[(int) std::strlen(msgbuf)], "Error(%d) at line %d:  %s\n  ", errors[j].error_number, line_number, ParseErrs(errors[j].error_number));
+        int i = (int) std::strlen(msgbuf);
         fseek(open_file, errors[j].start_pos, SEEK_SET);
         token_count = 0;
         statement_len = token_count;
@@ -4454,14 +4454,14 @@ void frm_error(FILE * open_file, long begin_frm)
             {
                 chars_to_error = statement_len;
                 frmgettoken(open_file, &tok);
-                chars_in_error = (int) strlen(tok.token_str);
+                chars_in_error = (int) std::strlen(tok.token_str);
                 statement_len += chars_in_error;
                 token_count++;
             }
             else
             {
                 frmgettoken(open_file, &tok);
-                statement_len += (int) strlen(tok.token_str);
+                statement_len += (int) std::strlen(tok.token_str);
                 token_count++;
             }
             if ((tok.token_type == END_OF_FORMULA)
@@ -4481,7 +4481,7 @@ void frm_error(FILE * open_file, long begin_frm)
             while (chars_to_error + chars_in_error > 74)
             {
                 frmgettoken(open_file, &tok);
-                chars_to_error -= (int) strlen(tok.token_str);
+                chars_to_error -= (int) std::strlen(tok.token_str);
                 token_count--;
             }
         }
@@ -4491,32 +4491,32 @@ void frm_error(FILE * open_file, long begin_frm)
             chars_to_error = 0;
             token_count = 1;
         }
-        while ((int) strlen(&msgbuf[i]) <=74 && token_count--)
+        while ((int) std::strlen(&msgbuf[i]) <=74 && token_count--)
         {
             frmgettoken(open_file, &tok);
-            strcat(msgbuf, tok.token_str);
+            std::strcat(msgbuf, tok.token_str);
         }
         fseek(open_file, errors[j].error_pos, SEEK_SET);
         frmgettoken(open_file, &tok);
-        if ((int) strlen(&msgbuf[i]) > 74)
+        if ((int) std::strlen(&msgbuf[i]) > 74)
         {
             msgbuf[i + 74] = (char) 0;
         }
-        strcat(msgbuf, "\n");
-        i = (int) strlen(msgbuf);
+        std::strcat(msgbuf, "\n");
+        i = (int) std::strlen(msgbuf);
         while (chars_to_error-- > -2)
         {
-            strcat(msgbuf, " ");
+            std::strcat(msgbuf, " ");
         }
         if (errors[j].error_number == PE_TOKEN_TOO_LONG)
         {
             chars_in_error = 33;
         }
-        while (chars_in_error-- && (int) strlen(&msgbuf[i]) <=74)
+        while (chars_in_error-- && (int) std::strlen(&msgbuf[i]) <=74)
         {
-            strcat(msgbuf, "^");
+            std::strcat(msgbuf, "^");
         }
-        strcat(msgbuf, "\n");
+        std::strcat(msgbuf, "\n");
     }
     stopmsg(STOPMSG_FIXED_FONT, msgbuf);
     return;
@@ -4566,7 +4566,7 @@ bool frm_prescan(FILE * open_file)
     {
         filepos = ftell(open_file);
         frmgettoken(open_file, &this_token);
-        chars_in_formula += (int) strlen(this_token.token_str);
+        chars_in_formula += (int) std::strlen(this_token.token_str);
         switch (this_token.token_type)
         {
         case NOT_A_TOKEN:

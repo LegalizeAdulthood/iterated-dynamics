@@ -11,7 +11,8 @@
 
 #include <float.h>
 #include <math.h>
-#include <string.h>
+
+#include <cstring>
 
 #ifdef max
 #undef max
@@ -605,7 +606,7 @@ lsysf_cmd *LSysFSizeTransform(char const *s, lsys_turtlestatef *ts)
                 ts->stackoflow = true;
                 return nullptr;
             }
-            memcpy(doub, ret, max*sizeof(lsysf_cmd));
+            std::memcpy(doub, ret, max*sizeof(lsysf_cmd));
             free(ret);
             ret = doub;
             max <<= 1;
@@ -624,7 +625,7 @@ lsysf_cmd *LSysFSizeTransform(char const *s, lsys_turtlestatef *ts)
         ts->stackoflow = true;
         return nullptr;
     }
-    memcpy(doub, ret, n*sizeof(lsysf_cmd));
+    std::memcpy(doub, ret, n*sizeof(lsysf_cmd));
     free(ret);
     return doub;
 }
@@ -728,7 +729,7 @@ lsysf_cmd *LSysFDrawTransform(char const *s, lsys_turtlestatef *ts)
                 ts->stackoflow = true;
                 return nullptr;
             }
-            memcpy(doub, ret, max*sizeof(lsysf_cmd));
+            std::memcpy(doub, ret, max*sizeof(lsysf_cmd));
             free(ret);
             ret = doub;
             max <<= 1;
@@ -747,7 +748,7 @@ lsysf_cmd *LSysFDrawTransform(char const *s, lsys_turtlestatef *ts)
         ts->stackoflow = true;
         return nullptr;
     }
-    memcpy(doub, ret, n*sizeof(lsysf_cmd));
+    std::memcpy(doub, ret, n*sizeof(lsysf_cmd));
     free(ret);
     return doub;
 }

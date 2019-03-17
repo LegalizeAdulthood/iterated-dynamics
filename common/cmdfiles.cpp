@@ -37,12 +37,12 @@
 #include <float.h>
 #include <math.h>
 #include <stdlib.h>
-#include <string.h>
 #include <time.h>
 #include <stdio.h>
 
 #include <algorithm>
 #include <cassert>
+#include <cstring>
 #include <string>
 #include <system_error>
 #include <vector>
@@ -274,7 +274,7 @@ void process_sstools_ini()
 void process_simple_command(char *curarg)
 {
     bool processed = false;
-    if (strchr(curarg, '=') == nullptr)
+    if (std::strchr(curarg, '=') == nullptr)
     {
         // not xxx=yyy, so check for gif
         std::string filename = curarg;
@@ -352,7 +352,7 @@ int cmdfiles(int argc, char const *const *argv)
     for (int i = 1; i < argc; i++)
     {
         char curarg[141];
-        strcpy(curarg, argv[i]);
+        std::strcpy(curarg, argv[i]);
         if (curarg[0] == ';')             // start of comments?
         {
             break;
@@ -362,7 +362,7 @@ int cmdfiles(int argc, char const *const *argv)
             process_simple_command(curarg);
         }
         // @filename/setname?
-        else if (char *sptr = strchr(curarg, '/'))
+        else if (char *sptr = std::strchr(curarg, '/'))
         {
             process_file_setname(curarg, sptr);
         }
@@ -390,10 +390,10 @@ int cmdfiles(int argc, char const *const *argv)
     g_read_color = !(g_colors_preloaded && g_show_file == 0);
 
     //set structure of search directories
-    strcpy(g_search_for.par, g_command_file.c_str());
-    strcpy(g_search_for.frm, g_formula_filename.c_str());
-    strcpy(g_search_for.lsys, g_l_system_filename.c_str());
-    strcpy(g_search_for.ifs, g_ifs_filename.c_str());
+    std::strcpy(g_search_for.par, g_command_file.c_str());
+    std::strcpy(g_search_for.frm, g_formula_filename.c_str());
+    std::strcpy(g_search_for.lsys, g_l_system_filename.c_str());
+    std::strcpy(g_search_for.ifs, g_ifs_filename.c_str());
     return 0;
 }
 
@@ -669,7 +669,7 @@ static int cmdfile(FILE *handle, cmd_file mode)
     linebuf[0] = 0;
     while (next_command(cmdbuf, 10000, handle, linebuf, &lineoffset, mode) > 0)
     {
-        if ((mode == cmd_file::AT_AFTER_STARTUP || mode == cmd_file::AT_CMD_LINE_SET_NAME) && strcmp(cmdbuf, "}") == 0)
+        if ((mode == cmd_file::AT_AFTER_STARTUP || mode == cmd_file::AT_CMD_LINE_SET_NAME) && std::strcmp(cmdbuf, "}") == 0)
         {
             break;
         }
@@ -728,7 +728,7 @@ static int next_command(
                     }
                     if (*lineptr)
                     {
-                        if ((int)strlen(lineptr) >= MAX_COMMENT_LEN)
+                        if ((int)std::strlen(lineptr) >= MAX_COMMENT_LEN)
                         {
                             *(lineptr+MAX_COMMENT_LEN-1) = 0;
                         }
@@ -781,15 +781,15 @@ static bool next_line(FILE *handle, char *linebuf, cmd_file mode)
         {
             char tmpbuf[11];
 #ifndef XFRACT
-            strncpy(tmpbuf, &linebuf[1], 9);
+            std::strncpy(tmpbuf, &linebuf[1], 9);
             tmpbuf[9] = 0;
             strlwr(tmpbuf);
-            tools_section = strncmp(tmpbuf, "fractint]", 9) == 0;
+            tools_section = std::strncmp(tmpbuf, "fractint]", 9) == 0;
 #else
-            strncpy(tmpbuf, &linebuf[1], 10);
+            std::strncpy(tmpbuf, &linebuf[1], 10);
             tmpbuf[10] = 0;
             strlwr(tmpbuf);
-            tools_section = strncmp(tmpbuf, "xfractint]", 10) == 0;
+            tools_section = std::strncmp(tmpbuf, "xfractint]", 10) == 0;
 #endif
             continue;                              // skip tools section heading
         }
@@ -814,7 +814,7 @@ static void lowerize_command(char *curarg)
         else if (*argptr == '=')
         {
             // don't convert colors=value or comment=value
-            if ((strncmp(curarg, "colors=", 7) == 0) || (strncmp(curarg, "comment", 7) == 0))
+            if ((std::strncmp(curarg, "colors=", 7) == 0) || (std::strncmp(curarg, "comment", 7) == 0))
             {
                 break;
             }
@@ -862,14 +862,14 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
     lowerize_command(curarg);
 
     int j;
-    char *value = strchr(&curarg[1], '=');
+    char *value = std::strchr(&curarg[1], '=');
     if (value != nullptr)
     {
         j = (int)(value++ - curarg);
     }
     else
     {
-        j = (int) strlen(curarg);
+        j = (int) std::strlen(curarg);
         value = curarg + j;
     }
     if (j > 20)
@@ -878,7 +878,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         return CMDARG_ERROR;
     }
     std::string const variable(curarg, j);
-    valuelen = (int) strlen(value);            // note value's length
+    valuelen = (int) std::strlen(value);            // note value's length
     charval[0] = value[0];               // first letter of value
     yesnoval[0] = -1;                    // note yes|no value
     if (charval[0] == 'n')
@@ -899,10 +899,10 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
     {
         long ll;
         lastarg = 0;
-        argptr2 = strchr(argptr, '/');
+        argptr2 = std::strchr(argptr, '/');
         if (argptr2 == nullptr)     // find next '/'
         {
-            argptr2 = argptr + strlen(argptr);
+            argptr2 = argptr + std::strlen(argptr);
             *argptr2 = '/';
             lastarg = 1;
         }
@@ -977,7 +977,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
             }
         }
         // using arbitrary precision and above failed
-        else if (((int) strlen(argptr) > 513)  // very long command
+        else if (((int) std::strlen(argptr) > 513)  // very long command
             || (totparms > 0 && floatval[totparms-1] == FLT_MAX && totparms < 6)
             || isabigfloat(argptr))
         {
@@ -1033,9 +1033,9 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         if (variable == "adapter")    // adapter==?
         {
             // adapter parameter no longer used; check for bad argument anyway
-            if ((strcmp(value, "egamono") != 0) && (strcmp(value, "hgc") != 0)
-                && (strcmp(value, "ega") != 0) && (strcmp(value, "cga") != 0)
-                && (strcmp(value, "mcga") != 0) && (strcmp(value, "vga") != 0))
+            if ((std::strcmp(value, "egamono") != 0) && (std::strcmp(value, "hgc") != 0)
+                && (std::strcmp(value, "ega") != 0) && (std::strcmp(value, "cga") != 0)
+                && (std::strcmp(value, "mcga") != 0) && (std::strcmp(value, "vga") != 0))
             {
                 goto badarg;
             }
@@ -1086,7 +1086,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
 
         if (variable == "fpu")
         {
-            if (strcmp(value, "387") == 0)
+            if (std::strcmp(value, "387") == 0)
             {
                 return CMDARG_NONE;
             }
@@ -1116,7 +1116,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
             {
                 goto badarg;
             }
-            slash = strchr(value, '/');
+            slash = std::strchr(value, '/');
             if (slash != nullptr)
             {
                 *slash = 0;
@@ -1124,7 +1124,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
             }
 
             g_command_file = value;
-            if (strchr(g_command_file.c_str(), '.') == nullptr)
+            if (std::strchr(g_command_file.c_str(), '.') == nullptr)
             {
                 g_command_file += ".par";
             }
@@ -1399,11 +1399,11 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
 
     if (variable == "autokey")       // autokey=?
     {
-        if (strcmp(value, "record") == 0)
+        if (std::strcmp(value, "record") == 0)
         {
             g_slides = slides_mode::RECORD;
         }
-        else if (strcmp(value, "play") == 0)
+        else if (std::strcmp(value, "play") == 0)
         {
             g_slides = slides_mode::PLAY;
         }
@@ -1435,14 +1435,14 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
             value[--valuelen] = 0;
         }
         // kludge because type ifs3d has an asterisk in front
-        if (strcmp(value, "ifs3d") == 0)
+        if (std::strcmp(value, "ifs3d") == 0)
         {
             value[3] = 0;
         }
         int k;
         for (k = 0; g_fractal_specific[k].name != nullptr; k++)
         {
-            if (strcmp(value, g_fractal_specific[k].name) == 0)
+            if (std::strcmp(value, g_fractal_specific[k].name) == 0)
             {
                 break;
             }
@@ -1490,7 +1490,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         };
         for (auto &arg : args)
         {
-            if (strcmp(value, arg.arg) == 0)
+            if (std::strcmp(value, arg.arg) == 0)
             {
                 g_inside_color = arg.inside;
                 return CMDARG_FRACTAL_PARAM;
@@ -1515,7 +1515,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
 
     if (variable == "fillcolor")       // fillcolor
     {
-        if (strcmp(value, "normal") == 0)
+        if (std::strcmp(value, "normal") == 0)
         {
             g_fill_color = -1;
         }
@@ -1559,7 +1559,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
             {
                 goto badarg;
             }
-            value = strchr(value, '/');
+            value = std::strchr(value, '/');
             if (value == nullptr)
             {
                 break;
@@ -1590,7 +1590,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         };
         for (auto &arg : args)
         {
-            if (strcmp(value, arg.arg) == 0)
+            if (std::strcmp(value, arg.arg) == 0)
             {
                 g_outside_color = arg.outside;
                 return CMDARG_FRACTAL_PARAM;
@@ -1871,7 +1871,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
                 g_potential_params[k] = atoi(value);
             }
             k++;
-            value = strchr(value, '/');
+            value = std::strchr(value, '/');
             if (value == nullptr)
             {
                 k = 99;
@@ -1881,7 +1881,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         g_potential_16bit = false;
         if (k < 99)
         {
-            if (strcmp(value, "16bit"))
+            if (std::strcmp(value, "16bit"))
             {
                 goto badarg;
             }
@@ -1968,7 +1968,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
 
     if (variable == "initorbit")     // initorbit=?,?
     {
-        if (strcmp(value, "pixel") == 0)
+        if (std::strcmp(value, "pixel") == 0)
         {
             g_use_init_orbit = init_orbit_mode::pixel;
         }
@@ -2517,31 +2517,31 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
     if (variable == "bailoutest")
     {
         // bailoutest=?
-        if (strcmp(value, "mod") == 0)
+        if (std::strcmp(value, "mod") == 0)
         {
             g_bail_out_test = bailouts::Mod;
         }
-        else if (strcmp(value, "real") == 0)
+        else if (std::strcmp(value, "real") == 0)
         {
             g_bail_out_test = bailouts::Real;
         }
-        else if (strcmp(value, "imag") == 0)
+        else if (std::strcmp(value, "imag") == 0)
         {
             g_bail_out_test = bailouts::Imag;
         }
-        else if (strcmp(value, "or") == 0)
+        else if (std::strcmp(value, "or") == 0)
         {
             g_bail_out_test = bailouts::Or;
         }
-        else if (strcmp(value, "and") == 0)
+        else if (std::strcmp(value, "and") == 0)
         {
             g_bail_out_test = bailouts::And;
         }
-        else if (strcmp(value, "manh") == 0)
+        else if (std::strcmp(value, "manh") == 0)
         {
             g_bail_out_test = bailouts::Manh;
         }
-        else if (strcmp(value, "manr") == 0)
+        else if (std::strcmp(value, "manr") == 0)
         {
             g_bail_out_test = bailouts::Manr;
         }
@@ -2556,27 +2556,27 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
     if (variable == "symmetry")
     {
         // symmetry=?
-        if (strcmp(value, "xaxis") == 0)
+        if (std::strcmp(value, "xaxis") == 0)
         {
             g_force_symmetry = symmetry_type::X_AXIS;
         }
-        else if (strcmp(value, "yaxis") == 0)
+        else if (std::strcmp(value, "yaxis") == 0)
         {
             g_force_symmetry = symmetry_type::Y_AXIS;
         }
-        else if (strcmp(value, "xyaxis") == 0)
+        else if (std::strcmp(value, "xyaxis") == 0)
         {
             g_force_symmetry = symmetry_type::XY_AXIS;
         }
-        else if (strcmp(value, "origin") == 0)
+        else if (std::strcmp(value, "origin") == 0)
         {
             g_force_symmetry = symmetry_type::ORIGIN;
         }
-        else if (strcmp(value, "pi") == 0)
+        else if (std::strcmp(value, "pi") == 0)
         {
             g_force_symmetry = symmetry_type::PI_SYM;
         }
-        else if (strcmp(value, "none") == 0)
+        else if (std::strcmp(value, "none") == 0)
         {
             g_force_symmetry = symmetry_type::NONE;
         }
@@ -2628,7 +2628,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         {
             g_sound_flag &= ~SOUNDFLAG_ORBITMASK;
         }
-        else if ((strncmp(value, "ye", 2) == 0) || (charval[0] == 'b'))
+        else if ((std::strncmp(value, "ye", 2) == 0) || (charval[0] == 'b'))
         {
             g_sound_flag |= SOUNDFLAG_BEEP;
         }
@@ -2636,7 +2636,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         {
             g_sound_flag |= SOUNDFLAG_X;
         }
-        else if (charval[0] == 'y' && strncmp(value, "ye", 2) != 0)
+        else if (charval[0] == 'y' && std::strncmp(value, "ye", 2) != 0)
         {
             g_sound_flag |= SOUNDFLAG_Y;
         }
@@ -2915,7 +2915,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
             g_auto_show_dot = (char)0;
             if (isalpha(charval[0]))
             {
-                if (strchr("abdm", (int)charval[0]) != nullptr)
+                if (std::strchr("abdm", (int)charval[0]) != nullptr)
                 {
                     g_auto_show_dot = charval[0];
                 }
@@ -3193,7 +3193,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
     if (variable == "3d")
     {
         // 3d=?/?/..
-        if (strcmp(value, "overlay") == 0)
+        if (std::strcmp(value, "overlay") == 0)
         {
             yesnoval[0] = 1;
             if (g_calc_status > calc_status_value::NO_FRACTAL)   // if no image, treat same as 3D=yes
@@ -3569,7 +3569,7 @@ badarg:
 static void parse_textcolors(char const *value)
 {
     int hexval;
-    if (strcmp(value, "mono") == 0)
+    if (std::strcmp(value, "mono") == 0)
     {
         for (auto & elem : g_text_color)
         {
@@ -3611,7 +3611,7 @@ static void parse_textcolors(char const *value)
                     j = 15;
                 }
                 g_text_color[k] = (BYTE)(i * 16 + j);
-                value = strchr(value, '/');
+                value = std::strchr(value, '/');
                 if (value == nullptr)
                 {
                     break;
@@ -3631,7 +3631,7 @@ static int parse_colors(char const *value)
         {
             init_msg("", &value[1], cmd_file::AT_CMD_LINE_SET_NAME);
         }
-        if ((int)strlen(value) > FILE_MAX_PATH || ValidateLuts(g_map_name.c_str()))
+        if ((int)std::strlen(value) > FILE_MAX_PATH || ValidateLuts(g_map_name.c_str()))
         {
             goto badcolor;
         }
@@ -3663,7 +3663,7 @@ static int parse_colors(char const *value)
                 if (i == 0
                     || smooth
                     || (smooth = atoi(value+1)) < 2
-                    || (value = strchr(value, '>')) == nullptr)
+                    || (value = std::strchr(value, '>')) == nullptr)
                 {
                     goto badcolor;
                 }
@@ -3744,7 +3744,7 @@ static int parse_colors(char const *value)
         g_color_state = 1;
     }
     g_colors_preloaded = true;
-    memcpy(g_old_dac_box, g_dac_box, 256*3);
+    std::memcpy(g_old_dac_box, g_dac_box, 256*3);
     return CMDARG_NONE;
 badcolor:
     return -1;
@@ -3753,7 +3753,7 @@ badcolor:
 static void argerror(char const *badarg)      // oops. couldn't decode this
 {
     std::string spillover;
-    if ((int) strlen(badarg) > 70)
+    if ((int) std::strlen(badarg) > 70)
     {
         spillover = std::string(&badarg[0], &badarg[70]);
         badarg = spillover.c_str();
@@ -3823,7 +3823,7 @@ void set_3d_defaults()
 static int get_bf(bf_t bf, char const *curarg)
 {
     char const *s;
-    s = strchr(curarg, '/');
+    s = std::strchr(curarg, '/');
     if (s)
     {
         std::string buff(curarg, s);
@@ -3840,14 +3840,14 @@ static int get_bf(bf_t bf, char const *curarg)
 int get_curarg_len(char const *curarg)
 {
     char const *s;
-    s = strchr(curarg, '/');
+    s = std::strchr(curarg, '/');
     if (s)
     {
         return s - curarg;
     }
 
 
-    return strlen(curarg);
+    return std::strlen(curarg);
 
 }
 
@@ -3888,12 +3888,12 @@ int init_msg(char const *cmdstr, char const *badfilename, cmd_file mode)
         }
     }
     char cmd[80];
-    strncpy(cmd, cmdstr, 30);
+    std::strncpy(cmd, cmdstr, 30);
     cmd[29] = 0;
 
     if (*cmd)
     {
-        strcat(cmd, "=");
+        std::strcat(cmd, "=");
     }
     std::string msg;
     if (badfilename)

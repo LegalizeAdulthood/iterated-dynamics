@@ -16,9 +16,9 @@
 
 #include <float.h>
 #include <stdlib.h>
-#include <string.h>
 
 #include <algorithm>
+#include <cstring>
 #include <vector>
 
 #define PARMBOX 128

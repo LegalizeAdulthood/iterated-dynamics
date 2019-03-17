@@ -16,9 +16,9 @@
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
 
 #include <cassert>
+#include <cstring>
 #include <string>
 #include <vector>
 
@@ -107,7 +107,7 @@ LDBL getnumber(char const **str)
         break;
     }
     char numstr[30];
-    strcpy(numstr, "");
+    std::strcpy(numstr, "");
     int i = 0;
     while ((**str <= '9' && **str >= '0') || **str == '.')
     {
@@ -164,33 +164,33 @@ bool readLSystemFile(char const *str)
     while (file_gets(inline1, MAX_LSYS_LINE_LEN, infile) > -1)  // Max line length chars
     {
         linenum++;
-        char *word = strchr(inline1, ';');
+        char *word = std::strchr(inline1, ';');
         if (word != nullptr)   // strip comment
         {
             *word = 0;
         }
         strlwr(inline1);
 
-        if ((int)strspn(inline1, " \t\n") < (int)strlen(inline1)) // not a blank line
+        if ((int)std::strspn(inline1, " \t\n") < (int)std::strlen(inline1)) // not a blank line
         {
             bool check = false;
-            word = strtok(inline1, " =\t\n");
-            if (!strcmp(word, "axiom"))
+            word = std::strtok(inline1, " =\t\n");
+            if (!std::strcmp(word, "axiom"))
             {
-                if (save_axiom(strtok(nullptr, " \t\n")))
+                if (save_axiom(std::strtok(nullptr, " \t\n")))
                 {
-                    strcat(msgbuf, "Error:  out of memory\n");
+                    std::strcat(msgbuf, "Error:  out of memory\n");
                     ++err;
                     break;
                 }
                 check = true;
             }
-            else if (!strcmp(word, "angle"))
+            else if (!std::strcmp(word, "angle"))
             {
-                maxangle = (char)atoi(strtok(nullptr, " \t\n"));
+                maxangle = (char)atoi(std::strtok(nullptr, " \t\n"));
                 check = true;
             }
-            else if (!strcmp(word, "}"))
+            else if (!std::strcmp(word, "}"))
             {
                 break;
             }
@@ -198,22 +198,22 @@ bool readLSystemFile(char const *str)
             {
                 bool memerr = false;
 
-                if (strchr("+-/\\@|!c<>][", *word))
+                if (std::strchr("+-/\\@|!c<>][", *word))
                 {
-                    sprintf(&msgbuf[strlen(msgbuf)],
+                    sprintf(&msgbuf[std::strlen(msgbuf)],
                             "Syntax error line %d: Redefined reserved symbol %s\n", linenum, word);
                     ++err;
                     break;
                 }
-                char const *temp = strtok(nullptr, " =\t\n");
+                char const *temp = std::strtok(nullptr, " =\t\n");
                 int const index = rule_present(*word);
                 char fixed[MAX_LSYS_LINE_LEN+1];
                 if (!index)
                 {
-                    strcpy(fixed, word);
+                    std::strcpy(fixed, word);
                     if (temp)
                     {
-                        strcat(fixed, temp);
+                        std::strcat(fixed, temp);
                     }
                     memerr = save_rule(fixed, rulind++);
                 }
@@ -223,7 +223,7 @@ bool readLSystemFile(char const *str)
                 }
                 if (memerr)
                 {
-                    strcat(msgbuf, "Error:  out of memory\n");
+                    std::strcat(msgbuf, "Error:  out of memory\n");
                     ++err;
                     break;
                 }
@@ -231,18 +231,18 @@ bool readLSystemFile(char const *str)
             }
             else if (err < 6)
             {
-                sprintf(&msgbuf[strlen(msgbuf)],
+                sprintf(&msgbuf[std::strlen(msgbuf)],
                         "Syntax error line %d: %s\n", linenum, word);
                 ++err;
             }
             if (check)
             {
-                word = strtok(nullptr, " \t\n");
+                word = std::strtok(nullptr, " \t\n");
                 if (word != nullptr)
                 {
                     if (err < 6)
                     {
-                        sprintf(&msgbuf[strlen(msgbuf)],
+                        sprintf(&msgbuf[std::strlen(msgbuf)],
                                 "Extra text after command line %d: %s\n", linenum, word);
                         ++err;
                     }
@@ -253,17 +253,17 @@ bool readLSystemFile(char const *str)
     fclose(infile);
     if (axiom.empty() && err < 6)
     {
-        strcat(msgbuf, "Error:  no axiom\n");
+        std::strcat(msgbuf, "Error:  no axiom\n");
         ++err;
     }
     if ((maxangle < 3||maxangle > 50) && err < 6)
     {
-        strcat(msgbuf, "Error:  illegal or missing angle\n");
+        std::strcat(msgbuf, "Error:  illegal or missing angle\n");
         ++err;
     }
     if (err)
     {
-        msgbuf[strlen(msgbuf)-1] = 0; // strip trailing \n
+        msgbuf[std::strlen(msgbuf)-1] = 0; // strip trailing \n
         stopmsg(STOPMSG_NONE, msgbuf);
         return true;
     }
@@ -1042,7 +1042,7 @@ lsys_cmd *LSysISizeTransform(char const *s, lsys_turtlestatei *ts)
                 ts->stackoflow = true;
                 return nullptr;
             }
-            memcpy(doub, ret, maxval*sizeof(lsys_cmd));
+            std::memcpy(doub, ret, maxval*sizeof(lsys_cmd));
             free(ret);
             ret = doub;
             maxval <<= 1;
@@ -1061,7 +1061,7 @@ lsys_cmd *LSysISizeTransform(char const *s, lsys_turtlestatei *ts)
         ts->stackoflow = true;
         return nullptr;
     }
-    memcpy(doub, ret, n*sizeof(lsys_cmd));
+    std::memcpy(doub, ret, n*sizeof(lsys_cmd));
     free(ret);
     return doub;
 }
@@ -1157,7 +1157,7 @@ lsys_cmd *LSysIDrawTransform(char const *s, lsys_turtlestatei *ts)
                 ts->stackoflow = true;
                 return nullptr;
             }
-            memcpy(doub, ret, maxval*sizeof(lsys_cmd));
+            std::memcpy(doub, ret, maxval*sizeof(lsys_cmd));
             free(ret);
             ret = doub;
             maxval <<= 1;
@@ -1176,7 +1176,7 @@ lsys_cmd *LSysIDrawTransform(char const *s, lsys_turtlestatei *ts)
         ts->stackoflow = true;
         return nullptr;
     }
-    memcpy(doub, ret, n*sizeof(lsys_cmd));
+    std::memcpy(doub, ret, n*sizeof(lsys_cmd));
     free(ret);
     return doub;
 }

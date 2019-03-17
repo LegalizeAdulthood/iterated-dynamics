@@ -17,8 +17,8 @@
 #include "realdos.h"
 
 #include <float.h>
-#include <string.h>
 
+#include <cstring>
 #include <vector>
 
 #define BOXROW   6
@@ -383,7 +383,7 @@ int FromMemDisk(long offset, int size, void *dest)
     {
         findload_cache(offset & (0L-BLOCKLEN));
     }
-    memcpy(dest, (void *) &cur_cache->pixel[col_subscr], size);
+    std::memcpy(dest, (void *) &cur_cache->pixel[col_subscr], size);
     cur_cache->dirty = false;
     return 1;
 }
@@ -453,7 +453,7 @@ bool ToMemDisk(long offset, int size, void *src)
         findload_cache(offset & (0L-BLOCKLEN));
     }
 
-    memcpy((void *) &cur_cache->pixel[col_subscr], src, size);
+    std::memcpy((void *) &cur_cache->pixel[col_subscr], src, size);
     cur_cache->dirty = true;
     return true;
 }
@@ -517,7 +517,7 @@ static void findload_cache(long offset) // used by read/write
     if (offset > high_offset)  // never been this high before, just clear it
     {
         high_offset = offset;
-        memset(pixelptr, 0, BLOCKLEN);
+        std::memset(pixelptr, 0, BLOCKLEN);
     }
     else
     {
@@ -738,8 +738,8 @@ void dvid_status(int line, char const *msg)
 {
     char buf[41];
     int attrib;
-    memset(buf, ' ', 40);
-    memcpy(buf, msg, (int) strlen(msg));
+    std::memset(buf, ' ', 40);
+    std::memcpy(buf, msg, (int) std::strlen(msg));
     buf[40] = 0;
     attrib = C_DVID_HI;
     if (line >= 100)

@@ -17,7 +17,7 @@ is in the allocations of memory for the big numbers.
 
 #include <float.h>
 #include <stdio.h>
-#include <string.h>
+#include <cstring>
 
 // globals
 int bnstep = 0;
@@ -375,14 +375,14 @@ static void init_bf_2()
     // good citizens initialize variables
     if (g_bf_save_len > 0)    // leave save area
     {
-        memset(bnroot+(g_bf_save_len+2)*22, 0, (unsigned)(startstack-(g_bf_save_len+2)*22));
+        std::memset(bnroot+(g_bf_save_len+2)*22, 0, (unsigned)(startstack-(g_bf_save_len+2)*22));
     }
     else   // first time through - nothing saved
     {
         // high variables
-        memset(bnroot+maxstack, 0, (bflength+2)*22);
+        std::memset(bnroot+maxstack, 0, (bflength+2)*22);
         // low variables
-        memset(bnroot, 0, (unsigned)startstack);
+        std::memset(bnroot, 0, (unsigned)startstack);
     }
 
     restore_bf_vars();
@@ -399,9 +399,9 @@ static int save_bf_vars()
     {
         unsigned int mem = (bflength+2)*22;  // 6 corners + 6 save corners + 10 params
         g_bf_save_len = bflength;
-        memcpy(bnroot, g_bf_x_min, mem);
+        std::memcpy(bnroot, g_bf_x_min, mem);
         // scrub old high area
-        memset(g_bf_x_min, 0, mem);
+        std::memset(g_bf_x_min, 0, mem);
         ret = 0;
     }
     else
@@ -452,7 +452,7 @@ static int restore_bf_vars()
     convert_bf(g_bf_save_y_3rd, ptr, bflength, g_bf_save_len);
 
     // scrub save area
-    memset(bnroot, 0, (g_bf_save_len+2)*22);
+    std::memset(bnroot, 0, (g_bf_save_len+2)*22);
     return 0;
 }
 
@@ -668,7 +668,7 @@ void init_big_pi()
 
     length = bflength+2; // 2 byte exp
     pi_offset = sizeof pi_table - length;
-    memcpy(big_pi, pi_table + pi_offset, length);
+    std::memcpy(big_pi, pi_table + pi_offset, length);
 
     // notice that bf_pi and bn_pi can share the same memory space
     bf_pi = big_pi;

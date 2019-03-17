@@ -27,7 +27,6 @@
 #include <ctype.h>
 #include <math.h>
 #include <stdarg.h>
-#include <string.h>
 #include <time.h>
 #if defined(XFRACT)
 #include <unistd.h>
@@ -35,6 +34,7 @@
 
 #include <algorithm>
 #include <cassert>
+#include <cstring>
 #include <string>
 
 static void trigdetails(char *buf);
@@ -61,7 +61,7 @@ static bool putstringwrap(int *row, int col1, int col2, int color, char *str, in
     int length, decpt, padding, startrow;
     bool done = false;
     startrow = *row;
-    length = (int) strlen(str);
+    length = (int) std::strlen(str);
     padding = 3; // space between col1 and decimal.
     // find decimal point
     for (decpt = 0; decpt < length; decpt++)
@@ -505,7 +505,7 @@ void updatesavename(char *filename) // go to the next file name
 
     splitpath(filename , drive, dir, fname, ext);
 
-    hold = fname + strlen(fname) - 1; // start at the end
+    hold = fname + std::strlen(fname) - 1; // start at the end
     while (hold >= fname && (*hold == ' ' || isdigit(*hold)))   // skip backwards
     {
         hold--;
@@ -541,7 +541,7 @@ void updatesavename(char *filename) // go to the next file name
 void updatesavename(std::string &filename)
 {
     char buff[FILE_MAX_PATH];
-    strncpy(buff, filename.c_str(), FILE_MAX_PATH);
+    std::strncpy(buff, filename.c_str(), FILE_MAX_PATH);
     updatesavename(buff);
     filename = buff;
 }
@@ -553,18 +553,18 @@ int check_writefile(char *name, char const *ext)
     char opentype[20];
     char const *period;
 nextname:
-    strcpy(openfile, name);
-    strcpy(opentype, ext);
+    std::strcpy(openfile, name);
+    std::strcpy(opentype, ext);
     period = has_ext(openfile);
     if (period != nullptr)
     {
-        strcpy(opentype, period);
+        std::strcpy(opentype, period);
         openfile[period - openfile] = 0;
     }
-    strcat(openfile, opentype);
+    std::strcat(openfile, opentype);
     if (access(openfile, 0) != 0) // file doesn't exist
     {
-        strcpy(name, openfile);
+        std::strcpy(name, openfile);
         return 0;
     }
     // file already exists
@@ -579,7 +579,7 @@ nextname:
 int check_writefile(std::string &name, char const *ext)
 {
     char buff[FILE_MAX_PATH];
-    strcpy(buff, name.c_str());
+    std::strcpy(buff, name.c_str());
     int const result = check_writefile(buff, ext);
     name = buff;
     return result;
@@ -636,12 +636,12 @@ static void trigdetails(char *buf)
     *buf = 0; // null string if none
     if (numfn > 0)
     {
-        strcpy(buf, g_trig_fn[static_cast<int>(g_trig_index[0])].name);
+        std::strcpy(buf, g_trig_fn[static_cast<int>(g_trig_index[0])].name);
         int i = 0;
         while (++i < numfn)
         {
             sprintf(tmpbuf, "/%s", g_trig_fn[static_cast<int>(g_trig_index[i])].name);
-            strcat(buf, tmpbuf);
+            std::strcat(buf, tmpbuf);
         }
     }
 }
@@ -651,10 +651,10 @@ int set_trig_array(int k, char const *name)
 {
     char trigname[10];
     char *slash;
-    strncpy(trigname, name, 6);
+    std::strncpy(trigname, name, 6);
     trigname[6] = 0; // safety first
 
-    slash = strchr(trigname, '/');
+    slash = std::strchr(trigname, '/');
     if (slash != nullptr)
     {
         *slash = 0;
@@ -664,7 +664,7 @@ int set_trig_array(int k, char const *name)
 
     for (int i = 0; i < g_num_trig_functions; i++)
     {
-        if (strcmp(trigname, g_trig_fn[i].name) == 0)
+        if (std::strcmp(trigname, g_trig_fn[i].name) == 0)
         {
             g_trig_index[k] = static_cast<trig_fn>(i);
             set_trig_pointers(k);
@@ -730,7 +730,7 @@ void get_calculation_time(char *msg, long ctime)
     }
     else
     {
-        strcpy(msg, "A long time! (> 24.855 days)");
+        std::strcpy(msg, "A long time! (> 24.855 days)");
     }
 }
 
@@ -1354,7 +1354,7 @@ static void area()
 int endswithslash(char const *fl)
 {
     int len;
-    len = (int) strlen(fl);
+    len = (int) std::strlen(fl);
     if (len)
     {
         if (fl[--len] == SLASHC)
@@ -1378,12 +1378,12 @@ char *get_ifs_token(char *buf, FILE *ifsfile)
         }
         else
         {
-            bufptr = strchr(buf, ';');
+            bufptr = std::strchr(buf, ';');
             if (bufptr != nullptr)   // use ';' as comment to eol
             {
                 *bufptr = 0;
             }
-            bufptr = strtok(buf, seps);
+            bufptr = std::strtok(buf, seps);
             if (bufptr != nullptr)
             {
                 return bufptr;
@@ -1414,7 +1414,7 @@ int ifsload()                   // read in IFS parameters
     }
 
     file_gets(buf, 200, ifsfile);
-    bufptr = strchr(buf, ';');
+    bufptr = std::strchr(buf, ';');
     if (bufptr != nullptr)   // use ';' as comment to eol
     {
         *bufptr = 0;
@@ -1424,7 +1424,7 @@ int ifsload()                   // read in IFS parameters
     bufptr = &buf[0];
     while (*bufptr)
     {
-        if (strncmp(bufptr, "(3d)", 4) == 0)
+        if (std::strncmp(bufptr, "(3d)", 4) == 0)
         {
             g_ifs_type = true;
             rowsize = NUM_IFS_3D_PARAMS;
@@ -1449,7 +1449,7 @@ int ifsload()                   // read in IFS parameters
             ret = -1;
             break;
         }
-        bufptr = strtok(nullptr, seps);
+        bufptr = std::strtok(nullptr, seps);
         if (bufptr == nullptr)
         {
             bufptr = get_ifs_token(buf, ifsfile);
@@ -1527,7 +1527,7 @@ bool find_file_item(char *filename, char const *itemname, FILE **fileptr, int it
             {
                 if (scan_entries(infile, nullptr, itemname) == -1)
                 {
-                    strcpy(filename, fullpath);
+                    std::strcpy(filename, fullpath);
                     found = true;
                 }
                 else
@@ -1542,30 +1542,30 @@ bool find_file_item(char *filename, char const *itemname, FILE **fileptr, int it
     switch (itemtype)
     {
     case 1:
-        strcpy(parsearchname, "frm:");
-        strcat(parsearchname, itemname);
+        std::strcpy(parsearchname, "frm:");
+        std::strcat(parsearchname, itemname);
         parsearchname[ITEM_NAME_LEN + 5] = (char) 0; //safety
-        strcpy(defaultextension, ".frm");
+        std::strcpy(defaultextension, ".frm");
         splitpath(g_search_for.frm, drive, dir, nullptr, nullptr);
         break;
     case 2:
-        strcpy(parsearchname, "lsys:");
-        strcat(parsearchname, itemname);
+        std::strcpy(parsearchname, "lsys:");
+        std::strcat(parsearchname, itemname);
         parsearchname[ITEM_NAME_LEN + 5] = (char) 0; //safety
-        strcpy(defaultextension, ".l");
+        std::strcpy(defaultextension, ".l");
         splitpath(g_search_for.lsys, drive, dir, nullptr, nullptr);
         break;
     case 3:
-        strcpy(parsearchname, "ifs:");
-        strcat(parsearchname, itemname);
+        std::strcpy(parsearchname, "ifs:");
+        std::strcat(parsearchname, itemname);
         parsearchname[ITEM_NAME_LEN + 5] = (char) 0; //safety
-        strcpy(defaultextension, ".ifs");
+        std::strcpy(defaultextension, ".ifs");
         splitpath(g_search_for.ifs, drive, dir, nullptr, nullptr);
         break;
     default:
-        strcpy(parsearchname, itemname);
+        std::strcpy(parsearchname, itemname);
         parsearchname[ITEM_NAME_LEN + 5] = (char) 0; //safety
-        strcpy(defaultextension, ".par");
+        std::strcpy(defaultextension, ".par");
         splitpath(g_search_for.par, drive, dir, nullptr, nullptr);
         break;
     }
@@ -1577,7 +1577,7 @@ bool find_file_item(char *filename, char const *itemname, FILE **fileptr, int it
         {
             if (scan_entries(infile, nullptr, parsearchname) == -1)
             {
-                strcpy(filename, g_command_file.c_str());
+                std::strcpy(filename, g_command_file.c_str());
                 found = true;
             }
             else
@@ -1596,7 +1596,7 @@ bool find_file_item(char *filename, char const *itemname, FILE **fileptr, int it
         {
             if (scan_entries(infile, nullptr, itemname) == -1)
             {
-                strcpy(filename, fullpath);
+                std::strcpy(filename, fullpath);
                 found = true;
             }
             else
@@ -1620,8 +1620,8 @@ bool find_file_item(char *filename, char const *itemname, FILE **fileptr, int it
             sprintf(msg, "Searching %13s for %s      ", DTA.filename, itemname);
             showtempmsg(msg);
             if (!(DTA.attribute & SUBDIR)
-                && strcmp(DTA.filename, ".")
-                && strcmp(DTA.filename, ".."))
+                && std::strcmp(DTA.filename, ".")
+                && std::strcmp(DTA.filename, ".."))
             {
                 splitpath(DTA.filename, nullptr, nullptr, fname, ext);
                 makepath(fullpath, drive, dir, fname, ext);
@@ -1630,7 +1630,7 @@ bool find_file_item(char *filename, char const *itemname, FILE **fileptr, int it
                 {
                     if (scan_entries(infile, nullptr, itemname) == -1)
                     {
-                        strcpy(filename, fullpath);
+                        std::strcpy(filename, fullpath);
                         found = true;
                         break;
                     }
@@ -1660,22 +1660,22 @@ bool find_file_item(char *filename, char const *itemname, FILE **fileptr, int it
             }
             else if (isdigit(itemname[4]))
             {
-                strcat(fname, "rc");
+                std::strcat(fname, "rc");
                 fname[3] = itemname[4];
                 fname[4] = (char) 0;
             }
             else
             {
-                strcat(fname, "rc");
+                std::strcat(fname, "rc");
             }
         }
         else if (isdigit(itemname[0]))
         {
-            strcat(fname, "num");
+            std::strcat(fname, "num");
         }
         else
         {
-            strcat(fname, "chr");
+            std::strcat(fname, "chr");
         }
         makepath(fullpath, drive, dir, fname, defaultextension);
         infile = fopen(fullpath, "rb");
@@ -1683,7 +1683,7 @@ bool find_file_item(char *filename, char const *itemname, FILE **fileptr, int it
         {
             if (scan_entries(infile, nullptr, itemname) == -1)
             {
-                strcpy(filename, fullpath);
+                std::strcpy(filename, fullpath);
                 found = true;
             }
             else
@@ -1716,7 +1716,7 @@ bool find_file_item(std::string &filename, char const *itemname, FILE **fileptr,
 {
     char buf[FILE_MAX_PATH];
     assert(filename.size() < FILE_MAX_PATH);
-    strncpy(buf, filename.c_str(), FILE_MAX_PATH);
+    std::strncpy(buf, filename.c_str(), FILE_MAX_PATH);
     buf[FILE_MAX_PATH - 1] = 0;
     bool const result = find_file_item(buf, itemname, fileptr, itemtype);
     filename = buf;

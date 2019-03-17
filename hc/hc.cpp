@@ -23,8 +23,9 @@
 #include <fcntl.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
 #include <sys/types.h>
+
+#include <cstring>
 
 #include "port.h"
 #include "helpcom.h"
@@ -743,7 +744,7 @@ int find_topic_title(char const *title)
         ++title;
     }
 
-    int len = (int) strlen(title) - 1;
+    int len = (int) std::strlen(title) - 1;
     while (title[len] == ' ' && len > 0)
     {
         --len;
@@ -815,7 +816,7 @@ char *read_until(char *buff, int len, char const *stop_chars)
 
         *buff++ = ch;
 
-        if ((ch&0x100) == 0 && strchr(stop_chars, ch) != nullptr)
+        if ((ch&0x100) == 0 && std::strchr(stop_chars, ch) != nullptr)
         {
             break;
         }
@@ -837,7 +838,7 @@ void skip_over(char const *skip)
         {
             break;
         }
-        if ((ch&0x100) == 0 && strchr(skip, ch) == nullptr)
+        if ((ch&0x100) == 0 && std::strchr(skip, ch) == nullptr)
         {
             unread_char(ch);
             break;
@@ -893,7 +894,7 @@ bool get_next_item()
     char *ptr = read_until(cmd, 128, ",}");
     bool last = (*ptr == '}');
     --ptr;
-    while (ptr >= cmd && strchr(" \t\n", *ptr))     // strip trailing spaces
+    while (ptr >= cmd && std::strchr(" \t\n", *ptr))     // strip trailing spaces
     {
         --ptr;
     }
@@ -932,7 +933,7 @@ void process_doc_contents(modes mode)
 {
     TOPIC t;
     t.flags     = 0;
-    t.title_len = (unsigned) strlen(DOCCONTENTS_TITLE)+1;
+    t.title_len = (unsigned) std::strlen(DOCCONTENTS_TITLE)+1;
     t.title     = DOCCONTENTS_TITLE;
     t.doc_page  = -1;
     t.num_page  = 0;
@@ -981,9 +982,9 @@ void process_doc_contents(modes mode)
             if (cmd[0] == '\"')
             {
                 char *ptr = &cmd[1];
-                if (ptr[(int) strlen(ptr)-1] == '\"')
+                if (ptr[(int) std::strlen(ptr)-1] == '\"')
                 {
-                    ptr[(int) strlen(ptr)-1] = '\0';
+                    ptr[(int) std::strlen(ptr)-1] = '\0';
                 }
                 else
                 {
@@ -1004,14 +1005,14 @@ void process_doc_contents(modes mode)
             if (mode == modes::HTML)
             {
                 sprintf(curr, "%s", rst_name(c.name).c_str());
-                char *ptr = curr + (int) strlen(curr);
+                char *ptr = curr + (int) std::strlen(curr);
                 c.page_num_pos = 0U;
                 curr = ptr;
             }
             else
             {
                 sprintf(curr, "%-5s %*.0s%s", c.id.c_str(), indent*2, "", c.name.c_str());
-                char *ptr = curr + (int) strlen(curr);
+                char *ptr = curr + (int) std::strlen(curr);
                 while ((ptr-curr) < PAGE_WIDTH-10)
                 {
                     *ptr++ = '.';
@@ -1036,9 +1037,9 @@ void process_doc_contents(modes mode)
                 if (cmd[0] == '\"')
                 {
                     char *ptr = &cmd[1];
-                    if (ptr[(int) strlen(ptr)-1] == '\"')
+                    if (ptr[(int) std::strlen(ptr)-1] == '\"')
                     {
-                        ptr[(int) strlen(ptr)-1] = '\0';
+                        ptr[(int) std::strlen(ptr)-1] = '\0';
                     }
                     else
                     {
@@ -1115,7 +1116,7 @@ int parse_link()   // returns length of link or 0 on error
 
     if (cmd[0] == '=')   // it's an "explicit" link to a label or "special"
     {
-        ptr = strchr(cmd, ' ');
+        ptr = std::strchr(cmd, ' ');
 
         if (ptr == nullptr)
         {
@@ -1138,7 +1139,7 @@ int parse_link()   // returns length of link or 0 on error
         else
         {
             l.type = link_types::LT_LABEL;
-            if ((int)strlen(cmd) > 32)
+            if ((int)std::strlen(cmd) > 32)
             {
                 warn(err_off, "Label is long.");
             }
@@ -1177,7 +1178,7 @@ int parse_link()   // returns length of link or 0 on error
         *curr++ = CMD_LINK;
         setint(curr, lnum);
         curr += 3*sizeof(int);
-        memcpy(curr, ptr, len);
+        std::memcpy(curr, ptr, len);
         curr += len;
         *curr++ = CMD_LINK;
         return len;
@@ -1205,7 +1206,7 @@ int create_table()
     std::vector<std::string> title;
     char  *table_start;
 
-    ptr = strchr(cmd, '=');
+    ptr = std::strchr(cmd, '=');
 
     if (ptr == nullptr)
     {
@@ -1341,7 +1342,7 @@ int create_table()
             *curr++ = CMD_LINK;
             setint(curr, first_link+lnum);
             curr += 3*sizeof(int);
-            memcpy(curr, title[lnum].c_str(), len);
+            std::memcpy(curr, title[lnum].c_str(), len);
             curr += len;
             *curr++ = CMD_LINK;
 
@@ -1530,7 +1531,7 @@ enum class STATES   // states for FSM's
 
 void check_command_length(int eoff, int len)
 {
-    if ((int) strlen(cmd) != len)
+    if ((int) std::strlen(cmd) != len)
     {
         error(eoff, "Invalid text after a command \"%s\"", cmd+len);
     }
@@ -1685,7 +1686,7 @@ void read_src(std::string const &fname, modes mode)
                     }
 
                     char const *topic_title = &cmd[6];
-                    size_t const title_len = strlen(topic_title);
+                    size_t const title_len = std::strlen(topic_title);
                     if (title_len == 0)
                     {
                         warn(eoff, "Topic has no title.");
@@ -1753,7 +1754,7 @@ void read_src(std::string const &fname, modes mode)
                     start_topic(&t, "", 0);
                     t.flags |= TF_DATA;
 
-                    if ((int)strlen(data) > 32)
+                    if ((int)std::strlen(data) > 32)
                     {
                         warn(eoff, "Label name is long.");
                     }
@@ -2020,7 +2021,7 @@ void read_src(std::string const &fname, modes mode)
                 else if (strnicmp(cmd, "Label=", 6) == 0)
                 {
                     char const *label_name = &cmd[6];
-                    if ((int)strlen(label_name) <= 0)
+                    if ((int)std::strlen(label_name) <= 0)
                     {
                         error(eoff, "Label has no name.");
                     }
@@ -2034,7 +2035,7 @@ void read_src(std::string const &fname, modes mode)
                     }
                     else
                     {
-                        if ((int)strlen(label_name) > 32)
+                        if ((int)std::strlen(label_name) > 32)
                         {
                             warn(eoff, "Label name is long.");
                         }
@@ -3087,9 +3088,9 @@ void set_content_doc_page()
     {
         assert(c.doc_page >= 1);
         sprintf(buf, "%d", c.doc_page);
-        len = (int) strlen(buf);
+        len = (int) std::strlen(buf);
         assert(len <= 3);
-        memcpy(base + c.page_num_pos + (3 - len), buf, len);
+        std::memcpy(base + c.page_num_pos + (3 - len), buf, len);
     }
 
     release_topic_text(t, 1);
@@ -3233,18 +3234,18 @@ int fcmp_LABEL(void const *a, void const *b)
     char const *bn = static_cast<LABEL const *>(b)->name.c_str();
 
     // compare the names, making sure that the index goes first
-    int const diff = strcmp(an, bn);
+    int const diff = std::strcmp(an, bn);
     if (diff == 0)
     {
         return 0;
     }
 
-    if (strcmp(an, INDEX_LABEL) == 0)
+    if (std::strcmp(an, INDEX_LABEL) == 0)
     {
         return -1;
     }
 
-    if (strcmp(bn, INDEX_LABEL) == 0)
+    if (std::strcmp(bn, INDEX_LABEL) == 0)
     {
         return 1;
     }

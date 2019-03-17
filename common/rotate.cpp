@@ -18,8 +18,9 @@
 
 #include <float.h>
 #include <stdio.h>
-#include <string.h>
 #include <time.h>
+
+#include <cstring>
 
 static void pauserotate();
 static void set_palette(BYTE start[3], BYTE finish[3]);
@@ -389,7 +390,7 @@ void rotate(int direction)      // rotate-the-palette routine
             more = false;                   // time to bail out
             break;
         case FIK_HOME:                     // restore palette
-            memcpy(g_dac_box, g_old_dac_box, 256*3);
+            std::memcpy(g_dac_box, g_old_dac_box, 256*3);
             pauserotate();              // pause
             break;
         default:                       // maybe a new palette
@@ -610,7 +611,7 @@ void save_palette()
     char palname[FILE_MAX_PATH];
     FILE *dacfile;
     int i;
-    strcpy(palname, g_map_name.c_str());
+    std::strcpy(palname, g_map_name.c_str());
     help_labels const old_help_mode = g_help_mode;
     driver_stack_screen();
     char filename[256] = { 0 };
@@ -619,9 +620,9 @@ void save_palette()
     driver_unstack_screen();
     if (i != -1 && filename[0])
     {
-        if (strchr(filename, '.') == nullptr)
+        if (std::strchr(filename, '.') == nullptr)
         {
-            strcat(filename, ".map");
+            std::strcat(filename, ".map");
         }
         merge_pathnames(palname, filename, cmd_file::AT_AFTER_STARTUP);
         dacfile = fopen(palname, "w");
@@ -642,7 +643,7 @@ void save_palette()
                         g_dac_box[i][1] << 2,
                         g_dac_box[i][2] << 2);
             }
-            memcpy(g_old_dac_box, g_dac_box, 256*3);
+            std::memcpy(g_old_dac_box, g_dac_box, 256*3);
             g_color_state = 2;
             g_color_file = filename;
         }
@@ -656,7 +657,7 @@ bool load_palette()
 {
     char filename[FILE_MAX_PATH];
     help_labels const old_help_mode = g_help_mode;
-    strcpy(filename, g_map_name.c_str());
+    std::strcpy(filename, g_map_name.c_str());
     driver_stack_screen();
     g_help_mode = help_labels::HELPCOLORMAP;
     bool i = getafilename("Select a MAP File", mapmask, filename);
@@ -665,7 +666,7 @@ bool load_palette()
     {
         if (!ValidateLuts(filename))
         {
-            memcpy(g_old_dac_box, g_dac_box, 256*3);
+            std::memcpy(g_old_dac_box, g_dac_box, 256*3);
         }
         merge_pathnames(g_map_name, filename, cmd_file::AT_CMD_LINE);
     }

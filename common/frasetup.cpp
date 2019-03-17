@@ -17,7 +17,8 @@
 #include "mpmath_c.h"
 
 #include <math.h>
-#include <string.h>
+
+#include <cstring>
 
 #if !defined(XFRACT)
 #define MPCmod(m) (*pMPadd(*pMPmul((m).x, (m).x), *pMPmul((m).y, (m).y)))

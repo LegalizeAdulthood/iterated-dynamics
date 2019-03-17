@@ -35,9 +35,9 @@
 #include "zoom.h"
 
 #include <stdio.h>
-#include <string.h>
 #include <time.h>
 
+#include <cstring>
 #include <string>
 #include <vector>
 
@@ -192,7 +192,7 @@ main_state big_while_loop(bool *const kbdmore, bool *const stacked, bool const r
 
         if (g_calc_status != calc_status_value::RESUMABLE || g_show_file == 0)
         {
-            memcpy((char *)&g_video_entry, (char *)&g_video_table[g_adapter],
+            std::memcpy((char *)&g_video_entry, (char *)&g_video_table[g_adapter],
                    sizeof(g_video_entry));
             g_dot_mode = g_video_entry.dotmode;     // assembler dot read/write
             g_logical_screen_x_dots   = g_video_entry.xdots;       // # dots across the screen
@@ -205,7 +205,7 @@ main_state big_while_loop(bool *const kbdmore, bool *const stacked, bool const r
             g_logical_screen_x_offset = 0;
             g_color_cycle_range_hi = (g_color_cycle_range_hi < g_colors) ? g_color_cycle_range_hi : g_colors - 1;
 
-            memcpy(g_old_dac_box, g_dac_box, 256*3); // save the DAC
+            std::memcpy(g_old_dac_box, g_dac_box, 256*3); // save the DAC
 
             if (g_overlay_3d && (g_init_batch == batch_modes::NONE))
             {
@@ -260,7 +260,7 @@ main_state big_while_loop(bool *const kbdmore, bool *const stacked, bool const r
 
             if (g_save_dac || g_colors_preloaded)
             {
-                memcpy(g_dac_box, g_old_dac_box, 256*3); // restore the DAC
+                std::memcpy(g_dac_box, g_old_dac_box, 256*3); // restore the DAC
                 spindac(0, 1);
                 g_colors_preloaded = false;
             }
@@ -1413,9 +1413,9 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
     case '+':                    // rotate palette
     case '-':                    // rotate palette
         clear_zoombox();
-        memcpy(g_old_dac_box, g_dac_box, 256 * 3);
+        std::memcpy(g_old_dac_box, g_dac_box, 256 * 3);
         rotate((*kbdchar == 'c') ? 0 : ((*kbdchar == '+') ? 1 : -1));
-        if (memcmp(g_old_dac_box, g_dac_box, 256 * 3))
+        if (std::memcmp(g_old_dac_box, g_dac_box, 256 * 3))
         {
             g_color_state = 1;
             save_history_info();
@@ -1440,11 +1440,11 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
         if (g_dac_box[0][0] != 255 && g_colors >= 16 && !driver_diskp())
         {
             help_labels const old_help_mode = g_help_mode;
-            memcpy(g_old_dac_box, g_dac_box, 256 * 3);
+            std::memcpy(g_old_dac_box, g_dac_box, 256 * 3);
             g_help_mode = help_labels::HELPXHAIR;
             EditPalette();
             g_help_mode = old_help_mode;
-            if (memcmp(g_old_dac_box, g_dac_box, 256 * 3))
+            if (std::memcmp(g_old_dac_box, g_dac_box, 256 * 3))
             {
                 g_color_state = 1;
                 save_history_info();
@@ -1860,9 +1860,9 @@ static main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdm
     case '+':                    // rotate palette
     case '-':                    // rotate palette
         clear_zoombox();
-        memcpy(g_old_dac_box, g_dac_box, 256 * 3);
+        std::memcpy(g_old_dac_box, g_dac_box, 256 * 3);
         rotate((*kbdchar == 'c') ? 0 : ((*kbdchar == '+') ? 1 : -1));
-        if (memcmp(g_old_dac_box, g_dac_box, 256 * 3))
+        if (std::memcmp(g_old_dac_box, g_dac_box, 256 * 3))
         {
             g_color_state = 1;
             save_history_info();
@@ -1887,11 +1887,11 @@ static main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdm
         if (g_dac_box[0][0] != 255 && g_colors >= 16 && !driver_diskp())
         {
             help_labels const old_help_mode = g_help_mode;
-            memcpy(g_old_dac_box, g_dac_box, 256 * 3);
+            std::memcpy(g_old_dac_box, g_dac_box, 256 * 3);
             g_help_mode = help_labels::HELPXHAIR;
             EditPalette();
             g_help_mode = old_help_mode;
-            if (memcmp(g_old_dac_box, g_dac_box, 256 * 3))
+            if (std::memcmp(g_old_dac_box, g_dac_box, 256 * 3))
             {
                 g_color_state = 1;
                 save_history_info();
@@ -2617,22 +2617,22 @@ static void save_history_info()
     current.orbit_corner_3_y = g_orbit_corner_3_y;
     current.keep_screen_coords = g_keep_screen_coords;
     current.draw_mode = g_draw_mode;
-    memcpy(current.dac_box, g_dac_box, 256*3);
+    std::memcpy(current.dac_box, g_dac_box, 256*3);
     switch (g_fractal_type)
     {
     case fractal_type::FORMULA:
     case fractal_type::FFORMULA:
-        strncpy(current.filename, g_formula_filename.c_str(), FILE_MAX_PATH);
-        strncpy(current.file_item_name, g_formula_name.c_str(), ITEM_NAME_LEN+1);
+        std::strncpy(current.filename, g_formula_filename.c_str(), FILE_MAX_PATH);
+        std::strncpy(current.file_item_name, g_formula_name.c_str(), ITEM_NAME_LEN+1);
         break;
     case fractal_type::IFS:
     case fractal_type::IFS3D:
-        strncpy(current.filename, g_ifs_filename.c_str(), FILE_MAX_PATH);
-        strncpy(current.file_item_name, g_ifs_name.c_str(), ITEM_NAME_LEN+1);
+        std::strncpy(current.filename, g_ifs_filename.c_str(), FILE_MAX_PATH);
+        std::strncpy(current.file_item_name, g_ifs_name.c_str(), ITEM_NAME_LEN+1);
         break;
     case fractal_type::LSYSTEM:
-        strncpy(current.filename, g_l_system_filename.c_str(), FILE_MAX_PATH);
-        strncpy(current.file_item_name, g_l_system_name.c_str(), ITEM_NAME_LEN+1);
+        std::strncpy(current.filename, g_l_system_filename.c_str(), FILE_MAX_PATH);
+        std::strncpy(current.file_item_name, g_l_system_name.c_str(), ITEM_NAME_LEN+1);
         break;
     default:
         *(current.filename) = 0;
@@ -2653,7 +2653,7 @@ static void save_history_info()
     {
         historyflag = false;            // coming from user history command, don't save
     }
-    else if (memcmp(&current, &last, sizeof(HISTORY)))
+    else if (std::memcmp(&current, &last, sizeof(HISTORY)))
     {
         if (++saveptr >= g_max_image_history)    // back to beginning of circular buffer
         {
@@ -2811,8 +2811,8 @@ static void restore_history_info(int i)
     }
     g_draw_mode = last.draw_mode;
     g_user_float_flag = g_cur_fractal_specific->isinteger == 0;
-    memcpy(g_dac_box, last.dac_box, 256*3);
-    memcpy(g_old_dac_box, last.dac_box, 256*3);
+    std::memcpy(g_dac_box, last.dac_box, 256*3);
+    std::memcpy(g_old_dac_box, last.dac_box, 256*3);
     if (g_map_specified)
     {
         for (int i = 0; i < 256; ++i)

@@ -32,13 +32,13 @@
 #include <signal.h>
 #include <stdarg.h>
 #include <stdio.h>
-#include <string.h>
 #include <time.h>
 #if defined(XFRACT)
 #include <unistd.h>
 #endif
 
 #include <cassert>
+#include <cstring>
 #include <vector>
 
 VIDEOINFO g_video_entry;
@@ -163,7 +163,7 @@ void check_samename()
     char ext[FILE_MAX_EXT];
     char path[FILE_MAX_PATH];
     splitpath(g_save_filename.c_str(), drive, dir, fname, ext);
-    if (strcmp(fname, "fract001"))
+    if (std::strcmp(fname, "fract001"))
     {
         makepath(path, drive, dir, fname, "gif");
         if (access(path, 0) == 0)
@@ -236,7 +236,7 @@ static void main_restart(int const argc, char const *const argv[], bool &stacked
         check_samename();
     }
     driver_window();
-    memcpy(g_old_dac_box, g_dac_box, 256*3);      // save in case colors= present
+    std::memcpy(g_old_dac_box, g_dac_box, 256*3);      // save in case colors= present
 
     driver_set_for_text();                      // switch to text mode
     g_save_dac = 0;                         // don't save the VGA DAC
@@ -277,7 +277,7 @@ static bool main_restore_start(bool &stacked, bool &resumeflag)
 
     if (g_colors_preloaded)
     {
-        memcpy(g_dac_box, g_old_dac_box, 256*3);   // restore in case colors= present
+        std::memcpy(g_dac_box, g_old_dac_box, 256*3);   // restore in case colors= present
     }
 
     g_look_at_mouse = 0;                     // ignore mouse
@@ -459,7 +459,7 @@ static main_state main_image_start(bool &stacked, bool &resumeflag)
             }
             if (g_colors_preloaded)
             {
-                memcpy(g_old_dac_box, g_dac_box, 256*3); // save in case colors= present
+                std::memcpy(g_old_dac_box, g_dac_box, 256*3); // save in case colors= present
             }
             driver_set_for_text(); // switch to text mode
             g_show_file = -1;

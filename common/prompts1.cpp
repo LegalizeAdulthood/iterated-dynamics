@@ -35,7 +35,6 @@
 #include <ctype.h>
 #include <float.h>
 #include <stdlib.h>
-#include <string.h>
 #ifdef   XFRACT
 #include <sys/stat.h>
 #include <sys/types.h>
@@ -47,6 +46,7 @@
 #endif
 
 #include <cassert>
+#include <cstring>
 #include <string>
 
 static int prompt_checkkey(int curkey);
@@ -125,7 +125,7 @@ int fullscreen_prompt(      // full-screen prompting routine
     old_look_at_mouse = g_look_at_mouse;
     g_look_at_mouse = 0;
     promptfkeys = fkeymask;
-    memset(blanks, ' ', 77);   // initialize string of blanks
+    std::memset(blanks, ' ', 77);   // initialize string of blanks
     blanks[77] = (char) 0;
 
     /* If applicable, open file for scrolling extrainfo. The function
@@ -262,7 +262,7 @@ int fullscreen_prompt(      // full-screen prompting routine
     if (in_scrolling_mode && scroll_row_status == 0
         && lines_in_entry == extralines - 2
         && scroll_column_status == 0
-        && strchr(extrainfo, '\021') == nullptr)
+        && std::strchr(extrainfo, '\021') == nullptr)
     {
         in_scrolling_mode = false;
         fclose(scroll_file);
@@ -335,7 +335,7 @@ int fullscreen_prompt(      // full-screen prompting routine
             values[i].uval.ch.list = noyes;
             values[i].uval.ch.llen = 2;
         }
-        int j = (int) strlen(prompts[i]);
+        int j = (int) std::strlen(prompts[i]);
         if (values[i].type == '*')
         {
             if (j > maxcomment)
@@ -410,16 +410,16 @@ int fullscreen_prompt(      // full-screen prompting routine
         char buffer[256], *hdgline = buffer;
         // center each line of heading independently
         int i;
-        strcpy(hdgline, hdg);
+        std::strcpy(hdgline, hdg);
         for (i = 0; i < titlelines-1; i++)
         {
-            char *next = strchr(hdgline, '\n');
+            char *next = std::strchr(hdgline, '\n');
             if (next == nullptr)
             {
                 break; // shouldn't happen
             }
             *next = '\0';
-            titlewidth = (int) strlen(hdgline);
+            titlewidth = (int) std::strlen(hdgline);
             g_text_cbase = boxcol + (boxwidth - titlewidth) / 2;
             driver_put_string(titlerow+i, 0, C_PROMPT_HI, hdgline);
             *next = '\n';
@@ -429,10 +429,10 @@ int fullscreen_prompt(      // full-screen prompting routine
         if (in_scrolling_mode)
         {
             *(hdgline + 31) = (char) 0;   // replace the ')'
-            strcat(hdgline, ". CTRL+(direction key) to scroll text.)");
+            std::strcat(hdgline, ". CTRL+(direction key) to scroll text.)");
         }
 
-        titlewidth = (int) strlen(hdgline);
+        titlewidth = (int) std::strlen(hdgline);
         g_text_cbase = boxcol + (boxwidth - titlewidth) / 2;
         driver_put_string(titlerow+i, 0, C_PROMPT_HI, hdgline);
     }
@@ -455,7 +455,7 @@ int fullscreen_prompt(      // full-screen prompting routine
 #define S5 "+" // ul corner
 #define S6 "+" // ur corner
 #endif
-        memset(buf, S1, 80);
+        std::memset(buf, S1, 80);
         buf[boxwidth-2] = 0;
         g_text_cbase = boxcol + 1;
         driver_put_string(extrarow, 0, C_PROMPT_BKGRD, buf);
@@ -553,7 +553,7 @@ int fullscreen_prompt(      // full-screen prompting routine
                 }
                 break;
             case FIK_CTL_RIGHT_ARROW:   // scrolling key - right one column
-                if (in_scrolling_mode && strchr(extrainfo, '\021') != nullptr)
+                if (in_scrolling_mode && std::strchr(extrainfo, '\021') != nullptr)
                 {
                     scroll_column_status++;
                     rewrite_extrainfo = true;
@@ -674,7 +674,7 @@ int fullscreen_prompt(      // full-screen prompting routine
             int j;
             for (j = 0; j < values[curchoice].uval.ch.llen; ++j)
             {
-                if (strcmp(buf, values[curchoice].uval.ch.list[j]) == 0)
+                if (std::strcmp(buf, values[curchoice].uval.ch.list[j]) == 0)
                 {
                     break;
                 }
@@ -723,17 +723,17 @@ int fullscreen_prompt(      // full-screen prompting routine
                 values[curchoice].uval.Lval = atol(buf);
                 break;
             case 's':
-                strncpy(values[curchoice].uval.sval, buf, 16);
+                std::strncpy(values[curchoice].uval.sval, buf, 16);
                 break;
             default: // assume 0x100+n
-                strcpy(values[curchoice].uval.sbuf, buf);
+                std::strcpy(values[curchoice].uval.sbuf, buf);
             }
         }
 
         driver_put_string(promptrow+curchoice, promptcol, C_PROMPT_LO, prompts[curchoice]);
         {
-            int j = (int) strlen(buf);
-            memset(&buf[j], ' ', 80-j);
+            int j = (int) std::strlen(buf);
+            std::memset(&buf[j], ' ', 80-j);
         }
         buf[curlen] = 0;
         driver_put_string(promptrow+curchoice, valuecol, C_PROMPT_LO,  buf);
@@ -801,7 +801,7 @@ int fullscreen_prompt(      // full-screen prompting routine
             }
             break;
         case FIK_CTL_RIGHT_ARROW:    // scrolling key - right one column
-            if (in_scrolling_mode && strchr(extrainfo, '\021') != nullptr)
+            if (in_scrolling_mode && std::strchr(extrainfo, '\021') != nullptr)
             {
                 scroll_column_status++;
                 rewrite_extrainfo = true;
@@ -871,7 +871,7 @@ int prompt_valuestring(char *buf, fullscreenvalues const *val)
         while (true)
         {
             sprintf(buf, "%.*g", i, val->uval.dval);
-            if ((int)strlen(buf) <= ret)
+            if ((int)std::strlen(buf) <= ret)
             {
                 break;
             }
@@ -907,16 +907,16 @@ int prompt_valuestring(char *buf, fullscreenvalues const *val)
         *buf = (char) ret;
         break;
     case 's':
-        strncpy(buf, val->uval.sval, 16);
+        std::strncpy(buf, val->uval.sval, 16);
         buf[15] = 0;
         ret = 15;
         break;
     case 'l':
-        strcpy(buf, val->uval.ch.list[val->uval.ch.val]);
+        std::strcpy(buf, val->uval.ch.list[val->uval.ch.val]);
         ret = val->uval.ch.vlen;
         break;
     default: // assume 0x100+n
-        strcpy(buf, val->uval.sbuf);
+        std::strcpy(buf, val->uval.sbuf);
         ret = val->type & 0xff;
     }
     return ret;
@@ -1001,7 +1001,7 @@ static int input_field_list(
     g_look_at_mouse = 0;
     for (initval = 0; initval < llen; ++initval)
     {
-        if (strcmp(fld, list[initval]) == 0)
+        if (std::strcmp(fld, list[initval]) == 0)
         {
             break;
         }
@@ -1014,9 +1014,9 @@ static int input_field_list(
     ret = -1;
     while (true)
     {
-        strcpy(buf, list[curval]);
+        std::strcpy(buf, list[curval]);
         {
-            int i = (int) strlen(buf);
+            int i = (int) std::strlen(buf);
             while (i < vlen)
             {
                 buf[i++] = ' ';
@@ -1074,7 +1074,7 @@ static int input_field_list(
         }
     }
 inpfldl_end:
-    strcpy(fld, list[curval]);
+    std::strcpy(fld, list[curval]);
     g_look_at_mouse = old_look_at_mouse;
     return ret;
 }
@@ -1161,7 +1161,7 @@ static fractal_type select_fracttype(fractal_type t)
             {
                 continue;
             }
-            strcpy(choices[++j]->name, g_fractal_specific[i].name);
+            std::strcpy(choices[++j]->name, g_fractal_specific[i].name);
             choices[j]->name[14] = 0; // safety
             choices[j]->num = i;      // remember where the real item is
         }
@@ -1946,7 +1946,7 @@ gfp_top:
     }
     if (bf_math == bf_math_type::NONE)
     {
-        strcat(msg, "\n(Press " FK_F6 " for corner parameters)");
+        std::strcat(msg, "\n(Press " FK_F6 " for corner parameters)");
         fkeymask = 1U << 6;     // F6 exits
     }
     scroll_row_status = 0; // make sure we start at beginning of entry
@@ -2142,7 +2142,7 @@ bool check_orbit_name(char const *orbitname)
     bool bad = true;
     for (int i = 0; i < numtypes; i++)
     {
-        if (strcmp(orbitname, nameptr[i]) == 0)
+        if (std::strcmp(orbitname, nameptr[i]) == 0)
         {
             g_new_orbit_type = static_cast<fractal_type>(fractals[i]);
             bad = false;
@@ -2231,7 +2231,7 @@ long get_file_entry(int type, char const *title, char const *fmask,
 {
     char buf[FILE_MAX_PATH];
     assert(filename.size() < FILE_MAX_PATH);
-    strncpy(buf, filename.c_str(), FILE_MAX_PATH);
+    std::strncpy(buf, filename.c_str(), FILE_MAX_PATH);
     buf[FILE_MAX_PATH - 1] = 0;
     long const result = get_file_entry(type, title, fmask, buf, entryname);
     filename = buf;
@@ -2243,10 +2243,10 @@ long get_file_entry(int type, char const *title, char const *fmask,
 {
     char buf[FILE_MAX_PATH];
     assert(filename.size() < FILE_MAX_PATH);
-    strncpy(buf, filename.c_str(), FILE_MAX_PATH);
+    std::strncpy(buf, filename.c_str(), FILE_MAX_PATH);
     buf[FILE_MAX_PATH - 1] = 0;
     char name_buf[ITEM_NAME_LEN];
-    strncpy(name_buf, entryname.c_str(), ITEM_NAME_LEN);
+    std::strncpy(name_buf, entryname.c_str(), ITEM_NAME_LEN);
     name_buf[ITEM_NAME_LEN - 1] = 0;
     long const result = get_file_entry(type, title, fmask, buf, name_buf);
     filename = buf;
@@ -2419,7 +2419,7 @@ top:
             {
                 if (buf[0] != 0 && stricmp(buf, "comment") != 0 && !exclude_entry)
                 {
-                    strcpy(choices[numentries].name, buf);
+                    std::strcpy(choices[numentries].name, buf);
                     choices[numentries].point = name_offset;
                     if (++numentries >= MAXENTRIES)
                     {
@@ -2477,18 +2477,18 @@ retry:
         fclose(gfe_file);
         return -2; // back to file list
     }
-    strcpy(instr, o_instr);
+    std::strcpy(instr, o_instr);
     if (dosort)
     {
-        strcat(instr, "off");
+        std::strcat(instr, "off");
         shell_sort((char *) &choices, numentries, sizeof(entryinfo *), lccompare);
     }
     else
     {
-        strcat(instr, "on");
+        std::strcat(instr, "on");
     }
 
-    strcpy(buf, entryname); // preset to last choice made
+    std::strcpy(buf, entryname); // preset to last choice made
     std::string const heading{std::string{title} + " Selection\n"
         + "File: " + filename};
     formatitem = nullptr;
@@ -2519,7 +2519,7 @@ retry:
         // go back to file list or cancel
         return (i == -FIK_F6) ? -2 : -1;
     }
-    strcpy(entryname, choices[i]->name);
+    std::strcpy(entryname, choices[i]->name);
     return choices[i]->point;
 }
 
@@ -2529,7 +2529,7 @@ static int check_gfe_key(int curkey, int choice)
     char infhdg[60];
     char infbuf[25*80];
     char blanks[79];         // used to clear the entry portion of screen
-    memset(blanks, ' ', 78);
+    std::memset(blanks, ' ', 78);
     blanks[78] = (char) 0;
 
     if (curkey == FIK_F6)
@@ -2591,8 +2591,8 @@ static int check_gfe_key(int curkey, int choice)
         {
             in_scrolling_mode = true;
         }
-        strcpy(infhdg, gfe_title);
-        strcat(infhdg, " file entry:\n\n");
+        std::strcpy(infhdg, gfe_title);
+        std::strcat(infhdg, " file entry:\n\n");
         // ... instead, call help with buffer?  heading added
         driver_stack_screen();
         helptitle();
@@ -2664,7 +2664,7 @@ static int check_gfe_key(int curkey, int choice)
                     break;
                 case FIK_RIGHT_ARROW:
                 case FIK_CTL_RIGHT_ARROW: // right one column
-                    if (in_scrolling_mode && strchr(infbuf, '\021') != nullptr)
+                    if (in_scrolling_mode && std::strchr(infbuf, '\021') != nullptr)
                     {
                         left_column++;
                         rewrite_infbuf = true;
@@ -3047,7 +3047,7 @@ restart_1:
     check_writefile(g_raytrace_filename, ".ray");
     prompts3d[++k] = "    Output File Name";
     uvalues[k].type = 's';
-    strcpy(uvalues[k].uval.sval, g_raytrace_filename.c_str());
+    std::strcpy(uvalues[k].uval.sval, g_raytrace_filename.c_str());
 
     prompts3d[++k] = "Targa output?";
     uvalues[k].type = 'y';
@@ -3374,7 +3374,7 @@ static bool get_light_params()
         }
         prompts3d[++k] = "Targa File Name  (Assume .tga)";
         uvalues[k].type = 's';
-        strcpy(uvalues[k].uval.sval, g_light_name.c_str());
+        std::strcpy(uvalues[k].uval.sval, g_light_name.c_str());
 
         prompts3d[++k] = "Back Ground Color (0 - 255)";
         uvalues[k].type = '*';
@@ -3465,7 +3465,7 @@ static bool check_mapfile()
     char buff[256] = "*";
     if (g_map_set)
     {
-        strcpy(buff, g_map_name.c_str());
+        std::strcpy(buff, g_map_name.c_str());
     }
     if (!(g_glasses_type == 1 || g_glasses_type == 2))
     {
@@ -3496,9 +3496,9 @@ static bool check_mapfile()
                 break;
             }
         }
-        memcpy(g_old_dac_box, g_dac_box, 256*3); // save the DAC
+        std::memcpy(g_old_dac_box, g_dac_box, 256*3); // save the DAC
         bool valid = ValidateLuts(buff);
-        memcpy(g_dac_box, g_old_dac_box, 256*3); // restore the DAC
+        std::memcpy(g_dac_box, g_old_dac_box, 256*3); // restore the DAC
         if (valid) // Oops, somethings wrong
         {
             askflag = true;
@@ -3540,19 +3540,19 @@ static bool get_funny_glasses_params()
 
     if (g_glasses_type == 1)
     {
-        strcpy(funnyglasses_map_name, g_glasses1_map.c_str());
+        std::strcpy(funnyglasses_map_name, g_glasses1_map.c_str());
     }
     else if (g_glasses_type == 2)
     {
         if (FILLTYPE == -1)
         {
-            strcpy(funnyglasses_map_name, "grid.map");
+            std::strcpy(funnyglasses_map_name, "grid.map");
         }
         else
         {
             std::string glasses2_map{g_glasses1_map};
             glasses2_map.replace(glasses2_map.find('1'), 1, "2");
-            strcpy(funnyglasses_map_name, glasses2_map.c_str());
+            std::strcpy(funnyglasses_map_name, glasses2_map.c_str());
         }
     }
 
@@ -3593,7 +3593,7 @@ static bool get_funny_glasses_params()
     {
         prompts3d[++k] = "Map File name";
         uvalues[k].type = 's';
-        strcpy(uvalues[k].uval.sval, funnyglasses_map_name);
+        std::strcpy(uvalues[k].uval.sval, funnyglasses_map_name);
     }
 
     help_labels const old_help_mode = g_help_mode;
@@ -3617,7 +3617,7 @@ static bool get_funny_glasses_params()
 
     if (g_glasses_type == 1 || g_glasses_type == 2)
     {
-        strcpy(funnyglasses_map_name, uvalues[k].uval.sval);
+        std::strcpy(funnyglasses_map_name, uvalues[k].uval.sval);
     }
     return false;
 }

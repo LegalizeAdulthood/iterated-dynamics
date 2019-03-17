@@ -15,7 +15,8 @@
 #include <limits.h>
 #include <stdarg.h>
 #include <stdio.h>
-#include <string.h>
+
+#include <cstring>
 
 // Memory allocation routines.
 
@@ -454,7 +455,7 @@ bool CopyFromMemoryToHandle(BYTE const *buffer, U16 size, long count, long offse
 #if defined(_WIN32)
         _ASSERTE(handletable[handle].Linearmem.size >= size*count + start);
 #endif
-        memcpy(handletable[handle].Linearmem.memory + start, buffer, size*count);
+        std::memcpy(handletable[handle].Linearmem.memory + start, buffer, size*count);
         success = true; // No way to gauge success or failure
         break;
 
@@ -463,7 +464,7 @@ bool CopyFromMemoryToHandle(BYTE const *buffer, U16 size, long count, long offse
         fseek(handletable[handle].Disk.file, start, SEEK_SET);
         while (tomove > DISKWRITELEN)
         {
-            memcpy(diskbuf, buffer, (U16)DISKWRITELEN);
+            std::memcpy(diskbuf, buffer, (U16)DISKWRITELEN);
             numwritten = (U16)write1(diskbuf, (U16)DISKWRITELEN, 1, handletable[handle].Disk.file);
             if (numwritten != 1)
             {
@@ -473,7 +474,7 @@ bool CopyFromMemoryToHandle(BYTE const *buffer, U16 size, long count, long offse
             tomove -= DISKWRITELEN;
             buffer += DISKWRITELEN;
         }
-        memcpy(diskbuf, buffer, (U16)tomove);
+        std::memcpy(diskbuf, buffer, (U16)tomove);
         numwritten = (U16)write1(diskbuf, (U16)tomove, 1, handletable[handle].Disk.file);
         if (numwritten != 1)
         {
@@ -522,7 +523,7 @@ bool CopyFromHandleToMemory(BYTE *buffer, U16 size, long count, long offset, U16
     case MEMORY: // MoveFromMemory
         for (int i = 0; i < size; i++)
         {
-            memcpy(buffer, handletable[handle].Linearmem.memory+start, (U16)count);
+            std::memcpy(buffer, handletable[handle].Linearmem.memory+start, (U16)count);
             start += count;
             buffer += count;
         }
@@ -540,7 +541,7 @@ bool CopyFromHandleToMemory(BYTE *buffer, U16 size, long count, long offset, U16
                 WhichDiskError(4);
                 goto diskerror;
             }
-            memcpy(buffer, diskbuf, (U16)DISKWRITELEN);
+            std::memcpy(buffer, diskbuf, (U16)DISKWRITELEN);
             tomove -= DISKWRITELEN;
             buffer += DISKWRITELEN;
         }
@@ -550,7 +551,7 @@ bool CopyFromHandleToMemory(BYTE *buffer, U16 size, long count, long offset, U16
             WhichDiskError(4);
             break;
         }
-        memcpy(buffer, diskbuf, (U16)tomove);
+        std::memcpy(buffer, diskbuf, (U16)tomove);
         success = true;
 diskerror:
         break;
@@ -593,14 +594,14 @@ bool SetMemory(int value, U16 size, long count, long offset, U16 handle)
     case MEMORY: // SetMemory
         for (int i = 0; i < size; i++)
         {
-            memset(handletable[handle].Linearmem.memory+start, value, (U16)count);
+            std::memset(handletable[handle].Linearmem.memory+start, value, (U16)count);
             start += count;
         }
         success = true; // No way to gauge success or failure
         break;
 
     case DISK: // SetMemory
-        memset(diskbuf, value, (U16)DISKWRITELEN);
+        std::memset(diskbuf, value, (U16)DISKWRITELEN);
         rewind(handletable[handle].Disk.file);
         fseek(handletable[handle].Disk.file, start, SEEK_SET);
         while (tomove > DISKWRITELEN)

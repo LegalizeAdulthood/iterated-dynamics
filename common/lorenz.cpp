@@ -29,8 +29,8 @@
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
 
+#include <cstring>
 #include <vector>
 
 // orbitcalc is declared with no arguments so jump through hoops here

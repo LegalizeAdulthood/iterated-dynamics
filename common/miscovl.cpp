@@ -33,7 +33,6 @@
 #include <math.h>
 #include <stdarg.h>
 #include <stdio.h>
-#include <string.h>
 #include <time.h>
 #if defined(XFRACT)
 #include <unistd.h>
@@ -42,6 +41,7 @@
 #endif
 
 #include <algorithm>
+#include <cstring>
 #include <string>
 #include <vector>
 
@@ -108,7 +108,7 @@ void make_batch_file()
     g_help_mode = help_labels::HELPPARMFILE;
 
     maxcolor = g_colors;
-    strcpy(colorspec, "y");
+    std::strcpy(colorspec, "y");
 #ifndef XFRACT
     if (g_got_real_dac || (g_is_true_color && g_true_mode == true_color_mode::default_color))
 #else
@@ -158,36 +158,36 @@ void make_batch_file()
         }
         else                        // colors match no .map that we know of
         {
-            strcpy(colorspec, "y");
+            std::strcpy(colorspec, "y");
         }
 
         if (sptr && colorspec[0] == '@')
         {
-            sptr2 = strrchr(sptr, SLASHC);
+            sptr2 = std::strrchr(sptr, SLASHC);
             if (sptr2 != nullptr)
             {
                 sptr = sptr2 + 1;
             }
-            sptr2 = strrchr(sptr, ':');
+            sptr2 = std::strrchr(sptr, ':');
             if (sptr2 != nullptr)
             {
                 sptr = sptr2 + 1;
             }
-            strncpy(&colorspec[1], sptr, 12);
+            std::strncpy(&colorspec[1], sptr, 12);
             colorspec[13] = 0;
         }
     }
-    strcpy(inpcommandfile, g_command_file.c_str());
-    strcpy(inpcommandname, g_command_name.c_str());
+    std::strcpy(inpcommandfile, g_command_file.c_str());
+    std::strcpy(inpcommandname, g_command_name.c_str());
     for (int i = 0; i < 4; i++)
     {
         g_command_comment[i] = expand_comments(par_comment[i]);
-        strcpy(inpcomment[i], g_command_comment[i].c_str());
+        std::strcpy(inpcomment[i], g_command_comment[i].c_str());
     }
 
     if (g_command_name.empty())
     {
-        strcpy(inpcommandname, "test");
+        std::strcpy(inpcommandname, "test");
     }
     pxdots = g_logical_screen_x_dots;
     pydots = g_logical_screen_y_dots;
@@ -266,7 +266,7 @@ prompt_user:
 
         if (*colorspec == 'o' || g_make_parameter_file_map)
         {
-            strcpy(colorspec, "y");
+            std::strcpy(colorspec, "y");
             colorsonly = true;
         }
 
@@ -359,11 +359,11 @@ skip_UI:
         {
             if (g_file_colors > 0)
             {
-                strcpy(colorspec, "y");
+                std::strcpy(colorspec, "y");
             }
             else
             {
-                strcpy(colorspec, "n");
+                std::strcpy(colorspec, "n");
             }
             if (g_make_parameter_file_map)
             {
@@ -374,7 +374,7 @@ skip_UI:
                 maxcolor = g_file_colors;
             }
         }
-        strcpy(outname, g_command_file.c_str());
+        std::strcpy(outname, g_command_file.c_str());
         bool gotinfile = false;
         if (access(g_command_file.c_str(), 0) == 0)
         {
@@ -386,12 +386,12 @@ skip_UI:
                 stopmsg(STOPMSG_NONE, buf);
                 continue;
             }
-            int i = (int) strlen(outname);
+            int i = (int) std::strlen(outname);
             while (--i >= 0 && outname[i] != SLASHC)
             {
                 outname[i] = 0;
             }
-            strcat(outname, "fractint.tmp");
+            std::strcat(outname, "fractint.tmp");
             infile = fopen(g_command_file.c_str(), "rt");
         }
         parmfile = fopen(outname, "wt");
@@ -410,7 +410,7 @@ skip_UI:
         {
             while (file_gets(buf, 255, infile) >= 0)
             {
-                if (strchr(buf, '{')// entry heading?
+                if (std::strchr(buf, '{')// entry heading?
                     && sscanf(buf, " %40[^ \t({]", buf2)
                     && stricmp(buf2, g_command_name.c_str()) == 0)
                 {
@@ -426,7 +426,7 @@ skip_UI:
                         unlink(outname);
                         goto prompt_user;
                     }
-                    while (strchr(buf, '}') == nullptr
+                    while (std::strchr(buf, '}') == nullptr
                         && file_gets(buf, 255, infile) > 0)
                     {
                         ; // skip to end of set
@@ -480,7 +480,7 @@ skip_UI:
                     {
                         char buf[20];
                         sprintf(buf, "_%c%c", PAR_KEY(i), PAR_KEY(j));
-                        strcat(PCommandName, buf);
+                        std::strcat(PCommandName, buf);
                     }
                     fprintf(parmfile, "%-19s{", PCommandName);
                     g_x_min = pxxmin + pdelx*(i*pxdots) + pdelx2*(j*pydots);
@@ -530,7 +530,7 @@ skip_UI:
                 fputc('\n', parmfile);
                 {
                     char buf[25];
-                    memset(buf, ' ', 23);
+                    std::memset(buf, ' ', 23);
                     buf[23] = 0;
                     buf[21] = ';';
                     for (int k = 1; k < 4; k++)
@@ -1611,7 +1611,7 @@ static void put_filename(char const *keyword, char const *fname)
     char const *p;
     if (*fname && !endswithslash(fname))
     {
-        p = strrchr(fname, SLASHC);
+        p = std::strrchr(fname, SLASHC);
         if (p != nullptr)
         {
             fname = p+1;
@@ -1688,7 +1688,7 @@ static void put_parm_line()
         ++len;
     }
     s_wbdata.len -= len;
-    strcpy(s_wbdata.buf, s_wbdata.buf+len);
+    std::strcpy(s_wbdata.buf, s_wbdata.buf+len);
 }
 
 int getprecbf_mag()
@@ -1890,18 +1890,18 @@ static void strip_zeros(char *buf)
 {
     char *dptr, *bptr, *exptr;
     strlwr(buf);
-    dptr = strchr(buf, '.');
+    dptr = std::strchr(buf, '.');
     if (dptr != nullptr)
     {
         ++dptr;
-        exptr = strchr(buf, 'e');
+        exptr = std::strchr(buf, 'e');
         if (exptr != nullptr)    // scientific notation with 'e'?
         {
             bptr = exptr;
         }
         else
         {
-            bptr = buf + strlen(buf);
+            bptr = buf + std::strlen(buf);
         }
         while (--bptr > dptr && *bptr == '0')
         {
@@ -1909,7 +1909,7 @@ static void strip_zeros(char *buf)
         }
         if (exptr && bptr < exptr -1)
         {
-            strcat(buf, exptr);
+            std::strcat(buf, exptr);
         }
     }
 }
@@ -1978,7 +1978,7 @@ int select_video_mode(int curmode)
     }
     else
     {
-        memcpy((char *) &g_video_entry, (char *) &g_video_table[curmode], sizeof(g_video_entry));
+        std::memcpy((char *) &g_video_entry, (char *) &g_video_table[curmode], sizeof(g_video_entry));
     }
     int i;
     for (i = 0; i < g_video_table_len; ++i)  // find default mode
@@ -1986,7 +1986,7 @@ int select_video_mode(int curmode)
         if (g_video_entry.videomodeax == g_video_table[entnums[i]].videomodeax
             && g_video_entry.colors == g_video_table[entnums[i]].colors
             && (curmode < 0
-                || memcmp((char *) &g_video_entry, (char *) &g_video_table[entnums[i]], sizeof(g_video_entry)) == 0))
+                || std::memcmp((char *) &g_video_entry, (char *) &g_video_table[entnums[i]], sizeof(g_video_entry)) == 0))
         {
             break;
         }
@@ -2023,7 +2023,7 @@ int select_video_mode(int curmode)
     // picked by function key or ENTER key
     i = (i < 0) ? (-1 - i) : entnums[i];
     // the selected entry now in g_video_entry
-    memcpy((char *) &g_video_entry, (char *) &g_video_table[i], sizeof(g_video_entry));
+    std::memcpy((char *) &g_video_entry, (char *) &g_video_table[i], sizeof(g_video_entry));
 
     // copy fractint.cfg table to resident table, note selected entry
     int k = 0;
@@ -2031,7 +2031,7 @@ int select_video_mode(int curmode)
     {
         if (g_video_table[i].keynum > 0)
         {
-            if (memcmp((char *)&g_video_entry, (char *)&g_video_table[i], sizeof(g_video_entry)) == 0)
+            if (std::memcmp((char *)&g_video_entry, (char *)&g_video_table[i], sizeof(g_video_entry)) == 0)
             {
                 k = g_video_table[i].keynum;
             }
@@ -2040,7 +2040,7 @@ int select_video_mode(int curmode)
     ret = k;
     if (k == 0)  // selected entry not a copied (assigned to key) one
     {
-        memcpy((char *)&g_video_table[MAX_VIDEO_MODES-1],
+        std::memcpy((char *)&g_video_table[MAX_VIDEO_MODES-1],
                (char *)&g_video_entry, sizeof(*g_video_table));
         ret = 1400; // special value for check_vidmode_key
     }
@@ -2059,7 +2059,7 @@ void format_vid_table(int choice, char *buf)
     char local_buf[81];
     char kname[5];
     int truecolorbits;
-    memcpy((char *)&g_video_entry, (char *)&g_video_table[entnums[choice]],
+    std::memcpy((char *)&g_video_entry, (char *)&g_video_table[entnums[choice]],
            sizeof(g_video_entry));
     vidmode_keyname(g_video_entry.keynum, kname);
     sprintf(buf, "%-5s %-25s %5d %5d ",  // 44 chars
@@ -2168,13 +2168,13 @@ static void update_fractint_cfg()
         stopmsg(STOPMSG_NONE, buf);
         return;
     }
-    strcpy(outname, cfgname);
-    i = (int) strlen(outname);
+    std::strcpy(outname, cfgname);
+    i = (int) std::strlen(outname);
     while (--i >= 0 && outname[i] != SLASHC)
     {
         outname[i] = 0;
     }
-    strcat(outname, "fractint.tmp");
+    std::strcat(outname, "fractint.tmp");
     outfile = fopen(outname, "w");
     if (outfile == nullptr)
     {
@@ -2194,11 +2194,11 @@ static void update_fractint_cfg()
         if (linenum == nextlinenum)
         {
             // replace this line
-            memcpy((char *)&vident, (char *)&g_video_table[nextmode],
+            std::memcpy((char *)&vident, (char *)&g_video_table[nextmode],
                    sizeof(g_video_entry));
             vidmode_keyname(vident.keynum, kname);
-            strcpy(buf, vident.name);
-            i = (int) strlen(buf);
+            std::strcpy(buf, vident.name);
+            i = (int) std::strlen(buf);
             while (i && buf[i-1] == ' ') // strip trailing spaces to compress
             {
                 --i;
@@ -2287,7 +2287,7 @@ void make_mig(unsigned int xmult, unsigned int ymult)
     in = nullptr;
     out = in;
 
-    strcpy(gifout, "fractmig.gif");
+    std::strcpy(gifout, "fractmig.gif");
 
     temp = &g_old_dac_box[0][0];                 // a safe place for our temp data
 
@@ -2325,8 +2325,8 @@ void make_mig(unsigned int xmult, unsigned int ymult)
             {
                 inputerrorflag = 1;
             }
-            memcpy(&xres, &temp[6], 2);     // X-resolution
-            memcpy(&yres, &temp[8], 2);     // Y-resolution
+            std::memcpy(&xres, &temp[6], 2);     // X-resolution
+            std::memcpy(&yres, &temp[8], 2);     // Y-resolution
 
             if (xstep == 0 && ystep == 0)  // first time through?
             {
@@ -2334,8 +2334,8 @@ void make_mig(unsigned int xmult, unsigned int ymult)
                 allyres = yres;
                 xtot = xres * xmult;        // adjust the image size
                 ytot = yres * ymult;
-                memcpy(&temp[6], &xtot, 2);
-                memcpy(&temp[8], &ytot, 2);
+                std::memcpy(&temp[6], &xtot, 2);
+                std::memcpy(&temp[8], &ytot, 2);
                 if (g_gif87a_flag)
                 {
                     temp[3] = '8';
@@ -2381,7 +2381,7 @@ void make_mig(unsigned int xmult, unsigned int ymult)
 
             while (true)                       // process each information block
             {
-                memset(temp, 0, 10);
+                std::memset(temp, 0, 10);
                 if (fread(temp, 1, 1, in) != 1)    // read the block identifier
                 {
                     inputerrorflag = 3;
@@ -2393,12 +2393,12 @@ void make_mig(unsigned int xmult, unsigned int ymult)
                     {
                         inputerrorflag = 4;
                     }
-                    memcpy(&xloc, &temp[1], 2); // X-location
-                    memcpy(&yloc, &temp[3], 2); // Y-location
+                    std::memcpy(&xloc, &temp[1], 2); // X-location
+                    std::memcpy(&yloc, &temp[3], 2); // Y-location
                     xloc += (xstep * xres);     // adjust the locations
                     yloc += (ystep * yres);
-                    memcpy(&temp[1], &xloc, 2);
-                    memcpy(&temp[3], &yloc, 2);
+                    std::memcpy(&temp[1], &xloc, 2);
+                    std::memcpy(&temp[3], &yloc, 2);
                     if (fwrite(temp, 10, 1, out) != 1)     // write out the Image Descriptor
                     {
                         errorflag = 4;
@@ -2709,76 +2709,76 @@ static char const *expand_var(char const *var, char *buf)
     // Sat Aug 17 21:34:14 1996
     // 012345678901234567890123
     //           1         2
-    if (strcmp(var, "year") == 0)       // 4 chars
+    if (std::strcmp(var, "year") == 0)       // 4 chars
     {
         str[24] = '\0';
         out = &str[20];
     }
-    else if (strcmp(var, "month") == 0) // 3 chars
+    else if (std::strcmp(var, "month") == 0) // 3 chars
     {
         str[7] = '\0';
         out = &str[4];
     }
-    else if (strcmp(var, "day") == 0)   // 2 chars
+    else if (std::strcmp(var, "day") == 0)   // 2 chars
     {
         str[10] = '\0';
         out = &str[8];
     }
-    else if (strcmp(var, "hour") == 0)  // 2 chars
+    else if (std::strcmp(var, "hour") == 0)  // 2 chars
     {
         str[13] = '\0';
         out = &str[11];
     }
-    else if (strcmp(var, "min") == 0)   // 2 chars
+    else if (std::strcmp(var, "min") == 0)   // 2 chars
     {
         str[16] = '\0';
         out = &str[14];
     }
-    else if (strcmp(var, "sec") == 0)   // 2 chars
+    else if (std::strcmp(var, "sec") == 0)   // 2 chars
     {
         str[19] = '\0';
         out = &str[17];
     }
-    else if (strcmp(var, "time") == 0)  // 8 chars
+    else if (std::strcmp(var, "time") == 0)  // 8 chars
     {
         str[19] = '\0';
         out = &str[11];
     }
-    else if (strcmp(var, "date") == 0)
+    else if (std::strcmp(var, "date") == 0)
     {
         str[10] = '\0';
         str[24] = '\0';
         char *dest = &str[4];
-        strcat(dest, ", ");
-        strcat(dest, &str[20]);
+        std::strcat(dest, ", ");
+        std::strcat(dest, &str[20]);
         out = dest;
     }
-    else if (strcmp(var, "calctime") == 0)
+    else if (std::strcmp(var, "calctime") == 0)
     {
         get_calculation_time(buf, g_calc_time);
         out = buf;
     }
-    else if (strcmp(var, "version") == 0)  // 4 chars
+    else if (std::strcmp(var, "version") == 0)  // 4 chars
     {
         sprintf(buf, "%d", g_release);
         out = buf;
     }
-    else if (strcmp(var, "patch") == 0)   // 1 or 2 chars
+    else if (std::strcmp(var, "patch") == 0)   // 1 or 2 chars
     {
         sprintf(buf, "%d", g_patch_level);
         out = buf;
     }
-    else if (strcmp(var, "xdots") == 0)   // 2 to 4 chars
+    else if (std::strcmp(var, "xdots") == 0)   // 2 to 4 chars
     {
         sprintf(buf, "%d", g_logical_screen_x_dots);
         out = buf;
     }
-    else if (strcmp(var, "ydots") == 0)   // 2 to 4 chars
+    else if (std::strcmp(var, "ydots") == 0)   // 2 to 4 chars
     {
         sprintf(buf, "%d", g_logical_screen_y_dots);
         out = buf;
     }
-    else if (strcmp(var, "vidkey") == 0)   // 2 to 3 chars
+    else if (std::strcmp(var, "vidkey") == 0)   // 2 to 3 chars
     {
         char vidmde[5];
         vidmode_keyname(g_video_entry.keynum, vidmde);
@@ -2863,7 +2863,7 @@ void parse_comments(char *value)
         {
             break;
         }
-        next = strchr(value, '/');
+        next = std::strchr(value, '/');
         if (*value != '/')
         {
             if (next != nullptr)
@@ -2871,7 +2871,7 @@ void parse_comments(char *value)
                 save = *next;
                 *next = '\0';
             }
-            strncpy(elem, value, MAX_COMMENT_LEN);
+            std::strncpy(elem, value, MAX_COMMENT_LEN);
         }
         if (next == nullptr)
         {

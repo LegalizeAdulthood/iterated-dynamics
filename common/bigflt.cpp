@@ -10,7 +10,8 @@ Wesley Loewer's Big Numbers.        (C) 1994-95, Wesley B. Loewer
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
+
+#include <cstring>
 
 #define LOG10_256 2.4082399653118
 #define LOG_256   5.5451774444795
@@ -58,11 +59,11 @@ bf_t strtobf(bf_t r, char const *s)
         s++;
     }
 
-    d = strchr(s, '.');
-    e = strchr(s, 'e');
+    d = std::strchr(s, '.');
+    e = std::strchr(s, 'e');
     if (e == nullptr)
     {
-        e = strchr(s, 'E');
+        e = std::strchr(s, 'E');
     }
     if (e != nullptr)
     {
@@ -71,7 +72,7 @@ bf_t strtobf(bf_t r, char const *s)
     }
     else
     {
-        l = s + strlen(s) - 1;  // last digit
+        l = s + std::strlen(s) - 1;  // last digit
     }
 
     if (d != nullptr) // is there a decimal point?
@@ -141,7 +142,7 @@ bf_t strtobf(bf_t r, char const *s)
 }
 
 /********************************************************************/
-// strlen_needed() - returns string length needed to hold bigfloat
+// std::strlen_needed() - returns string length needed to hold bigfloat
 
 int strlen_needed_bf()
 {
@@ -176,7 +177,7 @@ char *unsafe_bftostr(char *s, int dec, bf_t r)
     value = bftofloat(r);
     if (value == 0.0)
     {
-        strcpy(s, "0.0");
+        std::strcpy(s, "0.0");
         return s;
     }
 
@@ -204,7 +205,7 @@ char *unsafe_bftostr_e(char *s, int dec, bf_t r)
     value = bftofloat(r);
     if (value == 0.0)
     {
-        strcpy(s, "0.0");
+        std::strcpy(s, "0.0");
         return s;
     }
 
@@ -223,7 +224,7 @@ char *unsafe_bftostr_f(char *s, int dec, bf_t r)
     value = bftofloat(r);
     if (value == 0.0)
     {
-        strcpy(s, "0.0");
+        std::strcpy(s, "0.0");
         return s;
     }
 
@@ -263,9 +264,9 @@ bn_t bftobn(bn_t n, bf_t f)
 
     // already checked for over/underflow, this should be ok
     movebytes = bnlength - intlength + fexp + 1;
-    memcpy(n, f+bflength-movebytes-1, movebytes);
+    std::memcpy(n, f+bflength-movebytes-1, movebytes);
     hibyte = *(f+bflength-1);
-    memset(n+movebytes, hibyte, bnlength-movebytes); // sign extends
+    std::memset(n+movebytes, hibyte, bnlength-movebytes); // sign extends
     return n;
 }
 
@@ -275,8 +276,8 @@ bn_t bftobn(bn_t n, bf_t f)
 //  bflength must be at least bnlength+2
 bf_t bntobf(bf_t f, bn_t n)
 {
-    memcpy(f+bflength-bnlength-1, n, bnlength);
-    memset(f, 0, bflength - bnlength - 1);
+    std::memcpy(f+bflength-bnlength-1, n, bnlength);
+    std::memset(f, 0, bflength - bnlength - 1);
     *(f+bflength-1) = (BYTE)(is_bn_neg(n) ? 0xFF : 0x00); // sign extend
     big_set16(f+bflength, (S16)(intlength - 1)); // exp
     norm_bf(f);
@@ -1339,11 +1340,11 @@ int convert_bf(bf_t newnum, bf_t old, int newbflength, int oldbflength)
 
     if (newbflength > oldbflength)
     {
-        memcpy(newnum+newbflength-oldbflength, old, oldbflength+2);
+        std::memcpy(newnum+newbflength-oldbflength, old, oldbflength+2);
     }
     else
     {
-        memcpy(newnum, old+oldbflength-newbflength, newbflength+2);
+        std::memcpy(newnum, old+oldbflength-newbflength, newbflength+2);
     }
     return 0;
 }
@@ -1362,7 +1363,7 @@ bf_t norm_bf(bf_t r)
     hi_byte = r[bflength-1];
     if (hi_byte != 0x00 && hi_byte != 0xFF)
     {
-        memmove(r, r+1, bflength-1);
+        std::memmove(r, r+1, bflength-1);
         r[bflength-1] = (BYTE)(hi_byte & 0x80 ? 0xFF : 0x00);
         big_setS16(rexp, big_accessS16(rexp)+(S16)1);   // exp
     }
@@ -1384,8 +1385,8 @@ bf_t norm_bf(bf_t r)
             scale -= 2;
             if (scale > 0) // it did underflow
             {
-                memmove(r+scale, r, bflength-scale-1);
-                memset(r, 0, scale);
+                std::memmove(r+scale, r, bflength-scale-1);
+                std::memset(r, 0, scale);
                 big_setS16(rexp, big_accessS16(rexp)-(S16)scale);    // exp
             }
         }
@@ -1424,8 +1425,8 @@ S16 adjust_bf_add(bf_t n1, bf_t n2)
         if (scale < bflength)
         {
             fill_byte = is_bf_neg(n2) ? 0xFF : 0x00;
-            memmove(n2, n2+scale, bflength-scale);
-            memset(n2+bflength-scale, fill_byte, scale);
+            std::memmove(n2, n2+scale, bflength-scale);
+            std::memset(n2+bflength-scale, fill_byte, scale);
         }
         else
         {
@@ -1441,8 +1442,8 @@ S16 adjust_bf_add(bf_t n1, bf_t n2)
         if (scale < bflength)
         {
             fill_byte = is_bf_neg(n1) ? 0xFF : 0x00;
-            memmove(n1, n1+scale, bflength-scale);
-            memset(n1+bflength-scale, fill_byte, scale);
+            std::memmove(n1, n1+scale, bflength-scale);
+            std::memset(n1+bflength-scale, fill_byte, scale);
         }
         else
         {
@@ -1866,7 +1867,7 @@ bf_t unsafe_mult_bf(bf_t r, bf_t n1, bf_t n2)
     big_set16(r+bflength, (S16)(rexp+2)); // adjust after mult
     norm_sign_bf(r, positive);
     bflength = bfl;
-    memmove(r, r+padding, bflength+2); // shift back
+    std::memmove(r, r+padding, bflength+2); // shift back
 
     return r;
 }
@@ -1953,7 +1954,7 @@ bf_t unsafe_square_bf(bf_t r, bf_t n)
 
     norm_sign_bf(r, true);
     bflength = bfl;
-    memmove(r, r+padding, bflength+2); // shift back
+    std::memmove(r, r+padding, bflength+2); // shift back
 
     return r;
 }
@@ -1980,7 +1981,7 @@ bf_t unsafe_mult_bf_int(bf_t r, bf_t n, U16 u)
     if (u > 0x00FF)
     {
         // un-normalize n
-        memmove(n, n+1, bflength-1);  // this sign extends as well
+        std::memmove(n, n+1, bflength-1);  // this sign extends as well
         big_setS16(rexp, big_accessS16(rexp)+(S16)1);
     }
 
@@ -2011,7 +2012,7 @@ bf_t mult_a_bf_int(bf_t r, U16 u)
     if (u > 0x00FF)
     {
         // un-normalize n
-        memmove(r, r+1, bflength-1);  // this sign extends as well
+        std::memmove(r, r+1, bflength-1);  // this sign extends as well
         big_setS16(rexp, big_accessS16(rexp)+(S16)1);
     }
 
@@ -2322,7 +2323,7 @@ bf10_t unsafe_bftobf10(bf10_t r, int dec, bf_t n)
         if (d == 0) // rounding went back to the first digit and it overflowed
         {
             r[1] = 0;
-            memmove(r+2, r+1, dec-1);
+            std::memmove(r+2, r+1, dec-1);
             r[1] = 1;
             p = (S16)big_access16(power10);
             big_set16(power10, (U16)(p+1));
@@ -2366,7 +2367,7 @@ bf10_t mult_a_bf10_int(bf10_t r, int dec, U16 n)
     while (overflow)
     {
         p++;
-        memmove(r+2, r+1, dec-1);
+        std::memmove(r+2, r+1, dec-1);
         r[1] = (BYTE)(overflow % 10);
         overflow = overflow / 10;
     }
@@ -2437,7 +2438,7 @@ char *bf10tostr_e(char *s, int dec, bf10_t n)
 
     if (n[1] == 0)
     {
-        strcpy(s, "0.0");
+        std::strcpy(s, "0.0");
         return s;
     }
 
@@ -2493,7 +2494,7 @@ char *bf10tostr_f(char *s, int dec, bf10_t n)
 
     if (n[1] == 0)
     {
-        strcpy(s, "0.0");
+        std::strcpy(s, "0.0");
         return s;
     }
 

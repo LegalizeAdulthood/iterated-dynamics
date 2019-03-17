@@ -31,12 +31,12 @@
 
 #include <limits.h>
 #include <stdio.h>
-#include <string.h>
 #if defined(XFRACT)
 #include <unistd.h>
 #endif
 
 #include <algorithm>
+#include <cstring>
 #include <string>
 
 static bool compress(int rowlimit);
@@ -115,17 +115,17 @@ restart:
         save16bit = false;
     }
 
-    strcpy(openfile, filename);  // decode and open the filename
-    strcpy(openfiletype, DEFAULT_FRACTAL_TYPE);    // determine the file extension
+    std::strcpy(openfile, filename);  // decode and open the filename
+    std::strcpy(openfiletype, DEFAULT_FRACTAL_TYPE);    // determine the file extension
     if (save16bit)
     {
-        strcpy(openfiletype, ".pot");
+        std::strcpy(openfiletype, ".pot");
     }
 
     period = has_ext(openfile);
     if (period != nullptr)
     {
-        strcpy(openfiletype, period);
+        std::strcpy(openfiletype, period);
         openfile[period - openfile] = 0;
     }
     if (g_resave_flag != 1)
@@ -133,9 +133,9 @@ restart:
         updatesavename(filename); // for next time
     }
 
-    strcat(openfile, openfiletype);
+    std::strcat(openfile, openfiletype);
 
-    strcpy(tmpfile, openfile);
+    std::strcpy(tmpfile, openfile);
     if (access(openfile, 0) != 0)  // file doesn't exist
     {
         newfile = true;
@@ -163,12 +163,12 @@ restart:
             return -1;
         }
         newfile = false;
-        int i = (int) strlen(tmpfile);
+        int i = (int) std::strlen(tmpfile);
         while (--i >= 0 && tmpfile[i] != SLASHC)
         {
             tmpfile[i] = 0;
         }
-        strcat(tmpfile, "fractint.tmp");
+        std::strcat(tmpfile, "fractint.tmp");
     }
 
     g_started_resaves = (g_resave_flag == 1);
@@ -224,11 +224,11 @@ restart:
         sprintf(buf, "Save of %s interrupted.\nCancel to ", openfile);
         if (newfile)
         {
-            strcat(buf, "delete the file,\ncontinue to keep the partial image.");
+            std::strcat(buf, "delete the file,\ncontinue to keep the partial image.");
         }
         else
         {
-            strcat(buf, "retain the original file,\ncontinue to replace original with new partial image.");
+            std::strcat(buf, "retain the original file,\ncontinue to replace original with new partial image.");
         }
         interrupted = 1;
         if (stopmsg(STOPMSG_CANCEL, buf))
@@ -327,7 +327,7 @@ int savetodisk(char *filename)
 int savetodisk(std::string &filename)
 {
     char buff[FILE_MAX_PATH];
-    strncpy(buff, filename.c_str(), FILE_MAX_PATH);
+    std::strncpy(buff, filename.c_str(), FILE_MAX_PATH);
     int const result = savetodisk(buff);
     filename = buff;
     return result;
@@ -782,7 +782,7 @@ static int put_extend_blk(int block_id, int block_len, char const *block_data)
 {
     int i, j;
     char header[15];
-    strcpy(header, "!\377\013fractint");
+    std::strcpy(header, "!\377\013fractint");
     sprintf(&header[11], "%03d", block_id);
     if (fwrite(header, 14, 1, g_outfile) != 1)
     {
@@ -815,7 +815,7 @@ static int store_item_name(char const *nameptr)
     {
         fsave_info.form_name[i] = 0;      // initialize string
     }
-    strcpy(fsave_info.form_name, nameptr);
+    std::strcpy(fsave_info.form_name, nameptr);
     if (g_fractal_type == fractal_type::FORMULA || g_fractal_type == fractal_type::FFORMULA)
     {
         fsave_info.uses_p1 = (short) (g_frm_uses_p1 ? 1 : 0);
@@ -852,7 +852,7 @@ static void setup_save_info(FRACTAL_INFO *save_info)
         g_max_function = 0;
     }
     // set save parameters in save structure
-    strcpy(save_info->info_id, INFO_ID);
+    std::strcpy(save_info->info_id, INFO_ID);
     save_info->version = FRACTAL_INFO_VERSION;
 
     if (g_max_iterations <= SHRT_MAX)
@@ -1151,7 +1151,7 @@ static bool compress(int rowlimit)
     }
     hshift = 8 - hshift;                // set hash code range bound
 
-    memset(htab, 0xff, (unsigned)HSIZE*sizeof(long));
+    std::memset(htab, 0xff, (unsigned)HSIZE*sizeof(long));
     hsize_reg = HSIZE;
 
     output((int)ClearCode);
@@ -1360,7 +1360,7 @@ static void output(int code)
 //
 static void cl_block()             // table clear for block compress
 {
-    memset(htab, 0xff, (unsigned)HSIZE*sizeof(long));
+    std::memset(htab, 0xff, (unsigned)HSIZE*sizeof(long));
     free_ent = ClearCode + 2;
     clear_flg = true;
     output((int)ClearCode);

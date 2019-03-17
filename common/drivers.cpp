@@ -7,7 +7,8 @@
 #include "realdos.h"
 
 #include <float.h>
-#include <string.h>
+
+#include <cstring>
 
 extern Driver *x11_driver;
 extern Driver *gdi_driver;
@@ -73,7 +74,7 @@ add_video_mode(Driver *drv, VIDEOINFO *mode)
 #endif
     // stash away driver pointer so we can init driver for selected mode
     mode->driver = drv;
-    memcpy(&g_video_table[g_video_table_len], mode, sizeof(g_video_table[0]));
+    std::memcpy(&g_video_table[g_video_table_len], mode, sizeof(g_video_table[0]));
     g_video_table_len++;
 }
 
@@ -97,7 +98,7 @@ driver_find_by_name(char const *name)
 {
     for (int i = 0; i < num_drivers; i++)
     {
-        if (strcmp(name, s_available[i]->name) == 0)
+        if (std::strcmp(name, s_available[i]->name) == 0)
         {
             return s_available[i];
         }

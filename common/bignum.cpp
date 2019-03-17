@@ -138,9 +138,9 @@ double wide number can then be ignored.
 #include <float.h>
 #include <math.h>
 #include <stdio.h>
-#include <string.h>
 
 #include <algorithm>
+#include <cstring>
 
 /*************************************************************************
 * The original bignumber code was written specifically for a Little Endian
@@ -210,13 +210,13 @@ int convert_bn(bn_t newnum, bn_t old, int newbnlength, int newintlength,
         // This will keep the integer part from overflowing past the array.
         bnlength = oldbnlength - oldintlength + std::min(oldintlength, newintlength);
 
-        memcpy(newnum+newbnlength-newintlength-oldbnlength+oldintlength,
+        std::memcpy(newnum+newbnlength-newintlength-oldbnlength+oldintlength,
                old, bnlength);
     }
     else
     {
         bnlength = newbnlength - newintlength + std::min(oldintlength, newintlength);
-        memcpy(newnum, old+oldbnlength-oldintlength-newbnlength+newintlength,
+        std::memcpy(newnum, old+oldbnlength-oldintlength-newbnlength+newintlength,
                bnlength);
     }
     intlength = saveintlength;
@@ -263,9 +263,9 @@ bn_t strtobn(bn_t r, char *s)
         s++;
     }
 
-    if (strchr(s, '.') != nullptr) // is there a decimal point?
+    if (std::strchr(s, '.') != nullptr) // is there a decimal point?
     {
-        int l = (int) strlen(s) - 1;      // start with the last digit
+        int l = (int) std::strlen(s) - 1;      // start with the last digit
         while (s[l] >= '0' && s[l] <= '9') // while a digit
         {
             *onesbyte = (BYTE)(s[l--] - '0');
@@ -317,7 +317,7 @@ bn_t strtobn(bn_t r, char *s)
 }
 
 /********************************************************************/
-// strlen_needed() - returns string length needed to hold bignumber
+// std::strlen_needed() - returns string length needed to hold bignumber
 
 int strlen_needed()
 {
@@ -381,7 +381,7 @@ char *unsafe_bntostr(char *s, int dec, bn_t r)
         break;
     }
     ltoa(longval, s, 10);
-    l = (int) strlen(s);
+    l = (int) std::strlen(s);
     s[l++] = '.';
     for (int d = 0; d < dec; d++)
     {
@@ -712,11 +712,11 @@ bn_t unsafe_div_bn(bn_t r, bn_t n1, bn_t n2)
     }
 
     // shift n1, n2
-    // important!, use memmove(), not memcpy()
-    memmove(n1+scale1, n1, bnlength-scale1); // shift bytes over
-    memset(n1, 0, scale1);  // zero out the rest
-    memmove(n2+scale2, n2, bnlength-scale2); // shift bytes over
-    memset(n2, 0, scale2);  // zero out the rest
+    // important!, use std::memmove(), not std::memcpy()
+    std::memmove(n1+scale1, n1, bnlength-scale1); // shift bytes over
+    std::memset(n1, 0, scale1);  // zero out the rest
+    std::memmove(n2+scale2, n2, bnlength-scale2); // shift bytes over
+    std::memset(n2, 0, scale2);  // zero out the rest
 
     unsafe_inv_bn(r, n2);
     unsafe_mult_bn(bntmp1, n1, r);
@@ -728,14 +728,14 @@ bn_t unsafe_div_bn(bn_t r, bn_t n1, bn_t n2)
         if (scale1 > scale2) // answer is too big, adjust it
         {
             int scale = scale1-scale2;
-            memmove(r, r+scale, bnlength-scale); // shift bytes over
-            memset(r+bnlength-scale, 0, scale);  // zero out the rest
+            std::memmove(r, r+scale, bnlength-scale); // shift bytes over
+            std::memset(r+bnlength-scale, 0, scale);  // zero out the rest
         }
         else if (scale1 < scale2) // answer is too small, adjust it
         {
             int scale = scale2-scale1;
-            memmove(r+scale, r, bnlength-scale); // shift bytes over
-            memset(r, 0, scale);                 // zero out the rest
+            std::memmove(r+scale, r, bnlength-scale); // shift bytes over
+            std::memset(r, 0, scale);                 // zero out the rest
         }
         // else scale1 == scale2
 

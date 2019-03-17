@@ -480,7 +480,7 @@ bool process_document(PD_FUNC get_info, PD_FUNC output, void *info)
                             else if (in_link == 2)
                             {
                                 tok = token_types::TOK_WORD;
-                                width = (int) strlen(page_text);
+                                width = (int) std::strlen(page_text);
                                 col += 8 - width;
                                 size = 0;
                                 pd.curr = page_text;
@@ -673,7 +673,7 @@ bool process_document(PD_FUNC get_info, PD_FUNC output, void *info)
                     {
                         width += 9;
                         sprintf(page_text, " (p. %d)", pd.i);
-                        if (!do_print(page_text, (int) strlen(page_text)))
+                        if (!do_print(page_text, (int) std::strlen(page_text)))
                         {
                             return false;
                         }

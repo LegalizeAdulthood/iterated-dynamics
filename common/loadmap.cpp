@@ -10,7 +10,8 @@
 
 #include <float.h>
 #include <stdio.h>
-#include <string.h>
+
+#include <cstring>
 
 //*************************************************************************
 
@@ -35,8 +36,8 @@ bool ValidateLuts(char const *fn)
     char    line[160];
     char    temp[FILE_MAX_PATH+1];
     char    temp_fn[FILE_MAX_PATH];
-    strcpy(temp, g_map_name.c_str());
-    strcpy(temp_fn, fn);
+    std::strcpy(temp, g_map_name.c_str());
+    std::strcpy(temp_fn, fn);
 #ifdef XFRACT
     merge_pathnames(temp, temp_fn, cmd_file::AT_CMD_LINE_SET_NAME);
 #else
@@ -44,7 +45,7 @@ bool ValidateLuts(char const *fn)
 #endif
     if (has_ext(temp) == nullptr)   // Did name have an extension?
     {
-        strcat(temp, ".map");  // No? Then add .map
+        std::strcat(temp, ".map");  // No? Then add .map
     }
     findpath(temp, line);         // search the dos path
     f = fopen(line, "r");

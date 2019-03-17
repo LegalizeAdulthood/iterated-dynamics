@@ -29,9 +29,9 @@ Miscellaneous fractal-specific code (formerly in CALCFRAC.C)
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
 
 #include <algorithm>
+#include <cstring>
 #include <vector>
 
 // routines in this module
@@ -1826,7 +1826,7 @@ int cellular()
     {
         n = g_params[0];
         sprintf(buf, "%.16g", n); // # of digits in initial string
-        t = (S16)strlen(buf);
+        t = (S16)std::strlen(buf);
         if (t>16 || t <= 0)
         {
             abort_cellular(STRING1, 0);
@@ -1882,7 +1882,7 @@ int cellular()
         g_params[1] = n;
     }
     sprintf(buf, "%.*g", rule_digits , n);
-    t = (S16)strlen(buf);
+    t = (S16)std::strlen(buf);
     if (rule_digits < t || t < 0)
     {
         // leading 0s could make t smaller

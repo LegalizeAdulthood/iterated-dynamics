@@ -13,7 +13,6 @@
 #include <assert.h>
 #include <fcntl.h>
 #include <stdio.h>
-#include <string.h>
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <time.h>
@@ -21,6 +20,7 @@
 #include <unistd.h>
 #endif
 
+#include <cstring>
 #include <system_error>
 #include <vector>
 
@@ -976,9 +976,9 @@ static bool can_read_file(char const *path)
 
 static bool exe_path(char const *filename, char *path)
 {
-    strcpy(path, SRCDIR);
-    strcat(path, "/");
-    strcat(path, filename);
+    std::strcpy(path, SRCDIR);
+    std::strcat(path, "/");
+    std::strcat(path, filename);
     return true;
 }
 
@@ -1239,13 +1239,13 @@ static bool print_doc_output(int cmd, PD_INFO *pd, void *context)
 
         info->margin = 0;
 
-        memset(line, ' ', 81);
+        std::memset(line, ' ', 81);
         sprintf(buff, "Fractint Version %d.%01d%c", g_release/100, (g_release%100)/10,
                 ((g_release%10) ? '0'+(g_release%10) : ' '));
-        memmove(line + ((width-(int)(strlen(buff))) / 2)-4, buff, strlen(buff));
+        std::memmove(line + ((width-(int)(std::strlen(buff))) / 2)-4, buff, std::strlen(buff));
 
         sprintf(buff, "Page %d", pd->page_num);
-        memmove(line + (width - (int)strlen(buff)), buff, strlen(buff));
+        std::memmove(line + (width - (int)std::strlen(buff)), buff, std::strlen(buff));
 
         printerc(info, '\n', 1);
         printers(info, line, width);

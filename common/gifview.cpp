@@ -30,9 +30,9 @@
 #include "stereo.h"
 
 #include <stdio.h>
-#include <string.h>
 
 #include <algorithm>
+#include <cstring>
 #include <vector>
 
 static void close_file();
@@ -100,15 +100,15 @@ int gifview()
     // Open the file
     if (g_out_line == outline_stereo)
     {
-        strcpy(temp1, g_stereo_map_filename.c_str());
+        std::strcpy(temp1, g_stereo_map_filename.c_str());
     }
     else
     {
-        strcpy(temp1, g_read_filename.c_str());
+        std::strcpy(temp1, g_read_filename.c_str());
     }
     if (has_ext(temp1) == nullptr)
     {
-        strcat(temp1, DEFAULT_FRACTAL_TYPE);
+        std::strcat(temp1, DEFAULT_FRACTAL_TYPE);
         fpin = fopen(temp1, "rb");
         if (fpin != nullptr)
         {
@@ -118,13 +118,13 @@ int gifview()
         {
             if (g_out_line == outline_stereo)
             {
-                strcpy(temp1, g_stereo_map_filename.c_str());
+                std::strcpy(temp1, g_stereo_map_filename.c_str());
             }
             else
             {
-                strcpy(temp1, g_read_filename.c_str());
+                std::strcpy(temp1, g_read_filename.c_str());
             }
-            strcat(temp1, ALTERNATE_FRACTAL_TYPE);
+            std::strcat(temp1, ALTERNATE_FRACTAL_TYPE);
         }
     }
     fpin = fopen(temp1, "rb");
@@ -145,7 +145,7 @@ int gifview()
         }
     }
 
-    if (strncmp((char *)buffer, "GIF87a", 3)             // use updated GIF specs
+    if (std::strncmp((char *)buffer, "GIF87a", 3)             // use updated GIF specs
         || buffer[3] < '0' || buffer[3] > '9'
         || buffer[4] < '0' || buffer[4] > '9'
         || buffer[5] < 'A' || buffer[5] > 'z')

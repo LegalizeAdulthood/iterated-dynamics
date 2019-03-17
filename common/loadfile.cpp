@@ -36,7 +36,6 @@
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
 #include <time.h>
 #if defined(XFRACT)
 #include <unistd.h>
@@ -44,6 +43,7 @@
 
 #include <algorithm>
 #include <cassert>
+#include <cstring>
 #include <string>
 #include <system_error>
 #include <vector>
@@ -598,7 +598,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
     {
         bf_math = bf_math_type::BIGNUM;
         init_bf_length(read_info.bflength);
-        memcpy((char *) g_bf_x_min, &blk_5_info.apm_data[0], blk_5_info.length);
+        std::memcpy((char *) g_bf_x_min, &blk_5_info.apm_data[0], blk_5_info.length);
     }
     else
     {
@@ -756,7 +756,7 @@ static int find_fractal_info(char const *gif_file, FRACTAL_INFO *info,
         return -1;
     }
     freader(gifstart, 13, 1, fp);
-    if (strncmp((char *)gifstart, "GIF", 3) != 0)
+    if (std::strncmp((char *)gifstart, "GIF", 3) != 0)
     {
         // not GIF, maybe old .tga?
         fclose(fp);
@@ -830,13 +830,13 @@ static int find_fractal_info(char const *gif_file, FRACTAL_INFO *info,
          fractint006     evolver params
     */
 
-    memset(info, 0, FRACTAL_INFO_SIZE);
+    std::memset(info, 0, FRACTAL_INFO_SIZE);
     fractinf_len = FRACTAL_INFO_SIZE + (FRACTAL_INFO_SIZE+254)/255;
     fseek(fp, (long)(-1-fractinf_len), SEEK_END);
     /* TODO: revise this to read members one at a time so we get natural alignment
        of fields within the FRACTAL_INFO structure for the platform */
     freader(info, 1, FRACTAL_INFO_SIZE, fp);
-    if (strcmp(INFO_ID, info->info_id) == 0)
+    if (std::strcmp(INFO_ID, info->info_id) == 0)
     {
 #ifdef XFRACT
         decode_fractal_info(info, 1);
@@ -858,10 +858,10 @@ static int find_fractal_info(char const *gif_file, FRACTAL_INFO *info,
             freader(tmpbuf, 1, 110, fp); // read 10 extra for string compare
             for (int i = 0; i < 100; ++i)
             {
-                if (!strcmp(INFO_ID, &tmpbuf[i]))
+                if (!std::strcmp(INFO_ID, &tmpbuf[i]))
                 {
                     // found header?
-                    strcpy(info->info_id, INFO_ID);
+                    std::strcpy(info->info_id, INFO_ID);
                     fseek(fp, (long)(hdr_offset = i-offset), SEEK_END);
                     /* TODO: revise this to read members one at a time so we get natural alignment
                         of fields within the FRACTAL_INFO structure for the platform */
@@ -892,7 +892,7 @@ static int find_fractal_info(char const *gif_file, FRACTAL_INFO *info,
             {
                 if (fgetc(fp) != '!' // if not what we expect just give up
                     || fread(temp1, 1, 13, fp) != 13
-                    || strncmp(&temp1[2], "fractint", 8))
+                    || std::strncmp(&temp1[2], "fractint", 8))
                 {
                     break;
                 }
@@ -928,7 +928,7 @@ static int find_fractal_info(char const *gif_file, FRACTAL_INFO *info,
                     // check data_len for backward compatibility
                     fseek(fp, (long)(0-block_len), SEEK_CUR);
                     load_ext_blk((char *)&fload_info, data_len);
-                    strcpy(blk_3_info->form_name, fload_info.form_name);
+                    std::strcpy(blk_3_info->form_name, fload_info.form_name);
                     blk_3_info->length = data_len;
                     blk_3_info->got_data = true;
                     if (data_len < sizeof(fload_info))
@@ -1041,7 +1041,7 @@ static int find_fractal_info(char const *gif_file, FRACTAL_INFO *info,
         return 0;
     }
 
-    strcpy(info->info_id, "GIFFILE");
+    std::strcpy(info->info_id, "GIFFILE");
     info->iterations = 150;
     info->iterationsold = 150;
     info->fractal_type = static_cast<short>(fractal_type::PLASMA);
@@ -1468,7 +1468,7 @@ rescan:  // entry for changed browse parms
             && !blk_6_info.got_data
             && is_visible_window(&winlist, &read_info, &blk_5_info))
         {
-            strcpy(winlist.name, DTA.filename);
+            std::strcpy(winlist.name, DTA.filename);
             drawindow(color_of_box, &winlist);
             winlist.boxcount = g_box_count;
             browse_windows[wincount] = winlist;
@@ -1627,7 +1627,7 @@ rescan:  // entry for changed browse parms
                     {
                         // do a rescan
                         done = 3;
-                        strcpy(oldname, winlist.name);
+                        std::strcpy(oldname, winlist.name);
                         tmpmask[0] = '\0';
                         check_history(oldname, tmpmask);
                         break;
@@ -1649,12 +1649,12 @@ rescan:  // entry for changed browse parms
                 cleartempmsg();
                 driver_stack_screen();
                 newname[0] = 0;
-                strcpy(mesg, "Enter the new filename for ");
+                std::strcpy(mesg, "Enter the new filename for ");
                 splitpath(g_read_filename.c_str(), drive, dir, nullptr, nullptr);
                 splitpath(winlist.name, nullptr, nullptr, fname, ext);
                 makepath(tmpmask, drive, dir, fname, ext);
-                strcpy(newname, tmpmask);
-                strcat(mesg, tmpmask);
+                std::strcpy(newname, tmpmask);
+                std::strcat(mesg, tmpmask);
                 {
                     int i = field_prompt(mesg, nullptr, newname, 60, nullptr);
                     driver_unstack_screen();
@@ -1670,9 +1670,9 @@ rescan:  // entry for changed browse parms
                             {
                                 splitpath(newname, nullptr, nullptr, fname, ext);
                                 makepath(tmpmask, nullptr, nullptr, fname, ext);
-                                strcpy(oldname, winlist.name);
+                                std::strcpy(oldname, winlist.name);
                                 check_history(oldname, tmpmask);
-                                strcpy(winlist.name, tmpmask);
+                                std::strcpy(winlist.name, tmpmask);
                             }
                         }
                     }
@@ -1889,12 +1889,12 @@ bool is_visible_window(
         bt_t5   = alloc_stack(two_di_len);
         bt_t6   = alloc_stack(two_di_len);
 
-        memcpy((char *)bt_t1, &blk_5_info->apm_data[0], (two_di_len));
-        memcpy((char *)bt_t2, &blk_5_info->apm_data[two_di_len], (two_di_len));
-        memcpy((char *)bt_t3, &blk_5_info->apm_data[2*two_di_len], (two_di_len));
-        memcpy((char *)bt_t4, &blk_5_info->apm_data[3*two_di_len], (two_di_len));
-        memcpy((char *)bt_t5, &blk_5_info->apm_data[4*two_di_len], (two_di_len));
-        memcpy((char *)bt_t6, &blk_5_info->apm_data[5*two_di_len], (two_di_len));
+        std::memcpy((char *)bt_t1, &blk_5_info->apm_data[0], (two_di_len));
+        std::memcpy((char *)bt_t2, &blk_5_info->apm_data[two_di_len], (two_di_len));
+        std::memcpy((char *)bt_t3, &blk_5_info->apm_data[2*two_di_len], (two_di_len));
+        std::memcpy((char *)bt_t4, &blk_5_info->apm_data[3*two_di_len], (two_di_len));
+        std::memcpy((char *)bt_t5, &blk_5_info->apm_data[4*two_di_len], (two_di_len));
+        std::memcpy((char *)bt_t6, &blk_5_info->apm_data[5*two_di_len], (two_di_len));
 
         convert_bf(bt_xmin, bt_t1, two_len, two_di_len);
         convert_bf(bt_xmax, bt_t2, two_len, two_di_len);

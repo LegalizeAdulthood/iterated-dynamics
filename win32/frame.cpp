@@ -249,7 +249,7 @@ void frame_init(HINSTANCE instance, LPCSTR title)
     if (!status)
     {
         g_frame.instance = instance;
-        strcpy(g_frame.title, title);
+        std::strcpy(g_frame.title, title);
 
         wc.style = 0;
         wc.lpfnWndProc = frame_proc;

@@ -18,7 +18,6 @@
 
 #include <fcntl.h>
 #include <math.h>
-#include <string.h>
 #ifndef NOBSTRING
 #ifndef sun
 // If this gives you an error, read the README and modify the Makefile.
@@ -305,11 +304,11 @@ void decode_fractal_info(FRACTAL_INFO *info, int dir)
 
     if (dir == 1)
     {
-        strncpy(info->info_id, (char *)bufPtr, 8);
+        std::strncpy(info->info_id, (char *)bufPtr, 8);
     }
     else
     {
-        strncpy((char *)bufPtr, info->info_id, 8);
+        std::strncpy((char *)bufPtr, info->info_id, 8);
     }
     bufPtr += 8;
     getInt(&info->iterationsold, &bufPtr, dir);
@@ -862,8 +861,8 @@ void findpath(char const *filename, char *fullpathname)
     if (g_check_cur_dir)
     {
         // check for current dir
-        strcpy(fullpathname, "./");
-        strcat(fullpathname, filename);
+        std::strcpy(fullpathname, "./");
+        std::strcat(fullpathname, filename);
         if (path_exists(fullpathname))
         {
             return;
@@ -873,7 +872,7 @@ void findpath(char const *filename, char *fullpathname)
     // check for absolute path
     if (filename[0] == '/')
     {
-        strcpy(fullpathname, filename);
+        std::strcpy(fullpathname, filename);
         if (path_exists(fullpathname))
         {
             return;
@@ -881,18 +880,18 @@ void findpath(char const *filename, char *fullpathname)
     }
 
     // check for FRACTDIR
-    strcpy(fullpathname, g_fractal_search_dir1);
-    strcat(fullpathname, "/");
-    strcat(fullpathname, filename);
+    std::strcpy(fullpathname, g_fractal_search_dir1);
+    std::strcat(fullpathname, "/");
+    std::strcat(fullpathname, filename);
     if (path_exists(fullpathname))
     {
         return;
     }
 
     // check for SRCDIR
-    strcpy(fullpathname, g_fractal_search_dir2);
-    strcat(fullpathname, "/");
-    strcat(fullpathname, filename);
+    std::strcpy(fullpathname, g_fractal_search_dir2);
+    std::strcat(fullpathname, "/");
+    std::strcat(fullpathname, filename);
     if (path_exists(fullpathname))
     {
         return;

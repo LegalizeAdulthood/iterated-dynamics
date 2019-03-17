@@ -68,7 +68,7 @@ x11_text_window::x11_text_window()
     for (int i = 0; i < 3; i++)
     {
         size_t count = NUM_OF(me->cursor_pattern[0])*sizeof(me->cursor_pattern[0][0]);
-        memset(&me->cursor_pattern[i][0], 0, count);
+        std::memset(&me->cursor_pattern[i][0], 0, count);
     }
     for (int j = me->char_height-2; j < me->char_height; j++)
     {
@@ -552,8 +552,8 @@ void wintext_scroll_up(WinText *me, int top, int bot)
             *attrs++ = *next_attrs++;
         }
     }
-    memset(&me->chars[bot][0], 0, (size_t) WINTEXT_MAX_COL);
-    memset(&me->attrs[bot][0], 0, (size_t) WINTEXT_MAX_COL);
+    std::memset(&me->chars[bot][0], 0, (size_t) WINTEXT_MAX_COL);
+    std::memset(&me->attrs[bot][0], 0, (size_t) WINTEXT_MAX_COL);
     invalidate(me, 0, bot, WINTEXT_MAX_COL, top);
 }
 
@@ -729,8 +729,8 @@ void wintext_clear(WinText *me)
 {
     for (int y = 0; y < WINTEXT_MAX_ROW; y++)
     {
-        memset(&me->chars[y][0], ' ', (size_t) WINTEXT_MAX_COL);
-        memset(&me->attrs[y][0], 0xf0, (size_t) WINTEXT_MAX_COL);
+        std::memset(&me->chars[y][0], ' ', (size_t) WINTEXT_MAX_COL);
+        std::memset(&me->attrs[y][0], 0xf0, (size_t) WINTEXT_MAX_COL);
     }
     InvalidateRect(me->hWndCopy, nullptr, FALSE);
 }
@@ -740,16 +740,16 @@ BYTE *wintext_screen_get(WinText *me)
     size_t count = sizeof(BYTE)*WINTEXT_MAX_ROW*WINTEXT_MAX_COL;
     BYTE *copy = (BYTE *) malloc(count*2);
     _ASSERTE(copy);
-    memcpy(copy, me->chars, count);
-    memcpy(copy + count, me->attrs, count);
+    std::memcpy(copy, me->chars, count);
+    std::memcpy(copy + count, me->attrs, count);
     return copy;
 }
 
 void wintext_screen_set(WinText *me, const BYTE *copy)
 {
     size_t count = sizeof(BYTE)*WINTEXT_MAX_ROW*WINTEXT_MAX_COL;
-    memcpy(me->chars, copy, count);
-    memcpy(me->attrs, copy + count, count);
+    std::memcpy(me->chars, copy, count);
+    std::memcpy(me->attrs, copy + count, count);
     InvalidateRect(me->hWndCopy, nullptr, FALSE);
 }
 

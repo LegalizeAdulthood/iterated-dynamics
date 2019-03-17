@@ -20,9 +20,9 @@
 
 #include <stdarg.h>
 #include <stdio.h>
-#include <string.h>
 
 #include <algorithm>
+#include <cstring>
 #include <system_error>
 #include <vector>
 
@@ -96,14 +96,14 @@ static void setpal(int pal, int r, int g, int b)
 
 static void setpalrange(int first, int how_many, PALENTRY *pal)
 {
-    memmove(g_dac_box+first, pal, how_many*3);
+    std::memmove(g_dac_box+first, pal, how_many*3);
     spindac(0, 1);
 }
 
 
 static void getpalrange(int first, int how_many, PALENTRY *pal)
 {
-    memmove(pal, g_dac_box+first, how_many*3);
+    std::memmove(pal, g_dac_box+first, how_many*3);
 }
 
 
@@ -119,9 +119,9 @@ static void rotatepal(PALENTRY *pal, int dir, int lo, int hi)
     {
         while (dir-- > 0)
         {
-            memmove(&hold, &pal[hi],  3);
-            memmove(&pal[lo+1], &pal[lo], 3*(size-1));
-            memmove(&pal[lo], &hold, 3);
+            std::memmove(&hold, &pal[hi],  3);
+            std::memmove(&pal[lo+1], &pal[lo], 3*(size-1));
+            std::memmove(&pal[lo], &hold, 3);
         }
     }
 
@@ -129,9 +129,9 @@ static void rotatepal(PALENTRY *pal, int dir, int lo, int hi)
     {
         while (dir++ < 0)
         {
-            memmove(&hold, &pal[lo], 3);
-            memmove(&pal[lo], &pal[lo+1], 3*(size-1));
-            memmove(&pal[hi], &hold,  3);
+            std::memmove(&hold, &pal[lo], 3);
+            std::memmove(&pal[lo], &pal[lo+1], 3*(size-1));
+            std::memmove(&pal[hi], &hold,  3);
         }
     }
 }
@@ -215,7 +215,7 @@ int clip_getcolor(int x, int y)
 
 static void hline(int x, int y, int width, int color)
 {
-    memset(&g_line_buff[0], color, width);
+    std::memset(&g_line_buff[0], color, width);
     clip_put_line(y, x, x+width-1, &g_line_buff[0]);
 }
 
@@ -1770,7 +1770,7 @@ static void PalTable__UndoProcess(PalTable *me, int delta)   // undo/redo common
         fseek(me->undo_file, -(num*3), SEEK_CUR);  // go to start of undo/redo data
         fwrite(me->pal+first, 3, num, me->undo_file);  // write redo/undo data
 
-        memmove(me->pal+first, temp, num*3);
+        std::memmove(me->pal+first, temp, num*3);
 
         PalTable__UpdateDAC(me);
 
@@ -2266,11 +2266,11 @@ static void PalTable__UpdateDAC(PalTable *me)
 {
     if (me->exclude)
     {
-        memset(g_dac_box, 0, 256*3);
+        std::memset(g_dac_box, 0, 256*3);
         if (me->exclude == 1)
         {
             int a = me->curr[me->active];
-            memmove(g_dac_box[a], &me->pal[a], 3);
+            std::memmove(g_dac_box[a], &me->pal[a], 3);
         }
         else
         {
@@ -2284,12 +2284,12 @@ static void PalTable__UpdateDAC(PalTable *me)
                 b = t;
             }
 
-            memmove(g_dac_box[a], &me->pal[a], 3*(1+(b-a)));
+            std::memmove(g_dac_box[a], &me->pal[a], 3*(1+(b-a)));
         }
     }
     else
     {
-        memmove(g_dac_box[0], me->pal, 3*g_colors);
+        std::memmove(g_dac_box[0], me->pal, 3*g_colors);
 
         if (me->freestyle)
         {
@@ -2301,13 +2301,13 @@ static void PalTable__UpdateDAC(PalTable *me)
     {
         if (inverse)
         {
-            memset(g_dac_box[fg_color], 0, 3);         // g_dac_box[fg] = (0,0,0)
-            memset(g_dac_box[bg_color], 48, 3);        // g_dac_box[bg] = (48,48,48)
+            std::memset(g_dac_box[fg_color], 0, 3);         // g_dac_box[fg] = (0,0,0)
+            std::memset(g_dac_box[bg_color], 48, 3);        // g_dac_box[bg] = (48,48,48)
         }
         else
         {
-            memset(g_dac_box[bg_color], 0, 3);         // g_dac_box[bg] = (0,0,0)
-            memset(g_dac_box[fg_color], 48, 3);        // g_dac_box[fg] = (48,48,48)
+            std::memset(g_dac_box[bg_color], 0, 3);         // g_dac_box[bg] = (0,0,0)
+            std::memset(g_dac_box[fg_color], 48, 3);        // g_dac_box[fg] = (48,48,48)
         }
     }
 
@@ -2768,7 +2768,7 @@ static void PalTable__other_key(int key, RGBEditor *rgb, void *info)
         Cursor_Hide();
 
         PalTable__SaveUndoData(me, 0, 255);
-        memcpy(me->pal, me->save_pal[which], 256*sizeof(PALENTRY));
+        std::memcpy(me->pal, me->save_pal[which], 256*sizeof(PALENTRY));
         PalTable__UpdateDAC(me);
 
         PalTable__SetCurr(me, -1, 0);
@@ -2787,7 +2787,7 @@ static void PalTable__other_key(int key, RGBEditor *rgb, void *info)
     case FIK_SF9:
     {
         int which = key - FIK_SF2;
-        memcpy(me->save_pal[which], me->pal, 256*sizeof(PALENTRY));
+        std::memcpy(me->save_pal[which], me->pal, 256*sizeof(PALENTRY));
         break;
     }
 
@@ -2986,7 +2986,7 @@ static void PalTable__MkDefaultPalettes(PalTable *me)  // creates default Fkey p
 {
     for (int i = 0; i < 8; i++) // copy original palette to save areas
     {
-        memcpy(me->save_pal[i], me->pal, 256*sizeof(PALENTRY));
+        std::memcpy(me->save_pal[i], me->pal, 256*sizeof(PALENTRY));
     }
 }
 

@@ -10,8 +10,7 @@
 #include "zoom.h"
 
 #include <stdio.h>
-#include <string.h>
-
+ 
 #include <cstring>
 
 /*
@@ -329,7 +328,7 @@ putstring(int row, int col, int attr, char const *msg)
         else
         {
             char const *ptr;
-            ptr = strchr(msg, '\n');
+            ptr = std::strchr(msg, '\n');
             if (ptr == nullptr)
             {
                 waddstr(curwin, msg);

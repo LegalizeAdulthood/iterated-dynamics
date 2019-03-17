@@ -19,9 +19,9 @@
 #include "rotate.h"
 
 #include <stdlib.h>
-#include <string.h>
 #include <time.h>
 
+#include <cstring>
 #include <vector>
 
 std::string g_stereo_map_filename;
@@ -261,7 +261,7 @@ bool do_AutoStereo()
     help_labels const old_help_mode = g_help_mode;
     g_help_mode = help_labels::RDSKEYS;
     driver_save_graphics();                      // save graphics image
-    memcpy(savedacbox, g_dac_box, 256 * 3);  // save colors
+    std::memcpy(savedacbox, g_dac_box, 256 * 3);  // save colors
 
     if (g_logical_screen_x_dots > OLD_MAX_PIXELS)
     {
@@ -396,7 +396,7 @@ bool do_AutoStereo()
 exit_stereo:
     g_help_mode = old_help_mode;
     driver_restore_graphics();
-    memcpy(g_dac_box, savedacbox, 256 * 3);
+    std::memcpy(g_dac_box, savedacbox, 256 * 3);
     spindac(0, 1);
     return ret;
 }

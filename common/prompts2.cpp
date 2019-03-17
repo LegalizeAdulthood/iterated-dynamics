@@ -35,7 +35,6 @@
 #include <ctype.h>
 #include <math.h>
 #include <stdlib.h>
-#include <string.h>
 #if defined(XFRACT)
 #include <fcntl.h>
 #include <sys/stat.h>
@@ -54,6 +53,7 @@
 #endif
 
 #include <algorithm>
+#include <cstring>
 #include <string>
 
 static  int check_f6_key(int curkey, int choice);
@@ -242,8 +242,8 @@ int get_toggles()
 
     choices[++k] = "Savename (.GIF implied)";
     uvalues[k].type = 's';
-    strcpy(prevsavename, g_save_filename.c_str());
-    savenameptr = strrchr(g_save_filename.c_str(), SLASHC);
+    std::strcpy(prevsavename, g_save_filename.c_str());
+    savenameptr = std::strrchr(g_save_filename.c_str(), SLASHC);
     if (savenameptr == nullptr)
     {
         savenameptr = g_save_filename.c_str();
@@ -252,7 +252,7 @@ int get_toggles()
     {
         savenameptr++; // point past slash
     }
-    strcpy(uvalues[k].uval.sval, savenameptr);
+    std::strcpy(uvalues[k].uval.sval, savenameptr);
 
     choices[++k] = "File Overwrite ('overwrite=')";
     uvalues[k].type = 'y';
@@ -292,7 +292,7 @@ int get_toggles()
     uvalues[k].type = 's';
     if (g_fill_color < 0)
     {
-        strcpy(uvalues[k].uval.sval, "normal");
+        std::strcpy(uvalues[k].uval.sval, "normal");
     }
     else
     {
@@ -439,7 +439,7 @@ int get_toggles()
     }
 
     g_save_filename = std::string {g_save_filename.c_str(), savenameptr} + uvalues[++k].uval.sval;
-    if (strcmp(g_save_filename.c_str(), prevsavename))
+    if (std::strcmp(g_save_filename.c_str(), prevsavename))
     {
         g_resave_flag = 0;
         g_started_resaves = false; // forget pending increment
@@ -475,7 +475,7 @@ int get_toggles()
         j++;
     }
 
-    if (strncmp(strlwr(uvalues[++k].uval.sval), "normal", 4) == 0)
+    if (std::strncmp(strlwr(uvalues[++k].uval.sval), "normal", 4) == 0)
     {
         g_fill_color = -1;
     }
@@ -1047,7 +1047,7 @@ get_view_restart:
     {
         g_video_entry.xdots = g_screen_x_dots;
         g_video_entry.ydots = g_screen_y_dots;
-        memcpy(&g_video_table[g_adapter], &g_video_entry, sizeof(g_video_entry));
+        std::memcpy(&g_video_table[g_adapter], &g_video_entry, sizeof(g_video_entry));
         if (g_final_aspect_ratio == 0.0)
         {
             g_final_aspect_ratio = ((float) g_screen_y_dots)/((float) g_screen_x_dots);
@@ -1290,9 +1290,9 @@ int get_rds_params()
             }
             // center file name
             rds6[(sizeof(rds6)-(int) (g_stereo_map_filename.length() - p)+2)/2] = 0;
-            strcat(rds6, "[");
-            strcat(rds6, &g_stereo_map_filename.c_str()[p]);
-            strcat(rds6, "]");
+            std::strcat(rds6, "[");
+            std::strcat(rds6, &g_stereo_map_filename.c_str()[p]);
+            std::strcat(rds6, "]");
         }
         else
         {
@@ -1517,22 +1517,22 @@ int  fr_findnext()              // Find next file (or subdir) meeting above path
         else if (dirEntry->d_ino != 0)
         {
             splitpath(dirEntry->d_name, nullptr, nullptr, thisname, thisext);
-            strncpy(DTA.filename, dirEntry->d_name, 13);
+            std::strncpy(DTA.filename, dirEntry->d_name, 13);
             DTA.filename[12] = '\0';
-            strcpy(tmpname, searchdir);
-            strcat(tmpname, dirEntry->d_name);
+            std::strcpy(tmpname, searchdir);
+            std::strcat(tmpname, dirEntry->d_name);
             stat(tmpname, &sbuf);
             DTA.size = sbuf.st_size;
             if ((sbuf.st_mode&S_IFMT) == S_IFREG &&
-                    (searchname[0] == '*' || strcmp(searchname, thisname) == 0) &&
-                    (searchext[0] == '*' || strcmp(searchext, thisext) == 0))
+                    (searchname[0] == '*' || std::strcmp(searchname, thisname) == 0) &&
+                    (searchext[0] == '*' || std::strcmp(searchext, thisext) == 0))
             {
                 DTA.attribute = 0;
                 return 0;
             }
             else if (((sbuf.st_mode&S_IFMT) == S_IFDIR) &&
                      ((searchname[0] == '*' || searchext[0] == '*') ||
-                      (strcmp(searchname, thisname) == 0)))
+                      (std::strcmp(searchname, thisname) == 0)))
             {
                 DTA.attribute = SUBDIR;
                 return 0;
@@ -1594,13 +1594,13 @@ bool getafilename(char const *hdg, char const *file_template, char *flname)
         choices[i] = &storage[i];
     }
     // save filename
-    strcpy(old_flname, flname);
+    std::strcpy(old_flname, flname);
 
 restart:  // return here if template or directory changes
     tmpmask[0] = 0;
     if (flname[0] == 0)
     {
-        strcpy(flname, DOTSLASH);
+        std::strcpy(flname, DOTSLASH);
     }
     splitpath(flname , drive, dir, fname, ext);
     makepath(filename, ""   , "" , fname, ext);
@@ -1609,20 +1609,20 @@ restart:  // return here if template or directory changes
 retry_dir:
     if (dir[0] == 0)
     {
-        strcpy(dir, ".");
+        std::strcpy(dir, ".");
     }
     expand_dirname(dir, drive);
     makepath(tmpmask, drive, dir, "", "");
     fix_dirname(tmpmask);
-    if (retried == 0 && strcmp(dir, SLASH) && strcmp(dir, DOTSLASH))
+    if (retried == 0 && std::strcmp(dir, SLASH) && std::strcmp(dir, DOTSLASH))
     {
-        int j = (int) strlen(tmpmask) - 1;
+        int j = (int) std::strlen(tmpmask) - 1;
         tmpmask[j] = 0; // strip trailing backslash
-        if (strchr(tmpmask, '*') || strchr(tmpmask, '?')
+        if (std::strchr(tmpmask, '*') || std::strchr(tmpmask, '?')
             || fr_findfirst(tmpmask) != 0
             || (DTA.attribute & SUBDIR) == 0)
         {
-            strcpy(dir, DOTSLASH);
+            std::strcpy(dir, DOTSLASH);
             ++retried;
             goto retry_dir;
         }
@@ -1640,23 +1640,23 @@ retry_dir:
     filecount = -1;
     dircount  = 0;
     notroot   = false;
-    masklen = (int) strlen(tmpmask);
-    strcat(tmpmask, "*.*");
+    masklen = (int) std::strlen(tmpmask);
+    std::strcat(tmpmask, "*.*");
     out = fr_findfirst(tmpmask);
     while (out == 0 && filecount < MAXNUMFILES)
     {
-        if ((DTA.attribute & SUBDIR) && strcmp(DTA.filename, "."))
+        if ((DTA.attribute & SUBDIR) && std::strcmp(DTA.filename, "."))
         {
-            if (strcmp(DTA.filename, ".."))
+            if (std::strcmp(DTA.filename, ".."))
             {
-                strcat(DTA.filename, SLASH);
+                std::strcat(DTA.filename, SLASH);
             }
-            strncpy(choices[++filecount]->name, DTA.filename, 13);
+            std::strncpy(choices[++filecount]->name, DTA.filename, 13);
             choices[filecount]->name[12] = 0;
             choices[filecount]->type = 1;
-            strcpy(choices[filecount]->full_name, DTA.filename);
+            std::strcpy(choices[filecount]->full_name, DTA.filename);
             dircount++;
-            if (strcmp(DTA.filename, "..") == 0)
+            if (std::strcmp(DTA.filename, "..") == 0)
             {
                 notroot = true;
             }
@@ -1673,7 +1673,7 @@ retry_dir:
     {
         if (numtemplates > 1)
         {
-            strcpy(&(tmpmask[masklen]), masks[j]);
+            std::strcpy(&(tmpmask[masklen]), masks[j]);
         }
         out = fr_findfirst(tmpmask);
         while (out == 0 && filecount < MAXNUMFILES)
@@ -1687,14 +1687,14 @@ retry_dir:
                     splitpath(DTA.filename, nullptr, nullptr, fname, ext);
                     // just using speedstr as a handy buffer
                     makepath(speedstr, drive, dir, fname, ext);
-                    strncpy(choices[++filecount]->name, DTA.filename, 13);
+                    std::strncpy(choices[++filecount]->name, DTA.filename, 13);
                     choices[filecount]->type = 0;
                 }
                 else
                 {
-                    strncpy(choices[++filecount]->name, DTA.filename, 13);
+                    std::strncpy(choices[++filecount]->name, DTA.filename, 13);
                     choices[filecount]->type = 0;
-                    strcpy(choices[filecount]->full_name, DTA.filename);
+                    std::strcpy(choices[filecount]->full_name, DTA.filename);
                 }
             }
             out = fr_findnext();
@@ -1703,36 +1703,36 @@ retry_dir:
     while (++j < numtemplates);
     if (++filecount == 0)
     {
-        strcpy(choices[filecount]->name, "*nofiles*");
+        std::strcpy(choices[filecount]->name, "*nofiles*");
         choices[filecount]->type = 0;
         ++filecount;
     }
 
-    strcpy(instr, "Press " FK_F6 " for default directory, " FK_F4 " to toggle sort ");
+    std::strcpy(instr, "Press " FK_F6 " for default directory, " FK_F4 " to toggle sort ");
     if (dosort)
     {
-        strcat(instr, "off");
+        std::strcat(instr, "off");
         shell_sort(&choices, filecount, sizeof(CHOICE *), lccompare); // sort file list
     }
     else
     {
-        strcat(instr, "on");
+        std::strcat(instr, "on");
     }
     if (!notroot && dir[0] && dir[0] != SLASHC) // must be in root directory
     {
         splitpath(tmpmask, drive, dir, fname, ext);
-        strcpy(dir, SLASH);
+        std::strcpy(dir, SLASH);
         makepath(tmpmask, drive, dir, fname, ext);
     }
     if (numtemplates > 1)
     {
-        strcat(tmpmask, " ");
-        strcat(tmpmask, masks[0]);
+        std::strcat(tmpmask, " ");
+        std::strcat(tmpmask, masks[0]);
     }
 
     std::string const heading{std::string{hdg} + "\n"
         + "Template: " + tmpmask};
-    strcpy(speedstr, filename);
+    std::strcpy(speedstr, filename);
     int i = 0;
     if (speedstr[0] == 0)
     {
@@ -1762,11 +1762,11 @@ retry_dir:
         static int lastdir = 0;
         if (lastdir == 0)
         {
-            strcpy(dir, g_fractal_search_dir1);
+            std::strcpy(dir, g_fractal_search_dir1);
         }
         else
         {
-            strcpy(dir, g_fractal_search_dir2);
+            std::strcpy(dir, g_fractal_search_dir2);
         }
         fix_dirname(dir);
         makepath(flname, drive, dir, "", "");
@@ -1776,26 +1776,26 @@ retry_dir:
     if (i < 0)
     {
         // restore filename
-        strcpy(flname, old_flname);
+        std::strcpy(flname, old_flname);
         return true;
     }
     if (speedstr[0] == 0 || speedstate == MATCHING)
     {
         if (choices[i]->type)
         {
-            if (strcmp(choices[i]->name, "..") == 0) // go up a directory
+            if (std::strcmp(choices[i]->name, "..") == 0) // go up a directory
             {
-                if (strcmp(dir, DOTSLASH) == 0)
+                if (std::strcmp(dir, DOTSLASH) == 0)
                 {
-                    strcpy(dir, DOTDOTSLASH);
+                    std::strcpy(dir, DOTDOTSLASH);
                 }
                 else
                 {
-                    char *s = strrchr(dir, SLASHC);
+                    char *s = std::strrchr(dir, SLASHC);
                     if (s != nullptr) // trailing slash
                     {
                         *s = 0;
-                        s = strrchr(dir, SLASHC);
+                        s = std::strrchr(dir, SLASHC);
                         if (s != nullptr)
                         {
                             *(s + 1) = 0;
@@ -1805,7 +1805,7 @@ retry_dir:
             }
             else  // go down a directory
             {
-                strcat(dir, choices[i]->full_name);
+                std::strcat(dir, choices[i]->full_name);
             }
             fix_dirname(dir);
             makepath(flname, drive, dir, "", "");
@@ -1817,9 +1817,9 @@ retry_dir:
     else
     {
         if (speedstate == SEARCHPATH
-            && strchr(speedstr, '*') == nullptr && strchr(speedstr, '?') == nullptr
+            && std::strchr(speedstr, '*') == nullptr && std::strchr(speedstr, '?') == nullptr
             && ((fr_findfirst(speedstr) == 0 && (DTA.attribute & SUBDIR))
-                || strcmp(speedstr, SLASH) == 0)) // it is a directory
+                || std::strcmp(speedstr, SLASH) == 0)) // it is a directory
         {
             speedstate = TEMPLATE;
         }
@@ -1836,15 +1836,15 @@ retry_dir:
             splitpath(speedstr, drive1, dir1, fname1, ext1);
             if (drive1[0])
             {
-                strcpy(drive, drive1);
+                std::strcpy(drive, drive1);
             }
             if (dir1[0])
             {
-                strcpy(dir, dir1);
+                std::strcpy(dir, dir1);
             }
             makepath(flname, drive, dir, fname1, ext1);
-            if (strchr(fname1, '*') || strchr(fname1, '?') ||
-                    strchr(ext1,   '*') || strchr(ext1,   '?'))
+            if (std::strchr(fname1, '*') || std::strchr(fname1, '?') ||
+                    std::strchr(ext1,   '*') || std::strchr(ext1,   '?'))
             {
                 makepath(user_file_template, "", "", fname1, ext1);
                 // cppcheck-suppress uselessAssignmentPtrArg
@@ -1862,13 +1862,13 @@ retry_dir:
             findpath(speedstr, fullpath);
             if (fullpath[0])
             {
-                strcpy(flname, fullpath);
+                std::strcpy(flname, fullpath);
             }
             else
             {
                 // failed, make diagnostic useful:
-                strcpy(flname, speedstr);
-                if (strchr(speedstr, SLASHC) == nullptr)
+                std::strcpy(flname, speedstr);
+                if (std::strchr(speedstr, SLASHC) == nullptr)
                 {
                     splitpath(speedstr, nullptr, nullptr, fname, ext);
                     makepath(flname, drive, dir, fname, ext);
@@ -1883,7 +1883,7 @@ retry_dir:
 bool getafilename(char const *hdg, char const *file_template, std::string &flname)
 {
     char buff[FILE_MAX_PATH];
-    strncpy(buff, flname.c_str(), FILE_MAX_PATH);
+    std::strncpy(buff, flname.c_str(), FILE_MAX_PATH);
     bool const result = getafilename(hdg, file_template, buff);
     flname = buff;
     return result;
@@ -1907,9 +1907,9 @@ static int filename_speedstr(int row, int col, int vid,
                              char const *speedstring, int speed_match)
 {
     char const *prompt;
-    if (strchr(speedstring, ':')
-        || strchr(speedstring, '*') || strchr(speedstring, '*')
-        || strchr(speedstring, '?'))
+    if (std::strchr(speedstring, ':')
+        || std::strchr(speedstring, '*') || std::strchr(speedstring, '*')
+        || std::strchr(speedstring, '?'))
     {
         speedstate = TEMPLATE;  // template
         prompt = "File Template";
@@ -1925,7 +1925,7 @@ static int filename_speedstr(int row, int col, int vid,
         prompt = g_speed_prompt.c_str();
     }
     driver_put_string(row, col, vid, prompt);
-    return (int) strlen(prompt);
+    return (int) std::strlen(prompt);
 }
 
 #ifndef XFRACT  // This routine moved to unix.c so we can use it in hc.c
@@ -1952,7 +1952,7 @@ int splitpath(char const *file_template, char *drive, char *dir, char *fname, ch
         ext[0]   = 0;
     }
 
-    length = (int) strlen(file_template);
+    length = (int) std::strlen(file_template);
     if (length == 0)
     {
         return 0;
@@ -1982,14 +1982,14 @@ int splitpath(char const *file_template, char *drive, char *dir, char *fname, ch
     // get dir
     if (offset < length)
     {
-        tmp = strrchr(file_template, SLASHC);
+        tmp = std::strrchr(file_template, SLASHC);
         if (tmp)
         {
             tmp++;  // first character after slash
             len = (int)(tmp - (char *)&file_template[offset]);
             if (len >= 0 && len < FILE_MAX_DIR && dir)
             {
-                strncpy(dir, &file_template[offset], std::min(len, FILE_MAX_DIR));
+                std::strncpy(dir, &file_template[offset], std::min(len, FILE_MAX_DIR));
             }
             if (len < FILE_MAX_DIR && dir)
             {
@@ -2006,8 +2006,8 @@ int splitpath(char const *file_template, char *drive, char *dir, char *fname, ch
     // get fname
     if (offset < length)
     {
-        tmp = strrchr(file_template, '.');
-        if (tmp < strrchr(file_template, SLASHC) || tmp < strrchr(file_template, ':'))
+        tmp = std::strrchr(file_template, '.');
+        if (tmp < std::strrchr(file_template, SLASHC) || tmp < std::strrchr(file_template, ':'))
         {
             tmp = nullptr; // in this case the '.' must be a directory
         }
@@ -2016,7 +2016,7 @@ int splitpath(char const *file_template, char *drive, char *dir, char *fname, ch
             len = (int)(tmp - (char *)&file_template[offset]);
             if ((len > 0) && (offset+len < length) && fname)
             {
-                strncpy(fname, &file_template[offset], std::min(len, FILE_MAX_FNAME));
+                std::strncpy(fname, &file_template[offset], std::min(len, FILE_MAX_FNAME));
                 if (len < FILE_MAX_FNAME)
                 {
                     fname[len] = 0;
@@ -2029,13 +2029,13 @@ int splitpath(char const *file_template, char *drive, char *dir, char *fname, ch
             offset += len;
             if ((offset < length) && ext)
             {
-                strncpy(ext, &file_template[offset], FILE_MAX_EXT);
+                std::strncpy(ext, &file_template[offset], FILE_MAX_EXT);
                 ext[FILE_MAX_EXT-1] = 0;
             }
         }
         else if ((offset < length) && fname)
         {
-            strncpy(fname, &file_template[offset], FILE_MAX_FNAME);
+            std::strncpy(fname, &file_template[offset], FILE_MAX_FNAME);
             fname[FILE_MAX_FNAME-1] = 0;
         }
     }
@@ -2056,24 +2056,24 @@ int makepath(char *template_str, char const *drive, char const *dir, char const 
 #ifndef XFRACT
     if (drive)
     {
-        strcpy(template_str, drive);
+        std::strcpy(template_str, drive);
     }
 #endif
     if (dir)
     {
-        strcat(template_str, dir);
-        if (dir[0] != 0 && dir[strlen(dir)-1] != '/')
+        std::strcat(template_str, dir);
+        if (dir[0] != 0 && dir[std::strlen(dir)-1] != '/')
         {
-            strcat(template_str, "/");
+            std::strcat(template_str, "/");
         }
     }
     if (fname)
     {
-        strcat(template_str, fname);
+        std::strcat(template_str, fname);
     }
     if (ext)
     {
-        strcat(template_str, ext);
+        std::strcat(template_str, ext);
     }
     return 0;
 }
@@ -2081,7 +2081,7 @@ int makepath(char *template_str, char const *drive, char const *dir, char const 
 // fix up directory names
 void fix_dirname(char *dirname)
 {
-    int length = (int) strlen(dirname); // index of last character
+    int length = (int) std::strlen(dirname); // index of last character
 
     // make sure dirname ends with a slash
     if (length > 0)
@@ -2091,13 +2091,13 @@ void fix_dirname(char *dirname)
             return;
         }
     }
-    strcat(dirname, SLASH);
+    std::strcat(dirname, SLASH);
 }
 
 void fix_dirname(std::string &dirname)
 {
     char buff[FILE_MAX_PATH];
-    strcpy(buff, dirname.c_str());
+    std::strcpy(buff, dirname.c_str());
     fix_dirname(buff);
     dirname = buff;
 }
@@ -2107,9 +2107,9 @@ static void dir_name(char *target, char const *dir, char const *name)
     *target = 0;
     if (*dir != 0)
     {
-        strcpy(target, dir);
+        std::strcpy(target, dir);
     }
-    strcat(target, name);
+    std::strcat(target, name);
 }
 
 // removes file in dir directory
@@ -2683,7 +2683,7 @@ get_brws_restart:
     uvalues[k].uval.ival = g_smallest_box_size_shown;
     choices[++k] = "Browse search filename mask ";
     uvalues[k].type = 's';
-    strcpy(uvalues[k].uval.sval, g_browse_mask.c_str());
+    std::strcpy(uvalues[k].uval.sval, g_browse_mask.c_str());
 
     choices[++k] = "";
     uvalues[k].type = '*';
@@ -2780,7 +2780,7 @@ get_brws_restart:
 int merge_pathnames(char *oldfullpath, char const *filename, cmd_file mode)
 {
     char newfilename[FILE_MAX_PATH];
-    strcpy(newfilename, filename);
+    std::strcpy(newfilename, filename);
     bool isadir_error = false;
     char drive[FILE_MAX_DRIVE];
     char dir[FILE_MAX_DIR];
@@ -2794,8 +2794,8 @@ int merge_pathnames(char *oldfullpath, char const *filename, cmd_file mode)
     char ext1[FILE_MAX_EXT];
 
     // no dot or slash so assume a file
-    bool isafile = strchr(newfilename, '.') == nullptr
-        && strchr(newfilename, SLASHC) == nullptr;
+    bool isafile = std::strchr(newfilename, '.') == nullptr
+        && std::strchr(newfilename, SLASHC) == nullptr;
     bool isadir = isadirectory(newfilename);
     if (isadir)
     {
@@ -2803,12 +2803,12 @@ int merge_pathnames(char *oldfullpath, char const *filename, cmd_file mode)
     }
 #ifndef XFRACT
     // if drive, colon, slash, is a directory
-    if ((int) strlen(newfilename) == 3 && newfilename[1] == ':' && newfilename[2] == SLASHC)
+    if ((int) std::strlen(newfilename) == 3 && newfilename[1] == ':' && newfilename[2] == SLASHC)
     {
         isadir = true;
     }
     // if drive, colon, with no slash, is a directory
-    if ((int) strlen(newfilename) == 2 && newfilename[1] == ':')
+    if ((int) std::strlen(newfilename) == 2 && newfilename[1] == ':')
     {
         newfilename[2] = SLASHC;
         newfilename[3] = 0;
@@ -2821,8 +2821,8 @@ int merge_pathnames(char *oldfullpath, char const *filename, cmd_file mode)
         temp_path[1] = ':';
         temp_path[2] = 0;
         expand_dirname(newfilename, temp_path);
-        strcat(temp_path, newfilename);
-        strcpy(newfilename, temp_path);
+        std::strcat(temp_path, newfilename);
+        std::strcpy(newfilename, temp_path);
         isadir = true;
     }
     // if dot, slash, its relative to the current directory, set up full path
@@ -2832,22 +2832,22 @@ int merge_pathnames(char *oldfullpath, char const *filename, cmd_file mode)
         temp_path[0] = (char)('a' + _getdrive() - 1);
         temp_path[1] = ':';
         temp_path[2] = 0;
-        if (strrchr(newfilename, '.') == newfilename)
+        if (std::strrchr(newfilename, '.') == newfilename)
         {
             test_dir = true;    // only one '.' assume its a directory
         }
         expand_dirname(newfilename, temp_path);
-        strcat(temp_path, newfilename);
-        strcpy(newfilename, temp_path);
+        std::strcat(temp_path, newfilename);
+        std::strcpy(newfilename, temp_path);
         if (!test_dir)
         {
-            int len = (int) strlen(newfilename);
+            int len = (int) std::strlen(newfilename);
             newfilename[len-1] = 0; // get rid of slash added by expand_dirname
         }
     }
 #else
     findpath(newfilename, temp_path);
-    strcpy(newfilename, temp_path);
+    std::strcpy(newfilename, temp_path);
 #endif
     // check existence
     if (!isadir || isafile)
@@ -2870,26 +2870,26 @@ int merge_pathnames(char *oldfullpath, char const *filename, cmd_file mode)
     splitpath(newfilename, drive, dir, fname, ext);
     splitpath(oldfullpath, drive1, dir1, fname1, ext1);
     bool const get_path = (mode == cmd_file::AT_CMD_LINE) || (mode == cmd_file::SSTOOLS_INI);
-    if ((int) strlen(drive) != 0 && get_path)
+    if ((int) std::strlen(drive) != 0 && get_path)
     {
-        strcpy(drive1, drive);
+        std::strcpy(drive1, drive);
     }
-    if ((int) strlen(dir) != 0 && get_path)
+    if ((int) std::strlen(dir) != 0 && get_path)
     {
-        strcpy(dir1, dir);
+        std::strcpy(dir1, dir);
     }
-    if ((int) strlen(fname) != 0)
+    if ((int) std::strlen(fname) != 0)
     {
-        strcpy(fname1, fname);
+        std::strcpy(fname1, fname);
     }
-    if ((int) strlen(ext) != 0)
+    if ((int) std::strlen(ext) != 0)
     {
-        strcpy(ext1, ext);
+        std::strcpy(ext1, ext);
     }
     if (!isadir && !isafile && get_path)
     {
         makepath(oldfullpath, drive1, dir1, nullptr, nullptr);
-        int len = (int) strlen(oldfullpath);
+        int len = (int) std::strlen(oldfullpath);
         if (len > 0)
         {
             char save;
@@ -2913,7 +2913,7 @@ int merge_pathnames(char *oldfullpath, char const *filename, cmd_file mode)
 int merge_pathnames(std::string &oldfullpath, char const *filename, cmd_file mode)
 {
     char buff[FILE_MAX_PATH];
-    strcpy(buff, oldfullpath.c_str());
+    std::strcpy(buff, oldfullpath.c_str());
     int const result = merge_pathnames(buff, filename, mode);
     oldfullpath = buff;
     return result;
@@ -2945,7 +2945,7 @@ char const *has_ext(char const *source)
     char const *ret = nullptr;
     if (ext[0] != 0)
     {
-        ret = strrchr(source, '.');
+        ret = std::strrchr(source, '.');
     }
     return ret;
 }

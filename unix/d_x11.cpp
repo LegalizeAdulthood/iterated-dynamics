@@ -30,7 +30,6 @@
 #include <signal.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
 #include <sys/ioctl.h>
 #include <sys/time.h>
 #include <sys/types.h>
@@ -303,60 +302,60 @@ do_fake_lut(DriverX11 *di, int idx)
 static int
 check_arg(DriverX11 *di, int argc, char **argv, int *i)
 {
-    if (strcmp(argv[*i], "-display") == 0 && (*i)+1 < argc)
+    if (std::strcmp(argv[*i], "-display") == 0 && (*i)+1 < argc)
     {
         di->Xdisplay = argv[(*i)+1];
         (*i)++;
         return 1;
     }
-    else if (strcmp(argv[*i], "-fullscreen") == 0)
+    else if (std::strcmp(argv[*i], "-fullscreen") == 0)
     {
         di->fullscreen = true;
         return 1;
     }
-    else if (strcmp(argv[*i], "-onroot") == 0)
+    else if (std::strcmp(argv[*i], "-onroot") == 0)
     {
         di->onroot = true;
         return 1;
     }
-    else if (strcmp(argv[*i], "-share") == 0)
+    else if (std::strcmp(argv[*i], "-share") == 0)
     {
         di->sharecolor = true;
         return 1;
     }
-    else if (strcmp(argv[*i], "-fast") == 0)
+    else if (std::strcmp(argv[*i], "-fast") == 0)
     {
         di->fastmode = true;
         return 1;
     }
-    else if (strcmp(argv[*i], "-slowdisplay") == 0)
+    else if (std::strcmp(argv[*i], "-slowdisplay") == 0)
     {
         slowdisplay = true;
         return 1;
     }
-    else if (strcmp(argv[*i], "-sync") == 0)
+    else if (std::strcmp(argv[*i], "-sync") == 0)
     {
         di->sync = true;
         return 1;
     }
-    else if (strcmp(argv[*i], "-private") == 0)
+    else if (std::strcmp(argv[*i], "-private") == 0)
     {
         di->privatecolor = true;
         return 1;
     }
-    else if (strcmp(argv[*i], "-fixcolors") == 0 && *i+1 < argc)
+    else if (std::strcmp(argv[*i], "-fixcolors") == 0 && *i+1 < argc)
     {
         di->fixcolors = atoi(argv[(*i)+1]);
         (*i)++;
         return 1;
     }
-    else if (strcmp(argv[*i], "-geometry") == 0 && *i+1 < argc)
+    else if (std::strcmp(argv[*i], "-geometry") == 0 && *i+1 < argc)
     {
         di->Xgeometry = argv[(*i)+1];
         (*i)++;
         return 1;
     }
-    else if (strcmp(argv[*i], "-fn") == 0 && *i+1 < argc)
+    else if (std::strcmp(argv[*i], "-fn") == 0 && *i+1 < argc)
     {
         di->x_font_name = argv[(*i)+1];
         (*i)++;
@@ -684,7 +683,7 @@ xcmapstuff(DriverX11 *di)
         di->ipixtab[di->pixtab[i]] = i;
     }
     /* We must make sure if any color uses position 0, that it is 0.
-     * This is so we can clear the image with memset.
+     * This is so we can clear the image with std::memset.
      * So, suppose fractint 0 = cmap 42, cmap 0 = fractint 55.
      * Then want fractint 0 = cmap 0, cmap 42 = fractint 55.
      * I.e. pixtab[55] = 42, ipixtab[42] = 55.

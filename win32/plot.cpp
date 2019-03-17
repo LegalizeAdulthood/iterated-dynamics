@@ -10,11 +10,12 @@
 #include <crtdbg.h>
 #include <float.h>
 #include <stdlib.h>
-#include <string.h>
 #define STRICT
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 #include <windowsx.h>
+
+#include <cstring>
 
 #include "plot.h"
 #include "ods.h"
@@ -230,7 +231,7 @@ init_pixels(Plot *me)
     me->pixels_len = me->row_len * me->height;
     _ASSERTE(me->pixels_len > 0);
     me->pixels.resize(me->pixels_len);
-    memset(&me->pixels[0], 0, me->pixels_len);
+    std::memset(&me->pixels[0], 0, me->pixels_len);
     me->dirty = false;
     {
         RECT dirty_rect = { -1, -1, -1, -1 };
@@ -293,7 +294,7 @@ int plot_init(Plot *me, HINSTANCE instance, LPCSTR title)
     int result;
 
     me->instance = instance;
-    strcpy(me->title, title);
+    std::strcpy(me->title, title);
 
     result = GetClassInfo(me->instance, s_window_class, &wc);
     if (!result)
@@ -493,7 +494,7 @@ void plot_clear(Plot *me)
     RECT r = { 0, 0, me->width, me->height };
     me->dirty_region = r;
     me->dirty = true;
-    memset(&me->pixels[0], 0, me->pixels_len);
+    std::memset(&me->pixels[0], 0, me->pixels_len);
 }
 
 void plot_redraw(Plot *me)

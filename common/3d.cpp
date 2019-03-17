@@ -61,7 +61,7 @@
 
 #include <float.h>
 #include <math.h>
-#include <string.h>
+#include <cstring>
 
 // initialize a matrix and set to identity matrix (all 0's, 1's on diagonal)
 void identity(MATRIX m)
@@ -98,7 +98,7 @@ void mat_mul(MATRIX mat1, MATRIX mat2, MATRIX mat3)
                             mat1[j][3]*mat2[3][i];
         }
     }
-    memcpy(mat3, newmat, sizeof(newmat));
+    std::memcpy(mat3, newmat, sizeof(newmat));
 }
 
 // multiply a matrix by a scalar
@@ -220,7 +220,7 @@ int vmult(VECTOR s, MATRIX m, VECTOR t)
         tmp[j] += m[3][j];
     }
     // set target = tmp. Necessary to use tmp in case source = target
-    memcpy(t, tmp, sizeof(tmp));
+    std::memcpy(t, tmp, sizeof(tmp));
     return 0;
 }
 
@@ -242,7 +242,7 @@ void mult_vec(VECTOR s)
         tmp[j] += g_m[3][j];
     }
     // set target = tmp. Necessary to use tmp in case source = target
-    memcpy(s, tmp, sizeof(tmp));
+    std::memcpy(s, tmp, sizeof(tmp));
 }
 
 // perspective projection of vector v with respect to viewpoint vector view

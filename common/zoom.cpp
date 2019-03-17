@@ -21,9 +21,9 @@
 
 #include <float.h>
 #include <math.h>
-#include <string.h>
 
 #include <cassert>
+#include <cstring>
 #include <vector>
 
 #define PIXELROUND 0.00001

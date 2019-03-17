@@ -18,9 +18,9 @@
 #include <float.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
 #include <time.h>
 
+#include <cstring>
 #include <sstream>
 #include <system_error>
 
@@ -67,7 +67,7 @@ static int get_scancode(char const *mn)
 {
     for (auto const &it : scancodes)
     {
-        if (strcmp(mn, it.mnemonic) == 0)
+        if (std::strcmp(mn, it.mnemonic) == 0)
         {
             return it.code;
         }
@@ -83,7 +83,7 @@ static void get_mnemonic(int code, char *mnemonic)
     {
         if (code == it.code)
         {
-            strcpy(mnemonic, it.mnemonic);
+            std::strcpy(mnemonic, it.mnemonic);
             break;
         }
     }
@@ -123,7 +123,7 @@ static int showtempmsg_txt(int row, int col, int attr, int secs, const char *txt
 static void message(int secs, char const *buf)
 {
     char nearbuf[41] = { 0 };
-    strncpy(nearbuf, buf, NUM_OF(nearbuf)-1);
+    std::strncpy(nearbuf, buf, NUM_OF(nearbuf)-1);
     showtempmsg_txt(0, 0, 7, secs, nearbuf);
     if (!showtempmsg(nearbuf))
     {
@@ -242,7 +242,7 @@ start:
     {
         out = atoi(buffer);
     }
-    else if (strcmp(buffer, "MESSAGE") == 0)
+    else if (std::strcmp(buffer, "MESSAGE") == 0)
     {
         int secs;
         if (fscanf(fpss, "%d", &secs) != 1)
@@ -258,13 +258,13 @@ start:
             {
                 throw std::system_error(errno, std::system_category(), "slideshw failed fgets");
             }
-            len = (int) strlen(buf);
+            len = (int) std::strlen(buf);
             buf[len-1] = 0; // zap newline
             message(secs, buf);
         }
         out = 0;
     }
-    else if (strcmp(buffer, "GOTO") == 0)
+    else if (std::strcmp(buffer, "GOTO") == 0)
     {
         if (fscanf(fpss, "%s", buffer) != 1)
         {
@@ -275,12 +275,12 @@ start:
         {
             char buffer1[80];
             rewind(fpss);
-            strcat(buffer, ":");
+            std::strcat(buffer, ":");
             do
             {
                 err = fscanf(fpss, "%s", buffer1);
             }
-            while (err == 1 && strcmp(buffer1, buffer) != 0);
+            while (err == 1 && std::strcmp(buffer1, buffer) != 0);
             if (feof(fpss))
             {
                 slideshowerr("GOTO target not found");
@@ -293,7 +293,7 @@ start:
     {
         out = i;
     }
-    else if (strcmp("WAIT", buffer) == 0)
+    else if (std::strcmp("WAIT", buffer) == 0)
     {
         float fticks;
         err = fscanf(fpss, "%f", &fticks); // how many ticks to wait
@@ -311,7 +311,7 @@ start:
         out = 0;
         slowcount = out;
     }
-    else if (strcmp("CALCWAIT", buffer) == 0) // wait for calc to finish
+    else if (std::strcmp("CALCWAIT", buffer) == 0) // wait for calc to finish
     {
         calcwait = true;
         out = 0;
@@ -430,7 +430,7 @@ static void slideshowerr(char const *msg)
 {
     char msgbuf[300] = { "Slideshow error:\n" };
     stopslideshow();
-    strcat(msgbuf, msg);
+    std::strcat(msgbuf, msg);
     stopmsg(STOPMSG_NONE, msgbuf);
 }
 

@@ -24,7 +24,6 @@
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
 #include <sys/stat.h>
 #include <sys/types.h>
 #if defined(XFRACT)
@@ -34,6 +33,7 @@
 #endif
 
 #include <cassert>
+#include <cstring>
 #include <vector>
 
 static int menu_checkkey(int curkey, int choice);
@@ -186,7 +186,7 @@ bool showtempmsg(char const *msgparm)
     int yrepeat = 0;
     int save_sxoffs, save_syoffs;
 
-    strncpy(msg, msgparm, 40);
+    std::strncpy(msg, msgparm, 40);
     msg[40] = 0; // ensure max message len of 40 chars
     if (driver_diskp())  // disk video, screen in text mode, easy
     {
@@ -201,7 +201,7 @@ bool showtempmsg(char const *msgparm)
 
     xrepeat = (g_screen_x_dots >= 640) ? 2 : 1;
     yrepeat = (g_screen_y_dots >= 300) ? 2 : 1;
-    textxdots = (int) strlen(msg) * xrepeat * 8;
+    textxdots = (int) std::strlen(msg) * xrepeat * 8;
     textydots = yrepeat * 8;
 
     size = (long) textxdots * (long) textydots;
@@ -274,7 +274,7 @@ void cleartempmsg()
 void blankrows(int row, int rows, int attr)
 {
     char buf[81];
-    memset(buf, ' ', 80);
+    std::memset(buf, ' ', 80);
     buf[80] = 0;
     while (--rows >= 0)
     {
@@ -290,12 +290,12 @@ void helptitle()
     if (g_release%10)
     {
         sprintf(buf, "%01d", g_release%10);
-        strcat(msg, buf);
+        std::strcat(msg, buf);
     }
     if (g_patch_level)
     {
         sprintf(buf, ".%d", g_patch_level);
-        strcat(msg, buf);
+        std::strcat(msg, buf);
     }
     putstringcenter(0, 0, 80, C_TITLE, msg);
 }
@@ -329,7 +329,7 @@ int putstringcenter(int row, int col, int width, int attr, char const *msg)
 #endif
     while (msg[i])
     {
-        ++i; // strlen for a
+        ++i; // std::strlen for a
     }
     if (i == 0)
     {
@@ -341,13 +341,13 @@ int putstringcenter(int row, int col, int width, int attr, char const *msg)
     }
     j = (width - i) / 2;
     j -= (width + 10 - i) / 20; // when wide a bit left of center looks better
-    memset(buf, ' ', width);
+    std::memset(buf, ' ', width);
     buf[width] = 0;
     i = 0;
     k = j;
     while (msg[i])
     {
-        buf[k++] = msg[i++]; // strcpy for a
+        buf[k++] = msg[i++]; // std::strcpy for a
     }
     driver_put_string(row, col, attr, buf);
     return j;
@@ -381,7 +381,7 @@ void show_speedstring(
     int (*speedprompt)(int row, int col, int vid, char const *speedstring, int speed_match))
 {
     char buf[81];
-    memset(buf, ' ', 80);
+    std::memset(buf, ' ', 80);
     buf[80] = 0;
     driver_put_string(speedrow, 0, C_PROMPT_BKGRD, buf);
     if (*speedstring)
@@ -399,8 +399,8 @@ void show_speedstring(
             driver_put_string(speedrow, 16, C_CHOICE_SP_INSTR, g_speed_prompt.c_str());
             j = g_speed_prompt.length();
         }
-        strcpy(buf, speedstring);
-        int i = (int) strlen(buf);
+        std::strcpy(buf, speedstring);
+        int i = (int) std::strlen(buf);
         while (i < 30)
         {
             buf[i++] = ' ';
@@ -409,7 +409,7 @@ void show_speedstring(
         buf[i] = 0;
         driver_put_string(speedrow, 16+j, C_CHOICE_SP_INSTR, " ");
         driver_put_string(speedrow, 17+j, C_CHOICE_SP_KEYIN, buf);
-        driver_move_cursor(speedrow, 17+j+(int) strlen(speedstring));
+        driver_move_cursor(speedrow, 17+j+(int) std::strlen(speedstring));
     }
     else
     {
@@ -426,7 +426,7 @@ void process_speedstring(char    *speedstring,
                          int       numchoices,
                          int       is_unsorted)
 {
-    int i = (int) strlen(speedstring);
+    int i = (int) std::strlen(speedstring);
     if (curkey == 8 && i > 0)   // backspace
     {
         speedstring[--i] = 0;
@@ -544,7 +544,7 @@ int fullscreen_choice(
     g_look_at_mouse = 0;
     ret = -1;
     // preset current to passed string
-    int const len = (speedstring == nullptr) ? 0 : (int) strlen(speedstring);
+    int const len = (speedstring == nullptr) ? 0 : (int) std::strlen(speedstring);
     if (len > 0)
     {
         current = 0;
@@ -616,7 +616,7 @@ int fullscreen_choice(
     {
         for (int i = 0; i < numchoices; ++i)
         {
-            int len = (int) strlen(choices[i]);
+            int len = (int) std::strlen(choices[i]);
             if (len > colwidth)
             {
                 colwidth = len;
@@ -789,7 +789,7 @@ int fullscreen_choice(
     {
         if (redisplay)                       // display the current choices
         {
-            memset(buf, ' ', 80);
+            std::memset(buf, ' ', 80);
             buf[boxwidth*colwidth] = 0;
             for (int i = (hdg2) ? 0 : -1; i <= boxdepth; ++i)  // blank the box
             {
@@ -1502,7 +1502,7 @@ static int menu_checkkey(int curkey, int /*choice*/)
         testkey = '@';
 
     }
-    if (strchr("#@2txyzgvir3dj", testkey)
+    if (std::strchr("#@2txyzgvir3dj", testkey)
         || testkey == FIK_INSERT || testkey == FIK_CTL_B
         || testkey == FIK_ESC || testkey == FIK_DELETE
         || testkey == FIK_CTL_F)
@@ -1511,7 +1511,7 @@ static int menu_checkkey(int curkey, int /*choice*/)
     }
     if (menutype)
     {
-        if (strchr("\\sobpkrh", testkey)
+        if (std::strchr("\\sobpkrh", testkey)
             || testkey == FIK_TAB || testkey == FIK_CTL_A
             || testkey == FIK_CTL_E || testkey == FIK_BACKSPACE
             || testkey == FIK_CTL_P || testkey == FIK_CTL_S
@@ -1529,7 +1529,7 @@ static int menu_checkkey(int curkey, int /*choice*/)
         }
         if (g_got_real_dac && g_colors >= 16)
         {
-            if (strchr("c+-", testkey))
+            if (std::strchr("c+-", testkey))
             {
                 return -testkey;
             }
@@ -1568,15 +1568,15 @@ int input_field(
     int old_look_at_mouse = g_look_at_mouse;
     g_look_at_mouse = 0;
     int ret = -1;
-    strcpy(savefld, fld);
+    std::strcpy(savefld, fld);
     int insert = 0;
     bool started = false;
     int offset = 0;
     bool display = true;
     while (true)
     {
-        strcpy(buf, fld);
-        i = (int) strlen(buf);
+        std::strcpy(buf, fld);
+        i = (int) std::strlen(buf);
         while (i < len)
         {
             buf[i++] = ' ';
@@ -1621,14 +1621,14 @@ int input_field(
             started = true;
             break;
         case FIK_END:
-            offset = (int) strlen(fld);
+            offset = (int) std::strlen(fld);
             started = true;
             break;
         case FIK_BACKSPACE:
         case 127:                              // backspace
             if (offset > 0)
             {
-                j = (int) strlen(fld);
+                j = (int) std::strlen(fld);
                 for (int i = offset-1; i < j; ++i)
                 {
                     fld[i] = fld[i+1];
@@ -1639,7 +1639,7 @@ int input_field(
             display = true;
             break;
         case FIK_DELETE:                           // delete
-            j = (int) strlen(fld);
+            j = (int) std::strlen(fld);
             for (int i = offset; i < j; ++i)
             {
                 fld[i] = fld[i+1];
@@ -1652,7 +1652,7 @@ int input_field(
             started = true;
             break;
         case FIK_F5:
-            strcpy(fld, savefld);
+            std::strcpy(fld, savefld);
             offset = 0;
             insert = offset;
             started = false;
@@ -1671,7 +1671,7 @@ int input_field(
             {
                 break;                // at end of field
             }
-            if (insert && started && strlen(fld) >= (size_t)len)
+            if (insert && started && std::strlen(fld) >= (size_t)len)
             {
                 break;                                // insert & full
             }
@@ -1697,14 +1697,14 @@ int input_field(
             }
             if (insert)
             {
-                j = (int) strlen(fld);
+                j = (int) std::strlen(fld);
                 while (j >= offset)
                 {
                     fld[j+1] = fld[j];
                     --j;
                 }
             }
-            if ((size_t)offset >= strlen(fld))
+            if ((size_t)offset >= std::strlen(fld))
             {
                 fld[offset+1] = 0;
             }
@@ -1734,7 +1734,7 @@ int input_field(
                     }
                     sprintf(tmpfld, "%.15g", tmpd);
                     tmpfld[len-1] = 0; // safety, field should be long enough
-                    strcpy(fld, tmpfld);
+                    std::strcpy(fld, tmpfld);
                     offset = 0;
                 }
             }
@@ -1858,9 +1858,9 @@ bool thinking(int options, char const *msg)
         driver_stack_screen();
         thinkstate = 0;
         helptitle();
-        strcpy(buf, "  ");
-        strcat(buf, msg);
-        strcat(buf, "    ");
+        std::strcpy(buf, "  ");
+        std::strcat(buf, msg);
+        std::strcat(buf, "    ");
         driver_put_string(4, 10, C_GENERAL_HI, buf);
         thinkcol = g_text_col - 3;
         count = 0;
@@ -1934,7 +1934,7 @@ void load_fractint_config()
     while (g_video_table_len < MAX_VIDEO_MODES
         && fgets(tempstring, 120, cfgfile))
     {
-        if (strchr(tempstring, '\n') == nullptr)
+        if (std::strchr(tempstring, '\n') == nullptr)
         {
             // finish reading the line
             while (fgetc(cfgfile) != '\n' && !feof(cfgfile));
@@ -1945,7 +1945,7 @@ void load_fractint_config()
             continue;   // comment line
         }
         tempstring[120] = 0;
-        tempstring[(int) strlen(tempstring)-1] = 0; // zap trailing \n
+        tempstring[(int) std::strlen(tempstring)-1] = 0; // zap trailing \n
         j = -1;
         i = j;
         // key, mode name, ax, bx, cx, dx, dotmode, x, y, colors, comments, driver
@@ -1979,22 +1979,22 @@ void load_fractint_config()
         ydots       = atol(fields[7]);
         assert(fields[8]);
         colors      = atoi(fields[8]);
-        if (colors == 4 && strchr(strlwr(fields[8]), 'g'))
+        if (colors == 4 && std::strchr(strlwr(fields[8]), 'g'))
         {
             colors = 256;
             truecolorbits = 4; // 32 bits
         }
-        else if (colors == 16 && strchr(fields[8], 'm'))
+        else if (colors == 16 && std::strchr(fields[8], 'm'))
         {
             colors = 256;
             truecolorbits = 3; // 24 bits
         }
-        else if (colors == 64 && strchr(fields[8], 'k'))
+        else if (colors == 64 && std::strchr(fields[8], 'k'))
         {
             colors = 256;
             truecolorbits = 2; // 16 bits
         }
-        else if (colors == 32 && strchr(fields[8], 'k'))
+        else if (colors == 32 && std::strchr(fields[8], 'k'))
         {
             colors = 256;
             truecolorbits = 1; // 15 bits
@@ -2020,9 +2020,9 @@ void load_fractint_config()
         }
         g_cfg_line_nums[g_video_table_len] = linenum; // for update_fractint_cfg
 
-        memset(&vident, 0, sizeof(vident));
-        strncpy(&vident.name[0], fields[0], NUM_OF(vident.name));
-        strncpy(&vident.comment[0], fields[9], NUM_OF(vident.comment));
+        std::memset(&vident, 0, sizeof(vident));
+        std::strncpy(&vident.name[0], fields[0], NUM_OF(vident.name));
+        std::strncpy(&vident.comment[0], fields[9], NUM_OF(vident.comment));
         vident.comment[25] = 0;
         vident.name[25] = vident.comment[25];
         vident.keynum      = keynum;
