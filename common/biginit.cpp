@@ -673,5 +673,4 @@ void init_big_pi()
     // notice that bf_pi and bn_pi can share the same memory space
     bf_pi = big_pi;
     bn_pi = big_pi + (bflength-2) - (bnlength-intlength);
-    return;
 }
