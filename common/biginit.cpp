@@ -386,12 +386,6 @@ static void init_bf_2()
     }
 
     restore_bf_vars();
-
-    // Initialize the value of pi.  Needed for trig functions.
-    // init_big_pi();
-    // call to init_big_pi() has been moved to fractal setup routine
-    // so as to use only when necessary.
-
 }
 
 
