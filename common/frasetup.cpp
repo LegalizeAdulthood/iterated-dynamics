@@ -16,8 +16,7 @@
 #include "mpmath.h"
 #include "mpmath_c.h"
 
-#include <math.h>
-
+#include <cmath>
 #include <cstring>
 
 #if !defined(XFRACT)
@@ -152,8 +151,8 @@ NewtonSetup()           // Newton/NewtBasin Routines
         // list of roots to discover where we converged for newtbasin
         for (int i = 0; i < g_degree; i++)
         {
-            g_roots[i].x = cos(i*PI*2.0/(double)g_degree);
-            g_roots[i].y = sin(i*PI*2.0/(double)g_degree);
+            g_roots[i].x = std::cos(i*PI*2.0/(double)g_degree);
+            g_roots[i].y = std::sin(i*PI*2.0/(double)g_degree);
         }
     }
 #if !defined(XFRACT)
@@ -173,8 +172,8 @@ NewtonSetup()           // Newton/NewtBasin Routines
         // list of roots to discover where we converged for newtbasin
         for (int i = 0; i < g_degree; i++)
         {
-            g_mpc_roots[i].x = *pd2MP(cos(i*PI*2.0/(double)g_degree));
-            g_mpc_roots[i].y = *pd2MP(sin(i*PI*2.0/(double)g_degree));
+            g_mpc_roots[i].x = *pd2MP(std::cos(i*PI*2.0/(double)g_degree));
+            g_mpc_roots[i].y = *pd2MP(std::sin(i*PI*2.0/(double)g_degree));
         }
     }
 #endif
@@ -473,7 +472,7 @@ JuliafpSetup()
             && g_trig_index[1] == trig_fn::TAN
             && g_trig_index[2] == trig_fn::SIN
             && g_trig_index[3] == trig_fn::TAN
-            && fabs(g_param_z2.x - 3.0) < .0001
+            && std::fabs(g_param_z2.x - 3.0) < .0001
             && g_param_z2.y == 0
             && g_param_z1.y == 0)
         {
@@ -635,7 +634,7 @@ JulialongSetup()
             && g_trig_index[1] == trig_fn::TAN
             && g_trig_index[2] == trig_fn::SIN
             && g_trig_index[3] == trig_fn::TAN
-            && fabs(g_param_z2.x - 3.0) < .0001
+            && std::fabs(g_param_z2.x - 3.0) < .0001
             && g_param_z2.y == 0
             && g_param_z1.y == 0)
         {
@@ -1359,7 +1358,7 @@ PhoenixSetup()
     }
     if (g_degree <= -3)
     {
-        g_degree = abs(g_degree) - 2;
+        g_degree = std::abs(g_degree) - 2;
         if (g_user_float_flag)
         {
             g_cur_fractal_specific->orbitcalc =  PhoenixMinusFractal;
@@ -1429,7 +1428,7 @@ PhoenixCplxSetup()
     }
     if (g_degree <= -3)
     {
-        g_degree = abs(g_degree) - 2;
+        g_degree = std::abs(g_degree) - 2;
         if (g_param_z1.y == 0 && g_param_z2.y == 0)
         {
             g_symmetry = symmetry_type::X_AXIS;
@@ -1487,7 +1486,7 @@ MandPhoenixSetup()
     }
     if (g_degree <= -3)
     {
-        g_degree = abs(g_degree) - 2;
+        g_degree = std::abs(g_degree) - 2;
         if (g_user_float_flag)
         {
             g_cur_fractal_specific->orbitcalc =  PhoenixMinusFractal;
@@ -1541,7 +1540,7 @@ MandPhoenixCplxSetup()
     }
     if (g_degree <= -3)
     {
-        g_degree = abs(g_degree) - 2;
+        g_degree = std::abs(g_degree) - 2;
         if (g_user_float_flag)
         {
             g_cur_fractal_specific->orbitcalc =  PhoenixCplxMinusFractal;

@@ -33,7 +33,6 @@
 #include "zoom.h"
 
 #include <errno.h>
-#include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
@@ -43,6 +42,7 @@
 
 #include <algorithm>
 #include <cassert>
+#include <cmath>
 #include <cstring>
 #include <string>
 #include <system_error>
@@ -1684,7 +1684,7 @@ rescan:  // entry for changed browse parms
             case FIK_CTL_B:
                 cleartempmsg();
                 driver_stack_screen();
-                done = abs(get_browse_params());
+                done = std::abs(get_browse_params());
                 driver_unstack_screen();
                 showtempmsg(winlist.name);
                 break;
@@ -1830,7 +1830,7 @@ bool is_visible_window(
          orig_shiftfactor,
          orig_rbflength;
     double toobig, tmp_sqrt;
-    toobig = sqrt(sqr((double)g_screen_x_dots)+sqr((double)g_screen_y_dots)) * 1.5;
+    toobig = std::sqrt(sqr((double)g_screen_x_dots)+sqr((double)g_screen_y_dots)) * 1.5;
     // arbitrary value... stops browser zooming out too far
     cornercount = 0;
     cant_see = false;
@@ -1997,7 +1997,7 @@ bool is_visible_window(
     list->ibr.x = (int)(br.x + 0.5);
     list->ibr.y = (int)(br.y + 0.5);
 
-    tmp_sqrt = sqrt(sqr(tr.x-bl.x) + sqr(tr.y-bl.y));
+    tmp_sqrt = std::sqrt(sqr(tr.x-bl.x) + sqr(tr.y-bl.y));
     list->win_size = tmp_sqrt; // used for box vs crosshair in drawindow()
     // reject anything too small or too big on screen
     if ((tmp_sqrt < g_smallest_window_display_size) || (tmp_sqrt > toobig))
@@ -2082,16 +2082,16 @@ bool paramsOK(FRACTAL_INFO const *info)
         tmpparm9 = 0.0;
         tmpparm10 = 0.0;
     }
-    if (fabs(info->creal - g_params[0]) < MINDIF
-        && fabs(info->cimag - g_params[1]) < MINDIF
-        && fabs(tmpparm3 - g_params[2]) < MINDIF
-        && fabs(tmpparm4 - g_params[3]) < MINDIF
-        && fabs(tmpparm5 - g_params[4]) < MINDIF
-        && fabs(tmpparm6 - g_params[5]) < MINDIF
-        && fabs(tmpparm7 - g_params[6]) < MINDIF
-        && fabs(tmpparm8 - g_params[7]) < MINDIF
-        && fabs(tmpparm9 - g_params[8]) < MINDIF
-        && fabs(tmpparm10 - g_params[9]) < MINDIF
+    if (std::fabs(info->creal - g_params[0]) < MINDIF
+        && std::fabs(info->cimag - g_params[1]) < MINDIF
+        && std::fabs(tmpparm3 - g_params[2]) < MINDIF
+        && std::fabs(tmpparm4 - g_params[3]) < MINDIF
+        && std::fabs(tmpparm5 - g_params[4]) < MINDIF
+        && std::fabs(tmpparm6 - g_params[5]) < MINDIF
+        && std::fabs(tmpparm7 - g_params[6]) < MINDIF
+        && std::fabs(tmpparm8 - g_params[7]) < MINDIF
+        && std::fabs(tmpparm9 - g_params[8]) < MINDIF
+        && std::fabs(tmpparm10 - g_params[9]) < MINDIF
         && info->invert[0] - g_inversion[0] < MINDIF)
     {
         return true; // parameters are in range

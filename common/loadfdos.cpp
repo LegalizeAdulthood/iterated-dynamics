@@ -41,9 +41,9 @@
 #include "realdos.h"
 
 #include <float.h>
-#include <math.h>
 #include <stdio.h>
 
+#include <cmath>
 #include <cstring>
 #include <sstream>
 #include <string>
@@ -530,7 +530,7 @@ int get_video_mode(FRACTAL_INFO *info, ext_blk_3 *blk_3_info)
     if (!g_make_parameter_file
         && !g_fast_restore
         && (g_init_batch == batch_modes::NONE)
-        && (fabs(g_final_aspect_ratio - g_screen_aspect) > .00001 || g_view_x_dots != 0))
+        && (std::fabs(g_final_aspect_ratio - g_screen_aspect) > .00001 || g_view_x_dots != 0))
     {
         stopmsg(STOPMSG_NO_BUZZER,
                 "Warning: <V>iew parameters are being set to non-standard values.\n"

@@ -481,7 +481,7 @@ main_state big_while_loop(bool *const kbdmore, bool *const stacked, bool const r
                 && (g_cur_fractal_specific->flags&NORESUME) == 0)
             {
                 g_save_base = readticker(); // calc's start time
-                g_save_ticks = abs(g_init_save_time);
+                g_save_ticks = std::abs(g_init_save_time);
                 g_save_ticks *= 1092; // bios ticks/minute
                 if ((g_save_ticks & 65535L) == 0)
                 {

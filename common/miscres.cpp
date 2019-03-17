@@ -25,7 +25,6 @@
 #include "soi.h"
 
 #include <ctype.h>
-#include <math.h>
 #include <stdarg.h>
 #include <time.h>
 #if defined(XFRACT)
@@ -34,6 +33,7 @@
 
 #include <algorithm>
 #include <cassert>
+#include <cmath>
 #include <cstring>
 #include <string>
 
@@ -158,21 +158,21 @@ void cvtcentermag(double *Xctr, double *Yctr, LDBL *Magnification, double *Xmagf
         tmpx1 = g_x_max - g_x_3rd;
         tmpy1 = g_y_min - g_y_3rd;
         double a2 = tmpx1*tmpx1 + tmpy1*tmpy1;
-        double a = sqrt(a2);
-        *Rotation = -rad_to_deg(atan2(tmpy1, tmpx1));   // negative for image rotation
+        double a = std::sqrt(a2);
+        *Rotation = -rad_to_deg(std::atan2(tmpy1, tmpx1));   // negative for image rotation
 
         double tmpx2 = g_x_min - g_x_3rd;
         double tmpy2 = g_y_max - g_y_3rd;
         double b2 = tmpx2*tmpx2 + tmpy2*tmpy2;
-        double b = sqrt(b2);
+        double b = std::sqrt(b2);
 
-        double tmpa = acos((a2+b2-c2)/(2*a*b)); // save tmpa for later use
+        double tmpa = std::acos((a2+b2-c2)/(2*a*b)); // save tmpa for later use
         *Skew = 90.0 - rad_to_deg(tmpa);
 
         *Xctr = (g_x_min + g_x_max)*0.5;
         *Yctr = (g_y_min + g_y_max)*0.5;
 
-        Height = b * sin(tmpa);
+        Height = b * std::sin(tmpa);
 
         *Magnification  = 2.0/Height; // 1/(h/2)
         *Xmagfactor = Height / (DEFAULT_ASPECT * a);
@@ -254,7 +254,7 @@ void cvtcorners(double Xctr, double Yctr, LDBL Magnification, double Xmagfactor,
     }
 
     // in unrotated, untranslated coordinate system
-    tanskew = tan(deg_to_rad(Skew));
+    tanskew = std::tan(deg_to_rad(Skew));
     g_x_min = -w + h*tanskew;
     g_x_max =  w - h*tanskew;
     g_x_3rd = -w - h*tanskew;
@@ -264,8 +264,8 @@ void cvtcorners(double Xctr, double Yctr, LDBL Magnification, double Xmagfactor,
 
     // rotate coord system and then translate it
     Rotation = deg_to_rad(Rotation);
-    sinrot = sin(Rotation);
-    cosrot = cos(Rotation);
+    sinrot = std::sin(Rotation);
+    cosrot = std::cos(Rotation);
 
     // top left
     x = g_x_min * cosrot + g_y_max *  sinrot;
@@ -358,7 +358,7 @@ void cvtcentermagbf(bf_t Xctr, bf_t Yctr, LDBL *Magnification, double *Xmagfacto
         {
             tmpy = tmpy1/tmpx1 * signx;    // tmpy = tmpy / |tmpx|
         }
-        *Rotation = (double)(-rad_to_deg(atan2((double)tmpy, signx)));   // negative for image rotation
+        *Rotation = (double)(-rad_to_deg(std::atan2((double)tmpy, signx)));   // negative for image rotation
 
         // tmpx = xxmin - xx3rd;
         sub_bf(bftmpx, g_bf_x_min, g_bf_x_3rd);
@@ -369,7 +369,7 @@ void cvtcentermagbf(bf_t Xctr, bf_t Yctr, LDBL *Magnification, double *Xmagfacto
         LDBL b2 = tmpx2*tmpx2 + tmpy2*tmpy2;
         LDBL b = sqrtl(b2);
 
-        double tmpa = acos((double)((a2+b2-c2)/(2*a*b))); // save tmpa for later use
+        double tmpa = std::acos((double)((a2+b2-c2)/(2*a*b))); // save tmpa for later use
         *Skew = 90 - rad_to_deg(tmpa);
 
         // these are the only two variables that must use big precision
@@ -380,7 +380,7 @@ void cvtcentermagbf(bf_t Xctr, bf_t Yctr, LDBL *Magnification, double *Xmagfacto
         add_bf(Yctr, g_bf_y_min, g_bf_y_max);
         half_a_bf(Yctr);
 
-        Height = b * sin(tmpa);
+        Height = b * std::sin(tmpa);
         *Magnification  = 2/Height; // 1/(h/2)
         *Xmagfactor = (double)(Height / (DEFAULT_ASPECT * a));
 
@@ -448,7 +448,7 @@ void cvtcornersbf(bf_t Xctr, bf_t Yctr, LDBL Magnification, double Xmagfactor, d
 
     bftmp = alloc_stack(bflength+2);
     // in unrotated, untranslated coordinate system
-    tanskew = tan(deg_to_rad(Skew));
+    tanskew = std::tan(deg_to_rad(Skew));
     xmin = -w + h*tanskew;
     xmax =  w - h*tanskew;
     x3rd = -w - h*tanskew;
@@ -458,8 +458,8 @@ void cvtcornersbf(bf_t Xctr, bf_t Yctr, LDBL Magnification, double Xmagfactor, d
 
     // rotate coord system and then translate it
     Rotation = deg_to_rad(Rotation);
-    sinrot = sin(Rotation);
-    cosrot = cos(Rotation);
+    sinrot = std::sin(Rotation);
+    cosrot = std::cos(Rotation);
 
     // top left
     x =  xmin * cosrot + ymax *  sinrot;

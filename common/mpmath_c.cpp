@@ -30,9 +30,8 @@
 #include "parser.h"
 #include "prompts2.h"
 
-#include <math.h>
-
 #include <algorithm>
+#include <cmath>
 
 namespace
 {
@@ -313,18 +312,18 @@ void Arctanhz(DComplex z, DComplex *rz)
     if (z.x == 0.0)
     {
         rz->x = 0;
-        rz->y = atan(z.y);
+        rz->y = std::atan(z.y);
         return;
     }
     else
     {
-        if (fabs(z.x) == 1.0 && z.y == 0.0)
+        if (std::fabs(z.x) == 1.0 && z.y == 0.0)
         {
             return;
         }
-        else if (fabs(z.x) < 1.0 && z.y == 0.0)
+        else if (std::fabs(z.x) < 1.0 && z.y == 0.0)
         {
-            rz->x = log((1+z.x)/(1-z.x))/2;
+            rz->x = std::log((1+z.x)/(1-z.x))/2;
             rz->y = 0;
             return;
         }
@@ -354,7 +353,7 @@ void Arctanz(DComplex z, DComplex *rz)
     }
     else if (z.x != 0.0 && z.y == 0.0)
     {
-        rz->x = atan(z.x);
+        rz->x = std::atan(z.x);
         rz->y = 0;
     }
     else if (z.x == 0.0 && z.y != 0.0)
@@ -448,13 +447,13 @@ LComplex ComplexSqrtLong(long x, long y)
     LComplex    result;
 
 #ifndef LONGSQRT
-    double mag = sqrt(sqrt(((double) multiply(x, x, g_bit_shift))/g_fudge_factor +
+    double mag = std::sqrt(std::sqrt(((double) multiply(x, x, g_bit_shift))/g_fudge_factor +
                            ((double) multiply(y, y, g_bit_shift))/ g_fudge_factor));
     maglong   = (long)(mag * g_fudge_factor);
 #else
     maglong   = lsqrt(lsqrt(multiply(x, x, g_bit_shift)+multiply(y, y, g_bit_shift)));
 #endif
-    theta     = atan2((double) y/g_fudge_factor, (double) x/g_fudge_factor)/2;
+    theta     = std::atan2((double) y/g_fudge_factor, (double) x/g_fudge_factor)/2;
     thetalong = (long)(theta * SinCosFudge);
     SinCos086(thetalong, &result.y, &result.x);
     result.x  = multiply(result.x << (g_bit_shift - 16), maglong, g_bit_shift);
@@ -473,8 +472,8 @@ DComplex ComplexSqrtFloat(double x, double y)
     }
     else
     {
-        double mag = sqrt(sqrt(x*x + y*y));
-        double theta = atan2(y, x) / 2;
+        double mag = std::sqrt(std::sqrt(x*x + y*y));
+        double theta = std::atan2(y, x) / 2;
         FPUsincos(&theta, &result.y, &result.x);
         result.x *= mag;
         result.y *= mag;
@@ -514,12 +513,12 @@ void SetupLogTable()
         {
             lf = g_log_map_table_max_size - 1;
         }
-        mlf = (g_colors - (lf?2:1)) / log(static_cast<double>(g_log_map_table_max_size - lf));
+        mlf = (g_colors - (lf?2:1)) / std::log(static_cast<double>(g_log_map_table_max_size - lf));
     }
     else if (g_log_map_flag == -1)
     {
         // old log function
-        mlf = (g_colors - 1) / log(static_cast<double>(g_log_map_table_max_size));
+        mlf = (g_colors - 1) / std::log(static_cast<double>(g_log_map_table_max_size));
     }
     else if (g_log_map_flag <= -2)
     {
@@ -529,7 +528,7 @@ void SetupLogTable()
         {
             lf = g_log_map_table_max_size - 1;
         }
-        mlf = (g_colors - 2) / sqrt(static_cast<double>(g_log_map_table_max_size - lf));
+        mlf = (g_colors - 2) / std::sqrt(static_cast<double>(g_log_map_table_max_size - lf));
     }
 
     if (g_log_map_calculate)
@@ -645,13 +644,13 @@ long logtablecalc(long citer)
         {
             ret = 1;
         }
-        else if ((citer - lf)/log(static_cast<double>(citer - lf)) <= mlf)
+        else if ((citer - lf)/std::log(static_cast<double>(citer - lf)) <= mlf)
         {
             ret = (long)(citer - lf);
         }
         else
         {
-            ret = (long)(mlf * log(static_cast<double>(citer - lf))) + 1;
+            ret = (long)(mlf * std::log(static_cast<double>(citer - lf))) + 1;
         }
     }
     else if (g_log_map_flag == -1)
@@ -663,7 +662,7 @@ long logtablecalc(long citer)
         }
         else
         {
-            ret = (long)(mlf * log(static_cast<double>(citer))) + 1;
+            ret = (long)(mlf * std::log(static_cast<double>(citer))) + 1;
         }
     }
     else if (g_log_map_flag <= -2)
@@ -679,7 +678,7 @@ long logtablecalc(long citer)
         }
         else
         {
-            ret = (long)(mlf * sqrt(static_cast<double>(citer - lf))) + 1;
+            ret = (long)(mlf * std::sqrt(static_cast<double>(citer - lf))) + 1;
         }
     }
     return ret;
@@ -716,7 +715,7 @@ bool ComplexNewtonSetup()
         cdegree.x = g_params[0];
         cdegree.y = g_params[1];
         FPUcplxlog(&croot, &BaseLog);
-        TwoPi = asin(1.0) * 4;
+        TwoPi = std::asin(1.0) * 4;
     }
     return true;
 }
@@ -774,7 +773,7 @@ int ComplexBasin()
     g_tmp_z.y = g_new_z.y - croot.y;
     if ((sqr(g_tmp_z.x) + sqr(g_tmp_z.y)) < g_threshold)
     {
-        if (fabs(g_old_z.y) < .01)
+        if (std::fabs(g_old_z.y) < .01)
         {
             g_old_z.y = 0.0;
         }
@@ -782,7 +781,7 @@ int ComplexBasin()
         FPUcplxmul(&temp, &cdegree, &g_tmp_z);
         double mod = g_tmp_z.y/TwoPi;
         g_color_iter = (long)mod;
-        if (fabs(mod - g_color_iter) > 0.5)
+        if (std::fabs(mod - g_color_iter) > 0.5)
         {
             if (mod < 0.0)
             {

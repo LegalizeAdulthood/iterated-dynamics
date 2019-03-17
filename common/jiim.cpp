@@ -28,11 +28,11 @@
 #include "realdos.h"
 #include "zoom.h"
 
-#include <math.h>
 #include <stdarg.h>
 #include <stdio.h>
 
 #include <algorithm>
+#include <cmath>
 #include <cstring>
 #include <vector>
 
@@ -55,7 +55,7 @@ void SetAspect(double aspect)
 {
     xAspect = 0;
     yAspect = 0;
-    aspect = fabs(aspect);
+    aspect = std::fabs(aspect);
     if (aspect != 1.0)
     {
         if (aspect > 1.0)
@@ -1052,14 +1052,14 @@ void Jiim(jiim_types which)
                 }
 
                 //       r = sqrt(old.x*old.x + old.y*old.y); calculated above
-                r = sqrt(r);
-                g_new_z.x = sqrt(fabs((r + g_old_z.x)/2));
+                r = std::sqrt(r);
+                g_new_z.x = std::sqrt(std::fabs((r + g_old_z.x)/2));
                 if (g_old_z.y < 0)
                 {
                     g_new_z.x = -g_new_z.x;
                 }
 
-                g_new_z.y = sqrt(fabs((r - g_old_z.x)/2));
+                g_new_z.y = std::sqrt(std::fabs((r - g_old_z.x)/2));
 
 
                 switch (SecretExperimentalMode)

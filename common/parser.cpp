@@ -35,13 +35,13 @@
 
 #include <ctype.h>
 #include <float.h>
-#include <math.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <time.h>
 
 #include <algorithm>
 #include <cassert>
+#include <cmath>
 #include <cstring>
 #include <iterator>
 #include <string>
@@ -230,7 +230,7 @@ static unsigned int chars_in_formula;
 #endif
 
 #define ChkFloatDenom(denom)        \
-    if (fabs(denom) <= DBL_MIN)     \
+    if (std::fabs(denom) <= DBL_MIN)     \
     {                               \
         g_overflow = true;          \
         return;                     \
@@ -361,7 +361,7 @@ static void lStkFunct(void (*fct)())   // call lStk via dStk
     Arg1->d.x = (double)Arg1->l.x / fg;
     Arg1->d.y = y;
     (*fct)();
-    if (fabs(Arg1->d.x) < g_fudge_limit && fabs(Arg1->d.y) < g_fudge_limit)
+    if (std::fabs(Arg1->d.x) < g_fudge_limit && fabs(Arg1->d.y) < g_fudge_limit)
     {
         Arg1->l.x = (long)(Arg1->d.x * fg);
         Arg1->l.y = (long)(Arg1->d.y * fg);
@@ -533,8 +533,8 @@ void dStkSqr3()
 
 void dStkAbs()
 {
-    Arg1->d.x = fabs(Arg1->d.x);
-    Arg1->d.y = fabs(Arg1->d.y);
+    Arg1->d.x = std::fabs(Arg1->d.x);
+    Arg1->d.y = std::fabs(Arg1->d.y);
 }
 
 #if !defined(XFRACT)
@@ -1529,7 +1529,7 @@ void (*StkSqrt)() = dStkSqrt;
 
 void dStkCAbs()
 {
-    Arg1->d.x = sqrt(sqr(Arg1->d.x)+sqr(Arg1->d.y));
+    Arg1->d.x = std::sqrt(sqr(Arg1->d.x)+sqr(Arg1->d.y));
     Arg1->d.y = 0.0;
 }
 
@@ -1813,9 +1813,9 @@ void FPUcplxexp(const DComplex *x, DComplex *z)
 {
     double pow, y;
     y = x->y;
-    pow = exp(x->x);
-    z->x = pow*cos(y);
-    z->y = pow*sin(y);
+    pow = std::exp(x->x);
+    z->x = pow*std::cos(y);
+    z->y = pow*std::sin(y);
 }
 
 void dStkExp()
@@ -1866,7 +1866,7 @@ void lStkPwr()
     y.x = (double)Arg1->l.x / fg;
     y.y = (double)Arg1->l.y / fg;
     x = ComplexPower(x, y);
-    if (fabs(x.x) < g_fudge_limit && fabs(x.y) < g_fudge_limit)
+    if (std::fabs(x.x) < g_fudge_limit && fabs(x.y) < g_fudge_limit)
     {
         Arg2->l.x = (long)(x.x * fg);
         Arg2->l.y = (long)(x.y * fg);
@@ -2587,8 +2587,8 @@ static bool ParseStr(char const *Str, int pass)
         v[g_variable_index].len = (int) std::strlen(Constants[g_variable_index]);
     }
     cvtcentermag(&Xctr, &Yctr, &Magnification, &Xmagfactor, &Rotation, &Skew);
-    const_pi = atan(1.0) * 4;
-    const_e  = exp(1.0);
+    const_pi = std::atan(1.0) * 4;
+    const_e  = std::exp(1.0);
     v[7].a.d.y = 0.0;
     v[7].a.d.x = v[7].a.d.y;
     v[11].a.d.x = (double)g_logical_screen_x_dots;

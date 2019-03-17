@@ -35,13 +35,13 @@
 
 #include <ctype.h>
 #include <float.h>
-#include <math.h>
 #include <stdlib.h>
 #include <time.h>
 #include <stdio.h>
 
 #include <algorithm>
 #include <cassert>
+#include <cmath>
 #include <cstring>
 #include <string>
 #include <system_error>
@@ -2733,7 +2733,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         {
             goto badarg;
         }
-        g_polyphony = abs(numval-1);
+        g_polyphony = std::abs(numval-1);
         return CMDARG_NONE;
     }
 

@@ -17,7 +17,6 @@
 #include "slideshw.h"
 
 #include <fcntl.h>
-#include <math.h>
 #ifndef NOBSTRING
 #ifndef sun
 // If this gives you an error, read the README and modify the Makefile.
@@ -30,6 +29,7 @@
 #include <sys/time.h>
 #include <unistd.h>
 
+#include <cmath>
 #include <cstring>
 #include <vector>
 
@@ -559,7 +559,7 @@ static void getDouble(double *dst, unsigned char **src, int dir)
             e = (((*src)[7]&0x7f) << 4) + (((*src)[6]&0xf0) >> 4) - 1023;
             f = 1 + ((*src)[6]&0x0f)/P4 + (*src)[5]/P12 + (*src)[4]/P20 +
                 (*src)[3]/P28 + (*src)[2]/P36 + (*src)[1]/P44 + (*src)[0]/P52;
-            f *= pow(2., (double)e);
+            f *= std::pow(2., (double)e);
             if ((*src)[7]&0x80)
             {
                 f = -f;
@@ -582,8 +582,8 @@ static void getDouble(double *dst, unsigned char **src, int dir)
                 s = 0x80;
                 f = -f;
             }
-            e = log(f)/log(2.);
-            f = f/pow(2., (double)e) - 1;
+            e = std::log(f)/std::log(2.);
+            f = f/std::pow(2., (double)e) - 1;
             if (f < 0)
             {
                 e--;
@@ -639,7 +639,7 @@ static void getFloat(float *dst, unsigned char **src, int dir)
         {
             e = ((((*src)[3]&0x7f) << 1) | (((*src)[2]&0x80) >> 7)) - 127;
             f = 1 + ((*src)[2]&0x7f)/P7 + (*src)[1]/P15 + (*src)[0]/P23;
-            f *= pow(2., (double)e);
+            f *= std::pow(2., (double)e);
             if ((*src)[3]&0x80)
             {
                 f = -f;
@@ -662,8 +662,8 @@ static void getFloat(float *dst, unsigned char **src, int dir)
                 s = 0x80;
                 f = -f;
             }
-            e = log(f)/log(2.);
-            f = f/pow(2., (double)e) - 1;
+            e = std::log(f)/std::log(2.);
+            f = f/std::pow(2., (double)e) - 1;
             if (f < 0)
             {
                 e--;

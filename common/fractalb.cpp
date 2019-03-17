@@ -590,7 +590,7 @@ bool MandelbnSetup()
     }
     {
         int t;
-        t = abs(g_periodicity_check);
+        t = std::abs(g_periodicity_check);
         while (t--)
         {
             half_a_bn(bnclosenuff);
@@ -677,7 +677,7 @@ bool MandelbfSetup()
     }
     {
         int t;
-        t = abs(g_periodicity_check);
+        t = std::abs(g_periodicity_check);
         while (t--)
         {
             half_a_bf(bfclosenuff);

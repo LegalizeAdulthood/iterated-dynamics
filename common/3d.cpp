@@ -60,7 +60,8 @@
 #include "line3d.h"
 
 #include <float.h>
-#include <math.h>
+
+#include <cmath>
 #include <cstring>
 
 // initialize a matrix and set to identity matrix (all 0's, 1's on diagonal)
@@ -117,8 +118,8 @@ void xrot(double theta, MATRIX m)
 {
     MATRIX rot;
     double sintheta, costheta;
-    sintheta = sin(theta);
-    costheta = cos(theta);
+    sintheta = std::sin(theta);
+    costheta = std::cos(theta);
     identity(rot);
     rot[1][1] = costheta;
     rot[1][2] = -sintheta;
@@ -132,8 +133,8 @@ void yrot(double theta, MATRIX m)
 {
     MATRIX rot;
     double sintheta, costheta;
-    sintheta = sin(theta);
-    costheta = cos(theta);
+    sintheta = std::sin(theta);
+    costheta = std::cos(theta);
     identity(rot);
     rot[0][0] = costheta;
     rot[0][2] = sintheta;
@@ -147,8 +148,8 @@ void zrot(double theta, MATRIX m)
 {
     MATRIX rot;
     double sintheta, costheta;
-    sintheta = sin(theta);
-    costheta = cos(theta);
+    sintheta = std::sin(theta);
+    costheta = std::cos(theta);
     identity(rot);
     rot[0][0] = costheta;
     rot[0][1] = -sintheta;
@@ -192,7 +193,7 @@ bool normalize_vector(VECTOR v)
     {
         return true;
     }
-    vlength = sqrt(vlength);
+    vlength = std::sqrt(vlength);
     if (vlength < FLT_MIN)
     {
         return true;

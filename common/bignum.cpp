@@ -136,10 +136,10 @@ double wide number can then be ignored.
 #include "big.h"
 
 #include <float.h>
-#include <math.h>
 #include <stdio.h>
 
 #include <algorithm>
+#include <cmath>
 #include <cstring>
 
 /*************************************************************************
@@ -825,7 +825,7 @@ bn_t sqrt_bn(bn_t r, bn_t n)
         half_a_bn(r);
         if (bnlength == orig_bnlength)
         {
-            const int comp = abs(cmp_bn(r, bntmp4));
+            const int comp = std::abs(cmp_bn(r, bntmp4));
             if (comp < 8)  // if match or almost match
             {
                 if (comp < 4  // perfect or near perfect match
@@ -975,7 +975,7 @@ bn_t unsafe_ln_bn(bn_t r, bn_t n)
 
         if (bnlength == orig_bnlength)
         {
-            const int comp = abs(cmp_bn(r, bntmp5));
+            const int comp = std::abs(cmp_bn(r, bntmp5));
             if (comp < 8)  // if match or almost match
             {
                 if (comp < 4  // perfect or near perfect match
@@ -1266,7 +1266,7 @@ bn_t unsafe_atan_bn(bn_t r, bn_t n)
 #endif
         if (bnlength == orig_bnlength)
         {
-            const int comp = abs(cmp_bn(r, bntmp3));
+            const int comp = std::abs(cmp_bn(r, bntmp3));
             if (comp < 8)  // if match or almost match
             {
 #ifdef CALCULATING_BIG_PI

@@ -42,13 +42,13 @@
 #include "soi.h"
 
 #include <limits.h>
-#include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <cstring>
 #include <time.h>
 
 #include <algorithm>
+#include <cmath>
 #include <vector>
 
 // routines in this module
@@ -347,7 +347,7 @@ double fmodtest()
         break;
 
     case bailouts::Manh:
-        result = sqr(fabs(g_new_z.x)+fabs(g_new_z.y));
+        result = sqr(std::fabs(g_new_z.x) + std::fabs(g_new_z.y));
         break;
 
     case bailouts::Manr:
@@ -676,7 +676,7 @@ int calcfract()
     }
     else
     {
-        g_periodicity_next_saved_incr = (int)log10(static_cast<double>(g_max_iterations)); // works better than log()
+        g_periodicity_next_saved_incr = (int)std::log10(static_cast<double>(g_max_iterations)); // works better than log()
         if (g_periodicity_next_saved_incr < 4)
         {
             g_periodicity_next_saved_incr = 4; // maintains image with low iterations
@@ -800,7 +800,7 @@ int calcfract()
         if (g_inversion[0] == AUTO_INVERT)  //  auto calc radius 1/6 screen
         {
             g_inversion[0] = std::min(fabs(g_x_max - g_x_min),
-                                    fabs(g_y_max - g_y_min)) / 6.0;
+                                    std::fabs(g_y_max - g_y_min)) / 6.0;
             fix_inversion(&g_inversion[0]);
             g_f_radius = g_inversion[0];
         }
@@ -810,7 +810,7 @@ int calcfract()
             g_inversion[1] = (g_x_min + g_x_max) / 2.0;
             fix_inversion(&g_inversion[1]);
             g_f_x_center = g_inversion[1];
-            if (fabs(g_f_x_center) < fabs(g_x_max-g_x_min) / 100)
+            if (std::fabs(g_f_x_center) < std::fabs(g_x_max-g_x_min) / 100)
             {
                 g_f_x_center = 0.0;
                 g_inversion[1] = g_f_x_center;
@@ -822,7 +822,7 @@ int calcfract()
             g_inversion[2] = (g_y_min + g_y_max) / 2.0;
             fix_inversion(&g_inversion[2]);
             g_f_y_center = g_inversion[2];
-            if (fabs(g_f_y_center) < fabs(g_y_max-g_y_min) / 100)
+            if (std::fabs(g_f_y_center) < std::fabs(g_y_max-g_y_min) / 100)
             {
                 g_f_y_center = 0.0;
                 g_inversion[2] = g_f_y_center;
@@ -832,9 +832,9 @@ int calcfract()
         g_invert = 3; // so values will not be changed if we come back
     }
 
-    g_close_enough = g_delta_min*pow(2.0, -(double)(abs(g_periodicity_check)));
+    g_close_enough = g_delta_min*std::pow(2.0, -(double)(std::abs(g_periodicity_check)));
     rqlim_save = g_magnitude_limit;
-    g_magnitude_limit2 = sqrt(g_magnitude_limit);
+    g_magnitude_limit2 = std::sqrt(g_magnitude_limit);
     if (g_integer_fractal)          // for integer routines (lambda)
     {
         g_l_param.x = (long)(g_param_z1.x * g_fudge_factor);    // real portion of Lambda
@@ -890,7 +890,7 @@ int calcfract()
         {
             // not a stand-alone
             // next two lines in case periodicity changed
-            g_close_enough = g_delta_min*pow(2.0, -(double)(abs(g_periodicity_check)));
+            g_close_enough = g_delta_min*std::pow(2.0, -(double)(std::abs(g_periodicity_check)));
             g_l_close_enough = (long)(g_close_enough * g_fudge_factor); // "close enough" value
             setsymmetry(g_symmetry, false);
             timer(0, g_calc_type); // non-standard fractal engine
@@ -1126,18 +1126,18 @@ static void perform_worklist()
         {
             dem_delta *= 1/(sqr(ftemp)*10000); // multiply by thickness desired
         }
-        dem_width = (sqrt(sqr(g_x_max-g_x_min) + sqr(g_x_3rd-g_x_min)) * aspect
-                     + sqrt(sqr(g_y_max-g_y_min) + sqr(g_y_3rd-g_y_min))) / g_distance_estimator;
+        dem_width = (std::sqrt(sqr(g_x_max-g_x_min) + sqr(g_x_3rd-g_x_min)) * aspect
+                     + std::sqrt(sqr(g_y_max-g_y_min) + sqr(g_y_3rd-g_y_min))) / g_distance_estimator;
         ftemp = (g_magnitude_limit < DEM_BAILOUT) ? DEM_BAILOUT : g_magnitude_limit;
         ftemp += 3; // bailout plus just a bit
-        ftemp2 = log(ftemp);
+        ftemp2 = std::log(ftemp);
         if (g_use_old_distance_estimator)
         {
             dem_toobig = sqr(ftemp) * sqr(ftemp2) * 4 / dem_delta;
         }
         else
         {
-            dem_toobig = fabs(ftemp) * fabs(ftemp2) * 2 / sqrt(dem_delta);
+            dem_toobig = std::fabs(ftemp) * std::fabs(ftemp2) * 2 / std::sqrt(dem_delta);
         }
     }
 
@@ -1254,7 +1254,7 @@ static void perform_worklist()
         }
 
         // some common initialization for escape-time pixel level routines
-        g_close_enough = g_delta_min*pow(2.0, -(double)(abs(g_periodicity_check)));
+        g_close_enough = g_delta_min*std::pow(2.0, -(double)(std::abs(g_periodicity_check)));
         g_l_close_enough = (long)(g_close_enough * g_fudge_factor); // "close enough" value
         g_keyboard_check_interval = g_max_keyboard_check_interval;
 
@@ -1324,7 +1324,7 @@ static int diffusion_scan()
 {
     double log2;
 
-    log2 = (double) log(2.0);
+    log2 = (double) std::log(2.0);
 
     g_got_status = 5;
 
@@ -1332,7 +1332,7 @@ static int diffusion_scan()
     // fit any 32 bit architecture, the maxinum limit for this case would
     // be 65536x65536
 
-    g_diffusion_bits = (unsigned)(std::min(log(static_cast<double>(g_i_y_stop-g_i_y_start+1)), log(static_cast<double>(g_i_x_stop-g_i_x_start+1)))/log2);
+    g_diffusion_bits = (unsigned)(std::min(std::log(static_cast<double>(g_i_y_stop-g_i_y_start+1)), std::log(static_cast<double>(g_i_x_stop-g_i_x_start+1)))/log2);
     g_diffusion_bits <<= 1; // double for two axes
     g_diffusion_limit = 1UL << g_diffusion_bits;
 
@@ -1389,7 +1389,7 @@ static int diffusion_scan()
 
 static int diffusion_engine()
 {
-    double log2 = (double) log(2.0);
+    double log2 = (double) std::log(2.0);
 
     int i, j;
 
@@ -1486,7 +1486,7 @@ static int diffusion_engine()
         // with progressive filling :
         while (g_diffusion_counter < (g_diffusion_limit >> 1))
         {
-            sqsz = 1 << ((int)(g_diffusion_bits-(int)(log(g_diffusion_counter+0.5)/log2)-1)/2);
+            sqsz = 1 << ((int)(g_diffusion_bits-(int)(std::log(g_diffusion_counter+0.5)/log2)-1)/2);
 
             count_to_int(g_diffusion_counter, colo, rowo);
 
@@ -1651,7 +1651,7 @@ static int sticky_orbits()
         {
             pos_slope = (char)!pos_slope;
         }
-        if (abs(dX) > abs(dY))                  // shallow line case
+        if (std::abs(dX) > std::abs(dY))                  // shallow line case
         {
             if (dX > 0)         // determine start point and last column
             {
@@ -1665,9 +1665,9 @@ static int sticky_orbits()
                 g_row = g_i_y_stop;
                 final = xxbegin;
             }
-            inc1 = 2 * abs(dY);             // determine increments and initial G
-            G = inc1 - abs(dX);
-            inc2 = 2 * (abs(dY) - abs(dX));
+            inc1 = 2 * std::abs(dY);             // determine increments and initial G
+            G = inc1 - std::abs(dX);
+            inc2 = 2 * (std::abs(dY) - std::abs(dX));
             if (pos_slope)
             {
                 while (g_col <= final)    // step through columns checking for new row
@@ -1725,9 +1725,9 @@ static int sticky_orbits()
                 g_row = g_i_y_stop;
                 final = yybegin;
             }
-            inc1 = 2 * abs(dX);             // determine increments and initial G
-            G = inc1 - abs(dY);
-            inc2 = 2 * (abs(dX) - abs(dY));
+            inc1 = 2 * std::abs(dX);             // determine increments and initial G
+            G = inc1 - std::abs(dY);
+            inc2 = 2 * (std::abs(dX) - std::abs(dY));
             if (pos_slope)
             {
                 while (g_row <= final)    // step through rows checking for new column
@@ -1796,8 +1796,8 @@ static int sticky_orbits()
         while (angle < Rotation)
         {
             theta = (double)angle * factor;
-            g_col = (int)(xfactor + (Xctr + Xmagfactor * cos(theta)));
-            g_row = (int)(yfactor + (Yctr + Xmagfactor * sin(theta)));
+            g_col = (int)(xfactor + (Xctr + Xmagfactor * std::cos(theta)));
+            g_row = (int)(yfactor + (Yctr + Xmagfactor * std::sin(theta)));
             if (plotorbits2dfloat() == -1)
             {
                 add_worklist(angle, 0, 0, 0, 0, 0, 0, g_work_symmetry);
@@ -1925,7 +1925,7 @@ int calcmand()              // fast per pixel 1/2/b/g, called with row & col set
         {
             g_color_iter = logtablecalc(g_color_iter);
         }
-        g_color = abs((int)g_color_iter);
+        g_color = std::abs((int)g_color_iter);
         if (g_color_iter >= g_colors)
         {
             // don't use color 0 unless from inside/outside
@@ -1980,7 +1980,7 @@ int calcmandfp()
         {
             g_color_iter = logtablecalc(g_color_iter);
         }
-        g_color = abs((int)g_color_iter);
+        g_color = std::abs((int)g_color_iter);
         if (g_color_iter >= g_colors)
         {
             // don't use color 0 unless from inside/outside
@@ -2249,7 +2249,7 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
             }
             else
             {
-                if (std::max(fabs(deriv.x), fabs(deriv.y)) > dem_toobig)
+                if (std::max(std::fabs(deriv.x), std::fabs(deriv.y)) > dem_toobig)
                 {
                     break;
                 }
@@ -2372,12 +2372,12 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
                 }
                 else
                 {
-                    if (fabs(g_new_z.x) < fabs(g_close_proximity))
+                    if (std::fabs(g_new_z.x) < std::fabs(g_close_proximity))
                     {
                         hooper = (g_close_proximity > 0? 1 : -1); // close to y axis
                         goto plot_inside;
                     }
-                    else if (fabs(g_new_z.y) < fabs(g_close_proximity))
+                    else if (std::fabs(g_new_z.y) < std::fabs(g_close_proximity))
                     {
                         hooper = (g_close_proximity > 0? 2 : -2); // close to x axis
                         goto plot_inside;
@@ -2438,7 +2438,7 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
                     g_new_z.x = ((double)g_l_new_z.x) / g_fudge_factor;
                     g_new_z.y = ((double)g_l_new_z.y) / g_fudge_factor;
                 }
-                totaldist += sqrt(sqr(lastz.x-g_new_z.x)+sqr(lastz.y-g_new_z.y));
+                totaldist += std::sqrt(sqr(lastz.x-g_new_z.x)+sqr(lastz.y-g_new_z.y));
                 lastz.x = g_new_z.x;
                 lastz.y = g_new_z.y;
             }
@@ -2587,9 +2587,9 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
                 }
                 else
                 {
-                    if (fabs(saved.x - g_new_z.x) < g_close_enough)
+                    if (std::fabs(saved.x - g_new_z.x) < g_close_enough)
                     {
-                        if (fabs(saved.y - g_new_z.y) < g_close_enough)
+                        if (std::fabs(saved.y - g_new_z.y) < g_close_enough)
                         {
                             caught_a_cycle = true;
                         }
@@ -2599,8 +2599,8 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
                     {
                         if (caught[i] == 0)
                         {
-                            if (fabs(savedz[i].x - g_new_z.x) < g_close_enough)
-                                if (fabs(savedz[i].y - g_new_z.y) < g_close_enough)
+                            if (std::fabs(savedz[i].x - g_new_z.x) < g_close_enough)
+                                if (std::fabs(savedz[i].y - g_new_z.y) < g_close_enough)
                                 {
                                     caught[i] = g_color_iter;
                                 }
@@ -2715,7 +2715,7 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
         }
         else if (g_outside_color == ATAN)              // "atan"
         {
-            g_color_iter = (long)fabs(atan2(g_new_z.y, g_new_z.x)*g_atan_colors/PI);
+            g_color_iter = (long)std::fabs(std::atan2(g_new_z.y, g_new_z.x)*g_atan_colors/PI);
         }
         else if (g_outside_color == FMOD)
         {
@@ -2745,7 +2745,7 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
         else
         {
             double temp;
-            temp = log(dist);
+            temp = std::log(dist);
             dist = dist * sqr(temp) / (sqr(deriv.x) + sqr(deriv.y));
         }
         if (dist < dem_delta)     // point is on the edge
@@ -2766,11 +2766,11 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
         {
             if (g_old_demm_colors)   // this one is needed for old color scheme
             {
-                g_color_iter = (long)sqrt(sqrt(dist) / dem_width + 1);
+                g_color_iter = (long)std::sqrt(sqrt(dist) / dem_width + 1);
             }
             else if (g_use_old_distance_estimator)
             {
-                g_color_iter = (long)sqrt(dist / dem_width + 1);
+                g_color_iter = (long)std::sqrt(dist / dem_width + 1);
             }
             else
             {
@@ -2800,7 +2800,7 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
                 g_color_iter = g_biomorph;
             }
         }
-        else if (fabs(g_new_z.x) < g_magnitude_limit2 || fabs(g_new_z.y) < g_magnitude_limit2)
+        else if (std::fabs(g_new_z.x) < g_magnitude_limit2 || std::fabs(g_new_z.y) < g_magnitude_limit2)
         {
             g_color_iter = g_biomorph;
         }
@@ -2834,7 +2834,7 @@ plot_inside: // we're "inside"
             for (int i = 1; i < 16; i++)
             {
                 diff = tantable[0] - tantable[i];
-                if (fabs(diff) < .05)
+                if (std::fabs(diff) < .05)
                 {
                     g_color_iter = i;
                     break;
@@ -2881,16 +2881,16 @@ plot_inside: // we're "inside"
             {
                 g_new_z.x = ((double)g_l_new_z.x) / g_fudge_factor;
                 g_new_z.y = ((double)g_l_new_z.y) / g_fudge_factor;
-                g_color_iter = (long)fabs(atan2(g_new_z.y, g_new_z.x)*g_atan_colors/PI);
+                g_color_iter = (long)std::fabs(std::atan2(g_new_z.y, g_new_z.x)*g_atan_colors/PI);
             }
             else
             {
-                g_color_iter = (long)fabs(atan2(g_new_z.y, g_new_z.x)*g_atan_colors/PI);
+                g_color_iter = (long)std::fabs(std::atan2(g_new_z.y, g_new_z.x)*g_atan_colors/PI);
             }
         }
         else if (g_inside_color == BOF60)
         {
-            g_color_iter = (long)(sqrt(min_orbit) * 75);
+            g_color_iter = (long)(std::sqrt(min_orbit) * 75);
         }
         else if (g_inside_color == BOF61)
         {
@@ -2919,7 +2919,7 @@ plot_inside: // we're "inside"
 
 plot_pixel:
 
-    g_color = abs((int)g_color_iter);
+    g_color = std::abs((int)g_color_iter);
     if (g_color_iter >= g_colors)
     {
         // don't use color 0 unless from inside/outside
@@ -2942,7 +2942,7 @@ plot_pixel:
     (*g_plot)(g_col, g_row, g_color);
 
     g_max_iterations = savemaxit;
-    if ((g_keyboard_check_interval -= abs((int)g_real_color_iter)) <= 0)
+    if ((g_keyboard_check_interval -= std::abs((int)g_real_color_iter)) <= 0)
     {
         if (check_key())
         {
@@ -3275,7 +3275,7 @@ static int potential(double mag, long iterations)
             }
             else
             {
-                double d_tmp = log(mag)/(double)pow(2.0, (double)pot);
+                double d_tmp = std::log(mag)/(double)std::pow(2.0, (double)pot);
                 if (d_tmp > FLT_MIN)   // prevent float type underflow
                 {
                     pot = (float)d_tmp;
@@ -3296,7 +3296,7 @@ static int potential(double mag, long iterations)
         {
             if (g_float_flag)
             {
-                pot = (float)sqrt((double)pot);
+                pot = (float)std::sqrt((double)pot);
             }
             else
             {
@@ -4564,7 +4564,7 @@ originsym:
         }
         else
         {
-            if (fabs(g_x_max - g_x_min) < PI/4)
+            if (std::fabs(g_x_max - g_x_min) < PI/4)
             {
                 break; // no point in pi symmetry if values too close
             }
@@ -4600,7 +4600,7 @@ originsym:
         }
         else
         {
-            g_pi_in_pixels = (int)((PI/fabs(g_x_max-g_x_min))*g_logical_screen_x_dots); // PI in pixels
+            g_pi_in_pixels = (int)((PI/std::fabs(g_x_max-g_x_min))*g_logical_screen_x_dots); // PI in pixels
         }
 
         g_i_x_stop = g_xx_start+g_pi_in_pixels-1;

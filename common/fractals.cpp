@@ -55,9 +55,9 @@ an appropriate setup, per_image, per_pixel, and orbit routines.
 
 #include <float.h>
 #include <limits.h>
-#include <math.h>
 #include <stdlib.h>
 
+#include <cmath>
 #include <cstring>
 
 #define NEWTONDEGREELIMIT  100
@@ -249,7 +249,7 @@ int  fpMANHbailout()
     g_temp_sqr_x = sqr(g_new_z.x);
     g_temp_sqr_y = sqr(g_new_z.y);
     g_magnitude = g_temp_sqr_x + g_temp_sqr_y;
-    manhmag = fabs(g_new_z.x) + fabs(g_new_z.y);
+    manhmag = std::fabs(g_new_z.x) + std::fabs(g_new_z.y);
     if ((manhmag * manhmag) >= g_magnitude_limit)
     {
         return 1;
@@ -274,7 +274,7 @@ int  fpMANRbailout()
 }
 
 #define FLOATTRIGBAILOUT()  \
-    if (fabs(g_old_z.y) >= g_magnitude_limit2) \
+    if (std::fabs(g_old_z.y) >= g_magnitude_limit2) \
         return 1;
 
 #define LONGTRIGBAILOUT()  \
@@ -288,11 +288,11 @@ int  fpMANRbailout()
         { return 1;}
 
 #define FLOATXYTRIGBAILOUT()  \
-    if (fabs(g_old_z.x) >= g_magnitude_limit2 || fabs(g_old_z.y) >= g_magnitude_limit2) \
+    if (std::fabs(g_old_z.x) >= g_magnitude_limit2 || fabs(g_old_z.y) >= g_magnitude_limit2) \
         return 1;
 
 #define FLOATHTRIGBAILOUT()  \
-    if (fabs(g_old_z.x) >= g_magnitude_limit2) \
+    if (std::fabs(g_old_z.x) >= g_magnitude_limit2) \
         return 1;
 
 #define LONGHTRIGBAILOUT()  \
@@ -308,15 +308,15 @@ int  fpMANRbailout()
     }
 
 #define OLD_FLOATEXPBAILOUT()  \
-    if (fabs(g_old_z.y) >= 1.0e8) \
+    if (std::fabs(g_old_z.y) >= 1.0e8) \
         return 1;\
-    if (fabs(g_old_z.x) >= 6.4e2) \
+    if (std::fabs(g_old_z.x) >= 6.4e2) \
         return 1;
 
 #define FLOATEXPBAILOUT()  \
-    if (fabs(g_old_z.y) >= 1.0e3) \
+    if (std::fabs(g_old_z.y) >= 1.0e3) \
         return 1;\
-    if (fabs(g_old_z.x) >= 8) \
+    if (std::fabs(g_old_z.x) >= 8) \
         return 1;
 
 #define LONGEXPBAILOUT()  \
@@ -331,14 +331,14 @@ int  fpMANRbailout()
         double tmp;\
         tmp = (X);\
         tmp /= g_fudge_factor;\
-        tmp = fmod(tmp, PI*2.0);\
+        tmp = std::fmod(tmp, PI*2.0);\
         tmp *= g_fudge_factor;\
         (X) = (long)tmp;\
     }\
  
 static int  Halleybailout()
 {
-    if (fabs(modulus(g_new_z)-modulus(g_old_z)) < g_param_z2.x)
+    if (std::fabs(modulus(g_new_z)-modulus(g_old_z)) < g_param_z2.x)
     {
         return 1;
     }
@@ -856,7 +856,7 @@ int LambdaexponentFractal()
     {
         return 1;
     }
-    tmpexp = exp(g_old_z.x);
+    tmpexp = std::exp(g_old_z.x);
     g_tmp_z.x = tmpexp*cosy;
     g_tmp_z.y = tmpexp*siny;
 
@@ -900,11 +900,11 @@ int FloatTrigPlusExponentFractal()
     // another Scientific American biomorph type
     // z(n+1) = e**z(n) + trig(z(n)) + C
 
-    if (fabs(g_old_z.x) >= 6.4e2)
+    if (std::fabs(g_old_z.x) >= 6.4e2)
     {
         return 1; // DOMAIN errors
     }
-    tmpexp = exp(g_old_z.x);
+    tmpexp = std::exp(g_old_z.x);
     FPUsincos(&g_old_z.y, &siny, &cosy);
     CMPLXtrig0(g_old_z, g_new_z);
 
@@ -994,7 +994,7 @@ int UnityfpFractal()
 {
     double XXOne;
     XXOne = sqr(g_old_z.x) + sqr(g_old_z.y);
-    if ((XXOne > 2.0) || (fabs(XXOne - 1.0) < g_delta_min))
+    if ((XXOne > 2.0) || (std::fabs(XXOne - 1.0) < g_delta_min))
     {
         return 1;
     }
@@ -1080,7 +1080,7 @@ int longCmplxZpowerFractal()
     y.x = (double)g_l_param2.x / g_fudge_factor;
     y.y = (double)g_l_param2.y / g_fudge_factor;
     x = ComplexPower(x, y);
-    if (fabs(x.x) < g_fudge_limit && fabs(x.y) < g_fudge_limit)
+    if (std::fabs(x.x) < g_fudge_limit && fabs(x.y) < g_fudge_limit)
     {
         g_l_new_z.x = (long)(x.x * g_fudge_factor);
         g_l_new_z.y = (long)(x.y * g_fudge_factor);
@@ -1280,8 +1280,8 @@ int PopcornFractal()
     g_temp_sqr_y = sqr(g_new_z.y);
     g_magnitude = g_temp_sqr_x + g_temp_sqr_y;
     if (g_magnitude >= g_magnitude_limit
-        || fabs(g_new_z.x) > g_magnitude_limit2
-        || fabs(g_new_z.y) > g_magnitude_limit2)
+        || std::fabs(g_new_z.x) > g_magnitude_limit2
+        || std::fabs(g_new_z.y) > g_magnitude_limit2)
     {
         return 1;
     }
@@ -1408,8 +1408,8 @@ int PopcornFractalFn()
     g_temp_sqr_y = sqr(g_new_z.y);
     g_magnitude = g_temp_sqr_x + g_temp_sqr_y;
     if (g_magnitude >= g_magnitude_limit
-        || fabs(g_new_z.x) > g_magnitude_limit2
-        || fabs(g_new_z.y) > g_magnitude_limit2)
+        || std::fabs(g_new_z.x) > g_magnitude_limit2
+        || std::fabs(g_new_z.y) > g_magnitude_limit2)
     {
         return 1;
     }
@@ -2507,7 +2507,7 @@ void invertz2(DComplex *z)
     z->y -= g_f_y_center;  // Normalize values to center of circle
 
     g_temp_sqr_x = sqr(z->x) + sqr(z->y);  // Get old radius
-    if (fabs(g_temp_sqr_x) > FLT_MIN)
+    if (std::fabs(g_temp_sqr_x) > FLT_MIN)
     {
         g_temp_sqr_x = g_f_radius / g_temp_sqr_x;
     }

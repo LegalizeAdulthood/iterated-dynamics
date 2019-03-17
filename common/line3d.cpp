@@ -26,12 +26,12 @@
 #include "stereo.h"
 
 #include <limits.h>
-#include <math.h>
 #if defined(XFRACT)
 #include <unistd.h>
 #endif
 
 #include <algorithm>
+#include <cmath>
 #include <vector>
 
 struct point
@@ -1154,7 +1154,7 @@ static void draw_light_box(double *origin, double *direct, MATRIX light_m)
     {
         for (int j = -3; j < 4; j++)
         {
-            if (abs(i) + abs(j) < 6)
+            if (std::abs(i) + std::abs(j) < 6)
             {
                 g_plot((int)(S[1][2][0] + i), (int)(S[1][2][1] + j), 10);
             }
@@ -1178,8 +1178,8 @@ static void draw_rect(VECTOR V0, VECTOR V1, VECTOR V2, VECTOR V3, int color, boo
     {
         for (int i = 0; i < 4; i++)
         {
-            if (fabs(V[i][0] - V[(i + 1) % 4][0]) < -2 * bad_check
-                && fabs(V[i][1] - V[(i + 1) % 4][1]) < -2 * bad_check)
+            if (std::fabs(V[i][0] - V[(i + 1) % 4][0]) < -2 * bad_check
+                && std::fabs(V[i][1] - V[(i + 1) % 4][1]) < -2 * bad_check)
             {
                 vdraw_line(V[i], V[(i + 1) % 4], color);
             }
@@ -1190,8 +1190,8 @@ static void draw_rect(VECTOR V0, VECTOR V1, VECTOR V2, VECTOR V3, int color, boo
     {
         for (int i = 0; i < 3; i += 2)
         {
-            if (fabs(V[i][0] - V[i + 1][0]) < -2 * bad_check
-                && fabs(V[i][1] - V[i + 1][1]) < -2 * bad_check)
+            if (std::fabs(V[i][0] - V[i + 1][0]) < -2 * bad_check
+                && std::fabs(V[i][1] - V[i + 1][1]) < -2 * bad_check)
             {
                 vdraw_line(V[i], V[i + 1], color);
             }
@@ -1332,7 +1332,7 @@ static int offscreen(point pt)
             }
         }
     }
-    if (abs(pt.x) > 0 - bad_check || abs(pt.y) > 0 - bad_check)
+    if (std::abs(pt.x) > 0 - bad_check || std::abs(pt.y) > 0 - bad_check)
     {
         return 99;              // point is bad
     }
@@ -1401,9 +1401,9 @@ static void interpcolor(int x, int y, int color)
      * it uses ONLY additions (almost) and it DOES go to zero as the points
      * get close. */
 
-    d1 = abs(p1.x - x) + abs(p1.y - y);
-    d2 = abs(p2.x - x) + abs(p2.y - y);
-    d3 = abs(p3.x - x) + abs(p3.y - y);
+    d1 = std::abs(p1.x - x) + std::abs(p1.y - y);
+    d2 = std::abs(p2.x - x) + std::abs(p2.y - y);
+    d3 = std::abs(p3.x - x) + std::abs(p3.y - y);
 
     D = (d1 + d2 + d3) << 1;
     if (D)
@@ -2658,13 +2658,13 @@ static int first_time(int linelen, VECTOR v)
         deltatheta = (float)(theta2 - theta1) / (float) linelen;
 
         // initial sin,cos theta
-        sinthetaarray[0] = (float) sin((double) theta);
-        costhetaarray[0] = (float) cos((double) theta);
-        sinthetaarray[1] = (float) sin((double)(theta + deltatheta));
-        costhetaarray[1] = (float) cos((double)(theta + deltatheta));
+        sinthetaarray[0] = (float) std::sin((double) theta);
+        costhetaarray[0] = (float) std::cos((double) theta);
+        sinthetaarray[1] = (float) std::sin((double)(theta + deltatheta));
+        costhetaarray[1] = (float) std::cos((double)(theta + deltatheta));
 
         // sin,cos delta theta
-        twocosdeltatheta = (float)(2.0 * cos((double) deltatheta));
+        twocosdeltatheta = (float)(2.0 * std::cos((double) deltatheta));
 
         // build table of other sin,cos with trig identity
         for (int i = 2; i < (int) linelen; i++)
@@ -2680,15 +2680,15 @@ static int first_time(int linelen, VECTOR v)
 
         // initial sin,cos phi
 
-        oldsinphi1 = (float) sin((double) phi1);
+        oldsinphi1 = (float) std::sin((double) phi1);
         sinphi = oldsinphi1;
-        oldcosphi1 = (float) cos((double) phi1);
+        oldcosphi1 = (float) std::cos((double) phi1);
         cosphi = oldcosphi1;
-        oldsinphi2 = (float) sin((double)(phi1 + deltaphi));
-        oldcosphi2 = (float) cos((double)(phi1 + deltaphi));
+        oldsinphi2 = (float) std::sin((double)(phi1 + deltaphi));
+        oldcosphi2 = (float) std::cos((double)(phi1 + deltaphi));
 
         // sin,cos delta phi
-        twocosdeltaphi = (float)(2.0 * cos((double) deltaphi));
+        twocosdeltaphi = (float)(2.0 * std::cos((double) deltaphi));
 
 
         // affects how rough planet terrain is
@@ -2729,8 +2729,8 @@ static int first_time(int linelen, VECTOR v)
              * from being written */
             zview = -(long)((double) g_logical_screen_y_dots * (double) ZVIEWER / 100.0);
             radius = (double)(g_logical_screen_y_dots) / 2;
-            angle = atan(-radius / (zview + radius));
-            zcutoff = -radius - sin(angle) * radius;
+            angle = std::atan(-radius / (zview + radius));
+            zcutoff = -radius - std::sin(angle) * radius;
             zcutoff *= 1.1;        // for safety
             zcutoff *= 65536L;
         }

@@ -441,7 +441,7 @@ static int dist1(int a, int b)
 {
     int t = a - b;
 
-    return abs(t);
+    return std::abs(t);
 }
 
 static int find_link_updown(LINK *link, int num_link, int curr_link, int up)

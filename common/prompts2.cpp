@@ -33,7 +33,6 @@
 #include "zoom.h"
 
 #include <ctype.h>
-#include <math.h>
 #include <stdlib.h>
 #if defined(XFRACT)
 #include <fcntl.h>
@@ -53,6 +52,7 @@
 #endif
 
 #include <algorithm>
+#include <cmath>
 #include <cstring>
 #include <string>
 
@@ -2145,7 +2145,7 @@ int cmpdbl(double old, double new_val)
     prompt_valuestring(buf, &val);   // convert "old" to string
 
     old = atof(buf);                // convert back
-    return fabs(old-new_val) < DBL_EPSILON ? 0 : 1; // zero if same
+    return std::fabs(old-new_val) < DBL_EPSILON ? 0 : 1; // zero if same
 }
 
 int get_corners()

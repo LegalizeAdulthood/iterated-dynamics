@@ -21,7 +21,6 @@
 #include <ctype.h>
 #include <fcntl.h>
 #include <float.h>
-#include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/stat.h>
@@ -33,6 +32,7 @@
 #endif
 
 #include <cassert>
+#include <cmath>
 #include <cstring>
 #include <vector>
 
@@ -1718,12 +1718,12 @@ int input_field(
                 bool specialv = false;
                 if (*fld == 'e' || *fld == 'E')
                 {
-                    tmpd = exp(1.0);
+                    tmpd = std::exp(1.0);
                     specialv = true;
                 }
                 if (*fld == 'p' || *fld == 'P')
                 {
-                    tmpd = atan(1.0) * 4;
+                    tmpd = std::atan(1.0) * 4;
                     specialv = true;
                 }
                 if (specialv)

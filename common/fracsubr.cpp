@@ -23,7 +23,6 @@ FRACTALS.C, i.e. which are non-fractal-specific fractal engine subroutines.
 
 #include <float.h>
 #include <limits.h>
-#include <math.h>
 #include <memory.h>
 #include <stdarg.h>
 #include <stdio.h>
@@ -35,6 +34,7 @@ FRACTALS.C, i.e. which are non-fractal-specific fractal engine subroutines.
 #include <time.h>
 
 #include <algorithm>
+#include <cmath>
 #include <iterator>
 #include <vector>
 
@@ -595,7 +595,7 @@ expand_retry:
                        to arbitrary precision sooner, but always later.*/
                     double testx_try;
                     double testx_exact;
-                    if (fabs(g_x_max-g_x_3rd) > fabs(g_x_3rd-g_x_min))
+                    if (std::fabs(g_x_max-g_x_3rd) > std::fabs(g_x_3rd-g_x_min))
                     {
                         testx_exact  = g_x_max-g_x_3rd;
                         testx_try    = dx0-g_x_min;
@@ -607,7 +607,7 @@ expand_retry:
                     }
                     double testy_try;
                     double testy_exact;
-                    if (fabs(g_y_3rd-g_y_max) > fabs(g_y_min-g_y_3rd))
+                    if (std::fabs(g_y_3rd-g_y_max) > std::fabs(g_y_min-g_y_3rd))
                     {
                         testy_exact = g_y_3rd-g_y_max;
                         testy_try   = dy0-g_y_max;
@@ -644,21 +644,21 @@ expand_retry:
 
     // for periodicity close-enough, and for unity:
     //     min(max(delx,delx2),max(dely,dely2))
-    g_delta_min = fabs((double)g_delta_x);
-    if (fabs((double)g_delta_x2) > g_delta_min)
+    g_delta_min = std::fabs((double)g_delta_x);
+    if (std::fabs((double)g_delta_x2) > g_delta_min)
     {
-        g_delta_min = fabs((double)g_delta_x2);
+        g_delta_min = std::fabs((double)g_delta_x2);
     }
-    if (fabs((double)g_delta_y) > fabs((double)g_delta_y2))
+    if (std::fabs((double)g_delta_y) > std::fabs((double)g_delta_y2))
     {
-        if (fabs((double)g_delta_y) < g_delta_min)
+        if (std::fabs((double)g_delta_y) < g_delta_min)
         {
-            g_delta_min = fabs((double)g_delta_y);
+            g_delta_min = std::fabs((double)g_delta_y);
         }
     }
-    else if (fabs((double)g_delta_y2) < g_delta_min)
+    else if (std::fabs((double)g_delta_y2) < g_delta_min)
     {
-        g_delta_min = fabs((double)g_delta_y2);
+        g_delta_min = std::fabs((double)g_delta_y2);
     }
     g_l_delta_min = fudgetolong(g_delta_min);
 
@@ -724,7 +724,7 @@ void adjust_cornerbf()
     // While we're at it, let's adjust the Xmagfactor as well
     // use bftemp, bftemp2 as bfXctr, bfYctr
     cvtcentermagbf(bftemp, bftemp2, &Magnification, &Xmagfactor, &Rotation, &Skew);
-    ftemp = fabs(Xmagfactor);
+    ftemp = std::fabs(Xmagfactor);
     if (ftemp != 1 && ftemp >= (1-g_aspect_drift) && ftemp <= (1+g_aspect_drift))
     {
         Xmagfactor = sign(Xmagfactor);
@@ -799,7 +799,7 @@ void adjust_corner()
     {
         // While we're at it, let's adjust the Xmagfactor as well
         cvtcentermag(&Xctr, &Yctr, &Magnification, &Xmagfactor, &Rotation, &Skew);
-        ftemp = fabs(Xmagfactor);
+        ftemp = std::fabs(Xmagfactor);
         if (ftemp != 1 && ftemp >= (1-g_aspect_drift) && ftemp <= (1+g_aspect_drift))
         {
             Xmagfactor = sign(Xmagfactor);
@@ -807,8 +807,8 @@ void adjust_corner()
         }
     }
 
-    ftemp = fabs(g_x_3rd-g_x_min);
-    ftemp2 = fabs(g_x_max-g_x_3rd);
+    ftemp = std::fabs(g_x_3rd-g_x_min);
+    ftemp2 = std::fabs(g_x_max-g_x_3rd);
     if (ftemp < ftemp2)
     {
         if (ftemp*10000 < ftemp2 && g_y_3rd != g_y_max)
@@ -822,8 +822,8 @@ void adjust_corner()
         g_x_3rd = g_x_max;
     }
 
-    ftemp = fabs(g_y_3rd-g_y_min);
-    ftemp2 = fabs(g_y_max-g_y_3rd);
+    ftemp = std::fabs(g_y_3rd-g_y_min);
+    ftemp2 = std::fabs(g_y_max-g_y_3rd);
     if (ftemp < ftemp2)
     {
         if (ftemp*10000 < ftemp2 && g_x_3rd != g_x_max)
@@ -1955,8 +1955,8 @@ void get_julia_attractor(double real, double imag)
                 }
                 else
                 {
-                    if (fabs(result.x-g_new_z.x) < g_close_enough
-                        && fabs(result.y-g_new_z.y) < g_close_enough)
+                    if (std::fabs(result.x-g_new_z.x) < g_close_enough
+                        && std::fabs(result.y-g_new_z.y) < g_close_enough)
                     {
                         g_attractor[g_attractors] = g_new_z;
                         g_attractor_period[g_attractors] = i+1;

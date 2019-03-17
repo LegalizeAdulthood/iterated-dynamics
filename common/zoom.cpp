@@ -20,9 +20,9 @@
 #include "zoom.h"
 
 #include <float.h>
-#include <math.h>
 
 #include <cassert>
+#include <cmath>
 #include <cstring>
 #include <vector>
 
@@ -139,8 +139,8 @@ void drawbox(bool drawit)
         bffxadj   = alloc_stack(rbflength+2);
     }
     ftemp1 = PI*g_zoom_box_rotation/72; // convert to radians
-    rotcos = cos(ftemp1);   // sin & cos of rotation
-    rotsin = sin(ftemp1);
+    rotcos = std::cos(ftemp1);   // sin & cos of rotation
+    rotsin = std::sin(ftemp1);
 
     // do some calcs just once here to reduce fp work a bit
     fxwidth = g_save_x_max-g_save_x_3rd;
@@ -248,7 +248,7 @@ void drawbox(bool drawit)
 
 void drawlines(coords fr, coords to, int dx, int dy)
 {
-    if (abs(to.x-fr.x) > abs(to.y-fr.y))
+    if (std::abs(to.x-fr.x) > std::abs(to.y-fr.y))
     {
         // delta.x > delta.y
         if (fr.x > to.x)
@@ -260,7 +260,7 @@ void drawlines(coords fr, coords to, int dx, int dy)
         }
         int const xincr = (to.x-fr.x)*4/g_screen_x_dots+1; // do every 1st, 2nd, 3rd, or 4th dot
         int ctr = (to.x-fr.x-1)/xincr;
-        int const altdec = abs(to.y-fr.y)*xincr;
+        int const altdec = std::abs(to.y-fr.y)*xincr;
         int const altinc = to.x-fr.x;
         int altctr = altinc/2;
         int const yincr = (to.y > fr.y)?1:-1;
@@ -297,7 +297,7 @@ void drawlines(coords fr, coords to, int dx, int dy)
         }
         int const yincr = (to.y-fr.y)*4/g_screen_y_dots+1; // do every 1st, 2nd, 3rd, or 4th dot
         int ctr = (to.y-fr.y-1)/yincr;
-        int const altdec = abs(to.x-fr.x)*yincr;
+        int const altdec = std::abs(to.x-fr.x)*yincr;
         int const altinc = to.y-fr.y;
         int altctr = altinc/2;
         int const xincr = (to.x > fr.x) ? 1 : -1;

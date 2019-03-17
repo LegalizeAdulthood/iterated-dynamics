@@ -491,7 +491,7 @@ int ant()
     help_labels const old_help_mode = g_help_mode;
     g_help_mode = help_labels::ANTCOMMANDS;
     long const maxpts = labs(static_cast<long>(g_params[1]));
-    long const wait = abs(g_orbit_delay);
+    long const wait = std::abs(g_orbit_delay);
     std::string rule{get_rule()};
     int rule_len = (int) rule.length();;
     if (rule_len > 1)

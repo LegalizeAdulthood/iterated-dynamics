@@ -7,10 +7,10 @@ Wesley Loewer's Big Numbers.        (C) 1994-95, Wesley B. Loewer
 #include "big.h"
 
 #include <float.h>
-#include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
 
+#include <cmath>
 #include <cstring>
 
 #define LOG10_256 2.4082399653118
@@ -585,7 +585,7 @@ bf_t unsafe_sqrt_bf(bf_t r, bf_t n)
         half_a_bf(r);
         if (bflength == orig_bflength)
         {
-            const int comp = abs(cmp_bf(r, bftmp3));  // if match or almost match
+            const int comp = std::abs(cmp_bf(r, bftmp3));  // if match or almost match
             if (comp < 8)
             {
                 if (comp < 4  // perfect or near perfect match
@@ -729,7 +729,7 @@ bf_t unsafe_ln_bf(bf_t r, bf_t n)
         unsafe_sub_a_bf(r, bftmp2);        // -r - (n*exp(-r) - 1)
         if (bflength == orig_bflength)
         {
-            const int comp = abs(cmp_bf(r, bftmp5));
+            const int comp = std::abs(cmp_bf(r, bftmp5));
             if(comp < 8)  // if match or almost match
             {
                 if (comp < 4  // perfect or near perfect match
@@ -1044,7 +1044,7 @@ bf_t unsafe_atan_bf(bf_t r, bf_t n)
 #endif
         if (bflength == orig_bflength)
         {
-            const int comp = abs(cmp_bf(r, bftmp3));
+            const int comp = std::abs(cmp_bf(r, bftmp3));
             if (comp < 8)  // if match or almost match
             {
 #if defined(CALCULATING_BIG_PI) && !defined(_WIN32)
@@ -2157,7 +2157,7 @@ LDBL scale_value(LDBL f, LDBL b , int n)
         return f;
     }
 
-    an = abs(n);
+    an = std::abs(n);
 
     while (an != 0)
     {

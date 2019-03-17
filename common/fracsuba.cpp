@@ -5,8 +5,9 @@
 #include "fractals.h"
 
 #include <float.h>
-#include <math.h>
 #include <stdlib.h>
+
+#include <cmath>
 
 int asmlMODbailout()
 {
@@ -82,7 +83,7 @@ int asmlMANHbailout()
 {
     g_l_temp_sqr_x = lsqr(g_l_new_z.x);
     g_l_temp_sqr_y = lsqr(g_l_new_z.y);
-    g_magnitude = fabs(g_new_z.x) + fabs(g_new_z.y);
+    g_magnitude = std::fabs(g_new_z.x) + std::fabs(g_new_z.y);
     if (g_magnitude*g_magnitude >= g_magnitude_limit)
     {
         return 1;
@@ -95,7 +96,7 @@ int asmlMANRbailout()
 {
     g_l_temp_sqr_x = lsqr(g_l_new_z.x);
     g_l_temp_sqr_y = lsqr(g_l_new_z.y);
-    g_magnitude = fabs(g_new_z.x + g_new_z.y);
+    g_magnitude = std::fabs(g_new_z.x + g_new_z.y);
     if (g_magnitude*g_magnitude >= g_magnitude_limit)
     {
         return 1;
@@ -178,7 +179,7 @@ int asm386lMANHbailout()
 {
     g_l_temp_sqr_x = lsqr(g_l_new_z.x);
     g_l_temp_sqr_y = lsqr(g_l_new_z.y);
-    g_magnitude = fabs(g_new_z.x) + fabs(g_new_z.y);
+    g_magnitude = std::fabs(g_new_z.x) + std::fabs(g_new_z.y);
     if (g_magnitude*g_magnitude >= g_magnitude_limit)
     {
         return 1;
@@ -191,7 +192,7 @@ int asm386lMANRbailout()
 {
     g_l_temp_sqr_x = lsqr(g_l_new_z.x);
     g_l_temp_sqr_y = lsqr(g_l_new_z.y);
-    g_magnitude = fabs(g_new_z.x + g_new_z.y);
+    g_magnitude = std::fabs(g_new_z.x + g_new_z.y);
     if (g_magnitude*g_magnitude >= g_magnitude_limit)
     {
         return 1;
@@ -234,8 +235,8 @@ int asmfpMODbailout()
     g_magnitude = g_temp_sqr_x + g_temp_sqr_y;
     if (g_magnitude > g_magnitude_limit
         || g_magnitude < 0.0
-        || fabs(g_new_z.x) > g_magnitude_limit2
-        || fabs(g_new_z.y) > g_magnitude_limit2
+        || std::fabs(g_new_z.x) > g_magnitude_limit2
+        || std::fabs(g_new_z.y) > g_magnitude_limit2
         || g_overflow)
     {
         g_overflow = false;
@@ -464,7 +465,7 @@ int asmfpMANHbailout()
     // TODO: verify this code is correct
     g_temp_sqr_x = sqr(g_new_z.x);
     g_temp_sqr_y = sqr(g_new_z.y);
-    g_magnitude = fabs(g_new_z.x) + fabs(g_new_z.y);
+    g_magnitude = std::fabs(g_new_z.x) + std::fabs(g_new_z.y);
     if (g_magnitude*g_magnitude >= g_magnitude_limit)
     {
         return 1;
@@ -513,7 +514,7 @@ int asmfpMANRbailout()
     // TODO: verify this code is correct
     g_temp_sqr_x = sqr(g_new_z.x);
     g_temp_sqr_y = sqr(g_new_z.y);
-    g_magnitude = fabs(g_new_z.x + g_new_z.y);
+    g_magnitude = std::fabs(g_new_z.x + g_new_z.y);
     if (g_magnitude*g_magnitude >= g_magnitude_limit)
     {
         return 1;

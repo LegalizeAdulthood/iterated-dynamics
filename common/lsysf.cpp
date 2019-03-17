@@ -10,8 +10,8 @@
 #include "realdos.h"
 
 #include <float.h>
-#include <math.h>
 
+#include <cmath>
 #include <cstring>
 
 #ifdef max
@@ -165,8 +165,8 @@ static void lsysf_dosizedm(lsys_turtlestatef *cmd)
     double angle = (double) cmd->realangle;
     double s, c;
 
-    s = sin(angle);
-    c = cos(angle);
+    s = std::sin(angle);
+    c = std::cos(angle);
 
     cmd->xpos += cmd->size * cmd->aspect * c;
     cmd->ypos += cmd->size * s;
@@ -217,8 +217,8 @@ static void lsysf_dodrawd(lsys_turtlestatef *cmd)
     double angle = (double) cmd->realangle;
     double s, c;
     int lastx, lasty;
-    s = sin(angle);
-    c = cos(angle);
+    s = std::sin(angle);
+    c = std::cos(angle);
 
     lastx = (int) cmd->xpos;
     lasty = (int) cmd->ypos;
@@ -234,8 +234,8 @@ static void lsysf_dodrawm(lsys_turtlestatef *cmd)
     double angle = (double) cmd->realangle;
     double s, c;
 
-    s = sin(angle);
-    c = cos(angle);
+    s = std::sin(angle);
+    c = std::cos(angle);
 
     cmd->xpos += cmd->size * cmd->aspect * c;
     cmd->ypos += cmd->size * s;

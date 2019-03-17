@@ -16,7 +16,7 @@
 #include "fractype.h"
 #include "id_data.h"
 
-#include <math.h>
+#include <cmath>
 
 static int inside_color, periodicity_color;
 
@@ -239,7 +239,7 @@ over_bailout_87:
         }
         else if (g_outside_color == ATAN)
         {
-            g_color_iter = (long) fabs(atan2(g_new_z.y, g_new_z.x)*g_atan_colors/PI);
+            g_color_iter = (long) std::fabs(std::atan2(g_new_z.y, g_new_z.x)*g_atan_colors/PI);
         }
         // check_color
         if ((g_color_iter <= 0 || g_color_iter > g_max_iterations) && g_outside_color != FMOD)

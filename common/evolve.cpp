@@ -265,7 +265,7 @@ void varydbl(GENEBASE gene[], int randval, int i)
     case variations::WEIGHTED_RANDOM:
     {
         int mid = g_evolve_image_grid_size /2;
-        double radius =  sqrt(static_cast<double>(sqr(g_evolve_param_grid_x - mid) + sqr(lclpy - mid)));
+        double radius =  std::sqrt(static_cast<double>(sqr(g_evolve_param_grid_x - mid) + sqr(lclpy - mid)));
         *(double *)gene[i].addr += ((((double)randval / RAND_MAX) * 2 * g_evolve_max_random_mutation) - g_evolve_max_random_mutation) * radius;
     }
     break;
@@ -300,7 +300,7 @@ int varyint(int randvalue, int limit, variations mode)
     case variations::WEIGHTED_RANDOM:
     {
         int mid = g_evolve_image_grid_size /2;
-        double radius =  sqrt(static_cast<double>(sqr(g_evolve_param_grid_x - mid) + sqr(lclpy - mid)));
+        double radius =  std::sqrt(static_cast<double>(sqr(g_evolve_param_grid_x - mid) + sqr(lclpy - mid)));
         ret = (int)((((randvalue / RAND_MAX) * 2 * g_evolve_max_random_mutation) - g_evolve_max_random_mutation) * radius);
         ret %= limit;
         break;

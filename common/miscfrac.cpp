@@ -26,11 +26,11 @@ Miscellaneous fractal-specific code (formerly in CALCFRAC.C)
 #include "testpt.h"
 
 #include <limits.h>
-#include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
 
 #include <algorithm>
+#include <cmath>
 #include <cstring>
 #include <vector>
 
@@ -1241,7 +1241,7 @@ static bool Bif_Periodic(long time)
         }
         else
         {
-            if (fabs(Bif_savedpop-Population) <= Bif_closenuf)
+            if (std::fabs(Bif_savedpop-Population) <= Bif_closenuf)
             {
                 return true;
             }
@@ -1259,7 +1259,7 @@ static bool Bif_Periodic(long time)
 int BifurcLambda() // Used by lyanupov
 {
     Population = Rate * Population * (1 - Population);
-    return fabs(Population) > BIG;
+    return std::fabs(Population) > BIG;
 }
 #endif
 
@@ -1273,7 +1273,7 @@ int BifurcVerhulstTrig()
     g_tmp_z.y = 0;
     CMPLXtrig0(g_tmp_z, g_tmp_z);
     Population += Rate * g_tmp_z.x * (1 - g_tmp_z.x);
-    return fabs(Population) > BIG;
+    return std::fabs(Population) > BIG;
 }
 
 int LongBifurcVerhulstTrig()
@@ -1295,7 +1295,7 @@ int BifurcStewartTrig()
     g_tmp_z.y = 0;
     CMPLXtrig0(g_tmp_z, g_tmp_z);
     Population = (Rate * g_tmp_z.x * g_tmp_z.x) - 1.0;
-    return fabs(Population) > BIG;
+    return std::fabs(Population) > BIG;
 }
 
 int LongBifurcStewartTrig()
@@ -1317,7 +1317,7 @@ int BifurcSetTrigPi()
     g_tmp_z.y = 0;
     CMPLXtrig0(g_tmp_z, g_tmp_z);
     Population = Rate * g_tmp_z.x;
-    return fabs(Population) > BIG;
+    return std::fabs(Population) > BIG;
 }
 
 int LongBifurcSetTrigPi()
@@ -1337,7 +1337,7 @@ int BifurcAddTrigPi()
     g_tmp_z.y = 0;
     CMPLXtrig0(g_tmp_z, g_tmp_z);
     Population += Rate * g_tmp_z.x;
-    return fabs(Population) > BIG;
+    return std::fabs(Population) > BIG;
 }
 
 int LongBifurcAddTrigPi()
@@ -1358,7 +1358,7 @@ int BifurcLambdaTrig()
     g_tmp_z.y = 0;
     CMPLXtrig0(g_tmp_z, g_tmp_z);
     Population = Rate * g_tmp_z.x * (1 - g_tmp_z.x);
-    return fabs(Population) > BIG;
+    return std::fabs(Population) > BIG;
 }
 
 int LongBifurcLambdaTrig()
@@ -1383,9 +1383,9 @@ int BifurcMay()
     /* X = (lambda * X) / (1 + X)^beta, from R.May as described in Pickover,
             Computers, Pattern, Chaos, and Beauty, page 153 */
     g_tmp_z.x = 1.0 + Population;
-    g_tmp_z.x = pow(g_tmp_z.x, -beta); // pow in math.h included with mpmath.h
+    g_tmp_z.x = std::pow(g_tmp_z.x, -beta); // pow in math.h included with mpmath.h
     Population = (Rate * Population) * g_tmp_z.x;
-    return fabs(Population) > BIG;
+    return std::fabs(Population) > BIG;
 }
 
 int LongBifurcMay()
@@ -1488,7 +1488,7 @@ int lyapunov()
     }
     else if (g_params[1] == 0)
     {
-        if (fabs(Population)>BIG || Population == 0 || Population == 1)
+        if (std::fabs(Population)>BIG || Population == 0 || Population == 1)
         {
             Population = (1.0+rand())/(2.0+RAND_MAX);
         }
@@ -1644,7 +1644,7 @@ int lyapunov_cycles_in_c(long filter_cycles, double a, double b)
                 g_overflow = true;
                 goto jumpout;
             }
-            temp = fabs(Rate-2.0*Rate*Population);
+            temp = std::fabs(Rate-2.0*Rate*Population);
             total *= temp;
             if (total == 0)
             {
@@ -1665,7 +1665,7 @@ int lyapunov_cycles_in_c(long filter_cycles, double a, double b)
     }
 
 jumpout:
-    if (g_overflow || total <= 0 || (temp = log(total) + lnadjust) > 0)
+    if (g_overflow || total <= 0 || (temp = std::log(total) + lnadjust) > 0)
     {
         color = 0;
     }
@@ -1678,7 +1678,7 @@ jumpout:
         }
         else
         {
-            lyap = 1 - exp(temp/((double) lyaLength*i));
+            lyap = 1 - std::exp(temp/((double) lyaLength*i));
         }
         color = 1 + (int)(lyap * (g_colors-1));
     }
@@ -2290,7 +2290,7 @@ bool froth_setup()
     fsp.altcolor = (int)g_params[1];
     fsp.fl.f.a = g_params[2];
 
-    fsp.attractors = fabs(fsp.fl.f.a) <= FROTH_CRITICAL_A ? (!fsp.repeat_mapping ? 3 : 6)
+    fsp.attractors = std::fabs(fsp.fl.f.a) <= FROTH_CRITICAL_A ? (!fsp.repeat_mapping ? 3 : 6)
                          : (!fsp.repeat_mapping ? 2 : 3);
 
     // new improved values
@@ -2419,7 +2419,7 @@ int calcfroth()   // per pixel 1/2/g, called with row & col set
                 plot_orbit(g_old_z.x, g_old_z.y, -1);
             }
 
-            if (fabs(fsp.fl.f.halfa-g_old_z.y) < FROTH_CLOSE
+            if (std::fabs(fsp.fl.f.halfa-g_old_z.y) < FROTH_CLOSE
                 && g_old_z.x >= fsp.fl.f.top_x1
                 && g_old_z.x <= fsp.fl.f.top_x2)
             {
@@ -2444,7 +2444,7 @@ int calcfroth()   // per pixel 1/2/g, called with row & col set
                     }
                 }
             }
-            else if (fabs(FROTH_SLOPE*g_old_z.x - fsp.fl.f.a - g_old_z.y) < FROTH_CLOSE
+            else if (std::fabs(FROTH_SLOPE*g_old_z.x - fsp.fl.f.a - g_old_z.y) < FROTH_CLOSE
                 && g_old_z.x <= fsp.fl.f.right_x1
                 && g_old_z.x >= fsp.fl.f.right_x2)
             {
@@ -2479,7 +2479,7 @@ int calcfroth()   // per pixel 1/2/g, called with row & col set
                     }
                 }
             }
-            else if (fabs(-FROTH_SLOPE*g_old_z.x - fsp.fl.f.a - g_old_z.y) < FROTH_CLOSE
+            else if (std::fabs(-FROTH_SLOPE*g_old_z.x - fsp.fl.f.a - g_old_z.y) < FROTH_CLOSE
                 && g_old_z.x <= fsp.fl.f.left_x1
                 && g_old_z.x >= fsp.fl.f.left_x2)
             {
@@ -2671,7 +2671,7 @@ int calcfroth()   // per pixel 1/2/g, called with row & col set
     }
 
     g_real_color_iter = g_color_iter;
-    if ((g_keyboard_check_interval -= abs((int)g_real_color_iter)) <= 0)
+    if ((g_keyboard_check_interval -= std::abs((int)g_real_color_iter)) <= 0)
     {
         if (check_key())
         {
@@ -2761,7 +2761,7 @@ int calcfroth()   // per pixel 1/2/g, called with row & col set
         g_color_iter = 0;
     }
 
-    g_color = abs((int)(g_color_iter));
+    g_color = std::abs((int)(g_color_iter));
 
     (*g_plot)(g_col, g_row, g_color);
 

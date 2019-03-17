@@ -13,11 +13,11 @@
 #include "realdos.h"
 
 #include <float.h>
-#include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
 
 #include <cassert>
+#include <cmath>
 #include <cstring>
 #include <string>
 #include <vector>

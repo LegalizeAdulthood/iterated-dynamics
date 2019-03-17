@@ -26,10 +26,10 @@
 #include "realdos.h"
 
 #include <float.h>
-#include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
 
+#include <cmath>
 #include <cstring>
 #include <vector>
 
@@ -353,8 +353,8 @@ bool orbit3dlongsetup()
         l_d = (long) g_params[3];
         t = (int) l_d;      // points per orbit
 
-        l_sinx = (long)(sin(a)*g_fudge_factor);
-        l_cosx = (long)(cos(a)*g_fudge_factor);
+        l_sinx = (long)(std::sin(a)*g_fudge_factor);
+        l_cosx = (long)(std::cos(a)*g_fudge_factor);
         l_orbit = 0;
         initorbitlong[2] = 0;
         initorbitlong[1] = initorbitlong[2];
@@ -543,8 +543,8 @@ bool orbit3dfloatsetup()
         c =  g_params[2];    // stop
         l_d = (long) g_params[3];
         t = (int) l_d;      // points per orbit
-        g_sin_x = sin(a);
-        g_cos_x = cos(a);
+        g_sin_x = std::sin(a);
+        g_cos_x = std::cos(a);
         orbit = 0;
         initorbitfp[2] = 0;
         initorbitfp[1] = initorbitfp[2];
@@ -566,8 +566,8 @@ bool orbit3dfloatsetup()
         d =  g_params[3];
         if (g_fractal_type == fractal_type::THREEPLY)
         {
-            COSB   = cos(b);
-            SINABC = sin(a+b+c);
+            COSB   = std::cos(b);
+            SINABC = std::sin(a+b+c);
         }
     }
     else if (g_fractal_type == fractal_type::INVERSEJULIAFP)
@@ -996,7 +996,7 @@ int lorenz3d1floatorbit(double *x, double *y, double *z)
     zdt = (*z)*dt;
 
     // 1-lobe Lorenz
-    norm = sqrt((*x)*(*x)+(*y)*(*y));
+    norm = std::sqrt((*x)*(*x)+(*y)*(*y));
     dx   = (-adt-dt)*(*x) + (adt-bdt)*(*y) + (dt-adt)*norm + ydt*(*z);
     dy   = (bdt-adt)*(*x) - (adt+dt)*(*y) + (bdt+adt)*norm - xdt*(*z) -
            norm*zdt;
@@ -1034,7 +1034,7 @@ int lorenz3d3floatorbit(double *x, double *y, double *z)
     zdt = (*z)*dt;
 
     // 3-lobe Lorenz
-    norm = sqrt((*x)*(*x)+(*y)*(*y));
+    norm = std::sqrt((*x)*(*x)+(*y)*(*y));
     dx   = (-(adt+dt)*(*x) + (adt-bdt+zdt)*(*y)) / 3 +
            ((dt-adt)*((*x)*(*x)-(*y)*(*y)) +
             2*(bdt+adt-zdt)*(*x)*(*y))/(3*norm);
@@ -1110,9 +1110,9 @@ int rosslerfloatorbit(double *x, double *y, double *z)
 int pickoverfloatorbit(double *x, double *y, double *z)
 {
     double newx, newy, newz;
-    newx = sin(a*(*y)) - (*z)*cos(b*(*x));
-    newy = (*z)*sin(c*(*x)) - cos(d*(*y));
-    newz = sin(*x);
+    newx = std::sin(a*(*y)) - (*z)*std::cos(b*(*x));
+    newy = (*z)*std::sin(c*(*x)) - std::cos(d*(*y));
+    newz = std::sin(*x);
     *x = newx;
     *y = newy;
     *z = newz;
@@ -1123,7 +1123,7 @@ int pickoverfloatorbit(double *x, double *y, double *z)
 int gingerbreadfloatorbit(double *x, double *y, double * /*z*/)
 {
     double newx;
-    newx = 1 - (*y) + fabs(*x);
+    newx = 1 - (*y) + std::fabs(*x);
     *y = *x;
     *x = newx;
     return 0;
@@ -1195,7 +1195,7 @@ int kamtoruslongorbit(long *r, long *s, long *z)
 int hopalong2dfloatorbit(double *x, double *y, double * /*z*/)
 {
     double tmp;
-    tmp = *y - sign(*x)*sqrt(fabs(b*(*x)-c));
+    tmp = *y - sign(*x)*std::sqrt(std::fabs(b*(*x)-c));
     *y = a - *x;
     *x = tmp;
     return 0;
@@ -1204,8 +1204,8 @@ int hopalong2dfloatorbit(double *x, double *y, double * /*z*/)
 int chip2dfloatorbit(double *x, double *y, double * /*z*/)
 {
     double tmp;
-    tmp = *y - sign(*x) * cos(sqr(log(fabs(b*(*x)-c))))
-          * atan(sqr(log(fabs(c*(*x)-b))));
+    tmp = *y - sign(*x) * std::cos(sqr(std::log(std::fabs(b*(*x)-c))))
+          * std::atan(sqr(std::log(std::fabs(c*(*x)-b))));
     *y = a - *x;
     *x = tmp;
     return 0;
@@ -1214,8 +1214,8 @@ int chip2dfloatorbit(double *x, double *y, double * /*z*/)
 int quadruptwo2dfloatorbit(double *x, double *y, double * /*z*/)
 {
     double tmp;
-    tmp = *y - sign(*x) * sin(log(fabs(b*(*x)-c)))
-          * atan(sqr(log(fabs(c*(*x)-b))));
+    tmp = *y - sign(*x) * std::sin(std::log(std::fabs(b*(*x)-c)))
+          * std::atan(sqr(std::log(std::fabs(c*(*x)-b))));
     *y = a - *x;
     *x = tmp;
     return 0;
@@ -1224,7 +1224,7 @@ int quadruptwo2dfloatorbit(double *x, double *y, double * /*z*/)
 int threeply2dfloatorbit(double *x, double *y, double * /*z*/)
 {
     double tmp;
-    tmp = *y - sign(*x)*(fabs(sin(*x)*COSB+c-(*x)*SINABC));
+    tmp = *y - sign(*x)*(std::fabs(std::sin(*x)*COSB+c-(*x)*SINABC));
     *y = a - *x;
     *x = tmp;
     return 0;
@@ -1233,7 +1233,7 @@ int threeply2dfloatorbit(double *x, double *y, double * /*z*/)
 int martin2dfloatorbit(double *x, double *y, double * /*z*/)
 {
     double tmp;
-    tmp = *y - sin(*x);
+    tmp = *y - std::sin(*x);
     *y = a - *x;
     *x = tmp;
     return 0;
@@ -1262,7 +1262,7 @@ int dynamfloat(double *x, double *y, double * /*z*/)
     cp.x = b* *x;
     cp.y = 0;
     CMPLXtrig0(cp, tmp);
-    newy = *y + dt*sin(*x + a*tmp.x);
+    newy = *y + dt*std::sin(*x + a*tmp.x);
     if (euler)
     {
         *y = newy;
@@ -1271,7 +1271,7 @@ int dynamfloat(double *x, double *y, double * /*z*/)
     cp.x = b* *y;
     cp.y = 0;
     CMPLXtrig0(cp, tmp);
-    newx = *x - dt*sin(*y + a*tmp.x);
+    newx = *x - dt*std::sin(*y + a*tmp.x);
     *x = newx;
     *y = newy;
     return 0;
@@ -1531,7 +1531,7 @@ int orbit2dfloat()
             oldcol = col;
             oldrow = row;
         }
-        else if ((long) abs(row) + (long) abs(col) > BAD_PIXEL) // sanity check
+        else if ((long) std::abs(row) + (long) std::abs(col) > BAD_PIXEL) // sanity check
         {
             return ret;
         }
@@ -1703,7 +1703,7 @@ int orbit2dlong()
             oldrow = row;
             start = false;
         }
-        else if ((long)abs(row) + (long)abs(col) > BAD_PIXEL) // sanity check
+        else if ((long)std::abs(row) + (long)std::abs(col) > BAD_PIXEL) // sanity check
         {
             return ret;
         }
@@ -2176,7 +2176,7 @@ int dynam2dfloat()
                 oldcol = col;
                 oldrow = row;
             }
-            else if ((long)abs(row) + (long)abs(col) > BAD_PIXEL)   // sanity check
+            else if ((long)std::abs(row) + (long)std::abs(col) > BAD_PIXEL)   // sanity check
             {
                 return ret;
             }
@@ -2714,7 +2714,7 @@ static int ifs2d()
                 (*g_plot)(col, row, color);
             }
         }
-        else if ((long)abs(row) + (long)abs(col) > BAD_PIXEL)   // sanity check
+        else if ((long)std::abs(row) + (long)std::abs(col) > BAD_PIXEL)   // sanity check
         {
             return ret;
         }
@@ -2824,7 +2824,7 @@ static int ifs3dlong()
 
         if (long3dviewtransf(&inf))
         {
-            if ((long)abs(inf.row) + (long)abs(inf.col) > BAD_PIXEL)   // sanity check
+            if ((long)std::abs(inf.row) + (long)std::abs(inf.col) > BAD_PIXEL)   // sanity check
             {
                 return ret;
             }
@@ -3072,7 +3072,7 @@ static bool long3dviewtransf(long3dvtinf *inf)
                      + g_xx_adjust);
     if (inf->col < 0 || inf->col >= g_logical_screen_x_dots || inf->row < 0 || inf->row >= g_logical_screen_y_dots)
     {
-        if ((long)abs(inf->col)+(long)abs(inf->row) > BAD_PIXEL)
+        if ((long)std::abs(inf->col)+(long)std::abs(inf->row) > BAD_PIXEL)
         {
             inf->row = -2;
             inf->col = inf->row;
@@ -3095,7 +3095,7 @@ static bool long3dviewtransf(long3dvtinf *inf)
                           + g_xx_adjust1);
         if (inf->col1 < 0 || inf->col1 >= g_logical_screen_x_dots || inf->row1 < 0 || inf->row1 >= g_logical_screen_y_dots)
         {
-            if ((long)abs(inf->col1)+(long)abs(inf->row1) > BAD_PIXEL)
+            if ((long)std::abs(inf->col1)+(long)std::abs(inf->row1) > BAD_PIXEL)
             {
                 inf->row1 = -2;
                 inf->col1 = inf->row1;
@@ -3196,7 +3196,7 @@ static bool float3dviewtransf(float3dvtinf *inf)
                      + inf->cvt.e + g_xx_adjust);
     if (inf->col < 0 || inf->col >= g_logical_screen_x_dots || inf->row < 0 || inf->row >= g_logical_screen_y_dots)
     {
-        if ((long)abs(inf->col)+(long)abs(inf->row) > BAD_PIXEL)
+        if ((long)std::abs(inf->col)+(long)std::abs(inf->row) > BAD_PIXEL)
         {
             inf->row = -2;
             inf->col = inf->row;
@@ -3215,7 +3215,7 @@ static bool float3dviewtransf(float3dvtinf *inf)
                           + inf->cvt.e + g_xx_adjust1);
         if (inf->col1 < 0 || inf->col1 >= g_logical_screen_x_dots || inf->row1 < 0 || inf->row1 >= g_logical_screen_y_dots)
         {
-            if ((long)abs(inf->col1)+(long)abs(inf->row1) > BAD_PIXEL)
+            if ((long)std::abs(inf->col1)+(long)std::abs(inf->row1) > BAD_PIXEL)
             {
                 inf->row1 = -2;
                 inf->col1 = inf->row1;
