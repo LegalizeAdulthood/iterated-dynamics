@@ -235,7 +235,7 @@ win32_shell(Driver *drv)
     {
         comspec = "cmd.exe";
     }
-    const std::string command_line{comspec};
+    const std::string command_line(comspec);
     std::vector<char> buffer{command_line.begin(), command_line.end()};
     if (CreateProcessA(nullptr, buffer.data(), nullptr, nullptr, FALSE, CREATE_NEW_CONSOLE, nullptr, nullptr, &si, &pi))
     {
