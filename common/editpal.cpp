@@ -26,10 +26,6 @@
 #include <system_error>
 #include <vector>
 
-#ifdef DEBUG_UNDO
-#include "mdisp.h"
-#endif
-
 // see Fractint.c for a description of the "include"  hierarchy
 //
 // misc. #defines
@@ -1684,11 +1680,6 @@ static void PalTable__SaveUndoData(PalTable *me, int first, int last)
     }
 
     num = (last - first) + 1;
-
-#ifdef DEBUG_UNDO
-    mprintf("%6ld Writing Undo DATA from %d to %d (%d)", ftell(me->undo_file), first, last, num);
-#endif
-
     fseek(me->undo_file, 0, SEEK_CUR);
     if (num == 1)
     {
@@ -1716,10 +1707,6 @@ static void PalTable__SaveUndoRotate(PalTable *me, int dir, int first, int last)
     {
         return ;
     }
-
-#ifdef DEBUG_UNDO
-    mprintf("%6ld Writing Undo ROTATE of %d from %d to %d", ftell(me->undo_file), dir, first, last);
-#endif
 
     fseek(me->undo_file, 0, SEEK_CUR);
     putc(UNDO_ROTATE, me->undo_file);
@@ -1757,11 +1744,6 @@ static void PalTable__UndoProcess(PalTable *me, int delta)   // undo/redo common
         }
 
         num = (last - first) + 1;
-
-#ifdef DEBUG_UNDO
-        mprintf("          Reading DATA from %d to %d", first, last);
-#endif
-
         if (fread(temp, 3, num, me->undo_file) != num)
         {
             throw std::system_error(errno, std::system_category(), "PalTable_UndoProcess  failed fread");
@@ -1786,18 +1768,11 @@ static void PalTable__UndoProcess(PalTable *me, int delta)   // undo/redo common
         int first = (unsigned char)getc(me->undo_file);
         int last  = (unsigned char)getc(me->undo_file);
         int dir   = getw(me->undo_file);
-
-#ifdef DEBUG_UNDO
-        mprintf("          Reading ROTATE of %d from %d to %d", dir, first, last);
-#endif
         PalTable__Rotate(me, delta*dir, first, last);
         break;
     }
 
     default:
-#ifdef DEBUG_UNDO
-        mprintf("          Unknown command: %d", cmd);
-#endif
         break;
     }
 
@@ -1822,10 +1797,6 @@ static void PalTable__Undo(PalTable *me)
     size = getw(me->undo_file);
     fseek(me->undo_file, -size, SEEK_CUR);   // go to start of undo
 
-#ifdef DEBUG_UNDO
-    mprintf("%6ld Undo:", ftell(me->undo_file));
-#endif
-
     pos = ftell(me->undo_file);
 
     PalTable__UndoProcess(me, -1);
@@ -1842,10 +1813,6 @@ static void PalTable__Redo(PalTable *me)
     {
         return ;
     }
-
-#ifdef DEBUG_UNDO
-    mprintf("%6ld Redo:", ftell(me->undo_file));
-#endif
 
     fseek(me->undo_file, 0, SEEK_CUR);  // to make sure we are in "read" mode
     PalTable__UndoProcess(me, 1);
