@@ -289,16 +289,6 @@ inline double dot_product(VECTOR v1, VECTOR v2)
 #define TRUE 1
 #define FALSE 0
 #endif
-// Math definitions (normally in float.h) that are missing on some systems.
-#ifndef FLT_MIN
-#define FLT_MIN 1.17549435e-38
-#endif
-#ifndef FLT_MAX
-#define FLT_MAX 3.40282347e+38
-#endif
-#ifndef DBL_EPSILON
-#define DBL_EPSILON 2.2204460492503131e-16
-#endif
 #ifndef XFRACT
 // TODO: make sure X Window System font can render these chars
 #define UPARR "\x18"
