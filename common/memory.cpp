@@ -10,7 +10,6 @@
 #include "realdos.h"
 
 #include <errno.h>
-#include <stdarg.h>
 #include <stdio.h>
 
 #include <climits>
