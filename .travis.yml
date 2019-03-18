@@ -13,10 +13,7 @@ before_install:
   - sudo apt-get -qq -d update
 
 install:
-  - sudo apt-get install xutils-dev libx11-dev cmake
   - if [ $CC = 'gcc' -a $ANALYZE = 'true' ]; then sudo apt-get install cppcheck; cppcheck --version; fi
-  - if [ $CC = 'gcc' -a $ANALYZE = 'false' ]; then sudo apt-get install g++-4.8; sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-4.8 90; g++ --version; fi
-  - if [ $CC = 'clang' ]; then sudo apt-get install clang; g++ --version; fi
 
 script:
   - ./.travis.sh
