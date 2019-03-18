@@ -29,7 +29,6 @@
 #include "rotate.h"
 
 #include <signal.h>
-#include <stdarg.h>
 #include <stdio.h>
 #if defined(XFRACT)
 #include <unistd.h>
@@ -37,6 +36,7 @@
 
 #include <cassert>
 #include <cctype>
+#include <cstdarg>
 #include <cstring>
 #include <ctime>
 #include <vector>
@@ -645,7 +645,7 @@ bool check_key()
   */
 int timer(int timertype, int(*subrtn)(), ...)
 {
-    va_list arg_marker;  // variable arg list
+    std::va_list arg_marker;  // variable arg list
     char *timestring;
     time_t ltime;
     FILE *fp = nullptr;

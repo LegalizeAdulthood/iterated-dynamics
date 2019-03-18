@@ -18,10 +18,10 @@
 #include "rotate.h"
 #include "zoom.h"
 
-#include <stdarg.h>
 #include <stdio.h>
 
 #include <algorithm>
+#include <cstdarg>
 #include <cstring>
 #include <system_error>
 #include <vector>
@@ -282,7 +282,7 @@ static void displayf(int x, int y, int fg, int bg, char const *format, ...)
 {
     char buff[81];
 
-    va_list arg_list;
+    std::va_list arg_list;
 
     va_start(arg_list, format);
     vsprintf(buff, format, arg_list);

@@ -28,7 +28,6 @@
 #include "rotate.h"
 #include "stereo.h"
 
-#include <stdarg.h>
 #include <stdio.h>
 #if defined(XFRACT)
 #include <unistd.h>
@@ -40,6 +39,7 @@
 #include <cctype>
 #include <cfloat>
 #include <cmath>
+#include <cstdarg>
 #include <cstring>
 #include <ctime>
 #include <string>
@@ -1627,7 +1627,7 @@ static void put_filename(char const *keyword, char const *fname)
 static void put_parm(char const *parm, ...)
 {
     char *bufptr;
-    va_list args;
+    std::va_list args;
 
     va_start(args, parm);
     if (*parm == ' '             // starting a new parm

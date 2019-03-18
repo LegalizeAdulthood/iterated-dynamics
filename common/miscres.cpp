@@ -24,7 +24,6 @@
 #include "realdos.h"
 #include "soi.h"
 
-#include <stdarg.h>
 #if defined(XFRACT)
 #include <unistd.h>
 #endif
@@ -33,6 +32,7 @@
 #include <cassert>
 #include <cctype>
 #include <cmath>
+#include <cstdarg>
 #include <cstring>
 #include <ctime>
 #include <string>
@@ -750,7 +750,7 @@ static void show_str_var(char const *name, char const *var, int *row, char *msg)
 static void write_row(int row, char const *format, ...)
 {
     char text[78] = { 0 };
-    va_list args;
+    std::va_list args;
 
     va_start(args, format);
     _vsnprintf(text, NUM_OF(text), format, args);

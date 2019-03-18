@@ -27,6 +27,7 @@
 #include <shlwapi.h>
 #include <dbghelp.h>
 
+#include <cstdarg>
 #include <cstring>
 
 #include "frame.h"
@@ -631,7 +632,7 @@ ods(char const *file, unsigned int line, char const *format, ...)
 {
     char full_msg[MAX_PATH+1];
     char app_msg[MAX_PATH+1];
-    va_list args;
+    std::va_list args;
 
     va_start(args, format);
     _vsnprintf(app_msg, MAX_PATH, format, args);

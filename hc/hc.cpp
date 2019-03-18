@@ -361,7 +361,7 @@ void report_errors()
 }
 
 
-void print_msg(char const *type, int lnum, char const *format, va_list arg)
+void print_msg(char const *type, int lnum, char const *format, std::va_list arg)
 {
     if (type != nullptr)
     {
@@ -378,7 +378,7 @@ void print_msg(char const *type, int lnum, char const *format, va_list arg)
 
 void fatal(int diff, char const *format, ...)
 {
-    va_list arg;
+    std::va_list arg;
     va_start(arg, format);
 
     print_msg("Fatal", srcline-diff, format, arg);
@@ -395,7 +395,7 @@ void fatal(int diff, char const *format, ...)
 
 void error(int diff, char const *format, ...)
 {
-    va_list arg;
+    std::va_list arg;
     va_start(arg, format);
 
     print_msg("Error", srcline-diff, format, arg);
@@ -410,7 +410,7 @@ void error(int diff, char const *format, ...)
 
 void warn(int diff, char const *format, ...)
 {
-    va_list arg;
+    std::va_list arg;
     va_start(arg, format);
 
     print_msg("Warning", srcline-diff, format, arg);
@@ -425,7 +425,7 @@ void warn(int diff, char const *format, ...)
 
 void notice(char const *format, ...)
 {
-    va_list arg;
+    std::va_list arg;
     va_start(arg, format);
     print_msg("Note", srcline, format, arg);
     va_end(arg);
@@ -434,7 +434,7 @@ void notice(char const *format, ...)
 
 void msg(char const *format, ...)
 {
-    va_list arg;
+    std::va_list arg;
 
     if (quiet_mode)
     {

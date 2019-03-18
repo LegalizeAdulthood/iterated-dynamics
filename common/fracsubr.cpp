@@ -21,7 +21,6 @@ FRACTALS.C, i.e. which are non-fractal-specific fractal engine subroutines.
 #include "realdos.h"
 #include "soi.h"
 
-#include <stdarg.h>
 #include <stdio.h>
 #include <sys/timeb.h>
 #include <sys/types.h>
@@ -29,6 +28,7 @@ FRACTALS.C, i.e. which are non-fractal-specific fractal engine subroutines.
 #include <algorithm>
 #include <cfloat>
 #include <cmath>
+#include <cstdarg>
 #include <cstdlib>
 #include <ctime>
 #include <iterator>
@@ -1342,7 +1342,7 @@ static int ratio_bad(double actual, double desired)
 
 int put_resume(int len, ...)
 {
-    va_list arg_marker;
+    std::va_list arg_marker;
 
     if (g_resume_data.empty())
     {
@@ -1373,7 +1373,7 @@ int alloc_resume(int alloclen, int version)
 
 int get_resume(int len, ...)
 {
-    va_list arg_marker;
+    std::va_list arg_marker;
 
     if (g_resume_data.empty())
     {
