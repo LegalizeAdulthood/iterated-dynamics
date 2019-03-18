@@ -2,8 +2,7 @@
 #if !defined(CMDFILES_H)
 #define CMDFILES_H
 
-#include <stdio.h>
-
+#include <cstdio>
 #include <string>
 #include <vector>
 
@@ -281,7 +280,7 @@ extern int                   g_user_biomorph_value;
 extern std::string           g_working_dir;
 
 extern int cmdfiles(int argc, char const *const *argv);
-extern int load_commands(FILE *);
+extern int load_commands(std::FILE *);
 extern void set_3d_defaults();
 extern int get_curarg_len(char const *curarg);
 extern int get_max_curarg_len(char const *floatvalstr[], int totparm);

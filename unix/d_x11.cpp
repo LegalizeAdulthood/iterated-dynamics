@@ -28,7 +28,6 @@
 #include "zoom.h"
 
 #include <signal.h>
-#include <stdio.h>
 #include <sys/ioctl.h>
 #include <sys/time.h>
 #include <sys/wait.h>
@@ -47,6 +46,7 @@
 #include <sys/file.h>
 #endif
 
+#include <cstdio>
 #include <cstdlib>
 #include <cstring>
 #include <string>
@@ -470,10 +470,10 @@ static int errhand(Display *dp, XErrorEvent *xe)
 {
     char buf[200];
     fflush(stdout);
-    fprintf(stderr, "X Error: %d %d %d %d\n", xe->type, xe->error_code,
+    std::fprintf(stderr, "X Error: %d %d %d %d\n", xe->type, xe->error_code,
            xe->request_code, xe->minor_code);
     XGetErrorText(dp, xe->error_code, buf, 200);
-    fprintf(stderr, "%s\n", buf);
+    std::fprintf(stderr, "%s\n", buf);
     fflush(stderr);
     return 0;
 }
@@ -501,7 +501,7 @@ continue_hdl(int sig, int code, struct sigcontext *scp, char *addr)
 {
     char out[20];
     //        if you want to get all messages enable this statement.
-    //  printf("ieee exception code %x occurred at pc %X\n", code, scp->sc_pc);
+    //  std::printf("ieee exception code %x occurred at pc %X\n", code, scp->sc_pc);
     //    clear all excaption flags
     ieee_flags("clear", "exception", "all", out);
 }
@@ -673,7 +673,7 @@ xcmapstuff(DriverX11 *di)
         }
         if (!di->usepixtab)
         {
-            printf("Couldn't allocate any colors\n");
+            std::printf("Couldn't allocate any colors\n");
             g_got_real_dac = false;
         }
     }
@@ -1504,7 +1504,7 @@ pr_dwmroot(DriverX11 *di, Display *dpy, Window pwin)
 
     if (!XGetWindowAttributes(dpy, pwin, &pxwa))
     {
-        printf("Search for root: XGetWindowAttributes failed\n");
+        std::printf("Search for root: XGetWindowAttributes failed\n");
         return RootWindow(dpy, di->Xdscreen);
     }
     if (XQueryTree(dpy, pwin, &root, &parent, &child, &nchild))
@@ -1513,7 +1513,7 @@ pr_dwmroot(DriverX11 *di, Display *dpy, Window pwin)
         {
             if (!XGetWindowAttributes(dpy, child[i], &cxwa))
             {
-                printf("Search for root: XGetWindowAttributes failed\n");
+                std::printf("Search for root: XGetWindowAttributes failed\n");
                 return RootWindow(dpy, di->Xdscreen);
             }
             if (pxwa.width == cxwa.width && pxwa.height == cxwa.height)
@@ -1523,7 +1523,7 @@ pr_dwmroot(DriverX11 *di, Display *dpy, Window pwin)
     }
     else
     {
-        printf("xfractint: failed to find root window\n");
+        std::printf("xfractint: failed to find root window\n");
         return RootWindow(dpy, di->Xdscreen);
     }
 }
@@ -1672,12 +1672,12 @@ x11_init(Driver *drv, int *argc, char **argv)
      */
     if (sizeof(short) != 2)
     {
-        fprintf(stderr, "Error: need short to be 2 bytes\n");
+        std::fprintf(stderr, "Error: need short to be 2 bytes\n");
         exit(-1);
     }
     if (sizeof(long) < sizeof(FLOAT4))
     {
-        fprintf(stderr, "Error: need sizeof(long) >= sizeof(FLOAT4)\n");
+        std::fprintf(stderr, "Error: need sizeof(long) >= sizeof(FLOAT4)\n");
         exit(-1);
     }
 
@@ -1692,7 +1692,7 @@ x11_init(Driver *drv, int *argc, char **argv)
       such ieee trapping is supported.
     */
     if (ieee_handler("set", "common", continue_hdl) != 0)
-        printf("ieee trapping not supported here \n");
+        std::printf("ieee trapping not supported here \n");
 #endif
 
     // filter out x11 arguments
@@ -2053,14 +2053,14 @@ static bool x11_resize(Driver *drv)
                                   g_screen_y_dots, Xpad, Xmwidth);
         if (di->Ximage == nullptr)
         {
-            printf("XCreateImage failed\n");
+            std::printf("XCreateImage failed\n");
             x11_terminate(drv);
             exit(-1);
         }
         di->Ximage->data = (char *) malloc(di->Ximage->bytes_per_line * di->Ximage->height);
         if (di->Ximage->data == nullptr)
         {
-            fprintf(stderr, "Malloc failed: %d\n", di->Ximage->bytes_per_line *
+            std::fprintf(stderr, "Malloc failed: %d\n", di->Ximage->bytes_per_line *
                     di->Ximage->height);
             exit(-1);
         }
@@ -2186,7 +2186,7 @@ x11_write_palette(Driver *drv)
                     else
                     {
                         assert(1);
-                        printf("Allocating color %d failed.\n", i);
+                        std::printf("Allocating color %d failed.\n", i);
                     }
 
                     last_dac[i][0] = g_dac_box[i][0];
@@ -2274,11 +2274,11 @@ x11_write_pixel(Driver *drv, int x, int y, int color)
 #ifdef DEBUG // Debugging checks
     if (color >= g_colors || color < 0)
     {
-        printf("Color %d too big %d\n", color, g_colors);
+        std::printf("Color %d too big %d\n", color, g_colors);
     }
     if (x >= g_screen_x_dots || x < 0 || y >= g_screen_y_dots || y < 0)
     {
-        printf("Bad coord %d %d\n", x, y);
+        std::printf("Bad coord %d %d\n", x, y);
     }
 #endif
     if (di->xlastcolor != color)
@@ -2705,7 +2705,7 @@ x11_set_video_mode(Driver *drv, VIDEOINFO *mode)
         break;
 
     default:
-        printf("Bad mode %d\n", g_dot_mode);
+        std::printf("Bad mode %d\n", g_dot_mode);
         exit(-1);
     }
     if (g_dot_mode != 0)
@@ -2774,14 +2774,14 @@ static void
 x11_move_cursor(Driver *drv, int row, int col)
 {
     // TODO: draw reverse video text cursor at new position
-    fprintf(stderr, "x11_move_cursor(%d,%d)\n", row, col);
+    std::fprintf(stderr, "x11_move_cursor(%d,%d)\n", row, col);
 }
 
 static void
 x11_hide_text_cursor(Driver *drv)
 {
     // TODO: erase cursor if currently drawn
-    fprintf(stderr, "x11_hide_text_cursor\n");
+    std::fprintf(stderr, "x11_hide_text_cursor\n");
 }
 
 static void
@@ -2803,7 +2803,7 @@ x11_set_attr(Driver *drv, int row, int col, int attr, int count)
         count--;
     }
     // TODO: refresh text
-    fprintf(stderr, "x11_set_attr(%d,%d, %d): %d\n", row, col, count, attr);
+    std::fprintf(stderr, "x11_set_attr(%d,%d, %d): %d\n", row, col, count, attr);
 }
 
 static void
@@ -2823,28 +2823,28 @@ x11_scroll_up(Driver *drv, int top, int bot)
         di->text_screen[bot][c] = ' ';
     }
     // TODO: draw text
-    fprintf(stderr, "x11_scroll_up(%d, %d)\n", top, bot);
+    std::fprintf(stderr, "x11_scroll_up(%d, %d)\n", top, bot);
 }
 
 static void
 x11_stack_screen(Driver *drv)
 {
     // TODO
-    fprintf(stderr, "x11_stack_screen\n");
+    std::fprintf(stderr, "x11_stack_screen\n");
 }
 
 static void
 x11_unstack_screen(Driver *drv)
 {
     // TODO
-    fprintf(stderr, "x11_unstack_screen\n");
+    std::fprintf(stderr, "x11_unstack_screen\n");
 }
 
 static void
 x11_discard_screen(Driver *drv)
 {
     // TODO
-    fprintf(stderr, "x11_discard_screen\n");
+    std::fprintf(stderr, "x11_discard_screen\n");
 }
 
 static int
@@ -2858,13 +2858,13 @@ static void
 x11_buzzer(Driver *drv, buzzer_codes kind)
 {
     // TODO
-    fprintf(stderr, "x11_buzzer(%d)\n", kind);
+    std::fprintf(stderr, "x11_buzzer(%d)\n", kind);
 }
 
 static bool x11_sound_on(Driver *drv, int freq)
 {
     // TODO
-    fprintf(stderr, "x11_sound_on(%d)\n", freq);
+    std::fprintf(stderr, "x11_sound_on(%d)\n", freq);
     return false;
 }
 
@@ -2872,7 +2872,7 @@ static void
 x11_sound_off(Driver *drv)
 {
     // TODO
-    fprintf(stderr, "x11_sound_off\n");
+    std::fprintf(stderr, "x11_sound_off\n");
 }
 
 static void

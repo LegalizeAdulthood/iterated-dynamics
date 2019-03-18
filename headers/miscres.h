@@ -2,8 +2,7 @@
 #if !defined(MISCRES_H)
 #define MISCRES_H
 
-#include <stdio.h>
-
+#include <cstdio>
 #include <string>
 
 extern int                   g_num_affine_transforms;
@@ -38,9 +37,9 @@ extern void set_trig_pointers(int);
 extern int tab_display();
 extern int endswithslash(char const *fl);
 extern int ifsload();
-extern bool find_file_item(char *filename, char const *itemname, FILE **fileptr, int itemtype);
-extern bool find_file_item(std::string &filename, char const *itemname, FILE **fileptr, int itemtype);
-extern int file_gets(char *buf, int maxlen, FILE *infile);
+extern bool find_file_item(char *filename, char const *itemname, std::FILE **fileptr, int itemtype);
+extern bool find_file_item(std::string &filename, char const *itemname, std::FILE **fileptr, int itemtype);
+extern int file_gets(char *buf, int maxlen, std::FILE *infile);
 extern void roundfloatd(double *);
 extern void fix_inversion(double *);
 extern int ungetakey(int);

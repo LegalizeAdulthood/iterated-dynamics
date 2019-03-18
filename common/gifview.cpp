@@ -29,9 +29,8 @@
 #include "slideshw.h"
 #include "stereo.h"
 
-#include <stdio.h>
-
 #include <algorithm>
+#include <cstdio>
 #include <cstring>
 #include <vector>
 
@@ -39,7 +38,7 @@ static void close_file();
 
 #define MAXCOLORS       256
 
-static FILE *fpin = nullptr;       // FILE pointer
+static std::FILE *fpin = nullptr;       // std::FILE pointer
 unsigned int g_height;
 unsigned int g_num_colors;
 
@@ -109,10 +108,10 @@ int gifview()
     if (has_ext(temp1) == nullptr)
     {
         std::strcat(temp1, DEFAULT_FRACTAL_TYPE);
-        fpin = fopen(temp1, "rb");
+        fpin = std::fopen(temp1, "rb");
         if (fpin != nullptr)
         {
-            fclose(fpin);
+            std::fclose(fpin);
         }
         else
         {
@@ -127,7 +126,7 @@ int gifview()
             std::strcat(temp1, ALTERNATE_FRACTAL_TYPE);
         }
     }
-    fpin = fopen(temp1, "rb");
+    fpin = std::fopen(temp1, "rb");
     if (fpin == nullptr)
     {
         return -1;
@@ -209,7 +208,7 @@ int gifview()
         char msg[40];
         splitpath(temp1, nullptr, nullptr, fname, ext);
         makepath(tmpname, nullptr, nullptr, fname, ext);
-        sprintf(msg, "restoring %s", tmpname);
+        std::sprintf(msg, "restoring %s", tmpname);
         dvid_status(1, msg);
     }
     g_read_color = true;
@@ -373,7 +372,7 @@ int gifview()
 
 static void close_file()
 {
-    fclose(fpin);
+    std::fclose(fpin);
     fpin = nullptr;
 }
 

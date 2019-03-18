@@ -32,11 +32,10 @@
 #include "rotate.h"
 #include "zoom.h"
 
-#include <stdio.h>
-
 #include <algorithm>
 #include <cassert>
 #include <cmath>
+#include <cstdio>
 #include <cstdlib>
 #include <cstring>
 #include <string>
@@ -135,7 +134,7 @@ static bool fix_bof();
 static bool fix_period_bof();
 
 bool g_loaded_3d = false;
-static FILE *fp;
+static std::FILE *fp;
 int g_file_y_dots;
 int g_file_x_dots;
 int g_file_colors;
@@ -175,7 +174,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
         &blk_4_info, &blk_5_info, &blk_6_info, &blk_7_info))
     {
         // didn't find a useable file
-        sprintf(msg, "Sorry, %s isn't a file I can decode.", g_read_filename.c_str());
+        std::sprintf(msg, "Sorry, %s isn't a file I can decode.", g_read_filename.c_str());
         stopmsg(STOPMSG_NONE, msg);
         return -1;
     }
@@ -184,7 +183,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
     int const read_fractype = read_info.fractal_type;
     if (read_fractype < 0 || read_fractype >= g_num_fractal_types)
     {
-        sprintf(msg, "Warning: %s has a bad fractal type; using 0", g_read_filename.c_str());
+        std::sprintf(msg, "Warning: %s has a bad fractal type; using 0", g_read_filename.c_str());
         g_fractal_type = fractal_type::MANDEL;
     }
     g_fractal_type = static_cast<fractal_type>(read_fractype);
@@ -712,7 +711,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
     return 0;
 }
 
-inline void freader(void *ptr, size_t size, size_t nmemb, FILE *stream)
+inline void freader(void *ptr, size_t size, size_t nmemb, std::FILE *stream)
 {
     if (fread(ptr, size, nmemb, stream) != nmemb)
     {
@@ -746,7 +745,7 @@ static int find_fractal_info(char const *gif_file, FRACTAL_INFO *info,
     blk_6_info->got_data = false;
     blk_7_info->got_data = false;
 
-    fp = fopen(gif_file, "rb");
+    fp = std::fopen(gif_file, "rb");
     if (fp == nullptr)
     {
         return -1;
@@ -755,7 +754,7 @@ static int find_fractal_info(char const *gif_file, FRACTAL_INFO *info,
     if (std::strncmp((char *)gifstart, "GIF", 3) != 0)
     {
         // not GIF, maybe old .tga?
-        fclose(fp);
+        std::fclose(fp);
         return -1;
     }
 
@@ -1032,7 +1031,7 @@ static int find_fractal_info(char const *gif_file, FRACTAL_INFO *info,
             }
         }
 
-        fclose(fp);
+        std::fclose(fp);
         g_file_aspect_ratio = g_screen_aspect; // if not >= v15, this is correct
         return 0;
     }
@@ -1060,7 +1059,7 @@ static int find_fractal_info(char const *gif_file, FRACTAL_INFO *info,
     info->version = 0; // this forces lots more init at calling end too
 
     // zero means we won
-    fclose(fp);
+    std::fclose(fp);
     return 0;
 }
 

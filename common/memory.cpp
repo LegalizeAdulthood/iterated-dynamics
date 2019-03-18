@@ -9,9 +9,8 @@
 #include "prompts2.h"
 #include "realdos.h"
 
-#include <stdio.h>
-
 #include <climits>
+#include <cstdio>
 #include <cstring>
 
 // Memory allocation routines.
@@ -45,7 +44,7 @@ struct disk
 {
     stored_at_values stored_at;
     long size;
-    FILE *file;
+    std::FILE *file;
 };
 
 union mem
@@ -96,7 +95,7 @@ static void WhichDiskError(int I_O)
         "Write file error %d:  %s",
         "Read file error %d:  %s"
     };
-    sprintf(buf, pats[(1 <= I_O && I_O <= 4) ? (I_O-1) : 0], errno, strerror(errno));
+    std::sprintf(buf, pats[(1 <= I_O && I_O <= 4) ? (I_O-1) : 0], errno, strerror(errno));
     if (g_debug_flag == debug_flags::display_memory_statistics)
     {
         if (stopmsg(STOPMSG_CANCEL | STOPMSG_NO_BUZZER, buf))
@@ -118,7 +117,7 @@ static void DisplayError(int stored_at, long howmuch)
     // is also insufficient disk space to use as memory.
 
     char buf[MSG_LEN*2];
-    sprintf(buf, "Allocating %ld Bytes of %s memory failed.\n"
+    std::sprintf(buf, "Allocating %ld Bytes of %s memory failed.\n"
             "Alternate disk space is also insufficient. Goodbye",
             howmuch, memstr[stored_at]);
     stopmsg(STOPMSG_NONE, buf);
@@ -231,7 +230,7 @@ void DisplayMemory()
 {
     char buf[MSG_LEN];
 
-    sprintf(buf, "disk=%lu", get_disk_space());
+    std::sprintf(buf, "disk=%lu", get_disk_space());
     stopmsg(STOPMSG_INFO_ONLY | STOPMSG_NO_BUZZER, buf);
 }
 
@@ -239,7 +238,7 @@ void DisplayHandle(U16 handle)
 {
     char buf[MSG_LEN];
 
-    sprintf(buf, "Handle %u, type %s, size %li", handle, memstr[handletable[handle].Nowhere.stored_at],
+    std::sprintf(buf, "Handle %u, type %s, size %li", handle, memstr[handletable[handle].Nowhere.stored_at],
             handletable[handle].Nowhere.size);
     if (stopmsg(STOPMSG_CANCEL | STOPMSG_NO_BUZZER, buf))
     {
@@ -268,7 +267,7 @@ void ExitCheck()
             if (handletable[i].Nowhere.stored_at != NOWHERE)
             {
                 char buf[MSG_LEN];
-                sprintf(buf, "Memory type %s still allocated.  Handle = %u.",
+                std::sprintf(buf, "Memory type %s still allocated.  Handle = %u.",
                         memstr[handletable[i].Nowhere.stored_at], i);
                 stopmsg(STOPMSG_NONE, buf);
                 MemoryRelease(i);
@@ -357,7 +356,7 @@ U16 MemoryAlloc(U16 size, long count, int stored_at)
         }
         numTOTALhandles++;
         success = true;
-        fclose(handletable[handle].Disk.file); // so clusters aren't lost if we crash while running
+        std::fclose(handletable[handle].Disk.file); // so clusters aren't lost if we crash while running
         handletable[handle].Disk.file = g_disk_targa ?
             dir_fopen(g_working_dir.c_str(), g_light_name.c_str(), "r+b") :
             dir_fopen(g_temp_dir.c_str(), memfile, "r+b");
@@ -372,7 +371,7 @@ U16 MemoryAlloc(U16 size, long count, int stored_at)
     if (stored_at != use_this_type && g_debug_flag == debug_flags::display_memory_statistics)
     {
         char buf[MSG_LEN];
-        sprintf(buf, "Asked for %s, allocated %ld bytes of %s, handle = %u.",
+        std::sprintf(buf, "Asked for %s, allocated %ld bytes of %s, handle = %u.",
                 memstr[stored_at], toallocate, memstr[use_this_type], handle);
         stopmsg(STOPMSG_INFO_ONLY | STOPMSG_NO_BUZZER, buf);
         DisplayMemory();
@@ -407,7 +406,7 @@ void MemoryRelease(U16 handle)
         memfile[9] = (char)(handle % 10 + (int)'0');
         memfile[8] = (char)((handle % 100) / 10 + (int)'0');
         memfile[7] = (char)((handle % 1000) / 100 + (int)'0');
-        fclose(handletable[handle].Disk.file);
+        std::fclose(handletable[handle].Disk.file);
         dir_remove(g_temp_dir.c_str(), memfile);
         handletable[handle].Disk.file = nullptr;
         handletable[handle].Disk.size = 0;

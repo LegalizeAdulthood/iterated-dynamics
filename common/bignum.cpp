@@ -135,11 +135,10 @@ double wide number can then be ignored.
 
 #include "big.h"
 
-#include <stdio.h>
-
 #include <algorithm>
 #include <cfloat>
 #include <cmath>
+#include <cstdio>
 #include <cstring>
 
 /*************************************************************************
@@ -231,9 +230,9 @@ void bn_hexdump(bn_t r)
 {
     for (int i = 0; i < bnlength; i++)
     {
-        printf("%02X ", r[i]);
+        std::printf("%02X ", r[i]);
     }
-    printf("\n");
+    std::printf("\n");
     return;
 }
 
@@ -1131,7 +1130,7 @@ bn_t unsafe_sincos_bn(bn_t s, bn_t c, bn_t n)
         }
         k = !k; // toggle
 #ifdef CALCULATING_BIG_PI
-        printf("."); // lets you know it's doing something
+        std::printf("."); // lets you know it's doing something
 #endif
     }
 
@@ -1250,7 +1249,7 @@ bn_t unsafe_atan_bn(bn_t r, bn_t n)
         bntmp3 = orig_bntmp3 + orig_bnlength - bnlength;
 
 #ifdef CALCULATING_BIG_PI
-        printf("\natan() loop #%i, bnlength=%i\nsincos() loops\n", i, bnlength);
+        std::printf("\natan() loop #%i, bnlength=%i\nsincos() loops\n", i, bnlength);
 #endif
         unsafe_sincos_bn(bntmp4, bntmp5, bntmp3);   // sin(r), cos(r)
         copy_bn(bntmp3, r); // restore bntmp3 from sincos_bn()
@@ -1270,7 +1269,7 @@ bn_t unsafe_atan_bn(bn_t r, bn_t n)
             if (comp < 8)  // if match or almost match
             {
 #ifdef CALCULATING_BIG_PI
-                printf("atan() loop comp=%i\n", comp);
+                std::printf("atan() loop comp=%i\n", comp);
 #endif
                 if (comp < 4  // perfect or near perfect match
                     || almost_match == 1)   // close enough for 2nd time
@@ -1285,7 +1284,7 @@ bn_t unsafe_atan_bn(bn_t r, bn_t n)
 #ifdef CALCULATING_BIG_PI
             if (comp >= 8)
             {
-                printf("atan() loop comp=%i\n", comp);
+                std::printf("atan() loop comp=%i\n", comp);
             }
 #endif
         }

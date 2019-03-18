@@ -29,7 +29,6 @@
 #include <assert.h>
 #include <fcntl.h>
 #include <signal.h>
-#include <stdio.h>
 #include <sys/ioctl.h>
 #include <sys/wait.h>
 #include <unistd.h>
@@ -47,6 +46,7 @@
 #include <sys/file.h>
 #endif
 
+#include <cstdio>
 #include <cstdlib>
 #include <cstring>
 
@@ -181,12 +181,12 @@ UnixInit()
      */
     if (sizeof(short) != 2)
     {
-        fprintf(stderr, "Error: need short to be 2 bytes\n");
+        std::fprintf(stderr, "Error: need short to be 2 bytes\n");
         exit(-1);
     }
     if (sizeof(long) < sizeof(FLOAT4))
     {
-        fprintf(stderr, "Error: need sizeof(long)>=sizeof(FLOAT4)\n");
+        std::fprintf(stderr, "Error: need sizeof(long)>=sizeof(FLOAT4)\n");
         exit(-1);
     }
 
@@ -223,7 +223,7 @@ UnixInit()
         such ieee trapping is supported.
     */
     if (ieee_handler("set", "common", continue_hdl) != 0)
-        printf("ieee trapping not supported here \n");
+        std::printf("ieee trapping not supported here \n");
 #endif
 }
 #endif
@@ -282,10 +282,10 @@ static int errhand(Display *dp, XErrorEvent *xe)
 {
     char buf[200];
     fflush(stdout);
-    printf("X Error: %d %d %d %d\n", xe->type, xe->error_code,
+    std::printf("X Error: %d %d %d %d\n", xe->type, xe->error_code,
            xe->request_code, xe->minor_code);
     XGetErrorText(dp, xe->error_code, buf, 200);
-    printf("%s\n", buf);
+    std::printf("%s\n", buf);
     return 0;
 }
 
@@ -311,7 +311,7 @@ static void
 continue_hdl(int sig, int code, struct sigcontext *scp, char *addr)
 {
     //      if you want to get all messages enable this statement.
-    //  printf("ieee exception code %x occurred at pc %X\n",code,scp->sc_pc);
+    //  std::printf("ieee exception code %x occurred at pc %X\n",code,scp->sc_pc);
     //  clear all excaption flags
     char out[20];
     ieee_flags("clear", "exception", "all", out);
@@ -460,8 +460,8 @@ initUnixWindow()
         size_hints = XAllocSizeHints();
         if (size_hints == nullptr)
         {
-            fprintf(stderr, "Could not allocate memory for X size hints \n");
-            fprintf(stderr, "Note: xfractint can run without X in -disk mode\n");
+            std::fprintf(stderr, "Could not allocate memory for X size hints \n");
+            std::fprintf(stderr, "Note: xfractint can run without X in -disk mode\n");
             UnixDone();
             exit(-1);
         }
@@ -482,8 +482,8 @@ initUnixWindow()
         Xdp = XOpenDisplay(Xdisplay);
         if (Xdp == nullptr)
         {
-            fprintf(stderr, "Could not open display %s\n", Xdisplay);
-            fprintf(stderr, "Note: xfractint can run without X in -disk mode\n");
+            std::fprintf(stderr, "Could not open display %s\n", Xdisplay);
+            std::fprintf(stderr, "Note: xfractint can run without X in -disk mode\n");
             UnixDone();
             exit(-1);
         }
@@ -845,14 +845,14 @@ resizeWindow()
                               g_screen_y_dots, Xpad, Xmwidth);
         if (Ximage == nullptr)
         {
-            fprintf(stderr, "XCreateImage failed\n");
+            std::fprintf(stderr, "XCreateImage failed\n");
             UnixDone();
             exit(-1);
         }
         Ximage->data = static_cast<char *>(malloc(Ximage->bytes_per_line * Ximage->height));
         if (Ximage->data == nullptr)
         {
-            fprintf(stderr, "Malloc failed: %d\n", Ximage->bytes_per_line *
+            std::fprintf(stderr, "Malloc failed: %d\n", Ximage->bytes_per_line *
                     Ximage->height);
             exit(-1);
         }
@@ -921,14 +921,14 @@ xcmapstuff()
                                  (unsigned int) ncells))
             {
                 g_colors = ncells;
-                fprintf(stderr, "%d colors\n", g_colors);
+                std::fprintf(stderr, "%d colors\n", g_colors);
                 usepixtab = 1;
                 break;
             }
         }
         if (!usepixtab)
         {
-            fprintf(stderr, "Couldn't allocate any colors\n");
+            std::fprintf(stderr, "Couldn't allocate any colors\n");
             g_got_real_dac = false;
         }
     }
@@ -1081,11 +1081,11 @@ void writevideo(int x, int y, int color)
 #ifdef DEBUG // Debugging checks
     if (color >= g_colors || color < 0)
     {
-        fprintf(stderr, "Color %d too big %d\n", color, g_colors);
+        std::fprintf(stderr, "Color %d too big %d\n", color, g_colors);
     }
     if (x >= g_screen_x_dots || x < 0 || y >= g_screen_y_dots || y < 0)
     {
-        fprintf(stderr, "Bad coord %d %d\n", x, y);
+        std::fprintf(stderr, "Bad coord %d %d\n", x, y);
     }
 #endif
     if (xlastcolor != color)
@@ -1131,7 +1131,7 @@ int readvideo(int x, int y)
 #ifdef DEBUG // Debugging checks
     if (x >= g_screen_x_dots || x < 0 || y >= g_screen_y_dots || y < 0)
     {
-        fprintf(stderr, "Bad coord %d %d\n", x, y);
+        std::fprintf(stderr, "Bad coord %d %d\n", x, y);
     }
 #endif
     if (g_fake_lut)
@@ -1220,7 +1220,7 @@ int writevideopalette()
                     else
                     {
                         assert(1);
-                        fprintf(stderr, "Allocating color %d failed.\n", i);
+                        std::fprintf(stderr, "Allocating color %d failed.\n", i);
                     }
 
                     last_dac[i][0] = g_dac_box[i][0];
@@ -2163,7 +2163,7 @@ pr_dwmroot(Display *dpy, Window pwin)
 
     if (!XGetWindowAttributes(dpy, pwin, &pxwa))
     {
-        printf("Search for root: XGetWindowAttributes failed\n");
+        std::printf("Search for root: XGetWindowAttributes failed\n");
         return RootWindow(dpy, scr);
     }
     unsigned int nchild;
@@ -2173,7 +2173,7 @@ pr_dwmroot(Display *dpy, Window pwin)
         {
             if (!XGetWindowAttributes(dpy, child[i], &cxwa))
             {
-                printf("Search for root: XGetWindowAttributes failed\n");
+                std::printf("Search for root: XGetWindowAttributes failed\n");
                 return RootWindow(dpy, scr);
             }
             if (pxwa.width == cxwa.width && pxwa.height == cxwa.height)
@@ -2185,7 +2185,7 @@ pr_dwmroot(Display *dpy, Window pwin)
     }
     else
     {
-        printf("xfractint: failed to find root window\n");
+        std::printf("xfractint: failed to find root window\n");
         return RootWindow(dpy, scr);
     }
 }
@@ -2304,12 +2304,12 @@ xgetfont()
     font_info = XLoadQueryFont(Xdp, FONT);
     if (font_info == nullptr)
     {
-        printf("No %s\n", FONT);
+        std::printf("No %s\n", FONT);
     }
     if (font_info == nullptr || font_info->max_bounds.width > 8 ||
             font_info->max_bounds.width != font_info->min_bounds.width)
     {
-        printf("Bad font: %s\n", FONT);
+        std::printf("Bad font: %s\n", FONT);
         sleep(2);
         font_info = XLoadQueryFont(Xdp, "6x12");
     }
@@ -2319,7 +2319,7 @@ xgetfont()
     if (font_info->max_bounds.width > 8 ||
             font_info->max_bounds.width != font_info->min_bounds.width)
     {
-        printf("Bad font\n");
+        std::printf("Bad font\n");
         return nullptr;
     }
 

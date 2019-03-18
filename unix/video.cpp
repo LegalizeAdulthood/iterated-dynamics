@@ -9,8 +9,7 @@
 #include "rotate.h"
 #include "zoom.h"
 
-#include <stdio.h>
- 
+#include <cstdio>
 #include <cstring>
 
 /*
@@ -204,7 +203,7 @@ setvideomode(int ax, int bx, int cx, int dx)
         setforgraphics();
         break;
     default:
-        printf("Bad mode %d\n", g_dot_mode);
+        std::printf("Bad mode %d\n", g_dot_mode);
         exit(-1);
     }
     if (g_dot_mode != 0)

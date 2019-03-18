@@ -56,7 +56,7 @@ static bool select_type_params(fractal_type newfractype, fractal_type oldfractyp
 static void set_default_parms();
 static long gfe_choose_entry(int type, char const *title, char const *filename, char *entryname);
 static  int check_gfe_key(int curkey, int choice);
-static  void load_entry_text(FILE *entfile, char *buf, int maxlines, int startrow, int startcol);
+static  void load_entry_text(std::FILE *entfile, char *buf, int maxlines, int startrow, int startcol);
 static  void format_parmfile_line(int choice, char *buf);
 static  bool get_light_params();
 static  bool check_mapfile();
@@ -110,7 +110,7 @@ int fullscreen_prompt(      // full-screen prompting routine
     char buf[81];
 
     // scrolling related variables
-    FILE * scroll_file = nullptr;     // file with extrainfo entry to scroll
+    std::FILE * scroll_file = nullptr;     // file with extrainfo entry to scroll
     long scroll_file_start = 0;    // where entry starts in scroll_file
     bool in_scrolling_mode = false; // will be true if need to scroll extrainfo
     int lines_in_entry = 0;        // total lines in entry to be scrolled
@@ -190,7 +190,7 @@ int fullscreen_prompt(      // full-screen prompting routine
         if (c == EOF || c == '\032')
         {
             // should never happen
-            fclose(scroll_file);
+            std::fclose(scroll_file);
             in_scrolling_mode = false;
         }
     }
@@ -262,7 +262,7 @@ int fullscreen_prompt(      // full-screen prompting routine
         && std::strchr(extrainfo, '\021') == nullptr)
     {
         in_scrolling_mode = false;
-        fclose(scroll_file);
+        std::fclose(scroll_file);
         scroll_file = nullptr;
     }
 
@@ -850,7 +850,7 @@ fullscreen_exit:
     g_look_at_mouse = old_look_at_mouse;
     if (scroll_file)
     {
-        fclose(scroll_file);
+        std::fclose(scroll_file);
         scroll_file = nullptr;
     }
     return done;
@@ -867,7 +867,7 @@ int prompt_valuestring(char *buf, fullscreenvalues const *val)
         i = 16;    // cellular needs 16 (was 15)
         while (true)
         {
-            sprintf(buf, "%.*g", i, val->uval.dval);
+            std::sprintf(buf, "%.*g", i, val->uval.dval);
             if ((int)std::strlen(buf) <= ret)
             {
                 break;
@@ -879,24 +879,24 @@ int prompt_valuestring(char *buf, fullscreenvalues const *val)
         if (val->uval.dval < 0)
         {
             // We have to round the right way
-            sprintf(buf, "%ld", (long)(val->uval.dval-.5));
+            std::sprintf(buf, "%ld", (long)(val->uval.dval-.5));
         }
         else
         {
-            sprintf(buf, "%ld", (long)(val->uval.dval+.5));
+            std::sprintf(buf, "%ld", (long)(val->uval.dval+.5));
         }
         ret = 20;
         break;
     case 'f':
-        sprintf(buf, "%.7g", val->uval.dval);
+        std::sprintf(buf, "%.7g", val->uval.dval);
         ret = 14;
         break;
     case 'i':
-        sprintf(buf, "%d", val->uval.ival);
+        std::sprintf(buf, "%d", val->uval.ival);
         ret = 6;
         break;
     case 'L':
-        sprintf(buf, "%ld", val->uval.Lval);
+        std::sprintf(buf, "%ld", val->uval.Lval);
         ret = 10;
         break;
     case '*':
@@ -1521,7 +1521,7 @@ int get_fract_params(int caller)        // prompt for type-specific parms
     };
     char *filename;
     char const *entryname;
-    FILE *entryfile;
+    std::FILE *entryfile;
     char const *trignameptr[NUMTRIGFN];
 #ifdef XFRACT
     static // Can't initialize aggregates on the stack
@@ -1582,7 +1582,7 @@ int get_fract_params(int caller)        // prompt for type-specific parms
             || (use_filename_ref && find_file_item(filename_ref, entryname, &entryfile, -1-static_cast<int>(help_formula)) == 0))
         {
             load_entry_text(entryfile, tstack, 17, 0, 0);
-            fclose(entryfile);
+            std::fclose(entryfile);
             if (g_fractal_type == fractal_type::FORMULA || g_fractal_type == fractal_type::FFORMULA)
             {
                 frm_get_param_stuff(entryname); // no error check, should be okay, from above
@@ -1754,7 +1754,7 @@ gfp_top:
             {
                 choices[promptnum]++;
             }
-            sprintf(tmpbuf, "%.17g", g_params[i]);
+            std::sprintf(tmpbuf, "%.17g", g_params[i]);
             paramvalues[promptnum].uval.dval = atof(tmpbuf);
             oldparam[i] = paramvalues[promptnum++].uval.dval;
         }
@@ -1826,7 +1826,7 @@ gfp_top:
                 orbit_bailout = 100;
                 tmpptr = "biomorph";
             }
-            sprintf(bailoutmsg, "    (%s default is %d)", tmpptr, orbit_bailout);
+            std::sprintf(bailoutmsg, "    (%s default is %d)", tmpptr, orbit_bailout);
             choices[promptnum++] = bailoutmsg;
         }
     }
@@ -1935,11 +1935,11 @@ gfp_top:
     }
     if (g_julibrot)
     {
-        sprintf(msg, "Julibrot Parameters (orbit=%s)", juliorbitname);
+        std::sprintf(msg, "Julibrot Parameters (orbit=%s)", juliorbitname);
     }
     else
     {
-        sprintf(msg, "Parameters for fractal type %s", type_name);
+        std::sprintf(msg, "Parameters for fractal type %s", type_name);
     }
     if (bf_math == bf_math_type::NONE)
     {
@@ -2151,7 +2151,7 @@ bool check_orbit_name(char const *orbitname)
 
 // ---------------------------------------------------------------------
 
-static FILE *gfe_file;
+static std::FILE *gfe_file;
 
 long get_file_entry(int type, char const *title, char const *fmask,
                     char *filename, char *entryname)
@@ -2166,7 +2166,7 @@ long get_file_entry(int type, char const *title, char const *fmask,
         firsttry = false;
         // binary mode used here - it is more work, but much faster,
         //     especially when ftell or fgetpos is used
-        while (newfile || (gfe_file = fopen(filename, "rb")) == nullptr)
+        while (newfile || (gfe_file = std::fopen(filename, "rb")) == nullptr)
         {
             char buf[60];
             newfile = false;
@@ -2174,7 +2174,7 @@ long get_file_entry(int type, char const *title, char const *fmask,
             {
                 stopmsg(STOPMSG_NONE, (std::string{"Can't find "} + filename).c_str());
             }
-            sprintf(buf, "Select %s File", title);
+            std::sprintf(buf, "Select %s File", title);
             if (getafilename(buf, fmask, filename))
             {
                 return -1;
@@ -2260,7 +2260,7 @@ static entryinfo **gfe_choices; // for format_getparm_line
 static char const *gfe_title;
 
 // skip to next non-white space character and return it
-int skip_white_space(FILE *infile, long *file_offset)
+int skip_white_space(std::FILE *infile, long *file_offset)
 {
     int c;
     do
@@ -2273,7 +2273,7 @@ int skip_white_space(FILE *infile, long *file_offset)
 }
 
 // skip to end of line
-int skip_comment(FILE *infile, long *file_offset)
+int skip_comment(std::FILE *infile, long *file_offset)
 {
     int c;
     do
@@ -2287,7 +2287,7 @@ int skip_comment(FILE *infile, long *file_offset)
 
 #define MAXENTRIES 2000L
 
-int scan_entries(FILE *infile, entryinfo *choices, char const *itemname)
+int scan_entries(std::FILE *infile, entryinfo *choices, char const *itemname)
 {
     /*
     function returns the number of entries found; if a
@@ -2420,7 +2420,7 @@ top:
                     choices[numentries].point = name_offset;
                     if (++numentries >= MAXENTRIES)
                     {
-                        sprintf(buf, "Too many entries in file, first %ld used", MAXENTRIES);
+                        std::sprintf(buf, "Too many entries in file, first %ld used", MAXENTRIES);
                         stopmsg(STOPMSG_NONE, buf);
                         break;
                     }
@@ -2471,7 +2471,7 @@ retry:
     if (numentries == 0)
     {
         stopmsg(STOPMSG_NONE, "File doesn't contain any valid entries");
-        fclose(gfe_file);
+        std::fclose(gfe_file);
         return -2; // back to file list
     }
     std::strcpy(instr, o_instr);
@@ -2510,7 +2510,7 @@ retry:
         dosort = !dosort;
         goto retry;
     }
-    fclose(gfe_file);
+    std::fclose(gfe_file);
     if (i < 0)
     {
         // go back to file list or cancel
@@ -2726,7 +2726,7 @@ static int check_gfe_key(int curkey, int choice)
 }
 
 static void load_entry_text(
-    FILE *entfile,
+    std::FILE *entfile,
     char *buf,
     int maxlines,
     int startrow,
@@ -2910,7 +2910,7 @@ static void format_parmfile_line(int choice, char *buf)
         c = getc(gfe_file);
     }
     line[i] = 0;
-    sprintf(buf, "%-20s%-56s", gfe_choices[choice]->name, line);
+    std::sprintf(buf, "%-20s%-56s", gfe_choices[choice]->name, line);
 }
 
 // ---------------------------------------------------------------------

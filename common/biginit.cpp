@@ -15,8 +15,7 @@ is in the allocations of memory for the big numbers.
 #include "prompts2.h"
 #include "realdos.h"
 
-#include <stdio.h>
-
+#include <cstdio>
 #include <cstring>
 
 // globals
@@ -333,7 +332,7 @@ static void init_bf_2()
     if (ptr + NUMVARS*(bflength+2) > maxstack)
     {
         char msg[80];
-        sprintf(msg, "Requested precision of %d too high, aborting", g_decimals);
+        std::sprintf(msg, "Requested precision of %d too high, aborting", g_decimals);
         stopmsg(STOPMSG_NONE, msg);
         goodbye();
     }

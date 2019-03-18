@@ -34,9 +34,8 @@
 #include "stereo.h"
 #include "zoom.h"
 
-#include <stdio.h>
-
 #include <cctype>
+#include <cstdio>
 #include <cstring>
 #include <ctime>
 #include <string>
@@ -241,7 +240,7 @@ main_state big_while_loop(bool *const kbdmore, bool *const stacked, bool const r
                     static char msgxy2[] = {"Not enough video memory for that many lines, height cut down."};
                     if (g_logical_screen_x_dots > g_screen_x_dots && g_logical_screen_y_dots > g_screen_y_dots)
                     {
-                        sprintf(buf, "%s\n%s", msgxy1, msgxy2);
+                        std::sprintf(buf, "%s\n%s", msgxy1, msgxy2);
                         stopmsg(STOPMSG_NONE, buf);
                     }
                     else if (g_logical_screen_y_dots > g_screen_y_dots)
@@ -406,7 +405,7 @@ main_state big_while_loop(bool *const kbdmore, bool *const stacked, bool const r
             if (g_debug_flag == debug_flags::show_float_flag)
             {
                 char msg[MSG_LEN];
-                sprintf(msg, "floatflag=%d", g_user_float_flag ? 1 : 0);
+                std::sprintf(msg, "floatflag=%d", g_user_float_flag ? 1 : 0);
                 stopmsg(STOPMSG_NO_BUZZER, msg);
             }
             i = funny_glasses_call(gifview);
@@ -2380,7 +2379,7 @@ static void move_zoombox(int keynum)
 }
 
 // displays differences between current image file and new image
-static FILE *cmp_fp;
+static std::FILE *cmp_fp;
 static int errcount;
 int cmp_line(BYTE *pixels, int linelen)
 {
@@ -2418,7 +2417,7 @@ int cmp_line(BYTE *pixels, int linelen)
             ++errcount;
             if (g_init_batch == batch_modes::NONE)
             {
-                fprintf(cmp_fp, "#%5d col %3d row %3d old %3d new %3d\n",
+                std::fprintf(cmp_fp, "#%5d col %3d row %3d old %3d new %3d\n",
                         errcount, col, row, oldcolor, pixels[col]);
             }
         }
@@ -2435,10 +2434,10 @@ static void cmp_line_cleanup()
         time(&ltime);
         timestring = ctime(&ltime);
         timestring[24] = 0; //clobber newline in time string
-        fprintf(cmp_fp, "%s compare to %s has %5d errs\n",
+        std::fprintf(cmp_fp, "%s compare to %s has %5d errs\n",
                 timestring, g_read_filename.c_str(), errcount);
     }
-    fclose(cmp_fp);
+    std::fclose(cmp_fp);
 }
 
 void clear_zoombox()

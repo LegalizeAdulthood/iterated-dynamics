@@ -2,7 +2,7 @@
 #if !defined(DISKVID_H)
 #define DISKVID_H
 
-#include <stdio.h>
+#include <cstdio>
 
 extern bool                  g_disk_16_bit;
 extern bool                  g_disk_flag;       // disk video active flag
@@ -11,7 +11,7 @@ extern bool                  g_good_mode;       // video mode ok?
 
 extern int startdisk();
 extern int pot_startdisk();
-extern int targa_startdisk(FILE *, int);
+extern int targa_startdisk(std::FILE *, int);
 extern void enddisk();
 extern int readdisk(int, int);
 extern void writedisk(int, int, int);

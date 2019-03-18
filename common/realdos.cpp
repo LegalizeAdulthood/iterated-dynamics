@@ -18,12 +18,12 @@
 #include "rotate.h"
 #include "zoom.h"
 
-#include <stdio.h>
 #include <sys/stat.h>
 
 #include <cassert>
 #include <cctype>
 #include <cmath>
+#include <cstdio>
 #include <cstdlib>
 #include <cstring>
 #include <vector>
@@ -56,10 +56,10 @@ bool stopmsg(int flags, char const* msg)
     static bool batchmode = false;
     if (g_debug_flag != debug_flags::none || g_init_batch >= batch_modes::NORMAL)
     {
-        if (FILE *fp = dir_fopen(g_working_dir.c_str(), "stopmsg.txt", g_init_batch == batch_modes::NONE ? "w" : "a"))
+        if (std::FILE *fp = dir_fopen(g_working_dir.c_str(), "stopmsg.txt", g_init_batch == batch_modes::NONE ? "w" : "a"))
         {
-            fprintf(fp, "%s\n", msg);
-            fclose(fp);
+            std::fprintf(fp, "%s\n", msg);
+            std::fclose(fp);
         }
     }
     if (g_first_init)
@@ -77,7 +77,7 @@ bool stopmsg(int flags, char const* msg)
         close_drivers();
         exit(1);
 #else
-        printf("%s\n", msg);
+        std::printf("%s\n", msg);
         dopause(1); // pause deferred until after cmdfiles
         return false;
 #endif
@@ -187,7 +187,7 @@ bool showtempmsg(char const *msgparm)
     }
     if (g_first_init)      // & cmdfiles hasn't finished 1st try
     {
-        printf("%s\n", msg);
+        std::printf("%s\n", msg);
         return false;
     }
 
@@ -278,15 +278,15 @@ void helptitle()
 {
     char msg[MSG_LEN], buf[MSG_LEN];
     driver_set_clear(); // clear the screen
-    sprintf(msg, "FRACTINT Version %d.%01d", g_release/100, (g_release%100)/10);
+    std::sprintf(msg, "FRACTINT Version %d.%01d", g_release/100, (g_release%100)/10);
     if (g_release%10)
     {
-        sprintf(buf, "%01d", g_release%10);
+        std::sprintf(buf, "%01d", g_release%10);
         std::strcat(msg, buf);
     }
     if (g_patch_level)
     {
-        sprintf(buf, ".%d", g_patch_level);
+        std::sprintf(buf, ".%d", g_patch_level);
         std::strcat(msg, buf);
     }
     putstringcenter(0, 0, 80, C_TITLE, msg);
@@ -1298,7 +1298,7 @@ top:
 
     nextright += 2;
     attributes[nextright] = 256 + MENU_HDG;
-    choices[nextright] = "        FILE                  ";
+    choices[nextright] = "        std::FILE                  ";
 
     nextright += 2;
     choicekey[nextright] = '@';
@@ -1724,7 +1724,7 @@ int input_field(
                     {
                         roundfloatd(&tmpd);
                     }
-                    sprintf(tmpfld, "%.15g", tmpd);
+                    std::sprintf(tmpfld, "%.15g", tmpd);
                     tmpfld[len-1] = 0; // safety, field should be long enough
                     std::strcpy(fld, tmpfld);
                     offset = 0;
@@ -1905,7 +1905,7 @@ int g_cfg_line_nums[MAX_VIDEO_MODES] = { 0 };
  */
 void load_fractint_config()
 {
-    FILE *cfgfile;
+    std::FILE *cfgfile;
     VIDEOINFO vident;
     int linenum;
     long xdots, ydots;
@@ -1917,7 +1917,7 @@ void load_fractint_config()
 
     findpath("fractint.cfg", tempstring);
     if (tempstring[0] == 0                            // can't find the file
-        || (cfgfile = fopen(tempstring, "r")) == nullptr)   // can't open it
+        || (cfgfile = std::fopen(tempstring, "r")) == nullptr)   // can't open it
     {
         goto bad_fractint_cfg;
     }
@@ -1959,10 +1959,10 @@ void load_fractint_config()
             }
         }
         keynum = check_vidmode_keyname(tempstring);
-        sscanf(fields[1], "%x", &ax);
-        sscanf(fields[2], "%x", &bx);
-        sscanf(fields[3], "%x", &cx);
-        sscanf(fields[4], "%x", &dx);
+        std::sscanf(fields[1], "%x", &ax);
+        std::sscanf(fields[2], "%x", &bx);
+        std::sscanf(fields[3], "%x", &cx);
+        std::sscanf(fields[4], "%x", &dx);
         assert(fields[5]);
         dotmode     = atoi(fields[5]);
         assert(fields[6]);
@@ -2058,7 +2058,7 @@ void load_fractint_config()
             }
         }
     }
-    fclose(cfgfile);
+    std::fclose(cfgfile);
     return;
 
 bad_fractint_cfg:
@@ -2187,6 +2187,6 @@ void vidmode_keyname(int k, char *buf)
         {
             k -= 1058;
         }
-        sprintf(buf, "F%d", k);
+        std::sprintf(buf, "F%d", k);
     }
 }

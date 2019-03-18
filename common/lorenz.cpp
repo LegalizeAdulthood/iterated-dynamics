@@ -25,9 +25,9 @@
 #include "plot3d.h"
 #include "realdos.h"
 
-#include <stdio.h>
 
 #include <cmath>
+#include <cstdio>
 #include <cstdlib>
 #include <cstring>
 #include <vector>
@@ -100,7 +100,7 @@ static bool l_setup_convert_to_screen(l_affine *);
 static void setupmatrix(MATRIX);
 static bool long3dviewtransf(long3dvtinf *inf);
 static bool float3dviewtransf(float3dvtinf *inf);
-static FILE *open_orbitsave();
+static std::FILE *open_orbitsave();
 static void plothist(int x, int y, int color);
 static bool realtime = false;
 
@@ -1386,7 +1386,7 @@ int inverse_julia_per_image()
 
 int orbit2dfloat()
 {
-    FILE *fp;
+    std::FILE *fp;
     double *soundvar;
     double x, y, z;
     int color, col, row;
@@ -1546,19 +1546,19 @@ int orbit2dfloat()
         }
         if (fp)
         {
-            fprintf(fp, "%g %g %g 15\n", *p0, *p1, 0.0);
+            std::fprintf(fp, "%g %g %g 15\n", *p0, *p1, 0.0);
         }
     }
     if (fp)
     {
-        fclose(fp);
+        std::fclose(fp);
     }
     return ret;
 }
 
 int orbit2dlong()
 {
-    FILE *fp;
+    std::FILE *fp;
     long *soundvar;
     long x, y, z;
     int color, col, row;
@@ -1719,19 +1719,19 @@ int orbit2dlong()
         }
         if (fp)
         {
-            fprintf(fp, "%g %g %g 15\n", (double)*p0/g_fudge_factor, (double)*p1/g_fudge_factor, 0.0);
+            std::fprintf(fp, "%g %g %g 15\n", (double)*p0/g_fudge_factor, (double)*p1/g_fudge_factor, 0.0);
         }
     }
     if (fp)
     {
-        fclose(fp);
+        std::fclose(fp);
     }
     return ret;
 }
 
 static int orbit3dlongcalc()
 {
-    FILE *fp;
+    std::FILE *fp;
     unsigned long count;
     int oldcol, oldrow;
     int oldcol1, oldrow1;
@@ -1796,7 +1796,7 @@ static int orbit3dlongcalc()
         LORBIT(&inf.orbit[0], &inf.orbit[1], &inf.orbit[2]);
         if (fp)
         {
-            fprintf(fp, "%g %g %g 15\n", (double)inf.orbit[0]/g_fudge_factor, (double)inf.orbit[1]/g_fudge_factor, (double)inf.orbit[2]/g_fudge_factor);
+            std::fprintf(fp, "%g %g %g 15\n", (double)inf.orbit[0]/g_fudge_factor, (double)inf.orbit[1]/g_fudge_factor, (double)inf.orbit[2]/g_fudge_factor);
         }
         if (long3dviewtransf(&inf))
         {
@@ -1855,7 +1855,7 @@ static int orbit3dlongcalc()
     }
     if (fp)
     {
-        fclose(fp);
+        std::fclose(fp);
     }
     return ret;
 }
@@ -1863,7 +1863,7 @@ static int orbit3dlongcalc()
 
 static int orbit3dfloatcalc()
 {
-    FILE *fp;
+    std::FILE *fp;
     unsigned long count;
     int oldcol, oldrow;
     int oldcol1, oldrow1;
@@ -1928,7 +1928,7 @@ static int orbit3dfloatcalc()
         FORBIT(&inf.orbit[0], &inf.orbit[1], &inf.orbit[2]);
         if (fp)
         {
-            fprintf(fp, "%g %g %g 15\n", inf.orbit[0], inf.orbit[1], inf.orbit[2]);
+            std::fprintf(fp, "%g %g %g 15\n", inf.orbit[0], inf.orbit[1], inf.orbit[2]);
         }
         if (float3dviewtransf(&inf))
         {
@@ -1984,7 +1984,7 @@ static int orbit3dfloatcalc()
     }
     if (fp)
     {
-        fclose(fp);
+        std::fclose(fp);
     }
     return ret;
 }
@@ -2034,7 +2034,7 @@ bool dynam2dfloatsetup()
  */
 int dynam2dfloat()
 {
-    FILE *fp = nullptr;
+    std::FILE *fp = nullptr;
     double *soundvar = nullptr;
     double x = 0.0;
     double y = 0.0;
@@ -2191,13 +2191,13 @@ int dynam2dfloat()
             }
             if (fp)
             {
-                fprintf(fp, "%g %g %g 15\n", *p0, *p1, 0.0);
+                std::fprintf(fp, "%g %g %g 15\n", *p0, *p1, 0.0);
             }
         }
     }
     if (fp)
     {
-        fclose(fp);
+        std::fclose(fp);
     }
     return ret;
 }
@@ -2452,7 +2452,7 @@ done:
 static int ifs3dfloat()
 {
     int color_method;
-    FILE *fp;
+    std::FILE *fp;
     int color;
 
     double newx, newy, newz, r, sum;
@@ -2528,7 +2528,7 @@ static int ifs3dfloat()
         inf.orbit[2] = newz;
         if (fp)
         {
-            fprintf(fp, "%g %g %g 15\n", newx, newy, newz);
+            std::fprintf(fp, "%g %g %g 15\n", newx, newy, newz);
         }
         if (float3dviewtransf(&inf))
         {
@@ -2584,7 +2584,7 @@ static int ifs3dfloat()
     } // end while
     if (fp)
     {
-        fclose(fp);
+        std::fclose(fp);
     }
     return ret;
 }
@@ -2611,7 +2611,7 @@ char insufficient_ifs_mem[] = {"Insufficient memory for IFS"};
 static int ifs2d()
 {
     int color_method;
-    FILE *fp;
+    std::FILE *fp;
     int col;
     int row;
     int color;
@@ -2691,7 +2691,7 @@ static int ifs2d()
         y = newy;
         if (fp)
         {
-            fprintf(fp, "%g %g %g 15\n", (double)newx/g_fudge_factor, (double)newy/g_fudge_factor, 0.0);
+            std::fprintf(fp, "%g %g %g 15\n", (double)newx/g_fudge_factor, (double)newy/g_fudge_factor, 0.0);
         }
 
         // plot if inside window
@@ -2720,7 +2720,7 @@ static int ifs2d()
     }
     if (fp)
     {
-        fclose(fp);
+        std::fclose(fp);
     }
     return ret;
 }
@@ -2728,7 +2728,7 @@ static int ifs2d()
 static int ifs3dlong()
 {
     int color_method;
-    FILE *fp;
+    std::FILE *fp;
     int color;
     int ret;
     std::vector<long> localifs;
@@ -2818,7 +2818,7 @@ static int ifs3dlong()
         inf.orbit[2] = newz;
         if (fp)
         {
-            fprintf(fp, "%g %g %g 15\n", (double)newx/g_fudge_factor, (double)newy/g_fudge_factor, (double)newz/g_fudge_factor);
+            std::fprintf(fp, "%g %g %g 15\n", (double)newx/g_fudge_factor, (double)newy/g_fudge_factor, (double)newz/g_fudge_factor);
         }
 
         if (long3dviewtransf(&inf))
@@ -2871,7 +2871,7 @@ static int ifs3dlong()
     }
     if (fp)
     {
-        fclose(fp);
+        std::fclose(fp);
     }
     return ret;
 }
@@ -3229,12 +3229,12 @@ static bool float3dviewtransf(float3dvtinf *inf)
     return true;
 }
 
-static FILE *open_orbitsave()
+static std::FILE *open_orbitsave()
 {
-    FILE *fp;
-    if ((g_orbit_save_flags & osf_raw) && (fp = fopen("orbits.raw", "w")) != nullptr)
+    std::FILE *fp;
+    if ((g_orbit_save_flags & osf_raw) && (fp = std::fopen("orbits.raw", "w")) != nullptr)
     {
-        fprintf(fp, "pointlist x y z color\n");
+        std::fprintf(fp, "pointlist x y z color\n");
         return fp;
     }
     return nullptr;

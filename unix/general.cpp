@@ -23,10 +23,10 @@
 #include <bstring.h>
 #endif
 #endif
-#include <stdio.h>
 #include <unistd.h>
 
 #include <cmath>
+#include <cstdio>
 #include <cstdlib>
 #include <cstring>
 #include <ctime>
@@ -208,7 +208,7 @@ buzzer(buzzer_codes buzzertype)
 {
     if ((g_sound_flag & 7) != 0)
     {
-        printf("\007");
+        std::printf("\007");
         fflush(stdout);
     }
     if (buzzertype == buzzer_codes::COMPLETE)
@@ -450,8 +450,8 @@ void decode_fractal_info(FRACTAL_INFO *info, int dir)
     }
     if (bufPtr-buf != FRACTAL_INFO_SIZE)
     {
-        printf("Warning: loadfile miscount on fractal_info structure.\n");
-        printf("Components add up to %d bytes, but FRACTAL_INFO_SIZE = %d\n",
+        std::printf("Warning: loadfile miscount on fractal_info structure.\n");
+        std::printf("Components add up to %d bytes, but FRACTAL_INFO_SIZE = %d\n",
                (int)(bufPtr-buf), (int) FRACTAL_INFO_SIZE);
     }
     if (dir == 0)
@@ -767,8 +767,8 @@ decode_evolver_info(EVOLUTION_INFO *info, int dir)
     }
     if (bufPtr-buf != EVOLVER_INFO_SIZE)
     {
-        printf("Warning: loadfile miscount on evolution_info structure.\n");
-        printf("Components add up to %d bytes, but EVOLVER_INFO_SIZE = %d\n",
+        std::printf("Warning: loadfile miscount on evolution_info structure.\n");
+        std::printf("Components add up to %d bytes, but EVOLVER_INFO_SIZE = %d\n",
                (int)(bufPtr-buf), (int) EVOLVER_INFO_SIZE);
     }
     if (dir == 0)
@@ -815,8 +815,8 @@ decode_orbits_info(ORBITS_INFO *info, int dir)
     }
     if (bufPtr-buf != ORBITS_INFO_SIZE)
     {
-        printf("Warning: loadfile miscount on orbits_info structure.\n");
-        printf("Components add up to %d bytes, but ORBITS_INFO_SIZE = %d\n",
+        std::printf("Warning: loadfile miscount on orbits_info structure.\n");
+        std::printf("Components add up to %d bytes, but ORBITS_INFO_SIZE = %d\n",
                (int)(bufPtr-buf), (int) ORBITS_INFO_SIZE);
     }
     if (dir == 0)

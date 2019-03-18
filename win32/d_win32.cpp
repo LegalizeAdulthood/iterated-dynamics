@@ -20,11 +20,11 @@
 #include "slideshw.h"
 
 #include <assert.h>
-#include <stdio.h>
 #define WIN32_LEAN_AND_MEAN
 #define STRICT
 #include <windows.h>
 
+#include <cstdio>
 #include <ctime>
 
 #include "WinText.h"

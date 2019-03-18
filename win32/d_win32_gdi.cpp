@@ -21,7 +21,6 @@
 #include "slideshw.h"
 
 #include <assert.h>
-#include <stdio.h>
 #define WIN32_LEAN_AND_MEAN
 #define STRICT
 #include <windows.h>
@@ -31,6 +30,8 @@
 #include "plot.h"
 #include "d_win32.h"
 #include "ods.h"
+
+#include <cstdio>
 
 extern HINSTANCE g_instance;
 

@@ -29,13 +29,12 @@
 #include "rotate.h"
 #include "stereo.h"
 
-#include <stdio.h>
-
 #include <algorithm>
 #include <cctype>
 #include <cfloat>
 #include <cmath>
 #include <cstdarg>
+#include <cstdio>
 #include <cstring>
 #include <ctime>
 #include <string>
@@ -62,7 +61,7 @@ static char par_comment[4][MAX_COMMENT_LEN];
 
 // JIIM
 
-static FILE *parmfile;
+static std::FILE *parmfile;
 
 #define PAR_KEY(x)  ( x < 10 ? '0' + x : 'a' - 10 + x)
 
@@ -86,8 +85,8 @@ void make_batch_file()
     fullscreenvalues paramvalues[18];
     char const *choices[MAXPROMPTS];
     char outname[FILE_MAX_PATH+1], buf[256], buf2[128];
-    FILE *infile = nullptr;
-    FILE *fpbat = nullptr;
+    std::FILE *infile = nullptr;
+    std::FILE *fpbat = nullptr;
     char colorspec[14];
     int maxcolor;
     int maxcolorindex = 0;
@@ -378,7 +377,7 @@ skip_UI:
             gotinfile = true;
             if (access(g_command_file.c_str(), 6))
             {
-                sprintf(buf, "Can't write %s", g_command_file.c_str());
+                std::sprintf(buf, "Can't write %s", g_command_file.c_str());
                 stopmsg(STOPMSG_NONE, buf);
                 continue;
             }
@@ -388,16 +387,16 @@ skip_UI:
                 outname[i] = 0;
             }
             std::strcat(outname, "fractint.tmp");
-            infile = fopen(g_command_file.c_str(), "rt");
+            infile = std::fopen(g_command_file.c_str(), "rt");
         }
-        parmfile = fopen(outname, "wt");
+        parmfile = std::fopen(outname, "wt");
         if (parmfile == nullptr)
         {
-            sprintf(buf, "Can't create %s", outname);
+            std::sprintf(buf, "Can't create %s", outname);
             stopmsg(STOPMSG_NONE, buf);
             if (gotinfile)
             {
-                fclose(infile);
+                std::fclose(infile);
             }
             continue;
         }
@@ -407,7 +406,7 @@ skip_UI:
             while (file_gets(buf, 255, infile) >= 0)
             {
                 if (std::strchr(buf, '{')// entry heading?
-                    && sscanf(buf, " %40[^ \t({]", buf2)
+                    && std::sscanf(buf, " %40[^ \t({]", buf2)
                     && stricmp(buf2, g_command_name.c_str()) == 0)
                 {
                     // entry with same name
@@ -417,8 +416,8 @@ skip_UI:
                     if (stopmsg(STOPMSG_CANCEL | STOPMSG_INFO_ONLY, buf2))
                     {
                         // cancel
-                        fclose(infile);
-                        fclose(parmfile);
+                        std::fclose(infile);
+                        std::fclose(parmfile);
                         unlink(outname);
                         goto prompt_user;
                     }
@@ -475,10 +474,10 @@ skip_UI:
                     PCommandName[w] = 0;
                     {
                         char buf[20];
-                        sprintf(buf, "_%c%c", PAR_KEY(i), PAR_KEY(j));
+                        std::sprintf(buf, "_%c%c", PAR_KEY(i), PAR_KEY(j));
                         std::strcat(PCommandName, buf);
                     }
-                    fprintf(parmfile, "%-19s{", PCommandName);
+                    std::fprintf(parmfile, "%-19s{", PCommandName);
                     g_x_min = pxxmin + pdelx*(i*pxdots) + pdelx2*(j*pydots);
                     g_x_max = pxxmin + pdelx*((i+1)*pxdots - 1) + pdelx2*((j+1)*pydots - 1);
                     g_y_min = pyymax - pdely*((j+1)*pydots - 1) - pdely2*((i+1)*pxdots - 1);
@@ -493,12 +492,12 @@ skip_UI:
                         g_x_3rd = g_x_min;
                         g_y_3rd = g_y_min;
                     }
-                    fprintf(fpbat, "Fractint batch=yes overwrite=yes @%s/%s\n", g_command_file.c_str(), PCommandName);
-                    fprintf(fpbat, "If Errorlevel 2 goto oops\n");
+                    std::fprintf(fpbat, "Fractint batch=yes overwrite=yes @%s/%s\n", g_command_file.c_str(), PCommandName);
+                    std::fprintf(fpbat, "If Errorlevel 2 goto oops\n");
                 }
                 else
                 {
-                    fprintf(parmfile, "%-19s{", g_command_name.c_str());
+                    std::fprintf(parmfile, "%-19s{", g_command_name.c_str());
                 }
                 {
                     /* guarantee that there are no blank comments above the last
@@ -521,7 +520,7 @@ skip_UI:
                 }
                 if (!g_command_comment[0].empty())
                 {
-                    fprintf(parmfile, " ; %s", g_command_comment[0].c_str());
+                    std::fprintf(parmfile, " ; %s", g_command_comment[0].c_str());
                 }
                 fputc('\n', parmfile);
                 {
@@ -533,30 +532,30 @@ skip_UI:
                     {
                         if (!g_command_comment[k].empty())
                         {
-                            fprintf(parmfile, "%s%s\n", buf, g_command_comment[k].c_str());
+                            std::fprintf(parmfile, "%s%s\n", buf, g_command_comment[k].c_str());
                         }
                     }
                     if (g_patch_level != 0 && !colorsonly)
                     {
-                        fprintf(parmfile, "%s %s Version %d Patchlevel %d\n", buf,
+                        std::fprintf(parmfile, "%s %s Version %d Patchlevel %d\n", buf,
                                 Fractint, g_release, g_patch_level);
                     }
                 }
                 write_batch_parms(colorspec, colorsonly, maxcolor, i, j);
                 if (xm > 1 || ym > 1)
                 {
-                    fprintf(parmfile, "  video=%s", vidmde);
-                    fprintf(parmfile, " savename=frmig_%c%c\n", PAR_KEY(i), PAR_KEY(j));
+                    std::fprintf(parmfile, "  video=%s", vidmde);
+                    std::fprintf(parmfile, " savename=frmig_%c%c\n", PAR_KEY(i), PAR_KEY(j));
                 }
-                fprintf(parmfile, "  }\n\n");
+                std::fprintf(parmfile, "  }\n\n");
             }
         }
         if (xm > 1 || ym > 1)
         {
-            fprintf(fpbat, "Fractint makemig=%u/%u\n", xm, ym);
-            fprintf(fpbat, "Rem Simplgif fractmig.gif simplgif.gif  in case you need it\n");
-            fprintf(fpbat, ":oops\n");
-            fclose(fpbat);
+            std::fprintf(fpbat, "Fractint makemig=%u/%u\n", xm, ym);
+            std::fprintf(fpbat, "Rem Simplgif fractmig.gif simplgif.gif  in case you need it\n");
+            std::fprintf(fpbat, ":oops\n");
+            std::fclose(fpbat);
         }
         //******end here
 
@@ -575,9 +574,9 @@ skip_UI:
                 fputc('\n', parmfile);
                 i = file_gets(buf, 255, infile);
             }
-            fclose(infile);
+            std::fclose(infile);
         }
-        fclose(parmfile);
+        std::fclose(parmfile);
         if (gotinfile)
         {
             // replace the original file with the new
@@ -1925,11 +1924,11 @@ static void put_float(int slash, double fnum, int prec)
 
     if (prec > 15)
     {
-        sprintf(bptr, "%1.*Lg", prec, (long double)fnum);
+        std::sprintf(bptr, "%1.*Lg", prec, (long double)fnum);
     }
     else
     {
-        sprintf(bptr, "%1.*g", prec, (double)fnum);
+        std::sprintf(bptr, "%1.*g", prec, (double)fnum);
     }
     strip_zeros(bptr);
     put_parm(buf);
@@ -2058,23 +2057,23 @@ void format_vid_table(int choice, char *buf)
     std::memcpy((char *)&g_video_entry, (char *)&g_video_table[entnums[choice]],
            sizeof(g_video_entry));
     vidmode_keyname(g_video_entry.keynum, kname);
-    sprintf(buf, "%-5s %-25s %5d %5d ",  // 44 chars
+    std::sprintf(buf, "%-5s %-25s %5d %5d ",  // 44 chars
             kname, g_video_entry.name, g_video_entry.xdots, g_video_entry.ydots);
     truecolorbits = g_video_entry.dotmode/1000;
     if (truecolorbits == 0)
     {
-        sprintf(local_buf, "%s%3d",  // 47 chars
+        std::sprintf(local_buf, "%s%3d",  // 47 chars
                 buf, g_video_entry.colors);
     }
     else
     {
-        sprintf(local_buf, "%s%3s",  // 47 chars
+        std::sprintf(local_buf, "%s%3s",  // 47 chars
                 buf, (truecolorbits == 4)?" 4g":
                 (truecolorbits == 3)?"16m":
                 (truecolorbits == 2)?"64k":
                 (truecolorbits == 1)?"32k":"???");
     }
-    sprintf(buf, "%s %.12s %.12s",  // 74 chars
+    std::sprintf(buf, "%s %.12s %.12s",  // 74 chars
             local_buf, g_video_entry.driver->name, g_video_entry.comment);
 }
 
@@ -2152,7 +2151,7 @@ static void update_fractint_cfg()
 {
 #ifndef XFRACT
     char cfgname[100], outname[100], buf[121], kname[5];
-    FILE *cfgfile, *outfile;
+    std::FILE *cfgfile, *outfile;
     int i, j, linenum, nextlinenum, nextmode;
     VIDEOINFO vident;
 
@@ -2160,7 +2159,7 @@ static void update_fractint_cfg()
 
     if (access(cfgname, 6))
     {
-        sprintf(buf, "Can't write %s", cfgname);
+        std::sprintf(buf, "Can't write %s", cfgname);
         stopmsg(STOPMSG_NONE, buf);
         return;
     }
@@ -2171,14 +2170,14 @@ static void update_fractint_cfg()
         outname[i] = 0;
     }
     std::strcat(outname, "fractint.tmp");
-    outfile = fopen(outname, "w");
+    outfile = std::fopen(outname, "w");
     if (outfile == nullptr)
     {
-        sprintf(buf, "Can't create %s", outname);
+        std::sprintf(buf, "Can't create %s", outname);
         stopmsg(STOPMSG_NONE, buf);
         return;
     }
-    cfgfile = fopen(cfgname, "r");
+    cfgfile = std::fopen(cfgname, "r");
 
     nextmode = 0;
     linenum = nextmode;
@@ -2210,17 +2209,17 @@ static void update_fractint_cfg()
             int truecolorbits = vident.dotmode/1000;
             if (truecolorbits == 0)
             {
-                sprintf(colorsbuf, "%3d", vident.colors);
+                std::sprintf(colorsbuf, "%3d", vident.colors);
             }
             else
             {
-                sprintf(colorsbuf, "%3s",
+                std::sprintf(colorsbuf, "%3s",
                         (truecolorbits == 4)?" 4g":
                         (truecolorbits == 3)?"16m":
                         (truecolorbits == 2)?"64k":
                         (truecolorbits == 1)?"32k":"???");
             }
-            fprintf(outfile, "%-4s,%s,%4x,%4x,%4x,%4x,%4d,%5d,%5d,%s,%s\n",
+            std::fprintf(outfile, "%-4s,%s,%4x,%4x,%4x,%4x,%4d,%5d,%5d,%s,%s\n",
                     kname,
                     buf,
                     vident.videomodeax,
@@ -2247,8 +2246,8 @@ static void update_fractint_cfg()
         }
     }
 
-    fclose(cfgfile);
-    fclose(outfile);
+    std::fclose(cfgfile);
+    std::fclose(outfile);
     unlink(cfgname);         // success assumed on these lines
     rename(outname, cfgname); // since we checked earlier with access
 #endif
@@ -2273,7 +2272,7 @@ void make_mig(unsigned int xmult, unsigned int ymult)
     char gifin[15], gifout[15];
     int errorflag, inputerrorflag;
     unsigned char *temp;
-    FILE *out, *in;
+    std::FILE *out, *in;
 
     errorflag = 0;                          // no errors so
     inputerrorflag = 0;
@@ -2296,23 +2295,23 @@ void make_mig(unsigned int xmult, unsigned int ymult)
         {
             if (xstep == 0 && ystep == 0)          // first time through?
             {
-                printf(" \n Generating multi-image GIF file %s using", gifout);
-                printf(" %u X and %u Y components\n\n", xmult, ymult);
+                std::printf(" \n Generating multi-image GIF file %s using", gifout);
+                std::printf(" %u X and %u Y components\n\n", xmult, ymult);
                 // attempt to create the output file
-                out = fopen(gifout, "wb");
+                out = std::fopen(gifout, "wb");
                 if (out == nullptr)
                 {
-                    printf("Cannot create output file %s!\n", gifout);
+                    std::printf("Cannot create output file %s!\n", gifout);
                     exit(1);
                 }
             }
 
-            sprintf(gifin, "frmig_%c%c.gif", PAR_KEY(xstep), PAR_KEY(ystep));
+            std::sprintf(gifin, "frmig_%c%c.gif", PAR_KEY(xstep), PAR_KEY(ystep));
 
-            in = fopen(gifin, "rb");
+            in = std::fopen(gifin, "rb");
             if (in == nullptr)
             {
-                printf("Can't open file %s!\n", gifin);
+                std::printf("Can't open file %s!\n", gifin);
                 exit(1);
             }
 
@@ -2371,7 +2370,7 @@ void make_mig(unsigned int xmult, unsigned int ymult)
             if (xres != allxres || yres != allyres || itbl != allitbl)
             {
                 // Oops - our pieces don't match
-                printf("File %s doesn't have the same resolution as its predecessors!\n", gifin);
+                std::printf("File %s doesn't have the same resolution as its predecessors!\n", gifin);
                 exit(1);
             }
 
@@ -2511,7 +2510,7 @@ void make_mig(unsigned int xmult, unsigned int ymult)
                     break;
                 }
             }
-            fclose(in);                     // done with an input GIF
+            std::fclose(in);                     // done with an input GIF
 
             if (errorflag != 0 || inputerrorflag != 0)      // oops - did something go wrong?
             {
@@ -2530,21 +2529,21 @@ void make_mig(unsigned int xmult, unsigned int ymult)
     {
         errorflag = 12;
     }
-    fclose(out);                    // done with the output GIF
+    std::fclose(out);                    // done with the output GIF
 
     if (inputerrorflag != 0)       // uh-oh - something failed
     {
-        printf("\007 Process failed = early EOF on input file %s\n", gifin);
+        std::printf("\007 Process failed = early EOF on input file %s\n", gifin);
         /* following line was for debugging
-            printf("inputerrorflag = %d\n", inputerrorflag);
+            std::printf("inputerrorflag = %d\n", inputerrorflag);
         */
     }
 
     if (errorflag != 0)            // uh-oh - something failed
     {
-        printf("\007 Process failed = out of disk space?\n");
+        std::printf("\007 Process failed = out of disk space?\n");
         /* following line was for debugging
-            printf("errorflag = %d\n", errorflag);
+            std::printf("errorflag = %d\n", errorflag);
         */
     }
 
@@ -2555,7 +2554,7 @@ void make_mig(unsigned int xmult, unsigned int ymult)
         {
             for (unsigned xstep = 0U; xstep < xmult; xstep++)
             {
-                sprintf(gifin, "frmig_%c%c.gif", PAR_KEY(xstep), PAR_KEY(ystep));
+                std::sprintf(gifin, "frmig_%c%c.gif", PAR_KEY(xstep), PAR_KEY(ystep));
                 unlink(gifin);
             }
         }
@@ -2564,7 +2563,7 @@ void make_mig(unsigned int xmult, unsigned int ymult)
     // tell the world we're done
     if (errorflag == 0 && inputerrorflag == 0)
     {
-        printf("File %s has been created (and its component files deleted)\n", gifout);
+        std::printf("File %s has been created (and its component files deleted)\n", gifout);
     }
 }
 
@@ -2756,29 +2755,29 @@ static char const *expand_var(char const *var, char *buf)
     }
     else if (std::strcmp(var, "version") == 0)  // 4 chars
     {
-        sprintf(buf, "%d", g_release);
+        std::sprintf(buf, "%d", g_release);
         out = buf;
     }
     else if (std::strcmp(var, "patch") == 0)   // 1 or 2 chars
     {
-        sprintf(buf, "%d", g_patch_level);
+        std::sprintf(buf, "%d", g_patch_level);
         out = buf;
     }
     else if (std::strcmp(var, "xdots") == 0)   // 2 to 4 chars
     {
-        sprintf(buf, "%d", g_logical_screen_x_dots);
+        std::sprintf(buf, "%d", g_logical_screen_x_dots);
         out = buf;
     }
     else if (std::strcmp(var, "ydots") == 0)   // 2 to 4 chars
     {
-        sprintf(buf, "%d", g_logical_screen_y_dots);
+        std::sprintf(buf, "%d", g_logical_screen_y_dots);
         out = buf;
     }
     else if (std::strcmp(var, "vidkey") == 0)   // 2 to 3 chars
     {
         char vidmde[5];
         vidmode_keyname(g_video_entry.keynum, vidmde);
-        sprintf(buf, "%s", vidmde);
+        std::sprintf(buf, "%s", vidmde);
         out = buf;
     }
     else

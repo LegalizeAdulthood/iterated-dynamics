@@ -30,10 +30,9 @@
 #include "rotate.h"
 #include "slideshw.h"
 
-#include <stdio.h>
-
 #include <algorithm>
 #include <climits>
+#include <cstdio>
 #include <cstring>
 #include <string>
 
@@ -67,7 +66,7 @@ static void setup_save_info(FRACTAL_INFO *save_info);
 //
 
 static int numsaves = 0;        // For adjusting 'save-to-disk' filenames
-static FILE *g_outfile;
+static std::FILE *g_outfile;
 static int last_colorbar;
 static bool save16bit;
 static int outcolor1s;
@@ -157,7 +156,7 @@ restart:
         }
         if (access(openfile, 2) != 0)
         {
-            sprintf(tmpmsg, "Can't write %s", openfile);
+            std::sprintf(tmpmsg, "Can't write %s", openfile);
             stopmsg(STOPMSG_NONE, tmpmsg);
             return -1;
         }
@@ -176,10 +175,10 @@ restart:
         g_resave_flag = 0;
     }
 
-    g_outfile = fopen(tmpfile, "wb");
+    g_outfile = std::fopen(tmpfile, "wb");
     if (g_outfile == nullptr)
     {
-        sprintf(tmpmsg, "Can't create %s", tmpfile);
+        std::sprintf(tmpmsg, "Can't create %s", tmpfile);
         stopmsg(STOPMSG_NONE, tmpmsg);
         return -1;
     }
@@ -190,7 +189,7 @@ restart:
         char buf[61];
         extract_filename(tmpmsg, openfile);
 
-        sprintf(buf, "Saving %s", tmpmsg);
+        std::sprintf(buf, "Saving %s", tmpmsg);
         dvid_status(1, buf);
     }
 #ifdef XFRACT
@@ -215,12 +214,12 @@ restart:
 
     g_busy = false;
 
-    fclose(g_outfile);
+    std::fclose(g_outfile);
 
     if (interrupted)
     {
         char buf[200];
-        sprintf(buf, "Save of %s interrupted.\nCancel to ", openfile);
+        std::sprintf(buf, "Save of %s interrupted.\nCancel to ", openfile);
         if (newfile)
         {
             std::strcat(buf, "delete the file,\ncontinue to keep the partial image.");
@@ -291,7 +290,7 @@ restart:
         if (g_init_batch == batch_modes::NONE)
         {
             extract_filename(tmpfile, openfile);
-            sprintf(tmpmsg, " File saved as %s ", tmpfile);
+            std::sprintf(tmpmsg, " File saved as %s ", tmpfile);
             texttempmsg(tmpmsg);
         }
     }
@@ -782,7 +781,7 @@ static int put_extend_blk(int block_id, int block_len, char const *block_data)
     int i, j;
     char header[15];
     std::strcpy(header, "!\377\013fractint");
-    sprintf(&header[11], "%03d", block_id);
+    std::sprintf(&header[11], "%03d", block_id);
     if (fwrite(header, 14, 1, g_outfile) != 1)
     {
         return 0;

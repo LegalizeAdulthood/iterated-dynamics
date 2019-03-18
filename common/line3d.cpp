@@ -59,7 +59,7 @@ static int H_R(BYTE *, BYTE *, BYTE *, unsigned long, unsigned long, unsigned lo
 static int line3dmem();
 static int R_H(BYTE, BYTE, BYTE, unsigned long *, unsigned long *, unsigned long *);
 static bool set_pixel_buff(BYTE *pixels, BYTE *fraction, unsigned linelen);
-bool startdisk1(char const *File_Name2, FILE *Source, bool overlay);
+bool startdisk1(char const *File_Name2, std::FILE *Source, bool overlay);
 static void set_upr_lwr();
 static int end_object(bool triout);
 static int offscreen(point);
@@ -97,7 +97,7 @@ static std::vector<BYTE> fraction;  // float version of pixels array
 static float min_xyz[3], max_xyz[3];        // For Raytrace output
 static int line_length1;
 static int T_header_24 = 18;// Size of current Targa-24 header
-static FILE *File_Ptr1 = nullptr;
+static std::FILE *File_Ptr1 = nullptr;
 static unsigned int IAmbient;
 static int rand_factor;
 static int HAZE_MULT;
@@ -304,7 +304,7 @@ int line3d(BYTE * pixels, unsigned linelen)
     if (driver_diskp())
     {
         char s[40];
-        sprintf(s, "mapping to 3d, reading line %d", g_current_row);
+        std::sprintf(s, "mapping to 3d, reading line %d", g_current_row);
         dvid_status(1, s);
     }
 
@@ -645,7 +645,7 @@ int line3d(BYTE * pixels, unsigned linelen)
 
             if (g_raytrace_format == raytrace_formats::acrospin)       // Output vertex info for Acrospin
             {
-                fprintf(File_Ptr1, "% #4.4f % #4.4f % #4.4f R%dC%d\n",
+                std::fprintf(File_Ptr1, "% #4.4f % #4.4f % #4.4f R%dC%d\n",
                         f_cur.x, f_cur.y, f_cur.color, RO, CO);
                 if (CO > CO_MAX)
                 {
@@ -907,7 +907,7 @@ loopbottom:
                 tout = false;
                 if (ferror(File_Ptr1))
                 {
-                    fclose(File_Ptr1);
+                    std::fclose(File_Ptr1);
                     unlink(g_light_name.c_str());
                     File_Error(g_raytrace_filename.c_str(), 2);
                     return -1;
@@ -1561,16 +1561,16 @@ static void File_Error(char const *File_Name1, int ERROR)
     switch (ERROR)
     {
     case 1:                      // Can't Open
-        sprintf(msgbuf, "OOPS, couldn't open  < %s >", File_Name1);
+        std::sprintf(msgbuf, "OOPS, couldn't open  < %s >", File_Name1);
         break;
     case 2:                      // Not enough room
-        sprintf(msgbuf, "OOPS, ran out of disk space. < %s >", File_Name1);
+        std::sprintf(msgbuf, "OOPS, ran out of disk space. < %s >", File_Name1);
         break;
     case 3:                      // Image wrong size
-        sprintf(msgbuf, "OOPS, image wrong size\n");
+        std::sprintf(msgbuf, "OOPS, image wrong size\n");
         break;
     case 4:                      // Wrong file type
-        sprintf(msgbuf, "OOPS, can't handle this type of file.\n");
+        std::sprintf(msgbuf, "OOPS, can't handle this type of file.\n");
         break;
     }
     stopmsg(STOPMSG_NONE, msgbuf);
@@ -1594,10 +1594,10 @@ static void File_Error(char const *File_Name1, int ERROR)
 //
 // *********************************************************************
 
-bool startdisk1(char const *File_Name2, FILE *Source, bool overlay)
+bool startdisk1(char const *File_Name2, std::FILE *Source, bool overlay)
 {
     // Open File for both reading and writing
-    FILE *fps = dir_fopen(g_working_dir.c_str(), File_Name2, "w+b");
+    std::FILE *fps = dir_fopen(g_working_dir.c_str(), File_Name2, "w+b");
     if (fps == nullptr)
     {
         File_Error(File_Name2, 1);
@@ -1673,10 +1673,10 @@ bool startdisk1(char const *File_Name2, FILE *Source, bool overlay)
         if (ferror(fps))
         {
             // Almost certainly not enough disk space
-            fclose(fps);
+            std::fclose(fps);
             if (overlay)
             {
-                fclose(Source);
+                std::fclose(Source);
             }
             dir_remove(g_working_dir.c_str(), File_Name2);
             File_Error(File_Name2, 2);
@@ -1700,7 +1700,7 @@ bool startdisk1(char const *File_Name2, FILE *Source, bool overlay)
 bool targa_validate(char const *File_Name)
 {
     // Attempt to open source file for reading
-    FILE *fp = dir_fopen(g_working_dir.c_str(), File_Name, "rb");
+    std::FILE *fp = dir_fopen(g_working_dir.c_str(), File_Name, "rb");
     if (fp == nullptr)
     {
         File_Error(File_Name, 1);
@@ -1763,7 +1763,7 @@ bool targa_validate(char const *File_Name)
         return true;
     }
 
-    fclose(fp);                  // Close the source
+    std::fclose(fp);                  // Close the source
 
     T_Safe = true;              // Original file successfully copied to targa_temp
     return false;
@@ -1942,7 +1942,7 @@ static int RAY_Header()
 {
     // Open the ray tracing output file
     check_writefile(g_raytrace_filename, ".ray");
-    File_Ptr1 = fopen(g_raytrace_filename.c_str(), "w");
+    File_Ptr1 = std::fopen(g_raytrace_filename.c_str(), "w");
     if (File_Ptr1 == nullptr)
     {
         return -1;              // Oops, somethings wrong!
@@ -1950,66 +1950,66 @@ static int RAY_Header()
 
     if (g_raytrace_format == raytrace_formats::vivid)
     {
-        fprintf(File_Ptr1, "//");
+        std::fprintf(File_Ptr1, "//");
     }
     if (g_raytrace_format == raytrace_formats::mtv)
     {
-        fprintf(File_Ptr1, "#");
+        std::fprintf(File_Ptr1, "#");
     }
     if (g_raytrace_format == raytrace_formats::rayshade)
     {
-        fprintf(File_Ptr1, "/*\n");
+        std::fprintf(File_Ptr1, "/*\n");
     }
     if (g_raytrace_format == raytrace_formats::acrospin)
     {
-        fprintf(File_Ptr1, "--");
+        std::fprintf(File_Ptr1, "--");
     }
     if (g_raytrace_format == raytrace_formats::dxf)
-        fprintf(File_Ptr1, "  0\nSECTION\n  2\nTABLES\n  0\nTABLE\n  2\nLAYER\n\
+        std::fprintf(File_Ptr1, "  0\nSECTION\n  2\nTABLES\n  0\nTABLE\n  2\nLAYER\n\
  70\n     2\n  0\nLAYER\n  2\n0\n 70\n     0\n 62\n     7\n  6\nCONTINUOUS\n\
   0\nLAYER\n  2\nFRACTAL\n 70\n    64\n 62\n     1\n  6\nCONTINUOUS\n  0\n\
 ENDTAB\n  0\nENDSEC\n  0\nSECTION\n  2\nENTITIES\n");
 
     if (g_raytrace_format != raytrace_formats::dxf)
     {
-        fprintf(File_Ptr1, "{ Created by FRACTINT Ver. %#4.2f }\n\n", g_release / 100.);
+        std::fprintf(File_Ptr1, "{ Created by FRACTINT Ver. %#4.2f }\n\n", g_release / 100.);
     }
 
     if (g_raytrace_format == raytrace_formats::rayshade)
     {
-        fprintf(File_Ptr1, "*/\n");
+        std::fprintf(File_Ptr1, "*/\n");
     }
 
 
     // Set the default color
     if (g_raytrace_format == raytrace_formats::povray)
     {
-        fprintf(File_Ptr1, "DECLARE       F_Dflt = COLOR  RED 0.8 GREEN 0.4 BLUE 0.1\n");
+        std::fprintf(File_Ptr1, "DECLARE       F_Dflt = COLOR  RED 0.8 GREEN 0.4 BLUE 0.1\n");
     }
     if (g_brief)
     {
         if (g_raytrace_format == raytrace_formats::vivid)
         {
-            fprintf(File_Ptr1, "surf={diff=0.8 0.4 0.1;}\n");
+            std::fprintf(File_Ptr1, "surf={diff=0.8 0.4 0.1;}\n");
         }
         if (g_raytrace_format == raytrace_formats::mtv)
         {
-            fprintf(File_Ptr1, "f 0.8 0.4 0.1 0.95 0.05 5 0 0\n");
+            std::fprintf(File_Ptr1, "f 0.8 0.4 0.1 0.95 0.05 5 0 0\n");
         }
         if (g_raytrace_format == raytrace_formats::rayshade)
         {
-            fprintf(File_Ptr1, "applysurf diffuse 0.8 0.4 0.1");
+            std::fprintf(File_Ptr1, "applysurf diffuse 0.8 0.4 0.1");
         }
     }
     if (g_raytrace_format != raytrace_formats::dxf)
     {
-        fprintf(File_Ptr1, "\n");
+        std::fprintf(File_Ptr1, "\n");
     }
 
     // open "grid" opject, a speedy way to do aggregates in rayshade
     if (g_raytrace_format == raytrace_formats::rayshade)
     {
-        fprintf(File_Ptr1,
+        std::fprintf(File_Ptr1,
                 "/* make a gridded aggregate. this size grid is fast for landscapes. */\n"
                 "/* make z grid = 1 always for landscapes. */\n\n"
                 "grid 33 25 1\n");
@@ -2017,7 +2017,7 @@ ENDTAB\n  0\nENDSEC\n  0\nSECTION\n  2\nENTITIES\n");
 
     if (g_raytrace_format == raytrace_formats::acrospin)
     {
-        fprintf(File_Ptr1, "Set Layer 1\nSet Color 2\nEndpointList X Y Z Name\n");
+        std::fprintf(File_Ptr1, "Set Layer 1\nSet Color 2\nEndpointList X Y Z Name\n");
     }
 
     return 0;
@@ -2075,26 +2075,26 @@ static int out_triangle(f_point pt1, f_point pt2, f_point pt3, int c1, int c2, i
     // Describe the triangle
     if (g_raytrace_format == raytrace_formats::povray)
     {
-        fprintf(File_Ptr1, " OBJECT\n  TRIANGLE ");
+        std::fprintf(File_Ptr1, " OBJECT\n  TRIANGLE ");
     }
     if (g_raytrace_format == raytrace_formats::vivid && !g_brief)
     {
-        fprintf(File_Ptr1, "surf={diff=");
+        std::fprintf(File_Ptr1, "surf={diff=");
     }
     if (g_raytrace_format == raytrace_formats::mtv && !g_brief)
     {
-        fprintf(File_Ptr1, "f");
+        std::fprintf(File_Ptr1, "f");
     }
     if (g_raytrace_format == raytrace_formats::rayshade && !g_brief)
     {
-        fprintf(File_Ptr1, "applysurf diffuse ");
+        std::fprintf(File_Ptr1, "applysurf diffuse ");
     }
 
     if (!g_brief && g_raytrace_format != raytrace_formats::povray && g_raytrace_format != raytrace_formats::dxf)
     {
         for (int i = 0; i <= 2; i++)
         {
-            fprintf(File_Ptr1, "% #4.4f ", c[i]);
+            std::fprintf(File_Ptr1, "% #4.4f ", c[i]);
         }
     }
 
@@ -2102,50 +2102,50 @@ static int out_triangle(f_point pt1, f_point pt2, f_point pt3, int c1, int c2, i
     {
         if (!g_brief)
         {
-            fprintf(File_Ptr1, ";}\n");
+            std::fprintf(File_Ptr1, ";}\n");
         }
-        fprintf(File_Ptr1, "polygon={points=3;");
+        std::fprintf(File_Ptr1, "polygon={points=3;");
     }
     if (g_raytrace_format == raytrace_formats::mtv)
     {
         if (!g_brief)
         {
-            fprintf(File_Ptr1, "0.95 0.05 5 0 0\n");
+            std::fprintf(File_Ptr1, "0.95 0.05 5 0 0\n");
         }
-        fprintf(File_Ptr1, "p 3");
+        std::fprintf(File_Ptr1, "p 3");
     }
     if (g_raytrace_format == raytrace_formats::rayshade)
     {
         if (!g_brief)
         {
-            fprintf(File_Ptr1, "\n");
+            std::fprintf(File_Ptr1, "\n");
         }
-        fprintf(File_Ptr1, "triangle");
+        std::fprintf(File_Ptr1, "triangle");
     }
 
     if (g_raytrace_format == raytrace_formats::dxf)
     {
-        fprintf(File_Ptr1, "  0\n3DFACE\n  8\nFRACTAL\n 62\n%3d\n", std::min(255, std::max(1, c1)));
+        std::fprintf(File_Ptr1, "  0\n3DFACE\n  8\nFRACTAL\n 62\n%3d\n", std::min(255, std::max(1, c1)));
     }
 
     for (int i = 0; i <= 2; i++)     // Describe each  Vertex
     {
         if (g_raytrace_format != raytrace_formats::dxf)
         {
-            fprintf(File_Ptr1, "\n");
+            std::fprintf(File_Ptr1, "\n");
         }
 
         if (g_raytrace_format == raytrace_formats::povray)
         {
-            fprintf(File_Ptr1, "      <");
+            std::fprintf(File_Ptr1, "      <");
         }
         if (g_raytrace_format == raytrace_formats::vivid)
         {
-            fprintf(File_Ptr1, " vertex =  ");
+            std::fprintf(File_Ptr1, " vertex =  ");
         }
         if (g_raytrace_format > raytrace_formats::raw && g_raytrace_format != raytrace_formats::dxf)
         {
-            fprintf(File_Ptr1, " ");
+            std::fprintf(File_Ptr1, " ");
         }
 
         for (int j = 0; j <= 2; j++)
@@ -2153,59 +2153,59 @@ static int out_triangle(f_point pt1, f_point pt2, f_point pt3, int c1, int c2, i
             if (g_raytrace_format == raytrace_formats::dxf)
             {
                 // write 3dface entity to dxf file
-                fprintf(File_Ptr1, "%3d\n%g\n", 10 * (j + 1) + i, pt_t[i][j]);
+                std::fprintf(File_Ptr1, "%3d\n%g\n", 10 * (j + 1) + i, pt_t[i][j]);
                 if (i == 2)           // 3dface needs 4 vertecies
                 {
-                    fprintf(File_Ptr1, "%3d\n%g\n", 10 * (j + 1) + i + 1,
+                    std::fprintf(File_Ptr1, "%3d\n%g\n", 10 * (j + 1) + i + 1,
                             pt_t[i][j]);
                 }
             }
             else if (!(g_raytrace_format == raytrace_formats::mtv || g_raytrace_format == raytrace_formats::rayshade))
             {
-                fprintf(File_Ptr1, "% #4.4f ", pt_t[i][j]); // Right handed
+                std::fprintf(File_Ptr1, "% #4.4f ", pt_t[i][j]); // Right handed
             }
             else
             {
-                fprintf(File_Ptr1, "% #4.4f ", pt_t[2 - i][j]);     // Left handed
+                std::fprintf(File_Ptr1, "% #4.4f ", pt_t[2 - i][j]);     // Left handed
             }
         }
 
         if (g_raytrace_format == raytrace_formats::povray)
         {
-            fprintf(File_Ptr1, ">");
+            std::fprintf(File_Ptr1, ">");
         }
         if (g_raytrace_format == raytrace_formats::vivid)
         {
-            fprintf(File_Ptr1, ";");
+            std::fprintf(File_Ptr1, ";");
         }
     }
 
     if (g_raytrace_format == raytrace_formats::povray)
     {
-        fprintf(File_Ptr1, " END_TRIANGLE \n");
+        std::fprintf(File_Ptr1, " END_TRIANGLE \n");
         if (!g_brief)
         {
-            fprintf(File_Ptr1,
+            std::fprintf(File_Ptr1,
                     "  TEXTURE\n"
                     "   COLOR  RED% #4.4f GREEN% #4.4f BLUE% #4.4f\n"
                     "      AMBIENT 0.25 DIFFUSE 0.75 END_TEXTURE\n",
                     c[0], c[1], c[2]);
         }
-        fprintf(File_Ptr1, "  COLOR  F_Dflt  END_OBJECT");
+        std::fprintf(File_Ptr1, "  COLOR  F_Dflt  END_OBJECT");
         triangle_bounds(pt_t);    // update bounding info
     }
     if (g_raytrace_format == raytrace_formats::vivid)
     {
-        fprintf(File_Ptr1, "}");
+        std::fprintf(File_Ptr1, "}");
     }
     if (g_raytrace_format == raytrace_formats::raw && !g_brief)
     {
-        fprintf(File_Ptr1, "\n");
+        std::fprintf(File_Ptr1, "\n");
     }
 
     if (g_raytrace_format != raytrace_formats::dxf)
     {
-        fprintf(File_Ptr1, "\n");
+        std::fprintf(File_Ptr1, "\n");
     }
 
     return 0;
@@ -2259,7 +2259,7 @@ static int start_object()
     max_xyz[1] = max_xyz[2];
     max_xyz[0] = max_xyz[1];
 
-    fprintf(File_Ptr1, "COMPOSITE\n");
+    std::fprintf(File_Ptr1, "COMPOSITE\n");
     return 0;
 }
 
@@ -2298,23 +2298,23 @@ static int end_object(bool triout)
             }
 
             // Add the bounding box info
-            fprintf(File_Ptr1, " BOUNDED_BY\n  INTERSECTION\n");
-            fprintf(File_Ptr1, "   PLANE <-1.0  0.0  0.0 > % #4.3f END_PLANE\n", -min_xyz[0]);
-            fprintf(File_Ptr1, "   PLANE < 1.0  0.0  0.0 > % #4.3f END_PLANE\n",  max_xyz[0]);
-            fprintf(File_Ptr1, "   PLANE < 0.0 -1.0  0.0 > % #4.3f END_PLANE\n", -min_xyz[1]);
-            fprintf(File_Ptr1, "   PLANE < 0.0  1.0  0.0 > % #4.3f END_PLANE\n",  max_xyz[1]);
-            fprintf(File_Ptr1, "   PLANE < 0.0  0.0 -1.0 > % #4.3f END_PLANE\n", -min_xyz[2]);
-            fprintf(File_Ptr1, "   PLANE < 0.0  0.0  1.0 > % #4.3f END_PLANE\n",  max_xyz[2]);
-            fprintf(File_Ptr1, "  END_INTERSECTION\n END_BOUND\n");
+            std::fprintf(File_Ptr1, " BOUNDED_BY\n  INTERSECTION\n");
+            std::fprintf(File_Ptr1, "   PLANE <-1.0  0.0  0.0 > % #4.3f END_PLANE\n", -min_xyz[0]);
+            std::fprintf(File_Ptr1, "   PLANE < 1.0  0.0  0.0 > % #4.3f END_PLANE\n",  max_xyz[0]);
+            std::fprintf(File_Ptr1, "   PLANE < 0.0 -1.0  0.0 > % #4.3f END_PLANE\n", -min_xyz[1]);
+            std::fprintf(File_Ptr1, "   PLANE < 0.0  1.0  0.0 > % #4.3f END_PLANE\n",  max_xyz[1]);
+            std::fprintf(File_Ptr1, "   PLANE < 0.0  0.0 -1.0 > % #4.3f END_PLANE\n", -min_xyz[2]);
+            std::fprintf(File_Ptr1, "   PLANE < 0.0  0.0  1.0 > % #4.3f END_PLANE\n",  max_xyz[2]);
+            std::fprintf(File_Ptr1, "  END_INTERSECTION\n END_BOUND\n");
         }
 
         // Complete the composite object statement
-        fprintf(File_Ptr1, "END_%s\n", "COMPOSITE");
+        std::fprintf(File_Ptr1, "END_%s\n", "COMPOSITE");
     }
 
     if (g_raytrace_format != raytrace_formats::acrospin && g_raytrace_format != raytrace_formats::rayshade)
     {
-        fprintf(File_Ptr1, "\n");
+        std::fprintf(File_Ptr1, "\n");
     }
 
     return 0;
@@ -2327,55 +2327,55 @@ static void line3d_cleanup()
         // Finish up the ray tracing files
         if (g_raytrace_format != raytrace_formats::rayshade && g_raytrace_format != raytrace_formats::dxf)
         {
-            fprintf(File_Ptr1, "\n");
+            std::fprintf(File_Ptr1, "\n");
         }
         if (g_raytrace_format == raytrace_formats::vivid)
         {
-            fprintf(File_Ptr1, "\n\n//");
+            std::fprintf(File_Ptr1, "\n\n//");
         }
         if (g_raytrace_format == raytrace_formats::mtv)
         {
-            fprintf(File_Ptr1, "\n\n#");
+            std::fprintf(File_Ptr1, "\n\n#");
         }
 
         if (g_raytrace_format == raytrace_formats::rayshade)
         {
             // end grid aggregate
-            fprintf(File_Ptr1, "end\n\n/*good landscape:*/\n%s%s\n/*",
+            std::fprintf(File_Ptr1, "end\n\n/*good landscape:*/\n%s%s\n/*",
                     "screen 640 480\neyep 0 2.1 0.8\nlookp 0 0 -0.95\nlight 1 point -2 1 1.5\n", "background .3 0 0\nreport verbose\n");
         }
         if (g_raytrace_format == raytrace_formats::acrospin)
         {
-            fprintf(File_Ptr1, "LineList From To\n");
+            std::fprintf(File_Ptr1, "LineList From To\n");
             for (int i = 0; i < RO; i++)
             {
                 for (int j = 0; j <= CO_MAX; j++)
                 {
                     if (j < CO_MAX)
                     {
-                        fprintf(File_Ptr1, "R%dC%d R%dC%d\n", i, j, i, j + 1);
+                        std::fprintf(File_Ptr1, "R%dC%d R%dC%d\n", i, j, i, j + 1);
                     }
                     if (i < RO - 1)
                     {
-                        fprintf(File_Ptr1, "R%dC%d R%dC%d\n", i, j, i + 1, j);
+                        std::fprintf(File_Ptr1, "R%dC%d R%dC%d\n", i, j, i + 1, j);
                     }
                     if (i && i < RO && j < CO_MAX)
                     {
-                        fprintf(File_Ptr1, "R%dC%d R%dC%d\n", i, j, i - 1, j + 1);
+                        std::fprintf(File_Ptr1, "R%dC%d R%dC%d\n", i, j, i - 1, j + 1);
                     }
                 }
             }
-            fprintf(File_Ptr1, "\n\n--");
+            std::fprintf(File_Ptr1, "\n\n--");
         }
         if (g_raytrace_format != raytrace_formats::dxf)
         {
-            fprintf(File_Ptr1, "{ No. Of Triangles = %ld }*/\n\n", num_tris);
+            std::fprintf(File_Ptr1, "{ No. Of Triangles = %ld }*/\n\n", num_tris);
         }
         if (g_raytrace_format == raytrace_formats::dxf)
         {
-            fprintf(File_Ptr1, "  0\nENDSEC\n  0\nEOF\n");
+            std::fprintf(File_Ptr1, "  0\nENDSEC\n  0\nEOF\n");
         }
-        fclose(File_Ptr1);
+        std::fclose(File_Ptr1);
         File_Ptr1 = nullptr;
     }
     if (g_targa_out)

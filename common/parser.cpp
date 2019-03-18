@@ -33,13 +33,12 @@
 #include "parser.h"
 #include "realdos.h"
 
-#include <stdio.h>
-
 #include <algorithm>
 #include <cassert>
 #include <cctype>
 #include <cfloat>
 #include <cmath>
+#include <cstdio>
 #include <cstdlib>
 #include <cstring>
 #include <ctime>
@@ -73,7 +72,7 @@ JUMP_CONTROL_ST jump_control[MAX_JUMPS];
 int jump_index;
 static int InitJumpIndex;
 
-static bool frm_prescan(FILE * open_file);
+static bool frm_prescan(std::FILE * open_file);
 
 #define CASE_TERMINATOR case',':\
                         case '\n':\
@@ -3255,7 +3254,7 @@ static bool fill_jump_struct()
 
 static std::string FormStr;
 
-int frmgetchar(FILE * openfile)
+int frmgetchar(std::FILE * openfile)
 {
     int c;
     bool done = false;
@@ -3363,7 +3362,7 @@ void getvarinfo(token_st * tok)
         of a complex constant. See is_complex_constant() below. */
 
 // returns 1 on success, 0 on NOT_A_TOKEN
-static bool frmgetconstant(FILE * openfile, token_st * tok)
+static bool frmgetconstant(std::FILE * openfile, token_st * tok)
 {
     int c;
     int i = 1;
@@ -3464,7 +3463,7 @@ CASE_NUM:
     return true;
 }
 
-void is_complex_constant(FILE * openfile, token_st * tok)
+void is_complex_constant(std::FILE * openfile, token_st * tok)
 {
     assert(tok->token_str[0] == '(');
     token_st temp_tok;
@@ -3473,13 +3472,13 @@ void is_complex_constant(FILE * openfile, token_st * tok)
     int sign_value = 1;
     bool done = false;
     bool getting_real = true;
-    FILE * debug_token = nullptr;
+    std::FILE * debug_token = nullptr;
     tok->token_str[1] = (char) 0;  // so we can concatenate later
 
     filepos = ftell(openfile);
     if (g_debug_flag == debug_flags::write_formula_debug_information)
     {
-        debug_token = fopen("frmconst.txt", "at");
+        debug_token = std::fopen("frmconst.txt", "at");
     }
 
     while (!done)
@@ -3491,14 +3490,14 @@ CASE_NUM :
         case '.':
             if (debug_token != nullptr)
             {
-                fprintf(debug_token,  "Set temp_tok.token_str[0] to %c\n", c);
+                std::fprintf(debug_token,  "Set temp_tok.token_str[0] to %c\n", c);
             }
             temp_tok.token_str[0] = (char) c;
             break;
         case '-' :
             if (debug_token != nullptr)
             {
-                fprintf(debug_token,  "First char is a minus\n");
+                std::fprintf(debug_token,  "First char is a minus\n");
             }
             sign_value = -1;
             c = frmgetchar(openfile);
@@ -3506,7 +3505,7 @@ CASE_NUM :
             {
                 if (debug_token != nullptr)
                 {
-                    fprintf(debug_token,  "Set temp_tok.token_str[0] to %c\n", c);
+                    std::fprintf(debug_token,  "Set temp_tok.token_str[0] to %c\n", c);
                 }
                 temp_tok.token_str[0] = (char) c;
             }
@@ -3514,7 +3513,7 @@ CASE_NUM :
             {
                 if (debug_token != nullptr)
                 {
-                    fprintf(debug_token,  "First char not a . or NUM\n");
+                    std::fprintf(debug_token,  "First char not a . or NUM\n");
                 }
                 done = true;
             }
@@ -3522,21 +3521,21 @@ CASE_NUM :
         default:
             if (debug_token != nullptr)
             {
-                fprintf(debug_token,  "First char not a . or NUM\n");
+                std::fprintf(debug_token,  "First char not a . or NUM\n");
             }
             done = true;
             break;
         }
         if (debug_token != nullptr)
         {
-            fprintf(debug_token,  "Calling frmgetconstant unless done is true; done is %s\n", done ? "true" : "false");
+            std::fprintf(debug_token,  "Calling frmgetconstant unless done is true; done is %s\n", done ? "true" : "false");
         }
         if (!done && frmgetconstant(openfile, &temp_tok))
         {
             c = frmgetchar(openfile);
             if (debug_token != nullptr)
             {
-                fprintf(debug_token, "frmgetconstant returned 1; next token is %c\n", c);
+                std::fprintf(debug_token, "frmgetconstant returned 1; next token is %c\n", c);
             }
             if (getting_real && c == ',')   // we have the real part now
             {
@@ -3563,8 +3562,8 @@ CASE_NUM :
                 tok->token_id   = 0;
                 if (debug_token != nullptr)
                 {
-                    fprintf(debug_token,  "Exiting with type set to %d\n", tok->token_const.y ? COMPLEX_CONSTANT : REAL_CONSTANT);
-                    fclose(debug_token);
+                    std::fprintf(debug_token,  "Exiting with type set to %d\n", tok->token_const.y ? COMPLEX_CONSTANT : REAL_CONSTANT);
+                    std::fclose(debug_token);
                 }
                 return;
             }
@@ -3586,13 +3585,13 @@ CASE_NUM :
     tok->token_id = OPEN_PARENS;
     if (debug_token != nullptr)
     {
-        fprintf(debug_token,  "Exiting with ID set to OPEN_PARENS\n");
-        fclose(debug_token);
+        std::fprintf(debug_token,  "Exiting with ID set to OPEN_PARENS\n");
+        std::fclose(debug_token);
     }
     return;
 }
 
-bool frmgetalpha(FILE * openfile, token_st * tok)
+bool frmgetalpha(std::FILE * openfile, token_st * tok)
 {
     int c;
     int i = 1;
@@ -3697,7 +3696,7 @@ CASE_NUM:
     return false;
 }
 
-void frm_get_eos(FILE * openfile, token_st * this_token)
+void frm_get_eos(std::FILE * openfile, token_st * this_token)
 {
     long last_filepos = ftell(openfile);
     int c;
@@ -3729,7 +3728,7 @@ void frm_get_eos(FILE * openfile, token_st * this_token)
 /*frmgettoken fills token structure; returns 1 on success and 0 on
   NOT_A_TOKEN and END_OF_FORMULA
 */
-static bool frmgettoken(FILE * openfile, token_st * this_token)
+static bool frmgettoken(std::FILE * openfile, token_st * this_token)
 {
     int i = 1;
     long filepos;
@@ -3858,10 +3857,10 @@ CASE_TERMINATOR:
 
 int frm_get_param_stuff(char const *Name)
 {
-    FILE *debug_token = nullptr;
+    std::FILE *debug_token = nullptr;
     int c;
     token_st current_token;
-    FILE * entry_file = nullptr;
+    std::FILE * entry_file = nullptr;
     g_frm_uses_p1 = false;
     g_frm_uses_p2 = false;
     g_frm_uses_p3 = false;
@@ -3885,31 +3884,31 @@ int frm_get_param_stuff(char const *Name)
     if (c != '{')
     {
         stopmsg(STOPMSG_NONE, ParseErrs(PE_UNEXPECTED_EOF));
-        fclose(entry_file);
+        std::fclose(entry_file);
         return 0;
     }
 
     if (g_debug_flag == debug_flags::write_formula_debug_information)
     {
-        debug_token = fopen("frmtokens.txt", "at");
+        debug_token = std::fopen("frmtokens.txt", "at");
         if (debug_token != nullptr)
         {
-            fprintf(debug_token, "%s\n", Name);
+            std::fprintf(debug_token, "%s\n", Name);
         }
     }
     while (frmgettoken(entry_file, &current_token))
     {
         if (debug_token != nullptr)
         {
-            fprintf(debug_token, "%s\n", current_token.token_str);
-            fprintf(debug_token, "token_type is %d\n", current_token.token_type);
-            fprintf(debug_token, "token_id is %d\n", current_token.token_id);
+            std::fprintf(debug_token, "%s\n", current_token.token_str);
+            std::fprintf(debug_token, "token_type is %d\n", current_token.token_type);
+            std::fprintf(debug_token, "token_id is %d\n", current_token.token_id);
             if (current_token.token_type == REAL_CONSTANT || current_token.token_type == COMPLEX_CONSTANT)
             {
-                fprintf(debug_token, "Real value is %f\n", current_token.token_const.x);
-                fprintf(debug_token, "Imag value is %f\n", current_token.token_const.y);
+                std::fprintf(debug_token, "Real value is %f\n", current_token.token_const.x);
+                std::fprintf(debug_token, "Imag value is %f\n", current_token.token_const.y);
             }
-            fprintf(debug_token, "\n");
+            std::fprintf(debug_token, "\n");
         }
         switch (current_token.token_type)
         {
@@ -3947,10 +3946,10 @@ int frm_get_param_stuff(char const *Name)
             break;
         }
     }
-    fclose(entry_file);
+    std::fclose(entry_file);
     if (debug_token)
     {
-        fclose(debug_token);
+        std::fclose(debug_token);
     }
     if (current_token.token_type != END_OF_FORMULA)
     {
@@ -3971,7 +3970,7 @@ int frm_get_param_stuff(char const *Name)
      on success, and false if errors are found which should cause the
      formula not to be executed
 */
-static bool frm_check_name_and_sym(FILE * open_file, bool report_bad_sym)
+static bool frm_check_name_and_sym(std::FILE * open_file, bool report_bad_sym)
 {
     long filepos = ftell(open_file);
     int c, i;
@@ -4116,9 +4115,9 @@ static bool frm_check_name_and_sym(FILE * open_file, bool report_bad_sym)
     letter of the name of the formula to be prepared. This function
     is called from RunForm() below.
 */
-static std::string PrepareFormula(FILE * File, bool from_prompts1c)
+static std::string PrepareFormula(std::FILE * File, bool from_prompts1c)
 {
-    FILE *debug_fp = nullptr;
+    std::FILE *debug_fp = nullptr;
     token_st temp_tok;
     long filepos = ftell(File);
 
@@ -4143,17 +4142,17 @@ static std::string PrepareFormula(FILE * File, bool from_prompts1c)
 
     if (g_debug_flag == debug_flags::write_formula_debug_information)
     {
-        debug_fp = fopen("debugfrm.txt", "at");
+        debug_fp = std::fopen("debugfrm.txt", "at");
         if (debug_fp != nullptr)
         {
-            fprintf(debug_fp, "%s\n", g_formula_name.c_str());
+            std::fprintf(debug_fp, "%s\n", g_formula_name.c_str());
             if (g_symmetry != symmetry_type::NONE)
             {
                 auto it = std::find_if(std::begin(SymStr), std::end(SymStr),
                     [](SYMETRY const& item) { return item.n == g_symmetry; });
                 if (it != std::end(SymStr))
                 {
-                    fprintf(debug_fp, "%s\n", it->s);
+                    std::fprintf(debug_fp, "%s\n", it->s);
                 }
             }
         }
@@ -4173,7 +4172,7 @@ static std::string PrepareFormula(FILE * File, bool from_prompts1c)
             fseek(File, filepos, SEEK_SET);
             if (debug_fp != nullptr)
             {
-                fclose(debug_fp);
+                std::fclose(debug_fp);
             }
             return nullptr;
         }
@@ -4183,7 +4182,7 @@ static std::string PrepareFormula(FILE * File, bool from_prompts1c)
             fseek(File, filepos, SEEK_SET);
             if (debug_fp != nullptr)
             {
-                fclose(debug_fp);
+                std::fclose(debug_fp);
             }
             return nullptr;
         }
@@ -4209,7 +4208,7 @@ static std::string PrepareFormula(FILE * File, bool from_prompts1c)
             fseek(File, filepos, SEEK_SET);
             if (debug_fp != nullptr)
             {
-                fclose(debug_fp);
+                std::fclose(debug_fp);
             }
             return nullptr;
         case END_OF_FORMULA:
@@ -4224,11 +4223,11 @@ static std::string PrepareFormula(FILE * File, bool from_prompts1c)
 
     if (debug_fp != nullptr && !FormulaStr.empty())
     {
-        fprintf(debug_fp, "   %s\n", FormulaStr.c_str());
+        std::fprintf(debug_fp, "   %s\n", FormulaStr.c_str());
     }
     if (debug_fp != nullptr)
     {
-        fclose(debug_fp);
+        std::fclose(debug_fp);
     }
 
     return FormulaStr;
@@ -4244,7 +4243,7 @@ int BadFormula()
 //  returns true if an error occurred
 bool RunForm(char const *Name, bool from_prompts1c)
 {
-    FILE * entry_file = nullptr;
+    std::FILE * entry_file = nullptr;
 
     //  first set the pointers so they point to a fn which always returns 1
     g_cur_fractal_specific->per_pixel = BadFormula;
@@ -4262,7 +4261,7 @@ bool RunForm(char const *Name, bool from_prompts1c)
     }
 
     FormStr = PrepareFormula(entry_file, from_prompts1c);
-    fclose(entry_file);
+    std::fclose(entry_file);
 
     if (!FormStr.empty())  //  No errors while making string
     {
@@ -4412,7 +4411,7 @@ struct error_data_st
 
 static error_data_st errors[3];
 
-void frm_error(FILE * open_file, long begin_frm)
+void frm_error(std::FILE * open_file, long begin_frm)
 {
     token_st tok;
     int chars_to_error = 0, chars_in_error = 0, token_count;
@@ -4441,7 +4440,7 @@ void frm_error(FILE * open_file, long begin_frm)
                 return;
             }
         }
-        sprintf(&msgbuf[(int) std::strlen(msgbuf)], "Error(%d) at line %d:  %s\n  ", errors[j].error_number, line_number, ParseErrs(errors[j].error_number));
+        std::sprintf(&msgbuf[(int) std::strlen(msgbuf)], "Error(%d) at line %d:  %s\n  ", errors[j].error_number, line_number, ParseErrs(errors[j].error_number));
         int i = (int) std::strlen(msgbuf);
         fseek(open_file, errors[j].start_pos, SEEK_SET);
         token_count = 0;
@@ -4529,7 +4528,7 @@ void frm_error(FILE * open_file, long begin_frm)
 
   The function returns 1 if success, and 0 if errors are found.
 */
-bool frm_prescan(FILE * open_file)
+bool frm_prescan(std::FILE * open_file)
 {
     long filepos;
     long statement_pos, orig_pos;

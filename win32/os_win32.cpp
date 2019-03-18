@@ -19,7 +19,6 @@
 #include <assert.h>
 #include <direct.h>
 #include <io.h>
-#include <stdio.h>
 #define WIN32_LEAN_AND_MEAN
 #define STRICT
 #include <windows.h>
@@ -27,6 +26,7 @@
 #include <dbghelp.h>
 
 #include <cstdarg>
+#include <cstdio>
 #include <cstring>
 
 #include "frame.h"
@@ -515,7 +515,7 @@ static void CreateMiniDump(EXCEPTION_POINTERS *ep)
 
     while (PathFileExists(minidump))
     {
-        sprintf(minidump, "fractint-%d.dmp", i++);
+        std::sprintf(minidump, "fractint-%d.dmp", i++);
     }
     dump_file = CreateFile(minidump, GENERIC_READ | GENERIC_WRITE,
                            0, nullptr, CREATE_NEW, FILE_ATTRIBUTE_NORMAL, nullptr);
@@ -527,7 +527,7 @@ static void CreateMiniDump(EXCEPTION_POINTERS *ep)
     if (!status)
     {
         char msg[100];
-        sprintf(msg, "MiniDumpWriteDump failed with %08lx", GetLastError());
+        std::sprintf(msg, "MiniDumpWriteDump failed with %08lx", GetLastError());
         MessageBox(nullptr, msg, "Ugh", MB_OK);
     }
     else
@@ -541,7 +541,7 @@ static void CreateMiniDump(EXCEPTION_POINTERS *ep)
 
     {
         char msg[MAX_PATH*2];
-        sprintf(msg, "Unexpected error, crash dump saved to %s.\n"
+        std::sprintf(msg, "Unexpected error, crash dump saved to %s.\n"
                 "Please include this file with your bug report.", minidump);
         MessageBox(nullptr, msg, "FractInt: Unexpected Error", MB_OK);
     }
@@ -618,7 +618,7 @@ int expand_dirname(char *dirname, char *drive)
 bool abortmsg(char const *file, unsigned int line, int flags, char const *msg)
 {
     char buffer[3*80];
-    sprintf(buffer, "%s(%u):\n%s", file, line, msg);
+    std::sprintf(buffer, "%s(%u):\n%s", file, line, msg);
     return stopmsg(flags, buffer);
 }
 

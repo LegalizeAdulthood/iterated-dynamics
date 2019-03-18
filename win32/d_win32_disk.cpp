@@ -16,7 +16,6 @@
 #include "rotate.h"
 
 #include <assert.h>
-#include <stdio.h>
 #define WIN32_LEAN_AND_MEAN
 #define STRICT
 #include <Windows.h>
@@ -26,7 +25,9 @@
 #include "d_win32.h"
 #include "ods.h"
 
-// read/write-a-dot/line routines
+#include <cstdio>
+
+ // read/write-a-dot/line routines
 using t_dotwriter = void(int, int, int);
 using t_dotreader = int(int, int);
 using t_linewriter = void(int y, int x, int lastx, BYTE *pixels);

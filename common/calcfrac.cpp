@@ -41,14 +41,13 @@
 #include "realdos.h"
 #include "soi.h"
 
-#include <stdio.h>
-#include <cstring>
-
 #include <algorithm>
 #include <cfloat>
 #include <climits>
 #include <cmath>
+#include <cstdio>
 #include <cstdlib>
+#include <cstring>
 #include <vector>
 
 // routines in this module
@@ -2611,17 +2610,17 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
                 if (caught_a_cycle)
                 {
 #ifdef NUMSAVED
-                    static FILE *fp = dir_fopen(workdir.c_str(), "cycles.txt", "w");
+                    static std::FILE *fp = dir_fopen(workdir.c_str(), "cycles.txt", "w");
 #endif
                     cyclelen = g_color_iter-savedcoloriter;
 #ifdef NUMSAVED
-                    fprintf(fp, "row %3d col %3d len %6ld iter %6ld savedand %6ld\n",
+                    std::fprintf(fp, "row %3d col %3d len %6ld iter %6ld savedand %6ld\n",
                             row, g_col, cyclelen, g_color_iter, savedand);
                     if (zctr > 1 && zctr < NUMSAVED)
                     {
                         for (int i = 0; i < zctr; i++)
                         {
-                            fprintf(fp, "   caught %2d saved %6ld iter %6ld\n", i, changed[i], caught[i]);
+                            std::fprintf(fp, "   caught %2d saved %6ld iter %6ld\n", i, changed[i], caught[i]);
                         }
                     }
                     fflush(fp);

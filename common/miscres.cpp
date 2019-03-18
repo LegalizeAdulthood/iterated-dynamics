@@ -531,7 +531,7 @@ void updatesavename(char *filename) // go to the next file name
     {
         save = hold;
     }
-    sprintf(save, "%ld", atol(hold)+1); // increment the number
+    std::sprintf(save, "%ld", atol(hold)+1); // increment the number
     makepath(filename, drive, dir, fname, ext);
 }
 
@@ -609,7 +609,7 @@ void showtrig(char *buf)
     trigdetails(tmpbuf);
     if (tmpbuf[0])
     {
-        sprintf(buf, " function=%s", tmpbuf);
+        std::sprintf(buf, " function=%s", tmpbuf);
     }
 }
 
@@ -637,7 +637,7 @@ static void trigdetails(char *buf)
         int i = 0;
         while (++i < numfn)
         {
-            sprintf(tmpbuf, "/%s", g_trig_fn[static_cast<int>(g_trig_index[i])].name);
+            std::sprintf(tmpbuf, "/%s", g_trig_fn[static_cast<int>(g_trig_index[i])].name);
             std::strcat(buf, tmpbuf);
         }
     }
@@ -722,7 +722,7 @@ void get_calculation_time(char *msg, long ctime)
 {
     if (ctime >= 0)
     {
-        sprintf(msg, "%3ld:%02ld:%02ld.%02ld", ctime/360000L,
+        std::sprintf(msg, "%3ld:%02ld:%02ld.%02ld", ctime/360000L,
                 (ctime%360000L)/6000, (ctime%6000)/100, ctime%100);
     }
     else
@@ -739,7 +739,7 @@ static void show_str_var(char const *name, char const *var, int *row, char *msg)
     }
     if (*var != 0)
     {
-        sprintf(msg, "%s=%s", name, var);
+        std::sprintf(msg, "%s=%s", name, var);
         driver_put_string((*row)++, 2, C_GENERAL_HI, msg);
     }
 }
@@ -837,7 +837,7 @@ bool tab_display_2(char *msg)
     {
         driver_put_string(row, 2, C_GENERAL_HI, msg);
         key = getakeynohelp();
-        sprintf(msg, "%d (0x%04x)      ", key, key);
+        std::sprintf(msg, "%d (0x%04x)      ", key, key);
     }
     return key != FIK_ESC;
 }
@@ -1003,7 +1003,7 @@ top:
     }
     else
     {
-        sprintf(msg, "(%-d decimals)", g_decimals /*getprecbf(CURRENTREZ)*/);
+        std::sprintf(msg, "(%-d decimals)", g_decimals /*getprecbf(CURRENTREZ)*/);
         driver_put_string(s_row, 45, C_GENERAL_HI, "Arbitrary precision ");
         driver_put_string(-1, -1, C_GENERAL_HI, msg);
     }
@@ -1028,7 +1028,7 @@ top:
         switch (g_got_status)
         {
         case 0:
-            sprintf(msg, "%d Pass Mode", g_total_passes);
+            std::sprintf(msg, "%d Pass Mode", g_total_passes);
             driver_put_string(s_row, 2, C_GENERAL_HI, msg);
             if (g_user_std_calc_mode == '3')
             {
@@ -1046,7 +1046,7 @@ top:
             driver_put_string(s_row, 2, C_GENERAL_HI, "Boundary Tracing");
             break;
         case 3:
-            sprintf(msg, "Processing row %d (of %d) of input image", g_current_row, g_file_y_dots);
+            std::sprintf(msg, "Processing row %d (of %d) of input image", g_current_row, g_file_y_dots);
             driver_put_string(s_row, 2, C_GENERAL_HI, msg);
             break;
         case 4:
@@ -1062,7 +1062,7 @@ top:
         ++s_row;
         if (g_got_status == 5)
         {
-            sprintf(msg, "%2.2f%% done, counter at %lu of %lu (%u bits)",
+            std::sprintf(msg, "%2.2f%% done, counter at %lu of %lu (%u bits)",
                     (100.0 * g_diffusion_counter)/g_diffusion_limit,
                     g_diffusion_counter, g_diffusion_limit, g_diffusion_bits);
             driver_put_string(s_row, 2, C_GENERAL_MED, msg);
@@ -1070,13 +1070,13 @@ top:
         }
         else if (g_got_status != 3)
         {
-            sprintf(msg, "Working on block (y, x) [%d, %d]...[%d, %d], ",
+            std::sprintf(msg, "Working on block (y, x) [%d, %d]...[%d, %d], ",
                     g_yy_start, g_xx_start, g_yy_stop, g_xx_stop);
             driver_put_string(s_row, 2, C_GENERAL_MED, msg);
             if (g_got_status == 2 || g_got_status == 4)  // btm or tesseral
             {
                 driver_put_string(-1, -1, C_GENERAL_MED, "at ");
-                sprintf(msg, "[%d, %d]", g_current_row, g_current_column);
+                std::sprintf(msg, "[%d, %d]", g_current_row, g_current_column);
                 driver_put_string(-1, -1, C_GENERAL_HI, msg);
             }
             else
@@ -1084,18 +1084,18 @@ top:
                 if (g_total_passes > 1)
                 {
                     driver_put_string(-1, -1, C_GENERAL_MED, "pass ");
-                    sprintf(msg, "%d", g_current_pass);
+                    std::sprintf(msg, "%d", g_current_pass);
                     driver_put_string(-1, -1, C_GENERAL_HI, msg);
                     driver_put_string(-1, -1, C_GENERAL_MED, " of ");
-                    sprintf(msg, "%d", g_total_passes);
+                    std::sprintf(msg, "%d", g_total_passes);
                     driver_put_string(-1, -1, C_GENERAL_HI, msg);
                     driver_put_string(-1, -1, C_GENERAL_MED, ", ");
                 }
                 driver_put_string(-1, -1, C_GENERAL_MED, "at row ");
-                sprintf(msg, "%d", g_current_row);
+                std::sprintf(msg, "%d", g_current_row);
                 driver_put_string(-1, -1, C_GENERAL_HI, msg);
                 driver_put_string(-1, -1, C_GENERAL_MED, " col ");
-                sprintf(msg, "%d", g_col);
+                std::sprintf(msg, "%d", g_col);
                 driver_put_string(-1, -1, C_GENERAL_HI, msg);
             }
             ++s_row;
@@ -1114,7 +1114,7 @@ top:
     if ((g_cur_fractal_specific->flags&INFCALC) && (g_color_iter != 0))
     {
         driver_put_string(s_row, -1, C_GENERAL_MED, " 1000's of points:");
-        sprintf(msg, " %ld of %ld", g_color_iter-2, g_max_count);
+        std::sprintf(msg, " %ld of %ld", g_color_iter-2, g_max_count);
         driver_put_string(s_row, -1, C_GENERAL_HI, msg);
     }
 
@@ -1127,7 +1127,7 @@ top:
     driver_put_string(s_row++, 2, C_GENERAL_MED, msg);
     if (g_video_entry.xdots && bf_math == bf_math_type::NONE)
     {
-        sprintf(msg, "Video: %dx%dx%d %s %s",
+        std::sprintf(msg, "Video: %dx%dx%d %s %s",
                 g_video_entry.xdots, g_video_entry.ydots, g_video_entry.colors,
                 g_video_entry.name, g_video_entry.comment);
         driver_put_string(s_row++, 2, C_GENERAL_MED, msg);
@@ -1163,49 +1163,49 @@ top:
                 driver_put_string(truncaterow, 2, C_GENERAL_MED, "(Center values shown truncated to 320 decimals)");
             }
             driver_put_string(++s_row, 2, C_GENERAL_MED, "Mag");
-            sprintf(msg, "%10.8Le", Magnification);
+            std::sprintf(msg, "%10.8Le", Magnification);
             driver_put_string(-1, 11, C_GENERAL_HI, msg);
             driver_put_string(++s_row, 2, C_GENERAL_MED, "X-Mag-Factor");
-            sprintf(msg, "%11.4f   ", Xmagfactor);
+            std::sprintf(msg, "%11.4f   ", Xmagfactor);
             driver_put_string(-1, -1, C_GENERAL_HI, msg);
             driver_put_string(-1, -1, C_GENERAL_MED, "Rotation");
-            sprintf(msg, "%9.3f   ", Rotation);
+            std::sprintf(msg, "%9.3f   ", Rotation);
             driver_put_string(-1, -1, C_GENERAL_HI, msg);
             driver_put_string(-1, -1, C_GENERAL_MED, "Skew");
-            sprintf(msg, "%9.3f", Skew);
+            std::sprintf(msg, "%9.3f", Skew);
             driver_put_string(-1, -1, C_GENERAL_HI, msg);
         }
         else // bf != 1
         {
             driver_put_string(s_row, 2, C_GENERAL_MED, "Corners:                X                     Y");
             driver_put_string(++s_row, 3, C_GENERAL_MED, "Top-l");
-            sprintf(msg, "%20.16f  %20.16f", g_x_min, g_y_max);
+            std::sprintf(msg, "%20.16f  %20.16f", g_x_min, g_y_max);
             driver_put_string(-1, 17, C_GENERAL_HI, msg);
             driver_put_string(++s_row, 3, C_GENERAL_MED, "Bot-r");
-            sprintf(msg, "%20.16f  %20.16f", g_x_max, g_y_min);
+            std::sprintf(msg, "%20.16f  %20.16f", g_x_max, g_y_min);
             driver_put_string(-1, 17, C_GENERAL_HI, msg);
 
             if (g_x_min != g_x_3rd || g_y_min != g_y_3rd)
             {
                 driver_put_string(++s_row, 3, C_GENERAL_MED, "Bot-l");
-                sprintf(msg, "%20.16f  %20.16f", g_x_3rd, g_y_3rd);
+                std::sprintf(msg, "%20.16f  %20.16f", g_x_3rd, g_y_3rd);
                 driver_put_string(-1, 17, C_GENERAL_HI, msg);
             }
             cvtcentermag(&Xctr, &Yctr, &Magnification, &Xmagfactor, &Rotation, &Skew);
             driver_put_string(s_row += 2, 2, C_GENERAL_MED, "Ctr");
-            sprintf(msg, "%20.16f %20.16f  ", Xctr, Yctr);
+            std::sprintf(msg, "%20.16f %20.16f  ", Xctr, Yctr);
             driver_put_string(-1, -1, C_GENERAL_HI, msg);
             driver_put_string(-1, -1, C_GENERAL_MED, "Mag");
-            sprintf(msg, " %10.8Le", Magnification);
+            std::sprintf(msg, " %10.8Le", Magnification);
             driver_put_string(-1, -1, C_GENERAL_HI, msg);
             driver_put_string(++s_row, 2, C_GENERAL_MED, "X-Mag-Factor");
-            sprintf(msg, "%11.4f   ", Xmagfactor);
+            std::sprintf(msg, "%11.4f   ", Xmagfactor);
             driver_put_string(-1, -1, C_GENERAL_HI, msg);
             driver_put_string(-1, -1, C_GENERAL_MED, "Rotation");
-            sprintf(msg, "%9.3f   ", Rotation);
+            std::sprintf(msg, "%9.3f   ", Rotation);
             driver_put_string(-1, -1, C_GENERAL_HI, msg);
             driver_put_string(-1, -1, C_GENERAL_MED, "Skew");
-            sprintf(msg, "%9.3f", Skew);
+            std::sprintf(msg, "%9.3f", Skew);
             driver_put_string(-1, -1, C_GENERAL_HI, msg);
         }
     }
@@ -1231,19 +1231,19 @@ top:
                 {
                     driver_put_string(++s_row, 2, C_GENERAL_MED, "Params ");
                 }
-                sprintf(msg, "%3d: ", i+1);
+                std::sprintf(msg, "%3d: ", i+1);
                 driver_put_string(s_row, col, C_GENERAL_MED, msg);
                 if (*p == '+')
                 {
-                    sprintf(msg, "%-12d", (int)g_params[i]);
+                    std::sprintf(msg, "%-12d", (int)g_params[i]);
                 }
                 else if (*p == '#')
                 {
-                    sprintf(msg, "%-12u", (U32)g_params[i]);
+                    std::sprintf(msg, "%-12u", (U32)g_params[i]);
                 }
                 else
                 {
-                    sprintf(msg, "%-12.9f", g_params[i]);
+                    std::sprintf(msg, "%-12.9f", g_params[i]);
                 }
                 driver_put_string(-1, -1, C_GENERAL_HI, msg);
                 k++;
@@ -1251,29 +1251,29 @@ top:
         }
     }
     driver_put_string(s_row += 2, 2, C_GENERAL_MED, "Current (Max) Iteration: ");
-    sprintf(msg, "%ld (%ld)", g_color_iter, g_max_iterations);
+    std::sprintf(msg, "%ld (%ld)", g_color_iter, g_max_iterations);
     driver_put_string(-1, -1, C_GENERAL_HI, msg);
     driver_put_string(-1, -1, C_GENERAL_MED, "     Effective bailout: ");
-    sprintf(msg, "%f", g_magnitude_limit);
+    std::sprintf(msg, "%f", g_magnitude_limit);
     driver_put_string(-1, -1, C_GENERAL_HI, msg);
 
     if (g_fractal_type == fractal_type::PLASMA || g_fractal_type == fractal_type::ANT || g_fractal_type == fractal_type::CELLULAR)
     {
         driver_put_string(++s_row, 2, C_GENERAL_MED, "Current 'rseed': ");
-        sprintf(msg, "%d", g_random_seed);
+        std::sprintf(msg, "%d", g_random_seed);
         driver_put_string(-1, -1, C_GENERAL_HI, msg);
     }
 
     if (g_invert != 0)
     {
         driver_put_string(++s_row, 2, C_GENERAL_MED, "Inversion radius: ");
-        sprintf(msg, "%12.9f", g_f_radius);
+        std::sprintf(msg, "%12.9f", g_f_radius);
         driver_put_string(-1, -1, C_GENERAL_HI, msg);
         driver_put_string(-1, -1, C_GENERAL_MED, "  xcenter: ");
-        sprintf(msg, "%12.9f", g_f_x_center);
+        std::sprintf(msg, "%12.9f", g_f_x_center);
         driver_put_string(-1, -1, C_GENERAL_HI, msg);
         driver_put_string(-1, -1, C_GENERAL_MED, "  ycenter: ");
-        sprintf(msg, "%12.9f", g_f_y_center);
+        std::sprintf(msg, "%12.9f", g_f_y_center);
         driver_put_string(-1, -1, C_GENERAL_HI, msg);
     }
 
@@ -1342,7 +1342,7 @@ static void area()
     {
         msg = "";
     }
-    sprintf(buf, "%s%ld inside pixels of %ld%s%f",
+    std::sprintf(buf, "%s%ld inside pixels of %ld%s%f",
             msg, cnt, (long)g_logical_screen_x_dots*(long)g_logical_screen_y_dots, ".  Total area ",
             cnt/((float)g_logical_screen_x_dots*(float)g_logical_screen_y_dots)*(g_x_max-g_x_min)*(g_y_max-g_y_min));
     stopmsg(STOPMSG_NO_BUZZER, buf);
@@ -1364,7 +1364,7 @@ int endswithslash(char const *fl)
 
 // ---------------------------------------------------------------------
 static char seps[] = {"' ', '\t', \n', \r'"};
-char *get_ifs_token(char *buf, FILE *ifsfile)
+char *get_ifs_token(char *buf, std::FILE *ifsfile)
 {
     char *bufptr;
     while (true)
@@ -1392,7 +1392,7 @@ char *get_ifs_token(char *buf, FILE *ifsfile)
 int g_num_affine_transforms;
 int ifsload()                   // read in IFS parameters
 {
-    FILE *ifsfile;
+    std::FILE *ifsfile;
     char buf[201];
     char *bufptr;
     int ret, rowsize;
@@ -1435,7 +1435,7 @@ int ifsload()                   // read in IFS parameters
     while (bufptr != nullptr)
     {
         float value = 0.0f;
-        if (sscanf(bufptr, " %f ", &value) != 1)
+        if (std::sscanf(bufptr, " %f ", &value) != 1)
         {
             break;
         }
@@ -1476,7 +1476,7 @@ int ifsload()                   // read in IFS parameters
         stopmsg(STOPMSG_NONE, "Empty IFS definition");
         ret = -1;
     }
-    fclose(ifsfile);
+    std::fclose(ifsfile);
 
     if (ret == 0)
     {
@@ -1485,9 +1485,9 @@ int ifsload()                   // read in IFS parameters
     return ret;
 }
 
-bool find_file_item(char *filename, char const *itemname, FILE **fileptr, int itemtype)
+bool find_file_item(char *filename, char const *itemname, std::FILE **fileptr, int itemtype)
 {
-    FILE *infile = nullptr;
+    std::FILE *infile = nullptr;
     bool found = false;
     char parsearchname[ITEM_NAME_LEN + 6];
     char drive[FILE_MAX_DRIVE];
@@ -1502,7 +1502,7 @@ bool find_file_item(char *filename, char const *itemname, FILE **fileptr, int it
     makepath(fullpath, "", "", fname, ext);
     if (stricmp(filename, g_command_file.c_str()))
     {
-        infile = fopen(filename, "rb");
+        infile = std::fopen(filename, "rb");
         if (infile != nullptr)
         {
             if (scan_entries(infile, nullptr, itemname) == -1)
@@ -1511,7 +1511,7 @@ bool find_file_item(char *filename, char const *itemname, FILE **fileptr, int it
             }
             else
             {
-                fclose(infile);
+                std::fclose(infile);
                 infile = nullptr;
             }
         }
@@ -1519,7 +1519,7 @@ bool find_file_item(char *filename, char const *itemname, FILE **fileptr, int it
         if (!found && g_check_cur_dir)
         {
             makepath(fullpath, "", DOTSLASH, fname, ext);
-            infile = fopen(fullpath, "rb");
+            infile = std::fopen(fullpath, "rb");
             if (infile != nullptr)
             {
                 if (scan_entries(infile, nullptr, itemname) == -1)
@@ -1529,7 +1529,7 @@ bool find_file_item(char *filename, char const *itemname, FILE **fileptr, int it
                 }
                 else
                 {
-                    fclose(infile);
+                    std::fclose(infile);
                     infile = nullptr;
                 }
             }
@@ -1569,7 +1569,7 @@ bool find_file_item(char *filename, char const *itemname, FILE **fileptr, int it
 
     if (!found)
     {
-        infile = fopen(g_command_file.c_str(), "rb");
+        infile = std::fopen(g_command_file.c_str(), "rb");
         if (infile != nullptr)
         {
             if (scan_entries(infile, nullptr, parsearchname) == -1)
@@ -1579,7 +1579,7 @@ bool find_file_item(char *filename, char const *itemname, FILE **fileptr, int it
             }
             else
             {
-                fclose(infile);
+                std::fclose(infile);
                 infile = nullptr;
             }
         }
@@ -1588,7 +1588,7 @@ bool find_file_item(char *filename, char const *itemname, FILE **fileptr, int it
     if (!found)
     {
         makepath(fullpath, drive, dir, fname, ext);
-        infile = fopen(fullpath, "rb");
+        infile = std::fopen(fullpath, "rb");
         if (infile != nullptr)
         {
             if (scan_entries(infile, nullptr, itemname) == -1)
@@ -1598,7 +1598,7 @@ bool find_file_item(char *filename, char const *itemname, FILE **fileptr, int it
             }
             else
             {
-                fclose(infile);
+                std::fclose(infile);
                 infile = nullptr;
             }
         }
@@ -1614,7 +1614,7 @@ bool find_file_item(char *filename, char const *itemname, FILE **fileptr, int it
         {
             char msg[200];
             DTA.filename[FILE_MAX_FNAME+FILE_MAX_EXT-2] = 0;
-            sprintf(msg, "Searching %13s for %s      ", DTA.filename, itemname);
+            std::sprintf(msg, "Searching %13s for %s      ", DTA.filename, itemname);
             showtempmsg(msg);
             if (!(DTA.attribute & SUBDIR)
                 && std::strcmp(DTA.filename, ".")
@@ -1622,7 +1622,7 @@ bool find_file_item(char *filename, char const *itemname, FILE **fileptr, int it
             {
                 splitpath(DTA.filename, nullptr, nullptr, fname, ext);
                 makepath(fullpath, drive, dir, fname, ext);
-                infile = fopen(fullpath, "rb");
+                infile = std::fopen(fullpath, "rb");
                 if (infile != nullptr)
                 {
                     if (scan_entries(infile, nullptr, itemname) == -1)
@@ -1633,7 +1633,7 @@ bool find_file_item(char *filename, char const *itemname, FILE **fileptr, int it
                     }
                     else
                     {
-                        fclose(infile);
+                        std::fclose(infile);
                         infile = nullptr;
                     }
                 }
@@ -1675,7 +1675,7 @@ bool find_file_item(char *filename, char const *itemname, FILE **fileptr, int it
             std::strcat(fname, "chr");
         }
         makepath(fullpath, drive, dir, fname, defaultextension);
-        infile = fopen(fullpath, "rb");
+        infile = std::fopen(fullpath, "rb");
         if (infile != nullptr)
         {
             if (scan_entries(infile, nullptr, itemname) == -1)
@@ -1685,7 +1685,7 @@ bool find_file_item(char *filename, char const *itemname, FILE **fileptr, int it
             }
             else
             {
-                fclose(infile);
+                std::fclose(infile);
                 infile = nullptr;
             }
         }
@@ -1693,7 +1693,7 @@ bool find_file_item(char *filename, char const *itemname, FILE **fileptr, int it
 
     if (!found)
     {
-        sprintf(fullpath, "'%s' file entry item not found", itemname);
+        std::sprintf(fullpath, "'%s' file entry item not found", itemname);
         stopmsg(STOPMSG_NONE, fullpath);
         return true;
     }
@@ -1704,12 +1704,12 @@ bool find_file_item(char *filename, char const *itemname, FILE **fileptr, int it
     }
     else if (infile != nullptr)
     {
-        fclose(infile);
+        std::fclose(infile);
     }
     return false;
 }
 
-bool find_file_item(std::string &filename, char const *itemname, FILE **fileptr, int itemtype)
+bool find_file_item(std::string &filename, char const *itemname, std::FILE **fileptr, int itemtype)
 {
     char buf[FILE_MAX_PATH];
     assert(filename.size() < FILE_MAX_PATH);
@@ -1720,7 +1720,7 @@ bool find_file_item(std::string &filename, char const *itemname, FILE **fileptr,
     return result;
 }
 
-int file_gets(char *buf, int maxlen, FILE *infile)
+int file_gets(char *buf, int maxlen, std::FILE *infile)
 {
     int len, c;
     // similar to 'fgets', but file may be in either text or binary mode
@@ -1757,13 +1757,13 @@ int file_gets(char *buf, int maxlen, FILE *infile)
 void roundfloatd(double *x) // make double converted from float look ok
 {
     char buf[30];
-    sprintf(buf, "%-10.7g", *x);
+    std::sprintf(buf, "%-10.7g", *x);
     *x = atof(buf);
 }
 
 void fix_inversion(double *x) // make double converted from string look ok
 {
     char buf[30];
-    sprintf(buf, "%-1.15lg", *x);
+    std::sprintf(buf, "%-1.15lg", *x);
     *x = atof(buf);
 }

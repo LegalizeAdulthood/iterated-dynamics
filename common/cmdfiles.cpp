@@ -33,13 +33,12 @@
 #include "soi.h"
 #include "stereo.h"
 
-#include <stdio.h>
-
 #include <algorithm>
 #include <cassert>
 #include <cctype>
 #include <cfloat>
 #include <cmath>
+#include <cstdio>
 #include <cstdlib>
 #include <cstring>
 #include <ctime>
@@ -55,15 +54,15 @@
 #define PRT_RESOLUTION  60      // Assume low resolution
 #endif
 
-static int  cmdfile(FILE *handle, cmd_file mode);
+static int  cmdfile(std::FILE *handle, cmd_file mode);
 static int  next_command(
     char *cmdbuf,
     int maxlen,
-    FILE *handle,
+    std::FILE *handle,
     char *linebuf,
     int *lineoffset,
     cmd_file mode);
-static bool next_line(FILE *handle, char *linebuf, cmd_file mode);
+static bool next_line(std::FILE *handle, char *linebuf, cmd_file mode);
 int cmdarg(char *argument, cmd_file mode);
 static void argerror(char const *);
 static void initvars_run();
@@ -244,7 +243,7 @@ int getpower10(LDBL x)
     char string[11]; // space for "+x.xe-xxxx"
     int p;
 
-    sprintf(string, "%+.1Le", x);
+    std::sprintf(string, "%+.1Le", x);
     p = atoi(string+5);
     return p;
 }
@@ -263,7 +262,7 @@ void process_sstools_ini()
     std::string const sstools_ini = findpath("sstools.ini"); // look for SSTOOLS.INI
     if (!sstools_ini.empty())              // found it!
     {
-        FILE *initfile = fopen(sstools_ini.c_str(), "r");
+        std::FILE *initfile = std::fopen(sstools_ini.c_str(), "r");
         if (initfile != nullptr)
         {
             cmdfile(initfile, cmd_file::SSTOOLS_INI);           // process it
@@ -282,7 +281,7 @@ void process_simple_command(char *curarg)
         {
             filename += ".gif";
         }
-        if (FILE *initfile = fopen(filename.c_str(), "rb"))
+        if (std::FILE *initfile = std::fopen(filename.c_str(), "rb"))
         {
             char tempstring[101];
             if (fread(tempstring, 6, 1, initfile) != 6)
@@ -300,7 +299,7 @@ void process_simple_command(char *curarg)
                 g_show_file = 0;
                 processed = true;
             }
-            fclose(initfile);
+            std::fclose(initfile);
         }
     }
     if (!processed)
@@ -317,7 +316,7 @@ void process_file_setname(char *curarg, char *sptr)
         init_msg("", g_command_file.c_str(), cmd_file::AT_CMD_LINE);
     }
     g_command_name = &sptr[1];
-    FILE *initfile = nullptr;
+    std::FILE *initfile = nullptr;
     if (find_file_item(g_command_file, g_command_name.c_str(), &initfile, 0) || initfile == nullptr)
     {
         argerror(curarg);
@@ -327,7 +326,7 @@ void process_file_setname(char *curarg, char *sptr)
 
 void process_file(char *curarg)
 {
-    FILE *initfile = fopen(&curarg[1], "r");
+    std::FILE *initfile = std::fopen(&curarg[1], "r");
     if (initfile == nullptr)
     {
         argerror(curarg);
@@ -398,7 +397,7 @@ int cmdfiles(int argc, char const *const *argv)
 }
 
 
-int load_commands(FILE *infile)
+int load_commands(std::FILE *infile)
 {
     // when called, file is open in binary mode, positioned at the
     // '(' or '{' following the desired parameter set's name
@@ -646,7 +645,7 @@ static void reset_ifs_defn()
 //        1 sstools.ini
 //        2 <@> command after startup
 //        3 command line @filename/setname
-static int cmdfile(FILE *handle, cmd_file mode)
+static int cmdfile(std::FILE *handle, cmd_file mode)
 {
     // note that cmdfile could be open as text OR as binary
     // binary is used in @ command processing for reasonable speed note/point
@@ -680,7 +679,7 @@ static int cmdfile(FILE *handle, cmd_file mode)
         }
         changeflag |= i;
     }
-    fclose(handle);
+    std::fclose(handle);
     if (changeflag & CMDARG_FRACTAL_PARAM)
     {
         backwards_v18();
@@ -693,7 +692,7 @@ static int cmdfile(FILE *handle, cmd_file mode)
 static int next_command(
     char *cmdbuf,
     int maxlen,
-    FILE *handle,
+    std::FILE *handle,
     char *linebuf,
     int *lineoffset,
     cmd_file mode)
@@ -772,7 +771,7 @@ static int next_command(
     }
 }
 
-static bool next_line(FILE *handle, char *linebuf, cmd_file mode)
+static bool next_line(std::FILE *handle, char *linebuf, cmd_file mode)
 {
     bool tools_section = false;
     while (file_gets(linebuf, 512, handle) >= 0)
@@ -923,7 +922,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
             }
         }
         char next = 0;
-        if (sscanf(argptr, "%c%c", &next, &tmpc) > 0    // NULL entry
+        if (std::sscanf(argptr, "%c%c", &next, &tmpc) > 0    // NULL entry
             && (next == '/' || next == '=') && tmpc == '/')
         {
             j = 0;
@@ -943,7 +942,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
                 numval = j;
             }
         }
-        else if (sscanf(argptr, "%ld%c", &ll, &tmpc) > 0       // got an integer
+        else if (std::sscanf(argptr, "%ld%c", &ll, &tmpc) > 0       // got an integer
             && tmpc == '/')        // needs a long int, ll, here for lyapunov
         {
             ++floatparms;
@@ -963,9 +962,9 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
             }
         }
 #ifndef XFRACT
-        else if (sscanf(argptr, "%lg%c", &ftemp, &tmpc) > 0  // got a float
+        else if (std::sscanf(argptr, "%lg%c", &ftemp, &tmpc) > 0  // got a float
 #else
-        else if (sscanf(argptr, "%lf%c", &ftemp, &tmpc) > 0  // got a float
+        else if (std::sscanf(argptr, "%lf%c", &ftemp, &tmpc) > 0  // got a float
 #endif
             && tmpc == '/')
         {
@@ -1846,7 +1845,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
 
     if (variable == "exitmode")      // exitmode=?
     {
-        sscanf(value, "%x", &numval);
+        std::sscanf(value, "%x", &numval);
         g_exit_video_mode = (BYTE)numval;
         return CMDARG_NONE;
     }
@@ -2293,7 +2292,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         }
         initcorners = true;
         // dec = get_max_curarg_len(floatvalstr, totparms);
-        sscanf(floatvalstr[2], "%Lf", &Magnification);
+        std::sscanf(floatvalstr[2], "%Lf", &Magnification);
 
         // I don't know if this is portable, but something needs to
         // be used in case compiler's LDBL_MAX is not big enough
@@ -3603,7 +3602,7 @@ static void parse_textcolors(char const *value)
             }
             if (*value != '/')
             {
-                sscanf(value, "%x", &hexval);
+                std::sscanf(value, "%x", &hexval);
                 int i = (hexval / 16) & 7;
                 int j = hexval & 15;
                 if (i == j || (i == 0 && j == 8))   // force contrast

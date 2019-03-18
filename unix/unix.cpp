@@ -6,12 +6,12 @@
  */
 #include "port.h"
 
-#include <stdio.h>
 #include <sys/file.h>
 #include <sys/stat.h>
 #include <sys/time.h>
 
 #include <algorithm>
+#include <cstdio>
 #include <cstdlib>
 #include <cstring>
 
@@ -199,7 +199,7 @@ strupr(char *s)
  */
 int ltoa(long num, char *str, int len)
 {
-    sprintf(str, "%10d", (int)num);
+    std::sprintf(str, "%10d", (int)num);
     return 0;
 }
 

@@ -16,8 +16,7 @@
 #include "realdos.h"
 #include "rotate.h"
 
-#include <stdio.h>
-
+#include <cstdio>
 #include <cstring>
 #include <ctime>
 
@@ -608,7 +607,7 @@ static void set_palette3(BYTE start[3], BYTE middle[3], BYTE finish[3])
 void save_palette()
 {
     char palname[FILE_MAX_PATH];
-    FILE *dacfile;
+    std::FILE *dacfile;
     int i;
     std::strcpy(palname, g_map_name.c_str());
     help_labels const old_help_mode = g_help_mode;
@@ -624,7 +623,7 @@ void save_palette()
             std::strcat(filename, ".map");
         }
         merge_pathnames(palname, filename, cmd_file::AT_AFTER_STARTUP);
-        dacfile = fopen(palname, "w");
+        dacfile = std::fopen(palname, "w");
         if (dacfile == nullptr)
         {
             driver_buzzer(buzzer_codes::PROBLEM);
@@ -637,7 +636,7 @@ void save_palette()
             for (i = 0; i < 256; i++)
 #endif
             {
-                fprintf(dacfile, "%3d %3d %3d\n",
+                std::fprintf(dacfile, "%3d %3d %3d\n",
                         g_dac_box[i][0] << 2,
                         g_dac_box[i][1] << 2,
                         g_dac_box[i][2] << 2);
@@ -646,7 +645,7 @@ void save_palette()
             g_color_state = 2;
             g_color_file = filename;
         }
-        fclose(dacfile);
+        std::fclose(dacfile);
     }
     g_help_mode = old_help_mode;
 }

@@ -27,7 +27,7 @@
 bool g_disk_16_bit = false;                 // storing 16 bit values for continuous potential
 
 static int timetodisplay;
-static FILE *fp = nullptr;
+static std::FILE *fp = nullptr;
 bool g_disk_targa = false;
 bool g_disk_flag = false;
 bool g_good_mode = false;        // if non-zero, OK to read/write pixels
@@ -105,7 +105,7 @@ int pot_startdisk()
     return i;
 }
 
-int targa_startdisk(FILE *targafp, int overhead)
+int targa_startdisk(std::FILE *targafp, int overhead)
 {
     int i;
     if (driver_diskp()) // ditch the original file, make just the targa
@@ -142,7 +142,7 @@ int common_startdisk(long newrowsize, long newcolsize, int colors)
             driver_set_attr(BOXROW+i, BOXCOL, C_DVID_LO, BOXWIDTH);  // init box
         }
         driver_put_string(BOXROW+2, BOXCOL+4, C_DVID_HI, "'Disk-Video' mode");
-        sprintf(buf, "Screen resolution: %d x %d", g_screen_x_dots, g_screen_y_dots);
+        std::sprintf(buf, "Screen resolution: %d x %d", g_screen_x_dots, g_screen_y_dots);
         driver_put_string(BOXROW+4, BOXCOL+4, C_DVID_LO, buf);
         if (g_disk_targa)
         {
@@ -151,10 +151,10 @@ int common_startdisk(long newrowsize, long newcolsize, int colors)
         else
         {
             driver_put_string(-1, -1, C_DVID_LO, "  Colors: ");
-            sprintf(buf, "%d", colors);
+            std::sprintf(buf, "%d", colors);
             driver_put_string(-1, -1, C_DVID_LO, buf);
         }
-        sprintf(buf, "Save name: %s", g_save_filename.c_str());
+        std::sprintf(buf, "Save name: %s", g_save_filename.c_str());
         driver_put_string(BOXROW+8, BOXCOL+4, C_DVID_LO, buf);
         driver_put_string(BOXROW+10, BOXCOL+4, C_DVID_LO, "Status:");
         dvid_status(0, "clearing the 'screen'");
@@ -198,7 +198,7 @@ int common_startdisk(long newrowsize, long newcolsize, int colors)
     if (driver_diskp())
     {
         char buf[50];
-        sprintf(buf, "Cache size: %uK", cache_size);
+        std::sprintf(buf, "Cache size: %uK", cache_size);
         driver_put_string(BOXROW+6, BOXCOL+4, C_DVID_LO, buf);
     }
 
@@ -239,7 +239,7 @@ int common_startdisk(long newrowsize, long newcolsize, int colors)
         {
             membuf[i] = (BYTE)fgetc(fp);
         }
-        fclose(fp);
+        std::fclose(fp);
         dv_handle = MemoryAlloc((U16)BLOCKLEN, memorysize, DISK);
     }
     else
@@ -306,7 +306,7 @@ void enddisk()
                 }
             }
         }
-        fclose(fp);
+        std::fclose(fp);
         fp = nullptr;
     }
 
@@ -335,7 +335,7 @@ int readdisk(int col, int row)
     {
         if (driver_diskp())
         {
-            sprintf(buf, " reading line %4d",
+            std::sprintf(buf, " reading line %4d",
                     (row >= g_screen_y_dots) ? row-g_screen_y_dots : row); // adjust when potfile
             dvid_status(0, buf);
         }
@@ -405,7 +405,7 @@ void writedisk(int col, int row, int color)
     {
         if (driver_diskp())
         {
-            sprintf(buf, " writing line %4d",
+            std::sprintf(buf, " writing line %4d",
                     (row >= g_screen_y_dots) ? row-g_screen_y_dots : row); // adjust when potfile
             dvid_status(0, buf);
         }

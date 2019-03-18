@@ -39,9 +39,8 @@
 #include "parser.h"
 #include "realdos.h"
 
-#include <stdio.h>
-
 #include <cctype>
+#include <cstdio>
 #include <cstring>
 #include <string>
 
@@ -291,14 +290,14 @@ NEW_FN fStkOne;   // to support new parser fn.
 #ifdef TESTFP
 int pstopmsg(int x, char const *msg)
 {
-    static FILE *fp = nullptr;
+    static std::FILE *fp = nullptr;
     if (fp == nullptr)
     {
-        fp = fopen("fpdebug.txt", "w");
+        fp = std::fopen("fpdebug.txt", "w");
     }
     if (fp)
     {
-        fprintf(fp, "%s\n", msg);
+        std::fprintf(fp, "%s\n", msg);
         fflush(fp);
     }
     return x; // just to quiet warnings
@@ -315,7 +314,7 @@ int pstopmsg(int x, char const *msg)
     if (g_debug_flag == debug_flags::show_formula_info_after_compile   \
         || g_debug_flag == debug_flags::prevent_formula_optimizer)     \
     {                                                               \
-        sprintf(cDbgMsg, (y), (p) );                                \
+        std::sprintf(cDbgMsg, (y), (p) );                                \
         stopmsg(STOPMSG_NONE, cDbgMsg);                             \
     }
 
@@ -323,7 +322,7 @@ int pstopmsg(int x, char const *msg)
     if (g_debug_flag == debug_flags::show_formula_info_after_compile   \
         || g_debug_flag == debug_flags::prevent_formula_optimizer)     \
     {                                                               \
-        sprintf(cDbgMsg, (y), (p), (q));                            \
+        std::sprintf(cDbgMsg, (y), (p), (q));                            \
         stopmsg(STOPMSG_NONE, cDbgMsg);                             \
     }
 
@@ -331,7 +330,7 @@ int pstopmsg(int x, char const *msg)
     if (g_debug_flag == debug_flags::show_formula_info_after_compile   \
         || g_debug_flag == debug_flags::prevent_formula_optimizer)     \
     {                                                               \
-        sprintf(cDbgMsg, (y), (p), (q), (r) );                      \
+        std::sprintf(cDbgMsg, (y), (p), (q), (r) );                      \
         stopmsg(STOPMSG_NONE, cDbgMsg);                             \
     }
 
@@ -339,7 +338,7 @@ int pstopmsg(int x, char const *msg)
     if (g_debug_flag == debug_flags::show_formula_info_after_compile   \
         || g_debug_flag == debug_flags::prevent_formula_optimizer)     \
     {                                                               \
-        sprintf(cDbgMsg, (y), (p), (q), (r), (s) );                 \
+        std::sprintf(cDbgMsg, (y), (p), (q), (r), (s) );                 \
         stopmsg(STOPMSG_NONE, cDbgMsg);                             \
     }
 

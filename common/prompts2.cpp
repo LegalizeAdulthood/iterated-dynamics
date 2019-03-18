@@ -284,7 +284,7 @@ int get_toggles()
     }
     else
     {
-        sprintf(uvalues[k].uval.sval, "%d", g_fill_color);
+        std::sprintf(uvalues[k].uval.sval, "%d", g_fill_color);
     }
     old_fillcolor = g_fill_color;
 
@@ -553,11 +553,11 @@ int get_toggles2()
         old_inversion[i] = g_inversion[i];
         if (g_inversion[i] == AUTO_INVERT)
         {
-            sprintf(uvalues[k].uval.sval, "auto");
+            std::sprintf(uvalues[k].uval.sval, "auto");
         }
         else
         {
-            sprintf(uvalues[k].uval.sval, "%-1.15lg", g_inversion[i]);
+            std::sprintf(uvalues[k].uval.sval, "%-1.15lg", g_inversion[i]);
         }
     }
     choices[++k] = "  (use fixed radius & center when zooming)";
@@ -944,11 +944,11 @@ get_view_restart:
     choices[++k] = "";
     uvalues[k].type = '*';
 
-    sprintf(dim1, "Video memory limits: (for y = %4d) x <= %d", ymax,  xmax);
+    std::sprintf(dim1, "Video memory limits: (for y = %4d) x <= %d", ymax,  xmax);
     choices[++k] = dim1;
     uvalues[k].type = '*';
 
-    sprintf(dim2, "                     (for x = %4d) y <= %d", xmax, ymax);
+    std::sprintf(dim2, "                     (for x = %4d) y <= %d", xmax, ymax);
     choices[++k] = dim2;
     uvalues[k].type = '*';
 
@@ -1367,12 +1367,12 @@ int get_a_number(double *x, double *y)
 int get_commands()              // execute commands from file
 {
     int ret;
-    FILE *parmfile;
+    std::FILE *parmfile;
     ret = 0;
     help_labels const old_help_mode = g_help_mode;
     g_help_mode = help_labels::HELPPARMFILE;
     long point = get_file_entry(GETPARM, "Parameter Set", commandmask, g_command_file, g_command_name);
-    if (point >= 0 && (parmfile = fopen(g_command_file.c_str(), "rb")) != nullptr)
+    if (point >= 0 && (parmfile = std::fopen(g_command_file.c_str(), "rb")) != nullptr)
     {
         fseek(parmfile, point, SEEK_SET);
         ret = load_commands(parmfile);
@@ -1402,7 +1402,7 @@ void goodbye()                  // we done.  Bail out
     }
 #if 0 && defined(XFRACT)
     UnixDone();
-    printf("\n\n\n%s\n", "   Thank You for using " FRACTINT); // printf takes pointer
+    std::printf("\n\n\n%s\n", "   Thank You for using " FRACTINT); // printf takes pointer
 #endif
     if (!g_make_parameter_file)
     {
@@ -2008,11 +2008,11 @@ int dir_remove(char const *dir, char const *filename)
 }
 
 // fopens file in dir directory
-FILE *dir_fopen(char const *dir, char const *filename, char const *mode)
+std::FILE *dir_fopen(char const *dir, char const *filename, char const *mode)
 {
     char tmp[FILE_MAX_PATH];
     dir_name(tmp, dir, filename);
-    return fopen(tmp, mode);
+    return std::fopen(tmp, mode);
 }
 
 /*

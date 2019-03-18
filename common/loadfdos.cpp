@@ -40,9 +40,8 @@
 #include "os.h"
 #include "realdos.h"
 
-#include <stdio.h>
-
 #include <cmath>
+#include <cstdio>
 #include <cstring>
 #include <sstream>
 #include <string>
@@ -109,7 +108,7 @@ static void format_vid_inf(int i, char const *err, char *buf)
     std::memcpy((char *)&g_video_entry, (char *)&g_video_table[i],
            sizeof(g_video_entry));
     vidmode_keyname(g_video_entry.keynum, kname);
-    sprintf(buf, "%-5s %-25s %-4s %5d %5d %3d %-25s",  // 78 chars
+    std::sprintf(buf, "%-5s %-25s %-4s %5d %5d %3d %-25s",  // 78 chars
             kname, g_video_entry.name, err,
             g_video_entry.xdots, g_video_entry.ydots,
             g_video_entry.colors, g_video_entry.comment);
@@ -164,7 +163,7 @@ std::string heading_detail(FRACTAL_INFO const *info, ext_blk_3 const *blk_3_info
 std::string save_release_detail()
 {
     char buff[80];
-    sprintf(buff, "v%d.%01d", g_release/100, (g_release%100)/10);
+    std::sprintf(buff, "v%d.%01d", g_release/100, (g_release%100)/10);
     if (g_release%100)
     {
         int i = (int) std::strlen(buff);
@@ -289,7 +288,7 @@ int get_video_mode(FRACTAL_INFO *info, ext_blk_3 *blk_3_info)
 
         // format heading
         char heading[256];  // big enough for more than a few lines
-        sprintf(heading, "File: %-44s  %d x %d x %d\n%-52s",
+        std::sprintf(heading, "File: %-44s  %d x %d x %d\n%-52s",
                 g_read_filename.c_str(), g_file_x_dots, g_file_y_dots, g_file_colors,
                 heading_detail(info, blk_3_info).c_str());
         if (info->info_id[0] != 'G')

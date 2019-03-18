@@ -2,8 +2,7 @@
 #if !defined(PROMPTS2_H)
 #define PROMPTS2_H
 
-#include <stdio.h>
-
+#include <cstdio>
 #include <string>
 
 enum class cmd_file;
@@ -55,7 +54,7 @@ extern int starfield();
 extern int get_a_number(double *, double *);
 extern int lccompare(void *, void *);
 extern int dir_remove(char const *dir, char const *filename);
-extern FILE *dir_fopen(char const *dir, char const *filename, char const *mode);
+extern std::FILE *dir_fopen(char const *dir, char const *filename, char const *mode);
 extern void extract_filename(char *target, char const *source);
 extern std::string extract_filename(char const *source);
 extern const char *has_ext(char const *source);

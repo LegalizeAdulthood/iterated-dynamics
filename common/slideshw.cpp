@@ -14,9 +14,8 @@
 #include "realdos.h"
 #include "slideshw.h"
 
-#include <stdio.h>
-
 #include <cctype>
+#include <cstdio>
 #include <cstdlib>
 #include <cstring>
 #include <ctime>
@@ -89,7 +88,7 @@ static void get_mnemonic(int code, char *mnemonic)
 }
 
 bool g_busy = false;
-static FILE *fpss = nullptr;
+static std::FILE *fpss = nullptr;
 static long starttick;
 static long ticks;
 static int slowcount;
@@ -333,7 +332,7 @@ start:
 
 slides_mode startslideshow()
 {
-    fpss = fopen(g_auto_name.c_str(), "r");
+    fpss = std::fopen(g_auto_name.c_str(), "r");
     if (fpss == nullptr)
     {
         g_slides = slides_mode::OFF;
@@ -349,7 +348,7 @@ void stopslideshow()
 {
     if (fpss)
     {
-        fclose(fpss);
+        std::fclose(fpss);
     }
     fpss = nullptr;
     g_slides = slides_mode::OFF;
@@ -363,7 +362,7 @@ void recordshw(int key)
     ticks = std::clock();  // current time
     if (fpss == nullptr)
     {
-        fpss = fopen(g_auto_name.c_str(), "w");
+        fpss = std::fopen(g_auto_name.c_str(), "w");
         if (fpss == nullptr)
         {
             return;
@@ -376,9 +375,9 @@ void recordshw(int key)
         if (quotes) // close quotes first
         {
             quotes = false;
-            fprintf(fpss, "\"\n");
+            std::fprintf(fpss, "\"\n");
         }
-        fprintf(fpss, "WAIT %4.1f\n", dt);
+        std::fprintf(fpss, "WAIT %4.1f\n", dt);
     }
     if (key >= 32 && key < 128)
     {
@@ -393,13 +392,13 @@ void recordshw(int key)
     {
         if (quotes) // not an ASCII character - turn off quotes
         {
-            fprintf(fpss, "\"\n");
+            std::fprintf(fpss, "\"\n");
             quotes = false;
         }
         get_mnemonic(key, mn);
         if (*mn)
         {
-            fprintf(fpss, "%s", mn);
+            std::fprintf(fpss, "%s", mn);
         }
         else if (check_vidmode_key(0, key) >= 0)
         {
@@ -409,7 +408,7 @@ void recordshw(int key)
         }
         else   // not ASCII and not FN key
         {
-            fprintf(fpss, "%4d", key);
+            std::fprintf(fpss, "%4d", key);
         }
         fputc('\n', fpss);
     }

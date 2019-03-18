@@ -6,10 +6,9 @@ Wesley Loewer's Big Numbers.        (C) 1994-95, Wesley B. Loewer
 #include "port.h"
 #include "big.h"
 
-#include <stdio.h>
-
 #include <cfloat>
 #include <cmath>
+#include <cstdio>
 #include <cstdlib>
 #include <cstring>
 
@@ -23,10 +22,10 @@ void bf_hexdump(bf_t r)
 {
     for (int i = 0; i < bflength; i++)
     {
-        printf("%02X ", *(r+i));
+        std::printf("%02X ", *(r+i));
     }
-    printf(" e %04hX ", (S16)big_access16(r+bflength));
-    printf("\n");
+    std::printf(" e %04hX ", (S16)big_access16(r+bflength));
+    std::printf("\n");
     return;
 }
 
@@ -902,7 +901,7 @@ bf_t unsafe_sincos_bf(bf_t s, bf_t c, bf_t n)
         }
         k = !k; // toggle
 #if defined(CALCULATING_BIG_PI) && !defined(_WIN32)
-        printf("."); // lets you know it's doing something
+        std::printf("."); // lets you know it's doing something
 #endif
     }
     while (!cos_done || !sin_done);
@@ -1028,7 +1027,7 @@ bf_t unsafe_atan_bf(bf_t r, bf_t n)
         bftmp3 = orig_bftmp3 + orig_bflength - bflength;
 
 #if defined(CALCULATING_BIG_PI) && !defined(_WIN32)
-        printf("\natan() loop #%i, bflength=%i\nsincos() loops\n", i, bflength);
+        std::printf("\natan() loop #%i, bflength=%i\nsincos() loops\n", i, bflength);
 #endif
         unsafe_sincos_bf(bftmp4, bftmp5, bftmp3);   // sin(r), cos(r)
         copy_bf(bftmp3, r); // restore bftmp3 from sincos_bf()
@@ -1048,7 +1047,7 @@ bf_t unsafe_atan_bf(bf_t r, bf_t n)
             if (comp < 8)  // if match or almost match
             {
 #if defined(CALCULATING_BIG_PI) && !defined(_WIN32)
-                printf("atan() loop comp=%i\n", comp);
+                std::printf("atan() loop comp=%i\n", comp);
 #endif
                 if (comp < 4  // perfect or near perfect match
                     || almost_match == 1)   // close enough for 2nd time
@@ -1061,7 +1060,7 @@ bf_t unsafe_atan_bf(bf_t r, bf_t n)
 #if defined(CALCULATING_BIG_PI) && !defined(_WIN32)
             else
             {
-                printf("atan() loop comp=%i\n", comp);
+                std::printf("atan() loop comp=%i\n", comp);
             }
 #endif
         }
@@ -2479,7 +2478,7 @@ char *bf10tostr_e(char *s, int dec, bf10_t n)
     {
         *(s++) = '0';
     }
-    sprintf(s, "e%d", p);
+    std::sprintf(s, "e%d", p);
     return s;
 }
 

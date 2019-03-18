@@ -30,11 +30,11 @@
 #include "rotate.h"
 
 #include <signal.h>
-#include <stdio.h>
 
 #include <cassert>
 #include <cctype>
 #include <cstdarg>
+#include <cstdio>
 #include <cstring>
 #include <ctime>
 #include <vector>
@@ -646,7 +646,7 @@ int timer(int timertype, int(*subrtn)(), ...)
     std::va_list arg_marker;  // variable arg list
     char *timestring;
     time_t ltime;
-    FILE *fp = nullptr;
+    std::FILE *fp = nullptr;
     int out = 0;
     int i;
 
@@ -686,20 +686,20 @@ int timer(int timertype, int(*subrtn)(), ...)
         switch (timertype)
         {
         case 1:
-            fprintf(fp, "decode ");
+            std::fprintf(fp, "decode ");
             break;
         case 2:
-            fprintf(fp, "encode ");
+            std::fprintf(fp, "encode ");
             break;
         }
-        fprintf(fp, "%s type=%s resolution = %dx%d maxiter=%ld",
+        std::fprintf(fp, "%s type=%s resolution = %dx%d maxiter=%ld",
                 timestring,
                 g_cur_fractal_specific->name,
                 g_logical_screen_x_dots,
                 g_logical_screen_y_dots,
                 g_max_iterations);
-        fprintf(fp, " time= %ld.%02ld secs\n", g_timer_interval/100, g_timer_interval%100);
-        fclose(fp);
+        std::fprintf(fp, " time= %ld.%02ld secs\n", g_timer_interval/100, g_timer_interval%100);
+        std::fclose(fp);
     }
     return out;
 }

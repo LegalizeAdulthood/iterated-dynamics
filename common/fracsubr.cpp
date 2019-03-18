@@ -21,13 +21,13 @@ FRACTALS.C, i.e. which are non-fractal-specific fractal engine subroutines.
 #include "realdos.h"
 #include "soi.h"
 
-#include <stdio.h>
 #include <sys/timeb.h>
 
 #include <algorithm>
 #include <cfloat>
 #include <cmath>
 #include <cstdarg>
+#include <cstdio>
 #include <cstdlib>
 #include <ctime>
 #include <iterator>
@@ -686,11 +686,11 @@ static double fudgetodouble(long l)
 {
     char buf[30];
     double d;
-    sprintf(buf, "%.9g", (double)l / g_fudge_factor);
+    std::sprintf(buf, "%.9g", (double)l / g_fudge_factor);
 #ifndef XFRACT
-    sscanf(buf, "%lg", &d);
+    std::sscanf(buf, "%lg", &d);
 #else
-    sscanf(buf, "%lf", &d);
+    std::sscanf(buf, "%lf", &d);
 #endif
     return d;
 }
@@ -1582,7 +1582,7 @@ void reset_clock()
 #define LOG2  0.693147180F
 #define LOG32 3.465735902F
 
-static FILE *snd_fp = nullptr;
+static std::FILE *snd_fp = nullptr;
 
 // open sound file
 bool snd_open()
@@ -1590,7 +1590,7 @@ bool snd_open()
     static char soundname[] = {"sound001.txt"};
     if ((g_orbit_save_flags & osf_midi) != 0 && snd_fp == nullptr)
     {
-        snd_fp = fopen(soundname, "w");
+        snd_fp = std::fopen(soundname, "w");
         if (snd_fp == nullptr)
         {
             stopmsg(STOPMSG_NONE, "Can't open sound*.txt");
@@ -1612,7 +1612,7 @@ void w_snd(int tone)
         // cppcheck-suppress leakNoVarFunctionCall
         if (snd_open())
         {
-            fprintf(snd_fp, "%-d\n", tone);
+            std::fprintf(snd_fp, "%-d\n", tone);
         }
     }
     g_tab_or_help = false;
@@ -1638,7 +1638,7 @@ void snd_time_write()
     // cppcheck-suppress leakNoVarFunctionCall
     if (snd_open())
     {
-        fprintf(snd_fp, "time=%-ld\n", (long)std::clock()*1000/CLOCKS_PER_SEC);
+        std::fprintf(snd_fp, "time=%-ld\n", (long)std::clock()*1000/CLOCKS_PER_SEC);
     }
 }
 
@@ -1646,7 +1646,7 @@ void close_snd()
 {
     if (snd_fp)
     {
-        fclose(snd_fp);
+        std::fclose(snd_fp);
     }
     snd_fp = nullptr;
 }

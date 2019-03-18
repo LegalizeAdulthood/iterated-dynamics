@@ -7,9 +7,8 @@ Wesley Loewer's Big Numbers.        (C) 1994-95, Wesley B. Loewer
 
 #include "big.h"
 
-#include <stdio.h>
-
 #include <cfloat>
+#include <cstdio>
 #include <cstring>
 
 /********************************************************************
@@ -960,7 +959,7 @@ bf_t floattobf(bf_t r, LDBL f)
 bf_t floattobf1(bf_t r, LDBL f)
 {
     char msg[80];
-    sprintf(msg, "%-.22Le", f);
+    std::sprintf(msg, "%-.22Le", f);
     strtobf(r, msg);
     return r;
 }

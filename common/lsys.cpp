@@ -12,10 +12,9 @@
 #include "miscres.h"
 #include "realdos.h"
 
-#include <stdio.h>
-
 #include <cassert>
 #include <cmath>
+#include <cstdio>
 #include <cstdlib>
 #include <cstring>
 #include <string>
@@ -138,7 +137,7 @@ bool readLSystemFile(char const *str)
 {
     int err = 0;
     char inline1[MAX_LSYS_LINE_LEN+1];
-    FILE *infile;
+    std::FILE *infile;
 
     if (find_file_item(g_l_system_filename, str, &infile, 2))
     {
@@ -199,7 +198,7 @@ bool readLSystemFile(char const *str)
 
                 if (std::strchr("+-/\\@|!c<>][", *word))
                 {
-                    sprintf(&msgbuf[std::strlen(msgbuf)],
+                    std::sprintf(&msgbuf[std::strlen(msgbuf)],
                             "Syntax error line %d: Redefined reserved symbol %s\n", linenum, word);
                     ++err;
                     break;
@@ -230,7 +229,7 @@ bool readLSystemFile(char const *str)
             }
             else if (err < 6)
             {
-                sprintf(&msgbuf[std::strlen(msgbuf)],
+                std::sprintf(&msgbuf[std::strlen(msgbuf)],
                         "Syntax error line %d: %s\n", linenum, word);
                 ++err;
             }
@@ -241,7 +240,7 @@ bool readLSystemFile(char const *str)
                 {
                     if (err < 6)
                     {
-                        sprintf(&msgbuf[std::strlen(msgbuf)],
+                        std::sprintf(&msgbuf[std::strlen(msgbuf)],
                                 "Extra text after command line %d: %s\n", linenum, word);
                         ++err;
                     }
@@ -249,7 +248,7 @@ bool readLSystemFile(char const *str)
             }
         }
     }
-    fclose(infile);
+    std::fclose(infile);
     if (axiom.empty() && err < 6)
     {
         std::strcat(msgbuf, "Error:  no axiom\n");

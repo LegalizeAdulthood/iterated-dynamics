@@ -7,9 +7,8 @@
 #include "port.h"
 #include "helpcom.h"
 
-#include <stdio.h>
-
 #include <cassert>
+#include <cstdio>
 #include <cstring>
 
 #ifdef XFRACT
@@ -519,7 +518,7 @@ bool process_document(PD_FUNC get_info, PD_FUNC output, void *info)
                             if (get_info(PD_GET_LINK_PAGE, &pd, info))
                             {
                                 in_link = 1;
-                                sprintf(page_text, "(p. %d)", pd.i);
+                                std::sprintf(page_text, "(p. %d)", pd.i);
                             }
                             else
                             {
@@ -672,7 +671,7 @@ bool process_document(PD_FUNC get_info, PD_FUNC output, void *info)
                     if (get_info(PD_GET_LINK_PAGE, &pd, info))
                     {
                         width += 9;
-                        sprintf(page_text, " (p. %d)", pd.i);
+                        std::sprintf(page_text, " (p. %d)", pd.i);
                         if (!do_print(page_text, (int) std::strlen(page_text)))
                         {
                             return false;

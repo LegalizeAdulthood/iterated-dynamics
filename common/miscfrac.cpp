@@ -25,10 +25,9 @@ Miscellaneous fractal-specific code (formerly in CALCFRAC.C)
 #include "rotate.h"
 #include "testpt.h"
 
-#include <stdio.h>
-
 #include <algorithm>
 #include <cmath>
+#include <cstdio>
 #include <cstdlib>
 #include <cstring>
 #include <vector>
@@ -1711,7 +1710,7 @@ void abort_cellular(int err, int t)
     case BAD_T:
     {
         char msg[30];
-        sprintf(msg, "Bad t=%d, aborting\n", t);
+        std::sprintf(msg, "Bad t=%d, aborting\n", t);
         stopmsg(STOPMSG_NONE, msg);
     }
     break;
@@ -1824,7 +1823,7 @@ int cellular()
     if (randparam != 0 && randparam != -1)
     {
         n = g_params[0];
-        sprintf(buf, "%.16g", n); // # of digits in initial string
+        std::sprintf(buf, "%.16g", n); // # of digits in initial string
         t = (S16)std::strlen(buf);
         if (t>16 || t <= 0)
         {
@@ -1880,7 +1879,7 @@ int cellular()
         }
         g_params[1] = n;
     }
-    sprintf(buf, "%.*g", rule_digits , n);
+    std::sprintf(buf, "%.*g", rule_digits , n);
     t = (S16)std::strlen(buf);
     if (rule_digits < t || t < 0)
     {

@@ -13,9 +13,9 @@
 
 #include <assert.h>
 #include <fcntl.h>
-#include <stdio.h>
 #include <sys/stat.h>
 
+#include <cstdio>
 #include <cstring>
 #include <ctime>
 #include <system_error>
@@ -78,7 +78,7 @@ static bool print_doc_msg_func(int pnum, int num_pages);
 
 // stuff from fractint
 
-static FILE *help_file = nullptr;       // help file handle
+static std::FILE *help_file = nullptr;       // help file handle
 static long base_off;                   // offset to help info in help file
 static int max_links;                   // max # of links in any page
 static int max_pages;                   // max # of pages in any topic
@@ -370,7 +370,7 @@ static void display_page(char const *title, char const *text, unsigned text_len,
     helpinstr();
     driver_set_attr(2, 0, C_HELP_BODY, 80*22);
     putstringcenter(1, 0, 80, C_HELP_HDG, title);
-    sprintf(temp, "%2d of %d", page+1, num_pages);
+    std::sprintf(temp, "%2d of %d", page+1, num_pages);
 #if !defined(XFRACT) && !defined(_WIN32)
     driver_put_string(1, 79-(6 + ((num_pages >= 10)?2:1)), C_HELP_INSTR, temp);
 #else
@@ -581,7 +581,7 @@ static int do_move_link(LINK *link, int num_link, int *curr, int (*f)(LINK *, in
     return 0;
 }
 
-inline void freader(void *ptr, size_t size, size_t nmemb, FILE *stream)
+inline void freader(void *ptr, size_t size, size_t nmemb, std::FILE *stream)
 {
     if (fread(ptr, size, nmemb, stream) != nmemb)
     {
@@ -1080,7 +1080,7 @@ struct PRINT_DOC_INFO
 
     bool (*msg_func)(int pnum, int num_page);
 
-    FILE     *file;          // file to sent output to
+    std::FILE     *file;          // file to sent output to
     int       margin;        // indent text by this much
     bool      start_of_line; // are we at the beginning of a line?
     int       spaces;        // number of spaces in a row
@@ -1237,11 +1237,11 @@ static bool print_doc_output(int cmd, PD_INFO *pd, void *context)
         info->margin = 0;
 
         std::memset(line, ' ', 81);
-        sprintf(buff, "Fractint Version %d.%01d%c", g_release/100, (g_release%100)/10,
+        std::sprintf(buff, "Fractint Version %d.%01d%c", g_release/100, (g_release%100)/10,
                 ((g_release%10) ? '0'+(g_release%10) : ' '));
         std::memmove(line + ((width-(int)(std::strlen(buff))) / 2)-4, buff, std::strlen(buff));
 
-        sprintf(buff, "Page %d", pd->page_num);
+        std::sprintf(buff, "Page %d", pd->page_num);
         std::memmove(line + (width - (int)std::strlen(buff)), buff, std::strlen(buff));
 
         printerc(info, '\n', 1);
@@ -1324,7 +1324,7 @@ static bool print_doc_msg_func(int pnum, int num_pages)
         driver_hide_text_cursor();
     }
 
-    sprintf(temp, "%d%%", (int)((100.0 / num_pages) * pnum));
+    std::sprintf(temp, "%d%%", (int)((100.0 / num_pages) * pnum));
     driver_put_string(7, 41, C_HELP_LINK, temp);
 
     while (driver_key_pressed())
@@ -1346,12 +1346,12 @@ bool makedoc_msg_func(int pnum, int num_pages)
 
     if (pnum >= 0)
     {
-        sprintf(buffer, "\rcompleted %d%%", (int)((100.0 / num_pages) * pnum));
+        std::sprintf(buffer, "\rcompleted %d%%", (int)((100.0 / num_pages) * pnum));
         result = true;
     }
     else if (pnum == -2)
     {
-        sprintf(buffer, "\n*** aborted\n");
+        std::sprintf(buffer, "\n*** aborted\n");
     }
     stopmsg(STOPMSG_NONE, buffer);
     return result;
@@ -1361,7 +1361,7 @@ void print_document(char const *outfname, bool (*msg_func)(int, int), int save_e
 {
     PRINT_DOC_INFO info;
     bool success = false;
-    FILE *temp_file = nullptr;
+    std::FILE *temp_file = nullptr;
     char const *msg = nullptr;
 
     help_seek(16L);
@@ -1380,7 +1380,7 @@ void print_document(char const *outfname, bool (*msg_func)(int, int), int save_e
 
     if (save_extraseg)
     {
-        temp_file = fopen(TEMP_FILE_NAME, "wb");
+        temp_file = std::fopen(TEMP_FILE_NAME, "wb");
         if (temp_file == nullptr)
         {
             msg = "Unable to create temporary file.\n";
@@ -1394,7 +1394,7 @@ void print_document(char const *outfname, bool (*msg_func)(int, int), int save_e
         }
     }
 
-    info.file = fopen(outfname, "wt");
+    info.file = std::fopen(outfname, "wt");
     if (info.file == nullptr)
     {
         msg = "Unable to create output file.\n";
@@ -1407,7 +1407,7 @@ void print_document(char const *outfname, bool (*msg_func)(int, int), int save_e
 
     success = process_document(print_doc_get_info,
                                print_doc_output,   &info);
-    fclose(info.file);
+    std::fclose(info.file);
 
     if (save_extraseg)
     {
@@ -1427,7 +1427,7 @@ void print_document(char const *outfname, bool (*msg_func)(int, int), int save_e
 ErrorAbort:
     if (temp_file != nullptr)
     {
-        fclose(temp_file);
+        std::fclose(temp_file);
         unlink(TEMP_FILE_NAME);
         temp_file = nullptr;
     }
@@ -1453,19 +1453,19 @@ int init_help()
 
     if (find_file("fractint.hlp", path))
     {
-        help_file = fopen(path, "rb");
+        help_file = std::fopen(path, "rb");
         if (help_file != nullptr)
         {
             freader(&hs, sizeof(long)+sizeof(int), 1, help_file);
 
             if (hs.sig != HELP_SIG)
             {
-                fclose(help_file);
+                std::fclose(help_file);
                 stopmsg(STOPMSG_NO_STACK, "Invalid help signature in FRACTINT.HLP!\n");
             }
             else if (hs.version != IDHELP_VERSION)
             {
-                fclose(help_file);
+                std::fclose(help_file);
                 stopmsg(STOPMSG_NO_STACK, "Wrong help version in FRACTINT.HLP!\n");
             }
             else
@@ -1515,7 +1515,7 @@ int init_help()
 
     if (!resized)
     {
-        fclose(help_file);
+        std::fclose(help_file);
         help_file = nullptr;
         stopmsg(STOPMSG_NO_STACK, "Not enough memory for help system!\n");
 
@@ -1535,7 +1535,7 @@ void end_help()
 {
     if (help_file != nullptr)
     {
-        fclose(help_file);
+        std::fclose(help_file);
         help_file = nullptr;
     }
 }

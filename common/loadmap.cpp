@@ -8,8 +8,7 @@
 #include "realdos.h"
 #include "rotate.h"
 
-#include <stdio.h>
-
+#include <cstdio>
 #include <cstring>
 
 //*************************************************************************
@@ -30,7 +29,7 @@ struct Palettetype
 
 bool ValidateLuts(char const *fn)
 {
-    FILE * f;
+    std::FILE * f;
     unsigned        r, g, b;
     char    line[160];
     char    temp[FILE_MAX_PATH+1];
@@ -47,10 +46,10 @@ bool ValidateLuts(char const *fn)
         std::strcat(temp, ".map");  // No? Then add .map
     }
     findpath(temp, line);         // search the dos path
-    f = fopen(line, "r");
+    f = std::fopen(line, "r");
     if (f == nullptr)
     {
-        sprintf(line, "Could not load color map %s", fn);
+        std::sprintf(line, "Could not load color map %s", fn);
         stopmsg(STOPMSG_NONE, line);
         return true;
     }
@@ -61,13 +60,13 @@ bool ValidateLuts(char const *fn)
         {
             break;
         }
-        sscanf(line, "%u %u %u", &r, &g, &b);
+        std::sscanf(line, "%u %u %u", &r, &g, &b);
         //* load global dac values *
         dac[index].red   = (BYTE)((r%256) >> 2);// maps default to 8 bits
         dac[index].green = (BYTE)((g%256) >> 2);// DAC wants 6 bits
         dac[index].blue  = (BYTE)((b%256) >> 2);
     }
-    fclose(f);
+    std::fclose(f);
     while (index < 256)
     {
         // zap unset entries

@@ -18,10 +18,9 @@
 #include "rotate.h"
 #include "zoom.h"
 
-#include <stdio.h>
-
 #include <algorithm>
 #include <cstdarg>
+#include <cstdio>
 #include <cstring>
 #include <system_error>
 #include <vector>
@@ -1565,7 +1564,7 @@ struct PalTable
     int exclude;
     bool auto_select;
     PALENTRY      pal[256];
-    FILE         *undo_file;
+    std::FILE         *undo_file;
     bool curr_changed;
     int           num_redo;
     bool hidden;
@@ -1843,7 +1842,7 @@ static void PalTable__DrawStatus(PalTable *me, bool stripe_mode)
 
         {
             char buff[80];
-            sprintf(buff, "%c%c%c%c",
+            std::sprintf(buff, "%c%c%c%c",
                     me->auto_select ? 'A' : ' ',
                     (me->exclude == 1)  ? 'X' : (me->exclude == 2) ? 'Y' : ' ',
                     me->freestyle ? 'F' : ' ',
@@ -1851,7 +1850,7 @@ static void PalTable__DrawStatus(PalTable *me, bool stripe_mode)
             driver_display_string(x, y, fg_color, bg_color, buff);
 
             y = y - 10;
-            sprintf(buff, "%d", color);
+            std::sprintf(buff, "%d", color);
             driver_display_string(x, y, fg_color, bg_color, buff);
         }
         Cursor_Show();
@@ -2581,13 +2580,13 @@ static void PalTable__other_key(int key, RGBEditor *rgb, void *info)
     {
         int i;
         char buf[20];
-        sprintf(buf, "%.3f", 1./gamma_val);
+        std::sprintf(buf, "%.3f", 1./gamma_val);
         driver_stack_screen();
         i = field_prompt("Enter gamma value", nullptr, buf, 20, nullptr);
         driver_unstack_screen();
         if (i != -1)
         {
-            sscanf(buf, "%f", &gamma_val);
+            std::sscanf(buf, "%f", &gamma_val);
             if (gamma_val == 0)
             {
                 gamma_val = 0.0000000001F;
@@ -3050,7 +3049,7 @@ static void PalTable_Destroy(PalTable *me)
 {
     if (me->undo_file != nullptr)
     {
-        fclose(me->undo_file);
+        std::fclose(me->undo_file);
         dir_remove(g_temp_dir.c_str(), undofile);
     }
 

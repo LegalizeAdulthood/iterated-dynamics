@@ -10,6 +10,9 @@
 #include <cctype>
 #include <cerrno>
 #include <cstdarg>
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
 #include <fstream>
 #include <iostream>
 #include <iterator>
@@ -21,10 +24,6 @@
 
 #include <assert.h>
 #include <fcntl.h>
-#include <stdio.h>
-
-#include <cstdlib>
-#include <cstring>
 
 #include "id_io.h"
 #include "port.h"
@@ -197,7 +196,7 @@ int      max_pages        = 0;    // max. pages in any topic
 int      max_links        = 0;    // max. links on any page
 int      num_doc_pages    = 0;    // total number of pages in document
 
-FILE    *srcfile;                 // .SRC file
+std::FILE    *srcfile;                 // .SRC file
 int      srcline          = 0;    // .SRC line number (used for errors)
 int      srccol           = 0;    // .SRC column.
 
@@ -213,7 +212,7 @@ std::string src_cfname;           // current .SRC filename
 
 int      format_exclude   = 0;    // disable formatting at this col, 0 to
 //    never disable formatting
-FILE    *swapfile;
+std::FILE    *swapfile;
 long     swappos;
 
 std::vector<char> buffer;         // alloc'ed as BUFFER_SIZE bytes
@@ -228,7 +227,7 @@ int const MAX_INCLUDE_STACK = 5;    // allow 5 nested includes
 struct include_stack_entry
 {
     std::string fname;
-    FILE *file;
+    std::FILE *file;
     int   line;
     int   col;
 };
@@ -353,10 +352,10 @@ std::ostream &operator<<(std::ostream &str, TOPIC const &topic)
 
 void report_errors()
 {
-    printf("\n");
-    printf("Compiler Status:\n");
-    printf("%8d Error%c\n",       errors, (errors == 1)   ? ' ' : 's');
-    printf("%8d Warning%c\n",     warnings, (warnings == 1) ? ' ' : 's');
+    std::printf("\n");
+    std::printf("Compiler Status:\n");
+    std::printf("%8d Error%c\n",       errors, (errors == 1)   ? ' ' : 's');
+    std::printf("%8d Warning%c\n",     warnings, (warnings == 1) ? ' ' : 's');
 }
 
 
@@ -364,15 +363,15 @@ void print_msg(char const *type, int lnum, char const *format, std::va_list arg)
 {
     if (type != nullptr)
     {
-        printf("   %s", type);
+        std::printf("   %s", type);
         if (lnum > 0)
         {
-            printf(" %s %d", src_cfname.c_str(), lnum);
+            std::printf(" %s %d", src_cfname.c_str(), lnum);
         }
-        printf(": ");
+        std::printf(": ");
     }
     vprintf(format, arg);
-    printf("\n");
+    std::printf("\n");
 }
 
 void fatal(int diff, char const *format, ...)
@@ -446,11 +445,11 @@ void msg(char const *format, ...)
 
 
 #ifdef SHOW_ERROR_LINE
-#   define fatal  (printf("[%04d] ", __LINE__), fatal)
-#   define error  (printf("[%04d] ", __LINE__), error)
-#   define warn   (printf("[%04d] ", __LINE__), warn)
-#   define notice (printf("[%04d] ", __LINE__), notice)
-#   define msg    (quiet_mode ? 0 : printf("[%04d] ", __LINE__), msg)
+#   define fatal  (std::printf("[%04d] ", __LINE__), fatal)
+#   define error  (std::printf("[%04d] ", __LINE__), error)
+#   define warn   (std::printf("[%04d] ", __LINE__), warn)
+#   define notice (std::printf("[%04d] ", __LINE__), notice)
+#   define msg    (quiet_mode ? 0 : std::printf("[%04d] ", __LINE__), msg)
 #endif
 
 
@@ -852,11 +851,11 @@ char *pchar(int ch)
 
     if (ch >= 0x20 && ch <= 0x7E)
     {
-        sprintf(buff, "\'%c\'", ch);
+        std::sprintf(buff, "\'%c\'", ch);
     }
     else
     {
-        sprintf(buff, "\'\\x%02X\'", ch&0xFF);
+        std::sprintf(buff, "\'\\x%02X\'", ch&0xFF);
     }
 
     return buff;
@@ -1003,14 +1002,14 @@ void process_doc_contents(modes mode)
             // now, make the entry in the buffer
             if (mode == modes::HTML)
             {
-                sprintf(curr, "%s", rst_name(c.name).c_str());
+                std::sprintf(curr, "%s", rst_name(c.name).c_str());
                 char *ptr = curr + (int) std::strlen(curr);
                 c.page_num_pos = 0U;
                 curr = ptr;
             }
             else
             {
-                sprintf(curr, "%-5s %*.0s%s", c.id.c_str(), indent*2, "", c.name.c_str());
+                std::sprintf(curr, "%-5s %*.0s%s", c.id.c_str(), indent*2, "", c.name.c_str());
                 char *ptr = curr + (int) std::strlen(curr);
                 while ((ptr-curr) < PAGE_WIDTH-10)
                 {
@@ -1214,7 +1213,7 @@ int create_table()
 
     ptr++;
 
-    len = sscanf(ptr, " %d %d %d", &width, &cols, &start_off);
+    len = std::sscanf(ptr, " %d %d %d", &width, &cols, &start_off);
 
     if (len < 3)
     {
@@ -1537,15 +1536,15 @@ void check_command_length(int eoff, int len)
 }
 
 
-FILE *open_include(std::string const &file_name)
+std::FILE *open_include(std::string const &file_name)
 {
-    FILE *result = fopen(file_name.c_str(), "rt");
+    std::FILE *result = std::fopen(file_name.c_str(), "rt");
     if (result == nullptr)
     {
         for (std::string const &dir : g_include_paths)
         {
             std::string const path{dir + '/' + file_name};
-            result = fopen(path.c_str(), "rt");
+            result = std::fopen(path.c_str(), "rt");
             if (result != nullptr)
             {
                 return result;
@@ -1596,7 +1595,7 @@ void read_src(std::string const &fname, modes mode)
         {
             if (include_stack_top >= 0)
             {
-                fclose(srcfile);
+                std::fclose(srcfile);
                 src_cfname = include_stack[include_stack_top].fname;
                 srcfile = include_stack[include_stack_top].file;
                 srcline = include_stack[include_stack_top].line;
@@ -2612,7 +2611,7 @@ void read_src(std::string const &fname, modes mode)
         check_buffer(0);
     } // while ( 1 )
 
-    fclose(srcfile);
+    std::fclose(srcfile);
 
     srcline = -1;
 }
@@ -3086,7 +3085,7 @@ void set_content_doc_page()
     for (CONTENT const &c : g_contents)
     {
         assert(c.doc_page >= 1);
-        sprintf(buf, "%d", c.doc_page);
+        std::sprintf(buf, "%d", c.doc_page);
         len = (int) std::strlen(buf);
         assert(len <= 3);
         std::memcpy(base + c.page_num_pos + (3 - len), buf, len);
@@ -3266,7 +3265,7 @@ void sort_labels()
 
 
 // returns true if different
-bool compare_files(FILE *f1, FILE *f2)
+bool compare_files(std::FILE *f1, std::FILE *f2)
 {
     if (filelength(fileno(f1)) != filelength(fileno(f2)))
     {
@@ -3285,25 +3284,25 @@ bool compare_files(FILE *f1, FILE *f2)
 }
 
 
-void _write_hdr(char const *fname, FILE *file)
+void _write_hdr(char const *fname, std::FILE *file)
 {
     char nfile[MAXFILE],
          next[MAXEXT];
 
     FNSPLIT(fname, nullptr, nullptr, nfile, next);
-    fprintf(file, "#if !defined(HELP_DEFS_H)\n"
+    std::fprintf(file, "#if !defined(HELP_DEFS_H)\n"
         "#define HELP_DEFS_H\n"
         "\n/*\n * %s%s\n", nfile, next);
     FNSPLIT(src_fname.c_str(), nullptr, nullptr, nfile, next);
-    fprintf(file, " *\n * Contains #defines for help.\n *\n");
-    fprintf(file, " * Generated by HC from: %s%s\n *\n */\n\n\n", nfile, next);
+    std::fprintf(file, " *\n * Contains #defines for help.\n *\n");
+    std::fprintf(file, " * Generated by HC from: %s%s\n *\n */\n\n\n", nfile, next);
 
-    fprintf(file, "/* current help file version */\n");
-    fprintf(file, "\n");
-    fprintf(file, "#define %-32s %3d\n", "IDHELP_VERSION", version);
-    fprintf(file, "\n\n");
+    std::fprintf(file, "/* current help file version */\n");
+    std::fprintf(file, "\n");
+    std::fprintf(file, "#define %-32s %3d\n", "IDHELP_VERSION", version);
+    std::fprintf(file, "\n\n");
 
-    fprintf(file, "/* labels */\n"
+    std::fprintf(file, "/* labels */\n"
         "\n"
         "enum class help_labels\n"
         "{\n"
@@ -3316,15 +3315,15 @@ void _write_hdr(char const *fname, FILE *file)
     {
         if (g_labels[ctr].name[0] != '@')  // if it's not a local label...
         {
-            fprintf(file, "    %-32s = %3d%s", g_labels[ctr].name.c_str(), ctr, ctr != static_cast<int>(g_labels.size())-1 ? "," : "");
+            std::fprintf(file, "    %-32s = %3d%s", g_labels[ctr].name.c_str(), ctr, ctr != static_cast<int>(g_labels.size())-1 ? "," : "");
             if (g_labels[ctr].name == INDEX_LABEL)
             {
-                fprintf(file, "        /* index */");
+                std::fprintf(file, "        /* index */");
             }
-            fprintf(file, "\n");
+            std::fprintf(file, "\n");
         }
     }
-    fprintf(file, "};\n"
+    std::fprintf(file, "};\n"
         "\n"
         "\n"
         "#endif\n");
@@ -3333,29 +3332,29 @@ void _write_hdr(char const *fname, FILE *file)
 
 void write_hdr(char const *fname)
 {
-    FILE *temp,
+    std::FILE *temp,
          *hdr;
 
-    hdr = fopen(fname, "rt");
+    hdr = std::fopen(fname, "rt");
 
     if (hdr == nullptr)
     {
         // if no prev. hdr file generate a new one
-        hdr = fopen(fname, "wt");
+        hdr = std::fopen(fname, "wt");
         if (hdr == nullptr)
         {
             fatal(0, "Cannot create \"%s\".", fname);
         }
         msg("Writing: %s", fname);
         _write_hdr(fname, hdr);
-        fclose(hdr);
+        std::fclose(hdr);
         notice("FRACTINT must be re-compiled.");
         return ;
     }
 
     msg("Comparing: %s", fname);
 
-    temp = fopen(TEMP_FNAME, "wt");
+    temp = std::fopen(TEMP_FNAME, "wt");
 
     if (temp == nullptr)
     {
@@ -3364,8 +3363,8 @@ void write_hdr(char const *fname)
 
     _write_hdr(fname, temp);
 
-    fclose(temp);
-    temp = fopen(TEMP_FNAME, "rt");
+    std::fclose(temp);
+    temp = std::fopen(TEMP_FNAME, "rt");
 
     if (temp == nullptr)
     {
@@ -3375,8 +3374,8 @@ void write_hdr(char const *fname)
     if (compare_files(temp, hdr))     // if they are different...
     {
         msg("Updating: %s", fname);
-        fclose(temp);
-        fclose(hdr);
+        std::fclose(temp);
+        std::fclose(hdr);
         unlink(fname);               // delete the old hdr file
         rename(TEMP_FNAME, fname);   // rename the temp to the hdr file
         notice("FRACTINT must be re-compiled.");
@@ -3384,8 +3383,8 @@ void write_hdr(char const *fname)
     else
     {
         // if they are the same leave the original alone.
-        fclose(temp);
-        fclose(hdr);
+        std::fclose(temp);
+        std::fclose(hdr);
         unlink(TEMP_FNAME);      // delete the temp
     }
 }
@@ -3452,7 +3451,7 @@ void insert_real_link_info(char *curr, unsigned int len)
 }
 
 
-void _write_help(FILE *file)
+void _write_help(std::FILE *file)
 {
     char                 *text;
     help_sig_info  hs;
@@ -3552,9 +3551,9 @@ void _write_help(FILE *file)
 
 void write_help(char const *fname)
 {
-    FILE *hlp;
+    std::FILE *hlp;
 
-    hlp = fopen(fname, "wb");
+    hlp = std::fopen(fname, "wb");
 
     if (hlp == nullptr)
     {
@@ -3565,7 +3564,7 @@ void write_help(char const *fname)
 
     _write_help(hlp);
 
-    fclose(hlp);
+    std::fclose(hlp);
 }
 
 
@@ -3576,7 +3575,7 @@ void write_help(char const *fname)
 
 struct PRINT_DOC_INFO : public DOC_INFO
 {
-    FILE    *file;
+    std::FILE    *file;
     int      margin;
     bool     start_of_line;
     int      spaces;
@@ -3706,7 +3705,7 @@ void print_document(char const *fname)
     info.content_num = info.topic_num;
     info.link_dest_warn = false;
 
-    info.file = fopen(fname, "wt");
+    info.file = std::fopen(fname, "wt");
     if (info.file == nullptr)
     {
         fatal(0, "Couldn't create \"%s\"", fname);
@@ -3718,7 +3717,7 @@ void print_document(char const *fname)
 
     process_document(pd_get_info, print_doc_output, &info);
 
-    fclose(info.file);
+    std::fclose(info.file);
 }
 
 
@@ -3785,17 +3784,17 @@ void report_memory()
 
     dead += (g_contents.capacity() - g_contents.size())*sizeof(CONTENT);
 
-    printf("\n");
-    printf("Memory Usage:\n");
-    printf("%8ld Bytes in buffers.\n", (long)BUFFER_SIZE);
-    printf("%8ld Bytes in strings.\n", bytes_in_strings);
-    printf("%8ld Bytes in data.\n", data);
-    printf("%8ld Bytes in dead space.\n", dead);
-    printf("--------\n");
-    printf("%8ld Bytes total.\n", (long)BUFFER_SIZE+bytes_in_strings+data+dead);
-    printf("\n");
-    printf("Disk Usage:\n");
-    printf("%8ld Bytes in topic text.\n", text);
+    std::printf("\n");
+    std::printf("Memory Usage:\n");
+    std::printf("%8ld Bytes in buffers.\n", (long)BUFFER_SIZE);
+    std::printf("%8ld Bytes in strings.\n", bytes_in_strings);
+    std::printf("%8ld Bytes in data.\n", data);
+    std::printf("%8ld Bytes in dead space.\n", dead);
+    std::printf("--------\n");
+    std::printf("%8ld Bytes total.\n", (long)BUFFER_SIZE+bytes_in_strings+data+dead);
+    std::printf("\n");
+    std::printf("Disk Usage:\n");
+    std::printf("%8ld Bytes in topic text.\n", text);
 }
 
 
@@ -3807,15 +3806,15 @@ void report_stats()
         pages += t.num_page;
     }
 
-    printf("\n");
-    printf("Statistics:\n");
-    printf("%8d Topics\n", static_cast<int>(g_topics.size()));
-    printf("%8d Links\n", static_cast<int>(g_all_links.size()));
-    printf("%8d Labels\n", static_cast<int>(g_labels.size()));
-    printf("%8d Private labels\n", static_cast<int>(g_private_labels.size()));
-    printf("%8d Table of contents (DocContent) entries\n", static_cast<int>(g_contents.size()));
-    printf("%8d Online help pages\n", pages);
-    printf("%8d Document pages\n", num_doc_pages);
+    std::printf("\n");
+    std::printf("Statistics:\n");
+    std::printf("%8d Topics\n", static_cast<int>(g_topics.size()));
+    std::printf("%8d Links\n", static_cast<int>(g_all_links.size()));
+    std::printf("%8d Labels\n", static_cast<int>(g_labels.size()));
+    std::printf("%8d Private labels\n", static_cast<int>(g_private_labels.size()));
+    std::printf("%8d Table of contents (DocContent) entries\n", static_cast<int>(g_contents.size()));
+    std::printf("%8d Online help pages\n", pages);
+    std::printf("%8d Document pages\n", num_doc_pages);
 }
 
 
@@ -3987,7 +3986,7 @@ public:
     {
         if (swapfile != nullptr)
         {
-            fclose(swapfile);
+            std::fclose(swapfile);
             unlink(swappath.c_str());
         }
     }
@@ -4176,7 +4175,7 @@ void compiler::parse_arguments()
 
 int compiler::process()
 {
-    printf("HC - FRACTINT Help Compiler.\n\n");
+    std::printf("HC - FRACTINT Help Compiler.\n\n");
 
     buffer.resize(BUFFER_SIZE);
 
@@ -4219,27 +4218,27 @@ int compiler::process()
 
 void compiler::usage()
 {
-    printf("To compile a .SRC file:\n");
-    printf("      HC /c [/s] [/m] [/r[path]] [src_file]\n");
-    printf("         /s       = report statistics.\n");
-    printf("         /m       = report memory usage.\n");
-    printf("         /r[path] = set swap file path.\n");
-    printf("         src_file = .SRC file.  Default is \"%s\"\n", DEFAULT_SRC_FNAME);
-    printf("To print a .SRC file:\n");
-    printf("      HC /p [/r[path]] [src_file] [out_file]\n");
-    printf("         /r[path] = set swap file path.\n");
-    printf("         src_file = .SRC file.  Default is \"%s\"\n", DEFAULT_SRC_FNAME);
-    printf("         out_file = Filename to print to. Default is \"%s\"\n",
+    std::printf("To compile a .SRC file:\n");
+    std::printf("      HC /c [/s] [/m] [/r[path]] [src_file]\n");
+    std::printf("         /s       = report statistics.\n");
+    std::printf("         /m       = report memory usage.\n");
+    std::printf("         /r[path] = set swap file path.\n");
+    std::printf("         src_file = .SRC file.  Default is \"%s\"\n", DEFAULT_SRC_FNAME);
+    std::printf("To print a .SRC file:\n");
+    std::printf("      HC /p [/r[path]] [src_file] [out_file]\n");
+    std::printf("         /r[path] = set swap file path.\n");
+    std::printf("         src_file = .SRC file.  Default is \"%s\"\n", DEFAULT_SRC_FNAME);
+    std::printf("         out_file = Filename to print to. Default is \"%s\"\n",
         DEFAULT_DOC_FNAME);
-    printf("To append a .HLP file to an .EXE file:\n");
-    printf("      HC /a [hlp_file] [exe_file]\n");
-    printf("         hlp_file = .HLP file.  Default is \"%s\"\n", DEFAULT_HLP_FNAME);
-    printf("         exe_file = .EXE file.  Default is \"%s\"\n", DEFAULT_EXE_FNAME);
-    printf("To delete help info from an .EXE file:\n");
-    printf("      HC /d [exe_file]\n");
-    printf("         exe_file = .EXE file.  Default is \"%s\"\n", DEFAULT_EXE_FNAME);
-    printf("\n");
-    printf("Use \"/q\" for quiet mode. (No status messages.)\n");
+    std::printf("To append a .HLP file to an .EXE file:\n");
+    std::printf("      HC /a [hlp_file] [exe_file]\n");
+    std::printf("         hlp_file = .HLP file.  Default is \"%s\"\n", DEFAULT_HLP_FNAME);
+    std::printf("         exe_file = .EXE file.  Default is \"%s\"\n", DEFAULT_EXE_FNAME);
+    std::printf("To delete help info from an .EXE file:\n");
+    std::printf("      HC /d [exe_file]\n");
+    std::printf("         exe_file = .EXE file.  Default is \"%s\"\n", DEFAULT_EXE_FNAME);
+    std::printf("\n");
+    std::printf("Use \"/q\" for quiet mode. (No status messages.)\n");
 }
 
 void compiler::read_source_file(modes mode)
@@ -4248,7 +4247,7 @@ void compiler::read_source_file(modes mode)
 
     swappath += SWAP_FNAME;
 
-    swapfile = fopen(swappath.c_str(), "w+b");
+    swapfile = std::fopen(swappath.c_str(), "w+b");
     if (swapfile == nullptr)
     {
         fatal(0, "Cannot create swap file \"%s\"", swappath.c_str());
