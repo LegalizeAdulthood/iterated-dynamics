@@ -368,17 +368,17 @@ gdi_write_palette(Driver *drv)
 *----------------------------------------------------------------------
 */
 static void
-gdi_schedule_alarm(Driver *drv, int soon)
+gdi_schedule_alarm(Driver *drv, int secs)
 {
     DI(di);
-    soon = (soon ? 1 : DRAW_INTERVAL)*1000;
+    secs = (secs ? 1 : DRAW_INTERVAL)*1000;
     if (di->text_not_graphics)
     {
-        wintext_schedule_alarm(&di->base.wintext, soon);
+        wintext_schedule_alarm(&di->base.wintext, secs);
     }
     else
     {
-        plot_schedule_alarm(&di->plot, soon);
+        plot_schedule_alarm(&di->plot, secs);
     }
 }
 

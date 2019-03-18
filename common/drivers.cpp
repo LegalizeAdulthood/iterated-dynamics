@@ -130,9 +130,9 @@ type_ driver_##name_() { return (*g_driver->name_)(g_driver); }
 #define METHOD_INT(name_) METHOD(int, name_)
 
 void
-driver_schedule_alarm(int soon)
+driver_schedule_alarm(int secs)
 {
-    (*g_driver->schedule_alarm)(g_driver, soon);
+    (*g_driver->schedule_alarm)(g_driver, secs);
 }
 
 METHOD_VOID(window)

@@ -768,9 +768,9 @@ static VOID CALLBACK wintext_timer_redraw(HWND window, UINT msg, UINT_PTR idEven
     KillTimer(window, TIMER_ID);
 }
 
-void wintext_schedule_alarm(WinText *me, int delay)
+void wintext_schedule_alarm(WinText *me, int secs)
 {
-    UINT_PTR result = SetTimer(me->hWndCopy, TIMER_ID, delay, wintext_timer_redraw);
+    UINT_PTR result = SetTimer(me->hWndCopy, TIMER_ID, secs, wintext_timer_redraw);
     if (!result)
     {
         DWORD error = GetLastError();

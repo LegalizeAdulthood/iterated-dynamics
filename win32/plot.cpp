@@ -478,9 +478,9 @@ static VOID CALLBACK redraw(HWND window, UINT msg, UINT_PTR idEvent, DWORD dwTim
     KillTimer(window, PLOT_TIMER_ID);
 }
 
-void plot_schedule_alarm(Plot *me, int delay)
+void plot_schedule_alarm(Plot *me, int secs)
 {
-    UINT_PTR result = SetTimer(me->window, PLOT_TIMER_ID, delay, redraw);
+    UINT_PTR result = SetTimer(me->window, PLOT_TIMER_ID, secs, redraw);
     if (!result)
     {
         DWORD error = GetLastError();

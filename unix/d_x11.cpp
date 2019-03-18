@@ -1793,7 +1793,7 @@ static void x11_resume(Driver *drv)
  *----------------------------------------------------------------------
  */
 static void
-x11_schedule_alarm(Driver *drv, int soon)
+x11_schedule_alarm(Driver *drv, int secs)
 {
     DIX11(drv);
 
@@ -1801,7 +1801,7 @@ x11_schedule_alarm(Driver *drv, int soon)
         return;
 
     signal(SIGALRM, (SignalHandler) setredrawscreen);
-    if (soon)
+    if (secs)
         alarm(1);
     else
         alarm(DRAW_INTERVAL);

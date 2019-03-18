@@ -57,7 +57,7 @@ extern int          wintext_texton(WinText *);
 extern BYTE *       wintext_screen_get(WinText *);
 extern void         wintext_screen_set(WinText *, const BYTE *copy);
 extern void         wintext_hide_cursor(WinText *);
-extern void         wintext_schedule_alarm(WinText *, int delay);
+extern void         wintext_schedule_alarm(WinText *, int secs);
 extern int          wintext_get_char_attr(WinText *, int row, int col);
 extern void         wintext_put_char_attr(WinText *, int row, int col, int char_attr);
 extern void         wintext_set_focus();

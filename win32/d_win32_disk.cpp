@@ -318,10 +318,10 @@ disk_write_palette(Driver *drv)
 *----------------------------------------------------------------------
 */
 static void
-disk_schedule_alarm(Driver *drv, int soon)
+disk_schedule_alarm(Driver *drv, int secs)
 {
     DI(di);
-    wintext_schedule_alarm(&di->base.wintext, (soon ? 1 : DRAW_INTERVAL)*1000);
+    wintext_schedule_alarm(&di->base.wintext, (secs ? 1 : DRAW_INTERVAL)*1000);
 }
 
 /*

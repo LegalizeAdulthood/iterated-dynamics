@@ -42,7 +42,7 @@ extern int plot_resize(Plot *p);
 extern int plot_read_palette(Plot *p);
 extern int plot_write_palette(Plot *p);
 extern void plot_flush(Plot *p);
-extern void plot_schedule_alarm(Plot *me, int delay);
+extern void plot_schedule_alarm(Plot *me, int secs);
 extern void plot_clear(Plot *me);
 extern void plot_redraw(Plot *me);
 extern void plot_display_string(Plot *me, int x, int y, int fg, int bg, char const *text);
