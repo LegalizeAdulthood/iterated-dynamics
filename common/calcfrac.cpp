@@ -41,13 +41,13 @@
 #include "realdos.h"
 #include "soi.h"
 
-#include <limits.h>
 #include <stdio.h>
 #include <cstring>
 #include <time.h>
 
 #include <algorithm>
 #include <cfloat>
+#include <climits>
 #include <cmath>
 #include <cstdlib>
 #include <vector>

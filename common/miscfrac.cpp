@@ -25,7 +25,6 @@ Miscellaneous fractal-specific code (formerly in CALCFRAC.C)
 #include "rotate.h"
 #include "testpt.h"
 
-#include <limits.h>
 #include <stdio.h>
 
 #include <algorithm>

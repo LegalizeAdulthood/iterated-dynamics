@@ -25,12 +25,12 @@
 #include "rotate.h"
 #include "stereo.h"
 
-#include <limits.h>
 #if defined(XFRACT)
 #include <unistd.h>
 #endif
 
 #include <algorithm>
+#include <climits>
 #include <cmath>
 #include <vector>
 

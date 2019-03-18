@@ -16,7 +16,6 @@ fractal routines.
 #include "helpdefs.h"
 #include "id_data.h"
 
-#include <limits.h>
 #include <stdio.h>
 
 #include <cstring>

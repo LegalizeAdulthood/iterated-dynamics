@@ -29,13 +29,13 @@
 #include "rotate.h"
 #include "slideshw.h"
 
-#include <limits.h>
 #include <stdio.h>
 #if defined(XFRACT)
 #include <unistd.h>
 #endif
 
 #include <algorithm>
+#include <climits>
 #include <cstring>
 #include <string>
 
