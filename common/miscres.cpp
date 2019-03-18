@@ -24,7 +24,6 @@
 #include "realdos.h"
 #include "soi.h"
 
-#include <ctype.h>
 #include <stdarg.h>
 #include <time.h>
 #if defined(XFRACT)
@@ -33,6 +32,7 @@
 
 #include <algorithm>
 #include <cassert>
+#include <cctype>
 #include <cmath>
 #include <cstring>
 #include <string>
@@ -506,7 +506,7 @@ void updatesavename(char *filename) // go to the next file name
     splitpath(filename , drive, dir, fname, ext);
 
     hold = fname + std::strlen(fname) - 1; // start at the end
-    while (hold >= fname && (*hold == ' ' || isdigit(*hold)))   // skip backwards
+    while (hold >= fname && (*hold == ' ' || std::isdigit(*hold)))   // skip backwards
     {
         hold--;
     }
@@ -1651,14 +1651,14 @@ bool find_file_item(char *filename, char const *itemname, FILE **fileptr, int it
         splitpath(g_organize_formulas_dir.c_str(), drive, dir, nullptr, nullptr);
         fname[0] = '_';
         fname[1] = (char) 0;
-        if (isalpha(itemname[0]))
+        if (std::isalpha(itemname[0]))
         {
             if (strnicmp(itemname, "carr", 4))
             {
                 fname[1] = itemname[0];
                 fname[2] = (char) 0;
             }
-            else if (isdigit(itemname[4]))
+            else if (std::isdigit(itemname[4]))
             {
                 std::strcat(fname, "rc");
                 fname[3] = itemname[4];
@@ -1669,7 +1669,7 @@ bool find_file_item(char *filename, char const *itemname, FILE **fileptr, int it
                 std::strcat(fname, "rc");
             }
         }
-        else if (isdigit(itemname[0]))
+        else if (std::isdigit(itemname[0]))
         {
             std::strcat(fname, "num");
         }

@@ -32,7 +32,6 @@
 #include "stereo.h"
 #include "zoom.h"
 
-#include <ctype.h>
 #if defined(XFRACT)
 #include <fcntl.h>
 #include <sys/stat.h>

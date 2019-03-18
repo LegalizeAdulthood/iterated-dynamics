@@ -18,7 +18,6 @@
 #include "rotate.h"
 #include "zoom.h"
 
-#include <ctype.h>
 #include <fcntl.h>
 #include <stdio.h>
 #include <sys/stat.h>
@@ -30,6 +29,7 @@
 #endif
 
 #include <cassert>
+#include <cctype>
 #include <cmath>
 #include <cstdlib>
 #include <cstring>
@@ -433,7 +433,7 @@ void process_speedstring(char    *speedstring,
     if (33 <= curkey && curkey <= 126 && i < 30)
     {
 #ifndef XFRACT
-        curkey = tolower(curkey);
+        curkey = std::tolower(curkey);
 #endif
         speedstring[i] = (char)curkey;
         speedstring[++i] = 0;

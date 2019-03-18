@@ -28,7 +28,6 @@
 #include "realdos.h"
 #include "rotate.h"
 
-#include <ctype.h>
 #include <signal.h>
 #include <stdarg.h>
 #include <stdio.h>
@@ -38,6 +37,7 @@
 #endif
 
 #include <cassert>
+#include <cctype>
 #include <cstring>
 #include <vector>
 
@@ -419,7 +419,7 @@ static main_state main_image_start(bool &stacked, bool &resumeflag)
 #ifndef XFRACT
         if ('A' <= kbdchar && kbdchar <= 'Z')
         {
-            kbdchar = tolower(kbdchar);
+            kbdchar = std::tolower(kbdchar);
         }
 #endif
         if (kbdchar == 'd')

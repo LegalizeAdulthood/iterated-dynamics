@@ -6,7 +6,6 @@
  */
 #include "port.h"
 
-#include <ctype.h>
 #include <stdio.h>
 #include <sys/file.h>
 #include <sys/stat.h>

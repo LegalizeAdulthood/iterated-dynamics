@@ -39,10 +39,10 @@
 #include "parser.h"
 #include "realdos.h"
 
-#include <ctype.h>
 #include <stdio.h>
 #include <time.h>
 
+#include <cctype>
 #include <cstring>
 #include <string>
 
@@ -259,7 +259,7 @@ NEW_FN fStkOne;   // to support new parser fn.
 // if first char not alpha, or const p1, p2, or p3 are being accessed
 //    then this is a const.
 #define IS_CONST(x) \
-      (!isalpha(**(((char * *)x ) - 2 ) ) \
+      (!std::isalpha(**(((char * *)x ) - 2 ) ) \
       || (x == &PARM1 && p1const ) \
       || (x == &PARM2 && p2const ) \
       || (x == &PARM3 && p3const ) \

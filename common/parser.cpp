@@ -33,12 +33,12 @@
 #include "parser.h"
 #include "realdos.h"
 
-#include <ctype.h>
 #include <stdio.h>
 #include <time.h>
 
 #include <algorithm>
 #include <cassert>
+#include <cctype>
 #include <cfloat>
 #include <cmath>
 #include <cstdlib>
@@ -2014,14 +2014,14 @@ static bool isconst_pair(char const *Str)
     int n, j;
     bool answer = false;
     // skip past first number
-    for (n = 0; isdigit(Str[n]) || Str[n] == '.'; n++)
+    for (n = 0; std::isdigit(Str[n]) || Str[n] == '.'; n++)
     {
     }
     if (Str[n] == ',')
     {
         j = n + SkipWhiteSpace(&Str[n+1]) + 1;
-        if (isdigit(Str[j])
-            || (Str[j] == '-' && (isdigit(Str[j+1]) || Str[j+1] == '.'))
+        if (std::isdigit(Str[j])
+            || (Str[j] == '-' && (std::isdigit(Str[j+1]) || Str[j+1] == '.'))
             || Str[j] == '.')
         {
             answer = true;
@@ -2111,8 +2111,8 @@ ConstArg *isconst(char const *Str, int Len)
     }
 #endif
 
-    if (isdigit(Str[0])
-        || (Str[0] == '-' && (isdigit(Str[1]) || Str[1] == '.'))
+    if (std::isdigit(Str[0])
+        || (Str[0] == '-' && (std::isdigit(Str[1]) || Str[1] == '.'))
         || Str[0] == '.')
     {
         if (o[g_operation_index-1].f == StkNeg)
@@ -2123,18 +2123,18 @@ ConstArg *isconst(char const *Str, int Len)
             v[g_variable_index].len++;
         }
         unsigned n;
-        for (n = 1; isdigit(Str[n]) || Str[n] == '.'; n++)
+        for (n = 1; std::isdigit(Str[n]) || Str[n] == '.'; n++)
         {
         }
         if (Str[n] == ',')
         {
             unsigned j = n + SkipWhiteSpace(&Str[n+1]) + 1;
-            if (isdigit(Str[j])
-                || (Str[j] == '-' && (isdigit(Str[j+1]) || Str[j+1] == '.'))
+            if (std::isdigit(Str[j])
+                || (Str[j] == '-' && (std::isdigit(Str[j+1]) || Str[j+1] == '.'))
                 || Str[j] == '.')
             {
                 z.y = atof(&Str[j]);
-                for (; isdigit(Str[j]) || Str[j] == '.' || Str[j] == '-'; j++)
+                for (; std::isdigit(Str[j]) || Str[j] == '.' || Str[j] == '-'; j++)
                 {
                 }
                 v[g_variable_index].len = j;
@@ -2839,7 +2839,7 @@ static bool ParseStr(char const *Str, int pass)
             }
             break;
         default:
-            while (isalnum(Str[n+1]) || Str[n+1] == '.' || Str[n+1] == '_')
+            while (std::isalnum(Str[n+1]) || Str[n+1] == '.' || Str[n+1] == '_')
             {
                 n++;
             }
@@ -3292,7 +3292,7 @@ int frmgetchar(FILE * openfile)
             break;
         }
     }
-    return tolower(c);
+    return std::tolower(c);
 }
 
 // This function also gets flow control info
@@ -3409,7 +3409,7 @@ CASE_NUM:
             }
             break;
         default :
-            if (c == 'e' && getting_base && (isdigit(tok->token_str[i-1]) || (tok->token_str[i-1] == '.' && i > 1)))
+            if (c == 'e' && getting_base && (std::isdigit(tok->token_str[i-1]) || (tok->token_str[i-1] == '.' && i > 1)))
             {
                 tok->token_str[i++] = (char) c;
                 getting_base = false;
@@ -3426,7 +3426,7 @@ CASE_NUM:
                     fseek(openfile, filepos, SEEK_SET);
                 }
             }
-            else if (isalpha(c) || c == '_')
+            else if (std::isalpha(c) || c == '_')
             {
                 tok->token_str[i++] = (char) c;
                 tok->token_str[i++] = (char) 0;
@@ -3502,7 +3502,7 @@ CASE_NUM :
             }
             sign_value = -1;
             c = frmgetchar(openfile);
-            if (c == '.' || isdigit(c))
+            if (c == '.' || std::isdigit(c))
             {
                 if (debug_token != nullptr)
                 {
@@ -4058,7 +4058,7 @@ static bool frm_check_name_and_sym(FILE * open_file, bool report_bad_sym)
             default :
                 if (i < 19)
                 {
-                    sym_buf[i++] = (char) toupper(c);
+                    sym_buf[i++] = (char) std::toupper(c);
                 }
                 break;
             }

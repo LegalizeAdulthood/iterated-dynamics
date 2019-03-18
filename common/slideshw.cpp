@@ -14,10 +14,10 @@
 #include "realdos.h"
 #include "slideshw.h"
 
-#include <ctype.h>
 #include <stdio.h>
 #include <time.h>
 
+#include <cctype>
 #include <cstdlib>
 #include <cstring>
 #include <sstream>
@@ -237,7 +237,7 @@ start:
         goto start;
     }
     out = -12345;
-    if (isdigit(buffer[0]))         // an arbitrary scan code number - use it
+    if (std::isdigit(buffer[0]))         // an arbitrary scan code number - use it
     {
         out = atoi(buffer);
     }

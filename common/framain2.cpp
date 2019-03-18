@@ -37,6 +37,7 @@
 #include <stdio.h>
 #include <time.h>
 
+#include <cctype>
 #include <cstring>
 #include <string>
 #include <vector>
@@ -772,7 +773,7 @@ resumeloop:                             // return here on failed overlays
 #ifndef XFRACT
             if ('A' <= kbdchar && kbdchar <= 'Z')
             {
-                kbdchar = tolower(kbdchar);
+                kbdchar = std::tolower(kbdchar);
             }
 #endif
             if (g_evolving)

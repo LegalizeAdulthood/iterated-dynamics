@@ -33,12 +33,12 @@
 #include "soi.h"
 #include "stereo.h"
 
-#include <ctype.h>
 #include <time.h>
 #include <stdio.h>
 
 #include <algorithm>
 #include <cassert>
+#include <cctype>
 #include <cfloat>
 #include <cmath>
 #include <cstdlib>
@@ -2913,7 +2913,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         if (totparms > 0)
         {
             g_auto_show_dot = (char)0;
-            if (isalpha(charval[0]))
+            if (std::isalpha(charval[0]))
             {
                 if (std::strchr("abdm", (int)charval[0]) != nullptr)
                 {
@@ -3984,7 +3984,7 @@ static bool isabigfloat(char const *str)
         {
             nume++;
         }
-        else if (!isdigit(*s))
+        else if (!std::isdigit(*s))
         {
             result = false;
             break;

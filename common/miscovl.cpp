@@ -28,7 +28,6 @@
 #include "rotate.h"
 #include "stereo.h"
 
-#include <ctype.h>
 #include <stdarg.h>
 #include <stdio.h>
 #include <time.h>
@@ -39,6 +38,7 @@
 #endif
 
 #include <algorithm>
+#include <cctype>
 #include <cfloat>
 #include <cmath>
 #include <cstring>
@@ -469,7 +469,7 @@ skip_UI:
                     while (w < (int)g_command_name.length())
                     {
                         c = g_command_name[w];
-                        if (isspace(c) || c == 0)
+                        if (std::isspace(c) || c == 0)
                         {
                             break;
                         }
