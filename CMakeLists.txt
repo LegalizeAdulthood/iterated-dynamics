@@ -43,6 +43,7 @@ add_subdirectory(win32)
 add_subdirectory(hc)
 
 add_executable(id ${OS_ID_OPTIONS}
+    headers/id_io.h
     headers/os.h
 
     common/3d.cpp headers/3d.h
@@ -188,6 +189,7 @@ source_group("Header Files\\common\\i/o" FILES
     headers/encoder.h
     headers/evolve.h
     headers/gifview.h
+    headers/id_io.h
     headers/loadfdos.h
     headers/loadfile.h
     headers/loadmap.h

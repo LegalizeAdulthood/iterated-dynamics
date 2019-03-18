@@ -19,6 +19,7 @@
 #include "helpcom.h"
 #include "helpdefs.h"
 #include "id_data.h"
+#include "id_io.h"
 #include "intro.h"
 #include "loadfile.h"
 #include "memory.h"
@@ -30,12 +31,6 @@
 
 #include <signal.h>
 #include <stdio.h>
-
-#if defined(XFRACT)
-#include <unistd.h>
-#else
-#include <io.h>
-#endif
 
 #include <cassert>
 #include <cctype>

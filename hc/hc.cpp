@@ -26,6 +26,7 @@
 #include <cstdlib>
 #include <cstring>
 
+#include "id_io.h"
 #include "port.h"
 #include "helpcom.h"
 
@@ -34,7 +35,6 @@
 #define FNSPLIT _splitpath
 
 #ifdef XFRACT
-#include <unistd.h>
 
 #ifndef HAVESTRI
 extern int stricmp(char const *, char const *);
@@ -43,9 +43,8 @@ extern int strnicmp(char const *, char const *, int);
 extern int filelength(int);
 extern int _splitpath(char const *file_template, char *drive, char *dir, char *fname, char *ext);
 #else
-#include <io.h>
 
-/*
+ /*
  * When defined, SHOW_ERROR_LINE will cause the line number in HC.C where
  * errors/warnings/messages are generated to be displayed at the start of
  * the line.

@@ -14,6 +14,7 @@
 #include "fractype.h"
 #include "framain2.h"
 #include "id_data.h"
+#include "id_io.h"
 #include "jb.h"
 #include "line3d.h"
 #include "loadfile.h"
@@ -30,12 +31,6 @@
 #include "slideshw.h"
 
 #include <stdio.h>
-
-#if defined(XFRACT)
-#include <unistd.h>
-#else
-#include <io.h>
-#endif
 
 #include <algorithm>
 #include <climits>

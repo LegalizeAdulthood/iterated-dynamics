@@ -6,6 +6,7 @@
 #include "helpcom.h"
 #include "helpdefs.h"
 #include "id_data.h"
+#include "id_io.h"
 #include "miscres.h"
 #include "os.h"
 #include "realdos.h"
@@ -14,12 +15,6 @@
 #include <fcntl.h>
 #include <stdio.h>
 #include <sys/stat.h>
-
-#if defined(XFRACT)
-#include <unistd.h>
-#else
-#include <io.h>
-#endif
 
 #include <cstring>
 #include <ctime>

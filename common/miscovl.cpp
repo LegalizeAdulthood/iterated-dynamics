@@ -13,6 +13,7 @@
 #include "framain2.h"
 #include "helpdefs.h"
 #include "id_data.h"
+#include "id_io.h"
 #include "jb.h"
 #include "line3d.h"
 #include "loadfile.h"
@@ -29,12 +30,6 @@
 #include "stereo.h"
 
 #include <stdio.h>
-
-#if defined(XFRACT)
-#include <unistd.h>
-#else
-#include <io.h>
-#endif
 
 #include <algorithm>
 #include <cctype>

@@ -16,6 +16,7 @@
 #include "helpcom.h"
 #include "helpdefs.h"
 #include "id_data.h"
+#include "id_io.h"
 #include "loadfile.h"
 #include "loadmap.h"
 #include "lorenz.h"
@@ -32,11 +33,6 @@
 #include "stereo.h"
 #include "zoom.h"
 
-#if defined(XFRACT)
-#include <unistd.h>
-#else
-#include <io.h>
-#endif
 #ifdef __hpux
 #include <sys/param.h>
 #endif
