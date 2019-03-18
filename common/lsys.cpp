@@ -13,10 +13,10 @@
 #include "realdos.h"
 
 #include <stdio.h>
-#include <stdlib.h>
 
 #include <cassert>
 #include <cmath>
+#include <cstdlib>
 #include <cstring>
 #include <string>
 #include <vector>

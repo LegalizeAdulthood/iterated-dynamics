@@ -7,10 +7,10 @@ Wesley Loewer's Big Numbers.        (C) 1994-95, Wesley B. Loewer
 #include "big.h"
 
 #include <stdio.h>
-#include <stdlib.h>
 
 #include <cfloat>
 #include <cmath>
+#include <cstdlib>
 #include <cstring>
 
 #define LOG10_256 2.4082399653118

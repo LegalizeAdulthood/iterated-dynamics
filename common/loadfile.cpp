@@ -34,7 +34,6 @@
 
 #include <errno.h>
 #include <stdio.h>
-#include <stdlib.h>
 #include <time.h>
 #if defined(XFRACT)
 #include <unistd.h>
@@ -43,6 +42,7 @@
 #include <algorithm>
 #include <cassert>
 #include <cmath>
+#include <cstdlib>
 #include <cstring>
 #include <string>
 #include <system_error>

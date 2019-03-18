@@ -8,12 +8,12 @@
 
 #include <assert.h>
 #include <crtdbg.h>
-#include <stdlib.h>
 #define STRICT
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 #include <windowsx.h>
 
+#include <cstdlib>
 #include <cstring>
 
 #include "plot.h"

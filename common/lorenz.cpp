@@ -26,9 +26,9 @@
 #include "realdos.h"
 
 #include <stdio.h>
-#include <stdlib.h>
 
 #include <cmath>
+#include <cstdlib>
 #include <cstring>
 #include <vector>
 

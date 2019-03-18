@@ -54,10 +54,10 @@ an appropriate setup, per_image, per_pixel, and orbit routines.
 #include "realdos.h"
 
 #include <limits.h>
-#include <stdlib.h>
 
 #include <cfloat>
 #include <cmath>
+#include <cstdlib>
 #include <cstring>
 
 #define NEWTONDEGREELIMIT  100

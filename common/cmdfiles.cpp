@@ -34,7 +34,6 @@
 #include "stereo.h"
 
 #include <ctype.h>
-#include <stdlib.h>
 #include <time.h>
 #include <stdio.h>
 
@@ -42,6 +41,7 @@
 #include <cassert>
 #include <cfloat>
 #include <cmath>
+#include <cstdlib>
 #include <cstring>
 #include <string>
 #include <system_error>

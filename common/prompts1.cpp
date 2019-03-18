@@ -33,7 +33,6 @@
 #include "zoom.h"
 
 #include <ctype.h>
-#include <stdlib.h>
 #ifdef   XFRACT
 #include <sys/stat.h>
 #include <sys/types.h>
@@ -45,6 +44,7 @@
 #endif
 
 #include <cassert>
+#include <cstdlib>
 #include <cstring>
 #include <string>
 

@@ -30,7 +30,6 @@
 #include <fcntl.h>
 #include <signal.h>
 #include <stdio.h>
-#include <stdlib.h>
 #include <sys/ioctl.h>
 #include <sys/time.h>
 #include <sys/types.h>
@@ -50,6 +49,7 @@
 #include <sys/file.h>
 #endif
 
+#include <cstdlib>
 #include <cstring>
 
 #ifdef LINUX

@@ -18,9 +18,9 @@
 #include "realdos.h"
 #include "rotate.h"
 
-#include <stdlib.h>
 #include <time.h>
 
+#include <cstdlib>
 #include <cstring>
 #include <vector>
 

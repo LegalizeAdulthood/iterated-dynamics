@@ -21,7 +21,6 @@
 #include <ctype.h>
 #include <fcntl.h>
 #include <stdio.h>
-#include <stdlib.h>
 #include <sys/stat.h>
 #include <sys/types.h>
 #if defined(XFRACT)
@@ -32,6 +31,7 @@
 
 #include <cassert>
 #include <cmath>
+#include <cstdlib>
 #include <cstring>
 #include <vector>
 

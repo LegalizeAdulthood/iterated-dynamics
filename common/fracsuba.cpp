@@ -4,9 +4,8 @@
 #include "calcfrac.h"
 #include "fractals.h"
 
-#include <stdlib.h>
-
 #include <cmath>
+#include <cstdlib>
 
 int asmlMODbailout()
 {

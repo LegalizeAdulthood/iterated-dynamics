@@ -27,10 +27,10 @@ Miscellaneous fractal-specific code (formerly in CALCFRAC.C)
 
 #include <limits.h>
 #include <stdio.h>
-#include <stdlib.h>
 
 #include <algorithm>
 #include <cmath>
+#include <cstdlib>
 #include <cstring>
 #include <vector>
 

@@ -33,7 +33,6 @@
 #include "zoom.h"
 
 #include <ctype.h>
-#include <stdlib.h>
 #if defined(XFRACT)
 #include <fcntl.h>
 #include <sys/stat.h>
@@ -54,6 +53,7 @@
 #include <algorithm>
 #include <cfloat>
 #include <cmath>
+#include <cstdlib>
 #include <cstring>
 #include <string>
 

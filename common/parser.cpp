@@ -34,7 +34,6 @@
 #include "realdos.h"
 
 #include <ctype.h>
-#include <stdlib.h>
 #include <stdio.h>
 #include <time.h>
 
@@ -42,6 +41,7 @@
 #include <cassert>
 #include <cfloat>
 #include <cmath>
+#include <cstdlib>
 #include <cstring>
 #include <iterator>
 #include <string>

@@ -14,9 +14,8 @@
 #include "prompts1.h"
 #include "zoom.h"
 
-#include <stdlib.h>
-
 #include <algorithm>
+#include <cstdlib>
 #include <cstring>
 #include <vector>
 

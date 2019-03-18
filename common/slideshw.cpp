@@ -16,9 +16,9 @@
 
 #include <ctype.h>
 #include <stdio.h>
-#include <stdlib.h>
 #include <time.h>
 
+#include <cstdlib>
 #include <cstring>
 #include <sstream>
 #include <system_error>
