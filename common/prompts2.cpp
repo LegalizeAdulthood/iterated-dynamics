@@ -1442,26 +1442,14 @@ void goodbye()                  // we done.  Bail out
 
 // ---------------------------------------------------------------------
 
-#if !defined(_WIN32)
 #ifdef XFRACT
 static char searchdir[FILE_MAX_DIR];
 static char searchname[FILE_MAX_PATH];
 static char searchext[FILE_MAX_EXT];
 static DIR *currdir = nullptr;
-#endif
+
 int  fr_findfirst(char const *path)       // Find 1st file (or subdir) meeting path/filespec
 {
-#ifndef XFRACT
-    union REGS regs;
-    regs.h.ah = 0x1A;             // Set DTA to filedata
-    regs.x.dx = (unsigned)&DTA;
-    intdos(&regs, &regs);
-    regs.h.ah = 0x4E;             // Find 1st file meeting path
-    regs.x.dx = (unsigned)path;
-    regs.x.cx = FILEATTR;
-    intdos(&regs, &regs);
-    return regs.x.ax;           // Return error code
-#else
     if (currdir != nullptr)
     {
         closedir(currdir);
@@ -1484,18 +1472,10 @@ int  fr_findfirst(char const *path)       // Find 1st file (or subdir) meeting p
     {
         return fr_findnext();
     }
-#endif
 }
 
 int  fr_findnext()              // Find next file (or subdir) meeting above path/filespec
 {
-#ifndef XFRACT
-    union REGS regs;
-    regs.h.ah = 0x4F;             // Find next file meeting path
-    regs.x.dx = (unsigned)&DTA;
-    intdos(&regs, &regs);
-    return regs.x.ax;
-#else
 #ifdef DIRENT
     struct dirent *dirEntry;
 #else
@@ -1539,9 +1519,8 @@ int  fr_findnext()              // Find next file (or subdir) meeting above path
             }
         }
     }
-#endif
 }
-#endif // !_WIN32
+#endif
 
 struct CHOICE
 {
