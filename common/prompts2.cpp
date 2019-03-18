@@ -33,14 +33,10 @@
 #include "zoom.h"
 
 #if defined(XFRACT)
+#include <dirent.h>
 #include <fcntl.h>
 #include <sys/stat.h>
 #include <unistd.h>
-#ifdef DIRENT
-#include <dirent.h>
-#else
-#include <sys/dir.h>
-#endif
 #else
 #include <direct.h>
 #include <io.h>
@@ -1476,18 +1472,13 @@ int  fr_findfirst(char const *path)       // Find 1st file (or subdir) meeting p
 
 int  fr_findnext()              // Find next file (or subdir) meeting above path/filespec
 {
-#ifdef DIRENT
-    struct dirent *dirEntry;
-#else
-    struct direct *dirEntry;
-#endif
     struct stat sbuf;
     char thisname[FILE_MAX_PATH];
     char tmpname[FILE_MAX_PATH];
     char thisext[FILE_MAX_EXT];
     while (true)
     {
-        dirEntry = readdir(currdir);
+        struct dirent *dirEntry = readdir(currdir);
         if (dirEntry == nullptr)
         {
             closedir(currdir);
