@@ -23,7 +23,6 @@ FRACTALS.C, i.e. which are non-fractal-specific fractal engine subroutines.
 
 #include <stdio.h>
 #include <sys/timeb.h>
-#include <sys/types.h>
 
 #include <algorithm>
 #include <cfloat>

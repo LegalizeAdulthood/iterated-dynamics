@@ -31,7 +31,6 @@
 #include <signal.h>
 #include <stdio.h>
 #include <sys/ioctl.h>
-#include <sys/types.h>
 #include <sys/wait.h>
 #include <unistd.h>
 #include <X11/Xatom.h>

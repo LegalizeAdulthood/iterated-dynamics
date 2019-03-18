@@ -34,7 +34,6 @@
 
 #ifdef   XFRACT
 #include <sys/stat.h>
-#include <sys/types.h>
 #endif
 
 #ifdef __hpux

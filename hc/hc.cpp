@@ -22,7 +22,6 @@
 #include <assert.h>
 #include <fcntl.h>
 #include <stdio.h>
-#include <sys/types.h>
 
 #include <cstdlib>
 #include <cstring>
