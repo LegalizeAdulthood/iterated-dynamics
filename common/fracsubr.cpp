@@ -24,9 +24,7 @@ FRACTALS.C, i.e. which are non-fractal-specific fractal engine subroutines.
 #include <memory.h>
 #include <stdarg.h>
 #include <stdio.h>
-#ifndef XFRACT
 #include <sys/timeb.h>
-#endif
 #include <sys/types.h>
 
 #include <algorithm>
@@ -36,11 +34,6 @@ FRACTALS.C, i.e. which are non-fractal-specific fractal engine subroutines.
 #include <ctime>
 #include <iterator>
 #include <vector>
-
-#if defined(_WIN32)
-#define ftimex ftime
-#define timebx timeb
-#endif
 
 // routines in this module
 
@@ -1445,7 +1438,7 @@ void sleepms_old(long ms)
 {
     static long scalems = 0L;
     help_labels old_help_mode;
-    timebx t1, t2;
+    timeb t1, t2;
 #define SLEEPINIT 250 // milliseconds for calibration
     bool const save_tab_mode = g_tab_mode;
     old_help_mode = g_help_mode;
@@ -1466,15 +1459,15 @@ void sleepms_old(long ms)
         do
         {
             scalems *= 2;
-            ftimex(&t2);
+            ftime(&t2);
             do
             {
                 // wait for the start of a new tick
-                ftimex(&t1);
+                ftime(&t1);
             }
             while (t2.time == t1.time && t2.millitm == t1.millitm);
             sleepms_old(10L * SLEEPINIT); // about 1/4 sec
-            ftimex(&t2);
+            ftime(&t2);
             if (driver_key_pressed())
             {
                 scalems = 0L;
@@ -1487,11 +1480,11 @@ void sleepms_old(long ms)
         do
         {
             // wait for the start of a new tick
-            ftimex(&t1);
+            ftime(&t1);
         }
         while (t2.time == t1.time && t2.millitm == t1.millitm);
         sleepms_old(10L * SLEEPINIT);
-        ftimex(&t2);
+        ftime(&t2);
         i = (int)(t2.time-t1.time)*1000 + t2.millitm-t1.millitm;
         if (i < elapsed)
         {
@@ -1504,14 +1497,14 @@ void sleepms_old(long ms)
     {
         // using ftime is probably more accurate
         ms /= 10;
-        ftimex(&t1);
+        ftime(&t1);
         while (true)
         {
             if (driver_key_pressed())
             {
                 break;
             }
-            ftimex(&t2);
+            ftime(&t2);
             if ((long)((t2.time-t1.time)*1000 + t2.millitm-t1.millitm) >= ms)
             {
                 break;

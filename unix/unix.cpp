@@ -9,7 +9,6 @@
 #include <stdio.h>
 #include <sys/file.h>
 #include <sys/stat.h>
-#include <sys/time.h>
 #include <sys/types.h>
 #include <unistd.h>
 
@@ -338,23 +337,6 @@ int
 _splitpath(char const *file_template, char *drive, char *dir, char *fname, char *ext)
 {
     return splitpath(file_template, drive, dir, fname, ext);
-}
-
-// This ftime simulation routine is from Frank Chen
-void ftimex(struct timebx *tp)
-{
-    struct timeval  timep;
-    struct timezone timezp;
-
-    if (gettimeofday(&timep, &timezp) != 0)
-    {
-        perror("error in gettimeofday");
-        exit(0);
-    }
-    tp->time = timep.tv_sec;
-    tp->millitm = timep.tv_usec/1000;
-    tp->timezone = timezp.tz_minuteswest;
-    tp->dstflag = timezp.tz_dsttime;
 }
 
 // sound.c file prototypes
