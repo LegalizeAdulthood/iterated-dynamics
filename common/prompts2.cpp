@@ -33,12 +33,9 @@
 #include "zoom.h"
 
 #if defined(XFRACT)
-#include <dirent.h>
 #include <fcntl.h>
-#include <sys/stat.h>
 #include <unistd.h>
 #else
-#include <direct.h>
 #include <io.h>
 #endif
 #ifdef __hpux
@@ -1437,81 +1434,6 @@ void goodbye()                  // we done.  Bail out
 
 
 // ---------------------------------------------------------------------
-
-#ifdef XFRACT
-static char searchdir[FILE_MAX_DIR];
-static char searchname[FILE_MAX_PATH];
-static char searchext[FILE_MAX_EXT];
-static DIR *currdir = nullptr;
-
-int  fr_findfirst(char const *path)       // Find 1st file (or subdir) meeting path/filespec
-{
-    if (currdir != nullptr)
-    {
-        closedir(currdir);
-        currdir = nullptr;
-    }
-    splitpath(path, nullptr, searchdir, searchname, searchext);
-    if (searchdir[0] == '\0')
-    {
-        currdir = opendir(".");
-    }
-    else
-    {
-        currdir = opendir(searchdir);
-    }
-    if (currdir == nullptr)
-    {
-        return -1;
-    }
-    else
-    {
-        return fr_findnext();
-    }
-}
-
-int  fr_findnext()              // Find next file (or subdir) meeting above path/filespec
-{
-    struct stat sbuf;
-    char thisname[FILE_MAX_PATH];
-    char tmpname[FILE_MAX_PATH];
-    char thisext[FILE_MAX_EXT];
-    while (true)
-    {
-        struct dirent *dirEntry = readdir(currdir);
-        if (dirEntry == nullptr)
-        {
-            closedir(currdir);
-            currdir = nullptr;
-            return -1;
-        }
-        else if (dirEntry->d_ino != 0)
-        {
-            splitpath(dirEntry->d_name, nullptr, nullptr, thisname, thisext);
-            std::strncpy(DTA.filename, dirEntry->d_name, 13);
-            DTA.filename[12] = '\0';
-            std::strcpy(tmpname, searchdir);
-            std::strcat(tmpname, dirEntry->d_name);
-            stat(tmpname, &sbuf);
-            DTA.size = sbuf.st_size;
-            if ((sbuf.st_mode&S_IFMT) == S_IFREG &&
-                    (searchname[0] == '*' || std::strcmp(searchname, thisname) == 0) &&
-                    (searchext[0] == '*' || std::strcmp(searchext, thisext) == 0))
-            {
-                DTA.attribute = 0;
-                return 0;
-            }
-            else if (((sbuf.st_mode&S_IFMT) == S_IFDIR) &&
-                     ((searchname[0] == '*' || searchext[0] == '*') ||
-                      (std::strcmp(searchname, thisname) == 0)))
-            {
-                DTA.attribute = SUBDIR;
-                return 0;
-            }
-        }
-    }
-}
-#endif
 
 struct CHOICE
 {
