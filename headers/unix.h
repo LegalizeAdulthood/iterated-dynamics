@@ -1,11 +1,14 @@
 // UNIX.H - unix port declarations
 #ifndef UNIX_H
 #define UNIX_H
+
+#include <unistd.h>
+
 #if !defined(O_BINARY)
 #define O_BINARY 0
 #endif
 typedef float FLOAT4;
-#define id_fs_remove(x) unlink(x)
+
 #if !defined(_MAX_FNAME)
 #define _MAX_FNAME 20
 #endif
@@ -18,13 +21,5 @@ typedef float FLOAT4;
 typedef void (*SignalHandler)(int);
 char *strlwr(char *s);
 char *strupr(char *s);
-// ftime replacement
-#include <sys/types.h>
-struct timebx
-{
-    time_t  time;
-    unsigned short millitm;
-    int   timezone;
-    int   dstflag;
-};
+
 #endif

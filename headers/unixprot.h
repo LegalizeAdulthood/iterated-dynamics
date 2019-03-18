@@ -18,7 +18,6 @@ extern int stricmp(char const *, char const *);
 extern int strnicmp(char const *, char const *, int);
 #endif
 extern int ltoa(long, char *, int);
-extern void ftimex(timebx *);
 
 // initializes curses text window and the signal handlers.
 void UnixInit();

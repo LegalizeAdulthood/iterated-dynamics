@@ -18,6 +18,7 @@
 
 #include <assert.h>
 #include <direct.h>
+#include <io.h>
 #include <signal.h>
 #include <stdio.h>
 #include <sys/timeb.h>
@@ -847,7 +848,7 @@ void findpath(char const *filename, char *fullpathname) // return full pathnames
     // check current directory if curdir= parameter set
     splitpath(filename, nullptr, nullptr, fname, ext);
     makepath(temp_path, "", "", fname, ext);
-    if (g_check_cur_dir && _access(temp_path, 0) == 0)   // file exists
+    if (g_check_cur_dir && access(temp_path, 0) == 0)   // file exists
     {
         std::strcpy(fullpathname, temp_path);
         return;
@@ -857,7 +858,7 @@ void findpath(char const *filename, char *fullpathname) // return full pathnames
     std::strcpy(temp_path, filename);   // avoid side effect changes to filename
     if (temp_path[0] == SLASHC || (temp_path[0] && temp_path[1] == ':'))
     {
-        if (_access(temp_path, 0) == 0)   // file exists
+        if (access(temp_path, 0) == 0)   // file exists
         {
             std::strcpy(fullpathname, temp_path);
             return;
@@ -869,7 +870,7 @@ void findpath(char const *filename, char *fullpathname) // return full pathnames
 
     // check FRACTDIR
     makepath(temp_path, "", g_fractal_search_dir1, fname, ext);
-    if (_access(temp_path, 0) == 0)
+    if (access(temp_path, 0) == 0)
     {
         std::strcpy(fullpathname, temp_path);
         return;
@@ -877,7 +878,7 @@ void findpath(char const *filename, char *fullpathname) // return full pathnames
 
     // check SRCDIR
     makepath(temp_path, "", g_fractal_search_dir2, fname, ext);
-    if (_access(temp_path, 0) == 0)
+    if (access(temp_path, 0) == 0)
     {
         std::strcpy(fullpathname, temp_path);
         return;

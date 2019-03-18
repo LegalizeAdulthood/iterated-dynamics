@@ -22,11 +22,6 @@
 #include <stdio.h>
 #include <sys/stat.h>
 #include <sys/types.h>
-#if defined(XFRACT)
-#include <unistd.h>
-#else
-#include <process.h>
-#endif
 
 #include <cassert>
 #include <cctype>

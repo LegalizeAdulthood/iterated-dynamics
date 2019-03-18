@@ -25,10 +25,6 @@
 #include "rotate.h"
 #include "stereo.h"
 
-#if defined(XFRACT)
-#include <unistd.h>
-#endif
-
 #include <algorithm>
 #include <climits>
 #include <cmath>
@@ -912,7 +908,7 @@ loopbottom:
                 if (ferror(File_Ptr1))
                 {
                     fclose(File_Ptr1);
-                    id_fs_remove(g_light_name.c_str());
+                    unlink(g_light_name.c_str());
                     File_Error(g_raytrace_filename.c_str(), 2);
                     return -1;
                 }

@@ -30,8 +30,11 @@
 #include "slideshw.h"
 
 #include <stdio.h>
+
 #if defined(XFRACT)
 #include <unistd.h>
+#else
+#include <io.h>
 #endif
 
 #include <algorithm>
@@ -102,7 +105,8 @@ static BYTE paletteEGA[] =
 static int gif_savetodisk(char *filename)      // save-to-disk routine
 {
     char tmpmsg[41];                 // before openfile in case of overrun
-    char openfile[FILE_MAX_PATH], openfiletype[10];
+    char openfile[FILE_MAX_PATH];
+    char openfiletype[10];
     char tmpfile[FILE_MAX_PATH];
     char const *period;
     bool newfile = false;

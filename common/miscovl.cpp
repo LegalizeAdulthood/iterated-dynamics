@@ -29,10 +29,11 @@
 #include "stereo.h"
 
 #include <stdio.h>
+
 #if defined(XFRACT)
 #include <unistd.h>
 #else
-#include <process.h>
+#include <io.h>
 #endif
 
 #include <algorithm>
@@ -2560,7 +2561,7 @@ void make_mig(unsigned int xmult, unsigned int ymult)
             for (unsigned xstep = 0U; xstep < xmult; xstep++)
             {
                 sprintf(gifin, "frmig_%c%c.gif", PAR_KEY(xstep), PAR_KEY(ystep));
-                id_fs_remove(gifin);
+                unlink(gifin);
             }
         }
     }

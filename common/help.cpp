@@ -15,8 +15,11 @@
 #include <stdio.h>
 #include <sys/stat.h>
 #include <sys/types.h>
+
 #if defined(XFRACT)
 #include <unistd.h>
+#else
+#include <io.h>
 #endif
 
 #include <cstring>
@@ -1431,7 +1434,7 @@ ErrorAbort:
     if (temp_file != nullptr)
     {
         fclose(temp_file);
-        id_fs_remove(TEMP_FILE_NAME);
+        unlink(TEMP_FILE_NAME);
         temp_file = nullptr;
     }
 

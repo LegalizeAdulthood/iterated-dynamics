@@ -30,8 +30,11 @@
 
 #include <signal.h>
 #include <stdio.h>
+
 #if defined(XFRACT)
 #include <unistd.h>
+#else
+#include <io.h>
 #endif
 
 #include <cassert>

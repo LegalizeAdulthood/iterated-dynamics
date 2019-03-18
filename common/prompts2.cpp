@@ -44,6 +44,7 @@
 #endif
 #else
 #include <direct.h>
+#include <io.h>
 #endif
 #ifdef __hpux
 #include <sys/param.h>
@@ -2117,7 +2118,7 @@ int dir_remove(char const *dir, char const *filename)
 {
     char tmp[FILE_MAX_PATH];
     dir_name(tmp, dir, filename);
-    return id_fs_remove(tmp);
+    return unlink(tmp);
 }
 
 // fopens file in dir directory

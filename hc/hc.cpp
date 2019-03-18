@@ -44,6 +44,7 @@ extern int strnicmp(char const *, char const *, int);
 extern int filelength(int);
 extern int _splitpath(char const *file_template, char *drive, char *dir, char *fname, char *ext);
 #else
+#include <io.h>
 
 /*
  * When defined, SHOW_ERROR_LINE will cause the line number in HC.C where
@@ -3989,7 +3990,7 @@ public:
         if (swapfile != nullptr)
         {
             fclose(swapfile);
-            id_fs_remove(swappath.c_str());
+            unlink(swappath.c_str());
         }
     }
 
