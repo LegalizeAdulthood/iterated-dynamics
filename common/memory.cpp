@@ -9,7 +9,6 @@
 #include "prompts2.h"
 #include "realdos.h"
 
-#include <errno.h>
 #include <stdio.h>
 
 #include <climits>

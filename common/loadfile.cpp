@@ -32,7 +32,6 @@
 #include "rotate.h"
 #include "zoom.h"
 
-#include <errno.h>
 #include <stdio.h>
 
 #include <algorithm>
