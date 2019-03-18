@@ -48,6 +48,7 @@
 #include <time.h>
 
 #include <algorithm>
+#include <cfloat>
 #include <cmath>
 #include <vector>
 

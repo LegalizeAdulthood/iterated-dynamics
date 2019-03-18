@@ -23,8 +23,6 @@
 #include "gifview.h"
 #include "loadfile.h"
 
-#include <float.h>
-
 static short get_next_code();
 
 // extern short out_line(pixels, linelen)

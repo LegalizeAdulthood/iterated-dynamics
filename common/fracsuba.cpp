@@ -4,7 +4,6 @@
 #include "calcfrac.h"
 #include "fractals.h"
 
-#include <float.h>
 #include <stdlib.h>
 
 #include <cmath>

@@ -11,7 +11,6 @@
 #include "id_data.h"
 #include "realdos.h"
 
-#include <float.h>
 #include <time.h>
 
 #include <vector>

@@ -9,8 +9,6 @@
 #include "lsys_fns.h"
 #include "realdos.h"
 
-#include <float.h>
-
 #include <cmath>
 #include <cstring>
 

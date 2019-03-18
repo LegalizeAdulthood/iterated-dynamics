@@ -5,7 +5,6 @@
 #include "fractint.h"
 #include "prompts2.h"
 
-#include <float.h>
 #define WIN32_LEAN_AND_MEAN
 #define STRICT
 #include <tchar.h>

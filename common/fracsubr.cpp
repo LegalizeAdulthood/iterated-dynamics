@@ -21,7 +21,6 @@ FRACTALS.C, i.e. which are non-fractal-specific fractal engine subroutines.
 #include "realdos.h"
 #include "soi.h"
 
-#include <float.h>
 #include <limits.h>
 #include <memory.h>
 #include <stdarg.h>
@@ -34,6 +33,7 @@ FRACTALS.C, i.e. which are non-fractal-specific fractal engine subroutines.
 #include <time.h>
 
 #include <algorithm>
+#include <cfloat>
 #include <cmath>
 #include <iterator>
 #include <vector>

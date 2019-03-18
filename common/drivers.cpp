@@ -6,8 +6,6 @@
 #include "os.h"
 #include "realdos.h"
 
-#include <float.h>
-
 #include <cstring>
 
 extern Driver *x11_driver;

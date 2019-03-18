@@ -6,10 +6,10 @@ Wesley Loewer's Big Numbers.        (C) 1994-95, Wesley B. Loewer
 #include "port.h"
 #include "big.h"
 
-#include <float.h>
 #include <stdio.h>
 #include <stdlib.h>
 
+#include <cfloat>
 #include <cmath>
 #include <cstring>
 

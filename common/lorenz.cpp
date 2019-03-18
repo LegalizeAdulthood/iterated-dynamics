@@ -25,7 +25,6 @@
 #include "plot3d.h"
 #include "realdos.h"
 
-#include <float.h>
 #include <stdio.h>
 #include <stdlib.h>
 

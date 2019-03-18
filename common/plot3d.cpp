@@ -17,8 +17,6 @@
 #include "prompts1.h"
 #include "rotate.h"
 
-#include <float.h>
-
 // Use these palette indices for red/blue - same on ega/vga
 #define PAL_BLUE    1
 #define PAL_RED 2

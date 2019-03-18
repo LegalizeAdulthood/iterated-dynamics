@@ -14,7 +14,6 @@
 #include "prompts1.h"
 #include "zoom.h"
 
-#include <float.h>
 #include <stdlib.h>
 
 #include <algorithm>

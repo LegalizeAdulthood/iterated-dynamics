@@ -1,6 +1,5 @@
 #include <assert.h>
 #include <crtdbg.h>
-#include <float.h>
 #include <stdlib.h>
 
 #define STRICT

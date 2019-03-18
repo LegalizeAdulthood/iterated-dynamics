@@ -29,7 +29,6 @@
 #include "stereo.h"
 
 #include <ctype.h>
-#include <float.h>
 #include <stdarg.h>
 #include <stdio.h>
 #include <time.h>
@@ -40,6 +39,7 @@
 #endif
 
 #include <algorithm>
+#include <cfloat>
 #include <cmath>
 #include <cstring>
 #include <string>

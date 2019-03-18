@@ -34,13 +34,13 @@
 #include "stereo.h"
 
 #include <ctype.h>
-#include <float.h>
 #include <stdlib.h>
 #include <time.h>
 #include <stdio.h>
 
 #include <algorithm>
 #include <cassert>
+#include <cfloat>
 #include <cmath>
 #include <cstring>
 #include <string>

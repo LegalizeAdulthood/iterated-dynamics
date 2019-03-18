@@ -15,7 +15,6 @@
 #include "slideshw.h"
 
 #include <ctype.h>
-#include <float.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>

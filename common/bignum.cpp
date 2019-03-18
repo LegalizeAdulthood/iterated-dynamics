@@ -135,10 +135,10 @@ double wide number can then be ignored.
 
 #include "big.h"
 
-#include <float.h>
 #include <stdio.h>
 
 #include <algorithm>
+#include <cfloat>
 #include <cmath>
 #include <cstring>
 

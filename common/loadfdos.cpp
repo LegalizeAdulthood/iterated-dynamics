@@ -40,7 +40,6 @@
 #include "os.h"
 #include "realdos.h"
 
-#include <float.h>
 #include <stdio.h>
 
 #include <cmath>

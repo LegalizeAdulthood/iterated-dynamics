@@ -21,7 +21,6 @@
 #include "slideshw.h"
 
 #include <assert.h>
-#include <float.h>
 #include <stdio.h>
 #include <time.h>
 #define WIN32_LEAN_AND_MEAN

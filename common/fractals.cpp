@@ -53,10 +53,10 @@ an appropriate setup, per_image, per_pixel, and orbit routines.
 #include "parser.h"
 #include "realdos.h"
 
-#include <float.h>
 #include <limits.h>
 #include <stdlib.h>
 
+#include <cfloat>
 #include <cmath>
 #include <cstring>
 

@@ -16,8 +16,6 @@
 #include "memory.h"
 #include "realdos.h"
 
-#include <float.h>
-
 #include <cstring>
 #include <vector>
 

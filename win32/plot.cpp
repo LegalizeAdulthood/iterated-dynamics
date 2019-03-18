@@ -8,7 +8,6 @@
 
 #include <assert.h>
 #include <crtdbg.h>
-#include <float.h>
 #include <stdlib.h>
 #define STRICT
 #define WIN32_LEAN_AND_MEAN

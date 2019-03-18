@@ -19,8 +19,6 @@
 #include "realdos.h"
 #include "zoom.h"
 
-#include <float.h>
-
 #include <cassert>
 #include <cmath>
 #include <cstring>

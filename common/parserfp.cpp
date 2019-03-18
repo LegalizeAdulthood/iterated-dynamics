@@ -40,7 +40,6 @@
 #include "realdos.h"
 
 #include <ctype.h>
-#include <float.h>
 #include <stdio.h>
 #include <time.h>
 

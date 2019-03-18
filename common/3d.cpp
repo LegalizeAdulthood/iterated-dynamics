@@ -59,8 +59,7 @@
 #include "fractals.h"
 #include "line3d.h"
 
-#include <float.h>
-
+#include <cfloat>
 #include <cmath>
 #include <cstring>
 

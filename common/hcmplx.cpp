@@ -5,8 +5,6 @@
 #include "miscres.h"
 #include "mpmath.h"
 
-#include <float.h>
-
 void HComplexMult(DHyperComplex *arg1, DHyperComplex *arg2, DHyperComplex *out)
 {
     out->x = arg1->x * arg2->x - arg1->y * arg2->y

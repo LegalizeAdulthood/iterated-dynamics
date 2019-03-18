@@ -8,7 +8,6 @@
 #include "realdos.h"
 #include "rotate.h"
 
-#include <float.h>
 #include <stdio.h>
 
 #include <cstring>

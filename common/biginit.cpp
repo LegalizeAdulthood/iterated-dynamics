@@ -15,8 +15,8 @@ is in the allocations of memory for the big numbers.
 #include "prompts2.h"
 #include "realdos.h"
 
-#include <float.h>
 #include <stdio.h>
+
 #include <cstring>
 
 // globals

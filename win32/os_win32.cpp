@@ -18,7 +18,6 @@
 
 #include <assert.h>
 #include <direct.h>
-#include <float.h>
 #include <signal.h>
 #include <stdio.h>
 #include <sys/timeb.h>
