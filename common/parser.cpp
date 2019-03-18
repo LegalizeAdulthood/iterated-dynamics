@@ -34,7 +34,6 @@
 #include "realdos.h"
 
 #include <stdio.h>
-#include <time.h>
 
 #include <algorithm>
 #include <cassert>
@@ -43,6 +42,7 @@
 #include <cmath>
 #include <cstdlib>
 #include <cstring>
+#include <ctime>
 #include <iterator>
 #include <string>
 
@@ -433,10 +433,10 @@ void SetRandFnct()
 
 void RandomSeed()
 {
-    time_t ltime;
+    std::time_t ltime;
 
     // Use the current time to randomize the random number sequence.
-    time(&ltime);
+    std::time(&ltime);
     srand((unsigned int)ltime);
 
     NewRandNum();

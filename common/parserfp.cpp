@@ -40,7 +40,6 @@
 #include "realdos.h"
 
 #include <stdio.h>
-#include <time.h>
 
 #include <cctype>
 #include <cstring>

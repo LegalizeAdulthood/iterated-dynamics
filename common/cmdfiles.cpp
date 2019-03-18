@@ -33,7 +33,6 @@
 #include "soi.h"
 #include "stereo.h"
 
-#include <time.h>
 #include <stdio.h>
 
 #include <algorithm>
@@ -43,6 +42,7 @@
 #include <cmath>
 #include <cstdlib>
 #include <cstring>
+#include <ctime>
 #include <string>
 #include <system_error>
 #include <vector>
@@ -416,7 +416,7 @@ int load_commands(FILE *infile)
 
 static void initvars_run()              // once per run init
 {
-    init_rseed = (int)time(nullptr);
+    init_rseed = (int)std::time(nullptr);
     init_comments();
     char const *p = getenv("TMP");
     if (p == nullptr)

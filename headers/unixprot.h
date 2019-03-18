@@ -13,7 +13,6 @@ extern void decode_evolver_info(EVOLUTION_INFO *, int);
 extern void decode_fractal_info(FRACTAL_INFO *, int);
 extern void decode_orbits_info(ORBITS_INFO *, int);
 
-extern long clock_ticks();
 #ifndef HAVESTRI
 extern int stricmp(char const *, char const *);
 extern int strnicmp(char const *, char const *, int);

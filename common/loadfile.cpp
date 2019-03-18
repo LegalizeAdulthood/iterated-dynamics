@@ -34,7 +34,6 @@
 
 #include <errno.h>
 #include <stdio.h>
-#include <time.h>
 #if defined(XFRACT)
 #include <unistd.h>
 #endif
@@ -45,6 +44,7 @@
 #include <cstdlib>
 #include <cstring>
 #include <string>
+#include <ctime>
 #include <system_error>
 #include <vector>
 
@@ -1370,7 +1370,8 @@ static bf_math_type oldbf_math;
 int fgetwindow()
 {
     affine stack_cvt;
-    time_t thistime, lastime;
+    std::time_t thistime;
+    std::time_t lastime;
     char mesg[40];
     char newname[60];
     char oldname[60];
@@ -1435,7 +1436,7 @@ int fgetwindow()
     find_special_colors();
     color_of_box = g_color_medium;
 rescan:  // entry for changed browse parms
-    time(&lastime);
+    std::time(&lastime);
     toggle = 0;
     wincount = 0;
     g_browse_sub_images = true;
@@ -1510,7 +1511,7 @@ rescan:  // entry for changed browse parms
 #endif
             while (!driver_key_pressed())
             {
-                time(&thistime);
+                std::time(&thistime);
                 if (static_cast<double>(thistime - lastime) > 0.2)
                 {
                     lastime = thistime;

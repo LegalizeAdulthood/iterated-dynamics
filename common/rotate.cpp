@@ -17,9 +17,9 @@
 #include "rotate.h"
 
 #include <stdio.h>
-#include <time.h>
 
 #include <cstring>
+#include <ctime>
 
 static void pauserotate();
 static void set_palette(BYTE start[3], BYTE finish[3]);
@@ -76,7 +76,7 @@ void rotate(int direction)      // rotate-the-palette routine
     changecolor = -1;                    // no color (rgb) to change
     changedirection = 0;                 // no color direction to change
     incr = 999;                          // ready to randomize
-    srand((unsigned)time(nullptr));         // randomize things
+    srand((unsigned)std::time(nullptr));         // randomize things
 
     if (direction == 0)
     {

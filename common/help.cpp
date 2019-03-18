@@ -15,12 +15,12 @@
 #include <stdio.h>
 #include <sys/stat.h>
 #include <sys/types.h>
-#include <time.h>
 #if defined(XFRACT)
 #include <unistd.h>
 #endif
 
 #include <cstring>
+#include <ctime>
 #include <system_error>
 #include <vector>
 
@@ -834,7 +834,7 @@ int help(int action)
 
     old_look_at_mouse = g_look_at_mouse;
     g_look_at_mouse = 0;
-    g_timer_start -= clock_ticks();
+    g_timer_start -= std::clock();
     driver_stack_screen();
 
     if (g_help_mode >= help_labels::IDHELP_INDEX)
@@ -953,7 +953,7 @@ int help(int action)
     driver_unstack_screen();
     g_look_at_mouse = old_look_at_mouse;
     g_help_mode = old_help_mode;
-    g_timer_start += clock_ticks();
+    g_timer_start += std::clock();
 
     return 0;
 }

@@ -31,7 +31,6 @@
 #include <signal.h>
 #include <stdarg.h>
 #include <stdio.h>
-#include <time.h>
 #if defined(XFRACT)
 #include <unistd.h>
 #endif
@@ -39,6 +38,7 @@
 #include <cassert>
 #include <cctype>
 #include <cstring>
+#include <ctime>
 #include <vector>
 
 VIDEOINFO g_video_entry;
@@ -218,7 +218,7 @@ static void main_restart(int const argc, char const *const argv[], bool &stacked
     g_evolve_image_grid_size = 9;
     g_evolve_max_random_mutation = 1;
     g_evolve_mutation_reduction_factor = 1.0;
-    g_evolve_this_generation_random_seed = (unsigned int)clock_ticks();
+    g_evolve_this_generation_random_seed = (unsigned int)std::clock();
     srand(g_evolve_this_generation_random_seed);
     initgene(); /*initialise pointers to lots of fractint variables for the evolution engine*/
     g_start_show_orbit = false;
@@ -663,7 +663,7 @@ int timer(int timertype, int(*subrtn)(), ...)
     {
         fp = dir_fopen(g_working_dir.c_str(), "bench", "a");
     }
-    g_timer_start = clock_ticks();
+    g_timer_start = std::clock();
     switch (timertype)
     {
     case 0:
@@ -678,7 +678,7 @@ int timer(int timertype, int(*subrtn)(), ...)
         break;
     }
     // next assumes CLOCKS_PER_SEC is 10^n, n>=2
-    g_timer_interval = (clock_ticks() - g_timer_start) / (CLOCKS_PER_SEC/100);
+    g_timer_interval = (std::clock() - g_timer_start) / (CLOCKS_PER_SEC/100);
 
     if (do_bench)
     {

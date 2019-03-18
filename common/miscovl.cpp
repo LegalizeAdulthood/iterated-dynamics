@@ -30,7 +30,6 @@
 
 #include <stdarg.h>
 #include <stdio.h>
-#include <time.h>
 #if defined(XFRACT)
 #include <unistd.h>
 #else
@@ -42,6 +41,7 @@
 #include <cfloat>
 #include <cmath>
 #include <cstring>
+#include <ctime>
 #include <string>
 #include <vector>
 
@@ -2698,12 +2698,12 @@ void flip_image(int key)
 
 static char const *expand_var(char const *var, char *buf)
 {
-    time_t ltime;
+    std::time_t ltime;
     char *str;
     char const *out;
 
-    time(&ltime);
-    str = ctime(&ltime);
+    std::time(&ltime);
+    str = std::ctime(&ltime);
 
     // ctime format
     // Sat Aug 17 21:34:14 1996

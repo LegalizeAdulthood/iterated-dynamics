@@ -31,6 +31,7 @@
 #include <cmath>
 #include <cstdlib>
 #include <cstring>
+#include <ctime>
 #include <vector>
 
 // ********************** Mouse Support Variables **************************
@@ -261,10 +262,9 @@ nosnd()
 /*
 ; long readticker() returns current bios ticker value
 */
-long
-readticker()
+long readticker()
 {
-    return clock_ticks();
+    return std::clock();
 }
 
 /* --------------------------------------------------------------------

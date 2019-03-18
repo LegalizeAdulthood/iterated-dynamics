@@ -21,28 +21,6 @@
 #define FILE_MAX_FNAME  9       // max length of filename
 #define FILE_MAX_EXT    5       // max length of extension
 
-/*
- *----------------------------------------------------------------------
- *
- * clock_ticks --
- *
- *      Return time in CLOCKS_PER_SEC ticks.
- *
- * Results:
- *      Time.
- *
- * Side effects:
- *      None.
- *
- *----------------------------------------------------------------------
- */
-long clock_ticks()
-{
-    struct timeval tim;
-    gettimeofday(&tim, nullptr);
-    return tim.tv_sec*CLOCKS_PER_SEC + tim.tv_usec*CLOCKS_PER_SEC/1000000;
-}
-
 // stub
 void
 intdos()

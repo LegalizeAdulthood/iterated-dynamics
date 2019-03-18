@@ -28,12 +28,12 @@ FRACTALS.C, i.e. which are non-fractal-specific fractal engine subroutines.
 #include <sys/timeb.h>
 #endif
 #include <sys/types.h>
-#include <time.h>
 
 #include <algorithm>
 #include <cfloat>
 #include <cmath>
 #include <cstdlib>
+#include <ctime>
 #include <iterator>
 #include <vector>
 
@@ -1647,7 +1647,7 @@ void snd_time_write()
     // cppcheck-suppress leakNoVarFunctionCall
     if (snd_open())
     {
-        fprintf(snd_fp, "time=%-ld\n", (long)clock()*1000/CLOCKS_PER_SEC);
+        fprintf(snd_fp, "time=%-ld\n", (long)std::clock()*1000/CLOCKS_PER_SEC);
     }
 }
 

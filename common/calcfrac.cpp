@@ -43,7 +43,6 @@
 
 #include <stdio.h>
 #include <cstring>
-#include <time.h>
 
 #include <algorithm>
 #include <cfloat>

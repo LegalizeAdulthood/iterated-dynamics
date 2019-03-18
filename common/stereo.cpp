@@ -18,10 +18,9 @@
 #include "realdos.h"
 #include "rotate.h"
 
-#include <time.h>
-
 #include <cstdlib>
 #include <cstring>
+#include <ctime>
 #include <vector>
 
 std::string g_stereo_map_filename;
@@ -246,7 +245,7 @@ bool do_AutoStereo()
     int ct;
     int kbdchar;
     int barwidth;
-    time_t ltime;
+    std::time_t ltime;
     std::vector<int> colour;
     colour.resize(g_logical_screen_x_dots);
     bool done = false;
@@ -255,7 +254,7 @@ bool do_AutoStereo()
     pv->savedac = savedacbox;
 
     // Use the current time to randomize the random number sequence.
-    time(&ltime);
+    std::time(&ltime);
     srand((unsigned int)ltime);
 
     help_labels const old_help_mode = g_help_mode;

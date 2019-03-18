@@ -21,10 +21,11 @@
 
 #include <assert.h>
 #include <stdio.h>
-#include <time.h>
 #define WIN32_LEAN_AND_MEAN
 #define STRICT
 #include <windows.h>
+
+#include <ctime>
 
 #include "WinText.h"
 #include "frame.h"
@@ -47,12 +48,12 @@ static void flush_output()
     {
         if (!start)
         {
-            time(&start);
+            std::time(&start);
             last = readticker();
         }
         else
         {
-            time_t now = time(nullptr);
+            std::time_t now = std::time(nullptr);
             long now_ticks = readticker();
             if (now > start)
             {

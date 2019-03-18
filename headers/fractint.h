@@ -10,9 +10,6 @@
     NUM_OF(stuff) returns 100.
 */
 #define NUM_OF(ary_) (sizeof(ary_)/sizeof(ary_[0]))
-#ifndef XFRACT
-#define clock_ticks() clock()
-#endif
 #define NUM_BOX_POINTS 4096
 
 // these are used to declare arrays for file names

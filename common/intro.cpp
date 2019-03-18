@@ -11,8 +11,7 @@
 #include "id_data.h"
 #include "realdos.h"
 
-#include <time.h>
-
+#include <ctime>
 #include <vector>
 
 bool slowdisplay = false;
@@ -28,7 +27,7 @@ void intro()
     char screen_text[32768];
     int old_look_at_mouse;
 
-    g_timer_start -= clock_ticks();       // "time out" during help
+    g_timer_start -= std::clock();       // "time out" during help
     old_look_at_mouse = g_look_at_mouse;
     help_labels const old_help_mode = g_help_mode;
     g_look_at_mouse = 0;                    // de-activate full mouse checking
@@ -66,7 +65,7 @@ void intro()
         driver_set_attr(i, 21, C_CONTRIB, 58);
     }
     driver_set_attr(toprow, 0, C_CONTRIB, (21-END_MAIN_AUTHOR)*80);
-    srand((unsigned int)clock_ticks());
+    srand((unsigned int)std::clock());
     j = rand()%(j-(botrow-toprow)); // first to use
     i = j+botrow-toprow; // last to use
     oldchar = credits[authors.at(i+1)];

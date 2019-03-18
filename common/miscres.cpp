@@ -25,7 +25,6 @@
 #include "soi.h"
 
 #include <stdarg.h>
-#include <time.h>
 #if defined(XFRACT)
 #include <unistd.h>
 #endif
@@ -35,6 +34,7 @@
 #include <cctype>
 #include <cmath>
 #include <cstring>
+#include <ctime>
 #include <string>
 
 static void trigdetails(char *buf);
@@ -869,7 +869,7 @@ int tab_display()       // display the status of the current image
     }
     if (g_calc_status == calc_status_value::IN_PROGRESS)        // next assumes CLOCKS_PER_SEC is 10^n, n>=2
     {
-        g_calc_time += (clock_ticks() - g_timer_start) / (CLOCKS_PER_SEC/100);
+        g_calc_time += (std::clock() - g_timer_start) / (CLOCKS_PER_SEC/100);
     }
     driver_stack_screen();
     if (bf_math != bf_math_type::NONE)
@@ -1309,7 +1309,7 @@ top:
         }
     }
     driver_unstack_screen();
-    g_timer_start = clock_ticks(); // tab display was "time out"
+    g_timer_start = std::clock(); // tab display was "time out"
     if (bf_math != bf_math_type::NONE)
     {
         restore_stack(saved);

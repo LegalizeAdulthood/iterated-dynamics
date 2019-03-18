@@ -35,10 +35,10 @@
 #include "zoom.h"
 
 #include <stdio.h>
-#include <time.h>
 
 #include <cctype>
 #include <cstring>
+#include <ctime>
 #include <string>
 #include <vector>
 
@@ -532,7 +532,7 @@ main_state big_while_loop(bool *const kbdmore, bool *const stacked, bool const r
                     int mid = g_evolve_image_grid_size / 2;
                     if ((g_evolve_param_grid_x != mid) || (g_evolve_param_grid_y != mid))
                     {
-                        g_evolve_this_generation_random_seed = (unsigned int)clock_ticks(); // time for new set
+                        g_evolve_this_generation_random_seed = (unsigned int)std::clock(); // time for new set
                     }
                     param_history(0); // save old history
                     ecount = 0;

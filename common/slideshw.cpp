@@ -15,11 +15,11 @@
 #include "slideshw.h"
 
 #include <stdio.h>
-#include <time.h>
 
 #include <cctype>
 #include <cstdlib>
 #include <cstring>
+#include <ctime>
 #include <sstream>
 #include <system_error>
 
@@ -155,7 +155,7 @@ int slideshw()
 
     if (ticks) // if waiting, see if waited long enough
     {
-        if (clock_ticks() - starttick < ticks)   // haven't waited long enough
+        if (std::clock() - starttick < ticks)   // haven't waited long enough
         {
             return 0;
         }
@@ -163,7 +163,7 @@ int slideshw()
     }
     if (++slowcount <= 18)
     {
-        starttick = clock_ticks();
+        starttick = std::clock();
         ticks = CLOCKS_PER_SEC/5; // a slight delay so keystrokes are visible
         if (slowcount > 10)
         {
@@ -301,7 +301,7 @@ start:
         if (err == 1)
         {
             ticks = (long)fticks;
-            starttick = clock_ticks();  // start timing
+            starttick = std::clock();  // start timing
         }
         else
         {
@@ -360,7 +360,7 @@ void recordshw(int key)
     char mn[MAX_MNEMONIC];
     float dt;
     dt = (float)ticks;      // save time of last call
-    ticks = clock_ticks();  // current time
+    ticks = std::clock();  // current time
     if (fpss == nullptr)
     {
         fpss = fopen(g_auto_name.c_str(), "w");
@@ -419,8 +419,8 @@ void recordshw(int key)
 static void sleep_secs(int secs)
 {
     long stop;
-    stop = clock_ticks() + (long)secs*CLOCKS_PER_SEC;
-    while (clock_ticks() < stop && driver_key_pressed() == 0)
+    stop = std::clock() + (long)secs*CLOCKS_PER_SEC;
+    while (std::clock() < stop && driver_key_pressed() == 0)
     {
     } // bailout if key hit
 }
