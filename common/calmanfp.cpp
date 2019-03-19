@@ -29,21 +29,13 @@ void calcmandfpasmstart()
 
 #define ABS(x) ((x) < 0?-(x):(x))
 
-// If USE_NEW is 1, the magnitude is used for periodicity checking instead
-// of the x and y values.  This is experimental.
-#define USE_NEW 0
-
 long calcmandfpasm()
 {
     long cx;
     long savedand;
     int savedincr;
     long tmpfsd;
-#if USE_NEW
-    double x, y, x2, y2, xy, Cx, Cy, savedmag;
-#else
     double x, y, x2, y2, xy, Cx, Cy, savedx, savedy;
-#endif
 
     if (g_periodicity_check == 0)
     {
@@ -61,12 +53,8 @@ long calcmandfpasm()
     }
 
     // initparms
-#if USE_NEW
-    savedmag = 0;
-#else
     savedx = 0;
     savedy = 0;
-#endif
     g_orbit_save_index = 0;
     savedand = g_first_saved_and;
     savedincr = 1;             // start checking the very first time
@@ -137,12 +125,8 @@ long calcmandfpasm()
         {
             if (((g_max_iterations - cx) & savedand) == 0)
             {
-#if USE_NEW
-                savedmag = magnitude;
-#else
                 savedx = x;
                 savedy = y;
-#endif
                 savedincr--;
                 if (savedincr == 0)
                 {
@@ -152,13 +136,8 @@ long calcmandfpasm()
             }
             else
             {
-#if USE_NEW
-                if (ABS(magnitude-savedmag) < g_close_enough)
-                {
-#else
                 if (ABS(savedx-x) < g_close_enough && ABS(savedy-y) < g_close_enough)
                 {
-#endif
                     //          oldcoloriter = 65535;
                     g_old_color_iter = g_max_iterations;
                     g_real_color_iter = g_max_iterations;
