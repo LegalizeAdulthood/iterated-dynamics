@@ -24,12 +24,8 @@ using BYTE = U8;
 
 // If endian.h is not present, it can be handled in the code below,
 // but if you have this file, it can make it more fool proof.
-#if (defined(XFRACT) && !defined(__sun))
-#  if defined(sgi)
-#    include <sys/endian.h>
-#  else
-#    include <endian.h>
-#  endif
+#if defined(XFRACT)
+#include <endian.h>
 #endif
 
 #ifndef BIG_ENDIAN
