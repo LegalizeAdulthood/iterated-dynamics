@@ -22,7 +22,6 @@ enum class bf_math_type
     BIGFLT = 2          // bf_math is being used with bf_t numbers
 };
 
-#define USE_BIGNUM_C_CODE
 #define BIG_NULL            nullptr
 #define BIG_SIZE_T          size_t
 #define big_malloc(size)    malloc(size)
