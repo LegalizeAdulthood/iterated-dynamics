@@ -27,10 +27,10 @@ enum class bf_math_type
 #define big_malloc(size)    malloc(size)
 #define big_free(ptr)       free(ptr)
 
-typedef unsigned char * big_t;
-#define bn_t   big_t  // for clarification purposes
-#define bf_t   big_t
-#define bf10_t big_t
+using big_t = unsigned char *;
+using bn_t = big_t;  // for clarification purposes
+using bf_t = big_t;
+using bf10_t = big_t;
 #include "cmplx.h"
 struct BFComplex
 {
