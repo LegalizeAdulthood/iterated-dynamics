@@ -32,16 +32,10 @@ using bn_t = big_t;  // for clarification purposes
 using bf_t = big_t;
 using bf10_t = big_t;
 #include "cmplx.h"
-struct BFComplex
-{
-    bn_t x;
-    bn_t y;
-};
-struct BNComplex
-{
-    bn_t x;
-    bn_t y;
-};
+
+using BFComplex = id::complex<bf_t>;
+using BNComplex = id::complex<bn_t>;
+
 // globals
 extern bf_math_type bf_math;
 extern int bnstep, intlength;
