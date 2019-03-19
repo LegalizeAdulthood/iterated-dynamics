@@ -25,6 +25,7 @@
 #include <shlwapi.h>
 #include <dbghelp.h>
 
+#include <cctype>
 #include <cstdarg>
 #include <cstdio>
 #include <cstring>
@@ -896,12 +897,12 @@ void findpath(char const *filename, char *fullpathname) // return full pathnames
 // case independent version of std::strncmp
 int strncasecmp(char const *s, char const *t, int ct)
 {
-    for (; (tolower(*s) == tolower(*t)) && --ct ; s++, t++)
+    for (; (std::tolower(*s) == std::tolower(*t)) && --ct ; s++, t++)
     {
         if (*s == '\0')
         {
             return 0;
         }
     }
-    return tolower(*s) - tolower(*t);
+    return std::tolower(*s) - std::tolower(*t);
 }

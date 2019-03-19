@@ -63,16 +63,10 @@ long stackavail()
  */
 int stricmp(char const *s1, char const *s2)
 {
-    int c1, c2;
-
     while (1)
     {
-        c1 = *s1++;
-        c2 = *s2++;
-        if (isupper(c1))
-            c1 = tolower(c1);
-        if (isupper(c2))
-            c2 = tolower(c2);
+        const int c1 = std::tolower(*s1++);
+        const int c2 = std::tolower(*s2++);
         if (c1 != c2)
         {
             return c1 - c2;
@@ -100,21 +94,15 @@ int stricmp(char const *s1, char const *s2)
  */
 int strnicmp(char const *s1, char const *s2, int numChars)
 {
-    char c1, c2;
-
     for (; numChars > 0; --numChars)
     {
-        c1 = *s1++;
-        c2 = *s2++;
-        if (isupper(c1))
-            c1 = tolower(c1);
-        if (isupper(c2))
-            c2 = tolower(c2);
+        const int c1 = std::tolower(*s1++);
+        const int c2 = std::tolower(*s2++);
         if (c1 != c2)
         {
             return c1 - c2;
         }
-        if (c1 == '\0')
+        if (c1 == 0)
         {
             return 0;
         }
@@ -141,14 +129,9 @@ int strnicmp(char const *s1, char const *s2, int numChars)
 char *
 strlwr(char *s)
 {
-    char *sptr = s;
-    while (*sptr != '\0')
+    for (char *sptr = s; *sptr; ++sptr)
     {
-        if (isupper(*sptr))
-        {
-            *sptr = tolower(*sptr);
-        }
-        sptr++;
+        *sptr = std::tolower(*sptr);
     }
     return s;
 }
@@ -170,14 +153,9 @@ strlwr(char *s)
 char *
 strupr(char *s)
 {
-    char *sptr = s;
-    while (*sptr != '\0')
+    for (char *sptr = s; *sptr; ++sptr)
     {
-        if (islower(*sptr))
-        {
-            *sptr = toupper(*sptr);
-        }
-        sptr++;
+        *sptr = std::toupper(*sptr);
     }
     return s;
 }
