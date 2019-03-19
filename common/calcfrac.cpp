@@ -2014,12 +2014,6 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
     int const green = 2;
     int const yellow = 6;
 
-#ifdef NUMSAVED
-    DComplex savedz[NUMSAVED] = { 0.0 };
-    long caught[NUMSAVED] = { 0 };
-    long changed[NUMSAVED] = { 0 };
-    int zctr = 0;
-#endif
     long savemaxit = 0;
     double tantable[16] = { 0.0 };
     int hooper = 0;
@@ -2045,13 +2039,6 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
 
     lcloseprox = (long)(g_close_proximity*g_fudge_factor);
     savemaxit = g_max_iterations;
-#ifdef NUMSAVED
-    for (int i = 0; i < NUMSAVED; i++)
-    {
-        caught[i] = 0L;
-        changed[i] = 0L;
-    }
-#endif
     if (g_inside_color == STARTRAIL)
     {
         std::fill(std::begin(tantable), std::end(tantable), 0.0);
@@ -2094,9 +2081,6 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
             saved.x = 0;
             saved.y = 0;
         }
-#ifdef NUMSAVED
-        savedz[zctr++] = saved;
-#endif
         if (bf_math != bf_math_type::NONE)
         {
             if (g_decimals > 200)
@@ -2538,13 +2522,6 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
                 else
                 {
                     saved = g_new_z;  // floating pt fractals
-#ifdef NUMSAVED
-                    if (zctr < NUMSAVED)
-                    {
-                        changed[zctr]  = g_color_iter;
-                        savedz[zctr++] = saved;
-                    }
-#endif
                 }
                 if (--savedincr == 0)    // time to lengthen the periodicity?
                 {
@@ -2593,38 +2570,10 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
                             caught_a_cycle = true;
                         }
                     }
-#ifdef NUMSAVED
-                    for (int i = 0; i <= zctr; i++)
-                    {
-                        if (caught[i] == 0)
-                        {
-                            if (std::fabs(savedz[i].x - g_new_z.x) < g_close_enough)
-                                if (std::fabs(savedz[i].y - g_new_z.y) < g_close_enough)
-                                {
-                                    caught[i] = g_color_iter;
-                                }
-                        }
-                    }
-#endif
                 }
                 if (caught_a_cycle)
                 {
-#ifdef NUMSAVED
-                    static std::FILE *fp = dir_fopen(workdir.c_str(), "cycles.txt", "w");
-#endif
                     cyclelen = g_color_iter-savedcoloriter;
-#ifdef NUMSAVED
-                    std::fprintf(fp, "row %3d col %3d len %6ld iter %6ld savedand %6ld\n",
-                            row, g_col, cyclelen, g_color_iter, savedand);
-                    if (zctr > 1 && zctr < NUMSAVED)
-                    {
-                        for (int i = 0; i < zctr; i++)
-                        {
-                            std::fprintf(fp, "   caught %2d saved %6ld iter %6ld\n", i, changed[i], caught[i]);
-                        }
-                    }
-                    fflush(fp);
-#endif
                     g_color_iter = g_max_iterations - 1;
                 }
 
