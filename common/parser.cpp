@@ -45,10 +45,6 @@
 #include <iterator>
 #include <string>
 
-#ifdef WATCH_MP
-double x1, y1, x2, y2;
-#endif
-
 enum MATH_TYPE MathType = D_MATH;
 
 #define MAX_OPS 250
@@ -2958,12 +2954,6 @@ int Formula()
     {
         f[OpPtr]();
         OpPtr++;
-#ifdef WATCH_MP
-        x1 = *MP2d(Arg1->m.x);
-        y1 = *MP2d(Arg1->m.y);
-        x2 = *MP2d(Arg2->m.x);
-        y2 = *MP2d(Arg2->m.y);
-#endif
     }
 
     switch (MathType)
