@@ -42,9 +42,6 @@
 #ifdef FPUERR
 #include <floatingpoint.h>
 #endif
-#ifdef __hpux
-#include <sys/file.h>
-#endif
 
 #include <cstdio>
 #include <cstdlib>

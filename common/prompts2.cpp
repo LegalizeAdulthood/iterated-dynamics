@@ -33,10 +33,6 @@
 #include "stereo.h"
 #include "zoom.h"
 
-#ifdef __hpux
-#include <sys/param.h>
-#endif
-
 #include <algorithm>
 #include <cfloat>
 #include <cmath>

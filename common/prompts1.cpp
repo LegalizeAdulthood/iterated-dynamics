@@ -36,11 +36,6 @@
 #include <sys/stat.h>
 #endif
 
-#ifdef __hpux
-#include <sys/param.h>
-#define getwd(a) getcwd(a, MAXPATHLEN)
-#endif
-
 #include <cassert>
 #include <cstdlib>
 #include <cstring>

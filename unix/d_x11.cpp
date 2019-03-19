@@ -42,9 +42,6 @@
 #ifdef FPUERR
 #include <floatingpoint.h>
 #endif
-#ifdef __hpux
-#include <sys/file.h>
-#endif
 
 #include <cstdio>
 #include <cstdlib>
@@ -914,76 +911,6 @@ static int get_a_char_delay(DriverX11 *di)
 static int
 handle_esc(DriverX11 *di)
 {
-#ifdef __hpux
-    // HP escape key sequences.
-    int ch1 = get_a_char_delay(di);
-    if (ch1 == -1)
-        return FIK_ESC;
-
-    switch (ch1)
-    {
-    case 'A':
-        return FIK_UP_ARROW;
-    case 'B':
-        return FIK_DOWN_ARROW;
-    case 'D':
-        return FIK_LEFT_ARROW;
-    case 'C':
-        return FIK_RIGHT_ARROW;
-    case 'd':
-        return FIK_HOME;
-    }
-    if (ch1 != '[')
-        return FIK_ESC;
-    ch1 = get_a_char_delay(di);
-    if (ch1 == -1 || !isdigit(ch1))
-        return FIK_ESC;
-    int ch2 = get_a_char_delay(di);
-    if (ch2 == -1)
-        return FIK_ESC;
-    if (isdigit(ch2))
-    {
-        const int ch3 = get_a_char_delay(di);
-        if (ch3 != '~')
-            return FIK_ESC;
-        ch2 = (ch2-'0')*10+ch3-'0';
-    }
-    else if (ch2 != '~')
-    {
-        return FIK_ESC;
-    }
-    else
-    {
-        ch2 = ch2-'0';
-    }
-    switch (ch2)
-    {
-    case 5:
-        return FIK_PAGE_UP;
-    case 6:
-        return FIK_PAGE_DOWN;
-    case 29:
-        return FIK_F1; // help
-    case 11:
-        return FIK_F1;
-    case 12:
-        return FIK_F2;
-    case 13:
-        return FIK_F3;
-    case 14:
-        return FIK_F4;
-    case 15:
-        return FIK_F5;
-    case 17:
-        return FIK_F6;
-    case 18:
-        return FIK_F7;
-    case 19:
-        return FIK_F8;
-    default:
-        return FIK_ESC;
-    }
-#else
     // SUN escape key sequences
     int ch1 = get_a_char_delay(di);
     if (ch1 != '[')       // See if we have esc [
@@ -1075,7 +1002,6 @@ handle_esc(DriverX11 *di)
             return FIK_ESC;
         }
     }
-#endif
 }
 
 /* ev_key_press
