@@ -17,12 +17,6 @@
 #include "slideshw.h"
 
 #include <fcntl.h>
-#ifndef NOBSTRING
-#ifndef sun
-// If this gives you an error, read the README and modify the Makefile.
-#include <bstring.h>
-#endif
-#endif
 #include <unistd.h>
 
 #include <cmath>
