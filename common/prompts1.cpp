@@ -32,10 +32,6 @@
 #include "stereo.h"
 #include "zoom.h"
 
-#ifdef   XFRACT
-#include <sys/stat.h>
-#endif
-
 #include <cassert>
 #include <cstdlib>
 #include <cstring>
