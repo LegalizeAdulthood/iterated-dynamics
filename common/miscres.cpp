@@ -1613,12 +1613,11 @@ bool find_file_item(char *filename, char const *itemname, std::FILE **fileptr, i
         while (out == 0)
         {
             char msg[200];
-            DTA.filename[FILE_MAX_FNAME+FILE_MAX_EXT-2] = 0;
-            std::sprintf(msg, "Searching %13s for %s      ", DTA.filename, itemname);
+            std::sprintf(msg, "Searching %13s for %s      ", DTA.filename.c_str(), itemname);
             showtempmsg(msg);
             if (!(DTA.attribute & SUBDIR)
-                && std::strcmp(DTA.filename, ".")
-                && std::strcmp(DTA.filename, ".."))
+                && DTA.filename != "."
+                && DTA.filename != "..")
             {
                 splitpath(DTA.filename, nullptr, nullptr, fname, ext);
                 makepath(fullpath, drive, dir, fname, ext);

@@ -1528,18 +1528,18 @@ retry_dir:
     out = fr_findfirst(tmpmask);
     while (out == 0 && filecount < MAXNUMFILES)
     {
-        if ((DTA.attribute & SUBDIR) && std::strcmp(DTA.filename, "."))
+        if ((DTA.attribute & SUBDIR) && DTA.filename != ".")
         {
-            if (std::strcmp(DTA.filename, ".."))
+            if (DTA.filename != "..")
             {
-                std::strcat(DTA.filename, SLASH);
+                DTA.filename += SLASH;
             }
-            std::strncpy(choices[++filecount]->name, DTA.filename, 13);
+            std::strncpy(choices[++filecount]->name, DTA.filename.c_str(), 13);
             choices[filecount]->name[12] = 0;
             choices[filecount]->type = 1;
-            std::strcpy(choices[filecount]->full_name, DTA.filename);
+            std::strcpy(choices[filecount]->full_name, DTA.filename.c_str());
             dircount++;
-            if (std::strcmp(DTA.filename, "..") == 0)
+            if (DTA.filename == "..")
             {
                 notroot = true;
             }
@@ -1565,19 +1565,19 @@ retry_dir:
             {
                 if (rds)
                 {
-                    putstringcenter(2, 0, 80, C_GENERAL_INPUT, DTA.filename);
+                    putstringcenter(2, 0, 80, C_GENERAL_INPUT, DTA.filename.c_str());
 
                     splitpath(DTA.filename, nullptr, nullptr, fname, ext);
                     // just using speedstr as a handy buffer
                     makepath(speedstr, drive, dir, fname, ext);
-                    std::strncpy(choices[++filecount]->name, DTA.filename, 13);
+                    std::strncpy(choices[++filecount]->name, DTA.filename.c_str(), 13);
                     choices[filecount]->type = 0;
                 }
                 else
                 {
-                    std::strncpy(choices[++filecount]->name, DTA.filename, 13);
+                    std::strncpy(choices[++filecount]->name, DTA.filename.c_str(), 13);
                     choices[filecount]->type = 0;
-                    std::strcpy(choices[filecount]->full_name, DTA.filename);
+                    std::strcpy(choices[filecount]->full_name, DTA.filename.c_str());
                 }
             }
             out = fr_findnext();

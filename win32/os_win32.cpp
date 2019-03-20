@@ -255,11 +255,12 @@ static WIN32_FIND_DATA s_find_data = { 0 };
 
 static void fill_dta()
 {
-    _snprintf(DTA.path, NUM_OF(DTA.path), "%s%s", s_find_base, s_find_data.cFileName);
+    DTA.path = s_find_base;
+    DTA.path += s_find_data.cFileName;
     DTA.attribute = DTA_FLAG(FILE_ATTRIBUTE_DIRECTORY, SUBDIR) |
                     DTA_FLAG(FILE_ATTRIBUTE_SYSTEM, SYSTEM) |
                     DTA_FLAG(FILE_ATTRIBUTE_HIDDEN, HIDDEN);
-    std::strcpy(DTA.filename, s_find_data.cFileName);
+    DTA.filename = s_find_data.cFileName;
 }
 #undef DTA_FLAG
 

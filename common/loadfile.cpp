@@ -1460,11 +1460,11 @@ rescan:  // entry for changed browse parms
                 &blk_4_info, &blk_5_info, &blk_6_info, &blk_7_info)
             && (typeOK(&read_info, &blk_3_info) || !g_browse_check_fractal_type)
             && (paramsOK(&read_info) || !g_browse_check_fractal_params)
-            && stricmp(g_browse_name.c_str(), DTA.filename)
+            && stricmp(g_browse_name.c_str(), DTA.filename.c_str()) != 0
             && !blk_6_info.got_data
             && is_visible_window(&winlist, &read_info, &blk_5_info))
         {
-            std::strcpy(winlist.name, DTA.filename);
+            std::strcpy(winlist.name, DTA.filename.c_str());
             drawindow(color_of_box, &winlist);
             winlist.boxcount = g_box_count;
             browse_windows[wincount] = winlist;
