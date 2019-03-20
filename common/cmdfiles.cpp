@@ -3866,6 +3866,17 @@ int get_max_curarg_len(char const *floatvalstr[], int totparms)
     return max_str;
 }
 
+namespace
+{
+
+std::string to_string(cmd_file value)
+{
+    static char const *const modestr[4] = {"command line", "sstools.ini", "PAR file", "PAR file"};
+    return modestr[static_cast<int>(value)];
+}
+
+} // namespace
+
 // mode = 0 command line @filename
 //        1 sstools.ini
 //        2 <@> command after startup
@@ -3874,8 +3885,6 @@ int get_max_curarg_len(char const *floatvalstr[], int totparms)
 // call with NULL for badfilename to get pause for driver_get_key()
 int init_msg(char const *cmdstr, char const *badfilename, cmd_file mode)
 {
-    char const *modestr[4] =
-    {"command line", "sstools.ini", "PAR file", "PAR file"};
     static int row = 1;
 
     if (g_init_batch == batch_modes::NORMAL)
@@ -3898,8 +3907,7 @@ int init_msg(char const *cmdstr, char const *badfilename, cmd_file mode)
     if (badfilename)
     {
         // cppcheck-suppress constStatement
-        msg = std::string {"Can't find "} + cmd + badfilename
-              + ", please check " + modestr[static_cast<int>(mode)];
+        msg = std::string {"Can't find "} + cmd + badfilename + ", please check " + to_string(mode);
     }
     if (g_first_init)
     {
