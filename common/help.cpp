@@ -12,7 +12,6 @@
 #include "realdos.h"
 
 #include <fcntl.h>
-#include <sys/stat.h>
 
 #include <cassert>
 #include <cstdio>
