@@ -16,6 +16,7 @@
 #include "memory.h"
 #include "realdos.h"
 
+#include <cassert>
 #include <cstring>
 #include <vector>
 
@@ -734,17 +735,14 @@ static void mem_putc(BYTE c)     // memory get_char
 
 void dvid_status(int line, char const *msg)
 {
-    char buf[41];
-    int attrib;
-    std::memset(buf, ' ', 40);
-    std::memcpy(buf, msg, (int) std::strlen(msg));
-    buf[40] = 0;
-    attrib = C_DVID_HI;
+    assert(msg != nullptr);
+    const std::string buff = (msg + std::string(40, ' ')).substr(0, 40);
+    int attrib = C_DVID_HI;
     if (line >= 100)
     {
         line -= 100;
         attrib = C_STOP_ERR;
     }
-    driver_put_string(BOXROW+10+line, BOXCOL+12, attrib, buf);
+    driver_put_string(BOXROW+10+line, BOXCOL+12, attrib, buff.c_str());
     driver_hide_text_cursor();
 }
