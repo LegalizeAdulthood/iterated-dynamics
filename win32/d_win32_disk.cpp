@@ -15,10 +15,11 @@
 #include "plot3d.h"
 #include "rotate.h"
 
-#include <assert.h>
 #define WIN32_LEAN_AND_MEAN
 #define STRICT
 #include <Windows.h>
+
+#include <cassert>
 
 #include "WinText.h"
 #include "frame.h"

@@ -20,10 +20,11 @@
 #include "rotate.h"
 #include "slideshw.h"
 
-#include <assert.h>
 #define WIN32_LEAN_AND_MEAN
 #define STRICT
 #include <windows.h>
+
+#include <cassert>
 
 #include "WinText.h"
 #include "frame.h"

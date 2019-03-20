@@ -7,6 +7,7 @@
  *
  */
 #include <algorithm>
+#include <cassert>
 #include <cctype>
 #include <cerrno>
 #include <cstdarg>
@@ -22,7 +23,6 @@
 #include <system_error>
 #include <vector>
 
-#include <assert.h>
 #include <fcntl.h>
 
 #include "id_io.h"

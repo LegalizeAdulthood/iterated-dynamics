@@ -16,7 +16,6 @@
 #include "rotate.h"
 #include "zoom.h"
 
-#include <assert.h>
 #include <direct.h>
 #include <io.h>
 #define WIN32_LEAN_AND_MEAN
@@ -25,6 +24,7 @@
 #include <shlwapi.h>
 #include <dbghelp.h>
 
+#include <cassert>
 #include <cctype>
 #include <cstdarg>
 #include <cstdio>

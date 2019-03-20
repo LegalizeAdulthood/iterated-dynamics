@@ -42,6 +42,7 @@
 #include <floatingpoint.h>
 #endif
 
+#include <cassert>
 #include <csignal>
 #include <cstdio>
 #include <cstdlib>
@@ -56,7 +57,6 @@
 #ifdef LINUX
 #define FNDELAY O_NDELAY
 #endif
-#include <assert.h>
 
 // external variables (set in the FRACTINT.CFG file, but findable here
 

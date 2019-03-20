@@ -11,10 +11,10 @@
 #include "os.h"
 #include "realdos.h"
 
-#include <assert.h>
 #include <fcntl.h>
 #include <sys/stat.h>
 
+#include <cassert>
 #include <cstdio>
 #include <cstring>
 #include <ctime>

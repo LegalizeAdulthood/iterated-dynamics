@@ -26,7 +26,6 @@
 #include "rotate.h"
 #include "zoom.h"
 
-#include <assert.h>
 #include <fcntl.h>
 #include <sys/ioctl.h>
 #include <sys/wait.h>
@@ -42,6 +41,7 @@
 #include <floatingpoint.h>
 #endif
 
+#include <cassert>
 #include <csignal>
 #include <cstdio>
 #include <cstdlib>

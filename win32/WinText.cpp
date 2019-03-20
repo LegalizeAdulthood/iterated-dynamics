@@ -1,4 +1,3 @@
-#include <assert.h>
 #include <crtdbg.h>
 
 #define STRICT
@@ -6,6 +5,7 @@
 #include <windows.h>
 #include <windowsx.h>
 
+#include <cassert>
 #include <cstdlib>
 #include <cstring>
 
