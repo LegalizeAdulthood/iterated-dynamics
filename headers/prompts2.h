@@ -43,7 +43,7 @@ inline int splitpath(const std::string &file_template, char *drive, char *dir, c
 {
     return splitpath(file_template.c_str(), drive, dir, fname, ext);
 }
-extern int makepath(char *template_str, char const *drive, char const *dir, char const *fname, char const *ext);
+extern void makepath(char *template_str, char const *drive, char const *dir, char const *fname, char const *ext);
 extern int fr_findfirst(char const *path);
 extern int fr_findnext();
 extern void shell_sort(void *, int n, unsigned, int (*fct)(void *, void *));

@@ -34,6 +34,7 @@
 #include "zoom.h"
 
 #include <algorithm>
+#include <cassert>
 #include <cfloat>
 #include <cmath>
 #include <cstdlib>
@@ -1926,16 +1927,15 @@ int splitpath(char const *file_template, char *drive, char *dir, char *fname, ch
 }
 #endif
 
-int makepath(char *template_str, char const *drive, char const *dir, char const *fname, char const *ext)
+void makepath(char *template_str, char const *drive, char const *dir, char const *fname, char const *ext)
 {
-    if (template_str)
+    if (template_str == nullptr)
     {
-        *template_str = 0;
+        assert(template_str != nullptr);
+        return;
     }
-    else
-    {
-        return -1;
-    }
+    *template_str = 0;
+
 #ifndef XFRACT
     if (drive)
     {
@@ -1958,7 +1958,6 @@ int makepath(char *template_str, char const *drive, char const *dir, char const 
     {
         std::strcat(template_str, ext);
     }
-    return 0;
 }
 
 // fix up directory names
