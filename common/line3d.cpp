@@ -124,7 +124,7 @@ static long num_tris; // number of triangles output to ray trace file
 static std::vector<f_point> f_lastrow;
 static int Real_V = 0; // Actual value of V for fillytpe>4 monochrome images
 static int error;
-static std::string targa_temp{"fractemp.tga"};
+static std::string targa_temp("fractemp.tga");
 static int P = 250; // Perspective dist used when viewing light vector
 static int const bad_check = -3000; // check values against this to determine if good
 static std::vector<point> lastrow; // this array remembers the previous line
