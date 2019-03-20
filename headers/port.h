@@ -44,7 +44,6 @@ using BYTE = U8;
 #define SLASHDOT       "\\."
 #define DOTSLASH       ".\\"
 #define DOTDOTSLASH    "..\\"
-#define READMODE        "rb"    // Correct DOS text-mode
 #define WRITEMODE       "wb"    // file open "feature".
 #define write1(ptr, len, n, stream) fwrite(ptr, len, n, stream)
 #define write2(ptr, len, n, stream) fwrite(ptr, len, n, stream)
@@ -81,7 +80,6 @@ typedef int sigfunc(int);
 #       define SLASHDOT       "/."
 #       define DOTSLASH       "./"
 #       define DOTDOTSLASH    "../"
-#       define READMODE       "r"
 #       define WRITEMODE        "w"
 #       define write1(ptr, len, n, stream) (fputc(*(ptr), stream), 1)
 #       define write2(ptr, len, n, stream) (fputc((*(ptr))&255, stream), fputc((*(ptr)) >> 8, stream), 1)
