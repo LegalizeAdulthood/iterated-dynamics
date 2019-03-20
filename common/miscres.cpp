@@ -500,7 +500,7 @@ void updatesavename(char *filename) // go to the next file name
     char fname[FILE_MAX_FNAME];
     char ext[FILE_MAX_EXT];
 
-    splitpath(filename , drive, dir, fname, ext);
+    splitpath(filename, drive, dir, fname, ext);
 
     hold = fname + std::strlen(fname) - 1; // start at the end
     while (hold >= fname && (*hold == ' ' || std::isdigit(*hold)))   // skip backwards
@@ -1543,27 +1543,27 @@ bool find_file_item(char *filename, char const *itemname, std::FILE **fileptr, i
         std::strcat(parsearchname, itemname);
         parsearchname[ITEM_NAME_LEN + 5] = (char) 0; //safety
         std::strcpy(defaultextension, ".frm");
-        splitpath(g_search_for.frm.c_str(), drive, dir, nullptr, nullptr);
+        splitpath(g_search_for.frm, drive, dir, nullptr, nullptr);
         break;
     case 2:
         std::strcpy(parsearchname, "lsys:");
         std::strcat(parsearchname, itemname);
         parsearchname[ITEM_NAME_LEN + 5] = (char) 0; //safety
         std::strcpy(defaultextension, ".l");
-        splitpath(g_search_for.lsys.c_str(), drive, dir, nullptr, nullptr);
+        splitpath(g_search_for.lsys, drive, dir, nullptr, nullptr);
         break;
     case 3:
         std::strcpy(parsearchname, "ifs:");
         std::strcat(parsearchname, itemname);
         parsearchname[ITEM_NAME_LEN + 5] = (char) 0; //safety
         std::strcpy(defaultextension, ".ifs");
-        splitpath(g_search_for.ifs.c_str(), drive, dir, nullptr, nullptr);
+        splitpath(g_search_for.ifs, drive, dir, nullptr, nullptr);
         break;
     default:
         std::strcpy(parsearchname, itemname);
         parsearchname[ITEM_NAME_LEN + 5] = (char) 0; //safety
         std::strcpy(defaultextension, ".par");
-        splitpath(g_search_for.par.c_str(), drive, dir, nullptr, nullptr);
+        splitpath(g_search_for.par, drive, dir, nullptr, nullptr);
         break;
     }
 
@@ -1645,7 +1645,7 @@ bool find_file_item(char *filename, char const *itemname, std::FILE **fileptr, i
 
     if (!found && g_organize_formulas_search && itemtype == 1)
     {
-        splitpath(g_organize_formulas_dir.c_str(), drive, dir, nullptr, nullptr);
+        splitpath(g_organize_formulas_dir, drive, dir, nullptr, nullptr);
         fname[0] = '_';
         fname[1] = (char) 0;
         if (std::isalpha(itemname[0]))

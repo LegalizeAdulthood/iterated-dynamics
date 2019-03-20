@@ -160,7 +160,7 @@ void check_samename()
     char fname[FILE_MAX_FNAME];
     char ext[FILE_MAX_EXT];
     char path[FILE_MAX_PATH];
-    splitpath(g_save_filename.c_str(), drive, dir, fname, ext);
+    splitpath(g_save_filename, drive, dir, fname, ext);
     if (std::strcmp(fname, "fract001"))
     {
         makepath(path, drive, dir, fname, "gif");

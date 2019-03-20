@@ -1435,8 +1435,8 @@ rescan:  // entry for changed browse parms
     toggle = 0;
     wincount = 0;
     g_browse_sub_images = true;
-    splitpath(g_read_filename.c_str(), drive, dir, nullptr, nullptr);
-    splitpath(g_browse_mask.c_str(), nullptr, nullptr, fname, ext);
+    splitpath(g_read_filename, drive, dir, nullptr, nullptr);
+    splitpath(g_browse_mask, nullptr, nullptr, fname, ext);
     makepath(tmpmask, drive, dir, fname, ext);
     done = (vid_too_big == 2) || no_memory || fr_findfirst(tmpmask);
     // draw all visible windows
@@ -1616,7 +1616,7 @@ rescan:  // entry for changed browse parms
                 }
                 if (c == 'Y')
                 {
-                    splitpath(g_read_filename.c_str(), drive, dir, nullptr, nullptr);
+                    splitpath(g_read_filename, drive, dir, nullptr, nullptr);
                     splitpath(winlist.name, nullptr, nullptr, fname, ext);
                     makepath(tmpmask, drive, dir, fname, ext);
                     if (!unlink(tmpmask))
@@ -1646,7 +1646,7 @@ rescan:  // entry for changed browse parms
                 driver_stack_screen();
                 newname[0] = 0;
                 std::strcpy(mesg, "Enter the new filename for ");
-                splitpath(g_read_filename.c_str(), drive, dir, nullptr, nullptr);
+                splitpath(g_read_filename, drive, dir, nullptr, nullptr);
                 splitpath(winlist.name, nullptr, nullptr, fname, ext);
                 makepath(tmpmask, drive, dir, fname, ext);
                 std::strcpy(newname, tmpmask);
