@@ -1678,7 +1678,7 @@ bool startdisk1(const std::string &File_Name2, std::FILE *Source, bool overlay)
             {
                 std::fclose(Source);
             }
-            dir_remove(g_working_dir.c_str(), File_Name2.c_str());
+            dir_remove(g_working_dir, File_Name2);
             File_Error(File_Name2.c_str(), 2);
             return true;
         }
@@ -1691,7 +1691,7 @@ bool startdisk1(const std::string &File_Name2, std::FILE *Source, bool overlay)
     if (targa_startdisk(fps, T_header_24) != 0)
     {
         enddisk();
-        dir_remove(g_working_dir.c_str(), File_Name2.c_str());
+        dir_remove(g_working_dir, File_Name2);
         return true;
     }
     return false;
@@ -2385,12 +2385,12 @@ static void line3d_cleanup()
         enddisk();
         if (g_debug_flag == debug_flags::none && (!T_Safe || error) && g_targa_overlay)
         {
-            dir_remove(g_working_dir.c_str(), g_light_name.c_str());
+            dir_remove(g_working_dir, g_light_name);
             rename(targa_temp.c_str(), g_light_name.c_str());
         }
         if (g_debug_flag == debug_flags::none && g_targa_overlay)
         {
-            dir_remove(g_working_dir.c_str(), targa_temp.c_str());
+            dir_remove(g_working_dir, targa_temp);
         }
     }
     error = 0;
