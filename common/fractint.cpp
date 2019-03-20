@@ -29,7 +29,7 @@
 #include "realdos.h"
 #include "rotate.h"
 
-#include <signal.h>
+#include <csignal>
 
 #include <cassert>
 #include <cctype>
@@ -550,7 +550,7 @@ int main(int argc, char **argv)
     bool stacked = false;               // flag to indicate screen stacked
 
     // this traps non-math library floating point errors
-    signal(SIGFPE, my_floating_point_err);
+    std::signal(SIGFPE, my_floating_point_err);
 
     initasmvars();                       // initialize ASM stuff
     InitMemory();

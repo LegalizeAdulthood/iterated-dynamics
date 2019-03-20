@@ -28,7 +28,6 @@
 
 #include <assert.h>
 #include <fcntl.h>
-#include <signal.h>
 #include <sys/ioctl.h>
 #include <sys/wait.h>
 #include <unistd.h>
@@ -43,6 +42,7 @@
 #include <floatingpoint.h>
 #endif
 
+#include <csignal>
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
@@ -206,14 +206,14 @@ UnixInit()
 
     if (!simple_input)
     {
-        signal(SIGINT, (SignalHandler)goodbye);
+        std::signal(SIGINT, (SignalHandler)goodbye);
     }
-    signal(SIGFPE, fpe_handler);
+    std::signal(SIGFPE, fpe_handler);
     /*
-    signal(SIGTSTP, goodbye);
+    std::signal(SIGTSTP, goodbye);
     */
 #ifdef FPUERR
-    signal(SIGABRT, SIG_IGN);
+    std::signal(SIGABRT, SIG_IGN);
     /*
         setup the IEEE-handler to forget all common ( invalid,
         divide by zero, overflow ) signals. Here we test, if
@@ -2391,7 +2391,7 @@ shell_to_dos()
     char *argv[2];
     int pid, donepid;
 
-    sigint = (SignalHandler)signal(SIGINT, SIG_IGN);
+    sigint = (SignalHandler)std::signal(SIGINT, SIG_IGN);
     shell = getenv("SHELL");
     if (shell == nullptr)
     {
@@ -2446,7 +2446,7 @@ shell_to_dos()
         fcntl(0, F_SETFL, FNDELAY);
     }
 
-    signal(SIGINT, (SignalHandler)sigint);
+    std::signal(SIGINT, (SignalHandler)sigint);
     putchar('\n');
 }
 #endif
@@ -2472,7 +2472,7 @@ schedulealarm(int soon)
 {
     if (!fastmode)
         return;
-    signal(SIGALRM, (SignalHandler)setredrawscreen);
+    std::signal(SIGALRM, (SignalHandler)setredrawscreen);
     if (soon)
     {
         alarm(1);

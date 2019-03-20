@@ -27,7 +27,6 @@
 #include "slideshw.h"
 #include "zoom.h"
 
-#include <signal.h>
 #include <sys/ioctl.h>
 #include <sys/time.h>
 #include <sys/wait.h>
@@ -43,6 +42,7 @@
 #include <floatingpoint.h>
 #endif
 
+#include <csignal>
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
