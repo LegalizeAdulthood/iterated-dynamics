@@ -195,8 +195,7 @@ int  fr_findnext()              // Find next file (or subdir) meeting above path
         else if (dirEntry->d_ino != 0)
         {
             splitpath(dirEntry->d_name, nullptr, nullptr, thisname, thisext);
-            std::strncpy(DTA.filename, dirEntry->d_name, 13);
-            DTA.filename[12] = '\0';
+            DTA.filename = dirEntry->d_name;
             std::strcpy(tmpname, searchdir);
             std::strcat(tmpname, dirEntry->d_name);
             stat(tmpname, &sbuf);
