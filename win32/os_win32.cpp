@@ -33,7 +33,7 @@
 #include "frame.h"
 
 // External declarations
-extern void check_samename();
+extern void check_same_name();
 
 HINSTANCE g_instance = nullptr;
 
