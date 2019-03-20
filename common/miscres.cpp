@@ -1543,21 +1543,21 @@ bool find_file_item(char *filename, char const *itemname, std::FILE **fileptr, i
         std::strcat(parsearchname, itemname);
         parsearchname[ITEM_NAME_LEN + 5] = (char) 0; //safety
         std::strcpy(defaultextension, ".frm");
-        splitpath(g_search_for.frm, drive, dir, nullptr, nullptr);
+        splitpath(g_search_for.frm.c_str(), drive, dir, nullptr, nullptr);
         break;
     case 2:
         std::strcpy(parsearchname, "lsys:");
         std::strcat(parsearchname, itemname);
         parsearchname[ITEM_NAME_LEN + 5] = (char) 0; //safety
         std::strcpy(defaultextension, ".l");
-        splitpath(g_search_for.lsys, drive, dir, nullptr, nullptr);
+        splitpath(g_search_for.lsys.c_str(), drive, dir, nullptr, nullptr);
         break;
     case 3:
         std::strcpy(parsearchname, "ifs:");
         std::strcat(parsearchname, itemname);
         parsearchname[ITEM_NAME_LEN + 5] = (char) 0; //safety
         std::strcpy(defaultextension, ".ifs");
-        splitpath(g_search_for.ifs, drive, dir, nullptr, nullptr);
+        splitpath(g_search_for.ifs.c_str(), drive, dir, nullptr, nullptr);
         break;
     default:
         std::strcpy(parsearchname, itemname);

@@ -390,9 +390,9 @@ int cmdfiles(int argc, char const *const *argv)
 
     //set structure of search directories
     g_search_for.par = g_command_file;
-    std::strcpy(g_search_for.frm, g_formula_filename.c_str());
-    std::strcpy(g_search_for.lsys, g_l_system_filename.c_str());
-    std::strcpy(g_search_for.ifs, g_ifs_filename.c_str());
+    g_search_for.frm = g_formula_filename;
+    g_search_for.lsys = g_l_system_filename;
+    g_search_for.ifs = g_ifs_filename;
     return 0;
 }
 

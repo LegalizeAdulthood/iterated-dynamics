@@ -14,9 +14,9 @@ namespace id
 struct SearchPath
 {
     std::string par;
-    char frm[FILE_MAX_PATH];
-    char ifs[FILE_MAX_PATH];
-    char lsys[FILE_MAX_PATH];
+    std::string frm;
+    std::string ifs;
+    std::string lsys;
 };
 
 } // namespace id
