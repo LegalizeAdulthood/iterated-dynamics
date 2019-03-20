@@ -389,7 +389,7 @@ int cmdfiles(int argc, char const *const *argv)
     g_read_color = !(g_colors_preloaded && g_show_file == 0);
 
     //set structure of search directories
-    std::strcpy(g_search_for.par, g_command_file.c_str());
+    g_search_for.par = g_command_file;
     std::strcpy(g_search_for.frm, g_formula_filename.c_str());
     std::strcpy(g_search_for.lsys, g_l_system_filename.c_str());
     std::strcpy(g_search_for.ifs, g_ifs_filename.c_str());

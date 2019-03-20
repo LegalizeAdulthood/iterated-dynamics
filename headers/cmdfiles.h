@@ -13,7 +13,7 @@ namespace id
 
 struct SearchPath
 {
-    char par[FILE_MAX_PATH];
+    std::string par;
     char frm[FILE_MAX_PATH];
     char ifs[FILE_MAX_PATH];
     char lsys[FILE_MAX_PATH];

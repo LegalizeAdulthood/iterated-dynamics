@@ -1563,7 +1563,7 @@ bool find_file_item(char *filename, char const *itemname, std::FILE **fileptr, i
         std::strcpy(parsearchname, itemname);
         parsearchname[ITEM_NAME_LEN + 5] = (char) 0; //safety
         std::strcpy(defaultextension, ".par");
-        splitpath(g_search_for.par, drive, dir, nullptr, nullptr);
+        splitpath(g_search_for.par.c_str(), drive, dir, nullptr, nullptr);
         break;
     }
 
