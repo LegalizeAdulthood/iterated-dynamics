@@ -37,7 +37,6 @@ using BYTE = U8;
 
 #if defined(_WIN32)
 // ================================== Win32 definitions
-#define PRINTER        "PRT:"
 #define LOBYTEFIRST    1
 #define SLASHC         '\\'
 #define SLASH          "\\"
@@ -76,7 +75,6 @@ typedef int sigfunc(int);
 #define BYTE_ORDER BIG_ENDIAN // the usual case
 #endif
 #endif
-#       define PRINTER        "/dev/lp"
 #       define SLASHC         '/'
 #       define SLASH          "/"
 #       define SLASHSLASH     "//"
