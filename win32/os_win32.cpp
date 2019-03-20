@@ -20,9 +20,9 @@
 #include <io.h>
 #define WIN32_LEAN_AND_MEAN
 #define STRICT
-#include <windows.h>
-#include <shlwapi.h>
-#include <dbghelp.h>
+#include <Windows.h>
+#include <Shlwapi.h>
+#include <DbgHelp.h>
 
 #include <cassert>
 #include <cctype>

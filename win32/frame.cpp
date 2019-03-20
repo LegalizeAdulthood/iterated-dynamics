@@ -8,7 +8,7 @@
 #define WIN32_LEAN_AND_MEAN
 #define STRICT
 #include <tchar.h>
-#include <windows.h>
+#include <Windows.h>
 #include <windowsx.h>
 
 #include "WinText.h"

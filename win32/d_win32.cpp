@@ -21,7 +21,7 @@
 
 #define WIN32_LEAN_AND_MEAN
 #define STRICT
-#include <windows.h>
+#include <Windows.h>
 
 #include <cassert>
 #include <cstdio>
