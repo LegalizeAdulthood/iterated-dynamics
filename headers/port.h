@@ -35,6 +35,10 @@ using BYTE = U8;
 #  define LITTLE_ENDIAN 1234
 #endif
 
+#define write1(ptr, len, n, stream) fwrite(ptr, len, n, stream)
+#define write2(ptr, len, n, stream) fwrite(ptr, len, n, stream)
+#define rand15() (rand() & 0x7FFF)
+
 #if defined(_WIN32)
 // ================================== Win32 definitions
 #define LOBYTEFIRST    1
@@ -44,9 +48,6 @@ using BYTE = U8;
 #define SLASHDOT       "\\."
 #define DOTSLASH       ".\\"
 #define DOTDOTSLASH    "..\\"
-#define write1(ptr, len, n, stream) fwrite(ptr, len, n, stream)
-#define write2(ptr, len, n, stream) fwrite(ptr, len, n, stream)
-#define rand15() rand()
 #ifndef BYTE_ORDER
 // change for little endians that don't have this defined elsewhere (endian.h)
 #define BYTE_ORDER BIG_ENDIAN // the usual case
@@ -79,9 +80,6 @@ typedef int sigfunc(int);
 #       define SLASHDOT       "/."
 #       define DOTSLASH       "./"
 #       define DOTDOTSLASH    "../"
-#       define write1(ptr, len, n, stream) (fputc(*(ptr), stream), 1)
-#       define write2(ptr, len, n, stream) (fputc((*(ptr))&255, stream), fputc((*(ptr)) >> 8, stream), 1)
-#       define rand15() (rand()&0x7FFF)
 #       include "unix.h"
 #    endif // unix
 #endif // _WIN32
