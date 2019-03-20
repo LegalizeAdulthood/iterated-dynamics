@@ -124,7 +124,7 @@ static long num_tris; // number of triangles output to ray trace file
 static std::vector<f_point> f_lastrow;
 static int Real_V = 0; // Actual value of V for fillytpe>4 monochrome images
 static int error;
-static char targa_temp[14] = "fractemp.tga";
+static std::string targa_temp{"fractemp.tga"};
 static int P = 250; // Perspective dist used when viewing light vector
 static int const bad_check = -3000; // check values against this to determine if good
 static std::vector<point> lastrow; // this array remembers the previous line
@@ -1594,13 +1594,13 @@ static void File_Error(char const *File_Name1, int ERROR)
 //
 // *********************************************************************
 
-bool startdisk1(char const *File_Name2, std::FILE *Source, bool overlay)
+bool startdisk1(const std::string &File_Name2, std::FILE *Source, bool overlay)
 {
     // Open File for both reading and writing
-    std::FILE *fps = dir_fopen(g_working_dir.c_str(), File_Name2, "w+b");
+    std::FILE *fps = dir_fopen(g_working_dir.c_str(), File_Name2.c_str(), "w+b");
     if (fps == nullptr)
     {
-        File_Error(File_Name2, 1);
+        File_Error(File_Name2.c_str(), 1);
         return true;            // Oops, somethings wrong!
     }
 
@@ -1678,8 +1678,8 @@ bool startdisk1(char const *File_Name2, std::FILE *Source, bool overlay)
             {
                 std::fclose(Source);
             }
-            dir_remove(g_working_dir.c_str(), File_Name2);
-            File_Error(File_Name2, 2);
+            dir_remove(g_working_dir.c_str(), File_Name2.c_str());
+            File_Error(File_Name2.c_str(), 2);
             return true;
         }
         if (driver_key_pressed())
@@ -1691,7 +1691,7 @@ bool startdisk1(char const *File_Name2, std::FILE *Source, bool overlay)
     if (targa_startdisk(fps, T_header_24) != 0)
     {
         enddisk();
-        dir_remove(g_working_dir.c_str(), File_Name2);
+        dir_remove(g_working_dir.c_str(), File_Name2.c_str());
         return true;
     }
     return false;
@@ -2386,11 +2386,11 @@ static void line3d_cleanup()
         if (g_debug_flag == debug_flags::none && (!T_Safe || error) && g_targa_overlay)
         {
             dir_remove(g_working_dir.c_str(), g_light_name.c_str());
-            rename(targa_temp, g_light_name.c_str());
+            rename(targa_temp.c_str(), g_light_name.c_str());
         }
         if (g_debug_flag == debug_flags::none && g_targa_overlay)
         {
-            dir_remove(g_working_dir.c_str(), targa_temp);
+            dir_remove(g_working_dir.c_str(), targa_temp.c_str());
         }
     }
     error = 0;
@@ -2471,7 +2471,7 @@ static int first_time(int linelen, VECTOR v)
         else
         {
             check_writefile(g_light_name, ".tga");
-            if (startdisk1(g_light_name.c_str(), nullptr, false))     // Open new file
+            if (startdisk1(g_light_name, nullptr, false))     // Open new file
             {
                 return -1;
             }
