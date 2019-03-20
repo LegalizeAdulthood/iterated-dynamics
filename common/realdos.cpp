@@ -18,8 +18,6 @@
 #include "rotate.h"
 #include "zoom.h"
 
-#include <sys/stat.h>
-
 #include <cassert>
 #include <cctype>
 #include <cmath>
