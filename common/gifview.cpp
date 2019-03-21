@@ -208,7 +208,7 @@ int gifview()
         char msg[40];
         splitpath(temp1, nullptr, nullptr, fname, ext);
         makepath(tmpname, nullptr, nullptr, fname, ext);
-        std::sprintf(msg, "restoring %s", tmpname);
+        std::snprintf(msg, NUM_OF(msg), "restoring %s", tmpname);
         dvid_status(1, msg);
     }
     g_read_color = true;

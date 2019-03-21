@@ -49,7 +49,7 @@ bool ValidateLuts(char const *fn)
     f = std::fopen(line, "r");
     if (f == nullptr)
     {
-        std::sprintf(line, "Could not load color map %s", fn);
+        std::snprintf(line, NUM_OF(line), "Could not load color map %s", fn);
         stopmsg(STOPMSG_NONE, line);
         return true;
     }

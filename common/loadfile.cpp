@@ -174,7 +174,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
         &blk_4_info, &blk_5_info, &blk_6_info, &blk_7_info))
     {
         // didn't find a useable file
-        std::sprintf(msg, "Sorry, %s isn't a file I can decode.", g_read_filename.c_str());
+        std::snprintf(msg, NUM_OF(msg), "Sorry, %s isn't a file I can decode.", g_read_filename.c_str());
         stopmsg(STOPMSG_NONE, msg);
         return -1;
     }
@@ -183,7 +183,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
     int const read_fractype = read_info.fractal_type;
     if (read_fractype < 0 || read_fractype >= g_num_fractal_types)
     {
-        std::sprintf(msg, "Warning: %s has a bad fractal type; using 0", g_read_filename.c_str());
+        std::snprintf(msg, NUM_OF(msg), "Warning: %s has a bad fractal type; using 0", g_read_filename.c_str());
         g_fractal_type = fractal_type::MANDEL;
     }
     g_fractal_type = static_cast<fractal_type>(read_fractype);

@@ -143,7 +143,7 @@ int common_startdisk(long newrowsize, long newcolsize, int colors)
             driver_set_attr(BOXROW+i, BOXCOL, C_DVID_LO, BOXWIDTH);  // init box
         }
         driver_put_string(BOXROW+2, BOXCOL+4, C_DVID_HI, "'Disk-Video' mode");
-        std::sprintf(buf, "Screen resolution: %d x %d", g_screen_x_dots, g_screen_y_dots);
+        std::snprintf(buf, NUM_OF(buf), "Screen resolution: %d x %d", g_screen_x_dots, g_screen_y_dots);
         driver_put_string(BOXROW+4, BOXCOL+4, C_DVID_LO, buf);
         if (g_disk_targa)
         {
@@ -152,10 +152,10 @@ int common_startdisk(long newrowsize, long newcolsize, int colors)
         else
         {
             driver_put_string(-1, -1, C_DVID_LO, "  Colors: ");
-            std::sprintf(buf, "%d", colors);
+            std::snprintf(buf, NUM_OF(buf), "%d", colors);
             driver_put_string(-1, -1, C_DVID_LO, buf);
         }
-        std::sprintf(buf, "Save name: %s", g_save_filename.c_str());
+        std::snprintf(buf, NUM_OF(buf), "Save name: %s", g_save_filename.c_str());
         driver_put_string(BOXROW+8, BOXCOL+4, C_DVID_LO, buf);
         driver_put_string(BOXROW+10, BOXCOL+4, C_DVID_LO, "Status:");
         dvid_status(0, "clearing the 'screen'");
@@ -199,7 +199,7 @@ int common_startdisk(long newrowsize, long newcolsize, int colors)
     if (driver_diskp())
     {
         char buf[50];
-        std::sprintf(buf, "Cache size: %uK", cache_size);
+        std::snprintf(buf, NUM_OF(buf), "Cache size: %uK", cache_size);
         driver_put_string(BOXROW+6, BOXCOL+4, C_DVID_LO, buf);
     }
 
@@ -336,7 +336,7 @@ int readdisk(int col, int row)
     {
         if (driver_diskp())
         {
-            std::sprintf(buf, " reading line %4d",
+            std::snprintf(buf, NUM_OF(buf), " reading line %4d",
                     (row >= g_screen_y_dots) ? row-g_screen_y_dots : row); // adjust when potfile
             dvid_status(0, buf);
         }
@@ -406,7 +406,7 @@ void writedisk(int col, int row, int color)
     {
         if (driver_diskp())
         {
-            std::sprintf(buf, " writing line %4d",
+            std::snprintf(buf, NUM_OF(buf), " writing line %4d",
                     (row >= g_screen_y_dots) ? row-g_screen_y_dots : row); // adjust when potfile
             dvid_status(0, buf);
         }

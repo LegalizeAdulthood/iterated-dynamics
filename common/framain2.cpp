@@ -240,7 +240,7 @@ main_state big_while_loop(bool *const kbdmore, bool *const stacked, bool const r
                     static char msgxy2[] = {"Not enough video memory for that many lines, height cut down."};
                     if (g_logical_screen_x_dots > g_screen_x_dots && g_logical_screen_y_dots > g_screen_y_dots)
                     {
-                        std::sprintf(buf, "%s\n%s", msgxy1, msgxy2);
+                        std::snprintf(buf, NUM_OF(buf), "%s\n%s", msgxy1, msgxy2);
                         stopmsg(STOPMSG_NONE, buf);
                     }
                     else if (g_logical_screen_y_dots > g_screen_y_dots)
@@ -405,7 +405,7 @@ main_state big_while_loop(bool *const kbdmore, bool *const stacked, bool const r
             if (g_debug_flag == debug_flags::show_float_flag)
             {
                 char msg[MSG_LEN];
-                std::sprintf(msg, "floatflag=%d", g_user_float_flag ? 1 : 0);
+                std::snprintf(msg, NUM_OF(msg), "floatflag=%d", g_user_float_flag ? 1 : 0);
                 stopmsg(STOPMSG_NO_BUZZER, msg);
             }
             i = funny_glasses_call(gifview);

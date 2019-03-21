@@ -156,7 +156,7 @@ restart:
         }
         if (access(openfile, 2) != 0)
         {
-            std::sprintf(tmpmsg, "Can't write %s", openfile);
+            std::snprintf(tmpmsg, NUM_OF(tmpmsg), "Can't write %s", openfile);
             stopmsg(STOPMSG_NONE, tmpmsg);
             return -1;
         }
@@ -178,7 +178,7 @@ restart:
     g_outfile = std::fopen(tmpfile, "wb");
     if (g_outfile == nullptr)
     {
-        std::sprintf(tmpmsg, "Can't create %s", tmpfile);
+        std::snprintf(tmpmsg, NUM_OF(tmpmsg), "Can't create %s", tmpfile);
         stopmsg(STOPMSG_NONE, tmpmsg);
         return -1;
     }
@@ -189,7 +189,7 @@ restart:
         char buf[61];
         extract_filename(tmpmsg, openfile);
 
-        std::sprintf(buf, "Saving %s", tmpmsg);
+        std::snprintf(buf, NUM_OF(buf), "Saving %s", tmpmsg);
         dvid_status(1, buf);
     }
 #ifdef XFRACT
@@ -219,7 +219,7 @@ restart:
     if (interrupted)
     {
         char buf[200];
-        std::sprintf(buf, "Save of %s interrupted.\nCancel to ", openfile);
+        std::snprintf(buf, NUM_OF(buf), "Save of %s interrupted.\nCancel to ", openfile);
         if (newfile)
         {
             std::strcat(buf, "delete the file,\ncontinue to keep the partial image.");
@@ -290,7 +290,7 @@ restart:
         if (g_init_batch == batch_modes::NONE)
         {
             extract_filename(tmpfile, openfile);
-            std::sprintf(tmpmsg, " File saved as %s ", tmpfile);
+            std::snprintf(tmpmsg, NUM_OF(tmpmsg), " File saved as %s ", tmpfile);
             texttempmsg(tmpmsg);
         }
     }

@@ -6,6 +6,7 @@ Wesley Loewer's Big Numbers.        (C) 1994-95, Wesley B. Loewer
 #include "port.h"
 
 #include "big.h"
+#include "fractint.h"
 
 #include <cfloat>
 #include <cstdio>
@@ -959,7 +960,7 @@ bf_t floattobf(bf_t r, LDBL f)
 bf_t floattobf1(bf_t r, LDBL f)
 {
     char msg[80];
-    std::sprintf(msg, "%-.22Le", f);
+    std::snprintf(msg, NUM_OF(msg), "%-.22Le", f);
     strtobf(r, msg);
     return r;
 }

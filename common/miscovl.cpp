@@ -377,7 +377,7 @@ skip_UI:
             gotinfile = true;
             if (access(g_command_file.c_str(), 6))
             {
-                std::sprintf(buf, "Can't write %s", g_command_file.c_str());
+                std::snprintf(buf, NUM_OF(buf), "Can't write %s", g_command_file.c_str());
                 stopmsg(STOPMSG_NONE, buf);
                 continue;
             }
@@ -392,7 +392,7 @@ skip_UI:
         parmfile = std::fopen(outname, "wt");
         if (parmfile == nullptr)
         {
-            std::sprintf(buf, "Can't create %s", outname);
+            std::snprintf(buf, NUM_OF(buf), "Can't create %s", outname);
             stopmsg(STOPMSG_NONE, buf);
             if (gotinfile)
             {
@@ -410,9 +410,9 @@ skip_UI:
                     && stricmp(buf2, g_command_name.c_str()) == 0)
                 {
                     // entry with same name
-                    _snprintf(buf2, NUM_OF(buf2), "File already has an entry named %s\n%s",
-                              g_command_name.c_str(), g_make_parameter_file ?
-                              "... Replacing ..." : "Continue to replace it, Cancel to back out");
+                    std::snprintf(buf2, NUM_OF(buf2), "File already has an entry named %s\n%s",
+                    g_command_name.c_str(), g_make_parameter_file ?
+                    "... Replacing ..." : "Continue to replace it, Cancel to back out");
                     if (stopmsg(STOPMSG_CANCEL | STOPMSG_INFO_ONLY, buf2))
                     {
                         // cancel
@@ -474,7 +474,7 @@ skip_UI:
                     PCommandName[w] = 0;
                     {
                         char buf[20];
-                        std::sprintf(buf, "_%c%c", PAR_KEY(i), PAR_KEY(j));
+                        std::snprintf(buf, NUM_OF(buf), "_%c%c", PAR_KEY(i), PAR_KEY(j));
                         std::strcat(PCommandName, buf);
                     }
                     std::fprintf(parmfile, "%-19s{", PCommandName);
@@ -2062,12 +2062,12 @@ void format_vid_table(int choice, char *buf)
     truecolorbits = g_video_entry.dotmode/1000;
     if (truecolorbits == 0)
     {
-        std::sprintf(local_buf, "%s%3d",  // 47 chars
+        std::snprintf(local_buf, NUM_OF(local_buf), "%s%3d",  // 47 chars
                 buf, g_video_entry.colors);
     }
     else
     {
-        std::sprintf(local_buf, "%s%3s",  // 47 chars
+        std::snprintf(local_buf, NUM_OF(local_buf), "%s%3s",  // 47 chars
                 buf, (truecolorbits == 4)?" 4g":
                 (truecolorbits == 3)?"16m":
                 (truecolorbits == 2)?"64k":
@@ -2159,7 +2159,7 @@ static void update_fractint_cfg()
 
     if (access(cfgname, 6))
     {
-        std::sprintf(buf, "Can't write %s", cfgname);
+        std::snprintf(buf, NUM_OF(buf), "Can't write %s", cfgname);
         stopmsg(STOPMSG_NONE, buf);
         return;
     }
@@ -2173,7 +2173,7 @@ static void update_fractint_cfg()
     outfile = std::fopen(outname, "w");
     if (outfile == nullptr)
     {
-        std::sprintf(buf, "Can't create %s", outname);
+        std::snprintf(buf, NUM_OF(buf), "Can't create %s", outname);
         stopmsg(STOPMSG_NONE, buf);
         return;
     }
@@ -2209,11 +2209,11 @@ static void update_fractint_cfg()
             int truecolorbits = vident.dotmode/1000;
             if (truecolorbits == 0)
             {
-                std::sprintf(colorsbuf, "%3d", vident.colors);
+                std::snprintf(colorsbuf, NUM_OF(colorsbuf), "%3d", vident.colors);
             }
             else
             {
-                std::sprintf(colorsbuf, "%3s",
+                std::snprintf(colorsbuf, NUM_OF(colorsbuf), "%3s",
                         (truecolorbits == 4)?" 4g":
                         (truecolorbits == 3)?"16m":
                         (truecolorbits == 2)?"64k":
@@ -2306,7 +2306,7 @@ void make_mig(unsigned int xmult, unsigned int ymult)
                 }
             }
 
-            std::sprintf(gifin, "frmig_%c%c.gif", PAR_KEY(xstep), PAR_KEY(ystep));
+            std::snprintf(gifin, NUM_OF(gifin), "frmig_%c%c.gif", PAR_KEY(xstep), PAR_KEY(ystep));
 
             in = std::fopen(gifin, "rb");
             if (in == nullptr)
@@ -2554,7 +2554,7 @@ void make_mig(unsigned int xmult, unsigned int ymult)
         {
             for (unsigned xstep = 0U; xstep < xmult; xstep++)
             {
-                std::sprintf(gifin, "frmig_%c%c.gif", PAR_KEY(xstep), PAR_KEY(ystep));
+                std::snprintf(gifin, NUM_OF(gifin), "frmig_%c%c.gif", PAR_KEY(xstep), PAR_KEY(ystep));
                 unlink(gifin);
             }
         }

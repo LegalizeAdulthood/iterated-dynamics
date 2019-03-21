@@ -36,7 +36,7 @@ void show_var_bn(char const *s, bn_t n)
 void showcornersdbl(char const *s)
 {
     char msg[400];
-    std::sprintf(msg, "%s\n"
+    std::snprintf(msg, NUM_OF(msg), "%s\n"
             "xxmin= %.20f xxmax= %.20f\n"
             "yymin= %.20f yymax= %.20f\n"
             "xx3rd= %.20f yy3rd= %.20f\n"
@@ -56,24 +56,24 @@ void showcorners(char const *s)
     int dec = 20;
     char msg[100], msg1[100], msg3[100];
     bntostr(msg, dec, bnxmin);
-    std::sprintf(msg1, "bnxmin=%s\nxxmin= %.20f\n\n", msg, xxmin);
+    std::snprintf(msg1, NUM_OF(msg1), "bnxmin=%s\nxxmin= %.20f\n\n", msg, xxmin);
     std::strcpy(msg3, s);
     std::strcat(msg3, "\n");
     std::strcat(msg3, msg1);
     bntostr(msg, dec, bnxmax);
-    std::sprintf(msg1, "bnxmax=%s\nxxmax= %.20f\n\n", msg, xxmax);
+    std::snprintf(msg1, NUM_OF(msg1), "bnxmax=%s\nxxmax= %.20f\n\n", msg, xxmax);
     std::strcat(msg3, msg1);
     bntostr(msg, dec, bnymin);
-    std::sprintf(msg1, "bnymin=%s\nyymin= %.20f\n\n", msg, yymin);
+    std::snprintf(msg1, NUM_OF(msg1), "bnymin=%s\nyymin= %.20f\n\n", msg, yymin);
     std::strcat(msg3, msg1);
     bntostr(msg, dec, bnymax);
-    std::sprintf(msg1, "bnymax=%s\nyymax= %.20f\n\n", msg, yymax);
+    std::snprintf(msg1, NUM_OF(msg1), "bnymax=%s\nyymax= %.20f\n\n", msg, yymax);
     std::strcat(msg3, msg1);
     bntostr(msg, dec, bnx3rd);
-    std::sprintf(msg1, "bnx3rd=%s\nxx3rd= %.20f\n\n", msg, xx3rd);
+    std::snprintf(msg1, NUM_OF(msg1), "bnx3rd=%s\nxx3rd= %.20f\n\n", msg, xx3rd);
     std::strcat(msg3, msg1);
     bntostr(msg, dec, bny3rd);
-    std::sprintf(msg1, "bny3rd=%s\nyy3rd= %.20f\n\n", msg, yy3rd);
+    std::snprintf(msg1, NUM_OF(msg1), "bny3rd=%s\nyy3rd= %.20f\n\n", msg, yy3rd);
     std::strcat(msg3, msg1);
     if (stopmsg(STOPMSG_NONE, msg3))
     {
@@ -85,7 +85,7 @@ void showcorners(char const *s)
 void showbfglobals(char const *s)
 {
     char msg[300];
-    std::sprintf(msg, "%s\n\
+    std::snprintf(msg, NUM_OF(msg), "%s\n\
 bnstep=%d bnlength=%d intlength=%d rlength=%d padding=%d\n\
 shiftfactor=%d decimals=%d bflength=%d rbflength=%d \n\
 bfdecimals=%d ",
@@ -107,25 +107,25 @@ void showcornersbf(char const *s)
         dec = 20;
     }
     bftostr(msg, dec, bfxmin);
-    std::sprintf(msg1, "bfxmin=%s\nxxmin= %.20f decimals %d bflength %d\n\n",
+    std::snprintf(msg1, NUM_OF(msg1), "bfxmin=%s\nxxmin= %.20f decimals %d bflength %d\n\n",
             msg, xxmin, g_decimals, bflength);
     std::strcpy(msg3, s);
     std::strcat(msg3, "\n");
     std::strcat(msg3, msg1);
     bftostr(msg, dec, bfxmax);
-    std::sprintf(msg1, "bfxmax=%s\nxxmax= %.20f\n\n", msg, xxmax);
+    std::snprintf(msg1, NUM_OF(msg1), "bfxmax=%s\nxxmax= %.20f\n\n", msg, xxmax);
     std::strcat(msg3, msg1);
     bftostr(msg, dec, bfymin);
-    std::sprintf(msg1, "bfymin=%s\nyymin= %.20f\n\n", msg, yymin);
+    std::snprintf(msg1, NUM_OF(msg1), "bfymin=%s\nyymin= %.20f\n\n", msg, yymin);
     std::strcat(msg3, msg1);
     bftostr(msg, dec, bfymax);
-    std::sprintf(msg1, "bfymax=%s\nyymax= %.20f\n\n", msg, yymax);
+    std::snprintf(msg1, NUM_OF(msg1), "bfymax=%s\nyymax= %.20f\n\n", msg, yymax);
     std::strcat(msg3, msg1);
     bftostr(msg, dec, bfx3rd);
-    std::sprintf(msg1, "bfx3rd=%s\nxx3rd= %.20f\n\n", msg, xx3rd);
+    std::snprintf(msg1, NUM_OF(msg1), "bfx3rd=%s\nxx3rd= %.20f\n\n", msg, xx3rd);
     std::strcat(msg3, msg1);
     bftostr(msg, dec, bfy3rd);
-    std::sprintf(msg1, "bfy3rd=%s\nyy3rd= %.20f\n\n", msg, yy3rd);
+    std::snprintf(msg1, NUM_OF(msg1), "bfy3rd=%s\nyy3rd= %.20f\n\n", msg, yy3rd);
     std::strcat(msg3, msg1);
     if (stopmsg(STOPMSG_NONE, msg3))
     {
@@ -138,24 +138,24 @@ void showcornersbfs(char const *s)
     int dec = 20;
     char msg[100], msg1[100], msg3[500];
     bftostr(msg, dec, bfsxmin);
-    std::sprintf(msg1, "bfsxmin=%s\nxxmin= %.20f\n\n", msg, xxmin);
+    std::snprintf(msg1, NUM_OF(msg1), "bfsxmin=%s\nxxmin= %.20f\n\n", msg, xxmin);
     std::strcpy(msg3, s);
     std::strcat(msg3, "\n");
     std::strcat(msg3, msg1);
     bftostr(msg, dec, bfsxmax);
-    std::sprintf(msg1, "bfsxmax=%s\nxxmax= %.20f\n\n", msg, xxmax);
+    std::snprintf(msg1, NUM_OF(msg1), "bfsxmax=%s\nxxmax= %.20f\n\n", msg, xxmax);
     std::strcat(msg3, msg1);
     bftostr(msg, dec, bfsymin);
-    std::sprintf(msg1, "bfsymin=%s\nyymin= %.20f\n\n", msg, yymin);
+    std::snprintf(msg1, NUM_OF(msg1), "bfsymin=%s\nyymin= %.20f\n\n", msg, yymin);
     std::strcat(msg3, msg1);
     bftostr(msg, dec, bfsymax);
-    std::sprintf(msg1, "bfsymax=%s\nyymax= %.20f\n\n", msg, yymax);
+    std::snprintf(msg1, NUM_OF(msg1), "bfsymax=%s\nyymax= %.20f\n\n", msg, yymax);
     std::strcat(msg3, msg1);
     bftostr(msg, dec, bfsx3rd);
-    std::sprintf(msg1, "bfsx3rd=%s\nxx3rd= %.20f\n\n", msg, xx3rd);
+    std::snprintf(msg1, NUM_OF(msg1), "bfsx3rd=%s\nxx3rd= %.20f\n\n", msg, xx3rd);
     std::strcat(msg3, msg1);
     bftostr(msg, dec, bfsy3rd);
-    std::sprintf(msg1, "bfsy3rd=%s\nyy3rd= %.20f\n\n", msg, yy3rd);
+    std::snprintf(msg1, NUM_OF(msg1), "bfsy3rd=%s\nyy3rd= %.20f\n\n", msg, yy3rd);
     std::strcat(msg3, msg1);
     if (stopmsg(STOPMSG_NONE, msg3))
     {
@@ -168,7 +168,7 @@ void show_two_bf(char const *s1, bf_t t1, char const *s2, bf_t t2, int digits)
     char msg1[200], msg2[200], msg3[400];
     bftostr_e(msg1, digits, t1);
     bftostr_e(msg2, digits, t2);
-    std::sprintf(msg3, "\n%s->%s\n%s->%s", s1, msg1, s2, msg2);
+    std::snprintf(msg3, NUM_OF(msg3), "\n%s->%s\n%s->%s", s1, msg1, s2, msg2);
     if (stopmsg(STOPMSG_NONE, msg3))
     {
         goodbye();
@@ -181,7 +181,7 @@ void show_three_bf(char const *s1, bf_t t1, char const *s2, bf_t t2, char const 
     bftostr_e(msg1, digits, t1);
     bftostr_e(msg2, digits, t2);
     bftostr_e(msg3, digits, t3);
-    std::sprintf(msg4, "\n%s->%s\n%s->%s\n%s->%s", s1, msg1, s2, msg2, s3, msg3);
+    std::snprintf(msg4, NUM_OF(msg4), "\n%s->%s\n%s->%s\n%s->%s", s1, msg1, s2, msg2, s3, msg3);
     if (stopmsg(STOPMSG_NONE, msg4))
     {
         goodbye();
@@ -202,7 +202,7 @@ void showaspect(char const *s)
     sub_bf(bt2, bfymax, bfymin);
     div_bf(aspect, bt2, bt1);
     bftostr(str, 10, aspect);
-    std::sprintf(msg, "aspect %s\nfloat %13.10f\nbf    %s\n\n",
+    std::snprintf(msg, NUM_OF(msg), "aspect %s\nfloat %13.10f\nbf    %s\n\n",
             s,
             (yymax-yymin)/(xxmax-xxmin),
             str);
@@ -219,7 +219,7 @@ void comparevalues(char const *s, LDBL x, bn_t bnx)
     int dec = 40;
     char msg[100], msg1[100];
     bntostr(msg, dec, bnx);
-    std::sprintf(msg1, "%s\nbignum=%s\ndouble=%.20Lf\n\n", s, msg, x);
+    std::snprintf(msg1, NUM_OF(msg1), "%s\nbignum=%s\ndouble=%.20Lf\n\n", s, msg, x);
     if (stopmsg(STOPMSG_NONE, msg1))
     {
         goodbye();
@@ -231,7 +231,7 @@ void comparevaluesbf(char const *s, LDBL x, bf_t bfx)
     int dec = 40;
     char msg[300], msg1[300];
     bftostr_e(msg, dec, bfx);
-    std::sprintf(msg1, "%s\nbignum=%s\ndouble=%.20Lf\n\n", s, msg, x);
+    std::snprintf(msg1, NUM_OF(msg1), "%s\nbignum=%s\ndouble=%.20Lf\n\n", s, msg, x);
     if (stopmsg(STOPMSG_NONE, msg1))
     {
         goodbye();

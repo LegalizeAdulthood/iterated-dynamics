@@ -243,7 +243,7 @@ int getpower10(LDBL x)
     char string[11]; // space for "+x.xe-xxxx"
     int p;
 
-    std::sprintf(string, "%+.1Le", x);
+    std::snprintf(string, NUM_OF(string), "%+.1Le", x);
     p = atoi(string+5);
     return p;
 }

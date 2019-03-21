@@ -531,7 +531,7 @@ void updatesavename(char *filename) // go to the next file name
     {
         save = hold;
     }
-    std::sprintf(save, "%ld", atol(hold)+1); // increment the number
+    std::snprintf(save, NUM_OF(save), "%ld", atol(hold)+1); // increment the number
     makepath(filename, drive, dir, fname, ext);
 }
 
@@ -609,7 +609,7 @@ void showtrig(char *buf)
     trigdetails(tmpbuf);
     if (tmpbuf[0])
     {
-        std::sprintf(buf, " function=%s", tmpbuf);
+        std::snprintf(buf, NUM_OF(buf), " function=%s", tmpbuf);
     }
 }
 
@@ -637,7 +637,7 @@ static void trigdetails(char *buf)
         int i = 0;
         while (++i < numfn)
         {
-            std::sprintf(tmpbuf, "/%s", g_trig_fn[static_cast<int>(g_trig_index[i])].name);
+            std::snprintf(tmpbuf, NUM_OF(tmpbuf), "/%s", g_trig_fn[static_cast<int>(g_trig_index[i])].name);
             std::strcat(buf, tmpbuf);
         }
     }
@@ -722,7 +722,7 @@ void get_calculation_time(char *msg, long ctime)
 {
     if (ctime >= 0)
     {
-        std::sprintf(msg, "%3ld:%02ld:%02ld.%02ld", ctime/360000L,
+        std::snprintf(msg, NUM_OF(msg), "%3ld:%02ld:%02ld.%02ld", ctime/360000L,
                 (ctime%360000L)/6000, (ctime%6000)/100, ctime%100);
     }
     else

@@ -886,7 +886,7 @@ void Jiim(jiim_types which)
             if (show_numbers) // write coordinates on screen
             {
                 char str[41];
-                std::sprintf(str, "%16.14f %16.14f %3d", cr, ci, getcolor(g_col, g_row));
+                std::snprintf(str, NUM_OF(str), "%16.14f %16.14f %3d", cr, ci, getcolor(g_col, g_row));
                 if (windows == 0)
                 {
                     /* show temp msg will clear self if new msg is a
