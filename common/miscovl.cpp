@@ -1631,7 +1631,7 @@ static void put_parm(char const *parm, ...)
         ++parm;
     }
     bufptr = s_wbdata.buf + s_wbdata.len;
-    vsprintf(bufptr, parm, args);
+    std::vsprintf(bufptr, parm, args);
     while (*(bufptr++))
     {
         ++s_wbdata.len;
