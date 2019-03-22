@@ -1600,7 +1600,7 @@ rescan:  // entry for changed browse parms
 
             case 'D': // delete file
                 cleartempmsg();
-                _snprintf(mesg, NUM_OF(mesg), "Delete %s? (Y/N)", winlist.name);
+                std::snprintf(mesg, NUM_OF(mesg), "Delete %s? (Y/N)", winlist.name);
                 showtempmsg(mesg);
                 driver_wait_key_pressed(0);
                 cleartempmsg();
@@ -1619,7 +1619,7 @@ rescan:  // entry for changed browse parms
                     splitpath(g_read_filename, drive, dir, nullptr, nullptr);
                     splitpath(winlist.name, nullptr, nullptr, fname, ext);
                     makepath(tmpmask, drive, dir, fname, ext);
-                    if (!unlink(tmpmask))
+                    if (!std::remove(tmpmask))
                     {
                         // do a rescan
                         done = 3;
@@ -1656,7 +1656,7 @@ rescan:  // entry for changed browse parms
                     driver_unstack_screen();
                     if (i != -1)
                     {
-                        if (!rename(tmpmask, newname))
+                        if (!std::rename(tmpmask, newname))
                         {
                             if (errno == EACCES)
                             {

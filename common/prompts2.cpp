@@ -1999,7 +1999,7 @@ int dir_remove(char const *dir, char const *filename)
 {
     char tmp[FILE_MAX_PATH];
     dir_name(tmp, dir, filename);
-    return unlink(tmp);
+    return std::remove(tmp);
 }
 
 // fopens file in dir directory

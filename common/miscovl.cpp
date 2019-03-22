@@ -418,7 +418,7 @@ skip_UI:
                         // cancel
                         std::fclose(infile);
                         std::fclose(parmfile);
-                        unlink(outname);
+                        std::remove(outname);
                         goto prompt_user;
                     }
                     while (std::strchr(buf, '}') == nullptr
@@ -580,8 +580,8 @@ skip_UI:
         if (gotinfile)
         {
             // replace the original file with the new
-            unlink(g_command_file.c_str());   // success assumed on these lines
-            rename(outname, g_command_file.c_str());  // since we checked earlier with access
+            std::remove(g_command_file.c_str());   // success assumed on these lines
+            std::rename(outname, g_command_file.c_str());  // since we checked earlier with access
         }
         break;
     }
@@ -2248,8 +2248,8 @@ static void update_fractint_cfg()
 
     std::fclose(cfgfile);
     std::fclose(outfile);
-    unlink(cfgname);         // success assumed on these lines
-    rename(outname, cfgname); // since we checked earlier with access
+    std::remove(cfgname);         // success assumed on these lines
+    std::rename(outname, cfgname); // since we checked earlier with access
 #endif
 }
 
@@ -2555,7 +2555,7 @@ void make_mig(unsigned int xmult, unsigned int ymult)
             for (unsigned xstep = 0U; xstep < xmult; xstep++)
             {
                 std::snprintf(gifin, NUM_OF(gifin), "frmig_%c%c.gif", PAR_KEY(xstep), PAR_KEY(ystep));
-                unlink(gifin);
+                std::remove(gifin);
             }
         }
     }
@@ -2783,7 +2783,7 @@ static char const *expand_var(char const *var, char *buf)
     else
     {
         char buff[80];
-        _snprintf(buff, NUM_OF(buff), "Unknown comment variable %s", var);
+        std::snprintf(buff, NUM_OF(buff), "Unknown comment variable %s", var);
         stopmsg(STOPMSG_NONE, buff);
         out = "";
     }

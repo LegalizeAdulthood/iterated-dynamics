@@ -1427,7 +1427,7 @@ ErrorAbort:
     if (temp_file != nullptr)
     {
         std::fclose(temp_file);
-        unlink(TEMP_FILE_NAME);
+        std::remove(TEMP_FILE_NAME);
         temp_file = nullptr;
     }
 

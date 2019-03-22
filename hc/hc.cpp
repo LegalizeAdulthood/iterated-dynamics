@@ -3376,8 +3376,8 @@ void write_hdr(char const *fname)
         msg("Updating: %s", fname);
         std::fclose(temp);
         std::fclose(hdr);
-        unlink(fname);               // delete the old hdr file
-        rename(TEMP_FNAME, fname);   // rename the temp to the hdr file
+        std::remove(fname);               // delete the old hdr file
+        std::rename(TEMP_FNAME, fname);   // rename the temp to the hdr file
         notice("FRACTINT must be re-compiled.");
     }
     else
@@ -3385,7 +3385,7 @@ void write_hdr(char const *fname)
         // if they are the same leave the original alone.
         std::fclose(temp);
         std::fclose(hdr);
-        unlink(TEMP_FNAME);      // delete the temp
+        std::remove(TEMP_FNAME);      // delete the temp
     }
 }
 
@@ -3987,7 +3987,7 @@ public:
         if (swapfile != nullptr)
         {
             std::fclose(swapfile);
-            unlink(swappath.c_str());
+            std::remove(swappath.c_str());
         }
     }
 

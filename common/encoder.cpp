@@ -232,15 +232,15 @@ restart:
         if (stopmsg(STOPMSG_CANCEL, buf))
         {
             interrupted = -1;
-            unlink(tmpfile);
+            std::remove(tmpfile);
         }
     }
 
     if (!newfile && interrupted >= 0)
     {
         // replace the real file
-        unlink(openfile);         // success assumed since we checked
-        rename(tmpfile, openfile);// earlier with access
+        std::remove(openfile);         // success assumed since we checked
+        std::rename(tmpfile, openfile);// earlier with access
     }
 
     if (!driver_diskp())

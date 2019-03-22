@@ -908,7 +908,7 @@ loopbottom:
                 if (ferror(File_Ptr1))
                 {
                     std::fclose(File_Ptr1);
-                    unlink(g_light_name.c_str());
+                    std::remove(g_light_name.c_str());
                     File_Error(g_raytrace_filename.c_str(), 2);
                     return -1;
                 }
@@ -2386,7 +2386,7 @@ static void line3d_cleanup()
         if (g_debug_flag == debug_flags::none && (!T_Safe || error) && g_targa_overlay)
         {
             dir_remove(g_working_dir, g_light_name);
-            rename(targa_temp.c_str(), g_light_name.c_str());
+            std::rename(targa_temp.c_str(), g_light_name.c_str());
         }
         if (g_debug_flag == debug_flags::none && g_targa_overlay)
         {

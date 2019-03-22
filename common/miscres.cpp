@@ -750,7 +750,7 @@ static void write_row(int row, char const *format, ...)
     std::va_list args;
 
     va_start(args, format);
-    _vsnprintf(text, NUM_OF(text), format, args);
+    std::vsnprintf(text, NUM_OF(text), format, args);
     va_end(args);
 
     driver_put_string(row, 2, C_GENERAL_HI, text);
@@ -1123,7 +1123,7 @@ top:
     {
         ++s_row;
     }
-    _snprintf(msg, NUM_OF(msg), "Driver: %s, %s", g_driver->name, g_driver->description);
+    std::snprintf(msg, NUM_OF(msg), "Driver: %s, %s", g_driver->name, g_driver->description);
     driver_put_string(s_row++, 2, C_GENERAL_MED, msg);
     if (g_video_entry.xdots && bf_math == bf_math_type::NONE)
     {
