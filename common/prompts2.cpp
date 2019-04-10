@@ -1945,9 +1945,9 @@ void makepath(char *template_str, char const *drive, char const *dir, char const
     if (dir)
     {
         std::strcat(template_str, dir);
-        if (dir[0] != 0 && dir[std::strlen(dir)-1] != '/')
+        if (dir[0] != 0 && dir[std::strlen(dir)-1] != SLASHC)
         {
-            std::strcat(template_str, "/");
+            std::strcat(template_str, SLASH);
         }
     }
     if (fname)
