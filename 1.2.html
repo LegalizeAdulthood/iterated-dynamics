@@ -1,0 +1,188 @@
+<html>
+<head>
+<title>Iterated Dynamics: Plotting Commands</title>
+</head>
+<body>
+<div>
+<pre>
+<a href="1.1.html">&lt; Prev</a>           <a href="index.html">Iterated Dynamics</a> Version 1.0          Page 18 <a href="1.3.html">Next &gt;</a></pre>
+</div>
+<pre>
+ 1.2 Plotting Commands
+
+  Function keys &amp; various combinations are used to select a video mode and
+  redraw the screen.  For a quick start try one of the following:
+    If you have MCGA, VGA, or better:  &lt;F3&gt;
+    If you have EGA:                   &lt;F9&gt;
+    If you have CGA:                   &lt;F5&gt;
+    Otherwise, monochrome:             &lt;F6&gt;
+
+  &lt;F1&gt;
+  Display a help screen. The function keys available in help mode are
+  displayed at the bottom of the help screen.
+
+  &lt;M&gt; or &lt;Esc&gt;
+  Return from a displayed image to the main menu.
+
+  &lt;Esc&gt;
+  From the main menu, &lt;Esc&gt; is used to exit from Fractint.
+
+  &lt;Delete&gt;
+  Same as choosing "select video mode" from the main menu.  Goes to the
+  "select video mode" screen.  See Video Mode Function Keys (p. 36).
+
+  &lt;h&gt;
+  Redraw the previous image in the circular history buffer, revisiting
+  fractals you previously generated this session in reverse order.
+  Fractint saves the last ten images worth of information including
+  fractal type, coordinates, colors, and all options. Image information is
+  saved only when some item changes. After ten images the circular buffer
+  wraps around and earlier information is overwritten. You can set image
+  capacity of the history feature using the maxhistory=&lt;nnn&gt; command.
+  About 1200 bytes of memory is required for each image slot.
+
+  &lt;Ctrl-h&gt;
+  Redraw the next image in the circular history buffer. Use this to return
+  to images you passed by when using &lt;h&gt;.
+
+  &lt;Tab&gt;
+  Display the current fractal type, parameters, video mode, screen or (if
+  displayed) zoom-box coordinates, maximum iteration count, and other
+  information useful in keeping track of where you are.  The Tab function
+  is non-destructive - if you press it while in the midst of generating an
+  image, you will continue generating it when you return.  The Tab
+  function tells you if your image is still being generated or has
+  finished - a handy feature for those overnight, 1024x768 resolution
+  fractal images.  If the image is incomplete, it also tells you whether
+  it can be interrupted and resumed.  (Any function other than &lt;Tab&gt; and
+  &lt;F1&gt; counts as an "interrupt".)
+
+  The Tab screen also includes a pixel-counting function, which will count
+  the number of pixels colored in the inside color.  This gives an
+  estimate of the area of the fractal.  Note that the inside color must be
+  different from the outside color(s) for this to work; inside=0 is a good
+  choice.
+
+  &lt;T&gt;
+  Select a fractal type. Move the cursor to your choice (or type the first
+  few letters of its name) and hit &lt;Enter&gt;. Next you will be prompted for
+  any parameters used by the selected type - hit &lt;Enter&gt; for the defaults.
+  See Fractal Types (p. 43) for a list of supported types.
+
+  &lt;F&gt;
+  Toggles the use of floating-point algorithms (see "Limitations of
+  Integer Math (And How We Cope)" (p. 166)).  Whether floating point is in
+  use is shown on the &lt;Tab&gt; status screen.  The floating point option can
+  also be turned on and off using the "X" options screen.  If you have a
+  non-Intel floating point chip which supports the full 387 instruction
+  set, see the "FPU=" command in Startup Parameters (p. 122) to get the
+  most out of your chip.
+
+  &lt;X&gt;
+  Select a number of eXtended options. Brings up a full-screen menu of
+  options, any of which you can change at will.  These options are:
+    "passes=" - see Drawing Method (p. 86)
+    Floating point toggle - see &lt;F&gt; key description below
+    "maxiter=" - see Image Calculation Parameters (p. 126)
+    "inside=" and "outside=" - see Color Parameters (p. 128)
+    "savename=" filename - see File Parameters (p. 133)
+    "overwrite=" option - see File Parameters (p. 133)
+    "sound=" option - see Sound Parameters (p. 137)
+    "logmap=" - see Logarithmic Palettes and Color Ranges (p. 93)
+    "biomorph=" - see Biomorphs (p. 95)
+    "decomp=" - see Decomposition (p. 93)
+    "fillcolor=" - see Drawing Method (p. 86)
+
+  &lt;Y&gt;
+  More options which we couldn't fit under the &lt;X&gt; command:
+    "finattract=" - see Finite Attractors (p. 185)
+    "potential=" parameters - see Continuous Potential (p. 95)
+    "invert=" parameters - see Inversion (p. 92)
+    "distest=" parameters - see Distance Estimator Method (p. 91)
+    "cyclerange=" - see Color Cycling Commands (p. 23)
+
+  &lt;P&gt;
+  Options that apply to the Passes feature:
+    "periodicity=" - see Periodicity Logic (p. 166)
+    "orbitdelay=" - see Passes Parameters (p. 150)
+    "orbitinterval=" - see Passes Parameters (p. 150)
+    "screencoords=" - see Passes Parameters (p. 150)
+    "orbitdrawmode=" - see Passes Parameters (p. 150)
+
+  &lt;Z&gt;
+  Modify the parameters specific to the currently selected fractal type.
+  This command lets you modify the parameters which are requested when you
+  select a new fractal type with the &lt;T&gt; command, without having to repeat
+  that selection. You can enter "e" or "p" in column one of the input
+  fields to get the numbers e and pi (2.71828... and 3.14159...).
+  From the fractal parameters screen, you can press &lt;F6&gt; to bring up a sub
+  parameter screen for the coordinates of the image's corners.  With
+  selected fractal types, &lt;Z&gt; allows you to change the Bailout Test
+  (p. 98).
+
+  &lt;+&gt; or &lt;-&gt;
+  Switch to color-cycling mode and begin cycling the palette by shifting
+  each color to the next "contour."  See Color Cycling Commands (p. 23).
+
+  &lt;C&gt;
+  Switch to color-cycling mode but do not start cycling.  The normally
+  black "overscan" border of the screen changes to white.  See Color
+  Cycling Commands (p. 23).
+
+  &lt;E&gt;
+  Enter Palette-Editing Mode.  See Palette Editing Commands (p. 25).
+
+  &lt;Spacebar&gt;
+  Toggle between Mandelbrot set images and their corresponding Julia-set
+  images. Read the notes in Fractal Types, Julia Sets (p. 44) before
+  trying this option if you want to see anything interesting.
+
+  &lt;J&gt;
+  Toggle between Julia escape time fractal and the Inverse Julia orbit
+  fractal. See Inverse Julias (p. 46)
+
+  &lt;Enter&gt;
+  Enter is used to resume calculation after a pause. It is only necessary
+  to do this when there is a message on the screen waiting to be
+  acknowledged, such as the message shown after you save an image to disk.
+
+  &lt;I&gt;
+  Modify 3D transformation parameters used with 3D fractal types such as
+  "Lorenz3D" and 3D "IFS" definitions, including the selection of "funny
+  glasses" (p. 110) red/blue 3D.
+
+  &lt;A&gt;
+  Convert the current image into a fractal 'starfield'.  See Starfields
+  (p. 97).
+
+  &lt;Ctrl-A&gt;
+  Unleash an image-eating ant automaton on current image. See Ant
+  Automaton (p. 79).
+
+  &lt;Ctrl-S&gt; (or &lt;k&gt;)
+  Convert the current image into a Random Dot Stereogram (RDS).  See
+  Random Dot Stereograms (RDS) (p. 102).
+
+  &lt;O&gt; (the letter, not the number)
+  If pressed while an image is being generated, toggles the display of
+  intermediate results -- the "orbits" Fractint uses as it calculates
+  values for each point. Slows the display a bit, but shows you how clever
+  the program is behind the scenes. (See "A Little Code" in "Fractals and
+  the PC" (p. 164).)
+
+  &lt;D&gt;
+  Shell to DOS. Return to Fractint by entering "exit" at a DOS prompt.
+
+  &lt;Insert&gt;
+  Restart at the "credits" screen and reset most variables to their
+  initial state.  Variables which are not reset are: savename, lightname,
+  video, startup filename.
+
+  &lt;L&gt;
+  Enter Browsing Mode.  See Browse Commands (p. 37).
+
+  &lt;Ctrl-E&gt;
+  Enter Explorer/Evolver Mode.  See Evolver Commands (p. 38).
+</pre>
+</body>
+</html>

@@ -1,0 +1,232 @@
+<html>
+<head>
+<title>Iterated Dynamics: Palette Editing Commands</title>
+</head>
+<body>
+<div>
+<pre>
+<a href="1.4.html">&lt; Prev</a>           <a href="index.html">Iterated Dynamics</a> Version 1.0          Page 25 <a href="1.6.html">Next &gt;</a></pre>
+</div>
+<pre>
+ 1.5 Palette Editing Commands
+
+  Palette-editing mode provides a number of tools for modifying the colors
+  in an image.  It can be used only with MCGA or higher adapters, and only
+  with 16 or 256 color video modes.  Many thanks to Ethan Nagel for
+  creating the palette editor.
+
+  Use the &lt;E&gt; key to enter palette-editing mode from a displayed image or
+  from the main menu.
+
+  When this mode is entered, an empty palette frame is displayed. You can
+  use the cursor keys to position the frame outline, and &lt;Pageup&gt; and
+  &lt;Pagedn&gt; to change its size.  (The upper and lower limits on the size
+  depend on the current video mode.)  When the frame is positioned where
+  you want it, hit Enter to display the current palette in the frame.
+
+  Note that the palette frame shows R(ed) G(reen) and B(lue) values for
+  two color registers at the top.  The active color register has a solid
+  frame, the inactive register's frame is dotted.  Within the active
+  register, the active color component is framed.
+
+  With a video mode of 640x400 or higher, a status area appears between
+  the two color registers.  This status area shows:
+
+    nnn  = color number at the cursor location
+    A    = Auto mode
+    X, Y = exclusion modes
+    F    = freesyle mode
+    T    = stripe mode is waiting for #
+
+  Using the commands described below, you can assign particular colors to
+  the registers and manipulate them.  Note that at any given time there
+  are two colors "X"d - these are pre-empted by the editor to display the
+  palette frame. They can be edited but the results won't be visible. You
+  can change which two colors are borrowed ("X"d out) by using the &lt;v&gt;
+  command.
+
+  Once the palette frame is displayed and filled in, the following
+  commands are available:
+
+  &lt;F1&gt;
+  Bring up a HELP screen with commands specific to palette-editing mode.
+
+  &lt;Esc&gt;
+  Leave palette-editing mode
+
+  &lt;H&gt;
+  Hide the palette frame to see full image; the cross-hair remains visible
+  and all functions remain enabled; hit &lt;H&gt; again to restore the palette
+  display.
+
+  Cursor keys
+  Move the cross-hair cursor around. In 'auto' mode (the default) the
+  color under the center of the cross-hair is automatically assigned to
+  the active color register. Control-Cursor keys move the cross-hair
+  faster. A mouse can also be used to move around.
+
+  &lt;R&gt; &lt;G&gt; &lt;B&gt;
+  Select the Red, Green, or Blue component of the active color register
+  for subsequent commands
+
+  &lt;Insert&gt; &lt;Delete&gt;
+  Select previous or next color component in active register
+
+  &lt;+&gt; &lt;-&gt;
+  Increase or decrease the active color component value by 1  Numeric
+  keypad (gray) + and - keys do the same.
+
+  &lt;Pageup&gt; &lt;Pagedn&gt;
+  Increase or decrease the active color component value by 5; Moving the
+  mouse up/down with left button held is the same
+
+  &lt;0&gt; &lt;1&gt; &lt;2&gt; &lt;3&gt; &lt;4&gt; &lt;5&gt; &lt;6&gt;
+  Set the active color component's value to 0 10 20 ... 60
+
+  &lt;Space&gt;
+  Select the other color register as the active one.  In the default
+  'auto' mode this results in the now-inactive register being set to
+  remember the color under the cursor, and the now-active register
+  changing from whatever it had previously remembered to now follow the
+  color.
+
+  &lt;,&gt; &lt;.&gt;
+  Rotate the palette one step.  By default colors 1 through 255 inclusive
+  are rotated.  This range can be over-ridden with the "cyclerange"
+  parameter, the &lt;Y&gt; options screen, or the &lt;O&gt; command described below.
+
+  "&lt;" "&gt;"
+  Rotate the palette continuously (until next keystroke)
+
+  &lt;O&gt;
+  Set the color cycling range to the range of colors currently defined by
+  the color registers.
+
+  &lt;C&gt;
+  Enter Color-Cycling Mode.  When you invoke color-cycling from here, it
+  will subsequently return to palette-editing when you &lt;Esc&gt; from it.  See
+  Color Cycling Commands (p. 23).
+
+  &lt;=&gt;
+  Create a smoothly shaded range of colors between the colors selected by
+  the two color registers.
+
+  &lt;M&gt;
+  Specify a gamma value for the shading created by &lt;=&gt;.
+
+  &lt;D&gt;
+  Duplicate the inactive color register's values to the active color
+  register.
+
+  &lt;T&gt;
+  Stripe-shade - create a smoothly shaded range of colors between the two
+  color registers, setting only every Nth register.  After hitting &lt;T&gt;,
+  hit a numeric key from 2 to 9 to specify N.  For example, if you press
+  &lt;T&gt; &lt;3&gt;, smooth shading is done between the two color registers,
+  affecting only every 3rd color between them.  The other colors between
+  them remain unchanged.
+
+  &lt;W&gt;
+  Convert current palette to gray-scale.  (If the &lt;X&gt; or &lt;Y&gt; exclude
+  ranges described later are in force, only the active range of colors is
+  converted to gray-scale.)
+
+  &lt;Shift-F2&gt; ... &lt;Shift-F9&gt;
+  Store the current palette in a temporary save area associated with the
+  function key.  The temporary save palettes are useful for quickly
+  comparing different palettes or the effect of some changes - see next
+  command.  The temporary palettes are only remembered until you exit from
+  palette-editing mode.
+  Starting with version 19.6, when palette editing mode is entered, the
+  original palette is stored in the area associated with F2.
+
+  &lt;F2&gt; ... &lt;F9&gt;
+  Restore the palette from a temporary save area.  If you haven't
+  previously saved a palette for the function key, you'll get a simple
+  grey scale.
+
+  &lt;L&gt;
+  Pause and load an external color map (.MAP file).  See Palette Maps
+  (p. 88).
+
+  &lt;S&gt;
+  Pause, prompt for a filename, and save the current palette to the named
+  file (.MAP assumed).  See Palette Maps (p. 88).
+
+  &lt;I&gt;
+  Invert frame colors.  With some colors the palette is easier to see when
+  the frame colors are interchanged.
+
+  &lt;\&gt;
+  Move or resize the palette frame.  The frame outline is drawn - it can
+  then be repositioned and sized with the cursor keys, &lt;Pageup&gt; and
+  &lt;Pagedn&gt;, just as was done when first entering palette-editing mode.
+  Hit Enter when done moving/sizing.
+
+  &lt;V&gt;
+  Use the colors currently selected by the two color registers for the
+  palette editor's frame.  When palette editing mode is entered, the last
+  two colors are "X"d out for use by the palette editor; this command can
+  be used to replace the default with two other color numbers.
+
+  &lt;A&gt;
+  Toggle 'auto' mode on or off.  When on (the default), the active color
+  register follows the cursor; when off, &lt;Enter&gt; must be pressed to set
+  the active register to the color under the cursor.
+
+  &lt;Enter&gt;
+  Only useful when 'auto' is off, as described above; double clicking the
+  left mouse button is the same as Enter.
+
+  &lt;X&gt;
+  Toggle 'exclude' mode on or off - when toggled on, only those image
+  pixels which match the active color are displayed.
+
+  &lt;Y&gt;
+  Toggle 'exclude' range on or off - similar to &lt;X&gt;, but all pixels
+  matching colors in the range of the two color registers are displayed.
+
+  &lt;N&gt;
+  Make a negative color palette - will convert only current color if in
+  'x' mode or range between editors in 'y' mode or entire palette if in
+  "normal" mode.
+
+  &lt;!&gt;
+  &lt;@&gt;     &lt;"&gt;       (English keyboard)  &lt;u-grave&gt; (French keyboard)
+  &lt;#&gt;  &lt;pound sign&gt; (English keyboard)     &lt;$&gt;    (French keyboard)
+  Swap R&lt;-&gt;G, G&lt;-&gt;B, and R&lt;-&gt;B columns. &lt;!&gt;, &lt;@&gt;, and &lt;#&gt; are shifted 1,
+  2, and 3, which you may find easier to remember.
+
+  &lt;U&gt;
+  Undoes the last palette editor command.  Will undo all the way to the
+  beginning of the current session.
+
+  &lt;E&gt;
+  Redoes the undone palette editor commands.
+
+  &lt;F&gt;
+  Toggles "Freestyle mode" on and off (Freestyle mode changes a range of
+  palette values smoothly from a center value outward).  With your cursor
+  inside the palette box, press the &lt;F&gt; key to enter Freestyle mode.  A
+  default range of colors will be selected for you centered at the cursor
+  (the ends of the color range are noted by putting dashed lines around
+  the corresponding palette values). While in Freestyle mode:
+
+   Moving the mouse changes the location of the range of colors that are
+   affected.
+
+   Control-Insert/Delete or the shifted-right-mouse-button changes the
+   size of the affected palette range.
+
+   The normal color editing keys (R,G,B,1-6, etc) set the central color of
+   the affected palette range.
+
+   Pressing ENTER or double-clicking the left mouse button makes the
+   palette changes permanent (if you don't perform this step, any palette
+   changes disappear when you press the &lt;F&gt; key again to exit freestyle
+   mode).
+
+   For more details see Freestyle mode tutorial (p. 104)
+</pre>
+</body>
+</html>

@@ -1,0 +1,106 @@
+<html>
+<head>
+<title>Iterated Dynamics: Zoom box Commands</title>
+</head>
+<body>
+<div>
+<pre>
+<a href="1.2.html">&lt; Prev</a>           <a href="index.html">Iterated Dynamics</a> Version 1.0          Page 22 <a href="1.4.html">Next &gt;</a></pre>
+</div>
+<pre>
+ 1.3 Zoom box Commands
+
+  Zoom Box functions can be invoked while an image is being generated or
+  when it has been completely drawn.  Zooming is supported for most
+  fractal types, but not all.
+
+  The general approach to using the zoom box is:  Frame an area using the
+  keys described below, then &lt;Enter&gt; to expand what's in the frame to fill
+  the whole screen (zoom in); or &lt;Ctrl&gt;&lt;Enter&gt; to shrink the current image
+  into the framed area (zoom out). With a mouse, double-click the left
+  button to zoom in, double click the right button to zoom out.
+
+  &lt;Page Up&gt;, &lt;Page Down&gt;
+  Use &lt;Page Up&gt; to initially bring up the zoom box. It starts at full
+  screen size. Subsequent use of these keys makes the zoom box smaller or
+  larger.  Using &lt;Page Down&gt; to enlarge the zoom box when it is already at
+  maximum size removes the zoom box from the display. Moving the mouse
+  away from you or toward you while holding the left button down performs
+  the same functions as these keys.
+
+  Using the cursor "arrow" keys or moving the mouse without holding any
+  buttons down, moves the zoom box.
+
+  Holding &lt;Ctrl&gt; while pressing cursor "arrow" keys moves the box 5 times
+  faster.  (This only works with enhanced keyboards.)
+
+  Panning: If you move a fullsize zoombox and don't change anything else
+  before performing the zoom, Fractint just moves what's already on the
+  screen and then fills in the new edges, to reduce drawing time. This
+  feature applies to most fractal types but not all.  A side effect is
+  that while an image is incomplete, a full size zoom box moves in steps
+  larger than one pixel.  Fractint keeps the box on multiple pixel
+  boundaries, to make panning possible.  As a multi-pass (e.g. solid
+  guessing) image approaches completion, the zoom box can move in smaller
+  increments.
+
+  In addition to resizing the zoom box and moving it around, you can do
+  some rather warped things with it.  If you're a new Fractint user, we
+  recommend skipping the rest of the zoom box functions for now and coming
+  back to them when you're comfortable with the basic zoom box functions.
+
+  &lt;Ctrl&gt;&lt;Keypad-&gt;, &lt;Ctrl&gt;&lt;Keypad+&gt;
+  Holding &lt;Ctrl&gt; and pressing the numeric keypad's + or - keys rotates the
+  zoom box. Moving the mouse left or right while holding the right button
+  down performs the same function.
+
+  &lt;Ctrl&gt;&lt;Page Up&gt;, &lt;Ctrl&gt;&lt;Page Down&gt;
+  These commands change the zoom box's "aspect ratio", stretching or
+  shrinking it vertically. Moving the mouse away from you or toward you
+  while holding both buttons (or the middle button on a 3-button mouse)
+  down performs the same function. There are no commands to directly
+  stretch or shrink the zoom box horizontally - the same effect can be
+  achieved by combining vertical stretching and resizing.
+
+  &lt;Ctrl&gt;&lt;Home&gt;, &lt;Ctrl&gt;&lt;End&gt;
+  These commands "skew" the zoom box, moving the top and bottom edges in
+  opposite directions. Moving the mouse left or right while holding both
+  buttons (or the middle button on a 3-button mouse) down performs the
+  same function. There are no commands to directly skew the left and right
+  edges - the same effect can be achieved by using these functions
+  combined with rotation.
+
+  &lt;Ctrl&gt;&lt;Insert&gt;, &lt;Ctrl&gt;&lt;Delete&gt;
+  These commands change the zoom box color. This is useful when you're
+  having trouble seeing the zoom box against the colors around it. Moving
+  the mouse away from you or toward you while holding the right button
+  down performs the same function.
+
+  You may find it difficult to figure out what combination of size,
+  position rotation, stretch, and skew to use to get a particular result.
+  (We do.)
+  A good way to get a feel for all these functions is to play with the
+  Gingerbreadman fractal type. Gingerbreadman's shape makes it easy to see
+  what you're doing to him. A warning though: Gingerbreadman will run
+  forever, he's never quite done! So, pre-empt with your next zoom when
+  he's baked enough.
+
+  If you accidentally change your zoom box shape or rotate and forget
+  which way is up, just use &lt;PageDown&gt; to make it bigger until it
+  disappears, then &lt;PageUp&gt; to get a fresh one.  With a mouse, after
+  removing the old zoom box from the display release and re-press the left
+  button for a fresh one.
+
+  If your screen does not have a 4:3 "aspect ratio" (i.e. if the visible
+  display area on it is not 1.333 times as wide as it is high), rotating
+  and zooming will have some odd effects - angles will change, including
+  the zoom box's shape itself, circles (if you are so lucky as to see any
+  with a non-standard aspect ratio) become non-circular, and so on. The
+  vast majority of PC screens *do* have a 4:3 aspect ratio.
+
+  Zooming is not implemented for the plasma and diffusion fractal types,
+  nor for overlayed and 3D images. A few fractal types support zooming but
+  do not support rotation and skewing - nothing happens when you try it.
+</pre>
+</body>
+</html>

@@ -1,0 +1,111 @@
+<html>
+<head>
+<title>Iterated Dynamics: Color Cycling Commands</title>
+</head>
+<body>
+<div>
+<pre>
+<a href="1.3.html">&lt; Prev</a>           <a href="index.html">Iterated Dynamics</a> Version 1.0          Page 23 <a href="1.5.html">Next &gt;</a></pre>
+</div>
+<pre>
+ 1.4 Color Cycling Commands
+
+  Color-cycling mode is entered with the 'c', '+', or '-' keys from an
+  image, or with the 'c' key from Palette-Editing mode.
+
+  The color-cycling commands are available ONLY for VGA adapters and EGA
+  adapters in 640x350x16 mode.  You can also enter color-cycling while
+  using a disk-video mode, to load or save a palette - other functions are
+  not supported in disk-video.
+
+  Note that the colors available on an EGA adapter (16 colors at a time
+  out of a palette of 64) are limited compared to those of VGA, super-VGA,
+  and MCGA (16 or 256 colors at a time out of a palette of 262,144). So
+  color-cycling in general looks a LOT better in the latter modes. Also,
+  because of the EGA palette restrictions, some commands are not available
+  with EGA adapters.
+
+  Color cycling applies to the color numbers selected by the "cyclerange="
+  command line parameter (also changeable via the &lt;Y&gt; options screen and
+  via the palette editor).  By default, color numbers 1 to 255 inclusive
+  are cycled.  On some images you might want to set "inside=0" (&lt;X&gt;
+  options or command line parameter) to exclude the "lake" from color
+  cycling.
+
+  When you are in color-cycling mode, you will either see the screen
+  colors cycling, or will see a white "overscan" border when paused, as a
+  reminder that you are still in this mode.  The keyboard commands
+  available once you've entered color-cycling. are described below.
+
+  &lt;F1&gt;
+  Bring up a HELP screen with commands specific to color cycling mode.
+
+  &lt;Esc&gt;
+  Leave color-cycling mode.
+
+  &lt;Home&gt;
+  Restore original palette.
+
+  &lt;+&gt; or &lt;-&gt;
+  Begin cycling the palette by shifting each color to the next "contour."
+  &lt;+&gt; cycles the colors in one direction, &lt;-&gt; in the other.
+
+  '&lt;' or '&gt;'
+  Force a color-cycling pause, disable random colorizing, and single-step
+  through a one color-cycle.  For "fine-tuning" your image colors.
+
+  Cursor up/down
+  Increase/decrease the cycling speed. High speeds may cause a harmless
+  flicker at the top of the screen.
+
+  &lt;F2&gt; through &lt;F10&gt;
+  Switches from simple rotation to color selection using randomly
+  generated color bands of short (F2) to long (F10) duration.
+
+  &lt;1&gt; through &lt;9&gt;
+  Causes the screen to be updated every 'n' color cycles (the default is
+  1).  Handy for slower computers.
+
+  &lt;Enter&gt;
+  Randomly selects a function key (F2 through F10) and then updates ALL
+  the screen colors prior to displaying them for instant, random colors.
+  Hit this over and over again (we do).
+
+  &lt;Spacebar&gt;
+  Pause cycling with white overscan area. Cycling restarts with any
+  command key (including another spacebar).
+
+  &lt;Shift&gt;&lt;F1&gt;-&lt;F10&gt;
+  Pause cycling and reset the palette to a preset two color "straight"
+  assignment, such as a spread from black to white. (Not for EGA)
+
+  &lt;Ctrl&gt;&lt;F1&gt;-&lt;F10&gt;
+  Pause &amp; set a 2-color cyclical assignment, e.g. red-&gt;yellow-&gt;red (not
+  EGA).
+
+  &lt;Alt&gt;&lt;F1&gt;-&lt;F10&gt;
+  Pause &amp; set a 3-color cyclical assignment, e.g. green-&gt;white-&gt;blue (not
+  EGA).
+
+  &lt;R&gt;, &lt;G&gt;, &lt;B&gt;
+  Pause and increase the red, green, or blue component of all colors by a
+  small amount (not for EGA). Note the case distinction of this vs:
+
+  &lt;r&gt;, &lt;g&gt;, &lt;b&gt;
+  Pause and decrease the red, green, or blue component of all colors by a
+  small amount (not for EGA).
+
+  &lt;D&gt; or &lt;A&gt;
+  Pause and load an external color map from the files DEFAULT.MAP or
+  ALTERN.MAP, supplied with the program.
+
+  &lt;L&gt;
+  Pause and load an external color map (.MAP file).  Several .MAP files
+  are supplied with Fractint.  See Palette Maps (p. 88).
+
+  &lt;S&gt;
+  Pause, prompt for a filename, and save the current palette to the named
+  file (.MAP assumed).  See Palette Maps (p. 88).
+</pre>
+</body>
+</html>

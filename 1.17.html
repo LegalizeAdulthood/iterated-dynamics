@@ -1,0 +1,48 @@
+<html>
+<head>
+<title>Iterated Dynamics: Hints</title>
+</head>
+<body>
+<div>
+<pre>
+<a href="1.16.html">&lt; Prev</a>           <a href="index.html">Iterated Dynamics</a> Version 1.0          Page 39 <a href="1.18.html">Next &gt;</a></pre>
+</div>
+<pre>
+ 1.17 Hints
+
+  Remember, you do NOT have to wait for the program to finish a full
+  screen display before entering a command. If you see an interesting spot
+  you want to zoom in on while the screen is half-done, don't wait -- do
+  it! If you think after seeing the first few lines that another video
+  mode would look better, go ahead -- Fractint will shift modes and start
+  the redraw at once. When it finishes a display, it beeps and waits for
+  your next command.
+
+  In general, the most interesting areas are the "border" areas where the
+  colors are changing rapidly. Zoom in on them for the best results. The
+  first Mandelbrot-set (default) fractal image has a large, solid-colored
+  interior that is the slowest to display; there's nothing to be seen by
+  zooming there.
+
+  Plotting time is directly proportional to the number of pixels in a
+  screen, and hence increases with the resolution of the video mode.  You
+  may want to start in a low-resolution mode for quick progress while
+  zooming in, and switch to a higher-resolution mode when things get
+  interesting. Or use the solid guessing mode and pre-empt with a zoom
+  before it finishes. Plotting time also varies with the maximum iteration
+  setting, the fractal type, and your choice of drawing mode.  Solid-
+  guessing (the default) is fastest, but it can be wrong: perfectionists
+  will want to use dual-pass mode (its first-pass preview is handy if you
+  might zoom pre-emptively) or single-pass mode.
+
+  When you start systematically exploring, you can save time (and hey,
+  every little bit helps -- these "objects" are INFINITE, remember!) by
+  &lt;S&gt;aving your last screen in a session to a file, and then going
+  straight to it the next time by using the command FRACTINT FRACTxxx (the
+  .GIF extension is assumed), or by starting Fractint normally and then
+  using the &lt;R&gt; command to reload the saved file. Or you could hit &lt;B&gt; to
+  create a parameter file entry with the "recipe" for a given image, and
+  next time use the &lt;@&gt; command to re-plot it.
+</pre>
+</body>
+</html>

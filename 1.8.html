@@ -1,0 +1,134 @@
+<html>
+<head>
+<title>Iterated Dynamics: Parameter Save/Restore Commands</title>
+</head>
+<body>
+<div>
+<pre>
+<a href="1.7.html">&lt; Prev</a>           <a href="index.html">Iterated Dynamics</a> Version 1.0          Page 30 <a href="1.9.html">Next &gt;</a></pre>
+</div>
+<pre>
+ 1.8 Parameter Save/Restore Commands
+
+  Parameter files can be used to save/restore all options and settings
+  required to recreate particular images.  The parameters required to
+  describe an image require very little disk space, especially compared
+  with saving the image itself.
+
+  &lt;@&gt; or &lt;2&gt;
+
+  The &lt;@&gt; or &lt;2&gt; command loads a set of parameters describing an image.
+  (Actually, it can also be used to set non-image parameters such as
+  SOUND, but at this point we're interested in images. Other uses of
+  parameter files are discussed in "Parameter Files and the &lt;@&gt; Command"
+  (p. 121).)
+
+  When you hit &lt;@&gt; or &lt;2&gt;, Fractint displays the names of the entries in
+  the currently selected parameter file.  The default parameter file,
+  FRACTINT.PAR, is included with the Fractint release and contains
+  parameters for some sample images.
+
+  After pressing &lt;@&gt; or &lt;2&gt;, highlight an entry and press &lt;Enter&gt; to load
+  it, or press &lt;F6&gt; to change to another parameter file.
+
+  Note that parameter file entries specify all calculation related
+  parameters, but do not specify things like the video mode - the image
+  will be plotted in your currently selected mode.
+
+  &lt;B&gt;
+
+  The &lt;B&gt; command saves the parameters required to describe the currently
+  displayed image, which can subsequently be used with the &lt;@&gt; or &lt;2&gt;
+  command to recreate it.
+
+  After you press &lt;B&gt;, Fractint prompts for:
+
+    Parameter file:  The name of the file to store the parameters in.  You
+    should use some name like "myimages" instead of fractint.par, so that
+    your images are kept separate from the ones released with new versions
+    of Fractint. You can use the PARMFILE= command in SSTOOLS.INI to set
+    the default parameter file name to "myimages" or whatever.  (See
+    "Setting Defaults (SSTOOLS.INI File)" (p. 120) and "parmfile=" in
+    "File Parameters" (p. 133).)
+
+    Name:  The name you want to assign to the entry, to be displayed when
+    the &lt;@&gt; or &lt;2&gt; command is used.
+
+    Main comment:  A comment to be shown beside the entry in the &lt;@&gt;
+    command display.
+
+    Second, Third, and Fourth comment:  Additional comments to store in
+    the file with the entry. These comments go in the file only, and are
+    not displayed by the &lt;@&gt; command. You can set these comments from the
+    command line - see Comment= Command (p. 122).
+
+    Record colors?:  Whether color information should be included in the
+    entry. Usually the default value displayed by Fractint is what you
+    want.  Allowed values are:
+    "no" - Don't record colors.
+    "@mapfilename" - When these parameters are used, load colors from the
+       named color map file. This is the default if you are currently
+       using colors from a color map file.
+    "yes" - Record the colors in detail. This is the default when you've
+       changed the display colors by using the palette editor or by color
+       cycling. The only reason that this isn't what Fractint always does
+       for the &lt;B&gt; command is that color information can be bulky - up to
+       nearly 3K of disk space per map - which adds up to a lot for many
+       images. Smooth-shaded ranges of colors are compressed, so if that's
+       used a lot in an image the color information won't be as bulky.
+    "only" - Record only the colors in the PAR file, without any other
+       parameters. This is useful for converting color maps to PAR
+       entries.
+
+    # of colors:  This only matters if "Record colors?" is set to "yes".
+    It specifies the number of colors to record. Recording less colors
+    will take less space. Usually the default value displayed by Fractint
+    is what you want. You might want to increase it in some cases, e.g. if
+    you are using a 256 color mode with maxiter 150, and have used the
+    palette editor to set all 256 possible colors for use with color
+    cycling, then you'll want to set the "# of colors" to 256.
+
+    See the Recordcolors (p. 128) command, which controls when mapfiles
+    are used and when compressed colors are written to PAR files.
+
+    maxlinelength: This number controls the maximum width of a parameter
+    entry in a PAR file. The default is 72 characters.
+
+    At the bottom of the input screen are inputs for Fractint's "pieces"
+    divide-and-conquer feature. You can create multiple PAR entries that
+    break an image up into pieces so that you can generate the image
+    pieces one by one. There are two reasons for doing this. The first is
+    in case the fractal is very slow, and you want to generate parts of
+    the image at the same time on several computers. The second is that
+    you might want to make an image greater than 2048 x 2048, the old
+    pixel limit for Fractint. The parameters for this feature are:
+       X Multiples - How many divisions of final image in the x direction
+       Y Multiples - How many divisions of final image in the y direction
+       Video mode  - Fractint video mode for each piece (e.g. "F3")
+
+    The last item defaults to the current video mode. If either X
+    Multiples or Y Multiples are greater than 1, then multiple numbered
+    PAR entries for the pieces are added to the PAR file, and a
+    MAKEMIG.BAT file is created that builds all of the component pieces
+    and then stitches them together into a "multi-image" GIF.  The current
+    limitations of the "divide and conquer" algorithm are 36 or fewer X
+    and Y multiples (so you are limited to "only" 36x36=1296 component
+    images), and a final resolution limit in both the X and Y directions
+    of 65,535 (a limitation of "only" four billion pixels or so).
+
+    The final image generated by MAKEMIG is a "multi-image" GIF file
+    called FRACTMIG.GIF.  In case you have other software that can't
+    handle multi-image GIF files, MAKEMIG includes a final (but commented
+    out) call to SIMPLGIF, a companion program that reads a GIF file that
+    may contain little tricks like multiple images and creates a simple
+    GIF from it.  Fair warning: SIMPLGIF needs room to build a composite
+    image while it works, and it does that using a temporary disk file
+    equal to the size of the final image - and a 64Kx64K GIF image
+    requires a 4GB temporary disk file!
+
+  &lt;G&gt;
+
+  The &lt;G&gt; command lets you give a startup parameter interactively.
+</pre>
+</body>
+</html>
