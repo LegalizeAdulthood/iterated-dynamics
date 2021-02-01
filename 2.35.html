@@ -1,0 +1,201 @@
+<html>
+<head>
+<title>Iterated Dynamics: Formula</title>
+</head>
+<body>
+<div>
+<pre>
+<a href="2.34.html">&lt; Prev</a>           <a href="index.html">Iterated Dynamics</a> Version 1.0          Page 65 <a href="2.36.html">Next &gt;</a></pre>
+</div>
+<pre>
+ 2.35 Formula
+
+  (type=formula)
+
+  This is a "roll-your-own" fractal interpreter - you don't even need a
+  compiler!
+
+  To run a "type=formula" fractal, you first need a text file containing
+  formulas (there's a sample file - FRACTINT.FRM - included with this
+  distribution).  When you select the "formula" fractal type, Fractint
+  scans the current formula file (default is FRACTINT.FRM) for formulas,
+  then prompts you for the formula name you wish to run.  After prompting
+  for any parameters, the formula is parsed for syntax errors and then the
+  fractal is generated. If you want to use a different formula file, press
+  &lt;F6&gt; when you are prompted to select a formula name.
+
+  There are two command-line options that work with type=formula
+  ("formulafile=" and "formulaname="), useful when you are using this
+  fractal type in batch mode.
+
+  The following documentation is supplied by Mark Peterson, who wrote the
+  formula interpreter:
+
+  Formula fractals allow you to create your own fractal formulas.  The
+  general format is:
+
+     Mandelbrot(XAXIS) { z = Pixel:  z = sqr(z) + pixel, |z| &lt;= 4 }
+        |         |          |                |              |
+       Name     Symmetry    Initial         Iteration       Bailout
+                            Condition                       Criteria
+
+  Initial conditions are set, then the iterations performed while the
+  bailout criteria remains true or until 'z' turns into a periodic loop.
+  All variables are created automatically by their usage and treated as
+  complex.  If you declare 'v = 2' then the variable 'v' is treated as a
+  complex with an imaginary value of zero.
+
+  NOTE: For periodicity checking, inside options, outside options, and the
+  passes=o option to work correctly it is necessary to leave the result of
+  the orbit calculation in the variable z.
+
+  Sequential processing of the formula can be altered with the flow
+  control
+  instructions
+
+      IF(expr1)
+        statements
+      ELSEIF(expr2)
+         statements
+      .
+      .
+      ELSEIF(exprn)
+         statements
+      ELSE
+        statements
+      ENDIF
+
+  where the expressions are evaluated and the statements executed are
+  those
+  immediately following the first "true" expression (the real part of the
+  complex variable being nonzero). Nesting of IF..ENDIF blocks is
+  permitted.
+
+            Predefined Variables (x, y)
+            --------------------------------------------
+            z          used for periodicity checking
+            p1         parameters 1 and 2
+            p2         parameters 3 and 4
+            p3         parameters 5 and 6
+            p4         parameters 7 and 8
+            p5         parameters 9 and 10
+            pixel      complex coordinates
+            LastSqr    Modulus from the last sqr() function
+            rand       Complex random number
+            pi         (3.14159..., 0.0)
+            e          (2.71828..., 0.0)
+            maxit      (maxit, 0) maximum iterations
+            scrnmax    (xdots, ydots) max horizontal/vertical resolution.
+                       e.g. for SF7 scrnmax = (1024,768)
+            scrnpix    (col, row) pixel screen coordinates. (col, row) ranges
+                       from (0,0) to (xdots-1, ydots-1)
+            whitesq    ((col+row) modulo 2, 0) i.e. thinking of the screen
+                       coordinates as a large checker board, whitesq is (1,0)
+                       for the white squares and (0,0) for the black ones.
+            Predefined Variables (Continued)
+            --------------------------------------------
+            ismand     1 (true) by default, changes to 0 when the Mandelbrot/
+                       Julia SPACE toggle is pressed. This allows writing
+                       formulas that have both "Mandelbrot" and "Julia" behavior.
+            center     Zoom box (Xcenter,  Ycenter)    (see center-mag (p. 126))
+            magxmag    Zoom box (Mag,      Xmagnitude) (see center-mag (p. 126))
+            rotskew    Zoom box (Rotation, Skew)       (see center-mag (p. 126))
+
+            Precedence
+            --------------------------------------------
+            1          sin(), cos(), sinh(), cosh(), cosxx(), tan(), cotan(),
+                       tanh(), cotanh(), sqr(), log(), exp(), abs(), conj(),
+                       real(), imag(), flip(), fn1(), fn2(), fn3(), fn4(),
+                       srand(), asin(), asinh(), acos(), acosh(), atan(),
+                       atanh(), sqrt(), cabs(), floor(), ceil(), trunc(),
+                       round()
+            2          - (negation), ^ (power)
+            3          * (multiplication), / (division)
+            4          + (addition), - (subtraction)
+            5          = (assignment)
+            Precedence (Continued)
+            --------------------------------------------
+            6          &lt; (less than), &lt;= (less than or equal to)
+                       &gt; (greater than), &gt;= (greater than or equal to)
+                       == (equal to), != (not equal to)
+            7          &amp;&amp; (logical AND), || (logical OR)
+  Precedence may be overridden by use of parenthesis.  Note the modulus
+  squared operator |z| is also parenthetic and always sets the imaginary
+  component to zero.  This means 'c * |z - 4|' first subtracts 4 from z,
+  calculates the modulus squared then multiplies times 'c'.  Nested
+  modulus squared operators require overriding parenthesis:
+
+     c * |z + (|pixel|)|
+
+  The functions fn1(...) to fn4(...) are variable functions - when used,
+  the user is prompted at run time (on the &lt;Z&gt; screen) to specify one of
+  sin, cos, sinh, cosh, exp, log, sqr, etc. for each required variable
+  function.
+
+  Most of the functions have their conventional meaning, here are a few
+  notes on others that are not conventional.
+   abs()    - returns abs(x)+i*abs(y)
+   |x+iy|   - returns x*x+y*y
+   cabs()   - returns sqrt(x*x+y*y)
+   conj()   - returns the complex conjugate of the argument. That is, changes
+              sign of the imaginary component of argument: (x,y) becomes (x,-y)
+   cosxx()  - duplicates a bug in the version 16 cos() function
+   flip()   - Swap the real and imaginary components of the complex number.
+              e.g. (4,5) would become (5,4)
+   ident()  - identity function. Leaves the value of the argument unchanged,
+              acting like a "z" term in a formula.
+   zero()   - returns 0.
+   one()    - returns 1.
+   floor()  - largest integer not greater than the argument
+              floor(x+iy) = floor(x) + i*floor(y)
+   ceil()   - smallest integer not less than the argument
+   trunc()  - truncate fraction part toward zero
+   round()  - round to nearest integer or up. e.g. round(2.5,3.4) = (3,3)
+
+  The formulas are performed using either integer or floating point
+  mathematics depending on the &lt;F&gt; floating point toggle.  If you do not
+  have an FPU then type MPC math is performed in lieu of traditional
+  floating point.
+
+  The 'rand' predefined variable is changed with each iteration to a new
+  random number with the real and imaginary components containing a value
+  between zero and 1. Use the srand() function to initialize the random
+  numbers to a consistent random number sequence.  If a formula does not
+  contain the srand() function, then the formula compiler will use the
+  system time to initialize the sequence.  This could cause a different
+  fractal to be generated each time the formula is used depending on how
+  the formula is written.
+
+  A formula containing one of the predefined variables "maxit", "scrnpix"
+  or "scrnmax" will be automatically run in floating point mode.
+
+  The rounding functions must be used cautiously; formulas that depend on
+  exact values of numbers will not work reliably in all cases.  For
+  example, in floating point mode, trunc(6/3) returns 1 while
+  trunc(6/real(3)) returns 2.
+
+  Note that if x is an integer, floor(x) = ceil(x) = trunc(x) = round(x) =
+  x.
+
+  Remember that when using integer math there is a limited dynamic range,
+  so what you think may be a fractal could really be just a limitation of
+  the integer math range.  God may work with integers, but God's dynamic
+  range is many orders of magnitude greater than our puny 32 bit
+  mathematics!  Always verify with the floating point &lt;F&gt; toggle.
+  The possible values for symmetry are:
+  XAXIS,  XAXIS_NOPARM
+  YAXIS,  YAXIS_NOPARM
+  XYAXIS, XYAXIS_NOPARM
+  ORIGIN, ORIGIN_NOPARM
+  PI_SYM, PI_SYM_NOPARM
+  XAXIS_NOREAL
+  XAXIS_NOIMAG
+
+  These will force the symmetry even if no symmetry is actually present,
+  so try your formulas without symmetry before you use these.
+
+  For mathematical formulas of functions used in the parser language, see
+   Trig Identities (p. 188)
+</pre>
+</body>
+</html>

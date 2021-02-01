@@ -1,0 +1,38 @@
+<html>
+<head>
+<title>Iterated Dynamics: Unity</title>
+</head>
+<body>
+<div>
+<pre>
+<a href="2.21.html">&lt; Prev</a>           <a href="index.html">Iterated Dynamics</a> Version 1.0          Page 57 <a href="2.23.html">Next &gt;</a></pre>
+</div>
+<pre>
+ 2.22 Unity
+
+  (type=unity)
+
+  This Peterson variation began with curiosity about other "Newton-style"
+  approximation processes. A simple one,
+
+     One = (x * x) + (y * y); y = (2 - One) * x;   x = (2 - One) * y;
+
+  produces the fractal called Unity.
+
+  One of its interesting features is the "ghost lines." The iteration loop
+  bails out when it reaches the number 1 to within the resolution of a
+  screen pixel. When you zoom a section of the image, the bailout
+  criterion is adjusted, causing some lines to become thinner and others
+  thicker.
+
+  Only one line in Unity that forms a perfect circle: the one at a radius
+  of 1 from the origin. This line is actually infinitely thin. Zooming on
+  it reveals only a thinner line, up (down?) to the limit of accuracy for
+  the algorithm. The same thing happens with other lines in the fractal,
+  such as those around |x| = |y| = (1/2)^(1/2) = .7071
+
+  Try some other tortuous approximations using the TEST stub (p. 64) and
+  let us know what you come up with!
+</pre>
+</body>
+</html>

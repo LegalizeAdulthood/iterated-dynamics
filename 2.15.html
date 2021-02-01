@@ -1,0 +1,106 @@
+<html>
+<head>
+<title>Iterated Dynamics: Barnsley IFS Fractals</title>
+</head>
+<body>
+<div>
+<pre>
+<a href="2.14.html">&lt; Prev</a>           <a href="index.html">Iterated Dynamics</a> Version 1.0          Page 53 <a href="2.16.html">Next &gt;</a></pre>
+</div>
+<pre>
+ 2.15 Barnsley IFS Fractals
+
+  (type=ifs)
+
+  One of the most remarkable spin-offs of fractal geometry is the ability
+  to "encode" realistic images in very small sets of numbers -- parameters
+  for a set of functions that map a region of two-dimensional space onto
+  itself.  In principle (and increasingly in practice), a scene of any
+  level of complexity and detail can be stored as a handful of numbers,
+  achieving amazing "compression" ratios... how about a super-VGA image of
+  a forest, more than 300,000 pixels at eight bits apiece, from a 1-KB
+  "seed" file?
+
+  Again, Michael Barnsley and his co-workers at the Georgia Institute of
+  Technology are to be thanked for pushing the development of these
+  iterated function systems (IFS).
+
+  When you select this fractal type, Fractint scans the current IFS file
+  (default is FRACTINT.IFS, a set of definitions supplied with Fractint)
+  for IFS definitions, then prompts you for the IFS name you wish to run.
+  Fern and 3dfern are good ones to start with. You can press &lt;F6&gt; at the
+  selection screen if you want to select a different .IFS file you've
+  written.
+
+  Note that some Barnsley IFS values generate images quite a bit smaller
+  than the initial (default) screen. Just bring up the zoom box, center it
+  on the small image, and hit &lt;Enter&gt; to get a full-screen image.
+
+  To change the number of dots Fractint generates for an IFS image before
+  stopping, you can change the "maximum iterations" parameter on the &lt;X&gt;
+  options screen.
+
+  Fractint supports two types of IFS images: 2D and 3D. In order to fully
+  appreciate 3D IFS images, since your monitor is presumably 2D, we have
+  added rotation, translation, and perspective capabilities. These share
+  values with the same variables used in Fractint's other 3D facilities;
+  for their meaning see "Rectangular Coordinate Transformation" (p. 111).
+  You can enter these values from the command line using:
+
+  rotation=xrot/yrot/zrot       (try 30/30/30)
+  shift=xshift/yshift           (shifts BEFORE applying perspective!)
+  perspective=viewerposition    (try 200)
+
+  Alternatively, entering &lt;I&gt; from main screen will allow you to modify
+  these values. The defaults are the same as for regular 3D, and are not
+  always optimum for 3D IFS. With the 3dfern IFS type, try
+  rotation=30/30/30. Note that applying shift when using perspective
+  changes the picture -- your "point of view" is moved.
+
+  A truly wild variation of 3D may be seen by entering "2" for the stereo
+  mode (see "Stereo 3D Viewing" (p. 110)), putting on red/blue "funny
+  glasses", and watching the fern develop with full depth perception right
+  there before your eyes!
+
+  This feature USED to be dedicated to Bruce Goren, as a bribe to get him
+  to send us MORE knockout stereo slides of 3D ferns, now that we have
+  made it so easy! Bruce, what have you done for us *LATELY* ?? (Just
+  kidding, really!)
+
+  Each line in an IFS definition (look at FRACTINT.IFS with your editor
+  for examples) contains the parameters for one of the generating
+  functions, e.g. in FERN:
+     a    b     c    d    e    f    p
+   ___________________________________
+     0     0    0  .16    0    0   .01
+   .85   .04 -.04  .85    0  1.6   .85
+   .2   -.26  .23  .22    0  1.6   .07
+  -.15   .28  .26  .24    0  .44   .07
+
+  The values on each line define a matrix, vector, and probability:
+      matrix   vector  prob
+      |a b|     |e|     p
+      |c d|     |f|
+
+  The "p" values are the probabilities assigned to each function (how
+  often it is used), which add up to one. Fractint supports up to 32
+  functions, although usually three or four are enough.
+
+  3D IFS definitions are a bit different.  The name is followed by (3D) in
+  the definition file, and each line of the definition contains 13
+  numbers: a b c d e f g h i j k l p, defining:
+      matrix   vector  prob
+      |a b c|   |j|     p
+      |d e f|   |k|
+      |g h i|   |l|
+
+  The program FDESIGN can be used to design IFS fractals - see FDESIGN
+  (p. 203).
+
+  You can save the points in your IFS fractal in the file ORBITS.RAW which
+  is overwritten each time a fractal is generated. The program Acrospin
+  can read this file and will let you view the fractal from any angle
+  using the cursor keys. See Acrospin (p. 203).
+</pre>
+</body>
+</html>

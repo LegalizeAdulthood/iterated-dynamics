@@ -1,0 +1,82 @@
+<html>
+<head>
+<title>Iterated Dynamics: Inverse Julias</title>
+</head>
+<body>
+<div>
+<pre>
+<a href="2.3.html">&lt; Prev</a>           <a href="index.html">Iterated Dynamics</a> Version 1.0          Page 46 <a href="2.5.html">Next &gt;</a></pre>
+</div>
+<pre>
+ 2.4 Inverse Julias
+
+  (type=julia_inverse)
+
+  Pick a function, such as the familiar Z(n) = Z(n-1) squared plus C (the
+  defining function of the Mandelbrot Set).  If you pick a point Z(0) at
+  random from the complex plane, and repeatedly apply the function to it,
+  you get a sequence of new points called an orbit, which usually either
+  zips out toward infinity or zooms in toward one or more "attractor"
+  points near the middle of the plane.  The set of all points that are
+  "attracted" to infinity is called the "Basin of Attraction" of infinity.
+  Each of the other attractors also has its own Basin of Attraction.  Why
+  is it called a Basin?  Imagine a lake, and all the water in it
+  "draining" into the attractor.  The boundary between these basins is
+  called the Julia Set of the function.
+
+  The boundary between the basins of attraction is sort of like a
+  repeller; all orbits move away from it, toward one of the attractors.
+  But if we define a new function as the inverse of the old one, as for
+  instance Z(n) = sqrt(Z(n-1) minus C), then the old attractors become
+  repellers, and the former boundary itself becomes the attractor!  Now,
+  starting from any point, all orbits are drawn irresistibly to the Julia
+  Set!  In fact, once an orbit reaches the boundary, it will continue to
+  hop about until it traces the entire Julia Set!  This method for drawing
+  Julia Sets is called the Inverse Iteration Method, or IIM for short.
+
+  Unfortunately, some parts of each Julia Set boundary are far more
+  attractive to inverse orbits than others are, so that as an orbit traces
+  out the set, it keeps coming back to these attractive parts again and
+  again, only occasionally visiting the less attractive parts.  Thus it
+  may take an infinite length of time to draw the entire set.  To hasten
+  the process, we can keep track of how many times each pixel on our
+  computer screen is visited by an orbit, and whenever an orbit reaches a
+  pixel that has already been visited more than a certain number of times,
+  we can consider that orbit finished and move on to another one.  This
+  "hit limit" thus becomes similar to the iteration limit used in the
+  traditional escape-time fractal algorithm.  This is called the Modified
+  Inverse Iteration Method, or MIIM, and is much faster than the IIM.
+
+  Now, the inverse of Mandelbrot's classic function is a square root, and
+  the square root actually has two solutions; one positive, one negative.
+  Therefore at each step of each orbit of the inverse function there is a
+  decision; whether to use the positive or the negative square root.  Each
+  one gives rise to a new point on the Julia Set, so each is a good
+  choice.  This series of choices defines a binary decision tree, each
+  point on the Julia Set giving rise to two potential child points.  There
+  are many interesting ways to traverse a binary tree, among them Breadth
+  first, Depth first (left or negative first), Depth first (right or
+  positive first), and completely at random.  It turns out that most
+  traversal methods lead to the same or similar pictures, but that how the
+  image evolves as the orbits trace it out differs wildly depending on the
+  traversal method chosen.  As far as we know, this fact is an original
+  discovery by Michael Snyder, and version 18.2 of FRACTINT was its first
+  publication.
+
+  Pick a Julia constant such as Z(0) = (-.74543, .11301), the popular
+  Seahorse Julia, and try drawing it first Breadth first, then Depth first
+  (right first), Depth first (left first), and finally with Random Walk.
+
+  Caveats: the video memory is used in the algorithm, to keep track of how
+  many times each pixel has been visited (by changing it's color).
+  Therefore the algorithm will not work well if you zoom in far enough
+  that part of the Julia Set is off the screen.
+
+  Bugs:   Not working with Disk Video.
+          Not resumeable.
+
+  The &lt;J&gt; key toggles between the Inverse Julia orbit and the
+  corresponding Julia escape time fractal.
+</pre>
+</body>
+</html>

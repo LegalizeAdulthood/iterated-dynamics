@@ -1,0 +1,31 @@
+<html>
+<head>
+<title>Iterated Dynamics: Mandelbrot Mix 4</title>
+</head>
+<body>
+<div>
+<pre>
+<a href="2.53.html">&lt; Prev</a>           <a href="index.html">Iterated Dynamics</a> Version 1.0          Page 84 <a href="page86.html">Next &gt;</a></pre>
+</div>
+<pre>
+ 2.54 Mandelbrot Mix 4
+
+  (type=mandelbrotmix4)
+
+  Jim Muth has been publishing a "Fractal of the Day" on the fractint
+  mailing list for many years now. As often as not Jim picks the formula
+  Mandelbrotmix4 as the fractal continent to explore. To honor Jim, the
+  fractint authors have provided this fractal as a built-in type.
+
+  The formula is:
+
+  MandelbrotMix4 {; Jim Muth a=real(p1), b=imag(p1), d=real(p2),
+  f=imag(p2), g=1/f, h=1/d, j=1/(f-b), z=(-a*b*g*h)^j, k=real(p3)+1,
+  l=imag(p3)+100, c=fn1(pixel): z=k*((a*(z^b))+(d*(z^f)))+c, |z| &lt; l }
+
+  Note that Jim uses l=imag(p3)+100, which is to say, the sixth scalar
+  parameter, as the bailout. Our implementation follows Jim if the user
+  requests the default bailout.
+</pre>
+</body>
+</html>

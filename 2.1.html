@@ -1,0 +1,98 @@
+<html>
+<head>
+<title>Iterated Dynamics: The Mandelbrot Set</title>
+</head>
+<body>
+<div>
+<pre>
+<a href="2.0.html">&lt; Prev</a>           <a href="index.html">Iterated Dynamics</a> Version 1.0          Page 43 <a href="2.2.html">Next &gt;</a></pre>
+</div>
+<pre>
+ 2.1 The Mandelbrot Set
+
+  (type=mandel)
+
+  This set is the classic: the only one implemented in many plotting
+  programs, and the source of most of the printed fractal images published
+  in recent years. Like most of the other types in Fractint, it is simply
+  a graph: the x (horizontal) and y (vertical) coordinate axes represent
+  ranges of two independent quantities, with various colors used to
+  symbolize levels of a third quantity which depends on the first two. So
+  far, so good: basic analytic geometry.
+
+  Now things get a bit hairier. The x axis is ordinary, vanilla real
+  numbers. The y axis is an imaginary number, i.e. a real number times i,
+  where i is the square root of -1. Every point on the plane -- in this
+  case, your PC's display screen -- represents a complex number of the
+  form:
+
+      x-coordinate + i * y-coordinate
+
+  If your math training stopped before you got to imaginary and complex
+  numbers, this is not the place to catch up. Suffice it to say that they
+  are just as "real" as the numbers you count fingers with (they're used
+  every day by electrical engineers) and they can undergo the same kinds
+  of algebraic operations.
+
+  OK, now pick any complex number -- any point on the complex plane -- and
+  call it C, a constant. Pick another, this time one which can vary, and
+  call it Z. Starting with Z=0 (i.e., at the origin, where the real and
+  imaginary axes cross), calculate the value of the expression
+
+      Z^2 + C
+
+  Take the result, make it the new value of the variable Z, and calculate
+  again. Take that result, make it Z, and do it again, and so on: in
+  mathematical terms, iterate the function Z(n+1) = Z(n)^2 + C. For
+  certain values of C, the result "levels off" after a while. For all
+  others, it grows without limit. The Mandelbrot set you see at the start
+  -- the solid-colored lake (blue by default), the blue circles sprouting
+  from it, and indeed every point of that color -- is the set of all
+  points C for which the magnitude of Z is less than 2 after 150
+  iterations (150 is the default setting, changeable via the &lt;X&gt; options
+  screen or "maxiter=" parameter).  All the surrounding "contours" of
+  other colors represent points for which the magnitude of Z exceeds 2
+  after 149 iterations (the contour closest to the M-set itself), 148
+  iterations, (the next one out), and so on.
+
+  We actually don't test for the magnitude of Z exceeding 2 - we test the
+  magnitude of Z squared against 4 instead because it is easier.  This
+  value (FOUR usually) is known as the "bailout" value for the
+  calculation, because we stop iterating for the point when it is reached.
+  The bailout value can be changed on the &lt;Z&gt; options screen but the
+  default is usually best.  See also Bailout Test (p. 98).
+
+  Some features of interest:
+
+  1. Use the &lt;X&gt; options screen to increase the maximum number of
+  iterations.  Notice that the boundary of the M-set becomes more and more
+  convoluted (the technical terms are "wiggly," "squiggly," and "utterly
+  bizarre") as the Z-magnitudes for points that were still within the set
+  after 150 iterations turn out to exceed 2 after 200, 500, or 1200. In
+  fact, it can be proven that the true boundary is infinitely long: detail
+  without limit.
+
+  2. Although there appear to be isolated "islands" of blue, zoom in --
+  that is, plot for a smaller range of coordinates to show more detail --
+  and you'll see that there are fine "causeways" of blue connecting them
+  to the main set. As you zoomed, smaller islands became visible; the same
+  is true for them. In fact, there are no isolated points in the M-set: it
+  is "connected" in a strict mathematical sense.
+
+  3. The upper and lower halves of the first image are symmetric (a fact
+  that Fractint makes use of here and in some other fractal types to speed
+  plotting). But notice that the same general features -- lobed discs,
+  spirals, starbursts -- tend to repeat themselves (although never
+  exactly) at smaller and smaller scales, so that it can be impossible to
+  judge by eye the scale of a given image.
+
+  4. In a sense, the contour colors are window-dressing: mathematically,
+  it is the properties of the M-set itself that are interesting, and no
+  information about it would be lost if all points outside the set were
+  assigned the same color. If you're a serious, no-nonsense type, you may
+  want to cycle the colors just once to see the kind of silliness that
+  other people enjoy, and then never do it again. Go ahead. Just once,
+  now. We trust you.
+</pre>
+</body>
+</html>

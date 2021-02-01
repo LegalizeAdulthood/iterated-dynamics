@@ -1,0 +1,39 @@
+<html>
+<head>
+<title>Iterated Dynamics: Martin Attractors</title>
+</head>
+<body>
+<div>
+<pre>
+<a href="2.31.html">&lt; Prev</a>           <a href="index.html">Iterated Dynamics</a> Version 1.0          Page 63 <a href="2.33.html">Next &gt;</a></pre>
+</div>
+<pre>
+ 2.32 Martin Attractors
+
+  (type=hopalong/martin)
+
+  These fractal types are from A. K. Dewdney's "Computer Recreations"
+  column in "Scientific American". They are attributed to Barry Martin of
+  Aston University in Birmingham, England.
+
+  Hopalong is an "orbit" type fractal like lorenz. The image is obtained
+  by iterating this formula after setting z(0) = y(0) = 0:
+        x(n+1) = y(n) - sign(x(n))*sqrt(abs(b*x(n)-c))
+        y(n+1) = a - x(n)
+  Parameters are a, b, and c. The function "sign()"  returns 1 if the
+  argument is positive, -1 if argument is negative.
+
+  This fractal continues to develop in surprising ways after many
+  iterations.
+
+  Another Martin fractal is simpler. The iterated formula is:
+        x(n+1) = y(n) - sin(x(n))
+        y(n+1) = a - x(n)
+  The parameter is "a". Try values near the number pi.
+
+  Michael Peters has based the HOP program on variations of these Martin
+  types.  You will find three of these here: chip, quadruptwo, and
+  threeply.
+</pre>
+</body>
+</html>

@@ -1,0 +1,40 @@
+<html>
+<head>
+<title>Iterated Dynamics: Lambdafn</title>
+</head>
+<body>
+<div>
+<pre>
+<a href="2.11.html">&lt; Prev</a>           <a href="index.html">Iterated Dynamics</a> Version 1.0          Page 51 <a href="2.13.html">Next &gt;</a></pre>
+</div>
+<pre>
+ 2.12 Lambdafn
+
+  (type=lambdafn)
+
+  Function=[sin|cos|sinh|cosh|exp|log|sqr|...]) is specified with this
+  type.  Prior to version 14, these types were lambdasine, lambdacos,
+  lambdasinh, lambdacos, and lambdaexp.  Where we say "lambdasine" or some
+  such below, the good reader knows we mean "lambdafn with function=sin".)
+
+  These types calculate the Julia set of the formula lambda*fn(Z), for
+  various values of the function "fn", where lambda and Z are both
+  complex.  Two values, the real and imaginary parts of lambda, should be
+  given in the "params=" option.  For the feathery, nested spirals of
+  LambdaSines and the frost-on-glass patterns of LambdaCosines, make the
+  real part = 1, and try values for the imaginary part ranging from 0.1 to
+  0.4 (hint: values near 0.4 have the best patterns). In these ranges the
+  Julia set "explodes". For the tongues and blobs of LambdaExponents, try
+  a real part of 0.379 and an imaginary part of 0.479.
+
+  A coprocessor used to be almost mandatory: each LambdaSine/Cosine
+  iteration calculates a hyperbolic sine, hyperbolic cosine, a sine, and a
+  cosine (the LambdaExponent iteration "only" requires an exponent, sine,
+  and cosine operation)!  However, Fractint now computes these
+  transcendental functions with fast integer math. In a few cases the fast
+  math is less accurate, so we have kept the old slow floating point code.
+  To use the old code, invoke with the float=yes option, and, if you DON'T
+  have a coprocessor, go on a LONG vacation!
+</pre>
+</body>
+</html>

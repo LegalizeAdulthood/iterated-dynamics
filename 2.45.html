@@ -1,0 +1,47 @@
+<html>
+<head>
+<title>Iterated Dynamics: Quaternion</title>
+</head>
+<body>
+<div>
+<pre>
+<a href="2.44.html">&lt; Prev</a>           <a href="index.html">Iterated Dynamics</a> Version 1.0          Page 76 <a href="2.46.html">Next &gt;</a></pre>
+</div>
+<pre>
+ 2.45 Quaternion
+
+  (type=quat,quatjul)
+
+  These fractals are based on quaternions.  Quaternions are an extension
+  of complex numbers, with 4 parts instead of 2.  That is, a quaternion Q
+  equals a+ib+jc+kd, where a,b,c,d are reals.  Quaternions have rules for
+  addition and multiplication.  The normal Mandelbrot and Julia formulas
+  can be generalized to use quaternions instead of complex numbers.
+
+  There is one complication.  Complex numbers have 2 parts, so they can be
+  displayed on a plane.  Quaternions have 4 parts, so they require 4
+  dimensions to view.  That is, the quaternion Mandelbrot set is actually
+  a 4-dimensional object.  Each quaternion C generates a 4-dimensional
+  Julia set.
+
+  One method of displaying the 4-dimensional object is to take a 3-
+  dimensional slice and render the resulting object in 3-dimensional
+  perspective.  Fractint isn't that sophisticated, so it merely displays a
+  2-dimensional slice of the resulting object. (Note: Now Fractint is that
+  sophisticated!  See the Julibrot type!)
+
+  In fractint, for the Julia set, you can specify the four parameters of
+  the quaternion constant: c=(c1,ci,cj,ck), but the 2-dimensional slice of
+  the z-plane Julia set is fixed to (xpixel,ypixel,0,0).
+
+  For the Mandelbrot set, you can specify the position of the c-plane
+  slice: (xpixel,ypixel,cj,ck).
+
+  These fractals are discussed in Chapter 10 of Pickover's "Computers,
+  Pattern, Chaos, and Beauty".
+
+  See also HyperComplex (p. 77) and  Quaternion and Hypercomplex Algebra
+  (p. 189)
+</pre>
+</body>
+</html>

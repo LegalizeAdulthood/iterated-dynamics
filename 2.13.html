@@ -1,0 +1,49 @@
+<html>
+<head>
+<title>Iterated Dynamics: Mandelfn</title>
+</head>
+<body>
+<div>
+<pre>
+<a href="2.12.html">&lt; Prev</a>           <a href="index.html">Iterated Dynamics</a> Version 1.0          Page 52 <a href="2.14.html">Next &gt;</a></pre>
+</div>
+<pre>
+ 2.13 Mandelfn
+
+  (type=mandelfn)
+
+  Function=[sin|cos|sinh|cosh|exp|log|sqr|...]) is specified with this
+  type.  Prior to version 14, these types were mandelsine, mandelcos,
+  mandelsinh, mandelcos, and mandelexp. Same comment about our lapses into
+  the old terminology as above!
+
+  These are "pseudo-Mandelbrot" mappings for the LambdaFn (p. 51) Julia
+  functions.  They map to their corresponding Julia sets via the spacebar
+  command in exactly the same fashion as the original M/J sets.  In
+  general, they are interesting mainly because of that property (the
+  function=exp set in particular is rather boring). Generate the
+  appropriate "Mandelfn" set, zoom on a likely spot where the colors are
+  changing rapidly, and hit the spacebar key to plot the Julia set for
+  that particular point.
+
+  Try "FRACTINT TYPE=MANDELFN CORNERS=4.68/4.76/-.03/.03 FUNCTION=COS" for
+  a graphic demonstration that we're not taking Mandelbrot's name in vain
+  here. We didn't even know these little buggers were here until Mark
+  Peterson found this a few hours before the version incorporating
+  Mandelfns was released.
+
+  Note: If you created images using the lambda or mandel "fn" types prior
+  to version 14, and you wish to update the fractal information in the
+  "*.fra" file, simply read the files and save again. You can do this in
+  batch mode via a command line such as:
+
+       "fractint oldfile.fra savename=newfile.gif batch=yes"
+
+  For example, this procedure can convert a version 13 "type=lambdasine"
+  image to a version 14 "type=lambdafn function=sin" GIF89a image.  We do
+  not promise to keep this "backward compatibility" past version 14 - if
+  you want to keep the fractal information in your *.fra files accurate,
+  we recommend conversion.  See GIF Save File Format (p. 198).
+</pre>
+</body>
+</html>

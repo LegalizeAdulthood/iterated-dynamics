@@ -1,0 +1,50 @@
+<html>
+<head>
+<title>Iterated Dynamics: Dynamic System</title>
+</head>
+<body>
+<div>
+<pre>
+<a href="2.42.html">&lt; Prev</a>           <a href="index.html">Iterated Dynamics</a> Version 1.0          Page 75 <a href="2.44.html">Next &gt;</a></pre>
+</div>
+<pre>
+ 2.43 Dynamic System
+
+  (type=dynamic, dynamic2)
+
+  These fractals are based on a cyclic system of differential equations:
+           x'(t) = -f(y(t))
+           y'(t) = f(x(t))
+  These equations are approximated by using a small time step dt, forming
+  a time-discrete dynamic system:
+           x(n+1) = x(n) - dt*f(y(n))
+           y(n+1) = y(n) + dt*f(x(n))
+  The initial values x(0) and y(0) are set to various points in the plane,
+  the dynamic system is iterated, and the resulting orbit points are
+  plotted.
+
+  In fractint, the function f is restricted to: f(k) = sin(k + a*fn1(b*k))
+  The parameters are the spacing of the initial points, the time step dt,
+  and the parameters (a,b,fn1) that affect the function f.  Normally the
+  orbit points are plotted individually, but for a negative spacing the
+  points are connected.
+
+  This fractal is similar to the Pickover Popcorn (p. 56).
+  A variant is the implicit Euler approximation:
+           y(n+1) = y(n) + dt*f(x(n))
+           x(n+1) = x(n) - dt*f(y(n+1))
+  This variant results in complex orbits.  The implicit Euler
+  approximation is selected by entering dt&lt;0.
+
+  There are two options that have unusual effects on these fractals.  The
+  Orbit Delay value controls how many initial points are computed before
+  the orbits are displayed on the screen.  This allows the orbit to settle
+  down.  The outside=summ option causes each pixel to increment color
+  every time an orbit touches it; the resulting display is a 2-d
+  histogram.
+
+  These fractals are discussed in Chapter 14 of Pickover's "Computers,
+  Pattern, Chaos, and Beauty".
+</pre>
+</body>
+</html>

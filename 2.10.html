@@ -1,0 +1,35 @@
+<html>
+<head>
+<title>Iterated Dynamics: Circle</title>
+</head>
+<body>
+<div>
+<pre>
+<a href="2.9.html">&lt; Prev</a>           <a href="index.html">Iterated Dynamics</a> Version 1.0          Page 50 <a href="2.11.html">Next &gt;</a></pre>
+</div>
+<pre>
+ 2.10 Circle
+
+  (type=circle)
+
+  This fractal types is from A. K. Dewdney's "Computer Recreations" column
+  in "Scientific American". It is attributed to John Connett of the
+  University of Minnesota.
+
+  (Don't tell anyone, but this fractal type is not really a fractal!)
+
+  Fascinating Moire patterns can be formed by calculating x^2 + y^2 for
+  each pixel in a piece of the complex plane. After multiplication by a
+  magnification factor (the parameter), the number is truncated to an
+  integer and mapped to a color via color = value modulo (number of
+  colors). That is, the integer is divided by the number of colors, and
+  the remainder is the color index value used.  The resulting image is not
+  a fractal because all detail is lost after zooming in too far. Try it
+  with different resolution video modes - the results may surprise you!
+
+  If inside=startrail is used, it will automatically be set to inside=norm
+  by Fractint.  This is because type circle and inside=startrail locks up
+  Fractint.
+</pre>
+</body>
+</html>

@@ -1,0 +1,58 @@
+<html>
+<head>
+<title>Iterated Dynamics: Diffusion Limited Aggregation</title>
+</head>
+<body>
+<div>
+<pre>
+<a href="2.36.html">&lt; Prev</a>           <a href="index.html">Iterated Dynamics</a> Version 1.0          Page 69 <a href="2.38.html">Next &gt;</a></pre>
+</div>
+<pre>
+ 2.37 Diffusion Limited Aggregation
+
+  (type=diffusion)
+
+  Standard diffusion begins with a single point in the center of the
+  screen.  Subsequent points move around randomly until coming into
+  contact with a point already on the screen, at which time their
+  locations are fixed and they are drawn.  This process repeats until the
+  fractals reaches the edge of the screen.  Use the show orbits function
+  to see the points' random motion.
+
+  One unfortunate problem is that on a large screen, this process will
+  tend to take eons.  To speed things up, the points are restricted to a
+  box around the initial point.  The first parameter to diffusion contains
+  the size of the border between the fractal and the edge of the box.  If
+  you make this number small, the fractal will look more solid and will be
+  generated more quickly.
+
+  The second parameter to diffusion changes the type of growth.  If you
+  set it to 1, then the diffusion will start with a line along the bottom
+  of the screen.  Points will appear above this line and the fractal will
+  grow upward.  For this fractal, the points are restricted to a box which
+  is as wide as the screen but whose distance from the fractal is given by
+  the border size (the first parameter).  Initial points are released from
+  a centered segment along the top of this box which has a width equal to
+  twice the border size.
+
+  If the second parameter is set to 2, then diffusion begins with a square
+  box on the screen.  Points appear on a circle inside the box whose
+  distance from the box is equal to the border size.  This fractal grows
+  very slowly since the points are not restricted to a small box.
+
+  The third and last parameter for diffusion controls the color of the
+  fractal.  If it is set to zero then points are colored randomly.
+  Otherwise, it tells how often to shift the color of the points being
+  deposited.  If you set it to 150, for example, then the color of the
+  points will shift every 150 points leading to a radial color pattern if
+  you are using the standards diffusion type.
+
+  Diffusion was inspired by a Scientific American article a couple of
+  years back which includes actual pictures of real physical phenomena
+  that behave like this.
+
+  Thanks to Adrian Mariano for providing the diffusion code and
+  documentation. Juan J. Buhler added additional options.
+</pre>
+</body>
+</html>

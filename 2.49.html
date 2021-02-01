@@ -1,0 +1,41 @@
+<html>
+<head>
+<title>Iterated Dynamics: Phoenix</title>
+</head>
+<body>
+<div>
+<pre>
+<a href="2.48.html">&lt; Prev</a>           <a href="index.html">Iterated Dynamics</a> Version 1.0          Page 80 <a href="2.50.html">Next &gt;</a></pre>
+</div>
+<pre>
+ 2.49 Phoenix
+
+  (type=phoenix, mandphoenix, phoenixcplx, mandphoenixclx)
+
+  The phoenix type defaults to the original phoenix curve discovered by
+  Shigehiro Ushiki, "Phoenix", IEEE Transactions on Circuits and Systems,
+  Vol. 35, No. 7, July 1988, pp. 788-789.  These images do not have the X
+  and Y axis swapped as is normal for this type.
+
+  The mandphoenix type is the corresponding Mandelbrot set image of the
+  phoenix type.  The spacebar toggles between the two as long as the
+  mandphoenix type has an initial z(0) of (0,0).  The mandphoenix is not
+  an effective index to the phoenix type, so explore the wild blue yonder.
+
+  To reproduce the Mandelbrot set image of the phoenix type as shown in
+  Stevens' book, "Fractal Programming in C", set initorbit=0/0 on the
+  command line or with the &lt;g&gt; key.  The colors need to be rotated one
+  position because Stevens uses the values from the previous calculation
+  instead of the current calculation to determine when to bailout.
+
+  The phoenixcplx type is implemented using complex constants instead of
+  the real constants that Stevens used.  This recreates the mapping as
+  originally presented by Ushiki.
+
+  The mandphoenixclx type is the corresponding Mandelbrot set image of the
+  phoenixcplx type.  The spacebar toggles between the two as long as the
+  mandphoenixclx type has a perturbation of z(0) = (0,0).  The
+  mandphoenixclx is an effective index to the phoenixcplx type.
+</pre>
+</body>
+</html>
