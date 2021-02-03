@@ -1,0 +1,1142 @@
+<html>
+<head>
+<title>Iterated Dynamics: Mathematics of the Fractal Types</title>
+</head>
+<body>
+<div>
+<pre>
+<a href="8.2.4.html">&lt; Prev</a>           <a href="index.html">Iterated Dynamics</a> Version 1.0          Page 171 <a href="B.html">Next &gt;</a></pre>
+</div>
+<pre>
+ Appendix A Mathematics of the Fractal Types
+
+  SUMMARY OF FRACTAL TYPES
+
+  ant (p. 79)
+      Generalized Ant Automaton as described in the July 1994 Scientific
+      American. Some ants wander around the screen. A rule string (the first
+      parameter) determines the ant's direction. When the type 1 ant leaves a
+      cell of color k, it turns right if the kth symbol in the first parameter
+      is a 1, or left otherwise. Then the color in the old cell is incremented.
+      The 2nd parameter is a maximum iteration to guarantee that the fractal
+      will terminate. The 3rd parameter is the number of ants. The 4th is the
+      ant type 1 or 2. The 5th parameter determines if the ants wrap the screen
+      or stop at the edge.  The 6th parameter is a random seed. You can slow
+      down the ants to see them better using the &lt;p&gt; screen Orbit Delay.
+
+  barnsleyj1 (p. 52)
+        z(0) = pixel;
+        if real(z) &gt;= 0
+          z(n+1) = (z-1)*c
+        else
+           z(n+1) = (z+1)*c
+      Two parameters: real and imaginary parts of c
+
+  barnsleyj2 (p. 52)
+        z(0) = pixel;
+        if real(z(n)) * imag(c) + real(c) * imag(z((n)) &gt;= 0
+           z(n+1) = (z(n)-1)*c
+        else
+           z(n+1) = (z(n)+1)*c
+      Two parameters: real and imaginary parts of c
+
+  barnsleyj3 (p. 52)
+        z(0) = pixel;
+        if real(z(n) &gt; 0 then z(n+1) = (real(z(n))^2 - imag(z(n))^2 - 1)
+           + i * (2*real(z((n)) * imag(z((n))) else
+        z(n+1) = (real(z(n))^2 - imag(z(n))^2 - 1 + real(c) * real(z(n))
+               + i * (2*real(z((n)) * imag(z((n)) + imag(c) * real(z(n))
+      Two parameters: real and imaginary parts of c.
+
+  barnsleym1 (p. 52)
+        z(0) = c = pixel;
+        if real(z) &gt;= 0 then
+          z(n+1) = (z-1)*c
+        else z(n+1) = (z+1)*c.
+      Parameters are perturbations of z(0)
+
+  barnsleym2 (p. 52)
+        z(0) = c = pixel;
+        if real(z)*imag(c) + real(c)*imag(z) &gt;= 0
+          z(n+1) = (z-1)*c
+        else
+          z(n+1) = (z+1)*c
+      Parameters are perturbations of z(0)
+
+  barnsleym3 (p. 52)
+        z(0) = c = pixel;
+        if real(z(n) &gt; 0 then z(n+1) = (real(z(n))^2 - imag(z(n))^2 - 1)
+           + i * (2*real(z((n)) * imag(z((n))) else
+        z(n+1) = (real(z(n))^2 - imag(z(n))^2 - 1 + real(c) * real(z(n))
+           + i * (2*real(z((n)) * imag(z((n)) + imag(c) * real(z(n))
+      Parameters are perturbations of z(0)
+
+  bifurcation (p. 58)
+      Pictorial representation of a population growth model.
+        Let P = new population, p = oldpopulation, r = growth rate
+        The model is: P = p + r*fn(p)*(1-fn(p)).
+      Three parameters: Filter Cycles, Seed Population, and Function.
+
+  bif+sinpi (p. 58)
+      Bifurcation variation: model is: P = p + r*fn(PI*p).
+      Three parameters: Filter Cycles, Seed Population, and Function.
+
+  bif=sinpi (p. 58)
+      Bifurcation variation: model is: P = r*fn(PI*p).
+      Three parameters: Filter Cycles, Seed Population, and Function.
+
+  biflambda (p. 58)
+      Bifurcation variation: model is: P = r*fn(p)*(1-fn(p)).
+      Three parameters: Filter Cycles, Seed Population, and Function.
+
+  bifstewart (p. 58)
+      Bifurcation variation: model is: P = (r*fn(p)*fn(p)) - 1.
+      Three parameters: Filter Cycles, Seed Population, and Function.
+
+  bifmay (p. 58)
+      Bifurcation variation: model is: P = r*p / ((1+p)^beta).
+      Three parameters: Filter Cycles, Seed Population, and Beta.
+
+  cellular (p. 78)
+      One-dimensional cellular automata or line automata.  The type of CA
+      is given by kr, where k is the number of different states of the
+      automata and r is the radius of the neighborhood.  The next generation
+      is determined by the sum of the neighborhood and the specified rule.
+      Four parameters: Initial String, Rule, Type, and Starting Row Number.
+      For Type = 21, 31, 41, 51, 61, 22, 32, 42, 23, 33, 24, 25, 26, 27
+          Rule =  4,  7, 10, 13, 16,  6, 11, 16,  8, 15, 10, 12, 14, 16 digits
+
+  chip (p. 63)
+      Chip attractor from Michael Peters - orbit in two dimensions.
+        z(0) = y(0) = 0;
+        x(n+1) = y(n) - sign(x(n)) * cos(sqr(ln(abs(b*x(n)-c))))
+                                   * arctan(sqr(ln(abs(c*x(n)-b))))
+        y(n+1) = a - x(n)
+      Parameters are a, b, and c.
+
+  circle (p. 50)
+      Circle pattern by John Connett
+        x + iy = pixel
+        z = a*(x^2 + y^2)
+        c = integer part of z
+        color = c modulo(number of colors)
+
+  cmplxmarksjul (p. 56)
+      A generalization of the marksjulia fractal.
+        z(0) = pixel;
+        z(n+1) = c^(exp-1)*z(n)^2 + c.
+      Four parameters: real and imaginary parts of c,
+      and real and imaginary parts of exponent.
+
+  cmplxmarksmand (p. 56)
+      A generalization of the marksmandel fractal.
+        z(0) = c = pixel;
+        z(n+1) = c^(exp-1)*z(n)^2 + c.
+      Four parameters: real and imaginary parts of perturbation
+      of z(0), and real and imaginary parts of exponent.
+
+  complexnewton, complexbasin (p. 48)
+      Newton fractal types extended to complex degrees. Complexnewton
+      colors pixels according to the number of iterations required to
+      escape to a root. Complexbasin colors pixels according to which
+      root captures the orbit. The equation is based on the newton
+      formula for solving the equation z^p = r
+        z(0) = pixel;
+        z(n+1) = ((p - 1) * z(n)^p + r)/(p * z(n)^(p - 1)).
+      Four parameters: real &amp; imaginary parts of degree p and root r.
+
+  diffusion (p. 69)
+      Diffusion Limited Aggregation.  Randomly moving points
+      accumulate.  Three parameters: border width (default 10), type,
+      and color change rate.
+
+  dynamic (p. 75)
+      Time-discrete dynamic system.
+        x(0) = y(0) = start position.
+        y(n+1) = y(n) + f( x(n) )
+        x(n+1) = x(n) - f( y(n) )
+        f(k) = sin(k + a*fn1(b*k))
+      For implicit Euler approximation: x(n+1) = x(n) - f( y(n+1) )
+      Five parameters: start position step, dt, a, b, and the function fn1.
+
+  escher_julia (p. 83)
+      Escher-like tiling of Julia sets from The Science of Fractal Images
+        z(0) = pixel
+        z(n+1) = z(n)^2 + (0, 0i)
+      The target set is a second, scaled, Julia set:
+        T = [ z: | (z * 15.0)^2 + c | &lt; BAILOUT ]
+      Two parameters: real and imaginary parts of c
+      Iteration count and bailout size apply to both Julia sets.
+
+  fn(z)+fn(pix) (p. 57)
+        c = z(0) = pixel;
+        z(n+1) = fn1(z) + p*fn2(c)
+      Six parameters: real and imaginary parts of the perturbation
+      of z(0) and factor p, and the functions fn1, and fn2.
+
+  fn(z*z) (p. 57)
+        z(0) = pixel;
+        z(n+1) = fn(z(n)*z(n))
+      One parameter: the function fn.
+
+  fn*fn (p. 57)
+        z(0) = pixel; z(n+1) = fn1(n)*fn2(n)
+      Two parameters: the functions fn1 and fn2.
+
+  fn*z+z (p. 57)
+        z(0) = pixel; z(n+1) = p1*fn(z(n))*z(n) + p2*z(n)
+      Five parameters: the real and imaginary components of
+      p1 and p2, and the function fn.
+
+  fn+fn (p. 57)
+        z(0) = pixel;
+        z(n+1) = p1*fn1(z(n))+p2*fn2(z(n))
+      Six parameters: The real and imaginary components of
+      p1 and p2, and the functions fn1 and fn2.
+
+  formula (p. 65)
+      Formula interpreter - write your own formulas as text files!
+
+  frothybasin (p. 80)
+      Pixel color is determined by which attractor captures the orbit.  The
+      shade of color is determined by the number of iterations required to
+      capture the orbit.
+        Z(0) = pixel;  Z(n+1) = Z(n)^2 - C*conj(Z(n))
+        where C = 1 + A*i, critical value of A = 1.028713768218725...
+
+  gingerbread (p. 63)
+      Orbit in two dimensions defined by:
+        x(n+1) = 1 - y(n) + |x(n)|
+        y(n+1) = x(n)
+      Two parameters: initial values of x(0) and y(0).
+
+  halley (p. 75)
+        Halley map for the function: F = z(z^a - 1) = 0
+        z(0) = pixel;
+        z(n+1) = z(n) - R * F / [F' - (F" * F / 2 * F')]
+        bailout when: abs(mod(z(n+1)) - mod(z(n)) &lt; epsilon
+      Four parameters: order a, real part of R, epsilon,
+         and imaginary part of R.
+
+  henon (p. 62)
+      Orbit in two dimensions defined by:
+        x(n+1) = 1 + y(n) - a*x(n)*x(n)
+        y(n+1) = b*x(n)
+      Two parameters: a and b
+
+  hopalong (p. 63)
+      Hopalong attractor by Barry Martin - orbit in two dimensions.
+        z(0) = y(0) = 0;
+        x(n+1) = y(n) - sign(x(n))*sqrt(abs(b*x(n)-c))
+        y(n+1) = a - x(n)
+      Parameters are a, b, and c.
+
+  hypercomplex (p. 77)
+      HyperComplex Mandelbrot set.
+        h(0)   = (0,0,0,0)
+        h(n+1) = fn(h(n)) + C.
+        where "fn" is sin, cos, log, sqr etc.
+      Two parameters: cj, ck
+      C = (xpixel,ypixel,cj,ck)
+
+  hypercomplexj (p. 77)
+      HyperComplex Julia set.
+        h(0)   = (xpixel,ypixel,zj,zk)
+        h(n+1) = fn(h(n)) + C.
+        where "fn" is sin, cos, log, sqr etc.
+      Six parameters: c1, ci, cj, ck
+      C = (c1,ci,cj,ck)
+
+  icon, icon3d (p. 64)
+      Orbit in three dimensions defined by:
+        p = lambda + alpha * magnitude + beta * (x(n)*zreal - y(n)*zimag)
+        x(n+1) = p * x(n) + gamma * zreal - omega * y(n)
+        y(n+1) = p * y(n) - gamma * zimag + omega * x(n)
+        (3D version uses magnitude for z)
+        Parameters:  Lambda, Alpha, Beta, Gamma, Omega, and Degree
+
+  IFS (p. 53)
+      Barnsley IFS (Iterated Function System) fractals. Apply
+      contractive affine mappings.
+
+  julfn+exp (p. 55)
+      A generalized Clifford Pickover fractal.
+        z(0) = pixel;
+        z(n+1) = fn(z(n)) + e^z(n) + c.
+      Three parameters: real &amp; imaginary parts of c, and fn
+
+  julfn+zsqrd (p. 55)
+        z(0) = pixel;
+        z(n+1) = fn(z(n)) + z(n)^2 + c
+      Three parameters: real &amp; imaginary parts of c, and fn
+
+  julia (p. 44)
+      Classic Julia set fractal.
+        z(0) = pixel; z(n+1) = z(n)^2 + c.
+      Two parameters: real and imaginary parts of c.
+
+  julia_inverse (p. 46)
+      Inverse Julia function - "orbit" traces Julia set in two dimensions.
+        z(0) = a point on the Julia Set boundary; z(n+1) = +- sqrt(z(n) - c)
+      Parameters: Real and Imaginary parts of c
+             Maximum Hits per Pixel (similar to max iters)
+             Breadth First, Depth First or Random Walk Tree Traversal
+             Left or Right First Branching (in Depth First mode only)
+          Try each traversal method, keeping everything else the same.
+          Notice the differences in the way the image evolves.  Start with
+          a fairly low Maximum Hit limit, then increase it.  The hit limit
+          cannot be higher than the maximum colors in your video mode.
+
+  julia(fn||fn) (p. 74)
+        z(0) = pixel;
+        if modulus(z(n)) &lt; shift value, then
+           z(n+1) = fn1(z(n)) + c,
+        else
+           z(n+1) = fn2(z(n)) + c.
+      Five parameters: real, imag portions of c, shift value, fn1, fn2.
+
+  julia4 (p. 55)
+      Fourth-power Julia set fractals, a special case
+      of julzpower kept for speed.
+        z(0) = pixel;
+        z(n+1) = z(n)^4 + c.
+      Two parameters: real and imaginary parts of c.
+
+  julibrot (p. 68)
+      'Julibrot' 4-dimensional fractals.
+
+  julzpower (p. 55)
+        z(0) = pixel;
+        z(n+1) = z(n)^m + c.
+      Three parameters: real &amp; imaginary parts of c, exponent m
+
+  julzzpwr (p. 55)
+        z(0) = pixel;
+        z(n+1) = z(n)^z(n) + z(n)^m + c.
+      Three parameters: real &amp; imaginary parts of c, exponent m
+
+  kamtorus, kamtorus3d (p. 58)
+      Series of orbits superimposed.
+      3d version has 'orbit' the z dimension.
+        x(0) = y(0) = orbit/3;
+        x(n+1) = x(n)*cos(a) + (x(n)*x(n)-y(n))*sin(a)
+        y(n+1) = x(n)*sin(a) - (x(n)*x(n)-y(n))*cos(a)
+      After each orbit, 'orbit' is incremented by a step size.
+      Parameters: a, step size, stop value for 'orbit', and
+      points per orbit.
+
+  lambda (p. 49)
+      Classic Lambda fractal. 'Julia' variant of Mandellambda.
+        z(0) = pixel;
+        z(n+1) = lambda*z(n)*(1 - z(n)).
+      Two parameters: real and imaginary parts of lambda.
+
+  lambdafn (p. 51)
+        z(0) = pixel;
+        z(n+1) = lambda * fn(z(n)).
+      Three parameters: real, imag portions of lambda, and fn
+
+  lambda(fn||fn) (p. 74)
+        z(0) = pixel;
+        if modulus(z(n)) &lt; shift value, then
+           z(n+1) = lambda * fn1(z(n)),
+        else
+           z(n+1) = lambda * fn2(z(n)).
+      Five parameters: real, imag portions of lambda, shift value, fn1, fn2
+
+  latoocarfian (p. 84)
+         Orbit in two dimensions defined by:
+         x(n+1) = fn1 (y(n) * b) + c * fn2(x(n) * b)
+         y(n+1) = fn3 (x(n) * a) + d * fn4(y(n) * a)
+         Parameters:  a, b, c, d fn1..4 (all sin=original)
+
+  lorenz, lorenz3d (p. 61)
+      Lorenz two lobe attractor - orbit in three dimensions.
+      In 2d the x and y components are projected to form the image.
+        z(0) = y(0) = z(0) = 1;
+        x(n+1) = x(n) + (-a*x(n)*dt) + (   a*y(n)*dt)
+        y(n+1) = y(n) + ( b*x(n)*dt) - (     y(n)*dt) - (z(n)*x(n)*dt)
+        z(n+1) = z(n) + (-c*z(n)*dt) + (x(n)*y(n)*dt)
+      Parameters are dt, a, b, and c.
+
+  lorenz3d1 (p. 61)
+      Lorenz one lobe attractor, 3D orbit (Rick Miranda and Emily Stone)
+        z(0) = y(0) = z(0) = 1; norm = sqrt(x(n)^2 + y(n)^2)
+        x(n+1) = x(n) + (-a*dt-dt)*x(n) + (a*dt-b*dt)*y(n)
+           + (dt-a*dt)*norm + y(n)*dt*z(n)
+        y(n+1) = y(n) + (b*dt-a*dt)*x(n) - (a*dt+dt)*y(n)
+           + (b*dt+a*dt)*norm - x(n)*dt*z(n) - norm*z(n)*dt
+        z(n+1) = z(n) +(y(n)*dt/2) - c*dt*z(n)
+      Parameters are dt, a, b, and c.
+
+  lorenz3d3 (p. 61)
+      Lorenz three lobe attractor, 3D orbit (Rick Miranda and Emily Stone)
+        z(0) = y(0) = z(0) = 1; norm = sqrt(x(n)^2 + y(n)^2)
+        x(n+1) = x(n) +(-(a*dt+dt)*x(n) + (a*dt-b*dt+z(n)*dt)*y(n))/3
+            + ((dt-a*dt)*(x(n)^2-y(n)^2)
+            + 2*(b*dt+a*dt-z(n)*dt)*x(n)*y(n))/(3*norm)
+        y(n+1) = y(n) +((b*dt-a*dt-z(n)*dt)*x(n) - (a*dt+dt)*y(n))/3
+            + (2*(a*dt-dt)*x(n)*y(n)
+            + (b*dt+a*dt-z(n)*dt)*(x(n)^2-y(n)^2))/(3*norm)
+        z(n+1) = z(n) +(3*x(n)*dt*x(n)*y(n)-y(n)*dt*y(n)^2)/2 - c*dt*z(n)
+      Parameters are dt, a, b, and c.
+
+  lorenz3d4 (p. 61)
+      Lorenz four lobe attractor, 3D orbit (Rick Miranda and Emily Stone)
+        z(0) = y(0) = z(0) = 1;
+        x(n+1) = x(n) +(-a*dt*x(n)^3
+           + (2*a*dt+b*dt-z(n)*dt)*x(n)^2*y(n) + (a*dt-2*dt)*x(n)*y(n)^2
+           + (z(n)*dt-b*dt)*y(n)^3) / (2 * (x(n)^2+y(n)^2))
+        y(n+1) = y(n) +((b*dt-z(n)*dt)*x(n)^3 + (a*dt-2*dt)*x(n)^2*y(n)
+           + (-2*a*dt-b*dt+z(n)*dt)*x(n)*y(n)^2
+           - a*dt*y(n)^3) / (2 * (x(n)^2+y(n)^2))
+        z(n+1) = z(n) +(2*x(n)*dt*x(n)^2*y(n) - 2*x(n)*dt*y(n)^3 - c*dt*z(n))
+      Parameters are dt, a, b, and c.
+
+  lsystem (p. 71)
+      Using a turtle-graphics control language and starting with
+      an initial axiom string, carries out string substitutions the
+      specified number of times (the order), and plots the result.
+
+  lyapunov (p. 73)
+      Derived from the Bifurcation fractal, the Lyapunov plots the Lyapunov
+      Exponent for a population model where the Growth parameter varies between
+      two values in a periodic manner.
+
+  magnet1j (p. 70)
+        z(0) = pixel;
+                  [  z(n)^2 + (c-1)  ] 2
+        z(n+1) =  | ---------------- |
+                  [  2*z(n) + (c-2)  ]
+      Parameters: the real and imaginary parts of c
+
+  magnet1m (p. 70)
+        z(0) = 0; c = pixel;
+                  [  z(n)^2 + (c-1)  ] 2
+        z(n+1) =  | ---------------- |
+                  [  2*z(n) + (c-2)  ]
+      Parameters: the real &amp; imaginary parts of perturbation of z(0)
+
+  magnet2j (p. 70)
+        z(0) = pixel;
+                  [  z(n)^3 + 3*(C-1)*z(n) + (C-1)*(C-2)         ] 2
+        z(n+1) =  | -------------------------------------------- |
+                  [  3*(z(n)^2) + 3*(C-2)*z(n) + (C-1)*(C-2) + 1 ]
+      Parameters: the real and imaginary parts of c
+
+  magnet2m (p. 70)
+        z(0) = 0; c = pixel;
+                  [  z(n)^3 + 3*(C-1)*z(n) + (C-1)*(C-2)         ] 2
+        z(n+1) =  | -------------------------------------------- |
+                  [  3*(z(n)^2) + 3*(C-2)*z(n) + (C-1)*(C-2) + 1 ]
+      Parameters: the real and imaginary parts of perturbation of z(0)
+
+  mandel (p. 43)
+      Classic Mandelbrot set fractal.
+        z(0) = c = pixel;
+        z(n+1) = z(n)^2 + c.
+      Two parameters: real &amp; imaginary perturbations of z(0)
+
+  mandel(fn||fn) (p. 74)
+        c = pixel;
+        z(0) = p1
+        if modulus(z(n)) &lt; shift value, then
+           z(n+1) = fn1(z(n)) + c,
+        else
+           z(n+1) = fn2(z(n)) + c.
+      Five parameters: real, imaginary portions of p1, shift value,
+                       fn1 and fn2.
+
+  mandelbrotmix4 (p. 84)
+      From a Jim Muth favorite FOTD formula
+        a=real(p1), b=imag(p1), d=real(p2), f=imag(p2),
+        g=1/f, h=1/d, j=1/(f-b), z=(-a*b*g*h)^j,
+        k=real(p3)+1, l=imag(p3)+100, c=fn1(pixel):
+        z=k*((a*(z^b))+(d*(z^f)))+c
+      Parameters: see above, sixth parameter used for bailout
+
+  mandelcloud (p. 76)
+      Displays orbits of Mandelbrot set:
+        z(0) = c = pixel;
+        z(n+1) = z(n)^2 + c.
+      One parameter: number of intervals
+
+  mandel4 (p. 55)
+      Special case of mandelzpower kept for speed.
+        z(0) = c = pixel;
+        z(n+1) = z(n)^4 + c.
+      Parameters: real &amp; imaginary perturbations of z(0)
+
+  mandelfn (p. 52)
+        z(0) = c = pixel;
+        z(n+1) = c*fn(z(n)).
+      Parameters: real &amp; imaginary perturbations of z(0), and fn
+
+  manlam(fn||fn) (p. 74)
+        c = pixel;
+        z(0) = p1
+        if modulus(z(n)) &lt; shift value, then
+           z(n+1) = fn1(z(n)) * c, else
+           z(n+1) = fn2(z(n)) * c.
+      Five parameters: real, imaginary parts of p1, shift value, fn1, fn2.
+
+  Martin (p. 63)
+      Attractor fractal by Barry Martin - orbit in two dimensions.
+        z(0) = y(0) = 0;
+        x(n+1) = y(n) - sin(x(n))
+        y(n+1) = a - x(n)
+      Parameter is a (try a value near pi)
+
+  mandellambda (p. 49)
+        z(0) = .5; lambda = pixel;
+        z(n+1) = lambda*z(n)*(1 - z(n)).
+      Parameters: real &amp; imaginary perturbations of z(0)
+
+  mandphoenix (p. 80)
+      z(0) = c = pixel, y(0) = 0;
+      For degree = 0:
+        z(n+1) = z(n)^2 + c.x + c.y*y(n), y(n+1) = z(n)
+      For degree &gt;= 2:
+        z(n+1) = z(n)^degree + c.x*z(n)^(degree-1) + c.y*y(n)
+        y(n+1) = z(n)
+      For degree &lt;= -3:
+        z(n+1) = z(n)^|degree| + c.x*z(n)^(|degree|-2) + c.y*y(n)
+        y(n+1) = z(n)
+      Three parameters: real &amp; imaginary perturbations of z(0), and degree.
+
+  mandphoenixclx (p. 80)
+      z(0) = c = pixel, y(0) = 0;
+      For degree = 0:
+        z(n+1) = z(n)^2 + c + p2*y(n), y(n+1) = z(n)
+      For degree &gt;= 2:
+        z(n+1) = z(n)^degree + c*z(n)^(degree-1) + p2*y(n), y(n+1) = z(n)
+      For degree &lt;= -3:
+        z(n+1) = z(n)^|degree| + c*z(n)^(|degree|-2) + p2*y(n), y(n+1) = z(n)
+      Five parameters: real &amp; imaginary perturbations of z(0), real &amp;
+        imaginary parts of p2, and degree.
+
+  manfn+exp (p. 55)
+      'Mandelbrot-Equivalent' for the julfn+exp fractal.
+        z(0) = c = pixel;
+        z(n+1) = fn(z(n)) + e^z(n) + C.
+      Parameters: real &amp; imaginary perturbations of z(0), and fn
+
+  manfn+zsqrd (p. 55)
+      'Mandelbrot-Equivalent' for the Julfn+zsqrd fractal.
+        z(0) = c = pixel;
+        z(n+1) = fn(z(n)) + z(n)^2 + c.
+      Parameters: real &amp; imaginary perturbations of z(0), and fn
+
+  manowar (p. 57)
+        c = z1(0) = z(0) = pixel;
+        z(n+1) = z(n)^2 + z1(n) + c;
+        z1(n+1) = z(n);
+      Parameters: real &amp; imaginary perturbations of z(0)
+
+  manowarj (p. 57)
+        z1(0) = z(0) = pixel;
+        z(n+1) = z(n)^2 + z1(n) + c;
+        z1(n+1) = z(n);
+      Parameters: real &amp; imaginary parts of c
+
+  manzpower (p. 55)
+      'Mandelbrot-Equivalent' for julzpower.
+        z(0) = c = pixel;
+        z(n+1) = z(n)^exp + c; try exp = e = 2.71828...
+      Parameters: real &amp; imaginary perturbations of z(0), real &amp;
+      imaginary parts of exponent exp.
+
+  manzzpwr (p. 55)
+      'Mandelbrot-Equivalent' for the julzzpwr fractal.
+        z(0) = c = pixel
+        z(n+1) = z(n)^z(n) + z(n)^exp + C.
+      Parameters: real &amp; imaginary perturbations of z(0), and exponent
+
+  marksjulia (p. 56)
+      A variant of the julia-lambda fractal.
+        z(0) = pixel;
+        z(n+1) = c^(exp-1)*z(n)^2 + c.
+      Parameters: real &amp; imaginary parts of c, and exponent
+
+  marksmandel (p. 56)
+      A variant of the mandel-lambda fractal.
+        z(0) = c = pixel;
+        z(n+1) = c^(exp-1)*z(n)^2 + c.
+      Parameters: real &amp; imaginary parts of perturbations of z(0),
+      and exponent
+
+  marksmandelpwr (p. 56)
+      The marksmandelpwr formula type generalized (it previously
+      had fn=sqr hard coded).
+        z(0) = pixel, c = z(0) ^ (z(0) - 1):
+        z(n+1) = c * fn(z(n)) + pixel,
+      Parameters: real and imaginary perturbations of z(0), and fn
+
+  newtbasin (p. 47)
+      Based on the Newton formula for finding the roots of z^p - 1.
+      Pixels are colored according to which root captures the orbit.
+        z(0) = pixel;
+        z(n+1) = ((p-1)*z(n)^p + 1)/(p*z(n)^(p - 1)).
+      Two parameters: the polynomial degree p, and a flag to turn
+      on color stripes to show alternate iterations.
+
+  newton (p. 48)
+      Based on the Newton formula for finding the roots of z^p - 1.
+      Pixels are colored according to the iteration when the orbit
+      is captured by a root.
+        z(0) = pixel;
+        z(n+1) = ((p-1)*z(n)^p + 1)/(p*z(n)^(p - 1)).
+      One parameter: the polynomial degree p.
+
+  phoenix (p. 80)
+      z(0) = pixel, y(0) = 0;
+      For degree = 0: z(n+1) = z(n)^2 + p1.x + p2.x*y(n), y(n+1) = z(n)
+      For degree &gt;= 2:
+       z(n+1) = z(n)^degree + p1.x*z(n)^(degree-1) + p2.x*y(n), y(n+1) = z(n)
+      For degree &lt;= -3:
+       z(n+1) = z(n)^|degree| + p1.x*z(n)^(|degree|-2)
+              + p2.x*y(n), y(n+1) = z(n)
+      Three parameters: real parts of p1 &amp; p2, and degree.
+
+  phoenixcplx (p. 80)
+      z(0) = pixel, y(0) = 0;
+      For degree = 0: z(n+1) = z(n)^2 + p1 + p2*y(n), y(n+1) = z(n)
+      For degree &gt;= 2:
+        z(n+1) = z(n)^degree + p1*z(n)^(degree-1) + p2*y(n), y(n+1) = z(n)
+      For degree &lt;= -3:
+        z(n+1) = z(n)^|degree| + p1*z(n)^(|degree|-2) + p2*y(n), y(n+1) = z(n)
+      Five parameters: real &amp; imaginary parts of p1 &amp; p2, and degree.
+
+  pickover (p. 63)
+      Orbit in three dimensions defined by:
+        x(n+1) = sin(a*y(n)) - z(n)*cos(b*x(n))
+        y(n+1) = z(n)*sin(c*x(n)) - cos(d*y(n))
+        z(n+1) = sin(x(n))
+      Parameters: a, b, c, and d.
+
+  plasma (p. 50)
+      Random, cloud-like formations.  Requires 4 or more colors.
+      A recursive algorithm repeatedly subdivides the screen and
+      colors pixels according to an average of surrounding pixels
+      and a random color, less random as the grid size decreases.
+      Four parameters: 'graininess' (0, 0.125 to 100, default = 2),
+      old/new algorithm, seed value used, 16-bit out output selection.
+
+  popcorn (p. 56)
+      The orbits in 2D are plotted superimposed:
+        x(0) = xpixel, y(0) = ypixel;
+        x(n+1) = x(n) - real(h * fn1( y(n) + fn2(C * y(n) ))
+                      - imag(h * fn3( x(n) + fn4(C * x(n) ))
+        y(n+1) = y(n) - real(h * fn3( x(n) + fn4(C * x(n) ))
+                      - imag(h * fn1( y(n) + fn2(C * y(n) ))
+      Parameters: step size h, C, functions fn1..4 (original: sin,tan,sin,tan).
+
+  popcornjul (p. 56)
+      Julia using the generalized Pickover Popcorn formula:
+        x(0) = xpixel, y(0) = ypixel;
+        x(n+1) = x(n) - real(h * fn1( y(n) + fn2(C * y(n) ))
+                      - imag(h * fn3( x(n) + fn4(C * x(n) ))
+        y(n+1) = y(n) - real(h * fn3( x(n) + fn4(C * x(n) ))
+                      - imag(h * fn1( y(n) + fn2(C * y(n) ))
+      Parameters: step size h, C, functions fn1..4 (original: sin,tan,sin,tan).
+
+  quadruptwo (p. 63)
+      Quadruptwo attractor from Michael Peters - orbit in two dimensions.
+        z(0) = y(0) = 0;
+        x(n+1) = y(n) - sign(x(n)) * sin(ln(abs(b*x(n)-c)))
+                                   * arctan(sqr(ln(abs(c*x(n)-b))))
+        y(n+1) = a - x(n)
+      Parameters are a, b, and c.
+
+  quatjul (p. 76)
+      Quaternion Julia set.
+        q(0)   = (xpixel,ypixel,zj,zk)
+        q(n+1) = q(n)*q(n) + c.
+      Four parameters: c, ci, cj, ck
+      c = (c1,ci,cj,ck)
+
+  quat (p. 76)
+      Quaternion Mandelbrot set.
+        q(0)   = (0,0,0,0)
+        q(n+1) = q(n)*q(n) + c.
+      Two parameters: cj,ck
+      c = (xpixel,ypixel,cj,ck)
+
+  rossler3D (p. 62)
+      Orbit in three dimensions defined by:
+        x(0) = y(0) = z(0) = 1;
+        x(n+1) = x(n) - y(n)*dt -   z(n)*dt
+        y(n+1) = y(n) + x(n)*dt + a*y(n)*dt
+        z(n+1) = z(n) + b*dt + x(n)*z(n)*dt - c*z(n)*dt
+      Parameters are dt, a, b, and c.
+
+  sierpinski (p. 54)
+      Sierpinski gasket - Julia set producing a 'Swiss cheese triangle'
+        z(n+1) = (2*x,2*y-1) if y &gt; .5;
+            else (2*x-1,2*y) if x &gt; .5;
+            else (2*x,2*y)
+      No parameters.
+
+  spider (p. 57)
+        c(0) = z(0) = pixel;
+        z(n+1) = z(n)^2 + c(n);
+        c(n+1) = c(n)/2 + z(n+1)
+      Parameters: real &amp; imaginary perturbation of z(0)
+
+  sqr(1/fn) (p. 57)
+        z(0) = pixel;
+        z(n+1) = (1/fn(z(n))^2
+      One parameter: the function fn.
+
+  sqr(fn) (p. 57)
+        z(0) = pixel;
+        z(n+1) = fn(z(n))^2
+      One parameter: the function fn.
+
+  test (p. 64)
+      'test' point letting us (and you!) easily add fractal types via
+      the c module testpt.c.  Default set up is a mandelbrot fractal.
+      Four parameters: user hooks (not used by default testpt.c).
+
+  tetrate (p. 57)
+        z(0) = c = pixel;
+        z(n+1) = c^z(n)
+      Parameters: real &amp; imaginary perturbation of z(0)
+
+  threeply (p. 63)
+      Threeply attractor by Michael Peters - orbit in two dimensions.
+        z(0) = y(0) = 0;
+        x(n+1) = y(n) - sign(x(n)) * (abs(sin(x(n))*cos(b)
+                                      +c-x(n)*sin(a+b+c)))
+        y(n+1) = a - x(n)
+      Parameters are a, b, and c.
+
+  tim's_error (p. 56)
+      A serendipitous coding error in marksmandelpwr brings to life
+      an ancient pterodactyl!  (Try setting fn to sqr.)
+        z(0) = pixel, c = z(0) ^ (z(0) - 1):
+        tmp = fn(z(n))
+        real(tmp) = real(tmp) * real(c) - imag(tmp) * imag(c);
+        imag(tmp) = real(tmp) * imag(c) - imag(tmp) * real(c);
+        z(n+1) = tmp + pixel;
+      Parameters: real &amp; imaginary perturbations of z(0) and function fn
+
+  unity (p. 57)
+        z(0) = pixel;
+        x = real(z(n)), y = imag(z(n))
+        One = x^2 + y^2;
+        y = (2 - One) * x;
+        x = (2 - One) * y;
+        z(n+1) = x + i*y
+      No parameters.
+
+  volterra-lotka (p. 82)
+      Volterra-Lotka fractal from The Beauty of Fractals
+        x(0) = xpixel, y(0) = ypixel;
+        dx/dt =  x - xy = f(x,y)
+        dy/dt = -y + xy = g(x,y)
+        x(new) = x + h/2 * [ f(x,y) + f[x + pf(x,y), y + pg(x,y)] ]
+        y(new) = y + h/2 * [ g(x,y) + g[x + pf(x,y), y + pg(x,y)] ]
+      Two parameters: h and p
+      Recommended: zmag or bof60 inside coloring options
+
+
+  INSIDE=BOF60|BOF61|ZMAG|FMOD|PERIOD|ATAN
+
+  Here is an *ATTEMPTED* explanation of what the inside=bof60 and
+  inside=bof61 options do. This explanation is hereby dedicated to Adrian
+  Mariano, who badgered it out of us! For the *REAL* explanation, see
+  "Beauty of Fractals", page 62.
+
+  Let p(z) be the function that is repeatedly iterated to generate a
+  fractal using the escape-time algorithm.  For example, p(z) = z^2+c in
+  the case of a Julia set. Then let pk(z) be the result of iterating the
+  function p for k iterations. (The "k" should be shown as a superscript.)
+  We could also use the notation pkc(z) when the function p has a
+  parameter c, as it does in our example.  Now hold your breath and get
+  your thinking cap on. Define a(c) = inf{|pkc(0)|:k=1,2,3,...}. In
+  English - a(c) is the greatest lower bound of the images of zero of as
+  many iterations as you like. Put another way, a(c) is the closest to the
+  origin any point in the orbit starting with 0 gets. Then the index (c)
+  is the value of k (the iteration) when that closest point was achieved.
+  Since there may be more than one, index(c) is the least such. Got it?
+  Good, because the "Beauty of Fractals" explanation of this, is, ahhhh,
+  *TERSE* ! Now for the punch line. Inside=bof60 colors the lake
+  alternating shades according to the level sets of a(c).  Each band
+  represents solid areas of the fractal where the closest value of the
+  orbit to the origin is the same.  Inside=bof61 show domains where
+  index(c) is constant.  That is, areas where the iteration when the orbit
+  swooped closest to the origin has the same value.  Well, folks, that's
+  the best we can do! Improved explanations will be accepted for the next
+  edition!
+
+  In response to this request for lucidity, Herb Savage offers this
+  explanation the bof60 and bof61 options:
+
+   The picture on page 60 of The Beauty of Fractals shows the distance to
+   origin of the closest point to the origin in the sequence of points
+   generated from a given X,Y coordinate.  The picture on page 61 shows
+   the index (or number) in the sequence of the closest point.
+
+  inside=zmag is similar. This option colors inside pixels according to
+  the magnitude of the orbit point when maxiter was reached, using the
+  formula color = (x^2 + y^2) * maxiter/2 + 1.
+
+  inside=fmod colors inside pixels according to the magnitude of the last
+  orbit point which is within a set distance from the origin.  Then:
+    color = magnitude * colors / closeprox
+  The magnitude used for the comparison is now based on the same
+  calculation as is used for the bailout test.  The value of closeprox can
+  be varied interactively.  This feature was contributed by Iain Stirling.
+
+  inside=period colors pixels according to the length of their eventual
+  cycle.  For example, points that approach a fixed point have color=1.
+  Points that approach a 2-cycle have color=2.  Points that do not
+  approach a cycle during the iterations performed have color=maxit.  This
+  option works best with a fairly large number of iterations.
+
+  inside=atan colors by determining the angle in degrees the last iterated
+  value has with respect to the real axis, and using the absolute value.
+  This feature should be used with periodicity=0
+
+  INSIDE=EPSCROSS|STARTRAIL
+
+  Kenneth Hooper has written a paper entitled "A Note On Some Internal
+  Structures Of The Mandelbrot Set" published in "Computers and Graphics",
+  Vol 15, No.2, pp. 295-297.  In that article he describes Clifford
+  Pickover's "epsilon cross" method which creates some mysterious plant-
+  like tendrils in the Mandelbrot set. The algorithm is this. In the
+  escape-time calculation of a fractal, if the orbit comes within .01 of
+  the Y-axis, the orbit is terminated and the pixel is colored green.
+  Similarly, the pixel is colored yellow if it approaches the X-axis.
+  Strictly speaking, this is not an "inside" option because a point
+  destined to escape could be caught by this bailout criterion.
+
+  The test distance, 0.01, can now be changed interactively on the &lt;x&gt;
+  screen and via the proximity=&lt;nnn&gt; command line parameter. A negative
+  value of the test distance triggers an alternative variation of epsilon
+  cross that colors the epsilon bands with the iteration; otherwise they
+  are colored normally to maintain compatibility.
+
+  Hooper has another coloring scheme called "star trails" that involves
+  detecting clusters of points being traversed by the orbit. A table of
+  tangents of each orbit point is built, and the pixel colored according
+  to how many orbit points are near the first one before the orbit flies
+  out of the cluster.  This option looks fine with maxiter=16, which
+  greatly speeds the calculation.
+
+  Both of these options should be tried with the outside color fixed
+  (outside=&lt;nnn&gt;) so that the "lake" structure revealed by the algorithms
+  can be more clearly seen. Epsilon Cross is fun to watch with boundary
+  tracing turned on - even though the result is incorrect it is
+  interesting! Shucks - what does "incorrect" mean in chaos theory
+  anyway?!
+
+  FINITE ATTRACTORS
+
+  Many of Fractint's fractals involve the iteration of functions of
+  complex numbers until some "bailout" value is exceeded, then coloring
+  the associated pixel according to the number of iterations performed.
+  This process identifies which values tend to infinity when iterated, and
+  gives us a rough measure of how "quickly" they get there.
+
+  In dynamical terms, we say that "Infinity is an Attractor", as many
+  initial values get "attracted" to it when iterated.  The set of all
+  points that are attracted to infinity is termed The Basin of Attraction
+  of Infinity.  The coloring algorithm used divides this Basin of
+  Attraction into many distinct sets, each a single band of one color,
+  representing all the points that are "attracted" to Infinity at the same
+  "rate".  These sets (bands of color) are termed "Level Sets" - all
+  points in such a set are at the same "Level" away from the attractor, in
+  terms of numbers of iterations required to exceed the bailout value.
+
+  Thus, Fractint produces colored images of the Level Sets of the Basin of
+  Attraction of Infinity, for all fractals that iterate functions of
+  Complex numbers, at least.  Now we have a sound mathematical definition
+  of what Fractint's "bailout" processing generates, and we have formally
+  introduced the terms Attractor, Basin of Attraction, and Level Set, so
+  you should have little trouble following the rest of this section!
+
+  For certain Julia-type fractals, Fractint can also display the Level
+  Sets of Basins of Attraction of Finite Attractors.  This capability is a
+  by-product of the implementation of the MAGNETic fractal types, which
+  always have at least one Finite Attractor.
+
+  This option can be invoked by setting the "Look for finite attractor"
+  option on the &lt;Y&gt; options screen, or by giving the "finattract=yes"
+  command-line option.
+
+  Most Julia-types that have a "lake" (normally colored blue by default)
+  have a Finite Attractor within this lake, and the lake turns out to be,
+  quite appropriately, the Basin of Attraction of this Attractor.
+
+  The "finattract=yes" option (command-line or &lt;Y&gt; options screen)
+  instructs Fractint to seek out and identify a possible Finite Attractor
+  and, if found, to display the Level Sets of its Basin of Attraction, in
+  addition to those of the Basin of Attraction of Infinity.  In many cases
+  this results in a "lake" with colored "waves" in it;  in other cases
+  there may be little change in the lake's appearance.
+
+  For a quick demonstration, select a fractal type of LAMBDA, with a
+  parameter of 0.5 + 0.5i.  You will obtain an image with a large blue
+  lake.  Now set "Look for finite attractor" to 1 with the "Y" menu.  The
+  image will be re-drawn with a much more colorful lake.  A Finite
+  Attractor lives in the center of one of the resulting "ripple" patterns
+  in the lake - turn the &lt;O&gt;rbits display on to see where it is - the
+  orbits of all initial points that are in the lake converge there.
+
+  Fractint tests for the presence of a Finite Attractor by iterating a
+  Critical Value of the fractal's function.  If the iteration doesn't bail
+  out before exceeding twice the iteration limit, it is almost certain
+  that we have a Finite Attractor - we assume that we have.
+
+  Next we define a small circle around it and, after each iteration, as
+  well as testing for the usual bailout value being exceeded, we test to
+  see if we've hit the circle. If so, we bail out and color our pixels
+  according to the number of iterations performed.  Result - a nicely
+  colored-in lake that displays the Level Sets of the Basin of Attraction
+  of the Finite Attractor.  Sometimes !
+
+  First exception: This does not work for the lakes of Mandel-types.
+  Every point in a Mandel-type is, in effect, a single point plucked from
+  one of its related Julia-types.  A Mandel-type's lake has an infinite
+  number of points, and thus an infinite number of related Julia-type
+  sets, and consequently an infinite number of finite attractors too.  It
+  *MAY* be possible to color in such a lake, by determining the attractor
+  for EVERY pixel, but this would probably treble (at least) the number of
+  iterations needed to draw the image.  Due to this overhead, Finite
+  Attractor logic has not been implemented for Mandel-types.
+
+  Secondly, certain Julia-types with lakes may not respond to this
+  treatment, depending on the parameter value used.  E.g., the Lambda Set
+  for 0.5 + 0.5i responds well; the Lambda Set for 0.0 + 1.0i does not -
+  its lake stays blue.  Attractors that consist of single points, or a
+  cycle of a finite number of points are ok.  Others are not.  If you're
+  into fractal technospeak, the implemented approach fails if the Julia-
+  type is a Parabolic case, or has Siegel Disks, or has Herman Rings.
+
+  However, all the difficult cases have one thing in common - they all
+  have a parameter value that falls exactly on the edge of the related
+  Mandel-type's lake.  You can avoid them by intelligent use of the
+  Mandel-Julia Space-Bar toggle:  Pick a view of the related Mandel-type
+  where the center of the screen is inside the lake, but not too close to
+  its edge, then use the space-bar toggle.  You should obtain a usable
+  Julia-type with a lake, if you follow this guideline.
+
+  Thirdly, the initial implementation only works for Julia-types that use
+  the "Standard" fractal engine in Fractint.  Fractals with their own
+  special algorithms are not affected by Finite Attractor logic, as yet.
+
+  Finally, the finite attractor code will not work if it fails to detect a
+  finite attractor.  If the number of iterations is set too low, the
+  finite attractor may be missed.
+
+  Despite these restrictions, the Finite Attractor logic can produce
+  interesting results.  Just bear in mind that it is principally a bonus
+  off-shoot from the development of the MAGNETic fractal types, and is not
+  specifically tuned for optimal performance for other Julia types.
+
+  (Thanks to Kevin Allen for the above).
+
+  There is a second type of finite attractor coloring, which is selected
+  by setting "Look for Finite Attractor" to a negative value.  This colors
+  points by the phase of the convergence to the finite attractor, instead
+  of by the speed of convergence.
+
+  For example, consider the Julia set for -0.1 + 0.7i, which is the three-
+  lobed "rabbit" set.  The Finite Attractor is an orbit of length three;
+  call these values a, b, and c.  Then, the Julia set iteration can
+  converge to one of three sequences: a,b,c,a,b,c,..., or b,c,a,b,c,...,
+  or c,a,b,c,a,b,...  The Finite Attractor phase option colors the
+  interior of the Julia set with three colors, depending on which of the
+  three sequences the orbit converges to.  Internally, the code determines
+  one point of the orbit, say "a", and the length of the orbit cycle, say
+  3.  It then iterates until the sequence converges to a, and then uses
+  the iteration number modulo 3 to determine the color.
+
+  TRIG IDENTITIES
+
+  The following trig identities are invaluable for coding fractals that
+  use complex-valued transcendental functions of a complex variable in
+  terms of real-valued functions of a real variable, which are usually
+  found in compiler math libraries. In what follows, we sometimes use "*"
+  for multiplication, but leave it out when clarity is not lost. We use
+  "^" for exponentiation; x^y is x to the y power.
+
+     (u+iv) + (x+iy) = (u+x) + i(v+y)
+     (u+iv) - (x+iy) = (u-x) + i(v-y)
+     (u+iv) * (x+iy) = (ux - vy) + i(vx + uy)
+     (u+iv) / (x+iy) = ((ux + vy) + i(vx - uy)) / (x^2 + y^2)
+
+     e^(x+iy) = (e^x) (cos(y) + i sin(y))
+
+     log(x+iy) = (1/2)log(x^2 + y^2) + i(atan(y/x) + 2kPi)
+        for k = 0, -1, 1, -2, 2, ...
+        (The log function refers to log base e, or ln. The expression
+         atan(y/x) is an angle between -pi and pi in the quadrant containing
+         (x,y) implemented in C as the atan2() function.)
+
+     z^w = e^(w*log(z))
+
+     sin(x+iy)  = sin(x)cosh(y) + i cos(x)sinh(y)
+     cos(x+iy)  = cos(x)cosh(y) - i sin(x)sinh(y)
+     tan(x+iy)  = sin(x+iy) / cos(x+iy)
+     sinh(x+iy) = sinh(x)cos(y) + i cosh(x)sin(y)
+     cosh(x+iy) = cosh(x)cos(y) + i sinh(x)sin(y)
+     tanh(x+iy) = sinh(x+iy) / cosh(x+iy)
+     cosxx(x+iy) = cos(x)cosh(y) + i sin(x)sinh(y)
+       (cosxx is present in Fractint to provide compatibility with a bug
+       which was in its cos calculation before version 16)
+
+                       sin(2x)               sinh(2y)
+     tan(x+iy) = ------------------  + i------------------
+                 cos(2x) + cosh(2y)     cos(2x) + cosh(2y)
+
+                   sin(2x) - i*sinh(2y)
+     cotan(x+iy) = --------------------
+                    cosh(2y) - cos(2x)
+
+                      sinh(2x)                sin(2y)
+     tanh(x+iy) = ------------------ + i------------------
+                  cosh(2x) + cos(2y)    cosh(2x) + cos(2y)
+
+                    sinh(2x) - i*sin(2y)
+     cotanh(x+iy) = --------------------
+                     cosh(2x) - cos(2y)
+
+     asin(z) = -i * log(i*z+sqrt(1-z*z))
+     acos(z) = -i * log(z+sqrt(z*z-1))
+     atan(z) = i/2* log((1-i*z)/(1+i*z))
+     asinh(z) = log(z+sqrt(z*z+1))
+     acosh(z) = log(z+sqrt(z*z-1))
+     atanh(z) = 1/2 * log((1+z)/(1-z))
+
+     sqr(x+iy) = (x^2-y^2) + i*2xy
+     sqrt(x+iy) = sqrt(sqrt(x^2+y^2)) * (cos(atan(y/x)/2) + i sin(atan(y/x)/2))
+
+     ident(x+iy) = x + iy
+     conj(x+iy) = x - iy
+     recip(x+iy) = (x-iy) / (x^2+y^2)
+     flip(x+iy) = y + ix
+     zero(x+iy) = 0
+     one(x+iy)  = 1
+     cabs(x+iy) = sqrt(x^2 + y^2)
+     floor(x+iy) = floor(x) + i*floor(y)
+     ceil(x+iy)  = ceil(x) + i*ceil(y)
+     trunc(x+iy) = trunc(x) + i*trunc(y)
+     round(x+iy) = round(x) + i*round(y)
+
+  Fractint's definitions of abs(x+iy) and |x+iy| below are non-standard.
+  Math texts define both absolute value and modulus of a complex number to
+  be the same thing.  They are both equal to cabs(x+iy) as defined above.
+
+     |x+iy| = x^2 + y^2
+     abs(x+iy) = sqrt(x^2) + i sqrt(y^2)
+
+  Quaternions are four dimensional generalizations of complex numbers.
+  They almost obey the familiar field properties of real numbers, but fail
+  the commutative law of multiplication, since x*y is not generally equal
+  to y*x.
+
+  Quaternion algebra is most compactly described by specifying the rules
+  for multiplying the basis vectors 1, i, j, and k. Quaternions form a
+  superset of the complex numbers, and the basis vectors 1 and i are the
+  familiar basis vectors for the complex algebra. Any quaternion q can be
+  represented as a linear combination q = x + yi + zj + wk of the basis
+  vectors just as any complex number can be written in the form z = a +
+  bi.
+
+  Multiplication rules for quaternion basis vectors:
+  ij =  k jk =  i ki = j
+  ji = -k kj = -i ik = -j
+  ii = jj = kk = -1
+  ijk = -1
+
+  Note that ij = k but ji = -k, showing the failure of the commutative law.
+  The rules for multiplying any two quaternions follow from the behavior
+  of the basis vectors just described. However, for your convenience, the
+  following formula works out the details.
+
+  Let q1 = x1 + y1i + z1j + w1k and q2 = x2 + y2i + z2j + w2k.
+  Then q1q2 = 1(x1x2 - y1y2 - z1z2 - w1w2) +
+              i(y1x2 + x1y2 - w1z2 + z1w2) +
+              j(z1x2 + w1y2 + x1z2 - y1w2) +
+              k(w1x2 + z1y2 - y1z2 + x1w2)
+
+  Quaternions are not the only possible four dimensional supersets of the
+  complex numbers. William Rowan Hamilton, who discovered quaternions in
+  1843, considered the alternative called the hypercomplex number system.
+  Unlike quaternions, the hypercomplex numbers satisfy the commutative law
+  of multiplication. The law which fails is the field property that states
+  that all non-zero elements of a field have a multiplicative inverse. For
+  a non-zero hypercomplex number h, the multiplicative inverse 1/h does
+  not always exist.
+
+  As with quaternions, we will define multiplication in terms of the basis
+  vectors 1, i, j, and k, but with subtly different rules.
+
+  Multiplication rules for hypercomplex basis vectors:
+  ij = k  jk = -i ki = -j
+  ji = k  kj = -i ik = -j
+  ii = jj = -kk = -1
+  ijk = 1
+
+  Note that now ij = k and ji = k, and similarly for other products of pairs
+  of basis vectors, so the commutative law holds.
+
+  Hypercomplex multiplication formula:
+  Let h1 = x1 + y1i + z1j + w1k and h2 = x2 + y2i + z2j + w2k.
+  Then  h1h2 =  1(x1x2 - y1y2 - z1z2 + w1w2) +
+                i(y1x2 + x1y2 - w1z2 - z1w2) +
+                j(z1x2 - w1y2 + x1z2 - y1w2) +
+                k(w1x2 + z1y2 + y1z2 + x1w2)
+
+  As an added bonus, we'll give you the formula for the reciprocal.
+
+  Let det = [((x-w)^2+(y+z)^2)((x+w)^2+(y-z)^2)]
+  Then 1/h =   1[ x(x^2+y^2+z^2+w^2)-2w(xw-yz)]/det +
+               i[-y(x^2+y^2+z^2+w^2)-2z(xw-yz)]/det +
+               j[-z(x^2+y^2+z^2+w^2)-2y(xw-yz)]/det +
+               k[ w(x^2+y^2+z^2+w^2)-2x(xw-yz)]/det
+
+  A look at this formula shows the difficulty with hypercomplex numbers.
+  In order to calculate 1/h, you have to divide by the quantity det =
+  [((x-w)^2+(y+z)^2)((x+w)^2+(y-z)^2)]. So when this quantity is zero, the
+  multiplicative inverse will not exist.
+
+  Hypercomplex numbers have an elegant generalization of any unary complex
+  valued function defined on the complex numbers. First, note that
+  hypercomplex numbers can be represented as a pair of complex numbers in
+  the following way.
+  Let h = x + yi + zj + wk.
+      a = (x-w) + i(y+z)
+      b = (x+w) + i(y-z)
+  The numbers a and b are complex numbers. We can represent h as the pair
+  of complex numbers (a,b). Conversely, if we have a hypercomplex number
+  given to us in the form (a,b), we can solve for x, y, z, and w. The
+  solution to
+     c = (x-w) + i(y+z)
+     d = (x+w) + i(y-z)
+  is
+     x = (real(c) + real(d))/2
+     y = (imag(c) + imag(d))/2
+     z = (imag(c) - imag(d))/2
+     w = (real(d) - real(c))/2
+  We can now, for example, compute sin(h). First compute the two complex
+  numbers a and b as above, then set c = sin(a) and d = sin(b) where sin()
+  is the complex version of the sin function. Now use the equations above
+  to solve for x, y, z, and w in terms of c and d. The hypercomplex number
+  (x,y,z,w) thus obtained is sin(h).
+
+  The beauty of this is that it really doesn't make any difference what
+  function we use. Instead of sin, we could have used cos, sinh, ln, or
+  z^2.  Using this technique, Fractint can create 3-D fractals using the
+  formula h' = fn(h) + c, where "fn" is any of the built-in functions.
+  Where fn is sqr(), this is the famous mandelbrot formula, generalized to
+  four dimensions.
+
+  For more information, see _Fractal Creations, Second Edition_ by Tim
+  Wegner and Bert Tyler, Waite Group Press, 1993.
+</pre>
+</body>
+</html>

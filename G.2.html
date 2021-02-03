@@ -1,0 +1,661 @@
+<html>
+<head>
+<title>Iterated Dynamics: Version 19</title>
+</head>
+<body>
+<div>
+<pre>
+<a href="G.1.html">&lt; Prev</a>           <a href="index.html">Iterated Dynamics</a> Version 1.0          Page 208 <a href="G.3.html">Next &gt;</a></pre>
+</div>
+<pre>
+  Version 19.6 (5/97) new features include:
+
+  Added new fractal types escher_julia (p. 83) and volterra-lotka
+    (p. 82) courtesy Michael Sargent.
+
+  Expanded formula parser capability to recognize "if..else" flow control
+    instructions. The format of an "if block" of instructions is:
+           IF(boolean)
+              statements
+           ELSEIF(boolean) [any number of these are permitted in a block]
+              statements
+           ELSE            [if used, only one is permitted in a block]
+              statements
+           ENDIF
+    Note that ELSEIF() does not require a separate ENDIF. Each branching
+    instruction must be a separate formula statement, separated from other
+    statements by a comma or an end of line. There is a limit of 200
+    branching instructions per formula (ELSEIF counts as two branching
+    instructions).  Unlimited nesting is permitted; each ELSEIF, ELSE, and
+    ENDIF relates to the immediately preceding "non endif'ed" IF. An IF()
+    and its ENDIF cannot traverse the end of the initialization section of
+    the formula.
+
+  Added tutorials to the distribution package: Bradley Beacham's basic
+    formula tutorial, Sylvie Gallet's PHC and PTC formula tutorial, and
+    George Martin's tutorial on the new if..else feature of the formula
+    parser. Required reading for formula writers.
+
+  Added text scrolling capability in &lt;z&gt; and F2 screens. Scroll keys for
+    the &lt;z&gt; screen:
+           CTRL+DOWN_ARROW    Move screen down one line
+           CTRL+UP_ARROW      Move screen up one line
+           CTRL+RIGHT_ARROW   Move screen right one column
+           CTRL+LEFT_ARROW    Move screen left one column
+           CTRL+PAGE_DOWN     Move screen down one view screen
+           CTRL+PAGE_UP       Move screen up one view screen
+           CTRL+HOME          Go to beginning of entry
+           CTRL+END           Go to end of entry
+
+    Direction keys without the CONTROL key depressed maintain their
+    current roles in moving the cursor in the entry prompt boxes.
+
+    In the F2 screen, the same scrolling is available; the CONTROL key
+    does not need to be depressed.
+
+  Added capability to place ifs, formula, and lsys entries in PAR files.
+    If not found in the file named in the parameter entry, formulas, ifs,
+    and lsystem entries called for in entries are looked for in the .par
+    file itself. The referenced entry must have the appropriate prefix in
+    the PAR file as follows:
+
+         formulas  frm:
+         lsystem   lsys:
+         ifs       ifs:
+
+    for example:
+
+    frm:mandel {
+      z=c=pixel:
+      z = z*z + c
+      |z| &lt; 4
+    }
+
+    The prefix is an identifier, not part of the name itself. Thus, the
+    parameter in the image entry would read "formulaname=mandel". The
+    formulafile= parameter need not, and probably should not, name the PAR
+    file itself - the search of the PAR file is automatic.
+
+    Formulas, ifs, and lsys entries in a PAR file will not be shown on the
+    menu screen for the PAR file, and are accessible only in connection
+    with running the parameter entry which calls for the formula. Also,
+    PAR files are not searched when looking for a formula, ifs, or lsystem
+    entry in connection with restoring a .gif file. You will need to copy
+    these entries from the PAR file into .frm, .ifs, and .l files as
+    applicable (taking care, of course, to delete the identifier prefixes)
+    in order to make general use of them.
+
+  Added command line option fastrestore=yes|no. Default is NO. When YES,
+    causes viewwindows to be set to NO before each restore, so that
+    otherwise normal gifs will not be drawn at the reduced aspect when
+    viewwindows was previously set to YES; and bypasses the warning which
+    is displayed when a restore is to be viewed in a video mode other than
+    the one at which the gif was saved. Combined with askvideo=no, all
+    restores will automatically be made at the user's default video mode.
+    This feature will be helpful when cycling through a group of gifs in
+    autokey mode.
+
+  Ctrl-Right used in file selection screens now skips over directory
+    listings, and if the cursor is on the last file, moves the cursor to
+    the first file.  This makes possible uninterrupted cycling in autokey
+    mode. The keyword for this keystroke in a .key file is CTRL_RIGHT.
+    The following additional keystrokes were also implemented:
+
+         Ctrl-Left (autokey symbol "CTRL_LEFT")
+         Ctrl-Down ("CTRL_DOWN")
+         Ctrl-Up   ("CTRL_UP")
+         Ctrl-Home ("CTRL_HOME")
+         Ctrl-End  ("CTRL_END")
+
+     Run the following .key file with command line parameters
+     fastrestore=yes and askvideo=no (and, if you don't set your video
+     mode in sstools.ini, video=[your standard video mode]) and your
+     coworkers will get a continuous display of the .gif files in your
+     default .gif directory when you go to lunch (come on, we know you
+     have Fractint on your hard drive at work):
+
+           "r"
+            MORE:
+            ENTER
+            CALCWAIT
+            WAIT 30
+            "R"
+            CTRL_RIGHT
+            GOTO MORE
+
+  Added four new lsystem types to fractint.l.
+
+  When palette editing mode is entered, the original palette is now stored
+    in the area associated with F2.
+
+  Reduced the fractint.cfg resolution limit to 2x2 pixels.
+
+  Fixed bug which caused a lockup when ranges= was used with maxit &gt;=
+  32767.
+
+  Fixed arbitrary precision and decoder crashes.
+
+  Fixed an entry display scrolling bug.
+
+  Fixed the integer mode frothy basin "censored" bug.
+
+  Added backwards compatibility for inside=startrails.
+
+  Fixed the 16-color color cycling inside the palette editor.  Fixed color
+    cycling when used with a maxit &gt; 32767.  Pixels with iterations &gt;
+    32767 now cycle in the same direction as those with iterations &lt;=
+    32767.
+
+  Fixed bug which caused an apparent lockup when find finite attractor was
+    used with maxit &gt; 32767.
+
+  Fixed viewwindows bug that caused extra points to be written when ydots
+    was not divisible by 4.
+
+  Fixed Ant type so that it works with 16 digits.  Old pars will need to
+    be re-entered or have a decimal point added to the first two
+    parameters.
+
+  Changed MAXSTRING in the decoder from 64000 to 60000. This change
+    eliminates all the encoder bug examples we have, but we don't
+    understand why it works and we may not have fixed the problem.
+
+  Fixed the logmap routine when used with a par/gif release &lt;= 1920 and
+    memory for the LogTable is insufficient.
+
+  Fixed the complexnewton type when used with a par/gif release &lt;= 1920.
+
+  Changed the keystroke behavior of the passes= field on the &lt;x&gt; screen.
+
+  New logic autocenters all input screen menu titles.
+
+  Changed the automatic resolution switching logic between float and
+    arbitrary precision.
+
+  If user aborts before selecting a file in a file menu screen, the
+    program now remembers the last file name selected even if the
+    directory has been changed.
+
+  Fixed writing 3d smooth factor to PAR.
+
+  Fixed writing potential to PAR in makepar mode.
+
+  Fixed redundant "Regenerate before &lt;b&gt; to get correct symmetry" messages
+    in divide and conquer mode.
+
+  Fixed hi rez type 2 diffusion bug and parser error bug.
+
+  Fixed crashing in disk video with too long a savename path.
+
+  Added Adrian Mariano's diffusion fixes - a new color option, several bug
+    fixes, and improved documentation. Removed integer support which
+    wasn't being used anyway.
+
+  Finally, we've added two undocumented commands to give expert users
+     workarounds for math type precision and GIF encoder problems.
+
+  Added the mathtolerance=.05/.05 command. The first number controls the
+    integer/float transition, and the second number controls the
+    float/arbitrary precision transition. The default value of .05 means
+    that the ratio between the exact and calculated width and height is
+    between .95 and 1.05. A larger value than .05 (say .10) makes the test
+    looser so that the lower precision math is used longer. A value &lt;= 0
+    means the test is always failed and the higher precision math type is
+    used. A value &gt;= 1 means that the test is always passed and the lower
+    precision math type is used.
+
+    The automatic precision toggle is resolution dependent. The same image
+    may use float at 320x200 and arbitrary precision at 640x480. This is
+    not a bug; it has to work this way. At a given magnification more
+    pixels require more precision. There are other tests so even with
+    mathtolerance=1/.05, eventually Fractint will have to use float. The
+    same is not true for mathtolerance=.05/1. If you keep zooming Fractint
+    will not rescue you; eventually you'll get a nasty error message and
+    the corners will be lost.
+
+  Added the tweaklzw=nnn/nnn command. Fractint's GIF encoder occasionally
+    fails and produces bad GIF files. Tweaking encoder parameters might
+    allow saving in such a situation. The parameters reduce the maximum
+    size of the current string and maximum total length of the string
+    table, respectively. The default values are 0, which gives the old
+    encoder performance.
+
+  Version 19.5 is a bug-fix release for version 19.4 based on the
+    developer's version 19.40 patch 11. As always, we added a few new
+    features along with the bug fixes.
+
+  New Comment= command (p. 122). You can automatically set any of the four
+    PAR comments, and can include variables in the comments such as the
+    much-requested $calctime$ and $date$. Fractint now writes ';;' for
+    empty comments above the last comment from the comment= command. This
+    prevents comments from moving positions when the PAR is reloaded.
+
+  New recordcolors= command (p. 128). If you place recordcolors=y in your
+    SSTOOLS.INI, compressed colors will always be written in your PARS. If
+    you want to remember what the map file was (assuming the colors were
+    loaded from one), try recordcolors=c. This is exactly like
+    recordcolors=y except that the map file (if any) is written to a
+    parfile comment.
+
+  Added new parser constants:
+    1. whitesq parser constant = (row+col)&amp;1
+    2. scrnpix parser constant = (col,row)
+    3. scrnmax parser constant = (xdots, ydots)
+    4. maxit   parser constant = (maxit,0)
+
+  Added "\" linewrap for formula files.
+
+  Made the round function consistent in all modes. Now round(z) is always
+    (floor(x+.5)+i*floor(y+.5)). In version 19.4, in floating point mode
+    with type=formula, round() used the coprocessor "nearest or even"
+    rounding. Version 19.5 always rounds xxx.5 up.
+
+  Fixed a bug that caused a crash when zooming out with certain functions
+    in integer mode.
+
+  Fixed a bug that caused a crash when attempting 3d=overlay without a
+    filename in batch mode.
+
+  Fixed a bug that caused part of the video table to not show when
+    compiled by Borland.
+
+  Fixed a bug that kept the last image browsed from showing up when you
+    regenerate an image and then start the browser again.
+
+  Fixed a bug that loaded images with the wrong aspect ratio when using
+    the browser with the view window turned on, and the file image size
+    was not the same as the screen image size.
+  Version 19.4 is a bug-fix release for version 19.3 based on the
+    developer's version 19.30 patch 18. But a few new features did slip in
+    when we weren't looking.
+
+  New functions are now available for type=formula and general function
+    variable use. They are the rounding functions: floor(), ceil(),
+    trunc(), and round()
+
+  New larger showdot "turtle" to enable better seeing which pixel is
+    currently being calculated. The syntax is showdot=&lt;color&gt;/&lt;size&gt;, but
+    the color parameter can now be one of auto, bright, medium, and dark
+    in addition to the previously-supported color number value.
+
+  The &lt;g&gt; command now remembers the last command.
+
+  Added the ability to load images into a view window.  This can be used
+    with the browser to browse images larger than the current image.
+
+  Added George Martin's new integrated entry-finding code. Fractint is now
+    more tolerant of text between entries, and the internal code is much
+    cleaner than before.
+
+  Added Bert Tyler's new VESA truecolor video drivers. These don't do
+    anything yet; we've just added the video drivers for testing. Work
+    goes on ...
+    To test out the new modes, try fractint debug=500 type=test and select
+    a new truecolor mode. They only work with video boards having VESA
+    truecolor support. Some "non-standard VESA" modes (an unfortunate
+    oxymoron if there ever was one) can also be supported by editing
+    FRACTINT.CFG. These vendor-specific "VESA" modes tend to make Bert,
+    our video expert, real grumpy ...
+
+  Now for the squashed bugs report:
+
+  Ranges is working again.
+
+  Fixed a browser bug that caused a crash when the browser cross-hairs
+    become too small.
+
+  Fixed a bug which put the browser into an infinite loop if the history
+    feature was used to try and access a deleted or renamed image that was
+    still in the history stack.
+
+  Fixed bug that caused any command with greater than 16 parameters to
+    fail, most notably textcolors and ranges.
+
+  Fixed a center-mag&lt;-&gt;corners conversion bug that occurred with rotated
+    images.  arbitrary precision also (test with debug=3200).
+
+  Fixed bug that allowed the matherr debugging file to grow arbitrarily
+    large.  Matherr file is limited to 100 messages for each fractal.
+
+  Fixed bug that affected some Icons3d types, which were broken due to a
+    very subtle bug in apparently good code caused by the compiler
+    optimizer.
+
+  Version 19.3 is a bug-fix release for version 19.2 based on the
+    developer's version 19.21 patch 30.
+
+  The biggest changes from 19.2 to 19.3 are the fixing of the color logmap
+    function for maximum iterations greater than 32K, and a large increase
+    in the maximum size of an individual formula and the maximum number of
+    entries in formula, parameter, ifs, and lsystem files.
+
+  Changes from 19.2 to 19.3 include:
+
+  Added better math function error trapping for the formula parser. This
+    can change the rendering of some PAR files using type=formula. If
+    reset=1920 is included in the PAR file, the new error trapping is
+    disabled.
+
+  Fixed an old, rare, but nasty bug that stripped trailing zeros from the
+    exponents of floating point numbers written to PAR files.
+
+  Ctrl-ins and Ctrl-Del now change the browser frame colors.
+
+  Fixed bug that occurred when writing PAR files containing a video= line
+    with a four character video mode.
+
+  Added batch facility to copy fractal information and color in GIFs to
+    PAR format.
+
+  Added current column to the &lt;tab&gt; screen.
+
+  Removed support for reading Targa files.
+
+  Added backwards compatibility for the fractal type fn(z*z).
+
+  Added support for expanded and extended memory to the browser.  Use
+    expanded memory if you don't have at least 4 MB of extended memory.
+
+  Added pi and e to constants that the formula parser recognizes.  Fixed
+    parser so that constants are recognized correctly.
+
+  Added docs for freestyle mode in the colour editor.
+
+  Fixed bug involving comments between formula entries.
+
+  Allow renaming Fractint.exe without losing access to fractint's help
+  files.
+
+  Center-mag is now the default method for storing coordinates in PAR
+  files.
+
+  Increased limit on number of operations in a formula entry from 250 to
+    over 2000. In most cases memory use is actually less than before
+    because of use of existing memory arrays.
+
+  Fixed a bug that caused the image to regenerate when the &lt;y&gt; screen was
+    accessed, but nothing was changed (or color cycle range was changed).
+
+  Fixed a bug that caused saved partial images that used logmap to use the
+    incorrect logmap routine when restored (GIFs &amp; PARs).
+
+  Made the solid guessing stop pass parameter save to GIFs and PARS.
+
+  Added truecolor=yes command. This causes the iterations for each point
+    to be written to a 24-bit Targa truecolor file called iterates.tga.
+    Maxiter is also written to the file. This allows a simple outboard
+    program to assign truecolors to iterations. Passes=1 is forced, but
+    symmetry works.  (This function may go away in the future when real
+    truecolor support is implemented.)
+
+  Fixed bug that caused PARs to have incorrect number of parameters when a
+    formula based GIF was loaded and a PAR made immediately.
+
+  Added additional bailout tests manh and manr.  See Bailout Test (p. 98)
+  .
+  Fixed &lt;Z&gt; screen so bailout test can be changed when potential is being
+  used.
+
+  Fixed bug that caused large filename numbers to increment incorrectly.
+
+  Added new guessing options g1, g2, etc. that cause guessing to terminate
+    before the last pass.
+
+  Added new orbitsave=sound option that causes orbits with sound on to
+    write to a file sound.txt. The values written are the Hertz values for
+    each orbit point. The time is written out in milliseconds once per
+    pixel.
+
+  Added documentation for making demm images to match ones made prior to
+    version 16.
+
+  Added key pressed check to autologmap so it is possible to bailout with
+    a high maxit value.
+
+  Made all floating point types capable of zooming out past (32,32).
+
+  Added the formula parameters p1, p2, and p3 to the &lt;tab&gt; screen.
+
+  Added stereo pair feature to stereo options menu.
+
+  Fixed a bug that caused julia_inverse to continue after completed.
+
+  Bignumber library rearranged. DOS midnight bug fix, so total time of
+    images run overnight is now correct.
+
+  Added logmap backwards compatibility for pre-version 19.2 images.
+
+  Browser problem with flipped images fixed.
+
+  Changed default corners to 4:3 aspect for types sierpinski, popcorn,
+    pickover, popcornjul, tim's_error, martin, and halley.
+
+  Added a range check for type=ants numants parameter.
+
+  RDS save command is no longer case sensitive.
+
+  Added the color number to the status area in the palette editor.
+
+  Changed logmap and distest to a long variable to accomodate the version
+    19.0 change to long maxit.
+
+  Added a pixel-at-a-time routine to calculate the logmap values on the
+    fly when memory is low or maxit &gt; 32767.  Use logmode=fly to use with
+    maxit &lt; 32767.  Note: ranges still doesn't work with maxit &gt; 32767.
+
+  Extended error checking to set the overflow variable when a zero
+    denominator is found.  Added checking of overflow in a few places
+    where it is needed.
+
+  Added backwards compatibility for the old "broken" integer parser mod
+    function.
+
+  Fixed the maximum zoom out of the integer type fn(z*z) (and others) so
+    the user doesn't get thrown out to DOS.
+
+  Fixed writing of olddemmcolors variable to PAR file.
+
+  Version 19.2 is a bug-fix release for version 19.1. Changes from 19.1 to
+    19.2 include:
+
+  Fixed the 3D function, which was broken in 19.1 due to a side-effect of
+    a repair of a minor bug in 19.0. Arrgghh! This is the main reason for
+    the release of this version so quickly.
+
+  Fixed a bug that caused the Julia inverse window and the orbits window
+    to lose their place after loading a color map.
+
+  Fixed a bug that causes corners to be lost when too many digits are
+  entered.
+
+  Added an enhanced ants automaton by Luciano Genero and Fulvio Cappelli.
+
+  New showorbit command allows orbits-during-generation feature to be
+    turned on by default. Expanded limits of Hertz command to 20 to 15000.
+
+  Targa 3D files are now correctly written to workdir rather than tempdir.
+
+  Uncommented garbage between file entries is now ignored. (But note that
+    "{" must be on same line as entry name.)
+
+  Fixed savename update logic.
+
+  Version 19.1 is a bug-fix release for version 19.0. Changes from 19.0 to
+    19.1 include:
+
+  Disabled the F6 (corners) key when in the parameters screen (&lt;z&gt;) for
+    arbitrary precision.
+
+  IFS formulas now show in &lt;z&gt; screen.
+
+  Allow RDS image maps of arbitrary dimensions.
+
+  Touched up Mandelbrot/Julia &lt;Space&gt; toggle logic.
+
+  Fractint now remembers map name, and uses the mapfile path correctly,
+    and now allows periods in directory names.
+
+  Fixed tab bug that caused problems when interrupting a restore of an
+    arbitrary precision image.
+
+  Repaired savename logic. No longer show (usually truncated) full path of
+    the saved file in the screen.
+
+  Fixed double to arbitrary precision transition with 90 degree images.
+    (This only failed before when the image was rotated exactly 90
+    degrees.)
+
+  Corrected docs directory errors that reported several commands such as
+    PARDIR= that were not implemented. Documented the color cycling HOME
+    function.
+
+  Fixed Mandelbrot/Julia types with bailout less than 4 (try it, results
+    are interesting!)
+
+  Fixed browser delete feature which left a box on the screen after
+    deleting and exiting browser feature.
+
+  More changes in filename processing logic.  ".\" is now recognized as
+    the current directory and is expanded to its full path name.  It is
+    now possible, although not recommended, to designate the root
+    directory of a disk as the desired search directory.
+
+  Fixed integer math Mandelbrot bug for 286 or lower machines.
+
+  Fixed problem of reading some Lsys files incorrectly (distribution
+    PENROSE.L file was broken unless first line was commented.)
+
+  Fixed problem that caused endless loop in RDS with bad input values.
+
+  Made reading the current directory first optional, added the new
+    curdir=yes command for times when you want to use current directory
+    files.
+
+  Fixed problem with complexpower() function ("x^y" formula operator) in
+    the case where x == 0. (Note that formulas where 0^0 appears for every
+    every pixel are considered broken and no promises made.)
+
+  Prevented aspect ratio drift as you zoom. If you want to make tiny
+    adjustments, use new ASPECTDRIFT=0 command.
+
+  Inside=bof60 and bof61 options now work correctly with the formula
+  parser.
+
+  We discovered the calculation time is no good after 24 days, so instead
+    of the time you will now get the message "A Really Long Time!!! (&gt;
+    24.855 days)".  We thought you'd like to know ... A prize for the
+    first person who actually *sees* this message!
+
+  A summary of features new with 19.0 is as follows.
+
+  New arbitrary precision math allows types mandelbrot, julia, manzpower,
+    and julzpower to zoom to 10^1600. See Arbitrary Precision and Deep
+    Zooming (p. 167)
+
+  New Random Dot Stereogram feature using &lt;Ctrl&gt;-&lt;S&gt;. Thanks to Paul De
+    Leeuw for contributing this feature. For more, see Random Dot
+    Stereograms (RDS) (p. 102).
+
+  New browser invoked by the &lt;l&gt; command allows you to see the
+    relationships of a family of images within the current corners values.
+    See Browse Commands (p. 37) and Browser Parameters (p. 149). Thanks
+    to Robin Bussell for contributing this feature.
+
+  Added four bailout tests: real, imag, or, and.  These are set on the &lt;Z&gt;
+    screen of the fractal types for which they work.  The default is still
+    mod.  See Bailout Test (p. 98).
+
+  New asin, asinh, acos, acosh, atan, atanh, sqrt, abs (abs(x)+i*abs(y)),
+    and cabs (sqrt(x*x + y*y)) functions added to function variables and
+    parser.
+
+  New fractal types types chip, quadruptwo, threeply, phoenixcplx,
+    mandphoenixclx, and ant automaton.
+
+  Increased maximum iterations to 2,147,483,647 and maximum bailout to
+    2,100,000,000 when using floating point math.
+
+  New path/directory management. Fractint now remembers the pathname of
+    command-line filenames. This means that you can specifiy directories
+    where your files reside in SSTOOLS.INI. In what follows, &lt;path&gt; can be
+    a directory, a filename, or a full path.
+
+    File                      SSTOOLS.INI Command       Comments
+
+    ==========================================================================
+    PAR directory             parmfile=&lt;path&gt;
+    GIF files for reading     filename=&lt;path&gt;
+    MAP files                 map=&lt;path&gt;
+    Autokey files             autokeyname=&lt;path&gt;
+    GIF files for saving      savename=&lt;path&gt;
+    Print file                printfile=&lt;path&gt;
+    Formula files             formulafile=&lt;path&gt;
+    Lsystem file              lfile=&lt;path&gt;
+    IFS file                  ifsfile=&lt;path&gt;
+    Miscellaneous files       workdir=&lt;path&gt;           new command
+    Temporary files           tempdir=&lt;path&gt;           new command
+
+    If the directories do not exist, Fractint gives an error message on
+    runup with the option to continue.
+
+  Fractint now searches all FRM, IFS, LSYS, and PAR files in the
+    designated directory for entries. The number of entries in files has
+    been greatly increased from 200 to 2000. Comment support in these
+    files is improved.
+
+  Parameters shown in &lt;z&gt; screen now match those used in a formula.
+
+  Distance estimator logic has been overhauled, with the variable
+    olddemmcolors added for backward compatibility.
+
+  New floating point code for Lsystems from Nick Wilt greatly speeds up
+     image generation.
+
+  Enhanced fast parser from Chuck Ebbert makes floating point formula
+    fractals faster than built-in types.
+
+  Enhanced the history command to include all parameters, colors, and even
+    .frm, .l, and .ifs file names and entries. Number of history sets
+    remembered can be set with the maxhistory=&lt;nnn&gt; command to save
+    memory.
+
+  Enhanced center-mag coordinates to support rotated/stretched/skewed zoom
+    boxes.
+
+  Added new parameter to built-in Halley for comparison with formula type,
+    also added new parameter to Frothybasin type.
+
+  Added color number to orbits numbers &lt;n&gt; display.
+
+  Added two new parameters to distest= to allow specifying resolution.
+    This allows making resolution-independent distance estimator images.
+
+  Fixed bug that caused the "big red switch" bug if '(' appeared in random
+    uncommented formula file text, but fair warning, we don't officially
+    support uncommented text in FRM files.
+
+  Symmetry now works for the Marksjulia type and Marksmandel types.
+
+  Full path no longer written in PAR files with &lt;b&gt; command.
+
+  Fixed fractal type fn(z*z) so that zooming out will no longer dump you
+    out to DOS, affecting zoomed out integer images made with this type.
+
+  Fixed a float to fudged integer conversion that affects integer fractal
+    types fn(z*z) and fn*fn.  This has only a minor impact on integer
+    images made with these types.
+
+  Default drive and directory restored after dropping to DOS, in case you
+    changed it while under DOS.
+
+  Added support for inversion to the formula parser (type=formula).
+
+  Increased maximum number of files listed by &lt;r&gt; command to 2977 from
+  300.
+
+  Added outside=atan option.
+
+  Added faster auto logmap logic.
+</pre>
+</body>
+</html>

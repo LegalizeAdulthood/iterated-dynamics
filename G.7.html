@@ -1,0 +1,324 @@
+<html>
+<head>
+<title>Iterated Dynamics: Version 14 Through Version 1</title>
+</head>
+<body>
+<div>
+<pre>
+<a href="G.6.html">&lt; Prev</a>           <a href="index.html">Iterated Dynamics</a> Version 1.0          Page 237</pre>
+</div>
+<pre>
+  Version 14, 8/90
+
+    LAST MINUTE NEWS FLASH!
+      CompuServe announces the GIF89a on August 1, 1990, and Fractint
+      supports it on August 2! GIF files can now contain fractal
+      information!  Fractint now saves its files in the new GIF89a format
+      by default, and uses .GIF rather than .FRA as a default filetype.
+      Note that Fractint still *looks* for a .FRA file on file restores if
+      it can't find a .GIF file, and can be coerced into using the old
+      GIF87a format with the new 'gif87a=yes' command-line option.
+
+    Pieter Branderhorst mounted a major campaign to get his name in
+    lights:
+    Mouse interface:  Diagonals, faster movement, improved feel. Mouse
+      button assignments have changed - see the online help.
+    Zoom box enhancements:  The zoom box can be rotated, stretched,
+      skewed, and panned partially offscreen.  See "More Zoom Box
+      Commands".
+    FINALLY!! You asked for it and we (eventually, by talking Pieter into
+      it [actually he grabbed it]) did it!  Images can be saved before
+      completion, for a subsequent restore and continue.  See
+      "Interrupting and Resuming" and "Batch Mode".
+    Off-center symmetry:  Fractint now takes advantage of x or y axis
+      symmetry anywhere on the screen to reduce drawing time.
+    Panning:  If you move an image up, down, left, or right, and don't
+      change anything else, only the new edges are calculated.
+    Disk-video caching - it is now possible, reasonable even, to do most
+      things with disk video, including solid guessing, 3d, and plasma.
+    Logarithmic palette changed to use all colors.  It now matches regular
+      palette except near the "lake".  "logmap=old" gets the old way.
+    New "savetime=nnn" parameter to save checkpoints during long
+    calculations.
+    Calculation time is shown in &lt;Tab&gt; display.
+
+    Kevin C Allen    Finite Attractor, Bifurcation Engine, Magnetic
+    fractals...
+    Made Bifurcation/Verhulst into a generalized Fractal Engine (like
+      StandardFractal, but for Bifurcation types), and implemented
+      periodicity checking for Bifurcation types to speed them up.
+    Added Integer version of Verhulst Bifurcation (lots faster now).
+      Integer is the default.  The Floating-Point toggle works, too.
+    Added NEW Fractal types BIFLAMBDA, BIF+SINPI, and BIF=SINPI. These are
+      Bifurcation types that make use of the new Engine. Floating-
+      point/Integer toggle is available for BIFLAMBDA. The SINPI types are
+      Floating-Point only, at this time.
+    Corrected the generation of the MandelLambda Set.  Sorry, but it's
+      always been wrong (up to v 12, at least).  Ask Mandelbrot !
+    Added NEW Fractal types MAGNET1M, MAGNET1J, MAGNET2M, MAGNET2J from
+      "The Beauty of Fractals".  Floating-Point only, so far, but what do
+      you expect with THESE formulae ?!
+    Added new symmetry types XAXIS NOIMAG and XAXIS NOREAL, required by
+      the new MAGNETic Fractal types.
+    Added Finite Attractor Bailout (FAB) logic to detect when iterations
+      are approaching a known finite attractor. This is required by the
+      new MAGNETic Fractal types.
+    Added Finite Attractor Detection (FAD) logic which can be used by
+      *SOME* Julia types prior to generating an image, to test for finite
+      attractors, and find their values, for use by FAB logic. Can be used
+      by the new MAGNETic Fractal Types, Lambda Sets, and some other Julia
+      types too.
+
+    Mike Burkey sent us new tweaked video modes:
+      VGA     - 400x600x256   376x564x256   400x564x256
+      ATI VGA - 832x612x256 New HP Paintjet support from Chris Martin
+    New "FUNCTION=" command to allow substition of different
+      transcendental functions for variables in types (allows one type
+      with four of these variables to represent 7*7*7*7 different types!
+    ALL KINDS of new fractal types, some using "FUNCTION=": fn(z*z),
+      fn*fn, fn*z+z, fn+fn, sqr(1/fn), sqr(fn), spider, tetrate, and
+      Manowar. Most of these are generalizations of formula fractal types
+      contributed by Scott Taylor and Lee Skinner.
+    Distance Estimator logic can now be applied to many fractal types
+      using distest= option. The types "demm" and "demj" have been
+      replaced by "type=mandel distest=nnn" and "type=julia distest=nnn"
+    Added extended memory support for diskvideo thanks to Paul Varner
+    Added support for "center and magnification" format for corners.
+    Color 0 is no longer generated except when specifically requested with
+      inside= or outside=.
+    Formula name is now included in &lt;Tab&gt; display and in &lt;S&gt;aved images.
+    Bug fixes - formula type and diskvideo, batch file outside=-1 problem.
+    Now you can produce your favorite fractal terrains in full color
+      instead of boring old monochrome! Use the fullcolor option in 3d!
+      Along with a few new 3D options.
+    New "INITORBIT=" command to allow alternate Mandelbrot set orbit
+      initialization.
+
+  Version 13.0, 5/90
+
+    F1 was made the help key.
+      Use F1 for help
+      Use F9 for EGA 320x200x16 video mode
+      Use CF4 for EGA 640x200x16 mode (if anybody uses that mode)
+    Super-Solid-guessing (three or more passes) from Pieter Branderhorst
+      (replaces the old solid-guessing mode)
+    Boundary Tracing option from David Guenther ("fractint passes=btm", or
+      use the new 'x' options screen)
+    "outside=nnn" option sets all points not "inside" the fractal to color
+      "nnn" (and generates a two-color image).
+    'x' option from the main menu brings up a full-screen menu of many
+      popular options and toggle switches
+    "Speed Key" feature for fractal type selection (either use the cursor
+      keys for point-and-shoot, or just start typing the name of your
+      favorite fractal type)
+    "Attractor" fractals (Henon, Rossler, Pickover, Gingerbread)
+    Diffusion fractal type by Adrian Mariano
+    "type=formula" formulas from Scott Taylor and Lee H. Skinner.
+    "sound=" options for attractor fractals.  Sound=x  plays speaker tones
+      according to the 'x' attractor value  Sound=y  plays speaker tones
+      according to the 'y' attractor value.  Sound=z  plays speaker tones
+      according to the 'z' attractor value  (These options are best
+      invoked with the floating-point algorithm flag set.)
+    "hertz=" option for adjusting the "sound=x/y/z" output.
+    Printer support for color printers (printer=color) from Kurt Sowa
+    Trident 4000 and Oak Technologies SuperVGA support from John Bridges
+    Improved 8514/A support (the zoom-box keeps up with the cursor keys
+    now!)
+    Tandy 1000 640x200x16 mode from Brian Corbino (which does not, as yet,
+      work with the F1(help) and TAB functions)
+    The Julibrot fractal type and the Starmap option now automatically
+      verify that they have been selected with a 256-color palette, and
+      search for, and use, the appropriate GLASSESn.MAP or ALTERN.MAP
+      palette map when invoked.  *You* were supposed to be doing that
+      manually all along, but *you* probably never read the docs, huh?
+    Bug Fixes:
+      TAB key now works after R(estore) commands
+      PS/2 Model 30 (MCGA) adapters should be able to select 320x200x256
+        mode again (we think)
+      Everex video adapters should work with the Autodetect modes again
+        (we think)
+
+  Version 12.0, 3/90
+
+    New SuperVGA Autodetecting and VESA Video modes (you tell us the
+      resolution you want, and we'll figure out how to do it)
+    New Full-Screen Entry for most prompting
+    New Fractal formula interpreter ('type=formula') - roll your own
+      fractals without using a "C" compiler!
+    New 'Julibrot' fractal type
+    Added floating point option to all remaining fractal types.
+    Real (funny glasses) 3D - Now with "real-time" lorenz3D!!
+    Non-Destructive &lt;TAB&gt; - Check out what your fractal parameters are
+      without stopping the generation of a fractal image
+    New Cross-Hair mode for changing individual palette colors (VGA only)
+    Zooming beyond the limits of Integer algorithms (with automatic
+      switchover to a floating-point algorithm when you zoom in "too far")
+    New 'inside=bof60', 'inside=bof61' ("Beauty of Fractals, Page nn")
+    options
+    New starmap ('a' - for astrology? astronomy?) transformation option
+    Restrictions on the options available when using Expanded Memory
+      "Disk/RAM" video mode have been removed
+    And a lot of other nice little clean-up features that we've already
+      forgotten that we've added...
+    Added capability to create 3D projection images (just barely) for
+      people with 2 or 4 color video boards.
+
+  Version 11.0, 1/90
+
+    More fractal types
+      mandelsinh/lambdasinh        mandelcosh/lambdacosh
+      mansinzsqrd/julsinzsqrd      mansinexp/julsinexp
+      manzzprw/julzzpwr            manzpower/julzpower
+      lorenz (from Rob Beyer)      lorenz3d
+      complexnewton                complexbasin
+      dynamic                      popcorn
+    Most fractal types given an integer and a floating point algorithm.
+      "Float=yes" option now determines whether integer or floating-point
+      algorithms are used for most fractal types.  "F" command toggles the
+      use of floating-point algorithms, flagged in the &lt;Tab&gt; status
+      display
+    8/16/32/../256-Way decomposition option (from Richard Finegold)
+    "Biomorph=", "bailout=", "symmetry="  and "askvideo=" options
+    "T(ransform)" option in the IFS editor lets you select 3D options
+      (used with the Lorenz3D fractal type)
+    The "T(ype)" command uses a new "Point-and-Shoot" method of selecting
+      fractal types rather than prompting you for a type name
+    Bug fixes to continuous-potential algorithm on integer fractals, GIF
+      encoder, and IFS editor
+
+  Version 10.0, 11/89
+
+    Barnsley IFS type (Rob Beyer)
+    Barnsley IFS3D type
+    MandelSine/Cos/Exp type
+    MandelLambda/MarksLambda/Unity type
+    BarnsleyM1/J1/M2/J2/M3/J3 type
+    Mandel4/Julia4 type
+    Sierpinski gasket type
+    Demm/Demj and bifurcation types (Phil Wilson), "test" is "mandel"
+    again
+    &lt;I&gt;nversion command for most fractal types
+    &lt;Q&gt;uaternary decomposition toggle and "DECOMP=" argument
+    &lt;E&gt;ditor for Barnsley IFS parameters
+    Command-line options for 3D parameters
+    Spherical 3D calculations 5x faster
+    3D now clips properly to screen edges and works at extreme perspective
+    "RSEED=" argument for reproducible plasma clouds
+    Faster plasma clouds (by 40% on a 386)
+    Sensitivity to "continuous potential" algorithm for all types except
+      plasma and IFS
+    Palette-map &lt;S&gt;ave and Restore (&lt;M&gt;) commands
+    &lt;L&gt;ogarithmic and &lt;N&gt;ormal palette-mapping commands and arguments
+    Maxiter increased to 32,000 to support log palette maps
+    .MAP and .IFS files can now reside anywhere along the DOS path
+    Direct-video support for Hercules adapters (Dean Souleles)
+    Tandy 1000 160x200x16 mode (Tom Price)
+    320x400x256 register-compatible-VGA "tweaked" mode
+    ATI VGA Wonder 1024x768x16 direct-video mode (Mark Peterson)
+    1024x768x16 direct-video mode for all supported chipsets
+    Tseng 640x400x256 mode
+    "Roll-your-own" video mode 19
+    New video-table "hot-keys" eliminate need for enhanced keyboard to
+      access later entries
+
+  Version 9.3, 8/89
+
+    &lt;P&gt;rint command and "PRINTER=" argument (Matt Saucier)
+    8514/A video modes (Kyle Powell)
+    SSTOOLS.INI sensitivity and '@THISFILE' argument
+    Continuous-potential algorithm for Mandelbrot/Julia sets
+    Light source 3D option for all fractal types
+    "Distance estimator" M/J method (Phil Wilson) implemented as "test"
+    type
+    LambdaCosine and LambdaExponent types
+    Color cycling mode for 640x350x16 EGA adapters
+    Plasma clouds for 16-color and 4-color video modes
+    Improved TARGA support (Joe McLain)
+    CGA modes now use direct-video read/writes
+    Tandy 1000 320x200x16 and 640x200x4 modes (Tom Price)
+    TRIDENT chip-set super-VGA video modes (Lew Ramsey)
+    Direct-access video modes for TRIDENT, Chips &amp; Technologies, and ATI
+      VGA WONDER adapters (John Bridges). and, unlike version 9.1, they
+      WORK in version 9.3!)
+    "zoom-out" (&lt;Ctrl&gt;&lt;Enter&gt;) command
+    &lt;D&gt;os command for shelling out
+    2/4/16-color Disk/RAM video mode capability and 2-color video modes
+      supporting full-page printer graphics
+    "INSIDE=-1" option (treated dynamically as "INSIDE=maxiter")
+    Improved &lt;H&gt;elp and sound routines (even a "SOUND=off" argument)
+    Turbo-C and TASM compatibility (really!  Would we lie to you?)
+
+  Version 8.1, 6/89
+
+    &lt;3&gt;D restore-from-disk and 3D &lt;O&gt;verlay commands, "3D=" argument
+    Fast Newton algorithm including inversion option (Lee Crocker)
+    16-bit Mandelbrot/Julia logic for 386-class speed with non-386 PCs on
+      "large" images (Mark Peterson)
+    Restore now loads .GIF files (as plasma clouds)
+    TARGA video modes and color-map file options (Joe McLain)
+    30 new color-cycling palette options (&lt;Shft&gt;&lt;F1&gt; to &lt;Alt&gt;&lt;F10&gt;)
+    "Disk-video, RAM-video, EMS-video" modes
+    Lambda sets now use integer math (with 80386 speedups)
+    "WARN=yes" argument to prevent over-writing old .GIF files
+
+  Version 7.0, 4/89
+
+    Restore from disk (from prior save-to-disk using v. 7.0 or later)
+    New types: Newton, Lambda, Mandelfp, Juliafp, Plasma, Lambdasine
+    Many new color-cycling options (for VGA adapters only)
+    New periodicity logic (Mark Peterson)
+    Initial displays recognize (and use) symmetry
+    Solid-guessing option (now the default)
+    Context-sensitive &lt;H&gt;elp
+    Customizable video mode configuration file (FRACTINT.CFG)
+    "Batch mode" option
+    Improved super-VGA support (with direct video read/writes)
+    Non-standard 360 x 480 x 256 color mode on a STANDARD IBM VGA!
+
+  Version 6.0, 2/89
+
+    32-bit integer math emulated for non-386 processors; FRACT386 renamed
+      FRACTINT
+    More video modes
+
+
+  Version 5.1, 1/89
+
+    Save to disk
+    New! Improved! (and Incompatible!) optional arguments format
+    "Correct" initial image aspect ratio
+    More video modes
+
+
+  Version 4.0, 12/88
+
+    Mouse support (Mike Kaufman)
+    Dynamic iteration limits
+    Color cycling
+    Dual-pass mode
+    More video modes, including "tweaked" modes for IBM VGA and register-
+      compatible adapters
+
+
+  Version 3.1, 11/88
+
+    Julia sets
+
+
+  Version 2.1, 10/23/88 (the "debut" on CIS)
+
+    Video table
+    CPU type detector
+
+
+  Version 2.0, 10/10/88
+
+    Zoom and pan
+
+
+  Version 1.0, 9/88
+
+    The original, blindingly fast, 386-specific 32-bit integer algorithm
+</pre>
+</body>
+</html>
