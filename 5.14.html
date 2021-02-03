@@ -1,0 +1,66 @@
+<html>
+<head>
+<title>Iterated Dynamics: Printer Parameters</title>
+</head>
+<body>
+<div>
+<pre>
+<a href="5.13.3.html">&lt; Prev</a>           <a href="index.html">Iterated Dynamics</a> Version 1.0          Page 142 <a href="5.15.html">Next &gt;</a></pre>
+</div>
+<pre>
+ 5.14 Printer Parameters
+
+  PRINTER=type[/resolution[/port#]]
+  Defines your printer setup. The SSTOOLS.INI file is a REAL handy place
+  to put this option, so that it's available whenever you have that
+  sudden, irresistible urge for hard copy.
+  Printer types:
+    IB  IBM-compatible (default)
+    EP  Epson-compatible
+    HP  LaserJet
+    CO  Star Micronics Color printer, supposedly Epson-color-compatible
+    PA  Paintjet
+    PS  PostScript
+    PSL Postscript, landscape mode
+    PL  Plotter using HP-GL
+  Resolution:
+    In dots per inch.
+    Epson/IBM: 60, 120, 240
+    LaserJet: 75, 150, 300
+    PaintJet: 90, 180
+    PostScript: 10 through 600, or special value 0 to print full page to
+    within about .4" of the edges (in portrait mode, width is full page and
+    height is adjusted to 3:4 aspect ratio)
+    Plotter: 1 to 10 for 1/Nth of page (e.g. 2 for 1/2 page)
+  Port:
+    1, 2, 3 for LPT1-3 via BIOS
+    11, 12, 13, 14 for COM1-4 via BIOS
+    21, 22 for LPT1 or LPT2 using direct port access (faster when it works)
+    31, 32 for COM1 or COM2 using direct port access
+
+  COMPORT=port/baud/options
+  Serial printer port initialization.
+  Port=1,2,3,etc.
+  Baud=115,150,300,600,1200,2400,4800,9600
+  Options: 7,8 | 1,2 | e,n,o (any order).
+  Example: comport=1/9600/n81 for COM1 set to 9600, no parity, 8 bits per
+  character, 1 stop bit.
+
+  LINEFEED=crlf|lf|cr
+  Specifies the control characters to emit at end of each line:  carriage
+  return and linefeed, just linefeed, or just carriage return.  The
+  default is crlf.
+
+  TITLE=yes
+  If specified, title information is added to printouts.
+
+  PRINTFILE=[&lt;path&gt;\]filename
+  Causes output data for the printer to be written to the named file on
+  disk instead of to a printer port. The filename is incremented by 1 each
+  time an image is printed - e.g. if the name is FRAC01.PRN, the second
+  print operation writes to FRAC02.PRN, etc. Existing files are not
+  overwritten - if the file exists, the filename is incremented to a new
+  name.
+</pre>
+</body>
+</html>

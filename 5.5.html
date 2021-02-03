@@ -1,0 +1,141 @@
+<html>
+<head>
+<title>Iterated Dynamics: Startup Parameters</title>
+</head>
+<body>
+<div>
+<pre>
+<a href="5.4.html">&lt; Prev</a>           <a href="index.html">Iterated Dynamics</a> Version 1.0          Page 122 <a href="5.6.html">Next &gt;</a></pre>
+</div>
+<pre>
+ 5.5 Startup Parameters
+
+  @FILENAME
+  Causes Fractint to read "filename" for parameters. When it finishes, it
+  resumes reading its own command line -- i.e., "FRACTINT MAXITER=250
+  @MYFILE PASSES=1" is legal. This option is only valid on the DOS command
+  line, as Fractint is not clever enough to deal with multiple
+  indirection.
+
+  @FILENAME/GROUPNAME
+  Like @FILENAME, but reads a named group of parameters from a parameter
+  file.  See "Parameter Files and the &lt;@&gt; Command" (p. 121).
+
+  TEMPDIR=[directory]
+  This command allows to specify the directory where Fractint writes
+  temporary files.
+
+  WORKDIR=[directory]
+  This command sets the directory where miscellaneous Fractint files get
+  written, including MAKEMIG.BAT and debugging files.
+
+  FILENAME=[name]
+  Causes Fractint to read the named file, which must either have been
+  saved from an earlier Fractint session or be a generic GIF file, and use
+  that as the starting point, bypassing the initial information screens.
+  The filetype is optional and defaults to .GIF. Non-Fractint GIF files
+  are restored as fractal type "plasma".
+
+  On the DOS command line you may omit FILENAME= and just give the file
+  name.
+
+  CURDIR=yes
+  Fractint uses directories set by various commands, possibly in the
+  SSTOOLS.INI file. If you want to try out some files in the current
+  directory, such as a modified copy of FRACTINT.FRM, you won't Fractint
+  to read the copy in your official FRM directory. Setting curdir=yes at
+  the command line will cause Fractint to look in the current directory
+  for requested files first before looking in the default directory set by
+  the other commands. Warning: &lt;tab&gt; screen may not reflect actual file
+  opened in cases where the file was opened in the DOS current directory.
+
+  MAKEPAR=parfile/entryname
+  This command invokes a batch facility to copy fractal and color
+  information stored in GIF files to PAR format. The syntax is:
+       fractint filename.gif makepar=parfile.par/entryname &gt;&gt; makepar.log
+  The entryname is optional and defaults to the name of the gif filename
+  if absent. Other parameters can appear before the makepar= command, but
+  anything after will ignored. If the parfile and entryname exist, the
+  entry will replace the previous entry. If the entry doesn't exist, it
+  will be added. If the parfile doesn't exist it will be created.
+  Redirection of output to a log file is possible in the DOS version
+  because all screen output is written to the standard output.
+
+  If you leave the GIF filename out of the command lime but add a map=
+  command, then the makepar command will write a PAR named for the color
+  map with only the colors in the PAR entry. This is a handy tool for
+  converting maps into compressed PAR colors entry. For example, you could
+  type:
+       fractint map=lyapunov.map makepar=mycolors &gt;&gt; makepar.log
+  This adds a colors-only PAR entry called lyapunov.map to mycolors.par.
+
+  MAXLINELENGTH=nnn
+  This command sets the maximum width of lines in a PAR entry.
+
+  COMMENT=[comment1]/[comment2]/[comment3]/[comment4]
+  Inserts comments into PAR files. These comments can include variables
+  that are expanded at the time the PAR file is created. Variables are
+  indicated by $varname$. Underscore characters are expanded to blanks.
+  If you want to include the special characters '$', '_', or '\' in a
+  comment, precede the character with '\'. Supported variables are:
+
+  Variable   Expands to   Example     Variable   Expands to   Example
+  ===============================     ===============================
+  $year$     time:year    1996        $date$     mo. day, yr  Aug 17, 1996
+  $month$    time:month   Aug         $calctime$ h:m:s        4:34:45.3
+  $day$      time:day     12          $version$  version      1940
+  $hour$     time:hour    21          $patch$    patch number 2
+  $min$      time:minute  34          $xdots$    horiz rez    640
+  $sec$      time:sec     14          $ydots$    vertical rez 480
+  $time$     time:h:m:s   21:34:14    $vidkey$   video key    SF4
+
+  You can leave any of the four comment fields unchanged by leaving that
+  position blank. For example, the command comment=//Created_$date$
+  inserts the text "Created Aug 17, 1996" into the third comment.
+
+  BATCH=yes
+  See Batch Mode (p. 148).
+
+  AUTOKEY=play|record
+  Specifying "play" runs Fractint in playback mode - keystrokes are read
+  from the autokey file (see next parameter) and interpreted as if they're
+  being entered from the keyboard.
+
+  Specifying "record" runs in recording mode - all keystrokes are recorded
+  in the autokey file.
+
+  See also Autokey Mode (p. 89).
+
+  AUTOKEYNAME=[filename]
+  Specifies the file name to be used in autokey mode. The default file
+  name is AUTO.KEY.
+
+  MAKEDOC[=filename]
+  Create Fractint documentation file (for printing or viewing with a text
+  editor) and then return to DOS.  Filename defaults to FRACTINT.DOC.
+  There's also a function in Fractint's online help which can be used to
+  produce the documentation file - use "Printing Fractint Documentation"
+  from the main help index.
+
+  MAXHISTORY=&lt;nnn&gt;
+  Fractint maintains a list of parameters of the past 10 images that you
+  generated in the current Fractint session. You can revisit these images
+  using the &lt;h&gt; and &lt;Ctrl-h&gt; commands. The maxhistory command allows you
+  to set the number of image parameter sets stored in memory. The tradeoff
+  is between the convenience of storing more images and memory use. Each
+  image in the circular history buffer takes up over 1200 bytes, so the
+  default value of ten images uses up 12,000 bytes of memory. If your
+  memory is very tight, and some memory-intensive Fractint operations are
+  giving "out of memory" messages, you can reduce maxistory to 2 or even
+  zero. Keep in mind that every time you color cycle or change from
+  integer to float or back, another image parameter set is saved, so the
+  default ten images are used up quickly.
+
+  FPU=387
+  This parameter is useful if you have an unusual coprocessor chip. If you
+  have a 80287 replacement chip with full 80387 functionality use
+  "FPU=387" to inform Fractint to take advantage of those extra 387
+  instructions.
+</pre>
+</body>
+</html>

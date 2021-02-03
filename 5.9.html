@@ -1,0 +1,205 @@
+<html>
+<head>
+<title>Iterated Dynamics: Color Parameters</title>
+</head>
+<body>
+<div>
+<pre>
+<a href="5.8.html">&lt; Prev</a>           <a href="index.html">Iterated Dynamics</a> Version 1.0          Page 128 <a href="5.10.html">Next &gt;</a></pre>
+</div>
+<pre>
+ 5.9 Color Parameters
+
+  INSIDE=nnn|maxiter|bof60|bof61|zmag|epscross|startrail|period|atan|fmod
+  Set the color of the interior: for example, "inside=0" makes the M-set
+  "lake" a stylish basic black. A setting of inside=maxiter makes the
+  inside color the same as the value of maxiter.
+
+  Eight more options reveal hidden structure inside the lake.
+  Inside=bof60 and inside=bof61, are named after the figures on pages 60
+  and 61 of "Beauty of Fractals".  Inside=zmag is a method of coloring
+  based on the magnitude of Z after the maximum iterations have been
+  reached.  The affect along the edges of the Mandelbrot is like thin-
+  metal welded sculpture.  Inside=fmod is a method of coloring based on
+  the magnitude of the last orbit within a set distance from the origin.
+  Inside=period colors pixels according to the period of their eventual
+  orbit.  Inside=atan colors by determining the angle in degrees the last
+  iterated value has with respect to the real axis, and using the absolute
+  value.  See Inside=bof60|bof61|zmag|fmod|period|atan (p. 184) for a
+  brilliant explanation of what these do!
+
+  Inside=epscross colors pixels green or yellow according to whether their
+  orbits swing close to the Y-axis or X-axis, respectively.
+  Inside=startrail has a coloring scheme based on clusters of points in
+  the orbits. Best with outside=&lt;nnn&gt;. For more information, see
+  Inside=epscross|startrail (p. 185).
+
+  Note that the "Look for finite attractor" option on the &lt;Y&gt; options
+  screen will override the selected inside option if an attractor is found
+  - see Finite Attractors (p. 185).
+
+  OUTSIDE=nnn|iter|real|imag|summ|mult|atan|fmod|tdis
+  The classic method of coloring outside the fractal is to color according
+  to how many iterations were required before Z reached the bailout value,
+  usually 4. This is the method used when OUTSIDE=iter.
+
+  However, when Z reaches bailout the real and imaginary components can be
+  at very diferent values.  OUTSIDE=real and OUTSIDE=imag color using the
+  iteration value plus the real or imaginary values.  OUTSIDE=summ uses
+  the sum of all these values.  These options can give a startling 3d
+  quality to otherwise flat images and can change some boring images to
+  wonderful ones. OUTSIDE=mult colors by multiplying the iteration by real
+  divided by imaginary. There was no mathematical reason for this, it just
+  seemed like a good idea.  OUTSIDE=atan colors by determining the angle
+  in degrees the last iterated value has with respect to the real axis,
+  and using the absolute value.
+
+  OUTSIDE=fmod colors pixels according to the magnitude of the last orbit
+  point which is within a set distance from the origin.  Then:
+    color = magnitude * colors / closeprox
+  The magnitude used for the comparison is now based on the same
+  calculation as is used for the bailout test.  The value of closeprox can
+  be varied interactively.  This feature was contributed by Iain Stirling.
+  There is a problem with the mandel fractal type when outside=fmod is
+  used with inside=bof6x and bailoutest=real, imag, or manr.  This is
+  likely due to changes made in the code so that bof images could be
+  reproduced.  Select a different fractal type that produces the default
+  mandel image to explore using these parameters.
+
+  OUTSIDE=tdis colors the pixels according to the total distance traveled
+  by the orbit.  This feature was suggested by Steve Robinson.
+
+  Outside=nnn sets the color of the exterior to some number of your
+  choosing: for example, "OUTSIDE=1" makes all points not INSIDE the
+  fractal set to color 1 (blue). Note that defining an OUTSIDE color
+  forces any image to be a two-color one: either a point is INSIDE the
+  set, or it's OUTSIDE it.
+
+  MAP=[filename]
+  Reads in a replacement color map from [filename]. This map replaces the
+  default color map of your video adapter. Requires a VGA or higher
+  adapter.  The difference between this argument and an alternate map read
+  in via &lt;L&gt; in color-command mode is that this one applies to the entire
+  run.  See Palette Maps (p. 88).
+
+  COLORS=@filename|colorspecification
+  Sets colors for the current image, like the &lt;L&gt; function in color
+  cycling and palette editing modes. Unlike the MAP= parameter, colors set
+  with COLORS= do not replace the default - when you next select a new
+  fractal type, colors will revert to their defaults.
+
+  COLORS=@filename tells Fractint to use a color map file named
+  "filename".  See Palette Maps (p. 88).
+
+  COLORS=colorspecification specifies the colors directly. The value of
+  "colorspecification" is rather long (768 characters for 256 color
+  modes), and its syntax is not documented here.  This form of the COLORS=
+  command is not intended for manual use - it exists for use by the &lt;B&gt;
+  command when saving the description of a nice image.
+
+  RECORDCOLORS=auto|comment|yes
+  Controls the method of writing colors in PAR files. Auto causes the
+  colors to be written in the colors=@mapfile form if the colors were
+  loaded from a map. Use this mode if you manage your colors using map
+  files. If you share PAR files with others, and have trouble remembering
+  to send them the map file, use RECORDCOLORS=comment or yes. These modes
+  force the writing of compressed color maps in the PAR file in all cases.
+  The only difference is that the 'comment' option also writes the mapfile
+  name in a comment so you can remember where the colors came from.
+
+  CYCLERANGE=nnn/nnn
+  Sets the range of color numbers to be animated during color cycling.
+  The default is 1/255, i.e. just color number 0 (usually black) is not
+  cycled.
+
+  CYCLELIMIT=nnn
+  Sets the speed of color cycling. Technically, the number of DAC
+  registers updated during a single vertical refresh cycle. Legal values
+  are 1 - 256, default is 55.
+
+  TEXTCOLORS=mono
+  Set text screen colors to simple black and white.
+
+  TEXTCOLORS=aa/bb/cc/...
+  Set text screen colors. Omit any value to use the default (e.g.
+  textcolors=////50 to set just the 5th value). Each value is a 2 digit
+  hexadecimal value; 1st digit is background color (from 0 to 7), 2nd
+  digit is foreground color (from 0 to F).
+  Color values are:
+      0 black     8 gray
+      1 blue      9 light blue
+      2 green     A light green
+      3 cyan      B light cyan
+      4 red       C light red
+      5 magenta   D light magenta
+      6 brown     E yellow
+      7 white     F bright white
+
+  31 colors can be specified, their meanings are as follows:
+    heading:
+      1  Fractint version info
+      2  heading line development info (not used in released version)
+    help:
+      3  sub-heading
+      4  main text
+      5  instructions at bottom of screen
+      6  hotlink field
+      7  highlighted (current) hotlink
+    menu, selection boxes, parameter input boxes:
+      8  background around box and instructions at bottom
+      9  emphasized text outside box
+     10  low intensity information in box
+     11  medium intensity information in box
+     12  high intensity information in box (e.g. heading)
+     13  current keyin field
+     14  current keyin field when it is limited to one of n values
+     15  current choice in multiple choice list
+     16  speed key prompt in multiple choice list
+     17  speed key keyin in multiple choice list
+    general (tab key display, IFS parameters, "thinking" display):
+     18  high intensity information
+     19  medium intensity information
+     20  low intensity information
+     21  current keyin field
+    disk video:
+     22  background around box
+     23  high intensity information
+     24  low intensity information
+    diagnostic messages:
+     25  error
+     26  information
+    credits screen:
+     27  bottom lines
+     28  high intensity divider line
+     29  low intensity divider line
+     30  primary authors
+     31  contributing authors
+  The default is
+     textcolors=1F/1A/2E/70/28/71/31/78/70/17/1F/1E/2F/3F/5F/07/
+                0D/71/70/78/0F/70/0E/0F/4F/20/17/20/28/0F/07
+  (In a real command file, all values must be on one line.)
+
+  OLDDEMMCOLORS=yes|no
+  Sets the coloring scheme used with the distance estimator method to the
+  pre-version 16 scheme.
+
+  TRUECOLOR=yes
+  You can save either the default color scheme or the iteration escape
+  value to a file called FRACTxxx.TGA.  This will allow experimentation
+  with truecolor algorithms.  A C language source file that reads the file
+  when iterates are used, is provided. Someday we'll have REAL truecolor
+  support ...
+
+  TRUEMODE=def|iter
+  Determines whether the FRACTxxx.TGA file produced when TRUECOLOR=yes
+  contains the iteration value or the default coloring scheme.
+
+  NOBOF=yes|no
+  Setting this parameter to yes causes the bof60 and bof61 inside options
+  to function the same as the other inside options by making the per pixel
+  initialization the same.  The per pixel initialization is normally
+  different for the bof60 and bof61 options to reproduce the images in the
+  book, "The Beauty of Fractals".  The default is no.
+</pre>
+</body>
+</html>

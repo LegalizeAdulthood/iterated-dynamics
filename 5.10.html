@@ -1,0 +1,72 @@
+<html>
+<head>
+<title>Iterated Dynamics: Doodad Parameters</title>
+</head>
+<body>
+<div>
+<pre>
+<a href="5.9.html">&lt; Prev</a>           <a href="index.html">Iterated Dynamics</a> Version 1.0          Page 132 <a href="5.11.html">Next &gt;</a></pre>
+</div>
+<pre>
+ 5.10 Doodad Parameters
+
+  LOGMAP=yes|old|n
+  Selects a compressed relationship between escape-time iterations and
+  palette colors.  See "Logarithmic Palettes and Color Ranges" (p. 93)
+  for details.
+
+  LOGMODE=fly/table|auto
+  Forces the use of the on-the-fly routine or the logarithm table for the
+  calculation of log palettes.  Not normally needed.  The auto option
+  cannot be used at the same time as the other two.  Auto causes the
+  logmap value to be automatically recalculated when zooming.  Changing
+  almost anything will turn this feature off.  Set logmode=auto from the
+  &lt;g&gt; screen prompt.
+
+  RANGES=nn/nn/nn/...
+  Specifies ranges of escape-time iteration counts to be mapped to each
+  color number.  See "Logarithmic Palettes and Color Ranges" (p. 93) for
+  details.
+
+  DISTEST=nnn/nnn
+  A nonzero value in the first parameter enables the distance estimator
+  method. The second parameter specifies the "width factor", defaults to
+  71.  See "Distance Estimator Method" (p. 91) for details.
+
+  DECOMP=2|4|8|16|32|64|128|256
+  Invokes the corresponding decomposition coloring scheme.  See
+  Decomposition (p. 93) for details.
+
+  BIOMORPH=nnn
+  Turn on biomorph option; set affected pixels to color nnn.  See
+  Biomorphs (p. 95) for details.
+
+  POTENTIAL=maxcolor[/slope[/modulus[/16bit]]]
+  Enables the "continuous potential" coloring mode for all fractal types
+  except plasma clouds, attractor types such as lorenz, and IFS. The four
+  arguments define the maximum color value, the slope of the potential
+  curve, the modulus "bailout" value, and whether 16 bit values are to be
+  calculated.  Example: "POTENTIAL=240/2000/40/16bit". The Mandelbrot and
+  Julia types ignore the modulus bailout value and use their own hardwired
+  value of 4.0 instead.  See Continuous Potential (p. 95) for details.
+
+  INVERT=nn/nn/nn
+  Turns on inversion. The parameters are radius of inversion, x-coordinate
+  of center, and y-coordinate of center. -1 as the first parameter sets
+  the radius to 1/6 the smaller screen dimension; no x/y parameters
+  defaults to center of screen. The values are displayed with the &lt;Tab&gt;
+  command.  See Inversion (p. 92) for details.
+
+  FINATTRACT=no|yes
+  Another option to show coloring inside some Julia "lakes" to show escape
+  time to finite attractors. Works with lambda, magnet types, and possibly
+  others.  See Finite Attractors (p. 185) for more information.
+
+  EXITNOASK=yes
+  This option forces Fractint to bypass the final "are you sure?" exit
+  screen when the ESCAPE key is pressed from the main image-generation
+  screen.  Added at the request of Ward Christensen.  It's his funeral
+  &lt;grin&gt;.
+</pre>
+</body>
+</html>

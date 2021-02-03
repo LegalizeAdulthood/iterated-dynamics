@@ -1,0 +1,34 @@
+<html>
+<head>
+<title>Iterated Dynamics: Using the DOS Command Line</title>
+</head>
+<body>
+<div>
+<pre>
+<a href="5.0.html">&lt; Prev</a>           <a href="index.html">Iterated Dynamics</a> Version 1.0          Page 120 <a href="5.2.html">Next &gt;</a></pre>
+</div>
+<pre>
+ 5.1 Using the DOS Command Line
+
+  You can specify parameters when you start Fractint from DOS by using a
+  command like:
+
+      FRACTINT SOUND=OFF FILENAME=MYIMAGE.GIF
+
+  The individual parameters are separated by one or more spaces (an
+  parameter itself may not include spaces). Upper or lower case may be
+  used, and parameters can be in any order.
+
+  Since DOS commands are limited to 128 characters, Fractint has a special
+  command you can use when you have a lot of startup parameters (or have a
+  set of parameters you use frequently):
+
+      FRACTINT @MYFILE
+
+  When @filename is specified on the command line, Fractint reads
+  parameters from the specified file as if they were keyed on the command
+  line.  You can create the file with a text editor, putting one
+  "keyword=value" parameter on each line.
+</pre>
+</body>
+</html>

@@ -1,0 +1,67 @@
+<html>
+<head>
+<title>Iterated Dynamics: Parameter Files and the &lt;@&gt; Command</title>
+</head>
+<body>
+<div>
+<pre>
+<a href="5.2.html">&lt; Prev</a>           <a href="index.html">Iterated Dynamics</a> Version 1.0          Page 121 <a href="5.4.html">Next &gt;</a></pre>
+</div>
+<pre>
+ 5.3 Parameter Files and the &lt;@&gt; Command
+
+  You can change parameters on-the-fly while running Fractint by using the
+  &lt;@&gt; or &lt;2&gt; command and a parameter file. Parameter files contain named
+  groups of parameters, looking something like this:
+
+    quickdraw {      ; a set of parameters named quickdraw
+       maxiter=150
+       float=no
+       }
+    slowdraw {       ; another set of parameters
+       maxiter=2000
+       float=yes
+       }
+
+  If you use the &lt;@&gt; or &lt;2&gt; command and select a parameter file containing
+  the above example, Fractint will show two choices: quickdraw and
+  slowdraw. You move the cursor to highlight one of the choices and press
+  &lt;Enter&gt; to set the parameters specified in the file by that choice.
+
+  The default parameter file name is FRACTINT.PAR. A different file can be
+  selected with the "parmfile=" option, or by using &lt;@&gt; or &lt;2&gt; and then
+  hitting &lt;F6&gt;.
+
+  You can create parameter files with a text editor, or for some uses, by
+  using the &lt;B&gt; command. Parameter files can be used in a number of ways,
+  some examples:
+
+    o To save the parameters for a favorite image. Fractint can do this
+      for you with the &lt;B&gt; command.
+
+    o To save favorite sets of 3D transformation parameters. Fractint can
+      do this for you with the &lt;B&gt; command.
+
+    o To set up different sets of parameters you use occasionally. For
+      instance, if you have two printers, you might want to set up a group
+      of parameters describing each.
+
+    o To save image parameters for later use in batch mode - see Batch
+      Mode (p. 148).
+
+  Formulas, ifs, and lsystem entries referred to in a parameter entry can
+  be included in a .par file by adding the prefix frm:, ifs:, or lsys:
+  respectively, for example frm:myformula {rest of that formula}.
+  Note that the prefix is a label, not part of the formula name, so the
+  reference in the image entry would be formulaname=myformula. The
+  formula, ifs, and lsystem entries added to a parfile are accessed only
+  when the image entry in the parfile is run. To make these formulas
+  generally
+  accessible, they must be added to a .frm, .ifs or .l file (without the
+  identifier prefix, of course).
+
+  See "Parameter Save/Restore Commands" (p. 30) for details about the &lt;@&gt;
+  and &lt;B&gt; commands.
+</pre>
+</body>
+</html>

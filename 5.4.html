@@ -1,0 +1,35 @@
+<html>
+<head>
+<title>Iterated Dynamics: General Parameter Syntax</title>
+</head>
+<body>
+<div>
+<pre>
+<a href="5.3.html">&lt; Prev</a>           <a href="index.html">Iterated Dynamics</a> Version 1.0          Page 122 <a href="5.5.html">Next &gt;</a></pre>
+</div>
+<pre>
+ 5.4 General Parameter Syntax
+
+  Parameters must be separated by one or more spaces.
+
+  Upper and lower case can be used in keywords and values.
+
+  Anything on a line following a ; (semi-colon) is ignored, i.e. is a
+  comment.
+
+  In parameter files and SSTOOLS.INI:
+    o Individual parameters can be entered on separate lines.
+    o Long values can be split onto multiple lines by ending a line with a
+      \ (backslash) - leading spaces on the following line are ignored,
+      the information on the next line from the first non-blank character
+      onward is appended to the prior line.
+
+  Some terminology:
+    KEYWORD=nnn              enter a number in place of "nnn"
+    KEYWORD=[filename]       you supply filename
+    KEYWORD=yes|no|whatever  choose one of "yes", "no", or "whatever"
+    KEYWORD=1st[/2nd[/3rd]]  the slash-separated parameters "2nd" and
+                             "3rd" are optional
+</pre>
+</body>
+</html>
