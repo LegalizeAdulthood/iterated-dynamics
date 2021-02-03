@@ -1,0 +1,85 @@
+<html>
+<head>
+<title>Iterated Dynamics: Select Fill Type Screen</title>
+</head>
+<body>
+<div>
+<pre>
+<a href="4.1.html">&lt; Prev</a>           <a href="index.html">Iterated Dynamics</a> Version 1.0          Page 109 <a href="4.3.html">Next &gt;</a></pre>
+</div>
+<pre>
+ 4.2 Select Fill Type Screen
+
+  This option exists because in the course of the 3D projection, portions
+  of the original image may be stretched to fit the new surface. Points of
+  an image that formerly were right next to each other, now may have a
+  space between them. This option generally determines what to do with the
+  space between the mapped dots. It is not used if you have selected a
+  value for RAY other than 0.
+
+  For an illustration, pick the second option "just draw the points",
+  which just maps points to corresponding points. Generally this will
+  leave empty space between many of the points. Therefore you can choose
+  various algorithms that "fill in" the space between the points in
+  various ways.
+
+  Later, try the first option "make a surface grid." This option will make
+  a grid of the surface which is as many divisions in the original "y"
+  direction as was set in "coarse" in the first screen. It is very fast,
+  and can give you a good idea what the final relationship of parts of
+  your picture will look like.
+
+  Later, try the second option "connect the dots (wire frame)", then
+  "surface fills" - "colors interpolated" and "colors not interpolated",
+  the general favorites of the authors. Solid fill, while it reveals the
+  pseudo-geology under your pseudo-landscape, inevitably takes longer.
+
+  Later, try the light source fill types. These two algorithms allow you
+  to position the "sun" over your "landscape." Each pixel is colored
+  according to the angle the surface makes with an imaginary light source.
+  You will be asked to enter the three coordinates of the vector pointing
+  toward the light in a following parameter screen - see Light Source
+  Parameters (p. 113).
+
+  "Light source before transformation" uses the illumination direction
+  without transforming it. The light source is fixed relative to your
+  computer screen.  If you generate a sequence of images with progressive
+  rotation, the effect is as if you and the light source are fixed and the
+  object is rotating. Therefore as the object rotates features of the
+  object move in and out of the light.  This fill option was incorrect
+  prior to version 16.1, and has been changed.
+
+  "Light source after transformation" applies the same transformation to
+  both the light direction and the object. Since both the light direction
+  and the object are transformed, if you generate a sequence of images
+  with the rotation progressively changed, the effect is as if the image
+  and the light source are fixed in relation to each other and you orbit
+  around the image. The illumination of features on the object is
+  constant, but you see the object from different angles. This fill option
+  was correct in earlier Fractint versions and has not been changed.
+
+  For ease of discussion we will refer to the following fill types by
+  these numbers:
+      1 - surface grid
+      2 - (default) - no fill at all - just draw the dots
+      3 - wire frame - joins points with lines
+      4 - surface fill - (colors interpolated)
+      5 - surface fill - (interpolation turned off)
+      6 - solid fill - draws lines from the "ground" up to the point
+      7 - surface fill with light model - calculated before 3D transforms
+      8 - surface fill with light model - calculated after 3D transforms
+
+  Types 4, 7, and 8 interpolate colors when filling, making a very smooth
+  fill if the palette is continuous. This may not be desirable if the
+  palette is not continuous. Type 5 is the same as type 4 with
+  interpolation turned off. You might want to use fill type 5, for
+  example, to project a .GIF photograph onto a sphere. With type 4, you
+  might see the filled-in points, since chances are the palette is not
+  continuous; type 5 fills those same points in with the colors of
+  adjacent pixels. However, for most fractal images, fill type 4 works
+  better.
+
+  This screen is not available if you have selected a ray tracing option.
+</pre>
+</body>
+</html>
