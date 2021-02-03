@@ -1,0 +1,41 @@
+<html>
+<head>
+<title>Iterated Dynamics: Decomposition</title>
+</head>
+<body>
+<div>
+<pre>
+<a href="3.5.html">&lt; Prev</a>           <a href="index.html">Iterated Dynamics</a> Version 1.0          Page 93 <a href="3.7.html">Next &gt;</a></pre>
+</div>
+<pre>
+ 3.6 Decomposition
+
+  You'll remember that most fractal types are calculated by iterating a
+  simple function of a complex number, producing another complex number,
+  until either the number exceeds some pre-defined "bailout" value, or the
+  iteration limit is reached. The pixel corresponding to the starting
+  point is then colored based on the result of that calculation.
+
+  The decomposition option ("decomp=", on the &lt;X&gt; screen) toggles to
+  another coloring protocol.  Here the points are colored according to
+  which quadrant of the complex plane (negative real/positive imaginary,
+  positive real/positive imaginary, etc.) the final value is in. If you
+  use 4 as the parameter, points ending up in each quadrant are given
+  their own color; if 2 (binary decomposition), points in alternating
+  quadrants are given 2 alternating colors.
+
+  The result is a kind of warped checkerboard coloring, even in areas that
+  would ordinarily be part of a single contour. Remember, for the M-set
+  all points whose final values exceed 2 (by any amount) after, say, 80
+  iterations are normally the same color; under decomposition, Fractint
+  runs [bailout-value] iterations and then colors according to where the
+  actual final value falls on the complex plane.
+
+  When using decomposition, a higher bailout value will give a more
+  accurate plot, at some expense in speed.  You might want to set the
+  bailout value (in the parameters prompt following selection of a new
+  fractal type; present for most but not all types) to a higher value than
+  the default.  A value of about 50 is a good compromise for M/J sets.
+</pre>
+</body>
+</html>

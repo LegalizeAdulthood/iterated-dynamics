@@ -1,0 +1,46 @@
+<html>
+<head>
+<title>Iterated Dynamics: Starfields</title>
+</head>
+<body>
+<div>
+<pre>
+<a href="3.9.html">&lt; Prev</a>           <a href="index.html">Iterated Dynamics</a> Version 1.0          Page 97 <a href="3.11.html">Next &gt;</a></pre>
+</div>
+<pre>
+ 3.10 Starfields
+
+  Once you have generated your favorite fractal image, you can convert it
+  into a fractal starfield with the 'a' transformation (for 'astronomy'? -
+  once again, all of the good letters were gone already).  Stars are
+  generated on a pixel-by-pixel basis - the odds that a particular pixel
+  will coalesce into a star are based (partially) on the color index of
+  that pixel.
+
+  (The following was supplied by Mark Peterson, the starfield author).
+
+  If the screen were entirely black and the 'Star Density per Pixel' were
+  set to 30 then a starfield transformation would create an evenly
+  distributed starfield with an average of one star for every 30 pixels.
+
+  If you're on a 320x200 screen then you have 64000 pixels and would end
+  up with about 2100 stars.  By introducing the variable of 'Clumpiness'
+  we can create more stars in areas that have higher color values.  At
+  100% Clumpiness a color value of 255 will change the average of finding
+  a star at that location to 50:50.  A lower clumpiness values will lower
+  the amount of probability weighting.  To create a spiral galaxy draw
+  your favorite spiral fractal (IFS, Julia, or Mandelbrot) and perform a
+  starfield transformation.  For general starfields I'd recommend
+  transforming a plasma fractal.
+
+  Real starfields have many more dim stars than bright ones because very
+  few stars are close enough to appear bright.  To achieve this effect the
+  program will create a bell curve based on the value of ratio of Dim
+  stars to bright stars.  After calculating the bell curve the curve is
+  folded in half and the peak used to represent the number of dim stars.
+
+  Starfields can only be shown in 256 colors.  Fractint will automatically
+  try to load ALTERN.MAP and abort if the map file cannot be found.
+</pre>
+</body>
+</html>

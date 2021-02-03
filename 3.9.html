@@ -1,0 +1,126 @@
+<html>
+<head>
+<title>Iterated Dynamics: Continuous Potential</title>
+</head>
+<body>
+<div>
+<pre>
+<a href="3.8.html">&lt; Prev</a>           <a href="index.html">Iterated Dynamics</a> Version 1.0          Page 95 <a href="3.10.html">Next &gt;</a></pre>
+</div>
+<pre>
+ 3.9 Continuous Potential
+
+  Note: This option can only be used with 256 color modes.
+
+  Fractint's images are usually calculated by the "level set" method,
+  producing bands of color corresponding to regions where the calculation
+  gives the same value. When "3D" transformed (see "3D" Images (p. 106)),
+  most images other than plasma clouds are like terraced landscapes: most
+  of the surface is either horizontal or vertical.
+
+  To get the best results with the "illuminated" 3D fill options 5 and 6,
+  there is an alternative approach that yields continuous changes in
+  colors.
+
+  Continuous potential is approximated by calculating
+
+           potential =  log(modulus)/2^iterations
+
+  where "modulus" is the orbit value (magnitude of the complex number)
+  when the modulus bailout was exceeded, at the "iterations" iteration.
+  Clear as mud, right?
+
+  Fortunately, you don't have to understand all the details. However,
+  there ARE a few points to understand. First, Fractint's criterion for
+  halting a fractal calculation, the "modulus bailout value", is generally
+  set to 4.  Continuous potential is inaccurate at such a low value.
+
+  The bad news is that the integer math which makes the "mandel" and
+  "julia" types so fast imposes a hard-wired maximum value of 127. You can
+  still make interesting images from those types, though, so don't avoid
+  them. You will see "ridges" in the "hillsides." Some folks like the
+  effect.
+
+  The good news is that the other fractal types, particularly the
+  (generally slower) floating point algorithms, have no such limitation.
+  The even better news is that there is a floating-point algorithm for the
+  "mandel" and "julia" types.  To force the use of a floating-point
+  algorithm, use Fractint with the "FLOAT=YES" command-line toggle.  Only
+  a few fractal types like plasma clouds, the Barnsley IFS type, and
+  "test" are unaffected by this toggle.
+
+  The parameters for continuous potential are:
+      potential=maxcolor[/slope[/modulus[/16bit]]]
+  These parameters are present on the &lt;Y&gt; options screen.
+
+  "Maxcolor" is the color corresponding to zero potential, which plots as
+  the TOP of the mountain. Generally this should be set to one less than
+  the number of colors, i.e. usually 255. Remember that the last few
+  colors of the default IBM VGA palette are BLACK, so you won't see what
+  you are really getting unless you change to a different palette.
+
+  "Slope" affects how rapidly the colors change -- the slope of the
+  "mountains" created in 3D. If this is too low, the palette will not
+  cover all the potential values and large areas will be black. If it is
+  too high, the range of colors in the picture will be much less than
+  those available.  There is no easy way to predict in advance what this
+  value should be.
+
+  "Modulus" is the bailout value used to determine when an orbit has
+  "escaped". Larger values give more accurate and smoother potential. A
+  value of 500 gives excellent results. As noted, this value must be &lt;128
+  for the integer fractal types (if you select a higher number, they will
+  use 127).
+
+  "16bit":  If you transform a continuous potential image to 3D, the
+  illumination modes 5 and 6 will work fine, but the colors will look a
+  bit granular. This is because even with 256 colors, the continuous
+  potential is being truncated to integers. The "16bit" option can be used
+  to add an extra 8 bits of goodness to each stored pixel, for a much
+  smoother result when transforming to 3D.
+
+  Fractint's visible behavior is unchanged when 16bit is enabled, except
+  that solid guessing and boundary tracing are not used. But when you save
+  an image generated with 16bit continuous potential:
+   o The saved file is a fair bit larger.
+   o Fractint names the file with a .POT extension instead of .GIF, if you
+     didn't specify an extension in "savename".
+   o The image can be used as input to a subsequent &lt;3&gt; command to get the
+     promised smoother effect.
+   o If you happen to view the saved image with a GIF viewer other than
+     Fractint, you'll find that it is twice as wide as it is supposed to
+     be. (Guess where the extra goodness was stored!) Though these files
+     are structurally legal GIF files the double-width business made us
+     think they should perhaps not be called GIF - hence the .POT filename
+     extension.
+
+  A 16bit (.POT) file can be converted to an ordinary 8 bit GIF by
+  &lt;R&gt;estoring it, changing "16bit" to "no" on the &lt;Y&gt; options screen, and
+  &lt;S&gt;aving.
+
+  You might find with 16bit continuous potential that there's a long delay
+  at the start of an image, and disk activity during calculation. Fractint
+  uses its disk-video cache area to store the extra 8 bits per pixel - if
+  there isn't sufficient memory available, the cache will page to disk.
+
+  The following commands can be used to recreate the image that Mark
+  Peterson first prototyped for us, and named "MtMand":
+
+          TYPE=mandel
+          CORNERS=-0.19920/-0.11/1.0/1.06707
+          INSIDE=255
+          MAXITER=255
+          POTENTIAL=255/2000/1000/16bit
+          PASSES=1
+          FLOAT=yes
+
+  Note that prior to version 15.0, Fractint:
+   o Produced "16 bit TGA potfiles" This format is no longer generated,
+     but you can still (for a release or two) use &lt;R&gt; and &lt;3&gt; with those
+     files.
+   o Assumed "inside=maxit" for continuous potential. It now uses the
+     current "inside=" value - to recreate prior results you must be
+     explicit about this parameter.
+</pre>
+</body>
+</html>
