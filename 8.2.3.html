@@ -1,0 +1,92 @@
+<html>
+<head>
+<title>Iterated Dynamics: Arbitrary Precision and Deep Zooming</title>
+</head>
+<body>
+<div>
+<pre>
+<a href="8.2.2.html">&lt; Prev</a>           <a href="index.html">Iterated Dynamics</a> Version 1.0          Page 167 <a href="8.2.4.html">Next &gt;</a></pre>
+</div>
+<pre>
+ 8.2.3 Arbitrary Precision and Deep Zooming
+
+  The zoom limit of Fractint is approximately 10^15 (10 to the fifteenth
+  power). This limit is due to the precision possible with the computer
+  representation of numbers as 64 bit double precision data. To give you
+  an idea of just how big a magnification 10^15 is, consider this. At the
+  scale of your computer screen while displaying a tiny part of the
+  Mandelbrot set at the deepest possible zoom, the entire Mandelbrot set
+  would be many millions of miles wide, as big as the orbit of Jupiter.
+
+  Big as this zoom magnification is, your PC can do better using something
+  called arbitrary precision math. Instead of using 64 bit double
+  precision to represent numbers, your computer software allocates as much
+  memory as needed to create a data type supporting as many decimals of
+  precision as you want.
+
+  Incorporation of this feature in Fractint was inspired by Jay Hill and
+  his DEEPZOOM program which uses the shareware MFLOAT programming
+  library.  Several of the Stone Soup programmers noticed Jay's posts in
+  the Internet sci.fractals newsgroup and began to investigate adding
+  arbitrary precision to Fractint. High school math and physics teacher
+  Wes Loewer wrote an arbitrary precision library in both 80x86 assembler
+  and C, and the Stone Soup team incorporated Wes's library into Fractint.
+  Initially, support was added for fractal types mandel, julia, manzpower,
+  and julzpower.
+
+  Normally, when you reach Fractint's zoom limit, Fractint simply refuses
+  to let you zoom any more. When using the fractal types that support
+  arbitrary precision, you will not reach this limit, but can keep on
+  zooming. When you pass the threshold between double precision and
+  arbitrary precision, Fractint will dramatically slow down. The &lt;tab&gt;
+  status screen can be used to verify that Fractint is indeed using
+  arbitrary precision.
+
+  Fractals with arbitrary precision are SLOW, as much as ten times slower
+  than if the math were done with your math coprocessor, and even slower
+  simply because the zoom depth is greater. The good news, if you want to
+  call it that, is that your math coprocessor is not needed;
+  coprocessorless machines can produce deep zooms with the same glacial
+  slowness as machines with coprocessors!
+
+  Maybe the real point of arbitrary precision math is to prolong the
+  "olden" days when men were men, women were women, and real fractal
+  programmers spent weeks generating fractals. One of your Stone Soup
+  authors has a large monitor that blinks a bit when changing video modes-
+  -PCs have gotten so fast that Fractint finishes the default 320x200
+  Mandelbrot before the monitor can even complete its blinking transition
+  to graphics mode! Computers are getting faster every day, and soon a new
+  generation of fractal lovers might forget that fractal generation is
+  *supposed* to be slow, just as it was in Grandpa's day when they only
+  had Pentium chips. The solution to this educational dilemma is
+  Fractint's arbitrary precision feature. Even the newest sexium and
+  septium machines are going to have to chug for days or weeks at the
+  extreme zoom depths now possible ...
+
+  So how far can you zoom? How does 10^1600 sound--roughly 1600 decimal
+  digits of precision. To put *this* magnification in perspective, the
+  "tiny" ratio of 10^61 is the ratio of the entire visible universe to the
+  smallest quantum effects. With 1600 digits to work with, you can expand
+  an electron-sized image up to the size of the visible universe, not once
+  but more than twenty times. So you can examine screen-sized portions of
+  a Mandelbrot set so large all but a tiny part of it would be vastly
+  farther away than the billion or so light year limit of our best
+  telescopes.
+
+  Lest anyone suppose that we Stone Soupers suffer from an inflated pride
+  over having thus spanned the Universe, current inflationary cosmological
+  theories estimate the size of the universe to be unimaginably larger
+  than the "tiny" part we can see.
+
+  Note: many of Fractint's options do not work with arbitrary precision.
+  To experiment with arbitrary precision at the speedier ordinary
+  magnifications, start Fractint with the debug=3200 command-line option.
+  With the exception of mandel and manzpower perturbations, values that
+  would normally be entered in the Parameters and Coordinates screens need
+  to be entered using the command-line interface or .par files.  Other
+  known things that do not yet work with arbitrary precision are:
+  biomorph, decomp, distance estimator, inversion, Julia-Mandel switch,
+  history, orbit-in-window, and the browse feature.
+</pre>
+</body>
+</html>
