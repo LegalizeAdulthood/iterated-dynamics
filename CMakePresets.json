@@ -13,16 +13,28 @@
       "binaryDir": "${sourceDir}/../build-${presetName}"
     },
     {
+      "name": "compile-commands",
+      "hidden": true,
+      "description": "Generate a compile_commands.json database",
+      "cacheVariables": {
+        "CMAKE_EXPORT_COMPILE_COMMANDS": true
+      }
+    },
+    {
       "name": "vcpkg",
       "hidden": true,
       "description": "Configure the toolchain for vcpkg",
       "toolchainFile": "${sourceDir}/vcpkg/scripts/buildsystems/vcpkg.cmake"
     },
-
     {
       "name": "default",
       "displayName": "Configure with default settings",
       "inherits": [ "sibling-build-preset", "vcpkg" ]
+    },
+    {
+      "name": "cppcheck",
+      "displayName": "Configure for use with cppcheck",
+      "inherits": [ "sibling-build-preset", "compile-commands" ]
     }
   ],
   "buildPresets": [
