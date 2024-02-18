@@ -64,7 +64,6 @@ using BYTE = U8;
 #endif
 #endif
 
-#ifdef unix                     // Unix machine
 typedef int sigfunc(int);
 #ifndef BYTE_ORDER
 // change for little endians that don't have this defined elsewhere (endian.h)
@@ -81,7 +80,6 @@ typedef int sigfunc(int);
 #       define DOTSLASH       "./"
 #       define DOTDOTSLASH    "../"
 #       include "unix.h"
-#    endif // unix
 #endif // _WIN32
 // Uses big_access32(), big_set32(), ... functions instead of macros.
 // Some little endian machines may require this as well.
