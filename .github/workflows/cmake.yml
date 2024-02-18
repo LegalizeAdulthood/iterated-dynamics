@@ -21,10 +21,18 @@ jobs:
   windows-build:
     runs-on: windows-latest
     
+    env: 
+      VCPKG_BINARY_SOURCES: "clear;x-gha,readwrite"
+
     steps:
     - uses: actions/checkout@v4.1.1
       with:
         submodules: true
+    - uses: actions/github-script@v6
+      with:
+        script: |
+          core.exportVariable('ACTIONS_CACHE_URL', process.env.ACTIONS_CACHE_URL || '');
+          core.exportVariable('ACTIONS_RUNTIME_TOKEN', process.env.ACTIONS_RUNTIME_TOKEN || '');
 
     - name: CMake workflow
       run: cmake --workflow --preset default
