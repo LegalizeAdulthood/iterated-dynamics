@@ -6,9 +6,13 @@ jobs:
     name: cppcheck
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout Repository
+        uses: actions/checkout@v4
           
-      - name: cppcheck
+      - name: Configure Compilation Database
+        run: cmake --preset cppcheck
+  
+      - name: Run CppCheck
         uses: deep5050/cppcheck-action@v3.0
         with:
           github_token: ${{secrets.GITHUB_TOKEN}}
@@ -24,5 +28,7 @@ jobs:
             --suppress=invalidscanf
             --inline-suppr
             -I headers hc common headers unix win32
+            -ifractint
 
-      - run: cmake -E cat cppcheck_report.txt
+      - name: Print Report
+        run: cmake -E cat cppcheck_report.txt
