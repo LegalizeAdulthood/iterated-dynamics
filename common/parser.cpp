@@ -188,11 +188,11 @@ bool g_is_mandelbrot = true;
 unsigned int g_operation_index;
 unsigned int g_variable_index;
 unsigned int g_last_op;
-static unsigned int n;
+static unsigned int s_n;
 static unsigned int NextOp;
 static unsigned int InitN;
 static int paren;
-static bool ExpectingArg = false;
+static bool s_expecting_arg{};
 int InitLodPtr;
 int InitStoPtr;
 int InitOpPtr;
@@ -2681,15 +2681,15 @@ static bool ParseStr(char const *Str, int pass)
     OpPtr = g_load_index;
     paren = OpPtr;
     g_last_init_op = paren;
-    ExpectingArg = true;
-    for (n = 0; Str[n]; n++)
+    s_expecting_arg = true;
+    for (s_n = 0; Str[s_n]; s_n++)
     {
-        if (!Str[n])
+        if (!Str[s_n])
         {
             break;
         }
-        InitN = n;
-        switch (Str[n])
+        InitN = s_n;
+        switch (Str[s_n])
         {
         case ' ':
         case '\t':
@@ -2703,10 +2703,10 @@ static bool ParseStr(char const *Str, int pass)
             paren--;
             break;
         case '|':
-            if (Str[n+1] == '|')
+            if (Str[s_n+1] == '|')
             {
-                ExpectingArg = true;
-                n++;
+                s_expecting_arg = true;
+                s_n++;
                 o[g_operation_index].f = StkOR;
                 o[g_operation_index++].p = 7 - (paren + Equals)*15;
             }
@@ -2725,9 +2725,9 @@ static bool ParseStr(char const *Str, int pass)
             break;
         case ',':
         case ';':
-            if (!ExpectingArg)
+            if (!s_expecting_arg)
             {
-                ExpectingArg = true;
+                s_expecting_arg = true;
                 o[g_operation_index].f = (void(*)())nullptr;
                 o[g_operation_index++].p = 15;
                 o[g_operation_index].f = StkClr;
@@ -2737,7 +2737,7 @@ static bool ParseStr(char const *Str, int pass)
             }
             break;
         case ':':
-            ExpectingArg = true;
+            s_expecting_arg = true;
             o[g_operation_index].f = (void(*)())nullptr;
             o[g_operation_index++].p = 15;
             o[g_operation_index].f = EndInit;
@@ -2747,12 +2747,12 @@ static bool ParseStr(char const *Str, int pass)
             g_last_init_op = 10000;
             break;
         case '+':
-            ExpectingArg = true;
+            s_expecting_arg = true;
             o[g_operation_index].f = StkAdd;
             o[g_operation_index++].p = 4 - (paren + Equals)*15;
             break;
         case '-':
-            if (ExpectingArg)
+            if (s_expecting_arg)
             {
                 o[g_operation_index].f = StkNeg;
                 o[g_operation_index++].p = 2 - (paren + Equals)*15;
@@ -2761,26 +2761,26 @@ static bool ParseStr(char const *Str, int pass)
             {
                 o[g_operation_index].f = StkSub;
                 o[g_operation_index++].p = 4 - (paren + Equals)*15;
-                ExpectingArg = true;
+                s_expecting_arg = true;
             }
             break;
         case '&':
-            ExpectingArg = true;
-            n++;
+            s_expecting_arg = true;
+            s_n++;
             o[g_operation_index].f = StkAND;
             o[g_operation_index++].p = 7 - (paren + Equals)*15;
             break;
         case '!':
-            ExpectingArg = true;
-            n++;
+            s_expecting_arg = true;
+            s_n++;
             o[g_operation_index].f = StkNE;
             o[g_operation_index++].p = 6 - (paren + Equals)*15;
             break;
         case '<':
-            ExpectingArg = true;
-            if (Str[n+1] == '=')
+            s_expecting_arg = true;
+            if (Str[s_n+1] == '=')
             {
-                n++;
+                s_n++;
                 o[g_operation_index].f = StkLTE;
             }
             else
@@ -2790,10 +2790,10 @@ static bool ParseStr(char const *Str, int pass)
             o[g_operation_index++].p = 6 - (paren + Equals)*15;
             break;
         case '>':
-            ExpectingArg = true;
-            if (Str[n+1] == '=')
+            s_expecting_arg = true;
+            if (Str[s_n+1] == '=')
             {
-                n++;
+                s_n++;
                 o[g_operation_index].f = StkGTE;
             }
             else
@@ -2803,25 +2803,25 @@ static bool ParseStr(char const *Str, int pass)
             o[g_operation_index++].p = 6 - (paren + Equals)*15;
             break;
         case '*':
-            ExpectingArg = true;
+            s_expecting_arg = true;
             o[g_operation_index].f = StkMul;
             o[g_operation_index++].p = 3 - (paren + Equals)*15;
             break;
         case '/':
-            ExpectingArg = true;
+            s_expecting_arg = true;
             o[g_operation_index].f = StkDiv;
             o[g_operation_index++].p = 3 - (paren + Equals)*15;
             break;
         case '^':
-            ExpectingArg = true;
+            s_expecting_arg = true;
             o[g_operation_index].f = StkPwr;
             o[g_operation_index++].p = 2 - (paren + Equals)*15;
             break;
         case '=':
-            ExpectingArg = true;
-            if (Str[n+1] == '=')
+            s_expecting_arg = true;
+            if (Str[s_n+1] == '=')
             {
-                n++;
+                s_n++;
                 o[g_operation_index].f = StkEQ;
                 o[g_operation_index++].p = 6 - (paren + Equals)*15;
             }
@@ -2834,12 +2834,12 @@ static bool ParseStr(char const *Str, int pass)
             }
             break;
         default:
-            while (std::isalnum(Str[n+1]) || Str[n+1] == '.' || Str[n+1] == '_')
+            while (std::isalnum(Str[s_n+1]) || Str[s_n+1] == '.' || Str[s_n+1] == '_')
             {
-                n++;
+                s_n++;
             }
-            Len = (n+1)-InitN;
-            ExpectingArg = false;
+            Len = (s_n+1)-InitN;
+            s_expecting_arg = false;
             jumptype = isjump(&Str[InitN], Len);
             if (jumptype != 0)
             {
@@ -2847,13 +2847,13 @@ static bool ParseStr(char const *Str, int pass)
                 switch (jumptype)
                 {
                 case 1:                      // if
-                    ExpectingArg = true;
+                    s_expecting_arg = true;
                     jump_control[jump_index++].type = 1;
                     o[g_operation_index].f = StkJumpOnFalse;
                     o[g_operation_index++].p = 1;
                     break;
                 case 2:                     // elseif
-                    ExpectingArg = true;
+                    s_expecting_arg = true;
                     jump_control[jump_index++].type = 2;
                     jump_control[jump_index++].type = 2;
                     o[g_operation_index].f = StkJump;
@@ -2885,7 +2885,7 @@ static bool ParseStr(char const *Str, int pass)
                 if (o[g_operation_index].f != NotAFnct)
                 {
                     o[g_operation_index++].p = 1 - (paren + Equals)*15;
-                    ExpectingArg = true;
+                    s_expecting_arg = true;
                 }
                 else
                 {
@@ -2893,7 +2893,7 @@ static bool ParseStr(char const *Str, int pass)
                     Load[g_load_index++] = &(c->a);
                     o[g_operation_index].f = StkLod;
                     o[g_operation_index++].p = 1 - (paren + Equals)*15;
-                    n = InitN + c->len - 1;
+                    s_n = InitN + c->len - 1;
                 }
             }
             break;
@@ -3821,11 +3821,11 @@ CASE_TERMINATOR:
         this_token->token_str[i] = (char) 0;
         if (this_token->token_type == OPERATOR)
         {
-            for (int i = 0; i < sizeof(OPList)/sizeof(OPList[0]); i++)
+            for (int j = 0; j < sizeof(OPList)/sizeof(OPList[0]); j++)
             {
-                if (!std::strcmp(OPList[i], this_token->token_str))
+                if (!std::strcmp(OPList[j], this_token->token_str))
                 {
-                    this_token->token_id = i;
+                    this_token->token_id = j;
                 }
             }
         }

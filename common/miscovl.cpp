@@ -473,9 +473,9 @@ skip_UI:
                     }
                     PCommandName[w] = 0;
                     {
-                        char buf[20];
-                        std::snprintf(buf, NUM_OF(buf), "_%c%c", PAR_KEY(i), PAR_KEY(j));
-                        std::strcat(PCommandName, buf);
+                        char tmpbuff[20];
+                        std::snprintf(tmpbuff, NUM_OF(tmpbuff), "_%c%c", PAR_KEY(i), PAR_KEY(j));
+                        std::strcat(PCommandName, tmpbuff);
                     }
                     std::fprintf(parmfile, "%-19s{", PCommandName);
                     g_x_min = pxxmin + pdelx*(i*pxdots) + pdelx2*(j*pydots);
@@ -503,18 +503,18 @@ skip_UI:
                     /* guarantee that there are no blank comments above the last
                        non-blank par_comment */
                     int last = -1;
-                    for (int i = 0; i < 4; i++)
+                    for (int k = 0; k < 4; k++)
                     {
-                        if (*par_comment[i])
+                        if (*par_comment[k])
                         {
-                            last = i;
+                            last = k;
                         }
                     }
-                    for (int i = 0; i < last; i++)
+                    for (int k = 0; k < last; k++)
                     {
-                        if (g_command_comment[i].empty())
+                        if (g_command_comment[k].empty())
                         {
-                            g_command_comment[i] = ";";
+                            g_command_comment[k] = ";";
                         }
                     }
                 }
@@ -524,20 +524,20 @@ skip_UI:
                 }
                 fputc('\n', parmfile);
                 {
-                    char buf[25];
-                    std::memset(buf, ' ', 23);
-                    buf[23] = 0;
-                    buf[21] = ';';
+                    char tmpbuff[25];
+                    std::memset(tmpbuff, ' ', 23);
+                    tmpbuff[23] = 0;
+                    tmpbuff[21] = ';';
                     for (int k = 1; k < 4; k++)
                     {
                         if (!g_command_comment[k].empty())
                         {
-                            std::fprintf(parmfile, "%s%s\n", buf, g_command_comment[k].c_str());
+                            std::fprintf(parmfile, "%s%s\n", tmpbuff, g_command_comment[k].c_str());
                         }
                     }
                     if (g_patch_level != 0 && !colorsonly)
                     {
-                        std::fprintf(parmfile, "%s %s Version %d Patchlevel %d\n", buf,
+                        std::fprintf(parmfile, "%s %s Version %d Patchlevel %d\n", tmpbuff,
                                 Fractint, g_release, g_patch_level);
                     }
                 }

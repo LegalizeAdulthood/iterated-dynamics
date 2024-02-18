@@ -696,7 +696,7 @@ long ExpFloat14(long xx)
 }
 
 static double TwoPi;
-static DComplex temp;
+static DComplex s_temp;
 static DComplex BaseLog;
 static DComplex cdegree = { 3.0, 0.0 };
 static DComplex croot   = { 1.0, 0.0 };
@@ -731,8 +731,8 @@ int ComplexNewton()
     cd1.x = cdegree.x - 1.0;
     cd1.y = cdegree.y;
 
-    temp = ComplexPower(g_old_z, cd1);
-    FPUcplxmul(&temp, &g_old_z, &g_new_z);
+    s_temp = ComplexPower(g_old_z, cd1);
+    FPUcplxmul(&s_temp, &g_old_z, &g_new_z);
 
     g_tmp_z.x = g_new_z.x - croot.x;
     g_tmp_z.y = g_new_z.y - croot.y;
@@ -745,7 +745,7 @@ int ComplexNewton()
     g_tmp_z.x += croot.x;
     g_tmp_z.y += croot.y;
 
-    FPUcplxmul(&temp, &cdegree, &cd1);
+    FPUcplxmul(&s_temp, &cdegree, &cd1);
     FPUcplxdiv(&g_tmp_z, &cd1, &g_old_z);
     if (g_overflow)
     {
@@ -766,8 +766,8 @@ int ComplexBasin()
     cd1.x = cdegree.x - 1.0;
     cd1.y = cdegree.y;
 
-    temp = ComplexPower(g_old_z, cd1);
-    FPUcplxmul(&temp, &g_old_z, &g_new_z);
+    s_temp = ComplexPower(g_old_z, cd1);
+    FPUcplxmul(&s_temp, &g_old_z, &g_new_z);
 
     g_tmp_z.x = g_new_z.x - croot.x;
     g_tmp_z.y = g_new_z.y - croot.y;
@@ -777,8 +777,8 @@ int ComplexBasin()
         {
             g_old_z.y = 0.0;
         }
-        FPUcplxlog(&g_old_z, &temp);
-        FPUcplxmul(&temp, &cdegree, &g_tmp_z);
+        FPUcplxlog(&g_old_z, &s_temp);
+        FPUcplxmul(&s_temp, &cdegree, &g_tmp_z);
         double mod = g_tmp_z.y/TwoPi;
         g_color_iter = (long)mod;
         if (std::fabs(mod - g_color_iter) > 0.5)
@@ -804,7 +804,7 @@ int ComplexBasin()
     g_tmp_z.x += croot.x;
     g_tmp_z.y += croot.y;
 
-    FPUcplxmul(&temp, &cdegree, &cd1);
+    FPUcplxmul(&s_temp, &cdegree, &cd1);
     FPUcplxdiv(&g_tmp_z, &cd1, &g_old_z);
     if (g_overflow)
     {
