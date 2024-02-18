@@ -301,23 +301,24 @@ bn_t double_a_bn(bn_t r)
 // r = n/2
 bn_t half_bn(bn_t r, bn_t n)
 {
-    int i;
     U32 quot = 0;
 
     // two bytes at a time
 
     // start with an arithmetic shift
-    i = bnlength-2;
-    quot += (U32)(((S32)(S16)big_access16(n+i) << 16) >> 1); // shift to upper 2 bytes and half it
-    big_set16(r+i, (U16)(quot >> 16));   // store the upper 2 bytes
-    quot <<= 16; // shift the underflow for next time
+    {
+        const int i = bnlength - 2;
+        quot += (U32) (((S32) (S16) big_access16(n + i) << 16) >> 1); // shift to upper 2 bytes and half it
+        big_set16(r + i, (U16) (quot >> 16));                         // store the upper 2 bytes
+        quot <<= 16;                                                  // shift the underflow for next time
+    }
 
-    for (int i = bnlength-4; i >= 0; i -= 2)
+    for (int i = bnlength - 4; i >= 0; i -= 2)
     {
         // looks wierd, but properly sign extends argument
-        quot += (U32)(((U32)big_access16(n+i) << 16) >> 1); // shift to upper 2 bytes and half it
-        big_set16(r+i, (U16)(quot >> 16));   // store the upper 2 bytes
-        quot <<= 16; // shift the underflow for next time
+        quot += (U32) (((U32) big_access16(n + i) << 16) >> 1); // shift to upper 2 bytes and half it
+        big_set16(r + i, (U16) (quot >> 16));                   // store the upper 2 bytes
+        quot <<= 16;                                            // shift the underflow for next time
     }
 
     return r;
@@ -327,23 +328,24 @@ bn_t half_bn(bn_t r, bn_t n)
 // r /= 2
 bn_t half_a_bn(bn_t r)
 {
-    int i;
     U32 quot = 0;
 
     // two bytes at a time
 
     // start with an arithmetic shift
-    i = bnlength-2;
-    quot += (U32)(((S32)(S16)big_access16(r+i) << 16) >> 1); // shift to upper 2 bytes and half it
-    big_set16(r+i, (U16)(quot >> 16));   // store the upper 2 bytes
-    quot <<= 16; // shift the underflow for next time
+    {
+        const int i = bnlength - 2;
+        quot += (U32) (((S32) (S16) big_access16(r + i) << 16) >> 1); // shift to upper 2 bytes and half it
+        big_set16(r + i, (U16) (quot >> 16));                         // store the upper 2 bytes
+        quot <<= 16;                                                  // shift the underflow for next time
+    }
 
-    for (int i = bnlength-4; i >= 0; i -= 2)
+    for (int i = bnlength - 4; i >= 0; i -= 2)
     {
         // looks wierd, but properly sign extends argument
-        quot += (U32)(((U32)(U16)big_access16(r+i) << 16) >> 1); // shift to upper 2 bytes and half it
-        big_set16(r+i, (U16)(quot >> 16));   // store the upper 2 bytes
-        quot <<= 16; // shift the underflow for next time
+        quot += (U32) (((U32) (U16) big_access16(r + i) << 16) >> 1); // shift to upper 2 bytes and half it
+        big_set16(r + i, (U16) (quot >> 16));                         // store the upper 2 bytes
+        quot <<= 16;                                                  // shift the underflow for next time
     }
     return r;
 }

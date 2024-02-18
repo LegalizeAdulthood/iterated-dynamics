@@ -3776,9 +3776,11 @@ static bool guessrow(bool firstpass, int y, int blocksize)
     c44 = c41;
 
     halfblock = blocksize >> 1;
-    int i = y/maxblock;
-    pfxptr = (unsigned int *) &tprefix[firstpass ? 1 : 0][(i >> 4) + 1][g_i_x_start/maxblock];
-    pfxmask = 1 << (i & 15);
+    {
+        const int i = y / maxblock;
+        pfxptr = (unsigned int *) &tprefix[firstpass ? 1 : 0][(i >> 4) + 1][g_i_x_start / maxblock];
+        pfxmask = 1 << (i & 15);
+    }
     ylesshalf = y - halfblock;
     ylessblock = y - blocksize; // constants, for speed
     yplushalf = y + halfblock;
