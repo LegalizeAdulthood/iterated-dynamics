@@ -7,16 +7,16 @@ on:
     branches: [ "master" ]
 
 jobs:
-  linux-build:
-    runs-on: ubuntu-latest
-
-    steps:
-    - uses: actions/checkout@v4.1.1
-      with:
-        submodules: true
-
-    - name: CMake workflow
-      run: cmake --workflow --preset default
+#  linux-build:
+#    runs-on: ubuntu-latest
+#
+#    steps:
+#    - uses: actions/checkout@v4.1.1
+#      with:
+#        submodules: true
+#
+#    - name: CMake workflow
+#      run: cmake --workflow --preset default
 
   windows-build:
     runs-on: windows-latest
