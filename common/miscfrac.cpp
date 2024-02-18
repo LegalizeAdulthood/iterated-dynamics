@@ -1699,7 +1699,7 @@ jumpout:
 
 static std::vector<BYTE> cell_array[2];
 
-S16 r, k_1, rule_digits;
+static S16 s_r, k_1, rule_digits;
 bool lstscreenflag = false;
 
 void abort_cellular(int err, int t)
@@ -1811,10 +1811,10 @@ int cellular()
         return -1;
     }
 
-    r = (S16)(kr % 10); // Number of nearest neighbors to sum
+    s_r = (S16)(kr % 10); // Number of nearest neighbors to sum
     k = (U16)(kr / 10); // Number of different states, k=3 has states 0,1,2
     k_1 = (S16)(k - 1); // Highest state value, k=3 has highest state value of 2
-    rule_digits = (S16)((r * 2 + 1) * k_1 + 1); // Number of digits in the rule
+    rule_digits = (S16)((s_r * 2 + 1) * k_1 + 1); // Number of digits in the rule
 
     if (!g_random_seed_flag && randparam == -1)
     {
@@ -1980,7 +1980,7 @@ int cellular()
             if (g_random_seed_flag || randparam == 0 || randparam == -1)
             {
                 // Use a random border
-                for (int i = 0; i <= r; i++)
+                for (int i = 0; i <= s_r; i++)
                 {
                     cell_array[notfilled][i] = (BYTE)(rand()%(int)k);
                     cell_array[notfilled][g_i_x_stop-i] = (BYTE)(rand()%(int)k);
@@ -1989,7 +1989,7 @@ int cellular()
             else
             {
                 // Use a zero border
-                for (int i = 0; i <= r; i++)
+                for (int i = 0; i <= s_r; i++)
                 {
                     cell_array[notfilled][i] = 0;
                     cell_array[notfilled][g_i_x_stop-i] = 0;
@@ -1997,7 +1997,7 @@ int cellular()
             }
 
             t = 0; // do first cell
-            twor = (U16)(r+r);
+            twor = (U16)(s_r+s_r);
             for (int i = 0; i <= twor; i++)
             {
                 t = (S16)(t + (S16)cell_array[filled][i]);
@@ -2008,13 +2008,13 @@ int cellular()
                 abort_cellular(BAD_T, t);
                 return -1;
             }
-            cell_array[notfilled][r] = (BYTE)cell_table[t];
+            cell_array[notfilled][s_r] = (BYTE)cell_table[t];
 
             // use a rolling sum in t
-            for (g_col = r+1; g_col < g_i_x_stop-r; g_col++)
+            for (g_col = s_r+1; g_col < g_i_x_stop-s_r; g_col++)
             {
                 // now do the rest
-                t = (S16)(t + cell_array[filled][g_col+r] - cell_array[filled][g_col-r-1]);
+                t = (S16)(t + cell_array[filled][g_col+s_r] - cell_array[filled][g_col-s_r-1]);
                 if (t > rule_digits || t < 0)
                 {
                     thinking(0, nullptr);
@@ -2045,7 +2045,7 @@ contloop:
         if (g_random_seed_flag || randparam == 0 || randparam == -1)
         {
             // Use a random border
-            for (int i = 0; i <= r; i++)
+            for (int i = 0; i <= s_r; i++)
             {
                 cell_array[notfilled][i] = (BYTE)(rand()%(int)k);
                 cell_array[notfilled][g_i_x_stop-i] = (BYTE)(rand()%(int)k);
@@ -2054,7 +2054,7 @@ contloop:
         else
         {
             // Use a zero border
-            for (int i = 0; i <= r; i++)
+            for (int i = 0; i <= s_r; i++)
             {
                 cell_array[notfilled][i] = 0;
                 cell_array[notfilled][g_i_x_stop-i] = 0;
@@ -2062,7 +2062,7 @@ contloop:
         }
 
         t = 0; // do first cell
-        twor = (U16)(r+r);
+        twor = (U16)(s_r+s_r);
         for (int i = 0; i <= twor; i++)
         {
             t = (S16)(t + (S16)cell_array[filled][i]);
@@ -2073,13 +2073,13 @@ contloop:
             abort_cellular(BAD_T, t);
             return -1;
         }
-        cell_array[notfilled][r] = (BYTE)cell_table[t];
+        cell_array[notfilled][s_r] = (BYTE)cell_table[t];
 
         // use a rolling sum in t
-        for (g_col = r+1; g_col < g_i_x_stop-r; g_col++)
+        for (g_col = s_r+1; g_col < g_i_x_stop-s_r; g_col++)
         {
             // now do the rest
-            t = (S16)(t + cell_array[filled][g_col+r] - cell_array[filled][g_col-r-1]);
+            t = (S16)(t + cell_array[filled][g_col+s_r] - cell_array[filled][g_col-s_r-1]);
             if (t > rule_digits || t < 0)
             {
                 thinking(0, nullptr);

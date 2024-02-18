@@ -93,9 +93,9 @@ static std::vector<HIST> hist;          // 6*MAX_HIST (96 bytes)
 
 // these items alloc'ed only while help is active...
 
-static std::vector<char> buffer;           // MAX_PAGE_SIZE (2048 bytes)
-static std::vector<LINK> link_table;       // 10*max_links
-static std::vector<PAGE> page_table;       // 4*max_pages
+static std::vector<char> g_buffer;   // MAX_PAGE_SIZE (2048 bytes)
+static std::vector<LINK> link_table; // 10*max_links
+static std::vector<PAGE> page_table; // 4*max_pages
 
 static void help_seek(long pos)
 {
@@ -640,10 +640,10 @@ static int help_topic(HIST *curr, HIST *next, int flags)
         if (draw_page)
         {
             help_seek(where+page_table[page].offset);
-            freader(&buffer[0], sizeof(char), page_table[page].len, help_file);
+            freader(&g_buffer[0], sizeof(char), page_table[page].len, help_file);
 
             num_link = 0;
-            display_page(title, &buffer[0], page_table[page].len, page, num_pages,
+            display_page(title, &g_buffer[0], page_table[page].len, page, num_pages,
                          page_table[page].margin, &num_link, &link_table[0]);
 
             if (draw_page == 2)
@@ -814,7 +814,7 @@ int help(int action)
     bool resized = false;
     try
     {
-        buffer.resize(MAX_PAGE_SIZE);
+        g_buffer.resize(MAX_PAGE_SIZE);
         link_table.resize(max_links);
         page_table.resize(max_pages);
         resized = true;

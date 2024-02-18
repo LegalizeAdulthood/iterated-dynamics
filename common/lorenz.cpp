@@ -142,11 +142,11 @@ static double initorbitfp[3];
 static char NoQueue[] =
     "Not enough memory: switching to random walk.\n";
 
-static int    mxhits;
-static int    run_length;
-Major g_major_method;
-Minor g_inverse_julia_minor_method;
-static affine cvt;
+static int      mxhits;
+static int      run_length;
+Major           g_major_method;
+Minor           g_inverse_julia_minor_method;
+static affine   s_cvt;
 static l_affine lcvt;
 
 static double Cx;
@@ -378,15 +378,15 @@ bool orbit3dlongsetup()
         }
         g_params[2] = mxhits;
 
-        setup_convert_to_screen(&cvt);
+        setup_convert_to_screen(&s_cvt);
         // Note: using bitshift of 21 for affine, 24 otherwise
 
-        lcvt.a = (long)(cvt.a * (1L << 21));
-        lcvt.b = (long)(cvt.b * (1L << 21));
-        lcvt.c = (long)(cvt.c * (1L << 21));
-        lcvt.d = (long)(cvt.d * (1L << 21));
-        lcvt.e = (long)(cvt.e * (1L << 21));
-        lcvt.f = (long)(cvt.f * (1L << 21));
+        lcvt.a = (long)(s_cvt.a * (1L << 21));
+        lcvt.b = (long)(s_cvt.b * (1L << 21));
+        lcvt.c = (long)(s_cvt.c * (1L << 21));
+        lcvt.d = (long)(s_cvt.d * (1L << 21));
+        lcvt.e = (long)(s_cvt.e * (1L << 21));
+        lcvt.f = (long)(s_cvt.f * (1L << 21));
 
         Sqrt = ComplexSqrtLong(g_fudge_factor - 4 * CxLong, -4 * CyLong);
 
@@ -588,7 +588,7 @@ bool orbit3dfloatsetup()
         }
         g_params[2] = mxhits;
 
-        setup_convert_to_screen(&cvt);
+        setup_convert_to_screen(&s_cvt);
 
         // find fixed points: guaranteed to be in the set
         Sqrt = ComplexSqrtFloat(1 - 4 * Cx, -4 * Cy);
@@ -696,8 +696,8 @@ int Minverse_julia_orbit()
     /*
      * Next, find its pixel position
      */
-    newcol = (int)(cvt.a * g_new_z.x + cvt.b * g_new_z.y + cvt.e);
-    newrow = (int)(cvt.c * g_new_z.x + cvt.d * g_new_z.y + cvt.f);
+    newcol = (int)(s_cvt.a * g_new_z.x + s_cvt.b * g_new_z.y + s_cvt.e);
+    newrow = (int)(s_cvt.c * g_new_z.x + s_cvt.d * g_new_z.y + s_cvt.f);
 
     /*
      * Now find the next point(s), and flip a coin to choose one.

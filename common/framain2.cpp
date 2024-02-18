@@ -2815,11 +2815,11 @@ static void restore_history_info(int i)
     std::memcpy(g_old_dac_box, last.dac_box, 256*3);
     if (g_map_specified)
     {
-        for (int i = 0; i < 256; ++i)
+        for (int j = 0; j < 256; ++j)
         {
-            g_map_clut[i][0] = last.dac_box[i][0];
-            g_map_clut[i][1] = last.dac_box[i][1];
-            g_map_clut[i][2] = last.dac_box[i][2];
+            g_map_clut[j][0] = last.dac_box[j][0];
+            g_map_clut[j][1] = last.dac_box[j][1];
+            g_map_clut[j][2] = last.dac_box[j][2];
         }
     }
     spindac(0, 1);

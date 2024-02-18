@@ -157,7 +157,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
 
     g_show_file = 1;                // for any abort exit, pretend done
     g_init_mode = -1;               // no viewing mode set yet
-    bool oldfloatflag = g_user_float_flag;
+    const bool old_float_flag = g_user_float_flag;
     g_loaded_3d = false;
     if (g_fast_restore)
     {
@@ -488,7 +488,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
 
     if (g_display_3d != display_3d_modes::NONE)
     {
-        g_user_float_flag = oldfloatflag;
+        g_user_float_flag = old_float_flag;
     }
 
     if (g_overlay_3d)
@@ -504,7 +504,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
     else
     {
         display_3d_modes const old_display_ed = g_display_3d;
-        bool const oldfloatflag = g_float_flag;
+        bool const old_float_flag2 = g_float_flag;
         g_display_3d = g_loaded_3d ? display_3d_modes::YES : display_3d_modes::NONE;   // for <tab> display during next
         g_float_flag = g_user_float_flag; // ditto
         int i = get_video_mode(&read_info, &blk_3_info);
@@ -512,7 +512,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
         _ASSERTE(_CrtCheckMemory());
 #endif
         g_display_3d = old_display_ed;
-        g_float_flag = oldfloatflag;
+        g_float_flag = old_float_flag2;
         if (i)
         {
             if (blk_2_info.got_data)
