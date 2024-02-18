@@ -970,6 +970,7 @@ MP *d2MP086(double x)
     }
     else
     {
+/*
         __asm
         {
             mov dx, word ptr [x+6]
@@ -1003,6 +1004,7 @@ MP *d2MP086(double x)
             mov   word ptr Ans.Mant+2, dx
             mov   word ptr Ans.Mant, ax
         }
+*/
     }
     return &Ans;
 }
@@ -1437,6 +1439,7 @@ MPmul086    ENDP
 MP *MPmul086(MP x, MP y)
 {
     // TODO: implement
+/*
     __asm
     {
         xor   eax, eax
@@ -1527,7 +1530,7 @@ MP *MPmul086(MP x, MP y)
         mov   word ptr Ans.Mant+2, dx
         mov   word ptr Ans.Mant, ax
     }
-
+*/
     return &Ans;
 }
 
