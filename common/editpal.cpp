@@ -19,6 +19,7 @@
 #include "zoom.h"
 
 #include <algorithm>
+#include <cmath>
 #include <cstdarg>
 #include <cstdio>
 #include <cstring>

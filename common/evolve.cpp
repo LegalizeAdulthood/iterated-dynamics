@@ -15,6 +15,7 @@
 #include "zoom.h"
 
 #include <algorithm>
+#include <cmath>
 #include <cstdlib>
 #include <cstring>
 #include <vector>
