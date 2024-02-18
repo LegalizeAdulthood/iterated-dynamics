@@ -3842,12 +3842,10 @@ int get_curarg_len(char const *curarg)
     s = std::strchr(curarg, '/');
     if (s)
     {
-        return s - curarg;
+        return static_cast<int>(s - curarg);
     }
 
-
-    return std::strlen(curarg);
-
+    return static_cast<int>(std::strlen(curarg));
 }
 
 // Get max length of current args

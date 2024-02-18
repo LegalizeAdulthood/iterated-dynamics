@@ -1336,7 +1336,7 @@ int create_table()
                 break;
             }
 
-            len = title[lnum].length();
+            len = static_cast<int>(title[lnum].length());
             *curr++ = CMD_LINK;
             setint(curr, first_link+lnum);
             curr += 3*sizeof(int);
@@ -3393,14 +3393,14 @@ void write_hdr(char const *fname)
 void calc_offsets()    // calc file offset to each topic
 {
     // NOTE: offsets do NOT include 6 bytes for signature & version!
-    long offset = sizeof(int) +     // max_pages
-        sizeof(int) +               // max_links
-        sizeof(int) +               // num_topic
-        sizeof(int) +               // num_label
-        sizeof(int) +               // num_contents
-        sizeof(int) +               // num_doc_pages
-        g_topics.size()*sizeof(long) + // offsets to each topic
-        g_labels.size()*2*sizeof(int);    // topic_num/topic_off for all public labels
+    long offset = static_cast<long>(sizeof(int) +                       // max_pages
+                                    sizeof(int) +                       // max_links
+                                    sizeof(int) +                       // num_topic
+                                    sizeof(int) +                       // num_label
+                                    sizeof(int) +                       // num_contents
+                                    sizeof(int) +                       // num_doc_pages
+                                    g_topics.size() * sizeof(long) +    // offsets to each topic
+                                    g_labels.size() * 2 * sizeof(int)); // topic_num/topic_off for all public labels
 
     offset = std::accumulate(g_contents.begin(), g_contents.end(), offset, [](long offset, CONTENT const &cp) {
         return offset += sizeof(int) +  // flags
@@ -3741,7 +3741,7 @@ void report_memory()
         data   += t.num_page * sizeof(PAGE);
 
         std::vector<PAGE> const &pages = t.page;
-        dead   += (pages.capacity() - pages.size())*sizeof(PAGE);
+        dead += static_cast<long>((pages.capacity() - pages.size()) * sizeof(PAGE));
     }
 
     for (LINK const &l : g_all_links)
@@ -3750,7 +3750,7 @@ void report_memory()
         bytes_in_strings += (long) l.name.length();
     }
 
-    dead += (g_all_links.capacity() - g_all_links.size())*sizeof(LINK);
+    dead += static_cast<long>((g_all_links.capacity() - g_all_links.size()) * sizeof(LINK));
 
     for (LABEL const &l : g_labels)
     {
@@ -3758,7 +3758,7 @@ void report_memory()
         bytes_in_strings += (long) l.name.length() + 1;
     }
 
-    dead += (g_labels.capacity() - g_labels.size())*sizeof(LABEL);
+    dead += static_cast<long>((g_labels.capacity() - g_labels.size()) * sizeof(LABEL));
 
     for (LABEL const &l : g_private_labels)
     {
@@ -3766,7 +3766,7 @@ void report_memory()
         bytes_in_strings += (long) l.name.length() + 1;
     }
 
-    dead += (g_private_labels.capacity() - g_private_labels.size())*sizeof(LABEL);
+    dead += static_cast<long>((g_private_labels.capacity() - g_private_labels.size()) * sizeof(LABEL));
 
     for (CONTENT const &c : g_contents)
     {
@@ -3782,7 +3782,7 @@ void report_memory()
         }
     }
 
-    dead += (g_contents.capacity() - g_contents.size())*sizeof(CONTENT);
+    dead += static_cast<long>((g_contents.capacity() - g_contents.size()) * sizeof(CONTENT));
 
     std::printf("\n");
     std::printf("Memory Usage:\n");
@@ -4688,13 +4688,13 @@ void html_processor::write_topic(TOPIC const &t)
                 data += 3*sizeof(int);
                 std::string const link_text(":doc:`" + std::string(data, width) +
                     " <" + rst_name(g_topics[link_topic].title) + ">`");
-                if (!nl(link_text.length()) && !spaces.empty())
+                if (!nl(static_cast<int>(link_text.length())) && !spaces.empty())
                 {
                     str << spaces;
                     spaces.clear();
                 }
                 str << link_text;
-                column += link_text.length();
+                column += static_cast<unsigned int>(link_text.length());
             }
             break;
 

@@ -417,7 +417,7 @@ int rule_present(char symbol)
     {
         if (rules[i][0] == symbol)
         {
-            return i;
+            return static_cast<int>(i);
         }
     }
     return 0;
