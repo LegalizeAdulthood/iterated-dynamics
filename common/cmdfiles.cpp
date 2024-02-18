@@ -1706,7 +1706,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
 
     if (variable == "ranges")
     {
-        int i, j, entries, prev;
+        int i, k, entries, prev;
         int tmpranges[128];
 
         if (totparms != intparms)
@@ -1719,23 +1719,23 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         g_log_map_flag = 0; // ranges overrides logmap
         while (i < totparms)
         {
-            j = intval[i++];
-            if (j < 0) // striping
+            k = intval[i++];
+            if (k < 0) // striping
             {
-                j = -j;
-                if (j < 1 || j >= 16384 || i >= totparms)
+                k = -k;
+                if (k < 1 || k >= 16384 || i >= totparms)
                 {
                     goto badarg;
                 }
                 tmpranges[entries++] = -1; // {-1,width,limit} for striping
-                tmpranges[entries++] = j;
-                j = intval[i++];
+                tmpranges[entries++] = k;
+                k = intval[i++];
             }
-            if (j < prev)
+            if (k < prev)
             {
                 goto badarg;
             }
-            prev = j;
+            prev = k;
             tmpranges[entries++] = prev;
         }
         if (prev == 0)
@@ -1757,9 +1757,9 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
             return CMDARG_ERROR;
         }
         g_iteration_ranges_len = entries;
-        for (int i = 0; i < g_iteration_ranges_len; ++i)
+        for (int i2 = 0; i2 < g_iteration_ranges_len; ++i2)
         {
-            g_iteration_ranges[i] = tmpranges[i];
+            g_iteration_ranges[i2] = tmpranges[i2];
         }
         return CMDARG_FRACTAL_PARAM;
     }
@@ -1995,22 +1995,19 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
 
     if (variable == "3dmode")         // orbitname=?
     {
-        int j = -1;
+        int julibrot_mode = -1;
         for (int i = 0; i < 4; i++)
         {
             if (g_julibrot_3d_options[i] == value)
             {
-                j = i;
+                julibrot_mode = i;
             }
         }
-        if (j < 0)
+        if (julibrot_mode < 0)
         {
             goto badarg;
         }
-        else
-        {
-            g_julibrot_3d_mode = j;
-        }
+        g_julibrot_3d_mode = julibrot_mode;
         return CMDARG_FRACTAL_PARAM;
     }
 

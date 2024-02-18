@@ -110,7 +110,7 @@ static char dif_lb[] =
 // added for testing autologmap()
 static long autologmap();
 
-static DComplex saved{};
+static DComplex s_saved{};
 static double rqlim_save = 0.0;
 static int (*calctypetmp)() = nullptr;
 static unsigned long lm = 0;                   // magnitude limit (CALCMAND)
@@ -2074,12 +2074,12 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
     {
         if (g_use_init_orbit == init_orbit_mode::value)
         {
-            saved = g_init_orbit;
+            s_saved = g_init_orbit;
         }
         else
         {
-            saved.x = 0;
-            saved.y = 0;
+            s_saved.x = 0;
+            s_saved.y = 0;
         }
         if (bf_math != bf_math_type::NONE)
         {
@@ -2521,7 +2521,7 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
                 }
                 else
                 {
-                    saved = g_new_z;  // floating pt fractals
+                    s_saved = g_new_z;  // floating pt fractals
                 }
                 if (--savedincr == 0)    // time to lengthen the periodicity?
                 {
@@ -2563,9 +2563,9 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
                 }
                 else
                 {
-                    if (std::fabs(saved.x - g_new_z.x) < g_close_enough)
+                    if (std::fabs(s_saved.x - g_new_z.x) < g_close_enough)
                     {
-                        if (std::fabs(saved.y - g_new_z.y) < g_close_enough)
+                        if (std::fabs(s_saved.y - g_new_z.y) < g_close_enough)
                         {
                             caught_a_cycle = true;
                         }
