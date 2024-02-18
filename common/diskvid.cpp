@@ -221,10 +221,12 @@ int common_startdisk(long newrowsize, long newcolsize, int colors)
     }
 
     memorysize = (long)(newcolsize) * newrowsize + headerlength;
-    int i = (short)memorysize & (BLOCKLEN-1);
-    if (i != 0)
     {
-        memorysize += BLOCKLEN - i;
+        const int i = (short) memorysize & (BLOCKLEN - 1);
+        if (i != 0)
+        {
+            memorysize += BLOCKLEN - i;
+        }
     }
     memorysize >>= pixelshift;
     memorysize >>= BLOCKSHIFT;
