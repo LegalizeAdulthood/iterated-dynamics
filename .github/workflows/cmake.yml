@@ -1,0 +1,26 @@
+name: CMake
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+jobs:
+  linux-build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4.1.1
+
+    - name: CMake workflow
+      run: cmake --workflow --preset default
+
+  windows-build:
+    runs-on: windows-latest
+    
+    steps:
+    - uses: actions/checkout@v4.1.1
+
+    - name: CMake workflow
+      run: cmake --workflow --preset default
