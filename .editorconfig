@@ -3,22 +3,19 @@
 root = true
 
 [{.travis.sh,*.{cpp,c,h,asm,txt,src}}]
-end_of_line = lf
 insert_final_newline = true
 indent_style = space
 indent_size = 4
 trim_trailing_whitespace = true
 
 [*.yml]
-end_of_line = lf
 insert_final_newline = true
 indent_style = space
 indent_size = 2
 trim_trailing_whitespace = true
 
-[*.js]
-end_of_line = lf
+[*.json]
 insert_final_newline = true
 indent_style = space
-indent_size = 4
+indent_size = 2
 trim_trailing_whitespace = true

@@ -1,0 +1,65 @@
+{
+  "version": 6,
+  "cmakeMinimumRequired": {
+    "major": 3,
+    "minor": 23,
+    "patch": 0
+  },
+  "configurePresets": [
+    {
+      "name": "sibling-build-preset",
+      "hidden": true,
+      "description": "Use a sibling directory for the build based on the preset name",
+      "binaryDir": "${sourceDir}/../build-${presetName}"
+    },
+    {
+      "name": "vcpkg",
+      "hidden": true,
+      "description": "Configure the toolchain for vcpkg",
+      "toolchainFile": "${sourceDir}/vcpkg/scripts/buildsystems/vcpkg.cmake"
+    },
+
+    {
+      "name": "default",
+      "displayName": "Configure with default settings",
+      "inherits": [ "sibling-build-preset", "vcpkg" ]
+    }
+  ],
+  "buildPresets": [
+    {
+      "name": "default",
+      "displayName": "Build with default settings",
+      "configurePreset": "default"
+    }
+  ],
+  "testPresets": [
+    {
+      "name": "default",
+      "displayName": "Test with default settings",
+      "configurePreset": "default",
+      "output": {
+        "outputOnFailure": true
+      }
+    }
+  ],
+  "workflowPresets": [
+    {
+      "name": "default",
+      "displayName": "Workflow with default settings: configure, build and test",
+      "steps": [
+        {
+          "type": "configure",
+          "name": "default"
+        },
+        {
+          "type": "build",
+          "name": "default"
+        },
+        {
+          "type": "test",
+          "name": "default"
+        }
+      ]
+    }
+  ]
+}

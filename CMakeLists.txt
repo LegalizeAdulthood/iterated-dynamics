@@ -1,5 +1,7 @@
 # Copyright 2014 Richard Thomson
-cmake_minimum_required(VERSION 2.8.11)
+cmake_minimum_required(VERSION 3.23)
+
+set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 project(iterated-dynamics CXX)
 
 set(home_dir "${CMAKE_SOURCE_DIR}/home")
@@ -10,17 +12,19 @@ function(set_src_dir src_file)
         PROPERTIES COMPILE_DEFINITIONS SRCDIR="${home_dir}")
 endfunction()
 
-if("${CMAKE_SYSTEM_NAME}" STREQUAL "Windows")
-    set(OS_DEFINITIONS "")
-    set(OS_ID_OPTIONS "WIN32")
+set(ID_TARGET_DEFINITIONS "")
+set(ID_TARGET_DEFINITIONS_DEBUG "")
+set(ID_EXECUTABLE_TYPE "")
+
+if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
+    set(ID_EXECUTABLE_TYPE "WIN32")
 else()
-    set(OS_DEFINITIONS XFRACT LINUX)
-    set(OS_ID_OPTIONS "")
+    list(APPEND ID_TARGET_DEFINITIONS XFRACT LINUX)
 endif()
 
-if(NOT MSVC AND ("${CMAKE_CXX_COMPILER_ID}" MATCHES "(GNU|Clang)"))
-    set(CMAKE_CXX_FLAGS "-std=c++11 -Werror")
-    set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS} -g")
+set(ID_TARGET_OPTIONS "")
+if(NOT MSVC AND CMAKE_CXX_COMPILER_ID MATCHES "(GNU|Clang)")
+    list(APPEND ID_TARGET_OPTIONS "-std=c++11" "-Werror")
 endif()
 
 
@@ -29,20 +33,19 @@ endif()
 #   - not warn us about deprecated CRT functions
 #   - not warn us about possibly unsafe CRT functions
 #   - store source code location information for memory allocations
-if(${MSVC})
-    set(MSVC_DEFINITIONS
-        "/D_SCL_SECURE_NO_WARNINGS"
-        "/D_CRT_SECURE_NO_DEPRECATE"
-        "/D_CRT_SECURE_NO_WARNINGS"
-        "/D_CRTDBG_MAP_ALLOC")
-    set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} ${MSVC_DEFINITIONS}")
+if(MSVC)
+    list(APPEND ID_TARGET_DEFINITIONS_DEBUG
+        "_SCL_SECURE_NO_WARNINGS"
+        "_CRT_SECURE_NO_DEPRECATE"
+        "_CRT_SECURE_NO_WARNINGS"
+        "_CRTDBG_MAP_ALLOC")
 endif()
 
 add_subdirectory(unix)
 add_subdirectory(win32)
 add_subdirectory(hc)
 
-add_executable(id ${OS_ID_OPTIONS}
+add_executable(id ${ID_EXECUTABLE_TYPE}
     headers/id_io.h
     headers/os.h
 
@@ -272,6 +275,8 @@ source_group("Source Files\\common\\ui" FILES
 set_src_dir(common/help.cpp)
 set_src_dir(common/fractint.cpp)
 
+target_compile_definitions(id PUBLIC ${ID_TARGET_DEFINITIONS} $<$<CONFIG:Debug>:${ID_TARGET_DEFINITIONS_DEBUG}>)
+target_compile_options(id PUBLIC ${ID_TARGET_OPTIONS})
 target_include_directories(id PRIVATE headers)
 target_link_libraries(id PRIVATE helpcom os)
 add_dependencies(id native_help)

@@ -1,6 +1,6 @@
 # Copyright 2018 Richard Thomson
 
-if("${CMAKE_SYSTEM_NAME}" STREQUAL "Windows")
+if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
     add_library(os_hc INTERFACE)
     add_library(os STATIC
         d_win32.cpp
@@ -18,6 +18,8 @@ if("${CMAKE_SYSTEM_NAME}" STREQUAL "Windows")
         plot.h
         resource.h
         WinText.h)
+    target_compile_definitions(os PRIVATE ${ID_TARGET_DEFINITIONS} $<$<CONFIG:Debug>:${ID_TARGET_DEFINITIONS_DEBUG}>)
+    target_compile_options(os PRIVATE ${ID_TARGET_OPTIONS})
     target_link_libraries(os PUBLIC gdi32.lib user32.lib shlwapi.lib)
     target_include_directories(os PRIVATE ../headers PUBLIC .)
     add_dependencies(os native_help)

@@ -4,15 +4,13 @@ add_library(helpcom STATIC
     helpcom.cpp
     ../headers/helpcom.h)
 target_include_directories(helpcom PUBLIC ../headers)
-target_compile_definitions(helpcom PUBLIC ${OS_DEFINITIONS})
+target_compile_definitions(helpcom PUBLIC ${ID_TARGET_DEFINITIONS} $<$<CONFIG:Debug>:${ID_TARGET_DEFINITIONS_DEBUG}>)
 
 add_executable(hc
     hc.cpp
     ${OS_HC_FILES})
 target_include_directories(hc PRIVATE ../headers)
-if(${HAVE_OS_DEFINITIONS})
-    target_compile_definitions(hc PRIVATE ${OS_DEFINITIONS})
-endif()
+target_compile_definitions(hc PRIVATE ${ID_TARGET_DEFINITIONS} $<$<CONFIG:Debug>:${ID_TARGET_DEFINITIONS_DEBUG}>)
 target_link_libraries(hc PRIVATE helpcom os_hc)
 
 add_custom_target(native_help
