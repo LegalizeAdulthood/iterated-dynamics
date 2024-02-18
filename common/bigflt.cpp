@@ -2232,7 +2232,6 @@ n <><------------- dec --------------><> <->
 
 bf10_t unsafe_bftobf10(bf10_t r, int dec, bf_t n)
 {
-    int d;
     int power256;
     int p;
     int bnl;
@@ -2307,7 +2306,7 @@ bf10_t unsafe_bftobf10(bf10_t r, int dec, bf_t n)
     // round the last digit
     if (r[dec] >= 5)
     {
-        d = dec-1;
+        int d = dec - 1;
         while (d > 0) // stop before you get to the sign flag
         {
             r[d]++;  // round up
