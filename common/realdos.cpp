@@ -534,14 +534,14 @@ int fullscreen_choice(
     g_look_at_mouse = 0;
     ret = -1;
     // preset current to passed string
-    int const len = (speedstring == nullptr) ? 0 : (int) std::strlen(speedstring);
-    if (len > 0)
+    int const speed_len = (speedstring == nullptr) ? 0 : (int) std::strlen(speedstring);
+    if (speed_len > 0)
     {
         current = 0;
         if (options & CHOICE_NOT_SORTED)
         {
             int k;
-            while (current < numchoices && (k = strncasecmp(speedstring, choices[current], len)) != 0)
+            while (current < numchoices && (k = strncasecmp(speedstring, choices[current], speed_len)) != 0)
             {
                 ++current;
             }
@@ -553,7 +553,7 @@ int fullscreen_choice(
         else
         {
             int k;
-            while (current < numchoices && (k = strncasecmp(speedstring, choices[current], len)) > 0)
+            while (current < numchoices && (k = strncasecmp(speedstring, choices[current], speed_len)) > 0)
             {
                 ++current;
             }
@@ -606,7 +606,7 @@ int fullscreen_choice(
     {
         for (int i = 0; i < numchoices; ++i)
         {
-            int len = (int) std::strlen(choices[i]);
+            const int len = (int) std::strlen(choices[i]);
             if (len > colwidth)
             {
                 colwidth = len;
@@ -1146,11 +1146,11 @@ top:
     menutype = fullmenu;
     g_tab_mode = false;
     showjuliatoggle = false;
-    for (int i = 0; i < 44; ++i)
+    for (int j = 0; j < 44; ++j)
     {
-        attributes[i] = 256;
-        choices[i] = "";
-        choicekey[i] = -1;
+        attributes[j] = 256;
+        choices[j] = "";
+        choicekey[j] = -1;
     }
     nextleft = -2;
     nextright = -1;
@@ -1443,9 +1443,9 @@ top:
     {
         helptitle();
         driver_set_attr(1, 0, C_GENERAL_MED, 24*80);
-        for (i = 9; i <= 11; ++i)
+        for (int j = 9; j <= 11; ++j)
         {
-            driver_set_attr(i, 18, C_GENERAL_INPUT, 40);
+            driver_set_attr(j, 18, C_GENERAL_INPUT, 40);
         }
         putstringcenter(10, 18, 40, C_GENERAL_INPUT,
 #ifdef XFRACT
@@ -1619,9 +1619,9 @@ int input_field(
             if (offset > 0)
             {
                 j = (int) std::strlen(fld);
-                for (int i = offset-1; i < j; ++i)
+                for (int k = offset-1; k < j; ++k)
                 {
-                    fld[i] = fld[i+1];
+                    fld[k] = fld[k+1];
                 }
                 --offset;
             }
@@ -1630,9 +1630,9 @@ int input_field(
             break;
         case FIK_DELETE:                           // delete
             j = (int) std::strlen(fld);
-            for (int i = offset; i < j; ++i)
+            for (int k = offset; k < j; ++k)
             {
-                fld[i] = fld[i+1];
+                fld[k] = fld[k+1];
             }
             started = true;
             display = true;
@@ -1786,9 +1786,9 @@ int field_prompt(
     }
     j -= i;
     boxwidth += i * 2;
-    for (int i = -1; i < titlelines+3; ++i)      // draw empty box
+    for (int k = -1; k < titlelines + 3; ++k) // draw empty box
     {
-        driver_set_attr(titlerow+i, j, C_PROMPT_LO, boxwidth);
+        driver_set_attr(titlerow + k, j, C_PROMPT_LO, boxwidth);
     }
     g_text_cbase = titlecol;                  // set left margin for putstring
     driver_put_string(titlerow, 0, C_PROMPT_HI, hdg); // display heading
