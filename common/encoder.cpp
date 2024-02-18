@@ -471,7 +471,7 @@ bool encoder()
         else
         {
             // uh oh - better fake it
-            for (int i = 0; i < 256; i += 16)
+            for (int j = 0; j < 256; j += 16)
             {
                 if (!shftwrite((BYTE *)paletteEGA, 16))
                 {
@@ -673,14 +673,14 @@ bool encoder()
                 esave_info.max_random_mutation = g_evolve_info.max_random_mutation;
                 esave_info.ecount          = g_evolve_info.ecount;
             }
-            for (int i = 0; i < NUM_GENES; i++)
+            for (int j = 0; j < NUM_GENES; j++)
             {
-                esave_info.mutate[i] = (short)g_gene_bank[i].mutate;
+                esave_info.mutate[j] = (short)g_gene_bank[j].mutate;
             }
 
-            for (int i = 0; i < sizeof(esave_info.future) / sizeof(short); i++)
+            for (int j = 0; j < sizeof(esave_info.future) / sizeof(short); j++)
             {
-                esave_info.future[i] = 0;
+                esave_info.future[j] = 0;
             }
 
             // some XFRACT logic for the doubles needed here
@@ -707,9 +707,9 @@ bool encoder()
             osave_info.oy3rd     = g_orbit_corner_3_y;
             osave_info.keep_scrn_coords = (short) (g_keep_screen_coords ? 1 : 0);
             osave_info.drawmode  = g_draw_mode;
-            for (int i = 0; i < sizeof(osave_info.future) / sizeof(short); i++)
+            for (short &j : osave_info.future)
             {
-                osave_info.future[i] = 0;
+                j = 0;
             }
 
             // some XFRACT logic for the doubles needed here

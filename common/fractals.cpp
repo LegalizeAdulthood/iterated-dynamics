@@ -1727,17 +1727,17 @@ int MPCHalleyFractal()
     MPC mpcXtoAlessOne, mpcXtoA;
     MPC mpcXtoAplusOne; // a-1, a, a+1
     MPC mpcFX, mpcF1prime, mpcF2prime, mpcHalnumer1;
-    MPC mpcHalnumer2, mpcHaldenom, mpctmp;
+    MPC mpcHalnumer2, mpcHaldenom, mpctmp2;
 
     g_mp_overflow = 0;
     mpcXtoAlessOne.x = mpcold.x;
     mpcXtoAlessOne.y = mpcold.y;
     for (int ihal = 2; ihal < g_degree; ihal++)
     {
-        mpctmp.x = *pMPsub(*pMPmul(mpcXtoAlessOne.x, mpcold.x), *pMPmul(mpcXtoAlessOne.y, mpcold.y));
-        mpctmp.y = *pMPadd(*pMPmul(mpcXtoAlessOne.x, mpcold.y), *pMPmul(mpcXtoAlessOne.y, mpcold.x));
-        mpcXtoAlessOne.x = mpctmp.x;
-        mpcXtoAlessOne.y = mpctmp.y;
+        mpctmp2.x = *pMPsub(*pMPmul(mpcXtoAlessOne.x, mpcold.x), *pMPmul(mpcXtoAlessOne.y, mpcold.y));
+        mpctmp2.y = *pMPadd(*pMPmul(mpcXtoAlessOne.x, mpcold.y), *pMPmul(mpcXtoAlessOne.y, mpcold.x));
+        mpcXtoAlessOne.x = mpctmp2.x;
+        mpcXtoAlessOne.y = mpctmp2.y;
     }
     mpcXtoA.x = *pMPsub(*pMPmul(mpcXtoAlessOne.x, mpcold.x), *pMPmul(mpcXtoAlessOne.y, mpcold.y));
     mpcXtoA.y = *pMPadd(*pMPmul(mpcXtoAlessOne.x, mpcold.y), *pMPmul(mpcXtoAlessOne.y, mpcold.x));
@@ -1753,21 +1753,21 @@ int MPCHalleyFractal()
     mpcF1prime.x = *pMPsub(*pMPmul(g_halley_mp_a_plus_one, mpcXtoA.x), g_mp_one);
     mpcF1prime.y = *pMPmul(g_halley_mp_a_plus_one, mpcXtoA.y);                   //  F'
 
-    mpctmp.x = *pMPsub(*pMPmul(mpcF2prime.x, mpcFX.x), *pMPmul(mpcF2prime.y, mpcFX.y));
-    mpctmp.y = *pMPadd(*pMPmul(mpcF2prime.x, mpcFX.y), *pMPmul(mpcF2prime.y, mpcFX.x));
+    mpctmp2.x = *pMPsub(*pMPmul(mpcF2prime.x, mpcFX.x), *pMPmul(mpcF2prime.y, mpcFX.y));
+    mpctmp2.y = *pMPadd(*pMPmul(mpcF2prime.x, mpcFX.y), *pMPmul(mpcF2prime.y, mpcFX.x));
     //  F * F"
 
     mpcHaldenom.x = *pMPadd(mpcF1prime.x, mpcF1prime.x);
     mpcHaldenom.y = *pMPadd(mpcF1prime.y, mpcF1prime.y);      //  2 * F'
 
-    mpcHalnumer1 = MPCdiv(mpctmp, mpcHaldenom);        //  F"F/2F'
-    mpctmp.x = *pMPsub(mpcF1prime.x, mpcHalnumer1.x);
-    mpctmp.y = *pMPsub(mpcF1prime.y, mpcHalnumer1.y); //  F' - F"F/2F'
-    mpcHalnumer2 = MPCdiv(mpcFX, mpctmp);
+    mpcHalnumer1 = MPCdiv(mpctmp2, mpcHaldenom);        //  F"F/2F'
+    mpctmp2.x = *pMPsub(mpcF1prime.x, mpcHalnumer1.x);
+    mpctmp2.y = *pMPsub(mpcF1prime.y, mpcHalnumer1.y); //  F' - F"F/2F'
+    mpcHalnumer2 = MPCdiv(mpcFX, mpctmp2);
 
-    mpctmp   =  MPCmul(g_mpc_temp_param, mpcHalnumer2);  // mpctmpparm is
+    mpctmp2   =  MPCmul(g_mpc_temp_param, mpcHalnumer2);  // mpctmpparm is
     // relaxation coef.
-    mpcnew = MPCsub(mpcold, mpctmp);
+    mpcnew = MPCsub(mpcold, mpctmp2);
     g_new_z    = MPC2cmplx(mpcnew);
     return MPCHalleybailout() || g_mp_overflow;
 #else
@@ -2113,11 +2113,11 @@ static int TryFloatFractal(int (*fpFractal)())
 int TrigXTrigFractal()
 {
 #if !defined(XFRACT)
-    LComplex ltmp2;
+    LComplex ltmp3;
     // z = trig0(z)*trig1(z)
     LCMPLXtrig0(g_l_old_z, g_l_temp);
-    LCMPLXtrig1(g_l_old_z, ltmp2);
-    LCMPLXmult(g_l_temp, ltmp2, g_l_new_z);
+    LCMPLXtrig1(g_l_old_z, ltmp3);
+    LCMPLXmult(g_l_temp, ltmp3, g_l_new_z);
     if (g_overflow)
     {
         TryFloatFractal(TrigXTrigfpFractal);

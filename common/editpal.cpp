@@ -2545,14 +2545,12 @@ static void PalTable__other_key(int key, RGBEditor *rgb, void *info)
     case 'T':
     case 't':   // s(T)ripe mode
     {
-        int key;
-
         Cursor_Hide();
         PalTable__DrawStatus(me, true);
-        key = getakeynohelp();
+        const int key2 = getakeynohelp();
         Cursor_Show();
 
-        if (key >= '1' && key <= '9')
+        if (key2 >= '1' && key2 <= '9')
         {
             int a = me->curr[0],
                 b = me->curr[1];
@@ -2568,7 +2566,7 @@ static void PalTable__other_key(int key, RGBEditor *rgb, void *info)
 
             if (a != b)
             {
-                mkpalrange(&me->pal[a], &me->pal[b], &me->pal[a], b-a, key-'0');
+                mkpalrange(&me->pal[a], &me->pal[b], &me->pal[a], b-a, key2-'0');
                 PalTable__UpdateDAC(me);
             }
         }

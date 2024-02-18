@@ -1552,7 +1552,7 @@ void sleepms(long ms)
  * last call has elapsed.
  */
 #define MAX_INDEX 2
-static uclock_t next_time[MAX_INDEX];
+static uclock_t s_next_time[MAX_INDEX];
 void wait_until(int index, uclock_t wait_time)
 {
     if (g_debug_flag == debug_flags::force_old_sleep)
@@ -1562,21 +1562,21 @@ void wait_until(int index, uclock_t wait_time)
     else
     {
         uclock_t now;
-        while ((now = usec_clock()) < next_time[index])
+        while ((now = usec_clock()) < s_next_time[index])
         {
             if (driver_key_pressed())
             {
                 break;
             }
         }
-        next_time[index] = now + wait_time*100; // wait until this time next call
+        s_next_time[index] = now + wait_time*100; // wait until this time next call
     }
 }
 
 void reset_clock()
 {
     restart_uclock();
-    std::fill(std::begin(next_time), std::end(next_time), 0);
+    std::fill(std::begin(s_next_time), std::end(s_next_time), 0);
 }
 
 #define LOG2  0.693147180F

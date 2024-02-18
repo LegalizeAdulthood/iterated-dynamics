@@ -270,11 +270,11 @@ main_state big_while_loop(bool *const kbdmore, bool *const stacked, bool const r
                 if (g_map_specified)
                 {
                     // but there's a map=, so load that
-                    for (int i = 0; i < 256; ++i)
+                    for (int j = 0; j < 256; ++j)
                     {
-                        g_dac_box[i][0] = g_map_clut[i][0];
-                        g_dac_box[i][1] = g_map_clut[i][1];
-                        g_dac_box[i][2] = g_map_clut[i][2];
+                        g_dac_box[j][0] = g_map_clut[j][0];
+                        g_dac_box[j][1] = g_map_clut[j][1];
+                        g_dac_box[j][2] = g_map_clut[j][2];
                     }
                     spindac(0, 1);
                 }
@@ -1114,9 +1114,9 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
             int err;
             double oldparm[MAX_PARAMS];
             fractal_type oldtype = g_fractal_type;
-            for (int i = 0; i < MAX_PARAMS; ++i)
+            for (int j = 0; j < MAX_PARAMS; ++j)
             {
-                oldparm[i] = g_params[i];
+                oldparm[j] = g_params[j];
             }
             if (g_fractal_type != fractal_type::ANT)
             {
@@ -1143,9 +1143,9 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
                 driver_unstack_screen();
             }
             g_fractal_type = oldtype;
-            for (int i = 0; i < MAX_PARAMS; ++i)
+            for (int j = 0; j < MAX_PARAMS; ++j)
             {
-                g_params[i] = oldparm[i];
+                g_params[j] = oldparm[j];
             }
             if (err >= 0)
             {

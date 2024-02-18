@@ -624,13 +624,13 @@ write_stuff:
     switch (pixelshift)
     {
     case 0:
-        for (int i = 0; i < BLOCKLEN; ++i)
+        for (int j = 0; j < BLOCKLEN; ++j)
         {
             mem_putc(*(pixelptr++));
         }
         break;
     case 1:
-        for (int i = 0; i < BLOCKLEN/2; ++i)
+        for (int j = 0; j < BLOCKLEN/2; ++j)
         {
             tmpchar = (BYTE)(*(pixelptr++) << 4);
             tmpchar = (BYTE)(tmpchar + *(pixelptr++));
@@ -638,9 +638,9 @@ write_stuff:
         }
         break;
     case 2:
-        for (int i = 0; i < BLOCKLEN/4; ++i)
+        for (int j = 0; j < BLOCKLEN/4; ++j)
         {
-            for (int j = 6; j >= 0; j -= 2)
+            for (int k = 6; k >= 0; k -= 2)
             {
                 tmpchar = (BYTE)((tmpchar << 2) + *(pixelptr++));
             }
@@ -648,24 +648,19 @@ write_stuff:
         }
         break;
     case 3:
-        for (int i = 0; i < BLOCKLEN/8; ++i)
+        for (int j = 0; j < BLOCKLEN/8; ++j)
         {
+            // clang-format off
             mem_putc((BYTE)
-                     ((((((((((((((*pixelptr
-                                   << 1)
-                                  | *(pixelptr+1))
-                                 << 1)
-                                | *(pixelptr+2))
-                               << 1)
-                              | *(pixelptr+3))
-                             << 1)
-                            | *(pixelptr+4))
-                           << 1)
-                          | *(pixelptr+5))
-                         << 1)
-                        | *(pixelptr+6))
-                       << 1)
-                      | *(pixelptr+7)));
+                (((((((*pixelptr << 1
+                    | *(pixelptr + 1)) << 1
+                    | *(pixelptr + 2)) << 1
+                    | *(pixelptr + 3)) << 1
+                    | *(pixelptr + 4)) << 1
+                    | *(pixelptr + 5)) << 1
+                    | *(pixelptr + 6)) << 1
+                    | *(pixelptr + 7)));
+            // clang-format on
             pixelptr += 8;
         }
         break;
