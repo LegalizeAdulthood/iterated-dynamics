@@ -12,5 +12,17 @@ jobs:
         uses: deep5050/cppcheck-action@v3.0
         with:
           github_token: ${{secrets.GITHUB_TOKEN}}
+          enable: 'style'
+          force: 'enable'
+          other_options: >-
+            '--suppress=incorrectStringBooleanError '
+            '--suppress=cstyleCast '
+            '--suppress=variableScope '
+            '--suppress=commaSeparatedReturn '
+            '--suppress=variableHidingEnum '
+            '--suppress=invalidPointerCast '
+            '--suppress=invalidscanf '
+            '--inline-suppr '
+            '-I headers hc common headers unix win32'
 
       - run: cmake -E cat cppcheck_report.txt
