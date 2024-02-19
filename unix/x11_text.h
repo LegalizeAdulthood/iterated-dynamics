@@ -70,7 +70,7 @@ private:
     std::vector<std::vector<char>> text_;
     std::vector<std::vector<unsigned char>> attributes_;
 
-    void repaint(int xpos, int ypos, int maxcol, int maxrow);
+    void repaint(int xmin, int xmax, int ymin, int ymax);
 
     Colormap colormap_;
     bool buffer_init_;
