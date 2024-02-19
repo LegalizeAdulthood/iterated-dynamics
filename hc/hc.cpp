@@ -3969,16 +3969,46 @@ void delete_hlp_from_exe(char const *exe_fname)
 /*
  * command-line parser, etc.
  */
+struct compiler_options
+{
+    modes       mode{modes::NONE};
+    std::string fname1;
+    std::string fname2;
+    std::string swappath;
+    bool        show_mem{};
+    bool        show_stats{};
+};
+
+std::ostream &operator<<(std::ostream &str, modes val)
+{
+    switch (val)
+    {
+    case modes::NONE:       return str << "NONE";
+    case modes::COMPILE:    return str << "COMPILE";
+    case modes::PRINT:      return str << "PRINT";
+    case modes::APPEND:     return str << "APPEND";
+    case modes::DELETE:     return str << "DELETE";
+    case modes::HTML:       return str << "HTML";
+    }
+    return str << "?unknown (" << static_cast<int>(val) << ")";
+}
+
+std::ostream &operator<<(std::ostream &str, const compiler_options &val)
+{
+    return str << "Mode: " << val.mode
+        << "\nfname1: " << val.fname1
+        << "\nfname2: " << val.fname2
+        << "\nswappath: " << val.swappath
+        << "\nshow_mem: " << std::boolalpha << val.show_mem
+        << "\nshow_stats: " << std::boolalpha << val.show_stats << '\n';
+}
 
 class compiler
 {
 public:
     compiler(int argc_, char *argv_[])
         : argc(argc_),
-        argv(argv_),
-        show_stats(false),
-        show_mem(false),
-        mode(modes::NONE)
+        argv(argv_)
     {
     }
 
@@ -3987,7 +4017,7 @@ public:
         if (swapfile != nullptr)
         {
             std::fclose(swapfile);
-            std::remove(swappath.c_str());
+            std::remove(m_options.swappath.c_str());
         }
     }
 
@@ -4003,19 +4033,14 @@ private:
     void paginate_html_document();
     void print_html_document(std::string const &output_filename);
 
-    int argc;
-    char **argv;
-    bool show_stats;
-    bool show_mem;
-    modes mode;
-
-    std::string fname1;
-    std::string fname2;
-    std::string swappath;
+    int              argc;
+    char           **argv;
+    compiler_options m_options;
 };
 
-void compiler::parse_arguments()
+compiler_options parse_compiler_options(int argc, char **argv)
 {
+    compiler_options result{};
     for (char **arg = &argv[1]; argc > 1; argc--, arg++)
     {
         switch (arg[0][0])
@@ -4025,9 +4050,9 @@ void compiler::parse_arguments()
             switch (arg[0][1])
             {
             case 'a':
-                if (mode == modes::NONE)
+                if (result.mode == modes::NONE)
                 {
-                    mode = modes::APPEND;
+                    result.mode = modes::APPEND;
                 }
                 else
                 {
@@ -4036,9 +4061,9 @@ void compiler::parse_arguments()
                 break;
 
             case 'c':
-                if (mode == modes::NONE)
+                if (result.mode == modes::NONE)
                 {
-                    mode = modes::COMPILE;
+                    result.mode = modes::COMPILE;
                 }
                 else
                 {
@@ -4047,9 +4072,9 @@ void compiler::parse_arguments()
                 break;
 
             case 'd':
-                if (mode == modes::NONE)
+                if (result.mode == modes::NONE)
                 {
-                    mode = modes::DELETE;
+                    result.mode = modes::DELETE;
                 }
                 else
                 {
@@ -4058,9 +4083,9 @@ void compiler::parse_arguments()
                 break;
 
             case 'h':
-                if (mode == modes::NONE)
+                if (result.mode == modes::NONE)
                 {
-                    mode = modes::HTML;
+                    result.mode = modes::HTML;
                 }
                 else
                 {
@@ -4082,9 +4107,9 @@ void compiler::parse_arguments()
                 break;
 
             case 'm':
-                if (mode == modes::COMPILE)
+                if (result.mode == modes::COMPILE)
                 {
-                    show_mem = true;
+                    result.show_mem = true;
                 }
                 else
                 {
@@ -4093,7 +4118,7 @@ void compiler::parse_arguments()
                 break;
 
             case 'o':
-                if (mode == modes::HTML)
+                if (result.mode == modes::HTML)
                 {
                     if (argc > 2)
                     {
@@ -4113,9 +4138,9 @@ void compiler::parse_arguments()
                 break;
 
             case 'p':
-                if (mode == modes::NONE)
+                if (result.mode == modes::NONE)
                 {
-                    mode = modes::PRINT;
+                    result.mode = modes::PRINT;
                 }
                 else
                 {
@@ -4124,9 +4149,9 @@ void compiler::parse_arguments()
                 break;
 
             case 's':
-                if (mode == modes::COMPILE)
+                if (result.mode == modes::COMPILE)
                 {
-                    show_stats = true;
+                    result.show_stats = true;
                 }
                 else
                 {
@@ -4135,9 +4160,9 @@ void compiler::parse_arguments()
                 break;
 
             case 'r':
-                if (mode == modes::COMPILE || mode == modes::PRINT)
+                if (result.mode == modes::COMPILE || result.mode == modes::PRINT)
                 {
-                    swappath = &(*arg)[2];
+                    result.swappath = &(*arg)[2];
                 }
                 else
                 {
@@ -4156,13 +4181,13 @@ void compiler::parse_arguments()
             break;
 
         default:   // assume it is a fname
-            if (fname1.empty())
+            if (result.fname1.empty())
             {
-                fname1 = *arg;
+                result.fname1 = *arg;
             }
-            else if (fname2.empty())
+            else if (result.fname2.empty())
             {
-                fname2 = *arg;
+                result.fname2 = *arg;
             }
             else
             {
@@ -4171,6 +4196,13 @@ void compiler::parse_arguments()
             break;
         }
     }
+    std::cout << "Parsing command-line arguments: " << argc << "\nArguments:\n" << result << '\n';
+    return result;
+}
+
+void compiler::parse_arguments()
+{
+    m_options = parse_compiler_options(argc, argv);
 }
 
 int compiler::process()
@@ -4181,7 +4213,7 @@ int compiler::process()
 
     parse_arguments();
 
-    switch (mode)
+    switch (m_options.mode)
     {
     case modes::NONE:
         usage();
@@ -4196,16 +4228,16 @@ int compiler::process()
         break;
 
     case modes::APPEND:
-        add_hlp_to_exe(fname1.empty() ? DEFAULT_HLP_FNAME : fname1.c_str(),
-                       fname2.empty() ? DEFAULT_EXE_FNAME : fname2.c_str());
+        add_hlp_to_exe(m_options.fname1.empty() ? DEFAULT_HLP_FNAME : m_options.fname1.c_str(),
+                       m_options.fname2.empty() ? DEFAULT_EXE_FNAME : m_options.fname2.c_str());
         break;
 
     case modes::DELETE:
-        if (!fname2.empty())
+        if (!m_options.fname2.empty())
         {
-            fatal(0, "Unexpected argument \"%s\"", fname2.c_str());
+            fatal(0, "Unexpected argument \"%s\"", m_options.fname2.c_str());
         }
-        delete_hlp_from_exe(fname1.empty() ? DEFAULT_EXE_FNAME : fname1.c_str());
+        delete_hlp_from_exe(m_options.fname1.empty() ? DEFAULT_EXE_FNAME : m_options.fname1.c_str());
         break;
 
     case modes::HTML:
@@ -4243,14 +4275,14 @@ void compiler::usage()
 
 void compiler::read_source_file(modes mode)
 {
-    src_fname = fname1.empty() ? DEFAULT_SRC_FNAME : fname1;
+    src_fname = m_options.fname1.empty() ? DEFAULT_SRC_FNAME : m_options.fname1;
 
-    swappath += SWAP_FNAME;
+    m_options.swappath += SWAP_FNAME;
 
-    swapfile = std::fopen(swappath.c_str(), "w+b");
+    swapfile = std::fopen(m_options.swappath.c_str(), "w+b");
     if (swapfile == nullptr)
     {
-        fatal(0, "Cannot create swap file \"%s\"", swappath.c_str());
+        fatal(0, "Cannot create swap file \"%s\"", m_options.swappath.c_str());
     }
     swappos = 0;
 
@@ -4259,12 +4291,12 @@ void compiler::read_source_file(modes mode)
 
 void compiler::compile()
 {
-    if (!fname2.empty())
+    if (!m_options.fname2.empty())
     {
-        fatal(0, "Unexpected command-line argument \"%s\"", fname2.c_str());
+        fatal(0, "Unexpected command-line argument \"%s\"", m_options.fname2.c_str());
     }
 
-    read_source_file(mode);
+    read_source_file(m_options.mode);
 
     if (hdr_fname.empty())
     {
@@ -4308,12 +4340,12 @@ void compiler::compile()
         write_help(hlp_fname.c_str());
     }
 
-    if (show_stats)
+    if (m_options.show_stats)
     {
         report_stats();
     }
 
-    if (show_mem)
+    if (m_options.show_mem)
     {
         report_memory();
     }
@@ -4326,7 +4358,7 @@ void compiler::compile()
 
 void compiler::print()
 {
-    read_source_file(mode);
+    read_source_file(m_options.mode);
     make_hot_links();
 
     if (!errors)
@@ -4335,7 +4367,7 @@ void compiler::print()
     }
     if (!errors)
     {
-        print_document(fname2.empty() ? DEFAULT_DOC_FNAME : fname2.c_str());
+        print_document(m_options.fname2.empty() ? DEFAULT_DOC_FNAME : m_options.fname2.c_str());
     }
 
     if (errors || warnings)
@@ -4346,7 +4378,7 @@ void compiler::print()
 
 void compiler::render_html()
 {
-    read_source_file(mode);
+    read_source_file(m_options.mode);
     make_hot_links();
 
     if (errors == 0)
@@ -4363,7 +4395,7 @@ void compiler::render_html()
     }
     if (errors == 0)
     {
-        print_html_document(fname2.empty() ? DEFAULT_HTML_FNAME : fname2);
+        print_html_document(m_options.fname2.empty() ? DEFAULT_HTML_FNAME : m_options.fname2);
     }
     if (errors > 0 || warnings > 0)
     {
