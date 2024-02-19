@@ -373,6 +373,7 @@ void print_msg(char const *type, int lnum, char const *format, std::va_list arg)
     }
     vprintf(format, arg);
     std::printf("\n");
+    std::fflush(stdout);
 }
 
 void fatal_msg(int diff, char const *format, ...)
@@ -3990,30 +3991,6 @@ struct compiler_options
     bool        show_stats{};
 };
 
-std::ostream &operator<<(std::ostream &str, modes val)
-{
-    switch (val)
-    {
-    case modes::NONE:       return str << "NONE";
-    case modes::COMPILE:    return str << "COMPILE";
-    case modes::PRINT:      return str << "PRINT";
-    case modes::APPEND:     return str << "APPEND";
-    case modes::DELETE:     return str << "DELETE";
-    case modes::HTML:       return str << "HTML";
-    }
-    return str << "?unknown (" << static_cast<int>(val) << ")";
-}
-
-std::ostream &operator<<(std::ostream &str, const compiler_options &val)
-{
-    return str << "Mode: " << val.mode << std::endl
-        << "fname1: " << val.fname1 << std::endl
-        << "fname2: " << val.fname2 << std::endl
-        << "swappath: " << val.swappath << std::endl
-        << "show_mem: " << std::boolalpha << val.show_mem << std::endl
-        << "show_stats: " << std::boolalpha << val.show_stats <<  std::endl;
-}
-
 class compiler
 {
 public:
@@ -4055,7 +4032,6 @@ compiler_options parse_compiler_options(int argc, char **argv)
     for (int i = 1; i < argc; ++i)
     {
         const std::string arg{argv[i]};
-        std::cout << i << ": " << arg << std::endl;
         if (arg[0] == '/' || arg[0] == '-')
         {
             switch (arg[1])
@@ -4199,11 +4175,9 @@ compiler_options parse_compiler_options(int argc, char **argv)
         else
         {
             // assume it is a filename
-            std::cout << "Filename: " << arg << std::endl;
             if (result.fname1.empty())
             {
                 result.fname1 = arg;
-                std::cout << "Assigning to fname1" << std::endl;
             }
             else if (result.fname2.empty())
             {
@@ -4214,18 +4188,14 @@ compiler_options parse_compiler_options(int argc, char **argv)
             {
                 fatal(0, "Unexpected command-line argument \"%s\"", arg.c_str());
             }
-            std::cout << "Filenameassigned" << std::endl;
         }
-        std::cout << "Done with argument " << i << std::endl;
     }
-    std::cout << "Parsing command-line arguments: " << argc << "\nArguments:\n" << result << '\n';
     return result;
 }
 
 void compiler::parse_arguments()
 {
     m_options = parse_compiler_options(argc, argv);
-    std::cout << "Arguments parsed" << std::endl;
 }
 
 int compiler::process()
@@ -4314,6 +4284,7 @@ void compiler::read_source_file(modes mode)
 
 void compiler::compile()
 {
+    std::cout << "Compile" << std::endl;
     if (!m_options.fname2.empty())
     {
         fatal(0, "Unexpected command-line argument \"%s\"", m_options.fname2.c_str());
