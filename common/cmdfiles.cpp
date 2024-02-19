@@ -1844,8 +1844,9 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
 
     if (variable == "exitmode")      // exitmode=?
     {
-        std::sscanf(value, "%x", &numval);
-        g_exit_video_mode = (BYTE)numval;
+        unsigned int hexval;
+        std::sscanf(value, "%x", &hexval);
+        g_exit_video_mode = (BYTE)hexval;
         return CMDARG_NONE;
     }
 
@@ -3563,7 +3564,6 @@ badarg:
 
 static void parse_textcolors(char const *value)
 {
-    int hexval;
     if (std::strcmp(value, "mono") == 0)
     {
         for (auto & elem : g_text_color)
@@ -3598,9 +3598,10 @@ static void parse_textcolors(char const *value)
             }
             if (*value != '/')
             {
+                unsigned int hexval;
                 std::sscanf(value, "%x", &hexval);
-                int i = (hexval / 16) & 7;
-                int j = hexval & 15;
+                unsigned int i = (hexval / 16) & 7;
+                unsigned int j = hexval & 15;
                 if (i == j || (i == 0 && j == 8))   // force contrast
                 {
                     j = 15;
