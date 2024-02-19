@@ -4006,12 +4006,12 @@ std::ostream &operator<<(std::ostream &str, modes val)
 
 std::ostream &operator<<(std::ostream &str, const compiler_options &val)
 {
-    return str << "Mode: " << val.mode
-        << "\nfname1: " << val.fname1
-        << "\nfname2: " << val.fname2
-        << "\nswappath: " << val.swappath
-        << "\nshow_mem: " << std::boolalpha << val.show_mem
-        << "\nshow_stats: " << std::boolalpha << val.show_stats << '\n';
+    return str << "Mode: " << val.mode << std::endl
+        << "fname1: " << val.fname1 << std::endl
+        << "fname2: " << val.fname2 << std::endl
+        << "swappath: " << val.swappath << std::endl
+        << "show_mem: " << std::boolalpha << val.show_mem << std::endl
+        << "show_stats: " << std::boolalpha << val.show_stats <<  std::endl;
 }
 
 class compiler
@@ -4214,7 +4214,9 @@ compiler_options parse_compiler_options(int argc, char **argv)
             {
                 fatal(0, "Unexpected command-line argument \"%s\"", arg.c_str());
             }
+            std::cout << "Filenameassigned" << std::endl;
         }
+        std::cout << "Done with argument " << i << std::endl;
     }
     std::cout << "Parsing command-line arguments: " << argc << "\nArguments:\n" << result << '\n';
     return result;
