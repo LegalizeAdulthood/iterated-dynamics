@@ -33,16 +33,6 @@
 #define MAXEXT  _MAX_EXT
 #define FNSPLIT _splitpath
 
-#ifdef XFRACT
-
-#ifndef HAVESTRI
-extern int stricmp(char const *, char const *);
-extern int strnicmp(char const *, char const *, int);
-#endif
-extern int filelength(int);
-extern int _splitpath(char const *file_template, char *drive, char *dir, char *fname, char *ext);
-#else
-
  /*
  * When defined, SHOW_ERROR_LINE will cause the line number in HC.C where
  * errors/warnings/messages are generated to be displayed at the start of
@@ -52,6 +42,17 @@ extern int _splitpath(char const *file_template, char *drive, char *dir, char *f
  * generated a error or warning.
  */
 #define SHOW_ERROR_LINE
+
+#ifdef XFRACT
+
+#ifndef HAVESTRI
+extern int stricmp(char const *, char const *);
+extern int strnicmp(char const *, char const *, int);
+#endif
+extern int filelength(int);
+extern int _splitpath(char const *file_template, char *drive, char *dir, char *fname, char *ext);
+
+#else
 
 #if defined(_WIN32)
 // disable unsafe CRT warnings
