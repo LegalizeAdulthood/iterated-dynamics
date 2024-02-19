@@ -444,7 +444,7 @@ void msg_msg(char const *format, ...)
     va_end(arg);
 }
 
-inline void show_line(unsigned int line)
+void show_line(unsigned int line)
 {
     std::printf("[%04d] ", line);
 }
@@ -454,7 +454,7 @@ inline void show_line(unsigned int line)
 #   define error(...)  (show_line(__LINE__), error_msg(__VA_ARGS__))
 #   define warn(...)   (show_line(__LINE__), warn_msg(__VA_ARGS__))
 #   define notice(...) (show_line(__LINE__), notice_msg(__VA_ARGS__))
-#   define msg(...)    (quiet_mode ? 0 : (show_line(__LINE__), msg_msg(__VA_ARGS__)))
+#   define msg(...)    (quiet_mode ? static_cast<void>(0) : (show_line(__LINE__), msg_msg(__VA_ARGS__)))
 #else
 #define fatal(...)  fatal_msg(__VA_ARGS__)
 #define error(...)  error_msg(__VA_ARGS__)
