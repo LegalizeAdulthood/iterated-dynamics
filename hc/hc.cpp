@@ -4002,13 +4002,11 @@ public:
 
     ~compiler()
     {
-        notice("~compiler start");
         if (swapfile != nullptr)
         {
             std::fclose(swapfile);
             std::remove(m_options.swappath.c_str());
         }
-        notice("~compiler end");
     }
 
     int process();
@@ -4757,6 +4755,7 @@ void check_buffer(char const *curr, unsigned int off, char const *buffer)
 
 int main(int argc, char *argv[])
 {
-    std::cerr << "Running compiler\n";
-    return compiler(argc, argv).process();
+    int result = compiler(argc, argv).process();
+    notice("Result: %d", result);
+    return result;
 }
