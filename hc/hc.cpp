@@ -3238,36 +3238,22 @@ void paginate_document()
  * label sorting stuff
  */
 
-int fcmp_LABEL(void const *a, void const *b)
+bool cmp_LABEL(const LABEL &a, const LABEL &b)
 {
-    char const *an = static_cast<LABEL const *>(a)->name.c_str();
-    char const *bn = static_cast<LABEL const *>(b)->name.c_str();
+    if (a.name == INDEX_LABEL)
+        return true;
+    
+    if (b.name == INDEX_LABEL)
+        return false;
 
-    // compare the names, making sure that the index goes first
-    int const diff = std::strcmp(an, bn);
-    if (diff == 0)
-    {
-        return 0;
-    }
-
-    if (std::strcmp(an, INDEX_LABEL) == 0)
-    {
-        return -1;
-    }
-
-    if (std::strcmp(bn, INDEX_LABEL) == 0)
-    {
-        return 1;
-    }
-
-    return diff;
+    return a.name < b.name;
 }
 
 
 void sort_labels()
 {
-    qsort(&g_labels[0], static_cast<int>(g_labels.size()),  sizeof(LABEL), fcmp_LABEL);
-    qsort(&g_private_labels[0], static_cast<int>(g_private_labels.size()), sizeof(LABEL), fcmp_LABEL);
+    std::sort(g_labels.begin(), g_labels.end(), cmp_LABEL);
+    std::sort(g_private_labels.begin(), g_private_labels.end(), cmp_LABEL);
 }
 
 
