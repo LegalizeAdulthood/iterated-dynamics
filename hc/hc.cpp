@@ -4225,6 +4225,7 @@ compiler_options parse_compiler_options(int argc, char **argv)
 void compiler::parse_arguments()
 {
     m_options = parse_compiler_options(argc, argv);
+    std::cout << "Arguments parsed" << std::endl;
 }
 
 int compiler::process()
