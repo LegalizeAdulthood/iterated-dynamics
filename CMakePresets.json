@@ -55,7 +55,10 @@
       "name": "ci-linux",
       "displayName": "Build with CI linux settings",
       "configurePreset": "ci-linux",
-      "configuration": "Debug"
+      "configuration": "Debug",
+      "nativeToolOptions": [
+        "-k"
+      ]
     }
   ],
   "testPresets": [
