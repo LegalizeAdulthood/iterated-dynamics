@@ -806,14 +806,14 @@ static int put_extend_blk(int block_id, int block_len, char const *block_data)
     return 1;
 }
 
-static int store_item_name(char const *nameptr)
+static int store_item_name(char const *name)
 {
     formula_info fsave_info;
     for (int i = 0; i < 40; i++)
     {
         fsave_info.form_name[i] = 0;      // initialize string
     }
-    std::strcpy(fsave_info.form_name, nameptr);
+    std::strcpy(fsave_info.form_name, name);
     if (g_fractal_type == fractal_type::FORMULA || g_fractal_type == fractal_type::FFORMULA)
     {
         fsave_info.uses_p1 = (short) (g_frm_uses_p1 ? 1 : 0);
@@ -834,9 +834,9 @@ static int store_item_name(char const *nameptr)
         fsave_info.uses_p4 = 0;
         fsave_info.uses_p5 = 0;
     }
-    for (int i = 0; i < sizeof(fsave_info.future) / sizeof(short); i++)
+    for (short &i : fsave_info.future)
     {
-        fsave_info.future[i] = 0;
+        i = 0;
     }
     // formula/lsys/ifs info block, 003
     put_extend_blk(3, sizeof(fsave_info), (char *) &fsave_info);
