@@ -63,7 +63,6 @@ static int  next_command(
     int *lineoffset,
     cmd_file mode);
 static bool next_line(std::FILE *handle, char *linebuf, cmd_file mode);
-int cmdarg(char *argument, cmd_file mode);
 static void argerror(char const *);
 static void initvars_run();
 static void initvars_restart();
