@@ -130,7 +130,7 @@ static int doredraw = 0; // 1 if we have a redraw waiting
 
 // Static routines
 static Window FindRootWindow();
-static Window pr_dwmroot(Display *dpy, Window pwin);
+static Window pr_dwm_root(Display *dpy, Window pwin);
 static int errhand(Display *dp, XErrorEvent *xe);
 static int getachar();
 static int handleesc();
@@ -2139,7 +2139,7 @@ xhandleevents()
 /*
  *----------------------------------------------------------------------
  *
- * pr_dwmroot --
+ * pr_dwm_root --
  *
  *  Search for a dec window manager root window.
  *
@@ -2151,8 +2151,7 @@ xhandleevents()
  *
  *----------------------------------------------------------------------
  */
-static Window
-pr_dwmroot(Display *dpy, Window pwin)
+static Window pr_dwm_root(Display *dpy, Window pwin)
 {
     // search for DEC Window Manager root
     XWindowAttributes pxwa, cxwa;
@@ -2175,7 +2174,7 @@ pr_dwmroot(Display *dpy, Window pwin)
             }
             if (pxwa.width == cxwa.width && pxwa.height == cxwa.height)
             {
-                return pr_dwmroot(dpy, child[i]);
+                return pr_dwm_root(dpy, child[i]);
             }
         }
         return pwin;
@@ -2206,7 +2205,7 @@ static Window
 FindRootWindow()
 {
     w_root = RootWindow(dpy, scr);
-    w_root = pr_dwmroot(dpy, w_root); // search for DEC wm root
+    w_root = pr_dwm_root(dpy, w_root); // search for DEC wm root
 
     {   // search for swm/tvtwm root (from ssetroot by Tom LaStrange)
         Window rootReturn, parentReturn, *children;
