@@ -4040,21 +4040,13 @@ private:
 
 compiler_options parse_compiler_options(int argc, char **argv)
 {
-    for (int i = 0; i < argc; ++i)
-    {
-        std::cout << "Argument[" << i << "] = '" << argv[i] << "'" << std::endl;
-    }
     compiler_options result{};
-    
-    for (char **arg = &argv[1]; argc > 1; argc--, arg++)
+    for (int i = 1; i < argc; ++i)
     {
-        std::cout << "Argument " << argc << std::endl;
-        switch (arg[0][0])
+        const std::string arg{argv[i]};
+        if (arg[0] == '/' || arg[0] == '-')
         {
-        case '/':
-        case '-':
-            std::cout << "Switch " << arg[0] << std::endl;
-            switch (arg[0][1])
+            switch (arg[1])
             {
             case 'a':
                 if (result.mode == modes::NONE)
@@ -4101,11 +4093,10 @@ compiler_options parse_compiler_options(int argc, char **argv)
                 break;
 
             case 'i':
-                if (argc > 2)
+                if (i < argc - 1)
                 {
-                    g_include_paths.emplace_back(arg[1]);
-                    --argc;
-                    ++arg;
+                    g_include_paths.emplace_back(argv[i + 1]);
+                    ++i;
                 }
                 else
                 {
@@ -4127,11 +4118,10 @@ compiler_options parse_compiler_options(int argc, char **argv)
             case 'o':
                 if (result.mode == modes::HTML)
                 {
-                    if (argc > 2)
+                    if (i < argc - 1)
                     {
-                        g_html_output_dir = arg[1];
-                        --argc;
-                        ++arg;
+                        g_html_output_dir = argv[i + 1];
+                        ++i;
                     }
                     else
                     {
@@ -4169,7 +4159,15 @@ compiler_options parse_compiler_options(int argc, char **argv)
             case 'r':
                 if (result.mode == modes::COMPILE || result.mode == modes::PRINT)
                 {
-                    result.swappath = &(*arg)[2];
+                    if (i < argc - 1)
+                    {
+                        result.swappath = argv[i + 1];
+                        ++i;
+                    }
+                    else
+                    {
+                        fatal(0, "Missing argument for /r");
+                    }
                 }
                 else
                 {
@@ -4182,26 +4180,26 @@ compiler_options parse_compiler_options(int argc, char **argv)
                 break;
 
             default:
-                fatal(0, "Bad command-line switch /%c", (*arg)[1]);
+                fatal(0, "Bad command-line switch /%c", arg[1]);
                 break;
             }
-            break;
-
-        default:   // assume it is a fname
-            std::cout << "Filename:" << std::endl << arg[0] << std::endl;
+        }
+        else
+        {
+            // assume it is a filename
+            std::cout << "Filename: " << arg << std::endl;
             if (result.fname1.empty())
             {
-                result.fname1 = *arg;
+                result.fname1 = arg;
             }
             else if (result.fname2.empty())
             {
-                result.fname2 = *arg;
+                result.fname2 = arg;
             }
             else
             {
-                fatal(0, "Unexpected command-line argument \"%s\"", *arg);
+                fatal(0, "Unexpected command-line argument \"%s\"", arg.c_str());
             }
-            break;
         }
     }
     std::cout << "Parsing command-line arguments: " << argc << "\nArguments:\n" << result << '\n';
@@ -4210,7 +4208,6 @@ compiler_options parse_compiler_options(int argc, char **argv)
 
 void compiler::parse_arguments()
 {
-    std::cout << "Parsing arguments" << std::endl;
     m_options = parse_compiler_options(argc, argv);
 }
 
