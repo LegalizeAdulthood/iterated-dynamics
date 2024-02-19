@@ -35,6 +35,14 @@
       "name": "cppcheck",
       "displayName": "Configure for use with cppcheck",
       "inherits": [ "sibling-build-preset", "compile-commands" ]
+    },
+    {
+      "name": "ci-linux",
+      "displayName": "Configure for use with CI build on linux",
+      "inherits": [ "sibling-build-preset", "compile-commands" ],
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug"
+      }
     }
   ],
   "buildPresets": [
@@ -42,16 +50,33 @@
       "name": "default",
       "displayName": "Build with default settings",
       "configurePreset": "default"
+    },
+    {
+      "name": "ci-linux",
+      "displayName": "Build with CI linux settings",
+      "configurePreset": "ci-linux",
+      "configuration": "Debug"
     }
   ],
   "testPresets": [
     {
-      "name": "default",
-      "displayName": "Test with default settings",
-      "configurePreset": "default",
+      "name": "settings",
+      "hidden": true,
       "output": {
         "outputOnFailure": true
       }
+    },
+    {
+      "name": "default",
+      "displayName": "Test with default settings",
+      "configurePreset": "default",
+      "inherits": [ "settings" ]
+    },
+    {
+      "name": "ci-linux",
+      "displayName": "Test with CI linux settings",
+      "configurePreset": "ci-linux",
+      "inherits": [ "settings" ]
     }
   ],
   "workflowPresets": [
@@ -70,6 +95,24 @@
         {
           "type": "test",
           "name": "default"
+        }
+      ]
+    },
+    {
+      "name": "ci-linux",
+      "displayName": "Workflow with CI linux settings: configure, build and test",
+      "steps": [
+        {
+          "type": "configure",
+          "name": "ci-linux"
+        },
+        {
+          "type": "build",
+          "name": "ci-linux"
+        },
+        {
+          "type": "test",
+          "name": "ci-linux"
         }
       ]
     }
