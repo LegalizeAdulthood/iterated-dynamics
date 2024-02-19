@@ -7,16 +7,27 @@ on:
     branches: [ "master" ]
 
 jobs:
-#  linux-build:
-#    runs-on: ubuntu-latest
-#
-#    steps:
-#    - uses: actions/checkout@v4.1.1
-#      with:
-#        submodules: true
-#
-#    - name: CMake workflow
-#      run: cmake --workflow --preset default
+  linux-build:
+    runs-on: ubuntu-latest
+
+    env: 
+      VCPKG_BINARY_SOURCES: "clear;x-gha,readwrite"
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4.1.1
+      with:
+        submodules: true
+
+    - name: Set Environment Variables
+      uses: actions/github-script@v6
+      with:
+        script: |
+          core.exportVariable('ACTIONS_CACHE_URL', process.env.ACTIONS_CACHE_URL || '');
+          core.exportVariable('ACTIONS_RUNTIME_TOKEN', process.env.ACTIONS_RUNTIME_TOKEN || '');
+
+    - name: Configure
+      run: cmake --preset default
 
   windows-build:
     runs-on: windows-latest
@@ -25,16 +36,19 @@ jobs:
       VCPKG_BINARY_SOURCES: "clear;x-gha,readwrite"
 
     steps:
-    - uses: actions/checkout@v4.1.1
+    - name: Checkout
+      uses: actions/checkout@v4.1.1
       with:
         submodules: true
-    - uses: actions/github-script@v6
+
+    - name: Set Environment Variables
+      uses: actions/github-script@v6
       with:
         script: |
           core.exportVariable('ACTIONS_CACHE_URL', process.env.ACTIONS_CACHE_URL || '');
           core.exportVariable('ACTIONS_RUNTIME_TOKEN', process.env.ACTIONS_RUNTIME_TOKEN || '');
 
-    - name: CMake workflow
+    - name: CMake Workflow
       run: cmake --workflow --preset default
 
   cppcheck:
