@@ -4048,6 +4048,7 @@ compiler_options parse_compiler_options(int argc, char **argv)
         {
         case '/':
         case '-':
+            std::cout << "Switch " << arg[0] << std::endl;
             switch (arg[0][1])
             {
             case 'a':
@@ -4182,6 +4183,7 @@ compiler_options parse_compiler_options(int argc, char **argv)
             break;
 
         default:   // assume it is a fname
+            std::cout << "Filename:" << std::endl << arg[0] << std::endl;
             if (result.fname1.empty())
             {
                 result.fname1 = *arg;
