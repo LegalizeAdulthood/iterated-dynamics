@@ -3573,6 +3573,7 @@ void _write_help(std::FILE *file)
 
         ++i;
     }
+    notice("Done writing help");
 }
 
 
