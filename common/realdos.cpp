@@ -1903,15 +1903,23 @@ int g_cfg_line_nums[MAX_VIDEO_MODES] = { 0 };
  */
 void load_fractint_config()
 {
-    std::FILE *cfgfile;
-    VIDEOINFO vident;
-    int linenum;
-    long xdots, ydots;
-    int i, j, keynum, ax, bx, cx, dx, dotmode, colors;
-    char *fields[11] = { nullptr };
-    int textsafe2;
-    char tempstring[150];
-    int truecolorbits;
+    std::FILE   *cfgfile;
+    VIDEOINFO    vident;
+    int          linenum;
+    long         xdots, ydots;
+    int          i;
+    int          j;
+    int          keynum;
+    unsigned int ax;
+    unsigned int bx;
+    unsigned int cx;
+    unsigned int dx;
+    int          dotmode;
+    int          colors;
+    char        *fields[11] = {nullptr};
+    int          textsafe2;
+    char         tempstring[150];
+    int          truecolorbits;
 
     findpath("fractint.cfg", tempstring);
     if (tempstring[0] == 0                            // can't find the file
@@ -1962,13 +1970,13 @@ void load_fractint_config()
         std::sscanf(fields[3], "%x", &cx);
         std::sscanf(fields[4], "%x", &dx);
         assert(fields[5]);
-        dotmode     = atoi(fields[5]);
+        dotmode = atoi(fields[5]);
         assert(fields[6]);
-        xdots       = atol(fields[6]);
+        xdots = atol(fields[6]);
         assert(fields[7]);
-        ydots       = atol(fields[7]);
+        ydots = atol(fields[7]);
         assert(fields[8]);
-        colors      = atoi(fields[8]);
+        colors = atoi(fields[8]);
         if (colors == 4 && std::strchr(strlwr(fields[8]), 'g'))
         {
             colors = 256;
