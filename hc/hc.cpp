@@ -4755,7 +4755,5 @@ void check_buffer(char const *curr, unsigned int off, char const *buffer)
 
 int main(int argc, char *argv[])
 {
-    int result = compiler(argc, argv).process();
-    notice("Result: %d", result);
-    return result;
+    return compiler(argc, argv).process();
 }
