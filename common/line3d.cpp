@@ -53,7 +53,6 @@ struct minmax
 // routines in this module
 int line3d(BYTE *, unsigned);
 int targa_color(int, int, int);
-bool targa_validate(char const *file_name);
 static int first_time(int, VECTOR);
 static int H_R(BYTE *, BYTE *, BYTE *, unsigned long, unsigned long, unsigned long);
 static int line3dmem();

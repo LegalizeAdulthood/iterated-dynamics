@@ -472,7 +472,7 @@ int lcpower(LComplex *base, int exp, LComplex *result, int bitshift)
 }
 #endif
 
-int complex_div(DComplex arg1, DComplex arg2, DComplex *pz);
+int complex_div(DComplex numerator, DComplex denominator, DComplex *pout);
 int complex_mult(DComplex arg1, DComplex arg2, DComplex *pz);
 
 // Distance of complex z from unit circle
