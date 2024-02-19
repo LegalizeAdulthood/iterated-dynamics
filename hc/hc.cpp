@@ -374,7 +374,7 @@ void print_msg(char const *type, int lnum, char const *format, std::va_list arg)
     std::printf("\n");
 }
 
-void fatal(int diff, char const *format, ...)
+void fatal_msg(int diff, char const *format, ...)
 {
     std::va_list arg;
     va_start(arg, format);
@@ -391,7 +391,7 @@ void fatal(int diff, char const *format, ...)
 }
 
 
-void error(int diff, char const *format, ...)
+void error_msg(int diff, char const *format, ...)
 {
     std::va_list arg;
     va_start(arg, format);
@@ -401,12 +401,12 @@ void error(int diff, char const *format, ...)
 
     if (++errors >= MAX_ERRORS)
     {
-        fatal(0, "Too many errors!");
+        fatal_msg(0, "Too many errors!");
     }
 }
 
 
-void warn(int diff, char const *format, ...)
+void warn_msg(int diff, char const *format, ...)
 {
     std::va_list arg;
     va_start(arg, format);
@@ -416,12 +416,12 @@ void warn(int diff, char const *format, ...)
 
     if (++warnings >= MAX_WARNINGS)
     {
-        fatal(0, "Too many warnings!");
+        fatal_msg(0, "Too many warnings!");
     }
 }
 
 
-void notice(char const *format, ...)
+void notice_msg(char const *format, ...)
 {
     std::va_list arg;
     va_start(arg, format);
@@ -430,7 +430,7 @@ void notice(char const *format, ...)
 }
 
 
-void msg(char const *format, ...)
+void msg_msg(char const *format, ...)
 {
     std::va_list arg;
 
@@ -443,13 +443,23 @@ void msg(char const *format, ...)
     va_end(arg);
 }
 
+inline void show_line(unsigned int line)
+{
+    std::printf("[%04d] ", line);
+}
 
 #ifdef SHOW_ERROR_LINE
-#   define fatal  (std::printf("[%04d] ", __LINE__), fatal)
-#   define error  (std::printf("[%04d] ", __LINE__), error)
-#   define warn   (std::printf("[%04d] ", __LINE__), warn)
-#   define notice (std::printf("[%04d] ", __LINE__), notice)
-#   define msg    (quiet_mode ? 0 : std::printf("[%04d] ", __LINE__), msg)
+#   define fatal(...)  (show_line(__LINE__), fatal_msg(__VA_ARGS__))
+#   define error(...)  (show_line(__LINE__), error_msg(__VA_ARGS__))
+#   define warn(...)   (show_line(__LINE__), warn_msg(__VA_ARGS__))
+#   define notice(...) (show_line(__LINE__), notice_msg(__VA_ARGS__))
+#   define msg(...)    (quiet_mode ? 0 : (show_line(__LINE__), msg_msg(__VA_ARGS__)))
+#else
+#define fatal(...)  fatal_msg(__VA_ARGS__)
+#define erorr(...)  error_msg(__VA_ARGS__)
+#define warn(...)   warn_msg(__VA_ARGS__)
+#define notice(...) notice_msg(__VA_ARGS__)
+#define msg(...)    msg_msg(__VA_ARGS__)
 #endif
 
 
@@ -4192,10 +4202,12 @@ compiler_options parse_compiler_options(int argc, char **argv)
             if (result.fname1.empty())
             {
                 result.fname1 = arg;
+                std::cout << "Assigning to fname1" << std::endl;
             }
             else if (result.fname2.empty())
             {
                 result.fname2 = arg;
+                std::cout << "Assigning to fname2" << std::endl;
             }
             else
             {
