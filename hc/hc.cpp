@@ -456,7 +456,7 @@ inline void show_line(unsigned int line)
 #   define msg(...)    (quiet_mode ? 0 : (show_line(__LINE__), msg_msg(__VA_ARGS__)))
 #else
 #define fatal(...)  fatal_msg(__VA_ARGS__)
-#define erorr(...)  error_msg(__VA_ARGS__)
+#define error(...)  error_msg(__VA_ARGS__)
 #define warn(...)   warn_msg(__VA_ARGS__)
 #define notice(...) notice_msg(__VA_ARGS__)
 #define msg(...)    msg_msg(__VA_ARGS__)
