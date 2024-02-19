@@ -4043,6 +4043,7 @@ compiler_options parse_compiler_options(int argc, char **argv)
     compiler_options result{};
     for (char **arg = &argv[1]; argc > 1; argc--, arg++)
     {
+        std::cout << "Argument " << argc << std::endl;
         switch (arg[0][0])
         {
         case '/':
@@ -4202,6 +4203,7 @@ compiler_options parse_compiler_options(int argc, char **argv)
 
 void compiler::parse_arguments()
 {
+    std::cout << "Parsing arguments" << std::endl;
     m_options = parse_compiler_options(argc, argv);
 }
 
@@ -4762,5 +4764,6 @@ void check_buffer(char const *curr, unsigned int off, char const *buffer)
 
 int main(int argc, char *argv[])
 {
+    std::cerr << "Running compiler\n";
     return compiler(argc, argv).process();
 }
