@@ -2784,7 +2784,7 @@ static void
 x11_buzzer(Driver *drv, buzzer_codes kind)
 {
     // TODO
-    std::fprintf(stderr, "x11_buzzer(%d)\n", kind);
+    std::fprintf(stderr, "x11_buzzer(%d)\n", static_cast<int>(kind));
 }
 
 static bool x11_sound_on(Driver *drv, int freq)
