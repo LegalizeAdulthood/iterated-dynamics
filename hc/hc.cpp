@@ -4044,6 +4044,7 @@ compiler_options parse_compiler_options(int argc, char **argv)
     for (int i = 1; i < argc; ++i)
     {
         const std::string arg{argv[i]};
+        std::cout << i << ": " << arg << std::endl;
         if (arg[0] == '/' || arg[0] == '-')
         {
             switch (arg[1])
