@@ -3474,27 +3474,32 @@ void _write_help(std::FILE *file)
     hs.version = version;
 
     fwrite(&hs, sizeof(long)+sizeof(int), 1, file);
+    notice("Wrote signature and version");
 
     // write max_pages & max_links
 
     putw(max_pages, file);
     putw(max_links, file);
+    notice("Wrote max pages, max links");
 
     // write num_topic, num_label and num_contents
 
     putw(static_cast<int>(g_topics.size()), file);
     putw(static_cast<int>(g_labels.size()), file);
     putw(static_cast<int>(g_contents.size()), file);
+    notice("Wrote num topics, num labels, num contents");
 
     // write num_doc_page
 
     putw(num_doc_pages, file);
+    notice("Wrote num doc pages");
 
     // write the offsets to each topic
     for (TOPIC const &t : g_topics)
     {
         fwrite(&t.offset, sizeof(long), 1, file);
     }
+    notice("Wrote topic offsets");
 
     // write all public labels
     for (LABEL const &l : g_labels)
@@ -3502,6 +3507,7 @@ void _write_help(std::FILE *file)
         putw(l.topic_num, file);
         putw(l.topic_off, file);
     }
+    notice("Wrote public labels");
 
     // write contents
     for (CONTENT const &cp : g_contents)
@@ -3519,12 +3525,15 @@ void _write_help(std::FILE *file)
         putc((BYTE)cp.num_topic, file);
         fwrite(cp.topic_num, sizeof(int), cp.num_topic, file);
     }
+    notice("Wrote contents");
 
     // write topics
+    int i{};
     for (TOPIC const &tp : g_topics)
     {
         // write the topics flags
         putw(tp.flags, file);
+        notice("Wrote topic %d flags", i);
 
         // write offset, length and starting margin for each page
 
@@ -3535,11 +3544,13 @@ void _write_help(std::FILE *file)
             putw(p.length, file);
             putw(p.margin, file);
         }
+        notice("Wrote topic %d offset, length, starting margins", i);
 
         // write the help title
 
         putc((BYTE)tp.title_len, file);
         fwrite(tp.title.c_str(), 1, tp.title_len, file);
+        notice("Wrote topic %d title", i);
 
         // insert hot-link info & write the help text
 
@@ -3552,11 +3563,15 @@ void _write_help(std::FILE *file)
 
         putw(tp.text_len, file);
         fwrite(text, 1, tp.text_len, file);
+        notice("Wrote topic %d hot link info and help text", i);
 
         release_topic_text(&tp, 0);  // don't save the text even though
         // insert_real_link_info() modified it
         // because we don't access the info after
         // this.
+        notice("Release topic %d", i);
+
+        ++i;
     }
 }
 
@@ -4284,7 +4299,6 @@ void compiler::read_source_file(modes mode)
 
 void compiler::compile()
 {
-    std::cout << "Compile" << std::endl;
     if (!m_options.fname2.empty())
     {
         fatal(0, "Unexpected command-line argument \"%s\"", m_options.fname2.c_str());
