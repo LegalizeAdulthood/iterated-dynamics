@@ -809,9 +809,9 @@ static int put_extend_blk(int block_id, int block_len, char const *block_data)
 static int store_item_name(char const *name)
 {
     formula_info fsave_info;
-    for (int i = 0; i < 40; i++)
+    for (char &i : fsave_info.form_name)
     {
-        fsave_info.form_name[i] = 0;      // initialize string
+        i = 0;      // initialize string
     }
     std::strcpy(fsave_info.form_name, name);
     if (g_fractal_type == fractal_type::FORMULA || g_fractal_type == fractal_type::FFORMULA)
