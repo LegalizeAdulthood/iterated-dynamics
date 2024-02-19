@@ -3519,7 +3519,6 @@ void _write_help(std::FILE *file)
         putc((BYTE)cp.num_topic, file);
         fwrite(cp.topic_num, sizeof(int), cp.num_topic, file);
     }
-    notice("Wrote contents");
 
     // write topics
     for (TOPIC const &tp : g_topics)
@@ -4003,11 +4002,13 @@ public:
 
     ~compiler()
     {
+        notice("~compiler start");
         if (swapfile != nullptr)
         {
             std::fclose(swapfile);
             std::remove(m_options.swappath.c_str());
         }
+        notice("~compiler end");
     }
 
     int process();
@@ -4333,25 +4334,21 @@ void compiler::compile()
     {
         write_help(hlp_fname.c_str());
     }
-    notice("write_help");
 
     if (m_options.show_stats)
     {
         report_stats();
     }
-    notice("report_stats");
 
     if (m_options.show_mem)
     {
         report_memory();
     }
-    notice("report_memory");
 
     if (errors || warnings)
     {
         report_errors();
     }
-    notice("report_errors");
 }
 
 void compiler::print()
