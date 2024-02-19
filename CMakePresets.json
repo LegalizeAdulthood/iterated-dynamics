@@ -58,7 +58,8 @@
       "configuration": "Debug",
       "nativeToolOptions": [
         "-k"
-      ]
+      ],
+      "verbose": true
     }
   ],
   "testPresets": [
