@@ -4040,7 +4040,12 @@ private:
 
 compiler_options parse_compiler_options(int argc, char **argv)
 {
+    for (int i = 0; i < argc; ++i)
+    {
+        std::cout << "Argument[" << i << "] = '" << argv[i] << "'" << std::endl;
+    }
     compiler_options result{};
+    
     for (char **arg = &argv[1]; argc > 1; argc--, arg++)
     {
         std::cout << "Argument " << argc << std::endl;
