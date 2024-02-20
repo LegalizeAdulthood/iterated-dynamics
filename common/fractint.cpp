@@ -153,24 +153,6 @@ std::string g_browse_mask;
 int g_scale_map[12] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12}; // array for mapping notes to a (user defined) scale
 
 
-void check_same_name()
-{
-    char drive[FILE_MAX_DRIVE];
-    char dir[FILE_MAX_DIR];
-    char fname[FILE_MAX_FNAME];
-    char ext[FILE_MAX_EXT];
-    char path[FILE_MAX_PATH];
-    splitpath(g_save_filename, drive, dir, fname, ext);
-    if (std::strcmp(fname, "fract001"))
-    {
-        makepath(path, drive, dir, fname, "gif");
-        if (access(path, 0) == 0)
-        {
-            exit(0);
-        }
-    }
-}
-
 // Do nothing if math error
 static void my_floating_point_err(int sig)
 {
@@ -229,10 +211,6 @@ static void main_restart(int const argc, char const *const argv[], bool &stacked
 
     history_init();
 
-    if (g_debug_flag == debug_flags::prevent_overwrite_savename && g_init_batch == batch_modes::NORMAL)   // abort if savename already exists
-    {
-        check_same_name();
-    }
     driver_window();
     std::memcpy(g_old_dac_box, g_dac_box, 256*3);      // save in case colors= present
 

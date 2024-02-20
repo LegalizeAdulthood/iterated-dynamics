@@ -64,7 +64,6 @@ enum debug_flags
     show_formula_info_after_compile     = 324,
     force_memory_from_disk              = 420,
     force_memory_from_memory            = 422,
-    prevent_overwrite_savename          = 450,
     force_boundary_trace_error          = 470,
     force_solid_guess_error             = 472,
     force_precision_0_digits            = 700,

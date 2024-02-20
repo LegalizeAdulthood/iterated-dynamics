@@ -32,9 +32,6 @@
 
 #include "frame.h"
 
-// External declarations
-extern void check_same_name();
-
 HINSTANCE g_instance = nullptr;
 
 static void (*dotwrite)(int, int, int) = nullptr;
