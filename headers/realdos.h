@@ -78,5 +78,9 @@ extern void load_videotable(int);
 extern void bad_fractint_cfg_msg();
 extern int showvidlength();
 extern bool stopmsg(int flags, char const* msg);
+inline bool stopmsg(int flags, const std::string &msg)
+{
+    return stopmsg(flags, msg.c_str());
+}
 
 #endif
