@@ -38,8 +38,9 @@
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
-#include <string>
 #include <ctime>
+#include <filesystem>
+#include <string>
 #include <system_error>
 #include <vector>
 
@@ -1303,13 +1304,13 @@ namespace
 struct window
 {
     // for fgetwindow on screen browser
-    coords itl;  // screen coordinates
-    coords ibl;
-    coords itr;
-    coords ibr;
-    double win_size;   // box size for drawindow()
-    char name[13];     // for filename
-    int boxcount;      // bytes of saved screen info
+    coords      itl;      // screen coordinates
+    coords      ibl;      //
+    coords      itr;      //
+    coords      ibr;      //
+    double      win_size; // box size for drawindow()
+    std::string name;     // for filename
+    int         boxcount; // bytes of saved screen info
 };
 
 } // namespace
@@ -1469,7 +1470,7 @@ rescan:  // entry for changed browse parms
             && !blk_6_info.got_data
             && is_visible_window(&winlist, &read_info, &blk_5_info))
         {
-            std::strcpy(winlist.name, DTA.filename.c_str());
+            winlist.name = DTA.filename;
             drawindow(color_of_box, &winlist);
             winlist.boxcount = g_box_count;
             browse_windows[wincount] = winlist;
@@ -1605,7 +1606,7 @@ rescan:  // entry for changed browse parms
 
             case 'D': // delete file
                 cleartempmsg();
-                std::snprintf(mesg, NUM_OF(mesg), "Delete %s? (Y/N)", winlist.name);
+                std::snprintf(mesg, NUM_OF(mesg), "Delete %s? (Y/N)", winlist.name.c_str());
                 showtempmsg(mesg);
                 driver_wait_key_pressed(0);
                 cleartempmsg();
@@ -1622,13 +1623,15 @@ rescan:  // entry for changed browse parms
                 if (c == 'Y')
                 {
                     splitpath(g_read_filename, drive, dir, nullptr, nullptr);
-                    splitpath(winlist.name, nullptr, nullptr, fname, ext);
-                    makepath(tmpmask, drive, dir, fname, ext);
+                    const std::filesystem::path name_path(winlist.name);
+                    const std::string fname2 = name_path.stem().string();
+                    const std::string ext2 = name_path.extension().string();
+                    makepath(tmpmask, drive, dir, fname2.c_str(), ext2.c_str());
                     if (!std::remove(tmpmask))
                     {
                         // do a rescan
                         done = 3;
-                        std::strcpy(oldname, winlist.name);
+                        std::strcpy(oldname, winlist.name.c_str());
                         tmpmask[0] = '\0';
                         check_history(oldname, tmpmask);
                         break;
@@ -1652,8 +1655,12 @@ rescan:  // entry for changed browse parms
                 newname[0] = 0;
                 std::strcpy(mesg, "Enter the new filename for ");
                 splitpath(g_read_filename, drive, dir, nullptr, nullptr);
-                splitpath(winlist.name, nullptr, nullptr, fname, ext);
-                makepath(tmpmask, drive, dir, fname, ext);
+                {
+                    const std::filesystem::path name_path{winlist.name};
+                    const std::string           fname2{name_path.stem().string()};
+                    const std::string           ext2{name_path.extension().string()};
+                    makepath(tmpmask, drive, dir, fname2.c_str(), ext2.c_str());
+                }
                 std::strcpy(newname, tmpmask);
                 std::strcat(mesg, tmpmask);
                 {
@@ -1671,9 +1678,9 @@ rescan:  // entry for changed browse parms
                             {
                                 splitpath(newname, nullptr, nullptr, fname, ext);
                                 makepath(tmpmask, nullptr, nullptr, fname, ext);
-                                std::strcpy(oldname, winlist.name);
+                                std::strcpy(oldname, winlist.name.c_str());
                                 check_history(oldname, tmpmask);
-                                std::strcpy(winlist.name, tmpmask);
+                                winlist.name = tmpmask;
                             }
                         }
                     }
