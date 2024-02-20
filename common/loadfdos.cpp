@@ -40,6 +40,8 @@
 #include "os.h"
 #include "realdos.h"
 
+#include <algorithm>
+#include <array>
 #include <cmath>
 #include <cstdio>
 #include <cstring>
@@ -74,32 +76,29 @@ struct vidinf
 #define VI_ASPECT    1  // aspect ratio bad
 
 #ifndef XFRACT
-static int vidcompare(const void *p1, const void *p2)
+static bool vidinf_less(const vidinf &lhs, const vidinf &rhs)
 {
-    vidinf const *ptr1, *ptr2;
-    ptr1 = (vidinf const *)p1;
-    ptr2 = (vidinf const *)p2;
-    if (ptr1->flags < ptr2->flags)
+    if (lhs.flags < rhs.flags)
     {
-        return -1;
+        return true;
     }
-    if (ptr1->flags > ptr2->flags)
+    if (lhs.flags > rhs.flags)
     {
-        return 1;
+        return false;
     }
-    if (g_video_table[ptr1->entnum].keynum < g_video_table[ptr2->entnum].keynum)
+    if (g_video_table[lhs.entnum].keynum < g_video_table[rhs.entnum].keynum)
     {
-        return -1;
+        return true;
     }
-    if (g_video_table[ptr1->entnum].keynum > g_video_table[ptr2->entnum].keynum)
+    if (g_video_table[lhs.entnum].keynum > g_video_table[rhs.entnum].keynum)
     {
-        return 1;
+        return false;
     }
-    if (ptr1->entnum < ptr2->entnum)
+    if (lhs.entnum < rhs.entnum)
     {
-        return -1;
+        return true;
     }
-    return 1;
+    return false;
 }
 
 static void format_vid_inf(int i, char const *err, char *buf)
@@ -125,7 +124,7 @@ static double vid_aspect(int tryxdots, int tryydots)
 }
 
 #ifndef XFRACT
-static vidinf *vidptr;
+static std::array<vidinf, MAX_VIDEO_MODES> s_video_info;
 #endif
 
 namespace
@@ -177,7 +176,6 @@ std::string save_release_detail()
 
 int get_video_mode(FRACTAL_INFO *info, ext_blk_3 *blk_3_info)
 {
-    vidinf vid[MAX_VIDEO_MODES];
     bool gotrealmode;
     double ftemp;
     unsigned tmpflags;
@@ -265,9 +263,9 @@ int get_video_mode(FRACTAL_INFO *info, ext_blk_3 *blk_3_info)
                 tmpflags |= VI_ASPECT;
             }
         }
-        vid[i].entnum = i;
+        s_video_info[i].entnum = i;
         // cppcheck-suppress unreadVariable
-        vid[i].flags  = tmpflags;
+        s_video_info[i].flags  = tmpflags;
     }
 
     if (g_fast_restore  && !g_ask_video)
@@ -280,11 +278,9 @@ int get_video_mode(FRACTAL_INFO *info, ext_blk_3 *blk_3_info)
     if ((g_init_mode < 0 || (g_ask_video && (g_init_batch == batch_modes::NONE))) && !g_make_parameter_file)
     {
         // no exact match or (askvideo=yes and batch=no), and not in makepar mode, talk to user
-
-        qsort(vid, g_video_table_len, sizeof(vid[0]), vidcompare); // sort modes
+        std::sort(s_video_info.begin(), s_video_info.end(), vidinf_less);
 
         std::vector<int> attributes(g_video_table_len, 1);
-        vidptr = &vid[0]; // for format_item
 
         // format heading
         char heading[256];  // big enough for more than a few lines
@@ -348,7 +344,7 @@ int get_video_mode(FRACTAL_INFO *info, ext_blk_3 *blk_3_info)
         }
         else
         {
-            g_init_mode = vid[i].entnum;
+            g_init_mode = s_video_info[i].entnum;
         }
     }
 #else
@@ -543,7 +539,7 @@ static void format_item(int choice, char *buf)
     char errbuf[10];
     unsigned tmpflags;
     errbuf[0] = 0;
-    tmpflags = vidptr[choice].flags;
+    tmpflags = s_video_info[choice].flags;
     if (tmpflags & (VI_VSMALL+VI_CSMALL+VI_ASPECT))
     {
         std::strcat(errbuf, "*");
@@ -568,7 +564,7 @@ static void format_item(int choice, char *buf)
     {
         std::strcat(errbuf, "c");
     }
-    format_vid_inf(vidptr[choice].entnum, errbuf, buf);
+    format_vid_inf(s_video_info[choice].entnum, errbuf, buf);
 }
 
 static int check_modekey(int curkey, int /*choice*/)
