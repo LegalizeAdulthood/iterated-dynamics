@@ -392,8 +392,7 @@ skip_UI:
         parmfile = std::fopen(outname, "wt");
         if (parmfile == nullptr)
         {
-            std::snprintf(buf, NUM_OF(buf), "Can't create %s", outname);
-            stopmsg(STOPMSG_NONE, buf);
+            stopmsg(STOPMSG_NONE, std::string{"Can't create "} + outname);
             if (gotinfile)
             {
                 std::fclose(infile);
