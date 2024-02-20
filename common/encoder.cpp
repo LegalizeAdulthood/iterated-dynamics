@@ -156,8 +156,7 @@ restart:
         }
         if (access(openfile, 2) != 0)
         {
-            std::snprintf(tmpmsg, NUM_OF(tmpmsg), "Can't write %s", openfile);
-            stopmsg(STOPMSG_NONE, tmpmsg);
+            stopmsg(STOPMSG_NONE, std::string{"Can't write "} + openfile);
             return -1;
         }
         newfile = false;
@@ -178,8 +177,7 @@ restart:
     g_outfile = std::fopen(tmpfile, "wb");
     if (g_outfile == nullptr)
     {
-        std::snprintf(tmpmsg, NUM_OF(tmpmsg), "Can't create %s", tmpfile);
-        stopmsg(STOPMSG_NONE, tmpmsg);
+        stopmsg(STOPMSG_NONE, (std::string{"Can't create "} + tmpfile).c_str());
         return -1;
     }
 
@@ -218,15 +216,16 @@ restart:
 
     if (interrupted)
     {
-        char buf[200];
-        std::snprintf(buf, NUM_OF(buf), "Save of %s interrupted.\nCancel to ", openfile);
+        std::string buf{"Save of "};
+        buf += openfile;
+        buf += " interrupted.\nCancel to ";
         if (newfile)
         {
-            std::strcat(buf, "delete the file,\ncontinue to keep the partial image.");
+            buf += "delete the file,\ncontinue to keep the partial image.";
         }
         else
         {
-            std::strcat(buf, "retain the original file,\ncontinue to replace original with new partial image.");
+            buf += "retain the original file,\ncontinue to replace original with new partial image.";
         }
         interrupted = 1;
         if (stopmsg(STOPMSG_CANCEL, buf))
@@ -290,8 +289,7 @@ restart:
         if (g_init_batch == batch_modes::NONE)
         {
             extract_filename(tmpfile, openfile);
-            std::snprintf(tmpmsg, NUM_OF(tmpmsg), " File saved as %s ", tmpfile);
-            texttempmsg(tmpmsg);
+            texttempmsg((std::string{" File saved as "} + tmpfile + ' ').c_str());
         }
     }
     if (g_init_save_time < 0)
