@@ -59,6 +59,10 @@ extern int fullscreen_choice(
     int (*checkkey)(int, int)
 );
 extern bool showtempmsg(char const *);
+inline bool showtempmsg(const std::string &msg)
+{
+    return showtempmsg(msg.c_str());
+}
 extern void cleartempmsg();
 extern void helptitle();
 extern int putstringcenter(int row, int col, int width, int attr, char const *msg);
