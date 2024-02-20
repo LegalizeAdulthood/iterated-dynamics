@@ -19,25 +19,30 @@ TEST(TestUpdateSaveName, noNumbersAtEnd)
     
     update_save_name(filename);
 
-    EXPECT_EQ(std::string{"myfrac1.gif"}, filename);
+    EXPECT_EQ(std::string{"myfract2.gif"}, filename);
 }
 
 TEST(TestUpdateSaveName, singleNumberAtEnd)
 {
     char filename[1024];
-    strcpy(filename, "myfrac1.gif");
+    strcpy(filename, "myfract1.gif");
     
     update_save_name(filename);
 
-    EXPECT_EQ(std::string{"myfrac2.gif"}, filename);
+    EXPECT_EQ(std::string{"myfract2.gif"}, filename);
 }
 
 TEST(TestUpdateSaveName, nineAtEnd)
 {
     char filename[1024];
-    strcpy(filename, "myfrac9.gif");
+    strcpy(filename, "myfract9.gif");
     
     update_save_name(filename);
 
-    EXPECT_EQ(std::string{"myfra10.gif"}, filename);
+    EXPECT_EQ(std::string{"myfract10.gif"}, filename);
+}
+
+TEST(TestNextSaveName, basic)
+{
+    EXPECT_EQ("fract0002.gif", next_save_name("fract0001.gif"));
 }

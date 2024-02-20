@@ -1,57 +1,34 @@
 #include "update_save_name.h"
 
-#include "port.h"
+#include <cstring>
+#include <filesystem>
 
-#include "fractint.h"
-#include "prompts2.h"
-
-void update_save_name(char *filename) // go to the next file name
+ // go to the next file name
+std::string next_save_name(const std::string &filename)
 {
-    char *save, *hold;
-    char drive[FILE_MAX_DRIVE];
-    char dir[FILE_MAX_DIR];
-    char fname[FILE_MAX_FNAME];
-    char ext[FILE_MAX_EXT];
-
-    splitpath(filename, drive, dir, fname, ext);
-
-    hold = fname + std::strlen(fname) - 1; // start at the end
-    while (hold >= fname && (*hold == ' ' || std::isdigit(*hold)))   // skip backwards
+    std::filesystem::path file_path{filename};
+    std::string           stem{file_path.stem().string()};
+    const auto            last_non_digit = stem.find_last_not_of("0123456789");
+    if (last_non_digit == stem.length() - 1)
     {
-        hold--;
+        file_path.replace_filename(stem + "2" + file_path.extension().string());
     }
-    hold++;                      // recover first digit
-    while (*hold == '0')           // skip leading zeros
-    {
-        hold++;
-    }
-    save = hold;
-    while (*save)
-    {
-        // check for all nines
-        if (*save != '9')
-        {
-            break;
-        }
-        save++;
-    }
-    if (!*save)                    // if the whole thing is nines then back
-    {
-        save = hold - 1;          // up one place. Note that this will eat
-    }
-    // your last letter if you go to far.
     else
     {
-        save = hold;
+        const auto first_digit_pos = last_non_digit + 1;
+        std::string next = std::to_string(std::stoi(stem.substr(first_digit_pos)) + 1);
+        const auto  num_digits = stem.length() - first_digit_pos;
+        if (num_digits > next.length())
+        {
+            next = std::string(num_digits - next.length(), '0') + next;
+        }
+        file_path.replace_filename(stem.substr(0, first_digit_pos) + next + file_path.extension().string());
     }
-    std::snprintf(save, NUM_OF(save), "%ld", atol(hold)+1); // increment the number
-    makepath(filename, drive, dir, fname, ext);
+    return file_path.string();
 }
 
-void update_save_name(std::string &filename)
+void update_save_name(char *filename)
 {
-    char buff[FILE_MAX_PATH];
-    std::strncpy(buff, filename.c_str(), FILE_MAX_PATH);
-    update_save_name(buff);
-    filename = buff;
+    const std::string next{next_save_name(filename)};
+    std::strcpy(filename, next.c_str());
 }
