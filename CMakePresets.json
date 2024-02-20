@@ -21,6 +21,14 @@
       }
     },
     {
+      "name": "no-testing",
+      "hidden": true,
+      "description": "Turn off building of tests",
+      "cacheVariables": {
+        "BUILD_TESTING": false
+      }
+    },
+    {
       "name": "vcpkg",
       "hidden": true,
       "description": "Configure the toolchain for vcpkg",
@@ -34,7 +42,7 @@
     {
       "name": "cppcheck",
       "displayName": "Configure for use with cppcheck",
-      "inherits": [ "sibling-build-preset", "compile-commands" ]
+      "inherits": [ "sibling-build-preset", "compile-commands", "no-testing" ]
     },
     {
       "name": "ci-linux",
