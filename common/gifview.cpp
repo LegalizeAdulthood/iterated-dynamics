@@ -32,6 +32,7 @@
 #include <algorithm>
 #include <cstdio>
 #include <cstring>
+#include <filesystem>
 #include <vector>
 
 static void close_file();
@@ -202,14 +203,7 @@ int gifview()
     if (driver_diskp())
     {
         // disk-video
-        char fname[FILE_MAX_FNAME];
-        char ext[FILE_MAX_EXT];
-        char tmpname[15];
-        char msg[40];
-        splitpath(temp1, nullptr, nullptr, fname, ext);
-        makepath(tmpname, nullptr, nullptr, fname, ext);
-        std::snprintf(msg, NUM_OF(msg), "restoring %s", tmpname);
-        dvid_status(1, msg);
+        dvid_status(1, "restoring " + std::filesystem::path(temp1).filename().string());
     }
     g_read_color = true;
 
