@@ -9,6 +9,8 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 project(iterated-dynamics CXX)
 
+include(CTest)
+
 set(home_dir "${CMAKE_SOURCE_DIR}/home")
 set(ID_DIR ${CMAKE_CURRENT_SOURCE_DIR})
 
@@ -290,6 +292,10 @@ set_src_dir(common/fractint.cpp)
 
 target_compile_definitions(libid PUBLIC ${ID_TARGET_DEFINITIONS} $<$<CONFIG:Debug>:${ID_TARGET_DEFINITIONS_DEBUG}>)
 target_compile_options(libid PUBLIC ${ID_TARGET_OPTIONS})
-target_include_directories(libid PRIVATE headers)
+target_include_directories(libid PUBLIC headers)
 target_link_libraries(libid PRIVATE helpcom os)
 add_dependencies(libid native_help)
+
+if(BUILD_TESTING)
+    add_subdirectory(tests)
+endif()
