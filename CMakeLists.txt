@@ -127,17 +127,17 @@ add_executable(id ${ID_EXECUTABLE_TYPE}
     headers/winprot.h
 )
 
-source_group("Header Files\\common\\3d" FILES
+source_group("Header Files/common/3d" FILES
     headers/3d.h
     headers/line3d.h
     headers/plot3d.h
 )
-source_group("Source Files\\common\\3d" FILES
+source_group("Source Files/common/3d" FILES
     common/3d.cpp
     common/line3d.cpp
     common/plot3d.cpp
 )
-source_group("Header Files\\common\\engine" FILES
+source_group("Header Files/common/engine" FILES
     headers/calcfrac.h
     headers/calcmand.h
     headers/calmanfp.h
@@ -152,7 +152,7 @@ source_group("Header Files\\common\\engine" FILES
     headers/soi.h
     headers/testpt.h
 )
-source_group("Source Files\\common\\engine" FILES
+source_group("Source Files/common/engine" FILES
     common/calcfrac.cpp
     common/calcmand.cpp
     common/calmanfp.cpp
@@ -166,7 +166,7 @@ source_group("Source Files\\common\\engine" FILES
     common/soi1.cpp
     common/testpt.cpp
 )
-source_group("Header Files\\common\\fractal specific" FILES
+source_group("Header Files/common/fractal specific" FILES
     headers/ant.h
     headers/jb.h
     headers/lorenz.h
@@ -176,7 +176,7 @@ source_group("Header Files\\common\\fractal specific" FILES
     headers/miscfrac.h
     headers/newton.h
 )
-source_group("Source Files\\common\\fractal specific" FILES
+source_group("Source Files/common/fractal specific" FILES
     common/ant.cpp
     common/jb.cpp
     common/lorenz.cpp
@@ -184,7 +184,7 @@ source_group("Source Files\\common\\fractal specific" FILES
     common/lsysf.cpp
     common/miscfrac.cpp
 )
-source_group("Header Files\\common\\i/o" FILES
+source_group("Header Files/common/IO" FILES
     headers/cmdfiles.h
     headers/decoder.h
     headers/diskvid.h
@@ -201,7 +201,7 @@ source_group("Header Files\\common\\i/o" FILES
     headers/slideshw.h
     headers/stereo.h
 )
-source_group("Source Files\\common\\i/o" FILES
+source_group("Source Files/common/IO" FILES
     common/cmdfiles.cpp
     common/decoder.cpp
     common/diskvid.cpp
@@ -218,7 +218,7 @@ source_group("Source Files\\common\\i/o" FILES
     common/slideshw.cpp
     common/stereo.cpp
 )
-source_group("Header Files\\common\\math" FILES
+source_group("Header Files/common/math" FILES
     headers/big.h
     headers/biginit.h
     headers/cmplx.h
@@ -227,7 +227,7 @@ source_group("Header Files\\common\\math" FILES
     headers/mpmath.h
     headers/mpmath_c.h
 )
-source_group("Source Files\\common\\math" FILES
+source_group("Source Files/common/math" FILES
     common/bigflt.cpp
     common/biginit.cpp
     common/bignum.cpp
@@ -236,15 +236,15 @@ source_group("Source Files\\common\\math" FILES
     common/hcmplx.cpp
     common/mpmath_c.cpp
 )
-source_group("Header Files\\common\\plumbing" FILES
+source_group("Header Files/common/plumbing" FILES
     headers/drivers.h
     headers/memory.h
 )
-source_group("Source Files\\common\\plumbing" FILES
+source_group("Source Files/common/plumbing" FILES
     common/drivers.cpp
     common/memory.cpp
 )
-source_group("Header Files\\common\\ui" FILES
+source_group("Header Files/common/ui" FILES
     headers/fractint.h
     headers/framain2.h
     headers/help.h
@@ -258,7 +258,7 @@ source_group("Header Files\\common\\ui" FILES
     headers/realdos.h
     headers/zoom.h
 )
-source_group("Source Files\\common\\ui" FILES
+source_group("Source Files/common/ui" FILES
     common/fractint.cpp
     common/framain2.cpp
     common/help.cpp
