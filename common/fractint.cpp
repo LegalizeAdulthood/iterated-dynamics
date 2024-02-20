@@ -532,7 +532,7 @@ static main_state main_image_start(bool &stacked, bool &resumeflag)
     return main_state::CONTINUE;
 }
 
-int main(int argc, char **argv)
+int id_main(int argc, char *argv[])
 {
     g_fractal_search_dir1 = getenv("FRACTDIR");
     if (g_fractal_search_dir1 == nullptr)

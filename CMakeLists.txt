@@ -46,6 +46,11 @@ add_subdirectory(win32)
 add_subdirectory(hc)
 
 add_executable(id ${ID_EXECUTABLE_TYPE}
+    common/main.cpp
+)
+target_link_libraries(id PUBLIC libid)
+
+add_library(libid
     headers/id_io.h
     headers/os.h
 
@@ -275,8 +280,8 @@ source_group("Source Files/common/ui" FILES
 set_src_dir(common/help.cpp)
 set_src_dir(common/fractint.cpp)
 
-target_compile_definitions(id PUBLIC ${ID_TARGET_DEFINITIONS} $<$<CONFIG:Debug>:${ID_TARGET_DEFINITIONS_DEBUG}>)
-target_compile_options(id PUBLIC ${ID_TARGET_OPTIONS})
-target_include_directories(id PRIVATE headers)
-target_link_libraries(id PRIVATE helpcom os)
-add_dependencies(id native_help)
+target_compile_definitions(libid PUBLIC ${ID_TARGET_DEFINITIONS} $<$<CONFIG:Debug>:${ID_TARGET_DEFINITIONS_DEBUG}>)
+target_compile_options(libid PUBLIC ${ID_TARGET_OPTIONS})
+target_include_directories(libid PRIVATE headers)
+target_link_libraries(libid PRIVATE helpcom os)
+add_dependencies(libid native_help)
