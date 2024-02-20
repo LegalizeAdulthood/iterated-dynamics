@@ -602,15 +602,15 @@ void (*dtrig2)() = dStkSinh;
 void (*dtrig3)() = dStkCosh;
 
 // return display form of active trig functions
-void showtrig(char *buf)
+std::string showtrig()
 {
     char tmpbuf[30];
-    *buf = 0; // null string if none
     trigdetails(tmpbuf);
     if (tmpbuf[0])
     {
-        std::snprintf(buf, NUM_OF(buf), " function=%s", tmpbuf);
+        return std::string{" function="} + tmpbuf;
     }
+    return {};
 }
 
 static void trigdetails(char *buf)

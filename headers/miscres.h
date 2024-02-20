@@ -31,7 +31,7 @@ extern void updatesavename(char *filename);
 extern void updatesavename(std::string &filename);
 extern int check_writefile(char *name, char const *ext);
 extern int check_writefile(std::string &name, char const *ext);
-extern void showtrig(char *buf);
+extern std::string showtrig();
 extern int set_trig_array(int k, char const *name);
 extern void set_trig_pointers(int);
 extern int tab_display();

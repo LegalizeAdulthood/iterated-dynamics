@@ -694,7 +694,7 @@ void write_batch_parms(char const *colorinf, bool colorsonly, int maxcolor, int 
                      g_jiim_left_right[static_cast<int>(g_inverse_julia_minor_method)].c_str());
         }
 
-        showtrig(buf); // this function is in miscres.c
+        strncpy(buf, showtrig().c_str(), NUM_OF(buf));
         if (buf[0])
         {
             put_parm(buf);
