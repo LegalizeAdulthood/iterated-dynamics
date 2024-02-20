@@ -123,9 +123,7 @@ static double vid_aspect(int tryxdots, int tryydots)
            * g_screen_aspect;
 }
 
-#ifndef XFRACT
 static std::array<vidinf, MAX_VIDEO_MODES> s_video_info;
-#endif
 
 namespace
 {
