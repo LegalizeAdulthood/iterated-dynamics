@@ -2,6 +2,11 @@
 cmake_minimum_required(VERSION 3.23)
 
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
+
+# <filesystem> is C++17 or later
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
 project(iterated-dynamics CXX)
 
 set(home_dir "${CMAKE_SOURCE_DIR}/home")
