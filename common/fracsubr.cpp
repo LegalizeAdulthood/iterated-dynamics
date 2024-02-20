@@ -1430,101 +1430,10 @@ void end_resume()
                       / ((0-delyy2)*W*delxx2*D-Ys*Xs)
   */
 
-// sleep N * a tenth of a millisecond
-
-void sleepms_old(long ms)
+void sleepms(long ms)
 {
-    static long scalems = 0L;
-    help_labels old_help_mode;
-    timeb t1, t2;
-#define SLEEPINIT 250 // milliseconds for calibration
-    bool const save_tab_mode = g_tab_mode;
-    old_help_mode = g_help_mode;
-    g_tab_mode = false;
-    g_help_mode = help_labels::NONE;
-    if (scalems == 0L) // calibrate
-    {
-        /* selects a value of scalems that makes the units
-           10000 per sec independent of CPU speed */
-        int i, elapsed;
-        scalems = 1L;
-        if (driver_key_pressed())   // check at start, hope to get start of timeslice
-        {
-            goto sleepexit;
-        }
-        // calibrate, assume slow computer first
-        showtempmsg("Calibrating timer");
-        do
-        {
-            scalems *= 2;
-            ftime(&t2);
-            do
-            {
-                // wait for the start of a new tick
-                ftime(&t1);
-            }
-            while (t2.time == t1.time && t2.millitm == t1.millitm);
-            sleepms_old(10L * SLEEPINIT); // about 1/4 sec
-            ftime(&t2);
-            if (driver_key_pressed())
-            {
-                scalems = 0L;
-                cleartempmsg();
-                goto sleepexit;
-            }
-        }
-        while ((elapsed = (int)(t2.time - t1.time)*1000 + t2.millitm - t1.millitm) < SLEEPINIT);
-        // once more to see if faster (eg multi-tasking)
-        do
-        {
-            // wait for the start of a new tick
-            ftime(&t1);
-        }
-        while (t2.time == t1.time && t2.millitm == t1.millitm);
-        sleepms_old(10L * SLEEPINIT);
-        ftime(&t2);
-        i = (int)(t2.time-t1.time)*1000 + t2.millitm-t1.millitm;
-        if (i < elapsed)
-        {
-            elapsed = (i == 0) ? 1 : i;
-        }
-        scalems = (long)((float)SLEEPINIT/(float)(elapsed) * scalems);
-        cleartempmsg();
-    }
-    if (ms > 10L * SLEEPINIT)
-    {
-        // using ftime is probably more accurate
-        ms /= 10;
-        ftime(&t1);
-        while (true)
-        {
-            if (driver_key_pressed())
-            {
-                break;
-            }
-            ftime(&t2);
-            if ((long)((t2.time-t1.time)*1000 + t2.millitm-t1.millitm) >= ms)
-            {
-                break;
-            }
-        }
-    }
-    else if (!driver_key_pressed())
-    {
-        ms *= scalems;
-        while (ms-- >= 0)
-        {
-        }
-    }
-sleepexit:
-    g_tab_mode = save_tab_mode;
-    g_help_mode = old_help_mode;
-}
-
-static void sleepms_new(long ms)
-{
-    uclock_t now = usec_clock();
-    const uclock_t next_time = now + ms*100;
+    uclock_t       now = usec_clock();
+    const uclock_t next_time = now + ms * 100;
     while (now < next_time)
     {
         if (driver_key_pressed())
@@ -1532,18 +1441,6 @@ static void sleepms_new(long ms)
             break;
         }
         now = usec_clock();
-    }
-}
-
-void sleepms(long ms)
-{
-    if (g_debug_flag == debug_flags::force_old_sleep)
-    {
-        sleepms_old(ms);
-    }
-    else
-    {
-        sleepms_new(ms);
     }
 }
 
@@ -1555,22 +1452,15 @@ void sleepms(long ms)
 static uclock_t s_next_time[MAX_INDEX];
 void wait_until(int index, uclock_t wait_time)
 {
-    if (g_debug_flag == debug_flags::force_old_sleep)
+    uclock_t now;
+    while ((now = usec_clock()) < s_next_time[index])
     {
-        sleepms_old(wait_time);
-    }
-    else
-    {
-        uclock_t now;
-        while ((now = usec_clock()) < s_next_time[index])
+        if (driver_key_pressed())
         {
-            if (driver_key_pressed())
-            {
-                break;
-            }
+            break;
         }
-        s_next_time[index] = now + wait_time*100; // wait until this time next call
     }
+    s_next_time[index] = now + wait_time * 100; // wait until this time next call
 }
 
 void reset_clock()

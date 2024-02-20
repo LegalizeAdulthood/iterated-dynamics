@@ -1872,8 +1872,7 @@ Added Humberto Baptista's Epsilon Cross variation. It is triggered with a
 
 Changed the internal orbitdelay timer to use a new microsecond timer.
   Changed the logic for controlling sound and orbit speed to make
-  it less machine dependent. Use debug=4020 to invoke the old timing
-  logic.
+  it less machine dependent.
 
 Modified autologmap so that it ignores symmetry.
 

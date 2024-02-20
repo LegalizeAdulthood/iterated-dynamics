@@ -82,7 +82,6 @@ enum debug_flags
     prevent_plasma_random               = 3600,
     prevent_coordinate_grid             = 3800,
     allow_negative_cross_product        = 4010,
-    force_old_sleep                     = 4020,
     force_scaled_sound_formula          = 4030,
     force_disk_min_cache                = 4200,
     force_complex_power                 = 6000,
