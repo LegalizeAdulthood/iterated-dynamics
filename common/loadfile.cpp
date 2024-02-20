@@ -44,8 +44,6 @@
 #include <system_error>
 #include <vector>
 
-std::filesystem::path pX;
-
 namespace
 {
 
