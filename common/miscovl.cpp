@@ -1851,8 +1851,8 @@ int getprecdbl(int rezflag)
     ydel = ((LDBL)g_y_max - (LDBL)g_y_3rd)/rez;
     xdel2 = ((LDBL)g_x_3rd - (LDBL)g_x_min)/rez;
 
-    del1 = fabsl(xdel) + fabsl(xdel2);
-    del2 = fabsl(ydel) + fabsl(ydel2);
+    del1 = std::fabs(xdel) + std::fabs(xdel2);
+    del2 = std::fabs(ydel) + std::fabs(ydel2);
     if (del2 < del1)
     {
         del1 = del2;

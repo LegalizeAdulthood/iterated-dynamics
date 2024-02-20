@@ -20,6 +20,7 @@
 
 #include <algorithm>
 #include <cassert>
+#include <cmath>
 
 #define EVERY 15
 #define BASIN_COLOR 0
@@ -198,7 +199,7 @@ static long iteration(
             im = imn + ci;
             re += cr;
 
-            if (fabsl(sre - re) < equal && fabsl(sim - im) < equal)
+            if (std::fabs(sre - re) < equal && std::fabs(sim - im) < equal)
             {
                 return BASIN_COLOR;
             }
@@ -712,7 +713,7 @@ scan:
         state.limit.re = (state.tz[0].re == 0.0)?
            (state.limit.re == 0.0)?1.0:1000.0:
            state.limit.re/state.tz[0].re;
-        if (fabsl(1.0 - state.limit.re) > twidth)
+        if (std::fabs(1.0 - state.limit.re) > twidth)
         {
             break;
         }
@@ -721,7 +722,7 @@ scan:
         state.limit.im = (state.tz[0].im == 0.0)?
            (state.limit.im == 0.0)?1.0:1000.0:
            state.limit.im/state.tz[0].im;
-        if (fabsl(1.0 - state.limit.im) > twidth)
+        if (std::fabs(1.0 - state.limit.im) > twidth)
         {
             break;
         }
@@ -730,7 +731,7 @@ scan:
         state.limit.re = (state.tz[1].re == 0.0)?
            (state.limit.re == 0.0)?1.0:1000.0:
            state.limit.re/state.tz[1].re;
-        if (fabsl(1.0 - state.limit.re) > twidth)
+        if (std::fabs(1.0 - state.limit.re) > twidth)
         {
             break;
         }
@@ -739,7 +740,7 @@ scan:
         state.limit.im = (state.tz[1].im == 0.0)?
            (state.limit.im == 0.0)?1.0:1000.0:
            state.limit.im/state.tz[1].im;
-        if (fabsl(1.0 - state.limit.im) > twidth)
+        if (std::fabs(1.0 - state.limit.im) > twidth)
         {
             break;
         }
@@ -748,7 +749,7 @@ scan:
         state.limit.re = (state.tz[2].re == 0.0)?
            (state.limit.re == 0.0)?1.0:1000.0:
            state.limit.re/state.tz[2].re;
-        if (fabsl(1.0 - state.limit.re) > twidth)
+        if (std::fabs(1.0 - state.limit.re) > twidth)
         {
             break;
         }
@@ -757,7 +758,7 @@ scan:
         state.limit.im = (state.tz[2].im == 0.0)?
            (state.limit.im == 0.0)?1.0:1000.0:
            state.limit.im/state.tz[2].im;
-        if (fabsl(1.0 - state.limit.im) > twidth)
+        if (std::fabs(1.0 - state.limit.im) > twidth)
         {
             break;
         }
@@ -766,7 +767,7 @@ scan:
         state.limit.re = (state.tz[3].re == 0.0)?
            (state.limit.re == 0.0)?1.0:1000.0:
            state.limit.re/state.tz[3].re;
-        if (fabsl(1.0 - state.limit.re) > twidth)
+        if (std::fabs(1.0 - state.limit.re) > twidth)
         {
             break;
         }
@@ -775,7 +776,7 @@ scan:
         state.limit.im = (state.tz[3].im == 0.0)?
            (state.limit.im == 0.0)?1.0:1000.0:
            state.limit.im/state.tz[3].im;
-        if (fabsl(1.0 - state.limit.im) > twidth)
+        if (std::fabs(1.0 - state.limit.im) > twidth)
         {
             break;
         }
