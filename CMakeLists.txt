@@ -285,6 +285,7 @@ source_group("Source Files/common/ui" FILES
 set_src_dir(common/help.cpp)
 set_src_dir(common/fractint.cpp)
 
+target_compile_features(libid PUBLIC cxx_std_17)
 target_compile_definitions(libid PUBLIC ${ID_TARGET_DEFINITIONS} $<$<CONFIG:Debug>:${ID_TARGET_DEFINITIONS_DEBUG}>)
 target_compile_options(libid PUBLIC ${ID_TARGET_OPTIONS})
 target_include_directories(libid PRIVATE headers)
