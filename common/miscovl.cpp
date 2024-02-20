@@ -30,6 +30,7 @@
 #include "stereo.h"
 
 #include <algorithm>
+#include <array>
 #include <cctype>
 #include <cfloat>
 #include <cmath>
@@ -49,7 +50,7 @@ static void put_float(int, double, int);
 static void put_bf(int slash, bf_t r, int prec);
 static void put_filename(char const *keyword, char const *fname);
 static int check_modekey(int curkey, int choice);
-static int entcompare(const void *p1, const void *p2);
+static bool ent_less(int lhs, int rhs);
 static void update_fractint_cfg();
 static void strip_zeros(char *buf);
 
@@ -1948,7 +1949,7 @@ static void put_bf(int slash, bf_t r, int prec)
     put_parm(&buf[0]);
 }
 
-static int entnums[MAX_VIDEO_MODES];
+static std::array<int, MAX_VIDEO_MODES> entnums;
 static bool modes_changed = false;
 
 int select_video_mode(int curmode)
@@ -1961,8 +1962,7 @@ int select_video_mode(int curmode)
         entnums[i] = i;
         attributes[i] = 1;
     }
-
-    qsort(entnums, g_video_table_len, sizeof(entnums[0]), entcompare); // sort modes
+    std::sort(entnums.begin(), entnums.end(), ent_less);
 
     // pick default mode
     if (curmode < 0)
@@ -2126,24 +2126,19 @@ static int check_modekey(int curkey, int choice)
     return ret;
 }
 
-static int entcompare(const void *p1, const void *p2)
+static bool ent_less(const int lhs, const int rhs)
 {
-    int i, j;
-    i = g_video_table[*((int *)p1)].keynum;
+    int i = g_video_table[lhs].keynum;
     if (i == 0)
     {
         i = 9999;
     }
-    j = g_video_table[*((int *)p2)].keynum;
+    int j = g_video_table[rhs].keynum;
     if (j == 0)
     {
         j = 9999;
     }
-    if (i < j || (i == j && *((int *)p1) < *((int *)p2)))
-    {
-        return -1;
-    }
-    return 1;
+    return i < j || i == j && lhs < rhs;
 }
 
 static void update_fractint_cfg()
