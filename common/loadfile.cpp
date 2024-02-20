@@ -1297,6 +1297,9 @@ static bool fix_period_bof()
 
 #define MAX_WINDOWS_OPEN 450
 
+namespace
+{
+
 struct window
 {
     // for fgetwindow on screen browser
@@ -1308,6 +1311,8 @@ struct window
     char name[13];     // for filename
     int boxcount;      // bytes of saved screen info
 };
+
+} // namespace
 
 // prototypes
 static void drawindow(int colour, window const *info);
