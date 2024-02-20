@@ -32,6 +32,7 @@
 #include "realdos.h"
 #include "rotate.h"
 #include "stereo.h"
+#include "update_save_name.h"
 #include "zoom.h"
 
 #include <cctype>
@@ -1510,7 +1511,7 @@ do_3d_transform:
         }
         if (g_resave_flag)
         {
-            updatesavename(g_save_filename);      // do the pending increment
+            update_save_name(g_save_filename);      // do the pending increment
             g_resave_flag = 0;
             g_started_resaves = false;
         }
@@ -1972,7 +1973,7 @@ static main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdm
         }
         if (g_resave_flag)
         {
-            updatesavename(g_save_filename);      // do the pending increment
+            update_save_name(g_save_filename);      // do the pending increment
             g_resave_flag = 0;
             g_started_resaves = false;
         }

@@ -40,6 +40,7 @@
 #include "parser.h"
 #include "realdos.h"
 #include "soi.h"
+#include "update_save_name.h"
 
 #include <algorithm>
 #include <cfloat>
@@ -856,7 +857,7 @@ int calcfract()
         end_resume();
         if (g_resave_flag)
         {
-            updatesavename(g_save_filename); // do the pending increment
+            update_save_name(g_save_filename); // do the pending increment
             g_resave_flag = 0;
             g_started_resaves = false;
         }

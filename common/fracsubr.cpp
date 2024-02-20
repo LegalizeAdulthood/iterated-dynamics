@@ -20,6 +20,7 @@ FRACTALS.C, i.e. which are non-fractal-specific fractal engine subroutines.
 #include "miscres.h"
 #include "realdos.h"
 #include "soi.h"
+#include "update_save_name.h"
 
 #include <sys/timeb.h>
 
@@ -1487,7 +1488,7 @@ bool snd_open()
         }
         else
         {
-            updatesavename(soundname);
+            update_save_name(soundname);
         }
     }
     return snd_fp != nullptr;

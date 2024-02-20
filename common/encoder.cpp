@@ -29,6 +29,7 @@
 #include "realdos.h"
 #include "rotate.h"
 #include "slideshw.h"
+#include "update_save_name.h"
 
 #include <algorithm>
 #include <climits>
@@ -128,7 +129,7 @@ restart:
     }
     if (g_resave_flag != 1)
     {
-        updatesavename(filename); // for next time
+        update_save_name(filename); // for next time
     }
 
     std::strcat(openfile, openfiletype);
@@ -150,7 +151,7 @@ restart:
             if (!g_started_resaves)
             {
                 // first save of a savetime set
-                updatesavename(filename);
+                update_save_name(filename);
                 goto restart;
             }
         }

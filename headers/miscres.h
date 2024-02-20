@@ -1,6 +1,4 @@
 #pragma once
-#if !defined(MISCRES_H)
-#define MISCRES_H
 
 #include <cstdio>
 #include <string>
@@ -27,8 +25,6 @@ extern void cvtcentermag(double *, double *, LDBL *, double *, double *, double 
 extern void cvtcorners(double, double, LDBL, double, double, double);
 extern void cvtcentermagbf(bf_t, bf_t, LDBL *, double *, double *, double *);
 extern void cvtcornersbf(bf_t, bf_t, LDBL, double, double, double);
-extern void updatesavename(char *filename);
-extern void updatesavename(std::string &filename);
 extern int check_writefile(char *name, char const *ext);
 extern int check_writefile(std::string &name, char const *ext);
 extern std::string showtrig();
@@ -44,5 +40,3 @@ extern void roundfloatd(double *);
 extern void fix_inversion(double *);
 extern int ungetakey(int);
 extern std::string get_calculation_time(long ctime);
-
-#endif
