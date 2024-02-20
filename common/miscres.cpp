@@ -718,8 +718,9 @@ static char spressanykey[] = {"Press any key to continue, F6 for area, F7 for ne
 static char spressanykey[] = {"Press any key to continue, F6 for area, CTRL-TAB for next page"};
 #endif
 
-void get_calculation_time(char *msg, long ctime)
+std::string get_calculation_time(long ctime)
 {
+    char msg[80];
     if (ctime >= 0)
     {
         std::snprintf(msg, NUM_OF(msg), "%3ld:%02ld:%02ld.%02ld", ctime/360000L,
@@ -729,6 +730,7 @@ void get_calculation_time(char *msg, long ctime)
     {
         std::strcpy(msg, "A long time! (> 24.855 days)");
     }
+    return msg;
 }
 
 static void show_str_var(char const *name, char const *var, int *row, char *msg)
@@ -1102,12 +1104,12 @@ top:
         }
     }
     driver_put_string(s_row, 2, C_GENERAL_MED, "Calculation time:");
-    get_calculation_time(msg, g_calc_time);
+    strncpy(msg, get_calculation_time(g_calc_time).c_str(), NUM_OF(msg));
     driver_put_string(-1, -1, C_GENERAL_HI, msg);
     if ((g_got_status == 5) && (g_calc_status == calc_status_value::IN_PROGRESS))  // estimate total time
     {
         driver_put_string(-1, -1, C_GENERAL_MED, " estimated total time: ");
-        get_calculation_time(msg, (long)(g_calc_time*((g_diffusion_limit*1.0)/g_diffusion_counter)));
+        get_calculation_time((long) (g_calc_time * ((g_diffusion_limit * 1.0) / g_diffusion_counter)));
         driver_put_string(-1, -1, C_GENERAL_HI, msg);
     }
 

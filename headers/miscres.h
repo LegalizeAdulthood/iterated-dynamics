@@ -43,6 +43,6 @@ extern int file_gets(char *buf, int maxlen, std::FILE *infile);
 extern void roundfloatd(double *);
 extern void fix_inversion(double *);
 extern int ungetakey(int);
-extern void get_calculation_time(char *msg, long ctime);
+extern std::string get_calculation_time(long ctime);
 
 #endif

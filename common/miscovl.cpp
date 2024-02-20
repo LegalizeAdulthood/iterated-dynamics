@@ -2749,7 +2749,7 @@ static char const *expand_var(char const *var, char *buf)
     }
     else if (std::strcmp(var, "calctime") == 0)
     {
-        get_calculation_time(buf, g_calc_time);
+        strcpy(buf, get_calculation_time(g_calc_time).c_str());
         out = buf;
     }
     else if (std::strcmp(var, "version") == 0)  // 4 chars
