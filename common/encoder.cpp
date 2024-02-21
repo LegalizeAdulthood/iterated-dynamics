@@ -185,11 +185,7 @@ restart:
     if (driver_diskp())
     {
         // disk-video
-        char buf[61];
-        extract_filename(tmpmsg, openfile);
-
-        std::snprintf(buf, NUM_OF(buf), "Saving %s", tmpmsg);
-        dvid_status(1, buf);
+        dvid_status(1, "Saving " + extract_filename(openfile));
     }
 #ifdef XFRACT
     else
@@ -289,8 +285,7 @@ restart:
         driver_buzzer(buzzer_codes::COMPLETE);
         if (g_init_batch == batch_modes::NONE)
         {
-            extract_filename(tmpfile, openfile);
-            texttempmsg((std::string{" File saved as "} + tmpfile + ' ').c_str());
+            texttempmsg((" File saved as " + extract_filename(openfile) + ' ').c_str());
         }
     }
     if (g_init_save_time < 0)

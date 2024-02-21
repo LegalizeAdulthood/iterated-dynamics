@@ -2803,14 +2803,6 @@ int merge_pathnames(std::string &oldfullpath, char const *filename, cmd_file mod
 }
 
 // extract just the filename/extension portion of a path
-void extract_filename(char *target, char const *source)
-{
-    char fname[FILE_MAX_FNAME];
-    char ext[FILE_MAX_EXT];
-    splitpath(source, nullptr, nullptr, fname, ext);
-    makepath(target, "", "", fname, ext);
-}
-
 std::string extract_filename(char const *source)
 {
     return std::filesystem::path(source).filename().string();
