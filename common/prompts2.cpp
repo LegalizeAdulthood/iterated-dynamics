@@ -39,6 +39,7 @@
 #include <cmath>
 #include <cstdlib>
 #include <cstring>
+#include <filesystem>
 #include <string>
 
 static  int check_f6_key(int curkey, int choice);
@@ -2812,9 +2813,7 @@ void extract_filename(char *target, char const *source)
 
 std::string extract_filename(char const *source)
 {
-    char target[FILE_MAX_FNAME];
-    extract_filename(target, source);
-    return target;
+    return std::filesystem::path(source).filename().string();
 }
 
 // tells if filename has extension
