@@ -1,6 +1,4 @@
 #pragma once
-#if !defined(THREED_H)
-#define THREED_H
 
 extern void identity(MATRIX);
 extern void mat_mul(MATRIX, MATRIX, MATRIX);
@@ -17,5 +15,3 @@ extern int perspective(VECTOR);
 extern int longvmultpersp(LVECTOR, LMATRIX, LVECTOR, LVECTOR, LVECTOR, int);
 extern int longpersp(LVECTOR, LVECTOR, int);
 extern int longvmult(LVECTOR, LMATRIX, LVECTOR, int);
-
-#endif

@@ -1,6 +1,4 @@
 #pragma once
-#if !defined(CMDFILES_H)
-#define CMDFILES_H
 
 #include <cstdio>
 #include <string>
@@ -288,5 +286,3 @@ extern int init_msg(char const *cmdstr, char const *badfilename, cmd_file mode);
 extern int cmdarg(char *curarg, cmd_file mode);
 extern int getpower10(LDBL x);
 extern void dopause(int);
-
-#endif

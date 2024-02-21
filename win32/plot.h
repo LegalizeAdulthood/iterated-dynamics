@@ -1,5 +1,4 @@
-#if !defined(PLOT_H)
-#define PLOT_H
+#pragma once
 
 #include <vector>
 
@@ -48,5 +47,3 @@ extern void plot_redraw(Plot *p);
 extern void plot_display_string(Plot *p, int x, int y, int fg, int bg, char const *text);
 extern void plot_save_graphics(Plot *p);
 extern void plot_restore_graphics(Plot *p);
-
-#endif

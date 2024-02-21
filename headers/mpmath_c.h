@@ -1,6 +1,4 @@
 #pragma once
-#if !defined(MPMATH_C_H)
-#define MPMATH_C_H
 
 extern MP *MPmul086(MP, MP);
 extern MP *MPdiv086(MP, MP);
@@ -53,5 +51,3 @@ extern void Arcsinhz(DComplex z, DComplex *rz);
 extern void Arccoshz(DComplex z, DComplex *rz);
 extern void Arctanhz(DComplex z, DComplex *rz);
 extern void Arctanz(DComplex z, DComplex *rz);
-
-#endif

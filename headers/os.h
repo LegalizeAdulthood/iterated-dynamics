@@ -1,6 +1,4 @@
 #pragma once
-#if !defined(OS_H)
-#define OS_H
 
 struct VIDEOINFO;
 
@@ -34,6 +32,4 @@ extern VIDEOINFO             g_video_table[];
 #if defined(XFRACT)
 extern bool                  g_fake_lut;
 extern bool                  g_x_zoom_waiting;
-#endif
-
 #endif

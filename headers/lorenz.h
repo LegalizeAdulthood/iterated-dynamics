@@ -1,6 +1,4 @@
 #pragma once
-#if !defined(LORENZ_H)
-#define LORENZ_H
 
 struct affine
 {
@@ -75,5 +73,3 @@ extern int latoofloatorbit(double *, double *, double *);
 extern bool setup_convert_to_screen(affine *);
 extern int plotorbits2dsetup();
 extern int plotorbits2dfloat();
-
-#endif

@@ -1,5 +1,4 @@
-#if !defined(X11_FRAME_H)
-#define X11_FRAME_H
+#pragma once
 
 #include <X11/Xlib.h>
 
@@ -46,5 +45,3 @@ private:
     unsigned height_;
     bool mapped_;
 };
-
-#endif

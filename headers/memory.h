@@ -1,6 +1,4 @@
 #pragma once
-#if !defined(FI_MEMORY_H)
-#define FI_MEMORY_H
 
 enum stored_at_values
 {
@@ -21,5 +19,3 @@ extern void MemoryRelease(U16 handle);
 extern bool CopyFromMemoryToHandle(BYTE const *buffer, U16 size, long count, long offset, U16 handle);
 extern bool CopyFromHandleToMemory(BYTE *buffer, U16 size, long count, long offset, U16 handle);
 extern bool SetMemory(int value, U16 size, long count, long offset, U16 handle);
-
-#endif

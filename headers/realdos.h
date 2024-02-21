@@ -1,6 +1,4 @@
 #pragma once
-#if !defined(REALDOS_H)
-#define REALDOS_H
 
 #include <string>
 
@@ -86,5 +84,3 @@ inline bool stopmsg(int flags, const std::string &msg)
 {
     return stopmsg(flags, msg.c_str());
 }
-
-#endif

@@ -1,6 +1,4 @@
 #pragma once
-#if !defined(PROMPTS1_H)
-#define PROMPTS1_H
 
 #include <cstdio>
 #include <string>
@@ -75,5 +73,3 @@ extern void load_params(fractal_type fractype);
 extern bool check_orbit_name(char const *orbitname);
 struct entryinfo;
 extern int scan_entries(std::FILE *infile, struct entryinfo *ch, char const *itemname);
-
-#endif

@@ -1,6 +1,4 @@
 #pragma once
-#if !defined(JB_H)
-#define JB_H
 
 extern float                 g_eyes_fp;
 extern int                   g_julibrot_3d_mode;
@@ -24,5 +22,3 @@ extern int zline(long, long);
 extern int zlinefp(double, double);
 extern int Std4dFractal();
 extern int Std4dfpFractal();
-
-#endif

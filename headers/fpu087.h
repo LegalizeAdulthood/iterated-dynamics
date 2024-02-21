@@ -1,6 +1,4 @@
 #pragma once
-#if !defined(FPU087_H)
-#define FPU087_H
 
 // fpu087 -- assembler file prototypes
 extern void FPUcplxmul(DComplex const *x, DComplex const *y, DComplex *z);
@@ -19,5 +17,3 @@ extern long LogFudged(unsigned long, int);
 extern long LogFloat14(unsigned long);
 extern long RegFg2Float(long, int);
 extern long RegSftFloat(long, int);
-
-#endif

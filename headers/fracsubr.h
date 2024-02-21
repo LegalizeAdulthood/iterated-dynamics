@@ -1,6 +1,4 @@
 #pragma once
-#if !defined(FRACSUBR_H)
-#define FRACSUBR_H
 
 extern int                   g_resume_len;
 extern bool                  g_tab_or_help;
@@ -43,5 +41,3 @@ extern bool snd_open();
 extern void w_snd(int);
 extern void snd_time_write();
 extern void close_snd();
-
-#endif

@@ -1,6 +1,4 @@
 #pragma once
-#if !defined(FRACTALB_H)
-#define FRACTALB_H
 
 extern DComplex cmplxbntofloat(BNComplex *);
 extern DComplex cmplxbftofloat(BFComplex *);
@@ -26,5 +24,3 @@ extern int JuliaZpowerbfFractal();
 extern BFComplex *cmplxlog_bf(BFComplex *t, BFComplex *s);
 extern BFComplex *cplxmul_bf(BFComplex *t, BFComplex *x, BFComplex *y);
 extern BFComplex *ComplexPower_bf(BFComplex *t, BFComplex *xx, BFComplex *yy);
-
-#endif

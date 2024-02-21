@@ -1,6 +1,4 @@
 #pragma once
-#if !defined(FRACSUBA_H)
-#define FRACSUBA_H
 
 // fracsuba -- assembler file prototypes
 extern int asmlMODbailout();
@@ -24,5 +22,3 @@ extern int asmfpORbailout();
 extern int asmfpANDbailout();
 extern int asmfpMANHbailout();
 extern int asmfpMANRbailout();
-
-#endif

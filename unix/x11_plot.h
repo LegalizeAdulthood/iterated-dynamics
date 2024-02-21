@@ -1,5 +1,4 @@
-#if !defined(X11_PLOT_H)
-#define X11_PLOT_H
+#pragma once
 
 #include <X11/Xlib.h>
 
@@ -42,5 +41,3 @@ private:
     unsigned height_;
     Window window_;
 };
-
-#endif

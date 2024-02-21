@@ -1,6 +1,4 @@
 #pragma once
-#if !defined(FRACTALS_H)
-#define FRACTALS_H
 
 #include "cmplx.h"
 
@@ -236,5 +234,3 @@ extern void set_pixel_calc_functions();
 extern int MandelbrotMix4fp_per_pixel();
 extern int MandelbrotMix4fpFractal();
 extern bool MandelbrotMix4Setup();
-
-#endif

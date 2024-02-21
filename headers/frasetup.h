@@ -1,6 +1,4 @@
 #pragma once
-#if !defined(FRASETUP_H)
-#define FRASETUP_H
 
 extern bool VLSetup();
 extern bool MandelSetup();
@@ -38,5 +36,3 @@ extern bool PhoenixSetup();
 extern bool MandPhoenixSetup();
 extern bool PhoenixCplxSetup();
 extern bool MandPhoenixCplxSetup();
-
-#endif

@@ -1,6 +1,4 @@
 #pragma once
-#if !defined(DISKVID_H)
-#define DISKVID_H
 
 #include <cstdio>
 #include <string>
@@ -26,5 +24,3 @@ inline void dvid_status(int line, const std::string &msg)
 extern int  common_startdisk(long, long, int);
 extern int FromMemDisk(long, int, void *);
 extern bool ToMemDisk(long, int, void *);
-
-#endif

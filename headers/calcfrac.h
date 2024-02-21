@@ -1,6 +1,4 @@
 #pragma once
-#if !defined(CALCFRAC_H)
-#define CALCFRAC_H
 
 #include "big.h"
 
@@ -130,5 +128,3 @@ extern int froth_per_orbit();
 extern bool froth_setup();
 extern int logtable_in_extra_ok();
 extern int find_alternate_math(fractal_type type, bf_math_type math);
-
-#endif

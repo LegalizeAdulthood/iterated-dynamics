@@ -1,6 +1,4 @@
 #pragma once
-#if !defined(EDITPAL_H)
-#define EDITPAL_H
 
 #include <vector>
 
@@ -26,6 +24,4 @@ extern void displayc(int, int, int, int, int);
 #if defined(XFRACT)
 void Cursor_StartMouseTracking();
 void Cursor_EndMouseTracking();
-#endif
-
 #endif

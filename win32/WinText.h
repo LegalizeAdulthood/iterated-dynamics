@@ -1,5 +1,4 @@
-#if !defined(WINTEXT_H)
-#define WINTEXT_H
+#pragma once
 
 #define KEYBUFMAX 80
 #define WINTEXT_MAX_COL 80
@@ -63,5 +62,3 @@ extern void         wintext_put_char_attr(WinText *, int row, int col, int char_
 extern void         wintext_set_focus();
 extern void         wintext_kill_focus();
 extern void         wintext_resume(WinText *me);
-
-#endif

@@ -1,6 +1,4 @@
 #pragma once
-#if !defined(PARSER_H)
-#define PARSER_H
 
 #include "mpmath.h"
 
@@ -219,5 +217,3 @@ extern bool intFormulaSetup();
 extern void init_misc();
 extern void free_workarea();
 extern int fill_if_group(int endif_index, JUMP_PTRS_ST *jump_data);
-
-#endif

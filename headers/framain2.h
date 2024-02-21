@@ -1,6 +1,4 @@
 #pragma once
-#if !defined(FRAMAIN2_H)
-#define FRAMAIN2_H
 
 struct EVOLUTION_INFO;
 
@@ -33,5 +31,3 @@ extern void clear_zoombox();
 extern void flip_image(int kbdchar);
 extern void reset_zoom_corners();
 extern void history_init();
-
-#endif

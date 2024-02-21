@@ -1,5 +1,4 @@
-#if !defined(ODS_H)
-#define ODS_H
+#pragma once
 
 #if defined(RT_VERBOSE)
 #define ODS(text_)                      ods(__FILE__, __LINE__, text_)
@@ -16,6 +15,4 @@ extern void ods(char const *file, unsigned int line, char const *format, ...);
 #define ODS3(fmt_, a1_, a2_, a3_)
 #define ODS4(fmt_, _1, _2, _3, _4)
 #define ODS5(fmt_, _1, _2, _3, _4, _5)
-#endif
-
 #endif

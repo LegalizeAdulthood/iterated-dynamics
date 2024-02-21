@@ -1,5 +1,4 @@
-#if !defined(X11_TEXT_H)
-#define X11_TEXT_H
+#pragma once
 
 #include <string>
 #include <vector>
@@ -75,5 +74,3 @@ private:
     Colormap colormap_;
     bool buffer_init_;
 };
-
-#endif

@@ -1,6 +1,4 @@
 #pragma once
-#if !defined(MISCOVL_H)
-#define MISCOVL_H
 
 #include <string>
 
@@ -21,5 +19,3 @@ extern void parse_comments(char *value);
 extern void init_comments();
 extern void write_batch_parms(char const *colorinf, bool colorsonly, int maxcolor, int i, int j);
 extern std::string expand_comments(char const *source);
-
-#endif

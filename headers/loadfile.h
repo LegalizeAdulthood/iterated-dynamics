@@ -1,6 +1,4 @@
 #pragma once
-#if !defined(LOADFILE_H)
-#define LOADFILE_H
 
 #include <string>
 
@@ -258,5 +256,3 @@ extern int fgetwindow();
 extern void backwards_v18();
 extern void backwards_v19();
 extern void backwards_v20();
-
-#endif

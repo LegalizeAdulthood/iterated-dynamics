@@ -1,6 +1,4 @@
 #pragma once
-#if !defined(PROMPTS2_H)
-#define PROMPTS2_H
 
 #include <cstdio>
 #include <string>
@@ -69,5 +67,3 @@ inline int dir_remove(const std::string &dir, const std::string &filename)
 extern std::FILE *dir_fopen(char const *dir, char const *filename, char const *mode);
 std::string extract_filename(char const *source);
 extern const char *has_ext(char const *source);
-
-#endif

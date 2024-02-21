@@ -1,6 +1,4 @@
 #pragma once
-#if !defined(JIIM_H)
-#define JIIM_H
 
 enum class jiim_types
 {
@@ -29,5 +27,3 @@ extern int    PushLong(long, long);
 extern int    PushFloat(float, float);
 extern int    EnQueueLong(long, long);
 extern int    EnQueueFloat(float, float);
-
-#endif

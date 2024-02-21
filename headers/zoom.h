@@ -1,6 +1,4 @@
 #pragma once
-#if !defined(ZOOM_H)
-#define ZOOM_H
 
 struct coords
 {
@@ -25,5 +23,3 @@ extern void drawlines(coords, coords, int, int);
 extern void addbox(coords);
 extern void clearbox();
 extern void dispbox();
-
-#endif

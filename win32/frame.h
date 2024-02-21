@@ -1,5 +1,4 @@
-#if !defined(FRAME_H)
-#define FRAME_H
+#pragma once
 
 #define KEYBUFMAX 80
 
@@ -33,5 +32,3 @@ extern int frame_pump_messages(bool waitflag);
 extern void frame_schedule_alarm(int secs);
 extern void frame_resize(int width, int height);
 extern void frame_set_keyboard_timeout(int ms);
-
-#endif

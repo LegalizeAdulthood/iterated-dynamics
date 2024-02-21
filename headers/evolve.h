@@ -1,6 +1,4 @@
 #pragma once
-#if !defined(EVOLVE_H)
-#define EVOLVE_H
 
 enum class variations
 {
@@ -63,5 +61,3 @@ extern  void spiralmap(int);
 extern  int unspiralmap();
 extern  void SetupParamBox();
 extern  void ReleaseParamBox();
-
-#endif
