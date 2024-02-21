@@ -823,7 +823,7 @@ void init_failure(char const *message)
  *
  *      Find where a file is.
  *  We return filename if it is an absolute path.
- *  Otherwise we first try FRACTDIR/filename, SRCDIR/filename,
+ *  Otherwise, we first try FRACTDIR/filename, SRCDIR/filename,
  *      and then ./filename.
  *
  * Results:

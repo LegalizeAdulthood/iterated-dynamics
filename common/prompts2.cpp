@@ -1516,7 +1516,7 @@ retry_dir:
     if (file_template[0])
     {
         numtemplates = 1;
-        splitpath(file_template, nullptr, nullptr, fname, ext);
+        split_fname_ext(file_template, fname, ext);
     }
     else
     {
@@ -1696,7 +1696,7 @@ retry_dir:
             makepath(flname, drive, dir, "", "");
             goto restart;
         }
-        splitpath(choices[i]->full_name, nullptr, nullptr, fname, ext);
+        split_fname_ext(choices[i]->full_name, fname, ext);
         makepath(flname, drive, dir, fname, ext);
     }
     else
@@ -1755,7 +1755,7 @@ retry_dir:
                 std::strcpy(flname, speedstr);
                 if (std::strchr(speedstr, SLASHC) == nullptr)
                 {
-                    splitpath(speedstr, nullptr, nullptr, fname, ext);
+                    split_fname_ext(speedstr, fname, ext);
                     makepath(flname, drive, dir, fname, ext);
                 }
             }
@@ -2814,7 +2814,7 @@ char const *has_ext(char const *source)
 {
     char fname[FILE_MAX_FNAME];
     char ext[FILE_MAX_EXT] = { 0 };
-    splitpath(source, nullptr, nullptr, fname, ext);
+    split_fname_ext(source, fname, ext);
     char const *ret = nullptr;
     if (ext[0] != 0)
     {
