@@ -47,7 +47,7 @@ void setwait(long *wait)
     {
         std::ostringstream msg;
         msg << "Delay " << std::setw(4) << *wait << "     ";
-        showtempmsg(msg.str().c_str());
+        showtempmsg(msg.str());
         kbdchar = driver_get_key();
         switch (kbdchar)
         {

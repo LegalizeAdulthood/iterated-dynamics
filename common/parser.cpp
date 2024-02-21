@@ -4066,7 +4066,7 @@ static bool frm_check_name_and_sym(std::FILE * open_file, bool report_bad_sym)
             std::string msgbuf{ParseErrs(PE_INVALID_SYM_USING_NOSYM)};
             msgbuf += ":\n   ";
             msgbuf += sym_buf;
-            stopmsg(STOPMSG_FIXED_FONT, msgbuf.c_str());
+            stopmsg(STOPMSG_FIXED_FONT, msgbuf);
         }
     }
     if (c != '{')

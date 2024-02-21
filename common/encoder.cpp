@@ -178,7 +178,7 @@ restart:
     g_outfile = std::fopen(tmpfile, "wb");
     if (g_outfile == nullptr)
     {
-        stopmsg(STOPMSG_NONE, (std::string{"Can't create "} + tmpfile).c_str());
+        stopmsg(STOPMSG_NONE, std::string{"Can't create "} + tmpfile);
         return -1;
     }
 

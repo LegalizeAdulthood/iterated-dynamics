@@ -3765,7 +3765,7 @@ static void argerror(char const *badarg)      // oops. couldn't decode this
                "(see the Startup Help screens or documentation for a complete\n"
                " argument list with descriptions)";
     }
-    stopmsg(STOPMSG_NONE, msg.c_str());
+    stopmsg(STOPMSG_NONE, msg);
     if (g_init_batch != batch_modes::NONE)
     {
         g_init_batch = batch_modes::BAILOUT_INTERRUPTED_TRY_SAVE;
@@ -3925,7 +3925,7 @@ int init_msg(char const *cmdstr, char const *badfilename, cmd_file mode)
     }
     else if (badfilename)
     {
-        stopmsg(STOPMSG_NONE, msg.c_str());
+        stopmsg(STOPMSG_NONE, msg);
     }
     return 0;
 }

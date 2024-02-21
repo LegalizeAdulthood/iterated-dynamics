@@ -2163,7 +2163,7 @@ long get_file_entry(int type, char const *title, char const *fmask,
             newfile = false;
             if (firsttry)
             {
-                stopmsg(STOPMSG_NONE, (std::string{"Can't find "} + filename).c_str());
+                stopmsg(STOPMSG_NONE, std::string{"Can't find "} + filename);
             }
             std::sprintf(buf, "Select %s File", title);
             if (getafilename(buf, fmask, filename))
