@@ -89,7 +89,6 @@ std::string g_temp_dir;            // name of temporary directory
 std::string g_working_dir;            // name of directory for misc files
 std::string g_organize_formulas_dir;          // name of directory for orgfrm files
 std::string g_gif_filename_mask;
-char    PrintName[FILE_MAX_PATH] = {"fract001.prn"}; // Name for print-to-file
 // cppcheck-suppress constStatement
 std::string g_save_filename{"fract001"}; // save files using this name
 // cppcheck-suppress constStatement
