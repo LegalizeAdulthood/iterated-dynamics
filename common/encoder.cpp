@@ -102,7 +102,7 @@ static int gif_savetodisk(char *filename)      // save-to-disk routine
 {
     std::filesystem::path open_file;
     std::string open_file_ext;
-    std::filesystem::path tmpfile;
+    std::filesystem::path tmp_file;
     bool newfile;
     int interrupted;
 
@@ -132,7 +132,7 @@ restart:
 
     open_file.replace_extension(open_file_ext);
 
-    tmpfile = open_file;
+    tmp_file = open_file;
     if (!exists(open_file))  // file doesn't exist
     {
         newfile = true;
@@ -159,7 +159,7 @@ restart:
             return -1;
         }
         newfile = false;
-        tmpfile.replace_filename("fractint.tmp");
+        tmp_file.replace_filename("fractint.tmp");
     }
 
     g_started_resaves = (g_resave_flag == 1);
@@ -168,10 +168,10 @@ restart:
         g_resave_flag = 0;
     }
 
-    g_outfile = std::fopen(tmpfile.string().c_str(), "wb");
+    g_outfile = std::fopen(tmp_file.string().c_str(), "wb");
     if (g_outfile == nullptr)
     {
-        stopmsg(STOPMSG_NONE, std::string{"Can't create "} + tmpfile.string());
+        stopmsg(STOPMSG_NONE, std::string{"Can't create "} + tmp_file.string());
         return -1;
     }
 
@@ -221,7 +221,7 @@ restart:
         if (stopmsg(STOPMSG_CANCEL, buf))
         {
             interrupted = -1;
-            std::filesystem::remove(tmpfile);
+            std::filesystem::remove(tmp_file);
         }
     }
 
@@ -229,7 +229,7 @@ restart:
     {
         // replace the real file
         std::filesystem::remove(open_file);          // success assumed since we checked
-        std::filesystem::rename(tmpfile, open_file); // earlier with access
+        std::filesystem::rename(tmp_file, open_file); // earlier with access
     }
 
     if (!driver_diskp())
