@@ -7,6 +7,17 @@
   },
   "configurePresets": [
     {
+      "name": "project-name-preset",
+      "hidden": true,
+      "description": "Sets the project name based on the preset",
+      "cacheVariables": {
+        "ID_PROJECT_NAME": {
+          "type": "STRING",
+          "value": "Iterated Dynamics ${presetName}"
+        }
+      }
+    },
+    {
       "name": "sibling-build-preset",
       "hidden": true,
       "description": "Use a sibling directory for the build based on the preset name",
@@ -37,7 +48,7 @@
     {
       "name": "default",
       "displayName": "Configure with default settings",
-      "inherits": [ "sibling-build-preset", "vcpkg" ]
+      "inherits": [ "sibling-build-preset", "project-name-preset", "vcpkg" ]
     },
     {
       "name": "cppcheck",

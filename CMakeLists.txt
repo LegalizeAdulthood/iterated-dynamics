@@ -7,7 +7,13 @@ set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-project(iterated-dynamics CXX)
+set(ID_PROJECT_NAME "Iterated Dynamics" CACHE STRING "Project name for IDEs")
+
+project("${ID_PROJECT_NAME}"
+    VERSION 1.0.0
+    DESCRIPTION "Iterated Dynamics is a fractal generator"
+    HOMEPAGE_URL "https://LegalizeAdulthood.github.io/iterated-dynamics"
+    LANGUAGES CXX)
 
 include(CTest)
 
