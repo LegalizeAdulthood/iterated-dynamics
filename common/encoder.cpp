@@ -100,10 +100,9 @@ static BYTE paletteEGA[] =
 
 static int gif_savetodisk(char *filename)      // save-to-disk routine
 {
-    char openfile[FILE_MAX_PATH];
+    std::filesystem::path openfile;
     std::string open_file_ext;
     std::filesystem::path tmpfile;
-    char const *period;
     bool newfile;
     int interrupted;
 
@@ -114,28 +113,27 @@ restart:
         save16bit = false;
     }
 
-    std::strcpy(openfile, filename);     // decode and open the filename
+    openfile = filename;                  // decode and open the filename
     open_file_ext = DEFAULT_FRACTAL_TYPE; // determine the file extension
     if (save16bit)
     {
         open_file_ext = ".pot";
     }
 
-    period = has_ext(openfile);
-    if (period != nullptr)
+    if (openfile.has_extension())
     {
-        open_file_ext = period;
-        openfile[period - openfile] = 0;
+        open_file_ext = openfile.extension().string();
+        openfile.replace_extension();
     }
     if (g_resave_flag != 1)
     {
         update_save_name(filename); // for next time
     }
 
-    std::strcat(openfile, open_file_ext.c_str());
+    openfile.replace_extension(open_file_ext);
 
     tmpfile = openfile;
-    if (access(openfile, 0) != 0)  // file doesn't exist
+    if (!exists(openfile))  // file doesn't exist
     {
         newfile = true;
     }
@@ -155,9 +153,9 @@ restart:
                 goto restart;
             }
         }
-        if (access(openfile, 2) != 0)
+        if ((status(openfile).permissions() & std::filesystem::perms::owner_write) == std::filesystem::perms::none)
         {
-            stopmsg(STOPMSG_NONE, std::string{"Can't write "} + openfile);
+            stopmsg(STOPMSG_NONE, std::string{"Can't write "} + openfile.string());
             return -1;
         }
         newfile = false;
@@ -180,13 +178,13 @@ restart:
     if (driver_diskp())
     {
         // disk-video
-        dvid_status(1, "Saving " + extract_filename(openfile));
+        dvid_status(1, "Saving " + extract_filename(openfile.string().c_str()));
     }
 #ifdef XFRACT
     else
     {
         driver_put_string(3, 0, 0, "Saving to:");
-        driver_put_string(4, 0, 0, openfile);
+        driver_put_string(4, 0, 0, openfile.string().c_str());
         driver_put_string(5, 0, 0, "               ");
     }
 #endif
@@ -209,7 +207,7 @@ restart:
     if (interrupted)
     {
         std::string buf{"Save of "};
-        buf += openfile;
+        buf += openfile.string();
         buf += " interrupted.\nCancel to ";
         if (newfile)
         {
@@ -230,8 +228,8 @@ restart:
     if (!newfile && interrupted >= 0)
     {
         // replace the real file
-        std::remove(openfile);         // success assumed since we checked
-        std::filesystem::rename(tmpfile, openfile);// earlier with access
+        std::filesystem::remove(openfile);          // success assumed since we checked
+        std::filesystem::rename(tmpfile, openfile); // earlier with access
     }
 
     if (!driver_diskp())
@@ -280,7 +278,7 @@ restart:
         driver_buzzer(buzzer_codes::COMPLETE);
         if (g_init_batch == batch_modes::NONE)
         {
-            texttempmsg((" File saved as " + extract_filename(openfile) + ' ').c_str());
+            texttempmsg((" File saved as " + extract_filename(openfile.string().c_str()) + ' ').c_str());
         }
     }
     if (g_init_save_time < 0)
