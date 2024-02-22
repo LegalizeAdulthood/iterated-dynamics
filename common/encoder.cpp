@@ -101,7 +101,7 @@ static BYTE paletteEGA[] =
 static int gif_savetodisk(char *filename)      // save-to-disk routine
 {
     char openfile[FILE_MAX_PATH];
-    std::string openfiletype;
+    std::string open_file_ext;
     std::filesystem::path tmpfile;
     char const *period;
     bool newfile;
@@ -115,16 +115,16 @@ restart:
     }
 
     std::strcpy(openfile, filename);     // decode and open the filename
-    openfiletype = DEFAULT_FRACTAL_TYPE; // determine the file extension
+    open_file_ext = DEFAULT_FRACTAL_TYPE; // determine the file extension
     if (save16bit)
     {
-        openfiletype = ".pot";
+        open_file_ext = ".pot";
     }
 
     period = has_ext(openfile);
     if (period != nullptr)
     {
-        openfiletype = period;
+        open_file_ext = period;
         openfile[period - openfile] = 0;
     }
     if (g_resave_flag != 1)
@@ -132,7 +132,7 @@ restart:
         update_save_name(filename); // for next time
     }
 
-    std::strcat(openfile, openfiletype.c_str());
+    std::strcat(openfile, open_file_ext.c_str());
 
     tmpfile = openfile;
     if (access(openfile, 0) != 0)  // file doesn't exist
