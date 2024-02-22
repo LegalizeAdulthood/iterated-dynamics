@@ -38,6 +38,7 @@
 #include <cstdio>
 #include <cstring>
 #include <ctime>
+#include <filesystem>
 #include <string>
 #include <vector>
 
@@ -84,8 +85,10 @@ void make_batch_file()
     char inpcommandfile[80], inpcommandname[ITEM_NAME_LEN+1];
     char inpcomment[4][MAX_COMMENT_LEN];
     fullscreenvalues paramvalues[18];
-    char const *choices[MAXPROMPTS];
-    char outname[FILE_MAX_PATH+1], buf[256], buf2[128];
+    char const      *choices[MAXPROMPTS];
+    std::filesystem::path outname;
+    char             buf[256];
+    char             buf2[128];
     std::FILE *infile = nullptr;
     std::FILE *fpbat = nullptr;
     char colorspec[14];
@@ -370,7 +373,7 @@ skip_UI:
                 maxcolor = g_file_colors;
             }
         }
-        std::strcpy(outname, g_command_file.c_str());
+        outname = g_command_file;
         bool gotinfile = false;
         if (access(g_command_file.c_str(), 0) == 0)
         {
@@ -382,18 +385,13 @@ skip_UI:
                 stopmsg(STOPMSG_NONE, buf);
                 continue;
             }
-            int i = (int) std::strlen(outname);
-            while (--i >= 0 && outname[i] != SLASHC)
-            {
-                outname[i] = 0;
-            }
-            std::strcat(outname, "fractint.tmp");
+            outname.replace_filename("fractint.tmp");
             infile = std::fopen(g_command_file.c_str(), "rt");
         }
-        parmfile = std::fopen(outname, "wt");
+        parmfile = std::fopen(outname.string().c_str(), "wt");
         if (parmfile == nullptr)
         {
-            stopmsg(STOPMSG_NONE, std::string{"Can't create "} + outname);
+            stopmsg(STOPMSG_NONE, "Can't create " + outname.string());
             if (gotinfile)
             {
                 std::fclose(infile);
@@ -418,7 +416,7 @@ skip_UI:
                         // cancel
                         std::fclose(infile);
                         std::fclose(parmfile);
-                        std::remove(outname);
+                        remove(outname);
                         goto prompt_user;
                     }
                     while (std::strchr(buf, '}') == nullptr
@@ -580,8 +578,8 @@ skip_UI:
         if (gotinfile)
         {
             // replace the original file with the new
-            std::remove(g_command_file.c_str());   // success assumed on these lines
-            std::rename(outname, g_command_file.c_str());  // since we checked earlier with access
+            std::remove(g_command_file.c_str()); // success assumed on these lines
+            rename(outname, g_command_file);     // since we checked earlier with access
         }
         break;
     }
