@@ -103,7 +103,7 @@ static int gif_savetodisk(char *filename)      // save-to-disk routine
     std::filesystem::path open_file;
     std::string open_file_ext;
     std::filesystem::path tmp_file;
-    bool newfile;
+    bool new_file;
     int interrupted;
 
 restart:
@@ -135,7 +135,7 @@ restart:
     tmp_file = open_file;
     if (!exists(open_file))  // file doesn't exist
     {
-        newfile = true;
+        new_file = true;
     }
     else
     {
@@ -158,7 +158,7 @@ restart:
             stopmsg(STOPMSG_NONE, std::string{"Can't write "} + open_file.string());
             return -1;
         }
-        newfile = false;
+        new_file = false;
         tmp_file.replace_filename("fractint.tmp");
     }
 
@@ -209,7 +209,7 @@ restart:
         std::string buf{"Save of "};
         buf += open_file.string();
         buf += " interrupted.\nCancel to ";
-        if (newfile)
+        if (new_file)
         {
             buf += "delete the file,\ncontinue to keep the partial image.";
         }
@@ -225,7 +225,7 @@ restart:
         }
     }
 
-    if (!newfile && interrupted >= 0)
+    if (!new_file && interrupted >= 0)
     {
         // replace the real file
         std::filesystem::remove(open_file);          // success assumed since we checked
