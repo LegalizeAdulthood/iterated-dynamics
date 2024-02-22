@@ -86,7 +86,7 @@ void make_batch_file()
     char inpcomment[4][MAX_COMMENT_LEN];
     fullscreenvalues paramvalues[18];
     char const      *choices[MAXPROMPTS];
-    std::filesystem::path outname;
+    std::filesystem::path out_name;
     char             buf[256];
     char             buf2[128];
     std::FILE *infile = nullptr;
@@ -373,7 +373,7 @@ skip_UI:
                 maxcolor = g_file_colors;
             }
         }
-        outname = g_command_file;
+        out_name = g_command_file;
         bool gotinfile = false;
         if (access(g_command_file.c_str(), 0) == 0)
         {
@@ -385,13 +385,13 @@ skip_UI:
                 stopmsg(STOPMSG_NONE, buf);
                 continue;
             }
-            outname.replace_filename("fractint.tmp");
+            out_name.replace_filename("fractint.tmp");
             infile = std::fopen(g_command_file.c_str(), "rt");
         }
-        parmfile = std::fopen(outname.string().c_str(), "wt");
+        parmfile = std::fopen(out_name.string().c_str(), "wt");
         if (parmfile == nullptr)
         {
-            stopmsg(STOPMSG_NONE, "Can't create " + outname.string());
+            stopmsg(STOPMSG_NONE, "Can't create " + out_name.string());
             if (gotinfile)
             {
                 std::fclose(infile);
@@ -416,7 +416,7 @@ skip_UI:
                         // cancel
                         std::fclose(infile);
                         std::fclose(parmfile);
-                        remove(outname);
+                        remove(out_name);
                         goto prompt_user;
                     }
                     while (std::strchr(buf, '}') == nullptr
@@ -579,7 +579,7 @@ skip_UI:
         {
             // replace the original file with the new
             std::remove(g_command_file.c_str()); // success assumed on these lines
-            rename(outname, g_command_file);     // since we checked earlier with access
+            rename(out_name, g_command_file);     // since we checked earlier with access
         }
         break;
     }
