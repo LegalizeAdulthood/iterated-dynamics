@@ -843,7 +843,7 @@ void findpath(char const *filename, char *fullpathname) // return full pathnames
     char temp_path[FILE_MAX_PATH];
 
     // check current directory if curdir= parameter set
-    splitpath(filename, nullptr, nullptr, fname, ext);
+    split_fname_ext(filename, fname, ext);
     makepath(temp_path, "", "", fname, ext);
     if (g_check_cur_dir && access(temp_path, 0) == 0)   // file exists
     {
@@ -861,7 +861,7 @@ void findpath(char const *filename, char *fullpathname) // return full pathnames
             return;
         }
 
-        splitpath(temp_path, nullptr, nullptr, fname, ext);
+        split_fname_ext(temp_path, fname, ext);
         makepath(temp_path, "", "", fname, ext);
     }
 
