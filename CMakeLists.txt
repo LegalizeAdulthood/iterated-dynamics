@@ -52,11 +52,6 @@ add_subdirectory(unix)
 add_subdirectory(win32)
 add_subdirectory(hc)
 
-add_executable(id ${ID_EXECUTABLE_TYPE}
-    common/main.cpp
-)
-target_link_libraries(id PUBLIC libid)
-
 add_library(libid
     headers/id_io.h
     headers/os.h
@@ -295,6 +290,13 @@ target_compile_options(libid PUBLIC ${ID_TARGET_OPTIONS})
 target_include_directories(libid PUBLIC headers)
 target_link_libraries(libid PRIVATE helpcom os)
 add_dependencies(libid native_help)
+
+add_executable(id ${ID_EXECUTABLE_TYPE}
+    common/main.cpp
+)
+target_link_libraries(id PUBLIC libid)
+
+set_property(DIRECTORY PROPERTY VS_STARTUP_PROJECT id)
 
 if(BUILD_TESTING)
     add_subdirectory(tests)
