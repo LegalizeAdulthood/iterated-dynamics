@@ -103,7 +103,7 @@ static int gif_savetodisk(char *filename)      // save-to-disk routine
     char openfiletype[10];
     char tmpfile[FILE_MAX_PATH];
     char const *period;
-    bool newfile = false;
+    bool newfile;
     int interrupted;
 
 restart:
