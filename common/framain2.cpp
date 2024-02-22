@@ -124,8 +124,8 @@ struct HISTORY
     long iterations;
     int converge_y_adjust;
     bool old_demm_colors;
-    char filename[FILE_MAX_PATH];
-    char file_item_name[ITEM_NAME_LEN+1];
+    std::string filename;
+    std::string file_item_name;
     unsigned char dac_box[256][3];
     char  max_function;
     char user_std_calc_mode;
@@ -2623,21 +2623,21 @@ static void save_history_info()
     {
     case fractal_type::FORMULA:
     case fractal_type::FFORMULA:
-        std::strncpy(current.filename, g_formula_filename.c_str(), FILE_MAX_PATH);
-        std::strncpy(current.file_item_name, g_formula_name.c_str(), ITEM_NAME_LEN+1);
+        current.filename = g_formula_filename;
+        current.file_item_name = g_formula_name;
         break;
     case fractal_type::IFS:
     case fractal_type::IFS3D:
-        std::strncpy(current.filename, g_ifs_filename.c_str(), FILE_MAX_PATH);
-        std::strncpy(current.file_item_name, g_ifs_name.c_str(), ITEM_NAME_LEN+1);
+        current.filename = g_ifs_filename;
+        current.file_item_name = g_ifs_name;
         break;
     case fractal_type::LSYSTEM:
-        std::strncpy(current.filename, g_l_system_filename.c_str(), FILE_MAX_PATH);
-        std::strncpy(current.file_item_name, g_l_system_name.c_str(), ITEM_NAME_LEN+1);
+        current.filename = g_l_system_filename;
+        current.file_item_name = g_l_system_name;
         break;
     default:
-        *(current.filename) = 0;
-        *(current.file_item_name) = 0;
+        current.filename.clear();
+        current.file_item_name.clear();
         break;
     }
     if (historyptr == -1)        // initialize the history file
