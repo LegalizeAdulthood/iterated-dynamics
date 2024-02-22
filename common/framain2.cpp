@@ -2481,12 +2481,12 @@ int key_count(int keynum)
     return ctr;
 }
 
-static std::vector<HISTORY> history;
+static std::vector<HISTORY> s_history;
 int g_max_image_history = 10;
 
 void history_init()
 {
-    history.resize(g_max_image_history);
+    s_history.resize(g_max_image_history);
 }
 
 static void save_history_info()
@@ -2495,7 +2495,7 @@ static void save_history_info()
     {
         return;
     }
-    HISTORY last = history[saveptr];
+    HISTORY last = s_history[saveptr];
 
     HISTORY current{};
     current.image_fractal_type = g_fractal_type;
@@ -2644,7 +2644,7 @@ static void save_history_info()
     {
         for (int i = 0; i < g_max_image_history; i++)
         {
-            history[i] = current;
+            s_history[i] = current;
         }
         historyflag = false;
         historyptr = 0;
@@ -2664,7 +2664,7 @@ static void save_history_info()
         {
             historyptr = 0;
         }
-        history[saveptr] = current;
+        s_history[saveptr] = current;
     }
 }
 
@@ -2674,7 +2674,7 @@ static void restore_history_info(int i)
     {
         return;
     }
-    HISTORY last = history[i];
+    HISTORY last = s_history[i];
     g_invert = 0;
     g_calc_status = calc_status_value::PARAMS_CHANGED;
     g_resuming = false;
