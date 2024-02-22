@@ -35,6 +35,7 @@
 #include <climits>
 #include <cstdio>
 #include <cstring>
+#include <filesystem>
 #include <string>
 
 static bool compress(int rowlimit);
@@ -101,7 +102,7 @@ static int gif_savetodisk(char *filename)      // save-to-disk routine
 {
     char openfile[FILE_MAX_PATH];
     char openfiletype[10];
-    char tmpfile[FILE_MAX_PATH];
+    std::filesystem::path tmpfile;
     char const *period;
     bool newfile;
     int interrupted;
@@ -133,7 +134,7 @@ restart:
 
     std::strcat(openfile, openfiletype);
 
-    std::strcpy(tmpfile, openfile);
+    tmpfile = openfile;
     if (access(openfile, 0) != 0)  // file doesn't exist
     {
         newfile = true;
@@ -160,12 +161,7 @@ restart:
             return -1;
         }
         newfile = false;
-        int i = (int) std::strlen(tmpfile);
-        while (--i >= 0 && tmpfile[i] != SLASHC)
-        {
-            tmpfile[i] = 0;
-        }
-        std::strcat(tmpfile, "fractint.tmp");
+        tmpfile.replace_filename("fractint.tmp");
     }
 
     g_started_resaves = (g_resave_flag == 1);
@@ -174,10 +170,10 @@ restart:
         g_resave_flag = 0;
     }
 
-    g_outfile = std::fopen(tmpfile, "wb");
+    g_outfile = std::fopen(tmpfile.string().c_str(), "wb");
     if (g_outfile == nullptr)
     {
-        stopmsg(STOPMSG_NONE, std::string{"Can't create "} + tmpfile);
+        stopmsg(STOPMSG_NONE, std::string{"Can't create "} + tmpfile.string());
         return -1;
     }
 
@@ -227,7 +223,7 @@ restart:
         if (stopmsg(STOPMSG_CANCEL, buf))
         {
             interrupted = -1;
-            std::remove(tmpfile);
+            std::filesystem::remove(tmpfile);
         }
     }
 
@@ -235,7 +231,7 @@ restart:
     {
         // replace the real file
         std::remove(openfile);         // success assumed since we checked
-        std::rename(tmpfile, openfile);// earlier with access
+        std::filesystem::rename(tmpfile, openfile);// earlier with access
     }
 
     if (!driver_diskp())
