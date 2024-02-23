@@ -32,92 +32,92 @@ int bfdecimals = 0;
 
 // used internally by bignum.c routines
 static char s_storage[4096];
-static bn_t bnroot = BIG_NULL;
-static bn_t stack_ptr = BIG_NULL; // memory allocator base after global variables
-bn_t bntmp1 = BIG_NULL;
-bn_t bntmp2 = BIG_NULL;
-bn_t bntmp3 = BIG_NULL;
-bn_t bntmp4 = BIG_NULL;
-bn_t bntmp5 = BIG_NULL;
-bn_t bntmp6 = BIG_NULL;
-bn_t bntmpcpy1 = BIG_NULL;
-bn_t bntmpcpy2 = BIG_NULL;
+static bn_t bnroot = nullptr;
+static bn_t stack_ptr = nullptr; // memory allocator base after global variables
+bn_t bntmp1 = nullptr;
+bn_t bntmp2 = nullptr;
+bn_t bntmp3 = nullptr;
+bn_t bntmp4 = nullptr;
+bn_t bntmp5 = nullptr;
+bn_t bntmp6 = nullptr;
+bn_t bntmpcpy1 = nullptr;
+bn_t bntmpcpy2 = nullptr;
 
 // used by other routines, bnlength
-bn_t bnxmin = BIG_NULL;
-bn_t bnxmax = BIG_NULL;
-bn_t bnymin = BIG_NULL;
-bn_t bnymax = BIG_NULL;
-bn_t bnx3rd = BIG_NULL;
-bn_t bny3rd = BIG_NULL;
+bn_t bnxmin = nullptr;
+bn_t bnxmax = nullptr;
+bn_t bnymin = nullptr;
+bn_t bnymax = nullptr;
+bn_t bnx3rd = nullptr;
+bn_t bny3rd = nullptr;
 
 // bnlength
-bn_t bnxdel = BIG_NULL;
-bn_t bnydel = BIG_NULL;
-bn_t bnxdel2 = BIG_NULL;
-bn_t bnydel2 = BIG_NULL;
-bn_t bnclosenuff = BIG_NULL;
+bn_t bnxdel = nullptr;
+bn_t bnydel = nullptr;
+bn_t bnxdel2 = nullptr;
+bn_t bnydel2 = nullptr;
+bn_t bnclosenuff = nullptr;
 
 // rlength
-bn_t bntmpsqrx = BIG_NULL;
-bn_t bntmpsqry = BIG_NULL;
-bn_t bntmp = BIG_NULL;
+bn_t bntmpsqrx = nullptr;
+bn_t bntmpsqry = nullptr;
+bn_t bntmp = nullptr;
 
 // bnlength
-BNComplex bnold = { BIG_NULL, BIG_NULL };
-BNComplex bnparm = { BIG_NULL, BIG_NULL };
-BNComplex bnsaved = { BIG_NULL, BIG_NULL };
-BNComplex bnnew = { BIG_NULL, BIG_NULL };   // rlength
-bn_t bn_pi = BIG_NULL;                      // TAKES NO SPACE
+BNComplex bnold = { nullptr, nullptr };
+BNComplex bnparm = { nullptr, nullptr };
+BNComplex bnsaved = { nullptr, nullptr };
+BNComplex bnnew = { nullptr, nullptr };   // rlength
+bn_t bn_pi = nullptr;                      // TAKES NO SPACE
 
 // // rbflength+2
-bf_t bftmp1 = BIG_NULL;
-bf_t bftmp2 = BIG_NULL;
-bf_t bftmp3 = BIG_NULL;
-bf_t bftmp4 = BIG_NULL;
-bf_t bftmp5 = BIG_NULL;
-bf_t bftmp6 = BIG_NULL;
-bf_t bftmpcpy1 = BIG_NULL;
-bf_t bftmpcpy2 = BIG_NULL;
-bf_t bfxdel = BIG_NULL;
-bf_t bfydel = BIG_NULL;
-bf_t bfxdel2 = BIG_NULL;
-bf_t bfydel2 = BIG_NULL;
-bf_t bfclosenuff = BIG_NULL;
-bf_t bftmpsqrx = BIG_NULL;
-bf_t bftmpsqry = BIG_NULL;
+bf_t bftmp1 = nullptr;
+bf_t bftmp2 = nullptr;
+bf_t bftmp3 = nullptr;
+bf_t bftmp4 = nullptr;
+bf_t bftmp5 = nullptr;
+bf_t bftmp6 = nullptr;
+bf_t bftmpcpy1 = nullptr;
+bf_t bftmpcpy2 = nullptr;
+bf_t bfxdel = nullptr;
+bf_t bfydel = nullptr;
+bf_t bfxdel2 = nullptr;
+bf_t bfydel2 = nullptr;
+bf_t bfclosenuff = nullptr;
+bf_t bftmpsqrx = nullptr;
+bf_t bftmpsqry = nullptr;
 
 // bflength+2
-BFComplex bfparm = { BIG_NULL, BIG_NULL };
-BFComplex bfsaved = { BIG_NULL, BIG_NULL };
+BFComplex bfparm = { nullptr, nullptr };
+BFComplex bfsaved = { nullptr, nullptr };
 
 // rbflength+2
-BFComplex bfold = { BIG_NULL, BIG_NULL };
-BFComplex bfnew = { BIG_NULL, BIG_NULL };
+BFComplex bfold = { nullptr, nullptr };
+BFComplex bfnew = { nullptr, nullptr };
 
-bf_t bf_pi = BIG_NULL;      // TAKES NO SPACE
-bf_t big_pi = BIG_NULL;     // bflength+2
+bf_t bf_pi = nullptr;      // TAKES NO SPACE
+bf_t big_pi = nullptr;     // bflength+2
 
 // for testing only
 
 // used by other routines
 // bflength+2
-bf_t g_bf_x_min = BIG_NULL;
-bf_t g_bf_x_max = BIG_NULL;
-bf_t g_bf_y_min = BIG_NULL;
-bf_t g_bf_y_max = BIG_NULL;
-bf_t g_bf_x_3rd = BIG_NULL;
-bf_t g_bf_y_3rd = BIG_NULL;
-bf_t g_bf_save_x_min = BIG_NULL;
-bf_t g_bf_save_x_max = BIG_NULL;
-bf_t g_bf_save_y_min = BIG_NULL;
-bf_t g_bf_save_y_max = BIG_NULL;
-bf_t g_bf_save_x_3rd = BIG_NULL;
-bf_t g_bf_save_y_3rd = BIG_NULL;
+bf_t g_bf_x_min = nullptr;
+bf_t g_bf_x_max = nullptr;
+bf_t g_bf_y_min = nullptr;
+bf_t g_bf_y_max = nullptr;
+bf_t g_bf_x_3rd = nullptr;
+bf_t g_bf_y_3rd = nullptr;
+bf_t g_bf_save_x_min = nullptr;
+bf_t g_bf_save_x_max = nullptr;
+bf_t g_bf_save_y_min = nullptr;
+bf_t g_bf_save_y_max = nullptr;
+bf_t g_bf_save_x_3rd = nullptr;
+bf_t g_bf_save_y_3rd = nullptr;
 bf_t bfparms[10];                                    // (bflength+2)*10
-bf_t bftmp = BIG_NULL;
+bf_t bftmp = nullptr;
 
-bf_t bf10tmp = BIG_NULL;                                              // dec+4
+bf_t bf10tmp = nullptr;                                              // dec+4
 
 #define LOG10_256 2.4082399653118
 #define LOG_256   5.5451774444795
@@ -394,7 +394,7 @@ static void init_bf_2()
 static int save_bf_vars()
 {
     int ret;
-    if (bnroot != BIG_NULL)
+    if (bnroot != nullptr)
     {
         unsigned int mem = (bflength+2)*22;  // 6 corners + 6 save corners + 10 params
         g_bf_save_len = bflength;
