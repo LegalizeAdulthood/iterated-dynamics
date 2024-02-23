@@ -3,8 +3,10 @@
 ** PORT.H : Miscellaneous definitions for portability.  Please add
 ** to this file for any new machines/compilers you may have.
 */
-#ifndef PORT_H
-#define PORT_H
+
+#pragma once
+
+#include "port_config.h"
 
 #include <cstdint>
 
@@ -22,17 +24,19 @@ using BYTE = U8;
 #pragma warning(disable: 4996)
 #endif
 
-// If endian.h is not present, it can be handled in the code below,
-// but if you have this file, it can make it more fool proof.
-#if defined(XFRACT)
-#include <endian.h>
-#endif
-
 #ifndef BIG_ENDIAN
 #  define BIG_ENDIAN    4321  // to show byte order (taken from gcc)
 #endif
 #ifndef LITTLE_ENDIAN
 #  define LITTLE_ENDIAN 1234
+#endif
+
+#ifndef BYTE_ORDER
+#if ID_BIG_ENDIAN
+#define BYTE_ORDER BIG_ENDIAN
+#else
+#define BYTE_ORDER LITTLE_ENDIAN
+#endif
 #endif
 
 #define write1(ptr, len, n, stream) fwrite(ptr, len, n, stream)
@@ -48,10 +52,6 @@ using BYTE = U8;
 #define SLASHDOT       "\\."
 #define DOTSLASH       ".\\"
 #define DOTDOTSLASH    "..\\"
-#ifndef BYTE_ORDER
-// change for little endians that don't have this defined elsewhere (endian.h)
-#define BYTE_ORDER BIG_ENDIAN // the usual case
-#endif
 #include "win32.h"
 // ================================== Win32 definitions
 #else
@@ -65,14 +65,7 @@ using BYTE = U8;
 #endif
 
 typedef int sigfunc(int);
-#ifndef BYTE_ORDER
-// change for little endians that don't have this defined elsewhere (endian.h)
-#ifdef LINUX
-#define BYTE_ORDER LITTLE_ENDIAN
-#else
-#define BYTE_ORDER BIG_ENDIAN // the usual case
-#endif
-#endif
+
 #       define SLASHC         '/'
 #       define SLASH          "/"
 #       define SLASHSLASH     "//"
@@ -93,4 +86,3 @@ typedef int sigfunc(int);
                                 ((*((unsigned char*)&(c)+1)) << 8)
 #endif
 using LDBL = long double;
-#endif  /* PORT_H */

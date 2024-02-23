@@ -16,6 +16,7 @@ project("${ID_PROJECT_NAME}"
     LANGUAGES CXX)
 
 include(CTest)
+include(TestBigEndian)
 
 set(home_dir "${CMAKE_SOURCE_DIR}/home")
 set(ID_DIR ${CMAKE_CURRENT_SOURCE_DIR})
@@ -57,6 +58,15 @@ endif()
 add_subdirectory(unix)
 add_subdirectory(win32)
 add_subdirectory(hc)
+
+test_big_endian(ID_BIG_ENDIAN)
+configure_file(headers/port_config.h.in include/port_config.h)
+add_library(config INTERFACE)
+target_sources(config INTERFACE
+    headers/port_config.h.in
+    "${CMAKE_CURRENT_BINARY_DIR}/include/port_config.h"
+)
+target_include_directories(config INTERFACE "${CMAKE_CURRENT_BINARY_DIR}/include")
 
 add_library(libid
     headers/id_io.h
@@ -137,6 +147,7 @@ add_library(libid
     headers/mpmath.h
     headers/newton.h
     headers/port.h
+    ${CMAKE_CURRENT_BINARY_DIR}/include/port_config.h
     headers/prototyp.h
     headers/winprot.h
 )
@@ -294,7 +305,7 @@ set_src_dir(common/fractint.cpp)
 target_compile_definitions(libid PUBLIC ${ID_TARGET_DEFINITIONS} $<$<CONFIG:Debug>:${ID_TARGET_DEFINITIONS_DEBUG}>)
 target_compile_options(libid PUBLIC ${ID_TARGET_OPTIONS})
 target_include_directories(libid PUBLIC headers)
-target_link_libraries(libid PRIVATE helpcom os)
+target_link_libraries(libid PRIVATE helpcom os config)
 add_dependencies(libid native_help)
 
 add_executable(id ${ID_EXECUTABLE_TYPE}

@@ -5,6 +5,7 @@ if(NOT CMAKE_SYSTEM_NAME STREQUAL "Windows")
     target_compile_definitions(os_hc PUBLIC ${OS_DEFINITIONS})
     target_compile_options(os_hc PRIVATE ${ID_TARGET_OPTIONS})
     target_include_directories(os_hc PRIVATE ../headers)
+    target_link_libraries(os_hc PUBLIC config)
 
     add_library(os STATIC
         d_x11.cpp
@@ -19,6 +20,7 @@ if(NOT CMAKE_SYSTEM_NAME STREQUAL "Windows")
     target_compile_definitions(os PUBLIC ${ID_TARGET_DEFINITIONS} $<$<CONFIG:Debug>:${ID_TARGET_DEFINITIONS_DEBUG}>)
     target_compile_options(os PRIVATE ${ID_TARGET_OPTIONS})
     target_include_directories(os PRIVATE ../headers)
+
     set_src_dir(unix.cpp)
     add_dependencies(os native_help)
 endif()

@@ -1,0 +1,3 @@
+#pragma once
+
+#cmakedefine01 ID_BIG_ENDIAN
