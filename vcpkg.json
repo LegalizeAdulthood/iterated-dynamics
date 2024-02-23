@@ -3,6 +3,10 @@
   "name": "iterated-dynamics",
   "version": "1.0.0",
   "dependencies": [
-    "gtest"
+    "gtest",
+    {
+      "name": "libx11",
+      "platform": "!windows"
+    }
   ]
 }
