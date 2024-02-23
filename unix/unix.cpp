@@ -164,27 +164,6 @@ strupr(char *s)
 /*
  *----------------------------------------------------------------------
  *
- * ltoa --
- *
- *      Convert long to string.
- *
- * Results:
- *      0.
- *
- * Side effects:
- *      Prints number into the string.
- *
- *----------------------------------------------------------------------
- */
-int ltoa(long num, char *str, int len)
-{
-    std::sprintf(str, "%10d", (int)num);
-    return 0;
-}
-
-/*
- *----------------------------------------------------------------------
- *
  * filelength --
  *
  *      Find length of a file.

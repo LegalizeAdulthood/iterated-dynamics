@@ -140,6 +140,7 @@ double wide number can then be ignored.
 #include <cmath>
 #include <cstdio>
 #include <cstring>
+#include <string>
 
 /*************************************************************************
 * The original bignumber code was written specifically for a Little Endian
@@ -379,7 +380,7 @@ char *unsafe_bntostr(char *s, int dec, bn_t r)
         longval = big_access32(onesbyte);
         break;
     }
-    ltoa(longval, s, 10);
+    strcpy(s, std::to_string(longval).c_str());
     l = (int) std::strlen(s);
     s[l++] = '.';
     for (int d = 0; d < dec; d++)

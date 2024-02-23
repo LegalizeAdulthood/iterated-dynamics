@@ -17,7 +17,6 @@ extern void decode_orbits_info(ORBITS_INFO *, int);
 extern int stricmp(char const *, char const *);
 extern int strnicmp(char const *, char const *, int);
 #endif
-extern int ltoa(long, char *, int);
 
 // initializes curses text window and the signal handlers.
 void UnixInit();
