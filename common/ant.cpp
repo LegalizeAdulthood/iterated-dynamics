@@ -374,7 +374,6 @@ void TurkMite2(int maxtur, int rule_len, char const *ru, long maxpts, long wait)
                 ix = x[color];      // temp vars
                 iy = y[color];
                 idir = dir[color];
-                // cppcheck-suppress constStatement
                 pixel = getcolor(ix, iy);
                 g_put_color(ix, iy, 15);
 

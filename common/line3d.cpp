@@ -139,11 +139,9 @@ MATRIX g_m; // transformation matrix
 int g_ambient;
 int g_randomize_3d;
 int g_haze;
-// cppcheck-suppress constStatement
 std::string g_light_name{"fract001"};
 bool g_targa_overlay = false;
 BYTE g_background_color[3];
-// cppcheck-suppress constStatement
 std::string g_raytrace_filename{"fract001"};
 bool g_preview = false;
 bool g_show_box = false;

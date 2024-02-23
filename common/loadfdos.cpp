@@ -314,7 +314,6 @@ int get_video_mode(FRACTAL_INFO *info, ext_blk_3 *blk_3_info)
         }
         std::strcat(heading, "\n");
         // set up instructions
-        // cppcheck-suppress constStatement
         std::string instructions{"Select a video mode.  Use the cursor keypad to move the pointer.\n"
                "Press ENTER for selected mode, or use a video mode function key.\n"
                "Press F1 for help, "};

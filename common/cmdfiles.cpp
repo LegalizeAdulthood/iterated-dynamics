@@ -89,9 +89,7 @@ std::string g_temp_dir;            // name of temporary directory
 std::string g_working_dir;            // name of directory for misc files
 std::string g_organize_formulas_dir;          // name of directory for orgfrm files
 std::string g_gif_filename_mask;
-// cppcheck-suppress constStatement
 std::string g_save_filename{"fract001"}; // save files using this name
-// cppcheck-suppress constStatement
 std::string g_auto_name{"auto.key"}; // record auto keystrokes here
 bool    g_potential_flag = false;        // continuous potential enabled?
 bool    g_potential_16bit = false;               // store 16 bit continuous potential values
@@ -1200,7 +1198,6 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
             {
                 goto badarg;
             }
-            // cppcheck-suppress constStatement
             g_gif_filename_mask = std::string{"*"} + value;
             return CMDARG_NONE;
         }
@@ -3753,7 +3750,6 @@ static void argerror(char const *badarg)      // oops. couldn't decode this
         spillover = std::string(&badarg[0], &badarg[70]);
         badarg = spillover.c_str();
     }
-    // cppcheck-suppress constStatement
     std::string msg{"Oops. I couldn't understand the argument:\n  "};
     msg += badarg;
 
@@ -3900,7 +3896,6 @@ int init_msg(char const *cmdstr, char const *badfilename, cmd_file mode)
     std::string msg;
     if (badfilename)
     {
-        // cppcheck-suppress constStatement
         msg = std::string {"Can't find "} + cmd + badfilename + ", please check " + to_string(mode);
     }
     if (g_first_init)
