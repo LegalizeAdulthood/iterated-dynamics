@@ -22,10 +22,6 @@ enum class bf_math_type
     BIGFLT = 2          // bf_math is being used with bf_t numbers
 };
 
-#define BIG_SIZE_T          size_t
-#define big_malloc(size)    malloc(size)
-#define big_free(ptr)       free(ptr)
-
 using big_t = unsigned char *;
 using bn_t = big_t;  // for clarification purposes
 using bf_t = big_t;
@@ -53,14 +49,10 @@ extern bf_t bftmp;                                           // rbflength
 extern bf10_t bf10tmp;                                            // dec+4
 extern big_t big_pi;
 
-// functions defined in biginit.c
-big_t big_alloc(size_t size);
-// void big_free(big_t memblock); now defined as a macro above
 void calc_lengths();
 void init_big_dec(int dec);
 void init_big_length(int bnl);
 void init_big_pi();
-// functions defined in bignuma.asm or bignumc.c
 extern bn_t clear_bn(bn_t r);
 extern bn_t max_bn(bn_t r);
 extern bn_t copy_bn(bn_t r, bn_t n);
