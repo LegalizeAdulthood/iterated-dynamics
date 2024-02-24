@@ -1881,13 +1881,13 @@ int getprecdbl(int rezflag)
 
 static void strip_zeros(char *buf)
 {
-    char *dptr, *bptr, *exptr;
     strlwr(buf);
-    dptr = std::strchr(buf, '.');
+    char *dptr = std::strchr(buf, '.');
     if (dptr != nullptr)
     {
+        char *bptr;
         ++dptr;
-        exptr = std::strchr(buf, 'e');
+        char *exptr = std::strchr(buf, 'e');
         if (exptr != nullptr)    // scientific notation with 'e'?
         {
             bptr = exptr;

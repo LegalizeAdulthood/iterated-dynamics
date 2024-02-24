@@ -1112,12 +1112,12 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
 
         if (variable == "makepar")
         {
-            char *slash, *next = nullptr;
             if (totparms < 1 || totparms > 2)
             {
                 return bad_arg(curarg);
             }
-            slash = std::strchr(value, '/');
+            char *slash = std::strchr(value, '/');
+            char *next = nullptr;
             if (slash != nullptr)
             {
                 *slash = 0;
