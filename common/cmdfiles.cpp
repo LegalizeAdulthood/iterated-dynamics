@@ -304,7 +304,7 @@ void process_simple_command(char *curarg)
     }
 }
 
-void process_file_setname(char *curarg, char *sptr)
+void process_file_setname(const char *curarg, char *sptr)
 {
     *sptr = 0;
     if (merge_pathnames(g_command_file, &curarg[1], cmd_file::AT_CMD_LINE) < 0)
