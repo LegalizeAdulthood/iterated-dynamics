@@ -11,6 +11,7 @@
 #include "fracsubr.h"
 #include "fractalp.h"
 #include "fractype.h"
+#include "get_ifs_token.h"
 #include "helpdefs.h"
 #include "id_data.h"
 #include "id_io.h"
@@ -1313,7 +1314,7 @@ int endswithslash(char const *fl)
 }
 
 // ---------------------------------------------------------------------
-static char seps[] = {"' ', '\t', \n', \r'"};
+static char seps[] = {' ', '\t', '\n', '\r'};
 char *get_ifs_token(char *buf, std::FILE *ifsfile)
 {
     char *bufptr;

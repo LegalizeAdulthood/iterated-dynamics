@@ -125,6 +125,7 @@ add_library(libid
 
     common/fractint.cpp
     common/framain2.cpp headers/framain2.h
+    headers/get_ifs_token.h
     common/help.cpp
     common/intro.cpp headers/intro.h
     common/jiim.cpp headers/jiim.h
@@ -272,6 +273,7 @@ source_group("Source Files/common/plumbing" FILES
 source_group("Header Files/common/ui" FILES
     headers/fractint.h
     headers/framain2.h
+    headers/get_ifs_token.h
     headers/help.h
     headers/helpdefs.h
     headers/intro.h

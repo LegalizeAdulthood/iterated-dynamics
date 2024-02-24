@@ -1,0 +1,4 @@
+#pragma once
+
+#define ID_TEST_DATA_DIR "@ID_TEST_DATA_DIR@"
+#define ID_TEST_IFS_FILE "test.ifs"
