@@ -17,6 +17,7 @@
 #include <cstdio>
 #include <cstring>
 #include <ctime>
+#include <filesystem>
 #include <system_error>
 #include <vector>
 
@@ -970,22 +971,12 @@ static bool can_read_file(char const *path)
 }
 
 
-static bool exe_path(char const *filename, char *path)
-{
-    std::strcpy(path, SRCDIR);
-    std::strcat(path, "/");
-    std::strcat(path, filename);
-    return true;
-}
-
 static bool find_file(char const *filename, char *path)
 {
-    if (exe_path(filename, path))
+    strcpy(path, (std::filesystem::path(SRCDIR) / filename).string().c_str());
+    if (can_read_file(path))
     {
-        if (can_read_file(path))
-        {
-            return true;
-        }
+        return true;
     }
     findpath(filename, path);
     return path[0] != 0;
