@@ -1315,6 +1315,7 @@ int endswithslash(char const *fl)
 
 // ---------------------------------------------------------------------
 static char seps[] = {' ', '\t', '\n', '\r'};
+
 char *get_ifs_token(char *buf, std::FILE *ifsfile)
 {
     char *bufptr;
@@ -1338,6 +1339,16 @@ char *get_ifs_token(char *buf, std::FILE *ifsfile)
             }
         }
     }
+}
+
+char *get_next_ifs_token(char *buf, std::FILE *ifsfile)
+{
+    char *bufptr = std::strtok(nullptr, seps);
+    if (bufptr == nullptr)
+    {
+        bufptr = get_ifs_token(buf, ifsfile);
+    }
+    return bufptr;
 }
 
 int g_num_affine_transforms;
@@ -1390,18 +1401,10 @@ int ifsload()                   // read in IFS parameters
             ret = -1;
             break;
         }
-        bufptr = std::strtok(nullptr, seps);
+        bufptr = get_next_ifs_token(buf, ifsfile);
         if (bufptr == nullptr)
         {
-            bufptr = get_ifs_token(buf, ifsfile);
-            if (bufptr == nullptr)
-            {
-                ret = -1;
-                break;
-            }
-        }
-        if (ret == -1)
-        {
+            ret = -1;
             break;
         }
         if (*bufptr == '}')

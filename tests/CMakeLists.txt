@@ -3,6 +3,9 @@ include(GoogleTest)
 find_package(GTest CONFIG REQUIRED)
 
 set(ID_TEST_DATA_DIR "${CMAKE_CURRENT_BINARY_DIR}/test_data")
+SET(ID_TEST_FIRST_IFS_NAME "binary")
+set(ID_TEST_FIRST_IFS_PARAM1 ".5")
+set(ID_TEST_SECOND_IFS_NAME "3dfern")
 configure_file(test_data.h.in include/test_data.h @ONLY)
 configure_file(test.ifs.in "${ID_TEST_DATA_DIR}/test.ifs")
 
