@@ -1343,26 +1343,18 @@ char *get_ifs_token(char *buf, std::FILE *ifsfile)
 int g_num_affine_transforms;
 int ifsload()                   // read in IFS parameters
 {
-    std::FILE *ifsfile;
-    char buf[201];
-    char *bufptr;
-    int ret, rowsize;
-
-    if (!g_ifs_definition.empty())
-    {
-        // release prior parms
-        g_ifs_definition.clear();
-    }
-
+    // release prior params
+    g_ifs_definition.clear();
     g_ifs_type = false;
-    rowsize = NUM_IFS_PARAMS;
+    std::FILE *ifsfile;
     if (find_file_item(g_ifs_filename, g_ifs_name.c_str(), &ifsfile, 3))
     {
         return -1;
     }
 
+    char  buf[201];
     file_gets(buf, 200, ifsfile);
-    bufptr = std::strchr(buf, ';');
+    char *bufptr = std::strchr(buf, ';');
     if (bufptr != nullptr)   // use ';' as comment to eol
     {
         *bufptr = 0;
@@ -1370,6 +1362,7 @@ int ifsload()                   // read in IFS parameters
 
     strlwr(buf);
     bufptr = &buf[0];
+    int rowsize = NUM_IFS_PARAMS;
     while (*bufptr)
     {
         if (std::strncmp(bufptr, "(3d)", 4) == 0)
@@ -1380,7 +1373,7 @@ int ifsload()                   // read in IFS parameters
         ++bufptr;
     }
 
-    ret = 0;
+    int ret = 0;
     int i = ret;
     bufptr = get_ifs_token(buf, ifsfile);
     while (bufptr != nullptr)
