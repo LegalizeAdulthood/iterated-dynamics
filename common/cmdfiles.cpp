@@ -818,6 +818,12 @@ static void lowerize_command(char *curarg)
     }
 }
 
+static int bad_arg(const char *curarg)
+{
+    argerror(curarg);
+    return CMDARG_ERROR;
+}
+
 // cmdarg(string,mode) processes a single command-line/command-file argument
 //  return:
 //    -1 error, >= 0 ok
@@ -999,7 +1005,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         {
             if (yesnoval[0] < 0)
             {
-                goto badarg;
+                return bad_arg(curarg);
             }
 #ifdef XFRACT
             g_init_mode = yesnoval[0] ? 0 : -1; // skip credits for batch mode
@@ -1011,11 +1017,11 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         {
             if (numval == NONNUMERIC)
             {
-                goto badarg;
+                return bad_arg(curarg);
             }
             else if (numval < 0)
             {
-                goto badarg;
+                return bad_arg(curarg);
             }
             else
             {
@@ -1032,7 +1038,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
                 && (std::strcmp(value, "ega") != 0) && (std::strcmp(value, "cga") != 0)
                 && (std::strcmp(value, "mcga") != 0) && (std::strcmp(value, "vga") != 0))
             {
-                goto badarg;
+                return bad_arg(curarg);
             }
             return CMDARG_FRACTAL_PARAM | CMDARG_3D_PARAM;
         }
@@ -1053,7 +1059,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
                     || (charval[0] == 'b')  // bios
                     || (charval[0] == 's'))) // save
                 {
-                    goto badarg;
+                    return bad_arg(curarg);
                 }
             }
             return CMDARG_FRACTAL_PARAM | CMDARG_3D_PARAM;
@@ -1064,7 +1070,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
             // vesadetect no longer used, do validity checks, but gobble argument
             if (yesnoval[0] < 0)
             {
-                goto badarg;
+                return bad_arg(curarg);
             }
             return CMDARG_FRACTAL_PARAM | CMDARG_3D_PARAM;
         }
@@ -1074,7 +1080,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         {
             if (yesnoval[0] < 0)
             {
-                goto badarg;
+                return bad_arg(curarg);
             }
             return CMDARG_FRACTAL_PARAM | CMDARG_3D_PARAM;
         }
@@ -1085,14 +1091,14 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
             {
                 return CMDARG_NONE;
             }
-            goto badarg;
+            return bad_arg(curarg);
         }
 
         if (variable == "exitnoask")
         {
             if (yesnoval[0] < 0)
             {
-                goto badarg;
+                return bad_arg(curarg);
             }
             g_escape_exit = yesnoval[0] != 0;
             return CMDARG_FRACTAL_PARAM | CMDARG_3D_PARAM;
@@ -1109,7 +1115,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
             char *slash, *next = nullptr;
             if (totparms < 1 || totparms > 2)
             {
-                goto badarg;
+                return bad_arg(curarg);
             }
             slash = std::strchr(value, '/');
             if (slash != nullptr)
@@ -1139,7 +1145,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
                 }
                 else
                 {
-                    goto badarg;
+                    return bad_arg(curarg);
                 }
             }
             else
@@ -1184,7 +1190,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         // PAR release unknown unless specified
         if (numval < 0)
         {
-            goto badarg;
+            return bad_arg(curarg);
         }
         return CMDARG_FRACTAL_PARAM | CMDARG_RESET;
     }
@@ -1196,18 +1202,18 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         {
             if (valuelen > 4)
             {
-                goto badarg;
+                return bad_arg(curarg);
             }
             g_gif_filename_mask = std::string{"*"} + value;
             return CMDARG_NONE;
         }
         if (valuelen > (FILE_MAX_PATH-1))
         {
-            goto badarg;
+            return bad_arg(curarg);
         }
         if (mode == cmd_file::AT_AFTER_STARTUP && g_display_3d == display_3d_modes::NONE) // can't do this in @ command
         {
-            goto badarg;
+            return bad_arg(curarg);
         }
 
         existdir = merge_pathnames(g_read_filename, value, mode);
@@ -1231,7 +1237,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         int k = check_vidmode_keyname(value);
         if (k == 0)
         {
-            goto badarg;
+            return bad_arg(curarg);
         }
         g_init_mode = -1;
         for (int i = 0; i < MAX_VIDEO_MODES; ++i)
@@ -1244,7 +1250,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         }
         if (g_init_mode == -1)
         {
-            goto badarg;
+            return bad_arg(curarg);
         }
         return CMDARG_FRACTAL_PARAM | CMDARG_3D_PARAM;
     }
@@ -1254,7 +1260,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         int existdir;
         if (valuelen > (FILE_MAX_PATH-1))
         {
-            goto badarg;
+            return bad_arg(curarg);
         }
         existdir = merge_pathnames(g_map_name, value, mode);
         if (existdir > 0)
@@ -1274,7 +1280,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
     {
         if (parse_colors(value) < 0)
         {
-            goto badarg;
+            return bad_arg(curarg);
         }
         return CMDARG_NONE;
     }
@@ -1283,7 +1289,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
     {
         if (*value != 'y' && *value != 'c' && *value != 'a')
         {
-            goto badarg;
+            return bad_arg(curarg);
         }
         g_record_colors = static_cast<record_colors_mode>(*value);
         return CMDARG_NONE;
@@ -1293,7 +1299,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
     {
         if (numval < MIN_MAX_LINE_LENGTH || numval > MAX_MAX_LINE_LENGTH)
         {
-            goto badarg;
+            return bad_arg(curarg);
         }
         g_max_line_length = numval;
         return CMDARG_NONE;
@@ -1310,7 +1316,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
     {
         if (yesnoval[0] < 0)
         {
-            goto badarg;
+            return bad_arg(curarg);
         }
         return CMDARG_NONE;
     }
@@ -1320,7 +1326,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
     {
         if (yesnoval[0] < 0)
         {
-            goto badarg;
+            return bad_arg(curarg);
         }
         return CMDARG_NONE;
     }
@@ -1332,7 +1338,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         {
             return CMDARG_NONE;
         }
-        goto badarg;
+        return bad_arg(curarg);
     }
 
     // pixelzoom no longer used, validate value and gobble argument
@@ -1340,7 +1346,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
     {
         if (numval >= 5)
         {
-            goto badarg;
+            return bad_arg(curarg);
         }
         return CMDARG_NONE;
     }
@@ -1350,7 +1356,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
     {
         if (yesnoval[0] < 0)
         {
-            goto badarg;
+            return bad_arg(curarg);
         }
         g_overwrite_file = (yesnoval[0] ^ 1) != 0;
         return CMDARG_NONE;
@@ -1359,7 +1365,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
     {
         if (yesnoval[0] < 0)
         {
-            goto badarg;
+            return bad_arg(curarg);
         }
         g_overwrite_file = yesnoval[0] != 0;
         return CMDARG_NONE;
@@ -1369,7 +1375,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
     {
         if (yesnoval[0] < 0)
         {
-            goto badarg;
+            return bad_arg(curarg);
         }
         g_gif87a_flag = yesnoval[0] != 0;
         return CMDARG_NONE;
@@ -1379,7 +1385,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
     {
         if (yesnoval[0] < 0)
         {
-            goto badarg;
+            return bad_arg(curarg);
         }
         g_dither_flag = yesnoval[0] != 0;
         return CMDARG_NONE;
@@ -1403,7 +1409,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         }
         else
         {
-            goto badarg;
+            return bad_arg(curarg);
         }
         return CMDARG_NONE;
     }
@@ -1443,7 +1449,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         }
         if (g_fractal_specific[k].name == nullptr)
         {
-            goto badarg;
+            return bad_arg(curarg);
         }
         g_fractal_type = static_cast<fractal_type>(k);
         g_cur_fractal_specific = &g_fractal_specific[static_cast<int>(g_fractal_type)];
@@ -1492,7 +1498,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         }
         if (numval == NONNUMERIC)
         {
-            goto badarg;
+            return bad_arg(curarg);
         }
         else
         {
@@ -1515,7 +1521,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         }
         else if (numval == NONNUMERIC)
         {
-            goto badarg;
+            return bad_arg(curarg);
         }
         else
         {
@@ -1528,7 +1534,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
     {
         if (yesnoval[0] < 0)
         {
-            goto badarg;
+            return bad_arg(curarg);
         }
         g_finite_attractor = yesnoval[0] != 0;
         return CMDARG_FRACTAL_PARAM;
@@ -1538,7 +1544,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
     {
         if (yesnoval[0] < 0)
         {
-            goto badarg;
+            return bad_arg(curarg);
         }
         g_bof_match_book_images = yesnoval[0] == 0;
         return CMDARG_FRACTAL_PARAM;
@@ -1551,7 +1557,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         {
             if (set_trig_array(k++, value))
             {
-                goto badarg;
+                return bad_arg(curarg);
             }
             value = std::strchr(value, '/');
             if (value == nullptr)
@@ -1592,7 +1598,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         }
         if ((numval == NONNUMERIC) || (numval < TDIS || numval > 255))
         {
-            goto badarg;
+            return bad_arg(curarg);
         }
         g_outside_color = numval;
         return CMDARG_FRACTAL_PARAM;
@@ -1602,7 +1608,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
     {
         if ((numval == NONNUMERIC) || (numval < 0 || numval > 2000))
         {
-            goto badarg;
+            return bad_arg(curarg);
         }
         g_bf_digits = numval;
         return CMDARG_FRACTAL_PARAM;
@@ -1612,7 +1618,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
     {
         if (floatval[0] < 2)
         {
-            goto badarg;
+            return bad_arg(curarg);
         }
         g_max_iterations = (long) floatval[0];
         return CMDARG_FRACTAL_PARAM;
@@ -1630,7 +1636,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
             && charval[0] != 't' && charval[0] != 's'
             && charval[0] != 'd' && charval[0] != 'o')
         {
-            goto badarg;
+            return bad_arg(curarg);
         }
         g_user_std_calc_mode = charval[0];
         if (charval[0] == 'g')
@@ -1648,7 +1654,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
     {
         if (yesnoval[0] < 0)
         {
-            goto badarg;
+            return bad_arg(curarg);
         }
         g_is_mandelbrot = yesnoval[0] != 0;
         return CMDARG_FRACTAL_PARAM;
@@ -1658,7 +1664,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
     {
         if (numval <= 1 || numval > 256)
         {
-            goto badarg;
+            return bad_arg(curarg);
         }
         g_init_cycle_limit = numval;
         return CMDARG_NONE;
@@ -1669,7 +1675,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         int xmult, ymult;
         if (totparms < 2)
         {
-            goto badarg;
+            return bad_arg(curarg);
         }
         xmult = intval[0];
         ymult = intval[1];
@@ -1692,7 +1698,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
             || intval[1] > 255
             || intval[0] > intval[1])
         {
-            goto badarg;
+            return bad_arg(curarg);
         }
         g_color_cycle_range_lo = intval[0];
         g_color_cycle_range_hi = intval[1];
@@ -1706,7 +1712,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
 
         if (totparms != intparms)
         {
-            goto badarg;
+            return bad_arg(curarg);
         }
         i = 0;
         prev = i;
@@ -1720,7 +1726,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
                 k = -k;
                 if (k < 1 || k >= 16384 || i >= totparms)
                 {
-                    goto badarg;
+                    return bad_arg(curarg);
                 }
                 tmpranges[entries++] = -1; // {-1,width,limit} for striping
                 tmpranges[entries++] = k;
@@ -1728,14 +1734,14 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
             }
             if (k < prev)
             {
-                goto badarg;
+                return bad_arg(curarg);
             }
             prev = k;
             tmpranges[entries++] = prev;
         }
         if (prev == 0)
         {
-            goto badarg;
+            return bad_arg(curarg);
         }
         bool resized = false;
         try
@@ -1763,7 +1769,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
     {
         if (valuelen > (FILE_MAX_PATH-1))
         {
-            goto badarg;
+            return bad_arg(curarg);
         }
         if (g_first_init || mode == cmd_file::AT_AFTER_STARTUP)
         {
@@ -1785,7 +1791,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
     {
         if (totparms != 1)
         {
-            goto badarg;
+            return bad_arg(curarg);
         }
         g_soi_min_stack = intval[0];
         return CMDARG_NONE;
@@ -1812,11 +1818,11 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
     {
         if (valuelen > (FILE_MAX_DIR-1))
         {
-            goto badarg;
+            return bad_arg(curarg);
         }
         if (!isadirectory(value))
         {
-            goto badarg;
+            return bad_arg(curarg);
         }
         g_temp_dir = value;
         fix_dirname(g_temp_dir);
@@ -1827,11 +1833,11 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
     {
         if (valuelen > (FILE_MAX_DIR-1))
         {
-            goto badarg;
+            return bad_arg(curarg);
         }
         if (!isadirectory(value))
         {
-            goto badarg;
+            return bad_arg(curarg);
         }
         g_working_dir = value;
         fix_dirname(g_working_dir);
@@ -1878,7 +1884,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         {
             if (std::strcmp(value, "16bit"))
             {
-                goto badarg;
+                return bad_arg(curarg);
             }
             g_potential_16bit = true;
         }
@@ -1889,7 +1895,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
     {
         if (totparms != floatparms || totparms > MAX_PARAMS)
         {
-            goto badarg;
+            return bad_arg(curarg);
         }
         initparams = true;
         for (int k = 0; k < MAX_PARAMS; ++k)
@@ -1910,7 +1916,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
     {
         if (totparms > 6)
         {
-            goto badarg;
+            return bad_arg(curarg);
         }
         if (charval[0] == 'b')
         {
@@ -1932,7 +1938,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
 #endif
         else
         {
-            goto badarg;
+            return bad_arg(curarg);
         }
 
         if (charval[1] == 'l')
@@ -1945,7 +1951,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         }
         else
         {
-            goto badarg;
+            return bad_arg(curarg);
         }
 
         // keep this next part in for backwards compatibility with old PARs ???
@@ -1971,7 +1977,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         {
             if (totparms != 2 || floatparms != 2)
             {
-                goto badarg;
+                return bad_arg(curarg);
             }
             g_init_orbit.x = floatval[0];
             g_init_orbit.y = floatval[1];
@@ -1984,7 +1990,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
     {
         if (check_orbit_name(value))
         {
-            goto badarg;
+            return bad_arg(curarg);
         }
         return CMDARG_FRACTAL_PARAM;
     }
@@ -2001,7 +2007,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         }
         if (julibrot_mode < 0)
         {
-            goto badarg;
+            return bad_arg(curarg);
         }
         g_julibrot_3d_mode = julibrot_mode;
         return CMDARG_FRACTAL_PARAM;
@@ -2011,7 +2017,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
     {
         if (floatparms != totparms)
         {
-            goto badarg;
+            return bad_arg(curarg);
         }
         if (totparms > 0)
         {
@@ -2044,7 +2050,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
     {
         if (floatparms != totparms || totparms != 1)
         {
-            goto badarg;
+            return bad_arg(curarg);
         }
         g_eyes_fp = (float)floatval[0];
         return CMDARG_FRACTAL_PARAM;
@@ -2054,7 +2060,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
     {
         if (floatparms != totparms || totparms != 4)
         {
-            goto badarg;
+            return bad_arg(curarg);
         }
         g_julibrot_x_max = floatval[0];
         g_julibrot_x_min = floatval[1];
@@ -2073,7 +2079,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         if (floatparms != totparms
             || (totparms != 0 && totparms != 4 && totparms != 6))
         {
-            goto badarg;
+            return bad_arg(curarg);
         }
         g_use_center_mag = false;
         if (totparms == 0)
@@ -2128,7 +2134,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
             dec = getprecbf_mag();
             if (dec < 0)
             {
-                goto badarg;     // ie: Magnification is +-1.#INF
+                return bad_arg(curarg);     // ie: Magnification is +-1.#INF
             }
 
             if (dec > g_decimals)  // get corners again if need more precision
@@ -2187,7 +2193,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         if (floatparms != totparms
             || (totparms != 0 && totparms != 4 && totparms != 6))
         {
-            goto badarg;
+            return bad_arg(curarg);
         }
         g_orbit_corner_min_x = floatval[0];
         g_orbit_corner_3_x = g_orbit_corner_min_x;
@@ -2210,7 +2216,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
     {
         if (yesnoval[0] < 0)
         {
-            goto badarg;
+            return bad_arg(curarg);
         }
         g_keep_screen_coords = yesnoval[0] != 0;
         return CMDARG_FRACTAL_PARAM;
@@ -2220,7 +2226,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
     {
         if (charval[0] != 'l' && charval[0] != 'r' && charval[0] != 'f')
         {
-            goto badarg;
+            return bad_arg(curarg);
         }
         g_draw_mode = charval[0];
         return CMDARG_FRACTAL_PARAM;
@@ -2231,7 +2237,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         // viewwindows=?,?,?,?,?
         if (totparms > 5 || floatparms-intparms > 2 || intparms > 4)
         {
-            goto badarg;
+            return bad_arg(curarg);
         }
         g_view_window = true;
         g_view_reduction = 4.2F;  // reset default values
@@ -2272,7 +2278,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
             || (totparms != 0 && totparms < 3)
             || (totparms >= 3 && floatval[2] == 0.0))
         {
-            goto badarg;
+            return bad_arg(curarg);
         }
         if (g_fractal_type == fractal_type::CELLULAR)
         {
@@ -2291,7 +2297,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         // be used in case compiler's LDBL_MAX is not big enough
         if (Magnification > LDBL_MAX || Magnification < -LDBL_MAX)
         {
-            goto badarg;     // ie: Magnification is +-1.#INF
+            return bad_arg(curarg);     // ie: Magnification is +-1.#INF
         }
 
         dec = getpower10(Magnification) + 4; // 4 digits of padding sounds good
@@ -2380,7 +2386,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         // aspectdrift=?
         if (floatparms != 1 || floatval[0] < 0)
         {
-            goto badarg;
+            return bad_arg(curarg);
         }
         g_aspect_drift = (float)floatval[0];
         return CMDARG_FRACTAL_PARAM;
@@ -2391,7 +2397,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         // invert=?,?,?
         if (totparms != floatparms || (totparms != 1 && totparms != 3))
         {
-            goto badarg;
+            return bad_arg(curarg);
         }
         g_inversion[0] = floatval[0];
         g_invert = (g_inversion[0] != 0.0) ? totparms : 0;
@@ -2408,7 +2414,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         // olddemmcolors=?
         if (yesnoval[0] < 0)
         {
-            goto badarg;
+            return bad_arg(curarg);
         }
         g_old_demm_colors = yesnoval[0] != 0;
         return CMDARG_NONE;
@@ -2419,7 +2425,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         // askvideo=?
         if (yesnoval[0] < 0)
         {
-            goto badarg;
+            return bad_arg(curarg);
         }
         g_ask_video = yesnoval[0] != 0;
         return CMDARG_NONE;
@@ -2435,7 +2441,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         // float=?
         if (yesnoval[0] < 0)
         {
-            goto badarg;
+            return bad_arg(curarg);
         }
 #ifndef XFRACT
         g_user_float_flag = yesnoval[0] != 0;
@@ -2450,7 +2456,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         // fastrestore=?
         if (yesnoval[0] < 0)
         {
-            goto badarg;
+            return bad_arg(curarg);
         }
         g_fast_restore = yesnoval[0] != 0;
         return CMDARG_NONE;
@@ -2461,11 +2467,11 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         // orgfrmdir=?
         if (valuelen > (FILE_MAX_DIR-1))
         {
-            goto badarg;
+            return bad_arg(curarg);
         }
         if (!isadirectory(value))
         {
-            goto badarg;
+            return bad_arg(curarg);
         }
         g_organize_formulas_search = true;
         g_organize_formulas_dir = value;
@@ -2489,7 +2495,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         }
         else if (yesnoval[0] < 0)
         {
-            goto badarg;
+            return bad_arg(curarg);
         }
         g_orbit_save_flags |= (yesnoval[0] ? osf_raw : 0);
         return CMDARG_FRACTAL_PARAM;
@@ -2500,7 +2506,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         // bailout=?
         if (floatval[0] < 1 || floatval[0] > 2100000000L)
         {
-            goto badarg;
+            return bad_arg(curarg);
         }
         g_bail_out = (long)floatval[0];
         return CMDARG_FRACTAL_PARAM;
@@ -2539,7 +2545,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         }
         else
         {
-            goto badarg;
+            return bad_arg(curarg);
         }
         setbailoutformula(g_bail_out_test);
         return CMDARG_FRACTAL_PARAM;
@@ -2574,7 +2580,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         }
         else
         {
-            goto badarg;
+            return bad_arg(curarg);
         }
         return CMDARG_FRACTAL_PARAM;
     }
@@ -2600,7 +2606,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         // sound=?,?,?
         if (totparms > 5)
         {
-            goto badarg;
+            return bad_arg(curarg);
         }
         g_sound_flag = SOUNDFLAG_OFF; // start with a clean slate, add bits as we go
         if (totparms == 1)
@@ -2638,7 +2644,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         }
         else
         {
-            goto badarg;
+            return bad_arg(curarg);
         }
 #if !defined(XFRACT)
         if (totparms > 1)
@@ -2673,7 +2679,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
                 }
                 else
                 {
-                    goto badarg;
+                    return bad_arg(curarg);
                 }
             } // end for
         }    // end totparms > 1
@@ -2714,7 +2720,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         }
         else
         {
-            goto badarg;
+            return bad_arg(curarg);
         }
         return CMDARG_NONE;
     }
@@ -2723,7 +2729,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
     {
         if (numval > 9)
         {
-            goto badarg;
+            return bad_arg(curarg);
         }
         g_polyphony = std::abs(numval-1);
         return CMDARG_NONE;
@@ -2769,7 +2775,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         // Scalemap=?,?,?,?,?,?,?,?,?,?,?
         if (totparms != intparms)
         {
-            goto badarg;
+            return bad_arg(curarg);
         }
         for (int counter = 0; counter <= 11; counter++)
             if ((totparms > counter) && (intval[counter] > 0)
@@ -2799,7 +2805,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         }
         else if (numval == NONNUMERIC)
         {
-            goto badarg;
+            return bad_arg(curarg);
         }
         else if (numval != 0)
         {
@@ -2858,7 +2864,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         }
         else
         {
-            goto badarg;
+            return bad_arg(curarg);
         }
         return CMDARG_FRACTAL_PARAM;
     }
@@ -2913,7 +2919,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
                 }
                 else
                 {
-                    goto badarg;
+                    return bad_arg(curarg);
                 }
             }
             else
@@ -2946,7 +2952,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
     {
         if (totparms != intparms || totparms < 1)
         {
-            goto badarg;
+            return bad_arg(curarg);
         }
         g_decomp[0] = intval[0];
         g_decomp[1] = 0;
@@ -2962,7 +2968,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
     {
         if (totparms != intparms || totparms < 1)
         {
-            goto badarg;
+            return bad_arg(curarg);
         }
         g_user_distance_estimator_value = (long)floatval[0];
         g_distance_estimator_width_factor = 71;
@@ -2988,7 +2994,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         // formulafile=?
         if (valuelen > (FILE_MAX_PATH-1))
         {
-            goto badarg;
+            return bad_arg(curarg);
         }
         if (merge_pathnames(g_formula_filename, value, mode) < 0)
         {
@@ -3002,7 +3008,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         // formulaname=?
         if (valuelen > ITEM_NAME_LEN)
         {
-            goto badarg;
+            return bad_arg(curarg);
         }
         g_formula_name = value;
         return CMDARG_FRACTAL_PARAM;
@@ -3013,7 +3019,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         // lfile=?
         if (valuelen > (FILE_MAX_PATH-1))
         {
-            goto badarg;
+            return bad_arg(curarg);
         }
         if (merge_pathnames(g_l_system_filename, value, mode) < 0)
         {
@@ -3026,7 +3032,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
     {
         if (valuelen > ITEM_NAME_LEN)
         {
-            goto badarg;
+            return bad_arg(curarg);
         }
         g_l_system_name = value;
         return CMDARG_FRACTAL_PARAM;
@@ -3038,7 +3044,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         int existdir;
         if (valuelen > (FILE_MAX_PATH-1))
         {
-            goto badarg;
+            return bad_arg(curarg);
         }
         existdir = merge_pathnames(g_ifs_filename, value, mode);
         if (existdir == 0)
@@ -3058,7 +3064,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         // ifs3d for old time's sake
         if (valuelen > ITEM_NAME_LEN)
         {
-            goto badarg;
+            return bad_arg(curarg);
         }
         g_ifs_name = value;
         reset_ifs_defn();
@@ -3070,7 +3076,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         // parmfile=?
         if (valuelen > (FILE_MAX_PATH-1))
         {
-            goto badarg;
+            return bad_arg(curarg);
         }
         if (merge_pathnames(g_command_file, value, mode) < 0)
         {
@@ -3084,7 +3090,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         // stereo=?
         if ((numval < 0) || (numval > 4))
         {
-            goto badarg;
+            return bad_arg(curarg);
         }
         g_glasses_type = numval;
         return CMDARG_FRACTAL_PARAM | CMDARG_3D_PARAM;
@@ -3095,7 +3101,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         // rotation=?/?/?
         if (totparms != 3 || intparms != 3)
         {
-            goto badarg;
+            return bad_arg(curarg);
         }
         XROT = intval[0];
         YROT = intval[1];
@@ -3108,7 +3114,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         // perspective=?
         if (numval == NONNUMERIC)
         {
-            goto badarg;
+            return bad_arg(curarg);
         }
         ZVIEWER = numval;
         return CMDARG_FRACTAL_PARAM | CMDARG_3D_PARAM;
@@ -3119,7 +3125,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         // xyshift=?/?
         if (totparms != 2 || intparms != 2)
         {
-            goto badarg;
+            return bad_arg(curarg);
         }
         XSHIFT = intval[0];
         YSHIFT = intval[1];
@@ -3149,7 +3155,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
             || intval[2] < 0 || intval[2] > 100
             || intval[3] < 0 || intval[3] > 100)
         {
-            goto badarg;
+            return bad_arg(curarg);
         }
         g_red_crop_left   = intval[0];
         g_red_crop_right  = intval[1];
@@ -3163,7 +3169,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         // bright=?
         if (totparms != 2 || intparms != 2)
         {
-            goto badarg;
+            return bad_arg(curarg);
         }
         g_red_bright  = intval[0];
         g_blue_bright = intval[1];
@@ -3175,7 +3181,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         // trans=?
         if (totparms != 2 || intparms != 2)
         {
-            goto badarg;
+            return bad_arg(curarg);
         }
         g_adjust_3d_x = intval[0];
         g_adjust_3d_y = intval[1];
@@ -3195,7 +3201,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         }
         else if (yesnoval[0] < 0)
         {
-            goto badarg;
+            return bad_arg(curarg);
         }
         g_display_3d = yesnoval[0] != 0 ? display_3d_modes::YES : display_3d_modes::NONE;
         initvars_3d();
@@ -3207,7 +3213,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         // sphere=?
         if (yesnoval[0] < 0)
         {
-            goto badarg;
+            return bad_arg(curarg);
         }
         SPHERE = yesnoval[0];
         return CMDARG_3D_PARAM;
@@ -3218,7 +3224,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         // scalexyz=?/?/?
         if (totparms < 2 || intparms != totparms)
         {
-            goto badarg;
+            return bad_arg(curarg);
         }
         XSCALE = intval[0];
         YSCALE = intval[1];
@@ -3242,7 +3248,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         // waterline=?
         if (numval < 0)
         {
-            goto badarg;
+            return bad_arg(curarg);
         }
         WATERLINE = numval;
         return CMDARG_3D_PARAM;
@@ -3253,7 +3259,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         // filltype=?
         if (numval < -1 || numval > 6)
         {
-            goto badarg;
+            return bad_arg(curarg);
         }
         FILLTYPE = numval;
         return CMDARG_3D_PARAM;
@@ -3264,7 +3270,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         // lightsource=?/?/?
         if (totparms != 3 || intparms != 3)
         {
-            goto badarg;
+            return bad_arg(curarg);
         }
         XLIGHT = intval[0];
         YLIGHT = intval[1];
@@ -3277,7 +3283,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         // smoothing=?
         if (numval < 0)
         {
-            goto badarg;
+            return bad_arg(curarg);
         }
         LIGHTAVG = numval;
         return CMDARG_3D_PARAM;
@@ -3288,7 +3294,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         // latitude=?/?
         if (totparms != 2 || intparms != 2)
         {
-            goto badarg;
+            return bad_arg(curarg);
         }
         THETA1 = intval[0];
         THETA2 = intval[1];
@@ -3300,7 +3306,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         // longitude=?/?
         if (totparms != 2 || intparms != 2)
         {
-            goto badarg;
+            return bad_arg(curarg);
         }
         PHI1 = intval[0];
         PHI2 = intval[1];
@@ -3312,7 +3318,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         // radius=?
         if (numval < 0)
         {
-            goto badarg;
+            return bad_arg(curarg);
         }
         RADIUS = numval;
         return CMDARG_3D_PARAM;
@@ -3323,7 +3329,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         // transparent?
         if (totparms != intparms || totparms < 1)
         {
-            goto badarg;
+            return bad_arg(curarg);
         }
         g_transparent_color_3d[0] = intval[0];
         g_transparent_color_3d[1] = g_transparent_color_3d[0];
@@ -3339,7 +3345,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         // preview?
         if (yesnoval[0] < 0)
         {
-            goto badarg;
+            return bad_arg(curarg);
         }
         g_preview = yesnoval[0] != 0;
         return CMDARG_3D_PARAM;
@@ -3350,7 +3356,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         // showbox?
         if (yesnoval[0] < 0)
         {
-            goto badarg;
+            return bad_arg(curarg);
         }
         g_show_box = yesnoval[0] != 0;
         return CMDARG_3D_PARAM;
@@ -3361,7 +3367,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         // coarse=?
         if (numval < 3 || numval > 2000)
         {
-            goto badarg;
+            return bad_arg(curarg);
         }
         g_preview_factor = numval;
         return CMDARG_3D_PARAM;
@@ -3372,7 +3378,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         // RANDOMIZE=?
         if (numval < 0 || numval > 7)
         {
-            goto badarg;
+            return bad_arg(curarg);
         }
         g_randomize_3d = numval;
         return CMDARG_3D_PARAM;
@@ -3383,7 +3389,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         // ambient=?
         if (numval < 0 || numval > 100)
         {
-            goto badarg;
+            return bad_arg(curarg);
         }
         g_ambient = numval;
         return CMDARG_3D_PARAM;
@@ -3394,7 +3400,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         // haze=?
         if (numval < 0 || numval > 100)
         {
-            goto badarg;
+            return bad_arg(curarg);
         }
         g_haze = numval;
         return CMDARG_3D_PARAM;
@@ -3405,7 +3411,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         // fullcolor=?
         if (yesnoval[0] < 0)
         {
-            goto badarg;
+            return bad_arg(curarg);
         }
         g_targa_out = yesnoval[0] != 0;
         return CMDARG_3D_PARAM;
@@ -3416,7 +3422,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         // truecolor=?
         if (yesnoval[0] < 0)
         {
-            goto badarg;
+            return bad_arg(curarg);
         }
         g_truecolor = yesnoval[0] != 0;
         return CMDARG_FRACTAL_PARAM | CMDARG_3D_PARAM;
@@ -3442,7 +3448,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         // usegrayscale?
         if (yesnoval[0] < 0)
         {
-            goto badarg;
+            return bad_arg(curarg);
         }
         g_gray_flag = yesnoval[0] != 0;
         return CMDARG_3D_PARAM;
@@ -3453,7 +3459,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         // monitorwidth=?
         if (totparms != 1 || floatparms != 1)
         {
-            goto badarg;
+            return bad_arg(curarg);
         }
         g_auto_stereo_width  = floatval[0];
         return CMDARG_3D_PARAM;
@@ -3464,7 +3470,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         // Targa Overlay?
         if (yesnoval[0] < 0)
         {
-            goto badarg;
+            return bad_arg(curarg);
         }
         g_targa_overlay = yesnoval[0] != 0;
         return CMDARG_3D_PARAM;
@@ -3475,13 +3481,13 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         // background=?/?
         if (totparms != 3 || intparms != 3)
         {
-            goto badarg;
+            return bad_arg(curarg);
         }
         for (int i = 0; i < 3; i++)
         {
             if (intval[i] & ~0xff)
             {
-                goto badarg;
+                return bad_arg(curarg);
             }
         }
         g_background_color[0] = (BYTE)intval[0];
@@ -3495,7 +3501,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         // lightname=?
         if (valuelen > (FILE_MAX_PATH-1))
         {
-            goto badarg;
+            return bad_arg(curarg);
         }
         if (g_first_init || mode == cmd_file::AT_AFTER_STARTUP)
         {
@@ -3509,7 +3515,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         // RAY=?
         if (numval < 0 || numval > 6)
         {
-            goto badarg;
+            return bad_arg(curarg);
         }
         g_raytrace_format = static_cast<raytrace_formats>(numval);
         return CMDARG_3D_PARAM;
@@ -3520,7 +3526,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         // BRIEF?
         if (yesnoval[0] < 0)
         {
-            goto badarg;
+            return bad_arg(curarg);
         }
         g_brief = yesnoval[0] != 0;
         return CMDARG_3D_PARAM;
@@ -3529,7 +3535,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
     if (variable == "release")
     {
         // release
-        goto badarg;
+        return bad_arg(curarg);
     }
 
     if (variable == "curdir")
@@ -3537,7 +3543,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         // curdir=
         if (yesnoval[0] < 0)
         {
-            goto badarg;
+            return bad_arg(curarg);
         }
         g_check_cur_dir = yesnoval[0] != 0;
         return CMDARG_NONE;
@@ -3547,15 +3553,13 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
     {
         if (yesnoval[0] < 0)
         {
-            goto badarg;
+            return bad_arg(curarg);
         }
         g_virtual_screens = yesnoval[0] != 0;
         return CMDARG_FRACTAL_PARAM;
     }
 
-badarg:
-    argerror(curarg);
-    return CMDARG_ERROR;
+    return bad_arg(curarg);
 }
 
 static void parse_textcolors(char const *value)
