@@ -25,8 +25,7 @@ extern void cvtcentermag(double *, double *, LDBL *, double *, double *, double 
 extern void cvtcorners(double, double, LDBL, double, double, double);
 extern void cvtcentermagbf(bf_t, bf_t, LDBL *, double *, double *, double *);
 extern void cvtcornersbf(bf_t, bf_t, LDBL, double, double, double);
-extern int check_writefile(char *name, char const *ext);
-extern int check_writefile(std::string &name, char const *ext);
+extern void check_writefile(std::string &name, char const *ext);
 extern std::string showtrig();
 extern int set_trig_array(int k, char const *name);
 extern void set_trig_pointers(int);

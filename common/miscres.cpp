@@ -493,7 +493,7 @@ void cvtcornersbf(bf_t Xctr, bf_t Yctr, LDBL Magnification, double Xmagfactor, d
     return;
 }
 
-int check_writefile(char *name, char const *ext)
+static void check_writefile(char *name, char const *ext)
 {
     // after v16 release, change encoder.c to also use this routine
     char openfile[FILE_MAX_DIR];
@@ -512,7 +512,7 @@ nextname:
     if (access(openfile, 0) != 0) // file doesn't exist
     {
         std::strcpy(name, openfile);
-        return 0;
+        return;
     }
     // file already exists
     if (!g_overwrite_file)
@@ -520,16 +520,14 @@ nextname:
         update_save_name(name);
         goto nextname;
     }
-    return 1;
 }
 
-int check_writefile(std::string &name, char const *ext)
+void check_writefile(std::string &name, char const *ext)
 {
     char buff[FILE_MAX_PATH];
     std::strcpy(buff, name.c_str());
-    int const result = check_writefile(buff, ext);
+    check_writefile(buff, ext);
     name = buff;
-    return result;
 }
 
 trig_fn g_trig_index[] =
