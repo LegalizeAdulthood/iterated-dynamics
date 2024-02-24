@@ -2842,15 +2842,14 @@ std::string expand_comments(char const *source)
 // extract comments from the comments= command
 void parse_comments(char *value)
 {
-    char *next, save;
     for (auto &elem : par_comment)
     {
-        save = '\0';
+        char save = '\0';
         if (*value == 0)
         {
             break;
         }
-        next = std::strchr(value, '/');
+        char *next = std::strchr(value, '/');
         if (*value != '/')
         {
             if (next != nullptr)
