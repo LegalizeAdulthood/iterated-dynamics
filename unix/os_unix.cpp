@@ -88,7 +88,7 @@ unsigned long get_disk_space()
 
 void init_failure(char const *message)
 {
-    fputs(message, stderr);
+    std::fputs(message, stderr);
 }
 
 extern void (*dotwrite)(int, int, int); // write-a-dot routine

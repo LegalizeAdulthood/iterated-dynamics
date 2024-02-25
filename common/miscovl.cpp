@@ -429,7 +429,7 @@ skip_UI:
                     }
                     break;
                 }
-                fputs(buf, parmfile);
+                std::fputs(buf, parmfile);
                 std::fputc('\n', parmfile);
             }
         }
@@ -571,7 +571,7 @@ skip_UI:
             while (i == 0); // skip blanks
             while (i >= 0)
             {
-                fputs(buf, parmfile);
+                std::fputs(buf, parmfile);
                 std::fputc('\n', parmfile);
                 i = file_gets(buf, 255, infile);
             }
@@ -1671,8 +1671,8 @@ static void put_parm_line()
     }
     c = s_wbdata.buf[len];
     s_wbdata.buf[len] = 0;
-    fputs("  ", parmfile);
-    fputs(s_wbdata.buf, parmfile);
+    std::fputs("  ", parmfile);
+    std::fputs(s_wbdata.buf, parmfile);
     if (c && c != ' ')
     {
         std::fputc('\\', parmfile);
@@ -2231,7 +2231,7 @@ static void update_fractint_cfg()
         }
         else
         {
-            fputs(buf, outfile);
+            std::fputs(buf, outfile);
         }
     }
 

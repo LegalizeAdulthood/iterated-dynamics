@@ -404,7 +404,7 @@ void recordshw(int key)
         {
             char buf[10];
             vidmode_keyname(key, buf);
-            fputs(buf, fpss);
+            std::fputs(buf, fpss);
         }
         else   // not ASCII and not FN key
         {
