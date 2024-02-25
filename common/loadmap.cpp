@@ -30,9 +30,7 @@ struct Palettetype
 
 bool ValidateLuts(char const *fn)
 {
-    std::FILE * f;
     unsigned        r, g, b;
-    char    line[160];
     char    temp[FILE_MAX_PATH+1];
     char    temp_fn[FILE_MAX_PATH];
     std::strcpy(temp, g_map_name.c_str());
@@ -46,10 +44,10 @@ bool ValidateLuts(char const *fn)
     {
         std::strcat(temp, ".map");  // No? Then add .map
     }
-    findpath(temp, line);         // search the dos path
-    f = std::fopen(line, "r");
+    std::FILE *f = std::fopen(find_path(temp).c_str(), "r"); // search the dos path
     if (f == nullptr)
     {
+        char line[80];
         std::snprintf(line, NUM_OF(line), "Could not load color map %s", fn);
         stopmsg(STOPMSG_NONE, line);
         return true;
@@ -57,6 +55,7 @@ bool ValidateLuts(char const *fn)
     unsigned index;
     for (index = 0; index < 256; index++)
     {
+        char line[80];
         if (fgets(line, 100, f) == nullptr)
         {
             break;
