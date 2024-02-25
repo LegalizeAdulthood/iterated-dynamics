@@ -43,6 +43,8 @@
 #include <string>
 #include <vector>
 
+namespace fs = std::filesystem;
+
 static void put_parm(char const *parm, ...);
 
 static void put_parm_line();
@@ -87,7 +89,7 @@ void make_batch_file()
     char inpcomment[4][MAX_COMMENT_LEN];
     fullscreenvalues paramvalues[18];
     char const      *choices[MAXPROMPTS];
-    std::filesystem::path out_name;
+    fs::path out_name;
     char             buf[256];
     char             buf2[128];
     std::FILE *infile = nullptr;
@@ -2143,20 +2145,20 @@ static bool ent_less(const int lhs, const int rhs)
 static void update_fractint_cfg()
 {
 #ifndef XFRACT
-    char cfgname[100], outname[100], buf[121], kname[5];
+    char outname[100], buf[121], kname[5];
     std::FILE *cfgfile, *outfile;
     int i, j, linenum, nextlinenum, nextmode;
     VIDEOINFO vident;
 
-    findpath("fractint.cfg", cfgname);
+    const std::string cfgname = find_path("fractint.cfg");
 
-    if (access(cfgname, 6))
+    if (access(cfgname.c_str(), 6))
     {
-        std::snprintf(buf, NUM_OF(buf), "Can't write %s", cfgname);
+        std::snprintf(buf, NUM_OF(buf), "Can't write %s", cfgname.c_str());
         stopmsg(STOPMSG_NONE, buf);
         return;
     }
-    std::strcpy(outname, cfgname);
+    std::strcpy(outname, cfgname.c_str());
     i = (int) std::strlen(outname);
     while (--i >= 0 && outname[i] != SLASHC)
     {
@@ -2170,7 +2172,7 @@ static void update_fractint_cfg()
         stopmsg(STOPMSG_NONE, buf);
         return;
     }
-    cfgfile = std::fopen(cfgname, "r");
+    cfgfile = std::fopen(cfgname.c_str(), "r");
 
     nextmode = 0;
     linenum = nextmode;
@@ -2241,8 +2243,8 @@ static void update_fractint_cfg()
 
     std::fclose(cfgfile);
     std::fclose(outfile);
-    std::remove(cfgname);         // success assumed on these lines
-    std::rename(outname, cfgname); // since we checked earlier with access
+    fs::remove(cfgname);         // success assumed on these lines
+    fs::rename(outname, cfgname); // since we checked earlier with access
 #endif
 }
 
