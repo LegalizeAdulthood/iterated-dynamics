@@ -4,10 +4,7 @@
 #include "prototyp.h"
 
 #include "cmdfiles.h"
-#include "fractint.h"
 #include "id_data.h"
-#include "make_path.h"
-#include "prompts2.h"
 #include "search_path.h"
 
 #ifdef WIN32
@@ -16,80 +13,51 @@
 #include <unistd.h>
 #endif
 
-#include <cstring>
 #include <filesystem>
 
 namespace fs = std::filesystem;
 
-/*
- *----------------------------------------------------------------------
- *
- * find_path
- *
- *      Find where a file is.
- *  We return filename if it is an absolute path.
- *  Otherwise, we first try FRACTDIR/filename, SRCDIR/filename,
- *      and then ./filename.
- *
- * Results:
- *      Returns full pathname in fullpathname.
- *
- * Side effects:
- *      None.
- *
- *----------------------------------------------------------------------
- */
+// find_path
+//
+//      Find where a file is.
+//
 std::string find_path(const char *filename,
     const std::function<const char *(const char *)> &get_env) // return full pathnames
 {
-    char fullpathname[FILE_MAX_PATH];
-    fullpathname[0] = 0;                         // indicate none found
-
-    char fname[FILE_MAX_FNAME];
-    char ext[FILE_MAX_EXT];
-    char temp_path[FILE_MAX_PATH];
+    const fs::path file_path{fs::path{filename}.make_preferred()};
 
     // check current directory if curdir= parameter set
-    split_fname_ext(filename, fname, ext);
-    make_path(temp_path, "", "", fname, ext);
-    if (g_check_cur_dir && fs::exists(temp_path))   // file exists
+    if (g_check_cur_dir && exists(file_path.filename()))   // file exists
     {
-        return (fs::current_path() / filename).make_preferred().string();
+        return (fs::current_path() / file_path.filename()).make_preferred().string();
     }
 
     // check for absolute path
-    //if (fs::path{filename}.is_absolute() && )
-    //{
-    //}
-    std::strcpy(temp_path, filename);   // avoid side effect changes to filename
-    if (temp_path[0] == SLASHC || (temp_path[0] && temp_path[1] == ':'))
+    if (file_path.is_absolute() && access(file_path.string().c_str(), 0) == 0) // file exists
     {
-        if (access(temp_path, 0) == 0)   // file exists
-        {
-            std::strcpy(fullpathname, temp_path);
-            return fullpathname;
-        }
-
-        split_fname_ext(temp_path, fname, ext);
-        make_path(temp_path, "", "", fname, ext);
+        return file_path.string();
     }
 
-    // check FRACTDIR
-    make_path(temp_path, "", g_fractal_search_dir1.c_str(), fname, ext);
-    if (access(temp_path, 0) == 0)
+    const auto check_dir = [&](const std::string &dir)
     {
-        std::strcpy(fullpathname, temp_path);
-        return fullpathname;
+        fs::path check_path{fs::path{dir} / file_path.filename()};
+        return exists(check_path) ? check_path.make_preferred().string() : std::string{};
+    };
+
+    // check FRACTDIR
+    const std::string dir1_path{check_dir(g_fractal_search_dir1)};
+    if (!dir1_path.empty())
+    {
+        return dir1_path;
     }
 
     // check SRCDIR
-    make_path(temp_path, "", g_fractal_search_dir2.c_str(), fname, ext);
-    if (access(temp_path, 0) == 0)
+    const std::string dir2_path{check_dir(g_fractal_search_dir2)};
+    if (!dir2_path.empty())
     {
-        std::strcpy(fullpathname, temp_path);
-        return fullpathname;
+        return dir2_path;
     }
 
     // check PATH
-    return search_path(temp_path, "PATH", get_env);
+    return search_path(file_path.filename().string().c_str(), "PATH", get_env);
 }

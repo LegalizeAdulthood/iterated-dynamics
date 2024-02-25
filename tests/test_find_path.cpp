@@ -61,12 +61,23 @@ void TestFindPath::SetUp()
 
 } // namespace
 
-TEST_F(TestFindPath, foundInCurrentDirectory)
+TEST_F(TestFindPath, fileFoundInCurrentDirectory)
 {
     current_path_saver cd(ID_TEST_DATA_DIR);
     g_check_cur_dir = true;
 
     const std::string result = find_path(ID_TEST_IFS_FILE, m_empty_env);
+
+    ASSERT_EQ((fs::path{ID_TEST_DATA_DIR} / ID_TEST_IFS_FILE).make_preferred(), fs::path{result});
+}
+
+TEST_F(TestFindPath, filePathFoundInCurrentDirectory)
+{
+    current_path_saver cd(ID_TEST_DATA_DIR);
+    g_check_cur_dir = true;
+    const fs::path relativeFile{fs::path{ID_TEST_DATA_SUBDIR}.filename() / ID_TEST_IFS_FILE};
+
+    const std::string result = find_path(relativeFile.string().c_str(), m_empty_env);
 
     ASSERT_EQ((fs::path{ID_TEST_DATA_DIR} / ID_TEST_IFS_FILE).make_preferred(), fs::path{result});
 }
@@ -133,8 +144,17 @@ TEST_F(TestFindPath, foundInPathSubDir)
 
 TEST_F(TestFindPath, notFoundInPath)
 {
-
     const std::string result = find_path(m_non_existent, m_env_path);
 
     ASSERT_TRUE(result.empty());
+}
+
+TEST_F(TestFindPath, absolutePath)
+{
+    const fs::path absoluteLocation{(fs::path{ID_TEST_DATA_DIR} / ID_TEST_IFS_FILE).make_preferred()};
+    ASSERT_TRUE(exists(absoluteLocation));
+
+    const std::string result = find_path(absoluteLocation.string().c_str(), m_empty_env);
+
+    ASSERT_EQ(absoluteLocation.string(), result);
 }
