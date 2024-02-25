@@ -46,8 +46,8 @@ int g_look_at_mouse = 0;  // see notes at mouseread routine
 
 long g_timer_start, g_timer_interval;       // timer(...) start & total
 int     g_adapter;                      // Video Adapter chosen from list in ...h
-char const *g_fractal_search_dir1 = "";
-char const *g_fractal_search_dir2 = "";
+std::string g_fractal_search_dir1;
+std::string g_fractal_search_dir2;
 
 /*
    the following variables are out here only so
@@ -512,10 +512,9 @@ static main_state main_image_start(bool &stacked, bool &resumeflag)
 
 int id_main(int argc, char *argv[])
 {
-    g_fractal_search_dir1 = getenv("FRACTDIR");
-    if (g_fractal_search_dir1 == nullptr)
     {
-        g_fractal_search_dir1 = ".";
+        const char *fract_dir = getenv("FRACTDIR");
+        g_fractal_search_dir1 = fract_dir == nullptr ? "." : fract_dir;
     }
 #ifdef SRCDIR
     g_fractal_search_dir2 = SRCDIR;

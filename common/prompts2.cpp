@@ -1646,11 +1646,11 @@ retry_dir:
         static int lastdir = 0;
         if (lastdir == 0)
         {
-            std::strcpy(dir, g_fractal_search_dir1);
+            std::strcpy(dir, g_fractal_search_dir1.c_str());
         }
         else
         {
-            std::strcpy(dir, g_fractal_search_dir2);
+            std::strcpy(dir, g_fractal_search_dir2.c_str());
         }
         fix_dirname(dir);
         makepath(flname, drive, dir, "", "");
