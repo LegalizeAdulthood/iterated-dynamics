@@ -17,6 +17,7 @@
 #include "prompts2.h"
 #include "realdos.h"
 #include "rotate.h"
+#include "string_case_compare.h"
 #include "zoom.h"
 
 #include <cassert>

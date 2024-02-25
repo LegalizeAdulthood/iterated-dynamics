@@ -816,16 +816,3 @@ void init_failure(char const *message)
 {
     MessageBox(nullptr, message, "FractInt: Fatal Error", MB_OK);
 }
-
-// case independent version of std::strncmp
-int strncasecmp(char const *s, char const *t, int ct)
-{
-    for (; (std::tolower(*s) == std::tolower(*t)) && --ct ; s++, t++)
-    {
-        if (*s == '\0')
-        {
-            return 0;
-        }
-    }
-    return std::tolower(*s) - std::tolower(*t);
-}

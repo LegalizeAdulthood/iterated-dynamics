@@ -1,3 +1,5 @@
 #pragma once
 
 #cmakedefine01 ID_BIG_ENDIAN
+
+#cmakedefine ID_HAVE_STRNCASECMP

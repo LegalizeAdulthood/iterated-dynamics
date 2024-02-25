@@ -15,6 +15,7 @@ project("${ID_PROJECT_NAME}"
     HOMEPAGE_URL "https://LegalizeAdulthood.github.io/iterated-dynamics"
     LANGUAGES CXX)
 
+include(CheckSymbolExists)
 include(CTest)
 include(TestBigEndian)
 
@@ -62,10 +63,12 @@ add_subdirectory(win32)
 add_subdirectory(hc)
 
 test_big_endian(ID_BIG_ENDIAN)
+check_symbol_exists(strncasecmp "strings.h" ID_HAVE_STRNCASECMP)
 configure_file(headers/port_config.h.in include/port_config.h)
 add_library(config INTERFACE)
 target_sources(config INTERFACE
     headers/port_config.h.in
+    headers/string_case_compare.h
     "${CMAKE_CURRENT_BINARY_DIR}/include/port_config.h"
 )
 target_include_directories(config INTERFACE "${CMAKE_CURRENT_BINARY_DIR}/include")
