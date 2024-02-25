@@ -17,6 +17,7 @@ is in the allocations of memory for the big numbers.
 
 #include <cstdio>
 #include <cstring>
+#include <string>
 
 // globals
 int bnstep = 0;
@@ -331,9 +332,7 @@ static void init_bf_2()
     // also leave room for the safe area at top of segment
     if (ptr + NUMVARS*(bflength+2) > maxstack)
     {
-        char msg[80];
-        std::sprintf(msg, "Requested precision of %d too high, aborting", g_decimals);
-        stopmsg(STOPMSG_NONE, msg);
+        stopmsg(STOPMSG_NONE, "Requested precision of " + std::to_string(g_decimals) + " too high, aborting");
         goodbye();
     }
 
