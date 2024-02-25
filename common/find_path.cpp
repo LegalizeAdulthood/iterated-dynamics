@@ -23,7 +23,7 @@ namespace fs = std::filesystem;
 /*
  *----------------------------------------------------------------------
  *
- * findpath --
+ * find_path
  *
  *      Find where a file is.
  *  We return filename if it is an absolute path.

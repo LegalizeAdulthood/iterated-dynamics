@@ -2730,8 +2730,7 @@ int merge_pathnames(char *oldfullpath, char const *filename, cmd_file mode)
         }
     }
 #else
-    findpath(newfilename, temp_path);
-    std::strcpy(newfilename, temp_path);
+    std::strcpy(newfilename, find_path(newfilename).c_str());
 #endif
     // check existence
     if (!isadir || isafile)
