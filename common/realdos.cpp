@@ -1926,7 +1926,8 @@ void load_fractint_config()
     if (tempstring[0] == 0                            // can't find the file
         || (cfgfile = std::fopen(tempstring, "r")) == nullptr)   // can't open it
     {
-        goto bad_fractint_cfg;
+        g_bad_config = config_status::BAD_NO_MESSAGE;
+        return;
     }
 
     linenum = 0;
@@ -2015,7 +2016,8 @@ void load_fractint_config()
                  colors != 256)
            )
         {
-            goto bad_fractint_cfg;
+            g_bad_config = config_status::BAD_NO_MESSAGE;
+            return;
         }
         g_cfg_line_nums[g_video_table_len] = linenum; // for update_fractint_cfg
 
@@ -2066,10 +2068,6 @@ void load_fractint_config()
         }
     }
     std::fclose(cfgfile);
-    return;
-
-bad_fractint_cfg:
-    g_bad_config = config_status::BAD_NO_MESSAGE;
 }
 
 void bad_fractint_cfg_msg()
