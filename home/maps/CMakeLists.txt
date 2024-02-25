@@ -1,0 +1,28 @@
+id_install_home(FILES
+    altern.map
+    blues.map
+    chroma.map
+    default.map
+    defaultw.map
+    firestrm.map
+    froth3.map
+    froth316.map
+    froth6.map
+    froth616.map
+    gamma1.map
+    gamma2.map
+    glasses1.map
+    glasses2.map
+    goodega.map
+    green.map
+    grey.map
+    grid.map
+    headache.map
+    landscap.map
+    lyapunov.map
+    neon.map
+    paintjet.map
+    royal.map
+    topo.map
+    volcano.map
+)

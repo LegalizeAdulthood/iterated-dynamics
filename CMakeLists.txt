@@ -7,6 +7,9 @@ set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+# Set install folder
+set(CMAKE_INSTALL_PREFIX install)
+
 set(ID_PROJECT_NAME "Iterated Dynamics" CACHE STRING "Project name for IDEs")
 
 project("${ID_PROJECT_NAME}"
@@ -328,9 +331,12 @@ add_executable(id ${ID_EXECUTABLE_TYPE}
     common/main.cpp
 )
 target_link_libraries(id PUBLIC libid)
+install(TARGETS id DESTINATION bin)
 
 set_property(DIRECTORY PROPERTY VS_STARTUP_PROJECT id)
 
 if(BUILD_TESTING)
     add_subdirectory(tests)
 endif()
+
+add_subdirectory(home)

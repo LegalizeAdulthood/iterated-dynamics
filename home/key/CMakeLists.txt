@@ -1,0 +1,11 @@
+id_install_home(FILES
+    advanced.key
+    auto.key
+    basic.key
+    explore.key
+    new19-4.key
+    new19-5.key
+    new19-6.key
+    new19.key
+    snddemo1.key
+)

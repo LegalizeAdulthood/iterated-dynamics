@@ -1,0 +1,23 @@
+id_install_home(FILES
+    Carlson1.map
+    droz12.map
+    droz34.map
+    droz35.map
+    droz49.map
+    droz54.map
+    droz56.map
+    droz62.map
+    Gallet01.map
+    Gallet02.map
+    Gallet03.map
+    Gallet07.map
+    Gallet08.map
+    Gallet09.map
+    Gallet10.map
+    Lindaa11.map
+    Lindaa12.map
+    Morgen3.map
+    Wizzl011.map
+    Wizzl012.map
+    Wizzl013.map
+)

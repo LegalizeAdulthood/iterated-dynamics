@@ -1,0 +1,27 @@
+id_install_home(FILES
+    Digiorg1.map
+    droz22.map
+    droz60.map
+    lkmtch00.map
+    lkmtch01.map
+    lkmtch02.map
+    lkmtch03.map
+    lkmtch04.map
+    lkmtch05.map
+    lkmtch06.map
+    lkmtch07.map
+    lkmtch08.map
+    lkmtch09.map
+    lkmtch10.map
+    lkmtch11.map
+    lkmtch12.map
+    lkmtch13.map
+    lkmtch14.map
+    lkmtch15.map
+    lkmtch16.map
+    lkmtch17.map
+    lkmtch18.map
+    lkmtch19.map
+    Skydye06.map
+    Skydye07.map
+)

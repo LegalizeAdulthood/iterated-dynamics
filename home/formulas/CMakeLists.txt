@@ -1,0 +1,14 @@
+id_install_home(FILES
+    fend.frm
+    fract001.frm
+    fract002.frm
+    fract003.frm
+    fract196.frm
+    fract200.frm
+    fractint.frm
+    fract_sy.frm
+    ikenaga.frm
+    julitile.frm
+    newton.frm
+    new_if.frm
+)

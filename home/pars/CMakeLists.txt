@@ -1,0 +1,15 @@
+id_install_home(FILES
+    cellular.par
+    demo.par
+    fract18.par
+    fract19.par
+    fract200.par
+    fract205.par
+    fractint.par
+    icons.par
+    lyapunov.par
+    music.par
+    newphoen.par
+    orbits.par
+    phoenix.par
+)
