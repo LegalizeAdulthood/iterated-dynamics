@@ -63,6 +63,7 @@ jobs:
             --inline-suppr
             -I headers hc common headers unix win32
             -ifractint
+            -i../build-cppcheck/vcpkg_installed
 
       - name: Print Report
         run: cmake -E cat cppcheck_report.txt
