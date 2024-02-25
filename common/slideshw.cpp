@@ -384,9 +384,9 @@ void recordshw(int key)
         if (!quotes)
         {
             quotes = true;
-            fputc('\"', fpss);
+            std::fputc('\"', fpss);
         }
-        fputc(key, fpss);
+        std::fputc(key, fpss);
     }
     else
     {
@@ -410,7 +410,7 @@ void recordshw(int key)
         {
             std::fprintf(fpss, "%4d", key);
         }
-        fputc('\n', fpss);
+        std::fputc('\n', fpss);
     }
 }
 

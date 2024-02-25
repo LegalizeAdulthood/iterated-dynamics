@@ -3603,11 +3603,11 @@ void printerc(PRINT_DOC_INFO *info, int c, int n)
 
             while (info->spaces > 0)
             {
-                fputc(' ', info->file);
+                std::fputc(' ', info->file);
                 --info->spaces;
             }
 
-            fputc(c, info->file);
+            std::fputc(c, info->file);
         }
     }
 }

@@ -1087,7 +1087,7 @@ static void printerc(PRINT_DOC_INFO *info, int c, int n)
         {
             info->start_of_line = true;
             info->spaces = 0;   // strip spaces before a new-line
-            fputc(c, info->file);
+            std::fputc(c, info->file);
         }
 
         else
@@ -1100,11 +1100,11 @@ static void printerc(PRINT_DOC_INFO *info, int c, int n)
 
             while (info->spaces > 0)
             {
-                fputc(' ', info->file);
+                std::fputc(' ', info->file);
                 --info->spaces;
             }
 
-            fputc(c, info->file);
+            std::fputc(c, info->file);
         }
     }
 }

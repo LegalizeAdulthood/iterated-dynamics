@@ -1608,7 +1608,7 @@ bool startdisk1(const std::string &File_Name2, std::FILE *Source, bool overlay)
     {
         for (int i = 0; i < T_header_24; i++)   // Copy the header from the Source
         {
-            fputc(fgetc(Source), fps);
+            std::fputc(fgetc(Source), fps);
         }
     }
     else
@@ -1620,34 +1620,34 @@ bool startdisk1(const std::string &File_Name2, std::FILE *Source, bool overlay)
             if (i == 0 && g_truecolor)
             {
                 set_upr_lwr();
-                fputc(4, fps); // make room to write an extra number
+                std::fputc(4, fps); // make room to write an extra number
                 T_header_24 = 18 + 4;
             }
             else if (i == 2)
             {
-                fputc(i, fps);
+                std::fputc(i, fps);
             }
             else
             {
-                fputc(0, fps);
+                std::fputc(0, fps);
             }
         }
         // Write image size
         for (auto &elem : upr_lwr)
         {
-            fputc(elem, fps);
+            std::fputc(elem, fps);
         }
-        fputc(T24, fps);          // Targa 24 file
-        fputc(T32, fps);          // Image at upper left
+        std::fputc(T24, fps);          // Targa 24 file
+        std::fputc(T32, fps);          // Image at upper left
         inc = 3;
     }
 
     if (g_truecolor) // write maxit
     {
-        fputc((BYTE)(g_max_iterations       & 0xff), fps);
-        fputc((BYTE)((g_max_iterations >> 8) & 0xff), fps);
-        fputc((BYTE)((g_max_iterations >> 16) & 0xff), fps);
-        fputc((BYTE)((g_max_iterations >> 24) & 0xff), fps);
+        std::fputc((BYTE)(g_max_iterations       & 0xff), fps);
+        std::fputc((BYTE)((g_max_iterations >> 8) & 0xff), fps);
+        std::fputc((BYTE)((g_max_iterations >> 16) & 0xff), fps);
+        std::fputc((BYTE)((g_max_iterations >> 24) & 0xff), fps);
     }
 
     // Finished with the header, now lets work on the display area
@@ -1657,13 +1657,13 @@ bool startdisk1(const std::string &File_Name2, std::FILE *Source, bool overlay)
         {
             if (overlay)
             {
-                fputc(fgetc(Source), fps);
+                std::fputc(fgetc(Source), fps);
             }
             else
             {
                 for (int k = 2; k > -1; k--)
                 {
-                    fputc(g_background_color[k], fps);       // Targa order (B, G, R)
+                    std::fputc(g_background_color[k], fps);       // Targa order (B, G, R)
                 }
             }
         }

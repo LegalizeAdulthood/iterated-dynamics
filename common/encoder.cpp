@@ -400,7 +400,7 @@ bool encoder()
     {
         goto oops;
     }
-    if (fputc(0, g_outfile) != 0)
+    if (std::fputc(0, g_outfile) != 0)
     {
         goto oops;                // background color
     }
@@ -427,7 +427,7 @@ bool encoder()
     {
         i = 0;                    // for some decoders which can't handle aspect
     }
-    if (fputc(i, g_outfile) != i)
+    if (std::fputc(i, g_outfile) != i)
     {
         goto oops;                // pixel aspect ratio
     }
@@ -545,7 +545,7 @@ bool encoder()
         goto oops;
     }
 
-    if (fputc(0, g_outfile) != 0)
+    if (std::fputc(0, g_outfile) != 0)
     {
         goto oops;
     }
@@ -748,7 +748,7 @@ static int shftwrite(BYTE const *color, int numcolors)
             BYTE thiscolor = color[3 * i + j];
             thiscolor = (BYTE)(thiscolor << 2);
             thiscolor = (BYTE)(thiscolor + (BYTE)(thiscolor >> 6));
-            if (fputc(thiscolor, g_outfile) != (int) thiscolor)
+            if (std::fputc(thiscolor, g_outfile) != (int) thiscolor)
             {
                 return 0;
             }
@@ -777,16 +777,16 @@ static int put_extend_blk(int block_id, int block_len, char const *block_data)
     while (--i >= 0)
     {
         block_len -= (j = std::min(block_len, 255));
-        if (fputc(j, g_outfile) != j)
+        if (std::fputc(j, g_outfile) != j)
         {
             return 0;
         }
         while (--j >= 0)
         {
-            fputc(*(block_data++), g_outfile);
+            std::fputc(*(block_data++), g_outfile);
         }
     }
-    if (fputc(0, g_outfile) != 0)
+    if (std::fputc(0, g_outfile) != 0)
     {
         return 0;
     }
@@ -1371,7 +1371,7 @@ static void flush_char()
 {
     if (a_count > 0)
     {
-        fputc(a_count, g_outfile);
+        std::fputc(a_count, g_outfile);
         std::fwrite(accum, 1, a_count, g_outfile);
         a_count = 0;
     }

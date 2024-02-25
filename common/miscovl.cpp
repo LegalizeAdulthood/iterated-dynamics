@@ -430,7 +430,7 @@ skip_UI:
                     break;
                 }
                 fputs(buf, parmfile);
-                fputc('\n', parmfile);
+                std::fputc('\n', parmfile);
             }
         }
         //**** start here
@@ -523,7 +523,7 @@ skip_UI:
                 {
                     std::fprintf(parmfile, " ; %s", g_command_comment[0].c_str());
                 }
-                fputc('\n', parmfile);
+                std::fputc('\n', parmfile);
                 {
                     char tmpbuff[25];
                     std::memset(tmpbuff, ' ', 23);
@@ -572,7 +572,7 @@ skip_UI:
             while (i >= 0)
             {
                 fputs(buf, parmfile);
-                fputc('\n', parmfile);
+                std::fputc('\n', parmfile);
                 i = file_gets(buf, 255, infile);
             }
             std::fclose(infile);
@@ -1675,9 +1675,9 @@ static void put_parm_line()
     fputs(s_wbdata.buf, parmfile);
     if (c && c != ' ')
     {
-        fputc('\\', parmfile);
+        std::fputc('\\', parmfile);
     }
-    fputc('\n', parmfile);
+    std::fputc('\n', parmfile);
     s_wbdata.buf[len] = (char)c;
     if (c == ' ')
     {
