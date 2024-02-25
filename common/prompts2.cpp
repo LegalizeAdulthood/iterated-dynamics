@@ -1948,6 +1948,7 @@ void make_path(char *template_str, char const *drive, char const *dir, char cons
     if (dir)
     {
         result /= dir;
+        result += '/';
     }
     if (fname)
     {

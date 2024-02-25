@@ -49,7 +49,7 @@ TEST_F(TestMakePath, directory)
 {
     make_path(buffer, nullptr, "foo", nullptr, nullptr);
 
-    ASSERT_EQ(std::string{"foo"} + static_cast<char>(fs::path::preferred_separator), std::string{buffer});
+    ASSERT_EQ(fs::path{"foo/"}.make_preferred().string(), std::string{buffer});
 }
 
 TEST_F(TestMakePath, filename)
