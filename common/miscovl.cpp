@@ -2305,7 +2305,7 @@ void make_mig(unsigned int xmult, unsigned int ymult)
             }
 
             // (read, but only copy this if it's the first time through)
-            if (fread(temp, 13, 1, in) != 1)   // read the header and LDS
+            if (std::fread(temp, 13, 1, in) != 1)   // read the header and LDS
             {
                 inputerrorflag = 1;
             }
@@ -2343,7 +2343,7 @@ void make_mig(unsigned int xmult, unsigned int ymult)
             if (ichar != 0)                // yup
             {
                 // (read, but only copy this if it's the first time through)
-                if (fread(temp, 3*itbl, 1, in) != 1)    // read the global color table
+                if (std::fread(temp, 3*itbl, 1, in) != 1)    // read the global color table
                 {
                     inputerrorflag = 2;
                 }
@@ -2366,14 +2366,14 @@ void make_mig(unsigned int xmult, unsigned int ymult)
             while (true)                       // process each information block
             {
                 std::memset(temp, 0, 10);
-                if (fread(temp, 1, 1, in) != 1)    // read the block identifier
+                if (std::fread(temp, 1, 1, in) != 1)    // read the block identifier
                 {
                     inputerrorflag = 3;
                 }
 
                 if (temp[0] == 0x2c)           // image descriptor block
                 {
-                    if (fread(&temp[1], 9, 1, in) != 1)    // read the Image Descriptor
+                    if (std::fread(&temp[1], 9, 1, in) != 1)    // read the Image Descriptor
                     {
                         inputerrorflag = 4;
                     }
@@ -2391,7 +2391,7 @@ void make_mig(unsigned int xmult, unsigned int ymult)
                     ichar = (char)(temp[9] & 0x80);     // is there a local color table?
                     if (ichar != 0)            // yup
                     {
-                        if (fread(temp, 3*itbl, 1, in) != 1)       // read the local color table
+                        if (std::fread(temp, 3*itbl, 1, in) != 1)       // read the local color table
                         {
                             inputerrorflag = 5;
                         }
@@ -2401,7 +2401,7 @@ void make_mig(unsigned int xmult, unsigned int ymult)
                         }
                     }
 
-                    if (fread(temp, 1, 1, in) != 1)        // LZH table size
+                    if (std::fread(temp, 1, 1, in) != 1)        // LZH table size
                     {
                         inputerrorflag = 6;
                     }
@@ -2415,7 +2415,7 @@ void make_mig(unsigned int xmult, unsigned int ymult)
                         {
                             break;
                         }
-                        if (fread(temp, 1, 1, in) != 1)    // block size
+                        if (std::fread(temp, 1, 1, in) != 1)    // block size
                         {
                             inputerrorflag = 7;
                         }
@@ -2428,7 +2428,7 @@ void make_mig(unsigned int xmult, unsigned int ymult)
                         {
                             break;
                         }
-                        if (fread(temp, i, 1, in) != 1)    // LZH data block
+                        if (std::fread(temp, i, 1, in) != 1)    // LZH data block
                         {
                             inputerrorflag = 8;
                         }
@@ -2442,7 +2442,7 @@ void make_mig(unsigned int xmult, unsigned int ymult)
                 if (temp[0] == 0x21)           // extension block
                 {
                     // (read, but only copy this if it's the last time through)
-                    if (fread(&temp[2], 1, 1, in) != 1)    // read the block type
+                    if (std::fread(&temp[2], 1, 1, in) != 1)    // read the block type
                     {
                         inputerrorflag = 9;
                     }
@@ -2459,7 +2459,7 @@ void make_mig(unsigned int xmult, unsigned int ymult)
                         {
                             break;
                         }
-                        if (fread(temp, 1, 1, in) != 1)    // block size
+                        if (std::fread(temp, 1, 1, in) != 1)    // block size
                         {
                             inputerrorflag = 10;
                         }
@@ -2475,7 +2475,7 @@ void make_mig(unsigned int xmult, unsigned int ymult)
                         {
                             break;
                         }
-                        if (fread(temp, i, 1, in) != 1)    // data block
+                        if (std::fread(temp, i, 1, in) != 1)    // data block
                         {
                             inputerrorflag = 11;
                         }

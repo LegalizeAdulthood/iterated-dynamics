@@ -59,7 +59,7 @@ int get_byte()
 
 int get_bytes(BYTE *where, int how_many)
 {
-    return (int) fread((char *)where, 1, how_many, fpin); // EOF is -1, as desired
+    return (int) std::fread((char *)where, 1, how_many, fpin); // EOF is -1, as desired
 }
 
 /*

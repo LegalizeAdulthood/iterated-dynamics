@@ -586,7 +586,7 @@ static int do_move_link(LINK *link, int num_link, int *curr, int (*f)(LINK *, in
 
 inline void freader(void *ptr, size_t size, size_t nmemb, std::FILE *stream)
 {
-    if (fread(ptr, size, nmemb, stream) != nmemb)
+    if (std::fread(ptr, size, nmemb, stream) != nmemb)
     {
         throw std::system_error(errno, std::system_category(), "failed fread");
     }
@@ -1405,7 +1405,7 @@ void print_document(char const *outfname, bool (*msg_func)(int, int), int save_e
             goto ErrorAbort;
         }
 
-        if (fread(info.buffer, sizeof(char), PRINT_BUFFER_SIZE, temp_file) != PRINT_BUFFER_SIZE)
+        if (std::fread(info.buffer, sizeof(char), PRINT_BUFFER_SIZE, temp_file) != PRINT_BUFFER_SIZE)
         {
             msg = "Error reading temporary file.\nSystem may be corrupt!\nSave your image and re-start FRACTINT!\n";
             goto ErrorAbort;

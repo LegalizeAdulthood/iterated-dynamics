@@ -715,7 +715,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
 
 inline void freader(void *ptr, size_t size, size_t nmemb, std::FILE *stream)
 {
-    if (fread(ptr, size, nmemb, stream) != nmemb)
+    if (std::fread(ptr, size, nmemb, stream) != nmemb)
     {
         throw std::system_error(errno, std::system_category(), "failed fread");
     }
@@ -888,7 +888,7 @@ static int find_fractal_info(char const *gif_file, FRACTAL_INFO *info,
             while (scan_extend)
             {
                 if (fgetc(fp) != '!' // if not what we expect just give up
-                    || fread(temp1, 1, 13, fp) != 13
+                    || std::fread(temp1, 1, 13, fp) != 13
                     || std::strncmp(&temp1[2], "fractint", 8))
                 {
                     break;

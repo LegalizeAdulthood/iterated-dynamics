@@ -530,7 +530,7 @@ bool CopyFromHandleToMemory(BYTE *buffer, U16 size, long count, long offset, U16
         fseek(handletable[handle].Disk.file, start, SEEK_SET);
         while (tomove > DISKWRITELEN)
         {
-            numread = (U16)fread(diskbuf, (U16)DISKWRITELEN, 1, handletable[handle].Disk.file);
+            numread = (U16)std::fread(diskbuf, (U16)DISKWRITELEN, 1, handletable[handle].Disk.file);
             if (numread != 1 && !feof(handletable[handle].Disk.file))
             {
                 WhichDiskError(4);
@@ -540,7 +540,7 @@ bool CopyFromHandleToMemory(BYTE *buffer, U16 size, long count, long offset, U16
             tomove -= DISKWRITELEN;
             buffer += DISKWRITELEN;
         }
-        numread = (U16)fread(diskbuf, (U16)tomove, 1, handletable[handle].Disk.file);
+        numread = (U16)std::fread(diskbuf, (U16)tomove, 1, handletable[handle].Disk.file);
         if (numread != 1 && !feof(handletable[handle].Disk.file))
         {
             WhichDiskError(4);

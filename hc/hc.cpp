@@ -483,7 +483,7 @@ void alloc_topic_text(TOPIC *t, unsigned size)
 char *get_topic_text(TOPIC const *t)
 {
     fseek(swapfile, t->text, SEEK_SET);
-    if (fread(&buffer[0], 1, t->text_len, swapfile) != t->text_len)
+    if (std::fread(&buffer[0], 1, t->text_len, swapfile) != t->text_len)
     {
         throw std::system_error(errno, std::system_category(), "get_topic_text failed fread");
     }

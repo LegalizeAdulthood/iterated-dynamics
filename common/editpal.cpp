@@ -1744,7 +1744,7 @@ static void PalTable__UndoProcess(PalTable *me, int delta)   // undo/redo common
         }
 
         num = (last - first) + 1;
-        if (fread(temp, 3, num, me->undo_file) != num)
+        if (std::fread(temp, 3, num, me->undo_file) != num)
         {
             throw std::system_error(errno, std::system_category(), "PalTable_UndoProcess  failed fread");
         }
