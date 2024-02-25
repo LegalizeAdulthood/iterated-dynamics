@@ -6,16 +6,24 @@ set(ID_TEST_DATA_DIR "${CMAKE_CURRENT_BINARY_DIR}/test_data")
 SET(ID_TEST_FIRST_IFS_NAME "binary")
 set(ID_TEST_FIRST_IFS_PARAM1 ".5")
 set(ID_TEST_SECOND_IFS_NAME "3dfern")
+set(ID_TEST_IFS_FILE "test.ifs")
+configure_file(test.ifs.in "${ID_TEST_DATA_DIR}/${ID_TEST_IFS_FILE}")
+
+set(ID_TEST_DATA_SUBDIR "${ID_TEST_DATA_DIR}/subdir")
+set(ID_TEST_IFS_FILE2 "test2.ifs")
+configure_file(test.ifs.in "${ID_TEST_DATA_SUBDIR}/${ID_TEST_IFS_FILE2}")
+
 configure_file(test_data.h.in include/test_data.h @ONLY)
-configure_file(test.ifs.in "${ID_TEST_DATA_DIR}/test.ifs")
 
 add_executable(test-id
     test.ifs.in
     "${ID_TEST_DATA_DIR}/test.ifs"
     "${CMAKE_CURRENT_BINARY_DIR}/include/test_data.h"
     test_data.h.in
+    test_find_path.cpp
     test_get_ifs_token.cpp
     test_make_path.cpp
+    test_search_path.cpp
     test_update_save_name.cpp
 )
 source_group("CMake Templates" REGULAR_EXPRESSION ".*\\.in$")

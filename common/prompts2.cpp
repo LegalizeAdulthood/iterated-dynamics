@@ -10,6 +10,7 @@
 #include "diskvid.h"
 #include "drivers.h"
 #include "evolve.h"
+#include "find_path.h"
 #include "fracsubr.h"
 #include "fractalp.h"
 #include "fractype.h"
@@ -1939,22 +1940,23 @@ void make_path(char *template_str, char const *drive, char const *dir, char cons
     }
 
     fs::path result;
+    auto not_empty = [](const char *ptr) { return ptr != nullptr && ptr[0] != 0; };
 #ifndef XFRACT
-    if (drive)
+    if (not_empty(drive))
     {
         result = drive;
     }
 #endif
-    if (dir)
+    if (not_empty(dir))
     {
         result /= dir;
         result += '/';
     }
-    if (fname)
+    if (not_empty(fname))
     {
         result /= fname;
     }
-    if (ext)
+    if (not_empty(ext))
     {
         result.replace_extension(ext);
     }

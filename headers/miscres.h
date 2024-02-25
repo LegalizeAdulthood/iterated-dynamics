@@ -19,7 +19,6 @@ extern void (*mtrig2)();
 extern void (*mtrig3)();
 
 extern void restore_active_ovly();
-extern void findpath(char const *filename, char *fullpathname);
 extern void notdiskmsg();
 extern void cvtcentermag(double *, double *, LDBL *, double *, double *, double *);
 extern void cvtcorners(double, double, LDBL, double, double, double);

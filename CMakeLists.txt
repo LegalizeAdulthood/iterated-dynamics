@@ -18,6 +18,8 @@ project("${ID_PROJECT_NAME}"
 include(CTest)
 include(TestBigEndian)
 
+find_package(Boost REQUIRED)
+
 set(home_dir "${CMAKE_SOURCE_DIR}/home")
 set(ID_DIR ${CMAKE_CURRENT_SOURCE_DIR})
 
@@ -123,6 +125,7 @@ add_library(libid
     common/drivers.cpp
     common/memory.cpp headers/memory.h
 
+    common/find_path.cpp headers/find_path.h
     common/fractint.cpp
     common/framain2.cpp headers/framain2.h
     headers/get_ifs_token.h
@@ -135,6 +138,7 @@ add_library(libid
     common/prompts1.cpp headers/prompts1.h
     common/prompts2.cpp headers/prompts2.h
     common/realdos.cpp headers/realdos.h
+    common/search_path.cpp headers/search_path.h
     common/update_save_name.cpp headers/update_save_name.h
     common/zoom.cpp headers/zoom.h
 
@@ -272,6 +276,7 @@ source_group("Source Files/common/plumbing" FILES
     common/memory.cpp
 )
 source_group("Header Files/common/ui" FILES
+    headers/find_path.h
     headers/fractint.h
     headers/framain2.h
     headers/get_ifs_token.h
@@ -285,10 +290,12 @@ source_group("Header Files/common/ui" FILES
     headers/prompts1.h
     headers/prompts2.h
     headers/realdos.h
+    headers/search_path.h
     headers/update_save_name.h
     headers/zoom.h
 )
 source_group("Source Files/common/ui" FILES
+    common/find_path.cpp
     common/fractint.cpp
     common/framain2.cpp
     common/help.cpp
@@ -299,6 +306,7 @@ source_group("Source Files/common/ui" FILES
     common/prompts1.cpp
     common/prompts2.cpp
     common/realdos.cpp
+    common/search_path.cpp
     common/update_save_name.cpp
     common/zoom.cpp
 )
@@ -309,7 +317,8 @@ set_src_dir(common/fractint.cpp)
 target_compile_definitions(libid PUBLIC ${ID_TARGET_DEFINITIONS} $<$<CONFIG:Debug>:${ID_TARGET_DEFINITIONS_DEBUG}>)
 target_compile_options(libid PUBLIC ${ID_TARGET_OPTIONS})
 target_include_directories(libid PUBLIC headers)
-target_link_libraries(libid PRIVATE helpcom os config)
+target_link_libraries(libid PRIVATE helpcom os config Boost::boost)
+target_link_libraries(libid PUBLIC config)
 add_dependencies(libid native_help)
 
 add_executable(id ${ID_EXECUTABLE_TYPE}

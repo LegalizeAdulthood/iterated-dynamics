@@ -3,6 +3,7 @@
   "name": "iterated-dynamics",
   "version": "1.0.0",
   "dependencies": [
+    "boost-algorithm",
     "gtest",
     {
       "name": "libx11",

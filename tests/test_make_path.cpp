@@ -52,9 +52,16 @@ TEST_F(TestMakePath, directory)
     ASSERT_EQ(fs::path{"foo/"}.make_preferred().string(), std::string{buffer});
 }
 
-TEST_F(TestMakePath, filename)
+TEST_F(TestMakePath, filenameNullDirectory)
 {
     make_path(buffer, nullptr, nullptr, "foo", nullptr);
+
+    ASSERT_STREQ("foo", buffer);
+}
+
+TEST_F(TestMakePath, filenameEmptyDirectory)
+{
+    make_path(buffer, nullptr, "", "foo", nullptr);
 
     ASSERT_STREQ("foo", buffer);
 }

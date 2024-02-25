@@ -5,6 +5,7 @@
 #include "diskvid.h"
 #include "drivers.h"
 #include "editpal.h"
+#include "find_path.h"
 #include "fractalp.h"
 #include "fractype.h"
 #include "helpcom.h"
