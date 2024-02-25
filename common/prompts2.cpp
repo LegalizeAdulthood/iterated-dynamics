@@ -1746,11 +1746,10 @@ retry_dir:
         }
         else // speedstate == SEARCHPATH
         {
-            char fullpath[FILE_MAX_DIR];
-            findpath(speedstr, fullpath);
-            if (fullpath[0])
+            const std::string full_path{find_path(speedstr)};
+            if (!full_path.empty())
             {
-                std::strcpy(flname, fullpath);
+                std::strcpy(flname, full_path.c_str());
             }
             else
             {
