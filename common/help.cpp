@@ -22,6 +22,8 @@
 #include <system_error>
 #include <vector>
 
+namespace fs = std::filesystem;
+
 #ifndef TEST // kills all those assert macros in production version
 #define NDEBUG
 #endif
@@ -956,31 +958,26 @@ int help(int action)
     return 0;
 }
 
-static bool can_read_file(char const *path)
+static bool can_read_file(const std::string &path)
 {
-    int handle = open(path, O_RDONLY);
-
+    int handle = open(path.c_str(), O_RDONLY);
     if (handle != -1)
     {
         close(handle);
         return true;
     }
-    else
-    {
-        return false;
-    }
+    return false;
 }
 
 
-static bool find_file(char const *filename, char *path)
+static std::string find_file(char const *filename)
 {
-    strcpy(path, (std::filesystem::path(SRCDIR) / filename).string().c_str());
+    const std::string path{(fs::path(SRCDIR) / filename).string()};
     if (can_read_file(path))
     {
-        return true;
+        return path;
     }
-    findpath(filename, path);
-    return path[0] != 0;
+    return find_path(filename);
 }
 
 static int _read_help_topic(int topic, int off, int len, void *buf)
@@ -1438,13 +1435,13 @@ ErrorAbort:
 int init_help()
 {
     help_sig_info hs = { 0 };
-    char path[FILE_MAX_PATH+1];
 
     help_file = nullptr;
 
-    if (find_file("fractint.hlp", path))
+    const std::string path{find_file("fractint.hlp")};
+    if (!path.empty())
     {
-        help_file = std::fopen(path, "rb");
+        help_file = std::fopen(path.c_str(), "rb");
         if (help_file != nullptr)
         {
             freader(&hs, sizeof(long)+sizeof(int), 1, help_file);
