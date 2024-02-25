@@ -1447,7 +1447,7 @@ bool find_file_item(char *filename, char const *itemname, std::FILE **fileptr, i
 
 
     splitpath(filename, drive, dir, fname, ext);
-    makepath(fullpath, "", "", fname, ext);
+    make_path(fullpath, "", "", fname, ext);
     if (stricmp(filename, g_command_file.c_str()))
     {
         infile = std::fopen(filename, "rb");
@@ -1466,7 +1466,7 @@ bool find_file_item(char *filename, char const *itemname, std::FILE **fileptr, i
 
         if (!found && g_check_cur_dir)
         {
-            makepath(fullpath, "", DOTSLASH, fname, ext);
+            make_path(fullpath, "", DOTSLASH, fname, ext);
             infile = std::fopen(fullpath, "rb");
             if (infile != nullptr)
             {
@@ -1535,7 +1535,7 @@ bool find_file_item(char *filename, char const *itemname, std::FILE **fileptr, i
 
     if (!found)
     {
-        makepath(fullpath, drive, dir, fname, ext);
+        make_path(fullpath, drive, dir, fname, ext);
         infile = std::fopen(fullpath, "rb");
         if (infile != nullptr)
         {
@@ -1556,7 +1556,7 @@ bool find_file_item(char *filename, char const *itemname, std::FILE **fileptr, i
     {
         // search for file
         int out;
-        makepath(fullpath, drive, dir, "*", defaultextension);
+        make_path(fullpath, drive, dir, "*", defaultextension);
         out = fr_findfirst(fullpath);
         while (out == 0)
         {
@@ -1568,7 +1568,7 @@ bool find_file_item(char *filename, char const *itemname, std::FILE **fileptr, i
                 && DTA.filename != "..")
             {
                 splitpath(DTA.filename, nullptr, nullptr, fname, ext);
-                makepath(fullpath, drive, dir, fname, ext);
+                make_path(fullpath, drive, dir, fname, ext);
                 infile = std::fopen(fullpath, "rb");
                 if (infile != nullptr)
                 {
@@ -1621,7 +1621,7 @@ bool find_file_item(char *filename, char const *itemname, std::FILE **fileptr, i
         {
             std::strcat(fname, "chr");
         }
-        makepath(fullpath, drive, dir, fname, defaultextension);
+        make_path(fullpath, drive, dir, fname, defaultextension);
         infile = std::fopen(fullpath, "rb");
         if (infile != nullptr)
         {

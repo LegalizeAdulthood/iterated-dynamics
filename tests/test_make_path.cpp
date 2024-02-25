@@ -29,14 +29,14 @@ void TestMakePath::SetUp()
 
 TEST_F(TestMakePath, empty)
 {
-    makepath(buffer, nullptr, nullptr, nullptr, nullptr);
+    make_path(buffer, nullptr, nullptr, nullptr, nullptr);
 
     ASSERT_STREQ("", buffer);
 }
 
 TEST_F(TestMakePath, drive)
 {
-    makepath(buffer, "C:", nullptr, nullptr, nullptr);
+    make_path(buffer, "C:", nullptr, nullptr, nullptr);
 
 #if WIN32
     ASSERT_STREQ("C:", buffer);
@@ -47,42 +47,42 @@ TEST_F(TestMakePath, drive)
 
 TEST_F(TestMakePath, directory)
 {
-    makepath(buffer, nullptr, "foo", nullptr, nullptr);
+    make_path(buffer, nullptr, "foo", nullptr, nullptr);
 
     ASSERT_EQ(std::string{"foo"} + static_cast<char>(fs::path::preferred_separator), std::string{buffer});
 }
 
 TEST_F(TestMakePath, filename)
 {
-    makepath(buffer, nullptr, nullptr, "foo", nullptr);
+    make_path(buffer, nullptr, nullptr, "foo", nullptr);
 
     ASSERT_STREQ("foo", buffer);
 }
 
 TEST_F(TestMakePath, extension)
 {
-    makepath(buffer, nullptr, nullptr, nullptr, ".gif");
+    make_path(buffer, nullptr, nullptr, nullptr, ".gif");
 
     ASSERT_STREQ(".gif", buffer);
 }
 
 TEST_F(TestMakePath, filenameExtension)
 {
-    makepath(buffer, nullptr, nullptr, "foo", ".gif");
+    make_path(buffer, nullptr, nullptr, "foo", ".gif");
 
     ASSERT_STREQ("foo.gif", buffer);
 }
 
 TEST_F(TestMakePath, directoryFilenameExtension)
 {
-    makepath(buffer, nullptr, "tmp", "foo", ".gif");
+    make_path(buffer, nullptr, "tmp", "foo", ".gif");
 
     ASSERT_STREQ(fs::path{"tmp/foo.gif"}.make_preferred().string().c_str(), buffer);
 }
 
 TEST_F(TestMakePath, driveDirectoryFilenameExtension)
 {
-    makepath(buffer, "C:", "tmp", "foo", ".gif");
+    make_path(buffer, "C:", "tmp", "foo", ".gif");
 
 #if WIN32
     ASSERT_STREQ(fs::path{"C:tmp/foo.gif"}.make_preferred().string().c_str(), buffer);

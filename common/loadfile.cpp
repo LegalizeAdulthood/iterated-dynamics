@@ -1444,7 +1444,7 @@ rescan:  // entry for changed browse parms
     g_browse_sub_images = true;
     splitpath(g_read_filename, drive, dir, nullptr, nullptr);
     splitpath(g_browse_mask, nullptr, nullptr, fname, ext);
-    makepath(tmpmask, drive, dir, fname, ext);
+    make_path(tmpmask, drive, dir, fname, ext);
     done = (vid_too_big == 2) || no_memory || fr_findfirst(tmpmask);
     // draw all visible windows
     while (!done)
@@ -1455,7 +1455,7 @@ rescan:  // entry for changed browse parms
             break;
         }
         splitpath(DTA.filename, nullptr, nullptr, fname, ext);
-        makepath(tmpmask, drive, dir, fname, ext);
+        make_path(tmpmask, drive, dir, fname, ext);
         FRACTAL_INFO read_info;
         ext_blk_2 blk_2_info;
         ext_blk_3 blk_3_info;
@@ -1627,7 +1627,7 @@ rescan:  // entry for changed browse parms
                     const std::filesystem::path name_path(winlist.name);
                     const std::string fname2 = name_path.stem().string();
                     const std::string ext2 = name_path.extension().string();
-                    makepath(tmpmask, drive, dir, fname2.c_str(), ext2.c_str());
+                    make_path(tmpmask, drive, dir, fname2.c_str(), ext2.c_str());
                     if (!std::remove(tmpmask))
                     {
                         // do a rescan
@@ -1660,7 +1660,7 @@ rescan:  // entry for changed browse parms
                     const std::filesystem::path name_path{winlist.name};
                     const std::string           fname2{name_path.stem().string()};
                     const std::string           ext2{name_path.extension().string()};
-                    makepath(tmpmask, drive, dir, fname2.c_str(), ext2.c_str());
+                    make_path(tmpmask, drive, dir, fname2.c_str(), ext2.c_str());
                 }
                 std::strcpy(newname, tmpmask);
                 std::strcat(mesg, tmpmask);
@@ -1678,7 +1678,7 @@ rescan:  // entry for changed browse parms
                             else
                             {
                                 split_fname_ext(newname, fname, ext);
-                                makepath(tmpmask, nullptr, nullptr, fname, ext);
+                                make_path(tmpmask, nullptr, nullptr, fname, ext);
                                 std::strcpy(oldname, winlist.name.c_str());
                                 check_history(oldname, tmpmask);
                                 winlist.name = tmpmask;

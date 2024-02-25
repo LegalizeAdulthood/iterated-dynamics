@@ -1488,7 +1488,7 @@ restart:  // return here if template or directory changes
         std::strcpy(flname, DOTSLASH);
     }
     splitpath(flname , drive, dir, fname, ext);
-    makepath(filename, ""   , "" , fname, ext);
+    make_path(filename, ""   , "" , fname, ext);
     retried = 0;
 
 retry_dir:
@@ -1497,7 +1497,7 @@ retry_dir:
         std::strcpy(dir, ".");
     }
     expand_dirname(dir, drive);
-    makepath(tmpmask, drive, dir, "", "");
+    make_path(tmpmask, drive, dir, "", "");
     fix_dirname(tmpmask);
     if (retried == 0 && std::strcmp(dir, SLASH) && std::strcmp(dir, DOTSLASH))
     {
@@ -1551,7 +1551,7 @@ retry_dir:
     tmpmask[masklen] = 0;
     if (file_template[0])
     {
-        makepath(tmpmask, drive, dir, fname, ext);
+        make_path(tmpmask, drive, dir, fname, ext);
     }
     int j = 0;
     do
@@ -1571,7 +1571,7 @@ retry_dir:
 
                     splitpath(DTA.filename, nullptr, nullptr, fname, ext);
                     // just using speedstr as a handy buffer
-                    makepath(speedstr, drive, dir, fname, ext);
+                    make_path(speedstr, drive, dir, fname, ext);
                     std::strncpy(choices[++filecount]->name, DTA.filename.c_str(), 13);
                     choices[filecount]->type = 0;
                 }
@@ -1607,7 +1607,7 @@ retry_dir:
     {
         splitpath(tmpmask, drive, dir, fname, ext);
         std::strcpy(dir, SLASH);
-        makepath(tmpmask, drive, dir, fname, ext);
+        make_path(tmpmask, drive, dir, fname, ext);
     }
     if (numtemplates > 1)
     {
@@ -1654,7 +1654,7 @@ retry_dir:
             std::strcpy(dir, g_fractal_search_dir2.c_str());
         }
         fix_dirname(dir);
-        makepath(flname, drive, dir, "", "");
+        make_path(flname, drive, dir, "", "");
         lastdir = 1 - lastdir;
         goto restart;
     }
@@ -1693,11 +1693,11 @@ retry_dir:
                 std::strcat(dir, choices[i]->full_name);
             }
             fix_dirname(dir);
-            makepath(flname, drive, dir, "", "");
+            make_path(flname, drive, dir, "", "");
             goto restart;
         }
         split_fname_ext(choices[i]->full_name, fname, ext);
-        makepath(flname, drive, dir, fname, ext);
+        make_path(flname, drive, dir, fname, ext);
     }
     else
     {
@@ -1727,11 +1727,11 @@ retry_dir:
             {
                 std::strcpy(dir, dir1);
             }
-            makepath(flname, drive, dir, fname1, ext1);
+            make_path(flname, drive, dir, fname1, ext1);
             if (std::strchr(fname1, '*') || std::strchr(fname1, '?') ||
                     std::strchr(ext1,   '*') || std::strchr(ext1,   '?'))
             {
-                makepath(user_file_template, "", "", fname1, ext1);
+                make_path(user_file_template, "", "", fname1, ext1);
                 // cppcheck-suppress uselessAssignmentPtrArg
                 file_template = user_file_template;
             }
@@ -1756,7 +1756,7 @@ retry_dir:
                 if (std::strchr(speedstr, SLASHC) == nullptr)
                 {
                     split_fname_ext(speedstr, fname, ext);
-                    makepath(flname, drive, dir, fname, ext);
+                    make_path(flname, drive, dir, fname, ext);
                 }
             }
         }
@@ -1928,7 +1928,7 @@ int splitpath(char const *file_template, char *drive, char *dir, char *fname, ch
 }
 #endif
 
-void makepath(char *template_str, char const *drive, char const *dir, char const *fname, char const *ext)
+void make_path(char *template_str, char const *drive, char const *dir, char const *fname, char const *ext)
 {
     if (template_str == nullptr)
     {
@@ -2771,7 +2771,7 @@ int merge_pathnames(char *oldfullpath, char const *filename, cmd_file mode)
     }
     if (!isadir && !isafile && get_path)
     {
-        makepath(oldfullpath, drive1, dir1, nullptr, nullptr);
+        make_path(oldfullpath, drive1, dir1, nullptr, nullptr);
         int len = (int) std::strlen(oldfullpath);
         if (len > 0)
         {
@@ -2789,7 +2789,7 @@ int merge_pathnames(char *oldfullpath, char const *filename, cmd_file mode)
             oldfullpath[len-1] = save;
         }
     }
-    makepath(oldfullpath, drive1, dir1, fname1, ext1);
+    make_path(oldfullpath, drive1, dir1, fname1, ext1);
     return isadir_error ? -1 : (isadir ? 1 : 0);
 }
 
