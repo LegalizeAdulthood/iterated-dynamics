@@ -363,14 +363,14 @@ bool encoder()
     int i = 0;
     if (g_gif87a_flag)
     {
-        if (fwrite("GIF87a", 6, 1, g_outfile) != 1)
+        if (std::fwrite("GIF87a", 6, 1, g_outfile) != 1)
         {
             goto oops;             // old GIF Signature
         }
     }
     else
     {
-        if (fwrite("GIF89a", 6, 1, g_outfile) != 1)
+        if (std::fwrite("GIF89a", 6, 1, g_outfile) != 1)
         {
             goto oops;             // new GIF Signature
         }
@@ -505,7 +505,7 @@ bool encoder()
     }
 #endif
 
-    if (fwrite(",", 1, 1, g_outfile) != 1)
+    if (std::fwrite(",", 1, 1, g_outfile) != 1)
     {
         goto oops;                // Image Descriptor
     }
@@ -722,7 +722,7 @@ bool encoder()
         }
     }
 
-    if (fwrite(";", 1, 1, g_outfile) != 1)
+    if (std::fwrite(";", 1, 1, g_outfile) != 1)
     {
         goto oops;                // GIF Terminator
     }
@@ -769,7 +769,7 @@ static int put_extend_blk(int block_id, int block_len, char const *block_data)
     char header[15];
     std::strcpy(header, "!\377\013fractint");
     std::sprintf(&header[11], "%03d", block_id);
-    if (fwrite(header, 14, 1, g_outfile) != 1)
+    if (std::fwrite(header, 14, 1, g_outfile) != 1)
     {
         return 0;
     }
@@ -1372,7 +1372,7 @@ static void flush_char()
     if (a_count > 0)
     {
         fputc(a_count, g_outfile);
-        fwrite(accum, 1, a_count, g_outfile);
+        std::fwrite(accum, 1, a_count, g_outfile);
         a_count = 0;
     }
 }

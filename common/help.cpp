@@ -1375,7 +1375,7 @@ void print_document(char const *outfname, bool (*msg_func)(int, int), int save_e
             goto ErrorAbort;
         }
 
-        if (fwrite(info.buffer, sizeof(char), PRINT_BUFFER_SIZE, temp_file) != PRINT_BUFFER_SIZE)
+        if (std::fwrite(info.buffer, sizeof(char), PRINT_BUFFER_SIZE, temp_file) != PRINT_BUFFER_SIZE)
         {
             msg = "Error writing temporary file.\n";
             goto ErrorAbort;

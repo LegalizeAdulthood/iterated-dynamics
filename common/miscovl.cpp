@@ -2327,7 +2327,7 @@ void make_mig(unsigned int xmult, unsigned int ymult)
                     temp[5] = 'a';
                 }
                 temp[12] = 0; // reserved
-                if (fwrite(temp, 13, 1, out) != 1)     // write out the header
+                if (std::fwrite(temp, 13, 1, out) != 1)     // write out the header
                 {
                     errorflag = 1;
                 }
@@ -2349,7 +2349,7 @@ void make_mig(unsigned int xmult, unsigned int ymult)
                 }
                 if (xstep == 0 && ystep == 0)       // first time through?
                 {
-                    if (fwrite(temp, 3*itbl, 1, out) != 1)     // write out the GCT
+                    if (std::fwrite(temp, 3*itbl, 1, out) != 1)     // write out the GCT
                     {
                         errorflag = 2;
                     }
@@ -2383,7 +2383,7 @@ void make_mig(unsigned int xmult, unsigned int ymult)
                     yloc += (ystep * yres);
                     std::memcpy(&temp[1], &xloc, 2);
                     std::memcpy(&temp[3], &yloc, 2);
-                    if (fwrite(temp, 10, 1, out) != 1)     // write out the Image Descriptor
+                    if (std::fwrite(temp, 10, 1, out) != 1)     // write out the Image Descriptor
                     {
                         errorflag = 4;
                     }
@@ -2395,7 +2395,7 @@ void make_mig(unsigned int xmult, unsigned int ymult)
                         {
                             inputerrorflag = 5;
                         }
-                        if (fwrite(temp, 3*itbl, 1, out) != 1)     // write out the LCT
+                        if (std::fwrite(temp, 3*itbl, 1, out) != 1)     // write out the LCT
                         {
                             errorflag = 5;
                         }
@@ -2405,7 +2405,7 @@ void make_mig(unsigned int xmult, unsigned int ymult)
                     {
                         inputerrorflag = 6;
                     }
-                    if (fwrite(temp, 1, 1, out) != 1)
+                    if (std::fwrite(temp, 1, 1, out) != 1)
                     {
                         errorflag = 6;
                     }
@@ -2419,7 +2419,7 @@ void make_mig(unsigned int xmult, unsigned int ymult)
                         {
                             inputerrorflag = 7;
                         }
-                        if (fwrite(temp, 1, 1, out) != 1)
+                        if (std::fwrite(temp, 1, 1, out) != 1)
                         {
                             errorflag = 7;
                         }
@@ -2432,7 +2432,7 @@ void make_mig(unsigned int xmult, unsigned int ymult)
                         {
                             inputerrorflag = 8;
                         }
-                        if (fwrite(temp, i, 1, out) != 1)
+                        if (std::fwrite(temp, i, 1, out) != 1)
                         {
                             errorflag = 8;
                         }
@@ -2448,7 +2448,7 @@ void make_mig(unsigned int xmult, unsigned int ymult)
                     }
                     if (!g_gif87a_flag && xstep == xmult-1 && ystep == ymult-1)
                     {
-                        if (fwrite(temp, 2, 1, out) != 1)
+                        if (std::fwrite(temp, 2, 1, out) != 1)
                         {
                             errorflag = 9;
                         }
@@ -2465,7 +2465,7 @@ void make_mig(unsigned int xmult, unsigned int ymult)
                         }
                         if (!g_gif87a_flag && xstep == xmult-1 && ystep == ymult-1)
                         {
-                            if (fwrite(temp, 1, 1, out) != 1)
+                            if (std::fwrite(temp, 1, 1, out) != 1)
                             {
                                 errorflag = 10;
                             }
@@ -2481,7 +2481,7 @@ void make_mig(unsigned int xmult, unsigned int ymult)
                         }
                         if (!g_gif87a_flag && xstep == xmult-1 && ystep == ymult-1)
                         {
-                            if (fwrite(temp, i, 1, out) != 1)
+                            if (std::fwrite(temp, i, 1, out) != 1)
                             {
                                 errorflag = 11;
                             }
@@ -2514,7 +2514,7 @@ void make_mig(unsigned int xmult, unsigned int ymult)
     }
 
     temp[0] = 0x3b;                 // end-of-stream indicator
-    if (fwrite(temp, 1, 1, out) != 1)
+    if (std::fwrite(temp, 1, 1, out) != 1)
     {
         errorflag = 12;
     }

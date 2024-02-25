@@ -1685,7 +1685,7 @@ static void PalTable__SaveUndoData(PalTable *me, int first, int last)
     {
         putc(UNDO_DATA_SINGLE, me->undo_file);
         putc(first, me->undo_file);
-        fwrite(me->pal+first, 3, 1, me->undo_file);
+        std::fwrite(me->pal+first, 3, 1, me->undo_file);
         putw(1 + 1 + 3 + sizeof(int), me->undo_file);
     }
     else
@@ -1693,7 +1693,7 @@ static void PalTable__SaveUndoData(PalTable *me, int first, int last)
         putc(UNDO_DATA, me->undo_file);
         putc(first, me->undo_file);
         putc(last,  me->undo_file);
-        fwrite(me->pal+first, 3, num, me->undo_file);
+        std::fwrite(me->pal+first, 3, num, me->undo_file);
         putw(1 + 2 + (num*3) + sizeof(int), me->undo_file);
     }
 
@@ -1750,7 +1750,7 @@ static void PalTable__UndoProcess(PalTable *me, int delta)   // undo/redo common
         }
 
         std::fseek(me->undo_file, -(num*3), SEEK_CUR);  // go to start of undo/redo data
-        fwrite(me->pal+first, 3, num, me->undo_file);  // write redo/undo data
+        std::fwrite(me->pal+first, 3, num, me->undo_file);  // write redo/undo data
 
         std::memmove(me->pal+first, temp, num*3);
 

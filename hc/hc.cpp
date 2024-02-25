@@ -476,7 +476,7 @@ void alloc_topic_text(TOPIC *t, unsigned size)
     t->text = swappos;
     swappos += size;
     std::fseek(swapfile, t->text, SEEK_SET);
-    fwrite(&buffer[0], 1, t->text_len, swapfile);
+    std::fwrite(&buffer[0], 1, t->text_len, swapfile);
 }
 
 
@@ -496,7 +496,7 @@ void release_topic_text(TOPIC const *t, int save)
     if (save)
     {
         std::fseek(swapfile, t->text, SEEK_SET);
-        fwrite(&buffer[0], 1, t->text_len, swapfile);
+        std::fwrite(&buffer[0], 1, t->text_len, swapfile);
     }
 }
 
@@ -3459,7 +3459,7 @@ void _write_help(std::FILE *file)
     hs.sig = HELP_SIG; // Edit line 17 of helpcom.h if this is a syntax error
     hs.version = version;
 
-    fwrite(&hs, sizeof(long)+sizeof(int), 1, file);
+    std::fwrite(&hs, sizeof(long)+sizeof(int), 1, file);
 
     // write max_pages & max_links
 
@@ -3479,7 +3479,7 @@ void _write_help(std::FILE *file)
     // write the offsets to each topic
     for (TOPIC const &t : g_topics)
     {
-        fwrite(&t.offset, sizeof(long), 1, file);
+        std::fwrite(&t.offset, sizeof(long), 1, file);
     }
 
     // write all public labels
@@ -3496,14 +3496,14 @@ void _write_help(std::FILE *file)
 
         int t = (int) cp.id.length();
         putc((BYTE)t, file);
-        fwrite(cp.id.c_str(), 1, t, file);
+        std::fwrite(cp.id.c_str(), 1, t, file);
 
         t = (int) cp.name.length();
         putc((BYTE)t, file);
-        fwrite(cp.name.c_str(), 1, t, file);
+        std::fwrite(cp.name.c_str(), 1, t, file);
 
         putc((BYTE)cp.num_topic, file);
-        fwrite(cp.topic_num, sizeof(int), cp.num_topic, file);
+        std::fwrite(cp.topic_num, sizeof(int), cp.num_topic, file);
     }
 
     // write topics
@@ -3525,7 +3525,7 @@ void _write_help(std::FILE *file)
         // write the help title
 
         putc((BYTE)tp.title_len, file);
-        fwrite(tp.title.c_str(), 1, tp.title_len, file);
+        std::fwrite(tp.title.c_str(), 1, tp.title_len, file);
 
         // insert hot-link info & write the help text
 
@@ -3537,7 +3537,7 @@ void _write_help(std::FILE *file)
         }
 
         putw(tp.text_len, file);
-        fwrite(text, 1, tp.text_len, file);
+        std::fwrite(text, 1, tp.text_len, file);
 
         release_topic_text(&tp, 0);  // don't save the text even though
         // insert_real_link_info() modified it

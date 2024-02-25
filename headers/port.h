@@ -39,8 +39,8 @@ using BYTE = U8;
 #endif
 #endif
 
-#define write1(ptr, len, n, stream) fwrite(ptr, len, n, stream)
-#define write2(ptr, len, n, stream) fwrite(ptr, len, n, stream)
+#define write1(ptr, len, n, stream) std::fwrite(ptr, len, n, stream)
+#define write2(ptr, len, n, stream) std::fwrite(ptr, len, n, stream)
 #define rand15() (rand() & 0x7FFF)
 
 #if defined(_WIN32)
