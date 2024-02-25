@@ -53,7 +53,7 @@
     {
       "name": "cppcheck",
       "displayName": "Configure for use with cppcheck",
-      "inherits": [ "sibling-build-preset", "compile-commands", "no-testing" ]
+      "inherits": [ "sibling-build-preset", "compile-commands", "no-testing", "vcpkg" ]
     },
     {
       "name": "ci-linux",
