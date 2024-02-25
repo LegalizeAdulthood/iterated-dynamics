@@ -1919,18 +1919,18 @@ void load_fractint_config()
     int          colors;
     char        *fields[11] = {nullptr};
     int          textsafe2;
-    char         tempstring[150];
     int          truecolorbits;
 
-    findpath("fractint.cfg", tempstring);
-    if (tempstring[0] == 0                            // can't find the file
-        || (cfgfile = std::fopen(tempstring, "r")) == nullptr)   // can't open it
+    const std::string cfg_path{find_path("fractint.cfg")};
+    if (cfg_path.empty()                                             // can't find the file
+        || (cfgfile = std::fopen(cfg_path.c_str(), "r")) == nullptr) // can't open it
     {
         g_bad_config = config_status::BAD_NO_MESSAGE;
         return;
     }
 
     linenum = 0;
+    char tempstring[150];
     while (g_video_table_len < MAX_VIDEO_MODES
         && fgets(tempstring, 120, cfgfile))
     {
