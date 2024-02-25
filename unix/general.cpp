@@ -872,7 +872,7 @@ void findpath(char const *filename, char *fullpathname)
     }
 
     // check for FRACTDIR
-    std::strcpy(fullpathname, g_fractal_search_dir1);
+    std::strcpy(fullpathname, g_fractal_search_dir1.c_str());
     std::strcat(fullpathname, "/");
     std::strcat(fullpathname, filename);
     if (path_exists(fullpathname))
@@ -881,7 +881,7 @@ void findpath(char const *filename, char *fullpathname)
     }
 
     // check for SRCDIR
-    std::strcpy(fullpathname, g_fractal_search_dir2);
+    std::strcpy(fullpathname, g_fractal_search_dir2.c_str());
     std::strcat(fullpathname, "/");
     std::strcat(fullpathname, filename);
     if (path_exists(fullpathname))
