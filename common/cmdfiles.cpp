@@ -274,16 +274,16 @@ void process_simple_command(char *curarg)
         }
         if (std::FILE *initfile = std::fopen(filename.c_str(), "rb"))
         {
-            char tempstring[101];
-            if (fread(tempstring, 6, 1, initfile) != 6)
+            char signature[6];
+            if (std::fread(signature, 6, 1, initfile) != 6)
             {
                 throw std::system_error(errno, std::system_category(), "process_simple_command failed fread");
             }
-            if (tempstring[0] == 'G'
-                && tempstring[1] == 'I'
-                && tempstring[2] == 'F'
-                && tempstring[3] >= '8' && tempstring[3] <= '9'
-                && tempstring[4] >= '0' && tempstring[4] <= '9')
+            if (signature[0] == 'G'
+                && signature[1] == 'I'
+                && signature[2] == 'F'
+                && signature[3] >= '8' && signature[3] <= '9'
+                && signature[4] >= '0' && signature[4] <= '9')
             {
                 g_read_filename = curarg;
                 g_browse_name = extract_filename(g_read_filename.c_str());
