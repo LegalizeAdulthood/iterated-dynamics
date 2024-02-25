@@ -203,7 +203,7 @@ start:
         }
         goto start;
     case '*':
-        if (fscanf(fpss, "%d", &repeats) != 1
+        if (std::fscanf(fpss, "%d", &repeats) != 1
             || repeats <= 1
             || repeats >= 256
             || feof(fpss))
@@ -243,7 +243,7 @@ start:
     else if (std::strcmp(buffer, "MESSAGE") == 0)
     {
         int secs;
-        if (fscanf(fpss, "%d", &secs) != 1)
+        if (std::fscanf(fpss, "%d", &secs) != 1)
         {
             slideshowerr("MESSAGE needs argument");
         }
@@ -264,7 +264,7 @@ start:
     }
     else if (std::strcmp(buffer, "GOTO") == 0)
     {
-        if (fscanf(fpss, "%s", buffer) != 1)
+        if (std::fscanf(fpss, "%s", buffer) != 1)
         {
             slideshowerr("GOTO needs target");
             out = 0;
@@ -276,7 +276,7 @@ start:
             std::strcat(buffer, ":");
             do
             {
-                err = fscanf(fpss, "%s", buffer1);
+                err = std::fscanf(fpss, "%s", buffer1);
             }
             while (err == 1 && std::strcmp(buffer1, buffer) != 0);
             if (feof(fpss))
@@ -294,7 +294,7 @@ start:
     else if (std::strcmp("WAIT", buffer) == 0)
     {
         float fticks;
-        err = fscanf(fpss, "%f", &fticks); // how many ticks to wait
+        err = std::fscanf(fpss, "%f", &fticks); // how many ticks to wait
         driver_set_keyboard_timeout((int)(fticks*1000.f));
         fticks *= CLOCKS_PER_SEC;             // convert from seconds to ticks
         if (err == 1)
