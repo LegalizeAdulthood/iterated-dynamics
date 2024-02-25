@@ -2145,7 +2145,7 @@ static bool ent_less(const int lhs, const int rhs)
 static void update_fractint_cfg()
 {
 #ifndef XFRACT
-    char outname[100], buf[121], kname[5];
+    char buf[121], kname[5];
     std::FILE *cfgfile, *outfile;
     int i, j, linenum, nextlinenum, nextmode;
     VIDEOINFO vident;
@@ -2158,17 +2158,11 @@ static void update_fractint_cfg()
         stopmsg(STOPMSG_NONE, buf);
         return;
     }
-    std::strcpy(outname, cfgname.c_str());
-    i = (int) std::strlen(outname);
-    while (--i >= 0 && outname[i] != SLASHC)
-    {
-        outname[i] = 0;
-    }
-    std::strcat(outname, "fractint.tmp");
-    outfile = std::fopen(outname, "w");
+    const std::string outname{(fs::path{cfgname}.parent_path() / "fractint.tmp").string()};
+    outfile = std::fopen(outname.c_str(), "w");
     if (outfile == nullptr)
     {
-        std::snprintf(buf, NUM_OF(buf), "Can't create %s", outname);
+        std::snprintf(buf, NUM_OF(buf), "Can't create %s", outname.c_str());
         stopmsg(STOPMSG_NONE, buf);
         return;
     }
