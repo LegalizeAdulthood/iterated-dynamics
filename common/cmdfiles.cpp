@@ -247,16 +247,10 @@ int getpower10(LDBL x)
 
 namespace
 {
-std::string findpath(char const *filename)
-{
-    char buffer[FILE_MAX_PATH] = { 0 };
-    ::findpath(filename, buffer);
-    return buffer;
-}
 
 void process_sstools_ini()
 {
-    std::string const sstools_ini = findpath("sstools.ini"); // look for SSTOOLS.INI
+    std::string const sstools_ini = find_path("sstools.ini"); // look for SSTOOLS.INI
     if (!sstools_ini.empty())              // found it!
     {
         std::FILE *initfile = std::fopen(sstools_ini.c_str(), "r");
@@ -331,7 +325,7 @@ void process_file(char *curarg)
     cmdfile(initfile, cmd_file::AT_CMD_LINE);
 }
 
-}
+} // namespace
 
 int cmdfiles(int argc, char const *const *argv)
 {
