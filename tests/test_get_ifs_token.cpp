@@ -31,12 +31,12 @@ protected:
 void TestGetIFSToken::SetUp()
 {
     Test::SetUp();
-    m_file = fopen(m_ifs_file.string().c_str(), "rt");
+    m_file = std::fopen(m_ifs_file.string().c_str(), "rt");
 }
 
 void TestGetIFSToken::TearDown()
 {
-    fclose(m_file);
+    std::fclose(m_file);
     Test::TearDown();
 }
 
