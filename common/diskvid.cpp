@@ -237,7 +237,7 @@ int common_startdisk(long newrowsize, long newcolsize, int colors)
     if (g_disk_targa)
     {
         // Retrieve the header information first
-        fseek(fp, 0L, SEEK_SET);
+        std::fseek(fp, 0L, SEEK_SET);
         for (int i = 0; i < headerlength; i++)
         {
             membuf[i] = (BYTE)fgetc(fp);

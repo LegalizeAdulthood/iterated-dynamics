@@ -498,7 +498,7 @@ int fullscreen_prompt(      // full-screen prompting routine
             if (rewrite_extrainfo)
             {
                 rewrite_extrainfo = false;
-                fseek(scroll_file, scroll_file_start, SEEK_SET);
+                std::fseek(scroll_file, scroll_file_start, SEEK_SET);
                 load_entry_text(scroll_file, extrainfo, extralines - 2,
                                 scroll_row_status, scroll_column_status);
                 for (int i = 1; i <= extralines-2; i++)
@@ -626,7 +626,7 @@ int fullscreen_prompt(      // full-screen prompting routine
         {
             int j = g_text_cbase;
             g_text_cbase = 2;
-            fseek(scroll_file, scroll_file_start, SEEK_SET);
+            std::fseek(scroll_file, scroll_file_start, SEEK_SET);
             load_entry_text(scroll_file, extrainfo, extralines - 2,
                             scroll_row_status, scroll_column_status);
             for (int i = 1; i <= extralines-2; i++)
@@ -2368,7 +2368,7 @@ top:
                     }
                     else
                     {
-                        fseek(infile, temp_offset, SEEK_SET); //else, go back to
+                        std::fseek(infile, temp_offset, SEEK_SET); //else, go back to
                         file_offset = temp_offset - 1;        //beginning of line
                         goto top;
                     }
@@ -2399,7 +2399,7 @@ top:
             {
                 if (stricmp(buf, itemname) == 0)
                 {
-                    fseek(infile, name_offset + (long) exclude_entry, SEEK_SET);
+                    std::fseek(infile, name_offset + (long) exclude_entry, SEEK_SET);
                     return -1;
                 }
             }
@@ -2535,7 +2535,7 @@ static int check_gfe_key(int curkey, int choice)
         bool comment = false;
         int c = 0;
         int widthct = 0;
-        fseek(gfe_file, gfe_choices[choice]->point, SEEK_SET);
+        std::fseek(gfe_file, gfe_choices[choice]->point, SEEK_SET);
         while ((c = fgetc(gfe_file)) != EOF && c != '\032')
         {
             if (c == ';')
@@ -2570,10 +2570,10 @@ static int check_gfe_key(int curkey, int choice)
         if (c == EOF || c == '\032')
         {
             // should never happen
-            fseek(gfe_file, gfe_choices[choice]->point, SEEK_SET);
+            std::fseek(gfe_file, gfe_choices[choice]->point, SEEK_SET);
             in_scrolling_mode = false;
         }
-        fseek(gfe_file, gfe_choices[choice]->point, SEEK_SET);
+        std::fseek(gfe_file, gfe_choices[choice]->point, SEEK_SET);
         load_entry_text(gfe_file, infbuf, 17, 0, 0);
         if (lines_in_entry > 17 || widest_entry_line > 74)
         {
@@ -2606,7 +2606,7 @@ static int check_gfe_key(int curkey, int choice)
             if (rewrite_infbuf)
             {
                 rewrite_infbuf = false;
-                fseek(gfe_file, gfe_choices[choice]->point, SEEK_SET);
+                std::fseek(gfe_file, gfe_choices[choice]->point, SEEK_SET);
                 load_entry_text(gfe_file, infbuf, 17, top_line, left_column);
                 for (int i = 4; i < (lines_in_entry < 17 ? lines_in_entry + 4 : 21); i++)
                 {
@@ -2885,7 +2885,7 @@ static void format_parmfile_line(int choice, char *buf)
 {
     int c, i;
     char line[80];
-    fseek(gfe_file, gfe_choices[choice]->point, SEEK_SET);
+    std::fseek(gfe_file, gfe_choices[choice]->point, SEEK_SET);
     while (getc(gfe_file) != '{')
     {
     }

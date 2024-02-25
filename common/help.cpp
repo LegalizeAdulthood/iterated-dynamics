@@ -103,7 +103,7 @@ static std::vector<PAGE> page_table; // 4*max_pages
 
 static void help_seek(long pos)
 {
-    fseek(help_file, base_off + pos, SEEK_SET);
+    std::fseek(help_file, base_off + pos, SEEK_SET);
 }
 
 static void displaycc(int row, int col, int color, int ch)
@@ -1399,7 +1399,7 @@ void print_document(char const *outfname, bool (*msg_func)(int, int), int save_e
 
     if (save_extraseg)
     {
-        if (fseek(temp_file, 0L, SEEK_SET) != 0L)
+        if (std::fseek(temp_file, 0L, SEEK_SET) != 0L)
         {
             msg = "Error reading temporary file.\nSystem may be corrupt!\nSave your image and re-start FRACTINT!\n";
             goto ErrorAbort;

@@ -1375,7 +1375,7 @@ int get_commands()              // execute commands from file
     long point = get_file_entry(GETPARM, "Parameter Set", commandmask, g_command_file, g_command_name);
     if (point >= 0 && (parmfile = std::fopen(g_command_file.c_str(), "rb")) != nullptr)
     {
-        fseek(parmfile, point, SEEK_SET);
+        std::fseek(parmfile, point, SEEK_SET);
         ret = load_commands(parmfile);
     }
     g_help_mode = old_help_mode;

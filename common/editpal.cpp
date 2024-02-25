@@ -1680,7 +1680,7 @@ static void PalTable__SaveUndoData(PalTable *me, int first, int last)
     }
 
     num = (last - first) + 1;
-    fseek(me->undo_file, 0, SEEK_CUR);
+    std::fseek(me->undo_file, 0, SEEK_CUR);
     if (num == 1)
     {
         putc(UNDO_DATA_SINGLE, me->undo_file);
@@ -1708,7 +1708,7 @@ static void PalTable__SaveUndoRotate(PalTable *me, int dir, int first, int last)
         return ;
     }
 
-    fseek(me->undo_file, 0, SEEK_CUR);
+    std::fseek(me->undo_file, 0, SEEK_CUR);
     putc(UNDO_ROTATE, me->undo_file);
     putc(first, me->undo_file);
     putc(last,  me->undo_file);
@@ -1749,7 +1749,7 @@ static void PalTable__UndoProcess(PalTable *me, int delta)   // undo/redo common
             throw std::system_error(errno, std::system_category(), "PalTable_UndoProcess  failed fread");
         }
 
-        fseek(me->undo_file, -(num*3), SEEK_CUR);  // go to start of undo/redo data
+        std::fseek(me->undo_file, -(num*3), SEEK_CUR);  // go to start of undo/redo data
         fwrite(me->pal+first, 3, num, me->undo_file);  // write redo/undo data
 
         std::memmove(me->pal+first, temp, num*3);
@@ -1776,7 +1776,7 @@ static void PalTable__UndoProcess(PalTable *me, int delta)   // undo/redo common
         break;
     }
 
-    fseek(me->undo_file, 0, SEEK_CUR);  // to put us in read mode
+    std::fseek(me->undo_file, 0, SEEK_CUR);  // to put us in read mode
     getw(me->undo_file);  // read size
 }
 
@@ -1792,16 +1792,16 @@ static void PalTable__Undo(PalTable *me)
         return ;
     }
 
-    fseek(me->undo_file, -(int)sizeof(int), SEEK_CUR);  // go back to get size
+    std::fseek(me->undo_file, -(int)sizeof(int), SEEK_CUR);  // go back to get size
 
     size = getw(me->undo_file);
-    fseek(me->undo_file, -size, SEEK_CUR);   // go to start of undo
+    std::fseek(me->undo_file, -size, SEEK_CUR);   // go to start of undo
 
     pos = ftell(me->undo_file);
 
     PalTable__UndoProcess(me, -1);
 
-    fseek(me->undo_file, pos, SEEK_SET);   // go to start of me block
+    std::fseek(me->undo_file, pos, SEEK_SET);   // go to start of me block
 
     ++me->num_redo;
 }
@@ -1814,7 +1814,7 @@ static void PalTable__Redo(PalTable *me)
         return ;
     }
 
-    fseek(me->undo_file, 0, SEEK_CUR);  // to make sure we are in "read" mode
+    std::fseek(me->undo_file, 0, SEEK_CUR);  // to make sure we are in "read" mode
     PalTable__UndoProcess(me, 1);
 
     --me->num_redo;

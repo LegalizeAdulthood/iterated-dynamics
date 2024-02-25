@@ -3628,7 +3628,7 @@ CASE_NUM:
                 return false;
             }
             tok->token_str[i] = (char) 0;
-            fseek(openfile, last_filepos, SEEK_SET);
+            std::fseek(openfile, last_filepos, SEEK_SET);
             getfuncinfo(tok);
             if (c == '(') //getfuncinfo() correctly filled structure
             {
@@ -3707,7 +3707,7 @@ void frm_get_eos(std::FILE * openfile, token_st * this_token)
     }
     else
     {
-        fseek(openfile, last_filepos, SEEK_SET);
+        std::fseek(openfile, last_filepos, SEEK_SET);
         if (this_token->token_str[0] == '\n')
         {
             this_token->token_str[0] = ',';
@@ -3747,7 +3747,7 @@ CASE_TERMINATOR:
             }
             else
             {
-                fseek(openfile, filepos, SEEK_SET);
+                std::fseek(openfile, filepos, SEEK_SET);
             }
         }
         else if (c == '!')
@@ -3759,7 +3759,7 @@ CASE_TERMINATOR:
             }
             else
             {
-                fseek(openfile, filepos, SEEK_SET);
+                std::fseek(openfile, filepos, SEEK_SET);
                 this_token->token_str[1] = (char) 0;
                 this_token->token_type = NOT_A_TOKEN;
                 this_token->token_id = ILLEGAL_OPERATOR;
@@ -3775,7 +3775,7 @@ CASE_TERMINATOR:
             }
             else
             {
-                fseek(openfile, filepos, SEEK_SET);
+                std::fseek(openfile, filepos, SEEK_SET);
             }
         }
         else if (c == '&')
@@ -3787,7 +3787,7 @@ CASE_TERMINATOR:
             }
             else
             {
-                fseek(openfile, filepos, SEEK_SET);
+                std::fseek(openfile, filepos, SEEK_SET);
                 this_token->token_str[1] = (char) 0;
                 this_token->token_type = NOT_A_TOKEN;
                 this_token->token_id = ILLEGAL_OPERATOR;
@@ -4006,7 +4006,7 @@ static bool frm_check_name_and_sym(std::FILE * open_file, bool report_bad_sym)
         char msgbuf[100];
         std::strcpy(msgbuf, ParseErrs(PE_FORMULA_NAME_TOO_LARGE));
         std::strcat(msgbuf, ":\n   ");
-        fseek(open_file, filepos, SEEK_SET);
+        std::fseek(open_file, filepos, SEEK_SET);
         for (j = 0; j < i && j < 25; j++)
         {
             msgbuf[j+k+2] = (char) getc(open_file);
@@ -4115,18 +4115,18 @@ static std::string PrepareFormula(std::FILE * File, bool from_prompts1c)
 
     if (!frm_check_name_and_sym(File, from_prompts1c))
     {
-        fseek(File, filepos, SEEK_SET);
+        std::fseek(File, filepos, SEEK_SET);
         return nullptr;
     }
     if (!frm_prescan(File))
     {
-        fseek(File, filepos, SEEK_SET);
+        std::fseek(File, filepos, SEEK_SET);
         return nullptr;
     }
 
     if (chars_in_formula > 8190)
     {
-        fseek(File, filepos, SEEK_SET);
+        std::fseek(File, filepos, SEEK_SET);
         return nullptr;
     }
 
@@ -4159,7 +4159,7 @@ static std::string PrepareFormula(std::FILE * File, bool from_prompts1c)
         if (temp_tok.token_type == NOT_A_TOKEN)
         {
             stopmsg(STOPMSG_FIXED_FONT, "Unexpected token error in PrepareFormula\n");
-            fseek(File, filepos, SEEK_SET);
+            std::fseek(File, filepos, SEEK_SET);
             if (debug_fp != nullptr)
             {
                 std::fclose(debug_fp);
@@ -4169,7 +4169,7 @@ static std::string PrepareFormula(std::FILE * File, bool from_prompts1c)
         else if (temp_tok.token_type == END_OF_FORMULA)
         {
             stopmsg(STOPMSG_FIXED_FONT, "Formula has no executable instructions\n");
-            fseek(File, filepos, SEEK_SET);
+            std::fseek(File, filepos, SEEK_SET);
             if (debug_fp != nullptr)
             {
                 std::fclose(debug_fp);
@@ -4195,7 +4195,7 @@ static std::string PrepareFormula(std::FILE * File, bool from_prompts1c)
         {
         case NOT_A_TOKEN:
             stopmsg(STOPMSG_FIXED_FONT, "Unexpected token error in PrepareFormula\n");
-            fseek(File, filepos, SEEK_SET);
+            std::fseek(File, filepos, SEEK_SET);
             if (debug_fp != nullptr)
             {
                 std::fclose(debug_fp);
@@ -4203,7 +4203,7 @@ static std::string PrepareFormula(std::FILE * File, bool from_prompts1c)
             return nullptr;
         case END_OF_FORMULA:
             Done = true;
-            fseek(File, filepos, SEEK_SET);
+            std::fseek(File, filepos, SEEK_SET);
             break;
         default:
             FormulaStr += temp_tok.token_str;
@@ -4413,7 +4413,7 @@ void frm_error(std::FILE * open_file, long begin_frm)
     for (int j = 0; j < 3 && errors[j].start_pos; j++)
     {
         bool const initialization_error = errors[j].error_number == PE_SECOND_COLON;
-        fseek(open_file, begin_frm, SEEK_SET);
+        std::fseek(open_file, begin_frm, SEEK_SET);
         line_number = 1;
         while (ftell(open_file) != errors[j].error_pos)
         {
@@ -4425,14 +4425,14 @@ void frm_error(std::FILE * open_file, long begin_frm)
             else if (i == EOF || i == '}')
             {
                 stopmsg(STOPMSG_NONE, "Unexpected EOF or end-of-formula in error function.\n");
-                fseek(open_file, errors[j].error_pos, SEEK_SET);
+                std::fseek(open_file, errors[j].error_pos, SEEK_SET);
                 frmgettoken(open_file, &tok); //reset file to end of error token
                 return;
             }
         }
         std::sprintf(&msgbuf[(int) std::strlen(msgbuf)], "Error(%d) at line %d:  %s\n  ", errors[j].error_number, line_number, ParseErrs(errors[j].error_number));
         int i = (int) std::strlen(msgbuf);
-        fseek(open_file, errors[j].start_pos, SEEK_SET);
+        std::fseek(open_file, errors[j].start_pos, SEEK_SET);
         token_count = 0;
         statement_len = token_count;
         bool done = false;
@@ -4464,7 +4464,7 @@ void frm_error(std::FILE * open_file, long begin_frm)
                 }
             }
         }
-        fseek(open_file, errors[j].start_pos, SEEK_SET);
+        std::fseek(open_file, errors[j].start_pos, SEEK_SET);
         if (chars_in_error < 74)
         {
             while (chars_to_error + chars_in_error > 74)
@@ -4476,7 +4476,7 @@ void frm_error(std::FILE * open_file, long begin_frm)
         }
         else
         {
-            fseek(open_file, errors[j].error_pos, SEEK_SET);
+            std::fseek(open_file, errors[j].error_pos, SEEK_SET);
             chars_to_error = 0;
             token_count = 1;
         }
@@ -4485,7 +4485,7 @@ void frm_error(std::FILE * open_file, long begin_frm)
             frmgettoken(open_file, &tok);
             std::strcat(msgbuf, tok.token_str);
         }
-        fseek(open_file, errors[j].error_pos, SEEK_SET);
+        std::fseek(open_file, errors[j].error_pos, SEEK_SET);
         frmgettoken(open_file, &tok);
         if ((int) std::strlen(&msgbuf[i]) > 74)
         {
@@ -4564,7 +4564,7 @@ bool frm_prescan(std::FILE * open_file)
             {
             case END_OF_FILE:
                 stopmsg(STOPMSG_NONE, ParseErrs(PE_UNEXPECTED_EOF));
-                fseek(open_file, orig_pos, SEEK_SET);
+                std::fseek(open_file, orig_pos, SEEK_SET);
                 return false;
             case ILLEGAL_CHARACTER:
                 if (!errors_found || errors[errors_found-1].start_pos != statement_pos)
@@ -4640,7 +4640,7 @@ bool frm_prescan(std::FILE * open_file)
                 break;
             default:
                 stopmsg(STOPMSG_NONE, "Unexpected arrival at default case in prescan()");
-                fseek(open_file, orig_pos, SEEK_SET);
+                std::fseek(open_file, orig_pos, SEEK_SET);
                 return false;
             }
             break;
@@ -5310,7 +5310,7 @@ bool frm_prescan(std::FILE * open_file)
                 }
                 else
                 {
-                    fseek(open_file, filepos, SEEK_SET);
+                    std::fseek(open_file, filepos, SEEK_SET);
                 }
                 ExpectingArg = true;
                 break;
@@ -5383,10 +5383,10 @@ bool frm_prescan(std::FILE * open_file)
     if (errors[0].start_pos)
     {
         frm_error(open_file, orig_pos);
-        fseek(open_file, orig_pos, SEEK_SET);
+        std::fseek(open_file, orig_pos, SEEK_SET);
         return false;
     }
-    fseek(open_file, orig_pos, SEEK_SET);
+    std::fseek(open_file, orig_pos, SEEK_SET);
 
     return true;
 }

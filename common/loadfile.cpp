@@ -829,7 +829,7 @@ static int find_fractal_info(char const *gif_file, FRACTAL_INFO *info,
 
     std::memset(info, 0, FRACTAL_INFO_SIZE);
     fractinf_len = FRACTAL_INFO_SIZE + (FRACTAL_INFO_SIZE+254)/255;
-    fseek(fp, (long)(-1-fractinf_len), SEEK_END);
+    std::fseek(fp, (long)(-1-fractinf_len), SEEK_END);
     /* TODO: revise this to read members one at a time so we get natural alignment
        of fields within the FRACTAL_INFO structure for the platform */
     freader(info, 1, FRACTAL_INFO_SIZE, fp);
@@ -851,7 +851,7 @@ static int find_fractal_info(char const *gif_file, FRACTAL_INFO *info,
         {
             // allow 512 garbage at eof
             offset += 100; // go back 100 bytes at a time
-            fseek(fp, (long)(0-offset), SEEK_END);
+            std::fseek(fp, (long)(0-offset), SEEK_END);
             freader(tmpbuf, 1, 110, fp); // read 10 extra for string compare
             for (int i = 0; i < 100; ++i)
             {
@@ -859,7 +859,7 @@ static int find_fractal_info(char const *gif_file, FRACTAL_INFO *info,
                 {
                     // found header?
                     std::strcpy(info->info_id, INFO_ID);
-                    fseek(fp, (long)(hdr_offset = i-offset), SEEK_END);
+                    std::fseek(fp, (long)(hdr_offset = i-offset), SEEK_END);
                     /* TODO: revise this to read members one at a time so we get natural alignment
                         of fields within the FRACTAL_INFO structure for the platform */
                     freader(info, 1, FRACTAL_INFO_SIZE, fp);
