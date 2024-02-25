@@ -1,8 +1,5 @@
 #include "find_path.h"
 
-#include "port.h"
-#include "prototyp.h"
-
 #include "cmdfiles.h"
 #include "id_data.h"
 #include "search_path.h"
