@@ -2069,7 +2069,7 @@ void load_fractint_config()
     return;
 
 bad_fractint_cfg:
-    g_bad_config = -1; // bad, no message issued yet
+    g_bad_config = config_status::BAD_NO_MESSAGE;
 }
 
 void bad_fractint_cfg_msg()
@@ -2078,7 +2078,7 @@ void bad_fractint_cfg_msg()
             "File FRACTINT.CFG is missing or invalid.\n"
             "See Hardware Support and Video Modes in the full documentation for help.\n"
             "I will continue with only the built-in video modes available.");
-    g_bad_config = 1; // bad, message issued
+    g_bad_config = config_status::BAD_WITH_MESSAGE;
 }
 
 int check_vidmode_key(int option, int k)

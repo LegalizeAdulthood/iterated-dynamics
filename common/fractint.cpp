@@ -81,7 +81,7 @@ long    g_l_at_rad;               // finite attractor radius
 double  g_f_at_rad;               // finite attractor radius
 int     g_bit_shift;               // fudgefactor
 
-int     g_bad_config = 0;          // 'fractint.cfg' ok?
+config_status     g_bad_config{};          // 'fractint.cfg' ok?
 bool g_has_inverse = false;
 // note that integer grid is set when integerfractal && !invert;
 // otherwise the floating point grid is set; never both at once
@@ -218,7 +218,7 @@ static void main_restart(int const argc, char const *const argv[], bool &stacked
     g_save_dac = 0;                         // don't save the VGA DAC
 
 #ifndef XFRACT
-    if (g_bad_config < 0)                   // fractint.cfg bad, no msg yet
+    if (g_bad_config == config_status::BAD_NO_MESSAGE)
     {
         bad_fractint_cfg_msg();
     }

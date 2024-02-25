@@ -16,11 +16,18 @@ enum class calc_status_value
     COMPLETED = 4
 };
 
+enum class config_status
+{
+    OK = 0,
+    BAD_WITH_MESSAGE = 1,
+    BAD_NO_MESSAGE = -1
+};
+
 enum class help_labels;
 
 extern int                   g_adapter;             // index into g_video_table[]
 extern bool                  g_auto_browse;
-extern int                   g_bad_config;
+extern config_status         g_bad_config;
 extern int                   g_bit_shift;
 extern int                   g_box_count;
 extern std::string           g_browse_mask;
