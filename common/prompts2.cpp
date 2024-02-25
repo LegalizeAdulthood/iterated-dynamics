@@ -43,6 +43,8 @@
 #include <filesystem>
 #include <string>
 
+namespace fs = std::filesystem;
+
 static  int check_f6_key(int curkey, int choice);
 static  int filename_speedstr(int row, int col, int vid,
                              char const *speedstring, int speed_match);
@@ -1935,30 +1937,27 @@ void make_path(char *template_str, char const *drive, char const *dir, char cons
         assert(template_str != nullptr);
         return;
     }
-    *template_str = 0;
 
+    fs::path result;
 #ifndef XFRACT
     if (drive)
     {
-        std::strcpy(template_str, drive);
+        result = drive;
     }
 #endif
     if (dir)
     {
-        std::strcat(template_str, dir);
-        if (dir[0] != 0 && dir[std::strlen(dir)-1] != SLASHC)
-        {
-            std::strcat(template_str, SLASH);
-        }
+        result /= dir;
     }
     if (fname)
     {
-        std::strcat(template_str, fname);
+        result /= fname;
     }
     if (ext)
     {
-        std::strcat(template_str, ext);
+        result.replace_extension(ext);
     }
+    strcpy(template_str, result.make_preferred().string().c_str());
 }
 
 // fix up directory names
@@ -2805,7 +2804,7 @@ int merge_pathnames(std::string &oldfullpath, char const *filename, cmd_file mod
 // extract just the filename/extension portion of a path
 std::string extract_filename(char const *source)
 {
-    return std::filesystem::path(source).filename().string();
+    return fs::path(source).filename().string();
 }
 
 // tells if filename has extension
