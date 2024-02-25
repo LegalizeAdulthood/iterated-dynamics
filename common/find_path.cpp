@@ -16,6 +16,7 @@
 #include <unistd.h>
 #endif
 
+#include <cstring>
 #include <filesystem>
 
 namespace fs = std::filesystem;
