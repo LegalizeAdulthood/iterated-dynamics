@@ -19,6 +19,7 @@
 #include "line3d.h"
 #include "loadfile.h"
 #include "lorenz.h"
+#include "make_path.h"
 #include "miscres.h"
 #include "parser.h"
 #include "prompts1.h"

@@ -21,6 +21,7 @@
 #include "loadfdos.h"
 #include "loadfile.h"
 #include "lorenz.h"
+#include "make_path.h"
 #include "miscovl.h"
 #include "miscres.h"
 #include "os.h"

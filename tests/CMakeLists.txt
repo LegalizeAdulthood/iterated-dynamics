@@ -15,6 +15,7 @@ add_executable(test-id
     "${CMAKE_CURRENT_BINARY_DIR}/include/test_data.h"
     test_data.h.in
     test_get_ifs_token.cpp
+    test_make_path.cpp
     test_update_save_name.cpp
 )
 source_group("CMake Templates" REGULAR_EXPRESSION ".*\\.in$")

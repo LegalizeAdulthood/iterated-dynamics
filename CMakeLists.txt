@@ -129,6 +129,7 @@ add_library(libid
     common/help.cpp
     common/intro.cpp headers/intro.h
     common/jiim.cpp headers/jiim.h
+    headers/make_path.h
     common/miscovl.cpp headers/miscovl.h
     common/miscres.cpp headers/miscres.h
     common/prompts1.cpp headers/prompts1.h
@@ -278,6 +279,7 @@ source_group("Header Files/common/ui" FILES
     headers/helpdefs.h
     headers/intro.h
     headers/jiim.h
+    headers/make_path.h
     headers/miscovl.h
     headers/miscres.h
     headers/prompts1.h

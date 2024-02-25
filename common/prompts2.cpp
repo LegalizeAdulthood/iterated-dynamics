@@ -20,6 +20,7 @@
 #include "loadfile.h"
 #include "loadmap.h"
 #include "lorenz.h"
+#include "make_path.h"
 #include "memory.h"
 #include "miscovl.h"
 #include "miscres.h"

@@ -9,6 +9,7 @@
 #include "fractint.h"
 #include "helpdefs.h"
 #include "id_data.h"
+#include "make_path.h"
 #include "miscovl.h"
 #include "mpmath.h"
 #include "prompts2.h"
