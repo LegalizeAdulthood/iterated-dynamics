@@ -540,7 +540,7 @@ initUnixWindow()
             Xw = XCreateWindow(Xdp, Xroot, Xwinx, Xwiny, Xwinwidth,
                                Xwinheight, 0, Xdepth, InputOutput, CopyFromParent,
                                CWBackPixel | CWBitGravity | CWBackingStore, &Xwatt);
-            XStoreName(Xdp, Xw, Fractint);
+            XStoreName(Xdp, Xw, "Id");
             Xgc = XCreateGC(Xdp, Xw, 0, &Xgcvals);
         }
         g_colors = xcmapstuff();
