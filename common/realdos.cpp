@@ -1297,7 +1297,7 @@ top:
 
     nextright += 2;
     attributes[nextright] = 256 + MENU_HDG;
-    choices[nextright] = "        std::FILE                  ";
+    choices[nextright] = "        FILE                  ";
 
     nextright += 2;
     choicekey[nextright] = '@';

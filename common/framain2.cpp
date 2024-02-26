@@ -21,6 +21,7 @@
 #include "jiim.h"
 #include "line3d.h"
 #include "loadfile.h"
+#include "loadmap.h"
 #include "lorenz.h"
 #include "miscovl.h"
 #include "miscres.h"
@@ -282,9 +283,7 @@ main_state big_while_loop(bool *const kbdmore, bool *const stacked, bool const r
                 else if ((driver_diskp() && g_colors == 256) || !g_colors)
                 {
                     // disk video, setvideomode via bios didn't get it right, so:
-#if !defined(XFRACT) && !defined(_WIN32)
                     ValidateLuts("default"); // read the default palette file
-#endif
                 }
                 g_color_state = 0;
             }
