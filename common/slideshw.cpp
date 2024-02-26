@@ -252,7 +252,7 @@ start:
             int len;
             char buf[41];
             buf[40] = 0;
-            if (fgets(buf, NUM_OF(buf), fpss) == nullptr)
+            if (std::fgets(buf, NUM_OF(buf), fpss) == nullptr)
             {
                 throw std::system_error(errno, std::system_category(), "slideshw failed fgets");
             }

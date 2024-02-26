@@ -56,7 +56,7 @@ bool ValidateLuts(char const *fn)
     for (index = 0; index < 256; index++)
     {
         char line[160];
-        if (fgets(line, NUM_OF(line), f) == nullptr)
+        if (std::fgets(line, NUM_OF(line), f) == nullptr)
         {
             break;
         }
