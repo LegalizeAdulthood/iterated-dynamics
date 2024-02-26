@@ -1421,7 +1421,7 @@ images.
 
 Try the following unfortunately circuitous approach. Invoke Fractint,
 making sure you have set askvideo=yes. Use a disk-video mode to create a
-256 color fractal. You might want to edit the fractint.cfg file to make a
+256 color fractal. You might want to edit the id.cfg file to make a
 disk-video mode with the same pixel dimensions as your normal video. Using
 the "3" command, enter the file name of the saved 256 color file, then
 select your 2 or 4

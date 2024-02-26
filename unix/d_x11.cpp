@@ -58,7 +58,7 @@
 #define FNDELAY O_NDELAY
 #endif
 
-// external variables (set in the FRACTINT.CFG file, but findable here
+// external variables (set in the id.cfg file, but findable here
 
 extern bool slowdisplay;
 extern  int g_dot_mode;        // video access method (= 19)

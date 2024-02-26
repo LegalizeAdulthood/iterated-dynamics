@@ -71,13 +71,13 @@ extern int field_prompt(char const *hdg, char const *instr, char *fld, int len,
     int (*checkkey)(int curkey));
 extern bool thinking(int options, char const *msg);
 extern void discardgraphics();
-extern void load_fractint_config();
+extern void load_id_config();
 extern int check_vidmode_key(int, int);
 extern int check_vidmode_keyname(char const *kname);
 extern void vidmode_keyname(int k, char *buf);
 extern void freetempmsg();
 extern void load_videotable(int);
-extern void bad_fractint_cfg_msg();
+extern void bad_id_cfg_msg();
 extern int showvidlength();
 extern bool stopmsg(int flags, char const* msg);
 inline bool stopmsg(int flags, const std::string &msg)

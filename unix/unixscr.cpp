@@ -63,7 +63,7 @@ static int iocount;
 // Check if there is a character waiting for us.
 #define input_pending() (ioctl(0, FIONREAD, &iocount), (int)iocount)
 
-// external variables (set in the FRACTINT.CFG file, but findable here
+// external variables (set in the id.cfg file, but findable here
 
 extern  int g_dot_mode;        // video access method (= 19)
 extern  int g_screen_x_dots, g_screen_y_dots;     // total # of dots on the screen

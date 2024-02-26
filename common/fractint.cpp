@@ -81,7 +81,7 @@ long    g_l_at_rad;               // finite attractor radius
 double  g_f_at_rad;               // finite attractor radius
 int     g_bit_shift;               // fudgefactor
 
-config_status     g_bad_config{};          // 'fractint.cfg' ok?
+config_status     g_bad_config{};          // 'id.cfg' ok?
 bool g_has_inverse = false;
 // note that integer grid is set when integerfractal && !invert;
 // otherwise the floating point grid is set; never both at once
@@ -220,7 +220,7 @@ static void main_restart(int const argc, char const *const argv[], bool &stacked
 #ifndef XFRACT
     if (g_bad_config == config_status::BAD_NO_MESSAGE)
     {
-        bad_fractint_cfg_msg();
+        bad_id_cfg_msg();
     }
 #endif
 
@@ -538,8 +538,8 @@ int id_main(int argc, char *argv[])
         init_failure("Sorry, I couldn't find any working video drivers for your system\n");
         exit(-1);
     }
-    // load fractint.cfg, match against driver supplied modes
-    load_fractint_config();
+    // load id.cfg, match against driver supplied modes
+    load_id_config();
     init_help();
 
 restart:   // insert key re-starts here

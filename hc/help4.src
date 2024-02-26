@@ -1829,9 +1829,9 @@ Millennium, and boards from several manufacturers using Nvidia Riva chip sets.
 
 Using high resolution video modes poses a second challenge for fractint users.
 That is that the VESA standard does not have standard settings for this mode,
-so you will have to edit the fractint.cfg file to support your board. You can
+so you will have to edit the id.cfg file to support your board. You can
 run the program makefcfg.exe that comes with fractint to generate entries
-for your fractint.cfg file.
+for your id.cfg file.
 
 Finally, even if your video board VESA Bios supports high resolution video
 modes, it probably doesn't come with a utility that allows you to set the

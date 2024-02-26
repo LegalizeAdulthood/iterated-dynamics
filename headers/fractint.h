@@ -127,7 +127,7 @@ struct VIDEOINFO
 
 #define NUM_GENES 21
 
-#define MAX_VIDEO_MODES 300       // maximum entries in fractint.cfg
+#define MAX_VIDEO_MODES 300       // maximum entries in id.cfg
 #define AUTO_INVERT -123456.789
 #define MAX_NUM_ATTRACTORS 8
 extern  long     g_l_at_rad;      // finite attractor radius

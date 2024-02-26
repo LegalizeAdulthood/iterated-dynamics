@@ -13,7 +13,7 @@ if(WIN32)
 endif()
 
 set(ID_HOME_INSTALL_DIR share)
-id_install_home(FILES fractint.cfg sstools.ini)
+id_install_home(FILES id.cfg sstools.ini)
 
 id_install_subdirectory(extra)
 id_install_subdirectory(formulas)

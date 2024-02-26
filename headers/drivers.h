@@ -50,7 +50,7 @@ struct Driver
     char const *name;                       // name of driver
     char const *description;                // driver description
     bool (*init)(Driver *drv, int *argc, char **argv); // init the driver
-    bool (*validate_mode)(Driver *drv, VIDEOINFO *mode); // validate a fractint.cfg mode
+    bool (*validate_mode)(Driver *drv, VIDEOINFO *mode); // validate a id.cfg mode
     void (*get_max_screen)(Driver *drv, int *xmax, int *ymax); // find max screen extents
     void (*terminate)(Driver *drv);         // shutdown the driver
     void (*pause)(Driver *drv);             // pause this driver

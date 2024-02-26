@@ -55,7 +55,7 @@ static void put_bf(int slash, bf_t r, int prec);
 static void put_filename(char const *keyword, char const *fname);
 static int check_modekey(int curkey, int choice);
 static bool ent_less(int lhs, int rhs);
-static void update_fractint_cfg();
+static void update_id_cfg();
 static void strip_zeros(char *buf);
 
 bool g_is_true_color = false;
@@ -2005,13 +2005,13 @@ int select_video_mode(int curmode)
     g_help_mode = old_help_mode;
     if (i == -1)
     {
-        // update fractint.cfg for new key assignments
+        // update id.cfg for new key assignments
         if (modes_changed
             && g_bad_config == config_status::OK
             && stopmsg(STOPMSG_CANCEL | STOPMSG_NO_BUZZER | STOPMSG_INFO_ONLY,
                 "Save new function key assignments or cancel changes?") == 0)
         {
-            update_fractint_cfg();
+            update_id_cfg();
         }
         return -1;
     }
@@ -2020,7 +2020,7 @@ int select_video_mode(int curmode)
     // the selected entry now in g_video_entry
     std::memcpy((char *) &g_video_entry, (char *) &g_video_table[i], sizeof(g_video_entry));
 
-    // copy fractint.cfg table to resident table, note selected entry
+    // copy id.cfg table to resident table, note selected entry
     int k = 0;
     for (i = 0; i < g_video_table_len; ++i)
     {
@@ -2040,10 +2040,10 @@ int select_video_mode(int curmode)
         ret = 1400; // special value for check_vidmode_key
     }
 
-    // update fractint.cfg for new key assignments
+    // update id.cfg for new key assignments
     if (modes_changed && g_bad_config == config_status::OK)
     {
-        update_fractint_cfg();
+        update_id_cfg();
     }
 
     return ret;
@@ -2091,7 +2091,7 @@ static int check_modekey(int curkey, int choice)
     {
         if (g_bad_config != config_status::OK)
         {
-            stopmsg(STOPMSG_NONE, "Missing or bad FRACTINT.CFG file. Can't reassign keys.");
+            stopmsg(STOPMSG_NONE, "Missing or bad id.cfg file. Can't reassign keys.");
         }
         else
         {
@@ -2142,7 +2142,7 @@ static bool ent_less(const int lhs, const int rhs)
     return i < j || i == j && lhs < rhs;
 }
 
-static void update_fractint_cfg()
+static void update_id_cfg()
 {
 #ifndef XFRACT
     char buf[121], kname[5];
@@ -2150,7 +2150,7 @@ static void update_fractint_cfg()
     int i, j, linenum, nextlinenum, nextmode;
     VIDEOINFO vident;
 
-    const std::string cfgname = find_path("fractint.cfg");
+    const std::string cfgname = find_path("id.cfg");
 
     if (access(cfgname.c_str(), 6))
     {

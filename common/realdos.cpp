@@ -1881,7 +1881,7 @@ void discardgraphics() // release expanded/extended memory if any in use
 #endif
 }
 
-//VIDEOINFO *g_video_table;*/  /* temporarily loaded fractint.cfg info
+//VIDEOINFO *g_video_table;*/  /* temporarily loaded id.cfg info
 int g_video_table_len;                 // number of entries in above
 
 int showvidlength()
@@ -1893,16 +1893,16 @@ int showvidlength()
 
 int g_cfg_line_nums[MAX_VIDEO_MODES] = { 0 };
 
-/* load_fractint_config
+/* load_id_config
  *
- * Reads fractint.cfg, loading videoinfo entries into g_video_table.
+ * Reads id.cfg, loading videoinfo entries into g_video_table.
  * Sets the number of entries, sets g_video_table_len.
- * Past g_video_table, g_cfg_line_nums are stored for update_fractint_cfg.
- * If fractint.cfg is not found or invalid, issues a message
+ * Past g_video_table, g_cfg_line_nums are stored for update_id_cfg.
+ * If id.cfg is not found or invalid, issues a message
  * (first time the problem occurs only, and only if options is
  * zero) and uses the hard-coded table.
  */
-void load_fractint_config()
+void load_id_config()
 {
     std::FILE   *cfgfile;
     VIDEOINFO    vident;
@@ -1921,7 +1921,7 @@ void load_fractint_config()
     int          textsafe2;
     int          truecolorbits;
 
-    const std::string cfg_path{find_path("fractint.cfg")};
+    const std::string cfg_path{find_path("id.cfg")};
     if (cfg_path.empty()                                             // can't find the file
         || (cfgfile = std::fopen(cfg_path.c_str(), "r")) == nullptr) // can't open it
     {
@@ -2070,10 +2070,10 @@ void load_fractint_config()
     std::fclose(cfgfile);
 }
 
-void bad_fractint_cfg_msg()
+void bad_id_cfg_msg()
 {
     stopmsg(STOPMSG_NONE,
-            "File FRACTINT.CFG is missing or invalid.\n"
+            "File id.cfg is missing or invalid.\n"
             "See Hardware Support and Video Modes in the full documentation for help.\n"
             "I will continue with only the built-in video modes available.");
     g_bad_config = config_status::BAD_WITH_MESSAGE;
