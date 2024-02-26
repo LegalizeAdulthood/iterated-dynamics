@@ -3,7 +3,7 @@
 ;
 ;
 ~HdrFile=helpdefs.h
-~HlpFile=fractint.hlp
+~HlpFile=id.hlp
 ~Version=100
 ~FormatExclude=8
 ;

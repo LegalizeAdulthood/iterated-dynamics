@@ -1438,7 +1438,7 @@ int init_help()
 
     help_file = nullptr;
 
-    const std::string path{find_file("fractint.hlp")};
+    const std::string path{find_file("id.hlp")};
     if (!path.empty())
     {
         help_file = std::fopen(path.c_str(), "rb");
@@ -1449,12 +1449,12 @@ int init_help()
             if (hs.sig != HELP_SIG)
             {
                 std::fclose(help_file);
-                stopmsg(STOPMSG_NO_STACK, "Invalid help signature in FRACTINT.HLP!\n");
+                stopmsg(STOPMSG_NO_STACK, "Invalid help signature in id.hlp!\n");
             }
             else if (hs.version != IDHELP_VERSION)
             {
                 std::fclose(help_file);
-                stopmsg(STOPMSG_NO_STACK, "Wrong help version in FRACTINT.HLP!\n");
+                stopmsg(STOPMSG_NO_STACK, "Wrong help version in id.hlp!\n");
             }
             else
             {
@@ -1467,9 +1467,9 @@ int init_help()
     {
         static char msg[] =
 #if !defined(XFRACT) && !defined(_WIN32)
-        {"Help Files aren't in FRACTINT.EXE, and couldn't find FRACTINT.HLP!\n"};
+        {"Help Files aren't in id.exe, and couldn't find id.hlp!\n"};
 #else
-            {"Couldn't find fractint.hlp; set FRACTDIR to proper directory with setenv.\n"
+            {"Couldn't find id.hlp; set FRACTDIR to proper directory with setenv.\n"
             };
 #endif
         stopmsg(STOPMSG_NO_STACK, msg);
