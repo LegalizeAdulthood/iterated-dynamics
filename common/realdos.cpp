@@ -1937,7 +1937,7 @@ void load_id_config()
         if (std::strchr(tempstring, '\n') == nullptr)
         {
             // finish reading the line
-            while (fgetc(cfgfile) != '\n' && !feof(cfgfile));
+            while (fgetc(cfgfile) != '\n' && !std::feof(cfgfile));
         }
         ++linenum;
         if (tempstring[0] == ';')

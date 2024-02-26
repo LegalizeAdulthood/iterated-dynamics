@@ -1672,7 +1672,7 @@ int file_gets(char *buf, int maxlen, std::FILE *infile)
     int len, c;
     // similar to 'fgets', but file may be in either text or binary mode
     // returns -1 at eof, length of string otherwise
-    if (feof(infile))
+    if (std::feof(infile))
     {
         return -1;
     }

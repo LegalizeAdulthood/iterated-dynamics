@@ -206,7 +206,7 @@ start:
         if (std::fscanf(fpss, "%d", &repeats) != 1
             || repeats <= 1
             || repeats >= 256
-            || feof(fpss))
+            || std::feof(fpss))
         {
             slideshowerr("error in * argument");
             repeats = 0;
@@ -279,7 +279,7 @@ start:
                 err = std::fscanf(fpss, "%s", buffer1);
             }
             while (err == 1 && std::strcmp(buffer1, buffer) != 0);
-            if (feof(fpss))
+            if (std::feof(fpss))
             {
                 slideshowerr("GOTO target not found");
                 return 0;

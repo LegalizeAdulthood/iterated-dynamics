@@ -598,7 +598,7 @@ int read_char_aux()
         return ' ';
     }
 
-    if (feof(srcfile))
+    if (std::feof(srcfile))
     {
         return -1;
     }
@@ -3270,7 +3270,7 @@ bool compare_files(std::FILE *f1, std::FILE *f2)
         return true;    // different if sizes are not the same
     }
 
-    while (!feof(f1) && !feof(f2))
+    while (!std::feof(f1) && !std::feof(f2))
     {
         if (getc(f1) != getc(f2))
         {
@@ -3278,7 +3278,7 @@ bool compare_files(std::FILE *f1, std::FILE *f2)
         }
     }
 
-    return !(feof(f1) && feof(f2));
+    return !(std::feof(f1) && std::feof(f2));
 }
 
 
