@@ -55,33 +55,33 @@ for more of what the software can do.
 See the [wiki](https://github.com/LegalizeAdulthood/iterated-dynamics/wiki)
 for the current release plan.
 
-Compiling the Code
-==================
+# Building
 
-Iterated Dynamics uses a [CMake](http://www.cmake.org) based build.  You
-will need CMake 2.8.11 or later to compile Iterated Dynamics.  Use CMake
-to create a build for your preferred development environment.
+Iterated Dynamics uses [CMake](http://www.cmake.org) to generate build scripts
+and [vcpkg](http://vcpkg.io) to manage third party library dependencies.
+You will need a C++ compiler capable of supporting the C++17 standard.
 
-These instructions assume a build directory called `build` at the top
-level of the source tree.  Run CMake from the `build` directory to create
-the build script:
+After cloning this source repository, initialize and update git submodules
+with the commands:
+```
+git submodule init
+git submodule update
+```
 
-| OS | Command |
-| ---- | ------- |
-| Linux | `cmake -G "Unix Makefiles" ..` |
-| MacOS with `make` | `cmake -G "Unix Makefiles" ..` |
-| MacOS with Xcode | `cmake -G Xcode ..` |
-| Windows | `cmake -G "Visual Studio 12" ..` |
+CMake presets are provided to simplify building the code.  The command
 
-Once the appropriate build script is generated, then build the code
-normally.
+```
+cmake --workflow --preset default
+```
+
+will configure, build and test the code.
 
 The build will first compile `hc`, the help compiler.  This generates
 the run-time help file from the help source files and an include file
 used by the iterated dynamics compile.
 
-Contributing
-============
+# Contributing
+
 Iterated Dynamics welcomes contributions from everyone!  The code has a
 long history of contributions from many people over the years.  There are
 many small ways in which the code can be improved as well as large changes
@@ -98,9 +98,9 @@ Once your change is ready, prepare a pull request and submit it back for
 incorporation into the main repository.  We couldn't have gotten this far
 without contributions from many persons!
 
-Code Structure
-==============
-- `common`
+# Code Structure
+
+- - `common`
     Files common to all implementations
  - **3d**
         Files containing 3D drawing support.  Eventually these should be
@@ -117,7 +117,7 @@ Code Structure
         specific to a particular fractal, such as the Lorenz fractal or
         L-system type.
 
- - **i/o**
+ - **IO**
         Anything related to doing external file I/O: saving and loading GIF
         files, dealing with overlay files, saving parameter files, etc.
 
