@@ -77,7 +77,7 @@ enum class modes
 char const *const DEFAULT_SRC_FNAME = "help.src";
 char const *const DEFAULT_HLP_FNAME = "id.hlp";
 char const *const DEFAULT_EXE_FNAME = "id.exe";
-char const *const DEFAULT_DOC_FNAME = "fractint.doc";
+char const *const DEFAULT_DOC_FNAME = "id.txt";
 std::string const DEFAULT_HTML_FNAME = "index.rst";
 
 char const *const TEMP_FNAME = "hc.tmp";

@@ -905,7 +905,7 @@ int help(int action)
         {
             if (curr.topic_num == -100)
             {
-                print_document("FRACTINT.DOC", print_doc_msg_func, 1);
+                print_document("id.txt", print_doc_msg_func, 1);
                 action = ACTION_PREV2;
             }
             else if (curr.topic_num == -101)
@@ -1305,7 +1305,7 @@ static bool print_doc_msg_func(int pnum, int num_pages)
         helptitle();
         printinstr();
         driver_set_attr(2, 0, C_HELP_BODY, 80*22);
-        putstringcenter(1, 0, 80, C_HELP_HDG, "Generating FRACTINT.DOC");
+        putstringcenter(1, 0, 80, C_HELP_HDG, "Generating id.txt");
 
         driver_put_string(7, 30, C_HELP_BODY, "Completed:");
 

@@ -1101,7 +1101,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
 
         if (variable == "makedoc")
         {
-            print_document(*value ? value : "fractint.doc", makedoc_msg_func, 0);
+            print_document(*value ? value : "id.txt", makedoc_msg_func, 0);
             goodbye();
         }
 
