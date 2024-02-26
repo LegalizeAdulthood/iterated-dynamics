@@ -38,26 +38,26 @@ if errorlevel 0 goto end
 goto top
 
 :sound
-fractint savename=.\ filename=.\ curdir=yes autokey=play autokeyname=snddemo1.key
+id savename=.\ filename=.\ curdir=yes autokey=play autokeyname=snddemo1.key
 goto top
 
 
 :evolver
-fractint savename=.\ filename=.\ curdir=yes  autokey=play autokeyname=explore.key
+id savename=.\ filename=.\ curdir=yes  autokey=play autokeyname=explore.key
 goto top
 
 
 :advanced
-fractint savename=.\ filename=.\ curdir=yes @demo.par/Mandel_Demo autokey=play autokeyname=advanced.key
+id savename=.\ filename=.\ curdir=yes @demo.par/Mandel_Demo autokey=play autokeyname=advanced.key
 goto top
 
 :newin19
-fractint savename=.\ filename=.\ curdir=yes @demo.par/Mandel_Demo autokey=play autokeyname=new19.key
+id savename=.\ filename=.\ curdir=yes @demo.par/Mandel_Demo autokey=play autokeyname=new19.key
 del new19???.gif
 goto top
 
 :newin194
-fractint savename=.\ filename=.\ curdir=yes @demo.par/trunc_Demo autokey=play autokeyname=new19-4.key
+id savename=.\ filename=.\ curdir=yes @demo.par/trunc_Demo autokey=play autokeyname=new19-4.key
 del new1940?.gif
 goto top
 
@@ -69,31 +69,31 @@ del demo195.par
 goto top
 
 :newin196
-fractint savename=.\ filename=.\ curdir=yes autokey=play autokeyname=new19-6.key
+id savename=.\ filename=.\ curdir=yes autokey=play autokeyname=new19-6.key
 del demo196?.gif
 goto top
 
 :basic
-fractint savename=.\ filename=.\ curdir=yes @demo.par/Mandel_Demo autokey=play autokeyname=basic.key
+id savename=.\ filename=.\ curdir=yes @demo.par/Mandel_Demo autokey=play autokeyname=basic.key
 del basic001.gif
 goto top
 
 :all
-fractint savename=.\ filename=.\ curdir=yes @demo.par/Mandel_Demo autokey=play autokeyname=basic.key
-fractint savename=.\ filename=.\ curdir=yes @demo.par/Mandel_Demo autokey=play autokeyname=new19.key
-fractint savename=.\ filename=.\ curdir=yes @demo.par/trunc_Demo autokey=play autokeyname=new19-4.key
+id savename=.\ filename=.\ curdir=yes @demo.par/Mandel_Demo autokey=play autokeyname=basic.key
+id savename=.\ filename=.\ curdir=yes @demo.par/Mandel_Demo autokey=play autokeyname=new19.key
+id savename=.\ filename=.\ curdir=yes @demo.par/trunc_Demo autokey=play autokeyname=new19-4.key
 set r=allb
 goto n195s
 :allb
-fractint savename=.\ filename=.\ curdir=yes autokey=play autokeyname=new19-6.key
-fractint savename=.\ filename=.\ curdir=yes @demo.par/Mandel_Demo autokey=play autokeyname=advanced.key
+id savename=.\ filename=.\ curdir=yes autokey=play autokeyname=new19-6.key
+id savename=.\ filename=.\ curdir=yes @demo.par/Mandel_Demo autokey=play autokeyname=advanced.key
 del basic001.gif
 del new19???.gif
 del new1940?.gif
 del demo195.par
 del demo196?.gif
-fractint savename=.\ filename=.\ curdir=yes autokey=play autokeyname=snddemo1.key
-fractint savename=.\ filename=.\ curdir=yes autokey=play autokeyname=explore.key
+id savename=.\ filename=.\ curdir=yes autokey=play autokeyname=snddemo1.key
+id savename=.\ filename=.\ curdir=yes autokey=play autokeyname=explore.key
 goto top
 
 :n195s
@@ -119,7 +119,7 @@ echo   - load this par and let you see with F2 the complete par entry
 echo   - exit
 echo.
 pause
-fractint savename=.\ filename=.\ curdir=yes @demo.par/Mandel_Demo autokey=play autokeyname=new19-5.key
+id savename=.\ filename=.\ curdir=yes @demo.par/Mandel_Demo autokey=play autokeyname=new19-5.key
 goto %r%
 
 :end
