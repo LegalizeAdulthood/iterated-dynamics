@@ -159,7 +159,7 @@ restart:
             return -1;
         }
         new_file = false;
-        tmp_file.replace_filename("fractint.tmp");
+        tmp_file.replace_filename("id.tmp");
     }
 
     g_started_resaves = (g_resave_flag == 1);

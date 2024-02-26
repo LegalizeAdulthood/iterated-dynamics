@@ -388,7 +388,7 @@ skip_UI:
                 stopmsg(STOPMSG_NONE, buf);
                 continue;
             }
-            out_name.replace_filename("fractint.tmp");
+            out_name.replace_filename("id.tmp");
             infile = std::fopen(g_command_file.c_str(), "rt");
         }
         parmfile = std::fopen(out_name.string().c_str(), "wt");
@@ -493,8 +493,8 @@ skip_UI:
                         g_x_3rd = g_x_min;
                         g_y_3rd = g_y_min;
                     }
-                    std::fprintf(fpbat, "Fractint batch=yes overwrite=yes @%s/%s\n", g_command_file.c_str(), PCommandName);
-                    std::fprintf(fpbat, "If Errorlevel 2 goto oops\n");
+                    std::fprintf(fpbat, "id batch=yes overwrite=yes @%s/%s\n", g_command_file.c_str(), PCommandName);
+                    std::fprintf(fpbat, "if errorlevel 2 goto oops\n");
                 }
                 else
                 {
@@ -538,8 +538,7 @@ skip_UI:
                     }
                     if (g_patch_level != 0 && !colorsonly)
                     {
-                        std::fprintf(parmfile, "%s %s Version %d Patchlevel %d\n", tmpbuff,
-                                Fractint, g_release, g_patch_level);
+                        std::fprintf(parmfile, "%s id Version %d Patchlevel %d\n", tmpbuff, g_release, g_patch_level);
                     }
                 }
                 write_batch_parms(colorspec, colorsonly, maxcolor, i, j);
@@ -553,8 +552,8 @@ skip_UI:
         }
         if (xm > 1 || ym > 1)
         {
-            std::fprintf(fpbat, "Fractint makemig=%u/%u\n", xm, ym);
-            std::fprintf(fpbat, "Rem Simplgif fractmig.gif simplgif.gif  in case you need it\n");
+            std::fprintf(fpbat, "id makemig=%u/%u\n", xm, ym);
+            std::fprintf(fpbat, "rem Simplgif fractmig.gif simplgif.gif  in case you need it\n");
             std::fprintf(fpbat, ":oops\n");
             std::fclose(fpbat);
         }
@@ -2158,7 +2157,7 @@ static void update_id_cfg()
         stopmsg(STOPMSG_NONE, buf);
         return;
     }
-    const std::string outname{(fs::path{cfgname}.parent_path() / "fractint.tmp").string()};
+    const std::string outname{(fs::path{cfgname}.parent_path() / "id.tmp").string()};
     outfile = std::fopen(outname.c_str(), "w");
     if (outfile == nullptr)
     {

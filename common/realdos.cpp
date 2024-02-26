@@ -278,7 +278,7 @@ void helptitle()
 {
     char msg[MSG_LEN], buf[MSG_LEN];
     driver_set_clear(); // clear the screen
-    std::sprintf(msg, "FRACTINT Version %d.%01d", g_release/100, (g_release%100)/10);
+    std::sprintf(msg, "Iterated Dynamics Version %d.%01d", g_release/100, (g_release%100)/10);
     if (g_release%10)
     {
         std::sprintf(buf, "%01d", g_release%10);
@@ -1357,12 +1357,12 @@ top:
     nextright += 2;
     choicekey[nextright] = FIK_ESC;
     attributes[nextright] = MENU_ITEM;
-    choices[nextright] = "quit " FRACTINT "           <esc> ";
+    choices[nextright] = "quit id                  <esc> ";
 
     nextright += 2;
     choicekey[nextright] = FIK_INSERT;
     attributes[nextright] = MENU_ITEM;
-    choices[nextright] = "restart " FRACTINT "        <ins> ";
+    choices[nextright] = "restart id               <ins> ";
 
 #ifdef XFRACT
     if (fullmenu && (g_got_real_dac || g_fake_lut) && g_colors >= 16)
@@ -1440,7 +1440,7 @@ top:
             }
         }
     }
-    if (i == FIK_ESC)             // escape from menu exits Fractint
+    if (i == FIK_ESC)             // escape from menu exits
     {
         helptitle();
         driver_set_attr(1, 0, C_GENERAL_MED, 24*80);
@@ -1449,11 +1449,7 @@ top:
             driver_set_attr(j, 18, C_GENERAL_INPUT, 40);
         }
         putstringcenter(10, 18, 40, C_GENERAL_INPUT,
-#ifdef XFRACT
-                        "Exit from Xfractint (y/n)? y"
-#else
-                        "Exit from Fractint (y/n)? y"
-#endif
+                        "Exit from Iterated Dynamics (y/n)? y"
                        );
         driver_hide_text_cursor();
         while ((i = driver_get_key()) != 'y' && i != 'Y' && i != FIK_ENTER)

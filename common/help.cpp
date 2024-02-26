@@ -1225,7 +1225,7 @@ static bool print_doc_output(int cmd, PD_INFO *pd, void *context)
         info->margin = 0;
 
         std::memset(line, ' ', 81);
-        std::snprintf(buff, NUM_OF(buff), "Fractint Version %d.%01d%c", g_release/100, (g_release%100)/10,
+        std::snprintf(buff, NUM_OF(buff), "Iterated Dynamics Version %d.%01d%c", g_release/100, (g_release%100)/10,
                 ((g_release%10) ? '0'+(g_release%10) : ' '));
         std::memmove(line + ((width-(int)(std::strlen(buff))) / 2)-4, buff, std::strlen(buff));
 
@@ -1401,13 +1401,13 @@ void print_document(char const *outfname, bool (*msg_func)(int, int), int save_e
     {
         if (std::fseek(temp_file, 0L, SEEK_SET) != 0L)
         {
-            msg = "Error reading temporary file.\nSystem may be corrupt!\nSave your image and re-start FRACTINT!\n";
+            msg = "Error reading temporary file.\nSystem may be corrupt!\nSave your image and re-start id!\n";
             goto ErrorAbort;
         }
 
         if (std::fread(info.buffer, sizeof(char), PRINT_BUFFER_SIZE, temp_file) != PRINT_BUFFER_SIZE)
         {
-            msg = "Error reading temporary file.\nSystem may be corrupt!\nSave your image and re-start FRACTINT!\n";
+            msg = "Error reading temporary file.\nSystem may be corrupt!\nSave your image and re-start id!\n";
             goto ErrorAbort;
         }
     }

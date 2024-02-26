@@ -767,20 +767,13 @@ static bool next_line(std::FILE *handle, char *linebuf, cmd_file mode)
     bool tools_section = false;
     while (file_gets(linebuf, 512, handle) >= 0)
     {
-        if (mode == cmd_file::SSTOOLS_INI && linebuf[0] == '[')   // check for [fractint]
+        if (mode == cmd_file::SSTOOLS_INI && linebuf[0] == '[')   // check for [id]
         {
             char tmpbuf[11];
-#ifndef XFRACT
-            std::strncpy(tmpbuf, &linebuf[1], 9);
-            tmpbuf[9] = 0;
+            std::strncpy(tmpbuf, &linebuf[1], 4);
+            tmpbuf[4] = 0;
             strlwr(tmpbuf);
-            tools_section = std::strncmp(tmpbuf, "fractint]", 9) == 0;
-#else
-            std::strncpy(tmpbuf, &linebuf[1], 10);
-            tmpbuf[10] = 0;
-            strlwr(tmpbuf);
-            tools_section = std::strncmp(tmpbuf, "xfractint]", 10) == 0;
-#endif
+            tools_section = std::strncmp(tmpbuf, "id]", 3) == 0;
             continue;                              // skip tools section heading
         }
         if (tools_section)
@@ -3903,7 +3896,7 @@ int init_msg(char const *cmdstr, char const *badfilename, cmd_file mode)
         if (row == 1 && badfilename)
         {
             driver_set_for_text();
-            driver_put_string(0, 0, 15, "Fractint found the following problems when parsing commands: ");
+            driver_put_string(0, 0, 15, "Id found the following problems when parsing commands: ");
         }
         if (badfilename)
         {

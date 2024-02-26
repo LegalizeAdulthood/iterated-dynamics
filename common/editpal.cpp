@@ -47,10 +47,10 @@
 
 #define MAX_WIDTH        1024     // palette editor cannot be wider than this
 
-static char undofile[] = "FRACTINT.$$2";  // file where undo list is stored
-#define TITLE   "FRACTINT"
+static char undofile[] = "id.$$2";  // file where undo list is stored
+#define TITLE   "Id"
 
-#define TITLE_LEN (8)
+#define TITLE_LEN (2)
 
 
 #ifdef XFRACT

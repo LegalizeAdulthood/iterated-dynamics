@@ -322,13 +322,6 @@ inline double dot_product(VECTOR v1, VECTOR v2)
 #define FK_F8  "Shift-8"
 #define FK_F9  "Shift-9"
 #endif
-#ifndef XFRACT
-#define Fractint  "Fractint"
-#define FRACTINT  "FRACTINT"
-#else
-#define Fractint  "Xfractint"
-#define FRACTINT  "XFRACTINT"
-#endif
 
 // for overlay return stack
 #define BIG 100000.0

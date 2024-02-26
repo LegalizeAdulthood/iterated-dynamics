@@ -3346,7 +3346,7 @@ void write_hdr(char const *fname)
         msg("Writing: %s", fname);
         _write_hdr(fname, hdr);
         std::fclose(hdr);
-        notice("FRACTINT must be re-compiled.");
+        notice("Id must be re-compiled.");
         return ;
     }
 
@@ -3376,7 +3376,7 @@ void write_hdr(char const *fname)
         std::fclose(hdr);
         std::remove(fname);               // delete the old hdr file
         std::rename(TEMP_FNAME, fname);   // rename the temp to the hdr file
-        notice("FRACTINT must be re-compiled.");
+        notice("Id must be re-compiled.");
     }
     else
     {
@@ -4186,7 +4186,7 @@ void compiler::parse_arguments()
 
 int compiler::process()
 {
-    std::printf("HC - FRACTINT Help Compiler.\n\n");
+    std::printf("HC - Iterated Dynamics Help Compiler.\n\n");
 
     buffer.resize(BUFFER_SIZE);
 
