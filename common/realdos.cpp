@@ -1932,7 +1932,7 @@ void load_id_config()
     linenum = 0;
     char tempstring[150];
     while (g_video_table_len < MAX_VIDEO_MODES
-        && fgets(tempstring, 120, cfgfile))
+        && fgets(tempstring, NUM_OF(tempstring), cfgfile))
     {
         if (std::strchr(tempstring, '\n') == nullptr)
         {

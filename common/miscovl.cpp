@@ -2171,7 +2171,7 @@ static void update_id_cfg()
     nextmode = 0;
     linenum = nextmode;
     nextlinenum = g_cfg_line_nums[0];
-    while (fgets(buf, 120, cfgfile))
+    while (fgets(buf, NUM_OF(buf), cfgfile))
     {
         char colorsbuf[10];
         ++linenum;
