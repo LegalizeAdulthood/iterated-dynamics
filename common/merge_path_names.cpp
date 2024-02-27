@@ -6,6 +6,8 @@
 #include "port.h"
 #include "prototyp.h"
 
+#include "find_file.h"
+#include "is_directory.h"
 #include "make_path.h"
 #include "prompts2.h"
 
