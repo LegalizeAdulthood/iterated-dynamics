@@ -97,3 +97,10 @@ TEST_F(TestMakePath, driveDirectoryFilenameExtension)
     ASSERT_STREQ(fs::path{"tmp/foo.gif"}.make_preferred().string().c_str(), buffer);
 #endif
 }
+
+TEST_F(TestMakePath, directoryWithTrailingSlash)
+{
+    make_path(buffer, nullptr, "tmp/", nullptr, nullptr);
+
+    ASSERT_STREQ(fs::path{"tmp/"}.make_preferred().string().c_str(), buffer);
+}

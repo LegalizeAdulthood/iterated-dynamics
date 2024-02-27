@@ -1949,7 +1949,11 @@ void make_path(char *template_str, char const *drive, char const *dir, char cons
     if (not_empty(dir))
     {
         result /= dir;
-        result += '/';
+        result.make_preferred();
+        if (result.string().back() != fs::path::preferred_separator)
+        {
+            result += '/';
+        }
     }
     if (not_empty(fname))
     {
