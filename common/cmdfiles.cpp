@@ -764,7 +764,7 @@ static int next_command(
 
 static bool next_line(std::FILE *handle, char *linebuf, cmd_file mode)
 {
-    bool tools_section = false;
+    bool tools_section = true;
     while (file_gets(linebuf, 512, handle) >= 0)
     {
         if (mode == cmd_file::SSTOOLS_INI && linebuf[0] == '[')   // check for [id]
