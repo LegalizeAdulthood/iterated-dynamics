@@ -24,6 +24,7 @@
 #include "loadfile.h"
 #include "loadmap.h"
 #include "lorenz.h"
+#include "merge_path_names.h"
 #include "miscovl.h"
 #include "miscres.h"
 #include "os.h"

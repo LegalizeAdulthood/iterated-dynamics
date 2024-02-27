@@ -10,6 +10,7 @@
 #include "helpdefs.h"
 #include "id_data.h"
 #include "loadmap.h"
+#include "merge_path_names.h"
 #include "os.h"
 #include "prompts1.h"
 #include "prompts2.h"

@@ -143,6 +143,7 @@ add_library(libid
     headers/is_directory.h
     common/jiim.cpp headers/jiim.h
     headers/make_path.h
+    common/merge_path_names.cpp headers/merge_path_names.h
     common/miscovl.cpp headers/miscovl.h
     common/miscres.cpp headers/miscres.h
     common/path_match.cpp headers/path_match.h
@@ -301,6 +302,7 @@ source_group("Header Files/common/ui" FILES
     headers/is_directory.h
     headers/jiim.h
     headers/make_path.h
+    headers/merge_path_names.h
     headers/miscovl.h
     headers/miscres.h
     headers/path_match.h
@@ -322,6 +324,7 @@ source_group("Source Files/common/ui" FILES
     common/help.cpp
     common/intro.cpp
     common/jiim.cpp
+    common/merge_path_names.cpp
     common/miscovl.cpp
     common/miscres.cpp
     common/path_match.cpp

@@ -22,6 +22,7 @@
 #include "loadmap.h"
 #include "lorenz.h"
 #include "lsys_fns.h"
+#include "merge_path_names.h"
 #include "miscres.h"
 #include "os.h"
 #include "parser.h"

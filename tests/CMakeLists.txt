@@ -32,6 +32,7 @@ add_executable(test-id
     test_get_ifs_token.cpp
     test_is_directory.cpp
     test_make_path.cpp
+    test_merge_path_names.cpp
     test_path_match.cpp
     test_search_path.cpp
     test_update_save_name.cpp
