@@ -5,23 +5,6 @@
 
 enum class cmd_file;
 
-#define   FILEATTR       0x37      // File attributes; select all but volume labels
-#define   HIDDEN         2
-#define   SYSTEM         4
-#define   SUBDIR         16
-
-struct DIR_SEARCH               // Allocate DTA and define structure
-{
-    std::string path;           // path and filespec
-    char attribute;             // File attributes wanted
-    int  ftime;                 // File creation time
-    int  fdate;                 // File creation date
-    long size;                  // File size in bytes
-    std::string filename;       // Filename and extension
-};
-
-extern DIR_SEARCH DTA;          // Disk Transfer Area
-
 extern long                  g_concentration;
 extern std::string const     g_gray_map_file;
 
@@ -45,8 +28,6 @@ inline int splitpath(const std::string &file_template, char *drive, char *dir, c
 {
     return splitpath(file_template.c_str(), drive, dir, fname, ext);
 }
-extern int fr_findfirst(char const *path);
-extern int fr_findnext();
 extern void shell_sort(void *, int n, unsigned, int (*fct)(void *, void *));
 extern void fix_dirname(char *dirname);
 extern void fix_dirname(std::string &dirname);

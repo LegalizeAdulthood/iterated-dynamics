@@ -10,6 +10,7 @@
 #include "diskvid.h"
 #include "drivers.h"
 #include "evolve.h"
+#include "find_file.h"
 #include "find_path.h"
 #include "fracsubr.h"
 #include "fractalp.h"

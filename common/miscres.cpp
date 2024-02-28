@@ -8,6 +8,7 @@
 #include "calcfrac.h"
 #include "cmdfiles.h"
 #include "drivers.h"
+#include "find_file.h"
 #include "fracsubr.h"
 #include "fractalp.h"
 #include "fractype.h"

@@ -6,6 +6,7 @@
 #include "cmplx.h"
 #include "diskvid.h"
 #include "drivers.h"
+#include "find_file.h"
 #include "fractint.h"
 #include "helpdefs.h"
 #include "id_data.h"
