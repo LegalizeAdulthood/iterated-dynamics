@@ -136,6 +136,7 @@ add_library(libid
     common/fractint.cpp
     common/framain2.cpp headers/framain2.h
     headers/get_ifs_token.h
+    common/get_key_no_help.cpp headers/get_key_no_help.h
     common/help.cpp
     common/intro.cpp headers/intro.h
     headers/is_directory.h
@@ -290,6 +291,7 @@ source_group("Header Files/common/ui" FILES
     headers/fractint.h
     headers/framain2.h
     headers/get_ifs_token.h
+    headers/get_key_no_help.h
     headers/help.h
     headers/helpdefs.h
     headers/intro.h
@@ -311,6 +313,7 @@ source_group("Source Files/common/ui" FILES
     common/find_path.cpp
     common/fractint.cpp
     common/framain2.cpp
+    common/get_key_no_help.cpp
     common/help.cpp
     common/intro.cpp
     common/jiim.cpp

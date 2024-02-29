@@ -13,7 +13,6 @@ extern void spindac(int dir, int inc);
 extern void put_line(int row, int startcol, int stopcol, BYTE const *pixels);
 extern void get_line(int row, int startcol, int stopcol, BYTE *pixels);
 extern void find_special_colors();
-extern int getakeynohelp();
 extern long readticker();
 extern int get_sound_params();
 extern void setnullvideo();

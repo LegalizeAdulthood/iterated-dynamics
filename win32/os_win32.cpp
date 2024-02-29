@@ -489,20 +489,6 @@ int __stdcall WinMain(HINSTANCE instance, HINSTANCE prev_instance, LPSTR cmdLine
     return result;
 }
 
-/*
- * This routine returns a key, ignoring F1
- */
-int getakeynohelp()
-{
-    int ch;
-    do
-    {
-        ch = driver_get_key();
-    }
-    while (FIK_F1 == ch);
-    return ch;
-}
-
 // converts relative path to absolute path
 int expand_dirname(char *dirname, char *drive)
 {

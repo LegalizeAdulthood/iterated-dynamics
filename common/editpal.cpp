@@ -10,6 +10,7 @@
 #include "calcfrac.h"
 #include "cmdfiles.h"
 #include "drivers.h"
+#include "get_key_no_help.h"
 #include "id_data.h"
 #include "memory.h"
 #include "os.h"

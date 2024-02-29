@@ -98,21 +98,6 @@ int waitkeypressed(int timeout)
 }
 
 /*
- * This routine returns a key, ignoring F1
- */
-int
-getakeynohelp()
-{
-    int ch;
-    while (1)
-    {
-        ch = getakey();
-        if (ch != FIK_F1)
-            break;
-    }
-    return ch;
-}
-/*
  * This routine returns a keypress
  */
 int

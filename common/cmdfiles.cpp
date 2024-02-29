@@ -15,6 +15,7 @@
 #include "fractals.h"
 #include "fractype.h"
 #include "framain2.h"
+#include "get_key_no_help.h"
 #include "helpcom.h"
 #include "id_data.h"
 #include "is_directory.h"

@@ -12,6 +12,7 @@
 #include "fractalp.h"
 #include "fractals.h"
 #include "fractype.h"
+#include "get_key_no_help.h"
 #include "helpcom.h"
 #include "helpdefs.h"
 #include "id_data.h"

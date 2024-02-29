@@ -13,6 +13,7 @@
 #include "fractalp.h"
 #include "fractype.h"
 #include "get_ifs_token.h"
+#include "get_key_no_help.h"
 #include "helpdefs.h"
 #include "id_data.h"
 #include "id_io.h"

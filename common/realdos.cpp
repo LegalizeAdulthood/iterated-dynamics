@@ -8,6 +8,7 @@
 #include "find_path.h"
 #include "fractalp.h"
 #include "fractype.h"
+#include "get_key_no_help.h"
 #include "helpcom.h"
 #include "helpdefs.h"
 #include "id_data.h"
