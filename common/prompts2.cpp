@@ -57,14 +57,6 @@ static  int get_screen_corners();
 #define TEMPLATE        -2      // wild cards present - buiding template
 #define SEARCHPATH      -3      // no match - building path search name
 
-#define   FILEATTR       0x37      // File attributes; select all but volume labels
-#define   HIDDEN         2
-#define   SYSTEM         4
-#define   SUBDIR         16
-#define   MAXNUMFILES    2977L
-
-DIR_SEARCH DTA;          // Allocate DTA and define structure
-
 #define GETFORMULA 0
 #define GETLSYS    1
 #define GETIFS     2
@@ -1447,6 +1439,7 @@ int lccompare(void *arg1, void *arg2) // for sort
     return stricmp(*choice1, *choice2);
 }
 
+#define MAXNUMFILES 2977L
 
 static int speedstate;
 bool getafilename(char const *hdg, char const *file_template, char *flname)

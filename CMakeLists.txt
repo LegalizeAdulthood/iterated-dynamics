@@ -142,6 +142,7 @@ add_library(libid
     headers/make_path.h
     common/miscovl.cpp headers/miscovl.h
     common/miscres.cpp headers/miscres.h
+    common/path_match.cpp headers/path_match.h
     common/prompts1.cpp headers/prompts1.h
     common/prompts2.cpp headers/prompts2.h
     common/realdos.cpp headers/realdos.h
@@ -295,6 +296,7 @@ source_group("Header Files/common/ui" FILES
     headers/make_path.h
     headers/miscovl.h
     headers/miscres.h
+    headers/path_match.h
     headers/prompts1.h
     headers/prompts2.h
     headers/realdos.h
@@ -312,6 +314,7 @@ source_group("Source Files/common/ui" FILES
     common/jiim.cpp
     common/miscovl.cpp
     common/miscres.cpp
+    common/path_match.cpp
     common/prompts1.cpp
     common/prompts2.cpp
     common/realdos.cpp

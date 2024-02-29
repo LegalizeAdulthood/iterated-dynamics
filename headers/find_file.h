@@ -1,11 +1,13 @@
 #pragma once
 
+#include <filesystem>
+#include <functional>
 #include <string>
 
-#define   FILEATTR       0x37      // File attributes; select all but volume labels
-#define   HIDDEN         2
-#define   SYSTEM         4
-#define   SUBDIR         16
+enum
+{
+    SUBDIR = 1
+};
 
 struct DIR_SEARCH               // Allocate DTA and define structure
 {
