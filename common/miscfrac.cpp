@@ -23,6 +23,7 @@ Miscellaneous fractal-specific code (formerly in CALCFRAC.C)
 #include "parser.h"
 #include "realdos.h"
 #include "rotate.h"
+#include "spindac.h"
 #include "testpt.h"
 
 #include <algorithm>

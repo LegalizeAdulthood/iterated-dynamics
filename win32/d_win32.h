@@ -1,5 +1,7 @@
 #pragma once
 
+#include "frame.h"
+
 #define WIN32_MAXSCREENS 10
 
 struct Win32BaseDriver

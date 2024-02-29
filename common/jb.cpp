@@ -15,6 +15,7 @@
 #include "prompts1.h"
 #include "prompts2.h"
 #include "realdos.h"
+#include "spindac.h"
 
 // these need to be accessed elsewhere for saving data
 double g_julibrot_x_min = -.83;

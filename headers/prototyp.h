@@ -9,7 +9,6 @@
 #include "winprot.h"
 #endif
 #endif
-extern void spindac(int dir, int inc);
 extern void put_line(int row, int startcol, int stopcol, BYTE const *pixels);
 extern void get_line(int row, int startcol, int stopcol, BYTE *pixels);
 extern long readticker();

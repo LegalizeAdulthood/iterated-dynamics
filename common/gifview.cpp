@@ -27,6 +27,7 @@
 #include "prompts2.h"
 #include "rotate.h"
 #include "slideshw.h"
+#include "spindac.h"
 #include "stereo.h"
 
 #include <algorithm>

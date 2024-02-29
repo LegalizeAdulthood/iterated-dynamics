@@ -34,6 +34,7 @@
 #include "prompts2.h"
 #include "realdos.h"
 #include "slideshw.h"
+#include "spindac.h"
 #include "stereo.h"
 #include "zoom.h"
 

@@ -18,6 +18,7 @@
 #include "realdos.h"
 #include "rotate.h"
 #include "slideshw.h"
+#include "spindac.h"
 
 #define WIN32_LEAN_AND_MEAN
 #define STRICT
@@ -28,10 +29,10 @@
 #include <ctime>
 
 #include "WinText.h"
-#include "frame.h"
-#include "plot.h"
 #include "d_win32.h"
+#include "frame.h"
 #include "ods.h"
+#include "plot.h"
 
 extern HINSTANCE g_instance;
 

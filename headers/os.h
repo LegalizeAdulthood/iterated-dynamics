@@ -5,7 +5,6 @@ struct VIDEOINFO;
 extern int                   g_color_bright;    // brightest color in palette
 extern int                   g_color_dark;      // darkest color in palette
 extern int                   g_color_medium;    // nearest to medbright grey in palette
-extern int                   g_dac_count;
 extern int                   g_fm_attack;
 extern int                   g_fm_decay;
 extern int                   g_fm_release;

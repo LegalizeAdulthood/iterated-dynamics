@@ -15,6 +15,7 @@
 #include "prompts2.h"
 #include "realdos.h"
 #include "rotate.h"
+#include "spindac.h"
 
 #include <cstdio>
 #include <cstring>

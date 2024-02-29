@@ -7,6 +7,7 @@
 #include "id_data.h"
 #include "miscovl.h"
 #include "rotate.h"
+#include "spindac.h"
 #include "zoom.h"
 
 #include <cstdio>
@@ -395,49 +396,6 @@ scrollup(int top, int bot)
     wrefresh(curwin);
 }
 #endif
-
-/*
-; *************** Function spindac(direction, rstep) ********************
-
-;       Rotate the MCGA/VGA DAC in the (plus or minus) "direction"
-;       in "rstep" increments - or, if "direction" is 0, just replace it.
-*/
-void
-spindac(int dir, int inc)
-{
-    unsigned char tmp[3];
-    unsigned char *dacbot;
-    if (g_colors < 16)
-        return;
-    if (g_is_true_color && g_true_mode != true_color_mode::default_color)
-        return;
-    if (dir != 0 && g_color_cycle_range_lo < g_colors && g_color_cycle_range_lo < g_color_cycle_range_hi)
-    {
-        int top = g_color_cycle_range_hi > g_colors ? g_colors - 1 : g_color_cycle_range_hi;
-        dacbot = (unsigned char *) g_dac_box + 3 * g_color_cycle_range_lo;
-        int len = (top - g_color_cycle_range_lo) * 3 * sizeof(unsigned char);
-        if (dir > 0)
-        {
-            for (int i = 0; i < inc; i++)
-            {
-                std::memcpy(tmp, dacbot, 3*sizeof(unsigned char));
-                std::memcpy(dacbot, dacbot + 3*sizeof(unsigned char), len);
-                std::memcpy(dacbot + len, tmp, 3*sizeof(unsigned char));
-            }
-        }
-        else
-        {
-            for (int i = 0; i < inc; i++)
-            {
-                std::memcpy(tmp, dacbot + len, 3*sizeof(unsigned char));
-                std::memcpy(dacbot + 3*sizeof(unsigned char), dacbot, len);
-                std::memcpy(dacbot, tmp, 3*sizeof(unsigned char));
-            }
-        }
-    }
-    writevideopalette();
-    driver_delay(g_colors - g_dac_count - 1);
-}
 
 /*
 ; ---- Help (Video) Support

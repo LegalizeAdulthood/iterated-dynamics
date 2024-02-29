@@ -14,6 +14,7 @@
 #include "os.h"
 #include "plot3d.h"
 #include "rotate.h"
+#include "spindac.h"
 
 #define WIN32_LEAN_AND_MEAN
 #define STRICT

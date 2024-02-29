@@ -18,6 +18,7 @@
 #include "os.h"
 #include "realdos.h"
 #include "rotate.h"
+#include "spindac.h"
 
 #include <cstdlib>
 #include <cstring>

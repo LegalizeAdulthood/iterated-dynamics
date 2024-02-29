@@ -150,6 +150,7 @@ add_library(libid
     common/prompts2.cpp headers/prompts2.h
     common/realdos.cpp headers/realdos.h
     common/search_path.cpp headers/search_path.h
+    common/spindac.cpp headers/spindac.h
     common/update_save_name.cpp headers/update_save_name.h
     common/zoom.cpp headers/zoom.h
 
@@ -307,6 +308,7 @@ source_group("Header Files/common/ui" FILES
     headers/prompts2.h
     headers/realdos.h
     headers/search_path.h
+    headers/spindac.h
     headers/update_save_name.h
     headers/zoom.h
 )
@@ -327,6 +329,7 @@ source_group("Source Files/common/ui" FILES
     common/prompts2.cpp
     common/realdos.cpp
     common/search_path.cpp
+    common/spindac.cpp
     common/update_save_name.cpp
     common/zoom.cpp
 )
