@@ -26,7 +26,6 @@ extern int waitkeypressed(int);
 
 bool g_fake_lut = false;
 int dacnorm = 0;
-int g_dac_count = 0;
 int ShadowColors;
 void (*dotwrite)(int, int, int);
 // write-a-dot routine
