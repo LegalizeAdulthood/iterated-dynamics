@@ -341,11 +341,6 @@ void home()
     g_text_col = 0;
 }
 
-bool isadirectory(char const *s)
-{
-    return PathIsDirectory(s) != 0;
-}
-
 // tenths of millisecond timewr routine
 // static struct timeval tv_start;
 

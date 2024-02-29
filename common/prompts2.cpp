@@ -19,6 +19,7 @@
 #include "helpdefs.h"
 #include "id_data.h"
 #include "id_io.h"
+#include "is_directory.h"
 #include "loadfile.h"
 #include "loadmap.h"
 #include "lorenz.h"

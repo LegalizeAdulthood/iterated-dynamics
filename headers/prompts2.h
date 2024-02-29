@@ -16,7 +16,6 @@ extern int get_view_params();
 extern int get_starfield_params();
 extern int get_commands();
 extern void goodbye();
-extern bool isadirectory(char const *s);
 extern bool getafilename(char const *hdg, char const *file_template, char *flname);
 extern bool getafilename(char const *hdg, char const *file_template, std::string &flname);
 extern int splitpath(char const *file_template, char *drive, char *dir, char *fname, char *ext);

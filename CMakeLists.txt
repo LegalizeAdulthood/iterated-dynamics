@@ -138,6 +138,7 @@ add_library(libid
     headers/get_ifs_token.h
     common/help.cpp
     common/intro.cpp headers/intro.h
+    headers/is_directory.h
     common/jiim.cpp headers/jiim.h
     headers/make_path.h
     common/miscovl.cpp headers/miscovl.h
@@ -292,6 +293,7 @@ source_group("Header Files/common/ui" FILES
     headers/help.h
     headers/helpdefs.h
     headers/intro.h
+    headers/is_directory.h
     headers/jiim.h
     headers/make_path.h
     headers/miscovl.h
