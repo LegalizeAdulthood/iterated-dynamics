@@ -47,18 +47,18 @@ TEST(TestFindFile, noMatchingFiles)
     EXPECT_EQ(1, result);
 }
 
-TEST(TestFindFile, allFiles)
+TEST(TestFindFile, findSubDir)
 {
     const fs::path path{(fs::path(ID_TEST_DATA_FIND_FILE_DIR) / "*")};
-    std::vector<int> results;
-    results.push_back(fr_findfirst(path.string().c_str())); // "."
-    results.push_back(fr_findnext());                       // ".."
-    results.push_back(fr_findnext());                       // "find_file1.txt"
-    results.push_back(fr_findnext());                       // "find_file2.txt"
-                                                            //
-    results.push_back(fr_findnext());                       // "subdir"
+    int result = fr_findfirst(path.string().c_str());
+    const std::string subdir{fs::path{ID_TEST_DATA_SUBDIR}.filename().string()};
 
-    EXPECT_EQ(results.end(), std::find_if(results.begin(), results.end(), [](int value) { return value != 0; }));
-    EXPECT_EQ("subdir", DTA.filename);
+    while (result == 0 && DTA.filename != subdir)
+    {
+        result = fr_findnext();
+    }
+    
+    EXPECT_EQ(0, result);
+    EXPECT_EQ(subdir, DTA.filename);
     EXPECT_EQ(SUBDIR, DTA.attribute);
 }
