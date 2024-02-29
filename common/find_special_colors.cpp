@@ -3,6 +3,7 @@
 #include "port.h"
 
 #include "id_data.h"
+#include "os.h"
 #include "rotate.h"
 
 int g_color_dark = 0;       // darkest color in palette
@@ -33,8 +34,14 @@ void find_special_colors()
         return;
     }
 
-    if (!g_got_real_dac)
+#ifdef XFRACT
+    if (!(g_got_real_dac || g_fake_lut))
+#else
+    if (g_got_real_dac)
+#endif
+    {
         return;
+    }
 
     for (int i = 0; i < g_colors; i++)
     {
