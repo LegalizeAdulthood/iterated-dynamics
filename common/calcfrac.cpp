@@ -22,6 +22,7 @@
 #include "cmplx.h"
 #include "diskvid.h"
 #include "drivers.h"
+#include "find_special_colors.h"
 #include "fpu087.h"
 #include "fracsubr.h"
 #include "fractalp.h"

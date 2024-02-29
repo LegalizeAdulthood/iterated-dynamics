@@ -6,6 +6,7 @@
 #include "drivers.h"
 #include "editpal.h"
 #include "find_path.h"
+#include "find_special_colors.h"
 #include "fractalp.h"
 #include "fractype.h"
 #include "get_key_no_help.h"

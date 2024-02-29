@@ -133,6 +133,7 @@ add_library(libid
 
     common/find_file.cpp headers/find_file.h
     common/find_path.cpp headers/find_path.h
+    common/find_special_colors.cpp headers/find_special_colors.h
     common/fractint.cpp
     common/framain2.cpp headers/framain2.h
     headers/get_ifs_token.h
@@ -288,6 +289,7 @@ source_group("Source Files/common/plumbing" FILES
 source_group("Header Files/common/ui" FILES
     headers/find_file.h
     headers/find_path.h
+    headers/find_special_colors.h
     headers/fractint.h
     headers/framain2.h
     headers/get_ifs_token.h
@@ -311,6 +313,7 @@ source_group("Header Files/common/ui" FILES
 source_group("Source Files/common/ui" FILES
     common/find_file.cpp
     common/find_path.cpp
+    common/find_special_colors.cpp
     common/fractint.cpp
     common/framain2.cpp
     common/get_key_no_help.cpp

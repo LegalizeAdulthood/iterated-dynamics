@@ -10,6 +10,7 @@
 #include "editpal.h"
 #include "encoder.h"
 #include "evolve.h"
+#include "find_special_colors.h"
 #include "fracsubr.h"
 #include "fractalp.h"
 #include "fractype.h"
