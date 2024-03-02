@@ -10,7 +10,8 @@ set(ID_TEST_SECOND_IFS_NAME "3dfern")
 set(ID_TEST_IFS_FILE "test.ifs")
 configure_file(test.ifs.in "${ID_TEST_DATA_DIR}/${ID_TEST_IFS_FILE}")
 
-set(ID_TEST_DATA_SUBDIR "${ID_TEST_DATA_DIR}/subdir")
+set(ID_TEST_DATA_SUBDIR_NAME "subdir")
+set(ID_TEST_DATA_SUBDIR "${ID_TEST_DATA_DIR}/${ID_TEST_DATA_SUBDIR_NAME}")
 set(ID_TEST_IFS_FILE2 "test2.ifs")
 configure_file(test.ifs.in "${ID_TEST_DATA_SUBDIR}/${ID_TEST_IFS_FILE2}")
 

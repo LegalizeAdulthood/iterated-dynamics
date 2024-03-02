@@ -1,7 +1,8 @@
 #pragma once
 
-#define ID_TEST_DATA_DIR    "@ID_TEST_DATA_DIR@"
-#define ID_TEST_DATA_SUBDIR "@ID_TEST_DATA_SUBDIR@"
+#define ID_TEST_DATA_DIR         "@ID_TEST_DATA_DIR@"
+#define ID_TEST_DATA_SUBDIR      "@ID_TEST_DATA_SUBDIR@"
+#define ID_TEST_DATA_SUBDIR_NAME "@ID_TEST_DATA_SUBDIR_NAME@"
 
 // IFS test data
 #define ID_TEST_IFS_FILE "@ID_TEST_IFS_FILE@"

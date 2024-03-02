@@ -66,3 +66,13 @@ TEST_F(TestMergePathNames, setParentDirNewFilenameForNonExistingDirAtCommandLine
     EXPECT_EQ(0, result);
     EXPECT_EQ((m_non_existing_dir.parent_path() / "new_filename.par").make_preferred(), m_path);
 }
+
+TEST_F(TestMergePathNames, newPathIsDirectory)
+{
+    m_path = fs::path{ID_TEST_IFS_FILE}.make_preferred().string();
+
+    const int result = merge_pathnames(m_path, fs::path{ID_TEST_DATA_SUBDIR}.make_preferred().string().c_str(), m_mode);
+
+    EXPECT_EQ(1, result);
+    EXPECT_EQ((fs::path{ID_TEST_DATA_SUBDIR} / ID_TEST_IFS_FILE).make_preferred().string(), m_path);
+}
