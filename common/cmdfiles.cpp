@@ -168,8 +168,6 @@ int g_orbit_delay = 0;            // clock ticks delating orbit release
 int g_transparent_color_3d[2] = { 0 }; // transparency min/max values
 long    g_log_map_flag = 0;            // Logarithmic palette flag: 0 = no
 
-BYTE g_exit_video_mode = 3;              // video mode on exit
-
 int     g_log_map_fly_calculate = 0;       // calculate logmap on-the-fly
 bool    g_log_map_auto_calculate = false;          // auto calculate logmap
 bool    g_bof_match_book_images = true;                  // Flag to make inside=bof options not duplicate bof images
@@ -1835,11 +1833,8 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         return CMDARG_NONE;
     }
 
-    if (variable == "exitmode")      // exitmode=?
+    if (variable == "exitmode")      // exitmode=? (deprecated)
     {
-        unsigned int hexval;
-        std::sscanf(value, "%x", &hexval);
-        g_exit_video_mode = (BYTE)hexval;
         return CMDARG_NONE;
     }
 

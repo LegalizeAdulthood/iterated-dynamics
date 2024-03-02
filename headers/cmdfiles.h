@@ -207,7 +207,6 @@ extern int                   g_distance_estimator_x_dots;
 extern int                   g_distance_estimator_y_dots;
 extern bool                  g_dither_flag;
 extern bool                  g_escape_exit;
-extern BYTE                  g_exit_video_mode;
 extern bool                  g_fast_restore;
 extern int                   g_fill_color;
 extern bool                  g_finite_attractor;
