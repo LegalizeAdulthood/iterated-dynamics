@@ -48,63 +48,35 @@ int merge_pathnames(char *oldfullpath, char const *new_filename, cmd_file mode)
         fix_dirname(newfilename);
     }
 
-    // if drive, colon, slash, NUL, is a directory
-    if (newfilename[1] == ':' && newfilename[2] == SLASHC && newfilename[3] == 0)
-    {
-        isadir = true;
-    }
-
-    // if drive, colon, NUL, is a directory
-    if (newfilename[1] == ':' && newfilename[2] == 0)
-    {
-        newfilename[2] = SLASHC;
-        newfilename[3] = 0;
-        isadir = true;
-    }
-
     // if dot, slash, NUL, it's the current directory, set up full path
     if (newfilename[0] == '.' && newfilename[1] == SLASHC && newfilename[2] == 0)
     {
-        char temp_path[FILE_MAX_PATH];
-#ifdef XFRACT
-        temp_path[0] = '.';
-        temp_path[1] = 0;
-#else
-        temp_path[0] = (char)('a' + _getdrive() - 1);
-        temp_path[1] = ':';
-        temp_path[2] = 0;
-#endif
-        expand_dirname(newfilename, temp_path);
-        std::strcat(temp_path, newfilename);
-        std::strcpy(newfilename, temp_path);
+        char temp_drive[FILE_MAX_PATH];
+        expand_dirname(newfilename, temp_drive);
+        std::strcat(temp_drive, newfilename);
+        std::strcpy(newfilename, temp_drive);
         isadir = true;
     }
+
     // if dot, slash, its relative to the current directory, set up full path
     if (newfilename[0] == '.' && newfilename[1] == SLASHC)
     {
         bool test_dir = false;
-        char temp_path[FILE_MAX_PATH];
-#ifdef XFRACT
-        temp_path[0] = '.';
-        temp_path[1] = 0;
-#else
-        temp_path[0] = (char)('a' + _getdrive() - 1);
-        temp_path[1] = ':';
-        temp_path[2] = 0;
-#endif
+        char temp_drive[FILE_MAX_PATH];
         if (std::strrchr(newfilename, '.') == newfilename)
         {
-            test_dir = true;    // only one '.' assume its a directory
+            test_dir = true;    // only one '.' assume it's a directory
         }
-        expand_dirname(newfilename, temp_path);
-        std::strcat(temp_path, newfilename);
-        std::strcpy(newfilename, temp_path);
+        expand_dirname(newfilename, temp_drive);
+        std::strcat(temp_drive, newfilename);
+        std::strcpy(newfilename, temp_drive);
         if (!test_dir)
         {
             int len = (int) std::strlen(newfilename);
             newfilename[len-1] = 0; // get rid of slash added by expand_dirname
         }
     }
+
     // check existence
     if (!isadir || isafile)
     {
