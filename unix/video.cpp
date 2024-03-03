@@ -350,36 +350,6 @@ putstring(int row, int col, int attr, char const *msg)
 #endif
 
 /*
-; setattr(row, col, attr, count) where
-;         row, col = row and column to start printing.
-;         attr = color attribute.
-;         count = number of characters to set
-;         This routine works only in real color text mode.
-*/
-#if 0
-void
-setattr(int row, int col, int attr, int count)
-{
-    movecursor(row, col);
-}
-#endif
-
-/*
-; **************** Function home()  ********************************
-
-;       Home the cursor (called before printfs)
-*/
-#if 0
-void
-home()
-{
-    wmove(curwin, 0, 0);
-    g_text_row = 0;
-    g_text_col = 0;
-}
-#endif
-
-/*
 ; ************* Function scrollup(toprow, botrow) ******************
 
 ;       Scroll the screen up (from toprow to botrow)

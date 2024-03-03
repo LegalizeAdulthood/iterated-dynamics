@@ -212,18 +212,6 @@ void scroll_relative(int bycol, int byrow)
     }
 }
 
-/*
-; **************** Function home()  ********************************
-
-;       Home the cursor (called before printfs)
-*/
-void home()
-{
-    driver_move_cursor(0, 0);
-    g_text_row = 0;
-    g_text_col = 0;
-}
-
 // tenths of millisecond timewr routine
 // static struct timeval tv_start;
 
