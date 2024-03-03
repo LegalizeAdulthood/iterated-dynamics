@@ -1,228 +1,29 @@
 #include "split_path.h"
 
-#include "port.h"
-
-#include "prototyp.h"
-
-#include <algorithm>
 #include <cstring>
+#include <filesystem>
 
-#ifndef XFRACT
-void splitpath(char const *file_template, char *drive, char *dir, char *fname, char *ext)
+namespace fs = std::filesystem;
+
+void splitpath(const std::string &file_template, char *drive, char *dir, char *fname, char *ext)
 {
-    int length;
-    int len;
-    int offset;
-    char const *tmp;
-    if (drive)
+    fs::path path{file_template};
+    path.make_preferred();
+    if (drive != nullptr)
     {
-        drive[0] = 0;
+        std::strcpy(drive, path.root_name().string().c_str());
     }
-    if (dir)
+    const std::string dir_name{path.parent_path().string().substr(path.root_name().string().length())};
+    if (dir != nullptr)
     {
-        dir[0]   = 0;
+        std::strcpy(dir, dir_name.empty() ? "" : (dir_name + static_cast<char>(fs::path::preferred_separator)).c_str());
     }
-    if (fname)
+    if (fname != nullptr)
     {
-        fname[0] = 0;
+        std::strcpy(fname, path.stem().string().c_str());
     }
-    if (ext)
+    if (ext != nullptr)
     {
-        ext[0]   = 0;
-    }
-
-    length = (int) std::strlen(file_template);
-    if (length == 0)
-    {
-        return;
-    }
-
-    offset = 0;
-
-    // get drive
-    if (length >= 2)
-    {
-        if (file_template[1] == ':')
-        {
-            if (drive)
-            {
-                drive[0] = file_template[offset++];
-                drive[1] = file_template[offset++];
-                drive[2] = 0;
-            }
-            else
-            {
-                offset++;
-                offset++;
-            }
-        }
-    }
-
-    // get dir
-    if (offset < length)
-    {
-        tmp = std::strrchr(file_template, SLASHC);
-        if (tmp)
-        {
-            tmp++;  // first character after slash
-            len = (int)(tmp - (char *)&file_template[offset]);
-            if (len >= 0 && len < FILE_MAX_DIR && dir)
-            {
-                std::strncpy(dir, &file_template[offset], std::min(len, FILE_MAX_DIR));
-            }
-            if (len < FILE_MAX_DIR && dir)
-            {
-                dir[len] = 0;
-            }
-            offset += len;
-        }
-    }
-    else
-    {
-        return;
-    }
-
-    // get fname
-    if (offset < length)
-    {
-        tmp = std::strrchr(file_template, '.');
-        if (tmp < std::strrchr(file_template, SLASHC) || tmp < std::strrchr(file_template, ':'))
-        {
-            tmp = nullptr; // in this case the '.' must be a directory
-        }
-        if (tmp)
-        {
-            len = (int)(tmp - (char *)&file_template[offset]);
-            if ((len > 0) && (offset+len < length) && fname)
-            {
-                std::strncpy(fname, &file_template[offset], std::min(len, FILE_MAX_FNAME));
-                if (len < FILE_MAX_FNAME)
-                {
-                    fname[len] = 0;
-                }
-                else
-                {
-                    fname[FILE_MAX_FNAME-1] = 0;
-                }
-            }
-            offset += len;
-            if ((offset < length) && ext)
-            {
-                std::strncpy(ext, &file_template[offset], FILE_MAX_EXT);
-                ext[FILE_MAX_EXT-1] = 0;
-            }
-        }
-        else if ((offset < length) && fname)
-        {
-            std::strncpy(fname, &file_template[offset], FILE_MAX_FNAME);
-            fname[FILE_MAX_FNAME-1] = 0;
-        }
+        std::strcpy(ext, path.extension().string().c_str());
     }
 }
-#else
-/*
- *----------------------------------------------------------------------
- *
- * splitpath --
- *
- *      This is the splitpath code from prompts.c
- *
- * Results:
- *      Returns drive, dir, base, and extension.
- *
- * Side effects:
- *      None.
- *
- *----------------------------------------------------------------------
- */
-int splitpath(char const *file_template, char *drive, char *dir, char *fname, char *ext)
-{
-    int length;
-    int len;
-    int offset;
-    char const *tmp;
-
-    if (drive)
-        drive[0] = 0;
-    if (dir)
-        dir[0]   = 0;
-    if (fname)
-        fname[0] = 0;
-    if (ext)
-        ext[0]   = 0;
-
-    length = std::strlen(file_template);
-    if (length == 0)
-        return;
-    offset = 0;
-
-    // get drive
-    if (length >= 2)
-        if (file_template[1] == ':')
-        {
-            if (drive)
-            {
-                drive[0] = file_template[offset++];
-                drive[1] = file_template[offset++];
-                drive[2] = 0;
-            }
-            else
-            {
-                offset++;
-                offset++;
-            }
-        }
-
-    // get dir
-    if (offset < length)
-    {
-        tmp = std::strrchr(file_template, SLASHC);
-        if (tmp)
-        {
-            tmp++;  // first character after slash
-            len = tmp - &file_template[offset];
-            if (len >=0 && len < FILE_MAX_DIR && dir)
-                        std::strncpy(dir, &file_template[offset], std::min(len, FILE_MAX_DIR));
-            if (len < FILE_MAX_DIR && dir)
-                        dir[len] = 0;
-            offset += len;
-        }
-    }
-    else
-        return;
-
-    // get fname
-    if (offset < length)
-    {
-        tmp = std::strrchr(file_template, '.');
-        if (tmp < std::strrchr(file_template, SLASHC) || tmp < std::strrchr(file_template, ':'))
-        {
-            tmp = nullptr; // in this case the '.' must be a directory
-        }
-        if (tmp)
-        {
-            // tmp++; */ /* first character past "."
-            len = tmp - &file_template[offset];
-            if ((len > 0) && (offset+len < length) && fname)
-            {
-                std::strncpy(fname, &file_template[offset], std::min(len, FILE_MAX_FNAME));
-                if (len < FILE_MAX_FNAME)
-                            fname[len] = 0;
-                else
-                    fname[FILE_MAX_FNAME-1] = 0;
-            }
-            offset += len;
-            if ((offset < length) && ext)
-            {
-                std::strncpy(ext, &file_template[offset], FILE_MAX_EXT);
-                ext[FILE_MAX_EXT-1] = 0;
-            }
-        }
-        else if ((offset < length) && fname)
-        {
-            std::strncpy(fname, &file_template[offset], FILE_MAX_FNAME);
-            fname[FILE_MAX_FNAME-1] = 0;
-        }
-    }
-}
-#endif

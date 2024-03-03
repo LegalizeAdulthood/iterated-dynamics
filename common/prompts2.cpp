@@ -1571,7 +1571,7 @@ retry_dir:
                 {
                     putstringcenter(2, 0, 80, C_GENERAL_INPUT, DTA.filename.c_str());
 
-                    splitpath(DTA.filename, nullptr, nullptr, fname, ext);
+                    split_fname_ext(DTA.filename, fname, ext);
                     // just using speedstr as a handy buffer
                     make_path(speedstr, drive, dir, fname, ext);
                     std::strncpy(choices[++filecount]->name, DTA.filename.c_str(), 13);

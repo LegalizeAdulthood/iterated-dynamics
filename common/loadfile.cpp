@@ -1445,8 +1445,8 @@ rescan:  // entry for changed browse parms
     toggle = 0;
     wincount = 0;
     g_browse_sub_images = true;
-    splitpath(g_read_filename, drive, dir, nullptr, nullptr);
-    splitpath(g_browse_mask, nullptr, nullptr, fname, ext);
+    split_drive_dir(g_read_filename, drive, dir);
+    split_fname_ext(g_browse_mask, fname, ext);
     make_path(tmpmask, drive, dir, fname, ext);
     done = (vid_too_big == 2) || no_memory || fr_findfirst(tmpmask);
     // draw all visible windows
@@ -1457,7 +1457,7 @@ rescan:  // entry for changed browse parms
             driver_get_key();
             break;
         }
-        splitpath(DTA.filename, nullptr, nullptr, fname, ext);
+        split_fname_ext(DTA.filename, fname, ext);
         make_path(tmpmask, drive, dir, fname, ext);
         FRACTAL_INFO read_info;
         ext_blk_2 blk_2_info;
@@ -1626,7 +1626,7 @@ rescan:  // entry for changed browse parms
                 }
                 if (c == 'Y')
                 {
-                    splitpath(g_read_filename, drive, dir, nullptr, nullptr);
+                    split_drive_dir(g_read_filename, drive, dir);
                     const std::filesystem::path name_path(winlist.name);
                     const std::string fname2 = name_path.stem().string();
                     const std::string ext2 = name_path.extension().string();
@@ -1658,7 +1658,7 @@ rescan:  // entry for changed browse parms
                 driver_stack_screen();
                 newname[0] = 0;
                 std::strcpy(mesg, "Enter the new filename for ");
-                splitpath(g_read_filename, drive, dir, nullptr, nullptr);
+                split_drive_dir(g_read_filename, drive, dir);
                 {
                     const std::filesystem::path name_path{winlist.name};
                     const std::string           fname2{name_path.stem().string()};

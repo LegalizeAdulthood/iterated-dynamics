@@ -1494,27 +1494,27 @@ bool find_file_item(char *filename, char const *itemname, std::FILE **fileptr, i
         std::strcat(parsearchname, itemname);
         parsearchname[ITEM_NAME_LEN + 5] = (char) 0; //safety
         std::strcpy(defaultextension, ".frm");
-        splitpath(g_search_for.frm, drive, dir, nullptr, nullptr);
+        split_drive_dir(g_search_for.frm, drive, dir);
         break;
     case 2:
         std::strcpy(parsearchname, "lsys:");
         std::strcat(parsearchname, itemname);
         parsearchname[ITEM_NAME_LEN + 5] = (char) 0; //safety
         std::strcpy(defaultextension, ".l");
-        splitpath(g_search_for.lsys, drive, dir, nullptr, nullptr);
+        split_drive_dir(g_search_for.lsys, drive, dir);
         break;
     case 3:
         std::strcpy(parsearchname, "ifs:");
         std::strcat(parsearchname, itemname);
         parsearchname[ITEM_NAME_LEN + 5] = (char) 0; //safety
         std::strcpy(defaultextension, ".ifs");
-        splitpath(g_search_for.ifs, drive, dir, nullptr, nullptr);
+        split_drive_dir(g_search_for.ifs, drive, dir);
         break;
     default:
         std::strcpy(parsearchname, itemname);
         parsearchname[ITEM_NAME_LEN + 5] = (char) 0; //safety
         std::strcpy(defaultextension, ".par");
-        splitpath(g_search_for.par, drive, dir, nullptr, nullptr);
+        split_drive_dir(g_search_for.par, drive, dir);
         break;
     }
 
@@ -1570,7 +1570,7 @@ bool find_file_item(char *filename, char const *itemname, std::FILE **fileptr, i
                 && DTA.filename != "."
                 && DTA.filename != "..")
             {
-                splitpath(DTA.filename, nullptr, nullptr, fname, ext);
+                split_fname_ext(DTA.filename, fname, ext);
                 make_path(fullpath, drive, dir, fname, ext);
                 infile = std::fopen(fullpath, "rb");
                 if (infile != nullptr)
@@ -1595,7 +1595,7 @@ bool find_file_item(char *filename, char const *itemname, std::FILE **fileptr, i
 
     if (!found && g_organize_formulas_search && itemtype == 1)
     {
-        splitpath(g_organize_formulas_dir, drive, dir, nullptr, nullptr);
+        split_drive_dir(g_organize_formulas_dir, drive, dir);
         fname[0] = '_';
         fname[1] = (char) 0;
         if (std::isalpha(itemname[0]))
