@@ -36,21 +36,9 @@ namespace fs = std::filesystem;
 // (modes AT_CMD_LINE and SSTOOLS_INI)
 int merge_pathnames(char *oldfullpath, char const *new_filename, cmd_file mode)
 {
+    // no dot or slash so assume a file
     char newfilename[FILE_MAX_PATH];
     std::strcpy(newfilename, new_filename);
-    bool isadir_error = false;
-    char drive[FILE_MAX_DRIVE];
-    char dir[FILE_MAX_DIR];
-    char fname[FILE_MAX_FNAME];
-    char ext[FILE_MAX_EXT];
-    char temp_path[FILE_MAX_PATH];
-
-    char drive1[FILE_MAX_DRIVE];
-    char dir1[FILE_MAX_DIR];
-    char fname1[FILE_MAX_FNAME];
-    char ext1[FILE_MAX_EXT];
-
-    // no dot or slash so assume a file
     bool isafile = std::strchr(newfilename, '.') == nullptr
         && std::strchr(newfilename, SLASHC) == nullptr;
     bool isadir = isadirectory(newfilename);
@@ -58,11 +46,13 @@ int merge_pathnames(char *oldfullpath, char const *new_filename, cmd_file mode)
     {
         fix_dirname(newfilename);
     }
+
     // if drive, colon, slash, is a directory
     if ((int) std::strlen(newfilename) == 3 && newfilename[1] == ':' && newfilename[2] == SLASHC)
     {
         isadir = true;
     }
+
     // if drive, colon, with no slash, is a directory
     if ((int) std::strlen(newfilename) == 2 && newfilename[1] == ':')
     {
@@ -70,7 +60,9 @@ int merge_pathnames(char *oldfullpath, char const *new_filename, cmd_file mode)
         newfilename[3] = 0;
         isadir = true;
     }
+
     // if dot, slash, '0', its the current directory, set up full path
+    char temp_path[FILE_MAX_PATH];
     if (newfilename[0] == '.' && newfilename[1] == SLASHC && newfilename[2] == 0)
     {
 #ifdef XFRACT
@@ -129,8 +121,18 @@ int merge_pathnames(char *oldfullpath, char const *new_filename, cmd_file mode)
         }
     }
 
+    char drive[FILE_MAX_DRIVE];
+    char dir[FILE_MAX_DIR];
+    char fname[FILE_MAX_FNAME];
+    char ext[FILE_MAX_EXT];
     splitpath(newfilename, drive, dir, fname, ext);
+
+    char drive1[FILE_MAX_DRIVE];
+    char dir1[FILE_MAX_DIR];
+    char fname1[FILE_MAX_FNAME];
+    char ext1[FILE_MAX_EXT];
     splitpath(oldfullpath, drive1, dir1, fname1, ext1);
+
     bool const get_path = (mode == cmd_file::AT_CMD_LINE) || (mode == cmd_file::SSTOOLS_INI);
     if ((int) std::strlen(drive) != 0 && get_path)
     {
@@ -148,6 +150,7 @@ int merge_pathnames(char *oldfullpath, char const *new_filename, cmd_file mode)
     {
         std::strcpy(ext1, ext);
     }
+    bool isadir_error = false;
     if (!isadir && !isafile && get_path)
     {
         make_path(oldfullpath, drive1, dir1, nullptr, nullptr);
