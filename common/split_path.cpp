@@ -8,7 +8,7 @@
 #include <cstring>
 
 #ifndef XFRACT
-int splitpath(char const *file_template, char *drive, char *dir, char *fname, char *ext)
+void splitpath(char const *file_template, char *drive, char *dir, char *fname, char *ext)
 {
     int length;
     int len;
@@ -34,7 +34,7 @@ int splitpath(char const *file_template, char *drive, char *dir, char *fname, ch
     length = (int) std::strlen(file_template);
     if (length == 0)
     {
-        return 0;
+        return;
     }
 
     offset = 0;
@@ -79,7 +79,7 @@ int splitpath(char const *file_template, char *drive, char *dir, char *fname, ch
     }
     else
     {
-        return 0;
+        return;
     }
 
     // get fname
@@ -118,7 +118,6 @@ int splitpath(char const *file_template, char *drive, char *dir, char *fname, ch
             fname[FILE_MAX_FNAME-1] = 0;
         }
     }
-    return 0;
 }
 #else
 /*
@@ -154,7 +153,7 @@ int splitpath(char const *file_template, char *drive, char *dir, char *fname, ch
 
     length = std::strlen(file_template);
     if (length == 0)
-        return 0;
+        return;
     offset = 0;
 
     // get drive
@@ -190,7 +189,7 @@ int splitpath(char const *file_template, char *drive, char *dir, char *fname, ch
         }
     }
     else
-        return 0;
+        return;
 
     // get fname
     if (offset < length)
@@ -225,6 +224,5 @@ int splitpath(char const *file_template, char *drive, char *dir, char *fname, ch
             fname[FILE_MAX_FNAME-1] = 0;
         }
     }
-    return 0;
 }
 #endif
