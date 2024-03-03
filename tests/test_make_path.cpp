@@ -104,3 +104,47 @@ TEST_F(TestMakePath, directoryWithTrailingSlash)
 
     ASSERT_STREQ(fs::path{"tmp/"}.make_preferred().string().c_str(), buffer);
 }
+
+namespace
+{
+
+class TestMakeFNameExt : public TestMakePath
+{
+};
+
+} // namespace
+
+TEST_F(TestMakeFNameExt, nullFilename)
+{
+    make_fname_ext(buffer, nullptr, ".par");
+
+    ASSERT_STREQ(".par", buffer);
+}
+
+TEST_F(TestMakeFNameExt, emptyFilename)
+{
+    make_fname_ext(buffer, "", ".par");
+
+    ASSERT_STREQ(".par", buffer);
+}
+
+TEST_F(TestMakeFNameExt, nullExtension)
+{
+    make_fname_ext(buffer, "id", nullptr);
+
+    ASSERT_STREQ("id", buffer);
+}
+
+TEST_F(TestMakeFNameExt, emptyExtension)
+{
+    make_fname_ext(buffer, "id", "");
+
+    ASSERT_STREQ("id", buffer);
+}
+
+TEST_F(TestMakeFNameExt, basic)
+{
+    make_fname_ext(buffer, "id", ".par");
+
+    ASSERT_STREQ("id.par", buffer);
+}
