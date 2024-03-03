@@ -17,9 +17,12 @@ configure_file(test.ifs.in "${ID_TEST_DATA_SUBDIR}/${ID_TEST_IFS_FILE2}")
 
 set(ID_TEST_FIND_FILE_SUBDIR test_data/find_file)
 set(ID_TEST_DATA_FIND_FILE_DIR "${CMAKE_CURRENT_BINARY_DIR}/${ID_TEST_FIND_FILE_SUBDIR}")
-configure_file(test_find_file.txt.in ${ID_TEST_FIND_FILE_SUBDIR}/find_file1.txt)
-configure_file(test_find_file.txt.in ${ID_TEST_FIND_FILE_SUBDIR}/find_file2.txt)
-configure_file(test_find_file.txt.in ${ID_TEST_FIND_FILE_SUBDIR}/subdir/find_file3.txt)
+set(ID_TEST_FIND_FILE1 "find_file1.txt")
+set(ID_TEST_FIND_FILE2 "find_file2.txt")
+set(ID_TEST_FIND_FILE3 "find_file3.txt")
+configure_file(test_find_file.txt.in ${ID_TEST_FIND_FILE_SUBDIR}/${ID_TEST_FIND_FILE1})
+configure_file(test_find_file.txt.in ${ID_TEST_FIND_FILE_SUBDIR}/${ID_TEST_FIND_FILE2})
+configure_file(test_find_file.txt.in ${ID_TEST_FIND_FILE_SUBDIR}/subdir/${ID_TEST_FIND_FILE3})
 
 configure_file(test_data.h.in include/test_data.h @ONLY)
 

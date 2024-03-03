@@ -1,5 +1,6 @@
 #include <find_file.h>
 
+#include "current_path_saver.h"
 #include "test_data.h"
 
 #include <gtest/gtest.h>
@@ -15,7 +16,7 @@ TEST(TestFindFile, firstTextFile)
     const int result = fr_findfirst((fs::path(ID_TEST_DATA_FIND_FILE_DIR) / "*.txt").string().c_str());
 
     EXPECT_EQ(0, result);
-    EXPECT_EQ("find_file1.txt", DTA.filename);
+    EXPECT_EQ(ID_TEST_FIND_FILE1, DTA.filename);
     EXPECT_EQ(0, DTA.attribute);
 }
 
@@ -26,7 +27,7 @@ TEST(TestFindFile, secondTextFile)
     const int second = fr_findnext();
 
     EXPECT_EQ(0, second);
-    EXPECT_EQ("find_file2.txt", DTA.filename);
+    EXPECT_EQ(ID_TEST_FIND_FILE2, DTA.filename);
     EXPECT_EQ(0, DTA.attribute);
 }
 
@@ -61,4 +62,15 @@ TEST(TestFindFile, findSubDir)
     EXPECT_EQ(0, result);
     EXPECT_EQ(subdir, DTA.filename);
     EXPECT_EQ(SUBDIR, DTA.attribute);
+}
+
+TEST(TestFindFile, findFileCurrentDirectory)
+{
+    current_path_saver saver{ID_TEST_DATA_FIND_FILE_DIR};
+
+    int result = fr_findfirst(ID_TEST_FIND_FILE1);
+
+    EXPECT_EQ(0, result);
+    EXPECT_EQ(ID_TEST_FIND_FILE1, DTA.filename);
+    EXPECT_EQ(0, DTA.attribute);
 }
