@@ -33,13 +33,6 @@ VIDEOINFO g_video_table[MAX_VIDEO_MODES]{};
 // Global variables that should be phased out (old video mode stuff)
 int g_video_vram = 0;
 
-// converts relative path to absolute path
-int expand_dirname(char *dirname, char *drive)
-{
-    // TODO
-    return -1;
-}
-
 unsigned long get_disk_space()
 {
     // TODO
