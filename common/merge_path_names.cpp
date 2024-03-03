@@ -14,13 +14,6 @@
 #include "make_path.h"
 #include "split_path.h"
 
-#ifdef WIN32
-#include <direct.h>
-#include <corecrt_io.h>
-#else
-#include <unistd.h>
-#endif
-
 #include <cstring>
 #include <filesystem>
 

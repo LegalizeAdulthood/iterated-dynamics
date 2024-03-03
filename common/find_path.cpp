@@ -7,12 +7,6 @@
 #include "id_data.h"
 #include "search_path.h"
 
-#ifdef WIN32
-#include <corecrt_io.h>
-#else
-#include <unistd.h>
-#endif
-
 #include <filesystem>
 
 namespace fs = std::filesystem;
