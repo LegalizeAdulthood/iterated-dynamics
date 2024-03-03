@@ -71,6 +71,12 @@ static std::FILE *parmfile;
 
 #define PAR_KEY(x)  ( x < 10 ? '0' + x : 'a' - 10 + x)
 
+inline bool is_writable(const std::string &path)
+{
+    const fs::perms read_write = fs::perms::owner_read | fs::perms::owner_write;
+    return (fs::status(path).permissions() & read_write) == read_write;
+}
+
 void make_batch_file()
 {
 #define MAXPROMPTS 18
@@ -383,7 +389,7 @@ skip_UI:
         {
             // file exists
             gotinfile = true;
-            if (access(g_command_file.c_str(), 6))
+            if (!is_writable(g_command_file))
             {
                 std::snprintf(buf, NUM_OF(buf), "Can't write %s", g_command_file.c_str());
                 stopmsg(STOPMSG_NONE, buf);
@@ -2152,7 +2158,7 @@ static void update_id_cfg()
 
     const std::string cfgname = find_path("id.cfg");
 
-    if (access(cfgname.c_str(), 6))
+    if (!is_writable(cfgname))
     {
         std::snprintf(buf, NUM_OF(buf), "Can't write %s", cfgname.c_str());
         stopmsg(STOPMSG_NONE, buf);
