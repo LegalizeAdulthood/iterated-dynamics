@@ -1,7 +1,7 @@
 # Copyright 2018 Richard Thomson
 
 if(NOT CMAKE_SYSTEM_NAME STREQUAL "Windows")
-    add_library(os_hc STATIC ../common/split_path.cpp unix.cpp)
+    add_library(os_hc STATIC unix.cpp)
     target_compile_definitions(os_hc PUBLIC ${OS_DEFINITIONS})
     target_compile_options(os_hc PRIVATE ${ID_TARGET_OPTIONS})
     target_include_directories(os_hc PRIVATE ../headers)

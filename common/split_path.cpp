@@ -227,11 +227,4 @@ int splitpath(char const *file_template, char *drive, char *dir, char *fname, ch
     }
     return 0;
 }
-
-int
-_splitpath(char const *file_template, char *drive, char *dir, char *fname, char *ext)
-{
-    return splitpath(file_template, drive, dir, fname, ext);
-}
-
 #endif
