@@ -108,13 +108,16 @@ int merge_pathnames(char *oldfullpath, char const *new_filename, cmd_file mode)
     splitpath(oldfullpath, drive1, dir1, fname1, ext1);
 
     bool const get_path = (mode == cmd_file::AT_CMD_LINE) || (mode == cmd_file::SSTOOLS_INI);
-    if ((int) std::strlen(drive) != 0 && get_path)
+    if (get_path)
     {
-        std::strcpy(drive1, drive);
-    }
-    if ((int) std::strlen(dir) != 0 && get_path)
-    {
-        std::strcpy(dir1, dir);
+        if ((int) std::strlen(drive) != 0)
+        {
+            std::strcpy(drive1, drive);
+        }
+        if ((int) std::strlen(dir) != 0)
+        {
+            std::strcpy(dir1, dir);
+        }
     }
     if ((int) std::strlen(fname) != 0)
     {
