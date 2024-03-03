@@ -36,9 +36,10 @@ namespace fs = std::filesystem;
 // (modes AT_CMD_LINE and SSTOOLS_INI)
 int merge_pathnames(char *oldfullpath, char const *new_filename, cmd_file mode)
 {
-    // no dot or slash so assume a file
     char newfilename[FILE_MAX_PATH];
     std::strcpy(newfilename, new_filename);
+
+    // no dot or slash so assume a file
     bool isafile = std::strchr(newfilename, '.') == nullptr
         && std::strchr(newfilename, SLASHC) == nullptr;
     bool isadir = isadirectory(newfilename);
@@ -47,24 +48,24 @@ int merge_pathnames(char *oldfullpath, char const *new_filename, cmd_file mode)
         fix_dirname(newfilename);
     }
 
-    // if drive, colon, slash, is a directory
-    if ((int) std::strlen(newfilename) == 3 && newfilename[1] == ':' && newfilename[2] == SLASHC)
+    // if drive, colon, slash, NUL, is a directory
+    if (newfilename[1] == ':' && newfilename[2] == SLASHC && newfilename[3] == 0)
     {
         isadir = true;
     }
 
-    // if drive, colon, with no slash, is a directory
-    if ((int) std::strlen(newfilename) == 2 && newfilename[1] == ':')
+    // if drive, colon, NUL, is a directory
+    if (newfilename[1] == ':' && newfilename[2] == 0)
     {
         newfilename[2] = SLASHC;
         newfilename[3] = 0;
         isadir = true;
     }
 
-    // if dot, slash, '0', its the current directory, set up full path
-    char temp_path[FILE_MAX_PATH];
+    // if dot, slash, NUL, it's the current directory, set up full path
     if (newfilename[0] == '.' && newfilename[1] == SLASHC && newfilename[2] == 0)
     {
+        char temp_path[FILE_MAX_PATH];
 #ifdef XFRACT
         temp_path[0] = '.';
         temp_path[1] = 0;
@@ -82,6 +83,7 @@ int merge_pathnames(char *oldfullpath, char const *new_filename, cmd_file mode)
     if (newfilename[0] == '.' && newfilename[1] == SLASHC)
     {
         bool test_dir = false;
+        char temp_path[FILE_MAX_PATH];
 #ifdef XFRACT
         temp_path[0] = '.';
         temp_path[1] = 0;
