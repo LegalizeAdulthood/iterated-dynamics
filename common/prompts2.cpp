@@ -1847,7 +1847,7 @@ void make_path(char *template_str, char const *drive, char const *dir, char cons
     {
         result.replace_extension(ext);
     }
-    strcpy(template_str, result.make_preferred().string().c_str());
+    strcpy(template_str, result.lexically_normal().make_preferred().string().c_str());
 }
 
 static void dir_name(char *target, char const *dir, char const *name)
