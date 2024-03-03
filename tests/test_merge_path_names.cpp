@@ -9,6 +9,9 @@
 
 namespace fs = std::filesystem;
 
+namespace
+{
+
 class TestMergePathNames : public ::testing::Test
 {
 public:
@@ -28,6 +31,8 @@ void TestMergePathNames::SetUp()
     m_existing_dir.make_preferred();
     m_non_existing_dir.make_preferred();
 }
+
+} // namespace
 
 TEST_F(TestMergePathNames, basicAtCommandLine)
 {

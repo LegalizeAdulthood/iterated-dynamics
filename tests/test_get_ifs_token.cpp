@@ -11,6 +11,9 @@
 
 namespace fs = std::filesystem;
 
+namespace
+{
+
 class TestGetIFSToken : public testing::Test
 {
 public:
@@ -48,12 +51,14 @@ void TestGetIFSToken::skipToken()
 void TestGetIFSToken::skipFirstIFSDefinition()
 {
     constexpr int num_first_tokens = 7 + 1 + 1; // {, params, }
-    get_ifs_token(m_buff.data(), m_file); // name
+    get_ifs_token(m_buff.data(), m_file);       // name
     for (int i = 0; i < num_first_tokens; ++i)
     {
         skipToken();
     }
 }
+
+} // namespace
 
 TEST_F(TestGetIFSToken, firstTokenIsName)
 {
