@@ -35,15 +35,13 @@ add_executable(test-id
     test_get_ifs_token.cpp
     test_is_directory.cpp
     test_make_path.cpp
+    test_merge_path_names.cpp
     test_path_match.cpp
     test_search_path.cpp
     test_split_path.cpp
     test_update_save_name.cpp
     test_find_file.txt.in
 )
-if(WIN32)
-    target_sources(test-id PRIVATE test_merge_path_names.cpp)
-endif()
 source_group("CMake Templates" REGULAR_EXPRESSION ".*\\.in$")
 source_group("Test Data/IFS" REGULAR_EXPRESSION ".*\\.ifs$")
 target_include_directories(test-id PUBLIC "${CMAKE_CURRENT_BINARY_DIR}/include")
