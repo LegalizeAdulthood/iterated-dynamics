@@ -4,6 +4,9 @@
 
 #include "prototyp.h"
 
+#include <algorithm>
+#include <cstring>
+
 #ifndef XFRACT
 int splitpath(char const *file_template, char *drive, char *dir, char *fname, char *ext)
 {
