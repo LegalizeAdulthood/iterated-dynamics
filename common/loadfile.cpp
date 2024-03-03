@@ -32,6 +32,7 @@
 #include "prompts1.h"
 #include "prompts2.h"
 #include "realdos.h"
+#include "split_path.h"
 #include "rotate.h"
 #include "zoom.h"
 

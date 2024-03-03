@@ -28,6 +28,7 @@
 #include "prompts2.h"
 #include "realdos.h"
 #include "soi.h"
+#include "split_path.h"
 #include "update_save_name.h"
 
 #include <algorithm>

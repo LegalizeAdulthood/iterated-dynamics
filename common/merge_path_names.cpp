@@ -12,7 +12,7 @@
 #include "fix_dirname.h"
 #include "is_directory.h"
 #include "make_path.h"
-#include "prompts2.h"
+#include "split_path.h"
 
 #ifdef WIN32
 #include <direct.h>

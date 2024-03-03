@@ -155,6 +155,7 @@ add_library(libid
     common/realdos.cpp headers/realdos.h
     common/search_path.cpp headers/search_path.h
     common/spindac.cpp headers/spindac.h
+    common/split_path.cpp headers/split_path.h
     common/update_save_name.cpp headers/update_save_name.h
     common/zoom.cpp headers/zoom.h
 
@@ -317,6 +318,7 @@ source_group("Header Files/common/ui" FILES
     headers/realdos.h
     headers/search_path.h
     headers/spindac.h
+    headers/split_path.h
     headers/update_save_name.h
     headers/zoom.h
 )
@@ -342,6 +344,7 @@ source_group("Source Files/common/ui" FILES
     common/realdos.cpp
     common/search_path.cpp
     common/spindac.cpp
+    common/split_path.cpp
     common/update_save_name.cpp
     common/zoom.cpp
 )
