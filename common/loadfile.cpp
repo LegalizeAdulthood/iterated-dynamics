@@ -1681,7 +1681,7 @@ rescan:  // entry for changed browse parms
                             else
                             {
                                 split_fname_ext(newname, fname, ext);
-                                make_path(tmpmask, nullptr, nullptr, fname, ext);
+                                make_fname_ext(tmpmask, fname, ext);
                                 std::strcpy(oldname, winlist.name.c_str());
                                 check_history(oldname, tmpmask);
                                 winlist.name = tmpmask;

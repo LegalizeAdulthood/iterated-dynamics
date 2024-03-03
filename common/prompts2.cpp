@@ -1490,7 +1490,7 @@ restart:  // return here if template or directory changes
         std::strcpy(flname, DOTSLASH);
     }
     splitpath(flname , drive, dir, fname, ext);
-    make_path(filename, ""   , "" , fname, ext);
+    make_fname_ext(filename, fname, ext);
     retried = 0;
 
 retry_dir:
@@ -1733,7 +1733,7 @@ retry_dir:
             if (std::strchr(fname1, '*') || std::strchr(fname1, '?') ||
                     std::strchr(ext1,   '*') || std::strchr(ext1,   '?'))
             {
-                make_path(user_file_template, "", "", fname1, ext1);
+                make_fname_ext(user_file_template, fname1, ext1);
                 // cppcheck-suppress uselessAssignmentPtrArg
                 file_template = user_file_template;
             }

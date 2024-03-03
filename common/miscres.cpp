@@ -1450,7 +1450,7 @@ bool find_file_item(char *filename, char const *itemname, std::FILE **fileptr, i
 
 
     splitpath(filename, drive, dir, fname, ext);
-    make_path(fullpath, "", "", fname, ext);
+    make_fname_ext(fullpath, fname, ext);
     if (stricmp(filename, g_command_file.c_str()))
     {
         infile = std::fopen(filename, "rb");
