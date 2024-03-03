@@ -131,9 +131,11 @@ add_library(libid
     common/drivers.cpp
     common/memory.cpp headers/memory.h
 
+    common/expand_dirname.cpp headers/expand_dirname.h
     common/find_file.cpp headers/find_file.h
     common/find_path.cpp headers/find_path.h
     common/find_special_colors.cpp headers/find_special_colors.h
+    common/fix_dirname.cpp headers/fix_dirname.h
     common/fractint.cpp
     common/framain2.cpp headers/framain2.h
     headers/get_ifs_token.h
@@ -289,9 +291,11 @@ source_group("Source Files/common/plumbing" FILES
     common/memory.cpp
 )
 source_group("Header Files/common/ui" FILES
+    headers/expand_dirname.h
     headers/find_file.h
     headers/find_path.h
     headers/find_special_colors.h
+    headers/fix_dirname.h
     headers/fractint.h
     headers/framain2.h
     headers/get_ifs_token.h
@@ -315,9 +319,11 @@ source_group("Header Files/common/ui" FILES
     headers/zoom.h
 )
 source_group("Source Files/common/ui" FILES
+    common/expand_dirname.cpp
     common/find_file.cpp
     common/find_path.cpp
     common/find_special_colors.cpp
+    common/fix_dirname.cpp
     common/fractint.cpp
     common/framain2.cpp
     common/get_key_no_help.cpp

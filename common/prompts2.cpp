@@ -10,8 +10,10 @@
 #include "diskvid.h"
 #include "drivers.h"
 #include "evolve.h"
+#include "expand_dirname.h"
 #include "find_file.h"
 #include "find_path.h"
+#include "fix_dirname.h"
 #include "fracsubr.h"
 #include "fractalp.h"
 #include "fractype.h"
@@ -1960,30 +1962,6 @@ void make_path(char *template_str, char const *drive, char const *dir, char cons
         result.replace_extension(ext);
     }
     strcpy(template_str, result.make_preferred().string().c_str());
-}
-
-// fix up directory names
-void fix_dirname(char *dirname)
-{
-    int length = (int) std::strlen(dirname); // index of last character
-
-    // make sure dirname ends with a slash
-    if (length > 0)
-    {
-        if (dirname[length-1] == SLASHC)
-        {
-            return;
-        }
-    }
-    std::strcat(dirname, SLASH);
-}
-
-void fix_dirname(std::string &dirname)
-{
-    char buff[FILE_MAX_PATH];
-    std::strcpy(buff, dirname.c_str());
-    fix_dirname(buff);
-    dirname = buff;
 }
 
 static void dir_name(char *target, char const *dir, char const *name)

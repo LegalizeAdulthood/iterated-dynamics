@@ -28,8 +28,6 @@ inline int splitpath(const std::string &file_template, char *drive, char *dir, c
     return splitpath(file_template.c_str(), drive, dir, fname, ext);
 }
 extern void shell_sort(void *, int n, unsigned, int (*fct)(void *, void *));
-extern void fix_dirname(char *dirname);
-extern void fix_dirname(std::string &dirname);
 extern int get_browse_params();
 extern int get_cmd_string();
 extern int get_rds_params();

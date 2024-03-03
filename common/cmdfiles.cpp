@@ -8,6 +8,7 @@
 #include "cmdfiles.h"
 #include "drivers.h"
 #include "find_path.h"
+#include "fix_dirname.h"
 #include "fracsuba.h"
 #include "fracsubr.h"
 #include "fractalb.h"
