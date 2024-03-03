@@ -38,7 +38,10 @@
 #include <cstdarg>
 #include <cstring>
 #include <ctime>
+#include <filesystem>
 #include <string>
+
+namespace fs = std::filesystem;
 
 static void trigdetails(char *buf);
 static void area();
@@ -514,7 +517,7 @@ nextname:
         openfile[period - openfile] = 0;
     }
     std::strcat(openfile, opentype);
-    if (access(openfile, 0) != 0) // file doesn't exist
+    if (!fs::exists(openfile))
     {
         std::strcpy(name, openfile);
         return;

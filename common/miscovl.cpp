@@ -379,7 +379,7 @@ skip_UI:
         }
         out_name = g_command_file;
         bool gotinfile = false;
-        if (access(g_command_file.c_str(), 0) == 0)
+        if (fs::exists(g_command_file))
         {
             // file exists
             gotinfile = true;

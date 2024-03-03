@@ -141,7 +141,7 @@ int merge_pathnames(char *oldfullpath, char const *new_filename, cmd_file mode)
             {
                 oldfullpath[len-1] = 0;
             }
-            if (access(oldfullpath, 0))
+            if (!fs::exists(oldfullpath))
             {
                 isadir_error = true;
             }

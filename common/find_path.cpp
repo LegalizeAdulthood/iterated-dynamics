@@ -33,7 +33,7 @@ std::string find_path(const char *filename,
     }
 
     // check for absolute path
-    if (file_path.is_absolute() && access(file_path.string().c_str(), 0) == 0) // file exists
+    if (file_path.is_absolute() && exists(file_path)) // file exists
     {
         return file_path.string();
     }
