@@ -23,8 +23,6 @@ typedef unsigned long uclock_t;
 extern uclock_t usec_clock();
 extern void restart_uclock();
 extern void init_failure(char const *message);
-extern bool abortmsg(char const *file, unsigned int line, int flags, char const *msg);
-#define ABORT(flags_, msg_) abortmsg(__FILE__, __LINE__, flags_, msg_)
 extern long stackavail();
 extern int getcolor(int, int);
 extern int out_line(BYTE *, int);

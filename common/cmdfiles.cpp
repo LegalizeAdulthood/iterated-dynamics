@@ -3,6 +3,7 @@
 #include "port.h"
 #include "prototyp.h"
 
+#include "abort_msg.h"
 #include "biginit.h"
 #include "calcfrac.h"
 #include "cmdfiles.h"

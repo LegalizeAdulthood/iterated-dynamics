@@ -131,6 +131,7 @@ add_library(libid
     common/drivers.cpp
     common/memory.cpp headers/memory.h
 
+    common/abort_msg.cpp headers/abort_msg.h
     common/expand_dirname.cpp headers/expand_dirname.h
     common/find_file.cpp headers/find_file.h
     common/find_path.cpp headers/find_path.h
@@ -291,6 +292,7 @@ source_group("Source Files/common/plumbing" FILES
     common/memory.cpp
 )
 source_group("Header Files/common/ui" FILES
+    headers/abort_msg.h
     headers/expand_dirname.h
     headers/find_file.h
     headers/find_path.h
@@ -319,6 +321,7 @@ source_group("Header Files/common/ui" FILES
     headers/zoom.h
 )
 source_group("Source Files/common/ui" FILES
+    common/abort_msg.cpp
     common/expand_dirname.cpp
     common/find_file.cpp
     common/find_path.cpp

@@ -372,13 +372,6 @@ int __stdcall WinMain(HINSTANCE instance, HINSTANCE prev_instance, LPSTR cmdLine
     return result;
 }
 
-bool abortmsg(char const *file, unsigned int line, int flags, char const *msg)
-{
-    char buffer[3*80];
-    std::sprintf(buffer, "%s(%u):\n%s", file, line, msg);
-    return stopmsg(flags, buffer);
-}
-
 /* ods
  *
  * varargs version of OutputDebugString with file and line markers.
