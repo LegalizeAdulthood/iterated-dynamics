@@ -27,7 +27,9 @@ add_executable(test-id
     test.ifs.in
     "${ID_TEST_DATA_DIR}/test.ifs"
     "${CMAKE_CURRENT_BINARY_DIR}/include/test_data.h"
+    current_path_saver.h
     test_data.h.in
+    test_expand_dirname.cpp
     test_find_file.cpp
     test_find_path.cpp
     test_get_ifs_token.cpp

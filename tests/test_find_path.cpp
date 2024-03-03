@@ -7,6 +7,7 @@
 #include <id_data.h>
 #include <search_path.h>
 
+#include "current_path_saver.h"
 #include "test_data.h"
 
 #include <gtest/gtest.h>
@@ -17,23 +18,6 @@ namespace fs = std::filesystem;
 
 namespace
 {
-
-class current_path_saver
-{
-public:
-    current_path_saver(const fs::path &new_path) :
-        m_old_path(fs::current_path())
-    {
-        current_path(new_path);
-    }
-    ~current_path_saver()
-    {
-        current_path(m_old_path);
-    }
-
-private:
-    fs::path m_old_path;
-};
 
 using GetEnv = std::function<const char *(const char *)>;
 

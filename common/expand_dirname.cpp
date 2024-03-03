@@ -9,11 +9,14 @@
 #include <crtdbg.h>
 
 #include <cstring>
+#include <filesystem>
+
+namespace fs = std::filesystem;
 
 // converts relative path to absolute path
 int expand_dirname(char *dirname, char *drive)
 {
-    if (PathIsRelative(dirname))
+    if (fs::path(dirname).has_relative_path())
     {
         char relative[MAX_PATH];
         _ASSERTE(std::strlen(drive) < NUM_OF(relative));
@@ -23,7 +26,7 @@ int expand_dirname(char *dirname, char *drive)
         char absolute[MAX_PATH];
         BOOL status = PathSearchAndQualify(relative, absolute, NUM_OF(absolute));
         _ASSERTE(status);
-        if (':' == absolute[1])
+        if (absolute[1] == ':')
         {
             drive[0] = absolute[0];
             drive[1] = absolute[1];
