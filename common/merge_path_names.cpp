@@ -73,9 +73,14 @@ int merge_pathnames(char *oldfullpath, char const *new_filename, cmd_file mode)
     // if dot, slash, '0', its the current directory, set up full path
     if (newfilename[0] == '.' && newfilename[1] == SLASHC && newfilename[2] == 0)
     {
+#ifdef XFRACT
+        temp_path[0] = '.';
+        temp_path[1] = 0;
+#else
         temp_path[0] = (char)('a' + _getdrive() - 1);
         temp_path[1] = ':';
         temp_path[2] = 0;
+#endif
         expand_dirname(newfilename, temp_path);
         std::strcat(temp_path, newfilename);
         std::strcpy(newfilename, temp_path);
@@ -85,9 +90,14 @@ int merge_pathnames(char *oldfullpath, char const *new_filename, cmd_file mode)
     if (newfilename[0] == '.' && newfilename[1] == SLASHC)
     {
         bool test_dir = false;
+#ifdef XFRACT
+        temp_path[0] = '.';
+        temp_path[1] = 0;
+#else
         temp_path[0] = (char)('a' + _getdrive() - 1);
         temp_path[1] = ':';
         temp_path[2] = 0;
+#endif
         if (std::strrchr(newfilename, '.') == newfilename)
         {
             test_dir = true;    // only one '.' assume its a directory
