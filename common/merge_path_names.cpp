@@ -153,7 +153,7 @@ int merge_pathnames(char *oldfullpath, char const *new_filename, cmd_file mode)
     bool isadir_error = false;
     if (!isadir && !isafile && get_path)
     {
-        make_path(oldfullpath, drive1, dir1, nullptr, nullptr);
+        make_drive_dir(oldfullpath, drive1, dir1);
         int len = (int) std::strlen(oldfullpath);
         if (len > 0)
         {

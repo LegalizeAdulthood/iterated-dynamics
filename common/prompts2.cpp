@@ -1499,7 +1499,7 @@ retry_dir:
         std::strcpy(dir, ".");
     }
     expand_dirname(dir, drive);
-    make_path(tmpmask, drive, dir, "", "");
+    make_drive_dir(tmpmask, drive, dir);
     fix_dirname(tmpmask);
     if (retried == 0 && std::strcmp(dir, SLASH) && std::strcmp(dir, DOTSLASH))
     {
@@ -1656,7 +1656,7 @@ retry_dir:
             std::strcpy(dir, g_fractal_search_dir2.c_str());
         }
         fix_dirname(dir);
-        make_path(flname, drive, dir, "", "");
+        make_drive_dir(flname, drive, dir);
         lastdir = 1 - lastdir;
         goto restart;
     }
@@ -1695,7 +1695,7 @@ retry_dir:
                 std::strcat(dir, choices[i]->full_name);
             }
             fix_dirname(dir);
-            make_path(flname, drive, dir, "", "");
+            make_drive_dir(flname, drive, dir);
             goto restart;
         }
         split_fname_ext(choices[i]->full_name, fname, ext);

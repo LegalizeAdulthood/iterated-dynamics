@@ -6,3 +6,8 @@ inline void make_fname_ext(char *template_str, char const *fname, char const *ex
 {
     make_path(template_str, nullptr, nullptr, fname, ext);
 }
+
+inline void make_drive_dir(char *template_str, const char *drive, const char *dir)
+{
+    make_path(template_str, drive, dir, nullptr, nullptr);
+}
