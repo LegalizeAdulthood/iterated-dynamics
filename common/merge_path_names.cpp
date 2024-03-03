@@ -58,7 +58,6 @@ int merge_pathnames(char *oldfullpath, char const *new_filename, cmd_file mode)
     {
         fix_dirname(newfilename);
     }
-#ifndef XFRACT
     // if drive, colon, slash, is a directory
     if ((int) std::strlen(newfilename) == 3 && newfilename[1] == ':' && newfilename[2] == SLASHC)
     {
@@ -102,9 +101,6 @@ int merge_pathnames(char *oldfullpath, char const *new_filename, cmd_file mode)
             newfilename[len-1] = 0; // get rid of slash added by expand_dirname
         }
     }
-#else
-    std::strcpy(newfilename, find_path(newfilename).c_str());
-#endif
     // check existence
     if (!isadir || isafile)
     {
