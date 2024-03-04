@@ -61,9 +61,14 @@ Iterated Dynamics uses [CMake](http://www.cmake.org) to generate build scripts
 and [vcpkg](http://vcpkg.io) to manage third party library dependencies.
 You will need a C++ compiler capable of supporting the C++17 standard.
 
-After cloning this source repository, initialize and update git submodules
-with the commands:
+Make a directory for the source code and build directories and then clone this
+source repository, initialize and update git submodules with the commands:
+
 ```
+mkdir id
+cd id
+git clone https://github.com:LegalizeAdulthood/iterated-dynamics
+cd iterated-dynamics
 git submodule init
 git submodule update
 ```
@@ -74,7 +79,8 @@ CMake presets are provided to simplify building the code.  The command
 cmake --workflow --preset default
 ```
 
-will configure, build and test the code.
+will configure, build and test the code in the directory `id/build-default`,
+a sibling directory to the source code in `id/iterated-dynamics`.
 
 The build will first compile `hc`, the help compiler.  This generates
 the run-time help file from the help source files and an include file
@@ -100,40 +106,40 @@ without contributions from many persons!
 
 # Code Structure
 
-- - `common`
+- `common`
     Files common to all implementations
- - **3d**
+  - **3d**
         Files containing 3D drawing support.  Eventually these should be
         subsumed into the driver interface, with this sofwtare implementation
         as a fallback if the driver doesn't support 3D rendering.
 
- - **engine**
+  - **engine**
         Files containing the implementation of the fractal rendering engines
         that are shared between multiple fractal types.  Also contains the
         big array that defines the available fractal types.
 
- - **fractal specific**
+  - **fractal specific**
         Files containing rendering code or user interaction code that is
         specific to a particular fractal, such as the Lorenz fractal or
         L-system type.
 
- - **IO**
+  - **IO**
         Anything related to doing external file I/O: saving and loading GIF
         files, dealing with overlay files, saving parameter files, etc.
 
- - **math**
+  - **math**
         Files containing math routines for arbitrary precision arithmetic,
         complex arithmetic, etc.
 
- - **plumbing**
+  - **plumbing**
         Miscellaneous routines that don't fit elesewhere like memory and
         driver management.
 
- - **ui**
+  - **ui**
         Anything to do with displaying menu screens, help screens, intro
         screen, etc.
 
- - **main**
+  - **main**
     Miscellaneous files in the main fractint source folder.  These are not
     currently used for any of the compilation of the code and are placed
     here just for reference.
