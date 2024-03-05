@@ -1007,7 +1007,7 @@ handle_esc(DriverX11 *di)
 /* ev_key_press
  *
  * Translate keypress into appropriate fractint character code,
- * according to defines in fractint.h
+ * according to defines in id.h
  */
 static int
 ev_key_press(DriverX11 *di, XKeyEvent *xevent)

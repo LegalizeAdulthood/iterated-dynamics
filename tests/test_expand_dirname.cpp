@@ -2,7 +2,7 @@
 
 #include <port.h>
 
-#include <fractint.h>
+#include <id.h>
 
 #include "current_path_saver.h"
 #include "test_data.h"

@@ -2,7 +2,7 @@
 
 #include "port.h"
 
-#include "fractint.h"
+#include "id.h"
 
 #include "cmdfiles.h"
 

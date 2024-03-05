@@ -130,7 +130,7 @@ void copy_genes_to_bank(GENEBASE const gene[NUM_GENES])
 // set up pointers and mutation params for all usable image
 // control variables in fractint... revise as necessary when
 // new vars come along... don't forget to increment NUM_GENES
-// (in fractint.h ) as well
+// (in id.h) as well
 void initgene()
 {
     //                        Use only 15 letters below: 123456789012345

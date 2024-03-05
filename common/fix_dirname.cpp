@@ -1,7 +1,8 @@
 #include "fix_dirname.h"
 
 #include "port.h"
-#include "fractint.h"
+
+#include "id.h"
 
 #include <cstring>
 

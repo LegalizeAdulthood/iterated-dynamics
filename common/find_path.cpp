@@ -1,7 +1,8 @@
 #include "find_path.h"
 
 #include "port.h"
-#include "fractint.h"
+
+#include "id.h"
 
 #include "cmdfiles.h"
 #include "id_data.h"

@@ -1,6 +1,6 @@
 #ifndef PROTOTYP_H
 #define PROTOTYP_H
-#include "fractint.h"
+#include "id.h"
 
 #ifdef XFRACT
 #include "unixprot.h"

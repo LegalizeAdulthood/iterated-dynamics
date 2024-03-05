@@ -2,7 +2,7 @@
 #include "prototyp.h"
 
 #include "drivers.h"
-#include "fractint.h"
+#include "id.h"
 #include "prompts2.h"
 
 #define WIN32_LEAN_AND_MEAN

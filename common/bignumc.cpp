@@ -6,7 +6,7 @@ Wesley Loewer's Big Numbers.        (C) 1994-95, Wesley B. Loewer
 #include "port.h"
 
 #include "big.h"
-#include "fractint.h"
+#include "id.h"
 
 #include <cfloat>
 #include <cstdio>

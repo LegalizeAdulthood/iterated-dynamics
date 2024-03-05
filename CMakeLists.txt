@@ -163,9 +163,9 @@ add_library(libid
     headers/biginit.h
     headers/cmplx.h
     headers/drivers.h
-    headers/fractint.h
-    headers/id_data.h
     headers/fractype.h
+    headers/id.h
+    headers/id_data.h
     headers/lsys.h
     headers/mpmath.h
     headers/newton.h
@@ -299,12 +299,12 @@ source_group("Header Files/common/ui" FILES
     headers/find_path.h
     headers/find_special_colors.h
     headers/fix_dirname.h
-    headers/fractint.h
     headers/framain2.h
     headers/get_ifs_token.h
     headers/get_key_no_help.h
     headers/help.h
     headers/helpdefs.h
+    headers/id.h
     headers/intro.h
     headers/is_directory.h
     headers/jiim.h

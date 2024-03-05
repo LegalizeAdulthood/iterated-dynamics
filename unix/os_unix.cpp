@@ -3,7 +3,7 @@
 
 #include "cmplx.h"
 #include "drivers.h"
-#include "fractint.h"
+#include "id.h"
 #include "mpmath.h"
 #include "prompts2.h"
 

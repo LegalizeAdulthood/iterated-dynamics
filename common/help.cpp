@@ -1467,10 +1467,9 @@ int init_help()
     {
         static char msg[] =
 #if !defined(XFRACT) && !defined(_WIN32)
-        {"Help Files aren't in id.exe, and couldn't find id.hlp!\n"};
+            {"Help Files aren't in id.exe, and couldn't find id.hlp!\n"};
 #else
-            {"Couldn't find id.hlp; set FRACTDIR to proper directory with setenv.\n"
-            };
+            {"Couldn't find id.hlp; set FRACTDIR to proper directory with setenv.\n"};
 #endif
         stopmsg(STOPMSG_NO_STACK, msg);
     }
