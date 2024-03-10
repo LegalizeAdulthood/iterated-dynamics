@@ -1,6 +1,6 @@
-// FRACTINT.H - common structures and values for the FRACTINT routines
-#ifndef FRACTINT_H
-#define FRACTINT_H
+// id.h - common structures and values for the FRACTINT routines
+#pragma once
+
 #include <vector>
 
 #include "big.h"
@@ -442,5 +442,3 @@ int sign(T x)
 {
     return (T{} < x) - (x < T{});
 }
-
-#endif
