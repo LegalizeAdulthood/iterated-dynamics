@@ -6,6 +6,7 @@
 #include "evolve.h"
 #include "fractalp.h"
 #include "fractype.h"
+#include "full_screen_prompt.h"
 #include "helpdefs.h"
 #include "id_data.h"
 #include "jb.h"

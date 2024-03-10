@@ -18,6 +18,7 @@
 #include "fracsubr.h"
 #include "fractalp.h"
 #include "fractype.h"
+#include "full_screen_prompt.h"
 #include "helpcom.h"
 #include "helpdefs.h"
 #include "id_data.h"

@@ -12,6 +12,7 @@
 #include "fractalp.h"
 #include "fractype.h"
 #include "framain2.h"
+#include "full_screen_prompt.h"
 #include "get_key_no_help.h"
 #include "helpdefs.h"
 #include "id_data.h"
