@@ -49,6 +49,6 @@ add_executable(test-id
 source_group("CMake Templates" REGULAR_EXPRESSION ".*\\.in$")
 source_group("Test Data/IFS" REGULAR_EXPRESSION ".*\\.ifs$")
 target_include_directories(test-id PUBLIC "${CMAKE_CURRENT_BINARY_DIR}/include")
-target_link_libraries(test-id PRIVATE GTest::gtest_main libid)
+target_link_libraries(test-id PRIVATE GTest::gmock_main libid)
 
 gtest_discover_tests(test-id)
