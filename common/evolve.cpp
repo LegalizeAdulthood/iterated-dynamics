@@ -2,6 +2,7 @@
 #include "prototyp.h"
 
 #include "calcfrac.h"
+#include "choice_builder.h"
 #include "cmdfiles.h"
 #include "evolve.h"
 #include "fractalp.h"
@@ -692,10 +693,9 @@ void set_mutation_level(int strength)
 
 int get_evolve_Parms()
 {
-    char const *choices[20];
+    ChoiceBuilder<20> choices;
     help_labels old_help_mode;
-    fullscreenvalues uvalues[20];
-    int i, j, k, tmp;
+    int i, j, tmp;
     int old_evolving, old_image_grid_size;
     int old_variations = 0;
     double old_x_parameter_range, old_y_parameter_range, old_x_parameter_offset, old_y_parameter_offset, old_max_random_mutation;
@@ -722,70 +722,33 @@ get_evol_restart:
         // set middle image to last selected and edges to +- evolve_max_random_mutation
     }
 
-    k = -1;
-
-    choices[++k] = "Evolution mode? (no for full screen)";
-    uvalues[k].type = 'y';
-    uvalues[k].uval.ch.val = g_evolving & FIELDMAP ? 1 : 0;
-
-    choices[++k] = "Image grid size (odd numbers only)";
-    uvalues[k].type = 'i';
-    uvalues[k].uval.ival = g_evolve_image_grid_size;
+    choices.reset()
+        .yes_no("Evolution mode? (no for full screen)", g_evolving & FIELDMAP != 0)
+        .int_number("Image grid size (odd numbers only)", g_evolve_image_grid_size);
 
     if (explore_check())
     {
         // test to see if any parms are set to linear
         // variation 'explore mode'
-        choices[++k] = "Show parameter zoom box?";
-        uvalues[k].type = 'y';
-        uvalues[k].uval.ch.val = ((g_evolving & PARMBOX) / PARMBOX);
-
-        choices[++k] = "x parameter range (across screen)";
-        uvalues[k].type = 'f';
-        uvalues[k].uval.dval = g_evolve_x_parameter_range;
-
-        choices[++k] = "x parameter offset (left hand edge)";
-        uvalues[k].type = 'f';
-        uvalues[k].uval.dval = g_evolve_x_parameter_offset;
-
-        choices[++k] = "y parameter range (up screen)";
-        uvalues[k].type = 'f';
-        uvalues[k].uval.dval = g_evolve_y_parameter_range;
-
-        choices[++k] = "y parameter offset (lower edge)";
-        uvalues[k].type = 'f';
-        uvalues[k].uval.dval = g_evolve_y_parameter_offset;
+        choices.yes_no("Show parameter zoom box?", (g_evolving & PARMBOX) != 0)
+            .float_number("x parameter range (across screen)", g_evolve_x_parameter_range)
+            .float_number("x parameter offset (left hand edge)", g_evolve_x_parameter_offset)
+            .float_number("y parameter range (up screen)", g_evolve_y_parameter_range)
+            .float_number("y parameter offset (lower edge)", g_evolve_y_parameter_offset);
     }
 
-    choices[++k] = "Max random mutation";
-    uvalues[k].type = 'f';
-    uvalues[k].uval.dval = g_evolve_max_random_mutation;
+    choices.float_number("Max random mutation", g_evolve_max_random_mutation)
+        .float_number("Mutation reduction factor (between generations)", g_evolve_mutation_reduction_factor)
+        .yes_no("Grouting? ", (g_evolving & NOGROUT) == 0)
+        .comment("")
+        .comment("Press F4 to reset view parameters to defaults.")
+        .comment("Press F2 to halve mutation levels")
+        .comment("Press F3 to double mutation levels")
+        .comment("Press F6 to control which parameters are varied");
 
-    choices[++k] = "Mutation reduction factor (between generations)";
-    uvalues[k].type = 'f';
-    uvalues[k].uval.dval = g_evolve_mutation_reduction_factor;
-
-    choices[++k] = "Grouting? ";
-    uvalues[k].type = 'y';
-    uvalues[k].uval.ch.val = !((g_evolving & NOGROUT) / NOGROUT);
-
-    choices[++k] = "";
-    uvalues[k].type = '*';
-
-    choices[++k] = "Press F4 to reset view parameters to defaults.";
-    uvalues[k].type = '*';
-
-    choices[++k] = "Press F2 to halve mutation levels";
-    uvalues[k].type = '*';
-
-    choices[++k] = "Press F3 to double mutation levels" ;
-    uvalues[k].type ='*';
-
-    choices[++k] = "Press F6 to control which parameters are varied";
-    uvalues[k].type = '*';
     old_help_mode = g_help_mode;     // this prevents HELP from activating
     g_help_mode = help_labels::HELPEVOL;
-    i = fullscreen_prompt("Evolution Mode Options", k+1, choices, uvalues, 255, nullptr);
+    i = choices.prompt("Evolution Mode Options", 255, nullptr);
     g_help_mode = old_help_mode;     // re-enable HELP
     if (i < 0)
     {
@@ -838,9 +801,9 @@ get_evol_restart:
 
     // now check out the results (*hopefully* in the same order <grin>)
 
-    k = -1;
+    int k = -1;
 
-    g_evolving = uvalues[++k].uval.ch.val;
+    g_evolving = choices.uvalues[++k].uval.ch.val;
     g_view_window = g_evolving != 0;
 
     if (!g_evolving && i != FIK_F6)    // don't need any of the other parameters
@@ -848,7 +811,7 @@ get_evol_restart:
         return 1;             // the following code can set evolving even if it's off
     }
 
-    g_evolve_image_grid_size = uvalues[++k].uval.ival;
+    g_evolve_image_grid_size = choices.uvalues[++k].uval.ival;
     tmp = g_screen_x_dots / (MIN_PIXELS << 1);
     // (sxdots / 20), max # of subimages @ 20 pixels per subimage
     // EVOLVE_MAX_GRID_SIZE == 1024 / 20 == 51
@@ -867,24 +830,24 @@ get_evol_restart:
     g_evolve_image_grid_size |= 1; // make sure evolve_image_grid_size is odd
     if (explore_check())
     {
-        tmp = (PARMBOX * uvalues[++k].uval.ch.val);
+        tmp = (PARMBOX * choices.uvalues[++k].uval.ch.val);
         if (g_evolving)
         {
             g_evolving += tmp;
         }
-        g_evolve_x_parameter_range = uvalues[++k].uval.dval;
-        g_evolve_x_parameter_offset = uvalues[++k].uval.dval;
+        g_evolve_x_parameter_range = choices.uvalues[++k].uval.dval;
+        g_evolve_x_parameter_offset = choices.uvalues[++k].uval.dval;
         g_evolve_new_x_parameter_offset = g_evolve_x_parameter_offset;
-        g_evolve_y_parameter_range = uvalues[++k].uval.dval;
-        g_evolve_y_parameter_offset = uvalues[++k].uval.dval;
+        g_evolve_y_parameter_range = choices.uvalues[++k].uval.dval;
+        g_evolve_y_parameter_offset = choices.uvalues[++k].uval.dval;
         g_evolve_new_y_parameter_offset = g_evolve_y_parameter_offset;
     }
 
-    g_evolve_max_random_mutation = uvalues[++k].uval.dval;
+    g_evolve_max_random_mutation = choices.uvalues[++k].uval.dval;
 
-    g_evolve_mutation_reduction_factor = uvalues[++k].uval.dval;
+    g_evolve_mutation_reduction_factor = choices.uvalues[++k].uval.dval;
 
-    if (!(uvalues[++k].uval.ch.val))
+    if (!(choices.uvalues[++k].uval.ch.val))
     {
         g_evolving = g_evolving + NOGROUT;
     }
