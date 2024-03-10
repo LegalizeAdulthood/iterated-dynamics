@@ -76,10 +76,16 @@ bool g_julibrot = false;                  // flag for julibrot
 static int promptfkeys;
 
 // These need to be global because F6 exits fullscreen_prompt()
-static int scroll_row_status;    /* will be set to first line of extra info to
+static int scroll_row_status{};    /* will be set to first line of extra info to
                              be displayed ( 0 = top line) */
-static int scroll_column_status; /* will be set to first column of extra info to
+static int scroll_column_status{}; /* will be set to first column of extra info to
                              be displayed ( 0 = leftmost column )*/
+
+void full_screen_reset_scrolling()
+{
+    scroll_row_status = 0; // make sure we start at beginning of entry
+    scroll_column_status = 0;
+}
 
 int fullscreen_prompt(      // full-screen prompting routine
     char const *hdg,        // heading, lines separated by \n
@@ -1932,8 +1938,7 @@ gfp_top:
         std::strcat(msg, "\n(Press " FK_F6 " for corner parameters)");
         fkeymask = 1U << 6;     // F6 exits
     }
-    scroll_row_status = 0; // make sure we start at beginning of entry
-    scroll_column_status = 0;
+    full_screen_reset_scrolling();
     while (true)
     {
         old_help_mode = g_help_mode;
