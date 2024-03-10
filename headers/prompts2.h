@@ -19,7 +19,6 @@ extern void goodbye();
 extern bool getafilename(char const *hdg, char const *file_template, char *flname);
 extern bool getafilename(char const *hdg, char const *file_template, std::string &flname);
 extern void shell_sort(void *, int n, unsigned, int (*fct)(void *, void *));
-extern int get_browse_params();
 extern int get_cmd_string();
 extern int get_rds_params();
 extern int starfield();

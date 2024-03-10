@@ -139,6 +139,7 @@ add_library(libid
     common/fix_dirname.cpp headers/fix_dirname.h
     common/fractint.cpp
     common/framain2.cpp headers/framain2.h
+    common/get_browse_params.cpp headers/get_browse_params.h
     headers/get_ifs_token.h
     common/get_key_no_help.cpp headers/get_key_no_help.h
     common/help.cpp
@@ -300,6 +301,7 @@ source_group("Header Files/common/ui" FILES
     headers/find_special_colors.h
     headers/fix_dirname.h
     headers/framain2.h
+    headers/get_browse_params.h
     headers/get_ifs_token.h
     headers/get_key_no_help.h
     headers/help.h
@@ -331,6 +333,7 @@ source_group("Source Files/common/ui" FILES
     common/fix_dirname.cpp
     common/fractint.cpp
     common/framain2.cpp
+    common/get_browse_params.cpp
     common/get_key_no_help.cpp
     common/help.cpp
     common/intro.cpp
