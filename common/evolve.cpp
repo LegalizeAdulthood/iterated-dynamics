@@ -725,7 +725,7 @@ get_evol_restart:
 
     choices[++k] = "Evolution mode? (no for full screen)";
     uvalues[k].type = 'y';
-    uvalues[k].uval.ch.val = g_evolving & FIELDMAP;
+    uvalues[k].uval.ch.val = g_evolving & FIELDMAP ? 1 : 0;
 
     choices[++k] = "Image grid size (odd numbers only)";
     uvalues[k].type = 'i';

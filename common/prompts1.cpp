@@ -6,6 +6,7 @@
 
 #include "calcfrac.h"
 #include "cmdfiles.h"
+#include "double_to_string.h"
 #include "drivers.h"
 #include "fracsuba.h"
 #include "fracsubr.h"
@@ -54,6 +55,7 @@ static  void format_parmfile_line(int choice, char *buf);
 static  bool get_light_params();
 static  bool check_mapfile();
 static  bool get_funny_glasses_params();
+static int prompt_valuestring(char *buf, fullscreenvalues const *val);
 
 #define GETFORMULA 0
 #define GETLSYS    1
@@ -849,7 +851,7 @@ fullscreen_exit:
     return done;
 }
 
-int prompt_valuestring(char *buf, fullscreenvalues const *val)
+static int prompt_valuestring(char *buf, fullscreenvalues const *val)
 {
     // format value into buf, return field width
     int i, ret;
@@ -857,16 +859,7 @@ int prompt_valuestring(char *buf, fullscreenvalues const *val)
     {
     case 'd':
         ret = 20;
-        i = 16;    // cellular needs 16 (was 15)
-        while (true)
-        {
-            std::sprintf(buf, "%.*g", i, val->uval.dval);
-            if ((int)std::strlen(buf) <= ret)
-            {
-                break;
-            }
-            --i;
-        }
+        double_to_string(buf, val->uval.dval);
         break;
     case 'D':
         if (val->uval.dval < 0)

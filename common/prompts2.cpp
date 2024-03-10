@@ -8,6 +8,7 @@
 #include "calcfrac.h"
 #include "cmdfiles.h"
 #include "diskvid.h"
+#include "double_to_string.h"
 #include "drivers.h"
 #include "evolve.h"
 #include "expand_dirname.h"
@@ -1888,9 +1889,7 @@ int cmpdbl(double old, double new_val)
     fullscreenvalues val;
 
     // change the old value with the same torture the new value had
-    val.type = 'd'; // most values on this screen are type d
-    val.uval.dval = old;
-    prompt_valuestring(buf, &val);   // convert "old" to string
+    double_to_string(buf, old);   // convert "old" to string
 
     old = atof(buf);                // convert back
     return std::fabs(old-new_val) < DBL_EPSILON ? 0 : 1; // zero if same

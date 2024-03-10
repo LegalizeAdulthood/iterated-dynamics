@@ -132,6 +132,7 @@ add_library(libid
     common/memory.cpp headers/memory.h
 
     common/abort_msg.cpp headers/abort_msg.h
+    common/double_to_string.cpp headers/double_to_string.h
     common/expand_dirname.cpp headers/expand_dirname.h
     common/find_file.cpp headers/find_file.h
     common/find_path.cpp headers/find_path.h
@@ -295,6 +296,7 @@ source_group("Source Files/common/plumbing" FILES
 )
 source_group("Header Files/common/ui" FILES
     headers/abort_msg.h
+    headers/double_to_string.h
     headers/expand_dirname.h
     headers/find_file.h
     headers/find_path.h
@@ -326,6 +328,7 @@ source_group("Header Files/common/ui" FILES
 )
 source_group("Source Files/common/ui" FILES
     common/abort_msg.cpp
+    common/double_to_string.cpp
     common/expand_dirname.cpp
     common/find_file.cpp
     common/find_path.cpp
