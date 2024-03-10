@@ -32,6 +32,7 @@ add_executable(test-id
     "${CMAKE_CURRENT_BINARY_DIR}/include/test_data.h"
     current_path_saver.h
     test_data.h.in
+    test_choice_builder.cpp
     test_expand_dirname.cpp
     test_find_file.cpp
     test_find_path.cpp
