@@ -741,7 +741,7 @@ pass_option_restart:
     i = fullscreen_prompt("Passes Options\n"
                           "(not all combinations make sense)\n"
                           "(Press " FK_F2 " for corner parameters)\n"
-                          "(Press " FK_F6 " for calculation parameters)", k+1, choices, uvalues, 0x44, nullptr);
+                          "(Press " FK_F6 " for calculation parameters)", k+1, choices, uvalues, 64 | 4, nullptr);
     g_help_mode = old_help_mode;
     if (i < 0)
     {
@@ -1346,7 +1346,7 @@ int get_a_number(double *x, double *y)
     uvalues[k].type = 'd';
     uvalues[k].uval.dval = *y;
 
-    i = fullscreen_prompt("Set Cursor Coordinates", k+1, choices, uvalues, 25, nullptr);
+    i = fullscreen_prompt("Set Cursor Coordinates", k+1, choices, uvalues, 16 | 8 | 1, nullptr);
     if (i < 0)
     {
         driver_unstack_screen();
@@ -2003,7 +2003,7 @@ gc_loop:
 
     help_labels const old_help_mode = g_help_mode;
     g_help_mode = help_labels::HELPCOORDS;
-    prompt_ret = fullscreen_prompt("Image Coordinates", nump+1, prompts, values, 0x90, nullptr);
+    prompt_ret = fullscreen_prompt("Image Coordinates", nump+1, prompts, values, 128 | 16, nullptr);
     g_help_mode = old_help_mode;
 
     if (prompt_ret < 0)
@@ -2234,7 +2234,7 @@ gsc_loop:
 
     help_labels const old_help_mode = g_help_mode;
     g_help_mode = help_labels::HELPSCRNCOORDS;
-    prompt_ret = fullscreen_prompt("Screen Coordinates", nump+1, prompts, values, 0x90, nullptr);
+    prompt_ret = fullscreen_prompt("Screen Coordinates", nump+1, prompts, values, 128 | 16, nullptr);
     g_help_mode = old_help_mode;
 
     if (prompt_ret < 0)

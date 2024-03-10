@@ -461,7 +461,7 @@ choose_vars_restart:
     choices[++k] = "Press F4 to randomize all";
     uvalues[k].type = '*';
 
-    i = fullscreen_prompt("Variable tweak central 2 of 2", k+1, choices, uvalues, 28, nullptr);
+    i = fullscreen_prompt("Variable tweak central 2 of 2", k+1, choices, uvalues, 16 | 8 | 4, nullptr);
 
     switch (i)
     {
@@ -622,7 +622,7 @@ choose_vars_restart:
     choices[++k] = "Press F6 for second page"; // F5 gets eaten
     uvalues[k].type = '*';
 
-    int i = fullscreen_prompt("Variable tweak central 1 of 2", k+1, choices, uvalues, 92, nullptr);
+    int i = fullscreen_prompt("Variable tweak central 1 of 2", k+1, choices, uvalues, 64 | 16 | 8 | 4, nullptr);
 
     switch (i)
     {
