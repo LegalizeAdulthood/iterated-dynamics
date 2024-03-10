@@ -594,7 +594,7 @@ TEST_F(TestChoiceBuilderPrompting, readYesNoChoice)
 {
     ChoiceBuilder<1, Shim> builder;
     EXPECT_CALL(prompter,
-        prompt(StrEq("Evolution Mode Options"), 1, builder.choices.data(), builder.uvalues.data(), 255, nullptr))
+        prompt(StrEq("Evolution Mode Options"), 1, NotNull(), NotNull(), 255, nullptr))
         .WillOnce(DoAll(WithArg<3>([](fullscreenvalues *uvalues) { uvalues[0].uval.ch.val = 0; }), Return(FIK_ENTER)));
     builder.yes_no("Evolution mode? (no for full screen)", true);
     const int result = builder.prompt("Evolution Mode Options", 255, nullptr);

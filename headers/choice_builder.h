@@ -176,10 +176,9 @@ public:
         return uvalues[m_current_read++].uval.sbuf;
     }
 
+private:
     std::array<const char *, N> choices{};
     std::array<fullscreenvalues, N> uvalues{};
-
-private:
 
     ChoiceBuilder &advance()
     {

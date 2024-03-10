@@ -799,11 +799,8 @@ get_evol_restart:
 
     j = i;
 
-    // now check out the results (*hopefully* in the same order <grin>)
-
-    int k = -1;
-
-    g_evolving = choices.uvalues[++k].uval.ch.val;
+    // now check out the results
+    g_evolving = choices.read_yes_no() ? 1 : 0;
     g_view_window = g_evolving != 0;
 
     if (!g_evolving && i != FIK_F6)    // don't need any of the other parameters
@@ -811,7 +808,7 @@ get_evol_restart:
         return 1;             // the following code can set evolving even if it's off
     }
 
-    g_evolve_image_grid_size = choices.uvalues[++k].uval.ival;
+    g_evolve_image_grid_size = choices.read_int_number();
     tmp = g_screen_x_dots / (MIN_PIXELS << 1);
     // (sxdots / 20), max # of subimages @ 20 pixels per subimage
     // EVOLVE_MAX_GRID_SIZE == 1024 / 20 == 51
@@ -830,24 +827,24 @@ get_evol_restart:
     g_evolve_image_grid_size |= 1; // make sure evolve_image_grid_size is odd
     if (explore_check())
     {
-        tmp = (PARMBOX * choices.uvalues[++k].uval.ch.val);
+        tmp = choices.read_yes_no() ? PARMBOX : 0;
         if (g_evolving)
         {
             g_evolving += tmp;
         }
-        g_evolve_x_parameter_range = choices.uvalues[++k].uval.dval;
-        g_evolve_x_parameter_offset = choices.uvalues[++k].uval.dval;
+        g_evolve_x_parameter_range = choices.read_float_number();
+        g_evolve_x_parameter_offset = choices.read_float_number();
         g_evolve_new_x_parameter_offset = g_evolve_x_parameter_offset;
-        g_evolve_y_parameter_range = choices.uvalues[++k].uval.dval;
-        g_evolve_y_parameter_offset = choices.uvalues[++k].uval.dval;
+        g_evolve_y_parameter_range = choices.read_float_number();
+        g_evolve_y_parameter_offset = choices.read_float_number();
         g_evolve_new_y_parameter_offset = g_evolve_y_parameter_offset;
     }
 
-    g_evolve_max_random_mutation = choices.uvalues[++k].uval.dval;
+    g_evolve_max_random_mutation = choices.read_float_number();
 
-    g_evolve_mutation_reduction_factor = choices.uvalues[++k].uval.dval;
+    g_evolve_mutation_reduction_factor = choices.read_float_number();
 
-    if (!(choices.uvalues[++k].uval.ch.val))
+    if (!choices.read_yes_no())
     {
         g_evolving = g_evolving + NOGROUT;
     }
