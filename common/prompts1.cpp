@@ -911,7 +911,7 @@ static int prompt_valuestring(char *buf, fullscreenvalues const *val)
     return ret;
 }
 
-int prompt_checkkey(int curkey)
+static int prompt_checkkey(int curkey)
 {
     switch (curkey)
     {
@@ -937,7 +937,7 @@ int prompt_checkkey(int curkey)
     return 0;
 }
 
-int prompt_checkkey_scroll(int curkey)
+static int prompt_checkkey_scroll(int curkey)
 {
     switch (curkey)
     {
