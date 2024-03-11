@@ -514,9 +514,6 @@ int get_fract_params(int caller)        // prompt for type-specific parms
     char const *entryname;
     std::FILE *entryfile;
     char const *trignameptr[NUMTRIGFN];
-#ifdef XFRACT
-    static // Can't initialize aggregates on the stack
-#endif
     char const *bailnameptr[] = {"mod", "real", "imag", "or", "and", "manh", "manr"};
     fractalspecificstuff *jborbit = nullptr;
     int firstparm = 0;
