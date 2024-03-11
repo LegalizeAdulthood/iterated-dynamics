@@ -44,7 +44,6 @@ namespace fs = std::filesystem;
 
 static void put_parm(char const *parm, ...);
 static void put_parm_line();
-int getprecbf(int);
 static void put_float(int, double, int);
 static void put_bf(int slash, bf_t r, int prec);
 static void put_filename(char const *keyword, char const *fname);

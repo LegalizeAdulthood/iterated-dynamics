@@ -22,14 +22,13 @@
 #include "helpcom.h"
 #include "helpdefs.h"
 #include "id_data.h"
-#include "id_io.h"
 #include "is_directory.h"
 #include "loadfile.h"
 #include "loadmap.h"
 #include "lorenz.h"
+#include "make_batch_file.h"
 #include "make_path.h"
 #include "memory.h"
-#include "miscovl.h"
 #include "miscres.h"
 #include "mpmath.h"
 #include "mpmath_c.h"
@@ -43,7 +42,6 @@
 #include "stereo.h"
 #include "zoom.h"
 
-#include <algorithm>
 #include <cassert>
 #include <cfloat>
 #include <cmath>

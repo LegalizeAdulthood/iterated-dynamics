@@ -36,7 +36,7 @@
 #include "helpdefs.h"
 #include "id_data.h"
 #include "loadfile.h"
-#include "miscovl.h"
+#include "make_batch_file.h"
 #include "os.h"
 #include "realdos.h"
 

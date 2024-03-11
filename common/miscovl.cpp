@@ -4,6 +4,8 @@
 #include "port.h"
 #include "prototyp.h"
 
+#include "miscovl.h"
+
 #include "biginit.h"
 #include "calcfrac.h"
 #include "cmdfiles.h"
@@ -21,7 +23,6 @@
 #include "line3d.h"
 #include "loadfile.h"
 #include "lorenz.h"
-#include "miscovl.h"
 #include "miscres.h"
 #include "os.h"
 #include "parser.h"
@@ -47,7 +48,6 @@
 
 namespace fs = std::filesystem;
 
-int getprecbf(int);
 static int check_modekey(int curkey, int choice);
 static bool ent_less(int lhs, int rhs);
 static void update_id_cfg();
@@ -216,6 +216,34 @@ int getprecdbl(int rezflag)
 static std::array<int, MAX_VIDEO_MODES> entnums;
 static bool modes_changed = false;
 
+static void format_vid_table(int choice, char *buf)
+{
+    char local_buf[81];
+    char kname[5];
+    int truecolorbits;
+    std::memcpy((char *)&g_video_entry, (char *)&g_video_table[entnums[choice]],
+           sizeof(g_video_entry));
+    vidmode_keyname(g_video_entry.keynum, kname);
+    std::sprintf(buf, "%-5s %-25s %5d %5d ",  // 44 chars
+            kname, g_video_entry.name, g_video_entry.xdots, g_video_entry.ydots);
+    truecolorbits = g_video_entry.dotmode/1000;
+    if (truecolorbits == 0)
+    {
+        std::snprintf(local_buf, NUM_OF(local_buf), "%s%3d",  // 47 chars
+                buf, g_video_entry.colors);
+    }
+    else
+    {
+        std::snprintf(local_buf, NUM_OF(local_buf), "%s%3s",  // 47 chars
+                buf, (truecolorbits == 4)?" 4g":
+                (truecolorbits == 3)?"16m":
+                (truecolorbits == 2)?"64k":
+                (truecolorbits == 1)?"32k":"???");
+    }
+    std::sprintf(buf, "%s %.12s %.12s",  // 74 chars
+            local_buf, g_video_entry.driver->name, g_video_entry.comment);
+}
+
 int select_video_mode(int curmode)
 {
     int attributes[MAX_VIDEO_MODES];
@@ -310,34 +338,6 @@ int select_video_mode(int curmode)
     }
 
     return ret;
-}
-
-static void format_vid_table(int choice, char *buf)
-{
-    char local_buf[81];
-    char kname[5];
-    int truecolorbits;
-    std::memcpy((char *)&g_video_entry, (char *)&g_video_table[entnums[choice]],
-           sizeof(g_video_entry));
-    vidmode_keyname(g_video_entry.keynum, kname);
-    std::sprintf(buf, "%-5s %-25s %5d %5d ",  // 44 chars
-            kname, g_video_entry.name, g_video_entry.xdots, g_video_entry.ydots);
-    truecolorbits = g_video_entry.dotmode/1000;
-    if (truecolorbits == 0)
-    {
-        std::snprintf(local_buf, NUM_OF(local_buf), "%s%3d",  // 47 chars
-                buf, g_video_entry.colors);
-    }
-    else
-    {
-        std::snprintf(local_buf, NUM_OF(local_buf), "%s%3s",  // 47 chars
-                buf, (truecolorbits == 4)?" 4g":
-                (truecolorbits == 3)?"16m":
-                (truecolorbits == 2)?"64k":
-                (truecolorbits == 1)?"32k":"???");
-    }
-    std::sprintf(buf, "%s %.12s %.12s",  // 74 chars
-            local_buf, g_video_entry.driver->name, g_video_entry.comment);
 }
 
 static int check_modekey(int curkey, int choice)

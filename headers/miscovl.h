@@ -1,13 +1,8 @@
 #pragma once
 
-extern bool                  g_is_true_color;
-extern bool                  g_make_parameter_file;
-extern bool                  g_make_parameter_file_map;
-extern int                   g_max_line_length;
+extern bool g_is_true_color;
 
-extern void edit_text_colors();
 extern int select_video_mode(int);
-extern void format_vid_table(int choice, char *buf);
 extern void make_mig(unsigned int, unsigned int);
 extern int getprecdbl(int);
 extern int getprecbf(int);
