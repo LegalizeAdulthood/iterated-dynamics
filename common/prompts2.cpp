@@ -1884,11 +1884,9 @@ int cmpdbl(double old, double new_val)
 
 int get_corners()
 {
-    fullscreenvalues values[15];
-    char const *prompts[15];
+    ChoiceBuilder<15> builder;
     char xprompt[] = "          X";
     char yprompt[] = "          Y";
-    int i, nump, prompt_ret;
     int cmag;
     double Xctr, Yctr;
     LDBL Magnification; // LDBL not really needed here, but used to match function parameters
@@ -1904,11 +1902,6 @@ int get_corners()
     oyy3rd = g_y_3rd;
 
 gc_loop:
-    for (i = 0; i < 15; ++i)
-    {
-        values[i].type = 'd'; // most values on this screen are type d
-
-    }
     cmag = g_use_center_mag ? 1 : 0;
     if (g_draw_mode == 'l')
     {
@@ -1916,80 +1909,53 @@ gc_loop:
     }
     cvtcentermag(&Xctr, &Yctr, &Magnification, &Xmagfactor, &Rotation, &Skew);
 
-    nump = -1;
     if (cmag)
     {
-        prompts[++nump] = "Center X";
-        values[nump].uval.dval = Xctr;
-        prompts[++nump] = "Center Y";
-        values[nump].uval.dval = Yctr;
-        prompts[++nump] = "Magnification";
-        values[nump].uval.dval = (double)Magnification;
-        prompts[++nump] = "X Magnification Factor";
-        values[nump].uval.dval = Xmagfactor;
-        prompts[++nump] = "Rotation Angle (degrees)";
-        values[nump].uval.dval = Rotation;
-        prompts[++nump] = "Skew Angle (degrees)";
-        values[nump].uval.dval = Skew;
-        prompts[++nump] = "";
-        values[nump].type = '*';
-        prompts[++nump] = "Press " FK_F7 " to switch to \"corners\" mode";
-        values[nump].type = '*';
+        builder.double_number("Center X", Xctr)
+            .double_number("Center Y", Yctr)
+            .double_number("Magnification", (double) Magnification)
+            .double_number("X Magnification Factor", Xmagfactor)
+            .double_number("Rotation Angle (degrees)", Rotation)
+            .double_number("Skew Angle (degrees)", Skew)
+            .comment("")
+            .comment("Press " FK_F7 " to switch to \"corners\" mode");
     }
 
     else
     {
         if (g_draw_mode == 'l')
         {
-            prompts[++nump] = "Left End Point";
-            values[nump].type = '*';
-            prompts[++nump] = xprompt;
-            values[nump].uval.dval = g_x_min;
-            prompts[++nump] = yprompt;
-            values[nump].uval.dval = g_y_max;
-            prompts[++nump] = "Right End Point";
-            values[nump].type = '*';
-            prompts[++nump] = xprompt;
-            values[nump].uval.dval = g_x_max;
-            prompts[++nump] = yprompt;
-            values[nump].uval.dval = g_y_min;
+            builder.comment("Left End Point")
+                .double_number(xprompt, g_x_min)
+                .double_number(yprompt, g_y_max)
+                .comment("Right End Point")
+                .double_number(xprompt, g_x_max)
+                .double_number(yprompt, g_y_min);
         }
         else
         {
-            prompts[++nump] = "Top-Left Corner";
-            values[nump].type = '*';
-            prompts[++nump] = xprompt;
-            values[nump].uval.dval = g_x_min;
-            prompts[++nump] = yprompt;
-            values[nump].uval.dval = g_y_max;
-            prompts[++nump] = "Bottom-Right Corner";
-            values[nump].type = '*';
-            prompts[++nump] = xprompt;
-            values[nump].uval.dval = g_x_max;
-            prompts[++nump] = yprompt;
-            values[nump].uval.dval = g_y_min;
+            builder.comment("Top-Left Corner")
+                .double_number(xprompt, g_x_min)
+                .double_number(yprompt, g_y_max)
+                .comment("Bottom-Right Corner")
+                .double_number(xprompt, g_x_max)
+                .double_number(yprompt, g_y_min);
             if (g_x_min == g_x_3rd && g_y_min == g_y_3rd)
             {
                 g_y_3rd = 0;
                 g_x_3rd = g_y_3rd;
             }
-            prompts[++nump] = "Bottom-left (zeros for top-left X, bottom-right Y)";
-            values[nump].type = '*';
-            prompts[++nump] = xprompt;
-            values[nump].uval.dval = g_x_3rd;
-            prompts[++nump] = yprompt;
-            values[nump].uval.dval = g_y_3rd;
-            prompts[++nump] = "Press " FK_F7 " to switch to \"center-mag\" mode";
-            values[nump].type = '*';
+            builder.comment("Bottom-left (zeros for top-left X, bottom-right Y)")
+                .double_number(xprompt, g_x_3rd)
+                .double_number(yprompt, g_y_3rd)
+                .comment("Press " FK_F7 " to switch to \"center-mag\" mode");
         }
     }
-
-    prompts[++nump] = "Press " FK_F4 " to reset to type default values";
-    values[nump].type = '*';
+    builder.comment("Press " FK_F4 " to reset to type default values");
 
     help_labels const old_help_mode = g_help_mode;
     g_help_mode = help_labels::HELPCOORDS;
-    prompt_ret = fullscreen_prompt("Image Coordinates", nump+1, prompts, values, 128 | 16, nullptr);
+    const int prompt_ret = builder.prompt("Image Coordinates", 128 | 16, nullptr);
     g_help_mode = old_help_mode;
 
     if (prompt_ret < 0)
@@ -2026,19 +1992,25 @@ gc_loop:
 
     if (cmag)
     {
-        if (cmpdbl(Xctr         , values[0].uval.dval)
-            || cmpdbl(Yctr         , values[1].uval.dval)
-            || cmpdbl((double)Magnification, values[2].uval.dval)
-            || cmpdbl(Xmagfactor   , values[3].uval.dval)
-            || cmpdbl(Rotation     , values[4].uval.dval)
-            || cmpdbl(Skew         , values[5].uval.dval))
+        const double new_x_center = builder.read_double_number();
+        const double new_y_center = builder.read_double_number();
+        const double new_magnification = builder.read_double_number();
+        const double new_x_mag_factor = builder.read_double_number();
+        const double new_rotation = builder.read_double_number();
+        const double new_skew = builder.read_double_number();
+        if (cmpdbl(Xctr, new_x_center)                           //
+            || cmpdbl(Yctr, new_y_center)                        //
+            || cmpdbl((double) Magnification, new_magnification) //
+            || cmpdbl(Xmagfactor, new_x_mag_factor)              //
+            || cmpdbl(Rotation, new_rotation)                    //
+            || cmpdbl(Skew, new_skew))
         {
-            Xctr          = values[0].uval.dval;
-            Yctr          = values[1].uval.dval;
-            Magnification = values[2].uval.dval;
-            Xmagfactor    = values[3].uval.dval;
-            Rotation      = values[4].uval.dval;
-            Skew          = values[5].uval.dval;
+            Xctr          = new_x_center;
+            Yctr          = new_y_center;
+            Magnification = new_magnification;
+            Xmagfactor    = new_x_mag_factor;
+            Rotation      = new_rotation;
+            Skew          = new_skew;
             if (Xmagfactor == 0)
             {
                 Xmagfactor = 1;
@@ -2046,29 +2018,28 @@ gc_loop:
             cvtcorners(Xctr, Yctr, Magnification, Xmagfactor, Rotation, Skew);
         }
     }
-
     else
     {
         if (g_draw_mode == 'l')
         {
-            nump = 1;
-            g_x_min = values[nump++].uval.dval;
-            g_y_max = values[nump++].uval.dval;
-            nump++;
-            g_x_max = values[nump++].uval.dval;
-            g_y_min = values[nump++].uval.dval;
+            builder.read_comment();
+            g_x_min = builder.read_double_number();
+            g_y_max = builder.read_double_number();
+            builder.read_comment();
+            g_x_max = builder.read_double_number();
+            g_y_min = builder.read_double_number();
         }
         else
         {
-            nump = 1;
-            g_x_min = values[nump++].uval.dval;
-            g_y_max = values[nump++].uval.dval;
-            nump++;
-            g_x_max = values[nump++].uval.dval;
-            g_y_min = values[nump++].uval.dval;
-            nump++;
-            g_x_3rd = values[nump++].uval.dval;
-            g_y_3rd = values[nump++].uval.dval;
+            builder.read_comment();
+            g_x_min = builder.read_double_number();
+            g_y_max = builder.read_double_number();
+            builder.read_comment();
+            g_x_max = builder.read_double_number();
+            g_y_min = builder.read_double_number();
+            builder.read_comment();
+            g_x_3rd = builder.read_double_number();
+            g_y_3rd = builder.read_double_number();
             if (g_x_3rd == 0 && g_y_3rd == 0)
             {
                 g_x_3rd = g_x_min;
@@ -2104,10 +2075,8 @@ gc_loop:
         g_y_3rd = oyy3rd;
         return 0;
     }
-    else
-    {
-        return 1;
-    }
+
+    return 1;
 }
 
 static int get_screen_corners()
