@@ -1,8 +1,7 @@
 /* lsys.h
  *      Header file for L-system code.
  */
-#ifndef LSYS_H
-#define LSYS_H
+#pragma once
 
 /* Macro to take an FP number and turn it into a
  * 16/16-bit fixed-point number.
@@ -60,5 +59,3 @@ extern bool lsysf_findscale(lsysf_cmd *command, lsys_turtlestatef *ts, lsysf_cmd
 extern lsysf_cmd *LSysFSizeTransform(char const *s, lsys_turtlestatef *ts);
 extern lsysf_cmd *LSysFDrawTransform(char const *s, lsys_turtlestatef *ts);
 extern void lsysf_dosincos();
-
-#endif

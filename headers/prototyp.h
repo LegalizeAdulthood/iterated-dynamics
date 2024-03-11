@@ -1,5 +1,5 @@
-#ifndef PROTOTYP_H
-#define PROTOTYP_H
+#pragma once
+
 #include "id.h"
 
 #ifdef XFRACT
@@ -27,4 +27,3 @@ extern long stackavail();
 extern int getcolor(int, int);
 extern int out_line(BYTE *, int);
 extern void putcolor_a(int, int, int);
-#endif

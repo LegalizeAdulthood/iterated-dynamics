@@ -1,5 +1,4 @@
-#ifndef FRACTYPE_H
-#define FRACTYPE_H
+#pragma once
 
 // The values must match the values in the trigfn array in prompts1
 enum class trig_fn
@@ -241,5 +240,3 @@ enum class fractal_type
 };
 
 extern fractal_type g_fractal_type;
-
-#endif

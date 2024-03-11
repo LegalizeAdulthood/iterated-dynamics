@@ -1,6 +1,5 @@
 // Wesley Loewer's Big Numbers.        (C) 1994, Wesley B. Loewer
-#ifndef BIG_H
-#define BIG_H
+#pragma once
 
 // Number of bytes to use for integer part for fixed decimal math,
 // does not effect floating point math at all.
@@ -283,4 +282,3 @@ extern bf_t g_bf_save_y_max;
 extern bf_t g_bf_save_x_3rd;
 extern bf_t g_bf_save_y_3rd;
 extern bf_t bfparms[10];                                 // (bflength+2)*10
-#endif /* BIG_H */

@@ -1,5 +1,5 @@
-#ifndef UNIXPROT_H
-#define UNIXPROT_H
+#pragma once
+
 // This file contains prototypes for unix/linux specific functions.
 
 struct EVOLUTION_INFO;
@@ -82,4 +82,3 @@ void schedulealarm(int soon);
 
 extern void putprompt();
 extern void loaddac();
-#endif

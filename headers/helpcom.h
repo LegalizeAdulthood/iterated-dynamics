@@ -4,9 +4,9 @@
  * Common #defines, structures and code for HC.C and HELP.C
  *
  */
-#ifndef HELPCOM_H
-#define HELPCOM_H
-/*
+#pragma once
+
+ /*
  * help file signature
  */
 #define HELP_SIG           (0xAFBC1823UL)
@@ -140,5 +140,4 @@ inline void setint(char *ptr, int n)
 #else
 extern int getint(char const *ptr);
 extern void setint(char *ptr, int n);
-#endif
 #endif

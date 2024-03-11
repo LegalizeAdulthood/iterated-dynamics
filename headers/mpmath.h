@@ -1,5 +1,4 @@
-#ifndef MPMATH_H
-#define MPMATH_H
+#pragma once
 
 #include "calcfrac.h"
 #include "cmplx.h"
@@ -368,5 +367,3 @@ inline void CMPLXrecip(const DComplex &arg, DComplex &out)
         out.y = -arg.y / denom;
     }
 }
-
-#endif

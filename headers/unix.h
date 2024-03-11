@@ -1,6 +1,5 @@
 // UNIX.H - unix port declarations
-#ifndef UNIX_H
-#define UNIX_H
+#pragma once
 
 #include <unistd.h>
 
@@ -21,5 +20,3 @@ typedef float FLOAT4;
 typedef void (*SignalHandler)(int);
 char *strlwr(char *s);
 char *strupr(char *s);
-
-#endif
