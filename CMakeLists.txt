@@ -142,6 +142,7 @@ add_library(libid
     common/fractint.cpp
     common/framain2.cpp headers/framain2.h
     common/full_screen_prompt.cpp headers/full_screen_prompt.h
+    common/get_3d_params.cpp headers/get_3d_params.h
     common/get_browse_params.cpp headers/get_browse_params.h
     headers/get_ifs_token.h
     common/get_key_no_help.cpp headers/get_key_no_help.h
@@ -308,6 +309,7 @@ source_group("Header Files/common/ui" FILES
     headers/fix_dirname.h
     headers/framain2.h
     headers/full_screen_prompt.h
+    headers/get_3d_params.h
     headers/get_browse_params.h
     headers/get_ifs_token.h
     headers/get_key_no_help.h
@@ -343,6 +345,7 @@ source_group("Source Files/common/ui" FILES
     common/fractint.cpp
     common/framain2.cpp
     common/full_screen_prompt.cpp
+    common/get_3d_params.cpp
     common/get_browse_params.cpp
     common/get_key_no_help.cpp
     common/help.cpp
