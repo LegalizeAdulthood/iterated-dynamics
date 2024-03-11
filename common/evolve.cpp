@@ -494,8 +494,7 @@ int get_variations()
 {
     char const *evolvmodes[] = {"no", "x", "y", "x+y", "x-y", "random", "spread"};
     int k, numparams;
-    char const *choices[20];
-    fullscreenvalues uvalues[20];
+    ChoiceBuilder<20> choices;
     GENEBASE gene[NUM_GENES];
     int firstparm = 0;
     int lastparm  = MAX_PARAMS;
@@ -571,8 +570,7 @@ int get_variations()
     }
 
 choose_vars_restart:
-
-    k = -1;
+    choices.reset();
     for (int num = firstparm; num < lastparm; num++)
     {
         if (g_fractal_type == fractal_type::FORMULA || g_fractal_type == fractal_type::FFORMULA)
@@ -582,26 +580,15 @@ choose_vars_restart:
                 continue;
             }
         }
-        choices[++k] = gene[num].name;
-        uvalues[k].type = 'l';
-        uvalues[k].uval.ch.vlen = 7;
-        uvalues[k].uval.ch.llen = 7;
-        uvalues[k].uval.ch.list = evolvmodes;
-        uvalues[k].uval.ch.val = static_cast<int>(gene[num].mutate);
+        choices.list(gene[num].name, 7, 7, evolvmodes, static_cast<int>(gene[num].mutate));
     }
+    choices.comment("")
+        .comment("Press F2 to set all to off")
+        .comment("Press F3 to set all on")
+        .comment("Press F4 to randomize all")
+        .comment("Press F6 for second page"); // F5 gets eaten
 
-    choices[++k] = "";
-    uvalues[k].type = '*';
-    choices[++k] = "Press F2 to set all to off";
-    uvalues[k].type ='*';
-    choices[++k] = "Press F3 to set all on";
-    uvalues[k].type = '*';
-    choices[++k] = "Press F4 to randomize all";
-    uvalues[k].type = '*';
-    choices[++k] = "Press F6 for second page"; // F5 gets eaten
-    uvalues[k].type = '*';
-
-    int i = fullscreen_prompt("Variable tweak central 1 of 2", k+1, choices, uvalues, 64 | 16 | 8 | 4, nullptr);
+    int i = choices.prompt("Variable tweak central 1 of 2", 64 | 16 | 8 | 4, nullptr);
 
     switch (i)
     {
@@ -635,7 +622,6 @@ choose_vars_restart:
     }
 
     // read out values
-    k = -1;
     for (int num = firstparm; num < lastparm; num++)
     {
         if (g_fractal_type == fractal_type::FORMULA || g_fractal_type == fractal_type::FFORMULA)
@@ -645,7 +631,7 @@ choose_vars_restart:
                 continue;
             }
         }
-        gene[num].mutate = static_cast<variations>(uvalues[++k].uval.ch.val);
+        gene[num].mutate = static_cast<variations>(choices.read_list());
     }
 
     copy_genes_to_bank(gene);
