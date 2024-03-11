@@ -441,7 +441,7 @@ choose_vars_restart:
     choices.comment("Press F3 to set all on");
     choices.comment("Press F4 to randomize all");
 
-    i = choices.prompt("Variable tweak central 2 of 2", 16 | 8 | 4, nullptr);
+    i = choices.prompt("Variable tweak central 2 of 2", 16 | 8 | 4);
 
     switch (i)
     {
@@ -588,7 +588,7 @@ choose_vars_restart:
         .comment("Press F4 to randomize all")
         .comment("Press F6 for second page"); // F5 gets eaten
 
-    int i = choices.prompt("Variable tweak central 1 of 2", 64 | 16 | 8 | 4, nullptr);
+    int i = choices.prompt("Variable tweak central 1 of 2", 64 | 16 | 8 | 4);
 
     switch (i)
     {
@@ -712,7 +712,7 @@ get_evol_restart:
 
     old_help_mode = g_help_mode;     // this prevents HELP from activating
     g_help_mode = help_labels::HELPEVOL;
-    i = choices.prompt("Evolution Mode Options", 255, nullptr);
+    i = choices.prompt("Evolution Mode Options", 255);
     g_help_mode = old_help_mode;     // re-enable HELP
     if (i < 0)
     {

@@ -385,7 +385,7 @@ TEST_F(TestChoiceBuilderPrompting, yesNoChoice)
     expect_choice_value("Evolution mode? (no for full screen)", has_yes_no(true));
 
     builder.yes_no("Evolution mode? (no for full screen)", true);
-    builder.prompt("Evolution Mode Options", 255, nullptr);
+    builder.prompt("Evolution Mode Options", 255);
 
     EXPECT_EQ(1, builder.count());
 }
@@ -396,7 +396,7 @@ TEST_F(TestChoiceBuilderPrompting, intChoice)
     expect_choice_value("Image grid size (odd numbers only)", has_int_number(50));
 
     builder.int_number("Image grid size (odd numbers only)", 50);
-    builder.prompt("Evolution Mode Options", 255, nullptr);
+    builder.prompt("Evolution Mode Options", 255);
 
     EXPECT_EQ(1, builder.count());
 }
@@ -407,7 +407,7 @@ TEST_F(TestChoiceBuilderPrompting, longChoice)
     expect_choice_value("Bailout value (0 means use default)", has_long_number(50L));
 
     builder.long_number("Bailout value (0 means use default)", 50L);
-    builder.prompt("Evolution Mode Options", 255, nullptr);
+    builder.prompt("Evolution Mode Options", 255);
 
     EXPECT_EQ(1, builder.count());
 }
@@ -418,7 +418,7 @@ TEST_F(TestChoiceBuilderPrompting, floatChoice)
     expect_choice_value("x parameter range (across screen)", has_float_number(123.456f));
 
     builder.float_number("x parameter range (across screen)", 123.456f);
-    builder.prompt("Evolution Mode Options", 255, nullptr);
+    builder.prompt("Evolution Mode Options", 255);
 
     EXPECT_EQ(1, builder.count());
 }
@@ -429,7 +429,7 @@ TEST_F(TestChoiceBuilderPrompting, doubleChoice)
     expect_choice_value("x parameter range (across screen)", has_double_number(123.456));
 
     builder.double_number("x parameter range (across screen)", 123.456);
-    builder.prompt("Evolution Mode Options", 255, nullptr);
+    builder.prompt("Evolution Mode Options", 255);
 
     EXPECT_EQ(1, builder.count());
 }
@@ -440,7 +440,7 @@ TEST_F(TestChoiceBuilderPrompting, intDoubleChoice)
     expect_choice_value("x parameter range (across screen)", has_int_double_number(123.0));
 
     builder.int_double_number("x parameter range (across screen)", 123.0);
-    builder.prompt("Evolution Mode Options", 255, nullptr);
+    builder.prompt("Evolution Mode Options", 255);
 
     EXPECT_EQ(1, builder.count());
 }
@@ -451,7 +451,7 @@ TEST_F(TestChoiceBuilderPrompting, comment)
     expect_choice_value("Press F4 to reset view parameters to defaults.", has_type('*'));
 
     builder.comment("Press F4 to reset view parameters to defaults.");
-    builder.prompt("Evolution Mode Options", 255, nullptr);
+    builder.prompt("Evolution Mode Options", 255);
 
     EXPECT_EQ(1, builder.count());
 }
@@ -465,7 +465,7 @@ TEST_F(TestChoiceBuilderPrompting, listChoice)
     expect_choice_value("First Function", has_list(list_len, list_value_len, list, 1));
 
     builder.list("First Function", list_len, list_value_len, list, 1);
-    builder.prompt("Evolution Mode Options", 255, nullptr);
+    builder.prompt("Evolution Mode Options", 255);
 
     EXPECT_EQ(1, builder.count());
 }
@@ -476,7 +476,7 @@ TEST_F(TestChoiceBuilderPrompting, stringChoice)
     expect_choice_value("Browse search filename mask ", has_string("*.gif"));
 
     builder.string("Browse search filename mask ", "*.gif");
-    builder.prompt("Evolution Mode Options", 255, nullptr);
+    builder.prompt("Evolution Mode Options", 255);
 
     EXPECT_EQ(1, builder.count());
 }
@@ -489,7 +489,7 @@ TEST_F(TestChoiceBuilderPrompting, stringBufferChoice)
     expect_choice_value("Browse search filename mask ", has_string_buff(buff, len));
 
     builder.string_buff("Browse search filename mask ", buff, len);
-    builder.prompt("Evolution Mode Options", 255, nullptr);
+    builder.prompt("Evolution Mode Options", 255);
 
     EXPECT_EQ(1, builder.count());
 }
@@ -503,7 +503,7 @@ TEST_F(TestChoiceBuilderPrompting, multipleChoices)
         .WillOnce(Return(FIK_ENTER));
 
     builder.comment("First").comment("Second");
-    builder.prompt("Evolution Mode Options", 255, nullptr);
+    builder.prompt("Evolution Mode Options", 255);
 
     EXPECT_EQ(2, builder.count());
 }
@@ -541,7 +541,7 @@ TEST_F(TestChoiceBuilderPrompting, buildReset)
     builder.comment("First");
 
     builder.reset();
-    builder.prompt("Oops", 0, nullptr);
+    builder.prompt("Oops");
 
     EXPECT_EQ(0, builder.count());
 }
@@ -574,7 +574,7 @@ TEST_F(TestChoiceBuilderPrompting, readChoiceWrongType)
     ChoiceBuilder<1, Shim> builder;
     EXPECT_CALL(prompter, prompt(_, _, _, _, _, _)).WillOnce(Return(FIK_ENTER));
     builder.int_number("Image grid size (odd numbers only)", 50);
-    builder.prompt("Evolution Mode Options", 255, nullptr);
+    builder.prompt("Evolution Mode Options", 255);
 
     EXPECT_THROW(builder.read_yes_no(), std::runtime_error);
 }
@@ -584,7 +584,7 @@ TEST_F(TestChoiceBuilderPrompting, readTooManyChoices)
     ChoiceBuilder<1, Shim> builder;
     EXPECT_CALL(prompter, prompt(_, _, _, _, _, _)).WillOnce(Return(FIK_ENTER));
     builder.yes_no("Evolution mode? (no for full screen)", true);
-    builder.prompt("Evolution Mode Options", 255, nullptr);
+    builder.prompt("Evolution Mode Options", 255);
     EXPECT_EQ(true, builder.read_yes_no());
 
     EXPECT_THROW(builder.read_yes_no(), std::runtime_error);
@@ -597,7 +597,7 @@ TEST_F(TestChoiceBuilderPrompting, readYesNoChoice)
         prompt(StrEq("Evolution Mode Options"), 1, NotNull(), NotNull(), 255, nullptr))
         .WillOnce(DoAll(WithArg<3>([](fullscreenvalues *uvalues) { uvalues[0].uval.ch.val = 0; }), Return(FIK_ENTER)));
     builder.yes_no("Evolution mode? (no for full screen)", true);
-    const int result = builder.prompt("Evolution Mode Options", 255, nullptr);
+    const int result = builder.prompt("Evolution Mode Options", 255);
 
     const bool yes_no = builder.read_yes_no();
 
@@ -611,7 +611,7 @@ TEST_F(TestChoiceBuilderPrompting, readIntChoice)
     EXPECT_CALL(prompter, prompt(_, 1, _, NotNull(), _, _))
         .WillOnce(DoAll(WithArg<3>([](fullscreenvalues *uvalues) { uvalues[0].uval.ival = 12; }), Return(FIK_ENTER)));
     builder.int_number("Image grid size (odd numbers only)", 50);
-    const int result = builder.prompt("Evolution Mode Options", 255, nullptr);
+    const int result = builder.prompt("Evolution Mode Options", 255);
 
     const int value = builder.read_int_number();
 
@@ -625,7 +625,7 @@ TEST_F(TestChoiceBuilderPrompting, readLongChoice)
     EXPECT_CALL(prompter, prompt(_, 1, _, NotNull(), _, _))
         .WillOnce(DoAll(WithArg<3>([](fullscreenvalues *uvalues) { uvalues[0].uval.Lval = 46L; }), Return(FIK_ENTER)));
     builder.long_number("Image grid size (odd numbers only)", 66L);
-    const int result = builder.prompt("Evolution Mode Options", 255, nullptr);
+    const int result = builder.prompt("Evolution Mode Options", 255);
 
     const long value = builder.read_long_number();
 
@@ -639,7 +639,7 @@ TEST_F(TestChoiceBuilderPrompting, readFloatChoice)
     EXPECT_CALL(prompter, prompt(_, 1, _, NotNull(), _, _))
         .WillOnce(DoAll(WithArg<3>([](fullscreenvalues *uvalues) { uvalues[0].uval.dval = 46.5; }), Return(FIK_ENTER)));
     builder.float_number("Image grid size (odd numbers only)", 66.0f);
-    const int result = builder.prompt("Evolution Mode Options", 255, nullptr);
+    const int result = builder.prompt("Evolution Mode Options", 255);
 
     const float value = builder.read_float_number();
 
@@ -653,7 +653,7 @@ TEST_F(TestChoiceBuilderPrompting, readDoubleChoice)
     EXPECT_CALL(prompter, prompt(_, 1, _, NotNull(), _, _))
         .WillOnce(DoAll(WithArg<3>([](fullscreenvalues *uvalues) { uvalues[0].uval.dval = 46.5; }), Return(FIK_ENTER)));
     builder.double_number("Image grid size (odd numbers only)", 66.0);
-    const int result = builder.prompt("Evolution Mode Options", 255, nullptr);
+    const int result = builder.prompt("Evolution Mode Options", 255);
 
     const double value = builder.read_double_number();
 
@@ -667,7 +667,7 @@ TEST_F(TestChoiceBuilderPrompting, readIntDoubleChoice)
     EXPECT_CALL(prompter, prompt(_, 1, _, NotNull(), _, _))
         .WillOnce(DoAll(WithArg<3>([](fullscreenvalues *uvalues) { uvalues[0].uval.dval = 46; }), Return(FIK_ENTER)));
     builder.int_double_number("Image grid size (odd numbers only)", 66.0);
-    const int result = builder.prompt("Evolution Mode Options", 255, nullptr);
+    const int result = builder.prompt("Evolution Mode Options", 255);
 
     const double value = builder.read_int_double_number();
 
@@ -680,7 +680,7 @@ TEST_F(TestChoiceBuilderPrompting, readComment)
     ChoiceBuilder<1, Shim> builder;
     EXPECT_CALL(prompter, prompt(_, _, _, _, _, _)).WillOnce(Return(FIK_ENTER));
     builder.comment("Press F4 to reset view parameters to defaults.");
-    const int result = builder.prompt("Evolution Mode Options", 255, nullptr);
+    const int result = builder.prompt("Evolution Mode Options", 255);
 
     builder.read_comment();
 
@@ -696,7 +696,7 @@ TEST_F(TestChoiceBuilderPrompting, readList)
     const int list_len = 3;
     const int list_value_len = 5;
     builder.list("First Function", list_len, list_value_len, list, 1);
-    const int result = builder.prompt("Evolution Mode Options", 255, nullptr);
+    const int result = builder.prompt("Evolution Mode Options", 255);
 
     const int value = builder.read_list();
 
@@ -711,7 +711,7 @@ TEST_F(TestChoiceBuilderPrompting, readString)
         .WillOnce(DoAll(WithArg<3>([](fullscreenvalues *uvalues) { std::strncpy(uvalues[0].uval.sval, "*.pot", 16); }),
             Return(FIK_ENTER)));
     builder.string("Browse search filename mask ", "*.gif");
-    const int result = builder.prompt("Evolution Mode Options", 255, nullptr);
+    const int result = builder.prompt("Evolution Mode Options", 255);
 
     const char *value = builder.read_string();
 
@@ -728,7 +728,7 @@ TEST_F(TestChoiceBuilderPrompting, readStringBuff)
     constexpr int len{80};
     char buff[len]{};
     builder.string_buff("Browse search filename mask ", buff, len);
-    const int result = builder.prompt("Evolution Mode Options", 255, nullptr);
+    const int result = builder.prompt("Evolution Mode Options", 255);
 
     const char *value = builder.read_string_buff(len);
 

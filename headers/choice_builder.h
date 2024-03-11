@@ -103,6 +103,7 @@ public:
         uvalues[m_current_build].uval.sbuf = buffer;
         return advance();
     }
+
     ChoiceBuilder &reset()
     {
         m_current_build = 0;
@@ -123,6 +124,14 @@ public:
         m_prompted = true;
         m_result = m_prompter(hdg, count(), choices.data(), uvalues.data(), fkeymask, extrainfo);
         return m_result;
+    }
+    int prompt(char const *hdg, int fkeymask)
+    {
+        return prompt(hdg, fkeymask, nullptr);
+    }
+    int prompt(char const *hdg)
+    {
+        return prompt(hdg, 0, nullptr);
     }
 
     bool read_yes_no() const

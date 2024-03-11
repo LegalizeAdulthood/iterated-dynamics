@@ -45,7 +45,7 @@ get_brws_restart:
 
     help_labels const old_help_mode = g_help_mode;     // this prevents HELP from activating
     g_help_mode = help_labels::HELPBRWSPARMS;
-    i = choices.prompt("Browse ('L'ook) Mode Options", 16, nullptr);
+    i = choices.prompt("Browse ('L'ook) Mode Options", 16);
     g_help_mode = old_help_mode;     // re-enable HELP
     if (i < 0)
     {

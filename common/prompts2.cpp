@@ -1334,7 +1334,7 @@ int get_a_number(double *x, double *y)
     builder.double_number("X coordinate at cursor", *x);
     builder.double_number("Y coordinate at cursor", *y);
 
-    const int i = builder.prompt("Set Cursor Coordinates", 16 | 8 | 1, nullptr);
+    const int i = builder.prompt("Set Cursor Coordinates", 16 | 8 | 1);
     if (i < 0)
     {
         driver_unstack_screen();
@@ -1955,7 +1955,7 @@ gc_loop:
 
     help_labels const old_help_mode = g_help_mode;
     g_help_mode = help_labels::HELPCOORDS;
-    const int prompt_ret = builder.prompt("Image Coordinates", 128 | 16, nullptr);
+    const int prompt_ret = builder.prompt("Image Coordinates", 128 | 16);
     g_help_mode = old_help_mode;
 
     if (prompt_ret < 0)
@@ -2163,7 +2163,7 @@ gsc_loop:
 
     help_labels const old_help_mode = g_help_mode;
     g_help_mode = help_labels::HELPSCRNCOORDS;
-    prompt_ret = builder.prompt("Screen Coordinates", 128 | 16, nullptr);
+    prompt_ret = builder.prompt("Screen Coordinates", 128 | 16);
     g_help_mode = old_help_mode;
 
     if (prompt_ret < 0)

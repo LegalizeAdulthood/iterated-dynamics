@@ -405,7 +405,7 @@ static bool get_light_params()
 
     help_labels const old_help_mode = g_help_mode;
     g_help_mode = help_labels::HELP3DLIGHT;
-    k = builder.prompt("Light Source Parameters", 0, nullptr);
+    k = builder.prompt("Light Source Parameters");
     g_help_mode = old_help_mode;
     if (k < 0)
     {
@@ -570,7 +570,7 @@ static bool get_funny_glasses_params()
 
     help_labels const old_help_mode = g_help_mode;
     g_help_mode = help_labels::HELP3DGLASSES;
-    int k = builder.prompt("Funny Glasses Parameters", 0, nullptr);
+    int k = builder.prompt("Funny Glasses Parameters");
     g_help_mode = old_help_mode;
     if (k < 0)
     {
@@ -608,7 +608,7 @@ int get_fract3d_params() // prompt for 3D fractal parameters
 
     help_labels const old_help_mode = g_help_mode;
     g_help_mode = help_labels::HELP3DFRACT;
-    int i = builder.prompt("3D Parameters", 0, nullptr);
+    int i = builder.prompt("3D Parameters");
     g_help_mode = old_help_mode;
 
     int ret{};
