@@ -17,6 +17,7 @@
 #include "line3d.h"
 #include "loadfile.h"
 #include "lorenz.h"
+#include "miscovl.h"
 #include "miscres.h"
 #include "os.h"
 #include "parser.h"
@@ -48,6 +49,7 @@ static void put_float(int, double, int);
 static void put_bf(int slash, bf_t r, int prec);
 static void put_filename(char const *keyword, char const *fname);
 static void strip_zeros(char *buf);
+static void write_batch_parms(char const *colorinf, bool colorsonly, int maxcolor, int ii, int jj);
 
 bool g_make_parameter_file = false;
 bool g_make_parameter_file_map = false;
