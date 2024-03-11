@@ -8,7 +8,6 @@
 #include "full_screen_prompt.h"
 #include "helpdefs.h"
 #include "id_data.h"
-#include "prompts1.h"
 
 #include <cstring>
 #include <string>
