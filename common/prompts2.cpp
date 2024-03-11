@@ -1175,28 +1175,20 @@ int starfield()
 
 int get_starfield_params()
 {
-    fullscreenvalues uvalues[3];
-    char const *starfield_prompts[3] =
-    {
-        "Star Density in Pixels per Star",
-        "Percent Clumpiness",
-        "Ratio of Dim stars to Bright"
-    };
-
     if (g_colors < 255)
     {
         stopmsg(STOPMSG_NONE, "starfield requires 256 color mode");
         return -1;
     }
-    for (int i = 0; i < 3; i++)
-    {
-        uvalues[i].uval.dval = starfield_values[i];
-        uvalues[i].type = 'f';
-    }
+
+    ChoiceBuilder<3> builder;
+    builder.float_number("Star Density in Pixels per Star", starfield_values[0])
+        .float_number("Percent Clumpiness", starfield_values[1])
+        .float_number("Ratio of Dim stars to Bright", starfield_values[2]);
     driver_stack_screen();
     help_labels const old_help_mode = g_help_mode;
     g_help_mode = help_labels::HELPSTARFLD;
-    int const choice = fullscreen_prompt("Starfield Parameters", 3, starfield_prompts, uvalues, 0, nullptr);
+    int const choice = builder.prompt("Starfield Parameters");
     g_help_mode = old_help_mode;
     driver_unstack_screen();
     if (choice < 0)
@@ -1205,7 +1197,7 @@ int get_starfield_params()
     }
     for (int i = 0; i < 3; i++)
     {
-        starfield_values[i] = uvalues[i].uval.dval;
+        starfield_values[i] = builder.read_float_number();
     }
 
     return 0;
