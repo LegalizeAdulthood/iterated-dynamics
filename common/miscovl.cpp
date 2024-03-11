@@ -80,7 +80,7 @@ inline bool is_writable(const std::string &path)
 
 void make_batch_file()
 {
-#define MAXPROMPTS 18
+    constexpr int MAXPROMPTS = 18;
     bool colorsonly = false;
     // added for pieces feature
     double pdelx = 0.0;
