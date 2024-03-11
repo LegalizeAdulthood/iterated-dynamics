@@ -151,6 +151,7 @@ add_library(libid
     headers/is_directory.h
     common/jiim.cpp headers/jiim.h
     common/load_entry_text.cpp headers/load_entry_text.h
+    common/make_batch_file.cpp headers/make_batch_file.h
     headers/make_path.h
     common/merge_path_names.cpp headers/merge_path_names.h
     common/miscovl.cpp headers/miscovl.h
@@ -320,6 +321,7 @@ source_group("Header Files/common/ui" FILES
     headers/is_directory.h
     headers/jiim.h
     headers/load_entry_text.h
+    headers/make_batch_file.h
     headers/make_path.h
     headers/merge_path_names.h
     headers/miscovl.h
@@ -352,6 +354,7 @@ source_group("Source Files/common/ui" FILES
     common/intro.cpp
     common/jiim.cpp
     common/load_entry_text.cpp
+    common/make_batch_file.cpp
     common/merge_path_names.cpp
     common/miscovl.cpp
     common/miscres.cpp
