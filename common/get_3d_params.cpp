@@ -365,8 +365,7 @@ restart_3:
 // ---------------------------------------------------------------------
 static bool get_light_params()
 {
-    char const *prompts3d[13];
-    fullscreenvalues uvalues[13];
+    ChoiceBuilder<13> builder;
 
     int k;
 
@@ -376,70 +375,37 @@ static bool get_light_params()
 
     if (ILLUMINE || g_raytrace_format != raytrace_formats::none)
     {
-        prompts3d[++k] = "X value light vector";
-        uvalues[k].type = 'i';
-        uvalues[k].uval.ival = XLIGHT    ;
-
-        prompts3d[++k] = "Y value light vector";
-        uvalues[k].type = 'i';
-        uvalues[k].uval.ival = YLIGHT    ;
-
-        prompts3d[++k] = "Z value light vector";
-        uvalues[k].type = 'i';
-        uvalues[k].uval.ival = ZLIGHT    ;
+        builder.int_number("X value light vector", XLIGHT)
+            .int_number("Y value light vector", YLIGHT)
+            .int_number("Z value light vector", ZLIGHT);
 
         if (g_raytrace_format == raytrace_formats::none)
         {
-            prompts3d[++k] = "Light Source Smoothing Factor";
-            uvalues[k].type = 'i';
-            uvalues[k].uval.ival = LIGHTAVG  ;
-
-            prompts3d[++k] = "Ambient";
-            uvalues[k].type = 'i';
-            uvalues[k].uval.ival = g_ambient;
+            builder.int_number("Light Source Smoothing Factor", LIGHTAVG);
+            builder.int_number("Ambient", g_ambient);
         }
     }
 
     if (g_targa_out && g_raytrace_format == raytrace_formats::none)
     {
-        prompts3d[++k] = "Haze Factor        (0 - 100, '0' disables)";
-        uvalues[k].type = 'i';
-        uvalues[k].uval.ival = g_haze;
+        builder.int_number("Haze Factor        (0 - 100, '0' disables)", g_haze);
 
         if (!g_targa_overlay)
         {
             check_writefile(g_light_name, ".tga");
         }
-        prompts3d[++k] = "Targa File Name  (Assume .tga)";
-        uvalues[k].type = 's';
-        std::strcpy(uvalues[k].uval.sval, g_light_name.c_str());
-
-        prompts3d[++k] = "Back Ground Color (0 - 255)";
-        uvalues[k].type = '*';
-
-        prompts3d[++k] = "   Red";
-        uvalues[k].type = 'i';
-        uvalues[k].uval.ival = (int)g_background_color[0];
-
-        prompts3d[++k] = "   Green";
-        uvalues[k].type = 'i';
-        uvalues[k].uval.ival = (int)g_background_color[1];
-
-        prompts3d[++k] = "   Blue";
-        uvalues[k].type = 'i';
-        uvalues[k].uval.ival = (int)g_background_color[2];
-
-        prompts3d[++k] = "Overlay Targa File? (Y/N)";
-        uvalues[k].type = 'y';
-        uvalues[k].uval.ch.val = g_targa_overlay ? 1 : 0;
-
+        builder.string("Targa File Name  (Assume .tga)", g_light_name.c_str())
+            .comment("Back Ground Color (0 - 255)")
+            .int_number("   Red", g_background_color[0])
+            .int_number("   Green", g_background_color[1])
+            .int_number("   Blue", g_background_color[2])
+            .yes_no("Overlay Targa File? (Y/N)", g_targa_overlay);
     }
-
-    prompts3d[++k] = "";
+    builder.comment("");
 
     help_labels const old_help_mode = g_help_mode;
     g_help_mode = help_labels::HELP3DLIGHT;
-    k = fullscreen_prompt("Light Source Parameters", k, prompts3d, uvalues, 0, nullptr);
+    k = builder.prompt("Light Source Parameters", 0, nullptr);
     g_help_mode = old_help_mode;
     if (k < 0)
     {
@@ -449,13 +415,13 @@ static bool get_light_params()
     k = 0;
     if (ILLUMINE)
     {
-        XLIGHT   = uvalues[k++].uval.ival;
-        YLIGHT   = uvalues[k++].uval.ival;
-        ZLIGHT   = uvalues[k++].uval.ival;
+        XLIGHT   = builder.read_int_number();
+        YLIGHT   = builder.read_int_number();
+        ZLIGHT   = builder.read_int_number();
         if (g_raytrace_format == raytrace_formats::none)
         {
-            LIGHTAVG = uvalues[k++].uval.ival;
-            g_ambient  = uvalues[k++].uval.ival;
+            LIGHTAVG = builder.read_int_number();
+            g_ambient  = builder.read_int_number();
             if (g_ambient >= 100)
             {
                 g_ambient = 100;
@@ -469,7 +435,7 @@ static bool get_light_params()
 
     if (g_targa_out && g_raytrace_format == raytrace_formats::none)
     {
-        g_haze  =  uvalues[k++].uval.ival;
+        g_haze = builder.read_int_number();
         if (g_haze >= 100)
         {
             g_haze = 100;
@@ -478,13 +444,13 @@ static bool get_light_params()
         {
             g_haze = 0;
         }
-        g_light_name = uvalues[k++].uval.sval;
+        g_light_name = builder.read_string();
         /* In case light_name conflicts with an existing name it is checked again in line3d */
         k++;
-        g_background_color[0] = (char)(uvalues[k++].uval.ival % 255);
-        g_background_color[1] = (char)(uvalues[k++].uval.ival % 255);
-        g_background_color[2] = (char)(uvalues[k++].uval.ival % 255);
-        g_targa_overlay = uvalues[k].uval.ch.val != 0;
+        g_background_color[0] = (char)(builder.read_int_number() % 255);
+        g_background_color[1] = (char)(builder.read_int_number() % 255);
+        g_background_color[2] = (char)(builder.read_int_number() % 255);
+        g_targa_overlay = builder.read_yes_no();
     }
     return false;
 }
