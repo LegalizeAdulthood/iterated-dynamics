@@ -3,6 +3,7 @@
 #include "port.h"
 #include "prototyp.h"
 
+#include "choice_builder.h"
 #include "cmdfiles.h"
 #include "drivers.h"
 #include "fractype.h"
@@ -661,57 +662,35 @@ static bool get_funny_glasses_params()
 
 int get_fract3d_params() // prompt for 3D fractal parameters
 {
-    int i;
-    int k;
-    int ret;
-    fullscreenvalues uvalues[20];
-    char const *ifs3d_prompts[7] =
-    {
-        "X-axis rotation in degrees",
-        "Y-axis rotation in degrees",
-        "Z-axis rotation in degrees",
-        "Perspective distance [1 - 999, 0 for no persp]",
-        "X shift with perspective (positive = right)",
-        "Y shift with perspective (positive = up   )",
-        "Stereo (R/B 3D)? (0=no,1=alternate,2=superimpose,3=photo,4=stereo pair)"
-    };
-
     driver_stack_screen();
-    k = 0;
-    uvalues[k].type = 'i';
-    uvalues[k++].uval.ival = XROT;
-    uvalues[k].type = 'i';
-    uvalues[k++].uval.ival = YROT;
-    uvalues[k].type = 'i';
-    uvalues[k++].uval.ival = ZROT;
-    uvalues[k].type = 'i';
-    uvalues[k++].uval.ival = ZVIEWER;
-    uvalues[k].type = 'i';
-    uvalues[k++].uval.ival = XSHIFT;
-    uvalues[k].type = 'i';
-    uvalues[k++].uval.ival = YSHIFT;
-    uvalues[k].type = 'i';
-    uvalues[k++].uval.ival = g_glasses_type;
+    ChoiceBuilder<7> builder;
+    builder.int_number("X-axis rotation in degrees", XROT)
+        .int_number("Y-axis rotation in degrees", YROT)
+        .int_number("Z-axis rotation in degrees", ZROT)
+        .int_number("Perspective distance [1 - 999, 0 for no persp]", ZVIEWER)
+        .int_number("X shift with perspective (positive = right)", XSHIFT)
+        .int_number("Y shift with perspective (positive = up   )", YSHIFT)
+        .int_number("Stereo (R/B 3D)? (0=no,1=alternate,2=superimpose,3=photo,4=stereo pair)", g_glasses_type);
 
     help_labels const old_help_mode = g_help_mode;
     g_help_mode = help_labels::HELP3DFRACT;
-    i = fullscreen_prompt("3D Parameters", k, ifs3d_prompts, uvalues, 0, nullptr);
+    int i = builder.prompt("3D Parameters", 0, nullptr);
     g_help_mode = old_help_mode;
+
+    int ret{};
     if (i < 0)
     {
         ret = -1;
         goto get_f3d_exit;
     }
 
-    k = 0;
-    ret = k;
-    XROT    =  uvalues[k++].uval.ival;
-    YROT    =  uvalues[k++].uval.ival;
-    ZROT    =  uvalues[k++].uval.ival;
-    ZVIEWER =  uvalues[k++].uval.ival;
-    XSHIFT  =  uvalues[k++].uval.ival;
-    YSHIFT  =  uvalues[k++].uval.ival;
-    g_glasses_type = uvalues[k++].uval.ival;
+    XROT    = builder.read_int_number();
+    YROT    = builder.read_int_number();
+    ZROT    = builder.read_int_number();
+    ZVIEWER = builder.read_int_number();
+    XSHIFT  = builder.read_int_number();
+    YSHIFT  = builder.read_int_number();
+    g_glasses_type = builder.read_int_number();;
     if (g_glasses_type < 0 || g_glasses_type > 4)
     {
         g_glasses_type = 0;
