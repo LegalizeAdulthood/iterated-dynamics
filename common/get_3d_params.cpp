@@ -27,7 +27,7 @@ static  bool get_light_params();
 static  bool check_mapfile();
 static  bool get_funny_glasses_params();
 
-static char funnyglasses_map_name[16];
+static std::string g_funny_glasses_map_name;
 
 int get_3d_params()     // prompt for 3D parameters
 {
@@ -511,7 +511,7 @@ static bool check_mapfile()
     }
     else
     {
-        merge_pathnames(buff, funnyglasses_map_name, cmd_file::AT_CMD_LINE);
+        merge_pathnames(buff, g_funny_glasses_map_name.c_str(), cmd_file::AT_CMD_LINE);
     }
 
     while (true)
@@ -551,12 +551,6 @@ static bool check_mapfile()
 
 static bool get_funny_glasses_params()
 {
-    char const *prompts3d[10];
-
-    fullscreenvalues uvalues[10];
-
-    int k;
-
     // defaults
     if (ZVIEWER == 0)
     {
@@ -578,65 +572,39 @@ static bool get_funny_glasses_params()
 
     if (g_glasses_type == 1)
     {
-        std::strcpy(funnyglasses_map_name, g_glasses1_map.c_str());
+        g_funny_glasses_map_name = g_glasses1_map;
     }
     else if (g_glasses_type == 2)
     {
         if (FILLTYPE == -1)
         {
-            std::strcpy(funnyglasses_map_name, "grid.map");
+            g_funny_glasses_map_name = "grid.map";
         }
         else
         {
             std::string glasses2_map{g_glasses1_map};
             glasses2_map.replace(glasses2_map.find('1'), 1, "2");
-            std::strcpy(funnyglasses_map_name, glasses2_map.c_str());
+            g_funny_glasses_map_name = glasses2_map;
         }
     }
 
-    k = -1;
-    prompts3d[++k] = "Interocular distance (as % of screen)";
-    uvalues[k].type = 'i';
-    uvalues[k].uval.ival = g_eye_separation;
-
-    prompts3d[++k] = "Convergence adjust (positive = spread greater)";
-    uvalues[k].type = 'i';
-    uvalues[k].uval.ival = g_converge_x_adjust;
-
-    prompts3d[++k] = "Left  red image crop (% of screen)";
-    uvalues[k].type = 'i';
-    uvalues[k].uval.ival = g_red_crop_left;
-
-    prompts3d[++k] = "Right red image crop (% of screen)";
-    uvalues[k].type = 'i';
-    uvalues[k].uval.ival = g_red_crop_right;
-
-    prompts3d[++k] = "Left  blue image crop (% of screen)";
-    uvalues[k].type = 'i';
-    uvalues[k].uval.ival = g_blue_crop_left;
-
-    prompts3d[++k] = "Right blue image crop (% of screen)";
-    uvalues[k].type = 'i';
-    uvalues[k].uval.ival = g_blue_crop_right;
-
-    prompts3d[++k] = "Red brightness factor (%)";
-    uvalues[k].type = 'i';
-    uvalues[k].uval.ival = g_red_bright;
-
-    prompts3d[++k] = "Blue brightness factor (%)";
-    uvalues[k].type = 'i';
-    uvalues[k].uval.ival = g_blue_bright;
-
+    ChoiceBuilder<10> builder;
+    builder.int_number("Interocular distance (as % of screen)", g_eye_separation)
+        .int_number("Convergence adjust (positive = spread greater)", g_converge_x_adjust)
+        .int_number("Left  red image crop (% of screen)", g_red_crop_left)
+        .int_number("Right red image crop (% of screen)", g_red_crop_right)
+        .int_number("Left  blue image crop (% of screen)", g_blue_crop_left)
+        .int_number("Right blue image crop (% of screen)", g_blue_crop_right)
+        .int_number("Red brightness factor (%)", g_red_bright)
+        .int_number("Blue brightness factor (%)", g_blue_bright);
     if (g_glasses_type == 1 || g_glasses_type == 2)
     {
-        prompts3d[++k] = "Map File name";
-        uvalues[k].type = 's';
-        std::strcpy(uvalues[k].uval.sval, funnyglasses_map_name);
+        builder.string("Map File name", g_funny_glasses_map_name.c_str());
     }
 
     help_labels const old_help_mode = g_help_mode;
     g_help_mode = help_labels::HELP3DGLASSES;
-    k = fullscreen_prompt("Funny Glasses Parameters", k+1, prompts3d, uvalues, 0, nullptr);
+    int k = builder.prompt("Funny Glasses Parameters", 0, nullptr);
     g_help_mode = old_help_mode;
     if (k < 0)
     {
@@ -644,18 +612,18 @@ static bool get_funny_glasses_params()
     }
 
     k = 0;
-    g_eye_separation   =  uvalues[k++].uval.ival;
-    g_converge_x_adjust         =  uvalues[k++].uval.ival;
-    g_red_crop_left   =  uvalues[k++].uval.ival;
-    g_red_crop_right  =  uvalues[k++].uval.ival;
-    g_blue_crop_left  =  uvalues[k++].uval.ival;
-    g_blue_crop_right =  uvalues[k++].uval.ival;
-    g_red_bright      =  uvalues[k++].uval.ival;
-    g_blue_bright     =  uvalues[k++].uval.ival;
+    g_eye_separation   =  builder.read_int_number();
+    g_converge_x_adjust = builder.read_int_number();
+    g_red_crop_left   =  builder.read_int_number();
+    g_red_crop_right  =  builder.read_int_number();
+    g_blue_crop_left  =  builder.read_int_number();
+    g_blue_crop_right =  builder.read_int_number();
+    g_red_bright      =  builder.read_int_number();
+    g_blue_bright     =  builder.read_int_number();
 
     if (g_glasses_type == 1 || g_glasses_type == 2)
     {
-        std::strcpy(funnyglasses_map_name, uvalues[k].uval.sval);
+        g_funny_glasses_map_name = builder.read_string();
     }
     return false;
 }
