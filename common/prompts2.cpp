@@ -6,6 +6,7 @@
 
 #include "ant.h"
 #include "calcfrac.h"
+#include "choice_builder.h"
 #include "cmdfiles.h"
 #include "diskvid.h"
 #include "double_to_string.h"
@@ -1326,25 +1327,14 @@ int get_rds_params()
 
 int get_a_number(double *x, double *y)
 {
-    char const *choices[2];
-
-    fullscreenvalues uvalues[2];
-    int i, k;
-
     driver_stack_screen();
 
     // fill up the previous values arrays
-    k = -1;
+    ChoiceBuilder<2> builder;
+    builder.double_number("X coordinate at cursor", *x);
+    builder.double_number("Y coordinate at cursor", *y);
 
-    choices[++k] = "X coordinate at cursor";
-    uvalues[k].type = 'd';
-    uvalues[k].uval.dval = *x;
-
-    choices[++k] = "Y coordinate at cursor";
-    uvalues[k].type = 'd';
-    uvalues[k].uval.dval = *y;
-
-    i = fullscreen_prompt("Set Cursor Coordinates", k+1, choices, uvalues, 16 | 8 | 1, nullptr);
+    const int i = builder.prompt("Set Cursor Coordinates", 16 | 8 | 1, nullptr);
     if (i < 0)
     {
         driver_unstack_screen();
@@ -1352,10 +1342,8 @@ int get_a_number(double *x, double *y)
     }
 
     // now check out the results (*hopefully* in the same order <grin>)
-    k = -1;
-
-    *x = uvalues[++k].uval.dval;
-    *y = uvalues[++k].uval.dval;
+    *x = builder.read_double_number();
+    *y = builder.read_double_number();
 
     driver_unstack_screen();
     return i;
