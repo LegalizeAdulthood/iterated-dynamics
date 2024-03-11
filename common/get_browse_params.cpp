@@ -3,6 +3,7 @@
 #include "port.h"
 #include "prototyp.h"
 
+#include "choice_builder.h"
 #include "cmdfiles.h"
 #include "evolve.h"
 #include "full_screen_prompt.h"
@@ -15,8 +16,7 @@
 // get browse parameters, returns 3 if anything changes.
 int get_browse_params()
 {
-    char const *choices[10];
-    fullscreenvalues uvalues[25];
+    ChoiceBuilder<10> choices;
     int i, k;
 
     bool old_auto_browse = g_auto_browse;
@@ -31,46 +31,21 @@ get_brws_restart:
     // fill up the previous values arrays
     k = -1;
 
-    choices[++k] = "Autobrowsing? (y/n)";
-    uvalues[k].type = 'y';
-    uvalues[k].uval.ch.val = g_auto_browse ? 1 : 0;
-
-    choices[++k] = "Ask about GIF video mode? (y/n)";
-    uvalues[k].type = 'y';
-    uvalues[k].uval.ch.val = g_ask_video ? 1 : 0;
-
-    choices[++k] = "Check fractal type? (y/n)";
-    uvalues[k].type = 'y';
-    uvalues[k].uval.ch.val = g_browse_check_fractal_type ? 1 : 0;
-
-    choices[++k] = "Check fractal parameters (y/n)";
-    uvalues[k].type = 'y';
-    uvalues[k].uval.ch.val = g_browse_check_fractal_params ? 1 : 0;
-
-    choices[++k] = "Confirm file deletes (y/n)";
-    uvalues[k].type = 'y';
-    uvalues[k].uval.ch.val = g_confirm_file_deletes ? 1 : 0;
-
-    choices[++k] = "Smallest window to display (size in pixels)";
-    uvalues[k].type = 'f';
-    uvalues[k].uval.dval = g_smallest_window_display_size;
-
-    choices[++k] = "Smallest box size shown before crosshairs used (pix)";
-    uvalues[k].type = 'i';
-    uvalues[k].uval.ival = g_smallest_box_size_shown;
-    choices[++k] = "Browse search filename mask ";
-    uvalues[k].type = 's';
-    std::strcpy(uvalues[k].uval.sval, g_browse_mask.c_str());
-
-    choices[++k] = "";
-    uvalues[k].type = '*';
-
-    choices[++k] = "Press " FK_F4 " to reset browse parameters to defaults.";
-    uvalues[k].type = '*';
+    choices.reset()
+        .yes_no("Autobrowsing? (y/n)", g_auto_browse)
+        .yes_no("Ask about GIF video mode? (y/n)", g_ask_video)
+        .yes_no("Check fractal type? (y/n)", g_browse_check_fractal_type)
+        .yes_no("Check fractal parameters (y/n)", g_browse_check_fractal_params)
+        .yes_no("Confirm file deletes (y/n)", g_confirm_file_deletes)
+        .float_number("Smallest window to display (size in pixels)", g_smallest_window_display_size)
+        .int_number("Smallest box size shown before crosshairs used (pix)", g_smallest_box_size_shown)
+        .string("Browse search filename mask ", g_browse_mask.c_str())
+        .comment("")
+        .comment("Press " FK_F4 " to reset browse parameters to defaults.");
 
     help_labels const old_help_mode = g_help_mode;     // this prevents HELP from activating
     g_help_mode = help_labels::HELPBRWSPARMS;
-    i = fullscreen_prompt("Browse ('L'ook) Mode Options", k+1, choices, uvalues, 16, nullptr);
+    i = choices.prompt("Browse ('L'ook) Mode Options", 16, nullptr);
     g_help_mode = old_help_mode;     // re-enable HELP
     if (i < 0)
     {
@@ -93,17 +68,17 @@ get_brws_restart:
     // now check out the results (*hopefully* in the same order <grin>)
     k = -1;
 
-    g_auto_browse = uvalues[++k].uval.ch.val != 0;
-    g_ask_video = uvalues[++k].uval.ch.val != 0;
-    g_browse_check_fractal_type = uvalues[++k].uval.ch.val != 0;
-    g_browse_check_fractal_params = uvalues[++k].uval.ch.val != 0;
-    g_confirm_file_deletes = uvalues[++k].uval.ch.val != 0;
-    g_smallest_window_display_size = uvalues[++k].uval.dval;
+    g_auto_browse = choices.read_yes_no();
+    g_ask_video = choices.read_yes_no();
+    g_browse_check_fractal_type = choices.read_yes_no();
+    g_browse_check_fractal_params = choices.read_yes_no();
+    g_confirm_file_deletes = choices.read_yes_no();
+    g_smallest_window_display_size = choices.read_float_number();
     if (g_smallest_window_display_size < 0)
     {
-        g_smallest_window_display_size = 0 ;
+        g_smallest_window_display_size = 0;
     }
-    g_smallest_box_size_shown = uvalues[++k].uval.ival;
+    g_smallest_box_size_shown = choices.read_int_number();
     if (g_smallest_box_size_shown < 1)
     {
         g_smallest_box_size_shown = 1;
@@ -113,7 +88,7 @@ get_brws_restart:
         g_smallest_box_size_shown = 10;
     }
 
-    g_browse_mask = uvalues[++k].uval.sval;
+    g_browse_mask = choices.read_string();
 
     i = 0;
     if (g_auto_browse != old_auto_browse ||
