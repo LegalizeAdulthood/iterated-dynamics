@@ -2081,11 +2081,10 @@ gc_loop:
 
 static int get_screen_corners()
 {
-    fullscreenvalues values[15];
-    char const *prompts[15];
+    ChoiceBuilder<15> builder;
     char xprompt[] = "          X";
     char yprompt[] = "          Y";
-    int nump, prompt_ret;
+    int prompt_ret;
     int cmag;
     double Xctr, Yctr;
     LDBL Magnification; // LDBL not really needed here, but used to match function parameters
@@ -2127,69 +2126,44 @@ static int get_screen_corners()
     g_y_3rd = g_orbit_corner_3_y;
 
 gsc_loop:
-    for (auto & value : values)
-    {
-        value.type = 'd'; // most values on this screen are type d
-
-    }
     cmag = g_use_center_mag ? 1 : 0;
     cvtcentermag(&Xctr, &Yctr, &Magnification, &Xmagfactor, &Rotation, &Skew);
 
-    nump = -1;
+    builder.reset();
     if (cmag)
     {
-        prompts[++nump] = "Center X";
-        values[nump].uval.dval = Xctr;
-        prompts[++nump] = "Center Y";
-        values[nump].uval.dval = Yctr;
-        prompts[++nump] = "Magnification";
-        values[nump].uval.dval = (double)Magnification;
-        prompts[++nump] = "X Magnification Factor";
-        values[nump].uval.dval = Xmagfactor;
-        prompts[++nump] = "Rotation Angle (degrees)";
-        values[nump].uval.dval = Rotation;
-        prompts[++nump] = "Skew Angle (degrees)";
-        values[nump].uval.dval = Skew;
-        prompts[++nump] = "";
-        values[nump].type = '*';
-        prompts[++nump] = "Press " FK_F7 " to switch to \"corners\" mode";
-        values[nump].type = '*';
+        builder.double_number("Center X", Xctr)
+            .double_number("Center Y", Yctr)
+            .double_number("Magnification", static_cast<double>(Magnification))
+            .double_number("X Magnification Factor", Xmagfactor)
+            .double_number("Rotation Angle (degrees)", Rotation)
+            .double_number("Skew Angle (degrees)", Skew)
+            .comment("")
+            .comment("Press " FK_F7 " to switch to \"corners\" mode");
     }
     else
     {
-        prompts[++nump] = "Top-Left Corner";
-        values[nump].type = '*';
-        prompts[++nump] = xprompt;
-        values[nump].uval.dval = g_orbit_corner_min_x;
-        prompts[++nump] = yprompt;
-        values[nump].uval.dval = g_orbit_corner_max_y;
-        prompts[++nump] = "Bottom-Right Corner";
-        values[nump].type = '*';
-        prompts[++nump] = xprompt;
-        values[nump].uval.dval = g_orbit_corner_max_x;
-        prompts[++nump] = yprompt;
-        values[nump].uval.dval = g_orbit_corner_min_y;
+        builder.comment("Top-Left Corner")
+            .double_number(xprompt, g_orbit_corner_min_x)
+            .double_number(yprompt, g_orbit_corner_max_y)
+            .comment("Bottom-Right Corner")
+            .double_number(xprompt, g_orbit_corner_max_x)
+            .double_number(yprompt, g_orbit_corner_min_y);
         if (g_orbit_corner_min_x == g_orbit_corner_3_x && g_orbit_corner_min_y == g_orbit_corner_3_y)
         {
             g_orbit_corner_3_y = 0;
             g_orbit_corner_3_x = g_orbit_corner_3_y;
         }
-        prompts[++nump] = "Bottom-left (zeros for top-left X, bottom-right Y)";
-        values[nump].type = '*';
-        prompts[++nump] = xprompt;
-        values[nump].uval.dval = g_orbit_corner_3_x;
-        prompts[++nump] = yprompt;
-        values[nump].uval.dval = g_orbit_corner_3_y;
-        prompts[++nump] = "Press " FK_F7 " to switch to \"center-mag\" mode";
-        values[nump].type = '*';
+        builder.comment("Bottom-left (zeros for top-left X, bottom-right Y)")
+            .double_number(xprompt, g_orbit_corner_3_x)
+            .double_number(yprompt, g_orbit_corner_3_y)
+            .comment("Press " FK_F7 " to switch to \"center-mag\" mode");
     }
-
-    prompts[++nump] = "Press " FK_F4 " to reset to type default values";
-    values[nump].type = '*';
+    builder.comment("Press " FK_F4 " to reset to type default values");
 
     help_labels const old_help_mode = g_help_mode;
     g_help_mode = help_labels::HELPSCRNCOORDS;
-    prompt_ret = fullscreen_prompt("Screen Coordinates", nump+1, prompts, values, 128 | 16, nullptr);
+    prompt_ret = builder.prompt("Screen Coordinates", 128 | 16, nullptr);
     g_help_mode = old_help_mode;
 
     if (prompt_ret < 0)
@@ -2242,19 +2216,25 @@ gsc_loop:
 
     if (cmag)
     {
-        if (cmpdbl(Xctr         , values[0].uval.dval)
-            || cmpdbl(Yctr         , values[1].uval.dval)
-            || cmpdbl((double)Magnification, values[2].uval.dval)
-            || cmpdbl(Xmagfactor   , values[3].uval.dval)
-            || cmpdbl(Rotation     , values[4].uval.dval)
-            || cmpdbl(Skew         , values[5].uval.dval))
+        const double new_x_center = builder.read_double_number();
+        const double new_y_center = builder.read_double_number();
+        const double new_magnification = builder.read_double_number();
+        const double new_x_mag_factor = builder.read_double_number();
+        const double new_rotation = builder.read_double_number();
+        const double new_skew = builder.read_double_number();
+        if (cmpdbl(Xctr, new_x_center)                           //
+            || cmpdbl(Yctr, new_y_center)                        //
+            || cmpdbl((double) Magnification, new_magnification) //
+            || cmpdbl(Xmagfactor, new_x_mag_factor)              //
+            || cmpdbl(Rotation, new_rotation)                    //
+            || cmpdbl(Skew, new_skew))
         {
-            Xctr          = values[0].uval.dval;
-            Yctr          = values[1].uval.dval;
-            Magnification = values[2].uval.dval;
-            Xmagfactor    = values[3].uval.dval;
-            Rotation      = values[4].uval.dval;
-            Skew          = values[5].uval.dval;
+            Xctr          = new_x_center;
+            Yctr          = new_y_center;
+            Magnification = new_magnification;
+            Xmagfactor    = new_x_mag_factor;
+            Rotation      = new_rotation;
+            Skew          = new_skew;
             if (Xmagfactor == 0)
             {
                 Xmagfactor = 1;
@@ -2271,15 +2251,15 @@ gsc_loop:
     }
     else
     {
-        nump = 1;
-        g_orbit_corner_min_x = values[nump++].uval.dval;
-        g_orbit_corner_max_y = values[nump++].uval.dval;
-        nump++;
-        g_orbit_corner_max_x = values[nump++].uval.dval;
-        g_orbit_corner_min_y = values[nump++].uval.dval;
-        nump++;
-        g_orbit_corner_3_x = values[nump++].uval.dval;
-        g_orbit_corner_3_y = values[nump++].uval.dval;
+        builder.read_comment();
+        g_orbit_corner_min_x = builder.read_double_number();
+        g_orbit_corner_max_y = builder.read_double_number();
+        builder.read_comment();
+        g_orbit_corner_max_x = builder.read_double_number();
+        g_orbit_corner_min_y = builder.read_double_number();
+        builder.read_comment();
+        g_orbit_corner_3_x = builder.read_double_number();
+        g_orbit_corner_3_y = builder.read_double_number();
         if (g_orbit_corner_3_x == 0 && g_orbit_corner_3_y == 0)
         {
             g_orbit_corner_3_x = g_orbit_corner_min_x;
