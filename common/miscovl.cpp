@@ -604,7 +604,7 @@ struct write_batch_data // buffer for parms to break lines nicely
 };
 static write_batch_data s_wbdata;
 
-void write_batch_parms(char const *colorinf, bool colorsonly, int maxcolor, int ii, int jj)
+static void write_batch_parms(char const *colorinf, bool colorsonly, int maxcolor, int ii, int jj)
 {
     double Xctr, Yctr;
     LDBL Magnification;
@@ -2056,7 +2056,7 @@ int select_video_mode(int curmode)
     return ret;
 }
 
-void format_vid_table(int choice, char *buf)
+static void format_vid_table(int choice, char *buf)
 {
     char local_buf[81];
     char kname[5];
@@ -2791,7 +2791,7 @@ static char const *expand_var(char const *var, char *buf)
 static char const esc_char = '$';
 
 // extract comments from the comments= command
-std::string expand_comments(char const *source)
+static std::string expand_comments(char const *source)
 {
     int escape = 0;
     char c, oldc, varname[MAXVNAME];
