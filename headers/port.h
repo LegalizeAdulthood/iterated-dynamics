@@ -52,7 +52,6 @@ using BYTE = U8;
 #define SLASHDOT       "\\."
 #define DOTSLASH       ".\\"
 #define DOTDOTSLASH    "..\\"
-#include "win32.h"
 // ================================== Win32 definitions
 #else
 #define _snprintf snprintf
