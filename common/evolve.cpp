@@ -405,10 +405,9 @@ void varyinv(GENEBASE gene[], int randval, int i)
 //
 int get_the_rest()
 {
+    ChoiceBuilder<20> choices;
     char const *evolvmodes[] = {"no", "x", "y", "x+y", "x-y", "random", "spread"};
-    int i, k, numtrig;
-    char const *choices[20];
-    fullscreenvalues uvalues[20];
+    int i, numtrig;
     GENEBASE gene[NUM_GENES];
 
     copy_genes_from_bank(gene);
@@ -420,49 +419,29 @@ int get_the_rest()
     }
 
 choose_vars_restart:
-
-    k = -1;
+    choices.reset();
     for (int num = MAX_PARAMS; num < (NUM_GENES - 5); num++)
     {
-        choices[++k] = gene[num].name;
-        uvalues[k].type = 'l';
-        uvalues[k].uval.ch.vlen = 7;
-        uvalues[k].uval.ch.llen = 7;
-        uvalues[k].uval.ch.list = evolvmodes;
-        uvalues[k].uval.ch.val =  static_cast<int>(gene[num].mutate);
+        choices.list(gene[num].name, 7, 7, evolvmodes, static_cast<int>(gene[num].mutate));
     }
 
     for (int num = (NUM_GENES - 5); num < (NUM_GENES - 5 + numtrig); num++)
     {
-        choices[++k] = gene[num].name;
-        uvalues[k].type = 'l';
-        uvalues[k].uval.ch.vlen = 7;
-        uvalues[k].uval.ch.llen = 7;
-        uvalues[k].uval.ch.list = evolvmodes;
-        uvalues[k].uval.ch.val =  static_cast<int>(gene[num].mutate);
+        choices.list(gene[num].name, 7, 7, evolvmodes, static_cast<int>(gene[num].mutate));
     }
 
     if (g_cur_fractal_specific->calctype == standard_fractal
         && (g_cur_fractal_specific->flags & BAILTEST))
     {
-        choices[++k] = gene[NUM_GENES - 1].name;
-        uvalues[k].type = 'l';
-        uvalues[k].uval.ch.vlen = 7;
-        uvalues[k].uval.ch.llen = 7;
-        uvalues[k].uval.ch.list = evolvmodes;
-        uvalues[k].uval.ch.val = static_cast<int>(gene[NUM_GENES - 1].mutate);
+        choices.list(gene[NUM_GENES - 1].name, 7, 7, evolvmodes, static_cast<int>(gene[NUM_GENES - 1].mutate));
     }
 
-    choices[++k] = "";
-    uvalues[k].type = '*';
-    choices[++k] = "Press F2 to set all to off";
-    uvalues[k].type ='*';
-    choices[++k] = "Press F3 to set all on";
-    uvalues[k].type = '*';
-    choices[++k] = "Press F4 to randomize all";
-    uvalues[k].type = '*';
+    choices.comment("");
+    choices.comment("Press F2 to set all to off");
+    choices.comment("Press F3 to set all on");
+    choices.comment("Press F4 to randomize all");
 
-    i = fullscreen_prompt("Variable tweak central 2 of 2", k+1, choices, uvalues, 16 | 8 | 4, nullptr);
+    i = choices.prompt("Variable tweak central 2 of 2", 16 | 8 | 4, nullptr);
 
     switch (i)
     {
@@ -491,21 +470,20 @@ choose_vars_restart:
     }
 
     // read out values
-    k = -1;
     for (int num = MAX_PARAMS; num < (NUM_GENES - 5); num++)
     {
-        gene[num].mutate = static_cast<variations>(uvalues[++k].uval.ch.val);
+        gene[num].mutate = static_cast<variations>(choices.read_list());
     }
 
     for (int num = (NUM_GENES - 5); num < (NUM_GENES - 5 + numtrig); num++)
     {
-        gene[num].mutate = static_cast<variations>(uvalues[++k].uval.ch.val);
+        gene[num].mutate = static_cast<variations>(choices.read_list());
     }
 
     if (g_cur_fractal_specific->calctype == standard_fractal
         && (g_cur_fractal_specific->flags & BAILTEST))
     {
-        gene[NUM_GENES - 1].mutate = static_cast<variations>(uvalues[++k].uval.ch.val);
+        gene[NUM_GENES - 1].mutate = static_cast<variations>(choices.read_list());
     }
 
     copy_genes_to_bank(gene);
