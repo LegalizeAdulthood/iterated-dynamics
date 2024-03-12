@@ -4,6 +4,8 @@
 #include "port.h"
 #include "prototyp.h"
 
+#include "loadfile.h"
+
 #include "biginit.h"
 #include "calcfrac.h"
 #include "cmdfiles.h"
@@ -22,7 +24,6 @@
 #include "jb.h"
 #include "line3d.h"
 #include "loadfdos.h"
-#include "loadfile.h"
 #include "lorenz.h"
 #include "make_batch_file.h"
 #include "make_path.h"

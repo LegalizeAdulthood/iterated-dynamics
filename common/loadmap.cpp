@@ -1,6 +1,8 @@
 #include "port.h"
 #include "prototyp.h"
 
+#include "loadmap.h"
+
 #include "cmdfiles.h"
 #include "find_path.h"
 #include "merge_path_names.h"

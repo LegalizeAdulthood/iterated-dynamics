@@ -39,11 +39,12 @@ an appropriate setup, per_image, per_pixel, and orbit routines.
 #include "port.h"
 #include "prototyp.h"
 
+#include "fractals.h"
+
 #include "calcfrac.h"
 #include "cmdfiles.h"
 #include "fpu087.h"
 #include "fracsubr.h"
-#include "fractals.h"
 #include "fractype.h"
 #include "hcmplx.h"
 #include "helpdefs.h"

@@ -31,6 +31,8 @@
 #include "port.h"
 #include "prototyp.h"
 
+#include "loadfdos.h"
+
 #include "cmdfiles.h"
 #include "fractalp.h"
 #include "helpdefs.h"

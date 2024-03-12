@@ -7,8 +7,9 @@
 #include "port.h"
 #include "prototyp.h"
 
-#include "calcfrac.h"
 #include "calmanfp.h"
+
+#include "calcfrac.h"
 #include "cmdfiles.h"
 #include "drivers.h"
 #include "fracsubr.h"

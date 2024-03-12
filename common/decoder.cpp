@@ -19,6 +19,8 @@
 #include "port.h"
 #include "prototyp.h"
 
+#include "decoder.h"
+
 #include "drivers.h"
 #include "gifview.h"
 #include "loadfile.h"

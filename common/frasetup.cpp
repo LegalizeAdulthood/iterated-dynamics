@@ -1,6 +1,8 @@
 #include "port.h"
 #include "prototyp.h"
 
+#include "frasetup.h"
+
 #include "calcfrac.h"
 #include "calmanfp.h"
 #include "cmdfiles.h"
@@ -10,7 +12,6 @@
 #include "fractals.h"
 #include "fractype.h"
 #include "framain2.h"
-#include "frasetup.h"
 #include "helpdefs.h"
 #include "id_data.h"
 #include "mpmath.h"

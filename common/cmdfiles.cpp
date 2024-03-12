@@ -3,10 +3,11 @@
 #include "port.h"
 #include "prototyp.h"
 
+#include "cmdfiles.h"
+
 #include "abort_msg.h"
 #include "biginit.h"
 #include "calcfrac.h"
-#include "cmdfiles.h"
 #include "drivers.h"
 #include "find_path.h"
 #include "fix_dirname.h"

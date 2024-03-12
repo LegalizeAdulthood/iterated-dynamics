@@ -5,6 +5,8 @@
 #include "port.h"
 #include "prototyp.h"
 
+#include "slideshw.h"
+
 #include "cmdfiles.h"
 #include "drivers.h"
 #include "helpcom.h"
@@ -12,7 +14,6 @@
 #include "id_data.h"
 #include "miscres.h"
 #include "realdos.h"
-#include "slideshw.h"
 
 #include <cctype>
 #include <cstdio>

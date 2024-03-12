@@ -4,11 +4,12 @@
 #include "port.h"
 #include "prototyp.h"
 
+#include "encoder.h"
+
 #include "calcfrac.h"
 #include "cmdfiles.h"
 #include "diskvid.h"
 #include "drivers.h"
-#include "encoder.h"
 #include "evolve.h"
 #include "fracsubr.h"
 #include "fractype.h"

@@ -1,13 +1,13 @@
 #include "port.h"
 #include "prototyp.h"
 
+#include "evolve.h"
+
 #include "calcfrac.h"
 #include "choice_builder.h"
 #include "cmdfiles.h"
-#include "evolve.h"
 #include "fractalp.h"
 #include "fractype.h"
-#include "full_screen_prompt.h"
 #include "helpdefs.h"
 #include "id_data.h"
 #include "jb.h"
@@ -19,7 +19,6 @@
 #include <algorithm>
 #include <cmath>
 #include <cstdlib>
-#include <cstring>
 #include <vector>
 
 #define PARMBOX 128

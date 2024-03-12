@@ -5,6 +5,8 @@
 #include "port.h"
 #include "prototyp.h"
 
+#include "plot3d.h"
+
 #include "calcfrac.h"
 #include "cmdfiles.h"
 #include "diskvid.h"
@@ -13,8 +15,6 @@
 #include "line3d.h"
 #include "loadmap.h"
 #include "os.h"
-#include "plot3d.h"
-#include "prompts1.h"
 #include "rotate.h"
 #include "spindac.h"
 

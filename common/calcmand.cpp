@@ -1,6 +1,8 @@
 #include "port.h"
 #include "prototyp.h"
 
+#include "calcmand.h"
+
 #include "realdos.h"
 
 long

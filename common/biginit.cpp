@@ -8,6 +8,8 @@ is in the allocations of memory for the big numbers.
 #include "port.h"
 #include "prototyp.h"
 
+#include "biginit.h"
+
 #include "calcfrac.h"
 #include "cmdfiles.h"
 #include "fractalp.h"

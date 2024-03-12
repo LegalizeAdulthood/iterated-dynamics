@@ -19,6 +19,8 @@
 #include "port.h"
 #include "prototyp.h"
 
+#include "parser.h"
+
 #include "calcfrac.h"
 #include "cmdfiles.h"
 #include "drivers.h"
@@ -30,7 +32,6 @@
 #include "miscres.h"
 #include "mpmath_c.h"
 #include "newton.h"
-#include "parser.h"
 #include "realdos.h"
 
 #include <algorithm>

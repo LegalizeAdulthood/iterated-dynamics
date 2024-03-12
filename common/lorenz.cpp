@@ -6,6 +6,8 @@
 #include "port.h"
 #include "prototyp.h"
 
+#include "lorenz.h"
+
 #include "3d.h"
 #include "calcfrac.h"
 #include "cmdfiles.h"
@@ -19,7 +21,6 @@
 #include "id_data.h"
 #include "jiim.h"
 #include "line3d.h"
-#include "lorenz.h"
 #include "miscres.h"
 #include "mpmath.h"
 #include "plot3d.h"

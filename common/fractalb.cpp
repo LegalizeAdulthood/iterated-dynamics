@@ -7,6 +7,8 @@ fractal routines.
 #include "port.h"
 #include "prototyp.h"
 
+#include "fractalb.h"
+
 #include "biginit.h"
 #include "calcfrac.h"
 #include "cmdfiles.h"

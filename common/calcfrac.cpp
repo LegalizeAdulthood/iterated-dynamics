@@ -14,8 +14,9 @@
 #include "port.h"
 #include "prototyp.h"
 
-#include "biginit.h"
 #include "calcfrac.h"
+
+#include "biginit.h"
 #include "calcmand.h"
 #include "calmanfp.h"
 #include "cmdfiles.h"

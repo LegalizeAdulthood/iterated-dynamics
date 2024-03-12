@@ -19,6 +19,8 @@
 #include "port.h"
 #include "prototyp.h"
 
+#include "mpmath.h"
+
 #include "calcfrac.h"
 #include "cmdfiles.h"
 #include "fpu087.h"

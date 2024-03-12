@@ -6,6 +6,8 @@
 #include "port.h"
 #include "prototyp.h"
 
+#include "line3d.h"
+
 #include "3d.h"
 #include "calcfrac.h"
 #include "cmdfiles.h"
@@ -15,7 +17,6 @@
 #include "framain2.h"
 #include "gifview.h"
 #include "id_data.h"
-#include "line3d.h"
 #include "loadfile.h"
 #include "miscres.h"
 #include "os.h"

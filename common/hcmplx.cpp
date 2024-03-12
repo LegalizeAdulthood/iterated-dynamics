@@ -2,6 +2,8 @@
 #include "port.h"
 #include "prototyp.h"
 
+#include "hcmplx.h"
+
 #include "miscres.h"
 #include "mpmath.h"
 

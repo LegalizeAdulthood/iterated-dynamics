@@ -1,11 +1,12 @@
 #include "port.h"
 #include "prototyp.h"
 
+#include "memory.h"
+
 #include "cmdfiles.h"
 #include "diskvid.h"
 #include "drivers.h"
 #include "line3d.h"
-#include "memory.h"
 #include "prompts2.h"
 #include "realdos.h"
 

@@ -34,9 +34,10 @@
 #include "port.h"
 #include "prototyp.h"
 
+#include "parser.h"
+
 #include "cmdfiles.h"
 #include "fractalp.h"
-#include "parser.h"
 #include "realdos.h"
 
 #include <cctype>

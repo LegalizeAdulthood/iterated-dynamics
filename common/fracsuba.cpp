@@ -1,6 +1,8 @@
 #include "port.h"
 #include "prototyp.h"
 
+#include "fracsuba.h"
+
 #include "calcfrac.h"
 #include "fractals.h"
 

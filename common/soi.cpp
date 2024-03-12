@@ -14,6 +14,8 @@
 #include "port.h"
 #include "prototyp.h"
 
+#include "soi.h"
+
 #include "calcfrac.h"
 #include "drivers.h"
 #include "id_data.h"

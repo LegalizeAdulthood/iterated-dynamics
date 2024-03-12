@@ -9,8 +9,9 @@
 #include "port.h"
 #include "prototyp.h"
 
-#include "cmdfiles.h"
 #include "diskvid.h"
+
+#include "cmdfiles.h"
 #include "drivers.h"
 #include "id_data.h"
 #include "memory.h"

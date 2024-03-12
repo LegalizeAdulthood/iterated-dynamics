@@ -1,6 +1,8 @@
 #include "port.h"
 #include "prototyp.h"
 
+#include "jb.h"
+
 #include "calcfrac.h"
 #include "cmdfiles.h"
 #include "drivers.h"
@@ -11,7 +13,6 @@
 #include "get_3d_params.h"
 #include "helpdefs.h"
 #include "id_data.h"
-#include "jb.h"
 #include "loadmap.h"
 #include "prompts1.h"
 #include "prompts2.h"

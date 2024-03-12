@@ -22,8 +22,9 @@ The sample code below is a straightforward Mandelbrot routine.
 #include "port.h"
 #include "prototyp.h"
 
-#include "drivers.h"
 #include "testpt.h"
+
+#include "drivers.h"
 
 int teststart()     // this routine is called just before the fractal starts
 {

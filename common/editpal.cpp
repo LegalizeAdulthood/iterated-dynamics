@@ -7,6 +7,8 @@
 #include "port.h"
 #include "prototyp.h"
 
+#include "editpal.h"
+
 #include "calcfrac.h"
 #include "cmdfiles.h"
 #include "drivers.h"

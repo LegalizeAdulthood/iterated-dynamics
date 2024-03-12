@@ -55,6 +55,8 @@
 #include "port.h"
 #include "prototyp.h"
 
+#include "3d.h"
+
 #include "calcfrac.h"
 #include "fractals.h"
 #include "line3d.h"
