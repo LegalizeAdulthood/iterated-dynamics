@@ -2,7 +2,7 @@
 
 #include "realdos.h"
 
-#include <cstring>
+#include <cstdio>
 
 bool abortmsg(char const *file, unsigned int line, int flags, char const *msg)
 {
