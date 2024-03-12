@@ -18,6 +18,7 @@
 #include "framain2.h"
 #include "get_3d_params.h"
 #include "get_browse_params.h"
+#include "get_toggles.h"
 #include "helpcom.h"
 #include "helpdefs.h"
 #include "id_data.h"

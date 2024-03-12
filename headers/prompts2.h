@@ -9,7 +9,6 @@ extern long                  g_concentration;
 extern std::string const     g_gray_map_file;
 
 extern int get_corners();
-extern int get_toggles();
 extern int get_toggles2();
 extern int passes_options();
 extern int get_view_params();

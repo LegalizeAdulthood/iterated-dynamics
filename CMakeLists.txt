@@ -146,6 +146,7 @@ add_library(libid
     common/get_browse_params.cpp headers/get_browse_params.h
     headers/get_ifs_token.h
     common/get_key_no_help.cpp headers/get_key_no_help.h
+    common/get_toggles.cpp headers/get_toggles.h
     common/help.cpp
     common/intro.cpp headers/intro.h
     headers/is_directory.h
@@ -314,6 +315,7 @@ source_group("Header Files/common/ui" FILES
     headers/get_browse_params.h
     headers/get_ifs_token.h
     headers/get_key_no_help.h
+    headers/get_toggles.h
     headers/help.h
     headers/helpdefs.h
     headers/id.h
@@ -350,6 +352,7 @@ source_group("Source Files/common/ui" FILES
     common/get_3d_params.cpp
     common/get_browse_params.cpp
     common/get_key_no_help.cpp
+    common/get_toggles.cpp
     common/help.cpp
     common/intro.cpp
     common/jiim.cpp
