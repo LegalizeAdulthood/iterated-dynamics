@@ -18,22 +18,17 @@
 #include "helpdefs.h"
 #include "id_data.h"
 #include "jb.h"
-#include "line3d.h"
 #include "load_entry_text.h"
 #include "loadfile.h"
-#include "loadmap.h"
 #include "lorenz.h"
 #include "lsys_fns.h"
 #include "merge_path_names.h"
 #include "miscres.h"
 #include "os.h"
 #include "parser.h"
-#include "plot3d.h"
 #include "prompts1.h"
 #include "prompts2.h"
 #include "realdos.h"
-#include "rotate.h"
-#include "stereo.h"
 #include "zoom.h"
 
 #include <cassert>
@@ -48,9 +43,6 @@ static void set_default_parms();
 static long gfe_choose_entry(int type, char const *title, char const *filename, char *entryname);
 static  int check_gfe_key(int curkey, int choice);
 static  void format_parmfile_line(int choice, char *buf);
-static  bool get_light_params();
-static  bool check_mapfile();
-static  bool get_funny_glasses_params();
 
 #define GETFORMULA 0
 #define GETLSYS    1
