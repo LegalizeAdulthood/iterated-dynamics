@@ -13,6 +13,9 @@
 #include "id_data.h"
 #include "loadmap.h"
 #include "merge_path_names.h"
+#ifdef XFRACT
+#include "os.h"
+#endif
 #include "prompts2.h"
 #include "realdos.h"
 #include "spindac.h"
