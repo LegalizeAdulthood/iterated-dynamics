@@ -4,6 +4,8 @@
 #include "port.h"
 #include "prototyp.h"
 
+#include "prompts2.h"
+
 #include "ant.h"
 #include "calcfrac.h"
 #include "choice_builder.h"
@@ -35,7 +37,6 @@
 #include "mpmath_c.h"
 #include "os.h"
 #include "prompts1.h"
-#include "prompts2.h"
 #include "realdos.h"
 #include "slideshw.h"
 #include "spindac.h"

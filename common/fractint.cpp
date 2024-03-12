@@ -32,10 +32,8 @@
 #include "realdos.h"
 #include "rotate.h"
 
-#include <csignal>
-
-#include <cassert>
 #include <cctype>
+#include <csignal>
 #include <cstdarg>
 #include <cstdio>
 #include <cstring>

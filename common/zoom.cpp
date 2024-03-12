@@ -5,6 +5,8 @@
 #include "port.h"
 #include "prototyp.h"
 
+#include "zoom.h"
+
 #include "biginit.h"
 #include "calcfrac.h"
 #include "cmdfiles.h"
@@ -18,7 +20,6 @@
 #include "miscfrac.h"
 #include "os.h"
 #include "realdos.h"
-#include "zoom.h"
 
 #include <cassert>
 #include <cmath>

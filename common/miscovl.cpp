@@ -12,39 +12,22 @@
 #include "drivers.h"
 #include "find_path.h"
 #include "fractalp.h"
-#include "fractype.h"
 #include "framain2.h"
-#include "full_screen_prompt.h"
 #include "get_key_no_help.h"
 #include "helpdefs.h"
 #include "id_data.h"
-#include "id_io.h"
-#include "jb.h"
-#include "line3d.h"
-#include "loadfile.h"
-#include "lorenz.h"
 #include "miscres.h"
 #include "os.h"
-#include "parser.h"
-#include "plot3d.h"
-#include "prompts1.h"
-#include "prompts2.h"
 #include "realdos.h"
 #include "rotate.h"
-#include "stereo.h"
 
 #include <algorithm>
 #include <array>
-#include <cctype>
-#include <cfloat>
 #include <cmath>
-#include <cstdarg>
 #include <cstdio>
 #include <cstring>
-#include <ctime>
 #include <filesystem>
 #include <string>
-#include <vector>
 
 namespace fs = std::filesystem;
 

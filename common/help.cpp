@@ -8,7 +8,6 @@
 #include "helpdefs.h"
 #include "id_data.h"
 #include "id_io.h"
-#include "miscres.h"
 #include "os.h"
 #include "realdos.h"
 

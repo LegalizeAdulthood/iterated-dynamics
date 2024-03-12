@@ -1,6 +1,8 @@
 #include "port.h"
 #include "prototyp.h"
 
+#include "framain2.h"
+
 #include "ant.h"
 #include "calcfrac.h"
 #include "cmdfiles.h"
@@ -14,12 +16,10 @@
 #include "fracsubr.h"
 #include "fractalp.h"
 #include "fractype.h"
-#include "framain2.h"
 #include "get_3d_params.h"
 #include "get_browse_params.h"
 #include "get_toggles.h"
 #include "gifview.h"
-#include "helpdefs.h"
 #include "id_data.h"
 #include "jb.h"
 #include "jiim.h"
@@ -31,7 +31,6 @@
 #include "merge_path_names.h"
 #include "miscovl.h"
 #include "miscfrac.h"
-#include "miscres.h"
 #include "os.h"
 #include "parser.h"
 #include "plot3d.h"
@@ -45,6 +44,7 @@
 #include "zoom.h"
 
 #include <cctype>
+#include <cmath>
 #include <cstdio>
 #include <cstring>
 #include <ctime>

@@ -9,6 +9,8 @@
 #include "port.h"
 #include "prototyp.h"
 
+#include "jiim.h"
+
 #include "calcfrac.h"
 #include "cmdfiles.h"
 #include "diskvid.h"
@@ -20,7 +22,6 @@
 #include "fractype.h"
 #include "helpdefs.h"
 #include "id_data.h"
-#include "jiim.h"
 #include "lorenz.h"
 #include "miscfrac.h"
 #include "os.h"

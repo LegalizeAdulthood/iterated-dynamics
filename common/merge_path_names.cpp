@@ -1,6 +1,3 @@
-/*
-        Various routines that prompt for things.
-*/
 #include "merge_path_names.h"
 
 #include "port.h"

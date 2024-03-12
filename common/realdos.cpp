@@ -1,6 +1,8 @@
 #include "port.h"
 #include "prototyp.h"
 
+#include "realdos.h"
+
 #include "cmdfiles.h"
 #include "diskvid.h"
 #include "drivers.h"
@@ -17,7 +19,6 @@
 #include "miscres.h"
 #include "os.h"
 #include "prompts2.h"
-#include "realdos.h"
 #include "rotate.h"
 #include "string_case_compare.h"
 #include "zoom.h"

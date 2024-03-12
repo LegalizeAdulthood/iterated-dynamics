@@ -1,14 +1,12 @@
 #include "spindac.h"
 
 #include "port.h"
-
-#include "id.h"
+#include "prototyp.h"
 
 #include "cmdfiles.h"
 #include "drivers.h"
 #include "id_data.h"
 #include "miscovl.h"
-#include "os.h"
 #include "rotate.h"
 
 #include <cstring>

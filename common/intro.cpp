@@ -1,3 +1,5 @@
+#include "intro.h"
+
 /*
  * intro screen (authors & credits)
  */
