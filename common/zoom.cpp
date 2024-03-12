@@ -15,6 +15,7 @@
 #include "framain2.h"
 #include "id_data.h"
 #include "miscovl.h"
+#include "miscfrac.h"
 #include "os.h"
 #include "realdos.h"
 #include "zoom.h"

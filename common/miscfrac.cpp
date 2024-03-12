@@ -1,6 +1,8 @@
+#include "miscfrac.h"
+
 /*
 
-Miscellaneous fractal-specific code (formerly in CALCFRAC.C)
+Miscellaneous fractal-specific code
 
 */
 #include "port.h"

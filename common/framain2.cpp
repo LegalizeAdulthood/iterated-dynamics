@@ -30,6 +30,7 @@
 #include "make_batch_file.h"
 #include "merge_path_names.h"
 #include "miscovl.h"
+#include "miscfrac.h"
 #include "miscres.h"
 #include "os.h"
 #include "parser.h"
