@@ -45,9 +45,11 @@ static void Bif_Period_Init();
 static bool Bif_Periodic(long time);
 static void set_Cellular_palette();
 
-U16(*getpix)(int, int)  = (U16(*)(int, int))getcolor;
+bool g_cellular_next_screen = false;             // for cellular next screen generation
 
-typedef void (*PLOT)(int, int, int);
+static U16(*getpix)(int, int)  = (U16(*)(int, int))getcolor;
+
+using PLOT = void(*)(int, int, int);
 
 //**************** standalone engine for "test" *******************
 

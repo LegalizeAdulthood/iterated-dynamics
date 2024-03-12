@@ -221,7 +221,6 @@ unsigned long g_diffusion_limit = 0;    // the diffusion counter
 // static vars for solid_guess & its subroutines
 bool g_three_pass = false;
 
-bool g_cellular_next_screen = false;             // for cellular next screen generation
 int g_attractors = 0;                     // number of finite attractors
 DComplex g_attractor[MAX_NUM_ATTRACTORS] = { 0.0 };        // finite attractor vals (f.p)
 LComplex g_l_attractor[MAX_NUM_ATTRACTORS] = { 0 };         // finite attractor vals (int)

@@ -1,5 +1,7 @@
 #pragma once
 
+extern bool g_cellular_next_screen;
+
 extern int Bifurcation();
 extern int BifurcAddTrigPi();
 extern int BifurcLambda();

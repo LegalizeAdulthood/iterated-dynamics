@@ -24,7 +24,6 @@ extern DComplex              g_attractor[];
 extern int                   g_attractor_period[];
 extern int                   g_attractors;
 extern int                 (*g_calc_type)();
-extern bool                  g_cellular_next_screen;
 extern double                g_close_enough;
 extern double                g_close_proximity;
 extern int                   g_col;
