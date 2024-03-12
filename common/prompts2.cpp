@@ -63,9 +63,6 @@ static  int get_screen_corners();
 #define TEMPLATE        -2      // wild cards present - buiding template
 #define SEARCHPATH      -3      // no match - building path search name
 
-#define GETFORMULA 0
-#define GETLSYS    1
-#define GETIFS     2
 #define GETPARM    3
 
 static char commandmask[13] = {"*.par"};
