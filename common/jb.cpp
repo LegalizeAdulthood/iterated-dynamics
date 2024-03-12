@@ -8,6 +8,7 @@
 #include "fractalp.h"
 #include "fractals.h"
 #include "fractype.h"
+#include "get_3d_params.h"
 #include "helpdefs.h"
 #include "id_data.h"
 #include "jb.h"

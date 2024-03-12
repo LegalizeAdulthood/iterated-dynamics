@@ -29,6 +29,8 @@ static  bool get_funny_glasses_params();
 
 static std::string g_funny_glasses_map_name;
 
+std::string const g_glasses1_map = "glasses1.map";
+
 int get_3d_params()     // prompt for 3D parameters
 {
     char const *choices[11];

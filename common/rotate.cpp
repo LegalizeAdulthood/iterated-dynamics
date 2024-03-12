@@ -4,6 +4,8 @@
 #include "port.h"
 #include "prototyp.h"
 
+#include "rotate.h"
+
 #include "cmdfiles.h"
 #include "diskvid.h"
 #include "drivers.h"
@@ -11,11 +13,8 @@
 #include "id_data.h"
 #include "loadmap.h"
 #include "merge_path_names.h"
-#include "os.h"
-#include "prompts1.h"
 #include "prompts2.h"
 #include "realdos.h"
-#include "rotate.h"
 #include "spindac.h"
 
 #include <cstdio>
@@ -36,8 +35,9 @@ static BYTE White[3]  = {63, 63, 63};
 static BYTE Yellow[3] = {63, 63, 0};
 static BYTE Brown[3]  = {31, 31, 0};
 
+std::string g_map_name;
+bool g_map_set = false;
 char mapmask[13] = {"*.map"};
-
 BYTE g_dac_box[256][3];
 BYTE g_old_dac_box[256][3];
 bool g_dac_learn = false;

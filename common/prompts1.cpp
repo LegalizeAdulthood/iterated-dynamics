@@ -4,6 +4,8 @@
 #include "port.h"
 #include "prototyp.h"
 
+#include "prompts1.h"
+
 #include "calcfrac.h"
 #include "cmdfiles.h"
 #include "drivers.h"
@@ -26,7 +28,6 @@
 #include "miscres.h"
 #include "os.h"
 #include "parser.h"
-#include "prompts1.h"
 #include "prompts2.h"
 #include "realdos.h"
 #include "zoom.h"
@@ -52,9 +53,6 @@ static  void format_parmfile_line(int choice, char *buf);
 static char ifsmask[13]     = {"*.ifs"};
 static char formmask[13]    = {"*.frm"};
 static char lsysmask[13]    = {"*.l"};
-std::string const g_glasses1_map = "glasses1.map";
-std::string g_map_name;
-bool g_map_set = false;
 bool g_julibrot = false;                  // flag for julibrot
 
 // ---------------------------------------------------------------------

@@ -4,38 +4,36 @@
 #include "port.h"
 #include "prototyp.h"
 
+#include "miscres.h"
+
 #include "biginit.h"
-#include "calcfrac.h"
 #include "cmdfiles.h"
 #include "drivers.h"
 #include "find_file.h"
 #include "fracsubr.h"
 #include "fractalp.h"
 #include "fractype.h"
-#include "get_ifs_token.h"
 #include "get_key_no_help.h"
-#include "helpdefs.h"
 #include "id_data.h"
-#include "id_io.h"
 #include "jb.h"
 #include "line3d.h"
 #include "loadfile.h"
 #include "lorenz.h"
 #include "make_path.h"
-#include "miscres.h"
 #include "parser.h"
 #include "prompts1.h"
 #include "prompts2.h"
 #include "realdos.h"
+#include "rotate.h"
 #include "soi.h"
 #include "split_path.h"
 #include "update_save_name.h"
 
-#include <algorithm>
 #include <cassert>
 #include <cctype>
 #include <cmath>
 #include <cstdarg>
+#include <cstdio>
 #include <cstring>
 #include <ctime>
 #include <filesystem>
