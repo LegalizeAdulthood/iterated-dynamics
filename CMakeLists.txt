@@ -382,11 +382,7 @@ target_link_libraries(libid PRIVATE helpcom os config Boost::boost)
 target_link_libraries(libid PUBLIC config)
 add_dependencies(libid native_help)
 
-add_executable(id ${ID_EXECUTABLE_TYPE}
-    common/main.cpp
-)
-target_link_libraries(id PUBLIC libid)
-install(TARGETS id DESTINATION bin)
+add_subdirectory(id)
 
 set_property(DIRECTORY PROPERTY VS_STARTUP_PROJECT id)
 
