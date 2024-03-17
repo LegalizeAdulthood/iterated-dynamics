@@ -185,7 +185,7 @@ restart:
     else
     {
         driver_put_string(3, 0, 0, "Saving to:");
-        driver_put_string(4, 0, 0, open_file.string().c_str());
+        driver_put_string(4, 0, 0, open_file.string());
         driver_put_string(5, 0, 0, "               ");
     }
 #endif

@@ -392,7 +392,7 @@ void show_speedstring(
         }
         else
         {
-            driver_put_string(speedrow, 16, C_CHOICE_SP_INSTR, g_speed_prompt.c_str());
+            driver_put_string(speedrow, 16, C_CHOICE_SP_INSTR, g_speed_prompt);
             j = static_cast<int>(g_speed_prompt.length());
         }
         std::strcpy(buf, speedstring);

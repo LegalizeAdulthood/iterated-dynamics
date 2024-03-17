@@ -3902,7 +3902,7 @@ int init_msg(char const *cmdstr, char const *badfilename, cmd_file mode)
         }
         if (badfilename)
         {
-            driver_put_string(row++, 0, 7, msg.c_str());
+            driver_put_string(row++, 0, 7, msg);
         }
         else if (row > 1)
         {

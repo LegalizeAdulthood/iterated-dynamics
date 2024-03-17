@@ -1,5 +1,7 @@
 #pragma once
 
+#include <string>
+
 enum class buzzer_codes
 {
     COMPLETE = 0,
@@ -292,6 +294,10 @@ inline void driver_shell()
 inline void driver_put_string(int row, int col, int attr, char const *msg)
 {
     (*g_driver->put_string)(g_driver, row, col, attr, msg);
+}
+inline void driver_put_string(int row, int col, int attr, const std::string &msg)
+{
+    (*g_driver->put_string)(g_driver, row, col, attr, msg.c_str());
 }
 inline void driver_set_for_text()
 {

@@ -862,38 +862,38 @@ top:
         if (g_fractal_type == fractal_type::FORMULA || g_fractal_type == fractal_type::FFORMULA)
         {
             driver_put_string(s_row+1, 3, C_GENERAL_MED, "Item name:");
-            driver_put_string(s_row+1, 16, C_GENERAL_HI, g_formula_name.c_str());
+            driver_put_string(s_row+1, 16, C_GENERAL_HI, g_formula_name);
             i = static_cast<int>(g_formula_name.length() + 1);
             driver_put_string(s_row+2, 3, C_GENERAL_MED, "Item file:");
             if (g_formula_filename.length() >= 29)
             {
                 addrow = 1;
             }
-            driver_put_string(s_row+2+addrow, 16, C_GENERAL_HI, g_formula_filename.c_str());
+            driver_put_string(s_row+2+addrow, 16, C_GENERAL_HI, g_formula_filename);
         }
         trigdetails(msg);
         driver_put_string(s_row+1, 16+i, C_GENERAL_HI, msg);
         if (g_fractal_type == fractal_type::LSYSTEM)
         {
             driver_put_string(s_row+1, 3, C_GENERAL_MED, "Item name:");
-            driver_put_string(s_row+1, 16, C_GENERAL_HI, g_l_system_name.c_str());
+            driver_put_string(s_row+1, 16, C_GENERAL_HI, g_l_system_name);
             driver_put_string(s_row+2, 3, C_GENERAL_MED, "Item file:");
             if ((int) g_l_system_filename.length() >= 28)
             {
                 addrow = 1;
             }
-            driver_put_string(s_row+2+addrow, 16, C_GENERAL_HI, g_l_system_filename.c_str());
+            driver_put_string(s_row+2+addrow, 16, C_GENERAL_HI, g_l_system_filename);
         }
         if (g_fractal_type == fractal_type::IFS || g_fractal_type == fractal_type::IFS3D)
         {
             driver_put_string(s_row+1, 3, C_GENERAL_MED, "Item name:");
-            driver_put_string(s_row+1, 16, C_GENERAL_HI, g_ifs_name.c_str());
+            driver_put_string(s_row+1, 16, C_GENERAL_HI, g_ifs_name);
             driver_put_string(s_row+2, 3, C_GENERAL_MED, "Item file:");
             if ((int) g_ifs_filename.length() >= 28)
             {
                 addrow = 1;
             }
-            driver_put_string(s_row+2+addrow, 16, C_GENERAL_HI, g_ifs_filename.c_str());
+            driver_put_string(s_row+2+addrow, 16, C_GENERAL_HI, g_ifs_filename);
         }
     }
 
@@ -975,7 +975,7 @@ top:
     }
     s_row += addrow;
     driver_put_string(s_row, 2, C_GENERAL_MED, "Savename: ");
-    driver_put_string(s_row, -1, C_GENERAL_HI, g_save_filename.c_str());
+    driver_put_string(s_row, -1, C_GENERAL_HI, g_save_filename);
 
     ++s_row;
 

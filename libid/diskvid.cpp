@@ -141,8 +141,7 @@ int common_startdisk(long newrowsize, long newcolsize, int colors)
         }
         driver_put_string(BOXROW+2, BOXCOL+4, C_DVID_HI, "'Disk-Video' mode");
         driver_put_string(BOXROW + 4, BOXCOL + 4, C_DVID_LO,
-            ("Screen resolution: " + std::to_string(g_screen_x_dots) + " x " + std::to_string(g_screen_y_dots))
-                .c_str());
+            "Screen resolution: " + std::to_string(g_screen_x_dots) + " x " + std::to_string(g_screen_y_dots));
         if (g_disk_targa)
         {
             driver_put_string(-1, -1, C_DVID_LO, "  24 bit Targa");
@@ -150,9 +149,9 @@ int common_startdisk(long newrowsize, long newcolsize, int colors)
         else
         {
             driver_put_string(-1, -1, C_DVID_LO, "  Colors: ");
-            driver_put_string(-1, -1, C_DVID_LO, std::to_string(colors).c_str());
+            driver_put_string(-1, -1, C_DVID_LO, std::to_string(colors));
         }
-        driver_put_string(BOXROW+8, BOXCOL+4, C_DVID_LO, ("Save name: " + g_save_filename).c_str());
+        driver_put_string(BOXROW+8, BOXCOL+4, C_DVID_LO, "Save name: " + g_save_filename);
         driver_put_string(BOXROW+10, BOXCOL+4, C_DVID_LO, "Status:");
         dvid_status(0, "clearing the 'screen'");
     }
@@ -736,6 +735,6 @@ void dvid_status(int line, char const *msg)
         line -= 100;
         attrib = C_STOP_ERR;
     }
-    driver_put_string(BOXROW+10+line, BOXCOL+12, attrib, buff.c_str());
+    driver_put_string(BOXROW+10+line, BOXCOL+12, attrib, buff);
     driver_hide_text_cursor();
 }
