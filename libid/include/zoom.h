@@ -23,3 +23,4 @@ void drawlines(coords, coords, int, int);
 void addbox(coords);
 void clearbox();
 void dispbox();
+void scroll_relative(int bycol, int byrow);

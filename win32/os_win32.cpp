@@ -173,37 +173,6 @@ long readticker()
 }
 
 
-//; ************* function scroll_relative(bycol, byrow) ***********************
-//
-//; scroll_relative ------------------------------------------------------------
-//; * relative screen center scrolling, arguments passed are signed deltas
-//; ------------------------------------------------------------16-08-2002-ChCh-
-//
-//scroll_relative proc    bycol: word, byrow: word
-//        cmp     g_video_scroll,0        ; is the scrolling on?
-//        jne     okletsmove              ;  ok, lets move
-//        jmp     staystill               ;  no, stay still
-//okletsmove:
-//        mov     cx,g_video_start_x         ; where we already are..
-//        mov     dx,g_video_start_y
-//        add     cx,video_cofs_x         ; find the screen center
-//        add     dx,video_cofs_y
-//        add     cx,bycol                ; add the relative shift
-//        add     dx,byrow
-//        call    VESAscroll              ; replace this later with a variable
-//staystill:
-//        ret
-//scroll_relative endp
-
-void scroll_relative(int bycol, int byrow)
-{
-    if (g_video_scroll)
-    {
-        _ASSERTE(0 && "scroll_relative called");
-        // blt pixels around :-)
-    }
-}
-
 // tenths of millisecond timewr routine
 // static struct timeval tv_start;
 
@@ -230,23 +199,6 @@ uclock_t usec_clock()
     _ASSERTE(FALSE);
 
     return result;
-}
-
-/*
-; ************* function scroll_center(tocol, torow) *************************
-
-; scroll_center --------------------------------------------------------------
-; * this is meant to be an universal scrolling redirection routine
-;   (if scrolling will be coded for the other modes too, the VESAscroll
-;   call should be replaced by a preset variable (like in proc newbank))
-; * arguments passed are the coords of the screen center because
-;   there is no universal way to determine physical screen resolution
-; ------------------------------------------------------------12-08-2002-ChCh-
-*/
-void scroll_center(int tocol, int torow)
-{
-    // TODO
-    _ASSERTE(FALSE);
 }
 
 unsigned long get_disk_space()

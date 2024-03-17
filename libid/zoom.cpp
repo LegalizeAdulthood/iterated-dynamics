@@ -338,6 +338,54 @@ void addbox(coords point)
     }
 }
 
+/*
+; ************* function scroll_center(tocol, torow) *************************
+
+; scroll_center --------------------------------------------------------------
+; * this is meant to be an universal scrolling redirection routine
+;   (if scrolling will be coded for the other modes too, the VESAscroll
+;   call should be replaced by a preset variable (like in proc newbank))
+; * arguments passed are the coords of the screen center because
+;   there is no universal way to determine physical screen resolution
+; ------------------------------------------------------------12-08-2002-ChCh-
+*/
+static void scroll_center(int tocol, int torow)
+{
+    // TODO
+    assert(false && "scroll_center called");
+}
+
+//; ************* function scroll_relative(bycol, byrow) ***********************
+//
+//; scroll_relative ------------------------------------------------------------
+//; * relative screen center scrolling, arguments passed are signed deltas
+//; ------------------------------------------------------------16-08-2002-ChCh-
+//
+//scroll_relative proc    bycol: word, byrow: word
+//        cmp     g_video_scroll,0        ; is the scrolling on?
+//        jne     okletsmove              ;  ok, lets move
+//        jmp     staystill               ;  no, stay still
+//okletsmove:
+//        mov     cx,g_video_start_x         ; where we already are..
+//        mov     dx,g_video_start_y
+//        add     cx,video_cofs_x         ; find the screen center
+//        add     dx,video_cofs_y
+//        add     cx,bycol                ; add the relative shift
+//        add     dx,byrow
+//        call    VESAscroll              ; replace this later with a variable
+//staystill:
+//        ret
+//scroll_relative endp
+
+void scroll_relative(int bycol, int byrow)
+{
+    if (g_video_scroll)
+    {
+        assert(false && "scroll_relative called");
+        // blt pixels around :-)
+    }
+}
+
 void moveboxf(double dx, double dy)
 {
     int align;
@@ -386,7 +434,6 @@ void moveboxf(double dx, double dy)
             g_zoom_box_y = (double)row/g_logical_screen_y_size_dots;
         }
     }
-#ifndef XFRACT
     if (g_video_scroll)                 // scroll screen center to the box center
     {
         int col = (int)((g_zoom_box_x + g_zoom_box_width/2)*(g_logical_screen_x_size_dots + PIXELROUND)) + g_logical_screen_x_offset;
@@ -413,7 +460,6 @@ void moveboxf(double dx, double dy)
             }
         }
     }
-#endif
 }
 
 static void chgboxf(double dwidth, double ddepth)
