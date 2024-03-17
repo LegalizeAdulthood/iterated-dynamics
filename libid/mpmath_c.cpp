@@ -44,8 +44,6 @@ struct MP Ans = { 0 };
 
 int g_mp_overflow = 0;
 
-#if !defined(XFRACT)
-
 MP *MPsub(MP x, MP y)
 {
     y.Exp ^= 0x8000;
@@ -213,7 +211,6 @@ void setMPfunctions()
     pd2MP  = d2MP386 ;
     pMP2d  = MP2d386 ;
 }
-#endif // XFRACT
 
 DComplex ComplexPower(DComplex xx, DComplex yy)
 {
@@ -863,7 +860,6 @@ int GausianNumber(int Probability, int Range)
 
 #endif
 
-#if defined(_WIN32)
 /*
 MP2d086     PROC     uses si di, xExp:WORD, xMant:DWORD
    sub   xExp, (1 SHL 14) - (1 SHL 10)
@@ -2178,4 +2174,3 @@ MP *fg2MP(long x, int fg)
 {
     return fg2MP386(x, fg);
 }
-#endif
