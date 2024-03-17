@@ -33,6 +33,7 @@
 #include "prompts2.h"
 
 #include <algorithm>
+#include <cassert>
 #include <cmath>
 
 namespace
@@ -916,7 +917,7 @@ double *MP2d086(MP x)
 {
     // TODO: implement
     static double ans = 0.0;
-    _ASSERTE(0 && "MP2d086 called.");
+    assert(!"MP2d086 called.");
     return &ans;
 }
 
@@ -1156,7 +1157,7 @@ MPadd086    ENDP
 MP *MPadd086(MP x, MP y)
 {
     // TODO: implement
-    _ASSERTE(0 && "MPadd086 called.");
+    assert(!"MPadd086 called.");
     return &Ans;
 }
 
@@ -1233,7 +1234,7 @@ MPcmp086    ENDP
 int MPcmp086(MP x, MP y)
 {
     // TODO: implement
-    _ASSERTE(0 && "MPcmp086 called.");
+    assert(!"MPcmp086 called.");
     return 0;
 }
 
@@ -1337,7 +1338,7 @@ MPdiv086    ENDP
 MP *MPdiv086(MP x, MP y)
 {
     // TODO: implement
-    _ASSERTE(0 && "MPdiv086 called.");
+    assert(!"MPdiv086 called.");
     return &Ans;
 }
 
@@ -1573,7 +1574,7 @@ d2MP386     ENDP
 MP *d2MP386(double x)
 {
     // TODO: implement
-    _ASSERTE(0 && "d2MP386 called.");
+    assert(!"d2MP386 called.");
     return &Ans;
 }
 
@@ -1621,7 +1622,7 @@ double *MP2d386(MP x)
 {
     // TODO: implement
     static double ans = 0.0;
-    _ASSERTE(0 && "MP2d386 called.");
+    assert(!"MP2d386 called.");
     return &ans;
 }
 
@@ -1774,7 +1775,7 @@ MPadd086    ENDP
 MP *MPadd(MP x, MP y)
 {
     // TODO: implement
-    _ASSERTE(0 && "MPadd called.");
+    assert(!"MPadd called.");
     return &Ans;
 }
 
@@ -1874,7 +1875,7 @@ MPadd386    ENDP
 MP *MPadd386(MP x, MP y)
 {
     // TODO: implement
-    _ASSERTE(0 && "MPadd386 called.");
+    assert(!"MPadd386 called.");
     return &Ans;
 }
 
@@ -1937,7 +1938,7 @@ MPcmp386    ENDP
 int MPcmp386(MP x, MP y)
 {
     // TODO: implement
-    _ASSERTE(0 && "MPcmp386 called.");
+    assert(!"MPcmp386 called.");
     return 0;
 }
 
@@ -1999,7 +2000,7 @@ MPdiv386    ENDP
 MP *MPdiv386(MP x, MP y)
 {
     // TODO: implement
-    _ASSERTE(0 && "MPdiv386 called.");
+    assert(!"MPdiv386 called.");
     return &Ans;
 }
 
@@ -2063,7 +2064,7 @@ MPmul386    ENDP
 MP *MPmul386(MP x, MP y)
 {
     // TODO: implement
-    _ASSERTE(0 && "MPmul386 called.");
+    assert(!"MPmul386 called.");
     return &Ans;
 }
 
@@ -2125,7 +2126,7 @@ fg2MP086    ENDP
 */
 MP *fg2MP086(long x, int fg)
 {
-    _ASSERTE(0 && "fg2MP086 called");
+    assert(!"fg2MP086 called");
     return &Ans;
 }
 
@@ -2166,7 +2167,7 @@ fg2MP386    ENDP
 */
 MP *fg2MP386(long x, int fg)
 {
-    _ASSERTE(0 && "fg2MP386 called");
+    assert(!"fg2MP386 called");
     return &Ans;
 }
 
