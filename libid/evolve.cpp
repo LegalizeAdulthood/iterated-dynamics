@@ -3,6 +3,7 @@
 
 #include "evolve.h"
 
+#include "bailout_formula.h"
 #include "calcfrac.h"
 #include "choice_builder.h"
 #include "cmdfiles.h"
@@ -14,7 +15,6 @@
 #include "miscres.h"
 #include "parser.h"
 #include "prompts1.h"
-#include "set_bailout_formula.h"
 #include "zoom.h"
 
 #include <algorithm>

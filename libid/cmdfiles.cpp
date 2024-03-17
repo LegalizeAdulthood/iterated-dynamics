@@ -6,6 +6,7 @@
 #include "cmdfiles.h"
 
 #include "abort_msg.h"
+#include "bailout_formula.h"
 #include "biginit.h"
 #include "calcfrac.h"
 #include "drivers.h"
@@ -39,7 +40,6 @@
 #include "prompts2.h"
 #include "realdos.h"
 #include "rotate.h"
-#include "set_bailout_formula.h"
 #include "soi.h"
 #include "stereo.h"
 

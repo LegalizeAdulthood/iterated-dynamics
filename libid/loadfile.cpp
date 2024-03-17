@@ -6,6 +6,7 @@
 
 #include "loadfile.h"
 
+#include "bailout_formula.h"
 #include "biginit.h"
 #include "calcfrac.h"
 #include "cmdfiles.h"
@@ -34,7 +35,6 @@
 #include "realdos.h"
 #include "split_path.h"
 #include "rotate.h"
-#include "set_bailout_formula.h"
 #include "zoom.h"
 
 #include <algorithm>

@@ -3,6 +3,7 @@
 #include "port.h"
 #include "prototyp.h"
 
+#include "bailout_formula.h"
 #include "biginit.h"
 #include "calcfrac.h"
 #include "cmdfiles.h"
@@ -26,7 +27,6 @@
 #include "prompts2.h"
 #include "realdos.h"
 #include "rotate.h"
-#include "set_bailout_formula.h"
 #include "stereo.h"
 
 #include <algorithm>

@@ -6,13 +6,12 @@
 
 #include "prompts1.h"
 
+#include "bailout_formula.h"
 #include "calcfrac.h"
 #include "cmdfiles.h"
 #include "drivers.h"
-#include "fracsuba.h"
 #include "fracsubr.h"
 #include "fractalp.h"
-#include "fractals.h"
 #include "fractype.h"
 #include "full_screen_prompt.h"
 #include "get_key_no_help.h"
@@ -30,7 +29,6 @@
 #include "parser.h"
 #include "prompts2.h"
 #include "realdos.h"
-#include "set_bailout_formula.h"
 #include "zoom.h"
 
 #include <cassert>

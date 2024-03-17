@@ -7,11 +7,11 @@ FRACTALS.C, i.e. which are non-fractal-specific fractal engine subroutines.
 
 #include "fracsubr.h"
 
+#include "bailout_formula.h"
 #include "biginit.h"
 #include "calcfrac.h"
 #include "cmdfiles.h"
 #include "drivers.h"
-#include "fracsubr.h"
 #include "fractalb.h"
 #include "fractalp.h"
 #include "fractals.h"
@@ -21,7 +21,6 @@ FRACTALS.C, i.e. which are non-fractal-specific fractal engine subroutines.
 #include "miscovl.h"
 #include "miscres.h"
 #include "realdos.h"
-#include "set_bailout_formula.h"
 #include "soi.h"
 #include "update_save_name.h"
 

@@ -10,13 +10,13 @@ is in the allocations of memory for the big numbers.
 
 #include "biginit.h"
 
+#include "bailout_formula.h"
 #include "calcfrac.h"
 #include "cmdfiles.h"
 #include "fractalp.h"
 #include "fractype.h"
 #include "prompts2.h"
 #include "realdos.h"
-#include "set_bailout_formula.h"
 
 #include <cstdio>
 #include <cstring>

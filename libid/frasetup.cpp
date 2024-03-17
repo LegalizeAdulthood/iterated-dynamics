@@ -3,6 +3,7 @@
 
 #include "frasetup.h"
 
+#include "bailout_formula.h"
 #include "calcfrac.h"
 #include "calmanfp.h"
 #include "cmdfiles.h"
@@ -15,7 +16,6 @@
 #include "id_data.h"
 #include "mpmath.h"
 #include "mpmath_c.h"
-#include "set_bailout_formula.h"
 
 #include <cmath>
 

@@ -6,6 +6,7 @@
 
 #include "encoder.h"
 
+#include "bailout_formula.h"
 #include "calcfrac.h"
 #include "cmdfiles.h"
 #include "diskvid.h"
@@ -30,7 +31,6 @@
 #include "prompts2.h"
 #include "realdos.h"
 #include "rotate.h"
-#include "set_bailout_formula.h"
 #include "slideshw.h"
 #include "update_save_name.h"
 

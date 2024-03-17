@@ -16,6 +16,7 @@
 
 #include "calcfrac.h"
 
+#include "bailout_formula.h"
 #include "biginit.h"
 #include "calcmand.h"
 #include "calmanfp.h"
@@ -40,7 +41,6 @@
 #include "newton.h"
 #include "parser.h"
 #include "realdos.h"
-#include "set_bailout_formula.h"
 #include "soi.h"
 #include "update_save_name.h"
 
