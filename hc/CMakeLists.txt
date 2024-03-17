@@ -16,10 +16,10 @@ add_custom_command(
     OUTPUT
         ${CMAKE_CURRENT_BINARY_DIR}/helpdefs.h
         ${CMAKE_CURRENT_BINARY_DIR}/id.hlp
-        ${ID_DIR}/headers/helpdefs.h
+        ${CMAKE_BINARY_DIR}/include/helpdefs.h
         ${home_dir}/id.hlp
     COMMAND hc /i ${CMAKE_CURRENT_SOURCE_DIR} /c help.src
-    COMMAND ${CMAKE_COMMAND} -E copy helpdefs.h ${ID_DIR}/headers
+    COMMAND ${CMAKE_COMMAND} -E copy helpdefs.h ${CMAKE_BINARY_DIR}/include/helpdefs.h
     COMMAND ${CMAKE_COMMAND} -E copy id.hlp ${home_dir}
     DEPENDS hc
         help.src
@@ -29,3 +29,8 @@ add_custom_command(
         help5.src)
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/id.hlp
     DESTINATION share)
+
+add_library(help_defs INTERFACE)
+target_sources(help_defs INTERFACE
+    ${CMAKE_BINARY_DIR}/include/helpdefs.h)
+target_include_directories(help_defs INTERFACE ${CMAKE_BINARY_DIR}/include)
