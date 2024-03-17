@@ -55,6 +55,7 @@ add_library(libid
     abort_msg.cpp include/abort_msg.h
     include/choice_builder.h
     double_to_string.cpp include/double_to_string.h
+    evolver_menu_switch.cpp include/evolver_menu_switch.h
     expand_dirname.cpp include/expand_dirname.h
     find_file.cpp include/find_file.h
     find_path.cpp include/find_path.h
@@ -224,6 +225,7 @@ source_group("Header Files/ui" FILES
     include/abort_msg.h
     include/choice_builder.h
     include/double_to_string.h
+    include/evolver_menu_switch.h
     include/expand_dirname.h
     include/find_file.h
     include/find_path.h
@@ -262,6 +264,7 @@ source_group("Header Files/ui" FILES
 source_group("Source Files/ui" FILES
     abort_msg.cpp
     double_to_string.cpp
+    evolver_menu_switch.cpp
     expand_dirname.cpp
     find_file.cpp
     find_path.cpp
