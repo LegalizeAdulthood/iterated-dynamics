@@ -540,7 +540,6 @@ trig_fn g_trig_index[] =
 {
     trig_fn::SIN, trig_fn::SQR, trig_fn::SINH, trig_fn::COSH
 };
-#if !defined(XFRACT)
 void (*ltrig0)() = lStkSin;
 void (*ltrig1)() = lStkSqr;
 void (*ltrig2)() = lStkSinh;
@@ -549,7 +548,6 @@ void (*mtrig0)() = mStkSin;
 void (*mtrig1)() = mStkSqr;
 void (*mtrig2)() = mStkSinh;
 void (*mtrig3)() = mStkCosh;
-#endif
 void (*dtrig0)() = dStkSin;
 void (*dtrig1)() = dStkSqr;
 void (*dtrig2)() = dStkSinh;
@@ -630,31 +628,23 @@ void set_trig_pointers(int which)
     switch (which)
     {
     case 0:
-#if !defined(XFRACT) && !defined(_WIN32)
         ltrig0 = g_trig_fn[static_cast<int>(g_trig_index[0])].lfunct;
         mtrig0 = g_trig_fn[static_cast<int>(g_trig_index[0])].mfunct;
-#endif
         dtrig0 = g_trig_fn[static_cast<int>(g_trig_index[0])].dfunct;
         break;
     case 1:
-#if !defined(XFRACT) && !defined(_WIN32)
         ltrig1 = g_trig_fn[static_cast<int>(g_trig_index[1])].lfunct;
         mtrig1 = g_trig_fn[static_cast<int>(g_trig_index[1])].mfunct;
-#endif
         dtrig1 = g_trig_fn[static_cast<int>(g_trig_index[1])].dfunct;
         break;
     case 2:
-#if !defined(XFRACT) && !defined(_WIN32)
         ltrig2 = g_trig_fn[static_cast<int>(g_trig_index[2])].lfunct;
         mtrig2 = g_trig_fn[static_cast<int>(g_trig_index[2])].mfunct;
-#endif
         dtrig2 = g_trig_fn[static_cast<int>(g_trig_index[2])].dfunct;
         break;
     case 3:
-#if !defined(XFRACT) && !defined(_WIN32)
         ltrig3 = g_trig_fn[static_cast<int>(g_trig_index[3])].lfunct;
         mtrig3 = g_trig_fn[static_cast<int>(g_trig_index[3])].mfunct;
-#endif
         dtrig3 = g_trig_fn[static_cast<int>(g_trig_index[3])].dfunct;
         break;
     default: // do 'em all

@@ -214,7 +214,6 @@ bool uses_jump = false;
 bool g_frm_uses_ismand = false;
 static unsigned int chars_in_formula;
 
-#if !defined(XFRACT)
 #define ChkLongDenom(denom)         \
     if ((denom == 0 || g_overflow)) \
     {                               \
@@ -223,7 +222,6 @@ static unsigned int chars_in_formula;
     }                               \
     else if (denom == 0)            \
         return
-#endif
 
 #define ChkFloatDenom(denom)        \
     if (std::fabs(denom) <= DBL_MIN)     \
@@ -337,8 +335,6 @@ static char const *ParseErrs(int which)
 /* use the following when only float functions are implemented to
    get MP math and Integer math */
 
-#if !defined(XFRACT)
-
 static void mStkFunct(void (*fct)())   // call mStk via dStk
 {
     Arg1->d = MPC2cmplx(Arg1->m);
@@ -368,8 +364,6 @@ static void lStkFunct(void (*fct)())   // call lStk via dStk
     }
 }
 
-#endif
-
 unsigned long NewRandNum()
 {
     return RandNum = ((RandNum << 15) + rand15()) ^ RandNum;
@@ -394,7 +388,6 @@ void dRandom()
 
 }
 
-#if !defined(XFRACT)
 void mRandom()
 {
     long x, y;
@@ -406,7 +399,6 @@ void mRandom()
     v[7].a.m.x = *fg2MP(x, g_bit_shift);
     v[7].a.m.y = *fg2MP(y, g_bit_shift);
 }
-#endif
 
 void SetRandFnct()
 {
@@ -441,16 +433,13 @@ void RandomSeed()
     Randomized = true;
 }
 
-#if !defined(XFRACT)
 void lStkSRand()
 {
     SetRandFnct();
     lRandom();
     Arg1->l = v[7].a.l;
 }
-#endif
 
-#if !defined(XFRACT)
 void mStkSRand()
 {
     Arg1->l.x = Arg1->m.x.Mant ^ (long)Arg1->m.x.Exp;
@@ -459,7 +448,6 @@ void mStkSRand()
     mRandom();
     Arg1->m = v[7].a.m;
 }
-#endif
 
 void dStkSRand()
 {
@@ -533,7 +521,6 @@ void dStkAbs()
     Arg1->d.y = std::fabs(Arg1->d.y);
 }
 
-#if !defined(XFRACT)
 void mStkAbs()
 {
     if (Arg1->m.x.Exp < 0)
@@ -551,7 +538,6 @@ void lStkAbs()
     Arg1->l.x = labs(Arg1->l.x);
     Arg1->l.y = labs(Arg1->l.y);
 }
-#endif
 
 void (*StkAbs)() = dStkAbs;
 
@@ -565,7 +551,6 @@ void dStkSqr()
     LastSqr.d.y = 0;
 }
 
-#if !defined(XFRACT)
 void mStkSqr()
 {
     LastSqr.m.x = *MPmul(Arg1->m.x, Arg1->m.x);
@@ -587,7 +572,6 @@ void lStkSqr()
     LastSqr.l.x += LastSqr.l.y;
     LastSqr.l.y = 0L;
 }
-#endif
 
 void (*StkSqr)() = dStkSqr;
 
@@ -598,8 +582,6 @@ void dStkAdd()
     Arg1--;
     Arg2--;
 }
-
-#if !defined(XFRACT)
 
 void mStkAdd()
 {
@@ -615,7 +597,6 @@ void lStkAdd()
     Arg1--;
     Arg2--;
 }
-#endif
 
 void (*StkAdd)() = dStkAdd;
 
@@ -627,7 +608,6 @@ void dStkSub()
     Arg2--;
 }
 
-#if !defined(XFRACT)
 void mStkSub()
 {
     Arg2->m = MPCsub(Arg2->m, Arg1->m);
@@ -642,7 +622,6 @@ void lStkSub()
     Arg1--;
     Arg2--;
 }
-#endif
 
 void (*StkSub)() = dStkSub;
 
@@ -651,7 +630,6 @@ void dStkConj()
     Arg1->d.y = -Arg1->d.y;
 }
 
-#if !defined(XFRACT)
 void mStkConj()
 {
     Arg1->m.y.Exp ^= 0x8000;
@@ -661,7 +639,6 @@ void lStkConj()
 {
     Arg1->l.y = -Arg1->l.y;
 }
-#endif
 
 void (*StkConj)() = dStkConj;
 
@@ -671,7 +648,6 @@ void dStkFloor()
     Arg1->d.y = floor(Arg1->d.y);
 }
 
-#if !defined(XFRACT)
 void mStkFloor()
 {
     mStkFunct(dStkFloor);   // call lStk via dStk
@@ -688,7 +664,6 @@ void lStkFloor()
     Arg1->l.x = (Arg1->l.x) << g_bit_shift;
     Arg1->l.y = (Arg1->l.y) << g_bit_shift;
 }
-#endif
 
 void (*StkFloor)() = dStkFloor;
 
@@ -698,7 +673,6 @@ void dStkCeil()
     Arg1->d.y = ceil(Arg1->d.y);
 }
 
-#if !defined(XFRACT)
 void mStkCeil()
 {
     mStkFunct(dStkCeil);   // call lStk via dStk
@@ -713,7 +687,6 @@ void lStkCeil()
     Arg1->l.x = -((Arg1->l.x) << g_bit_shift);
     Arg1->l.y = -((Arg1->l.y) << g_bit_shift);
 }
-#endif
 
 void (*StkCeil)() = dStkCeil;
 
@@ -723,7 +696,6 @@ void dStkTrunc()
     Arg1->d.y = (int)(Arg1->d.y);
 }
 
-#if !defined(XFRACT)
 void mStkTrunc()
 {
     mStkFunct(dStkTrunc);   // call lStk via dStk
@@ -745,7 +717,6 @@ void lStkTrunc()
     Arg1->l.x = signx*Arg1->l.x;
     Arg1->l.y = signy*Arg1->l.y;
 }
-#endif
 
 void (*StkTrunc)() = dStkTrunc;
 
@@ -755,7 +726,6 @@ void dStkRound()
     Arg1->d.y = floor(Arg1->d.y+.5);
 }
 
-#if !defined(XFRACT)
 void mStkRound()
 {
     mStkFunct(dStkRound);   // call lStk via dStk
@@ -768,7 +738,6 @@ void lStkRound()
     Arg1->l.y += (1L << g_bit_shift_less_1);
     lStkFloor();
 }
-#endif
 
 void (*StkRound)() = dStkRound;
 
@@ -778,7 +747,6 @@ void dStkZero()
     Arg1->d.y = Arg1->d.x;
 }
 
-#if !defined(XFRACT)
 void mStkZero()
 {
     Arg1->m.x.Exp = 0;
@@ -792,7 +760,6 @@ void lStkZero()
     Arg1->l.x = 0;
     Arg1->l.y = Arg1->l.x;
 }
-#endif
 
 void (*StkZero)() = dStkZero;
 
@@ -802,7 +769,6 @@ void dStkOne()
     Arg1->d.y = 0.0;
 }
 
-#if !defined(XFRACT)
 void mStkOne()
 {
     Arg1->m = g_mpc_one;
@@ -813,7 +779,6 @@ void lStkOne()
     Arg1->l.x = (long) fg;
     Arg1->l.y = 0L;
 }
-#endif
 
 void (*StkOne)() = dStkOne;
 
@@ -823,7 +788,6 @@ void dStkReal()
     Arg1->d.y = 0.0;
 }
 
-#if !defined(XFRACT)
 void mStkReal()
 {
     Arg1->m.y.Exp = 0;
@@ -834,7 +798,6 @@ void lStkReal()
 {
     Arg1->l.y = 0l;
 }
-#endif
 
 void (*StkReal)() = dStkReal;
 
@@ -844,7 +807,6 @@ void dStkImag()
     Arg1->d.y = 0.0;
 }
 
-#if !defined(XFRACT)
 void mStkImag()
 {
     Arg1->m.x = Arg1->m.y;
@@ -857,7 +819,6 @@ void lStkImag()
     Arg1->l.x = Arg1->l.y;
     Arg1->l.y = 0l;
 }
-#endif
 
 void (*StkImag)() = dStkImag;
 
@@ -867,7 +828,6 @@ void dStkNeg()
     Arg1->d.y = -Arg1->d.y;
 }
 
-#if !defined(XFRACT)
 void mStkNeg()
 {
     Arg1->m.x.Exp ^= 0x8000;
@@ -879,7 +839,6 @@ void lStkNeg()
     Arg1->l.x = -Arg1->l.x;
     Arg1->l.y = -Arg1->l.y;
 }
-#endif
 
 void (*StkNeg)() = dStkNeg;
 
@@ -890,7 +849,6 @@ void dStkMul()
     Arg2--;
 }
 
-#if !defined(XFRACT)
 void mStkMul()
 {
     Arg2->m = MPCmul(Arg2->m, Arg1->m);
@@ -911,7 +869,6 @@ void lStkMul()
     Arg1--;
     Arg2--;
 }
-#endif
 
 void (*StkMul)() = dStkMul;
 
@@ -922,7 +879,6 @@ void dStkDiv()
     Arg2--;
 }
 
-#if !defined(XFRACT)
 void mStkDiv()
 {
     Arg2->m = MPCdiv(Arg2->m, Arg1->m);
@@ -945,7 +901,6 @@ void lStkDiv()
     Arg1--;
     Arg2--;
 }
-#endif
 
 void (*StkDiv)() = dStkDiv;
 
@@ -955,7 +910,6 @@ void dStkMod()
     Arg1->d.y = 0.0;
 }
 
-#if !defined(XFRACT)
 void mStkMod()
 {
     Arg1->m.x = MPCmod(Arg1->m);
@@ -986,7 +940,6 @@ void lStkModOld()
     }
     Arg1->l.y = 0L;
 }
-#endif
 
 void (*StkMod)() = dStkMod;
 
@@ -1023,7 +976,6 @@ void dStkFlip()
     Arg1->d.y = t;
 }
 
-#if !defined(XFRACT)
 void mStkFlip()
 {
     MP t;
@@ -1041,7 +993,6 @@ void lStkFlip()
     Arg1->l.x = Arg1->l.y;
     Arg1->l.y = t;
 }
-#endif
 
 void (*StkFlip)() = dStkFlip;
 
@@ -1055,7 +1006,6 @@ void dStkSin()
     Arg1->d.y = cosx*sinhy;
 }
 
-#if !defined(XFRACT)
 void mStkSin()
 {
     mStkFunct(dStkSin);   // call lStk via dStk
@@ -1071,7 +1021,6 @@ void lStkSin()
     Arg1->l.x = multiply(sinx, coshy, ShiftBack);
     Arg1->l.y = multiply(cosx, sinhy, ShiftBack);
 }
-#endif
 
 void (*StkSin)() = dStkSin;
 
@@ -1091,7 +1040,6 @@ void dStkTan()
     Arg1->d.y = sinhy/denom;
 }
 
-#if !defined(XFRACT)
 void mStkTan()
 {
     mStkFunct(dStkTan);   // call lStk via dStk
@@ -1111,7 +1059,6 @@ void lStkTan()
     Arg1->l.x = divide(sinx, denom, g_bit_shift);
     Arg1->l.y = divide(sinhy, denom, g_bit_shift);
 }
-#endif
 
 void (*StkTan)() = dStkTan;
 
@@ -1128,7 +1075,6 @@ void dStkTanh()
     Arg1->d.y = siny/denom;
 }
 
-#if !defined(XFRACT)
 void mStkTanh()
 {
     mStkFunct(dStkTanh);   // call lStk via dStk
@@ -1148,7 +1094,6 @@ void lStkTanh()
     Arg1->l.x = divide(sinhx, denom, g_bit_shift);
     Arg1->l.y = divide(siny, denom, g_bit_shift);
 }
-#endif
 
 void (*StkTanh)() = dStkTanh;
 
@@ -1165,7 +1110,6 @@ void dStkCoTan()
     Arg1->d.y = -sinhy/denom;
 }
 
-#if !defined(XFRACT)
 void mStkCoTan()
 {
     mStkFunct(dStkCoTan);   // call lStk via dStk
@@ -1185,7 +1129,6 @@ void lStkCoTan()
     Arg1->l.x = divide(sinx, denom, g_bit_shift);
     Arg1->l.y = -divide(sinhy, denom, g_bit_shift);
 }
-#endif
 
 void (*StkCoTan)() = dStkCoTan;
 
@@ -1202,7 +1145,6 @@ void dStkCoTanh()
     Arg1->d.y = -siny/denom;
 }
 
-#if !defined(XFRACT)
 void mStkCoTanh()
 {
     mStkFunct(dStkCoTanh);   // call lStk via dStk
@@ -1222,7 +1164,6 @@ void lStkCoTanh()
     Arg1->l.x = divide(sinhx, denom, g_bit_shift);
     Arg1->l.y = -divide(siny, denom, g_bit_shift);
 }
-#endif
 
 void (*StkCoTanh)() = dStkCoTanh;
 
@@ -1242,7 +1183,6 @@ void dStkRecip()
     Arg1->d.y = -Arg1->d.y/mod;
 }
 
-#if !defined(XFRACT)
 void mStkRecip()
 {
     MP mod;
@@ -1266,7 +1206,6 @@ void lStkRecip()
     Arg1->l.x =  divide(Arg1->l.x, mod, g_bit_shift);
     Arg1->l.y = -divide(Arg1->l.y, mod, g_bit_shift);
 }
-#endif
 
 void StkIdent()
 {
@@ -1283,7 +1222,6 @@ void dStkSinh()
     Arg1->d.y = coshx*siny;
 }
 
-#if !defined(XFRACT)
 void mStkSinh()
 {
     mStkFunct(dStkSinh);   // call lStk via dStk
@@ -1300,7 +1238,6 @@ void lStkSinh()
     Arg1->l.x = multiply(cosy, sinhx, ShiftBack);
     Arg1->l.y = multiply(siny, coshx, ShiftBack);
 }
-#endif
 
 void (*StkSinh)() = dStkSinh;
 
@@ -1314,7 +1251,6 @@ void dStkCos()
     Arg1->d.y = -sinx*sinhy;
 }
 
-#if !defined(XFRACT)
 void mStkCos()
 {
     mStkFunct(dStkCos);   // call lStk via dStk
@@ -1331,7 +1267,6 @@ void lStkCos()
     Arg1->l.x = multiply(cosx, coshy, ShiftBack);
     Arg1->l.y = -multiply(sinx, sinhy, ShiftBack);
 }
-#endif
 
 void (*StkCos)() = dStkCos;
 
@@ -1343,7 +1278,6 @@ void dStkCosXX()
     Arg1->d.y = -Arg1->d.y;
 }
 
-#if !defined(XFRACT)
 void mStkCosXX()
 {
     mStkFunct(dStkCosXX);   // call lStk via dStk
@@ -1354,7 +1288,6 @@ void lStkCosXX()
     lStkCos();
     Arg1->l.y = -Arg1->l.y;
 }
-#endif
 
 void (*StkCosXX)() = dStkCosXX;
 
@@ -1368,7 +1301,6 @@ void dStkCosh()
     Arg1->d.y = sinhx*siny;
 }
 
-#if !defined(XFRACT)
 void mStkCosh()
 {
     mStkFunct(dStkCosh);   // call lStk via dStk
@@ -1385,7 +1317,6 @@ void lStkCosh()
     Arg1->l.x = multiply(cosy, coshx, ShiftBack);
     Arg1->l.y = multiply(siny, sinhx, ShiftBack);
 }
-#endif
 
 void (*StkCosh)() = dStkCosh;
 
@@ -1394,7 +1325,6 @@ void dStkASin()
     Arcsinz(Arg1->d, &(Arg1->d));
 }
 
-#if !defined(XFRACT)
 void mStkASin()
 {
     mStkFunct(dStkASin);
@@ -1404,7 +1334,6 @@ void lStkASin()
 {
     lStkFunct(dStkASin);
 }
-#endif
 
 void (*StkASin)() = dStkASin;
 
@@ -1413,7 +1342,6 @@ void dStkASinh()
     Arcsinhz(Arg1->d, &(Arg1->d));
 }
 
-#if !defined(XFRACT)
 void mStkASinh()
 {
     mStkFunct(dStkASinh);
@@ -1423,7 +1351,6 @@ void lStkASinh()
 {
     lStkFunct(dStkASinh);
 }
-#endif
 
 void (*StkASinh)() = dStkASinh;
 
@@ -1432,7 +1359,6 @@ void dStkACos()
     Arccosz(Arg1->d, &(Arg1->d));
 }
 
-#if !defined(XFRACT)
 void mStkACos()
 {
     mStkFunct(dStkACos);
@@ -1442,7 +1368,6 @@ void lStkACos()
 {
     lStkFunct(dStkACos);
 }
-#endif
 
 void (*StkACos)() = dStkACos;
 
@@ -1451,7 +1376,6 @@ void dStkACosh()
     Arccoshz(Arg1->d, &(Arg1->d));
 }
 
-#if !defined(XFRACT)
 void mStkACosh()
 {
     mStkFunct(dStkACosh);
@@ -1461,7 +1385,6 @@ void lStkACosh()
 {
     lStkFunct(dStkACosh);
 }
-#endif
 
 void (*StkACosh)() = dStkACosh;
 
@@ -1470,7 +1393,6 @@ void dStkATan()
     Arctanz(Arg1->d, &(Arg1->d));
 }
 
-#if !defined(XFRACT)
 void mStkATan()
 {
     mStkFunct(dStkATan);
@@ -1480,7 +1402,6 @@ void lStkATan()
 {
     lStkFunct(dStkATan);
 }
-#endif
 
 void (*StkATan)() = dStkATan;
 
@@ -1489,7 +1410,6 @@ void dStkATanh()
     Arctanhz(Arg1->d, &(Arg1->d));
 }
 
-#if !defined(XFRACT)
 void mStkATanh()
 {
     mStkFunct(dStkATanh);
@@ -1499,7 +1419,6 @@ void lStkATanh()
 {
     lStkFunct(dStkATanh);
 }
-#endif
 
 void (*StkATanh)() = dStkATanh;
 
@@ -1508,7 +1427,6 @@ void dStkSqrt()
     Arg1->d = ComplexSqrtFloat(Arg1->d.x, Arg1->d.y);
 }
 
-#if !defined(XFRACT)
 void mStkSqrt()
 {
     mStkFunct(dStkSqrt);
@@ -1519,7 +1437,6 @@ void lStkSqrt()
     // lStkFunct(dStkSqrt);
     Arg1->l = ComplexSqrtLong(Arg1->l.x, Arg1->l.y);
 }
-#endif
 
 void (*StkSqrt)() = dStkSqrt;
 
@@ -1529,7 +1446,6 @@ void dStkCAbs()
     Arg1->d.y = 0.0;
 }
 
-#if !defined(XFRACT)
 void mStkCAbs()
 {
     mStkFunct(dStkCAbs);
@@ -1539,7 +1455,6 @@ void lStkCAbs()
 {
     lStkFunct(dStkCAbs);
 }
-#endif
 
 void (*StkCAbs)() = dStkCAbs;
 
@@ -1551,7 +1466,6 @@ void dStkLT()
     Arg2--;
 }
 
-#if !defined(XFRACT)
 void mStkLT()
 {
     Arg2->m.x = *fg2MP((long)(MPcmp(Arg2->m.x, Arg1->m.x) == -1), 0);
@@ -1568,7 +1482,6 @@ void lStkLT()
     Arg1--;
     Arg2--;
 }
-#endif
 
 void (*StkLT)() = dStkLT;
 
@@ -1580,7 +1493,6 @@ void dStkGT()
     Arg2--;
 }
 
-#if !defined(XFRACT)
 void mStkGT()
 {
     Arg2->m.x = *fg2MP((long)(MPcmp(Arg2->m.x, Arg1->m.x) == 1), 0);
@@ -1597,7 +1509,6 @@ void lStkGT()
     Arg1--;
     Arg2--;
 }
-#endif
 
 void (*StkGT)() = dStkGT;
 
@@ -1609,7 +1520,6 @@ void dStkLTE()
     Arg2--;
 }
 
-#if !defined(XFRACT)
 void mStkLTE()
 {
     int comp;
@@ -1629,7 +1539,6 @@ void lStkLTE()
     Arg1--;
     Arg2--;
 }
-#endif
 
 void (*StkLTE)() = dStkLTE;
 
@@ -1641,7 +1550,6 @@ void dStkGTE()
     Arg2--;
 }
 
-#if !defined(XFRACT)
 void mStkGTE()
 {
     int comp;
@@ -1661,7 +1569,6 @@ void lStkGTE()
     Arg1--;
     Arg2--;
 }
-#endif
 
 void (*StkGTE)() = dStkGTE;
 
@@ -1673,7 +1580,6 @@ void dStkEQ()
     Arg2--;
 }
 
-#if !defined(XFRACT)
 void mStkEQ()
 {
     int comp;
@@ -1693,7 +1599,6 @@ void lStkEQ()
     Arg1--;
     Arg2--;
 }
-#endif
 
 void (*StkEQ)() = dStkEQ;
 
@@ -1705,7 +1610,6 @@ void dStkNE()
     Arg2--;
 }
 
-#if !defined(XFRACT)
 void mStkNE()
 {
     int comp;
@@ -1725,7 +1629,6 @@ void lStkNE()
     Arg1--;
     Arg2--;
 }
-#endif
 
 void (*StkNE)() = dStkNE;
 
@@ -1737,7 +1640,6 @@ void dStkOR()
     Arg2--;
 }
 
-#if !defined(XFRACT)
 void mStkOR()
 {
     Arg2->m.x = *fg2MP((long)(Arg2->m.x.Mant || Arg1->m.x.Mant), 0);
@@ -1754,7 +1656,6 @@ void lStkOR()
     Arg1--;
     Arg2--;
 }
-#endif
 
 void (*StkOR)() = dStkOR;
 
@@ -1766,7 +1667,6 @@ void dStkAND()
     Arg2--;
 }
 
-#if !defined(XFRACT)
 void mStkAND()
 {
     Arg2->m.x = *fg2MP((long)(Arg2->m.x.Mant && Arg1->m.x.Mant), 0);
@@ -1783,7 +1683,6 @@ void lStkAND()
     Arg1--;
     Arg2--;
 }
-#endif
 
 void (*StkAND)() = dStkAND;
 void dStkLog()
@@ -1791,7 +1690,6 @@ void dStkLog()
     FPUcplxlog(&Arg1->d, &Arg1->d);
 }
 
-#if !defined(XFRACT)
 void mStkLog()
 {
     mStkFunct(dStkLog);   // call lStk via dStk
@@ -1801,7 +1699,6 @@ void lStkLog()
 {
     lStkFunct(dStkLog);
 }
-#endif
 
 void (*StkLog)() = dStkLog;
 
@@ -1819,7 +1716,6 @@ void dStkExp()
     FPUcplxexp(&Arg1->d, &Arg1->d);
 }
 
-#if !defined(XFRACT)
 void mStkExp()
 {
     mStkFunct(dStkExp);   // call lStk via dStk
@@ -1829,7 +1725,6 @@ void lStkExp()
 {
     lStkFunct(dStkExp);
 }
-#endif
 
 void (*StkExp)() = dStkExp;
 
@@ -1840,7 +1735,6 @@ void dStkPwr()
     Arg2--;
 }
 
-#if !defined(XFRACT)
 void mStkPwr()
 {
     DComplex x, y;
@@ -1874,7 +1768,6 @@ void lStkPwr()
     Arg1--;
     Arg2--;
 }
-#endif
 
 void (*StkPwr)() = dStkPwr;
 
@@ -1908,7 +1801,6 @@ void dStkJumpOnFalse()
 
 void mStkJumpOnFalse()
 {
-#if !defined(XFRACT)
     if (Arg1->m.x.Mant == 0)
     {
         StkJump();
@@ -1917,7 +1809,6 @@ void mStkJumpOnFalse()
     {
         jump_index++;
     }
-#endif
 }
 
 void lStkJumpOnFalse()
@@ -1948,7 +1839,6 @@ void dStkJumpOnTrue()
 
 void mStkJumpOnTrue()
 {
-#if !defined(XFRACT)
     if (Arg1->m.x.Mant)
     {
         StkJump();
@@ -1957,7 +1847,6 @@ void mStkJumpOnTrue()
     {
         jump_index++;
     }
-#endif
 }
 
 void lStkJumpOnTrue()
@@ -2067,7 +1956,6 @@ ConstArg *isconst(char const *Str, int Len)
                 {
                     g_frm_uses_p5 = true;
                 }
-#if !defined(XFRACT)
                 if (n == 10 || n == 11 || n == 12)
                 {
                     if (MathType == L_MATH)
@@ -2075,7 +1963,6 @@ ConstArg *isconst(char const *Str, int Len)
                         driver_unget_key('f');
                     }
                 }
-#endif
                 if (!isconst_pair(Str))
                 {
                     return &v[n];
@@ -2088,7 +1975,6 @@ ConstArg *isconst(char const *Str, int Len)
     v[g_variable_index].a.d.y = 0.0;
     v[g_variable_index].a.d.x = v[g_variable_index].a.d.y;
 
-#if !defined(XFRACT)
     // v[vsp].a should already be zeroed out
     switch (MathType)
     {
@@ -2105,7 +1991,6 @@ ConstArg *isconst(char const *Str, int Len)
     case D_MATH:
         break;
     }
-#endif
 
     if (std::isdigit(Str[0])
         || (Str[0] == '-' && (std::isdigit(Str[1]) || Str[1] == '.'))
@@ -2150,7 +2035,6 @@ ConstArg *isconst(char const *Str, int Len)
         case D_MATH:
             v[g_variable_index].a.d = z;
             break;
-#if !defined(XFRACT)
         case M_MATH:
             v[g_variable_index].a.m = cmplx2MPC(z);
             break;
@@ -2158,7 +2042,6 @@ ConstArg *isconst(char const *Str, int Len)
             v[g_variable_index].a.l.x = (long)(z.x * fg);
             v[g_variable_index].a.l.y = (long)(z.y * fg);
             break;
-#endif
         }
         v[g_variable_index].s = Str;
     }
@@ -2463,7 +2346,6 @@ static bool ParseStr(char const *Str, int pass)
         StkJumpOnFalse = dStkJumpOnFalse;
         StkOne = dStkOne;
         break;
-#if !defined(XFRACT)
     case M_MATH:
         StkAdd = mStkAdd;
         StkSub = mStkSub;
@@ -2574,7 +2456,6 @@ static bool ParseStr(char const *Str, int pass)
         StkJumpOnFalse = lStkJumpOnFalse;
         StkOne = lStkOne;
         break;
-#endif
     }
     g_max_function = 0;
     for (g_variable_index = 0; g_variable_index < sizeof(Constants) / sizeof(char*); g_variable_index++)
@@ -2618,7 +2499,6 @@ static bool ParseStr(char const *Str, int pass)
         v[18].a.d.x = g_params[8];
         v[18].a.d.y = g_params[9];
         break;
-#if !defined(XFRACT)
     case M_MATH:
         v[1].a.m.x = *d2MP(g_params[0]);
         v[1].a.m.y = *d2MP(g_params[1]);
@@ -2673,7 +2553,6 @@ static bool ParseStr(char const *Str, int pass)
         v[18].a.l.x = (long)(g_params[8] * fg);
         v[18].a.l.y = (long)(g_params[9] * fg);
         break;
-#endif
     }
 
     g_operation_index = 0;
@@ -2939,13 +2818,11 @@ int Formula()
         case D_MATH:
             dRandom();
             break;
-#if !defined(XFRACT)
         case L_MATH:
             lRandom();
             break;
         case M_MATH:
             mRandom();
-#endif
         }
     }
 
@@ -2963,7 +2840,6 @@ int Formula()
         g_new_z = v[3].a.d;
         g_old_z = g_new_z;
         return Arg1->d.x == 0.0;
-#if !defined(XFRACT)
     case M_MATH:
         g_new_z = MPC2cmplx(v[3].a.m);
         g_old_z = g_new_z;
@@ -2976,7 +2852,6 @@ int Formula()
             return 1;
         }
         return Arg1->l.x == 0L;
-#endif
     }
     return 1;
 }
@@ -3013,9 +2888,7 @@ int form_per_pixel()
         }
         v[9].a.d.y = 0.0;
         break;
-
-
-#if !defined(XFRACT)
+    
     case M_MATH:
         if ((g_row+g_col)&1)
         {
@@ -3030,6 +2903,7 @@ int form_per_pixel()
         }
         v[10].a.m = cmplx2MPC(v[10].a.d);
         break;
+
     case L_MATH:
         v[9].a.l.x = (long)(((g_row+g_col)&1) * fg);
         v[9].a.l.y = 0L;
@@ -3038,7 +2912,6 @@ int form_per_pixel()
         v[10].a.l.y = g_row;
         v[10].a.l.y <<= g_bit_shift;
         break;
-#endif
     }
 
     {
@@ -3051,7 +2924,6 @@ int form_per_pixel()
                 v[0].a.d.x = g_old_z.x;
                 v[0].a.d.y = g_old_z.y;
                 break;
-#if !defined(XFRACT)
             case M_MATH:
                 v[0].a.m.x = *d2MP(g_old_z.x);
                 v[0].a.m.y = *d2MP(g_old_z.y);
@@ -3067,7 +2939,6 @@ int form_per_pixel()
                 v[0].a.l.x = (long)(g_old_z.x*fg);
                 v[0].a.l.y = (long)(g_old_z.y*fg);
                 break;
-#endif
             }
         }
         else
@@ -3078,7 +2949,6 @@ int form_per_pixel()
                 v[0].a.d.x = g_dx_pixel();
                 v[0].a.d.y = g_dy_pixel();
                 break;
-#if !defined(XFRACT)
             case M_MATH:
                 v[0].a.m.x = *d2MP(g_dx_pixel());
                 v[0].a.m.y = *d2MP(g_dy_pixel());
@@ -3087,7 +2957,6 @@ int form_per_pixel()
                 v[0].a.l.x = g_l_x_pixel();
                 v[0].a.l.y = g_l_y_pixel();
                 break;
-#endif
             }
         }
     }
@@ -3110,14 +2979,12 @@ int form_per_pixel()
     case D_MATH:
         g_old_z = v[3].a.d;
         break;
-#if !defined(XFRACT)
     case M_MATH:
         g_old_z = MPC2cmplx(v[3].a.m);
         break;
     case L_MATH:
         g_l_old_z = v[3].a.l;
         break;
-#endif
     }
 
     if (g_overflow)
