@@ -18,7 +18,6 @@ void set_bailout_formula(bailouts test)
     switch (test)
     {
     case bailouts::Mod:
-    default:
         if (g_debug_flag != debug_flags::prevent_287_math)
         {
             g_bailout_float = asmfpMODbailout;
