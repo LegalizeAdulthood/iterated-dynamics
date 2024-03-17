@@ -19,10 +19,6 @@
 
 #include <cmath>
 
-#if !defined(XFRACT)
-#define MPCmod(m) (*pMPadd(*pMPmul((m).x, (m).x), *pMPmul((m).y, (m).y)))
-#endif
-
 // --------------------------------------------------------------------
 //              Setup (once per fractal image) routines
 // --------------------------------------------------------------------
