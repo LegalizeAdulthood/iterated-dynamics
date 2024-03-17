@@ -199,7 +199,7 @@ static int sel_fractype_help(int curkey, int choice)
     return 0;
 }
 
-bool select_type_params( // prompt for new fractal type parameters
+static bool select_type_params( // prompt for new fractal type parameters
     fractal_type newfractype,        // new fractal type
     fractal_type oldfractype         // previous fractal type
 )
@@ -319,7 +319,7 @@ sel_type_exit:
     return ret;
 }
 
-void set_default_parms()
+static void set_default_parms()
 {
     g_x_min = g_cur_fractal_specific->xmin;
     g_x_max = g_cur_fractal_specific->xmax;
@@ -363,7 +363,7 @@ void set_default_parms()
 
 #define MAXFRACTALS 25
 
-int build_fractal_list(int fractals[], int *last_val, char const *nameptr[])
+static int build_fractal_list(int fractals[], int *last_val, char const *nameptr[])
 {
     int numfractals = 0;
     for (int i = 0; i < g_num_fractal_types; i++)
