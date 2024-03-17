@@ -41,23 +41,20 @@ an appropriate setup, per_image, per_pixel, and orbit routines.
 
 #include "fractals.h"
 
+#include "bailout_formula.h"
 #include "calcfrac.h"
 #include "cmdfiles.h"
 #include "fpu087.h"
 #include "fracsubr.h"
 #include "fractype.h"
 #include "hcmplx.h"
-#include "helpdefs.h"
 #include "id_data.h"
-#include "miscres.h"
 #include "mpmath_c.h"
 #include "parser.h"
-#include "realdos.h"
 
 #include <cfloat>
 #include <cmath>
 #include <cstdlib>
-#include <cstring>
 
 #define NEWTONDEGREELIMIT  100
 
@@ -171,11 +168,6 @@ void FloatPreCalcMagnet2() // precalculation for Magnet2 (M & J) for speed
 // --------------------------------------------------------------------
 //              Bailout Routines Macros
 // --------------------------------------------------------------------
-
-int (*floatbailout)();
-int (*longbailout)();
-int (*bignumbailout)();
-int (*bigfltbailout)();
 
 int  fpMODbailout()
 {

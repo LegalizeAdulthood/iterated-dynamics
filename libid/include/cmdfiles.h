@@ -106,17 +106,6 @@ enum orbit_save_flags
     osf_midi = 2
 };
 
-enum class bailouts
-{
-    Mod,
-    Real,
-    Imag,
-    Or,
-    And,
-    Manh,
-    Manr
-};
-
 enum sound_flags
 {
     SOUNDFLAG_OFF       = 0,

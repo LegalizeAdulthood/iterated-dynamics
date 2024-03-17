@@ -9,6 +9,7 @@ fractal routines.
 
 #include "fractalb.h"
 
+#include "bailout_formula.h"
 #include "biginit.h"
 #include "calcfrac.h"
 #include "cmdfiles.h"

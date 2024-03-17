@@ -3,12 +3,15 @@
 #include "port.h"
 #include "prototyp.h"
 
-#include "cmdfiles.h"
 #include "fracsuba.h"
 #include "fractals.h"
 #include "merge_path_names.h"
 
 bailouts g_bail_out_test; // test used for determining bailout
+int (*floatbailout)();
+int (*longbailout)();
+int (*bignumbailout)();
+int (*bigfltbailout)();
 
 void set_bailout_formula(bailouts test)
 {

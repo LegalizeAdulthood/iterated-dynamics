@@ -60,10 +60,6 @@ extern double                g_temp_sqr_x;
 extern double                g_temp_sqr_y;
 extern double                g_threshold;
 extern long                  g_xx_one;
-extern int                 (*floatbailout)();
-extern int                 (*longbailout)();
-extern int                 (*bignumbailout)();
-extern int                 (*bigfltbailout)();
 
 void FloatPreCalcMagnet2();
 void cpower(DComplex *, int, DComplex *);
