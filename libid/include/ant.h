@@ -1,4 +1,4 @@
 #pragma once
 
-extern int ant();
-extern void free_ant_storage();
+int ant();
+void free_ant_storage();

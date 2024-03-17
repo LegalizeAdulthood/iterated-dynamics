@@ -117,17 +117,16 @@ enum  PD_COMMANDS
     PD_GET_LINK_PAGE
 };
 typedef bool (*PD_FUNC)(int cmd, PD_INFO *pd, void *info);
-extern token_types _find_token_length(char const *curr, unsigned len, int *size, int *width);
-extern token_types find_token_length(token_modes mode, char const *curr, unsigned len, int *size, int *width);
-extern int find_line_width(token_modes mode, char const *curr, unsigned len);
-extern bool process_document(PD_FUNC get_info, PD_FUNC output, void *info);
-extern int help(int);
-extern int read_help_topic(help_labels label, int , int , void *);
-extern bool makedoc_msg_func(int pnum, int num_pages);
-extern void print_document(char const *outfname, bool (*msg_func)(int, int), int save_extraseg);
-extern int init_help();
-extern void end_help();
-extern bool is_hyphen(char const *ptr);
+token_types find_token_length(token_modes mode, char const *curr, unsigned len, int *size, int *width);
+int find_line_width(token_modes mode, char const *curr, unsigned len);
+bool process_document(PD_FUNC get_info, PD_FUNC output, void *info);
+int help(int);
+int read_help_topic(help_labels label, int , int , void *);
+bool makedoc_msg_func(int pnum, int num_pages);
+void print_document(char const *outfname, bool (*msg_func)(int, int), int save_extraseg);
+int init_help();
+void end_help();
+bool is_hyphen(char const *ptr);
 #ifndef XFRACT
 inline int getint(char const *ptr)
 {
@@ -138,6 +137,6 @@ inline void setint(char *ptr, int n)
     *reinterpret_cast<int *>(ptr) = n;
 }
 #else
-extern int getint(char const *ptr);
-extern void setint(char *ptr, int n);
+int getint(char const *ptr);
+void setint(char *ptr, int n);
 #endif

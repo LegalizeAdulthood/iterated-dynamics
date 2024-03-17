@@ -249,10 +249,10 @@ extern bool                  g_loaded_3d;
 extern short                 g_skip_x_dots;
 extern short                 g_skip_y_dots;
 
-extern int read_overlay();
-extern void set_if_old_bif();
-extern void set_function_parm_defaults();
-extern int fgetwindow();
-extern void backwards_v18();
-extern void backwards_v19();
-extern void backwards_v20();
+int read_overlay();
+void set_if_old_bif();
+void set_function_parm_defaults();
+int fgetwindow();
+void backwards_v18();
+void backwards_v19();
+void backwards_v20();

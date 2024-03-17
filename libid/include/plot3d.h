@@ -23,9 +23,9 @@ extern int                   g_xx_adjust1;
 extern int                   g_y_shift1;
 extern int                   g_yy_adjust1;
 
-extern void draw_line(int, int, int, int, int);
-extern void plot3dsuperimpose16(int, int, int);
-extern void plot3dsuperimpose256(int, int, int);
-extern void plotIFS3dsuperimpose256(int, int, int);
-extern void plot3dalternate(int, int, int);
-extern void plot_setup();
+void draw_line(int, int, int, int, int);
+void plot3dsuperimpose16(int, int, int);
+void plot3dsuperimpose256(int, int, int);
+void plotIFS3dsuperimpose256(int, int, int);
+void plot3dalternate(int, int, int);
+void plot_setup();

@@ -45,7 +45,7 @@ extern MP  *(*pMPadd)(MP , MP);
 extern MP  *(*pMPsub)(MP , MP);
 extern MP  *(*pd2MP)(double)                ;
 extern double     *(*pMP2d)(MP)             ;
-extern long ExpFloat14(long);
+long ExpFloat14(long);
 
 // ** Formula Declarations **
 #if !defined(XFRACT)

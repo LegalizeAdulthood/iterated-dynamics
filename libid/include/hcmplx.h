@@ -2,4 +2,4 @@
 
 #include "cmplx.h"
 
-extern void HComplexTrig0(DHyperComplex *, DHyperComplex *);
+void HComplexTrig0(DHyperComplex *, DHyperComplex *);

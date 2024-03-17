@@ -37,9 +37,9 @@ extern int                   g_release;
 extern std::string const     g_speed_prompt;
 extern int                   g_video_table_len;
 
-extern void blankrows(int, int, int);
-extern int texttempmsg(char const *);
-extern int fullscreen_choice(
+void blankrows(int, int, int);
+int texttempmsg(char const *);
+int fullscreen_choice(
     int options,
     char const *hdg,
     char const *hdg2,
@@ -56,30 +56,30 @@ extern int fullscreen_choice(
     int (*speedprompt)(int row, int col, int vid, char const *speedstring, int speed_match),
     int (*checkkey)(int, int)
 );
-extern bool showtempmsg(char const *);
+bool showtempmsg(char const *);
 inline bool showtempmsg(const std::string &msg)
 {
     return showtempmsg(msg.c_str());
 }
-extern void cleartempmsg();
-extern void helptitle();
-extern int putstringcenter(int row, int col, int width, int attr, char const *msg);
-extern int main_menu(int);
-extern int input_field(int options, int attr, char *fld, int len, int row, int col,
+void cleartempmsg();
+void helptitle();
+int putstringcenter(int row, int col, int width, int attr, char const *msg);
+int main_menu(int);
+int input_field(int options, int attr, char *fld, int len, int row, int col,
     int (*checkkey)(int curkey));
-extern int field_prompt(char const *hdg, char const *instr, char *fld, int len,
+int field_prompt(char const *hdg, char const *instr, char *fld, int len,
     int (*checkkey)(int curkey));
-extern bool thinking(int options, char const *msg);
-extern void discardgraphics();
-extern void load_id_config();
-extern int check_vidmode_key(int, int);
-extern int check_vidmode_keyname(char const *kname);
-extern void vidmode_keyname(int k, char *buf);
-extern void freetempmsg();
-extern void load_videotable(int);
-extern void bad_id_cfg_msg();
-extern int showvidlength();
-extern bool stopmsg(int flags, char const* msg);
+bool thinking(int options, char const *msg);
+void discardgraphics();
+void load_id_config();
+int check_vidmode_key(int, int);
+int check_vidmode_keyname(char const *kname);
+void vidmode_keyname(int k, char *buf);
+void freetempmsg();
+void load_videotable(int);
+void bad_id_cfg_msg();
+int showvidlength();
+bool stopmsg(int flags, char const* msg);
 inline bool stopmsg(int flags, const std::string &msg)
 {
     return stopmsg(flags, msg.c_str());

@@ -1,4 +1,4 @@
 #pragma once
 
-extern int NewtonFractal2();
-extern void invertz2(DComplex *);
+int NewtonFractal2();
+void invertz2(DComplex *);

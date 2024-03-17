@@ -1,3 +1,3 @@
 #pragma once
 
-extern long calcmandasm();
+long calcmandasm();

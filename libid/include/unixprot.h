@@ -6,16 +6,16 @@ struct EVOLUTION_INFO;
 struct FRACTAL_INFO;
 struct ORBITS_INFO;
 
-extern int getakey();
-extern int waitkeypressed(int);
-extern void fix_ranges(int *, int, int);
-extern void decode_evolver_info(EVOLUTION_INFO *, int);
-extern void decode_fractal_info(FRACTAL_INFO *, int);
-extern void decode_orbits_info(ORBITS_INFO *, int);
+int getakey();
+int waitkeypressed(int);
+void fix_ranges(int *, int, int);
+void decode_evolver_info(EVOLUTION_INFO *, int);
+void decode_fractal_info(FRACTAL_INFO *, int);
+void decode_orbits_info(ORBITS_INFO *, int);
 
 #ifndef HAVESTRI
-extern int stricmp(char const *, char const *);
-extern int strnicmp(char const *, char const *, int);
+int stricmp(char const *, char const *);
+int strnicmp(char const *, char const *, int);
 #endif
 
 // initializes curses text window and the signal handlers.
@@ -80,5 +80,5 @@ void redrawscreen();
 // Schedules the next delayed update.
 void schedulealarm(int soon);
 
-extern void putprompt();
-extern void loaddac();
+void putprompt();
+void loaddac();

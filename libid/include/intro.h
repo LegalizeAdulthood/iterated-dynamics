@@ -1,3 +1,3 @@
 #pragma once
 
-extern void intro();
+void intro();

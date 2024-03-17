@@ -9,5 +9,5 @@ extern bool                  g_gray_flag;
 extern bool                  g_image_map;
 extern std::string           g_stereo_map_filename;
 
-extern bool do_AutoStereo();
-extern int outline_stereo(BYTE *, int);
+bool do_AutoStereo();
+int outline_stereo(BYTE *, int);

@@ -5,7 +5,7 @@
 extern std::vector<BYTE>     g_line_buff;
 extern bool                  g_using_jiim;
 
-extern void EditPalette();
+void EditPalette();
 void putrow(int x, int y, int width, char const *buff);
 void getrow(int x, int y, int width, char *buff);
 int Cursor_WaitKey();
@@ -19,7 +19,7 @@ int Cursor_GetX();
 int Cursor_GetY();
 void Cursor_Hide();
 void Cursor_Show();
-extern void displayc(int, int, int, int, int);
+void displayc(int, int, int, int, int);
 
 #if defined(XFRACT)
 void Cursor_StartMouseTracking();

@@ -4,7 +4,7 @@
 
 extern BYTE                  g_block[];
 
-extern int savetodisk(char *filename);
-extern int savetodisk(std::string &filename);
-extern bool encoder();
-extern int new_to_old(int new_fractype);
+int savetodisk(char *filename);
+int savetodisk(std::string &filename);
+bool encoder();
+int new_to_old(int new_fractype);

@@ -92,10 +92,10 @@ extern int                   g_xx_stop;
 extern int                   g_yy_start;
 extern int                   g_yy_stop;
 
-extern long multiply(long x, long y, int n);
-extern long divide(long x, long y, int n);
-extern int calcfract();
-extern int calcmand();
-extern int calcmandfp();
-extern int standard_fractal();
-extern int find_alternate_math(fractal_type type, bf_math_type math);
+long multiply(long x, long y, int n);
+long divide(long x, long y, int n);
+int calcfract();
+int calcmand();
+int calcmandfp();
+int standard_fractal();
+int find_alternate_math(fractal_type type, bf_math_type math);

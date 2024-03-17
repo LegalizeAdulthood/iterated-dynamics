@@ -178,14 +178,14 @@ struct Driver
 #define HAVE_GDI_DRIVER         1
 #define HAVE_WIN32_DISK_DRIVER  1
 #endif
-extern int init_drivers(int *argc, char **argv);
-extern void add_video_mode(Driver *drv, VIDEOINFO *mode);
-extern void close_drivers();
-extern Driver *driver_find_by_name(char const *name);
+int init_drivers(int *argc, char **argv);
+void add_video_mode(Driver *drv, VIDEOINFO *mode);
+void close_drivers();
+Driver *driver_find_by_name(char const *name);
 
 extern Driver *g_driver;            // current driver in use
 
-extern void driver_set_video_mode(VIDEOINFO *mode);
+void driver_set_video_mode(VIDEOINFO *mode);
 
 inline bool driver_validate_mode(VIDEOINFO *mode)
 {

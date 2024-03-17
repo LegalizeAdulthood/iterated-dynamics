@@ -30,7 +30,6 @@ void setint(char *ptr, int n)
 }
 #endif
 
-
 bool is_hyphen(char const *ptr)   /* true if ptr points to a real hyphen */
 {
     /* checkes for "--" and " -" */
@@ -45,7 +44,7 @@ bool is_hyphen(char const *ptr)   /* true if ptr points to a real hyphen */
 }
 
 
-token_types _find_token_length(char const *curr, unsigned len, int *size, int *width)
+static token_types _find_token_length(char const *curr, unsigned len, int *size, int *width)
 {
     int _size  = 0;
     int _width = 0;

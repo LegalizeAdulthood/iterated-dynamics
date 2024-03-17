@@ -24,11 +24,11 @@ struct Frame
 
 extern Frame g_frame;
 
-extern void frame_init(HINSTANCE instance, LPCSTR title);
-extern void frame_window(int width, int height);
-extern int frame_key_pressed();
-extern int frame_get_key_press(int option);
-extern int frame_pump_messages(bool waitflag);
-extern void frame_schedule_alarm(int secs);
-extern void frame_resize(int width, int height);
-extern void frame_set_keyboard_timeout(int ms);
+void frame_init(HINSTANCE instance, LPCSTR title);
+void frame_window(int width, int height);
+int frame_key_pressed();
+int frame_get_key_press(int option);
+int frame_pump_messages(bool waitflag);
+void frame_schedule_alarm(int secs);
+void frame_resize(int width, int height);
+void frame_set_keyboard_timeout(int ms);

@@ -4,8 +4,8 @@
 
 extern bool                  g_busy;
 
-extern int slideshw();
-extern slides_mode startslideshow();
-extern void stopslideshow();
-extern void recordshw(int);
-extern int handle_special_keys(int ch);
+int slideshw();
+slides_mode startslideshow();
+void stopslideshow();
+void recordshw(int);
+int handle_special_keys(int ch);

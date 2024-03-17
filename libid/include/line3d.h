@@ -38,7 +38,7 @@ extern int                   g_xx_adjust;
 extern int                   g_y_shift;
 extern int                   g_yy_adjust;
 
-extern int line3d(BYTE *, unsigned int);
-extern int targa_color(int, int, int);
-extern bool targa_validate(char const *File_Name);
+int line3d(BYTE *, unsigned int);
+int targa_color(int, int, int);
+bool targa_validate(char const *File_Name);
 bool startdisk1(const std::string &File_Name2, std::FILE *Source, bool overlay);

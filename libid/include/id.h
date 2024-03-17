@@ -224,7 +224,7 @@ inline double sqr(double x)
 inline long lsqr(long x)
 {
     extern int g_bit_shift;
-    extern long multiply(long x, long y, int n);
+    long multiply(long x, long y, int n);
     return multiply(x, x, g_bit_shift);
 }
 

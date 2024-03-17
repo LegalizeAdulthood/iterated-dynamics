@@ -1,4 +1,4 @@
 #pragma once
 
-extern void calcmandfpasmstart();
-extern long calcmandfpasm();
+void calcmandfpasmstart();
+long calcmandfpasm();

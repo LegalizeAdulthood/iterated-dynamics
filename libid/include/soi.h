@@ -6,4 +6,4 @@ extern int                   g_rhombus_stack[];
 extern int                   g_soi_min_stack;
 extern int                   g_soi_min_stack_available;
 
-extern void soi();
+void soi();
