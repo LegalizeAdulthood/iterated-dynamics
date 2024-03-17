@@ -3,9 +3,6 @@
 
 #include <unistd.h>
 
-#if !defined(O_BINARY)
-#define O_BINARY 0
-#endif
 typedef float FLOAT4;
 
 #if !defined(_MAX_FNAME)

@@ -33,6 +33,10 @@
 
 namespace fs = std::filesystem;
 
+#if !defined(O_BINARY)
+#define O_BINARY 0
+#endif
+
 #define MAXFILE _MAX_FNAME
 #define MAXEXT  _MAX_EXT
 
