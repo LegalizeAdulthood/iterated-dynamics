@@ -193,9 +193,7 @@ int common_startdisk(long newrowsize, long newcolsize, int colors)
     }
     if (driver_diskp())
     {
-        char buf[50];
-        std::snprintf(buf, NUM_OF(buf), "Cache size: %uK", cache_size);
-        driver_put_string(BOXROW+6, BOXCOL+4, C_DVID_LO, buf);
+        driver_put_string(BOXROW + 6, BOXCOL + 4, C_DVID_LO, "Cache size: " + std::to_string(cache_size) + "K");
     }
 
     // preset cache to all invalid entries so we don't need free list logic
