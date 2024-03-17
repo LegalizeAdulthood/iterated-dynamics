@@ -165,7 +165,6 @@ add_library(libid
     headers/mpmath.h
     headers/newton.h
     headers/port.h
-    ${CMAKE_CURRENT_BINARY_DIR}/include/port_config.h
     headers/prototyp.h
     headers/winprot.h
 )
