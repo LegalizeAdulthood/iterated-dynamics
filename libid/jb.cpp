@@ -89,10 +89,8 @@ static Perspectivefp *Perfp;
 static LComplex jbc;
 static DComplex jbcfp;
 
-#ifndef XFRACT
 static double fg;
 static double fg16;
-#endif
 int g_julibrot_z_dots = 128;
 
 float g_julibrot_origin_fp  = 8.0F;
