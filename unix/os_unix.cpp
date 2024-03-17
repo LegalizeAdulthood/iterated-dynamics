@@ -16,7 +16,6 @@
 #include <string>
 
 // Global variables (yuck!)
-int g_hi_attenuation = 0;
 long g_l_init_x = 0;
 long g_l_init_y = 0;
 long g_save_base = 0;              // base clock ticks
