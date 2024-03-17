@@ -97,3 +97,8 @@ void set_normal_line()
     lineread = normalineread;
     linewrite = normaline;
 }
+
+void scroll_relative(int bycol, int byrow)
+{
+    assert(!"scroll_relative was called");
+}
