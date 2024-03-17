@@ -19,6 +19,7 @@
 
 #include <cassert>
 #include <cstring>
+#include <string>
 #include <vector>
 
 #define BOXROW   6
@@ -132,7 +133,6 @@ int common_startdisk(long newrowsize, long newcolsize, int colors)
     }
     if (driver_diskp()) // otherwise, real screen also in use, don't hit it
     {
-        char buf[128];
         helptitle();
         driver_set_attr(1, 0, C_DVID_BKGRD, 24*80);  // init rest to background
         for (int i = 0; i < BOXDEPTH; ++i)
@@ -140,8 +140,9 @@ int common_startdisk(long newrowsize, long newcolsize, int colors)
             driver_set_attr(BOXROW+i, BOXCOL, C_DVID_LO, BOXWIDTH);  // init box
         }
         driver_put_string(BOXROW+2, BOXCOL+4, C_DVID_HI, "'Disk-Video' mode");
-        std::snprintf(buf, NUM_OF(buf), "Screen resolution: %d x %d", g_screen_x_dots, g_screen_y_dots);
-        driver_put_string(BOXROW+4, BOXCOL+4, C_DVID_LO, buf);
+        driver_put_string(BOXROW + 4, BOXCOL + 4, C_DVID_LO,
+            ("Screen resolution: " + std::to_string(g_screen_x_dots) + " x " + std::to_string(g_screen_y_dots))
+                .c_str());
         if (g_disk_targa)
         {
             driver_put_string(-1, -1, C_DVID_LO, "  24 bit Targa");
@@ -149,11 +150,9 @@ int common_startdisk(long newrowsize, long newcolsize, int colors)
         else
         {
             driver_put_string(-1, -1, C_DVID_LO, "  Colors: ");
-            std::snprintf(buf, NUM_OF(buf), "%d", colors);
-            driver_put_string(-1, -1, C_DVID_LO, buf);
+            driver_put_string(-1, -1, C_DVID_LO, std::to_string(colors).c_str());
         }
-        std::snprintf(buf, NUM_OF(buf), "Save name: %s", g_save_filename.c_str());
-        driver_put_string(BOXROW+8, BOXCOL+4, C_DVID_LO, buf);
+        driver_put_string(BOXROW+8, BOXCOL+4, C_DVID_LO, ("Save name: " + g_save_filename).c_str());
         driver_put_string(BOXROW+10, BOXCOL+4, C_DVID_LO, "Status:");
         dvid_status(0, "clearing the 'screen'");
     }
