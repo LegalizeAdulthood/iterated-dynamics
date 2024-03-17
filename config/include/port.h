@@ -71,7 +71,6 @@ typedef int sigfunc(int);
 #       define SLASHDOT       "/."
 #       define DOTSLASH       "./"
 #       define DOTDOTSLASH    "../"
-#       include "unix.h"
 #endif // _WIN32
 // Uses big_access32(), big_set32(), ... functions instead of macros.
 // Some little endian machines may require this as well.
