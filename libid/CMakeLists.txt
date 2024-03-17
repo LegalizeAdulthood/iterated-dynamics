@@ -67,6 +67,7 @@ add_library(libid
     get_browse_params.cpp include/get_browse_params.h
     include/get_ifs_token.h
     get_key_no_help.cpp include/get_key_no_help.h
+    get_rds_params.cpp include/get_rds_params.h
     get_toggles.cpp include/get_toggles.h
     help.cpp
     intro.cpp include/intro.h
@@ -234,6 +235,7 @@ source_group("Header Files/ui" FILES
     include/get_browse_params.h
     include/get_ifs_token.h
     include/get_key_no_help.h
+    include/get_rds_params.h
     include/get_toggles.h
     include/help.h
     include/id.h
@@ -270,6 +272,7 @@ source_group("Source Files/ui" FILES
     get_3d_params.cpp
     get_browse_params.cpp
     get_key_no_help.cpp
+    get_rds_params.cpp
     get_toggles.cpp
     help.cpp
     intro.cpp
