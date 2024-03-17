@@ -8,18 +8,11 @@
 
 #include <vector>
 
-#if !defined(XFRACT)
 struct MP
 {
     int Exp;
     unsigned long Mant;
 };
-#else
-struct MP
-{
-    double val;
-};
-#endif
 
 struct MPC
 {
@@ -48,11 +41,7 @@ extern double     *(*pMP2d)(MP)             ;
 long ExpFloat14(long);
 
 // ** Formula Declarations **
-#if !defined(XFRACT)
 enum MATH_TYPE { D_MATH, M_MATH, L_MATH };
-#else
-enum MATH_TYPE { D_MATH};
-#endif
 
 extern MATH_TYPE MathType;
 
@@ -115,7 +104,6 @@ extern Arg *Arg2;
 // The following functions allow the complex transcendental functions
 // in parser.c to be used here thus avoiding duplicated code.
 // --------------------------------------------------------------------
-#if !defined(XFRACT)
 inline long LCMPLXmod(const LComplex &z)
 {
     return lsqr(z.x) + lsqr(z.y);
@@ -148,7 +136,6 @@ inline void LCMPLXtrig3(const LComplex &arg, LComplex &out)
     ltrig3();
     out = Arg1->l;
 }
-#endif /* XFRACT */
 inline void CMPLXtrig0(const DComplex &arg, DComplex &out)
 {
     Arg1->d = arg;
@@ -177,7 +164,6 @@ inline void CMPLXtrig3(const DComplex &arg, DComplex &out)
     dtrig3();
     (out) = Arg1->d;
 }
-#if !defined(XFRACT)
 inline void LCMPLXsin(const LComplex &arg, LComplex &out)
 {
     Arg1->l = arg;
@@ -277,7 +263,6 @@ inline void LCMPLXrecip(const LComplex &arg, LComplex &out)
         out.y = -divide(arg.y, denom, g_bit_shift);
     }
 }
-#endif /* XFRACT */
 inline double CMPLXmod(const DComplex &z)
 {
     return sqr(z.x) + sqr(z.y);
