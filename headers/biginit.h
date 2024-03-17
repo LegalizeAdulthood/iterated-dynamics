@@ -2,6 +2,8 @@
 
 #include "big.h"
 
+#include <stddef.h>
+
 extern int                   g_bf_save_len;
 extern long                  g_bignum_max_stack_addr;
 
