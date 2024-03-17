@@ -351,7 +351,7 @@ protected:
 
 } // namespace
 
-TEST(TestFullScreenValueMatchers, has_value)
+TEST(TestFullScreenValueMatchers, hasValue)
 {
     fullscreenvalues values{};
     auto always = [](MatchResultListener *, const fullscreenvalues &) { return true; };
