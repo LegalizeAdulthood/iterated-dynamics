@@ -96,9 +96,8 @@ that are on the [release plan](https://github.com/LegalizeAdulthood/iterated-dyn
 To get started, fork the repository into your github account.  We recommend
 using the [github workflow](https://guides.github.com/introduction/flow/index.html)
 to make contributions to Iterated Dynamics.  We recommend you enable
-[Travis CI builds](https://travis-ci.org) on your repository to get feedback
-from static analysis tools on your changes as you push to your branch in
-your repository.
+[GitHub Actions](https://docs.github.com/en/actions) on your repository to get feedback
+on your changes as you push to your branch in your repository.
 
 Once your change is ready, prepare a pull request and submit it back for
 incorporation into the main repository.  We couldn't have gotten this far
@@ -106,46 +105,46 @@ without contributions from many persons!
 
 # Code Structure
 
-- `common`
-    Files common to all implementations
-  - **3d**
-        Files containing 3D drawing support.  Eventually these should be
-        subsumed into the driver interface, with this sofwtare implementation
-        as a fallback if the driver doesn't support 3D rendering.
+Most of the source code is in a library named `libid` in a folder by the same
+name.  The files are organized in the IDE into various categories:
 
-  - **engine**
-        Files containing the implementation of the fractal rendering engines
-        that are shared between multiple fractal types.  Also contains the
-        big array that defines the available fractal types.
+- **3d**
+      Files containing 3D drawing support.  Eventually these should be
+      subsumed into the driver interface, with this sofwtare implementation
+      as a fallback if the driver doesn't support 3D rendering.
 
-  - **fractal specific**
-        Files containing rendering code or user interaction code that is
-        specific to a particular fractal, such as the Lorenz fractal or
-        L-system type.
+- **engine**
+      Files containing the implementation of the fractal rendering engines
+      that are shared between multiple fractal types.  Also contains the
+      big array that defines the available fractal types.
 
-  - **IO**
-        Anything related to doing external file I/O: saving and loading GIF
-        files, dealing with overlay files, saving parameter files, etc.
+- **fractal specific**
+      Files containing rendering code or user interaction code that is
+      specific to a particular fractal, such as the Lorenz fractal or
+      L-system type.
 
-  - **math**
-        Files containing math routines for arbitrary precision arithmetic,
-        complex arithmetic, etc.
+- **IO**
+      Anything related to doing external file I/O: saving and loading GIF
+      files, dealing with overlay files, saving parameter files, etc.
 
-  - **plumbing**
-        Miscellaneous routines that don't fit elesewhere like memory and
-        driver management.
+- **math**
+      Files containing math routines for arbitrary precision arithmetic,
+      complex arithmetic, etc.
 
-  - **ui**
-        Anything to do with displaying menu screens, help screens, intro
-        screen, etc.
+- **plumbing**
+      Miscellaneous routines that don't fit elesewhere like memory and
+      driver management.
 
-  - **main**
-    Miscellaneous files in the main fractint source folder.  These are not
-    currently used for any of the compilation of the code and are placed
-    here just for reference.
+- **ui**
+      Anything to do with displaying menu screens, help screens, intro
+      screen, etc.
 
-- `headers`
-    Header files
+Additional files are in the following directories:
+
+- `fractint`
+  Miscellaneous files in the main fractint source folder.  These are not
+  currently used for any of the compilation of the code and are placed
+  here just for reference.
 
 - `hc`
     Help source files with a custom build step on help.src to run the help
