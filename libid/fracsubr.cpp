@@ -690,11 +690,7 @@ static double fudgetodouble(long l)
     char buf[30];
     double d;
     std::snprintf(buf, NUM_OF(buf), "%.9g", (double)l / g_fudge_factor);
-#ifndef XFRACT
     std::sscanf(buf, "%lg", &d);
-#else
-    std::sscanf(buf, "%lf", &d);
-#endif
     return d;
 }
 
