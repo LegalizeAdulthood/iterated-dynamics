@@ -126,10 +126,6 @@ int targa_startdisk(std::FILE *targafp, int overhead)
 
 int common_startdisk(long newrowsize, long newcolsize, int colors)
 {
-    long memorysize;
-    unsigned int *fwd_link = nullptr;
-    long longtmp;
-    unsigned int cache_size;
     if (g_disk_flag)
     {
         enddisk();
@@ -181,8 +177,8 @@ int common_startdisk(long newrowsize, long newcolsize, int colors)
     }
     timetodisplay = bf_math != bf_math_type::NONE ? 10 : 1000;  // time-to-g_driver-status counter
 
-    cache_size = CACHEMAX;
-    longtmp = (long)cache_size << 10;
+    constexpr unsigned int cache_size = CACHEMAX;
+    long longtmp = (long) cache_size << 10;
     cache_start = (cache *)malloc(longtmp);
     if (cache_size == 64)
     {
@@ -215,13 +211,13 @@ int common_startdisk(long newrowsize, long newcolsize, int colors)
         ptr1->dirty = false;
         ptr1->lru = false;
         longtmp += BLOCKLEN;
-        fwd_link = &hash_ptr[((unsigned short)longtmp >> BLOCKSHIFT) & (HASHSIZE-1)];
+        unsigned int *fwd_link = &hash_ptr[((unsigned short) longtmp >> BLOCKSHIFT) & (HASHSIZE - 1)];
         ptr1->offset = longtmp;
         ptr1->hashlink = *fwd_link;
         *fwd_link = (int)((char *)ptr1 - (char *)cache_start);
     }
 
-    memorysize = (long)(newcolsize) * newrowsize + headerlength;
+    long memorysize = (long) (newcolsize) *newrowsize + headerlength;
     {
         const int i = (short) memorysize & (BLOCKLEN - 1);
         if (i != 0)
