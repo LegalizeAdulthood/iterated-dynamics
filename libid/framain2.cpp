@@ -514,16 +514,8 @@ done:
                 dvid_status(0, "Image has been completed");
             }
         }
-#ifndef XFRACT
         g_box_count = 0;                     // no zoom box yet
         g_zoom_box_width = 0;
-#else
-        if (!g_x_zoom_waiting)
-        {
-            g_box_count = 0;                 // no zoom box yet
-            g_zoom_box_width = 0;
-        }
-#endif
 
         if (g_fractal_type == fractal_type::PLASMA)
         {
@@ -560,11 +552,7 @@ resumeloop:                             // return here on failed overlays
             }
             else if (g_init_batch == batch_modes::NONE)      // not batch mode
             {
-#ifndef XFRACT
                 g_look_at_mouse = (g_zoom_box_width == 0 && !g_video_scroll) ? -FIK_PAGE_UP : 3;
-#else
-                g_look_at_mouse = (g_zoom_box_width == 0) ? -FIK_PAGE_UP : 3;
-#endif
                 if (g_calc_status == calc_status_value::RESUMABLE && g_zoom_box_width == 0 && !driver_key_pressed())
                 {
                     kbdchar = FIK_ENTER;  // no visible reason to stop, continue
@@ -588,22 +576,7 @@ resumeloop:                             // return here on failed overlays
                             goodbye();
                         }
                         driver_stack_screen();
-#ifndef XFRACT
                         kbdchar = main_menu(1);
-#else
-                        if (g_x_zoom_waiting)
-                        {
-                            kbdchar = FIK_ENTER;
-                        }
-                        else
-                        {
-                            kbdchar = main_menu(1);
-                            if (g_x_zoom_waiting)
-                            {
-                                kbdchar = FIK_ENTER;
-                            }
-                        }
-#endif
                         if (kbdchar == '\\' || kbdchar == FIK_CTL_BACKSLASH
                             || kbdchar == 'h' || kbdchar == FIK_CTL_H
                             || check_vidmode_key(0, kbdchar) >= 0)
@@ -661,12 +634,10 @@ resumeloop:                             // return here on failed overlays
                 }
             }
 
-#ifndef XFRACT
             if ('A' <= kbdchar && kbdchar <= 'Z')
             {
                 kbdchar = std::tolower(kbdchar);
             }
-#endif
             if (g_evolving)
             {
                 mms_value = evolver_menu_switch(&kbdchar, &frommandel, kbdmore, stacked);
@@ -937,12 +908,8 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
             g_calc_status = calc_status_value::PARAMS_CHANGED;
         }
         break;
-#ifndef XFRACT
     case '@':                    // execute commands
     case '2':                    // execute commands
-#else
-    case FIK_F2:                     // execute commands
-#endif
         driver_stack_screen();
         i = get_commands();
         if (g_init_mode != -1)
@@ -1351,9 +1318,6 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
         savetodisk(g_save_filename);
         return main_state::CONTINUE;
     case '#':                    // 3D overlay
-#ifdef XFRACT
-    case FIK_F3:                     // 3D overlay
-#endif
         clear_zoombox();
         g_overlay_3d = true;
     case '3':                    // restore-from (3d)
@@ -1428,9 +1392,6 @@ do_3d_transform:
         return main_state::CONTINUE;
     case FIK_ENTER:                  // Enter
     case FIK_ENTER_2:                // Numeric-Keypad Enter
-#ifdef XFRACT
-        g_x_zoom_waiting = false;
-#endif
         if (g_zoom_box_width != 0.0)
         {
             // do a zoom
@@ -1657,12 +1618,10 @@ void move_zoombox(int keynum)
     {
         moveboxf((double)horizontal/g_logical_screen_x_size_dots, (double)vertical/g_logical_screen_y_size_dots);
     }
-#ifndef XFRACT
     else                                 // if no zoombox, scroll by arrows
     {
         scroll_relative(horizontal, vertical);
     }
-#endif
 }
 
 // displays differences between current image file and new image

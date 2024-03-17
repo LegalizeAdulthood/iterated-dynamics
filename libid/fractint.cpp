@@ -218,12 +218,10 @@ static void main_restart(int const argc, char const *const argv[], bool &stacked
     driver_set_for_text();                      // switch to text mode
     g_save_dac = 0;                         // don't save the VGA DAC
 
-#ifndef XFRACT
     if (g_bad_config == config_status::BAD_NO_MESSAGE)
     {
         bad_id_cfg_msg();
     }
-#endif
 
     g_max_keyboard_check_interval = 80;                  // check the keyboard this often
 
@@ -350,9 +348,6 @@ static main_state main_image_start(bool &stacked, bool &resumeflag)
         driver_discard_screen();
         stacked = false;
     }
-#ifdef XFRACT
-    g_user_float_flag = true;
-#endif
     g_got_status = -1;                     // for tab_display
 
     if (g_show_file)
@@ -393,12 +388,10 @@ static main_state main_image_start(bool &stacked, bool &resumeflag)
         {
             break;                                 // got a video mode now
         }
-#ifndef XFRACT
         if ('A' <= kbdchar && kbdchar <= 'Z')
         {
             kbdchar = std::tolower(kbdchar);
         }
-#endif
         if (kbdchar == 'd')
         {
             // shell to DOS
@@ -407,28 +400,17 @@ static main_state main_image_start(bool &stacked, bool &resumeflag)
             return main_state::IMAGE_START;
         }
 
-#ifndef XFRACT
         if (kbdchar == '@' || kbdchar == '2')
         {
             // execute commands
-#else
-        if (kbdchar == FIK_F2 || kbdchar == '@')
-        {
-            // We mapped @ to F2
-#endif
             if ((get_commands() & CMDARG_3D_YES) == 0)
             {
                 return main_state::IMAGE_START;
             }
             kbdchar = '3';                         // 3d=y so fall thru '3' code
         }
-#ifndef XFRACT
         if (kbdchar == 'r' || kbdchar == '3' || kbdchar == '#')
         {
-#else
-        if (kbdchar == 'r' || kbdchar == '3' || kbdchar == FIK_F3)
-        {
-#endif
             g_display_3d = display_3d_modes::NONE;
             if (kbdchar == '3' || kbdchar == '#' || kbdchar == FIK_F3)
             {
