@@ -12,9 +12,9 @@ enum class bailouts
 };
 
 extern bailouts   g_bail_out_test;
-extern int      (*floatbailout)();
-extern int      (*longbailout)();
-extern int      (*bignumbailout)();
-extern int      (*bigfltbailout)();
+extern int      (*g_bailout_float)();
+extern int      (*g_bailout_long)();
+extern int      (*g_bailout_bignum)();
+extern int      (*g_bailout_bigfloat)();
 
 void set_bailout_formula(bailouts test);

@@ -885,7 +885,7 @@ JuliabnFractal()
     double_a_bn(bntmp+shiftfactor);
     add_bn(bnnew.y, bntmp+shiftfactor, bnparm.y);
 
-    return bignumbailout();
+    return g_bailout_bignum();
 }
 
 int
@@ -899,7 +899,7 @@ JuliabfFractal()
     mult_bf(bftmp, bfold.x, bfold.y); // ok to use unsafe here
     double_a_bf(bftmp);
     add_bf(bfnew.y, bftmp, bfparm.y);
-    return bigfltbailout();
+    return g_bailout_bigfloat();
 }
 
 int
@@ -918,7 +918,7 @@ JuliaZpowerbnFractal()
     add_bn(bnnew.x, bnparm.x, bnnew.x+shiftfactor);
     add_bn(bnnew.y, bnparm.y, bnnew.y+shiftfactor);
     restore_stack(saved);
-    return bignumbailout();
+    return g_bailout_bignum();
 }
 
 int
@@ -937,7 +937,7 @@ JuliaZpowerbfFractal()
     add_bf(bfnew.x, bfparm.x, bfnew.x);
     add_bf(bfnew.y, bfparm.y, bfnew.y);
     restore_stack(saved);
-    return bigfltbailout();
+    return g_bailout_bigfloat();
 }
 
 DComplex cmplxbntofloat(BNComplex *s)

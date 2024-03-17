@@ -8,10 +8,10 @@
 #include "merge_path_names.h"
 
 bailouts g_bail_out_test; // test used for determining bailout
-int (*floatbailout)();
-int (*longbailout)();
-int (*bignumbailout)();
-int (*bigfltbailout)();
+int (*g_bailout_float)();
+int (*g_bailout_long)();
+int (*g_bailout_bignum)();
+int (*g_bailout_bigfloat)();
 
 void set_bailout_formula(bailouts test)
 {
@@ -21,148 +21,148 @@ void set_bailout_formula(bailouts test)
     default:
         if (g_debug_flag != debug_flags::prevent_287_math)
         {
-            floatbailout = asmfpMODbailout;
+            g_bailout_float = asmfpMODbailout;
         }
         else
         {
-            floatbailout = fpMODbailout;
+            g_bailout_float = fpMODbailout;
         }
         if (g_debug_flag != debug_flags::prevent_386_math)
         {
-            longbailout = asm386lMODbailout;
+            g_bailout_long = asm386lMODbailout;
         }
         else
         {
-            longbailout = asmlMODbailout;
+            g_bailout_long = asmlMODbailout;
         }
-        bignumbailout = bnMODbailout;
-        bigfltbailout = bfMODbailout;
+        g_bailout_bignum = bnMODbailout;
+        g_bailout_bigfloat = bfMODbailout;
         break;
 
     case bailouts::Real:
         if (g_debug_flag != debug_flags::prevent_287_math)
         {
-            floatbailout = asmfpREALbailout;
+            g_bailout_float = asmfpREALbailout;
         }
         else
         {
-            floatbailout = fpREALbailout;
+            g_bailout_float = fpREALbailout;
         }
         if (g_debug_flag != debug_flags::prevent_386_math)
         {
-            longbailout = asm386lREALbailout;
+            g_bailout_long = asm386lREALbailout;
         }
         else
         {
-            longbailout = asmlREALbailout;
+            g_bailout_long = asmlREALbailout;
         }
-        bignumbailout = bnREALbailout;
-        bigfltbailout = bfREALbailout;
+        g_bailout_bignum = bnREALbailout;
+        g_bailout_bigfloat = bfREALbailout;
         break;
 
     case bailouts::Imag:
         if (g_debug_flag != debug_flags::prevent_287_math)
         {
-            floatbailout = asmfpIMAGbailout;
+            g_bailout_float = asmfpIMAGbailout;
         }
         else
         {
-            floatbailout = fpIMAGbailout;
+            g_bailout_float = fpIMAGbailout;
         }
         if (g_debug_flag != debug_flags::prevent_386_math)
         {
-            longbailout = asm386lIMAGbailout;
+            g_bailout_long = asm386lIMAGbailout;
         }
         else
         {
-            longbailout = asmlIMAGbailout;
+            g_bailout_long = asmlIMAGbailout;
         }
-        bignumbailout = bnIMAGbailout;
-        bigfltbailout = bfIMAGbailout;
+        g_bailout_bignum = bnIMAGbailout;
+        g_bailout_bigfloat = bfIMAGbailout;
         break;
 
     case bailouts::Or:
         if (g_debug_flag != debug_flags::prevent_287_math)
         {
-            floatbailout = asmfpORbailout;
+            g_bailout_float = asmfpORbailout;
         }
         else
         {
-            floatbailout = fpORbailout;
+            g_bailout_float = fpORbailout;
         }
         if (g_debug_flag != debug_flags::prevent_386_math)
         {
-            longbailout = asm386lORbailout;
+            g_bailout_long = asm386lORbailout;
         }
         else
         {
-            longbailout = asmlORbailout;
+            g_bailout_long = asmlORbailout;
         }
-        bignumbailout = bnORbailout;
-        bigfltbailout = bfORbailout;
+        g_bailout_bignum = bnORbailout;
+        g_bailout_bigfloat = bfORbailout;
         break;
 
     case bailouts::And:
         if (g_debug_flag != debug_flags::prevent_287_math)
         {
-            floatbailout = asmfpANDbailout;
+            g_bailout_float = asmfpANDbailout;
         }
         else
         {
-            floatbailout = fpANDbailout;
+            g_bailout_float = fpANDbailout;
         }
         if (g_debug_flag != debug_flags::prevent_386_math)
         {
-            longbailout = asm386lANDbailout;
+            g_bailout_long = asm386lANDbailout;
         }
         else
         {
-            longbailout = asmlANDbailout;
+            g_bailout_long = asmlANDbailout;
         }
-        bignumbailout = bnANDbailout;
-        bigfltbailout = bfANDbailout;
+        g_bailout_bignum = bnANDbailout;
+        g_bailout_bigfloat = bfANDbailout;
         break;
 
     case bailouts::Manh:
         if (g_debug_flag != debug_flags::prevent_287_math)
         {
-            floatbailout = asmfpMANHbailout;
+            g_bailout_float = asmfpMANHbailout;
         }
         else
         {
-            floatbailout = fpMANHbailout;
+            g_bailout_float = fpMANHbailout;
         }
         if (g_debug_flag != debug_flags::prevent_386_math)
         {
-            longbailout = asm386lMANHbailout;
+            g_bailout_long = asm386lMANHbailout;
         }
         else
         {
-            longbailout = asmlMANHbailout;
+            g_bailout_long = asmlMANHbailout;
         }
-        bignumbailout = bnMANHbailout;
-        bigfltbailout = bfMANHbailout;
+        g_bailout_bignum = bnMANHbailout;
+        g_bailout_bigfloat = bfMANHbailout;
         break;
 
     case bailouts::Manr:
         if (g_debug_flag != debug_flags::prevent_287_math)
         {
-            floatbailout = asmfpMANRbailout;
+            g_bailout_float = asmfpMANRbailout;
         }
         else
         {
-            floatbailout = fpMANRbailout;
+            g_bailout_float = fpMANRbailout;
         }
         if (g_debug_flag != debug_flags::prevent_386_math)
         {
-            longbailout = asm386lMANRbailout;
+            g_bailout_long = asm386lMANRbailout;
         }
         else
         {
-            longbailout = asmlMANRbailout;
+            g_bailout_long = asmlMANRbailout;
         }
-        bignumbailout = bnMANRbailout;
-        bigfltbailout = bfMANRbailout;
+        g_bailout_bignum = bnMANRbailout;
+        g_bailout_bigfloat = bfMANRbailout;
         break;
     }
 }

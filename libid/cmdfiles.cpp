@@ -570,10 +570,10 @@ static void initvars_fractal()          // init vars affecting calculation
 
     g_old_demm_colors = false;
     g_bail_out_test    = bailouts::Mod;
-    floatbailout  = fpMODbailout;
-    longbailout   = asmlMODbailout;
-    bignumbailout = bnMODbailout;
-    bigfltbailout = bfMODbailout;
+    g_bailout_float  = fpMODbailout;
+    g_bailout_long   = asmlMODbailout;
+    g_bailout_bignum = bnMODbailout;
+    g_bailout_bigfloat = bfMODbailout;
 
     g_new_bifurcation_functions_loaded = false; // for old bifs
     g_julibrot_x_min = -.83;
