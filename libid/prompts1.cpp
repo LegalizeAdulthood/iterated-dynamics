@@ -1005,7 +1005,7 @@ gfp_top:
     {
         g_bail_out_test = bailouts::Mod;
     }
-    setbailoutformula(g_bail_out_test);
+    set_bailout_formula(g_bail_out_test);
 
     if (orbit_bailout)
     {

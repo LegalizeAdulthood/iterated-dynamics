@@ -2539,7 +2539,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         {
             return bad_arg(curarg);
         }
-        setbailoutformula(g_bail_out_test);
+        set_bailout_formula(g_bail_out_test);
         return CMDARG_FRACTAL_PARAM;
     }
 

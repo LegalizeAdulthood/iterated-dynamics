@@ -8,7 +8,7 @@
 #include "fractals.h"
 #include "merge_path_names.h"
 
-void setbailoutformula(bailouts test)
+void set_bailout_formula(bailouts test)
 {
     switch (test)
     {

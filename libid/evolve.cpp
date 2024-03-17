@@ -360,7 +360,7 @@ void varybotest(GENEBASE gene[], int randval, int i)
     {
         *(int*)gene[i].addr = choices[wrapped_positive_varyint(randval, 7, gene[i].mutate)];
         // move this next bit to varybot where it belongs
-        setbailoutformula(g_bail_out_test);
+        set_bailout_formula(g_bail_out_test);
     }
     return;
 }

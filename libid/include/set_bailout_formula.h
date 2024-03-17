@@ -2,4 +2,4 @@
 
 enum class bailouts;
 
-void setbailoutformula(bailouts test);
+void set_bailout_formula(bailouts test);
