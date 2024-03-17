@@ -31,6 +31,10 @@
 #include <cstring>
 #include <vector>
 
+#ifdef XFRACT
+#include <unistd.h>
+#endif
+
 static int menu_checkkey(int curkey, int choice);
 
 int g_release = 2099;   // this has 2 implied decimals; increment it every synch
@@ -74,9 +78,7 @@ bool stopmsg(int flags, char const* msg)
         driver_put_string(0, 0, 15, "*** Error during startup:");
         driver_put_string(2, 0, 15, msg);
         driver_move_cursor(8, 0);
-#if !defined(WIN32)
         sleep(1);
-#endif
         close_drivers();
         exit(1);
 #else
