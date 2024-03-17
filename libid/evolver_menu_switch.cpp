@@ -306,9 +306,6 @@ main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bo
         return main_state::RESTORE_START;
     case FIK_ENTER:                  // Enter
     case FIK_ENTER_2:                // Numeric-Keypad Enter
-#ifdef XFRACT
-        g_x_zoom_waiting = false;
-#endif
         if (g_zoom_box_width != 0.0)
         {
             // do a zoom

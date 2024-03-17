@@ -1007,7 +1007,6 @@ void drawparmbox(int mode)
     br.x = tr.x;
     bl.y = ((g_evolve_param_grid_y +1+(int)g_evolve_param_zoom) * (int)(g_logical_screen_y_size_dots+1+grout))-g_logical_screen_y_offset;
     br.y = bl.y;
-#ifndef XFRACT
     g_box_count = 0;
     addbox(br);
     addbox(tr);
@@ -1015,17 +1014,6 @@ void drawparmbox(int mode)
     addbox(tl);
     drawlines(tl, tr, bl.x-tl.x, bl.y-tl.y);
     drawlines(tl, bl, tr.x-tl.x, tr.y-tl.y);
-#else
-    g_box_x[0] = tl.x + g_logical_screen_x_offset;
-    g_box_y[0] = tl.y + g_logical_screen_y_offset;
-    g_box_x[1] = tr.x + g_logical_screen_x_offset;
-    g_box_y[1] = tr.y + g_logical_screen_y_offset;
-    g_box_x[2] = br.x + g_logical_screen_x_offset;
-    g_box_y[2] = br.y + g_logical_screen_y_offset;
-    g_box_x[3] = bl.x + g_logical_screen_x_offset;
-    g_box_y[3] = bl.y + g_logical_screen_y_offset;
-    g_box_count = 8;
-#endif
     if (g_box_count)
     {
         dispbox();
