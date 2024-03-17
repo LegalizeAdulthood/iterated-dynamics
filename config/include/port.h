@@ -54,13 +54,13 @@ using BYTE = U8;
 #define DOTDOTSLASH    "..\\"
 // ================================== Win32 definitions
 #else
+// ================================== linux definitions
+
 #define _snprintf snprintf
 #define _vsnprintf vsnprintf
 #define _alloca alloca
-#if defined(XFRACT)
 #ifndef unix
 #define unix
-#endif
 #endif
 
 typedef int sigfunc(int);
@@ -71,7 +71,25 @@ typedef int sigfunc(int);
 #       define SLASHDOT       "/."
 #       define DOTSLASH       "./"
 #       define DOTDOTSLASH    "../"
-#endif // _WIN32
+
+#if !defined(_MAX_FNAME)
+#define _MAX_FNAME 20
+#endif
+#if !defined(_MAX_EXT)
+#define _MAX_EXT 4
+#endif
+
+typedef float FLOAT4;
+
+#define chsize(fd, en) ftruncate(fd, en)
+// We get a problem with connect, since it is used by X
+#define connect connect1
+typedef void (*SignalHandler)(int);
+char *strlwr(char *s);
+char *strupr(char *s);
+
+// ================================== linux definitions
+#endif
 // Uses big_access32(), big_set32(), ... functions instead of macros.
 // Some little endian machines may require this as well.
 #if BYTE_ORDER == BIG_ENDIAN
