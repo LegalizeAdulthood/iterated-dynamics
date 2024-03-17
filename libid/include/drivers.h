@@ -1,5 +1,4 @@
-#if !defined(DRIVERS_H)
-#define DRIVERS_H
+#pragma once
 
 enum class buzzer_codes
 {
@@ -181,109 +180,200 @@ extern int init_drivers(int *argc, char **argv);
 extern void add_video_mode(Driver *drv, VIDEOINFO *mode);
 extern void close_drivers();
 extern Driver *driver_find_by_name(char const *name);
+
 extern Driver *g_driver;            // current driver in use
-// always use a function for this one
+
 extern void driver_set_video_mode(VIDEOINFO *mode);
-#define USE_DRIVER_FUNCTIONS 1
-#if defined(USE_DRIVER_FUNCTIONS)
-extern bool driver_validate_mode(VIDEOINFO *mode);
-extern void driver_get_max_screen(int *xmax, int *ymax);
-extern void driver_terminate();
-// pause and resume are only used internally in drivers.c
-extern void driver_schedule_alarm(int secs);
-extern void driver_window();
-extern bool driver_resize();
-extern void driver_redraw();
-extern int driver_read_palette();
-extern int driver_write_palette();
-extern int driver_read_pixel(int x, int y);
-extern void driver_write_pixel(int x, int y, int color);
-extern void driver_read_span(int y, int x, int lastx, BYTE *pixels);
-extern void driver_write_span(int y, int x, int lastx, BYTE *pixels);
-extern void driver_get_truecolor(int x, int y, int *r, int *g, int *b, int *a);
-extern void driver_put_truecolor(int x, int y, int r, int g, int b, int a);
-extern void driver_set_line_mode(int mode);
-extern void driver_draw_line(int x1, int y1, int x2, int y2, int color);
-extern int driver_get_key();
-extern void driver_display_string(int x, int y, int fg, int bg, char const *text);
-extern void driver_save_graphics();
-extern void driver_restore_graphics();
-extern int driver_key_cursor(int row, int col);
-extern int driver_key_pressed();
-extern int driver_wait_key_pressed(int timeout);
-extern void driver_unget_key(int key);
-extern void driver_shell();
-extern void driver_put_string(int row, int col, int attr, char const *msg);
-extern void driver_set_for_text();
-extern void driver_set_for_graphics();
-extern void driver_set_clear();
-extern void driver_move_cursor(int row, int col);
-extern void driver_hide_text_cursor();
-extern void driver_set_attr(int row, int col, int attr, int count);
-extern void driver_scroll_up(int top, int bot);
-extern void driver_stack_screen();
-extern void driver_unstack_screen();
-extern void driver_discard_screen();
-extern int driver_init_fm();
-extern void driver_buzzer(buzzer_codes kind);
-extern bool driver_sound_on(int frequency);
-extern void driver_sound_off();
-extern void driver_mute();
-extern bool driver_diskp();
-extern int driver_get_char_attr();
-extern void driver_put_char_attr(int char_attr);
-extern void driver_delay(int ms);
-extern void driver_set_keyboard_timeout(int ms);
-extern void driver_flush();
-#else
-#define driver_validate_mode(mode_)                 (*g_driver->validate_mode)(g_driver, mode_)
-#define driver_get_max_screen(xmax_, ymax_)         (*g_driver->get_max_screen)(g_driver, xmax_, ymax_)
-#define driver_terminate()                          (*g_driver->terminate)(g_driver)
-// pause and resume are only used internally in drivers.c
-#define void driver_schedule_alarm(_secs)           (*g_driver->schedule_alarm)(g_driver, _secs)
-#define driver_window()                             (*g_driver->window)(g_driver)
-#define driver_resize()                             (*g_driver->resize)(g_driver)
-#define driver_redraw()                             (*g_driver->redraw)(g_driver)
-#define driver_read_palette()                       (*g_driver->read_palette)(g_driver)
-#define driver_write_palette()                      (*g_driver->write_palette)(g_driver)
-#define driver_read_pixel(_x, _y)                   (*g_driver->read_pixel)(g_driver, _x, _y)
-#define driver_write_pixel(_x, _y, _color)          (*g_driver->write_pixel)(g_driver, _x, _y, _color)
-#define driver_read_span(_y, _x, _lastx, _pixels)   (*g_driver->read_span(g_driver, _y, _x, _lastx, _pixels)
-#define driver_write_span(_y, _x, _lastx, _pixels)  (*g_driver->write_span)(g_driver, _y, _x, _lastx, _pixels)
-#define driver_get_truecolor(_x, _y, _r, _g, _b, _a) (*g_driver->get_truecolor)(g_driver, _x, _y, _r, _g, _b, _a)
-#define driver_put_truecolor(_x, _y, _r, _g, _b, _a) (*g_driver->put_trueoclor)(g_driver, _x, _y, _r, _g, _b, _a)
-#define driver_set_line_mode(_m)                    (*g_driver->set_line_mode)(g_driver, _m)
-#define driver_draw_line(x1_, y1_, x2_, y2_, clr_)  (*g_driver->draw_line)(g_driver, x1_, y1_, x1_, y2_, clr_)
-#define driver_display_string(x_, y_, fg_, bg_, str_) (*g_driver->display_string)(g_driver, x_, y_, fg_, bg_, str_)
-#define driver_save_graphics()                      (*g_driver->save_graphics)(g_driver)
-#define driver_restore_graphics()                   (*g_driver->restore_graphics)(g_driver)
-#define driver_get_key()                            (*g_driver->get_key)(g_driver)
-#define driver_key_cursor(row_, col_)               (*g_driver->key_cursor)(g_driver, row_, col_)
-#define driver_key_pressed()                        (*g_driver->key_pressed)(g_driver)
-#define driver_wait_key_pressed(timeout_)           (*g_driver->wait_key_pressed)(g_driver, timeout_)
-#define driver_unget_key(key_)                      (*g_driver->unget_key)(g_driver, key_)
-#define driver_shell()                              (*g_driver->shell)(g_driver)
-#define driver_put_string(_row, _col, _attr, _msg)  (*g_driver->put_string)(g_driver, _row, _col, _attr, _msg)
-#define driver_set_for_text()                       (*g_driver->set_for_text)(g_driver)
-#define driver_set_for_graphics()                   (*g_driver->set_for_graphics)(g_driver)
-#define driver_set_clear()                          (*g_driver->set_clear)(g_driver)
-#define driver_move_cursor(_row, _col)              (*g_driver->move_cursor)(g_driver, _row, _col)
-#define driver_hide_text_cursor()                   (*g_driver->hide_text_cursor)(g_driver)
-#define driver_set_attr(_row, _col, _attr, _count)  (*g_driver->set_attr)(g_driver, _row, _col, _attr, _count)
-#define driver_scroll_up(_top, _bot)                (*g_driver->scroll_up)(g_driver, _top, _bot)
-#define driver_stack_screen()                       (*g_driver->stack_screen)(g_driver)
-#define driver_unstack_screen()                     (*g_driver->unstack_screen)(g_driver)
-#define driver_discard_screen()                     (*g_driver->discard_screen)(g_driver)
-#define driver_init_fm()                            (*g_driver->init_fm)(g_driver)
-#define driver_buzzer(_kind)                        (*g_driver->buzzer)(g_driver, _kind)
-#define driver_sound_on(_freq)                      (*g_driver->sound_on)(g_driver, _freq)
-#define driver_sound_off()                          (*g_driver->sound_off)(g_driver)
-#define driver_mute()                               (*g_driver->mute)(g_driver)
-#define driver_diskp()                              (*g_driver->diskp)(g_driver)
-#define driver_get_char_attr()                      (*g_driver->get_char_attr)(g_driver)
-#define driver_put_char_attr(char_attr_)            (*g_driver->put_char_attr)(g_driver, char_attr_)
-#define driver_delay(ms_)                           (*g_driver->delay)(g_driver, ms_)
-#define driver_set_keyboard_timeout(ms_)            (*g_driver->set_keyboard_timeout)(g_driver, ms_)
-#define driver_flush()                              (*g_driver->flush)(g_driver)
-#endif
-#endif
+
+inline bool driver_validate_mode(VIDEOINFO *mode)
+{
+    return (*g_driver->validate_mode)(g_driver, mode);
+}
+inline void driver_get_max_screen(int *xmax, int *ymax)
+{
+    (*g_driver->get_max_screen)(g_driver, xmax, ymax);
+}
+inline void driver_terminate()
+{
+    (*g_driver->terminate)(g_driver);
+}
+inline void driver_schedule_alarm(int secs)
+{
+    (*g_driver->schedule_alarm)(g_driver, secs);
+}
+inline void driver_window()
+{
+    (*g_driver->window)(g_driver);
+}
+inline bool driver_resize()
+{
+    return (*g_driver->resize)(g_driver);
+}
+inline void driver_redraw()
+{
+    (*g_driver->redraw)(g_driver);
+}
+inline int driver_read_palette()
+{
+    return (*g_driver->read_palette)(g_driver);
+}
+inline int driver_write_palette()
+{
+    return (*g_driver->write_palette)(g_driver);
+}
+inline int driver_read_pixel(int x, int y)
+{
+    return (*g_driver->read_pixel)(g_driver, x, y);
+}
+inline void driver_write_pixel(int x, int y, int color)
+{
+    (*g_driver->write_pixel)(g_driver, x, y, color);
+}
+inline void driver_read_span(int y, int x, int lastx, BYTE *pixels)
+{
+    (*g_driver->read_span)(g_driver, y, x, lastx, pixels);
+}
+inline void driver_write_span(int y, int x, int lastx, BYTE *pixels)
+{
+    (*g_driver->write_span)(g_driver, y, x, lastx, pixels);
+}
+inline void driver_set_line_mode(int mode)
+{
+    (*g_driver->set_line_mode)(g_driver, mode);
+}
+inline void driver_draw_line(int x1, int y1, int x2, int y2, int color)
+{
+    (*g_driver->draw_line)(g_driver, x1, y1, x2, y2, color);
+}
+inline void driver_get_truecolor(int x, int y, int *r, int *g, int *b, int *a)
+{
+    (*g_driver->get_truecolor)(g_driver, x, y, r, g, b, a);
+}
+inline void driver_put_truecolor(int x, int y, int r, int g, int b, int a)
+{
+    (*g_driver->put_truecolor)(g_driver, x, y, r, g, b, a);
+}
+inline int driver_get_key()
+{
+    return (*g_driver->get_key)(g_driver);
+}
+inline void driver_display_string(int x, int y, int fg, int bg, char const *text)
+{
+    (*g_driver->display_string)(g_driver, x, y, fg, bg, text);
+}
+inline void driver_save_graphics()
+{
+    (*g_driver->save_graphics)(g_driver);
+}
+inline void driver_restore_graphics()
+{
+    (*g_driver->restore_graphics)(g_driver);
+}
+inline int driver_key_cursor(int row, int col)
+{
+    return (*g_driver->key_cursor)(g_driver, row, col);
+}
+inline int driver_key_pressed()
+{
+    return (*g_driver->key_pressed)(g_driver);
+}
+inline int driver_wait_key_pressed(int timeout)
+{
+    return (*g_driver->wait_key_pressed)(g_driver, timeout);
+}
+inline void driver_unget_key(int key)
+{
+    (*g_driver->unget_key)(g_driver, key);
+}
+inline void driver_shell()
+{
+    (*g_driver->shell)(g_driver);
+}
+inline void driver_put_string(int row, int col, int attr, char const *msg)
+{
+    (*g_driver->put_string)(g_driver, row, col, attr, msg);
+}
+inline void driver_set_for_text()
+{
+    (*g_driver->set_for_text)(g_driver);
+}
+inline void driver_set_for_graphics()
+{
+    (*g_driver->set_for_graphics)(g_driver);
+}
+inline void driver_set_clear()
+{
+    (*g_driver->set_clear)(g_driver);
+}
+inline void driver_move_cursor(int row, int col)
+{
+    (*g_driver->move_cursor)(g_driver, row, col);
+}
+inline void driver_hide_text_cursor()
+{
+    (*g_driver->hide_text_cursor)(g_driver);
+}
+inline void driver_set_attr(int row, int col, int attr, int count)
+{
+    (*g_driver->set_attr)(g_driver, row, col, attr, count);
+}
+inline void driver_scroll_up(int top, int bot)
+{
+    (*g_driver->scroll_up)(g_driver, top, bot);
+}
+inline void driver_stack_screen()
+{
+    (*g_driver->stack_screen)(g_driver);
+}
+inline void driver_unstack_screen()
+{
+    (*g_driver->unstack_screen)(g_driver);
+}
+inline void driver_discard_screen()
+{
+    (*g_driver->discard_screen)(g_driver);
+}
+inline int driver_init_fm()
+{
+    return (*g_driver->init_fm)(g_driver);
+}
+inline void driver_buzzer(buzzer_codes kind)
+{
+    (*g_driver->buzzer)(g_driver, kind);
+}
+inline bool driver_sound_on(int freq)
+{
+    return (*g_driver->sound_on)(g_driver, freq);
+}
+inline void driver_sound_off()
+{
+    (*g_driver->sound_off)(g_driver);
+}
+inline void driver_mute()
+{
+    (*g_driver->mute)(g_driver);
+}
+inline bool driver_diskp()
+{
+    return (*g_driver->diskp)(g_driver);
+}
+inline int driver_get_char_attr()
+{
+    return (*g_driver->get_char_attr)(g_driver);
+}
+inline void driver_put_char_attr(int char_attr)
+{
+    (*g_driver->put_char_attr)(g_driver, char_attr);
+}
+inline void driver_delay(int ms)
+{
+    (*g_driver->delay)(g_driver, ms);
+}
+inline void driver_set_keyboard_timeout(int ms)
+{
+    (*g_driver->set_keyboard_timeout)(g_driver, ms);
+}
+inline void driver_flush()
+{
+    (*g_driver->flush)(g_driver);
+}
