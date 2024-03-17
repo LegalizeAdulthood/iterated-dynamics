@@ -58,10 +58,11 @@ if(MSVC)
         "_CRTDBG_MAP_ALLOC")
 endif()
 
+add_subdirectory(config)
+add_subdirectory(hc)
+add_subdirectory(helpcom)
 add_subdirectory(unix)
 add_subdirectory(win32)
-add_subdirectory(hc)
-add_subdirectory(config)
 
 add_library(libid
     headers/id_io.h
@@ -164,7 +165,6 @@ add_library(libid
     headers/lsys.h
     headers/mpmath.h
     headers/newton.h
-    headers/port.h
     headers/prototyp.h
     headers/winprot.h
 )

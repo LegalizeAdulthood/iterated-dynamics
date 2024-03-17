@@ -2,7 +2,7 @@
 
 if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
     add_library(os_hc INTERFACE)
-    target_link_libraries(os_hc INTERFACE config)
+    target_link_libraries(os_hc INTERFACE helpcom config)
 
     add_library(os STATIC
         d_win32.cpp

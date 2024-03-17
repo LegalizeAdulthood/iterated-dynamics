@@ -5,7 +5,7 @@ if(NOT CMAKE_SYSTEM_NAME STREQUAL "Windows")
     target_compile_definitions(os_hc PUBLIC ${OS_DEFINITIONS})
     target_compile_options(os_hc PRIVATE ${ID_TARGET_OPTIONS})
     target_include_directories(os_hc PRIVATE ../headers)
-    target_link_libraries(os_hc PUBLIC config)
+    target_link_libraries(os_hc PUBLIC helpcom config)
 
     add_library(os STATIC
         d_x11.cpp
