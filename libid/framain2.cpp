@@ -245,22 +245,22 @@ main_state big_while_loop(bool *const kbdmore, bool *const stacked, bool const r
 
                 if (g_virtual_screens && (g_logical_screen_x_dots > g_screen_x_dots || g_logical_screen_y_dots > g_screen_y_dots))
                 {
-                    char buf[120];
-                    static char msgxy1[] = {"Can't set virtual line that long, width cut down."};
-                    static char msgxy2[] = {"Not enough video memory for that many lines, height cut down."};
+#define MSG_XY1 "Can't set virtual line that long, width cut down."
+#define MSG_XY2 "Not enough video memory for that many lines, height cut down."
                     if (g_logical_screen_x_dots > g_screen_x_dots && g_logical_screen_y_dots > g_screen_y_dots)
                     {
-                        std::snprintf(buf, NUM_OF(buf), "%s\n%s", msgxy1, msgxy2);
-                        stopmsg(STOPMSG_NONE, buf);
+                        stopmsg(STOPMSG_NONE, MSG_XY1 "\n" MSG_XY2);
                     }
                     else if (g_logical_screen_y_dots > g_screen_y_dots)
                     {
-                        stopmsg(STOPMSG_NONE, msgxy2);
+                        stopmsg(STOPMSG_NONE, MSG_XY2);
                     }
                     else
                     {
-                        stopmsg(STOPMSG_NONE, msgxy1);
+                        stopmsg(STOPMSG_NONE, MSG_XY1);
                     }
+#undef MSG_XY1
+#undef MSG_XY2
                 }
                 g_logical_screen_x_dots = g_screen_x_dots;
                 g_logical_screen_y_dots = g_screen_y_dots;
