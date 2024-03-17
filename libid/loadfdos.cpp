@@ -52,12 +52,9 @@
 
 // routines in this module
 
-#ifndef XFRACT
-static int    vidcompare(const void *, const void *);
 static void   format_item(int, char *);
 static int    check_modekey(int, int);
 static void   format_vid_inf(int i, char const *err, char *buf);
-#endif
 static double vid_aspect(int tryxdots, int tryydots);
 
 struct vidinf
