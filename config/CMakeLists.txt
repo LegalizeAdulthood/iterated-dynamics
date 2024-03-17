@@ -8,6 +8,7 @@ configure_file(port_config.h.in include/port_config.h)
 add_library(config INTERFACE)
 target_sources(config INTERFACE
     port_config.h.in
+    include/id_io.h
     include/port.h
     include/string_case_compare.h
     "${CMAKE_CURRENT_BINARY_DIR}/include/port_config.h"

@@ -65,7 +65,6 @@ add_subdirectory(unix)
 add_subdirectory(win32)
 
 add_library(libid
-    headers/id_io.h
     headers/os.h
 
     common/3d.cpp headers/3d.h
