@@ -51,6 +51,9 @@ an appropriate setup, per_image, per_pixel, and orbit routines.
 #include "id_data.h"
 #include "mpmath_c.h"
 #include "parser.h"
+#ifdef XFRACT
+#include "reados.h"
+#endif
 
 #include <cfloat>
 #include <cmath>
