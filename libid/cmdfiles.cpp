@@ -499,11 +499,7 @@ static void initvars_fractal()          // init vars affecting calculation
     g_quick_calc = false;
     g_close_proximity = 0.01;
     g_is_mandelbrot = true;                      // default formula mand/jul toggle
-#ifndef XFRACT
     g_user_float_flag = false;              // turn off the float flag
-#else
-    g_user_float_flag = true;               // turn on the float flag
-#endif
     g_finite_attractor = false;                 // disable finite attractor logic
     g_fractal_type = fractal_type::MANDEL;    // initial type Set flag
     g_cur_fractal_specific = &g_fractal_specific[0];
