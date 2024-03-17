@@ -27,6 +27,7 @@
 #include "prompts2.h"
 #include "realdos.h"
 #include "rotate.h"
+#include "sound.h"
 #include "stereo.h"
 
 #include <algorithm>

@@ -87,6 +87,7 @@ add_library(libid
     prompts2.cpp include/prompts2.h
     realdos.cpp include/realdos.h
     search_path.cpp include/search_path.h
+    sound.cpp include/sound.h
     spindac.cpp include/spindac.h
     split_path.cpp include/split_path.h
     update_save_name.cpp include/update_save_name.h

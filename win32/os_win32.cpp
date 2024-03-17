@@ -119,16 +119,8 @@ enum fractint_event
 
 // Global variables (yuck!)
 int dacnorm = 0;
-int g_fm_attack = 0;
-int g_fm_decay = 0;
-int g_fm_release = 0;
-int g_fm_sustain = 0;
-int g_fm_volume = 0;
-int g_fm_wavetype = 0;
-int g_hi_attenuation = 0;
 long g_l_init_x = 0;
 long g_l_init_y = 0;
-int g_polyphony = 0;
 int g_row_count = 0;
 long g_save_base = 0;              // base clock ticks
 long g_save_ticks = 0;             // save after this many ticks

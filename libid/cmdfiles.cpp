@@ -41,6 +41,7 @@
 #include "realdos.h"
 #include "rotate.h"
 #include "soi.h"
+#include "sound.h"
 #include "stereo.h"
 
 #include <algorithm>
