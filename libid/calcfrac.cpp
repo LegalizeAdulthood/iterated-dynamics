@@ -40,6 +40,7 @@
 #include "newton.h"
 #include "parser.h"
 #include "realdos.h"
+#include "set_bailout_formula.h"
 #include "soi.h"
 #include "update_save_name.h"
 

@@ -8,6 +8,8 @@
 #include "fractals.h"
 #include "merge_path_names.h"
 
+bailouts g_bail_out_test; // test used for determining bailout
+
 void set_bailout_formula(bailouts test)
 {
     switch (test)

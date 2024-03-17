@@ -138,7 +138,6 @@ int     g_init_mode = 0;        // initial video mode
 int     g_init_cycle_limit = 0;     // initial cycle limit
 bool    g_use_center_mag = false;         // use center-mag corners
 long    g_bail_out = 0;            // user input bailout value
-bailouts g_bail_out_test;            // test used for determining bailout
 double  g_inversion[3] = { 0.0 }; // radius, xcenter, ycenter
 int     g_color_cycle_range_lo = 0;
 int     g_color_cycle_range_hi = 0;          // cycling color range

@@ -21,6 +21,7 @@ FRACTALS.C, i.e. which are non-fractal-specific fractal engine subroutines.
 #include "miscovl.h"
 #include "miscres.h"
 #include "realdos.h"
+#include "set_bailout_formula.h"
 #include "soi.h"
 #include "update_save_name.h"
 

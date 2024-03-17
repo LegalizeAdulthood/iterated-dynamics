@@ -182,7 +182,6 @@ extern float                 g_aspect_drift;
 extern std::string           g_auto_name;
 extern char                  g_auto_show_dot;
 extern long                  g_bail_out;
-extern bailouts              g_bail_out_test;
 extern int                   g_base_hertz;
 extern int                   g_biomorph;
 extern bool                  g_bof_match_book_images;

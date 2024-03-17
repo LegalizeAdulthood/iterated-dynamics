@@ -30,6 +30,7 @@
 #include "prompts2.h"
 #include "realdos.h"
 #include "rotate.h"
+#include "set_bailout_formula.h"
 #include "slideshw.h"
 #include "update_save_name.h"
 

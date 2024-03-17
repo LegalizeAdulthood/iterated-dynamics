@@ -15,6 +15,7 @@
 #include "id_data.h"
 #include "mpmath.h"
 #include "mpmath_c.h"
+#include "set_bailout_formula.h"
 
 #include <cmath>
 

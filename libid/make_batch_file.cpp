@@ -26,6 +26,7 @@
 #include "prompts2.h"
 #include "realdos.h"
 #include "rotate.h"
+#include "set_bailout_formula.h"
 #include "stereo.h"
 
 #include <algorithm>

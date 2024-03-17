@@ -40,6 +40,7 @@
 #include "prompts2.h"
 #include "realdos.h"
 #include "rotate.h"
+#include "set_bailout_formula.h"
 #include "spindac.h"
 #include "stereo.h"
 #include "update_save_name.h"
