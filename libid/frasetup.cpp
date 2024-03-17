@@ -83,7 +83,6 @@ JuliaSetup()            // Julia Routine
 bool
 NewtonSetup()           // Newton/NewtBasin Routines
 {
-#if !defined(XFRACT)
     if (g_debug_flag != debug_flags::allow_mp_newton_type)
     {
         if (g_fractal_type == fractal_type::MPNEWTON)
@@ -96,18 +95,6 @@ NewtonSetup()           // Newton/NewtBasin Routines
         }
         g_cur_fractal_specific = &g_fractal_specific[static_cast<int>(g_fractal_type)];
     }
-#else
-    if (g_fractal_type == fractal_type::MPNEWTON)
-    {
-        g_fractal_type = fractal_type::NEWTON;
-    }
-    else if (g_fractal_type == fractal_type::MPNEWTBASIN)
-    {
-        g_fractal_type = fractal_type::NEWTBASIN;
-    }
-
-    g_cur_fractal_specific = &g_fractal_specific[static_cast<int>(g_fractal_type)];
-#endif
     // set up table of roots of 1 along unit circle
     g_degree = (int)g_param_z1.x;
     if (g_degree < 2)
@@ -120,7 +107,6 @@ NewtonSetup()           // Newton/NewtBasin Routines
     g_degree_minus_1_over_degree      = (double)(g_degree - 1) / (double)g_degree;
     g_max_color     = 0;
     g_threshold    = .3*PI/g_degree; // less than half distance between roots
-#if !defined(XFRACT)
     if (g_fractal_type == fractal_type::MPNEWTON || g_fractal_type == fractal_type::MPNEWTBASIN)
     {
         g_newton_mp_r_over_d     = *pd2MP(g_newton_r_over_d);
@@ -128,7 +114,6 @@ NewtonSetup()           // Newton/NewtBasin Routines
         g_mp_threshold  = *pd2MP(g_threshold);
         g_mp_one        = *pd2MP(1.0);
     }
-#endif
 
     g_basin = 0;
     g_roots.resize(16);
@@ -151,7 +136,6 @@ NewtonSetup()           // Newton/NewtBasin Routines
             g_roots[i].y = std::sin(i*PI*2.0/(double)g_degree);
         }
     }
-#if !defined(XFRACT)
     else if (g_fractal_type == fractal_type::MPNEWTBASIN)
     {
         if (g_param_z1.y)
@@ -172,7 +156,6 @@ NewtonSetup()           // Newton/NewtBasin Routines
             g_mpc_roots[i].y = *pd2MP(std::sin(i*PI*2.0/(double)g_degree));
         }
     }
-#endif
 
     g_params[0] = (double)g_degree;
     if (g_degree%4 == 0)
@@ -185,12 +168,10 @@ NewtonSetup()           // Newton/NewtBasin Routines
     }
 
     g_calc_type = standard_fractal;
-#if !defined(XFRACT)
     if (g_fractal_type == fractal_type::MPNEWTON || g_fractal_type == fractal_type::MPNEWTBASIN)
     {
         setMPfunctions();
     }
-#endif
     return true;
 }
 
@@ -1182,7 +1163,6 @@ MandelTrigSetup()
 bool
 MarksJuliaSetup()
 {
-#if !defined(XFRACT)
     if (g_params[2] < 1)
     {
         g_params[2] = 1;
@@ -1209,7 +1189,6 @@ MarksJuliaSetup()
         g_l_coefficient.y = 0L;
     }
     get_julia_attractor(0.0, 0.0);       // an attractor?
-#endif
     return true;
 }
 
@@ -1294,7 +1273,6 @@ HalleySetup()
     g_halley_a_plus_one = g_degree + 1; // a+1
     g_halley_a_plus_one_times_degree = g_halley_a_plus_one * g_degree;
 
-#if !defined(XFRACT)
     if (g_fractal_type == fractal_type::MPHALLEY)
     {
         setMPfunctions();
@@ -1305,7 +1283,6 @@ HalleySetup()
         g_mp_temp_param2_x = *pd2MP(g_param_z2.x);
         g_mp_one        = *pd2MP(1.0);
     }
-#endif
 
     if (g_degree % 2)
     {
