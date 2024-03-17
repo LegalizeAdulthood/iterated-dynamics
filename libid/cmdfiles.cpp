@@ -586,7 +586,6 @@ static void initvars_fractal()          // init vars affecting calculation
     g_julibrot_z_dots = 128;
     initvars_3d();
     g_base_hertz = 440;                     // basic hertz rate
-#ifndef XFRACT
     g_fm_volume = 63;                         // full volume on soundcard o/p
     g_hi_attenuation = 0;                        // no attenuation of hi notes
     g_fm_attack = 5;                       // fast attack
@@ -599,7 +598,6 @@ static void initvars_fractal()          // init vars affecting calculation
     {
         g_scale_map[i] = i+1;    // straight mapping of notes in octave
     }
-#endif
 }
 
 static void initvars_3d()               // init vars affecting 3d
@@ -2633,7 +2631,6 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         {
             return bad_arg(curarg);
         }
-#if !defined(XFRACT)
         if (totparms > 1)
         {
             g_sound_flag &= SOUNDFLAG_ORBITMASK; // reset options
@@ -2765,12 +2762,13 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
             return bad_arg(curarg);
         }
         for (int counter = 0; counter <= 11; counter++)
+        {
             if ((totparms > counter) && (intval[counter] > 0)
-                && (intval[counter] < 13))
+               && (intval[counter] < 13))
             {
                 g_scale_map[counter] = intval[counter];
             }
-#endif
+        }
         return CMDARG_NONE;
     }
 

@@ -1480,7 +1480,6 @@ static void write_batch_parms(char const *colorinf, bool colorsonly, int maxcolo
             {
                 put_parm(" %s=%s", "sound", "z");
             }
-#ifndef XFRACT
             if ((g_sound_flag & SOUNDFLAG_ORBITMASK) && (g_sound_flag & SOUNDFLAG_ORBITMASK) <= SOUNDFLAG_Z)
             {
                 if (g_sound_flag & SOUNDFLAG_SPEAKER)
@@ -1500,10 +1499,8 @@ static void write_batch_parms(char const *colorinf, bool colorsonly, int maxcolo
                     put_parm("/quant");
                 }
             }
-#endif
         }
 
-#ifndef XFRACT
         if (g_fm_volume != 63)
         {
             put_parm(" %s=%d", "volume", g_fm_volume);
@@ -1577,7 +1574,6 @@ static void write_batch_parms(char const *colorinf, bool colorsonly, int maxcolo
                          , g_scale_map[9], g_scale_map[10], g_scale_map[11]);
             }
         }
-#endif
 
         if (!g_bof_match_book_images)
         {
