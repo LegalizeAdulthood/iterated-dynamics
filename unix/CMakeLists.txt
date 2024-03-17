@@ -19,7 +19,7 @@ if(NOT CMAKE_SYSTEM_NAME STREQUAL "Windows")
     target_link_libraries(os PUBLIC help_defs os_hc X11 m)
     target_compile_definitions(os PUBLIC ${ID_TARGET_DEFINITIONS} $<$<CONFIG:Debug>:${ID_TARGET_DEFINITIONS_DEBUG}>)
     target_compile_options(os PRIVATE ${ID_TARGET_OPTIONS})
-    target_include_directories(os PRIVATE ../headers)
+    target_include_directories(os PRIVATE ../libid/include)
 
     set_src_dir(unix.cpp)
     add_dependencies(os native_help)
