@@ -1,6 +1,5 @@
 // various complex number defs
-#if !defined(CMPLX_H)
-#define CMPLX_H
+#pragma once
 
 namespace id
 {
@@ -94,5 +93,3 @@ using LHyperComplex = id::hyper_complex<long>;
 using DComplex = id::complex<double>;
 using LDComplex = id::complex<LDBL>;
 using LComplex = id::complex<long>;
-
-#endif
