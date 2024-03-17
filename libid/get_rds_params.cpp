@@ -10,6 +10,9 @@
 #include "prompts2.h"
 #include "stereo.h"
 
+#include <cstring>
+#include <string>
+
 static char const *masks[] = {"*.pot", "*.gif"};
 
 int get_rds_params()
