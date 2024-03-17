@@ -411,11 +411,9 @@ prompt_user:
         choices[promptnum] = "Y Multiples";
         paramvalues[promptnum].type = 'i';
         paramvalues[promptnum++].uval.ival = ym;
-#ifndef XFRACT
         choices[promptnum] = "Video mode";
         paramvalues[promptnum].type = 0x100 + 4;
         paramvalues[promptnum++].uval.sbuf = vidmde;
-#endif
 
         if (fullscreen_prompt("Save Current Parameters", promptnum, choices, paramvalues, 0, nullptr) < 0)
         {
@@ -469,7 +467,6 @@ prompt_user:
         // sanity checks
         {
             long xtotal, ytotal;
-#ifndef XFRACT
             int i;
 
             // get resolution from the video name (which must be valid)
@@ -492,7 +489,6 @@ prompt_user:
                 stopmsg(STOPMSG_NONE, "Invalid video mode entry!");
                 goto prompt_user;
             }
-#endif
 
             // bounds range on xm, ym
             if (xm < 1 || xm > 36 || ym < 1 || ym > 36)

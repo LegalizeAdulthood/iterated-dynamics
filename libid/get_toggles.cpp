@@ -77,11 +77,9 @@ int get_toggles()
         :        /* "o"rbits */      14;
     old_usr_stdcalcmode = g_user_std_calc_mode;
     old_stoppass = g_stop_pass;
-#ifndef XFRACT
     choices[++k] = "Floating Point Algorithm";
     uvalues[k].type = 'y';
     uvalues[k].uval.ch.val = g_user_float_flag ? 1 : 0;
-#endif
     choices[++k] = "Maximum Iterations (2 to 2,147,483,647)";
     uvalues[k].type = 'L';
     old_maxit = g_max_iterations;
@@ -271,13 +269,11 @@ int get_toggles()
     {
         j++;
     }
-#ifndef XFRACT
     if ((uvalues[++k].uval.ch.val != 0) != g_user_float_flag)
     {
         g_user_float_flag = uvalues[k].uval.ch.val != 0;
         j++;
     }
-#endif
     ++k;
     g_max_iterations = uvalues[k].uval.Lval;
     if (g_max_iterations < 0)

@@ -106,9 +106,7 @@ static long width;
 static long dist;
 static long depth;
 static long brratio;
-#ifndef XFRACT
 static long eyes;
-#endif
 int g_julibrot_3d_mode = 0;
 
 fractal_type g_new_orbit_type = fractal_type::JULIA;
@@ -118,13 +116,11 @@ bool JulibrotSetup()
     int r = 0;
     char const *mapname;
 
-#ifndef XFRACT
     if (g_colors < 255)
     {
         stopmsg(STOPMSG_NONE, "Sorry, but Julibrots require a 256-color video mode");
         return false;
     }
-#endif
 
     xoffsetfp = (g_x_max + g_x_min) / 2;     // Calculate average
     yoffsetfp = (g_y_max + g_y_min) / 2;     // Calculate average
@@ -153,7 +149,6 @@ bool JulibrotSetup()
     LeftEyefp.zy = RightEyefp.zy;
     bbase = 128;
 
-#ifndef XFRACT
     if (g_fractal_specific[static_cast<int>(g_fractal_type)].isinteger > 0)
     {
         long jxmin, jxmax, jymin, jymax, mxmax, mymax;
@@ -209,7 +204,6 @@ bool JulibrotSetup()
         LeftEye.zy = RightEye.zy;
         bbase = (int)(128.0 * brratiofp);
     }
-#endif
 
     if (g_julibrot_3d_mode == 3)
     {
@@ -362,9 +356,6 @@ int zline(long x, long y)
 
 int zlinefp(double x, double y)
 {
-#ifdef XFRACT
-    static int keychk = 0;
-#endif
     xpixelfp = x;
     ypixelfp = y;
     mxfp = g_julibrot_x_min;
@@ -415,21 +406,10 @@ int zlinefp(double x, double y)
             g_quaternion_cj = g_params[2];
             g_quaternino_ck = g_params[3];
         }
-#ifdef XFRACT
-        if (keychk++ > 500)
-        {
-            keychk = 0;
-            if (driver_key_pressed())
-            {
-                return -1;
-            }
-        }
-#else
         if (driver_key_pressed())
         {
             return -1;
         }
-#endif
         g_temp_sqr_x = sqr(g_old_z.x);
         g_temp_sqr_y = sqr(g_old_z.y);
 

@@ -2242,8 +2242,6 @@ int setup_orbits_to_screen(affine *scrn_cnvt)
 
 int plotorbits2dsetup()
 {
-
-#ifndef XFRACT
     if (g_cur_fractal_specific->isinteger != 0)
     {
         fractal_type tofloat = g_cur_fractal_specific->tofloat;
@@ -2256,7 +2254,6 @@ int plotorbits2dsetup()
         g_cur_fractal_specific = &g_fractal_specific[static_cast<int>(tofloat)];
         g_fractal_type = tofloat;
     }
-#endif
 
     PER_IMAGE();
 
@@ -2362,12 +2359,7 @@ int plotorbits2dfloat()
         // else count >= orbit_delay and we want to plot it
         col = (int)(o_cvt.a*g_new_z.x + o_cvt.b*g_new_z.y + o_cvt.e);
         row = (int)(o_cvt.c*g_new_z.x + o_cvt.d*g_new_z.y + o_cvt.f);
-#ifdef XFRACT
-        if (col >= 0 && col < g_logical_screen_x_dots && row >= 0 && row < g_logical_screen_y_dots)
-#else
-        // don't know why the next line is necessary, the one above should work
         if (col > 0 && col < g_logical_screen_x_dots && row > 0 && row < g_logical_screen_y_dots)
-#endif
         {
             // plot if on the screen
             if (soundvar && (g_sound_flag & SOUNDFLAG_ORBITMASK) > SOUNDFLAG_BEEP)

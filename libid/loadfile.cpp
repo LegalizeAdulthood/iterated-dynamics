@@ -1412,11 +1412,7 @@ int fgetwindow()
     bt_e = alloc_stack(rbflength+2);
     bt_f = alloc_stack(rbflength+2);
 
-#ifdef XFRACT
-    int const num_dots = 4;   // Xfractint only needs the 4 corners saved.
-#else
     int const num_dots = g_screen_x_dots + g_screen_y_dots;
-#endif
     browse_windows.resize(MAX_WINDOWS_OPEN);
     browse_box_x.resize(num_dots*MAX_WINDOWS_OPEN);
     browse_box_y.resize(num_dots*MAX_WINDOWS_OPEN);
@@ -1571,7 +1567,6 @@ rescan:  // entry for changed browse parms
                 restore_box(num_dots, index);
                 showtempmsg(winlist.name);
                 break;
-#ifndef XFRACT
             case FIK_CTL_INSERT:
                 color_of_box += key_count(FIK_CTL_INSERT);
                 for (int i = 0; i < wincount ; i++)
@@ -1591,7 +1586,6 @@ rescan:  // entry for changed browse parms
                 winlist = browse_windows[index];
                 drawindow(color_of_box, &winlist);
                 break;
-#endif
             case FIK_ENTER:
             case FIK_ENTER_2:   // this file please
                 g_browse_name = winlist.name;
@@ -1727,12 +1721,9 @@ rescan:  // entry for changed browse parms
                 g_box_count = winlist.boxcount;
                 restore_box(num_dots, i);
                 if (g_box_count > 0)
-#ifdef XFRACT
-                    // Turn all boxes off
-                    drawindow(g_color_bright, &winlist);
-#else
+                {
                     clearbox();
-#endif
+                }
             }
         }
         if (done == 3)
@@ -1765,9 +1756,7 @@ rescan:  // entry for changed browse parms
 
 static void drawindow(int colour, window const *info)
 {
-#ifndef XFRACT
     coords ibl, itr;
-#endif
 
     g_box_color = colour;
     g_box_count = 0;
@@ -1775,30 +1764,17 @@ static void drawindow(int colour, window const *info)
     {
         // big enough on screen to show up as a box so draw it
         // corner pixels
-#ifndef XFRACT
         addbox(info->itl);
         addbox(info->itr);
         addbox(info->ibl);
         addbox(info->ibr);
         drawlines(info->itl, info->itr, info->ibl.x-info->itl.x, info->ibl.y-info->itl.y); // top & bottom lines
         drawlines(info->itl, info->ibl, info->itr.x-info->itl.x, info->itr.y-info->itl.y); // left & right lines
-#else
-        g_box_x[0] = info->itl.x + g_logical_screen_x_offset;
-        g_box_y[0] = info->itl.y + g_logical_screen_y_offset;
-        g_box_x[1] = info->itr.x + g_logical_screen_x_offset;
-        g_box_y[1] = info->itr.y + g_logical_screen_y_offset;
-        g_box_x[2] = info->ibr.x + g_logical_screen_x_offset;
-        g_box_y[2] = info->ibr.y + g_logical_screen_y_offset;
-        g_box_x[3] = info->ibl.x + g_logical_screen_x_offset;
-        g_box_y[3] = info->ibl.y + g_logical_screen_y_offset;
-        g_box_count = 4;
-#endif
         dispbox();
     }
     else
     {
         // draw crosshairs
-#ifndef XFRACT
         int cross_size = g_logical_screen_y_dots / 45;
         if (cross_size < 2)
         {
@@ -1811,7 +1787,6 @@ static void drawindow(int colour, window const *info)
         drawlines(info->itl, itr, ibl.x-itr.x, 0); // top & bottom lines
         drawlines(info->itl, ibl, 0, itr.y-ibl.y); // left & right lines
         dispbox();
-#endif
     }
 }
 

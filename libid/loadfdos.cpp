@@ -77,7 +77,6 @@ struct vidinf
 #define VI_CBIG      4  // mode has excess colors
 #define VI_ASPECT    1  // aspect ratio bad
 
-#ifndef XFRACT
 static bool vidinf_less(const vidinf &lhs, const vidinf &rhs)
 {
     if (lhs.flags < rhs.flags)
@@ -115,7 +114,6 @@ static void format_vid_inf(int i, char const *err, char *buf)
             g_video_entry.colors, g_video_entry.comment);
     g_video_entry.xdots = 0; // so tab_display knows to display nothing
 }
-#endif
 
 static double vid_aspect(int tryxdots, int tryydots)
 {
@@ -273,7 +271,6 @@ int get_video_mode(FRACTAL_INFO *info, ext_blk_3 *blk_3_info)
         g_init_mode = g_adapter;
     }
 
-#ifndef XFRACT
     gotrealmode = false;
     if ((g_init_mode < 0 || (g_ask_video && (g_init_batch == batch_modes::NONE))) && !g_make_parameter_file)
     {
@@ -346,10 +343,6 @@ int get_video_mode(FRACTAL_INFO *info, ext_blk_3 *blk_3_info)
             g_init_mode = s_video_info[i].entnum;
         }
     }
-#else
-    g_init_mode = 0;
-    gotrealmode = false;
-#endif
 
     if (!gotrealmode)  // translate from temp table to permanent
     {
@@ -532,7 +525,6 @@ int get_video_mode(FRACTAL_INFO *info, ext_blk_3 *blk_3_info)
     return 0;
 }
 
-#ifndef XFRACT
 static void format_item(int choice, char *buf)
 {
     char errbuf[10];
@@ -571,4 +563,3 @@ static int check_modekey(int curkey, int /*choice*/)
     int i = check_vidmode_key(0, curkey);
     return i >= 0 ? -100-i : 0;
 }
-#endif

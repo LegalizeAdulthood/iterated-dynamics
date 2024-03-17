@@ -54,11 +54,7 @@ enum text_colors
 #define C_PROMPT_TEXT     (g_text_color[8])
 #define C_PROMPT_LO       (g_text_color[9])
 #define C_PROMPT_MED      (g_text_color[10])
-#ifndef XFRACT
 #define C_PROMPT_HI       (g_text_color[11] | BRIGHT)
-#else
-#define C_PROMPT_HI       (g_text_color[11])
-#endif
 #define C_PROMPT_INPUT    (g_text_color[12] | INVERSE)
 #define C_PROMPT_CHOOSE   (g_text_color[13] | INVERSE)
 #define C_CHOICE_CURRENT  (g_text_color[14] | INVERSE)
