@@ -264,68 +264,121 @@ int  fpMANRbailout()
     return 0;
 }
 
-#define FLOATTRIGBAILOUT()  \
-    if (std::fabs(g_old_z.y) >= g_magnitude_limit2) \
-        return 1;
+#define FLOATTRIGBAILOUT()                              \
+    do                                                  \
+    {                                                   \
+        if (std::fabs(g_old_z.y) >= g_magnitude_limit2) \
+        {                                               \
+            return 1;                                   \
+        }                                               \
+    } while (false)
 
-#define LONGTRIGBAILOUT()  \
-    if (labs(g_l_old_z.y) >= g_l_magnitude_limit2) \
-    { \
-        return 1; \
-    }
+#define LONGTRIGBAILOUT()                              \
+    do                                                 \
+    {                                                  \
+        if (labs(g_l_old_z.y) >= g_l_magnitude_limit2) \
+        {                                              \
+            return 1;                                  \
+        }                                              \
+    } while (false)
 
-#define LONGXYTRIGBAILOUT()  \
-    if (labs(g_l_old_z.x) >= g_l_magnitude_limit2 || labs(g_l_old_z.y) >= g_l_magnitude_limit2)\
-        { return 1;}
+#define LONGXYTRIGBAILOUT()                                                                         \
+    do                                                                                              \
+    {                                                                                               \
+        if (labs(g_l_old_z.x) >= g_l_magnitude_limit2 || labs(g_l_old_z.y) >= g_l_magnitude_limit2) \
+        {                                                                                           \
+            return 1;                                                                               \
+        }                                                                                           \
+    } while (false)
 
-#define FLOATXYTRIGBAILOUT()  \
-    if (std::fabs(g_old_z.x) >= g_magnitude_limit2 || fabs(g_old_z.y) >= g_magnitude_limit2) \
-        return 1;
+#define FLOATXYTRIGBAILOUT()                                                                     \
+    do                                                                                           \
+    {                                                                                            \
+        if (std::fabs(g_old_z.x) >= g_magnitude_limit2 || fabs(g_old_z.y) >= g_magnitude_limit2) \
+        {                                                                                        \
+            return 1;                                                                            \
+        }                                                                                        \
+    } while (false)
 
-#define FLOATHTRIGBAILOUT()  \
-    if (std::fabs(g_old_z.x) >= g_magnitude_limit2) \
-        return 1;
+#define FLOATHTRIGBAILOUT()                             \
+    do                                                  \
+    {                                                   \
+        if (std::fabs(g_old_z.x) >= g_magnitude_limit2) \
+        {                                               \
+            return 1;                                   \
+        }                                               \
+    } while (false)
 
-#define LONGHTRIGBAILOUT()  \
-    if (labs(g_l_old_z.x) >= g_l_magnitude_limit2) \
-    { \
-        return 1; \
-    }
+#define LONGHTRIGBAILOUT()                             \
+    do                                                 \
+    {                                                  \
+        if (labs(g_l_old_z.x) >= g_l_magnitude_limit2) \
+        {                                              \
+            return 1;                                  \
+        }                                              \
+    } while (false)
 
-#define TRIG16CHECK(X)  \
-    if (labs((X)) > l16triglim) \
-    { \
-        return 1; \
-    }
+#define TRIG16CHECK(X)              \
+    do                              \
+    {                               \
+        if (labs((X)) > l16triglim) \
+        {                           \
+            return 1;               \
+        }                           \
+    } while (false)
 
-#define OLD_FLOATEXPBAILOUT()  \
-    if (std::fabs(g_old_z.y) >= 1.0e8) \
-        return 1;\
-    if (std::fabs(g_old_z.x) >= 6.4e2) \
-        return 1;
+#define OLD_FLOATEXPBAILOUT()              \
+    do                                     \
+    {                                      \
+        if (std::fabs(g_old_z.y) >= 1.0e8) \
+        {                                  \
+            return 1;                      \
+        }                                  \
+        if (std::fabs(g_old_z.x) >= 6.4e2) \
+        {                                  \
+            return 1;                      \
+        }                                  \
+    } while (false)
 
-#define FLOATEXPBAILOUT()  \
-    if (std::fabs(g_old_z.y) >= 1.0e3) \
-        return 1;\
-    if (std::fabs(g_old_z.x) >= 8) \
-        return 1;
+#define FLOATEXPBAILOUT()                  \
+    do                                     \
+    {                                      \
+        if (std::fabs(g_old_z.y) >= 1.0e3) \
+        {                                  \
+            return 1;                      \
+        }                                  \
+        if (std::fabs(g_old_z.x) >= 8)     \
+        {                                  \
+            return 1;                      \
+        }                                  \
+    } while (false)
 
-#define LONGEXPBAILOUT()  \
-    if (labs(g_l_old_z.y) >= (1000L << g_bit_shift)) \
-        return 1;\
-    if (labs(g_l_old_z.x) >=    (8L << g_bit_shift)) \
-        return 1;
+#define LONGEXPBAILOUT()                                 \
+    do                                                   \
+    {                                                    \
+        if (labs(g_l_old_z.y) >= (1000L << g_bit_shift)) \
+        {                                                \
+            return 1;                                    \
+        }                                                \
+        if (labs(g_l_old_z.x) >= (8L << g_bit_shift))    \
+        {                                                \
+            return 1;                                    \
+        }                                                \
+    } while (false)
 
-#define LTRIGARG(X)    \
-    if (labs((X)) > l16triglim)\
-    {\
-        double tmp;\
-        tmp = (X);\
-        tmp /= g_fudge_factor;\
-        tmp = std::fmod(tmp, PI*2.0);\
-        tmp *= g_fudge_factor;\
-        (X) = (long)tmp;\
-    }\
+#define LTRIGARG(X)                         \
+    do                                      \
+    {                                       \
+        if (labs((X)) > l16triglim)         \
+        {                                   \
+            double tmp;                     \
+            tmp = (X);                      \
+            tmp /= g_fudge_factor;          \
+            tmp = std::fmod(tmp, PI * 2.0); \
+            tmp *= g_fudge_factor;          \
+            (X) = (long) tmp;               \
+        }                                   \
+    } while (false)
  
 static int  Halleybailout()
 {
