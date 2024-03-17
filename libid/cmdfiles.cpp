@@ -20,6 +20,7 @@
 #include "framain2.h"
 #include "get_key_no_help.h"
 #include "helpcom.h"
+#include "history.h"
 #include "id_data.h"
 #include "is_directory.h"
 #include "jb.h"

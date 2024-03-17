@@ -14,6 +14,7 @@
 #include "fractalp.h"
 #include "fractype.h"
 #include "get_toggles.h"
+#include "history.h"
 #include "id_data.h"
 #include "loadfile.h"
 #include "lorenz.h"
@@ -31,9 +32,6 @@
 #include <cstring>
 #include <ctime>
 #include <string>
-
-static  int        historyptr = -1;     // user pointer into history tbl
-static bool historyflag = false;        // are we backing off in history?
 
 main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool *stacked)
 {

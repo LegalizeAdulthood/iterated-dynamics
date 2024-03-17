@@ -71,6 +71,7 @@ add_library(libid
     get_rds_params.cpp include/get_rds_params.h
     get_toggles.cpp include/get_toggles.h
     help.cpp
+    history.cpp include/history.h
     intro.cpp include/intro.h
     include/is_directory.h
     jiim.cpp include/jiim.h
@@ -241,6 +242,7 @@ source_group("Header Files/ui" FILES
     include/get_rds_params.h
     include/get_toggles.h
     include/help.h
+    include/history.h
     include/id.h
     include/intro.h
     include/is_directory.h
@@ -279,6 +281,7 @@ source_group("Source Files/ui" FILES
     get_rds_params.cpp
     get_toggles.cpp
     help.cpp
+    history.cpp
     intro.cpp
     jiim.cpp
     load_entry_text.cpp
