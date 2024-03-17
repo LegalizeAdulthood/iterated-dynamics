@@ -1,10 +1,10 @@
-#include "miscfrac.h"
-
 /*
 
 Miscellaneous fractal-specific code
 
 */
+#include "miscfrac.h"
+
 #include "port.h"
 #include "prototyp.h"
 
@@ -16,8 +16,7 @@ Miscellaneous fractal-specific code
 #include "fracsubr.h"
 #include "fractalp.h"
 #include "fractals.h"
-#include "fractype.h"
-#include "framain2.h"
+#include "fractint.h"
 #include "id_data.h"
 #include "loadmap.h"
 #include "miscres.h"

@@ -60,7 +60,7 @@ add_library(libid
     find_path.cpp include/find_path.h
     find_special_colors.cpp include/find_special_colors.h
     fix_dirname.cpp include/fix_dirname.h
-    fractint.cpp
+    fractint.cpp include/fractint.h
     framain2.cpp include/framain2.h
     full_screen_prompt.cpp include/full_screen_prompt.h
     get_3d_params.cpp include/get_3d_params.h
@@ -229,6 +229,7 @@ source_group("Header Files/ui" FILES
     include/find_path.h
     include/find_special_colors.h
     include/fix_dirname.h
+    include/fractint.h
     include/framain2.h
     include/full_screen_prompt.h
     include/get_3d_params.h

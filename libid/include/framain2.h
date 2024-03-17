@@ -20,14 +20,9 @@ extern void                (*g_out_line_cleanup)();
 extern bool                  g_virtual_screens;
 
 main_state big_while_loop(bool *kbdmore, bool *stacked, bool resume_flag);
-bool check_key();
 int cmp_line(BYTE *pixels, int linelen);
 int key_count(int keynum);
 main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool *stacked);
-int pot_line(BYTE *pixels, int linelen);
-int sound_line(BYTE *pixels, int linelen);
-int timer(int timertype, int(*subrtn)(), ...);
 void clear_zoombox();
-void flip_image(int kbdchar);
 void reset_zoom_corners();
 void history_init();

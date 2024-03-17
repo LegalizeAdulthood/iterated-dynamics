@@ -10,15 +10,13 @@
 #include "fracsubr.h"
 #include "fractalp.h"
 #include "fractals.h"
+#include "fractint.h"
 #include "fractype.h"
-#include "framain2.h"
-#include "helpdefs.h"
 #include "id_data.h"
 #include "mpmath.h"
 #include "mpmath_c.h"
 
 #include <cmath>
-#include <cstring>
 
 #if !defined(XFRACT)
 #define MPCmod(m) (*pMPadd(*pMPmul((m).x, (m).x), *pMPmul((m).y, (m).y)))

@@ -16,8 +16,8 @@
 #include "fracsubr.h"
 #include "fractalp.h"
 #include "fractals.h"
+#include "fractint.h"
 #include "fractype.h"
-#include "framain2.h"
 #include "id_data.h"
 #include "jiim.h"
 #include "line3d.h"
@@ -30,7 +30,6 @@
 #include <cmath>
 #include <cstdio>
 #include <cstdlib>
-#include <cstring>
 #include <vector>
 
 // orbitcalc is declared with no arguments so jump through hoops here
