@@ -86,6 +86,7 @@ add_library(libid
     prompts2.cpp include/prompts2.h
     realdos.cpp include/realdos.h
     search_path.cpp include/search_path.h
+    set_bailout_formula.cpp include/set_bailout_formula.h
     spindac.cpp include/spindac.h
     split_path.cpp include/split_path.h
     update_save_name.cpp include/update_save_name.h
@@ -258,6 +259,7 @@ source_group("Header Files/ui" FILES
     include/prompts2.h
     include/realdos.h
     include/search_path.h
+    include/set_bailout_formula.h
     include/spindac.h
     include/split_path.h
     include/update_save_name.h
@@ -294,6 +296,7 @@ source_group("Source Files/ui" FILES
     prompts2.cpp
     realdos.cpp
     search_path.cpp
+    set_bailout_formula.cpp
     spindac.cpp
     split_path.cpp
     update_save_name.cpp

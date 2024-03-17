@@ -14,6 +14,7 @@
 #include "miscres.h"
 #include "parser.h"
 #include "prompts1.h"
+#include "set_bailout_formula.h"
 #include "zoom.h"
 
 #include <algorithm>

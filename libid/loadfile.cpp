@@ -30,11 +30,11 @@
 #include "miscres.h"
 #include "parser.h"
 #include "plot3d.h"
-#include "prompts1.h"
 #include "prompts2.h"
 #include "realdos.h"
 #include "split_path.h"
 #include "rotate.h"
+#include "set_bailout_formula.h"
 #include "zoom.h"
 
 #include <algorithm>
