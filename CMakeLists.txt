@@ -18,9 +18,7 @@ project("${ID_PROJECT_NAME}"
     HOMEPAGE_URL "https://LegalizeAdulthood.github.io/iterated-dynamics"
     LANGUAGES CXX)
 
-include(CheckSymbolExists)
 include(CTest)
-include(TestBigEndian)
 
 find_package(Boost REQUIRED)
 
@@ -47,7 +45,6 @@ if(NOT MSVC AND CMAKE_CXX_COMPILER_ID MATCHES "(GNU|Clang)")
     list(APPEND ID_TARGET_OPTIONS "-Werror")
 endif()
 
-
 # In debug builds, tell MSVC to:
 #   - not warn us about unchecked iterators
 #   - not warn us about deprecated CRT functions
@@ -64,17 +61,7 @@ endif()
 add_subdirectory(unix)
 add_subdirectory(win32)
 add_subdirectory(hc)
-
-test_big_endian(ID_BIG_ENDIAN)
-check_symbol_exists(strncasecmp "strings.h" ID_HAVE_STRNCASECMP)
-configure_file(headers/port_config.h.in include/port_config.h)
-add_library(config INTERFACE)
-target_sources(config INTERFACE
-    headers/port_config.h.in
-    headers/string_case_compare.h
-    "${CMAKE_CURRENT_BINARY_DIR}/include/port_config.h"
-)
-target_include_directories(config INTERFACE "${CMAKE_CURRENT_BINARY_DIR}/include")
+add_subdirectory(config)
 
 add_library(libid
     headers/id_io.h

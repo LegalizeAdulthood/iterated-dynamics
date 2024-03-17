@@ -1,5 +1,7 @@
 #pragma once
 
+#include "port_config.h"
+
 #ifdef ID_HAVE_STRNCASECMP
 #include <strings.h>
 
