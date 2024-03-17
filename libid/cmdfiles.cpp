@@ -2429,11 +2429,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         {
             return bad_arg(curarg);
         }
-#ifndef XFRACT
         g_user_float_flag = yesnoval[0] != 0;
-#else
-        g_user_float_flag = true; // must use floating point
-#endif
         return CMDARG_FRACTAL_PARAM | CMDARG_3D_PARAM;
     }
 
