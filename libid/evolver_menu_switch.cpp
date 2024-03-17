@@ -83,9 +83,9 @@ main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bo
     case FIK_CTL_E:
     case FIK_SPACE:
         clear_zoombox();
-        if (fromtext_flag)
+        if (g_from_text)
         {
-            fromtext_flag = false;
+            g_from_text = false;
         }
         else
         {

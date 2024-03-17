@@ -13,7 +13,7 @@ enum class main_state
 
 extern EVOLUTION_INFO        g_evolve_info;
 extern int                   g_finish_row;
-extern bool                  fromtext_flag;
+extern bool                  g_from_text;
 extern bool                  g_have_evolve_info;
 extern int                   g_max_image_history;
 extern char                  g_old_std_calc_mode;

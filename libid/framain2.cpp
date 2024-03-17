@@ -161,7 +161,7 @@ struct HISTORY
 
 } // namespace
 
-bool fromtext_flag = false;      // = true if we're in graphics mode
+bool g_from_text{}; // = true if we're in graphics mode
 static int call_line3d(BYTE *pixels, int linelen);
 static void cmp_line_cleanup();
 
@@ -728,7 +728,7 @@ resumeloop:                             // return here on failed overlays
                             || kbdchar == 'v' || kbdchar == FIK_CTL_B
                             || kbdchar == FIK_CTL_E || kbdchar == FIK_CTL_F)
                         {
-                            fromtext_flag = true;
+                            g_from_text = true;
                         }
                         else
                         {
@@ -969,9 +969,9 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
     case FIK_CTL_F:
         old_maxit = g_max_iterations;
         clear_zoombox();
-        if (fromtext_flag)
+        if (g_from_text)
         {
-            fromtext_flag = false;
+            g_from_text = false;
         }
         else
         {
@@ -1129,11 +1129,11 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
                 g_cur_fractal_specific = &g_fractal_specific[static_cast<int>(g_fractal_type)];
                 load_params(g_fractal_type);
             }
-            if (!fromtext_flag)
+            if (!g_from_text)
             {
                 driver_stack_screen();
             }
-            fromtext_flag = false;
+            g_from_text = false;
             err = get_fract_params(2);
             if (err >= 0)
             {
