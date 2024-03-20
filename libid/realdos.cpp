@@ -1886,13 +1886,6 @@ void discardgraphics() // release expanded/extended memory if any in use
 //VIDEOINFO *g_video_table;*/  /* temporarily loaded id.cfg info
 int g_video_table_len;                 // number of entries in above
 
-int showvidlength()
-{
-    int sz;
-    sz = (sizeof(VIDEOINFO)+sizeof(int))*MAX_VIDEO_MODES;
-    return sz;
-}
-
 int g_cfg_line_nums[MAX_VIDEO_MODES] = { 0 };
 
 /* load_id_config
