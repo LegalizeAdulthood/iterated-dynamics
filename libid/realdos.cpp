@@ -36,6 +36,7 @@
 #endif
 
 static int menu_checkkey(int curkey, int choice);
+static void blankrows(int row, int count, int attr);
 
 int g_release = 2099;   // this has 2 implied decimals; increment it every synch
 int g_patch_level = 8;  // patchlevel for DOS version
@@ -268,12 +269,12 @@ void cleartempmsg()
     }
 }
 
-void blankrows(int row, int rows, int attr)
+void blankrows(int row, int count, int attr)
 {
     char buf[81];
     std::memset(buf, ' ', 80);
     buf[80] = 0;
-    while (--rows >= 0)
+    while (--count >= 0)
     {
         driver_put_string(row++, 0, attr, buf);
     }

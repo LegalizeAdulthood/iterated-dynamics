@@ -37,7 +37,6 @@ extern int                   g_release;
 extern std::string const     g_speed_prompt;
 extern int                   g_video_table_len;
 
-void blankrows(int, int, int);
 int texttempmsg(char const *);
 int fullscreen_choice(
     int options,
