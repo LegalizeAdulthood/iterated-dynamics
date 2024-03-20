@@ -416,12 +416,12 @@ void show_speedstring(
 
 } // namespace
 
-void process_speedstring(char    *speedstring,
-                         char const **choices,         // array of choice strings
-                         int       curkey,
-                         int      *pcurrent,
-                         int       numchoices,
-                         int       is_unsorted)
+static void process_speedstring(char *speedstring, //
+    char const **choices,                          // array of choice strings
+    int curkey,                                    //
+    int *pcurrent,                                 //
+    int numchoices,                                //
+    int is_unsorted)
 {
     int i = (int) std::strlen(speedstring);
     if (curkey == 8 && i > 0)   // backspace
