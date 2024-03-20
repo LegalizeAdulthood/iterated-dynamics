@@ -123,18 +123,33 @@ struct VIDEOINFO
     Driver *driver;
 };
 
-#define ITEM_NAME_LEN 18   // max length of names in .frm/.l/.ifs/.fc
+enum
+{
+    ITEM_NAME_LEN = 18   // max length of names in .frm/.l/.ifs/.fc
+};
 
-#define NUM_GENES 21
+enum
+{
+    NUM_GENES = 21
+};
 
-#define MAX_VIDEO_MODES 300       // maximum entries in id.cfg
+enum
+{
+    MAX_VIDEO_MODES = 300       // maximum entries in id.cfg
+};
 #define AUTO_INVERT -123456.789
-#define MAX_NUM_ATTRACTORS 8
+enum
+{
+    MAX_NUM_ATTRACTORS = 8
+};
 extern  long     g_l_at_rad;      // finite attractor radius
 extern  double   g_f_at_rad;      // finite attractor radius
-#define NUM_IFS_FUNCTIONS 64
-#define NUM_IFS_PARAMS    7
-#define NUM_IFS_3D_PARAMS 13
+enum
+{
+    NUM_IFS_FUNCTIONS = 64,
+    NUM_IFS_PARAMS = 7,
+    NUM_IFS_3D_PARAMS = 13
+};
 
 enum class fractal_type;
 
@@ -160,48 +175,57 @@ enum class symmetry_type
 
 enum class fractal_type;
 
-// defines for inside/outside
-#define COLOR_BLACK 0
-#define ITER        -1
-#define REAL        -2
-#define IMAG        -3
-#define MULT        -4
-#define SUM         -5
-#define ATAN        -6
-#define FMOD        -7
-#define TDIS        -8
-#define ZMAG       -59
-#define BOF60      -60
-#define BOF61      -61
-#define EPSCROSS  -100
-#define STARTRAIL -101
-#define PERIOD    -102
-#define FMODI     -103
-#define ATANI     -104
+// values for inside/outside
+enum
+{
+    COLOR_BLACK = 0,
+    ITER = -1,
+    REAL = -2,
+    IMAG = -3,
+    MULT = -4,
+    SUM = -5,
+    ATAN = -6,
+    FMOD = -7,
+    TDIS = -8,
+    ZMAG = -59,
+    BOF60 = -60,
+    BOF61 = -61,
+    EPSCROSS = -100,
+    STARTRAIL = -101,
+    PERIOD = -102,
+    FMODI = -103,
+    ATANI = -104
+};
 
-// bitmask defines for fractalspecific flags
-#define  NOZOOM         1    // zoombox not allowed at all
-#define  NOGUESS        2    // solid guessing not allowed
-#define  NOTRACE        4    // boundary tracing not allowed
-#define  NOROTATE       8    // zoombox rotate/stretch not allowed
-#define  NORESUME      16    // can't interrupt and resume
-#define  INFCALC       32    // this type calculates forever
-#define  TRIG1         64    // number of trig functions in formula
-#define  TRIG2        128
-#define  TRIG3        192
-#define  TRIG4        256
-#define  PARMS3D     1024    // uses 3d parameters
-#define  OKJB        2048    // works with Julibrot
-#define  MORE        4096    // more than 4 parms
-#define  BAILTEST    8192    // can use different bailout tests
-#define  BF_MATH    16384    // supports arbitrary precision
-#define  LD_MATH    32768    // supports long double
+// bitmask values for fractalspecific flags
+enum
+{
+    NOZOOM = 1,      // zoombox not allowed at all
+    NOGUESS = 2,     // solid guessing not allowed
+    NOTRACE = 4,     // boundary tracing not allowed
+    NOROTATE = 8,    // zoombox rotate/stretch not allowed
+    NORESUME = 16,   // can't interrupt and resume
+    INFCALC = 32,    // this type calculates forever
+    TRIG1 = 64,      // number of trig functions in formula
+    TRIG2 = 128,     //
+    TRIG3 = 192,     //
+    TRIG4 = 256,     //
+    PARMS3D = 1024,  // uses 3d parameters
+    OKJB = 2048,     // works with Julibrot
+    MORE = 4096,     // more than 4 parms
+    BAILTEST = 8192, // can use different bailout tests
+    BF_MATH = 16384, // supports arbitrary precision
+    LD_MATH = 32768  // supports long double
+};
 
 // more bitmasks for evolution mode flag
-#define FIELDMAP        1    // steady field varyiations across screen
-#define RANDWALK        2    // newparm = lastparm +- rand()
-#define RANDPARAM       4    // newparm = constant +- rand()
-#define NOGROUT         8    // no gaps between images
+enum
+{
+    FIELDMAP = 1,  // steady field varyiations across screen
+    RANDWALK = 2,  // newparm = lastparm +- rand()
+    RANDPARAM = 4, // newparm = constant +- rand()
+    NOGROUT = 8    // no gaps between images
+};
 
 #define DEFAULT_FRACTAL_TYPE      ".gif"
 #define ALTERNATE_FRACTAL_TYPE    ".fra"
@@ -230,11 +254,14 @@ inline long lsqr(long x)
 
 #define PER_IMAGE   (g_fractal_specific[static_cast<int>(g_fractal_type)].per_image)
 #define PER_PIXEL   (g_fractal_specific[static_cast<int>(g_fractal_type)].per_pixel)
-#define ORBIT_CALC   (g_fractal_specific[static_cast<int>(g_fractal_type)].orbitcalc)
+#define ORBIT_CALC  (g_fractal_specific[static_cast<int>(g_fractal_type)].orbitcalc)
 
 // 3D stuff - formerly in 3d.h
-#define    CMAX    4   // maximum column (4 x 4 matrix)
-#define    RMAX    4   // maximum row    (4 x 4 matrix)
+enum
+{
+    CMAX = 4, // maximum column (4 x 4 matrix)
+    RMAX = 4   // maximum row    (4 x 4 matrix)
+};
 typedef double MATRIX [RMAX] [CMAX];  // matrix of doubles
 typedef int   IMATRIX [RMAX] [CMAX];  // matrix of ints
 typedef long  LMATRIX [RMAX] [CMAX];  // matrix of longs
