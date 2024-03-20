@@ -2255,7 +2255,7 @@ int plotorbits2dsetup()
         g_fractal_type = tofloat;
     }
 
-    PER_IMAGE();
+    per_image();
 
     // setup affine screen coord conversion
     if (g_keep_screen_coords)
@@ -2342,11 +2342,11 @@ int plotorbits2dfloat()
         }
     }
 
-    PER_PIXEL(); // initialize the calculations
+    per_pixel(); // initialize the calculations
 
     for (count = 0; count < g_max_iterations; count++)
     {
-        if (ORBIT_CALC() == 1 && g_periodicity_check)
+        if (orbit_calc() == 1 && g_periodicity_check)
         {
             continue;  // bailed out, don't plot
         }

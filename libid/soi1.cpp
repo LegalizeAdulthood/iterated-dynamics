@@ -105,7 +105,7 @@ static long iteration(
     g_float_param = &g_init;
     g_float_param->x = cr;
     g_float_param->y = ci;
-    while (ORBIT_CALC() == 0 && start < g_max_iterations)
+    while (orbit_calc() == 0 && start < g_max_iterations)
     {
         start++;
     }

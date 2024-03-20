@@ -519,7 +519,7 @@ void Jiim(jiim_types which)
 
     if (which == jiim_types::ORBIT)
     {
-        (*PER_IMAGE)();
+        per_image();
     }
 
     Cursor_Construct();
@@ -945,7 +945,7 @@ void Jiim(jiim_types which)
              */
             if (which == jiim_types::ORBIT)
             {
-                PER_PIXEL();
+                per_pixel();
             }
             // move window if bumped
             if (windows == 0 && g_col > xc && g_col < xc+xd && g_row > yc && g_row < yc+yd)
@@ -1210,7 +1210,7 @@ void Jiim(jiim_types which)
                 }
                 x = (int)((g_old_z.x - g_init.x) * xfactor * 3 * zoom + xoff);
                 y = (int)((g_old_z.y - g_init.y) * yfactor * 3 * zoom + yoff);
-                if ((*ORBIT_CALC)())
+                if (orbit_calc())
                 {
                     iter = g_max_iterations;
                 }
