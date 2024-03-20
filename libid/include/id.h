@@ -252,10 +252,6 @@ inline long lsqr(long x)
     return multiply(x, x, g_bit_shift);
 }
 
-#define PER_IMAGE   (g_fractal_specific[static_cast<int>(g_fractal_type)].per_image)
-#define PER_PIXEL   (g_fractal_specific[static_cast<int>(g_fractal_type)].per_pixel)
-#define ORBIT_CALC  (g_fractal_specific[static_cast<int>(g_fractal_type)].orbitcalc)
-
 // 3D stuff - formerly in 3d.h
 enum
 {

@@ -61,5 +61,9 @@ extern fractalspecificstuff  g_fractal_specific[];
 extern MOREPARAMS            g_more_fractal_params[];
 extern int                   g_num_fractal_types;
 
+#define PER_IMAGE   (g_fractal_specific[static_cast<int>(g_fractal_type)].per_image)
+#define PER_PIXEL   (g_fractal_specific[static_cast<int>(g_fractal_type)].per_pixel)
+#define ORBIT_CALC  (g_fractal_specific[static_cast<int>(g_fractal_type)].orbitcalc)
+
 bool typehasparm(fractal_type type, int parm, char *buf);
 bool paramnotused(int);
