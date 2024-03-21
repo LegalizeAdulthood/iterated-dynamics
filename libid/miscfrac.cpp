@@ -1463,14 +1463,7 @@ int popcorn()   // subset of std engine
 int lyaLength, lyaSeedOK;
 int lyaRxy[34];
 
-#define WES 1   // define WES to be 0 to use Nick's lyapunov.obj
-#if WES
-int lyapunov_cycles(double, double);
-#else
-int lyapunov_cycles(int, double, double, double);
-#endif
-
-int lyapunov_cycles_in_c(long, double, double);
+static int lyapunov_cycles(long filter_cycles, double a, double b);
 
 int lyapunov()
 {
@@ -1508,26 +1501,7 @@ int lyapunov()
         a = g_dy_pixel();
         b = g_dx_pixel();
     }
-#if !defined(XFRACT) && !defined(_WIN32)
-    /*  the assembler routines don't work for a & b outside the
-        ranges 0 < a < 4 and 0 < b < 4. So, fall back on the C
-        routines if part of the image sticks out.
-        */
-#if WES
-    color = lyapunov_cycles(a, b);
-#else
-    if (lyaSeedOK && a > 0 && b > 0 && a <= 4 && b <= 4)
-    {
-        color = lyapunov_cycles(filter_cycles, Population, a, b);
-    }
-    else
-    {
-        color = lyapunov_cycles_in_c(filter_cycles, a, b);
-    }
-#endif
-#else
-    g_color = lyapunov_cycles_in_c(filter_cycles, a, b);
-#endif
+    g_color = lyapunov_cycles(filter_cycles, a, b);
     if (g_inside_color > COLOR_BLACK && g_color == 0)
     {
         g_color = g_inside_color;
@@ -1611,7 +1585,7 @@ bool lya_setup()
     return true;
 }
 
-int lyapunov_cycles_in_c(long filter_cycles, double a, double b)
+static int lyapunov_cycles(long filter_cycles, double a, double b)
 {
     int color, lnadjust;
     double total;
