@@ -5,6 +5,7 @@
 
 #include "ant.h"
 #include "calcfrac.h"
+#include "cellular.h"
 #include "cmdfiles.h"
 #include "decoder.h"
 #include "diskvid.h"
@@ -33,7 +34,6 @@
 #include "make_batch_file.h"
 #include "merge_path_names.h"
 #include "miscovl.h"
-#include "miscfrac.h"
 #include "os.h"
 #include "parser.h"
 #include "prompts1.h"

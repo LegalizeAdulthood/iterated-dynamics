@@ -9,6 +9,7 @@
 
 #include "ant.h"
 #include "calcfrac.h"
+#include "cellular.h"
 #include "fractalb.h"
 #include "fractals.h"
 #include "fractype.h"

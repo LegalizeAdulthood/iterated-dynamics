@@ -1,7 +1,5 @@
 #pragma once
 
-extern bool g_cellular_next_screen;
-
 int Bifurcation();
 int BifurcAddTrigPi();
 int BifurcLambda();
@@ -19,8 +17,6 @@ int LongBifurcSetTrigPi();
 int LongBifurcStewartTrig();
 int LongBifurcVerhulstTrig();
 
-bool CellularSetup();
-int cellular();
 int diffusion();
 bool lya_setup();
 int lyapunov();
