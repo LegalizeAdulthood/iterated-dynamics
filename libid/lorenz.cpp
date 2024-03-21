@@ -2594,10 +2594,7 @@ int ifs()                       // front-end for ifs2d and ifs3d
     return !g_ifs_type ? ifs2d() : ifs3d();
 }
 
-namespace
-{
-char insufficient_ifs_mem[] = {"Insufficient memory for IFS"};
-}
+static const char *const insufficient_ifs_mem{"Insufficient memory for IFS"};
 
 // IFS logic shamelessly converted to integer math
 static int ifs2d()
