@@ -19,6 +19,7 @@ add_library(libid
     testpt.cpp include/testpt.h
 
     ant.cpp include/ant.h
+    frothy_basin.cpp include/frothy_basin.h
     jb.cpp include/jb.h
     lorenz.cpp include/lorenz.h
     lsys.cpp include/lsys_fns.h
@@ -148,6 +149,7 @@ source_group("Source Files/engine" FILES
 )
 source_group("Header Files/fractal specific" FILES
     include/ant.h
+    include/frothy_basin.h
     include/jb.h
     include/lorenz.h
     include/lsys.h
@@ -158,6 +160,7 @@ source_group("Header Files/fractal specific" FILES
 )
 source_group("Source Files/fractal specific" FILES
     ant.cpp
+    frothy_basin.cpp
     jb.cpp
     lorenz.cpp
     lsys.cpp

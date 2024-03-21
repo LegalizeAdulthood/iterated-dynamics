@@ -13,6 +13,7 @@
 #include "fractals.h"
 #include "fractype.h"
 #include "frasetup.h"
+#include "frothy_basin.h"
 #include "helpdefs.h"
 #include "jb.h"
 #include "lorenz.h"

@@ -17,6 +17,7 @@
 #include "fracsubr.h"
 #include "fractalp.h"
 #include "fractype.h"
+#include "frothy_basin.h"
 #include "get_3d_params.h"
 #include "get_browse_params.h"
 #include "get_rds_params.h"

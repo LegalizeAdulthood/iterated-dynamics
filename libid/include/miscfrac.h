@@ -19,14 +19,9 @@ int LongBifurcSetTrigPi();
 int LongBifurcStewartTrig();
 int LongBifurcVerhulstTrig();
 
-int calcfroth();
 bool CellularSetup();
 int cellular();
 int diffusion();
-void froth_cleanup();
-int froth_per_orbit();
-int froth_per_pixel();
-bool froth_setup();
 bool lya_setup();
 int lyapunov();
 int plasma();
