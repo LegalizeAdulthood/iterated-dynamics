@@ -79,6 +79,8 @@ add_library(libid
     include/is_directory.h
     jiim.cpp include/jiim.h
     load_entry_text.cpp include/load_entry_text.h
+    main_menu_switch.cpp include/main_menu_switch.h
+    include/main_state.h
     make_batch_file.cpp include/make_batch_file.h
     include/make_path.h
     merge_path_names.cpp include/merge_path_names.h
@@ -257,6 +259,8 @@ source_group("Header Files/ui" FILES
     include/is_directory.h
     include/jiim.h
     include/load_entry_text.h
+    include/main_menu_switch.h
+    include/main_state.h
     include/make_batch_file.h
     include/make_path.h
     include/merge_path_names.h
@@ -295,6 +299,7 @@ source_group("Source Files/ui" FILES
     intro.cpp
     jiim.cpp
     load_entry_text.cpp
+    main_menu_switch.cpp
     make_batch_file.cpp
     merge_path_names.cpp
     miscovl.cpp
