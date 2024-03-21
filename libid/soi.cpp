@@ -59,6 +59,8 @@ struct soi_long_double_state
     long_double_complex tq[4];
 };
 
+} // namespace
+
 inline long_double_complex zsqr(long_double_complex z)
 {
     return { z.re*z.re, z.im*z.im };
@@ -97,13 +99,11 @@ inline LDBL evaluate(
     return (b2*(t - x1) + b1)*(t - x0) + b0;
 }
 
-long_double_complex zi[9];
-soi_long_double_state state{};
-LDBL twidth;
-LDBL equal;
-bool baxinxx = false;
-
-} // namespace
+static long_double_complex zi[9];
+static soi_long_double_state state{};
+static LDBL twidth;
+static LDBL equal;
+static bool baxinxx = false;
 
 static long iteration(
     LDBL cr, LDBL ci,

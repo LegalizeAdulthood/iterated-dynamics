@@ -452,28 +452,23 @@ extern const int g_num_trig_functions = NUMTRIGFN;
 
 static char tstack[4096] = { 0 };
 
-namespace
-{
-
-char const *jiim_left_right_list[] =
+static char const *jiim_left_right_list[] =
 {
     g_jiim_left_right[0].c_str(), g_jiim_left_right[1].c_str()
 };
 
-char const *jiim_method_list[] =
+static char const *jiim_method_list[] =
 {
     g_jiim_method[0].c_str(), g_jiim_method[1].c_str(), g_jiim_method[2].c_str()
 };
 
-char const *julia_3d_options_list[] =
+static char const *julia_3d_options_list[] =
 {
     g_julibrot_3d_options[0].c_str(),
     g_julibrot_3d_options[1].c_str(),
     g_julibrot_3d_options[2].c_str(),
     g_julibrot_3d_options[3].c_str()
 };
-
-}
 
 // ---------------------------------------------------------------------
 int get_fract_params(int caller)        // prompt for type-specific parms

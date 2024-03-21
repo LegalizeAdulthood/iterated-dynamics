@@ -164,12 +164,9 @@ void initgene()
     copy_genes_to_bank(gene);
 }
 
-namespace
-{
+static PARAMHIST oldhistory = { 0 };
 
-PARAMHIST oldhistory = { 0 };
-
-void save_param_history()
+static void save_param_history()
 {
     // save the old parameter history
     oldhistory.param0 = g_params[0];
@@ -195,7 +192,7 @@ void save_param_history()
     oldhistory.bailoutest = g_bail_out_test;
 }
 
-void restore_param_history()
+static void restore_param_history()
 {
     // restore the old parameter history
     g_params[0] = oldhistory.param0;
@@ -220,8 +217,6 @@ void restore_param_history()
     g_trig_index[2] = static_cast<trig_fn>(oldhistory.trigndx2);
     g_trig_index[3] = static_cast<trig_fn>(oldhistory.trigndx3);
     g_bail_out_test = static_cast<bailouts>(oldhistory.bailoutest);
-}
-
 }
 
 // mode = 0 for save old history,

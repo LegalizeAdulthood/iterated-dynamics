@@ -36,12 +36,7 @@
 #include <cassert>
 #include <cmath>
 
-namespace
-{
-
-struct MP Ans = { 0 };
-
-} // namespace
+static MP Ans = { 0 };
 
 int g_mp_overflow = 0;
 
@@ -828,10 +823,7 @@ int ComplexBasin()
 int g_distribution = 30;
 int g_slope = 25;
 
-namespace
-{
-int Offset = 0;
-}
+static int Offset = 0;
 
 int GausianNumber(int Probability, int Range)
 {

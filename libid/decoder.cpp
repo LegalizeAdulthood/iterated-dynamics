@@ -91,11 +91,8 @@ static BYTE suffix[10000] = { 0 };
 // corrupt in some way...
 //
 
-namespace
-{
-int bad_code_count = 0;
-BYTE decoderline[MAX_PIXELS];
-}
+static int bad_code_count = 0;
+static BYTE decoderline[MAX_PIXELS];
 
 // The reason we have these separated like this instead of using
 // a structure like the original Wilhite code did, is because this

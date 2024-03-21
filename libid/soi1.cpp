@@ -60,6 +60,8 @@ struct soi_double_state
     double_complex tq[4];
 };
 
+} // namespace
+
 inline double_complex zsqr(double_complex z)
 {
     return { z.re*z.re, z.im*z.im };
@@ -86,12 +88,10 @@ inline double evaluate(
     return (b2*(t - x1) + b1)*(t - x0) + b0;
 }
 
-double_complex zi[9];
-soi_double_state state{};
-double twidth;
-double equal;
-
-} // namespace
+static double_complex zi[9];
+static soi_double_state state{};
+static double twidth;
+static double equal;
 
 static long iteration(
     double cr, double ci,

@@ -1868,10 +1868,7 @@ void StkJumpLabel()
     jump_index++;
 }
 
-namespace
-{
-
-unsigned SkipWhiteSpace(char const *Str)
+static unsigned int SkipWhiteSpace(char const *Str)
 {
     unsigned n;
     bool Done = false;
@@ -1889,8 +1886,6 @@ unsigned SkipWhiteSpace(char const *Str)
         }
     }
     return n - 1;
-}
-
 }
 
 // detect if constant is part of a (a,b) construct
@@ -1915,10 +1910,7 @@ static bool isconst_pair(char const *Str)
     return answer;
 }
 
-namespace
-{
-
-ConstArg *isconst(char const *Str, int Len)
+static ConstArg *isconst(char const *Str, int Len)
 {
     DComplex z;
     // next line enforces variable vs constant naming convention
@@ -2048,13 +2040,18 @@ ConstArg *isconst(char const *Str, int Len)
     return &v[g_variable_index++];
 }
 
+namespace
+{
+
 struct FNCT_LIST
 {
     char const *s;
     void (**ptr)();
 };
 
-char const *JumpList[] =
+} // namespace
+
+static char const *JumpList[] =
 {
     "if",
     "elseif",
@@ -2062,8 +2059,6 @@ char const *JumpList[] =
     "endif",
     ""
 };
-
-} // namespace
 
 void (*StkTrig0)() = dStkSin;
 void (*StkTrig1)() = dStkSqr;
@@ -2162,11 +2157,8 @@ void FnctNotFound()
 {
 }
 
-namespace
-{
-
 // determine if s names a function and if so which one
-int whichfn(char const *s, int len)
+static int whichfn(char const *s, int len)
 {
     int out;
     if (len != 3)
@@ -2188,7 +2180,7 @@ int whichfn(char const *s, int len)
     return out;
 }
 
-void (*isfunct(char const *Str, int Len))()
+static void (*isfunct(char const *Str, int Len))()
 {
     unsigned n = SkipWhiteSpace(&Str[Len]);
     if (Str[Len+n] == '(')
@@ -2215,8 +2207,6 @@ void (*isfunct(char const *Str, int Len))()
         return FnctNotFound;
     }
     return NotAFnct;
-}
-
 }
 
 void RecSortPrec()

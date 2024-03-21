@@ -122,10 +122,7 @@ static double vid_aspect(int tryxdots, int tryydots)
 
 static std::array<vidinf, MAX_VIDEO_MODES> s_video_info;
 
-namespace
-{
-
-std::string heading_detail(FRACTAL_INFO const *info, ext_blk_3 const *blk_3_info)
+static std::string heading_detail(FRACTAL_INFO const *info, ext_blk_3 const *blk_3_info)
 {
     std::ostringstream result;
     if (info->info_id[0] == 'G')
@@ -154,7 +151,7 @@ std::string heading_detail(FRACTAL_INFO const *info, ext_blk_3 const *blk_3_info
     return result.str();
 }
 
-std::string save_release_detail()
+static std::string save_release_detail()
 {
     char buff[80];
     std::snprintf(buff, NUM_OF(buff), "v%d.%01d", g_release/100, (g_release%100)/10);
@@ -165,8 +162,6 @@ std::string save_release_detail()
         buff[i+1] = 0;
     }
     return std::string(buff);
-}
-
 }
 
 int get_video_mode(FRACTAL_INFO *info, ext_blk_3 *blk_3_info)

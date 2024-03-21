@@ -52,17 +52,12 @@ int    g_resume_len;               // length of resume info
 static int    resume_offset;            // offset in resume info gets
 bool    g_tab_or_help = false;    // kludge for sound and tab or help key press
 
-namespace
-{
-
 enum
 {
     NUM_SAVE_ORBIT = 1500
 };
 
-int save_orbit[NUM_SAVE_ORBIT] = { 0 };           // array to save orbit values
-
-}
+static int save_orbit[NUM_SAVE_ORBIT] = { 0 };           // array to save orbit values
 
 #define FUDGEFACTOR     29      // fudge all values up by 2**this
 #define FUDGEFACTOR2    24      // (or maybe this)

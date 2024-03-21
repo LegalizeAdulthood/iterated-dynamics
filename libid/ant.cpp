@@ -258,16 +258,11 @@ exit_ant:
     return;
 }
 
-namespace
-{
-
-unsigned rotate_left_one(unsigned value)
+static unsigned rotate_left_one(unsigned value)
 {
     unsigned const high_bit{~(~0U >> 1)};
     unsigned const result{value << 1};
     return (value & high_bit) ? (result | 1U) : result;
-}
-
 }
 
 // this one ignore the color of the current cell is more like a white ant
@@ -426,16 +421,11 @@ void free_ant_storage()
     }
 }
 
-namespace
-{
-
-std::string get_rule()
+static std::string get_rule()
 {
     std::ostringstream buff;
     buff << std::setprecision(17) << std::fixed << g_params[0];
     return buff.str();
-}
-
 }
 
 int ant()

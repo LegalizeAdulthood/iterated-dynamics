@@ -252,10 +252,7 @@ int getpower10(LDBL x)
     return p;
 }
 
-namespace
-{
-
-void process_sstools_ini()
+static void process_sstools_ini()
 {
     std::string const sstools_ini = find_path("sstools.ini"); // look for SSTOOLS.INI
     if (!sstools_ini.empty())              // found it!
@@ -268,7 +265,7 @@ void process_sstools_ini()
     }
 }
 
-void process_simple_command(char *curarg)
+static void process_simple_command(char *curarg)
 {
     bool processed = false;
     if (std::strchr(curarg, '=') == nullptr)
@@ -306,7 +303,7 @@ void process_simple_command(char *curarg)
     }
 }
 
-void process_file_setname(const char *curarg, char *sptr)
+static void process_file_setname(const char *curarg, char *sptr)
 {
     *sptr = 0;
     if (merge_pathnames(g_command_file, &curarg[1], cmd_file::AT_CMD_LINE) < 0)
@@ -322,7 +319,7 @@ void process_file_setname(const char *curarg, char *sptr)
     cmdfile(initfile, cmd_file::AT_CMD_LINE_SET_NAME);
 }
 
-void process_file(char *curarg)
+static void process_file(char *curarg)
 {
     std::FILE *initfile = std::fopen(&curarg[1], "r");
     if (initfile == nullptr)
@@ -331,8 +328,6 @@ void process_file(char *curarg)
     }
     cmdfile(initfile, cmd_file::AT_CMD_LINE);
 }
-
-} // namespace
 
 int cmdfiles(int argc, char const *const *argv)
 {
@@ -3842,16 +3837,11 @@ int get_max_curarg_len(char const *floatvalstr[], int totparms)
     return max_str;
 }
 
-namespace
-{
-
-std::string to_string(cmd_file value)
+static std::string to_string(cmd_file value)
 {
     static char const *const modestr[4] = {"command line", "sstools.ini", "PAR file", "PAR file"};
     return modestr[static_cast<int>(value)];
 }
-
-} // namespace
 
 // mode = 0 command line @filename
 //        1 sstools.ini

@@ -29,13 +29,9 @@ struct lsysf_cmd
     char ch;
 };
 
-namespace
-{
-std::vector<LDBL> sins_f;
-std::vector<LDBL> coss_f;
-
-LDBL const PI_DIV_180 = PI/180.0L;
-}
+static std::vector<LDBL> sins_f;
+static std::vector<LDBL> coss_f;
+static LDBL const PI_DIV_180 = PI/180.0L;
 
 static lsysf_cmd *findsize(lsysf_cmd *, lsys_turtlestatef *, lsysf_cmd **, int);
 
