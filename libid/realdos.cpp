@@ -269,7 +269,7 @@ void cleartempmsg()
     }
 }
 
-void blankrows(int row, int count, int attr)
+static void blankrows(int row, int count, int attr)
 {
     char buf[81];
     std::memset(buf, ' ', 80);
@@ -298,10 +298,7 @@ void helptitle()
     putstringcenter(0, 0, 80, C_TITLE, msg);
 }
 
-namespace
-{
-
-void footer_msg(int *i, int options, char const *speedstring)
+static void footer_msg(int *i, int options, char const *speedstring)
 {
     putstringcenter((*i)++, 0, 80, C_PROMPT_BKGRD,
                     (speedstring) ? "Use the cursor keys or type a value to make a selection"
@@ -311,8 +308,6 @@ void footer_msg(int *i, int options, char const *speedstring)
                     : ((options & CHOICE_HELP) ? "Press ENTER for highlighted choice, ESCAPE to back out, or F1 for help"
                        : "Press ENTER for highlighted choice, or ESCAPE to back out"));
 }
-
-} // namespace
 
 int putstringcenter(int row, int col, int width, int attr, char const *msg)
 {
@@ -369,10 +364,7 @@ static int isadirname(char const *name)
     }
 }
 
-namespace
-{
-
-void show_speedstring(
+static void show_speedstring(
     int speedrow,
     char const *speedstring,
     int (*speedprompt)(int row, int col, int vid, char const *speedstring, int speed_match))
@@ -413,8 +405,6 @@ void show_speedstring(
         driver_hide_text_cursor();
     }
 }
-
-} // namespace
 
 static void process_speedstring(char *speedstring, //
     char const **choices,                          // array of choice strings
