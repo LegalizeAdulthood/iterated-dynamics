@@ -32,7 +32,3 @@ bool ManlamTrigOrTrigSetup();
 bool MandelTrigOrTrigSetup();
 bool HalleySetup();
 bool dynam2dfloatsetup();
-bool PhoenixSetup();
-bool MandPhoenixSetup();
-bool PhoenixCplxSetup();
-bool MandPhoenixCplxSetup();
