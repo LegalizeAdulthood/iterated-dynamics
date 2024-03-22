@@ -365,20 +365,6 @@ int  fpMANRbailout()
         }                                                \
     } while (false)
 
-#define LTRIGARG(X)                         \
-    do                                      \
-    {                                       \
-        if (labs((X)) > l16triglim)         \
-        {                                   \
-            double tmp;                     \
-            tmp = (X);                      \
-            tmp /= g_fudge_factor;          \
-            tmp = std::fmod(tmp, PI * 2.0); \
-            tmp *= g_fudge_factor;          \
-            (X) = (long) tmp;               \
-        }                                   \
-    } while (false)
- 
 static int  Halleybailout()
 {
     if (std::fabs(modulus(g_new_z)-modulus(g_old_z)) < g_param_z2.x)
@@ -1252,19 +1238,32 @@ int PopcornFractal()
     return 0;
 }
 
+static void ltrig_arg(long &val)
+{
+    if (labs(val) > l16triglim)
+    {
+        double tmp;
+        tmp = val;
+        tmp /= g_fudge_factor;
+        tmp = std::fmod(tmp, PI * 2.0);
+        tmp *= g_fudge_factor;
+        val = (long) tmp;
+    }
+}
+
 int LPopcornFractal_Old()
 {
     g_l_temp = g_l_old_z;
     g_l_temp.x *= 3L;
     g_l_temp.y *= 3L;
-    LTRIGARG(g_l_temp.x);
-    LTRIGARG(g_l_temp.y);
+    ltrig_arg(g_l_temp.x);
+    ltrig_arg(g_l_temp.y);
     SinCos086(g_l_temp.x, &lsinx, &lcosx);
     SinCos086(g_l_temp.y, &lsiny, &lcosy);
     g_l_temp.x = divide(lsinx, lcosx, g_bit_shift) + g_l_old_z.x;
     g_l_temp.y = divide(lsiny, lcosy, g_bit_shift) + g_l_old_z.y;
-    LTRIGARG(g_l_temp.x);
-    LTRIGARG(g_l_temp.y);
+    ltrig_arg(g_l_temp.x);
+    ltrig_arg(g_l_temp.y);
     SinCos086(g_l_temp.x, &lsinx, &lcosx);
     SinCos086(g_l_temp.y, &lsiny, &lcosy);
     g_l_new_z.x = g_l_old_z.x - multiply(g_l_param.x, lsiny, g_bit_shift);
@@ -1296,14 +1295,14 @@ int LPopcornFractal()
     g_l_temp = g_l_old_z;
     g_l_temp.x *= 3L;
     g_l_temp.y *= 3L;
-    LTRIGARG(g_l_temp.x);
-    LTRIGARG(g_l_temp.y);
+    ltrig_arg(g_l_temp.x);
+    ltrig_arg(g_l_temp.y);
     SinCos086(g_l_temp.x, &lsinx, &lcosx);
     SinCos086(g_l_temp.y, &lsiny, &lcosy);
     g_l_temp.x = divide(lsinx, lcosx, g_bit_shift) + g_l_old_z.x;
     g_l_temp.y = divide(lsiny, lcosy, g_bit_shift) + g_l_old_z.y;
-    LTRIGARG(g_l_temp.x);
-    LTRIGARG(g_l_temp.y);
+    ltrig_arg(g_l_temp.x);
+    ltrig_arg(g_l_temp.y);
     SinCos086(g_l_temp.x, &lsinx, &lcosx);
     SinCos086(g_l_temp.y, &lsiny, &lcosy);
     g_l_new_z.x = g_l_old_z.x - multiply(g_l_param.x, lsiny, g_bit_shift);
