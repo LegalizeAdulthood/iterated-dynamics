@@ -31,85 +31,81 @@
 //       # prefix denotes U32 parameters
 
 // for Mandelbrots
-static char realz0[] = "Real Perturbation of Z(0)";
-static char imagz0[] = "Imaginary Perturbation of Z(0)";
+static const char *const realz0{"Real Perturbation of Z(0)"};
+static const char *const imagz0{"Imaginary Perturbation of Z(0)"};
 
 // for Julias
-static char realparm[] = "Real Part of Parameter";
-static char imagparm[] = "Imaginary Part of Parameter";
+static const char *const realparm{"Real Part of Parameter"};
+static const char *const imagparm{"Imaginary Part of Parameter"};
 
 // for Newtons
-static char newtdegree[] = "+Polynomial Degree (>= 2)";
+static const char *const newtdegree{"+Polynomial Degree (>= 2)"};
 
 // for MarksMandel/Julia
-static char exponent[]   = "Real part of Exponent";
-static char imexponent[] = "Imag part of Exponent";
+static const char *const exponent{"Real part of Exponent"};
+static const char *const imexponent{"Imag part of Exponent"};
 
 // for Lorenz
-static char timestep[]     = "Time Step";
+static const char *const timestep{"Time Step"};
 
 // for formula
-static char p1real[] = "Real portion of p1";
-static char p2real[] = "Real portion of p2";
-static char p3real[] = "Real portion of p3";
-static char p4real[] = "Real portion of p4";
-static char p5real[] = "Real portion of p5";
-static char p1imag[] = "Imaginary portion of p1";
-static char p2imag[] = "Imaginary portion of p2";
-static char p3imag[] = "Imaginary portion of p3";
-static char p4imag[] = "Imaginary portion of p4";
-static char p5imag[] = "Imaginary portion of p5";
+static const char *const p1real{"Real portion of p1"};
+static const char *const p2real{"Real portion of p2"};
+static const char *const p3real{"Real portion of p3"};
+static const char *const p4real{"Real portion of p4"};
+static const char *const p5real{"Real portion of p5"};
+static const char *const p1imag{"Imaginary portion of p1"};
+static const char *const p2imag{"Imaginary portion of p2"};
+static const char *const p3imag{"Imaginary portion of p3"};
+static const char *const p4imag{"Imaginary portion of p4"};
+static const char *const p5imag{"Imaginary portion of p5"};
 
 // trig functions
-static char recoeftrg1[] = "Real Coefficient First Function";
-static char imcoeftrg1[] = "Imag Coefficient First Function";
-static char recoeftrg2[] = "Real Coefficient Second Function";
-static char imcoeftrg2[] = "Imag Coefficient Second Function";
+static const char *const recoeftrg1{"Real Coefficient First Function"};
+static const char *const imcoeftrg1{"Imag Coefficient First Function"};
+static const char *const recoeftrg2{"Real Coefficient Second Function"};
+static const char *const imcoeftrg2{"Imag Coefficient Second Function"};
 
 // KAM Torus
-static char kamangle[] = "Angle (radians)";
-static char kamstep[] =  "Step size";
-static char kamstop[] =  "Stop value";
-static char pointsperorbit[] = "+Points per orbit";
+static const char *const kamangle{"Angle (radians)"};
+static const char *const kamstep{"Step size"};
+static const char *const kamstop{"Stop value"};
+static const char *const pointsperorbit{"+Points per orbit"};
 
 // popcorn and julia popcorn generalized
-static char step_x[] = "Step size (real)";
-static char step_y[] = "Step size (imaginary)";
-static char constant_x[] = "Constant C (real)";
-static char constant_y[] = "Constant C (imaginary)";
+static const char *const step_x{"Step size (real)"};
+static const char *const step_y{"Step size (imaginary)"};
+static const char *const constant_x{"Constant C (real)"};
+static const char *const constant_y{"Constant C (imaginary)"};
 
 // bifurcations
-static char filt[] = "+Filter Cycles";
-static char seed[] = "Seed Population";
+static const char *const filt{"+Filter Cycles"};
+static const char *const seed{"Seed Population"};
 
 // frothy basins
-static char frothmapping[] = "+Apply mapping once (1) or twice (2)";
-static char frothshade[] =  "+Enter non-zero value for alternate color shading";
-static char frothavalue[] =  "A (imaginary part of C)";
+static const char *const frothmapping{"+Apply mapping once (1) or twice (2)"};
+static const char *const frothshade{"+Enter non-zero value for alternate color shading"};
+static const char *const frothavalue{"A (imaginary part of C)"};
 
 // plasma and ant
-
-static char s_randomseed[] = "+Random Seed Value (0 = Random, 1 = Reuse Last)";
+static const char *const s_randomseed{"+Random Seed Value (0 = Random, 1 = Reuse Last)"};
 
 // ifs
-static char color_method[] = "+Coloring method (0,1)";
+static const char *const color_method{"+Coloring method (0,1)"};
 
 // phoenix fractals
-static char degreeZ[] = "Degree = 0 | >= 2 | <= -3";
+static const char *const degreeZ{"Degree = 0 | >= 2 | <= -3"};
 
 // julia inverse
-static char s_maxhits[] = "Max Hits per Pixel";
+static const char *const s_maxhits{"Max Hits per Pixel"};
 
 // halley
-static char order[] = {"+Order (integer > 1)"};
-static char real_relax[] = {"Real Relaxation coefficient"};
-static char epsilon[] = {"Epsilon"};
-static char imag_relax[] = {"Imag Relaxation coefficient"};
+static const char *const order{"+Order (integer > 1)"};
+static const char *const real_relax{"Real Relaxation coefficient"};
+static const char *const epsilon{"Epsilon"};
+static const char *const imag_relax{"Imag Relaxation coefficient"};
+
 // cellular
-static char cell_init[] = {"#Initial String | 0 = Random | -1 = Reuse Last Random"};
-static char cell_rule[] = {"#Rule = # of digits (see below) | 0 = Random"};
-static char cell_type[] = {"+Type (see below)"};
-static char cell_strt[] = {"#Starting Row Number"};
 
 // bailout defines
 #define FTRIGBAILOUT 2500
@@ -117,6 +113,10 @@ static char cell_strt[] = {"#Starting Row Number"};
 #define FROTHBAILOUT    7
 #define STDBAILOUT      4
 #define NOBAILOUT       0
+static const char *const cell_init{"#Initial String | 0 = Random | -1 = Reuse Last Random"};
+static const char *const cell_rule{"#Rule = # of digits (see below) | 0 = Random"};
+static const char *const cell_type{"+Type (see below)"};
+static const char *const cell_strt{"#Starting Row Number"};
 
 MOREPARAMS g_more_fractal_params[] =
 {
