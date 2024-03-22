@@ -15,6 +15,7 @@
 #include "id_data.h"
 #include "loadmap.h"
 #include "newton.h"
+#include "pixel_grid.h"
 #include "spindac.h"
 
 #include <algorithm>

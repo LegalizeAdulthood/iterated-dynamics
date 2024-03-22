@@ -15,6 +15,7 @@ add_library(libid
     fractals.cpp include/fractals.h
     frasetup.cpp include/frasetup.h
     param_not_used.cpp include/param_not_used.h
+    pixel_grid.cpp include/pixel_grid.h
     soi.cpp include/soi.h
     soi1.cpp
     testpt.cpp include/testpt.h
@@ -136,6 +137,7 @@ source_group("Header Files/engine" FILES
     include/frasetup.h
     include/id_data.h
     include/param_not_used.h
+    include/pixel_grid.h
     include/soi.h
     include/testpt.h
     include/type_has_param.h
@@ -151,6 +153,7 @@ source_group("Source Files/engine" FILES
     fractals.cpp
     frasetup.cpp
     param_not_used.cpp
+    pixel_grid.cpp
     soi.cpp
     soi1.cpp
     testpt.cpp

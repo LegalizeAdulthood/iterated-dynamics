@@ -41,6 +41,7 @@
 #include "os.h"
 #include "newton.h"
 #include "parser.h"
+#include "pixel_grid.h"
 #include "realdos.h"
 #include "soi.h"
 #include "update_save_name.h"

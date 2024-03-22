@@ -22,6 +22,7 @@ Miscellaneous fractal-specific code
 #include "miscres.h"
 #include "newton.h"
 #include "parser.h"
+#include "pixel_grid.h"
 #include "realdos.h"
 #include "rotate.h"
 #include "spindac.h"

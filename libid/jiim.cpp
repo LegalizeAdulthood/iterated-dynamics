@@ -26,6 +26,7 @@
 #include "lorenz.h"
 #include "miscfrac.h"
 #include "os.h"
+#include "pixel_grid.h"
 #include "prompts2.h"
 #include "realdos.h"
 #include "zoom.h"
