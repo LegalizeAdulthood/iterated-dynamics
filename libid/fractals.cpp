@@ -352,19 +352,6 @@ int  fpMANRbailout()
         }                                  \
     } while (false)
 
-#define LONGEXPBAILOUT()                                 \
-    do                                                   \
-    {                                                    \
-        if (labs(g_l_old_z.y) >= (1000L << g_bit_shift)) \
-        {                                                \
-            return 1;                                    \
-        }                                                \
-        if (labs(g_l_old_z.x) >= (8L << g_bit_shift))    \
-        {                                                \
-            return 1;                                    \
-        }                                                \
-    } while (false)
-
 static int  Halleybailout()
 {
     if (std::fabs(modulus(g_new_z)-modulus(g_old_z)) < g_param_z2.x)
@@ -859,7 +846,14 @@ int LambdaexponentFractal()
 int LongLambdaexponentFractal()
 {
     // found this in  "Science of Fractal Images"
-    LONGEXPBAILOUT();
+    if (labs(g_l_old_z.y) >= (1000L << g_bit_shift))
+    {
+        return 1;
+    }
+    if (labs(g_l_old_z.x) >= (8L << g_bit_shift))
+    {
+        return 1;
+    }
 
     SinCos086(g_l_old_z.y, &lsiny,  &lcosy);
 
