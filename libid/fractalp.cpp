@@ -1,6 +1,5 @@
 /*
         This module consists only of the fractalspecific structure
-        and a *slew* of defines needed to get it to compile
 */
 #include "port.h"
 #include "prototyp.h"
@@ -27,12 +26,9 @@
 
 #include <cstring>
 
-// functions defined elsewhere needed for fractalspecific
-// moved to prototyp.h
-
 // parameter descriptions
-// Note: parameters preceded by + are integer parameters
-//       parameters preceded by # are U32 parameters
+// Note: + prefix denotes integer parameters
+//       # prefix denotes U32 parameters
 
 // for Mandelbrots
 static char realz0[] = "Real Perturbation of Z(0)";
