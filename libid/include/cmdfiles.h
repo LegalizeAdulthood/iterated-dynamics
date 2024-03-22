@@ -263,7 +263,6 @@ extern std::string           g_working_dir;
 int cmdfiles(int argc, char const *const *argv);
 int load_commands(std::FILE *);
 void set_3d_defaults();
-int get_curarg_len(char const *curarg);
 int init_msg(char const *cmdstr, char const *badfilename, cmd_file mode);
 int cmdarg(char *curarg, cmd_file mode);
 int getpower10(LDBL x);

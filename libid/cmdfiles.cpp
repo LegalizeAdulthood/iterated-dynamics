@@ -3811,7 +3811,7 @@ static int get_bf(bf_t bf, char const *curarg)
 }
 
 // Get length of current args
-int get_curarg_len(char const *curarg)
+static int get_curarg_len(char const *curarg)
 {
     char const *s;
     s = std::strchr(curarg, '/');
