@@ -8,6 +8,7 @@
 #include "calcfrac.h"
 #include "cmdfiles.h"
 #include "decoder.h"
+#include "do_pause.h"
 #include "drivers.h"
 #include "encoder.h"
 #include "evolve.h"

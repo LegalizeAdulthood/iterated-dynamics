@@ -33,6 +33,7 @@ add_library(libid
     cmdfiles.cpp include/cmdfiles.h
     decoder.cpp include/decoder.h
     diskvid.cpp include/diskvid.h
+    do_pause.cpp include/do_pause.h
     editpal.cpp include/editpal.h
     encoder.cpp include/encoder.h
     evolve.cpp include/evolve.h
@@ -185,6 +186,7 @@ source_group("Header Files/IO" FILES
     include/cmdfiles.h
     include/decoder.h
     include/diskvid.h
+    include/do_pause.h
     include/editpal.h
     include/encoder.h
     include/evolve.h
@@ -202,6 +204,7 @@ source_group("Source Files/IO" FILES
     cmdfiles.cpp
     decoder.cpp
     diskvid.cpp
+    do_pause.cpp
     editpal.cpp
     encoder.cpp
     evolve.cpp

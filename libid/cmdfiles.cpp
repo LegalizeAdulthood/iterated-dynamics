@@ -9,6 +9,7 @@
 #include "bailout_formula.h"
 #include "biginit.h"
 #include "calcfrac.h"
+#include "do_pause.h"
 #include "drivers.h"
 #include "find_path.h"
 #include "fix_dirname.h"
@@ -3898,38 +3899,6 @@ int init_msg(char const *cmdstr, char const *badfilename, cmd_file mode)
         stopmsg(STOPMSG_NONE, msg);
     }
     return 0;
-}
-
-// defer pause until after parsing so we know if in batch mode
-void dopause(int action)
-{
-    static unsigned char needpause = 0;
-    switch (action)
-    {
-    case 0:
-        if (g_init_batch == batch_modes::NONE)
-        {
-            if (needpause == 1)
-            {
-                driver_get_key();
-            }
-            else if (needpause == 2)
-            {
-                if (getakeynohelp() == FIK_ESC)
-                {
-                    goodbye();
-                }
-            }
-        }
-        needpause = 0;
-        break;
-    case 1:
-    case 2:
-        needpause = (char)action;
-        break;
-    default:
-        break;
-    }
 }
 
 // Crude function to detect a floating point number. Intended for

@@ -5,6 +5,7 @@
 
 #include "cmdfiles.h"
 #include "diskvid.h"
+#include "do_pause.h"
 #include "drivers.h"
 #include "editpal.h"
 #include "find_path.h"

@@ -268,4 +268,3 @@ int get_max_curarg_len(char const *floatvalstr[], int totparm);
 int init_msg(char const *cmdstr, char const *badfilename, cmd_file mode);
 int cmdarg(char *curarg, cmd_file mode);
 int getpower10(LDBL x);
-void dopause(int);
