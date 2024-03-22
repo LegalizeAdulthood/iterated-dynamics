@@ -77,4 +77,3 @@ inline int orbit_calc()
 
 
 bool typehasparm(fractal_type type, int parm, char *buf);
-bool paramnotused(int);

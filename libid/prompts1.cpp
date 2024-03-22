@@ -26,6 +26,7 @@
 #include "merge_path_names.h"
 #include "miscres.h"
 #include "os.h"
+#include "param_not_used.h"
 #include "parser.h"
 #include "prompts2.h"
 #include "realdos.h"
