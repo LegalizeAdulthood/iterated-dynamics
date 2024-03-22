@@ -339,19 +339,6 @@ int  fpMANRbailout()
         }                                  \
     } while (false)
 
-#define FLOATEXPBAILOUT()                  \
-    do                                     \
-    {                                      \
-        if (std::fabs(g_old_z.y) >= 1.0e3) \
-        {                                  \
-            return 1;                      \
-        }                                  \
-        if (std::fabs(g_old_z.x) >= 8)     \
-        {                                  \
-            return 1;                      \
-        }                                  \
-    } while (false)
-
 static int  Halleybailout()
 {
     if (std::fabs(modulus(g_new_z)-modulus(g_old_z)) < g_param_z2.x)
@@ -825,7 +812,14 @@ int SierpinskiFPFractal()
 int LambdaexponentFractal()
 {
     // found this in  "Science of Fractal Images"
-    FLOATEXPBAILOUT();
+    if (std::fabs(g_old_z.y) >= 1.0e3)
+    {
+        return 1;
+    }
+    if (std::fabs(g_old_z.x) >= 8)
+    {
+        return 1;
+    }
     FPUsincos(&g_old_z.y, &siny, &cosy);
 
     if (g_old_z.x >= g_magnitude_limit && cosy >= 0.0)
