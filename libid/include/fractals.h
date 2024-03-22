@@ -180,7 +180,6 @@ int long_phoenix_per_pixel();
 int phoenix_per_pixel();
 int long_mandphoenix_per_pixel();
 int mandphoenix_per_pixel();
-int HyperComplexFPFractal();
 int LongPhoenixFractalcplx();
 int PhoenixFractalcplx();
 int fpMODbailout();

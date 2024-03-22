@@ -16,6 +16,7 @@
 #include "frasetup.h"
 #include "frothy_basin.h"
 #include "helpdefs.h"
+#include "hypercomplex_mandelbrot.h"
 #include "jb.h"
 #include "lorenz.h"
 #include "lsys_fns.h"
