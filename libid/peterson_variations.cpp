@@ -8,6 +8,7 @@
 #include "cmdfiles.h"
 #include "cmplx.h"
 #include "fpu087.h"
+#include "fracsubr.h"
 #include "fractals.h"
 #include "fractype.h"
 #include "id_data.h"
@@ -17,6 +18,68 @@
 #include "pixel_grid.h"
 
 DComplex g_marks_coefficient;
+
+bool MarksJuliaSetup()
+{
+    if (g_params[2] < 1)
+    {
+        g_params[2] = 1;
+    }
+    g_c_exponent = (int)g_params[2];
+    g_long_param = &g_l_param;
+    g_l_old_z = *g_long_param;
+    if (g_c_exponent > 3)
+    {
+        lcpower(&g_l_old_z, g_c_exponent-1, &g_l_coefficient, g_bit_shift);
+    }
+    else if (g_c_exponent == 3)
+    {
+        g_l_coefficient.x = multiply(g_l_old_z.x, g_l_old_z.x, g_bit_shift) - multiply(g_l_old_z.y, g_l_old_z.y, g_bit_shift);
+        g_l_coefficient.y = multiply(g_l_old_z.x, g_l_old_z.y, g_bit_shift_less_1);
+    }
+    else if (g_c_exponent == 2)
+    {
+        g_l_coefficient = g_l_old_z;
+    }
+    else if (g_c_exponent < 2)
+    {
+        g_l_coefficient.x = 1L << g_bit_shift;
+        g_l_coefficient.y = 0L;
+    }
+    get_julia_attractor(0.0, 0.0);       // an attractor?
+    return true;
+}
+
+bool MarksJuliafpSetup()
+{
+    if (g_params[2] < 1)
+    {
+        g_params[2] = 1;
+    }
+    g_c_exponent = (int)g_params[2];
+    g_float_param = &g_param_z1;
+    g_old_z = *g_float_param;
+    if (g_c_exponent > 3)
+    {
+        cpower(&g_old_z, g_c_exponent-1, &g_marks_coefficient);
+    }
+    else if (g_c_exponent == 3)
+    {
+        g_marks_coefficient.x = sqr(g_old_z.x) - sqr(g_old_z.y);
+        g_marks_coefficient.y = g_old_z.x * g_old_z.y * 2;
+    }
+    else if (g_c_exponent == 2)
+    {
+        g_marks_coefficient = g_old_z;
+    }
+    else if (g_c_exponent < 2)
+    {
+        g_marks_coefficient.x = 1.0;
+        g_marks_coefficient.y = 0.0;
+    }
+    get_julia_attractor(0.0, 0.0);       // an attractor?
+    return true;
+}
 
 int MarksLambdaFractal()
 {

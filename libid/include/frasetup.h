@@ -20,8 +20,6 @@ bool JuliafnPlusZsqrdSetup();
 bool SqrTrigSetup();
 bool FnXFnSetup();
 bool MandelTrigSetup();
-bool MarksJuliaSetup();
-bool MarksJuliafpSetup();
 bool SierpinskiSetup();
 bool SierpinskiFPSetup();
 bool StandardSetup();

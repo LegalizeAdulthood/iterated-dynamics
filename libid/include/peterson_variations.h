@@ -6,6 +6,8 @@
 
 extern DComplex              g_marks_coefficient;
 
+bool MarksJuliaSetup();
+bool MarksJuliafpSetup();
 int MarksLambdaFractal();
 int MarksLambdafpFractal();
 int MarksCplxMand();
