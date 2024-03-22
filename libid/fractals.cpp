@@ -279,15 +279,6 @@ int  fpMANRbailout()
         }                                              \
     } while (false)
 
-#define LONGXYTRIGBAILOUT()                                                                         \
-    do                                                                                              \
-    {                                                                                               \
-        if (labs(g_l_old_z.x) >= g_l_magnitude_limit2 || labs(g_l_old_z.y) >= g_l_magnitude_limit2) \
-        {                                                                                           \
-            return 1;                                                                               \
-        }                                                                                           \
-    } while (false)
-
 static int  Halleybailout()
 {
     if (std::fabs(modulus(g_new_z)-modulus(g_old_z)) < g_param_z2.x)
@@ -2126,7 +2117,10 @@ int Magnet2Fractal()  // Z = ((Z**3 + 3(C-1)Z + (C-1)(C-2)  ) /
 
 int LambdaTrigFractal()
 {
-    LONGXYTRIGBAILOUT();
+    if (labs(g_l_old_z.x) >= g_l_magnitude_limit2 || labs(g_l_old_z.y) >= g_l_magnitude_limit2)
+    {
+        return 1;
+    }
     LCMPLXtrig0(g_l_old_z, g_l_temp);           // ltmp = trig(lold)
     LCMPLXmult(*g_long_param, g_l_temp, g_l_new_z);   // lnew = longparm*trig(lold)
     g_l_old_z = g_l_new_z;
