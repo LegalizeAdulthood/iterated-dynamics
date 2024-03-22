@@ -317,15 +317,6 @@ int  fpMANRbailout()
         }                                              \
     } while (false)
 
-#define TRIG16CHECK(X)              \
-    do                              \
-    {                               \
-        if (labs((X)) > l16triglim) \
-        {                           \
-            return 1;               \
-        }                           \
-    } while (false)
-
 static int  Halleybailout()
 {
     if (std::fabs(modulus(g_new_z)-modulus(g_old_z)) < g_param_z2.x)
@@ -873,6 +864,15 @@ int FloatTrigPlusExponentFractal()
     g_new_z.y += tmpexp*siny + g_float_param->y;
     return g_bailout_float();
 }
+
+#define TRIG16CHECK(X)              \
+    do                              \
+    {                               \
+        if (labs((X)) > l16triglim) \
+        {                           \
+            return 1;               \
+        }                           \
+    } while (false)
 
 int LongTrigPlusExponentFractal()
 {
