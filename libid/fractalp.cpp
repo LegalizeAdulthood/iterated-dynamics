@@ -24,6 +24,7 @@
 #include "mpmath_c.h"
 #include "newton.h"
 #include "parser.h"
+#include "volterra_lotka.h"
 
 // parameter descriptions
 // Note: + prefix denotes integer parameters

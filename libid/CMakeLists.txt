@@ -22,6 +22,7 @@ add_library(libid
     soi1.cpp
     testpt.cpp include/testpt.h
     type_has_param.cpp include/type_has_param.h
+    volterra_lotka.cpp include/volterra_lotka.h
 
     ant.cpp include/ant.h
     cellular.cpp include/cellular.h
@@ -146,6 +147,7 @@ source_group("Header Files/engine" FILES
     include/soi.h
     include/testpt.h
     include/type_has_param.h
+    include/volterra_lotka.h
 )
 source_group("Source Files/engine" FILES
     calcfrac.cpp
@@ -165,6 +167,7 @@ source_group("Source Files/engine" FILES
     soi1.cpp
     testpt.cpp
     type_has_param.cpp
+    volterra_lotka.cpp
 )
 source_group("Header Files/fractal specific" FILES
     include/ant.h

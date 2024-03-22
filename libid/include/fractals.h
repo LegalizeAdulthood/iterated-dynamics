@@ -144,7 +144,6 @@ int MarksMandelPwrFractal();
 int TimsErrorfpFractal();
 int TimsErrorFractal();
 int CirclefpFractal();
-int VLfpFractal();
 int long_julia_per_pixel();
 int long_richard8_per_pixel();
 int long_mandel_per_pixel();
