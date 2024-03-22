@@ -297,15 +297,6 @@ int  fpMANRbailout()
         }                                                                                        \
     } while (false)
 
-#define FLOATHTRIGBAILOUT()                             \
-    do                                                  \
-    {                                                   \
-        if (std::fabs(g_old_z.x) >= g_magnitude_limit2) \
-        {                                               \
-            return 1;                                   \
-        }                                               \
-    } while (false)
-
 static int  Halleybailout()
 {
     if (std::fabs(modulus(g_new_z)-modulus(g_old_z)) < g_param_z2.x)
@@ -2194,7 +2185,11 @@ int LambdaTrigFractal2()
 
 int LambdaTrigfpFractal2()
 {
-    FLOATHTRIGBAILOUT(); // sinh,cosh
+    // sinh,cosh
+    if (std::fabs(g_old_z.x) >= g_magnitude_limit2)
+    {
+        return 1;
+    }
     CMPLXtrig0(g_old_z, g_tmp_z);              // tmp = trig(old)
     CMPLXmult(*g_float_param, g_tmp_z, g_new_z);   // new = longparm*trig(old)
     g_old_z = g_new_z;
