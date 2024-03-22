@@ -326,19 +326,6 @@ int  fpMANRbailout()
         }                           \
     } while (false)
 
-#define OLD_FLOATEXPBAILOUT()              \
-    do                                     \
-    {                                      \
-        if (std::fabs(g_old_z.y) >= 1.0e8) \
-        {                                  \
-            return 1;                      \
-        }                                  \
-        if (std::fabs(g_old_z.x) >= 6.4e2) \
-        {                                  \
-            return 1;                      \
-        }                                  \
-    } while (false)
-
 static int  Halleybailout()
 {
     if (std::fabs(modulus(g_new_z)-modulus(g_old_z)) < g_param_z2.x)
