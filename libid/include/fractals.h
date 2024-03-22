@@ -223,6 +223,3 @@ int phoenix_per_pixel();
 int long_mandphoenix_per_pixel();
 int mandphoenix_per_pixel();
 void set_pixel_calc_functions();
-int MandelbrotMix4fp_per_pixel();
-int MandelbrotMix4fpFractal();
-bool MandelbrotMix4Setup();

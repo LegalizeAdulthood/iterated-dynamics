@@ -18,6 +18,7 @@
 #include "jb.h"
 #include "lorenz.h"
 #include "lsys_fns.h"
+#include "mandelbrot_mix.h"
 #include "miscfrac.h"
 #include "mpmath_c.h"
 #include "newton.h"
