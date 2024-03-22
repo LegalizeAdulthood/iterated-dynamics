@@ -165,7 +165,7 @@ void FloatPreCalcMagnet2() // precalculation for Magnet2 (M & J) for speed
 }
 
 // --------------------------------------------------------------------
-//              Bailout Routines Macros
+//              Bailout Routines
 // --------------------------------------------------------------------
 
 int  fpMODbailout()
