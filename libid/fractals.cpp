@@ -62,8 +62,6 @@ an appropriate setup, per_image, per_pixel, and orbit routines.
 
 #define NEWTONDEGREELIMIT  100
 
-static const long l16triglim = 8L << 16;       // domain limit of fast trig functions
-
 LComplex g_l_coefficient;
 LComplex g_l_old_z;
 LComplex g_l_new_z;
@@ -865,22 +863,22 @@ int FloatTrigPlusExponentFractal()
     return g_bailout_float();
 }
 
-#define TRIG16CHECK(X)              \
-    do                              \
-    {                               \
-        if (labs((X)) > l16triglim) \
-        {                           \
-            return 1;               \
-        }                           \
-    } while (false)
+inline bool trig16_check(long val)
+{
+    static constexpr long l16triglim = 8L << 16; // domain limit of fast trig functions
+
+    return labs(val) > l16triglim;
+}
 
 int LongTrigPlusExponentFractal()
 {
     // calculate exp(z)
 
     // domain check for fast transcendental functions
-    TRIG16CHECK(g_l_old_z.x);
-    TRIG16CHECK(g_l_old_z.y);
+    if (trig16_check(g_l_old_z.x) || trig16_check(g_l_old_z.y))
+    {
+        return 1;
+    }
 
     longtmp = Exp086(g_l_old_z.x);
     SinCos086(g_l_old_z.y, &lsiny,  &lcosy);
@@ -1215,7 +1213,7 @@ int PopcornFractal()
 
 static void ltrig_arg(long &val)
 {
-    if (labs(val) > l16triglim)
+    if (trig16_check(val))
     {
         double tmp;
         tmp = val;
