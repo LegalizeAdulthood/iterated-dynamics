@@ -18,6 +18,7 @@ add_library(libid
     hypercomplex_mandelbrot.cpp include/hypercomplex_mandelbrot.h
     mandelbrot_mix.cpp include/mandelbrot_mix.h
     param_not_used.cpp include/param_not_used.h
+    peterson_variations.cpp include/peterson_variations.h
     phoenix.cpp include/phoenix.h
     pixel_grid.cpp include/pixel_grid.h
     quaternion_mandelbrot.cpp include/quaternion_mandelbrot.h
@@ -147,6 +148,7 @@ source_group("Header Files/engine" FILES
     include/id_data.h
     include/mandelbrot_mix.h
     include/param_not_used.h
+    include/peterson_variations.h
     include/phoenix.h
     include/pixel_grid.h
     include/quaternion_mandelbrot.h
@@ -169,6 +171,7 @@ source_group("Source Files/engine" FILES
     hypercomplex_mandelbrot.cpp
     mandelbrot_mix.cpp
     param_not_used.cpp
+    peterson_variations.cpp
     phoenix.cpp
     pixel_grid.cpp
     quaternion_mandelbrot.cpp
