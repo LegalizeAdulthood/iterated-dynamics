@@ -60,8 +60,6 @@ an appropriate setup, per_image, per_pixel, and orbit routines.
 #include <cmath>
 #include <cstdlib>
 
-#define NEWTONDEGREELIMIT  100
-
 LComplex g_l_coefficient;
 LComplex g_l_old_z;
 LComplex g_l_new_z;
