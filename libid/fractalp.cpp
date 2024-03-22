@@ -25,6 +25,7 @@
 #include "mpmath_c.h"
 #include "newton.h"
 #include "parser.h"
+#include "quaternion_mandelbrot.h"
 #include "volterra_lotka.h"
 
 // parameter descriptions

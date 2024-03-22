@@ -19,6 +19,7 @@ add_library(libid
     mandelbrot_mix.cpp include/mandelbrot_mix.h
     param_not_used.cpp include/param_not_used.h
     pixel_grid.cpp include/pixel_grid.h
+    quaternion_mandelbrot.cpp include/quaternion_mandelbrot.h
     soi.cpp include/soi.h
     soi1.cpp
     testpt.cpp include/testpt.h
@@ -146,6 +147,7 @@ source_group("Header Files/engine" FILES
     include/mandelbrot_mix.h
     include/param_not_used.h
     include/pixel_grid.h
+    include/quaternion_mandelbrot.h
     include/soi.h
     include/testpt.h
     include/type_has_param.h
@@ -166,6 +168,7 @@ source_group("Source Files/engine" FILES
     mandelbrot_mix.cpp
     param_not_used.cpp
     pixel_grid.cpp
+    quaternion_mandelbrot.cpp
     soi.cpp
     soi1.cpp
     testpt.cpp
