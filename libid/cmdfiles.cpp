@@ -66,6 +66,7 @@
 #define PRT_RESOLUTION  60      // Assume low resolution
 #endif
 
+static int get_max_curarg_len(char const *floatvalstr[], int totparm);
 static int  cmdfile(std::FILE *handle, cmd_file mode);
 static int  next_command(
     char *cmdbuf,
@@ -3823,7 +3824,7 @@ int get_curarg_len(char const *curarg)
 }
 
 // Get max length of current args
-int get_max_curarg_len(char const *floatvalstr[], int totparms)
+static int get_max_curarg_len(char const *floatvalstr[], int totparms)
 {
     int tmp, max_str;
     max_str = 0;
