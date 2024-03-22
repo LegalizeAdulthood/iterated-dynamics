@@ -1,6 +1,5 @@
 #pragma once
 
-bool VLSetup();
 bool MandelSetup();
 bool MandelfpSetup();
 bool JuliaSetup();

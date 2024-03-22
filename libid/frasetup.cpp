@@ -1304,26 +1304,3 @@ StandardSetup()
     }
     return true;
 }
-
-bool
-VLSetup()
-{
-    if (g_params[0] < 0.0)
-    {
-        g_params[0] = 0.0;
-    }
-    if (g_params[1] < 0.0)
-    {
-        g_params[1] = 0.0;
-    }
-    if (g_params[0] > 1.0)
-    {
-        g_params[0] = 1.0;
-    }
-    if (g_params[1] > 1.0)
-    {
-        g_params[1] = 1.0;
-    }
-    g_float_param = &g_param_z1;
-    return true;
-}
