@@ -106,17 +106,19 @@ static const char *const epsilon{"Epsilon"};
 static const char *const imag_relax{"Imag Relaxation coefficient"};
 
 // cellular
-
-// bailout defines
-#define FTRIGBAILOUT 2500
-#define LTRIGBAILOUT   64
-#define FROTHBAILOUT    7
-#define STDBAILOUT      4
-#define NOBAILOUT       0
 static const char *const cell_init{"#Initial String | 0 = Random | -1 = Reuse Last Random"};
 static const char *const cell_rule{"#Rule = # of digits (see below) | 0 = Random"};
 static const char *const cell_type{"+Type (see below)"};
 static const char *const cell_strt{"#Starting Row Number"};
+
+// bailout values
+enum
+{
+    LTRIGBAILOUT = 64,
+    FROTHBAILOUT = 7,
+    STDBAILOUT = 4,
+    NOBAILOUT = 0,
+};
 
 MOREPARAMS g_more_fractal_params[] =
 {
