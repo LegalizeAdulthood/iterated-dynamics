@@ -28,6 +28,7 @@
 #include "rotate.h"
 #include "soi.h"
 #include "split_path.h"
+#include "type_has_param.h"
 #include "update_save_name.h"
 
 #include <cassert>

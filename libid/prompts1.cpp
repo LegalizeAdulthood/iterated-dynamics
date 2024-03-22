@@ -30,6 +30,7 @@
 #include "parser.h"
 #include "prompts2.h"
 #include "realdos.h"
+#include "type_has_param.h"
 #include "zoom.h"
 
 #include <cassert>

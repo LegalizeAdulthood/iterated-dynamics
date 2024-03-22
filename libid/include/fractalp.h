@@ -74,6 +74,3 @@ inline int orbit_calc()
 {
     return g_fractal_specific[static_cast<int>(g_fractal_type)].orbitcalc();
 }
-
-
-bool typehasparm(fractal_type type, int parm, char *buf);

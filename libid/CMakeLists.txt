@@ -18,6 +18,7 @@ add_library(libid
     soi.cpp include/soi.h
     soi1.cpp
     testpt.cpp include/testpt.h
+    type_has_param.cpp include/type_has_param.h
 
     ant.cpp include/ant.h
     cellular.cpp include/cellular.h
@@ -137,6 +138,7 @@ source_group("Header Files/engine" FILES
     include/param_not_used.h
     include/soi.h
     include/testpt.h
+    include/type_has_param.h
 )
 source_group("Source Files/engine" FILES
     calcfrac.cpp
@@ -152,6 +154,7 @@ source_group("Source Files/engine" FILES
     soi.cpp
     soi1.cpp
     testpt.cpp
+    type_has_param.cpp
 )
 source_group("Header Files/fractal specific" FILES
     include/ant.h

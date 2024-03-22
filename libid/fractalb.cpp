@@ -18,6 +18,7 @@ fractal routines.
 #include "fractype.h"
 #include "helpdefs.h"
 #include "id_data.h"
+#include "type_has_param.h"
 
 #include <cstdio>
 #include <cstring>

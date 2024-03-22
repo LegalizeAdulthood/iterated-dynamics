@@ -29,6 +29,7 @@
 #include "rotate.h"
 #include "sound.h"
 #include "stereo.h"
+#include "type_has_param.h"
 
 #include <algorithm>
 #include <cctype>
