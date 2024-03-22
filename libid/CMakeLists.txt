@@ -8,6 +8,7 @@ add_library(libid
     calcfrac.cpp include/calcfrac.h
     calcmand.cpp include/calcmand.h
     calmanfp.cpp include/calmanfp.h
+    escher.cpp include/escher.h
     fracsuba.cpp include/fracsuba.h
     fracsubr.cpp include/fracsubr.h
     fractalb.cpp include/fractalb.h
@@ -130,6 +131,7 @@ source_group("Header Files/engine" FILES
     include/calcfrac.h
     include/calcmand.h
     include/calmanfp.h
+    include/escher.h
     include/fracsuba.h
     include/fracsubr.h
     include/fractalb.h
@@ -149,6 +151,7 @@ source_group("Source Files/engine" FILES
     calcfrac.cpp
     calcmand.cpp
     calmanfp.cpp
+    escher.cpp
     fracsuba.cpp
     fracsubr.cpp
     fractalb.cpp
