@@ -19,6 +19,7 @@
 #include "prompts2.h"
 #include "realdos.h"
 #include "spindac.h"
+#include "stop_msg.h"
 
 
 struct Perspective

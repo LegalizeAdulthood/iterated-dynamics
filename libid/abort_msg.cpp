@@ -1,6 +1,6 @@
 #include "abort_msg.h"
 
-#include "realdos.h"
+#include "stop_msg.h"
 
 #include <cstdio>
 

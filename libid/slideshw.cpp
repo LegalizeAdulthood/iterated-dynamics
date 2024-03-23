@@ -14,6 +14,7 @@
 #include "id_data.h"
 #include "miscres.h"
 #include "realdos.h"
+#include "stop_msg.h"
 
 #include <cctype>
 #include <cstdio>

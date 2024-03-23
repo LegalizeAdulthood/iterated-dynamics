@@ -16,6 +16,7 @@
 #include "realdos.h"
 #include "rotate.h"
 #include "spindac.h"
+#include "stop_msg.h"
 
 #include <algorithm>
 #include <cmath>

@@ -44,6 +44,7 @@
 #include "soi.h"
 #include "sound.h"
 #include "stereo.h"
+#include "stop_msg.h"
 
 #include <algorithm>
 #include <cassert>

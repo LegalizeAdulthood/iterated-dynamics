@@ -8,7 +8,7 @@
 #include "drivers.h"
 #include "line3d.h"
 #include "prompts2.h"
-#include "realdos.h"
+#include "stop_msg.h"
 
 #include <climits>
 #include <cstdio>

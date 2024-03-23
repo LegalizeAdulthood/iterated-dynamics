@@ -23,9 +23,9 @@ Miscellaneous fractal-specific code
 #include "newton.h"
 #include "parser.h"
 #include "pixel_grid.h"
-#include "realdos.h"
 #include "rotate.h"
 #include "spindac.h"
+#include "stop_msg.h"
 #include "testpt.h"
 
 #include <algorithm>
@@ -1573,8 +1573,7 @@ bool lya_setup()
     lyaRxy[lyaLength++] = 0;
     if (g_inside_color < COLOR_BLACK)
     {
-        stopmsg(STOPMSG_NONE,
-            "Sorry, inside options other than inside=nnn are not supported by the lyapunov");
+        stopmsg(STOPMSG_NONE, "Sorry, inside options other than inside=nnn are not supported by the lyapunov");
         g_inside_color = 1;
     }
     if (g_user_std_calc_mode == 'o')

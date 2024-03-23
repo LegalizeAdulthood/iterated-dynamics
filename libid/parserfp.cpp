@@ -38,7 +38,7 @@
 
 #include "cmdfiles.h"
 #include "fractalp.h"
-#include "realdos.h"
+#include "stop_msg.h"
 
 #include <cctype>
 #include <cstdio>

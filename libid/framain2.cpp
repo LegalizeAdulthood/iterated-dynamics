@@ -28,6 +28,7 @@
 #include "realdos.h"
 #include "rotate.h"
 #include "spindac.h"
+#include "stop_msg.h"
 #include "zoom.h"
 
 #include <cctype>
@@ -105,8 +106,7 @@ main_state big_while_loop(bool *const kbdmore, bool *const stacked, bool const r
                     }
                     else
                     {
-                        stopmsg(STOPMSG_NONE,
-                            "That video mode is not available with your adapter.");
+                        stopmsg(STOPMSG_NONE, "That video mode is not available with your adapter.");
                         g_ask_video = true;
                     }
                     g_init_mode = -1;

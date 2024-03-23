@@ -42,6 +42,7 @@
 #include "spindac.h"
 #include "split_path.h"
 #include "stereo.h"
+#include "stop_msg.h"
 #include "zoom.h"
 
 #include <cassert>

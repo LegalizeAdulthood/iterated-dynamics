@@ -3,7 +3,7 @@
 
 #include "calcmand.h"
 
-#include "realdos.h"
+#include "stop_msg.h"
 
 long
 calcmandasm()

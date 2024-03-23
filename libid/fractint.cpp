@@ -32,6 +32,7 @@
 #include "prompts2.h"
 #include "realdos.h"
 #include "rotate.h"
+#include "stop_msg.h"
 
 #include <cctype>
 #include <csignal>

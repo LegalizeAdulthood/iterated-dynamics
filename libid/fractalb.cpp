@@ -18,6 +18,8 @@ fractal routines.
 #include "fractype.h"
 #include "helpdefs.h"
 #include "id_data.h"
+#include "prompts2.h"
+#include "stop_msg.h"
 #include "type_has_param.h"
 
 #include <cstdio>
@@ -25,7 +27,7 @@ fractal routines.
 
 bf_math_type bf_math = bf_math_type::NONE;
 
-#ifdef DEBUG
+#ifndef NDEBUG
 //********************************************************************
 void show_var_bn(char const *s, bn_t n)
 {
@@ -40,14 +42,19 @@ void show_var_bn(char const *s, bn_t n)
 void showcornersdbl(char const *s)
 {
     char msg[400];
-    std::snprintf(msg, NUM_OF(msg), "%s\n"
-            "xxmin= %.20f xxmax= %.20f\n"
-            "yymin= %.20f yymax= %.20f\n"
-            "xx3rd= %.20f yy3rd= %.20f\n"
-            "delxx= %.20Lf delyy= %.20Lf\n"
-            "delx2= %.20Lf dely2= %.20Lf",
-            s, xxmin, xxmax, yymin, yymax, xx3rd, yy3rd,
-            delxx, delyy, delxx2, delyy2);
+    std::snprintf(msg, NUM_OF(msg),
+        "%s\n"                               //
+        "   x_min= %.20f    x_max= %.20f\n"  //
+        "   y_min= %.20f    y_max= %.20f\n"  //
+        "   x_3rd= %.20f    y_3rd= %.20f\n"  //
+        " delta_x= %.20Lf delta_y= %.20Lf\n" //
+        "delta_x2= %.20Lf delta_y2= %.20Lf", //
+        s,                                   //
+        g_x_min, g_x_max,                    //
+        g_y_min, g_y_max,                    //
+        g_x_3rd, g_y_3rd,                    //
+        g_delta_x, g_delta_y,                //
+        g_delta_x2, g_delta_y2);
     if (stopmsg(STOPMSG_NONE, msg))
     {
         goodbye();
@@ -60,24 +67,24 @@ void showcorners(char const *s)
     int dec = 20;
     char msg[100], msg1[100], msg3[100];
     bntostr(msg, dec, bnxmin);
-    std::snprintf(msg1, NUM_OF(msg1), "bnxmin=%s\nxxmin= %.20f\n\n", msg, xxmin);
+    std::snprintf(msg1, NUM_OF(msg1), "bnxmin=%s\nx_min= %.20f\n\n", msg, g_x_min);
     std::strcpy(msg3, s);
     std::strcat(msg3, "\n");
     std::strcat(msg3, msg1);
     bntostr(msg, dec, bnxmax);
-    std::snprintf(msg1, NUM_OF(msg1), "bnxmax=%s\nxxmax= %.20f\n\n", msg, xxmax);
+    std::snprintf(msg1, NUM_OF(msg1), "bnxmax=%s\nx_max= %.20f\n\n", msg, g_x_max);
     std::strcat(msg3, msg1);
     bntostr(msg, dec, bnymin);
-    std::snprintf(msg1, NUM_OF(msg1), "bnymin=%s\nyymin= %.20f\n\n", msg, yymin);
+    std::snprintf(msg1, NUM_OF(msg1), "bnymin=%s\ny_min= %.20f\n\n", msg, g_y_min);
     std::strcat(msg3, msg1);
     bntostr(msg, dec, bnymax);
-    std::snprintf(msg1, NUM_OF(msg1), "bnymax=%s\nyymax= %.20f\n\n", msg, yymax);
+    std::snprintf(msg1, NUM_OF(msg1), "bnymax=%s\ny_max= %.20f\n\n", msg, g_y_max);
     std::strcat(msg3, msg1);
     bntostr(msg, dec, bnx3rd);
-    std::snprintf(msg1, NUM_OF(msg1), "bnx3rd=%s\nxx3rd= %.20f\n\n", msg, xx3rd);
+    std::snprintf(msg1, NUM_OF(msg1), "bnx3rd=%s\nx_3rd= %.20f\n\n", msg, g_x_3rd);
     std::strcat(msg3, msg1);
     bntostr(msg, dec, bny3rd);
-    std::snprintf(msg1, NUM_OF(msg1), "bny3rd=%s\nyy3rd= %.20f\n\n", msg, yy3rd);
+    std::snprintf(msg1, NUM_OF(msg1), "bny3rd=%s\ny_3rd= %.20f\n\n", msg, g_y_3rd);
     std::strcat(msg3, msg1);
     if (stopmsg(STOPMSG_NONE, msg3))
     {
@@ -89,13 +96,15 @@ void showcorners(char const *s)
 void showbfglobals(char const *s)
 {
     char msg[300];
-    std::snprintf(msg, NUM_OF(msg), "%s\n\
-bnstep=%d bnlength=%d intlength=%d rlength=%d padding=%d\n\
-shiftfactor=%d decimals=%d bflength=%d rbflength=%d \n\
-bfdecimals=%d ",
-            s, bnstep, bnlength, intlength, rlength, padding,
-            shiftfactor, g_decimals, bflength, rbflength,
-            bfdecimals);
+    std::snprintf(msg, NUM_OF(msg),
+        "%s\n"                                                       //
+        "bnstep=%d bnlength=%d intlength=%d rlength=%d padding=%d\n" //
+        "shiftfactor=%d decimals=%d bflength=%d rbflength=%d \n"     //
+        "bfdecimals=%d ",                                            //
+        s,                                                           //
+        bnstep, bnlength, intlength, rlength, padding,               //
+        shiftfactor, g_decimals, bflength, rbflength,                //
+        bfdecimals);
     if (stopmsg(STOPMSG_NONE, msg))
     {
         goodbye();
@@ -110,26 +119,29 @@ void showcornersbf(char const *s)
     {
         dec = 20;
     }
-    bftostr(msg, dec, bfxmin);
-    std::snprintf(msg1, NUM_OF(msg1), "bfxmin=%s\nxxmin= %.20f decimals %d bflength %d\n\n",
-            msg, xxmin, g_decimals, bflength);
+    bftostr(msg, dec, g_bf_x_min);
+    std::snprintf(msg1, NUM_OF(msg1),
+        "bf_x_min=%s\n"                                //
+        "x_min= %.20f decimals %d bflength %d\n\n", //
+        msg,                                           //
+        g_x_min, g_decimals, bflength);
     std::strcpy(msg3, s);
     std::strcat(msg3, "\n");
     std::strcat(msg3, msg1);
-    bftostr(msg, dec, bfxmax);
-    std::snprintf(msg1, NUM_OF(msg1), "bfxmax=%s\nxxmax= %.20f\n\n", msg, xxmax);
+    bftostr(msg, dec, g_bf_x_max);
+    std::snprintf(msg1, NUM_OF(msg1), "bf_x_max=%s\nx_max= %.20f\n\n", msg, g_x_max);
     std::strcat(msg3, msg1);
-    bftostr(msg, dec, bfymin);
-    std::snprintf(msg1, NUM_OF(msg1), "bfymin=%s\nyymin= %.20f\n\n", msg, yymin);
+    bftostr(msg, dec, g_bf_y_min);
+    std::snprintf(msg1, NUM_OF(msg1), "bf_y_min=%s\ny_min= %.20f\n\n", msg, g_y_min);
     std::strcat(msg3, msg1);
-    bftostr(msg, dec, bfymax);
-    std::snprintf(msg1, NUM_OF(msg1), "bfymax=%s\nyymax= %.20f\n\n", msg, yymax);
+    bftostr(msg, dec, g_bf_y_max);
+    std::snprintf(msg1, NUM_OF(msg1), "bf_y_max=%s\ny_max= %.20f\n\n", msg, g_y_max);
     std::strcat(msg3, msg1);
-    bftostr(msg, dec, bfx3rd);
-    std::snprintf(msg1, NUM_OF(msg1), "bfx3rd=%s\nxx3rd= %.20f\n\n", msg, xx3rd);
+    bftostr(msg, dec, g_bf_x_3rd);
+    std::snprintf(msg1, NUM_OF(msg1), "bf_x_3rd=%s\nxx_3rd= %.20f\n\n", msg, g_x_3rd);
     std::strcat(msg3, msg1);
-    bftostr(msg, dec, bfy3rd);
-    std::snprintf(msg1, NUM_OF(msg1), "bfy3rd=%s\nyy3rd= %.20f\n\n", msg, yy3rd);
+    bftostr(msg, dec, g_bf_y_3rd);
+    std::snprintf(msg1, NUM_OF(msg1), "bf_y_3rd=%s\ny_3rd= %.20f\n\n", msg, g_y_3rd);
     std::strcat(msg3, msg1);
     if (stopmsg(STOPMSG_NONE, msg3))
     {
@@ -141,25 +153,25 @@ void showcornersbfs(char const *s)
 {
     int dec = 20;
     char msg[100], msg1[100], msg3[500];
-    bftostr(msg, dec, bfsxmin);
-    std::snprintf(msg1, NUM_OF(msg1), "bfsxmin=%s\nxxmin= %.20f\n\n", msg, xxmin);
+    bftostr(msg, dec, g_bf_save_x_min);
+    std::snprintf(msg1, NUM_OF(msg1), "bf_save_x_min=%s\nx_min= %.20f\n\n", msg, g_x_min);
     std::strcpy(msg3, s);
     std::strcat(msg3, "\n");
     std::strcat(msg3, msg1);
-    bftostr(msg, dec, bfsxmax);
-    std::snprintf(msg1, NUM_OF(msg1), "bfsxmax=%s\nxxmax= %.20f\n\n", msg, xxmax);
+    bftostr(msg, dec, g_bf_save_x_max);
+    std::snprintf(msg1, NUM_OF(msg1), "bf_save_x_max=%s\nx_max= %.20f\n\n", msg, g_x_max);
     std::strcat(msg3, msg1);
-    bftostr(msg, dec, bfsymin);
-    std::snprintf(msg1, NUM_OF(msg1), "bfsymin=%s\nyymin= %.20f\n\n", msg, yymin);
+    bftostr(msg, dec, g_bf_save_y_min);
+    std::snprintf(msg1, NUM_OF(msg1), "bf_save_y_min=%s\ny_min= %.20f\n\n", msg, g_y_min);
     std::strcat(msg3, msg1);
-    bftostr(msg, dec, bfsymax);
-    std::snprintf(msg1, NUM_OF(msg1), "bfsymax=%s\nyymax= %.20f\n\n", msg, yymax);
+    bftostr(msg, dec, g_bf_save_y_max);
+    std::snprintf(msg1, NUM_OF(msg1), "bf_save_y_max=%s\ny_max= %.20f\n\n", msg, g_y_max);
     std::strcat(msg3, msg1);
-    bftostr(msg, dec, bfsx3rd);
-    std::snprintf(msg1, NUM_OF(msg1), "bfsx3rd=%s\nxx3rd= %.20f\n\n", msg, xx3rd);
+    bftostr(msg, dec, g_bf_save_x_3rd);
+    std::snprintf(msg1, NUM_OF(msg1), "bf_save_x_3rd=%s\nx_3rd= %.20f\n\n", msg, g_x_3rd);
     std::strcat(msg3, msg1);
-    bftostr(msg, dec, bfsy3rd);
-    std::snprintf(msg1, NUM_OF(msg1), "bfsy3rd=%s\nyy3rd= %.20f\n\n", msg, yy3rd);
+    bftostr(msg, dec, g_bf_save_y_3rd);
+    std::snprintf(msg1, NUM_OF(msg1), "bf_save_y_3rd=%s\ny_3rd= %.20f\n\n", msg, g_y_3rd);
     std::strcat(msg3, msg1);
     if (stopmsg(STOPMSG_NONE, msg3))
     {
@@ -202,13 +214,13 @@ void showaspect(char const *s)
     bt1    = alloc_stack(rbflength+2);
     bt2    = alloc_stack(rbflength+2);
     aspect = alloc_stack(rbflength+2);
-    sub_bf(bt1, bfxmax, bfxmin);
-    sub_bf(bt2, bfymax, bfymin);
+    sub_bf(bt1, g_bf_x_max, g_bf_x_min);
+    sub_bf(bt2, g_bf_y_max, g_bf_y_min);
     div_bf(aspect, bt2, bt1);
     bftostr(str, 10, aspect);
     std::snprintf(msg, NUM_OF(msg), "aspect %s\nfloat %13.10f\nbf    %s\n\n",
             s,
-            (yymax-yymin)/(xxmax-xxmin),
+            (g_y_max-g_y_min)/(g_x_max-g_x_min),
             str);
     if (stopmsg(STOPMSG_NONE, msg))
     {
@@ -255,7 +267,6 @@ void show_var_bf(char const *s, bf_t n)
         goodbye();
     }
 }
-
 #endif
 
 void bfcornerstofloat()
@@ -644,19 +655,19 @@ bool MandelbfSetup()
 
     bf_math = bf_math_type::BIGFLT;
 
-    // bfxdel = (bfxmax - bfx3rd)/(xdots-1)
+    // bfxdel = (g_bf_x_max - g_bf_x_3rd)/(xdots-1)
     sub_bf(bfxdel, g_bf_x_max, g_bf_x_3rd);
     div_a_bf_int(bfxdel, (U16)(g_logical_screen_x_dots - 1));
 
-    // bfydel = (bfymax - bfy3rd)/(ydots-1)
+    // bfydel = (g_bf_y_max - g_bf_y_3rd)/(ydots-1)
     sub_bf(bfydel, g_bf_y_max, g_bf_y_3rd);
     div_a_bf_int(bfydel, (U16)(g_logical_screen_y_dots - 1));
 
-    // bfxdel2 = (bfx3rd - bfxmin)/(ydots-1)
+    // bfxdel2 = (g_bf_x_3rd - g_bf_x_min)/(ydots-1)
     sub_bf(bfxdel2, g_bf_x_3rd, g_bf_x_min);
     div_a_bf_int(bfxdel2, (U16)(g_logical_screen_y_dots - 1));
 
-    // bfydel2 = (bfy3rd - bfymin)/(xdots-1)
+    // bfydel2 = (g_bf_y_3rd - g_bf_y_min)/(xdots-1)
     sub_bf(bfydel2, g_bf_y_3rd, g_bf_y_min);
     div_a_bf_int(bfydel2, (U16)(g_logical_screen_x_dots - 1));
 
@@ -722,14 +733,14 @@ bool MandelbfSetup()
 
 int mandelbn_per_pixel()
 {
-    // parm.x = xxmin + col*delx + row*delx2
+    // parm.x = g_x_min + col*delx + row*delx2
     mult_bn_int(bnparm.x, bnxdel, (U16)g_col);
     mult_bn_int(bntmp, bnxdel2, (U16)g_row);
 
     add_a_bn(bnparm.x, bntmp);
     add_a_bn(bnparm.x, bnxmin);
 
-    // parm.y = yymax - row*dely - col*dely2;
+    // parm.y = g_y_max - row*dely - col*dely2;
     // note: in next four lines, bnold is just used as a temporary variable
     mult_bn_int(bnold.x, bnydel, (U16)g_row);
     mult_bn_int(bnold.y, bnydel2, (U16)g_col);
@@ -768,14 +779,14 @@ int mandelbn_per_pixel()
 
 int mandelbf_per_pixel()
 {
-    // parm.x = xxmin + col*delx + row*delx2
+    // parm.x = g_x_min + col*delx + row*delx2
     mult_bf_int(bfparm.x, bfxdel, (U16)g_col);
     mult_bf_int(bftmp, bfxdel2, (U16)g_row);
 
     add_a_bf(bfparm.x, bftmp);
     add_a_bf(bfparm.x, g_bf_x_min);
 
-    // parm.y = yymax - row*dely - col*dely2;
+    // parm.y = g_y_max - row*dely - col*dely2;
     // note: in next four lines, bfold is just used as a temporary variable
     mult_bf_int(bfold.x, bfydel, (U16)g_row);
     mult_bf_int(bfold.y, bfydel2, (U16)g_col);
@@ -815,14 +826,14 @@ int mandelbf_per_pixel()
 int
 juliabn_per_pixel()
 {
-    // old.x = xxmin + col*delx + row*delx2
+    // old.x = g_x_min + col*delx + row*delx2
     mult_bn_int(bnold.x, bnxdel, (U16)g_col);
     mult_bn_int(bntmp, bnxdel2, (U16)g_row);
 
     add_a_bn(bnold.x, bntmp);
     add_a_bn(bnold.x, bnxmin);
 
-    // old.y = yymax - row*dely - col*dely2;
+    // old.y = g_y_max - row*dely - col*dely2;
     // note: in next four lines, bnnew is just used as a temporary variable
     mult_bn_int(bnnew.x, bnydel, (U16)g_row);
     mult_bn_int(bnnew.y, bnydel2, (U16)g_col);
@@ -843,14 +854,14 @@ juliabn_per_pixel()
 int
 juliabf_per_pixel()
 {
-    // old.x = xxmin + col*delx + row*delx2
+    // old.x = g_x_min + col*delx + row*delx2
     mult_bf_int(bfold.x, bfxdel, (U16)g_col);
     mult_bf_int(bftmp, bfxdel2, (U16)g_row);
 
     add_a_bf(bfold.x, bftmp);
     add_a_bf(bfold.x, g_bf_x_min);
 
-    // old.y = yymax - row*dely - col*dely2;
+    // old.y = g_y_max - row*dely - col*dely2;
     // note: in next four lines, bfnew is just used as a temporary variable
     mult_bf_int(bfnew.x, bfydel, (U16)g_row);
     mult_bf_int(bfnew.y, bfydel2, (U16)g_col);

@@ -20,8 +20,8 @@ FRACTALS.C, i.e. which are non-fractal-specific fractal engine subroutines.
 #include "jb.h"
 #include "miscovl.h"
 #include "miscres.h"
-#include "realdos.h"
 #include "soi.h"
+#include "stop_msg.h"
 #include "type_has_param.h"
 #include "update_save_name.h"
 

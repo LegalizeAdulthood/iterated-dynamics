@@ -29,6 +29,7 @@
 #include "pixel_grid.h"
 #include "prompts2.h"
 #include "realdos.h"
+#include "stop_msg.h"
 #include "zoom.h"
 
 #include <algorithm>

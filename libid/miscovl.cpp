@@ -20,6 +20,7 @@
 #include "os.h"
 #include "realdos.h"
 #include "rotate.h"
+#include "stop_msg.h"
 
 #include <algorithm>
 #include <array>

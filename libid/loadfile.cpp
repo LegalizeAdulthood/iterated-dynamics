@@ -35,6 +35,7 @@
 #include "realdos.h"
 #include "split_path.h"
 #include "rotate.h"
+#include "stop_msg.h"
 #include "zoom.h"
 
 #include <algorithm>

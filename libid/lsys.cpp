@@ -12,6 +12,7 @@
 #include "lsys_fns.h"
 #include "miscres.h"
 #include "realdos.h"
+#include "stop_msg.h"
 
 #include <cassert>
 #include <cmath>

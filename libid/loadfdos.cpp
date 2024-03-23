@@ -41,6 +41,7 @@
 #include "make_batch_file.h"
 #include "os.h"
 #include "realdos.h"
+#include "stop_msg.h"
 
 #include <algorithm>
 #include <array>

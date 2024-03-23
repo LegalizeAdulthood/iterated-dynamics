@@ -118,6 +118,7 @@ add_library(libid
     sound.cpp include/sound.h
     spindac.cpp include/spindac.h
     split_path.cpp include/split_path.h
+    stop_msg.cpp include/stop_msg.h
     update_save_name.cpp include/update_save_name.h
     zoom.cpp include/zoom.h
 
@@ -343,6 +344,7 @@ source_group("Header Files/ui" FILES
     include/search_path.h
     include/spindac.h
     include/split_path.h
+    include/stop_msg.h
     include/update_save_name.h
     include/zoom.h
 )
@@ -381,6 +383,7 @@ source_group("Source Files/ui" FILES
     search_path.cpp
     spindac.cpp
     split_path.cpp
+    stop_msg.cpp
     update_save_name.cpp
     zoom.cpp
 )

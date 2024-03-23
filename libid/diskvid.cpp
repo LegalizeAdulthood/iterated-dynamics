@@ -16,6 +16,7 @@
 #include "id_data.h"
 #include "memory.h"
 #include "realdos.h"
+#include "stop_msg.h"
 
 #include <cassert>
 #include <cstring>

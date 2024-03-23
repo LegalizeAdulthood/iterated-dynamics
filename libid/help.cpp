@@ -10,6 +10,7 @@
 #include "id_io.h"
 #include "os.h"
 #include "realdos.h"
+#include "stop_msg.h"
 
 #include <fcntl.h>
 

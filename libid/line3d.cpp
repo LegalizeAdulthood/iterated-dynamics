@@ -25,6 +25,7 @@
 #include "realdos.h"
 #include "rotate.h"
 #include "stereo.h"
+#include "stop_msg.h"
 
 #include <algorithm>
 #include <climits>
@@ -1572,7 +1573,6 @@ static void File_Error(char const *File_Name1, int ERROR)
         break;
     }
     stopmsg(STOPMSG_NONE, msgbuf);
-    return;
 }
 
 

@@ -18,6 +18,7 @@
 #include "realdos.h"
 #include "rotate.h"
 #include "stereo.h"
+#include "stop_msg.h"
 
 #include <cstring>
 #include <string>
