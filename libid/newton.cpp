@@ -16,6 +16,7 @@
 #include "pixel_grid.h"
 
 #include <cmath>
+#include <cfloat>
 
 #define distance(z1, z2)  (sqr((z1).x-(z2).x)+sqr((z1).y-(z2).y))
 #define MPCmod(m) (*pMPadd(*pMPmul((m).x, (m).x), *pMPmul((m).y, (m).y)))
