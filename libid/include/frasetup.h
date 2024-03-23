@@ -8,8 +8,6 @@ bool UnitySetup();
 bool JuliafpSetup();
 bool MandellongSetup();
 bool JulialongSetup();
-bool TrigPlusSqrlongSetup();
-bool TrigPlusSqrfpSetup();
 bool FnPlusFnSym();
 bool JuliafnPlusZsqrdSetup();
 bool MandelTrigSetup();

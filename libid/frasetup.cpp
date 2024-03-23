@@ -547,44 +547,6 @@ JulialongSetup()
 }
 
 bool
-TrigPlusSqrlongSetup()
-{
-    g_cur_fractal_specific->per_pixel =  julia_per_pixel;
-    g_cur_fractal_specific->orbitcalc =  TrigPlusSqrFractal;
-    if (g_l_param.x == g_fudge_factor && g_l_param.y == 0L && g_l_param2.y == 0L && g_debug_flag != debug_flags::force_standard_fractal)
-    {
-        if (g_l_param2.x == g_fudge_factor)          // Scott variant
-        {
-            g_cur_fractal_specific->orbitcalc =  ScottTrigPlusSqrFractal;
-        }
-        else if (g_l_param2.x == -g_fudge_factor)      // Skinner variant
-        {
-            g_cur_fractal_specific->orbitcalc =  SkinnerTrigSubSqrFractal;
-        }
-    }
-    return JulialongSetup();
-}
-
-bool
-TrigPlusSqrfpSetup()
-{
-    g_cur_fractal_specific->per_pixel =  juliafp_per_pixel;
-    g_cur_fractal_specific->orbitcalc =  TrigPlusSqrfpFractal;
-    if (g_param_z1.x == 1.0 && g_param_z1.y == 0.0 && g_param_z2.y == 0.0 && g_debug_flag != debug_flags::force_standard_fractal)
-    {
-        if (g_param_z2.x == 1.0)          // Scott variant
-        {
-            g_cur_fractal_specific->orbitcalc =  ScottTrigPlusSqrfpFractal;
-        }
-        else if (g_param_z2.x == -1.0)      // Skinner variant
-        {
-            g_cur_fractal_specific->orbitcalc =  SkinnerTrigSubSqrfpFractal;
-        }
-    }
-    return JuliafpSetup();
-}
-
-bool
 FnPlusFnSym() // set symmetry matrix for fn+fn type
 {
     static symmetry_type fnplusfn[7][7] =
