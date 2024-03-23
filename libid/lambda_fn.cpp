@@ -14,14 +14,6 @@
 
 #include <cmath>
 
-static long longtmp;
-// temporary variables for trig use
-static long lcosy;
-static long lsiny;
-static double siny;
-static double cosy;
-static double tmpexp;
-
 int LambdaFractal()
 {
     // variation of classical Mandelbrot/Julia
@@ -141,13 +133,15 @@ static int LongLambdaexponentFractal()
         return 1;
     }
 
+    long lsiny;
+    long lcosy;
     SinCos086(g_l_old_z.y, &lsiny,  &lcosy);
 
     if (g_l_old_z.x >= g_l_magnitude_limit && lcosy >= 0L)
     {
         return 1;
     }
-    longtmp = Exp086(g_l_old_z.x);
+    long longtmp = Exp086(g_l_old_z.x);
 
     g_l_temp.x = multiply(longtmp,      lcosy,   g_bit_shift);
     g_l_temp.y = multiply(longtmp,      lsiny,   g_bit_shift);
@@ -171,13 +165,15 @@ static int LambdaexponentFractal()
     {
         return 1;
     }
+    double siny;
+    double cosy;
     FPUsincos(&g_old_z.y, &siny, &cosy);
 
     if (g_old_z.x >= g_magnitude_limit && cosy >= 0.0)
     {
         return 1;
     }
-    tmpexp = std::exp(g_old_z.x);
+    const double tmpexp = std::exp(g_old_z.x);
     g_tmp_z.x = tmpexp*cosy;
     g_tmp_z.y = tmpexp*siny;
 
