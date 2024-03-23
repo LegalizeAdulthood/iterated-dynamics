@@ -14,8 +14,6 @@ bool MandelTrigSetup();
 bool SierpinskiSetup();
 bool SierpinskiFPSetup();
 bool StandardSetup();
-bool LambdaTrigOrTrigSetup();
-bool JuliaTrigOrTrigSetup();
 bool ManlamTrigOrTrigSetup();
 bool MandelTrigOrTrigSetup();
 bool dynam2dfloatsetup();

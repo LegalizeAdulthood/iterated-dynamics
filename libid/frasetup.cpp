@@ -580,42 +580,6 @@ FnPlusFnSym() // set symmetry matrix for fn+fn type
 }
 
 bool
-LambdaTrigOrTrigSetup()
-{
-    // default symmetry is ORIGIN
-    g_long_param = &g_l_param;
-    g_float_param = &g_param_z1;
-    if ((g_trig_index[0] == trig_fn::EXP) || (g_trig_index[1] == trig_fn::EXP))
-    {
-        g_symmetry = symmetry_type::NONE;
-    }
-    if ((g_trig_index[0] == trig_fn::LOG) || (g_trig_index[1] == trig_fn::LOG))
-    {
-        g_symmetry = symmetry_type::X_AXIS;
-    }
-    get_julia_attractor(0.0, 0.0);       // an attractor?
-    return true;
-}
-
-bool
-JuliaTrigOrTrigSetup()
-{
-    // default symmetry is X_AXIS
-    g_long_param = &g_l_param;
-    g_float_param = &g_param_z1;
-    if (g_param_z1.y != 0.0)
-    {
-        g_symmetry = symmetry_type::NONE;
-    }
-    if (g_trig_index[0] == trig_fn::FLIP || g_trig_index[1] == trig_fn::FLIP)
-    {
-        g_symmetry = symmetry_type::NONE;
-    }
-    get_julia_attractor(0.0, 0.0);       // an attractor?
-    return true;
-}
-
-bool
 ManlamTrigOrTrigSetup()
 {
     // psuedo

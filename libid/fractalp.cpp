@@ -11,6 +11,7 @@
 #include "cellular.h"
 #include "circle_pattern.h"
 #include "escher.h"
+#include "fn_or_fn.h"
 #include "fractalb.h"
 #include "fractals.h"
 #include "fractype.h"
