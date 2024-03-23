@@ -7,6 +7,7 @@
 #include "fractalp.h"
 
 #include "ant.h"
+#include "barnsley.h"
 #include "calcfrac.h"
 #include "cellular.h"
 #include "circle_pattern.h"

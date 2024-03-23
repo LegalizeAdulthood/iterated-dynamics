@@ -5,6 +5,7 @@ add_library(libid
     line3d.cpp include/line3d.h
     plot3d.cpp include/plot3d.h
 
+    barnsley.cpp include/barnsley.h
     calcfrac.cpp include/calcfrac.h
     calcmand.cpp include/calcmand.h
     calmanfp.cpp include/calmanfp.h
@@ -177,6 +178,7 @@ source_group("Source Files/engine" FILES
 )
 source_group("Header Files/fractal specific" FILES
     include/ant.h
+    include/barnsley.h
     include/cellular.h
     include/circle_pattern.h
     include/escher.h
@@ -204,6 +206,7 @@ source_group("Header Files/fractal specific" FILES
 )
 source_group("Source Files/fractal specific" FILES
     ant.cpp
+    barnsley.cpp
     cellular.cpp
     circle_pattern.cpp
     escher.cpp
