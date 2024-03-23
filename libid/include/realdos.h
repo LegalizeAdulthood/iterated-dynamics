@@ -76,7 +76,6 @@ int check_vidmode_keyname(char const *kname);
 void vidmode_keyname(int k, char *buf);
 void freetempmsg();
 void load_videotable(int);
-void bad_id_cfg_msg();
 bool stopmsg(int flags, char const* msg);
 inline bool stopmsg(int flags, const std::string &msg)
 {

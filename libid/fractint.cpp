@@ -172,6 +172,15 @@ void initasmvars()
     g_overflow = false;
 }
 
+static void bad_id_cfg_msg()
+{
+    stopmsg(STOPMSG_NONE,
+            "File id.cfg is missing or invalid.\n"
+            "See Hardware Support and Video Modes in the full documentation for help.\n"
+            "I will continue with only the built-in video modes available.");
+    g_bad_config = config_status::BAD_WITH_MESSAGE;
+}
+
 static void main_restart(int const argc, char const *const argv[], bool &stacked)
 {
 #if defined(_WIN32)
