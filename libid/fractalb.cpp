@@ -234,7 +234,7 @@ void showaspect(char const *s)
 void comparevalues(char const *s, LDBL x, bn_t bnx)
 {
     int dec = 40;
-    char msg[100], msg1[100];
+    char msg[100], msg1[300];
     bntostr(msg, dec, bnx);
     std::snprintf(msg1, NUM_OF(msg1), "%s\nbignum=%s\ndouble=%.20Lf\n\n", s, msg, x);
     if (stopmsg(STOPMSG_NONE, msg1))
@@ -246,7 +246,7 @@ void comparevalues(char const *s, LDBL x, bn_t bnx)
 void comparevaluesbf(char const *s, LDBL x, bf_t bfx)
 {
     int dec = 40;
-    char msg[300], msg1[300];
+    char msg[300], msg1[700];
     bftostr_e(msg, dec, bfx);
     std::snprintf(msg1, NUM_OF(msg1), "%s\nbignum=%s\ndouble=%.20Lf\n\n", s, msg, x);
     if (stopmsg(STOPMSG_NONE, msg1))
