@@ -4,6 +4,8 @@
 
 #include "id.h"
 
+#include <cstdio>
+
 /* g_video_table
  *
  *  |--Adapter/Mode-Name------|-------Comments-----------|
