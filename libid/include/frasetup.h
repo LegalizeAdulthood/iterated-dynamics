@@ -3,7 +3,6 @@
 bool MandelSetup();
 bool MandelfpSetup();
 bool JuliaSetup();
-bool NewtonSetup();
 bool StandaloneSetup();
 bool UnitySetup();
 bool JuliafpSetup();

@@ -11,3 +11,5 @@ int NewtonFractal2();
 bool ComplexNewtonSetup();
 int ComplexNewton();
 int ComplexBasin();
+
+bool NewtonSetup();
