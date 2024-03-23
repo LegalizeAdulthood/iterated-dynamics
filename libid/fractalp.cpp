@@ -32,6 +32,7 @@
 #include "parser.h"
 #include "peterson_variations.h"
 #include "phoenix.h"
+#include "pickover_mandelbrot.h"
 #include "popcorn.h"
 #include "quaternion_mandelbrot.h"
 #include "taylor_skinner_variations.h"

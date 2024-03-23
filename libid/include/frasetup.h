@@ -9,7 +9,6 @@ bool JuliafpSetup();
 bool MandellongSetup();
 bool JulialongSetup();
 bool FnPlusFnSym();
-bool JuliafnPlusZsqrdSetup();
 bool MandelTrigSetup();
 bool SierpinskiSetup();
 bool SierpinskiFPSetup();

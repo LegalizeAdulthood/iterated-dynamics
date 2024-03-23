@@ -14,6 +14,7 @@
 #include "helpdefs.h"
 #include "id_data.h"
 #include "loadmap.h"
+#include "pickover_mandelbrot.h"
 #include "prompts1.h"
 #include "prompts2.h"
 #include "realdos.h"

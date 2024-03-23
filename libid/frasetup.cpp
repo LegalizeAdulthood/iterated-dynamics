@@ -18,6 +18,7 @@
 #include "magnet.h"
 #include "mpmath.h"
 #include "mpmath_c.h"
+#include "pickover_mandelbrot.h"
 #include "popcorn.h"
 
 #include <cmath>
@@ -611,38 +612,6 @@ MandelTrigOrTrigSetup()
     return true;
 }
 
-
-bool
-JuliafnPlusZsqrdSetup()
-{
-    //   static char fnpluszsqrd[] =
-    // fn1 ->  sin   cos    sinh  cosh   sqr    exp   log
-    // sin    {NONE, ORIGIN, NONE, ORIGIN, ORIGIN, NONE, NONE};
-
-    switch (g_trig_index[0]) // fix sqr symmetry & add additional functions
-    {
-    case trig_fn::COSXX: // cosxx
-    case trig_fn::COSH:
-    case trig_fn::SQR:
-    case trig_fn::COS:
-    case trig_fn::TAN:
-    case trig_fn::TANH:
-        g_symmetry = symmetry_type::ORIGIN;
-        break;
-        // default is for NONE symmetry
-
-    default:
-        break;
-    }
-    if (g_cur_fractal_specific->isinteger)
-    {
-        return JulialongSetup();
-    }
-    else
-    {
-        return JuliafpSetup();
-    }
-}
 
 bool MandelTrigSetup()
 {
