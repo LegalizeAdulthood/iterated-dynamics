@@ -12,19 +12,14 @@
 
 #include <cmath>
 
-static double siny{};
-static double cosy{};
-static long lcosx{};
-static long lsinx{};
-static long lcosy{};
-static long lsiny{};
-
 int PopcornFractal_Old()
 {
     g_tmp_z = g_old_z;
     g_tmp_z.x *= 3.0;
     g_tmp_z.y *= 3.0;
     FPUsincos(&g_tmp_z.x, &g_sin_x, &g_cos_x);
+    double siny;
+    double cosy;
     FPUsincos(&g_tmp_z.y, &siny, &cosy);
     g_tmp_z.x = g_sin_x/g_cos_x + g_old_z.x;
     g_tmp_z.y = siny/cosy + g_old_z.y;
@@ -57,6 +52,8 @@ int PopcornFractal()
     g_tmp_z.x *= 3.0;
     g_tmp_z.y *= 3.0;
     FPUsincos(&g_tmp_z.x, &g_sin_x, &g_cos_x);
+    double siny;
+    double cosy;
     FPUsincos(&g_tmp_z.y, &siny, &cosy);
     g_tmp_z.x = g_sin_x/g_cos_x + g_old_z.x;
     g_tmp_z.y = siny/cosy + g_old_z.y;
@@ -109,7 +106,11 @@ int LPopcornFractal_Old()
     g_l_temp.y *= 3L;
     ltrig_arg(g_l_temp.x);
     ltrig_arg(g_l_temp.y);
+    long lcosx;
+    long lsinx;
     SinCos086(g_l_temp.x, &lsinx, &lcosx);
+    long lcosy;
+    long lsiny;
     SinCos086(g_l_temp.y, &lsiny, &lcosy);
     g_l_temp.x = divide(lsinx, lcosx, g_bit_shift) + g_l_old_z.x;
     g_l_temp.y = divide(lsiny, lcosy, g_bit_shift) + g_l_old_z.y;
@@ -148,7 +149,11 @@ int LPopcornFractal()
     g_l_temp.y *= 3L;
     ltrig_arg(g_l_temp.x);
     ltrig_arg(g_l_temp.y);
+    long lcosx;
+    long lsinx;
     SinCos086(g_l_temp.x, &lsinx, &lcosx);
+    long lcosy;
+    long lsiny;
     SinCos086(g_l_temp.y, &lsiny, &lcosy);
     g_l_temp.x = divide(lsinx, lcosx, g_bit_shift) + g_l_old_z.x;
     g_l_temp.y = divide(lsiny, lcosy, g_bit_shift) + g_l_old_z.y;
