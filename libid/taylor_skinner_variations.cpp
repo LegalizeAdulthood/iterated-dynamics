@@ -13,9 +13,6 @@
 #include "mpmath.h"
 #include "mpmath_c.h"
 
-static DComplex tmp2{};
-static LComplex ltmp2{};
-
 // call float version of fractal if integer math overflow
 static int TryFloatFractal(int (*fpFractal)())
 {
@@ -93,6 +90,7 @@ static int SkinnerTrigSubTrigFractal()
 {
     // z = trig(0, z)-trig1(z)
     LCMPLXtrig0(g_l_old_z, g_l_temp);
+    LComplex ltmp2;
     LCMPLXtrig1(g_l_old_z, ltmp2);
     LCMPLXsub(g_l_temp, ltmp2, g_l_new_z);
     return g_bailout_long();
@@ -127,6 +125,7 @@ static int TrigPlusSqrfpFractal() // generalization of Scott and Skinner types
     CMPLXtrig0(g_old_z, g_tmp_z);            // tmp = trig(old)
     CMPLXmult(g_param_z1, g_tmp_z, g_new_z); // new = parm*trig(old)
     CMPLXsqr_old(g_tmp_z);                   // tmp = sqr(old)
+    DComplex tmp2;                           //
     CMPLXmult(g_param_z2, g_tmp_z, tmp2);    // tmp = parm2*sqr(old)
     g_new_z += tmp2;                         // new = parm*trig(old)+parm2*sqr(old)
     return g_bailout_float();
@@ -172,6 +171,7 @@ static int ScottTrigPlusTrigfpFractal()
 {
     // z = trig0(z)+trig1(z)
     CMPLXtrig0(g_old_z, g_tmp_z);
+    DComplex tmp2;
     CMPLXtrig1(g_old_z, tmp2);
     g_new_z = g_tmp_z + tmp2;
     return g_bailout_float();
@@ -181,6 +181,7 @@ static int SkinnerTrigSubTrigfpFractal()
 {
     // z = trig0(z)-trig1(z)
     CMPLXtrig0(g_old_z, g_tmp_z);
+    DComplex tmp2;
     CMPLXtrig1(g_old_z, tmp2);
     g_new_z = g_tmp_z - tmp2;
     return g_bailout_float();
@@ -214,6 +215,7 @@ int TrigPlusTrigFractal()
     // z = trig(0,z)*p1+trig1(z)*p2
     LCMPLXtrig0(g_l_old_z, g_l_temp);
     LCMPLXmult(g_l_param, g_l_temp, g_l_temp);
+    LComplex ltmp2;
     LCMPLXtrig1(g_l_old_z, ltmp2);
     LCMPLXmult(g_l_param2, ltmp2, g_l_old_z);
     LCMPLXadd(g_l_temp, g_l_old_z, g_l_new_z);
@@ -519,6 +521,7 @@ int ZXTrigPlusZfpFractal()
     // z = (p1*z*trig(z))+p2*z
     CMPLXtrig0(g_old_z, g_tmp_z);            // tmp  = trig(old)
     CMPLXmult(g_param_z1, g_tmp_z, g_tmp_z); // tmp  = p1*trig(old)
+    DComplex tmp2;                           //
     CMPLXmult(g_old_z, g_tmp_z, tmp2);       // tmp2 = p1*old*trig(old)
     CMPLXmult(g_param_z2, g_old_z, g_tmp_z); // tmp  = p2*old
     g_new_z = tmp2 + g_tmp_z;                // new  = p1*trig(old) + p2*old
@@ -530,6 +533,7 @@ int ZXTrigPlusZFractal()
     // z = (p1*z*trig(z))+p2*z
     LCMPLXtrig0(g_l_old_z, g_l_temp);            // ltmp  = trig(old)
     LCMPLXmult(g_l_param, g_l_temp, g_l_temp);   // ltmp  = p1*trig(old)
+    LComplex ltmp2;                              //
     LCMPLXmult(g_l_old_z, g_l_temp, ltmp2);      // ltmp2 = p1*old*trig(old)
     LCMPLXmult(g_l_param2, g_l_old_z, g_l_temp); // ltmp  = p2*old
     LCMPLXadd(ltmp2, g_l_temp, g_l_new_z);       // lnew  = p1*trig(old) + p2*old
