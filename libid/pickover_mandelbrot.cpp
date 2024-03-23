@@ -15,12 +15,12 @@
 
 #include <cmath>
 
-static double siny;
-static double cosy;
-static long lcosy;
-static long lsiny;
-static double tmpexp;
-static long longtmp;
+static double siny{};
+static double cosy{};
+static long lcosy{};
+static long lsiny{};
+static double tmpexp{};
+static long longtmp{};
 
 int FloatTrigPlusExponentFractal()
 {

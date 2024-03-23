@@ -18,14 +18,14 @@
 #define modulus(z) (sqr((z).x) + sqr((z).y))
 #define MPCmod(m) (*pMPadd(*pMPmul((m).x, (m).x), *pMPmul((m).y, (m).y)))
 
-static MPC s_mpc_old;
-static MPC s_mpc_new;
-static int s_halley_a_plus_one;
-static int s_halley_a_plus_one_times_degree;
-static MP s_halley_mp_a_plus_one;
-static MP s_halley_mp_a_plus_one_times_degree;
-static MPC s_mpc_temp_param;
-static MP s_mp_temp_param2_x;
+static MPC s_mpc_old{};
+static MPC s_mpc_new{};
+static int s_halley_a_plus_one{};
+static int s_halley_a_plus_one_times_degree{};
+static MP s_halley_mp_a_plus_one{};
+static MP s_halley_mp_a_plus_one_times_degree{};
+static MPC s_mpc_temp_param{};
+static MP s_mp_temp_param2_x{};
 
 bool HalleySetup()
 {

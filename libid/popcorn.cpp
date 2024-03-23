@@ -12,12 +12,12 @@
 
 #include <cmath>
 
-static double siny;
-static double cosy;
-static long lcosx;
-static long lsinx;
-static long lcosy;
-static long lsiny;
+static double siny{};
+static double cosy{};
+static long lcosx{};
+static long lsinx{};
+static long lcosy{};
+static long lsiny{};
 
 int PopcornFractal_Old()
 {

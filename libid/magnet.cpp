@@ -12,9 +12,9 @@
 /*
 **  pre-calculated values for fractal types Magnet2M & Magnet2J
 */
-static DComplex  T_Cm1;        // 3 * (floatparm - 1)
-static DComplex  T_Cm2;        // 3 * (floatparm - 2)
-static DComplex  T_Cm1Cm2;     // (floatparm - 1) * (floatparm - 2)
+static DComplex  T_Cm1{};        // 3 * (floatparm - 1)
+static DComplex  T_Cm2{};        // 3 * (floatparm - 2)
+static DComplex  T_Cm1Cm2{};     // (floatparm - 1) * (floatparm - 2)
 
 /*
 **  details of finite attractors (required for Magnet Fractals)

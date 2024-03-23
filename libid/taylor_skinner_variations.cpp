@@ -13,8 +13,8 @@
 #include "mpmath.h"
 #include "mpmath_c.h"
 
-static DComplex tmp2;
-static LComplex ltmp2;
+static DComplex tmp2{};
+static LComplex ltmp2{};
 
 // call float version of fractal if integer math overflow
 static int TryFloatFractal(int (*fpFractal)())

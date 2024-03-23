@@ -17,7 +17,7 @@
 #include "newton.h"
 #include "pixel_grid.h"
 
-DComplex g_marks_coefficient;
+DComplex g_marks_coefficient{};
 
 bool MarksJuliaSetup()
 {

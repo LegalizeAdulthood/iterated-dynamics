@@ -14,8 +14,8 @@
 #include "newton.h"
 #include "pixel_grid.h"
 
-static LComplex ltmp2;
-static DComplex tmp2;
+static LComplex ltmp2{};
+static DComplex tmp2{};
 
 int LongPhoenixFractal()
 {

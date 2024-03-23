@@ -23,20 +23,20 @@
 #define pMPsqr(z) (*pMPmul((z), (z)))
 #define MPdistance(z1, z2)  (*pMPadd(pMPsqr(*pMPsub((z1).x, (z2).x)), pMPsqr(*pMPsub((z1).y, (z2).y))))
 
-static MPC mpcold;
-static MPC mpcnew;
-static MPC mpctmp;
-static MPC mpctmp1;
+static MPC mpcold{};
+static MPC mpcnew{};
+static MPC mpctmp{};
+static MPC mpctmp1{};
 static double t2{};
-static double TwoPi;
-static DComplex s_temp;
-static DComplex BaseLog;
+static double TwoPi{};
+static DComplex s_temp{};
+static DComplex BaseLog{};
 static DComplex cdegree = { 3.0, 0.0 };
 static DComplex croot   = { 1.0, 0.0 };
-static MP g_newton_mp_r_over_d;
-static MP g_mp_degree_minus_1_over_degree;
-static MP g_mp_threshold;
-static MP g_mp_temp2;
+static MP g_newton_mp_r_over_d{};
+static MP g_mp_degree_minus_1_over_degree{};
+static MP g_mp_threshold{};
+static MP g_mp_temp2{};
 
 // this code translated to asm - lives in newton.asm
 // transform points with reciprocal function
@@ -273,10 +273,10 @@ bool NewtonSetup()
     g_threshold    = .3*PI/g_degree; // less than half distance between roots
     if (g_fractal_type == fractal_type::MPNEWTON || g_fractal_type == fractal_type::MPNEWTBASIN)
     {
-        g_newton_mp_r_over_d     = *pd2MP(g_newton_r_over_d);
-        g_mp_degree_minus_1_over_degree    = *pd2MP(g_degree_minus_1_over_degree);
-        g_mp_threshold  = *pd2MP(g_threshold);
-        g_mp_one        = *pd2MP(1.0);
+        g_newton_mp_r_over_d = *pd2MP(g_newton_r_over_d);
+        g_mp_degree_minus_1_over_degree = *pd2MP(g_degree_minus_1_over_degree);
+        g_mp_threshold = *pd2MP(g_threshold);
+        g_mp_one = *pd2MP(1.0);
     }
 
     g_basin = 0;

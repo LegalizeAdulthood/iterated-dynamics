@@ -20,49 +20,6 @@
 #include "realdos.h"
 #include "spindac.h"
 
-// these need to be accessed elsewhere for saving data
-double g_julibrot_x_min = -.83;
-double g_julibrot_y_min = -.25;
-double g_julibrot_x_max = -.83;
-double g_julibrot_y_max =  .25;
-
-static long mxmin;
-static long mymin;
-static long x_per_inch;
-static long y_per_inch;
-static long inch_per_xdot;
-static long inch_per_ydot;
-static double x_per_inchfp;
-static double y_per_inchfp;
-static double inch_per_xdotfp;
-static double inch_per_ydotfp;
-static int bbase;
-static long xpixel;
-static long ypixel;
-static double xpixelfp;
-static double ypixelfp;
-static long initz;
-static long djx;
-static long djy;
-static long dmx;
-static long dmy;
-static double initzfp;
-static double djxfp;
-static double djyfp;
-static double dmxfp;
-static double dmyfp;
-static long jx;
-static long jy;
-static long mx;
-static long my;
-static long xoffset;
-static long yoffset;
-static double jxfp;
-static double jyfp;
-static double mxfp;
-static double myfp;
-static double xoffsetfp;
-static double yoffsetfp;
 
 struct Perspective
 {
@@ -80,34 +37,74 @@ struct Perspectivefp
     double zy;
 };
 
-static Perspective LeftEye;
-static Perspective RightEye;
-static Perspective *Per;
-static Perspectivefp LeftEyefp;
-static Perspectivefp RightEyefp;
-static Perspectivefp *Perfp;
+static long mxmin{};
+static long mymin{};
+static long x_per_inch{};
+static long y_per_inch{};
+static long inch_per_xdot{};
+static long inch_per_ydot{};
+static double x_per_inchfp{};
+static double y_per_inchfp{};
+static double inch_per_xdotfp{};
+static double inch_per_ydotfp{};
+static int bbase{};
+static long xpixel{};
+static long ypixel{};
+static double xpixelfp{};
+static double ypixelfp{};
+static long initz{};
+static long djx{};
+static long djy{};
+static long dmx{};
+static long dmy{};
+static double initzfp{};
+static double djxfp{};
+static double djyfp{};
+static double dmxfp{};
+static double dmyfp{};
+static long jx{};
+static long jy{};
+static long mx{};
+static long my{};
+static long xoffset{};
+static long yoffset{};
+static double jxfp{};
+static double jyfp{};
+static double mxfp{};
+static double myfp{};
+static double xoffsetfp{};
+static double yoffsetfp{};
+static Perspective LeftEye{};
+static Perspective RightEye{};
+static Perspective *Per{};
+static Perspectivefp LeftEyefp{};
+static Perspectivefp RightEyefp{};
+static Perspectivefp *Perfp{};
+static LComplex jbc{};
+static DComplex jbcfp{};
+static double fg{};
+static double fg16{};
+static float brratiofp = 1.0F;
+static long width{};
+static long dist{};
+static long depth{};
+static long brratio{};
+static long eyes{};
 
-static LComplex jbc;
-static DComplex jbcfp;
-
-static double fg;
-static double fg16;
+// these need to be accessed elsewhere for saving data
+double g_julibrot_x_min = -.83;
+double g_julibrot_y_min = -.25;
+double g_julibrot_x_max = -.83;
+double g_julibrot_y_max =  .25;
+//
 int g_julibrot_z_dots = 128;
-
 float g_julibrot_origin_fp  = 8.0F;
 float g_julibrot_height_fp  = 7.0F;
 float g_julibrot_width_fp   = 10.0F;
 float g_julibrot_dist_fp    = 24.0F;
 float g_eyes_fp    = 2.5F;
 float g_julibrot_depth_fp   = 8.0F;
-static float brratiofp = 1.0F;
-static long width;
-static long dist;
-static long depth;
-static long brratio;
-static long eyes;
 int g_julibrot_3d_mode = 0;
-
 fractal_type g_new_orbit_type = fractal_type::JULIA;
 
 bool JulibrotSetup()

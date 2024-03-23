@@ -82,7 +82,7 @@ struct froth_struct
     } fl;
 };
 
-static froth_struct fsp;
+static froth_struct fsp{};
 
 // color maps which attempt to replicate the images of James Alexander.
 static void set_Froth_palette()

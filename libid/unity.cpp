@@ -9,7 +9,7 @@
 
 #include <cmath>
 
-static long g_xx_one;
+static long g_xx_one{};
 
 int UnityFractal()
 {
