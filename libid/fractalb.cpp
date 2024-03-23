@@ -115,7 +115,7 @@ void showbfglobals(char const *s)
 void showcornersbf(char const *s)
 {
     int dec = g_decimals;
-    char msg[100], msg1[100], msg3[600];
+    char msg[100], msg1[200], msg3[600];
     if (dec > 20)
     {
         dec = 20;
@@ -153,7 +153,7 @@ void showcornersbf(char const *s)
 void showcornersbfs(char const *s)
 {
     int dec = 20;
-    char msg[100], msg1[100], msg3[500];
+    char msg[100], msg1[200], msg3[500];
     bftostr(msg, dec, g_bf_save_x_min);
     std::snprintf(msg1, NUM_OF(msg1), "bf_save_x_min=%s\nx_min= %.20f\n\n", msg, g_x_min);
     std::strcpy(msg3, s);
@@ -182,7 +182,7 @@ void showcornersbfs(char const *s)
 
 void show_two_bf(char const *s1, bf_t t1, char const *s2, bf_t t2, int digits)
 {
-    char msg1[200], msg2[200], msg3[400];
+    char msg1[200], msg2[200], msg3[500];
     bftostr_e(msg1, digits, t1);
     bftostr_e(msg2, digits, t2);
     std::snprintf(msg3, NUM_OF(msg3), "\n%s->%s\n%s->%s", s1, msg1, s2, msg2);
@@ -194,7 +194,7 @@ void show_two_bf(char const *s1, bf_t t1, char const *s2, bf_t t2, int digits)
 
 void show_three_bf(char const *s1, bf_t t1, char const *s2, bf_t t2, char const *s3, bf_t t3, int digits)
 {
-    char msg1[200], msg2[200], msg3[200], msg4[600];
+    char msg1[200], msg2[200], msg3[200], msg4[700];
     bftostr_e(msg1, digits, t1);
     bftostr_e(msg2, digits, t2);
     bftostr_e(msg3, digits, t3);
