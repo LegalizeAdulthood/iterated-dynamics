@@ -12,6 +12,8 @@
 #include "os.h"
 #include "zoom.h"
 
+#include <cstdio>
+#include <string>
 #include <vector>
 
 static std::vector<BYTE> temptextsave;
