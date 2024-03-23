@@ -27,6 +27,7 @@ add_library(libid
     peterson_variations.cpp include/peterson_variations.h
     phoenix.cpp include/phoenix.h
     pixel_grid.cpp include/pixel_grid.h
+    popcorn.cpp include/popcorn.h
     quaternion_mandelbrot.cpp include/quaternion_mandelbrot.h
     soi.cpp include/soi.h
     soi1.cpp
@@ -194,6 +195,7 @@ source_group("Header Files/fractal specific" FILES
     include/newton.h
     include/peterson_variations.h
     include/phoenix.h
+    include/popcorn.h
     include/quaternion_mandelbrot.h
     include/taylor_skinner_variations.h
     include/volterra_lotka.h
@@ -218,6 +220,7 @@ source_group("Source Files/fractal specific" FILES
     newton.cpp
     peterson_variations.cpp
     phoenix.cpp
+    popcorn.cpp
     quaternion_mandelbrot.cpp
     taylor_skinner_variations.cpp
     volterra_lotka.cpp

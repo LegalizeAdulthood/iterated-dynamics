@@ -18,6 +18,7 @@
 #include "magnet.h"
 #include "mpmath.h"
 #include "mpmath_c.h"
+#include "popcorn.h"
 
 #include <cmath>
 
