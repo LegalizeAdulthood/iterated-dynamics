@@ -20,6 +20,7 @@
 #include "helpdefs.h"
 #include "hypercomplex_mandelbrot.h"
 #include "jb.h"
+#include "lambda_fn.h"
 #include "lorenz.h"
 #include "lsys_fns.h"
 #include "mandelbrot_mix.h"
@@ -766,7 +767,7 @@ fractalspecificstuff g_fractal_specific[] =
         help_labels::HT_LAMBDAFN, help_labels::HF_LAMBDAFN, TRIG1+OKJB,
         -4.0F, 4.0F, -3.0F, 3.0F,
         16, fractal_type::NOFRACTAL, fractal_type::MANDELTRIG, fractal_type::LAMBDATRIGFP, symmetry_type::PI_SYM,
-        (VF)LambdaTrigFractal, long_julia_per_pixel, LambdaTrigSetup,
+        LambdaTrigFractal, long_julia_per_pixel, LambdaTrigSetup,
         standard_fractal,
         LTRIGBAILOUT
     },

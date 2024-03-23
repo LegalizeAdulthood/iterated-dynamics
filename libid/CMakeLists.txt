@@ -18,6 +18,7 @@ add_library(libid
     frasetup.cpp include/frasetup.h
     halley.cpp include/halley.h
     hypercomplex_mandelbrot.cpp include/hypercomplex_mandelbrot.h
+    lambda_fn.cpp include/lambda_fn.h
     mandelbrot_mix.cpp include/mandelbrot_mix.h
     newton.cpp include/newton.h
     param_not_used.cpp include/param_not_used.h
@@ -180,6 +181,7 @@ source_group("Header Files/fractal specific" FILES
     include/halley.h
     include/hypercomplex_mandelbrot.h
     include/jb.h
+    include/lambda_fn.h
     include/lorenz.h
     include/lsys.h
     include/lsysf.h
@@ -201,6 +203,7 @@ source_group("Source Files/fractal specific" FILES
     halley.cpp
     hypercomplex_mandelbrot.cpp
     jb.cpp
+    lambda_fn.cpp
     lorenz.cpp
     lsys.cpp
     lsysf.cpp

@@ -13,8 +13,8 @@
 #include "fractals.h"
 #include "fractint.h"
 #include "fractype.h"
-#include "halley.h"
 #include "id_data.h"
+#include "lambda_fn.h"
 #include "mpmath.h"
 #include "mpmath_c.h"
 
@@ -685,77 +685,6 @@ MandelTrigOrTrigSetup()
 
 
 bool
-LambdaTrigSetup()
-{
-    bool const isinteger = g_cur_fractal_specific->isinteger != 0;
-    if (isinteger)
-    {
-        g_cur_fractal_specific->orbitcalc =  LambdaTrigFractal;
-    }
-    else
-    {
-        g_cur_fractal_specific->orbitcalc =  LambdaTrigfpFractal;
-    }
-    switch (g_trig_index[0])
-    {
-    case trig_fn::SIN:
-    case trig_fn::COSXX:
-    case trig_fn::COS:
-        g_symmetry = symmetry_type::PI_SYM;
-        if (isinteger)
-        {
-            g_cur_fractal_specific->orbitcalc =  LambdaTrigFractal1;
-        }
-        else
-        {
-            g_cur_fractal_specific->orbitcalc =  LambdaTrigfpFractal1;
-        }
-        break;
-    case trig_fn::SINH:
-    case trig_fn::COSH:
-        g_symmetry = symmetry_type::ORIGIN;
-        if (isinteger)
-        {
-            g_cur_fractal_specific->orbitcalc =  LambdaTrigFractal2;
-        }
-        else
-        {
-            g_cur_fractal_specific->orbitcalc =  LambdaTrigfpFractal2;
-        }
-        break;
-    case trig_fn::SQR:
-        g_symmetry = symmetry_type::ORIGIN;
-        break;
-    case trig_fn::EXP:
-        if (isinteger)
-        {
-            g_cur_fractal_specific->orbitcalc =  LongLambdaexponentFractal;
-        }
-        else
-        {
-            g_cur_fractal_specific->orbitcalc =  LambdaexponentFractal;
-        }
-        g_symmetry = symmetry_type::NONE;
-        break;
-    case trig_fn::LOG:
-        g_symmetry = symmetry_type::NONE;
-        break;
-    default:   // default for additional functions
-        g_symmetry = symmetry_type::ORIGIN;
-        break;
-    }
-    get_julia_attractor(0.0, 0.0);       // an attractor?
-    if (isinteger)
-    {
-        return JulialongSetup();
-    }
-    else
-    {
-        return JuliafpSetup();
-    }
-}
-
-bool
 JuliafnPlusZsqrdSetup()
 {
     //   static char fnpluszsqrd[] =
@@ -787,8 +716,7 @@ JuliafnPlusZsqrdSetup()
     }
 }
 
-bool
-MandelTrigSetup()
+bool MandelTrigSetup()
 {
     bool const isinteger = g_cur_fractal_specific->isinteger != 0;
     if (isinteger)
