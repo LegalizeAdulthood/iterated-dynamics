@@ -13,7 +13,7 @@
 #include "zoom.h"
 
 #include <cstdio>
-#include <string>
+#include <cstring>
 #include <vector>
 
 static std::vector<BYTE> temptextsave;
