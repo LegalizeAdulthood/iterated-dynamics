@@ -24,6 +24,7 @@ fractal routines.
 
 #include <cstdio>
 #include <cstring>
+#include <string>
 
 bf_math_type bf_math = bf_math_type::NONE;
 
@@ -65,7 +66,7 @@ void showcornersdbl(char const *s)
 void showcorners(char const *s)
 {
     int dec = 20;
-    char msg[100], msg1[100], msg3[100];
+    char msg[100], msg1[200], msg3[400];
     bntostr(msg, dec, bnxmin);
     std::snprintf(msg1, NUM_OF(msg1), "bnxmin=%s\nx_min= %.20f\n\n", msg, g_x_min);
     std::strcpy(msg3, s);
