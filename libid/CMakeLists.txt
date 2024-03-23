@@ -25,6 +25,7 @@ add_library(libid
     quaternion_mandelbrot.cpp include/quaternion_mandelbrot.h
     soi.cpp include/soi.h
     soi1.cpp
+    taylor_skinner_variations.cpp include/taylor_skinner_variations.h
     testpt.cpp include/testpt.h
     type_has_param.cpp include/type_has_param.h
     volterra_lotka.cpp include/volterra_lotka.h
@@ -155,6 +156,7 @@ source_group("Header Files/engine" FILES
     include/pixel_grid.h
     include/quaternion_mandelbrot.h
     include/soi.h
+    include/taylor_skinner_variations.h
     include/testpt.h
     include/type_has_param.h
     include/volterra_lotka.h
@@ -180,6 +182,7 @@ source_group("Source Files/engine" FILES
     quaternion_mandelbrot.cpp
     soi.cpp
     soi1.cpp
+    taylor_skinner_variations.cpp
     testpt.cpp
     type_has_param.cpp
     volterra_lotka.cpp

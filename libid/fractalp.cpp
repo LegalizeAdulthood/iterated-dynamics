@@ -29,6 +29,7 @@
 #include "peterson_variations.h"
 #include "phoenix.h"
 #include "quaternion_mandelbrot.h"
+#include "taylor_skinner_variations.h"
 #include "volterra_lotka.h"
 
 // parameter descriptions
