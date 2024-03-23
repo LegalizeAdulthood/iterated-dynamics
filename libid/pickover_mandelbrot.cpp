@@ -15,13 +15,6 @@
 
 #include <cmath>
 
-static double siny{};
-static double cosy{};
-static long lcosy{};
-static long lsiny{};
-static double tmpexp{};
-static long longtmp{};
-
 int FloatTrigPlusExponentFractal()
 {
     // another Scientific American biomorph type
@@ -31,7 +24,9 @@ int FloatTrigPlusExponentFractal()
     {
         return 1; // DOMAIN errors
     }
-    tmpexp = std::exp(g_old_z.x);
+    const double tmpexp = std::exp(g_old_z.x);
+    double siny;
+    double cosy;
     FPUsincos(&g_old_z.y, &siny, &cosy);
     CMPLXtrig0(g_old_z, g_new_z);
 
@@ -58,7 +53,9 @@ int LongTrigPlusExponentFractal()
         return 1;
     }
 
-    longtmp = Exp086(g_l_old_z.x);
+    const long longtmp = Exp086(g_l_old_z.x);
+    long lcosy;
+    long lsiny;
     SinCos086(g_l_old_z.y, &lsiny,  &lcosy);
     LCMPLXtrig0(g_l_old_z, g_l_new_z);
     g_l_new_z.x += multiply(longtmp,    lcosy,   g_bit_shift) + g_long_param->x;
