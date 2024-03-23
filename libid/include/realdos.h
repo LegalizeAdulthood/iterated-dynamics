@@ -56,4 +56,3 @@ void load_id_config();
 int check_vidmode_key(int, int);
 int check_vidmode_keyname(char const *kname);
 void vidmode_keyname(int k, char *buf);
-void load_videotable(int);
