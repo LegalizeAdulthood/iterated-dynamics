@@ -66,11 +66,6 @@ an appropriate setup, per_image, per_pixel, and orbit routines.
 #define conjugate(pz)   ((pz)->y = 0.0 - (pz)->y)
 #define distance(z1, z2)  (sqr((z1).x-(z2).x)+sqr((z1).y-(z2).y))
 
-static long longtmp;
-// temporary variables for trig use
-static long lcosy;
-static long lsiny;
-
 LComplex g_l_coefficient;
 LComplex g_l_old_z;
 LComplex g_l_new_z;
@@ -104,9 +99,6 @@ LComplex *g_long_param; // used here and in jb.c
 // --------------------------------------------------------------------
 double g_sin_x;
 double g_cos_x;
-static double siny;
-static double cosy;
-static double tmpexp;
 double g_temp_sqr_x;
 double g_temp_sqr_y;
 double g_quaternion_c;
@@ -357,95 +349,6 @@ int JuliafpFractal()
     g_new_z.x = g_temp_sqr_x - g_temp_sqr_y + g_float_param->x;
     g_new_z.y = 2.0 * g_old_z.x * g_old_z.y + g_float_param->y;
     return g_bailout_float();
-}
-
-int LambdaFPFractal()
-{
-    // variation of classical Mandelbrot/Julia
-    // note that fast >= 287 equiv in fracsuba.asm must be kept in step
-
-    g_temp_sqr_x = g_old_z.x - g_temp_sqr_x + g_temp_sqr_y;
-    g_temp_sqr_y = -(g_old_z.y * g_old_z.x);
-    g_temp_sqr_y += g_temp_sqr_y + g_old_z.y;
-
-    g_new_z.x = g_float_param->x * g_temp_sqr_x - g_float_param->y * g_temp_sqr_y;
-    g_new_z.y = g_float_param->x * g_temp_sqr_y + g_float_param->y * g_temp_sqr_x;
-    return g_bailout_float();
-}
-
-int LambdaFractal()
-{
-    // variation of classical Mandelbrot/Julia
-
-    // in complex math) temp = Z * (1-Z)
-    g_l_temp_sqr_x = g_l_old_z.x - g_l_temp_sqr_x + g_l_temp_sqr_y;
-    g_l_temp_sqr_y = g_l_old_z.y
-                - multiply(g_l_old_z.y, g_l_old_z.x, g_bit_shift_less_1);
-    // (in complex math) Z = Lambda * Z
-    g_l_new_z.x = multiply(g_long_param->x, g_l_temp_sqr_x, g_bit_shift)
-             - multiply(g_long_param->y, g_l_temp_sqr_y, g_bit_shift);
-    g_l_new_z.y = multiply(g_long_param->x, g_l_temp_sqr_y, g_bit_shift)
-             + multiply(g_long_param->y, g_l_temp_sqr_x, g_bit_shift);
-    return g_bailout_long();
-}
-
-int LambdaexponentFractal()
-{
-    // found this in  "Science of Fractal Images"
-    if (std::fabs(g_old_z.y) >= 1.0e3)
-    {
-        return 1;
-    }
-    if (std::fabs(g_old_z.x) >= 8)
-    {
-        return 1;
-    }
-    FPUsincos(&g_old_z.y, &siny, &cosy);
-
-    if (g_old_z.x >= g_magnitude_limit && cosy >= 0.0)
-    {
-        return 1;
-    }
-    tmpexp = std::exp(g_old_z.x);
-    g_tmp_z.x = tmpexp*cosy;
-    g_tmp_z.y = tmpexp*siny;
-
-    //multiply by lamda
-    g_new_z.x = g_float_param->x*g_tmp_z.x - g_float_param->y*g_tmp_z.y;
-    g_new_z.y = g_float_param->y*g_tmp_z.x + g_float_param->x*g_tmp_z.y;
-    g_old_z = g_new_z;
-    return 0;
-}
-
-int LongLambdaexponentFractal()
-{
-    // found this in  "Science of Fractal Images"
-    if (labs(g_l_old_z.y) >= (1000L << g_bit_shift))
-    {
-        return 1;
-    }
-    if (labs(g_l_old_z.x) >= (8L << g_bit_shift))
-    {
-        return 1;
-    }
-
-    SinCos086(g_l_old_z.y, &lsiny,  &lcosy);
-
-    if (g_l_old_z.x >= g_l_magnitude_limit && lcosy >= 0L)
-    {
-        return 1;
-    }
-    longtmp = Exp086(g_l_old_z.x);
-
-    g_l_temp.x = multiply(longtmp,      lcosy,   g_bit_shift);
-    g_l_temp.y = multiply(longtmp,      lsiny,   g_bit_shift);
-
-    g_l_new_z.x  = multiply(g_long_param->x, g_l_temp.x, g_bit_shift)
-              - multiply(g_long_param->y, g_l_temp.y, g_bit_shift);
-    g_l_new_z.y  = multiply(g_long_param->x, g_l_temp.y, g_bit_shift)
-              + multiply(g_long_param->y, g_l_temp.x, g_bit_shift);
-    g_l_old_z = g_l_new_z;
-    return 0;
 }
 
 long g_fudge_one;
