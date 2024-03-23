@@ -8,25 +8,16 @@
 #include "fractals.h"
 #include "id_data.h"
 
-static double foldxinitx;
-static double foldyinity;
-static double foldxinity;
-static double foldyinitx;
-static long oldxinitx;
-static long oldyinity;
-static long oldxinity;
-static long oldyinitx;
-
 int Barnsley1Fractal()
 {
     /* Barnsley's Mandelbrot type M1 from "Fractals
     Everywhere" by Michael Barnsley, p. 322 */
 
     // calculate intermediate products
-    oldxinitx   = multiply(g_l_old_z.x, g_long_param->x, g_bit_shift);
-    oldyinity   = multiply(g_l_old_z.y, g_long_param->y, g_bit_shift);
-    oldxinity   = multiply(g_l_old_z.x, g_long_param->y, g_bit_shift);
-    oldyinitx   = multiply(g_l_old_z.y, g_long_param->x, g_bit_shift);
+    const long oldxinitx   = multiply(g_l_old_z.x, g_long_param->x, g_bit_shift);
+    const long oldyinity   = multiply(g_l_old_z.y, g_long_param->y, g_bit_shift);
+    const long oldxinity   = multiply(g_l_old_z.x, g_long_param->y, g_bit_shift);
+    const long oldyinitx   = multiply(g_l_old_z.y, g_long_param->x, g_bit_shift);
     // orbit calculation
     if (g_l_old_z.x >= 0)
     {
@@ -48,10 +39,10 @@ int Barnsley1FPFractal()
     // note that fast >= 287 equiv in fracsuba.asm must be kept in step
 
     // calculate intermediate products
-    foldxinitx = g_old_z.x * g_float_param->x;
-    foldyinity = g_old_z.y * g_float_param->y;
-    foldxinity = g_old_z.x * g_float_param->y;
-    foldyinitx = g_old_z.y * g_float_param->x;
+    const double foldxinitx = g_old_z.x * g_float_param->x;
+    const double foldyinity = g_old_z.y * g_float_param->y;
+    const double foldxinity = g_old_z.x * g_float_param->y;
+    const double foldyinitx = g_old_z.y * g_float_param->x;
     // orbit calculation
     if (g_old_z.x >= 0)
     {
@@ -73,10 +64,10 @@ int Barnsley2Fractal()
     // note that fast >= 287 equiv in fracsuba.asm must be kept in step
 
     // calculate intermediate products
-    oldxinitx   = multiply(g_l_old_z.x, g_long_param->x, g_bit_shift);
-    oldyinity   = multiply(g_l_old_z.y, g_long_param->y, g_bit_shift);
-    oldxinity   = multiply(g_l_old_z.x, g_long_param->y, g_bit_shift);
-    oldyinitx   = multiply(g_l_old_z.y, g_long_param->x, g_bit_shift);
+    const long oldxinitx   = multiply(g_l_old_z.x, g_long_param->x, g_bit_shift);
+    const long oldyinity   = multiply(g_l_old_z.y, g_long_param->y, g_bit_shift);
+    const long oldxinity   = multiply(g_l_old_z.x, g_long_param->y, g_bit_shift);
+    const long oldyinitx   = multiply(g_l_old_z.y, g_long_param->x, g_bit_shift);
 
     // orbit calculation
     if (oldxinity + oldyinitx >= 0)
@@ -98,10 +89,10 @@ int Barnsley2FPFractal()
     Everywhere" by Michael Barnsley, p. 331, example 4.2 */
 
     // calculate intermediate products
-    foldxinitx = g_old_z.x * g_float_param->x;
-    foldyinity = g_old_z.y * g_float_param->y;
-    foldxinity = g_old_z.x * g_float_param->y;
-    foldyinitx = g_old_z.y * g_float_param->x;
+    const double foldxinitx = g_old_z.x * g_float_param->x;
+    const double foldyinity = g_old_z.y * g_float_param->y;
+    const double foldxinity = g_old_z.x * g_float_param->y;
+    const double foldyinitx = g_old_z.y * g_float_param->x;
 
     // orbit calculation
     if (foldxinity + foldyinitx >= 0)
@@ -123,9 +114,9 @@ int Barnsley3Fractal()
     Everywhere" by Michael Barnsley, p. 292, example 4.1 */
 
     // calculate intermediate products
-    oldxinitx   = multiply(g_l_old_z.x, g_l_old_z.x, g_bit_shift);
-    oldyinity   = multiply(g_l_old_z.y, g_l_old_z.y, g_bit_shift);
-    oldxinity   = multiply(g_l_old_z.x, g_l_old_z.y, g_bit_shift);
+    const long oldxinitx   = multiply(g_l_old_z.x, g_l_old_z.x, g_bit_shift);
+    const long oldyinity   = multiply(g_l_old_z.y, g_l_old_z.y, g_bit_shift);
+    const long oldxinity   = multiply(g_l_old_z.x, g_l_old_z.y, g_bit_shift);
 
     // orbit calculation
     if (g_l_old_z.x > 0)
@@ -153,9 +144,9 @@ int Barnsley3FPFractal()
     Everywhere" by Michael Barnsley, p. 292, example 4.1 */
 
     // calculate intermediate products
-    foldxinitx  = g_old_z.x * g_old_z.x;
-    foldyinity  = g_old_z.y * g_old_z.y;
-    foldxinity  = g_old_z.x * g_old_z.y;
+    const double foldxinitx  = g_old_z.x * g_old_z.x;
+    const double foldyinity  = g_old_z.y * g_old_z.y;
+    const double foldxinity  = g_old_z.x * g_old_z.y;
 
     // orbit calculation
     if (g_old_z.x > 0)
