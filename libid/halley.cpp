@@ -25,7 +25,7 @@ static int s_halley_a_plus_one_times_degree;
 static MP s_halley_mp_a_plus_one;
 static MP s_halley_mp_a_plus_one_times_degree;
 static MPC s_mpc_temp_param;
-static MP g_mp_temp_param2_x;
+static MP s_mp_temp_param2_x;
 
 bool HalleySetup()
 {
@@ -61,7 +61,7 @@ bool HalleySetup()
         s_halley_mp_a_plus_one_times_degree = *pd2MP((double)s_halley_a_plus_one_times_degree);
         s_mpc_temp_param.x = *pd2MP(g_param_z1.y);
         s_mpc_temp_param.y = *pd2MP(g_param_z2.y);
-        g_mp_temp_param2_x = *pd2MP(g_param_z2.x);
+        s_mp_temp_param2_x = *pd2MP(g_param_z2.x);
         g_mp_one        = *pd2MP(1.0);
     }
 
@@ -90,7 +90,7 @@ static int  MPCHalleybailout()
 {
     static MP mptmpbailout;
     mptmpbailout = *MPabs(*pMPsub(MPCmod(s_mpc_new), MPCmod(s_mpc_old)));
-    if (pMPcmp(mptmpbailout, g_mp_temp_param2_x) < 0)
+    if (pMPcmp(mptmpbailout, s_mp_temp_param2_x) < 0)
     {
         return 1;
     }
