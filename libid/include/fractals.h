@@ -63,8 +63,6 @@ int LambdaexponentFractal();
 int LongLambdaexponentFractal();
 int UnityFractal();
 int UnityfpFractal();
-int Mandel4Fractal();
-int Mandel4fpFractal();
 int longCmplxZpowerFractal();
 int floatCmplxZpowerFractal();
 int TrigPlusZsquaredFractal();

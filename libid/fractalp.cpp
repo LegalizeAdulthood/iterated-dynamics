@@ -35,6 +35,7 @@
 #include "phoenix.h"
 #include "pickover_mandelbrot.h"
 #include "popcorn.h"
+#include "quartic_mandelbrot.h"
 #include "quaternion_mandelbrot.h"
 #include "taylor_skinner_variations.h"
 #include "volterra_lotka.h"

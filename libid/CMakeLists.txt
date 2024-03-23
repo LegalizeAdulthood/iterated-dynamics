@@ -30,6 +30,7 @@ add_library(libid
     pickover_mandelbrot.cpp include/pickover_mandelbrot.h
     pixel_grid.cpp include/pixel_grid.h
     popcorn.cpp include/popcorn.h
+    quartic_mandelbrot.cpp include/quartic_mandelbrot.h
     quaternion_mandelbrot.cpp include/quaternion_mandelbrot.h
     soi.cpp include/soi.h
     soi1.cpp
@@ -200,6 +201,7 @@ source_group("Header Files/fractal specific" FILES
     include/phoenix.h
     include/pickover_mandelbrot.h
     include/popcorn.h
+    include/quartic_mandelbrot.h
     include/quaternion_mandelbrot.h
     include/taylor_skinner_variations.h
     include/volterra_lotka.h
@@ -227,6 +229,7 @@ source_group("Source Files/fractal specific" FILES
     phoenix.cpp
     pickover_mandelbrot.cpp
     popcorn.cpp
+    quartic_mandelbrot.cpp
     quaternion_mandelbrot.cpp
     taylor_skinner_variations.cpp
     volterra_lotka.cpp
