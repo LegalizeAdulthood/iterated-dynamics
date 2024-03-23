@@ -7,6 +7,8 @@
 #include "calcfrac.h"
 #include "fractals.h"
 
+#include <cfloat>
+
 /*
 **  pre-calculated values for fractal types Magnet2M & Magnet2J
 */
