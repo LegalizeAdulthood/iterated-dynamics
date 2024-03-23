@@ -24,10 +24,7 @@
 #define MPdistance(z1, z2)  (*pMPadd(pMPsqr(*pMPsub((z1).x, (z2).x)), pMPsqr(*pMPsub((z1).y, (z2).y))))
 
 static MPC mpcold{};
-static MPC mpcnew{};
-static MPC mpctmp{};
 static MPC mpctmp1{};
-static double t2{};
 static double TwoPi{};
 static DComplex s_temp{};
 static DComplex BaseLog{};
@@ -36,7 +33,6 @@ static DComplex croot   = { 1.0, 0.0 };
 static MP g_newton_mp_r_over_d{};
 static MP g_mp_degree_minus_1_over_degree{};
 static MP g_mp_threshold{};
-static MP g_mp_temp2{};
 
 // this code translated to asm - lives in newton.asm
 // transform points with reciprocal function
@@ -117,7 +113,7 @@ int NewtonFractal2()
     g_new_z.y *= g_degree_minus_1_over_degree;
 
     // Watch for divide underflow
-    t2 = g_tmp_z.x*g_tmp_z.x + g_tmp_z.y*g_tmp_z.y;
+    double t2 = g_tmp_z.x * g_tmp_z.x + g_tmp_z.y * g_tmp_z.y;
     if (t2 < FLT_MIN)
     {
         return 1;
@@ -342,8 +338,9 @@ bool NewtonSetup()
 int MPCNewtonFractal()
 {
     g_mp_overflow = 0;
-    mpctmp   = MPCpow(mpcold, g_degree-1);
+    MPC mpctmp = MPCpow(mpcold, g_degree - 1);
 
+    MPC mpcnew;
     mpcnew.x = *pMPsub(*pMPmul(mpctmp.x, mpcold.x), *pMPmul(mpctmp.y, mpcold.y));
     mpcnew.y = *pMPadd(*pMPmul(mpctmp.x, mpcold.y), *pMPmul(mpctmp.y, mpcold.x));
     mpctmp1.x = *pMPsub(mpcnew.x, g_mpc_one.x);
@@ -381,10 +378,10 @@ int MPCNewtonFractal()
 
     mpcnew.x = *pMPadd(*pMPmul(g_mp_degree_minus_1_over_degree, mpcnew.x), g_newton_mp_r_over_d);
     mpcnew.y = *pMPmul(mpcnew.y, g_mp_degree_minus_1_over_degree);
-    g_mp_temp2 = MPCmod(mpctmp);
-    g_mp_temp2 = *pMPdiv(g_mp_one, g_mp_temp2);
-    mpcold.x = *pMPmul(g_mp_temp2, (*pMPadd(*pMPmul(mpcnew.x, mpctmp.x), *pMPmul(mpcnew.y, mpctmp.y))));
-    mpcold.y = *pMPmul(g_mp_temp2, (*pMPsub(*pMPmul(mpcnew.y, mpctmp.x), *pMPmul(mpcnew.x, mpctmp.y))));
+    MP temp2 = MPCmod(mpctmp);
+    temp2 = *pMPdiv(g_mp_one, temp2);
+    mpcold.x = *pMPmul(temp2, (*pMPadd(*pMPmul(mpcnew.x, mpctmp.x), *pMPmul(mpcnew.y, mpctmp.y))));
+    mpcold.y = *pMPmul(temp2, (*pMPsub(*pMPmul(mpcnew.y, mpctmp.x), *pMPmul(mpcnew.x, mpctmp.y))));
     g_new_z.x = *pMP2d(mpcold.x);
     g_new_z.y = *pMP2d(mpcold.y);
     return g_mp_overflow;
