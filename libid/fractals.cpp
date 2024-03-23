@@ -61,13 +61,38 @@ an appropriate setup, per_image, per_pixel, and orbit routines.
 #include <cmath>
 #include <cstdlib>
 
+#define modulus(z)       (sqr((z).x)+sqr((z).y))
+#define conjugate(pz)   ((pz)->y = 0.0 - (pz)->y)
+#define distance(z1, z2)  (sqr((z1).x-(z2).x)+sqr((z1).y-(z2).y))
+
+static LComplex ltmp2;
+static double foldxinitx;
+static double foldyinity;
+static double foldxinity;
+static double foldyinitx;
+static long oldxinitx;
+static long oldyinity;
+static long oldxinity;
+static long oldyinitx;
+static long longtmp;
+// temporary variables for trig use
+static long lcosx;
+static long lsinx;
+static long lcosy;
+static long lsiny;
+/*
+**  pre-calculated values for fractal types Magnet2M & Magnet2J
+*/
+static DComplex  T_Cm1;        // 3 * (floatparm - 1)
+static DComplex  T_Cm2;        // 3 * (floatparm - 2)
+static DComplex  T_Cm1Cm2;     // (floatparm - 1) * (floatparm - 2)
+
 LComplex g_l_coefficient;
 LComplex g_l_old_z;
 LComplex g_l_new_z;
 LComplex g_l_param;
 LComplex g_l_init;
 LComplex g_l_temp;
-static LComplex ltmp2;
 LComplex g_l_param2;
 long g_l_temp_sqr_x;
 long g_l_temp_sqr_y;
@@ -84,26 +109,15 @@ long g_fudge_half;
 DComplex g_power_z;
 int     g_bit_shift_less_1;                  // bit shift less 1
 bool g_overflow = false;
-
-#define modulus(z)       (sqr((z).x)+sqr((z).y))
-#define conjugate(pz)   ((pz)->y = 0.0 - (pz)->y)
-#define distance(z1, z2)  (sqr((z1).x-(z2).x)+sqr((z1).y-(z2).y))
-#define pMPsqr(z) (*pMPmul((z), (z)))
-#define MPdistance(z1, z2)  (*pMPadd(pMPsqr(*pMPsub((z1).x, (z2).x)), pMPsqr(*pMPsub((z1).y, (z2).y))))
-
 int g_c_exponent;
-
-
 // These are local but I don't want to pass them as parameters
 DComplex g_param_z1;
 DComplex g_param_z2;
 DComplex *g_float_param;
 LComplex *g_long_param; // used here and in jb.c
-
 // --------------------------------------------------------------------
 //              These variables are external for speed's sake only
 // --------------------------------------------------------------------
-
 double g_sin_x;
 double g_cos_x;
 static double siny;
@@ -111,39 +125,15 @@ static double cosy;
 static double tmpexp;
 double g_temp_sqr_x;
 double g_temp_sqr_y;
-
-static double foldxinitx;
-static double foldyinity;
-static double foldxinity;
-static double foldyinitx;
-static long oldxinitx;
-static long oldyinity;
-static long oldxinity;
-static long oldyinitx;
-static long longtmp;
-
 double g_quaternion_c;
 double g_quaternion_ci;
 double g_quaternion_cj;
 double g_quaternino_ck;
 
-// temporary variables for trig use
-static long lcosx;
-static long lsinx;
-static long lcosy;
-static long lsiny;
-
 /*
 **  details of finite attractors (required for Magnet Fractals)
 **  (can also be used in "coloring in" the lakes of Julia types)
 */
-
-/*
-**  pre-calculated values for fractal types Magnet2M & Magnet2J
-*/
-static DComplex  T_Cm1;        // 3 * (floatparm - 1)
-static DComplex  T_Cm2;        // 3 * (floatparm - 2)
-static DComplex  T_Cm1Cm2;     // (floatparm - 1) * (floatparm - 2)
 
 void FloatPreCalcMagnet2() // precalculation for Magnet2 (M & J) for speed
 {
@@ -257,12 +247,6 @@ int  fpMANRbailout()
     g_old_z = g_new_z;
     return 0;
 }
-
-#define MPCmod(m) (*pMPadd(*pMPmul((m).x, (m).x), *pMPmul((m).y, (m).y)))
-static MPC mpcold;
-static MPC mpcnew;
-static MPC mpctmp;
-static MPC mpctmp1;
 
 // --------------------------------------------------------------------
 //              Fractal (once per iteration) routines
@@ -390,63 +374,7 @@ int complex_div(DComplex numerator, DComplex denominator, DComplex *pout)
     return 0;
 }
 
-MP g_newton_mp_r_over_d;
-MP g_mp_degree_minus_1_over_degree;
-MP g_mp_threshold;
-MP g_mp_temp2;
 MP g_mp_one;
-MP g_mp_temp_param2_x;
-
-int MPCNewtonFractal()
-{
-    g_mp_overflow = 0;
-    mpctmp   = MPCpow(mpcold, g_degree-1);
-
-    mpcnew.x = *pMPsub(*pMPmul(mpctmp.x, mpcold.x), *pMPmul(mpctmp.y, mpcold.y));
-    mpcnew.y = *pMPadd(*pMPmul(mpctmp.x, mpcold.y), *pMPmul(mpctmp.y, mpcold.x));
-    mpctmp1.x = *pMPsub(mpcnew.x, g_mpc_one.x);
-    mpctmp1.y = *pMPsub(mpcnew.y, g_mpc_one.y);
-    if (pMPcmp(MPCmod(mpctmp1), g_mp_threshold) < 0)
-    {
-        if (g_fractal_type == fractal_type::MPNEWTBASIN)
-        {
-            long tmpcolor;
-            tmpcolor = -1;
-            for (int i = 0; i < g_degree; i++)
-                if (pMPcmp(MPdistance(g_mpc_roots[i], mpcold), g_mp_threshold) < 0)
-                {
-                    if (g_basin == 2)
-                    {
-                        tmpcolor = 1+(i&7) + ((g_color_iter&1) << 3);
-                    }
-                    else
-                    {
-                        tmpcolor = 1+i;
-                    }
-                    break;
-                }
-            if (tmpcolor == -1)
-            {
-                g_color_iter = g_max_color;
-            }
-            else
-            {
-                g_color_iter = tmpcolor;
-            }
-        }
-        return 1;
-    }
-
-    mpcnew.x = *pMPadd(*pMPmul(g_mp_degree_minus_1_over_degree, mpcnew.x), g_newton_mp_r_over_d);
-    mpcnew.y = *pMPmul(mpcnew.y, g_mp_degree_minus_1_over_degree);
-    g_mp_temp2 = MPCmod(mpctmp);
-    g_mp_temp2 = *pMPdiv(g_mp_one, g_mp_temp2);
-    mpcold.x = *pMPmul(g_mp_temp2, (*pMPadd(*pMPmul(mpcnew.x, mpctmp.x), *pMPmul(mpcnew.y, mpctmp.y))));
-    mpcold.y = *pMPmul(g_mp_temp2, (*pMPsub(*pMPmul(mpcnew.y, mpctmp.x), *pMPmul(mpcnew.x, mpctmp.y))));
-    g_new_z.x = *pMP2d(mpcold.x);
-    g_new_z.y = *pMP2d(mpcold.y);
-    return g_mp_overflow;
-}
 
 int Barnsley1Fractal()
 {
@@ -1833,24 +1761,6 @@ int juliafp_per_pixel()
     g_temp_sqr_x = sqr(g_old_z.x);  // precalculated value for regular Julia
     g_temp_sqr_y = sqr(g_old_z.y);
     g_tmp_z = g_old_z;
-    return 0;
-}
-
-int MPCjulia_per_pixel()
-{
-    // floating point julia
-    // juliafp
-    if (g_invert != 0)
-    {
-        invertz2(&g_old_z);
-    }
-    else
-    {
-        g_old_z.x = g_dx_pixel();
-        g_old_z.y = g_dy_pixel();
-    }
-    mpcold.x = *pd2MP(g_old_z.x);
-    mpcold.y = *pd2MP(g_old_z.y);
     return 0;
 }
 

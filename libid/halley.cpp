@@ -25,6 +25,7 @@ static int s_halley_a_plus_one_times_degree;
 static MP s_halley_mp_a_plus_one;
 static MP s_halley_mp_a_plus_one_times_degree;
 static MPC s_mpc_temp_param;
+static MP g_mp_temp_param2_x;
 
 bool HalleySetup()
 {

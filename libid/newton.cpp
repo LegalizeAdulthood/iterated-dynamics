@@ -18,13 +18,24 @@
 #include <cmath>
 
 #define distance(z1, z2)  (sqr((z1).x-(z2).x)+sqr((z1).y-(z2).y))
+#define MPCmod(m) (*pMPadd(*pMPmul((m).x, (m).x), *pMPmul((m).y, (m).y)))
+#define pMPsqr(z) (*pMPmul((z), (z)))
+#define MPdistance(z1, z2)  (*pMPadd(pMPsqr(*pMPsub((z1).x, (z2).x)), pMPsqr(*pMPsub((z1).y, (z2).y))))
 
+static MPC mpcold;
+static MPC mpcnew;
+static MPC mpctmp;
+static MPC mpctmp1;
 static double t2{};
 static double TwoPi;
 static DComplex s_temp;
 static DComplex BaseLog;
 static DComplex cdegree = { 3.0, 0.0 };
 static DComplex croot   = { 1.0, 0.0 };
+static MP g_newton_mp_r_over_d;
+static MP g_mp_degree_minus_1_over_degree;
+static MP g_mp_threshold;
+static MP g_mp_temp2;
 
 // this code translated to asm - lives in newton.asm
 // transform points with reciprocal function
@@ -325,4 +336,73 @@ bool NewtonSetup()
         setMPfunctions();
     }
     return true;
+}
+
+int MPCNewtonFractal()
+{
+    g_mp_overflow = 0;
+    mpctmp   = MPCpow(mpcold, g_degree-1);
+
+    mpcnew.x = *pMPsub(*pMPmul(mpctmp.x, mpcold.x), *pMPmul(mpctmp.y, mpcold.y));
+    mpcnew.y = *pMPadd(*pMPmul(mpctmp.x, mpcold.y), *pMPmul(mpctmp.y, mpcold.x));
+    mpctmp1.x = *pMPsub(mpcnew.x, g_mpc_one.x);
+    mpctmp1.y = *pMPsub(mpcnew.y, g_mpc_one.y);
+    if (pMPcmp(MPCmod(mpctmp1), g_mp_threshold) < 0)
+    {
+        if (g_fractal_type == fractal_type::MPNEWTBASIN)
+        {
+            long tmpcolor;
+            tmpcolor = -1;
+            for (int i = 0; i < g_degree; i++)
+                if (pMPcmp(MPdistance(g_mpc_roots[i], mpcold), g_mp_threshold) < 0)
+                {
+                    if (g_basin == 2)
+                    {
+                        tmpcolor = 1+(i&7) + ((g_color_iter&1) << 3);
+                    }
+                    else
+                    {
+                        tmpcolor = 1+i;
+                    }
+                    break;
+                }
+            if (tmpcolor == -1)
+            {
+                g_color_iter = g_max_color;
+            }
+            else
+            {
+                g_color_iter = tmpcolor;
+            }
+        }
+        return 1;
+    }
+
+    mpcnew.x = *pMPadd(*pMPmul(g_mp_degree_minus_1_over_degree, mpcnew.x), g_newton_mp_r_over_d);
+    mpcnew.y = *pMPmul(mpcnew.y, g_mp_degree_minus_1_over_degree);
+    g_mp_temp2 = MPCmod(mpctmp);
+    g_mp_temp2 = *pMPdiv(g_mp_one, g_mp_temp2);
+    mpcold.x = *pMPmul(g_mp_temp2, (*pMPadd(*pMPmul(mpcnew.x, mpctmp.x), *pMPmul(mpcnew.y, mpctmp.y))));
+    mpcold.y = *pMPmul(g_mp_temp2, (*pMPsub(*pMPmul(mpcnew.y, mpctmp.x), *pMPmul(mpcnew.x, mpctmp.y))));
+    g_new_z.x = *pMP2d(mpcold.x);
+    g_new_z.y = *pMP2d(mpcold.y);
+    return g_mp_overflow;
+}
+
+int MPCjulia_per_pixel()
+{
+    // floating point julia
+    // juliafp
+    if (g_invert != 0)
+    {
+        invertz2(&g_old_z);
+    }
+    else
+    {
+        g_old_z.x = g_dx_pixel();
+        g_old_z.y = g_dy_pixel();
+    }
+    mpcold.x = *pd2MP(g_old_z.x);
+    mpcold.y = *pd2MP(g_old_z.y);
+    return 0;
 }

@@ -13,3 +13,4 @@ int ComplexNewton();
 int ComplexBasin();
 
 bool NewtonSetup();
+int MPCjulia_per_pixel();
