@@ -38,6 +38,7 @@
 #include "quartic_mandelbrot.h"
 #include "quaternion_mandelbrot.h"
 #include "taylor_skinner_variations.h"
+#include "unity.h"
 #include "volterra_lotka.h"
 
 // parameter descriptions

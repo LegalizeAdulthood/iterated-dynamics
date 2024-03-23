@@ -45,7 +45,6 @@ extern double                g_sin_x;
 extern double                g_temp_sqr_x;
 extern double                g_temp_sqr_y;
 extern double                g_threshold;
-extern long                  g_xx_one;
 
 void cpower(DComplex *, int, DComplex *);
 int lcpower(LComplex *, int, LComplex *, int);
@@ -61,8 +60,6 @@ int SierpinskiFractal();
 int SierpinskiFPFractal();
 int LambdaexponentFractal();
 int LongLambdaexponentFractal();
-int UnityFractal();
-int UnityfpFractal();
 int longCmplxZpowerFractal();
 int floatCmplxZpowerFractal();
 int TrigPlusZsquaredFractal();

@@ -37,6 +37,7 @@ add_library(libid
     taylor_skinner_variations.cpp include/taylor_skinner_variations.h
     testpt.cpp include/testpt.h
     type_has_param.cpp include/type_has_param.h
+    unity.cpp include/unity.h
     volterra_lotka.cpp include/volterra_lotka.h
 
     ant.cpp include/ant.h
@@ -204,6 +205,7 @@ source_group("Header Files/fractal specific" FILES
     include/quartic_mandelbrot.h
     include/quaternion_mandelbrot.h
     include/taylor_skinner_variations.h
+    include/unity.h
     include/volterra_lotka.h
 )
 source_group("Source Files/fractal specific" FILES
@@ -232,6 +234,7 @@ source_group("Source Files/fractal specific" FILES
     quartic_mandelbrot.cpp
     quaternion_mandelbrot.cpp
     taylor_skinner_variations.cpp
+    unity.cpp
     volterra_lotka.cpp
 )
 source_group("Header Files/IO" FILES
