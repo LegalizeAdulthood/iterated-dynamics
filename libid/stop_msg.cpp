@@ -11,6 +11,9 @@
 #include "os.h"
 #include "prompts2.h"
 
+#include <cstdio>
+#include <cstring>
+
 static void blankrows(int row, int count, int attr)
 {
     char buf[81];
