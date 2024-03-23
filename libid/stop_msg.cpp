@@ -13,6 +13,9 @@
 
 #include <cstdio>
 #include <cstring>
+#ifdef XFRACT
+#include <unistd.h>
+#endif
 
 static void blankrows(int row, int count, int attr)
 {
