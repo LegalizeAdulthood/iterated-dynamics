@@ -23,6 +23,7 @@
 #include "lambda_fn.h"
 #include "lorenz.h"
 #include "lsys_fns.h"
+#include "magnet.h"
 #include "mandelbrot_mix.h"
 #include "miscfrac.h"
 #include "mpmath_c.h"

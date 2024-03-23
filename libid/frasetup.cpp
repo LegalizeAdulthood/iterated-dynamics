@@ -15,6 +15,7 @@
 #include "fractype.h"
 #include "id_data.h"
 #include "lambda_fn.h"
+#include "magnet.h"
 #include "mpmath.h"
 #include "mpmath_c.h"
 

@@ -11,7 +11,6 @@ bool JulialongSetup();
 bool TrigPlusSqrlongSetup();
 bool TrigPlusSqrfpSetup();
 bool FnPlusFnSym();
-bool LambdaTrigSetup();
 bool JuliafnPlusZsqrdSetup();
 bool MandelTrigSetup();
 bool SierpinskiSetup();

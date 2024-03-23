@@ -47,7 +47,6 @@ extern double                g_temp_sqr_y;
 extern double                g_threshold;
 extern long                  g_xx_one;
 
-void FloatPreCalcMagnet2();
 void cpower(DComplex *, int, DComplex *);
 int lcpower(LComplex *, int, LComplex *, int);
 int lcomplex_mult(LComplex, LComplex, LComplex *, int);
@@ -101,8 +100,6 @@ int ScottTrigPlusSqrFractal();
 int ScottTrigPlusSqrfpFractal();
 int SkinnerTrigSubSqrFractal();
 int SkinnerTrigSubSqrfpFractal();
-int Magnet1Fractal();
-int Magnet2Fractal();
 int long_julia_per_pixel();
 int long_mandel_per_pixel();
 int julia_per_pixel();

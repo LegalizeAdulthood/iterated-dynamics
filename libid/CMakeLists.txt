@@ -19,6 +19,7 @@ add_library(libid
     halley.cpp include/halley.h
     hypercomplex_mandelbrot.cpp include/hypercomplex_mandelbrot.h
     lambda_fn.cpp include/lambda_fn.h
+    magnet.cpp include/magnet.h
     mandelbrot_mix.cpp include/mandelbrot_mix.h
     newton.cpp include/newton.h
     param_not_used.cpp include/param_not_used.h
@@ -140,7 +141,6 @@ source_group("Header Files/engine" FILES
     include/calcfrac.h
     include/calcmand.h
     include/calmanfp.h
-    include/escher.h
     include/fracsuba.h
     include/fracsubr.h
     include/fractalb.h
@@ -159,7 +159,6 @@ source_group("Source Files/engine" FILES
     calcfrac.cpp
     calcmand.cpp
     calmanfp.cpp
-    escher.cpp
     fracsuba.cpp
     fracsubr.cpp
     fractalb.cpp
@@ -177,6 +176,7 @@ source_group("Header Files/fractal specific" FILES
     include/ant.h
     include/cellular.h
     include/circle_pattern.h
+    include/escher.h
     include/frothy_basin.h
     include/halley.h
     include/hypercomplex_mandelbrot.h
@@ -186,6 +186,7 @@ source_group("Header Files/fractal specific" FILES
     include/lsys.h
     include/lsysf.h
     include/lsys_fns.h
+    include/magnet.h
     include/mandelbrot_mix.h
     include/miscfrac.h
     include/newton.h
@@ -199,6 +200,7 @@ source_group("Source Files/fractal specific" FILES
     ant.cpp
     cellular.cpp
     circle_pattern.cpp
+    escher.cpp
     frothy_basin.cpp
     halley.cpp
     hypercomplex_mandelbrot.cpp
@@ -207,6 +209,7 @@ source_group("Source Files/fractal specific" FILES
     lorenz.cpp
     lsys.cpp
     lsysf.cpp
+    magnet.cpp
     mandelbrot_mix.cpp
     miscfrac.cpp
     newton.cpp
