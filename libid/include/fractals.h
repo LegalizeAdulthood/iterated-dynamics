@@ -56,8 +56,6 @@ int JuliaFractal();
 int JuliafpFractal();
 int LambdaFPFractal();
 int LambdaFractal();
-int SierpinskiFractal();
-int SierpinskiFPFractal();
 int LambdaexponentFractal();
 int LongLambdaexponentFractal();
 int longCmplxZpowerFractal();

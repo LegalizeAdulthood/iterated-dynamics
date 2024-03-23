@@ -32,6 +32,7 @@ add_library(libid
     popcorn.cpp include/popcorn.h
     quartic_mandelbrot.cpp include/quartic_mandelbrot.h
     quaternion_mandelbrot.cpp include/quaternion_mandelbrot.h
+    sierpinski_gasket.cpp include/sierpinski_gasket.h
     soi.cpp include/soi.h
     soi1.cpp
     taylor_skinner_variations.cpp include/taylor_skinner_variations.h
@@ -204,6 +205,7 @@ source_group("Header Files/fractal specific" FILES
     include/popcorn.h
     include/quartic_mandelbrot.h
     include/quaternion_mandelbrot.h
+    include/sierpinski_gasket.h
     include/taylor_skinner_variations.h
     include/unity.h
     include/volterra_lotka.h
@@ -233,6 +235,7 @@ source_group("Source Files/fractal specific" FILES
     popcorn.cpp
     quartic_mandelbrot.cpp
     quaternion_mandelbrot.cpp
+    sierpinski_gasket.cpp
     taylor_skinner_variations.cpp
     unity.cpp
     volterra_lotka.cpp
