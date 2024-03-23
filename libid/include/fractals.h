@@ -35,7 +35,6 @@ extern MP                    g_mp_temp_param2_x;
 extern MP                    g_mp_temp2;
 extern MP                    g_mp_threshold;
 extern std::vector<MPC>      g_mpc_roots;
-extern MPC                   g_mpc_temp_param;
 extern MP                    g_newton_mp_r_over_d;
 extern double                g_newton_r_over_d;
 extern bool                  g_overflow;

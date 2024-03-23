@@ -8,6 +8,7 @@
 #include "fractalp.h"
 #include "fractals.h"
 #include "fractype.h"
+#include "mpmath.h"
 #include "mpmath_c.h"
 #include "newton.h"
 #include "pixel_grid.h"
@@ -19,12 +20,11 @@
 
 static MPC mpcold;
 static MPC mpcnew;
-
-int g_halley_a_plus_one;
-int g_halley_a_plus_one_times_degree;
-MP g_halley_mp_a_plus_one;
-MP g_halley_mp_a_plus_one_times_degree;
-MPC g_mpc_temp_param;
+static int g_halley_a_plus_one;
+static int g_halley_a_plus_one_times_degree;
+static MP g_halley_mp_a_plus_one;
+static MP g_halley_mp_a_plus_one_times_degree;
+static MPC g_mpc_temp_param;
 
 bool HalleySetup()
 {
