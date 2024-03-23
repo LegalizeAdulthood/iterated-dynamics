@@ -209,7 +209,7 @@ void show_three_bf(char const *s1, bf_t t1, char const *s2, bf_t t2, char const 
 void showaspect(char const *s)
 {
     bf_t bt1, bt2, aspect;
-    char msg[100], str[100];
+    char msg[300], str[100];
     int saved;
     saved = save_stack();
     bt1    = alloc_stack(rbflength+2);
