@@ -56,6 +56,8 @@ void FloatPreCalcMagnet2();
 void cpower(DComplex *, int, DComplex *);
 int lcpower(LComplex *, int, LComplex *, int);
 int lcomplex_mult(LComplex, LComplex, LComplex *, int);
+int complex_mult(DComplex arg1, DComplex arg2, DComplex *pz);
+int complex_div(DComplex numerator, DComplex denominator, DComplex *pout);
 int MPCNewtonFractal();
 int Barnsley1Fractal();
 int Barnsley1FPFractal();

@@ -18,6 +18,7 @@ add_library(libid
     halley.cpp include/halley.h
     hypercomplex_mandelbrot.cpp include/hypercomplex_mandelbrot.h
     mandelbrot_mix.cpp include/mandelbrot_mix.h
+    newton.cpp include/newton.h
     param_not_used.cpp include/param_not_used.h
     peterson_variations.cpp include/peterson_variations.h
     phoenix.cpp include/phoenix.h
@@ -119,7 +120,6 @@ add_library(libid
     include/id_data.h
     include/lsys.h
     include/mpmath.h
-    include/newton.h
     include/prototyp.h
     include/winprot.h
 )
@@ -146,20 +146,12 @@ source_group("Header Files/engine" FILES
     include/fractals.h
     include/fractype.h
     include/frasetup.h
-    include/halley.h
-    include/hypercomplex_mandelbrot.h
     include/id_data.h
-    include/mandelbrot_mix.h
     include/param_not_used.h
-    include/peterson_variations.h
-    include/phoenix.h
     include/pixel_grid.h
-    include/quaternion_mandelbrot.h
     include/soi.h
-    include/taylor_skinner_variations.h
     include/testpt.h
     include/type_has_param.h
-    include/volterra_lotka.h
 )
 source_group("Source Files/engine" FILES
     calcfrac.cpp
@@ -172,42 +164,51 @@ source_group("Source Files/engine" FILES
     fractalp.cpp
     fractals.cpp
     frasetup.cpp
-    halley.cpp
-    hypercomplex_mandelbrot.cpp
-    mandelbrot_mix.cpp
     param_not_used.cpp
-    peterson_variations.cpp
-    phoenix.cpp
     pixel_grid.cpp
-    quaternion_mandelbrot.cpp
     soi.cpp
     soi1.cpp
-    taylor_skinner_variations.cpp
     testpt.cpp
     type_has_param.cpp
-    volterra_lotka.cpp
 )
 source_group("Header Files/fractal specific" FILES
     include/ant.h
     include/cellular.h
     include/frothy_basin.h
+    include/halley.h
+    include/hypercomplex_mandelbrot.h
     include/jb.h
     include/lorenz.h
     include/lsys.h
     include/lsysf.h
     include/lsys_fns.h
+    include/mandelbrot_mix.h
     include/miscfrac.h
     include/newton.h
+    include/peterson_variations.h
+    include/phoenix.h
+    include/quaternion_mandelbrot.h
+    include/taylor_skinner_variations.h
+    include/volterra_lotka.h
 )
 source_group("Source Files/fractal specific" FILES
     ant.cpp
     cellular.cpp
     frothy_basin.cpp
+    halley.cpp
+    hypercomplex_mandelbrot.cpp
     jb.cpp
     lorenz.cpp
     lsys.cpp
     lsysf.cpp
+    mandelbrot_mix.cpp
     miscfrac.cpp
+    newton.cpp
+    peterson_variations.cpp
+    phoenix.cpp
+    quaternion_mandelbrot.cpp
+    taylor_skinner_variations.cpp
+    volterra_lotka.cpp
 )
 source_group("Header Files/IO" FILES
     include/cmdfiles.h
