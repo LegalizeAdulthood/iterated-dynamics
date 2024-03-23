@@ -1183,56 +1183,6 @@ SierpinskiFPSetup()
 }
 
 bool
-HalleySetup()
-{
-    // Halley
-    g_periodicity_check = 0;
-
-    if (g_user_float_flag)
-    {
-        g_fractal_type = fractal_type::HALLEY; // float on
-    }
-    else
-    {
-        g_fractal_type = fractal_type::MPHALLEY;
-    }
-
-    g_cur_fractal_specific = &g_fractal_specific[static_cast<int>(g_fractal_type)];
-
-    g_degree = (int)g_param_z1.x;
-    if (g_degree < 2)
-    {
-        g_degree = 2;
-    }
-    g_params[0] = (double)g_degree;
-
-    //  precalculated values
-    g_halley_a_plus_one = g_degree + 1; // a+1
-    g_halley_a_plus_one_times_degree = g_halley_a_plus_one * g_degree;
-
-    if (g_fractal_type == fractal_type::MPHALLEY)
-    {
-        setMPfunctions();
-        g_halley_mp_a_plus_one = *pd2MP((double)g_halley_a_plus_one);
-        g_halley_mp_a_plus_one_times_degree = *pd2MP((double)g_halley_a_plus_one_times_degree);
-        g_mpc_temp_param.x = *pd2MP(g_param_z1.y);
-        g_mpc_temp_param.y = *pd2MP(g_param_z2.y);
-        g_mp_temp_param2_x = *pd2MP(g_param_z2.x);
-        g_mp_one        = *pd2MP(1.0);
-    }
-
-    if (g_degree % 2)
-    {
-        g_symmetry = symmetry_type::X_AXIS;   // odd
-    }
-    else
-    {
-        g_symmetry = symmetry_type::XY_AXIS; // even
-    }
-    return true;
-}
-
-bool
 StandardSetup()
 {
     if (g_fractal_type == fractal_type::UNITYFP)

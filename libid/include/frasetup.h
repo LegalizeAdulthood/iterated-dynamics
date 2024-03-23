@@ -27,5 +27,4 @@ bool LambdaTrigOrTrigSetup();
 bool JuliaTrigOrTrigSetup();
 bool ManlamTrigOrTrigSetup();
 bool MandelTrigOrTrigSetup();
-bool HalleySetup();
 bool dynam2dfloatsetup();
