@@ -5,8 +5,11 @@
 
 #include "calcfrac.h"
 #include "cmplx.h"
+#include "fpu087.h"
 #include "fractals.h"
 #include "fractype.h"
+#include "id_data.h"
+#include "mpmath_c.h"
 #include "pixel_grid.h"
 
 #include <cmath>
@@ -14,6 +17,11 @@
 #define distance(z1, z2)  (sqr((z1).x-(z2).x)+sqr((z1).y-(z2).y))
 
 static double t2{};
+static double TwoPi;
+static DComplex s_temp;
+static DComplex BaseLog;
+static DComplex cdegree = { 3.0, 0.0 };
+static DComplex croot   = { 1.0, 0.0 };
 
 // this code translated to asm - lives in newton.asm
 // transform points with reciprocal function
@@ -107,3 +115,117 @@ int NewtonFractal2()
     }
     return 0;
 }
+
+bool ComplexNewtonSetup()
+{
+    g_threshold = .001;
+    g_periodicity_check = 0;
+    if (g_params[0] != 0.0
+        || g_params[1] != 0.0
+        || g_params[2] != 0.0
+        || g_params[3] != 0.0)
+    {
+        croot.x = g_params[2];
+        croot.y = g_params[3];
+        cdegree.x = g_params[0];
+        cdegree.y = g_params[1];
+        FPUcplxlog(&croot, &BaseLog);
+        TwoPi = std::asin(1.0) * 4;
+    }
+    return true;
+}
+
+int ComplexNewton()
+{
+    DComplex cd1;
+
+    /* new = ((cdegree-1) * old**cdegree) + croot
+             ----------------------------------
+                  cdegree * old**(cdegree-1)         */
+
+    cd1.x = cdegree.x - 1.0;
+    cd1.y = cdegree.y;
+
+    s_temp = ComplexPower(g_old_z, cd1);
+    FPUcplxmul(&s_temp, &g_old_z, &g_new_z);
+
+    g_tmp_z.x = g_new_z.x - croot.x;
+    g_tmp_z.y = g_new_z.y - croot.y;
+    if ((sqr(g_tmp_z.x) + sqr(g_tmp_z.y)) < g_threshold)
+    {
+        return 1;
+    }
+
+    FPUcplxmul(&g_new_z, &cd1, &g_tmp_z);
+    g_tmp_z.x += croot.x;
+    g_tmp_z.y += croot.y;
+
+    FPUcplxmul(&s_temp, &cdegree, &cd1);
+    FPUcplxdiv(&g_tmp_z, &cd1, &g_old_z);
+    if (g_overflow)
+    {
+        return 1;
+    }
+    g_new_z = g_old_z;
+    return 0;
+}
+
+int ComplexBasin()
+{
+    DComplex cd1;
+
+    /* new = ((cdegree-1) * old**cdegree) + croot
+             ----------------------------------
+                  cdegree * old**(cdegree-1)         */
+
+    cd1.x = cdegree.x - 1.0;
+    cd1.y = cdegree.y;
+
+    s_temp = ComplexPower(g_old_z, cd1);
+    FPUcplxmul(&s_temp, &g_old_z, &g_new_z);
+
+    g_tmp_z.x = g_new_z.x - croot.x;
+    g_tmp_z.y = g_new_z.y - croot.y;
+    if ((sqr(g_tmp_z.x) + sqr(g_tmp_z.y)) < g_threshold)
+    {
+        if (std::fabs(g_old_z.y) < .01)
+        {
+            g_old_z.y = 0.0;
+        }
+        FPUcplxlog(&g_old_z, &s_temp);
+        FPUcplxmul(&s_temp, &cdegree, &g_tmp_z);
+        double mod = g_tmp_z.y/TwoPi;
+        g_color_iter = (long)mod;
+        if (std::fabs(mod - g_color_iter) > 0.5)
+        {
+            if (mod < 0.0)
+            {
+                g_color_iter--;
+            }
+            else
+            {
+                g_color_iter++;
+            }
+        }
+        g_color_iter += 2;
+        if (g_color_iter < 0)
+        {
+            g_color_iter += 128;
+        }
+        return 1;
+    }
+
+    FPUcplxmul(&g_new_z, &cd1, &g_tmp_z);
+    g_tmp_z.x += croot.x;
+    g_tmp_z.y += croot.y;
+
+    FPUcplxmul(&s_temp, &cdegree, &cd1);
+    FPUcplxdiv(&g_tmp_z, &cd1, &g_old_z);
+    if (g_overflow)
+    {
+        return 1;
+    }
+    g_new_z = g_old_z;
+    return 0;
+}
+

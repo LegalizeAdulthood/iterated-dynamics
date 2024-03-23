@@ -7,3 +7,7 @@
 void invertz2(DComplex *z);
 
 int NewtonFractal2();
+
+bool ComplexNewtonSetup();
+int ComplexNewton();
+int ComplexBasin();
