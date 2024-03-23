@@ -109,7 +109,6 @@ int LambdaTrigFractal1();
 int LambdaTrigfpFractal1();
 int LambdaTrigFractal2();
 int LambdaTrigfpFractal2();
-int CirclefpFractal();
 int long_julia_per_pixel();
 int long_mandel_per_pixel();
 int julia_per_pixel();

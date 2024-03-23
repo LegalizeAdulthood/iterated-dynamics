@@ -9,6 +9,7 @@
 #include "ant.h"
 #include "calcfrac.h"
 #include "cellular.h"
+#include "circle_pattern.h"
 #include "escher.h"
 #include "fractalb.h"
 #include "fractals.h"

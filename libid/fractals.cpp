@@ -1475,24 +1475,6 @@ int LambdaTrigfpFractal2()
     return 0;
 }
 
-int CirclefpFractal()
-{
-    long i;
-    i = (long)(g_params[0]*(g_temp_sqr_x+g_temp_sqr_y));
-    g_color_iter = i%g_colors;
-    return 1;
-}
-/*
-CirclelongFractal()
-{
-   long i;
-   i = multiply(lparm.x,(g_l_temp_sqr_x+g_l_temp_sqr_y),g_bit_shift);
-   i = i >> g_bit_shift;
-   g_color_iter = i%colors);
-   return 1;
-}
-*/
-
 // --------------------------------------------------------------------
 //              Initialization (once per pixel) routines
 // --------------------------------------------------------------------

@@ -8,6 +8,7 @@ add_library(libid
     calcfrac.cpp include/calcfrac.h
     calcmand.cpp include/calcmand.h
     calmanfp.cpp include/calmanfp.h
+    circle_pattern.cpp include/circle_pattern.h
     escher.cpp include/escher.h
     fracsuba.cpp include/fracsuba.h
     fracsubr.cpp include/fracsubr.h
@@ -174,6 +175,7 @@ source_group("Source Files/engine" FILES
 source_group("Header Files/fractal specific" FILES
     include/ant.h
     include/cellular.h
+    include/circle_pattern.h
     include/frothy_basin.h
     include/halley.h
     include/hypercomplex_mandelbrot.h
@@ -194,6 +196,7 @@ source_group("Header Files/fractal specific" FILES
 source_group("Source Files/fractal specific" FILES
     ant.cpp
     cellular.cpp
+    circle_pattern.cpp
     frothy_basin.cpp
     halley.cpp
     hypercomplex_mandelbrot.cpp
