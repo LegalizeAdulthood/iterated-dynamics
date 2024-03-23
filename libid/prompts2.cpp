@@ -20,7 +20,6 @@
 #include "fix_dirname.h"
 #include "fracsubr.h"
 #include "fractalp.h"
-#include "fractype.h"
 #include "full_screen_prompt.h"
 #include "helpcom.h"
 #include "helpdefs.h"
@@ -35,7 +34,6 @@
 #include "miscres.h"
 #include "mpmath.h"
 #include "mpmath_c.h"
-#include "os.h"
 #include "prompts1.h"
 #include "realdos.h"
 #include "slideshw.h"
@@ -43,6 +41,7 @@
 #include "split_path.h"
 #include "stereo.h"
 #include "stop_msg.h"
+#include "video_mode.h"
 #include "zoom.h"
 
 #include <cassert>

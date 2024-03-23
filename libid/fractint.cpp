@@ -33,6 +33,7 @@
 #include "realdos.h"
 #include "rotate.h"
 #include "stop_msg.h"
+#include "video_mode.h"
 
 #include <cctype>
 #include <csignal>
@@ -56,33 +57,33 @@ std::string g_fractal_search_dir2;
    the following variables are out here only so
    that the calcfract() and assembler routines can get at them easily
 */
-int     g_dot_mode;                // video access method
-int     textsafe2;              // textsafe override from g_video_table
-int     g_screen_x_dots, g_screen_y_dots;         // # of dots on the physical screen
-int     g_logical_screen_x_offset, g_logical_screen_y_offset;         // physical top left of logical screen
-int     g_logical_screen_x_dots, g_logical_screen_y_dots;           // # of dots on the logical screen
-double  g_logical_screen_x_size_dots, g_logical_screen_y_size_dots;         // xdots-1, ydots-1
-int     g_colors = 256;           // maximum colors available
-long    g_max_iterations;                  // try this many iterations
-int     g_box_count;               // 0 if no zoom-box yet
-int     g_zoom_box_rotation;                // zoombox rotation
-double  g_zoom_box_x, g_zoom_box_y;               // topleft of zoombox
-double  g_zoom_box_width, g_zoom_box_height, g_zoom_box_skew;  // zoombox size & shape
-
-fractal_type g_fractal_type;               // if == 0, use Mandelbrot
-char    g_std_calc_mode;            // '1', '2', 'g', 'b'
-long    g_l_delta_x, g_l_delta_y;             // screen pixel increments
-long    g_l_delta_x2, g_l_delta_y2;           // screen pixel increments
-LDBL    g_delta_x, g_delta_y;           // screen pixel increments
-LDBL    g_delta_x2, g_delta_y2;         // screen pixel increments
-long    g_l_delta_min;                 // for calcfrac/calcmand
-double  g_delta_min;                // same as a double
-double  g_params[MAX_PARAMS];       // parameters
-double  g_potential_params[3];            // three potential parameters
-long    g_fudge_factor;                  // 2**fudgefactor
-long    g_l_at_rad;               // finite attractor radius
-double  g_f_at_rad;               // finite attractor radius
-int     g_bit_shift;               // fudgefactor
+int g_dot_mode;                                                    // video access method
+int textsafe2;                                                     // textsafe override from g_video_table
+int g_screen_x_dots, g_screen_y_dots;                              // # of dots on the physical screen
+int g_logical_screen_x_offset, g_logical_screen_y_offset;          // physical top left of logical screen
+int g_logical_screen_x_dots, g_logical_screen_y_dots;              // # of dots on the logical screen
+double g_logical_screen_x_size_dots, g_logical_screen_y_size_dots; // xdots-1, ydots-1
+int g_colors = 256;                                                // maximum colors available
+long g_max_iterations;                                             // try this many iterations
+int g_box_count;                                                   // 0 if no zoom-box yet
+int g_zoom_box_rotation;                                           // zoombox rotation
+double g_zoom_box_x, g_zoom_box_y;                                 // topleft of zoombox
+double g_zoom_box_width, g_zoom_box_height;                        // zoombox size
+double g_zoom_box_skew;                                            // zoombox shape
+fractal_type g_fractal_type;                                       // if == 0, use Mandelbrot
+char g_std_calc_mode;                                              // '1', '2', 'g', 'b'
+long g_l_delta_x, g_l_delta_y;                                     // screen pixel increments
+long g_l_delta_x2, g_l_delta_y2;                                   // screen pixel increments
+LDBL g_delta_x, g_delta_y;                                         // screen pixel increments
+LDBL g_delta_x2, g_delta_y2;                                       // screen pixel increments
+long g_l_delta_min;                                                // for calcfrac/calcmand
+double g_delta_min;                                                // same as a double
+double g_params[MAX_PARAMS];                                       // parameters
+double g_potential_params[3];                                      // three potential parameters
+long g_fudge_factor;                                               // 2**fudgefactor
+long g_l_at_rad;                                                   // finite attractor radius
+double g_f_at_rad;                                                 // finite attractor radius
+int g_bit_shift;                                                   // fudgefactor
 
 config_status     g_bad_config{};          // 'id.cfg' ok?
 bool g_has_inverse = false;

@@ -45,6 +45,7 @@
 #include "sound.h"
 #include "stereo.h"
 #include "stop_msg.h"
+#include "video_mode.h"
 
 #include <algorithm>
 #include <cassert>

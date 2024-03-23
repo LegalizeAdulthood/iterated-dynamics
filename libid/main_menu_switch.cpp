@@ -29,15 +29,14 @@
 #include "make_batch_file.h"
 #include "merge_path_names.h"
 #include "miscovl.h"
-#include "os.h"
 #include "parser.h"
 #include "prompts1.h"
 #include "prompts2.h"
-#include "realdos.h"
 #include "rotate.h"
 #include "spindac.h"
 #include "stereo.h"
 #include "update_save_name.h"
+#include "video_mode.h"
 #include "zoom.h"
 
 #include <cstring>

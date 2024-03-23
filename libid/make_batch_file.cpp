@@ -20,7 +20,6 @@
 #include "lorenz.h"
 #include "miscovl.h"
 #include "miscres.h"
-#include "os.h"
 #include "parser.h"
 #include "plot3d.h"
 #include "prompts1.h"
@@ -31,6 +30,7 @@
 #include "stereo.h"
 #include "stop_msg.h"
 #include "type_has_param.h"
+#include "video_mode.h"
 
 #include <algorithm>
 #include <cctype>

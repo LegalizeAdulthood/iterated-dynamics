@@ -15,6 +15,7 @@
 #include "plot3d.h"
 #include "rotate.h"
 #include "spindac.h"
+#include "video_mode.h"
 
 #define WIN32_LEAN_AND_MEAN
 #define STRICT
@@ -29,7 +30,7 @@
 
 #include <cstdio>
 
- // read/write-a-dot/line routines
+// read/write-a-dot/line routines
 using t_dotwriter = void(int, int, int);
 using t_dotreader = int(int, int);
 using t_linewriter = void(int y, int x, int lastx, BYTE *pixels);

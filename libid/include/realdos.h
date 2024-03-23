@@ -24,7 +24,6 @@ extern int                   g_cfg_line_nums[];
 extern int                   g_patch_level;
 extern int                   g_release;
 extern std::string const     g_speed_prompt;
-extern int                   g_video_table_len;
 
 int fullscreen_choice(
     int options,
@@ -53,6 +52,3 @@ int field_prompt(char const *hdg, char const *instr, char *fld, int len,
 bool thinking(int options, char const *msg);
 void discardgraphics();
 void load_id_config();
-int check_vidmode_key(int, int);
-int check_vidmode_keyname(char const *kname);
-void vidmode_keyname(int k, char *buf);

@@ -25,6 +25,7 @@
 #include "os.h"
 #include "prompts2.h"
 #include "slideshw.h"
+#include "video_mode.h"
 #include "zoom.h"
 
 #include <sys/ioctl.h>

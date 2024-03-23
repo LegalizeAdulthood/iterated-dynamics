@@ -13,9 +13,9 @@
 #include "helpdefs.h"
 #include "id_data.h"
 #include "miscres.h"
-#include "realdos.h"
 #include "stop_msg.h"
 #include "temp_msg.h"
+#include "video_mode.h"
 
 #include <cctype>
 #include <cstdio>

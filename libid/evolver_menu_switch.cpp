@@ -1,7 +1,7 @@
+#include "evolver_menu_switch.h"
+
 #include "port.h"
 #include "prototyp.h"
-
-#include "framain2.h"
 
 #include "calcfrac.h"
 #include "cmdfiles.h"
@@ -13,19 +13,18 @@
 #include "find_special_colors.h"
 #include "fractalp.h"
 #include "fractype.h"
+#include "framain2.h"
 #include "get_toggles.h"
 #include "history.h"
 #include "id_data.h"
 #include "loadfile.h"
 #include "lorenz.h"
-#include "merge_path_names.h"
 #include "miscovl.h"
-#include "os.h"
 #include "prompts1.h"
 #include "prompts2.h"
-#include "realdos.h"
 #include "rotate.h"
 #include "update_save_name.h"
+#include "video_mode.h"
 #include "zoom.h"
 
 #include <cmath>

@@ -29,6 +29,7 @@
 #include "spindac.h"
 #include "stop_msg.h"
 #include "temp_msg.h"
+#include "video_mode.h"
 #include "zoom.h"
 
 #include <cctype>

@@ -6,6 +6,7 @@
 #include "cmplx.h"
 #include "os.h"
 #include "realdos.h"
+#include "video_mode.h"
 
 #include <cstring>
 

@@ -17,10 +17,10 @@
 #include "helpdefs.h"
 #include "id_data.h"
 #include "miscres.h"
-#include "os.h"
 #include "realdos.h"
 #include "rotate.h"
 #include "stop_msg.h"
+#include "video_mode.h"
 
 #include <algorithm>
 #include <array>

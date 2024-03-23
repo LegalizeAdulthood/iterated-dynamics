@@ -18,7 +18,6 @@ extern int                   g_vesa_x_res;
 extern int                   g_vesa_y_res;
 extern int                   g_video_start_x;
 extern int                   g_video_start_y;
-extern VIDEOINFO             g_video_table[];
 
 #if defined(XFRACT)
 extern bool                  g_fake_lut;

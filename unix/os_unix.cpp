@@ -6,6 +6,7 @@
 #include "id.h"
 #include "mpmath.h"
 #include "prompts2.h"
+#include "video_mode.h"
 
 #include <dirent.h>
 #include <sys/stat.h>
@@ -20,14 +21,6 @@ long g_l_init_x = 0;
 long g_l_init_y = 0;
 long g_save_base = 0;              // base clock ticks
 long g_save_ticks = 0;             // save after this many ticks
-
-/* g_video_table
- *
- *  |--Adapter/Mode-Name------|-------Comments-----------|
- *  |------INT 10H------|Dot-|--Resolution---|
- *  |key|--AX---BX---CX---DX|Mode|--X-|--Y-|Color|
- */
-VIDEOINFO g_video_table[MAX_VIDEO_MODES]{};
 
 // Global variables that should be phased out (old video mode stuff)
 int g_video_vram = 0;

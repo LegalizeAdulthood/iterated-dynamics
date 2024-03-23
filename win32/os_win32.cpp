@@ -133,13 +133,6 @@ int g_vesa_x_res = 0;
 int g_vesa_y_res = 0;
 int g_video_start_x = 0;
 int g_video_start_y = 0;
-/* g_video_table
- *
- *  |--Adapter/Mode-Name------|-------Comments-----------|
- *  |------INT 10H------|Dot-|--Resolution---|
- *  |key|--AX---BX---CX---DX|Mode|--X-|--Y-|Color|
- */
-VIDEOINFO g_video_table[MAX_VIDEO_MODES] = { 0 };
 
 /* Global functions
  *
