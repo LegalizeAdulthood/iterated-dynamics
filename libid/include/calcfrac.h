@@ -1,6 +1,7 @@
 #pragma once
 
 #include "big.h"
+#include "id.h"
 
 #include <vector>
 

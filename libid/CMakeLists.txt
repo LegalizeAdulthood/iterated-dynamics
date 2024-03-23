@@ -15,6 +15,7 @@ add_library(libid
     fractalp.cpp include/fractalp.h
     fractals.cpp include/fractals.h
     frasetup.cpp include/frasetup.h
+    halley.cpp include/halley.h
     hypercomplex_mandelbrot.cpp include/hypercomplex_mandelbrot.h
     mandelbrot_mix.cpp include/mandelbrot_mix.h
     param_not_used.cpp include/param_not_used.h
@@ -144,6 +145,7 @@ source_group("Header Files/engine" FILES
     include/fractals.h
     include/fractype.h
     include/frasetup.h
+    include/halley.h
     include/hypercomplex_mandelbrot.h
     include/id_data.h
     include/mandelbrot_mix.h
@@ -168,6 +170,7 @@ source_group("Source Files/engine" FILES
     fractalp.cpp
     fractals.cpp
     frasetup.cpp
+    halley.cpp
     hypercomplex_mandelbrot.cpp
     mandelbrot_mix.cpp
     param_not_used.cpp

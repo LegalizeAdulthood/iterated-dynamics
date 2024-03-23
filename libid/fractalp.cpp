@@ -15,6 +15,7 @@
 #include "fractype.h"
 #include "frasetup.h"
 #include "frothy_basin.h"
+#include "halley.h"
 #include "helpdefs.h"
 #include "hypercomplex_mandelbrot.h"
 #include "jb.h"

@@ -13,6 +13,7 @@
 #include "fractals.h"
 #include "fractint.h"
 #include "fractype.h"
+#include "halley.h"
 #include "id_data.h"
 #include "mpmath.h"
 #include "mpmath_c.h"
