@@ -17,11 +17,10 @@
 #include "gifview.h"
 #include "helpdefs.h"
 #include "id_data.h"
-#include "os.h"
-#include "realdos.h"
 #include "rotate.h"
 #include "spindac.h"
 #include "stop_msg.h"
+#include "temp_msg.h"
 
 #include <cstdlib>
 #include <cstring>

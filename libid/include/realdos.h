@@ -26,7 +26,6 @@ extern int                   g_release;
 extern std::string const     g_speed_prompt;
 extern int                   g_video_table_len;
 
-int texttempmsg(char const *);
 int fullscreen_choice(
     int options,
     char const *hdg,
@@ -44,12 +43,6 @@ int fullscreen_choice(
     int (*speedprompt)(int row, int col, int vid, char const *speedstring, int speed_match),
     int (*checkkey)(int, int)
 );
-bool showtempmsg(char const *);
-inline bool showtempmsg(const std::string &msg)
-{
-    return showtempmsg(msg.c_str());
-}
-void cleartempmsg();
 void helptitle();
 int putstringcenter(int row, int col, int width, int attr, char const *msg);
 int main_menu(int);
@@ -63,5 +56,4 @@ void load_id_config();
 int check_vidmode_key(int, int);
 int check_vidmode_keyname(char const *kname);
 void vidmode_keyname(int k, char *buf);
-void freetempmsg();
 void load_videotable(int);

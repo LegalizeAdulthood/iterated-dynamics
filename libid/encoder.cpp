@@ -33,6 +33,7 @@
 #include "rotate.h"
 #include "slideshw.h"
 #include "stop_msg.h"
+#include "temp_msg.h"
 #include "update_save_name.h"
 
 #include <algorithm>

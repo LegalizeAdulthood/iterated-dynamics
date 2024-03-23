@@ -21,7 +21,6 @@
 #include "loadmap.h"
 #include "lorenz.h"
 #include "main_menu_switch.h"
-#include "merge_path_names.h"
 #include "os.h"
 #include "prompts1.h"
 #include "prompts2.h"
@@ -29,6 +28,7 @@
 #include "rotate.h"
 #include "spindac.h"
 #include "stop_msg.h"
+#include "temp_msg.h"
 #include "zoom.h"
 
 #include <cctype>
