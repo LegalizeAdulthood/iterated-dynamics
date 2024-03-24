@@ -1,7 +1,6 @@
 #pragma once
 
 extern int                   g_resume_len;
-extern bool                  g_tab_or_help;
 extern bool                  g_use_grid;
 
 void wait_until(int index, uclock_t wait_time);

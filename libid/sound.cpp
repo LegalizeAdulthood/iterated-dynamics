@@ -20,6 +20,8 @@ int g_fm_volume = 0;
 int g_fm_wavetype = 0;
 int g_hi_attenuation = 0;
 int g_polyphony = 0;
+// TODO: this doesn't appear to be used outside this file?
+bool g_tab_or_help{}; // kludge for sound and tab or help key press
 
 static std::FILE *s_snd_fp{};
 

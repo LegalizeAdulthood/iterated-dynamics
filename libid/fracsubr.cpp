@@ -51,7 +51,6 @@ static void   adjust_to_limitsbf(double);
 static void   smallest_add_bf(bf_t);
 int    g_resume_len;               // length of resume info
 static int    resume_offset;            // offset in resume info gets
-bool    g_tab_or_help = false;    // kludge for sound and tab or help key press
 
 enum
 {
