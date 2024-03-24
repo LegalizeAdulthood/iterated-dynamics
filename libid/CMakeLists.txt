@@ -119,7 +119,7 @@ add_library(libid
     path_match.cpp include/path_match.h
     prompts1.cpp include/prompts1.h
     prompts2.cpp include/prompts2.h
-    realdos.cpp include/realdos.h
+    put_string_center.cpp include/put_string_center.h
     search_path.cpp include/search_path.h
     sound.cpp include/sound.h
     spindac.cpp include/spindac.h
@@ -356,7 +356,7 @@ source_group("Header Files/ui" FILES
     include/path_match.h
     include/prompts1.h
     include/prompts2.h
-    include/realdos.h
+    include/put_string_center.h
     include/search_path.h
     include/spindac.h
     include/split_path.h
@@ -405,7 +405,7 @@ source_group("Source Files/ui" FILES
     path_match.cpp
     prompts1.cpp
     prompts2.cpp
-    realdos.cpp
+    put_string_center.cpp
     search_path.cpp
     spindac.cpp
     split_path.cpp

@@ -8,7 +8,7 @@
 #include "help_title.h"
 #include "input_field.h"
 #include "os.h"
-#include "realdos.h"
+#include "put_string_center.h"
 
 int field_prompt(
     char const *hdg,        // heading, \n delimited lines

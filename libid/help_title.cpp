@@ -6,7 +6,7 @@
 #include "cmdfiles.h"
 #include "id.h"
 #include "drivers.h"
-#include "realdos.h"
+#include "put_string_center.h"
 #include "version.h"
 
 #include <cstdio>

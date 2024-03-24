@@ -15,7 +15,7 @@
 #include "load_entry_text.h"
 #include "miscres.h"
 #include "os.h"
-#include "realdos.h"
+#include "put_string_center.h"
 
 #include <cassert>
 #include <cstdio>

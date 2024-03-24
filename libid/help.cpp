@@ -10,7 +10,7 @@
 #include "id_data.h"
 #include "id_io.h"
 #include "os.h"
-#include "realdos.h"
+#include "put_string_center.h"
 #include "stop_msg.h"
 #include "version.h"
 

@@ -15,7 +15,7 @@
 #include "help_title.h"
 #include "miscres.h"
 #include "prompts2.h"
-#include "realdos.h"
+#include "put_string_center.h"
 #include "rotate.h"
 #include "video_mode.h"
 

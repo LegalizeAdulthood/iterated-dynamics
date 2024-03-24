@@ -1,4 +1,4 @@
-#include "realdos.h"
+#include "put_string_center.h"
 
 #include "port.h"
 #include "prototyp.h"

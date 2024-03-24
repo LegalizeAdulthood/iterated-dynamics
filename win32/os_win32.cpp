@@ -14,7 +14,6 @@
 #include "miscovl.h"
 #include "mpmath.h"
 #include "prompts2.h"
-#include "realdos.h"
 #include "rotate.h"
 #include "zoom.h"
 

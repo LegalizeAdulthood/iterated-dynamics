@@ -30,7 +30,6 @@
 #include "parser.h"
 #include "plot3d.h"
 #include "prompts2.h"
-#include "realdos.h"
 #include "rotate.h"
 #include "slideshw.h"
 #include "stop_msg.h"

@@ -16,7 +16,6 @@
 #include "help_title.h"
 #include "id_data.h"
 #include "memory.h"
-#include "realdos.h"
 #include "stop_msg.h"
 #include "temp_msg.h"
 

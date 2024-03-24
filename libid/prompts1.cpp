@@ -30,7 +30,6 @@
 #include "param_not_used.h"
 #include "parser.h"
 #include "prompts2.h"
-#include "realdos.h"
 #include "stop_msg.h"
 #include "type_has_param.h"
 #include "zoom.h"

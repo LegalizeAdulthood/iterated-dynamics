@@ -17,7 +17,6 @@
 #include "merge_path_names.h"
 #include "miscres.h"
 #include "plot3d.h"
-#include "realdos.h"
 #include "rotate.h"
 #include "stereo.h"
 #include "stop_msg.h"

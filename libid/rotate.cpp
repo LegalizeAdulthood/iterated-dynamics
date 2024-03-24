@@ -18,7 +18,6 @@
 #include "os.h"
 #endif
 #include "prompts2.h"
-#include "realdos.h"
 #include "spindac.h"
 
 #include <cstdio>

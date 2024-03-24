@@ -37,7 +37,7 @@
 #include "mpmath.h"
 #include "mpmath_c.h"
 #include "prompts1.h"
-#include "realdos.h"
+#include "put_string_center.h"
 #include "slideshw.h"
 #include "spindac.h"
 #include "split_path.h"

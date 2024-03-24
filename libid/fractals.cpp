@@ -54,9 +54,6 @@ an appropriate setup, per_image, per_pixel, and orbit routines.
 #include "newton.h"
 #include "parser.h"
 #include "pixel_grid.h"
-#ifdef XFRACT
-#include "realdos.h"
-#endif
 
 #include <cfloat>
 #include <cmath>

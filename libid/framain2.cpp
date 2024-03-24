@@ -25,7 +25,6 @@
 #include "os.h"
 #include "prompts1.h"
 #include "prompts2.h"
-#include "realdos.h"
 #include "rotate.h"
 #include "spindac.h"
 #include "stop_msg.h"

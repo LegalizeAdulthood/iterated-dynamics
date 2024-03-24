@@ -25,7 +25,7 @@
 #include "parser.h"
 #include "prompts1.h"
 #include "prompts2.h"
-#include "realdos.h"
+#include "put_string_center.h"
 #include "rotate.h"
 #include "soi.h"
 #include "split_path.h"
