@@ -4,6 +4,7 @@
 #include "prototyp.h"
 
 #include "cmdfiles.h"
+#include "dir_file.h"
 #include "do_pause.h"
 #include "drivers.h"
 #include "get_key_no_help.h"

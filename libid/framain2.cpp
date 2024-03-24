@@ -7,6 +7,7 @@
 #include "calc_frac_init.h"
 #include "cmdfiles.h"
 #include "decoder.h"
+#include "dir_file.h"
 #include "diskvid.h"
 #include "drivers.h"
 #include "evolve.h"

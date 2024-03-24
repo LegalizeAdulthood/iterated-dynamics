@@ -4,6 +4,7 @@
 #include "memory.h"
 
 #include "cmdfiles.h"
+#include "dir_file.h"
 #include "diskvid.h"
 #include "drivers.h"
 #include "line3d.h"

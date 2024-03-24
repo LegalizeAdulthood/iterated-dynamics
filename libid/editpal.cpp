@@ -11,6 +11,7 @@
 
 #include "calcfrac.h"
 #include "cmdfiles.h"
+#include "dir_file.h"
 #include "drivers.h"
 #include "field_prompt.h"
 #include "find_special_colors.h"

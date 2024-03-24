@@ -92,6 +92,7 @@ add_library(libid
     convert_center_mag.cpp include/convert_center_mag.h
     convert_corners.cpp include/convert_corners.h
     include/choice_builder.h
+    dir_file.cpp include/dir_file.h
     double_to_string.cpp include/double_to_string.h
     ends_with_slash.cpp include/ends_with_slash.h
     evolver_menu_switch.cpp include/evolver_menu_switch.h
@@ -358,6 +359,7 @@ source_group("Header Files/ui" FILES
     include/choice_builder.h
     include/convert_center_mag.h
     include/convert_corners.h
+    include/dir_file.h
     include/double_to_string.h
     include/ends_with_slash.h
     include/evolver_menu_switch.h
@@ -429,6 +431,7 @@ source_group("Source Files/ui" FILES
     check_write_file.cpp
     convert_center_mag.cpp
     convert_corners.cpp
+    dir_file.cpp
     double_to_string.cpp
     ends_with_slash.cpp
     evolver_menu_switch.cpp

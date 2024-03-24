@@ -12,6 +12,7 @@
 #include "calcfrac.h"
 #include "check_write_file.h"
 #include "cmdfiles.h"
+#include "dir_file.h"
 #include "diskvid.h"
 #include "drivers.h"
 #include "fractals.h"
