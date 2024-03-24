@@ -17,7 +17,6 @@
 #include "field_prompt.h"
 #include "find_file.h"
 #include "find_special_colors.h"
-#include "fracsubr.h"
 #include "fractalp.h"
 #include "fractype.h"
 #include "framain2.h"

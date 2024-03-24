@@ -13,7 +13,6 @@ Miscellaneous fractal-specific code
 #include "diskvid.h"
 #include "drivers.h"
 #include "fpu087.h"
-#include "fracsubr.h"
 #include "fractalp.h"
 #include "fractals.h"
 #include "fractint.h"

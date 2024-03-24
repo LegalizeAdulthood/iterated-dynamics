@@ -13,7 +13,6 @@
 #include "cmdfiles.h"
 #include "drivers.h"
 #include "encoder.h"
-#include "fracsubr.h"
 #include "fractalp.h"
 #include "fractals.h"
 #include "fractint.h"
@@ -27,7 +26,6 @@
 #include "resume.h"
 #include "sound.h"
 #include "stop_msg.h"
-
 
 #include <cmath>
 #include <cstdio>

@@ -6,9 +6,9 @@
 #include "calcfrac.h"
 #include "cmdfiles.h"
 #include "drivers.h"
-#include "fracsubr.h"
 #include "id_data.h"
 #include "sound.h"
+#include "wait_until.h"
 
 static void   plotdorbit(double, double, int);
 

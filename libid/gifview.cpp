@@ -18,7 +18,6 @@
 #include "decoder.h"
 #include "diskvid.h"
 #include "drivers.h"
-#include "fracsubr.h"
 #include "fractint.h"
 #include "id_data.h"
 #include "loadfile.h"
@@ -31,6 +30,7 @@
 #include "sound.h"
 #include "spindac.h"
 #include "stereo.h"
+#include "wait_until.h"
 
 #include <algorithm>
 #include <cstdio>

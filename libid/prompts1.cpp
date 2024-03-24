@@ -11,7 +11,6 @@
 #include "calc_frac_init.h"
 #include "cmdfiles.h"
 #include "drivers.h"
-#include "fracsubr.h"
 #include "fractalp.h"
 #include "fractype.h"
 #include "full_screen_choice.h"

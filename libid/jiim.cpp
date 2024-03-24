@@ -16,7 +16,6 @@
 #include "diskvid.h"
 #include "drivers.h"
 #include "editpal.h"
-#include "fracsubr.h"
 #include "fractalp.h"
 #include "fractals.h"
 #include "fractype.h"

@@ -11,7 +11,6 @@
 #include "drivers.h"
 #include "evolve.h"
 #include "evolver_menu_switch.h"
-#include "fracsubr.h"
 #include "fractalp.h"
 #include "fractype.h"
 #include "gifview.h"

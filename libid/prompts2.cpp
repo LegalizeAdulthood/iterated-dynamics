@@ -20,7 +20,6 @@
 #include "find_file.h"
 #include "find_path.h"
 #include "fix_dirname.h"
-#include "fracsubr.h"
 #include "fractalp.h"
 #include "full_screen_choice.h"
 #include "full_screen_prompt.h"

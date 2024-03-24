@@ -10,7 +10,6 @@ add_library(libid
     calcmand.cpp include/calcmand.h
     calmanfp.cpp include/calmanfp.h
     fracsuba.cpp include/fracsuba.h
-    fracsubr.cpp include/fracsubr.h
     fractalb.cpp include/fractalb.h
     fractalp.cpp include/fractalp.h
     fractals.cpp include/fractals.h
@@ -25,6 +24,7 @@ add_library(libid
     ssg_block_size.cpp include/ssg_block_size.h
     testpt.cpp include/testpt.h
     type_has_param.cpp include/type_has_param.h
+    wait_until.cpp include/wait_until.h
     work_list.cpp include/work_list.h
 
     ant.cpp include/ant.h
@@ -167,7 +167,6 @@ source_group("Header Files/engine" FILES
     include/calcmand.h
     include/calmanfp.h
     include/fracsuba.h
-    include/fracsubr.h
     include/fractalb.h
     include/fractalp.h
     include/fractals.h
@@ -183,6 +182,7 @@ source_group("Header Files/engine" FILES
     include/ssg_block_size.h
     include/testpt.h
     include/type_has_param.h
+    include/wait_until.h
     include/work_list.h
 )
 source_group("Source Files/engine" FILES
@@ -191,7 +191,6 @@ source_group("Source Files/engine" FILES
     calcmand.cpp
     calmanfp.cpp
     fracsuba.cpp
-    fracsubr.cpp
     fractalb.cpp
     fractalp.cpp
     fractals.cpp
@@ -206,6 +205,7 @@ source_group("Source Files/engine" FILES
     ssg_block_size.cpp
     testpt.cpp
     type_has_param.cpp
+    wait_until.cpp
     work_list.cpp
 )
 source_group("Header Files/fractal specific" FILES

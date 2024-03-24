@@ -25,7 +25,6 @@
 #include "diskvid.h"
 #include "drivers.h"
 #include "find_special_colors.h"
-#include "fracsubr.h"
 #include "fractalp.h"
 #include "fractals.h"
 #include "fractint.h"
@@ -49,6 +48,7 @@
 #include "ssg_block_size.h"
 #include "stop_msg.h"
 #include "update_save_name.h"
+#include "wait_until.h"
 #include "work_list.h"
 
 #include <algorithm>

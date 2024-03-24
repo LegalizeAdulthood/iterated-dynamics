@@ -11,7 +11,6 @@
 #include "cmdfiles.h"
 #include "drivers.h"
 #include "find_file.h"
-#include "fracsubr.h"
 #include "fractalp.h"
 #include "fractype.h"
 #include "get_key_no_help.h"

@@ -5,14 +5,13 @@ FRACTALS.C, i.e. which are non-fractal-specific fractal engine subroutines.
 #include "port.h"
 #include "prototyp.h"
 
-#include "fracsubr.h"
+#include "wait_until.h"
 
 #include "drivers.h"
 
-#include <sys/timeb.h>
-
 #include <algorithm>
 #include <iterator>
+#include <sys/timeb.h>
 
 void sleepms(long ms)
 {

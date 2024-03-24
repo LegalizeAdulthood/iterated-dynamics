@@ -45,7 +45,6 @@ an appropriate setup, per_image, per_pixel, and orbit routines.
 #include "calcfrac.h"
 #include "cmdfiles.h"
 #include "fpu087.h"
-#include "fracsubr.h"
 #include "fractype.h"
 #include "hcmplx.h"
 #include "id_data.h"
