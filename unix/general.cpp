@@ -14,6 +14,7 @@
 #include "id_data.h"
 #include "loadfile.h"
 #include "slideshw.h"
+#include "tab_display.h"
 
 #include <fcntl.h>
 #include <unistd.h>
