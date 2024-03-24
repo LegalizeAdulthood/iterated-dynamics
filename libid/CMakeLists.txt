@@ -108,7 +108,6 @@ add_library(libid
     get_browse_params.cpp include/get_browse_params.h
     get_calculation_time.cpp include/get_calculation_time.h
     get_file_entry.cpp include/get_file_entry.h
-    include/get_ifs_token.h
     get_key_no_help.cpp include/get_key_no_help.h
     get_rds_params.cpp include/get_rds_params.h
     get_toggles.cpp include/get_toggles.h
@@ -368,7 +367,6 @@ source_group("Header Files/ui" FILES
     include/get_calculation_time.h
     include/get_file_entry.h
     include/get_file_entry.h
-    include/get_ifs_token.h
     include/get_key_no_help.h
     include/get_rds_params.h
     include/get_toggles.h
