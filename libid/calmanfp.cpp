@@ -12,10 +12,10 @@
 #include "calcfrac.h"
 #include "cmdfiles.h"
 #include "drivers.h"
-#include "fracsubr.h"
 #include "fractals.h"
 #include "fractype.h"
 #include "id_data.h"
+#include "orbit.h"
 
 #include <cmath>
 

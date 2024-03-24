@@ -9,12 +9,12 @@
 #include "cmdfiles.h"
 #include "diskvid.h"
 #include "drivers.h"
-#include "fracsubr.h"
 #include "fractals.h"
 #include "fractint.h"
 #include "id_data.h"
 #include "loadmap.h"
 #include "newton.h"
+#include "orbit.h"
 #include "pixel_grid.h"
 #include "spindac.h"
 

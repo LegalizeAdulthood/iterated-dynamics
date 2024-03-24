@@ -5,10 +5,10 @@
 
 #include "calcfrac.h"
 #include "fpu087.h"
-#include "fracsubr.h"
 #include "fractals.h"
 #include "id_data.h"
 #include "mpmath.h"
+#include "orbit.h"
 
 #include <cmath>
 

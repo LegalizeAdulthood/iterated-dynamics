@@ -12,7 +12,6 @@
 #include "drivers.h"
 #include "encoder.h"
 #include "evolve.h"
-#include "fracsubr.h"
 #include "fractalp.h"
 #include "fractals.h"
 #include "fractype.h"
@@ -30,6 +29,7 @@
 #include "main_menu.h"
 #include "memory.h"
 #include "miscovl.h"
+#include "orbit.h"
 #include "prompts1.h"
 #include "prompts2.h"
 #include "rotate.h"
@@ -42,7 +42,6 @@
 #include <cstdio>
 #include <cstring>
 #include <ctime>
-#include <vector>
 
 VIDEOINFO g_video_entry;
 help_labels g_help_mode;

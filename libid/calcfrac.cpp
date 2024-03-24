@@ -40,6 +40,7 @@
 #include "mpmath_c.h"
 #include "os.h"
 #include "newton.h"
+#include "orbit.h"
 #include "parser.h"
 #include "pixel_grid.h"
 #include "resume.h"
