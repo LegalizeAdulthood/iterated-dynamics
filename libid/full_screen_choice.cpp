@@ -13,6 +13,13 @@
 
 #include <cstring>
 
+/* For file list purposes only, it's a directory name if first
+   char is a dot or last char is a slash */
+inline int isadirname(char const *name)
+{
+    return *name == '.' || endswithslash(name) ? 1 : 0;
+}
+
 /*
     options:        &2 use menu coloring scheme
                     &4 include F1 for help in instructions
