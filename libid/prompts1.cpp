@@ -11,6 +11,7 @@
 #include "calc_frac_init.h"
 #include "cmdfiles.h"
 #include "drivers.h"
+#include "find_extra_param.h"
 #include "find_file_item.h"
 #include "fractalp.h"
 #include "fractype.h"
@@ -1062,24 +1063,6 @@ gfp_top:
     }
 gfp_exit:
     g_cur_fractal_specific = &g_fractal_specific[static_cast<int>(g_fractal_type)];
-    return ret;
-}
-
-int find_extra_param(fractal_type type)
-{
-    int i, ret;
-    fractal_type curtyp;
-    ret = -1;
-    i = -1;
-
-    if (g_fractal_specific[static_cast<int>(type)].flags & MORE)
-    {
-        while ((curtyp = g_more_fractal_params[++i].type) != type && curtyp != fractal_type::NOFRACTAL);
-        if (curtyp == type)
-        {
-            ret = i;
-        }
-    }
     return ret;
 }
 

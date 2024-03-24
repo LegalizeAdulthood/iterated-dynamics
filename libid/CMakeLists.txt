@@ -91,6 +91,7 @@ add_library(libid
     evolver_menu_switch.cpp include/evolver_menu_switch.h
     expand_dirname.cpp include/expand_dirname.h
     field_prompt.cpp include/field_prompt.h
+    find_extra_param.cpp include/find_extra_param.h
     find_file.cpp include/find_file.h
     find_file_item.cpp include/find_file_item.h
     find_path.cpp include/find_path.h
@@ -340,6 +341,7 @@ source_group("Header Files/ui" FILES
     include/evolver_menu_switch.h
     include/expand_dirname.h
     include/field_prompt.h
+    include/find_extra_param.h
     include/find_file.h
     include/find_file_item.h
     include/find_path.h
@@ -395,6 +397,7 @@ source_group("Source Files/ui" FILES
     evolver_menu_switch.cpp
     expand_dirname.cpp
     field_prompt.cpp
+    find_extra_param.cpp
     find_file.cpp
     find_file_item.cpp
     find_path.cpp

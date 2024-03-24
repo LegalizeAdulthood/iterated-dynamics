@@ -28,7 +28,6 @@ long get_file_entry(int type, char const *title, char const *fmask,
                     std::string &filename, std::string &entryname);
 int get_fracttype();
 int get_fract_params(int);
-int find_extra_param(fractal_type type);
 void load_params(fractal_type fractype);
 bool check_orbit_name(char const *orbitname);
 bool search_for_entry(std::FILE *infile, char const *itemname);

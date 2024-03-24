@@ -3,10 +3,10 @@
 #include "port.h"
 #include "prototyp.h"
 
+#include "find_extra_param.h"
 #include "fractalp.h"
 #include "id.h"
 #include "param_not_used.h"
-#include "prompts1.h"
 
 #include <cstring>
 
