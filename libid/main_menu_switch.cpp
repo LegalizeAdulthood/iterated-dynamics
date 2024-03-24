@@ -35,6 +35,7 @@
 #include "prompts2.h"
 #include "rotate.h"
 #include "spindac.h"
+#include "starfield.h"
 #include "stereo.h"
 #include "update_save_name.h"
 #include "video_mode.h"

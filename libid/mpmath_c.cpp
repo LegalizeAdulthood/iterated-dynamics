@@ -689,49 +689,6 @@ long ExpFloat14(long xx)
     Ans = ExpFudged(RegFloat2Fg(xx, 16), f);
     return RegFg2Float(Ans, (char)f);
 }
-
-/*
- * Generate a gaussian distributed number.
- * The right half of the distribution is folded onto the lower half.
- * That is, the curve slopes up to the peak and then drops to 0.
- * The larger slope is, the smaller the standard deviation.
- * The values vary from 0+offset to range+offset, with the peak
- * at range+offset.
- * To make this more complicated, you only have a
- * 1 in Distribution*(1-Probability/Range*con)+1 chance of getting a
- * Gaussian; otherwise you just get offset.
- */
-int g_distribution = 30;
-int g_slope = 25;
-
-static int Offset = 0;
-
-int GausianNumber(int Probability, int Range)
-{
-    long p;
-
-    p = divide((long)Probability << 16, (long)Range << 16, 16);
-    p = multiply(p, g_concentration, 16);
-    p = multiply((long)g_distribution << 16, p, 16);
-    if (!(rand15() % (g_distribution - (int)(p >> 16) + 1)))
-    {
-        long Accum = 0;
-        for (int n = 0; n < g_slope; n++)
-        {
-            Accum += rand15();
-        }
-        Accum /= g_slope;
-        int r = (int)(multiply((long)Range << 15, Accum, 15) >> 14);
-        r = r - Range;
-        if (r < 0)
-        {
-            r = -r;
-        }
-        return Range - r + Offset;
-    }
-    return Offset;
-}
-
 #endif
 
 /*

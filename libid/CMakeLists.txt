@@ -147,6 +147,7 @@ add_library(libid
     sound.cpp include/sound.h
     spindac.cpp include/spindac.h
     split_path.cpp include/split_path.h
+    starfield.cpp include/starfield.h
     stop_msg.cpp include/stop_msg.h
     tab_display.cpp include/tab_display.h
     temp_msg.cpp include/temp_msg.h
@@ -416,6 +417,7 @@ source_group("Header Files/ui" FILES
     include/shell_sort.h
     include/spindac.h
     include/split_path.h
+    include/starfield.h
     include/stop_msg.h
     include/tab_display.h
     include/temp_msg.h
@@ -484,6 +486,7 @@ source_group("Source Files/ui" FILES
     shell_sort.cpp
     spindac.cpp
     split_path.cpp
+    starfield.cpp
     stop_msg.cpp
     tab_display.cpp
     temp_msg.cpp

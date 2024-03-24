@@ -20,13 +20,13 @@ struct MPC
     MP y;
 };
 
-extern int                   g_distribution;
+extern int                   s_distribution;
 extern bool                  g_log_map_calculate;
 extern std::vector<BYTE>     g_log_map_table;
 extern long                  g_log_map_table_max_size;
 extern int                   g_mp_overflow;
 extern MPC                   g_mpc_one;
-extern int                   g_slope;
+extern int                   s_slope;
 
 /* Mark Peterson's expanded floating point operators. If
    the operation results in an overflow (result < 2**(2**14), or division

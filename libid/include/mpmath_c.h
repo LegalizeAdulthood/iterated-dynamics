@@ -41,7 +41,6 @@ DComplex ComplexPower(DComplex, DComplex);
 void SetupLogTable();
 long logtablecalc(long);
 long ExpFloat14(long);
-int GausianNumber(int, int);
 void Arcsinz(DComplex z, DComplex *rz);
 void Arccosz(DComplex z, DComplex *rz);
 void Arcsinhz(DComplex z, DComplex *rz);
