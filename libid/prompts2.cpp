@@ -8,6 +8,7 @@
 
 #include "ant.h"
 #include "calcfrac.h"
+#include "calc_frac_init.h"
 #include "choice_builder.h"
 #include "cmdfiles.h"
 #include "diskvid.h"

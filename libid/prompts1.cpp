@@ -8,6 +8,7 @@
 
 #include "bailout_formula.h"
 #include "calcfrac.h"
+#include "calc_frac_init.h"
 #include "cmdfiles.h"
 #include "drivers.h"
 #include "fracsubr.h"

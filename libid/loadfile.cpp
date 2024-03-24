@@ -9,6 +9,7 @@
 #include "bailout_formula.h"
 #include "biginit.h"
 #include "calcfrac.h"
+#include "calc_frac_init.h"
 #include "cmdfiles.h"
 #include "drivers.h"
 #include "encoder.h"

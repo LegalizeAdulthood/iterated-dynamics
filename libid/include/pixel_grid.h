@@ -2,6 +2,7 @@
 
 #include <vector>
 
+extern bool                  g_use_grid;
 extern std::vector<double>   g_grid_x0;
 extern std::vector<double>   g_grid_x1;
 extern std::vector<double>   g_grid_y0;

@@ -6,6 +6,7 @@ add_library(libid
     plot3d.cpp include/plot3d.h
 
     barnsley.cpp include/barnsley.h
+    calc_frac_init.cpp include/calc_frac_init.h
     calcfrac.cpp include/calcfrac.h
     calcmand.cpp include/calcmand.h
     calmanfp.cpp include/calmanfp.h
@@ -156,6 +157,7 @@ source_group("Source Files/3d" FILES
     plot3d.cpp
 )
 source_group("Header Files/engine" FILES
+    include/calc_frac_init.h
     include/calcfrac.h
     include/calcmand.h
     include/calmanfp.h
@@ -174,6 +176,7 @@ source_group("Header Files/engine" FILES
     include/type_has_param.h
 )
 source_group("Source Files/engine" FILES
+    calc_frac_init.cpp
     calcfrac.cpp
     calcmand.cpp
     calmanfp.cpp

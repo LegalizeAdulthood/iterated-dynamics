@@ -4,6 +4,7 @@
 #include "framain2.h"
 
 #include "calcfrac.h"
+#include "calc_frac_init.h"
 #include "cmdfiles.h"
 #include "decoder.h"
 #include "diskvid.h"

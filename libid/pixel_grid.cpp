@@ -4,11 +4,11 @@
 #include "prototyp.h"
 
 #include "calcfrac.h"
-#include "fracsubr.h"
 #include "id_data.h"
 
 #include <vector>
 
+bool g_use_grid{};
 // note that integer grid is set when integerfractal && !invert;
 // otherwise the floating point grid is set; never both at once
 std::vector<long> g_l_x0;              // x, y grid
