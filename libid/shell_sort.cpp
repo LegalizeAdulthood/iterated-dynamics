@@ -1,5 +1,8 @@
 #include "shell_sort.h"
 
+#include "port.h"
+#include "prototyp.h"
+
 #include <string.h>
 
 void shell_sort(void *v1, int n, unsigned sz)
