@@ -13,7 +13,6 @@
 #include "fractype.h"
 #include "full_screen_prompt.h"
 #include "helpdefs.h"
-#include "help_title.h"
 #include "id_data.h"
 #include "jb.h"
 #include "line3d.h"
@@ -26,12 +25,12 @@
 #include "plot3d.h"
 #include "prompts1.h"
 #include "prompts2.h"
-#include "realdos.h"
 #include "rotate.h"
 #include "sound.h"
 #include "stereo.h"
 #include "stop_msg.h"
 #include "type_has_param.h"
+#include "version.h"
 #include "video_mode.h"
 
 #include <algorithm>

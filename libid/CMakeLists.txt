@@ -127,6 +127,7 @@ add_library(libid
     stop_msg.cpp include/stop_msg.h
     temp_msg.cpp include/temp_msg.h
     update_save_name.cpp include/update_save_name.h
+    version.cpp include/version.h
     video_mode.cpp include/video_mode.h
     zoom.cpp include/zoom.h
 
@@ -361,6 +362,7 @@ source_group("Header Files/ui" FILES
     include/stop_msg.h
     include/temp_msg.h
     include/update_save_name.h
+    include/version.h
     include/video_mode.h
     include/zoom.h
 )
@@ -408,6 +410,7 @@ source_group("Source Files/ui" FILES
     stop_msg.cpp
     temp_msg.cpp
     update_save_name.cpp
+    version.cpp
     video_mode.cpp
     zoom.cpp
 )

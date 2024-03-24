@@ -16,17 +16,16 @@
 #include "fractals.h"
 #include "framain2.h"
 #include "gifview.h"
-#include "help_title.h"
 #include "id_data.h"
 #include "loadfile.h"
 #include "miscres.h"
 #include "os.h"
 #include "plot3d.h"
 #include "prompts2.h"
-#include "realdos.h"
 #include "rotate.h"
 #include "stereo.h"
 #include "stop_msg.h"
+#include "version.h"
 
 #include <algorithm>
 #include <climits>

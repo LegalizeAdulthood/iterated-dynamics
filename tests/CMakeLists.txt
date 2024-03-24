@@ -45,6 +45,7 @@ add_executable(test-id
     test_search_path.cpp
     test_split_path.cpp
     test_update_save_name.cpp
+    test_version.cpp
     test_find_file.txt.in
 )
 source_group("CMake Templates" REGULAR_EXPRESSION ".*\\.in$")

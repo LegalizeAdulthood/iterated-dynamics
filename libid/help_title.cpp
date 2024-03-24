@@ -7,12 +7,10 @@
 #include "id.h"
 #include "drivers.h"
 #include "realdos.h"
+#include "version.h"
 
 #include <cstdio>
 #include <cstring>
-
-int g_release{2099};        // this has 2 implied decimals; increment it every synch
-const int g_patch_level{8}; // patchlevel for DOS version
 
 void helptitle()
 {

@@ -12,6 +12,7 @@
 #include "os.h"
 #include "realdos.h"
 #include "stop_msg.h"
+#include "version.h"
 
 #include <fcntl.h>
 

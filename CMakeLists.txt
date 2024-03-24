@@ -13,7 +13,7 @@ set(CMAKE_INSTALL_PREFIX install)
 set(ID_PROJECT_NAME "Iterated Dynamics" CACHE STRING "Project name for IDEs")
 
 project("${ID_PROJECT_NAME}"
-    VERSION 1.0.0
+    VERSION 1.0.0.0
     DESCRIPTION "Iterated Dynamics is a fractal generator"
     HOMEPAGE_URL "https://LegalizeAdulthood.github.io/iterated-dynamics"
     LANGUAGES CXX)

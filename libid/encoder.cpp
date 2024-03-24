@@ -36,6 +36,7 @@
 #include "stop_msg.h"
 #include "temp_msg.h"
 #include "update_save_name.h"
+#include "version.h"
 
 #include <algorithm>
 #include <climits>

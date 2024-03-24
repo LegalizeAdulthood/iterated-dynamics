@@ -9,7 +9,6 @@
 #include "diskvid.h"
 #include "fractalp.h"
 #include "fractype.h"
-#include "help_title.h"
 #include "id_data.h"
 #include "jb.h"
 #include "line3d.h"
@@ -17,9 +16,9 @@
 #include "merge_path_names.h"
 #include "parser.h"
 #include "plot3d.h"
-#include "realdos.h"
 #include "rotate.h"
 #include "spindac.h"
+#include "version.h"
 
 #include <cstring>
 #include <ctime>
