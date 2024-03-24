@@ -11,6 +11,8 @@
 #include "realdos.h"
 #include "string_case_compare.h"
 
+#include <cstring>
+
 /*
     options:        &2 use menu coloring scheme
                     &4 include F1 for help in instructions
