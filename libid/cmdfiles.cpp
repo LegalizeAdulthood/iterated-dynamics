@@ -10,6 +10,7 @@
 #include "biginit.h"
 #include "calcfrac.h"
 #include "calc_frac_init.h"
+#include "check_orbit_name.h"
 #include "do_pause.h"
 #include "drivers.h"
 #include "find_file_item.h"
