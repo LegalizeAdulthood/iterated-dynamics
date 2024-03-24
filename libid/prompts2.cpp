@@ -644,38 +644,6 @@ get_view_restart:
                     || (g_view_y_dots != old_viewydots && g_view_x_dots)))) ? 1 : 0;
 }
 
-/*
-    get_cmd_string() is called from FRACTINT.C whenever the 'g' key
-    is pressed.  Return codes are:
-        -1  routine was ESCAPEd - no need to re-generate the image.
-         0  parameter changed, no need to regenerate
-        >0  parameter changed, regenerate
-*/
-
-int get_cmd_string()
-{
-    int i;
-    static char cmdbuf[61];
-
-    help_labels const old_help_mode = g_help_mode;
-    g_help_mode = help_labels::HELPCOMMANDS;
-    i = field_prompt("Enter command string to use.", nullptr, cmdbuf, 60, nullptr);
-    g_help_mode = old_help_mode;
-    if (i >= 0 && cmdbuf[0] != 0)
-    {
-        i = cmdarg(cmdbuf, cmd_file::AT_AFTER_STARTUP);
-        if (g_debug_flag == debug_flags::write_formula_debug_information)
-        {
-            backwards_v18();
-            backwards_v19();
-            backwards_v20();
-        }
-    }
-
-    return i;
-}
-
-
 // ---------------------------------------------------------------------
 
 std::string const g_gray_map_file{"altern.map"};

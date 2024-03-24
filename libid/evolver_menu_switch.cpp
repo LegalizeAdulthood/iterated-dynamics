@@ -14,6 +14,7 @@
 #include "fractalp.h"
 #include "fractype.h"
 #include "framain2.h"
+#include "get_cmd_string.h"
 #include "get_toggles.h"
 #include "history.h"
 #include "id_data.h"

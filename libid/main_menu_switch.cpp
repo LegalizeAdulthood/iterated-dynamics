@@ -19,6 +19,7 @@
 #include "frothy_basin.h"
 #include "get_3d_params.h"
 #include "get_browse_params.h"
+#include "get_cmd_string.h"
 #include "get_rds_params.h"
 #include "get_toggles.h"
 #include "history.h"
