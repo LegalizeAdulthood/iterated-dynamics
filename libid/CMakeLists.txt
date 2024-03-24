@@ -90,6 +90,7 @@ add_library(libid
     check_orbit_name.cpp include/check_orbit_name.h
     include/choice_builder.h
     double_to_string.cpp include/double_to_string.h
+    ends_with_slash.cpp include/ends_with_slash.h
     evolver_menu_switch.cpp include/evolver_menu_switch.h
     expand_dirname.cpp include/expand_dirname.h
     field_prompt.cpp include/field_prompt.h
@@ -348,6 +349,7 @@ source_group("Header Files/ui" FILES
     include/check_orbit_name.h
     include/choice_builder.h
     include/double_to_string.h
+    include/ends_with_slash.h
     include/evolver_menu_switch.h
     include/expand_dirname.h
     include/field_prompt.h
@@ -411,6 +413,7 @@ source_group("Source Files/ui" FILES
     bailout_formula.cpp
     check_orbit_name.cpp
     double_to_string.cpp
+    ends_with_slash.cpp
     evolver_menu_switch.cpp
     expand_dirname.cpp
     field_prompt.cpp

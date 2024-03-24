@@ -1288,17 +1288,3 @@ static void area()
             cnt/((float)g_logical_screen_x_dots*(float)g_logical_screen_y_dots)*(g_x_max-g_x_min)*(g_y_max-g_y_min));
     stopmsg(STOPMSG_NO_BUZZER, buf);
 }
-
-int endswithslash(char const *fl)
-{
-    int len;
-    len = (int) std::strlen(fl);
-    if (len)
-    {
-        if (fl[--len] == SLASHC)
-        {
-            return 1;
-        }
-    }
-    return 0;
-}

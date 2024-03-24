@@ -5,6 +5,7 @@
 
 #include "cmdfiles.h"
 #include "drivers.h"
+#include "ends_with_slash.h"
 #include "help_title.h"
 #include "id.h"
 #include "id_data.h"
