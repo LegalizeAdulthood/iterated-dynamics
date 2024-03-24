@@ -5,6 +5,8 @@
 #include "id.h"
 #include "split_path.h"
 
+#include <cstring>
+
 // tells if filename has extension
 // returns pointer to period or nullptr
 char const *has_ext(char const *source)
