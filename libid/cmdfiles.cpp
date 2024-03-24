@@ -11,6 +11,7 @@
 #include "calcfrac.h"
 #include "calc_frac_init.h"
 #include "check_orbit_name.h"
+#include "convert_corners.h"
 #include "do_pause.h"
 #include "drivers.h"
 #include "file_gets.h"

@@ -7,6 +7,7 @@
 #include "biginit.h"
 #include "calcfrac.h"
 #include "cmdfiles.h"
+#include "convert_corners.h"
 #include "fractalb.h"
 #include "fractalp.h"
 #include "id_data.h"
