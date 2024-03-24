@@ -26,6 +26,7 @@
 #include "id_data.h"
 #include "intro.h"
 #include "loadfile.h"
+#include "load_config.h"
 #include "main_menu.h"
 #include "memory.h"
 #include "miscovl.h"
@@ -535,7 +536,7 @@ int id_main(int argc, char *argv[])
         exit(-1);
     }
     // load id.cfg, match against driver supplied modes
-    load_id_config();
+    load_config();
     init_help();
 
 restart:   // insert key re-starts here

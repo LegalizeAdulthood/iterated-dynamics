@@ -4,7 +4,6 @@
 
 #include <string>
 
-extern int                   g_cfg_line_nums[];
 extern int                   g_patch_level;
 extern int                   g_release;
 extern std::string const     g_speed_prompt;
@@ -25,7 +24,6 @@ void helptitle();
 int putstringcenter(int row, int col, int width, int attr, char const *msg);
 bool thinking(int options, char const *msg);
 void discardgraphics();
-void load_id_config();
 void process_speedstring(char *speedstring, //
     char const **choices,                   // array of choice strings
     int curkey,                             //
