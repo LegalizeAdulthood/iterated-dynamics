@@ -47,6 +47,7 @@
 #include "sound.h"
 #include "stop_msg.h"
 #include "update_save_name.h"
+#include "work_list.h"
 
 #include <algorithm>
 #include <cfloat>
@@ -195,8 +196,6 @@ bool g_reset_periodicity = false;         // true if escape time pixel rtn to re
 int g_keyboard_check_interval = 0;
 int g_max_keyboard_check_interval = 0;                   // avoids checking keyboard too often
 
-int g_num_work_list = 0;                   // resume worklist for standard engine
-WORKLIST g_work_list[MAX_CALC_WORK] = { 0 };
 int g_xx_start = 0;
 int g_xx_stop = 0;
 int g_yy_start = 0;

@@ -5,20 +5,6 @@
 
 #include <vector>
 
-#define MAX_CALC_WORK 12
-
-struct WORKLIST     // work list entry for std escape time engines
-{
-    int xxstart;    // screen window for this entry
-    int xxstop;
-    int yystart;
-    int yystop;
-    int yybegin;    // start row within window, for 2pass/ssg resume
-    int sym;        // if symmetry in window, prevents bad combines
-    int pass;       // for 2pass and solid guessing
-    int xxbegin;    // start col within window, =0 except on resume
-};
-
 extern int                   g_and_color;           // AND mask for iteration to get color index
 extern int                   g_atan_colors;
 extern DComplex              g_attractor[];
@@ -61,7 +47,6 @@ extern double                g_magnitude_limit;
 extern double                g_magnitude_limit2;
 extern int                   g_max_keyboard_check_interval;
 extern DComplex              g_new_z;
-extern int                   g_num_work_list;
 extern long                  g_old_color_iter;
 extern bool                  g_old_demm_colors;
 extern DComplex              g_old_z;
@@ -83,7 +68,6 @@ extern int                   g_total_passes;
 extern DComplex              g_tmp_z;
 extern bool                  g_use_old_periodicity;
 extern bool                  g_use_old_distance_estimator;
-extern WORKLIST              g_work_list[MAX_CALC_WORK];
 extern int                   g_work_pass;
 extern int                   g_work_symmetry;
 extern int                   g_xx_start;

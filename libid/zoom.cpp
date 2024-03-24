@@ -22,6 +22,7 @@
 #include "os.h"
 #include "resume.h"
 #include "stop_msg.h"
+#include "work_list.h"
 
 #include <cassert>
 #include <cmath>

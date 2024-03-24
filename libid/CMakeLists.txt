@@ -5,52 +5,53 @@ add_library(libid
     line3d.cpp include/line3d.h
     plot3d.cpp include/plot3d.h
 
-    barnsley.cpp include/barnsley.h
     calc_frac_init.cpp include/calc_frac_init.h
     calcfrac.cpp include/calcfrac.h
     calcmand.cpp include/calcmand.h
     calmanfp.cpp include/calmanfp.h
-    circle_pattern.cpp include/circle_pattern.h
-    escher.cpp include/escher.h
-    fn_or_fn.cpp include/fn_or_fn.h
     fracsuba.cpp include/fracsuba.h
     fracsubr.cpp include/fracsubr.h
     fractalb.cpp include/fractalb.h
     fractalp.cpp include/fractalp.h
     fractals.cpp include/fractals.h
     frasetup.cpp include/frasetup.h
-    halley.cpp include/halley.h
-    hypercomplex_mandelbrot.cpp include/hypercomplex_mandelbrot.h
-    lambda_fn.cpp include/lambda_fn.h
-    magnet.cpp include/magnet.h
-    mandelbrot_mix.cpp include/mandelbrot_mix.h
-    newton.cpp include/newton.h
     param_not_used.cpp include/param_not_used.h
-    peterson_variations.cpp include/peterson_variations.h
-    phoenix.cpp include/phoenix.h
-    pickover_mandelbrot.cpp include/pickover_mandelbrot.h
     pixel_grid.cpp include/pixel_grid.h
-    popcorn.cpp include/popcorn.h
-    quartic_mandelbrot.cpp include/quartic_mandelbrot.h
-    quaternion_mandelbrot.cpp include/quaternion_mandelbrot.h
     resume.cpp include/resume.h
-    sierpinski_gasket.cpp include/sierpinski_gasket.h
     soi.cpp include/soi.h
     soi1.cpp
-    taylor_skinner_variations.cpp include/taylor_skinner_variations.h
     testpt.cpp include/testpt.h
     type_has_param.cpp include/type_has_param.h
-    unity.cpp include/unity.h
-    volterra_lotka.cpp include/volterra_lotka.h
+    work_list.cpp include/work_list.h
 
     ant.cpp include/ant.h
+    barnsley.cpp include/barnsley.h
     cellular.cpp include/cellular.h
+    circle_pattern.cpp include/circle_pattern.h
+    escher.cpp include/escher.h
+    fn_or_fn.cpp include/fn_or_fn.h
     frothy_basin.cpp include/frothy_basin.h
+    halley.cpp include/halley.h
+    hypercomplex_mandelbrot.cpp include/hypercomplex_mandelbrot.h
     jb.cpp include/jb.h
+    lambda_fn.cpp include/lambda_fn.h
     lorenz.cpp include/lorenz.h
     lsys.cpp include/lsys_fns.h
     lsysf.cpp
+    magnet.cpp include/magnet.h
+    mandelbrot_mix.cpp include/mandelbrot_mix.h
     miscfrac.cpp include/miscfrac.h
+    newton.cpp include/newton.h
+    peterson_variations.cpp include/peterson_variations.h
+    phoenix.cpp include/phoenix.h
+    pickover_mandelbrot.cpp include/pickover_mandelbrot.h
+    popcorn.cpp include/popcorn.h
+    quartic_mandelbrot.cpp include/quartic_mandelbrot.h
+    quaternion_mandelbrot.cpp include/quaternion_mandelbrot.h
+    sierpinski_gasket.cpp include/sierpinski_gasket.h
+    taylor_skinner_variations.cpp include/taylor_skinner_variations.h
+    unity.cpp include/unity.h
+    volterra_lotka.cpp include/volterra_lotka.h
 
     cmdfiles.cpp include/cmdfiles.h
     decoder.cpp include/decoder.h
@@ -176,6 +177,7 @@ source_group("Header Files/engine" FILES
     include/soi.h
     include/testpt.h
     include/type_has_param.h
+    include/work_list.h
 )
 source_group("Source Files/engine" FILES
     calc_frac_init.cpp
@@ -195,6 +197,7 @@ source_group("Source Files/engine" FILES
     soi1.cpp
     testpt.cpp
     type_has_param.cpp
+    work_list.cpp
 )
 source_group("Header Files/fractal specific" FILES
     include/ant.h
