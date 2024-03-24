@@ -23,6 +23,7 @@
 #include "check_write_file.h"
 #include "cmdfiles.h"
 #include "cmplx.h"
+#include "convert_center_mag.h"
 #include "diskvid.h"
 #include "drivers.h"
 #include "find_special_colors.h"

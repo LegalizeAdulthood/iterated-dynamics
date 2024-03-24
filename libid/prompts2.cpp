@@ -11,6 +11,7 @@
 #include "calc_frac_init.h"
 #include "choice_builder.h"
 #include "cmdfiles.h"
+#include "convert_center_mag.h"
 #include "convert_corners.h"
 #include "diskvid.h"
 #include "double_to_string.h"

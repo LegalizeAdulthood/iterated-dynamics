@@ -7,6 +7,7 @@
 #include "biginit.h"
 #include "calcfrac.h"
 #include "cmdfiles.h"
+#include "convert_center_mag.h"
 #include "drivers.h"
 #include "ends_with_slash.h"
 #include "file_gets.h"

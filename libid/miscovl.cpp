@@ -9,6 +9,7 @@
 #include "biginit.h"
 #include "calcfrac.h"
 #include "cmdfiles.h"
+#include "convert_center_mag.h"
 #include "drivers.h"
 #include "find_path.h"
 #include "fractalp.h"

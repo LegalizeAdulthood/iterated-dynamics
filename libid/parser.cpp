@@ -23,6 +23,7 @@
 
 #include "calcfrac.h"
 #include "cmdfiles.h"
+#include "convert_center_mag.h"
 #include "drivers.h"
 #include "find_file_item.h"
 #include "fpu087.h"
