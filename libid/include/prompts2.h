@@ -29,4 +29,3 @@ inline int dir_remove(const std::string &dir, const std::string &filename)
 }
 std::FILE *dir_fopen(char const *dir, char const *filename, char const *mode);
 std::string extract_filename(char const *source);
-const char *has_ext(char const *source);

@@ -19,6 +19,7 @@
 #include "diskvid.h"
 #include "drivers.h"
 #include "fractint.h"
+#include "has_ext.h"
 #include "id_data.h"
 #include "loadfile.h"
 #include "loadmap.h"

@@ -5,6 +5,7 @@
 
 #include "cmdfiles.h"
 #include "find_path.h"
+#include "has_ext.h"
 #include "merge_path_names.h"
 #include "prompts2.h"
 #include "rotate.h"

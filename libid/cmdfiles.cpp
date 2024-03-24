@@ -24,6 +24,7 @@
 #include "fractals.h"
 #include "fractype.h"
 #include "framain2.h"
+#include "has_ext.h"
 #include "helpcom.h"
 #include "history.h"
 #include "id_data.h"

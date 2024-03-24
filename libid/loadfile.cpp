@@ -23,6 +23,7 @@
 #include "get_3d_params.h"
 #include "get_browse_params.h"
 #include "get_video_mode.h"
+#include "has_ext.h"
 #include "id_data.h"
 #include "jb.h"
 #include "line3d.h"

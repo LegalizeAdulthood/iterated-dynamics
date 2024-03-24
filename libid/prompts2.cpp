@@ -1777,21 +1777,6 @@ std::string extract_filename(char const *source)
     return fs::path(source).filename().string();
 }
 
-// tells if filename has extension
-// returns pointer to period or nullptr
-char const *has_ext(char const *source)
-{
-    char fname[FILE_MAX_FNAME];
-    char ext[FILE_MAX_EXT] = { 0 };
-    split_fname_ext(source, fname, ext);
-    char const *ret = nullptr;
-    if (ext[0] != 0)
-    {
-        ret = std::strrchr(source, '.');
-    }
-    return ret;
-}
-
 void shell_sort(void *v1, int n, unsigned sz, int (*fct)(void *arg1, void *arg2))
 {
     void *temp;
