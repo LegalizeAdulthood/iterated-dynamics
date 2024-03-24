@@ -14,6 +14,9 @@
 #include "temp_msg.h"
 
 #include <cassert>
+#include <cctype>
+#include <cstdio>
+#include <cstring>
 
 bool find_file_item(char *filename, char const *itemname, std::FILE **fileptr, int itemtype)
 {
