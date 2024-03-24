@@ -9,6 +9,9 @@
 #include "full_screen_choice.h"
 #include "id.h"
 #include "id_data.h"
+#ifdef XFRACT
+#include "os.h"
+#endif
 #include "prompts2.h"
 #include "realdos.h"
 #include "rotate.h"
