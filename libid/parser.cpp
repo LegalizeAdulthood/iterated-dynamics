@@ -24,6 +24,7 @@
 #include "calcfrac.h"
 #include "cmdfiles.h"
 #include "drivers.h"
+#include "find_file_item.h"
 #include "fpu087.h"
 #include "fractalp.h"
 #include "fractals.h"

@@ -31,8 +31,6 @@ void set_trig_pointers(int);
 int tab_display();
 int endswithslash(char const *fl);
 int ifsload();
-bool find_file_item(char *filename, char const *itemname, std::FILE **fileptr, int itemtype);
-bool find_file_item(std::string &filename, char const *itemname, std::FILE **fileptr, int itemtype);
 int file_gets(char *buf, int maxlen, std::FILE *infile);
 void roundfloatd(double *);
 void fix_inversion(double *);

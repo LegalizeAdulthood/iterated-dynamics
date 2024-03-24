@@ -12,6 +12,7 @@
 #include "calc_frac_init.h"
 #include "do_pause.h"
 #include "drivers.h"
+#include "find_file_item.h"
 #include "find_path.h"
 #include "fix_dirname.h"
 #include "fracsuba.h"

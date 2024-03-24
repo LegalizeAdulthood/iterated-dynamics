@@ -6,6 +6,7 @@
 #include "cmdfiles.h"
 #include "double_to_string.h"
 #include "drivers.h"
+#include "find_file_item.h"
 #include "fractype.h"
 #include "helpdefs.h"
 #include "help_title.h"

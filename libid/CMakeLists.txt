@@ -92,6 +92,7 @@ add_library(libid
     expand_dirname.cpp include/expand_dirname.h
     field_prompt.cpp include/field_prompt.h
     find_file.cpp include/find_file.h
+    find_file_item.cpp include/find_file_item.h
     find_path.cpp include/find_path.h
     find_special_colors.cpp include/find_special_colors.h
     fix_dirname.cpp include/fix_dirname.h
@@ -340,6 +341,7 @@ source_group("Header Files/ui" FILES
     include/expand_dirname.h
     include/field_prompt.h
     include/find_file.h
+    include/find_file_item.h
     include/find_path.h
     include/find_special_colors.h
     include/fix_dirname.h
@@ -394,6 +396,7 @@ source_group("Source Files/ui" FILES
     expand_dirname.cpp
     field_prompt.cpp
     find_file.cpp
+    find_file_item.cpp
     find_path.cpp
     find_special_colors.cpp
     fix_dirname.cpp
