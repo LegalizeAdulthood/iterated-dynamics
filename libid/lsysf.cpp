@@ -8,7 +8,7 @@
 #include "fractals.h"
 #include "id_data.h"
 #include "lsys_fns.h"
-#include "realdos.h"
+#include "thinking.h"
 
 #include <cmath>
 #include <cstring>

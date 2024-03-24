@@ -13,10 +13,10 @@
 #include "fractalp.h"
 #include "fractint.h"
 #include "id_data.h"
-#include "realdos.h"
 #include "rotate.h"
 #include "spindac.h"
 #include "stop_msg.h"
+#include "thinking.h"
 
 #include <algorithm>
 #include <cmath>

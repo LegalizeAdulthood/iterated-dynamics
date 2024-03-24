@@ -126,6 +126,7 @@ add_library(libid
     split_path.cpp include/split_path.h
     stop_msg.cpp include/stop_msg.h
     temp_msg.cpp include/temp_msg.h
+    thinking.cpp include/thinking.h
     update_save_name.cpp include/update_save_name.h
     version.cpp include/version.h
     video_mode.cpp include/video_mode.h
@@ -361,6 +362,7 @@ source_group("Header Files/ui" FILES
     include/split_path.h
     include/stop_msg.h
     include/temp_msg.h
+    include/thinking.h
     include/update_save_name.h
     include/version.h
     include/video_mode.h
@@ -409,6 +411,7 @@ source_group("Source Files/ui" FILES
     split_path.cpp
     stop_msg.cpp
     temp_msg.cpp
+    thinking.cpp
     update_save_name.cpp
     version.cpp
     video_mode.cpp
