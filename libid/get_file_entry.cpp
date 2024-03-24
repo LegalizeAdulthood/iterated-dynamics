@@ -18,6 +18,7 @@
 #include "prompts1.h"
 #include "prompts2.h"
 #include "set_default_parms.h"
+#include "shell_sort.h"
 #include "stop_msg.h"
 
 #include <cassert>
@@ -487,7 +488,7 @@ retry:
     if (dosort)
     {
         std::strcat(instr, "off");
-        shell_sort((char *) &choices, numentries, sizeof(entryinfo *), lccompare);
+        shell_sort((char *) &choices, numentries, sizeof(entryinfo *));
     }
     else
     {

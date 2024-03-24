@@ -143,6 +143,7 @@ add_library(libid
     round_float_double.cpp include/round_float_double.h
     search_path.cpp include/search_path.h
     set_default_parms.cpp include/set_default_parms.h
+    shell_sort.cpp include/shell_sort.h
     sound.cpp include/sound.h
     spindac.cpp include/spindac.h
     split_path.cpp include/split_path.h
@@ -412,6 +413,7 @@ source_group("Header Files/ui" FILES
     include/round_float_double.h
     include/search_path.h
     include/set_default_parms.h
+    include/shell_sort.h
     include/spindac.h
     include/split_path.h
     include/stop_msg.h
@@ -479,6 +481,7 @@ source_group("Source Files/ui" FILES
     round_float_double.cpp
     search_path.cpp
     set_default_parms.cpp
+    shell_sort.cpp
     spindac.cpp
     split_path.cpp
     stop_msg.cpp

@@ -16,8 +16,6 @@ int get_commands();
 void goodbye();
 bool getafilename(char const *hdg, char const *file_template, char *flname);
 bool getafilename(char const *hdg, char const *file_template, std::string &flname);
-void shell_sort(void *, int n, unsigned, int (*fct)(void *, void *));
 int get_cmd_string();
 int starfield();
 int get_a_number(double *, double *);
-int lccompare(void *, void *);

@@ -42,6 +42,7 @@
 #include "prompts1.h"
 #include "put_string_center.h"
 #include "resume.h"
+#include "shell_sort.h"
 #include "slideshw.h"
 #include "spindac.h"
 #include "split_path.h"
@@ -879,14 +880,6 @@ struct CHOICE
     char type;
 };
 
-int lccompare(void *arg1, void *arg2) // for sort
-{
-    char **choice1 = (char **) arg1;
-    char **choice2 = (char **) arg2;
-
-    return stricmp(*choice1, *choice2);
-}
-
 #define MAXNUMFILES 2977L
 
 static int speedstate;
@@ -1042,7 +1035,7 @@ retry_dir:
     if (dosort)
     {
         std::strcat(instr, "off");
-        shell_sort(&choices, filecount, sizeof(CHOICE *), lccompare); // sort file list
+        shell_sort(&choices, filecount, sizeof(CHOICE *)); // sort file list
     }
     else
     {
@@ -1742,28 +1735,5 @@ gsc_loop:
         g_x_3rd = svxx3rd;
         g_y_3rd = svyy3rd;
         return 1;
-    }
-}
-
-void shell_sort(void *v1, int n, unsigned sz, int (*fct)(void *arg1, void *arg2))
-{
-    void *temp;
-    char *v;
-    v = (char *)v1;
-    for (int gap = n/2; gap > 0; gap /= 2)
-    {
-        for (int i = gap; i < n; i++)
-        {
-            for (int j = i-gap; j >= 0; j -= gap)
-            {
-                if (fct((char **)(v+j*sz), (char **)(v+(j+gap)*sz)) <= 0)
-                {
-                    break;
-                }
-                temp = *(char **)(v+j*sz);
-                *(char **)(v+j*sz) = *(char **)(v+(j+gap)*sz);
-                *(char **)(v+(j+gap)*sz) = static_cast<char *>(temp);
-            }
-        }
     }
 }

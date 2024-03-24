@@ -33,6 +33,7 @@
 #include "parser.h"
 #include "prompts2.h"
 #include "set_default_parms.h"
+#include "shell_sort.h"
 #include "stop_msg.h"
 #include "trig_fns.h"
 #include "type_has_param.h"
@@ -143,7 +144,7 @@ static fractal_type select_fracttype(fractal_type t)
         }
         numtypes = j + 1;
     }
-    shell_sort(&choices, numtypes, sizeof(FT_CHOICE *), lccompare); // sort list
+    shell_sort(&choices, numtypes, sizeof(FT_CHOICE *)); // sort list
     int j = 0;
     for (int i = 0; i < numtypes; ++i)   // find starting choice in sorted list
     {
