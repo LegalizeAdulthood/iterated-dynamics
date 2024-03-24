@@ -24,6 +24,7 @@
 #include "miscres.h"
 #include "mpmath.h"
 #include "plot3d.h"
+#include "sound.h"
 #include "stop_msg.h"
 
 

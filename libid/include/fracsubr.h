@@ -37,7 +37,3 @@ void adjust_cornerbf();
 void set_grid_pointers();
 void fill_dx_array();
 void fill_lx_array();
-bool snd_open();
-void w_snd(int);
-void snd_time_write();
-void close_snd();

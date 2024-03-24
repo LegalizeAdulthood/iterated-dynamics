@@ -8,3 +8,8 @@ extern int                   g_fm_wavetype;
 extern int                   g_fm_volume;            // volume of OPL-3 soundcard output
 extern int                   g_hi_attenuation;
 extern int                   g_polyphony;
+
+bool snd_open();
+void w_snd(int);
+void snd_time_write();
+void close_snd();

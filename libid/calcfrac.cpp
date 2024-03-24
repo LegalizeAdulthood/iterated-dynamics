@@ -43,6 +43,7 @@
 #include "parser.h"
 #include "pixel_grid.h"
 #include "soi.h"
+#include "sound.h"
 #include "stop_msg.h"
 #include "update_save_name.h"
 
