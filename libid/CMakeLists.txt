@@ -104,6 +104,7 @@ add_library(libid
     full_screen_prompt.cpp include/full_screen_prompt.h
     get_3d_params.cpp include/get_3d_params.h
     get_browse_params.cpp include/get_browse_params.h
+    get_file_entry.cpp include/get_file_entry.h
     include/get_ifs_token.h
     get_key_no_help.cpp include/get_key_no_help.h
     get_rds_params.cpp include/get_rds_params.h
@@ -356,6 +357,7 @@ source_group("Header Files/ui" FILES
     include/full_screen_prompt.h
     include/get_3d_params.h
     include/get_browse_params.h
+    include/get_file_entry.h
     include/get_ifs_token.h
     include/get_key_no_help.h
     include/get_rds_params.h
@@ -414,6 +416,7 @@ source_group("Source Files/ui" FILES
     full_screen_prompt.cpp
     get_3d_params.cpp
     get_browse_params.cpp
+    get_file_entry.cpp
     get_key_no_help.cpp
     get_rds_params.cpp
     get_toggles.cpp

@@ -5,6 +5,7 @@
 
 #include "cmdfiles.h"
 #include "find_file.h"
+#include "get_file_entry.h"
 #include "id.h"
 #include "make_path.h"
 #include "prompts1.h"

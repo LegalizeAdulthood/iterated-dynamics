@@ -23,6 +23,7 @@
 #include "fractalp.h"
 #include "full_screen_choice.h"
 #include "full_screen_prompt.h"
+#include "get_file_entry.h"
 #include "helpcom.h"
 #include "helpdefs.h"
 #include "id_data.h"
@@ -67,8 +68,6 @@ static  int get_screen_corners();
 #define MATCHING         0      // string matches list - speed key mode
 #define TEMPLATE        -2      // wild cards present - buiding template
 #define SEARCHPATH      -3      // no match - building path search name
-
-#define GETPARM    3
 
 static char commandmask[13] = {"*.par"};
 
