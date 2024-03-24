@@ -1461,10 +1461,3 @@ void roundfloatd(double *x) // make double converted from float look ok
     std::sprintf(buf, "%-10.7g", *x);
     *x = atof(buf);
 }
-
-void fix_inversion(double *x) // make double converted from string look ok
-{
-    char buf[30];
-    std::sprintf(buf, "%-1.15lg", *x);
-    *x = atof(buf);
-}

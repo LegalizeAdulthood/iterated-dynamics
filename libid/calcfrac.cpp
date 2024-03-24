@@ -613,6 +613,13 @@ int calctypeshowdot()
     return out;
 }
 
+static void fix_inversion(double *x) // make double converted from string look ok
+{
+    char buf[30];
+    std::sprintf(buf, "%-1.15lg", *x);
+    *x = atof(buf);
+}
+
 // calcfract - the top level routine for generating an image
 int calcfract()
 {

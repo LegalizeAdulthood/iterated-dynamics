@@ -33,4 +33,3 @@ int endswithslash(char const *fl);
 int ifsload();
 int file_gets(char *buf, int maxlen, std::FILE *infile);
 void roundfloatd(double *);
-void fix_inversion(double *);
