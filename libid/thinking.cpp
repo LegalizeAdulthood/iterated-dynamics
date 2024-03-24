@@ -8,6 +8,8 @@
 #include "help_title.h"
 #include "os.h"
 
+#include <cstring>
+
 /* thinking(1,message):
       if thinking message not yet on display, it is displayed;
       otherwise the wheel is updated
