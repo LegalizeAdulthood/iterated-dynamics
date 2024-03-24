@@ -88,6 +88,7 @@ add_library(libid
     abort_msg.cpp include/abort_msg.h
     bailout_formula.cpp include/bailout_formula.h
     check_orbit_name.cpp include/check_orbit_name.h
+    check_write_file.cpp include/check_write_file.h
     include/choice_builder.h
     double_to_string.cpp include/double_to_string.h
     ends_with_slash.cpp include/ends_with_slash.h
@@ -348,6 +349,7 @@ source_group("Header Files/ui" FILES
     include/abort_msg.h
     include/bailout_formula.h
     include/check_orbit_name.h
+    include/check_write_file.h
     include/choice_builder.h
     include/double_to_string.h
     include/ends_with_slash.h
@@ -414,6 +416,7 @@ source_group("Source Files/ui" FILES
     abort_msg.cpp
     bailout_formula.cpp
     check_orbit_name.cpp
+    check_write_file.cpp
     double_to_string.cpp
     ends_with_slash.cpp
     evolver_menu_switch.cpp

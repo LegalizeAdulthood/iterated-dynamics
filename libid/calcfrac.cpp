@@ -20,6 +20,7 @@
 #include "biginit.h"
 #include "calcmand.h"
 #include "calmanfp.h"
+#include "check_write_file.h"
 #include "cmdfiles.h"
 #include "cmplx.h"
 #include "diskvid.h"
