@@ -386,7 +386,7 @@ static main_state main_image_start(bool &stacked, bool &resumeflag)
             g_init_batch = batch_modes::BAILOUT_INTERRUPTED_TRY_SAVE;                 // exit with error condition set
             goodbye();
         }
-        int kbdchar = main_menu(0);
+        int kbdchar = main_menu(false);
         if (kbdchar == FIK_INSERT)
         {
             return main_state::RESTART;      // restart pgm on Insert Key

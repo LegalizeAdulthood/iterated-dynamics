@@ -564,7 +564,7 @@ resumeloop:                             // return here on failed overlays
                             goodbye();
                         }
                         driver_stack_screen();
-                        kbdchar = main_menu(1);
+                        kbdchar = main_menu(true);
                         if (kbdchar == '\\' || kbdchar == FIK_CTL_BACKSLASH
                             || kbdchar == 'h' || kbdchar == FIK_CTL_H
                             || check_vidmode_key(0, kbdchar) >= 0)

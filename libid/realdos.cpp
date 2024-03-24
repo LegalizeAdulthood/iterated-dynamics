@@ -32,8 +32,6 @@
 #include <unistd.h>
 #endif
 
-static int menu_checkkey(int curkey, int choice);
-
 int g_release = 2099;   // this has 2 implied decimals; increment it every synch
 int g_patch_level = 8;  // patchlevel for DOS version
 
@@ -209,11 +207,76 @@ void process_speedstring(char *speedstring, //
     }
 }
 
-static int menutype;
+static bool s_full_menu{};
+
+static int menu_checkkey(int curkey, int /*choice*/)
+{
+    int testkey = (curkey >= 'A' && curkey <= 'Z') ? curkey+('a'-'A') : curkey;
+#ifdef XFRACT
+    // We use F2 for shift-@, annoyingly enough
+    if (testkey == FIK_F2)
+    {
+        return -testkey;
+    }
+#endif
+    if (testkey == '2')
+    {
+        testkey = '@';
+
+    }
+    if (std::strchr("#@2txyzgvir3dj", testkey)
+        || testkey == FIK_INSERT || testkey == FIK_CTL_B
+        || testkey == FIK_ESC || testkey == FIK_DELETE
+        || testkey == FIK_CTL_F)
+    {
+        return -testkey;
+    }
+    if (s_full_menu)
+    {
+        if (std::strchr("\\sobpkrh", testkey)
+            || testkey == FIK_TAB || testkey == FIK_CTL_A
+            || testkey == FIK_CTL_E || testkey == FIK_BACKSPACE
+            || testkey == FIK_CTL_P || testkey == FIK_CTL_S
+            || testkey == FIK_CTL_U)   // ctrl-A, E, H, P, S, U
+        {
+            return -testkey;
+        }
+        if (testkey == ' ')
+        {
+            if ((g_cur_fractal_specific->tojulia != fractal_type::NOFRACTAL && g_params[0] == 0.0 && g_params[1] == 0.0)
+                || g_cur_fractal_specific->tomandel != fractal_type::NOFRACTAL)
+            {
+                return -testkey;
+            }
+        }
+        if (g_got_real_dac && g_colors >= 16)
+        {
+            if (std::strchr("c+-", testkey))
+            {
+                return -testkey;
+            }
+            if (g_colors > 16 && (testkey == 'a' || (testkey == 'e')))
+            {
+                return -testkey;
+            }
+        }
+        // Alt-A and Alt-S
+        if (testkey == FIK_ALT_A || testkey == FIK_ALT_S)
+        {
+            return -testkey;
+        }
+    }
+    if (check_vidmode_key(0, testkey) >= 0)
+    {
+        return -testkey;
+    }
+    return 0;
+}
+
 #define MENU_HDG 3
 #define MENU_ITEM 1
 
-int main_menu(int fullmenu)
+int main_menu(bool full_menu)
 {
     char const *choices[44]; // 2 columns * 22 rows
     int attributes[44];
@@ -224,7 +287,7 @@ int main_menu(int fullmenu)
     bool const old_tab_mode = g_tab_mode;
 
 top:
-    menutype = fullmenu;
+    s_full_menu = full_menu;
     g_tab_mode = false;
     showjuliatoggle = false;
     for (int j = 0; j < 44; ++j)
@@ -236,7 +299,7 @@ top:
     nextleft = -2;
     nextright = -1;
 
-    if (fullmenu)
+    if (full_menu)
     {
         nextleft += 2;
         choices[nextleft] = "      CURRENT IMAGE         ";
@@ -282,7 +345,7 @@ top:
     attributes[nextleft] = MENU_ITEM;
     choices[nextleft] = "select fractal type    <t>  ";
 
-    if (fullmenu)
+    if (full_menu)
     {
         if ((g_cur_fractal_specific->tojulia != fractal_type::NOFRACTAL && g_params[0] == 0.0 && g_params[1] == 0.0)
             || g_cur_fractal_specific->tomandel != fractal_type::NOFRACTAL)
@@ -360,7 +423,7 @@ top:
     attributes[nextleft] = MENU_ITEM;
     choices[nextleft] = "browse parms...      <ctl-b>";
 
-    if (fullmenu)
+    if (full_menu)
     {
         nextleft += 2;
         choicekey[nextleft] = FIK_CTL_E;
@@ -384,7 +447,7 @@ top:
     attributes[nextright] = MENU_ITEM;
     choices[nextright] = "run saved command set... <@>  ";
 
-    if (fullmenu)
+    if (full_menu)
     {
         nextright += 2;
         choicekey[nextright] = 's';
@@ -402,7 +465,7 @@ top:
     attributes[nextright] = MENU_ITEM;
     choices[nextright] = "3d transform from file...<3>  ";
 
-    if (fullmenu)
+    if (full_menu)
     {
         nextright += 2;
         choicekey[nextright] = '#';
@@ -447,7 +510,7 @@ top:
 #ifdef XFRACT
     if (fullmenu && (g_got_real_dac || g_fake_lut) && g_colors >= 16)
 #else
-    if (fullmenu && g_got_real_dac && g_colors >= 16)
+    if (full_menu && g_got_real_dac && g_colors >= 16)
 #endif
     {
         nextright += 2;
@@ -552,70 +615,6 @@ top:
     }
     g_tab_mode = old_tab_mode;
     return i;
-}
-
-static int menu_checkkey(int curkey, int /*choice*/)
-{
-    int testkey = (curkey >= 'A' && curkey <= 'Z') ? curkey+('a'-'A') : curkey;
-#ifdef XFRACT
-    // We use F2 for shift-@, annoyingly enough
-    if (testkey == FIK_F2)
-    {
-        return -testkey;
-    }
-#endif
-    if (testkey == '2')
-    {
-        testkey = '@';
-
-    }
-    if (std::strchr("#@2txyzgvir3dj", testkey)
-        || testkey == FIK_INSERT || testkey == FIK_CTL_B
-        || testkey == FIK_ESC || testkey == FIK_DELETE
-        || testkey == FIK_CTL_F)
-    {
-        return -testkey;
-    }
-    if (menutype)
-    {
-        if (std::strchr("\\sobpkrh", testkey)
-            || testkey == FIK_TAB || testkey == FIK_CTL_A
-            || testkey == FIK_CTL_E || testkey == FIK_BACKSPACE
-            || testkey == FIK_CTL_P || testkey == FIK_CTL_S
-            || testkey == FIK_CTL_U)   // ctrl-A, E, H, P, S, U
-        {
-            return -testkey;
-        }
-        if (testkey == ' ')
-        {
-            if ((g_cur_fractal_specific->tojulia != fractal_type::NOFRACTAL && g_params[0] == 0.0 && g_params[1] == 0.0)
-                || g_cur_fractal_specific->tomandel != fractal_type::NOFRACTAL)
-            {
-                return -testkey;
-            }
-        }
-        if (g_got_real_dac && g_colors >= 16)
-        {
-            if (std::strchr("c+-", testkey))
-            {
-                return -testkey;
-            }
-            if (g_colors > 16 && (testkey == 'a' || (testkey == 'e')))
-            {
-                return -testkey;
-            }
-        }
-        // Alt-A and Alt-S
-        if (testkey == FIK_ALT_A || testkey == FIK_ALT_S)
-        {
-            return -testkey;
-        }
-    }
-    if (check_vidmode_key(0, testkey) >= 0)
-    {
-        return -testkey;
-    }
-    return 0;
 }
 
 /* thinking(1,message):
