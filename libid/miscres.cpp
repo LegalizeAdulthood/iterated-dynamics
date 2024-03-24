@@ -10,6 +10,7 @@
 #include "calc_frac_init.h"
 #include "cmdfiles.h"
 #include "drivers.h"
+#include "file_gets.h"
 #include "find_file.h"
 #include "find_file_item.h"
 #include "fractalp.h"
@@ -1419,38 +1420,4 @@ int ifsload()                   // read in IFS parameters
         g_num_affine_transforms = i/rowsize;
     }
     return ret;
-}
-
-int file_gets(char *buf, int maxlen, std::FILE *infile)
-{
-    int len, c;
-    // similar to 'fgets', but file may be in either text or binary mode
-    // returns -1 at eof, length of string otherwise
-    if (std::feof(infile))
-    {
-        return -1;
-    }
-    len = 0;
-    while (len < maxlen)
-    {
-        c = getc(infile);
-        if (c == EOF || c == '\032')
-        {
-            if (len)
-            {
-                break;
-            }
-            return -1;
-        }
-        if (c == '\n')
-        {
-            break;             // linefeed is end of line
-        }
-        if (c != '\r')
-        {
-            buf[len++] = (char)c;    // ignore c/r
-        }
-    }
-    buf[len] = 0;
-    return len;
 }

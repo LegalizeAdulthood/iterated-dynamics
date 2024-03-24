@@ -6,6 +6,7 @@
 #include "calcfrac.h"
 #include "cmdfiles.h"
 #include "drivers.h"
+#include "file_gets.h"
 #include "find_file_item.h"
 #include "fpu087.h"
 #include "fractals.h"

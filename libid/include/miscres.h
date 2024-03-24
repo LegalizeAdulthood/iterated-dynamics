@@ -31,4 +31,3 @@ void set_trig_pointers(int);
 int tab_display();
 int endswithslash(char const *fl);
 int ifsload();
-int file_gets(char *buf, int maxlen, std::FILE *infile);

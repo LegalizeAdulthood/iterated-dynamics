@@ -13,6 +13,7 @@
 #include "check_orbit_name.h"
 #include "do_pause.h"
 #include "drivers.h"
+#include "file_gets.h"
 #include "find_file_item.h"
 #include "find_path.h"
 #include "fix_dirname.h"
