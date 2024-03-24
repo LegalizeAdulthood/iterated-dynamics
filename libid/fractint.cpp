@@ -22,6 +22,7 @@
 #include "get_browse_params.h"
 #include "get_cmd_string.h"
 #include "get_toggles.h"
+#include "goodbye.h"
 #include "helpcom.h"
 #include "helpdefs.h"
 #include "history.h"

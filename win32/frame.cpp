@@ -2,6 +2,7 @@
 #include "prototyp.h"
 
 #include "drivers.h"
+#include "goodbye.h"
 #include "id.h"
 #include "prompts2.h"
 

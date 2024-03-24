@@ -25,6 +25,7 @@
 #include "os.h"
 #endif
 #include "extract_filename.h"
+#include "goodbye.h"
 #include "parser.h"
 #include "plot3d.h"
 #include "prompts2.h"

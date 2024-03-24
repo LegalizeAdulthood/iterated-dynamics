@@ -20,6 +20,7 @@
 #include "drivers.h"
 #include "editpal.h"
 #include "fractals.h"
+#include "goodbye.h"
 #include "helpdefs.h"
 #include "id_data.h"
 #include "os.h"

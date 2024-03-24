@@ -15,6 +15,7 @@
 #include "fractalp.h"
 #include "fractype.h"
 #include "gifview.h"
+#include "goodbye.h"
 #include "history.h"
 #include "id_data.h"
 #include "line3d.h"

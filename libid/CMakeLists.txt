@@ -120,6 +120,7 @@ add_library(libid
     get_key_no_help.cpp include/get_key_no_help.h
     get_rds_params.cpp include/get_rds_params.h
     get_toggles.cpp include/get_toggles.h
+    goodbye.cpp include/goodbye.h
     has_ext.cpp include/has_ext.h
     help.cpp
     help_title.cpp include/help_title.h
@@ -393,6 +394,7 @@ source_group("Header Files/ui" FILES
     include/get_key_no_help.h
     include/get_rds_params.h
     include/get_toggles.h
+    include/goodbye.h
     include/has_ext.h
     include/help.h
     include/help_title.h
@@ -469,6 +471,7 @@ source_group("Source Files/ui" FILES
     get_key_no_help.cpp
     get_rds_params.cpp
     get_toggles.cpp
+    goodbye.cpp
     has_ext.cpp
     help.cpp
     help_title.cpp

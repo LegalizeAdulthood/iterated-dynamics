@@ -12,6 +12,7 @@
 #ifdef XFRACT
 #include "os.h"
 #endif
+#include "goodbye.h"
 #include "help_title.h"
 #include "prompts2.h"
 #include "put_string_center.h"

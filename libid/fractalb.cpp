@@ -16,6 +16,7 @@ fractal routines.
 #include "fractalp.h"
 #include "fractals.h"
 #include "fractype.h"
+#include "goodbye.h"
 #include "helpdefs.h"
 #include "id_data.h"
 #include "prompts2.h"
