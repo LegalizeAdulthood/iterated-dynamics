@@ -16,25 +16,22 @@ static const char *const seps{" \t\n\r"};
 
 char *get_ifs_token(char *buf, std::FILE *ifsfile)
 {
-    char *bufptr;
     while (true)
     {
         if (file_gets(buf, 200, ifsfile) < 0)
         {
             return nullptr;
         }
-        else
+
+        char* bufptr = std::strchr(buf, ';');
+        if (bufptr != nullptr) // use ';' as comment to eol
         {
-            bufptr = std::strchr(buf, ';');
-            if (bufptr != nullptr)   // use ';' as comment to eol
-            {
-                *bufptr = 0;
-            }
-            bufptr = std::strtok(buf, seps);
-            if (bufptr != nullptr)
-            {
-                return bufptr;
-            }
+            *bufptr = 0;
+        }
+        bufptr = std::strtok(buf, seps);
+        if (bufptr != nullptr)
+        {
+            return bufptr;
         }
     }
 }
@@ -42,11 +39,11 @@ char *get_ifs_token(char *buf, std::FILE *ifsfile)
 char *get_next_ifs_token(char *buf, std::FILE *ifsfile)
 {
     char *bufptr = std::strtok(nullptr, seps);
-    if (bufptr == nullptr)
+    if (bufptr != nullptr)
     {
-        bufptr = get_ifs_token(buf, ifsfile);
+        return bufptr;
     }
-    return bufptr;
+    return get_ifs_token(buf, ifsfile);
 }
 
 int g_num_affine_transforms;
