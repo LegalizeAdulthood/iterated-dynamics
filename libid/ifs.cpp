@@ -12,7 +12,9 @@
 #include <cstdio>
 #include <cstring>
 
-static const char *const seps{" \t\n\r"};
+int g_num_affine_transforms;
+
+static const char *const s_token_separators{" \t\n\r"};
 
 char *get_ifs_token(char *buf, std::FILE *ifsfile)
 {
@@ -28,7 +30,7 @@ char *get_ifs_token(char *buf, std::FILE *ifsfile)
         {
             *bufptr = 0;
         }
-        bufptr = std::strtok(buf, seps);
+        bufptr = std::strtok(buf, s_token_separators);
         if (bufptr != nullptr)
         {
             return bufptr;
@@ -38,7 +40,7 @@ char *get_ifs_token(char *buf, std::FILE *ifsfile)
 
 char *get_next_ifs_token(char *buf, std::FILE *ifsfile)
 {
-    char *bufptr = std::strtok(nullptr, seps);
+    char *bufptr = std::strtok(nullptr, s_token_separators);
     if (bufptr != nullptr)
     {
         return bufptr;
@@ -46,7 +48,6 @@ char *get_next_ifs_token(char *buf, std::FILE *ifsfile)
     return get_ifs_token(buf, ifsfile);
 }
 
-int g_num_affine_transforms;
 int ifsload()                   // read in IFS parameters
 {
     // release prior params

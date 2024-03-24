@@ -3,8 +3,6 @@
 #include <cstdio>
 #include <string>
 
-extern int                   g_num_affine_transforms;
-
 extern void (*ltrig0)();
 extern void (*ltrig1)();
 extern void (*ltrig2)();
