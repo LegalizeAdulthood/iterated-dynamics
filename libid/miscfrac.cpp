@@ -20,6 +20,7 @@ Miscellaneous fractal-specific code
 #include "loadmap.h"
 #include "miscres.h"
 #include "newton.h"
+#include "not_disk_msg.h"
 #include "parser.h"
 #include "pixel_grid.h"
 #include "resume.h"

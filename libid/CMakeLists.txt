@@ -133,6 +133,7 @@ add_library(libid
     merge_path_names.cpp include/merge_path_names.h
     miscovl.cpp include/miscovl.h
     miscres.cpp include/miscres.h
+    not_disk_msg.cpp include/not_disk_msg.h
     path_match.cpp include/path_match.h
     prompts1.cpp include/prompts1.h
     prompts2.cpp include/prompts2.h
@@ -398,6 +399,7 @@ source_group("Header Files/ui" FILES
     include/merge_path_names.h
     include/miscovl.h
     include/miscres.h
+    include/not_disk_msg.h
     include/path_match.h
     include/prompts1.h
     include/prompts2.h
@@ -462,6 +464,7 @@ source_group("Source Files/ui" FILES
     merge_path_names.cpp
     miscovl.cpp
     miscres.cpp
+    not_disk_msg.cpp
     path_match.cpp
     prompts1.cpp
     prompts2.cpp
