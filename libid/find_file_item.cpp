@@ -34,7 +34,7 @@ bool find_file_item(char *filename, char const *itemname, std::FILE **fileptr, i
         infile = std::fopen(filename, "rb");
         if (infile != nullptr)
         {
-            if (scan_entries(infile, nullptr, itemname) == -1)
+            if (search_for_entry(infile, itemname))
             {
                 found = true;
             }
@@ -51,7 +51,7 @@ bool find_file_item(char *filename, char const *itemname, std::FILE **fileptr, i
             infile = std::fopen(fullpath, "rb");
             if (infile != nullptr)
             {
-                if (scan_entries(infile, nullptr, itemname) == -1)
+                if (search_for_entry(infile, itemname))
                 {
                     std::strcpy(filename, fullpath);
                     found = true;
@@ -101,7 +101,7 @@ bool find_file_item(char *filename, char const *itemname, std::FILE **fileptr, i
         infile = std::fopen(g_command_file.c_str(), "rb");
         if (infile != nullptr)
         {
-            if (scan_entries(infile, nullptr, parsearchname) == -1)
+            if (search_for_entry(infile, parsearchname))
             {
                 std::strcpy(filename, g_command_file.c_str());
                 found = true;
@@ -120,7 +120,7 @@ bool find_file_item(char *filename, char const *itemname, std::FILE **fileptr, i
         infile = std::fopen(fullpath, "rb");
         if (infile != nullptr)
         {
-            if (scan_entries(infile, nullptr, itemname) == -1)
+            if (search_for_entry(infile, itemname))
             {
                 std::strcpy(filename, fullpath);
                 found = true;
@@ -153,7 +153,7 @@ bool find_file_item(char *filename, char const *itemname, std::FILE **fileptr, i
                 infile = std::fopen(fullpath, "rb");
                 if (infile != nullptr)
                 {
-                    if (scan_entries(infile, nullptr, itemname) == -1)
+                    if (search_for_entry(infile, itemname))
                     {
                         std::strcpy(filename, fullpath);
                         found = true;
@@ -206,7 +206,7 @@ bool find_file_item(char *filename, char const *itemname, std::FILE **fileptr, i
         infile = std::fopen(fullpath, "rb");
         if (infile != nullptr)
         {
-            if (scan_entries(infile, nullptr, itemname) == -1)
+            if (search_for_entry(infile, itemname))
             {
                 std::strcpy(filename, fullpath);
                 found = true;

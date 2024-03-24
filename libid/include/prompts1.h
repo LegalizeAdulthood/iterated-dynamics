@@ -31,5 +31,4 @@ int get_fract_params(int);
 int find_extra_param(fractal_type type);
 void load_params(fractal_type fractype);
 bool check_orbit_name(char const *orbitname);
-struct entryinfo;
-int scan_entries(std::FILE *infile, struct entryinfo *ch, char const *itemname);
+bool search_for_entry(std::FILE *infile, char const *itemname);

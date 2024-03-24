@@ -1262,7 +1262,7 @@ int skip_comment(std::FILE *infile, long *file_offset)
 
 #define MAXENTRIES 2000L
 
-int scan_entries(std::FILE *infile, entryinfo *choices, char const *itemname)
+static int scan_entries(std::FILE *infile, entryinfo *choices, char const *itemname)
 {
     /*
     function returns the number of entries found; if a
@@ -1408,6 +1408,11 @@ top:
         }
     }
     return numentries;
+}
+
+bool search_for_entry(std::FILE *infile, char const *itemname)
+{
+    return scan_entries(infile, nullptr, itemname) == -1;
 }
 
 // subrtn of get_file_entry, separated so that storage gets freed up
