@@ -8,7 +8,6 @@ extern int                   g_patch_level;
 extern int                   g_release;
 extern std::string const     g_speed_prompt;
 
-void footer_msg(int *i, int options, char const *speedstring);
 void show_speedstring(
     int speedrow,
     char const *speedstring,
