@@ -13,6 +13,7 @@
 #include "fracsubr.h"
 #include "fractalp.h"
 #include "fractype.h"
+#include "full_screen_choice.h"
 #include "full_screen_prompt.h"
 #include "get_key_no_help.h"
 #include "helpcom.h"

@@ -13,6 +13,7 @@
 #include "find_path.h"
 #include "fractalp.h"
 #include "framain2.h"
+#include "full_screen_choice.h"
 #include "get_key_no_help.h"
 #include "helpdefs.h"
 #include "id_data.h"
