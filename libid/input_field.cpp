@@ -8,6 +8,8 @@
 #include "miscres.h"
 
 #include <cmath>
+#include <cstdio>
+#include <cstring>
 
 int input_field(
     int options,          // &1 numeric, &2 integer, &4 double
