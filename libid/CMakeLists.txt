@@ -22,7 +22,6 @@ add_library(libid
     soi.cpp include/soi.h
     soi1.cpp
     ssg_block_size.cpp include/ssg_block_size.h
-    testpt.cpp include/testpt.h
     type_has_param.cpp include/type_has_param.h
     wait_until.cpp include/wait_until.h
     work_list.cpp include/work_list.h
@@ -53,6 +52,7 @@ add_library(libid
     quaternion_mandelbrot.cpp include/quaternion_mandelbrot.h
     sierpinski_gasket.cpp include/sierpinski_gasket.h
     taylor_skinner_variations.cpp include/taylor_skinner_variations.h
+    testpt.cpp include/testpt.h
     unity.cpp include/unity.h
     volterra_lotka.cpp include/volterra_lotka.h
 
@@ -180,7 +180,6 @@ source_group("Header Files/engine" FILES
     include/resume.h
     include/soi.h
     include/ssg_block_size.h
-    include/testpt.h
     include/type_has_param.h
     include/wait_until.h
     include/work_list.h
@@ -203,7 +202,6 @@ source_group("Source Files/engine" FILES
     soi.cpp
     soi1.cpp
     ssg_block_size.cpp
-    testpt.cpp
     type_has_param.cpp
     wait_until.cpp
     work_list.cpp
@@ -236,6 +234,7 @@ source_group("Header Files/fractal specific" FILES
     include/quaternion_mandelbrot.h
     include/sierpinski_gasket.h
     include/taylor_skinner_variations.h
+    include/testpt.h
     include/unity.h
     include/volterra_lotka.h
 )
@@ -266,6 +265,7 @@ source_group("Source Files/fractal specific" FILES
     quaternion_mandelbrot.cpp
     sierpinski_gasket.cpp
     taylor_skinner_variations.cpp
+    testpt.cpp
     unity.cpp
     volterra_lotka.cpp
 )
