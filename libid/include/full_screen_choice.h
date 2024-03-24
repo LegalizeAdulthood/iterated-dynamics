@@ -1,5 +1,9 @@
 #pragma once
 
+#include <string>
+
+extern std::string const     g_speed_prompt;
+
 // fullscreen_choice options
 enum choice_flags
 {

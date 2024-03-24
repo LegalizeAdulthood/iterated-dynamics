@@ -11,7 +11,11 @@
 #include "realdos.h"
 #include "string_case_compare.h"
 
+#include <cctype>
 #include <cstring>
+#include <string>
+
+std::string const g_speed_prompt{"Speed key string"};
 
 /* For file list purposes only, it's a directory name if first
    char is a dot or last char is a slash */
@@ -29,6 +33,108 @@ static void footer_msg(int *i, int options, char const *speedstring)
                     (options & CHOICE_MENU) ? "Press ENTER for highlighted choice, or " FK_F1 " for help"
                     : ((options & CHOICE_HELP) ? "Press ENTER for highlighted choice, ESCAPE to back out, or F1 for help"
                        : "Press ENTER for highlighted choice, or ESCAPE to back out"));
+}
+
+static void show_speedstring(
+    int speedrow,
+    char const *speedstring,
+    int (*speedprompt)(int row, int col, int vid, char const *speedstring, int speed_match))
+{
+    char buf[81];
+    std::memset(buf, ' ', 80);
+    buf[80] = 0;
+    driver_put_string(speedrow, 0, C_PROMPT_BKGRD, buf);
+    if (*speedstring)
+    {
+        // got a speedstring on the go
+        driver_put_string(speedrow, 15, C_CHOICE_SP_INSTR, " ");
+        int j;
+        if (speedprompt)
+        {
+            int speed_match = 0;
+            j = speedprompt(speedrow, 16, C_CHOICE_SP_INSTR, speedstring, speed_match);
+        }
+        else
+        {
+            driver_put_string(speedrow, 16, C_CHOICE_SP_INSTR, g_speed_prompt);
+            j = static_cast<int>(g_speed_prompt.length());
+        }
+        std::strcpy(buf, speedstring);
+        int i = (int) std::strlen(buf);
+        while (i < 30)
+        {
+            buf[i++] = ' ';
+
+        }
+        buf[i] = 0;
+        driver_put_string(speedrow, 16+j, C_CHOICE_SP_INSTR, " ");
+        driver_put_string(speedrow, 17+j, C_CHOICE_SP_KEYIN, buf);
+        driver_move_cursor(speedrow, 17+j+(int) std::strlen(speedstring));
+    }
+    else
+    {
+        driver_hide_text_cursor();
+    }
+}
+
+static void process_speedstring(char *speedstring, //
+    char const **choices,                          // array of choice strings
+    int curkey,                                    //
+    int *pcurrent,                                 //
+    int numchoices,                                //
+    int is_unsorted)
+{
+    int i = (int) std::strlen(speedstring);
+    if (curkey == 8 && i > 0)   // backspace
+    {
+        speedstring[--i] = 0;
+    }
+    if (33 <= curkey && curkey <= 126 && i < 30)
+    {
+#ifndef XFRACT
+        curkey = std::tolower(curkey);
+#endif
+        speedstring[i] = (char)curkey;
+        speedstring[++i] = 0;
+    }
+    if (i > 0)
+    {
+        // locate matching type
+        *pcurrent = 0;
+        int comp_result;
+        while (*pcurrent < numchoices
+            && (comp_result = strncasecmp(speedstring, choices[*pcurrent], i)) != 0)
+        {
+            if (comp_result < 0 && !is_unsorted)
+            {
+                *pcurrent -= *pcurrent ? 1 : 0;
+                break;
+            }
+            else
+            {
+                ++*pcurrent;
+            }
+        }
+        if (*pcurrent >= numchoices)   // bumped end of list
+        {
+            *pcurrent = numchoices - 1;
+            /*if the list is unsorted, and the entry found is not the exact
+              entry, then go looking for the exact entry.
+            */
+        }
+        else if (is_unsorted && choices[*pcurrent][i])
+        {
+            int temp = *pcurrent;
+            while (++temp < numchoices)
+            {
+                if (!choices[temp][i] && !strncasecmp(speedstring, choices[temp], i))
+                {
+                    *pcurrent = temp;
+                    break;
+                }
+            }
+        }
+    }
 }
 
 /*
