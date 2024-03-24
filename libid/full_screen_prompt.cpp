@@ -10,6 +10,7 @@
 #include "helpdefs.h"
 #include "id.h"
 #include "id_data.h"
+#include "input_field.h"
 #include "load_entry_text.h"
 #include "miscres.h"
 #include "os.h"

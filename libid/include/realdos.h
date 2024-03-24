@@ -2,13 +2,6 @@
 
 #include <string>
 
-enum input_field_flags
-{
-    INPUTFIELD_NUMERIC  = 1,
-    INPUTFIELD_INTEGER  = 2,
-    INPUTFIELD_DOUBLE   = 4
-};
-
 // fullscreen_choice options
 enum choice_flags
 {
@@ -45,8 +38,6 @@ int fullscreen_choice(
 void helptitle();
 int putstringcenter(int row, int col, int width, int attr, char const *msg);
 int main_menu(int);
-int input_field(int options, int attr, char *fld, int len, int row, int col,
-    int (*checkkey)(int curkey));
 bool thinking(int options, char const *msg);
 void discardgraphics();
 void load_id_config();

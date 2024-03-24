@@ -102,6 +102,7 @@ add_library(libid
     history.cpp include/history.h
     intro.cpp include/intro.h
     include/is_directory.h
+    input_field.cpp include/input_field.h
     jiim.cpp include/jiim.h
     load_entry_text.cpp include/load_entry_text.h
     main_menu_switch.cpp include/main_menu_switch.h
@@ -330,6 +331,7 @@ source_group("Header Files/ui" FILES
     include/help.h
     include/history.h
     include/id.h
+    include/input_field.h
     include/intro.h
     include/is_directory.h
     include/jiim.h
@@ -375,6 +377,7 @@ source_group("Source Files/ui" FILES
     get_toggles.cpp
     help.cpp
     history.cpp
+    input_field.cpp
     intro.cpp
     jiim.cpp
     load_entry_text.cpp

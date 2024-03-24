@@ -2,6 +2,8 @@
 
 #include <string>
 
+struct VIDEOINFO;
+
 enum class buzzer_codes
 {
     COMPLETE = 0,
