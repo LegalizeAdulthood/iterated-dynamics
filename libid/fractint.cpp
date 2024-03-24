@@ -18,6 +18,7 @@
 #include "fractype.h"
 #include "framain2.h"
 #include "get_3d_params.h"
+#include "get_a_filename.h"
 #include "get_browse_params.h"
 #include "get_cmd_string.h"
 #include "get_toggles.h"

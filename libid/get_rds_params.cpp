@@ -5,6 +5,7 @@
 
 #include "drivers.h"
 #include "full_screen_prompt.h"
+#include "get_a_filename.h"
 #include "helpdefs.h"
 #include "id_data.h"
 #include "prompts2.h"
