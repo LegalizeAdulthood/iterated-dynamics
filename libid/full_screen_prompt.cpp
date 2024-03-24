@@ -17,6 +17,7 @@
 #include "miscres.h"
 #include "os.h"
 #include "put_string_center.h"
+#include "round_float_double.h"
 
 #include <cassert>
 #include <cstdio>

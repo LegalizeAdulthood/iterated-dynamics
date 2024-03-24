@@ -1454,10 +1454,3 @@ int file_gets(char *buf, int maxlen, std::FILE *infile)
     buf[len] = 0;
     return len;
 }
-
-void roundfloatd(double *x) // make double converted from float look ok
-{
-    char buf[30];
-    std::sprintf(buf, "%-10.7g", *x);
-    *x = atof(buf);
-}

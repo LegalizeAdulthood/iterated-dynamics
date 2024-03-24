@@ -132,6 +132,7 @@ add_library(libid
     prompts1.cpp include/prompts1.h
     prompts2.cpp include/prompts2.h
     put_string_center.cpp include/put_string_center.h
+    round_float_double.cpp include/round_float_double.h
     search_path.cpp include/search_path.h
     set_default_parms.cpp include/set_default_parms.h
     sound.cpp include/sound.h
@@ -389,6 +390,7 @@ source_group("Header Files/ui" FILES
     include/prompts1.h
     include/prompts2.h
     include/put_string_center.h
+    include/round_float_double.h
     include/search_path.h
     include/set_default_parms.h
     include/spindac.h
@@ -446,6 +448,7 @@ source_group("Source Files/ui" FILES
     prompts1.cpp
     prompts2.cpp
     put_string_center.cpp
+    round_float_double.cpp
     search_path.cpp
     set_default_parms.cpp
     spindac.cpp

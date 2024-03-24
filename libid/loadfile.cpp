@@ -36,6 +36,7 @@
 #include "resume.h"
 #include "split_path.h"
 #include "rotate.h"
+#include "round_float_double.h"
 #include "stop_msg.h"
 #include "temp_msg.h"
 #include "zoom.h"
