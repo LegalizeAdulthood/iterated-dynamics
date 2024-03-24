@@ -6,10 +6,10 @@
 #include "bailout_formula.h"
 #include "calcfrac.h"
 #include "cmdfiles.h"
-#include "fracsubr.h"
 #include "fractalp.h"
 #include "fractals.h"
 #include "frasetup.h"
+#include "get_julia_attractor.h"
 #include "mpmath.h"
 
 #include <cmath>

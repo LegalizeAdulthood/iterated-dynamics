@@ -15,6 +15,7 @@ add_library(libid
     fractalp.cpp include/fractalp.h
     fractals.cpp include/fractals.h
     frasetup.cpp include/frasetup.h
+    get_julia_attractor.cpp include/get_julia_attractor.h
     param_not_used.cpp include/param_not_used.h
     pixel_grid.cpp include/pixel_grid.h
     resume.cpp include/resume.h
@@ -170,6 +171,7 @@ source_group("Header Files/engine" FILES
     include/fractals.h
     include/fractype.h
     include/frasetup.h
+    include/get_julia_attractor.h
     include/id_data.h
     include/param_not_used.h
     include/pixel_grid.h
@@ -190,6 +192,7 @@ source_group("Source Files/engine" FILES
     fractalp.cpp
     fractals.cpp
     frasetup.cpp
+    get_julia_attractor.cpp
     param_not_used.cpp
     pixel_grid.cpp
     resume.cpp

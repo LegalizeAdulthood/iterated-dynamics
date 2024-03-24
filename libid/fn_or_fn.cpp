@@ -4,9 +4,9 @@
 #include "prototyp.h"
 
 #include "bailout_formula.h"
-#include "fracsubr.h"
 #include "fractals.h"
 #include "fractype.h"
+#include "get_julia_attractor.h"
 #include "mpmath.h"
 
 bool LambdaTrigOrTrigSetup()
