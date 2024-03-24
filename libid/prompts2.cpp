@@ -36,6 +36,7 @@
 #include "miscres.h"
 #include "mpmath.h"
 #include "mpmath_c.h"
+#include "pixel_grid.h"
 #include "prompts1.h"
 #include "put_string_center.h"
 #include "slideshw.h"

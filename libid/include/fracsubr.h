@@ -5,7 +5,6 @@ extern bool                  g_tab_or_help;
 extern bool                  g_use_grid;
 
 void wait_until(int index, uclock_t wait_time);
-void free_grid_pointers();
 void calcfracinit();
 void adjust_corner();
 int put_resume(int, ...);
@@ -34,6 +33,3 @@ void symplot4basin(int, int, int);
 void noplot(int, int, int);
 void fractal_floattobf();
 void adjust_cornerbf();
-void set_grid_pointers();
-void fill_dx_array();
-void fill_lx_array();

@@ -88,18 +88,6 @@ int g_bit_shift;                                                   // fudgefacto
 
 config_status     g_bad_config{};          // 'id.cfg' ok?
 bool g_has_inverse = false;
-// note that integer grid is set when integerfractal && !invert;
-// otherwise the floating point grid is set; never both at once
-std::vector<long> g_l_x0;              // x, y grid
-std::vector<long> g_l_y0;
-std::vector<long> g_l_x1;              // adjustment for rotate
-std::vector<long> g_l_y1;
-// note that lx1 & ly1 values can overflow into sign bit; since
-// they're used only to add to lx0/ly0, 2s comp straightens it out
-std::vector<double> g_grid_x0;            // floating pt equivs
-std::vector<double> g_grid_y0;
-std::vector<double> g_grid_x1;
-std::vector<double> g_grid_y1;
 int     g_integer_fractal;         // TRUE if fractal uses integer math
 
 // usr_xxx is what the user wants, vs what we may be forced to do
