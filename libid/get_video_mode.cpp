@@ -31,7 +31,7 @@
 #include "port.h"
 #include "prototyp.h"
 
-#include "loadfdos.h"
+#include "get_video_mode.h"
 
 #include "cmdfiles.h"
 #include "fractalp.h"

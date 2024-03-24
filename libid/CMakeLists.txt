@@ -64,8 +64,8 @@ add_library(libid
     editpal.cpp include/editpal.h
     encoder.cpp include/encoder.h
     evolve.cpp include/evolve.h
+    get_video_mode.cpp include/get_video_mode.h
     gifview.cpp include/gifview.h
-    loadfdos.cpp include/loadfdos.h
     loadfile.cpp include/loadfile.h
     loadmap.cpp include/loadmap.h
     parser.cpp include/parser.h
@@ -294,9 +294,9 @@ source_group("Header Files/IO" FILES
     include/editpal.h
     include/encoder.h
     include/evolve.h
+    include/get_video_mode.h
     include/gifview.h
     include/id_io.h
-    include/loadfdos.h
     include/loadfile.h
     include/loadmap.h
     include/parser.h
@@ -312,8 +312,8 @@ source_group("Source Files/IO" FILES
     editpal.cpp
     encoder.cpp
     evolve.cpp
+    get_video_mode.cpp
     gifview.cpp
-    loadfdos.cpp
     loadfile.cpp
     loadmap.cpp
     parser.cpp
