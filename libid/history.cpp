@@ -9,6 +9,7 @@
 #include "diskvid.h"
 #include "fractalp.h"
 #include "fractype.h"
+#include "help_title.h"
 #include "id_data.h"
 #include "jb.h"
 #include "line3d.h"

@@ -5,8 +5,10 @@
 
 #include "cmdfiles.h"
 #include "drivers.h"
+#include "help_title.h"
 #include "id.h"
 #include "id_data.h"
+#include "miscres.h"
 #include "os.h"
 #include "realdos.h"
 #include "string_case_compare.h"

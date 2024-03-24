@@ -8,6 +8,7 @@
 #include "drivers.h"
 #include "fractype.h"
 #include "helpdefs.h"
+#include "help_title.h"
 #include "id.h"
 #include "id_data.h"
 #include "input_field.h"

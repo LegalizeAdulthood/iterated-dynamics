@@ -10,6 +10,7 @@
 #include "drivers.h"
 #include "helpcom.h"
 #include "helpdefs.h"
+#include "help_title.h"
 #include "id_data.h"
 #include "realdos.h"
 

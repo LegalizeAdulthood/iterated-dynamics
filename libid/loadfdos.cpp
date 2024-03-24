@@ -37,6 +37,7 @@
 #include "fractalp.h"
 #include "full_screen_choice.h"
 #include "helpdefs.h"
+#include "help_title.h"
 #include "id_data.h"
 #include "loadfile.h"
 #include "make_batch_file.h"

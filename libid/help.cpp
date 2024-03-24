@@ -6,6 +6,7 @@
 #include "find_path.h"
 #include "helpcom.h"
 #include "helpdefs.h"
+#include "help_title.h"
 #include "id_data.h"
 #include "id_io.h"
 #include "os.h"

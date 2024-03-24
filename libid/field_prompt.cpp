@@ -5,6 +5,7 @@
 
 #include "cmdfiles.h"
 #include "drivers.h"
+#include "help_title.h"
 #include "input_field.h"
 #include "os.h"
 #include "realdos.h"

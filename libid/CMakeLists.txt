@@ -100,6 +100,7 @@ add_library(libid
     get_rds_params.cpp include/get_rds_params.h
     get_toggles.cpp include/get_toggles.h
     help.cpp
+    help_title.cpp include/help_title.h
     history.cpp include/history.h
     intro.cpp include/intro.h
     include/is_directory.h
@@ -333,6 +334,7 @@ source_group("Header Files/ui" FILES
     include/get_rds_params.h
     include/get_toggles.h
     include/help.h
+    include/help_title.h
     include/history.h
     include/id.h
     include/input_field.h
@@ -383,6 +385,7 @@ source_group("Source Files/ui" FILES
     get_rds_params.cpp
     get_toggles.cpp
     help.cpp
+    help_title.cpp
     history.cpp
     input_field.cpp
     intro.cpp

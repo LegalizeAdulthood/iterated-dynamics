@@ -13,6 +13,7 @@
 
 #include "cmdfiles.h"
 #include "drivers.h"
+#include "help_title.h"
 #include "id_data.h"
 #include "memory.h"
 #include "realdos.h"
