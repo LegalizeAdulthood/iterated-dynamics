@@ -39,6 +39,7 @@
 #include "round_float_double.h"
 #include "stop_msg.h"
 #include "temp_msg.h"
+#include "trig_fns.h"
 #include "zoom.h"
 
 #include <algorithm>

@@ -32,6 +32,7 @@
 #include "sound.h"
 #include "stereo.h"
 #include "stop_msg.h"
+#include "trig_fns.h"
 #include "type_has_param.h"
 #include "version.h"
 #include "video_mode.h"

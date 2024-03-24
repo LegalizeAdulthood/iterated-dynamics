@@ -12,6 +12,7 @@
 #include "frasetup.h"
 #include "mpmath.h"
 #include "mpmath_c.h"
+#include "trig_fns.h"
 
 #include <cmath>
 

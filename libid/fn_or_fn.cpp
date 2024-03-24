@@ -8,6 +8,7 @@
 #include "fractype.h"
 #include "get_julia_attractor.h"
 #include "mpmath.h"
+#include "trig_fns.h"
 
 bool LambdaTrigOrTrigSetup()
 {

@@ -19,6 +19,7 @@
 #include "mpmath_c.h"
 #include "pickover_mandelbrot.h"
 #include "popcorn.h"
+#include "trig_fns.h"
 
 #include <cmath>
 

@@ -47,6 +47,7 @@
 #include "sound.h"
 #include "stereo.h"
 #include "stop_msg.h"
+#include "trig_fns.h"
 #include "video_mode.h"
 
 #include <algorithm>

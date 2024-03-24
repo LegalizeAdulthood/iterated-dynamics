@@ -27,6 +27,7 @@ Miscellaneous fractal-specific code
 #include "spindac.h"
 #include "stop_msg.h"
 #include "testpt.h"
+#include "trig_fns.h"
 
 #include <algorithm>
 #include <cmath>

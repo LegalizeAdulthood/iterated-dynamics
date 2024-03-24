@@ -143,6 +143,7 @@ add_library(libid
     stop_msg.cpp include/stop_msg.h
     temp_msg.cpp include/temp_msg.h
     thinking.cpp include/thinking.h
+    trig_fns.cpp include/trig_fns.h
     update_save_name.cpp include/update_save_name.h
     version.cpp include/version.h
     video_mode.cpp include/video_mode.h
@@ -403,6 +404,7 @@ source_group("Header Files/ui" FILES
     include/stop_msg.h
     include/temp_msg.h
     include/thinking.h
+    include/trig_fns.h
     include/update_save_name.h
     include/version.h
     include/video_mode.h
@@ -463,6 +465,7 @@ source_group("Source Files/ui" FILES
     stop_msg.cpp
     temp_msg.cpp
     thinking.cpp
+    trig_fns.cpp
     update_save_name.cpp
     version.cpp
     video_mode.cpp

@@ -1,43 +1,5 @@
 #pragma once
 
-// The values must match the values in the trigfn array in prompts1
-enum class trig_fn
-{
-    SIN = 0,
-    COSXX,
-    SINH,
-    COSH,
-    EXP,
-    LOG,
-    SQR,
-    RECIP,
-    IDENT,
-    COS,
-    TAN,
-    TANH,
-    COTAN,
-    COTANH,
-    FLIP,
-    CONJ,
-    ZERO,
-    ASIN,
-    ASINH,
-    ACOS,
-    ACOSH,
-    FN_ATAN,
-    ATANH,
-    CABS,
-    ABS,
-    SQRT,
-    FLOOR,
-    CEIL,
-    TRUNC,
-    ROUND,
-    ONE
-};
-
-extern trig_fn g_trig_index[];
-
 // These MUST match the corresponding indices into the fractalspecific array
 enum class fractal_type
 {

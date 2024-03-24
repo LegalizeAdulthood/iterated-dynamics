@@ -35,6 +35,7 @@
 #include "newton.h"
 #include "pixel_grid.h"
 #include "stop_msg.h"
+#include "trig_fns.h"
 
 #include <algorithm>
 #include <cassert>

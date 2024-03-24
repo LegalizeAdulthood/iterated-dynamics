@@ -11,6 +11,7 @@
 #include "frasetup.h"
 #include "get_julia_attractor.h"
 #include "mpmath.h"
+#include "trig_fns.h"
 
 #include <cmath>
 

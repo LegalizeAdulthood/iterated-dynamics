@@ -35,6 +35,7 @@
 #include "prompts2.h"
 #include "set_default_parms.h"
 #include "stop_msg.h"
+#include "trig_fns.h"
 #include "type_has_param.h"
 #include "zoom.h"
 
@@ -42,6 +43,7 @@
 #include <cstdlib>
 #include <cstring>
 #include <string>
+#include <vector>
 
 static  fractal_type select_fracttype(fractal_type t);
 static  int sel_fractype_help(int curkey, int choice);
@@ -338,48 +340,6 @@ std::string const g_jiim_method[] =
 static char JIIMstr2[] = "Left first or Right first?";
 std::string const g_jiim_left_right[] = {"left", "right"};
 
-// The index into this array must correspond to enum trig_fn
-trig_funct_lst g_trig_fn[] =
-// changing the order of these alters meaning of *.fra file
-// maximum 6 characters in function names or recheck all related code
-{
-    {"sin",   dStkSin,   dStkSin,   dStkSin   },
-    {"cosxx", dStkCosXX, dStkCosXX, dStkCosXX },
-    {"sinh",  dStkSinh,  dStkSinh,  dStkSinh  },
-    {"cosh",  dStkCosh,  dStkCosh,  dStkCosh  },
-    {"exp",   dStkExp,   dStkExp,   dStkExp   },
-    {"log",   dStkLog,   dStkLog,   dStkLog   },
-    {"sqr",   dStkSqr,   dStkSqr,   dStkSqr   },
-    {"recip", dStkRecip, dStkRecip, dStkRecip }, // from recip on new in v16
-    {"ident", StkIdent,  StkIdent,  StkIdent  },
-    {"cos",   dStkCos,   dStkCos,   dStkCos   },
-    {"tan",   dStkTan,   dStkTan,   dStkTan   },
-    {"tanh",  dStkTanh,  dStkTanh,  dStkTanh  },
-    {"cotan", dStkCoTan, dStkCoTan, dStkCoTan },
-    {"cotanh", dStkCoTanh, dStkCoTanh, dStkCoTanh},
-    {"flip",  dStkFlip,  dStkFlip,  dStkFlip  },
-    {"conj",  dStkConj,  dStkConj,  dStkConj  },
-    {"zero",  dStkZero,  dStkZero,  dStkZero  },
-    {"asin",  dStkASin,  dStkASin,  dStkASin  },
-    {"asinh", dStkASinh, dStkASinh, dStkASinh },
-    {"acos",  dStkACos,  dStkACos,  dStkACos  },
-    {"acosh", dStkACosh, dStkACosh, dStkACosh },
-    {"atan",  dStkATan,  dStkATan,  dStkATan  },
-    {"atanh", dStkATanh, dStkATanh, dStkATanh },
-    {"cabs",  dStkCAbs,  dStkCAbs,  dStkCAbs  },
-    {"abs",   dStkAbs,   dStkAbs,   dStkAbs   },
-    {"sqrt",  dStkSqrt,  dStkSqrt,  dStkSqrt  },
-    {"floor", dStkFloor, dStkFloor, dStkFloor },
-    {"ceil",  dStkCeil,  dStkCeil,  dStkCeil  },
-    {"trunc", dStkTrunc, dStkTrunc, dStkTrunc },
-    {"round", dStkRound, dStkRound, dStkRound },
-    {"one",   dStkOne,   dStkOne,   dStkOne   },
-};
-
-#define NUMTRIGFN  sizeof(g_trig_fn)/sizeof(trig_funct_lst)
-
-extern const int g_num_trig_functions = NUMTRIGFN;
-
 static char tstack[4096] = { 0 };
 
 static char const *jiim_left_right_list[] =
@@ -427,7 +387,7 @@ int get_fract_params(int caller)        // prompt for type-specific parms
     char *filename;
     char const *entryname;
     std::FILE *entryfile;
-    char const *trignameptr[NUMTRIGFN];
+    std::vector<char const *> trignameptr;
     char const *bailnameptr[] = {"mod", "real", "imag", "or", "and", "manh", "manr"};
     fractalspecificstuff *jborbit = nullptr;
     int firstparm = 0;
@@ -676,7 +636,8 @@ gfp_top:
         numtrig = g_max_function;
     }
 
-    for (int i = NUMTRIGFN-1; i >= 0; --i)
+    trignameptr.resize(g_num_trig_functions);
+    for (int i = g_num_trig_functions-1; i >= 0; --i)
     {
         trignameptr[i] = g_trig_fn[i].name;
     }
@@ -684,9 +645,9 @@ gfp_top:
     {
         paramvalues[promptnum].type = 'l';
         paramvalues[promptnum].uval.ch.val  = static_cast<int>(g_trig_index[i]);
-        paramvalues[promptnum].uval.ch.llen = NUMTRIGFN;
+        paramvalues[promptnum].uval.ch.llen = g_num_trig_functions;
         paramvalues[promptnum].uval.ch.vlen = 6;
-        paramvalues[promptnum].uval.ch.list = trignameptr;
+        paramvalues[promptnum].uval.ch.list = trignameptr.data();
         choices[promptnum++] = trg[i];
     }
     type_name = g_cur_fractal_specific->name;

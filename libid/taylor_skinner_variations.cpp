@@ -12,6 +12,7 @@
 #include "frasetup.h"
 #include "mpmath.h"
 #include "mpmath_c.h"
+#include "trig_fns.h"
 
 // call float version of fractal if integer math overflow
 static int TryFloatFractal(int (*fpFractal)())
