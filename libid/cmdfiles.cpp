@@ -14,6 +14,7 @@
 #include "convert_corners.h"
 #include "do_pause.h"
 #include "drivers.h"
+#include "extract_filename.h"
 #include "file_gets.h"
 #include "find_file_item.h"
 #include "find_path.h"

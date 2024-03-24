@@ -96,6 +96,7 @@ add_library(libid
     ends_with_slash.cpp include/ends_with_slash.h
     evolver_menu_switch.cpp include/evolver_menu_switch.h
     expand_dirname.cpp include/expand_dirname.h
+    include/extract_filename.h
     field_prompt.cpp include/field_prompt.h
     file_gets.cpp include/file_gets.h
     find_extra_param.cpp include/find_extra_param.h
@@ -361,6 +362,7 @@ source_group("Header Files/ui" FILES
     include/ends_with_slash.h
     include/evolver_menu_switch.h
     include/expand_dirname.h
+    include/extract_filename.h
     include/field_prompt.h
     include/file_gets.h
     include/find_extra_param.h

@@ -1771,12 +1771,6 @@ gsc_loop:
     }
 }
 
-// extract just the filename/extension portion of a path
-std::string extract_filename(char const *source)
-{
-    return fs::path(source).filename().string();
-}
-
 void shell_sort(void *v1, int n, unsigned sz, int (*fct)(void *arg1, void *arg2))
 {
     void *temp;
