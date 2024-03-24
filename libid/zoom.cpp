@@ -12,7 +12,6 @@
 #include "cmdfiles.h"
 #include "drivers.h"
 #include "evolve.h"
-#include "fracsubr.h"
 #include "fractalp.h"
 #include "framain2.h"
 #include "frothy_basin.h"
@@ -21,6 +20,7 @@
 #include "miscfrac.h"
 #include "os.h"
 #include "resume.h"
+#include "ssg_block_size.h"
 #include "stop_msg.h"
 #include "work_list.h"
 

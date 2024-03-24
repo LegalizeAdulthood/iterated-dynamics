@@ -22,6 +22,7 @@ add_library(libid
     resume.cpp include/resume.h
     soi.cpp include/soi.h
     soi1.cpp
+    ssg_block_size.cpp include/ssg_block_size.h
     testpt.cpp include/testpt.h
     type_has_param.cpp include/type_has_param.h
     work_list.cpp include/work_list.h
@@ -179,6 +180,7 @@ source_group("Header Files/engine" FILES
     include/pixel_grid.h
     include/resume.h
     include/soi.h
+    include/ssg_block_size.h
     include/testpt.h
     include/type_has_param.h
     include/work_list.h
@@ -201,6 +203,7 @@ source_group("Source Files/engine" FILES
     resume.cpp
     soi.cpp
     soi1.cpp
+    ssg_block_size.cpp
     testpt.cpp
     type_has_param.cpp
     work_list.cpp
