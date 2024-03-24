@@ -15,6 +15,7 @@
 #include "drivers.h"
 #include "evolve.h"
 #include "expand_dirname.h"
+#include "field_prompt.h"
 #include "find_file.h"
 #include "find_path.h"
 #include "fix_dirname.h"

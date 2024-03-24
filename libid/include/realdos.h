@@ -47,8 +47,6 @@ int putstringcenter(int row, int col, int width, int attr, char const *msg);
 int main_menu(int);
 int input_field(int options, int attr, char *fld, int len, int row, int col,
     int (*checkkey)(int curkey));
-int field_prompt(char const *hdg, char const *instr, char *fld, int len,
-    int (*checkkey)(int curkey));
 bool thinking(int options, char const *msg);
 void discardgraphics();
 void load_id_config();

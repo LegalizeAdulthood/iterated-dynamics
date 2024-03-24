@@ -84,6 +84,7 @@ add_library(libid
     double_to_string.cpp include/double_to_string.h
     evolver_menu_switch.cpp include/evolver_menu_switch.h
     expand_dirname.cpp include/expand_dirname.h
+    field_prompt.cpp include/field_prompt.h
     find_file.cpp include/find_file.h
     find_path.cpp include/find_path.h
     find_special_colors.cpp include/find_special_colors.h
@@ -312,6 +313,7 @@ source_group("Header Files/ui" FILES
     include/double_to_string.h
     include/evolver_menu_switch.h
     include/expand_dirname.h
+    include/field_prompt.h
     include/find_file.h
     include/find_path.h
     include/find_special_colors.h
@@ -358,6 +360,7 @@ source_group("Source Files/ui" FILES
     double_to_string.cpp
     evolver_menu_switch.cpp
     expand_dirname.cpp
+    field_prompt.cpp
     find_file.cpp
     find_path.cpp
     find_special_colors.cpp

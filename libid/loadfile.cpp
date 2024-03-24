@@ -13,6 +13,7 @@
 #include "drivers.h"
 #include "encoder.h"
 #include "evolve.h"
+#include "field_prompt.h"
 #include "find_file.h"
 #include "find_special_colors.h"
 #include "fracsubr.h"

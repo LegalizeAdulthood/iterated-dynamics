@@ -6,6 +6,7 @@
 #include "choice_builder.h"
 #include "cmdfiles.h"
 #include "drivers.h"
+#include "field_prompt.h"
 #include "fractype.h"
 #include "full_screen_prompt.h"
 #include "helpdefs.h"

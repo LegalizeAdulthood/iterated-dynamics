@@ -9,6 +9,7 @@
 #include "cmdfiles.h"
 #include "diskvid.h"
 #include "drivers.h"
+#include "field_prompt.h"
 #include "helpdefs.h"
 #include "id_data.h"
 #include "loadmap.h"
