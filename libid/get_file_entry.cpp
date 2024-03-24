@@ -13,7 +13,6 @@
 #include "ifs.h"
 #include "load_entry_text.h"
 #include "lsys_fns.h"
-#include "miscres.h"
 #include "os.h"
 #include "parser.h"
 #include "prompts1.h"

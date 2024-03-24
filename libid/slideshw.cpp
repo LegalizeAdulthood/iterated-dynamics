@@ -12,8 +12,8 @@
 #include "helpcom.h"
 #include "helpdefs.h"
 #include "id_data.h"
-#include "miscres.h"
 #include "stop_msg.h"
+#include "tab_display.h"
 #include "temp_msg.h"
 #include "video_mode.h"
 

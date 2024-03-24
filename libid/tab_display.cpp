@@ -1,10 +1,10 @@
+#include "tab_display.h"
+
 /*
         Resident odds and ends that don't fit anywhere else.
 */
 #include "port.h"
 #include "prototyp.h"
-
-#include "miscres.h"
 
 #include "biginit.h"
 #include "calc_frac_init.h"

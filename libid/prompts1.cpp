@@ -28,7 +28,6 @@
 #include "loadfile.h"
 #include "lorenz.h"
 #include "lsys_fns.h"
-#include "miscres.h"
 #include "os.h"
 #include "param_not_used.h"
 #include "parser.h"

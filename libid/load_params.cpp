@@ -7,7 +7,6 @@
 #include "fractalp.h"
 #include "id.h"
 #include "id_data.h"
-#include "miscres.h"
 #include "round_float_double.h"
 
 void load_params(fractal_type fractype)

@@ -21,7 +21,6 @@
 #include "line3d.h"
 #include "loadfile.h"
 #include "lorenz.h"
-#include "miscres.h"
 #if defined(XFRACT)
 #include "os.h"
 #endif

@@ -13,10 +13,10 @@
 #include "os.h"
 #endif
 #include "help_title.h"
-#include "miscres.h"
 #include "prompts2.h"
 #include "put_string_center.h"
 #include "rotate.h"
+#include "tab_display.h"
 #include "video_mode.h"
 
 #include <cstring>

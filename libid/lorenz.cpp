@@ -21,7 +21,6 @@
 #include "ifs.h"
 #include "jiim.h"
 #include "line3d.h"
-#include "miscres.h"
 #include "mpmath.h"
 #include "not_disk_msg.h"
 #include "plot3d.h"

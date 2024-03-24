@@ -9,7 +9,6 @@
 #include "fractalp.h"
 #include "id.h"
 #include "id_data.h"
-#include "miscres.h"
 #include "round_float_double.h"
 #include "zoom.h"
 

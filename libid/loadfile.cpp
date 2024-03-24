@@ -29,7 +29,6 @@
 #include "lorenz.h"
 #include "make_batch_file.h"
 #include "make_path.h"
-#include "miscres.h"
 #include "parser.h"
 #include "plot3d.h"
 #include "prompts2.h"

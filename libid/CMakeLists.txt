@@ -132,7 +132,6 @@ add_library(libid
     include/make_path.h
     merge_path_names.cpp include/merge_path_names.h
     miscovl.cpp include/miscovl.h
-    miscres.cpp include/miscres.h
     not_disk_msg.cpp include/not_disk_msg.h
     path_match.cpp include/path_match.h
     prompts1.cpp include/prompts1.h
@@ -145,6 +144,7 @@ add_library(libid
     spindac.cpp include/spindac.h
     split_path.cpp include/split_path.h
     stop_msg.cpp include/stop_msg.h
+    tab_display.cpp include/tab_display.h
     temp_msg.cpp include/temp_msg.h
     thinking.cpp include/thinking.h
     trig_fns.cpp include/trig_fns.h
@@ -398,7 +398,6 @@ source_group("Header Files/ui" FILES
     include/make_path.h
     include/merge_path_names.h
     include/miscovl.h
-    include/miscres.h
     include/not_disk_msg.h
     include/path_match.h
     include/prompts1.h
@@ -410,6 +409,7 @@ source_group("Header Files/ui" FILES
     include/spindac.h
     include/split_path.h
     include/stop_msg.h
+    include/tab_display.h
     include/temp_msg.h
     include/thinking.h
     include/trig_fns.h
@@ -463,7 +463,6 @@ source_group("Source Files/ui" FILES
     make_batch_file.cpp
     merge_path_names.cpp
     miscovl.cpp
-    miscres.cpp
     not_disk_msg.cpp
     path_match.cpp
     prompts1.cpp
@@ -475,6 +474,7 @@ source_group("Source Files/ui" FILES
     spindac.cpp
     split_path.cpp
     stop_msg.cpp
+    tab_display.cpp
     temp_msg.cpp
     thinking.cpp
     trig_fns.cpp

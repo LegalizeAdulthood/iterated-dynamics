@@ -4,7 +4,6 @@
 
 #include "hcmplx.h"
 
-#include "miscres.h"
 #include "mpmath.h"
 
 void HComplexMult(DHyperComplex *arg1, DHyperComplex *arg2, DHyperComplex *out)

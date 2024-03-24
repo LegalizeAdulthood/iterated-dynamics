@@ -12,7 +12,6 @@
 #include "fractals.h"
 #include "id_data.h"
 #include "lsys_fns.h"
-#include "miscres.h"
 #include "stop_msg.h"
 #include "thinking.h"
 

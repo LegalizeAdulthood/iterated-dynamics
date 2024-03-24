@@ -37,7 +37,6 @@
 #include "lorenz.h"
 #include "miscfrac.h"
 #include "miscovl.h"
-#include "miscres.h"
 #include "mpmath_c.h"
 #include "os.h"
 #include "newton.h"

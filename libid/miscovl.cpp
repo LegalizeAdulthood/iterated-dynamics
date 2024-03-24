@@ -19,7 +19,6 @@
 #include "helpdefs.h"
 #include "id_data.h"
 #include "load_config.h"
-#include "miscres.h"
 #include "rotate.h"
 #include "stop_msg.h"
 #include "video_mode.h"

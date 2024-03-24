@@ -18,7 +18,6 @@ Miscellaneous fractal-specific code
 #include "fractint.h"
 #include "id_data.h"
 #include "loadmap.h"
-#include "miscres.h"
 #include "newton.h"
 #include "not_disk_msg.h"
 #include "parser.h"

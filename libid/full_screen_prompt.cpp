@@ -14,7 +14,6 @@
 #include "id_data.h"
 #include "input_field.h"
 #include "load_entry_text.h"
-#include "miscres.h"
 #include "os.h"
 #include "put_string_center.h"
 #include "round_float_double.h"

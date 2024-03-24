@@ -36,7 +36,6 @@
 #include "make_batch_file.h"
 #include "make_path.h"
 #include "memory.h"
-#include "miscres.h"
 #include "mpmath.h"
 #include "mpmath_c.h"
 #include "pixel_grid.h"
