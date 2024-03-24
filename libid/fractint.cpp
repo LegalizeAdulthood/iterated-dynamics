@@ -26,6 +26,7 @@
 #include "id_data.h"
 #include "intro.h"
 #include "loadfile.h"
+#include "main_menu.h"
 #include "memory.h"
 #include "miscovl.h"
 #include "prompts1.h"

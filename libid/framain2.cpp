@@ -20,6 +20,7 @@
 #include "loadfile.h"
 #include "loadmap.h"
 #include "lorenz.h"
+#include "main_menu.h"
 #include "main_menu_switch.h"
 #include "os.h"
 #include "prompts1.h"

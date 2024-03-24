@@ -23,7 +23,6 @@ void show_speedstring(
     int (*speedprompt)(int row, int col, int vid, char const *speedstring, int speed_match));
 void helptitle();
 int putstringcenter(int row, int col, int width, int attr, char const *msg);
-int main_menu(bool full_menu);
 bool thinking(int options, char const *msg);
 void discardgraphics();
 void load_id_config();

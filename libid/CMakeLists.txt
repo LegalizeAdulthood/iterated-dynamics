@@ -106,6 +106,7 @@ add_library(libid
     input_field.cpp include/input_field.h
     jiim.cpp include/jiim.h
     load_entry_text.cpp include/load_entry_text.h
+    main_menu.cpp include/main_menu.h
     main_menu_switch.cpp include/main_menu_switch.h
     include/main_state.h
     make_batch_file.cpp include/make_batch_file.h
@@ -338,6 +339,7 @@ source_group("Header Files/ui" FILES
     include/is_directory.h
     include/jiim.h
     include/load_entry_text.h
+    include/main_menu.h
     include/main_menu_switch.h
     include/main_state.h
     include/make_batch_file.h
@@ -384,6 +386,7 @@ source_group("Source Files/ui" FILES
     intro.cpp
     jiim.cpp
     load_entry_text.cpp
+    main_menu.cpp
     main_menu_switch.cpp
     make_batch_file.cpp
     merge_path_names.cpp
