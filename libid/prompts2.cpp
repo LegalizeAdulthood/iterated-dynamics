@@ -836,7 +836,6 @@ void goodbye()                  // we done.  Bail out
     free_grid_pointers();
     free_ant_storage();
     enddisk();
-    discardgraphics();
     ExitCheck();
     if (!g_make_parameter_file)
     {
@@ -849,7 +848,6 @@ void goodbye()                  // we done.  Bail out
     if (!g_make_parameter_file)
     {
         driver_move_cursor(6, 0);
-        discardgraphics(); // if any emm/xmm tied up there, release it
     }
     stopslideshow();
     end_help();

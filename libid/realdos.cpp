@@ -102,17 +102,3 @@ bool thinking(int options, char const *msg)
     thinkstate = (thinkstate + 1) & 3;
     return driver_key_pressed() != 0;
 }
-
-
-// savegraphics/restoregraphics: video.asm subroutines
-
-#define SWAPBLKLEN 4096 // must be a power of 2
-static U16 memhandle = 0;
-
-void discardgraphics() // release expanded/extended memory if any in use
-{
-#ifndef XFRACT
-    MemoryRelease(memhandle);
-    memhandle = 0;
-#endif
-}
