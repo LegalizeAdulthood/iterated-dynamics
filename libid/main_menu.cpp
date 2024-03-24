@@ -318,7 +318,7 @@ top:
     choices[nextright] = "restart id               <ins> ";
 
 #ifdef XFRACT
-    if (fullmenu && (g_got_real_dac || g_fake_lut) && g_colors >= 16)
+    if (full_menu && (g_got_real_dac || g_fake_lut) && g_colors >= 16)
 #else
     if (full_menu && g_got_real_dac && g_colors >= 16)
 #endif
