@@ -14,6 +14,7 @@
 #include "find_file_item.h"
 #include "fractalp.h"
 #include "fractype.h"
+#include "get_calculation_time.h"
 #include "get_key_no_help.h"
 #include "help_title.h"
 #include "id_data.h"
@@ -669,21 +670,6 @@ static char spressanykey[] = {"Press any key to continue, F6 for area, F7 for ne
 #else
 static char spressanykey[] = {"Press any key to continue, F6 for area, CTRL-TAB for next page"};
 #endif
-
-std::string get_calculation_time(long ctime)
-{
-    char msg[80];
-    if (ctime >= 0)
-    {
-        std::snprintf(msg, NUM_OF(msg), "%3ld:%02ld:%02ld.%02ld", ctime/360000L,
-                (ctime%360000L)/6000, (ctime%6000)/100, ctime%100);
-    }
-    else
-    {
-        std::strcpy(msg, "A long time! (> 24.855 days)");
-    }
-    return msg;
-}
 
 static void show_str_var(char const *name, char const *var, int *row, char *msg)
 {
