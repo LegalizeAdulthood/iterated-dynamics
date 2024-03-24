@@ -1,4 +1,4 @@
-#include <get_ifs_token.h>
+#include <ifs.h>
 
 #include "test_data.h"
 

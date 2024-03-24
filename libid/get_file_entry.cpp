@@ -10,6 +10,7 @@
 #include "full_screen_choice.h"
 #include "get_key_no_help.h"
 #include "help_title.h"
+#include "ifs.h"
 #include "load_entry_text.h"
 #include "lsys_fns.h"
 #include "miscres.h"

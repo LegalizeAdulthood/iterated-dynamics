@@ -35,6 +35,7 @@ add_library(libid
     frothy_basin.cpp include/frothy_basin.h
     halley.cpp include/halley.h
     hypercomplex_mandelbrot.cpp include/hypercomplex_mandelbrot.h
+    ifs.cpp include/ifs.h
     jb.cpp include/jb.h
     lambda_fn.cpp include/lambda_fn.h
     lorenz.cpp include/lorenz.h
@@ -225,6 +226,7 @@ source_group("Header Files/fractal specific" FILES
     include/frothy_basin.h
     include/halley.h
     include/hypercomplex_mandelbrot.h
+    include/ifs.h
     include/jb.h
     include/lambda_fn.h
     include/lorenz.h
@@ -257,6 +259,7 @@ source_group("Source Files/fractal specific" FILES
     frothy_basin.cpp
     halley.cpp
     hypercomplex_mandelbrot.cpp
+    ifs.cpp
     jb.cpp
     lambda_fn.cpp
     lorenz.cpp

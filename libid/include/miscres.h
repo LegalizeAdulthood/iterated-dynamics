@@ -30,4 +30,3 @@ int set_trig_array(int k, char const *name);
 void set_trig_pointers(int);
 int tab_display();
 int endswithslash(char const *fl);
-int ifsload();

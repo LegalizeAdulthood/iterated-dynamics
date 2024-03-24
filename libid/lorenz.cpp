@@ -18,6 +18,7 @@
 #include "fractint.h"
 #include "fractype.h"
 #include "id_data.h"
+#include "ifs.h"
 #include "jiim.h"
 #include "line3d.h"
 #include "miscres.h"
