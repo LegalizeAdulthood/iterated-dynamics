@@ -23,6 +23,7 @@ Miscellaneous fractal-specific code
 #include "newton.h"
 #include "parser.h"
 #include "pixel_grid.h"
+#include "resume.h"
 #include "rotate.h"
 #include "spindac.h"
 #include "stop_msg.h"

@@ -75,8 +75,6 @@ extern void                (*g_put_color)(int x, int y, int color);
 extern bool                  g_quick_calc;
 extern long                  g_real_color_iter;
 extern bool                  g_reset_periodicity;
-extern std::vector<BYTE>     g_resume_data;
-extern bool                  g_resuming;
 extern int                   g_row;
 extern bool                  g_show_orbit;
 extern symmetry_type         g_symmetry;

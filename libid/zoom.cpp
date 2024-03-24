@@ -20,6 +20,7 @@
 #include "miscovl.h"
 #include "miscfrac.h"
 #include "os.h"
+#include "resume.h"
 #include "stop_msg.h"
 
 #include <cassert>

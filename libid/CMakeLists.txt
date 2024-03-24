@@ -33,6 +33,7 @@ add_library(libid
     popcorn.cpp include/popcorn.h
     quartic_mandelbrot.cpp include/quartic_mandelbrot.h
     quaternion_mandelbrot.cpp include/quaternion_mandelbrot.h
+    resume.cpp include/resume.h
     sierpinski_gasket.cpp include/sierpinski_gasket.h
     soi.cpp include/soi.h
     soi1.cpp
@@ -171,6 +172,7 @@ source_group("Header Files/engine" FILES
     include/id_data.h
     include/param_not_used.h
     include/pixel_grid.h
+    include/resume.h
     include/soi.h
     include/testpt.h
     include/type_has_param.h
@@ -188,6 +190,7 @@ source_group("Source Files/engine" FILES
     frasetup.cpp
     param_not_used.cpp
     pixel_grid.cpp
+    resume.cpp
     soi.cpp
     soi1.cpp
     testpt.cpp

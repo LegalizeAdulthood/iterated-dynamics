@@ -19,6 +19,7 @@
 #include "type_has_param.h"
 
 #include <cmath>
+#include <cstdio>
 
 enum
 {

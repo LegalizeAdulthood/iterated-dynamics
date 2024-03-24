@@ -13,6 +13,7 @@
 #include "fractalp.h"
 #include "fractint.h"
 #include "id_data.h"
+#include "resume.h"
 #include "rotate.h"
 #include "spindac.h"
 #include "stop_msg.h"

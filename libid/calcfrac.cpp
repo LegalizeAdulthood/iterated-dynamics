@@ -42,6 +42,7 @@
 #include "newton.h"
 #include "parser.h"
 #include "pixel_grid.h"
+#include "resume.h"
 #include "soi.h"
 #include "sound.h"
 #include "stop_msg.h"
@@ -194,8 +195,6 @@ bool g_reset_periodicity = false;         // true if escape time pixel rtn to re
 int g_keyboard_check_interval = 0;
 int g_max_keyboard_check_interval = 0;                   // avoids checking keyboard too often
 
-std::vector<BYTE> g_resume_data;          // resume info
-bool g_resuming = false;                  // true if resuming after interrupt
 int g_num_work_list = 0;                   // resume worklist for standard engine
 WORKLIST g_work_list[MAX_CALC_WORK] = { 0 };
 int g_xx_start = 0;

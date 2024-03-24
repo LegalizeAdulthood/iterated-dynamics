@@ -40,6 +40,7 @@
 #include "pixel_grid.h"
 #include "prompts1.h"
 #include "put_string_center.h"
+#include "resume.h"
 #include "slideshw.h"
 #include "spindac.h"
 #include "split_path.h"

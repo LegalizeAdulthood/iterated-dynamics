@@ -16,6 +16,7 @@
 #include "merge_path_names.h"
 #include "parser.h"
 #include "plot3d.h"
+#include "resume.h"
 #include "rotate.h"
 #include "spindac.h"
 #include "version.h"
