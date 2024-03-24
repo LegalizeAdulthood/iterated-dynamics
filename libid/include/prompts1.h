@@ -21,4 +21,3 @@ extern trig_funct_lst        g_trig_fn[];
 
 int get_fracttype();
 int get_fract_params(int);
-void set_default_parms();

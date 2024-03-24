@@ -17,6 +17,7 @@
 #include "parser.h"
 #include "prompts1.h"
 #include "prompts2.h"
+#include "set_default_parms.h"
 #include "stop_msg.h"
 
 #include <cassert>
