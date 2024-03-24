@@ -43,6 +43,7 @@
 #include "prompts1.h"
 #include "prompts2.h"
 #include "rotate.h"
+#include "slideshw.h"
 #include "soi.h"
 #include "sound.h"
 #include "stereo.h"
@@ -108,7 +109,6 @@ std::string g_working_dir;            // name of directory for misc files
 std::string g_organize_formulas_dir;          // name of directory for orgfrm files
 std::string g_gif_filename_mask;
 std::string g_save_filename{"fract001"}; // save files using this name
-std::string g_auto_name{"auto.key"}; // record auto keystrokes here
 bool    g_potential_flag = false;        // continuous potential enabled?
 bool    g_potential_16bit = false;               // store 16 bit continuous potential values
 bool    g_gif87a_flag = false;    // true if GIF87a format, false otherwise
@@ -204,7 +204,6 @@ std::string g_ifs_name;                    // Name of the IFS def'n (if not null
 id::SearchPath g_search_for;
 std::vector<float> g_ifs_definition;            // ifs parameters
 bool g_ifs_type = false;                  // false=2d, true=3d
-slides_mode g_slides = slides_mode::OFF; // PLAY autokey=play, RECORD autokey=record
 
 BYTE g_text_color[] =
 {

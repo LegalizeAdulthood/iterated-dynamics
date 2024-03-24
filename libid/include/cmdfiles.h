@@ -135,13 +135,6 @@ enum cmdarg_flags
     CMDARG_RESET            = 8
 };
 
-enum class slides_mode
-{
-    OFF = 0,
-    PLAY = 1,
-    RECORD = 2
-};
-
 // for init_batch
 enum class batch_modes
 {
@@ -164,7 +157,6 @@ enum class display_3d_modes
 
 extern bool                  g_ask_video;
 extern float                 g_aspect_drift;
-extern std::string           g_auto_name;
 extern char                  g_auto_show_dot;
 extern long                  g_bail_out;
 extern int                   g_base_hertz;
@@ -244,7 +236,6 @@ extern id::SearchPath        g_search_for;
 extern int                   g_show_dot;
 extern int                   g_show_file;
 extern int                   g_size_dot;
-extern slides_mode           g_slides;
 extern int                   g_sound_flag;
 extern bool                  g_start_show_orbit;
 extern int                   g_stop_pass;

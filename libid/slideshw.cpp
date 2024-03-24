@@ -1,11 +1,11 @@
 //*********************************************************************
-// These routines are called by driver_get_key to allow keystrokes to control
-// Fractint to be read from a file.
+// These routines are called by driver_get_key to allow keystrokes that
+// control Iterated Dynamics to be read from a file.
 //*********************************************************************
+#include "slideshw.h"
+
 #include "port.h"
 #include "prototyp.h"
-
-#include "slideshw.h"
 
 #include "cmdfiles.h"
 #include "drivers.h"
@@ -25,6 +25,9 @@
 #include <sstream>
 #include <system_error>
 
+slides_mode g_slides{slides_mode::OFF}; // PLAY autokey=play, RECORD autokey=record
+std::string g_auto_name{"auto.key"};    // record auto keystrokes here
+
 static void sleep_secs(int);
 static int showtempmsg_txt(int row, int col, int attr, int secs, const char *txt);
 static void message(int secs, char const *buf);
@@ -34,13 +37,13 @@ static void get_mnemonic(int code, char *mnemonic);
 
 #define MAX_MNEMONIC    20   // max size of any mnemonic string
 
-struct scancodes
+struct key_mnemonic
 {
     int code;
     char const *mnemonic;
 };
 
-static scancodes scancodes[] =
+static key_mnemonic scancodes[] =
 {
     { FIK_ENTER,            "ENTER"     },
     { FIK_INSERT,           "INSERT"    },
@@ -66,7 +69,7 @@ static scancodes scancodes[] =
 
 static int get_scancode(char const *mn)
 {
-    for (auto const &it : scancodes)
+    for (key_mnemonic const &it : scancodes)
     {
         if (std::strcmp(mn, it.mnemonic) == 0)
         {
@@ -80,7 +83,7 @@ static int get_scancode(char const *mn)
 static void get_mnemonic(int code, char *mnemonic)
 {
     *mnemonic = 0;
-    for (auto const &it : scancodes)
+    for (key_mnemonic const &it : scancodes)
     {
         if (code == it.code)
         {

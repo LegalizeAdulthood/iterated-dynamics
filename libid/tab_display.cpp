@@ -32,6 +32,7 @@
 #include "prompts2.h"
 #include "put_string_center.h"
 #include "rotate.h"
+#include "slideshw.h"
 #include "soi.h"
 #include "split_path.h"
 #include "stop_msg.h"
