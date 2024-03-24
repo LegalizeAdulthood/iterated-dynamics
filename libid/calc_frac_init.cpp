@@ -18,6 +18,7 @@
 #include "stop_msg.h"
 #include "type_has_param.h"
 
+#include <cfloat>
 #include <cmath>
 #include <cstdio>
 
