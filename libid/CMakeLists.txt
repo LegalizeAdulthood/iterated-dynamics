@@ -116,6 +116,7 @@ add_library(libid
     jiim.cpp include/jiim.h
     load_config.cpp include/load_config.h
     load_entry_text.cpp include/load_entry_text.h
+    load_params.cpp include/load_params.h
     main_menu.cpp include/main_menu.h
     main_menu_switch.cpp include/main_menu_switch.h
     include/main_state.h
@@ -367,6 +368,7 @@ source_group("Header Files/ui" FILES
     include/jiim.h
     include/load_config.h
     include/load_entry_text.h
+    include/load_params.h
     include/main_menu.h
     include/main_menu_switch.h
     include/main_state.h
@@ -420,6 +422,7 @@ source_group("Source Files/ui" FILES
     jiim.cpp
     load_config.cpp
     load_entry_text.cpp
+    load_params.cpp
     main_menu.cpp
     main_menu_switch.cpp
     make_batch_file.cpp

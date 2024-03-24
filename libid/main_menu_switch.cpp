@@ -25,6 +25,7 @@
 #include "id_data.h"
 #include "jiim.h"
 #include "loadfile.h"
+#include "load_params.h"
 #include "lorenz.h"
 #include "make_batch_file.h"
 #include "merge_path_names.h"
