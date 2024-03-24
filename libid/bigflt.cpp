@@ -67,7 +67,7 @@ bf_t strtobf(bf_t r, char const *s)
     }
     if (e != nullptr)
     {
-        powerten = atoi(e+1);    // read in the e (x10^) part
+        powerten = std::atoi(e+1);    // read in the e (x10^) part
         l = e - 1; // just before e
     }
     else

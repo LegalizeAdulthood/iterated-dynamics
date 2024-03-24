@@ -2008,7 +2008,7 @@ static ConstArg *isconst(char const *Str, int Len)
                 || (Str[j] == '-' && (std::isdigit(Str[j+1]) || Str[j+1] == '.'))
                 || Str[j] == '.')
             {
-                z.y = atof(&Str[j]);
+                z.y = std::atof(&Str[j]);
                 for (; std::isdigit(Str[j]) || Str[j] == '.' || Str[j] == '-'; j++)
                 {
                 }
@@ -2023,7 +2023,7 @@ static ConstArg *isconst(char const *Str, int Len)
         {
             z.y = 0.0;
         }
-        z.x = atof(Str);
+        z.x = std::atof(Str);
         switch (MathType)
         {
         case D_MATH:
@@ -2173,7 +2173,7 @@ static int whichfn(char const *s, int len)
     }
     else
     {
-        out = atoi(s+2);
+        out = std::atoi(s+2);
     }
     if (out < 1 || out > 4)
     {
@@ -3307,7 +3307,7 @@ CASE_NUM:
             return false;
         }
     }    // end of while loop. Now fill in the value
-    tok->token_const.x = atof(tok->token_str);
+    tok->token_const.x = std::atof(tok->token_str);
     tok->token_type = REAL_CONSTANT;
     tok->token_id   = 0;
     return true;

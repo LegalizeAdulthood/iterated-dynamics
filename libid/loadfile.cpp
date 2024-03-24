@@ -902,7 +902,7 @@ static int find_fractal_info(char const *gif_file, FRACTAL_INFO *info,
                     break;
                 }
                 temp1[13] = 0;
-                switch (atoi(&temp1[10]))   // e.g. "fractint002"
+                switch (std::atoi(&temp1[10]))   // e.g. "fractint002"
                 {
                 case 1: // "fractint001", the main extension block
                     if (scan_extend == 2)

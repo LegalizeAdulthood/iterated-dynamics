@@ -665,17 +665,17 @@ int fullscreen_prompt(      // full-screen prompting routine
             {
             case 'd':
             case 'D':
-                values[curchoice].uval.dval = atof(buf);
+                values[curchoice].uval.dval = std::atof(buf);
                 break;
             case 'f':
-                values[curchoice].uval.dval = atof(buf);
+                values[curchoice].uval.dval = std::atof(buf);
                 roundfloatd(&values[curchoice].uval.dval);
                 break;
             case 'i':
-                values[curchoice].uval.ival = atoi(buf);
+                values[curchoice].uval.ival = std::atoi(buf);
                 break;
             case 'L':
-                values[curchoice].uval.Lval = atol(buf);
+                values[curchoice].uval.Lval = std::atol(buf);
                 break;
             case 's':
                 std::strncpy(values[curchoice].uval.sval, buf, 16);

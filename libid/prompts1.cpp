@@ -657,7 +657,7 @@ gfp_top:
                 choices[promptnum]++;
             }
             std::sprintf(tmpbuf, "%.17g", g_params[i]);
-            paramvalues[promptnum].uval.dval = atof(tmpbuf);
+            paramvalues[promptnum].uval.dval = std::atof(tmpbuf);
             oldparam[i] = paramvalues[promptnum++].uval.dval;
         }
     }

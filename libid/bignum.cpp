@@ -139,6 +139,7 @@ double wide number can then be ignored.
 #include <cfloat>
 #include <cmath>
 #include <cstdio>
+#include <cstdlib>
 #include <cstring>
 #include <string>
 
@@ -274,7 +275,7 @@ bn_t strtobn(bn_t r, char *s)
 
         if (s[l] == '.')
         {
-            longval = atol(s);
+            longval = std::atol(s);
             switch (intlength)
             {
                 // only 1, 2, or 4 are allowed
@@ -292,7 +293,7 @@ bn_t strtobn(bn_t r, char *s)
     }
     else
     {
-        longval = atol(s);
+        longval = std::atol(s);
         switch (intlength)
         {
             // only 1, 2, or 4 are allowed

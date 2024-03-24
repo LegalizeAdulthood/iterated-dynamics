@@ -697,7 +697,7 @@ int read_char()
                 ch = read_char_aux();
             }
             buff[ctr] = '\0';
-            ch = atoi(buff);
+            ch = std::atoi(buff);
         }
 
 #ifdef XFRACT
@@ -991,7 +991,7 @@ void process_doc_contents(modes mode)
                 error(0, "Unexpected end of DocContent entry.");
                 continue;
             }
-            int const indent = atoi(cmd);
+            int const indent = std::atoi(cmd);
 
             bool last = get_next_item();
 
@@ -1148,7 +1148,7 @@ int parse_link()   // returns length of link or 0 on error
         if (cmd[1] == '-')
         {
             l.type      = link_types::LT_SPECIAL;
-            l.topic_num = atoi(&cmd[1]);
+            l.topic_num = std::atoi(&cmd[1]);
             l.topic_off = 0;
             l.name.clear();
         }
@@ -1894,7 +1894,7 @@ void read_src(std::string const &fname, modes mode)
                         {
                             int n = ((in_topic ? lformat_exclude : format_exclude) < 0) ? -1 : 1;
 
-                            lformat_exclude = atoi(&cmd[14]);
+                            lformat_exclude = std::atoi(&cmd[14]);
 
                             if (lformat_exclude <= 0)
                             {
@@ -1972,7 +1972,7 @@ void read_src(std::string const &fname, modes mode)
                         {
                             warn(eoff, "Help version has already been defined");
                         }
-                        version = atoi(&cmd[8]);
+                        version = std::atoi(&cmd[8]);
                     }
                     else
                     {

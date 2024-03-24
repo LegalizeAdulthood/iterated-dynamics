@@ -10,6 +10,7 @@
 
 #include <cassert>
 #include <cstdio>
+#include <cstdlib>
 #include <cstring>
 #include <string>
 
@@ -94,13 +95,13 @@ void load_config()
         std::sscanf(fields[3], "%x", &cx);
         std::sscanf(fields[4], "%x", &dx);
         assert(fields[5]);
-        dotmode = atoi(fields[5]);
+        dotmode = std::atoi(fields[5]);
         assert(fields[6]);
-        xdots = atol(fields[6]);
+        xdots = std::atol(fields[6]);
         assert(fields[7]);
-        ydots = atol(fields[7]);
+        ydots = std::atol(fields[7]);
         assert(fields[8]);
-        colors = atoi(fields[8]);
+        colors = std::atoi(fields[8]);
         if (colors == 4 && std::strchr(strlwr(fields[8]), 'g'))
         {
             colors = 256;

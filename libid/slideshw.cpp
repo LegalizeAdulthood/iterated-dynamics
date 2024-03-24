@@ -241,7 +241,7 @@ start:
     out = -12345;
     if (std::isdigit(buffer[0]))         // an arbitrary scan code number - use it
     {
-        out = atoi(buffer);
+        out = std::atoi(buffer);
     }
     else if (std::strcmp(buffer, "MESSAGE") == 0)
     {

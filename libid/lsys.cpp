@@ -116,7 +116,7 @@ LDBL getnumber(char const **str)
     }
     (*str)--;
     numstr[i] = 0;
-    LDBL ret = atof(numstr);
+    LDBL ret = std::atof(numstr);
     if (ret <= 0.0)   // this is a sanity check
     {
         return 0;
@@ -184,7 +184,7 @@ static bool readLSystemFile(char const *str)
             }
             else if (!std::strcmp(word, "angle"))
             {
-                maxangle = (char)atoi(std::strtok(nullptr, " \t\n"));
+                maxangle = (char)std::atoi(std::strtok(nullptr, " \t\n"));
                 check = true;
             }
             else if (!std::strcmp(word, "}"))

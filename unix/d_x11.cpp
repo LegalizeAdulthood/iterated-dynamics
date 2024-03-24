@@ -342,7 +342,7 @@ check_arg(DriverX11 *di, int argc, char **argv, int *i)
     }
     else if (std::strcmp(argv[*i], "-fixcolors") == 0 && *i+1 < argc)
     {
-        di->fixcolors = atoi(argv[(*i)+1]);
+        di->fixcolors = std::atoi(argv[(*i)+1]);
         (*i)++;
         return 1;
     }

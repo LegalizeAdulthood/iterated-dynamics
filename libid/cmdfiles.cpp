@@ -253,7 +253,7 @@ int getpower10(LDBL x)
     int p;
 
     std::snprintf(string, NUM_OF(string), "%+.1Le", x);
-    p = atoi(string+5);
+    p = std::atoi(string+5);
     return p;
 }
 
@@ -1851,11 +1851,11 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         {
             if (k == 1)
             {
-                g_potential_params[k] = atof(value);
+                g_potential_params[k] = std::atof(value);
             }
             else
             {
-                g_potential_params[k] = atoi(value);
+                g_potential_params[k] = std::atoi(value);
             }
             k++;
             value = std::strchr(value, '/');
@@ -3640,7 +3640,7 @@ static int parse_colors(char const *value)
             {
                 if (i == 0
                     || smooth
-                    || (smooth = atoi(value+1)) < 2
+                    || (smooth = std::atoi(value+1)) < 2
                     || (value = std::strchr(value, '>')) == nullptr)
                 {
                     goto badcolor;

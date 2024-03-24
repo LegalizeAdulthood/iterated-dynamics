@@ -235,7 +235,7 @@ int get_toggles2()
         }
         else
         {
-            g_inversion[i] = atof(uvalues[k].uval.sval);
+            g_inversion[i] = std::atof(uvalues[k].uval.sval);
         }
         if (old_inversion[i] != g_inversion[i]
             && (i == 0 || g_inversion[0] != 0.0))
@@ -1332,7 +1332,7 @@ int cmpdbl(double old, double new_val)
     // change the old value with the same torture the new value had
     double_to_string(buf, old);   // convert "old" to string
 
-    old = atof(buf);                // convert back
+    old = std::atof(buf);                // convert back
     return std::fabs(old-new_val) < DBL_EPSILON ? 0 : 1; // zero if same
 }
 

@@ -11,6 +11,7 @@
 #include "id.h"
 #include "id_data.h"
 
+#include <cstdlib>
 #include <cstring>
 #include <string>
 
@@ -408,7 +409,7 @@ int get_toggles()
     }
     else
     {
-        g_fill_color = atoi(uvalues[k].uval.sval);
+        g_fill_color = std::atoi(uvalues[k].uval.sval);
     }
     if (g_fill_color < 0)
     {
