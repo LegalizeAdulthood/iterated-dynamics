@@ -15,4 +15,3 @@ void goodbye();
 bool getafilename(char const *hdg, char const *file_template, char *flname);
 bool getafilename(char const *hdg, char const *file_template, std::string &flname);
 int get_cmd_string();
-int get_a_number(double *, double *);

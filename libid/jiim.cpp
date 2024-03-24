@@ -20,6 +20,7 @@
 #include "fractals.h"
 #include "fractype.h"
 #include "frothy_basin.h"
+#include "get_a_number.h"
 #include "helpdefs.h"
 #include "id_data.h"
 #include "lorenz.h"

@@ -111,6 +111,7 @@ add_library(libid
     full_screen_choice.cpp include/full_screen_choice.h
     full_screen_prompt.cpp include/full_screen_prompt.h
     get_3d_params.cpp include/get_3d_params.h
+    get_a_number.cpp include/get_a_number.h
     get_browse_params.cpp include/get_browse_params.h
     get_calculation_time.cpp include/get_calculation_time.h
     get_file_entry.cpp include/get_file_entry.h
@@ -380,6 +381,7 @@ source_group("Header Files/ui" FILES
     include/full_screen_choice.h
     include/full_screen_prompt.h
     include/get_3d_params.h
+    include/get_a_number.h
     include/get_browse_params.h
     include/get_calculation_time.h
     include/get_file_entry.h
@@ -453,6 +455,7 @@ source_group("Source Files/ui" FILES
     full_screen_choice.cpp
     full_screen_prompt.cpp
     get_3d_params.cpp
+    get_a_number.cpp
     get_browse_params.cpp
     get_calculation_time.cpp
     get_file_entry.cpp
