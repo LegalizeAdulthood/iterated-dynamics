@@ -6,7 +6,6 @@
 #include "cmdfiles.h"
 #include "drivers.h"
 #include "find_path.h"
-#include "help_title.h"
 #include "memory.h"
 #include "os.h"
 

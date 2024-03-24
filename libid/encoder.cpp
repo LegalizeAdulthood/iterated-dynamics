@@ -26,7 +26,6 @@
 #if defined(XFRACT)
 #include "os.h"
 #endif
-#include "help_title.h"
 #include "parser.h"
 #include "plot3d.h"
 #include "prompts2.h"
