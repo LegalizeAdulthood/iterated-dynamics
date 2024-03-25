@@ -1,12 +1,8 @@
-#include "port.h"
-#include "prototyp.h"
-
 #include "calcmand.h"
 
 #include "stop_msg.h"
 
-long
-calcmandasm()
+long calcmandasm()
 {
     static bool been_here = false;
     if (!been_here)
