@@ -38,6 +38,8 @@ extern int                   g_keyboard_check_interval;
 extern LComplex              g_l_attractor[];
 extern long                  g_l_close_enough;
 extern LComplex              g_l_init_orbit;
+extern long                  g_l_init_x;
+extern long                  g_l_init_y;
 extern long                  g_l_magnitude;
 extern long                  g_l_magnitude_limit;
 extern long                  g_l_magnitude_limit2;

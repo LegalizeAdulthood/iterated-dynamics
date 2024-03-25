@@ -155,6 +155,8 @@ long g_l_magnitude = 0;
 long g_l_magnitude_limit = 0;
 long g_l_magnitude_limit2 = 0;
 long g_l_close_enough = 0;
+long g_l_init_x{};
+long g_l_init_y{};
 DComplex g_init = { 0.0 };
 DComplex g_tmp_z = { 0.0 };
 DComplex g_old_z = { 0.0 };

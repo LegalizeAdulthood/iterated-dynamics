@@ -16,8 +16,6 @@
 #include <string>
 
 // Global variables (yuck!)
-long g_l_init_x = 0;
-long g_l_init_y = 0;
 long g_save_base = 0;              // base clock ticks
 long g_save_ticks = 0;             // save after this many ticks
 
