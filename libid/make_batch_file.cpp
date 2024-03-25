@@ -32,6 +32,7 @@
 #include "plot3d.h"
 #include "rotate.h"
 #include "sound.h"
+#include "spindac.h"
 #include "stereo.h"
 #include "stop_msg.h"
 #include "trig_fns.h"

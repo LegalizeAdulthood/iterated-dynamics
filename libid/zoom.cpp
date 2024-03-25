@@ -20,6 +20,7 @@
 #include "miscfrac.h"
 #include "os.h"
 #include "resume.h"
+#include "spindac.h"
 #include "ssg_block_size.h"
 #include "stop_msg.h"
 #include "work_list.h"

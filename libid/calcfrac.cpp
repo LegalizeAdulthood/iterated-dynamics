@@ -46,6 +46,7 @@
 #include "resume.h"
 #include "soi.h"
 #include "sound.h"
+#include "spindac.h"
 #include "ssg_block_size.h"
 #include "stop_msg.h"
 #include "update_save_name.h"

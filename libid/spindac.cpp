@@ -6,12 +6,12 @@
 #include "cmdfiles.h"
 #include "drivers.h"
 #include "id_data.h"
-#include "miscovl.h"
 #include "rotate.h"
 
 #include <cstring>
 
-int g_dac_count = 0;
+int g_dac_count{};
+bool g_is_true_color{};
 
 /*
 ; *************** Function spindac(direction, rstep) ********************

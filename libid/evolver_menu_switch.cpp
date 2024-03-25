@@ -26,6 +26,7 @@
 #include "miscovl.h"
 #include "passes_options.h"
 #include "rotate.h"
+#include "spindac.h"
 #include "update_save_name.h"
 #include "video_mode.h"
 #include "zoom.h"

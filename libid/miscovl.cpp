@@ -38,7 +38,6 @@ static int check_modekey(int curkey, int choice);
 static bool ent_less(int lhs, int rhs);
 static void update_id_cfg();
 
-bool g_is_true_color = false;
 
 // JIIM
 
