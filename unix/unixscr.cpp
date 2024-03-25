@@ -23,6 +23,7 @@
 #include "id_data.h"
 #include "os.h"
 #include "rotate.h"
+#include "spindac.h"
 #include "zoom.h"
 
 #include <fcntl.h>
