@@ -234,6 +234,38 @@ int TrigPlusTrigfpFractal()
     return g_bailout_float();
 }
 
+bool FnPlusFnSym() // set symmetry matrix for fn+fn type
+{
+    static symmetry_type fnplusfn[7][7] =
+    {
+        // fn2 ->sin     cos    sinh    cosh   exp    log    sqr
+        // fn1
+        /* sin */ {symmetry_type::PI_SYM,  symmetry_type::X_AXIS,  symmetry_type::XY_AXIS, symmetry_type::X_AXIS,  symmetry_type::X_AXIS, symmetry_type::X_AXIS, symmetry_type::X_AXIS},
+        /* cos */ {symmetry_type::X_AXIS,  symmetry_type::PI_SYM,  symmetry_type::X_AXIS,  symmetry_type::XY_AXIS, symmetry_type::X_AXIS, symmetry_type::X_AXIS, symmetry_type::X_AXIS},
+        /* sinh*/ {symmetry_type::XY_AXIS, symmetry_type::X_AXIS,  symmetry_type::XY_AXIS, symmetry_type::X_AXIS,  symmetry_type::X_AXIS, symmetry_type::X_AXIS, symmetry_type::X_AXIS},
+        /* cosh*/ {symmetry_type::X_AXIS,  symmetry_type::XY_AXIS, symmetry_type::X_AXIS,  symmetry_type::XY_AXIS, symmetry_type::X_AXIS, symmetry_type::X_AXIS, symmetry_type::X_AXIS},
+        /* exp */ {symmetry_type::X_AXIS,  symmetry_type::XY_AXIS, symmetry_type::X_AXIS,  symmetry_type::X_AXIS,  symmetry_type::XY_AXIS, symmetry_type::X_AXIS, symmetry_type::X_AXIS},
+        /* log */ {symmetry_type::X_AXIS,  symmetry_type::X_AXIS,  symmetry_type::X_AXIS,  symmetry_type::X_AXIS,  symmetry_type::X_AXIS, symmetry_type::X_AXIS, symmetry_type::X_AXIS},
+        /* sqr */ {symmetry_type::X_AXIS,  symmetry_type::X_AXIS,  symmetry_type::X_AXIS,  symmetry_type::X_AXIS,  symmetry_type::X_AXIS, symmetry_type::X_AXIS, symmetry_type::XY_AXIS}
+    };
+    if (g_param_z1.y == 0.0 && g_param_z2.y == 0.0)
+    {
+        if (g_trig_index[0] <= trig_fn::SQR && g_trig_index[1] < trig_fn::SQR)    // bounds of array
+        {
+            g_symmetry = fnplusfn[static_cast<int>(g_trig_index[0])][static_cast<int>(g_trig_index[1])];
+        }
+        if (g_trig_index[0] == trig_fn::FLIP || g_trig_index[1] == trig_fn::FLIP)
+        {
+            g_symmetry = symmetry_type::NONE;
+        }
+    }                 // defaults to X_AXIS symmetry
+    else
+    {
+        g_symmetry = symmetry_type::NONE;
+    }
+    return false;
+}
+
 bool FnXFnSetup()
 {
     static symmetry_type fnxfn[7][7] =

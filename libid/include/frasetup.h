@@ -7,7 +7,6 @@ bool StandaloneSetup();
 bool JuliafpSetup();
 bool MandellongSetup();
 bool JulialongSetup();
-bool FnPlusFnSym();
 bool SierpinskiSetup();
 bool SierpinskiFPSetup();
 bool StandardSetup();

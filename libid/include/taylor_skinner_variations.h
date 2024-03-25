@@ -1,5 +1,7 @@
 #pragma once
 
+bool FnPlusFnSym();
+
 int SqrTrigFractal();
 int SqrTrigfpFractal();
 
