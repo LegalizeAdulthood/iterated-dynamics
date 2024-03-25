@@ -2,7 +2,6 @@
 
 extern bool g_is_true_color;
 
-void flip_image(int kbdchar);
 int getprecbf(int);
 int getprecbf_mag();
 int getprecdbl(int);

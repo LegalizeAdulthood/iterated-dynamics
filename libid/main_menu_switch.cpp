@@ -13,6 +13,7 @@
 #include "encoder.h"
 #include "evolve.h"
 #include "find_special_colors.h"
+#include "flip_image.h"
 #include "fractalp.h"
 #include "fractype.h"
 #include "framain2.h"

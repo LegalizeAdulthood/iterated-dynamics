@@ -106,6 +106,7 @@ add_library(libid
     find_path.cpp include/find_path.h
     find_special_colors.cpp include/find_special_colors.h
     fix_dirname.cpp include/fix_dirname.h
+    flip_image.cpp include/flip_image.h
     fractint.cpp include/fractint.h
     framain2.cpp include/framain2.h
     full_screen_choice.cpp include/full_screen_choice.h
@@ -383,6 +384,7 @@ source_group("Header Files/ui" FILES
     include/find_path.h
     include/find_special_colors.h
     include/fix_dirname.h
+    include/flip_image.h
     include/fractint.h
     include/framain2.h
     include/full_screen_choice.h
@@ -464,6 +466,7 @@ source_group("Source Files/ui" FILES
     find_path.cpp
     find_special_colors.cpp
     fix_dirname.cpp
+    flip_image.cpp
     fractint.cpp
     framain2.cpp
     full_screen_choice.cpp
