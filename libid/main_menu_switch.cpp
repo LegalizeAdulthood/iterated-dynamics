@@ -34,6 +34,7 @@
 #include "merge_path_names.h"
 #include "miscovl.h"
 #include "parser.h"
+#include "passes_options.h"
 #include "prompts1.h"
 #include "prompts2.h"
 #include "rotate.h"

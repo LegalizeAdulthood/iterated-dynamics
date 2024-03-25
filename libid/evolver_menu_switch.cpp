@@ -22,6 +22,7 @@
 #include "loadfile.h"
 #include "lorenz.h"
 #include "miscovl.h"
+#include "passes_options.h"
 #include "prompts1.h"
 #include "prompts2.h"
 #include "rotate.h"
