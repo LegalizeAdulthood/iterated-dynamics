@@ -10,6 +10,7 @@
 
 #include "3d.h"
 #include "calcfrac.h"
+#include "check_key.h"
 #include "cmdfiles.h"
 #include "drivers.h"
 #include "encoder.h"

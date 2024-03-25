@@ -9,6 +9,7 @@ Miscellaneous fractal-specific code
 #include "prototyp.h"
 
 #include "calcfrac.h"
+#include "check_key.h"
 #include "cmdfiles.h"
 #include "diskvid.h"
 #include "drivers.h"

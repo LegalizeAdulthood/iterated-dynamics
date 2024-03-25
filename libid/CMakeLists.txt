@@ -87,6 +87,7 @@ add_library(libid
 
     abort_msg.cpp include/abort_msg.h
     bailout_formula.cpp include/bailout_formula.h
+    check_key.cpp include/check_key.h
     check_orbit_name.cpp include/check_orbit_name.h
     check_write_file.cpp include/check_write_file.h
     comments.cpp include/comments.h
@@ -369,6 +370,7 @@ source_group("Source Files/plumbing" FILES
 source_group("Header Files/ui" FILES
     include/abort_msg.h
     include/bailout_formula.h
+    include/check_key.h
     include/check_orbit_name.h
     include/check_write_file.h
     include/choice_builder.h
@@ -457,6 +459,7 @@ source_group("Header Files/ui" FILES
 source_group("Source Files/ui" FILES
     abort_msg.cpp
     bailout_formula.cpp
+    check_key.cpp
     check_orbit_name.cpp
     check_write_file.cpp
     comments.cpp
