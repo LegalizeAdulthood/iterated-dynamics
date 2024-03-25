@@ -1,4 +1,4 @@
-extern int id_main(int argc, char *argv[]);
+#include <id_main.h>
 
 int main(int argc, char *argv[])
 {

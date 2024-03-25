@@ -12,7 +12,6 @@
 #include "diskvid.h"
 #include "drivers.h"
 #include "evolve.h"
-#include "fractint.h"
 #include "fractype.h"
 #include "framain2.h"
 #include "id_data.h"

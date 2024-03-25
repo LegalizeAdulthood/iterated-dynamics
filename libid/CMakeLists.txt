@@ -110,7 +110,6 @@ add_library(libid
     find_special_colors.cpp include/find_special_colors.h
     fix_dirname.cpp include/fix_dirname.h
     flip_image.cpp include/flip_image.h
-    fractint.cpp include/fractint.h
     framain2.cpp include/framain2.h
     full_screen_choice.cpp include/full_screen_choice.h
     full_screen_prompt.cpp include/full_screen_prompt.h
@@ -135,8 +134,8 @@ add_library(libid
     help.cpp
     help_title.cpp include/help_title.h
     history.cpp include/history.h
+    id_main.cpp include/id_main.h
     intro.cpp include/intro.h
-    include/is_directory.h
     input_field.cpp include/input_field.h
     jiim.cpp include/jiim.h
     load_config.cpp include/load_config.h
@@ -179,6 +178,7 @@ add_library(libid
     include/fractype.h
     include/id.h
     include/id_data.h
+    include/is_directory.h
     include/lsys.h
     include/mpmath.h
     include/prototyp.h
@@ -393,7 +393,6 @@ source_group("Header Files/ui" FILES
     include/find_special_colors.h
     include/fix_dirname.h
     include/flip_image.h
-    include/fractint.h
     include/framain2.h
     include/full_screen_choice.h
     include/full_screen_prompt.h
@@ -420,6 +419,7 @@ source_group("Header Files/ui" FILES
     include/help_title.h
     include/history.h
     include/id.h
+    include/id_main.h
     include/input_field.h
     include/intro.h
     include/is_directory.h
@@ -480,7 +480,6 @@ source_group("Source Files/ui" FILES
     find_special_colors.cpp
     fix_dirname.cpp
     flip_image.cpp
-    fractint.cpp
     framain2.cpp
     full_screen_choice.cpp
     full_screen_prompt.cpp
@@ -506,6 +505,7 @@ source_group("Source Files/ui" FILES
     help.cpp
     help_title.cpp
     history.cpp
+    id_main.cpp
     input_field.cpp
     intro.cpp
     jiim.cpp
@@ -542,7 +542,7 @@ source_group("Source Files/ui" FILES
 )
 
 set_src_dir(help.cpp)
-set_src_dir(fractint.cpp)
+set_src_dir(id_main.cpp)
 
 target_compile_definitions(libid PUBLIC ${ID_TARGET_DEFINITIONS} $<$<CONFIG:Debug>:${ID_TARGET_DEFINITIONS_DEBUG}>)
 target_compile_options(libid PUBLIC ${ID_TARGET_OPTIONS})

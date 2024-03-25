@@ -11,7 +11,6 @@
 #include "engine_timer.h"
 #include "fractalp.h"
 #include "fractals.h"
-#include "fractint.h"
 #include "fractype.h"
 #include "get_julia_attractor.h"
 #include "id_data.h"

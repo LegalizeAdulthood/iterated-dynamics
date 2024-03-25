@@ -31,7 +31,6 @@
 #include "find_special_colors.h"
 #include "fractalp.h"
 #include "fractals.h"
-#include "fractint.h"
 #include "fractype.h"
 #include "frothy_basin.h"
 #include "id_data.h"

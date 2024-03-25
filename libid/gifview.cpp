@@ -19,7 +19,6 @@
 #include "diskvid.h"
 #include "drivers.h"
 #include "engine_timer.h"
-#include "fractint.h"
 #include "has_ext.h"
 #include "id_data.h"
 #include "loadfile.h"

@@ -1,23 +1,14 @@
-#include "fractint.h"
+#include "id_main.h"
 
-/*
-        FRACTINT - The Ultimate Fractal Generator
-                        Main Routine
-*/
 #include "port.h"
 #include "prototyp.h"
 
 #include "calcfrac.h"
 #include "cmdfiles.h"
-#include "decoder.h"
-#include "dir_file.h"
 #include "do_pause.h"
 #include "drivers.h"
-#include "encoder.h"
 #include "evolve.h"
-#include "fractalp.h"
 #include "fractals.h"
-#include "fractype.h"
 #include "framain2.h"
 #include "get_3d_params.h"
 #include "get_a_filename.h"
@@ -29,17 +20,17 @@
 #include "get_toggles2.h"
 #include "get_view_params.h"
 #include "goodbye.h"
-#include "helpcom.h"
 #include "helpdefs.h"
 #include "history.h"
+#include "id.h"
 #include "id_data.h"
 #include "intro.h"
 #include "jb.h"
 #include "loadfile.h"
 #include "load_config.h"
 #include "main_menu.h"
+#include "main_state.h"
 #include "memory.h"
-#include "orbit.h"
 #include "rotate.h"
 #include "select_video_mode.h"
 #include "stop_msg.h"
@@ -47,10 +38,10 @@
 
 #include <cctype>
 #include <csignal>
-#include <cstdarg>
-#include <cstdio>
 #include <cstring>
 #include <ctime>
+#include <helpcom.h>
+#include <string>
 
 VIDEOINFO g_video_entry;
 help_labels g_help_mode;

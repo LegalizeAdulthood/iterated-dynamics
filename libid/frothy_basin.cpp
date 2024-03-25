@@ -11,7 +11,6 @@
 #include "diskvid.h"
 #include "drivers.h"
 #include "fractals.h"
-#include "fractint.h"
 #include "id_data.h"
 #include "loadmap.h"
 #include "newton.h"
