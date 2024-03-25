@@ -116,6 +116,7 @@ add_library(libid
     get_browse_params.cpp include/get_browse_params.h
     get_calculation_time.cpp include/get_calculation_time.h
     get_cmd_string.cpp include/get_cmd_string.h
+    get_commands.cpp include/get_commands.h
     get_file_entry.cpp include/get_file_entry.h
     get_key_no_help.cpp include/get_key_no_help.h
     get_rds_params.cpp include/get_rds_params.h
@@ -389,6 +390,7 @@ source_group("Header Files/ui" FILES
     include/get_a_filename.h
     include/get_calculation_time.h
     include/get_cmd_string.h
+    include/get_commands.h
     include/get_file_entry.h
     include/get_file_entry.h
     include/get_key_no_help.h
@@ -466,6 +468,7 @@ source_group("Source Files/ui" FILES
     get_browse_params.cpp
     get_calculation_time.cpp
     get_cmd_string.cpp
+    get_commands.cpp
     get_file_entry.cpp
     get_file_entry.cpp
     get_key_no_help.cpp

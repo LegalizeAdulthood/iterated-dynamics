@@ -68,8 +68,6 @@ static  int get_screen_corners();
 #define TEMPLATE        -2      // wild cards present - buiding template
 #define SEARCHPATH      -3      // no match - building path search name
 
-static char commandmask[13] = {"*.par"};
-
 /*
         get_toggles2() is similar to get_toggles, invoked by 'y' key
 */
@@ -644,25 +642,6 @@ get_view_restart:
 // ---------------------------------------------------------------------
 
 std::string const g_gray_map_file{"altern.map"};
-
-// ---------------------------------------------------------------------
-
-int get_commands()              // execute commands from file
-{
-    int ret;
-    std::FILE *parmfile;
-    ret = 0;
-    help_labels const old_help_mode = g_help_mode;
-    g_help_mode = help_labels::HELPPARMFILE;
-    long point = get_file_entry(GETPARM, "Parameter Set", commandmask, g_command_file, g_command_name);
-    if (point >= 0 && (parmfile = std::fopen(g_command_file.c_str(), "rb")) != nullptr)
-    {
-        std::fseek(parmfile, point, SEEK_SET);
-        ret = load_commands(parmfile);
-    }
-    g_help_mode = old_help_mode;
-    return ret;
-}
 
 // ---------------------------------------------------------------------
 
