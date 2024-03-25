@@ -7,6 +7,7 @@
 #include "drivers.h"
 #include "help_title.h"
 #include "os.h"
+#include "text_screen.h"
 
 #include <cstring>
 

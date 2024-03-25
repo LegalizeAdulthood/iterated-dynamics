@@ -10,6 +10,7 @@
 #include "get_key_no_help.h"
 #include "id_data.h"
 #include "os.h"
+#include "text_screen.h"
 
 #include <cstdio>
 #include <cstring>

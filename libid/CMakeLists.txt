@@ -73,6 +73,7 @@ add_library(libid
     rotate.cpp include/rotate.h
     slideshw.cpp include/slideshw.h
     stereo.cpp include/stereo.h
+    text_screen.cpp include/text_screen.h
 
     bigflt.cpp
     biginit.cpp include/biginit.h
@@ -449,6 +450,7 @@ source_group("Header Files/ui" FILES
     include/stop_msg.h
     include/tab_display.h
     include/temp_msg.h
+    include/text_screen.h
     include/thinking.h
     include/trig_fns.h
     include/update_save_name.h
@@ -533,6 +535,7 @@ source_group("Source Files/ui" FILES
     stop_msg.cpp
     tab_display.cpp
     temp_msg.cpp
+    text_screen.cpp
     thinking.cpp
     trig_fns.cpp
     update_save_name.cpp

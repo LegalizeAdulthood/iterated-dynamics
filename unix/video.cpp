@@ -76,10 +76,6 @@ int g_text_type = 1;        /* current mode's type of text:
                    0  = real text, mode 3 (or 7)
                    1  = 640x200x2, mode 6
                    2  = some other mode, graphics */
-int g_text_row = 0;     // for putstring(-1,...)
-int g_text_col = 0;     // for putstring(..,-1,...)
-int g_text_rbase = 0;       // g_text_row is relative to this
-int g_text_cbase = 0;       // g_text_col is relative to this
 
 int g_vesa_detect = 1;      // set to 0 to disable VESA-detection
 int g_video_start_x = 0;

@@ -9,6 +9,7 @@
 #include "input_field.h"
 #include "os.h"
 #include "put_string_center.h"
+#include "text_screen.h"
 
 int field_prompt(
     char const *hdg,        // heading, \n delimited lines

@@ -19,6 +19,7 @@
 #include "set_default_parms.h"
 #include "shell_sort.h"
 #include "stop_msg.h"
+#include "text_screen.h"
 
 #include <cassert>
 #include <cstdio>

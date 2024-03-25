@@ -13,6 +13,7 @@
 #include "os.h"
 #include "put_string_center.h"
 #include "stop_msg.h"
+#include "text_screen.h"
 #include "version.h"
 
 #include <fcntl.h>

@@ -18,6 +18,7 @@
 #include "slideshw.h"
 #include "spindac.h"
 #include "stop_msg.h"
+#include "text_screen.h"
 
 #define WIN32_LEAN_AND_MEAN
 #define STRICT

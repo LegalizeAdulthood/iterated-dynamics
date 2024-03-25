@@ -12,6 +12,7 @@
 #include "os.h"
 #include "put_string_center.h"
 #include "string_case_compare.h"
+#include "text_screen.h"
 
 #include <cctype>
 #include <cstring>

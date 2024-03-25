@@ -117,10 +117,6 @@ enum fractint_event
 // Global variables (yuck!)
 int dacnorm = 0;
 int g_row_count = 0;
-int g_text_cbase = 0;
-int g_text_col = 0;
-int g_text_rbase = 0;
-int g_text_row = 0;
 int g_vesa_detect = 0;
 int g_vesa_x_res = 0;
 int g_vesa_y_res = 0;

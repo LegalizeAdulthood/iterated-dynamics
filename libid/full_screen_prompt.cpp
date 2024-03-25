@@ -17,6 +17,7 @@
 #include "os.h"
 #include "put_string_center.h"
 #include "round_float_double.h"
+#include "text_screen.h"
 
 #include <cassert>
 #include <cstdio>
