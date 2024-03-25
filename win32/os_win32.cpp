@@ -13,7 +13,6 @@
 #include "make_path.h"
 #include "miscovl.h"
 #include "mpmath.h"
-#include "prompts2.h"
 #include "rotate.h"
 #include "zoom.h"
 

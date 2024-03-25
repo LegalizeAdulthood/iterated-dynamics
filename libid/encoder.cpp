@@ -28,7 +28,6 @@
 #include "goodbye.h"
 #include "parser.h"
 #include "plot3d.h"
-#include "prompts2.h"
 #include "resume.h"
 #include "rotate.h"
 #include "slideshw.h"

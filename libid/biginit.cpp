@@ -16,7 +16,6 @@ is in the allocations of memory for the big numbers.
 #include "fractalp.h"
 #include "fractype.h"
 #include "goodbye.h"
-#include "prompts2.h"
 #include "stop_msg.h"
 
 #include <cstdio>

@@ -27,7 +27,6 @@
 #include "miscfrac.h"
 #include "os.h"
 #include "pixel_grid.h"
-#include "prompts2.h"
 #include "stop_msg.h"
 #include "temp_msg.h"
 #include "zoom.h"

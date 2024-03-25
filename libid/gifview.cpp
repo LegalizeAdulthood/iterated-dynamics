@@ -25,7 +25,6 @@
 #include "loadmap.h"
 #include "os.h"
 #include "plot3d.h"
-#include "prompts2.h"
 #include "rotate.h"
 #include "slideshw.h"
 #include "sound.h"

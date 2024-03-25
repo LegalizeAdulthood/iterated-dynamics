@@ -4,7 +4,6 @@
 #include "drivers.h"
 #include "goodbye.h"
 #include "id.h"
-#include "prompts2.h"
 
 #define WIN32_LEAN_AND_MEAN
 #define STRICT

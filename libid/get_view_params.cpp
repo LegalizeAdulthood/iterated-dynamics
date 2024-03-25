@@ -1,63 +1,19 @@
-/*
-        Various routines that prompt for things.
-*/
+#include "get_view_params.h"
+
 #include "port.h"
 #include "prototyp.h"
 
-#include "prompts2.h"
-
-#include "ant.h"
-#include "calcfrac.h"
-#include "calc_frac_init.h"
-#include "choice_builder.h"
 #include "cmdfiles.h"
-#include "convert_center_mag.h"
-#include "convert_corners.h"
-#include "diskvid.h"
-#include "double_to_string.h"
 #include "drivers.h"
-#include "evolve.h"
-#include "expand_dirname.h"
-#include "field_prompt.h"
-#include "find_file.h"
-#include "find_path.h"
-#include "fix_dirname.h"
-#include "fractalp.h"
-#include "full_screen_choice.h"
 #include "full_screen_prompt.h"
-#include "get_corners.h"
-#include "get_file_entry.h"
-#include "helpcom.h"
 #include "helpdefs.h"
+#include "id.h"
 #include "id_data.h"
-#include "is_directory.h"
-#include "loadfile.h"
-#include "loadmap.h"
-#include "lorenz.h"
-#include "make_batch_file.h"
-#include "make_path.h"
-#include "memory.h"
-#include "mpmath.h"
-#include "mpmath_c.h"
-#include "pixel_grid.h"
-#include "prompts1.h"
-#include "put_string_center.h"
-#include "resume.h"
-#include "shell_sort.h"
-#include "slideshw.h"
-#include "spindac.h"
-#include "split_path.h"
-#include "stereo.h"
-#include "stop_msg.h"
 #include "video_mode.h"
 #include "zoom.h"
 
-#include <cassert>
-#include <cfloat>
-#include <cmath>
-#include <cstdlib>
+#include <cstdio>
 #include <cstring>
-#include <string>
 
 // for videomodes added new options "virtual x/y" that change "sx/ydots"
 // for diskmode changed "viewx/ydots" to "virtual x/y" that do as above
@@ -276,5 +232,3 @@ get_view_restart:
                     || g_view_x_dots != old_viewxdots
                     || (g_view_y_dots != old_viewydots && g_view_x_dots)))) ? 1 : 0;
 }
-
-// ---------------------------------------------------------------------

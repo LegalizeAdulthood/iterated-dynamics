@@ -32,7 +32,6 @@
 #include "os.h"
 #include "param_not_used.h"
 #include "parser.h"
-#include "prompts2.h"
 #include "set_default_parms.h"
 #include "shell_sort.h"
 #include "stop_msg.h"

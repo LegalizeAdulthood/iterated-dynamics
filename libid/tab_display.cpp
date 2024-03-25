@@ -29,7 +29,6 @@
 #include "parser.h"
 #include "pixel_grid.h"
 #include "prompts1.h"
-#include "prompts2.h"
 #include "put_string_center.h"
 #include "rotate.h"
 #include "slideshw.h"

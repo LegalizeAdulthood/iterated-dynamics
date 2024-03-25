@@ -17,7 +17,6 @@
 #include "os.h"
 #include "parser.h"
 #include "prompts1.h"
-#include "prompts2.h"
 #include "set_default_parms.h"
 #include "shell_sort.h"
 #include "stop_msg.h"

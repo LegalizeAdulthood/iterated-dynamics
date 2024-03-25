@@ -5,7 +5,6 @@
 #include "drivers.h"
 #include "id.h"
 #include "mpmath.h"
-#include "prompts2.h"
 #include "video_mode.h"
 
 #include <dirent.h>

@@ -9,7 +9,6 @@
 #include "drivers.h"
 #include "goodbye.h"
 #include "line3d.h"
-#include "prompts2.h"
 #include "stop_msg.h"
 
 #include <climits>

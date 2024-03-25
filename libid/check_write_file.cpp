@@ -5,7 +5,6 @@
 
 #include "cmdfiles.h"
 #include "has_ext.h"
-#include "prompts2.h"
 #include "update_save_name.h"
 
 #include <cstring>

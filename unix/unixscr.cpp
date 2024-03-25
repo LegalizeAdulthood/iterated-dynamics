@@ -23,7 +23,6 @@
 #include "id_data.h"
 #include "miscovl.h"
 #include "os.h"
-#include "prompts2.h"
 #include "rotate.h"
 #include "zoom.h"
 

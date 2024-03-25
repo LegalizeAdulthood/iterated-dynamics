@@ -32,7 +32,6 @@
 #include "make_path.h"
 #include "parser.h"
 #include "plot3d.h"
-#include "prompts2.h"
 #include "resume.h"
 #include "split_path.h"
 #include "rotate.h"

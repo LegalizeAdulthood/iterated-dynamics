@@ -123,6 +123,7 @@ add_library(libid
     get_rds_params.cpp include/get_rds_params.h
     get_toggles.cpp include/get_toggles.h
     get_toggles2.cpp include/get_toggles2.h
+    get_view_params.cpp include/get_view_params.h
     goodbye.cpp include/goodbye.h
     has_ext.cpp include/has_ext.h
     help.cpp
@@ -146,7 +147,6 @@ add_library(libid
     passes_options.cpp include/passes_options.h
     path_match.cpp include/path_match.h
     prompts1.cpp include/prompts1.h
-    prompts2.cpp include/prompts2.h
     put_string_center.cpp include/put_string_center.h
     round_float_double.cpp include/round_float_double.h
     search_path.cpp include/search_path.h
@@ -401,6 +401,7 @@ source_group("Header Files/ui" FILES
     include/get_rds_params.h
     include/get_toggles.h
     include/get_toggles2.h
+    include/get_view_params.h
     include/goodbye.h
     include/has_ext.h
     include/help.h
@@ -425,7 +426,6 @@ source_group("Header Files/ui" FILES
     include/passes_options.h
     include/path_match.h
     include/prompts1.h
-    include/prompts2.h
     include/put_string_center.h
     include/round_float_double.h
     include/search_path.h
@@ -482,6 +482,7 @@ source_group("Source Files/ui" FILES
     get_rds_params.cpp
     get_toggles.cpp
     get_toggles2.cpp
+    get_view_params.cpp
     goodbye.cpp
     has_ext.cpp
     help.cpp
@@ -503,7 +504,6 @@ source_group("Source Files/ui" FILES
     passes_options.cpp
     path_match.cpp
     prompts1.cpp
-    prompts2.cpp
     put_string_center.cpp
     round_float_double.cpp
     search_path.cpp

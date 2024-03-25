@@ -16,7 +16,6 @@
 #include "loadmap.h"
 #include "pickover_mandelbrot.h"
 #include "prompts1.h"
-#include "prompts2.h"
 #include "spindac.h"
 #include "starfield.h"
 #include "stop_msg.h"

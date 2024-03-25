@@ -10,7 +10,6 @@
 #include "get_key_no_help.h"
 #include "id_data.h"
 #include "os.h"
-#include "prompts2.h"
 
 #include <cstdio>
 #include <cstring>

@@ -8,7 +8,6 @@
 #include "get_a_filename.h"
 #include "helpdefs.h"
 #include "id_data.h"
-#include "prompts2.h"
 #include "stereo.h"
 
 #include <cstring>
