@@ -137,7 +137,7 @@ add_library(libid
     main_menu_switch.cpp include/main_menu_switch.h
     include/main_state.h
     make_batch_file.cpp include/make_batch_file.h
-    include/make_path.h
+    make_path.cpp include/make_path.h
     merge_path_names.cpp include/merge_path_names.h
     miscovl.cpp include/miscovl.h
     not_disk_msg.cpp include/not_disk_msg.h
@@ -488,6 +488,7 @@ source_group("Source Files/ui" FILES
     main_menu.cpp
     main_menu_switch.cpp
     make_batch_file.cpp
+    make_path.cpp
     merge_path_names.cpp
     miscovl.cpp
     not_disk_msg.cpp
