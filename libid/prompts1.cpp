@@ -17,6 +17,7 @@
 #include "fractype.h"
 #include "full_screen_choice.h"
 #include "full_screen_prompt.h"
+#include "get_corners.h"
 #include "get_file_entry.h"
 #include "get_key_no_help.h"
 #include "helpcom.h"
