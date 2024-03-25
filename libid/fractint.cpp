@@ -1,3 +1,5 @@
+#include "fractint.h"
+
 /*
         FRACTINT - The Ultimate Fractal Generator
                         Main Routine
