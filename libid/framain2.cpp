@@ -44,6 +44,8 @@ static int call_line3d(BYTE *pixels, int linelen);
 static void cmp_line_cleanup();
 static int cmp_line(BYTE *pixels, int linelen);
 
+static long s_save_base{}; // base clock ticks
+
 bool g_from_text{}; // = true if we're in graphics mode
 int g_finish_row = 0;    // save when this row is finished
 EVOLUTION_INFO g_evolve_info = { 0 };
@@ -361,7 +363,7 @@ main_state big_while_loop(bool *const kbdmore, bool *const stacked, bool const r
             if (g_init_save_time != 0          // autosave and resumable?
                 && (g_cur_fractal_specific->flags&NORESUME) == 0)
             {
-                g_save_base = readticker(); // calc's start time
+                s_save_base = readticker(); // calc's start time
                 g_save_ticks = std::abs(g_init_save_time);
                 g_save_ticks *= 1092; // bios ticks/minute
                 if ((g_save_ticks & 65535L) == 0)

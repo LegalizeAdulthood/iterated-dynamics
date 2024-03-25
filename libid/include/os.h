@@ -3,7 +3,6 @@
 struct VIDEOINFO;
 
 extern int                   g_row_count;       // row-counter for decoder and out_line
-extern long                  g_save_base;
 extern long                  g_save_ticks;
 extern int                   g_text_cbase;      // g_text_col is relative to this
 extern int                   g_text_col;        // current column in text mode

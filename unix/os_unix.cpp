@@ -16,7 +16,6 @@
 #include <string>
 
 // Global variables (yuck!)
-long g_save_base = 0;              // base clock ticks
 long g_save_ticks = 0;             // save after this many ticks
 
 // Global variables that should be phased out (old video mode stuff)
