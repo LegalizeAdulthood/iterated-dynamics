@@ -10,6 +10,4 @@ bool JulialongSetup();
 bool SierpinskiSetup();
 bool SierpinskiFPSetup();
 bool StandardSetup();
-bool ManlamTrigOrTrigSetup();
-bool MandelTrigOrTrigSetup();
 bool dynam2dfloatsetup();

@@ -540,38 +540,6 @@ JulialongSetup()
 }
 
 bool
-ManlamTrigOrTrigSetup()
-{
-    // psuedo
-    // default symmetry is X_AXIS
-    g_long_param = &g_l_init;
-    g_float_param = &g_init;
-    if (g_trig_index[0] == trig_fn::SQR)
-    {
-        g_symmetry = symmetry_type::NONE;
-    }
-    if ((g_trig_index[0] == trig_fn::LOG) || (g_trig_index[1] == trig_fn::LOG))
-    {
-        g_symmetry = symmetry_type::NONE;
-    }
-    return true;
-}
-
-bool
-MandelTrigOrTrigSetup()
-{
-    // default symmetry is X_AXIS_NO_PARAM
-    g_long_param = &g_l_init;
-    g_float_param = &g_init;
-    if ((g_trig_index[0] == trig_fn::FLIP) || (g_trig_index[1] == trig_fn::FLIP))
-    {
-        g_symmetry = symmetry_type::NONE;
-    }
-    return true;
-}
-
-
-bool
 SierpinskiSetup()
 {
     // sierpinski

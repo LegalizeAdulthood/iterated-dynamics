@@ -1,5 +1,8 @@
 #pragma once
 
+bool MandelTrigOrTrigSetup();
+bool ManlamTrigOrTrigSetup();
+
 bool LambdaTrigOrTrigSetup();
 int LambdaTrigOrTrigFractal();
 int LambdaTrigOrTrigfpFractal();
