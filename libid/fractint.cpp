@@ -453,7 +453,7 @@ static main_state main_image_start(bool &stacked, bool &resumeflag)
         if (kbdchar == 'z')
         {
             // type specific parms
-            get_fract_params(1);
+            get_fract_params(true);
             return main_state::IMAGE_START;
         }
         if (kbdchar == 'v')

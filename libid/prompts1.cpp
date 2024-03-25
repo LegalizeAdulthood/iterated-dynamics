@@ -288,7 +288,7 @@ sel_type_restart:
     }
     set_default_parms();
 
-    if (get_fract_params(0) < 0)
+    if (get_fract_params(false) < 0)
     {
         if (g_fractal_type == fractal_type::FORMULA || g_fractal_type == fractal_type::FFORMULA
             || g_fractal_type == fractal_type::IFS || g_fractal_type == fractal_type::IFS3D
@@ -344,7 +344,7 @@ static char const *jiim_left_right_list[]{
 };
 
 // ---------------------------------------------------------------------
-int get_fract_params(int caller)        // prompt for type-specific parms
+int get_fract_params(bool prompt_for_type_params)        // prompt for type-specific parms
 {
     char const *v0 = "From cx (real part)";
     char const *v1 = "From cy (imaginary part)";
@@ -774,7 +774,7 @@ gfp_top:
         paramvalues[promptnum++].uval.ch.val = g_is_mandelbrot ? 1 : 0;
     }
 
-    if (caller && (g_display_3d > display_3d_modes::NONE))
+    if (prompt_for_type_params && (g_display_3d > display_3d_modes::NONE))
     {
         stopmsg(STOPMSG_INFO_ONLY | STOPMSG_NO_BUZZER, "Current type has no type-specific parameters");
         goto gfp_exit;

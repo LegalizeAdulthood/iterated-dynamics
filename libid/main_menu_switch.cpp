@@ -216,7 +216,7 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
         }
         else if (*kbdchar == 'z')
         {
-            i = get_fract_params(1);
+            i = get_fract_params(true);
         }
         else if (*kbdchar == 'v')
         {
@@ -355,7 +355,7 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
                 driver_stack_screen();
             }
             g_from_text = false;
-            err = get_fract_params(2);
+            err = get_fract_params(true);
             if (err >= 0)
             {
                 driver_unstack_screen();
