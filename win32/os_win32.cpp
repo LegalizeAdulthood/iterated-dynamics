@@ -117,7 +117,6 @@ enum fractint_event
 // Global variables (yuck!)
 int dacnorm = 0;
 int g_row_count = 0;
-long g_save_ticks = 0;             // save after this many ticks
 int g_text_cbase = 0;
 int g_text_col = 0;
 int g_text_rbase = 0;
