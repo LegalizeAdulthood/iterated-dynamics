@@ -606,11 +606,11 @@ bool check_key()
 }
 
 /* timer function:
-     timer(0,(*fractal)())              fractal engine
-     timer(1,nullptr,int width)         decoder
-     timer(2)                           encoder
+     timer(timer_type::ENGINE,(*fractal)())              fractal engine
+     timer(timer_type::DECODER,nullptr,int width)        decoder
+     timer(timer_type::ENCODER)                          encoder
   */
-int timer(int timertype, int(*subrtn)(), ...)
+int timer(timer_type timertype, int(*subrtn)(), ...)
 {
     std::va_list arg_marker;  // variable arg list
     char *timestring;
@@ -622,7 +622,7 @@ int timer(int timertype, int(*subrtn)(), ...)
     va_start(arg_marker, subrtn);
 
     bool do_bench = g_timer_flag; // record time?
-    if (timertype == 2)     // encoder, record time only if debug flag set
+    if (timertype == timer_type::ENCODER)     // encoder, record time only if debug flag set
     {
         do_bench = (g_debug_flag == debug_flags::benchmark_encoder);
     }
@@ -633,14 +633,14 @@ int timer(int timertype, int(*subrtn)(), ...)
     g_timer_start = std::clock();
     switch (timertype)
     {
-    case 0:
-        out = (*(int(*)())subrtn)();
+    case timer_type::ENGINE:
+        out = subrtn();
         break;
-    case 1:
+    case timer_type::DECODER:
         i = va_arg(arg_marker, int);
         out = (int)decoder((short)i); // not indirect, safer with overlays
         break;
-    case 2:
+    case timer_type::ENCODER:
         out = encoder();            // not indirect, safer with overlays
         break;
     }
@@ -654,11 +654,13 @@ int timer(int timertype, int(*subrtn)(), ...)
         timestring[24] = 0; //clobber newline in time string
         switch (timertype)
         {
-        case 1:
+        case timer_type::DECODER:
             std::fprintf(fp, "decode ");
             break;
-        case 2:
+        case timer_type::ENCODER:
             std::fprintf(fp, "encode ");
+            break;
+        default:
             break;
         }
         std::fprintf(fp, "%s type=%s resolution = %dx%d maxiter=%ld",

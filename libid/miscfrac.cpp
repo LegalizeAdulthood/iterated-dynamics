@@ -1412,7 +1412,7 @@ bool BifurcMaySetup()
     }
     g_params[2] = (double)beta;
 
-    timer(0, g_cur_fractal_specific->calctype);
+    timer(timer_type::ENGINE, g_cur_fractal_specific->calctype);
     return false;
 }
 
