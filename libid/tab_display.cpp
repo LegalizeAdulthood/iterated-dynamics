@@ -28,7 +28,6 @@
 #include "param_not_used.h"
 #include "parser.h"
 #include "pixel_grid.h"
-#include "prompts1.h"
 #include "put_string_center.h"
 #include "rotate.h"
 #include "slideshw.h"

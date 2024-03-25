@@ -8,7 +8,6 @@
 #include "get_file_entry.h"
 #include "id.h"
 #include "make_path.h"
-#include "prompts1.h"
 #include "split_path.h"
 #include "stop_msg.h"
 #include "temp_msg.h"

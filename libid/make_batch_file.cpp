@@ -28,7 +28,6 @@
 #include "os.h"
 #include "parser.h"
 #include "plot3d.h"
-#include "prompts1.h"
 #include "rotate.h"
 #include "sound.h"
 #include "stereo.h"

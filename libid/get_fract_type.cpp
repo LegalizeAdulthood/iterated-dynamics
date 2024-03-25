@@ -1,10 +1,10 @@
+#include "get_fract_type.h"
+
 /*
         Various routines that prompt for things.
 */
 #include "port.h"
 #include "prototyp.h"
-
-#include "prompts1.h"
 
 #include "bailout_formula.h"
 #include "calcfrac.h"

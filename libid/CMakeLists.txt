@@ -119,6 +119,7 @@ add_library(libid
     get_commands.cpp include/get_commands.h
     get_corners.cpp include/get_corners.h
     get_file_entry.cpp include/get_file_entry.h
+    get_fract_type.cpp include/get_fract_type.h
     get_key_no_help.cpp include/get_key_no_help.h
     get_rds_params.cpp include/get_rds_params.h
     get_toggles.cpp include/get_toggles.h
@@ -146,7 +147,6 @@ add_library(libid
     not_disk_msg.cpp include/not_disk_msg.h
     passes_options.cpp include/passes_options.h
     path_match.cpp include/path_match.h
-    prompts1.cpp include/prompts1.h
     put_string_center.cpp include/put_string_center.h
     round_float_double.cpp include/round_float_double.h
     search_path.cpp include/search_path.h
@@ -397,6 +397,7 @@ source_group("Header Files/ui" FILES
     include/get_corners.h
     include/get_file_entry.h
     include/get_file_entry.h
+    include/get_fract_type.h
     include/get_key_no_help.h
     include/get_rds_params.h
     include/get_toggles.h
@@ -425,7 +426,6 @@ source_group("Header Files/ui" FILES
     include/not_disk_msg.h
     include/passes_options.h
     include/path_match.h
-    include/prompts1.h
     include/put_string_center.h
     include/round_float_double.h
     include/search_path.h
@@ -478,6 +478,7 @@ source_group("Source Files/ui" FILES
     get_corners.cpp
     get_file_entry.cpp
     get_file_entry.cpp
+    get_fract_type.cpp
     get_key_no_help.cpp
     get_rds_params.cpp
     get_toggles.cpp
@@ -503,7 +504,6 @@ source_group("Source Files/ui" FILES
     not_disk_msg.cpp
     passes_options.cpp
     path_match.cpp
-    prompts1.cpp
     put_string_center.cpp
     round_float_double.cpp
     search_path.cpp

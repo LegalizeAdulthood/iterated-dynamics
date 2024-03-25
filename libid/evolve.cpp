@@ -14,7 +14,6 @@
 #include "jb.h"
 #include "param_not_used.h"
 #include "parser.h"
-#include "prompts1.h"
 #include "trig_fns.h"
 #include "type_has_param.h"
 #include "zoom.h"
