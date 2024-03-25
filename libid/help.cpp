@@ -3,6 +3,7 @@
 
 #include "cmdfiles.h"
 #include "drivers.h"
+#include "engine_timer.h"
 #include "find_path.h"
 #include "helpcom.h"
 #include "helpdefs.h"

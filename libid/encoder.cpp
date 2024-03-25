@@ -24,6 +24,7 @@
 #if defined(XFRACT)
 #include "os.h"
 #endif
+#include "engine_timer.h"
 #include "extract_filename.h"
 #include "goodbye.h"
 #include "parser.h"

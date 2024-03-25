@@ -98,8 +98,6 @@ extern bool                  g_started_resaves;
 extern char                  g_std_calc_mode;
 extern bool                  g_tab_mode;
 extern int                   g_timed_save;
-extern long                  g_timer_interval;
-extern long                  g_timer_start;
 extern double                g_smallest_window_display_size;
 extern long                  g_user_distance_estimator_value;
 extern bool                  g_user_float_flag;

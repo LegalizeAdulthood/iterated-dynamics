@@ -241,7 +241,6 @@ extern int                   g_stop_pass;
 extern bool                  g_targa_out;
 extern std::string           g_temp_dir;
 extern BYTE                  g_text_color[];
-extern bool                  g_timer_flag;
 extern int                   g_transparent_color_3d[];
 extern true_color_mode       g_true_mode;
 extern bool                  g_truecolor;

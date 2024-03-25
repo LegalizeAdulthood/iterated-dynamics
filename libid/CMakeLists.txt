@@ -96,6 +96,7 @@ add_library(libid
     dir_file.cpp include/dir_file.h
     double_to_string.cpp include/double_to_string.h
     ends_with_slash.cpp include/ends_with_slash.h
+    engine_timer.cpp include/engine_timer.h
     evolver_menu_switch.cpp include/evolver_menu_switch.h
     expand_dirname.cpp include/expand_dirname.h
     include/extract_filename.h
@@ -377,6 +378,7 @@ source_group("Header Files/ui" FILES
     include/dir_file.h
     include/double_to_string.h
     include/ends_with_slash.h
+    include/engine_timer.h
     include/evolver_menu_switch.h
     include/expand_dirname.h
     include/extract_filename.h
@@ -463,6 +465,7 @@ source_group("Source Files/ui" FILES
     dir_file.cpp
     double_to_string.cpp
     ends_with_slash.cpp
+    engine_timer.cpp
     evolver_menu_switch.cpp
     expand_dirname.cpp
     field_prompt.cpp

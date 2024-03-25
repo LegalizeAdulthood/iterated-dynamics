@@ -12,6 +12,7 @@ Miscellaneous fractal-specific code
 #include "cmdfiles.h"
 #include "diskvid.h"
 #include "drivers.h"
+#include "engine_timer.h"
 #include "fpu087.h"
 #include "fractalp.h"
 #include "fractals.h"

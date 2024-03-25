@@ -9,6 +9,7 @@
 #include "cmdfiles.h"
 #include "diskvid.h"
 #include "drivers.h"
+#include "engine_timer.h"
 #include "fractalp.h"
 #include "fractint.h"
 #include "id_data.h"

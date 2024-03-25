@@ -8,6 +8,7 @@
 
 #include "cmdfiles.h"
 #include "drivers.h"
+#include "engine_timer.h"
 #include "helpcom.h"
 #include "helpdefs.h"
 #include "help_title.h"

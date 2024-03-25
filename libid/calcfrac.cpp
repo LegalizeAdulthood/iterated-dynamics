@@ -26,6 +26,7 @@
 #include "convert_center_mag.h"
 #include "diskvid.h"
 #include "drivers.h"
+#include "engine_timer.h"
 #include "find_special_colors.h"
 #include "fractalp.h"
 #include "fractals.h"

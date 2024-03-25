@@ -15,6 +15,7 @@
 #include "convert_corners.h"
 #include "do_pause.h"
 #include "drivers.h"
+#include "engine_timer.h"
 #include "extract_filename.h"
 #include "file_gets.h"
 #include "find_file_item.h"
@@ -131,7 +132,6 @@ bool    g_overwrite_file = false;// true if file overwrite allowed
 int     g_sound_flag = 0;          // sound control bitfield... see sound.c for useage
 int     g_base_hertz = 0;          // sound=x/y/x hertz value
 int     g_debug_flag = debug_flags::none; // internal use only - you didn't see this
-bool    g_timer_flag = false;      // you didn't see this, either
 int     g_cycle_limit = 0;         // color-rotator upper limit
 int     g_inside_color = 0;             // inside color: 1=blue
 int     g_fill_color = 0;          // fillcolor: -1=normal

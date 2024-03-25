@@ -8,6 +8,7 @@
 #include "calmanfp.h"
 #include "cmdfiles.h"
 #include "editpal.h"
+#include "engine_timer.h"
 #include "fractalp.h"
 #include "fractals.h"
 #include "fractint.h"
