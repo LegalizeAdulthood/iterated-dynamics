@@ -25,6 +25,7 @@
 #include "id_data.h"
 #include "os.h"
 #include "slideshw.h"
+#include "text_screen.h"
 #include "video_mode.h"
 #include "zoom.h"
 

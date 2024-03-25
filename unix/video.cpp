@@ -7,6 +7,7 @@
 #include "id_data.h"
 #include "rotate.h"
 #include "spindac.h"
+#include "text_screen.h"
 #include "zoom.h"
 
 #include <cstdio>
