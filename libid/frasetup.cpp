@@ -540,27 +540,6 @@ JulialongSetup()
 }
 
 bool
-SierpinskiSetup()
-{
-    // sierpinski
-    g_periodicity_check = 0;                // disable periodicity checks
-    g_l_temp.x = 1;
-    g_l_temp.x = g_l_temp.x << g_bit_shift; // ltmp.x = 1
-    g_l_temp.y = g_l_temp.x >> 1;                        // ltmp.y = .5
-    return true;
-}
-
-bool
-SierpinskiFPSetup()
-{
-    // sierpinski
-    g_periodicity_check = 0;                // disable periodicity checks
-    g_tmp_z.x = 1;
-    g_tmp_z.y = 0.5;
-    return true;
-}
-
-bool
 StandardSetup()
 {
     if (g_fractal_type == fractal_type::UNITYFP)
