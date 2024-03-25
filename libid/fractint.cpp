@@ -31,6 +31,7 @@
 #include "history.h"
 #include "id_data.h"
 #include "intro.h"
+#include "jb.h"
 #include "loadfile.h"
 #include "load_config.h"
 #include "main_menu.h"

@@ -27,6 +27,7 @@
 #include "get_view_params.h"
 #include "history.h"
 #include "id_data.h"
+#include "jb.h"
 #include "jiim.h"
 #include "loadfile.h"
 #include "load_params.h"

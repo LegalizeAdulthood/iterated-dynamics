@@ -865,9 +865,9 @@ static void write_batch_parms(char const *colorinf, bool colorsonly, int maxcolo
                 }
                 put_parm(" %s=%s", "orbitname", name);
             }
-            if (g_julibrot_3d_mode != 0)
+            if (g_julibrot_3d_mode != julibrot_3d_mode::MONOCULAR)
             {
-                put_parm(" %s=%s", "3dmode", g_julibrot_3d_options[g_julibrot_3d_mode]);
+                put_parm(" %s=%s", "3dmode", to_string(g_julibrot_3d_mode));
             }
         }
         if (g_fractal_type == fractal_type::FORMULA || g_fractal_type == fractal_type::FFORMULA)

@@ -52,7 +52,6 @@ static bool select_type_params(fractal_type newfractype, fractal_type oldfractyp
 static char ifsmask[13]     = {"*.ifs"};
 static char formmask[13]    = {"*.frm"};
 static char lsysmask[13]    = {"*.l"};
-bool g_julibrot = false;                  // flag for julibrot
 
 // ---------------------------------------------------------------------
 
@@ -317,11 +316,6 @@ sel_type_exit:
     g_help_mode = old_help_mode;
     return ret;
 }
-
-const char *g_julibrot_3d_options[] =
-{
-    "monocular", "lefteye", "righteye", "red-blue"
-};
 
 // JIIM
 #ifdef RANDOM_RUN
@@ -726,7 +720,7 @@ gfp_top:
         choices[promptnum++] = "Number of z pixels";
 
         paramvalues[promptnum].type = 'l';
-        paramvalues[promptnum].uval.ch.val  = g_julibrot_3d_mode;
+        paramvalues[promptnum].uval.ch.val  = static_cast<int>(g_julibrot_3d_mode);
         paramvalues[promptnum].uval.ch.llen = 4;
         paramvalues[promptnum].uval.ch.vlen = 9;
         paramvalues[promptnum].uval.ch.list = g_julibrot_3d_options;
@@ -908,7 +902,7 @@ gfp_top:
         g_julibrot_x_min    = paramvalues[promptnum++].uval.dval;
         g_julibrot_y_min    = paramvalues[promptnum++].uval.dval;
         g_julibrot_z_dots      = paramvalues[promptnum++].uval.ival;
-        g_julibrot_3d_mode = paramvalues[promptnum++].uval.ch.val;
+        g_julibrot_3d_mode = static_cast<julibrot_3d_mode>(paramvalues[promptnum++].uval.ch.val);
         g_eyes_fp     = (float)paramvalues[promptnum++].uval.dval;
         g_julibrot_origin_fp   = (float)paramvalues[promptnum++].uval.dval;
         g_julibrot_depth_fp    = (float)paramvalues[promptnum++].uval.dval;

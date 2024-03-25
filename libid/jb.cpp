@@ -90,6 +90,8 @@ static long depth{};
 static long brratio{};
 static long eyes{};
 
+bool g_julibrot{}; // flag for julibrot
+
 // these need to be accessed elsewhere for saving data
 double g_julibrot_x_min = -.83;
 double g_julibrot_y_min = -.25;
@@ -103,8 +105,14 @@ float g_julibrot_width_fp   = 10.0F;
 float g_julibrot_dist_fp    = 24.0F;
 float g_eyes_fp    = 2.5F;
 float g_julibrot_depth_fp   = 8.0F;
-int g_julibrot_3d_mode = 0;
+julibrot_3d_mode g_julibrot_3d_mode{};
 fractal_type g_new_orbit_type = fractal_type::JULIA;
+const char *g_julibrot_3d_options[]{
+    to_string(julibrot_3d_mode::MONOCULAR), //
+    to_string(julibrot_3d_mode::LEFT_EYE),  //
+    to_string(julibrot_3d_mode::RIGHT_EYE), //
+    to_string(julibrot_3d_mode::RED_BLUE)   //
+};
 
 bool JulibrotSetup()
 {
@@ -127,7 +135,7 @@ bool JulibrotSetup()
     inch_per_xdotfp = g_julibrot_width_fp / g_logical_screen_x_dots;
     inch_per_ydotfp = g_julibrot_height_fp / g_logical_screen_y_dots;
     initzfp = g_julibrot_origin_fp - (g_julibrot_depth_fp / 2);
-    if (g_julibrot_3d_mode == 0)
+    if (g_julibrot_3d_mode == julibrot_3d_mode::MONOCULAR)
     {
         RightEyefp.x = 0.0;
     }
@@ -182,7 +190,7 @@ bool JulibrotSetup()
         inch_per_xdot = (long)((g_julibrot_width_fp / g_logical_screen_x_dots) * fg16);
         inch_per_ydot = (long)((g_julibrot_height_fp / g_logical_screen_y_dots) * fg16);
         initz = origin - (depth / 2);
-        if (g_julibrot_3d_mode == 0)
+        if (g_julibrot_3d_mode == julibrot_3d_mode::MONOCULAR)
         {
             RightEye.x = 0L;
         }
@@ -200,7 +208,7 @@ bool JulibrotSetup()
         bbase = (int)(128.0 * brratiofp);
     }
 
-    if (g_julibrot_3d_mode == 3)
+    if (g_julibrot_3d_mode == julibrot_3d_mode::RED_BLUE)
     {
         g_save_dac = 0;
         mapname = g_glasses1_map.c_str();
@@ -271,14 +279,14 @@ int zline(long x, long y)
     my = mymin;
     switch (g_julibrot_3d_mode)
     {
-    case 0:
-    case 1:
+    case julibrot_3d_mode::MONOCULAR:
+    case julibrot_3d_mode::LEFT_EYE:
         Per = &LeftEye;
         break;
-    case 2:
+    case julibrot_3d_mode::RIGHT_EYE:
         Per = &RightEye;
         break;
-    case 3:
+    case julibrot_3d_mode::RED_BLUE:
         if ((g_row + g_col) & 1)
         {
             Per = &LeftEye;
@@ -311,7 +319,7 @@ int zline(long x, long y)
         }
         if (n == g_max_iterations)
         {
-            if (g_julibrot_3d_mode == 3)
+            if (g_julibrot_3d_mode == julibrot_3d_mode::RED_BLUE)
             {
                 g_color = (int)(128l * zpixel / g_julibrot_z_dots);
                 if ((g_row + g_col) & 1)
@@ -357,14 +365,14 @@ int zlinefp(double x, double y)
     myfp = g_julibrot_y_min;
     switch (g_julibrot_3d_mode)
     {
-    case 0:
-    case 1:
+    case julibrot_3d_mode::MONOCULAR:
+    case julibrot_3d_mode::LEFT_EYE:
         Perfp = &LeftEyefp;
         break;
-    case 2:
+    case julibrot_3d_mode::RIGHT_EYE:
         Perfp = &RightEyefp;
         break;
-    case 3:
+    case julibrot_3d_mode::RED_BLUE:
         if ((g_row + g_col) & 1)
         {
             Perfp = &LeftEyefp;
@@ -417,7 +425,7 @@ int zlinefp(double x, double y)
         }
         if (n == g_max_iterations)
         {
-            if (g_julibrot_3d_mode == 3)
+            if (g_julibrot_3d_mode == julibrot_3d_mode::RED_BLUE)
             {
                 g_color = (int)(128l * zpixel / g_julibrot_z_dots);
                 if ((g_row + g_col) & 1)

@@ -1984,21 +1984,22 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         return CMDARG_FRACTAL_PARAM;
     }
 
-    if (variable == "3dmode")         // orbitname=?
+    if (variable == "3dmode")         // 3dmode=?
     {
         int julibrot_mode = -1;
         for (int i = 0; i < 4; i++)
         {
-            if (g_julibrot_3d_options[i] == value)
+            if (g_julibrot_3d_options[i] == std::string{value})
             {
                 julibrot_mode = i;
+                break;
             }
         }
         if (julibrot_mode < 0)
         {
             return bad_arg(curarg);
         }
-        g_julibrot_3d_mode = julibrot_mode;
+        g_julibrot_3d_mode = static_cast<julibrot_3d_mode>(julibrot_mode);
         return CMDARG_FRACTAL_PARAM;
     }
 

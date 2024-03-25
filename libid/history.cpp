@@ -95,7 +95,7 @@ struct HISTORY
     float julibrot_dist_fp;
     float eyes_fp;
     fractal_type new_orbit_type;
-    int julibrot_3d_mode;
+    julibrot_3d_mode julibrot_mode;
     Major major_method;
     Minor inverse_julia_minor_method;
     double dparm5;
@@ -254,7 +254,7 @@ void save_history_info()
     current.julibrot_dist_fp = g_julibrot_dist_fp;
     current.eyes_fp = g_eyes_fp;
     current.new_orbit_type = g_new_orbit_type;
-    current.julibrot_3d_mode = g_julibrot_3d_mode;
+    current.julibrot_mode = g_julibrot_3d_mode;
     current.max_function = g_max_function;
     current.major_method = g_major_method;
     current.inverse_julia_minor_method = g_inverse_julia_minor_method;
@@ -437,7 +437,7 @@ void restore_history_info(int i)
     g_julibrot_dist_fp = last.julibrot_dist_fp;
     g_eyes_fp = last.eyes_fp;
     g_new_orbit_type = last.new_orbit_type;
-    g_julibrot_3d_mode = last.julibrot_3d_mode;
+    g_julibrot_3d_mode = last.julibrot_mode;
     g_max_function = last.max_function;
     g_major_method = last.major_method;
     g_inverse_julia_minor_method = last.inverse_julia_minor_method;

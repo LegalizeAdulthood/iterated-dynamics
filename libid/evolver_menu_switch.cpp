@@ -19,6 +19,7 @@
 #include "get_toggles2.h"
 #include "history.h"
 #include "id_data.h"
+#include "jb.h"
 #include "loadfile.h"
 #include "lorenz.h"
 #include "miscovl.h"
