@@ -639,5 +639,3 @@ get_view_restart:
 }
 
 // ---------------------------------------------------------------------
-
-std::string const g_gray_map_file{"altern.map"};

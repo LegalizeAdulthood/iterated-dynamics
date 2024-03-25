@@ -18,6 +18,7 @@
 #include "prompts1.h"
 #include "prompts2.h"
 #include "spindac.h"
+#include "starfield.h"
 #include "stop_msg.h"
 
 struct Perspective
@@ -207,7 +208,7 @@ bool JulibrotSetup()
     }
     else
     {
-        mapname = g_gray_map_file.c_str();
+        mapname = g_altern_map_file.c_str();
     }
     if (g_save_dac != 1)
     {
