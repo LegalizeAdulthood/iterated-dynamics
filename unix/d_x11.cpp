@@ -78,7 +78,6 @@ extern VIDEOINFO x11_video_table[];
 
 extern unsigned char g_dac_box[256][3];
 
-extern int g_text_type;
 extern int g_color_cycle_range_hi;
 
 typedef unsigned long XPixel;

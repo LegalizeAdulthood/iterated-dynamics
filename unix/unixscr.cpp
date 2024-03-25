@@ -81,7 +81,6 @@ extern VIDEOINFO x11_video_table[];
 
 extern unsigned char dacbox[256][3];
 
-extern int g_text_type;
 extern int g_color_cycle_range_hi;
 
 extern void fpe_handler(int signum);
@@ -194,12 +193,7 @@ UnixInit()
 
     if (standout())
     {
-        g_text_type = 1;
         standend();
-    }
-    else
-    {
-        g_text_type = 1;
     }
 
     initdacbox();

@@ -72,11 +72,6 @@ int textsafe = 0;       /* 0 = default, runup chgs to 1
                    2 = no, use 640x200
                    3 = bios, yes plus use int 10h-1Ch
                    4 = save, save entire image */
-int g_text_type = 1;        /* current mode's type of text:
-                   0  = real text, mode 3 (or 7)
-                   1  = 640x200x2, mode 6
-                   2  = some other mode, graphics */
-
 int g_vesa_detect = 1;      // set to 0 to disable VESA-detection
 int g_video_start_x = 0;
 int g_video_start_y = 0;
