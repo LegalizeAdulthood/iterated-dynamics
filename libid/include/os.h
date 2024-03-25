@@ -2,9 +2,6 @@
 
 struct VIDEOINFO;
 
-extern int                   g_color_bright;    // brightest color in palette
-extern int                   g_color_dark;      // darkest color in palette
-extern int                   g_color_medium;    // nearest to medbright grey in palette
 extern long                  g_l_init_x;
 extern long                  g_l_init_y;
 extern int                   g_row_count;       // row-counter for decoder and out_line
