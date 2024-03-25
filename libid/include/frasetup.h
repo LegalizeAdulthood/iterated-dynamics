@@ -4,7 +4,6 @@ bool MandelSetup();
 bool MandelfpSetup();
 bool JuliaSetup();
 bool StandaloneSetup();
-bool UnitySetup();
 bool JuliafpSetup();
 bool MandellongSetup();
 bool JulialongSetup();

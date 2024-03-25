@@ -9,6 +9,14 @@
 
 #include <cmath>
 
+bool UnitySetup()
+{
+    g_periodicity_check = 0;
+    g_fudge_one = (1L << g_bit_shift);
+    g_fudge_two = g_fudge_one + g_fudge_one;
+    return true;
+}
+
 int UnityFractal()
 {
     const long xx_one = multiply(g_l_old_z.x, g_l_old_z.x, g_bit_shift) + multiply(g_l_old_z.y, g_l_old_z.y, g_bit_shift);
