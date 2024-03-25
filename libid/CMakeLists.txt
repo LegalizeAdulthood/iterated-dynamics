@@ -122,6 +122,7 @@ add_library(libid
     get_file_entry.cpp include/get_file_entry.h
     get_fract_type.cpp include/get_fract_type.h
     get_key_no_help.cpp include/get_key_no_help.h
+    get_prec_big_float.cpp include/get_prec_big_float.h
     get_rds_params.cpp include/get_rds_params.h
     get_toggles.cpp include/get_toggles.h
     get_toggles2.cpp include/get_toggles2.h
@@ -401,6 +402,7 @@ source_group("Header Files/ui" FILES
     include/get_file_entry.h
     include/get_fract_type.h
     include/get_key_no_help.h
+    include/get_prec_big_float.h
     include/get_rds_params.h
     include/get_toggles.h
     include/get_toggles2.h
@@ -483,6 +485,7 @@ source_group("Source Files/ui" FILES
     get_file_entry.cpp
     get_fract_type.cpp
     get_key_no_help.cpp
+    get_prec_big_float.cpp
     get_rds_params.cpp
     get_toggles.cpp
     get_toggles2.cpp

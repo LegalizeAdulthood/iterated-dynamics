@@ -25,6 +25,7 @@
 #include "fractals.h"
 #include "fractype.h"
 #include "framain2.h"
+#include "get_prec_big_float.h"
 #include "goodbye.h"
 #include "has_ext.h"
 #include "helpcom.h"

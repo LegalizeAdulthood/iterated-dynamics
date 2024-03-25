@@ -2,8 +2,6 @@
 
 extern bool g_is_true_color;
 
-int getprecbf(int rezflag);
-int getprecbf_mag();
 void init_comments();
 void make_mig(unsigned int xmult, unsigned int ymult);
 void parse_comments(char *value);

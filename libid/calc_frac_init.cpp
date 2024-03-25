@@ -11,6 +11,7 @@
 #include "convert_corners.h"
 #include "fractalb.h"
 #include "fractalp.h"
+#include "get_prec_big_float.h"
 #include "id_data.h"
 #include "jb.h"
 #include "miscovl.h"
