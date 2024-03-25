@@ -166,7 +166,7 @@ static void my_floating_point_err(int sig)
 /*
 ; ****************** Function initasmvars() *****************************
 */
-void initasmvars()
+static void initasmvars()
 {
     g_overflow = false;
 }
