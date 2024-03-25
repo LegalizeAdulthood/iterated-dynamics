@@ -148,57 +148,6 @@ int getprecbf(int rezflag)
     return std::max(digits, dec);
 }
 
-/* This function calculates the precision needed to distinguish adjacent
-   pixels at Fractint's maximum resolution of MAX_PIXELS by MAX_PIXELS
-   (if rez==MAXREZ) or at current resolution (if rez==CURRENTREZ)    */
-int getprecdbl(int rezflag)
-{
-    LDBL del1, del2, xdel, xdel2, ydel, ydel2;
-    int digits;
-    LDBL rez;
-    if (rezflag == MAXREZ)
-    {
-        rez = OLD_MAX_PIXELS -1;
-    }
-    else
-    {
-        rez = g_logical_screen_x_dots-1;
-    }
-
-    xdel = ((LDBL)g_x_max - (LDBL)g_x_3rd)/rez;
-    ydel2 = ((LDBL)g_y_3rd - (LDBL)g_y_min)/rez;
-
-    if (rezflag == CURRENTREZ)
-    {
-        rez = g_logical_screen_y_dots-1;
-    }
-
-    ydel = ((LDBL)g_y_max - (LDBL)g_y_3rd)/rez;
-    xdel2 = ((LDBL)g_x_3rd - (LDBL)g_x_min)/rez;
-
-    del1 = std::fabs(xdel) + std::fabs(xdel2);
-    del2 = std::fabs(ydel) + std::fabs(ydel2);
-    if (del2 < del1)
-    {
-        del1 = del2;
-    }
-    if (del1 == 0)
-    {
-#ifdef DEBUG
-        showcornersdbl("getprecdbl");
-#endif
-        return -1;
-    }
-    digits = 1;
-    while (del1 < 1.0)
-    {
-        digits++;
-        del1 *= 10;
-    }
-    digits = std::max(digits, 3);
-    return digits;
-}
-
 static std::array<int, MAX_VIDEO_MODES> entnums;
 static bool modes_changed = false;
 

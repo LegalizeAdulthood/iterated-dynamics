@@ -2,10 +2,9 @@
 
 extern bool g_is_true_color;
 
-int getprecbf(int);
+int getprecbf(int rezflag);
 int getprecbf_mag();
-int getprecdbl(int);
 void init_comments();
-void make_mig(unsigned int, unsigned int);
+void make_mig(unsigned int xmult, unsigned int ymult);
 void parse_comments(char *value);
-int select_video_mode(int);
+int select_video_mode(int curmode);
