@@ -23,6 +23,7 @@
 #include "get_commands.h"
 #include "get_rds_params.h"
 #include "get_toggles.h"
+#include "get_toggles2.h"
 #include "history.h"
 #include "id_data.h"
 #include "jiim.h"

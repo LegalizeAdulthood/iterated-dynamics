@@ -23,6 +23,7 @@
 #include "get_cmd_string.h"
 #include "get_commands.h"
 #include "get_toggles.h"
+#include "get_toggles2.h"
 #include "goodbye.h"
 #include "helpcom.h"
 #include "helpdefs.h"

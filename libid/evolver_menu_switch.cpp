@@ -16,6 +16,7 @@
 #include "framain2.h"
 #include "get_cmd_string.h"
 #include "get_toggles.h"
+#include "get_toggles2.h"
 #include "history.h"
 #include "id_data.h"
 #include "loadfile.h"
