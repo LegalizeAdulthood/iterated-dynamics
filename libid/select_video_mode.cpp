@@ -1,32 +1,20 @@
-/*
-        Overlayed odds and ends that don't fit anywhere else.
-*/
+#include "select_video_mode.h"
+
 #include "port.h"
 #include "prototyp.h"
 
-#include "miscovl.h"
-
-#include "biginit.h"
-#include "calcfrac.h"
-#include "cmdfiles.h"
-#include "convert_center_mag.h"
 #include "drivers.h"
 #include "find_path.h"
-#include "fractalp.h"
-#include "framain2.h"
 #include "full_screen_choice.h"
 #include "get_key_no_help.h"
 #include "helpdefs.h"
 #include "id_data.h"
 #include "load_config.h"
-#include "rotate.h"
 #include "stop_msg.h"
 #include "video_mode.h"
 
 #include <algorithm>
 #include <array>
-#include <cfloat>
-#include <cmath>
 #include <cstdio>
 #include <cstring>
 #include <filesystem>
@@ -37,9 +25,6 @@ namespace fs = std::filesystem;
 static int check_modekey(int curkey, int choice);
 static bool ent_less(int lhs, int rhs);
 static void update_id_cfg();
-
-
-// JIIM
 
 inline bool is_writable(const std::string &path)
 {

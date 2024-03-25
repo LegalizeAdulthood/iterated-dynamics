@@ -26,7 +26,6 @@
 #include "line3d.h"
 #include "loadfile.h"
 #include "lorenz.h"
-#include "miscovl.h"
 #include "os.h"
 #include "parser.h"
 #include "plot3d.h"

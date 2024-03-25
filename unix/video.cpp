@@ -5,7 +5,6 @@
 #include "cmdfiles.h"
 #include "drivers.h"
 #include "id_data.h"
-#include "miscovl.h"
 #include "rotate.h"
 #include "spindac.h"
 #include "zoom.h"

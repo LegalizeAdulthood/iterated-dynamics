@@ -147,13 +147,13 @@ add_library(libid
     make_mig.cpp include/make_mig.h
     make_path.cpp include/make_path.h
     merge_path_names.cpp include/merge_path_names.h
-    miscovl.cpp include/miscovl.h
     not_disk_msg.cpp include/not_disk_msg.h
     passes_options.cpp include/passes_options.h
     path_match.cpp include/path_match.h
     put_string_center.cpp include/put_string_center.h
     round_float_double.cpp include/round_float_double.h
     search_path.cpp include/search_path.h
+    select_video_mode.cpp include/select_video_mode.h
     set_default_parms.cpp include/set_default_parms.h
     shell_sort.cpp include/shell_sort.h
     sound.cpp include/sound.h
@@ -430,13 +430,13 @@ source_group("Header Files/ui" FILES
     include/make_mig.h
     include/make_path.h
     include/merge_path_names.h
-    include/miscovl.h
     include/not_disk_msg.h
     include/passes_options.h
     include/path_match.h
     include/put_string_center.h
     include/round_float_double.h
     include/search_path.h
+    include/select_video_mode.h
     include/set_default_parms.h
     include/shell_sort.h
     include/spindac.h
@@ -512,13 +512,13 @@ source_group("Source Files/ui" FILES
     make_mig.cpp
     make_path.cpp
     merge_path_names.cpp
-    miscovl.cpp
     not_disk_msg.cpp
     passes_options.cpp
     path_match.cpp
     put_string_center.cpp
     round_float_double.cpp
     search_path.cpp
+    select_video_mode.cpp
     set_default_parms.cpp
     shell_sort.cpp
     spindac.cpp

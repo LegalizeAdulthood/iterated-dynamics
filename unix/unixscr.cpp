@@ -21,7 +21,6 @@
 #include "goodbye.h"
 #include "helpdefs.h"
 #include "id_data.h"
-#include "miscovl.h"
 #include "os.h"
 #include "rotate.h"
 #include "zoom.h"

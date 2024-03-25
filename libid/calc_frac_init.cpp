@@ -14,7 +14,6 @@
 #include "get_prec_big_float.h"
 #include "id_data.h"
 #include "jb.h"
-#include "miscovl.h"
 #include "pixel_grid.h"
 #include "soi.h"
 #include "stop_msg.h"

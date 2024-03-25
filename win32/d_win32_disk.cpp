@@ -10,7 +10,6 @@
 #include "diskvid.h"
 #include "drivers.h"
 #include "id_data.h"
-#include "miscovl.h"
 #include "os.h"
 #include "plot3d.h"
 #include "rotate.h"

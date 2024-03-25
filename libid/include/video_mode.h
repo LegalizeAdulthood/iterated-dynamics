@@ -1,5 +1,10 @@
 #pragma once
 
+enum
+{
+    MAX_VIDEO_MODES = 300       // maximum entries in id.cfg
+};
+
 struct VIDEOINFO;
 
 extern VIDEOINFO             g_video_table[];

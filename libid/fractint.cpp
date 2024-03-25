@@ -37,9 +37,9 @@
 #include "load_config.h"
 #include "main_menu.h"
 #include "memory.h"
-#include "miscovl.h"
 #include "orbit.h"
 #include "rotate.h"
+#include "select_video_mode.h"
 #include "stop_msg.h"
 #include "video_mode.h"
 

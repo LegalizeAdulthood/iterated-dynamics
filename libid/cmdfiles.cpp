@@ -42,7 +42,6 @@
 #include "make_batch_file.h"
 #include "make_mig.h"
 #include "merge_path_names.h"
-#include "miscovl.h"
 #include "os.h"
 #include "parser.h"
 #include "plot3d.h"

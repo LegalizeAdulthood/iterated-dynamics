@@ -132,10 +132,6 @@ enum
     NUM_GENES = 21
 };
 
-enum
-{
-    MAX_VIDEO_MODES = 300       // maximum entries in id.cfg
-};
 #define AUTO_INVERT -123456.789
 enum
 {

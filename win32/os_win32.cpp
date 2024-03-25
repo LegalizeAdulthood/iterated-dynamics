@@ -11,7 +11,6 @@
 #include "helpdefs.h"
 #include "id_data.h"
 #include "make_path.h"
-#include "miscovl.h"
 #include "mpmath.h"
 #include "rotate.h"
 #include "zoom.h"
