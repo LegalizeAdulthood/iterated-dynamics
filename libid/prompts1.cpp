@@ -318,46 +318,31 @@ sel_type_exit:
     return ret;
 }
 
-std::string const g_julibrot_3d_options[] =
+const char *g_julibrot_3d_options[] =
 {
     "monocular", "lefteye", "righteye", "red-blue"
 };
 
 // JIIM
 #ifdef RANDOM_RUN
-static char JIIMstr1[] = "Breadth first, Depth first, Random Walk, Random Run?";
-char const *JIIMmethod[] =
+static const char *JIIMstr1{"Breadth first, Depth first, Random Walk, Random Run?"};
+char const *g_jiim_method[] =
 {
     "breadth", "depth", "walk", "run"
 };
 #else
-static char JIIMstr1[] = "Breadth first, Depth first, Random Walk";
-std::string const g_jiim_method[] =
+static const char *JIIMstr1{"Breadth first, Depth first, Random Walk"};
+const char *g_jiim_method[] =
 {
     "breadth", "depth", "walk"
 };
 #endif
 static char JIIMstr2[] = "Left first or Right first?";
-std::string const g_jiim_left_right[] = {"left", "right"};
 
 static char tstack[4096] = { 0 };
 
-static char const *jiim_left_right_list[] =
-{
-    g_jiim_left_right[0].c_str(), g_jiim_left_right[1].c_str()
-};
-
-static char const *jiim_method_list[] =
-{
-    g_jiim_method[0].c_str(), g_jiim_method[1].c_str(), g_jiim_method[2].c_str()
-};
-
-static char const *julia_3d_options_list[] =
-{
-    g_julibrot_3d_options[0].c_str(),
-    g_julibrot_3d_options[1].c_str(),
-    g_julibrot_3d_options[2].c_str(),
-    g_julibrot_3d_options[3].c_str()
+static char const *jiim_left_right_list[]{
+    to_string(Minor::left_first), to_string(Minor::right_first) //
 };
 
 // ---------------------------------------------------------------------
@@ -740,7 +725,7 @@ gfp_top:
         paramvalues[promptnum].uval.ch.val  = g_julibrot_3d_mode;
         paramvalues[promptnum].uval.ch.llen = 4;
         paramvalues[promptnum].uval.ch.vlen = 9;
-        paramvalues[promptnum].uval.ch.list = julia_3d_options_list;
+        paramvalues[promptnum].uval.ch.list = g_julibrot_3d_options;
         choices[promptnum++] = "3D Mode";
 
         paramvalues[promptnum].uval.dval = g_eyes_fp;
@@ -767,7 +752,7 @@ gfp_top:
     {
         choices[promptnum] = JIIMstr1;
         paramvalues[promptnum].type = 'l';
-        paramvalues[promptnum].uval.ch.list = jiim_method_list;
+        paramvalues[promptnum].uval.ch.list = g_jiim_method;
         paramvalues[promptnum].uval.ch.vlen = 7;
 #ifdef RANDOM_RUN
         paramvalues[promptnum].uval.ch.llen = 4;

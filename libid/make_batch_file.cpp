@@ -867,7 +867,7 @@ static void write_batch_parms(char const *colorinf, bool colorsonly, int maxcolo
             }
             if (g_julibrot_3d_mode != 0)
             {
-                put_parm(" %s=%s", "3dmode", g_julibrot_3d_options[g_julibrot_3d_mode].c_str());
+                put_parm(" %s=%s", "3dmode", g_julibrot_3d_options[g_julibrot_3d_mode]);
             }
         }
         if (g_fractal_type == fractal_type::FORMULA || g_fractal_type == fractal_type::FFORMULA)
@@ -892,8 +892,8 @@ static void write_batch_parms(char const *colorinf, bool colorsonly, int maxcolo
         if (g_fractal_type == fractal_type::INVERSEJULIA || g_fractal_type == fractal_type::INVERSEJULIAFP)
         {
             put_parm(" %s=%s/%s", "miim",
-                     g_jiim_method[static_cast<int>(g_major_method)].c_str(),
-                     g_jiim_left_right[static_cast<int>(g_inverse_julia_minor_method)].c_str());
+                     g_jiim_method[static_cast<int>(g_major_method)],
+                     to_string(g_inverse_julia_minor_method));
         }
 
         strncpy(buf, showtrig().c_str(), NUM_OF(buf));

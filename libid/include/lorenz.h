@@ -38,6 +38,11 @@ extern double                g_orbit_corner_min_y;
 extern long                  g_orbit_interval;
 extern bool                  g_set_orbit_corners;
 
+constexpr const char *to_string(Minor value)
+{
+    return value == Minor::left_first ? "left" : "right";
+}
+
 bool orbit3dlongsetup();
 bool orbit3dfloatsetup();
 int lorenz3dlongorbit(long *, long *, long *);
