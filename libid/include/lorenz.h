@@ -38,6 +38,22 @@ extern double                g_orbit_corner_min_y;
 extern long                  g_orbit_interval;
 extern bool                  g_set_orbit_corners;
 
+constexpr const char *to_string(Major value)
+{
+    switch(value)
+    {
+    default:
+    case Major::breadth_first:
+        return "breadth";
+    case Major::depth_first:
+        return "depth";
+    case Major::random_walk:
+        return "walk";
+    case Major::random_run:
+        return "run";
+    }
+}
+
 constexpr const char *to_string(Minor value)
 {
     return value == Minor::left_first ? "left" : "right";

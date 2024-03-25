@@ -891,9 +891,7 @@ static void write_batch_parms(char const *colorinf, bool colorsonly, int maxcolo
         }
         if (g_fractal_type == fractal_type::INVERSEJULIA || g_fractal_type == fractal_type::INVERSEJULIAFP)
         {
-            put_parm(" %s=%s/%s", "miim",
-                     g_jiim_method[static_cast<int>(g_major_method)],
-                     to_string(g_inverse_julia_minor_method));
+            put_parm(" %s=%s/%s", "miim", to_string(g_major_method), to_string(g_inverse_julia_minor_method));
         }
 
         strncpy(buf, showtrig().c_str(), NUM_OF(buf));

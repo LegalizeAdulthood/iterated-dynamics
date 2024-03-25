@@ -326,15 +326,18 @@ const char *g_julibrot_3d_options[] =
 // JIIM
 #ifdef RANDOM_RUN
 static const char *JIIMstr1{"Breadth first, Depth first, Random Walk, Random Run?"};
-char const *g_jiim_method[] =
-{
-    "breadth", "depth", "walk", "run"
+static char const *s_jiim_method[]{
+    to_string(Major::breadth_first), //
+    to_string(Major::depth_first),   //
+    to_string(Major::random_walk),   //
+    to_string(Major::random_run)     //
 };
 #else
 static const char *JIIMstr1{"Breadth first, Depth first, Random Walk"};
-const char *g_jiim_method[] =
-{
-    "breadth", "depth", "walk"
+static const char *s_jiim_method[]{
+    to_string(Major::breadth_first), //
+    to_string(Major::depth_first),   //
+    to_string(Major::random_walk)    //
 };
 #endif
 static char JIIMstr2[] = "Left first or Right first?";
@@ -342,7 +345,8 @@ static char JIIMstr2[] = "Left first or Right first?";
 static char tstack[4096] = { 0 };
 
 static char const *jiim_left_right_list[]{
-    to_string(Minor::left_first), to_string(Minor::right_first) //
+    to_string(Minor::left_first), //
+    to_string(Minor::right_first) //
 };
 
 // ---------------------------------------------------------------------
@@ -752,7 +756,7 @@ gfp_top:
     {
         choices[promptnum] = JIIMstr1;
         paramvalues[promptnum].type = 'l';
-        paramvalues[promptnum].uval.ch.list = g_jiim_method;
+        paramvalues[promptnum].uval.ch.list = s_jiim_method;
         paramvalues[promptnum].uval.ch.vlen = 7;
 #ifdef RANDOM_RUN
         paramvalues[promptnum].uval.ch.llen = 4;
