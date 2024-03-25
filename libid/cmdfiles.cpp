@@ -40,6 +40,7 @@
 #include "load_params.h"
 #include "lorenz.h"
 #include "make_batch_file.h"
+#include "make_mig.h"
 #include "merge_path_names.h"
 #include "miscovl.h"
 #include "os.h"

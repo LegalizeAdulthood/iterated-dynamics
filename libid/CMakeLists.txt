@@ -144,6 +144,7 @@ add_library(libid
     main_menu_switch.cpp include/main_menu_switch.h
     include/main_state.h
     make_batch_file.cpp include/make_batch_file.h
+    make_mig.cpp include/make_mig.h
     make_path.cpp include/make_path.h
     merge_path_names.cpp include/merge_path_names.h
     miscovl.cpp include/miscovl.h
@@ -426,6 +427,7 @@ source_group("Header Files/ui" FILES
     include/main_menu_switch.h
     include/main_state.h
     include/make_batch_file.h
+    include/make_mig.h
     include/make_path.h
     include/merge_path_names.h
     include/miscovl.h
@@ -507,6 +509,7 @@ source_group("Source Files/ui" FILES
     main_menu.cpp
     main_menu_switch.cpp
     make_batch_file.cpp
+    make_mig.cpp
     make_path.cpp
     merge_path_names.cpp
     miscovl.cpp
