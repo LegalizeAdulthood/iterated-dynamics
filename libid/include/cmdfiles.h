@@ -168,7 +168,6 @@ extern int                   g_color_cycle_range_lo;
 extern std::string           g_color_file;
 extern int                   g_color_state;
 extern bool                  g_colors_preloaded;
-extern std::string           g_command_comment[4];
 extern std::string           g_command_file;
 extern std::string           g_command_name;
 extern fractalspecificstuff *g_cur_fractal_specific;

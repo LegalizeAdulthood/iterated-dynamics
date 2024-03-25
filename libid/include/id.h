@@ -38,7 +38,6 @@ names. So for now humor us and let's keep the names short.
 #define MAX_MAX_LINE_LENGTH  128    // upper limit for g_max_line_length for PARs
 #define MIN_MAX_LINE_LENGTH  40     // lower limit for g_max_line_length for PARs
 #define MSG_LEN 80                  // handy buffer size for messages
-#define MAX_COMMENT_LEN 57          // length of par comments
 #define MAX_PARAMS 10               // maximum number of parameters
 #define MAX_PIXELS   32767          // Maximum pixel count across/down the screen
 #define OLD_MAX_PIXELS 2048         // Limit of some old fixed arrays

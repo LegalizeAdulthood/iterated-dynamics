@@ -89,6 +89,7 @@ add_library(libid
     bailout_formula.cpp include/bailout_formula.h
     check_orbit_name.cpp include/check_orbit_name.h
     check_write_file.cpp include/check_write_file.h
+    comments.cpp include/comments.h
     convert_center_mag.cpp include/convert_center_mag.h
     convert_corners.cpp include/convert_corners.h
     include/choice_builder.h
@@ -369,6 +370,7 @@ source_group("Header Files/ui" FILES
     include/check_orbit_name.h
     include/check_write_file.h
     include/choice_builder.h
+    include/comments.h
     include/convert_center_mag.h
     include/convert_corners.h
     include/dir_file.h
@@ -453,6 +455,7 @@ source_group("Source Files/ui" FILES
     bailout_formula.cpp
     check_orbit_name.cpp
     check_write_file.cpp
+    comments.cpp
     convert_center_mag.cpp
     convert_corners.cpp
     dir_file.cpp

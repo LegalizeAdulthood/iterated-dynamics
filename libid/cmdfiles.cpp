@@ -11,6 +11,7 @@
 #include "calcfrac.h"
 #include "calc_frac_init.h"
 #include "check_orbit_name.h"
+#include "comments.h"
 #include "convert_corners.h"
 #include "do_pause.h"
 #include "drivers.h"
@@ -200,7 +201,6 @@ std::string g_l_system_filename;                  // file to find (type=)L-Syste
 std::string g_l_system_name;                      // Name of L-System
 std::string g_command_file;                // file to find command sets in
 std::string g_command_name;                // Name of Command set
-std::string g_command_comment[4];          // comments for command set
 std::string g_ifs_filename;                // file to find (type=)IFS in
 std::string g_ifs_name;                    // Name of the IFS def'n (if not null)
 id::SearchPath g_search_for;
@@ -468,10 +468,7 @@ static void initvars_restart()          // <ins> key init
     g_l_system_name = "";
     g_command_file = "fractint.par";
     g_command_name = "";
-    for (auto &elem : g_command_comment)
-    {
-        elem.clear();
-    }
+    clear_command_comments();
     g_ifs_filename = "fractint.ifs";
     g_ifs_name = "";
     reset_ifs_defn();
@@ -655,10 +652,7 @@ static int cmdfile(std::FILE *handle, cmd_file mode)
         while ((i = getc(handle)) != '{' && i != EOF)
         {
         }
-        for (auto &elem : g_command_comment)
-        {
-            elem.clear();
-        }
+        clear_command_comments();
     }
     linebuf[0] = 0;
     while (next_command(cmdbuf, 10000, handle, linebuf, &lineoffset, mode) > 0)
@@ -726,7 +720,7 @@ static int next_command(
                         {
                             *(lineptr+MAX_COMMENT_LEN-1) = 0;
                         }
-                        for (auto &elem : g_command_comment)
+                        for (std::string &elem : g_command_comment)
                         {
                             if (elem.empty())
                             {

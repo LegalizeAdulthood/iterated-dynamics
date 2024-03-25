@@ -40,8 +40,6 @@ static void update_id_cfg();
 
 bool g_is_true_color = false;
 
-static char par_comment[4][MAX_COMMENT_LEN];
-
 // JIIM
 
 #define PAR_KEY(x)  ( x < 10 ? '0' + x : 'a' - 10 + x)
@@ -655,45 +653,5 @@ void make_mig(unsigned int xmult, unsigned int ymult)
     if (errorflag == 0 && inputerrorflag == 0)
     {
         std::printf("File %s has been created (and its component files deleted)\n", gifout);
-    }
-}
-
-// extract comments from the comments= command
-void parse_comments(char *value)
-{
-    for (auto &elem : par_comment)
-    {
-        char save = '\0';
-        if (*value == 0)
-        {
-            break;
-        }
-        char *next = std::strchr(value, '/');
-        if (*value != '/')
-        {
-            if (next != nullptr)
-            {
-                save = *next;
-                *next = '\0';
-            }
-            std::strncpy(elem, value, MAX_COMMENT_LEN);
-        }
-        if (next == nullptr)
-        {
-            break;
-        }
-        if (save != '\0')
-        {
-            *next = save;
-        }
-        value = next+1;
-    }
-}
-
-void init_comments()
-{
-    for (auto &elem : par_comment)
-    {
-        elem[0] = '\0';
     }
 }
