@@ -349,29 +349,11 @@ void normalineread(int y, int x, int lastx, BYTE *pixels)
     }
 }
 
-#if defined(USE_DRIVER_FUNCTIONS)
 void set_normal_dot()
 {
     dotwrite = driver_write_pixel;
     dotread = driver_read_pixel;
 }
-#else
-static void driver_dot_write(int x, int y, int color)
-{
-    driver_write_pixel(x, y, color);
-}
-
-static int driver_dot_read(int x, int y)
-{
-    return driver_read_pixel(x, y);
-}
-
-void set_normal_dot()
-{
-    dotwrite = driver_dot_write;
-    dotread = driver_dot_read;
-}
-#endif
 
 void set_disk_dot()
 {
