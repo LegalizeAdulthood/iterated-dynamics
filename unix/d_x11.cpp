@@ -2610,7 +2610,6 @@ x11_shell(Driver * /*drv*/)
 ; Unix: We ignore ax,bx,cx,dx.  dotmode is the "mode" field in the video
 ; table.  We use mode 19 for the X window.
 */
-extern void set_normal_line();
 static void
 x11_set_video_mode(Driver *drv, VIDEOINFO *mode)
 {
@@ -2624,7 +2623,6 @@ x11_set_video_mode(Driver *drv, VIDEOINFO *mode)
         break;
 
     case 19: // X window
-        set_normal_line();
         x11_start_video(drv);
         x11_set_for_graphics(drv);
         break;

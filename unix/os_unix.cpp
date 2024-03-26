@@ -30,7 +30,3 @@ void init_failure(char const *message)
 {
     std::fputs(message, stderr);
 }
-
-void set_normal_line()
-{
-}
