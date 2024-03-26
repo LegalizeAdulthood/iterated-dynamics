@@ -26,6 +26,7 @@
 #include "main_menu.h"
 #include "main_menu_switch.h"
 #include "os.h"
+#include "out_line.h"
 #include "rotate.h"
 #include "spindac.h"
 #include "stop_msg.h"

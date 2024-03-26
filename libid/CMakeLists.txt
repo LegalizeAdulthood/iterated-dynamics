@@ -184,6 +184,7 @@ add_library(libid
     include/is_directory.h
     include/lsys.h
     include/mpmath.h
+    include/out_line.h
     include/prototyp.h
     include/put_color_a.h
     include/stack_avail.h

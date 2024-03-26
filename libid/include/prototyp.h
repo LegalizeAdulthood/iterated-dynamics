@@ -19,4 +19,3 @@ typedef unsigned long uclock_t;
 uclock_t usec_clock();
 void restart_uclock();
 int getcolor(int, int);
-int out_line(BYTE *, int);

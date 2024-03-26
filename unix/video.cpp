@@ -5,6 +5,7 @@
 #include "cmdfiles.h"
 #include "drivers.h"
 #include "id_data.h"
+#include "out_line.h"
 #include "put_color_a.h"
 #include "rotate.h"
 #include "spindac.h"
