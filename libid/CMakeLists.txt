@@ -84,6 +84,7 @@ add_library(libid
     mpmath_c.cpp include/mpmath_c.h
 
     drivers.cpp
+    get_disk_space.cpp include/get_disk_space.h
     memory.cpp include/memory.h
 
     abort_msg.cpp include/abort_msg.h
@@ -362,10 +363,12 @@ source_group("Source Files/math" FILES
 )
 source_group("Header Files/plumbing" FILES
     include/drivers.h
+    include/get_disk_space.h
     include/memory.h
 )
 source_group("Source Files/plumbing" FILES
     drivers.cpp
+    get_disk_space.cpp
     memory.cpp
 )
 source_group("Header Files/ui" FILES

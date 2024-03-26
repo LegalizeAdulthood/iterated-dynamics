@@ -183,24 +183,6 @@ uclock_t usec_clock()
     return result;
 }
 
-unsigned long get_disk_space()
-{
-    ULARGE_INTEGER space;
-    unsigned long result = 0;
-    if (GetDiskFreeSpaceEx(nullptr, &space, nullptr, nullptr))
-    {
-        if (space.HighPart)
-        {
-            result = ~0UL;
-        }
-        else
-        {
-            result = space.LowPart;
-        }
-    }
-    return result;
-}
-
 typedef BOOL MiniDumpWriteDumpProc(HANDLE process, DWORD pid, HANDLE file, MINIDUMP_TYPE dumpType,
                                    PMINIDUMP_EXCEPTION_INFORMATION exceptions,
                                    PMINIDUMP_USER_STREAM_INFORMATION user,

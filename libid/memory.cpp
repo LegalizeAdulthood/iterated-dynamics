@@ -7,6 +7,7 @@
 #include "dir_file.h"
 #include "diskvid.h"
 #include "drivers.h"
+#include "get_disk_space.h"
 #include "goodbye.h"
 #include "line3d.h"
 #include "stop_msg.h"
@@ -225,8 +226,6 @@ static int CheckBounds(long start, long length, U16 handle)
     }
     return 0;
 }
-
-unsigned long get_disk_space();
 
 void DisplayMemory()
 {
