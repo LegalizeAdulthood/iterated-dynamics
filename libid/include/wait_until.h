@@ -1,5 +1,5 @@
 #pragma once
 
-void wait_until(int index, uclock_t wait_time);
-void sleepms(long);
+void wait_until(int index, unsigned long wait_time);
+void sleepms(long ms);
 void reset_clock();
