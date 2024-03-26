@@ -15,12 +15,6 @@
 #include <cstring>
 #include <string>
 
-unsigned long get_disk_space()
-{
-    // TODO
-    return 0x7FFFFFFF;
-}
-
 void init_failure(char const *message)
 {
     std::fputs(message, stderr);
