@@ -105,85 +105,11 @@ setnullvideo()
 {
 }
 
-#if 0
-void
-putprompt()
-{
-    wclear(curwin);       // ????
-    putstring(0, 0, 0, "Press operation key, or <Esc> to return to Main Menu");
-    wrefresh(curwin);
-    return;
-}
-#endif
-
 void
 loaddac()
 {
     readvideopalette();
 }
-
-/*
-; **************** Function setvideomode(ax, bx, cx, dx) ****************
-;       This function sets the (alphanumeric or graphic) video mode
-;       of the monitor.   Called with the proper values of AX thru DX.
-;       No returned values, as there is no particular standard to
-;       adhere to in this case.
-
-;       (SPECIAL "TWEAKED" VGA VALUES:  if AX==BX==CX==0, assume we have a
-;       genuine VGA or register compatable adapter and program the registers
-;       directly using the coded value in DX)
-
-; Unix: We ignore ax,bx,cx,dx.  dotmode is the "mode" field in the video
-; table.  We use mode 19 for the X window.
-*/
-
-#if 0
-void
-setvideomode(int ax, int bx, int cx, int dx)
-{
-    if (g_disk_flag)
-    {
-        enddisk();
-    }
-    if (videoflag)
-    {
-        endvideo();
-        videoflag = 0;
-    }
-    g_good_mode = true;
-    switch (g_dot_mode)
-    {
-    case 0:         // text
-        clear();
-        /*
-           touchwin(curwin);
-         */
-        wrefresh(curwin);
-        break;
-    case 11:
-        startdisk();
-        break;
-    case 19:            // X window
-        putprompt();
-        videoflag = 1;
-        startvideo();
-        setforgraphics();
-        break;
-    default:
-        std::printf("Bad mode %d\n", g_dot_mode);
-        exit(-1);
-    }
-    if (g_dot_mode != 0)
-    {
-        loaddac();
-        g_and_color = g_colors - 1;
-        g_box_count = 0;
-    }
-    g_vesa_x_res = g_screen_x_dots;
-    g_vesa_y_res = g_screen_y_dots;
-}
-#endif
-
 
 /*
 ; **************** Function getcolor(xdot, ydot) *******************
@@ -207,131 +133,6 @@ putcolor_a(int xdot, int ydot, int color)
 }
 
 /*
-; **************** Function movecursor(row, col)  **********************
-
-;       Move the cursor (called before printfs)
-*/
-#if 0
-void
-movecursor(int row, int col)
-{
-    if (row == -1)
-    {
-        row = g_text_row;
-    }
-    else
-    {
-        g_text_row = row;
-    }
-    if (col == -1)
-    {
-        col = g_text_col;
-    }
-    else
-    {
-        g_text_col = col;
-    }
-    wmove(curwin, row, col);
-}
-#endif
-
-/*
-; **************** Function keycursor(row, col)  **********************
-
-;       Subroutine to wait cx ticks, or till keystroke pending
-*/
-#if 0
-int
-keycursor(int row, int col)
-{
-    movecursor(row, col);
-    wrefresh(curwin);
-    waitkeypressed(0);
-    return getakey();
-}
-#endif
-
-/*
-; PUTSTR.asm puts a string directly to video display memory. Called from C by:
-;    putstring(row, col, attr, string) where
-;         row, col = row and column to start printing.
-;         attr = color attribute.
-;         string = far pointer to the null terminated string to print.
-*/
-#if 0
-void
-putstring(int row, int col, int attr, char const *msg)
-{
-    int so = 0;
-
-    if (row != -1)
-        g_text_row = row;
-    if (col != -1)
-        g_text_col = col;
-
-    if (attr & INVERSE || attr & BRIGHT)
-    {
-        wstandout(curwin);
-        so = 1;
-    }
-    wmove(curwin, g_text_row + g_text_rbase, g_text_col + g_text_cbase);
-    while (1)
-    {
-        if (*msg == '\0')
-            break;
-        if (*msg == '\n')
-        {
-            g_text_col = 0;
-            g_text_row++;
-            wmove(curwin, g_text_row + g_text_rbase, g_text_col + g_text_cbase);
-        }
-        else
-        {
-            char const *ptr;
-            ptr = std::strchr(msg, '\n');
-            if (ptr == nullptr)
-            {
-                waddstr(curwin, msg);
-                break;
-            }
-            else
-            {
-                waddch(curwin, *msg);
-            }
-        }
-        msg++;
-    }
-    if (so)
-    {
-        wstandend(curwin);
-    }
-
-    wrefresh(curwin);
-    fflush(stdout);
-    getyx(curwin, g_text_row, g_text_col);
-    g_text_row -= g_text_rbase;
-    g_text_col -= g_text_cbase;
-}
-#endif
-
-/*
-; ************* Function scrollup(toprow, botrow) ******************
-
-;       Scroll the screen up (from toprow to botrow)
-*/
-#if 0
-void
-scrollup(int top, int bot)
-{
-    wmove(curwin, top, 0);
-    wdeleteln(curwin);
-    wmove(curwin, bot, 0);
-    winsertln(curwin);
-    wrefresh(curwin);
-}
-#endif
-
-/*
 ; ---- Help (Video) Support
 ; ********* Functions setfortext() and setforgraphics() ************
 
@@ -343,15 +144,6 @@ void
 setfortext()
 {
 }
-
-#if 0
-void
-setclear()
-{
-    wclear(curwin);
-    wrefresh(curwin);
-}
-#endif
 
 void
 setforgraphics()

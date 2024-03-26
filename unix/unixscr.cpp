@@ -153,72 +153,6 @@ static int mousefkey[4][4] /* [button][dir] */ = {
     {FIK_CTL_END, FIK_CTL_HOME, FIK_CTL_PAGE_DOWN, FIK_CTL_PAGE_UP}
 };
 
-#if 0
-/*
- *----------------------------------------------------------------------
- *
- * UnixInit --
- *
- *  Initialize the windows and stuff.
- *
- * Results:
- *  None.
- *
- * Side effects:
- *  Initializes windows.
- *
- *----------------------------------------------------------------------
- */
-void
-UnixInit()
-{
-    /*
-     * Check a bunch of important conditions
-     */
-    if (sizeof(short) != 2)
-    {
-        std::fprintf(stderr, "Error: need short to be 2 bytes\n");
-        exit(-1);
-    }
-    if (sizeof(long) < sizeof(FLOAT4))
-    {
-        std::fprintf(stderr, "Error: need sizeof(long)>=sizeof(FLOAT4)\n");
-        exit(-1);
-    }
-
-    initscr();
-    curwin = stdscr;
-    cbreak();
-    noecho();
-
-    if (standout())
-    {
-        standend();
-    }
-
-    initdacbox();
-
-    if (!simple_input)
-    {
-        std::signal(SIGINT, (SignalHandler)goodbye);
-    }
-    std::signal(SIGFPE, fpe_handler);
-    /*
-    std::signal(SIGTSTP, goodbye);
-    */
-#ifdef FPUERR
-    std::signal(SIGABRT, SIG_IGN);
-    /*
-        setup the IEEE-handler to forget all common ( invalid,
-        divide by zero, overflow ) signals. Here we test, if
-        such ieee trapping is supported.
-    */
-    if (ieee_handler("set", "common", continue_hdl) != 0)
-        std::printf("ieee trapping not supported here \n");
-#endif
-}
-#endif
-
 /*
  *----------------------------------------------------------------------
  *
@@ -238,20 +172,6 @@ UnixInit()
 void
 UnixDone()
 {
-#if 0
-    if (!unixDisk)
-    {
-        doneXwindow();
-    }
-    if (!simple_input)
-    {
-        fcntl(0, F_SETFL, old_fcntl);
-    }
-    mvcur(0, COLS-1, LINES-1, 0);
-    nocbreak();
-    echo();
-    endwin();
-#endif
 }
 
 /*
@@ -2299,91 +2219,6 @@ xgetfont()
 
     return fontPtr;
 }
-
-#if 0
-/*
- *----------------------------------------------------------------------
- *
- * shell_to_dos --
- *
- *  Exit to a unix shell.
- *
- * Results:
- *  None.
- *
- * Side effects:
- *  Goes to shell
- *
- *----------------------------------------------------------------------
- */
-#define SHELL "/bin/csh"
-void
-shell_to_dos()
-{
-    SignalHandler sigint;
-    char *shell;
-    char *argv[2];
-    int pid, donepid;
-
-    sigint = (SignalHandler)std::signal(SIGINT, SIG_IGN);
-    shell = getenv("SHELL");
-    if (shell == nullptr)
-    {
-        shell = const_cast<char *>(SHELL);
-    }
-    argv[0] = shell;
-    argv[1] = nullptr;
-
-    // Clean up the window
-
-    if (!simple_input)
-    {
-        fcntl(0, F_SETFL, old_fcntl);
-    }
-    mvcur(0, COLS-1, LINES-1, 0);
-    nocbreak();
-    echo();
-    endwin();
-
-    // Fork the shell
-
-    pid = fork();
-    if (pid < 0)
-    {
-        perror("fork to shell");
-    }
-    if (pid == 0)
-    {
-        execvp(shell, argv);
-        perror("fork to shell");
-        exit(1);
-    }
-
-    // Wait for the shell to finish
-
-    while (1)
-    {
-        donepid = wait(0);
-        if (donepid < 0 || donepid == pid)
-            break;
-    }
-
-    // Go back to curses mode
-
-    initscr();
-    curwin = stdscr;
-    cbreak();
-    noecho();
-    if (!simple_input)
-    {
-        old_fcntl = fcntl(0, F_GETFL);
-        fcntl(0, F_SETFL, FNDELAY);
-    }
-
-    std::signal(SIGINT, (SignalHandler)sigint);
-    putchar('\n');
-}
-#endif
 
 /*
  *----------------------------------------------------------------------
