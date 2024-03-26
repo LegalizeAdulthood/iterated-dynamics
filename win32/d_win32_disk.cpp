@@ -12,6 +12,7 @@
 #include "id_data.h"
 #include "os.h"
 #include "plot3d.h"
+#include "put_color_a.h"
 #include "rotate.h"
 #include "spindac.h"
 #include "video_mode.h"

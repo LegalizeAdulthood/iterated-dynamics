@@ -20,4 +20,3 @@ uclock_t usec_clock();
 void restart_uclock();
 int getcolor(int, int);
 int out_line(BYTE *, int);
-void putcolor_a(int, int, int);

@@ -43,6 +43,7 @@
 #include "orbit.h"
 #include "parser.h"
 #include "pixel_grid.h"
+#include "put_color_a.h"
 #include "resume.h"
 #include "soi.h"
 #include "sound.h"

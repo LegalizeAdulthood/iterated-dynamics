@@ -13,6 +13,7 @@
 #include "init_failure.h"
 #include "make_path.h"
 #include "mpmath.h"
+#include "put_color_a.h"
 #include "rotate.h"
 #include "stack_avail.h"
 #include "zoom.h"
