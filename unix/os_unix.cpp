@@ -31,7 +31,6 @@ void init_failure(char const *message)
     std::fputs(message, stderr);
 }
 
-extern void (*linewrite)(int y, int x, int lastx, BYTE *pixels);     // write-a-line routine
 extern void (*lineread)(int y, int x, int lastx, BYTE *pixels);      // read-a-line routine
 
 void normalineread(int y, int x, int lastx, BYTE *pixels)

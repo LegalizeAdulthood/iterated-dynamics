@@ -27,7 +27,6 @@ extern int waitkeypressed(int);
 bool g_fake_lut = false;
 int dacnorm = 0;
 int ShadowColors;
-void (*linewrite)(int y, int x, int lastx, BYTE const *pixels);        // write-a-line routine
 void (*lineread)(int y, int x, int lastx, BYTE *pixels);         // read-a-line routine
 
 int videoflag = 0;      // special "your-own-video" flag
@@ -169,7 +168,6 @@ setvideomode(int ax, int bx, int cx, int dx)
     case 19:            // X window
         putprompt();
         lineread = readvideoline;
-        linewrite = writevideoline;
         videoflag = 1;
         startvideo();
         setforgraphics();
@@ -478,7 +476,6 @@ put_line(int row, int startcol, int stopcol, BYTE const *pixels)
 {
     if (startcol + g_logical_screen_x_offset >= g_screen_x_dots || row + g_logical_screen_y_offset > g_screen_y_dots)
         return;
-    linewrite(row + g_logical_screen_y_offset, startcol + g_logical_screen_x_offset, stopcol + g_logical_screen_x_offset, pixels);
 }
 
 /*
@@ -493,7 +490,6 @@ out_line(BYTE *pixels, int linelen)
 {
     if (g_row_count + g_logical_screen_y_offset >= g_screen_y_dots)
         return 0;
-    linewrite(g_row_count + g_logical_screen_y_offset, g_logical_screen_x_offset, linelen + g_logical_screen_x_offset - 1, pixels);
     g_row_count++;
     return 0;
 }
