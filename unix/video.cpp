@@ -169,7 +169,6 @@ setvideomode(int ax, int bx, int cx, int dx)
         startdisk();
         dotread = readdisk;
         lineread = normalineread;
-        linewrite = normaline;
         break;
     case 19:            // X window
         putprompt();

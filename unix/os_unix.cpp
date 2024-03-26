@@ -35,10 +35,6 @@ extern int (*dotread)(int, int);    // read-a-dot routine
 extern void (*linewrite)(int y, int x, int lastx, BYTE *pixels);     // write-a-line routine
 extern void (*lineread)(int y, int x, int lastx, BYTE *pixels);      // read-a-line routine
 
-void normaline(int y, int x, int lastx, BYTE *pixels)
-{
-}
-
 void normalineread(int y, int x, int lastx, BYTE *pixels)
 {
     int width = lastx - x + 1;
@@ -52,5 +48,4 @@ void normalineread(int y, int x, int lastx, BYTE *pixels)
 void set_normal_line()
 {
     lineread = normalineread;
-    linewrite = normaline;
 }
