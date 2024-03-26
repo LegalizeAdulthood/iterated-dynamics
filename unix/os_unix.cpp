@@ -31,13 +31,10 @@ void init_failure(char const *message)
     std::fputs(message, stderr);
 }
 
-extern void (*lineread)(int y, int x, int lastx, BYTE *pixels);      // read-a-line routine
-
 void normalineread(int y, int x, int lastx, BYTE *pixels)
 {
 }
 
 void set_normal_line()
 {
-    lineread = normalineread;
 }
