@@ -184,6 +184,7 @@ add_library(libid
     include/lsys.h
     include/mpmath.h
     include/prototyp.h
+    include/stack_avail.h
 )
 
 source_group("Header Files/3d" FILES

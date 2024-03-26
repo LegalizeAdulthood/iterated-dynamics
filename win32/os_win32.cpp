@@ -14,6 +14,7 @@
 #include "make_path.h"
 #include "mpmath.h"
 #include "rotate.h"
+#include "stack_avail.h"
 #include "zoom.h"
 
 #include <direct.h>

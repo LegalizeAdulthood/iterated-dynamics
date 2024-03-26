@@ -14,6 +14,7 @@ if(NOT CMAKE_SYSTEM_NAME STREQUAL "Windows")
         x11_text.cpp
         x11_plot.cpp
         general.cpp
+        stack_avail.cpp
         unixscr.cpp
         video.cpp)
     target_link_libraries(os PUBLIC help_defs os_hc X11 m)

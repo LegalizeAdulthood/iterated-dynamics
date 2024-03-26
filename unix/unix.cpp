@@ -23,26 +23,6 @@
 /*
  *----------------------------------------------------------------------
  *
- * stackavail --
- *
- *      Returns amout of stack available.
- *
- * Results:
- *      Available stack.
- *
- * Side effects:
- *      None.
- *
- *----------------------------------------------------------------------
- */
-long stackavail()
-{
-    return 8192;
-}
-
-/*
- *----------------------------------------------------------------------
- *
  * stricmp --
  *
  *      Compare strings, ignoring case.
