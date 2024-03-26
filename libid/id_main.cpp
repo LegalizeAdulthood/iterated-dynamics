@@ -16,6 +16,7 @@
 #include "get_cmd_string.h"
 #include "get_commands.h"
 #include "get_fract_type.h"
+#include "get_sound_params.h"
 #include "get_toggles.h"
 #include "get_toggles2.h"
 #include "get_view_params.h"

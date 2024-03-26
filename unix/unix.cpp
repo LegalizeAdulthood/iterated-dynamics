@@ -155,12 +155,6 @@ int filelength(int fd)
     return buf.st_size;
 }
 
-// sound.c file prototypes
-int get_sound_params()
-{
-    return 0;
-}
-
 // tenths of millisecond timer routine
 static struct timeval tv_start;
 

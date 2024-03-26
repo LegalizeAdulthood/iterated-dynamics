@@ -141,13 +141,6 @@ long stackavail()
     return WIN32_STACK_SIZE - (long)(((char *) g_tos) - &junk);
 }
 
-int get_sound_params()
-{
-    // TODO
-    _ASSERTE(FALSE);
-    return 0;
-}
-
 /*
 ; long readticker() returns current bios ticker value
 */

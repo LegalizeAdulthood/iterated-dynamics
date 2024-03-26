@@ -128,6 +128,7 @@ add_library(libid
     get_key_no_help.cpp include/get_key_no_help.h
     get_prec_big_float.cpp include/get_prec_big_float.h
     get_rds_params.cpp include/get_rds_params.h
+    get_sound_params.cpp include/get_sound_params.h
     get_toggles.cpp include/get_toggles.h
     get_toggles2.cpp include/get_toggles2.h
     get_view_params.cpp include/get_view_params.h
@@ -415,6 +416,7 @@ source_group("Header Files/ui" FILES
     include/get_key_no_help.h
     include/get_prec_big_float.h
     include/get_rds_params.h
+    include/get_sound_params.h
     include/get_toggles.h
     include/get_toggles2.h
     include/get_view_params.h
@@ -503,6 +505,7 @@ source_group("Source Files/ui" FILES
     get_key_no_help.cpp
     get_prec_big_float.cpp
     get_rds_params.cpp
+    get_sound_params.cpp
     get_toggles.cpp
     get_toggles2.cpp
     get_view_params.cpp
