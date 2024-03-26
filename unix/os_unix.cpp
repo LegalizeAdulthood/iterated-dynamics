@@ -31,18 +31,11 @@ void init_failure(char const *message)
     std::fputs(message, stderr);
 }
 
-extern int (*dotread)(int, int);    // read-a-dot routine
 extern void (*linewrite)(int y, int x, int lastx, BYTE *pixels);     // write-a-line routine
 extern void (*lineread)(int y, int x, int lastx, BYTE *pixels);      // read-a-line routine
 
 void normalineread(int y, int x, int lastx, BYTE *pixels)
 {
-    int width = lastx - x + 1;
-    assert(dotread);
-    for (int i = 0; i < width; i++)
-    {
-        pixels[i] = (*dotread)(x + i, y);
-    }
 }
 
 void set_normal_line()

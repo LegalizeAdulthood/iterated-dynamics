@@ -27,8 +27,6 @@ extern int waitkeypressed(int);
 bool g_fake_lut = false;
 int dacnorm = 0;
 int ShadowColors;
-// write-a-dot routine
-int (*dotread)(int, int);   // read-a-dot routine
 void (*linewrite)(int y, int x, int lastx, BYTE const *pixels);        // write-a-line routine
 void (*lineread)(int y, int x, int lastx, BYTE *pixels);         // read-a-line routine
 
@@ -107,7 +105,6 @@ nullread(int a, int b)
 void
 setnullvideo()
 {
-    dotread = nullread;
 }
 
 #if 0
@@ -167,12 +164,10 @@ setvideomode(int ax, int bx, int cx, int dx)
         break;
     case 11:
         startdisk();
-        dotread = readdisk;
         lineread = normalineread;
         break;
     case 19:            // X window
         putprompt();
-        dotread = readvideo;
         lineread = readvideoline;
         linewrite = writevideoline;
         videoflag = 1;
@@ -203,12 +198,7 @@ setvideomode(int ax, int bx, int cx, int dx)
 int
 getcolor(int xdot, int ydot)
 {
-    int x1, y1;
-    x1 = xdot + g_logical_screen_x_offset;
-    y1 = ydot + g_logical_screen_y_offset;
-    if (x1 < 0 || y1 < 0 || x1 >= g_screen_x_dots || y1 >= g_screen_y_dots)
         return 0;
-    return dotread(x1, y1);
 }
 
 /*
