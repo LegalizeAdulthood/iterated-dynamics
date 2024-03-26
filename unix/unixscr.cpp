@@ -981,10 +981,8 @@ writevideoline(int y, int x, int lastx, BYTE const *pixels)
 
     drawing_or_drawn = 1;
 
-#if 1
     if (x == lastx)
     {
-        writevideo(x, y, pixels[0]);
         return;
     }
     width = lastx-x+1;
@@ -1019,13 +1017,6 @@ writevideoline(int y, int x, int lastx, BYTE const *pixels)
             XPutImage(Xdp, Xpixmap, Xgc, Ximage, x, y, x, y, width, 1);
         }
     }
-#else
-    width = lastx-x+1;
-    for (int i = 0; i < width; i++)
-    {
-        writevideo(x+i, y, (int)pixels[i]);
-    }
-#endif
 }
 /*
  *----------------------------------------------------------------------
@@ -1049,56 +1040,6 @@ readvideoline(int y, int x, int lastx, BYTE *pixels)
     for (int i = 0; i < width; i++)
     {
         pixels[i] = (BYTE)readvideo(x+i, y);
-    }
-}
-
-/*
- *----------------------------------------------------------------------
- *
- * writevideo --
- *
- *  Write a point to the screen
- *
- * Results:
- *  None.
- *
- * Side effects:
- *  Draws point.
- *
- *----------------------------------------------------------------------
- */
-void writevideo(int x, int y, int color)
-{
-#ifdef DEBUG // Debugging checks
-    if (color >= g_colors || color < 0)
-    {
-        std::fprintf(stderr, "Color %d too big %d\n", color, g_colors);
-    }
-    if (x >= g_screen_x_dots || x < 0 || y >= g_screen_y_dots || y < 0)
-    {
-        std::fprintf(stderr, "Bad coord %d %d\n", x, y);
-    }
-#endif
-    if (xlastcolor != color)
-    {
-        XSetForeground(Xdp, Xgc, FAKE_LUT(pixtab[color]));
-        xlastcolor = color;
-    }
-    XPutPixel(Ximage, x, y, FAKE_LUT(pixtab[color]));
-    if (fastmode == 1 && g_help_mode != help_labels::HELPXHAIR)
-    {
-        if (!alarmon)
-        {
-            schedulealarm(0);
-        }
-    }
-    else
-    {
-        XDrawPoint(Xdp, Xw, Xgc, x, y);
-        if (onroot)
-        {
-            XDrawPoint(Xdp, Xpixmap, Xgc, x, y);
-        }
     }
 }
 
