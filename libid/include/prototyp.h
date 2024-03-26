@@ -22,7 +22,6 @@ void setnullvideo();
 typedef unsigned long uclock_t;
 uclock_t usec_clock();
 void restart_uclock();
-void init_failure(char const *message);
 long stackavail();
 int getcolor(int, int);
 int out_line(BYTE *, int);

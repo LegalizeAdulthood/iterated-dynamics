@@ -9,6 +9,7 @@ if(NOT CMAKE_SYSTEM_NAME STREQUAL "Windows")
 
     add_library(os STATIC
         d_x11.cpp
+        init_failure.cpp
         x11_frame.cpp
         x11_text.cpp
         x11_plot.cpp

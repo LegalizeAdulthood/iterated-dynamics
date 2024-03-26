@@ -41,6 +41,7 @@
 #include <cstring>
 #include <ctime>
 #include <helpcom.h>
+#include <init_failure.h>
 #include <string>
 
 VIDEOINFO g_video_entry;

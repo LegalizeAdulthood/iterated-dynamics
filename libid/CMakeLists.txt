@@ -364,6 +364,7 @@ source_group("Source Files/math" FILES
 source_group("Header Files/plumbing" FILES
     include/drivers.h
     include/get_disk_space.h
+    include/init_failure.h
     include/memory.h
 )
 source_group("Source Files/plumbing" FILES

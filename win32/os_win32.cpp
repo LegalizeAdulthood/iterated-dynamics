@@ -10,6 +10,7 @@
 #include "id.h"
 #include "helpdefs.h"
 #include "id_data.h"
+#include "init_failure.h"
 #include "make_path.h"
 #include "mpmath.h"
 #include "rotate.h"
