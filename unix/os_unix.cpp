@@ -15,11 +15,6 @@
 #include <cstring>
 #include <string>
 
-// Global variables (yuck!)
-
-// Global variables that should be phased out (old video mode stuff)
-int g_video_vram = 0;
-
 unsigned long get_disk_space()
 {
     // TODO
