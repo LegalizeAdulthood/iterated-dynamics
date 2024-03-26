@@ -8,6 +8,7 @@
 #include "drivers.h"
 #include "fractalp.h"
 #include "framain2.h"
+#include "get_color.h"
 #include "id.h"
 #include "id_data.h"
 

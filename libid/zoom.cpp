@@ -15,6 +15,7 @@
 #include "fractalp.h"
 #include "framain2.h"
 #include "frothy_basin.h"
+#include "get_color.h"
 #include "id_data.h"
 #include "miscfrac.h"
 #include "os.h"

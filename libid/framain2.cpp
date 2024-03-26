@@ -14,6 +14,7 @@
 #include "evolver_menu_switch.h"
 #include "fractalp.h"
 #include "fractype.h"
+#include "get_color.h"
 #include "get_fract_type.h"
 #include "gifview.h"
 #include "goodbye.h"

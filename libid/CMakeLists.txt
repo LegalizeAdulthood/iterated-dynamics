@@ -179,6 +179,7 @@ add_library(libid
     include/cmplx.h
     include/drivers.h
     include/fractype.h
+    include/get_color.h
     include/id.h
     include/id_data.h
     include/is_directory.h

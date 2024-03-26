@@ -15,6 +15,7 @@
 #include "drivers.h"
 #include "field_prompt.h"
 #include "find_special_colors.h"
+#include "get_color.h"
 #include "get_key_no_help.h"
 #include "id_data.h"
 #include "memory.h"

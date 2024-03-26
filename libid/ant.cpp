@@ -12,6 +12,7 @@
 #include "calcfrac.h"
 #include "cmdfiles.h"
 #include "drivers.h"
+#include "get_color.h"
 #include "helpdefs.h"
 #include "id_data.h"
 #include "temp_msg.h"

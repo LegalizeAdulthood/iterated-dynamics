@@ -11,6 +11,7 @@
 #include "cmdfiles.h"
 #include "diskvid.h"
 #include "fractype.h"
+#include "get_color.h"
 #include "id_data.h"
 #include "line3d.h"
 #include "loadmap.h"

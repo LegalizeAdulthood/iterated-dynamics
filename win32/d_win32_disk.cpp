@@ -29,6 +29,7 @@
 #include "ods.h"
 
 #include <cstdio>
+#include <get_color.h>
 
 // read/write-a-dot/line routines
 using t_dotwriter = void(int, int, int);

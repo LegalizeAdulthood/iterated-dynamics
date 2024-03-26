@@ -25,6 +25,7 @@
 #endif
 #include "engine_timer.h"
 #include "extract_filename.h"
+#include "get_color.h"
 #include "goodbye.h"
 #include "parser.h"
 #include "plot3d.h"

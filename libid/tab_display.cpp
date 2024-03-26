@@ -18,6 +18,7 @@
 #include "fractalp.h"
 #include "fractype.h"
 #include "get_calculation_time.h"
+#include "get_color.h"
 #include "get_key_no_help.h"
 #include "help_title.h"
 #include "id_data.h"

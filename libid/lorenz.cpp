@@ -17,6 +17,7 @@
 #include "fractalp.h"
 #include "fractals.h"
 #include "fractype.h"
+#include "get_color.h"
 #include "id_data.h"
 #include "ifs.h"
 #include "jiim.h"

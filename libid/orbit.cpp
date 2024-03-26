@@ -6,6 +6,7 @@
 #include "calcfrac.h"
 #include "cmdfiles.h"
 #include "drivers.h"
+#include "get_color.h"
 #include "id_data.h"
 #include "sound.h"
 #include "wait_until.h"

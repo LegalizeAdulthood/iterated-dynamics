@@ -4,6 +4,7 @@
 #include "calcfrac.h"
 #include "cmdfiles.h"
 #include "drivers.h"
+#include "get_color.h"
 #include "id_data.h"
 #include "out_line.h"
 #include "put_color_a.h"
