@@ -98,11 +98,6 @@ VIDEOINFO x11_video_table[] = {
 
 void setforgraphics();
 
-void
-nullwrite(int a, int b, int c)
-{
-}
-
 int
 nullread(int a, int b)
 {
