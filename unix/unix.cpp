@@ -20,12 +20,6 @@
 #define FILE_MAX_FNAME  9       // max length of filename
 #define FILE_MAX_EXT    5       // max length of extension
 
-// stub
-void
-intdos()
-{
-}
-
 /*
  *----------------------------------------------------------------------
  *
@@ -46,7 +40,6 @@ long stackavail()
     return 8192;
 }
 
-#ifndef HAVESTRI
 /*
  *----------------------------------------------------------------------
  *
@@ -110,7 +103,6 @@ int strnicmp(char const *s1, char const *s2, int numChars)
     }
     return 0;
 }
-#endif
 
 /*
  *----------------------------------------------------------------------
