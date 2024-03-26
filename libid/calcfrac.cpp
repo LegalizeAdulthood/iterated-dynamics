@@ -25,6 +25,7 @@
 #include "cmdfiles.h"
 #include "cmplx.h"
 #include "convert_center_mag.h"
+#include "debug_flags.h"
 #include "diskvid.h"
 #include "drivers.h"
 #include "engine_timer.h"

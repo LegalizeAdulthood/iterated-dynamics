@@ -5,6 +5,7 @@
 
 #include "bailout_formula.h"
 #include "cmdfiles.h"
+#include "debug_flags.h"
 #include "id_data.h"
 #include "mpmath.h"
 #include "newton.h"

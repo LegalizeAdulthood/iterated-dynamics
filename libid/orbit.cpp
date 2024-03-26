@@ -5,6 +5,7 @@
 
 #include "calcfrac.h"
 #include "cmdfiles.h"
+#include "debug_flags.h"
 #include "drivers.h"
 #include "get_color.h"
 #include "id_data.h"

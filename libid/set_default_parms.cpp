@@ -5,6 +5,7 @@
 
 #include "calc_frac_init.h"
 #include "cmdfiles.h"
+#include "debug_flags.h"
 #include "find_extra_param.h"
 #include "fractalp.h"
 #include "id.h"

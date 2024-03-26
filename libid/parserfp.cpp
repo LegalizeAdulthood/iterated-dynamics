@@ -37,6 +37,7 @@
 #include "parser.h"
 
 #include "cmdfiles.h"
+#include "debug_flags.h"
 #include "fractalp.h"
 #include "stop_msg.h"
 

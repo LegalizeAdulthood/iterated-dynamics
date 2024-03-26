@@ -11,6 +11,7 @@
 #include "calcfrac.h"
 #include "calc_frac_init.h"
 #include "cmdfiles.h"
+#include "debug_flags.h"
 #include "drivers.h"
 #include "encoder.h"
 #include "evolve.h"

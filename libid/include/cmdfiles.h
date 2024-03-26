@@ -172,7 +172,6 @@ extern std::string           g_command_file;
 extern std::string           g_command_name;
 extern fractalspecificstuff *g_cur_fractal_specific;
 extern int                   g_cycle_limit;
-extern int                   g_debug_flag;
 extern int                   g_decomp[];
 extern int                   g_bf_digits;
 extern display_3d_modes      g_display_3d;

@@ -83,6 +83,7 @@ add_library(libid
     hcmplx.cpp include/hcmplx.h
     mpmath_c.cpp include/mpmath_c.h
 
+    debug_flags.cpp include/debug_flags.h
     drivers.cpp
     get_disk_space.cpp include/get_disk_space.h
     memory.cpp include/memory.h
@@ -368,12 +369,14 @@ source_group("Source Files/math" FILES
     mpmath_c.cpp
 )
 source_group("Header Files/plumbing" FILES
+    include/debug_flags.h
     include/drivers.h
     include/get_disk_space.h
     include/init_failure.h
     include/memory.h
 )
 source_group("Source Files/plumbing" FILES
+    debug_flags.cpp
     drivers.cpp
     get_disk_space.cpp
     memory.cpp

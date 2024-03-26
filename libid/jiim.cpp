@@ -13,6 +13,7 @@
 
 #include "calcfrac.h"
 #include "cmdfiles.h"
+#include "debug_flags.h"
 #include "diskvid.h"
 #include "drivers.h"
 #include "editpal.h"
@@ -491,9 +492,8 @@ void Jiim(jiim_types which)
     static int rancnt = 0;
     bool actively_computing = true;
     bool first_time = true;
-    int old_debugflag;
 
-    old_debugflag = g_debug_flag;
+    debug_flags old_debugflag = g_debug_flag;
     // must use standard fractal or be calcfroth
     if (g_fractal_specific[static_cast<int>(g_fractal_type)].calctype != standard_fractal
         && g_fractal_specific[static_cast<int>(g_fractal_type)].calctype != calcfroth)

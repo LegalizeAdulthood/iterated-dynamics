@@ -13,6 +13,7 @@
 #include "check_orbit_name.h"
 #include "comments.h"
 #include "convert_corners.h"
+#include "debug_flags.h"
 #include "do_pause.h"
 #include "drivers.h"
 #include "engine_timer.h"
@@ -131,7 +132,6 @@ int     g_distance_estimator_width_factor = 0;
 bool    g_overwrite_file = false;// true if file overwrite allowed
 int     g_sound_flag = 0;          // sound control bitfield... see sound.c for useage
 int     g_base_hertz = 0;          // sound=x/y/x hertz value
-int     g_debug_flag = debug_flags::none; // internal use only - you didn't see this
 int     g_cycle_limit = 0;         // color-rotator upper limit
 int     g_inside_color = 0;             // inside color: 1=blue
 int     g_fill_color = 0;          // fillcolor: -1=normal
@@ -2852,8 +2852,8 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
     if (variable == "debugflag" || variable == "debug")
     {
         // internal use only
-        g_debug_flag = numval;
-        g_timer_flag = (g_debug_flag & debug_flags::benchmark_timer) != 0;       // separate timer flag
+        g_debug_flag = static_cast<debug_flags>(numval);
+        g_timer_flag = (g_debug_flag & debug_flags::benchmark_timer) != debug_flags::none; // separate timer flag
         g_debug_flag &= ~debug_flags::benchmark_timer;
         return CMDARG_NONE;
     }

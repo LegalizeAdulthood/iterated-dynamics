@@ -7,6 +7,7 @@
 #include "calcfrac.h"
 #include "calmanfp.h"
 #include "cmdfiles.h"
+#include "debug_flags.h"
 #include "editpal.h"
 #include "engine_timer.h"
 #include "fractalp.h"

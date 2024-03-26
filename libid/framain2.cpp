@@ -6,6 +6,7 @@
 #include "calcfrac.h"
 #include "calc_frac_init.h"
 #include "cmdfiles.h"
+#include "debug_flags.h"
 #include "decoder.h"
 #include "dir_file.h"
 #include "diskvid.h"

@@ -4,6 +4,7 @@
 #include "prototyp.h"
 
 #include "cmdfiles.h"
+#include "debug_flags.h"
 #include "field_prompt.h"
 #include "helpdefs.h"
 #include "id.h"

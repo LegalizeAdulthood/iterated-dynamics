@@ -6,6 +6,7 @@
 #include "bailout_formula.h"
 #include "calcfrac.h"
 #include "cmdfiles.h"
+#include "debug_flags.h"
 #include "fractalp.h"
 #include "fractals.h"
 #include "fractype.h"

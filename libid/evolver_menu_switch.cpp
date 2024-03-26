@@ -5,6 +5,7 @@
 
 #include "calcfrac.h"
 #include "cmdfiles.h"
+#include "debug_flags.h"
 #include "diskvid.h"
 #include "drivers.h"
 #include "editpal.h"

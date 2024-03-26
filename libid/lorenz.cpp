@@ -12,6 +12,7 @@
 #include "calcfrac.h"
 #include "check_key.h"
 #include "cmdfiles.h"
+#include "debug_flags.h"
 #include "drivers.h"
 #include "encoder.h"
 #include "fractalp.h"

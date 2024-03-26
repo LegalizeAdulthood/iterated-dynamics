@@ -6,6 +6,7 @@
 #include "calcfrac.h"
 #include "cmdfiles.h"
 #include "cmplx.h"
+#include "debug_flags.h"
 #include "fpu087.h"
 #include "fractalp.h"
 #include "fractals.h"

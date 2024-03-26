@@ -11,6 +11,7 @@ Miscellaneous fractal-specific code
 #include "calcfrac.h"
 #include "check_key.h"
 #include "cmdfiles.h"
+#include "debug_flags.h"
 #include "diskvid.h"
 #include "drivers.h"
 #include "engine_timer.h"

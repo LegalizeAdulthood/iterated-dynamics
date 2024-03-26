@@ -3,6 +3,7 @@
 #include "port.h"
 #include "prototyp.h"
 
+#include "debug_flags.h"
 #include "fracsuba.h"
 #include "fractals.h"
 #include "merge_path_names.h"

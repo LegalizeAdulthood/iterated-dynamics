@@ -18,6 +18,7 @@
 
 #include "calcfrac.h"
 #include "cmdfiles.h"
+#include "debug_flags.h"
 #include "drivers.h"
 #include "fractalp.h"
 #include "fractals.h"

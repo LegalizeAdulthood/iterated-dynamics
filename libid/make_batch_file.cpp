@@ -9,6 +9,7 @@
 #include "cmdfiles.h"
 #include "comments.h"
 #include "convert_center_mag.h"
+#include "debug_flags.h"
 #include "dir_file.h"
 #include "drivers.h"
 #include "ends_with_slash.h"
@@ -626,7 +627,7 @@ static int getprec(double a, double b, double c)
     digits = 7;
     if (g_debug_flag >= debug_flags::force_precision_0_digits && g_debug_flag < debug_flags::force_precision_20_digits)
     {
-        digits = g_debug_flag - debug_flags::force_precision_0_digits;
+        digits = +g_debug_flag - +debug_flags::force_precision_0_digits;
     }
     while (diff < 1.0 && digits <= DBL_DIG+1)
     {

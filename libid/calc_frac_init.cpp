@@ -9,6 +9,7 @@
 #include "cmdfiles.h"
 #include "convert_center_mag.h"
 #include "convert_corners.h"
+#include "debug_flags.h"
 #include "fractalb.h"
 #include "fractalp.h"
 #include "get_prec_big_float.h"
