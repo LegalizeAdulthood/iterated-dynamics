@@ -5,9 +5,6 @@
 #ifdef XFRACT
 #include "unixprot.h"
 #else
-#ifdef _WIN32
-#include "winprot.h"
-#endif
 #endif
 void put_line(int row, int startcol, int stopcol, BYTE const *pixels);
 void get_line(int row, int startcol, int stopcol, BYTE *pixels);
