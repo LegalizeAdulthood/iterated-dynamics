@@ -31,10 +31,6 @@ void init_failure(char const *message)
     std::fputs(message, stderr);
 }
 
-void normalineread(int y, int x, int lastx, BYTE *pixels)
-{
-}
-
 void set_normal_line()
 {
 }
