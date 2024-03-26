@@ -188,6 +188,7 @@ add_library(libid
     include/out_line.h
     include/prototyp.h
     include/put_color_a.h
+    include/read_ticker.h
     include/set_null_video.h
     include/stack_avail.h
 )

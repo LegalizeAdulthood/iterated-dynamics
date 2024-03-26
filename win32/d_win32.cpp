@@ -34,6 +34,8 @@
 #include "ods.h"
 #include "plot.h"
 
+#include <read_ticker.h>
+
 
 extern HINSTANCE g_instance;
 

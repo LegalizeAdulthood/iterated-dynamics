@@ -13,6 +13,7 @@
 #include "helpdefs.h"
 #include "id_data.h"
 #include "loadfile.h"
+#include "read_ticker.h"
 #include "slideshw.h"
 #include "tab_display.h"
 

@@ -16,6 +16,7 @@
 #include "mpmath.h"
 #include "out_line.h"
 #include "put_color_a.h"
+#include "read_ticker.h"
 #include "rotate.h"
 #include "stack_avail.h"
 #include "zoom.h"

@@ -20,6 +20,7 @@
 #include "id_data.h"
 #include "memory.h"
 #include "os.h"
+#include "read_ticker.h"
 #include "rotate.h"
 #include "spindac.h"
 #include "zoom.h"

@@ -28,6 +28,7 @@
 #include "main_menu_switch.h"
 #include "os.h"
 #include "out_line.h"
+#include "read_ticker.h"
 #include "rotate.h"
 #include "spindac.h"
 #include "stop_msg.h"
