@@ -1,8 +1,6 @@
 // id.h - common structures and values for the FRACTINT routines
 #pragma once
 
-#include <vector>
-
 #include "big.h"
 
 /* Returns the number of items in an array declared of fixed size, i.e:
