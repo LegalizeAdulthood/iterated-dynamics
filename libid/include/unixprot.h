@@ -42,5 +42,4 @@ void xsync();
  */
 void redrawscreen();
 
-void putprompt();
 void loaddac();
