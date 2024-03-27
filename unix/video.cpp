@@ -34,7 +34,6 @@ int ShadowColors;
 
 int videoflag = 0;      // special "your-own-video" flag
 
-void (*swapsetup)() = nullptr;     // setfortext/graphics setup routine
 int g_row_count = 0;        // row-counter for decoder and out_line
 int video_type = 0;     /* actual video adapter type:
                    0  = type not yet determined
@@ -131,19 +130,6 @@ getcolor(int xdot, int ydot)
 */
 void
 putcolor_a(int xdot, int ydot, int color)
-{
-}
-
-/*
-; ---- Help (Video) Support
-; ********* Functions setfortext() and setforgraphics() ************
-
-;       setfortext() resets the video for text mode and saves graphics data
-;       setforgraphics() restores the graphics mode and data
-;       setclear() clears the screen after setfortext()
-*/
-void
-setfortext()
 {
 }
 
