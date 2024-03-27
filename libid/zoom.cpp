@@ -65,7 +65,6 @@ void calc_corner(bf_t target, bf_t p1, double p2, bf_t p3, double p4, bf_t p5)
 // Zoom-Box color
 int g_box_color = 0;
 
-#ifndef XFRACT
 void dispbox()
 {
     int boxc = (g_colors-1)&g_box_color;
@@ -112,7 +111,6 @@ void clearbox()
         }
     }
 }
-#endif
 
 void drawbox(bool drawit)
 {
