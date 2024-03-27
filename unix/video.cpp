@@ -96,8 +96,6 @@ VIDEOINFO x11_video_table[] = {
     },
 };
 
-void setforgraphics();
-
 int
 nullread(int a, int b)
 {
@@ -147,13 +145,6 @@ putcolor_a(int xdot, int ydot, int color)
 void
 setfortext()
 {
-}
-
-void
-setforgraphics()
-{
-    startvideo();
-    spindac(0, 1);
 }
 
 unsigned char *fontTab = nullptr;
