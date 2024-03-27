@@ -8,3 +8,6 @@ int writevideopalette();
 
 // initializes the graphics window, colormap, etc.
 void initUnixWindow();
+
+// Returns bitmap of an 8x8 font.
+unsigned char *xgetfont();

@@ -16,9 +16,6 @@ int strnicmp(char const *, char const *, int);
 // Checks if the window has been resized, and handles the resize.
 int resizeWindow();
 
-// Returns bitmap of an 8x8 font.
-unsigned char *xgetfont();
-
 // Forces all window events to be processed.
 void xsync();
 

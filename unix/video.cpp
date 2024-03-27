@@ -24,7 +24,6 @@
  * Copyright 1992 Ken Shirriff
  */
 
-extern unsigned char *xgetfont();
 extern int startdisk();
 
 //WINDOW *curwin;
