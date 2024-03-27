@@ -18,6 +18,9 @@
 // TODO: instead of hacking the padding here, adjust the code that reads this structure
 #if defined(_WIN32)
 #pragma pack(push, 1)
+#define ID_PACKED
+#else
+#define ID_PACKED __attribute__((packed))
 #endif
 struct FRACTAL_INFO         // for saving data in GIF file
 {
@@ -142,7 +145,7 @@ struct FRACTAL_INFO         // for saving data in GIF file
     std::int16_t orbit_delay;
     double math_tol[2];
     std::int16_t future[7];     // for stuff we haven't thought of yet
-};
+} ID_PACKED;
 
 struct formula_info         // for saving formula data in GIF file
 {
@@ -155,7 +158,7 @@ struct formula_info         // for saving formula data in GIF file
     std::int16_t uses_p4;
     std::int16_t uses_p5;
     std::int16_t future[6];       // for stuff we haven't thought of, yet
-};
+} ID_PACKED;
 
 struct ext_blk_3
 {
@@ -169,7 +172,7 @@ struct ext_blk_3
     std::int16_t ismand;
     std::int16_t uses_p4;
     std::int16_t uses_p5;
-};
+} ID_PACKED;
 
 /*
  * Note: because big endian machines store structures differently, we have
@@ -188,7 +191,7 @@ struct ORBITS_INFO      // for saving orbits data in a GIF file
     char drawmode;
     char dummy; // need an even number of bytes
     std::int16_t future[74];      // total of 200 bytes
-};
+} ID_PACKED;
 #if defined(_WIN32)
 #pragma pack(pop)
 #endif
