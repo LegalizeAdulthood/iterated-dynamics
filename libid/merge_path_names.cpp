@@ -27,7 +27,7 @@ namespace fs = std::filesystem;
 int merge_pathnames(char *oldfullpath, char const *new_filename, cmd_file mode)
 {
     char newfilename[FILE_MAX_PATH];
-    std::strcpy(newfilename, new_filename);
+    std::strcpy(newfilename, fs::path(new_filename).make_preferred().string().c_str());
 
     // no dot or slash so assume a file
     bool isafile = std::strchr(newfilename, '.') == nullptr
