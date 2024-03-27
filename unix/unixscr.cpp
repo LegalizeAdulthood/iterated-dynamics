@@ -866,66 +866,6 @@ xcmapstuff()
 
     return g_colors;
 }
-/*
- *----------------------------------------------------------------------
- *
- * writevideoline --
- *
- *  Write a line of pixels to the screen.
- *
- * Results:
- *  None.
- *
- * Side effects:
- *  Draws pixels.
- *
- *----------------------------------------------------------------------
- */
-void
-writevideoline(int y, int x, int lastx, BYTE const *pixels)
-{
-    int width;
-    BYTE const *pixline;
-
-    drawing_or_drawn = 1;
-
-    if (x == lastx)
-    {
-        return;
-    }
-    width = lastx-x+1;
-    if (usepixtab)
-    {
-        for (int i = 0; i < width; i++)
-        {
-            pixbuf[i] = pixtab[pixels[i]];
-        }
-        pixline = pixbuf;
-    }
-    else
-    {
-        pixline = pixels;
-    }
-    for (int i = 0; i < width; i++)
-    {
-        XPutPixel(Ximage, x+i, y, FAKE_LUT(pixline[i]));
-    }
-    if (fastmode == 1 && g_help_mode != help_labels::HELPXHAIR)
-    {
-        if (!alarmon)
-        {
-            schedulealarm(0);
-        }
-    }
-    else
-    {
-        XPutImage(Xdp, Xw, Xgc, Ximage, x, y, x, y, width, 1);
-        if (onroot)
-        {
-            XPutImage(Xdp, Xpixmap, Xgc, Ximage, x, y, x, y, width, 1);
-        }
-    }
-}
 
 /*
  *----------------------------------------------------------------------
