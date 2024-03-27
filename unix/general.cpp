@@ -33,20 +33,6 @@
 bool g_inside_help = false;
 
 /*
-; ***************** Function delay(int delaytime) ************************
-;
-;       performs a delay loop for 'delaytime' milliseconds
-*/
-void
-delay(int delaytime)
-{
-    static struct timeval delay;
-    delay.tv_sec = delaytime/1000;
-    delay.tv_usec = (delaytime%1000)*1000;
-    select(0, nullptr, nullptr, nullptr, &delay);
-}
-
-/*
 ; ************** Function tone(int frequency,int delaytime) **************
 ;
 ;       buzzes the speaker with this frequency for this amount of time
