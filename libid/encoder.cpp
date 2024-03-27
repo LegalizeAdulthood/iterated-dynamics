@@ -46,6 +46,7 @@
 #include <cstdio>
 #include <cstring>
 #include <filesystem>
+#include <iterator>
 #include <string>
 
 static bool compress(int rowlimit);
@@ -702,10 +703,7 @@ bool encoder()
             osave_info.oy3rd     = g_orbit_corner_3_y;
             osave_info.keep_scrn_coords = (short) (g_keep_screen_coords ? 1 : 0);
             osave_info.drawmode  = g_draw_mode;
-            for (short &j : osave_info.future)
-            {
-                j = 0;
-            }
+            std::fill(std::begin(osave_info.future), std::end(osave_info.future), 0);
 
             // some big-endian logic for the doubles needed here
             decode_orbits_info(&osave_info, 0);
@@ -825,10 +823,7 @@ static int store_item_name(char const *name)
         fsave_info.uses_p4 = 0;
         fsave_info.uses_p5 = 0;
     }
-    for (short &i : fsave_info.future)
-    {
-        i = 0;
-    }
+    std::fill(std::begin(fsave_info.future), std::end(fsave_info.future), 0);
     // formula/lsys/ifs info block, 003
     put_extend_blk(3, sizeof(fsave_info), (char *) &fsave_info);
     return extend_blk_len(sizeof(fsave_info));
