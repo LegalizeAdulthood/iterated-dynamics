@@ -3,11 +3,6 @@
 
 #include "big.h"
 
-/* Returns the number of items in an array declared of fixed size, i.e:
-    int stuff[100];
-    NUM_OF(stuff) returns 100.
-*/
-#define NUM_OF(ary_) (sizeof(ary_)/sizeof(ary_[0]))
 #define NUM_BOX_POINTS 4096
 
 // these are used to declare arrays for file names

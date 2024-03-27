@@ -41,6 +41,7 @@
 #include "video_mode.h"
 
 #include <algorithm>
+#include <array>
 #include <cctype>
 #include <cfloat>
 #include <cmath>
@@ -384,7 +385,7 @@ skip_UI:
             gotinfile = true;
             if (!is_writable(g_command_file))
             {
-                std::snprintf(buf, NUM_OF(buf), "Can't write %s", g_command_file.c_str());
+                std::snprintf(buf, std::size(buf), "Can't write %s", g_command_file.c_str());
                 stopmsg(STOPMSG_NONE, buf);
                 continue;
             }
@@ -411,7 +412,7 @@ skip_UI:
                     && stricmp(buf2, g_command_name.c_str()) == 0)
                 {
                     // entry with same name
-                    std::snprintf(buf2, NUM_OF(buf2), "File already has an entry named %s\n%s",
+                    std::snprintf(buf2, std::size(buf2), "File already has an entry named %s\n%s",
                     g_command_name.c_str(), g_make_parameter_file ?
                     "... Replacing ..." : "Continue to replace it, Cancel to back out");
                     if (stopmsg(STOPMSG_CANCEL | STOPMSG_INFO_ONLY, buf2))
@@ -475,7 +476,7 @@ skip_UI:
                     PCommandName[w] = 0;
                     {
                         char tmpbuff[20];
-                        std::snprintf(tmpbuff, NUM_OF(tmpbuff), "_%c%c", PAR_KEY(i), PAR_KEY(j));
+                        std::snprintf(tmpbuff, std::size(tmpbuff), "_%c%c", PAR_KEY(i), PAR_KEY(j));
                         std::strcat(PCommandName, tmpbuff);
                     }
                     std::fprintf(parmfile, "%-19s{", PCommandName);
@@ -734,7 +735,7 @@ static void write_batch_parms(char const *colorinf, bool colorsonly, int maxcolo
             put_parm(" %s=%s/%s", "miim", to_string(g_major_method), to_string(g_inverse_julia_minor_method));
         }
 
-        strncpy(buf, showtrig().c_str(), NUM_OF(buf));
+        strncpy(buf, showtrig().c_str(), std::size(buf));
         if (buf[0])
         {
             put_parm(buf);

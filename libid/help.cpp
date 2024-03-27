@@ -18,6 +18,7 @@
 
 #include <fcntl.h>
 
+#include <array>
 #include <cassert>
 #include <cstdio>
 #include <cstring>
@@ -377,7 +378,7 @@ static void display_page(char const *title, char const *text, unsigned text_len,
     helpinstr();
     driver_set_attr(2, 0, C_HELP_BODY, 80*22);
     putstringcenter(1, 0, 80, C_HELP_HDG, title);
-    std::snprintf(temp, NUM_OF(temp), "%2d of %d", page+1, num_pages);
+    std::snprintf(temp, std::size(temp), "%2d of %d", page+1, num_pages);
     driver_put_string(1, 79-(6 + ((num_pages >= 10)?2:1)), C_HELP_INSTR, temp);
 
     if (text != nullptr)
@@ -1224,11 +1225,11 @@ static bool print_doc_output(int cmd, PD_INFO *pd, void *context)
         info->margin = 0;
 
         std::memset(line, ' ', 81);
-        std::snprintf(buff, NUM_OF(buff), "Iterated Dynamics Version %d.%01d%c", g_release/100, (g_release%100)/10,
+        std::snprintf(buff, std::size(buff), "Iterated Dynamics Version %d.%01d%c", g_release/100, (g_release%100)/10,
                 ((g_release%10) ? '0'+(g_release%10) : ' '));
         std::memmove(line + ((width-(int)(std::strlen(buff))) / 2)-4, buff, std::strlen(buff));
 
-        std::snprintf(buff, NUM_OF(buff), "Page %d", pd->page_num);
+        std::snprintf(buff, std::size(buff), "Page %d", pd->page_num);
         std::memmove(line + (width - (int)std::strlen(buff)), buff, std::strlen(buff));
 
         printerc(info, '\n', 1);
@@ -1311,7 +1312,7 @@ static bool print_doc_msg_func(int pnum, int num_pages)
         driver_hide_text_cursor();
     }
 
-    std::snprintf(temp, NUM_OF(temp), "%d%%", (int)((100.0 / num_pages) * pnum));
+    std::snprintf(temp, std::size(temp), "%d%%", (int)((100.0 / num_pages) * pnum));
     driver_put_string(7, 41, C_HELP_LINK, temp);
 
     while (driver_key_pressed())
@@ -1333,12 +1334,12 @@ bool makedoc_msg_func(int pnum, int num_pages)
 
     if (pnum >= 0)
     {
-        std::snprintf(buffer, NUM_OF(buffer), "\rcompleted %d%%", (int)((100.0 / num_pages) * pnum));
+        std::snprintf(buffer, std::size(buffer), "\rcompleted %d%%", (int)((100.0 / num_pages) * pnum));
         result = true;
     }
     else if (pnum == -2)
     {
-        std::snprintf(buffer, NUM_OF(buffer), "\n*** aborted\n");
+        std::snprintf(buffer, std::size(buffer), "\n*** aborted\n");
     }
     stopmsg(STOPMSG_NONE, buffer);
     return result;

@@ -10,6 +10,7 @@
 #include "version.h"
 #include "video_mode.h"
 
+#include <array>
 #include <cstdio>
 #include <cstring>
 #include <ctime>
@@ -112,7 +113,7 @@ static char const *expand_var(char const *var, char *buf)
     else
     {
         char buff[80];
-        std::snprintf(buff, NUM_OF(buff), "Unknown comment variable %s", var);
+        std::snprintf(buff, std::size(buff), "Unknown comment variable %s", var);
         stopmsg(STOPMSG_NONE, buff);
         out = "";
     }

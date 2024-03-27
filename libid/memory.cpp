@@ -14,6 +14,7 @@
 #include "stack_avail.h"
 #include "stop_msg.h"
 
+#include <array>
 #include <climits>
 #include <cstdio>
 #include <cstring>
@@ -100,7 +101,7 @@ static void WhichDiskError(int I_O)
         "Write file error %d:  %s",
         "Read file error %d:  %s"
     };
-    std::snprintf(buf, NUM_OF(buf), pats[(1 <= I_O && I_O <= 4) ? (I_O-1) : 0], errno, strerror(errno));
+    std::snprintf(buf, std::size(buf), pats[(1 <= I_O && I_O <= 4) ? (I_O-1) : 0], errno, strerror(errno));
     if (g_debug_flag == debug_flags::display_memory_statistics)
     {
         if (stopmsg(STOPMSG_CANCEL | STOPMSG_NO_BUZZER, buf))
@@ -122,7 +123,7 @@ static void DisplayError(int stored_at, long howmuch)
     // is also insufficient disk space to use as memory.
 
     char buf[MSG_LEN*2];
-    std::snprintf(buf, NUM_OF(buf), "Allocating %ld Bytes of %s memory failed.\n"
+    std::snprintf(buf, std::size(buf), "Allocating %ld Bytes of %s memory failed.\n"
             "Alternate disk space is also insufficient. Goodbye",
             howmuch, memstr[stored_at]);
     stopmsg(STOPMSG_NONE, buf);
@@ -233,7 +234,7 @@ void DisplayMemory()
 {
     char buf[MSG_LEN];
 
-    std::snprintf(buf, NUM_OF(buf), "disk=%lu", get_disk_space());
+    std::snprintf(buf, std::size(buf), "disk=%lu", get_disk_space());
     stopmsg(STOPMSG_INFO_ONLY | STOPMSG_NO_BUZZER, buf);
 }
 
@@ -241,7 +242,7 @@ void DisplayHandle(U16 handle)
 {
     char buf[MSG_LEN];
 
-    std::snprintf(buf, NUM_OF(buf), "Handle %u, type %s, size %li", handle, memstr[handletable[handle].Nowhere.stored_at],
+    std::snprintf(buf, std::size(buf), "Handle %u, type %s, size %li", handle, memstr[handletable[handle].Nowhere.stored_at],
             handletable[handle].Nowhere.size);
     if (stopmsg(STOPMSG_CANCEL | STOPMSG_NO_BUZZER, buf))
     {
@@ -270,7 +271,7 @@ void ExitCheck()
             if (handletable[i].Nowhere.stored_at != NOWHERE)
             {
                 char buf[MSG_LEN];
-                std::snprintf(buf, NUM_OF(buf), "Memory type %s still allocated.  Handle = %u.",
+                std::snprintf(buf, std::size(buf), "Memory type %s still allocated.  Handle = %u.",
                         memstr[handletable[i].Nowhere.stored_at], i);
                 stopmsg(STOPMSG_NONE, buf);
                 MemoryRelease(i);
@@ -374,7 +375,7 @@ U16 MemoryAlloc(U16 size, long count, int stored_at)
     if (stored_at != use_this_type && g_debug_flag == debug_flags::display_memory_statistics)
     {
         char buf[MSG_LEN];
-        std::snprintf(buf, NUM_OF(buf), "Asked for %s, allocated %ld bytes of %s, handle = %u.",
+        std::snprintf(buf, std::size(buf), "Asked for %s, allocated %ld bytes of %s, handle = %u.",
                 memstr[stored_at], toallocate, memstr[use_this_type], handle);
         stopmsg(STOPMSG_INFO_ONLY | STOPMSG_NO_BUZZER, buf);
         DisplayMemory();

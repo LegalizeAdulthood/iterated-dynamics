@@ -156,7 +156,7 @@ static std::string heading_detail(FRACTAL_INFO const *info, ext_blk_3 const *blk
 static std::string save_release_detail()
 {
     char buff[80];
-    std::snprintf(buff, NUM_OF(buff), "v%d.%01d", g_release/100, (g_release%100)/10);
+    std::snprintf(buff, std::size(buff), "v%d.%01d", g_release/100, (g_release%100)/10);
     if (g_release%100)
     {
         int i = (int) std::strlen(buff);
@@ -275,7 +275,7 @@ int get_video_mode(FRACTAL_INFO *info, ext_blk_3 *blk_3_info)
 
         // format heading
         char heading[256];  // big enough for more than a few lines
-        std::snprintf(heading, NUM_OF(heading), "File: %-44s  %d x %d x %d\n%-52s",
+        std::snprintf(heading, std::size(heading), "File: %-44s  %d x %d x %d\n%-52s",
                 g_read_filename.c_str(), g_file_x_dots, g_file_y_dots, g_file_colors,
                 heading_detail(info, blk_3_info).c_str());
         if (info->info_id[0] != 'G')

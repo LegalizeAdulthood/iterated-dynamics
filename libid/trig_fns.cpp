@@ -8,6 +8,7 @@
 #include "jb.h"
 #include "parser.h"
 
+#include <array>
 #include <cstdio>
 #include <cstring>
 #include <string>
@@ -109,7 +110,7 @@ void trigdetails(char *buf)
         int i = 0;
         while (++i < numfn)
         {
-            std::snprintf(tmpbuf, NUM_OF(tmpbuf), "/%s", g_trig_fn[static_cast<int>(g_trig_index[i])].name);
+            std::snprintf(tmpbuf, std::size(tmpbuf), "/%s", g_trig_fn[static_cast<int>(g_trig_index[i])].name);
             std::strcat(buf, tmpbuf);
         }
     }

@@ -37,6 +37,7 @@
 #include "video_mode.h"
 #include "zoom.h"
 
+#include <array>
 #include <cctype>
 #include <cmath>
 #include <cstdio>
@@ -293,7 +294,7 @@ main_state big_while_loop(bool *const kbdmore, bool *const stacked, bool const r
             if (g_debug_flag == debug_flags::show_float_flag)
             {
                 char msg[MSG_LEN];
-                std::snprintf(msg, NUM_OF(msg), "floatflag=%d", g_user_float_flag ? 1 : 0);
+                std::snprintf(msg, std::size(msg), "floatflag=%d", g_user_float_flag ? 1 : 0);
                 stopmsg(STOPMSG_NO_BUZZER, msg);
             }
             i = funny_glasses_call(gifview);

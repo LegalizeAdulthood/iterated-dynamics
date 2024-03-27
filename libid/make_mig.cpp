@@ -7,6 +7,7 @@
 #include "id.h"
 #include "rotate.h"
 
+#include <array>
 #include <cstring>
 #include <cstdio>
 
@@ -68,7 +69,7 @@ void make_mig(unsigned int xmult, unsigned int ymult)
                 }
             }
 
-            std::snprintf(gifin, NUM_OF(gifin), "frmig_%c%c.gif", par_key(xstep), par_key(ystep));
+            std::snprintf(gifin, std::size(gifin), "frmig_%c%c.gif", par_key(xstep), par_key(ystep));
 
             in = std::fopen(gifin, "rb");
             if (in == nullptr)
@@ -316,7 +317,7 @@ void make_mig(unsigned int xmult, unsigned int ymult)
         {
             for (unsigned xstep = 0U; xstep < xmult; xstep++)
             {
-                std::snprintf(gifin, NUM_OF(gifin), "frmig_%c%c.gif", par_key(xstep), par_key(ystep));
+                std::snprintf(gifin, std::size(gifin), "frmig_%c%c.gif", par_key(xstep), par_key(ystep));
                 std::remove(gifin);
             }
         }

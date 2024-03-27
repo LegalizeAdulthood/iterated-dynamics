@@ -8,6 +8,7 @@
 #include "id_data.h"
 #include "video_mode.h"
 
+#include <array>
 #include <cassert>
 #include <cstdio>
 #include <cstdlib>
@@ -55,7 +56,7 @@ void load_config()
     linenum = 0;
     char tempstring[150];
     while (g_video_table_len < MAX_VIDEO_MODES
-        && std::fgets(tempstring, NUM_OF(tempstring), cfgfile))
+        && std::fgets(tempstring, std::size(tempstring), cfgfile))
     {
         if (std::strchr(tempstring, '\n') == nullptr)
         {
@@ -145,8 +146,8 @@ void load_config()
         g_cfg_line_nums[g_video_table_len] = linenum; // for update_fractint_cfg
 
         std::memset(&vident, 0, sizeof(vident));
-        std::strncpy(&vident.name[0], fields[0], NUM_OF(vident.name));
-        std::strncpy(&vident.comment[0], fields[9], NUM_OF(vident.comment));
+        std::strncpy(&vident.name[0], fields[0], std::size(vident.name));
+        std::strncpy(&vident.comment[0], fields[9], std::size(vident.comment));
         vident.comment[25] = 0;
         vident.name[25] = vident.comment[25];
         vident.keynum      = keynum;

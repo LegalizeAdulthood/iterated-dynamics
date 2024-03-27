@@ -1,4 +1,5 @@
 #include <algorithm>
+#include <array>
 #include <cassert>
 
 #include "port.h"
@@ -67,7 +68,7 @@ x11_text_window::x11_text_window()
     // set up the font and caret information
     for (int i = 0; i < 3; i++)
     {
-        size_t count = NUM_OF(me->cursor_pattern[0])*sizeof(me->cursor_pattern[0][0]);
+        size_t count = std::size(me->cursor_pattern[0])*sizeof(me->cursor_pattern[0][0]);
         std::memset(&me->cursor_pattern[i][0], 0, count);
     }
     for (int j = me->char_height-2; j < me->char_height; j++)

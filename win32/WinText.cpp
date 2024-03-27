@@ -5,6 +5,7 @@
 #include <Windows.h>
 #include <windowsx.h>
 
+#include <array>
 #include <cassert>
 #include <cstdlib>
 #include <cstring>
@@ -21,8 +22,6 @@
 #if defined(RT_VERBOSE)
 static int carrot_count = 0;
 #endif
-
-#define NUM_OF(ary_) (sizeof(ary_)/sizeof(ary_[0]))
 
 /*
         WINTEXT.C handles the character-based "prompt screens",
@@ -226,7 +225,7 @@ bool wintext_initialize(WinText *me, HINSTANCE hInstance, HWND hWndParent, LPCST
     // set up the font and caret information
     for (int i = 0; i < 3; i++)
     {
-        size_t count = NUM_OF(me->cursor_pattern[0])*sizeof(me->cursor_pattern[0][0]);
+        size_t count = std::size(me->cursor_pattern[0])*sizeof(me->cursor_pattern[0][0]);
         std::memset(&me->cursor_pattern[i][0], 0, count);
     }
     for (int j = me->char_height-2; j < me->char_height; j++)

@@ -43,6 +43,7 @@
 #include "version.h"
 #include "video_mode.h"
 
+#include <array>
 #include <cassert>
 #include <cctype>
 #include <cmath>
@@ -156,7 +157,7 @@ static void write_row(int row, char const *format, ...)
     std::va_list args;
 
     va_start(args, format);
-    std::vsnprintf(text, NUM_OF(text), format, args);
+    std::vsnprintf(text, std::size(text), format, args);
     va_end(args);
 
     driver_put_string(row, 2, C_GENERAL_HI, text);
@@ -508,7 +509,7 @@ top:
         }
     }
     driver_put_string(s_row, 2, C_GENERAL_MED, "Calculation time:");
-    strncpy(msg, get_calculation_time(g_calc_time).c_str(), NUM_OF(msg));
+    strncpy(msg, get_calculation_time(g_calc_time).c_str(), std::size(msg));
     driver_put_string(-1, -1, C_GENERAL_HI, msg);
     if ((g_got_status == 5) && (g_calc_status == calc_status_value::IN_PROGRESS))  // estimate total time
     {
@@ -529,7 +530,7 @@ top:
     {
         ++s_row;
     }
-    std::snprintf(msg, NUM_OF(msg), "Driver: %s, %s", g_driver->name, g_driver->description);
+    std::snprintf(msg, std::size(msg), "Driver: %s, %s", g_driver->name, g_driver->description);
     driver_put_string(s_row++, 2, C_GENERAL_MED, msg);
     if (g_video_entry.xdots && bf_math == bf_math_type::NONE)
     {

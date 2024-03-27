@@ -56,6 +56,7 @@
 #include "trig_fns.h"
 #include "video_mode.h"
 
+#include <array>
 #include <algorithm>
 #include <cassert>
 #include <cctype>
@@ -255,7 +256,7 @@ int getpower10(LDBL x)
     char string[11]; // space for "+x.xe-xxxx"
     int p;
 
-    std::snprintf(string, NUM_OF(string), "%+.1Le", x);
+    std::snprintf(string, std::size(string), "%+.1Le", x);
     p = std::atoi(string+5);
     return p;
 }

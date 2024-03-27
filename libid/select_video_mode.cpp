@@ -48,12 +48,12 @@ static void format_vid_table(int choice, char *buf)
     truecolorbits = g_video_entry.dotmode/1000;
     if (truecolorbits == 0)
     {
-        std::snprintf(local_buf, NUM_OF(local_buf), "%s%3d",  // 47 chars
+        std::snprintf(local_buf, std::size(local_buf), "%s%3d",  // 47 chars
                 buf, g_video_entry.colors);
     }
     else
     {
-        std::snprintf(local_buf, NUM_OF(local_buf), "%s%3s",  // 47 chars
+        std::snprintf(local_buf, std::size(local_buf), "%s%3s",  // 47 chars
                 buf, (truecolorbits == 4)?" 4g":
                 (truecolorbits == 3)?"16m":
                 (truecolorbits == 2)?"64k":
@@ -236,7 +236,7 @@ static void update_id_cfg()
 
     if (!is_writable(cfgname))
     {
-        std::snprintf(buf, NUM_OF(buf), "Can't write %s", cfgname.c_str());
+        std::snprintf(buf, std::size(buf), "Can't write %s", cfgname.c_str());
         stopmsg(STOPMSG_NONE, buf);
         return;
     }
@@ -244,7 +244,7 @@ static void update_id_cfg()
     outfile = std::fopen(outname.c_str(), "w");
     if (outfile == nullptr)
     {
-        std::snprintf(buf, NUM_OF(buf), "Can't create %s", outname.c_str());
+        std::snprintf(buf, std::size(buf), "Can't create %s", outname.c_str());
         stopmsg(STOPMSG_NONE, buf);
         return;
     }
@@ -253,7 +253,7 @@ static void update_id_cfg()
     nextmode = 0;
     linenum = nextmode;
     nextlinenum = g_cfg_line_nums[0];
-    while (std::fgets(buf, NUM_OF(buf), cfgfile))
+    while (std::fgets(buf, std::size(buf), cfgfile))
     {
         char colorsbuf[10];
         ++linenum;
@@ -280,11 +280,11 @@ static void update_id_cfg()
             int truecolorbits = vident.dotmode/1000;
             if (truecolorbits == 0)
             {
-                std::snprintf(colorsbuf, NUM_OF(colorsbuf), "%3d", vident.colors);
+                std::snprintf(colorsbuf, std::size(colorsbuf), "%3d", vident.colors);
             }
             else
             {
-                std::snprintf(colorsbuf, NUM_OF(colorsbuf), "%3s",
+                std::snprintf(colorsbuf, std::size(colorsbuf), "%3s",
                         (truecolorbits == 4)?" 4g":
                         (truecolorbits == 3)?"16m":
                         (truecolorbits == 2)?"64k":

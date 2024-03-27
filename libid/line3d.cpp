@@ -29,6 +29,7 @@
 #include "version.h"
 
 #include <algorithm>
+#include <array>
 #include <climits>
 #include <cmath>
 #include <vector>
@@ -304,7 +305,7 @@ int line3d(BYTE * pixels, unsigned linelen)
     if (driver_diskp())
     {
         char s[40];
-        std::snprintf(s, NUM_OF(s), "mapping to 3d, reading line %d", g_current_row);
+        std::snprintf(s, std::size(s), "mapping to 3d, reading line %d", g_current_row);
         dvid_status(1, s);
     }
 
@@ -1561,16 +1562,16 @@ static void File_Error(char const *File_Name1, int ERROR)
     switch (ERROR)
     {
     case 1:                      // Can't Open
-        std::snprintf(msgbuf, NUM_OF(msgbuf), "OOPS, couldn't open  < %s >", File_Name1);
+        std::snprintf(msgbuf, std::size(msgbuf), "OOPS, couldn't open  < %s >", File_Name1);
         break;
     case 2:                      // Not enough room
-        std::snprintf(msgbuf, NUM_OF(msgbuf), "OOPS, ran out of disk space. < %s >", File_Name1);
+        std::snprintf(msgbuf, std::size(msgbuf), "OOPS, ran out of disk space. < %s >", File_Name1);
         break;
     case 3:                      // Image wrong size
-        std::snprintf(msgbuf, NUM_OF(msgbuf), "OOPS, image wrong size\n");
+        std::snprintf(msgbuf, std::size(msgbuf), "OOPS, image wrong size\n");
         break;
     case 4:                      // Wrong file type
-        std::snprintf(msgbuf, NUM_OF(msgbuf), "OOPS, can't handle this type of file.\n");
+        std::snprintf(msgbuf, std::size(msgbuf), "OOPS, can't handle this type of file.\n");
         break;
     }
     stopmsg(STOPMSG_NONE, msgbuf);

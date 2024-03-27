@@ -20,6 +20,7 @@
 #include "stop_msg.h"
 #include "temp_msg.h"
 
+#include <array>
 #include <cassert>
 #include <cstring>
 #include <string>
@@ -334,7 +335,7 @@ int readdisk(int col, int row)
     {
         if (driver_diskp())
         {
-            std::snprintf(buf, NUM_OF(buf), " reading line %4d",
+            std::snprintf(buf, std::size(buf), " reading line %4d",
                     (row >= g_screen_y_dots) ? row-g_screen_y_dots : row); // adjust when potfile
             dvid_status(0, buf);
         }
@@ -404,7 +405,7 @@ void writedisk(int col, int row, int color)
     {
         if (driver_diskp())
         {
-            std::snprintf(buf, NUM_OF(buf), " writing line %4d",
+            std::snprintf(buf, std::size(buf), " writing line %4d",
                     (row >= g_screen_y_dots) ? row-g_screen_y_dots : row); // adjust when potfile
             dvid_status(0, buf);
         }

@@ -10,6 +10,7 @@
 #include "rotate.h"
 #include "stop_msg.h"
 
+#include <array>
 #include <cstdio>
 #include <cstring>
 
@@ -45,7 +46,7 @@ bool ValidateLuts(char const *fn)
     if (f == nullptr)
     {
         char line[160];
-        std::snprintf(line, NUM_OF(line), "Could not load color map %s", fn);
+        std::snprintf(line, std::size(line), "Could not load color map %s", fn);
         stopmsg(STOPMSG_NONE, line);
         return true;
     }
@@ -53,7 +54,7 @@ bool ValidateLuts(char const *fn)
     for (index = 0; index < 256; index++)
     {
         char line[160];
-        if (std::fgets(line, NUM_OF(line), f) == nullptr)
+        if (std::fgets(line, std::size(line), f) == nullptr)
         {
             break;
         }

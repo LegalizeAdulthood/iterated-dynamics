@@ -27,6 +27,7 @@
 #include "zoom.h"
 
 #include <algorithm>
+#include <array>
 #include <cmath>
 #include <cstdarg>
 #include <cstdio>
@@ -289,7 +290,7 @@ static void displayf(int x, int y, int fg, int bg, char const *format, ...)
     std::va_list arg_list;
 
     va_start(arg_list, format);
-    std::vsnprintf(buff, NUM_OF(buff), format, arg_list);
+    std::vsnprintf(buff, std::size(buff), format, arg_list);
     va_end(arg_list);
 
     driver_display_string(x, y, fg, bg, buff);
@@ -1851,7 +1852,7 @@ static void PalTable__DrawStatus(PalTable *me, bool stripe_mode)
 
         {
             char buff[80];
-            std::snprintf(buff, NUM_OF(buff), "%c%c%c%c",
+            std::snprintf(buff, std::size(buff), "%c%c%c%c",
                     me->auto_select ? 'A' : ' ',
                     (me->exclude == 1)  ? 'X' : (me->exclude == 2) ? 'Y' : ' ',
                     me->freestyle ? 'F' : ' ',
@@ -1859,7 +1860,7 @@ static void PalTable__DrawStatus(PalTable *me, bool stripe_mode)
             driver_display_string(x, y, fg_color, bg_color, buff);
 
             y = y - 10;
-            std::snprintf(buff, NUM_OF(buff), "%d", color);
+            std::snprintf(buff, std::size(buff), "%d", color);
             driver_display_string(x, y, fg_color, bg_color, buff);
         }
         Cursor_Show();
@@ -2587,7 +2588,7 @@ static void PalTable__other_key(int key, RGBEditor *rgb, void *info)
     {
         int i;
         char buf[20];
-        std::snprintf(buf, NUM_OF(buf), "%.3f", 1./gamma_val);
+        std::snprintf(buf, std::size(buf), "%.3f", 1./gamma_val);
         driver_stack_screen();
         i = field_prompt("Enter gamma value", nullptr, buf, 20, nullptr);
         driver_unstack_screen();

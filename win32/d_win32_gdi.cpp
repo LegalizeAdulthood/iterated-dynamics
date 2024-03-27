@@ -19,6 +19,7 @@
 #define STRICT
 #include <Windows.h>
 
+#include <array>
 #include <cassert>
 
 #include "WinText.h"
@@ -33,8 +34,6 @@ extern HINSTANCE g_instance;
 
 #define DRAW_INTERVAL 6
 #define TIMER_ID 1
-
-#define NUM_OF(ary_) (sizeof(ary_)/sizeof(ary_[0]))
 
 #define DI(name_) GDIDriver *name_ = (GDIDriver *) drv
 
@@ -265,7 +264,7 @@ static bool gdi_init(Driver *drv, int *argc, char **argv)
         int width, height;
         gdi_get_max_screen(drv, &width, &height);
 
-        for (int m = 0; m < NUM_OF(modes); m++)
+        for (int m = 0; m < std::size(modes); m++)
         {
             if ((modes[m].xdots <= width)
                 && (modes[m].ydots <= height))

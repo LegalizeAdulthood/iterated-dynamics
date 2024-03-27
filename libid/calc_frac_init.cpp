@@ -20,6 +20,7 @@
 #include "stop_msg.h"
 #include "type_has_param.h"
 
+#include <array>
 #include <cfloat>
 #include <cmath>
 #include <cstdio>
@@ -635,7 +636,7 @@ static double fudgetodouble(long l)
 {
     char buf[30];
     double d;
-    std::snprintf(buf, NUM_OF(buf), "%.9g", (double)l / g_fudge_factor);
+    std::snprintf(buf, std::size(buf), "%.9g", (double)l / g_fudge_factor);
     std::sscanf(buf, "%lg", &d);
     return d;
 }

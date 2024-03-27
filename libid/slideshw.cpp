@@ -17,6 +17,7 @@
 #include "temp_msg.h"
 #include "video_mode.h"
 
+#include <array>
 #include <cctype>
 #include <cstdio>
 #include <cstdlib>
@@ -127,7 +128,7 @@ static int showtempmsg_txt(int row, int col, int attr, int secs, const char *txt
 static void message(int secs, char const *buf)
 {
     char nearbuf[41] = { 0 };
-    std::strncpy(nearbuf, buf, NUM_OF(nearbuf)-1);
+    std::strncpy(nearbuf, buf, std::size(nearbuf)-1);
     showtempmsg_txt(0, 0, 7, secs, nearbuf);
     if (!showtempmsg(nearbuf))
     {
@@ -258,7 +259,7 @@ start:
             int len;
             char buf[41];
             buf[40] = 0;
-            if (std::fgets(buf, NUM_OF(buf), fpss) == nullptr)
+            if (std::fgets(buf, std::size(buf), fpss) == nullptr)
             {
                 throw std::system_error(errno, std::system_category(), "slideshw failed fgets");
             }

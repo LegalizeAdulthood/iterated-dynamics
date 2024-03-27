@@ -24,6 +24,7 @@
 #define STRICT
 #include <Windows.h>
 
+#include <array>
 #include <cassert>
 #include <cstdio>
 #include <ctime>
@@ -103,7 +104,7 @@ win32_terminate(Driver *drv)
     ODS("win32_terminate");
 
     wintext_destroy(&di->wintext);
-    for (int i = 0; i < NUM_OF(di->saved_screens); i++)
+    for (int i = 0; i < std::size(di->saved_screens); i++)
     {
         if (nullptr != di->saved_screens[i])
         {

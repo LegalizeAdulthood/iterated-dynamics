@@ -19,6 +19,7 @@
 #include "stop_msg.h"
 #include "thinking.h"
 
+#include <array>
 #include <algorithm>
 #include <cmath>
 #include <cstdio>
@@ -55,7 +56,7 @@ void abort_cellular(int err, int t)
     case BAD_T:
     {
         char msg[30];
-        std::snprintf(msg, NUM_OF(msg), "Bad t=%d, aborting\n", t);
+        std::snprintf(msg, std::size(msg), "Bad t=%d, aborting\n", t);
         stopmsg(STOPMSG_NONE, msg);
     }
     break;
@@ -168,7 +169,7 @@ int cellular()
     if (randparam != 0 && randparam != -1)
     {
         n = g_params[0];
-        std::snprintf(buf, NUM_OF(buf), "%.16g", n); // # of digits in initial string
+        std::snprintf(buf, std::size(buf), "%.16g", n); // # of digits in initial string
         t = (S16)std::strlen(buf);
         if (t>16 || t <= 0)
         {
@@ -224,7 +225,7 @@ int cellular()
         }
         g_params[1] = n;
     }
-    std::snprintf(buf, NUM_OF(buf), "%.*g", rule_digits , n);
+    std::snprintf(buf, std::size(buf), "%.*g", rule_digits , n);
     t = (S16)std::strlen(buf);
     if (rule_digits < t || t < 0)
     {
