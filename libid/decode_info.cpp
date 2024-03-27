@@ -4,6 +4,8 @@
 #include "loadfile.h"
 
 #include <cmath>
+#include <cstdio>
+#include <cstring>
 #include <vector>
 
 // The size of these structures must remain fixed in order to maintain
