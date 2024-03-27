@@ -12,6 +12,7 @@
 #include "rotate.h"
 #include "spindac.h"
 #include "text_screen.h"
+#include "video_mode.h"
 #include "zoom.h"
 
 #include <cstdio>

@@ -24,6 +24,7 @@
 #include "os.h"
 #include "rotate.h"
 #include "spindac.h"
+#include "video_mode.h"
 #include "zoom.h"
 
 #include <fcntl.h>
