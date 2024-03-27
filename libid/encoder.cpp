@@ -694,7 +694,7 @@ bool encoder()
         // Extended parameters block 007
         if (g_std_calc_mode == 'o')
         {
-            ORBITS_INFO osave_info;
+            ORBITS_INFO osave_info{};
             osave_info.oxmin     = g_orbit_corner_min_x;
             osave_info.oxmax     = g_orbit_corner_max_x;
             osave_info.oymin     = g_orbit_corner_min_y;
@@ -703,7 +703,6 @@ bool encoder()
             osave_info.oy3rd     = g_orbit_corner_3_y;
             osave_info.keep_scrn_coords = (short) (g_keep_screen_coords ? 1 : 0);
             osave_info.drawmode  = g_draw_mode;
-            std::fill(std::begin(osave_info.future), std::end(osave_info.future), 0);
 
             // some big-endian logic for the doubles needed here
             decode_orbits_info(&osave_info, 0);
@@ -797,11 +796,7 @@ static int put_extend_blk(int block_id, int block_len, char const *block_data)
 
 static int store_item_name(char const *name)
 {
-    formula_info fsave_info;
-    for (char &i : fsave_info.form_name)
-    {
-        i = 0;      // initialize string
-    }
+    formula_info fsave_info{};
     std::strcpy(fsave_info.form_name, name);
     if (g_fractal_type == fractal_type::FORMULA || g_fractal_type == fractal_type::FFORMULA)
     {
@@ -823,7 +818,7 @@ static int store_item_name(char const *name)
         fsave_info.uses_p4 = 0;
         fsave_info.uses_p5 = 0;
     }
-    std::fill(std::begin(fsave_info.future), std::end(fsave_info.future), 0);
+
     // formula/lsys/ifs info block, 003
     put_extend_blk(3, sizeof(fsave_info), (char *) &fsave_info);
     return extend_blk_len(sizeof(fsave_info));
