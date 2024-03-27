@@ -663,12 +663,6 @@ initdacbox()
 }
 
 
-int startvideo()
-{
-    clearXwindow();
-    return 0;
-}
-
 int endvideo()
 {
     return 0;             // set flag: video ended

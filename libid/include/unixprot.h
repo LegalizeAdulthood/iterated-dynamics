@@ -22,9 +22,6 @@ void initUnixWindow();
 // cleans up X window and curses.
 void UnixDone();
 
-// clears the graphics window
-int startvideo();
-
 // just a stub.
 int endvideo();
 
