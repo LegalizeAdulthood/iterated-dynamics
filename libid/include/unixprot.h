@@ -34,9 +34,6 @@ int resizeWindow();
 // Returns bitmap of an 8x8 font.
 unsigned char *xgetfont();
 
-// Calls a Unix subshell.
-void shell_to_dos();
-
 // Forces all window events to be processed.
 void xsync();
 

@@ -214,9 +214,9 @@ win32_get_key(Driver *drv)
 /*
 *----------------------------------------------------------------------
 *
-* shell_to_dos --
+* win32_shell --
 *
-*   Exit to a unix shell.
+*   Exit to a command prompt.
 *
 * Results:
 *   None.
