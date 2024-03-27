@@ -528,38 +528,6 @@ static void getFloat(float *dst, unsigned char **src, int dir)
     *src += 4; // sizeof(float) in MSDOS
 }
 
-/*
- * Fix up the ranges data for byte ordering.
- */
-void
-fix_ranges(int *ranges, int num, int dir)
-{
-    std::vector<unsigned char> ranges_buff;
-    unsigned char *buf;
-    unsigned char *bufPtr;
-
-    if (dir == 1)
-    {
-        ranges_buff.resize(num*2);
-        buf = &ranges_buff[0];
-        bufPtr = buf;
-        std::memcpy((char *)buf, (char *)ranges, num*2);
-    }
-    else
-    {
-        ranges_buff.resize(num*sizeof(int));
-        buf = &ranges_buff[0];
-        bufPtr = buf;
-        std::memcpy((char *)buf, (char *)ranges, num*sizeof(int));
-    }
-    for (int i = 0; i < num; i++)
-    {
-        short dest = 0;
-        getInt(&dest, &bufPtr, dir);
-        ranges[i] = dest;
-    }
-}
-
 void
 decode_evolver_info(EVOLUTION_INFO *info, int dir)
 {
