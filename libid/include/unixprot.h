@@ -22,12 +22,6 @@ void initUnixWindow();
 // cleans up X window and curses.
 void UnixDone();
 
-// reads the current colormap into dacbox.
-int readvideopalette();
-
-// writes the current colormap from dacbox.
-int writevideopalette();
-
 // Checks if the window has been resized, and handles the resize.
 int resizeWindow();
 

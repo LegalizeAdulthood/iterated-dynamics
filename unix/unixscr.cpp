@@ -12,6 +12,8 @@
  * Some of the zoombox code is from Bill Broadley.
  * David Sanderson straightened out a bunch of include file problems.
  */
+#include "unixscr.h"
+
 #include "port.h"
 #include "prototyp.h"
 
