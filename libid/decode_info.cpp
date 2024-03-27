@@ -29,11 +29,11 @@ static_assert(sizeof(ORBITS_INFO) == 200, "ORBITS_INFO size is incorrect");
  * If dir==0, we convert to MSDOS form.  Otherwise we convert from MSDOS.
  */
 
-static void getChar(unsigned char *dst, unsigned char **src, int dir);
-static void getInt(short *dst, unsigned char **src, int dir);
-static void getLong(long *dst, unsigned char **src, int dir);
-static void getFloat(float *dst, unsigned char **src, int dir);
-static void getDouble(double *dst, unsigned char **src, int dir);
+static void get_uint8(std::uint8_t *dst, unsigned char **src, int dir);
+static void get_int16(std::int16_t *dst, unsigned char **src, int dir);
+static void get_int32(std::int32_t *dst, unsigned char **src, int dir);
+static void get_float(float *dst, unsigned char **src, int dir);
+static void get_double(double *dst, unsigned char **src, int dir);
 
 void decode_fractal_info_big_endian(FRACTAL_INFO *info, int dir)
 {
@@ -65,144 +65,144 @@ void decode_fractal_info_big_endian(FRACTAL_INFO *info, int dir)
         std::strncpy((char *)bufPtr, info->info_id, 8);
     }
     bufPtr += 8;
-    getInt(&info->iterationsold, &bufPtr, dir);
-    getInt(&info->fractal_type, &bufPtr, dir);
-    getDouble(&info->xmin, &bufPtr, dir);
-    getDouble(&info->xmax, &bufPtr, dir);
-    getDouble(&info->ymin, &bufPtr, dir);
-    getDouble(&info->ymax, &bufPtr, dir);
-    getDouble(&info->creal, &bufPtr, dir);
-    getDouble(&info->cimag, &bufPtr, dir);
-    getInt(&info->videomodeax, &bufPtr, dir);
-    getInt(&info->videomodebx, &bufPtr, dir);
-    getInt(&info->videomodecx, &bufPtr, dir);
-    getInt(&info->videomodedx, &bufPtr, dir);
-    getInt(&info->dotmode, &bufPtr, dir);
-    getInt(&info->xdots, &bufPtr, dir);
-    getInt(&info->ydots, &bufPtr, dir);
-    getInt(&info->colors, &bufPtr, dir);
-    getInt(&info->version, &bufPtr, dir);
-    getFloat(&info->parm3, &bufPtr, dir);
-    getFloat(&info->parm4, &bufPtr, dir);
-    getFloat(&info->potential[0], &bufPtr, dir);
-    getFloat(&info->potential[1], &bufPtr, dir);
-    getFloat(&info->potential[2], &bufPtr, dir);
-    getInt(&info->rseed, &bufPtr, dir);
-    getInt(&info->rflag, &bufPtr, dir);
-    getInt(&info->biomorph, &bufPtr, dir);
-    getInt(&info->inside, &bufPtr, dir);
+    get_int16(&info->iterationsold, &bufPtr, dir);
+    get_int16(&info->fractal_type, &bufPtr, dir);
+    get_double(&info->xmin, &bufPtr, dir);
+    get_double(&info->xmax, &bufPtr, dir);
+    get_double(&info->ymin, &bufPtr, dir);
+    get_double(&info->ymax, &bufPtr, dir);
+    get_double(&info->creal, &bufPtr, dir);
+    get_double(&info->cimag, &bufPtr, dir);
+    get_int16(&info->videomodeax, &bufPtr, dir);
+    get_int16(&info->videomodebx, &bufPtr, dir);
+    get_int16(&info->videomodecx, &bufPtr, dir);
+    get_int16(&info->videomodedx, &bufPtr, dir);
+    get_int16(&info->dotmode, &bufPtr, dir);
+    get_int16(&info->xdots, &bufPtr, dir);
+    get_int16(&info->ydots, &bufPtr, dir);
+    get_int16(&info->colors, &bufPtr, dir);
+    get_int16(&info->version, &bufPtr, dir);
+    get_float(&info->parm3, &bufPtr, dir);
+    get_float(&info->parm4, &bufPtr, dir);
+    get_float(&info->potential[0], &bufPtr, dir);
+    get_float(&info->potential[1], &bufPtr, dir);
+    get_float(&info->potential[2], &bufPtr, dir);
+    get_int16(&info->rseed, &bufPtr, dir);
+    get_int16(&info->rflag, &bufPtr, dir);
+    get_int16(&info->biomorph, &bufPtr, dir);
+    get_int16(&info->inside, &bufPtr, dir);
     {
         short tmp = 0;
-        getInt(&tmp, &bufPtr, dir);
+        get_int16(&tmp, &bufPtr, dir);
         info->logmap = tmp;
     }
-    getFloat(&info->invert[0], &bufPtr, dir);
-    getFloat(&info->invert[1], &bufPtr, dir);
-    getFloat(&info->invert[2], &bufPtr, dir);
-    getInt(&info->decomp[0], &bufPtr, dir);
-    getInt(&info->decomp[1], &bufPtr, dir);
-    getInt(&info->symmetry, &bufPtr, dir);
+    get_float(&info->invert[0], &bufPtr, dir);
+    get_float(&info->invert[1], &bufPtr, dir);
+    get_float(&info->invert[2], &bufPtr, dir);
+    get_int16(&info->decomp[0], &bufPtr, dir);
+    get_int16(&info->decomp[1], &bufPtr, dir);
+    get_int16(&info->symmetry, &bufPtr, dir);
     for (int i = 0; i < 16; i++)
     {
-        getInt(&info->init3d[i], &bufPtr, dir);
+        get_int16(&info->init3d[i], &bufPtr, dir);
     }
-    getInt(&info->previewfactor, &bufPtr, dir);
-    getInt(&info->xtrans, &bufPtr, dir);
-    getInt(&info->ytrans, &bufPtr, dir);
-    getInt(&info->red_crop_left, &bufPtr, dir);
-    getInt(&info->red_crop_right, &bufPtr, dir);
-    getInt(&info->blue_crop_left, &bufPtr, dir);
-    getInt(&info->blue_crop_right, &bufPtr, dir);
-    getInt(&info->red_bright, &bufPtr, dir);
-    getInt(&info->blue_bright, &bufPtr, dir);
-    getInt(&info->xadjust, &bufPtr, dir);
-    getInt(&info->eyeseparation, &bufPtr, dir);
-    getInt(&info->glassestype, &bufPtr, dir);
-    getInt(&info->outside, &bufPtr, dir);
-    getDouble(&info->x3rd, &bufPtr, dir);
-    getDouble(&info->y3rd, &bufPtr, dir);
-    getChar(reinterpret_cast<unsigned char *>(&info->stdcalcmode), &bufPtr, dir);
-    getChar(reinterpret_cast<unsigned char *>(&info->useinitorbit), &bufPtr, dir);
-    getInt(&info->calc_status, &bufPtr, dir);
-    getLong(&info->tot_extend_len, &bufPtr, dir);
+    get_int16(&info->previewfactor, &bufPtr, dir);
+    get_int16(&info->xtrans, &bufPtr, dir);
+    get_int16(&info->ytrans, &bufPtr, dir);
+    get_int16(&info->red_crop_left, &bufPtr, dir);
+    get_int16(&info->red_crop_right, &bufPtr, dir);
+    get_int16(&info->blue_crop_left, &bufPtr, dir);
+    get_int16(&info->blue_crop_right, &bufPtr, dir);
+    get_int16(&info->red_bright, &bufPtr, dir);
+    get_int16(&info->blue_bright, &bufPtr, dir);
+    get_int16(&info->xadjust, &bufPtr, dir);
+    get_int16(&info->eyeseparation, &bufPtr, dir);
+    get_int16(&info->glassestype, &bufPtr, dir);
+    get_int16(&info->outside, &bufPtr, dir);
+    get_double(&info->x3rd, &bufPtr, dir);
+    get_double(&info->y3rd, &bufPtr, dir);
+    get_uint8(reinterpret_cast<unsigned char *>(&info->stdcalcmode), &bufPtr, dir);
+    get_uint8(reinterpret_cast<unsigned char *>(&info->useinitorbit), &bufPtr, dir);
+    get_int16(&info->calc_status, &bufPtr, dir);
+    get_int32(&info->tot_extend_len, &bufPtr, dir);
     {
         short tmp = 0;
-        getInt(&tmp, &bufPtr, dir);
+        get_int16(&tmp, &bufPtr, dir);
         info->distest = tmp;
     }
-    getInt(&info->floatflag, &bufPtr, dir);
-    getInt(&info->bailoutold, &bufPtr, dir);
-    getLong(&info->calctime, &bufPtr, dir);
+    get_int16(&info->floatflag, &bufPtr, dir);
+    get_int16(&info->bailoutold, &bufPtr, dir);
+    get_int32(&info->calctime, &bufPtr, dir);
     for (int i = 0; i < 4; i++)
     {
-        getChar(&info->trigndx[i], &bufPtr, dir);
+        get_uint8(&info->trigndx[i], &bufPtr, dir);
     }
-    getInt(&info->finattract, &bufPtr, dir);
-    getDouble(&info->initorbit[0], &bufPtr, dir);
-    getDouble(&info->initorbit[1], &bufPtr, dir);
-    getInt(&info->periodicity, &bufPtr, dir);
-    getInt(&info->pot16bit, &bufPtr, dir);
-    getFloat(&info->faspectratio, &bufPtr, dir);
-    getInt(&info->system, &bufPtr, dir);
-    getInt(&info->release, &bufPtr, dir);
-    getInt(&info->display_3d, &bufPtr, dir);
-    getInt(&info->transparent[0], &bufPtr, dir);
-    getInt(&info->transparent[1], &bufPtr, dir);
-    getInt(&info->ambient, &bufPtr, dir);
-    getInt(&info->haze, &bufPtr, dir);
-    getInt(&info->randomize, &bufPtr, dir);
-    getInt(&info->rotate_lo, &bufPtr, dir);
-    getInt(&info->rotate_hi, &bufPtr, dir);
-    getInt(&info->distestwidth, &bufPtr, dir);
-    getDouble(&info->dparm3, &bufPtr, dir);
-    getDouble(&info->dparm4, &bufPtr, dir);
-    getInt(&info->fillcolor, &bufPtr, dir);
-    getDouble(&info->mxmaxfp, &bufPtr, dir);
-    getDouble(&info->mxminfp, &bufPtr, dir);
-    getDouble(&info->mymaxfp, &bufPtr, dir);
-    getDouble(&info->myminfp, &bufPtr, dir);
-    getInt(&info->zdots, &bufPtr, dir);
-    getFloat(&info->originfp, &bufPtr, dir);
-    getFloat(&info->depthfp, &bufPtr, dir);
-    getFloat(&info->heightfp, &bufPtr, dir);
-    getFloat(&info->widthfp, &bufPtr, dir);
-    getFloat(&info->distfp, &bufPtr, dir);
-    getFloat(&info->eyesfp, &bufPtr, dir);
-    getInt(&info->orbittype, &bufPtr, dir);
-    getInt(&info->juli3Dmode, &bufPtr, dir);
-    getInt(&info->maxfn, &bufPtr, dir);
-    getInt(&info->inversejulia, &bufPtr, dir);
-    getDouble(&info->dparm5, &bufPtr, dir);
-    getDouble(&info->dparm6, &bufPtr, dir);
-    getDouble(&info->dparm7, &bufPtr, dir);
-    getDouble(&info->dparm8, &bufPtr, dir);
-    getDouble(&info->dparm9, &bufPtr, dir);
-    getDouble(&info->dparm10, &bufPtr, dir);
-    getLong(&info->bailout, &bufPtr, dir);
-    getInt(&info->bailoutest, &bufPtr, dir);
-    getLong(&info->iterations, &bufPtr, dir);
-    getInt(&info->bf_math, &bufPtr, dir);
-    getInt(&info->bflength, &bufPtr, dir);
-    getInt(&info->yadjust, &bufPtr, dir);
-    getInt(&info->old_demm_colors, &bufPtr, dir);
-    getLong(&info->logmap, &bufPtr, dir);
-    getLong(&info->distest, &bufPtr, dir);
-    getDouble(&info->dinvert[0], &bufPtr, dir);
-    getDouble(&info->dinvert[1], &bufPtr, dir);
-    getDouble(&info->dinvert[2], &bufPtr, dir);
-    getInt(&info->logcalc, &bufPtr, dir);
-    getInt(&info->stoppass, &bufPtr, dir);
-    getInt(&info->quick_calc, &bufPtr, dir);
-    getDouble(&info->closeprox, &bufPtr, dir);
-    getInt(&info->nobof, &bufPtr, dir);
-    getLong(&info->orbit_interval, &bufPtr, dir);
-    getInt(&info->orbit_delay, &bufPtr, dir);
-    getDouble(&info->math_tol[0], &bufPtr, dir);
-    getDouble(&info->math_tol[1], &bufPtr, dir);
+    get_int16(&info->finattract, &bufPtr, dir);
+    get_double(&info->initorbit[0], &bufPtr, dir);
+    get_double(&info->initorbit[1], &bufPtr, dir);
+    get_int16(&info->periodicity, &bufPtr, dir);
+    get_int16(&info->pot16bit, &bufPtr, dir);
+    get_float(&info->faspectratio, &bufPtr, dir);
+    get_int16(&info->system, &bufPtr, dir);
+    get_int16(&info->release, &bufPtr, dir);
+    get_int16(&info->display_3d, &bufPtr, dir);
+    get_int16(&info->transparent[0], &bufPtr, dir);
+    get_int16(&info->transparent[1], &bufPtr, dir);
+    get_int16(&info->ambient, &bufPtr, dir);
+    get_int16(&info->haze, &bufPtr, dir);
+    get_int16(&info->randomize, &bufPtr, dir);
+    get_int16(&info->rotate_lo, &bufPtr, dir);
+    get_int16(&info->rotate_hi, &bufPtr, dir);
+    get_int16(&info->distestwidth, &bufPtr, dir);
+    get_double(&info->dparm3, &bufPtr, dir);
+    get_double(&info->dparm4, &bufPtr, dir);
+    get_int16(&info->fillcolor, &bufPtr, dir);
+    get_double(&info->mxmaxfp, &bufPtr, dir);
+    get_double(&info->mxminfp, &bufPtr, dir);
+    get_double(&info->mymaxfp, &bufPtr, dir);
+    get_double(&info->myminfp, &bufPtr, dir);
+    get_int16(&info->zdots, &bufPtr, dir);
+    get_float(&info->originfp, &bufPtr, dir);
+    get_float(&info->depthfp, &bufPtr, dir);
+    get_float(&info->heightfp, &bufPtr, dir);
+    get_float(&info->widthfp, &bufPtr, dir);
+    get_float(&info->distfp, &bufPtr, dir);
+    get_float(&info->eyesfp, &bufPtr, dir);
+    get_int16(&info->orbittype, &bufPtr, dir);
+    get_int16(&info->juli3Dmode, &bufPtr, dir);
+    get_int16(&info->maxfn, &bufPtr, dir);
+    get_int16(&info->inversejulia, &bufPtr, dir);
+    get_double(&info->dparm5, &bufPtr, dir);
+    get_double(&info->dparm6, &bufPtr, dir);
+    get_double(&info->dparm7, &bufPtr, dir);
+    get_double(&info->dparm8, &bufPtr, dir);
+    get_double(&info->dparm9, &bufPtr, dir);
+    get_double(&info->dparm10, &bufPtr, dir);
+    get_int32(&info->bailout, &bufPtr, dir);
+    get_int16(&info->bailoutest, &bufPtr, dir);
+    get_int32(&info->iterations, &bufPtr, dir);
+    get_int16(&info->bf_math, &bufPtr, dir);
+    get_int16(&info->bflength, &bufPtr, dir);
+    get_int16(&info->yadjust, &bufPtr, dir);
+    get_int16(&info->old_demm_colors, &bufPtr, dir);
+    get_int32(&info->logmap, &bufPtr, dir);
+    get_int32(&info->distest, &bufPtr, dir);
+    get_double(&info->dinvert[0], &bufPtr, dir);
+    get_double(&info->dinvert[1], &bufPtr, dir);
+    get_double(&info->dinvert[2], &bufPtr, dir);
+    get_int16(&info->logcalc, &bufPtr, dir);
+    get_int16(&info->stoppass, &bufPtr, dir);
+    get_int16(&info->quick_calc, &bufPtr, dir);
+    get_double(&info->closeprox, &bufPtr, dir);
+    get_int16(&info->nobof, &bufPtr, dir);
+    get_int32(&info->orbit_interval, &bufPtr, dir);
+    get_int16(&info->orbit_delay, &bufPtr, dir);
+    get_double(&info->math_tol[0], &bufPtr, dir);
+    get_double(&info->math_tol[1], &bufPtr, dir);
 
     for (int i = 0; i < (sizeof(info->future)/sizeof(short)); i++)
     {
-        getInt(&info->future[i], &bufPtr, dir);
+        get_int16(&info->future[i], &bufPtr, dir);
     }
     if (bufPtr-buf != sizeof(FRACTAL_INFO))
     {
@@ -220,7 +220,7 @@ void decode_fractal_info_big_endian(FRACTAL_INFO *info, int dir)
  * This routine gets a char out of the buffer.
  * It updates the buffer pointer accordingly.
  */
-static void getChar(unsigned char *dst, unsigned char **src, int dir)
+static void get_uint8(std::uint8_t *dst, unsigned char **src, int dir)
 {
     if (dir == 1)
     {
@@ -237,7 +237,7 @@ static void getChar(unsigned char *dst, unsigned char **src, int dir)
  * This routine gets an int out of the buffer.
  * It updates the buffer pointer accordingly.
  */
-static void getInt(short *dst, unsigned char **src, int dir)
+static void get_int16(std::int16_t *dst, unsigned char **src, int dir)
 {
     if (dir == 1)
     {
@@ -255,7 +255,7 @@ static void getInt(short *dst, unsigned char **src, int dir)
  * This routine gets a long out of the buffer.
  * It updates the buffer pointer accordingly.
  */
-static void getLong(long *dst, unsigned char **src, int dir)
+static void get_int32(std::int32_t *dst, unsigned char **src, int dir)
 {
     if (dir == 1)
     {
@@ -292,7 +292,7 @@ static void getLong(long *dst, unsigned char **src, int dir)
  * buffer;
  * It updates the buffer pointer accordingly.
  */
-static void getDouble(double *dst, unsigned char **src, int dir)
+static void get_double(double *dst, unsigned char **src, int dir)
 {
     int e;
     double f;
@@ -373,7 +373,7 @@ static void getDouble(double *dst, unsigned char **src, int dir)
  * This routine gets a float out of the buffer.
  * It updates the buffer pointer accordingly.
  */
-static void getFloat(float *dst, unsigned char **src, int dir)
+static void get_float(float *dst, unsigned char **src, int dir)
 {
     int e;
     double f;
@@ -462,31 +462,31 @@ void decode_evolver_info_big_endian(EVOLUTION_INFO *info, int dir)
         std::memcpy((char *)buf, (char *)info, sizeof(EVOLUTION_INFO));
     }
 
-    getInt((short *) &info->evolving, &bufPtr, dir);
-    getInt(&info->image_grid_size, &bufPtr, dir);
-    getInt((short *) &info->this_generation_random_seed, &bufPtr, dir);
-    getDouble(&info->max_random_mutation, &bufPtr, dir);
-    getDouble(&info->x_parameter_range, &bufPtr, dir);
-    getDouble(&info->y_parameter_range, &bufPtr, dir);
-    getDouble(&info->x_parameter_offset, &bufPtr, dir);
-    getDouble(&info->y_parameter_offset, &bufPtr, dir);
-    getInt(&info->discrete_x_parameter_offset, &bufPtr, dir);
-    getInt(&info->discrete_y_paramter_offset, &bufPtr, dir);
-    getInt(&info->px, &bufPtr, dir);
-    getInt(&info->py, &bufPtr, dir);
-    getInt(&info->sxoffs, &bufPtr, dir);
-    getInt(&info->syoffs, &bufPtr, dir);
-    getInt(&info->xdots, &bufPtr, dir);
-    getInt(&info->ydots, &bufPtr, dir);
+    get_int16((short *) &info->evolving, &bufPtr, dir);
+    get_int16(&info->image_grid_size, &bufPtr, dir);
+    get_int16((short *) &info->this_generation_random_seed, &bufPtr, dir);
+    get_double(&info->max_random_mutation, &bufPtr, dir);
+    get_double(&info->x_parameter_range, &bufPtr, dir);
+    get_double(&info->y_parameter_range, &bufPtr, dir);
+    get_double(&info->x_parameter_offset, &bufPtr, dir);
+    get_double(&info->y_parameter_offset, &bufPtr, dir);
+    get_int16(&info->discrete_x_parameter_offset, &bufPtr, dir);
+    get_int16(&info->discrete_y_paramter_offset, &bufPtr, dir);
+    get_int16(&info->px, &bufPtr, dir);
+    get_int16(&info->py, &bufPtr, dir);
+    get_int16(&info->sxoffs, &bufPtr, dir);
+    get_int16(&info->syoffs, &bufPtr, dir);
+    get_int16(&info->xdots, &bufPtr, dir);
+    get_int16(&info->ydots, &bufPtr, dir);
     for (int i = 0; i < NUM_GENES; i++)
     {
-        getInt(&info->mutate[i], &bufPtr, dir);
+        get_int16(&info->mutate[i], &bufPtr, dir);
     }
-    getInt(&info->ecount, &bufPtr, dir);
+    get_int16(&info->ecount, &bufPtr, dir);
 
     for (int i = 0; i < (sizeof(info->future)/sizeof(short)); i++)
     {
-        getInt(&info->future[i], &bufPtr, dir);
+        get_int16(&info->future[i], &bufPtr, dir);
     }
     if (bufPtr-buf != sizeof(EVOLUTION_INFO))
     {
@@ -521,19 +521,19 @@ void decode_orbits_info_big_endian(ORBITS_INFO *info, int dir)
         std::memcpy((char *)buf, (char *)info, sizeof(ORBITS_INFO));
     }
 
-    getDouble(&info->oxmin, &bufPtr, dir);
-    getDouble(&info->oxmax, &bufPtr, dir);
-    getDouble(&info->oymin, &bufPtr, dir);
-    getDouble(&info->oymax, &bufPtr, dir);
-    getDouble(&info->ox3rd, &bufPtr, dir);
-    getDouble(&info->oy3rd, &bufPtr, dir);
-    getInt(&info->keep_scrn_coords, &bufPtr, dir);
-    getChar((unsigned char *) &info->drawmode, &bufPtr, dir);
-    getChar((unsigned char *) &info->dummy, &bufPtr, dir);
+    get_double(&info->oxmin, &bufPtr, dir);
+    get_double(&info->oxmax, &bufPtr, dir);
+    get_double(&info->oymin, &bufPtr, dir);
+    get_double(&info->oymax, &bufPtr, dir);
+    get_double(&info->ox3rd, &bufPtr, dir);
+    get_double(&info->oy3rd, &bufPtr, dir);
+    get_int16(&info->keep_scrn_coords, &bufPtr, dir);
+    get_uint8((unsigned char *) &info->drawmode, &bufPtr, dir);
+    get_uint8((unsigned char *) &info->dummy, &bufPtr, dir);
 
     for (int i = 0; i < (sizeof(info->future)/sizeof(short)); i++)
     {
-        getInt(&info->future[i], &bufPtr, dir);
+        get_int16(&info->future[i], &bufPtr, dir);
     }
     if (bufPtr-buf != sizeof(ORBITS_INFO))
     {
