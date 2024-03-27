@@ -41,6 +41,7 @@
 #include "type_has_param.h"
 #include "update_save_name.h"
 #include "version.h"
+#include "video_mode.h"
 
 #include <cassert>
 #include <cctype>

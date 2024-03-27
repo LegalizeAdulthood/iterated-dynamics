@@ -38,6 +38,7 @@
 #include "trig_fns.h"
 #include "update_save_name.h"
 #include "version.h"
+#include "video_mode.h"
 
 #include <algorithm>
 #include <climits>
