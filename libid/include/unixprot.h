@@ -42,8 +42,5 @@ void xsync();
  */
 void redrawscreen();
 
-// Schedules the next delayed update.
-void schedulealarm(int soon);
-
 void putprompt();
 void loaddac();

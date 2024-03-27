@@ -1941,39 +1941,6 @@ xgetfont()
 /*
  *----------------------------------------------------------------------
  *
- * schedulealarm --
- *
- *  Start the refresh alarm
- *
- * Results:
- *  None.
- *
- * Side effects:
- *  Starts the alarm.
- *
- *----------------------------------------------------------------------
- */
-#define DRAW_INTERVAL 6
-void
-schedulealarm(int soon)
-{
-    if (!fastmode)
-        return;
-    std::signal(SIGALRM, (SignalHandler)setredrawscreen);
-    if (soon)
-    {
-        alarm(1);
-    }
-    else
-    {
-        alarm(DRAW_INTERVAL);
-    }
-    alarmon = 1;
-}
-
-/*
- *----------------------------------------------------------------------
- *
  * setredrawscreen --
  *
  *  Set the screen refresh flag
