@@ -22,9 +22,6 @@ void initUnixWindow();
 // cleans up X window and curses.
 void UnixDone();
 
-// writes a pixel to the screen.
-void writevideo(int x, int y, int color);
-
 // reads the current colormap into dacbox.
 int readvideopalette();
 
