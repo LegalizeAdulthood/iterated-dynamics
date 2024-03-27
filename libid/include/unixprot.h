@@ -31,9 +31,6 @@ int writevideopalette();
 // Checks if the window has been resized, and handles the resize.
 int resizeWindow();
 
-// Checks if a key has been pressed.
-int xgetkey(int block);
-
 // Returns bitmap of an 8x8 font.
 unsigned char *xgetfont();
 
