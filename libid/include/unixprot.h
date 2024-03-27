@@ -22,9 +22,6 @@ void initUnixWindow();
 // cleans up X window and curses.
 void UnixDone();
 
-// just a stub.
-int endvideo();
-
 // reads a pixel from the screen.
 int readvideo(int x, int y);
 
