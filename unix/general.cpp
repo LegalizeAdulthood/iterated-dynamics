@@ -80,21 +80,6 @@ int keypressed()
     return ch;
 }
 
-/* Wait for a key.
- * This should be used instead of:
- * while (!keypressed()) {}
- * If timeout=1, waitkeypressed will time out after .5 sec.
- */
-int waitkeypressed(int timeout)
-{
-    while (!keybuffer)
-    {
-        if (timeout)
-            break;
-    }
-    return keypressed();
-}
-
 /*
  * This routine returns the current key, or 0.
  */

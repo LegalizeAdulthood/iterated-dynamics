@@ -25,7 +25,6 @@
 
 extern unsigned char *xgetfont();
 extern int startdisk();
-extern int waitkeypressed(int);
 
 //WINDOW *curwin;
 
