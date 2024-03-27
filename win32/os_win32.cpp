@@ -8,6 +8,7 @@
 #include "drivers.h"
 #include "find_file.h"
 #include "get_color.h"
+#include "get_line.h"
 #include "id.h"
 #include "helpdefs.h"
 #include "id_data.h"

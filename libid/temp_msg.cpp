@@ -8,6 +8,7 @@
 #include "drivers.h"
 #include "editpal.h"
 #include "find_special_colors.h"
+#include "get_line.h"
 #include "id_data.h"
 #include "os.h"
 #include "zoom.h"

@@ -17,6 +17,7 @@
 #include "find_special_colors.h"
 #include "get_color.h"
 #include "get_key_no_help.h"
+#include "get_line.h"
 #include "id_data.h"
 #include "memory.h"
 #include "os.h"

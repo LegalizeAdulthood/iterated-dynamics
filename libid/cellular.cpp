@@ -11,6 +11,7 @@
 #include "drivers.h"
 #include "engine_timer.h"
 #include "fractalp.h"
+#include "get_line.h"
 #include "id_data.h"
 #include "resume.h"
 #include "rotate.h"
