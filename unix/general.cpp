@@ -33,34 +33,6 @@
 bool g_inside_help = false;
 
 /*
-; ****************** Function buzzer(int buzzertype) *******************
-;
-;       Sound a tone based on the value of the parameter
-;
-;       0 = normal completion of task
-;       1 = interrupted task
-;       2 = error contition
-
-;       "buzzer()" codes:  strings of two-word pairs
-;               (frequency in cycles/sec, delay in milliseconds)
-;               frequency == 0 means no sound
-;               delay     == 0 means end-of-tune
-*/
-void
-buzzer(buzzer_codes buzzertype)
-{
-    if ((g_sound_flag & 7) != 0)
-    {
-        std::printf("\007");
-        fflush(stdout);
-    }
-    if (buzzertype == buzzer_codes::COMPLETE)
-    {
-        redrawscreen();
-    }
-}
-
-/*
 ; ***************** Function delay(int delaytime) ************************
 ;
 ;       performs a delay loop for 'delaytime' milliseconds
