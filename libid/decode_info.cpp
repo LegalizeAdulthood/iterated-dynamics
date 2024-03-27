@@ -21,12 +21,6 @@ static_assert(sizeof(EVOLUTION_INFO) == 200, "EVOLUTION_INFO size is incorrect")
 static_assert(sizeof(FRACTAL_INFO) == 504, "FRACTAL_INFO size is incorrect");
 static_assert(sizeof(ORBITS_INFO) == 200, "ORBITS_INFO size is incorrect");
 
-// TODO: figure out a better way to deal with these gcc errors
-#ifdef __GNUC__
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Werror=address-of-packed-member"
-#endif
-
 /* --------------------------------------------------------------------
  * The following routines are used for encoding/decoding gif images.
  * If we aren't on a PC, things are rough for decoding the fractal info
@@ -552,7 +546,3 @@ void decode_orbits_info_big_endian(ORBITS_INFO *info, int dir)
         std::memcpy((char *)info, (char *)buf, sizeof(ORBITS_INFO));
     }
 }
-
-#ifdef __GNUC__
-#pragma GCC diagnostic pop
-#endif

@@ -566,7 +566,12 @@ source_group("Source Files/ui" FILES
 set_src_dir(help.cpp)
 set_src_dir(id_main.cpp)
 
-target_compile_definitions(libid PUBLIC ${ID_TARGET_DEFINITIONS} $<$<CONFIG:Debug>:${ID_TARGET_DEFINITIONS_DEBUG}>)
+target_compile_definitions(libid PUBLIC
+    ${ID_TARGET_DEFINITIONS} $<$<CONFIG:Debug>:${ID_TARGET_DEFINITIONS_DEBUG}>)
+# TODO: Figure out a better way to deal with converting packed structs on big-endian machines
+set_source_files_properties(decode_info.cpp
+    PROPERTIES
+        COMPILE_FLAGS $<$<CXX_COMPILER_ID:GNU>:-Wno-error=address-of-packed-member>)
 target_compile_options(libid PUBLIC ${ID_TARGET_OPTIONS})
 target_include_directories(libid PUBLIC include)
 target_link_libraries(libid PRIVATE help_defs helpcom os config Boost::boost)
