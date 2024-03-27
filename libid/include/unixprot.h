@@ -13,9 +13,6 @@ void decode_orbits_info(ORBITS_INFO *, int);
 int stricmp(char const *, char const *);
 int strnicmp(char const *, char const *, int);
 
-// cleans up X window and curses.
-void UnixDone();
-
 // Checks if the window has been resized, and handles the resize.
 int resizeWindow();
 

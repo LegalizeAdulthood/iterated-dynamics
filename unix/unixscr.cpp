@@ -159,27 +159,6 @@ static int mousefkey[4][4] /* [button][dir] */ = {
 /*
  *----------------------------------------------------------------------
  *
- * UnixDone --
- *
- *  Cleanup windows and stuff.
- *
- * Results:
- *  None.
- *
- * Side effects:
- *  Cleans up.
- *
- *----------------------------------------------------------------------
- */
-
-void
-UnixDone()
-{
-}
-
-/*
- *----------------------------------------------------------------------
- *
  * errhand --
  *
  *  Called on an X server error.
@@ -376,7 +355,6 @@ initUnixWindow()
         {
             std::fprintf(stderr, "Could not allocate memory for X size hints \n");
             std::fprintf(stderr, "Note: xfractint can run without X in -disk mode\n");
-            UnixDone();
             exit(-1);
         }
 
@@ -398,7 +376,6 @@ initUnixWindow()
         {
             std::fprintf(stderr, "Could not open display %s\n", Xdisplay);
             std::fprintf(stderr, "Note: xfractint can run without X in -disk mode\n");
-            UnixDone();
             exit(-1);
         }
         Xdscreen = XDefaultScreen(Xdp);
@@ -747,7 +724,6 @@ resizeWindow()
         if (Ximage == nullptr)
         {
             std::fprintf(stderr, "XCreateImage failed\n");
-            UnixDone();
             exit(-1);
         }
         Ximage->data = static_cast<char *>(malloc(Ximage->bytes_per_line * Ximage->height));

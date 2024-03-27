@@ -38,10 +38,6 @@ void goodbye()                  // we done.  Bail out
     {
         driver_set_for_text();
     }
-#if 0 && defined(XFRACT)
-    UnixDone();
-    std::printf("\n\n\n%s\n", "   Thank You for using " FRACTINT); // printf takes pointer
-#endif
     if (!g_make_parameter_file)
     {
         driver_move_cursor(6, 0);
