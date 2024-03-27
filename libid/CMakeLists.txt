@@ -571,7 +571,7 @@ target_compile_definitions(libid PUBLIC
 # TODO: Figure out a better way to deal with converting packed structs on big-endian machines
 set_source_files_properties(decode_info.cpp
     PROPERTIES
-        COMPILE_FLAGS $<$<CXX_COMPILER_ID:GNU>:-Wno-error=address-of-packed-member>)
+        COMPILE_FLAGS $<$<CXX_COMPILER_ID:GNU>:-Wno-address-of-packed-member>)
 target_compile_options(libid PUBLIC ${ID_TARGET_OPTIONS})
 target_include_directories(libid PUBLIC include)
 target_link_libraries(libid PRIVATE help_defs helpcom os config Boost::boost)
