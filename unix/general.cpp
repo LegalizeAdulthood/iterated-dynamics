@@ -54,12 +54,10 @@ bool g_inside_help = false;
 */
 static int keybuffer = 0;
 
-int getkeynowait();
-
 int keypressed()
 {
     int ch;
-    ch = getkeynowait();
+    ch = 0;
     if (!ch)
         return 0;
     keybuffer = ch;
@@ -78,15 +76,6 @@ int keypressed()
         return 0;
     }
     return ch;
-}
-
-/*
- * This routine returns the current key, or 0.
- */
-int
-getkeynowait()
-{
-    return 0;
 }
 
 /*
