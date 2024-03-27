@@ -867,41 +867,6 @@ xcmapstuff()
     return g_colors;
 }
 
-/*
- *----------------------------------------------------------------------
- *
- * readvideo --
- *
- *  Read a point from the screen
- *
- * Results:
- *  Value of point.
- *
- * Side effects:
- *  None.
- *
- *----------------------------------------------------------------------
- */
-int readvideo(int x, int y)
-{
-#ifdef DEBUG // Debugging checks
-    if (x >= g_screen_x_dots || x < 0 || y >= g_screen_y_dots || y < 0)
-    {
-        std::fprintf(stderr, "Bad coord %d %d\n", x, y);
-    }
-#endif
-    if (g_fake_lut)
-    {
-        XPixel pixel = XGetPixel(Ximage, x, y);
-        for (int i = 0; i < g_colors; i++)
-            if (cmap_pixtab[i] == pixel)
-                return i;
-        return 0;
-    }
-    else
-        return ipixtab[XGetPixel(Ximage, x, y)];
-}
-
 XColor cols[256];
 
 /*
