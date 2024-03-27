@@ -56,7 +56,6 @@ bool g_inside_help = false;
 static int keybuffer = 0;
 
 int getkeynowait();
-int getkeyint(int);
 
 int keypressed()
 {
@@ -91,7 +90,6 @@ int waitkeypressed(int timeout)
 {
     while (!keybuffer)
     {
-        keybuffer = getkeyint(1);
         if (timeout)
             break;
     }
@@ -106,11 +104,6 @@ getakey()
 {
     int ch;
 
-    do
-    {
-        ch = getkeyint(1);
-    }
-    while (ch == 0);
     return ch;
 }
 
@@ -120,53 +113,7 @@ getakey()
 int
 getkeynowait()
 {
-    return getkeyint(0);
-}
-
-/*
- * This is the low level key handling routine.
- * If block is set, we want to block before returning, since we are waiting
- * for a key press.
- * We also have to handle the slide file, etc.
- */
-
-int
-getkeyint(int block)
-{
-    if (keybuffer)
-    {
-        int ch = keybuffer;
-        keybuffer = 0;
-        return ch;
-    }
-    int curkey = xgetkey(0);
-    if (g_slides == slides_mode::PLAY && curkey == FIK_ESC)
-    {
-        stopslideshow();
-        return 0;
-    }
-
-    if (curkey == 0 && g_slides == slides_mode::PLAY)
-    {
-        curkey = slideshw();
-    }
-
-    if (curkey == 0 && block)
-    {
-        curkey = xgetkey(1);
-        if (g_slides == slides_mode::PLAY && curkey == FIK_ESC)
-        {
-            stopslideshow();
-            return 0;
-        }
-    }
-
-    if (curkey && g_slides == slides_mode::RECORD)
-    {
-        recordshw(curkey);
-    }
-
-    return curkey;
+    return 0;
 }
 
 /*
