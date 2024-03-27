@@ -32,8 +32,6 @@
 
 bool g_inside_help = false;
 
-static int keybuffer = 0;
-
 /*
 ; ****************** Function buzzer(int buzzertype) *******************
 ;
