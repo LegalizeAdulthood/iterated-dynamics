@@ -34,7 +34,6 @@ bool g_inside_help = false;
 
 
 /*
-; ****************** Function getakey() *****************************
 ; **************** Function keypressed() ****************************
 
 ;       'getakey()' gets a key from either a "normal" or an enhanced
@@ -94,17 +93,6 @@ int waitkeypressed(int timeout)
             break;
     }
     return keypressed();
-}
-
-/*
- * This routine returns a keypress
- */
-int
-getakey()
-{
-    int ch;
-
-    return ch;
 }
 
 /*

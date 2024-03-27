@@ -232,7 +232,7 @@ SetupShadowVideo()
 char
 get_a_char()
 {
-    return (char) getakey();
+    return 0;
 }
 
 void

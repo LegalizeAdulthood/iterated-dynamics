@@ -6,7 +6,6 @@ struct EVOLUTION_INFO;
 struct FRACTAL_INFO;
 struct ORBITS_INFO;
 
-int getakey();
 int waitkeypressed(int);
 void fix_ranges(int *, int, int);
 void decode_evolver_info(EVOLUTION_INFO *, int);
