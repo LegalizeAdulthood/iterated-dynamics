@@ -34,9 +34,6 @@ int resizeWindow();
 // Returns bitmap of an 8x8 font.
 unsigned char *xgetfont();
 
-// Draws a line from (x1,y1) to (x2,y2).
-void drawline(int x1, int y1, int x2, int y2);
-
 // Sets line mode to draw or xor.
 void setlinemode(int mode);
 
