@@ -25,9 +25,6 @@ void UnixDone();
 // reads a pixel from the screen.
 int readvideo(int x, int y);
 
-// reads a line of pixels from the screen.
-void readvideoline(int y, int x, int lastx, BYTE *pixels);
-
 // writes a pixel to the screen.
 void writevideo(int x, int y, int color);
 

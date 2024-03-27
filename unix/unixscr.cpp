@@ -926,30 +926,6 @@ writevideoline(int y, int x, int lastx, BYTE const *pixels)
         }
     }
 }
-/*
- *----------------------------------------------------------------------
- *
- * readvideoline --
- *
- *  Reads a line of pixels from the screen.
- *
- * Results:
- *  None.
- *
- * Side effects:
- *  Gets pixels
- *
- *----------------------------------------------------------------------
- */
-void
-readvideoline(int y, int x, int lastx, BYTE *pixels)
-{
-    int width = lastx-x+1;
-    for (int i = 0; i < width; i++)
-    {
-        pixels[i] = (BYTE)readvideo(x+i, y);
-    }
-}
 
 /*
  *----------------------------------------------------------------------
