@@ -58,6 +58,7 @@ add_library(libid
     volterra_lotka.cpp include/volterra_lotka.h
 
     cmdfiles.cpp include/cmdfiles.h
+    decode_info.cpp include/decode_info.h
     decoder.cpp include/decoder.h
     diskvid.cpp include/diskvid.h
     do_pause.cpp include/do_pause.h
@@ -317,6 +318,7 @@ source_group("Source Files/fractal specific" FILES
 )
 source_group("Header Files/IO" FILES
     include/cmdfiles.h
+    include/decode_info.h
     include/decoder.h
     include/diskvid.h
     include/do_pause.h
@@ -335,6 +337,7 @@ source_group("Header Files/IO" FILES
 )
 source_group("Source Files/IO" FILES
     cmdfiles.cpp
+    decode_info.cpp
     decoder.cpp
     diskvid.cpp
     do_pause.cpp

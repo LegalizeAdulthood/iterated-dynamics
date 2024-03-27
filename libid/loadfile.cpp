@@ -12,6 +12,7 @@
 #include "calc_frac_init.h"
 #include "cmdfiles.h"
 #include "debug_flags.h"
+#include "decode_info.h"
 #include "drivers.h"
 #include "encoder.h"
 #include "evolve.h"
@@ -836,17 +837,15 @@ static int find_fractal_info(char const *gif_file, FRACTAL_INFO *info,
          fractint006     evolver params
     */
 
-    std::memset(info, 0, FRACTAL_INFO_SIZE);
-    fractinf_len = FRACTAL_INFO_SIZE + (FRACTAL_INFO_SIZE+254)/255;
+    std::memset(info, 0, sizeof(FRACTAL_INFO));
+    fractinf_len = sizeof(FRACTAL_INFO) + (sizeof(FRACTAL_INFO)+254)/255;
     std::fseek(fp, (long)(-1-fractinf_len), SEEK_END);
     /* TODO: revise this to read members one at a time so we get natural alignment
        of fields within the FRACTAL_INFO structure for the platform */
-    freader(info, 1, FRACTAL_INFO_SIZE, fp);
+    freader(info, 1, sizeof(FRACTAL_INFO), fp);
     if (std::strcmp(INFO_ID, info->info_id) == 0)
     {
-#ifdef XFRACT
         decode_fractal_info(info, 1);
-#endif
         hdr_offset = -1-fractinf_len;
     }
     else
@@ -871,10 +870,8 @@ static int find_fractal_info(char const *gif_file, FRACTAL_INFO *info,
                     std::fseek(fp, (long)(hdr_offset = i-offset), SEEK_END);
                     /* TODO: revise this to read members one at a time so we get natural alignment
                         of fields within the FRACTAL_INFO structure for the platform */
-                    freader(info, 1, FRACTAL_INFO_SIZE, fp);
-#ifdef XFRACT
+                    freader(info, 1, sizeof(FRACTAL_INFO), fp);
                     decode_fractal_info(info, 1);
-#endif
                     offset = 10000; // force exit from outer loop
                     break;
                 }
@@ -912,10 +909,8 @@ static int find_fractal_info(char const *gif_file, FRACTAL_INFO *info,
                         scan_extend = 0;
                         break;
                     }
-                    load_ext_blk((char *)info, FRACTAL_INFO_SIZE);
-#ifdef XFRACT
+                    load_ext_blk((char *)info, sizeof(FRACTAL_INFO));
                     decode_fractal_info(info, 1);
-#endif
                     scan_extend = 2;
                     // now we know total extension len, back up to first block
                     fseek(fp, 0L-info->tot_extend_len, SEEK_CUR);
@@ -989,9 +984,7 @@ static int find_fractal_info(char const *gif_file, FRACTAL_INFO *info,
                     fseek(fp, (long)(0-block_len), SEEK_CUR);
                     load_ext_blk((char *)&eload_info, data_len);
                     // XFRACT processing of doubles here
-#ifdef XFRACT
                     decode_evolver_info(&eload_info, 1);
-#endif
                     blk_6_info->length = data_len;
                     blk_6_info->got_data = true;
 
@@ -1021,10 +1014,7 @@ static int find_fractal_info(char const *gif_file, FRACTAL_INFO *info,
                     skip_ext_blk(&block_len, &data_len); // once to get lengths
                     fseek(fp, (long)(0-block_len), SEEK_CUR);
                     load_ext_blk((char *)&oload_info, data_len);
-                    // XFRACT processing of doubles here
-#ifdef XFRACT
                     decode_orbits_info(&oload_info, 1);
-#endif
                     blk_7_info->length = data_len;
                     blk_7_info->got_data = true;
                     blk_7_info->oxmin           = oload_info.oxmin;

@@ -46,7 +46,6 @@ names. So for now humor us and let's keep the names short.
 enum
 {
     ITEM_NAME_LEN = 18, // max length of names in .frm/.l/.ifs/.fc
-    NUM_GENES = 21
 };
 
 #define AUTO_INVERT -123456.789

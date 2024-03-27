@@ -10,6 +10,7 @@
 #include "calcfrac.h"
 #include "cmdfiles.h"
 #include "debug_flags.h"
+#include "decode_info.h"
 #include "diskvid.h"
 #include "drivers.h"
 #include "evolve.h"
@@ -680,9 +681,7 @@ bool encoder()
             }
 
             // some XFRACT logic for the doubles needed here
-#ifdef XFRACT
             decode_evolver_info(&esave_info, 0);
-#endif
             // evolution info block, 006
             save_info.tot_extend_len += extend_blk_len(sizeof(esave_info));
             if (!put_extend_blk(6, sizeof(esave_info), (char *) &esave_info))
@@ -708,10 +707,8 @@ bool encoder()
                 j = 0;
             }
 
-            // some XFRACT logic for the doubles needed here
-#ifdef XFRACT
+            // some big-endian logic for the doubles needed here
             decode_orbits_info(&osave_info, 0);
-#endif
             // orbits info block, 007
             save_info.tot_extend_len += extend_blk_len(sizeof(osave_info));
             if (!put_extend_blk(7, sizeof(osave_info), (char *) &osave_info))
@@ -721,11 +718,9 @@ bool encoder()
         }
 
         // main and last block, 001
-        save_info.tot_extend_len += extend_blk_len(FRACTAL_INFO_SIZE);
-#ifdef XFRACT
+        save_info.tot_extend_len += extend_blk_len(sizeof(FRACTAL_INFO));
         decode_fractal_info(&save_info, 0);
-#endif
-        if (!put_extend_blk(1, FRACTAL_INFO_SIZE, (char *) &save_info))
+        if (!put_extend_blk(1, sizeof(FRACTAL_INFO), (char *) &save_info))
         {
             goto oops;
         }
