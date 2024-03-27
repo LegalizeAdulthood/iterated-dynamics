@@ -990,41 +990,6 @@ int writevideopalette()
 /*
  *----------------------------------------------------------------------
  *
- * setlinemode --
- *
- *  Set line mode to 0=draw or 1=xor.
- *
- * Results:
- *  None.
- *
- * Side effects:
- *  Sets mode.
- *
- *----------------------------------------------------------------------
- */
-void
-setlinemode(int mode)
-{
-    if (unixDisk)
-        return;
-    xlastcolor = -1;
-    if (mode == 0)
-    {
-        XSetFunction(Xdp, Xgc, GXcopy);
-        xlastfcn = GXcopy;
-    }
-    else
-    {
-        XSetForeground(Xdp, Xgc, WhitePixel(Xdp, Xdscreen));
-        xlastcolor = -1;
-        XSetFunction(Xdp, Xgc, GXxor);
-        xlastfcn = GXxor;
-    }
-}
-
-/*
- *----------------------------------------------------------------------
- *
  * xsync --
  *
  *  Sync the x server

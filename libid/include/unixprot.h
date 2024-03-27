@@ -34,9 +34,6 @@ int resizeWindow();
 // Returns bitmap of an 8x8 font.
 unsigned char *xgetfont();
 
-// Sets line mode to draw or xor.
-void setlinemode(int mode);
-
 // Calls a Unix subshell.
 void shell_to_dos();
 
