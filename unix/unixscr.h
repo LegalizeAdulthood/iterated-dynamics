@@ -14,3 +14,6 @@ unsigned char *xgetfont();
 
 // Forces all window events to be processed.
 void xsync();
+
+// Checks if the window has been resized, and handles the resize.
+int resizeWindow();
