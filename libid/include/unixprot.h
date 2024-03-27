@@ -13,9 +13,6 @@ void decode_orbits_info(ORBITS_INFO *, int);
 int stricmp(char const *, char const *);
 int strnicmp(char const *, char const *, int);
 
-// initializes the graphics window, colormap, etc.
-void initUnixWindow();
-
 // cleans up X window and curses.
 void UnixDone();
 
