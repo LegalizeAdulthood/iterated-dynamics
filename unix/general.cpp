@@ -32,51 +32,7 @@
 
 bool g_inside_help = false;
 
-
-/*
-; **************** Function keypressed() ****************************
-
-;       'getakey()' gets a key from either a "normal" or an enhanced
-;       keyboard.   Returns either the vanilla ASCII code for regular
-;       keys, or 1000+(the scan code) for special keys (like F1, etc)
-;       Use of this routine permits the Control-Up/Down arrow keys on
-;       enhanced keyboards.
-;
-;       The concept for this routine was "borrowed" from the MSKermit
-;       SCANCHEK utility
-;
-;       'keypressed()' returns a zero if no keypress is outstanding,
-;       and the value that 'getakey()' will return if one is.  Note
-;       that you must still call 'getakey()' to flush the character.
-;       As a sidebar function, calls 'help()' if appropriate, or
-;       'tab_display()' if appropriate.
-;       Think of 'keypressed()' as a super-'kbhit()'.
-*/
 static int keybuffer = 0;
-
-int keypressed()
-{
-    int ch;
-    ch = 0;
-    if (!ch)
-        return 0;
-    keybuffer = ch;
-    if (ch == FIK_F1 && g_help_mode != help_labels::IDHELP_INDEX)
-    {
-        keybuffer = 0;
-        g_inside_help = true;
-        help(0);
-        g_inside_help = false;
-        return 0;
-    }
-    else if (ch == FIK_TAB && g_tab_mode)
-    {
-        keybuffer = 0;
-        tab_display();
-        return 0;
-    }
-    return ch;
-}
 
 /*
 ; ****************** Function buzzer(int buzzertype) *******************

@@ -78,7 +78,7 @@ static int mod_key(int modifier, int code, int fik, int *j)
 
 static void frame_OnKeyDown(HWND hwnd, UINT vk, BOOL fDown, int cRepeat, UINT flags)
 {
-    // KEYUP, KEYDOWN, and CHAR msgs go to the 'keypressed' code
+    // KEYUP, KEYDOWN, and CHAR msgs go to the 'key pressed' code
     // a key has been pressed - maybe ASCII, maybe not
     // if it's an ASCII key, 'WM_CHAR' will handle it
     unsigned int i;
