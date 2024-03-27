@@ -1,5 +1,6 @@
 #pragma once
 
+#include <cstdint>
 #include <string>
 
 #include "port.h"
@@ -21,100 +22,100 @@
 struct FRACTAL_INFO         // for saving data in GIF file
 {
     char  info_id[8];       // Unique identifier for info block
-    short iterationsold;    // Pre version 18.24
-    short fractal_type;     // 0=Mandelbrot 1=Julia 2= ...
+    std::int16_t iterationsold;    // Pre version 18.24
+    std::int16_t fractal_type;     // 0=Mandelbrot 1=Julia 2= ...
     double xmin;
     double xmax;
     double ymin;
     double ymax;
     double creal;
     double cimag;
-    short videomodeax;
-    short videomodebx;
-    short videomodecx;
-    short videomodedx;
-    short dotmode;
-    short xdots;
-    short ydots;
-    short colors;
-    short version;          // used to be 'future[0]'
+    std::int16_t videomodeax;
+    std::int16_t videomodebx;
+    std::int16_t videomodecx;
+    std::int16_t videomodedx;
+    std::int16_t dotmode;
+    std::int16_t xdots;
+    std::int16_t ydots;
+    std::int16_t colors;
+    std::int16_t version;          // used to be 'future[0]'
     float parm3;
     float parm4;
     float potential[3];
-    short rseed;
-    short rflag;
-    short biomorph;
-    short inside;
-    short logmapold;
+    std::int16_t rseed;
+    std::int16_t rflag;
+    std::int16_t biomorph;
+    std::int16_t inside;
+    std::int16_t logmapold;
     float invert[3];
-    short decomp[2];
-    short symmetry;
+    std::int16_t decomp[2];
+    std::int16_t symmetry;
     // version 2 stuff
-    short init3d[16];
-    short previewfactor;
-    short xtrans;
-    short ytrans;
-    short red_crop_left;
-    short red_crop_right;
-    short blue_crop_left;
-    short blue_crop_right;
-    short red_bright;
-    short blue_bright;
-    short xadjust;
-    short eyeseparation;
-    short glassestype;
+    std::int16_t init3d[16];
+    std::int16_t previewfactor;
+    std::int16_t xtrans;
+    std::int16_t ytrans;
+    std::int16_t red_crop_left;
+    std::int16_t red_crop_right;
+    std::int16_t blue_crop_left;
+    std::int16_t blue_crop_right;
+    std::int16_t red_bright;
+    std::int16_t blue_bright;
+    std::int16_t xadjust;
+    std::int16_t eyeseparation;
+    std::int16_t glassestype;
     // version 3 stuff, release 13
-    short outside;
+    std::int16_t outside;
     // version 4 stuff, release 14
     double x3rd;          // 3rd corner
     double y3rd;
     char stdcalcmode;     // 1/2/g/b
     char useinitorbit;    // init Mandelbrot orbit flag
-    short calc_status;    // resumable, finished, etc
-    long tot_extend_len;  // total length of extension blocks in .gif file
-    short distestold;
-    short floatflag;
-    short bailoutold;
-    long calctime;
-    BYTE trigndx[4];      // which trig functions selected
-    short finattract;
+    std::int16_t calc_status;    // resumable, finished, etc
+    std::int32_t tot_extend_len;  // total length of extension blocks in .gif file
+    std::int16_t distestold;
+    std::int16_t floatflag;
+    std::int16_t bailoutold;
+    std::int32_t calctime;
+    std::uint8_t trigndx[4];      // which trig functions selected
+    std::int16_t finattract;
     double initorbit[2];  // init Mandelbrot orbit values
-    short periodicity;    // periodicity checking
+    std::int16_t periodicity;    // periodicity checking
     // version 5 stuff, release 15
-    short pot16bit;       // save 16 bit continuous potential info
+    std::int16_t pot16bit;       // save 16 bit continuous potential info
     float faspectratio;   // finalaspectratio, y/x
-    short system;         // 0 for dos, 1 for windows
-    short release;        // release number, with 2 decimals implied
-    short display_3d;     // stored only for now, for future use
-    short transparent[2];
-    short ambient;
-    short haze;
-    short randomize;
+    std::int16_t system;         // 0 for dos, 1 for windows
+    std::int16_t release;        // release number, with 2 decimals implied
+    std::int16_t display_3d;     // stored only for now, for future use
+    std::int16_t transparent[2];
+    std::int16_t ambient;
+    std::int16_t haze;
+    std::int16_t randomize;
     // version 6 stuff, release 15.x
-    short rotate_lo;
-    short rotate_hi;
-    short distestwidth;
+    std::int16_t rotate_lo;
+    std::int16_t rotate_hi;
+    std::int16_t distestwidth;
     // version 7 stuff, release 16
     double dparm3;
     double dparm4;
     // version 8 stuff, release 17
-    short fillcolor;
+    std::int16_t fillcolor;
     // version 9 stuff, release 18
     double mxmaxfp;
     double mxminfp;
     double mymaxfp;
     double myminfp;
-    short zdots;
+    std::int16_t zdots;
     float originfp;
     float depthfp;
     float heightfp;
     float widthfp;
     float distfp;
     float eyesfp;
-    short orbittype;
-    short juli3Dmode;
-    short maxfn;
-    short inversejulia;
+    std::int16_t orbittype;
+    std::int16_t juli3Dmode;
+    std::int16_t maxfn;
+    std::int16_t inversejulia;
     double dparm5;
     double dparm6;
     double dparm7;
@@ -122,52 +123,52 @@ struct FRACTAL_INFO         // for saving data in GIF file
     double dparm9;
     double dparm10;
     // version 10 stuff, release 19
-    long bailout;
-    short bailoutest;
-    long iterations;
-    short bf_math;
-    short bflength;
-    short yadjust;        // yikes! we left this out ages ago!
-    short old_demm_colors;
-    long logmap;
-    long distest;
+    std::int32_t bailout;
+    std::int16_t bailoutest;
+    std::int32_t iterations;
+    std::int16_t bf_math;
+    std::int16_t bflength;
+    std::int16_t yadjust;        // yikes! we left this out ages ago!
+    std::int16_t old_demm_colors;
+    std::int32_t logmap;
+    std::int32_t distest;
     double dinvert[3];
-    short logcalc;
-    short stoppass;
-    short quick_calc;
+    std::int16_t logcalc;
+    std::int16_t stoppass;
+    std::int16_t quick_calc;
     double closeprox;
-    short nobof;
-    long orbit_interval;
-    short orbit_delay;
+    std::int16_t nobof;
+    std::int32_t orbit_interval;
+    std::int16_t orbit_delay;
     double math_tol[2];
-    short future[7];     // for stuff we haven't thought of yet
+    std::int16_t future[7];     // for stuff we haven't thought of yet
 };
 
 struct formula_info         // for saving formula data in GIF file
 {
     char  form_name[40];
-    short uses_p1;
-    short uses_p2;
-    short uses_p3;
-    short uses_ismand;
-    short ismand;
-    short uses_p4;
-    short uses_p5;
-    short future[6];       // for stuff we haven't thought of, yet
+    std::int16_t uses_p1;
+    std::int16_t uses_p2;
+    std::int16_t uses_p3;
+    std::int16_t uses_ismand;
+    std::int16_t ismand;
+    std::int16_t uses_p4;
+    std::int16_t uses_p5;
+    std::int16_t future[6];       // for stuff we haven't thought of, yet
 };
 
 struct ext_blk_3
 {
     bool got_data;
-    int length;
+    int32_t length;
     char form_name[40];
-    short uses_p1;
-    short uses_p2;
-    short uses_p3;
-    short uses_ismand;
-    short ismand;
-    short uses_p4;
-    short uses_p5;
+    std::int16_t uses_p1;
+    std::int16_t uses_p2;
+    std::int16_t uses_p3;
+    std::int16_t uses_ismand;
+    std::int16_t ismand;
+    std::int16_t uses_p4;
+    std::int16_t uses_p5;
 };
 
 /*
@@ -183,10 +184,10 @@ struct ORBITS_INFO      // for saving orbits data in a GIF file
     double oymax;
     double ox3rd;
     double oy3rd;
-    short keep_scrn_coords;
+    std::int16_t keep_scrn_coords;
     char drawmode;
     char dummy; // need an even number of bytes
-    short future[74];      // total of 200 bytes
+    std::int16_t future[74];      // total of 200 bytes
 };
 #if defined(_WIN32)
 #pragma pack(pop)

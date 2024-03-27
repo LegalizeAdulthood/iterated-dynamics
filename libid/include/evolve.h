@@ -1,5 +1,7 @@
 #pragma once
 
+#include <cstdint>
+
 enum class variations
 {
     NONE = 0,       // don't vary
@@ -36,25 +38,25 @@ enum
  */
 struct EVOLUTION_INFO      // for saving evolution data in a GIF file
 {
-    short evolving;
-    short image_grid_size;
-    unsigned short this_generation_random_seed;
+    std::int16_t evolving;
+    std::int16_t image_grid_size;
+    std::uint16_t this_generation_random_seed;
     double max_random_mutation;
     double x_parameter_range;
     double y_parameter_range;
     double x_parameter_offset;
     double y_parameter_offset;
-    short discrete_x_parameter_offset;
-    short discrete_y_paramter_offset;
-    short px;
-    short py;
-    short sxoffs;
-    short syoffs;
-    short xdots;
-    short ydots;
-    short mutate[NUM_GENES];
-    short ecount; // count of how many images have been calc'ed so far
-    short future[66 - NUM_GENES];      // total of 200 bytes
+    std::int16_t discrete_x_parameter_offset;
+    std::int16_t discrete_y_paramter_offset;
+    std::int16_t px;
+    std::int16_t py;
+    std::int16_t sxoffs;
+    std::int16_t syoffs;
+    std::int16_t xdots;
+    std::int16_t ydots;
+    std::int16_t mutate[NUM_GENES];
+    std::int16_t ecount; // count of how many images have been calc'ed so far
+    std::int16_t future[66 - NUM_GENES];      // total of 200 bytes
 };
 
 extern char                  g_evolve_discrete_x_parameter_offset;
