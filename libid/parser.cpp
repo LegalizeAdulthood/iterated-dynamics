@@ -35,6 +35,7 @@
 #include "mpmath_c.h"
 #include "newton.h"
 #include "pixel_grid.h"
+#include "sign.h"
 #include "stop_msg.h"
 #include "trig_fns.h"
 

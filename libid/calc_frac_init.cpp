@@ -16,6 +16,7 @@
 #include "id_data.h"
 #include "jb.h"
 #include "pixel_grid.h"
+#include "sign.h"
 #include "soi.h"
 #include "stop_msg.h"
 #include "type_has_param.h"

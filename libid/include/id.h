@@ -95,9 +95,3 @@ inline long lsqr(long x)
 
 // for overlay return stack
 #define BIG 100000.0
-
-template <typename T>
-int sign(T x)
-{
-    return (T{} < x) - (x < T{});
-}

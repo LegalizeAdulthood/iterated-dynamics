@@ -48,6 +48,7 @@
 #include "pixel_grid.h"
 #include "put_color_a.h"
 #include "resume.h"
+#include "sign.h"
 #include "soi.h"
 #include "sound.h"
 #include "spindac.h"

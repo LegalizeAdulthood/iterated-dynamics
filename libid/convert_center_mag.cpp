@@ -8,6 +8,7 @@
 #include "debug_flags.h"
 #include "id.h"
 #include "id_data.h"
+#include "sign.h"
 
 #include <cmath>
 

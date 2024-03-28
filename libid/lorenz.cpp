@@ -27,6 +27,7 @@
 #include "not_disk_msg.h"
 #include "plot3d.h"
 #include "resume.h"
+#include "sign.h"
 #include "sound.h"
 #include "stop_msg.h"
 

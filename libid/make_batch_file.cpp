@@ -31,6 +31,7 @@
 #include "parser.h"
 #include "plot3d.h"
 #include "rotate.h"
+#include "sign.h"
 #include "sound.h"
 #include "spindac.h"
 #include "stereo.h"

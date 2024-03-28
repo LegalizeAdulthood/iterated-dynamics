@@ -194,6 +194,7 @@ add_library(libid
     include/put_color_a.h
     include/read_ticker.h
     include/set_null_video.h
+    include/sign.h
     include/stack_avail.h
 )
 
@@ -363,6 +364,7 @@ source_group("Header Files/math" FILES
     include/hcmplx.h
     include/mpmath.h
     include/mpmath_c.h
+    include/sign.h
 )
 source_group("Source Files/math" FILES
     bigflt.cpp
