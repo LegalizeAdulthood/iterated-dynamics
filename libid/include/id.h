@@ -26,8 +26,6 @@ names. So for now humor us and let's keep the names short.
 */
 #define FILE_MAX_FNAME  64          // max length of filename
 #define FILE_MAX_EXT    64          // max length of extension
-#define MAX_MAX_LINE_LENGTH  128    // upper limit for g_max_line_length for PARs
-#define MIN_MAX_LINE_LENGTH  40     // lower limit for g_max_line_length for PARs
 #define MSG_LEN 80                  // handy buffer size for messages
 #define MAX_PARAMS 10               // maximum number of parameters
 #define MAX_PIXELS   32767          // Maximum pixel count across/down the screen
