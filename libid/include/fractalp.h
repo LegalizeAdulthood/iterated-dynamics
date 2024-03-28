@@ -1,6 +1,7 @@
 #pragma once
 
 #include "big.h"
+#include "calcfrac.h"
 #include "fractype.h"
 #include "helpdefs.h"
 

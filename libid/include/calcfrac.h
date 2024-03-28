@@ -12,6 +12,26 @@ enum
     MAX_NUM_ATTRACTORS = 8
 };
 
+enum class symmetry_type
+{
+    NONE                = 0,
+    X_AXIS_NO_PARAM     = -1,
+    X_AXIS              = 1,
+    Y_AXIS_NO_PARAM     = -2,
+    Y_AXIS              = 2,
+    XY_AXIS_NO_PARAM    = -3,
+    XY_AXIS             = 3,
+    ORIGIN_NO_PARAM     = -4,
+    ORIGIN              = 4,
+    PI_SYM_NO_PARAM     = -5,
+    PI_SYM              = 5,
+    X_AXIS_NO_IMAG      = -6,
+    X_AXIS_NO_REAL      = 6,
+    NO_PLOT             = 99,
+    SETUP               = 100,
+    NOT_FORCED          = 999
+};
+
 extern int                   g_and_color;           // AND mask for iteration to get color index
 extern  long                 g_l_at_rad;            // finite attractor radius
 extern  double               g_f_at_rad;            // finite attractor radius
@@ -73,6 +93,7 @@ extern long                  g_real_color_iter;
 extern bool                  g_reset_periodicity;
 extern int                   g_row;
 extern bool                  g_show_orbit;
+extern symmetry_type         g_force_symmetry;
 extern symmetry_type         g_symmetry;
 extern bool                  g_three_pass;
 extern int                   g_total_passes;

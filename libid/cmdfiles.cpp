@@ -125,7 +125,6 @@ bool    g_ask_video = false;       // flag for video prompting
 bool    g_float_flag = false;
 int     g_biomorph = 0;           // flag for biomorph
 int     g_user_biomorph_value = 0;
-symmetry_type g_force_symmetry = symmetry_type::NONE;      // force symmetry
 int     g_show_file = 0;           // zero if file display pending
 bool    g_random_seed_flag = false;
 int     g_random_seed = 0;              // Random number seeding flag and value

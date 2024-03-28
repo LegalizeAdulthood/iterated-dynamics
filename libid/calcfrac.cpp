@@ -204,6 +204,7 @@ int g_i_x_stop = 0;
 int g_i_y_start = 0;
 int g_i_y_stop = 0;                         // start, stop here
 symmetry_type g_symmetry = symmetry_type::NONE; // symmetry flag
+symmetry_type g_force_symmetry = symmetry_type::NONE;      // force symmetry
 bool g_reset_periodicity = false;         // true if escape time pixel rtn to reset
 int g_keyboard_check_interval = 0;
 int g_max_keyboard_check_interval = 0;                   // avoids checking keyboard too often

@@ -186,7 +186,6 @@ extern int                   g_fill_color;
 extern bool                  g_finite_attractor;
 extern bool                  g_first_init;
 extern bool                  g_float_flag;
-extern symmetry_type         g_force_symmetry;
 extern std::string           g_formula_filename;
 extern std::string           g_formula_name;
 extern bool                  g_gif87a_flag;
