@@ -11,7 +11,6 @@
 #include <cstring>
 
 #include "port.h"
-#include "prototyp.h"
 #include "id.h"
 
 #include "WinText.h"

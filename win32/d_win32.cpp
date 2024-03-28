@@ -3,7 +3,6 @@
  * Routines for a Win32 GDI driver for fractint.
  */
 #include "port.h"
-#include "prototyp.h"
 
 #include "calcfrac.h"
 #include "cmdfiles.h"

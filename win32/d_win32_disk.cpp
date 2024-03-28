@@ -3,7 +3,6 @@
  * Routines for a Win32 disk video mode driver for fractint.
  */
 #include "port.h"
-#include "prototyp.h"
 
 #include "calcfrac.h"
 #include "cmdfiles.h"

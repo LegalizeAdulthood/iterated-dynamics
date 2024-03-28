@@ -1,6 +1,5 @@
 #include <crtdbg.h>
 #include "port.h"
-#include "prototyp.h"
 
 #define FN(name_) void fStk##name_() { _ASSERTE(0 && "Called " #name_ ); }
 
