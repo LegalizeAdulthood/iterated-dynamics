@@ -154,6 +154,8 @@ static BYTE dstack[4096] = { 0 };              // common temp, two put_line call
 static unsigned int tprefix[2][maxyblk][maxxblk] = { 0 }; // common temp
 
 // variables exported from this file
+long            g_l_at_rad;                     // finite attractor radius
+double          g_f_at_rad;                     // finite attractor radius
 LComplex g_l_init_orbit = { 0 };
 long g_l_magnitude = 0;
 long g_l_magnitude_limit = 0;

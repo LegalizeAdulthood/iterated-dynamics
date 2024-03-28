@@ -82,8 +82,6 @@ double g_delta_min;                                                // same as a 
 double g_params[MAX_PARAMS];                                       // parameters
 double g_potential_params[3];                                      // three potential parameters
 long g_fudge_factor;                                               // 2**fudgefactor
-long g_l_at_rad;                                                   // finite attractor radius
-double g_f_at_rad;                                                 // finite attractor radius
 int g_bit_shift;                                                   // fudgefactor
 
 config_status     g_bad_config{};          // 'id.cfg' ok?

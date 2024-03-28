@@ -38,8 +38,6 @@ enum
     ITEM_NAME_LEN = 18, // max length of names in .frm/.l/.ifs/.fc
 };
 
-extern  long     g_l_at_rad;      // finite attractor radius
-extern  double   g_f_at_rad;      // finite attractor radius
 enum
 {
     NUM_IFS_FUNCTIONS = 64,

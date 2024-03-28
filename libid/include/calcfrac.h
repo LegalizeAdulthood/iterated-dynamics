@@ -10,6 +10,8 @@ enum
 };
 
 extern int                   g_and_color;           // AND mask for iteration to get color index
+extern  long                 g_l_at_rad;            // finite attractor radius
+extern  double               g_f_at_rad;            // finite attractor radius
 extern int                   g_atan_colors;
 extern DComplex              g_attractor[];
 extern int                   g_attractor_period[];
