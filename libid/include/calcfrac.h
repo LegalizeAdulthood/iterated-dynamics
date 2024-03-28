@@ -4,6 +4,10 @@
 #include "id.h"
 
 constexpr double AUTO_INVERT = -123456.789;
+enum
+{
+    MAX_NUM_ATTRACTORS = 8
+};
 
 extern int                   g_and_color;           // AND mask for iteration to get color index
 extern int                   g_atan_colors;
