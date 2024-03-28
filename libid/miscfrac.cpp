@@ -1259,13 +1259,11 @@ static bool Bif_Periodic(long time)
 // The following are Bifurcation "orbitcalc" routines...
 /*                                                                                                    */
 //********************************************************************
-#if defined(XFRACT) || defined(_WIN32)
 int BifurcLambda() // Used by lyanupov
 {
     Population = Rate * Population * (1 - Population);
     return std::fabs(Population) > BIG;
 }
-#endif
 
 #define LCMPLXtrig0(arg, out) Arg1->l = (arg); ltrig0(); (out) = Arg1->l
 #define  CMPLXtrig0(arg, out) Arg1->d = (arg); dtrig0(); (out) = Arg1->d
