@@ -77,13 +77,6 @@ inline double sqr(double x)
     return x*x;
 }
 
-inline long lsqr(long x)
-{
-    extern int g_bit_shift;
-    long multiply(long x, long y, int n);
-    return multiply(x, x, g_bit_shift);
-}
-
 #ifdef PI
 #undef PI
 #endif

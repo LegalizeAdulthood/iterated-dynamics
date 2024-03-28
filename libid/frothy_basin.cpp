@@ -10,6 +10,7 @@
 #include "cmdfiles.h"
 #include "diskvid.h"
 #include "drivers.h"
+#include "fixed_pt.h"
 #include "fractals.h"
 #include "id_data.h"
 #include "loadmap.h"

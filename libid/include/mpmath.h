@@ -2,6 +2,7 @@
 
 #include "calcfrac.h"
 #include "cmplx.h"
+#include "fixed_pt.h"
 #include "fpu087.h"
 #include "fractals.h"
 #include "id_data.h"

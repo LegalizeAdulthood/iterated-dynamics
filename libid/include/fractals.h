@@ -32,7 +32,6 @@ extern int                   g_max_color;
 extern MP                    g_mp_one;
 extern std::vector<MPC>      g_mpc_roots;
 extern double                g_newton_r_over_d;
-extern bool                  g_overflow;
 extern DComplex              g_param_z1;
 extern DComplex              g_param_z2;
 extern DComplex              g_power_z;

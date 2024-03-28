@@ -7,6 +7,7 @@
 #include "cmdfiles.h"
 #include "debug_flags.h"
 #include "drivers.h"
+#include "fixed_pt.h"
 #include "fractalp.h"
 #include "fractals.h"
 #include "fractype.h"

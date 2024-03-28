@@ -8,6 +8,7 @@
 #include "do_pause.h"
 #include "drivers.h"
 #include "evolve.h"
+#include "fixed_pt.h"
 #include "fractals.h"
 #include "framain2.h"
 #include "get_3d_params.h"
@@ -82,8 +83,6 @@ long g_l_delta_min;                                                // for calcfr
 double g_delta_min;                                                // same as a double
 double g_params[MAX_PARAMS];                                       // parameters
 double g_potential_params[3];                                      // three potential parameters
-long g_fudge_factor;                                               // 2**fudgefactor
-int g_bit_shift;                                                   // fudgefactor
 
 config_status     g_bad_config{};          // 'id.cfg' ok?
 bool g_has_inverse = false;

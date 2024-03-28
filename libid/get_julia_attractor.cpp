@@ -5,6 +5,7 @@
 
 #include "calcfrac.h"
 #include "cmdfiles.h"
+#include "fixed_pt.h"
 #include "fractalp.h"
 #include "fractals.h"
 #include "id_data.h"

@@ -28,7 +28,6 @@ enum class help_labels;
 extern int                   g_adapter;             // index into g_video_table[]
 extern bool                  g_auto_browse;
 extern config_status         g_bad_config;
-extern int                   g_bit_shift;
 extern int                   g_box_count;
 extern std::string           g_browse_mask;
 extern bool                  g_browsing;
@@ -51,7 +50,6 @@ extern int                   g_filename_stack_index;
 extern float                 g_final_aspect_ratio;
 extern std::string           g_fractal_search_dir1;
 extern std::string           g_fractal_search_dir2;
-extern long                  g_fudge_factor;
 extern bool                  g_has_inverse;
 extern help_labels           g_help_mode;
 extern int                   g_integer_fractal;

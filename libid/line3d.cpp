@@ -16,6 +16,7 @@
 #include "dir_file.h"
 #include "diskvid.h"
 #include "drivers.h"
+#include "fixed_pt.h"
 #include "fractals.h"
 #include "framain2.h"
 #include "gifview.h"

@@ -285,31 +285,6 @@ enum class show_dot_direction
 
 int g_and_color = 0;        // "and" value used for color selection
 
-//       32-bit integer divide routine with an 'n'-bit shift.
-//       Overflow condition returns 0x7fffh with overflow = 1;
-//
-//       z = divide(x, y, n);       z = x / y;
-//
-long divide(long x, long y, int n)
-{
-    return (long) (((float) x) / ((float) y)*(float)(1 << n));
-}
-
-//  32 bit integer multiply with n bit shift.
-//  Note that we fake integer multiplication with floating point
-//  multiplication.
-//  Overflow condition returns 0x7fffffffh with overflow = 1;
-long multiply(long x, long y, int n)
-{
-    long l = (long)(((float) x) * ((float) y)/(float)(1 << n));
-    if (l == 0x7fffffff)
-    {
-        g_overflow = true;
-    }
-    return l;
-}
-
-
 double fmodtest_bailout_or()
 {
     double const tmpx = sqr(g_new_z.x);

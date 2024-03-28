@@ -8,6 +8,7 @@
 #include "drivers.h"
 #include "file_gets.h"
 #include "find_file_item.h"
+#include "fixed_pt.h"
 #include "fpu087.h"
 #include "fractals.h"
 #include "id_data.h"

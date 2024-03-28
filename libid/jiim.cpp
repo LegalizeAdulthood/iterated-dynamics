@@ -18,6 +18,7 @@
 #include "drivers.h"
 #include "editpal.h"
 #include "find_special_colors.h"
+#include "fixed_pt.h"
 #include "fractalp.h"
 #include "fractals.h"
 #include "fractype.h"

@@ -80,6 +80,7 @@ add_library(libid
     biginit.cpp include/biginit.h
     bignum.cpp
     bignumc.cpp
+    fixed_pt.cpp include/fixed_pt.h
     fpu087.cpp include/fpu087.h
     hcmplx.cpp include/hcmplx.h
     mpmath_c.cpp include/mpmath_c.h
@@ -360,6 +361,7 @@ source_group("Header Files/math" FILES
     include/big.h
     include/biginit.h
     include/cmplx.h
+    include/fixed_pt.h
     include/fpu087.h
     include/hcmplx.h
     include/mpmath.h
@@ -371,6 +373,7 @@ source_group("Source Files/math" FILES
     biginit.cpp
     bignum.cpp
     bignumc.cpp
+    fixed_pt.cpp
     fpu087.cpp
     hcmplx.cpp
     mpmath_c.cpp

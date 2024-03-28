@@ -107,8 +107,6 @@ extern int                   g_xx_stop;
 extern int                   g_yy_start;
 extern int                   g_yy_stop;
 
-long multiply(long x, long y, int n);
-long divide(long x, long y, int n);
 int calcfract();
 int calcmand();
 int calcmandfp();

@@ -83,7 +83,6 @@ std::vector<MPC> g_mpc_roots;
 long g_fudge_half;
 DComplex g_power_z;
 int     g_bit_shift_less_1;                  // bit shift less 1
-bool g_overflow = false;
 int g_c_exponent;
 // These are local but I don't want to pass them as parameters
 DComplex g_param_z1;

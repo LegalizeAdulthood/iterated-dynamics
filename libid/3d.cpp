@@ -58,6 +58,7 @@
 #include "3d.h"
 
 #include "calcfrac.h"
+#include "fixed_pt.h"
 #include "fractals.h"
 #include "line3d.h"
 
