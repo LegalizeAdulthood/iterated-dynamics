@@ -92,44 +92,6 @@ inline long lsqr(long x)
 #define TRUE 1
 #define FALSE 0
 #endif
-#ifndef XFRACT
-// TODO: make sure X Window System font can render these chars
-#define UPARR "\x18"
-#define DNARR "\x19"
-#define RTARR "\x1A"
-#define LTARR "\x1B"
-#define UPARR1 "\x18"
-#define DNARR1 "\x19"
-#define RTARR1 "\x1A"
-#define LTARR1 "\x1B"
-#define FK_F1  "F1"
-#define FK_F2  "F2"
-#define FK_F3  "F3"
-#define FK_F4  "F4"
-#define FK_F5  "F5"
-#define FK_F6  "F6"
-#define FK_F7  "F7"
-#define FK_F8  "F8"
-#define FK_F9  "F9"
-#else
-#define UPARR "K"
-#define DNARR "J"
-#define RTARR "L"
-#define LTARR "H"
-#define UPARR1 "up(K)"
-#define DNARR1 "down(J)"
-#define RTARR1 "left(L)"
-#define LTARR1 "right(H)"
-#define FK_F1  "Shift-1"
-#define FK_F2  "Shift-2"
-#define FK_F3  "Shift-3"
-#define FK_F4  "Shift-4"
-#define FK_F5  "Shift-5"
-#define FK_F6  "Shift-6"
-#define FK_F7  "Shift-7"
-#define FK_F8  "Shift-8"
-#define FK_F9  "Shift-9"
-#endif
 
 // for overlay return stack
 #define BIG 100000.0
