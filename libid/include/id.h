@@ -1,8 +1,6 @@
 // id.h - common structures and values for the FRACTINT routines
 #pragma once
 
-#include "big.h"
-
 // these are used to declare arrays for file names
 #if defined(_WIN32)
 #define FILE_MAX_PATH _MAX_PATH

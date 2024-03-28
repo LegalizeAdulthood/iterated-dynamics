@@ -11,6 +11,7 @@
 
 #include "diskvid.h"
 
+#include "big.h"
 #include "cmdfiles.h"
 #include "drivers.h"
 #include "help_title.h"

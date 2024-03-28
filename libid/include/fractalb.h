@@ -1,5 +1,7 @@
 #pragma once
 
+#include "big.h"
+
 DComplex cmplxbntofloat(BNComplex *);
 DComplex cmplxbftofloat(BFComplex *);
 void comparevalues(char const *s, LDBL x, bn_t bnx);

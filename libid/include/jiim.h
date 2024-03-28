@@ -1,5 +1,7 @@
 #pragma once
 
+#include "cmplx.h"
+
 enum class jiim_types
 {
     JIIM = 0,

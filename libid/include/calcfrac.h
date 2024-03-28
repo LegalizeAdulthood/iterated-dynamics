@@ -1,7 +1,7 @@
 #pragma once
 
 #include "big.h"
-#include "id.h"
+#include "cmplx.h"
 
 enum class fractal_type;
 

@@ -1,5 +1,7 @@
 #pragma once
 
+#include "cmplx.h"
+
 // fpu087 -- assembler file prototypes
 void FPUcplxmul(DComplex const *x, DComplex const *y, DComplex *z);
 void FPUcplxdiv(DComplex const *x, DComplex const *y, DComplex *z);
