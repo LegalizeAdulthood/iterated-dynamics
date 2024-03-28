@@ -992,7 +992,7 @@ static std::vector<int> verhulst_array;
 unsigned long filter_cycles;
 static bool half_time_check = false;
 static long   lPopulation, lRate;
-double Population,  Rate;
+static double Population,  Rate;
 static bool mono = false;
 static int outside_x = 0;
 static long   LPI;
