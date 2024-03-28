@@ -9,6 +9,7 @@
 #include "convert_center_mag.h"
 #include "id.h"
 #include "id_data.h"
+#include "pixel_limits.h"
 
 #include <algorithm>
 #include <cfloat>

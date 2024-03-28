@@ -46,6 +46,7 @@
 #include "orbit.h"
 #include "parser.h"
 #include "pixel_grid.h"
+#include "pixel_limits.h"
 #include "put_color_a.h"
 #include "resume.h"
 #include "sign.h"

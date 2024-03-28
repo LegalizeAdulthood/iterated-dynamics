@@ -192,6 +192,7 @@ add_library(libid
     include/lsys.h
     include/mpmath.h
     include/out_line.h
+    include/pixel_limits.h
     include/prototyp.h
     include/put_color_a.h
     include/read_ticker.h
@@ -226,6 +227,7 @@ source_group("Header Files/engine" FILES
     include/orbit.h
     include/param_not_used.h
     include/pixel_grid.h
+    include/pixel_limits.h
     include/resume.h
     include/soi.h
     include/ssg_block_size.h

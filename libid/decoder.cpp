@@ -25,6 +25,7 @@
 #include "gifview.h"
 #include "loadfile.h"
 #include "out_line.h"
+#include "pixel_limits.h"
 
 static short get_next_code();
 

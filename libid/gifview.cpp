@@ -26,6 +26,7 @@
 #include "loadmap.h"
 #include "os.h"
 #include "out_line.h"
+#include "pixel_limits.h"
 #include "plot3d.h"
 #include "rotate.h"
 #include "slideshw.h"

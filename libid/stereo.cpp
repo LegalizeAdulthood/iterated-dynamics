@@ -19,6 +19,7 @@
 #include "helpdefs.h"
 #include "id_data.h"
 #include "id_keys.h"
+#include "pixel_limits.h"
 #include "rotate.h"
 #include "spindac.h"
 #include "stop_msg.h"

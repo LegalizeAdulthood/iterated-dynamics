@@ -26,6 +26,7 @@
 #include "loadfile.h"
 #include "lorenz.h"
 #include "passes_options.h"
+#include "pixel_limits.h"
 #include "rotate.h"
 #include "select_video_mode.h"
 #include "spindac.h"

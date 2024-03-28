@@ -17,6 +17,7 @@
 #include "id_data.h"
 #include "jb.h"
 #include "pixel_grid.h"
+#include "pixel_limits.h"
 #include "sign.h"
 #include "soi.h"
 #include "stop_msg.h"

@@ -26,9 +26,6 @@ names. So for now humor us and let's keep the names short.
 #define FILE_MAX_EXT    64          // max length of extension
 #define MSG_LEN 80                  // handy buffer size for messages
 #define MAX_PARAMS 10               // maximum number of parameters
-#define MAX_PIXELS   32767          // Maximum pixel count across/down the screen
-#define OLD_MAX_PIXELS 2048         // Limit of some old fixed arrays
-#define MIN_PIXELS 10               // Minimum pixel count across/down the screen
 #define DEFAULT_ASPECT 1.0F         // Assumed overall screen dimensions, y/x
 
 enum

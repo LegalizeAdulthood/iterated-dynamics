@@ -23,6 +23,7 @@
 #include "id_data.h"
 #include "loadfile.h"
 #include "os.h"
+#include "pixel_limits.h"
 #include "plot3d.h"
 #include "rotate.h"
 #include "stereo.h"
