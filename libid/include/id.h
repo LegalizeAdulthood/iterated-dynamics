@@ -3,8 +3,6 @@
 
 #include "big.h"
 
-#define NUM_BOX_POINTS 4096
-
 // these are used to declare arrays for file names
 #if defined(_WIN32)
 #define FILE_MAX_PATH _MAX_PATH

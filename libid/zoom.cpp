@@ -32,10 +32,15 @@
 
 #define PIXELROUND 0.00001
 
-int g_box_x[NUM_BOX_POINTS] = { 0 };
-int g_box_y[NUM_BOX_POINTS] = { 0 };
-int g_box_values[NUM_BOX_POINTS] = { 0 };
-bool g_video_scroll = false;
+enum
+{
+    NUM_BOX_POINTS = 4096
+};
+
+int g_box_x[NUM_BOX_POINTS]{};
+int g_box_y[NUM_BOX_POINTS]{};
+int g_box_values[NUM_BOX_POINTS]{};
+bool g_video_scroll{};
 
 static void zmo_calc(double, double, double *, double *, double);
 static void zmo_calcbf(bf_t, bf_t, bf_t, bf_t, bf_t, bf_t, bf_t, bf_t, bf_t);
