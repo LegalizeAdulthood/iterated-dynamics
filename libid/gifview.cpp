@@ -40,32 +40,8 @@
 #include <filesystem>
 #include <vector>
 
-static void close_file();
-
 #define MAXCOLORS       256
-
-static std::FILE *fpin = nullptr;       // std::FILE pointer
-unsigned int g_height;
-unsigned int g_num_colors;
-
-static int out_line_dither(BYTE *, int);
-static int out_line_migs(BYTE *, int);
-static int out_line_too_wide(BYTE *, int);
-static int colcount; // keeps track of current column for wide images
-
-static unsigned int gifview_image_top;    // (for migs)
-static unsigned int gifview_image_left;   // (for migs)
-static unsigned int gifview_image_twidth; // (for migs)
-
-int get_byte()
-{
-    return getc(fpin); // EOF is -1, as desired
-}
-
-int get_bytes(BYTE *where, int how_many)
-{
-    return (int) std::fread((char *)where, 1, how_many, fpin); // EOF is -1, as desired
-}
+#define ALTERNATE_FRACTAL_TYPE    ".fra"
 
 /*
  * DECODERLINEWIDTH is the width of the pixel buffer used by the decoder. A
@@ -80,7 +56,32 @@ int get_bytes(BYTE *where, int how_many)
 
 #define DECODERLINE_WIDTH MAX_PIXELS
 
+static void close_file();
+
+static std::FILE *fpin = nullptr;       // std::FILE pointer
+unsigned int g_height;
+unsigned int g_num_colors;
+
+static int out_line_dither(BYTE *, int);
+static int out_line_migs(BYTE *, int);
+static int out_line_too_wide(BYTE *, int);
+static int colcount; // keeps track of current column for wide images
+
+static unsigned int gifview_image_top;    // (for migs)
+static unsigned int gifview_image_left;   // (for migs)
+static unsigned int gifview_image_twidth; // (for migs)
+
 static std::vector<char> ditherbuf;
+
+int get_byte()
+{
+    return getc(fpin); // EOF is -1, as desired
+}
+
+int get_bytes(BYTE *where, int how_many)
+{
+    return (int) std::fread((char *)where, 1, how_many, fpin); // EOF is -1, as desired
+}
 
 // Main entry decoder
 

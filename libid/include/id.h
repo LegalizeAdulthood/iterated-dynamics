@@ -91,7 +91,6 @@ enum
 };
 
 #define DEFAULT_FRACTAL_TYPE      ".gif"
-#define ALTERNATE_FRACTAL_TYPE    ".fra"
 
 inline int sqr(int x)
 {
