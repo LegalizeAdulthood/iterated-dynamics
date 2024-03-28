@@ -3,6 +3,8 @@
 #include <cstdio>
 #include <string>
 
+#include "3d.h"
+
 enum class raytrace_formats
 {
     none = 0,
