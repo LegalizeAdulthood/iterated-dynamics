@@ -14,18 +14,23 @@
 #define FILE_MAX_DIR   80       // max length of directory name
 #endif
 #endif
-#define FILE_MAX_DRIVE  3       // max length of drive letter
-/*
-The filename limits were increased in Xfract 3.02. But alas,
-in this poor program that was originally developed on the
-nearly-brain-dead DOS operating system, quite a few things
-in the UI would break if file names were bigger than DOS 8-3
-names. So for now humor us and let's keep the names short.
-*/
-#define FILE_MAX_FNAME  64          // max length of filename
-#define FILE_MAX_EXT    64          // max length of extension
-#define MSG_LEN 80                  // handy buffer size for messages
-#define MAX_PARAMS 10               // maximum number of parameters
+
+//
+// The filename limits were increased in Xfract 3.02. But alas,
+// in this poor program that was originally developed on the
+// nearly-brain-dead DOS operating system, quite a few things
+// in the UI would break if file names were bigger than DOS 8-3
+// names. So for now humor us and let's keep the names short.
+//
+enum
+{
+    FILE_MAX_DRIVE = 3,  // max length of drive letter
+    FILE_MAX_FNAME = 64, // max length of filename
+    FILE_MAX_EXT = 64,   // max length of extension
+    MSG_LEN = 80,        // handy buffer size for messages
+    MAX_PARAMS = 10      // maximum number of parameters
+};
+
 #define DEFAULT_ASPECT 1.0F         // Assumed overall screen dimensions, y/x
 
 enum
