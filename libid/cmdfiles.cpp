@@ -70,6 +70,8 @@
 #include <system_error>
 #include <vector>
 
+#define DEFAULT_ASPECT_DRIFT 0.02F  // drift of < 2% is forced to 0%
+
 #ifdef XFRACT
 #define DEFAULT_PRINTER 5       // Assume a Postscript printer
 #define PRT_RESOLUTION  100     // Assume medium resolution

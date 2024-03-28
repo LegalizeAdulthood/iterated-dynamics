@@ -32,7 +32,6 @@ names. So for now humor us and let's keep the names short.
 #define OLD_MAX_PIXELS 2048         // Limit of some old fixed arrays
 #define MIN_PIXELS 10               // Minimum pixel count across/down the screen
 #define DEFAULT_ASPECT 1.0F         // Assumed overall screen dimensions, y/x
-#define DEFAULT_ASPECT_DRIFT 0.02F  // drift of < 2% is forced to 0%
 
 enum
 {
