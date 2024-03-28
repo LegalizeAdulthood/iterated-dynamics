@@ -60,27 +60,6 @@ enum
     ATANI = -104
 };
 
-// bitmask values for fractalspecific flags
-enum
-{
-    NOZOOM = 1,      // zoombox not allowed at all
-    NOGUESS = 2,     // solid guessing not allowed
-    NOTRACE = 4,     // boundary tracing not allowed
-    NOROTATE = 8,    // zoombox rotate/stretch not allowed
-    NORESUME = 16,   // can't interrupt and resume
-    INFCALC = 32,    // this type calculates forever
-    TRIG1 = 64,      // number of trig functions in formula
-    TRIG2 = 128,     //
-    TRIG3 = 192,     //
-    TRIG4 = 256,     //
-    PARMS3D = 1024,  // uses 3d parameters
-    OKJB = 2048,     // works with Julibrot
-    MORE = 4096,     // more than 4 parms
-    BAILTEST = 8192, // can use different bailout tests
-    BF_MATH = 16384, // supports arbitrary precision
-    LD_MATH = 32768  // supports long double
-};
-
 #define DEFAULT_FRACTAL_TYPE      ".gif"
 
 inline int sqr(int x)
