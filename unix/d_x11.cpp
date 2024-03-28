@@ -19,6 +19,7 @@
 #include "diskvid.h"
 #include "drivers.h"
 #include "editpal.h"
+#include "fixed_pt.h"
 #include "fractals.h"
 #include "goodbye.h"
 #include "helpdefs.h"
