@@ -38,7 +38,6 @@ enum
     ITEM_NAME_LEN = 18, // max length of names in .frm/.l/.ifs/.fc
 };
 
-#define AUTO_INVERT -123456.789
 enum
 {
     MAX_NUM_ATTRACTORS = 8

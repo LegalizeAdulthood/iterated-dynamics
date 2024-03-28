@@ -3,7 +3,7 @@
 #include "big.h"
 #include "id.h"
 
-#include <vector>
+constexpr double AUTO_INVERT = -123456.789;
 
 extern int                   g_and_color;           // AND mask for iteration to get color index
 extern int                   g_atan_colors;
