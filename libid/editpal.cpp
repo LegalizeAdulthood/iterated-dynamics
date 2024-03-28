@@ -816,28 +816,28 @@ static void MoveBox__Move(MoveBox *me, int key)
     {
         switch (key)
         {
-        case FIK_CTL_RIGHT_ARROW:
+        case ID_KEY_CTL_RIGHT_ARROW:
             xoff += BOX_INC*4;
             break;
-        case FIK_RIGHT_ARROW:
+        case ID_KEY_RIGHT_ARROW:
             xoff += BOX_INC;
             break;
-        case FIK_CTL_LEFT_ARROW:
+        case ID_KEY_CTL_LEFT_ARROW:
             xoff -= BOX_INC*4;
             break;
-        case FIK_LEFT_ARROW:
+        case ID_KEY_LEFT_ARROW:
             xoff -= BOX_INC;
             break;
-        case FIK_CTL_DOWN_ARROW:
+        case ID_KEY_CTL_DOWN_ARROW:
             yoff += BOX_INC*4;
             break;
-        case FIK_DOWN_ARROW:
+        case ID_KEY_DOWN_ARROW:
             yoff += BOX_INC;
             break;
-        case FIK_CTL_UP_ARROW:
+        case ID_KEY_CTL_UP_ARROW:
             yoff -= BOX_INC*4;
             break;
-        case FIK_UP_ARROW:
+        case ID_KEY_UP_ARROW:
             yoff -= BOX_INC;
             break;
 
@@ -908,7 +908,7 @@ static bool MoveBox_Process(MoveBox *me)
         Cursor_WaitKey();
         key = driver_get_key();
 
-        if (key == FIK_ENTER || key == FIK_ENTER_2 || key == FIK_ESC || key == 'H' || key == 'h')
+        if (key == ID_KEY_ENTER || key == ID_KEY_ENTER_2 || key == ID_KEY_ESC || key == 'H' || key == 'h')
         {
             if (me->x != orig_x || me->y != orig_y || me->csize != orig_csize)
             {
@@ -923,18 +923,18 @@ static bool MoveBox_Process(MoveBox *me)
 
         switch (key)
         {
-        case FIK_UP_ARROW:
-        case FIK_DOWN_ARROW:
-        case FIK_LEFT_ARROW:
-        case FIK_RIGHT_ARROW:
-        case FIK_CTL_UP_ARROW:
-        case FIK_CTL_DOWN_ARROW:
-        case FIK_CTL_LEFT_ARROW:
-        case FIK_CTL_RIGHT_ARROW:
+        case ID_KEY_UP_ARROW:
+        case ID_KEY_DOWN_ARROW:
+        case ID_KEY_LEFT_ARROW:
+        case ID_KEY_RIGHT_ARROW:
+        case ID_KEY_CTL_UP_ARROW:
+        case ID_KEY_CTL_DOWN_ARROW:
+        case ID_KEY_CTL_LEFT_ARROW:
+        case ID_KEY_CTL_RIGHT_ARROW:
             MoveBox__Move(me, key);
             break;
 
-        case FIK_PAGE_UP:   // shrink
+        case ID_KEY_PAGE_UP:   // shrink
             if (me->csize > CSIZE_MIN)
             {
                 int t = me->csize - CSIZE_INC;
@@ -955,7 +955,7 @@ static bool MoveBox_Process(MoveBox *me)
             }
             break;
 
-        case FIK_PAGE_DOWN:   // grow
+        case ID_KEY_PAGE_DOWN:   // grow
         {
             int max_width = std::min(g_screen_x_dots, MAX_WIDTH);
 
@@ -997,7 +997,7 @@ static bool MoveBox_Process(MoveBox *me)
 
     me->should_hide = key == 'H' || key == 'h';
 
-    return key != FIK_ESC;
+    return key != ID_KEY_ESC;
 }
 
 
@@ -1136,7 +1136,7 @@ static int CEditor_Edit(CEditor *me)
 
         switch (key)
         {
-        case FIK_PAGE_UP:
+        case ID_KEY_PAGE_UP:
             if (me->val < 63)
             {
                 me->val += 5;
@@ -1150,7 +1150,7 @@ static int CEditor_Edit(CEditor *me)
             break;
 
         case '+':
-        case FIK_CTL_PLUS:
+        case ID_KEY_CTL_PLUS:
             diff = 1;
             while (driver_key_pressed() == key)
             {
@@ -1169,7 +1169,7 @@ static int CEditor_Edit(CEditor *me)
             }
             break;
 
-        case FIK_PAGE_DOWN:
+        case ID_KEY_PAGE_DOWN:
             if (me->val > 0)
             {
                 me->val -= 5;
@@ -1183,7 +1183,7 @@ static int CEditor_Edit(CEditor *me)
             break;
 
         case '-':
-        case FIK_CTL_MINUS:
+        case ID_KEY_CTL_MINUS:
             diff = 1;
             while (driver_key_pressed() == key)
             {
@@ -1373,8 +1373,8 @@ static void RGBEditor__other_key(int key, CEditor *ceditor, void *info) // priva
         }
         break;
 
-    case FIK_DELETE:   // move to next CEditor
-    case FIK_CTL_ENTER_2:    //double click rt mouse also!
+    case ID_KEY_DELETE:   // move to next CEditor
+    case ID_KEY_CTL_ENTER_2:    //double click rt mouse also!
         if (++me->curr > 2)
         {
             me->curr = 0;
@@ -1382,7 +1382,7 @@ static void RGBEditor__other_key(int key, CEditor *ceditor, void *info) // priva
         CEditor_SetDone(ceditor, true);
         break;
 
-    case FIK_INSERT:   // move to prev CEditor
+    case ID_KEY_INSERT:   // move to prev CEditor
         if (--me->curr < 0)
         {
             me->curr = 2;
@@ -2151,28 +2151,28 @@ static void PalTable__DoCurs(PalTable *me, int key)
     {
         switch (key)
         {
-        case FIK_CTL_RIGHT_ARROW:
+        case ID_KEY_CTL_RIGHT_ARROW:
             xoff += CURS_INC*4;
             break;
-        case FIK_RIGHT_ARROW:
+        case ID_KEY_RIGHT_ARROW:
             xoff += CURS_INC;
             break;
-        case FIK_CTL_LEFT_ARROW:
+        case ID_KEY_CTL_LEFT_ARROW:
             xoff -= CURS_INC*4;
             break;
-        case FIK_LEFT_ARROW:
+        case ID_KEY_LEFT_ARROW:
             xoff -= CURS_INC;
             break;
-        case FIK_CTL_DOWN_ARROW:
+        case ID_KEY_CTL_DOWN_ARROW:
             yoff += CURS_INC*4;
             break;
-        case FIK_DOWN_ARROW:
+        case ID_KEY_DOWN_ARROW:
             yoff += CURS_INC;
             break;
-        case FIK_CTL_UP_ARROW:
+        case ID_KEY_CTL_UP_ARROW:
             yoff -= CURS_INC*4;
             break;
-        case FIK_UP_ARROW:
+        case ID_KEY_UP_ARROW:
             yoff -= CURS_INC;
             break;
 
@@ -2381,18 +2381,18 @@ static void PalTable__other_key(int key, RGBEditor *rgb, void *info)
         PalTable__UpdateDAC(me);
         break;
 
-    case FIK_RIGHT_ARROW:
-    case FIK_LEFT_ARROW:
-    case FIK_UP_ARROW:
-    case FIK_DOWN_ARROW:
-    case FIK_CTL_RIGHT_ARROW:
-    case FIK_CTL_LEFT_ARROW:
-    case FIK_CTL_UP_ARROW:
-    case FIK_CTL_DOWN_ARROW:
+    case ID_KEY_RIGHT_ARROW:
+    case ID_KEY_LEFT_ARROW:
+    case ID_KEY_UP_ARROW:
+    case ID_KEY_DOWN_ARROW:
+    case ID_KEY_CTL_RIGHT_ARROW:
+    case ID_KEY_CTL_LEFT_ARROW:
+    case ID_KEY_CTL_UP_ARROW:
+    case ID_KEY_CTL_DOWN_ARROW:
         PalTable__DoCurs(me, key);
         break;
 
-    case FIK_ESC:
+    case ID_KEY_ESC:
         me->done = true;
         RGBEditor_SetDone(rgb, true);
         break;
@@ -2416,8 +2416,8 @@ static void PalTable__other_key(int key, RGBEditor *rgb, void *info)
         RGBEditor_SetDone(rgb, true);
         break;
 
-    case FIK_ENTER:    // set register to color under cursor.  useful when not
-    case FIK_ENTER_2:  // in auto_select mode
+    case ID_KEY_ENTER:    // set register to color under cursor.  useful when not
+    case ID_KEY_ENTER_2:  // in auto_select mode
 
         if (me->freestyle)
         {
@@ -2729,16 +2729,16 @@ static void PalTable__other_key(int key, RGBEditor *rgb, void *info)
         }
         break;
 
-    case FIK_F2:    // restore a palette
-    case FIK_F3:
-    case FIK_F4:
-    case FIK_F5:
-    case FIK_F6:
-    case FIK_F7:
-    case FIK_F8:
-    case FIK_F9:
+    case ID_KEY_F2:    // restore a palette
+    case ID_KEY_F3:
+    case ID_KEY_F4:
+    case ID_KEY_F5:
+    case ID_KEY_F6:
+    case ID_KEY_F7:
+    case ID_KEY_F8:
+    case ID_KEY_F9:
     {
-        int which = key - FIK_F2;
+        int which = key - ID_KEY_F2;
 
         Cursor_Hide();
 
@@ -2752,16 +2752,16 @@ static void PalTable__other_key(int key, RGBEditor *rgb, void *info)
         break;
     }
 
-    case FIK_SF2:   // save a palette
-    case FIK_SF3:
-    case FIK_SF4:
-    case FIK_SF5:
-    case FIK_SF6:
-    case FIK_SF7:
-    case FIK_SF8:
-    case FIK_SF9:
+    case ID_KEY_SF2:   // save a palette
+    case ID_KEY_SF3:
+    case ID_KEY_SF4:
+    case ID_KEY_SF5:
+    case ID_KEY_SF6:
+    case ID_KEY_SF7:
+    case ID_KEY_SF8:
+    case ID_KEY_SF9:
     {
-        int which = key - FIK_SF2;
+        int which = key - ID_KEY_SF2;
         std::memcpy(me->save_pal[which], me->pal, 256*sizeof(PALENTRY));
         break;
     }
@@ -2837,7 +2837,7 @@ static void PalTable__other_key(int key, RGBEditor *rgb, void *info)
 
         break;
 
-    case FIK_CTL_DEL:  // rt plus down
+    case ID_KEY_CTL_DEL:  // rt plus down
         if (me->bandwidth >0)
         {
             me->bandwidth--;
@@ -2849,7 +2849,7 @@ static void PalTable__other_key(int key, RGBEditor *rgb, void *info)
         PalTable__SetCurr(me, -1, 0);
         break;
 
-    case FIK_CTL_INSERT: // rt plus up
+    case ID_KEY_CTL_INSERT: // rt plus up
         if (me->bandwidth <255)
         {
             me->bandwidth ++;

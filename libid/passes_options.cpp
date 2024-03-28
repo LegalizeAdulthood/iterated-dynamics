@@ -148,7 +148,7 @@ pass_option_restart:
         j = 1;
     }
 
-    if (i == FIK_F2)
+    if (i == ID_KEY_F2)
     {
         if (get_screen_corners() > 0)
         {
@@ -161,7 +161,7 @@ pass_option_restart:
         goto pass_option_restart;
     }
 
-    if (i == FIK_F6)
+    if (i == ID_KEY_F6)
     {
         if (get_corners() > 0)
         {

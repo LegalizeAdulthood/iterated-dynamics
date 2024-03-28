@@ -96,68 +96,68 @@ static void frame_OnKeyDown(HWND hwnd, UINT vk, BOOL fDown, int cRepeat, UINT fl
 
         if (shift)
         {
-            i = SHF_KEY(FIK_SF1 + (vk - VK_F1));
+            i = SHF_KEY(ID_KEY_SF1 + (vk - VK_F1));
         }
         else if (ctl)
         {
-            i = CTL_KEY(FIK_CTL_F1 + (vk - VK_F1));
+            i = CTL_KEY(ID_KEY_CTL_F1 + (vk - VK_F1));
         }
         else if (alt)
         {
-            i = ALT_KEY(FIK_ALT_F1 + (vk - VK_F1));
+            i = ALT_KEY(ID_KEY_ALT_F1 + (vk - VK_F1));
         }
         else
         {
-            i = FIK_F1 + vk - VK_F1;
+            i = ID_KEY_F1 + vk - VK_F1;
         }
     }
     else
     {
         switch (vk)
         {
-        // sorted in FIK_xxx order
+        // sorted in ID_KEY_xxx order
         case VK_DELETE:
-            i = CTL_KEY(FIK_CTL_DEL);
+            i = CTL_KEY(ID_KEY_CTL_DEL);
             break;
         case VK_DOWN:
-            i = CTL_KEY(FIK_CTL_DOWN_ARROW);
+            i = CTL_KEY(ID_KEY_CTL_DOWN_ARROW);
             break;
         case VK_END:
-            i = CTL_KEY(FIK_CTL_END);
+            i = CTL_KEY(ID_KEY_CTL_END);
             break;
         case VK_RETURN:
-            i = CTL_KEY(FIK_CTL_ENTER);
+            i = CTL_KEY(ID_KEY_CTL_ENTER);
             break;
         case VK_HOME:
-            i = CTL_KEY(FIK_CTL_HOME);
+            i = CTL_KEY(ID_KEY_CTL_HOME);
             break;
         case VK_INSERT:
-            i = CTL_KEY(FIK_CTL_INSERT);
+            i = CTL_KEY(ID_KEY_CTL_INSERT);
             break;
         case VK_LEFT:
-            i = CTL_KEY(FIK_CTL_LEFT_ARROW);
+            i = CTL_KEY(ID_KEY_CTL_LEFT_ARROW);
             break;
         case VK_PRIOR:
-            i = CTL_KEY(FIK_CTL_PAGE_UP);
+            i = CTL_KEY(ID_KEY_CTL_PAGE_UP);
             break;
         case VK_NEXT:
-            i = CTL_KEY(FIK_CTL_PAGE_DOWN);
+            i = CTL_KEY(ID_KEY_CTL_PAGE_DOWN);
             break;
         case VK_RIGHT:
-            i = CTL_KEY(FIK_CTL_RIGHT_ARROW);
+            i = CTL_KEY(ID_KEY_CTL_RIGHT_ARROW);
             break;
         case VK_UP:
-            i = CTL_KEY(FIK_CTL_UP_ARROW);
+            i = CTL_KEY(ID_KEY_CTL_UP_ARROW);
             break;
 
         case VK_TAB:
-            i = CTL_KEY2(FIK_CTL_TAB, &j);
+            i = CTL_KEY2(ID_KEY_CTL_TAB, &j);
             break;
         case VK_ADD:
-            i = CTL_KEY2(FIK_CTL_PLUS, &j);
+            i = CTL_KEY2(ID_KEY_CTL_PLUS, &j);
             break;
         case VK_SUBTRACT:
-            i = CTL_KEY2(FIK_CTL_MINUS, &j);
+            i = CTL_KEY2(ID_KEY_CTL_MINUS, &j);
             break;
 
         default:

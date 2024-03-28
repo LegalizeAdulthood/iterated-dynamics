@@ -250,15 +250,15 @@ static int check_gfe_key(int curkey, int choice)
     std::memset(blanks, ' ', 78);
     blanks[78] = (char) 0;
 
-    if (curkey == FIK_F6)
+    if (curkey == ID_KEY_F6)
     {
-        return 0-FIK_F6;
+        return 0-ID_KEY_F6;
     }
-    if (curkey == FIK_F4)
+    if (curkey == ID_KEY_F4)
     {
-        return 0-FIK_F4;
+        return 0-ID_KEY_F4;
     }
-    if (curkey == FIK_F2)
+    if (curkey == ID_KEY_F2)
     {
         int widest_entry_line = 0;
         int lines_in_entry = 0;
@@ -345,51 +345,51 @@ static int check_gfe_key(int curkey, int choice)
                 driver_put_string(4, 0, C_GENERAL_MED, infbuf);
             }
             int i = getakeynohelp();
-            if (i == FIK_DOWN_ARROW        || i == FIK_CTL_DOWN_ARROW
-                || i == FIK_UP_ARROW       || i == FIK_CTL_UP_ARROW
-                || i == FIK_LEFT_ARROW     || i == FIK_CTL_LEFT_ARROW
-                || i == FIK_RIGHT_ARROW    || i == FIK_CTL_RIGHT_ARROW
-                || i == FIK_HOME           || i == FIK_CTL_HOME
-                || i == FIK_END            || i == FIK_CTL_END
-                || i == FIK_PAGE_UP        || i == FIK_CTL_PAGE_UP
-                || i == FIK_PAGE_DOWN      || i == FIK_CTL_PAGE_DOWN)
+            if (i == ID_KEY_DOWN_ARROW        || i == ID_KEY_CTL_DOWN_ARROW
+                || i == ID_KEY_UP_ARROW       || i == ID_KEY_CTL_UP_ARROW
+                || i == ID_KEY_LEFT_ARROW     || i == ID_KEY_CTL_LEFT_ARROW
+                || i == ID_KEY_RIGHT_ARROW    || i == ID_KEY_CTL_RIGHT_ARROW
+                || i == ID_KEY_HOME           || i == ID_KEY_CTL_HOME
+                || i == ID_KEY_END            || i == ID_KEY_CTL_END
+                || i == ID_KEY_PAGE_UP        || i == ID_KEY_CTL_PAGE_UP
+                || i == ID_KEY_PAGE_DOWN      || i == ID_KEY_CTL_PAGE_DOWN)
             {
                 switch (i)
                 {
-                case FIK_DOWN_ARROW:
-                case FIK_CTL_DOWN_ARROW: // down one line
+                case ID_KEY_DOWN_ARROW:
+                case ID_KEY_CTL_DOWN_ARROW: // down one line
                     if (in_scrolling_mode && top_line < lines_in_entry - 17)
                     {
                         top_line++;
                         rewrite_infbuf = true;
                     }
                     break;
-                case FIK_UP_ARROW:
-                case FIK_CTL_UP_ARROW:  // up one line
+                case ID_KEY_UP_ARROW:
+                case ID_KEY_CTL_UP_ARROW:  // up one line
                     if (in_scrolling_mode && top_line > 0)
                     {
                         top_line--;
                         rewrite_infbuf = true;
                     }
                     break;
-                case FIK_LEFT_ARROW:
-                case FIK_CTL_LEFT_ARROW:  // left one column
+                case ID_KEY_LEFT_ARROW:
+                case ID_KEY_CTL_LEFT_ARROW:  // left one column
                     if (in_scrolling_mode && left_column > 0)
                     {
                         left_column--;
                         rewrite_infbuf = true;
                     }
                     break;
-                case FIK_RIGHT_ARROW:
-                case FIK_CTL_RIGHT_ARROW: // right one column
+                case ID_KEY_RIGHT_ARROW:
+                case ID_KEY_CTL_RIGHT_ARROW: // right one column
                     if (in_scrolling_mode && std::strchr(infbuf, '\021') != nullptr)
                     {
                         left_column++;
                         rewrite_infbuf = true;
                     }
                     break;
-                case FIK_PAGE_DOWN:
-                case FIK_CTL_PAGE_DOWN: // down 17 lines
+                case ID_KEY_PAGE_DOWN:
+                case ID_KEY_CTL_PAGE_DOWN: // down 17 lines
                     if (in_scrolling_mode && top_line < lines_in_entry - 17)
                     {
                         top_line += 17;
@@ -400,8 +400,8 @@ static int check_gfe_key(int curkey, int choice)
                         rewrite_infbuf = true;
                     }
                     break;
-                case FIK_PAGE_UP:
-                case FIK_CTL_PAGE_UP: // up 17 lines
+                case ID_KEY_PAGE_UP:
+                case ID_KEY_CTL_PAGE_UP: // up 17 lines
                     if (in_scrolling_mode && top_line > 0)
                     {
                         top_line -= 17;
@@ -412,8 +412,8 @@ static int check_gfe_key(int curkey, int choice)
                         rewrite_infbuf = true;
                     }
                     break;
-                case FIK_END:
-                case FIK_CTL_END:       // to end of entry
+                case ID_KEY_END:
+                case ID_KEY_CTL_END:       // to end of entry
                     if (in_scrolling_mode)
                     {
                         top_line = lines_in_entry - 17;
@@ -421,8 +421,8 @@ static int check_gfe_key(int curkey, int choice)
                         rewrite_infbuf = true;
                     }
                     break;
-                case FIK_HOME:
-                case FIK_CTL_HOME:     // to beginning of entry
+                case ID_KEY_HOME:
+                case ID_KEY_CTL_HOME:     // to beginning of entry
                     if (in_scrolling_mode)
                     {
                         left_column = 0;
@@ -515,7 +515,7 @@ retry:
         heading.c_str(), nullptr, instr, numentries, (char const **) choices,
         attributes, boxwidth, boxdepth, colwidth, 0,
         formatitem, buf, nullptr, check_gfe_key);
-    if (i == -FIK_F4)
+    if (i == -ID_KEY_F4)
     {
         rewind(gfe_file);
         dosort = !dosort;
@@ -525,7 +525,7 @@ retry:
     if (i < 0)
     {
         // go back to file list or cancel
-        return (i == -FIK_F6) ? -2 : -1;
+        return (i == -ID_KEY_F6) ? -2 : -1;
     }
     std::strcpy(entryname, choices[i]->name);
     return choices[i]->point;

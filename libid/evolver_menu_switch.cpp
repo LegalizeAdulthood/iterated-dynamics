@@ -83,8 +83,8 @@ main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bo
     case 'p':                    // passes options
     case 'z':                    // type specific parms
     case 'g':
-    case FIK_CTL_E:
-    case FIK_SPACE:
+    case ID_KEY_CTL_E:
+    case ID_KEY_SPACE:
         clear_zoombox();
         if (g_from_text)
         {
@@ -110,7 +110,7 @@ main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bo
         {
             i = get_fract_params(true);
         }
-        else if (*kbdchar == FIK_CTL_E || *kbdchar == FIK_SPACE)
+        else if (*kbdchar == ID_KEY_CTL_E || *kbdchar == ID_KEY_SPACE)
         {
             i = get_evolve_Parms();
         }
@@ -151,9 +151,9 @@ main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bo
         g_init_mode = g_adapter;
         return main_state::IMAGE_START;
     case '\\':                   // return to prev image
-    case FIK_CTL_BACKSLASH:
+    case ID_KEY_CTL_BACKSLASH:
     case 'h':
-    case FIK_BACKSPACE:
+    case ID_KEY_BACKSPACE:
         if (g_max_image_history > 0 && bf_math == bf_math_type::NONE)
         {
             if (*kbdchar == '\\' || *kbdchar == 'h')
@@ -163,7 +163,7 @@ main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bo
                     historyptr = g_max_image_history - 1;
                 }
             }
-            if (*kbdchar == FIK_CTL_BACKSLASH || *kbdchar == 8)
+            if (*kbdchar == ID_KEY_CTL_BACKSLASH || *kbdchar == 8)
             {
                 if (++historyptr >= g_max_image_history)
                 {
@@ -309,8 +309,8 @@ main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bo
         }
         g_show_file = -1;
         return main_state::RESTORE_START;
-    case FIK_ENTER:                  // Enter
-    case FIK_ENTER_2:                // Numeric-Keypad Enter
+    case ID_KEY_ENTER:                  // Enter
+    case ID_KEY_ENTER_2:                // Numeric-Keypad Enter
         if (g_zoom_box_width != 0.0)
         {
             // do a zoom
@@ -322,25 +322,25 @@ main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bo
             *kbdmore = false;
         }
         break;
-    case FIK_CTL_ENTER:              // control-Enter
-    case FIK_CTL_ENTER_2:            // Control-Keypad Enter
+    case ID_KEY_CTL_ENTER:              // control-Enter
+    case ID_KEY_CTL_ENTER_2:            // Control-Keypad Enter
         init_pan_or_recalc(true);
         *kbdmore = false;
         zoomout();                // calc corners for zooming out
         break;
-    case FIK_INSERT:         // insert
+    case ID_KEY_INSERT:         // insert
         driver_set_for_text();           // force text mode
         return main_state::RESTART;
-    case FIK_LEFT_ARROW:             // cursor left
-    case FIK_RIGHT_ARROW:            // cursor right
-    case FIK_UP_ARROW:               // cursor up
-    case FIK_DOWN_ARROW:             // cursor down
+    case ID_KEY_LEFT_ARROW:             // cursor left
+    case ID_KEY_RIGHT_ARROW:            // cursor right
+    case ID_KEY_UP_ARROW:               // cursor up
+    case ID_KEY_DOWN_ARROW:             // cursor down
         move_zoombox(*kbdchar);
         break;
-    case FIK_CTL_LEFT_ARROW:           // Ctrl-cursor left
-    case FIK_CTL_RIGHT_ARROW:          // Ctrl-cursor right
-    case FIK_CTL_UP_ARROW:             // Ctrl-cursor up
-    case FIK_CTL_DOWN_ARROW:           // Ctrl-cursor down
+    case ID_KEY_CTL_LEFT_ARROW:           // Ctrl-cursor left
+    case ID_KEY_CTL_RIGHT_ARROW:          // Ctrl-cursor right
+    case ID_KEY_CTL_UP_ARROW:             // Ctrl-cursor up
+    case ID_KEY_CTL_DOWN_ARROW:           // Ctrl-cursor down
         // borrow ctrl cursor keys for moving selection box
         // in evolver mode
         if (g_box_count)
@@ -349,19 +349,19 @@ main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bo
             copy_genes_from_bank(gene);
             if (g_evolving & FIELDMAP)
             {
-                if (*kbdchar == FIK_CTL_LEFT_ARROW)
+                if (*kbdchar == ID_KEY_CTL_LEFT_ARROW)
                 {
                     g_evolve_param_grid_x--;
                 }
-                if (*kbdchar == FIK_CTL_RIGHT_ARROW)
+                if (*kbdchar == ID_KEY_CTL_RIGHT_ARROW)
                 {
                     g_evolve_param_grid_x++;
                 }
-                if (*kbdchar == FIK_CTL_UP_ARROW)
+                if (*kbdchar == ID_KEY_CTL_UP_ARROW)
                 {
                     g_evolve_param_grid_y--;
                 }
-                if (*kbdchar == FIK_CTL_DOWN_ARROW)
+                if (*kbdchar == ID_KEY_CTL_DOWN_ARROW)
                 {
                     g_evolve_param_grid_y++;
                 }
@@ -399,27 +399,27 @@ main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bo
             move_zoombox(*kbdchar);
         }
         break;
-    case FIK_CTL_HOME:               // Ctrl-home
+    case ID_KEY_CTL_HOME:               // Ctrl-home
         if (g_box_count && (g_cur_fractal_specific->flags & NOROTATE) == 0)
         {
-            i = key_count(FIK_CTL_HOME);
+            i = key_count(ID_KEY_CTL_HOME);
             if ((g_zoom_box_skew -= 0.02 * i) < -0.48)
             {
                 g_zoom_box_skew = -0.48;
             }
         }
         break;
-    case FIK_CTL_END:                // Ctrl-end
+    case ID_KEY_CTL_END:                // Ctrl-end
         if (g_box_count && (g_cur_fractal_specific->flags & NOROTATE) == 0)
         {
-            i = key_count(FIK_CTL_END);
+            i = key_count(ID_KEY_CTL_END);
             if ((g_zoom_box_skew += 0.02 * i) > 0.48)
             {
                 g_zoom_box_skew = 0.48;
             }
         }
         break;
-    case FIK_CTL_PAGE_UP:
+    case ID_KEY_CTL_PAGE_UP:
         if (g_evolve_param_box_count)
         {
             g_evolve_param_zoom -= 1.0;
@@ -431,7 +431,7 @@ main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bo
             set_evolve_ranges();
         }
         break;
-    case FIK_CTL_PAGE_DOWN:
+    case ID_KEY_CTL_PAGE_DOWN:
         if (g_evolve_param_box_count)
         {
             g_evolve_param_zoom += 1.0;
@@ -444,7 +444,7 @@ main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bo
         }
         break;
 
-    case FIK_PAGE_UP:                // page up
+    case ID_KEY_PAGE_UP:                // page up
         if (g_zoom_off)
         {
             if (g_zoom_box_width == 0)
@@ -471,11 +471,11 @@ main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bo
             }
             else
             {
-                resizebox(0 - key_count(FIK_PAGE_UP));
+                resizebox(0 - key_count(ID_KEY_PAGE_UP));
             }
         }
         break;
-    case FIK_PAGE_DOWN:              // page down
+    case ID_KEY_PAGE_DOWN:              // page down
         if (g_box_count)
         {
             if (g_zoom_box_width >= .999 && g_zoom_box_height >= 0.999)
@@ -490,33 +490,33 @@ main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bo
             }
             else
             {
-                resizebox(key_count(FIK_PAGE_DOWN));
+                resizebox(key_count(ID_KEY_PAGE_DOWN));
             }
         }
         break;
-    case FIK_CTL_MINUS:              // Ctrl-kpad-
+    case ID_KEY_CTL_MINUS:              // Ctrl-kpad-
         if (g_box_count && (g_cur_fractal_specific->flags & NOROTATE) == 0)
         {
-            g_zoom_box_rotation += key_count(FIK_CTL_MINUS);
+            g_zoom_box_rotation += key_count(ID_KEY_CTL_MINUS);
         }
         break;
-    case FIK_CTL_PLUS:               // Ctrl-kpad+
+    case ID_KEY_CTL_PLUS:               // Ctrl-kpad+
         if (g_box_count && (g_cur_fractal_specific->flags & NOROTATE) == 0)
         {
-            g_zoom_box_rotation -= key_count(FIK_CTL_PLUS);
+            g_zoom_box_rotation -= key_count(ID_KEY_CTL_PLUS);
         }
         break;
-    case FIK_CTL_INSERT:             // Ctrl-ins
-        g_box_color += key_count(FIK_CTL_INSERT);
+    case ID_KEY_CTL_INSERT:             // Ctrl-ins
+        g_box_color += key_count(ID_KEY_CTL_INSERT);
         break;
-    case FIK_CTL_DEL:                // Ctrl-del
-        g_box_color -= key_count(FIK_CTL_DEL);
+    case ID_KEY_CTL_DEL:                // Ctrl-del
+        g_box_color -= key_count(ID_KEY_CTL_DEL);
         break;
 
     /* grabbed a couple of video mode keys, user can change to these using
         delete and the menu if necessary */
 
-    case FIK_F2: // halve mutation params and regen
+    case ID_KEY_F2: // halve mutation params and regen
         g_evolve_max_random_mutation = g_evolve_max_random_mutation / 2;
         g_evolve_x_parameter_range = g_evolve_x_parameter_range / 2;
         g_evolve_new_x_parameter_offset = g_evolve_x_parameter_offset + g_evolve_x_parameter_range / 2;
@@ -526,7 +526,7 @@ main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bo
         g_calc_status = calc_status_value::PARAMS_CHANGED;
         break;
 
-    case FIK_F3: //double mutation parameters and regenerate
+    case ID_KEY_F3: //double mutation parameters and regenerate
     {
         double centerx, centery;
         g_evolve_max_random_mutation = g_evolve_max_random_mutation * 2;
@@ -541,7 +541,7 @@ main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bo
         break;
     }
 
-    case FIK_F4: //decrement  gridsize and regen
+    case ID_KEY_F4: //decrement  gridsize and regen
         if (g_evolve_image_grid_size > 3)
         {
             g_evolve_image_grid_size = g_evolve_image_grid_size - 2;  // evolve_image_grid_size must have odd value only
@@ -550,7 +550,7 @@ main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bo
         }
         break;
 
-    case FIK_F5: // increment gridsize and regen
+    case ID_KEY_F5: // increment gridsize and regen
         if (g_evolve_image_grid_size < (g_screen_x_dots / (MIN_PIXELS << 1)))
         {
             g_evolve_image_grid_size = g_evolve_image_grid_size + 2;
@@ -559,7 +559,7 @@ main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bo
         }
         break;
 
-    case FIK_F6: /* toggle all variables selected for random variation to center weighted variation and vice versa */
+    case ID_KEY_F6: /* toggle all variables selected for random variation to center weighted variation and vice versa */
         for (auto &elem : g_gene_bank)
         {
             if (elem.mutate == variations::RANDOM)
@@ -576,13 +576,13 @@ main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bo
         g_calc_status = calc_status_value::PARAMS_CHANGED;
         break;
 
-    case FIK_ALT_1: // alt + number keys set mutation level
-    case FIK_ALT_2:
-    case FIK_ALT_3:
-    case FIK_ALT_4:
-    case FIK_ALT_5:
-    case FIK_ALT_6:
-    case FIK_ALT_7:
+    case ID_KEY_ALT_1: // alt + number keys set mutation level
+    case ID_KEY_ALT_2:
+    case ID_KEY_ALT_3:
+    case ID_KEY_ALT_4:
+    case ID_KEY_ALT_5:
+    case ID_KEY_ALT_6:
+    case ID_KEY_ALT_7:
         set_mutation_level(*kbdchar-1119);
         param_history(1); // restore old history
         *kbdmore = false;
@@ -609,7 +609,7 @@ main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bo
         g_calc_status = calc_status_value::PARAMS_CHANGED;
         break;
 
-    case FIK_DELETE:         // select video mode from list
+    case ID_KEY_DELETE:         // select video mode from list
         driver_stack_screen();
         *kbdchar = select_video_mode(g_adapter);
         if (check_vidmode_key(0, *kbdchar) >= 0)    // picked a new mode?

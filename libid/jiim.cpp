@@ -693,63 +693,63 @@ void Jiim(jiim_types which)
                 g_julia_c_y = BIG;
                 switch (kbdchar)
                 {
-                case FIK_CTL_KEYPAD_5:      // ctrl - keypad 5
-                case FIK_KEYPAD_5:          // keypad 5
+                case ID_KEY_CTL_KEYPAD_5:      // ctrl - keypad 5
+                case ID_KEY_KEYPAD_5:          // keypad 5
                     break;                  // do nothing
-                case FIK_CTL_PAGE_UP:
+                case ID_KEY_CTL_PAGE_UP:
                     dcol = 4;
                     drow = -4;
                     break;
-                case FIK_CTL_PAGE_DOWN:
+                case ID_KEY_CTL_PAGE_DOWN:
                     dcol = 4;
                     drow = 4;
                     break;
-                case FIK_CTL_HOME:
+                case ID_KEY_CTL_HOME:
                     dcol = -4;
                     drow = -4;
                     break;
-                case FIK_CTL_END:
+                case ID_KEY_CTL_END:
                     dcol = -4;
                     drow = 4;
                     break;
-                case FIK_PAGE_UP:
+                case ID_KEY_PAGE_UP:
                     dcol = 1;
                     drow = -1;
                     break;
-                case FIK_PAGE_DOWN:
+                case ID_KEY_PAGE_DOWN:
                     dcol = 1;
                     drow = 1;
                     break;
-                case FIK_HOME:
+                case ID_KEY_HOME:
                     dcol = -1;
                     drow = -1;
                     break;
-                case FIK_END:
+                case ID_KEY_END:
                     dcol = -1;
                     drow = 1;
                     break;
-                case FIK_UP_ARROW:
+                case ID_KEY_UP_ARROW:
                     drow = -1;
                     break;
-                case FIK_DOWN_ARROW:
+                case ID_KEY_DOWN_ARROW:
                     drow = 1;
                     break;
-                case FIK_LEFT_ARROW:
+                case ID_KEY_LEFT_ARROW:
                     dcol = -1;
                     break;
-                case FIK_RIGHT_ARROW:
+                case ID_KEY_RIGHT_ARROW:
                     dcol = 1;
                     break;
-                case FIK_CTL_UP_ARROW:
+                case ID_KEY_CTL_UP_ARROW:
                     drow = -4;
                     break;
-                case FIK_CTL_DOWN_ARROW:
+                case ID_KEY_CTL_DOWN_ARROW:
                     drow = 4;
                     break;
-                case FIK_CTL_LEFT_ARROW:
+                case ID_KEY_CTL_LEFT_ARROW:
                     dcol = -4;
                     break;
-                case FIK_CTL_RIGHT_ARROW:
+                case ID_KEY_CTL_RIGHT_ARROW:
                     dcol = 4;
                     break;
                 case 'z':
@@ -764,7 +764,7 @@ void Jiim(jiim_types which)
                 case '.':
                     zoom *= 1.15F;
                     break;
-                case FIK_SPACE:
+                case ID_KEY_SPACE:
                     g_julia_c_x = cr;
                     g_julia_c_y = ci;
                     goto finish;
@@ -808,7 +808,7 @@ void Jiim(jiim_types which)
                     }
                     break;
 #ifdef XFRACT
-                case FIK_ENTER:
+                case ID_KEY_ENTER:
                     break;
 #endif
                 case '0':
@@ -840,7 +840,7 @@ void Jiim(jiim_types which)
                 g_col += dcol;
                 g_row += drow;
 #ifdef XFRACT
-                if (kbdchar == FIK_ENTER)
+                if (kbdchar == ID_KEY_ENTER)
                 {
                     // We want to use the position of the cursor
                     exact = false;

@@ -24,7 +24,7 @@ void dopause(int action)
             }
             else if (needpause == 2)
             {
-                if (getakeynohelp() == FIK_ESC)
+                if (getakeynohelp() == ID_KEY_ESC)
                 {
                     goodbye();
                 }

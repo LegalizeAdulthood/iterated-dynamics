@@ -188,7 +188,7 @@ static fractal_type select_fracttype(fractal_type t)
 
 static int sel_fractype_help(int curkey, int choice)
 {
-    if (curkey == FIK_F2)
+    if (curkey == ID_KEY_F2)
     {
         help_labels const old_help_mode = g_help_mode;
         g_help_mode = g_fractal_specific[(*(ft_choices+choice))->num].helptext;
@@ -812,7 +812,7 @@ gfp_top:
             }
             goto gfp_exit;
         }
-        if (i != FIK_F6)
+        if (i != ID_KEY_F6)
         {
             break;
         }

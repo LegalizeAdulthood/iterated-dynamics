@@ -228,7 +228,7 @@ static void main_restart(int const argc, char const *const argv[], bool &stacked
     if (g_show_file && g_init_mode < 0)
     {
         intro();                          // display the credits screen
-        if (driver_key_pressed() == FIK_ESC)
+        if (driver_key_pressed() == ID_KEY_ESC)
         {
             driver_get_key();
             goodbye();
@@ -360,7 +360,7 @@ static main_state main_image_start(bool &stacked, bool &resumeflag)
 
     if (g_init_batch == batch_modes::NONE)
     {
-        g_look_at_mouse = -FIK_PAGE_UP;           // just mouse left button, == pgup
+        g_look_at_mouse = -ID_KEY_PAGE_UP;           // just mouse left button, == pgup
     }
 
     g_cycle_limit = g_init_cycle_limit;         // default cycle limit
@@ -375,11 +375,11 @@ static main_state main_image_start(bool &stacked, bool &resumeflag)
             goodbye();
         }
         int kbdchar = main_menu(false);
-        if (kbdchar == FIK_INSERT)
+        if (kbdchar == ID_KEY_INSERT)
         {
             return main_state::RESTART;      // restart pgm on Insert Key
         }
-        if (kbdchar == FIK_DELETE)                      // select video mode list
+        if (kbdchar == ID_KEY_DELETE)                      // select video mode list
         {
             kbdchar = select_video_mode(-1);
         }
@@ -412,7 +412,7 @@ static main_state main_image_start(bool &stacked, bool &resumeflag)
         if (kbdchar == 'r' || kbdchar == '3' || kbdchar == '#')
         {
             g_display_3d = display_3d_modes::NONE;
-            if (kbdchar == '3' || kbdchar == '#' || kbdchar == FIK_F3)
+            if (kbdchar == '3' || kbdchar == '#' || kbdchar == ID_KEY_F3)
             {
                 g_display_3d = display_3d_modes::YES;
             }
@@ -455,13 +455,13 @@ static main_state main_image_start(bool &stacked, bool &resumeflag)
             get_view_params();
             return main_state::IMAGE_START;
         }
-        if (kbdchar == FIK_CTL_B)
+        if (kbdchar == ID_KEY_CTL_B)
         {
             /* ctrl B = browse parms*/
             get_browse_params();
             return main_state::IMAGE_START;
         }
-        if (kbdchar == FIK_CTL_F)
+        if (kbdchar == ID_KEY_CTL_F)
         {
             /* ctrl f = sound parms*/
             get_sound_params();

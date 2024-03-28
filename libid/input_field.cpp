@@ -57,35 +57,35 @@ int input_field(
         }
         switch (curkey)
         {
-        case FIK_ENTER:
-        case FIK_ENTER_2:
+        case ID_KEY_ENTER:
+        case ID_KEY_ENTER_2:
             ret = 0;
             goto inpfld_end;
-        case FIK_ESC:
+        case ID_KEY_ESC:
             goto inpfld_end;
-        case FIK_RIGHT_ARROW:
+        case ID_KEY_RIGHT_ARROW:
             if (offset < len-1)
             {
                 ++offset;
             }
             started = true;
             break;
-        case FIK_LEFT_ARROW:
+        case ID_KEY_LEFT_ARROW:
             if (offset > 0)
             {
                 --offset;
             }
             started = true;
             break;
-        case FIK_HOME:
+        case ID_KEY_HOME:
             offset = 0;
             started = true;
             break;
-        case FIK_END:
+        case ID_KEY_END:
             offset = (int) std::strlen(fld);
             started = true;
             break;
-        case FIK_BACKSPACE:
+        case ID_KEY_BACKSPACE:
         case 127:                              // backspace
             if (offset > 0)
             {
@@ -99,7 +99,7 @@ int input_field(
             started = true;
             display = true;
             break;
-        case FIK_DELETE:                           // delete
+        case ID_KEY_DELETE:                           // delete
             j = (int) std::strlen(fld);
             for (int k = offset; k < j; ++k)
             {
@@ -108,11 +108,11 @@ int input_field(
             started = true;
             display = true;
             break;
-        case FIK_INSERT:                           // insert
+        case ID_KEY_INSERT:                           // insert
             insert ^= 0x8000;
             started = true;
             break;
-        case FIK_F5:
+        case ID_KEY_F5:
             std::strcpy(fld, savefld);
             offset = 0;
             insert = offset;

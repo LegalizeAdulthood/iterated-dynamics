@@ -30,7 +30,7 @@ static int menu_checkkey(int curkey, int /*choice*/)
     int testkey = (curkey >= 'A' && curkey <= 'Z') ? curkey+('a'-'A') : curkey;
 #ifdef XFRACT
     // We use F2 for shift-@, annoyingly enough
-    if (testkey == FIK_F2)
+    if (testkey == ID_KEY_F2)
     {
         return -testkey;
     }
@@ -41,19 +41,19 @@ static int menu_checkkey(int curkey, int /*choice*/)
 
     }
     if (std::strchr("#@2txyzgvir3dj", testkey)
-        || testkey == FIK_INSERT || testkey == FIK_CTL_B
-        || testkey == FIK_ESC || testkey == FIK_DELETE
-        || testkey == FIK_CTL_F)
+        || testkey == ID_KEY_INSERT || testkey == ID_KEY_CTL_B
+        || testkey == ID_KEY_ESC || testkey == ID_KEY_DELETE
+        || testkey == ID_KEY_CTL_F)
     {
         return -testkey;
     }
     if (s_full_menu)
     {
         if (std::strchr("\\sobpkrh", testkey)
-            || testkey == FIK_TAB || testkey == FIK_CTL_A
-            || testkey == FIK_CTL_E || testkey == FIK_BACKSPACE
-            || testkey == FIK_CTL_P || testkey == FIK_CTL_S
-            || testkey == FIK_CTL_U)   // ctrl-A, E, H, P, S, U
+            || testkey == ID_KEY_TAB || testkey == ID_KEY_CTL_A
+            || testkey == ID_KEY_CTL_E || testkey == ID_KEY_BACKSPACE
+            || testkey == ID_KEY_CTL_P || testkey == ID_KEY_CTL_S
+            || testkey == ID_KEY_CTL_U)   // ctrl-A, E, H, P, S, U
         {
             return -testkey;
         }
@@ -77,7 +77,7 @@ static int menu_checkkey(int curkey, int /*choice*/)
             }
         }
         // Alt-A and Alt-S
-        if (testkey == FIK_ALT_A || testkey == FIK_ALT_S)
+        if (testkey == ID_KEY_ALT_A || testkey == ID_KEY_ALT_S)
         {
             return -testkey;
         }
@@ -148,7 +148,7 @@ top:
     attributes[nextleft] = 256+MENU_HDG;
 
     nextleft += 2;
-    choicekey[nextleft] = FIK_DELETE;
+    choicekey[nextleft] = ID_KEY_DELETE;
     attributes[nextleft] = MENU_ITEM;
 #ifdef XFRACT
     choices[nextleft] = "draw fractal           <D>  ";
@@ -167,7 +167,7 @@ top:
             || g_cur_fractal_specific->tomandel != fractal_type::NOFRACTAL)
         {
             nextleft += 2;
-            choicekey[nextleft] = FIK_SPACE;
+            choicekey[nextleft] = ID_KEY_SPACE;
             attributes[nextleft] = MENU_ITEM;
             choices[nextleft] = "toggle to/from julia <space>";
             showjuliatoggle = true;
@@ -188,7 +188,7 @@ top:
         choices[nextleft] = "return to prior image  <h>   ";
 
         nextleft += 2;
-        choicekey[nextleft] = FIK_BACKSPACE;
+        choicekey[nextleft] = ID_KEY_BACKSPACE;
         attributes[nextleft] = MENU_ITEM;
         choices[nextleft] = "reverse thru history <ctl-h> ";
     }
@@ -235,20 +235,20 @@ top:
     }
 
     nextleft += 2;
-    choicekey[nextleft] = FIK_CTL_B;
+    choicekey[nextleft] = ID_KEY_CTL_B;
     attributes[nextleft] = MENU_ITEM;
     choices[nextleft] = "browse parms...      <ctl-b>";
 
     if (full_menu)
     {
         nextleft += 2;
-        choicekey[nextleft] = FIK_CTL_E;
+        choicekey[nextleft] = ID_KEY_CTL_E;
         attributes[nextleft] = MENU_ITEM;
         choices[nextleft] = "evolver parms...     <ctl-e>";
 
 #ifndef XFRACT
         nextleft += 2;
-        choicekey[nextleft] = FIK_CTL_F;
+        choicekey[nextleft] = ID_KEY_CTL_F;
         attributes[nextleft] = MENU_ITEM;
         choices[nextleft] = "sound parms...       <ctl-f>";
 #endif
@@ -314,12 +314,12 @@ top:
     choices[nextright] = "give command string      <g>  ";
 
     nextright += 2;
-    choicekey[nextright] = FIK_ESC;
+    choicekey[nextright] = ID_KEY_ESC;
     attributes[nextright] = MENU_ITEM;
     choices[nextright] = "quit id                  <esc> ";
 
     nextright += 2;
-    choicekey[nextright] = FIK_INSERT;
+    choicekey[nextright] = ID_KEY_INSERT;
     attributes[nextright] = MENU_ITEM;
     choices[nextright] = "restart id               <ins> ";
 
@@ -358,12 +358,12 @@ top:
     }
 
     nextright += 2;
-    choicekey[nextright] = FIK_CTL_A;
+    choicekey[nextright] = ID_KEY_CTL_A;
     attributes[nextright] = MENU_ITEM;
     choices[nextright] = "ant automaton          <ctl-a>";
 
     nextright += 2;
-    choicekey[nextright] = FIK_CTL_S;
+    choicekey[nextright] = ID_KEY_CTL_S;
     attributes[nextright] = MENU_ITEM;
     choices[nextright] = "stereogram             <ctl-s>";
 
@@ -382,7 +382,7 @@ top:
                               2, nextleft/2, 29, 0, nullptr, nullptr, nullptr, menu_checkkey);
         if (i == -1)     // escape
         {
-            i = FIK_ESC;
+            i = ID_KEY_ESC;
         }
         else if (i < 0)
         {
@@ -399,7 +399,7 @@ top:
             }
         }
     }
-    if (i == FIK_ESC)             // escape from menu exits
+    if (i == ID_KEY_ESC)             // escape from menu exits
     {
         helptitle();
         driver_set_attr(1, 0, C_GENERAL_MED, 24*80);
@@ -411,7 +411,7 @@ top:
                         "Exit from Iterated Dynamics (y/n)? y"
                        );
         driver_hide_text_cursor();
-        while ((i = driver_get_key()) != 'y' && i != 'Y' && i != FIK_ENTER)
+        while ((i = driver_get_key()) != 'y' && i != 'Y' && i != ID_KEY_ENTER)
         {
             if (i == 'n' || i == 'N')
             {
@@ -420,12 +420,12 @@ top:
         }
         goodbye();
     }
-    if (i == FIK_TAB)
+    if (i == ID_KEY_TAB)
     {
         tab_display();
         i = 0;
     }
-    if (i == FIK_ENTER || i == FIK_ENTER_2)
+    if (i == ID_KEY_ENTER || i == ID_KEY_ENTER_2)
     {
         i = 0;                 // don't trigger new calc
     }

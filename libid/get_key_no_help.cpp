@@ -17,6 +17,6 @@ int getakeynohelp()
     {
         ch = driver_get_key();
     }
-    while (FIK_F1 == ch);
+    while (ID_KEY_F1 == ch);
     return ch;
 }

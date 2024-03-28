@@ -151,10 +151,10 @@ static void continue_hdl(int sig, int code, struct sigcontext *scp,
 #endif
 
 static int mousefkey[4][4] /* [button][dir] */ = {
-    {FIK_RIGHT_ARROW, FIK_LEFT_ARROW, FIK_DOWN_ARROW, FIK_UP_ARROW},
-    {0, 0, FIK_PAGE_DOWN, FIK_PAGE_UP},
-    {FIK_CTL_PLUS, FIK_CTL_MINUS, FIK_CTL_DEL, FIK_CTL_INSERT},
-    {FIK_CTL_END, FIK_CTL_HOME, FIK_CTL_PAGE_DOWN, FIK_CTL_PAGE_UP}
+    {ID_KEY_RIGHT_ARROW, ID_KEY_LEFT_ARROW, ID_KEY_DOWN_ARROW, ID_KEY_UP_ARROW},
+    {0, 0, ID_KEY_PAGE_DOWN, ID_KEY_PAGE_UP},
+    {ID_KEY_CTL_PLUS, ID_KEY_CTL_MINUS, ID_KEY_CTL_DEL, ID_KEY_CTL_INSERT},
+    {ID_KEY_CTL_END, ID_KEY_CTL_HOME, ID_KEY_CTL_PAGE_DOWN, ID_KEY_CTL_PAGE_UP}
 };
 
 /*
@@ -1035,7 +1035,7 @@ static int xbufkey = 0;     // Buffered X key
  * translatekey --
  *
  *  Translate an input key into MSDOS format.  The purpose of this
- *  routine is to do the mappings like U -> FIK_PAGE_UP.
+ *  routine is to do the mappings like U -> ID_KEY_PAGE_UP.
  *
  * Results:
  *  New character;
@@ -1057,70 +1057,70 @@ translatekey(int ch)
         switch (ch)
         {
         case 'I':
-            return FIK_INSERT;
+            return ID_KEY_INSERT;
         case 'D':
-            return FIK_DELETE;
+            return ID_KEY_DELETE;
         case 'U':
-            return FIK_PAGE_UP;
+            return ID_KEY_PAGE_UP;
         case 'N':
-            return FIK_PAGE_DOWN;
+            return ID_KEY_PAGE_DOWN;
         case ctl('O'):
-            return FIK_CTL_HOME;
+            return ID_KEY_CTL_HOME;
         case 'H':
-            return FIK_LEFT_ARROW;
+            return ID_KEY_LEFT_ARROW;
         case 'L':
-            return FIK_RIGHT_ARROW;
+            return ID_KEY_RIGHT_ARROW;
         case 'K':
-            return FIK_UP_ARROW;
+            return ID_KEY_UP_ARROW;
         case 'J':
-            return FIK_DOWN_ARROW;
+            return ID_KEY_DOWN_ARROW;
         case 1115:
-            return FIK_CTL_LEFT_ARROW;
+            return ID_KEY_CTL_LEFT_ARROW;
         case 1116:
-            return FIK_CTL_RIGHT_ARROW;
+            return ID_KEY_CTL_RIGHT_ARROW;
         case 1141:
-            return FIK_CTL_UP_ARROW;
+            return ID_KEY_CTL_UP_ARROW;
         case 1145:
-            return FIK_CTL_DOWN_ARROW;
+            return ID_KEY_CTL_DOWN_ARROW;
         case 'O':
-            return FIK_HOME;
+            return ID_KEY_HOME;
         case 'E':
-            return FIK_END;
+            return ID_KEY_END;
         case '\n':
-            return FIK_ENTER;
+            return ID_KEY_ENTER;
         case ctl('T'):
-            return FIK_CTL_ENTER;
+            return ID_KEY_CTL_ENTER;
         case -2:
-            return FIK_CTL_ENTER_2;
+            return ID_KEY_CTL_ENTER_2;
         case ctl('U'):
-            return FIK_CTL_PAGE_UP;
+            return ID_KEY_CTL_PAGE_UP;
         case ctl('N'):
-            return FIK_CTL_PAGE_DOWN;
+            return ID_KEY_CTL_PAGE_DOWN;
         case '{':
-            return FIK_CTL_MINUS;
+            return ID_KEY_CTL_MINUS;
         case '}':
-            return FIK_CTL_PLUS;
+            return ID_KEY_CTL_PLUS;
             // we need ^I for tab
         case ctl('D'):
-            return FIK_CTL_DEL;
+            return ID_KEY_CTL_DEL;
         case '!':
-            return FIK_F1;
+            return ID_KEY_F1;
         case '@':
-            return FIK_F2;
+            return ID_KEY_F2;
         case '$':
-            return FIK_F4;
+            return ID_KEY_F4;
         case '%':
-            return FIK_F5;
+            return ID_KEY_F5;
         case '^':
-            return FIK_F6;
+            return ID_KEY_F6;
         case '&':
-            return FIK_F7;
+            return ID_KEY_F7;
         case '*':
-            return FIK_F8;
+            return ID_KEY_F8;
         case '(':
-            return FIK_F9;
+            return ID_KEY_F9;
         case ')':
-            return FIK_F10;
+            return ID_KEY_F10;
         default:
             return ch;
         }
@@ -1148,7 +1148,7 @@ handleesc()
 {
     if (simple_input)
     {
-        return FIK_ESC;
+        return ID_KEY_ESC;
     }
     // SUN escape key sequences
     int ch1 = getachar();
@@ -1159,7 +1159,7 @@ handleesc()
     }
     if (ch1 != '[')
     {       // See if we have esc [
-        return FIK_ESC;
+        return ID_KEY_ESC;
     }
     ch1 = getachar();
     if (ch1 == -1)
@@ -1169,18 +1169,18 @@ handleesc()
     }
     if (ch1 == -1)
     {
-        return FIK_ESC;
+        return ID_KEY_ESC;
     }
     switch (ch1)
     {
     case 'A':       // esc [ A
-        return FIK_UP_ARROW;
+        return ID_KEY_UP_ARROW;
     case 'B':       // esc [ B
-        return FIK_DOWN_ARROW;
+        return ID_KEY_DOWN_ARROW;
     case 'C':       // esc [ C
-        return FIK_RIGHT_ARROW;
+        return ID_KEY_RIGHT_ARROW;
     case 'D':       // esc [ D
-        return FIK_LEFT_ARROW;
+        return ID_KEY_LEFT_ARROW;
     default:
         break;
     }
@@ -1195,20 +1195,20 @@ handleesc()
         switch (ch1)
         {
         case '2':       // esc [ 2 ~
-            return FIK_INSERT;
+            return ID_KEY_INSERT;
         case '3':       // esc [ 3 ~
-            return FIK_DELETE;
+            return ID_KEY_DELETE;
         case '5':       // esc [ 5 ~
-            return FIK_PAGE_UP;
+            return ID_KEY_PAGE_UP;
         case '6':       // esc [ 6 ~
-            return FIK_PAGE_DOWN;
+            return ID_KEY_PAGE_DOWN;
         default:
-            return FIK_ESC;
+            return ID_KEY_ESC;
         }
     }
     else if (ch2 == -1)
     {
-        return FIK_ESC;
+        return ID_KEY_ESC;
     }
     else
     {
@@ -1220,32 +1220,32 @@ handleesc()
         }
         if (ch3 != '~')
         {   // esc [ ch1 ch2 ~
-            return FIK_ESC;
+            return ID_KEY_ESC;
         }
         if (ch1 == '1')
         {
             switch (ch2)
             {
             case '1':   // esc [ 1 1 ~
-                return FIK_F1;
+                return ID_KEY_F1;
             case '2':   // esc [ 1 2 ~
-                return FIK_F2;
+                return ID_KEY_F2;
             case '3':   // esc [ 1 3 ~
-                return FIK_F3;
+                return ID_KEY_F3;
             case '4':   // esc [ 1 4 ~
-                return FIK_F4;
+                return ID_KEY_F4;
             case '5':   // esc [ 1 5 ~
-                return FIK_F5;
+                return ID_KEY_F5;
             case '6':   // esc [ 1 6 ~
-                return FIK_F6;
+                return ID_KEY_F6;
             case '7':   // esc [ 1 7 ~
-                return FIK_F7;
+                return ID_KEY_F7;
             case '8':   // esc [ 1 8 ~
-                return FIK_F8;
+                return ID_KEY_F8;
             case '9':   // esc [ 1 9 ~
-                return FIK_F9;
+                return ID_KEY_F9;
             default:
-                return FIK_ESC;
+                return ID_KEY_ESC;
             }
         }
         else if (ch1 == '2')
@@ -1253,16 +1253,16 @@ handleesc()
             switch (ch2)
             {
             case '0':   // esc [ 2 0 ~
-                return FIK_F10;
+                return ID_KEY_F10;
             case '8':   // esc [ 2 8 ~
-                return FIK_F1;  // HELP
+                return ID_KEY_F1;  // HELP
             default:
-                return FIK_ESC;
+                return ID_KEY_ESC;
             }
         }
         else
         {
-            return FIK_ESC;
+            return ID_KEY_ESC;
         }
     }
 }
@@ -1351,90 +1351,90 @@ xhandleevents()
                 break;
             case XK_Home:
             case XK_R7:
-                xbufkey = ctl_mode ? FIK_CTL_HOME : FIK_HOME;
+                xbufkey = ctl_mode ? ID_KEY_CTL_HOME : ID_KEY_HOME;
                 return;
             case XK_Left:
             case XK_R10:
-                xbufkey = ctl_mode ? FIK_CTL_LEFT_ARROW : FIK_LEFT_ARROW;
+                xbufkey = ctl_mode ? ID_KEY_CTL_LEFT_ARROW : ID_KEY_LEFT_ARROW;
                 return;
             case XK_Right:
             case XK_R12:
-                xbufkey = ctl_mode ? FIK_CTL_RIGHT_ARROW : FIK_RIGHT_ARROW;
+                xbufkey = ctl_mode ? ID_KEY_CTL_RIGHT_ARROW : ID_KEY_RIGHT_ARROW;
                 return;
             case XK_Down:
             case XK_R14:
-                xbufkey = ctl_mode ? FIK_CTL_DOWN_ARROW : FIK_DOWN_ARROW;
+                xbufkey = ctl_mode ? ID_KEY_CTL_DOWN_ARROW : ID_KEY_DOWN_ARROW;
                 return;
             case XK_Up:
             case XK_R8:
-                xbufkey = ctl_mode ? FIK_CTL_UP_ARROW : FIK_UP_ARROW;
+                xbufkey = ctl_mode ? ID_KEY_CTL_UP_ARROW : ID_KEY_UP_ARROW;
                 return;
             case XK_Insert:
-                xbufkey = ctl_mode ? FIK_CTL_INSERT : FIK_INSERT;
+                xbufkey = ctl_mode ? ID_KEY_CTL_INSERT : ID_KEY_INSERT;
                 return;
             case XK_Delete:
-                xbufkey = ctl_mode ? FIK_CTL_DEL : FIK_DELETE;
+                xbufkey = ctl_mode ? ID_KEY_CTL_DEL : ID_KEY_DELETE;
                 return;
             case XK_End:
             case XK_R13:
-                xbufkey = ctl_mode ? FIK_CTL_END : FIK_END;
+                xbufkey = ctl_mode ? ID_KEY_CTL_END : ID_KEY_END;
                 return;
             case XK_Help:
-                xbufkey = FIK_F1;
+                xbufkey = ID_KEY_F1;
                 return;
             case XK_Prior:
             case XK_R9:
-                xbufkey = ctl_mode ? FIK_CTL_PAGE_UP : FIK_PAGE_UP;
+                xbufkey = ctl_mode ? ID_KEY_CTL_PAGE_UP : ID_KEY_PAGE_UP;
                 return;
             case XK_Next:
             case XK_R15:
-                xbufkey = ctl_mode ? FIK_CTL_PAGE_DOWN : FIK_PAGE_DOWN;
+                xbufkey = ctl_mode ? ID_KEY_CTL_PAGE_DOWN : ID_KEY_PAGE_DOWN;
                 return;
             case XK_F1:
             case XK_L1:
-                xbufkey = shift_mode ? FIK_SF1 : FIK_F1;
+                xbufkey = shift_mode ? ID_KEY_SF1 : ID_KEY_F1;
                 return;
             case XK_F2:
             case XK_L2:
-                xbufkey = shift_mode ? FIK_SF2: FIK_F2;
+                xbufkey = shift_mode ? ID_KEY_SF2: ID_KEY_F2;
                 return;
             case XK_F3:
             case XK_L3:
-                xbufkey = shift_mode ? FIK_SF3: FIK_F3;
+                xbufkey = shift_mode ? ID_KEY_SF3: ID_KEY_F3;
                 return;
             case XK_F4:
             case XK_L4:
-                xbufkey = shift_mode ? FIK_SF4: FIK_F4;
+                xbufkey = shift_mode ? ID_KEY_SF4: ID_KEY_F4;
                 return;
             case XK_F5:
             case XK_L5:
-                xbufkey = shift_mode ? FIK_SF5: FIK_F5;
+                xbufkey = shift_mode ? ID_KEY_SF5: ID_KEY_F5;
                 return;
             case XK_F6:
             case XK_L6:
-                xbufkey = shift_mode ? FIK_SF6: FIK_F6;
+                xbufkey = shift_mode ? ID_KEY_SF6: ID_KEY_F6;
                 return;
             case XK_F7:
             case XK_L7:
-                xbufkey = shift_mode ? FIK_SF7: FIK_F7;
+                xbufkey = shift_mode ? ID_KEY_SF7: ID_KEY_F7;
                 return;
             case XK_F8:
             case XK_L8:
-                xbufkey = shift_mode ? FIK_SF8: FIK_F8;
+                xbufkey = shift_mode ? ID_KEY_SF8: ID_KEY_F8;
                 return;
             case XK_F9:
             case XK_L9:
-                xbufkey = shift_mode ? FIK_SF9: FIK_F9;
+                xbufkey = shift_mode ? ID_KEY_SF9: ID_KEY_F9;
                 return;
             case XK_F10:
             case XK_L10:
-                xbufkey = shift_mode ? FIK_SF10: FIK_F10;
+                xbufkey = shift_mode ? ID_KEY_SF10: ID_KEY_F10;
                 return;
             case '+':
-                xbufkey = ctl_mode ? FIK_CTL_PLUS : '+';
+                xbufkey = ctl_mode ? ID_KEY_CTL_PLUS : '+';
                 return;
             case '-':
-                xbufkey = ctl_mode ? FIK_CTL_MINUS : '-';
+                xbufkey = ctl_mode ? ID_KEY_CTL_MINUS : '-';
                 return;
                 break;
             case XK_Return:
@@ -1492,7 +1492,7 @@ xhandleevents()
                 else
                 {
                     Cursor_SetPos(xevent.xmotion.x, xevent.xmotion.y);
-                    xbufkey = FIK_ENTER;
+                    xbufkey = ID_KEY_ENTER;
                 }
 
             }
@@ -1590,7 +1590,7 @@ xhandleevents()
             g_zoom_box_height = g_zoom_box_width;
             if (!g_inside_help)
             {
-                xbufkey = FIK_ENTER;
+                xbufkey = ID_KEY_ENTER;
             }
             if (xlastcolor != -1)
             {

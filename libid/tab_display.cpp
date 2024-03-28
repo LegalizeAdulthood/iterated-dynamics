@@ -241,13 +241,13 @@ bool tab_display_2(char *msg)
     *msg = 0;
 
     // display keycodes while waiting for ESC, BACKSPACE or TAB
-    while ((key != FIK_ESC) && (key != FIK_BACKSPACE) && (key != FIK_TAB))
+    while ((key != ID_KEY_ESC) && (key != ID_KEY_BACKSPACE) && (key != ID_KEY_TAB))
     {
         driver_put_string(row, 2, C_GENERAL_HI, msg);
         key = getakeynohelp();
         std::sprintf(msg, "%d (0x%04x)      ", key, key);
     }
-    return key != FIK_ESC;
+    return key != ID_KEY_ESC;
 }
 
 int tab_display()       // display the status of the current image
@@ -699,14 +699,14 @@ top:
     }
 #endif
     key = getakeynohelp();
-    if (key == FIK_F6)
+    if (key == ID_KEY_F6)
     {
         driver_stack_screen();
         area();
         driver_unstack_screen();
         goto top;
     }
-    else if (key == FIK_CTL_TAB || key == FIK_SHF_TAB || key == FIK_F7)
+    else if (key == ID_KEY_CTL_TAB || key == ID_KEY_SHF_TAB || key == ID_KEY_F7)
     {
         if (tab_display_2(msg))
         {

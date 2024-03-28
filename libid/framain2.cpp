@@ -252,7 +252,7 @@ main_state big_while_loop(bool *const kbdmore, bool *const stacked, bool const r
         g_save_dac = (g_save_dac == 0) ? 2 : 1;
         if (g_init_batch == batch_modes::NONE)
         {
-            g_look_at_mouse = -FIK_PAGE_UP;        // mouse left button == pgup
+            g_look_at_mouse = -ID_KEY_PAGE_UP;        // mouse left button == pgup
         }
 
         if (g_show_file == 0)
@@ -545,15 +545,15 @@ resumeloop:                             // return here on failed overlays
                     // save done, resume
                     g_timed_save = 0;
                     g_resave_flag = 2;
-                    kbdchar = FIK_ENTER;
+                    kbdchar = ID_KEY_ENTER;
                 }
             }
             else if (g_init_batch == batch_modes::NONE)      // not batch mode
             {
-                g_look_at_mouse = (g_zoom_box_width == 0 && !g_video_scroll) ? -FIK_PAGE_UP : 3;
+                g_look_at_mouse = (g_zoom_box_width == 0 && !g_video_scroll) ? -ID_KEY_PAGE_UP : 3;
                 if (g_calc_status == calc_status_value::RESUMABLE && g_zoom_box_width == 0 && !driver_key_pressed())
                 {
-                    kbdchar = FIK_ENTER;  // no visible reason to stop, continue
+                    kbdchar = ID_KEY_ENTER;  // no visible reason to stop, continue
                 }
                 else      // wait for a real keystroke
                 {
@@ -566,25 +566,25 @@ resumeloop:                             // return here on failed overlays
                         driver_wait_key_pressed(0);
                         kbdchar = driver_get_key();
                     }
-                    if (kbdchar == FIK_ESC || kbdchar == 'm' || kbdchar == 'M')
+                    if (kbdchar == ID_KEY_ESC || kbdchar == 'm' || kbdchar == 'M')
                     {
-                        if (kbdchar == FIK_ESC && g_escape_exit)
+                        if (kbdchar == ID_KEY_ESC && g_escape_exit)
                         {
                             // don't ask, just get out
                             goodbye();
                         }
                         driver_stack_screen();
                         kbdchar = main_menu(true);
-                        if (kbdchar == '\\' || kbdchar == FIK_CTL_BACKSLASH
-                            || kbdchar == 'h' || kbdchar == FIK_CTL_H
+                        if (kbdchar == '\\' || kbdchar == ID_KEY_CTL_BACKSLASH
+                            || kbdchar == 'h' || kbdchar == ID_KEY_CTL_H
                             || check_vidmode_key(0, kbdchar) >= 0)
                         {
                             driver_discard_screen();
                         }
                         else if (kbdchar == 'x' || kbdchar == 'y'
                             || kbdchar == 'z' || kbdchar == 'g'
-                            || kbdchar == 'v' || kbdchar == FIK_CTL_B
-                            || kbdchar == FIK_CTL_E || kbdchar == FIK_CTL_F)
+                            || kbdchar == 'v' || kbdchar == ID_KEY_CTL_B
+                            || kbdchar == ID_KEY_CTL_E || kbdchar == ID_KEY_CTL_F)
                         {
                             g_from_text = true;
                         }
@@ -607,7 +607,7 @@ resumeloop:                             // return here on failed overlays
 
                 if (g_init_batch == batch_modes::FINISH_CALC_BEFORE_SAVE)
                 {
-                    kbdchar = FIK_ENTER;
+                    kbdchar = ID_KEY_ENTER;
                     g_init_batch = batch_modes::NORMAL;
                 }
                 else if (g_init_batch == batch_modes::NORMAL || g_init_batch == batch_modes::BAILOUT_INTERRUPTED_TRY_SAVE)         // save-to-disk
@@ -698,28 +698,28 @@ void move_zoombox(int keynum)
     {
         switch (keynum)
         {
-        case FIK_LEFT_ARROW:               // cursor left
+        case ID_KEY_LEFT_ARROW:               // cursor left
             --horizontal;
             break;
-        case FIK_RIGHT_ARROW:              // cursor right
+        case ID_KEY_RIGHT_ARROW:              // cursor right
             ++horizontal;
             break;
-        case FIK_UP_ARROW:                 // cursor up
+        case ID_KEY_UP_ARROW:                 // cursor up
             --vertical;
             break;
-        case FIK_DOWN_ARROW:               // cursor down
+        case ID_KEY_DOWN_ARROW:               // cursor down
             ++vertical;
             break;
-        case FIK_CTL_LEFT_ARROW:             // Ctrl-cursor left
+        case ID_KEY_CTL_LEFT_ARROW:             // Ctrl-cursor left
             horizontal -= 8;
             break;
-        case FIK_CTL_RIGHT_ARROW:             // Ctrl-cursor right
+        case ID_KEY_CTL_RIGHT_ARROW:             // Ctrl-cursor right
             horizontal += 8;
             break;
-        case FIK_CTL_UP_ARROW:               // Ctrl-cursor up
+        case ID_KEY_CTL_UP_ARROW:               // Ctrl-cursor up
             vertical -= 8;
             break;
-        case FIK_CTL_DOWN_ARROW:             // Ctrl-cursor down
+        case ID_KEY_CTL_DOWN_ARROW:             // Ctrl-cursor down
             vertical += 8;
             break;                      // += 8 needed by VESA scrolling
         default:

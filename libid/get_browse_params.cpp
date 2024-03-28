@@ -52,7 +52,7 @@ get_brws_restart:
         return 0;
     }
 
-    if (i == FIK_F4)
+    if (i == ID_KEY_F4)
     {
         g_smallest_window_display_size = 6;
         g_auto_browse = false;

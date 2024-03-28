@@ -442,19 +442,19 @@ choose_vars_restart:
 
     switch (i)
     {
-    case FIK_F2: // set all off
+    case ID_KEY_F2: // set all off
         for (int num = MAX_PARAMS; num < NUM_GENES; num++)
         {
             gene[num].mutate = variations::NONE;
         }
         goto choose_vars_restart;
-    case FIK_F3: // set all on..alternate x and y for field map
+    case ID_KEY_F3: // set all on..alternate x and y for field map
         for (int num = MAX_PARAMS; num < NUM_GENES; num ++)
         {
             gene[num].mutate = static_cast<variations>((num % 2) + 1);
         }
         goto choose_vars_restart;
-    case FIK_F4: // Randomize all
+    case ID_KEY_F4: // Randomize all
         for (int num = MAX_PARAMS; num < NUM_GENES; num ++)
         {
             gene[num].mutate = static_cast<variations>(rand() % static_cast<int>(variations::NUM));
@@ -589,25 +589,25 @@ choose_vars_restart:
 
     switch (i)
     {
-    case FIK_F2: // set all off
+    case ID_KEY_F2: // set all off
         for (int num = 0; num < MAX_PARAMS; num++)
         {
             gene[num].mutate = variations::NONE;
         }
         goto choose_vars_restart;
-    case FIK_F3: // set all on..alternate x and y for field map
+    case ID_KEY_F3: // set all on..alternate x and y for field map
         for (int num = 0; num < MAX_PARAMS; num ++)
         {
             gene[num].mutate = static_cast<variations>((num % 2) + 1);
         }
         goto choose_vars_restart;
-    case FIK_F4: // Randomize all
+    case ID_KEY_F4: // Randomize all
         for (int num =0; num < MAX_PARAMS; num ++)
         {
             gene[num].mutate = static_cast<variations>(rand() % static_cast<int>(variations::NUM));
         }
         goto choose_vars_restart;
-    case FIK_F6: // go to second screen, put array away first
+    case ID_KEY_F6: // go to second screen, put array away first
         copy_genes_to_bank(gene);
         chngd = get_the_rest();
         copy_genes_from_bank(gene);
@@ -725,14 +725,14 @@ get_evol_restart:
         return -1;
     }
 
-    if (i == FIK_F4)
+    if (i == ID_KEY_F4)
     {
         set_current_params();
         g_evolve_max_random_mutation = 1;
         g_evolve_mutation_reduction_factor = 1.0;
         goto get_evol_restart;
     }
-    if (i == FIK_F2)
+    if (i == ID_KEY_F2)
     {
         g_evolve_x_parameter_range = g_evolve_x_parameter_range / 2;
         g_evolve_new_x_parameter_offset = g_evolve_x_parameter_offset + g_evolve_x_parameter_range /2;
@@ -743,7 +743,7 @@ get_evol_restart:
         g_evolve_max_random_mutation = g_evolve_max_random_mutation / 2;
         goto get_evol_restart;
     }
-    if (i == FIK_F3)
+    if (i == ID_KEY_F3)
     {
         double centerx, centery;
         centerx = g_evolve_x_parameter_offset + g_evolve_x_parameter_range / 2;
@@ -764,7 +764,7 @@ get_evol_restart:
     g_evolving = choices.read_yes_no() ? 1 : 0;
     g_view_window = g_evolving != 0;
 
-    if (!g_evolving && i != FIK_F6)    // don't need any of the other parameters
+    if (!g_evolving && i != ID_KEY_F6)    // don't need any of the other parameters
     {
         return 1;             // the following code can set evolving even if it's off
     }
@@ -842,7 +842,7 @@ get_evol_restart:
         i = 0;
     }
 
-    if (j == FIK_F6)
+    if (j == ID_KEY_F6)
     {
         old_variations = get_variations();
         set_current_params();

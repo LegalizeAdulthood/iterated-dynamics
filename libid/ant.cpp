@@ -54,20 +54,20 @@ void setwait(long *wait)
         kbdchar = driver_get_key();
         switch (kbdchar)
         {
-        case FIK_CTL_RIGHT_ARROW:
-        case FIK_CTL_UP_ARROW:
+        case ID_KEY_CTL_RIGHT_ARROW:
+        case ID_KEY_CTL_UP_ARROW:
             (*wait) += 100;
             break;
-        case FIK_RIGHT_ARROW:
-        case FIK_UP_ARROW:
+        case ID_KEY_RIGHT_ARROW:
+        case ID_KEY_UP_ARROW:
             (*wait) += 10;
             break;
-        case FIK_CTL_DOWN_ARROW:
-        case FIK_CTL_LEFT_ARROW:
+        case ID_KEY_CTL_DOWN_ARROW:
+        case ID_KEY_CTL_LEFT_ARROW:
             (*wait) -= 100;
             break;
-        case FIK_LEFT_ARROW:
-        case FIK_DOWN_ARROW:
+        case ID_KEY_LEFT_ARROW:
+        case ID_KEY_DOWN_ARROW:
             (*wait) -= 10;
             break;
         default:
@@ -166,20 +166,20 @@ void TurkMite1(int maxtur, int rule_len, char const *ru, long maxpts, long wait)
             }
             switch (kbdchar)
             {
-            case FIK_SPACE:
+            case ID_KEY_SPACE:
                 step = 1 - step;
                 break;
-            case FIK_ESC:
+            case ID_KEY_ESC:
                 done = true;
                 break;
-            case FIK_RIGHT_ARROW:
-            case FIK_UP_ARROW:
-            case FIK_DOWN_ARROW:
-            case FIK_LEFT_ARROW:
-            case FIK_CTL_RIGHT_ARROW:
-            case FIK_CTL_UP_ARROW:
-            case FIK_CTL_DOWN_ARROW:
-            case FIK_CTL_LEFT_ARROW:
+            case ID_KEY_RIGHT_ARROW:
+            case ID_KEY_UP_ARROW:
+            case ID_KEY_DOWN_ARROW:
+            case ID_KEY_LEFT_ARROW:
+            case ID_KEY_CTL_RIGHT_ARROW:
+            case ID_KEY_CTL_UP_ARROW:
+            case ID_KEY_CTL_DOWN_ARROW:
+            case ID_KEY_CTL_LEFT_ARROW:
                 setwait(&wait);
                 break;
             default:
@@ -335,20 +335,20 @@ void TurkMite2(int maxtur, int rule_len, char const *ru, long maxpts, long wait)
             }
             switch (kbdchar)
             {
-            case FIK_SPACE:
+            case ID_KEY_SPACE:
                 step = 1 - step;
                 break;
-            case FIK_ESC:
+            case ID_KEY_ESC:
                 done = true;
                 break;
-            case FIK_RIGHT_ARROW:
-            case FIK_UP_ARROW:
-            case FIK_DOWN_ARROW:
-            case FIK_LEFT_ARROW:
-            case FIK_CTL_RIGHT_ARROW:
-            case FIK_CTL_UP_ARROW:
-            case FIK_CTL_DOWN_ARROW:
-            case FIK_CTL_LEFT_ARROW:
+            case ID_KEY_RIGHT_ARROW:
+            case ID_KEY_UP_ARROW:
+            case ID_KEY_DOWN_ARROW:
+            case ID_KEY_LEFT_ARROW:
+            case ID_KEY_CTL_RIGHT_ARROW:
+            case ID_KEY_CTL_UP_ARROW:
+            case ID_KEY_CTL_DOWN_ARROW:
+            case ID_KEY_CTL_LEFT_ARROW:
                 setwait(&wait);
                 break;
             default:

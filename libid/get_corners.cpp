@@ -126,7 +126,7 @@ gc_loop:
         return -1;
     }
 
-    if (prompt_ret == FIK_F4)
+    if (prompt_ret == ID_KEY_F4)
     {
         // reset to type defaults
         g_x_min = g_cur_fractal_specific->xmin;
@@ -204,7 +204,7 @@ gc_loop:
         }
     }
 
-    if (prompt_ret == FIK_F7 && g_draw_mode != 'l')
+    if (prompt_ret == ID_KEY_F7 && g_draw_mode != 'l')
     {
         // toggle corners/center-mag mode
         if (!g_use_center_mag)
@@ -341,7 +341,7 @@ gsc_loop:
         return -1;
     }
 
-    if (prompt_ret == FIK_F4)
+    if (prompt_ret == ID_KEY_F4)
     {
         // reset to type defaults
         g_orbit_corner_min_x = g_cur_fractal_specific->xmin;
@@ -423,7 +423,7 @@ gsc_loop:
         }
     }
 
-    if (prompt_ret == FIK_F7)
+    if (prompt_ret == ID_KEY_F7)
     {
         // toggle corners/center-mag mode
         if (!g_use_center_mag)

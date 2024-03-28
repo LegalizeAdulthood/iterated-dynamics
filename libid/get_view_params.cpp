@@ -139,7 +139,7 @@ get_view_restart:
         return -1;
     }
 
-    if (i == FIK_F4 && !driver_diskp())
+    if (i == ID_KEY_F4 && !driver_diskp())
     {
         g_view_window = false;
         g_view_x_dots = 0;

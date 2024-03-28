@@ -90,12 +90,12 @@ void intro()
         {
             driver_delay(100);
         }
-        if (driver_key_pressed() == FIK_SPACE)
+        if (driver_key_pressed() == ID_KEY_SPACE)
         {
             // spacebar pauses
             driver_get_key();
             driver_wait_key_pressed(0);
-            if (driver_key_pressed() == FIK_SPACE)
+            if (driver_key_pressed() == ID_KEY_SPACE)
             {
                 driver_get_key();
             }

@@ -122,7 +122,7 @@ bool stopmsg(int flags, char const* msg)
     bool ret = false;
     if (g_debug_flag != debug_flags::show_formula_info_after_compile)
     {
-        if (getakeynohelp() == FIK_ESC)
+        if (getakeynohelp() == ID_KEY_ESC)
         {
             ret = true;
         }

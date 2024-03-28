@@ -161,7 +161,7 @@ void rotate(int direction)      // rotate-the-palette routine
         if (paused
             && (kbdchar != ' '
                 && kbdchar != 'c'
-                && kbdchar != FIK_HOME
+                && kbdchar != ID_KEY_HOME
                 && kbdchar != 'C'))
         {
             paused = false;                 // clear paused condition
@@ -169,7 +169,7 @@ void rotate(int direction)      // rotate-the-palette routine
         switch (kbdchar)
         {
         case '+':                      // '+' means rotate forward
-        case FIK_RIGHT_ARROW:              // RightArrow = rotate fwd
+        case ID_KEY_RIGHT_ARROW:              // RightArrow = rotate fwd
             fkey = 0;
             direction = 1;
             last = rotate_max;
@@ -177,21 +177,21 @@ void rotate(int direction)      // rotate-the-palette routine
             incr = 999;
             break;
         case '-':                      // '-' means rotate backward
-        case FIK_LEFT_ARROW:               // LeftArrow = rotate bkwd
+        case ID_KEY_LEFT_ARROW:               // LeftArrow = rotate bkwd
             fkey = 0;
             direction = -1;
             last = g_color_cycle_range_lo;
             next = rotate_max;
             incr = 999;
             break;
-        case FIK_UP_ARROW:                 // UpArrow means speed up
+        case ID_KEY_UP_ARROW:                 // UpArrow means speed up
             g_dac_learn = true;
             if (++g_dac_count >= g_colors)
             {
                 --g_dac_count;
             }
             break;
-        case FIK_DOWN_ARROW:               // DownArrow means slow down
+        case ID_KEY_DOWN_ARROW:               // DownArrow means slow down
             g_dac_learn = true;
             if (g_dac_count > 1)
             {
@@ -213,49 +213,49 @@ void rotate(int direction)      // rotate-the-palette routine
                 step = rotate_size;
             }
             break;
-        case FIK_F1:                       // FIK_F1 - FIK_F10:
-        case FIK_F2:                       // select a shading factor
-        case FIK_F3:
-        case FIK_F4:
-        case FIK_F5:
-        case FIK_F6:
-        case FIK_F7:
-        case FIK_F8:
-        case FIK_F9:
-        case FIK_F10:
+        case ID_KEY_F1:                       // ID_KEY_F1 - ID_KEY_F10:
+        case ID_KEY_F2:                       // select a shading factor
+        case ID_KEY_F3:
+        case ID_KEY_F4:
+        case ID_KEY_F5:
+        case ID_KEY_F6:
+        case ID_KEY_F7:
+        case ID_KEY_F8:
+        case ID_KEY_F9:
+        case ID_KEY_F10:
 #ifndef XFRACT
             fkey = kbdchar-1058;
 #else
             switch (kbdchar)
             {
-            case FIK_F1:
+            case ID_KEY_F1:
                 fkey = 1;
                 break;
-            case FIK_F2:
+            case ID_KEY_F2:
                 fkey = 2;
                 break;
-            case FIK_F3:
+            case ID_KEY_F3:
                 fkey = 3;
                 break;
-            case FIK_F4:
+            case ID_KEY_F4:
                 fkey = 4;
                 break;
-            case FIK_F5:
+            case ID_KEY_F5:
                 fkey = 5;
                 break;
-            case FIK_F6:
+            case ID_KEY_F6:
                 fkey = 6;
                 break;
-            case FIK_F7:
+            case ID_KEY_F7:
                 fkey = 7;
                 break;
-            case FIK_F8:
+            case ID_KEY_F8:
                 fkey = 8;
                 break;
-            case FIK_F9:
+            case ID_KEY_F9:
                 fkey = 9;
                 break;
-            case FIK_F10:
+            case ID_KEY_F10:
                 fkey = 10;
                 break;
             }
@@ -263,8 +263,8 @@ void rotate(int direction)      // rotate-the-palette routine
             fstep = 1;
             incr = 999;
             break;
-        case FIK_ENTER:                    // enter key: randomize all colors
-        case FIK_ENTER_2:                  // also the Numeric-Keypad Enter
+        case ID_KEY_ENTER:                    // enter key: randomize all colors
+        case ID_KEY_ENTER_2:                  // also the Numeric-Keypad Enter
             fkey = rand15()/3277 + 1;
             fstep = 1;
             incr = 999;
@@ -377,7 +377,7 @@ void rotate(int direction)      // rotate-the-palette routine
             pauserotate();              // update palette and pause
             break;
         case 'l':                      // load colors from a specified map
-#ifndef XFRACT // L is used for FIK_RIGHT_ARROW in Unix keyboard mapping
+#ifndef XFRACT // L is used for ID_KEY_RIGHT_ARROW in Unix keyboard mapping
         case 'L':
 #endif
             load_palette();
@@ -390,132 +390,132 @@ void rotate(int direction)      // rotate-the-palette routine
             fkey = 0;                   // disable random generation
             pauserotate();              // update palette and pause
             break;
-        case FIK_ESC:                      // escape
+        case ID_KEY_ESC:                      // escape
             more = false;                   // time to bail out
             break;
-        case FIK_HOME:                     // restore palette
+        case ID_KEY_HOME:                     // restore palette
             std::memcpy(g_dac_box, g_old_dac_box, 256*3);
             pauserotate();              // pause
             break;
         default:                       // maybe a new palette
             fkey = 0;                   // disable random generation
-            if (kbdchar == FIK_SF1)
+            if (kbdchar == ID_KEY_SF1)
             {
                 set_palette(Black, White);
             }
-            if (kbdchar == FIK_SF2)
+            if (kbdchar == ID_KEY_SF2)
             {
                 set_palette(Red, Yellow);
             }
-            if (kbdchar == FIK_SF3)
+            if (kbdchar == ID_KEY_SF3)
             {
                 set_palette(Blue, Green);
             }
-            if (kbdchar == FIK_SF4)
+            if (kbdchar == ID_KEY_SF4)
             {
                 set_palette(Black, Yellow);
             }
-            if (kbdchar == FIK_SF5)
+            if (kbdchar == ID_KEY_SF5)
             {
                 set_palette(Black, Red);
             }
-            if (kbdchar == FIK_SF6)
+            if (kbdchar == ID_KEY_SF6)
             {
                 set_palette(Black, Blue);
             }
-            if (kbdchar == FIK_SF7)
+            if (kbdchar == ID_KEY_SF7)
             {
                 set_palette(Black, Green);
             }
-            if (kbdchar == FIK_SF8)
+            if (kbdchar == ID_KEY_SF8)
             {
                 set_palette(Blue, Yellow);
             }
-            if (kbdchar == FIK_SF9)
+            if (kbdchar == ID_KEY_SF9)
             {
                 set_palette(Red, Green);
             }
-            if (kbdchar == FIK_SF10)
+            if (kbdchar == ID_KEY_SF10)
             {
                 set_palette(Green, White);
             }
-            if (kbdchar == FIK_CTL_F1)
+            if (kbdchar == ID_KEY_CTL_F1)
             {
                 set_palette2(Black, White);
             }
-            if (kbdchar == FIK_CTL_F2)
+            if (kbdchar == ID_KEY_CTL_F2)
             {
                 set_palette2(Red, Yellow);
             }
-            if (kbdchar == FIK_CTL_F3)
+            if (kbdchar == ID_KEY_CTL_F3)
             {
                 set_palette2(Blue, Green);
             }
-            if (kbdchar == FIK_CTL_F4)
+            if (kbdchar == ID_KEY_CTL_F4)
             {
                 set_palette2(Black, Yellow);
             }
-            if (kbdchar == FIK_CTL_F5)
+            if (kbdchar == ID_KEY_CTL_F5)
             {
                 set_palette2(Black, Red);
             }
-            if (kbdchar == FIK_CTL_F6)
+            if (kbdchar == ID_KEY_CTL_F6)
             {
                 set_palette2(Black, Blue);
             }
-            if (kbdchar == FIK_CTL_F7)
+            if (kbdchar == ID_KEY_CTL_F7)
             {
                 set_palette2(Black, Green);
             }
-            if (kbdchar == FIK_CTL_F8)
+            if (kbdchar == ID_KEY_CTL_F8)
             {
                 set_palette2(Blue, Yellow);
             }
-            if (kbdchar == FIK_CTL_F9)
+            if (kbdchar == ID_KEY_CTL_F9)
             {
                 set_palette2(Red, Green);
             }
-            if (kbdchar == FIK_CTL_F10)
+            if (kbdchar == ID_KEY_CTL_F10)
             {
                 set_palette2(Green, White);
             }
-            if (kbdchar == FIK_ALT_F1)
+            if (kbdchar == ID_KEY_ALT_F1)
             {
                 set_palette3(Blue, Green, Red);
             }
-            if (kbdchar == FIK_ALT_F2)
+            if (kbdchar == ID_KEY_ALT_F2)
             {
                 set_palette3(Blue, Yellow, Red);
             }
-            if (kbdchar == FIK_ALT_F3)
+            if (kbdchar == ID_KEY_ALT_F3)
             {
                 set_palette3(Red, White, Blue);
             }
-            if (kbdchar == FIK_ALT_F4)
+            if (kbdchar == ID_KEY_ALT_F4)
             {
                 set_palette3(Red, Yellow, White);
             }
-            if (kbdchar == FIK_ALT_F5)
+            if (kbdchar == ID_KEY_ALT_F5)
             {
                 set_palette3(Black, Brown, Yellow);
             }
-            if (kbdchar == FIK_ALT_F6)
+            if (kbdchar == ID_KEY_ALT_F6)
             {
                 set_palette3(Blue, Brown, Green);
             }
-            if (kbdchar == FIK_ALT_F7)
+            if (kbdchar == ID_KEY_ALT_F7)
             {
                 set_palette3(Blue, Green, Green);
             }
-            if (kbdchar == FIK_ALT_F8)
+            if (kbdchar == ID_KEY_ALT_F8)
             {
                 set_palette3(Blue, Green, White);
             }
-            if (kbdchar == FIK_ALT_F9)
+            if (kbdchar == ID_KEY_ALT_F9)
             {
                 set_palette3(Green, Green, White);
             }
-            if (kbdchar == FIK_ALT_F10)
+            if (kbdchar == ID_KEY_ALT_F10)
             {
                 set_palette3(Red, Blue, White);
             }

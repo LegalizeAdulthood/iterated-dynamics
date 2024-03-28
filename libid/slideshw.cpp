@@ -47,26 +47,26 @@ struct key_mnemonic
 
 static key_mnemonic scancodes[] =
 {
-    { FIK_ENTER,            "ENTER"     },
-    { FIK_INSERT,           "INSERT"    },
-    { FIK_DELETE,           "DELETE"    },
-    { FIK_ESC,              "ESC"       },
-    { FIK_TAB,              "TAB"       },
-    { FIK_PAGE_UP,          "PAGEUP"    },
-    { FIK_PAGE_DOWN,        "PAGEDOWN"  },
-    { FIK_HOME,             "HOME"      },
-    { FIK_END,              "END"       },
-    { FIK_LEFT_ARROW,       "LEFT"      },
-    { FIK_RIGHT_ARROW,      "RIGHT"     },
-    { FIK_UP_ARROW,         "UP"        },
-    { FIK_DOWN_ARROW,       "DOWN"      },
-    { FIK_F1,               "F1"        },
-    { FIK_CTL_RIGHT_ARROW,  "CTRL_RIGHT"},
-    { FIK_CTL_LEFT_ARROW,   "CTRL_LEFT" },
-    { FIK_CTL_DOWN_ARROW,   "CTRL_DOWN" },
-    { FIK_CTL_UP_ARROW,     "CTRL_UP"   },
-    { FIK_CTL_END,          "CTRL_END"  },
-    { FIK_CTL_HOME,         "CTRL_HOME" }
+    { ID_KEY_ENTER,            "ENTER"     },
+    { ID_KEY_INSERT,           "INSERT"    },
+    { ID_KEY_DELETE,           "DELETE"    },
+    { ID_KEY_ESC,              "ESC"       },
+    { ID_KEY_TAB,              "TAB"       },
+    { ID_KEY_PAGE_UP,          "PAGEUP"    },
+    { ID_KEY_PAGE_DOWN,        "PAGEDOWN"  },
+    { ID_KEY_HOME,             "HOME"      },
+    { ID_KEY_END,              "END"       },
+    { ID_KEY_LEFT_ARROW,       "LEFT"      },
+    { ID_KEY_RIGHT_ARROW,      "RIGHT"     },
+    { ID_KEY_UP_ARROW,         "UP"        },
+    { ID_KEY_DOWN_ARROW,       "DOWN"      },
+    { ID_KEY_F1,               "F1"        },
+    { ID_KEY_CTL_RIGHT_ARROW,  "CTRL_RIGHT"},
+    { ID_KEY_CTL_LEFT_ARROW,   "CTRL_LEFT" },
+    { ID_KEY_CTL_DOWN_ARROW,   "CTRL_DOWN" },
+    { ID_KEY_CTL_UP_ARROW,     "CTRL_UP"   },
+    { ID_KEY_CTL_END,          "CTRL_END"  },
+    { ID_KEY_CTL_HOME,         "CTRL_HOME" }
 };
 
 static int get_scancode(char const *mn)
@@ -457,7 +457,7 @@ int handle_special_keys(int ch)
 {
     if (slides_mode::PLAY == g_slides)
     {
-        if (ch == FIK_ESC)
+        if (ch == ID_KEY_ESC)
         {
             stopslideshow();
             ch = 0;
@@ -473,14 +473,14 @@ int handle_special_keys(int ch)
     }
 
     static bool inside_help = false;
-    if (FIK_F1 == ch && g_help_mode != help_labels::IDHELP_INDEX && !inside_help)
+    if (ID_KEY_F1 == ch && g_help_mode != help_labels::IDHELP_INDEX && !inside_help)
     {
         inside_help = true;
         help(0);
         inside_help = false;
         ch = 0;
     }
-    else if (FIK_TAB == ch && g_tab_mode)
+    else if (ID_KEY_TAB == ch && g_tab_mode)
     {
         bool const old_tab_mode = g_tab_mode;
         g_tab_mode = false;

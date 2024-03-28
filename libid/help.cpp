@@ -549,9 +549,9 @@ static int find_link_key(LINK * /*link*/, int num_link, int curr_link, int key)
 {
     switch (key)
     {
-    case FIK_TAB:
+    case ID_KEY_TAB:
         return (curr_link >= num_link-1) ? -1 : curr_link+1;
-    case FIK_SHF_TAB:
+    case ID_KEY_SHF_TAB:
         return (curr_link <= 0)          ? -1 : curr_link-1;
     default:
         assert(0);
@@ -676,7 +676,7 @@ static int help_topic(HIST *curr, HIST *next, int flags)
 
         switch (key)
         {
-        case FIK_PAGE_DOWN:
+        case ID_KEY_PAGE_DOWN:
             if (page < num_pages-1)
             {
                 page++;
@@ -684,7 +684,7 @@ static int help_topic(HIST *curr, HIST *next, int flags)
             }
             break;
 
-        case FIK_PAGE_UP:
+        case ID_KEY_PAGE_UP:
             if (page > 0)
             {
                 page--;
@@ -692,7 +692,7 @@ static int help_topic(HIST *curr, HIST *next, int flags)
             }
             break;
 
-        case FIK_HOME:
+        case ID_KEY_HOME:
             if (page != 0)
             {
                 page = 0;
@@ -704,7 +704,7 @@ static int help_topic(HIST *curr, HIST *next, int flags)
             }
             break;
 
-        case FIK_END:
+        case ID_KEY_END:
             if (page != num_pages-1)
             {
                 page = num_pages-1;
@@ -716,7 +716,7 @@ static int help_topic(HIST *curr, HIST *next, int flags)
             }
             break;
 
-        case FIK_TAB:
+        case ID_KEY_TAB:
             if (!do_move_link(&link_table[0], num_link, &curr_link, find_link_key, key)
                 && page < num_pages-1)
             {
@@ -725,7 +725,7 @@ static int help_topic(HIST *curr, HIST *next, int flags)
             }
             break;
 
-        case FIK_SHF_TAB:
+        case ID_KEY_SHF_TAB:
             if (!do_move_link(&link_table[0], num_link, &curr_link, find_link_key, key)
                 && page > 0)
             {
@@ -734,7 +734,7 @@ static int help_topic(HIST *curr, HIST *next, int flags)
             }
             break;
 
-        case FIK_DOWN_ARROW:
+        case ID_KEY_DOWN_ARROW:
             if (!do_move_link(&link_table[0], num_link, &curr_link, find_link_updown, 0)
                 && page < num_pages-1)
             {
@@ -743,7 +743,7 @@ static int help_topic(HIST *curr, HIST *next, int flags)
             }
             break;
 
-        case FIK_UP_ARROW:
+        case ID_KEY_UP_ARROW:
             if (!do_move_link(&link_table[0], num_link, &curr_link, find_link_updown, 1)
                 && page > 0)
             {
@@ -752,35 +752,35 @@ static int help_topic(HIST *curr, HIST *next, int flags)
             }
             break;
 
-        case FIK_LEFT_ARROW:
+        case ID_KEY_LEFT_ARROW:
             do_move_link(&link_table[0], num_link, &curr_link, find_link_leftright, 1);
             break;
 
-        case FIK_RIGHT_ARROW:
+        case ID_KEY_RIGHT_ARROW:
             do_move_link(&link_table[0], num_link, &curr_link, find_link_leftright, 0);
             break;
 
-        case FIK_ESC:         // exit help
+        case ID_KEY_ESC:         // exit help
             action = ACTION_QUIT;
             break;
 
-        case FIK_BACKSPACE:   // prev topic
-        case FIK_ALT_F1:
+        case ID_KEY_BACKSPACE:   // prev topic
+        case ID_KEY_ALT_F1:
             if (flags & F_HIST)
             {
                 action = ACTION_PREV;
             }
             break;
 
-        case FIK_F1:    // help index
+        case ID_KEY_F1:    // help index
             if (!(flags & F_INDEX))
             {
                 action = ACTION_INDEX;
             }
             break;
 
-        case FIK_ENTER:
-        case FIK_ENTER_2:
+        case ID_KEY_ENTER:
+        case ID_KEY_ENTER_2:
             if (num_link > 0)
             {
                 next->topic_num = link_table[curr_link].topic_num;
@@ -921,13 +921,13 @@ int help(int action)
                 {
                     switch (driver_get_key())
                     {
-                    case FIK_ESC:
+                    case ID_KEY_ESC:
                         action = ACTION_QUIT;
                         break;
-                    case FIK_ALT_F1:
+                    case ID_KEY_ALT_F1:
                         action = ACTION_PREV;
                         break;
-                    case FIK_F1:
+                    case ID_KEY_F1:
                         action = ACTION_INDEX;
                         break;
                     } // switch
@@ -1319,7 +1319,7 @@ static bool print_doc_msg_func(int pnum, int num_pages)
     while (driver_key_pressed())
     {
         key = driver_get_key();
-        if (key == FIK_ESC)
+        if (key == ID_KEY_ESC)
         {
             return false;    // user abort
         }

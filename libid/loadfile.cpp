@@ -1534,13 +1534,13 @@ rescan:  // entry for changed browse parms
             c = driver_get_key();
             switch (c)
             {
-            case FIK_RIGHT_ARROW:
-            case FIK_LEFT_ARROW:
-            case FIK_DOWN_ARROW:
-            case FIK_UP_ARROW:
+            case ID_KEY_RIGHT_ARROW:
+            case ID_KEY_LEFT_ARROW:
+            case ID_KEY_DOWN_ARROW:
+            case ID_KEY_UP_ARROW:
                 cleartempmsg();
                 drawindow(color_of_box, &winlist);// dim last window
-                if (c == FIK_RIGHT_ARROW || c == FIK_UP_ARROW)
+                if (c == ID_KEY_RIGHT_ARROW || c == ID_KEY_UP_ARROW)
                 {
                     index++;                     // shift attention to next window
                     if (index >= wincount)
@@ -1560,8 +1560,8 @@ rescan:  // entry for changed browse parms
                 restore_box(num_dots, index);
                 showtempmsg(winlist.name);
                 break;
-            case FIK_CTL_INSERT:
-                color_of_box += key_count(FIK_CTL_INSERT);
+            case ID_KEY_CTL_INSERT:
+                color_of_box += key_count(ID_KEY_CTL_INSERT);
                 for (int i = 0; i < wincount ; i++)
                 {
                     drawindow(color_of_box, &browse_windows[i]);
@@ -1570,8 +1570,8 @@ rescan:  // entry for changed browse parms
                 drawindow(color_of_box, &winlist);
                 break;
 
-            case FIK_CTL_DEL:
-                color_of_box -= key_count(FIK_CTL_DEL);
+            case ID_KEY_CTL_DEL:
+                color_of_box -= key_count(ID_KEY_CTL_DEL);
                 for (int i = 0; i < wincount ; i++)
                 {
                     drawindow(color_of_box, &browse_windows[i]);
@@ -1579,13 +1579,13 @@ rescan:  // entry for changed browse parms
                 winlist = browse_windows[index];
                 drawindow(color_of_box, &winlist);
                 break;
-            case FIK_ENTER:
-            case FIK_ENTER_2:   // this file please
+            case ID_KEY_ENTER:
+            case ID_KEY_ENTER_2:   // this file please
                 g_browse_name = winlist.name;
                 done = 1;
                 break;
 
-            case FIK_ESC:
+            case ID_KEY_ESC:
             case 'l':
             case 'L':
 #ifdef XFRACT
@@ -1681,7 +1681,7 @@ rescan:  // entry for changed browse parms
                 }
                 break;
 
-            case FIK_CTL_B:
+            case ID_KEY_CTL_B:
                 cleartempmsg();
                 driver_stack_screen();
                 done = std::abs(get_browse_params());

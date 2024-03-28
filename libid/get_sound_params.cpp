@@ -86,19 +86,19 @@ get_sound_restart:
         driver_init_fm();
     }
 
-    if (i == FIK_F6)
+    if (i == ID_KEY_F6)
     {
         get_music_parms(); /* see below, for controling fmsynth */
         goto get_sound_restart;
     }
 
-    if (i == FIK_F7)
+    if (i == ID_KEY_F7)
     {
         get_scale_map(); /* see below, for setting scale mapping */
         goto get_sound_restart;
     }
 
-    if (i == FIK_F4)
+    if (i == ID_KEY_F4)
     {
         g_sound_flag = SOUNDFLAG_SPEAKER | SOUNDFLAG_BEEP; /* reset to default */
         g_orbit_delay = 0;
@@ -152,17 +152,17 @@ get_map_restart:
         scale_map[j] = std::min(12, std::abs(builder.read_int_number()));
     }
 
-    if (i == FIK_F6 && menu2 == 1)
+    if (i == ID_KEY_F6 && menu2 == 1)
     {
         get_music_parms(); /* see below, for controling fmsynth */
         goto get_map_restart;
     }
-    if (i == FIK_F6 && menu2 == 2)
+    if (i == ID_KEY_F6 && menu2 == 2)
     {
         menu2--;
     }
 
-    if (i == FIK_F4)
+    if (i == ID_KEY_F4)
     {
         for (int j = 0; j <= 11; j++)
         {
@@ -218,17 +218,17 @@ get_music_restart:
         driver_init_fm();
     }
 
-    if (i == FIK_F7 && menu2 == 1)
+    if (i == ID_KEY_F7 && menu2 == 1)
     {
         get_scale_map(); /* see above, for setting scale mapping */
         goto get_music_restart;
     }
-    if (i == FIK_F7 && menu2 == 2)
+    if (i == ID_KEY_F7 && menu2 == 2)
     {
         menu2--;
     }
 
-    if (i == FIK_F4)
+    if (i == ID_KEY_F4)
     {
         g_polyphony = 0;
         g_fm_wavetype = 0;

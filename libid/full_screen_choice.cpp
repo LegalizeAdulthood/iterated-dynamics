@@ -528,15 +528,15 @@ int fullscreen_choice(
         driver_wait_key_pressed(0); // enables help
         curkey = driver_get_key();
 #ifdef XFRACT
-        if (curkey == FIK_F10)
+        if (curkey == ID_KEY_F10)
         {
             curkey = ')';
         }
-        if (curkey == FIK_F9)
+        if (curkey == ID_KEY_F9)
         {
             curkey = '(';
         }
-        if (curkey == FIK_F8)
+        if (curkey == ID_KEY_F8)
         {
             curkey = '*';
         }
@@ -565,17 +565,17 @@ int fullscreen_choice(
         // deal with input key
         switch (curkey)
         {
-        case FIK_ENTER:
-        case FIK_ENTER_2:
+        case ID_KEY_ENTER:
+        case ID_KEY_ENTER_2:
             ret = current;
             goto fs_choice_end;
-        case FIK_ESC:
+        case ID_KEY_ESC:
             goto fs_choice_end;
-        case FIK_DOWN_ARROW:
+        case ID_KEY_DOWN_ARROW:
             increment = boxwidth;
             rev_increment = 0 - increment;
             break;
-        case FIK_CTL_DOWN_ARROW:
+        case ID_KEY_CTL_DOWN_ARROW:
             increment = boxwidth;
             rev_increment = 0 - increment;
             {
@@ -597,11 +597,11 @@ int fullscreen_choice(
                 }
             }
             break;
-        case FIK_UP_ARROW:
+        case ID_KEY_UP_ARROW:
             rev_increment = boxwidth;
             increment = 0 - rev_increment;
             break;
-        case FIK_CTL_UP_ARROW:
+        case ID_KEY_CTL_UP_ARROW:
             rev_increment = boxwidth;
             increment = 0 - rev_increment;
             {
@@ -624,11 +624,11 @@ int fullscreen_choice(
                 }
             }
             break;
-        case FIK_RIGHT_ARROW:
+        case ID_KEY_RIGHT_ARROW:
             increment = 1;
             rev_increment = -1;
             break;
-        case FIK_CTL_RIGHT_ARROW:  /* move to next file; if at last file, go to
+        case ID_KEY_CTL_RIGHT_ARROW:  /* move to next file; if at last file, go to
                                  first file */
             increment = 1;
             rev_increment = -1;
@@ -651,11 +651,11 @@ int fullscreen_choice(
                 }
             }
             break;
-        case FIK_LEFT_ARROW:
+        case ID_KEY_LEFT_ARROW:
             increment = -1;
             rev_increment = 1;
             break;
-        case FIK_CTL_LEFT_ARROW: /* move to previous file; if at first file, go to
+        case ID_KEY_CTL_LEFT_ARROW: /* move to previous file; if at first file, go to
                                last file */
             increment = -1;
             rev_increment = 1;
@@ -678,7 +678,7 @@ int fullscreen_choice(
                 }
             }
             break;
-        case FIK_PAGE_UP:
+        case ID_KEY_PAGE_UP:
             if (numchoices > boxitems)
             {
                 topleftchoice -= boxitems;
@@ -687,7 +687,7 @@ int fullscreen_choice(
                 redisplay = true;
             }
             break;
-        case FIK_PAGE_DOWN:
+        case ID_KEY_PAGE_DOWN:
             if (numchoices > boxitems)
             {
                 topleftchoice += boxitems;
@@ -696,12 +696,12 @@ int fullscreen_choice(
                 redisplay = true;
             }
             break;
-        case FIK_HOME:
+        case ID_KEY_HOME:
             current = -1;
             rev_increment = 1;
             increment = rev_increment;
             break;
-        case FIK_CTL_HOME:
+        case ID_KEY_CTL_HOME:
             current = -1;
             rev_increment = 1;
             increment = rev_increment;
@@ -714,12 +714,12 @@ int fullscreen_choice(
                 }
             }
             break;
-        case FIK_END:
+        case ID_KEY_END:
             current = numchoices;
             rev_increment = -1;
             increment = rev_increment;
             break;
-        case FIK_CTL_END:
+        case ID_KEY_CTL_END:
             current = numchoices;
             rev_increment = -1;
             increment = rev_increment;

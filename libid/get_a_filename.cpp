@@ -244,12 +244,12 @@ retry_dir:
     i = fullscreen_choice(CHOICE_INSTRUCTIONS | (dosort ? 0 : CHOICE_NOT_SORTED),
         heading.c_str(), nullptr, instr, filecount, (char const **) choices,
         attributes, 5, 99, 12, i, nullptr, speedstr, filename_speedstr, check_f6_key);
-    if (i == -FIK_F4)
+    if (i == -ID_KEY_F4)
     {
         dosort = !dosort;
         goto restart;
     }
-    if (i == -FIK_F6)
+    if (i == -ID_KEY_F6)
     {
         static int lastdir = 0;
         if (lastdir == 0)
@@ -383,13 +383,13 @@ bool getafilename(char const *hdg, char const *file_template, std::string &flnam
 // choice is used by other routines called by fullscreen_choice()
 static int check_f6_key(int curkey, int /*choice*/)
 {
-    if (curkey == FIK_F6)
+    if (curkey == ID_KEY_F6)
     {
-        return 0-FIK_F6;
+        return 0-ID_KEY_F6;
     }
-    else if (curkey == FIK_F4)
+    else if (curkey == ID_KEY_F4)
     {
-        return 0-FIK_F4;
+        return 0-ID_KEY_F4;
     }
     return 0;
 }
