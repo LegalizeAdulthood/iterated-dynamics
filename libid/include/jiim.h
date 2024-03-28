@@ -9,6 +9,7 @@ enum class jiim_types
 extern double                g_julia_c_x;
 extern double                g_julia_c_y;
 extern DComplex              g_save_c;
+constexpr double             BIG{100000.0};
 
 void Jiim(jiim_types which);
 LComplex PopLong();

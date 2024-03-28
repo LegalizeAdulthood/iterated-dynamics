@@ -92,6 +92,3 @@ inline long lsqr(long x)
 #define TRUE 1
 #define FALSE 0
 #endif
-
-// for overlay return stack
-#define BIG 100000.0
