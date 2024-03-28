@@ -134,12 +134,6 @@ inline long lsqr(long x)
 // for overlay return stack
 #define BIG 100000.0
 
-// nonalpha tests if we have a control character
-inline bool nonalpha(int c)
-{
-    return c < 32 || c > 127;
-}
-
 template <typename T>
 int sign(T x)
 {

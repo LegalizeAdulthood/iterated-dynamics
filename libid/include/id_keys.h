@@ -101,3 +101,9 @@ enum
     ID_KEY_CTL_KEYPAD_5    = 1143,
     ID_KEY_KEYPAD_5        = 1076
 };
+
+// nonalpha tests if we have a control character
+inline bool nonalpha(int c)
+{
+    return c < 32 || c > 127;
+}
