@@ -1,5 +1,7 @@
 #pragma once
 
+enum class fractal_type;
+
 enum class julibrot_3d_mode
 {
     MONOCULAR = 0,

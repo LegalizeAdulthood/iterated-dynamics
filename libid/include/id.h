@@ -38,8 +38,6 @@ enum
     ITEM_NAME_LEN = 18, // max length of names in .frm/.l/.ifs/.fc
 };
 
-enum class fractal_type;
-
 enum class symmetry_type
 {
     NONE                = 0,
@@ -59,8 +57,6 @@ enum class symmetry_type
     SETUP               = 100,
     NOT_FORCED          = 999
 };
-
-enum class fractal_type;
 
 // values for inside/outside
 enum

@@ -3,7 +3,10 @@
 #include "big.h"
 #include "id.h"
 
+enum class fractal_type;
+
 constexpr double AUTO_INVERT = -123456.789;
+
 enum
 {
     MAX_NUM_ATTRACTORS = 8
