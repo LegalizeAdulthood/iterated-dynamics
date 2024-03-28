@@ -465,7 +465,7 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
                 }
                 g_fractal_type = g_cur_fractal_specific->tojulia;
                 g_cur_fractal_specific = &g_fractal_specific[static_cast<int>(g_fractal_type)];
-                if (g_julia_c_x == BIG || g_julia_c_y == BIG)
+                if (g_julia_c_x == JULIA_C_NOT_SET || g_julia_c_y == JULIA_C_NOT_SET)
                 {
                     g_params[0] = (g_x_max + g_x_min) / 2;
                     g_params[1] = (g_y_max + g_y_min) / 2;
@@ -474,8 +474,8 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
                 {
                     g_params[0] = g_julia_c_x;
                     g_params[1] = g_julia_c_y;
-                    g_julia_c_y = BIG;
-                    g_julia_c_x = BIG;
+                    g_julia_c_y = JULIA_C_NOT_SET;
+                    g_julia_c_x = JULIA_C_NOT_SET;
                 }
                 jxxmin = g_save_x_min;
                 jxxmax = g_save_x_max;

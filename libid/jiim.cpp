@@ -50,8 +50,8 @@ static int windows = 0;               // windows management system
 
 static int xc, yc;                       // corners of the window
 static int xd, yd;                       // dots in the window
-double g_julia_c_x = BIG;
-double g_julia_c_y = BIG;
+double g_julia_c_x = JULIA_C_NOT_SET;
+double g_julia_c_y = JULIA_C_NOT_SET;
 
 // circle routines from Dr. Dobbs June 1990
 static int xbase, ybase;
@@ -689,8 +689,8 @@ void Jiim(jiim_types which)
 
                 int dcol = 0;
                 int drow = 0;
-                g_julia_c_x = BIG;
-                g_julia_c_y = BIG;
+                g_julia_c_x = JULIA_C_NOT_SET;
+                g_julia_c_y = JULIA_C_NOT_SET;
                 switch (kbdchar)
                 {
                 case ID_KEY_CTL_KEYPAD_5:      // ctrl - keypad 5
