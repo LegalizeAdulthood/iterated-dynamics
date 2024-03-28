@@ -38,28 +38,6 @@ enum
     ITEM_NAME_LEN = 18, // max length of names in .frm/.l/.ifs/.fc
 };
 
-// values for inside/outside
-enum
-{
-    COLOR_BLACK = 0,
-    ITER = -1,
-    REAL = -2,
-    IMAG = -3,
-    MULT = -4,
-    SUM = -5,
-    ATAN = -6,
-    FMOD = -7,
-    TDIS = -8,
-    ZMAG = -59,
-    BOF60 = -60,
-    BOF61 = -61,
-    EPSCROSS = -100,
-    STARTRAIL = -101,
-    PERIOD = -102,
-    FMODI = -103,
-    ATANI = -104
-};
-
 #define DEFAULT_FRACTAL_TYPE      ".gif"
 
 #ifdef PI

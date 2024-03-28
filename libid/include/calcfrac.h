@@ -32,6 +32,28 @@ enum class symmetry_type
     NOT_FORCED          = 999
 };
 
+// values for inside/outside
+enum
+{
+    COLOR_BLACK = 0,
+    ITER = -1,
+    REAL = -2,
+    IMAG = -3,
+    MULT = -4,
+    SUM = -5,
+    ATAN = -6,
+    FMOD = -7,
+    TDIS = -8,
+    ZMAG = -59,
+    BOF60 = -60,
+    BOF61 = -61,
+    EPSCROSS = -100,
+    STARTRAIL = -101,
+    PERIOD = -102,
+    FMODI = -103,
+    ATANI = -104
+};
+
 extern int                   g_and_color;           // AND mask for iteration to get color index
 extern  long                 g_l_at_rad;            // finite attractor radius
 extern  double               g_f_at_rad;            // finite attractor radius
@@ -106,6 +128,9 @@ extern int                   g_xx_start;
 extern int                   g_xx_stop;
 extern int                   g_yy_start;
 extern int                   g_yy_stop;
+
+extern int                   g_inside_color;
+extern int                   g_outside_color;
 
 int calcfract();
 int calcmand();

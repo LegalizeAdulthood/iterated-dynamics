@@ -240,6 +240,9 @@ DComplex g_attractor[MAX_NUM_ATTRACTORS] = { 0.0 };        // finite attractor v
 LComplex g_l_attractor[MAX_NUM_ATTRACTORS] = { 0 };         // finite attractor vals (int)
 int g_attractor_period[MAX_NUM_ATTRACTORS] = { 0 };         // period of the finite attractor
 
+int     g_inside_color = 0;             // inside color: 1=blue
+int     g_outside_color = COLOR_BLACK;  // outside color
+
 enum class direction
 {
     North,

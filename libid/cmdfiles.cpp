@@ -135,9 +135,7 @@ bool    g_overwrite_file = false;// true if file overwrite allowed
 int     g_sound_flag = 0;          // sound control bitfield... see sound.c for useage
 int     g_base_hertz = 0;          // sound=x/y/x hertz value
 int     g_cycle_limit = 0;         // color-rotator upper limit
-int     g_inside_color = 0;             // inside color: 1=blue
 int     g_fill_color = 0;          // fillcolor: -1=normal
-int     g_outside_color = COLOR_BLACK;  // outside color
 bool g_finite_attractor = false;        // finite attractor logic
 display_3d_modes g_display_3d = display_3d_modes::NONE; // 3D display flag: 0 = OFF
 bool    g_overlay_3d = false;      // 3D overlay flag
