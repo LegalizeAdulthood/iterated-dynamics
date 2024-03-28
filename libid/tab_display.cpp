@@ -22,6 +22,7 @@
 #include "get_key_no_help.h"
 #include "help_title.h"
 #include "id_data.h"
+#include "id_keys.h"
 #include "jb.h"
 #include "line3d.h"
 #include "loadfile.h"

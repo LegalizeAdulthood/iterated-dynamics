@@ -31,6 +31,7 @@
 #include "get_view_params.h"
 #include "history.h"
 #include "id_data.h"
+#include "id_keys.h"
 #include "jb.h"
 #include "jiim.h"
 #include "loadfile.h"

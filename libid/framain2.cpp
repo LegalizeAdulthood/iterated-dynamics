@@ -21,6 +21,7 @@
 #include "goodbye.h"
 #include "history.h"
 #include "id_data.h"
+#include "id_keys.h"
 #include "line3d.h"
 #include "loadfile.h"
 #include "loadmap.h"

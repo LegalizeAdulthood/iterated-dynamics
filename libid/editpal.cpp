@@ -19,6 +19,7 @@
 #include "get_key_no_help.h"
 #include "get_line.h"
 #include "id_data.h"
+#include "id_keys.h"
 #include "memory.h"
 #include "os.h"
 #include "read_ticker.h"

@@ -12,6 +12,7 @@
 #include "full_screen_choice.h"
 #include "id.h"
 #include "id_data.h"
+#include "id_keys.h"
 #include "is_directory.h"
 #include "loadfile.h"
 #include "make_path.h"

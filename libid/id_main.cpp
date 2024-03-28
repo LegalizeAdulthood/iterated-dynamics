@@ -25,6 +25,7 @@
 #include "history.h"
 #include "id.h"
 #include "id_data.h"
+#include "id_keys.h"
 #include "intro.h"
 #include "jb.h"
 #include "loadfile.h"

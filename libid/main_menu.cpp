@@ -14,6 +14,7 @@
 #endif
 #include "goodbye.h"
 #include "help_title.h"
+#include "id_keys.h"
 #include "put_string_center.h"
 #include "rotate.h"
 #include "tab_display.h"

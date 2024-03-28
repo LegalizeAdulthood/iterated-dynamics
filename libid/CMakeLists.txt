@@ -185,6 +185,7 @@ add_library(libid
     include/get_line.h
     include/id.h
     include/id_data.h
+    include/id_keys.h
     include/is_directory.h
     include/lsys.h
     include/mpmath.h
@@ -438,6 +439,7 @@ source_group("Header Files/ui" FILES
     include/help_title.h
     include/history.h
     include/id.h
+    include/id_keys.h
     include/id_main.h
     include/input_field.h
     include/intro.h

@@ -12,6 +12,7 @@
 #include "help_title.h"
 #include "id.h"
 #include "id_data.h"
+#include "id_keys.h"
 #include "input_field.h"
 #include "load_entry_text.h"
 #include "os.h"

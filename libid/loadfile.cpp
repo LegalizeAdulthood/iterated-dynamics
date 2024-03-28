@@ -27,6 +27,7 @@
 #include "get_video_mode.h"
 #include "has_ext.h"
 #include "id_data.h"
+#include "id_keys.h"
 #include "jb.h"
 #include "line3d.h"
 #include "lorenz.h"

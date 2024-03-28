@@ -8,6 +8,7 @@
 #include "evolve.h"
 #include "helpdefs.h"
 #include "id_data.h"
+#include "id_keys.h"
 
 #include <cstring>
 #include <string>

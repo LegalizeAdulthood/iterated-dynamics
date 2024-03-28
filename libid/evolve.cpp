@@ -11,6 +11,7 @@
 #include "fractype.h"
 #include "helpdefs.h"
 #include "id_data.h"
+#include "id_keys.h"
 #include "jb.h"
 #include "param_not_used.h"
 #include "parser.h"

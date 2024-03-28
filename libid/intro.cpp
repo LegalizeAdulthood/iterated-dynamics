@@ -13,6 +13,7 @@
 #include "helpdefs.h"
 #include "help_title.h"
 #include "id_data.h"
+#include "id_keys.h"
 #include "put_string_center.h"
 
 #include <ctime>

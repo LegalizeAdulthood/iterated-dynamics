@@ -11,6 +11,7 @@
 #include "get_a_filename.h"
 #include "get_key_no_help.h"
 #include "help_title.h"
+#include "id_keys.h"
 #include "ifs.h"
 #include "load_entry_text.h"
 #include "lsys_fns.h"

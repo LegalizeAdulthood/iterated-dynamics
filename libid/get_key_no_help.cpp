@@ -5,6 +5,7 @@
 #include "id.h"
 
 #include "drivers.h"
+#include "id_keys.h"
 
 /*
  * This routine returns a key, ignoring F1

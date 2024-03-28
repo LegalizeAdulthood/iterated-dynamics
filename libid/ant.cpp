@@ -15,6 +15,7 @@
 #include "get_color.h"
 #include "helpdefs.h"
 #include "id_data.h"
+#include "id_keys.h"
 #include "temp_msg.h"
 #include "wait_until.h"
 

@@ -10,6 +10,7 @@
 #include "drivers.h"
 #include "get_key_no_help.h"
 #include "id_data.h"
+#include "id_keys.h"
 #include "os.h"
 #include "text_screen.h"
 

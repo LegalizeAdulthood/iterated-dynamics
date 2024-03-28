@@ -9,6 +9,7 @@
 #include "help_title.h"
 #include "id.h"
 #include "id_data.h"
+#include "id_keys.h"
 #include "os.h"
 #include "put_string_center.h"
 #include "string_case_compare.h"

@@ -7,6 +7,7 @@
 #include "drivers.h"
 #include "get_key_no_help.h"
 #include "goodbye.h"
+#include "id_keys.h"
 
 // defer pause until after parsing so we know if in batch mode
 void dopause(int action)

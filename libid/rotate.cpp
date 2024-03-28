@@ -18,6 +18,7 @@
 #include "os.h"
 #endif
 #include "get_a_filename.h"
+#include "id_keys.h"
 #include "spindac.h"
 
 #include <cstdio>

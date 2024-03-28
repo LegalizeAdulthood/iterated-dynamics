@@ -4,6 +4,7 @@
 #include "drivers.h"
 #include "goodbye.h"
 #include "id.h"
+#include "id_keys.h"
 
 #define WIN32_LEAN_AND_MEAN
 #define STRICT
