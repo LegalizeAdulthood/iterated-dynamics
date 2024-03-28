@@ -194,7 +194,6 @@ extern std::vector<float>    g_ifs_definition;
 extern std::string           g_ifs_filename;
 extern std::string           g_ifs_name;
 extern bool                  g_ifs_type;
-extern int                   g_init_3d[20];
 extern batch_modes           g_init_batch;
 extern int                   g_init_cycle_limit;
 extern int                   g_init_mode;

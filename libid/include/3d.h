@@ -17,10 +17,13 @@ typedef long  LVECTOR [3];  // vector of longs
 /* A VECTOR is an array of three coordinates [x,y,z] representing magnitude
 and direction. A fourth dimension is assumed to always have the value 1, but
 is not in the data structure */
+
 inline double dot_product(VECTOR v1, VECTOR v2)
 {
     return v1[0]*v2[0] + v1[1]*v2[1] + v1[2]*v2[2];
 }
+
+extern int                   g_init_3d[20];
 
 void identity(MATRIX);
 void mat_mul(MATRIX, MATRIX, MATRIX);

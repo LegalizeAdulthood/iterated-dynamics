@@ -141,7 +141,6 @@ int     g_outside_color = COLOR_BLACK;  // outside color
 bool g_finite_attractor = false;        // finite attractor logic
 display_3d_modes g_display_3d = display_3d_modes::NONE; // 3D display flag: 0 = OFF
 bool    g_overlay_3d = false;      // 3D overlay flag
-int     g_init_3d[20] = { 0 };     // '3d=nn/nn/nn/...' values
 bool    g_check_cur_dir = false;    // flag to check current dir for files
 batch_modes g_init_batch = batch_modes::NONE; // 1 if batch run (no kbd)
 int     g_init_save_time = 0;       // autosave minutes

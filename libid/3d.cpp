@@ -65,6 +65,8 @@
 #include <cmath>
 #include <cstring>
 
+int     g_init_3d[20] = { 0 };     // '3d=nn/nn/nn/...' values
+
 // initialize a matrix and set to identity matrix (all 0's, 1's on diagonal)
 void identity(MATRIX m)
 {
