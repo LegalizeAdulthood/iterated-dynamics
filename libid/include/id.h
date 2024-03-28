@@ -81,15 +81,6 @@ enum
     LD_MATH = 32768  // supports long double
 };
 
-// more bitmasks for evolution mode flag
-enum
-{
-    FIELDMAP = 1,  // steady field varyiations across screen
-    RANDWALK = 2,  // newparm = lastparm +- rand()
-    RANDPARAM = 4, // newparm = constant +- rand()
-    NOGROUT = 8    // no gaps between images
-};
-
 #define DEFAULT_FRACTAL_TYPE      ".gif"
 
 inline int sqr(int x)

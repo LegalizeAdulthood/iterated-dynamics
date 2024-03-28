@@ -59,6 +59,15 @@ struct EVOLUTION_INFO      // for saving evolution data in a GIF file
     std::int16_t future[66 - NUM_GENES];      // total of 200 bytes
 };
 
+// more bitmasks for evolution mode flag
+enum
+{
+    FIELDMAP = 1,  // steady field varyiations across screen
+    RANDWALK = 2,  // newparm = lastparm +- rand()
+    RANDPARAM = 4, // newparm = constant +- rand()
+    NOGROUT = 8    // no gaps between images
+};
+
 extern char                  g_evolve_discrete_x_parameter_offset;
 extern char                  g_evolve_discrete_y_parameter_offset;
 extern double                g_evolve_dist_per_x;
