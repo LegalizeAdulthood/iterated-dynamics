@@ -6,6 +6,7 @@
 #include "calcfrac.h"
 #include "fixed_pt.h"
 #include "fractals.h"
+#include "sqr.h"
 
 #include <cmath>
 #include <cstdlib>

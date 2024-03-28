@@ -7,6 +7,7 @@
 #include "cmplx.h"
 #include "fractals.h"
 #include "hcmplx.h"
+#include "sqr.h"
 
 int HyperComplexFPFractal()
 {

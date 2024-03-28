@@ -6,6 +6,7 @@
 #include "fpu087.h"
 #include "fractals.h"
 #include "id_data.h"
+#include "sqr.h"
 
 #include <vector>
 

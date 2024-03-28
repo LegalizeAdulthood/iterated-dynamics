@@ -24,6 +24,7 @@
 #include "fractals.h"
 #include "fractype.h"
 #include "id_data.h"
+#include "sqr.h"
 #include "stack_avail.h"
 
 #include <algorithm>

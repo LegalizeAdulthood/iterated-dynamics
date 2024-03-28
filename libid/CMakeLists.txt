@@ -84,6 +84,7 @@ add_library(libid
     fpu087.cpp include/fpu087.h
     hcmplx.cpp include/hcmplx.h
     mpmath_c.cpp include/mpmath_c.h
+    include/sqr.h
 
     debug_flags.cpp include/debug_flags.h
     drivers.cpp
@@ -367,6 +368,7 @@ source_group("Header Files/math" FILES
     include/mpmath.h
     include/mpmath_c.h
     include/sign.h
+    include/sqr.h
 )
 source_group("Source Files/math" FILES
     bigflt.cpp

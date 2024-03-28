@@ -18,6 +18,7 @@
 #include "loadmap.h"
 #include "pickover_mandelbrot.h"
 #include "spindac.h"
+#include "sqr.h"
 #include "starfield.h"
 #include "stop_msg.h"
 

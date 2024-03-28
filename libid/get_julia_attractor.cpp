@@ -9,6 +9,7 @@
 #include "fractalp.h"
 #include "fractals.h"
 #include "id_data.h"
+#include "sqr.h"
 
 #include <cmath>
 

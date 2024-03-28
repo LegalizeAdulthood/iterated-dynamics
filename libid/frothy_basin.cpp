@@ -18,6 +18,7 @@
 #include "orbit.h"
 #include "pixel_grid.h"
 #include "spindac.h"
+#include "sqr.h"
 
 #include <algorithm>
 #include <cmath>

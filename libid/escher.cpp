@@ -7,6 +7,7 @@
 #include "calcfrac.h"
 #include "fractals.h"
 #include "id_data.h"
+#include "sqr.h"
 
 int EscherfpFractal() // Science of Fractal Images pp. 185, 187
 {
