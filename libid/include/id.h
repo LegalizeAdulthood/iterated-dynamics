@@ -38,13 +38,6 @@ enum
     ITEM_NAME_LEN = 18, // max length of names in .frm/.l/.ifs/.fc
 };
 
-enum
-{
-    NUM_IFS_FUNCTIONS = 64,
-    NUM_IFS_PARAMS = 7,
-    NUM_IFS_3D_PARAMS = 13
-};
-
 enum class fractal_type;
 
 enum class symmetry_type

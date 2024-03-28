@@ -14,6 +14,11 @@
 
 int g_num_affine_transforms;
 
+enum
+{
+    NUM_IFS_FUNCTIONS = 64
+};
+
 static const char *const s_token_separators{" \t\n\r"};
 
 char *get_ifs_token(char *buf, std::FILE *ifsfile)
