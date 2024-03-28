@@ -997,10 +997,15 @@ static bool mono = false;
 static int outside_x = 0;
 static long   LPI;
 
-inline int population_exceeded()
+inline bool population_exceeded()
 {
     constexpr double limit{100000.0};
-    return std::fabs(Population) > limit ? 1 : 0;
+    return std::fabs(Population) > limit;
+}
+
+inline int population_orbit()
+{
+    return population_exceeded() ? 1 : 0;
 }
 
 int Bifurcation()
@@ -1268,7 +1273,7 @@ static bool Bif_Periodic(long time)
 int BifurcLambda() // Used by lyanupov
 {
     Population = Rate * Population * (1 - Population);
-    return population_exceeded();
+    return population_orbit();
 }
 
 #define LCMPLXtrig0(arg, out) Arg1->l = (arg); ltrig0(); (out) = Arg1->l
@@ -1281,7 +1286,7 @@ int BifurcVerhulstTrig()
     g_tmp_z.y = 0;
     CMPLXtrig0(g_tmp_z, g_tmp_z);
     Population += Rate * g_tmp_z.x * (1 - g_tmp_z.x);
-    return population_exceeded();
+    return population_orbit();
 }
 
 int LongBifurcVerhulstTrig()
@@ -1303,7 +1308,7 @@ int BifurcStewartTrig()
     g_tmp_z.y = 0;
     CMPLXtrig0(g_tmp_z, g_tmp_z);
     Population = (Rate * g_tmp_z.x * g_tmp_z.x) - 1.0;
-    return population_exceeded();
+    return population_orbit();
 }
 
 int LongBifurcStewartTrig()
@@ -1325,7 +1330,7 @@ int BifurcSetTrigPi()
     g_tmp_z.y = 0;
     CMPLXtrig0(g_tmp_z, g_tmp_z);
     Population = Rate * g_tmp_z.x;
-    return population_exceeded();
+    return population_orbit();
 }
 
 int LongBifurcSetTrigPi()
@@ -1345,7 +1350,7 @@ int BifurcAddTrigPi()
     g_tmp_z.y = 0;
     CMPLXtrig0(g_tmp_z, g_tmp_z);
     Population += Rate * g_tmp_z.x;
-    return population_exceeded();
+    return population_orbit();
 }
 
 int LongBifurcAddTrigPi()
@@ -1366,7 +1371,7 @@ int BifurcLambdaTrig()
     g_tmp_z.y = 0;
     CMPLXtrig0(g_tmp_z, g_tmp_z);
     Population = Rate * g_tmp_z.x * (1 - g_tmp_z.x);
-    return population_exceeded();
+    return population_orbit();
 }
 
 int LongBifurcLambdaTrig()
@@ -1393,7 +1398,7 @@ int BifurcMay()
     g_tmp_z.x = 1.0 + Population;
     g_tmp_z.x = std::pow(g_tmp_z.x, -beta); // pow in math.h included with mpmath.h
     Population = (Rate * Population) * g_tmp_z.x;
-    return population_exceeded();
+    return population_orbit();
 }
 
 int LongBifurcMay()
