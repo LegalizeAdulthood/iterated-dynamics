@@ -2,12 +2,8 @@
 
 #include "cellular.h"
 
-#include "port.h"
-#include "prototyp.h"
-
 #include "calcfrac.h"
 #include "cmdfiles.h"
-#include "diskvid.h"
 #include "drivers.h"
 #include "engine_timer.h"
 #include "fractalp.h"
@@ -20,11 +16,10 @@
 #include "thinking.h"
 
 #include <array>
-#include <algorithm>
-#include <cmath>
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
+#include <stdexcept>
 #include <vector>
 
 //****************** standalone engine for "cellular" *******************
