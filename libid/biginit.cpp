@@ -5,9 +5,6 @@ Note: This is NOT the biginit.c file that come the standard BigNum library,
 but is a customized version specific to Fractint.  The biggest difference
 is in the allocations of memory for the big numbers.
 */
-#include "port.h"
-#include "prototyp.h"
-
 #include "biginit.h"
 
 #include "bailout_formula.h"
@@ -16,9 +13,9 @@ is in the allocations of memory for the big numbers.
 #include "fractalp.h"
 #include "fractype.h"
 #include "goodbye.h"
+#include "port.h"
 #include "stop_msg.h"
 
-#include <cstdio>
 #include <cstring>
 #include <string>
 
