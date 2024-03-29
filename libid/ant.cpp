@@ -4,9 +4,6 @@
 // tables for speed, and adds a second ant type, multiple ants, and random
 // rules.
 //
-#include "port.h"
-#include "prototyp.h"
-
 #include "ant.h"
 
 #include "calcfrac.h"
