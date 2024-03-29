@@ -52,12 +52,8 @@
 //                       0     0     1     0
 //                       0     0     0     1
 //
-#include "port.h"
-#include "prototyp.h"
-
 #include "3d.h"
 
-#include "calcfrac.h"
 #include "fixed_pt.h"
 #include "fractals.h"
 #include "line3d.h"
