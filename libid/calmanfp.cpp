@@ -4,9 +4,6 @@
 // This file Copyright 1992 Ken Shirriff.  It may be used according to the
 // fractint license conditions, blah blah blah.
 //
-#include "port.h"
-#include "prototyp.h"
-
 #include "calmanfp.h"
 
 #include "calcfrac.h"
@@ -14,8 +11,10 @@
 #include "drivers.h"
 #include "fractals.h"
 #include "fractype.h"
+#include "id.h"
 #include "id_data.h"
 #include "orbit.h"
+#include "port.h"
 
 #include <cmath>
 
