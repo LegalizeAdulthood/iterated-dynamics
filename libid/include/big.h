@@ -1,6 +1,8 @@
 // Wesley Loewer's Big Numbers.        (C) 1994, Wesley B. Loewer
 #pragma once
 
+#include "cmplx.h"
+
 // Number of bytes to use for integer part for fixed decimal math,
 // does not effect floating point math at all.
 #define BN_INT_LENGTH 4
@@ -25,7 +27,6 @@ using big_t = unsigned char *;
 using bn_t = big_t;  // for clarification purposes
 using bf_t = big_t;
 using bf10_t = big_t;
-#include "cmplx.h"
 
 using BFComplex = id::complex<bf_t>;
 using BNComplex = id::complex<bn_t>;
