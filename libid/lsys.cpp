@@ -140,7 +140,7 @@ static bool readLSystemFile(char const *str)
     char inline1[MAX_LSYS_LINE_LEN+1];
     std::FILE *infile;
 
-    if (find_file_item(g_l_system_filename, str, &infile, 2))
+    if (find_file_item(g_l_system_filename, str, &infile, gfe_type::L_SYSTEM))
     {
         return true;
     }

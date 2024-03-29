@@ -59,7 +59,7 @@ int ifsload()                   // read in IFS parameters
     g_ifs_definition.clear();
     g_ifs_type = false;
     std::FILE *ifsfile;
-    if (find_file_item(g_ifs_filename, g_ifs_name.c_str(), &ifsfile, 3))
+    if (find_file_item(g_ifs_filename, g_ifs_name.c_str(), &ifsfile, gfe_type::IFS))
     {
         return -1;
     }

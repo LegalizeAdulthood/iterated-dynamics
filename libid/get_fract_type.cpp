@@ -43,6 +43,7 @@
 #include <cassert>
 #include <cstdlib>
 #include <cstring>
+#include <stdexcept>
 #include <string>
 #include <vector>
 
@@ -215,7 +216,7 @@ sel_type_restart:
     if (g_fractal_type == fractal_type::LSYSTEM)
     {
         g_help_mode = help_labels::HT_LSYS;
-        if (get_file_entry(GETLSYS, "L-System", lsysmask, g_l_system_filename, g_l_system_name) < 0)
+        if (get_file_entry(gfe_type::L_SYSTEM, "L-System", lsysmask, g_l_system_filename, g_l_system_name) < 0)
         {
             ret = true;
             goto sel_type_exit;
@@ -224,7 +225,7 @@ sel_type_restart:
     if (g_fractal_type == fractal_type::FORMULA || g_fractal_type == fractal_type::FFORMULA)
     {
         g_help_mode = help_labels::HT_FORMULA;
-        if (get_file_entry(GETFORMULA, "Formula", formmask, g_formula_filename, g_formula_name) < 0)
+        if (get_file_entry(gfe_type::FORMULA, "Formula", formmask, g_formula_filename, g_formula_name) < 0)
         {
             ret = true;
             goto sel_type_exit;
@@ -233,7 +234,7 @@ sel_type_restart:
     if (g_fractal_type == fractal_type::IFS || g_fractal_type == fractal_type::IFS3D)
     {
         g_help_mode = help_labels::HT_IFS;
-        if (get_file_entry(GETIFS, "IFS", ifsmask, g_ifs_filename, g_ifs_name) < 0)
+        if (get_file_entry(gfe_type::IFS, "IFS", ifsmask, g_ifs_filename, g_ifs_name) < 0)
         {
             ret = true;
             goto sel_type_exit;
@@ -424,8 +425,23 @@ int get_fract_params(bool prompt_for_type_params)        // prompt for type-spec
             filename = nullptr;
             entryname = nullptr;
         }
-        if ((!use_filename_ref && find_file_item(filename, entryname, &entryfile, -1-static_cast<int>(help_formula)) == 0)
-            || (use_filename_ref && find_file_item(filename_ref, entryname, &entryfile, -1-static_cast<int>(help_formula)) == 0))
+        auto item_for_help = [](help_labels label)
+        {
+            switch (label)
+            {
+            case help_labels::SPECIAL_IFS:
+                return gfe_type::IFS;
+            case help_labels::SPECIAL_L_SYSTEM:
+                return gfe_type::L_SYSTEM;
+            case help_labels::SPECIAL_FORMULA:
+                return gfe_type::FORMULA;
+            default:
+                throw std::runtime_error(
+                    "Invalid help label " + std::to_string(static_cast<int>(label)) + " for find_file_item");
+            }
+        };
+        if ((!use_filename_ref && find_file_item(filename, entryname, &entryfile, item_for_help(help_formula)) == 0) ||
+            (use_filename_ref && find_file_item(filename_ref, entryname, &entryfile, item_for_help(help_formula)) == 0))
         {
             load_entry_text(entryfile, tstack, 17, 0, 0);
             std::fclose(entryfile);

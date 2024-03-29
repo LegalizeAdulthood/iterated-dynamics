@@ -3726,7 +3726,7 @@ int frm_get_param_stuff(char const *Name)
     {
         return 0;  //  and don't reset the pointers
     }
-    if (find_file_item(g_formula_filename, Name, &entry_file, 1))
+    if (find_file_item(g_formula_filename, Name, &entry_file, gfe_type::FORMULA))
     {
         stopmsg(STOPMSG_NONE, ParseErrs(PE_COULD_NOT_OPEN_FILE_WHERE_FORMULA_LOCATED));
         return 0;
@@ -4107,7 +4107,7 @@ bool RunForm(char const *Name, bool from_prompts1c)
         return true;  //  and don't reset the pointers
     }
 
-    if (find_file_item(g_formula_filename, Name, &entry_file, 1))
+    if (find_file_item(g_formula_filename, Name, &entry_file, gfe_type::FORMULA))
     {
         stopmsg(STOPMSG_NONE, ParseErrs(PE_COULD_NOT_OPEN_FILE_WHERE_FORMULA_LOCATED));
         return true;
