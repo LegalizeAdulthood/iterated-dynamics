@@ -1,10 +1,6 @@
 #include "check_orbit_name.h"
 
-#include "port.h"
-#include "prototyp.h"
-
 #include "fractalp.h"
-#include "id.h"
 #include "jb.h"
 
 #include <cstring>
