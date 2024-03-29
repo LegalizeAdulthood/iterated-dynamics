@@ -1,8 +1,5 @@
 #include "calc_frac_init.h"
 
-#include "port.h"
-#include "prototyp.h"
-
 #include "bailout_formula.h"
 #include "biginit.h"
 #include "calcfrac.h"
@@ -19,6 +16,7 @@
 #include "jb.h"
 #include "pixel_grid.h"
 #include "pixel_limits.h"
+#include "port.h"
 #include "sign.h"
 #include "soi.h"
 #include "stop_msg.h"
