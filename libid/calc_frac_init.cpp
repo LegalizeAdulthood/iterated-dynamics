@@ -14,6 +14,7 @@
 #include "fractalb.h"
 #include "fractalp.h"
 #include "get_prec_big_float.h"
+#include "id.h"
 #include "id_data.h"
 #include "jb.h"
 #include "pixel_grid.h"

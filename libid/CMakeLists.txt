@@ -111,7 +111,7 @@ add_library(libid
     file_gets.cpp include/file_gets.h
     find_extra_param.cpp include/find_extra_param.h
     find_file.cpp include/find_file.h
-    find_file_item.cpp include/find_file_item.h
+    file_item.cpp include/file_item.h
     find_path.cpp include/find_path.h
     find_special_colors.cpp include/find_special_colors.h
     fix_dirname.cpp include/fix_dirname.h
@@ -127,7 +127,6 @@ add_library(libid
     get_cmd_string.cpp include/get_cmd_string.h
     get_commands.cpp include/get_commands.h
     get_corners.cpp include/get_corners.h
-    get_file_entry.cpp include/get_file_entry.h
     get_fract_type.cpp include/get_fract_type.h
     get_key_no_help.cpp include/get_key_no_help.h
     get_prec_big_float.cpp include/get_prec_big_float.h
@@ -416,7 +415,7 @@ source_group("Header Files/ui" FILES
     include/file_gets.h
     include/find_extra_param.h
     include/find_file.h
-    include/find_file_item.h
+    include/file_item.h
     include/find_path.h
     include/find_special_colors.h
     include/fix_dirname.h
@@ -432,8 +431,6 @@ source_group("Header Files/ui" FILES
     include/get_cmd_string.h
     include/get_commands.h
     include/get_corners.h
-    include/get_file_entry.h
-    include/get_file_entry.h
     include/get_fract_type.h
     include/get_key_no_help.h
     include/get_prec_big_float.h
@@ -506,7 +503,7 @@ source_group("Source Files/ui" FILES
     file_gets.cpp
     find_extra_param.cpp
     find_file.cpp
-    find_file_item.cpp
+    file_item.cpp
     find_path.cpp
     find_special_colors.cpp
     fix_dirname.cpp
@@ -522,8 +519,6 @@ source_group("Source Files/ui" FILES
     get_cmd_string.cpp
     get_commands.cpp
     get_corners.cpp
-    get_file_entry.cpp
-    get_file_entry.cpp
     get_fract_type.cpp
     get_key_no_help.cpp
     get_prec_big_float.cpp

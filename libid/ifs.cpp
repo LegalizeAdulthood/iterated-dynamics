@@ -5,7 +5,7 @@
 
 #include "cmdfiles.h"
 #include "file_gets.h"
-#include "find_file_item.h"
+#include "file_item.h"
 #include "id.h"
 #include "stop_msg.h"
 

@@ -21,6 +21,7 @@
 #include "halley.h"
 #include "helpdefs.h"
 #include "hypercomplex_mandelbrot.h"
+#include "id.h"
 #include "jb.h"
 #include "lambda_fn.h"
 #include "lorenz.h"

@@ -22,6 +22,7 @@
 #include "get_prec_big_float.h"
 #include "has_ext.h"
 #include "helpdefs.h"
+#include "id.h"
 #include "id_data.h"
 #include "jb.h"
 #include "line3d.h"

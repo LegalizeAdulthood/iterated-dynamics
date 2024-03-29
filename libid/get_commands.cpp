@@ -4,7 +4,7 @@
 #include "prototyp.h"
 
 #include "cmdfiles.h"
-#include "get_file_entry.h"
+#include "file_item.h"
 #include "helpdefs.h"
 #include "id_data.h"
 

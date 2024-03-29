@@ -18,6 +18,7 @@ fractal routines.
 #include "fractype.h"
 #include "goodbye.h"
 #include "helpdefs.h"
+#include "id.h"
 #include "id_data.h"
 #include "stop_msg.h"
 #include "type_has_param.h"

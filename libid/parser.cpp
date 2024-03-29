@@ -26,7 +26,7 @@
 #include "convert_center_mag.h"
 #include "debug_flags.h"
 #include "drivers.h"
-#include "find_file_item.h"
+#include "file_item.h"
 #include "fpu087.h"
 #include "fractalp.h"
 #include "fractals.h"

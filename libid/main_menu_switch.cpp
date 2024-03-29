@@ -30,6 +30,7 @@
 #include "get_toggles2.h"
 #include "get_view_params.h"
 #include "history.h"
+#include "id.h"
 #include "id_data.h"
 #include "id_keys.h"
 #include "jb.h"

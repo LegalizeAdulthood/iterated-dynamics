@@ -4,6 +4,7 @@
 #include "calcfrac.h"
 #include "fractype.h"
 #include "helpdefs.h"
+#include "id.h"
 
 struct AlternateMath
 {
