@@ -16,6 +16,7 @@
 #include "evolve.h"
 #include "fractype.h"
 #include "framain2.h"
+#include "id.h"
 #include "id_data.h"
 #include "id_io.h"
 #include "jb.h"

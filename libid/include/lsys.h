@@ -3,6 +3,8 @@
  */
 #pragma once
 
+#include "id.h"
+
 /* Macro to take an FP number and turn it into a
  * 16/16-bit fixed-point number.
  */

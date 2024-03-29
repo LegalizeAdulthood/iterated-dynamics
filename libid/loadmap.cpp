@@ -6,6 +6,7 @@
 #include "cmdfiles.h"
 #include "find_path.h"
 #include "has_ext.h"
+#include "id.h"
 #include "merge_path_names.h"
 #include "rotate.h"
 #include "stop_msg.h"

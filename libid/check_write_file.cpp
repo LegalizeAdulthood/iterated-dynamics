@@ -1,10 +1,8 @@
 #include "check_write_file.h"
 
-#include "port.h"
-#include "prototyp.h"
-
 #include "cmdfiles.h"
 #include "has_ext.h"
+#include "id.h"
 #include "update_save_name.h"
 
 #include <cstring>

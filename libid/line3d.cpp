@@ -20,6 +20,7 @@
 #include "fractals.h"
 #include "framain2.h"
 #include "gifview.h"
+#include "id.h"
 #include "id_data.h"
 #include "loadfile.h"
 #include "os.h"

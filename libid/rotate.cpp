@@ -11,6 +11,7 @@
 #include "drivers.h"
 #include "field_prompt.h"
 #include "helpdefs.h"
+#include "id.h"
 #include "id_data.h"
 #include "loadmap.h"
 #include "merge_path_names.h"

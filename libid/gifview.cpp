@@ -21,6 +21,7 @@
 #include "engine_timer.h"
 #include "get_line.h"
 #include "has_ext.h"
+#include "id.h"
 #include "id_data.h"
 #include "loadfile.h"
 #include "loadmap.h"

@@ -11,6 +11,7 @@
 #include "fixed_pt.h"
 #include "fpu087.h"
 #include "fractals.h"
+#include "id.h"
 #include "id_data.h"
 #include "lsys_fns.h"
 #include "stack_avail.h"

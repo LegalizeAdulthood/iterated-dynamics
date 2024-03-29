@@ -11,6 +11,7 @@
 #include "fractalp.h"
 #include "fractals.h"
 #include "fractype.h"
+#include "id.h"
 #include "id_data.h"
 #include "mpmath.h"
 #include "mpmath_c.h"
