@@ -1,13 +1,9 @@
 #include "barnsley.h"
 
-#include "port.h"
-#include "prototyp.h"
-
 #include "bailout_formula.h"
 #include "calcfrac.h"
 #include "fixed_pt.h"
 #include "fractals.h"
-#include "id_data.h"
 
 int Barnsley1Fractal()
 {
