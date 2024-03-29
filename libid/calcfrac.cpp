@@ -11,11 +11,9 @@
 //   PARSER.C      formula fractals
 //   and more
 //
-#include "port.h"
-#include "prototyp.h"
-
 #include "calcfrac.h"
 
+#include "port.h"
 #include "bailout_formula.h"
 #include "biginit.h"
 #include "calcmand.h"
@@ -41,7 +39,6 @@
 #include "lorenz.h"
 #include "miscfrac.h"
 #include "mpmath_c.h"
-#include "os.h"
 #include "newton.h"
 #include "orbit.h"
 #include "parser.h"
