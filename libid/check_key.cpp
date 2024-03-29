@@ -1,8 +1,5 @@
 #include "check_key.h"
 
-#include "port.h"
-#include "prototyp.h"
-
 #include "calcfrac.h"
 #include "drivers.h"
 #include "orbit.h"
