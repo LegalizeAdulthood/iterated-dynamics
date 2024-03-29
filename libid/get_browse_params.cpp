@@ -1,7 +1,7 @@
 #include "get_browse_params.h"
 
 #include "port.h"
-#include "prototyp.h"
+#include "prototyp.h" // for stricmp
 
 #include "choice_builder.h"
 #include "cmdfiles.h"

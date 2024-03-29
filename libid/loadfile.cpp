@@ -2,7 +2,7 @@
         loadfile.c - load an existing fractal image, control level
 */
 #include "port.h"
-#include "prototyp.h"
+#include "prototyp.h" // for stricmp
 
 #include "loadfile.h"
 

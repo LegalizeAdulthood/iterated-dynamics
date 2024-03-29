@@ -1,7 +1,7 @@
 #include "shell_sort.h"
 
 #include "port.h"
-#include "prototyp.h"
+#include "prototyp.h" // for stricmp
 
 #include <string.h>
 

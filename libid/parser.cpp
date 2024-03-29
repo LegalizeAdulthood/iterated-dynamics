@@ -17,7 +17,7 @@
     (203) 276-9721
 */
 #include "port.h"
-#include "prototyp.h"
+#include "prototyp.h" // for stricmp
 
 #include "parser.h"
 

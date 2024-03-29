@@ -1,7 +1,7 @@
 #include "make_batch_file.h"
 
 #include "port.h"
-#include "prototyp.h"
+#include "prototyp.h" // for stricmp
 
 #include "bailout_formula.h"
 #include "biginit.h"
