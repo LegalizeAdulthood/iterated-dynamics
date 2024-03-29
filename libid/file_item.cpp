@@ -18,6 +18,7 @@
 #include "lsys_fns.h"
 #include "make_path.h"
 #include "parser.h"
+#include "prototyp.h"
 #include "set_default_parms.h"
 #include "shell_sort.h"
 #include "split_path.h"
