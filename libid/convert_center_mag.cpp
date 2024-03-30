@@ -1,10 +1,6 @@
 #include "convert_center_mag.h"
 
-#include "port.h"
-#include "prototyp.h"
-
 #include "biginit.h"
-#include "cmdfiles.h"
 #include "debug_flags.h"
 #include "id.h"
 #include "id_data.h"
