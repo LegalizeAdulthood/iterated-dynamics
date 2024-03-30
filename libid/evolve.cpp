@@ -1,6 +1,3 @@
-#include "port.h"
-#include "prototyp.h"
-
 #include "evolve.h"
 
 #include "bailout_formula.h"
@@ -10,13 +7,14 @@
 #include "fractalp.h"
 #include "fractype.h"
 #include "helpdefs.h"
-#include "id.h"
 #include "id_data.h"
 #include "id_keys.h"
 #include "jb.h"
 #include "param_not_used.h"
 #include "parser.h"
 #include "pixel_limits.h"
+#include "port.h"
+#include "sqr.h"
 #include "trig_fns.h"
 #include "type_has_param.h"
 #include "zoom.h"
