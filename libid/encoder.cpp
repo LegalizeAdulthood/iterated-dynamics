@@ -1,11 +1,9 @@
 //
 //      encoder.c - GIF Encoder and associated routines
 //
-#include "port.h"
-#include "prototyp.h"
-
 #include "encoder.h"
 
+#include "3d.h"
 #include "bailout_formula.h"
 #include "calcfrac.h"
 #include "cmdfiles.h"
@@ -13,12 +11,15 @@
 #include "decode_info.h"
 #include "diskvid.h"
 #include "drivers.h"
+#include "engine_timer.h"
 #include "evolve.h"
+#include "extract_filename.h"
 #include "fractype.h"
 #include "framain2.h"
+#include "get_color.h"
+#include "goodbye.h"
 #include "id.h"
 #include "id_data.h"
-#include "id_io.h"
 #include "jb.h"
 #include "line3d.h"
 #include "loadfile.h"
@@ -26,10 +27,6 @@
 #if defined(XFRACT)
 #include "os.h"
 #endif
-#include "engine_timer.h"
-#include "extract_filename.h"
-#include "get_color.h"
-#include "goodbye.h"
 #include "parser.h"
 #include "plot3d.h"
 #include "resume.h"
