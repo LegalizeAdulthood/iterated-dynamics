@@ -1,10 +1,8 @@
 #include "escher.h"
 
-#include "port.h"
-#include "prototyp.h"
-
 #include "bailout_formula.h"
 #include "calcfrac.h"
+#include "cmplx.h"
 #include "fractals.h"
 #include "id_data.h"
 #include "sqr.h"
