@@ -6,9 +6,6 @@
 // Do timing tests for a variety of situations after any change.
 //
 //
-#include "port.h"
-#include "prototyp.h"
-
 #include "diskvid.h"
 
 #include "big.h"

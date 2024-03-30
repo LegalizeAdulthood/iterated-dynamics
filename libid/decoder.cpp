@@ -16,9 +16,6 @@
 //
 // This routine was modified for use in FRACTINT.
 //
-#include "port.h"
-#include "prototyp.h"
-
 #include "decoder.h"
 
 #include "drivers.h"
@@ -26,6 +23,7 @@
 #include "loadfile.h"
 #include "out_line.h"
 #include "pixel_limits.h"
+#include "port.h"
 
 static short get_next_code();
 
