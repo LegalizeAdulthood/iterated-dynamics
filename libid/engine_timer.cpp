@@ -1,8 +1,5 @@
 #include "engine_timer.h"
 
-#include "port.h"
-#include "prototyp.h"
-
 #include "cmdfiles.h"
 #include "debug_flags.h"
 #include "decoder.h"
