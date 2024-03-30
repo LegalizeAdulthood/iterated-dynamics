@@ -1,5 +1,7 @@
 #pragma once
 
+#include "port.h"
+
 #include <string>
 
 struct VIDEOINFO;

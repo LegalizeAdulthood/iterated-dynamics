@@ -1,10 +1,5 @@
-#include "port.h"
-#include "prototyp.h"
-
 #include "drivers.h"
 
-#include "cmplx.h"
-#include "os.h"
 #include "video_mode.h"
 
 #include <cstring>
