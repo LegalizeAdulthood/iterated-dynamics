@@ -1,8 +1,5 @@
 // Command-line / Command-File Parser Routines
 //
-#include "port.h"
-#include "prototyp.h"
-
 #include "cmdfiles.h"
 
 #include "abort_msg.h"
@@ -45,7 +42,6 @@
 #include "make_batch_file.h"
 #include "make_mig.h"
 #include "merge_path_names.h"
-#include "os.h"
 #include "parser.h"
 #include "plot3d.h"
 #include "rotate.h"
