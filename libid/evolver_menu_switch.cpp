@@ -1,8 +1,5 @@
 #include "evolver_menu_switch.h"
 
-#include "port.h"
-#include "prototyp.h"
-
 #include "calcfrac.h"
 #include "cmdfiles.h"
 #include "debug_flags.h"
@@ -34,10 +31,7 @@
 #include "video_mode.h"
 #include "zoom.h"
 
-#include <cmath>
 #include <cstring>
-#include <ctime>
-#include <string>
 
 main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool *stacked)
 {
