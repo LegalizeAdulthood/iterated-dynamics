@@ -4,9 +4,6 @@
 // Edits VGA 256-color palettes.
 //
 //
-#include "port.h"
-#include "prototyp.h"
-
 #include "editpal.h"
 
 #include "calcfrac.h"

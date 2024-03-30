@@ -1,5 +1,7 @@
 #pragma once
 
+#include "port.h"
+
 #include <vector>
 
 extern std::vector<BYTE>     g_line_buff;
