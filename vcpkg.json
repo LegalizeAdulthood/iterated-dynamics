@@ -4,6 +4,8 @@
   "version": "1.0.0",
   "dependencies": [
     "boost-algorithm",
+    "boost-endian",
+    "giflib",
     "gtest",
     {
       "name": "libx11",

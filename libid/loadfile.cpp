@@ -61,9 +61,6 @@
 namespace
 {
 
-#if defined(_WIN32)
-#pragma pack(push, 1)
-#endif
 struct ext_blk_2
 {
     bool got_data;
@@ -123,9 +120,6 @@ struct ext_blk_7
     short keep_scrn_coords;
     char drawmode;
 };
-#if defined(_WIN32)
-#pragma pack(pop)
-#endif
 
 struct dblcoords
 {
@@ -158,6 +152,175 @@ short g_skip_x_dots;
 short g_skip_y_dots;      // for decoder, when reducing image
 bool g_bad_outside = false;
 bool g_ld_check = false;
+
+inline bool within_eps(float lhs, float rhs)
+{
+    return std::abs(lhs - rhs) < 1.0e-6f;
+}
+
+inline bool within_eps(double lhs, double rhs)
+{
+    return std::abs(lhs - rhs) < 1.0e-6f;
+}
+
+template <size_t N, typename T>
+bool equal(const T (&lhs)[N], const T (&rhs)[N])
+{
+    return std::equal(std::begin(lhs), std::end(lhs), std::begin(rhs));
+}
+
+template <size_t N>
+bool equal(const float (&lhs)[N], const float (&rhs)[N])
+{
+    return std::equal(std::begin(lhs), std::end(lhs), std::begin(rhs), //
+        [](float lhs, float rhs) { return within_eps(lhs, rhs); });
+}
+
+template <size_t N>
+bool equal(const double (&lhs)[N], const double (&rhs)[N])
+{
+    return std::equal(std::begin(lhs), std::end(lhs), std::begin(rhs), //
+        [](double lhs, double rhs) { return within_eps(lhs, rhs); });
+}
+
+bool operator==(const FRACTAL_INFO &lhs, const FRACTAL_INFO &rhs)
+{
+    return equal(lhs.info_id, rhs.info_id)                //
+        && lhs.iterationsold == rhs.iterationsold         //
+        && lhs.fractal_type == rhs.fractal_type           //
+        && within_eps(lhs.xmin, rhs.xmin)                 //
+        && within_eps(lhs.xmax, rhs.xmax)                 //
+        && within_eps(lhs.ymin, rhs.ymin)                 //
+        && within_eps(lhs.ymax, rhs.ymax)                 //
+        && within_eps(lhs.creal, rhs.creal)               //
+        && within_eps(lhs.cimag, rhs.cimag)               //
+        && lhs.videomodeax == rhs.videomodeax             //
+        && lhs.videomodebx == rhs.videomodebx             //
+        && lhs.videomodecx == rhs.videomodecx             //
+        && lhs.videomodedx == rhs.videomodedx             //
+        && lhs.dotmode == rhs.dotmode                     //
+        && lhs.xdots == rhs.xdots                         //
+        && lhs.ydots == rhs.ydots                         //
+        && lhs.colors == rhs.colors                       //
+        && lhs.version == rhs.version                     //
+        && within_eps(lhs.parm3, rhs.parm3)               //
+        && within_eps(lhs.parm4, rhs.parm4)               //
+        && equal(lhs.potential, rhs.potential)            //
+        && lhs.rseed == rhs.rseed                         //
+        && lhs.rflag == rhs.rflag                         //
+        && lhs.biomorph == rhs.biomorph                   //
+        && lhs.inside == rhs.inside                       //
+        && lhs.logmapold == rhs.logmapold                 //
+        && equal(lhs.invert, rhs.invert)                  //
+        && equal(lhs.decomp, rhs.decomp)                  //
+        && lhs.symmetry == rhs.symmetry                   //
+        && equal(lhs.init3d, rhs.init3d)                  //
+        && lhs.previewfactor == rhs.previewfactor         //
+        && lhs.xtrans == rhs.xtrans                       //
+        && lhs.ytrans == rhs.ytrans                       //
+        && lhs.red_crop_left == rhs.red_crop_left         //
+        && lhs.red_crop_right == rhs.red_crop_right       //
+        && lhs.blue_crop_left == rhs.blue_crop_left       //
+        && lhs.blue_crop_right == rhs.blue_crop_right     //
+        && lhs.red_bright == rhs.red_bright               //
+        && lhs.blue_bright == rhs.blue_bright             //
+        && lhs.xadjust == rhs.xadjust                     //
+        && lhs.eyeseparation == rhs.eyeseparation         //
+        && lhs.glassestype == rhs.glassestype             //
+        && lhs.outside == rhs.outside                     //
+        && within_eps(lhs.x3rd, rhs.x3rd)                 //
+        && within_eps(lhs.y3rd, rhs.y3rd)                 //
+        && lhs.stdcalcmode == rhs.stdcalcmode             //
+        && lhs.useinitorbit == rhs.useinitorbit           //
+        && lhs.calc_status == rhs.calc_status             //
+        && lhs.tot_extend_len == rhs.tot_extend_len       //
+        && lhs.distestold == rhs.distestold               //
+        && lhs.floatflag == rhs.floatflag                 //
+        && lhs.bailoutold == rhs.bailoutold               //
+        && lhs.calctime == rhs.calctime                   //
+        && equal(lhs.trigndx, rhs.trigndx)                //
+        && lhs.finattract == rhs.finattract               //
+        && equal(lhs.initorbit, rhs.initorbit)            //
+        && lhs.periodicity == rhs.periodicity             //
+        && lhs.pot16bit == rhs.pot16bit                   //
+        && within_eps(lhs.faspectratio, rhs.faspectratio) //
+        && lhs.system == rhs.system                       //
+        && lhs.release == rhs.release                     //
+        && lhs.display_3d == rhs.display_3d               //
+        && equal(lhs.transparent, rhs.transparent)        //
+        && lhs.ambient == rhs.ambient                     //
+        && lhs.haze == rhs.haze                           //
+        && lhs.randomize == rhs.randomize                 //
+        && lhs.rotate_lo == rhs.rotate_lo                 //
+        && lhs.rotate_hi == rhs.rotate_hi                 //
+        && lhs.distestwidth == rhs.distestwidth           //
+        && within_eps(lhs.dparm3, rhs.dparm3)             //
+        && within_eps(lhs.dparm4, rhs.dparm4)             //
+        && lhs.fillcolor == rhs.fillcolor                 //
+        && within_eps(lhs.mxmaxfp, rhs.mxmaxfp)           //
+        && within_eps(lhs.mxminfp, rhs.mxminfp)           //
+        && within_eps(lhs.mymaxfp, rhs.mymaxfp)           //
+        && within_eps(lhs.myminfp, rhs.myminfp)           //
+        && lhs.zdots == rhs.zdots                         //
+        && within_eps(lhs.originfp, rhs.originfp)         //
+        && within_eps(lhs.depthfp, rhs.depthfp)           //
+        && within_eps(lhs.heightfp, rhs.heightfp)         //
+        && within_eps(lhs.widthfp, rhs.widthfp)           //
+        && within_eps(lhs.distfp, rhs.distfp)             //
+        && within_eps(lhs.eyesfp, rhs.eyesfp)             //
+        && lhs.orbittype == rhs.orbittype                 //
+        && lhs.juli3Dmode == rhs.juli3Dmode               //
+        && lhs.maxfn == rhs.maxfn                         //
+        && lhs.inversejulia == rhs.inversejulia           //
+        && within_eps(lhs.dparm5, rhs.dparm5)             //
+        && within_eps(lhs.dparm6, rhs.dparm6)             //
+        && within_eps(lhs.dparm7, rhs.dparm7)             //
+        && within_eps(lhs.dparm8, rhs.dparm8)             //
+        && within_eps(lhs.dparm9, rhs.dparm9)             //
+        && within_eps(lhs.dparm10, rhs.dparm10)           //
+        && lhs.bailout == rhs.bailout                     //
+        && lhs.bailoutest == rhs.bailoutest               //
+        && lhs.iterations == rhs.iterations               //
+        && lhs.bf_math == rhs.bf_math                     //
+        && lhs.bflength == rhs.bflength                   //
+        && lhs.yadjust == rhs.yadjust                     //
+        && lhs.old_demm_colors == rhs.old_demm_colors     //
+        && lhs.logmap == rhs.logmap                       //
+        && lhs.distest == rhs.distest                     //
+        && equal(lhs.dinvert, rhs.dinvert)                //
+        && lhs.logcalc == rhs.logcalc                     //
+        && lhs.stoppass == rhs.stoppass                   //
+        && lhs.quick_calc == rhs.quick_calc               //
+        && within_eps(lhs.closeprox, rhs.closeprox)       //
+        && lhs.nobof == rhs.nobof                         //
+        && lhs.orbit_interval == rhs.orbit_interval       //
+        && lhs.orbit_delay == rhs.orbit_delay             //
+        && equal(lhs.math_tol, rhs.math_tol);             //
+}
+
+bool operator==(const formula_info &lhs, const formula_info &rhs)
+{
+    return equal(lhs.form_name, rhs.form_name) //
+        && lhs.uses_p1 == rhs.uses_p1          //
+        && lhs.uses_p2 == rhs.uses_p2          //
+        && lhs.uses_p3 == rhs.uses_p3          //
+        && lhs.uses_ismand == rhs.uses_ismand  //
+        && lhs.ismand == rhs.ismand            //
+        && lhs.uses_p4 == rhs.uses_p4          //
+        && lhs.uses_p5 == rhs.uses_p5;         //
+}
+
+bool operator==(const ORBITS_INFO &lhs, const ORBITS_INFO &rhs)
+{
+    return lhs.oxmin == rhs.oxmin                       //
+        && lhs.oxmax == rhs.oxmax                       //
+        && lhs.oymin == rhs.oymin                       //
+        && lhs.oymax == rhs.oymax                       //
+        && lhs.ox3rd == rhs.ox3rd                       //
+        && lhs.oy3rd == rhs.oy3rd                       //
+        && lhs.keep_scrn_coords == rhs.keep_scrn_coords //
+        && lhs.drawmode == rhs.drawmode;                //
+}
 
 int read_overlay()      // read overlay/3D files, if reqr'd
 {
@@ -838,6 +1001,7 @@ static int find_fractal_info(char const *gif_file, FRACTAL_INFO *info,
          fractint004     ranges info
          fractint005     extended precision parameters
          fractint006     evolver params
+         fractint007     orbits info
     */
 
     std::memset(info, 0, sizeof(FRACTAL_INFO));

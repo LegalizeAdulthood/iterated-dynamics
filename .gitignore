@@ -1,7 +1,4 @@
 home/id.hlp
-*.gif
-*.tmp
-hc/id.txt
 .idea
 .vs
 CMakeUserPresets.json

@@ -3,8 +3,6 @@
 #include <cstdint>
 #include <string>
 
-#include "port.h"
-
 #define INFO_ID         "Fractal"
 
 /*
@@ -195,6 +193,24 @@ struct ORBITS_INFO      // for saving orbits data in a GIF file
 #if defined(_WIN32)
 #pragma pack(pop)
 #endif
+
+bool operator==(const FRACTAL_INFO &lhs, const FRACTAL_INFO &rhs);
+inline bool operator!=(const FRACTAL_INFO &lhs, const FRACTAL_INFO &rhs)
+{
+    return !(lhs == rhs);
+}
+
+bool operator==(const formula_info &lhs, const formula_info &rhs);
+inline bool operator!=(const formula_info &lhs, const formula_info &rhs)
+{
+    return !(lhs == rhs);
+}
+
+bool operator==(const ORBITS_INFO &lhs, const ORBITS_INFO &rhs);
+inline bool operator!=(const ORBITS_INFO &lhs, const ORBITS_INFO &rhs)
+{
+    return !(lhs == rhs);
+}
 
 extern bool                  g_bad_outside;
 extern std::string           g_browse_name;

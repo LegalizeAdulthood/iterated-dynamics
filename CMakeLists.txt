@@ -20,8 +20,6 @@ project("${ID_PROJECT_NAME}"
 
 include(CTest)
 
-find_package(Boost REQUIRED)
-
 set(home_dir "${CMAKE_SOURCE_DIR}/home")
 set(ID_DIR ${CMAKE_CURRENT_SOURCE_DIR})
 

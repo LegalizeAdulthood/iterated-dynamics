@@ -59,6 +59,12 @@ struct EVOLUTION_INFO      // for saving evolution data in a GIF file
     std::int16_t future[66 - NUM_GENES];      // total of 200 bytes
 };
 
+bool operator==(const EVOLUTION_INFO &lhs, const EVOLUTION_INFO &rhs);
+inline bool operator!=(const EVOLUTION_INFO &lhs, const EVOLUTION_INFO &rhs)
+{
+    return !(lhs == rhs);
+}
+
 // more bitmasks for evolution mode flag
 enum
 {

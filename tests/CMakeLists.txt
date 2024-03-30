@@ -4,6 +4,20 @@ find_package(GTest CONFIG REQUIRED)
 
 set(ID_TEST_DATA_DIR "${CMAKE_CURRENT_BINARY_DIR}/test_data")
 
+set(ID_TEST_GIF_DIR "${ID_TEST_DATA_DIR}/gif")
+macro(configure_gif_extension_file num)
+    set("EXT${num}_FILE" "extension${num}.gif")
+    set("ID_TEST_GIF_EXT${num}_FILE" "${ID_TEST_GIF_DIR}/${EXT${num}_FILE}")
+    configure_file("gif/${EXT${num}_FILE}" "${ID_TEST_GIF_EXT${num}_FILE}" COPYONLY)
+    set("ID_TEST_GIF_WRITE${num}_FILE" "${ID_TEST_GIF_DIR}/output${num}.gif")
+endmacro()
+configure_gif_extension_file(1)
+configure_gif_extension_file(2)
+configure_gif_extension_file(3)
+configure_gif_extension_file(4)
+configure_gif_extension_file(6)
+configure_gif_extension_file(7)
+
 SET(ID_TEST_FIRST_IFS_NAME "binary")
 set(ID_TEST_FIRST_IFS_PARAM1 ".5")
 set(ID_TEST_SECOND_IFS_NAME "3dfern")
@@ -38,6 +52,7 @@ add_executable(test-id
     test_find_file.cpp
     test_find_path.cpp
     test_get_ifs_token.cpp
+    test_gif_file.cpp
     test_is_directory.cpp
     test_make_path.cpp
     test_merge_path_names.cpp

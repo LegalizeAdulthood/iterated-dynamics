@@ -22,6 +22,7 @@
 #include <algorithm>
 #include <cmath>
 #include <cstdlib>
+#include <iterator>
 #include <vector>
 
 #define PARMBOX 128
@@ -123,6 +124,39 @@ void ReleaseParamBox();
 void copy_genes_from_bank(GENEBASE gene[NUM_GENES])
 {
     std::copy(&g_gene_bank[0], &g_gene_bank[NUM_GENES], &gene[0]);
+}
+
+template <int N>
+bool equal(const std::int16_t (&lhs)[N], const std::int16_t (&rhs)[N])
+{
+    return std::equal(std::begin(lhs), std::end(lhs), std::begin(rhs));
+}
+
+inline bool within_eps(double lhs, double rhs)
+{
+    return std::abs(lhs - rhs) < 1.0e-6f;
+}
+
+bool operator==(const EVOLUTION_INFO &lhs, const EVOLUTION_INFO &rhs)
+{
+    return lhs.evolving == rhs.evolving                                       //
+        && lhs.image_grid_size == rhs.image_grid_size                         //
+        && lhs.this_generation_random_seed == rhs.this_generation_random_seed //
+        && lhs.max_random_mutation == rhs.max_random_mutation                 //
+        && within_eps(lhs.x_parameter_range, rhs.x_parameter_range)           //
+        && within_eps(lhs.y_parameter_range, rhs.y_parameter_range)           //
+        && within_eps(lhs.x_parameter_offset, rhs.x_parameter_offset)         //
+        && within_eps(lhs.y_parameter_offset, rhs.y_parameter_offset)         //
+        && lhs.discrete_x_parameter_offset == rhs.discrete_x_parameter_offset //
+        && lhs.discrete_y_paramter_offset == rhs.discrete_y_paramter_offset   //
+        && lhs.px == rhs.px                                                   //
+        && lhs.py == rhs.py                                                   //
+        && lhs.sxoffs == rhs.sxoffs                                           //
+        && lhs.syoffs == rhs.syoffs                                           //
+        && lhs.xdots == rhs.xdots                                             //
+        && lhs.ydots == rhs.ydots                                             //
+        && equal(lhs.mutate, rhs.mutate)                                      //
+        && lhs.ecount == rhs.ecount;                                          //
 }
 
 void copy_genes_to_bank(GENEBASE const gene[NUM_GENES])

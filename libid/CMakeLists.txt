@@ -1,3 +1,6 @@
+find_package(Boost REQUIRED)
+find_package(GIF REQUIRED)
+
 add_library(libid
     include/os.h
 
@@ -66,6 +69,7 @@ add_library(libid
     encoder.cpp include/encoder.h
     evolve.cpp include/evolve.h
     get_video_mode.cpp include/get_video_mode.h
+    gif_file.cpp include/gif_file.h
     gifview.cpp include/gifview.h
     loadfile.cpp include/loadfile.h
     loadmap.cpp include/loadmap.h
@@ -331,6 +335,7 @@ source_group("Header Files/IO" FILES
     include/encoder.h
     include/evolve.h
     include/get_video_mode.h
+    include/gif_file.h
     include/gifview.h
     include/id_io.h
     include/loadfile.h
@@ -351,6 +356,7 @@ source_group("Source Files/IO" FILES
     encoder.cpp
     evolve.cpp
     get_video_mode.cpp
+    gif_file.cpp
     gifview.cpp
     loadfile.cpp
     loadmap.cpp
@@ -582,6 +588,6 @@ set_source_files_properties(decode_info.cpp
         COMPILE_FLAGS $<$<CXX_COMPILER_ID:GNU>:-Wno-address-of-packed-member>)
 target_compile_options(libid PUBLIC ${ID_TARGET_OPTIONS})
 target_include_directories(libid PUBLIC include)
-target_link_libraries(libid PRIVATE help_defs helpcom os config Boost::boost)
-target_link_libraries(libid PUBLIC config)
+target_link_libraries(libid PRIVATE help_defs helpcom os)
+target_link_libraries(libid PUBLIC config Boost::boost GIF::GIF)
 add_dependencies(libid native_help)
