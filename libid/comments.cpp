@@ -1,10 +1,6 @@
 #include "comments.h"
 
-#include "port.h"
-#include "prototyp.h"
-
 #include "get_calculation_time.h"
-#include "id.h"
 #include "id_data.h"
 #include "stop_msg.h"
 #include "version.h"

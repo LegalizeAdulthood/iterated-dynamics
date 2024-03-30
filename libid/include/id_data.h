@@ -1,8 +1,9 @@
 #if !defined(ID_DATA_H)
 #define ID_DATA_H
 
+#include "port.h"
+
 #include <string>
-#include <vector>
 
 struct VIDEOINFO;
 
