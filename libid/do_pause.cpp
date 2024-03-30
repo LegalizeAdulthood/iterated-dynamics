@@ -1,8 +1,5 @@
 #include "do_pause.h"
 
-#include "port.h"
-#include "prototyp.h"
-
 #include "cmdfiles.h"
 #include "drivers.h"
 #include "get_key_no_help.h"
