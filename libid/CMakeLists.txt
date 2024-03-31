@@ -338,6 +338,7 @@ source_group("Header Files/IO" FILES
     include/parser.h
     include/rotate.h
     include/slideshw.h
+    include/sound.h
     include/stereo.h
 )
 source_group("Source Files/IO" FILES
@@ -357,6 +358,7 @@ source_group("Source Files/IO" FILES
     parserfp.cpp
     rotate.cpp
     slideshw.cpp
+    sound.cpp
     stereo.cpp
 )
 source_group("Header Files/math" FILES
