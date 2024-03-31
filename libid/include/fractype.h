@@ -201,4 +201,33 @@ enum class fractal_type
     MANDELBROTMIX4              = 172,
 };
 
+inline int operator+(fractal_type rhs)
+{
+    return static_cast<int>(rhs);
+}
+inline bool operator==(fractal_type lhs, fractal_type rhs)
+{
+    return +lhs == +rhs;
+}
+inline bool operator!=(fractal_type lhs, fractal_type rhs)
+{
+    return +lhs != +rhs;
+}
+inline bool operator<(fractal_type lhs, fractal_type rhs)
+{
+    return +lhs < +rhs;
+}
+inline bool operator<=(fractal_type lhs, fractal_type rhs)
+{
+    return +lhs <= +rhs;
+}
+inline bool operator>(fractal_type lhs, fractal_type rhs)
+{
+    return +lhs > +rhs;
+}
+inline bool operator>=(fractal_type lhs, fractal_type rhs)
+{
+    return +lhs >= +rhs;
+}
+
 extern fractal_type g_fractal_type;
