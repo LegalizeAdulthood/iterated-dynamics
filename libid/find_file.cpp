@@ -80,8 +80,7 @@ int fr_findfirst(char const *path)       // Find 1st file (or subdir) meeting pa
     }
 
     s_path_matcher = match_fn(path);
-    if (is_directory(search) ||
-        (search.filename() == "*" && (search.extension().string().empty() || search.extension() == ".*")))
+    if (is_directory(search) || search.filename() == "*" || search.filename() == "*.*")
     {
         s_dir_pos = dir_pos::NONE;
     }
