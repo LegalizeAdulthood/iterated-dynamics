@@ -124,9 +124,9 @@ public:
     template <int N>
     void extract_float(float (&values)[N])
     {
-        for (float &value : values)
+        for (int i = 0; i < N; ++i)
         {
-            value = extract_float();
+            values[i] = extract_float();
         }
     }
 
