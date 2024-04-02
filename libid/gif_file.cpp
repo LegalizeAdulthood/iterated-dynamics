@@ -243,7 +243,10 @@ FRACTAL_INFO get_fractal_info(GifFileType *gif)
         // TODO: error: cannot bind packed field
         float potential[3];
         deser.extract_float(potential);
-        std::copy_n(potential, std::size(potential), result.potential);
+        for (size_t i = 0; i < std::size(potential); ++i)
+        {
+            result.potential[i] = potential[i];
+        }
     }
     result.rseed = deser.extract_int16();
     result.rflag = deser.extract_int16();
