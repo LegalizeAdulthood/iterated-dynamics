@@ -439,7 +439,12 @@ TEST(TestCompareFractalInfo, futureFieldsAreIgnored)
 {
     const FRACTAL_INFO lhs{};
     FRACTAL_INFO rhs{};
-    std::iota(std::begin(rhs.future), std::end(rhs.future), 16);
+    std::int16_t value{16};
+    for (size_t i = 0; i < std::size(rhs.future); ++i)
+    {
+        rhs.future[i] = value;
+        ++value;
+    }
 
     EXPECT_TRUE(lhs == rhs) << lhs << " != " << rhs;
 }
@@ -448,7 +453,12 @@ TEST(TestCompareFormulaInfo, futureFieldsAreIgnored)
 {
     const formula_info lhs{};
     formula_info rhs{};
-    std::iota(std::begin(rhs.future), std::end(rhs.future), 16);
+    std::int16_t value{16};
+    for (size_t i = 0; i < std::size(rhs.future); ++i)
+    {
+        rhs.future[i] = value;
+        ++value;
+    }
 
     EXPECT_TRUE(lhs == rhs) << lhs << " != " << rhs;
 }
