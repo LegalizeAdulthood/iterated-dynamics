@@ -180,11 +180,13 @@ retry_dir:
                     // just using speedstr as a handy buffer
                     make_path(speedstr, drive, dir, fname, ext);
                     std::strncpy(choices[++filecount]->name, DTA.filename.c_str(), 13);
+                    choices[filecount]->name[12] = 0;
                     choices[filecount]->type = 0;
                 }
                 else
                 {
                     std::strncpy(choices[++filecount]->name, DTA.filename.c_str(), 13);
+                    choices[filecount]->name[12] = 0;
                     choices[filecount]->type = 0;
                     std::strcpy(choices[filecount]->full_name, DTA.filename.c_str());
                 }
@@ -243,7 +245,7 @@ retry_dir:
 
     i = fullscreen_choice(CHOICE_INSTRUCTIONS | (dosort ? 0 : CHOICE_NOT_SORTED),
         heading.c_str(), nullptr, instr, filecount, (char const **) choices,
-        attributes, 5, 99, 12, i, nullptr, speedstr, filename_speedstr, check_f6_key);
+        attributes, 0, 99, 0, i, nullptr, speedstr, filename_speedstr, check_f6_key);
     if (i == -ID_KEY_F4)
     {
         dosort = !dosort;
