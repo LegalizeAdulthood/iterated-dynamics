@@ -257,20 +257,29 @@ FRACTAL_INFO get_fractal_info(GifFileType *gif)
         // TODO: error: cannot bind packed field
         float invert[3];
         deser.extract_float(invert);
-        std::copy_n(invert, std::size(invert), result.invert);
+        for (size_t i = 0; i < std::size(invert); ++i)
+        {
+            result.invert[i] = invert[i];
+        }
     }
     {
         // TODO: error: cannot bind packed field
         std::int16_t decomp[2];
         deser.extract_int16(decomp);
-        std::copy_n(decomp, std::size(decomp), result.decomp);
+        for (size_t i = 0; i < std::size(decomp); ++i)
+        {
+            result.decomp[i] = decomp[i];
+        }
     }
     result.symmetry = deser.extract_int16();
     {
         // TODO: error: cannot bind packed field
         std::int16_t init3d[16];
         deser.extract_int16(init3d);
-        std::copy_n(init3d, std::size(init3d), result.init3d);
+        for (size_t i = 0; i < std::size(init3d); ++i)
+        {
+            result.init3d[i] = init3d[i];
+        }
     }
     result.previewfactor = deser.extract_int16();
     result.xtrans = deser.extract_int16();
@@ -301,7 +310,10 @@ FRACTAL_INFO get_fractal_info(GifFileType *gif)
         // TODO: error: cannot bind packed field
         double initorbit[2];
         deser.extract_double(initorbit);
-        std::copy_n(initorbit, std::size(initorbit), result.initorbit);
+        for (size_t i = 0; i < std::size(initorbit); ++i)
+        {
+            result.initorbit[i] = initorbit[i];
+        }
     }
     result.periodicity = deser.extract_int16();
     result.pot16bit = deser.extract_int16();
@@ -313,7 +325,10 @@ FRACTAL_INFO get_fractal_info(GifFileType *gif)
         // TODO: error: cannot bind packed field
         std::int16_t transparent[2];
         deser.extract_int16(transparent);
-        std::copy_n(transparent, std::size(transparent), result.transparent);
+        for (size_t i = 0; i < std::size(transparent); ++i)
+        {
+            result.transparent[i] = transparent[i];
+        }
     }
     result.ambient = deser.extract_int16();
     result.haze = deser.extract_int16();
@@ -358,7 +373,10 @@ FRACTAL_INFO get_fractal_info(GifFileType *gif)
         // TODO: error: cannot bind packed field
         double dinvert[3];
         deser.extract_double(dinvert);
-        std::copy_n(dinvert, std::size(dinvert), result.dinvert);
+        for (size_t i = 0; i < std::size(dinvert); ++i)
+        {
+            result.dinvert[i] = dinvert[i];
+        }
     }
     result.logcalc = deser.extract_int16();
     result.stoppass = deser.extract_int16();
@@ -371,13 +389,19 @@ FRACTAL_INFO get_fractal_info(GifFileType *gif)
         // TODO: error: cannot bind packed field
         double math_tol[2];
         deser.extract_double(math_tol);
-        std::copy_n(math_tol, std::size(math_tol), result.math_tol);
+        for (size_t i = 0; i < std::size(math_tol); ++i)
+        {
+            result.math_tol[i] = math_tol[i];
+        }
     }
     {
         // TODO: error: cannot bind packed field
         std::int16_t future[7];
         deser.extract_int16(future);
-        std::copy_n(future, std::size(future), result.future);
+        for (size_t i = 0; i < std::size(future); ++i)
+        {
+            result.future[i] = future[i];
+        }
     }
     deser.validate();
     return result;
@@ -731,10 +755,7 @@ EVOLUTION_INFO get_evolution_info(GifFileType *gif)
     result.syoffs = deser.extract_int16();
     result.xdots = deser.extract_int16();
     result.ydots = deser.extract_int16();
-    for (std::int16_t &i : result.mutate)
-    {
-        i = deser.extract_int16();
-    }
+    deser.extract_int16(result.mutate);
     result.ecount = deser.extract_int16();
     return result;
 }
