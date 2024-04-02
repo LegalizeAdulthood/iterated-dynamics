@@ -338,16 +338,27 @@ std::ostream &operator<<(std::ostream &str, const formula_info &value)
                << " }";
 }
 
-std::ostream &operator<<(std::ostream &str, const std::vector<int> &value)
+template <typename T>
+class vec_printer
 {
-    if (value.empty())
+public:
+    vec_printer(const std::vector<T> &values) :
+        m_values(values)
+    {
+    }
+    const std::vector<T> &m_values;
+};
+
+std::ostream &operator<<(std::ostream &str, const vec_printer<int> &value)
+{
+    if (value.m_values.empty())
     {
         return str << "[]";
     }
     
     str << "[ ";
     bool first{true};
-    for (int i : value)
+    for (int i : value.m_values)
     {
         if (!first)
         {
@@ -735,7 +746,7 @@ TEST_F(TestGIFRangesInfoExtension, encodeRangesInfoExtension)
     put_ranges_info(out, info1);
 
     const std::vector info2{get_ranges_info(out)};
-    EXPECT_EQ(info1, info2) << info1 << " != " << info2;
+    EXPECT_EQ(info1, info2) << vec_printer(info1) << " != " << vec_printer(info2);
 }
 
 TEST_F(TestGIFEvolutionInfoExtension, checkEvolutionInfoExtension)
