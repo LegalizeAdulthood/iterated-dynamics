@@ -215,6 +215,7 @@ source_group("Source Files/3d" FILES
     plot3d.cpp
 )
 source_group("Header Files/engine" FILES
+    include/bailout_formula.h
     include/calc_frac_init.h
     include/calcfrac.h
     include/calcmand.h
@@ -239,6 +240,7 @@ source_group("Header Files/engine" FILES
     include/work_list.h
 )
 source_group("Source Files/engine" FILES
+    bailout_formula.cpp
     calc_frac_init.cpp
     calcfrac.cpp
     calcmand.cpp
@@ -404,7 +406,6 @@ source_group("Source Files/plumbing" FILES
 )
 source_group("Header Files/ui" FILES
     include/abort_msg.h
-    include/bailout_formula.h
     include/check_key.h
     include/check_orbit_name.h
     include/check_write_file.h
@@ -494,7 +495,6 @@ source_group("Header Files/ui" FILES
 )
 source_group("Source Files/ui" FILES
     abort_msg.cpp
-    bailout_formula.cpp
     check_key.cpp
     check_orbit_name.cpp
     check_write_file.cpp
