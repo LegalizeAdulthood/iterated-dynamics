@@ -898,13 +898,14 @@ inline void freader(void *ptr, size_t size, size_t nmemb, std::FILE *stream)
 }
 
 
-static int find_fractal_info(char const *gif_file, FRACTAL_INFO *info,
-                             ext_blk_2 *blk_2_info,
-                             ext_blk_3 *blk_3_info,
-                             ext_blk_4 *blk_4_info,
-                             ext_blk_5 *blk_5_info,
-                             ext_blk_6 *blk_6_info,
-                             ext_blk_7 *blk_7_info)
+static int find_fractal_info(char const *gif_file, //
+    FRACTAL_INFO *info,                            //
+    ext_blk_2 *blk_2_info,                         //
+    ext_blk_3 *blk_3_info,                         //
+    ext_blk_4 *blk_4_info,                         //
+    ext_blk_5 *blk_5_info,                         //
+    ext_blk_6 *blk_6_info,                         //
+    ext_blk_7 *blk_7_info)                         //
 {
     BYTE gifstart[18];
     char temp1[81];
