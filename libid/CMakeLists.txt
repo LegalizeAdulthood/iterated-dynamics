@@ -404,9 +404,18 @@ source_group("Source Files/math" FILES
 source_group("Header Files/plumbing" FILES
     include/debug_flags.h
     include/drivers.h
+    include/get_color.h
     include/get_disk_space.h
+    include/get_line.h
+    include/id_io.h
     include/init_failure.h
     include/memory.h
+    include/os.h
+    include/prototyp.h
+    include/put_color_a.h
+    include/read_ticker.h
+    include/set_null_video.h
+    include/stack_avail.h
 )
 source_group("Source Files/plumbing" FILES
     debug_flags.cpp
