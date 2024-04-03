@@ -1,10 +1,13 @@
 #include "convert_center_mag.h"
 
 #include "biginit.h"
+#include "convert_corners.h"
 #include "debug_flags.h"
+#include "fractalb.h"
 #include "id.h"
 #include "id_data.h"
 #include "sign.h"
+#include "sqr.h"
 
 #include <cmath>
 
@@ -79,33 +82,31 @@ void cvtcentermag(double *Xctr, double *Yctr, LDBL *Magnification, double *Xmagf
         *Magnification = -*Magnification;
         *Rotation += 180;
     }
-#ifdef DEBUG
+#ifndef NDEBUG
     {
-        double txmin, txmax, tx3rd, tymin, tymax, ty3rd;
-        double error;
-        txmin = xxmin;
-        txmax = xxmax;
-        tx3rd = xx3rd;
-        tymin = yymin;
-        tymax = yymax;
-        ty3rd = yy3rd;
+        const double txmin = g_x_min;
+        const double txmax = g_x_max;
+        const double tx3rd = g_x_3rd;
+        const double tymin = g_y_min;
+        const double tymax = g_y_max;
+        const double ty3rd = g_y_3rd;
         cvtcorners(*Xctr, *Yctr, *Magnification, *Xmagfactor, *Rotation, *Skew);
-        error = sqr(txmin - xxmin) +
-                sqr(txmax - xxmax) +
-                sqr(tx3rd - xx3rd) +
-                sqr(tymin - yymin) +
-                sqr(tymax - yymax) +
-                sqr(ty3rd - yy3rd);
+        const double error = sqr(txmin - g_x_min) //
+            + sqr(txmax - g_x_max)                //
+            + sqr(tx3rd - g_x_3rd)                //
+            + sqr(tymin - g_y_min)                //
+            + sqr(tymax - g_y_max)                //
+            + sqr(ty3rd - g_y_3rd);               //
         if (error > .001)
         {
             showcornersdbl("cvtcentermag problem");
         }
-        xxmin = txmin;
-        xxmax = txmax;
-        xx3rd = tx3rd;
-        yymin = tymin;
-        yymax = tymax;
-        yy3rd = ty3rd;
+        g_x_min = txmin;
+        g_x_max = txmax;
+        g_x_3rd = tx3rd;
+        g_y_min = tymin;
+        g_y_max = tymax;
+        g_y_3rd = ty3rd;
     }
 #endif
     return;
@@ -124,22 +125,22 @@ void cvtcentermagbf(bf_t Xctr, bf_t Yctr, LDBL *Magnification, double *Xmagfacto
     saved = save_stack();
 
     // simple normal case first
-    // if (xx3rd == xxmin && yy3rd == yymin)
+    // if (g_x_3rd == g_x_min && g_y_3rd == g_y_min)
     if (!cmp_bf(g_bf_x_3rd, g_bf_x_min) && !cmp_bf(g_bf_y_3rd, g_bf_y_min))
     {
         // no rotation or skewing, but stretching is allowed
         bfWidth  = alloc_stack(bflength+2);
         bf_t bfHeight = alloc_stack(bflength+2);
-        // Width  = xxmax - xxmin;
+        // Width  = g_x_max - g_x_min;
         sub_bf(bfWidth, g_bf_x_max, g_bf_x_min);
         LDBL Width = bftofloat(bfWidth);
-        // Height = yymax - yymin;
+        // Height = g_y_max - g_y_min;
         sub_bf(bfHeight, g_bf_y_max, g_bf_y_min);
         Height = bftofloat(bfHeight);
-        // *Xctr = (xxmin + xxmax)/2;
+        // *Xctr = (g_x_min + g_x_max)/2;
         add_bf(Xctr, g_bf_x_min, g_bf_x_max);
         half_a_bf(Xctr);
-        // *Yctr = (yymin + yymax)/2;
+        // *Yctr = (g_y_min + g_y_max)/2;
         add_bf(Yctr, g_bf_y_min, g_bf_y_max);
         half_a_bf(Yctr);
         *Magnification  = 2/Height;
@@ -156,19 +157,19 @@ void cvtcentermagbf(bf_t Xctr, bf_t Yctr, LDBL *Magnification, double *Xmagfacto
         // side a = bottom, b = left, c = diagonal not containing (x3rd,y3rd)
         // IMPORTANT: convert from bf AFTER subtracting
 
-        // tmpx = xxmax - xxmin;
+        // tmpx = g_x_max - g_x_min;
         sub_bf(bftmpx, g_bf_x_max, g_bf_x_min);
         LDBL tmpx1 = bftofloat(bftmpx);
-        // tmpy = yymax - yymin;
+        // tmpy = g_y_max - g_y_min;
         sub_bf(bftmpy, g_bf_y_max, g_bf_y_min);
         LDBL tmpy1 = bftofloat(bftmpy);
         LDBL c2 = tmpx1*tmpx1 + tmpy1*tmpy1;
 
-        // tmpx = xxmax - xx3rd;
+        // tmpx = g_x_max - g_x_3rd;
         sub_bf(bftmpx, g_bf_x_max, g_bf_x_3rd);
         tmpx1 = bftofloat(bftmpx);
 
-        // tmpy = yymin - yy3rd;
+        // tmpy = g_y_min - g_y_3rd;
         sub_bf(bftmpy, g_bf_y_min, g_bf_y_3rd);
         tmpy1 = bftofloat(bftmpy);
         LDBL a2 = tmpx1*tmpx1 + tmpy1*tmpy1;
@@ -184,10 +185,10 @@ void cvtcentermagbf(bf_t Xctr, bf_t Yctr, LDBL *Magnification, double *Xmagfacto
         }
         *Rotation = (double)(-rad_to_deg(std::atan2((double)tmpy, signx)));   // negative for image rotation
 
-        // tmpx = xxmin - xx3rd;
+        // tmpx = g_x_min - g_x_3rd;
         sub_bf(bftmpx, g_bf_x_min, g_bf_x_3rd);
         LDBL tmpx2 = bftofloat(bftmpx);
-        // tmpy = yymax - yy3rd;
+        // tmpy = g_y_max - g_y_3rd;
         sub_bf(bftmpy, g_bf_y_max, g_bf_y_3rd);
         LDBL tmpy2 = bftofloat(bftmpy);
         LDBL b2 = tmpx2*tmpx2 + tmpy2*tmpy2;
@@ -197,10 +198,10 @@ void cvtcentermagbf(bf_t Xctr, bf_t Yctr, LDBL *Magnification, double *Xmagfacto
         *Skew = 90 - rad_to_deg(tmpa);
 
         // these are the only two variables that must use big precision
-        // *Xctr = (xxmin + xxmax)/2;
+        // *Xctr = (g_x_min + g_x_max)/2;
         add_bf(Xctr, g_bf_x_min, g_bf_x_max);
         half_a_bf(Xctr);
-        // *Yctr = (yymin + yymax)/2;
+        // *Yctr = (g_y_min + g_y_max)/2;
         add_bf(Yctr, g_bf_y_min, g_bf_y_max);
         half_a_bf(Yctr);
 

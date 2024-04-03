@@ -2166,7 +2166,7 @@ static void
 x11_write_pixel(Driver *drv, int x, int y, int color)
 {
     DIX11(drv);
-#ifdef DEBUG // Debugging checks
+#ifndef NDEBUG // Debugging checks
     if (color >= g_colors || color < 0)
     {
         std::printf("Color %d too big %d\n", color, g_colors);

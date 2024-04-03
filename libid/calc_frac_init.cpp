@@ -77,7 +77,7 @@ static int getprecdbl(int rezflag)
     }
     if (del1 == 0)
     {
-#ifdef DEBUG
+#ifndef NDEBUG
         showcornersdbl("getprecdbl");
 #endif
         return -1;
