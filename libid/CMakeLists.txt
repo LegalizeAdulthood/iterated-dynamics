@@ -348,7 +348,6 @@ source_group("Header Files/IO" FILES
     include/get_video_mode.h
     include/gif_file.h
     include/gifview.h
-    include/id_io.h
     include/loadfile.h
     include/loadmap.h
     include/parser.h
@@ -407,10 +406,10 @@ source_group("Header Files/plumbing" FILES
     include/get_color.h
     include/get_disk_space.h
     include/get_line.h
-    include/id_io.h
     include/init_failure.h
     include/memory.h
     include/os.h
+    include/out_line.h
     include/prototyp.h
     include/put_color_a.h
     include/read_ticker.h
