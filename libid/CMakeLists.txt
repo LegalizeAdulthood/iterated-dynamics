@@ -329,6 +329,7 @@ source_group("Source Files/fractal specific" FILES
 )
 source_group("Header Files/IO" FILES
     include/cmdfiles.h
+    include/comments.h
     include/decode_info.h
     include/decoder.h
     include/diskvid.h
@@ -350,6 +351,7 @@ source_group("Header Files/IO" FILES
 )
 source_group("Source Files/IO" FILES
     cmdfiles.cpp
+    comments.cpp
     decode_info.cpp
     decoder.cpp
     diskvid.cpp
@@ -410,7 +412,6 @@ source_group("Header Files/ui" FILES
     include/check_orbit_name.h
     include/check_write_file.h
     include/choice_builder.h
-    include/comments.h
     include/convert_center_mag.h
     include/convert_corners.h
     include/dir_file.h
@@ -498,7 +499,6 @@ source_group("Source Files/ui" FILES
     check_key.cpp
     check_orbit_name.cpp
     check_write_file.cpp
-    comments.cpp
     convert_center_mag.cpp
     convert_corners.cpp
     dir_file.cpp
