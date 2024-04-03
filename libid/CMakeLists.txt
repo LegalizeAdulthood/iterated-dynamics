@@ -12,6 +12,8 @@ add_library(libid
     calcfrac.cpp include/calcfrac.h
     calcmand.cpp include/calcmand.h
     calmanfp.cpp include/calmanfp.h
+    convert_center_mag.cpp include/convert_center_mag.h
+    convert_corners.cpp include/convert_corners.h
     fracsuba.cpp include/fracsuba.h
     fractalb.cpp include/fractalb.h
     fractalp.cpp include/fractalp.h
@@ -101,8 +103,6 @@ add_library(libid
     check_orbit_name.cpp include/check_orbit_name.h
     check_write_file.cpp include/check_write_file.h
     comments.cpp include/comments.h
-    convert_center_mag.cpp include/convert_center_mag.h
-    convert_corners.cpp include/convert_corners.h
     include/choice_builder.h
     dir_file.cpp include/dir_file.h
     double_to_string.cpp include/double_to_string.h
@@ -220,6 +220,8 @@ source_group("Header Files/engine" FILES
     include/calcfrac.h
     include/calcmand.h
     include/calmanfp.h
+    include/convert_center_mag.h
+    include/convert_corners.h
     include/fracsuba.h
     include/fractalb.h
     include/fractalp.h
@@ -245,6 +247,8 @@ source_group("Source Files/engine" FILES
     calcfrac.cpp
     calcmand.cpp
     calmanfp.cpp
+    convert_center_mag.cpp
+    convert_corners.cpp
     fracsuba.cpp
     fractalb.cpp
     fractalp.cpp
@@ -412,8 +416,6 @@ source_group("Header Files/ui" FILES
     include/check_orbit_name.h
     include/check_write_file.h
     include/choice_builder.h
-    include/convert_center_mag.h
-    include/convert_corners.h
     include/dir_file.h
     include/double_to_string.h
     include/ends_with_slash.h
@@ -499,8 +501,6 @@ source_group("Source Files/ui" FILES
     check_key.cpp
     check_orbit_name.cpp
     check_write_file.cpp
-    convert_center_mag.cpp
-    convert_corners.cpp
     dir_file.cpp
     double_to_string.cpp
     ends_with_slash.cpp
