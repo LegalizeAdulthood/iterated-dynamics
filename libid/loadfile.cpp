@@ -129,13 +129,13 @@ struct dblcoords
 
 } // namespace
 
-static int  find_fractal_info(char const *gif_file, FRACTAL_INFO *info,
-                             ext_blk_2 *blk_2_info,
-                             ext_blk_3 *blk_3_info,
-                             ext_blk_4 *blk_4_info,
-                             ext_blk_5 *blk_5_info,
-                             ext_blk_6 *blk_6_info,
-                             ext_blk_7 *blk_7_info);
+static int  find_fractal_info(const std::string &gif_file, FRACTAL_INFO *info,
+    ext_blk_2 *blk_2_info,
+    ext_blk_3 *blk_3_info,
+    ext_blk_4 *blk_4_info,
+    ext_blk_5 *blk_5_info,
+    ext_blk_6 *blk_6_info,
+    ext_blk_7 *blk_7_info);
 static void load_ext_blk(char *loadptr, int loadlen);
 static void skip_ext_blk(int *, int *);
 static void backwardscompat(FRACTAL_INFO *info);
@@ -347,9 +347,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
     }
 
     if (find_fractal_info(
-        g_read_filename.c_str(),
-        &read_info, &blk_2_info, &blk_3_info,
-        &blk_4_info, &blk_5_info, &blk_6_info, &blk_7_info))
+            g_read_filename, &read_info, &blk_2_info, &blk_3_info, &blk_4_info, &blk_5_info, &blk_6_info, &blk_7_info))
     {
         // didn't find a useable file
         std::snprintf(msg, std::size(msg), "Sorry, %s isn't a file I can decode.", g_read_filename.c_str());
@@ -898,14 +896,14 @@ inline void freader(void *ptr, size_t size, size_t nmemb, std::FILE *stream)
 }
 
 
-static int find_fractal_info(char const *gif_file, //
-    FRACTAL_INFO *info,                            //
-    ext_blk_2 *blk_2_info,                         //
-    ext_blk_3 *blk_3_info,                         //
-    ext_blk_4 *blk_4_info,                         //
-    ext_blk_5 *blk_5_info,                         //
-    ext_blk_6 *blk_6_info,                         //
-    ext_blk_7 *blk_7_info)                         //
+static int find_fractal_info(const std::string &gif_file, //
+    FRACTAL_INFO *info,                                   //
+    ext_blk_2 *blk_2_info,                                //
+    ext_blk_3 *blk_3_info,                                //
+    ext_blk_4 *blk_4_info,                                //
+    ext_blk_5 *blk_5_info,                                //
+    ext_blk_6 *blk_6_info,                                //
+    ext_blk_7 *blk_7_info)                                //
 {
     BYTE gifstart[18];
     char temp1[81];
@@ -924,7 +922,7 @@ static int find_fractal_info(char const *gif_file, //
     blk_6_info->got_data = false;
     blk_7_info->got_data = false;
 
-    fp = std::fopen(gif_file, "rb");
+    fp = std::fopen(gif_file.c_str(), "rb");
     if (fp == nullptr)
     {
         return -1;
@@ -1622,13 +1620,13 @@ rescan:  // entry for changed browse parms
         ext_blk_5 blk_5_info;
         ext_blk_6 blk_6_info;
         ext_blk_7 blk_7_info;
-        if (!find_fractal_info(tmpmask, &read_info, &blk_2_info, &blk_3_info,
-                &blk_4_info, &blk_5_info, &blk_6_info, &blk_7_info)
-            && (typeOK(&read_info, &blk_3_info) || !g_browse_check_fractal_type)
-            && (paramsOK(&read_info) || !g_browse_check_fractal_params)
-            && stricmp(g_browse_name.c_str(), DTA.filename.c_str()) != 0
-            && !blk_6_info.got_data
-            && is_visible_window(&winlist, &read_info, &blk_5_info))
+        if (!find_fractal_info(
+                tmpmask, &read_info, &blk_2_info, &blk_3_info, &blk_4_info, &blk_5_info, &blk_6_info, &blk_7_info) //
+            && (typeOK(&read_info, &blk_3_info) || !g_browse_check_fractal_type)                                   //
+            && (paramsOK(&read_info) || !g_browse_check_fractal_params)                                            //
+            && stricmp(g_browse_name.c_str(), DTA.filename.c_str()) != 0                                           //
+            && !blk_6_info.got_data                                                                                //
+            && is_visible_window(&winlist, &read_info, &blk_5_info))                                               //
         {
             winlist.name = DTA.filename;
             drawindow(color_of_box, &winlist);
