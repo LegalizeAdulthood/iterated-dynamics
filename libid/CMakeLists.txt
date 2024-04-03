@@ -222,6 +222,7 @@ source_group("Header Files/engine" FILES
     include/calmanfp.h
     include/convert_center_mag.h
     include/convert_corners.h
+    include/engine_timer.h
     include/fracsuba.h
     include/fractalb.h
     include/fractalp.h
@@ -249,6 +250,7 @@ source_group("Source Files/engine" FILES
     calmanfp.cpp
     convert_center_mag.cpp
     convert_corners.cpp
+    engine_timer.cpp
     fracsuba.cpp
     fractalb.cpp
     fractalp.cpp
@@ -278,6 +280,7 @@ source_group("Header Files/fractal specific" FILES
     include/hypercomplex_mandelbrot.h
     include/ifs.h
     include/jb.h
+    include/jiim.h
     include/lambda_fn.h
     include/lorenz.h
     include/lsys.h
@@ -311,6 +314,7 @@ source_group("Source Files/fractal specific" FILES
     hypercomplex_mandelbrot.cpp
     ifs.cpp
     jb.cpp
+    jiim.cpp
     lambda_fn.cpp
     lorenz.cpp
     lsys.cpp
@@ -419,7 +423,6 @@ source_group("Header Files/ui" FILES
     include/dir_file.h
     include/double_to_string.h
     include/ends_with_slash.h
-    include/engine_timer.h
     include/evolver_menu_switch.h
     include/expand_dirname.h
     include/extract_filename.h
@@ -462,7 +465,6 @@ source_group("Header Files/ui" FILES
     include/input_field.h
     include/intro.h
     include/is_directory.h
-    include/jiim.h
     include/load_config.h
     include/load_entry_text.h
     include/load_params.h
@@ -504,7 +506,6 @@ source_group("Source Files/ui" FILES
     dir_file.cpp
     double_to_string.cpp
     ends_with_slash.cpp
-    engine_timer.cpp
     evolver_menu_switch.cpp
     expand_dirname.cpp
     field_prompt.cpp
@@ -543,7 +544,6 @@ source_group("Source Files/ui" FILES
     id_main.cpp
     input_field.cpp
     intro.cpp
-    jiim.cpp
     load_config.cpp
     load_entry_text.cpp
     load_params.cpp
