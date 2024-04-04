@@ -1,10 +1,12 @@
 /*
-FRACTALS.C, FRACTALP.C and CALCFRAC.C actually calculate the fractal
-images (well, SOMEBODY had to do it!).  The modules are set up so that
-all logic that is independent of any fractal-specific code is in
-CALCFRAC.C, the code that IS fractal-specific is in FRACTALS.C, and the
-structure that ties (we hope!) everything together is in FRACTALP.C.
-Original author Tim Wegner, but just about ALL the authors have
+Actually calculate the fractal images (well, SOMEBODY had to do it!).
+
+The modules are set up so that all logic that is independent of any
+fractal-specific code is in calcfrac, the code that IS fractal-specific
+is in fractals, and the structure that ties (we hope!) everything together
+is in fractalp.
+
+Original author is Tim Wegner, but just about ALL the authors have
 contributed SOME code to this routine at one time or another, or
 contributed to one of the many massive restructurings.
 
