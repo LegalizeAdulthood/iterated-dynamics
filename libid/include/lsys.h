@@ -1,6 +1,5 @@
-/* lsys.h
- *      Header file for L-system code.
- */
+//      Header file for L-system code.
+//
 #pragma once
 
 #include "id.h"

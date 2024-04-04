@@ -1,4 +1,3 @@
-// id.h - common structures and values for the FRACTINT routines
 #pragma once
 
 // these are used to declare arrays for file names

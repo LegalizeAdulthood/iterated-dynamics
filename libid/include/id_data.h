@@ -1,5 +1,4 @@
-#if !defined(ID_DATA_H)
-#define ID_DATA_H
+#pragma once
 
 #include "port.h"
 
@@ -122,5 +121,3 @@ extern double                g_zoom_box_width;
 extern double                g_zoom_box_x;
 extern double                g_zoom_box_y;
 extern bool                  g_zoom_off;
-
-#endif
