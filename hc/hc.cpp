@@ -1,5 +1,5 @@
 /*
- * Stand-alone FRACTINT help compiler.  Compile in the COMPACT memory model.
+ * Stand-alone help compiler.
  *
  * See help-compiler.txt for source file syntax.
  *
