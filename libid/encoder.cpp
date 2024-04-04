@@ -1,5 +1,5 @@
 //
-//      encoder.c - GIF Encoder and associated routines
+//      GIF Encoder and associated routines
 //
 #include "encoder.h"
 
