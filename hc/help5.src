@@ -3649,11 +3649,12 @@ Version 1.0, 9/88
 ;
 ; FRACTINT intro screen primary authors
 ;
- Primary Authors (current version)
- Timothy Wegner       twegner AT fractint.org
- Jonathan Osuch       josuch AT fractint.org
- Contributing Authors
- ; room for 15 authors at a time here
+ Primary Author (current version)
+ Richard Thomson      legalize AT xmission.com
+ Legacy FRACTINT Primary Authors
+ Timothy Wegner       Jonathan Osuch
+ The Giants on Whose Shoulders We Stand
+; room for 14 authors at a time here
 
 
 
@@ -3670,8 +3671,8 @@ Version 1.0, 9/88
 
 
  SPACEBAR toggles scrolling off/on
-   Copyright (C) 1990-2006 The Stone Soup Group.  Fractint may be freely copied
-   and distributed but may not be sold.  See help for more information.
+   Copyright (C) 2024 Richard Thomson. Iterated Dynamics may be freely copied
+   and distributed, but may not be sold.    See help for more information.
 ;
 ;
 ;
