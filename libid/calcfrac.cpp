@@ -1,14 +1,14 @@
 //
-// CALCFRAC.C contains the high level ("engine") code for calculating the
+// Contains the high level ("engine") code for calculating the
 // fractal images (well, SOMEBODY had to do it!).
-// The following modules work very closely with CALCFRAC.C:
-//   FRACTALS.C    the fractal-specific code for escape-time fractals.
-//   FRACSUBR.C    assorted subroutines belonging mainly to calcfrac.
-//   CALCMAND.ASM  fast Mandelbrot/Julia integer implementation
-// Additional fractal-specific modules are also invoked from CALCFRAC:
-//   LORENZ.C      engine level and fractal specific code for attractors.
-//   JB.C          julibrot logic
-//   PARSER.C      formula fractals
+// The following modules work very closely with:
+//   - the fractal-specific code for escape-time fractals.
+//   - assorted subroutines belonging mainly to calcfrac.
+//   - fast Mandelbrot/Julia integer implementation
+// Additional fractal-specific modules are also invoked from calcfrac:
+//   - engine level and fractal specific code for attractors.
+//   - julibrot logic
+//   - formula fractals
 //   and more
 //
 #include "calcfrac.h"
