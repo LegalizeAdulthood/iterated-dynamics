@@ -1,6 +1,4 @@
 //
-// editpal.c
-//
 // Edits VGA 256-color palettes.
 //
 //

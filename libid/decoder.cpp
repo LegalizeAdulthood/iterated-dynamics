@@ -1,4 +1,4 @@
-// DECODE.C - An LZW decoder for GIF
+// An LZW decoder for GIF
 // Copyright (C) 1987, by Steven A. Bennett
 //
 // Permission is given by the author to freely redistribute and include
