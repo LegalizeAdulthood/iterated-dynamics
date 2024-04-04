@@ -1,6 +1,4 @@
 /*
- * JIIM.C
- *
  * Generates Inverse Julia in real time, lets move a cursor which determines
  * the J-set.
  *
