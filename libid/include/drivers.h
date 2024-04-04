@@ -168,7 +168,7 @@ struct Driver
   }
 /* Define the drivers to be included in the compilation:
     HAVE_CURSES_DRIVER      Curses based disk driver
-    HAVE_X11_DRIVER         XFractint code path
+    HAVE_X11_DRIVER         X11 code path
     HAVE_GDI_DRIVER         Win32 GDI driver
     HAVE_WIN32_DISK_DRIVER  Win32 disk driver
 */
