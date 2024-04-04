@@ -1,4 +1,4 @@
-/* Parser.c (C) 1990, Mark C. Peterson, CompuServe [70441,3353]
+/* (C) 1990, Mark C. Peterson, CompuServe [70441,3353]
    All rights reserved.
 
    Code may be used in any program provided the author is credited

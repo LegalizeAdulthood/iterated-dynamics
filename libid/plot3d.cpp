@@ -1,6 +1,6 @@
 /*
     This file includes miscellaneous plot functions and logic
-    for 3D, used by lorenz.c and line3d.c
+    for 3D, used by lorenz and line3d
 */
 #include "port.h"
 #include "prototyp.h"

@@ -1,7 +1,5 @@
-// PARSERFP.C  -- Part of FRACTINT fractal drawer.
-
 // Fast floating-point parser code.  The functions beginning with
-//    "fStk" are in PARSERA.ASM.  PARSER.C calls this code after
+//    "fStk" are in parsera.asm.  Parser functions call this code after
 //    it has parsed the formula.
 
 //   Converts the function pointers/load pointers/store pointers
@@ -9,8 +7,8 @@
 //       pointer/operand pointer pairs.
 
 //   Also generates executable code in memory.
-//       Define the varible COMPILER to generate executable code.
-//       COMPILER must also be defined in PARSERA.ASM.
+//       Define the variable COMPILER to generate executable code.
+//       COMPILER must also be defined in parsera.asm.
 
 // *******************************************************************
 //
