@@ -1,10 +1,7 @@
 /*
-    loadfdos.c - subroutine of loadfile.c (read_overlay) which sets
-                 up video (mode, screen size).
-    This module is linked as an overlay, should only be called from loadfile.c
+    subroutine of which sets up video (mode, screen size).
 
-    This code was split to a separate module to isolate the DOS only aspects
-    of loading an image.  get_video_mode should return with:
+    get_video_mode should return with:
       return code 0 for ok, -1 for error or cancelled by user
       video parameters setup for the mainline, in the dos case this means
         setting g_init_mode to video mode, based on this fractint.c will set up
@@ -14,18 +11,6 @@
         viewydots, and finalaspectratio
       set skipxdots and skipydots, to 0 if all pixels are to be loaded,
         to 1 for every 2nd pixel, 2 for every 3rd, etc
-
-    In WinFract, at least initially, get_video_mode can do just the
-    following:
-      set overall image x & y dimensions (sxdots and sydots) to filexdots
-        and fileydots (note that filecolors is the number of colors in the
-        gif, not sure if that is of any use...)
-      if current window smaller than new sxdots and sydots, use scroll bars,
-        if larger perhaps reduce the window size? whatever
-      set viewwindow to false (no need? it always is for now in windows vsn?)
-      set finalaspectratio to .75 (ditto?)
-      set skipxdots and skipydots to 0
-      return 0
 
 */
 #include "port.h"
