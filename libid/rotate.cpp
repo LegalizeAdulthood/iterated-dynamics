@@ -1,5 +1,5 @@
 /*
-    rotate.c - Routines that manipulate the Video DAC on VGA Adapters
+    Routines that manipulate the Video DAC on VGA Adapters
 */
 #include "port.h"
 #include "prototyp.h"
