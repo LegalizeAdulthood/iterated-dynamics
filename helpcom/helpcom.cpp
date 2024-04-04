@@ -1,7 +1,5 @@
 /*
- * helpcom.cpp
- *
- * Common code for hc.cpp and help.cpp
+ * Common help code
  *
  */
 #include "port.h"

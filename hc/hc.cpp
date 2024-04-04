@@ -1,6 +1,4 @@
 /*
- * hc.c
- *
  * Stand-alone FRACTINT help compiler.  Compile in the COMPACT memory model.
  *
  * See help-compiler.txt for source file syntax.

@@ -1,7 +1,5 @@
 /*
- * helpcom.h
- *
- * Common #defines, structures and code for HC.C and HELP.C
+ * Common #defines, structures and code for help functions
  *
  */
 #pragma once
