@@ -1,5 +1,5 @@
 /*
-    zoom.c - routines for zoombox manipulation and for panning
+    routines for zoombox manipulation and for panning
 
 */
 #include "port.h"

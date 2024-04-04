@@ -1,6 +1,6 @@
 /*
-FRACSUBR.C contains subroutines which belong primarily to CALCFRAC.C and
-FRACTALS.C, i.e. which are non-fractal-specific fractal engine subroutines.
+subroutines which belong primarily to calcfrac and
+fractals, i.e. which are non-fractal-specific fractal engine subroutines.
 */
 #include "port.h"
 #include "prototyp.h"
