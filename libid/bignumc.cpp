@@ -1,4 +1,4 @@
-// bignumc.c - C routines equivalent to ASM routines in bignuma.asm
+// C routines equivalent to ASM routines in bignuma.asm
 
 /*
 Wesley Loewer's Big Numbers.        (C) 1994-95, Wesley B. Loewer

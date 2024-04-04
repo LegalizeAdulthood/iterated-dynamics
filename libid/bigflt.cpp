@@ -1,4 +1,4 @@
-// bigflt.c - C routines for big floating point numbers
+// C routines for big floating point numbers
 
 /*
 Wesley Loewer's Big Numbers.        (C) 1994-95, Wesley B. Loewer

@@ -1,4 +1,4 @@
-// biginit.c - C routines for bignumbers
+// C routines for bignumbers
 
 /*
 Note: This is NOT the biginit.c file that come the standard BigNum library,

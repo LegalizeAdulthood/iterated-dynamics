@@ -1,4 +1,4 @@
-// bignum.c - C routines for bignumbers
+// C routines for bignumbers
 
 /*
 Wesley Loewer's Big Numbers.        (C) 1994-95, Wesley B. Loewer
