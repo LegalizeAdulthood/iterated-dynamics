@@ -14,7 +14,7 @@ enum class variations
     NUM             // number of variation schemes
 };
 
-// smallest part of a fractint 'gene'
+// smallest part of a fractal 'gene'
 struct GENEBASE
 {
     void *addr;             // address of variable to be referenced
