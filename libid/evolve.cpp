@@ -166,9 +166,9 @@ void copy_genes_to_bank(GENEBASE const gene[NUM_GENES])
 }
 
 // set up pointers and mutation params for all usable image
-// control variables in fractint... revise as necessary when
+// control variables... revise as necessary when
 // new vars come along... don't forget to increment NUM_GENES
-// (in id.h) as well
+// as well
 void initgene()
 {
     //                        Use only 15 letters below: 123456789012345
@@ -428,7 +428,7 @@ void varyinv(GENEBASE gene[], int randval, int i)
 
 // ---------------------------------------------------------------------
 //
-//  get_evolve_params() is called from FRACTINT.C whenever the 'ctrl_e' key
+//  get_evolve_params() is called whenever the 'ctrl_e' key
 //  is pressed.  Return codes are:
 //    -1  routine was ESCAPEd - no need to re-generate the images
 //     0  minor variable changed.  No need to re-generate the image.

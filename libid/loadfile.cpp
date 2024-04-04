@@ -980,7 +980,7 @@ static int find_fractal_info(const std::string &gif_file, //
            1 byte    '!', extension block identifier
            1 byte    extension block number, 255
            1 byte    length of id, 11
-          11 bytes   alpha id, "fractintnnn" with fractint, nnn is secondary id
+          11 bytes   alpha id, "fractintNNN" with fractint, NNN is secondary id
         n * {
            1 byte    length of block info in bytes
            x bytes   block info

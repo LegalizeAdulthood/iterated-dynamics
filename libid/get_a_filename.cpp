@@ -58,7 +58,7 @@ bool getafilename(char const *hdg, char const *file_template, char *flname)
     int rds;  // if getting an RDS image map
     char instr[80];
     int masklen;
-    char filename[FILE_MAX_PATH]; // 13 is big enough for Fractint, but not Xfractint
+    char filename[FILE_MAX_PATH];
     char speedstr[81];
     char tmpmask[FILE_MAX_PATH];   // used to locate next file in list
     char old_flname[FILE_MAX_PATH];

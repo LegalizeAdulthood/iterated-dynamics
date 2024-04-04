@@ -13,7 +13,7 @@ static_assert(sizeof(float) == 4, "sizeof(float) != 4");
 static_assert(sizeof(double) == 8, "sizeof(double) != 8");
 
 // The size of these structures must remain fixed in order to maintain
-// compatibility with the binary blobs written into files by FRACTINT.
+// compatibility with the binary blobs written into GIF files.
 //
 // TODO: verify that size of binary EVOLUTION_INFO blob is 200; DOS code reported size of 208.
 //

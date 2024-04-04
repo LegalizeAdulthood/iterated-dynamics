@@ -42,7 +42,7 @@ static void   adjust_to_limitsbf(double expand);
 static void   smallest_add_bf(bf_t num);
 
 /* This function calculates the precision needed to distinguish adjacent
-   pixels at Fractint's maximum resolution of MAX_PIXELS by MAX_PIXELS
+   pixels at the maximum resolution of MAX_PIXELS by MAX_PIXELS
    (if rez==MAXREZ) or at current resolution (if rez==CURRENTREZ)    */
 static int getprecdbl(int rezflag)
 {

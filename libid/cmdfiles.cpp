@@ -240,7 +240,7 @@ BYTE g_text_color[] =
 
 // cmdfiles(argc,argv) process the command-line arguments
 // it also processes the 'sstools.ini' file and any
-// indirect files ('fractint @myfile')
+// indirect files ('id @myfile')
 
 // This probably ought to go somewhere else, but it's used here.
 // getpower10(x) returns the magnitude of x.  This rounds

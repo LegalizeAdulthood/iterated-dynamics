@@ -60,10 +60,10 @@ static void setup_save_info(FRACTAL_INFO *save_info);
 //
 // The compression logic in this file has been replaced by the classic
 // UNIX compress code. We have extensively modified the sources to fit
-// Fractint's needs, but have left the original credits where they
+// our needs, but have left the original credits where they
 // appear. Thanks to the original authors for making available these
 // classic and reliable sources. Of course, they are not responsible for
-// all the changes we have made to integrate their sources into Fractint.
+// all the changes we have made to integrate their sources into this program.
 //
 // MEMORY ALLOCATION
 //
@@ -997,7 +997,7 @@ static void setup_save_info(FRACTAL_INFO *save_info)
 //
 //  Lempel-Ziv compression based on 'compress'.  GIF modifications by
 //  David Rowley (mgardi@watdcsu.waterloo.edu).
-//  Thoroughly massaged by the Stone Soup team for Fractint's purposes.
+//  Thoroughly massaged by the Stone Soup team for our purposes.
 //
 //
 

@@ -40,7 +40,7 @@ int getprecbf_mag()
 }
 
 /* This function calculates the precision needed to distiguish adjacent
-   pixels at Fractint's maximum resolution of MAX_PIXELS by MAX_PIXELS
+   pixels at maximum resolution of MAX_PIXELS by MAX_PIXELS
    (if rez==MAXREZ) or at current resolution (if rez==CURRENTREZ)    */
 int getprecbf(int rezflag)
 {

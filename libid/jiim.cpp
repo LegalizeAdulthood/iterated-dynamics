@@ -462,10 +462,6 @@ static void RestoreRect(int x, int y, int width, int depth)
     Cursor_Show();
 }
 
-/*
- * interface to FRACTINT
- */
-
 DComplex g_save_c = {-3000.0, -3000.0};
 
 void Jiim(jiim_types which)

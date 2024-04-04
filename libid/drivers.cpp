@@ -8,7 +8,7 @@ extern Driver *x11_driver;
 extern Driver *gdi_driver;
 extern Driver *disk_driver;
 
-// list of drivers that are supported by source code in fractint
+// list of drivers that are supported by source code in Id.
 // default driver is first one in the list that initializes.
 #define MAX_DRIVERS 10
 static int num_drivers = 0;

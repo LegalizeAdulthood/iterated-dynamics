@@ -144,7 +144,7 @@ void load_config()
             g_bad_config = config_status::BAD_NO_MESSAGE;
             return;
         }
-        g_cfg_line_nums[g_video_table_len] = linenum; // for update_fractint_cfg
+        g_cfg_line_nums[g_video_table_len] = linenum; // for update_id_cfg
 
         std::memset(&vident, 0, sizeof(vident));
         std::strncpy(&vident.name[0], fields[0], std::size(vident.name));

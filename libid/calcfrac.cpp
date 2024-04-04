@@ -684,8 +684,8 @@ int calcfract()
     g_log_map_table.clear();
     g_log_map_table_max_size = g_max_iterations;
     g_log_map_calculate = false;
-    // below, INT_MAX = 32767 only when an integer is two bytes.  Which is not true for Xfractint.
-    // Since 32767 is what was meant, replaced the instances of INT_MAX with 32767.
+    // below, 32767 is used as the allowed value for maximum iteration count for
+    // historical reasons.  TODO: increase this limit
     if (g_log_map_flag
         && ((g_max_iterations > 32767) || g_log_map_fly_calculate == 1))
     {
@@ -3186,7 +3186,7 @@ static void decomposition()
 // Reference: Science of Fractal Images p. 190.
 // Special thanks to Mark Peterson for his "MtMand" program that
 // beautifully approximates plate 25 (same reference) and spurred
-// on the inclusion of similar capabilities in FRACTINT.
+// on the inclusion of similar capabilities.
 //
 // The purpose of this function is to calculate a color value
 // for a fractal that varies continuously with the screen pixels

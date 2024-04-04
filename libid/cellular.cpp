@@ -261,7 +261,7 @@ int cellular()
         return -1;
     }
 
-    // nxtscreenflag toggled by space bar in fractint.c, true for continuous
+    // nxtscreenflag toggled by space bar, true for continuous
     // false to stop on next screen
 
     filled = 0;

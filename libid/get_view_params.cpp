@@ -24,7 +24,7 @@
 
 // ---------------------------------------------------------------------
 /*
-    get_view_params() is called from FRACTINT.C whenever the 'v' key
+    get_view_params() is called whenever the 'v' key
     is pressed.  Return codes are:
         -1  routine was ESCAPEd - no need to re-generate the image.
          0  minor variable changed.  No need to re-generate the image.

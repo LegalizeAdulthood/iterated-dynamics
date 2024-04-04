@@ -14,7 +14,7 @@
 // which is similar, structurally, to the original routine by Steve Wilhite.
 // It is, however, somewhat noticeably faster in most cases.
 //
-// This routine was modified for use in FRACTINT.
+// This routine was modified for use here.
 //
 #include "decoder.h"
 

@@ -31,8 +31,6 @@
 #include <system_error>
 #include <vector>
 
-// see Fractint.c for a description of the "include"  hierarchy
-//
 // misc. #defines
 //
 
@@ -63,7 +61,6 @@ bool editpal_cursor = false;
 #endif
 
 
-// Stuff from fractint
 bool g_using_jiim = false;
 
 // basic data types
@@ -84,7 +81,7 @@ static bool inverse = false;
 static float    gamma_val = 1;
 
 
-// Interface to FRACTINT's graphics stuff
+// Interface to graphics stuff
 
 static void setpal(int pal, int r, int g, int b)
 {

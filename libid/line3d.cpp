@@ -197,7 +197,7 @@ int line3d(BYTE * pixels, unsigned linelen)
         normalplot = T_clipcolor;
         g_plot = normalplot;          // Use transparent plot function
     }
-    else                            // Use the usual FRACTINT plot function with clipping
+    else                            // Use the usual plot function with clipping
     {
         normalplot = clipcolor;
         g_plot = normalplot;
@@ -1936,7 +1936,7 @@ static int H_R(BYTE *R, BYTE *G, BYTE *B, unsigned long H, unsigned long S, unsi
 //******************************************************************
 //
 //  This routine writes a header to a ray tracer data file. It
-//  Identifies the version of FRACTINT which created it an the
+//  Identifies the version of Iterated Dynamics which created it and the
 //  key 3D parameters in effect at the time.
 //
 //******************************************************************

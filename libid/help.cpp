@@ -85,8 +85,6 @@ struct help_sig_info
 void print_document(char const *outfname, bool (*msg_func)(int, int), int save_extraseg);
 static bool print_doc_msg_func(int pnum, int num_pages);
 
-// stuff from fractint
-
 static std::FILE *help_file = nullptr;       // help file handle
 static long base_off;                   // offset to help info in help file
 static int max_links;                   // max # of links in any page
