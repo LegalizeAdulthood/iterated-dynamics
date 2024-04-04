@@ -31,7 +31,7 @@ void x11_frame_window::initialize(Display *dpy,
         InputOutput, CopyFromParent,
         CWBackPixel | CWBitGravity | CWBackingStore, &attrs);
     assert(window_ != 0);
-    XStoreName(dpy, window_, "xfractint");
+    XStoreName(dpy, window_, "id");
     unsigned long event_mask = KeyPressMask | KeyReleaseMask | ExposureMask
         | ButtonPressMask | ButtonReleaseMask | PointerMotionMask;
     XSelectInput(dpy, window_, event_mask);

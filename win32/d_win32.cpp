@@ -1,6 +1,6 @@
 /* d_win32.c
  *
- * Routines for a Win32 GDI driver for fractint.
+ * Routines for a Win32 GDI driver for id.
  */
 #include "port.h"
 
@@ -129,7 +129,7 @@ win32_terminate(Driver *drv)
 */
 bool win32_init(Driver *drv, int *argc, char **argv)
 {
-    LPCSTR title = "FractInt for Windows";
+    LPCSTR title = "Iterated Dynamics for Windows";
     DI(di);
 
     ODS("win32_init");

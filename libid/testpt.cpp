@@ -3,7 +3,7 @@
 Write your fractal program here. initreal and initimag are the values in
 the complex plane; parm1, and parm2 are paramaters to be entered with the
 "params=" option (if needed). The function should return the color associated
-with initreal and initimag.  FRACTINT will repeatedly call your function with
+with initreal and initimag.  Id will repeatedly call your function with
 the values of initreal and initimag ranging over the rectangle defined by the
 "corners=" option. Assuming your formula is iterative, "maxit" is the maximum
 iteration. If "maxit" is hit, color "inside" should be returned.
@@ -14,7 +14,7 @@ to make it as easy as possible to add fractal types, and this looked like
 the easiest way.
 
 This module is part of an overlay, with calcfrac.c.  The routines in it
-must not be called by any part of Fractint other than calcfrac.
+must not be called by any part of Id other than calcfrac.
 
 The sample code below is a straightforward Mandelbrot routine.
 

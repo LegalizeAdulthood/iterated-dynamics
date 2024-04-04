@@ -1,6 +1,6 @@
 /* d_win32.c
  *
- * Routines for a Win32 GDI driver for fractint.
+ * Routines for a Win32 GDI driver for id.
  */
 #include "port.h"
 
@@ -232,7 +232,7 @@ gdi_get_max_screen(Driver *drv, int *xmax, int *ymax)
 */
 static bool gdi_init(Driver *drv, int *argc, char **argv)
 {
-    LPCSTR title = "FractInt for Windows";
+    LPCSTR title = "Iterated Dynamics for Windows";
     DI(di);
 
     ODS("gdi_init");

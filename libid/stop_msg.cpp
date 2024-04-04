@@ -43,7 +43,7 @@ static void blankrows(int row, int count, int attr)
           when set, "Escape to cancel, any other key to continue..."
           true is returned for cancel, false for continue
        &4 set to suppress buzzer
-       &8 for Fractint for Windows & parser - use a fixed pitch font
+       &8 for parser - use a fixed pitch font
       &16 for info only message (green box instead of red in DOS vsn)
    */
 bool stopmsg(int flags, char const* msg)

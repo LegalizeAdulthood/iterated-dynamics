@@ -110,7 +110,7 @@ long FAR PASCAL wintext_proc(HANDLE, UINT, WPARAM, LPARAM);
 
 static LRESULT CALLBACK wintext_proc(HWND, UINT, WPARAM, LPARAM);
 
-static LPCSTR s_window_class = "FractIntText";
+static LPCSTR s_window_class = "IdText";
 static WinText *g_me = nullptr;
 
 

@@ -1,5 +1,5 @@
 /* Unixscr.c
- * This file contains routines for the Unix port of fractint.
+ * This file contains routines for the Unix port of Id.
  * It uses the current window for text and creates an X window for graphics.
  *
  * This file Copyright 1991 Ken Shirriff.  It may be used according to the
@@ -111,7 +111,7 @@ static int old_fcntl;
 static int doesBacking;
 
 /*
- * The pixtab stuff is so we can map from fractint pixel values 0-n to
+ * The pixtab stuff is so we can map from pixel values 0-n to
  * the actual color table entries which may be anything.
  */
 static int usepixtab = 0;
@@ -355,7 +355,7 @@ initUnixWindow()
         if (size_hints == nullptr)
         {
             std::fprintf(stderr, "Could not allocate memory for X size hints \n");
-            std::fprintf(stderr, "Note: xfractint can run without X in -disk mode\n");
+            std::fprintf(stderr, "Note: id can run without X in -disk mode\n");
             exit(-1);
         }
 
@@ -376,7 +376,7 @@ initUnixWindow()
         if (Xdp == nullptr)
         {
             std::fprintf(stderr, "Could not open display %s\n", Xdisplay);
-            std::fprintf(stderr, "Note: xfractint can run without X in -disk mode\n");
+            std::fprintf(stderr, "Note: id can run without X in -disk mode\n");
             exit(-1);
         }
         Xdscreen = XDefaultScreen(Xdp);
@@ -816,8 +816,8 @@ xcmapstuff()
     }
     /* We must make sure if any color uses position 0, that it is 0.
      * This is so we can clear the image with std::memset.
-     * So, suppose fractint 0 = cmap 42, cmap 0 = fractint 55.
-     * Then want fractint 0 = cmap 0, cmap 42 = fractint 55.
+     * So, suppose id 0 = cmap 42, cmap 0 = fractint 55.
+     * Then want id 0 = cmap 0, cmap 42 = fractint 55.
      * I.e. pixtab[55] = 42, ipixtab[42] = 55.
      */
     if (ipixtab[0] == 999)
@@ -1733,7 +1733,7 @@ static Window pr_dwm_root(Display *dpy, Window pwin)
     }
     else
     {
-        std::printf("xfractint: failed to find root window\n");
+        std::printf("id: failed to find root window\n");
         return RootWindow(dpy, scr);
     }
 }

@@ -21,7 +21,7 @@
 #define PLOT_TIMER_ID 1
 
 static Plot *s_plot = nullptr;
-static LPCSTR s_window_class = "FractIntPlot";
+static LPCSTR s_window_class = "IdPlot";
 
 static const BYTE font_8x8[8][1024/8] =
 {

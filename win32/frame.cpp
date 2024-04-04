@@ -241,7 +241,7 @@ static LRESULT CALLBACK frame_proc(HWND window, UINT message, WPARAM wp, LPARAM 
 
 void frame_init(HINSTANCE instance, LPCSTR title)
 {
-    LPCTSTR windowClass = _T("FractintFrame");
+    LPCTSTR windowClass = _T("IdFrame");
     WNDCLASS  wc;
 
     bool status = GetClassInfo(instance, windowClass, &wc) != 0;
@@ -353,7 +353,7 @@ void frame_window(int width, int height)
     if (nullptr == g_frame.window)
     {
         frame_adjust_size(width, height);
-        g_frame.window = CreateWindow("FractintFrame",
+        g_frame.window = CreateWindow("IdFrame",
                                       g_frame.title,
                                       WS_OVERLAPPEDWINDOW,
                                       CW_USEDEFAULT,               // default horizontal position

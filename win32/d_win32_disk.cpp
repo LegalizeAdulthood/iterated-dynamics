@@ -1,6 +1,6 @@
 /* d_win32_disk.c
  *
- * Routines for a Win32 disk video mode driver for fractint.
+ * Routines for a Win32 disk video mode driver for id.
  */
 #include "port.h"
 
@@ -181,7 +181,7 @@ initdacbox()
 */
 static bool disk_init(Driver *drv, int *argc, char **argv)
 {
-    LPCSTR title = "FractInt for Windows";
+    LPCSTR title = "Iterated Dynamics for Windows";
     DI(di);
 
     frame_init(g_instance, title);

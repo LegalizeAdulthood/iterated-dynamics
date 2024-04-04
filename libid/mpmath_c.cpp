@@ -476,8 +476,6 @@ DComplex ComplexSqrtFloat(double x, double y)
 }
 
 
-//**** FRACTINT specific routines and variables ****
-
 #ifndef TESTING_MATH
 
 std::vector<BYTE> g_log_map_table;

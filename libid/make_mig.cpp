@@ -18,7 +18,7 @@ inline char par_key(unsigned int x)
 
 /* make_mig() takes a collection of individual GIF images (all
    presumably the same resolution and all presumably generated
-   by Fractint and its "divide and conquer" algorithm) and builds
+   by this program and its "divide and conquer" algorithm) and builds
    a single multiple-image GIF out of them.  This routine is
    invoked by the "batch=stitchmode/x/y" option, and is called
    with the 'x' and 'y' parameters

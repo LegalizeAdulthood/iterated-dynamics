@@ -1725,8 +1725,7 @@ static void put_parm_line()
 /*
    Strips zeros from the non-exponent part of a number. This logic
    was originally in put_bf(), but is split into this routine so it can be
-   shared with put_float(), which had a bug in Fractint 19.2 (used to strip
-   zeros from the exponent as well.)
+   shared with put_float().
 */
 
 static void strip_zeros(char *buf)

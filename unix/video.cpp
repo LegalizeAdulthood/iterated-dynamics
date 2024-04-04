@@ -90,7 +90,7 @@ void putstring(int row, int col, int attr, char const *msg);
 */
 
 VIDEOINFO x11_video_table[] = {
-    {   "xfractint mode           ", "                         ",
+    {   "id        mode           ", "                         ",
         999, 0, 0, 0, 0, 19, 640, 480, 256
     },
 };

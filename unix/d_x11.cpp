@@ -1,5 +1,5 @@
 /* Unixscr.c
- * This file contains routines for the Unix port of fractint.
+ * This file contains routines for the Unix port.
  * It uses the current window for text and creates an X window for graphics.
  *
  * This file Copyright 1991 Ken Shirriff.  It may be used according to the
@@ -113,7 +113,7 @@ struct DriverX11
     int doesBacking;
 
     /*
-     * The pixtab stuff is so we can map from fractint pixel values 0-n to
+     * The pixtab stuff is so we can map from pixel values 0-n to
      * the actual color table entries which may be anything.
      */
     bool usepixtab;             // = false;
@@ -684,8 +684,8 @@ xcmapstuff(DriverX11 *di)
     }
     /* We must make sure if any color uses position 0, that it is 0.
      * This is so we can clear the image with std::memset.
-     * So, suppose fractint 0 = cmap 42, cmap 0 = fractint 55.
-     * Then want fractint 0 = cmap 0, cmap 42 = fractint 55.
+     * So, suppose 0 = cmap 42, cmap 0 = fractint 55.
+     * Then want 0 = cmap 0, cmap 42 = fractint 55.
      * I.e. pixtab[55] = 42, ipixtab[42] = 55.
      */
     if (di->ipixtab[0] == 999)
@@ -1010,7 +1010,7 @@ handle_esc(DriverX11 *di)
 
 /* ev_key_press
  *
- * Translate keypress into appropriate fractint character code,
+ * Translate keypress into appropriate character code,
  * according to defines in id.h
  */
 static int
@@ -1453,7 +1453,7 @@ pr_dwmroot(DriverX11 *di, Display *dpy, Window pwin)
     }
     else
     {
-        std::printf("xfractint: failed to find root window\n");
+        std::printf("Id: failed to find root window\n");
         return RootWindow(dpy, di->Xdscreen);
     }
 }
@@ -1878,7 +1878,7 @@ x11_window(Driver *drv)
                                InputOutput, CopyFromParent,
                                CWBackPixel | CWBitGravity | CWBackingStore,
                                &Xwatt);
-        XStoreName(di->Xdp, di->Xw, "xfractint");
+        XStoreName(di->Xdp, di->Xw, "id");
         di->Xgc = XCreateGC(di->Xdp, di->Xw, 0, &Xgcvals);
     }
     g_colors = xcmapstuff(di);
