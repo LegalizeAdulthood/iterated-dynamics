@@ -1,6 +1,4 @@
 /*
- * soi.c --  SOI
- *
  *  Simultaneous Orbit Iteration Image Generation Method. Computes
  *      rectangular regions by tracking the orbits of only a few key points.
  *
@@ -8,7 +6,7 @@
  *
  * This file is distributed under the same conditions as
  * AlmondBread. For further information see
- * <URL:http://www.cs.tu-berlin.de/~rms/AlmondBread>.
+ * <http://www.cs.tu-berlin.de/~rms/AlmondBread>.
  *
  */
 #include "port.h"

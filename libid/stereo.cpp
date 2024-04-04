@@ -1,5 +1,5 @@
 /*
-    STEREO.C a module to view 3D images.
+    A module to view 3D images.
     Written in Borland 'C++' by Paul de Leeuw.
     From an idea in "New Scientist" 9 October 1993 pages 26 - 29.
 */
