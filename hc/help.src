@@ -141,10 +141,9 @@
 {4.6  , 1, "Light Source Parameters"}
 {4.7  , 1, "Spherical Projection"}
 {4.8  , 1, "3D Overlay Mode"}
-{4.9  , 1, "Special Note for CGA or Hercules Users"}
-{4.10 , 1, "Making Terrains"}
-{4.11 , 1, "Making 3D Slides"}
-{4.12 , 1, "Interfacing with Ray Tracing Programs"}
+{4.9  , 1, "Making Terrains"}
+{4.10 , 1, "Making 3D Slides"}
+{4.11 , 1, "Interfacing with Ray Tracing Programs"}
 
 {5.   , 0, Command Line Parameters\, Parameter Files\, Batch Mode, "Introduction to Parameters", FF}
 {5.1  , 1, "Using the DOS Command Line"}

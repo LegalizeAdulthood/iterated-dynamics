@@ -832,7 +832,6 @@ the spiked ends off of the protrusions.
    { Light Source Parameters }
    { Spherical Projection }
    { 3D Overlay Mode }
-   { Special Note for CGA or Hercules Users }
    { Making Terrains }
    { Making 3D Slides }
    { Interfacing with Ray Tracing Programs }
@@ -1397,24 +1396,6 @@ to point out that it wasn't as fast, flexible or pretty as Id on a
 the incredible progress of micro-processor power since then, so a lot of
 the credit should go to Intel rather than to our highly tuned code. OK,
 twist our arms -- it IS awfully good code.
-;
-;
-;
-~Topic=Special Note for CGA or Hercules Users
-
-If you are one of those unfortunates with a CGA or Hercules 2-color
-monochrome graphics, it is now possible for you to make 3D projection
-images.
-
-Try the following unfortunately circuitous approach. Invoke Id,
-making sure you have set askvideo=yes. Use a disk-video mode to create a
-256 color fractal. You might want to edit the id.cfg file to make a
-disk-video mode with the same pixel dimensions as your normal video. Using
-the "3" command, enter the file name of the saved 256 color file, then
-select your 2 or 4
-color mode, and answer the other 3D prompts. You will then see a 3D
-projection of the fractal. Another example of Stone Soup responsiveness to
-our fan mail!
 ;
 ;
 ;
