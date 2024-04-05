@@ -333,10 +333,9 @@ lets you "zoom in" by positioning a small box and hitting <Enter> to
 redraw the boxed area at full-screen size; its maximum linear
 "magnification" is over a trillionfold.
 
-3) They can be astonishingly beautiful, especially using PC color
-displays' ability to assign colors to selected points, and (with VGA
-displays or EGA in 640x350x16 mode) to "animate" the images by quickly
-shifting those color assignments.
+3) They can be astonishingly beautiful, especially when assigning colors
+to selected points, and to "animate" the images by quickly shifting those
+color assignments.
 ~OnlineFF
 
 For a demonstration of some of Id's features, run the demonstration
@@ -406,10 +405,9 @@ As soon as you select a video mode, Id begins drawing an image - the
 "full" Mandelbrot set if you haven't selected another fractal type.
 
 For a quick start, after starting Id try one of the following:\
-  If you have MCGA, VGA, or better:  <F3>\
-  If you have EGA:                   <F9>\
-  If you have CGA:                   <F5>\
-  Otherwise, monochrome:             <F6>
+  Win32 GDI 800x600 small size image:       <F6>\
+  Win32 GDI 1024x768 medium size image:     <F7>\
+  Win32 GDI 1200x900 large size image:      <F8>
 
 After the initial Mandelbrot image has been displayed, try zooming
 into it (see {Zoom Box Commands}) and color cycling (see
