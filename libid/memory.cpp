@@ -29,7 +29,6 @@
 BYTE *charbuf = nullptr;
 
 #define MAXHANDLES 256   // arbitrary #, suitably big
-char memfile[] = "handle.$$$";
 int numTOTALhandles;
 
 char memstr[3][9] = {{"nowhere"}, {"memory"}, {"disk"}};
@@ -281,6 +280,11 @@ void ExitCheck()
     }
 }
 
+static std::string mem_file_name(U16 handle)
+{
+    return "id" + std::to_string(handle) + ".$$$";
+}
+
 // * * * *
 // Memory handling routines
 
@@ -334,16 +338,13 @@ U16 MemoryAlloc(U16 size, long count, int stored_at)
         break;
 
     case DISK: // MemoryAlloc
-        memfile[9] = (char)(handle % 10 + (int)'0');
-        memfile[8] = (char)((handle % 100) / 10 + (int)'0');
-        memfile[7] = (char)((handle % 1000) / 100 + (int)'0');
         if (g_disk_targa)
         {
             handletable[handle].Disk.file = dir_fopen(g_working_dir.c_str(), g_light_name.c_str(), "a+b");
         }
         else
         {
-            handletable[handle].Disk.file = dir_fopen(g_temp_dir.c_str(), memfile, "w+b");
+            handletable[handle].Disk.file = dir_fopen(g_temp_dir.c_str(), mem_file_name(handle).c_str(), "w+b");
         }
         rewind(handletable[handle].Disk.file);
         if (fseek(handletable[handle].Disk.file, toallocate, SEEK_SET) != 0)
@@ -364,7 +365,7 @@ U16 MemoryAlloc(U16 size, long count, int stored_at)
         std::fclose(handletable[handle].Disk.file); // so clusters aren't lost if we crash while running
         handletable[handle].Disk.file = g_disk_targa ?
             dir_fopen(g_working_dir.c_str(), g_light_name.c_str(), "r+b") :
-            dir_fopen(g_temp_dir.c_str(), memfile, "r+b");
+            dir_fopen(g_temp_dir.c_str(), mem_file_name(handle).c_str(), "r+b");
         // cppcheck-suppress useClosedFile
         rewind(handletable[handle].Disk.file);
         handletable[handle].Disk.size = toallocate;
@@ -408,11 +409,8 @@ void MemoryRelease(U16 handle)
         break;
 
     case DISK: // MemoryRelease
-        memfile[9] = (char)(handle % 10 + (int)'0');
-        memfile[8] = (char)((handle % 100) / 10 + (int)'0');
-        memfile[7] = (char)((handle % 1000) / 100 + (int)'0');
         std::fclose(handletable[handle].Disk.file);
-        dir_remove(g_temp_dir.c_str(), memfile);
+        dir_remove(g_temp_dir.c_str(), mem_file_name(handle));
         handletable[handle].Disk.file = nullptr;
         handletable[handle].Disk.size = 0;
         handletable[handle].Disk.stored_at = NOWHERE;
