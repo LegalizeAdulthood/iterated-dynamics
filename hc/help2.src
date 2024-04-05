@@ -1215,9 +1215,7 @@ actual roots. By "weird," we mean infinitely complex in the good old
 fractal sense. Zoom in and see for yourself.
 
 This fractal type is symmetric about the origin, with the number of
-"spokes" depending on the order you select. It uses floating-point math if
-you have an FPU, or a somewhat slower integer algorithm if you don't have
-one.
+"spokes" depending on the order you select.
 ~Doc-
 
 See also: {Newton}
@@ -1242,8 +1240,7 @@ downright cosmic. If your "corners" choice is symmetrical, Id exploits
 the symmetry for faster display.
 
 The applicable "params=" values are the same as newtbasin. Try "params=4."
-Other values are 3 through 10. 8 has twice the symmetry and is faster. As
-with newtbasin, an FPU helps.
+Other values are 3 through 10. 8 has twice the symmetry and is faster.
 ;
 ;
 ~Topic=Complex Newton, Label=HT_NEWTCMPLX
@@ -1688,7 +1685,7 @@ of triangles, but it generates too much pyramid power to be safely
 unleashed yet.
 
 There are no parameters for this type. We were able to implement it with
-integer math routines, so it runs fairly quickly even without an FPU.
+integer math routines, so it runs fairly quickly.
 ;
 ;
 ~Topic=Quartic Mandelbrot/Julia, Label=HT_MANDJUL4
@@ -2645,9 +2642,7 @@ others that are not conventional.
 ~Format+
 
 The formulas are performed using either integer or floating point
-mathematics depending on the <F> floating point toggle.  If you do not
-have an FPU then type MPC math is performed in lieu of traditional
-floating point.
+mathematics depending on the <F> floating point toggle.
 
 The 'rand' predefined variable is changed with each iteration to a new
 random number with the real and imaginary components containing a value

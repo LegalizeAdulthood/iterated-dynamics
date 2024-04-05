@@ -34,7 +34,6 @@
   batch=yes                Batch mode run (display image, save-to-disk, exit)
   autokey=play|record      Playback or record keystrokes
   autokeyname=<path>\\filename  File for autokey mode, default AUTO.KEY
-  fpu=387                  Assume 387 fpu is present
   makedoc=filename         Create Id documentation file
   maxhistory=<nnn>         Set image capacity of history feature. A higher
                            number stores more images but uses more memory.
@@ -217,23 +216,10 @@
 {Video Parameters}
   video=xxx                Begin with this video mode (Example: Video=F2)
   askvideo=no              Skip the prompt for video mode when restoring files
-  adapter=hgc|cga|ega|egamono|mcga|vga
-                           Assume this (standard) video adapter is present
-  adapter=ATI|Everex|Trident|NCR|Video7|Genoa|Paradise|Chipstech|
-                           Tseng3000|Tseng4000|AheadA|AheadB|Oaktech
-                           Assume the named SuperVGA Chip set is present and
-                           enable its non-standard SuperVGA modes.
-  afi=yes                  Disables the register-compatible 8514/A logic
-                           and forces the use of the 8514/A API (HDILOAD)
-  textsafe=yes|no|bios|save  For use when images are not restored correctly on
-                           return from a text display
-  exitmode=nn              Sets the bios-supported videomode to use upon exit
-                           (if not mode 3) - nn is the mode in hexadecimal
   viewwindows=xx[/xx[/yes|no[/nn[/nn]]]]
                            Set the reduction factor, final media aspect ratio,
                            crop starting coordinates (y/n), explicit x size,
                            and explicit y size
-~OnLineFF
   fastrestore=yes|no       If yes, resets viewwindow to NO prior to restoring
                            a gif file, and bypasses the warning when
                            restoring a gif in a video mode other than the
@@ -558,11 +544,6 @@ is very tight, and some memory-intensive Id operations are giving
 in mind that every time you color cycle or change from integer to float or
 back, another image parameter set is saved, so the default ten images are
 used up quickly.
-
-FPU=387\
-This parameter is useful if you have an unusual coprocessor chip. If you
-have a 80287 replacement chip with full 80387 functionality use "FPU=387"
-to inform Id to take advantage of those extra 387 instructions.
 ;
 ;
 ~Topic=Calculation Mode Parameters
@@ -1181,111 +1162,6 @@ doesn't support can leave your system in limbo, be careful about leaving
 the above two parameters in a command file to be used with future versions
 of Id, particularly for the super-VGA modes.
 
-ADAPTER=hgc|cga|ega|egamono|mcga|vga|ATI|Everex|Trident|NCR|Video7|Genoa|
-        Paradise|Chipstech|Tseng3000|Tseng4000|AheadA|AheadB|Oaktech\
-Bypasses Id's internal video autodetect logic and assumes that the
-specified kind of adapter is present. Use this parameter only if you
-encounter video problems without it.  Specifying adapter=vga with an SVGA
-adapter will make its extended modes unusable with Id.  All of the
-options after the "VGA" option specify specific SuperVGA chipsets which
-are capable of video resolutions higher than that of a "vanilla" VGA adapter.
-Note that Id cares about the Chipset your adapter uses internally,
-not the name of the company that sold it to you.
-
-VESADETECT=yes|no\
-Specify no to bypass VESA video detection logic. Try this if you encounter
-video problems with a VESA compliant video adapter or driver.
-
-AFI=yes|8514|no\
-Normally, when you attempt to use an 8514/A-specific video mode, Id
-first attempts to detect the presence of an 8514/A register-compatible
-adapter.  If it fails to find one, it then attempts to detect the presence
-of an 8514/A-compatible API (IE, IBM's HDILOAD or its equivalent).
-Id then uses either its register-compatible or its API-compatible
-video logic based on the results of those tests.  If you have an
-"8514/A-compatible" video adapter that passes Id's
-register-compatible detection logic but doesn't work correctly with
-Id's register-compatible video logic, setting "afi=yes" will
-force Id to bypass the register-compatible code and look only for
-the API interface.
-
-TEXTSAFE=yes|no|bios|save\
-When you switch from a graphics image to text mode (e.g. when you use <F1>
-while a fractal is on display), Id remembers the graphics image, and
-restores it when you return from the text mode.
-This should be no big deal - there are a number of well-defined ways
-Id could do this which *should* work on any video adapter.  They
-don't - every fast approach we've tried runs into a bug on one video
-adapter or another.  So, we've implemented a fast way which works on most
-adapters in most modes as the default, and added this parameter for use
-when the default approach doesn't work.\
-If you experience the following problems, please fool around with this
-parameter to try to fix the problem:\
-  o Garbled image, or lines or dashes on image, when returning to image
-    after going to menu, <tab> display, or help.\
-  o Blank screen when starting Id.\
-The problems most often occur in higher resolution modes. We have not
-encountered them at all in modes under 320x200x256 - for those modes
-Id always uses a fast image save/restore approach.\
-Textsafe options:\
-  yes: This is the default. When switching to/from graphics, Id
-    saves just that part of video memory which EGA/VGA adapters are
-    supposed to modify during the mode changes.
-  no: This forces use of monochrome 640x200x2 mode for text displays (when
-    there is a high resolution graphics image to be saved.) This choice is
-    fast but uses chunky and colorless characters. If it turns out to be
-    the best choice for you, you might want to also specify
-    "textcolors=mono" for a more consistent appearance in text screens.
-  bios: This saves memory in the same way as textsafe=yes, but uses the
-    adapter's BIOS routines to save/restore the graphics state.  This
-    approach is fast and ought to work on all adapters. Sadly, we've found
-    that very few adapters implement this function perfectly.
-  save: It should work on all adapters in
-    all modes but it can be slow. It tells Id to save/restore the entire
-    image. Expanded or extended memory is used for the save if you have
-    enough available; otherwise a temporary disk file is used. The speed
-    of textsafe=save will be acceptable on some machines but not others.
-    If this method is too slow, try the other textsafe modes.
-    The speed depends on:\
-      o Cpu and video adapter speed.\
-      o Whether enough expanded or extended memory is available.\
-      o Video mode of image being remembered. A few special modes are *very*
-        slow compared to the rest. The slow ones are: 2 and 4 color modes
-        with resolution higher than 640x480; custom modes for ATI EGA Wonder,
-        Paradise EGA-480, STB, Compaq portable 386, AT&T 6300, and roll your
-        own video modes implemented with customized YOURVID.C code.
-If you want to tune Id to use different "textsafe" options for
-different video modes, see {"Customized Video Modes\, id.cfg"}.
-(E.g. you might want to use the slower textsafe=save approach just for a
-few high-resolution modes which have problems with textsafe=yes.)
-
-EXITMODE=nn\
-Sets the bios-supported videomode to use upon exit to the specified value.
-nn is in hexadecimal.  The default is 3, which resets to 80x25 color text
-mode on exit. With Hercules Graphics Cards, and with monochrome EGA
-systems, the exit mode is always 7 and is unaffected by this parameter.
-
-TPLUS=yes|no\
-For TARGA+ adapters. Setting this to 'no' pretends a TARGA+ is NOT
-installed.
-
-NONINTERLACED=yes|no\
-For TARGA+ adapters. Setting this to 'yes' will configure the adapter to a
-non-interlaced mode whenever possible.  It should only be used with a
-multisynch monitor. The default is no, i.e. interlaced.
-
-MAXCOLORRES=8|16|24\
-For TARGA+ adapters. This determines the number of bits to use for color
-resolution.  8 bit color is equivalent to VGA color resolution. The 16 and
-24 bit color resolutions are true color video modes.
-
-PIXELZOOM=0|1|2|3\
-For TARGA+ adapters. Lowers the video mode resolution by powers of 2. For
-example, the 320x200 video resolution on the TARGA+ is actually the
-640x400 video mode with a pixel zoom of 1.  Using the 640x400 video mode
-with a zoom of 3 would lower the resolution by 8, which is 2 raised to the
-3rd power, for a full screen resolution of 80x50 pixels.
-
 VIEWWINDOWS=xx[/xx[/yes|no[/nn[/nn]]]]\
 Set the reduction factor, final media aspect ratio, crop starting
 coordinates (y/n), explicit x size, and explicit y size, see {"View Window"}.
@@ -1542,198 +1418,6 @@ The SAVETIME= parameter, and batch resumes of partial calculations, only
 work with fractal types which can be resumed.  See
 {"Interrupting and Resuming"} for information about non-resumable types.
 ;
-;
-;
-~Topic=Video Adapter Notes
-Alas, in this day of Windows, video adapter manufacturers do not have much
-incentive to support DOS video modes. Id can support any video modes
-included in your board's VESA video bios. Many otherwise good boards do not
-include the higher resolution modes in their bios even though those modes
-are supported in the manufacturer's Windows driver.
-
-Id users are particularly fond of the 1600x1200 mode. If you want to
-use this mode, make sure your video board supports it. Some boards that
-have given good results are boards from STB, various versions of Matrox
-Millennium, and boards from several manufacturers using Nvidia Riva chip sets.
-
-Using high resolution video modes poses a second challenge for Id users.
-That is that the VESA standard does not have standard settings for this mode,
-so you will have to edit the id.cfg file to support your board. You can
-run the program makefcfg.exe that comes with Id to generate entries
-for your id.cfg file.
-
-Finally, even if your video board VESA Bios supports high resolution video
-modes, it probably doesn't come with a utility that allows you to set the
-vertical refresh. If the vertical refresh is set for 60 Hz or less, you may
-see flicker and be subject to headaches. Fortunately, there is a wonderful
-freeware utility by Rob Muller that allows you to control the vertical
-refresh for any VESA video mode. Of course your monitor still needs to be
-able to support higher rates -- software can't help that. To get Rob's
-unirefresh program, email Rob at r.muller@student.utwente.nl or check out
-
-   http://home.student.utwente.nl/r.muller/unirefresh
-
-True to the spirit of public-domain programming, Id makes only a
-limited attempt to verify that your video adapter can run in the mode you
-specify, or even that an adapter is present, before writing to it.
-So if you use the "video=" command line parameter, check it before using
-a new version of Id -
-the old key combo may now call an ultraviolet holographic mode.
-~Doc-
-
-Comments about some particular video adapters:\
-    { EGA }       { Tweaked VGA }   { Super-VGA }\
-    { 8514/A }    { XGA }\
-    { Targa }     { Targa+ }\
-
-Also see {Customized Video Modes\, id.cfg}.
-~Doc+
-;
-;
-~Topic=EGA
-~Format-,Online-
-EGA
-~Format+,Online+
-
-Id assumes that every EGA adapter has a full 256K of memory
-(and can therefore display 640 x 350 x 16 colors), but does nothing to
-verify that fact before slinging pixels.
-;
-;
-~Topic=Tweaked VGA
-~Format-,Online-
-"TWEAKED" VGA MODES
-~Format+,Online+
-
-The IBM VGA adapter is a highly programmable device, and can be set up to
-display many video-mode combinations beyond those "officially" supported
-by the IBM BIOS. E.g. 320x400x256 and 360x480x256 (the latter is one of
-our favorites).
-These video modes are perfectly legal, but temporarily
-reprogram the adapter (IBM or fully register-compatible) in a non-standard
-manner that the BIOS does not recognize.
-
-Id also contains code that sets up the IBM (or any truly register-
-compatible) VGA adapter for several extended modes such as 704x528,
-736x552, 768x576, and 800x600. It does this by programming the VGA
-controller to use the fastest dot-clock on the IBM adapter (28.322 MHz),
-throwing more pixels, and reducing the refresh rate to make up for it.
-
-These modes push many monitors beyond their rated specs, in terms of both
-resolution and refresh rate. Signs that your monitor is having problems
-with a particular "tweaked" mode include:
- o vertical or horizontal overscan (displaying dots beyond the edges of
-   your visible CRT area)
- o flickering (caused by a too-slow refresh rate)\
- o vertical roll or total garbage on the screen (your monitor simply
-   can't keep up, or is attempting to "force" the image into a pre-set
-   mode that doesn't fit).
-
-We have successfully tested the modes up to 768x576 on an IBM PS/2 Model
-80 connected to IBM 8513, IBM 8514, NEC Multisync II, and Zenith 1490
-monitors (all of which exhibit some overscan and flicker at the highest
-rates), and have tested 800x600 mode on the NEC Multisync II (although it
-took some twiddling of the vertical-size control).
-;
-;
-~Topic=Super-VGA
-~Format-,Online-
-SUPER-EGA AND SUPER-VGA MODES
-~Format+,Online+
-
-Since version 12.0, we've used both John Bridges' SuperVGA Autodetecting
-logic *and* VESA adapter detection, so that many brand-specific SuperVGA
-modes have been combined into single video mode selection entries.
-There is now exactly one entry for SuperVGA 640x480x256 mode, for instance.
-
-If Id's automatic SuperVGA/VESA detection logic guesses wrong,
-and you know which SuperVGA chipset your video adapter uses, you can use
-the "adapter=" command-line option to force Id to assume the presence
-of a specific SuperVGA Chipset - see {Video Parameters} for details.
-;
-;
-~Topic=8514/A
-~Format-,Online-
-8514/A MODES
-~Format+,Online+
-
-The IBM 8514/A modes (640x480 and 1024x768) default to using the hardware
-registers.  If an error occurs when trying to open the adapter, an attempt
-will be made to use IBM's software interface, and requires the preloading
-of IBM's HDILOAD TSR utility.
-
-The Adex 1280x1024 modes were written for and tested on an Adex
-Corporation 8514/A using a Brooktree DAC.  The ATI GU 800x600x256 and
-1280x1024x16 modes require a ROM bios version of 1.3 or higher for 800x600
-and 1.4 or higher for 1280x1024.
-
-There are two sets of 8514/A modes: full sets (640x480, 800x600, 1024x768,
-1280x1024) which cover the entire screen and do NOT have a border color
-(so that you cannot tell when you are "paused" in a color-cycling mode),
-and partial sets (632x474, 792x594, 1016x762, 1272x1018) with small border
-areas which do turn white when you are paused in color-cycling mode. Also,
-while these modes are declared to be 256-color, if you do not have your
-8514/A adapter loaded with its full complement of memory you will actually
-be in 16-color mode. The hardware register 16-color modes have not been
-tested.
-
-If your 8514/A adapter is not truly register compatible and Id does
-not detect this, use of the adapter interface can be forced by using afi=y
-or afi=8514 in your SSTOOLS.INI file.
-
-Finally, because IBM's adapter interface does not handle drawing single
-pixels very well (we have to draw a 1x1 pixel "box"), generating the zoom
-box when using the interface is excruciatingly slow. Still, it works!
-;
-;
-~Topic=XGA
-~Format-,Online-
-XGA MODES
-~Format+,Online+
-
-The XGA adapter is supported using the VESA/SuperVGA Autodetect modes -
-the XGA looks like just another SuperVGA adapter to Id.
-The supported XGA modes are 640x480x256, 1024x768x16, 1024x768x256,
-800x600x16, and 800x600x256.  Note that the 1024x768x256 mode requires
-a full 1MB of adapter memory, the 1024x768 modes require a high-rez
-monitor, and the 800x600 modes require a multisynching monitor such
-as the NEC 2A.
-;
-;
-~Topic=Targa
-~Format-,Online-
-TARGA MODES
-~Format+,Online+
-
-TARGA support for Id is provided courtesy of Joe McLain and has been
-enhanced with the help of Bruce Goren and Richard Biddle.  To use a TARGA
-board with Id, you must define two DOS environment variables,
-"TARGA" and "TARGASET".  The definition of these variables is standardized
-by Truevision; if you have a TARGA board you probably already have added
-"SET" statements for these variables to your AUTOEXEC.BAT file.
-Be aware that there are a LOT of possible TARGA configurations, and a LOT
-of opportunities for a TARGA board and a VGA or EGA board to interfere
-with each other, and we may not have all of them smoothed away yet.  Also,
-the TARGA boards have an entirely different color-map scheme than the VGA
-cards, and at the moment they cannot be run through the color-cycling
-menu. The "MAP=" argument (see {Color Parameters}),
-however, works with both TARGA and
-VGA boards and enables you to redefine the default color maps with either
-board.
-;
-;
-~Topic=Targa+
-~Format-,Online-
-TARGA+ MODES
-~Format+,Online+
-
-To use the special modes supported for TARGA+ adapters, the TARGAP.SYS
-device driver has to be loaded, and the TPLUS.DAT file (included with
-Id) must be in the same directory as Id.  The video modes with
-names containing "True Color Autodetect" can be used with the Targa+.  You
-might want to use the command line parameters "tplus=", "noninterlaced=",
-"maxcolorres=", and "pixelzoom=" (see {Video Parameters})
-in your SSTOOLS.INI file to modify Id's use of the adapter.
 ;
 ;
 ~Topic="Disk-Video" Modes

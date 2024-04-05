@@ -22,7 +22,7 @@
    { Display Mode Commands }
    { Color Cycling Commands }               { Id on Unix }
    { Palette Editing Commands }             { Using Id With a Mouse }
-                                          { Video Adapter Notes }
+
    { Summary of Fractal Types }             { GIF Save File Format }
 
    { Doodads\, Bells\, and Whistles }         { Common Problems }
@@ -171,9 +171,7 @@
 {5.19 , 1, "Image Coordinates Screen"}
 
 {6.   , 0, Hardware Support, FF}
-{6.1  , 1, Notes on Video Modes\, \"Standard\" and Otherwise,
-                    "Video Adapter Notes", "EGA", "Tweaked VGA", "Super-VGA",
-                    "8514/A", "XGA", "Targa", "Targa+"}
+{6.1  , 1, Notes on Video Modes\, \"Standard\" and Otherwise}
 {6.2  , 1, "\"Disk-Video\" Modes"}
 {6.3  , 1, "Customized Video Modes\, id.cfg"}
 
@@ -622,12 +620,9 @@ See {Fractal Types} for a list of supported types.
 <F>\
 Toggles the use of floating-point algorithms
 (see {"Limitations of Integer Math (And How We Cope)"}).
-Whether floating point is in
-use is shown on the <Tab> status screen.  The floating point option can
-also be turned on and off using the "X" options screen.
-If you have a non-Intel floating point chip which supports the full 387
-instruction set, see the "FPU=" command in {Startup Parameters}
-to get the most out of your chip.
+Whether floating point is in use is shown on the <Tab> status screen.
+The floating point option can also be turned on and off using the "X"
+options screen.
 
 <X>\
 Select a number of eXtended options. Brings up a full-screen menu of
@@ -1023,10 +1018,7 @@ The <G> command lets you give a startup parameter interactively.
 
 You can toggle the use of floating-point algorithms on this screen (see
 {"Limitations of Integer Math (And How We Cope)"}).  Whether floating
-point is in use is shown on the <Tab> status screen.  If you have a
-non-Intel floating point chip which supports the full 387 instruction set,
-see the "FPU=" command in {Startup Parameters} to get the most out of your
-chip.
+point is in use is shown on the <Tab> status screen.
 ;
 ;
 ~Topic=<Y> Options Screen, Label=HELPYOPTS
@@ -1310,13 +1302,6 @@ for future runs.
 To unassign a key (so that it doesn't invoke any video
 mode), highlight the mode currently selected by the key and press the
 keypad (gray) <-> key.
-
-A note about the "select video modes" screen:
-the video modes which are displayed with a 'B' suffix in the number
-of colors are modes which have no custom programming - they use the BIOS
-and are S-L-O-W ones.
-
-See {"Video Adapter Notes"} for comments about particular adapters.
 
 See {"Disk-Video" Modes} for a description of these non-display modes.
 
