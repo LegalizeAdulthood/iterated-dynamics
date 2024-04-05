@@ -522,7 +522,7 @@ is AUTO.KEY.
 
 MAKEDOC[=filename]\
 Create Id documentation file (for printing or viewing with a text
-editor) and then return to DOS.  Filename defaults to id.txt.
+editor) and then exit.  Filename defaults to id.txt.
 There's also a function in Id's online help which can be used to
 produce the documentation file -
 ~Doc-

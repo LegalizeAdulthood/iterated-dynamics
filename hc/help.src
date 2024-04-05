@@ -241,7 +241,7 @@ Use the following keys in help mode:
 ~Topic=Printing Id Documentation
 You can generate a text file containing full Iterated Dynamics documentation
 by selecting the "Generate id.txt now" hot-link below and pressing
-Enter, or by using the DOS command "id makedoc=filename" ("filename"
+Enter, or by using the command "id makedoc=filename" ("filename"
 is the name of the file to be written; it defaults to id.txt.)
 
 All information in the documentation file is also available in the online
