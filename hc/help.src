@@ -288,6 +288,22 @@ Version 1.0:
   The disk driver can be used to render images larger than your physical
   screen, but still uses your screen's GUI for displaying status with a
   CGA style window.
+- The release parameter does nothing in this release.  For backward
+  compatability with old behavior, use FRACTINT.
+- The following parameter file commands are deprecated and support will be
+  removed in a future release.
+  - adapter                             - pixelzoom
+  - afi                                 - plotstyle
+  - biospalette                         - printer
+  - colorps                             - printfile
+  - comport                             - ramvideo
+  - epsf                                - rleps
+  - exitmode                            - textsafe
+  - fpu                                 - title
+  - halftone                            - tplus
+  - linefeed                            - translate
+  - maxcolorres                         - tweaklzw
+  - noninterlaced                       - vesadetect
 
 Known limitations:
 
@@ -304,8 +320,8 @@ Known limitations:
 ;
 ;
 ~Topic=Introduction
-FRACTINT plots and manipulates images of "objects" -- actually, sets of
-mathematical points -- that have fractal dimension.
+Iterated Dynamics plots and manipulates images of "objects" -- actually,
+sets of mathematical points -- that have fractal dimension.
 See {"Fractals and the PC"} for some
 historical and mathematical background on fractal geometry, a discipline
 named and popularized by mathematician Benoit Mandelbrot. For now, these
@@ -331,31 +347,15 @@ For a demonstration of some of Fractint's features, run the demonstration
 file included with this release (DEMO.BAT) by typing "demo" at the DOS
 prompt. You can stop the demonstration at any time by pressing <Esc>.
 
-The name FRACTINT was chosen because the program generates many of its
-images using INTeger math, rather than the floating point calculations
-used by most such programs. That means that you don't need a math co-
-processor chip (aka floating point unit or FPU), although for a few
-fractal types where floating point math is faster, the program recognizes
-and automatically uses an 80x87 chip if it's present. It's even faster on
-systems using Intel's 80386 and 80486 microprocessors, where the integer
-math can be executed in their native 32-bit mode.
+The name Iterated Dynamics was chosen because the program generates its
+images by iterating some kind of dynamical system exhibiting non-linear
+or chaotic behavior.
 
-Fractint works with many adapters and graphics modes from CGA to the
-1024x768, 256-color XGA mode. Even "larger" images, up to 32767x32767x256,
-can be plotted to expanded memory, extended memory, or disk: this bypasses
-the screen and allows you to create images with higher resolution than
-your current display can handle, and to run in "background" under multi-
-tasking control programs such as DESQview and Windows 3.
-~OnlineFF
+Like many open source projects, Iterated Dynamics is an experiment in
+collaboration.  While being an offshoot of its ancestor, FRACTINT,
+Iterated Dynamics in no way changes the spirit of collaboration started
+by that program by its original author Bert Tyler.
 
-Fractint is an experiment in collaboration. Many volunteers have joined
-Bert Tyler, the program's first author, in improving successive versions.
-Through electronic mail messages, CompuServe's GO GRAPHICS forums,
-new versions are hacked out and debugged a little at a time.
-Fractint was born fast, and none of us has seen any other fractal plotter
-close to the present version for speed, versatility, and all-around
-wonderfulness. (If you have, tell us so we can steal somebody else's ideas
-instead of each other's.)
 See {The Stone Soup Story} and {A Word About the Authors} for information
 about the authors, and see {Contacting the Authors} for how to contribute
 your own ideas and code.
@@ -364,18 +364,20 @@ your own ideas and code.
 ;
 ~Topic=Conditions on Use
 
-Fractint is freeware. The copyright is retained by the Stone Soup Group.
+Iterated Dynamics is open source software. The copyright is retained by
+the primary author, Richard Thomson.  Legacy code is copyright the
+Stone Soup Group.
 
-Fractint may be freely copied and distributed in unmodified form but may
-not be sold. (A nominal distribution fee may be charged for media and
-handling by freeware and shareware distributors.) Fractint may be used
-personally or in a business - if you can do your job better by using
-Fractint, or using images from it, that's great! It may not be given away
-with commercial products without explicit permission from the Stone Soup
-Group.
+Iterated Dynamics may be freely copied and distributed in unmodified form
+but may not be sold. (A nominal distribution fee may be charged for media
+and handling by freeware and shareware distributors.)  Iterted Dynamics
+may be used personally or in a business - if you can do your job better
+by using Iterated Dynamics, or using images from it, that's great!  It may
+not be given away with commercial products without explicit permission
+from Richard Thomson.
 
-There is no warranty of Fractint's suitability for any purpose, nor any
-acceptance of liability, express or implied.
+There is no warranty of Iterated Dynamics's suitability for any purpose,
+nor any acceptance of liability, express or implied.
 
  **********************************************************************\
  * Contribution policy: Don't want money. Got money. Want admiration. *\
