@@ -1816,52 +1816,6 @@ Where:\
 ;
 ;
 ~Topic=Revision History
-
-Iterated Dynamics is a fork of the DOS program FRACTINT.  FRACTINT has its own
-  history spanning many years.  Please consult the FRACTINT help for its
-  history.  To avoid being confused with a new release of FRACTINT, the code
-  has been rebranded Iterated Dynamics, or Id for short, throughout.
-
-The source code for Iterated Dynamics lives on github:\
-  <https://github.com/LegalizeAdulthood/iterated-dynamics>
-
-Found a bug?  File an issue on our github project!\
-  <https://github.com/LegalizeAdulthood/iterated-dynamics/issues>
-
-Version 1.0:
-
-Most of the changes involve internal restructuring of the DOS FRACTINT code
-  to build a bridge to the future.
-
-Iterated Dynamics is a native 64-bit Windows program written in C++ with a
-  CMake build system.
-
-All assembly language code has been removed and, where practical, replaced
-  with C++ code that performs the same function.
-
-A CGA text display is simulated for all prompt screens and help screens.
-
-A "video mode" determines the resolution of all saved images and is provided
-  by a driver.  Iterated Dynamics comes with two drivers: Disk and GDI.
-  The GDI driver renders to the screen through the Windows GDI interface.
-  The disk driver can be used to render images larger than your physical
-  screen, but still uses your screen's GUI for displaying status with a
-  CGA style window.
-
-Known limitations:
-
-Navigation is exclusively through the keyboard.  Mouse support will be
-  restored in a subsequent release.
-
-Sound output does nothing, although all controls can be set through parameters
-  or interactive screen.  Sound output will be restored once a suitable audio
-  library has been identified.
-
-Some code still assumes 8.3 filenames, but this restriction will be lifted
-  over time.  To avoid surprises, continue to use 8.3 filenames until the
-  code has been completely audited.
-
-Printing an image has been removed.  Use your operating system for that. :)
 ;
 ;
 ;

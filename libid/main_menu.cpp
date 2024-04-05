@@ -52,7 +52,7 @@ static int menu_checkkey(int curkey, int /*choice*/)
         if (std::strchr("\\sobpkrh", testkey)
             || testkey == ID_KEY_TAB || testkey == ID_KEY_CTL_A
             || testkey == ID_KEY_CTL_E || testkey == ID_KEY_BACKSPACE
-            || testkey == ID_KEY_CTL_P || testkey == ID_KEY_CTL_S
+            || testkey == ID_KEY_CTL_S
             || testkey == ID_KEY_CTL_U)   // ctrl-A, E, H, P, S, U
         {
             return -testkey;

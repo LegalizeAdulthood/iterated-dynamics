@@ -759,9 +759,6 @@ do_3d_transform:
     case 'b':                    // make batch file
         make_batch_file();
         break;
-    case ID_KEY_CTL_P:                    // print current image
-        driver_buzzer(buzzer_codes::INTERRUPT);
-        return main_state::CONTINUE;
     case ID_KEY_ENTER:                  // Enter
     case ID_KEY_ENTER_2:                // Numeric-Keypad Enter
         if (g_zoom_box_width != 0.0)
