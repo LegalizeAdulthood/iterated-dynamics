@@ -1860,6 +1860,8 @@ Sound output does nothing, although all controls can be set through parameters
 Some code still assumes 8.3 filenames, but this restriction will be lifted
   over time.  To avoid surprises, continue to use 8.3 filenames until the
   code has been completely audited.
+
+Printing an image has been removed.  Use your operating system for that. :)
 ;
 ;
 ;
@@ -1901,23 +1903,15 @@ Some code still assumes 8.3 filenames, but this restriction will be lifted
                   ...
  Timothy Wegner       Legacy FRACTINT Primary Author
  Jonathan Osuch       Legacy FRACTINT Primary Author
- Michael Abrash       360x480x256, 320x400x256 VGA video modes
- Rees Acheson         (Author of MandelB) pentium speedups
- Joseph Albrecht      Tandy video, CGA video speedup
  Kevin Allen          Finite attractor, bifurcation engine
  Humberto Baptista    passes=d, latoocarfian type
  Steve Bennett        restore-from-disk logic
  Rob Beyer            Barnsley IFS, Lorenz fractals
- Francois Blais       Lyapunov Fractals, LYAPUNOV.MAP
- Scott D. Boyd        Xfractint user interface cleanup
+ Francois Blais       Lyapunov Fractals, lyapunov.map
  Dennis Bragg         DXF Raytracing output option
  Juan J. Buhler       Diffusion options, inverse Julia type
- Mike Burkey          376x564x256, 400x564x256, and 832x612x256 VGA video modes
  Robin Bussell        Fractal browser and evolver, past primary author
- John Bridges         superVGA support, 360x480x256 mode
  Fulvio Cappelli      ants options and speedup
- Charlie Chernohorsky Virtual VESA screen sizes & speedup
- Brian Corbino        Tandy 1000 640x200x16 video mode
  Lee Crocker          Fast Newton, Inversion, Decomposition..
  Monte Davis          Documentation
  Paul De Leeuw        RDS (Random Dot Stereogram) Feature
@@ -1929,7 +1923,6 @@ Some code still assumes 8.3 filenames, but this restriction will be lifted
  Sylvie Gallet        Formula and math wizard
  Mike Gelvin          Mandelbrot speedups
  Luciano Genero       ants options and speedup
- Lawrence Gozum       Tseng 640x400x256 Video Mode
  David Guenther       Boundary Tracing algorithm
  Jay Hill             Windows notes
  Mike Kaufman         mouse support, other features
@@ -1939,33 +1932,24 @@ Some code still assumes 8.3 filenames, but this restriction will be lifted
  Damien M. Jones      Windows notes, web hosting
  Wesley Loewer        Arbitrary precision, past primary author
  Adrian Mariano       Diffusion & L-Systems
- Charles Marslett     VESA video and IIT math chip support
  George Martin        Formula parser, past primary author
- Andrew McCarthy      European keyboard support
  Joe McLain           TARGA Support, color-map files
- Bob Montgomery       (Author of VPIC) Fast text I/O routines
  Bret Mulvey          plasma clouds
  Roy Murphy           Lyapunov Fractals
  Ethan Nagel          Palette editor, integrated help/doc system
- Yavuz Onder          Postscript printer driver
- Kyle Powell          8514/A Support
  Mark Peterson        Parser, julibrot, past primary author
  Marc Reinig          Lots of 3D options
  Pieter Branderhorst  Solid guessing, menus, past primary author
  Michael Sargent      Volterra-Lotka, escher_julia fractals
- Matt Saucier         Printer Support
  Herb Savage          'inside=bof60', 'inside=bof61' options
  Ken Shirriff         Quaternions, CA, Xfractint port
  Lee Skinner          Tetrate fractal types and more
  Michael Snyder       julia inverse and Julia-In-A-Window using MIIM
- Dean Souleles        Hercules Support
- Kurt Sowa            Color Printer Support
  Hugh Steele          cyclerange feature
  Iain Stirling        Inside=fmod and outside=fmod
- John Swenson         Postscript printer features
  Chris Taylor         Floating&Fixed-point algorithm speedups, Tesseral Option
  Scott Taylor         PostScript, Kam Torus, many fn types.
- Rich Thomson         Xfractint truecolor support, mailing list
+ Richard Thomson      Xfractint truecolor support, mailing list
  Bill Townsend        Mandelbrot Speedups
  Bert Tyler           Original Fractint/Fract386 Author
  Paul Varner          Extended Memory support for Disk Video
