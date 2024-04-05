@@ -115,18 +115,15 @@ Synchronous orbits ("s") is an experimental mode using the "fractal
 witchcraft" algorithm based on the Almondbread implementation by Michael
 Ganss. This algorithm optimizes deep zooms by calculating parallel orbits
 starting at different points, and subdividing when the orbits break formation.
-Michael's implementation had to be extensively modified to work with
-Fractint's DOS medium memory model environment.
 
 Synchronous orbits (also known as SOI) has some limitations. SOI is loosely
-coupled with fractint and most options don't work with it. Only types mandel
+coupled with Id and most options don't work with it. Only types mandel
 and julia are implemented. SOI is only useful for very deep zooms, but only
 up to the limit of double precision. Within this narrow magnification range,
-SOI can result in tremndous speedups. If you invoke fractint with "debug=3444"
+SOI can result in tremndous speedups. If you invoke Id with "debug=3444"
 on the command line, a long double (rather than double) version will be used,
 which allows zooming about 1000 times deeper. SOI really needs to be ported to
-fractint's arbitary precision. This will likely happen only after Fractint
-is moved to a better programming environment.
+Id's arbitary precision.
 ;
 ;
 ~Topic=Autokey Mode
@@ -136,8 +133,8 @@ The autokey feature allows you to set up beautiful self-running demo
 to generate sequences for special effects, to teach how Fractal exploring
 is done, etc.
 
-A sample autokey file (DEMO.KEY) and a batch to run it (DEMO.BAT) are
-included with Fractint. Type "demo" at the DOS prompt to run it.
+A sample autokey file (demo.key) and a batch to run it (demo.bat) are
+included with Id. Type "demo" at the DOS prompt to run it.
 
 Autokey record mode is enabled with the command line parameter
 "AUTOKEY=RECORD". Keystrokes are saved in an intelligible text format in a
@@ -154,7 +151,7 @@ Separate lines are not necessary but you'll probably find it
 easier to understand an autokey file if you put each command on a separate
 line. Autokey files can contain the following:
 
-  Quoted strings. Fractint reads whatever is between the quotes just as if
+  Quoted strings. Id reads whatever is between the quotes just as if
   you had typed it. For example,
       "t" "ifs"
   issues the "t" (type) command and then enters the letters i", "f", and
@@ -195,10 +192,10 @@ line. Autokey files can contain the following:
   MESSAGE nn <Your message here> -- Places a message on the top of the
   screen for nn seconds
 
-Making Fractint demos can be tricky. Here are some suggestions which may
+Making Id demos can be tricky. Here are some suggestions which may
 help:
 
-  Start Fractint with "fractint autokeyname=mydemo.key autokey=record".
+  Start Id with "id autokeyname=mydemo.key autokey=record".
   Use a unique name each time you run so that you don't overwrite prior
   files.
 
@@ -211,13 +208,13 @@ help:
   for different resolution monitors.
 
   When in the record mode, try to type names quickly, then pause. If you
-  pause partway through a name Fractint will break up the string in the
+  pause partway through a name Id will break up the string in the
   .KEY file. E.g. if you paused in the middle of typing fract001, you
   might get:\
       "fract"\
       WAIT 2.2\
       "001"\
-  No harm done, but messy to clean up. Fractint ignores pauses
+  No harm done, but messy to clean up. Id ignores pauses
   less than about 1/2 second.
 
   DO pause when you want the viewer to see what is happening during
@@ -231,14 +228,14 @@ help:
   future.
 
   It is a good idea to use INSERT before a GOTO which restarts the demo.
-  The <insert> key resets Fractint as if you exited the program and
+  The <insert> key resets Id as if you exited the program and
   restarted it.
 
-Warning: an autokey file built for this version of Fractint will probably
-require some retouching before it works with future releases of Fractint.
+Warning: an autokey file built for this version of Id will probably
+require some retouching before it works with future releases of Id.
 We have no intention of making sure that the same sequence of keystrokes
-will have exactly the same effect from one version of Fractint to the
-next. That would require pretty much freezing Fractint development, and we
+will have exactly the same effect from one version of Id to the
+next. That would require pretty much freezing Id development, and we
 just love to keep enhancing it!
 ;
 ;
@@ -326,7 +323,7 @@ cycling on a CRT.)
 
 The Inversion option performs a related transformation on most of the
 fractal types. You define the center point and radius of a circle;
-Fractint maps each point inside the circle to a corresponding point
+Id maps each point inside the circle to a corresponding point
 outside, and vice-versa. This is known to mathematicians as inverting (or
 if you want to get precise, "everting") the plane, and is something they
 can contemplate without getting a headache. John Milnor (also mentioned
@@ -376,7 +373,7 @@ alternating colors.
 The result is a kind of warped checkerboard coloring, even in areas that
 would ordinarily be part of a single contour. Remember, for the M-set all
 points whose final values exceed 2 (by any amount) after, say, 80
-iterations are normally the same color; under decomposition, Fractint runs
+iterations are normally the same color; under decomposition, Id runs
 [bailout-value] iterations and then colors according to where the actual
 final value falls on the complex plane.
 
@@ -390,7 +387,7 @@ value of about 50 is a good compromise for M/J sets.
 ;
 ~Topic=Logarithmic Palettes and Color Ranges
 
-By default, Fractint maps iterations to colors 1:1. I.e. if the
+By default, Id maps iterations to colors 1:1. I.e. if the
 calculation for a fractal "escapes" (exceeds the bailout value) after N
 iterations, the pixel is colored as color number N. If N is greater than
 the number of colors available, it wraps around. So, if you are using a
@@ -409,14 +406,14 @@ IBM VGA color map are black.  This results in points nearest the "lake"
 smearing into a single dark band, with little contrast from the blue (by
 default) lake.
 
-Fractint has a number of types of compressed palette, selected by the "Log
+Id has a number of types of compressed palette, selected by the "Log
 Palette" line on the <X> screen, or by the "logmap=" command line
 parameter:
 
   logmap=1: for standard logarithmic palette.
 
   logmap=-1: "old" logarithmic palette. This variant was the only one used
-  before Fractint 14.0. It differs from logmap=1 in that some colors are
+  before FRACTINT 14.0. It differs from logmap=1 in that some colors are
   not used - logmap=1 "spreads" low color numbers which are unused by
   logmap=-1's pure logarithmic mapping so that all colors are assigned.
 
@@ -492,7 +489,7 @@ color modes. Try it with the marksmandel and marksjulia types.
 
 Note: This option can only be used with 256 color modes.
 
-Fractint's images are usually calculated by the "level set" method,
+Id's images are usually calculated by the "level set" method,
 producing bands of color corresponding to regions where the calculation
 gives the same value. When "3D" transformed (see {\"3D\" Images}),
 most images other than plasma
@@ -511,7 +508,7 @@ the modulus bailout was exceeded, at the "iterations" iteration.  Clear as
 mud, right?
 
 Fortunately, you don't have to understand all the details. However, there
-ARE a few points to understand. First, Fractint's criterion for halting a
+ARE a few points to understand. First, Id's criterion for halting a
 fractal calculation, the "modulus bailout value", is generally set to 4.
 Continuous potential is inaccurate at such a low value.
 
@@ -524,7 +521,7 @@ The good news is that the other fractal types, particularly the (generally
 slower) floating point algorithms, have no such limitation.  The even
 better news is that there is a floating-point algorithm for the "mandel"
 and "julia" types.  To force the use of a floating-point algorithm, use
-Fractint with the "FLOAT=YES" command-line toggle.  Only a few fractal
+Id with the "FLOAT=YES" command-line toggle.  Only a few fractal
 types like plasma clouds, the Barnsley IFS type, and "test" are unaffected
 by this toggle.
 
@@ -557,16 +554,16 @@ is being truncated to integers. The "16bit" option can be used to add an
 extra 8 bits of goodness to each stored pixel, for a much smoother result
 when transforming to 3D.
 
-Fractint's visible behavior is unchanged when 16bit is enabled, except
+Id's visible behavior is unchanged when 16bit is enabled, except
 that solid guessing and boundary tracing are not used. But when you save
 an image generated with 16bit continuous potential:\
  o The saved file is a fair bit larger.\
- o Fractint names the file with a .POT extension instead of .GIF, if you
+ o Id names the file with a .POT extension instead of .GIF, if you
    didn't specify an extension in "savename".
  o The image can be used as input to a subsequent <3> command to get the
    promised smoother effect.
  o If you happen to view the saved image with a GIF viewer other than
-   Fractint, you'll find that it is twice as wide as it is supposed to
+   Id, you'll find that it is twice as wide as it is supposed to
    be. (Guess where the extra goodness was stored!) Though these files
    are structurally legal GIF files the double-width business made us
    think they should perhaps not be called GIF - hence the .POT filename
@@ -577,7 +574,7 @@ A 16bit (.POT) file can be converted to an ordinary 8 bit GIF by
 <S>aving.
 
 You might find with 16bit continuous potential that there's a long delay
-at the start of an image, and disk activity during calculation. Fractint
+at the start of an image, and disk activity during calculation. Id
 uses its disk-video cache area to store the extra 8 bits per pixel - if
 there isn't sufficient memory available, the cache will page to disk.
 
@@ -591,13 +588,6 @@ Peterson first prototyped for us, and named "MtMand":
         POTENTIAL=255/2000/1000/16bit\
         PASSES=1\
         FLOAT=yes\
-
-Note that prior to version 15.0, Fractint:\
- o Produced "16 bit TGA potfiles" This format is no longer generated, but
-   you can still (for a release or two) use <R> and <3> with those files.
- o Assumed "inside=maxit" for continuous potential. It now uses the
-   current "inside=" value - to recreate prior results you must be
-   explicit about this parameter.
 ;
 ;
 ;
@@ -632,7 +622,7 @@ program will create a bell curve based on the value of ratio of Dim stars
 to bright stars.  After calculating the bell curve the curve is folded in
 half and the peak used to represent the number of dim stars.
 
-Starfields can only be shown in 256 colors.  Fractint will automatically
+Starfields can only be shown in 256 colors.  Id will automatically
 try to load ALTERN.MAP and abort if the map file cannot be found.
 ;
 ;
@@ -640,7 +630,7 @@ try to load ALTERN.MAP and abort if the map file cannot be found.
 ~Topic=Random Dot Stereograms (RDS), Label=HELPRDS
 
 Random Dot Stereograms (RDS) are a way of encoding stereo
-images on a flat screen. Fractint can convert any image to a RDS using
+images on a flat screen. Id can convert any image to a RDS using
 either the color number in the current palette or the grayscale value as
 depth. Try these steps. Generate a plasma fractal using the 640x480x256 video
 mode. When the image on the screen is complete, press <ctrl-s> ("s" for
@@ -713,8 +703,8 @@ bars will turn to a more visible color.
 The fifth parameter asks if you want to use an image map GIF file instead of
 using random dots. An image map can give your RDS image a more interesting
 background texture than the random dots. If you answer "yes" at the Use image
-map? prompt, Fractint will present you with a file selection list of GIF
-images. Fractint will then go ahead and transform your original image to
+map? prompt, Id will present you with a file selection list of GIF
+images. Id will then go ahead and transform your original image to
 RDS using the selected image map to provide the "random" dots.
 
 After you have selected an image map file, the next time you reach
@@ -764,7 +754,7 @@ referring to the same color value).
 ~OnlineFF
 
 ~Format-
-Fractint is distributed with some sample .MAP files:
+Id is distributed with some sample .MAP files:
    ALTERN.MAP    the famous "Peterson-Vigneau Pseudo-Grey Scale"
    BLUES.MAP     for rainy days, by Daniel Egnor
    CHROMA.MAP    general purpose, chromatic
@@ -799,7 +789,7 @@ bailout value:\
 bailout test = |z| = sqrt(x^2 + y^2) >= 2
 
 As a computational speedup, we square both sides of this equation and the
-bailout test used by Fractint is:
+bailout test used by Id is:
 
 bailout test = |z|^2 = x^2 + y^2 >= 4
 
@@ -853,7 +843,7 @@ the spiked ends off of the protrusions.
 ;
 ~Topic=3D Overview
 
-Fractint can restore images in "3D". Important: we use quotation marks
+Id can restore images in "3D". Important: we use quotation marks
 because it does not CREATE images of 3D fractal objects (there are such,
 but we're not there yet.) Instead, it restores .GIF images as a 3D
 PROJECTION or STEREO IMAGE PAIR.  The iteration values you've come to know
@@ -882,11 +872,11 @@ command line (there ARE a lot of them so they may not all fit within the
 DOS command line limits), with an SSTOOLS.INI file, or with a parameter
 file.
 
-Here's an example for you power FRACTINTers, the command
+Here's an example for you power Iterated Dynamicists, the command
 
-      FRACTINT MYFILE SAVENAME=MY3D 3D=YES BATCH=YES
+      id myfile savename=my3d 3d=yes batch=yes
 
-would make Fractint load MYFILE.GIF, re-plot it as a 3D landscape (taking
+would make Id load MYFILE.GIF, re-plot it as a 3D landscape (taking
 all of the defaults), save the result as MY3D.GIF, and exit to DOS. By the
 time you've come back with that cup of coffee, you'll have a new world to
 view, if not conquer.
@@ -912,7 +902,7 @@ satisfied press <Enter>.
 Preview Mode:
    Preview mode provides a rapid look at your transformed image using by
    skipping a lot of rows and filling the image in. Good for quickly
-   discovering the best parameters. Let's face it, the Fractint authors
+   discovering the best parameters. Let's face it, the Id authors
    most famous for "blazingly fast" code *DIDN'T* write the 3D routines!
    [Pieter: "But they *are* picking away it and making some progress in
    each release."]
@@ -940,7 +930,7 @@ Spherical Projection:
 
 Stereo:
 
-   Stereo sound in Fractint? Well, not yet. Fractint now allows you to
+   Stereo sound in Id? Well, not yet. Id now allows you to
    create 3D images for use with red/blue glasses like 3D comics you may
    have seen, or images like Captain EO.
 
@@ -979,13 +969,13 @@ Stereo:
 ~OnlineFF
 Ray Tracing Output:
 
-   Fractint can create files of its 3d transformations which are
+   Id can create files of its 3d transformations which are
    compatible with many ray tracing programs. Currently four are supported
    directly: DKB (now obsolete), VIVID, MTV, and RAYSHADE. In addition a "RAW"
    output is supported which can be relatively easily transformed to be
    usable by many other products.
    One other option is supported: ACROSPIN.  This is not a ray tracer,
-   but the same Fractint options apply - see {=@ACROSPIN Acrospin}.
+   but the same Id options apply - see {=@ACROSPIN Acrospin}.
 
    Option values:\
       0  disables the creation of ray tracing output\
@@ -1003,7 +993,7 @@ Ray Tracing Output:
    POV-Ray.
 
    All ray tracing files consist of triangles which follow the surface
-   created by Fractint during the 3d transform. Triangles which lie below
+   created by Id during the 3d transform. Triangles which lie below
    the "water line" are not created in order to avoid causing unnecessary
    work for the poor ray tracers which are already overworked.
    A simple plane can be substituted by the user at the
@@ -1025,7 +1015,7 @@ Ray Tracing Output:
 Brief output:
 
    This is a ray tracing sub-option.
-   When it is set to yes, Fractint creates a considerably
+   When it is set to yes, Id creates a considerably
    smaller and somewhat faster file. In this mode, all triangles
    use the default color specified at the begining of the file.
    This color should be edited to supply the color of your choice.
@@ -1096,7 +1086,6 @@ transforming it. The light source is fixed relative to your computer screen.
 If you generate a sequence of images with progressive rotation, the effect is
 as if you and the light source are fixed and the object is rotating. Therefore
 as the object rotates features of the object move in and out of the light.
-This fill option was incorrect prior to version 16.1, and has been changed.
 
 "Light source after transformation" applies the same transformation to both
 the light direction and the object. Since both the light direction and the
@@ -1104,8 +1093,7 @@ object are transformed, if you generate a sequence of images with the rotation
 progressively changed, the effect is as if the image and the light source
 are fixed in relation to each other and you orbit around the image. The
 illumination of features on the object is constant, but you see the object
-from different angles. This fill option was correct in earlier Fractint
-versions and has not been changed.
+from different angles.
 
 For ease of discussion we will refer to the following fill types by these
 numbers:
@@ -1185,7 +1173,7 @@ This screen is not available if you have selected a ray tracing option.
 ; This topic is online only.
 
 The parameters on this screen are a subset of the zillions of options
-available for Fractint's 3D image transformations.
+available for Id's 3D image transformations.
 This screen's parameters are those which also affect 3D fractal types like
 lorenz3d and kamtorus3d.
 Since they are documented elsewhere, we won't repeat ourselves:
@@ -1331,7 +1319,7 @@ component for the background color you wish.
 
 Finally, absolutely the last option (this time we mean it): you can now
 choose to overlay an existing Targa-24, type 2, non mapped, top-to-bottom
-file, such as created by Fractint or PVRay. The Targa file specified above
+file, such as created by Id or PVRay. The Targa file specified above
 will be overlayed with new info just as a GIF is overlayed on screen. Note:
 it is not necessary to use the "O" overlay command to overlay Targa files.
 The Targa_Overlay option must be set to yes, however.
@@ -1405,7 +1393,7 @@ We'd like to salute LBLGRAPH, its successors, and their creators, because
 it was their graphic output (like "Planetrise over Labelgraph Hill," plate
 C9 in Mandelbrot's "Fractal Geometry of Nature") that helped turn fractal
 geometry from a mathematical curiosity into a phenomenon. We'd also like
-to point out that it wasn't as fast, flexible or pretty as Fractint on a
+to point out that it wasn't as fast, flexible or pretty as Id on a
 386/16 PC with S-VGA graphics. Now, a lot of the difference has to do with
 the incredible progress of micro-processor power since then, so a lot of
 the credit should go to Intel rather than to our highly tuned code. OK,
@@ -1419,7 +1407,7 @@ If you are one of those unfortunates with a CGA or Hercules 2-color
 monochrome graphics, it is now possible for you to make 3D projection
 images.
 
-Try the following unfortunately circuitous approach. Invoke Fractint,
+Try the following unfortunately circuitous approach. Invoke Id,
 making sure you have set askvideo=yes. Use a disk-video mode to create a
 256 color fractal. You might want to edit the id.cfg file to make a
 disk-video mode with the same pixel dimensions as your normal video. Using
@@ -1433,7 +1421,7 @@ our fan mail!
 ;
 ~Topic=Making Terrains
 
-If you enjoy using Fractint for making landscapes, we have several new
+If you enjoy using Id for making landscapes, we have several new
 features for you to work with. When doing 3d transformations banding tends
 to occur because all pixels of a given height end up the same color. Now,
 colors can be randomized to make the transitions between different colors
@@ -1465,7 +1453,7 @@ Using the full color option allows you to also set a haze factor with the
 As a default, full color files also have the background set to sky blue.
 Warning, the files which are created with the full color option are very
 large, 3 bytes per pixel. So be sure to use a disk with enough space.
-The file is created using Fractint's disk-video caching, but is always
+The file is created using Id's disk-video caching, but is always
 created on real disk (expanded or extended memory is not used.) Try the
 following settings of the new variables in sequence to get a feel for the
 effect of each one:\
@@ -1490,7 +1478,7 @@ image. Don't be disturbed if the colors look weird, they are an artifact
 of the process being used. The image being created in the lightfile won't
 look like the screen.
 
-However, if you are worried, hit ESC several times and when Fractint gets
+However, if you are worried, hit ESC several times and when Id gets
 to the end of the current line it will abort. Your partial image will be
 there as LIGHT001.TGA or with whatever file name you selected with the
 lightname option. Convert it as described above and adjust any parameters
@@ -1547,7 +1535,7 @@ currently has 6.5 MB of RAM."
 (Also see "Ray Tracing Output", "Brief", and "Output File Name"
 in {"3D Mode Selection"}.)
 
-Fractint allows you to save your 3d transforms in files which may be
+Id allows you to save your 3d transforms in files which may be
 fed to a ray tracer (or to "Acrospin").
 However, they are not ready to be traced by
 themselves. For one thing, no light source is included. They are
@@ -1565,7 +1553,7 @@ from 50 to 200 bytes each to describe, so your ray tracing files can
 rapidly approach or exceed 1Meg. Make sure you have enough disk space before
 you start.
 
-Each file starts with a comment identifying the version of Fractint
+Each file starts with a comment identifying the version of Id
 by which it was created. The file ends with a comment giving the number
 of triangles in the file.
 
@@ -1582,7 +1570,7 @@ current setting of WATERLINE is written to the ray tracing file.  These
 may be replaced by a simple plane in the syntax of the ray tracer you are
 using.
 
-Fractint's coordinate system has the origin of the x-y plane at the upper
+Id's coordinate system has the origin of the x-y plane at the upper
 left hand corner of the screen, with positive x to the right and positive
 y down. The ray tracing files have the origin of the x-y plane moved to
 the center of the screen with positive x to the right and positive y up.
