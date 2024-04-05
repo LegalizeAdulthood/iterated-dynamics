@@ -8,6 +8,7 @@
 #include <cassert>
 #include <cstdio>
 #include <cstring>
+#include <string>
 
 #ifdef XFRACT
 /* Get an int from an unaligned pointer
@@ -284,7 +285,7 @@ bool process_document(PD_FUNC get_info, PD_FUNC output, void *info)
     output(PD_HEADING, &pd, info);
 
     bool first_section = true;
-    char page_text[10];
+    std::string page_text;
     while (get_info(PD_GET_CONTENT, &pd, info))
     {
         if (!output(PD_START_SECTION, &pd, info))
@@ -476,10 +477,10 @@ bool process_document(PD_FUNC get_info, PD_FUNC output, void *info)
                             else if (in_link == 2)
                             {
                                 tok = token_types::TOK_WORD;
-                                width = (int) std::strlen(page_text);
+                                width = (int) page_text.length();
                                 col += 8 - width;
                                 size = 0;
-                                pd.curr = page_text;
+                                pd.curr = page_text.c_str();
                                 ++in_link;
                             }
                             else if (in_link == 3)
@@ -515,7 +516,7 @@ bool process_document(PD_FUNC get_info, PD_FUNC output, void *info)
                             if (get_info(PD_GET_LINK_PAGE, &pd, info))
                             {
                                 in_link = 1;
-                                std::sprintf(page_text, "(p. %d)", pd.i);
+                                page_text = "(p. " + std::to_string(pd.i) + ")";
                             }
                             else
                             {
@@ -668,8 +669,8 @@ bool process_document(PD_FUNC get_info, PD_FUNC output, void *info)
                     if (get_info(PD_GET_LINK_PAGE, &pd, info))
                     {
                         width += 9;
-                        std::sprintf(page_text, " (p. %d)", pd.i);
-                        if (!do_print(page_text, (int) std::strlen(page_text)))
+                        page_text = " (p. " + std::to_string(pd.i) + ")";
+                        if (!do_print(page_text.c_str(), (int) page_text.length()))
                         {
                             return false;
                         }
