@@ -19,8 +19,8 @@ add_custom_command(
         ${CMAKE_BINARY_DIR}/include/helpdefs.h
         ${home_dir}/id.hlp
     COMMAND hc /i ${CMAKE_CURRENT_SOURCE_DIR} /c help.src
-    COMMAND ${CMAKE_COMMAND} -E copy helpdefs.h ${CMAKE_BINARY_DIR}/include/helpdefs.h
-    COMMAND ${CMAKE_COMMAND} -E copy id.hlp ${home_dir}
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different helpdefs.h ${CMAKE_BINARY_DIR}/include/helpdefs.h
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different id.hlp ${home_dir}
     DEPENDS hc
         help.src
         help2.src
