@@ -3647,14 +3647,14 @@ Version 1.0, 9/88
 ;
 ~Data=INTRO_AUTHORS
 ;
-; FRACTINT intro screen primary authors
+; Iterated Dynamics intro screen primary authors
 ;
- Primary Author (current version)
+  Primary Author (current version)
  Richard Thomson      legalize AT xmission.com
- Legacy FRACTINT Primary Authors
- Timothy Wegner       Jonathan Osuch
- The Giants on Whose Shoulders We Stand
+  The Giants on Whose Shoulders We Stand
 ; room for 14 authors at a time here
+
+
 
 
 
@@ -3678,9 +3678,11 @@ Version 1.0, 9/88
 ;
 ~Data=INTRO_CREDITS
 ;
-; FRACTINT intro screen contributing authors.
+; Iterated Dynamics intro screen contributing authors.
 ;
                   ...
+ Timothy Wegner       Legacy FRACTINT Primary Author
+ Jonathan Osuch       Legacy FRACTINT Primary Author
  Michael Abrash       360x480x256, 320x400x256 VGA video modes
  Rees Acheson         (Author of MandelB) pentium speedups
  Joseph Albrecht      Tandy video, CGA video speedup
