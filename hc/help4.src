@@ -26,7 +26,7 @@
 ~Format-
 {Startup Parameters}
   @filename[/setname]      Process commands from a file
-  [filename=]filename      Start with this saved file (one saved by FRACTINT
+  [filename=]filename      Start with this saved file (one saved by Id
                            or a generic GIF file [treated as a plasma cloud])
   makepar=parfile[/entry]  Invokes batch facility to copy a GIF to
                            PAR format with colors.
@@ -35,12 +35,12 @@
   autokey=play|record      Playback or record keystrokes
   autokeyname=<path>\\filename  File for autokey mode, default AUTO.KEY
   fpu=387                  Assume 387 fpu is present
-  makedoc=filename         Create Fractint documentation file
+  makedoc=filename         Create Id documentation file
   maxhistory=<nnn>         Set image capacity of history feature. A higher
                            number stores more images but uses more memory.
   tempdir=directory        Place temporary files here
   workdir=directory        Directory for miscellaneous written files
-  curdir=yes|no            When set to yes, Fractint checks current directory
+  curdir=yes|no            When set to yes, Id checks current directory
                            before default directory when opening files. Use
                            this command when testing temporary .FRM, .L, etc.
                            files in the current directory.
@@ -206,10 +206,10 @@
   gif87a=yes               Save GIF files in the older GIF87a format (with
                            no FRACTINT extension blocks)
   dither=yes               Dither color GIFs read into a b/w display.
-  parmfile=<path>\\filename File for <@> and <b> commands, default FRACTINT.PAR
-  formulafile=<path>\\filename  File for type=formula, default FRACTINT.FRM
-  lfile=<path>\\filename    File for type=lsystem, default FRACTINT.L
-  ifsfile=<path>\\filename  File for type=ifs, default FRACTINT.IFS
+  parmfile=<path>\\filename File for <@> and <b> commands, default id.par
+  formulafile=<path>\\filename  File for type=formula, default id.frm
+  lfile=<path>\\filename    File for type=lsystem, default id.l
+  ifsfile=<path>\\filename  File for type=ifs, default id.ifs
   orbitsave=yes            Causes IFS and orbit fractals orbit points to be
                            saved in the file ORBITS.RAW
 ~FF
@@ -290,15 +290,15 @@
 ;
 ~Topic=Introduction to Parameters
 
-Fractint accepts command-line parameters that allow you to start it with a
+Id accepts command-line parameters that allow you to start it with a
 particular video mode, fractal type, starting coordinates, and just about
 every other parameter and option.
 
 These parameters can also be specified in a SSTOOLS.INI file, to set them
-every time you run Fractint.
+every time you run Id.
 
 They can also be specified as named groups in a .PAR (parameter) file
-which you can then call up while running Fractint by using the <@>
+which you can then call up while running Id by using the <@>
 command.
 
 In all three cases (DOS command line, SSTOOLS.INI, and parameter file) the
@@ -309,54 +309,54 @@ sections.
 ;
 ~Topic=Using the DOS Command Line
 
-You can specify parameters when you start Fractint from DOS by using a
+You can specify parameters when you start Id from DOS by using a
 command like:
 
-    FRACTINT SOUND=OFF FILENAME=MYIMAGE.GIF
+    id sound=off filename=myimage.gif
 
 The individual parameters are separated by one or more spaces (an
 parameter itself may not include spaces). Upper or lower case may be
 used, and parameters can be in any order.
 
-Since DOS commands are limited to 128 characters, Fractint has a special
+Since DOS commands are limited to 128 characters, Id has a special
 command you can use when you have a lot of startup parameters (or have a
 set of parameters you use frequently):
 
-    FRACTINT @MYFILE
+    id @myfile
 
-When @filename is specified on the command line, Fractint reads parameters
+When @filename is specified on the command line, Id reads parameters
 from the specified file as if they were keyed on the command line.  You
 can create the file with a text editor, putting one "keyword=value"
 parameter on each line.
 ;
 ;
 ~Topic=Setting Defaults (SSTOOLS.INI File)
-Every time Fractint runs, it searches the current directory, and then the
+Every time Id runs, it searches the current directory, and then the
 directories in your DOS PATH, for a file named SSTOOLS.INI.  If it finds
 this file, it begins by reading parameters from it.  This file is useful
 for setting parameters you always want.
 
 SSTOOLS.INI is divided into sections belonging to particular programs.
-Each section begins with a label in brackets. Fractint looks for the label
-[fractint], and ignores any lines it finds in the file belonging to any
+Each section begins with a label in brackets. Id looks for the label
+[Id], and ignores any lines it finds in the file belonging to any
 other label. If an SSTOOLS.INI file looks like this:
 
-  [fractint]\
+  [Id]\
   sound=off      ; (for home use only)\
   inside=0       ; using "traditional" black\
   [startrek]\
   warp=9.5       ; Captain, I dinna think the engines can take it!\
 
-Fractint will use only the second, third, and fourth lines of the file.
-(Why use a convention like that when Fractint is the only program you know
+Id will use only the second, third, and fourth lines of the file.
+(Why use a convention like that when Id is the only program you know
 of that uses an SSTOOLS.INI file?  Because there are other programs (such
 as Lee Crocker's PICLAB) that now use the same file, and there may one day
-be other, sister programs to Fractint using that file.)
+be other, sister programs to Id using that file.)
 ;
 ;
 ~Topic=Parameter Files and the <@> Command
 
-You can change parameters on-the-fly while running Fractint by using the
+You can change parameters on-the-fly while running Id by using the
 <@> or <2> command and a parameter file. Parameter files contain named
 groups of parameters, looking something like this:
 
@@ -370,11 +370,11 @@ groups of parameters, looking something like this:
      }\
 
 If you use the <@> or <2> command and select a parameter file containing the
-above example, Fractint will show two choices: quickdraw and slowdraw. You
+above example, Id will show two choices: quickdraw and slowdraw. You
 move the cursor to highlight one of the choices and press <Enter> to set
 the parameters specified in the file by that choice.
 
-The default parameter file name is FRACTINT.PAR. A different file can be
+The default parameter file name is id.par. A different file can be
 selected with the "parmfile=" option, or by using <@> or <2> and then hitting
 <F6>.
 
@@ -382,10 +382,10 @@ You can create parameter files with a text editor, or for some uses, by
 using the <B> command. Parameter files can be used in a number of ways,
 some examples:
 
-  o To save the parameters for a favorite image. Fractint can do this for
+  o To save the parameters for a favorite image. Id can do this for
     you with the <B> command.
 
-  o To save favorite sets of 3D transformation parameters. Fractint can do
+  o To save favorite sets of 3D transformation parameters. Id can do
     this for you with the <B> command.
 
   o To set up different sets of parameters you use occasionally.
@@ -434,39 +434,39 @@ Some terminology:\
 ~Topic=Startup Parameters
 
 @FILENAME\
-Causes Fractint to read "filename" for parameters. When it finishes, it
-resumes reading its own command line -- i.e., "FRACTINT MAXITER=250
-@MYFILE PASSES=1" is legal. This option is only valid on the DOS command
-line, as Fractint is not clever enough to deal with multiple indirection.
+Causes Id to read "filename" for parameters. When it finishes, it
+resumes reading its own command line -- i.e., "id maxiter=250
+@myfile passes=1" is legal. This option is only valid on the DOS command
+line, as Id is not clever enough to deal with multiple indirection.
 
 @FILENAME/GROUPNAME\
 Like @FILENAME, but reads a named group of parameters from a parameter
 file.  See {"Parameter Files and the <@> Command"}.
 
 TEMPDIR=[directory]\
-This command allows to specify the directory where Fractint writes temporary
+This command allows to specify the directory where Id writes temporary
 files.
 
 WORKDIR=[directory]\
-This command sets the directory where miscellaneous Fractint files get
+This command sets the directory where miscellaneous Id files get
 written, including MAKEMIG.BAT and debugging files.
 
 ~ONLINEFF
 FILENAME=[name]\
-Causes Fractint to read the named file, which must either have been saved
-from an earlier Fractint session or be a generic GIF file, and use that as
+Causes Id to read the named file, which must either have been saved
+from an earlier Id session or be a generic GIF file, and use that as
 the starting point, bypassing the initial information screens. The
-filetype is optional and defaults to .GIF. Non-Fractint GIF files are
+filetype is optional and defaults to .GIF. Non-Id GIF files are
 restored as fractal type "plasma".\
 
 On the DOS command line you may omit FILENAME= and just give the file name.
 
 CURDIR=yes\
-Fractint uses directories set by various commands, possibly in the
+Id uses directories set by various commands, possibly in the
 SSTOOLS.INI file. If you want to try out some files in the current directory,
-such as a modified copy of FRACTINT.FRM, you won't Fractint to read the copy
+such as a modified copy of id.frm, you won't Id to read the copy
 in your official FRM directory. Setting curdir=yes at the command line will
-cause Fractint to look in the current directory for requested files first
+cause Id to look in the current directory for requested files first
 before looking in the default directory set by the other commands. Warning:
 <tab> screen may not reflect actual file opened in cases where the file was
 opened in the DOS current directory.
@@ -475,7 +475,7 @@ opened in the DOS current directory.
 MAKEPAR=parfile/entryname\
 This command invokes a batch facility to copy fractal and color information
 stored in GIF files to PAR format. The syntax is:\
-     fractint filename.gif makepar=parfile.par/entryname >> makepar.log\
+     id filename.gif makepar=parfile.par/entryname >> makepar.log\
 The entryname is optional and defaults to the name of the gif filename if
 absent. Other parameters can appear before the makepar= command, but
 anything after will ignored. If the parfile and entryname exist, the entry
@@ -488,7 +488,7 @@ If you leave the GIF filename out of the command lime but add a map= command,
 then the makepar command will write a PAR named for the color map with only
 the colors in the PAR entry. This is a handy tool for converting maps
 into compressed PAR colors entry. For example, you could type:\
-     fractint map=lyapunov.map makepar=mycolors >> makepar.log\
+     id map=lyapunov.map makepar=mycolors >> makepar.log\
 This adds a colors-only PAR entry called lyapunov.map to mycolors.par.
 
 MAXLINELENGTH=nnn\
@@ -521,7 +521,7 @@ BATCH=yes\
 See {Batch Mode}.
 
 AUTOKEY=play|record\
-Specifying "play" runs Fractint in playback mode - keystrokes are read
+Specifying "play" runs Id in playback mode - keystrokes are read
 from the autokey file (see next parameter) and interpreted as if they're
 being entered from the keyboard.\
 
@@ -535,9 +535,9 @@ Specifies the file name to be used in autokey mode. The default file name
 is AUTO.KEY.
 
 MAKEDOC[=filename]\
-Create Fractint documentation file (for printing or viewing with a text
-editor) and then return to DOS.  Filename defaults to FRACTINT.DOC.
-There's also a function in Fractint's online help which can be used to
+Create Id documentation file (for printing or viewing with a text
+editor) and then return to DOS.  Filename defaults to id.txt.
+There's also a function in Id's online help which can be used to
 produce the documentation file -
 ~Doc-
 see {Printing Id Documentation}.
@@ -546,14 +546,14 @@ use "Printing Id Documentation" from the main help index.
 ~Online+
 
 MAXHISTORY=<nnn>\
-Fractint maintains a list of parameters of the past 10 images that you
-generated in the current Fractint session. You can revisit these images
+Id maintains a list of parameters of the past 10 images that you
+generated in the current Id session. You can revisit these images
 using the <h> and <Ctrl-h> commands. The maxhistory command allows you
 to set the number of image parameter sets stored in memory. The tradeoff
 is between the convenience of storing more images and memory use. Each
 image in the circular history buffer takes up over 1200 bytes, so the
 default value of ten images uses up 12,000 bytes of memory. If your memory
-is very tight, and some memory-intensive Fractint operations are giving
+is very tight, and some memory-intensive Id operations are giving
 "out of memory" messages, you can reduce maxistory to 2 or even zero. Keep
 in mind that every time you color cycle or change from integer to float or
 back, another image parameter set is saved, so the default ten images are
@@ -562,7 +562,7 @@ used up quickly.
 FPU=387\
 This parameter is useful if you have an unusual coprocessor chip. If you
 have a 80287 replacement chip with full 80387 functionality use "FPU=387"
-to inform Fractint to take advantage of those extra 387 instructions.
+to inform Id to take advantage of those extra 387 instructions.
 ;
 ;
 ~Topic=Calculation Mode Parameters
@@ -592,7 +592,7 @@ fractal actual exhibits the symmetry, or else results may not be
 satisfactory.
 
 BFDIGITS=<nnn>\
-Forces nnn digits if arbitrary precision used. You can use this if fractint's
+Forces nnn digits if arbitrary precision used. You can use this if Id's
 precision detection changes to arbitrary precision too late and regular double
 precision is used with poor results.
 
@@ -625,7 +625,7 @@ Set optional (required, for some fractal types) values used in the
 calculations. These numbers typically represent the real and imaginary
 portions of some startup value, and are described in detail as needed in
 {Fractal Types}.\
-(Example: FRACTINT TYPE=julia PARAMS=-0.48/0.626 would wait at the opening
+(Example: "id type=julia params=-0.48/0.626" would wait at the opening
 screen for you to select a video mode, but then proceed straight to the
 Julia set for the stated x (real) and y (imaginary) coordinates.)
 
@@ -678,7 +678,7 @@ Six parameters can be used to describe any rotated or stretched
 parallelogram:  (xmin,ymax) are the coordinates used for the top-left
 corner of the screen, (xmax,ymin) for the bottom-right corner, and
 (x3rd,y3rd) for the bottom-left.
-Entering just "CORNERS=" tells Fractint to use this form
+Entering just "CORNERS=" tells Id to use this form
 rather than CENTER-MAG (see below) when saving
 parameters with the <B> command.
 
@@ -686,7 +686,7 @@ parameters with the <B> command.
 CENTER-MAG=[Xctr/Yctr/Mag[/Xmagfactor/Rotation/Skew]]\
 This is an alternative way to enter corners as a center point and a
 magnification that is popular with some fractal programs and publications.
-Entering just "CENTER-MAG=" tells Fractint to use this form
+Entering just "CENTER-MAG=" tells Id to use this form
 (the default mode) rather than CORNERS (see above) when saving parameters
 with the <B> command.
 The <TAB> status
@@ -711,7 +711,7 @@ has exceeded the bailout value.  The default is mod and not all fractal types
 can utilize the additional tests.
 
 RESET\
-Causes Fractint to reset all calculation related parameters to their
+Causes Id to reset all calculation related parameters to their
 default values. Non-calculation parameters such as "sound=", and
 "savename=" are not affected. RESET should be specified at the start
 of each parameter file entry (used with the <@> command) which defines an
@@ -732,7 +732,7 @@ The initial random-number "seed" for plasma clouds is taken from your PC's
 internal clock-timer. This argument forces a value (which you can see in
 the <Tab> display), and allows you to reproduce plasma clouds. A detailed
 discussion of why a TRULY random number may be impossible to define, let
-alone generate, will have to wait for "FRACTINT: The 3-MB Doc File."
+alone generate, will have to wait for "Iterated Dynamics: The 3-MB Doc File."
 
 SHOWDOT=[auto|bright|medium|dark|<nnn>[/<size>]]\
 Colors the current dot being calculated color <nnn> or an automatically
@@ -882,7 +882,7 @@ and palette editing modes. Unlike the MAP= parameter, colors set with
 COLORS= do not replace the default - when you next select a new fractal
 type, colors will revert to their defaults.\
 
-COLORS=@filename tells Fractint to use a color map file named "filename".
+COLORS=@filename tells Id to use a color map file named "filename".
 See {Palette Maps}.\
 
 COLORS=colorspecification specifies the colors directly. The value of
@@ -935,7 +935,7 @@ Color values are:
 
 31 colors can be specified, their meanings are as follows:
   heading:
-    1  Fractint version info
+    1  Iterated Dynamics version info
     2  heading line development info (not used in released version)
   help:
     3  sub-heading
@@ -1008,7 +1008,7 @@ COLOR SPECIFICATION
 The colors= parameter in a PAR entry is a set of triplets.  Each triplet
 represents a color in the saved palette.  The triplet is made from the red
 green and blue components of the color in the palette entry.  The current
-limitations of fractint's palette handling capabilities restrict the palette
+limitations of Id's palette handling capabilities restrict the palette
 to 256 colors.  Each triplet rgb component is a 6 bit value from 0 to 63.
 These values are encoded using the following scheme:\
 
@@ -1086,14 +1086,14 @@ time to finite attractors. Works with lambda, magnet types, and possibly
 others.  See {Finite Attractors} for more information.
 
 EXITNOASK=yes\
-This option forces Fractint to bypass the final "are you sure?" exit
+This option forces Id to bypass the final "are you sure?" exit
 screen when the ESCAPE key is pressed from the main image-generation
 screen.  Added at the request of Ward Christensen.  It's his funeral <grin>.
 ;
 ;
 ~Topic=File Parameters
 
-In Fractint you can use various filename variables to specify files, set
+In Id you can use various filename variables to specify files, set
 default directories, or both. For example, in the SAVENAME description below,
 [name] can be a filename, a directory name, or a fully qualified pathname
 plus filename. You can specify default directories using these variables
@@ -1111,16 +1111,16 @@ automatic incrementing of FRACTnnn.GIF will find the first unused
 filename.
 
 SAVETIME=nnn\
-Tells Fractint to automatically do a save every nnn minutes while a
+Tells Id to automatically do a save every nnn minutes while a
 calculation is in progress.  This is mainly useful with long batches - see
 {Batch Mode}.
 
 ~ONLINEFF
 GIF87a=yes\
 Backward-compatibility switch to force creation of GIF files in the GIF87a
-format. As of version 14, Fractint defaults to the new GIF89a format which
+format. As of version 14, Id defaults to the new GIF89a format which
 permits storage of fractal information within the format. GIF87a=YES is
-only needed if you wish to view Fractint images with a GIF decoder that
+only needed if you wish to view Id images with a GIF decoder that
 cannot accept the newer format.  See {GIF Save File Format}.
 
 DITHER=yes\
@@ -1131,20 +1131,20 @@ back in dithered.
 
 PARMFILE=[<path>\\][parmfilename]\
 Specifies the default parameter path and/or file to be used by the <@> (or <2>)
-and <B> commands.  If not specified, the default is FRACTINT.PAR.
+and <B> commands.  If not specified, the default is id.par.
 
 FORMULAFILE=[<path>\\][formulafilename]\
 Specifies the formula path and/or file for type=formula fractals (default is
-FRACTINT.FRM).  Handy if you want to generate one of these fractal types
+id.frm).  Handy if you want to generate one of these fractal types
 in batch mode.
 
 LFILE=[<path>\\][lsystemfile]\
 Specifies the default L-System path and/or file for type=lsystem fractals
-(default is FRACTINT.L).
+(default is id.l).
 
 IFSFILE=[<path>\\][ifsfilename]\
 Specifies the default path and/or file for type=ifs fractals (default is
-FRACTINT.IFS).
+id.ifs).
 
 FILENAME=[.suffix]\
 Sets the default file extension used for the <r> command.
@@ -1168,28 +1168,28 @@ VIDEO=xxx\
 Set the initial video mode (and bypass the informational screens). Handy
 for batch runs. (Example: VIDEO=F4 for IBM 16-color VGA.)
 You can obtain the current VIDEO= values (key assignments) from the
-"select video mode" screens inside Fractint. If you want to do a batch run
+"select video mode" screens inside Id. If you want to do a batch run
 with a video mode which isn't currently assigned to a key, you'll have to
 modify the key assignments - see {"Video Mode Function Keys"}.
 
 ASKVIDEO=yes|no\
 If "no," this eliminates the prompt asking you if a file to be restored is
 OK for your current video hardware.\
-WARNING: every version of Fractint so far has had a bigger, better, but
+WARNING: every version of Id so far has had a bigger, better, but
 shuffled-around video table. Since calling for a mode your hardware
 doesn't support can leave your system in limbo, be careful about leaving
 the above two parameters in a command file to be used with future versions
-of Fractint, particularly for the super-VGA modes.
+of Id, particularly for the super-VGA modes.
 
 ADAPTER=hgc|cga|ega|egamono|mcga|vga|ATI|Everex|Trident|NCR|Video7|Genoa|
         Paradise|Chipstech|Tseng3000|Tseng4000|AheadA|AheadB|Oaktech\
-Bypasses Fractint's internal video autodetect logic and assumes that the
+Bypasses Id's internal video autodetect logic and assumes that the
 specified kind of adapter is present. Use this parameter only if you
 encounter video problems without it.  Specifying adapter=vga with an SVGA
-adapter will make its extended modes unusable with Fractint.  All of the
+adapter will make its extended modes unusable with Id.  All of the
 options after the "VGA" option specify specific SuperVGA chipsets which
 are capable of video resolutions higher than that of a "vanilla" VGA adapter.
-Note that Fractint cares about the Chipset your adapter uses internally,
+Note that Id cares about the Chipset your adapter uses internally,
 not the name of the company that sold it to you.
 
 VESADETECT=yes|no\
@@ -1197,24 +1197,24 @@ Specify no to bypass VESA video detection logic. Try this if you encounter
 video problems with a VESA compliant video adapter or driver.
 
 AFI=yes|8514|no\
-Normally, when you attempt to use an 8514/A-specific video mode, Fractint
+Normally, when you attempt to use an 8514/A-specific video mode, Id
 first attempts to detect the presence of an 8514/A register-compatible
 adapter.  If it fails to find one, it then attempts to detect the presence
 of an 8514/A-compatible API (IE, IBM's HDILOAD or its equivalent).
-Fractint then uses either its register-compatible or its API-compatible
+Id then uses either its register-compatible or its API-compatible
 video logic based on the results of those tests.  If you have an
-"8514/A-compatible" video adapter that passes Fractint's
+"8514/A-compatible" video adapter that passes Id's
 register-compatible detection logic but doesn't work correctly with
-Fractint's register-compatible video logic, setting "afi=yes" will
-force Fractint to bypass the register-compatible code and look only for
+Id's register-compatible video logic, setting "afi=yes" will
+force Id to bypass the register-compatible code and look only for
 the API interface.
 
 TEXTSAFE=yes|no|bios|save\
 When you switch from a graphics image to text mode (e.g. when you use <F1>
-while a fractal is on display), Fractint remembers the graphics image, and
+while a fractal is on display), Id remembers the graphics image, and
 restores it when you return from the text mode.
 This should be no big deal - there are a number of well-defined ways
-Fractint could do this which *should* work on any video adapter.  They
+Id could do this which *should* work on any video adapter.  They
 don't - every fast approach we've tried runs into a bug on one video
 adapter or another.  So, we've implemented a fast way which works on most
 adapters in most modes as the default, and added this parameter for use
@@ -1223,12 +1223,12 @@ If you experience the following problems, please fool around with this
 parameter to try to fix the problem:\
   o Garbled image, or lines or dashes on image, when returning to image
     after going to menu, <tab> display, or help.\
-  o Blank screen when starting Fractint.\
+  o Blank screen when starting Id.\
 The problems most often occur in higher resolution modes. We have not
 encountered them at all in modes under 320x200x256 - for those modes
-Fractint always uses a fast image save/restore approach.\
+Id always uses a fast image save/restore approach.\
 Textsafe options:\
-  yes: This is the default. When switching to/from graphics, Fractint
+  yes: This is the default. When switching to/from graphics, Id
     saves just that part of video memory which EGA/VGA adapters are
     supposed to modify during the mode changes.
   no: This forces use of monochrome 640x200x2 mode for text displays (when
@@ -1241,7 +1241,7 @@ Textsafe options:\
     approach is fast and ought to work on all adapters. Sadly, we've found
     that very few adapters implement this function perfectly.
   save: It should work on all adapters in
-    all modes but it can be slow. It tells Fractint to save/restore the entire
+    all modes but it can be slow. It tells Id to save/restore the entire
     image. Expanded or extended memory is used for the save if you have
     enough available; otherwise a temporary disk file is used. The speed
     of textsafe=save will be acceptable on some machines but not others.
@@ -1254,7 +1254,7 @@ Textsafe options:\
         with resolution higher than 640x480; custom modes for ATI EGA Wonder,
         Paradise EGA-480, STB, Compaq portable 386, AT&T 6300, and roll your
         own video modes implemented with customized YOURVID.C code.
-If you want to tune Fractint to use different "textsafe" options for
+If you want to tune Id to use different "textsafe" options for
 different video modes, see {"Customized Video Modes\, id.cfg"}.
 (E.g. you might want to use the slower textsafe=save approach just for a
 few high-resolution modes which have problems with textsafe=yes.)
@@ -1305,7 +1305,7 @@ VIRTUAL=yes|no\
 With a suitable video adapter it is possible to set virtual screen modes
 using the {"View Window"} options.  With certain video adapters it may be
 necessary to disable the check for virtual screen modes if this check
-prevents Fractint from loading correctly.  The default is "yes".  Setting
+prevents Id from loading correctly.  The default is "yes".  Setting
 this to "no" disables the check for and the ability to use virtual screen
 sizes.
 ;
@@ -1313,7 +1313,7 @@ sizes.
 ~Topic=Sound Parameters
 
 SOUND=off|beep|x|y|z/pc|fm/quant\
-We're all MUCH too busy to waste time with Fractint at work, and no doubt
+We're all MUCH too busy to waste time with Id at work, and no doubt
 you are too, so "sound=off" is included only for use at home, to avoid
 waking the kids or your Significant Other, late at night. (By the way,
 didn't you tell yourself "just one more zoom on LambdaSine" an hour ago?)
@@ -1335,9 +1335,9 @@ it will sound beautiful!
 
 The sound output can now be directed to the PC speaker, a sound card with
 OPL-3 support, or both at the same time.  There is also an option to
-quantize the notes generated by Fractint.  See {Sound Controls}.
+quantize the notes generated by Id.  See {Sound Controls}.
 
-You can also "hear" any image that Fractint can decode; turn on sound
+You can also "hear" any image that Id can decode; turn on sound
 before using <R> to read in a GIF file. We have no idea if this feature
 is useful. It was inspired by the comments of an on-line friend who is
 blind. We solicit feedback and suggestions from anyone who finds these
@@ -1471,7 +1471,7 @@ viewing RDS images. See {Random Dot Stereograms (RDS)}.
 It IS possible, believe it or not, to become so jaded with the screen
 drawing process, so familiar with the types and options, that you just
 want to hit a key and do something else until the final images are safe on
-disk.  To do this, start Fractint with the BATCH=yes parameter.  To set up
+disk.  To do this, start Id with the BATCH=yes parameter.  To set up
 a batch run with the parameters required for a particular image you might:
   o Find an interesting area.  Note the parameters from the <Tab> display.
     Then use an editor to write a batch file.
@@ -1479,7 +1479,7 @@ a batch run with the parameters required for a particular image you might:
     batch run.  Use the <B> command to store the parameters in a file.
     Then use an editor to add the additional required batch mode
     parameters (such as VIDEO=) to the generated parameter file entry.
-    Then run the batch using "fractint @myname.par/myentry" (if you told
+    Then run the batch using "id @myname.par/myentry" (if you told
     the <B> command to use file "myname" and to name the entry "myentry").
 
 Another approach to batch mode calculations, using "FILENAME=" and resume,
@@ -1491,9 +1491,9 @@ only parameters you must add for a batch mode run are "BATCH=yes", and
 "SAVENAME=[name]" to name the result as something other than the default
 FRACT001.GIF.  Or, you might find it easier to leave the generated
 parameter file unchanged and add these parameters by using a command like:
-   fractint @myname.par/myentry batch=y video=AF3 savename=mygif
+   id @myname.par/myentry batch=y video=AF3 savename=mygif
 
-"BATCH=yes" tells Fractint to run in batch mode -- that is, Fractint draws
+"BATCH=yes" tells Id to run in batch mode -- that is, Id draws
 the image using whatever other parameters you specified, then acts as if
 you had hit <S> to save the image, then exits to DOS.
 
@@ -1504,8 +1504,8 @@ distance estimator method, high maxiter, or whatever);  start the
 calculation;  then interrupt immediately with a <S>ave.  Rename the save
 file (fract001.gif if it is the first in the session and you didn't name
 it with the <X> options or "savename=") to xxx.gif. Later you can run
-Fractint in batch mode to finish the job:\
-    fractint batch=yes filename=xxx savename=xxx
+Id in batch mode to finish the job:\
+    id batch=yes filename=xxx savename=xxx
 
 "SAVETIME=nnn" is useful with long batch calculations, to store a
 checkpoint every nnn minutes.  If you start a many hour calculation with
@@ -1513,27 +1513,27 @@ say "savetime=60", and a power failure occurs during the calculation,
 you'll have lost at most an hour of work on the image.  You can resume
 calculation from the save file as above.  Automatic saves triggered by
 SAVETIME do not increment the save file name. The same file is overwritten
-by each auto save until the image completes.  But note that Fractint does
+by each auto save until the image completes.  But note that Id does
 not directly over-write save files.  Instead, each save operation writes a
-temporary file FRACTINT.TMP, then deletes the prior save file, then
-renames FRACTINT.TMP to be the new save file.  This protects against power
+temporary file id.tmp, then deletes the prior save file, then
+renames id.tmp to be the new save file.  This protects against power
 failures which occur during a save operation - if such a power failure
 occurs, the prior save file is intact and there's a harmless incomplete
-FRACTINT.TMP on your disk.
+id.tmp on your disk.
 
 If you want to spread a many-hour image over multiple bits of free machine
 time you could use a command like:\
-    fractint batch=yes filename=xxx savename=xxx savetime=60 video=F3\
+    id batch=yes filename=xxx savename=xxx savetime=60 video=F3\
 While this batch is running, hit <S> (almost any key actually) to tell
-fractint to save what it has done so far and give your machine back.  A status
-code of 2 is returned by fractint to the batch file.  Kick off the batch
+Id to save what it has done so far and give your machine back.  A status
+code of 2 is returned by Id to the batch file.  Kick off the batch
 again when you have another time slice for it.
 
-When the savetime parameter is negative, Fractint will save the image after
+When the savetime parameter is negative, Id will save the image after
 the requested time and exit.  This is useful in batch files where you want to
 generate several images with a time limit on each image.
 
-While running a batch file, pressing any key will cause Fractint to exit
+While running a batch file, pressing any key will cause Id to exit
 with an errorlevel = 2.  Any error that interrupts an image save to disk
 will cause an exit with errorlevel = 2.  Any error that prevents an image
 from being generated will cause an exit with errorlevel = 1.
@@ -1546,20 +1546,20 @@ work with fractal types which can be resumed.  See
 ;
 ~Topic=Video Adapter Notes
 Alas, in this day of Windows, video adapter manufacturers do not have much
-incentive to support DOS video modes. Fractint can support any video modes
+incentive to support DOS video modes. Id can support any video modes
 included in your board's VESA video bios. Many otherwise good boards do not
 include the higher resolution modes in their bios even though those modes
 are supported in the manufacturer's Windows driver.
 
-Fractint users are particularly fond of the 1600x1200 mode. If you want to
+Id users are particularly fond of the 1600x1200 mode. If you want to
 use this mode, make sure your video board supports it. Some boards that
 have given good results are boards from STB, various versions of Matrox
 Millennium, and boards from several manufacturers using Nvidia Riva chip sets.
 
-Using high resolution video modes poses a second challenge for fractint users.
+Using high resolution video modes poses a second challenge for Id users.
 That is that the VESA standard does not have standard settings for this mode,
 so you will have to edit the id.cfg file to support your board. You can
-run the program makefcfg.exe that comes with fractint to generate entries
+run the program makefcfg.exe that comes with Id to generate entries
 for your id.cfg file.
 
 Finally, even if your video board VESA Bios supports high resolution video
@@ -1573,11 +1573,11 @@ unirefresh program, email Rob at r.muller@student.utwente.nl or check out
 
    http://home.student.utwente.nl/r.muller/unirefresh
 
-True to the spirit of public-domain programming, Fractint makes only a
+True to the spirit of public-domain programming, Id makes only a
 limited attempt to verify that your video adapter can run in the mode you
 specify, or even that an adapter is present, before writing to it.
 So if you use the "video=" command line parameter, check it before using
-a new version of Fractint -
+a new version of Id -
 the old key combo may now call an ultraviolet holographic mode.
 ~Doc-
 
@@ -1595,7 +1595,7 @@ Also see {Customized Video Modes\, id.cfg}.
 EGA
 ~Format+,Online+
 
-Fractint assumes that every EGA adapter has a full 256K of memory
+Id assumes that every EGA adapter has a full 256K of memory
 (and can therefore display 640 x 350 x 16 colors), but does nothing to
 verify that fact before slinging pixels.
 ;
@@ -1613,7 +1613,7 @@ These video modes are perfectly legal, but temporarily
 reprogram the adapter (IBM or fully register-compatible) in a non-standard
 manner that the BIOS does not recognize.
 
-Fractint also contains code that sets up the IBM (or any truly register-
+Id also contains code that sets up the IBM (or any truly register-
 compatible) VGA adapter for several extended modes such as 704x528,
 736x552, 768x576, and 800x600. It does this by programming the VGA
 controller to use the fastest dot-clock on the IBM adapter (28.322 MHz),
@@ -1646,9 +1646,9 @@ logic *and* VESA adapter detection, so that many brand-specific SuperVGA
 modes have been combined into single video mode selection entries.
 There is now exactly one entry for SuperVGA 640x480x256 mode, for instance.
 
-If Fractint's automatic SuperVGA/VESA detection logic guesses wrong,
+If Id's automatic SuperVGA/VESA detection logic guesses wrong,
 and you know which SuperVGA chipset your video adapter uses, you can use
-the "adapter=" command-line option to force Fractint to assume the presence
+the "adapter=" command-line option to force Id to assume the presence
 of a specific SuperVGA Chipset - see {Video Parameters} for details.
 ;
 ;
@@ -1677,7 +1677,7 @@ while these modes are declared to be 256-color, if you do not have your
 be in 16-color mode. The hardware register 16-color modes have not been
 tested.
 
-If your 8514/A adapter is not truly register compatible and Fractint does
+If your 8514/A adapter is not truly register compatible and Id does
 not detect this, use of the adapter interface can be forced by using afi=y
 or afi=8514 in your SSTOOLS.INI file.
 
@@ -1692,7 +1692,7 @@ XGA MODES
 ~Format+,Online+
 
 The XGA adapter is supported using the VESA/SuperVGA Autodetect modes -
-the XGA looks like just another SuperVGA adapter to Fractint.
+the XGA looks like just another SuperVGA adapter to Id.
 The supported XGA modes are 640x480x256, 1024x768x16, 1024x768x256,
 800x600x16, and 800x600x256.  Note that the 1024x768x256 mode requires
 a full 1MB of adapter memory, the 1024x768 modes require a high-rez
@@ -1705,9 +1705,9 @@ as the NEC 2A.
 TARGA MODES
 ~Format+,Online+
 
-TARGA support for Fractint is provided courtesy of Joe McLain and has been
+TARGA support for Id is provided courtesy of Joe McLain and has been
 enhanced with the help of Bruce Goren and Richard Biddle.  To use a TARGA
-board with Fractint, you must define two DOS environment variables,
+board with Id, you must define two DOS environment variables,
 "TARGA" and "TARGASET".  The definition of these variables is standardized
 by Truevision; if you have a TARGA board you probably already have added
 "SET" statements for these variables to your AUTOEXEC.BAT file.
@@ -1729,18 +1729,18 @@ TARGA+ MODES
 
 To use the special modes supported for TARGA+ adapters, the TARGAP.SYS
 device driver has to be loaded, and the TPLUS.DAT file (included with
-Fractint) must be in the same directory as Fractint.  The video modes with
+Id) must be in the same directory as Id.  The video modes with
 names containing "True Color Autodetect" can be used with the Targa+.  You
 might want to use the command line parameters "tplus=", "noninterlaced=",
 "maxcolorres=", and "pixelzoom=" (see {Video Parameters})
-in your SSTOOLS.INI file to modify Fractint's use of the adapter.
+in your SSTOOLS.INI file to modify Id's use of the adapter.
 ;
 ;
 ~Topic="Disk-Video" Modes
 
 These "video modes" do not involve a video adapter at all. They use (in
 order or preference) your expanded memory, your extended memory, or your
-disk drive (as file FRACTINT.$$$) to store the fractal image. These modes
+disk drive (as file id.$$$) to store the fractal image. These modes
 are useful for creating images beyond the capacity of your video adapter
 right up to the current internal limit of 32767 x 32767 x 256,
 e.g. for subsequent printing.
@@ -1757,7 +1757,7 @@ memory free, and that performance will be less than optimum.  With a very
 low cache size such as 4 or 6k, performance gets considerably worse in
 cases using solid guessing, boundary tracing, plasma, or anything else
 which paints the screen non-linearly.  If you have this problem, all we
-can suggest is having fewer TSR utilities loaded before starting Fractint,
+can suggest is having fewer TSR utilities loaded before starting Id,
 or changing in your config.sys file, such as reducing a very high BUFFERS
 value.
 
@@ -1767,10 +1767,10 @@ it is anyway).  So is the orbit display feature.
 {=@ColorCycling Color Cycling} can be used during disk-video modes,
 but only to load or save a color palette.
 
-When using real disk for your disk-video, Fractint previously would not
+When using real disk for your disk-video, Id previously would not
 generate some "attractor" types (e.g. Lorenz) nor "IFS" images.  These stress
 disk drives with intensive reads and writes, but with the caching algorithm
-performance may be acceptable. Currently Fractint gives you a warning message
+performance may be acceptable. Currently Id gives you a warning message
 but lets you proceed. You can end the calculation with <Esc> if you think your
 hard disk is getting too strenuous a workout.
 
@@ -1790,12 +1790,12 @@ clears up the problem.
 
 If you are running background disk-video fractals under Windows 3, and you
 don't have a lot of real memory (over 2Mb), you might find it best to
-force Fractint to use real disk for disk-video modes.  (Force this by
+force Id to use real disk for disk-video modes.  (Force this by
 using a .pif file with extended memory and expanded memory set to zero.)
 Try this if your disk goes crazy when generating background images, which
 are supposedly using extended or expanded memory.  This problem can occur
 because, to multi-task, sometimes Windows must page an application's
-expanded or extended memory to disk, in big chunks. Fractint's own cached
+expanded or extended memory to disk, in big chunks. Id's own cached
 disk access may be faster in such cases.
 ;
 ;
@@ -1803,18 +1803,18 @@ disk access may be faster in such cases.
 ~Topic=Customized Video Modes\, id.cfg
 
 If you have a favorite adapter/video mode that you would like to add to
-Fractint... if you want some new sizes of disk-video modes... if you want
+Id... if you want some new sizes of disk-video modes... if you want
 to remove table entries that do not apply to your system... if you want to
 specify different "textsafe=" options for different video modes... relief
 is here, and without even learning "C"!
 
-You can do these things by modifying the FRACTINT.CFG file with your text
-editor. Saving a backup copy of FRACTINT.CFG first is of course highly
+You can do these things by modifying the id.cfg file with your text
+editor. Saving a backup copy of id.cfg first is of course highly
 recommended!
 
-Fractint uses a video adapter table for most of what it needs to know
+Id uses a video adapter table for most of what it needs to know
 about any particular adapter/mode combination. The table is loaded from
-FRACTINT.CFG each time Fractint is run. It can contain information for
+id.cfg each time Id is run. It can contain information for
 up to 300 adapter/mode combinations. The table entries, and the function
 keys they are tied to, are displayed in the "select video mode" screen.
 
@@ -1822,7 +1822,7 @@ This table makes adding support for various third-party video cards and
 their modes much easier, at least for the ones that pretend to be
 standard with extra dots and/or colors. There is even a special
 "roll-your-own" video mode (mode 19) enabling those of you with "C"
-compilers and a copy of the Fractint source to generate video modes
+compilers and a copy of the Id source to generate video modes
 supporting whatever adapter you may have.
 
 The table as currently distributed begins with nine standard and several
@@ -1835,9 +1835,9 @@ entries.
 After the IBM and quasi-pseudo-demi-IBM modes, the table contains an ever-
 increasing number of entries for other adapters. Almost all of these
 entries have been added because someone like you sent us spec sheets, or
-modified Fractint to support them and then informed us about it.
+modified Id to support them and then informed us about it.
 
-Lines in FRACTINT.CFG which begin with a semi-colon are treated as comments.
+Lines in id.cfg which begin with a semi-colon are treated as comments.
 The rest of the lines must have eleven fields separated by commas.
 The fields are defined as:
 
