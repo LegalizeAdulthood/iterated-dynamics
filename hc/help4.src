@@ -540,9 +540,9 @@ editor) and then return to DOS.  Filename defaults to FRACTINT.DOC.
 There's also a function in Fractint's online help which can be used to
 produce the documentation file -
 ~Doc-
-see {Printing Fractint Documentation}.
+see {Printing Id Documentation}.
 ~Doc+,Online-
-use "Printing Fractint Documentation" from the main help index.
+use "Printing Id Documentation" from the main help index.
 ~Online+
 
 MAXHISTORY=<nnn>\
@@ -1255,7 +1255,7 @@ Textsafe options:\
         Paradise EGA-480, STB, Compaq portable 386, AT&T 6300, and roll your
         own video modes implemented with customized YOURVID.C code.
 If you want to tune Fractint to use different "textsafe" options for
-different video modes, see {"Customized Video Modes\, FRACTINT.CFG"}.
+different video modes, see {"Customized Video Modes\, id.cfg"}.
 (E.g. you might want to use the slower textsafe=save approach just for a
 few high-resolution modes which have problems with textsafe=yes.)
 
@@ -1586,7 +1586,7 @@ Comments about some particular video adapters:\
     { 8514/A }    { XGA }\
     { Targa }     { Targa+ }\
 
-Also see {Customized Video Modes\, FRACTINT.CFG}.
+Also see {Customized Video Modes\, id.cfg}.
 ~Doc+
 ;
 ;
@@ -1800,7 +1800,7 @@ disk access may be faster in such cases.
 ;
 ;
 ;
-~Topic=Customized Video Modes\, FRACTINT.CFG
+~Topic=Customized Video Modes\, id.cfg
 
 If you have a favorite adapter/video mode that you would like to add to
 Fractint... if you want some new sizes of disk-video modes... if you want

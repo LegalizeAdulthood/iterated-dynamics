@@ -14,14 +14,14 @@
 
 ~Format-
    { Using Help }                           { Fractals and the PC }
-   { Introduction }                         { Distribution of Fractint }
+   { Introduction }                         { Distribution of Iterated Dynamics }
    { Conditions on Use }                    { Contacting the Authors }
    { Getting Started }                      { The Stone Soup Story }
    { New Features in 1.0 }                  { A Word About the Authors }
                                           { Other Fractal Products }
    { Display Mode Commands }
-   { Color Cycling Commands }               { Fractint on Unix }
-   { Palette Editing Commands }             { Using Fractint With a Mouse }
+   { Color Cycling Commands }               { Id on Unix }
+   { Palette Editing Commands }             { Using Id With a Mouse }
                                           { Video Adapter Notes }
    { Summary of Fractal Types }             { GIF Save File Format }
 
@@ -31,7 +31,7 @@
                                           { Other Programs }
    { Startup Parameters\, Parameter Files }  { Revision History }
    { Batch Mode }
-   { "Disk-Video" Modes }                   { Printing Fractint Documentation }
+   { "Disk-Video" Modes }                   { Printing Id Documentation }
 
 ~Format+
 ;
@@ -41,7 +41,7 @@
 {     , 0, "New Features in 1.0", FF}
 {     , 0, "Introduction", "Conditions on Use", FF}
 
-{1.   , 0, Fractint Commands, FF}
+{1.   , 0, Iterated Dynamics Commands, FF}
 {1.1  , 1, "Getting Started"}
 {1.2  , 1, "Plotting Commands"}
 {1.3  , 1, "Zoom box Commands"}
@@ -58,7 +58,7 @@
 {1.14 , 1, "Evolver Commands"}
 {1.15 , 1, "RDS Commands"}
 {1.16 , 1, "Hints"}
-{1.17 , 1, "Fractint on Unix"}
+{1.17 , 1, "Id on Unix"}
 
 {2.   , 0, "Fractal Types", FF}
 {2.1  , 1, "The Mandelbrot Set"}
@@ -175,7 +175,7 @@
                     "Video Adapter Notes", "EGA", "Tweaked VGA", "Super-VGA",
                     "8514/A", "XGA", "Targa", "Targa+"}
 {6.2  , 1, "\"Disk-Video\" Modes"}
-{6.3  , 1, "Customized Video Modes\, FRACTINT.CFG"}
+{6.3  , 1, "Customized Video Modes\, id.cfg"}
 
 {7.   , 0, "Common Problems", FF}
 
@@ -187,7 +187,7 @@
 {8.2.1, 2, "Periodicity Logic"}
 {8.2.2, 2, "Limitations of Integer Math (And How We Cope)"}
 {8.2.3, 2, "Arbitrary Precision and Deep Zooming"}
-{8.2.4, 2, "The Fractint \"Fractal Engine\" Architecture"}
+{8.2.4, 2, "The Iterated Dynamics \"Fractal Engine\" Architecture"}
 
 {Appendix A, 0, Mathematics of the Fractal Types,
                    "Summary of Fractal Types",
@@ -200,7 +200,7 @@
 {Appendix B, 0, Stone Soup With Pixels: The Authors,
                    "The Stone Soup Story",
                    "A Word About the Authors",
-                   "Distribution of Fractint",
+                   "Distribution of Iterated Dynamics",
                    "Contacting the Authors", FF}
 
 {Appendix C, 0, "GIF Save File Format", FF}
@@ -240,23 +240,22 @@ Use the following keys in help mode:
 ;
 ;
 ;
-~Topic=Printing Fractint Documentation
-You can generate a text file containing full Fractint documentation by
-selecting the "Generate FRACTINT.DOC now" hot-link below and pressing
-Enter, or by using the DOS command "fractint makedoc=filename" ("filename"
-is the name of the file to be written; it defaults to FRACTINT.DOC.)
+~Topic=Printing Id Documentation
+You can generate a text file containing full Iterated Dynamics documentation
+by selecting the "Generate id.txt now" hot-link below and pressing
+Enter, or by using the DOS command "id makedoc=filename" ("filename"
+is the name of the file to be written; it defaults to id.txt.)
 
 All information in the documentation file is also available in the online
 help, so extracting it is a matter of preference - you can print the
-file (e.g.  DOS command "print fractint.doc" or "copy fractint.doc prn")
-or read it with a text editor.  It contains over 200 pages of information,
-has a table of contents, and is cross-referenced by page number.
+file or read it with a text editor.  It contains over 200 pages of
+information, has a table of contents, and is cross-referenced by page number.
 
-  {=-101 Exit without generating FRACTINT.DOC}
+  {=-101 Exit without generating id.txt}
 
-  {=-100 Generate FRACTINT.DOC now}
+  {=-100 Generate id.txt now}
 
-Fractint's great (and pioneering but no longer unique) online help and
+Id's great (and pioneering but no longer unique) online help and
 integrated documentation file software was written by Ethan Nagel.
 ;
 ;
@@ -320,19 +319,19 @@ Known limitations:
 ;
 ;
 ~Topic=Introduction
-Iterated Dynamics plots and manipulates images of "objects" -- actually,
-sets of mathematical points -- that have fractal dimension.
-See {"Fractals and the PC"} for some
-historical and mathematical background on fractal geometry, a discipline
-named and popularized by mathematician Benoit Mandelbrot. For now, these
-sets of points have three important properties:
+Iterated Dynamics, or Id for short, plots and manipulates images of
+"objects" -- actually, sets of mathematical points -- that have fractal
+dimension.  See {"Fractals and the PC"} for some historical and mathematical
+background on fractal geometry, a discipline named and popularized by
+mathematician Benoit Mandelbrot. For now, these sets of points have three
+important properties:
 
 1) They are generated by relatively simple calculations repeated over and
 over, feeding the results of each step back into the next -- something
 computers can do very rapidly.
 
 2) They are, quite literally, infinitely complex: they reveal more and
-more detail without limit as you plot smaller and smaller areas. Fractint
+more detail without limit as you plot smaller and smaller areas. Id
 lets you "zoom in" by positioning a small box and hitting <Enter> to
 redraw the boxed area at full-screen size; its maximum linear
 "magnification" is over a trillionfold.
@@ -343,7 +342,7 @@ displays or EGA in 640x350x16 mode) to "animate" the images by quickly
 shifting those color assignments.
 ~OnlineFF
 
-For a demonstration of some of Fractint's features, run the demonstration
+For a demonstration of some of Id's features, run the demonstration
 file included with this release (DEMO.BAT) by typing "demo" at the DOS
 prompt. You can stop the demonstration at any time by pressing <Esc>.
 
@@ -384,17 +383,18 @@ nor any acceptance of liability, express or implied.
  **********************************************************************
 ~OnlineFF
 
-Source code for Fractint is also freely available - see
-{Distribution of Fractint}.
-See the FRACTSRC.DOC file included with the source for conditions on use.
-(In most cases we just want credit.)
+Source code for Iterated Dynamics is also freely available on github at
+<https://github.com/LegalizeAdulthood/iterated-dynamics>
+
+See the file COPYING.TXT in that repository for details on distributing
+the program.
 ;
 ;
 ;
 ~Topic=Getting Started
 
-To start the program, enter FRACTINT at the DOS prompt. The program
-displays an initial "credits" screen. If Fractint doesn't start properly,
+To start the program, locate the Id executable in the installation directory.
+The program displays an initial "credits" screen. If Id doesn't start properly,
 please see {Common Problems}.
 
 Hitting <Enter> gets you from the initial screen to the main menu. You can
@@ -405,10 +405,10 @@ keys
 ~Doc+
 and pressing <Enter>, or you can enter commands directly.
 
-As soon as you select a video mode, Fractint begins drawing an image - the
+As soon as you select a video mode, Id begins drawing an image - the
 "full" Mandelbrot set if you haven't selected another fractal type.
 
-For a quick start, after starting Fractint try one of the following:\
+For a quick start, after starting Id try one of the following:\
   If you have MCGA, VGA, or better:  <F3>\
   If you have EGA:                   <F9>\
   If you have CGA:                   <F5>\
@@ -420,7 +420,7 @@ into it (see {Zoom Box Commands}) and color cycling (see
 Once you're comfortable with these basics, start exploring other
 functions from the main menu.
 
-Help is available from the menu and at most other points in Fractint by
+Help is available from the menu and at most other points in Id by
 pressing the <F1> key.
 
 AT ANY TIME, you can hit
@@ -435,7 +435,7 @@ to finish, nor do you have to return to the main menu.
 When entering commands, note that for the "typewriter" keys, upper and
 lower case are equivalent, e.g. <B> and <b> have the same result.
 
-Many commands and parameters can be passed to FRACTINT as command-line
+Many commands and parameters can be passed to Id as command-line
 arguments or read from a configuration file;
 ~Doc-
 see {Startup Parameters\, Parameter Files} for details.
@@ -576,7 +576,7 @@ displayed at the bottom of the help screen.
 Return from a displayed image to the main menu.
 
 <Esc>\
-From the main menu, <Esc> is used to exit from Fractint.
+From the main menu, <Esc> is used to exit from Id.
 
 <Delete>\
 Same as choosing "select video mode" from the main menu.
@@ -584,7 +584,7 @@ Goes to the "select video mode" screen.  See {Video Mode Function Keys}.
 
 <h>\
 Redraw the previous image in the circular history buffer, revisiting fractals
-you previously generated this session in reverse order. Fractint saves
+you previously generated this session in reverse order. Id saves
 the last ten images worth of information including fractal type, coordinates,
 colors, and all options. Image information is saved only when some item
 changes. After ten images the circular buffer wraps around and earlier
@@ -715,13 +715,14 @@ See {Random Dot Stereograms (RDS)}.
 
 <O> (the letter, not the number)\
 If pressed while an image is being generated, toggles the display of
-intermediate results -- the "orbits" Fractint uses as it calculates values
+intermediate results -- the "orbits" Id uses as it calculates values
 for each point. Slows the display a bit, but shows you how clever the
 program is behind the scenes. (See "A Little Code" in
 {"Fractals and the PC"}.)
 
 <D>\
-Shell to DOS. Return to Fractint by entering "exit" at a DOS prompt.
+Shell to a command prompt. Return to Id by exiting your command shell,
+usually by entering the command "exit".
 
 <Insert>\
 Restart at the "credits" screen and reset most variables to their initial
@@ -768,16 +769,16 @@ Holding <Ctrl> while pressing cursor "arrow" keys moves the box 5 times
 faster.  (This only works with enhanced keyboards.)
 
 Panning: If you move a fullsize zoombox and don't change anything else
-before performing the zoom, Fractint just moves what's already on the
+before performing the zoom, Id just moves what's already on the
 screen and then fills in the new edges, to reduce drawing time. This
 feature applies to most fractal types but not all.  A side effect is that
 while an image is incomplete, a full size zoom box moves in steps larger
-than one pixel.  Fractint keeps the box on multiple pixel boundaries, to
+than one pixel.  Id keeps the box on multiple pixel boundaries, to
 make panning possible.  As a multi-pass (e.g. solid guessing) image
 approaches completion, the zoom box can move in smaller increments.
 
 In addition to resizing the zoom box and moving it around, you can do some
-rather warped things with it.  If you're a new Fractint user, we recommend
+rather warped things with it.  If you're a new Id user, we recommend
 skipping the rest of the zoom box functions for now and coming back to
 them when you're comfortable with the basic zoom box functions.
 
@@ -841,7 +842,7 @@ do not support rotation and skewing - nothing happens when you try it.
 the image are saved with it. Progress is marked by colored lines moving
 down the screen's edges.
 
-The default filename for the first image saved after starting Fractint is
+The default filename for the first image saved after starting Id is
 FRACT001.GIF;  subsequent saves in the same session are automatically
 incremented 002, 003... Use the "savename=" parameter or <X> options
 screen to change the name. By default, files left over from previous
@@ -865,7 +866,7 @@ drive) and press <Enter> for a new display. You can also type a mask such
 as "*.XYZ" and press <Enter> to display files whose name ends with the
 matching suffix (XYZ).
 
-You can use <F6> to switch directories to the default fractint directory
+You can use <F6> to switch directories to the default Id directory
 or to your own directory which is specified through the DOS environment
 variable "FRACTDIR".
 
@@ -877,7 +878,7 @@ available at this point are:\
   <Tab>: display more information about the fractal\
   <F1>: for help about the "err" column in displayed video modes\
 If you restore a file into a video mode which does not have the same pixel
-dimensions as the file, Fractint will make some adjustments:  The view
+dimensions as the file, Id will make some adjustments:  The view
 window parameters (see <V> command) will automatically be set to an
 appropriate size, and if the image is larger than the screen dimensions,
 it will be reduced by using only every Nth pixel during the restore.
@@ -898,10 +899,10 @@ The <@> or <2> command loads a set of parameters describing an image.
 but at this point we're interested in images. Other uses of parameter
 files are discussed in {"Parameter Files and the <@> Command"}.)
 
-When you hit <@> or <2>, Fractint displays the names of the entries in the
-currently selected parameter file.  The default parameter file,
-FRACTINT.PAR, is included with the Fractint release and contains
-parameters for some sample images.
+When you hit <@> or <2>, Id displays the names of the entries in the
+currently selected parameter file.  The default parameter file, id.par,
+is included with the Id release and contains parameters for some sample
+images.
 
 After pressing <@> or <2>, highlight an entry and press <Enter> to load it,
 or press <F6> to change to another parameter file.
@@ -916,14 +917,14 @@ The <B> command saves the parameters required to describe the currently
 displayed image, which can subsequently be used with the <@> or <2> command
 to recreate it.
 
-After you press <B>, Fractint prompts for:
+After you press <B>, Id prompts for:
 
   Parameter file:  The name of the file to store the parameters in.  You
-  should use some name like "myimages" instead of fractint.par, so that
+  should use some name like "myimages" instead of id.par, so that
   your images are kept separate from the ones released with new versions
-  of Fractint. You can use the PARMFILE= command in SSTOOLS.INI
+  of Id. You can use the parmfile= command in sstools.ini
   to set the default parameter file name to "myimages" or whatever.
-  (See {"Setting Defaults (SSTOOLS.INI File)"} and "parmfile=" in
+  (See {"Setting Defaults (sstools.ini File)"} and "parmfile=" in
   {"File Parameters"}.)
 
   Name:  The name you want to assign to the entry, to be displayed when
@@ -938,7 +939,7 @@ After you press <B>, Fractint prompts for:
   command line - see {=@COMMENTS Comment= Command}.
 
   Record colors?:  Whether color information should be included in the
-  entry. Usually the default value displayed by Fractint is what you want.
+  entry. Usually the default value displayed by Id is what you want.
   Allowed values are:\
   "no" - Don't record colors.\
   "@mapfilename" - When these parameters are used, load colors from the
@@ -946,7 +947,7 @@ After you press <B>, Fractint prompts for:
      colors from a color map file.\
   "yes" - Record the colors in detail. This is the default when you've
      changed the display colors by using the palette editor or by color
-     cycling. The only reason that this isn't what Fractint always does
+     cycling. The only reason that this isn't what Id always does
      for the <B> command is that color information can be bulky - up to
      nearly 3K of disk space per map - which adds up to a lot for many
      images. Smooth-shaded ranges of colors are compressed, so if that's
@@ -956,7 +957,7 @@ After you press <B>, Fractint prompts for:
 
   # of colors:  This only matters if "Record colors?" is set to "yes".  It
   specifies the number of colors to record. Recording less colors will
-  take less space. Usually the default value displayed by Fractint is what
+  take less space. Usually the default value displayed by Id is what
   you want. You might want to increase it in some cases, e.g. if you are
   using a 256 color mode with maxiter 150, and have used the palette
   editor to set all 256 possible colors for use with color cycling, then
@@ -968,17 +969,17 @@ After you press <B>, Fractint prompts for:
   maxlinelength: This number controls the maximum width of a parameter
   entry in a PAR file. The default is 72 characters.
 
-  At the bottom of the input screen are inputs for Fractint's "pieces"
+  At the bottom of the input screen are inputs for Id's "pieces"
   divide-and-conquer feature. You can create multiple PAR entries that
   break an image up into pieces so that you can generate the image pieces
   one by one. There are two reasons for doing this. The first is in case the
   fractal is very slow, and you want to generate parts of the image at the
   same time on several computers. The second is that you might want to make
-  an image greater than 2048 x 2048, the old pixel limit for Fractint. The
+  an image greater than 2048 x 2048, the old pixel limit for Id. The
   parameters for this feature are:
      X Multiples - How many divisions of final image in the x direction\
      Y Multiples - How many divisions of final image in the y direction\
-     Video mode  - Fractint video mode for each piece (e.g. "F3")\
+     Video mode  - Id video mode for each piece (e.g. "F3")\
 
   The last item defaults to the current video mode. If either X Multiples or
   Y Multiples are greater than 1, then multiple numbered PAR entries for the
@@ -1103,7 +1104,7 @@ that the image is stretched, rotated and skewed.
 ;
 ~Topic=Interrupting and Resuming
 
-Fractint command keys can be loosely grouped as:
+Id command keys can be loosely grouped as:
 
  o Keys which suspend calculation of the current image (if one is being
    calculated) and automatically resume after the function.  <Tab>
@@ -1201,7 +1202,7 @@ These parameters can be used to:\
 "Preview display"\
 Set this to "yes" to turn on view window, "no" for full screen display.
 While this is "no", the only view parameter which has any affect is "final
-media aspect ratio". When a view window is being used, all other Fractint
+media aspect ratio". When a view window is being used, all other Id
 functions continue to operate normally - you can zoom, color-cycle, and
 all the rest.
 
@@ -1252,7 +1253,7 @@ More about final aspect ratio:  If you want to produce a high quality
 hard-copy image which is say 8" high by 5" down, based on a vertical
 "slice" of an existing image, you could use a procedure like the
 following. You'll need some method of converting a GIF image to your final
-media (slide or whatever) - Fractint can only do the whole job with a
+media (slide or whatever) - Id can only do the whole job with a
 PostScript printer, it does not preserve aspect ratio with other printers.
  o restore the existing image\
  o set view parameters: preview to yes, reduction to anything (say 2),
@@ -1281,7 +1282,7 @@ Restore in 3D and overlay the result on the current screen.
 ;
 ~Topic=Video Mode Function Keys, Label=HELPVIDSEL
 
-Fractint supports *so* many video modes that we've given up trying to
+Id supports *so* many video modes that we've given up trying to
 reserve a keyboard combination for each of them.
 
 Any supported video mode can be selected by going to the "Select Video Mode"
@@ -1319,7 +1320,7 @@ See {"Video Adapter Notes"} for comments about particular adapters.
 
 See {"Disk-Video" Modes} for a description of these non-display modes.
 
-See {"Customized Video Modes\, FRACTINT.CFG"} for information about
+See {"Customized Video Modes\, id.cfg"} for information about
 adding your own video modes.
 ;
 ;
@@ -1403,7 +1404,7 @@ POSSIBLE ERRORS:
 "Sorry..I can't find anything"\
 The browser can't locate any files which match the file name mask.
 See {Browser Parameters}  This is also displayed if you have less than
-10K of far memory free when you run Fractint.
+10K of far memory free when you run Id.
 
 "Sorry....  no more space"\
 At the moment the browser can only cope with 450 sub images at one time.
@@ -1415,7 +1416,7 @@ isn't set too small on the parameters screen.
 The browser has run out of far, expanded, or extended memory in which to
 store the pixels covered by the sub image boxes.  Try again with the main
 image at lower resolution, and/or reduce the number of TSRs resident in
-memory when you start Fractint.  Make sure you have expanded or extended
+memory when you start Id.  Make sure you have expanded or extended
 memory available.
 
 "Sorry...it's a read only file, can't del <filename>"\
@@ -1428,7 +1429,7 @@ you can get rid of it.
 ;
 ~Topic=Browser Parameters, Label=HELPBRWSPARMS
 
-This Screen enables you to control Fractint's built in file browsing utility.
+This Screen enables you to control Id's built in file browsing utility.
 If you don't know what that is see {Browse Commands}.  This screen is
 selected with <Ctrl-B> from just about anywhere.
 
@@ -1499,9 +1500,8 @@ Remember, you do NOT have to wait for the program to finish a full screen
 display before entering a command. If you see an interesting spot you want
 to zoom in on while the screen is half-done, don't wait -- do it! If you
 think after seeing the first few lines that another video mode would look
-better, go ahead -- Fractint will shift modes and start the redraw at
-once. When it finishes a display, it beeps and waits for your next
-command.
+better, go ahead -- Id will shift modes and start the redraw at once.
+When it finishes a display, it beeps and waits for your next command.
 
 In general, the most interesting areas are the "border" areas where the
 colors are changing rapidly. Zoom in on them for the best results. The
@@ -1523,101 +1523,21 @@ handy if you might zoom pre-emptively) or single-pass mode.
 When you start systematically exploring, you can save time (and hey, every
 little bit helps -- these "objects" are INFINITE, remember!) by <S>aving
 your last screen in a session to a file, and then going straight to it the
-next time by using the command FRACTINT FRACTxxx (the .GIF extension is
-assumed), or by starting Fractint normally and then using the <R> command
+next time by using the command id fractxxx (the .gif extension is
+assumed), or by starting Id normally and then using the <R> command
 to reload the saved file. Or you could hit <B> to create a parameter file
 entry with the "recipe" for a given image, and next time use the <@>
 command to re-plot it.
 ;
 ;
 ;
-~Topic=Fractint on Unix
+~Topic=Id on Unix
 
-Fractint has been ported to Unix to run under X Windows.  This version is
-called "Xfractint".  Xfractint may be obtained by anonymous ftp,
-see {Distribution of Fractint}.
-
-Xfractint is still under development and is not as reliable as the IBM PC
-version.
-
-Contact xfractint@fractint.org for more information on Xfractint.
-~FF
-Xfractint is a straight port of the IBM PC version.  Thus, it uses the
-IBM user interface.  If you do not have function keys, or Xfractint does
-not accept them from your keyboard, use the following key mappings:
-
-     IBM             Unix\
-     F1 to F10       Shift-1 to Shift-0\
-     INSERT          I\
-     DELETE          D\
-     PAGE_UP         U\
-     PAGE_DOWN       N\
-     LEFT_ARROW      H\
-     RIGHT_ARROW     L\
-     UP_ARROW        K\
-     DOWN_ARROW      J\
-     HOME            O\
-     END             E\
-     CTL_PLUS        \}\
-     CTL_MINUS       \{
-
-Xfractint takes the following options:
-
--onroot\
-Puts the image on the root window.
-
--fast\
-Uses a faster drawing technique.
-
--disk\
-Uses disk video.
-
--geometry WxH[\{+-X}\{+-Y}]\
-Changes the geometry of the image window.
-
--display displayname\
-Specifies the X11 display to use.
-
--private\
-Allocates the entire colormap (i.e. more colors).
-
--share\
-Shares the current colormap.
-
--fixcolors n\
-Uses only n colors.
-
--slowdisplay\
-Prevents Xfractint from hanging on the title page with slow displays.
-
--simple\
-Uses simpler keyboard handling, which makes debugging easier.
-
-Common problems:
-
-If you get the message "Couldn't find fractint.hlp", you can\
-a) Do "setenv FRACTDIR /foo", replacing /foo with the directory containing
-fractint.hlp.\
-b) Run Xfractint from the directory containing fractint.hlp, or\
-c) Copy fractint.hlp to /usr/local/bin/X11/fractint
-
-If you get the message "Invalid help signature", the problem is due to
-byteorder.  You are probably using a Sun help file on a Dec machine or
-vice versa.
-
-If Xfractint doesn't accept input, try typing into both the graphics window
-and the text window.  On some systems, only one of these works.
-
-If you are using Openwindows and can't get Xfractint to accept input, add
-to your .Xdefaults file:\
-OpenWindows.FocusLenience:      True
-
-If you cannot view the GIFs that Xfractint creates, the problem is that
-Xfractint creates GIF89a format and your viewer probably only handles
-GIF87a format.  Run "xfractint gif87a=y" to produce GIF87a format.
-
-Because many shifted characters are used to simulate IBM keys, you can't
-enter capitalized filenames.
+This initial 1.0 release of Iterated Dynamics builds on unix, but the port
+is incomplete.  A subsequent release will restore parity of funcionatlity
+between unix and Windows, resulting in a truly cross-platform release.
+This should also make a macOS release possible, marking the first time this
+code base has been ported to the Macintosh line of computers.
 ;
 ;
 ;
@@ -1715,7 +1635,7 @@ ALTERN.MAP, supplied with the program.
 
 <L>\
 Pause and load an external color map (.MAP file).  Several .MAP files are
-supplied with Fractint.  See {Palette Maps}.
+supplied with Id.  See {Palette Maps}.
 
 <S>\
 Pause, prompt for a filename, and save the current palette to the named
@@ -2081,13 +2001,13 @@ the 'h' key can be used to hide the palette box and expose the whole image.
 ;
 ~Topic=Parameter Explorer/Evolver, Label=HELPEVOL
 
- Since fractint is such a wonderfully complex program it has more than a few
+ Since Id is such a wonderfully complex program it has more than a few
  parameters to tweak and options to select. To the inexperienced
  user the choice is bewildering.  Even for the experts the chaotic nature of
  the mathematical processes involved make it difficult to know what to
  change in order to achieve the desired effect.
 
- In order to help with this situation the Fractint parameter evolver has been
+ In order to help with this situation the Id parameter evolver has been
  developed.  It varies those parameters for you and puts the results
  on screen as a grid of small images. You can then choose the one which you
  like best and regenerate it full screen, or if you don't like any of the
@@ -2120,9 +2040,9 @@ the 'h' key can be used to hide the palette box and expose the whole image.
 
  From a basic point of view that's it!  Just press alt-number to scramble
  things when you're out of inspiration, it works for any of the fractal
- types in fractint including formulae... easy! (chaotic, but easy :-) )
+ types in Id including formulae... easy! (chaotic, but easy :-) )
 
- As this is a Fractint feature, there is, of course, a lot more to it
+ As this is a Id feature, there is, of course, a lot more to it
  than the basics described above...
 
  For a start, there are some handy hotkeys to use, 'F2' and 'F3' are used to
@@ -2184,7 +2104,7 @@ the 'h' key can be used to hide the palette box and expose the whole image.
  slowly changed ('explorer mode' or 'exploring'). For example, to get
  acquainted with parameter exploring and produce a map of the Julia sets, try
  this:\
- Start Fractint and set the type to Julia and the resolution higher than
+ Start Id and set the type to Julia and the resolution higher than
  320x200, once the default Julia set has been generated, press 'Ctrl-e' to
  bring up the evolver/explorer control panel.
 
@@ -2192,7 +2112,7 @@ the 'h' key can be used to hide the palette box and expose the whole image.
  you to choose what gets varied.
 
  Now set the first entry (param1) to 'x' and the second (param2) to 'y'. This
- tells Fractint to vary param1 (the real part of c) across the screen and
+ tells Id to vary param1 (the real part of c) across the screen and
  param2 (the imaginary part of c) down the screen. Make sure all the other
  parameters are set to 'no' so that nothing else gets changed to confuse
  things.
@@ -2227,7 +2147,7 @@ the 'h' key can be used to hide the palette box and expose the whole image.
  In the example shown above, you were just exploring the variation in two
  'real' parameters, i.e. they can take fractional values, and the idea of
  being able to create an image half way between two others is valid. However,
- many of the parameters in fractint are discrete, i.e. can be only one of a
+ many of the parameters in Id are discrete, i.e. can be only one of a
  set of specific values. Examples of discrete parameters are inside colouring
  method or decomposition values and the way in which these are explored is
  different in that parameter zooming has no meaning for discrete parameters.
@@ -2236,7 +2156,7 @@ the 'h' key can be used to hide the palette box and expose the whole image.
  through all possible values and round again. Words are getting clumsy so
  it's time for another example methinks!
 
- First press 'Insert' to restart Fractint and get everything back to its
+ First press 'Insert' to restart Id and get everything back to its
  default values for a fresh start. Set the fractal type to 'fn*fn' this type
  requires the user to choose two trig functions and this choice is made on
  the 'Z' screen. There are around thirty different functions to choose from
@@ -2270,7 +2190,7 @@ the 'h' key can be used to hide the palette box and expose the whole image.
 
  There now only remains to mention that you can save image sets and restore
  them later to carry on exploring from a different seed image:
- 's' saves and 'r' restores as in normal fractint operation and the screenfull
+ 's' saves and 'r' restores as in normal Id operation and the screenfull
  is saved as a single gif file.
 
  Have fun!  See {Evolver Commands}.

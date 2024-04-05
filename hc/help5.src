@@ -220,7 +220,7 @@ Sound card output isn't working:\
        { Periodicity Logic }
        { Limitations of Integer Math (And How We Cope) }
        { Arbitrary Precision and Deep Zooming }
-       { The Fractint "Fractal Engine" Architecture }
+       { The Iterated Dynamics "Fractal Engine" Architecture }
 
     A Little Math:
        { Summary of Fractal Types }
@@ -500,7 +500,7 @@ inversion, Julia-Mandel switch, history, orbit-in-window, and the browse
 feature.
 ;
 ;
-~Topic=The Fractint "Fractal Engine" Architecture
+~Topic=The Iterated Dynamics "Fractal Engine" Architecture
 
 Several of the authors would never ADMIT this, but Fractint has evolved a
 powerful and flexible architecture that makes adding new fractals very
@@ -571,7 +571,7 @@ distribute comfortably as a single compressed file, and because many
 downloaders have no intention of ever modifying it, Fractint is now
 distributed as two files: one containing FRACTINT.EXE, auxiliary files and
 this document, and another containing complete source code (including a
-.MAK file and MAKEFRAC.BAT).  See {Distribution of Fractint}.
+.MAK file and MAKEFRAC.BAT).  See {Distribution of Iterated Dynamics}.
 ;
 ;
 ;
@@ -1058,7 +1058,7 @@ Incorporated, an H&R Block Company.
 ;
 ;
 ;
-~Topic=Using Fractint With a Mouse
+~Topic=Using Id With a Mouse
 ; This topic is online only.
 
 ~FormatExclude-
@@ -1104,7 +1104,7 @@ The 'err' column in the video mode information indicates:
 ;
 ;
 ;
-~Topic=Distribution of Fractint
+~Topic=Distribution of Iterated Dynamics
 ~Format-,Online-
 
 DISTRIBUTION OF FRACTINT
