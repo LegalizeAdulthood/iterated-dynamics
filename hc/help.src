@@ -341,8 +341,9 @@ color assignments.
 ~OnlineFF
 
 For a demonstration of some of Id's features, run the demonstration
-file included with this release (DEMO.BAT) by typing "demo" at the DOS
-prompt. You can stop the demonstration at any time by pressing <Esc>.
+file included with this release (demo.bat) by typing "demo" at the
+command prompt. You can stop the demonstration at any time by pressing
+<Esc>.
 
 The name Iterated Dynamics was chosen because the program generates its
 images by iterating some kind of dynamical system exhibiting non-linear
@@ -560,10 +561,9 @@ Commands marked with an '*' are also available at the credits screen.
 ~Topic=Plotting Commands
 Function keys & various combinations are used to select a video mode and
 redraw the screen.  For a quick start try one of the following:\
-  If you have MCGA, VGA, or better:  <F3>\
-  If you have EGA:                   <F9>\
-  If you have CGA:                   <F5>\
-  Otherwise, monochrome:             <F6>\
+  Win32 GDI 800x600 small size image:       <F6>\
+  Win32 GDI 1024x768 medium size image:     <F7>\
+  Win32 GDI 1200x900 large size image:      <F8>
 
 <F1>\
 Display a help screen. The function keys available in help mode are
