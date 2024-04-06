@@ -1291,7 +1291,7 @@ that the MANDELLAMBDA set appears in the literature with z(0) initialized
 to a critical point (a point where the derivative of the formula is zero),
 which in this case happens to be the point (.5,0). Since Kevin knows more
 about Dr. Mandelbrot than we do, and Dr. Mandelbrot knows more about
-fractals than we do, we defer! Id calculates MANDELAMBDA Dr. Mandelbrot's
+fractals than we do, we defer!  Id calculates MANDELAMBDA Dr. Mandelbrot's
 way instead of our way. But ALL THE OTHER "Mandelbrot" sets in Id are
 still calculated OUR way!  (Fortunately for us, for the classic Mandelbrot
 Set these two methods are the same!)
@@ -1299,7 +1299,7 @@ Set these two methods are the same!)
 Well now, folks, apart from questions of faithfulness to fractals named in
 the literature (which we DO take seriously!), if a formula makes a
 beautiful fractal, it is not wrong. In fact some of the best fractals in
-Id are the results of mistakes! Nevertheless, thanks to Kevin for keeping
+Id are the results of mistakes!  Nevertheless, thanks to Kevin for keeping
 us accurate!
 
 (See description of "initorbit=" command in {Image Calculation Parameters}
@@ -1620,7 +1620,7 @@ with full depth perception right there before your eyes!
 
 This feature USED to be dedicated to Bruce Goren, as a bribe to get him to
 send us MORE knockout stereo slides of 3D ferns, now that we have made it
-so easy! Bruce, what have you done for us *LATELY* ?? (Just kidding,
+so easy!  Bruce, what have you done for us *LATELY* ?? (Just kidding,
 really!)
 
 Each line in an IFS definition (look at id.ifs with your editor for
@@ -1903,9 +1903,9 @@ tetrate, manowar)
 Two of Id's faithful users went bonkers when we introduced the
 "formula" type, and came up with all kinds of variations on escape-time
 fractals using trig functions.  We decided to put them in as regular
-types, but there were just too many! So we defined the types with variable
+types, but there were just too many!  So we defined the types with variable
 functions and let you, the overwhelmed user, specify what the functions
-should be! Thus Scott Taylor's "z = sin(z) + z^2" formula type is now the
+should be!  Thus Scott Taylor's "z = sin(z) + z^2" formula type is now the
 "fn+fn" regular type, and EITHER function can be one of sin, cos, tan, cotan,
 sinh, cosh, tanh, cotanh, exp, log, sqr, recip, ident, zero, one, conj,
 flip, cosxx, asin, asinh, acos, acosh, atan, atanh, sqrt, abs, or cabs.
@@ -1933,7 +1933,7 @@ equations, with a variable incremented each time.
 After each orbit, 'orbit' is incremented by a step size. The parameters
 are angle "a", step size for incrementing 'orbit', stop value for 'orbit',
 and points per orbit. Try this with a stop value of 5 with sound=x for
-some weird fractal music (ok, ok, fractal noise)! You will also see the
+some weird fractal music (ok, ok, fractal noise)!  You will also see the
 KAM Torus head into some chaotic territory that Scott Taylor wanted to
 hide from you by setting the defaults the way he did, but now we have
 revealed all!
@@ -2022,7 +2022,7 @@ When he studied bifurcations of r*sin(PI*p) he found a similar pattern,
 which is not surprising in itself.  However, 4.669+ popped out, again.
 Different formulae, same number ?  Now, THAT's surprising !  He tried many
 other formulae and ALWAYS got 4.669+ - Hot Damn !!!  So hot, in fact, that
-he phoned home and told his Mom it would make him Famous ! He also went on
+he phoned home and told his Mom it would make him Famous!  He also went on
 to tell other scientists.  The rest is History...
 
 (It has been conjectured that if Feigenbaum had a copy of Id, and
@@ -2109,7 +2109,7 @@ after one step. This gives us:
              (default values: dt = .02, a = 5, b = 15, c = 1)\
 
 We connect the successive points with a line, project the resulting 3D
-orbit onto the screen, and voila! The Lorenz Attractor!
+orbit onto the screen, and voila!  The Lorenz Attractor!
 
 We have added two versions of the Lorenz Attractor.  "Type=lorenz" is the
 Lorenz attractor as seen in everyday 2D.  "Type=lorenz3d" is the same set
@@ -2168,7 +2168,7 @@ of a very simple dynamic system that exhibits strange behavior. The orbit
 traces out a characteristic banana shape, but on close inspection, the
 shape is made up of thicker and thinner parts.  Upon magnification, the
 thicker bands resolve to still other thick and thin components.  And so it
-goes forever! The equations that generate this strange pattern perform the
+goes forever!  The equations that generate this strange pattern perform the
 mathematical equivalent of repeated stretching and folding, over and over
 again.
 
@@ -2451,9 +2451,9 @@ then suddenly marches off in a straight line. This happens for many other
 rule strings. The default 1100 produces symmetrical images.
 
 If the screen initially contains an image, the path of the ant changes. To
-try this, generate a fractal, and press <Ctrl-a>. Note that images
+try this, generate a fractal, and press <Ctrl+a>. Note that images
 seeded with an image are not (yet) reproducible in PAR files. When started
-using the <Ctrl-a> keys, after the ant is finished the default fractal
+using the <Ctrl+a> keys, after the ant is finished the default fractal
 type reverts to that of the underlying fractal.
 
 ~Label=ANTCOMMANDS
@@ -2464,7 +2464,7 @@ mode is the default.
 
 If you press the right or left arrow during the ant's journey, you can
 adjust the orbit delay factor with the arrow keys (increment by 10) or
-ctrl-arrow keys (increment by 100). Press any other key to get out of the
+<Ctrl+Arrow> keys (increment by 100). Press any other key to get out of the
 orbit delay adjustment mode. Higher values cause slower motion. Changed values
 are not saved after the ant is finished, but you can set the orbit delay
 value in advance from the <p> screen.
@@ -2709,8 +2709,8 @@ fractal.  What is unusual about this system, however, is that the
 attractors intersect.  This is the first case in which such a phenomenon
 has been observed.  The attractors for this system are made up of line
 segments which overlap to form an equilateral triangle.  This attractor
-triangle can be seen by using the "show orbits" option (the 'o' key) or
-the "orbits window" option (the ctrl-'o' key).
+triangle can be seen by using the "show orbits" option (the <O> key) or
+the "orbits window" option (the <Ctrl+O> key).
 
 The number of attractors present is dependant on the value of A, the
 imaginary part of C.  For values where A <= 1.028713768218725..., there
@@ -2898,7 +2898,7 @@ at the end, let's calculate the Order parameter for this pattern.
   512+64+32+8+2 = 618
 
 An Order parameter of 618 gives the Lyapunov equivalent of a sonnet.  "How do
-I make thee? Let me count the ways..."
+I make thee?  Let me count the ways..."
 
 Population Seed.
 When two parts of a Lyapunov overlap, which spike overlaps which is strongly

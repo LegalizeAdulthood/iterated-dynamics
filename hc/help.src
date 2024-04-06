@@ -229,7 +229,7 @@ Use the following keys in help mode:
 
    Enter           Select (go to) highlighted hot-link.
 
-   Tab/Shift-Tab   Move to the next/previous hot-link.
+   Tab/Shift+Tab   Move to the next/previous hot-link.
 
    \24 \25 \27 \26         Move to a hot-link.
 
@@ -475,51 +475,51 @@ Commands marked with an '*' are also available at the credits screen.
 {Plotting Commands}
  * Delete,F2,F3,.. Select a Video Mode and draw (or redraw) current fractal
  * F1              HELP! (Enter help mode)
-   Esc or m        Go to main menu
-   h               Redraw previous screen (you can 'back out' recursively)
-   Ctrl-H          Redraw next screen in history circular buffer
+   Esc or M        Go to main menu
+   H               Redraw previous screen (you can 'back out' recursively)
+   Ctrl+H          Redraw next screen in history circular buffer
    Tab             Display information about the current fractal image
- * t               Select a new fractal type and parameters
- * x               Set a number of options and doodads
- * y               Set extended options and doodads
- * z               Set fractal type-specific parameters
-   p               Set passes options
-   c or + or -     Enter Color-Cycling Mode (see {=HELPCYCLING Color Cycling Commands})
-   e               Enter Palette-Editing Mode (see {=HELPXHAIR Palette Editing Commands})
+ * T               Select a new fractal type and parameters
+ * X               Set a number of options and doodads
+ * Y               Set extended options and doodads
+ * Z               Set fractal type-specific parameters
+   P               Set passes options
+   C or + or -     Enter Color-Cycling Mode (see {=HELPCYCLING Color Cycling Commands})
+   E               Enter Palette-Editing Mode (see {=HELPXHAIR Palette Editing Commands})
    Spacebar        Mandelbrot/Julia Set toggle.
    Enter           Continue an interrupted calculation (e.g. after a save)
- * f               toggle the floating-point algorithm option ON or OFF
- * i               Set parameters for 3D fractal types
+ * F               toggle the floating-point algorithm option ON or OFF
+ * I               Set parameters for 3D fractal types
  * Insert          Restart the program (at the credits screen)
-   a               Convert the current image into a fractal 'starfield'
-   Ctrl-A          Turn on screen-eating ant automaton
-   Ctrl-S          Convert current image to a Random Dot Stereogram (RDS)
-   o               toggles 'orbits' option on and off during image generation
- * d               Shell to DOS (type 'exit' at the DOS prompt to return)
-   Ctrl-X          Flip the current image along the screen's X-axis
-   Ctrl-Y          Flip the current image along the screen's Y-axis
-   Ctrl-Z          Flip the current image along the screen's Origin
+   A               Convert the current image into a fractal 'starfield'
+   Ctrl+A          Turn on screen-eating ant automaton
+   Ctrl+S          Convert current image to a Random Dot Stereogram (RDS)
+   O               toggles 'orbits' option on and off during image generation
+ * D               Shell to DOS (type 'exit' at the DOS prompt to return)
+   Ctrl+X          Flip the current image along the screen's X-axis
+   Ctrl+Y          Flip the current image along the screen's Y-axis
+   Ctrl+Z          Flip the current image along the screen's Origin
 
 {Image Save/Restore Commands}
-   s               Save the current screen image to disk
- * r               Restore a saved (or .GIF) image ('3' or 'o' for 3-D)
+   S               Save the current screen image to disk
+ * R               Restore a saved (or .GIF) image (<3> or <O> for 3-D)
 
 {Orbits Window}
-   o               Turns on Orbits Window mode after image generation
-   ctrl-o          Turns on Orbits Window mode
+   O               Turns on Orbits Window mode after image generation
+   Ctrl+O          Turns on Orbits Window mode
 
 {View Window}
- * v               Set view window parameters (reduction, aspect ratio)
+ * V               Set view window parameters (reduction, aspect ratio)
 
 {Parameter Save/Restore Commands}
-   b               Save commands describing the current image in a file
+   B               Save commands describing the current image in a file
                    (writes an entry to be used with @ command)
  * @ or 2          Run a set of commands (in command line format) from a file
-   g               Give a startup parameter: {Summary of all Parameters}
+   G               Give a startup parameter: {Summary of all Parameters}
 
 {\"3D\" Commands}
  * 3               3D transform a saved (or .GIF) image
-   # (shift-3)     same as 3, but overlay the current image
+   # (Shift+3)     same as <3>, but overlay the current image
 
 {Zoom Box Commands}
    PageUp          When no Zoom Box is active, bring one up
@@ -527,14 +527,14 @@ Commands marked with an '*' are also available at the credits screen.
    PageDown        Expand the Zoom Box
                    Expanding past the screen size cancels the Zoom Box
    \24 \25 \27 \26         Pan (Move) the Zoom Box
-   Ctrl- \24 \25 \27 \26   Fast-Pan the Zoom Box (may require an enhanced keyboard)
+   Ctrl+ \24 \25 \27 \26   Fast-Pan the Zoom Box (may require an enhanced keyboard)
    Enter           Redraw the Screen or area inside the Zoom Box
-   Ctrl-Enter      'Zoom-out' - expands the image so that your current
+   Ctrl+Enter      'Zoom-out' - expands the image so that your current
                    image is positioned inside the current zoom-box location.
-   Ctrl-Pad+/Pad-  Rotate the Zoom Box
-   Ctrl-PgUp/PgDn  Change Zoom Box vertical size (change its aspect ratio)
-   Ctrl-Home/End   Change Zoom Box shape
-   Ctrl-Ins/Del    Change Zoom Box color
+   Ctrl+Pad+/Pad-  Rotate the Zoom Box
+   Ctrl+PgUp/PgDn  Change Zoom Box vertical size (change its aspect ratio)
+   Ctrl+Home/End   Change Zoom Box shape
+   Ctrl+Ins/Del    Change Zoom Box color
 
 {Interrupting and Resuming}
 
@@ -544,14 +544,14 @@ Commands marked with an '*' are also available at the credits screen.
   L(ook)                   Enter Browsing Mode
 
 {Evolver Commands}
-  Ctrl-E                   Bring up {=HELPEVOL explorer/evolver} control screen
-  Alt-1 ... Alt-7          Enter evolver mode with selected level of
-                           mutation: Alt-1 = low level, Alt-7 = maximum.
+  Ctrl+E                   Bring up {=HELPEVOL explorer/evolver} control screen
+  Alt+1 ... Alt+7          Enter evolver mode with selected level of
+                           mutation: Alt+1 = low level, Alt+7 = maximum.
                            (dont use the keypad, just the 'top row' numbers)
-                           When in evolve mode then just plain 1..7 also work
+                           When in evolve mode then just plain <1>..<7> also work
 
 {RDS Commands}
-  Ctrl-S                   Access RDS parameter screen
+  Ctrl+S                   Access RDS parameter screen
 
 ~Doc+
 ;
@@ -578,7 +578,7 @@ From the main menu, <Esc> is used to exit from Id.
 Same as choosing "select video mode" from the main menu.
 Goes to the "select video mode" screen.  See {Video Mode Function Keys}.
 
-<h>\
+<H>\
 Redraw the previous image in the circular history buffer, revisiting fractals
 you previously generated this session in reverse order.  Id saves
 the last ten images worth of information including fractal type, coordinates,
@@ -588,7 +588,7 @@ information is overwritten.  You can set image capacity of the history feature
 using the maxhistory=<nnn> command.  About 1200 bytes of memory is required
 for each image slot.
 
-<Ctrl-h>\
+<Ctrl+H>\
 Redraw the next image in the circular history buffer.  Use this to return to
 images you passed by when using <h>.
 
@@ -677,7 +677,7 @@ See {Color Cycling Commands}.
 <E>\
 Enter Palette-Editing Mode.  See {Palette Editing Commands}.
 
-<Spacebar>\
+<Space>\
 Toggle between Mandelbrot set images and their corresponding Julia-set
 images.  Read the notes in {=HT_JULIA Fractal Types, Julia Sets}
 before trying this option if you want to see anything interesting.
@@ -699,10 +699,10 @@ Modify 3D transformation parameters used with 3D fractal types such as
 <A>\
 Convert the current image into a fractal 'starfield'.  See {Starfields}.
 
-<Ctrl-A>\
+<Ctrl+A>\
 Unleash an image-eating ant automaton on current image.  See {Ant Automaton}.
 
-<Ctrl-S> (or <k>)\
+<Ctrl+S> (or <K>)\
 Convert the current image into a Random Dot Stereogram (RDS).
 See {Random Dot Stereograms (RDS)}.
 
@@ -725,7 +725,7 @@ startup filename.
 <L>\
 Enter Browsing Mode.  See {Browse Commands}.
 
-<Ctrl-E>\
+<Ctrl+E>\
 Enter Explorer/Evolver Mode.  See {Evolver Commands}.
 ;
 ;
@@ -739,14 +739,14 @@ but not all.
 The general approach to using the zoom box is:  Frame an area using
 the keys described below,
 then <Enter> to expand what's in the frame to fill the
-whole screen (zoom in); or <Ctrl><Enter> to shrink the current image into
+whole screen (zoom in); or <Ctrl+Enter> to shrink the current image into
 the framed area (zoom out).  With a mouse, double-click the left button to
 zoom in, double click the right button to zoom out.
 
-<Page Up>, <Page Down>\
-Use <Page Up> to initially bring up the zoom box.  It starts at full screen
+<PageUp>, <PageDown>\
+Use <PageUp> to initially bring up the zoom box.  It starts at full screen
 size.  Subsequent use of these keys makes the zoom box smaller or larger.
-Using <Page Down> to enlarge the zoom box when it is already at maximum
+Using <PageDown> to enlarge the zoom box when it is already at maximum
 size removes the zoom box from the display.  Moving the mouse away from you
 or toward you while holding the left button down performs the same
 functions as these keys.
@@ -775,12 +775,12 @@ rather warped things with it.  If you're a new Id user, we recommend
 skipping the rest of the zoom box functions for now and coming back to
 them when you're comfortable with the basic zoom box functions.
 
-<Ctrl><Keypad->, <Ctrl><Keypad+>\
+<Ctrl+Keypad->, <Ctrl+Keypad+>\
 Holding <Ctrl> and pressing the numeric keypad's + or - keys rotates the
 zoom box.  Moving the mouse left or right while holding the right button
 down performs the same function.
 
-<Ctrl><Page Up>, <Ctrl><Page Down>\
+<Ctrl+PageUp>, <Ctrl+PageDown>\
 These commands change the zoom box's "aspect ratio", stretching or
 shrinking it vertically.  Moving the mouse away from you or toward you
 while holding both buttons (or the middle button on a 3-button mouse) down
@@ -788,7 +788,7 @@ performs the same function.  There are no commands to directly stretch or
 shrink the zoom box horizontally - the same effect can be achieved by
 combining vertical stretching and resizing.
 
-<Ctrl><Home>, <Ctrl><End>\
+<Ctrl+Home>, <Ctrl+End>\
 These commands "skew" the zoom box, moving the top and bottom edges in
 opposite directions.  Moving the mouse left or right while holding both
 buttons (or the middle button on a 3-button mouse) down performs the same
@@ -796,18 +796,19 @@ function.  There are no commands to directly skew the left and right edges
 - the same effect can be achieved by using these functions combined with
 rotation.
 
-<Ctrl><Insert>, <Ctrl><Delete>\
+<Ctrl+Insert>, <Ctrl+Delete>\
 These commands change the zoom box color.  This is useful when you're
 having trouble seeing the zoom box against the colors around it.  Moving
 the mouse away from you or toward you while holding the right button down
 performs the same function.
 
 You may find it difficult to figure out what combination of size, position
-rotation, stretch, and skew to use to get a particular result.  (We do.)\
+rotation, stretch, and skew to use to get a particular result.  (We do.)
+
 A good way to get a feel for all these functions is to play with the
 Gingerbreadman fractal type.  Gingerbreadman's shape makes it easy to
 see what you're doing to him.  A warning though: Gingerbreadman will run
-forever, he's never quite done! So, pre-empt with your next zoom when he's
+forever, he's never quite done!  So, pre-empt with your next zoom when he's
 baked enough.
 
 If you accidentally change your zoom box shape or rotate and
@@ -816,12 +817,11 @@ disappears, then <PageUp> to get a fresh one.  With a
 mouse, after removing the old zoom box from the display release and
 re-press the left button for a fresh one.
 
-If your screen does not have a 4:3 "aspect ratio" (i.e. if the visible
+If your video mode does not have a 4:3 "aspect ratio" (i.e. if the visible
 display area on it is not 1.333 times as wide as it is high), rotating and
 zooming will have some odd effects - angles will change, including the
 zoom box's shape itself, circles (if you are so lucky as to see any with a
-non-standard aspect ratio) become non-circular, and so on.  The vast
-majority of PC screens *do* have a 4:3 aspect ratio.
+non-standard aspect ratio) become non-circular, and so on.
 
 Zooming is not implemented for the plasma and diffusion fractal types, nor
 for overlayed and 3D images.  A few fractal types support zooming but
@@ -836,10 +836,10 @@ the image are saved with it.  Progress is marked by colored lines moving
 down the screen's edges.
 
 The default filename for the first image saved after starting Id is
-FRACT001.GIF;  subsequent saves in the same session are automatically
+fract001.gif;  subsequent saves in the same session are automatically
 incremented 002, 003...  Use the "savename=" parameter or <X> options
 screen to change the name.  By default, files left over from previous
-sessions are not overwritten - the first unused FRACTnnn name is used.
+sessions are not overwritten - the first unused fractnnn name is used.
 Use the "overwrite=yes" parameter or <X> options screen) to overwrite
 existing files.
 
@@ -854,13 +854,12 @@ cursor to it (or type the first few letters of its name) and press
 
 Directories are shown in the file list with a \"\\\" at the end of the name.
 When you select a directory, the contents of that directory are shown.  Or,
-you can type the name of a different directory (and optionally a different
-drive) and press <Enter> for a new display.  You can also type a mask such
-as "*.XYZ" and press <Enter> to display files whose name ends with the
-matching suffix (XYZ).
+you can type the name of a different directory and press <Enter> for a new
+display.  You can also type a mask such as "*.xyz" and press <Enter> to
+display files whose name ends with the matching suffix (xyz).
 
 You can use <F6> to switch directories to the default Id directory
-or to your own directory which is specified through the DOS environment
+or to your own directory which is specified through the environment
 variable "FRACTDIR".
 
 Once you have selected a file to restore, a summary description of the
@@ -888,7 +887,7 @@ saving the image itself.
 <@> or <2>
 
 The <@> or <2> command loads a set of parameters describing an image.
-(Actually, it can also be used to set non-image parameters such as SOUND,
+(Actually, it can also be used to set non-image parameters such as sound,
 but at this point we're interested in images.  Other uses of parameter
 files are discussed in {"Parameter Files and the <@> Command"}.)
 
@@ -945,8 +944,8 @@ After you press <B>, Id prompts for:
      nearly 3K of disk space per map - which adds up to a lot for many
      images.  Smooth-shaded ranges of colors are compressed, so if that's
      used a lot in an image the color information won't be as bulky.\
-  "only" - Record only the colors in the PAR file, without any other
-     parameters.  This is useful for converting color maps to PAR entries.
+  "only" - Record only the colors in the par file, without any other
+     parameters.  This is useful for converting color maps to par entries.
 
   # of colors:  This only matters if "Record colors?" is set to "yes".  It
   specifies the number of colors to record.  Recording less colors will
@@ -957,26 +956,25 @@ After you press <B>, Id prompts for:
   you'll want to set the "# of colors" to 256.
 
   See the {=@RECORDCOLORS Recordcolors} command, which controls when mapfiles
-  are used and when compressed colors are written to PAR files.
+  are used and when compressed colors are written to par files.
 
   maxlinelength: This number controls the maximum width of a parameter
-  entry in a PAR file.  The default is 72 characters.
+  entry in a par file.  The default is 72 characters.
 
   At the bottom of the input screen are inputs for Id's "pieces"
-  divide-and-conquer feature.  You can create multiple PAR entries that
+  divide-and-conquer feature.  You can create multiple par entries that
   break an image up into pieces so that you can generate the image pieces
   one by one.  There are two reasons for doing this.  The first is in case the
   fractal is very slow, and you want to generate parts of the image at the
   same time on several computers.  The second is that you might want to make
-  an image greater than 2048 x 2048, the old pixel limit for Id.  The
-  parameters for this feature are:
+  an image greater than 2048 x 2048.  The parameters for this feature are:\
      X Multiples - How many divisions of final image in the x direction\
      Y Multiples - How many divisions of final image in the y direction\
      Video mode  - Id video mode for each piece (e.g. "F3")\
 
   The last item defaults to the current video mode.  If either X Multiples or
-  Y Multiples are greater than 1, then multiple numbered PAR entries for the
-  pieces are added to the PAR file, and a MAKEMIG.BAT file is created that
+  Y Multiples are greater than 1, then multiple numbered par entries for the
+  pieces are added to the par file, and a makemig.bat file is created that
   builds all of the component pieces and then stitches them together into
   a "multi-image" GIF.  The current limitations of the "divide and conquer"
   algorithm are 36 or fewer X and Y multiples (so you are limited to "only"
@@ -984,12 +982,12 @@ After you press <B>, Id prompts for:
   X and Y directions of 65,535 (a limitation of "only" four billion pixels
   or so).
 
-  The final image generated by MAKEMIG is a "multi-image" GIF file called
-  FRACTMIG.GIF.  In case you have other software that can't handle
-  multi-image GIF files, MAKEMIG includes a final (but commented out) call
-  to SIMPLGIF, a companion program that reads a GIF file that may contain
+  The final image generated by makemig is a "multi-image" GIF file called
+  fractmig.gif.  In case you have other software that can't handle
+  multi-image GIF files, makemig includes a final (but commented out) call
+  to simplgif, a companion program that reads a GIF file that may contain
   little tricks like multiple images and creates a simple GIF from it.
-  Fair warning: SIMPLGIF needs room to build a composite image while it
+  Fair warning: simplgif needs room to build a composite image while it
   works, and it does that using a temporary disk file equal to the size
   of the final image - and a 64Kx64K GIF image requires a 4GB temporary
   disk file!
@@ -1110,7 +1108,7 @@ Id command keys can be loosely grouped as:
    next.  Examples:  <M> to go to main menu;  <C> to enter color cycling
    mode;  <PageUp> to bring up a zoom box.  After using a command in this
    group, calculation automatically resumes when you return from the
-   function (e.g. <Esc> from color cycling, <PageDn> to clear zoom box).
+   function (e.g. <Esc> from color cycling, <PageDown> to clear zoom box).
    There are a few fractal types which cannot resume calculation, they
    are noted below.  Note that after saving an image with <S>, you must
    press <Enter> to clear the "saved" message from the screen and resume.
@@ -1145,22 +1143,22 @@ calculation of the color at the point where the cursor is.  Move the
 cursor around the fractal using the arrow keys or the mouse and watch
 the orbits change.  Try entering the Orbits mode with View Windows (<V>)
 turned on.  The following keys take effect in Orbits mode.\
-<c>         Circle toggle - makes little circles with radii inversely\
+<C>         Circle toggle - makes little circles with radii inversely\
             proportional to the iteration.  Press <c> again to toggle\
             back to point-by-point display of orbits.\
-<l>         Line toggle - connects orbits with lines (can use with <c>)\
-<n>         Numbers toggle - shows complex coordinates & color number of\
+<L>         Line toggle - connects orbits with lines (can use with <c>)\
+<N>         Numbers toggle - shows complex coordinates & color number of\
             the cursor on the screen.  Press <n> again to turn off numbers.\
-<p>         Enter pixel coordinates directly\
-<h>         Hide fractal toggle.  Works only if View Windows is turned on\
+<P>         Enter pixel coordinates directly\
+<H>         Hide fractal toggle.  Works only if View Windows is turned on\
             and set for a small window (such as the default size.) Hides the\
             fractal, allowing the orbit to take up the whole screen.  Press\
             <h> again to uncover the fractal.\
-<s>         Saves the fractal, cursor, orbits, and numbers as they\
+<S>         Saves the fractal, cursor, orbits, and numbers as they\
             appear on the screen.\
 <<> or <,>  Zoom orbits image smaller\
 <>> or <.>  Zoom orbits image larger\
-<z>         Restore default zoom.\
+<Z>         Restore default zoom.\
 ;
 ;
 ;
@@ -1179,11 +1177,11 @@ These parameters can be used to:\
    mode supported by your hardware.  This use of view windows occurs
    automatically when you restore such an image.
  o Define a disk video mode up to 32767x32767.  First select a disk video
-   mode using <del>.  Then on the <v> screen enter both an X and a Y value
-   at the Virtual Screen Total Pixels prompts.
+   mode using <Delete>.  Then on the <v> screen enter both an X and a Y
+   value at the Virtual Screen Total Pixels prompts.
  o Define a virtual video mode up to the size that fits in video memory.
-   First select a VESA video mode (dotmode=28) using <del>.  Then on the
-   <v> screen enter both an X and a Y value at the Virtual Screen Total
+   First select a VESA video mode (dotmode=28) using <Delete>.  Then on
+   the <V> screen enter both an X and a Y value at the Virtual Screen Total
    Pixels prompts.  The Keep Aspect prompt is used if the asked for virtual
    screen is larger than video memory.  If set, the X and Y values will both
    be reduced such that the ratio between them is maintained.  If not set,
@@ -1198,14 +1196,14 @@ all the rest.
 
 "Reduction factor"\
 When an explicit size is not given, this determines the view window size,
-as a factor of the screen size.  E.g. a reduction factor of 2 makes the
-window 1/2 as big as the screen in both dimensions.
+as a factor of the screen size.  For example, a reduction factor of 2 makes
+the window 1/2 as big as the screen in both dimensions.
 
 "Final media aspect ratio"\
 This is the height of the final image you want, divided by the width.  The
-default is 0.75 because standard PC monitors have a height:width ratio of
-3:4. e.g. set this to 2.0 for an image twice as high as it is wide.  The
-effect of this parameter is visible only when "preview display" is
+default is 0.75 because typical video modes have a height:width ratio of
+3:4.  For example, set this to 2.0 for an image twice as high as it is wide.
+The effect of this parameter is visible only when "preview display" is
 enabled.  If the explicit size of both x and y are set, setting this value
 to 0 will cause the appropriate value to be calculated based on x and y.
 
@@ -1272,16 +1270,24 @@ Restore in 3D and overlay the result on the current screen.
 ;
 ~Topic=Video Mode Function Keys, Label=HELPVIDSEL
 
-Id supports *so* many video modes that we've given up trying to
-reserve a keyboard combination for each of them.
+The concept of a "video mode" in Id is somewhat of a misnomer.  Id is just
+another GUI program on your desktop and doesn't control the video display
+directly.  The size of the video mode determines the pixel dimenions of any
+saved images.  So you can think of the "video mode" as "image size".
+In a future release, the saved image size will be decoupled from the size
+of the displayed image.
+
+The video modes that can be selected are determined entirely from the settings
+in the id.cfg file.  See {"Customized Video Modes\, id.cfg"} to customize the
+set of supported video modes.
 
 Any supported video mode can be selected by going to the "Select Video Mode"
 screen (from main menu or by using <Delete>), then using the cursor up and down
 arrow keys and/or <PageUp> and <PageDown> keys to highlight the desired mode,
 then pressing <Enter>.
 
-Up to 39 modes can be assigned to the keys F2-F10, SF1-SF10 <Shift>+<Fn>),
-CF1-CF10 (<Ctrl>+<Fn>), and AF1-AF10 (<Alt>+<Fn>).  The modes assigned to
+Up to 39 modes can be assigned to the keys F2-F10, SF1-SF10 <Shift+Fn>),
+CF1-CF10 (<Ctrl+Fn>), and AF1-AF10 (<Alt+Fn>).  The modes assigned to
 function keys can be invoked directly by pressing the assigned key, without
 going to the video mode selection screen.
 
@@ -1292,19 +1298,14 @@ changed - these are assigned to the most common video modes, which might
 be used in demonstration files or batches.
 
 To reassign a function key to a mode you often use, go to the "select
-video mode" screen, highlight the video
-mode, press the keypad (gray) <+> key, then press the desired
-function key or key combination.  The new key assignment will be remembered
-for future runs.
+video mode" screen, highlight the video mode, press the keypad <+> key,
+then press the desired function key or key combination.  The new key
+assignment will be remembered for future runs.
 
-To unassign a key (so that it doesn't invoke any video
-mode), highlight the mode currently selected by the key and press the
-keypad (gray) <-> key.
+To unassign a key (so that it doesn't invoke any video mode), highlight
+the mode currently selected by the key and press the keypad <-> key.
 
 See {"Disk-Video" Modes} for a description of these non-display modes.
-
-See {"Customized Video Modes\, id.cfg"} for information about
-adding your own video modes.
 ;
 ;
 ;
@@ -1312,19 +1313,22 @@ adding your own video modes.
 
 The following keystrokes function while browsing an image:\
 
-<ARROW KEYS>     Step through the outlines on the screen.\
-<ENTER>          Selects the image to display.\
+Arrow Keys       Step through the outlines on the screen.\
+<Enter>          Selects the image to display.\
 <\\>,<h>          Recalls the last image selected.\
-<D>              Deletes the selected file.\
-<R>              Renames the selected file.\
-<s>              Saves the current image with the browser boxes\
+<Shift+D>        Deletes the selected file.\
+<Shift+R>        Renames the selected file.\
+<S>              Saves the current image with the browser boxes\
                  displayed.\
-<ESC>,<l>        Toggles the browse mode off.\
-<Ctrl-b>         Brings up the {Browser Parameters} screen.\
-<Ctrl-Ins/Del>   Change the browser boxes color.\
+<ESC>,<L>        Toggles the browse mode off.\
+<Ctrl+B>         Brings up the {Browser Parameters} screen.\
+<Ctrl+Insert>,  Change the browser boxes color.\
+<Ctrl+Delete>\
 
-This is a "visual directory", here is how it works...\
-When 'L' or 'l' is pressed from a fractal display the current directory is
+This is a "visual directory" showing the relationship between saved images
+on disk and the region of the complex plane they represent.
+
+When typing <L> from a fractal display, the current directory is
 searched for any saved files that are deeper zooms of the current image and
 their position shown on screen by a box (or crosshairs if the box would be
 too small).  See also {Browser Parameters} for more on how this is done.
@@ -1335,48 +1339,41 @@ they appear in your directory, so don't worry if the flashing window jumps
 all over the place!
 
 When enter is pressed, the selected image is loaded.  In this mode a stack
-of the last sixteen selected filenames is maintained and the '\\' or 'h' key
+of the last sixteen selected filenames is maintained and the <\\> or <H> key
 pops and loads the last image you were looking at.  Using this it is
 possible to set up sequences of images that allow easy exploration of your
 favorite fractal without having to wait for recalc once the level of zoom
 gets too high, great for demos! (also useful for keeping track of just
 exactly where fract532.gif came from :-) )
 
-You can also use this facility to tidy up your disk: by typing UPPER CASE 'D'
+You can also use this facility to tidy up your disk: by typing <Shift+D>
 when a file is selected the browser will delete the file for you, after
 making sure that you really mean it, you must reply to the "are you sure"
-prompts with an UPPER CASE 'Y' and nothing else, otherwise the command is
+prompts with an <Shift+Y> and nothing else, otherwise the command is
 ignored.  Just to make absolutely sure you don't accidentally wipe out the
-fruits of many hours of cpu time the default setting is to have the browser
+fruits of many hours of CPU time the default setting is to have the browser
 prompt you twice, you can disable the second prompt within the parameters
 screen, however, if you're feeling overconfident :-).
 
-To complement the Delete function there is a rename function, use the UPPER
-CASE 'R' key for this.  You need to enter the FULL new file name, no .GIF is
-implied.
+To complement the delete function there is a rename function, use the
+<Shift+R> key for this.  You need to enter the full new file name,
+no .gif is implied.
 
 It is possible to save the current image along with all of the displayed
-boxes indicating subimages by pressing the 's' key.  This exits the browse
+boxes indicating subimages by pressing the <S> key.  This exits the browse
 mode to save the image and the boxes become a permanent part of the image.
 Currently, the screen image ends up with stray dots colored after it is
 saved.
 
-Esc backs out of image selecting mode.\
-
-The browser can now use expanded memory or extended memory.  If you have
-more than 4 MB of expanded/extended memory available, you can use either.
-If you don't have 4 MB of expanded/extended memory available, use expanded
-memory as it will allocate as much as possible.  The extended memory support
-will silently fail and default to the use of far memory if 4 MB of extended
-memory is not available.
+<Esc> backs out of image selecting mode.
 
 Here's a tip on how to zoom out beyond your starting point when browsing:
 Suppose you restore a fractal deeply-zoomed down in a directory of
 related zoomed images, and then bring up the browser.  How do you zoom
-out? You can't use "\\" because you started with the zoomed image, and
+out?  You can't use <\\> because you started with the zoomed image, and
 there is no browser command to detect the next outer image.  What you
-can do is exit the browser, press PgUp until the zoom box won't get any
-smaller, zoom out with Ctrl-Enter, and before any image starts to
+can do is exit the browser, press <PageUp> until the zoom box won't get any
+smaller, zoom out with <Ctrl+Enter>, and before any image starts to
 develop, call up the browser again, locate your zoomed image that you
 started with, and see if there is another image that contains it - if
 so, restore it with the browser.  You can also use a view window <v> to load
@@ -1395,13 +1392,6 @@ Any subsequent images are ignored.  Make sure that the minimum image size
 isn't set too small on the parameters screen.
 
 ~OnlineFF
-"Sorry .... out of memory"\
-The browser has run out of far, expanded, or extended memory in which to
-store the pixels covered by the sub image boxes.  Try again with the main
-image at lower resolution, and/or reduce the number of TSRs resident in
-memory when you start Id.  Make sure you have expanded or extended
-memory available.
-
 "Sorry...it's a read only file, can't del <filename>"\
 "Sorry....can't rename"\
 The file which you were trying to delete or rename has the read only
@@ -1414,7 +1404,7 @@ you can get rid of it.
 
 This Screen enables you to control Id's built in file browsing utility.
 If you don't know what that is see {Browse Commands}.  This screen is
-selected with <Ctrl-B> from just about anywhere.
+selected with <Ctrl+B> from just about anywhere.
 
 "Autobrowsing"\
 Select yes if you want the loaded image to be scanned for sub images
@@ -1466,9 +1456,9 @@ setting smallest image to 0 (see above).
 The following keystrokes function while viewing an RDS image:\
 
 <Enter> or <Space>   -- Toggle calibration bars on and off.\
-<Ctrl-s> or <k>      -- Return to RDS Parameters Screen.\
-<s>                  -- Save RDS image, then restore original.\
-<c>, <+>, <->        -- Color cycle RDS image.\
+<Ctrl+S> or <K>      -- Return to RDS Parameters Screen.\
+<S>                  -- Save RDS image, then restore original.\
+<C>, <+>, <->        -- Color cycle RDS image.\
 Other keys           -- Exit RDS mode, restore original image, and pass\
                         keystroke on to main menu.\
 
@@ -1481,7 +1471,7 @@ For more about RDS, see {Random Dot Stereograms (RDS)}
 
 Remember, you do NOT have to wait for the program to finish a full screen
 display before entering a command.  If you see an interesting spot you want
-to zoom in on while the screen is half-done, don't wait -- do it! If you
+to zoom in on while the screen is half-done, don't wait -- do it!  If you
 think after seeing the first few lines that another video mode would look
 better, go ahead -- Id will shift modes and start the redraw at once.
 When it finishes a display, it beeps and waits for your next command.
@@ -1530,20 +1520,12 @@ code base has been ported to the Macintosh line of computers.
 See {=HELPCYCLING Color Cycling Command Summary} for a summary of commands.
 
 ~Doc+
-Color-cycling mode is entered with the 'c', '+', or '-' keys from an image,
-or with the 'c' key from Palette-Editing mode.
+Color-cycling mode is entered with the <C>, <+>, or <-> keys from an image,
+or with the <C> key from Palette-Editing mode.
 
-The color-cycling commands are available ONLY for VGA adapters and EGA
-adapters in 640x350x16 mode.  You can also enter color-cycling while
+You can also enter color-cycling while
 using a disk-video mode, to load or save a palette - other functions are
 not supported in disk-video.
-
-Note that the colors available on an EGA adapter (16 colors at a
-time out of a palette of 64) are limited compared to those of VGA, super-
-VGA, and MCGA (16 or 256 colors at a time out of a palette of 262,144).  So
-color-cycling in general looks a LOT better in the latter modes.  Also,
-because of the EGA palette restrictions, some commands are not available
-with EGA adapters.
 
 Color cycling applies to the color numbers selected by the "cyclerange="
 command line parameter (also changeable via the <Y> options screen and via
@@ -1569,13 +1551,12 @@ Restore original palette.
 Begin cycling the palette by shifting each color to the next "contour."
 <+> cycles the colors in one direction, <-> in the other.
 
-'<' or '>'\
+<<> or <>>\
 Force a color-cycling pause, disable random colorizing, and single-step
 through a one color-cycle.  For "fine-tuning" your image colors.
 
-Cursor up/down\
-Increase/decrease the cycling speed.  High speeds may cause a harmless
-flicker at the top of the screen.
+<Up>/<Down>\
+Increase/decrease the cycling speed.
 
 <F2> through <F10>\
 Switches from simple rotation to color selection using randomly generated
@@ -1590,39 +1571,39 @@ Randomly selects a function key (F2 through F10) and then updates ALL the
 screen colors prior to displaying them for instant, random colors.  Hit
 this over and over again (we do).
 
-<Spacebar>\
+<Space>\
 Pause cycling with white overscan area.  Cycling restarts with any command
 key (including another spacebar).
 
-<Shift><F1>-<F10>\
+<Shift+F1>-<Shift+F10>\
 Pause cycling and reset the palette to a preset two color "straight"
-assignment, such as a spread from black to white. (Not for EGA)
+assignment, such as a spread from black to white
 
-<Ctrl><F1>-<F10>\
-Pause & set a 2-color cyclical assignment, e.g. red->yellow->red (not EGA).
+<Ctrl+F1>-<Ctrl+F10>\
+Pause & set a 2-color cyclical assignment, e.g. red->yellow->red.
 
-<Alt><F1>-<F10>\
-Pause & set a 3-color cyclical assignment, e.g. green->white->blue (not EGA).
+<Alt+F1>-<Alt+F10>\
+Pause & set a 3-color cyclical assignment, e.g. green->white->blue.
+
+<Shift+R>, <Shift+G>, <Shift+B>\
+Pause and increase the red, green, or blue component of all colors by a
+small amount.  Note the case distinction of this vs:
 
 <R>, <G>, <B>\
-Pause and increase the red, green, or blue component of all colors by a
-small amount (not for EGA).  Note the case distinction of this vs:
-
-<r>, <g>, <b>\
 Pause and decrease the red, green, or blue component of all colors by a
-small amount (not for EGA).
+small amount.
 
 <D> or <A>\
-Pause and load an external color map from the files DEFAULT.MAP or
-ALTERN.MAP, supplied with the program.
+Pause and load an external color map from the files default.map or
+altern.map, supplied with the program.
 
 <L>\
-Pause and load an external color map (.MAP file).  Several .MAP files are
+Pause and load an external color map (.map file).  Several .map files are
 supplied with Id.  See {Palette Maps}.
 
 <S>\
 Pause, prompt for a filename, and save the current palette to the named
-file (.MAP assumed).  See {Palette Maps}.
+file (.map assumed).  See {Palette Maps}.
 ;
 ;
 ;
@@ -1636,24 +1617,19 @@ file (.MAP assumed).  See {Palette Maps}.
   Esc              Exit from color-cycling mode
   + or -           (re)-set the direction of the color-cycling
   Home             Restore original palette
-~Doc-
-  \27 \26              (re)-set the direction of the color-cycling (just like +/-)
-  \24 \25              SpeedUp/SlowDown the color cycling process
-~Doc+,Online-
-  Right/Left Arrow (re)-set the direction of the color-cycling (just like +/-)
-  Up/Down Arrow    SpeedUp/SlowDown the color cycling process
-~Online+
+  Right/Left       (Re)-Set the direction of the color-cycling (just like +/-)
+  Up/Down          SpeedUp/SlowDown the color cycling process
   F2 thru F10      Select Short--Medium--Long (randomly-generated) color bands
   1  thru 9        Cycle through 'nn' colors between screen updates (default=1)
   Enter            Randomly (re)-select all new colors  [TRY THIS ONE!]
   Spacebar         Pause until another key is hit
   < or >           Pause and single-step through one color-cycle
 * SF1 thru AF10    Pause and reset the Palette to one of 30 fixed sequences
-  d or a           pause and load the palette from DEFAULT.MAP or ALTERN.MAP
-  l                load palette from a map file
-  s                save palette to a map file
-* r or g or b or   force a pause and Lower (lower case) or Raise (upper case)
-* R or G or B      the Red, Green, or Blue component of the fractal image
+  d or a           Pause and load the palette from default.map or altern.map
+  l                Load palette from a map file
+  s                Save palette to a map file
+* r or g or b or   Force a pause and Lower (lower case) or Raise (upper case)
+* R or G or B      The Red, Green, or Blue component of the fractal image
 ;
 ;
 ;
@@ -1664,16 +1640,14 @@ See {=HELPXHAIR Palette Editing Command Summary} for a summary of commands.
 
 ~Doc+
 Palette-editing mode provides a number of tools for modifying the colors
-in an image.  It can be used only with MCGA or higher adapters, and only
-with 16 or 256 color video modes.
-Many thanks to Ethan Nagel for creating the palette editor.
+in an image.  Many thanks to Ethan Nagel for creating the palette editor.
 
 Use the <E> key to enter palette-editing mode from a displayed image or
 from the main menu.
 
 When this mode is entered, an empty palette frame is displayed.  You can
-use the cursor keys to position the frame outline, and <Pageup> and
-<Pagedn> to change its size.  (The upper and lower limits on the size
+use the cursor keys to position the frame outline, and <PageUp> and
+<PageDown> to change its size.  (The upper and lower limits on the size
 depend on the current video mode.)  When the frame is positioned where you
 want it, hit Enter to display the current palette in the frame.
 
@@ -1695,7 +1669,7 @@ Using the commands described below, you can assign particular colors to
 the registers and manipulate them.  Note that at any given time there are
 two colors "X"d - these are pre-empted by the editor to display the
 palette frame.  They can be edited but the results won't be visible.  You
-can change which two colors are borrowed ("X"d out) by using the <v>
+can change which two colors are borrowed ("X"d out) by using the <V>
 command.
 
 Once the palette frame is displayed and filled in, the following commands
@@ -1712,7 +1686,7 @@ Hide the palette frame to see full image; the cross-hair remains visible
 and all functions remain enabled; hit <H> again to restore the palette
 display.
 
-Cursor keys\
+<Left> <Right> <Up> <Down>\
 Move the cross-hair cursor around.  In 'auto' mode (the default) the color
 under the center of the cross-hair is automatically assigned to the active
 color register.  Control-Cursor keys move the cross-hair faster.  A mouse
@@ -1730,7 +1704,7 @@ Select previous or next color component in active register
 Increase or decrease the active color component value by 1  Numeric keypad
 (gray) + and - keys do the same.
 
-<Pageup> <Pagedn>\
+<PageUp> <PageDown>\
 Increase or decrease the active color component value by 5; Moving the
 mouse up/down with left button held is the same
 
@@ -1748,7 +1722,7 @@ Rotate the palette one step.  By default colors 1 through 255 inclusive
 are rotated.  This range can be over-ridden with the "cyclerange"
 parameter, the <Y> options screen, or the <O> command described below.
 
-"<" ">"\
+<<> <>>\
 Rotate the palette continuously (until next keystroke)
 
 <O>\
@@ -1784,25 +1758,24 @@ Convert current palette to gray-scale.  (If the <X> or <Y> exclude ranges
 described later are in force, only the active range of colors is converted
 to gray-scale.)
 
-<Shift-F2> ... <Shift-F9>\
+<Shift+F2> ... <Shift+F9>\
 Store the current palette in a temporary save area associated with the
 function key.  The temporary save palettes are useful for quickly
 comparing different palettes or the effect of some changes - see next
 command.  The temporary palettes are only remembered until you exit from
-palette-editing mode.\
-Starting with version 19.6, when palette editing mode is entered, the
-original palette is stored in the area associated with F2.
+palette-editing mode.  When palette editing mode is entered, the
+original palette is stored in the area associated with <Shift+F2>.
 
 <F2> ... <F9>\
 Restore the palette from a temporary save area.  If you haven't previously
 saved a palette for the function key, you'll get a simple grey scale.
 
 <L>\
-Pause and load an external color map (.MAP file).  See {Palette Maps}.
+Pause and load an external color map (.map file).  See {Palette Maps}.
 
 <S>\
 Pause, prompt for a filename, and save the current palette to the named
-file (.MAP assumed).  See {Palette Maps}.
+file (.map assumed).  See {Palette Maps}.
 
 <I>\
 Invert frame colors.  With some colors the palette is easier to see when
@@ -1810,9 +1783,9 @@ the frame colors are interchanged.
 
 <\\>\
 Move or resize the palette frame.  The frame outline is drawn - it can
-then be repositioned and sized with the cursor keys, <Pageup> and
-<Pagedn>, just as was done when first entering palette-editing mode.  Hit
-Enter when done moving/sizing.
+then be repositioned and sized with the cursor keys, <PageUp> and
+<PageDown>, just as was done when first entering palette-editing mode.  Hit
+<Enter> when done moving/sizing.
 
 <V>\
 Use the colors currently selected by the two color registers for the
@@ -1842,9 +1815,7 @@ Make a negative color palette - will convert only current color if in 'x'
 mode or range between editors in 'y' mode or entire palette if in "normal"
 mode.
 
-<!>\
-<@>     <\">       (English keyboard)  <u-grave> (French keyboard)\
-<#>  <pound sign> (English keyboard)     <$>    (French keyboard)\
+<!> <@> <#>\
 Swap R<->G, G<->B, and R<->B columns. <!>, <@>, and <#> are shifted 1, 2,
 and 3, which you may find easier to remember.
 
@@ -1890,9 +1861,9 @@ an intuitive fashion with the minimum of keyboard usage.  In fact everything is
 controllable with the mouse, as the following shows:
 
 To start with, generate a plasma type fractal as it has all 256 colours on
-screen at once.  Now bring up the palette editor and press 'w' to set up
+screen at once.  Now bring up the palette editor and press <W> to set up
 a greyscale palette as a blank canvas on which to splash some colour.
-Pressing 'f' puts us in freestyle mode... crosshairs appear on the screen and
+Pressing <F> puts us in freestyle mode... crosshairs appear on the screen and
 a colour band is applied, centred on the cursor.  Although, at the moment,
 the colour of this band is grey and you won't see much!
 
@@ -1918,13 +1889,13 @@ moved about the screen and the edges come to overlap different areas of colour.
 For really violent jumps in shading try starting with an image that has areas
 that change chaotically, such as a Mandlbrot set.  You'll see what I mean when
 you move the cross hairs into an area close to the 'lake' where the change in
-value from one pixel to the next is sudden, chaotic and large.  Watch out! the
-strobing effect can be somewhat disturbing.  This is nothing to worry about but
-just a consequence of the manipulation of the palette and the way in which
+value from one pixel to the next is sudden, chaotic and large.  Watch out! --
+the strobing effect can be somewhat disturbing.  This is nothing to worry about
+but just a consequence of the manipulation of the palette and the way in which
 the colour bands are calculated.
 
 I hope that you'll find this a useful tool in colouring an image.  Remember that
-the 'h' key can be used to hide the palette box and expose the whole image.
+the <H> key can be used to hide the palette box and expose the whole image.
 
 ;
 ~Topic=Palette Editing Command Summary, Label=HELPXHAIR
@@ -1935,49 +1906,49 @@ the 'h' key can be used to hide the palette box and expose the whole image.
 
   F1               HELP! (Enter help mode and display this screen)
   Esc              Exit from palette editing mode
-  h                Hide/unhide the palette frame
+  H                Hide/unhide the palette frame
   \24 \25 \27 \26          Move the cross-hair cursor around.  Control-Cursor keys
                    move faster.  A mouse can also be used to move around.
-  r or g or b      Select the the Red, Green, or Blue component of the
+  R or G or B      Select the the Red, Green, or Blue component of the
                    active color register for subsequent commands
-  Insert or Delete Select previous or next color component in active register
+  Insert, Delete   Select previous or next color component in active register
   + or -           Increase or decrease the active color component by 1
-  Pageup or Pagedn Increase or decrease the active color component by 5;
+  PageUp, PageDown Increase or decrease the active color component by 5;
                    Moving the mouse up/down with left button held is the same
   0 1 2 3 4 5 6    Set active color component to 0 10 20 ... 60
   Space            Select the other color register as the active one
   , or .           Rotate the palette one step
   < or >           Rotate the palette continuously (until next keystroke)
-  c                Enter Color-Cycling Mode (see {=HELPCYCLING Color Cycling Commands})
+  C                Enter Color-Cycling Mode (see {=HELPCYCLING Color Cycling Commands})
   =                Create a smoothly shaded range of colors
-  m                Set the gamma value for '='.
+  M                Set the gamma value for '='.
 ~FF
-  d                Duplicate the inactive color register in active color
-  t                Stripe-shade; after hitting 't', hit a number from 2 to 9
+  D                Duplicate the inactive color register in active color
+  T                Stripe-shade; after hitting 't', hit a number from 2 to 9
                    which is used as stripe width
-  Shift-F2,F3,..F9 Store the current palette in a temporary save area
+  Shift+F2,F3,..F9 Store the current palette in a temporary save area
                    associated with the function key
   F2,F3,...,F9     Restore the palette from a temporary save area
-  w                Convert palette (or current exclude range) to gray-scale
+  W                Convert palette (or current exclude range) to gray-scale
   \\                Move or resize the palette frame
-  i                Invert frame colors, useful with dark colors
-  a                Toggle 'auto' mode on or off - when on, the active color
+  I                Invert frame colors, useful with dark colors
+  A                Toggle 'auto' mode on or off - when on, the active color
                    register follows the cursor; when off, Enter must be hit
                    to set the register to the color under the cursor
   Enter            Only useful when 'auto' is off, as described above; double
                    clicking the left mouse button is the same as Enter
-  x                Toggle 'exclude' mode on or off
-  y                Toggle 'exclude' range on or off
-  o                Set the 'cyclerange' (range affected by color cycling
+  X                Toggle 'exclude' mode on or off
+  Y                Toggle 'exclude' range on or off
+  O                Set the 'cyclerange' (range affected by color cycling
                    commands) to the range of the two registers
-  n                Make a negative color palette
-  u                Undoes the last command
-  e                Redoes the last undone command
+  N                Make a negative color palette
+  U                Undoes the last command
+  E                Redoes the last undone command
 ~FF
   !                Swap red and green columns
-  @ \" or u-grave   Swap green and blue columns
-  # pound or $     Swap red and blue columns
-  f                Toggle Freestyle Palette-Editing Mode.  See
+  @                Swap green and blue columns
+  #                Swap red and blue columns
+  F                Toggle Freestyle Palette-Editing Mode.  See
                    {Palette Editing Commands} for details.
 
 ;
@@ -1998,60 +1969,60 @@ the 'h' key can be used to hide the palette box and expose the whole image.
 
  Enough explanations for now, lets see how easy it is to use:
 
- With the default Mandlebrot set on the screen simply hold down the 'Alt' key
- and press the '1' key on the top row (DON'T use the numeric keypad to the
+ With the default Mandlebrot set on the screen simply hold down the <Alt+1>
+ key on the top row (DON'T use the numeric keypad to the
  right, it won't work).  You'll see a screen full of images generated starting
  from the middle and spiraling outwards.  The perfect Mandlebrot set will be
  in the middle and the others will be warped and distorted by having had the
  initial value of Z perturbed at random... but you don't need to know that
  (which is the whole point really!).
 
- 'Alt-1' produces a low level of mutation of the fractal, only 'mild'
+ <Alt+1> produces a low level of mutation of the fractal, only 'mild'
  parameters are changed, those which have a more subtle effect.  For much
- wilder variations try pressing 'Alt-7' now.  This give the maximum available
+ wilder variations try pressing <Alt+7> now.  This give the maximum available
  mutation with just about everything being twiddled and fiddled to rather
  dramatic effect as you should now be seeing.
 
  To select an image for full screen display simply bring up a zoombox by
  pressing 'Page-up' once.  The center image will now have a white box around
- it.  Hold down the 'Ctrl' key and use the arrow keys to move this box around
- until it's outlining an image you like.  Pressing 'B' will now exit from
+ it.  Hold down the <Ctrl+Arrow> keys to move this box around
+ until it's outlining an image you like.  Pressing <B> will now exit from
  evolver mode and redraw the selected image full size.  If, rather than exiting
- from evolver mode, you just press 'enter', then a whole new set of images
+ from evolver mode, you just press <Enter>, then a whole new set of images
  is generated, all based around the one you selected (which is now the middle
  image of the new set).
 
- From a basic point of view that's it!  Just press alt-number to scramble
+ From a basic point of view that's it!  Just press <Alt+1>-<Alt+7> to scramble
  things when you're out of inspiration, it works for any of the fractal
  types in Id including formulae... easy! (chaotic, but easy :-) )
 
  As this is a Id feature, there is, of course, a lot more to it
  than the basics described above...
 
- For a start, there are some handy hotkeys to use, 'F2' and 'F3' are used to
+ For a start, there are some handy hotkeys to use, <F2> and <F3> are used to
  alter the amount of mutation or the amount by which the selected parameters
- can be varied. 'F2' halves the amount of mutation, 'F3' doubles it.  So if
- things on-screen are looking a bit samey just press 'F3' a few times to
+ can be varied. <F2> halves the amount of mutation, <F3> doubles it.  So if
+ things on-screen are looking a bit samey just press <F3> a few times to
  crank up the mutation level.
 
- Using 'F2' to decrease mutation levels is a way of moving towards a goal
+ Using <F2> to decrease mutation levels is a way of moving towards a goal
  image.  Say that a set of images contained one that looked a little like,
  maybe, a cats face and you wished to try and get something more cat like.
- To achieve this simply select the desired image and press 'F2'.  The newly
+ To achieve this simply select the desired image and press <F2>.  The newly
  generated images should be more alike, though probably still quite widely
  varied.  With luck, one of the new images will be even more cat like.  Select
- this one and press 'F2' again.  Continue like this, selecting the center image
+ this one and press <F2> again.  Continue like this, selecting the center image
  again if there are no improvements in the current generation, until
  eventually all the images are alike and you've arrived at your goal (or at
  least you're probably as close as it's possible to get with that fractal
  type).
 
  As you look for more details in the images it is useful to reduce the number
- of images per generation, thus producing larger sub images.  Pressing 'F4'
+ of images per generation, thus producing larger sub images.  Pressing <F4>
  will reduce the number of images per side on the grid by two and pressing
- 'F5' increments the gridsize similarly.
+ <F5> increments the gridsize similarly.
 
- 'F6' will switch between normal random mutation and 'spread' random mutation.
+ <F6> will switch between normal random mutation and 'spread' random mutation.
  In 'spread' mode the amount of mutation allowed in an image is varied
  according to each images position in the grid.  Those images near the center
  are allowed a lesser degree of freedom of mutation than those around the
@@ -2059,7 +2030,7 @@ the 'h' key can be used to hide the palette box and expose the whole image.
  variations around the edges.  This mode is best used with larger gridsizes
  and becomes completely silly at a gridsize of three!
 
- 'Ctrl-e' brings up the evolver control screen on which you have manual access
+ <Ctrl+E> brings up the evolver control screen on which you have manual access
  to the evolution parameters varied by the hotkeys described above.\
  These are:
 
@@ -2070,13 +2041,13 @@ the 'h' key can be used to hide the palette box and expose the whole image.
 
     Mutation Reduction   The Max mutation value is multiplied by this between
                          generations.  This can be used to automatically goal
-                         seek without having to use the 'F2' key.
+                         seek without having to use the <F2> key.
 
     Grouting             Turns on or off the gap between sub images, at large
                          values of gridsize this can reclaim valuable screen
                          area for display use.
 
- Pressing 'F6' brings up a screen from which you can control what parameters
+ Pressing <F6> brings up a screen from which you can control what parameters
  get varied and in what manner.  You'll notice that as well as the mutation
  modes 'random' and 'spread' there are other ways of stirring things around,
  read on......
@@ -2088,10 +2059,10 @@ the 'h' key can be used to hide the palette box and expose the whole image.
  acquainted with parameter exploring and produce a map of the Julia sets, try
  this:\
  Start Id and set the type to Julia and the resolution higher than
- 320x200, once the default Julia set has been generated, press 'Ctrl-e' to
+ 320x200, once the default Julia set has been generated, press <Ctrl+E> to
  bring up the evolver/explorer control panel.
 
- Set evolve mode to yes and then press 'F6' to bring up the screen that allows
+ Set evolve mode to yes and then press <F6> to bring up the screen that allows
  you to choose what gets varied.
 
  Now set the first entry (param1) to 'x' and the second (param2) to 'y'.  This
@@ -2100,19 +2071,19 @@ the 'h' key can be used to hide the palette box and expose the whole image.
  parameters are set to 'no' so that nothing else gets changed to confuse
  things.
 
- Press 'Return' to go back to the main evolver control screen and you'll see
+ Press <Return> to go back to the main evolver control screen and you'll see
  that a few more items have appeared.  These control just how much the
  parameters are varied across the screen and what their starting values
  should be, leave them as they are but increase gridsz to 15.  Also switch
  on the parameter zoom box option.
 
- When you exit this control screen with the 'Return' key, you'll see a grid of
+ When you exit this control screen with the <Return> key, you'll see a grid of
  Julia sets generated all mapped out onto the imaginary plane, squint and
  you'll be able to spot the underlying Mset!
 
- When you press 'Pageup' this time you'll notice that there are two boxes on
+ When you press <PageUp> this time you'll notice that there are two boxes on
  screen with a larger box centered around the normal selection box.
- 'Ctrl-pageup' or 'Ctrl-pagedown' varies the size of this box which
+ <Ctrl+PageUp> or <Ctrl+PageDown> varies the size of this box which
  represents the 'parameter' zoom box.  The parameter zoombox allows you to
  look at smaller areas of the parameter space in more detail.  To explain
  this further look at how the Julia sets change across the screen, around
@@ -2121,7 +2092,7 @@ the 'h' key can be used to hide the palette box and expose the whole image.
  in more detail using parameter zooming.  Make the outer zoombox a few grids
  across and select an image in the area of this change with the outer box
  straddling it.  Look at the images right in the corners of the parm zoombox,
- when you press 'Enter' and a new generation of images is generated the same
+ when you press <Enter> and a new generation of images is generated the same
  images will be in the corners of the screen with more sub images between
  them, allowing a finer look at how the change progresses.  In this way, you
  can observe the chaotic areas in parameter space with the unique pseudo four
@@ -2146,9 +2117,9 @@ the 'h' key can be used to hide the palette box and expose the whole image.
  and checking out all the different combinations is a not inconsiderable task
  manually.  With the explorer, however, it's a piece of cake!
 
- Set the screen resolution to the highest you can view and press 'Ctrl-e'
+ Set the screen resolution to the highest you can view and press <Ctrl+E>
  to bring up the control panel and enable evolving mode.  Set the gridsize
- to 29 and leave the parameters at their defaults.  Now, press 'F6' to enter
+ to 29 and leave the parameters at their defaults.  Now, press <F6> to enter
  'variable tweak central' and set trig function 1 to 'x' and trig function 2
  to 'y', and all the others to 'no'.  Exit the two screens and you'll see
  generated all of the different combinations possible even if they are rather
@@ -2156,10 +2127,10 @@ the 'h' key can be used to hide the palette box and expose the whole image.
 
  To find out what particular combination of trig functions an image is using,
  just select the image using the zoombox and bring up the 'z' screen.  You
- don't have to press 'Enter', simply highlighting the appropriate image with
- the ctrl-arrow keys will do.
+ don't have to press <Enter>, simply highlighting the appropriate image with
+ the Ctrl+arrow keys will do.
 
- And that just about sums up the evolver! Much more could be written but it's
+ And that just about sums up the evolver!  Much more could be written but it's
  better experienced, try writing your formulae with more variable parameters
  and trig functions so that their behavior can be investigated.
 
@@ -2173,7 +2144,7 @@ the 'h' key can be used to hide the palette box and expose the whole image.
 
  There now only remains to mention that you can save image sets and restore
  them later to carry on exploring from a different seed image:
- 's' saves and 'r' restores as in normal Id operation and the screenfull
+ <S> saves and <R> restores as in normal Id operation and the screenfull
  is saved as a single gif file.
 
  Have fun!  See {Evolver Commands}.
@@ -2185,21 +2156,16 @@ the 'h' key can be used to hide the palette box and expose the whole image.
                    When Zoom Box is active already, shrinks it.
    PageDown        Expands the Zoom Box.
                    Expanding past the screen size cancels the Zoom Box.
-~Doc-
-   \24 \25 \27 \26         Pans (Moves) the Zoom Box.
-   Ctrl- \24 \25 \27 \26   Moves the Zoom Box to the next subimage.
-~Doc+,Online-
    Arrow key       Pans (Moves) the Zoom Box.
-   Ctrl-Arrow key  Moves the Zoom Box to the next subimage.
-~Online+
+   Ctrl+Arrow key  Moves the Zoom Box to the next subimage.
    Enter           Redraws the Screen or area inside the Zoom Box.
-   Ctrl-Enter      'Zoom-out' - expands the image so that your current image
-                    is positioned inside the current zoom-box location.
-   Ctrl-Pad+/Pad-  Rotates the inner Zoom Box.
-   Ctrl-PgUp/PgDn  Changes inner Zoom Box vertical size.
-   Ctrl-Home/End   Changes inner Zoom Box shape.
-   Ctrl-Ins/Del    Changes inner Zoom Box color.
-   Ctrl-E          Brings up the evolver screen.
+   Ctrl+Enter      'Zoom-out' - expands the image so that your current image
+                   is positioned inside the current zoom-box location.
+   Ctrl+Pad+/Pad-  Rotates the inner Zoom Box.
+   Ctrl+PgUp/PgDn  Changes inner Zoom Box vertical size.
+   Ctrl+Home/End   Changes inner Zoom Box shape.
+   Ctrl+Ins/Del    Changes inner Zoom Box color.
+   Ctrl+E          Brings up the evolver screen.
    Space           Brings up the evolver screen once in evolver mode.
    B               Turns off evolver if in evolver mode.
    F2              Halves the amount of mutation.
@@ -2207,7 +2173,7 @@ the 'h' key can be used to hide the palette box and expose the whole image.
    F4              Generates fewer, bigger images.
    F5              Generates more, smaller images.
    F6              Switches to/from 'spread' mode with fewer mutations around
-                    the middle.
+                   the middle.
 ~Format+
 
 

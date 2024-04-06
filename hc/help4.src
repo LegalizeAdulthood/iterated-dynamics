@@ -433,7 +433,7 @@ files.
 
 WORKDIR=[directory]\
 This command sets the directory where miscellaneous Id files get
-written, including MAKEMIG.BAT and debugging files.
+written, including makemig.bat and debugging files.
 
 ~ONLINEFF
 FILENAME=[name]\
@@ -532,7 +532,7 @@ use "Printing Id Documentation" from the main help index.
 MAXHISTORY=<nnn>\
 Id maintains a list of parameters of the past 10 images that you
 generated in the current Id session. You can revisit these images
-using the <h> and <Ctrl-h> commands. The maxhistory command allows you
+using the <h> and <Ctrl+h> commands. The maxhistory command allows you
 to set the number of image parameter sets stored in memory. The tradeoff
 is between the convenience of storing more images and memory use. Each
 image in the circular history buffer takes up over 1200 bytes, so the
@@ -1261,7 +1261,7 @@ a restore to be performed in 3D mode (handy when used with 'batch=yes' for
 batch-mode 3D images). If specified, 3D=Yes should come before any other
 3d parameters on the command line or in a parameter file entry. The form
 3D=Overlay is identical except that the previous graphics screen is not
-cleared, as with the <#> (<shift-3> on some keyboards) overlay command.
+cleared, as with the <#> (<shift+3> on some keyboards) overlay command.
 Useful for building parameter files that use the 3D overlay feature.\
 
 The options below override the 3D defaults:

@@ -264,15 +264,15 @@ days when men were men, women were women, and real fractal programmers spent
 weeks generating fractals. One of your Stone Soup authors has a large
 monitor that blinks a bit when changing video modes--PCs have gotten so fast
 that Fractint finishes the default 320x200 Mandelbrot before the monitor can
-even complete its blinking transition to graphics mode! Computers are getting
-faster every day, and soon a new generation of fractal lovers might forget
-that fractal generation is *supposed* to be slow, just as it was in Grandpa's
-day when they only had Pentium chips. The solution to this educational
-dilemma is Fractint's arbitrary precision feature. Even the newest sexium and
-septium machines are going to have to chug for days or weeks at the extreme
-zoom depths now possible ...
+even complete its blinking transition to graphics mode!  Computers are
+getting faster every day, and soon a new generation of fractal lovers might
+forget that fractal generation is *supposed* to be slow, just as it was in
+Grandpa's day when they only had Pentium chips. The solution to this
+educational dilemma is Fractint's arbitrary precision feature. Even the
+newest sexium and septium machines are going to have to chug for days or
+weeks at the extreme zoom depths now possible ...
 
-So how far can you zoom? How does 10^1600 sound--roughly 1600 decimal
+So how far can you zoom?  How does 10^1600 sound--roughly 1600 decimal
 digits of precision. To put *this* magnification in perspective, the "tiny"
 ratio of 10^61 is the ratio of the entire visible universe to the smallest
 quantum effects. With 1600 digits to work with, you can expand an
@@ -333,7 +333,7 @@ These three functions are:
 The common framework that calls these functions can contain all sorts of
 speedups, tricks, and options that the fractal implementor need not worry
 about.  All that is necessary is to write the three functions in the
-correct way, and BINGO! - all options automatically apply. What makes it
+correct way, and BINGO! -- all options automatically apply. What makes it
 even easier is that usually one can re-use functions 1) and 2) written for
 other fractals, and therefore only need to write function 3).
 
@@ -346,7 +346,7 @@ Mandelbrot or toggling between the various kinds of math used in
 implementation.
 
 That sounds pretty flexible, but there is one drawback - you have to be a
-C programmer and have a C compiler to make use of it! So we took it a step
+C programmer and have a C compiler to make use of it!  So we took it a step
 further, and designed a built-in high level compiler, so that you can
 enter the formulas for the various functions in a formula file in a
 straightforward algebra-like language, and Fractint will compile them and
@@ -380,7 +380,7 @@ INSIDE=BOF60|BOF61|ZMAG|FMOD|PERIOD|ATAN
 
 Here is an *ATTEMPTED* explanation of what the inside=bof60 and
 inside=bof61 options do. This explanation is hereby dedicated to Adrian
-Mariano, who badgered it out of us! For the *REAL* explanation, see
+Mariano, who badgered it out of us!  For the *REAL* explanation, see
 "Beauty of Fractals", page 62.
 
 Let p(z) be the function that is repeatedly iterated to generate a fractal
@@ -395,13 +395,13 @@ way, a(c) is the closest to the origin any point in the orbit starting
 with 0 gets. Then the index (c) is the value of k (the iteration) when
 that closest point was achieved.  Since there may be more than one,
 index(c) is the least such. Got it?  Good, because the "Beauty of
-Fractals" explanation of this, is, ahhhh, *TERSE* ! Now for the punch
+Fractals" explanation of this, is, ahhhh, *TERSE*!  Now for the punch
 line. Inside=bof60 colors the lake alternating shades according to the
 level sets of a(c).  Each band represents solid areas of the fractal where
 the closest value of the orbit to the origin is the same.  Inside=bof61
 show domains where index(c) is constant.  That is, areas where the
 iteration when the orbit swooped closest to the origin has the same value.
-Well, folks, that's the best we can do! Improved explanations will be
+Well, folks, that's the best we can do!  Improved explanations will be
 accepted for the next edition!
 
 In response to this request for lucidity, Herb Savage offers this explanation
@@ -466,7 +466,7 @@ This option looks fine with maxiter=16, which greatly speeds the calculation.
 Both of these options should be tried with the outside color fixed
 (outside=<nnn>) so that the "lake" structure revealed by the algorithms can be
 more clearly seen. Epsilon Cross is fun to watch with boundary tracing turned
-on - even though the result is incorrect it is interesting! Shucks - what
+on - even though the result is incorrect it is interesting!  Shucks - what
 does "incorrect" mean in chaos theory anyway?!
 ;
 ;
@@ -1029,11 +1029,11 @@ from their friends and neighbors. One day a peddler drove his wagon into a
 village, sold a few of his wares, and began asking questions as if he
 planned to stay for the night.
 
-[No!  No!  It was three Russian Soldiers! - Lee Crocker]\
-[Wait!  I heard it was a Wandering Confessor! - Doug Quinn]\
-[Well *my* kids have a book that uses Russian Soldiers! - Bert]\
-[Look, who's writing this documentation, anyway? - Monte]\
-[Ah, but who gets it *last* and gets to upload it? - Bert]\
+[No!  No!  It was three Russian Soldiers!  - Lee Crocker]\
+[Wait!  I heard it was a Wandering Confessor!  - Doug Quinn]\
+[Well *my* kids have a book that uses Russian Soldiers!  - Bert]\
+[Look, who's writing this documentation, anyway?  - Monte]\
+[Ah, but who gets it *last* and gets to upload it?  - Bert]\
 
 "There's not a bite to eat in the whole province," he was told. "Better
 keep moving on."
@@ -1400,7 +1400,7 @@ this program can read for orbit-type fractals and IFS fractals. Contact:
 
 ~Topic=Sound Controls, label=HELPSOUND
 
-On this screen, accessed by hitting ctrl-F, you'll find a few parameters
+On this screen, accessed by hitting <Ctrl+F>, you'll find a few parameters
 that you recognise from the 'x' menu handily gathered together, plus a few
 new ones. You can find the descriptions for the basic parms over at the
 {Sound Parameters} help.

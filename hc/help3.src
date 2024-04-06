@@ -633,7 +633,7 @@ Random Dot Stereograms (RDS) are a way of encoding stereo
 images on a flat screen. Id can convert any image to a RDS using
 either the color number in the current palette or the grayscale value as
 depth. Try these steps. Generate a plasma fractal using the 640x480x256 video
-mode. When the image on the screen is complete, press <ctrl-s> ("s" for
+mode. When the image on the screen is complete, press <Ctrl+s> ("s" for
 "Stereo"), and press <Enter> at the "RDS Parameters" screen prompt to accept
 the defaults. (More on the parameters in a moment.) The screen will be
 converted into a seemingly random collection of colored dots. Relax your eyes,
@@ -641,11 +641,11 @@ looking through the screen rather than at the screen surface. The image will
 (hopefully) resolve itself into the hills and valleys of the 3D Plasma
 fractal.
 
-Because pressing the two-keyed <ctrl-s> gets tiresome after a while, we have
-made <k> key a synonym for <ctrl-s> for convenience.  Don't get too attached
+Because pressing the two-keyed <Ctrl+s> gets tiresome after a while, we have
+made <k> key a synonym for <Ctrl+s> for convenience.  Don't get too attached
 to <k> though; we reserve the right to reuse it for another purpose later.
 
-The RDS feature has five and sometimes six parameters. Pressing <ctrl-s>
+The RDS feature has five and sometimes six parameters. Pressing <Ctrl+s>
 always takes you to the parameter screen.
 
 The first parameter allows you to control the depth effect. A larger value
@@ -702,8 +702,8 @@ bars will turn to a more visible color.
 
 The fifth parameter asks if you want to use an image map GIF file instead of
 using random dots. An image map can give your RDS image a more interesting
-background texture than the random dots. If you answer "yes" at the Use image
-map? prompt, Id will present you with a file selection list of GIF
+background texture than the random dots. If you answer "yes" at the 'Use
+image map?' prompt, Id will present you with a file selection list of GIF
 images. Id will then go ahead and transform your original image to
 RDS using the selected image map to provide the "random" dots.
 
@@ -719,7 +719,7 @@ RDS image, the image map will repeated to fill the space. If the image map
 is larger, just the upper left corner of the image map will be used.
 
 The original image you are using for your stereogram is saved, so if you want
-to modify the stereogram parameters and try again, just press <ctrl-s> (or <k>)
+to modify the stereogram parameters and try again, just press <Ctrl+s> (or <k>)
 to get the parameter screen, changes the parameters, and press <Enter>. The
 original image is restored and an RDS transform with the revised parameters is
 performed. If you press <s> when viewing an RDS image, after the RDS image is
@@ -928,7 +928,7 @@ Spherical Projection:
 
 Stereo:
 
-   Stereo sound in Id? Well, not yet. Id now allows you to
+   Stereo sound in Id?  Well, not yet. Id now allows you to
    create 3D images for use with red/blue glasses like 3D comics you may
    have seen, or images like Captain EO.
 
@@ -1331,7 +1331,7 @@ palettes (<F8> through <F10>), or load the GRAY palette with the
 
 ~Online-
 Now, lie down for a while in a quiet room with a damp washcloth on your
-forehead. Feeling better? Good -- because it's time to go back almost to
+forehead. Feeling better?  Good -- because it's time to go back almost to
 the top of the 3D options and just say yes to:
 ~Online+
 ;
@@ -1361,8 +1361,8 @@ nifty hidden-point algorithms "know" this, and the first few dozen lines
 may be invisible unless a high mountain happens to poke over the horizon.
 If you start a spherical projection and the screen stays black, wait for a
 while (a longer while for higher resolution or fill type 6) to see if
-points start to appear. Would we lie to you? If you're still waiting hours
-later, first check that the power's still on, then consider a faster
+points start to appear.  Would we lie to you?  If you're still waiting
+hours later, first check that the power's still on, then consider a faster
 system.
 ;
 ;
@@ -1370,7 +1370,7 @@ system.
 ~Topic=3D Overlay Mode, Label=HELP3DOVLY
 
 While the <3> command (see {\"3D\" Images})
-creates its image on a blank screen, the <#> (or <shift-3> on some
+creates its image on a blank screen, the <#> (or <shift+3> on some
 keyboards) command
 draws a second image over an existing displayed image. This image can be
 any restored image from a <R> command or the result of a just executed <3>
@@ -1527,7 +1527,7 @@ scaling will be done by the ray tracer. Thus, in creating the images, no
 facilities for rotations or shifting is provided. Scaling is provided to
 achieve the correct aspect ratio.
 
-WARNING! The files created using the RAY option can be huge. Setting
+WARNING!  The files created using the RAY option can be huge. Setting
 COARSE to 40 will result in over 2000 triangles. Each triangle can utilize
 from 50 to 200 bytes each to describe, so your ray tracing files can
 rapidly approach or exceed 1Meg. Make sure you have enough disk space before
