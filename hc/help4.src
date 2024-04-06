@@ -4,8 +4,8 @@
 ~Format-
     { Summary of all Parameters }
     { Introduction to Parameters }
-    { Using the DOS Command Line }
-    { Setting Defaults (SSTOOLS.INI File) }
+    { Using the Command Line }
+    { Setting Defaults (sstools.ini File) }
     { Parameter Files and the <@> Command }
     { General Parameter Syntax }
     { Startup Parameters }
@@ -280,33 +280,31 @@ Id accepts command-line parameters that allow you to start it with a
 particular video mode, fractal type, starting coordinates, and just about
 every other parameter and option.
 
-These parameters can also be specified in a SSTOOLS.INI file, to set them
+These parameters can also be specified in a sstools.ini file, to set them
 every time you run Id.
 
 They can also be specified as named groups in a .PAR (parameter) file
 which you can then call up while running Id by using the <@>
 command.
 
-In all three cases (DOS command line, SSTOOLS.INI, and parameter file) the
+In all three cases (DOS command line, sstools.ini, and parameter file) the
 parameters use the same syntax, usually a series of keyword=value commands
 like SOUND=OFF.  Each parameter is described in detail in subsequent
 sections.
 ;
 ;
-~Topic=Using the DOS Command Line
+~Topic=Using the Command Line
 
-You can specify parameters when you start Id from DOS by using a
-command like:
+You can specify parameters when you start Id by using a command like:
 
     id sound=off filename=myimage.gif
 
 The individual parameters are separated by one or more spaces (an
-parameter itself may not include spaces). Upper or lower case may be
+parameter itself may not include spaces).  Upper or lower case may be
 used, and parameters can be in any order.
 
-Since DOS commands are limited to 128 characters, Id has a special
-command you can use when you have a lot of startup parameters (or have a
-set of parameters you use frequently):
+Id has a special command you can use when you have a lot of startup
+parameters (or have a set of parameters you use frequently):
 
     id @myfile
 
@@ -316,18 +314,18 @@ can create the file with a text editor, putting one "keyword=value"
 parameter on each line.
 ;
 ;
-~Topic=Setting Defaults (SSTOOLS.INI File)
+~Topic=Setting Defaults (sstools.ini File)
 Every time Id runs, it searches the current directory, and then the
-directories in your DOS PATH, for a file named SSTOOLS.INI.  If it finds
+directories in your PATH, for a file named sstools.ini.  If it finds
 this file, it begins by reading parameters from it.  This file is useful
 for setting parameters you always want.
 
-SSTOOLS.INI is divided into sections belonging to particular programs.
-Each section begins with a label in brackets. Id looks for the label
-[Id], and ignores any lines it finds in the file belonging to any
-other label. If an SSTOOLS.INI file looks like this:
+The file sstools.ini is divided into sections belonging to particular
+programs.  Each section begins with a label in brackets. Id looks for
+the label [id], and ignores any lines it finds in the file belonging to
+any other label. If an sstools.ini file looks like this:
 
-  [Id]\
+  [id]\
   sound=off      ; (for home use only)\
   inside=0       ; using "traditional" black\
   [startrek]\
@@ -335,7 +333,7 @@ other label. If an SSTOOLS.INI file looks like this:
 
 Id will use only the second, third, and fourth lines of the file.
 (Why use a convention like that when Id is the only program you know
-of that uses an SSTOOLS.INI file?  Because there are other programs (such
+of that uses an sstools.ini file?  Because there are other programs (such
 as Lee Crocker's PICLAB) that now use the same file, and there may one day
 be other, sister programs to Id using that file.)
 ;
@@ -402,7 +400,7 @@ Upper and lower case can be used in keywords and values.
 Anything on a line following a ; (semi-colon) is ignored, i.e. is a
 comment.
 
-In parameter files and SSTOOLS.INI:\
+In parameter files and sstools.ini:\
   o Individual parameters can be entered on separate lines.\
   o Long values can be split onto multiple lines by ending a line with a \\
     (backslash) - leading spaces on the following line are ignored, the
@@ -449,7 +447,7 @@ On the DOS command line you may omit FILENAME= and just give the file name.
 
 CURDIR=yes\
 Id uses directories set by various commands, possibly in the
-SSTOOLS.INI file. If you want to try out some files in the current directory,
+sstools.ini file. If you want to try out some files in the current directory,
 such as a modified copy of id.frm, you won't Id to read the copy
 in your official FRM directory. Setting curdir=yes at the command line will
 cause Id to look in the current directory for requested files first
@@ -562,7 +560,7 @@ Most fractal types have both a fast integer math and a floating point
 version. The faster, but possibly less accurate, integer version is the
 default. The default is to use integer math, but in this age of pentium
 (amd later) CPUS we now recommend your making float=yes the default by
-adding this line to your SSTOOLS.INI file.
+adding this line to your sstools.ini file.
 Also see {"Limitations of Integer Math (And How We Cope)"}.
 
 SYMMETRY=xxx\
@@ -1078,7 +1076,7 @@ In Id you can use various filename variables to specify files, set
 default directories, or both. For example, in the SAVENAME description below,
 [name] can be a filename, a directory name, or a fully qualified pathname
 plus filename. You can specify default directories using these variables
-in your SSTOOLS.INI file.
+in your sstools.ini file.
 
 SAVENAME=[<path>\\][name]\
 Set the path and/or filename to use when you <S>ave a screen. The default
@@ -1131,7 +1129,7 @@ FILENAME=[.suffix]\
 Sets the default file extension used for the <r> command.
 When this parameter is omitted, the
 default file mask shows .GIF and .POT files.  You might want to specify
-this parameter and the SAVENAME= parameter in your SSTOOLS.INI file if you
+this parameter and the SAVENAME= parameter in your sstools.ini file if you
 keep your fractal images separate from other .GIF files by using a
 different suffix for them.
 

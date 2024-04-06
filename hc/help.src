@@ -146,8 +146,8 @@
 {4.11 , 1, "Interfacing with Ray Tracing Programs"}
 
 {5.   , 0, Command Line Parameters\, Parameter Files\, Batch Mode, "Introduction to Parameters", FF}
-{5.1  , 1, "Using the DOS Command Line"}
-{5.2  , 1, "Setting Defaults (SSTOOLS.INI File)"}
+{5.1  , 1, "Using the Command Line"}
+{5.2  , 1, "Setting Defaults (sstools.ini File)"}
 {5.3  , 1, "Parameter Files and the <@> Command"}
 {5.4  , 1, "General Parameter Syntax"}
 {5.5  , 1, "Startup Parameters"}
@@ -184,7 +184,7 @@
 {8.2.1, 2, "Periodicity Logic"}
 {8.2.2, 2, "Limitations of Integer Math (And How We Cope)"}
 {8.2.3, 2, "Arbitrary Precision and Deep Zooming"}
-{8.2.4, 2, "The Iterated Dynamics \"Fractal Engine\" Architecture"}
+{8.2.4, 2, "The Id \"Fractal Engine\" Architecture"}
 
 {Appendix A, 0, Mathematics of the Fractal Types,
                    "Summary of Fractal Types",
@@ -277,7 +277,8 @@ Version 1.0:
   CMake build system.
 - All assembly language code has been removed and, where practical, replaced
   with C++ code that performs the same function.
-- A CGA text display is simulated for all prompt screens and help screens.
+- A CGA text display is simulated for all prompt screens and help
+  screens.
 - A "video mode" determines the resolution of all saved images and is provided
   by a driver.  Iterated Dynamics comes with two drivers: Disk and GDI.
   The GDI driver renders to the screen through the Windows GDI interface.
@@ -287,20 +288,21 @@ Version 1.0:
 - The release parameter does nothing in this release.  For backward
   compatability with old behavior, use FRACTINT.
 - The following parameter file commands are deprecated and support will be
-  removed in a future release.
-  - adapter                             - pixelzoom
-  - afi                                 - plotstyle
-  - biospalette                         - printer
-  - colorps                             - printfile
-  - comport                             - ramvideo
-  - epsf                                - rleps
-  - exitmode                            - textsafe
-  - fpu                                 - title
-  - halftone                            - tplus
-  - linefeed                            - translate
-  - maxcolorres                         - tweaklzw
+  removed in a future release.\
+  - adapter                             - pixelzoom\
+  - afi                                 - plotstyle\
+  - biospalette                         - printer\
+  - colorps                             - printfile\
+  - comport                             - ramvideo\
+  - epsf                                - rleps\
+  - exitmode                            - textsafe\
+  - fpu                                 - title\
+  - halftone                            - tplus\
+  - linefeed                            - translate\
+  - maxcolorres                         - tweaklzw\
   - noninterlaced                       - vesadetect
-
+~OnlineFF
+~FF
 Known limitations:
 
 - Navigation is exclusively through the keyboard.  Mouse support will be
@@ -418,7 +420,7 @@ functions from the main menu.
 Help is available from the menu and at most other points in Id by
 pressing the <F1> key.
 
-AT ANY TIME, you can hit
+At any time, you can hit
 ~Doc-
 one of the keys described in {Display Mode Commands}
 ~Doc+,Online-
