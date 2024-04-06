@@ -240,16 +240,20 @@ win32_shell(Driver *drv)
         comspec = "cmd.exe";
     }
     const std::string command_line(comspec);
-    std::vector<char> buffer{command_line.begin(), command_line.end()};
-    if (CreateProcessA(nullptr, buffer.data(), nullptr, nullptr, FALSE, CREATE_NEW_CONSOLE, nullptr, nullptr, &si, &pi))
+    if (CreateProcessA(
+            command_line.c_str(), nullptr, nullptr, nullptr, FALSE, CREATE_NEW_CONSOLE, nullptr, nullptr, &si, &pi))
     {
-        DWORD status = WaitForSingleObject(pi.hProcess, 1000);
+        DWORD status = WaitForSingleObject(pi.hProcess, 100);
         while (WAIT_TIMEOUT == status)
         {
             frame_pump_messages(false);
-            status = WaitForSingleObject(pi.hProcess, 1000);
+            status = WaitForSingleObject(pi.hProcess, 100);
         }
         CloseHandle(pi.hProcess);
+    }
+    else
+    {
+        stopmsg(STOPMSG_NONE, "Couldn't run shell '" + command_line + "', error " + std::to_string(GetLastError()));
     }
 }
 
