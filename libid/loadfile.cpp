@@ -1550,7 +1550,6 @@ int fgetwindow()
     char ext[FILE_MAX_EXT];
     char tmpmask[FILE_MAX_PATH];
     int vid_too_big = 0;
-    bool no_memory = false;
     int saved;
 
     oldbf_math = bf_math;
@@ -1602,7 +1601,7 @@ rescan:  // entry for changed browse parms
     split_drive_dir(g_read_filename, drive, dir);
     split_fname_ext(g_browse_mask, fname, ext);
     make_path(tmpmask, drive, dir, fname, ext);
-    done = (vid_too_big == 2) || no_memory || fr_findfirst(tmpmask);
+    done = (vid_too_big == 2) || fr_findfirst(tmpmask);
     // draw all visible windows
     while (!done)
     {
@@ -1638,10 +1637,6 @@ rescan:  // entry for changed browse parms
         done = (fr_findnext() || wincount >= MAX_WINDOWS_OPEN);
     }
 
-    if (no_memory)
-    {
-        texttempmsg("Sorry...not enough memory to browse.");// doesn't work if NO memory available, go figure
-    }
     if (wincount >= MAX_WINDOWS_OPEN)
     {
         // hard code message at MAX_WINDOWS_OPEN = 450
