@@ -488,7 +488,7 @@ marksjulia types.
 ;
 ~Topic=Continuous Potential
 
-Note: This option can only be used with 256 color modes.
+Note: This option can only be used with 256 color video modes.
 
 Id's images are usually calculated by the "level set" method,
 producing bands of color corresponding to regions where the calculation
@@ -509,7 +509,7 @@ the modulus bailout was exceeded, at the "iterations" iteration.  Clear as
 mud, right?
 
 Fortunately, you don't have to understand all the details.  However, there
-ARE a few points to understand.  First, Id's criterion for halting a
+are a few points to understand.  First, Id's criterion for halting a
 fractal calculation, the "modulus bailout value", is generally set to 4.
 Continuous potential is inaccurate at such a low value.
 
@@ -518,22 +518,22 @@ types so fast imposes a hard-wired maximum value of 127.  You can still
 make interesting images from those types, though, so don't avoid them.  You
 will see "ridges" in the "hillsides." Some folks like the effect.
 
-The good news is that the other fractal types, particularly the (generally
-slower) floating point algorithms, have no such limitation.  The even
+The good news is that the other fractal types, particularly the
+floating point algorithms, have no such limitation.  The even
 better news is that there is a floating-point algorithm for the "mandel"
 and "julia" types.  To force the use of a floating-point algorithm, use
-Id with the "FLOAT=YES" command-line toggle.  Only a few fractal
-types like plasma clouds, the Barnsley IFS type, and "test" are unaffected
-by this toggle.
+Id with the "float=yes" command-line parameter or the <X> options screen.
+Only a few fractal types like plasma clouds, the Barnsley IFS type, and
+"test" are unaffected by this option.
 
 The parameters for continuous potential are:\
     potential=maxcolor[/slope[/modulus[/16bit]]]\
 These parameters are present on the <Y> options screen.
 
 "Maxcolor" is the color corresponding to zero potential, which plots as
-the TOP of the mountain.  Generally this should be set to one less than the
+the top of the mountain.  Generally this should be set to one less than the
 number of colors, i.e. usually 255.  Remember that the last few colors of
-the default IBM VGA palette are BLACK, so you won't see what you are
+the default palette are black, so you won't see what you are
 really getting unless you change to a different palette.
 
 "Slope" affects how rapidly the colors change -- the slope of the
@@ -559,7 +559,7 @@ Id's visible behavior is unchanged when 16bit is enabled, except
 that solid guessing and boundary tracing are not used.  But when you save
 an image generated with 16bit continuous potential:\
  o The saved file is a fair bit larger.\
- o Id names the file with a .POT extension instead of .GIF, if you
+ o Id names the file with a .pot extension instead of .gif, if you
    didn't specify an extension in "savename".
  o The image can be used as input to a subsequent <3> command to get the
    promised smoother effect.
@@ -567,10 +567,10 @@ an image generated with 16bit continuous potential:\
    Id, you'll find that it is twice as wide as it is supposed to
    be. (Guess where the extra goodness was stored!) Though these files
    are structurally legal GIF files the double-width business made us
-   think they should perhaps not be called GIF - hence the .POT filename
+   think they should perhaps not be called GIF - hence the .pot filename
    extension.
 
-A 16bit (.POT) file can be converted to an ordinary 8 bit GIF by
+A 16bit (.pot) file can be converted to an ordinary 8 bit GIF by
 <R>estoring it, changing "16bit" to "no" on the <Y> options screen, and
 <S>aving.
 
@@ -582,13 +582,13 @@ there isn't sufficient memory available, the cache will page to disk.
 The following commands can be used to recreate the image that Mark
 Peterson first prototyped for us, and named "MtMand":
 
-        TYPE=mandel\
-        CORNERS=-0.19920/-0.11/1.0/1.06707\
-        INSIDE=255\
-        MAXITER=255\
-        POTENTIAL=255/2000/1000/16bit\
-        PASSES=1\
-        FLOAT=yes\
+        type=mandel\
+        corners=-0.19920/-0.11/1.0/1.06707\
+        inside=255\
+        maxiter=255\
+        potential=255/2000/1000/16bit\
+        passes=1\
+        float=yes\
 ;
 ;
 ;
