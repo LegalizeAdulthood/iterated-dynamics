@@ -1172,7 +1172,7 @@ monitor towards you by X degrees, the Y value pulls the left side of the
 monitor towards you, and the Z value spins it counter-clockwise.  Note that
 these are NOT independent rotations: the image is rotated first along the
 X-axis, then along the Y-axis, and finally along the Z-axis.  Those are
-YOUR axes, not those of your (by now hopelessly skewed) monitor.  All
+your axes, not those of your (by now hopelessly skewed) monitor.  All
 rotations actually occur through the center of the original image.  Rotation
 parameters are not used when a ray tracing option has been selected.
 
@@ -1215,7 +1215,7 @@ screen.  Shifting of any type is not available if you have selected a ray
 tracing option.
 ~Doc-
 
-{3D Color Parameters} are also requested on the same input screen.\
+{3D Color Parameters} are also requested on the same input screen.
 
 If you are doing a {Spherical Projection}, special parameters for
 it are requested at the start of this screen.
