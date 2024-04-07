@@ -2846,20 +2846,20 @@ documentation.  Juan J. Buhler added additional options.
 ~Topic=Lyapunov Fractals, Label=HT_LYAPUNOV
 (type=lyapunov)
 
-The Bifurcation fractal illustrates what happens in a simple population
+The bifurcation fractal illustrates what happens in a simple population
 model as the growth rate increases.  The Lyapunov fractal expands that model
 into two dimensions by letting the growth rate vary in a periodic fashion
 between two values.  Each pair of growth rates is run through a logistic
-population model and a value called the Lyapunov Exponent is calculated for
-each pair and is plotted.  The Lyapunov Exponent is calculated by adding up
+population model and a value called the Lyapunov exponent is calculated for
+each pair and is plotted.  The Lyapunov exponent is calculated by adding up
 log | r - 2*r*x| over many cycles of the population model and dividing by the
 number of cycles.  Negative Lyapunov exponents indicate a stable, periodic
 behavior and are plotted in color.  Positive Lyapunov exponents indicate
 chaos (or a diverging model) and are colored black.
 
-Order parameter.
+Order parameter:\
 Each possible periodic sequence yields a two dimensional space to explore.
-The Order parameter selects a sequence.  The default value 0 represents the
+The order parameter selects a sequence.  The default value 0 represents the
 sequence ab which alternates between the two values of the growth parameter.
 On the screen, the a values run vertically and the b values run
 horizontally.  Here is how to calculate the space parameter for any desired
@@ -2869,35 +2869,35 @@ sequence or swap a's and b's.  Strike the first a and the last b off the list
 and replace each remaining a with a 1 and each remaining b with a zero.
 Interpret this as a binary number and convert it into decimal.
 
-An Example.
+An example:\
 I like sonnets.  A sonnet is a poem with fourteen lines that has the
 following rhyming sequence: abba abba abab cc.  Ignoring the rhyming couplet
-at the end, let's calculate the Order parameter for this pattern.
+at the end, let's calculate the order parameter for this pattern.
 
   abbaabbaabab         doesn't start with at least 2 a's \
   aabbaabababb         rotate it \
   1001101010           drop the first and last, replace with 0's and 1's \
   512+64+32+8+2 = 618
 
-An Order parameter of 618 gives the Lyapunov equivalent of a sonnet.  "How do
+An order parameter of 618 gives the Lyapunov equivalent of a sonnet.  "How do
 I make thee?  Let me count the ways..."
 
-Population Seed.
+Population Seed:\
 When two parts of a Lyapunov overlap, which spike overlaps which is strongly
 dependent on the initial value of the population model.  Any changes from
 using a different starting value between 0 and 1 may be subtle.  The values 0
-and 1 are interpreted in a special manner.  A Seed of 1 will choose a random
-number between 0 and 1 at the start of each pixel.  A Seed of 0 will suppress
+and 1 are interpreted in a special manner.  A seed of 1 will choose a random
+number between 0 and 1 at the start of each pixel.  A seed of 0 will suppress
 resetting the seed value between pixels unless the population model diverges
 in which case a random seed will be used on the next pixel.
 
-Filter Cycles.
+Filter Cycles:\
 Like the Bifurcation model, the Lyapunov allow you to set the number of
 cycles that will be run to allow the model to approach equilibrium before
 the lyapunov exponent calculation is begun.  The default value of 0 uses one
 half of the iterations before beginning the calculation of the exponent.
 
-Reference.
+Reference:
 A.K. Dewdney, Mathematical Recreations, Scientific American, Sept. 1991
 ;
 ;
