@@ -81,9 +81,9 @@
                            conj, flip, zero, one, cosxx (cos with bug), asin,
                            asinh, acos, acosh, atan, atanh, sqrt, abs, cabs,
                            floor, ceil, trunc, round
-  formulaname=name         Formula name for 'type=formula' fractals
-  lname=name               L-System name for 'type=lsystem' fractals
-  ifs=name                 IFS name for 'type=ifs' fractals
+  formulaname=name         Formula name for "type=formula" fractals
+  lname=name               L-System name for "type=lsystem" fractals
+  ifs=name                 IFS name for "type=ifs" fractals
   3dmode=monocular|left|right|red-blue  Sets the 3D mode used with julibrot
   julibrot3d=nn[/nn[/nn[/nn[/nn[/nn]]]]]")  Sets julibrot 3D parameters zdots,
                            origin, depth, height, width, and distance
@@ -96,12 +96,12 @@
                            Begin with these coordinates
                            (Example: corners=-0.739/-0.736/0.288/0.291)
                            With no parameters causes <B> command to output
-                           'corners=' instead of center-mag.
+                           "corners=" instead of center-mag.
   center-mag=[Xctr/Yctr/Mag[/Xmagfactor/Rotation/Skew]]
                            An alternative method of entering corners.
                            (Example: center-mag=-0.7375/0.2895/300)
                            With no parameters causes <B> command to output
-                           'center-mag=' (default) instead of corners.
+                           "center-mag=" (default) instead of corners.
   maxiter=nnn              Maximum number of iterations (default = 150)
   bailout=nnnn             Use this as the iteration bailout value (instead
                            of the default (4.0 for most fractal types)
@@ -119,10 +119,10 @@
   aspectdrift=nn           How much the aspect ratio can vary from normal due
                            to zooming. (default is 0.02)
 {Passes Parameters}
-  periodicity=[no|show|nnn] Controls periodicity checking. 'no' turns checking
+  periodicity=[no|show|nnn] Controls periodicity checking. "no" turns checking
                            off; entering a number nnn controls the tightness
                            of checking (default 1, higher is more stringent)
-                           'show' or a neg value colors 'caught' points white.
+                           "show" or a neg value colors caught points white.
   orbitdelay=nn            Starts plotting orbits after the nth orbit.
   orbitinterval=nn         Plots every nth orbit point with passes=o.
   screencoords=yes|no      Maintain screen coordinates constant.
@@ -132,7 +132,7 @@
                            Fractal interior color (inside=0 for black)
   outside=nnn|iter|real|imag|mult|summ|atan|fmod|tdis
                            Fractal exterior color options
-  map=<path>\\filename      Use 'filename' as the default color map (vga/targa)
+  map=<path>\\filename      Use "filename" as the default color map (vga/targa)
   colors=@filename|colorspec Sets current image color map from file or spec,
                            vga or higher only
   recordcolors=auto|comment|yes Sets method of writing colors in PAR files.
@@ -162,7 +162,7 @@
                            zooming.
   ranges=nn/nn/nn/...      Ranges of iteration values to map to colors
   distest=nnn/nnn          Distance Estimator Method
-  decomp=nn                'Decomposition' toggle, value 2 to 256.
+  decomp=nn                Decomposition toggle, value 2 to 256.
   biomorph=nnn             Biomorph Coloring
   potential=nn[/nn[/nn[/16bit]]]  Continuous Potential
   invert=nn/nn/nn          Turns on inversion - turns images 'inside out'
@@ -176,7 +176,7 @@
                            The PC speaker and/or an OPL-3 FM synth card can
                            now be used for sound.  See {Sound Controls}.  The
                            note frequency can be quantized, or rounded to the
-                           next 'proper' note.
+                           next proper note.
   hertz=nnn                Base frequency for sound effects
   orbitdelay=nn            Slows up the display of orbits (by nn/10000 sec)
   showorbit=yes|no         Causes orbits to be toggled on at start of image
@@ -190,8 +190,8 @@
   wavetype=nn              Selects the waveform used by the voices.
   attack=nn                Time for note to reach full volume.
   decay=nn                 Time for note to reach zero volume.
-  sustain=nn               Level at which note is maintained 'on'.
-  srelease=nn              Time note takes to release.  Note the leading 's'.
+  sustain=nn               Level at which note is maintained on.
+  srelease=nn              Time note takes to release.  Note the leading 'S'.
   volume=nn                Volume adjustment for FM synth card, but NOT the
                            PC speaker.
   attenuate=none|low|mid|high  Attenuation of high pitched notes.
@@ -233,10 +233,10 @@
 {3D Parameters}
   3d=yes|overlay           Resets 3D to defaults, starts 3D mode.  If overlay
                            specified, does not clear existing graphics screen
-  preview=yes              Turns on 3D 'preview' default mode
-  showbox=yes              Turns on 3D 'showbox' default mode
+  preview=yes              Turns on 3D preview default mode
+  showbox=yes              Turns on 3D showbox default mode
   sphere=yes               Turns on 3D sphere mode
-  coarse=nnn               Sets Preview 'coarseness' default value
+  coarse=nnn               Sets Preview coarseness default value
   stereo=nnn               Sets Stereo (R/B 3D) option:  0 = none,
                            1 = alternate, 2 = superimpose, 3 = photo,
                            4 = stereo pair
@@ -255,13 +255,13 @@
   rotation=nn[/nn[/nn]]    Rotation abount x,y, and z axes
   scalexyz=nn/nn/nn        X, Y, and Z scale factors
   roughness=nn             Same as Z scale factor
-  waterline=nn             Colors this number and below will be 'inside' color
+  waterline=nn             Colors this number and below will be inside color
   filltype=nn              3D filltype
   perspective=nn           Perspective viewer distance (100 is at the edge)
   xyshift=nn/nn            Shift image in x & y directions (alters viewpoint)
   lightsource=nn/nn/nn     The coordinates of the light source vector
   smoothing=nn             Smooths rough images in light source mode
-  transparent=mm/nn        Sets colors 'mm' to 'nn as transparent
+  transparent=mm/nn        Sets colors mm to nn as transparent
   xyadjust=nnn/nnn         Sets 3D X and Y adjustment defaults,
   randomize=nnn            smoothes 3d color transitions between elevations
   fullcolor=yes            allows creation of full color .TGA image with
@@ -759,7 +759,7 @@ for folks with hot new computers.  Units are in 1/10000 seconds per
 orbit point.  ORBITDELAY=10 therefore allows you to see each pixel's
 orbit point for about one millisecond.  For best display of orbits,
 try passes=1 and a moderate resolution such as 320x200.  Note that
-the first time you press the 'O' key with the 'orbitdelay' function
+the first time you press the <O> key with the orbitdelay function
 active, your computer will pause for a half-second or so to calibrate
 a high-resolution timer.
 
@@ -878,7 +878,7 @@ a map.  Use this mode if you manage your colors using map files.  If you
 share PAR files with others, and have trouble remembering to send them the
 map file, use RECORDCOLORS=comment or yes.  These modes force the writing
 of compressed color maps in the PAR file in all cases.  The only difference is
-that the 'comment' option also writes the mapfile name in a comment so you
+that the comment option also writes the mapfile name in a comment so you
 can remember where the colors came from.
 ~Doc-
  See {Color Specification}.
@@ -1084,7 +1084,7 @@ filename is FRACT001.  The .GIF extension is optional (Example:
 SAVENAME=myfile)
 
 OVERWRITE=no|yes\
-Sets the savename overwrite flag (default is 'no').  If 'yes', saved files
+Sets the savename overwrite flag (default is no).  If yes, saved files
 will over-write existing files from previous sessions; otherwise the
 automatic incrementing of FRACTnnn.GIF will find the first unused
 filename.
@@ -1232,7 +1232,7 @@ for folks with hot new computers.  Units are in 1/10000 seconds per
 orbit point.  ORBITDELAY=10 therefore allows you to see each pixel's
 orbit point for about one millisecond.  For best display of orbits,
 try passes=1 and a moderate resolution such as 320x200.  Note that
-the first time you press the 'O' key with the 'orbitdelay' function
+the first time you press the <O> key with the orbitdelay function
 active, your computer will pause for a half-second or so to calibrate
 a high-resolution timer.
 
@@ -1257,7 +1257,7 @@ editor to modify the resulting parameter file.
 3D=Yes\
 3D=Overlay\
 Resets all 3d parameters to default values.  If FILENAME= is given, forces
-a restore to be performed in 3D mode (handy when used with 'batch=yes' for
+a restore to be performed in 3D mode (handy when used with "batch=yes" for
 batch-mode 3D images).  If specified, 3D=Yes should come before any other
 3d parameters on the command line or in a parameter file entry.  The form
 3D=Overlay is identical except that the previous graphics screen is not
@@ -1266,9 +1266,9 @@ Useful for building parameter files that use the 3D overlay feature.\
 
 The options below override the 3D defaults:
 ~Format-
-PREVIEW=yes                Turns on 3D 'preview' default mode
-SHOWBOX=yes                Turns on 3D 'showbox' default mode
-COARSE=nn                  Sets Preview 'coarseness' default value
+PREVIEW=yes                Turns on 3D preview default mode
+SHOWBOX=yes                Turns on 3D showbox default mode
+COARSE=nn                  Sets Preview coarseness default value
 SPHERE=yes                 Turns on spherical projection mode
 STEREO=n                   Selects the type of stereo image creation
 RAY=nnn                    selects raytrace output file format
