@@ -776,8 +776,7 @@ The bailout test is used to determine if we should stop iterating before the
 maximum iteration count is reached.  This test compares the value determined
 by the test to the "bailout" value set via the <Z> screen.  The default
 bailout test compares the magnitude or modulus of a complex variable to some
-bailout value:\
-~Format-
+bailout value:
 
 bailout test = |z| = sqrt(x^2 + y^2) >= 2
 
@@ -805,7 +804,6 @@ The following bailout tests have been implemented on the <Z> screen:
 
    manr:    (x + y)^2 >= bailout
 
-~Format+
 The bailout test feature has not been implemented for all applicable fractal
 types.  This is due to the speedups used for these types.  Some of these
 bailout tests show the limitations of the integer math routines by clipping
