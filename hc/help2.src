@@ -1829,7 +1829,7 @@ of the exponent yields a different MarksMandel set, which turns out to be
 a kinda-polygon with (exponent) sides.  The exponent value is the third
 parameter, after the "initialization warping" values.  Typically one would
 use null warping values, and specify the exponent with something like
-"PARAMS=0/0/5", which creates an unwarped, pentagonal MarksMandel set.
+"params=0/0/5", which creates an unwarped, pentagonal MarksMandel set.
 
 In the process of coding MarksMandelPwr formula type, Tim Wegner
 created the type "tim's_error" after making an interesting coding mistake.
