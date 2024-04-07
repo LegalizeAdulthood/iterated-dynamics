@@ -403,20 +403,15 @@ and are zooming in on an area near a "lakelet".
 
 When using a compressed palette in a 256 color mode, we suggest changing
 your colors from the usual defaults.  The last few colors in the default
-IBM VGA color map are black.  This results in points nearest the "lake"
+color map are black.  This results in points nearest the "lake"
 smearing into a single dark band, with little contrast from the blue (by
 default) lake.
 
-Id has a number of types of compressed palette, selected by the "Log
+Id has a number of types of compressed palettes, selected by the "Log
 Palette" line on the <X> screen, or by the "logmap=" command line
 parameter:
 
   logmap=1: for standard logarithmic palette.
-
-  logmap=-1: "old" logarithmic palette.  This variant was the only one used
-  before FRACTINT 14.0.  It differs from logmap=1 in that some colors are
-  not used - logmap=1 "spreads" low color numbers which are unused by
-  logmap=-1's pure logarithmic mapping so that all colors are assigned.
 
   logmap=N (>1): Same as logmap=1, but starting from iteration count N.
   Pixels with iteration counts less than N are mapped to color 1.  This is
@@ -429,9 +424,14 @@ parameter:
 
   logmap=2 or -2: Auto calculates the logmap value for maximum effect.
 
+  logmap=-1: "old" logarithmic palette.  It differs from logmap=1 in
+  that some colors are not used - logmap=1 "spreads" low color numbers
+  which are unused by logmap=-1's pure logarithmic mapping so that all
+  colors are assigned.
+
 Another way to change the 1:1 mapping of iteration counts to colors is to
-use the "RANGES=" parameter.  It has the format:\
-   RANGES=aa/bb/cc/dd/...
+use the "ranges=" parameter.  It has the format:\
+   ranges=aa/bb/cc/dd/...
 
 Iteration counts up to and including the first value are mapped to color
 number 0, up to and including the second value to color number 1, and so
@@ -442,7 +442,7 @@ specifies a stripe width, the value following it specifies the limit of
 the striped range.  Two alternating colors are used within the striped
 range.
 
-Example:   RANGES=0/10/30/-5/65/79/32000\
+Example:   ranges=0/10/30/-5/65/79/32000\
 This example maps iteration counts to colors as follows:
 
 ~Format-
@@ -456,8 +456,8 @@ This example maps iteration counts to colors as follows:
       5      66 to 79
       6      80 and greater
 ~Format+
-Note that the maximum value in a RANGES parameter is 32767 and the maximum
-value for the number of iterations is also 32767 when using RANGES.
+Note that the maximum value in a ranges parameter is 32767 and the maximum
+value for the number of iterations is also 32767 when using ranges.
 ;
 ;
 ;
