@@ -375,7 +375,7 @@ The result is a kind of warped checkerboard coloring, even in areas that
 would ordinarily be part of a single contour.  Remember, for the M-set all
 points whose final values exceed 2 (by any amount) after, say, 80
 iterations are normally the same color; under decomposition, Id runs
-[bailout-value] iterations and then colors according to where the actual
+80 iterations and then colors according to where the actual
 final value falls on the complex plane.
 
 When using decomposition, a higher bailout value will give a more accurate
