@@ -287,9 +287,9 @@ They can also be specified as named groups in a .PAR (parameter) file
 which you can then call up while running Id by using the <@>
 command.
 
-In all three cases (DOS command line, sstools.ini, and parameter file) the
+In all three cases (command line, sstools.ini, and parameter file) the
 parameters use the same syntax, usually a series of keyword=value commands
-like SOUND=OFF.  Each parameter is described in detail in subsequent
+like sound=off.  Each parameter is described in detail in subsequent
 sections.
 ;
 ;
@@ -420,7 +420,7 @@ Some terminology:\
 @FILENAME\
 Causes Id to read "filename" for parameters.  When it finishes, it
 resumes reading its own command line -- i.e., "id maxiter=250
-@myfile passes=1" is legal.  This option is only valid on the DOS command
+@myfile passes=1" is legal.  This option is only valid on the command
 line, as Id is not clever enough to deal with multiple indirection.
 
 @FILENAME/GROUPNAME\
@@ -443,7 +443,7 @@ the starting point, bypassing the initial information screens.  The
 filetype is optional and defaults to .GIF.  Non-Id GIF files are
 restored as fractal type "plasma".\
 
-On the DOS command line you may omit FILENAME= and just give the file name.
+On the command line you may omit filename= and just give the file name.
 
 CURDIR=yes\
 Id uses directories set by various commands, possibly in the
@@ -453,7 +453,7 @@ in your official FRM directory.  Setting curdir=yes at the command line will
 cause Id to look in the current directory for requested files first
 before looking in the default directory set by the other commands.  Warning:
 <tab> screen may not reflect actual file opened in cases where the file was
-opened in the DOS current directory.
+opened in the current directory.
 
 ~ONLINEFF
 MAKEPAR=parfile/entryname\
@@ -1369,7 +1369,7 @@ parameter file unchanged and add these parameters by using a command like:
 
 "BATCH=yes" tells Id to run in batch mode -- that is, Id draws
 the image using whatever other parameters you specified, then acts as if
-you had hit <S> to save the image, then exits to DOS.
+you had hit <S> to save the image, then exits.
 
 "FILENAME=" can be used with "BATCH=yes" to resume calculation of an
 incomplete image.  For instance, you might interactively find an image you

@@ -497,7 +497,7 @@ Commands marked with an '*' are also available at the credits screen.
    Ctrl+A          Turn on screen-eating ant automaton
    Ctrl+S          Convert current image to a Random Dot Stereogram (RDS)
    O               toggles 'orbits' option on and off during image generation
- * D               Shell to DOS (type 'exit' at the DOS prompt to return)
+ * D               Create a command shell (exit the command shell to return)
    Ctrl+X          Flip the current image along the screen's X-axis
    Ctrl+Y          Flip the current image along the screen's Y-axis
    Ctrl+Z          Flip the current image along the screen's Origin
