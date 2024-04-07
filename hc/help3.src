@@ -1283,9 +1283,8 @@ from the viewer, we cheat and use the y value of the original image.  So
 the effect really only works if the y-rotation (set earlier) is between
 +/- 30.
 
-Next, you can choose the name under which to save your Targa file.  If you
-have a RAM disk handy, you might want to create the file on it, for speed.
-So include its  full path name in this option.  If you have not set
+Next, you can choose the name under which to save your Targa file.
+If you have not set
 "overwrite=yes" then the file name will be incremented to avoid over-writing
 previous files.  If you are going to overlay an existing Targa file, enter
 its name here.
@@ -1298,13 +1297,13 @@ Finally, absolutely the last option (this time we mean it): you can now
 choose to overlay an existing Targa-24, type 2, non mapped, top-to-bottom
 file, such as created by Id or PVRay.  The Targa file specified above
 will be overlayed with new info just as a GIF is overlayed on screen.  Note:
-it is not necessary to use the "O" overlay command to overlay Targa files.
+it is not necessary to use the <O> overlay command to overlay Targa files.
 The targa_overlay parameter must be set to yes, however.
 
 You'll probably want to adjust the final colors for monochrome fill types
 using light source via {=@ColorCycling color cycling}.
 Try one of the more continuous
-palettes (<F8> through <F10>), or load the GRAY palette with the
+palettes (<F8> through <F10>), or load the gray palette with the
 <A>lternate-map command.
 
 ~Online-
