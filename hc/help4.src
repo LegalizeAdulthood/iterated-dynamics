@@ -458,47 +458,45 @@ opened in the current directory.
 MAKEPAR=parfile/entryname\
 This command invokes a batch facility to copy fractal and color information
 stored in GIF files to par format.  The syntax is:\
-     id filename.gif makepar=parfile.par/entryname >> makepar.log\
+     id filename.gif makepar=parfile.par/entryname\
 The entryname is optional and defaults to the name of the GIF filename if
 absent.  Other parameters can appear before the makepar= command, but
 anything after will ignored.  If the parfile and entryname exist, the entry
 will replace the previous entry.  If the entry doesn't exist, it will be
 added.  If the parfile doesn't exist it will be created.
-Redirection of output to a log file is possible in the DOS version because
-all screen output is written to the standard output.
 
 If you leave the GIF filename out of the command lime but add a map= command,
-then the makepar command will write a PAR named for the color map with only
-the colors in the PAR entry.  This is a handy tool for converting maps
-into compressed PAR colors entry.  For example, you could type:\
-     id map=lyapunov.map makepar=mycolors >> makepar.log\
-This adds a colors-only PAR entry called lyapunov.map to mycolors.par.
+then the makepar command will write a par named for the color map with only
+the colors in the par entry.  This is a handy tool for converting maps
+into compressed par colors entry.  For example, you could type:\
+     id map=lyapunov.map makepar=mycolors\
+This adds a colors-only par entry called lyapunov.map to mycolors.par.
 
 MAXLINELENGTH=nnn\
-This command sets the maximum width of lines in a PAR entry.
+This command sets the maximum width of lines in a par entry.
 
 ~ONLINEFF
 ~Label=@COMMENTS
 COMMENT=[comment1]/[comment2]/[comment3]/[comment4]\
-Inserts comments into PAR files.  These comments can include
-variables that are expanded at the time the PAR file is created.  Variables are
+Inserts comments into par files.  These comments can include
+variables that are expanded at the time the par file is created.  Variables are
 indicated by $varname$.  Underscore characters are expanded to blanks.
 If you want to include the special characters '$', '_', or '\\' in a comment,
-precede the character with '\\'.  Supported variables are:\
+precede the character with '\\'.  Supported variables are:
 
-Variable   Expands to   Example     Variable   Expands to   Example
-===============================     ===============================\
-$year$     time:year    1996        $date$     mo. day, yr  Aug 17, 1996\
-$month$    time:month   Aug         $calctime$ h:m:s        4:34:45.3\
-$day$      time:day     12          $version$  version      1940\
-$hour$     time:hour    21          $patch$    patch number 2\
-$min$      time:minute  34          $xdots$    horiz rez    640\
-$sec$      time:sec     14          $ydots$    vertical rez 480\
-$time$     time:h:m:s   21:34:14    $vidkey$   video key    SF4\
+Variable   Expands to   Example    Variable   Expands to    Example\
+===============================    ================================\
+$year$     time:year    2024       $date$     mo. day, yr   Mar 17, 2024\
+$month$    time:month   Mar        $calctime$ h:m:s         4:34:45.3\
+$day$      time:day     17         $version$  version       100\
+$hour$     time:hour    21         $patch$    patch number  0\
+$min$      time:minute  34         $xdots$    horiz res.    640\
+$sec$      time:sec     14         $ydots$    vertical res. 480\
+$time$     time:h:m:s   21:34:14   $vidkey$   video key     SF4\
 
 You can leave any of the four comment fields unchanged by leaving that
 position blank.  For example, the command comment=//Created_$date$ inserts
-the text "Created Aug 17, 1996" into the third comment.
+the text "Created Mar 17, 2024" into the third comment.
 
 BATCH=yes\
 See {Batch Mode}.
@@ -506,16 +504,16 @@ See {Batch Mode}.
 AUTOKEY=play|record\
 Specifying "play" runs Id in playback mode - keystrokes are read
 from the autokey file (see next parameter) and interpreted as if they're
-being entered from the keyboard.\
+being entered from the keyboard.
 
-Specifying "record" runs in recording mode - all keystrokes are recorded
-in the autokey file.\
+Specifying "record" runs Id in recording mode - all keystrokes are recorded
+in the autokey file.
 
 See also {Autokey Mode}.
 
 AUTOKEYNAME=[filename]\
 Specifies the file name to be used in autokey mode.  The default file name
-is AUTO.KEY.
+is auto.key.
 
 MAKEDOC[=filename]\
 Create Id documentation file (for printing or viewing with a text
@@ -531,13 +529,8 @@ use "Printing Id Documentation" from the main help index.
 MAXHISTORY=<nnn>\
 Id maintains a list of parameters of the past 10 images that you
 generated in the current Id session.  You can revisit these images
-using the <H> and <Ctrl+H> commands.  The maxhistory command allows you
-to set the number of image parameter sets stored in memory.  The tradeoff
-is between the convenience of storing more images and memory use.  Each
-image in the circular history buffer takes up over 1200 bytes, so the
-default value of ten images uses up 12,000 bytes of memory.  If your memory
-is very tight, and some memory-intensive Id operations are giving
-"out of memory" messages, you can reduce maxistory to 2 or even zero.  Keep
+using the <H> and <Ctrl+H> commands.  The maxhistory parameter allows you
+to set the number of image parameter sets stored in memory.  Keep
 in mind that every time you color cycle or change from integer to float or
 back, another image parameter set is saved, so the default ten images are
 used up quickly.
@@ -1344,7 +1337,7 @@ It IS possible, believe it or not, to become so jaded with the screen
 drawing process, so familiar with the types and options, that you just
 want to hit a key and do something else until the final images are safe on
 disk.  To do this, start Id with the BATCH=yes parameter.  To set up
-a batch run with the parameters required for a particular image you might:
+a batch run with the parameters required for a particular image you might:\
   o Find an interesting area.  Note the parameters from the <Tab> display.
     Then use an editor to write a batch file.
   o Find an interesting area.  Set all the options you'll want in the
