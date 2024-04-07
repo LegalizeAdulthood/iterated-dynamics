@@ -953,8 +953,8 @@ Select a fractal type:
 (type=mandel)
 
 This set is the classic: the only one implemented in many plotting
-programs, and the source of most of the printed fractal images published
-in recent years. Like most of the other types in Id, it is simply a
+programs, and the source of most of the printed fractal images published.
+Like most of the other types in Id, it is simply a
 graph: the x (horizontal) and y (vertical) coordinate axes represent
 ranges of two independent quantities, with various colors used to
 symbolize levels of a third quantity which depends on the first two. So
@@ -963,7 +963,7 @@ far, so good: basic analytic geometry.
 Now things get a bit hairier. The x axis is ordinary, vanilla real
 numbers. The y axis is an imaginary number, i.e. a real number times i,
 where i is the square root of -1. Every point on the plane -- in this
-case, your PC's display screen -- represents a complex number of the form:
+case, Id's main window -- represents a complex number of the form:
 
     x-coordinate + i * y-coordinate
 
