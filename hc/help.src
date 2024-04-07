@@ -1318,7 +1318,7 @@ Arrow Keys       Step through the outlines on the screen.\
 <Shift+R>        Renames the selected file.\
 <S>              Saves the current image with the browser boxes\
                  displayed.\
-<ESC>,<L>        Toggles the browse mode off.\
+<Esc>,<L>        Toggles the browse mode off.\
 <Ctrl+B>         Brings up the {Browser Parameters} screen.\
 <Ctrl+Insert>,  Change the browser boxes color.\
 <Ctrl+Delete>\
