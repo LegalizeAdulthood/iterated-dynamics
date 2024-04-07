@@ -1803,7 +1803,7 @@ It starts with regularly spaced initial pixels and displays the resulting
 orbits.  This idea is somewhat similar to the {=HT_DYNAM Dynamic System}.
 
 There are two options that have unusual effects on this fractal.  The
-Orbit Delay value controls how many initial points are computed before
+orbit delay value controls how many initial points are computed before
 the orbits are displayed on the screen.  This allows the orbit to settle
 down.  The outside=summ option causes each pixel to increment color every
 time an orbit touches it; the resulting display is a 2-d histogram.
