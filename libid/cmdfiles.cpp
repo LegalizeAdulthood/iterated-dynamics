@@ -3430,9 +3430,10 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         return CMDARG_3D_PARAM;
     }
 
-    if (variable == "monitorwidth")
+    // TODO: deprecate monitorwidth parameter
+    if (variable == "monitorwidth" || variable == "stereowidth")
     {
-        // monitorwidth=?
+        // monitorwidth/stereowidth=?
         if (totparms != 1 || floatparms != 1)
         {
             return bad_arg(curarg);
