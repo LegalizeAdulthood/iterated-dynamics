@@ -58,8 +58,8 @@ Solid-guessing stop after pass n ("g1" through "g6") are a variation on the
 guessing mode in which the algorithm stops after the nth pass.  This facility
 is for exploring in low resolution when you'd rather see
 a low resolution image with large blocky pixels filling the whole screen than
-a small low resolution image such as you get with the <v> (View Windows)
-command.  Note that on the <x> screen you can't directly type g1 or g2.  Press g
+a small low resolution image such as you get with the <V> (View Windows)
+command.  Note that on the <X> screen you can't directly type g1 or g2.  Press g
 repeatedly until you get the option you want, or else use the left or right
 arrow keys.
 

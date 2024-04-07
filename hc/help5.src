@@ -451,7 +451,7 @@ and the pixel is colored green. Similarly, the pixel is colored yellow if it
 approaches the X-axis. Strictly speaking, this is not an "inside" option
 because a point destined to escape could be caught by this bailout criterion.
 
-The test distance, 0.01, can now be changed interactively on the <x> screen
+The test distance, 0.01, can now be changed interactively on the <X> screen
 and via the proximity=<nnn> command line parameter. A negative value of
 the test distance triggers an alternative variation of epsilon cross that
 colors the epsilon bands with the iteration; otherwise they are colored
@@ -891,12 +891,12 @@ The most suitable video modes for the file are listed first.
 
 The 'err' column in the video mode information indicates:
   blank  mode seems perfect for this image
-  v      image smaller than screen, will be loaded in a <v>iew window
+  v      image smaller than screen, will be loaded in a <V>iew window
   c      mode has more colors than image needs
   *      a major problem, one or more of the following is also shown:
    C     mode has too few colors
    R     image larger than screen, Fractint will reduce the image, possibly
-         into a <v>iew window, and maybe with aspect ratio a bit wrong
+         into a <V>iew window, and maybe with aspect ratio a bit wrong
    A     mode has the wrong shape of pixels for this image
 ;
 ;
@@ -1168,7 +1168,7 @@ a modicum of order to the chaotic world of formula postings with his
 release of the Orgform program and formula compilation. George added
 IF..ELSE to the formula parser language for version 19.6. Among his other
 contributions are the ability to include formula, ifs, and lsystem entries
-in .par files, the scrolling of text in the <z> and F2 screens, and
+in .par files, the scrolling of text in the <Z> and F2 screens, and
 new autokey commands.
 
 George received an A.B. in Economics from Dartmouth College and a J.D from

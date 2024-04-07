@@ -201,7 +201,7 @@
   gif87a=yes               Save GIF files in the older GIF87a format
                            (with no extension blocks)
   dither=yes               Dither color GIFs read into a b/w display.
-  parmfile=<path>\\filename File for <@> and <b> commands, default id.par
+  parmfile=<path>\\filename File for <@> and <B> commands, default id.par
   formulafile=<path>\\filename  File for type=formula, default id.frm
   lfile=<path>\\filename    File for type=lsystem, default id.l
   ifsfile=<path>\\filename  File for type=ifs, default id.ifs
@@ -531,7 +531,7 @@ use "Printing Id Documentation" from the main help index.
 MAXHISTORY=<nnn>\
 Id maintains a list of parameters of the past 10 images that you
 generated in the current Id session.  You can revisit these images
-using the <h> and <Ctrl+H> commands.  The maxhistory command allows you
+using the <H> and <Ctrl+H> commands.  The maxhistory command allows you
 to set the number of image parameter sets stored in memory.  The tradeoff
 is between the convenience of storing more images and memory use.  Each
 image in the circular history buffer takes up over 1200 bytes, so the
@@ -1023,7 +1023,7 @@ Forces the use of the on-the-fly routine or the logarithm table for the
 calculation of log palettes.  Not normally needed.  The auto option cannot
 be used at the same time as the other two.  Auto causes the logmap value to
 be automatically recalculated when zooming.  Changing almost anything will
-turn this feature off.  Set logmode=auto from the <g> screen prompt.
+turn this feature off.  Set logmode=auto from the <G> screen prompt.
 
 RANGES=nn/nn/nn/...\
 Specifies ranges of escape-time iteration counts to be mapped to each
@@ -1125,7 +1125,7 @@ Specifies the default path and/or file for type=ifs fractals (default is
 id.ifs).
 
 FILENAME=[.suffix]\
-Sets the default file extension used for the <r> command.
+Sets the default file extension used for the <R> command.
 When this parameter is omitted, the
 default file mask shows .GIF and .POT files.  You might want to specify
 this parameter and the SAVENAME= parameter in your sstools.ini file if you

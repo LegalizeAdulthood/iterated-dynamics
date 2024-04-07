@@ -432,7 +432,10 @@ to select a function.  You do not need to wait for a calculation
 to finish, nor do you have to return to the main menu.
 
 When entering commands, note that for the "typewriter" keys, upper and
-lower case are equivalent, e.g. <B> and <b> have the same result.
+lower case are equivalent in most situations, e.g. <B> and <Shift+B>
+have the same result.  When an upper case letter is required, such as
+telling Id to delete the current file in browse mode, it will be
+described as <Shift+D>.
 
 Many commands and parameters can be passed to Id as command-line
 arguments or read from a configuration file;
@@ -592,7 +595,7 @@ for each image slot.
 
 <Ctrl+H>\
 Redraw the next image in the circular history buffer.  Use this to return to
-images you passed by when using <h>.
+images you passed by when using <H>.
 
 <Tab>\
 Display the current fractal type, parameters, video mode, screen or (if
@@ -1142,16 +1145,16 @@ cursor around the fractal using the arrow keys or the mouse and watch
 the orbits change.  Try entering the Orbits mode with View Windows (<V>)
 turned on.  The following keys take effect in Orbits mode.\
 <C>         Circle toggle - makes little circles with radii inversely\
-            proportional to the iteration.  Press <c> again to toggle\
+            proportional to the iteration.  Press <C> again to toggle\
             back to point-by-point display of orbits.\
-<L>         Line toggle - connects orbits with lines (can use with <c>)\
+<L>         Line toggle - connects orbits with lines (can use with <C>)\
 <N>         Numbers toggle - shows complex coordinates & color number of\
-            the cursor on the screen.  Press <n> again to turn off numbers.\
+            the cursor on the screen.  Press <N> again to turn off numbers.\
 <P>         Enter pixel coordinates directly\
 <H>         Hide fractal toggle.  Works only if View Windows is turned on\
             and set for a small window (such as the default size.) Hides the\
             fractal, allowing the orbit to take up the whole screen.  Press\
-            <h> again to uncover the fractal.\
+            <H> again to uncover the fractal.\
 <S>         Saves the fractal, cursor, orbits, and numbers as they\
             appear on the screen.\
 <<> or <,>  Zoom orbits image smaller\
@@ -1175,7 +1178,7 @@ These parameters can be used to:\
    mode supported by your hardware.  This use of view windows occurs
    automatically when you restore such an image.
  o Define a disk video mode up to 32767x32767.  First select a disk video
-   mode using <Delete>.  Then on the <v> screen enter both an X and a Y
+   mode using <Delete>.  Then on the <V> screen enter both an X and a Y
    value at the Virtual Screen Total Pixels prompts.
  o Define a virtual video mode up to the size that fits in video memory.
    First select a VESA video mode (dotmode=28) using <Delete>.  Then on
@@ -1313,7 +1316,7 @@ The following keystrokes function while browsing an image:\
 
 Arrow Keys       Step through the outlines on the screen.\
 <Enter>          Selects the image to display.\
-<\\>,<h>          Recalls the last image selected.\
+<\\>,<H>          Recalls the last image selected.\
 <Shift+D>        Deletes the selected file.\
 <Shift+R>        Renames the selected file.\
 <S>              Saves the current image with the browser boxes\
@@ -1374,7 +1377,7 @@ can do is exit the browser, press <PageUp> until the zoom box won't get any
 smaller, zoom out with <Ctrl+Enter>, and before any image starts to
 develop, call up the browser again, locate your zoomed image that you
 started with, and see if there is another image that contains it - if
-so, restore it with the browser.  You can also use a view window <v> to load
+so, restore it with the browser.  You can also use a view window <V> to load
 the first image, and then use the browser.
 
 POSSIBLE ERRORS:
