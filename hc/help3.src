@@ -1485,26 +1485,26 @@ scaling will be done by the ray tracer.  Thus, in creating the images, no
 facilities for rotations or shifting is provided.  Scaling is provided to
 achieve the correct aspect ratio.
 
-WARNING!  The files created using the RAY option can be huge.  Setting
-COARSE to 40 will result in over 2000 triangles.  Each triangle can utilize
+WARNING!  The files created using the ray tracing options can be large.  Setting
+coarse to 40 will result in over 2000 triangles.  Each triangle can utilize
 from 50 to 200 bytes each to describe, so your ray tracing files can
-rapidly approach or exceed 1Meg.  Make sure you have enough disk space before
-you start.
+rapidly approach or exceed 1 MB.
 
 Each file starts with a comment identifying the version of Id
 by which it was created.  The file ends with a comment giving the number
 of triangles in the file.
 
-The files consist of long strips of adjacent triangles.  Triangles are
-clockwise or counter clockwise depending on the target ray tracer.
+The files consist of long strips of adjacent triangles.  Triangles
+vertices are listed in clockwise or counter clockwise order
+depending on the target ray tracer.
 Currently, MTV and Rayshade are the only ones which use counter clockwise
-triangles.  The size of the triangles is set by the COARSE setting in the
+order.  The size of the triangles is set by the coarse setting in the
 main 3d menu.  Color information about each individual triangle is included
 for all files unless in the brief mode.
 
-To keep the poor ray tracer from working too hard, if WATERLINE is set
+To keep the poor ray tracer from working too hard, if waterline is set
 to a non zero value, no triangle which lies entirely at or below the
-current setting of WATERLINE is written to the ray tracing file.  These
+current setting of waterline is written to the ray tracing file.  These
 may be replaced by a simple plane in the syntax of the ray tracer you are
 using.
 
@@ -1519,26 +1519,21 @@ When x- y- and zscale are set to 100, the surface created by the
 triangles will fall within a box of +/- 1.0 in all 3 directions.  Changing
 scale will change the size and/or aspect ratio of the enclosed object.
 
-We will only describe the structure of the RAW format here.  If you want
-to understand any of the ray tracing file formats besides RAW, please
+We will only describe the structure of the raw format here.  If you want
+to understand any of the ray tracing file formats besides raw, please
 see your favorite ray tracer docs.
 
-The RAW format simply consists of a series of clockwise triangles.  If
-BRIEF=yes, Each line is a vertex with coordinates x, y, and z.  Each
-triangle is separated by a couple of CR's from the next.  If BRIEF=no, the
+The raw format simply consists of a series of clockwise triangles.  If
+brief=yes, Each line is a vertex with coordinates x, y, and z.  Each
+triangle is separated by a couple of CR's from the next.  If brief=no, the
 first line in each triangle description if the r,g,b value of the triangle.
 
-Setting BRIEF=yes produces shorter files with the color of each triangle
+Setting brief=yes produces shorter files with the color of each triangle
 removed - all triangles will be the same color.  These files are
-otherwise identical to normal files but will run faster than the non BRIEF
-files.  Also, with BRIEF=yes, you may be able to get files with more
-triangles to run than with BRIEF=no.
+otherwise identical to normal files but will run faster than the non brief
+files.  Also, with brief=yes, you may be able to get files with more
+triangles to run than with brief=no.
 
-The DKB format is now obsolete.  POV-Ray users should use the RAW output
+The DKB format is now obsolete.  POV-Ray users should use the raw output
 and convert to POV-Ray using the POV Group's RAW2POV utility.  POV-Ray
 users can also do all 3D transformations within POV-Ray using height fields.
-;
-;
-;
-
-
