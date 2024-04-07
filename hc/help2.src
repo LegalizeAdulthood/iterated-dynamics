@@ -2975,11 +2975,12 @@ See {Finite Attractors} for more information on this aspect of Id internals.
 ~Topic=Volterra-Lotka Fractals, Label=HT_VL
 (type=volterra-lotka)
 
-In The Beauty of Fractals, these images are offered as an example of
-"how an apparently innocent system of differential equations gives rise
-to unimaginably rich and complex behavior after discretization." The
-Volterra-Lotka equations are a refinement of attempts to model predator-
-prey systems.
+In the book "The Beauty of Fractals", these images are offered as an
+example of "how an apparently innocent system of differential equations
+gives rise to unimaginably rich and complex behavior after
+discretization."
+The Volterra-Lotka equations are a refinement of attempts to model
+predator-prey systems.
 
 If x represents the prey population and y represents the predator
 population, their relationship can be expressed as:
@@ -2992,9 +2993,9 @@ population, their relationship can be expressed as:
 According to Peitgen and Richter, "Hence, x grows at a constant rate in
 the absence of y, and y decays at a constant rate in the absence of x.
 The prey is consumed in proportion to y, and the predators expand in
-proportion to x." They proceed to "discretize" this system, by "mating"
+proportion to x."  They proceed to "discretize" this system, by "mating"
 the Euler and Heun methods.  For purposes of image computation, their
-formula (Equation 8.3 on page 125) can be interpreted as:
+formula (equation 8.3 on page 125) can be interpreted as:
 
 ~Format-
   x(new) = x + h/2 * [ f(x,y) + f[x + pf(x,y), y + pg(x,y)] ]
@@ -3006,8 +3007,8 @@ arbitrary values of x(0) and y(0), to produce typical "strange attractor"
 images such as the ones commonly derived from the Henon or Lorenz formulae.
 But to produce an escape-time fractal, we iterate this formula for all
 (x, y) pairs that we can associate with pixels on our monitor screen.  The
-standard window is:  0.0 < x < 6.0;  0.0 < y < 4.5.  Since the "unimaginably
-rich and complex behavior" occurs with the points that do NOT escape, the
+standard window is: 0.0 < x < 6.0;  0.0 < y < 4.5.  Since the "unimaginably
+rich and complex behavior" occurs with the points that do not escape, the
 inside coloring method assumes considerable importance.
 
 The parameters h and p can be selected between 0.0 and 1.0, and this
@@ -3027,10 +3028,8 @@ inside coloring options.  See {Inside=bof60|bof61|zmag|fmod|period|atan} for
 details.  This formula performs best with a relatively high bailout value;
 the default is set at 256, rather than the standard default of 4.
 
-~Format-
 Reference: Peitgen, H.-O. and Richter, P.H. The Beauty of Fractals,
-  Springer-Verlag, 1986; Section 8, pp. 125-7.
-~Format+
+Springer-Verlag, 1986; Section 8, pp. 125-7.
 ;
 ;
 ~Topic=Escher-Like Julia Sets, Label=HT_ESCHER
