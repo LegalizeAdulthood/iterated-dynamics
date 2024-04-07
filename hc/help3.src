@@ -133,15 +133,15 @@ The autokey feature allows you to set up beautiful self-running demo
 to generate sequences for special effects, to teach how fractal exploring
 is done, etc.
 
-A sample autokey file (demo.key) and a batch to run it (demo.bat) are
-included with Id.  Type "demo" at the DOS prompt to run it.
+A sample autokey file (demo.key) and a script to run it (demo.bat) is
+included with Id.  Type "demo" at a command prompt to run it.
 
 Autokey record mode is enabled with the command line parameter
-"AUTOKEY=RECORD".  Keystrokes are saved in an intelligible text format in a
-file called AUTO.KEY.  You can change the file name with the "AUTOKEYNAME="
+"autokey=record".  Keystrokes are saved in an intelligible text format in a
+file called auto.key.  You can change the file name with the "autokeyname="
 parameter.
 
-Playback is enabled with the parameter "AUTOKEY=PLAY".  Playback can be
+Playback is enabled with the parameter "autokey=play".  Playback can be
 terminated by pressing the <Esc> key.
 
 After using record mode to capture an autokey file, you'll probably want
@@ -158,18 +158,21 @@ line.  Autokey files can contain the following:
   "s" to select the ifs type.
 
   Symbols for function keys used to select a video mode.  Examples:\
-      F3  -- Function key 3\
-      SF3 --<Shift> and <F3> together\
+      F3  -- Function key <F3>\
+      SF3 -- <Shift+F3> together\
 
-  Special keys: ENTER ESC F1 PAGEUP PAGEDOWN HOME END LEFT RIGHT UP DOWN\
-  INSERT DELETE TAB CTRL_RIGHT CTRL_LEFT CTRL_DOWN CTRL_UP CTRL_HOME\
-  CTRL_END\
+  Special keys:\
+    ENTER   ESC     F1              PAGEUP PAGEDOWN\
+    HOME END                        LEFT RIGHT UP DOWN\
+    INSERT DELETE                   TAB\
+    CTRL_RIGHT CTRL_LEFT            CTRL_DOWN  CTRL_UP\
+    CTRL_HOME CTRL_END\
 
   WAIT <nnn.n> -- wait nnn.n seconds before continuing
 
   CALCWAIT -- pause until the current fractal calculation or file save or
   restore is finished.  This command makes demo files more robust since
-  calculation times depend on the  speed of the machine running the demo -
+  calculation times depend on the speed of the machine running the demo -
   a "WAIT 10" command may allow enough time to complete a fractal on one
   machine, but not on another.  The record mode does not generate this
   command - it should be added by hand to the autokey file whenever there
@@ -202,10 +205,10 @@ help:
   When in record mode, avoid using the arrow keys to select filenames,
   fractal types, formula names, etc.  Instead, try to type in names.  This
   will ensure that the exact item you want gets chosen during playback
-  even if the list is different then.
+  even if the list is different on playback.
 
   Beware of video mode assumptions.  It is safest to build a separate demo
-  for different resolution monitors.
+  for different resolution video modes.
 
   When in the record mode, try to type names quickly, then pause.  If you
   pause partway through a name Id will break up the string in the
@@ -217,7 +220,7 @@ help:
   No harm done, but messy to clean up.  Id ignores pauses
   less than about 1/2 second.
 
-  DO pause when you want the viewer to see what is happening during
+  Do pause when you want the viewer to see what is happening during
   playback.
 
   When done recording, clean up your mydemo.key file.  Insert a CALCWAIT
