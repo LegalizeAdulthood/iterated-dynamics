@@ -78,43 +78,42 @@
 {2.15 , 1, "Barnsley IFS Fractals"}
 {2.16 , 1, "Sierpinski Gasket"}
 {2.17 , 1, "Quartic Mandelbrot/Julia"}
-{2.18 , 1, "Distance Estimator"}
-{2.19 , 1, "Pickover Mandelbrot/Julia Types"}
-{2.20 , 1, "Pickover Popcorn"}
-{2.21 , 1, "Peterson Variations"}
-{2.22 , 1, "Unity"}
-{2.23 , 1, "Scott Taylor / Lee Skinner Variations"}
-{2.24 , 1, "Kam Torus"}
-{2.25 , 1, "Bifurcation"}
-{2.26 , 1, "Orbit Fractals"}
-{2.27 , 1, "Lorenz Attractors"}
-{2.28 , 1, "Rossler Attractors"}
-{2.29 , 1, "Henon Attractors"}
-{2.30 , 1, "Pickover Attractors"}
-{2.31 , 1, "Gingerbreadman"}
-{2.32 , 1, "Martin Attractors"}
-{2.33 , 1, "Icon"}
-{2.34 , 1, "Test"}
-{2.35 , 1, "Formula"}
-{2.36 , 1, "Julibrots"}
-{2.37 , 1, "Diffusion Limited Aggregation"}
-{2.38 , 1, "Magnetic Fractals"}
-{2.39 , 1, "L-Systems"}
-{2.40 , 1, "Lyapunov Fractals"}
-{2.41 , 1, "fn||fn Fractals"}
-{2.42 , 1, "Halley"}
-{2.43 , 1, "Dynamic System"}
-{2.44 , 1, "Mandelcloud"}
-{2.45 , 1, "Quaternion"}
-{2.46 , 1, "HyperComplex"}
-{2.47 , 1, "Cellular Automata"}
-{2.48 , 1, "Ant Automaton"}
-{2.49 , 1, "Phoenix"}
-{2.50 , 1, "Frothy Basins"}
-{2.51 , 1, "Volterra-Lotka Fractals"}
-{2.52 , 1, "Escher-Like Julia Sets"}
-{2.53 , 1, "Latoocarfian"}
-{2.54 , 1, "Mandelbrot Mix 4"}
+{2.18 , 1, "Pickover Mandelbrot/Julia Types"}
+{2.19 , 1, "Pickover Popcorn"}
+{2.20 , 1, "Peterson Variations"}
+{2.21 , 1, "Unity"}
+{2.22 , 1, "Scott Taylor / Lee Skinner Variations"}
+{2.23 , 1, "Kam Torus"}
+{2.24 , 1, "Bifurcation"}
+{2.25 , 1, "Orbit Fractals"}
+{2.26 , 1, "Lorenz Attractors"}
+{2.27 , 1, "Rossler Attractors"}
+{2.28 , 1, "Henon Attractors"}
+{2.29 , 1, "Pickover Attractors"}
+{2.30 , 1, "Gingerbreadman"}
+{2.31 , 1, "Martin Attractors"}
+{2.32 , 1, "Icon"}
+{2.33 , 1, "Test"}
+{2.34 , 1, "Formula"}
+{2.35 , 1, "Julibrots"}
+{2.36 , 1, "Diffusion Limited Aggregation"}
+{2.37 , 1, "Magnetic Fractals"}
+{2.38 , 1, "L-Systems"}
+{2.39 , 1, "Lyapunov Fractals"}
+{2.40 , 1, "fn||fn Fractals"}
+{2.41 , 1, "Halley"}
+{2.42 , 1, "Dynamic System"}
+{2.43 , 1, "Mandelcloud"}
+{2.44 , 1, "Quaternion"}
+{2.45 , 1, "HyperComplex"}
+{2.46 , 1, "Cellular Automata"}
+{2.47 , 1, "Ant Automaton"}
+{2.48 , 1, "Phoenix"}
+{2.49 , 1, "Frothy Basins"}
+{2.50 , 1, "Volterra-Lotka Fractals"}
+{2.51 , 1, "Escher-Like Julia Sets"}
+{2.52 , 1, "Latoocarfian"}
+{2.53 , 1, "Mandelbrot Mix 4"}
 
 {3.   , 0, Doodads\, Bells\, and Whistles, FF}
 {3.1  , 1, "Drawing Method"}
