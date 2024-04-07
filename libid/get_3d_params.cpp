@@ -50,11 +50,11 @@ restart_1:
 
     k = -1;
 
-    prompts3d[++k] = "Preview Mode?";
+    prompts3d[++k] = "Preview mode?";
     uvalues[k].type = 'y';
     uvalues[k].uval.ch.val = g_preview ? 1 : 0;
 
-    prompts3d[++k] = "    Show Box?";
+    prompts3d[++k] = "    Show box?";
     uvalues[k].type = 'y';
     uvalues[k].uval.ch.val = g_show_box ? 1 : 0;
 
@@ -62,7 +62,7 @@ restart_1:
     uvalues[k].type = 'i';
     uvalues[k].uval.ival = g_preview_factor;
 
-    prompts3d[++k] = "Spherical Projection?";
+    prompts3d[++k] = "Spherical projection?";
     uvalues[k].type = 'y';
     sphere = SPHERE;
     uvalues[k].uval.ch.val = sphere;
@@ -74,7 +74,7 @@ restart_1:
     prompts3d[++k] = "                  3=photo,4=stereo pair)";
     uvalues[k].type = '*';
 
-    prompts3d[++k] = "Ray trace out? (0=No, 1=DKB/POVRay, 2=VIVID, 3=RAW,";
+    prompts3d[++k] = "Ray trace output? (0=No, 1=DKB/POVRay, 2=VIVID, 3=RAW,";
     uvalues[k].type = 'i';
     uvalues[k].uval.ival = static_cast<int>(g_raytrace_format);
 
@@ -86,7 +86,7 @@ restart_1:
     uvalues[k].uval.ch.val = g_brief ? 1 : 0;
 
     check_writefile(g_raytrace_filename, ".ray");
-    prompts3d[++k] = "    Output File Name";
+    prompts3d[++k] = "    Output file name";
     uvalues[k].type = 's';
     std::strcpy(uvalues[k].uval.sval, g_raytrace_filename.c_str());
 
