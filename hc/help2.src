@@ -818,8 +818,8 @@ SUMMARY OF FRACTAL TYPES
 {=HT_TEST test}
 ~Label=HF_TEST
     'test' point letting us (and you!) easily add fractal types via
-    the c module testpt.c.  Default set up is a mandelbrot fractal.
-    Four parameters: user hooks (not used by default testpt.c).
+    the source file testpt.cpp.  Default set up is a mandelbrot fractal.
+    Four parameters: user hooks (not used by default testpt.cpp).
 
 {=HT_SCOTSKIN tetrate}
 ~Label=HF_TETRATE
@@ -928,7 +928,7 @@ Select a fractal type:
 { Pickover Attractors }
 { Martin Attractors }
 { Gingerbreadman }
-{ Test }
+{ Test Stub }
 { Formula }
 { Julibrots }
 { Diffusion Limited Aggregation }
@@ -1856,7 +1856,7 @@ reveals only a thinner line, up (down?) to the limit of accuracy for the
 algorithm.  The same thing happens with other lines in the fractal, such as
 those around |x| = |y| = (1/2)^(1/2) = .7071
 
-Try some other tortuous approximations using the {=HT_TEST TEST stub} and
+Try some other tortuous approximations using the {=HT_TEST Test Stub} and
 let us know what you come up with!
 ;
 ;
@@ -2434,7 +2434,7 @@ are not saved after the ant is finished, but you can set the orbit delay
 value in advance from the <p> screen.
 ;
 ;
-~Topic=Test, Label=HT_TEST
+~Topic=Test Stub, Label=HT_TEST
 (type=test)
 
 This is a stub that we (and you!) use for trying out new fractal types.
@@ -2451,7 +2451,7 @@ After you get it working, send your code to one of the authors and we
 might just add it to the next release of Id, with full credit to
 you.  Our criteria are: 1) an interesting image and 2) a formula
 significantly different from types already supported. (Bribery may also
-work.  THIS author is completely honest, but I don't trust those other
+work.  This author is completely honest, but I don't trust those other
 guys.) Be sure to include an explanation of your algorithm and the
 parameters supported, preferably formatted as you see here to simplify
 folding it into the documentation.
