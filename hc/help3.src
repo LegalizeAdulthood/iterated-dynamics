@@ -481,8 +481,8 @@ option (where "nnn" is the color to use on the affected pixels).  When
 toggling to Julia sets, the default corners are three times bigger than
 normal to allow seeing the biomorph appendages.  Does not work with all
 types - in particular it fails with any of the mandelsine family.  However,
-if you are stuck with monochrome graphics, try it - works great in two-
-color modes.  Try it with the marksmandel and marksjulia types.
+it works great in two-color modes.  Try it with the marksmandel and
+marksjulia types.
 ;
 ;
 ;
