@@ -881,7 +881,7 @@ A list of the fractal types and their mathematics can be found in the
 are in "A Little Code" in {"Fractals and the PC"}.
 
 Id starts by default with the Mandelbrot set. You can change that by
-using the command-line argument "TYPE=" followed by one of the
+using the command-line argument "type=" followed by one of the
 fractal type names, or by using the <T> command and
 selecting the type - if parameters are needed, you will be prompted for
 them.
