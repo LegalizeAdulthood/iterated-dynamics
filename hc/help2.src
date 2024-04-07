@@ -1162,27 +1162,27 @@ Each one gives rise to a new point on the Julia Set, so each is a good
 choice.  This series of choices defines a binary decision tree, each
 point on the Julia Set giving rise to two potential child points.
 There are many interesting ways to traverse a binary tree, among them
-Breadth first, Depth first (left or negative first), Depth first (right
+breadth first, depth first (left or negative first), depth first (right
 or positive first), and completely at random.  It turns out that most
 traversal methods lead to the same or similar pictures, but that how the
 image evolves as the orbits trace it out differs wildly depending on the
 traversal method chosen.  As far as we know, this fact is an original
-discovery by Michael Snyder, and version 18.2 of FRACTINT was its first
-publication.
+discovery by Michael Snyder, andversion 18.2 of Id's ancestor, FRACTINT,
+was its first publication.
 
 Pick a Julia constant such as Z(0) = (-.74543, .11301), the popular
-Seahorse Julia, and try drawing it first Breadth first, then Depth first
-(right first), Depth first (left first), and finally with Random Walk.
+Seahorse Julia, and try drawing it first breadth first, then depth first
+(right first), depth first (left first), and finally with random walk.
 
 Caveats: the video memory is used in the algorithm, to keep track of
 how many times each pixel has been visited (by changing it's color).
 Therefore the algorithm will not work well if you zoom in far enough that
 part of the Julia Set is off the screen.
 
-Bugs:   Not working with Disk Video.
-        Not resumeable.
+This method has the limitation that it does not work with disk video
+modes and it is not resumable.
 
-The <J> key toggles between the Inverse Julia orbit and the
+The <J> key toggles between the inverse Julia orbit and the
 corresponding Julia escape time fractal.
 ;
 ;
