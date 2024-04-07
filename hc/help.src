@@ -291,6 +291,8 @@ Version 1.0:
   compatability with old behavior, use FRACTINT.
 - Printing an image has been removed.  Use your operating system for that.
   :)
+- The monitorwidth parameter was renamed to stereowidth.  The old parameter
+  name is still accepted but will be deprecated in a future release.
 - The following parameter file commands are deprecated and support will be
   removed in a future release.  In this release the arguments are parsed
   and validated and the results ignored.\

@@ -271,7 +271,7 @@
   haze=nnn                 sets haze for distant objects if fullcolor=1
   background=nn/nn/nn      sets the TGA background color as rr/gg/bb
   lightname=filename       fullcolor output file name, default FRACT001.TGA
-  monitorwidth=nnn         monitor width in inches (for RDS only so far)
+  stereowidth=nnn          image width in inches (for RDS only so far)
 ;
 ;
 ~Topic=Introduction to Parameters
@@ -532,7 +532,7 @@ use "Printing Id Documentation" from the main help index.
 MAXHISTORY=<nnn>\
 Id maintains a list of parameters of the past 10 images that you
 generated in the current Id session. You can revisit these images
-using the <h> and <Ctrl+h> commands. The maxhistory command allows you
+using the <h> and <Ctrl+H> commands. The maxhistory command allows you
 to set the number of image parameter sets stored in memory. The tradeoff
 is between the convenience of storing more images and memory use. Each
 image in the circular history buffer takes up over 1200 bytes, so the

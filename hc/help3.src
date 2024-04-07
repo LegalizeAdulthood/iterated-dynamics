@@ -630,11 +630,11 @@ try to load altern.map and abort if the map file cannot be found.
 ;
 ~Topic=Random Dot Stereograms (RDS), Label=HELP_RDS
 
-Random Dot Stereograms (RDS) are a way of encoding stereo
+Random dot stereograms (RDS) are a way of encoding stereo
 images on a flat screen.  Id can convert any image to a RDS using
 either the color number in the current palette or the grayscale value as
-depth.  Try these steps.  Generate a plasma fractal using the 640x480x256 video
-mode.  When the image on the screen is complete, press <Ctrl+s> ("s" for
+depth.  Try these steps.  Generate a plasma fractal using the 256 color video
+mode.  When the image on the screen is complete, press <Ctrl+S> ("S" for
 "Stereo"), and press <Enter> at the "RDS Parameters" screen prompt to accept
 the defaults. (More on the parameters in a moment.) The screen will be
 converted into a seemingly random collection of colored dots.  Relax your eyes,
@@ -642,11 +642,11 @@ looking through the screen rather than at the screen surface.  The image will
 (hopefully) resolve itself into the hills and valleys of the 3D Plasma
 fractal.
 
-Because pressing the two-keyed <Ctrl+s> gets tiresome after a while, we have
-made <k> key a synonym for <Ctrl+s> for convenience.  Don't get too attached
-to <k> though; we reserve the right to reuse it for another purpose later.
+Because pressing the two-keyed <Ctrl+S> gets tiresome after a while, we have
+made <K> key a synonym for <Ctrl+S> for convenience.  Don't get too attached
+to <K> though; we reserve the right to reuse it for another purpose later.
 
-The RDS feature has five and sometimes six parameters.  Pressing <Ctrl+s>
+The RDS feature has five and sometimes six parameters.  Pressing <Ctrl+S>
 always takes you to the parameter screen.
 
 The first parameter allows you to control the depth effect.  A larger value
@@ -655,11 +655,8 @@ negative, the high and low areas of the image are reversed.  If your RDS
 image is streaky try either a lower depth factor or a higher resolution.
 
 The second parameter indicates the overall width in inches of the image on
-your monitor or printout.  The default value of 10 inches is roughly the width
-of an image on a standard 14" to 16" monitor.  This value does not normally
-need to be changed for viewing images on standard monitors.  However, if your
-monitor or image hardcopy is much wider or narrower than 10 inches (25 cm),
-and you have trouble seeing the image, enter the image width in inches.  The
+your monitor.  The default value is 10 inches.  If you're
+having trouble seeing the image, enter the image width in inches.  The
 issue here is that if the widest separation of left and right pixels is
 greater than the physical separation of your eyes, you will not be able to
 fuse the images.  Conversely, a too-small separation may cause your eyes to
@@ -667,7 +664,7 @@ hyper-converge (fuse the wrong pixels together).  A larger width value reduces
 the width between left and right pixels.  You can use the calibration feature
 to help set the width parameter - see below.  Once you have found a good width
 setting, you can place the value in your sstools.ini file with the command
-monitorwidth=<nnn>.
+stereowidth=<nnn>.
 
 The third parameter allows you to control the method use to extract depth
 information from the original image.  If your answer "no" at the "Use Grayscale
@@ -681,7 +678,7 @@ calibration bars to the middle or the top of the image, or have the bars
 initially turned off.  Use this feature to help you adjust your eye's
 convergence to see the image.  You will see two vertical bars on the screen.
 You can turn off and on these bars with the <Enter> or <Space> keys after
-generating the RDS image.  If you save an RDS image by pressing <s>, if the
+generating the RDS image.  If you save an RDS image by pressing <S>, if the
 bars are turned on at the time, they become a permanent part of the image.
 
 As you relax your eyes and look past the screen, these bars will appear as
@@ -703,8 +700,8 @@ bars will turn to a more visible color.
 
 The fifth parameter asks if you want to use an image map GIF file instead of
 using random dots.  An image map can give your RDS image a more interesting
-background texture than the random dots.  If you answer "yes" at the 'Use
-image map?' prompt, Id will present you with a file selection list of GIF
+background texture than the random dots.  If you answer "yes" at the "Use
+image map?" prompt, Id will present you with a file selection list of GIF
 images.  Id will then go ahead and transform your original image to
 RDS using the selected image map to provide the "random" dots.
 
@@ -720,10 +717,10 @@ RDS image, the image map will repeated to fill the space.  If the image map
 is larger, just the upper left corner of the image map will be used.
 
 The original image you are using for your stereogram is saved, so if you want
-to modify the stereogram parameters and try again, just press <Ctrl+s> (or <k>)
+to modify the stereogram parameters and try again, just press <Ctrl+S> (or <K>)
 to get the parameter screen, changes the parameters, and press <Enter>.  The
 original image is restored and an RDS transform with the revised parameters is
-performed.  If you press <s> when viewing an RDS image, after the RDS image is
+performed.  If you press <S> when viewing an RDS image, after the RDS image is
 saved, the original is restored.
 
 Try the RDS feature with continuous potential Mandelbrots as well as plasma
