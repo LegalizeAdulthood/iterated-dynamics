@@ -1783,10 +1783,10 @@ A variant is the implicit Euler approximation:
          y(n+1) = y(n) + dt*f(x(n))\
          x(n+1) = x(n) - dt*f(y(n+1))\
 This variant results in complex orbits.  The implicit Euler approximation
-is selected by entering dt<0.
+is selected by entering dt < 0.
 
 There are two options that have unusual effects on these fractals.  The
-Orbit Delay value controls how many initial points are computed before
+orbit delay value controls how many initial points are computed before
 the orbits are displayed on the screen.  This allows the orbit to settle
 down.  The outside=summ option causes each pixel to increment color every
 time an orbit touches it; the resulting display is a 2-d histogram.
