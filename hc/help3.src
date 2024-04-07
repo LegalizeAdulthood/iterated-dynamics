@@ -730,29 +730,25 @@ For a summary of keystrokes in RDS mode, see {RDS Commands}
 ;
 ;
 ;
-~Topic=Palette Maps, Label=HELP_COLORMAP
+~Topic=Color Maps, Label=HELP_COLORMAP
 
-If you have a VGA, MCGA, Super-VGA, 8514/A, XGA, TARGA, or TARGA+ video
-adapter, you can save and restore color palettes for use
+You can save and restore color palettes for use
 with any image.  To load a palette onto an existing image, use
 the <L> command in color-cycling or palette-editing mode.  To save a
 palette, use the <S> command in those modes.  To change the default
 palette for an entire run, use the command line "map=" parameter.
 
-The default filetype for color-map files is ".MAP".
+The default filename extension for color-map files is ".map".
 
 These color-maps are ASCII text
 files set up as a series of RGB triplet values (one triplet per
 line, encoded as the red, green, and blue [RGB] components of the color).
-
-Note that .MAP file color values are in GIF format - values go from 0 (low) to
-255 (high), so for a VGA adapter they get divided by 4 before being
-stuffed into the VGA's Video-DAC registers (so '6' and '7' end up
-referring to the same color value).
+Map file color values are integers - values go from 0 (low) to
+255 (high).
 ~OnlineFF
 
 ~Format-
-Id is distributed with some sample .MAP files:
+Id is distributed with some sample .map files:
    altern.map    the famous "Peterson-Vigneau Pseudo-Grey Scale"
    blues.map     for rainy days, by Daniel Egnor
    chroma.map    general purpose, chromatic

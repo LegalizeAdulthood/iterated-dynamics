@@ -27,7 +27,7 @@
 
    { Doodads\, Bells\, and Whistles }         { Common Problems }
    { "3D" Images }
-   { Palette Maps }                         { Bibliography }
+   { Color Maps }                           { Bibliography }
                                           { Other Programs }
    { Startup Parameters\, Parameter Files }  { Revision History }
    { Batch Mode }
@@ -117,7 +117,7 @@
 
 {3.   , 0, Doodads\, Bells\, and Whistles, FF}
 {3.1  , 1, "Drawing Method"}
-{3.2  , 1, "Palette Maps"}
+{3.2  , 1, "Color Maps"}
 {3.3  , 1, "Autokey Mode"}
 {3.4  , 1, "Distance Estimator Method"}
 {3.5  , 1, "Inversion"}
@@ -1597,11 +1597,11 @@ altern.map, supplied with the program.
 
 <L>\
 Pause and load an external color map (.map file).  Several .map files are
-supplied with Id.  See {Palette Maps}.
+supplied with Id.  See {Color Maps}.
 
 <S>\
-Pause, prompt for a filename, and save the current palette to the named
-file (.map assumed).  See {Palette Maps}.
+Pause, prompt for a filename, and save the current color palette to the named
+file (.map assumed).  See {Color Maps}.
 ;
 ;
 ;
@@ -1769,11 +1769,11 @@ Restore the palette from a temporary save area.  If you haven't previously
 saved a palette for the function key, you'll get a simple grey scale.
 
 <L>\
-Pause and load an external color map (.map file).  See {Palette Maps}.
+Pause and load an external color map (.map file).  See {Color Maps}.
 
 <S>\
-Pause, prompt for a filename, and save the current palette to the named
-file (.map assumed).  See {Palette Maps}.
+Pause, prompt for a filename, and save the current color palette to the named
+file (.map assumed).  See {Color Maps}.
 
 <I>\
 Invert frame colors.  With some colors the palette is easier to see when

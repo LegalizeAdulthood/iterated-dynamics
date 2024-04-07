@@ -853,7 +853,7 @@ default color map of your video adapter. Requires a VGA or higher adapter.
 The difference
 between this argument and an alternate map read in via <L> in color-
 command mode is that this one applies to the entire run.
-See {Palette Maps}.
+See {Color Maps}.
 
 COLORS=@filename|colorspecification\
 Sets colors for the current image, like the <L> function in color cycling
@@ -862,7 +862,7 @@ COLORS= do not replace the default - when you next select a new fractal
 type, colors will revert to their defaults.\
 
 COLORS=@filename tells Id to use a color map file named "filename".
-See {Palette Maps}.\
+See {Color Maps}.\
 
 COLORS=colorspecification specifies the colors directly. The value of
 "colorspecification" is rather long (768 characters for 256 color modes),
