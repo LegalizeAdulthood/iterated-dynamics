@@ -2389,7 +2389,7 @@ Wentian Li, Computers & Graphics, Volume 13, Number 4.
 ~Topic=Ant Automaton, Label=HT_ANT
 (type=ant)
 
-This fractal type is the generalized Ant Automaton described in the "Computer
+This fractal type is the generalized ant automaton described in the "Computer
 Recreations" column of the July 1994 Scientific American.  The article
 attributes this automaton to Greg Turk of Stanford University, Leonid A.
 Bunivomitch of the Georgia Institute of Technology, and S. E. Troubetzkoy of
@@ -2411,14 +2411,14 @@ Id's 2nd parameter is a maximum iteration to guarantee that the fractal
 will terminate.
 
 The 3rd parameter is the number of ants (up to 256).  If you select 0 ants,
-then the number oif ants is random.
+then the number of ants is random.
 
 The 4th paramter allows you to select ant type 1 (the original), or type 2.
 
 The 5th parameter determines whether the ant's progress stops when the edge
 of the screen is reaches (as in the original implementation), or whether the
 ant's path wraps to the opposite side of the screen.  You can slow down the
-ant to see her better using the <p> screen Orbit Delay - try 10.
+ant to see her better using the <p> screen orbit delay - try 10.
 
 The 6th parameter accepts a random seed, allowing you to duplicate images
 using random values (empty rule string or 0 maximum ants.
@@ -2428,15 +2428,15 @@ then suddenly marches off in a straight line.  This happens for many other
 rule strings.  The default 1100 produces symmetrical images.
 
 If the screen initially contains an image, the path of the ant changes.  To
-try this, generate a fractal, and press <Ctrl+a>.  Note that images
+try this, generate a fractal, and press <Ctrl+A>.  Note that images
 seeded with an image are not (yet) reproducible in PAR files.  When started
-using the <Ctrl+a> keys, after the ant is finished the default fractal
+using the <Ctrl+A> keys, after the ant is finished the default fractal
 type reverts to that of the underlying fractal.
 
 ~Label=HELP_ANT_COMMANDS
-Special keystrokes are in effect during the ant's march.  The <space> key
-toggles a step-by-step mode.  When in this mode, press <enter> to see each step
-of the ant's progress.  When orbit delay (on <p> screen) is set to 1, the step
+Special keystrokes are in effect during the ant's march.  The <Space> key
+toggles a step-by-step mode.  When in this mode, press <Enter> to see each step
+of the ant's progress.  When orbit delay (on <P> screen) is set to 1, the step
 mode is the default.
 
 If you press the right or left arrow during the ant's journey, you can
@@ -2444,7 +2444,7 @@ adjust the orbit delay factor with the arrow keys (increment by 10) or
 <Ctrl+Arrow> keys (increment by 100).  Press any other key to get out of the
 orbit delay adjustment mode.  Higher values cause slower motion.  Changed values
 are not saved after the ant is finished, but you can set the orbit delay
-value in advance from the <p> screen.
+value in advance from the <P> screen.
 ;
 ;
 ~Topic=Test Stub, Label=HT_TEST
