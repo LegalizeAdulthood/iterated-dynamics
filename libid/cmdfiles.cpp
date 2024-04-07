@@ -1157,10 +1157,6 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
             g_logical_screen_y_size_dots = g_logical_screen_y_dots - 1;
             calcfracinit();
             make_batch_file();
-#if !defined(XFRACT)
-            ABORT(0, "Don't call standard I/O without a console on Windows");
-            _ASSERTE(0 && "Don't call standard I/O without a console on Windows");
-#endif
             goodbye();
         }
     } // end of commands allowed only at startup
