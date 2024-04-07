@@ -2511,24 +2511,24 @@ the passes=o option to work correctly it is necessary to leave the result
 of the orbit calculation in the variable z.
 
 ~OnlineFF
-Sequential processing of the formula can be altered with the flow control\
-instructions
+Sequential processing of the formula can be altered with the flow control
+instructions:
 
-    IF(expr1)\
+    if (expr1)\
       statements\
-    ELSEIF(expr2)\
+    elseif (expr2)\
        statements\
     .\
     .\
-    ELSEIF(exprn)\
+    elseif (exprn)\
        statements\
-    ELSE\
+    else\
       statements\
-    ENDIF\
+    endif\
 
-where the expressions are evaluated and the statements executed are those\
-immediately following the first "true" expression (the real part of the\
-complex variable being nonzero).  Nesting of IF..ENDIF blocks is permitted.\
+where the expressions are evaluated and the statements executed are those
+immediately following the first "true" expression (the real part of the
+complex variable being nonzero).  Nesting of if..endif blocks is permitted.
 
 ~OnlineFF
 ~Format-
@@ -2554,8 +2554,10 @@ complex variable being nonzero).  Nesting of IF..ENDIF blocks is permitted.\
                      coordinates as a large checker board, whitesq is (1,0)
                      for the white squares and (0,0) for the black ones.
 ~OnlineFF
+~Doc-
           Predefined Variables (Continued)
           --------------------------------------------
+~Doc+
           ismand     1 (true) by default, changes to 0 when the Mandelbrot/
                      Julia SPACE toggle is pressed.  This allows writing
                      formulas that have both "Mandelbrot" and "Julia" behavior.
@@ -2577,8 +2579,10 @@ complex variable being nonzero).  Nesting of IF..ENDIF blocks is permitted.\
           4          + (addition), - (subtraction)
           5          = (assignment)
 ~OnlineFF
+~Doc-
           Precedence (Continued)
           --------------------------------------------
+~Doc+
           6          < (less than), <= (less than or equal to)
                      > (greater than), >= (greater than or equal to)
                      == (equal to), != (not equal to)
@@ -2636,7 +2640,8 @@ A formula containing one of the predefined variables "maxit", "scrnpix" or
 The rounding functions must be used cautiously; formulas that depend on
 exact values of numbers will not work reliably in all cases.  For example,
 in floating point mode, trunc(6/3) returns 1 while trunc(6/real(3)) returns
-2.\
+2.
+
 Note that if x is an integer, floor(x) = ceil(x) = trunc(x) = round(x) = x.
 
 Remember that when using integer math there is a limited dynamic range, so
@@ -2657,8 +2662,8 @@ XAXIS_NOIMAG\
 These will force the symmetry even if no symmetry is actually present, so try
 your formulas without symmetry before you use these.
 
-For mathematical formulas of functions used in the parser language, see\
-{ Trig Identities}
+For mathematical formulas of functions used in the parser language, see
+{Trig Identities}
 ;
 ;
 ~Topic=Frothy Basins, Label=HT_FROTH
