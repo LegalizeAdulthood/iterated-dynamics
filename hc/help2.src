@@ -2460,12 +2460,12 @@ Id, just rewrite the function in testpt.cpp (or use the prototype
 function there, which is a simple M-set implementation) with an algorithm
 that computes a color based on a point in the complex plane.
 
-After you get it working, send your code to one of the authors and we
-might just add it to the next release of Id, with full credit to
-you.  Our criteria are: 1) an interesting image and 2) a formula
+After you get it working, send your code as a pull request on our github
+project and we might just add it to the next release of Id, with full
+credit to you.  Our criteria are: 1) an interesting image and 2) a formula
 significantly different from types already supported. (Bribery may also
 work.  This author is completely honest, but I don't trust those other
-guys.) Be sure to include an explanation of your algorithm and the
+guys.)  Be sure to include an explanation of your algorithm and the
 parameters supported, preferably formatted as you see here to simplify
 folding it into the documentation.
 ;
