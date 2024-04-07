@@ -2149,8 +2149,8 @@ goes forever!  The equations that generate this strange pattern perform the
 mathematical equivalent of repeated stretching and folding, over and over
 again.
 
-             xnew =  1 + y - a*x*x\
-             ynew =  b*x\
+             xnew = 1 + y - a*x*x\
+             ynew = b*x\
 
 The default parameters are a=1.4 and b=.3.
 ;
