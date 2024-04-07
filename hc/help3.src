@@ -322,7 +322,7 @@ reflection. (This byway of art history may be a useful defense when your
 friends and family give you odd looks for staring at fractal images color-
 cycling on a CRT.)
 
-The Inversion option performs a related transformation on most of the
+The inversion option performs a related transformation on most of the
 fractal types.  You define the center point and radius of a circle;
 Id maps each point inside the circle to a corresponding point
 outside, and vice-versa.  This is known to mathematicians as inverting (or
