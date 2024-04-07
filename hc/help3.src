@@ -1236,7 +1236,7 @@ colors by randomizing them and reduce the banding that occurs with some
 maps.  Select the value of randomize to between 0 (for no effect) and 7 (to
 randomize your colors almost beyond use). 3 is a good starting point.
 
-That's all for this screen.  Press enter for these parameters and the
+That's all for this screen.  Press <Enter> for these parameters and the
 next and final screen will appear (honestly!).
 ;
 ;
