@@ -1285,17 +1285,17 @@ initialized to the complex value corresponding to the current pixel.  Our
 reasoning was that "Mandelbrots" are maps of the corresponding "Julias".
 Using this scheme each pixel of a "Mandelbrot" is colored the same as the
 Julia set corresponding to that pixel.  However, Kevin Allen informs us
-that the MANDELLAMBDA set appears in the literature with z(0) initialized
+that the mandellambda set appears in the literature with z(0) initialized
 to a critical point (a point where the derivative of the formula is zero),
 which in this case happens to be the point (.5,0).  Since Kevin knows more
 about Dr. Mandelbrot than we do, and Dr. Mandelbrot knows more about
-fractals than we do, we defer!  Id calculates MANDELAMBDA Dr. Mandelbrot's
-way instead of our way.  But ALL THE OTHER "Mandelbrot" sets in Id are
-still calculated OUR way!  (Fortunately for us, for the classic Mandelbrot
+fractals than we do, we defer!  Id calculates mandelambda Dr. Mandelbrot's
+way instead of our way.  But all the other "Mandelbrot" sets in Id are
+still calculated our way!  (Fortunately for us, for the classic Mandelbrot
 Set these two methods are the same!)
 
 Well now, folks, apart from questions of faithfulness to fractals named in
-the literature (which we DO take seriously!), if a formula makes a
+the literature (which we do take seriously!), if a formula makes a
 beautiful fractal, it is not wrong.  In fact some of the best fractals in
 Id are the results of mistakes!  Nevertheless, thanks to Kevin for keeping
 us accurate!
