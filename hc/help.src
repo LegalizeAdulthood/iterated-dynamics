@@ -273,7 +273,7 @@ Version 1.0:
 - Most of the changes involve internal restructuring of the DOS FRACTINT code
   to build a bridge to the future.
 - Iterated Dynamics is a native 64-bit Windows program written in C++ with a
-  CMake build system.
+  CMake build system and vcpkg for obtaining 3rd party library dependencies.
 - All assembly language code has been removed and, where practical, replaced
   with C++ code that performs the same function.
 - A CGA text display is simulated for all prompt screens and help
