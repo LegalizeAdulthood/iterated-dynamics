@@ -2114,7 +2114,7 @@ Try changing these a little at a time to see the result.
 ;
 ;
 ~Topic=Rossler Attractors, Label=HT_ROSS
-(type=rossler3D)
+(type=rossler3d)
 
 This fractal is named after the German Otto Rossler, a non-practicing
 medical doctor who approached chaos with a bemusedly philosophical
