@@ -1554,7 +1554,7 @@ One of the most remarkable spin-offs of fractal geometry is the ability to
 a set of functions that map a region of two-dimensional space onto itself.
 In principle (and increasingly in practice), a scene of any level of
 complexity and detail can be stored as a handful of numbers, achieving
-amazing "compression" ratios... how about a super-VGA image of a forest,
+amazing "compression" ratios... how about an image of a forest,
 more than 300,000 pixels at eight bits apiece, from a 1-KB "seed" file?
 
 Again, Michael Barnsley and his co-workers at the Georgia Institute of
@@ -1584,7 +1584,7 @@ their meaning see {"Rectangular Coordinate Transformation"}.
 You can enter these values from the command line using:
 
 rotation=xrot/yrot/zrot       (try 30/30/30)\
-shift=xshift/yshift           (shifts BEFORE applying perspective!)\
+shift=xshift/yshift           (shifts before applying perspective!)\
 perspective=viewerposition    (try 200)\
 
 Alternatively, entering <I> from main screen will allow you to modify
@@ -1598,14 +1598,14 @@ mode (see {"Stereo 3D Viewing"}),
 putting on red/blue "funny glasses", and watching the fern develop
 with full depth perception right there before your eyes!
 
-This feature USED to be dedicated to Bruce Goren, as a bribe to get him to
-send us MORE knockout stereo slides of 3D ferns, now that we have made it
+This feature used to be dedicated to Bruce Goren, as a bribe to get him to
+send us more knockout stereo slides of 3D ferns, now that we have made it
 so easy!  Bruce, what have you done for us *LATELY*??  (Just kidding,
 really!)
 
 Each line in an IFS definition (look at id.ifs with your editor for
 examples) contains the parameters for one of the generating functions,
-e.g. in FERN:
+e.g. in fern:
 ~Format-
    a    b     c    d    e    f    p
  ___________________________________
@@ -1639,10 +1639,10 @@ a b c d e f g h i j k l p, defining:
 ;which you can then merge into an XXX.IFS file for future use with
 ;Id.
 ;
-The program FDESIGN can be used to design IFS fractals - see
-{=@FDESIGN FDESIGN}.
+The program FDesign can be used to design IFS fractals - see
+{=@FDESIGN FDesign}.
 
-You can save the points in your IFS fractal in the file ORBITS.RAW which is
+You can save the points in your IFS fractal in the file orbits.raw which is
 overwritten each time a fractal is generated.  The program Acrospin can
 read this file and will let you view the fractal from any angle using
 the arrow keys.  See {=@ACROSPIN Acrospin}.
