@@ -391,7 +391,10 @@ See {"Parameter Save/Restore Commands"} for details about the <@> and
 
 Parameters must be separated by one or more spaces.
 
-Upper and lower case can be used in keywords and values.
+Upper and lower case can be used in keywords and values.  In the
+parameter reference that follows, the name is shown in upper case.
+When mentioned in other contexts the name is generally shown in
+lower case.
 
 Anything on a line following a ; (semi-colon) is ignored, i.e. is a
 comment.
@@ -419,7 +422,7 @@ resumes reading its own command line -- i.e., "id maxiter=250
 @myfile passes=1" is legal.  This option is only valid on the command
 line, as Id is not clever enough to deal with multiple indirection.
 
-@FILENAME/GROUPNAME\
+@FILENAME/groupname\
 Like @FILENAME, but reads a named group of parameters from a parameter
 file.  See {"Parameter Files and the <@> Command"}.
 
@@ -436,8 +439,8 @@ FILENAME=[name]\
 Causes Id to read the named file, which must either have been saved
 from an earlier Id session or be a generic GIF file, and use that as
 the starting point, bypassing the initial information screens.  The
-filetype is optional and defaults to .GIF.  Non-Id GIF files are
-restored as fractal type "plasma".\
+filetype is optional and defaults to .gif.  Non-Id GIF files are
+restored as fractal type "plasma".
 
 On the command line you may omit filename= and just give the file name.
 
@@ -454,7 +457,7 @@ opened in the current directory.
 ~ONLINEFF
 MAKEPAR=parfile/entryname\
 This command invokes a batch facility to copy fractal and color information
-stored in GIF files to PAR format.  The syntax is:\
+stored in GIF files to par format.  The syntax is:\
      id filename.gif makepar=parfile.par/entryname >> makepar.log\
 The entryname is optional and defaults to the name of the GIF filename if
 absent.  Other parameters can appear before the makepar= command, but
