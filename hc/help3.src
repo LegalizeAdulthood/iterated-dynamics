@@ -61,7 +61,7 @@ a low resolution image with large blocky pixels filling the whole screen than
 a small low resolution image such as you get with the <v> (View Windows)
 command. Note that on the <x> screen you can't directly type g1 or g2. Press g
 repeatedly until you get the option you want, or else use the left or right
-cursor keys.
+arrow keys.
 
 Boundary Tracing ("b"), which only works accurately with fractal types
 (such as the Mandelbrot set, but not the Newton type) that do not contain
@@ -199,7 +199,7 @@ help:
   Use a unique name each time you run so that you don't overwrite prior
   files.
 
-  When in record mode, avoid using the cursor keys to select filenames,
+  When in record mode, avoid using the arrow keys to select filenames,
   fractal types, formula names, etc. Instead, try to type in names. This
   will ensure that the exact item you want gets chosen during playback
   even if the list is different then.
@@ -894,7 +894,7 @@ Wars" series...
 After hitting <3> and getting past the filename prompt and video mode
 selection, you're presented with a "3d Mode Selection" screen.  If you
 wish to change the default for any of the following parameters,
-use the cursor keys to move through the menu. When you're
+use the arrow keys to move through the menu. When you're
 satisfied press <Enter>.
 
 Preview Mode:

@@ -231,7 +231,7 @@ Use the following keys in help mode:
 
    Tab/Shift+Tab   Move to the next/previous hot-link.
 
-   \24 \25 \27 \26         Move to a hot-link.
+   Arrow keys      Move to a hot-link.
 
    Home/End        Move to the first/last hot-link.
 ;
@@ -396,12 +396,9 @@ The program displays an initial "credits" screen.  If Id doesn't start properly,
 please see {Common Problems}.
 
 Hitting <Enter> gets you from the initial screen to the main menu.  You can
-select options from the menu by moving the highlight with the cursor arrow
-keys
-~Doc-
-(\24 \25 \27 \26)
-~Doc+
-and pressing <Enter>, or you can enter commands directly.
+select options from the menu by moving the highlight with the arrow keys
+(<Left> <Right> <Up> <Down>) and pressing <Enter>, or you can enter commands
+directly.
 
 As soon as you select a video mode, Id begins drawing an image - the
 "full" Mandelbrot set if you haven't selected another fractal type.
@@ -526,8 +523,8 @@ Commands marked with an '*' are also available at the credits screen.
                    When active already, shrink it
    PageDown        Expand the Zoom Box
                    Expanding past the screen size cancels the Zoom Box
-   \24 \25 \27 \26         Pan (Move) the Zoom Box
-   Ctrl+ \24 \25 \27 \26   Fast-Pan the Zoom Box (may require an enhanced keyboard)
+   Arrow keys      Pan (Move) the Zoom Box
+   Ctrl+Arrow keys Fast-Pan the Zoom Box (may require an enhanced keyboard)
    Enter           Redraw the Screen or area inside the Zoom Box
    Ctrl+Enter      'Zoom-out' - expands the image so that your current
                    image is positioned inside the current zoom-box location.
@@ -751,14 +748,10 @@ size removes the zoom box from the display.  Moving the mouse away from you
 or toward you while holding the left button down performs the same
 functions as these keys.
 
-Using the cursor "arrow" keys
-~Doc-
-(\24 \25 \27 \26)
-~Doc+
-or moving
+Using the "arrow" keys (<Left> <Right> <Up> <Down>) or moving
 the mouse without holding any buttons down, moves the zoom box.
 
-Holding <Ctrl> while pressing cursor "arrow" keys moves the box 5 times
+Holding <Ctrl> while pressing arrow keys moves the box 5 times
 faster.
 
 Panning: If you move a fullsize zoombox and don't change anything else
@@ -866,7 +859,7 @@ Once you have selected a file to restore, a summary description of the
 file is shown, with a video mode selection list.  Usually you can just
 press <Enter> to go past this screen and load the image.  Other choices
 available at this point are:\
-  Cursor keys: select a different video mode\
+  Arrow keys: select a different video mode\
   <Tab>: display more information about the fractal\
   <F1>: for help about the "err" column in displayed video modes\
 If you restore a file into a video mode which does not have the same pixel
@@ -1282,7 +1275,7 @@ in the id.cfg file.  See {"Customized Video Modes\, id.cfg"} to customize the
 set of supported video modes.
 
 Any supported video mode can be selected by going to the "Select Video Mode"
-screen (from main menu or by using <Delete>), then using the cursor up and down
+screen (from main menu or by using <Delete>), then using the <Up> and <Down>
 arrow keys and/or <PageUp> and <PageDown> keys to highlight the desired mode,
 then pressing <Enter>.
 
@@ -1334,7 +1327,7 @@ their position shown on screen by a box (or crosshairs if the box would be
 too small).  See also {Browser Parameters} for more on how this is done.
 
 One outline flashes, the selected outline can be changed by using the
-cursor keys.  At the moment the outlines are selected in the order that
+arrow keys.  At the moment the outlines are selected in the order that
 they appear in your directory, so don't worry if the flashing window jumps
 all over the place!
 
@@ -1539,7 +1532,7 @@ that you are still in this mode.  The keyboard commands available once
 you've entered color-cycling. are described below.
 
 <F1>\
-Bring up a HELP screen with commands specific to color cycling mode.
+Bring up a help screen with commands specific to color cycling mode.
 
 <Esc>\
 Leave color-cycling mode.
@@ -1646,7 +1639,7 @@ Use the <E> key to enter palette-editing mode from a displayed image or
 from the main menu.
 
 When this mode is entered, an empty palette frame is displayed.  You can
-use the cursor keys to position the frame outline, and <PageUp> and
+use the arrow keys to position the frame outline, and <PageUp> and
 <PageDown> to change its size.  (The upper and lower limits on the size
 depend on the current video mode.)  When the frame is positioned where you
 want it, hit Enter to display the current palette in the frame.
@@ -1676,7 +1669,7 @@ Once the palette frame is displayed and filled in, the following commands
 are available:
 
 <F1>\
-Bring up a HELP screen with commands specific to palette-editing mode.
+Bring up a help screen with commands specific to palette-editing mode.
 
 <Esc>\
 Leave palette-editing mode
@@ -1689,7 +1682,7 @@ display.
 <Left> <Right> <Up> <Down>\
 Move the cross-hair cursor around.  In 'auto' mode (the default) the color
 under the center of the cross-hair is automatically assigned to the active
-color register.  Control-Cursor keys move the cross-hair faster.  A mouse
+color register.  Control-arrow keys move the cross-hair faster.  A mouse
 can also be used to move around.
 
 <R> <G> <B>\
@@ -1783,7 +1776,7 @@ the frame colors are interchanged.
 
 <\\>\
 Move or resize the palette frame.  The frame outline is drawn - it can
-then be repositioned and sized with the cursor keys, <PageUp> and
+then be repositioned and sized with the arrow keys, <PageUp> and
 <PageDown>, just as was done when first entering palette-editing mode.  Hit
 <Enter> when done moving/sizing.
 
@@ -1907,7 +1900,7 @@ the <H> key can be used to hide the palette box and expose the whole image.
   F1               HELP! (Enter help mode and display this screen)
   Esc              Exit from palette editing mode
   H                Hide/unhide the palette frame
-  \24 \25 \27 \26          Move the cross-hair cursor around.  Control-Cursor keys
+  Arrow keys       Move the cross-hair cursor around.  Control-arrow keys
                    move faster.  A mouse can also be used to move around.
   R or G or B      Select the the Red, Green, or Blue component of the
                    active color register for subsequent commands

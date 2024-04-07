@@ -1099,17 +1099,17 @@ take effect in Inverse Julia mode.
 
 <Space>     Generate the escape-time Julia Set corresponding to the cursor\
             position. Only works if fractal is a "Mandelbrot" type.\
-<n>         Numbers toggle - shows coordinates of the cursor on the\
+<N>         Numbers toggle - shows coordinates of the cursor on the\
             screen. Press <n> again to turn off numbers.\
-<p>         Enter new pixel coordinates directly\
-<h>         Hide fractal toggle. Works only if View Windows is turned on\
+<P>         Enter new pixel coordinates directly\
+<H>         Hide fractal toggle. Works only if View Windows is turned on\
             and set for a small window (such as the default size.) Hides \
             the fractal, allowing the orbit to take up the whole screen. \
             Press <h> again to uncover the fractal.\
-<s>         Saves the fractal, cursor, orbits, and numbers.\
+<S>         Saves the fractal, cursor, orbits, and numbers.\
 <<> or <,>  Zoom inverse julia image smaller.\
 <>> or <.>  Zoom inverse julia image larger.\
-<z>         Restore default zoom.\
+<Z>         Restore default zoom.\
 
 The Julia Inverse window is only implemented for the classic Mandelbrot
 (type=mandel). For other "Mandelbrot" types <space> turns on the cursor
@@ -1665,7 +1665,7 @@ The program FDESIGN can be used to design IFS fractals - see
 You can save the points in your IFS fractal in the file ORBITS.RAW which is
 overwritten each time a fractal is generated. The program Acrospin can
 read this file and will let you view the fractal from any angle using
-the cursor keys. See {=@ACROSPIN Acrospin}.
+the arrow keys. See {=@ACROSPIN Acrospin}.
 ;
 ;
 ~Topic=Sierpinski Gasket, Label=HT_SIER
