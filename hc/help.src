@@ -2143,7 +2143,7 @@ the <H> key can be used to hide the palette box and expose the whole image.
  There now only remains to mention that you can save image sets and restore
  them later to carry on exploring from a different seed image:
  <S> saves and <R> restores as in normal Id operation and the screenfull
- is saved as a single gif file.
+ is saved as a single GIF file.
 
  Have fun!  See {Evolver Commands}.
 ;

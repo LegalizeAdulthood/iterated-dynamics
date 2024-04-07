@@ -456,7 +456,7 @@ MAKEPAR=parfile/entryname\
 This command invokes a batch facility to copy fractal and color information
 stored in GIF files to PAR format.  The syntax is:\
      id filename.gif makepar=parfile.par/entryname >> makepar.log\
-The entryname is optional and defaults to the name of the gif filename if
+The entryname is optional and defaults to the name of the GIF filename if
 absent.  Other parameters can appear before the makepar= command, but
 anything after will ignored.  If the parfile and entryname exist, the entry
 will replace the previous entry.  If the entry doesn't exist, it will be
@@ -1101,7 +1101,7 @@ cannot accept the newer format.  See {GIF Save File Format}.
 DITHER=yes\
 Dither a color file into two colors for display on a b/w display.  This give
 a poor-quality display of gray levels.  Note that if you have a 2-color
-display, you can create a 256-color gif with disk video and then read it
+display, you can create a 256-color GIF with disk video and then read it
 back in dithered.
 
 PARMFILE=[<path>\\][parmfilename]\
@@ -1162,10 +1162,10 @@ coordinates (y/n), explicit x size, and explicit y size, see {"View Window"}.
 
 ~Label=@FASTRESTORE
 FASTRESTORE=yes|no\
-If YES, resets viewwindow to "no" prior to restoring a gif file.  Otherwise,
+If YES, resets viewwindow to "no" prior to restoring a GIF file.  Otherwise,
 images saved in full view will be drawn in reduced view if viewwindows has
 been set to "yes" previously.  Also, when YES, bypasses the warning when
-restoring a gif in a video mode other than the one in which the gif was
+restoring a GIF in a video mode other than the one in which the GIF was
 saved.  Default is NO.  Feature will be useful when cycling through a group
 of gifs in autokey mode.  When combined with askvideo=no, allows loading
 images with the last successfully used video mode.  This is handy when
