@@ -2909,45 +2909,45 @@ lattices, in the context of magnetic renormalisation transformations.
 This kinda stuff is useful in an area of theoretical physics that deals
 with magnetic phase-transitions (predicting at which temperatures a given
 substance will be magnetic, or non-magnetic).  In an attempt to clarify
-the results obtained for Real temperatures (the kind that you and I can
-feel), the study moved into the realm of Complex Numbers, aiming to spot
-Real phase-transitions by finding the intersections of lines representing
-Complex phase-transitions with the Real Axis.  The first people to try
+the results obtained for real temperatures (the kind that you and I can
+feel), the study moved into the realm of complex numbers, aiming to spot
+real phase-transitions by finding the intersections of lines representing
+complex phase-transitions with the real axis.  The first people to try
 this were two physicists called Yang and Lee, who found the situation a
-bit more complex than first expected, as the phase boundaries for Complex
+bit more complex than first expected, as the phase boundaries for complex
 temperatures are (surprise!) fractals.
 
 And that's all the technical (?) background you're getting here!  For more
-details (are you SERIOUS ?!) read "The Beauty of Fractals".  When you
+details (are you serious?!) read "The Beauty of Fractals".  When you
 understand it all, you might like to rewrite this section, before you
 start your new job as a professor of theoretical physics...
 
-In Id terms, the important bits of the above are "Fractals",
-"Complex Numbers", "Formulae", and "The Beauty of Fractals".  Lifting the
-Formulae straight out of the Book and iterating them over the Complex
-plane (just like the Mandelbrot set) produces Fractals.
+In Id terms, the important bits of the above are "fractals",
+"complex numbers", "formulae", and "The Beauty of Fractals".  Lifting the
+formulae straight out of the book and iterating them over the complex
+plane (just like the Mandelbrot set) produces fractals.
 
 The formulae are a bit more complicated than the Z^2+C used for the
-Mandelbrot Set, that's all.  They are :
+Mandelbrot set, that's all.  They are :
 
 ~Format-
                   [               ] 2
                   |  Z^2 + (C-1)  |
-        MAGNET1 : | ------------- |
+        magnet1 : | ------------- |
                   |  2*Z + (C-2)  |
                   [               ]
 
                   [                                         ] 2
                   |      Z^3 + 3*(C-1)*Z + (C-1)*(C-2)      |
-        MAGNET2 : | --------------------------------------- |
+        magnet2 : | --------------------------------------- |
                   |  3*(Z^2) + 3*(C-2)*Z + (C-1)*(C-2) + 1  |
                   [                                         ]
 ~Format+
 
 These aren't quite as horrific as they look (oh yeah ?!) as they only
 involve two variables (Z and C), but cubing things, doing division, and
-eventually squaring the result (all in Complex Numbers) don't exactly
-spell S-p-e-e-d !  These are NOT the fastest fractals in Id!
+eventually squaring the result (all in complex numbers) don't exactly
+spell s-p-e-e-d !  These are not the fastest fractals in Id!
 
 As you might expect, for both formulae there is a single related
 Mandelbrot-type set (magnet1m, magnet2m) and an infinite number of related
@@ -2955,21 +2955,21 @@ Julia-type sets (magnet1j, magnet2j), with the usual toggle between the
 corresponding Ms and Js via the spacebar.
 
 If you fancy delving into the Julia-types by hand, you will be prompted
-for the Real and Imaginary parts of the parameter denoted by C.  The
-result is symmetrical about the Real axis (and therefore the initial image
-gets drawn in half the usual time) if you specify a value of Zero for the
-Imaginary part of C.
+for the real and imaginary parts of the parameter denoted by C.  The
+result is symmetrical about the real axis (and therefore the initial image
+gets drawn in half the usual time) if you specify a value of zero for the
+imaginary part of C.
 
-Id Historical Note:  Another complication (besides the formulae) in
+Id historical note:  Another complication (besides the formulae) in
 implementing these fractal types was that they all have a finite attractor
-(1.0 + 0.0i), as well as the usual one (Infinity).  This fact spurred the
-development of Finite Attractor logic in Id.  Without this code you
+(1.0 + 0.0i), as well as the usual one at infinity.  This fact spurred the
+development of finite attractor logic in Id.  Without this code you
 can still generate these fractals, but you usually end up with a pretty
 boring image that is mostly deep blue "lake", courtesy of Id's
 standard {Periodicity Logic}.
 See {Finite Attractors} for more information on this aspect of Id internals.
 
-(Thanks to Kevin Allen for Magnetic type documentation above).
+(Thanks to Kevin Allen for magnetic type documentation above).
 ;
 ;
 ~Topic=Volterra-Lotka Fractals, Label=HT_VL
