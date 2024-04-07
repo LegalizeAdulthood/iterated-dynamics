@@ -1193,7 +1193,7 @@ The Newton formula is an algorithm used to find the roots of polynomial
 equations by successive "guesses" that converge on the correct value as
 you feed the results of each approximation back into the formula.  It works
 very well -- unless you are unlucky enough to pick a value that is on a
-line BETWEEN two actual roots.  In that case, the sequence explodes into
+line between two actual roots.  In that case, the sequence explodes into
 chaos, with results that diverge more and more wildly as you continue the
 iteration.
 
@@ -1203,8 +1203,7 @@ in response to the prompt.  You will be asked for a parameter, the "order"
 of the equation (an integer from 3 through 10 -- 3 for x^3-1, 7 for x^7-1,
 etc.).  A second parameter is a flag to turn on alternating shades showing
 changes in the number of iterations needed to attract an orbit.  Some
-people like stripes and some don't, as always, Id gives you a
-choice!
+people like stripes and some don't, as always, Id gives you a choice!
 
 The coloring of the plot shows the "basins of attraction" for each root of
 the polynomial -- i.e., an initial guess within any area of a given color
