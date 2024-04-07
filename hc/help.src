@@ -9,8 +9,8 @@
 ;
 ;
 ;
-~Topic=Main Help Index, Label=HELPMENU
-~Label=IDHELP_INDEX
+~Topic=Main Help Index, Label=HELP_MENU
+~Label=HELP_INDEX
 
 ~Format-
    { Using Help }                           { Fractals and the PC }
@@ -464,7 +464,7 @@ see "Command Line Parameters, Parameter Files, Batch Mode" for details.
 ;
 ;
 ;
-~Topic=Summary of Commands, Label=HELPMAIN
+~Topic=Summary of Commands, Label=HELP_MAIN
 ; This topic is online only
 ~Doc-
 
@@ -484,8 +484,8 @@ Commands marked with an '*' are also available at the credits screen.
  * Y               Set extended options and doodads
  * Z               Set fractal type-specific parameters
    P               Set passes options
-   C or + or -     Enter Color-Cycling Mode (see {=HELPCYCLING Color Cycling Commands})
-   E               Enter Palette-Editing Mode (see {=HELPXHAIR Palette Editing Commands})
+   C or + or -     Enter Color-Cycling Mode (see {=HELP_CYCLING Color Cycling Commands})
+   E               Enter Palette-Editing Mode (see {=HELP_PALETTE_EDITOR Palette Editing Commands})
    Spacebar        Mandelbrot/Julia Set toggle.
    Enter           Continue an interrupted calculation (e.g. after a save)
  * F               toggle the floating-point algorithm option ON or OFF
@@ -544,7 +544,7 @@ Commands marked with an '*' are also available at the credits screen.
   L(ook)                   Enter Browsing Mode
 
 {Evolver Commands}
-  Ctrl+E                   Bring up {=HELPEVOL explorer/evolver} control screen
+  Ctrl+E                   Bring up {=HELP_EVOL explorer/evolver} control screen
   Alt+1 ... Alt+7          Enter evolver mode with selected level of
                            mutation: Alt+1 = low level, Alt+7 = maximum.
                            (dont use the keypad, just the 'top row' numbers)
@@ -694,7 +694,7 @@ acknowledged, such as the message shown after you save an image to disk.
 <I>\
 Modify 3D transformation parameters used with 3D fractal types such as
 "Lorenz3D" and 3D "IFS" definitions, including the selection of
-{=HELP3DGLASSES "funny glasses"} red/blue 3D.
+{=HELP_3D_GLASSES "funny glasses"} red/blue 3D.
 
 <A>\
 Convert the current image into a fractal 'starfield'.  See {Starfields}.
@@ -730,7 +730,7 @@ Enter Explorer/Evolver Mode.  See {Evolver Commands}.
 ;
 ;
 ;
-~Topic=Zoom Box Commands, Label=HELPZOOM
+~Topic=Zoom Box Commands, Label=HELP_ZOOM
 
 Zoom Box functions can be invoked while an image is being generated or when
 it has been completely drawn.  Zooming is supported for most fractal types,
@@ -829,7 +829,7 @@ do not support rotation and skewing - nothing happens when you try it.
 ;
 ;
 ;
-~Topic=Image Save/Restore Commands, Label=HELPSAVEREST
+~Topic=Image Save/Restore Commands, Label=HELP_SAVEREST
 
 <S> saves the current image to disk.  All parameters required to recreate
 the image are saved with it.  Progress is marked by colored lines moving
@@ -877,7 +877,7 @@ it will be reduced by using only every Nth pixel during the restore.
 ;
 ;
 ;
-~Topic=Parameter Save/Restore Commands, Label=HELPPARMFILE
+~Topic=Parameter Save/Restore Commands, Label=HELP_PARMFILE
 
 Parameter files can be used to save/restore all options and settings
 required to recreate particular images.  The parameters required to
@@ -998,7 +998,7 @@ The <G> command lets you give a startup parameter interactively.
 ;
 ;
 ;
-~Topic=<X> Options Screen, Label=HELPXOPTS
+~Topic=<X> Options Screen, Label=HELP_X_OPTIONS
 ; This topic is online context-sensitive only.
 
    Passes - see {Drawing Method}\
@@ -1017,7 +1017,7 @@ You can toggle the use of floating-point algorithms on this screen (see
 point is in use is shown on the <Tab> status screen.
 ;
 ;
-~Topic=<Y> Options Screen, Label=HELPYOPTS
+~Topic=<Y> Options Screen, Label=HELP_Y_OPTIONS
 ; This topic is online context-sensitive only.
 
    Finite attractor - see{ Finite Attractors }\
@@ -1031,7 +1031,7 @@ point is in use is shown on the <Tab> status screen.
    Color cycling range - see{ Color Cycling Commands }\
 ;
 ;
-~Topic=<P> Options Screen, Label=HELPPOPTS
+~Topic=<P> Options Screen, Label=HELP_POPTS
 ; This topic is online context-sensitive only.
 
    Periodicity - see{ Passes Parameters }\
@@ -1045,7 +1045,7 @@ point is in use is shown on the <Tab> status screen.
    Orbit Draw Mode - see{ Passes Parameters }\
 ;
 ;
-~Topic=Image Coordinates Screen, Label=HELPCOORDS
+~Topic=Image Coordinates Screen, Label=HELP_COORDS
 ; This topic is online context-sensitive only.
 
 You can directly enter corner coordinates on this screen instead of
@@ -1067,7 +1067,7 @@ only these three values are needed, but the user can also specify the amount
 that the image is stretched, rotated and skewed.
 ;
 ;
-~Topic=Screen Coordinates Screen, Label=HELPSCRNCOORDS
+~Topic=Screen Coordinates Screen, Label=HELP_SCREEN_COORDS
 ; This topic is online context-sensitive only.
 
 You can directly enter corner coordinates on this screen for use with the
@@ -1162,7 +1162,7 @@ turned on.  The following keys take effect in Orbits mode.\
 ;
 ;
 ;
-~Topic=View Window, Label=HELPVIEW
+~Topic=View Window, Label=HELP_VIEW
 
 The <V> command is used to set the view window parameters described below.
 These parameters can be used to:\
@@ -1268,7 +1268,7 @@ Restore in 3D and overlay the result on the current screen.
 ;
 ;
 ;
-~Topic=Video Mode Function Keys, Label=HELPVIDSEL
+~Topic=Video Mode Function Keys, Label=HELP_VIDEO_MODE
 
 The concept of a "video mode" in Id is somewhat of a misnomer.  Id is just
 another GUI program on your desktop and doesn't control the video display
@@ -1309,7 +1309,7 @@ See {"Disk-Video" Modes} for a description of these non-display modes.
 ;
 ;
 ;
-~Topic=Browse Commands, Label=HELPBROWSE
+~Topic=Browse Commands, Label=HELP_BROWSE
 
 The following keystrokes function while browsing an image:\
 
@@ -1400,7 +1400,7 @@ you can get rid of it.
 ;
 ;
 ;
-~Topic=Browser Parameters, Label=HELPBRWSPARMS
+~Topic=Browser Parameters, Label=HELP_BROWSE_PARAMETERS
 
 This Screen enables you to control Id's built in file browsing utility.
 If you don't know what that is see {Browse Commands}.  This screen is
@@ -1452,7 +1452,7 @@ setting smallest image to 0 (see above).
 ;
 ;
 ;
-~Topic=RDS Commands, Label=RDSKEYS
+~Topic=RDS Commands, Label=HELP_RDS_KEYS
 The following keystrokes function while viewing an RDS image:\
 
 <Enter> or <Space>   -- Toggle calibration bars on and off.\
@@ -1517,7 +1517,7 @@ code base has been ported to the Macintosh line of computers.
 ~Topic=Color Cycling Commands, Label=@ColorCycling
 
 ~Doc-
-See {=HELPCYCLING Color Cycling Command Summary} for a summary of commands.
+See {=HELP_CYCLING Color Cycling Command Summary} for a summary of commands.
 
 ~Doc+
 Color-cycling mode is entered with the <C>, <+>, or <-> keys from an image,
@@ -1607,7 +1607,7 @@ file (.map assumed).  See {Palette Maps}.
 ;
 ;
 ;
-~Topic=Color Cycling Command Summary, Label=HELPCYCLING
+~Topic=Color Cycling Command Summary, Label=HELP_CYCLING
 ; This topic is online only
 
 ~Format-
@@ -1636,7 +1636,7 @@ file (.map assumed).  See {Palette Maps}.
 ~Topic=Palette Editing Commands
 
 ~Doc-
-See {=HELPXHAIR Palette Editing Command Summary} for a summary of commands.
+See {=HELP_PALETTE_EDITOR Palette Editing Command Summary} for a summary of commands.
 
 ~Doc+
 Palette-editing mode provides a number of tools for modifying the colors
@@ -1898,7 +1898,7 @@ I hope that you'll find this a useful tool in colouring an image.  Remember that
 the <H> key can be used to hide the palette box and expose the whole image.
 
 ;
-~Topic=Palette Editing Command Summary, Label=HELPXHAIR
+~Topic=Palette Editing Command Summary, Label=HELP_PALETTE_EDITOR
 ; This topic is online only.
 
 ~Format-
@@ -1919,7 +1919,7 @@ the <H> key can be used to hide the palette box and expose the whole image.
   Space            Select the other color register as the active one
   , or .           Rotate the palette one step
   < or >           Rotate the palette continuously (until next keystroke)
-  C                Enter Color-Cycling Mode (see {=HELPCYCLING Color Cycling Commands})
+  C                Enter Color-Cycling Mode (see {=HELP_CYCLING Color Cycling Commands})
   =                Create a smoothly shaded range of colors
   M                Set the gamma value for '='.
 ~FF
@@ -1953,7 +1953,7 @@ the <H> key can be used to hide the palette box and expose the whole image.
 
 ;
 ;
-~Topic=Parameter Explorer/Evolver, Label=HELPEVOL
+~Topic=Parameter Explorer/Evolver, Label=HELP_EVOL
 
  Since Id is such a wonderfully complex program it has more than a few
  parameters to tweak and options to select.  To the inexperienced

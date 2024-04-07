@@ -95,7 +95,7 @@ int get_toggles2()
     uvalues[k].uval.ival = old_rotate_hi;
 
     help_labels const old_help_mode = g_help_mode;
-    g_help_mode = help_labels::HELPYOPTS;
+    g_help_mode = help_labels::HELP_Y_OPTIONS;
     {
         int i = fullscreen_prompt("Extended Options\n"
                               "(not all combinations make sense)",

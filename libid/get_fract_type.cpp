@@ -118,7 +118,7 @@ static fractal_type select_fracttype(fractal_type t)
 
     // setup context sensitive help
     help_labels const old_help_mode = g_help_mode;
-    g_help_mode = help_labels::HELPFRACTALS;
+    g_help_mode = help_labels::HELP_FRACTALS;
     if (t == fractal_type::IFS3D)
     {
         t = fractal_type::IFS;
@@ -451,7 +451,7 @@ int get_fract_params(bool prompt_for_type_params)        // prompt for type-spec
             }
         }
     }
-    else if (help_formula >= help_labels::IDHELP_INDEX)
+    else if (help_formula >= help_labels::HELP_INDEX)
     {
         int c, lines;
         read_help_topic(help_formula, 0, 2000, tstack); // need error handling here ??

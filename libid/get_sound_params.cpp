@@ -59,7 +59,7 @@ get_sound_restart:
         .comment("Press F4 to reset to default values");
 
     oldhelpmode = g_help_mode;
-    g_help_mode = help_labels::HELPSOUND;
+    g_help_mode = help_labels::HELP_SOUND;
     i = builder.prompt("Sound Control Screen", 255);
     g_help_mode = oldhelpmode;
     if (i < 0)
@@ -139,7 +139,7 @@ get_map_restart:
         .comment("Press F4 to reset to default values");
 
     oldhelpmode = g_help_mode; /* this prevents HELP from activating */
-    g_help_mode = help_labels::HELPMUSIC;
+    g_help_mode = help_labels::HELP_MUSIC;
     i = builder.prompt("Scale Mapping Screen", 255);
     g_help_mode = oldhelpmode; /* re-enable HELP */
     if (i < 0)
@@ -197,7 +197,7 @@ get_music_restart:
         .comment("Press F4 to reset to default values");
 
     oldhelpmode = g_help_mode; /* this prevents HELP from activating */
-    g_help_mode = help_labels::HELPMUSIC;
+    g_help_mode = help_labels::HELP_MUSIC;
     i = builder.prompt("FM Synth Card Control Screen", 255);
     g_help_mode = oldhelpmode; /* re-enable HELP */
     if (i < 0)

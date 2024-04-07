@@ -75,7 +75,7 @@ void intro()
     credits[authors.at(i+1)] = oldchar;
     delaymax = 10;
     driver_hide_text_cursor();
-    g_help_mode = help_labels::HELPMENU;
+    g_help_mode = help_labels::HELP_MENU;
     while (! driver_key_pressed())
     {
         if (slowdisplay)

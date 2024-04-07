@@ -110,7 +110,7 @@ gc_loop:
     builder.comment("Press " FK_F4 " to reset to type default values");
 
     help_labels const old_help_mode = g_help_mode;
-    g_help_mode = help_labels::HELPCOORDS;
+    g_help_mode = help_labels::HELP_COORDS;
     const int prompt_ret = builder.prompt("Image Coordinates", 128 | 16);
     g_help_mode = old_help_mode;
 
@@ -318,7 +318,7 @@ gsc_loop:
     builder.comment("Press " FK_F4 " to reset to type default values");
 
     help_labels const old_help_mode = g_help_mode;
-    g_help_mode = help_labels::HELPSCRNCOORDS;
+    g_help_mode = help_labels::HELP_SCREEN_COORDS;
     prompt_ret = builder.prompt("Screen Coordinates", 128 | 16);
     g_help_mode = old_help_mode;
 

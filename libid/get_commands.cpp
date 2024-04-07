@@ -17,7 +17,7 @@ int get_commands()
     std::FILE *parmfile;
     ret = 0;
     help_labels const old_help_mode = g_help_mode;
-    g_help_mode = help_labels::HELPPARMFILE;
+    g_help_mode = help_labels::HELP_PARMFILE;
     long point = get_file_entry(gfe_type::PARM, "Parameter Set", "*.par", g_command_file, g_command_name);
     if (point >= 0 && (parmfile = std::fopen(g_command_file.c_str(), "rb")) != nullptr)
     {

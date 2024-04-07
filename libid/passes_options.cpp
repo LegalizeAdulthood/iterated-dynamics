@@ -66,7 +66,7 @@ pass_option_restart:
     old_drawmode = g_draw_mode;
 
     help_labels const old_help_mode = g_help_mode;
-    g_help_mode = help_labels::HELPPOPTS;
+    g_help_mode = help_labels::HELP_POPTS;
     i = fullscreen_prompt("Passes Options\n"
                           "(not all combinations make sense)\n"
                           "(Press " FK_F2 " for corner parameters)\n"

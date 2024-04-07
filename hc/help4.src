@@ -21,7 +21,7 @@
     { 3D Parameters }
 ;
 ;
-~Topic=Summary of all Parameters, Label=HELPCOMMANDS
+~Topic=Summary of all Parameters, Label=HELP_COMMANDS
 ; This topic is online only.
 ~Format-
 {Startup Parameters}

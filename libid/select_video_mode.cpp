@@ -105,7 +105,7 @@ int select_video_mode(int curmode)
     help_labels const old_help_mode = g_help_mode;
     modes_changed = false;
     g_tab_mode = false;
-    g_help_mode = help_labels::HELPVIDSEL;
+    g_help_mode = help_labels::HELP_VIDEO_MODE;
     i = fullscreen_choice(CHOICE_HELP,
                           "Select Video Mode",
                           "key...name.......................xdot..ydot.colr.driver......comment......",

@@ -836,7 +836,7 @@ int help(int action)
     g_timer_start -= std::clock();
     driver_stack_screen();
 
-    if (g_help_mode >= help_labels::IDHELP_INDEX)
+    if (g_help_mode >= help_labels::HELP_INDEX)
     {
         next.topic_num = label[static_cast<int>(g_help_mode)].topic_num;
         next.topic_off = label[static_cast<int>(g_help_mode)].topic_off;
@@ -876,8 +876,8 @@ int help(int action)
             break;
 
         case ACTION_INDEX:
-            next.topic_num = label[static_cast<int>(help_labels::IDHELP_INDEX)].topic_num;
-            next.topic_off = label[static_cast<int>(help_labels::IDHELP_INDEX)].topic_off;
+            next.topic_num = label[static_cast<int>(help_labels::HELP_INDEX)].topic_num;
+            next.topic_off = label[static_cast<int>(help_labels::HELP_INDEX)].topic_off;
             // fall-through
 
         case ACTION_CALL:
@@ -887,7 +887,7 @@ int help(int action)
         } // switch
 
         flags = 0;
-        if (curr.topic_num == label[static_cast<int>(help_labels::IDHELP_INDEX)].topic_num)
+        if (curr.topic_num == label[static_cast<int>(help_labels::HELP_INDEX)].topic_num)
         {
             flags |= F_INDEX;
         }

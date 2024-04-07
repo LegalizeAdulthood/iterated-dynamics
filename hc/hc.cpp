@@ -91,7 +91,7 @@ int const MAX_ERRORS = (25);            // stop after this many errors
 int const MAX_WARNINGS = (25);          // stop after this many warnings
                                         // 0 = never stop
 
-char const *const INDEX_LABEL       = "IDHELP_INDEX";
+char const *const INDEX_LABEL       = "HELP_INDEX";
 char const *const DOCCONTENTS_TITLE = "DocContent";
 
 int const BUFFER_SIZE = (1024*1024);    // 1 MB

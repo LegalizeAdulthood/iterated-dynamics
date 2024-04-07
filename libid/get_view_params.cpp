@@ -131,7 +131,7 @@ get_view_restart:
     }
 
     help_labels const old_help_mode = g_help_mode;     // this prevents HELP from activating
-    g_help_mode = help_labels::HELPVIEW;
+    g_help_mode = help_labels::HELP_VIEW;
     i = fullscreen_prompt("View Window Options", k+1, choices, uvalues, 16, nullptr);
     g_help_mode = old_help_mode;     // re-enable HELP
     if (i < 0)

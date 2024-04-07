@@ -89,7 +89,7 @@ int get_rds_params()
             g_stereo_map_filename.clear();
         }
         help_labels const old_help_mode = g_help_mode;
-        g_help_mode = help_labels::HELPRDS;
+        g_help_mode = help_labels::HELP_RDS;
         int const choice = fullscreen_prompt("Random Dot Stereogram Parameters", k, rds_prompts, uvalues, 0, nullptr);
         g_help_mode = old_help_mode;
         if (choice < 0)

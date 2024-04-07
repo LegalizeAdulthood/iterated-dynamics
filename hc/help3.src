@@ -591,7 +591,7 @@ Peterson first prototyped for us, and named "MtMand":
 ;
 ;
 ;
-~Topic=Starfields, Label=HELPSTARFLD
+~Topic=Starfields, Label=HELP_STARFIELD
 
 Once you have generated your favorite fractal image, you can convert it
 into a fractal starfield with the 'a' transformation (for 'astronomy'? -
@@ -627,7 +627,7 @@ try to load ALTERN.MAP and abort if the map file cannot be found.
 ;
 ;
 ;
-~Topic=Random Dot Stereograms (RDS), Label=HELPRDS
+~Topic=Random Dot Stereograms (RDS), Label=HELP_RDS
 
 Random Dot Stereograms (RDS) are a way of encoding stereo
 images on a flat screen. Id can convert any image to a RDS using
@@ -732,7 +732,7 @@ For a summary of keystrokes in RDS mode, see {RDS Commands}
 ;
 ;
 ;
-~Topic=Palette Maps, Label=HELPCOLORMAP
+~Topic=Palette Maps, Label=HELP_COLORMAP
 
 If you have a VGA, MCGA, Super-VGA, 8514/A, XGA, TARGA, or TARGA+ video
 adapter, you can save and restore color palettes for use
@@ -819,7 +819,7 @@ the spiked ends off of the protrusions.
 ;
 ;
 ;
-~Topic=\"3D\" Images, Label=HELP3D
+~Topic=\"3D\" Images, Label=HELP_3D
 ; Empty in docs, just to have the hotlink defined at chapter level.
 ~Format-,Doc-
 
@@ -889,7 +889,7 @@ Wars" series...
 ;
 ;
 ;
-~Topic=3D Mode Selection, Label=HELP3DMODE
+~Topic=3D Mode Selection, Label=HELP_3D_MODE
 
 After hitting <3> and getting past the filename prompt and video mode
 selection, you're presented with a "3d Mode Selection" screen.  If you
@@ -1048,7 +1048,7 @@ to the next parameter screen.
 ;
 ;
 ;
-~Topic=Select Fill Type Screen, Label=HELP3DFILL
+~Topic=Select Fill Type Screen, Label=HELP_3D_FILL
 
 This option exists because in the course of the 3D projection, portions
 of the original image may be stretched to fit the new surface. Points of
@@ -1117,7 +1117,7 @@ This screen is not available if you have selected a ray tracing option.
 ;
 ;
 ;
-~Topic=Stereo 3D Viewing, Label=HELP3DGLASSES
+~Topic=Stereo 3D Viewing, Label=HELP_3D_GLASSES
 
 The "Funny Glasses" (stereo 3D) parameter screen is presented only if
 you select a non-zero stereo option in the prior 3D parameters.
@@ -1167,7 +1167,7 @@ This screen is not available if you have selected a ray tracing option.
 ;
 ;
 ;
-~Topic=3D Fractal Parameters, Label=HELP3DFRACT
+~Topic=3D Fractal Parameters, Label=HELP_3D_FRACT
 ; This topic is online only.
 
 The parameters on this screen are a subset of the zillions of options
@@ -1185,7 +1185,7 @@ in {3D Mode Selection}.
 ;
 ;
 ;
-~Topic=Rectangular Coordinate Transformation, Label=HELP3DPARMS
+~Topic=Rectangular Coordinate Transformation, Label=HELP_3D_PARAMETERS
 
 The first entries are rotation values around the X, Y, and Z axes. Think
 of your starting image as a flat map: the X value tilts the bottom of your
@@ -1262,7 +1262,7 @@ next and final screen will appear (honestly!).
 ;
 ;
 ;
-~Topic=Light Source Parameters, Label=HELP3DLIGHT
+~Topic=Light Source Parameters, Label=HELP_3D_LIGHT
 
 This one deals with all the aspects of light source and Targa files.
 
@@ -1367,7 +1367,7 @@ system.
 ;
 ;
 ;
-~Topic=3D Overlay Mode, Label=HELP3DOVLY
+~Topic=3D Overlay Mode, Label=HELP_3D_OVERLAY
 
 While the <3> command (see {\"3D\" Images})
 creates its image on a blank screen, the <#> (or <shift+3> on some

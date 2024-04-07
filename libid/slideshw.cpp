@@ -473,7 +473,7 @@ int handle_special_keys(int ch)
     }
 
     static bool inside_help = false;
-    if (ID_KEY_F1 == ch && g_help_mode != help_labels::IDHELP_INDEX && !inside_help)
+    if (ID_KEY_F1 == ch && g_help_mode != help_labels::HELP_INDEX && !inside_help)
     {
         inside_help = true;
         help(0);

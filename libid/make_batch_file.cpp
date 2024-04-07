@@ -115,7 +115,7 @@ void make_batch_file()
 
     driver_stack_screen();
     help_labels const old_help_mode = g_help_mode;
-    g_help_mode = help_labels::HELPPARMFILE;
+    g_help_mode = help_labels::HELP_PARMFILE;
 
     maxcolor = g_colors;
     std::strcpy(colorspec, "y");

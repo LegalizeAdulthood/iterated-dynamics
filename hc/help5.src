@@ -883,7 +883,7 @@ palette editing see {Freestyle mode tutorial}
 ;
 ;
 ;
-~Topic=Selecting a video mode when loading a file, Label=HELPLOADFILE
+~Topic=Selecting a video mode when loading a file, Label=HELP_LOADFILE
 ; This topic is only online, context-sensitive.
 ~Format-
 
@@ -1398,7 +1398,7 @@ this program can read for orbit-type fractals and IFS fractals. Contact:
 ;
 ;
 
-~Topic=Sound Controls, label=HELPSOUND
+~Topic=Sound Controls, label=HELP_SOUND
 
 On this screen, accessed by hitting <Ctrl+F>, you'll find a few parameters
 that you recognise from the 'x' menu handily gathered together, plus a few
@@ -1439,7 +1439,7 @@ played further so that you can produce tunes in a particular key, if you're
 so inclined.
 ;
 ;
-~Topic=Advanced Sound Controls, Label=HELPMUSIC
+~Topic=Advanced Sound Controls, Label=HELP_MUSIC
 The soundcard output from fractint is a tad more versatile than the simple
 tones of the PC speaker. This comes into its own when playing sounds based
 on fractal orbits, producing results from haunting chordal pulses through to

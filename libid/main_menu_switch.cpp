@@ -58,7 +58,7 @@
 static bool look(bool *stacked)
 {
     help_labels const old_help_mode = g_help_mode;
-    g_help_mode = help_labels::HELPBROWSE;
+    g_help_mode = help_labels::HELP_BROWSE;
     switch (fgetwindow())
     {
     case ID_KEY_ENTER:
@@ -672,7 +672,7 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
         {
             help_labels const old_help_mode = g_help_mode;
             std::memcpy(g_old_dac_box, g_dac_box, 256 * 3);
-            g_help_mode = help_labels::HELPXHAIR;
+            g_help_mode = help_labels::HELP_PALETTE_EDITOR;
             EditPalette();
             g_help_mode = old_help_mode;
             if (std::memcmp(g_old_dac_box, g_dac_box, 256 * 3))

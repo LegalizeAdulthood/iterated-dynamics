@@ -265,7 +265,7 @@ bool do_AutoStereo()
     srand((unsigned int)ltime);
 
     help_labels const old_help_mode = g_help_mode;
-    g_help_mode = help_labels::RDSKEYS;
+    g_help_mode = help_labels::HELP_RDS_KEYS;
     driver_save_graphics();                      // save graphics image
     std::memcpy(savedacbox, g_dac_box, 256 * 3);  // save colors
 

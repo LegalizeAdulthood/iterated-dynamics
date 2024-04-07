@@ -1,4 +1,4 @@
-~Topic=Summary of Fractal Types, Label=HELPFRACTALS
+~Topic=Summary of Fractal Types, Label=HELP_FRACTALS
 ~Format-
 ~Doc-
 For detailed descriptions, select a hot-link below, see {Fractal Types},
@@ -2456,7 +2456,7 @@ seeded with an image are not (yet) reproducible in PAR files. When started
 using the <Ctrl+a> keys, after the ant is finished the default fractal
 type reverts to that of the underlying fractal.
 
-~Label=ANTCOMMANDS
+~Label=HELP_ANT_COMMANDS
 Special keystrokes are in effect during the ant's march. The <space> key
 toggles a step-by-step mode. When in this mode, press <enter> to see each step
 of the ant's progress. When orbit delay (on <p> screen) is set to 1, the step

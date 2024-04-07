@@ -2217,7 +2217,7 @@ x11_write_pixel(Driver *drv, int x, int y, int color)
         di->xlastcolor = color;
     }
     XPutPixel(di->Ximage, x, y, FAKE_LUT(di, di->pixtab[color]));
-    if (di->fastmode && g_help_mode != help_labels::HELPXHAIR)
+    if (di->fastmode && g_help_mode != help_labels::HELP_PALETTE_EDITOR)
     {
         if (!di->alarmon)
         {
@@ -2304,7 +2304,7 @@ x11_write_span(Driver *drv, int y, int x, int lastx, BYTE *pixels)
     {
         XPutPixel(di->Ximage, x+i, y, FAKE_LUT(di, pixline[i]));
     }
-    if (di->fastmode && g_help_mode != help_labels::HELPXHAIR)
+    if (di->fastmode && g_help_mode != help_labels::HELP_PALETTE_EDITOR)
     {
         if (!di->alarmon)
         {

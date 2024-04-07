@@ -265,17 +265,17 @@ static bool main_restore_start(bool &stacked, bool &resumeflag)
             if (g_overlay_3d)
             {
                 hdg = "Select File for 3D Overlay";
-                g_help_mode = help_labels::HELP3DOVLY;
+                g_help_mode = help_labels::HELP_3D_OVERLAY;
             }
             else if (g_display_3d != display_3d_modes::NONE)
             {
                 hdg = "Select File for 3D Transform";
-                g_help_mode = help_labels::HELP3D;
+                g_help_mode = help_labels::HELP_3D;
             }
             else
             {
                 hdg = "Select File to Restore";
-                g_help_mode = help_labels::HELPSAVEREST;
+                g_help_mode = help_labels::HELP_SAVEREST;
             }
             if (g_show_file < 0 && getafilename(hdg, g_gif_filename_mask.c_str(), g_read_filename))
             {
@@ -313,7 +313,7 @@ static bool main_restore_start(bool &stacked, bool &resumeflag)
         }
     }
 
-    g_help_mode = help_labels::HELPMENU;                 // now use this help mode
+    g_help_mode = help_labels::HELP_MENU;                 // now use this help mode
     g_tab_mode = true;
     g_look_at_mouse = 0;                     // ignore mouse
 
@@ -486,7 +486,7 @@ static main_state main_image_start(bool &stacked, bool &resumeflag)
     }
 
     g_zoom_off = true;                     // zooming is enabled
-    g_help_mode = help_labels::HELPMAIN;                // now use this help mode
+    g_help_mode = help_labels::HELP_MAIN;                // now use this help mode
     resumeflag = false;                 // allows taking goto inside big_while_loop()
 
     return main_state::CONTINUE;

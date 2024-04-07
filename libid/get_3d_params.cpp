@@ -99,7 +99,7 @@ restart_1:
     uvalues[k].uval.ch.val = g_gray_flag ? 1 : 0;
 
     help_labels const old_help_mode = g_help_mode;
-    g_help_mode = help_labels::HELP3DMODE;
+    g_help_mode = help_labels::HELP_3D_MODE;
 
     k = fullscreen_prompt("3D Mode Selection", k+1, prompts3d, uvalues, 0, nullptr);
     g_help_mode = old_help_mode;
@@ -197,7 +197,7 @@ restart_1:
         {
             attributes[i] = 1;
         }
-        g_help_mode = help_labels::HELP3DFILL;
+        g_help_mode = help_labels::HELP_3D_FILL;
         int i = fullscreen_choice(CHOICE_HELP, "Select 3D Fill Type",
                 nullptr, nullptr, k, (char const **)choices, attributes,
                 0, 0, 0, FILLTYPE+1, nullptr, nullptr, nullptr, nullptr);
@@ -316,7 +316,7 @@ restart_3:
 
 
     }
-    g_help_mode = help_labels::HELP3DPARMS;
+    g_help_mode = help_labels::HELP_3D_PARAMETERS;
     k = fullscreen_prompt(s, k, prompts3d, uvalues, 0, nullptr);
     g_help_mode = old_help_mode;
     if (k < 0)
@@ -407,7 +407,7 @@ static bool get_light_params()
     builder.comment("");
 
     help_labels const old_help_mode = g_help_mode;
-    g_help_mode = help_labels::HELP3DLIGHT;
+    g_help_mode = help_labels::HELP_3D_LIGHT;
     k = builder.prompt("Light Source Parameters");
     g_help_mode = old_help_mode;
     if (k < 0)
@@ -572,7 +572,7 @@ static bool get_funny_glasses_params()
     }
 
     help_labels const old_help_mode = g_help_mode;
-    g_help_mode = help_labels::HELP3DGLASSES;
+    g_help_mode = help_labels::HELP_3D_GLASSES;
     int k = builder.prompt("Funny Glasses Parameters");
     g_help_mode = old_help_mode;
     if (k < 0)
@@ -610,7 +610,7 @@ int get_fract3d_params() // prompt for 3D fractal parameters
         .int_number("Stereo (R/B 3D)? (0=no,1=alternate,2=superimpose,3=photo,4=stereo pair)", g_glasses_type);
 
     help_labels const old_help_mode = g_help_mode;
-    g_help_mode = help_labels::HELP3DFRACT;
+    g_help_mode = help_labels::HELP_3D_FRACT;
     int i = builder.prompt("3D Parameters");
     g_help_mode = old_help_mode;
 

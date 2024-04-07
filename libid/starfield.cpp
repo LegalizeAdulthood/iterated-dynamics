@@ -138,7 +138,7 @@ int get_starfield_params()
         .float_number("Ratio of Dim stars to Bright", s_starfield_values[2]);
     driver_stack_screen();
     help_labels const old_help_mode = g_help_mode;
-    g_help_mode = help_labels::HELPSTARFLD;
+    g_help_mode = help_labels::HELP_STARFIELD;
     int const choice = builder.prompt("Starfield Parameters");
     g_help_mode = old_help_mode;
     driver_unstack_screen();

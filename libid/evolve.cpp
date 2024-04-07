@@ -742,7 +742,7 @@ get_evol_restart:
         .comment("Press F6 to control which parameters are varied");
 
     old_help_mode = g_help_mode;     // this prevents HELP from activating
-    g_help_mode = help_labels::HELPEVOL;
+    g_help_mode = help_labels::HELP_EVOL;
     i = choices.prompt("Evolution Mode Options", 255);
     g_help_mode = old_help_mode;     // re-enable HELP
     if (i < 0)

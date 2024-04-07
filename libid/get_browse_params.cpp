@@ -44,7 +44,7 @@ get_brws_restart:
         .comment("Press " FK_F4 " to reset browse parameters to defaults.");
 
     help_labels const old_help_mode = g_help_mode;     // this prevents HELP from activating
-    g_help_mode = help_labels::HELPBRWSPARMS;
+    g_help_mode = help_labels::HELP_BROWSE_PARAMETERS;
     i = choices.prompt("Browse ('L'ook) Mode Options", 16);
     g_help_mode = old_help_mode;     // re-enable HELP
     if (i < 0)

@@ -456,7 +456,7 @@ int fullscreen_prompt(      // full-screen prompting routine
         putstringcenter(instrrow++, 0, 80, C_PROMPT_BKGRD,
                         "No changeable parameters;");
         putstringcenter(instrrow, 0, 80, C_PROMPT_BKGRD,
-                (g_help_mode > help_labels::IDHELP_INDEX) ?
+                (g_help_mode > help_labels::HELP_INDEX) ?
                 "Press ENTER to exit, ESC to back out, " FK_F1 " for help"
                 : "Press ENTER to exit");
         driver_hide_text_cursor();
@@ -578,7 +578,7 @@ int fullscreen_prompt(      // full-screen prompting routine
                         "Use " UPARR1 " and " DNARR1 " to select values to change");
     }
     putstringcenter(instrrow+1, 0, 80, C_PROMPT_BKGRD,
-            (g_help_mode > help_labels::IDHELP_INDEX) ?
+            (g_help_mode > help_labels::HELP_INDEX) ?
             "Press ENTER when finished, ESCAPE to back out, or " FK_F1 " for help"
             : "Press ENTER when finished (or ESCAPE to back out)");
 
