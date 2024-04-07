@@ -3117,7 +3117,7 @@ easy to exceed your resolution.  (Higher orders take longer to generate
 too.)  The command line options "lname=" and "lfile=" can be used to over-
 ride the default file name and lsystem name.
 
-Each L-System entry in the file contains a specification of the angle, the
+Each L-system entry in the file contains a specification of the angle, the
 axiom, and the transformation rules.  Each item must appear on its own
 line and each line must be less than 160 characters long.
 

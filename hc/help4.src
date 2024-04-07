@@ -82,7 +82,7 @@
                            asinh, acos, acosh, atan, atanh, sqrt, abs, cabs,
                            floor, ceil, trunc, round
   formulaname=name         Formula name for "type=formula" fractals
-  lname=name               L-System name for "type=lsystem" fractals
+  lname=name               L-system name for "type=lsystem" fractals
   ifs=name                 IFS name for "type=ifs" fractals
   3dmode=monocular|left|right|red-blue  Sets the 3D mode used with julibrot
   julibrot3d=nn[/nn[/nn[/nn[/nn[/nn]]]]]")  Sets julibrot 3D parameters zdots,
@@ -1111,7 +1111,7 @@ id.frm).  Handy if you want to generate one of these fractal types
 in batch mode.
 
 LFILE=[<path>\\][lsystemfile]\
-Specifies the default L-System path and/or file for type=lsystem fractals
+Specifies the default L-system path and/or file for type=lsystem fractals
 (default is id.l).
 
 IFSFILE=[<path>\\][ifsfilename]\
