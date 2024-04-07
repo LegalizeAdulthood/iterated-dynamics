@@ -1244,15 +1244,15 @@ editor to modify the resulting parameter file.
 
 3D=Yes\
 3D=Overlay\
-Resets all 3D parameters to default values.  If FILENAME= is given, forces
+Resets all 3D parameters to default values.  If "filename=" is given, forces
 a restore to be performed in 3D mode (handy when used with "batch=yes" for
-batch-mode 3D images).  If specified, 3D=Yes should come before any other
+batch-mode 3D images).  If specified, "3d=yes" should come before any other
 3D parameters on the command line or in a parameter file entry.  The form
-3D=Overlay is identical except that the previous graphics screen is not
-cleared, as with the <#> (<shift+3> on some keyboards) overlay command.
-Useful for building parameter files that use the 3D overlay feature.\
+"3d=overlay" is identical except that the previous graphics screen is not
+cleared, as with the <#> (<Shift+3>) overlay command.
+Useful for building parameter files that use the 3D overlay feature.
 
-The options below override the 3D defaults:
+The parameters below override the 3D defaults:
 ~Format-
 PREVIEW=yes                Turns on 3D preview default mode
 SHOWBOX=yes                Turns on 3D showbox default mode
@@ -1270,20 +1270,20 @@ BRIGHT=nn/nn               Compensates funny glasses filter parameters
 LONGITUDE=nn/nn            Longitude minimum and maximum
 LATITUDE=nn/nn             Latitude minimum and maximum
 RADIUS=nn                  Radius scale factor
-ROTATION=nn[/nn[/nn]]      Rotation about x,y, and z axes
-SCALEZYZ=nn/nn/nn          X,y,and z scale factors
+ROTATION=nn[/nn[/nn]]      Rotation about x, y and z axes
+SCALEZYZ=nn/nn/nn          X, y and z scale factors
 ROUGHNESS=nn               Same as z scale factor
 WATERLINE=nn               Colors nn and below will be "inside" color
 FILLTYPE=nn                3D filltype
 PERSPECTIVE=nn             Perspective distance
-XYSHIFT=nn/nn              Shift image in x and y directions with
-                            perspective
+XYSHIFT=nn/nn              Shift image in x and y directions
+                             with perspective
 LIGHTSOURCE=nn/nn/nn       Coordinates for light-source vector
 SMOOTHING=nn               Smooths images in light-source fill modes
 TRANSPARENT=min/max        Defines a range of colors to be treated as
-                            "transparent" when <#>Overlaying 3D images.
-XYADJUST=nn/nn             This shifts the image in the x/y dir without
-                            perspective
+                             transparent when <#> overlaying 3D images.
+XYADJUST=nn/nn             This shifts the image in the x/y dir
+                             without perspective
 ~Format+
 
 Below are commands that support Marc Reinig's terrain features.
@@ -1291,23 +1291,23 @@ Below are commands that support Marc Reinig's terrain features.
 RANDOMIZE=nnn (0 - 100)\
 This feature randomly varies the color of a pixel to near by colors.
 Useful to minimize map banding in 3D transformations.  Usable with all
-FILLTYPES. 0 disables, max values is 7.  Try 3 - 5.
+filltypes.  "0" disables, the maximum value is 7.  Try 3 - 5.
 
 AMBIENT=nnn (0 - 100)\
 Set the depth of the shadows when using full color and light source
-filltypes. "0" disables the function, higher values lower the contrast.
+filltypes.  "0" disables the function, higher values lower the contrast.
 
 FULLCOLOR=yes\
-Valid with any light source FILLTYPE.  Allows you to create a Targa-24 file
+Valid with any light source filltype.  Allows you to create a Targa-24 file
 which uses the color of the image being transformed or the map you select
 and shades it as you would see it in real life.  Well, its better than B&W.
-A good map file to use is topo
+A good map file to use is topo.map.
 
 HAZE=nnn (0 - 100)\
 Gives more realistic terrains by setting the amount of haze for distant
 objects when using full color in light source FILLTYPES.  Works only in the
 "y" direction currently, so don't use it with much y rotation.  Try
-"rotation=85/0/0". 0 disables.
+"rotation=85/0/0".  0 disables.
 
 BACKGROUND=nn/nn/nn\
 Sets the background color of the Targa-24 file by setting the red, green,
@@ -1315,21 +1315,21 @@ and blue values (rr/gg/bb).
 
 LIGHTNAME=<filename>\
 The name of the Targa-24 file to be created when using full color with
-light source.  Default is light001.tga.  If overwrite=no (the default), the
-file name will be incremented until an unused filename is found.
+light source.  Default is light001.tga.  If "overwrite=no" (the default),
+the file name will be incremented until an unused filename is found.
 Background in this file will be the color set by background=r/g/b, the
 default is sky blue.
 
-MONITORWIDTH=<nnn>\
-This parameter allows you to specify the width in inches of the image on
-your monitor for the purpose of getting the correct stereo effect when
+STEREOWIDTH=<nnn>\
+This parameter allows you to specify the width in inches of the image
+for the purpose of getting the correct stereo effect when
 viewing RDS images.  See {Random Dot Stereograms (RDS)}.
 ;
 ;
 ;
 ~Topic=Batch Mode
 
-It IS possible, believe it or not, to become so jaded with the screen
+It is possible, believe it or not, to become so jaded with the screen
 drawing process, so familiar with the types and options, that you just
 want to hit a key and do something else until the final images are safe on
 disk.  To do this, start Id with the BATCH=yes parameter.  To set up
