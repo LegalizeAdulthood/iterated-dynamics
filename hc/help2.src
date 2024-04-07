@@ -1390,9 +1390,8 @@ Saved plasma-cloud screens are excellent starting images for fractal
 (type=lambdafn)
 
 Function=[sin|cos|sinh|cosh|exp|log|sqr|...]) is specified with this type.
-Prior to version 14, these types were lambdasine, lambdacos, lambdasinh,
-lambdacos, and lambdaexp.  Where we say "lambdasine" or some such below,
-the good reader knows we mean "lambdafn with function=sin".)
+In the following description, we will use the shorthand "lambdasine" for
+"lambdafn with function=sin".
 
 These types calculate the Julia set of the formula lambda*fn(Z), for
 various values of the function "fn", where lambda and Z are both complex.
@@ -1404,14 +1403,13 @@ values for the imaginary part ranging from 0.1 to 0.4 (hint: values near
 For the tongues and blobs of LambdaExponents, try a real part of 0.379 and
 an imaginary part of 0.479.
 
-A coprocessor used to be almost mandatory: each LambdaSine/Cosine
-iteration calculates a hyperbolic sine, hyperbolic cosine, a sine, and a
-cosine (the LambdaExponent iteration "only" requires an exponent, sine,
-and cosine operation)!  However, Id now computes these transcendental
-functions with fast integer math.  In a few cases the fast math is less
-accurate, so we have kept the old slow floating point code.  To use the
-old code, invoke with the float=yes option, and, if you DON'T have a
-coprocessor, go on a LONG vacation!
+Each LambdaSine/Cosine iteration calculates a hyperbolic sine, hyperbolic
+cosine, a sine, and a cosine (the LambdaExponent iteration "only" requires
+an exponent, sine, and cosine operation)!  However, Id can compute these
+transcendental functions with fast integer math.  In a few cases the fast
+math is less accurate, so floating point code is used.  To use the
+floating-point code exclusively, use the float=yes parameter or the
+<X> options screen.
 ;
 ;
 ~Topic=Halley, Label=HT_HALLEY
