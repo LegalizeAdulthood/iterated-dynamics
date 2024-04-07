@@ -249,7 +249,7 @@ This is Phil Wilson's implementation of an alternate method for the M and
 J sets, based on work by mathematician John Milnor and described in "The
 Science of Fractal Images", p. 198.  While it can take full advantage of
 your color palette, one of the best uses is in preparing monochrome images
-for a printer.  Using the 1600x1200x2 disk-video mode and an HP LaserJet,
+for a printer.  Using the 1600x1200x2 disk video mode and an HP LaserJet,
 we have produced pictures of quality equivalent to the black and white
 illustrations of the M-set in "The Beauty of Fractals."
 
@@ -266,7 +266,7 @@ type, set the "Distance Estimator" value on the <Y> options screen (or use
 the "distest=" command line parameter).
 
 Setting the distance estimator option to a negative value -nnn enables
-edge-tracing mode.  The edge of the set is display as color number nnn.
+edge-tracing mode.  The edge of the set is displayed as color number nnn.
 This option works best when the "inside" and "outside" color values are
 also set to some other value(s).
 
@@ -297,8 +297,8 @@ Enabling the distance estimator method automatically toggles to floating
 point mode.  When you reset distest back to zero, remember to also turn off
 floating point mode if you want it off.
 
-Unfortunately, images using the distance estimator method can take many
-hours to calculate even on a fast machine with a coprocessor, especially
+Unfortunately, images using the distance estimator method can take a long
+time to calculate even on a fast machine, especially
 if a high "maxiter" value is used.  One way of dealing with this is to
 leave it turned off while you find and frame an image.  Then hit <B> to
 save the current image information in a parameter file
@@ -306,11 +306,9 @@ save the current image information in a parameter file
 file entry, adding "distest=1", "video=something" to select a high-
 resolution monochrome disk-video mode, "maxiter=1000", and "inside=0".  Run
 the parameter file entry with the <@> command when you won't be needing
-your machine for a while (over the weekend?)
+your machine for a while (over the weekend?).
 
-To reproduce images made prior to version 16.0, it is necessary to set several
-parameters from the command line or using <G>.  First, set "release=1510",
-then set "olddemmcolors=y".  To obtain the fine strands it is necessary to set
+To obtain the finest strands it is necessary to set
 the "width factor" to a large negative value, such as -32000.
 ;
 ;
