@@ -1125,9 +1125,9 @@ at random from the complex plane, and repeatedly apply the function to it,
 you get a sequence of new points called an orbit, which usually either
 zips out toward infinity or zooms in toward one or more "attractor" points
 near the middle of the plane.  The set of all points that are "attracted"
-to infinity is called the "Basin of Attraction" of infinity.  Each of the
-other attractors also has its own Basin of Attraction.  Why is it called
-a Basin?  Imagine a lake, and all the water in it "draining" into the
+to infinity is called the "basin of attraction" of infinity.  Each of the
+other attractors also has its own basin of attraction.  Why is it called
+a basin?  Imagine a lake, and all the water in it "draining" into the
 attractor.  The boundary between these basins is called the Julia Set of
 the function.
 
