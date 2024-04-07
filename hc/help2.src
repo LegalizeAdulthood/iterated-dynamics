@@ -2669,7 +2669,7 @@ For mathematical formulas of functions used in the parser language, see
 ~Topic=Frothy Basins, Label=HT_FROTH
 (type=frothybasin)
 
-Frothy Basins, or Riddled Basins, were discovered by James C. Alexander of
+Frothy basins, or riddled basins, were discovered by James C. Alexander of
 the University of Maryland.  The discussion below is derived from a two page
 article entitled "Basins of Froth" in Science News, November 14, 1992 and
 from correspondence with others, including Dr. Alexander.
@@ -2703,7 +2703,7 @@ twice per each iteration.  The result is that some of the attractors are
 split into two parts, giving the system either six or three attractors,
 depending on whether A is less than or greater than the critical value.
 
-These are also called "Riddled Basins" because each basin is riddled with
+These are also called "riddled basins" because each basin is riddled with
 holes.  Which attractor a point is eventually pulled into is extremely
 sensitive to its initial position.  A very slight change in any direction
 may cause it to end up on a different attractor.  As a result, the basins
