@@ -38,7 +38,7 @@ SUMMARY OF FRACTAL TYPES
         z(n+1) = (z-1)*c
       else
          z(n+1) = (z+1)*c
-    Two parameters: real and imaginary parts of c
+    Two parameters: real and imaginary parts of c.
 
 {=HT_BARNS barnsleyj2}
 ~Label=HF_BARNSJ2
@@ -47,7 +47,7 @@ SUMMARY OF FRACTAL TYPES
          z(n+1) = (z(n)-1)*c
       else
          z(n+1) = (z(n)+1)*c
-    Two parameters: real and imaginary parts of c
+    Two parameters: real and imaginary parts of c.
 
 {=HT_BARNS barnsleyj3}
 ~Label=HF_BARNSJ3
@@ -64,7 +64,7 @@ SUMMARY OF FRACTAL TYPES
       if real(z) >= 0 then
         z(n+1) = (z-1)*c
       else z(n+1) = (z+1)*c.
-    Parameters are perturbations of z(0)
+    Parameters are perturbations of z(0).
 
 {=HT_BARNS barnsleym2}
 ~Label=HF_BARNSM2
@@ -73,7 +73,7 @@ SUMMARY OF FRACTAL TYPES
         z(n+1) = (z-1)*c
       else
         z(n+1) = (z+1)*c
-    Parameters are perturbations of z(0)
+    Parameters are perturbations of z(0).
 
 {=HT_BARNS barnsleym3}
 ~Label=HF_BARNSM3
@@ -82,7 +82,7 @@ SUMMARY OF FRACTAL TYPES
          + i * (2*real(z((n)) * imag(z((n))) else
       z(n+1) = (real(z(n))^2 - imag(z(n))^2 - 1 + real(c) * real(z(n))
          + i * (2*real(z((n)) * imag(z((n)) + imag(c) * real(z(n))
-    Parameters are perturbations of z(0)
+    Parameters are perturbations of z(0).
 
 {=HT_BIF bifurcation}
 ~Label=HF_BIFURCATION
@@ -266,7 +266,7 @@ SUMMARY OF FRACTAL TYPES
     Orbit in two dimensions defined by:
       x(n+1) = 1 + y(n) - a*x(n)*x(n)
       y(n+1) = b*x(n)
-    Two parameters: a and b
+    Two parameters: a and b.
 
 {=HT_MARTIN hopalong}
 ~Label=HF_HOPALONG
@@ -303,7 +303,7 @@ SUMMARY OF FRACTAL TYPES
       x(n+1) = p * x(n) + gamma * zreal - omega * y(n)
       y(n+1) = p * y(n) - gamma * zimag + omega * x(n)
       (3D version uses magnitude for z)
-      Parameters:  Lambda, Alpha, Beta, Gamma, Omega, and Degree
+      Parameters:  Lambda, Alpha, Beta, Gamma, Omega, and Degree.
 
 {=HT_IFS IFS}
     Barnsley IFS (Iterated Function System) fractals.  Apply
@@ -314,13 +314,13 @@ SUMMARY OF FRACTAL TYPES
     A generalized Clifford Pickover fractal.
       z(0) = pixel;
       z(n+1) = fn(z(n)) + e^z(n) + c.
-    Three parameters: real & imaginary parts of c, and fn
+    Three parameters: real & imaginary parts of c, and fn.
 
 {=HT_PICKMJ julfn+zsqrd}
 ~Label=HF_JULFNPLUSZSQRD
       z(0) = pixel;
       z(n+1) = fn(z(n)) + z(n)^2 + c
-    Three parameters: real & imaginary parts of c, and fn
+    Three parameters: real & imaginary parts of c, and fn.
 
 {=HT_JULIA julia}
 ~Label=HF_JULIA
@@ -366,13 +366,13 @@ SUMMARY OF FRACTAL TYPES
 ~Label=HF_JULZPOWER
       z(0) = pixel;
       z(n+1) = z(n)^m + c.
-    Three parameters: real & imaginary parts of c, exponent m
+    Three parameters: real & imaginary parts of c, exponent m.
 
 {=HT_PICKMJ julzzpwr}
 ~Label=HF_JULZZPWR
       z(0) = pixel;
       z(n+1) = z(n)^z(n) + z(n)^m + c.
-    Three parameters: real & imaginary parts of c, exponent m
+    Three parameters: real & imaginary parts of c, exponent m.
 
 {=HT_KAM kamtorus, kamtorus3d}
 ~Label=HF_KAM
@@ -396,7 +396,7 @@ SUMMARY OF FRACTAL TYPES
 ~Label=HF_LAMBDAFN
       z(0) = pixel;
       z(n+1) = lambda * fn(z(n)).
-    Three parameters: real, imag portions of lambda, and fn
+    Three parameters: real, imag portions of lambda, and fn.
 
 {=HT_FNORFN lambda(fn||fn)}
 ~Label=HF_LAMBDAFNFN
@@ -405,14 +405,14 @@ SUMMARY OF FRACTAL TYPES
          z(n+1) = lambda * fn1(z(n)),
       else
          z(n+1) = lambda * fn2(z(n)).
-    Five parameters: real, imag portions of lambda, shift value, fn1, fn2
+    Five parameters: real, imag portions of lambda, shift value, fn1, fn2.
 
 {=HT_LATOO latoocarfian}
 ~Label=HF_LATOO
        Orbit in two dimensions defined by:
        x(n+1) = fn1 (y(n) * b) + c * fn2(x(n) * b)
        y(n+1) = fn3 (x(n) * a) + d * fn4(y(n) * a)
-       Parameters:  a, b, c, d fn1..4 (all sin=original)
+       Parameters:  a, b, c, d fn1..4 (all sin=original).
 
 ~OnlineFF
 {=HT_LORENZ lorenz, lorenz3d}
@@ -480,7 +480,7 @@ SUMMARY OF FRACTAL TYPES
                 [  z(n)^2 + (c-1)  ] 2
       z(n+1) =  | ---------------- |
                 [  2*z(n) + (c-2)  ]
-    Parameters: the real and imaginary parts of c
+    Parameters: the real and imaginary parts of c.
 
 {=HT_MAGNET magnet1m}
 ~Label=HF_MAGM1
@@ -488,7 +488,7 @@ SUMMARY OF FRACTAL TYPES
                 [  z(n)^2 + (c-1)  ] 2
       z(n+1) =  | ---------------- |
                 [  2*z(n) + (c-2)  ]
-    Parameters: the real & imaginary parts of perturbation of z(0)
+    Parameters: the real & imaginary parts of perturbation of z(0).
 
 {=HT_MAGNET magnet2j}
 ~Label=HF_MAGJ2
@@ -496,7 +496,7 @@ SUMMARY OF FRACTAL TYPES
                 [  z(n)^3 + 3*(C-1)*z(n) + (C-1)*(C-2)         ] 2
       z(n+1) =  | -------------------------------------------- |
                 [  3*(z(n)^2) + 3*(C-2)*z(n) + (C-1)*(C-2) + 1 ]
-    Parameters: the real and imaginary parts of c
+    Parameters: the real and imaginary parts of c.
 
 ~OnlineFF
 {=HT_MAGNET magnet2m}
@@ -505,14 +505,14 @@ SUMMARY OF FRACTAL TYPES
                 [  z(n)^3 + 3*(C-1)*z(n) + (C-1)*(C-2)         ] 2
       z(n+1) =  | -------------------------------------------- |
                 [  3*(z(n)^2) + 3*(C-2)*z(n) + (C-1)*(C-2) + 1 ]
-    Parameters: the real and imaginary parts of perturbation of z(0)
+    Parameters: the real and imaginary parts of perturbation of z(0).
 
 {=HT_MANDEL mandel}
 ~Label=HF_MANDEL
     Classic Mandelbrot set fractal.
       z(0) = c = pixel;
       z(n+1) = z(n)^2 + c.
-    Two parameters: real & imaginary perturbations of z(0)
+    Two parameters: real & imaginary perturbations of z(0).
 
 {=HT_FNORFN mandel(fn||fn)}
 ~Label=HF_MANDELFNFN
@@ -532,28 +532,28 @@ SUMMARY OF FRACTAL TYPES
       g=1/f, h=1/d, j=1/(f-b), z=(-a*b*g*h)^j,
       k=real(p3)+1, l=imag(p3)+100, c=fn1(pixel):
       z=k*((a*(z^b))+(d*(z^f)))+c
-    Parameters: see above, sixth parameter used for bailout
+    Parameters: see above, sixth parameter used for bailout.
 
 {=HT_MANDELCLOUD mandelcloud}
 ~Label=HF_MANDELCLOUD
     Displays orbits of Mandelbrot set:
       z(0) = c = pixel;
       z(n+1) = z(n)^2 + c.
-    One parameter: number of intervals
+    One parameter: number of intervals.
 
 {=HT_MANDJUL4 mandel4}
 ~Label=HF_MANDEL4
     Special case of mandelzpower kept for speed.
       z(0) = c = pixel;
       z(n+1) = z(n)^4 + c.
-    Parameters: real & imaginary perturbations of z(0)
+    Parameters: real & imaginary perturbations of z(0).
 
 ~OnlineFF
 {=HT_MANDFN mandelfn}
 ~Label=HF_MANDFN
       z(0) = c = pixel;
       z(n+1) = c*fn(z(n)).
-    Parameters: real & imaginary perturbations of z(0), and fn
+    Parameters: real & imaginary perturbations of z(0), and fn.
 
 {=HT_FNORFN manlam(fn||fn)}
 ~Label=HF_MANLAMFNFN
@@ -570,14 +570,14 @@ SUMMARY OF FRACTAL TYPES
       z(0) = y(0) = 0;
       x(n+1) = y(n) - sin(x(n))
       y(n+1) = a - x(n)
-    Parameter is a (try a value near pi)
+    Parameter is a (try a value near pi).
 
 ~OnlineFF
 {=HT_MLAMBDA mandellambda}
 ~Label=HF_MLAMBDA
       z(0) = .5; lambda = pixel;
       z(n+1) = lambda*z(n)*(1 - z(n)).
-    Parameters: real & imaginary perturbations of z(0)
+    Parameters: real & imaginary perturbations of z(0).
 
 {=HT_PHOENIX mandphoenix}
 ~Label=HF_MANDPHOENIX
@@ -610,28 +610,28 @@ SUMMARY OF FRACTAL TYPES
     'Mandelbrot-Equivalent' for the julfn+exp fractal.
       z(0) = c = pixel;
       z(n+1) = fn(z(n)) + e^z(n) + C.
-    Parameters: real & imaginary perturbations of z(0), and fn
+    Parameters: real & imaginary perturbations of z(0), and fn.
 
 {=HT_PICKMJ manfn+zsqrd}
 ~Label=HF_MANDFNPLUSZSQRD
     'Mandelbrot-Equivalent' for the Julfn+zsqrd fractal.
       z(0) = c = pixel;
       z(n+1) = fn(z(n)) + z(n)^2 + c.
-    Parameters: real & imaginary perturbations of z(0), and fn
+    Parameters: real & imaginary perturbations of z(0), and fn.
 
 {=HT_SCOTSKIN manowar}
 ~Label=HF_MANOWAR
       c = z1(0) = z(0) = pixel;
       z(n+1) = z(n)^2 + z1(n) + c;
       z1(n+1) = z(n);
-    Parameters: real & imaginary perturbations of z(0)
+    Parameters: real & imaginary perturbations of z(0).
 
 {=HT_SCOTSKIN manowarj}
 ~Label=HF_MANOWARJ
       z1(0) = z(0) = pixel;
       z(n+1) = z(n)^2 + z1(n) + c;
       z1(n+1) = z(n);
-    Parameters: real & imaginary parts of c
+    Parameters: real & imaginary parts of c.
 
 ~OnlineFF
 {=HT_PICKMJ manzpower}
@@ -647,7 +647,7 @@ SUMMARY OF FRACTAL TYPES
     'Mandelbrot-Equivalent' for the julzzpwr fractal.
       z(0) = c = pixel
       z(n+1) = z(n)^z(n) + z(n)^exp + C.
-    Parameters: real & imaginary perturbations of z(0), and exponent
+    Parameters: real & imaginary perturbations of z(0), and exponent.
 
 ~OnlineFF
 {=HT_MARKS marksjulia}
@@ -655,7 +655,7 @@ SUMMARY OF FRACTAL TYPES
     A variant of the julia-lambda fractal.
       z(0) = pixel;
       z(n+1) = c^(exp-1)*z(n)^2 + c.
-    Parameters: real & imaginary parts of c, and exponent
+    Parameters: real & imaginary parts of c, and exponent.
 
 {=HT_MARKS marksmandel}
 ~Label=HF_MARKSMAND
@@ -663,7 +663,7 @@ SUMMARY OF FRACTAL TYPES
       z(0) = c = pixel;
       z(n+1) = c^(exp-1)*z(n)^2 + c.
     Parameters: real & imaginary parts of perturbations of z(0),
-    and exponent
+    and exponent.
 
 {=HT_MARKS marksmandelpwr}
 ~Label=HF_MARKSMANDPWR
@@ -671,7 +671,7 @@ SUMMARY OF FRACTAL TYPES
     had fn=sqr hard coded).
       z(0) = pixel, c = z(0) ^ (z(0) - 1):
       z(n+1) = c * fn(z(n)) + pixel,
-    Parameters: real and imaginary perturbations of z(0), and fn
+    Parameters: real and imaginary perturbations of z(0), and fn.
 
 ~OnlineFF
 {=HT_NEWTBAS newtbasin}
@@ -801,7 +801,7 @@ SUMMARY OF FRACTAL TYPES
       c(0) = z(0) = pixel;
       z(n+1) = z(n)^2 + c(n);
       c(n+1) = c(n)/2 + z(n+1)
-    Parameters: real & imaginary perturbation of z(0)
+    Parameters: real & imaginary perturbation of z(0).
 
 {=HT_SCOTSKIN sqr(1/fn)}
 ~Label=HF_SQROVFN
@@ -825,7 +825,7 @@ SUMMARY OF FRACTAL TYPES
 ~Label=HF_TETRATE
       z(0) = c = pixel;
       z(n+1) = c^z(n)
-    Parameters: real & imaginary perturbation of z(0)
+    Parameters: real & imaginary perturbation of z(0).
 
 ~OnlineFF
 {=HT_MARTIN threeply}
@@ -846,7 +846,7 @@ SUMMARY OF FRACTAL TYPES
       real(tmp) = real(tmp) * real(c) - imag(tmp) * imag(c);
       imag(tmp) = real(tmp) * imag(c) - imag(tmp) * real(c);
       z(n+1) = tmp + pixel;
-    Parameters: real & imaginary perturbations of z(0) and function fn
+    Parameters: real & imaginary perturbations of z(0) and function fn.
 
 ~OnlineFF
 {=HT_UNITY unity}
@@ -867,8 +867,8 @@ SUMMARY OF FRACTAL TYPES
       dy/dt = -y + xy = g(x,y)
       x(new) = x + h/2 * [ f(x,y) + f[x + pf(x,y), y + pg(x,y)] ]
       y(new) = y + h/2 * [ g(x,y) + g[x + pf(x,y), y + pg(x,y)] ]
-    Two parameters: h and p
-    Recommended: zmag or bof60 inside coloring options
+    Two parameters: h and p.
+    Recommended: zmag or bof60 inside coloring options.
 
 ~CompressSpaces+
 ;
