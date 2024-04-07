@@ -869,7 +869,7 @@ command when saving the description of a nice image.
 
 ~Label=@RECORDCOLORS
 RECORDCOLORS=auto|comment|yes\
-Controls the method of writing colors in par files.  The optoin "auto"
+Controls the method of writing colors in par files.  The option "auto"
 causes the colors to be written in the "colors=@mapfile" form if the
 colors were loaded from a map.  Use this mode if you manage your colors
 using map files.  If you share par files with others, and have trouble
@@ -982,7 +982,7 @@ for the bof60 and bof61 options to reproduce the images in the book,
 COLOR SPECIFICATION
 ~Format+,Online+
 
-The colors= parameter in a PAR entry is a set of triplets.  Each triplet
+The colors parameter in a par entry is a set of triplets.  Each triplet
 represents a color in the saved palette.  The triplet is made from the red
 green and blue components of the color in the palette entry.  The current
 limitations of Id's palette handling capabilities restrict the palette
