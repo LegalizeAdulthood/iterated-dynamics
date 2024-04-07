@@ -1316,8 +1316,8 @@ the top of the 3D options and just say yes to:
 ;
 ~Topic=Spherical Projection
 
-Picture a globe lying on its side, "north" pole to the right. (It's our
-planet, and we'll position it the way we like.) You will be mapping the X
+Picture a globe lying on its side, "north" pole to the right.  (It's our
+planet, and we'll position it the way we like.)  You will be mapping the X
 and Y axes of the starting image to latitude and longitude on the globe,
 so that what was a horizontal row of pixels follows a line of longitude.
 The defaults exactly cover the hemisphere facing you, from longitude 180
