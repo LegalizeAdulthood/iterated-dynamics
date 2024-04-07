@@ -630,36 +630,37 @@ batch mode, as this is the only way to specify an IFS name in that case.
 ;
 ~Topic=Image Calculation Parameters
 MAXITER=nnn\
-Reset the iteration maximum (the number of iterations at which the program
-gives up and says 'OK, this point seems to be part of the set in question
-and should be colored [insidecolor]') from the default 150.  Values range
+Reset the iteration maximum -- the number of iterations at which the program
+gives up and says "OK, this point seems to be part of the set in question
+and should be colored with the inside color." -- from the default 150.
+Values range
 from 2 to 2,147,483,647 (super-high iteration limits like 200000000 are useful
 when using logarithmic palettes).  See {The Mandelbrot Set} for a description
-of the iteration method of calculating fractals.\
-"maxiter=" can also be used to adjust the number of orbits plotted for
+of the iteration method of calculating fractals.  This parameter
+can also be used to adjust the number of orbits plotted for
 3D "attractor" fractal types such as lorenz3d and kamtorus.
 
 CORNERS=[xmin/xmax/ymin/ymax[/x3rd/y3rd]]\
 Example: corners=-0.739/-0.736/0.288/0.291\
 Begin with these coordinates as the range of x and y coordinates, rather
 than the default values of (for type=mandel) -2.0/2.0/-1.5/1.5.  When you
-specify four values (the usual case), this defines a rectangle: x-
-coordinates are mapped to the screen, left to right, from xmin to xmax, y-
-coordinates are mapped to the screen, bottom to top, from ymin to ymax.
+specify four values (the usual case), this defines a rectangle:
+x coordinates are mapped to the screen, left to right, from xmin to xmax,
+y coordinates are mapped to the screen, bottom to top, from ymin to ymax.
 Six parameters can be used to describe any rotated or stretched
-parallelogram:  (xmin,ymax) are the coordinates used for the top-left
-corner of the screen, (xmax,ymin) for the bottom-right corner, and
-(x3rd,y3rd) for the bottom-left.
-Entering just "CORNERS=" tells Id to use this form
-rather than CENTER-MAG (see below) when saving
-parameters with the <B> command.
+parallelogram:\
+  (xmin,ymax) are used for the top-left corner of the screen,\
+  (xmax,ymin) are used for the bottom-right corner, and\
+  (x3rd,y3rd) are used for the bottom-left corner.\
+Entering just "corners=" tells Id to use this form rather than "center-mag"
+(see below) when saving parameters with the <B> command.
 
 ~Label=@CENTERMAG
-CENTER-MAG=[Xctr/Yctr/Mag[/Xmagfactor/Rotation/Skew]]\
+CENTER-MAG=[Xctr/Yctr/Mag[/Xmagfactor/rotation/skew]]\
 This is an alternative way to enter corners as a center point and a
 magnification that is popular with some fractal programs and publications.
-Entering just "CENTER-MAG=" tells Id to use this form
-(the default mode) rather than CORNERS (see above) when saving parameters
+Entering just "center-mag=" tells Id to use this form
+(the default mode) rather than "corners=" (see above) when saving parameters
 with the <B> command.
 The <TAB> status
 display shows the "corners" in both forms.  When you specify three values
@@ -667,13 +668,13 @@ display shows the "corners" in both forms.  When you specify three values
 coordinates of the center of the image while Mag indicates the amount of
 magnification to use.  Six parameters can be used to describe any rotated
 or stretched parallelogram:  Xmagfactor tells how many times bigger the
-x-magnification is than the y-magnification, Rotation indicates how many
-degrees the image has been turned, and Skew tells how many degrees the
+x-magnification is than the y-magnification, rotation indicates how many
+degrees the image has been turned, and skew tells how many degrees the
 image is leaning over.  Positive angles will rotate and skew the image
 counter-clockwise.
 
 BAILOUT=nnn\
-Over-rides the default bailout criterion for escape-time fractals.  Can
+Overrides the default bailout criterion for escape-time fractals.  Can
 also be set from the parameters screen after selecting a fractal type.
 See description of bailout in {The Mandelbrot Set}.
 
@@ -685,7 +686,7 @@ can utilize the additional tests.
 RESET\
 Causes Id to reset all calculation related parameters to their
 default values.  Non-calculation parameters such as "sound=", and
-"savename=" are not affected.  RESET should be specified at the start
+"savename=" are not affected.  Reset should be specified at the start
 of each parameter file entry (used with the <@> command) which defines an
 image, so that the entry need not describe every possible parameter - when
 invoked, all parameters not specifically set by the entry will have
@@ -700,21 +701,23 @@ command "initorbit=nnn/nnn" uses the entered value as the initializer.  See
 the discussion of the {Mandellambda Sets} for more on this topic.
 
 RSEED=nnnn\
-The initial random-number "seed" for plasma clouds is taken from your PC's
-internal clock-timer.  This argument forces a value (which you can see in
-the <Tab> display), and allows you to reproduce plasma clouds.  A detailed
-discussion of why a TRULY random number may be impossible to define, let
-alone generate, will have to wait for "Iterated Dynamics: The 3-MB Doc File."
+The initial random-number "seed" for plasma clouds is taken from your
+computer's internal clock-timer.  This argument forces a value (which you
+can see in the <Tab> display), and allows you to reproduce plasma clouds.
+A detailed discussion of why a truly random number may be impossible to
+define, let alone generate, will have to wait for "Iterated Dynamics:
+The 3-MB Doc File."
 
 SHOWDOT=[auto|bright|medium|dark|<nnn>[/<size>]]\
 Colors the current dot being calculated color <nnn> or an automatically
 calculated color taken from the current palette.  The second parameter is
 the size of the traveling pointer in units of pixels of 1/1024th of a screen.
 
-The travelling pointer strobes with fast fractals because of interaction with
-the monitor's vertical refresh.  The orbitdelay parameter can be used to
-introduce a per-pixel delay when showdot is turned on.  Try orbitdelay=1000
-with showdot=b/20 to get a feel for how the showdot triangle works.
+The travelling pointer may strobe or flicker with fast fractals because of
+interaction with the monitor's vertical refresh.  The orbitdelay parameter
+can be used to introduce a per-pixel delay when showdot is turned on.
+Try orbitdelay=1000 with "showdot=b/20" to get a feel for how the showdot
+triangle works.
 
 ASPECTDRIFT=<nn>\
 When zooming in or out, the aspect ratio (the width to height ratio) can
