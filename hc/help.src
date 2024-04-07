@@ -285,10 +285,16 @@ Version 1.0:
   The disk driver can be used to render images larger than your physical
   screen, but still uses your screen's GUI for displaying status with a
   CGA style window.
+- All online help text has been reviewed and revised to drop DOS specific
+  discussions.  Where still appropriate the text has been updated to reflect
+  that Id is a program operating in a windowed environment.
 - The release parameter does nothing in this release.  For backward
   compatability with old behavior, use FRACTINT.
+- Printing an image has been removed.  Use your operating system for that.
+  :)
 - The following parameter file commands are deprecated and support will be
-  removed in a future release.\
+  removed in a future release.  In this release the arguments are parsed
+  and validated and the results ignored.\
   - adapter                             - pixelzoom\
   - afi                                 - plotstyle\
   - biospalette                         - printer\
@@ -313,8 +319,6 @@ Known limitations:
 - Some code still assumes 8.3 filenames, but this restriction will be lifted
   over time.  To avoid surprises, continue to use 8.3 filenames until the
   code has been completely audited.
-- Printing an image has been removed.  Use your operating system for that.
-  :)
 ;
 ;
 ;
