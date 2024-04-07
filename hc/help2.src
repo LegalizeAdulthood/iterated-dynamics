@@ -3035,8 +3035,8 @@ Springer-Verlag, 1986; Section 8, pp. 125-7.
 ~Topic=Escher-Like Julia Sets, Label=HT_ESCHER
 (type=escher_julia)
 
-These unique variations on the Julia set theme, presented in The Science of
-Fractal Images, challenge us to expand our pre-conceived notions of how
+These unique variations on the Julia set theme, presented in "The Science of
+Fractal Images", challenge us to expand our pre-conceived notions of how
 fractals should be iterated.  We start with a very basic Julia formula:
 
 ~Format-
@@ -3086,17 +3086,15 @@ the depths of infinity....  There is only one possible way of ... obtaining an
 "infinity" entirely enclosed within a logical boundary line....  The largest ... shapes
 are now found in the center and the limit of infinite number and infinite smallness
 is reached at the circumference....  Not one single component ever reaches the edge.
-For beyond that there is "absolute nothingness." And yet this round world cannot exist
+For beyond that there is "absolute nothingness."  And yet this round world cannot exist
 without the emptiness around it, not simply because "within" presupposes "without", but
 also because it is out there in the "nothingness" that the center points of the arcs
 that go to build up the framework are fixed with such geometric exactitude."
 
-~Format-
-References:
-  Ernst, B. The Magic Mirror of M. C. Escher, Barnes & Noble, 1994, pp. 102-11.
-  Peitgen, H.-O. and Saupe, D. The Science of Fractal Images, Springer-Verlag,
-    1988; pp. 185, 187.
-~Format+
+References:\
+Ernst, B. The Magic Mirror of M. C. Escher, Barnes & Noble, 1994, pp. 102-11.\
+Peitgen, H.-O. and Saupe, D. The Science of Fractal Images, Springer-Verlag,
+1988; pp. 185, 187.
 ;
 ;
 ~Topic=L-Systems, Label=HT_LSYS
