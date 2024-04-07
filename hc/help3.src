@@ -77,14 +77,14 @@ errors when islands of color appear inside the rectangles.
 Diffusion Scan ("d") is a drawing type based on dithering techniques.  It
 scans the image spreading the points evenly and to each point it paints
 a square of the appropriate size so that the image will be incrementally
-enhanced.  This method calculates ALL the points in the image being a
-good substitute for Single/Dual/Triple pass and presents a quick
+enhanced.  This method calculates all the points in the image being a
+good substitute for single/double/triple pass and presents a quick
 visualization even in the slowest fractals.  With "fillcolor=0" (below)
 the squares are not painted and the points are spread over the image
-until all have being calculated (sort of a "Fade In").
+until all have being calculated (sort of a "fade in").
 
 The "fillcolor=" option in the <X> screen or on the command line sets a
-fixed color to be used by the Boundary Tracing and Tesseral calculations
+fixed color to be used by the boundary tracing and tesseral calculations
 for filling in defined regions.  The effect of this is to show off the
 boundaries of the areas delimited by these two methods.
 
@@ -97,7 +97,7 @@ is expected.  To find interesting places to investigate, press <O> after an
 image has completed and watch the behaviour of the orbits as the cursor is
 moved around the screen.  See {Orbits Window}.
 
-The "outside=summ" option causes Orbits to increment a pixel's color
+The "outside=summ" option causes orbits to increment a pixel's color
 number every time an orbit touchs it; the resulting display is a 2-d
 histogram.  If "outside=" is some other value, then the "inside=" color
 determines the color of the plotted orbits.  If "inside=0", then the color
@@ -106,7 +106,7 @@ number is incremented at the start of each pixel of the passes=1 image.
 The "orbitdelay=" option controls how many orbits are computed before the
 orbits are displayed on the screen.  This allows the orbits to settle down.
 The "orbitinterval=" option causes Orbits to plot every nth orbit point.  A
-non-zero value of the "periodicity=" option causes Orbits to not plot orbits
+non-zero value of the "periodicity=" option causes orbits to not plot orbits
 that have reached the bailout conditions or where an orbit goes off the visible
 area of the image.  A zero value of periodicity will plot all orbits except
 as modified by orbitdelay and orbitinterval.
@@ -130,7 +130,7 @@ Id's arbitary precision.
 
 The autokey feature allows you to set up beautiful self-running demo
 "loops".  You can set up hypnotic sequences to attract people to a booth,
-to generate sequences for special effects, to teach how Fractal exploring
+to generate sequences for special effects, to teach how fractal exploring
 is done, etc.
 
 A sample autokey file (demo.key) and a batch to run it (demo.bat) are
