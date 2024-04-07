@@ -279,7 +279,7 @@ every other parameter and option.
 These parameters can also be specified in a sstools.ini file, to set them
 every time you run Id.
 
-They can also be specified as named groups in a .PAR (parameter) file
+They can also be specified as named groups in a .par (parameter) file
 which you can then call up while running Id by using the <@>
 command.
 
@@ -327,7 +327,7 @@ any other label.  If an sstools.ini file looks like this:
   [startrek]\
   warp=9.5       ; Captain, I dinna think the engines can take it!\
 
-Id will use only the second, third, and fourth lines of the file.
+Id will use only the second and third lines of the file.
 (Why use a convention like that when Id is the only program you know
 of that uses an sstools.ini file?  Because there are other programs (such
 as Lee Crocker's PICLAB) that now use the same file, and there may one day
@@ -343,11 +343,11 @@ groups of parameters, looking something like this:
   quickdraw \{      ; a set of parameters named quickdraw\
      maxiter=150\
      float=no\
-     }\
+  }\
   slowdraw \{       ; another set of parameters\
      maxiter=2000\
      float=yes\
-     }\
+  }\
 
 If you use the <@> or <2> command and select a parameter file containing the
 above example, Id will show two choices: quickdraw and slowdraw.  You
@@ -373,15 +373,15 @@ some examples:
   o To save image parameters for later use in batch mode - see
     {Batch Mode}.
 
-Formulas, ifs, and lsystem entries referred to in a parameter entry can\
-be included in a .par file by adding the prefix frm:, ifs:, or lsys:\
-respectively, for example frm:myformula \{rest of that formula}.\
-Note that the prefix is a label, not part of the formula name, so the\
-reference in the image entry would be formulaname=myformula.  The\
-formula, ifs, and lsystem entries added to a parfile are accessed only\
-when the image entry in the parfile is run.  To make these formulas generally\
-accessible, they must be added to a .frm, .ifs or .l file (without the\
-identifier prefix, of course).
+Formulas, ifs, and lsystem entries referred to in a parameter entry can
+be included in a .par file by adding the prefix frm:, ifs:, or lsys:
+respectively, for example frm:myformula \{rest of that formula}.
+Note that the prefix is a label, not part of the formula name, so the
+reference in the image entry would be formulaname=myformula.  The
+formula, ifs, and lsystem entries added to a parfile are accessed only
+when the image entry in the parfile is run.  To make these formulas generally
+accessible, they must be added to a .frm, .ifs or .l file (without the
+identifying prefix, of course).
 
 See {"Parameter Save/Restore Commands"} for details about the <@> and
 <B> commands.
@@ -1294,8 +1294,7 @@ XYADJUST=nn/nn             This shifts the image in the x/y dir without
                             perspective
 ~Format+
 
-Below are new commands as of version 14 that support Marc Reinig's terrain
-features.
+Below are commands that support Marc Reinig's terrain features.
 
 RANDOMIZE=nnn (0 - 100)\
 This feature randomly varies the color of a pixel to near by colors.
