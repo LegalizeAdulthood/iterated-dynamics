@@ -1946,7 +1946,7 @@ two discrete solutions, then four, and soon becomes chaotic.
 
 Type=bifurcation illustrates this model. (Although it's now considered a
 poor one for real populations, it helped get people thinking about chaotic
-systems.) The horizontal axis represents growth rates, from 190 percent
+systems.)  The horizontal axis represents growth rates, from 190 percent
 (far left) to 400 percent; the vertical axis normalized population values,
 from 0 to 4/3.  Notice that within the chaotic region, there are narrow
 bands where there is a small, odd number of stable values.  It turns out
@@ -1967,7 +1967,7 @@ all others are calculated.  For filtered maps the final image is independent
 of Seed Population value in the valid range (0.0 < Seed Population < 1.0).
 ~OnlineFF
 Seed Population becomes effective in unfiltered maps - try setting Filter
-Cycles to 1 (unfiltered) and Seed Population to 0.001 ("PARAMS=1/.001" on
+Cycles to 1 (unfiltered) and Seed Population to 0.001 ("params=1/.001" on
 the command line).  This results in a map overlaid with nice curves.  Each
 Seed Population value results in a different set of curves.
 
@@ -1987,34 +1987,35 @@ colormap.
 
 Many formulae can be used to produce bifurcations.  Mitchel Feigenbaum
 studied lots of bifurcations in the mid-70's, using a HP-65 calculator
-(IBM PCs, Fractals, and Id, were all Sci-Fi then !).  He studied
-where bifurcations occurred, for the formula r*p*(1-p), the one described
-above.  He found that the ratios of lengths of adjacent areas of
-bifurcation were four and a bit.  These ratios vary, but, as the growth
-rate increases, they tend to a limit of 4.669+.  This helped him guess
-where bifurcation points would be, and saved lots of time.
+(Personal computers, fractals, and Id, were all science fiction then!).
+He studied where bifurcations occurred, for the formula r*p*(1-p), the
+one described above.  He found that the ratios of lengths of adjacent
+areas of bifurcation were four and a bit.  These ratios vary, but, as
+the growth rate increases, they tend to a limit of 4.669+.  This helped
+him guess where bifurcation points would be, and saved lots of time.
 
-When he studied bifurcations of r*sin(PI*p) he found a similar pattern,
+When he studied bifurcations of r*sin(PI*p), he found a similar pattern,
 which is not surprising in itself.  However, 4.669+ popped out, again.
-Different formulae, same number ?  Now, THAT's surprising !  He tried many
-other formulae and ALWAYS got 4.669+ - Hot Damn !!!  So hot, in fact, that
-he phoned home and told his Mom it would make him Famous!  He also went on
-to tell other scientists.  The rest is History...
+Different formulae, same number?  Now, that's surprising!  He tried many
+other formulae and always got 4.669+ - Hot Damn!!!  So hot, in fact, that
+he phoned home and told his mom it would make him famous!  He also went on
+to tell other scientists.  The rest is history...
 
 (It has been conjectured that if Feigenbaum had a copy of Id, and
-used it to study bifurcations, he may never have found his Number, as it
+used it to study bifurcations, he may never have found his number, as it
 only became obvious from long perusal of hand-written lists of values,
-without the distraction of wild color-cycling effects !).
+without the distraction of wild color-cycling effects!).
 ~OnlineFF
-We now know that this number is as universal as PI or E.  It appears in
-situations ranging from fluid-flow turbulence, electronic oscillators,
-chemical reactions, and even the Mandelbrot Set - yup, fraid so:
+We now know that this number is as universal as pi or e, the base of the
+natural logarithm.  It appears in situations ranging from fluid-flow
+turbulence, electronic oscillators, chemical reactions, and even the
+Mandelbrot Set - yup, fraid so:
 "budding" of the Mandelbrot Set along the negative real axis occurs at
-intervals determined by Feigenbaum's Number, 4.669201660910.....
+intervals determined by Feigenbaum's constant, 4.669201660910.....
 
-Id does not make direct use of the Feigenbaum Number (YET !).
+Id does not make direct use of the Feigenbaum constant (yet!).
 However, it does now reflect the fact that there is a whole sub-species of
-Bifurcation-type fractals.  Those implemented to date, and the related
+bifurcation-type fractals.  Those implemented to date, and the related
 formulae, (writing P for pop[n+1] and p for pop[n]) are :
 
 ~Format-
