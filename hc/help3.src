@@ -756,8 +756,8 @@ Id is distributed with some sample .map files:
    firestrm.map  general purpose, muted fire colors
    gamma1.map,   Lee Crocker's response
    gamma2.map      to altern.map
-   glasses1.map  used with 3d glasses modes
-   glasses2.map  used with 3d glasses modes
+   glasses1.map  used with 3D glasses modes
+   glasses2.map  used with 3D glasses modes
    green.map     shaded green
    grey.map      another grey variant
    grid.map      for stereo surface grid images
@@ -950,7 +950,7 @@ Stereo:\
 
 ~OnlineFF
 Ray trace output:\
-   Id can create files of its 3d transformations which are
+   Id can create files of its 3D transformations which are
    compatible with many ray tracing programs.  Currently four are supported
    directly: DKB (now obsolete), VIVID, MTV, and RAYSHADE.  In addition a "raw"
    output is supported which can be relatively easily transformed to be
@@ -974,7 +974,7 @@ Ray trace output:\
    POV-Ray.
 
    All ray tracing files consist of triangles which follow the surface
-   created by Id during the 3d transform.  Triangles which lie below
+   created by Id during the 3D transform.  Triangles which lie below
    the "water line" are not created in order to avoid causing unnecessary
    work for the poor ray tracers which are already overworked.
    A simple plane can be substituted by the user at the
@@ -1001,7 +1001,7 @@ Brief output:\
    This color should be edited to supply the color of your choice.
 
 Targa output:\
-   If you want any of the 3d transforms you select to be saved as a
+   If you want any of the 3D transforms you select to be saved as a
    Targa-24 file or overlayed onto one, select yes for this option.
    The overlay option in the final screen determines whether you will
    create a new file or overlay an existing one.
@@ -1378,7 +1378,7 @@ twist our arms -- it is awfully good code.
 ~Topic=Making Terrains
 
 If you enjoy using Id for making landscapes, we have several
-features for you to work with.  When doing 3d transformations, banding tends
+features for you to work with.  When doing 3D transformations, banding tends
 to occur because all pixels of a given height end up the same color.  Now,
 colors can be randomized to make the transitions between different colors
 at different altitudes smoother.  Use the "randomize=n" parameter to
@@ -1473,7 +1473,7 @@ the 7-sprocket Busch-European Emde masks."
 (Also see "Ray Tracing Output", "Brief", and "Output File Name"
 in {"3D Mode Selection"}.)
 
-Id allows you to save your 3d transforms in files which may be
+Id allows you to save your 3D transforms in files which may be
 fed to a ray tracer (or to "Acrospin").
 However, they are not ready to be traced by
 themselves.  For one thing, no light source is included.  They are
@@ -1499,7 +1499,7 @@ vertices are listed in clockwise or counter clockwise order
 depending on the target ray tracer.
 Currently, MTV and Rayshade are the only ones which use counter clockwise
 order.  The size of the triangles is set by the coarse setting in the
-main 3d menu.  Color information about each individual triangle is included
+main 3D menu.  Color information about each individual triangle is included
 for all files unless in the brief mode.
 
 To keep the poor ray tracer from working too hard, if waterline is set

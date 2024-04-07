@@ -1121,8 +1121,8 @@ because most cases of resume restart at the beginning of a screen line.
 If unsure, you can check whether calculation has resumed with the <Tab>
 key.
 
-The following fractal types cannot (currently) be resumed: plasma, 3d
-transformations, julibrot, and 3d orbital types like lorenz3d.  To check
+The following fractal types cannot (currently) be resumed: plasma, 3D
+transformations, julibrot, and 3D orbital types like lorenz3d.  To check
 whether resuming an image is possible, use the <Tab> key while it is
 calculating.  It is resumable unless there is a note under the fractal
 type saying it is not.

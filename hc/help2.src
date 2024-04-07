@@ -377,7 +377,7 @@ SUMMARY OF FRACTAL TYPES
 {=HT_KAM kamtorus, kamtorus3d}
 ~Label=HF_KAM
     Series of orbits superimposed.
-    3d version has 'orbit' the z dimension.
+    3D version has 'orbit' the z dimension.
       x(0) = y(0) = orbit/3;
       x(n+1) = x(n)*cos(a) + (x(n)*x(n)-y(n))*sin(a)
       y(n+1) = x(n)*sin(a) - (x(n)*x(n)-y(n))*cos(a)

@@ -73,7 +73,7 @@
   type=fractaltype         Perform this Fractal Type (default = mandel)
                            See {Fractal Types} for a full list
   params=xxx[/xxx[/...     Begin with these extra Parameter values
-                           (Examples:  params=4   params=-0.480/0.626)
+                           (Examples: "params=4", "params=-0.480/0.626")
   function=fn1/.../fn4     Allows specification of transcendental functions
                            with types using variable functions.  Values are
                            sin, cos, tan, cotan, sinh, cosh, tanh, cotanh,
@@ -94,18 +94,18 @@
 {Image Calculation Parameters}
   corners=[xmin/xmax/ymin/ymax[/x3rd/y3rd]]
                            Begin with these coordinates
-                           (Example: corners=-0.739/-0.736/0.288/0.291)
+                           (Example: "corners=-0.739/-0.736/0.288/0.291")
                            With no parameters causes <B> command to output
                            "corners=" instead of center-mag.
   center-mag=[Xctr/Yctr/Mag[/Xmagfactor/Rotation/Skew]]
                            An alternative method of entering corners.
-                           (Example: center-mag=-0.7375/0.2895/300)
+                           (Example: "center-mag=-0.7375/0.2895/300")
                            With no parameters causes <B> command to output
                            "center-mag=" (default) instead of corners.
   maxiter=nnn              Maximum number of iterations (default = 150)
   bailout=nnnn             Use this as the iteration bailout value (instead
                            of the default (4.0 for most fractal types)
-  bailoutest=mod|real|imag|or|and|manh|manr  Sets bailout test (default=mod)
+  bailoutest=mod|real|imag|or|and|manh|manr  Sets bailout test (default = mod)
   initorbit=nnn/nnn        Sets the value used to initialize Mandelbrot orbits
                            to the given complex number (real and imag parts)
   initorbit=pixel          Sets the value used to initialize Mandelbrot orbits
@@ -124,19 +124,18 @@
                            of checking (default 1, higher is more stringent)
                            "show" or a neg value colors caught points white.
   orbitdelay=nn            Starts plotting orbits after the nth orbit.
-  orbitinterval=nn         Plots every nth orbit point with passes=o.
+  orbitinterval=nn         Plots every nth orbit point with "passes=o".
   screencoords=yes|no      Maintain screen coordinates constant.
   orbitdrawmode=rect|line  Use rectangular mode or line mode for orbits.
 {Color Parameters}
   inside=nnn|maxiter|zmag|bof60|bof61|epscr|star|per|atan|fmod
-                           Fractal interior color (inside=0 for black)
+                           Fractal interior color ("inside=0" for black)
   outside=nnn|iter|real|imag|mult|summ|atan|fmod|tdis
                            Fractal exterior color options
-  map=<path>\\filename      Use "filename" as the default color map (vga/targa)
-  colors=@filename|colorspec Sets current image color map from file or spec,
-                           vga or higher only
-  recordcolors=auto|comment|yes Sets method of writing colors in PAR files.
-                           Auto causes colors=@mapfile to be written if
+  map=<path>\\filename      Use filename as the default color map
+  colors=@filename|colorspec Sets current image color map from file or spec
+  recordcolors=auto|comment|yes Sets method of writing colors in par files.
+                           Auto causes "colors=@mapfile" to be written if
                            colors came from loading a color map.  Yes and
                            comment force compressed colors always.  Comment
                            also writes map name in a comment if colors came
@@ -149,34 +148,32 @@
   truecolor=yes            Writes truecolor information to Targa file.
   truemode=def|iter        Writes default color scheme or escape iteration to
                            Targa file.
-  nobof=yes|no             Causes inside=bof60 & bof61 to NOT duplicate the
-                           bof images, but function like the other inside=
+  nobof=yes|no             Causes "inside=bof60" & bof61 to NOT duplicate the
+                           bof images, but function like the other "inside="
                            options.  Default is no.
 
 {Doodad Parameters}
   logmap=yes|old|nn        Yes maps logarithm of iteration to color.  Old uses
-                           pre vsn 14 logic. >1 compresses, <-1 for quadratic.
+                           old method.  >1 compresses, <-1 for quadratic.
   logmode=fly|table|auto   Fly forces on-the-fly calculation of logmap.  Table
                            forces the use of the logmap array.  Auto causes
                            logmap to be recalculated automatically when
                            zooming.
   ranges=nn/nn/nn/...      Ranges of iteration values to map to colors
-  distest=nnn/nnn          Distance Estimator Method
+  distest=nnn/nnn          Distance estimator method
   decomp=nn                Decomposition toggle, value 2 to 256.
   biomorph=nnn             Biomorph Coloring
-  potential=nn[/nn[/nn[/16bit]]]  Continuous Potential
+  potential=nn[/nn[/nn[/16bit]]]  Continuous potential
   invert=nn/nn/nn          Turns on inversion - turns images 'inside out'
-  finattract=yes           Look for finite attractor in julia types
+  finattract=yes           Look for finite attractor in Julia types
   exitnoask=yes            bypasses the final "are you sure?" exit screen
 
 {Sound Parameters}
   sound=off|beep|x|y|z     Nobody ever plays with fractals at work, do they?
         /pc|fm/quant       x|y|z can be used to add sound to attractor
                            fractals, the orbits command, and reading GIFs.
-                           The PC speaker and/or an OPL-3 FM synth card can
-                           now be used for sound.  See {Sound Controls}.  The
-                           note frequency can be quantized, or rounded to the
-                           next proper note.
+                           See {Sound Controls}.  The note frequency can be
+                           quantized, or rounded to the next proper note.
   hertz=nnn                Base frequency for sound effects
   orbitdelay=nn            Slows up the display of orbits (by nn/10000 sec)
   showorbit=yes|no         Causes orbits to be toggled on at start of image
@@ -192,40 +189,39 @@
   decay=nn                 Time for note to reach zero volume.
   sustain=nn               Level at which note is maintained on.
   srelease=nn              Time note takes to release.  Note the leading 'S'.
-  volume=nn                Volume adjustment for FM synth card, but NOT the
-                           PC speaker.
+  volume=nn                Volume adjustment.
   attenuate=none|low|mid|high  Attenuation of high pitched notes.
   scalemap=nn/nn/nn/...    Combined with quantization this allows selecting
                            notes on the musical scale.
 
 {File Parameters}
-  savename=<path>\\filename Save files using this name (instead of FRACT001)
+  savename=<path>\\filename Save files using this name (instead of fract001)
   overwrite=no|yes         Don't over-write existing files
   savetime=nnn             Autosave image every nnn minutes of calculation
-  gif87a=yes               Save GIF files in the older GIF87a format (with
-                           no FRACTINT extension blocks)
+  gif87a=yes               Save GIF files in the older GIF87a format
+                           (with no extension blocks)
   dither=yes               Dither color GIFs read into a b/w display.
   parmfile=<path>\\filename File for <@> and <b> commands, default id.par
   formulafile=<path>\\filename  File for type=formula, default id.frm
   lfile=<path>\\filename    File for type=lsystem, default id.l
   ifsfile=<path>\\filename  File for type=ifs, default id.ifs
   orbitsave=yes            Causes IFS and orbit fractals orbit points to be
-                           saved in the file ORBITS.RAW
+                           saved in the file orbits.raw
 ~FF
 
 {Video Parameters}
-  video=xxx                Begin with this video mode (Example: Video=F2)
+  video=xxx                Begin with this video mode (Example: "video=F2")
   askvideo=no              Skip the prompt for video mode when restoring files
   viewwindows=xx[/xx[/yes|no[/nn[/nn]]]]
                            Set the reduction factor, final media aspect ratio,
                            crop starting coordinates (y/n), explicit x size,
                            and explicit y size
-  fastrestore=yes|no       If yes, resets viewwindow to NO prior to restoring
-                           a gif file, and bypasses the warning when
-                           restoring a gif in a video mode other than the
-                           one in which the gif was saved.  Default is no.
+  fastrestore=yes|no       If yes, resets viewwindow to "no" prior to restoring
+                           a GIF file, and bypasses the warning when
+                           restoring a GIF in a video mode other than the
+                           one in which the GIF was saved.  Default is no.
                            Feature will be useful when cycling through a
-                           group of gifs in autokey mode.
+                           group of GIFs in autokey mode.
   virtual=yes|no           If no, disables the check for and the ability to
                            use virtual screen sizes.  Default is yes.
 
@@ -236,15 +232,15 @@
   preview=yes              Turns on 3D preview default mode
   showbox=yes              Turns on 3D showbox default mode
   sphere=yes               Turns on 3D sphere mode
-  coarse=nnn               Sets Preview coarseness default value
-  stereo=nnn               Sets Stereo (R/B 3D) option:  0 = none,
+  coarse=nnn               Sets preview coarseness default value
+  stereo=nnn               Sets stereo (R/B 3D) option:  0 = none,
                            1 = alternate, 2 = superimpose, 3 = photo,
                            4 = stereo pair
-  ray=nnn                  selects raytrace output file format
-  brief=yes                selects brief or verbose file for DKB output
-  usegrayscale=yes         use grayscale as depth instead of color number
-  interocular=nnn          Sets 3D Interocular distance default value
-  converge=nnn             Sets 3D Convergence default value
+  ray=nnn                  Selects raytrace output file format
+  brief=yes                Selects brief or verbose file for DKB output
+  usegrayscale=yes         Use grayscale as depth instead of color number
+  interocular=nnn          Sets 3D interocular distance default value
+  converge=nnn             Sets 3D convergence default value
   crop=nnn/nnn/nnn/nnn     Sets 3D red-left, red-right, blue-left,
                            and blue-right cropping default valuess
   bright=nnn/nnn           Sets 3D red and blue brightness defaults,
@@ -263,7 +259,7 @@
   smoothing=nn             Smooths rough images in light source mode
   transparent=mm/nn        Sets colors mm to nn as transparent
   xyadjust=nnn/nnn         Sets 3D X and Y adjustment defaults,
-  randomize=nnn            smoothes 3d color transitions between elevations
+  randomize=nnn            smoothes 3D color transitions between elevations
   fullcolor=yes            allows creation of full color .TGA image with
                            light source fill types
   ambient=nnn              sets depth of shadows and contrast when using
@@ -820,7 +816,7 @@ OUTSIDE=iter.
 However, when Z reaches bailout the real and imaginary components can be at
 very diferent values.  OUTSIDE=real and OUTSIDE=imag color using the iteration
 value plus the real or imaginary values.  OUTSIDE=summ uses the sum of all
-these values.  These options can give a startling 3d quality to otherwise flat
+these values.  These options can give a startling 3D quality to otherwise flat
 images and can change some boring images to wonderful ones.  OUTSIDE=mult
 colors by multiplying the iteration by real divided by imaginary.  There was no
 mathematical reason for this, it just seemed like a good idea.  OUTSIDE=atan
@@ -1256,10 +1252,10 @@ editor to modify the resulting parameter file.
 
 3D=Yes\
 3D=Overlay\
-Resets all 3d parameters to default values.  If FILENAME= is given, forces
+Resets all 3D parameters to default values.  If FILENAME= is given, forces
 a restore to be performed in 3D mode (handy when used with "batch=yes" for
 batch-mode 3D images).  If specified, 3D=Yes should come before any other
-3d parameters on the command line or in a parameter file entry.  The form
+3D parameters on the command line or in a parameter file entry.  The form
 3D=Overlay is identical except that the previous graphics screen is not
 cleared, as with the <#> (<shift+3> on some keyboards) overlay command.
 Useful for building parameter files that use the 3D overlay feature.\
@@ -1303,7 +1299,7 @@ features.
 
 RANDOMIZE=nnn (0 - 100)\
 This feature randomly varies the color of a pixel to near by colors.
-Useful to minimize map banding in 3d transformations.  Usable with all
+Useful to minimize map banding in 3D transformations.  Usable with all
 FILLTYPES. 0 disables, max values is 7.  Try 3 - 5.
 
 AMBIENT=nnn (0 - 100)\
