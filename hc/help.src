@@ -1504,7 +1504,7 @@ command to re-plot it.
 ~Topic=Id on Unix
 
 This initial 1.0 release of Iterated Dynamics builds on unix, but the port
-is incomplete.  A subsequent release will restore parity of funcionatlity
+is incomplete.  A subsequent release will restore parity of functionality
 between unix and Windows, resulting in a truly cross-platform release.
 This should also make a macOS release possible, marking the first time this
 code base has been ported to the Macintosh line of computers.
