@@ -1507,9 +1507,6 @@ julia set, julia(fn||fn).
 (type=mandelfn)
 
 Function=[sin|cos|sinh|cosh|exp|log|sqr|...]) is specified with this type.
-Prior to version 14, these types were mandelsine, mandelcos, mandelsinh,
-mandelcos, and mandelexp.  Same comment about our lapses into the old
-terminology as above!
 
 These are "pseudo-Mandelbrot" mappings for the {=HT_LAMBDAFN LambdaFn}
 Julia functions.
@@ -1520,24 +1517,11 @@ particular is rather boring).  Generate the appropriate "Mandelfn" set,
 zoom on a likely spot where the colors are changing rapidly, and hit the
 spacebar key to plot the Julia set for that particular point.
 
-Try "id type=mandelfn corners=4.68/4.76/-.03/.03 function=cos" for a
+Try "type=mandelfn corners=4.68/4.76/-.03/.03 function=cos" with the <G>
+command for a
 graphic demonstration that we're not taking Mandelbrot's name in vain
 here.  We didn't even know these little buggers were here until Mark
-Peterson found this a few hours before the version incorporating Mandelfns
-was released.
-
-Note: If you created images using the lambda or mandel "fn" types prior to
-version 14, and you wish to update the fractal information in the "*.fra"
-file, simply read the files and save again.  You can do this in batch mode
-via a command line such as:
-
-     "id oldfile.fra savename=newfile.gif batch=yes"
-
-For example, this procedure can convert a version 13 "type=lambdasine"
-image to a version 14 "type=lambdafn function=sin" GIF89a image.  We do
-not promise to keep this "backward compatibility" past version 14 - if you
-want to keep the fractal information in your *.fra files accurate, we
-recommend conversion.  See {GIF Save File Format}.
+Peterson found them!
 ;
 ;
 ~Topic=Barnsley Mandelbrot/Julia Sets, Label=HT_BARNS
