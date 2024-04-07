@@ -1906,6 +1906,18 @@ The 3D variant is created by treating 'orbit' as the z coordinate.
 
 With both variants, you can adjust the "maxiter" value (<X> options
 screen or parameter maxiter=) to change the number of orbits plotted.
+
+If you're wondering where KAM comes from in the name of this fractal,
+it comes from the Kolmogorov-Arnold-Moser theorem.  This theorem is a
+result in dynamical systems about the persistence of quasiperiodic
+motions under small perturbations.  The problem is whether or not a
+small perturbation of a conservative dynamical system results in a
+lasting quasiperiodic orbit.  The original breakthrough to this problem
+was given by Andrey Kolmogorov in 1954.  This was rigorously proved and
+extended by Jurgen Moser in 1962 (for smooth twist maps) and Vladimir
+Arnold in 1963 (for analytic Hamiltonian systems), and the general result
+is known as the KAM theorem.  Quasiperiodic orbits are more affectionatly
+known as chaotic orbits!  (Thanks, Wikipedia!)
 ;
 ;
 ~Topic=Bifurcation, Label=HT_BIF
