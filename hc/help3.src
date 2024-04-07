@@ -1515,7 +1515,7 @@ the center of the screen with positive x to the right and positive y up.
 Increasing values of the color index are out of the screen and in the +z
 direction.  The color index 0 will be found in the xy plane at z=-1.
 
-When x- y- and zscale are set to 100, the surface created by the
+When x, y and z scale are set to 100, the surface created by the
 triangles will fall within a box of +/- 1.0 in all 3 directions.  Changing
 scale will change the size and/or aspect ratio of the enclosed object.
 
