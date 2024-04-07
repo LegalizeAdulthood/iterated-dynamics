@@ -1083,7 +1083,7 @@ cx and cy are the real and imaginary parts of the parameter c and fx(z)
 and fy(z) are the real and imaginary parts of f(z).  The variable c is
 sometimes called lambda for historical reasons.
 
-NOTE: if you use the "PARAMS=" argument to warp the M-set by starting with
+NOTE: if you use the "params=" argument to warp the M-set by starting with
 an initial value of Z other than 0, the M-set/J-sets correspondence breaks
 down and the spacebar toggle no longer works.
 ;
