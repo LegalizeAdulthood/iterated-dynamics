@@ -885,16 +885,13 @@ wish to change the default for any of the following parameters,
 use the arrow keys to move through the menu.  When you're
 satisfied press <Enter>.
 
-Preview Mode:\
+Preview mode:\
    Preview mode provides a rapid look at your transformed image using by
    skipping a lot of rows and filling the image in.  Good for quickly
-   discovering the best parameters.  Let's face it, the Id authors
-   most famous for "blazingly fast" code *DIDN'T* write the 3D routines!
-   [Pieter: "But they *are* picking away it and making some progress in
-   each release."]
+   discovering the best parameters.
 
-Show Box:\
-   If you have selected Preview Mode you have another option to worry
+Show box:\
+   If you have selected preview mode you have another option to worry
    about.  This is the option to show the image box in scaled and rotated
    coordinates x, y, and z.  The box only appears in rectangular
    transformations and shows how the final image will be oriented.  If you
@@ -906,9 +903,9 @@ Show Box:\
 Coarseness:\
    This sets how many divisions the image will be divided into in the y
    direction, if you select preview mode, ray tracing output, or grid fill
-   in the "Select Fill Type" screen.
+   in the "Select 3D Fill Type" screen.
 
-Spherical Projection:\
+Spherical projection:\
    The next question asks if you want a sphere projection.  This will take
    your image and map it onto a plane if you answer "no" or a sphere if
    you answer "yes" as described above.  Try it and you'll see what we
@@ -930,14 +927,14 @@ Stereo:\
    Option 1 gives 64 shades of gray but with half the spatial resolution
    you have selected.  It works by writing the red and blue images on
    adjacent pixels, which is why it eats half your resolution.  In
-   general, we recommend you use this only with resolutions above
-   640x350.  Use this mode for continuous potential landscapes where you
-   *NEED* all those shades.
+   general, we recommend you use this only with higher resolution video
+   modes.  Use this mode for continuous potential landscapes where you
+   *need* all those shades.
 
    Option "2" gives you full spatial resolution but with only 16 shades
    of gray.  If the red and blue images overlap, the colors are mixed.
    Good for wire-frame images (we call them surface grids), lorenz3d and
-   3D IFS.  Works fine in 16 color modes.
+   3D IFS.
 
    Option 3 is for creating stereo pair images for view later with more
    specialized equipment.  It allows full color images to be presented in
@@ -952,10 +949,10 @@ Stereo:\
    Also see {Stereo 3D Viewing}.
 
 ~OnlineFF
-Ray Tracing Output:\
+Ray trace output:\
    Id can create files of its 3d transformations which are
    compatible with many ray tracing programs.  Currently four are supported
-   directly: DKB (now obsolete), VIVID, MTV, and RAYSHADE.  In addition a "RAW"
+   directly: DKB (now obsolete), VIVID, MTV, and RAYSHADE.  In addition a "raw"
    output is supported which can be relatively easily transformed to be
    usable by many other products.
    One other option is supported: ACROSPIN.  This is not a ray tracer,
@@ -971,9 +968,9 @@ Ray Tracing Output:\
       6  ACROSPIN format\
    Users of POV-Ray can use the DKB output and convert to POV-Ray with the
    DKB2POV utility that comes with POV-Ray.  A better (faster) approach is to
-   create a RAW output file and convert to POV-Ray with RAW2POV.  A still
+   create a raw output file and convert to POV-Ray with RAW2POV.  A still
    better approach is to use POV-Ray's height field feature to directly
-   read the fractal .GIF or .POT file and do the 3D transformation inside
+   read the fractal .gif or .pot file and do the 3D transformation inside
    POV-Ray.
 
    All ray tracing files consist of triangles which follow the surface
@@ -989,9 +986,9 @@ Ray Tracing Output:\
    triangles.
 
    The color of each triangle is the average of the color of its verticies
-   in the original image, unless BRIEF is selected.
+   in the original image, unless brief is selected.
 
-   If BRIEF is selected, a default color is assigned at the begining of the
+   If brief is selected, a default color is assigned at the begining of the
    file and is used for all triangles.
 
    Also see {Interfacing with Ray Tracing Programs}.
@@ -1003,21 +1000,21 @@ Brief output:\
    use the default color specified at the begining of the file.
    This color should be edited to supply the color of your choice.
 
-Targa Output:\
+Targa output:\
    If you want any of the 3d transforms you select to be saved as a
    Targa-24 file or overlayed onto one, select yes for this option.
    The overlay option in the final screen determines whether you will
    create a new file or overlay an existing one.
 
-MAP File name:\
+Map file name:\
    Imediately after selecting the previous options, you will be given the
-   chance to select an alternate color MAP file.  The default is to
-   use the current MAP.  If you want another MAP used, then enter your
+   chance to select an alternate color map file.  The default is to
+   use the current map.  If you want another map used, then enter your
    selection at this point.
 
-Output File Name:\
+Output file name:\
    This is a ray tracing sub-option, used to specify the name of the
-   file to be written.  The default name is FRACT001.RAY.  The name is
+   file to be written.  The default name is fract001.ray.  The name is
    incremented by one each time a file is written.
    If you have not set "overwrite=yes" then
    the file name will also be automatically incremented to avoid
@@ -1037,25 +1034,25 @@ of the original image may be stretched to fit the new surface.  Points of
 an image that formerly were right next to each other, now may have a space
 between them.  This option generally determines what to do with the space
 between the mapped dots.  It is not used if you have selected a value for
-RAY other than 0.
+ray other than 0.
 
 For an illustration, pick the second option "just draw the points", which
 just maps points to corresponding points.  Generally this will leave empty
 space between many of the points.  Therefore you can choose various
 algorithms that "fill in" the space between the points in various ways.
 
-Later, try the first option "make a surface grid." This option will make a
+Next, try the first option "make a surface grid." This option will make a
 grid of the surface which is as many divisions in the original "y"
 direction as was set in "coarse" in the first screen.  It is very fast, and
 can give you a good idea what the final relationship of parts of your
 picture will look like.
 
-Later, try the second option "connect the dots (wire frame)", then "surface
+Next, try the second option "connect the dots (wire frame)", then "surface
 fills" - "colors interpolated" and "colors not interpolated", the general
 favorites of the authors.  Solid fill, while it reveals the pseudo-geology
 under your pseudo-landscape, inevitably takes longer.
 
-Later, try the light source fill types.  These two algorithms allow you to
+Next, try the light source fill types.  These two algorithms allow you to
 position the "sun" over your "landscape." Each pixel is colored according
 to the angle the surface makes with an imaginary light source.  You will be
 asked to enter the three coordinates of the vector pointing toward the
@@ -1076,7 +1073,7 @@ illumination of features on the object is constant, but you see the object
 from different angles.
 
 For ease of discussion we will refer to the following fill types by these
-numbers:
+numbers:\
     1 - surface grid\
     2 - (default) - no fill at all - just draw the dots\
     3 - wire frame - joins points with lines\
@@ -1090,7 +1087,7 @@ Types 4, 7, and 8 interpolate colors when filling, making a very smooth
 fill if the palette is continuous.  This may not be desirable if the
 palette is not continuous.  Type 5 is the same as type 4 with interpolation
 turned off.  You might want to use fill type 5, for example, to project
-a .GIF photograph onto a sphere.  With type 4, you might see the filled-in
+a .gif photograph onto a sphere.  With type 4, you might see the filled-in
 points, since chances are the palette is not continuous; type 5 fills
 those same points in with the colors of adjacent pixels.  However, for most
 fractal images, fill type 4 works better.
@@ -1302,8 +1299,7 @@ choose to overlay an existing Targa-24, type 2, non mapped, top-to-bottom
 file, such as created by Id or PVRay.  The Targa file specified above
 will be overlayed with new info just as a GIF is overlayed on screen.  Note:
 it is not necessary to use the "O" overlay command to overlay Targa files.
-The Targa_Overlay option must be set to yes, however.
-
+The targa_overlay parameter must be set to yes, however.
 
 You'll probably want to adjust the final colors for monochrome fill types
 using light source via {=@ColorCycling color cycling}.
