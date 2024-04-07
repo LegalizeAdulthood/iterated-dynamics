@@ -1098,7 +1098,7 @@ This screen is not available if you have selected a ray tracing option.
 ;
 ~Topic=Stereo 3D Viewing, Label=HELP_3D_GLASSES
 
-The "Funny Glasses" (stereo 3D) parameter screen is presented only if
+The "Funny Glasses Parameters" (stereo 3D) screen is presented only if
 you select a non-zero stereo option in the prior 3D parameters.
 (See {3D Mode Selection}.)
 We suggest you definitely use defaults at first on this screen.
@@ -1126,7 +1126,7 @@ visible part of the right image the same as the visible part of the left
 by cropping them.  If there is too much in the field of either eye that the
 other doesn't see, the stereo effect can be ruined.
 
-Red and Blue brightness factor.  The generally available red/blue-green
+Red and Blue brightness factor: the generally available red/blue-green
 glasses, made for viewing on ink on paper and not the light from a CRT,
 let in more red light in the blue-green lens than we would like.  This
 leaves a ghost of the red image on the blue-green image (definitely not
@@ -1134,10 +1134,10 @@ desired in stereo images).  We have countered this by adjusting the
 intensity of the red and blue values on the CRT.  In general you should not
 have to adjust this.
 
-The final entry is Map file name (present only if stereo=1 or stereo=2
+The final entry is the map file name (present only if stereo=1 or stereo=2
 was selected).
 If you have a special map file you want
-to use for Stereo 3D this is the place to enter its name.  Generally
+to use for stereo 3D this is the place to enter its name.  Generally
 glasses1.map is for type 1 (alternating pixels), and glasses2.map is for
 type 2 (superimposed pixels).  Grid.map is great for wire-frame images
 using 16 color modes.
