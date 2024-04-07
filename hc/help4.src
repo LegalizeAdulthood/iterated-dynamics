@@ -35,12 +35,12 @@
   autokey=play|record      Playback or record keystrokes
   autokeyname=<path>\\filename  File for autokey mode, default auto.key
   makedoc=filename         Create Id documentation file
-  maxhistory=<nnn>         Set image capacity of history feature. A higher
+  maxhistory=<nnn>         Set image capacity of history feature.  A higher
                            number stores more images but uses more memory.
   tempdir=directory        Place temporary files here
   workdir=directory        Directory for miscellaneous written files
   curdir=yes|no            When set to yes, Id checks current directory
-                           before default directory when opening files. Use
+                           before default directory when opening files.  Use
                            this command when testing temporary .frm, .l, etc.
                            files in the current directory.
   comment=comment1/comment2/comment3/comment4
@@ -55,7 +55,7 @@
                            Tracing and Tesseral options
   float=yes                For most functions changes from integer math to fp
   symmetry=xxxx            Force symmetry to None, X axis, Y axis, XY axis,
-                           origin, or pi symmetry.  Useful as a speedup. Only
+                           origin, or pi symmetry.  Useful as a speedup.  Only
                            use this feature if the fractal actually has the
                            stated symmetry, otherwise may not work as expected.
   bfdigits=<nnn>           Force nnn digits if arbitrary precision used (not
@@ -63,10 +63,10 @@
   mathtolerance=<nnn>/<nnn> This commands controls the logic that automatically
                            selects one of integer/float/arbitrary precision
                            based on precision requirements of the current zoom
-                           depth. The first number controls the integer/float
+                           depth.  The first number controls the integer/float
                            transition, and the second number controls the
                            float/arbitrary precision transition.
-  minstack=<nnn>           For SOI (passes=s). This controls the minimum amount
+  minstack=<nnn>           For SOI (passes=s).  This controls the minimum amount
                            of stack memory reserved during synchronous orbits.
 ~FF
 {Fractal Type Parameters}
@@ -75,7 +75,7 @@
   params=xxx[/xxx[/...     Begin with these extra Parameter values
                            (Examples:  params=4   params=-0.480/0.626)
   function=fn1/.../fn4     Allows specification of transcendental functions
-                           with types using variable functions. Values are
+                           with types using variable functions.  Values are
                            sin, cos, tan, cotan, sinh, cosh, tanh, cotanh,
                            exp, log, sqr, recip (1/z), ident (identity),
                            conj, flip, zero, one, cosxx (cos with bug), asin,
@@ -110,11 +110,11 @@
                            to the given complex number (real and imag parts)
   initorbit=pixel          Sets the value used to initialize Mandelbrot orbits
                            to the complex number corresponding to the screen
-                           pixel. This is the default for most types.
+                           pixel.  This is the default for most types.
   rseed=nnnnn              Random number seed, for reproducable plasma clouds
   showdot=[auto|bright|medium|dark|nn]/size  Colors the current dot being
                            calculated color nn or an automatically calculated
-                           color (-1 disables). The second parameter is the
+                           color (-1 disables).  The second parameter is the
                            size of the traveling pointer.
   aspectdrift=nn           How much the aspect ratio can vary from normal due
                            to zooming. (default is 0.02)
@@ -137,10 +137,10 @@
                            vga or higher only
   recordcolors=auto|comment|yes Sets method of writing colors in PAR files.
                            Auto causes colors=@mapfile to be written if
-                           colors came from loading a color map. Yes and
-                           comment force compressed colors always. Comment
+                           colors came from loading a color map.  Yes and
+                           comment force compressed colors always.  Comment
                            also writes map name in a comment if colors came
-                           from a map file. Default is auto.
+                           from a map file.  Default is auto.
   cyclerange=nnn/nnn       Range of colors to cycle (default 1/255)
   cyclelimit=nnn           Color-cycler speed-limit (1 to 256, default = 55)
   olddemmcolors=yes|no     Use old coloring scheme with distance estimator
@@ -154,10 +154,10 @@
                            options.  Default is no.
 
 {Doodad Parameters}
-  logmap=yes|old|nn        Yes maps logarithm of iteration to color. Old uses
+  logmap=yes|old|nn        Yes maps logarithm of iteration to color.  Old uses
                            pre vsn 14 logic. >1 compresses, <-1 for quadratic.
-  logmode=fly|table|auto   Fly forces on-the-fly calculation of logmap. Table
-                           forces the use of the logmap array. Auto causes
+  logmode=fly|table|auto   Fly forces on-the-fly calculation of logmap.  Table
+                           forces the use of the logmap array.  Auto causes
                            logmap to be recalculated automatically when
                            zooming.
   ranges=nn/nn/nn/...      Ranges of iteration values to map to colors
@@ -223,7 +223,7 @@
   fastrestore=yes|no       If yes, resets viewwindow to NO prior to restoring
                            a gif file, and bypasses the warning when
                            restoring a gif in a video mode other than the
-                           one in which the gif was saved. Default is no.
+                           one in which the gif was saved.  Default is no.
                            Feature will be useful when cycling through a
                            group of gifs in autokey mode.
   virtual=yes|no           If no, disables the check for and the ability to
@@ -231,7 +231,7 @@
 
 ~FF
 {3D Parameters}
-  3d=yes|overlay           Resets 3D to defaults, starts 3D mode. If overlay
+  3d=yes|overlay           Resets 3D to defaults, starts 3D mode.  If overlay
                            specified, does not clear existing graphics screen
   preview=yes              Turns on 3D 'preview' default mode
   showbox=yes              Turns on 3D 'showbox' default mode
@@ -321,9 +321,9 @@ this file, it begins by reading parameters from it.  This file is useful
 for setting parameters you always want.
 
 The file sstools.ini is divided into sections belonging to particular
-programs.  Each section begins with a label in brackets. Id looks for
+programs.  Each section begins with a label in brackets.  Id looks for
 the label [id], and ignores any lines it finds in the file belonging to
-any other label. If an sstools.ini file looks like this:
+any other label.  If an sstools.ini file looks like this:
 
   [id]\
   sound=off      ; (for home use only)\
@@ -341,7 +341,7 @@ be other, sister programs to Id using that file.)
 ~Topic=Parameter Files and the <@> Command
 
 You can change parameters on-the-fly while running Id by using the
-<@> or <2> command and a parameter file. Parameter files contain named
+<@> or <2> command and a parameter file.  Parameter files contain named
 groups of parameters, looking something like this:
 
   quickdraw \{      ; a set of parameters named quickdraw\
@@ -354,22 +354,22 @@ groups of parameters, looking something like this:
      }\
 
 If you use the <@> or <2> command and select a parameter file containing the
-above example, Id will show two choices: quickdraw and slowdraw. You
+above example, Id will show two choices: quickdraw and slowdraw.  You
 move the cursor to highlight one of the choices and press <Enter> to set
 the parameters specified in the file by that choice.
 
-The default parameter file name is id.par. A different file can be
+The default parameter file name is id.par.  A different file can be
 selected with the "parmfile=" option, or by using <@> or <2> and then hitting
 <F6>.
 
 You can create parameter files with a text editor, or for some uses, by
-using the <B> command. Parameter files can be used in a number of ways,
+using the <B> command.  Parameter files can be used in a number of ways,
 some examples:
 
-  o To save the parameters for a favorite image. Id can do this for
+  o To save the parameters for a favorite image.  Id can do this for
     you with the <B> command.
 
-  o To save favorite sets of 3D transformation parameters. Id can do
+  o To save favorite sets of 3D transformation parameters.  Id can do
     this for you with the <B> command.
 
   o To set up different sets of parameters you use occasionally.
@@ -381,9 +381,9 @@ Formulas, ifs, and lsystem entries referred to in a parameter entry can\
 be included in a .par file by adding the prefix frm:, ifs:, or lsys:\
 respectively, for example frm:myformula \{rest of that formula}.\
 Note that the prefix is a label, not part of the formula name, so the\
-reference in the image entry would be formulaname=myformula. The\
+reference in the image entry would be formulaname=myformula.  The\
 formula, ifs, and lsystem entries added to a parfile are accessed only\
-when the image entry in the parfile is run. To make these formulas generally\
+when the image entry in the parfile is run.  To make these formulas generally\
 accessible, they must be added to a .frm, .ifs or .l file (without the\
 identifier prefix, of course).
 
@@ -418,9 +418,9 @@ Some terminology:\
 ~Topic=Startup Parameters
 
 @FILENAME\
-Causes Id to read "filename" for parameters. When it finishes, it
+Causes Id to read "filename" for parameters.  When it finishes, it
 resumes reading its own command line -- i.e., "id maxiter=250
-@myfile passes=1" is legal. This option is only valid on the DOS command
+@myfile passes=1" is legal.  This option is only valid on the DOS command
 line, as Id is not clever enough to deal with multiple indirection.
 
 @FILENAME/GROUPNAME\
@@ -439,39 +439,39 @@ written, including makemig.bat and debugging files.
 FILENAME=[name]\
 Causes Id to read the named file, which must either have been saved
 from an earlier Id session or be a generic GIF file, and use that as
-the starting point, bypassing the initial information screens. The
-filetype is optional and defaults to .GIF. Non-Id GIF files are
+the starting point, bypassing the initial information screens.  The
+filetype is optional and defaults to .GIF.  Non-Id GIF files are
 restored as fractal type "plasma".\
 
 On the DOS command line you may omit FILENAME= and just give the file name.
 
 CURDIR=yes\
 Id uses directories set by various commands, possibly in the
-sstools.ini file. If you want to try out some files in the current directory,
+sstools.ini file.  If you want to try out some files in the current directory,
 such as a modified copy of id.frm, you won't Id to read the copy
-in your official FRM directory. Setting curdir=yes at the command line will
+in your official FRM directory.  Setting curdir=yes at the command line will
 cause Id to look in the current directory for requested files first
-before looking in the default directory set by the other commands. Warning:
+before looking in the default directory set by the other commands.  Warning:
 <tab> screen may not reflect actual file opened in cases where the file was
 opened in the DOS current directory.
 
 ~ONLINEFF
 MAKEPAR=parfile/entryname\
 This command invokes a batch facility to copy fractal and color information
-stored in GIF files to PAR format. The syntax is:\
+stored in GIF files to PAR format.  The syntax is:\
      id filename.gif makepar=parfile.par/entryname >> makepar.log\
 The entryname is optional and defaults to the name of the gif filename if
-absent. Other parameters can appear before the makepar= command, but
-anything after will ignored. If the parfile and entryname exist, the entry
-will replace the previous entry. If the entry doesn't exist, it will be
-added. If the parfile doesn't exist it will be created.
+absent.  Other parameters can appear before the makepar= command, but
+anything after will ignored.  If the parfile and entryname exist, the entry
+will replace the previous entry.  If the entry doesn't exist, it will be
+added.  If the parfile doesn't exist it will be created.
 Redirection of output to a log file is possible in the DOS version because
 all screen output is written to the standard output.
 
 If you leave the GIF filename out of the command lime but add a map= command,
 then the makepar command will write a PAR named for the color map with only
-the colors in the PAR entry. This is a handy tool for converting maps
-into compressed PAR colors entry. For example, you could type:\
+the colors in the PAR entry.  This is a handy tool for converting maps
+into compressed PAR colors entry.  For example, you could type:\
      id map=lyapunov.map makepar=mycolors >> makepar.log\
 This adds a colors-only PAR entry called lyapunov.map to mycolors.par.
 
@@ -481,11 +481,11 @@ This command sets the maximum width of lines in a PAR entry.
 ~ONLINEFF
 ~Label=@COMMENTS
 COMMENT=[comment1]/[comment2]/[comment3]/[comment4]\
-Inserts comments into PAR files. These comments can include
-variables that are expanded at the time the PAR file is created. Variables are
-indicated by $varname$. Underscore characters are expanded to blanks.
+Inserts comments into PAR files.  These comments can include
+variables that are expanded at the time the PAR file is created.  Variables are
+indicated by $varname$.  Underscore characters are expanded to blanks.
 If you want to include the special characters '$', '_', or '\\' in a comment,
-precede the character with '\\'. Supported variables are:\
+precede the character with '\\'.  Supported variables are:\
 
 Variable   Expands to   Example     Variable   Expands to   Example
 ===============================     ===============================\
@@ -498,7 +498,7 @@ $sec$      time:sec     14          $ydots$    vertical rez 480\
 $time$     time:h:m:s   21:34:14    $vidkey$   video key    SF4\
 
 You can leave any of the four comment fields unchanged by leaving that
-position blank. For example, the command comment=//Created_$date$ inserts
+position blank.  For example, the command comment=//Created_$date$ inserts
 the text "Created Aug 17, 1996" into the third comment.
 
 BATCH=yes\
@@ -515,7 +515,7 @@ in the autokey file.\
 See also {Autokey Mode}.
 
 AUTOKEYNAME=[filename]\
-Specifies the file name to be used in autokey mode. The default file name
+Specifies the file name to be used in autokey mode.  The default file name
 is AUTO.KEY.
 
 MAKEDOC[=filename]\
@@ -531,14 +531,14 @@ use "Printing Id Documentation" from the main help index.
 
 MAXHISTORY=<nnn>\
 Id maintains a list of parameters of the past 10 images that you
-generated in the current Id session. You can revisit these images
-using the <h> and <Ctrl+H> commands. The maxhistory command allows you
-to set the number of image parameter sets stored in memory. The tradeoff
-is between the convenience of storing more images and memory use. Each
+generated in the current Id session.  You can revisit these images
+using the <h> and <Ctrl+H> commands.  The maxhistory command allows you
+to set the number of image parameter sets stored in memory.  The tradeoff
+is between the convenience of storing more images and memory use.  Each
 image in the circular history buffer takes up over 1200 bytes, so the
-default value of ten images uses up 12,000 bytes of memory. If your memory
+default value of ten images uses up 12,000 bytes of memory.  If your memory
 is very tight, and some memory-intensive Id operations are giving
-"out of memory" messages, you can reduce maxistory to 2 or even zero. Keep
+"out of memory" messages, you can reduce maxistory to 2 or even zero.  Keep
 in mind that every time you color cycle or change from integer to float or
 back, another image parameter set is saved, so the default ten images are
 used up quickly.
@@ -557,51 +557,51 @@ algorithms.  See {Drawing Method}.
 
 FLOAT=yes\
 Most fractal types have both a fast integer math and a floating point
-version. The faster, but possibly less accurate, integer version is the
-default. The default is to use integer math, but in this age of pentium
+version.  The faster, but possibly less accurate, integer version is the
+default.  The default is to use integer math, but in this age of pentium
 (amd later) CPUS we now recommend your making float=yes the default by
 adding this line to your sstools.ini file.
 Also see {"Limitations of Integer Math (And How We Cope)"}.
 
 SYMMETRY=xxx\
 Forces symmetry to None, Xaxis, Yaxis, XYaxis, Origin, or Pi symmetry.
-Useful as a speedup for symmetrical fractals. This is not a kaleidoscope
-feature for imposing symmetry where it doesn't exist. Use only when the
+Useful as a speedup for symmetrical fractals.  This is not a kaleidoscope
+feature for imposing symmetry where it doesn't exist.  Use only when the
 fractal actual exhibits the symmetry, or else results may not be
 satisfactory.
 
 BFDIGITS=<nnn>\
-Forces nnn digits if arbitrary precision used. You can use this if Id's
+Forces nnn digits if arbitrary precision used.  You can use this if Id's
 precision detection changes to arbitrary precision too late and regular double
 precision is used with poor results.
 
 MATHTOLERANCE=<nnn>/<nnn>\
 This commands controls the logic that automatically selects one of
 integer/float/arbitrary precision based on precision requirements of the
-current zoom depth. The first number controls the integer/float transition,
-and the second number controls the float/arbitrary precision transition. The
+current zoom depth.  The first number controls the integer/float transition,
+and the second number controls the float/arbitrary precision transition.  The
 default value of .05 for both means that the ratio between the exact and
-calculated width and height is between .95 and 1.05. A larger value than .05
+calculated width and height is between .95 and 1.05.  A larger value than .05
 (say .10) makes the test looser so that the lower precision math is used
-longer. A value <= 0 means the test is always failed and the higher precision
-math type is used. A value >= 1 means that the test is always passed and the
+longer.  A value <= 0 means the test is always failed and the higher precision
+math type is used.  A value >= 1 means that the test is always passed and the
 lower precision math type is used.
 
 MINSTACK=<nnn>\
 This sets the minimum number of stack bytes required for passes=s in order to
-do another SOI recursion. If you get bad results, try setting this to a
-value above the default value of 1100. If the value is too large, the image
+do another SOI recursion.  If you get bad results, try setting this to a
+value above the default value of 1100.  If the value is too large, the image
 will be OK but generation will be slower.
 ;
 ;
 ~Topic=Fractal Type Parameters
 
 TYPE=[name]\
-Selects the fractal type to calculate. The default is type "mandel".
+Selects the fractal type to calculate.  The default is type "mandel".
 
 PARAMS=n/n/n/n...\
 Set optional (required, for some fractal types) values used in the
-calculations. These numbers typically represent the real and imaginary
+calculations.  These numbers typically represent the real and imaginary
 portions of some startup value, and are described in detail as needed in
 {Fractal Types}.\
 (Example: "id type=julia params=-0.48/0.626" would wait at the opening
@@ -613,7 +613,7 @@ Allows setting variable functions found in some fractal type formulae.
 Possible values are sin, cos, tan, cotan, sinh, cosh, tanh, cotanh, exp,
 log, sqr, recip (i.e. 1/z), ident (i.e. identity), cosxx (cos with a
 pre version 16 bug), flip, zero, one, asin, asinh, acos, acosh, atan, atanh,
-sqrt, abs (abs(x)+i*abs(y)), cabs (sqrt(x*x+y*y)). New additions are
+sqrt, abs (abs(x)+i*abs(y)), cabs (sqrt(x*x+y*y)).  New additions are
 the various rounding-to-integer functions: floor (round down), ceil
 (round up), trunc (round toward zero), and round (round to nearest).
 
@@ -639,7 +639,7 @@ batch mode, as this is the only way to specify an IFS name in that case.
 MAXITER=nnn\
 Reset the iteration maximum (the number of iterations at which the program
 gives up and says 'OK, this point seems to be part of the set in question
-and should be colored [insidecolor]') from the default 150. Values range
+and should be colored [insidecolor]') from the default 150.  Values range
 from 2 to 2,147,483,647 (super-high iteration limits like 200000000 are useful
 when using logarithmic palettes).  See {The Mandelbrot Set} for a description
 of the iteration method of calculating fractals.\
@@ -649,7 +649,7 @@ of the iteration method of calculating fractals.\
 CORNERS=[xmin/xmax/ymin/ymax[/x3rd/y3rd]]\
 Example: corners=-0.739/-0.736/0.288/0.291\
 Begin with these coordinates as the range of x and y coordinates, rather
-than the default values of (for type=mandel) -2.0/2.0/-1.5/1.5. When you
+than the default values of (for type=mandel) -2.0/2.0/-1.5/1.5.  When you
 specify four values (the usual case), this defines a rectangle: x-
 coordinates are mapped to the screen, left to right, from xmin to xmax, y-
 coordinates are mapped to the screen, bottom to top, from ymin to ymax.
@@ -680,7 +680,7 @@ image is leaning over.  Positive angles will rotate and skew the image
 counter-clockwise.
 
 BAILOUT=nnn\
-Over-rides the default bailout criterion for escape-time fractals. Can
+Over-rides the default bailout criterion for escape-time fractals.  Can
 also be set from the parameters screen after selecting a fractal type.
 See description of bailout in {The Mandelbrot Set}.
 
@@ -691,8 +691,8 @@ can utilize the additional tests.
 
 RESET\
 Causes Id to reset all calculation related parameters to their
-default values. Non-calculation parameters such as "sound=", and
-"savename=" are not affected. RESET should be specified at the start
+default values.  Non-calculation parameters such as "sound=", and
+"savename=" are not affected.  RESET should be specified at the start
 of each parameter file entry (used with the <@> command) which defines an
 image, so that the entry need not describe every possible parameter - when
 invoked, all parameters not specifically set by the entry will have
@@ -702,25 +702,25 @@ INITORBIT=pixel\
 INITORBIT=nnn/nnn\
 Allows control over the value used to begin each Mandelbrot-type orbit.
 "initorbit=pixel" is the default for most types; this command initializes
-the orbit to the complex number corresponding to the screen pixel. The
-command "initorbit=nnn/nnn" uses the entered value as the initializer. See
+the orbit to the complex number corresponding to the screen pixel.  The
+command "initorbit=nnn/nnn" uses the entered value as the initializer.  See
 the discussion of the {Mandellambda Sets} for more on this topic.
 
 RSEED=nnnn\
 The initial random-number "seed" for plasma clouds is taken from your PC's
-internal clock-timer. This argument forces a value (which you can see in
-the <Tab> display), and allows you to reproduce plasma clouds. A detailed
+internal clock-timer.  This argument forces a value (which you can see in
+the <Tab> display), and allows you to reproduce plasma clouds.  A detailed
 discussion of why a TRULY random number may be impossible to define, let
 alone generate, will have to wait for "Iterated Dynamics: The 3-MB Doc File."
 
 SHOWDOT=[auto|bright|medium|dark|<nnn>[/<size>]]\
 Colors the current dot being calculated color <nnn> or an automatically
-calculated color taken from the current palette. The second parameter is
+calculated color taken from the current palette.  The second parameter is
 the size of the traveling pointer in units of pixels of 1/1024th of a screen.
 
 The travelling pointer strobes with fast fractals because of interaction with
-the monitor's vertical refresh. The orbitdelay parameter can be used to
-introduce a per-pixel delay when showdot is turned on. Try orbitdelay=1000
+the monitor's vertical refresh.  The orbitdelay parameter can be used to
+introduce a per-pixel delay when showdot is turned on.  Try orbitdelay=1000
 with showdot=b/20 to get a feel for how the showdot triangle works.
 
 ASPECTDRIFT=<nn>\
@@ -739,7 +739,7 @@ Controls periodicity checking (see {Periodicity Logic}).
 you see which pixels were painted as "inside" due to being caught
 by periodicity.  Specifying a number causes a more conservative
 periodicity test (each increase of 1 divides test tolerance by 2).
-Entering a negative number lets you turn on "show" with that number. Type
+Entering a negative number lets you turn on "show" with that number.  Type
 lambdafn function=exp needs periodicity turned off to be accurate -- there
 may be other cases.
 
@@ -755,9 +755,9 @@ fractal types mandelcloud and dynamic.  This allows the orbits to settle
 down before plotting starts.
 
 This option also slows down the display of orbits using the <O> command
-for folks with hot new computers. Units are in 1/10000 seconds per
+for folks with hot new computers.  Units are in 1/10000 seconds per
 orbit point.  ORBITDELAY=10 therefore allows you to see each pixel's
-orbit point for about one millisecond. For best display of orbits,
+orbit point for about one millisecond.  For best display of orbits,
 try passes=1 and a moderate resolution such as 320x200.  Note that
 the first time you press the 'O' key with the 'orbitdelay' function
 active, your computer will pause for a half-second or so to calibrate
@@ -786,7 +786,7 @@ on the <F6> image coordinates screen.
 ~Topic=Color Parameters
 INSIDE=nnn|maxiter|bof60|bof61|zmag|epscross|startrail|period|atan|fmod\
 Set the color of the interior: for
-example, "inside=0" makes the M-set "lake" a stylish basic black. A setting of
+example, "inside=0" makes the M-set "lake" a stylish basic black.  A setting of
 inside=maxiter makes the inside color the same as the value of maxiter.
 
 Eight more options reveal hidden structure inside the lake.  Inside=bof60 and
@@ -803,9 +803,9 @@ See {Inside=bof60|bof61|zmag|fmod|period|atan} for a brilliant explanation
 of what these do!
 
 Inside=epscross colors pixels green or yellow according to whether their
-orbits swing close to the Y-axis or X-axis, respectively. Inside=startrail
-has a coloring scheme based on clusters of points in the orbits. Best with
-outside=<nnn>. For more information, see {Inside=epscross|startrail}.
+orbits swing close to the Y-axis or X-axis, respectively.  Inside=startrail
+has a coloring scheme based on clusters of points in the orbits.  Best with
+outside=<nnn>.  For more information, see {Inside=epscross|startrail}.
 
 Note that the "Look for finite attractor" option on the <Y> options screen
 will override the selected inside option if an attractor is found - see
@@ -814,15 +814,15 @@ will override the selected inside option if an attractor is found - see
 OUTSIDE=nnn|iter|real|imag|summ|mult|atan|fmod|tdis\
 The classic method of coloring outside
 the fractal is to color according to how many iterations were required before
-Z reached the bailout value, usually 4. This is the method used when
+Z reached the bailout value, usually 4.  This is the method used when
 OUTSIDE=iter.
 
 However, when Z reaches bailout the real and imaginary components can be at
 very diferent values.  OUTSIDE=real and OUTSIDE=imag color using the iteration
 value plus the real or imaginary values.  OUTSIDE=summ uses the sum of all
 these values.  These options can give a startling 3d quality to otherwise flat
-images and can change some boring images to wonderful ones. OUTSIDE=mult
-colors by multiplying the iteration by real divided by imaginary. There was no
+images and can change some boring images to wonderful ones.  OUTSIDE=mult
+colors by multiplying the iteration by real divided by imaginary.  There was no
 mathematical reason for this, it just seemed like a good idea.  OUTSIDE=atan
 colors by determining the angle in degrees the last iterated value has with
 respect to the real axis, and using the absolute value.
@@ -844,12 +844,12 @@ orbit.  This feature was suggested by Steve Robinson.
 
 Outside=nnn sets the color of the exterior to some number of your choosing:
 for example, "OUTSIDE=1" makes all points not INSIDE the fractal set to color
-1 (blue). Note that defining an OUTSIDE color forces any image to be a
+1 (blue).  Note that defining an OUTSIDE color forces any image to be a
 two-color one: either a point is INSIDE the set, or it's OUTSIDE it.
 
 MAP=[filename]\
-Reads in a replacement color map from [filename]. This map replaces the
-default color map of your video adapter. Requires a VGA or higher adapter.
+Reads in a replacement color map from [filename].  This map replaces the
+default color map of your video adapter.  Requires a VGA or higher adapter.
 The difference
 between this argument and an alternate map read in via <L> in color-
 command mode is that this one applies to the entire run.
@@ -857,14 +857,14 @@ See {Color Maps}.
 
 COLORS=@filename|colorspecification\
 Sets colors for the current image, like the <L> function in color cycling
-and palette editing modes. Unlike the MAP= parameter, colors set with
+and palette editing modes.  Unlike the MAP= parameter, colors set with
 COLORS= do not replace the default - when you next select a new fractal
 type, colors will revert to their defaults.\
 
 COLORS=@filename tells Id to use a color map file named "filename".
 See {Color Maps}.\
 
-COLORS=colorspecification specifies the colors directly. The value of
+COLORS=colorspecification specifies the colors directly.  The value of
 "colorspecification" is rather long (768 characters for 256 color modes),
 and its syntax is not documented here.  This form of the COLORS= command
 is not intended for manual use - it exists for use by the <B> command
@@ -872,12 +872,12 @@ when saving the description of a nice image.
 
 ~Label=@RECORDCOLORS
 RECORDCOLORS=auto|comment|yes\
-Controls the method of writing colors in PAR files. Auto causes the colors
+Controls the method of writing colors in PAR files.  Auto causes the colors
 to be written in the colors=@mapfile form if the colors were loaded from
-a map. Use this mode if you manage your colors using map files. If you
+a map.  Use this mode if you manage your colors using map files.  If you
 share PAR files with others, and have trouble remembering to send them the
-map file, use RECORDCOLORS=comment or yes. These modes force the writing
-of compressed color maps in the PAR file in all cases. The only difference is
+map file, use RECORDCOLORS=comment or yes.  These modes force the writing
+of compressed color maps in the PAR file in all cases.  The only difference is
 that the 'comment' option also writes the mapfile name in a comment so you
 can remember where the colors came from.
 ~Doc-
@@ -889,16 +889,16 @@ Sets the range of color numbers to be animated during color cycling.  The
 default is 1/255, i.e. just color number 0 (usually black) is not cycled.
 
 CYCLELIMIT=nnn\
-Sets the speed of color cycling. Technically, the number of DAC registers
-updated during a single vertical refresh cycle. Legal values are 1 - 256,
+Sets the speed of color cycling.  Technically, the number of DAC registers
+updated during a single vertical refresh cycle.  Legal values are 1 - 256,
 default is 55.
 
 TEXTCOLORS=mono\
 Set text screen colors to simple black and white.
 
 TEXTCOLORS=aa/bb/cc/...\
-Set text screen colors. Omit any value to use the default (e.g.
-textcolors=////50 to set just the 5th value). Each value is a 2 digit
+Set text screen colors.  Omit any value to use the default (e.g.
+textcolors=////50 to set just the 5th value).  Each value is a 2 digit
 hexadecimal value; 1st digit is background color (from 0 to 7), 2nd digit
 is foreground color (from 0 to F).\
 ~Format-
@@ -965,7 +965,7 @@ TRUECOLOR=yes\
 You can save either the default color scheme or the iteration escape value
 to a file called FRACTxxx.TGA.  This will allow experimentation with
 truecolor algorithms.  A C language source file that reads the file when
-iterates are used, is provided. Someday we'll have REAL truecolor support ...
+iterates are used, is provided.  Someday we'll have REAL truecolor support ...
 
 TRUEMODE=def|iter\
 Determines whether the FRACTxxx.TGA file produced when TRUECOLOR=yes contains
@@ -1004,7 +1004,7 @@ preceeding triplet and the following triplet.  The routine for finding the
 smooth-shaded range works something like this.  The current triplet's color
 values are compared to the current-1 triplet's color values.  The difference
 is saved and then the current triplet's color values are compared to the
-current-2 triplet's color values. The difference is saved and then this
+current-2 triplet's color values.  The difference is saved and then this
 difference is compared to the first one.  If the differences are the same, a
 shaded range has been found.  If the differences are off by one, this is
 saved as the one exceptable alternative difference.  Up to four previous
@@ -1032,7 +1032,7 @@ color number.  See {"Logarithmic Palettes and Color Ranges"} for details.
 
 DISTEST=nnn/nnn\
 A nonzero value in the first parameter enables the distance estimator
-method. The second parameter specifies the "width factor", defaults to 71.
+method.  The second parameter specifies the "width factor", defaults to 71.
 See {"Distance Estimator Method"} for details.
 
 DECOMP=2|4|8|16|32|64|128|256\
@@ -1045,23 +1045,23 @@ See {Biomorphs} for details.
 
 POTENTIAL=maxcolor[/slope[/modulus[/16bit]]]\
 Enables the "continuous potential" coloring mode for all fractal types
-except plasma clouds, attractor types such as lorenz, and IFS. The four
+except plasma clouds, attractor types such as lorenz, and IFS.  The four
 arguments define the maximum color value, the slope of the potential
 curve, the modulus "bailout" value, and whether 16 bit values are to be
-calculated.  Example: "POTENTIAL=240/2000/40/16bit". The Mandelbrot and
+calculated.  Example: "POTENTIAL=240/2000/40/16bit".  The Mandelbrot and
 Julia types ignore the modulus bailout value and use their own hardwired
 value of 4.0 instead.  See {Continuous Potential} for details.
 
 INVERT=nn/nn/nn\
-Turns on inversion. The parameters are radius of inversion, x-coordinate
+Turns on inversion.  The parameters are radius of inversion, x-coordinate
 of center, and y-coordinate of center. -1 as the first parameter sets the
 radius to 1/6 the smaller screen dimension; no x/y parameters defaults to
-center of screen. The values are displayed with the <Tab> command.
+center of screen.  The values are displayed with the <Tab> command.
 See {Inversion} for details.
 
 FINATTRACT=no|yes\
 Another option to show coloring inside some Julia "lakes" to show escape
-time to finite attractors. Works with lambda, magnet types, and possibly
+time to finite attractors.  Works with lambda, magnet types, and possibly
 others.  See {Finite Attractors} for more information.
 
 EXITNOASK=yes\
@@ -1073,18 +1073,18 @@ screen.  Added at the request of Ward Christensen.  It's his funeral <grin>.
 ~Topic=File Parameters
 
 In Id you can use various filename variables to specify files, set
-default directories, or both. For example, in the SAVENAME description below,
+default directories, or both.  For example, in the SAVENAME description below,
 [name] can be a filename, a directory name, or a fully qualified pathname
-plus filename. You can specify default directories using these variables
+plus filename.  You can specify default directories using these variables
 in your sstools.ini file.
 
 SAVENAME=[<path>\\][name]\
-Set the path and/or filename to use when you <S>ave a screen. The default
-filename is FRACT001. The .GIF extension is optional (Example:
+Set the path and/or filename to use when you <S>ave a screen.  The default
+filename is FRACT001.  The .GIF extension is optional (Example:
 SAVENAME=myfile)
 
 OVERWRITE=no|yes\
-Sets the savename overwrite flag (default is 'no'). If 'yes', saved files
+Sets the savename overwrite flag (default is 'no').  If 'yes', saved files
 will over-write existing files from previous sessions; otherwise the
 automatic incrementing of FRACTnnn.GIF will find the first unused
 filename.
@@ -1097,8 +1097,8 @@ calculation is in progress.  This is mainly useful with long batches - see
 ~ONLINEFF
 GIF87a=yes\
 Backward-compatibility switch to force creation of GIF files in the GIF87a
-format. As of version 14, Id defaults to the new GIF89a format which
-permits storage of fractal information within the format. GIF87a=YES is
+format.  As of version 14, Id defaults to the new GIF89a format which
+permits storage of fractal information within the format.  GIF87a=YES is
 only needed if you wish to view Id images with a GIF decoder that
 cannot accept the newer format.  See {GIF Save File Format}.
 
@@ -1135,19 +1135,19 @@ different suffix for them.
 
 ORBITSAVE=yes\
 Causes the file ORBITS.RAW to be opened and the points generated by orbit
-fractals or IFS fractals to be saved in a raw format. This file can be read
+fractals or IFS fractals to be saved in a raw format.  This file can be read
 by the Acrospin program which can rotate and scale the image rapidly in
-response to arrow key commands. The filename ORBITS.RAW is fixed and will
+response to arrow key commands.  The filename ORBITS.RAW is fixed and will
 be overwritten each time a new fractal is generated with this option.\
 (see {Barnsley IFS Fractals} {Orbit Fractals} {=@ACROSPIN Acrospin}).
 ;
 ~Topic=Video Parameters
 
 VIDEO=xxx\
-Set the initial video mode (and bypass the informational screens). Handy
+Set the initial video mode (and bypass the informational screens).  Handy
 for batch runs. (Example: VIDEO=F4 for IBM 16-color VGA.)
 You can obtain the current VIDEO= values (key assignments) from the
-"select video mode" screens inside Id. If you want to do a batch run
+"select video mode" screens inside Id.  If you want to do a batch run
 with a video mode which isn't currently assigned to a key, you'll have to
 modify the key assignments - see {"Video Mode Function Keys"}.
 
@@ -1155,7 +1155,7 @@ ASKVIDEO=yes|no\
 If "no," this eliminates the prompt asking you if a file to be restored is
 OK for your current video hardware.\
 WARNING: every version of Id so far has had a bigger, better, but
-shuffled-around video table. Since calling for a mode your hardware
+shuffled-around video table.  Since calling for a mode your hardware
 doesn't support can leave your system in limbo, be careful about leaving
 the above two parameters in a command file to be used with future versions
 of Id, particularly for the super-VGA modes.
@@ -1166,11 +1166,11 @@ coordinates (y/n), explicit x size, and explicit y size, see {"View Window"}.
 
 ~Label=@FASTRESTORE
 FASTRESTORE=yes|no\
-If YES, resets viewwindow to "no" prior to restoring a gif file. Otherwise,
+If YES, resets viewwindow to "no" prior to restoring a gif file.  Otherwise,
 images saved in full view will be drawn in reduced view if viewwindows has
-been set to "yes" previously. Also, when YES, bypasses the warning when
+been set to "yes" previously.  Also, when YES, bypasses the warning when
 restoring a gif in a video mode other than the one in which the gif was
-saved. Default is NO. Feature will be useful when cycling through a group
+saved.  Default is NO.  Feature will be useful when cycling through a group
 of gifs in autokey mode.  When combined with askvideo=no, allows loading
 images with the last successfully used video mode.  This is handy when
 viewing 1600x1200 images when you only have 1024x768 available.
@@ -1198,12 +1198,12 @@ Lorenz fractals - they play with the sound on your PC speaker as they are
 generating an image, based on the X or Y or Z co-ordinate they are
 displaying at the moment.
 
-The scope of the sound command has been extended. You can now hear the
+The scope of the sound command has been extended.  You can now hear the
 sound of fractal orbits--just turn on sound from the command line, the
 <X> menu, or the <cntl-F> menu, fire up a fractal, and try the <O>rbits
 command (or set showorbit=yes).  Use the orbitdelay=<nnn> command (also
 on the <cntl-F> menu) to dramatically alter the effect, which ranges from
-an unearthly scream to a series of discrete tones. Not recommended when
+an unearthly scream to a series of discrete tones.  Not recommended when
 people you have to live with are nearby!  Remember, we don't promise that
 it will sound beautiful!
 
@@ -1212,10 +1212,10 @@ OPL-3 support, or both at the same time.  There is also an option to
 quantize the notes generated by Id.  See {Sound Controls}.
 
 You can also "hear" any image that Id can decode; turn on sound
-before using <R> to read in a GIF file. We have no idea if this feature
-is useful. It was inspired by the comments of an on-line friend who is
-blind. We solicit feedback and suggestions from anyone who finds these
-sound features interesting or useful. The orbitdelay command also affects
+before using <R> to read in a GIF file.  We have no idea if this feature
+is useful.  It was inspired by the comments of an on-line friend who is
+blind.  We solicit feedback and suggestions from anyone who finds these
+sound features interesting or useful.  The orbitdelay command also affects
 the sound of decoding images.
 
 HERTZ=<nnn>\
@@ -1228,9 +1228,9 @@ will not be played.
 
 ORBITDELAY=<nn>\
 Slows up the display of orbits using the <O> command
-for folks with hot new computers. Units are in 1/10000 seconds per
+for folks with hot new computers.  Units are in 1/10000 seconds per
 orbit point.  ORBITDELAY=10 therefore allows you to see each pixel's
-orbit point for about one millisecond. For best display of orbits,
+orbit point for about one millisecond.  For best display of orbits,
 try passes=1 and a moderate resolution such as 320x200.  Note that
 the first time you press the 'O' key with the 'orbitdelay' function
 active, your computer will pause for a half-second or so to calibrate
@@ -1243,23 +1243,23 @@ start off in the "on" position each time a new fractal calculation starts.
 ORBITSAVE=sound\
 This option causes the hertz value played through the PC speaker with
 sound=x|y|z option to be written to a file "sound.txt" in the current
-directory. Bill Jemison has made some intriguing music with this option.
+directory.  Bill Jemison has made some intriguing music with this option.
 ;
 ;
 ~Topic=3D Parameters
 
 To stay out of trouble, specify all the 3D parameters, even if you want to
-use what you think are the default values. It takes a little practice to
-learn what the default values really are. The best way to create a set of
+use what you think are the default values.  It takes a little practice to
+learn what the default values really are.  The best way to create a set of
 parameters is to use the <B> command on an image you like and then use an
 editor to modify the resulting parameter file.
 
 3D=Yes\
 3D=Overlay\
-Resets all 3d parameters to default values. If FILENAME= is given, forces
+Resets all 3d parameters to default values.  If FILENAME= is given, forces
 a restore to be performed in 3D mode (handy when used with 'batch=yes' for
-batch-mode 3D images). If specified, 3D=Yes should come before any other
-3d parameters on the command line or in a parameter file entry. The form
+batch-mode 3D images).  If specified, 3D=Yes should come before any other
+3d parameters on the command line or in a parameter file entry.  The form
 3D=Overlay is identical except that the previous graphics screen is not
 cleared, as with the <#> (<shift+3> on some keyboards) overlay command.
 Useful for building parameter files that use the 3D overlay feature.\
@@ -1303,23 +1303,23 @@ features.
 
 RANDOMIZE=nnn (0 - 100)\
 This feature randomly varies the color of a pixel to near by colors.
-Useful to minimize map banding in 3d transformations. Usable with all
-FILLTYPES. 0 disables, max values is 7. Try 3 - 5.
+Useful to minimize map banding in 3d transformations.  Usable with all
+FILLTYPES. 0 disables, max values is 7.  Try 3 - 5.
 
 AMBIENT=nnn (0 - 100)\
 Set the depth of the shadows when using full color and light source
 filltypes. "0" disables the function, higher values lower the contrast.
 
 FULLCOLOR=yes\
-Valid with any light source FILLTYPE. Allows you to create a Targa-24 file
+Valid with any light source FILLTYPE.  Allows you to create a Targa-24 file
 which uses the color of the image being transformed or the map you select
-and shades it as you would see it in real life. Well, its better than B&W.
+and shades it as you would see it in real life.  Well, its better than B&W.
 A good map file to use is topo
 
 HAZE=nnn (0 - 100)\
 Gives more realistic terrains by setting the amount of haze for distant
-objects when using full color in light source FILLTYPES. Works only in the
-"y" direction currently, so don't use it with much y rotation. Try
+objects when using full color in light source FILLTYPES.  Works only in the
+"y" direction currently, so don't use it with much y rotation.  Try
 "rotation=85/0/0". 0 disables.
 
 BACKGROUND=nn/nn/nn\
@@ -1328,7 +1328,7 @@ and blue values (rr/gg/bb).
 
 LIGHTNAME=<filename>\
 The name of the Targa-24 file to be created when using full color with
-light source. Default is light001.tga. If overwrite=no (the default), the
+light source.  Default is light001.tga.  If overwrite=no (the default), the
 file name will be incremented until an unused filename is found.
 Background in this file will be the color set by background=r/g/b, the
 default is sky blue.
@@ -1336,7 +1336,7 @@ default is sky blue.
 MONITORWIDTH=<nnn>\
 This parameter allows you to specify the width in inches of the image on
 your monitor for the purpose of getting the correct stereo effect when
-viewing RDS images. See {Random Dot Stereograms (RDS)}.
+viewing RDS images.  See {Random Dot Stereograms (RDS)}.
 ;
 ;
 ;
@@ -1377,7 +1377,7 @@ like; then select some slow options (a high resolution disk video mode,
 distance estimator method, high maxiter, or whatever);  start the
 calculation;  then interrupt immediately with a <S>ave.  Rename the save
 file (fract001.gif if it is the first in the session and you didn't name
-it with the <X> options or "savename=") to xxx.gif. Later you can run
+it with the <X> options or "savename=") to xxx.gif.  Later you can run
 Id in batch mode to finish the job:\
     id batch=yes filename=xxx savename=xxx
 
@@ -1386,7 +1386,7 @@ checkpoint every nnn minutes.  If you start a many hour calculation with
 say "savetime=60", and a power failure occurs during the calculation,
 you'll have lost at most an hour of work on the image.  You can resume
 calculation from the save file as above.  Automatic saves triggered by
-SAVETIME do not increment the save file name. The same file is overwritten
+SAVETIME do not increment the save file name.  The same file is overwritten
 by each auto save until the image completes.  But note that Id does
 not directly over-write save files.  Instead, each save operation writes a
 temporary file id.tmp, then deletes the prior save file, then
@@ -1420,9 +1420,9 @@ work with fractal types which can be resumed.  See
 ;
 ~Topic="Disk-Video" Modes
 
-These "video modes" do not involve a video adapter at all. They use (in
+These "video modes" do not involve a video adapter at all.  They use (in
 order or preference) your expanded memory, your extended memory, or your
-disk drive (as file id.$$$) to store the fractal image. These modes
+disk drive (as file id.$$$) to store the fractal image.  These modes
 are useful for creating images beyond the capacity of your video adapter
 right up to the current internal limit of 32767 x 32767 x 256,
 e.g. for subsequent printing.
@@ -1450,10 +1450,10 @@ it is anyway).  So is the orbit display feature.
 but only to load or save a color palette.
 
 When using real disk for your disk-video, Id previously would not
-generate some "attractor" types (e.g. Lorenz) nor "IFS" images.  These stress
+generate some "attractor" types (e.g.  Lorenz) nor "IFS" images.  These stress
 disk drives with intensive reads and writes, but with the caching algorithm
-performance may be acceptable. Currently Id gives you a warning message
-but lets you proceed. You can end the calculation with <Esc> if you think your
+performance may be acceptable.  Currently Id gives you a warning message
+but lets you proceed.  You can end the calculation with <Esc> if you think your
 hard disk is getting too strenuous a workout.
 
 When using a real disk, and you are not directing the file to a RAM disk,
@@ -1477,7 +1477,7 @@ using a .pif file with extended memory and expanded memory set to zero.)
 Try this if your disk goes crazy when generating background images, which
 are supposedly using extended or expanded memory.  This problem can occur
 because, to multi-task, sometimes Windows must page an application's
-expanded or extended memory to disk, in big chunks. Id's own cached
+expanded or extended memory to disk, in big chunks.  Id's own cached
 disk access may be faster in such cases.
 ;
 ;
@@ -1491,31 +1491,31 @@ specify different "textsafe=" options for different video modes... relief
 is here, and without even learning "C"!
 
 You can do these things by modifying the id.cfg file with your text
-editor. Saving a backup copy of id.cfg first is of course highly
+editor.  Saving a backup copy of id.cfg first is of course highly
 recommended!
 
 Id uses a video adapter table for most of what it needs to know
-about any particular adapter/mode combination. The table is loaded from
-id.cfg each time Id is run. It can contain information for
-up to 300 adapter/mode combinations. The table entries, and the function
+about any particular adapter/mode combination.  The table is loaded from
+id.cfg each time Id is run.  It can contain information for
+up to 300 adapter/mode combinations.  The table entries, and the function
 keys they are tied to, are displayed in the "select video mode" screen.
 
 This table makes adding support for various third-party video cards and
 their modes much easier, at least for the ones that pretend to be
-standard with extra dots and/or colors. There is even a special
+standard with extra dots and/or colors.  There is even a special
 "roll-your-own" video mode (mode 19) enabling those of you with "C"
 compilers and a copy of the Id source to generate video modes
 supporting whatever adapter you may have.
 
 The table as currently distributed begins with nine standard and several
 non-standard IBM video modes that have been exercised successfully with a
-PS/2 model 80. These entries, coupled with the descriptive comments in the
+PS/2 model 80.  These entries, coupled with the descriptive comments in the
 table definition and the information supplied (or that should have been
 supplied!) with your video adapter, should be all you need to add your own
 entries.
 
 After the IBM and quasi-pseudo-demi-IBM modes, the table contains an ever-
-increasing number of entries for other adapters. Almost all of these
+increasing number of entries for other adapters.  Almost all of these
 entries have been added because someone like you sent us spec sheets, or
 modified Id to support them and then informed us about it.
 
@@ -1524,7 +1524,7 @@ The rest of the lines must have eleven fields separated by commas.
 The fields are defined as:
 
 ~Format-
-1. Key assignment. F2 to F10, SF1 to SF10, CF1 to CF10, or AF1 to AF10.
+1. Key assignment.  F2 to F10, SF1 to SF10, CF1 to CF10, or AF1 to AF10.
    Blank if no key is assigned to the mode.
 2. The name of the adapter/video mode (25 chars max, no leading blanks).
    The adapter is set up for that mode via INT 10H, with:
@@ -1533,7 +1533,7 @@ The fields are defined as:
 5. CX = this, and
 6. DX = this (hey, having all these registers wasn't OUR idea!)
 7. An encoded value describing how to write to your video memory in that
-   mode. Currently available codes are:
+   mode.  Currently available codes are:
   1) Use the BIOS (INT 10H, AH=12/13, AL=color) (last resort - SLOW!)
   2) Pretend it's a (perhaps super-res) EGA/VGA
   3) Pretend it's an MCGA
@@ -1574,19 +1574,19 @@ Add 100, 200, 300, or 400 to this code to specify an over-ride "textsafe="
 
 NOTE that the AX, BX, CX, and DX fields use hexadecimal notation (fifteen
 ==> 'f', sixteen ==> '10'), because that's the way most adapter
-documentation describes it. The other fields use standard decimal
+documentation describes it.  The other fields use standard decimal
 notation.
 
 If you look closely at the default entries, you will notice that the IBM
 VGA entries labeled "tweaked" and "non standard" have entries in the table
-with AX = BX = CX = 0, and DX = some other number. Those are special flags
+with AX = BX = CX = 0, and DX = some other number.  Those are special flags
 that we used to tell the program to custom-program the VGA adapter, and
-are NOT undocumented BIOS calls. Maybe they should be, but they aren't.
+are NOT undocumented BIOS calls.  Maybe they should be, but they aren't.
 
 If you have a fancy adapter and a new video mode that works on it, and it
 is not currently supported, PLEASE GET THAT INFORMATION TO US!  We will
 add the video mode to the list on our next release, and give you credit
-for it. Which brings up another point: If you can confirm that a
+for it.  Which brings up another point: If you can confirm that a
 particular video adapter/mode works (or that it doesn't), and the program
 says it is UNTESTED, please get that information to us also.  Thanks in
 advance!
