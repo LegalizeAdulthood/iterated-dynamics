@@ -1095,7 +1095,7 @@ calculation is in progress.  This is mainly useful with long batches - see
 ~ONLINEFF
 GIF87a=yes\
 Backward-compatibility switch to force creation of GIF files in the GIF87a
-format.  Id defaults to the new GIF89a format which permits storage of
+format.  Id defaults to the GIF89a format which permits storage of
 fractal information within the format.  Using "gif87a=yes" is
 only needed if you wish to view Id images with a GIF decoder that
 cannot accept the newer format.  See {GIF Save File Format}.
