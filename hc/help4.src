@@ -29,11 +29,11 @@
   [filename=]filename      Start with this saved file (one saved by Id
                            or a generic GIF file [treated as a plasma cloud])
   makepar=parfile[/entry]  Invokes batch facility to copy a GIF to
-                           PAR format with colors.
-  maxlinelength=nnn        Sets maximum width of lines written to PAR files.
+                           par format with colors.
+  maxlinelength=nnn        Sets maximum width of lines written to par files.
   batch=yes                Batch mode run (display image, save-to-disk, exit)
   autokey=play|record      Playback or record keystrokes
-  autokeyname=<path>\\filename  File for autokey mode, default AUTO.KEY
+  autokeyname=<path>\\filename  File for autokey mode, default auto.key
   makedoc=filename         Create Id documentation file
   maxhistory=<nnn>         Set image capacity of history feature. A higher
                            number stores more images but uses more memory.
@@ -41,22 +41,22 @@
   workdir=directory        Directory for miscellaneous written files
   curdir=yes|no            When set to yes, Id checks current directory
                            before default directory when opening files. Use
-                           this command when testing temporary .FRM, .L, etc.
+                           this command when testing temporary .frm, .l, etc.
                            files in the current directory.
   comment=comment1/comment2/comment3/comment4
-                           Inserts comments into PAR files.
+                           Inserts comments into par files.
 ~FF
 {Calculation Mode Parameters}
-  passes=1|2|3|g|b|d|t|g1..g6|s|o  Select Single-Pass, Dual-Pass, Triple-Pass
-                           Solid-Guessing, Solid-Guessing stop after pass n,
-                           Boundary-Tracing, Diffusion, Tesseral,
-                           Synchronous Orbits, or Orbits drawing algorithms
+  passes=1|2|3|g|b|d|t|g1..g6|s|o  Select single-pass, dual-pass, triple-pass
+                           solid-guessing, solid-guessing stop after pass n,
+                           boundary-tracing, diffusion, tesseral,
+                           synchronous orbits, or orbits drawing algorithms
   fillcolor=normal|<nnn>   Sets a block fill color for use with Boundary
                            Tracing and Tesseral options
   float=yes                For most functions changes from integer math to fp
-  symmetry=xxxx            Force symmetry to None, Xaxis, Yaxis, XYaxis,
-                           Origin, or Pi symmetry.  Useful as a speedup. Only
-                           use this feature if the fractal actually *has* the
+  symmetry=xxxx            Force symmetry to None, X axis, Y axis, XY axis,
+                           origin, or pi symmetry.  Useful as a speedup. Only
+                           use this feature if the fractal actually has the
                            stated symmetry, otherwise may not work as expected.
   bfdigits=<nnn>           Force nnn digits if arbitrary precision used (not
                            recommended - this is a developer feature.)
@@ -66,11 +66,11 @@
                            depth. The first number controls the integer/float
                            transition, and the second number controls the
                            float/arbitrary precision transition.
-  minstack=<nnn>           For SOI (passes=s). This controls the minimum number
-                           stack memory reserved during synchronous orbits.
+  minstack=<nnn>           For SOI (passes=s). This controls the minimum amount
+                           of stack memory reserved during synchronous orbits.
 ~FF
 {Fractal Type Parameters}
-  type=fractaltype         Perform this Fractal Type (Default = mandel)
+  type=fractaltype         Perform this Fractal Type (default = mandel)
                            See {Fractal Types} for a full list
   params=xxx[/xxx[/...     Begin with these extra Parameter values
                            (Examples:  params=4   params=-0.480/0.626)
@@ -82,18 +82,18 @@
                            asinh, acos, acosh, atan, atanh, sqrt, abs, cabs,
                            floor, ceil, trunc, round
   formulaname=name         Formula name for 'type=formula' fractals
-  lname=name               Lsystem name for 'type=lsystem' fractals
+  lname=name               L-System name for 'type=lsystem' fractals
   ifs=name                 IFS name for 'type=ifs' fractals
-  3dmode=monocular|left|right|red-blue  Sets the 3D mode used with Julibrot
-  julibrot3d=nn[/nn[/nn[/nn[/nn[/nn]]]]]")  Sets Julibrot 3D parameters zdots,
+  3dmode=monocular|left|right|red-blue  Sets the 3D mode used with julibrot
+  julibrot3d=nn[/nn[/nn[/nn[/nn[/nn]]]]]")  Sets julibrot 3D parameters zdots,
                            origin, depth, height, width, and distance
-  julibroteyes=nn          Distance between the virtual eyes for Julibrot
-  julibrotfromto=nn/nn[/nn/nn] "From-to" parameters used for Julibrot
+  julibroteyes=nn          Distance between the virtual eyes for julibrot
+  julibrotfromto=nn/nn[/nn/nn] "From-to" parameters used for julibrot
   miim=depth|breadth|walk[/left|right] Parameters for MIIM julias.
 ~FF
 {Image Calculation Parameters}
   corners=[xmin/xmax/ymin/ymax[/x3rd/y3rd]]
-                           Begin with these Coordinates
+                           Begin with these coordinates
                            (Example: corners=-0.739/-0.736/0.288/0.291)
                            With no parameters causes <B> command to output
                            'corners=' instead of center-mag.
@@ -111,7 +111,7 @@
   initorbit=pixel          Sets the value used to initialize Mandelbrot orbits
                            to the complex number corresponding to the screen
                            pixel. This is the default for most types.
-  rseed=nnnnn              Random number seed, for reproducable Plasma Clouds
+  rseed=nnnnn              Random number seed, for reproducable plasma clouds
   showdot=[auto|bright|medium|dark|nn]/size  Colors the current dot being
                            calculated color nn or an automatically calculated
                            color (-1 disables). The second parameter is the
