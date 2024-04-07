@@ -538,25 +538,26 @@ used up quickly.
 ;
 ~Topic=Calculation Mode Parameters
 PASSES=1|2|3|g|g1|g2|g3|g4|g5|g6|b|t|s|o\
-Selects single-pass, dual-pass, triple-pass, solid-Guessing mode,
-solid-Guessing stop after pass n, Boundary Tracing, Tesseral,
-Synchronous Orbits, or the Orbits algorithm.  See {Drawing Method} and
+Selects single-pass, dual-pass, triple-pass, solid-guessing mode,
+solid-guessing stop after pass n, boundary tracing, tesseral,
+synchronous orbits, or the orbits algorithm.  See {Drawing Method} and
 {Passes Parameters}.
 
 FILLCOLOR=normal|<nnn>\
-Sets a color to be used for block fill by Boundary Tracing and Tesseral
+Sets a color to be used for block fill by boundary tracing and tesseral
 algorithms.  See {Drawing Method}.
 
 FLOAT=yes\
 Most fractal types have both a fast integer math and a floating point
 version.  The faster, but possibly less accurate, integer version is the
-default.  The default is to use integer math, but in this age of pentium
-(amd later) CPUS we now recommend your making float=yes the default by
-adding this line to your sstools.ini file.
+default.  The default is to use integer math, but in this age of
+powerful CPUS we now recommend your making float=yes the default by
+adding this line to your sstools.ini file.  This sstools.ini file
+distributed with Iterated Dynamics has this setting.
 Also see {"Limitations of Integer Math (And How We Cope)"}.
 
 SYMMETRY=xxx\
-Forces symmetry to None, Xaxis, Yaxis, XYaxis, Origin, or Pi symmetry.
+Forces symmetry to none, X axis, Y axis, XY axis, origin, or pi symmetry.
 Useful as a speedup for symmetrical fractals.  This is not a kaleidoscope
 feature for imposing symmetry where it doesn't exist.  Use only when the
 fractal actual exhibits the symmetry, or else results may not be
