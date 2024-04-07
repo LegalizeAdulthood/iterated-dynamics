@@ -489,7 +489,7 @@ static bool check_mapfile()
         {
             help_labels const old_help_mode = g_help_mode;
             g_help_mode = help_labels::NONE;
-            i = field_prompt("Enter name of .MAP file to use,\n"
+            i = field_prompt("Enter name of .map file to use,\n"
                              "or '*' to use palette from the image to be loaded.",
                              nullptr, buff, 60, nullptr);
             g_help_mode = old_help_mode;
@@ -568,7 +568,7 @@ static bool get_funny_glasses_params()
         .int_number("Blue brightness factor (%)", g_blue_bright);
     if (g_glasses_type == 1 || g_glasses_type == 2)
     {
-        builder.string("Map File name", g_funny_glasses_map_name.c_str());
+        builder.string("Map file name", g_funny_glasses_map_name.c_str());
     }
 
     help_labels const old_help_mode = g_help_mode;
