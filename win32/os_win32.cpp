@@ -11,6 +11,7 @@
 #include "id.h"
 #include "helpdefs.h"
 #include "id_data.h"
+#include "id_main.h"
 #include "init_failure.h"
 #include "make_path.h"
 #include "mpmath.h"
@@ -178,7 +179,6 @@ int __stdcall WinMain(HINSTANCE instance, HINSTANCE prev_instance, LPSTR cmdLine
         g_tos = (char *) &result;
         g_instance = instance;
         _CrtSetDbgFlag(_CrtSetDbgFlag(_CRTDBG_REPORT_FLAG) | _CRTDBG_CHECK_ALWAYS_DF | _CRTDBG_LEAK_CHECK_DF);
-        extern int id_main(int argc, char *argv[]);
         result = id_main(__argc, __argv);
     }
 #if !defined(_DEBUG)
