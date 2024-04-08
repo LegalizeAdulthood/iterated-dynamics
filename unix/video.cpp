@@ -90,7 +90,7 @@ void putstring(int row, int col, int attr, char const *msg);
 */
 
 VIDEOINFO x11_video_table[] = {
-    { "id        mode           ", 999, 640, 480, 256, "                         " },
+    { "id        mode           ", 999, 640, 480, 256, nullptr, "                         " },
 };
 
 int
