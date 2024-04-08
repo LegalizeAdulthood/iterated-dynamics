@@ -389,8 +389,8 @@ See {Distribution of Iterated Dynamics}.
 INSIDE=bof60|bof61|zmag|fmod|period|atan
 ~Format+,Online+
 
-Here is an attempted explanation of what the inside=bof60 and
-inside=bof61 options do.  This explanation is hereby dedicated to Adrian
+Here is an attempted explanation of what the "inside=bof60" and
+"inside=bof61" options do.  This explanation is hereby dedicated to Adrian
 Mariano, who badgered it out of us!  For the real explanation, see
 "Beauty of Fractals", page 62.
 
@@ -407,9 +407,9 @@ with 0 gets.  Then the index (c) is the value of k (the iteration) when
 that closest point was achieved.  Since there may be more than one,
 index(c) is the least such.  Got it?  Good, because the "Beauty of
 Fractals" explanation of this, is, ahhhh, terse!  Now for the punch
-line.  Inside=bof60 colors the lake alternating shades according to the
+line.  "Inside=bof60" colors the lake alternating shades according to the
 level sets of a(c).  Each band represents solid areas of the fractal where
-the closest value of the orbit to the origin is the same.  Inside=bof61
+the closest value of the orbit to the origin is the same.  "Inside=bof61"
 show domains where index(c) is constant.  That is, areas where the
 iteration when the orbit swooped closest to the origin has the same value.
 Well, folks, that's the best we can do!  Improved explanations will be
@@ -423,39 +423,39 @@ the bof60 and bof61 options:
   generated from a given X,Y coordinate.  The picture on page 61 shows
   the index (or number) in the sequence of the closest point.
 
-inside=zmag is similar.  This option colors inside pixels according to
+"Inside=zmag" is similar.  This option colors inside pixels according to
 the magnitude of the orbit point when maxiter was reached, using the formula
 color = (x^2 + y^2) * maxiter/2 + 1.
 
-inside=fmod colors inside pixels according to the magnitude of the last orbit
+"Inside=fmod" colors inside pixels according to the magnitude of the last orbit
 point which is within a set distance from the origin.  Then:\
   color = magnitude * colors / closeprox\
 The magnitude used for the comparison is now based on the same calculation as
 is used for the bailout test.  The value of closeprox can be varied
 interactively.  This feature was contributed by Iain Stirling.
 
-inside=period colors pixels according to the length of their eventual cycle.
+"Inside=period" colors pixels according to the length of their eventual cycle.
 For example, points that approach a fixed point have color=1.  Points that
 approach a 2-cycle have color=2.  Points that do not approach a cycle during
 the iterations performed have color=maxit.  This option works best with a
 fairly large number of iterations.
 
-inside=atan colors by determining the angle in degrees the last iterated
+"Inside=atan" colors by determining the angle in degrees the last iterated
 value has with respect to the real axis, and using the absolute value.  This
-feature should be used with periodicity=0
+feature should be used with periodicity=0.
 ;
 ;
 ;
 ~Topic=Inside=epscross|startrail
 ~Format-,Online-
 
-INSIDE=EPSCROSS|STARTRAIL
+INSIDE=epscross|startrail
 ~Format+,Online+
 
 Kenneth Hooper has written a paper entitled "A Note On Some Internal
-Structures Of The Mandelbrot Set" published in "Computers and Graphics", Vol
+Structures of the Mandelbrot Set" published in "Computers and Graphics", Vol
 15, No.2, pp. 295-297.  In that article he describes Clifford Pickover's
-"epsilon cross" method which creates some mysterious plant-like tendrils in
+epsilon cross method which creates some mysterious plant-like tendrils in
 the Mandelbrot set.  The algorithm is this.  In the escape-time calculation of a
 fractal, if the orbit comes within .01 of the Y-axis, the orbit is terminated
 and the pixel is colored green.  Similarly, the pixel is colored yellow if it
@@ -463,20 +463,20 @@ approaches the X-axis.  Strictly speaking, this is not an "inside" option
 because a point destined to escape could be caught by this bailout criterion.
 
 The test distance, 0.01, can now be changed interactively on the <X> screen
-and via the proximity=<nnn> command line parameter.  A negative value of
+and via the "proximity=<nnn>" command line parameter.  A negative value of
 the test distance triggers an alternative variation of epsilon cross that
 colors the epsilon bands with the iteration; otherwise they are colored
 normally to maintain compatibility.
 
-Hooper has another coloring scheme called "star trails" that involves
+Hooper has another coloring scheme called star trails that involves
 detecting clusters of points being traversed by the orbit.  A table of tangents
 of each orbit point is built, and the pixel colored according to how many
 orbit points are near the first one before the orbit flies out of the cluster.
 This option looks fine with maxiter=16, which greatly speeds the calculation.
 
 Both of these options should be tried with the outside color fixed
-(outside=<nnn>) so that the "lake" structure revealed by the algorithms can be
-more clearly seen.  Epsilon Cross is fun to watch with boundary tracing turned
+("outside=<nnn>") so that the lake structure revealed by the algorithms can be
+more clearly seen.  Epsilon cross is fun to watch with boundary tracing turned
 on - even though the result is incorrect it is interesting!  Shucks - what
 does "incorrect" mean in chaos theory anyway?!
 ;
