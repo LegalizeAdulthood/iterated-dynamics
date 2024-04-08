@@ -36,7 +36,9 @@
 #include <cstdio>
 #include <cstring>
 
+#include "create_minidump.h"
 #include "instance.h"
+#include "tos.h"
 
 HINSTANCE g_instance{};
 
@@ -53,6 +55,7 @@ int g_vesa_x_res = 0;
 int g_vesa_y_res = 0;
 int g_video_start_x = 0;
 int g_video_start_y = 0;
+char *s_tos{};
 
 /* Global functions
  *
@@ -103,7 +106,7 @@ typedef BOOL MiniDumpWriteDumpProc(HANDLE process, DWORD pid, HANDLE file, MINID
                                    PMINIDUMP_USER_STREAM_INFORMATION user,
                                    PMINIDUMP_CALLBACK_INFORMATION callback);
 
-static void CreateMiniDump(EXCEPTION_POINTERS *ep)
+void CreateMiniDump(EXCEPTION_POINTERS *ep)
 {
     MiniDumpWriteDumpProc *dumper = nullptr;
     HMODULE debughlp = LoadLibrary("dbghelp.dll");
@@ -157,38 +160,6 @@ static void CreateMiniDump(EXCEPTION_POINTERS *ep)
                 "Please include this file with your bug report.", minidump);
         MessageBox(nullptr, msg, "Id: Unexpected Error", MB_OK);
     }
-}
-
-static char *s_tos = nullptr;
-#define WIN32_STACK_SIZE 1024*1024
-// Return available stack space ... shouldn't be needed in Win32, should it?
-long stackavail()
-{
-    char junk = 0;
-    return WIN32_STACK_SIZE - (long)(((char *) s_tos) - &junk);
-}
-
-int __stdcall WinMain(HINSTANCE instance, HINSTANCE prev_instance, LPSTR cmdLine, int show)
-{
-    int result = 0;
-
-#if !defined(_DEBUG)
-    __try
-#endif
-    {
-        s_tos = (char *) &result;
-        g_instance = instance;
-        _CrtSetDbgFlag(_CrtSetDbgFlag(_CRTDBG_REPORT_FLAG) | _CRTDBG_CHECK_ALWAYS_DF | _CRTDBG_LEAK_CHECK_DF);
-        result = id_main(__argc, __argv);
-    }
-#if !defined(_DEBUG)
-    __except (CreateMiniDump(GetExceptionInformation()), EXCEPTION_EXECUTE_HANDLER)
-    {
-        result = -1;
-    }
-#endif
-
-    return result;
 }
 
 /* ods
@@ -366,4 +337,13 @@ int out_line(BYTE *pixels, int linelen)
 void init_failure(char const *message)
 {
     MessageBox(nullptr, message, "Id: Fatal Error", MB_OK);
+}
+
+#define WIN32_STACK_SIZE 1024*1024
+
+// Return available stack space ... shouldn't be needed in Win32, should it?
+long stackavail()
+{
+    char junk = 0;
+    return WIN32_STACK_SIZE - (long)(((char *) s_tos) - &junk);
 }

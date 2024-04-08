@@ -13,6 +13,7 @@
 
 #include "WinText.h"
 #include "frame.h"
+#include "resource.h"
 
 #define FRAME_TIMER_ID 2
 
@@ -255,7 +256,7 @@ void frame_init(HINSTANCE instance, LPCSTR title)
         wc.cbClsExtra = 0;
         wc.cbWndExtra = 0;
         wc.hInstance = g_frame.instance;
-        wc.hIcon = nullptr;
+        wc.hIcon = LoadIcon(instance, MAKEINTRESOURCE(IDI_ITERATED_DYNAMICS));
         wc.hCursor = LoadCursor(nullptr, IDC_ARROW);
         wc.hbrBackground = (HBRUSH)(COLOR_BACKGROUND+1);
         wc.lpszMenuName = g_frame.title;

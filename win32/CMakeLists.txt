@@ -16,16 +16,24 @@ add_library(os STATIC
     parsera.cpp
     plot.cpp
     WinText.cpp
-    fractint.rc
+    create_minidump.h
     d_win32.h
     frame.h
     instance.h
     ods.h
     plot.h
-    resource.h
+    tos.h
     WinText.h)
 target_compile_definitions(os PRIVATE ${ID_TARGET_DEFINITIONS} $<$<CONFIG:Debug>:${ID_TARGET_DEFINITIONS_DEBUG}>)
 target_compile_options(os PRIVATE ${ID_TARGET_OPTIONS})
 target_link_libraries(os PUBLIC gdi32.lib user32.lib shlwapi.lib os_hc help_defs)
 target_include_directories(os PRIVATE ../libid/include PUBLIC .)
 add_dependencies(os native_help)
+
+add_executable(id WIN32
+    Id.ico
+    id.rc
+    resource.h
+    win_main.cpp)
+target_link_libraries(id PUBLIC libid)
+install(TARGETS id DESTINATION bin)
