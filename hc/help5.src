@@ -877,118 +877,30 @@ The 'err' column in the video mode information indicates:
 ~Topic=Distribution of Iterated Dynamics
 ~Format-,Online-
 
-DISTRIBUTION OF FRACTINT
+DISTRIBUTION OF ID
 ~Format+,Online+
 
-New versions of FRACTINT are uploaded to the Fractint developer's web site at
-www.fractint.org, and make
-their way to other systems from that point.  FRACTINT is available as
-two self-extracting archive files - FRAINT.EXE (executable & documentation)
-and FRASRC.EXE (source code).
+New versions of Iterated Dynamics are released through github,
+<https://github.com/LegalizeAdulthood/iterated-dynamics>,
+and make their way to other systems from that point.  Id is available as
+a Windows MSI installer and as a source code ZIP file.
 
-The latest developer's version can also be found at www.fractint.org.
-
-Many other sites tend to carry
-these files shortly after their initial release (although sometimes
-using different naming conventions).  Look for frainnn.zip (executable
-package) and frasrnnn.zip (source), where nnn is the release number.  Major
-releases with two digit numbers have names such as fraintnn.zip and
-frasrcnn.zip.
-
-On the Internet, try the Noel Giffin's Spanky Fractal Database.  Using a
-Web browser, go to: \
-http://spanky.triumf.ca/pub/fractals/programs/ibmpc/frainxxx.zip\
-where xxx is the release number.
-
-Via FTP, login to spanky.triumf.ca as ANONYMOUS, and change directories
-to [pub.fractals.programs.ibmpc], then download frainxxx.zip. (The directory
-syntax is in VAX format.)
-
-The X Windows port of Fractint was written by Ken Shirriff and is available
-via FTP from http://spanky.triumf.ca/pub/fractals/programs/unix/XFRACTxxx.zip\
-where xxx is the Xfractint release number.  Developer's versions of
-Xfractint are available at the Fractint developer's web site.
+The latest version of the code can always be found on the github repository.
 ;
 ;
-~Topic=Contacting the Authors
+~Topic=Contacting the Author
 ~Format-,Online-
 
-CONTACTING THE AUTHORS
+CONTACTING THE AUTHOR
 ~Format+,Online+
-Communication between the authors for development of the next version of
-Fractint takes place in the fractint mailing list.
+Communication with the author for development of the next version of
+Iterated Dynamics takes place through the github repository,
+<https://github.com/LegalizeAdulthood/iterated-dynamics>.  From there you
+can file bugs, feature requests and so-on.
 
-
-
-The following authors have agreed to the distribution of their addresses.
-Usenet/Internet/Bitnet/Whatevernet users can reach CIS users directly if
-they know the user ID.
-
-Postal addresses are listed below
-so that you have a way to send bug reports
-and ideas to the Stone Soup team.
-
-Please understand that we receive a lot of
-mail, and because of the demands of volunteer work on Fractint as well as
-our professional responsibilities, we are generally unable to answer it all.
-Several of us have reached the point where we can't answer any conventional
-mail.  We *do* read and enjoy all the mail we receive, however.  If you need a
-reply, the best thing to do is use email, which we are generally able to
-answer, or better yet, leave a message on the fractint list.
-
-Tim Wegner now runs a mailing list for fractint users to swap ideas and par
-data, you can subscribe by emailing mailman@mailman.xmission.com with
-the line:\
-subscribe fractint\
-as the sole content of the message, you'll receive further instructions by
-return of email.
-
-(This address list has been pruned of names of folks we haven't heard
-from in a while.  If your name has been removed, and you'd like to be listed,
-just let us know and we'll add it back.)
-
-~FF
-Current main authors:
-
-~Format-
-
-Timothy Wegner          twegner@fractint.org
-4714 Rockwood
-Houston, TX 77004
-(713) 747-7543
-
-Jonathan Osuch          josuch@fractint.org
-2110 Northview Drive
-Marion, IA  52302
-
-Contributing authors' addresses (in alphabetic order).
-
-Prof Jm Collard-Richard jmc@math.ethz.ch
-
-Paul de Leeuw
-16 Sunset Street
-Wyoming
-NSW 2250
-Australia
-+61-2-8293-3055 (Work)
-+61-2-4329-0870 (Home)
-
-
-~OnlineFF
-Sylvie Gallet           sylvie.gallet1@libertysurf.fr
-
-Lee H. Skinner          skinner@thuntek.net
-P.O. Box 14944
-Albuquerque, NM  87191
-(505) 293-5723
-
-Bert Tyler              bert.tyler@oef.com
-Tyler Software
-124 Wooded Lane
-Villanova, PA 19085
-(610) 525-5478
-
-~Format+
+The current main author is Richard Thomson, who is the maintainer of the
+github repository.  You can email him directly at legalize@xmission.com, but
+it is best to use github.
 ;
 ;
 ~Topic=The Stone Soup Story
@@ -1011,8 +923,8 @@ planned to stay for the night.
 "There's not a bite to eat in the whole province," he was told. "Better
 keep moving on."
 
-"Oh, I have everything I need," he said. "In fact, I was thinking of
-making some stone soup to share with all of you." He pulled an iron
+"Oh, I have everything I need," he said.  "In fact, I was thinking of
+making some stone soup to share with all of you."  He pulled an iron
 cauldron from his wagon, filled it with water, and built a fire under it.
 Then, with great ceremony, he drew an ordinary-looking stone from a velvet
 bag and dropped it into the water.
@@ -1023,11 +935,11 @@ and licked his lips in anticipation, hunger began to overcome their
 skepticism.
 
 "Ahh," the peddler said to himself rather loudly, "I do like a tasty stone
-soup.  Of course, stone soup with CABBAGE -- that's hard to beat."
+soup.  Of course, stone soup with cabbage -- that's hard to beat."
 
 Soon a villager approached hesitantly, holding a cabbage he'd retrieved
-from its hiding place, and added it to the pot. "Capital!" cried the
-peddler. "You know, I once had stone soup with cabbage and a bit of salt
+from its hiding place, and added it to the pot.  "Capital!" cried the
+peddler.  "You know, I once had stone soup with cabbage and a bit of salt
 beef as well, and it was fit for a king."
 
 The village butcher managed to find some salt beef...and so it went,
@@ -1039,8 +951,8 @@ reminisced about the finest soup they'd ever had.
 
                                 ***
 
-That's the way Fractint has grown, with quite a bit of magic, although
-without the element of deception. (You don't have to deceive programmers
+That's the way Id has grown, with quite a bit of magic, although
+without the element of deception.  (You don't have to deceive programmers
 to make them think that hours of painstaking, often frustrating work is
 fun... they do it to themselves.)
 
@@ -1062,17 +974,105 @@ CompuServe PICS forum and keep adding video modes to the program.  Or...
 A WORD ABOUT THE AUTHORS
 ~Format+,Online+
 
-Fractint is the result of a synergy between the main authors, many
-contributors, and published sources.  All of the main authors have
-had a hand in many aspects of the code.  However, each author has certain
-areas of greater contribution and creativity.  Since there is not room in
-the credits screen for the contributions of the main authors, we list these
-here to facilitate those who would like to communicate with us on
-particular subjects.
+Id's ancestor, Fractint, is the result of a synergy between the main
+authors, many contributors, and published sources.  All of the main
+authors have had a hand in many aspects of the code.  However, each author
+has certain areas of greater contribution and creativity.  Since there is
+not room in the credits screen for the contributions of the main authors,
+we list these here to facilitate those who would like to communicate with
+us on particular subjects.
 
-Main Authors of Version 19 and later.
+Main Author of Iterated Dynamics
 
-BERT TYLER is the original author of Fractint.  He wrote the "blindingly
+Richard Thomson is the main author of Id.  The Fractint code had
+languished for many years, struggling to leave its DOS nest.  This
+has resulted other fractal renderers passing it by as they adopted SIMD
+parallelism, GPU computation and fancy perturbation methods to eclipse its
+computational speed.  Richard felt the investment in so many fractal types,
+and the extensive online help, couldn't just be left to rot and the code
+needed to move forward to a modern environment.  Particularly the IFS,
+L-system and cellular automata types deserve to have a modern home as
+they are often omitted by other fractal rendering programs.
+
+Richard forked the code from Subversion to the github repository.
+There are barely any lines of code that weren't touched by him after the
+fork from Fractint.
+
+Richard decoupled the DOS and assembly language code from the rest of the
+code and created a driver abstraction that could be used to connect the
+code to modern environments.  He implemented the disk and gdi drivers for
+Win32 used to provide their correspnding video modes.  The CGA text window
+is emulated in order to have the user interface and help system.  He
+converted the entirety of the code to C++ to allow object
+oriented programming paradigms to be used.
+
+Many magic numbers throughout the code were replaced with enums or other
+symbolic names to make it easier to understand how these values and flags
+are used throughout.  Many times an integer quantity was being used as a
+boolean on/off switch and those integer variables were replaced with boolean
+variables to make the intent more clear.
+
+Over the years, the code has accumulated a large number of global variables
+through which the various functions communicate.  Global variables have
+been renamed to start with a g_ prefix and variables with a file scope,
+e.g. static variables, were renamed to start with an s_ prefix.  This makes
+it easier to understand the scope of variables when reading a particular
+piece of code.
+
+Functions and variables were placed together into source files in order to
+suit the cramped memory limitations of DOS using overlays.  Sometimes you
+have to break things down into isolated pieces before you can begin to see
+which ones are intimately connected to each other.  For the largest source
+files containing multiple functions, the individual functions were split into
+their own source and header files.
+
+He implemented the CMake based build system from scratch.  He used the vcpkg
+package manager for C++ to allow Id to easily consume third party libraries
+for new features.  One of the first libraries used was Google Test, bringing
+unit testing to the code for the first time.  Making changes to the code
+requires careful attention to detail in how all these variables interact with
+each other.  Unit testing changes before applying them helps ensure that
+forward progress doesn't come at the expense of bugs.
+
+Github's actions provide continuous integration (CI) builds on Windows and
+linux with every commit to the repository.  The actions build all the code
+and run all the unit tests every time the repository is updated.  Richard
+uses Windows as his primary development environment and the CI builds
+ensure that the code continues to build on linux.  (This trips you up
+more often than you might think!)
+
+Other libraries Richard has brought in are the boost.algorithm library for
+some string algorithms, the boost.endian library for marshalling the GIF
+extension blocks between little and big endian machines and the giflib library
+for reading and writing GIF files.
+
+The 2017 version of the ISO C++ language standard is required to build Id.
+This is readily available through open source compilers on unix, such as gcc
+and clang, and on Windows through Visual Studio Community Edition.  Visual
+Studio Community Edition is a full-featured compiler and development
+environment with no license restrictions.  It can be downloaded from
+<https://VisualStudio.com>.
+
+Every line of the help files were examined and updated to have a consistent
+style throughout.  Discussion of old DOS related information was removed and,
+where appropriate, replaced with relevant discussion of operating in a
+Windowed environment.  Stale links to web sites have been removed.  The
+original help came from a more innocent time on the internet when people
+weren't afraid to post their phone numbers and home addresses.  That
+personal information has been removed from the help files and only
+Richard's personal email address has been left.
+
+Richard has a Bachelor of Science degree in Electrical Engineering from the
+University of Delaware and a Master of Philosophy degree in Computer Science
+from the University of Utah.  He has worked as a software engineer for his
+entire career on embedded systems, 3D graphics workstations, digital video
+editing software, system management software, home automation software, 3D
+content creation software, solid-state storage management software and
+currently works on hardware accelerated ray tracing.
+
+Main Authors of Fractint, Id's Ancestor.
+
+Bert Tyler is the original author of Fractint.  He wrote the "blindingly
 fast" 386-specific 32 bit integer math code and the original video mode
 logic.  Bert made Stone Soup possible, and provides a sense of direction when
 we need it.  His forte is writing fast 80x86 assembler, his knowledge of a
@@ -1090,7 +1090,7 @@ code that mangled it during the Internet-to-3+Mail conversion.  He also
 claims to support the MS-Kermit environment at NIH.  Fractint is Bert's
 first effort at building a graphics program.
 
-TIM WEGNER contributed the original implementation of palette animation,
+Tim Wegner contributed the original implementation of palette animation,
 and is responsible for most of the 3D mechanisms.  He provided
 the main outlines of the "StandardFractal" engine and data structures, and is
 accused by his cohorts of being "obsessed with options".  One of Tim's main
@@ -1107,7 +1107,7 @@ supported strategic information planning, all at NASA's Johnson Space
 Center.  After a two-year stint at full-time writing, he's back at NASA
 developing shuttle navigation software.
 
-JONATHAN OSUCH started throwing pebbles into the soup around version 15.0
+Jonathan Osuch started throwing pebbles into the soup around version 15.0
 with a method for simulating an if-then-else structure using the formula
 parser.  He has contributed the fn||fn fractal types, the built-in bailout
 tests, the increase in both the maximum iteration count and bailout value,
@@ -1118,7 +1118,7 @@ Jonathan has a B.S. in Physics from the University of Dubuque and a B.S. in
 Computer Science from Mount Mercy College, both in Iowa.  He is currently
 working as a consultant in the nuclear power industry.
 
-WES LOEWER first got his foot in the Stone Soup door by writing fast
+Wes Loewer first got his foot in the Stone Soup door by writing fast
 floating point assembler routines for Mandelbrot, Julia, and Lyapunov
 fractals.  He also rewrote the boundary trace algorithms and added the
 frothybasin fractal.  His most significant contribution is the addition of
@@ -1136,10 +1136,10 @@ the job.  Besides his involvement with Fractint, Wes is the author of
 WL-Plot, an equation graphing program, and MatCalc, a matrix calculator
 program.
 
-GEORGE MARTIN first became known to Fractint users when he brought
+George Martin first became known to Fractint users when he brought
 a modicum of order to the chaotic world of formula postings with his
 release of the Orgform program and formula compilation.  George added
-IF..ELSE to the formula parser language for version 19.6.  Among his other
+if..else to the formula parser language for version 19.6.  Among his other
 contributions are the ability to include formula, ifs, and lsystem entries
 in .par files, the scrolling of text in the <Z> and F2 screens, and
 new autokey commands.
@@ -1148,8 +1148,7 @@ George received an A.B. in Economics from Dartmouth College and a J.D from
 the University of Michigan.  When not playing with Fractint, he practices
 law in a small village about 40 miles northwest of Detroit.
 
-
-ROBIN BUSSELL began contributing to fractint in rudimentary fashion with the
+Robin Bussell began contributing to fractint in rudimentary fashion with the
 autologmap routine and has been producing more and more complex interface
 enhancements as he gets better at what he refers to as 'this C programming lark'
 He is always grateful for the help the rest of the team have given in smoothing
@@ -1158,14 +1157,12 @@ feature as his greatest achievement to date.
 
 Robin had far too much fun at college in London to actually get any qualifications there
 and has since worked his way up from a workshop job fixing computers back in
-the final days of CPM, via some interesting work with Transputers ( an innovative
+the final days of CP/M, via some interesting work with Transputers ( an innovative
 British cpu that was designed to run in massively parallel configurations, and
 made a very good Mandlebrot set calculating machine when a few dozen or more were set
 to the task) , through to his current position of senior engineer for a third
 party suppport company where he spends his time travelling the south west of Britain
-sorting out peoples IT problems.  Anyone wishing to offer him interesting work
-in anything to do with computers can find a CV at:
-http://web.ukonline.co.uk/robin.b2/rbcv.htm
+sorting out peoples IT problems.
 
 When not playing with computers Robin likes to relax by experimenting with kite
 powered traction and can often be found hurtling around the local beaches on the end of
