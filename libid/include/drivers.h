@@ -182,6 +182,7 @@ struct Driver
 #define HAVE_GDI_DRIVER         1
 #define HAVE_WIN32_DISK_DRIVER  1
 #endif
+void load_driver(Driver *drv, int *argc, char **argv);
 int init_drivers(int *argc, char **argv);
 void add_video_mode(Driver *drv, VIDEOINFO *mode);
 void close_drivers();

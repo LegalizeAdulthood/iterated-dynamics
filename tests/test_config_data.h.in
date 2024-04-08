@@ -1,0 +1,26 @@
+#pragma once
+
+#include <id_keys.h>
+
+// Generated from @CMAKE_CURRENT_LIST_FILE@
+
+// config test data
+#define ID_TEST_GDI_FN              "@ID_TEST_GDI_FN@"
+#define ID_TEST_GDI_FN_KEY          @ID_TEST_GDI_FN_KEY@
+#define ID_TEST_GDI_NAME            "@ID_TEST_GDI_NAME@"
+#define ID_TEST_GDI_DOTMODE         @ID_TEST_GDI_DOTMODE@
+#define ID_TEST_GDI_WIDTH           @ID_TEST_GDI_WIDTH@
+#define ID_TEST_GDI_HEIGHT          @ID_TEST_GDI_HEIGHT@
+#define ID_TEST_GDI_COLORS          @ID_TEST_GDI_COLORS@
+#define ID_TEST_GDI_COMMENT         "@ID_TEST_GDI_COMMENT@"
+#define ID_TEST_GDI_DRIVER          "@ID_TEST_GDI_DRIVER@"
+#define ID_TEST_DISK_FN             "@ID_TEST_DISK_FN@"
+#define ID_TEST_DISK_FN_KEY         @ID_TEST_DISK_FN_KEY@
+#define ID_TEST_DISK_NAME           "@ID_TEST_DISK_NAME@"
+#define ID_TEST_DISK_DOTMODE        @ID_TEST_DISK_DOTMODE@
+#define ID_TEST_DISK_WIDTH          @ID_TEST_DISK_WIDTH@
+#define ID_TEST_DISK_HEIGHT         @ID_TEST_DISK_HEIGHT@
+#define ID_TEST_DISK_COLORS         @ID_TEST_DISK_COLORS@
+#define ID_TEST_DISK_COMMENT        "@ID_TEST_DISK_COMMENT@"
+#define ID_TEST_DISK_DRIVER         "@ID_TEST_DISK_DRIVER@"
+#define ID_TEST_CONFIG_FILE         "@ID_TEST_CONFIG_FILE@"

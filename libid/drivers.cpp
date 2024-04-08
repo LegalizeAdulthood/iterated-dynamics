@@ -11,12 +11,12 @@ extern Driver *disk_driver;
 // list of drivers that are supported by source code in Id.
 // default driver is first one in the list that initializes.
 #define MAX_DRIVERS 10
-static int num_drivers = 0;
-static Driver *s_available[MAX_DRIVERS];
+static int s_num_drivers{};
+static Driver *s_available[MAX_DRIVERS]{};
 
 Driver *g_driver = nullptr;
 
-static void
+void
 load_driver(Driver *drv, int *argc, char **argv)
 {
     if (drv && drv->init)
@@ -28,7 +28,7 @@ load_driver(Driver *drv, int *argc, char **argv)
             {
                 g_driver = drv;
             }
-            s_available[num_drivers++] = drv;
+            s_available[s_num_drivers++] = drv;
         }
     }
 }
@@ -53,7 +53,7 @@ int init_drivers(int *argc, char **argv)
     load_driver(gdi_driver, argc, argv);
 #endif
 
-    return num_drivers;     // number of drivers supported at runtime
+    return s_num_drivers;     // number of drivers supported at runtime
 }
 
 // add_video_mode
@@ -75,7 +75,7 @@ add_video_mode(Driver *drv, VIDEOINFO *mode)
 void
 close_drivers()
 {
-    for (int i = 0; i < num_drivers; i++)
+    for (int i = 0; i < s_num_drivers; i++)
     {
         if (s_available[i])
         {
@@ -85,12 +85,13 @@ close_drivers()
     }
 
     g_driver = nullptr;
+    s_num_drivers = 0;
 }
 
 Driver *
 driver_find_by_name(char const *name)
 {
-    for (int i = 0; i < num_drivers; i++)
+    for (int i = 0; i < s_num_drivers; i++)
     {
         if (std::strcmp(name, s_available[i]->name) == 0)
         {

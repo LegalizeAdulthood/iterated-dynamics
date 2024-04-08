@@ -4,6 +4,29 @@ find_package(GTest CONFIG REQUIRED)
 
 set(ID_TEST_DATA_DIR "${CMAKE_CURRENT_BINARY_DIR}/test_data")
 
+# id.cfg test data
+set(ID_TEST_GDI_FN "F6")
+set(ID_TEST_GDI_FN_KEY "ID_KEY_${ID_TEST_GDI_FN}")
+set(ID_TEST_GDI_NAME "Win32 GDI Video")
+set(ID_TEST_GDI_DOTMODE 19)
+set(ID_TEST_GDI_WIDTH 800)
+set(ID_TEST_GDI_HEIGHT 600)
+set(ID_TEST_GDI_COLORS 256)
+set(ID_TEST_GDI_COMMENT "fancy GDI mode")
+set(ID_TEST_GDI_DRIVER "gdi")
+set(ID_TEST_DISK_FN "SF8")
+set(ID_TEST_DISK_FN_KEY "ID_KEY_${ID_TEST_DISK_FN}")
+set(ID_TEST_DISK_NAME "Win32 Disk Video")
+set(ID_TEST_DISK_DOTMODE 19)
+set(ID_TEST_DISK_WIDTH 1024)
+set(ID_TEST_DISK_HEIGHT 768)
+set(ID_TEST_DISK_COLORS 256)
+set(ID_TEST_DISK_COMMENT "fancier disk mode")
+set(ID_TEST_DISK_DRIVER "disk")
+set(ID_TEST_CONFIG_FILE "${ID_TEST_DATA_DIR}/config/test.cfg")
+configure_file("test.cfg.in" "${ID_TEST_CONFIG_FILE}" @ONLY)
+configure_file("test_config_data.h.in" "include/test_config_data.h" @ONLY)
+
 set(ID_TEST_GIF_DIR "${ID_TEST_DATA_DIR}/gif")
 macro(configure_gif_extension_file num)
     set("EXT${num}_FILE" "extension${num}.gif")
@@ -41,10 +64,15 @@ configure_file(test_find_file.txt.in ${ID_TEST_FIND_FILE_SUBDIR}/subdir/${ID_TES
 configure_file(test_data.h.in include/test_data.h @ONLY)
 
 add_executable(test-id
+    test.cfg.in
     test.ifs.in
-    "${ID_TEST_DATA_DIR}/test.ifs"
+    "${ID_TEST_CONFIG_FILE}"
+    "${ID_TEST_DATA_DIR}/${ID_TEST_IFS_FILE}"
+    "${ID_TEST_DATA_SUBDIR}/${ID_TEST_IFS_FILE2}"
+    "${CMAKE_CURRENT_BINARY_DIR}/include/test_config_data.h"
     "${CMAKE_CURRENT_BINARY_DIR}/include/test_data.h"
     current_path_saver.h
+    test_config_data.h.in
     test_data.h.in
     test_choice_builder.cpp
     test_cmplx.cpp
@@ -54,6 +82,7 @@ add_executable(test-id
     test_get_ifs_token.cpp
     test_gif_file.cpp
     test_is_directory.cpp
+    test_load_config.cpp
     test_make_path.cpp
     test_merge_path_names.cpp
     test_path_match.cpp
@@ -65,6 +94,7 @@ add_executable(test-id
 )
 source_group("CMake Templates" REGULAR_EXPRESSION ".*\\.in$")
 source_group("Test Data/IFS" REGULAR_EXPRESSION ".*\\.ifs$")
+source_group("Test Data/Config" REGULAR_EXPRESSION ".*\\.cfg$")
 target_include_directories(test-id PUBLIC "${CMAKE_CURRENT_BINARY_DIR}/include")
 target_link_libraries(test-id PRIVATE GTest::gmock_main libid)
 

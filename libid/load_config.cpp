@@ -29,6 +29,11 @@ int g_cfg_line_nums[MAX_VIDEO_MODES]{};
  */
 void load_config()
 {
+    load_config(find_path("id.cfg"));
+}
+
+void load_config(const std::string &cfg_path)
+{
     std::FILE   *cfgfile;
     VIDEOINFO    vident;
     int          linenum;
@@ -46,7 +51,6 @@ void load_config()
     int          textsafe2;
     int          truecolorbits;
 
-    const std::string cfg_path{find_path("id.cfg")};
     if (cfg_path.empty()                                             // can't find the file
         || (cfgfile = std::fopen(cfg_path.c_str(), "r")) == nullptr) // can't open it
     {
