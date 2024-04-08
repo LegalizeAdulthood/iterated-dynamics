@@ -315,9 +315,9 @@ feature.
 ;
 ~Topic=The Id "Fractal Engine" Architecture
 
-Several of the authors would never ADMIT this, but Fractint has evolved a
+Several of the authors would never admit this, but Id has evolved a
 powerful and flexible architecture that makes adding new fractals very
-easy. (They would never admit this because they pride themselves on being
+easy.  (They would never admit this because they pride themselves on being
 the sort that mindlessly but happily hacks away at code and "sees if it
 works and doesn't hang the machine".)
 
@@ -331,7 +331,7 @@ In implementing such a scheme, there are three fractal-specific
 calculations that take place within a framework that is pretty much the
 same for them all.  Rather than copy the same code over and over, we
 created a standard fractal engine that calls three functions that may be
-bolted in temporarily to the engine.  The "bolting in" process uses the C
+bolted in temporarily to the engine.  The bolting in process uses the C++
 language mechanism of variable function pointers.
 
 These three functions are:
@@ -349,12 +349,12 @@ These three functions are:
 The common framework that calls these functions can contain all sorts of
 speedups, tricks, and options that the fractal implementor need not worry
 about.  All that is necessary is to write the three functions in the
-correct way, and BINGO! -- all options automatically apply.  What makes it
+correct way, and bingo! -- all options automatically apply.  What makes it
 even easier is that usually one can re-use functions 1) and 2) written for
 other fractals, and therefore only need to write function 3).
 
 Then it occurred to us that there might be more than one sort of fractal
-engine, so we even allowed THAT to be bolted in.  And we created a data
+engine, so we even allowed that to be bolted in.  And we created a data
 structure for each fractal that includes pointers to these four functions,
 various prompts, a default region of the complex plane, and various
 miscellaneous bits of information that allow toggling between Julia and
@@ -362,13 +362,13 @@ Mandelbrot or toggling between the various kinds of math used in
 implementation.
 
 That sounds pretty flexible, but there is one drawback - you have to be a
-C programmer and have a C compiler to make use of it!  So we took it a step
-further, and designed a built-in high level compiler, so that you can
+C++ programmer and have a C++ compiler to make use of it!  So we took it
+a step further, and designed a built-in high level compiler, so that you can
 enter the formulas for the various functions in a formula file in a
 straightforward algebra-like language, and Fractint will compile them and
 bolt them in for you!
 
-There is a terrible down side to this flexibility.  Fractint users
+There is a terrible down side to this flexibility.  Id users
 everywhere are going berserk.  Fractal-inventing creativity is running
 rampant.  Proposals for new fractal types are clogging the mail and the
 telephones.
@@ -376,15 +376,10 @@ telephones.
 All we can say is that non-productivity software has never been so potent,
 and we're sorry, it's our fault!
 
-Fractint was compiled using Microsoft C 7.0 and Microsoft Assembler 6.0,
-using the "Medium" model.  Note that the assembler code uses the "C" model
-option added to version 5.1, and must be assembled with the /MX or /ML
-switch to link with the "C" code.  Because it has become too large to
-distribute comfortably as a single compressed file, and because many
-downloaders have no intention of ever modifying it, Fractint is now
-distributed as two files: one containing FRACTINT.EXE, auxiliary files and
-this document, and another containing complete source code (including a
-.MAK file and MAKEFRAC.BAT).  See {Distribution of Iterated Dynamics}.
+Id was compiled using Microsoft Visual Studio on Windows and the GNU C++
+compiler, g++, on unix.  Id source code is available directly through its
+project page on github a Windows MSI installer is also available there.
+See {Distribution of Iterated Dynamics}.
 ;
 ;
 ;
