@@ -197,11 +197,12 @@ good enough for the first few levels of M/J images, where the round-off
 errors stay well within the area covered by a single pixel.
 ;
 ;
-~Topic=Limitations of Integer Math (And How We Cope)
+~Topic=Limitations of Integer Math (and How We Cope)
 
-By default, Fractint uses 16-bit and/or 32-bit integer math to generate
-nearly all its fractal types.  The advantage of integer math is speed: this
-is by far the fastest such plotter that we have ever seen on any PC.  The
+By default, Id uses integer math to generate
+nearly all its fractal types.  The advantage of integer math is speed,
+even on a modern CPU integer math is still much faster than floating-point
+math.  The
 disadvantage is an accuracy limit.  Integer math represents numbers like
 1.00 as 32-bit integers of the form [1.00 * (2^29)] (approximately
 a range of 500,000,000) for the Mandelbrot and Julia sets.  Other integer
@@ -210,12 +211,12 @@ internally as [1.00 * (2^24)].  This yields accuracy of better than 8
 significant digits, and works fine... until the initial values of the
 calculations on consecutive pixels differ only in the ninth decimal place.
 
-At that point, if Fractint has a floating-point algorithm handy for that
+At that point, if Id has a floating-point algorithm handy for that
 particular fractal type (and virtually all of the fractal types have one
 these days), it will silently switch over to the floating-point algorithm
-and keep right on going.  Fair warning - the slowdown is noticeable.
+and keep right on going.
 
-If it has no floating-point algorithm, Fractint does the best it can: it
+If it has no floating-point algorithm, Id does the best it can: it
 switches to its minimal drawing mode, with adjacent pixels having initial
 values differing by 1 (really 0.000000002).  Attempts to zoom further may
 result in moving the image around a bit, but won't actually zoom.  If you
@@ -227,7 +228,7 @@ image is rotated or stretched very slightly, you can run into the wall of
 jello as early as the fourth consecutive maximum zoom.  Rotating or
 stretching by larger amounts has less impact on how soon you run into it.)
 
-Think of it this way: at minimal drawing mode, your VGA display would have
+Think of it this way: at minimal drawing mode, your display would have
 to have a surface area of over one million square miles just to be able to
 display the entire M-set using the integer algorithms.  Using the
 floating-point algorithms, your display would have to be big enough to fit
