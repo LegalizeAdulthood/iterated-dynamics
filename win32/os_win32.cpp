@@ -61,15 +61,6 @@ int g_video_start_y = 0;
  * here in a slower C form for portability.
  */
 
-static char *g_tos = nullptr;
-#define WIN32_STACK_SIZE 1024*1024
-// Return available stack space ... shouldn't be needed in Win32, should it?
-long stackavail()
-{
-    char junk = 0;
-    return WIN32_STACK_SIZE - (long)(((char *) g_tos) - &junk);
-}
-
 /*
 ; long readticker() returns current bios ticker value
 */
@@ -168,6 +159,15 @@ static void CreateMiniDump(EXCEPTION_POINTERS *ep)
     }
 }
 
+static char *s_tos = nullptr;
+#define WIN32_STACK_SIZE 1024*1024
+// Return available stack space ... shouldn't be needed in Win32, should it?
+long stackavail()
+{
+    char junk = 0;
+    return WIN32_STACK_SIZE - (long)(((char *) s_tos) - &junk);
+}
+
 int __stdcall WinMain(HINSTANCE instance, HINSTANCE prev_instance, LPSTR cmdLine, int show)
 {
     int result = 0;
@@ -176,7 +176,7 @@ int __stdcall WinMain(HINSTANCE instance, HINSTANCE prev_instance, LPSTR cmdLine
     __try
 #endif
     {
-        g_tos = (char *) &result;
+        s_tos = (char *) &result;
         g_instance = instance;
         _CrtSetDbgFlag(_CrtSetDbgFlag(_CRTDBG_REPORT_FLAG) | _CRTDBG_CHECK_ALWAYS_DF | _CRTDBG_LEAK_CHECK_DF);
         result = id_main(__argc, __argv);
