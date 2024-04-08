@@ -488,87 +488,87 @@ does "incorrect" mean in chaos theory anyway?!
 FINITE ATTRACTORS
 ~Format+,Online+
 
-Many of Fractint's fractals involve the iteration of functions of complex
-numbers until some "bailout" value is exceeded, then coloring the
+Many of Id's fractals involve the iteration of functions of complex
+numbers until some bailout value is exceeded, then coloring the
 associated pixel according to the number of iterations performed.  This
 process identifies which values tend to infinity when iterated, and gives
-us a rough measure of how "quickly" they get there.
+us a rough measure of how quickly they get there.
 
-In dynamical terms, we say that "Infinity is an Attractor", as many
-initial values get "attracted" to it when iterated.  The set of all points
-that are attracted to infinity is termed The Basin of Attraction of
-Infinity.  The coloring algorithm used divides this Basin of Attraction
+In dynamical terms, we say that infinity is an attractor, as many
+initial values get attracted to it when iterated.  The set of all points
+that are attracted to infinity is termed the basin of attraction of
+infinity.  The coloring algorithm used divides this basin of attraction
 into many distinct sets, each a single band of one color, representing all
-the points that are "attracted" to Infinity at the same "rate".  These
-sets (bands of color) are termed "Level Sets" - all points in such a set
-are at the same "Level" away from the attractor, in terms of numbers of
+the points that are attracted to infinity at the same rate.  These
+sets (bands of color) are termed level sets - all points in such a set
+are at the same level away from the attractor, in terms of numbers of
 iterations required to exceed the bailout value.
 
-Thus, Fractint produces colored images of the Level Sets of the Basin of
-Attraction of Infinity, for all fractals that iterate functions of Complex
+Thus, Id produces colored images of the level sets of the basin of
+attraction of infinity, for all fractals that iterate functions of complex
 numbers, at least.  Now we have a sound mathematical definition of what
-Fractint's "bailout" processing generates, and we have formally introduced
-the terms Attractor, Basin of Attraction, and Level Set, so you should
+Id's bailout processing generates, and we have formally introduced
+the terms attractor, basin of attraction, and level set, so you should
 have little trouble following the rest of this section!
 
-For certain Julia-type fractals, Fractint can also display the Level Sets
-of Basins of Attraction of Finite Attractors.  This capability is a by-
-product of the implementation of the MAGNETic fractal types, which always
-have at least one Finite Attractor.
+For certain Julia-type fractals, Id can also display the level sets
+of basins of attraction of finite attractors.  This capability is a by-
+product of the implementation of the magnetic fractal types, which always
+have at least one finite attractor.
 
 This option can be invoked by setting the "Look for finite attractor"
 option on the <Y> options screen, or by giving the "finattract=yes"
 command-line option.
 
-Most Julia-types that have a "lake" (normally colored blue by default)
-have a Finite Attractor within this lake, and the lake turns out to be,
-quite appropriately, the Basin of Attraction of this Attractor.
+Most Julia-types that have a lake (normally colored blue by default)
+have a finite attractor within this lake, and the lake turns out to be,
+quite appropriately, the basin of attraction of this attractor.
 
 The "finattract=yes" option (command-line or <Y> options screen)
-instructs Fractint to seek out and identify a possible Finite Attractor
-and, if found, to display the Level Sets of its Basin of Attraction, in
-addition to those of the Basin of Attraction of Infinity.  In many cases
-this results in a "lake" with colored "waves" in it;  in other cases there
+instructs Id to seek out and identify a possible finite attractor
+and, if found, to display the level sets of its basin of attraction, in
+addition to those of the basin of attraction of infinity.  In many cases
+this results in a lake with colored waves in it;  in other cases there
 may be little change in the lake's appearance.
 
-For a quick demonstration, select a fractal type of LAMBDA, with a
+For a quick demonstration, select a fractal type of lambda, with a
 parameter of 0.5 + 0.5i.  You will obtain an image with a large blue lake.
-Now set "Look for finite attractor" to 1 with the "Y" menu.
+Now set "Look for finite attractor" to 1 with the <Y> menu.
 The image will be re-drawn
-with a much more colorful lake.  A Finite Attractor lives in the center of
-one of the resulting "ripple" patterns in the lake - turn the <O>rbits
+with a much more colorful lake.  A finite attractor lives in the center of
+one of the resulting ripple patterns in the lake - turn the <O>rbits
 display on to see where it is - the orbits of all initial points that are
 in the lake converge there.
 
-Fractint tests for the presence of a Finite Attractor by iterating a
-Critical Value of the fractal's function.  If the iteration doesn't bail
+Id tests for the presence of a finite attractor by iterating a
+critical value of the fractal's function.  If the iteration doesn't bail
 out before exceeding twice the iteration limit, it is almost certain that
-we have a Finite Attractor - we assume that we have.
+we have a finite attractor - we assume that we have.
 
 Next we define a small circle around it and, after each iteration, as well
 as testing for the usual bailout value being exceeded, we test to see if
 we've hit the circle.  If so, we bail out and color our pixels according to
 the number of iterations performed.  Result - a nicely colored-in lake
-that displays the Level Sets of the Basin of Attraction of the Finite
-Attractor.  Sometimes !
+that displays the level sets of the basin of attraction of the finite
+attractor.  Sometimes!
 
-First exception: This does not work for the lakes of Mandel-types.  Every
+First, this does not work for the lakes of Mandel-types.  Every
 point in a Mandel-type is, in effect, a single point plucked from one of
 its related Julia-types.  A Mandel-type's lake has an infinite number of
 points, and thus an infinite number of related Julia-type sets, and
-consequently an infinite number of finite attractors too.  It *MAY* be
-possible to color in such a lake, by determining the attractor for EVERY
+consequently an infinite number of finite attractors too.  It may be
+possible to color in such a lake, by determining the attractor for every
 pixel, but this would probably treble (at least) the number of iterations
-needed to draw the image.  Due to this overhead, Finite Attractor logic
+needed to draw the image.  Due to this overhead, finite attractor logic
 has not been implemented for Mandel-types.
 
-Secondly, certain Julia-types with lakes may not respond to this
-treatment, depending on the parameter value used.  E.g., the Lambda Set
-for 0.5 + 0.5i responds well; the Lambda Set for 0.0 + 1.0i does not - its
+Second, certain Julia-types with lakes may not respond to this
+treatment, depending on the parameter value used.  E.g., the lambda set
+for 0.5 + 0.5i responds well; the lambda set for 0.0 + 1.0i does not - its
 lake stays blue.  Attractors that consist of single points, or a cycle of
 a finite number of points are ok.  Others are not.  If you're into fractal
 technospeak, the implemented approach fails if the Julia-type is a
-Parabolic case, or has Siegel Disks, or has Herman Rings.
+parabolic case, or has Siegel disks, or has Herman rings.
 
 However, all the difficult cases have one thing in common - they all have
 a parameter value that falls exactly on the edge of the related Mandel-
@@ -578,17 +578,17 @@ of the screen is inside the lake, but not too close to its edge, then use
 the space-bar toggle.  You should obtain a usable Julia-type with a lake,
 if you follow this guideline.
 
-Thirdly, the initial implementation only works for Julia-types that use
-the "Standard" fractal engine in Fractint.  Fractals with their own
-special algorithms are not affected by Finite Attractor logic, as yet.
+Third, the initial implementation only works for Julia-types that use
+the standard fractal engine in Id.  Fractals with their own
+special algorithms are not affected by finite attractor logic, as yet.
 
 Finally, the finite attractor code will not work if it fails to detect
 a finite attractor.  If the number of iterations is set too low, the finite
 attractor may be missed.
 
-Despite these restrictions, the Finite Attractor logic can produce
+Despite these restrictions, the finite attractor logic can produce
 interesting results.  Just bear in mind that it is principally a bonus
-off-shoot from the development of the MAGNETic fractal types, and is not
+off-shoot from the development of the magnetic fractal types, and is not
 specifically tuned for optimal performance for other Julia types.
 
 (Thanks to Kevin Allen for the above).
@@ -599,12 +599,12 @@ points by the phase of the convergence to the finite attractor,
 instead of by the speed of convergence.
 
 For example, consider the Julia set for -0.1 + 0.7i, which is the three-lobed
-"rabbit" set.  The Finite Attractor is an orbit of length three; call these
+rabbit set.  The finite attractor is an orbit of length three; call these
 values a, b, and c.  Then, the Julia set iteration can converge to one of
 three sequences: a,b,c,a,b,c,..., or b,c,a,b,c,..., or c,a,b,c,a,b,...
-The Finite Attractor phase option colors the interior of the Julia set with
+The finite attractor phase option colors the interior of the Julia set with
 three colors, depending on which of the three sequences the orbit converges
-to.  Internally, the code determines one point of the orbit, say "a", and
+to.  Internally, the code determines one point of the orbit, say a, and
 the length of the orbit cycle, say 3.  It then iterates until the sequence
 converges to a, and then uses the iteration number modulo 3 to determine the
 color.
