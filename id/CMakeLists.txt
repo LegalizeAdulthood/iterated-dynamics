@@ -1,3 +1,7 @@
+if(NOT CMAKE_SYSTEM_NAME STREQUAL "Windows")
+    return()
+endif()
+
 add_executable(id ${ID_EXECUTABLE_TYPE}
     main.cpp
 )
