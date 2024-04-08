@@ -1,8 +1,8 @@
-; id.cfg file
+; test.cfg file
 ; Don't use TABs when editing this file.
 ; The driver field is required or the mode will be skipped.
 ; If the driver rejects the mode, it won't be added to the mode list.
-;key  name of adapter/mode      | AX | BX | CX | DX |mode|  x |  y |clr| comments | driver
+;key  name of adapter/mode      |  x |  y |clr| driver | comments
 ;=========================================================================================
-@ID_TEST_GDI_FN@,@ID_TEST_GDI_NAME@,0,0,0,0,@ID_TEST_GDI_DOTMODE@,@ID_TEST_GDI_WIDTH@,@ID_TEST_GDI_HEIGHT@,@ID_TEST_GDI_COLORS@,@ID_TEST_GDI_COMMENT@,@ID_TEST_GDI_DRIVER@
-@ID_TEST_DISK_FN@,@ID_TEST_DISK_NAME@,0,0,0,0,@ID_TEST_DISK_DOTMODE@,@ID_TEST_DISK_WIDTH@,@ID_TEST_DISK_HEIGHT@,@ID_TEST_DISK_COLORS@,@ID_TEST_DISK_COMMENT@,@ID_TEST_DISK_DRIVER@
+@ID_TEST_GDI_FN@,@ID_TEST_GDI_NAME@,@ID_TEST_GDI_WIDTH@,@ID_TEST_GDI_HEIGHT@,@ID_TEST_GDI_COLORS@,@ID_TEST_GDI_DRIVER@,@ID_TEST_GDI_COMMENT@
+@ID_TEST_DISK_FN@,@ID_TEST_DISK_NAME@,@ID_TEST_DISK_WIDTH@,@ID_TEST_DISK_HEIGHT@,@ID_TEST_DISK_COLORS@,@ID_TEST_DISK_DRIVER@,@ID_TEST_DISK_COMMENT@

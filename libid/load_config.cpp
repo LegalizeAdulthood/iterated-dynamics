@@ -41,13 +41,8 @@ void load_config(const std::string &cfg_path)
     int          i;
     int          j;
     int          keynum;
-    unsigned int ax;
-    unsigned int bx;
-    unsigned int cx;
-    unsigned int dx;
-    int          dotmode;
     int          colors;
-    char        *fields[11] = {nullptr};
+    char        *fields[6]{};
     int          textsafe2;
     int          truecolorbits;
 
@@ -77,7 +72,7 @@ void load_config(const std::string &cfg_path)
         tempstring[(int) std::strlen(tempstring)-1] = 0; // zap trailing \n
         j = -1;
         i = j;
-        // key, mode name, ax, bx, cx, dx, dotmode, x, y, colors, comments, driver
+        // key, 0: mode name, 1: x, 2: y, 3: colors, 4: driver, 5: comments
         while (true)
         {
             if (tempstring[++i] < ' ')
@@ -88,7 +83,7 @@ void load_config(const std::string &cfg_path)
                 }
                 tempstring[i] = ' '; // convert tab (or whatever) to blank
             }
-            else if (tempstring[i] == ',' && ++j < 11)
+            else if (tempstring[i] == ',' && ++j < 6)
             {
                 assert(j >= 0 && j < 11);
                 fields[j] = &tempstring[i+1]; // remember start of next field
@@ -96,34 +91,28 @@ void load_config(const std::string &cfg_path)
             }
         }
         keynum = check_vidmode_keyname(tempstring);
-        std::sscanf(fields[1], "%x", &ax);
-        std::sscanf(fields[2], "%x", &bx);
-        std::sscanf(fields[3], "%x", &cx);
-        std::sscanf(fields[4], "%x", &dx);
-        assert(fields[5]);
-        dotmode = std::atoi(fields[5]);
-        assert(fields[6]);
-        xdots = std::atol(fields[6]);
-        assert(fields[7]);
-        ydots = std::atol(fields[7]);
-        assert(fields[8]);
-        colors = std::atoi(fields[8]);
-        if (colors == 4 && std::strchr(strlwr(fields[8]), 'g'))
+        assert(fields[1]);
+        xdots = std::atol(fields[1]);
+        assert(fields[2]);
+        ydots = std::atol(fields[2]);
+        assert(fields[3]);
+        colors = std::atoi(fields[3]);
+        if (colors == 4 && std::strchr(strlwr(fields[3]), 'g'))
         {
             colors = 256;
             truecolorbits = 4; // 32 bits
         }
-        else if (colors == 16 && std::strchr(fields[8], 'm'))
+        else if (colors == 16 && std::strchr(fields[3], 'm'))
         {
             colors = 256;
             truecolorbits = 3; // 24 bits
         }
-        else if (colors == 64 && std::strchr(fields[8], 'k'))
+        else if (colors == 64 && std::strchr(fields[3], 'k'))
         {
             colors = 256;
             truecolorbits = 2; // 16 bits
         }
-        else if (colors == 32 && std::strchr(fields[8], 'k'))
+        else if (colors == 32 && std::strchr(fields[3], 'k'))
         {
             colors = 256;
             truecolorbits = 1; // 15 bits
@@ -133,12 +122,8 @@ void load_config(const std::string &cfg_path)
             truecolorbits = 0;
         }
 
-        textsafe2   = dotmode / 100;
-        dotmode    %= 100;
-        if (j < 9 ||
+        if (j < 5 ||
                 keynum < 0 ||
-                dotmode < 0 || dotmode > 30 ||
-                textsafe2 < 0 || textsafe2 > 4 ||
                 xdots < MIN_PIXELS || xdots > MAX_PIXELS ||
                 ydots < MIN_PIXELS || ydots > MAX_PIXELS ||
                 (colors != 0 && colors != 2 && colors != 4 && colors != 16 &&
@@ -152,21 +137,16 @@ void load_config(const std::string &cfg_path)
 
         std::memset(&vident, 0, sizeof(vident));
         std::strncpy(&vident.name[0], fields[0], std::size(vident.name));
-        std::strncpy(&vident.comment[0], fields[9], std::size(vident.comment));
+        std::strncpy(&vident.comment[0], fields[5], std::size(vident.comment));
         vident.comment[25] = 0;
-        vident.name[25] = vident.comment[25];
+        vident.name[25] = 0;
         vident.keynum      = keynum;
-        vident.videomodeax = ax;
-        vident.videomodebx = bx;
-        vident.videomodecx = cx;
-        vident.videomodedx = dx;
-        vident.dotmode     = truecolorbits * 1000 + textsafe2 * 100 + dotmode;
         vident.xdots       = (short)xdots;
         vident.ydots       = (short)ydots;
         vident.colors      = colors;
 
         // if valid, add to supported modes
-        vident.driver = driver_find_by_name(fields[10]);
+        vident.driver = driver_find_by_name(fields[4]);
         if (vident.driver != nullptr)
         {
             if (vident.driver->validate_mode(vident.driver, &vident))
@@ -177,8 +157,7 @@ void load_config(const std::string &cfg_path)
                 {
                     VIDEOINFO *mode = &g_video_table[m];
                     if ((mode->driver == vident.driver) && (mode->colors == vident.colors)
-                        && (mode->xdots == vident.xdots) && (mode->ydots == vident.ydots)
-                        && (mode->dotmode == vident.dotmode))
+                        && (mode->xdots == vident.xdots) && (mode->ydots == vident.ydots))
                     {
                         if (0 == mode->keynum)
                         {

@@ -81,11 +81,6 @@ TEST(TestLoadConfig, gdiDisk)
     EXPECT_STREQ(ID_TEST_GDI_NAME, gdi_mode.name);
     EXPECT_STREQ(ID_TEST_GDI_COMMENT, gdi_mode.comment);
     EXPECT_EQ(ID_TEST_GDI_FN_KEY, gdi_mode.keynum);
-    EXPECT_EQ(0, gdi_mode.videomodeax);
-    EXPECT_EQ(0, gdi_mode.videomodebx);
-    EXPECT_EQ(0, gdi_mode.videomodecx);
-    EXPECT_EQ(0, gdi_mode.videomodedx);
-    EXPECT_EQ(ID_TEST_GDI_DOTMODE, gdi_mode.dotmode);
     EXPECT_EQ(ID_TEST_GDI_WIDTH, gdi_mode.xdots);
     EXPECT_EQ(ID_TEST_GDI_HEIGHT, gdi_mode.ydots);
     EXPECT_EQ(ID_TEST_GDI_COLORS, gdi_mode.colors);
@@ -94,11 +89,6 @@ TEST(TestLoadConfig, gdiDisk)
     EXPECT_STREQ(ID_TEST_DISK_NAME, disk_mode.name);
     EXPECT_STREQ(ID_TEST_DISK_COMMENT, disk_mode.comment);
     EXPECT_EQ(ID_TEST_DISK_FN_KEY, disk_mode.keynum);
-    EXPECT_EQ(0, disk_mode.videomodeax);
-    EXPECT_EQ(0, disk_mode.videomodebx);
-    EXPECT_EQ(0, disk_mode.videomodecx);
-    EXPECT_EQ(0, disk_mode.videomodedx);
-    EXPECT_EQ(ID_TEST_DISK_DOTMODE, disk_mode.dotmode);
     EXPECT_EQ(ID_TEST_DISK_WIDTH, disk_mode.xdots);
     EXPECT_EQ(ID_TEST_DISK_HEIGHT, disk_mode.ydots);
     EXPECT_EQ(ID_TEST_DISK_COLORS, disk_mode.colors);

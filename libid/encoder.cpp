@@ -848,11 +848,11 @@ static void setup_save_info(FRACTAL_INFO *save_info)
     save_info->ymax = g_y_max;
     save_info->creal = g_params[0];
     save_info->cimag = g_params[1];
-    save_info->videomodeax = (short) g_video_entry.videomodeax;
-    save_info->videomodebx = (short) g_video_entry.videomodebx;
-    save_info->videomodecx = (short) g_video_entry.videomodecx;
-    save_info->videomodedx = (short) g_video_entry.videomodedx;
-    save_info->dotmode = (short)(g_video_entry.dotmode % 100);
+    save_info->videomodeax = 0;
+    save_info->videomodebx = 0;
+    save_info->videomodecx = 0;
+    save_info->videomodedx = 0;
+    save_info->dotmode = (short)(g_dot_mode % 100);
     save_info->xdots = (short) g_video_entry.xdots;
     save_info->ydots = (short) g_video_entry.ydots;
     save_info->colors = (short) g_video_entry.colors;

@@ -45,7 +45,7 @@ static void format_vid_table(int choice, char *buf)
     vidmode_keyname(g_video_entry.keynum, kname);
     std::sprintf(buf, "%-5s %-25s %5d %5d ",  // 44 chars
             kname, g_video_entry.name, g_video_entry.xdots, g_video_entry.ydots);
-    truecolorbits = g_video_entry.dotmode/1000;
+    truecolorbits = g_dot_mode/1000;
     if (truecolorbits == 0)
     {
         std::snprintf(local_buf, std::size(local_buf), "%s%3d",  // 47 chars
@@ -59,7 +59,7 @@ static void format_vid_table(int choice, char *buf)
                 (truecolorbits == 2)?"64k":
                 (truecolorbits == 1)?"32k":"???");
     }
-    std::sprintf(buf, "%s %.12s %.12s",  // 74 chars
+    std::sprintf(buf, "%s  %.12s %.12s",  // 74 chars
             local_buf, g_video_entry.driver->name, g_video_entry.comment);
 }
 
@@ -78,7 +78,6 @@ int select_video_mode(int curmode)
     // pick default mode
     if (curmode < 0)
     {
-        g_video_entry.videomodeax = 19;  // vga
         g_video_entry.colors = 256;
     }
     else
@@ -88,8 +87,7 @@ int select_video_mode(int curmode)
     int i;
     for (i = 0; i < g_video_table_len; ++i)  // find default mode
     {
-        if (g_video_entry.videomodeax == g_video_table[entnums[i]].videomodeax
-            && g_video_entry.colors == g_video_table[entnums[i]].colors
+        if (g_video_entry.colors == g_video_table[entnums[i]].colors
             && (curmode < 0
                 || std::memcmp((char *) &g_video_entry, (char *) &g_video_table[entnums[i]], sizeof(g_video_entry)) == 0))
         {
@@ -230,7 +228,7 @@ static void update_id_cfg()
     char buf[121], kname[5];
     std::FILE *cfgfile, *outfile;
     int i, j, linenum, nextlinenum, nextmode;
-    VIDEOINFO vident;
+    VIDEOINFO vident{};
 
     const std::string cfgname = find_path("id.cfg");
 
@@ -257,27 +255,19 @@ static void update_id_cfg()
     {
         char colorsbuf[10];
         ++linenum;
+        // replace this line?
         if (linenum == nextlinenum)
         {
-            // replace this line
-            std::memcpy((char *)&vident, (char *)&g_video_table[nextmode],
-                   sizeof(g_video_entry));
+            vident = g_video_table[nextmode];
             vidmode_keyname(vident.keynum, kname);
             std::strcpy(buf, vident.name);
             i = (int) std::strlen(buf);
-            while (i && buf[i-1] == ' ') // strip trailing spaces to compress
+            while (i > 0 && buf[i-1] == ' ') // strip trailing spaces to compress
             {
                 --i;
             }
-            j = i + 5;
-            while (j < 32)
-            {
-                // tab to column 33
-                buf[i++] = '\t';
-                j += 8;
-            }
             buf[i] = 0;
-            int truecolorbits = vident.dotmode/1000;
+            int truecolorbits = g_dot_mode/1000;
             if (truecolorbits == 0)
             {
                 std::snprintf(colorsbuf, std::size(colorsbuf), "%3d", vident.colors);
@@ -290,17 +280,13 @@ static void update_id_cfg()
                         (truecolorbits == 2)?"64k":
                         (truecolorbits == 1)?"32k":"???");
             }
-            std::fprintf(outfile, "%-4s,%s,%4x,%4x,%4x,%4x,%4d,%5d,%5d,%s,%s\n",
+            std::fprintf(outfile, "%-4s,%26s,%4d,%5d,%s,%s,%s\n",
                     kname,
                     buf,
-                    vident.videomodeax,
-                    vident.videomodebx,
-                    vident.videomodecx,
-                    vident.videomodedx,
-                    vident.dotmode%1000, // remove true-color flag, keep g_text_safe
                     vident.xdots,
                     vident.ydots,
                     colorsbuf,
+                    vident.driver->name,
                     vident.comment);
             if (++nextmode >= g_video_table_len)
             {

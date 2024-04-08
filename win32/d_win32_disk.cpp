@@ -51,56 +51,23 @@ struct Win32DiskDriver
     unsigned char clut[256][3];
 };
 
-// VIDEOINFO:
-//         char    name[26];       Adapter name (IBM EGA, etc)
-//         char    comment[26];    Comments (UNTESTED, etc)
-//         int     keynum;         key number used to invoked this mode
-//                                 2-10 = F2-10, 11-40 = S,C,A{F1-F10}
-//         int     videomodeax;    begin with INT 10H, AX=(this)
-//         int     videomodebx;                 ...and BX=(this)
-//         int     videomodecx;                 ...and CX=(this)
-//         int     videomodedx;                 ...and DX=(this)
-//                                 NOTE:  IF AX==BX==CX==0, SEE BELOW
-//         int     dotmode;        video access method used by asm code
-//                                      1 == BIOS 10H, AH=12,13 (SLOW)
-//                                      2 == access like EGA/VGA
-//                                      3 == access like MCGA
-//                                      4 == Tseng-like  SuperVGA*256
-//                                      5 == P'dise-like SuperVGA*256
-//                                      6 == Vega-like   SuperVGA*256
-//                                      7 == "Tweaked" IBM-VGA ...*256
-//                                      8 == "Tweaked" SuperVGA ...*256
-//                                      9 == Targa Format
-//                                      10 = Hercules
-//                                      11 = "disk video" (no screen)
-//                                      12 = 8514/A
-//                                      13 = CGA 320x200x4, 640x200x2
-//                                      14 = Tandy 1000
-//                                      15 = TRIDENT  SuperVGA*256
-//                                      16 = Chips&Tech SuperVGA*256
-//         int     xdots;          number of dots across the screen
-//         int     ydots;          number of dots down the screen
-//         int     colors;         number of colors available
-
-#define DRIVER_MODE(name_, comment_, key_, width_, height_, mode_) \
-    { name_, comment_, key_, 0, 0, 0, 0, mode_, width_, height_, 256, nullptr }
-#define MODE19(n_, c_, k_, w_, h_) DRIVER_MODE(n_, c_, k_, w_, h_, 19)
+#define DRIVER_MODE(name_, width_, height_ ) \
+    { name_, 0, width_, height_, 256, nullptr, "                        " }
 static VIDEOINFO modes[] =
 {
-    MODE19("Win32 Disk Video         ", "                        ", 0,  320,  240),
-    MODE19("Win32 Disk Video         ", "                        ", 0,  400,  300),
-    MODE19("Win32 Disk Video         ", "                        ", 0,  480,  360),
-    MODE19("Win32 Disk Video         ", "                        ", 0,  600,  450),
-    MODE19("Win32 Disk Video         ", "                        ", 0,  640,  480),
-    MODE19("Win32 Disk Video         ", "                        ", 0,  800,  600),
-    MODE19("Win32 Disk Video         ", "                        ", 0, 1024,  768),
-    MODE19("Win32 Disk Video         ", "                        ", 0, 1200,  900),
-    MODE19("Win32 Disk Video         ", "                        ", 0, 1280,  960),
-    MODE19("Win32 Disk Video         ", "                        ", 0, 1400, 1050),
-    MODE19("Win32 Disk Video         ", "                        ", 0, 1500, 1125),
-    MODE19("Win32 Disk Video         ", "                        ", 0, 1600, 1200)
+    DRIVER_MODE("Win32 Disk Video         ",  320,  240),
+    DRIVER_MODE("Win32 Disk Video         ",  400,  300),
+    DRIVER_MODE("Win32 Disk Video         ",  480,  360),
+    DRIVER_MODE("Win32 Disk Video         ",  600,  450),
+    DRIVER_MODE("Win32 Disk Video         ",  640,  480),
+    DRIVER_MODE("Win32 Disk Video         ",  800,  600),
+    DRIVER_MODE("Win32 Disk Video         ", 1024,  768),
+    DRIVER_MODE("Win32 Disk Video         ", 1200,  900),
+    DRIVER_MODE("Win32 Disk Video         ", 1280,  960),
+    DRIVER_MODE("Win32 Disk Video         ", 1400, 1050),
+    DRIVER_MODE("Win32 Disk Video         ", 1500, 1125),
+    DRIVER_MODE("Win32 Disk Video         ", 1600, 1200)
 };
-#undef MODE19
 #undef DRIVER_MODE
 
 /* check_arg
@@ -565,14 +532,8 @@ disk_diskp(Driver *drv)
 static bool
 disk_validate_mode(Driver *drv, VIDEOINFO *mode)
 {
-    /* allow modes of any size with 256 colors and dotmode=19
-       ax/bx/cx/dx must be zero. */
-    return (mode->colors == 256)
-        && (mode->videomodeax == 0)
-        && (mode->videomodebx == 0)
-        && (mode->videomodecx == 0)
-        && (mode->videomodedx == 0)
-        && (mode->dotmode == 19);
+    /* allow modes of any size with 256 colors */
+    return mode->colors == 256;
 }
 
 static void

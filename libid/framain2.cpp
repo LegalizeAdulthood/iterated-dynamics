@@ -87,7 +87,7 @@ main_state big_while_loop(bool *const kbdmore, bool *const stacked, bool const r
         {
             std::memcpy((char *)&g_video_entry, (char *)&g_video_table[g_adapter],
                    sizeof(g_video_entry));
-            g_dot_mode = g_video_entry.dotmode;     // assembler dot read/write
+            g_dot_mode = 19;     // assembler dot read/write
             g_logical_screen_x_dots   = g_video_entry.xdots;       // # dots across the screen
             g_logical_screen_y_dots   = g_video_entry.ydots;       // # dots down the screen
             g_colors  = g_video_entry.colors;      // # colors available
