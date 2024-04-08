@@ -214,67 +214,33 @@ static void x11_redraw(Driver *drv);
 static bool x11_resize(Driver *drv);
 static void x11_set_for_graphics(Driver *drv);
 
-// VIDEOINFO:
-//         char    name[26];       Adapter name (IBM EGA, etc)
-//         char    comment[26];    Comments (UNTESTED, etc)
-//         int     keynum;         key number used to invoked this mode
-//                                 2-10 = F2-10, 11-40 = S,C,A{F1-F10}
-//         int     videomodeax;    begin with INT 10H, AX=(this)
-//         int     videomodebx;                 ...and BX=(this)
-//         int     videomodecx;                 ...and CX=(this)
-//         int     videomodedx;                 ...and DX=(this)
-//                                 NOTE:  IF AX==BX==CX==0, SEE BELOW
-//         int     dotmode;        video access method used by asm code
-//                                      1 == BIOS 10H, AH=12,13 (SLOW)
-//                                      2 == access like EGA/VGA
-//                                      3 == access like MCGA
-//                                      4 == Tseng-like  SuperVGA*256
-//                                      5 == P'dise-like SuperVGA*256
-//                                      6 == Vega-like   SuperVGA*256
-//                                      7 == "Tweaked" IBM-VGA ...*256
-//                                      8 == "Tweaked" SuperVGA ...*256
-//                                      9 == Targa Format
-//                                      10 = Hercules
-//                                      11 = "disk video" (no screen)
-//                                      12 = 8514/A
-//                                      13 = CGA 320x200x4, 640x200x2
-//                                      14 = Tandy 1000
-//                                      15 = TRIDENT  SuperVGA*256
-//                                      16 = Chips&Tech SuperVGA*256
-//         int     xdots;          number of dots across the screen
-//         int     ydots;          number of dots down the screen
-//         int     colors;         number of colors available
-
-#define DRIVER_MODE(name_, comment_, key_, width_, height_, mode_) \
-    { name_, comment_, key_, 0, 0, 0, 0, mode_, width_, height_, 256 }
-#define MODE19(n_, c_, k_, w_, h_) DRIVER_MODE(n_, c_, k_, w_, h_, 19)
-#define X11_MODE(w_, h_) \
-    MODE19("X11 Video                ", "                         ", 0, w_, h_)
+#define DRIVER_MODE(width_, height_) \
+    { "X11 Video                ", 0, width_, height_, 256, nullptr, "                         " }
 static const VIDEOINFO modes[] =
 {
     // 4:3 aspect ratio
-    X11_MODE(640, 480),
-    X11_MODE(800, 480),
-    X11_MODE(800, 600),
-    X11_MODE(1024, 768),
-    X11_MODE(1280, 960),
-    X11_MODE(1400, 1050),
-    X11_MODE(1600, 1200),
-    X11_MODE(2048, 1536),
+    DRIVER_MODE(640, 480),
+    DRIVER_MODE(800, 480),
+    DRIVER_MODE(800, 600),
+    DRIVER_MODE(1024, 768),
+    DRIVER_MODE(1280, 960),
+    DRIVER_MODE(1400, 1050),
+    DRIVER_MODE(1600, 1200),
+    DRIVER_MODE(2048, 1536),
 
     // 16:9 aspect ratio
-    X11_MODE(854, 480),
-    X11_MODE(1280, 720),
-    X11_MODE(1366, 768),
-    X11_MODE(1920, 1080),
+    DRIVER_MODE(854, 480),
+    DRIVER_MODE(1280, 720),
+    DRIVER_MODE(1366, 768),
+    DRIVER_MODE(1920, 1080),
 
     // 8:5 (16:10) aspect ratio
-    X11_MODE(320, 200),
-    X11_MODE(1280, 800),
-    X11_MODE(1440, 900),
-    X11_MODE(1680, 1050),
-    X11_MODE(1920, 1200),
-    X11_MODE(2560, 1600)
+    DRIVER_MODE(320, 200),
+    DRIVER_MODE(1280, 800),
+    DRIVER_MODE(1440, 900),
+    DRIVER_MODE(1680, 1050),
+    DRIVER_MODE(1920, 1200),
+    DRIVER_MODE(2560, 1600)
 };
 
 static unsigned long
