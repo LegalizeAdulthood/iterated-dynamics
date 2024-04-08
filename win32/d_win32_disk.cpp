@@ -458,8 +458,6 @@ disk_window(Driver *drv)
 ;       genuine VGA or register compatable adapter and program the registers
 ;       directly using the coded value in DX)
 
-; Unix: We ignore ax,bx,cx,dx.  dotmode is the "mode" field in the video
-; table.  We use mode 19 for the X window.
 */
 extern void set_disk_dot();
 extern void set_normal_line();
