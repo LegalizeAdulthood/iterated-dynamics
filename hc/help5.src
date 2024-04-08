@@ -636,7 +636,7 @@ exponentiation; x^y is x to the y power.
       for k = 0, -1, 1, -2, 2, ...
       (The log function refers to log base e, or ln.  The expression
        atan(y/x) is an angle between -pi and pi in the quadrant containing
-       (x,y) implemented in C as the atan2() function.)
+       (x,y).)
 
    z^w = e^(w*log(z))
 
@@ -647,8 +647,8 @@ exponentiation; x^y is x to the y power.
    cosh(x+iy) = cosh(x)cos(y) + i sinh(x)sin(y)
    tanh(x+iy) = sinh(x+iy) / cosh(x+iy)
    cosxx(x+iy) = cos(x)cosh(y) + i sin(x)sinh(y)
-     (cosxx is present in Fractint to provide compatibility with a bug
-     which was in its cos calculation before version 16)
+     (cosxx is present to provide compatibility
+      with a bug in its cos calculation)
 
                      sin(2x)               sinh(2y)
    tan(x+iy) = ------------------  + i------------------
@@ -690,7 +690,7 @@ exponentiation; x^y is x to the y power.
    round(x+iy) = round(x) + i*round(y)
 
 ~Format+
-Fractint's definitions of abs(x+iy) and |x+iy| below are non-standard.
+Id's definitions of abs(x+iy) and |x+iy| below are non-standard.
 Math texts define both absolute value and modulus of a complex number to
 be the same thing.  They are both equal to cabs(x+iy) as defined above.
 ~Format-
