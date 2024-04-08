@@ -15,7 +15,7 @@
 ~Format-
    { Using Help }                           { Fractals and the PC }
    { Introduction }                         { Distribution of Iterated Dynamics }
-   { Conditions on Use }                    { Contacting the Authors }
+   { Conditions on Use }                    { Contacting the Author }
    { Getting Started }                      { The Stone Soup Story }
    { New Features in 1.0 }                  { A Word About the Authors }
                                           { Other Fractal Products }
@@ -197,7 +197,7 @@
                    "The Stone Soup Story",
                    "A Word About the Authors",
                    "Distribution of Iterated Dynamics",
-                   "Contacting the Authors", FF}
+                   "Contacting the Author", FF}
 
 {Appendix C, 0, "GIF Save File Format", FF}
 
@@ -361,7 +361,7 @@ Iterated Dynamics in no way changes the spirit of collaboration started
 with that program by its original author Bert Tyler.
 
 See {The Stone Soup Story} and {A Word About the Authors} for information
-about the authors, and see {Contacting the Authors} for how to contribute
+about the authors, and see {Contacting the Author} for how to contribute
 your own ideas and code.
 ;
 ;
