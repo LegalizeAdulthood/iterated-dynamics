@@ -160,7 +160,7 @@ mathematician Heinz-Otto Peitgen said:
 ;
 ~Topic=Periodicity Logic
 
-The "Mandelbrot Lake" in the center of the M-set images is the traditional
+The "Mandelbrot lake" in the center of the M-set images is the traditional
 bane of plotting programs.  It sucks up the most computer time because it
 always reaches the iteration limit -- and yet the most interesting areas
 are invariably right at the edge the lake.
@@ -192,11 +192,9 @@ this toggle, it's best to disable solid-guessing first using <1> or <2>
 because in its second pass, solid-guessing bypasses many of the pixel
 calculations precisely where the orbits are most interesting.
 
-Mark was also responsible for pointing out that 16-bit integer math was
+Mark was also responsible for pointing out that integer math was
 good enough for the first few levels of M/J images, where the round-off
-errors stay well within the area covered by a single pixel.  Fractint now
-uses 16-bit math where applicable, which makes a big difference on non-32-
-bit PCs.
+errors stay well within the area covered by a single pixel.
 ;
 ;
 ~Topic=Limitations of Integer Math (And How We Cope)
