@@ -19,6 +19,7 @@ add_library(os STATIC
     fractint.rc
     d_win32.h
     frame.h
+    instance.h
     ods.h
     plot.h
     resource.h

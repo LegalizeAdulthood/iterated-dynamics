@@ -31,13 +31,12 @@
 #include "WinText.h"
 #include "d_win32.h"
 #include "frame.h"
+#include "instance.h"
 #include "ods.h"
 #include "plot.h"
 
 #include <read_ticker.h>
 
-
-extern HINSTANCE g_instance;
 
 #define DI(name_) Win32BaseDriver *name_ = (Win32BaseDriver *) drv
 

@@ -21,15 +21,14 @@
 #include <array>
 #include <cassert>
 
-#include "WinText.h"
-#include "frame.h"
-#include "plot.h"
 #include "d_win32.h"
+#include "frame.h"
+#include "instance.h"
 #include "ods.h"
+#include "plot.h"
+#include "WinText.h"
 
-#include <cstdio>
-
-extern HINSTANCE g_instance;
+#include <array>
 
 #define DRAW_INTERVAL 6
 #define TIMER_ID 1

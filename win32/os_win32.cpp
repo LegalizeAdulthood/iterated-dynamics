@@ -36,9 +36,9 @@
 #include <cstdio>
 #include <cstring>
 
-#include "frame.h"
+#include "instance.h"
 
-HINSTANCE g_instance = nullptr;
+HINSTANCE g_instance{};
 
 static void (*dotwrite)(int, int, int) = nullptr;
 static int (*dotread)(int, int) = nullptr;

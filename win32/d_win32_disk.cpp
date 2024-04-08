@@ -8,6 +8,7 @@
 #include "cmdfiles.h"
 #include "diskvid.h"
 #include "drivers.h"
+#include "get_color.h"
 #include "id_data.h"
 #include "os.h"
 #include "plot3d.h"
@@ -25,18 +26,14 @@
 #include "WinText.h"
 #include "frame.h"
 #include "d_win32.h"
+#include "instance.h"
 #include "ods.h"
-
-#include <cstdio>
-#include <get_color.h>
 
 // read/write-a-dot/line routines
 using t_dotwriter = void(int, int, int);
 using t_dotreader = int(int, int);
 using t_linewriter = void(int y, int x, int lastx, BYTE *pixels);
 using t_linereader = void(int y, int x, int lastx, BYTE *pixels);
-
-extern HINSTANCE g_instance;
 
 #define DRAW_INTERVAL 6
 #define TIMER_ID 1
