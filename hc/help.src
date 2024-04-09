@@ -294,20 +294,15 @@ o The monitorwidth parameter was renamed to stereowidth.  The old parameter
 o The following parameter file commands are deprecated and support will be
   removed in a future release.  In this release the arguments are parsed
   and validated and the results ignored.\
-  - adapter                             - pixelzoom\
-  - afi                                 - plotstyle\
-  - biospalette                         - printer\
-  - colorps                             - printfile\
-  - comport                             - ramvideo\
-  - epsf                                - rleps\
-  - exitmode                            - textsafe\
-  - fpu                                 - title\
-  - halftone                            - tplus\
-  - linefeed                            - translate\
-  - maxcolorres                         - tweaklzw\
-  - noninterlaced                       - vesadetect
-~OnlineFF
-~FF
+  - adapter             - halftone              - ramvideo\
+  - afi                 - linefeed              - rleps\
+  - biospalette         - maxcolorres           - textsafe\
+  - colorps             - noninterlaced         - title\
+  - comport             - pixelzoom             - tplus\
+  - epsf                - plotstyle             - translate\
+  - exitmode            - printer               - tweaklzw\
+  - fpu                 - printfile             - vesadetect
+
 Known limitations:
 
 o Navigation is exclusively through the keyboard.  Mouse support will be
