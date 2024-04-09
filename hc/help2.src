@@ -1638,13 +1638,8 @@ a b c d e f g h i j k l p, defining:
 ;which you can then merge into an XXX.IFS file for future use with
 ;Id.
 ;
-The program FDesign can be used to design IFS fractals - see
-{=@FDESIGN FDesign}.
-
 You can save the points in your IFS fractal in the file orbits.raw which is
-overwritten each time a fractal is generated.  The program Acrospin can
-read this file and will let you view the fractal from any angle using
-the arrow keys.  See {=@ACROSPIN Acrospin}.
+overwritten each time a fractal is generated.
 ;
 ;
 ~Topic=Sierpinski Gasket, Label=HT_SIER
@@ -2044,8 +2039,7 @@ and {Martin Attractors}.
 The orbit trajectory for these types can be saved in the file orbits.raw
 by invoking Id with the "orbitsave=yes" command-line option.  This file will
 be overwritten each time you generate a new fractal, so rename it if you
-want to save it.  A nifty program called Acrospin can read these files and
-rapidly rotate them in 3-D - see {=@ACROSPIN Acrospin}.
+want to save it.
 ;
 ;
 ~Topic=Lorenz Attractors, Label=HT_LORENZ

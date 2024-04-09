@@ -956,7 +956,7 @@ Ray trace output:\
    output is supported which can be relatively easily transformed to be
    usable by many other products.
    One other option is supported: ACROSPIN.  This is not a ray tracer,
-   but the same Id options apply - see {=@ACROSPIN Acrospin}.
+   but the same Id options apply.
 
    Option values:\
       0  disables the creation of ray tracing output\

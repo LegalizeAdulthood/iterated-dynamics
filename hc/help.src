@@ -18,7 +18,7 @@
    { Conditions on Use }                    { Contacting the Author }
    { Getting Started }                      { The Stone Soup Story }
    { New Features in 1.0 }                  { A Word About the Authors }
-                                          { Other Fractal Products }
+
    { Display Mode Commands }
    { Color Cycling Commands }               { Id on Unix }
    { Palette Editing Commands }             { Using Id With a Mouse }
@@ -28,7 +28,7 @@
    { Doodads\, Bells\, and Whistles }         { Common Problems }
    { "3D" Images }
    { Color Maps }                           { Bibliography }
-                                          { Other Programs }
+                                          { Other Fractal Programs }
    { Startup Parameters\, Parameter Files }  { Revision History }
    { Batch Mode }
    { "Disk-Video" Modes }                   { Printing Id Documentation }
@@ -201,13 +201,11 @@
 
 {Appendix C, 0, "GIF Save File Format", FF}
 
-{Appendix D, 0, "Other Fractal Products", FF}
+{Appendix D, 0, "Other Fractal Programs", FF}
 
 {Appendix E, 0, "Bibliography", FF}
 
-{Appendix F, 0, "Other Programs", FF}
-
-{Appendix G, 0, "Revision History", FF}
+{Appendix F, 0, "Revision History", FF}
 
 ;
 ; End of DoContents
