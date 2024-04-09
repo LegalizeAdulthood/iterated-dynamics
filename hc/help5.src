@@ -1152,7 +1152,7 @@ George received an A.B. in Economics from Dartmouth College and a J.D from
 the University of Michigan.  When not playing with Fractint, he practices
 law in a small village about 40 miles northwest of Detroit.
 
-Robin Bussell began contributing to fractint in rudimentary fashion with
+Robin Bussell began contributing to Fractint in rudimentary fashion with
 the autologmap routine and has been producing more and more complex
 interface enhancements as he gets better at what he refers to as 'this C
 programming lark'.  He is always grateful for the help the rest of the
@@ -1207,7 +1207,7 @@ Barnsley, Michael: "Fractals Everywhere," Academic Press, 1988.
 Davenport, Clyde: "A Hypercomplex Calculus with Applications to Relativity",
    ISBN 0-9623837-0-8.  This self-published expansion of Mr. Davenport's
    Master's thesis makes the case for using hypercomplex numbers rather than
-   quaternions.  This book provided the background for Fractint's
+   quaternions.  This book provided the background for Id's
    implementation of hypercomplex fractals.
 
 Dewdney, A. K., "Computer Recreations" columns in "Scientific American" --
@@ -1295,7 +1295,7 @@ POLYPHONY=nn\
 This controls how many different note are allowed to sound at once, voices are
 assigned cyclically as notes are played: i.e. after the first orbit is
 calculated a frequency is assigned to the first voice and that note is
-triggered on.  Fractint then waits for one orbitdelay period, calculates the
+triggered on.  Id then waits for one orbitdelay period, calculates the
 next orbit, assigns a frequency to the second voice, and triggers it on.
 This continues until the number of voices sounding is equal to the polyphony
 value whereupon the first selected voice is triggered off and the note allowed
@@ -1379,7 +1379,7 @@ default is none.  The low value attenuates at 1.5 dB/octave, the mid at
 3.0 dB/octave, and the high at 6.0 dB/octave.
 
 SCALEMAP=nn/nn/nn/...\
-The scale map list is a way of controlling which notes are played by fractint
+The scale map list is a way of controlling which notes are played by Id
 and only has any effect if note quantisation is switched on in the basic sound
 parameters screen.  It can be very useful when the polyphony is up and the chords
 you're getting are more like dischords. :-)
@@ -1391,7 +1391,7 @@ note indicated in that entry of the table.
 The end result of this is that, for instance, using this sequence of numbers
 as a scale map: \
 2,2,4,4,4,7,7,9,9,11,11,11\
-Will ensure that fractint uses only the black notes on the keyboard, just the
+Will ensure that Id uses only the black notes on the keyboard, just the
 sharps and flats for a vaguely oriental feel (to my western ears anyway :-) ).
 
 The above probably appears to be sheer gobbledegook at first reading, sorry,
@@ -1494,8 +1494,8 @@ Where:\
 ; Iterated Dynamics intro screen contributing authors.
 ;
                   ...
- Timothy Wegner       Legacy FRACTINT Primary Author
- Jonathan Osuch       Legacy FRACTINT Primary Author
+ Timothy Wegner       Legacy Fractint Primary Author
+ Jonathan Osuch       Legacy Fractint Primary Author
  Kevin Allen          Finite attractor, bifurcation engine
  Humberto Baptista    passes=d, latoocarfian type
  Steve Bennett        restore-from-disk logic

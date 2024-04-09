@@ -255,9 +255,9 @@ integrated documentation file software was written by Ethan Nagel.
 ;
 ;
 ~Topic=New Features in 1.0
-Iterated Dynamics is a fork of the DOS program FRACTINT.  FRACTINT has its own
-history spanning many years.  Please consult the FRACTINT help for its history.
-To avoid being confused with a new release of FRACTINT, the code has been
+Iterated Dynamics is a fork of the DOS program Fractint.  Fractint has its own
+history spanning many years.  Please consult the Fractint help for its history.
+To avoid being confused with a new release of Fractint, the code has been
 rebranded Iterated Dynamics, or Id for short, throughout.
 
 The source code for Iterated Dynamics lives on github:\
@@ -268,7 +268,7 @@ Found a bug?  File an issue on our github project!\
 
 Version 1.0:
 
-o Most of the changes involve internal restructuring of the DOS FRACTINT code
+o Most of the changes involve internal restructuring of the DOS Fractint code
   to build a bridge to the future.
 o Iterated Dynamics is a native 64-bit Windows program written in C++ with a
   CMake build system and vcpkg for obtaining 3rd party library dependencies.
@@ -286,7 +286,7 @@ o All online help text has been reviewed and revised to drop DOS specific
   discussions.  Where still appropriate the text has been updated to reflect
   that Id is a program operating in a windowed environment.
 o The release parameter does nothing in this release.  For backward
-  compatability with old behavior, use FRACTINT.
+  compatability with old behavior, use Fractint.
 o Printing an image has been removed.  Use your operating system for that.
   :)
 o The monitorwidth parameter was renamed to stereowidth.  The old parameter
@@ -354,7 +354,7 @@ images by iterating some kind of dynamical system exhibiting non-linear
 or chaotic behavior.
 
 Like many open source projects, Iterated Dynamics is an experiment in
-collaboration.  While being an offshoot of its ancestor, FRACTINT,
+collaboration.  While being an offshoot of its ancestor, Fractint,
 Iterated Dynamics in no way changes the spirit of collaboration started
 with that program by its original author Bert Tyler.
 

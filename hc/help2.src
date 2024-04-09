@@ -1166,7 +1166,7 @@ or positive first), and completely at random.  It turns out that most
 traversal methods lead to the same or similar pictures, but that how the
 image evolves as the orbits trace it out differs wildly depending on the
 traversal method chosen.  As far as we know, this fact is an original
-discovery by Michael Snyder, andversion 18.2 of Id's ancestor, FRACTINT,
+discovery by Michael Snyder, andversion 18.2 of Id's ancestor, Fractint,
 was its first publication.
 
 Pick a Julia constant such as Z(0) = (-.74543, .11301), the popular
