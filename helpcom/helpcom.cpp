@@ -285,7 +285,7 @@ bool process_document(PD_FUNC get_info, PD_FUNC output, void *info)
     output(PD_HEADING, &pd, info);
 
     bool first_section = true;
-    std::string page_text;
+    char page_text[30]{};
     while (get_info(PD_GET_CONTENT, &pd, info))
     {
         if (!output(PD_START_SECTION, &pd, info))
@@ -477,10 +477,10 @@ bool process_document(PD_FUNC get_info, PD_FUNC output, void *info)
                             else if (in_link == 2)
                             {
                                 tok = token_types::TOK_WORD;
-                                width = (int) page_text.length();
+                                width = (int) std::strlen(page_text);
                                 col += 8 - width;
                                 size = 0;
-                                pd.curr = page_text.c_str();
+                                pd.curr = page_text;
                                 ++in_link;
                             }
                             else if (in_link == 3)
@@ -516,7 +516,7 @@ bool process_document(PD_FUNC get_info, PD_FUNC output, void *info)
                             if (get_info(PD_GET_LINK_PAGE, &pd, info))
                             {
                                 in_link = 1;
-                                page_text = "(p. " + std::to_string(pd.i) + ")";
+                                std::snprintf(page_text, std::size(page_text), "(p. %d)", pd.page_num);
                             }
                             else
                             {
@@ -669,8 +669,8 @@ bool process_document(PD_FUNC get_info, PD_FUNC output, void *info)
                     if (get_info(PD_GET_LINK_PAGE, &pd, info))
                     {
                         width += 9;
-                        page_text = " (p. " + std::to_string(pd.i) + ")";
-                        if (!do_print(page_text.c_str(), (int) page_text.length()))
+                        std::snprintf(page_text, std::size(page_text), " (p. %d)", pd.page_num);
+                        if (!do_print(page_text, (int) std::strlen(page_text)))
                         {
                             return false;
                         }
