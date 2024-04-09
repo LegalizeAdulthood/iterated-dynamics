@@ -868,7 +868,7 @@ The 'err' column in the video mode information indicates:
   c      mode has more colors than image needs
   *      a major problem, one or more of the following is also shown:
    C     mode has too few colors
-   R     image larger than screen, Fractint will reduce the image, possibly
+   R     image larger than screen, Id will reduce the image, possibly
          into a <V>iew window, and maybe with aspect ratio a bit wrong
    A     mode has the wrong shape of pixels for this image
 ;
@@ -974,13 +974,12 @@ CompuServe PICS forum and keep adding video modes to the program.  Or...
 A WORD ABOUT THE AUTHORS
 ~Format+,Online+
 
-Id's ancestor, Fractint, is the result of a synergy between the main
+Id's ancestor, Fractint 20.04, is the result of a synergy between the main
 authors, many contributors, and published sources.  All of the main
 authors have had a hand in many aspects of the code.  However, each author
 has certain areas of greater contribution and creativity.  Since there is
 not room in the credits screen for the contributions of the main authors,
-we list these here to facilitate those who would like to communicate with
-us on particular subjects.
+we list them here to further elaborate on their contributions.
 
 Main Author of Iterated Dynamics
 
@@ -1064,11 +1063,16 @@ Richard's personal email address has been left.
 
 Richard has a Bachelor of Science degree in Electrical Engineering from the
 University of Delaware and a Master of Philosophy degree in Computer Science
-from the University of Utah.  He has worked as a software engineer for his
-entire career on embedded systems, 3D graphics workstations, digital video
-editing software, system management software, home automation software, 3D
-content creation software, solid-state storage management software and
-currently works on hardware accelerated ray tracing.
+from the University of Utah.  From 2000 to 2010, he was a Microsoft MVP for
+Direct3D and wrote a book on the Direct3D APIs.  The book, "The Direct3D
+Graphics Pipeline", is available free download at
+<https://legalizeadulthood.wordpress.com/the-direct3d-graphics-pipeline/>
+
+He has worked as a software engineer for his entire career on embedded systems,
+3D graphics workstations, 3D paint softare, digital video editing software,
+system management software, home automation software, 3D content creation
+software, solid-state storage management software and currently works on
+hardware accelerated ray tracing.
 
 Main Authors of Fractint, Id's Ancestor.
 
@@ -1081,7 +1085,7 @@ variety of video hardware, and his skill at hacking up the code we send him!
 Bert has a BA in mathematics from Cornell University.  He has been in
 programming since he got a job at the computer center in his sophomore
 year at college - in other words, he hasn't done an honest day's work in
-his life.  He has been known to pass himself off as a PC expert, a UNIX
+his life.  He has been known to pass himself off as a PC expert, a Unix
 expert, a statistician, and even a financial modeling expert.  He is
 currently masquerading as an independent PC consultant, supporting the PC-
 to-Mainframe communications environment at NIH.  If you sent mail from the
@@ -1091,8 +1095,8 @@ claims to support the MS-Kermit environment at NIH.  Fractint is Bert's
 first effort at building a graphics program.
 
 Tim Wegner contributed the original implementation of palette animation,
-and is responsible for most of the 3D mechanisms.  He provided
-the main outlines of the "StandardFractal" engine and data structures, and is
+and is responsible for most of the 3D mechanisms.  He provided the main
+outlines of the "Standard Fractal" engine and data structures, and is
 accused by his cohorts of being "obsessed with options".  One of Tim's main
 interests is the use of four dimensional algebras to produce fractals.
 Tim served as team coordinator for version 19, and integrated Wes Loewer's
@@ -1141,32 +1145,35 @@ a modicum of order to the chaotic world of formula postings with his
 release of the Orgform program and formula compilation.  George added
 if..else to the formula parser language for version 19.6.  Among his other
 contributions are the ability to include formula, ifs, and lsystem entries
-in .par files, the scrolling of text in the <Z> and F2 screens, and
+in .par files, the scrolling of text in the <Z> and <F2> screens, and
 new autokey commands.
 
 George received an A.B. in Economics from Dartmouth College and a J.D from
 the University of Michigan.  When not playing with Fractint, he practices
 law in a small village about 40 miles northwest of Detroit.
 
-Robin Bussell began contributing to fractint in rudimentary fashion with the
-autologmap routine and has been producing more and more complex interface
-enhancements as he gets better at what he refers to as 'this C programming lark'
-He is always grateful for the help the rest of the team have given in smoothing
-the rough edges of the ingredients he adds to the soup and regards the evolver
-feature as his greatest achievement to date.
+Robin Bussell began contributing to fractint in rudimentary fashion with
+the autologmap routine and has been producing more and more complex
+interface enhancements as he gets better at what he refers to as 'this C
+programming lark'.  He is always grateful for the help the rest of the
+team have given in smoothing the rough edges of the ingredients he adds
+to the soup and regards the evolver feature as his greatest achievement
+to date.
 
-Robin had far too much fun at college in London to actually get any qualifications there
-and has since worked his way up from a workshop job fixing computers back in
-the final days of CP/M, via some interesting work with Transputers ( an innovative
-British cpu that was designed to run in massively parallel configurations, and
-made a very good Mandlebrot set calculating machine when a few dozen or more were set
-to the task) , through to his current position of senior engineer for a third
-party suppport company where he spends his time travelling the south west of Britain
-sorting out peoples IT problems.
+Robin had far too much fun at college in London to actually get any
+qualifications there and has since worked his way up from a workshop job
+fixing computers back in the final days of CP/M, via some interesting work
+with Transputers (an innovative British cpu that was designed to run in
+massively parallel configurations, and made a very good Mandlebrot set
+calculating machine when a few dozen or more were set to the task), through
+to his position of senior engineer for a third party suppport company where
+he spends his time travelling the south west of Britain sorting out peoples
+IT problems.
 
-When not playing with computers Robin likes to relax by experimenting with kite
-powered traction and can often be found hurtling around the local beaches on the end of
-a few square metres of fabric and carbon fibre in various configurations.
+When not playing with computers Robin likes to relax by experimenting with
+kite powered traction and can often be found hurtling around the local
+beaches on the end of a few square metres of fabric and carbon fibre in
+various configurations.
 ;
 ;
 ~Topic=Other Fractal Programs
@@ -1176,11 +1183,17 @@ cellular automata.  Rudy's original source code is on github here:
 current editions of Visual Studio (as of April, 2024) is here:
 <https://github.com/legalizeadulthood/capow>
 
+Kalles-Fraktaler is a fractal renderer with SIMD and multithreading support.
+Download from <https://fraktaler.mathr.co.uk/>
+
 ManPWin is a Windows fractal generator derived from DOS FRACTINT with
 lots of additional features by Paul de Leeuw.  You can download
 the latest release from his web site: <https://www.deleeuw.com.au/>;
 Paul has collaborated with Richard Thomson to put his source code on
 github at <https://github.com/LegalizeAdulthood/manpwin>.
+
+Movie Maker 3D by Yann Le Bihan can create animations using frames rendered
+by Kalles-Fraktaler.  <http://www.chillheimer.de/kallesfraktaler/mmy/>
 
 XaoS is a program that specializes in fast, fluid, continuous zooming.
 <https://xaos-project.github.io/>
@@ -1377,7 +1390,7 @@ this note number is then looked up in the scale map table and substituted by the
 note indicated in that entry of the table.
 The end result of this is that, for instance, using this sequence of numbers
 as a scale map: \
-2,2,4,4,4,7,7,9,9,11,11,11 \
+2,2,4,4,4,7,7,9,9,11,11,11\
 Will ensure that fractint uses only the black notes on the keyboard, just the
 sharps and flats for a vaguely oriental feel (to my western ears anyway :-) ).
 
