@@ -679,7 +679,6 @@ bool encoder()
                 esave_info.future[j] = 0;
             }
 
-            // some XFRACT logic for the doubles needed here
             decode_evolver_info(&esave_info, 0);
             // evolution info block, 006
             save_info.tot_extend_len += extend_blk_len(sizeof(esave_info));

@@ -1149,7 +1149,6 @@ static int find_fractal_info(const std::string &gif_file, //
                     skip_ext_blk(&block_len, &data_len); // once to get lengths
                     fseek(fp, (long)(0-block_len), SEEK_CUR);
                     load_ext_blk((char *)&eload_info, data_len);
-                    // XFRACT processing of doubles here
                     decode_evolver_info(&eload_info, 1);
                     blk_6_info->length = data_len;
                     blk_6_info->got_data = true;
