@@ -4165,9 +4165,10 @@ bool fpFormulaSetup()
 #endif
 }
 
+#undef FORMULA_INTEGER_MATH
 bool intFormulaSetup()
 {
-#if defined(XFRACT) || defined(_WIN32)
+#ifndef FORMULA_INTEGER_MATH
     static bool been_here = false;
     if (!been_here)
     {
