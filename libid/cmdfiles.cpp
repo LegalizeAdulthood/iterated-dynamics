@@ -977,9 +977,6 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
             {
                 return bad_arg(curarg);
             }
-#ifdef XFRACT
-            g_init_mode = yesnoval[0] ? 0 : -1; // skip credits for batch mode
-#endif
             g_init_batch = static_cast<batch_modes>(yesnoval[0]);
             return CMDARG_FRACTAL_PARAM | CMDARG_3D_PARAM;
         }
