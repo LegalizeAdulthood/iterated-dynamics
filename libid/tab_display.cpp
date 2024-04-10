@@ -134,11 +134,7 @@ static bool putstringwrap(int *row, int col1, int col2, int color, char *str, in
     return done;
 }
 
-#ifdef XFRACT
-static char spressanykey[] = {"Press any key to continue, F6 for area, F7 for next page"};
-#else
-static char spressanykey[] = {"Press any key to continue, F6 for area, CTRL-TAB for next page"};
-#endif
+static char spressanykey[] = {"Press any key to continue, F6 for area, Ctrl+Tab for next page"};
 
 static void show_str_var(char const *name, char const *var, int *row, char *msg)
 {
