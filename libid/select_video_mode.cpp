@@ -224,7 +224,6 @@ static bool ent_less(const int lhs, const int rhs)
 
 static void update_id_cfg()
 {
-#ifndef XFRACT
     char buf[121], kname[5];
     std::FILE *cfgfile, *outfile;
     int i, j, linenum, nextlinenum, nextmode;
@@ -307,5 +306,4 @@ static void update_id_cfg()
     std::fclose(outfile);
     fs::remove(cfgname);         // success assumed on these lines
     fs::rename(outname, cfgname); // since we checked earlier with access
-#endif
 }
