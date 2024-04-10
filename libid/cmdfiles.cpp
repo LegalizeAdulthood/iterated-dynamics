@@ -69,14 +69,6 @@
 
 #define DEFAULT_ASPECT_DRIFT 0.02F  // drift of < 2% is forced to 0%
 
-#ifdef XFRACT
-#define DEFAULT_PRINTER 5       // Assume a Postscript printer
-#define PRT_RESOLUTION  100     // Assume medium resolution
-#else
-#define DEFAULT_PRINTER 2       // Assume an IBM/Epson printer
-#define PRT_RESOLUTION  60      // Assume low resolution
-#endif
-
 static int get_max_curarg_len(char const *floatvalstr[], int totparm);
 static int  cmdfile(std::FILE *handle, cmd_file mode);
 static int  next_command(
