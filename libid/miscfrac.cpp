@@ -1292,13 +1292,11 @@ int BifurcVerhulstTrig()
 
 int LongBifurcVerhulstTrig()
 {
-#if !defined(XFRACT)
     g_l_temp.x = lPopulation;
     g_l_temp.y = 0;
     LCMPLXtrig0(g_l_temp, g_l_temp);
     g_l_temp.y = g_l_temp.x - multiply(g_l_temp.x, g_l_temp.x, g_bit_shift);
     lPopulation += multiply(lRate, g_l_temp.y, g_bit_shift);
-#endif
     return g_overflow;
 }
 
