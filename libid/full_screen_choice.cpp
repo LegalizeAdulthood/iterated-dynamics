@@ -95,9 +95,7 @@ static void process_speedstring(char *speedstring, //
     }
     if (33 <= curkey && curkey <= 126 && i < 30)
     {
-#ifndef XFRACT
         curkey = std::tolower(curkey);
-#endif
         speedstring[i] = (char)curkey;
         speedstring[++i] = 0;
     }
