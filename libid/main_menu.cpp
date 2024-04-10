@@ -242,12 +242,10 @@ top:
         attributes[nextleft] = MENU_ITEM;
         choices[nextleft] = "evolver parms...     <ctl-e>";
 
-#ifndef XFRACT
         nextleft += 2;
         choicekey[nextleft] = ID_KEY_CTL_F;
         attributes[nextleft] = MENU_ITEM;
         choices[nextleft] = "sound parms...       <ctl-f>";
-#endif
     }
 
     nextright += 2;
