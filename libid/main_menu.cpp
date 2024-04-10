@@ -302,11 +302,7 @@ top:
     nextright += 2;
     choicekey[nextright] = 'd';
     attributes[nextright] = MENU_ITEM;
-#ifdef XFRACT
-    choices[nextright] = "shell to Linux/Unix      <d>  ";
-#else
-    choices[nextright] = "shell to dos             <d>  ";
-#endif
+    choices[nextright] = "command shell            <d>  ";
 
     nextright += 2;
     choicekey[nextright] = 'g';
