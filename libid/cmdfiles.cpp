@@ -937,11 +937,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
                 numval = (int) ll;
             }
         }
-#ifndef XFRACT
         else if (std::sscanf(argptr, "%lg%c", &ftemp, &tmpc) > 0  // got a float
-#else
-        else if (std::sscanf(argptr, "%lf%c", &ftemp, &tmpc) > 0  // got a float
-#endif
             && tmpc == '/')
         {
             ++floatparms;
