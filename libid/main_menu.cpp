@@ -150,11 +150,7 @@ top:
     nextleft += 2;
     choicekey[nextleft] = ID_KEY_DELETE;
     attributes[nextleft] = MENU_ITEM;
-#ifdef XFRACT
-    choices[nextleft] = "draw fractal           <D>  ";
-#else
     choices[nextleft] = "select video mode...  <del> ";
-#endif
 
     nextleft += 2;
     choicekey[nextleft] = 't';
