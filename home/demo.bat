@@ -1,15 +1,12 @@
-echo off
+@echo off
 :top
 cls
 echo ************************************************************
 echo *                                                          *
-echo *  The following demonstration of Fractint will only work  *
-echo *  with a VGA or higher resolution video system.           *
 echo *  The demo should be run in a directory containing all    *
-echo *  the Fractint release files. The evolver demo requires   *
-echo *  the SF5 640x480 mode, and the sound demo needs a sound  *
-echo *  and speakers installed, otherwise, only vanilla VGA     *
-echo *  and features are used.                                  *
+echo *  the Iterated Dynamics release files. The evolver demo   *
+echo *  requires the SF5 video mode, otherwise only vanilla     *
+echo *  features are used.                                      *
 echo *                                                          *
 echo ************************************************************
 echo.
@@ -20,25 +17,24 @@ echo 3:  New stuff in version 19.4
 echo 4:  New stuff in version 19.5
 echo 5:  New stuff in version 19.6
 echo 6:  Advanced commands demo
-echo 7:  New for 20.0 - Evolver
-echo 8:  New for 20.0 - Sound
-echo 9:  All six demos
-sschoice
+echo 7:  Evolver demo
+echo 9:  All demos
+set /p "choice=Your choice? "
 echo.
-if errorlevel 9 goto all
-if errorlevel 8 goto sound
-if errorlevel 7 goto evolver
-if errorlevel 6 goto advanced
-if errorlevel 5 goto newin196
-if errorlevel 4 goto newin195
-if errorlevel 3 goto newin194
-if errorlevel 2 goto newin19
-if errorlevel 1 goto basic
-if errorlevel 0 goto end
+if "%choice%" == "9" goto all
+if "%choice%" == "8" goto sound
+if "%choice%" == "7" goto evolver
+if "%choice%" == "6" goto advanced
+if "%choice%" == "5" goto newin196
+if "%choice%" == "4" goto newin195
+if "%choice%" == "3" goto newin194
+if "%choice%" == "2" goto newin19
+if "%choice%" == "1" goto basic
+if "%choice%" == "0" goto end
 goto top
 
 :sound
-id savename=.\ filename=.\ curdir=yes autokey=play autokeyname=snddemo1.key
+id savename=.\ filename=.\ curdir=yes autokey=play autokeyname=sound_demo.key
 goto top
 
 

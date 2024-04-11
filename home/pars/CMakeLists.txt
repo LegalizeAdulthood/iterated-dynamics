@@ -5,7 +5,7 @@ id_install_home(FILES
     fract19.par
     fract200.par
     fract205.par
-    fractint.par
+    id.par
     icons.par
     lyapunov.par
     music.par

@@ -7,5 +7,5 @@ id_install_home(FILES
     new19-5.key
     new19-6.key
     new19.key
-    snddemo1.key
+    sound_demo.key
 )

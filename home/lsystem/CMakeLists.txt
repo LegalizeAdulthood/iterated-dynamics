@@ -1,6 +1,6 @@
 id_install_home(FILES
     fract205.l
-    fractint.l
+    id.l
     lsysfp.l
     penrose.l
     tiling.l
