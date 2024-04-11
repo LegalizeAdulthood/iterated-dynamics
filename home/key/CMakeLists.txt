@@ -3,9 +3,9 @@ id_install_home(FILES
     auto.key
     basic.key
     explore.key
-    new19-4.key
-    new19-5.key
-    new19-6.key
-    new19.key
+    demo1.key
+    demo2.key
+    demo3.key
+    demo4.key
     sound_demo.key
 )
