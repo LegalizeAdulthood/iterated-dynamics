@@ -10,7 +10,10 @@ jobs:
   build:
     strategy:
       matrix:
-        os: [ ubuntu-latest, windows-latest ] # macos-latest is disabled for now
+        include:
+          - { os: ubuntu-latest, install: install }
+          - { os: windows-latest, install: INSTALL }
+          # macos-latest is disabled for now
 
     runs-on: ${{matrix.os}}
 
@@ -32,6 +35,9 @@ jobs:
 
     - name: Run Workflow
       run: cmake --workflow --preset default
+
+    - name: Build install target
+      run: cmake --build --preset default --target ${{matrix.install}} 
 
 #  cppcheck:
 #    name: cppcheck
