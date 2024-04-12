@@ -30,7 +30,7 @@ enum
     MAX_PARAMS = 10      // maximum number of parameters
 };
 
-#define DEFAULT_ASPECT 1.0F         // Assumed overall screen dimensions, y/x
+#define DEFAULT_ASPECT 0.75F         // Assumed overall screen dimensions, y/x
 
 enum
 {

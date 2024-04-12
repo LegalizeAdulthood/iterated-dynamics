@@ -231,7 +231,7 @@ int get_video_mode(FRACTAL_INFO *info, ext_blk_3 *blk_3_info)
         {
             tmpflags -= VI_EXACT;
         }
-        if (g_file_aspect_ratio != 0 && (tmpflags & VI_VSMALL) == 0)
+        if (g_file_aspect_ratio != 0.0f && (tmpflags & VI_VSMALL) == 0)
         {
             ftemp = vid_aspect(g_file_x_dots, g_file_y_dots);
             if (ftemp < g_file_aspect_ratio * 0.98
