@@ -412,12 +412,12 @@ class GIFOutputFile
 {
 public:
     GIFOutputFile(const char *path) :
-        m_gif(EGifOpenFileName(path, false, &gif_error))
+        m_gif(EGifOpenFileName(path, false, &m_gif_error))
     {
-        if (gif_error != E_GIF_SUCCEEDED)
+        if (m_gif_error != E_GIF_SUCCEEDED)
         {
             throw std::runtime_error(
-                "Unexpected error opening " + std::string{path} + " for writing: " + std::to_string(gif_error));
+                "Unexpected error opening " + std::string{path} + " for writing: " + std::to_string(m_gif_error));
         }
     }
     ~GIFOutputFile()
@@ -443,7 +443,7 @@ public:
 
 private:
     GifFileType *m_gif;
-    int gif_error{};
+    int m_gif_error{};
 };
 
 TEST(TestCompareFractalInfo, futureFieldsAreIgnored)
