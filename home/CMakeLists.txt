@@ -1,3 +1,5 @@
+set(ID_HOME_INSTALL_DIR .)
+
 function(id_install_home)
     cmake_parse_arguments(id_install "" "" "FILES" ${ARGV})
     install(FILES ${id_install_FILES} DESTINATION ${ID_HOME_INSTALL_DIR})
@@ -9,10 +11,9 @@ function(id_install_subdirectory dir)
 endfunction()
 
 if(WIN32)
-    install(FILES demo.bat DESTINATION bin)
+    id_install_home(FILES demo.bat)
 endif()
 
-set(ID_HOME_INSTALL_DIR share)
 id_install_home(FILES id.cfg sstools.ini)
 
 id_install_subdirectory(extra)

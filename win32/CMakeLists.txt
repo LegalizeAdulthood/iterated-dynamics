@@ -36,4 +36,4 @@ add_executable(id WIN32
     resource.h
     win_main.cpp)
 target_link_libraries(id PUBLIC libid)
-install(TARGETS id DESTINATION bin)
+install(TARGETS id DESTINATION .)

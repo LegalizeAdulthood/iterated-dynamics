@@ -27,8 +27,7 @@ add_custom_command(
         help3.src
         help4.src
         help5.src)
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/id.hlp
-    DESTINATION share)
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/id.hlp DESTINATION .)
 
 add_library(help_defs INTERFACE)
 target_sources(help_defs INTERFACE
