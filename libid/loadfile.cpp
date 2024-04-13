@@ -769,7 +769,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
     {
         bf_math = bf_math_type::BIGNUM;
         init_bf_length(read_info.bflength);
-        std::memcpy((char *) g_bf_x_min, &blk_5_info.apm_data[0], blk_5_info.length);
+        std::memcpy((char *) g_bf_x_min, blk_5_info.apm_data.data(), blk_5_info.length);
     }
     else
     {
@@ -1141,7 +1141,7 @@ static int find_fractal_info(const std::string &gif_file, //
                     skip_ext_blk(&block_len, &data_len); // once to get lengths
                     blk_5_info->apm_data.resize(data_len);
                     fseek(fp, (long)(0-block_len), SEEK_CUR);
-                    load_ext_blk(&blk_5_info->apm_data[0], data_len);
+                    load_ext_blk(blk_5_info->apm_data.data(), data_len);
                     blk_5_info->length = data_len;
                     blk_5_info->got_data = true;
                     break;
