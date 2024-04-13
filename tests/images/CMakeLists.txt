@@ -1,3 +1,8 @@
+# Until the unix port is complete, we can't run end-to-end image tests there
+if(NOT CMAKE_SYSTEM_NAME STREQUAL "Windows")
+    return()
+endif()
+
 function(add_image_test name)
     cmake_parse_arguments(IMAGE_TEST "" "" "PARAMETERS")
 
