@@ -43,4 +43,5 @@ target_include_directories(test-id PUBLIC "${CMAKE_CURRENT_BINARY_DIR}/include")
 target_link_libraries(test-id PRIVATE GTest::gmock_main libid)
 gtest_discover_tests(test-id)
 
+add_subdirectory(images)
 add_subdirectory(tools)

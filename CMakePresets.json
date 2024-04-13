@@ -87,7 +87,8 @@
       "hidden": true,
       "output": {
         "outputOnFailure": true
-      }
+      },
+      "configuration": "Debug"
     },
     {
       "name": "default",
