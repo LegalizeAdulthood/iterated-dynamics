@@ -78,7 +78,6 @@ struct ext_blk_4
 struct ext_blk_5
 {
     bool got_data;
-    int length;
     std::vector<char> apm_data;
 };
 
@@ -769,7 +768,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
     {
         bf_math = bf_math_type::BIGNUM;
         init_bf_length(read_info.bflength);
-        std::memcpy((char *) g_bf_x_min, blk_5_info.apm_data.data(), blk_5_info.length);
+        std::memcpy(g_bf_x_min, blk_5_info.apm_data.data(), blk_5_info.apm_data.size());
     }
     else
     {
@@ -1142,7 +1141,6 @@ static int find_fractal_info(const std::string &gif_file, //
                     blk_5_info->apm_data.resize(data_len);
                     fseek(fp, (long)(0-block_len), SEEK_CUR);
                     load_ext_blk(blk_5_info->apm_data.data(), data_len);
-                    blk_5_info->length = data_len;
                     blk_5_info->got_data = true;
                     break;
                 case 6: // evolver params
