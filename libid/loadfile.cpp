@@ -2000,12 +2000,9 @@ static bool is_visible_window(
 
     if (info->bf_math)
     {
-        bf_t   bt_t1, bt_t2, bt_t3, bt_t4, bt_t5, bt_t6;
-        int di_bflength, two_di_len, two_rbf;
-
-        di_bflength = info->bflength + bnstep;
-        two_di_len = di_bflength + 2;
-        two_rbf = rbflength + 2;
+        const int di_bflength = info->bflength + bnstep;
+        const int two_di_len = di_bflength + 2;
+        const int two_rbf = rbflength + 2;
 
         n_a     = alloc_stack(two_rbf);
         n_b     = alloc_stack(two_rbf);
@@ -2021,12 +2018,12 @@ static bool is_visible_window(
         convert_bf(n_e, bt_e, rbflength, orig_rbflength);
         convert_bf(n_f, bt_f, rbflength, orig_rbflength);
 
-        bt_t1   = alloc_stack(two_di_len);
-        bt_t2   = alloc_stack(two_di_len);
-        bt_t3   = alloc_stack(two_di_len);
-        bt_t4   = alloc_stack(two_di_len);
-        bt_t5   = alloc_stack(two_di_len);
-        bt_t6   = alloc_stack(two_di_len);
+        bf_t bt_t1 = alloc_stack(two_di_len);
+        bf_t bt_t2 = alloc_stack(two_di_len);
+        bf_t bt_t3 = alloc_stack(two_di_len);
+        bf_t bt_t4 = alloc_stack(two_di_len);
+        bf_t bt_t5 = alloc_stack(two_di_len);
+        bf_t bt_t6 = alloc_stack(two_di_len);
 
         std::memcpy(bt_t1, &blk_5_info->apm_data[0], two_di_len);
         std::memcpy(bt_t2, &blk_5_info->apm_data[two_di_len], two_di_len);
