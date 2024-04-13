@@ -32,6 +32,7 @@ configure_gif_extension_file(1)
 configure_gif_extension_file(2)
 configure_gif_extension_file(3)
 configure_gif_extension_file(4)
+configure_gif_extension_file(5)
 configure_gif_extension_file(6)
 configure_gif_extension_file(7)
 

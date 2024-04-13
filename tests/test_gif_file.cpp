@@ -134,6 +134,16 @@ public:
     ~TestGIFRangesInfoExtension() override = default;
 };
 
+class TestGIFBigNumParametersExtension : public TestSlurpGIF
+{
+public:
+    TestGIFBigNumParametersExtension() :
+        TestSlurpGIF(ID_TEST_GIF_EXT5_FILE)
+    {
+    }
+    ~TestGIFBigNumParametersExtension() override = default;
+};
+
 class TestGIFEvolutionInfoExtension : public TestSlurpGIF
 {
 public:
@@ -747,6 +757,34 @@ TEST_F(TestGIFRangesInfoExtension, encode)
 
     const std::vector info2{get_ranges_info(out)};
     EXPECT_EQ(info1, info2) << vec_printer(info1) << " != " << vec_printer(info2);
+}
+
+TEST_F(TestGIFBigNumParametersExtension, check)
+{
+    EXPECT_NE(GIF_ERROR, m_result);
+    EXPECT_EQ(6, m_gif->ExtensionBlockCount);
+    EXPECT_EQ(11, m_gif->ExtensionBlocks[0].ByteCount);
+    EXPECT_EQ("fractint005", get_extension_name(0));
+    // Extension length is determined at runtime based on bignum digit length;
+    // 6 + 6 + 10 bignums are stored in the block.
+    EXPECT_EQ(0, extension_total(1, 3) % 22);
+    EXPECT_EQ(11, m_gif->ExtensionBlocks[3].ByteCount);
+    EXPECT_EQ("fractint001", get_extension_name(3));
+    EXPECT_EQ(GIF_EXTENSION1_FRACTAL_INFO_LENGTH, extension_total(4, 6));
+}
+
+TEST_F(TestGIFBigNumParametersExtension, decode)
+{
+    EXPECT_NE(GIF_ERROR, m_result);
+    EXPECT_EQ(6, m_gif->ExtensionBlockCount);
+    EXPECT_EQ(11, m_gif->ExtensionBlocks[0].ByteCount);
+    EXPECT_EQ("fractint005", get_extension_name(0));
+    // Extension length is determined at runtime based on bignum digit length;
+    // 6 + 6 + 10 bignums are stored in the block.
+    EXPECT_EQ(0, extension_total(1, 3) % 22);
+    EXPECT_EQ(11, m_gif->ExtensionBlocks[3].ByteCount);
+    EXPECT_EQ("fractint001", get_extension_name(3));
+    EXPECT_EQ(GIF_EXTENSION1_FRACTAL_INFO_LENGTH, extension_total(4, 6));
 }
 
 TEST_F(TestGIFEvolutionInfoExtension, check)
