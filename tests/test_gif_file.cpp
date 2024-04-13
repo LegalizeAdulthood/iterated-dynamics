@@ -495,7 +495,7 @@ TEST_F(TestOpenGIF, checkScreen)
     EXPECT_EQ(0, m_gif->ExtensionBlockCount);
 }
 
-TEST_F(TestGIFFractalInfoExtension, checkFractalInfoExtension)
+TEST_F(TestGIFFractalInfoExtension, check)
 {
     EXPECT_NE(GIF_ERROR, m_result);
     EXPECT_EQ(3, m_gif->ExtensionBlockCount);
@@ -504,7 +504,7 @@ TEST_F(TestGIFFractalInfoExtension, checkFractalInfoExtension)
     EXPECT_EQ(GIF_EXTENSION1_FRACTAL_INFO_LENGTH, extension_total(1, 3));
 }
 
-TEST_F(TestGIFFractalInfoExtension, decodeFractalInfo)
+TEST_F(TestGIFFractalInfoExtension, decode)
 {
     const FRACTAL_INFO info{get_fractal_info(m_gif)};
 
@@ -649,7 +649,7 @@ TEST_F(TestGIFFractalInfoExtension, decodeFractalInfo)
     EXPECT_NEAR(0.05, info.math_tol[1], eps);
 }
 
-TEST_F(TestGIFFractalInfoExtension, encodeFractalInfoExtension)
+TEST_F(TestGIFFractalInfoExtension, encode)
 {
     const FRACTAL_INFO info{get_fractal_info(m_gif)};
     GIFOutputFile out{ID_TEST_GIF_WRITE1_FILE};
@@ -660,7 +660,7 @@ TEST_F(TestGIFFractalInfoExtension, encodeFractalInfoExtension)
     EXPECT_EQ(info, info2);
 }
 
-TEST_F(TestGIFResumeInfoExtension, checkResumeInfoExtension)
+TEST_F(TestGIFResumeInfoExtension, check)
 {
     EXPECT_NE(GIF_ERROR, m_result);
     EXPECT_EQ(7, m_gif->ExtensionBlockCount);
@@ -675,7 +675,7 @@ TEST_F(TestGIFResumeInfoExtension, checkResumeInfoExtension)
     EXPECT_EQ(GIF_EXTENSION1_FRACTAL_INFO_LENGTH, extension_total(5, 7));
 }
 
-TEST_F(TestGIFItemNameInfoExtension, checkItemNameInfoExtension)
+TEST_F(TestGIFItemNameInfoExtension, check)
 {
     EXPECT_NE(GIF_ERROR, m_result);
     EXPECT_EQ(5, m_gif->ExtensionBlockCount);
@@ -687,7 +687,7 @@ TEST_F(TestGIFItemNameInfoExtension, checkItemNameInfoExtension)
     EXPECT_EQ(GIF_EXTENSION1_FRACTAL_INFO_LENGTH, extension_total(3, 5));
 }
 
-TEST_F(TestGIFItemNameInfoExtension, decodeItemNameInfoExtension)
+TEST_F(TestGIFItemNameInfoExtension, decode)
 {
     const formula_info info{get_formula_info(m_gif)};
 
@@ -701,7 +701,7 @@ TEST_F(TestGIFItemNameInfoExtension, decodeItemNameInfoExtension)
     EXPECT_EQ(0, info.uses_p5);
 }
 
-TEST_F(TestGIFItemNameInfoExtension, encodeItemNameInfoExtension)
+TEST_F(TestGIFItemNameInfoExtension, encode)
 {
     const formula_info info{get_formula_info(m_gif)};
     GIFOutputFile out{ID_TEST_GIF_WRITE3_FILE};
@@ -712,7 +712,7 @@ TEST_F(TestGIFItemNameInfoExtension, encodeItemNameInfoExtension)
     EXPECT_EQ(info, info2);
 }
 
-TEST_F(TestGIFRangesInfoExtension, checkRangesInfoExtension)
+TEST_F(TestGIFRangesInfoExtension, check)
 {
     constexpr int num_ranges = 5;
     constexpr int GIF_EXTENSION4_RANGES_INFO_LENGTH = num_ranges * 2;
@@ -726,7 +726,7 @@ TEST_F(TestGIFRangesInfoExtension, checkRangesInfoExtension)
     EXPECT_EQ(GIF_EXTENSION1_FRACTAL_INFO_LENGTH, extension_total(3, 5));
 }
 
-TEST_F(TestGIFRangesInfoExtension, decodeRangesInfoExtension)
+TEST_F(TestGIFRangesInfoExtension, decode)
 {
     const std::vector info{get_ranges_info(m_gif)};
 
@@ -738,7 +738,7 @@ TEST_F(TestGIFRangesInfoExtension, decodeRangesInfoExtension)
     EXPECT_EQ(50, info[4]);
 }
 
-TEST_F(TestGIFRangesInfoExtension, encodeRangesInfoExtension)
+TEST_F(TestGIFRangesInfoExtension, encode)
 {
     const std::vector info1{get_ranges_info(m_gif)};
     GIFOutputFile out{ID_TEST_GIF_WRITE4_FILE};
@@ -749,7 +749,7 @@ TEST_F(TestGIFRangesInfoExtension, encodeRangesInfoExtension)
     EXPECT_EQ(info1, info2) << vec_printer(info1) << " != " << vec_printer(info2);
 }
 
-TEST_F(TestGIFEvolutionInfoExtension, checkEvolutionInfoExtension)
+TEST_F(TestGIFEvolutionInfoExtension, check)
 {
     EXPECT_NE(GIF_ERROR, m_result);
     EXPECT_EQ(5, m_gif->ExtensionBlockCount);
@@ -761,7 +761,7 @@ TEST_F(TestGIFEvolutionInfoExtension, checkEvolutionInfoExtension)
     EXPECT_EQ(GIF_EXTENSION1_FRACTAL_INFO_LENGTH, extension_total(3, 5));
 }
 
-TEST_F(TestGIFEvolutionInfoExtension, decodeEvolutionInfoExtension)
+TEST_F(TestGIFEvolutionInfoExtension, decode)
 {
     const EVOLUTION_INFO info{get_evolution_info(m_gif)};
 
@@ -789,7 +789,7 @@ TEST_F(TestGIFEvolutionInfoExtension, decodeEvolutionInfoExtension)
     EXPECT_EQ(81, info.ecount);
 }
 
-TEST_F(TestGIFEvolutionInfoExtension, encodeEvolutionInfoExtension)
+TEST_F(TestGIFEvolutionInfoExtension, encode)
 {
     const EVOLUTION_INFO info1{get_evolution_info(m_gif)};
     GIFOutputFile out{ID_TEST_GIF_WRITE6_FILE};
@@ -800,7 +800,7 @@ TEST_F(TestGIFEvolutionInfoExtension, encodeEvolutionInfoExtension)
     EXPECT_EQ(info1, info2) << info1 << " != " << info2;
 }
 
-TEST_F(TestGIFOrbitInfoExtension, checkOrbitInfoExtension)
+TEST_F(TestGIFOrbitInfoExtension, check)
 {
     EXPECT_NE(GIF_ERROR, m_result);
     EXPECT_EQ(7, m_gif->ExtensionBlockCount);
@@ -815,7 +815,7 @@ TEST_F(TestGIFOrbitInfoExtension, checkOrbitInfoExtension)
     EXPECT_EQ(GIF_EXTENSION1_FRACTAL_INFO_LENGTH, extension_total(5, 7));
 }
 
-TEST_F(TestGIFOrbitInfoExtension, decodeOrbitInfoExtension)
+TEST_F(TestGIFOrbitInfoExtension, decode)
 {
     const ORBITS_INFO info{get_orbits_info(m_gif)};
     EXPECT_NEAR(-1.0, info.oxmin, eps);
@@ -828,7 +828,7 @@ TEST_F(TestGIFOrbitInfoExtension, decodeOrbitInfoExtension)
     EXPECT_EQ('r', info.drawmode);
 }
 
-TEST_F(TestGIFOrbitInfoExtension, encodeOrbitInfoExtension)
+TEST_F(TestGIFOrbitInfoExtension, encode)
 {
     const ORBITS_INFO info1{get_orbits_info(m_gif)};
     GIFOutputFile out{ID_TEST_GIF_WRITE6_FILE};
