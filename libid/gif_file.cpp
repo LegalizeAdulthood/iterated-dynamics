@@ -735,6 +735,38 @@ void put_ranges_info(GifFileType *gif, const std::vector<int> &info)
     add_gif_extension(gif, "fractint004", bytes.data(), static_cast<int>(bytes.size()));
 }
 
+std::vector<char> get_extended_param_info(GifFileType *gif)
+{
+    std::vector<BYTE> bytes;
+    for (int i = 0; i < gif->ExtensionBlockCount; ++i)
+    {
+        const ExtensionBlock &block{gif->ExtensionBlocks[i]};
+        if (is_fractint_extension(block, "fractint005"))
+        {
+            int ext{i + 1};
+            while (ext < gif->ExtensionBlockCount                                //
+                && gif->ExtensionBlocks[ext].Function == CONTINUE_EXT_FUNC_CODE) //
+            {
+                const ExtensionBlock &src = gif->ExtensionBlocks[ext];
+                std::copy_n(src.Bytes, src.ByteCount, std::back_inserter(bytes));
+                ++ext;
+            }
+            break;
+        }
+    }
+
+    std::vector<char> parameters;
+    parameters.resize(bytes.size());
+    std::transform(bytes.begin(), bytes.end(), parameters.begin(), [](BYTE byte) { return static_cast<char>(byte); });
+    return parameters;
+}
+
+void put_extended_param_info(GifFileType *gif, const std::vector<char> &params)
+{
+    add_gif_extension(gif, "fractint005", //
+        reinterpret_cast<unsigned char *>(const_cast<char *>(params.data())), static_cast<int>(params.size()));
+}
+
 EVOLUTION_INFO get_evolution_info(GifFileType *gif)
 {
     EVOLUTION_INFO result{};

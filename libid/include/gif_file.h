@@ -31,3 +31,6 @@ void put_evolution_info(GifFileType *gif, const EVOLUTION_INFO &info);
 
 ORBITS_INFO get_orbits_info(GifFileType *gif);
 void put_orbits_info(GifFileType *gif, const ORBITS_INFO &info);
+
+std::vector<char> get_extended_param_info(GifFileType *gif);
+void put_extended_param_info(GifFileType *gif, const std::vector<char> &params);

@@ -775,16 +775,20 @@ TEST_F(TestGIFBigNumParametersExtension, check)
 
 TEST_F(TestGIFBigNumParametersExtension, decode)
 {
-    EXPECT_NE(GIF_ERROR, m_result);
-    EXPECT_EQ(6, m_gif->ExtensionBlockCount);
-    EXPECT_EQ(11, m_gif->ExtensionBlocks[0].ByteCount);
-    EXPECT_EQ("fractint005", get_extension_name(0));
-    // Extension length is determined at runtime based on bignum digit length;
-    // 6 + 6 + 10 bignums are stored in the block.
-    EXPECT_EQ(0, extension_total(1, 3) % 22);
-    EXPECT_EQ(11, m_gif->ExtensionBlocks[3].ByteCount);
-    EXPECT_EQ("fractint001", get_extension_name(3));
-    EXPECT_EQ(GIF_EXTENSION1_FRACTAL_INFO_LENGTH, extension_total(4, 6));
+    const std::vector info{get_extended_param_info(m_gif)};
+
+    ASSERT_EQ(396, info.size());
+}
+
+TEST_F(TestGIFBigNumParametersExtension, encode)
+{
+    const std::vector info{get_extended_param_info(m_gif)};
+    GIFOutputFile out{ID_TEST_GIF_WRITE5_FILE};
+
+    put_extended_param_info(out, info);
+
+    const std::vector info2{get_extended_param_info(m_gif)};
+    EXPECT_EQ(info, info2);
 }
 
 TEST_F(TestGIFEvolutionInfoExtension, check)
