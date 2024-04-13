@@ -2038,8 +2038,7 @@ static bool is_visible_window(
         convert_bf(bt_y3rd, bt_t6, two_len, two_di_len);
     }
 
-    /* tranform maps real plane co-ords onto the current screen view
-      see above */
+    /* transform maps real plane co-ords onto the current screen view see above */
     if (oldbf_math != bf_math_type::NONE || info->bf_math != 0)
     {
         if (!info->bf_math)
