@@ -476,32 +476,32 @@ static void initvars_restart()          // <ins> key init
 
 static void initvars_fractal()          // init vars affecting calculation
 {
-    g_escape_exit = false;                // don't disable the "are you sure?" screen
-    g_user_periodicity_value = 1;           // turn on periodicity
-    g_inside_color = 1;                         // inside color = blue
-    g_fill_color = -1;                     // no special fill color
-    g_user_biomorph_value = -1;                  // turn off biomorph flag
-    g_outside_color = ITER;                     // outside color = -1 (not used)
-    g_max_iterations = 150;                        // initial maxiter
-    g_user_std_calc_mode = 'g';              // initial solid-guessing
-    g_stop_pass = 0;                       // initial guessing stoppass
-    g_quick_calc = false;
-    g_close_proximity = 0.01;
-    g_is_mandelbrot = true;                      // default formula mand/jul toggle
-    g_user_float_flag = false;              // turn off the float flag
-    g_finite_attractor = false;                 // disable finite attractor logic
-    g_fractal_type = fractal_type::MANDEL;    // initial type Set flag
-    g_cur_fractal_specific = &g_fractal_specific[0];
-    initcorners = false;
-    initparams = false;
-    g_bail_out = 0;                        // no user-entered bailout
-    g_bof_match_book_images = true;         // use normal bof initialization to make bof images
-    g_use_init_orbit = init_orbit_mode::normal;
-    std::fill(&g_params[0], &g_params[MAX_PARAMS], 0.0); // initial parameter values
+    g_escape_exit = false;                                          // don't disable the "are you sure?" screen
+    g_user_periodicity_value = 1;                                   // turn on periodicity
+    g_inside_color = 1;                                             // inside color = blue
+    g_fill_color = -1;                                              // no special fill color
+    g_user_biomorph_value = -1;                                     // turn off biomorph flag
+    g_outside_color = ITER;                                         // outside color = -1 (not used)
+    g_max_iterations = 150;                                         // initial max iter
+    g_user_std_calc_mode = 'g';                                     // initial solid-guessing
+    g_stop_pass = 0;                                                // initial guessing stop pass
+    g_quick_calc = false;                                           //
+    g_close_proximity = 0.01;                                       //
+    g_is_mandelbrot = true;                                         // default formula mand/jul toggle
+    g_user_float_flag = true;                                       // turn on the float flag
+    g_finite_attractor = false;                                     // disable finite attractor logic
+    g_fractal_type = fractal_type::MANDEL;                          // initial type Set flag
+    g_cur_fractal_specific = &g_fractal_specific[0];                //
+    initcorners = false;                                            //
+    initparams = false;                                             //
+    g_bail_out = 0;                                                 // no user-entered bailout
+    g_bof_match_book_images = true;                                 // use normal bof initialization to make bof images
+    g_use_init_orbit = init_orbit_mode::normal;                     //
+    std::fill(&g_params[0], &g_params[MAX_PARAMS], 0.0);            // initial parameter values
     std::fill(&g_potential_params[0], &g_potential_params[3], 0.0); // initial potential values
     std::fill(std::begin(g_inversion), std::end(g_inversion), 0.0); // initial invert values
-    g_init_orbit.y = 0.0;
-    g_init_orbit.x = g_init_orbit.y;     // initial orbit values
+    g_init_orbit.y = 0.0;                                           //
+    g_init_orbit.x = 0.0;                                           // initial orbit values
     g_invert = 0;
     g_decomp[0] = 0;
     g_decomp[1] = 0;
