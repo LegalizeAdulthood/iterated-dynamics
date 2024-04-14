@@ -539,17 +539,17 @@ Commands marked with an '*' are also available at the credits screen.
 {Video Mode Function Keys}
 
 {Browse Commands}
-  L(ook)                   Enter Browsing Mode
+  L(ook)                Enter Browsing Mode
 
 {Evolver Commands}
-  Ctrl+E                   Bring up {=HELP_EVOL explorer/evolver} control screen
-  Alt+1 ... Alt+7          Enter evolver mode with selected level of
-                           mutation: Alt+1 = low level, Alt+7 = maximum.
-                           (dont use the keypad, just the 'top row' numbers)
-                           When in evolve mode then just plain <1>..<7> also work
+  Ctrl+E                Bring up {=HELP_EVOL explorer/evolver} control screen
+  Alt+1 ... Alt+7       Enter evolver mode with selected level of
+                        mutation: Alt+1 = low level, Alt+7 = maximum.
+                        (dont use the keypad, just the 'top row' numbers)
+                        When in evolve mode then just plain <1>..<7> also work
 
 {RDS Commands}
-  Ctrl+S                   Access RDS parameter screen
+  Ctrl+S                Access RDS parameter screen
 
 ~Doc+
 ;
