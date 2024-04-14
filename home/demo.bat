@@ -1,6 +1,7 @@
 @echo off
+setlocal
 rem TODO: Re-enable sound demo when audio library is selected.
-:top
+:menu
 cls
 echo ************************************************************
 echo *                                                          *
@@ -19,88 +20,46 @@ echo 4:  recordcolors=, comment= parameters
 echo 5:  fastrestore parameter, text scrolling in ^<Z^> screen
 echo 6:  Advanced commands demo
 echo 7:  Evolver demo
-echo 9:  All demos
-set /p "choice=Your choice? "
 echo.
-if "%choice%" == "9" goto all
-rem if "%choice%" == "8" goto sound
-if "%choice%" == "7" goto evolver
-if "%choice%" == "6" goto advanced
-if "%choice%" == "5" goto demo4
-if "%choice%" == "4" goto demo3
-if "%choice%" == "3" goto demo2
-if "%choice%" == "2" goto demo1
-if "%choice%" == "1" goto basic
+echo 9:  All demos
+echo.
+set /p "choice=Your choice? "
+
 if "%choice%" == "0" goto end
-goto top
+if "%choice%" == "1" call :basic
+if "%choice%" == "2" call :demo1
+if "%choice%" == "3" call :demo2
+if "%choice%" == "4" call :demo3
+if "%choice%" == "5" call :demo4
+if "%choice%" == "6" call :advanced
+if "%choice%" == "7" call :evolver
+rem if "%choice%" == "8" call :sound
+if "%choice%" == "9" call :all
+goto menu
 
-:sound
-start /wait id savename=.\ filename=.\ curdir=yes autokey=play autokeyname=sound_demo.key
-goto top
+:play-auto-key
+start /wait id savename=.\ filename=.\ curdir=yes autokey=play %*
+exit /b 0
 
-
-:evolver
-start /wait id savename=.\ filename=.\ curdir=yes  autokey=play autokeyname=explore.key
-goto top
-
-
-:advanced
-start /wait id savename=.\ filename=.\ curdir=yes @demo.par/Mandel_Demo autokey=play autokeyname=advanced.key
-goto top
+:basic
+call :play-auto-key @demo.par/Mandel_Demo autokeyname=basic.key
+del basic001.gif
+exit /b 0
 
 
 :demo1
-start /wait id savename=.\ filename=.\ curdir=yes @demo.par/Mandel_Demo autokey=play autokeyname=demo1.key
+call :play-auto-key @demo.par/Mandel_Demo autokeyname=demo1.key
 del demo1*.gif
-goto top
+exit /b 0
 
 
 :demo2
-start /wait id savename=.\ filename=.\ curdir=yes @demo.par/trunc_Demo autokey=play autokeyname=demo2.key
+call :play-auto-key @demo.par/trunc_Demo autokeyname=demo2.key
 del demo2*.gif
-goto top
+exit /b 0
 
 
 :demo3
-set r=demo3b
-goto demo3s
-:demo3b
-del demo3.par
-goto top
-
-
-:demo4
-start /wait id savename=.\ filename=.\ curdir=yes autokey=play autokeyname=demo4.key
-del demo4*.gif
-goto top
-
-
-:basic
-start /wait id savename=.\ filename=.\ curdir=yes @demo.par/Mandel_Demo autokey=play autokeyname=basic.key
-del basic001.gif
-goto top
-
-
-:all
-start /wait id savename=.\ filename=.\ curdir=yes @demo.par/Mandel_Demo autokey=play autokeyname=basic.key
-start /wait id savename=.\ filename=.\ curdir=yes @demo.par/Mandel_Demo autokey=play autokeyname=demo1.key
-start /wait id savename=.\ filename=.\ curdir=yes @demo.par/trunc_Demo autokey=play autokeyname=demo2.key
-set r=allb
-goto demo3s
-:allb
-start /wait id savename=.\ filename=.\ curdir=yes autokey=play autokeyname=demo4.key
-start /wait id savename=.\ filename=.\ curdir=yes @demo.par/Mandel_Demo autokey=play autokeyname=advanced.key
-del basic001.gif
-del demo1*.gif
-del demo2*.gif
-del demo3.par
-del demo4*.gif
-rem start /wait id savename=.\ filename=.\ curdir=yes autokey=play autokeyname=snddemo1.key
-start /wait id savename=.\ filename=.\ curdir=yes autokey=play autokeyname=explore.key
-goto top
-
-
-:demo3s
 cls
 echo.
 echo   This autokey demonstrates the "comment=" and "colors=" parameters
@@ -122,9 +81,42 @@ echo   - load this par and let you see with F2 the complete par entry
 echo   - exit
 echo.
 pause
-start /wait id savename=.\ filename=.\ curdir=yes @demo.par/Mandel_Demo autokey=play autokeyname=demo3.key
-goto %r%
+call :play-auto-key @demo.par/Mandel_Demo autokeyname=demo3.key
+exit /b 0
+
+
+:demo4
+call :play-auto-key autokeyname=demo4.key
+del demo4*.gif
+exit /b 0
+
+
+:advanced
+call :play-auto-key @demo.par/Mandel_Demo autokeyname=advanced.key
+exit /b 0
+
+
+:evolver
+call :play-auto-key autokeyname=explore.key
+exit /b 0
+
+
+:sound
+call :play-auto-key autokeyname=sound_demo.key
+exit /b 0
+
+
+:all
+call :basic
+call :demo1
+call :demo2
+call :demo3
+call :demo4
+call :advanced
+call :evolver
+rem call :sound
+exit /b 0
+
 
 :end
-set r=
 echo Have a nice day!
