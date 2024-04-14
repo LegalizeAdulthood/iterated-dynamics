@@ -607,7 +607,6 @@ static void
 gdi_display_string(Driver *drv, int x, int y, int fg, int bg, char const *text)
 {
     DI(di);
-    _ASSERTE(!di->text_not_graphics);
     plot_display_string(&di->plot, x, y, fg, bg, text);
 }
 
