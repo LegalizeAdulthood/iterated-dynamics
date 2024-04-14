@@ -1,5 +1,5 @@
 id_install_home(FILES
-    fract205.l
+    hanmer.l
     id.l
     lsysfp.l
     penrose.l
