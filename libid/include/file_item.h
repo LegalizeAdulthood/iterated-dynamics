@@ -5,10 +5,10 @@
 
 enum class gfe_type
 {
-    FORMULA = 0,
-    L_SYSTEM = 1,
-    IFS = 2,
-    PARM = 3,
+    PARM = 0,
+    FORMULA = 1,
+    L_SYSTEM = 2,
+    IFS = 3,
 };
 
 bool find_file_item(char *filename, char const *itemname, std::FILE **fileptr, gfe_type itemtype);
