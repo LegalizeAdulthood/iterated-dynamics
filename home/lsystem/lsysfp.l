@@ -4,8 +4,8 @@
 ; interesting L-system formulations for space-filling curves
 ; as well as simple plant structures.
 ;
-; L-system definitions created for fractint by Richard Thomson
-; <legalize@xmission.com>
+; L-system definitions created for Iterated Dynamics
+; by Richard Thomson <legalize@xmission.com>
 ;
 Fig_2_2 {
   Angle 4
