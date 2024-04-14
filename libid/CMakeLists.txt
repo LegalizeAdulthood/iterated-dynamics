@@ -176,6 +176,7 @@ add_library(libid
     temp_msg.cpp include/temp_msg.h
     thinking.cpp include/thinking.h
     trig_fns.cpp include/trig_fns.h
+    trim_filename.cpp include/trim_filename.h
     update_save_name.cpp include/update_save_name.h
     version.cpp include/version.h
     video_mode.cpp include/video_mode.h
@@ -501,6 +502,7 @@ source_group("Header Files/ui" FILES
     include/text_screen.h
     include/thinking.h
     include/trig_fns.h
+    include/trim_filename.h
     include/update_save_name.h
     include/version.h
     include/video_mode.h
@@ -579,6 +581,7 @@ source_group("Source Files/ui" FILES
     text_screen.cpp
     thinking.cpp
     trig_fns.cpp
+    trim_filename.cpp
     update_save_name.cpp
     version.cpp
     video_mode.cpp
