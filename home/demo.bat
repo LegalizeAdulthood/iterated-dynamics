@@ -35,28 +35,28 @@ if "%choice%" == "0" goto end
 goto top
 
 :sound
-id savename=.\ filename=.\ curdir=yes autokey=play autokeyname=sound_demo.key
+start /wait id savename=.\ filename=.\ curdir=yes autokey=play autokeyname=sound_demo.key
 goto top
 
 
 :evolver
-id savename=.\ filename=.\ curdir=yes  autokey=play autokeyname=explore.key
+start /wait id savename=.\ filename=.\ curdir=yes  autokey=play autokeyname=explore.key
 goto top
 
 
 :advanced
-id savename=.\ filename=.\ curdir=yes @demo.par/Mandel_Demo autokey=play autokeyname=advanced.key
+start /wait id savename=.\ filename=.\ curdir=yes @demo.par/Mandel_Demo autokey=play autokeyname=advanced.key
 goto top
 
 
 :demo1
-id savename=.\ filename=.\ curdir=yes @demo.par/Mandel_Demo autokey=play autokeyname=demo1.key
+start /wait id savename=.\ filename=.\ curdir=yes @demo.par/Mandel_Demo autokey=play autokeyname=demo1.key
 del demo1*.gif
 goto top
 
 
 :demo2
-id savename=.\ filename=.\ curdir=yes @demo.par/trunc_Demo autokey=play autokeyname=demo2.key
+start /wait id savename=.\ filename=.\ curdir=yes @demo.par/trunc_Demo autokey=play autokeyname=demo2.key
 del demo2*.gif
 goto top
 
@@ -70,33 +70,33 @@ goto top
 
 
 :demo4
-id savename=.\ filename=.\ curdir=yes autokey=play autokeyname=demo4.key
+start /wait id savename=.\ filename=.\ curdir=yes autokey=play autokeyname=demo4.key
 del demo4*.gif
 goto top
 
 
 :basic
-id savename=.\ filename=.\ curdir=yes @demo.par/Mandel_Demo autokey=play autokeyname=basic.key
+start /wait id savename=.\ filename=.\ curdir=yes @demo.par/Mandel_Demo autokey=play autokeyname=basic.key
 del basic001.gif
 goto top
 
 
 :all
-id savename=.\ filename=.\ curdir=yes @demo.par/Mandel_Demo autokey=play autokeyname=basic.key
-id savename=.\ filename=.\ curdir=yes @demo.par/Mandel_Demo autokey=play autokeyname=demo1.key
-id savename=.\ filename=.\ curdir=yes @demo.par/trunc_Demo autokey=play autokeyname=demo2.key
+start /wait id savename=.\ filename=.\ curdir=yes @demo.par/Mandel_Demo autokey=play autokeyname=basic.key
+start /wait id savename=.\ filename=.\ curdir=yes @demo.par/Mandel_Demo autokey=play autokeyname=demo1.key
+start /wait id savename=.\ filename=.\ curdir=yes @demo.par/trunc_Demo autokey=play autokeyname=demo2.key
 set r=allb
 goto demo3s
 :allb
-id savename=.\ filename=.\ curdir=yes autokey=play autokeyname=demo4.key
-id savename=.\ filename=.\ curdir=yes @demo.par/Mandel_Demo autokey=play autokeyname=advanced.key
+start /wait id savename=.\ filename=.\ curdir=yes autokey=play autokeyname=demo4.key
+start /wait id savename=.\ filename=.\ curdir=yes @demo.par/Mandel_Demo autokey=play autokeyname=advanced.key
 del basic001.gif
 del demo1*.gif
 del demo2*.gif
 del demo3.par
 del demo4*.gif
-rem id savename=.\ filename=.\ curdir=yes autokey=play autokeyname=snddemo1.key
-id savename=.\ filename=.\ curdir=yes autokey=play autokeyname=explore.key
+rem start /wait id savename=.\ filename=.\ curdir=yes autokey=play autokeyname=snddemo1.key
+start /wait id savename=.\ filename=.\ curdir=yes autokey=play autokeyname=explore.key
 goto top
 
 
@@ -122,7 +122,7 @@ echo   - load this par and let you see with F2 the complete par entry
 echo   - exit
 echo.
 pause
-id savename=.\ filename=.\ curdir=yes @demo.par/Mandel_Demo autokey=play autokeyname=demo3.key
+start /wait id savename=.\ filename=.\ curdir=yes @demo.par/Mandel_Demo autokey=play autokeyname=demo3.key
 goto %r%
 
 :end
