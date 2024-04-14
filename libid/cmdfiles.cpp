@@ -375,7 +375,7 @@ int cmdfiles(int argc, char const *const *argv)
     }
 
     // PAR reads a file and sets color, don't read colors from GIF
-    g_read_color = !(g_colors_preloaded && g_show_file == 0);
+    g_read_color = !g_colors_preloaded || g_show_file != 0;
 
     //set structure of search directories
     g_search_for.par = g_command_file;
