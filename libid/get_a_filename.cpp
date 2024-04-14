@@ -20,6 +20,7 @@
 #include "shell_sort.h"
 #include "split_path.h"
 #include "stereo.h"
+#include "trim_filename.h"
 
 #include <cstring>
 #include <string>
@@ -225,7 +226,7 @@ retry_dir:
     }
 
     std::string const heading{std::string{hdg} + "\n"
-        + "Template: " + tmpmask};
+        + "Template: " + trim_filename(tmpmask, 66)};
     std::strcpy(speedstr, filename);
     int i = 0;
     if (speedstr[0] == 0)

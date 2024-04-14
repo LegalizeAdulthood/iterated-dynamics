@@ -25,6 +25,7 @@
 #include "stop_msg.h"
 #include "temp_msg.h"
 #include "text_screen.h"
+#include "trim_filename.h"
 
 #include <cassert>
 #include <cctype>
@@ -738,7 +739,7 @@ retry:
 
     std::strcpy(buf, entryname); // preset to last choice made
     std::string const heading{std::string{title} + " Selection\n"
-        + "File: " + filename};
+        + "File: " + trim_filename(filename, 68)};
     formatitem = nullptr;
     boxdepth = 0;
     colwidth = boxdepth;
