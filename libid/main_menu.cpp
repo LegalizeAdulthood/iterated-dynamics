@@ -49,11 +49,10 @@ static int menu_checkkey(int curkey, int /*choice*/)
     }
     if (s_full_menu)
     {
-        if (std::strchr("\\sobpkrh", testkey)
+        if (std::strchr("\\sobkrh", testkey)
             || testkey == ID_KEY_TAB || testkey == ID_KEY_CTL_A
             || testkey == ID_KEY_CTL_E || testkey == ID_KEY_BACKSPACE
-            || testkey == ID_KEY_CTL_S
-            || testkey == ID_KEY_CTL_U)   // ctrl-A, E, H, P, S, U
+            || testkey == ID_KEY_CTL_S || testkey == ID_KEY_CTL_U)   // Ctrl+A, E, H, S, U
         {
             return -testkey;
         }
@@ -125,18 +124,18 @@ top:
         choicekey[nextleft] = 13; // enter
         attributes[nextleft] = MENU_ITEM;
         choices[nextleft] = (g_calc_status == calc_status_value::RESUMABLE) ?
-                            "continue calculation        " :
-                            "return to image             ";
+                            "Continue calculation        " :
+                            "Return to image             ";
 
         nextleft += 2;
         choicekey[nextleft] = 9; // tab
         attributes[nextleft] = MENU_ITEM;
-        choices[nextleft] = "info about image      <tab> ";
+        choices[nextleft] = "Info about image      <Tab> ";
 
         nextleft += 2;
         choicekey[nextleft] = 'o';
         attributes[nextleft] = MENU_ITEM;
-        choices[nextleft] = "orbits window          <o>  ";
+        choices[nextleft] = "Orbits window          <O>  ";
         if (!(g_fractal_type == fractal_type::JULIA || g_fractal_type == fractal_type::JULIAFP || g_fractal_type == fractal_type::INVERSEJULIA))
         {
             nextleft += 2;
@@ -150,12 +149,12 @@ top:
     nextleft += 2;
     choicekey[nextleft] = ID_KEY_DELETE;
     attributes[nextleft] = MENU_ITEM;
-    choices[nextleft] = "select video mode...  <del> ";
+    choices[nextleft] = "Select video mode...  <Del> ";
 
     nextleft += 2;
     choicekey[nextleft] = 't';
     attributes[nextleft] = MENU_ITEM;
-    choices[nextleft] = "select fractal type    <t>  ";
+    choices[nextleft] = "Select fractal type    <T>  ";
 
     if (full_menu)
     {
@@ -165,7 +164,7 @@ top:
             nextleft += 2;
             choicekey[nextleft] = ID_KEY_SPACE;
             attributes[nextleft] = MENU_ITEM;
-            choices[nextleft] = "toggle to/from julia <space>";
+            choices[nextleft] = "Toggle to/from Julia <Space>";
             showjuliatoggle = true;
         }
         if (g_fractal_type == fractal_type::JULIA || g_fractal_type == fractal_type::JULIAFP
@@ -174,19 +173,19 @@ top:
             nextleft += 2;
             choicekey[nextleft] = 'j';
             attributes[nextleft] = MENU_ITEM;
-            choices[nextleft] = "toggle to/from inverse <j>  ";
+            choices[nextleft] = "Toggle to/from inverse <J>  ";
             showjuliatoggle = true;
         }
 
         nextleft += 2;
         choicekey[nextleft] = 'h';
         attributes[nextleft] = MENU_ITEM;
-        choices[nextleft] = "return to prior image  <h>   ";
+        choices[nextleft] = "Return to prior image  <H>   ";
 
         nextleft += 2;
         choicekey[nextleft] = ID_KEY_BACKSPACE;
         attributes[nextleft] = MENU_ITEM;
-        choices[nextleft] = "reverse thru history <ctl-h> ";
+        choices[nextleft] = "Reverse thru history <Ctrl+H>";
     }
     else
     {
@@ -200,52 +199,52 @@ top:
     nextleft += 2;
     choicekey[nextleft] = 'x';
     attributes[nextleft] = MENU_ITEM;
-    choices[nextleft] = "basic options...       <x>  ";
+    choices[nextleft] = "Basic options...       <X>  ";
 
     nextleft += 2;
     choicekey[nextleft] = 'y';
     attributes[nextleft] = MENU_ITEM;
-    choices[nextleft] = "extended options...    <y>  ";
+    choices[nextleft] = "Extended options...    <Y>  ";
 
     nextleft += 2;
     choicekey[nextleft] = 'z';
     attributes[nextleft] = MENU_ITEM;
-    choices[nextleft] = "type-specific parms... <z>  ";
+    choices[nextleft] = "Type-specific parms... <Z>  ";
 
     nextleft += 2;
     choicekey[nextleft] = 'p';
     attributes[nextleft] = MENU_ITEM;
-    choices[nextleft] = "passes options...      <p>  ";
+    choices[nextleft] = "Passes options...      <P>  ";
 
     nextleft += 2;
     choicekey[nextleft] = 'v';
     attributes[nextleft] = MENU_ITEM;
-    choices[nextleft] = "view window options... <v>  ";
+    choices[nextleft] = "View window options... <V>  ";
 
     if (!showjuliatoggle)
     {
         nextleft += 2;
         choicekey[nextleft] = 'i';
         attributes[nextleft] = MENU_ITEM;
-        choices[nextleft] = "fractal 3D parms...    <i>  ";
+        choices[nextleft] = "Fractal 3D parms...    <I>  ";
     }
 
     nextleft += 2;
     choicekey[nextleft] = ID_KEY_CTL_B;
     attributes[nextleft] = MENU_ITEM;
-    choices[nextleft] = "browse parms...      <ctl-b>";
+    choices[nextleft] = "Browse params...    <Ctrl+B>";
 
     if (full_menu)
     {
         nextleft += 2;
         choicekey[nextleft] = ID_KEY_CTL_E;
         attributes[nextleft] = MENU_ITEM;
-        choices[nextleft] = "evolver parms...     <ctl-e>";
+        choices[nextleft] = "Evolver params...   <Ctrl+E>";
 
         nextleft += 2;
         choicekey[nextleft] = ID_KEY_CTL_F;
         attributes[nextleft] = MENU_ITEM;
-        choices[nextleft] = "sound parms...       <ctl-f>";
+        choices[nextleft] = "Sound params...     <Ctrl+F>";
     }
 
     nextright += 2;
@@ -255,63 +254,58 @@ top:
     nextright += 2;
     choicekey[nextright] = '@';
     attributes[nextright] = MENU_ITEM;
-    choices[nextright] = "run saved command set... <@>  ";
+    choices[nextright] = "Run saved command set... <@>  ";
 
     if (full_menu)
     {
         nextright += 2;
         choicekey[nextright] = 's';
         attributes[nextright] = MENU_ITEM;
-        choices[nextright] = "save image to file       <s>  ";
+        choices[nextright] = "Save image to file       <S>  ";
     }
 
     nextright += 2;
     choicekey[nextright] = 'r';
     attributes[nextright] = MENU_ITEM;
-    choices[nextright] = "load image from file...  <r>  ";
+    choices[nextright] = "Load image from file...  <R>  ";
 
     nextright += 2;
     choicekey[nextright] = '3';
     attributes[nextright] = MENU_ITEM;
-    choices[nextright] = "3d transform from file...<3>  ";
+    choices[nextright] = "3D transform from file...<3>  ";
 
     if (full_menu)
     {
         nextright += 2;
         choicekey[nextright] = '#';
         attributes[nextright] = MENU_ITEM;
-        choices[nextright] = "3d overlay from file.....<#>  ";
+        choices[nextright] = "3D overlay from file.....<#>  ";
 
         nextright += 2;
         choicekey[nextright] = 'b';
         attributes[nextright] = MENU_ITEM;
-        choices[nextright] = "save current parameters..<b>  ";
-
-        nextright += 2;
-        choicekey[nextright] = 16;
-        attributes[nextright] = MENU_ITEM;
-        choices[nextright] = "print image          <ctl-p>  ";
+        choices[nextright] = "Save current parameters..<B>  ";
     }
 
     nextright += 2;
     choicekey[nextright] = 'd';
     attributes[nextright] = MENU_ITEM;
-    choices[nextright] = "command shell            <d>  ";
+    choices[nextright] = "Command shell            <D>  ";
 
     nextright += 2;
     choicekey[nextright] = 'g';
     attributes[nextright] = MENU_ITEM;
-    choices[nextright] = "give command string      <g>  ";
+    choices[nextright] = "Give parameter string    <G>  ";
 
     nextright += 2;
     choicekey[nextright] = ID_KEY_ESC;
     attributes[nextright] = MENU_ITEM;
-    choices[nextright] = "quit id                  <esc> ";
+    choices[nextright] = "Quit Id                  <Esc> ";
 
     nextright += 2;
     choicekey[nextright] = ID_KEY_INSERT;
     attributes[nextright] = MENU_ITEM;
-    choices[nextright] = "restart id               <ins> ";
+    choices[nextright] = "Restart Id               <Ins> ";
 
 #ifdef XFRACT
     if (full_menu && (g_got_real_dac || g_fake_lut) && g_colors >= 16)
@@ -326,36 +320,36 @@ top:
         nextright += 2;
         choicekey[nextright] = 'c';
         attributes[nextright] = MENU_ITEM;
-        choices[nextright] = "color cycling mode       <c>  ";
+        choices[nextright] = "Color cycling mode       <C>  ";
 
         nextright += 2;
         choicekey[nextright] = '+';
         attributes[nextright] = MENU_ITEM;
-        choices[nextright] = "rotate palette      <+>, <->  ";
+        choices[nextright] = "Rotate palette      <+>, <->  ";
 
         if (g_colors > 16)
         {
             nextright += 2;
             choicekey[nextright] = 'e';
             attributes[nextright] = MENU_ITEM;
-            choices[nextright] = "palette editing mode     <e>  ";
+            choices[nextright] = "Palette editing mode     <E>  ";
 
             nextright += 2;
             choicekey[nextright] = 'a';
             attributes[nextright] = MENU_ITEM;
-            choices[nextright] = "make starfield           <a>  ";
+            choices[nextright] = "Make starfield           <A>  ";
         }
     }
 
     nextright += 2;
     choicekey[nextright] = ID_KEY_CTL_A;
     attributes[nextright] = MENU_ITEM;
-    choices[nextright] = "ant automaton          <ctl-a>";
+    choices[nextright] = "Ant automaton         <Ctrl+A>";
 
     nextright += 2;
     choicekey[nextright] = ID_KEY_CTL_S;
     attributes[nextright] = MENU_ITEM;
-    choices[nextright] = "stereogram             <ctl-s>";
+    choices[nextright] = "Stereogram            <Ctrl+S>";
 
     i = driver_key_pressed() ? driver_get_key() : 0;
     if (menu_checkkey(i, 0) == 0)
