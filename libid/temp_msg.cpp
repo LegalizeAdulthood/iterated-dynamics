@@ -45,10 +45,8 @@ void freetempmsg()
 
 bool showtempmsg(char const *msgparm)
 {
-    static long size = 0;
+    static size_t size = 0;
     char msg[41];
-    int xrepeat = 0;
-    int yrepeat = 0;
     int save_sxoffs, save_syoffs;
 
     std::strncpy(msg, msgparm, 40);
@@ -58,14 +56,15 @@ bool showtempmsg(char const *msgparm)
         dvid_status(0, msg);
         return false;
     }
-    if (g_first_init)      // & cmdfiles hasn't finished 1st try
+    if (g_first_init) // & cmdfiles hasn't finished 1st try
     {
+        // TODO: handle this in an OS-specific way
         std::printf("%s\n", msg);
         return false;
     }
 
-    xrepeat = (g_screen_x_dots >= 640) ? 2 : 1;
-    yrepeat = (g_screen_y_dots >= 300) ? 2 : 1;
+    const int xrepeat = (g_screen_x_dots >= 640) ? 2 : 1;
+    const int yrepeat = (g_screen_y_dots >= 300) ? 2 : 1;
     textxdots = (int) std::strlen(msg) * xrepeat * 8;
     textydots = yrepeat * 8;
 
