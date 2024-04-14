@@ -490,6 +490,12 @@ gdi_window(Driver *drv)
     center_windows(di, center_x, center_y);
 }
 
+static bool gdi_is_text(Driver *drv)
+{
+    DI(di);
+    return di->text_not_graphics;
+}
+
 static void
 gdi_set_for_text(Driver *drv)
 {
@@ -654,6 +660,7 @@ static GDIDriver gdi_driver_info =
             win32_shell,
             gdi_set_video_mode,
             win32_put_string,
+            gdi_is_text,
             gdi_set_for_text, gdi_set_for_graphics,
             gdi_set_clear,
             win32_move_cursor, win32_hide_text_cursor,

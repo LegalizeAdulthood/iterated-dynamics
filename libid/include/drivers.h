@@ -85,6 +85,7 @@ struct Driver
     void (*shell)(Driver *drv);             // invoke a command shell
     void (*set_video_mode)(Driver *drv, VIDEOINFO *mode);
     void (*put_string)(Driver *drv, int row, int col, int attr, char const *msg);
+    bool (*is_text)(Driver *drv);
     void (*set_for_text)(Driver *drv);      // set for text mode & save gfx
     void (*set_for_graphics)(Driver *drv);  // restores graphics and data
     void (*set_clear)(Driver *drv);         // clears text screen
@@ -144,6 +145,7 @@ struct Driver
     name_##_shell, \
     name_##_set_video_mode, \
     name_##_put_string, \
+    name_##_is_text, \
     name_##_set_for_text, \
     name_##_set_for_graphics, \
     name_##_set_clear, \
@@ -303,6 +305,10 @@ inline void driver_put_string(int row, int col, int attr, char const *msg)
 inline void driver_put_string(int row, int col, int attr, const std::string &msg)
 {
     (*g_driver->put_string)(g_driver, row, col, attr, msg.c_str());
+}
+inline bool driver_is_text()
+{
+    return (*g_driver->is_text)(g_driver);
 }
 inline void driver_set_for_text()
 {

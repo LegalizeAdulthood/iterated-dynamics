@@ -20,12 +20,14 @@
 
 #include <array>
 #include <cctype>
+#include <chrono>
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
 #include <ctime>
 #include <sstream>
 #include <system_error>
+#include <thread>
 
 slides_mode g_slides{slides_mode::OFF}; // PLAY autokey=play, RECORD autokey=record
 std::string g_auto_name{"auto.key"};    // record auto keystrokes here
@@ -128,8 +130,11 @@ static int showtempmsg_txt(int row, int col, int attr, int secs, const char *txt
 
 static void message(int secs, char const *buf)
 {
-    showtempmsg_txt(0, 0, 7, secs, buf);
-    if (!showtempmsg(buf))
+    if (driver_is_text())
+    {
+        showtempmsg_txt(0, 0, 7, secs, buf);
+    }
+    else if (!showtempmsg(buf))
     {
         sleep_secs(secs);
         cleartempmsg();
@@ -423,11 +428,19 @@ void recordshw(int key)
 // suspend process # of seconds
 static void sleep_secs(int secs)
 {
-    long stop;
-    stop = std::clock() + (long)secs*CLOCKS_PER_SEC;
-    while (std::clock() < stop && driver_key_pressed() == 0)
+    g_slides = slides_mode::OFF;
+    const int iterations = secs * 100;
+    for (int i = 0; i < iterations; ++i)
     {
-    } // bailout if key hit
+        if (driver_key_pressed() != 0)
+        {
+            // bailout if key hit
+            break;
+        }
+        // sleep 10ms per iteration
+        std::this_thread::sleep_for(std::chrono::milliseconds(10));
+    }
+    g_slides = slides_mode::PLAY;
 }
 
 static void slideshowerr(char const *msg)

@@ -2628,6 +2628,11 @@ x11_put_string(Driver *drv, int row, int col, int attr, char const *msg)
     di->text_.put_string(c, r, attr, msg, &g_text_row, &g_text_col);
 }
 
+static bool x11_is_text(Driver *drv)
+{
+    DIX11(drv);
+    return di->text_not_graphics;
+}
 
 static void
 x11_set_for_text(Driver *drv)

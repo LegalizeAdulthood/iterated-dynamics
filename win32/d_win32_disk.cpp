@@ -507,6 +507,11 @@ disk_hide_text_cursor(Driver *drv)
     ODS("disk_hide_text_cursor");
 }
 
+static bool disk_is_text(Driver *drv)
+{
+    return true;
+}
+
 static void
 disk_set_for_text(Driver *drv)
 {
@@ -603,6 +608,7 @@ static Win32DiskDriver disk_driver_info =
         win32_shell,
         disk_set_video_mode,
         win32_put_string,
+        disk_is_text,
         disk_set_for_text, disk_set_for_graphics,
         disk_set_clear,
         win32_move_cursor, win32_hide_text_cursor,
