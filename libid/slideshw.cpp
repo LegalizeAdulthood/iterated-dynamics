@@ -455,7 +455,7 @@ static void slideshowerr(char const *msg)
 //
 int handle_special_keys(int ch)
 {
-    if (slides_mode::PLAY == g_slides)
+    if (g_slides == slides_mode::PLAY)
     {
         if (ch == ID_KEY_ESC)
         {
@@ -467,7 +467,7 @@ int handle_special_keys(int ch)
             ch = slideshw();
         }
     }
-    else if ((slides_mode::RECORD == g_slides) && ch)
+    else if ((g_slides == slides_mode::RECORD) && ch)
     {
         recordshw(ch);
     }
