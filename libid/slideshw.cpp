@@ -444,7 +444,7 @@ static void slideshowerr(char const *msg)
 //
 // First, do some slideshow processing.  Then handle F1 and TAB display.
 //
-// Because we want context sensitive help to work everywhere, with the
+// Because we want context-sensitive help to work everywhere, with the
 // help to display indicated by a non-zero value in help_mode, we need
 // to trap the F1 key at a very low level.  The same is true of the
 // TAB display.
