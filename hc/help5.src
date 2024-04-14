@@ -860,7 +860,8 @@ palette editing see {Freestyle mode tutorial}
 ; This topic is only online, context-sensitive.
 ~Format-
 
-The most suitable video modes for the file are listed first.
+The most suitable video modes for the file are listed first.  Screen
+video modes are preferred over disk video modes.
 
 The 'err' column in the video mode information indicates:
   blank  mode seems perfect for this image
@@ -871,6 +872,7 @@ The 'err' column in the video mode information indicates:
    R     image larger than screen, Id will reduce the image, possibly
          into a <V>iew window, and maybe with aspect ratio a bit wrong
    A     mode has the wrong shape of pixels for this image
+   D     mode is a disk video mode
 ;
 ;
 ;

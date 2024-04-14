@@ -19,6 +19,7 @@
 #include "get_video_mode.h"
 
 #include "cmdfiles.h"
+#include "drivers.h"
 #include "fractalp.h"
 #include "full_screen_choice.h"
 #include "helpdefs.h"
@@ -26,6 +27,7 @@
 #include "loadfile.h"
 #include "make_batch_file.h"
 #include "stop_msg.h"
+#include "trim_filename.h"
 #include "version.h"
 #include "video_mode.h"
 
@@ -51,15 +53,19 @@ struct vidinf
 };
 /* defines for flags; done this way instead of bit union to ensure ordering;
    these bits represent the sort sequence for video mode list */
-#define VI_EXACT 0x8000 // unless the one and only exact match
-#define VI_NOKEY   512  // if no function key assigned
-#define VI_SSMALL  128  // screen smaller than file's screen
-#define VI_SBIG     64  // screen bigger than file's screen
-#define VI_VSMALL   32  // screen smaller than file's view
-#define VI_VBIG     16  // screen bigger than file's view
-#define VI_CSMALL    8  // mode has too few colors
-#define VI_CBIG      4  // mode has excess colors
-#define VI_ASPECT    1  // aspect ratio bad
+enum
+{
+    VI_EXACT = 0x8000, // unless the one and only exact match
+    VI_DISK = 1024,    // if video mode is disk video
+    VI_NOKEY = 512,    // if no function key assigned
+    VI_SSMALL = 128,   // screen smaller than file's screen
+    VI_SBIG = 64,      // screen bigger than file's screen
+    VI_VSMALL = 32,    // screen smaller than file's view
+    VI_VBIG = 16,      // screen bigger than file's view
+    VI_CSMALL = 8,     // mode has too few colors
+    VI_CBIG = 4,       // mode has excess colors
+    VI_ASPECT = 1      // aspect ratio bad
+};
 
 static bool vidinf_less(const vidinf &lhs, const vidinf &rhs)
 {
@@ -107,7 +113,7 @@ static double vid_aspect(int tryxdots, int tryydots)
            * g_screen_aspect;
 }
 
-static std::array<vidinf, MAX_VIDEO_MODES> s_video_info;
+static std::vector<vidinf> s_video_info;
 
 static std::string heading_detail(FRACTAL_INFO const *info, ext_blk_3 const *blk_3_info)
 {
@@ -159,17 +165,31 @@ int get_video_mode(FRACTAL_INFO *info, ext_blk_3 *blk_3_info)
 
     g_init_mode = -1;
 
-    // try to find exact match for vid mode
-    for (int i = 0; i < g_video_table_len; ++i)
-    {
-        VIDEOINFO *vident = &g_video_table[i];
-        if (info->xdots == vident->xdots
-            && info->ydots == vident->ydots
-            && g_file_colors == vident->colors)
+    // try to find exact match for vid mode: first look for non-disk video
+    const VIDEOINFO *begin = g_video_table;
+    const VIDEOINFO *end = g_video_table + g_video_table_len;
+    auto it = std::find_if(begin, end,
+        [=](const VIDEOINFO &mode)
         {
-            g_init_mode = i;
-            break;
-        }
+            return info->xdots == mode.xdots    //
+                && info->ydots == mode.ydots    //
+                && g_file_colors == mode.colors //
+                && mode.driver != nullptr       //
+                && !(*mode.driver->diskp)(mode.driver);
+        });
+    if (it == end)
+    {
+        it = std::find_if(begin, end,
+            [=](const VIDEOINFO &mode)
+            {
+                return info->xdots == mode.xdots //
+                    && info->ydots == mode.ydots //
+                    && g_file_colors == mode.colors;
+            });
+    }
+    if (it != end)
+    {
+        g_init_mode = static_cast<int>(it - begin);
     }
 
     // exit in makepar mode if no exact match of video mode in file
@@ -178,27 +198,16 @@ int get_video_mode(FRACTAL_INFO *info, ext_blk_3 *blk_3_info)
         return 0;
     }
 
-    if (g_init_mode == -1) // try to find very good match for vid mode
-    {
-        for (int i = 0; i < g_video_table_len; ++i)
-        {
-            VIDEOINFO *vident = &g_video_table[i];
-            if (info->xdots == vident->xdots
-                && info->ydots == vident->ydots
-                && g_file_colors == vident->colors)
-            {
-                g_init_mode = i;
-                break;
-            }
-        }
-    }
-
     // setup table entry for each vid mode, flagged for how well it matches
+    s_video_info.resize(g_video_table_len);
     for (int i = 0; i < g_video_table_len; ++i)
     {
-        std::memcpy((char *)&g_video_entry, (char *)&g_video_table[i],
-               sizeof(g_video_entry));
+        g_video_entry = g_video_table[i];
         tmpflags = VI_EXACT;
+        if (g_video_entry.driver != nullptr && (*g_video_entry.driver->diskp)(g_video_entry.driver))
+        {
+            tmpflags |= VI_DISK;
+        }
         if (g_video_entry.keynum == 0)
         {
             tmpflags |= VI_NOKEY;
@@ -261,13 +270,13 @@ int get_video_mode(FRACTAL_INFO *info, ext_blk_3 *blk_3_info)
         // format heading
         char heading[256];  // big enough for more than a few lines
         std::snprintf(heading, std::size(heading), "File: %-44s  %d x %d x %d\n%-52s",
-                g_read_filename.c_str(), g_file_x_dots, g_file_y_dots, g_file_colors,
+                trim_filename(g_read_filename, 44).c_str(), g_file_x_dots, g_file_y_dots, g_file_colors,
                 heading_detail(info, blk_3_info).c_str());
         if (info->info_id[0] != 'G')
         {
             if (g_save_system)
             {
-                std::strcat(heading, "WinFract ");
+                std::strcat(heading, "Id       ");
             }
             std::strcat(heading, save_release_detail().c_str());
         }
@@ -513,6 +522,10 @@ static void format_item(int choice, char *buf)
     if (tmpflags & (VI_VSMALL+VI_CSMALL+VI_ASPECT))
     {
         std::strcat(errbuf, "*");
+    }
+    if (tmpflags & VI_DISK)
+    {
+        std::strcat(errbuf, "D");
     }
     if (tmpflags & VI_VSMALL)
     {
