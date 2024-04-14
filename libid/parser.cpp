@@ -174,7 +174,7 @@ struct token_st
 #define MAX_STORES ((g_max_function_ops/4)*2)  // at most only half the ops can be stores
 #define MAX_LOADS  ((unsigned)(g_max_function_ops*.8))  // and 80% can be loads
 
-static PEND_OP o[2300];
+static std::vector<PEND_OP> o;
 
 static void parser_allocate();
 
@@ -2272,6 +2272,12 @@ static SYMETRY SymStr[] =
     { "",              symmetry_type::NONE }
 };
 
+inline void push_pending_op(void (*f)(), int p)
+{
+    o.push_back(PEND_OP{f, p});
+    ++g_operation_index;
+}
+
 static bool ParseStr(char const *Str, int pass)
 {
     ConstArg *c;
@@ -2582,8 +2588,7 @@ static bool ParseStr(char const *Str, int pass)
             {
                 s_expecting_arg = true;
                 s_n++;
-                o[g_operation_index].f = StkOR;
-                o[g_operation_index++].p = 7 - (paren + Equals)*15;
+                push_pending_op(StkOR, 7 - (paren + Equals) * 15);
             }
             else if (ModFlag == paren-1)
             {
@@ -2593,8 +2598,7 @@ static bool ParseStr(char const *Str, int pass)
             else
             {
                 Mods[mdstk++] = ModFlag;
-                o[g_operation_index].f = StkMod;
-                o[g_operation_index++].p = 2 - (paren + Equals)*15;
+                push_pending_op(StkMod, 2 - (paren + Equals) * 15);
                 ModFlag = paren++;
             }
             break;
@@ -2603,102 +2607,95 @@ static bool ParseStr(char const *Str, int pass)
             if (!s_expecting_arg)
             {
                 s_expecting_arg = true;
-                o[g_operation_index].f = (void(*)())nullptr;
-                o[g_operation_index++].p = 15;
-                o[g_operation_index].f = StkClr;
-                o[g_operation_index++].p = -30000;
+                push_pending_op(nullptr, 15);
+                push_pending_op(StkClr, -30000);
                 paren = 0;
                 Equals = paren;
             }
             break;
         case ':':
             s_expecting_arg = true;
-            o[g_operation_index].f = (void(*)())nullptr;
-            o[g_operation_index++].p = 15;
-            o[g_operation_index].f = EndInit;
-            o[g_operation_index++].p = -30000;
+            push_pending_op(nullptr, 15);
+            push_pending_op(EndInit, -30000);
             paren = 0;
             Equals = paren;
             g_last_init_op = 10000;
             break;
         case '+':
             s_expecting_arg = true;
-            o[g_operation_index].f = StkAdd;
-            o[g_operation_index++].p = 4 - (paren + Equals)*15;
+            push_pending_op(StkAdd, 4 - (paren + Equals)*15);
             break;
         case '-':
             if (s_expecting_arg)
             {
-                o[g_operation_index].f = StkNeg;
-                o[g_operation_index++].p = 2 - (paren + Equals)*15;
+                push_pending_op(StkNeg, 2 - (paren + Equals)*15);
             }
             else
             {
-                o[g_operation_index].f = StkSub;
-                o[g_operation_index++].p = 4 - (paren + Equals)*15;
+                push_pending_op(StkSub, 4 - (paren + Equals)*15);
                 s_expecting_arg = true;
             }
             break;
         case '&':
             s_expecting_arg = true;
             s_n++;
-            o[g_operation_index].f = StkAND;
-            o[g_operation_index++].p = 7 - (paren + Equals)*15;
+            push_pending_op(StkAND, 7 - (paren + Equals)*15);
             break;
         case '!':
             s_expecting_arg = true;
             s_n++;
-            o[g_operation_index].f = StkNE;
-            o[g_operation_index++].p = 6 - (paren + Equals)*15;
+            push_pending_op(StkNE, 6 - (paren + Equals)*15);
             break;
         case '<':
             s_expecting_arg = true;
-            if (Str[s_n+1] == '=')
             {
-                s_n++;
-                o[g_operation_index].f = StkLTE;
+                void (*fn)();
+                if (Str[s_n + 1] == '=')
+                {
+                    s_n++;
+                    fn = StkLTE;
+                }
+                else
+                {
+                    fn = StkLT;
+                }
+                push_pending_op(fn, 6 - (paren + Equals) * 15);
             }
-            else
-            {
-                o[g_operation_index].f = StkLT;
-            }
-            o[g_operation_index++].p = 6 - (paren + Equals)*15;
             break;
         case '>':
             s_expecting_arg = true;
-            if (Str[s_n+1] == '=')
             {
-                s_n++;
-                o[g_operation_index].f = StkGTE;
+                void (*fn)();
+                if (Str[s_n + 1] == '=')
+                {
+                    s_n++;
+                    fn = StkGTE;
+                }
+                else
+                {
+                    fn = StkGT;
+                }
+                push_pending_op(fn, 6 - (paren + Equals) * 15);
             }
-            else
-            {
-                o[g_operation_index].f = StkGT;
-            }
-            o[g_operation_index++].p = 6 - (paren + Equals)*15;
             break;
         case '*':
             s_expecting_arg = true;
-            o[g_operation_index].f = StkMul;
-            o[g_operation_index++].p = 3 - (paren + Equals)*15;
+            push_pending_op(StkMul, 3 - (paren + Equals)*15);
             break;
         case '/':
             s_expecting_arg = true;
-            o[g_operation_index].f = StkDiv;
-            o[g_operation_index++].p = 3 - (paren + Equals)*15;
+            push_pending_op(StkDiv, 3 - (paren + Equals)*15);
             break;
         case '^':
             s_expecting_arg = true;
-            o[g_operation_index].f = StkPwr;
-            o[g_operation_index++].p = 2 - (paren + Equals)*15;
+            push_pending_op(StkPwr, 2 - (paren + Equals)*15);
             break;
         case '=':
             s_expecting_arg = true;
             if (Str[s_n+1] == '=')
             {
                 s_n++;
-                o[g_operation_index].f = StkEQ;
-                o[g_operation_index++].p = 6 - (paren + Equals)*15;
+                push_pending_op(StkEQ, 6 - (paren + Equals)*15);
             }
             else
             {
@@ -2724,31 +2721,24 @@ static bool ParseStr(char const *Str, int pass)
                 case 1:                      // if
                     s_expecting_arg = true;
                     jump_control[jump_index++].type = 1;
-                    o[g_operation_index].f = StkJumpOnFalse;
-                    o[g_operation_index++].p = 1;
+                    push_pending_op(StkJumpOnFalse, 1);
                     break;
                 case 2:                     // elseif
                     s_expecting_arg = true;
                     jump_control[jump_index++].type = 2;
                     jump_control[jump_index++].type = 2;
-                    o[g_operation_index].f = StkJump;
-                    o[g_operation_index++].p = 1;
-                    o[g_operation_index].f = (void(*)())nullptr;
-                    o[g_operation_index++].p = 15;
-                    o[g_operation_index].f = StkClr;
-                    o[g_operation_index++].p = -30000;
-                    o[g_operation_index].f = StkJumpOnFalse;
-                    o[g_operation_index++].p = 1;
+                    push_pending_op(StkJump, 1);
+                    push_pending_op(nullptr, 15);
+                    push_pending_op(StkClr, -30000);
+                    push_pending_op(StkJumpOnFalse, 1);
                     break;
                 case 3:                     // else
                     jump_control[jump_index++].type = 3;
-                    o[g_operation_index].f = StkJump;
-                    o[g_operation_index++].p = 1;
+                    push_pending_op(StkJump, 1);
                     break;
                 case 4: // endif
                     jump_control[jump_index++].type = 4;
-                    o[g_operation_index].f = StkJumpLabel;
-                    o[g_operation_index++].p = 1;
+                    push_pending_op(StkJumpLabel, 1);
                     break;
                 default:
                     break;
@@ -2756,26 +2746,23 @@ static bool ParseStr(char const *Str, int pass)
             }
             else
             {
-                o[g_operation_index].f = isfunct(&Str[InitN], Len);
-                if (o[g_operation_index].f != NotAFnct)
+                if (const auto fn = isfunct(&Str[InitN], Len); fn != NotAFnct)
                 {
-                    o[g_operation_index++].p = 1 - (paren + Equals)*15;
+                    push_pending_op(fn,  1 - (paren + Equals)*15);
                     s_expecting_arg = true;
                 }
                 else
                 {
                     c = isconst(&Str[InitN], Len);
                     Load[g_load_index++] = &(c->a);
-                    o[g_operation_index].f = StkLod;
-                    o[g_operation_index++].p = 1 - (paren + Equals)*15;
+                    push_pending_op(StkLod, 1 - (paren + Equals)*15);
                     s_n = InitN + c->len - 1;
                 }
             }
             break;
         }
     }
-    o[g_operation_index].f = (void(*)())nullptr;
-    o[g_operation_index++].p = 16;
+    push_pending_op(nullptr, 16);
     NextOp = 0;
     g_last_op = g_operation_index;
     while (NextOp < g_operation_index)
