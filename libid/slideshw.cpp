@@ -128,10 +128,8 @@ static int showtempmsg_txt(int row, int col, int attr, int secs, const char *txt
 
 static void message(int secs, char const *buf)
 {
-    char nearbuf[41] = { 0 };
-    std::strncpy(nearbuf, buf, std::size(nearbuf)-1);
-    showtempmsg_txt(0, 0, 7, secs, nearbuf);
-    if (!showtempmsg(nearbuf))
+    showtempmsg_txt(0, 0, 7, secs, buf);
+    if (!showtempmsg(buf))
     {
         sleep_secs(secs);
         cleartempmsg();
