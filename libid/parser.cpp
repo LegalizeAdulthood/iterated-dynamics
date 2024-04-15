@@ -49,12 +49,16 @@
 #include <cstring>
 #include <ctime>
 #include <iterator>
+#include <stdexcept>
 #include <string>
 
-enum MATH_TYPE MathType = D_MATH;
+MATH_TYPE MathType = D_MATH;
 
-#define MAX_OPS 250
-#define MAX_ARGS 100
+enum
+{
+    MAX_OPS = 250,
+    MAX_ARGS = 100
+};
 
 unsigned int g_max_function_ops  = MAX_OPS;
 unsigned int g_max_function_args = MAX_ARGS;
@@ -70,9 +74,17 @@ struct PEND_OP
     int p;
 };
 
-JUMP_CONTROL_ST jump_control[MAX_JUMPS];
+std::vector<JUMP_CONTROL_ST> jump_control;
 int jump_index;
 static int InitJumpIndex;
+
+inline void push_jump_control_type(int type)
+{
+    JUMP_CONTROL_ST value{};
+    value.type = type;
+    jump_control.push_back(value);
+    ++jump_index;
+}
 
 static bool frm_prescan(std::FILE * open_file);
 
@@ -2221,7 +2233,13 @@ void RecSortPrec()
     {
         RecSortPrec();
     }
-    f[OpPtr++] = o[ThisOp].f;
+    if (OpPtr != static_cast<int>(f.size()))
+    {
+        throw std::runtime_error(
+            "OpPtr (" + std::to_string(OpPtr) + ") doesn't match size of f[] (" + std::to_string(f.size()) + ")");
+    }
+    f.push_back(o[ThisOp].f);
+    ++OpPtr;
 }
 
 static char const *Constants[] =
@@ -2720,24 +2738,24 @@ static bool ParseStr(char const *Str, int pass)
                 {
                 case 1:                      // if
                     s_expecting_arg = true;
-                    jump_control[jump_index++].type = 1;
+                    push_jump_control_type(1);
                     push_pending_op(StkJumpOnFalse, 1);
                     break;
                 case 2:                     // elseif
                     s_expecting_arg = true;
-                    jump_control[jump_index++].type = 2;
-                    jump_control[jump_index++].type = 2;
+                    push_jump_control_type(2);
+                    push_jump_control_type(2);
                     push_pending_op(StkJump, 1);
                     push_pending_op(nullptr, 15);
                     push_pending_op(StkClr, -30000);
                     push_pending_op(StkJumpOnFalse, 1);
                     break;
                 case 3:                     // else
-                    jump_control[jump_index++].type = 3;
+                    push_jump_control_type(3);
                     push_pending_op(StkJump, 1);
                     break;
                 case 4: // endif
-                    jump_control[jump_index++].type = 4;
+                    push_jump_control_type(4);
                     push_pending_op(StkJumpLabel, 1);
                     break;
                 default:
@@ -3025,7 +3043,7 @@ static bool fill_jump_struct()
     void (*JumpFunc)() = nullptr;
     bool find_new_func = true;
 
-    JUMP_PTRS_ST jump_data[MAX_JUMPS];
+    std::vector<JUMP_PTRS_ST> jump_data;
 
     for (OpPtr = 0; OpPtr < (int) g_last_op; OpPtr++)
     {
@@ -3068,9 +3086,11 @@ static bool fill_jump_struct()
         }
         else if (*(f[OpPtr]) == JumpFunc)
         {
-            jump_data[i].JumpOpPtr = OpPtr;
-            jump_data[i].JumpLodPtr = loadcount;
-            jump_data[i].JumpStoPtr = storecount;
+            JUMP_PTRS_ST value{};
+            value.JumpOpPtr = OpPtr;
+            value.JumpLodPtr = loadcount;
+            value.JumpStoPtr = storecount;
+            jump_data.push_back(value);
             i++;
             find_new_func = true;
         }
@@ -3087,7 +3107,7 @@ static bool fill_jump_struct()
     while (i > 0)
     {
         i--;
-        i = fill_if_group(i, jump_data);
+        i = fill_if_group(i, jump_data.data());
     }
     return i < 0;
 }
@@ -4211,7 +4231,7 @@ static void parser_allocate()
             g_max_function_args = (unsigned)(g_max_function_ops/2.5);
         }
 
-        f.resize(g_max_function_ops);
+        f.reserve(g_max_function_ops);
         Store.resize(MAX_STORES);
         Load.resize(MAX_LOADS);
         v.resize(g_max_function_args);
