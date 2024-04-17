@@ -17,7 +17,7 @@
 int get_browse_params()
 {
     ChoiceBuilder<10> choices;
-    int i, k;
+    int i;
 
     bool old_auto_browse = g_auto_browse;
     bool old_browse_check_fractal_type = g_browse_check_fractal_type;
@@ -28,9 +28,6 @@ int get_browse_params()
     std::string old_browse_mask = g_browse_mask;
 
 get_brws_restart:
-    // fill up the previous values arrays
-    k = -1;
-
     choices.reset()
         .yes_no("Autobrowsing? (y/n)", g_auto_browse)
         .yes_no("Ask about GIF video mode? (y/n)", g_ask_video)
@@ -64,9 +61,6 @@ get_brws_restart:
         g_browse_mask = "*.gif";
         goto get_brws_restart;
     }
-
-    // now check out the results (*hopefully* in the same order <grin>)
-    k = -1;
 
     g_auto_browse = choices.read_yes_no();
     g_ask_video = choices.read_yes_no();
