@@ -348,6 +348,18 @@ protected:
     }
 
     MockPrompter prompter;
+    std::function<void(fullscreenvalues *)> expect_yes_no(int index, bool expected)
+    {
+        return [=](fullscreenvalues *uvalues)
+        {
+            static const char *yesno[] = {"no", "yes"};
+            uvalues[index].type = 'l';
+            uvalues[index].uval.ch.llen = 2;
+            uvalues[index].uval.ch.vlen = 3;
+            uvalues[index].uval.ch.list = yesno;
+            uvalues[index].uval.ch.val = expected ? 1 : 0;
+        };
+    }
 };
 
 } // namespace
@@ -583,7 +595,8 @@ TEST_F(TestChoiceBuilderPrompting, readChoiceWrongType)
 TEST_F(TestChoiceBuilderPrompting, readTooManyChoices)
 {
     ChoiceBuilder<1, Shim> builder;
-    EXPECT_CALL(prompter, prompt(_, _, _, _, _, _)).WillOnce(Return(ID_KEY_ENTER));
+    EXPECT_CALL(prompter, prompt(_, _, _, _, _, _))
+        .WillOnce(DoAll(WithArg<3>(expect_yes_no(0, true)), Return(ID_KEY_ENTER)));
     builder.yes_no("Evolution mode? (no for full screen)", true);
     builder.prompt("Evolution Mode Options", 255);
     EXPECT_EQ(true, builder.read_yes_no());
@@ -594,9 +607,8 @@ TEST_F(TestChoiceBuilderPrompting, readTooManyChoices)
 TEST_F(TestChoiceBuilderPrompting, readYesNoChoice)
 {
     ChoiceBuilder<1, Shim> builder;
-    EXPECT_CALL(prompter,
-        prompt(StrEq("Evolution Mode Options"), 1, NotNull(), NotNull(), 255, nullptr))
-        .WillOnce(DoAll(WithArg<3>([](fullscreenvalues *uvalues) { uvalues[0].uval.ch.val = 0; }), Return(ID_KEY_ENTER)));
+    EXPECT_CALL(prompter, prompt(StrEq("Evolution Mode Options"), 1, NotNull(), NotNull(), 255, nullptr))
+        .WillOnce(DoAll(WithArg<3>(expect_yes_no(0, false)), Return(ID_KEY_ENTER)));
     builder.yes_no("Evolution mode? (no for full screen)", true);
     const int result = builder.prompt("Evolution Mode Options", 255);
 

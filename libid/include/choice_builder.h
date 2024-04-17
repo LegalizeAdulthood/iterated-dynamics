@@ -107,6 +107,7 @@ public:
     ChoiceBuilder &reset()
     {
         m_current_build = 0;
+        m_current_read = 0;
         choices = std::array<const char *, N>{};
         uvalues = std::array<fullscreenvalues, N>{};
         m_prompted = false;
@@ -123,6 +124,7 @@ public:
     {
         m_prompted = true;
         m_result = m_prompter(hdg, count(), choices.data(), uvalues.data(), fkeymask, extrainfo);
+        m_current_read = 0;
         return m_result;
     }
     int prompt(char const *hdg, int fkeymask)
@@ -136,7 +138,7 @@ public:
 
     bool read_yes_no() const
     {
-        check_read_type("yes/no", 'y');
+        check_read_type("yes/no", 'l');
         return uvalues[m_current_read++].uval.ch.val == 1;
     }
     int read_int_number() const
