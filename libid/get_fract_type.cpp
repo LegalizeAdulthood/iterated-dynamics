@@ -96,7 +96,6 @@ struct FT_CHOICE
 };
 static FT_CHOICE **ft_choices; // for sel_fractype_help subrtn
 
-// subrtn of get_fracttype, separated so that storage gets freed up
 static fractal_type select_fracttype(fractal_type t)
 {
     int numtypes;
