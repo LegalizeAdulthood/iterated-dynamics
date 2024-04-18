@@ -1847,7 +1847,7 @@ fractalspecificstuff g_fractal_specific[] =
         {6, 1.0, 0.0001, 0},
         help_labels::HT_HALLEY, help_labels::HF_HALLEY, 0,
         -2.0F, 2.0F, -1.5F, 1.5F,
-        0, fractal_type::NOFRACTAL, fractal_type::NOFRACTAL, fractal_type::HALLEY, symmetry_type::XY_AXIS,
+        0, fractal_type::NOFRACTAL, fractal_type::NOFRACTAL, fractal_type::MPHALLEY, symmetry_type::XY_AXIS,
         MPCHalleyFractal, MPCHalley_per_pixel, HalleySetup, standard_fractal,
         NOBAILOUT
     },
@@ -1858,7 +1858,7 @@ fractalspecificstuff g_fractal_specific[] =
         {6, 1.0, 0.0001, 0},
         help_labels::HT_HALLEY, help_labels::HF_HALLEY, 0,
         -2.0F, 2.0F, -1.5F, 1.5F,
-        0, fractal_type::NOFRACTAL, fractal_type::NOFRACTAL, fractal_type::MPHALLEY, symmetry_type::XY_AXIS,
+        0, fractal_type::NOFRACTAL, fractal_type::NOFRACTAL, fractal_type::HALLEY, symmetry_type::XY_AXIS,
         HalleyFractal, Halley_per_pixel, HalleySetup, standard_fractal,
         NOBAILOUT
     },
