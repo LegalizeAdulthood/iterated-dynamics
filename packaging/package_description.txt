@@ -1,0 +1,3 @@
+Iterated Dynamics is a full-features fractal renderer that can produce many types
+of complex plane fractals as well as L-systems, iterated function systems (IFS)
+and cellular automata.

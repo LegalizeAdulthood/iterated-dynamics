@@ -18,6 +18,10 @@ jobs:
             os: ubuntu-latest
           - install: INSTALL
             os: windows-latest
+          - package: package
+            os: ubuntu-latest
+          - package: PACKAGE
+            os: windows-latest
 
     runs-on: ${{matrix.os}}
 
@@ -41,7 +45,10 @@ jobs:
       run: cmake --workflow --preset ${{matrix.preset}}
 
     - name: Build install target
-      run: cmake --build --preset ${{matrix.preset}} --target ${{matrix.install}} 
+      run: cmake --build --preset ${{matrix.preset}} --target ${{matrix.install}}
+
+    - name: Create packages
+      run: cmake --preset ${{matrix.preset}} --target ${{matrix.package}}
 
   cppcheck:
     name: cppcheck

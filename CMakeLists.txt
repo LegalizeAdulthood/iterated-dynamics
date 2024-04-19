@@ -71,3 +71,7 @@ if(BUILD_TESTING)
 endif()
 
 set_property(DIRECTORY PROPERTY VS_STARTUP_PROJECT id)
+
+if(CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR)
+    add_subdirectory(packaging)
+endif()
