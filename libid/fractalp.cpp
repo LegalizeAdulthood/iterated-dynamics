@@ -249,6 +249,7 @@ const char *const t_halley{"*halley"};
 // use next to cast orbitcalcs() that have arguments
 #define VF int(*)()
 
+// This array is indexed by the enum fractal_type.
 fractalspecificstuff g_fractal_specific[] =
 {
     /*
