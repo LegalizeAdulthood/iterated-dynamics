@@ -85,7 +85,7 @@ int get_fracttype()             // prompt for and select fractal type
     {
         g_fractal_type = oldfractype;
     }
-    g_cur_fractal_specific = &g_fractal_specific[static_cast<int>(g_fractal_type)];
+    g_cur_fractal_specific = &g_fractal_specific[+g_fractal_type];
     return done;
 }
 
@@ -149,7 +149,7 @@ static fractal_type select_fracttype(fractal_type t)
     for (int i = 0; i < numtypes; ++i)   // find starting choice in sorted list
     {
         if (choices[i]->num == static_cast<int>(t)
-            || choices[i]->num == static_cast<int>(g_fractal_specific[static_cast<int>(t)].tofloat))
+            || choices[i]->num == +g_fractal_specific[+t].tofloat)
         {
             j = i;
         }
@@ -210,7 +210,7 @@ static bool select_type_params( // prompt for new fractal type parameters
 sel_type_restart:
     ret = false;
     g_fractal_type = newfractype;
-    g_cur_fractal_specific = &g_fractal_specific[static_cast<int>(g_fractal_type)];
+    g_cur_fractal_specific = &g_fractal_specific[+g_fractal_type];
 
     if (g_fractal_type == fractal_type::LSYSTEM)
     {
@@ -385,13 +385,13 @@ int get_fract_params(bool prompt_for_type_params)        // prompt for type-spec
     {
         int i;
         if (g_cur_fractal_specific->name[0] == '*'
-            && (i = static_cast<int>(g_cur_fractal_specific->tofloat)) != static_cast<int>(fractal_type::NOFRACTAL)
+            && (i = +g_cur_fractal_specific->tofloat) != +fractal_type::NOFRACTAL
             && g_fractal_specific[i].name[0] != '*')
         {
             curtype = static_cast<fractal_type>(i);
         }
     }
-    g_cur_fractal_specific = &g_fractal_specific[static_cast<int>(curtype)];
+    g_cur_fractal_specific = &g_fractal_specific[+curtype];
     tstack[0] = 0;
     help_labels help_formula = g_cur_fractal_specific->helpformula;
     if (help_formula < help_labels::NONE)
@@ -520,7 +520,7 @@ gfp_top:
         {
             g_new_orbit_type = i;
         }
-        jborbit = &g_fractal_specific[static_cast<int>(g_new_orbit_type)];
+        jborbit = &g_fractal_specific[+g_new_orbit_type];
         juliorbitname = jborbit->name;
     }
 
@@ -947,6 +947,6 @@ gfp_top:
         ++promptnum;
     }
 gfp_exit:
-    g_cur_fractal_specific = &g_fractal_specific[static_cast<int>(g_fractal_type)];
+    g_cur_fractal_specific = &g_fractal_specific[+g_fractal_type];
     return ret;
 }

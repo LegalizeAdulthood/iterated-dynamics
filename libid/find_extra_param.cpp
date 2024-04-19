@@ -9,7 +9,7 @@
 int find_extra_param(fractal_type type)
 {
     int ret = -1;
-    if (g_fractal_specific[static_cast<int>(type)].flags & MORE)
+    if (g_fractal_specific[+type].flags & MORE)
     {
         fractal_type curtyp;
         int i = -1;

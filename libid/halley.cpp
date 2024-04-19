@@ -41,7 +41,7 @@ bool HalleySetup()
         g_fractal_type = fractal_type::MPHALLEY;
     }
 
-    g_cur_fractal_specific = &g_fractal_specific[static_cast<int>(g_fractal_type)];
+    g_cur_fractal_specific = &g_fractal_specific[+g_fractal_type];
 
     g_degree = (int)g_param_z1.x;
     if (g_degree < 2)

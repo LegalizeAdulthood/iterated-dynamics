@@ -87,13 +87,13 @@ extern int                   g_num_fractal_types;
 
 inline bool per_image()
 {
-    return g_fractal_specific[static_cast<int>(g_fractal_type)].per_image();
+    return g_fractal_specific[+g_fractal_type].per_image();
 }
 inline int per_pixel()
 {
-    return g_fractal_specific[static_cast<int>(g_fractal_type)].per_pixel();
+    return g_fractal_specific[+g_fractal_type].per_pixel();
 }
 inline int orbit_calc()
 {
-    return g_fractal_specific[static_cast<int>(g_fractal_type)].orbitcalc();
+    return g_fractal_specific[+g_fractal_type].orbitcalc();
 }

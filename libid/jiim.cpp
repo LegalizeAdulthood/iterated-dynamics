@@ -492,8 +492,8 @@ void Jiim(jiim_types which)
 
     debug_flags old_debugflag = g_debug_flag;
     // must use standard fractal or be calcfroth
-    if (g_fractal_specific[static_cast<int>(g_fractal_type)].calctype != standard_fractal
-        && g_fractal_specific[static_cast<int>(g_fractal_type)].calctype != calcfroth)
+    if (g_fractal_specific[+g_fractal_type].calctype != standard_fractal
+        && g_fractal_specific[+g_fractal_type].calctype != calcfroth)
     {
         return;
     }

@@ -15,8 +15,7 @@ static int build_fractal_list(int fractals[], int *last_val, char const *nameptr
         if ((g_fractal_specific[i].flags & OKJB) && *g_fractal_specific[i].name != '*')
         {
             fractals[numfractals] = i;
-            if (i == static_cast<int>(g_new_orbit_type)
-                    || i == static_cast<int>(g_fractal_specific[static_cast<int>(g_new_orbit_type)].tofloat))
+            if (i == +g_new_orbit_type || i == +g_fractal_specific[+g_new_orbit_type].tofloat)
             {
                 *last_val = numfractals;
             }

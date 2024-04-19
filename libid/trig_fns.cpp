@@ -92,14 +92,14 @@ void trigdetails(char *buf)
     char tmpbuf[20];
     if (g_fractal_type == fractal_type::JULIBROT || g_fractal_type == fractal_type::JULIBROTFP)
     {
-        numfn = (g_fractal_specific[static_cast<int>(g_new_orbit_type)].flags >> 6) & 7;
+        numfn = (g_fractal_specific[+g_new_orbit_type].flags >> 6) & 7;
     }
     else
     {
         numfn = (g_cur_fractal_specific->flags >> 6) & 7;
     }
-    if (g_cur_fractal_specific == &g_fractal_specific[static_cast<int>(fractal_type::FORMULA)]
-        || g_cur_fractal_specific == &g_fractal_specific[static_cast<int>(fractal_type::FFORMULA)])
+    if (g_cur_fractal_specific == &g_fractal_specific[+fractal_type::FORMULA]
+        || g_cur_fractal_specific == &g_fractal_specific[+fractal_type::FFORMULA])
     {
         numfn = g_max_function;
     }

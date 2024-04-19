@@ -825,7 +825,7 @@ long get_file_entry(gfe_type type, char const *title, char const *fmask, char *f
             if (ifsload() == 0)
             {
                 g_fractal_type = !g_ifs_type ? fractal_type::IFS : fractal_type::IFS3D;
-                g_cur_fractal_specific = &g_fractal_specific[static_cast<int>(g_fractal_type)];
+                g_cur_fractal_specific = &g_fractal_specific[+g_fractal_type];
                 set_default_parms(); // to correct them if 3d
                 return 0;
             }

@@ -1410,7 +1410,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
             return bad_arg(curarg);
         }
         g_fractal_type = static_cast<fractal_type>(k);
-        g_cur_fractal_specific = &g_fractal_specific[static_cast<int>(g_fractal_type)];
+        g_cur_fractal_specific = &g_fractal_specific[+g_fractal_type];
         if (!initcorners)
         {
             g_x_min = g_cur_fractal_specific->xmin;

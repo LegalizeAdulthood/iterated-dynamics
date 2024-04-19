@@ -445,7 +445,7 @@ void restore_history_info(int i)
     g_bail_out_test = last.bail_out_test;
     g_max_iterations = last.iterations;
     g_old_demm_colors = last.old_demm_colors;
-    g_cur_fractal_specific = &g_fractal_specific[static_cast<int>(g_fractal_type)];
+    g_cur_fractal_specific = &g_fractal_specific[+g_fractal_type];
     g_potential_flag = (g_potential_params[0] != 0.0);
     if (g_inversion[0] != 0.0)
     {

@@ -156,11 +156,11 @@ MandelfpSetup()
         }
         if (g_params[3] == 0.0 && g_debug_flag != debug_flags::force_complex_power && (double)g_c_exponent == g_params[2])
         {
-            g_fractal_specific[static_cast<int>(g_fractal_type)].orbitcalc = floatZpowerFractal;
+            g_fractal_specific[+g_fractal_type].orbitcalc = floatZpowerFractal;
         }
         else
         {
-            g_fractal_specific[static_cast<int>(g_fractal_type)].orbitcalc = floatCmplxZpowerFractal;
+            g_fractal_specific[+g_fractal_type].orbitcalc = floatCmplxZpowerFractal;
         }
         break;
     case fractal_type::MAGNET1M:
@@ -280,11 +280,11 @@ JuliafpSetup()
         }
         if (g_params[3] == 0.0 && g_debug_flag != debug_flags::force_complex_power && (double)g_c_exponent == g_params[2])
         {
-            g_fractal_specific[static_cast<int>(g_fractal_type)].orbitcalc = floatZpowerFractal;
+            g_fractal_specific[+g_fractal_type].orbitcalc = floatZpowerFractal;
         }
         else
         {
-            g_fractal_specific[static_cast<int>(g_fractal_type)].orbitcalc = floatCmplxZpowerFractal;
+            g_fractal_specific[+g_fractal_type].orbitcalc = floatCmplxZpowerFractal;
         }
         get_julia_attractor(g_params[0], g_params[1]);  // another attractor?
         break;
@@ -413,11 +413,11 @@ MandellongSetup()
     {
         if (g_params[3] == 0.0 && g_debug_flag != debug_flags::force_complex_power && (double)g_c_exponent == g_params[2])
         {
-            g_fractal_specific[static_cast<int>(g_fractal_type)].orbitcalc = longZpowerFractal;
+            g_fractal_specific[+g_fractal_type].orbitcalc = longZpowerFractal;
         }
         else
         {
-            g_fractal_specific[static_cast<int>(g_fractal_type)].orbitcalc = longCmplxZpowerFractal;
+            g_fractal_specific[+g_fractal_type].orbitcalc = longCmplxZpowerFractal;
         }
         if (g_params[3] != 0 || (double)g_c_exponent != g_params[2])
         {
@@ -470,11 +470,11 @@ JulialongSetup()
         }
         if (g_params[3] == 0.0 && g_debug_flag != debug_flags::force_complex_power && (double)g_c_exponent == g_params[2])
         {
-            g_fractal_specific[static_cast<int>(g_fractal_type)].orbitcalc = longZpowerFractal;
+            g_fractal_specific[+g_fractal_type].orbitcalc = longZpowerFractal;
         }
         else
         {
-            g_fractal_specific[static_cast<int>(g_fractal_type)].orbitcalc = longCmplxZpowerFractal;
+            g_fractal_specific[+g_fractal_type].orbitcalc = longCmplxZpowerFractal;
         }
         break;
     case fractal_type::LAMBDA:

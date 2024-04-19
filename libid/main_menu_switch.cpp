@@ -352,7 +352,7 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
             if (g_fractal_type != fractal_type::ANT)
             {
                 g_fractal_type = fractal_type::ANT;
-                g_cur_fractal_specific = &g_fractal_specific[static_cast<int>(g_fractal_type)];
+                g_cur_fractal_specific = &g_fractal_specific[+g_fractal_type];
                 load_params(g_fractal_type);
             }
             if (!g_from_text)
@@ -410,10 +410,10 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
     case ID_KEY_CTL_O:                     // ctrl-o
     case 'o':
         // must use standard fractal and have a float variant
-        if ((g_fractal_specific[static_cast<int>(g_fractal_type)].calctype == standard_fractal
-                || g_fractal_specific[static_cast<int>(g_fractal_type)].calctype == calcfroth)
-            && (g_fractal_specific[static_cast<int>(g_fractal_type)].isinteger == 0 ||
-                 g_fractal_specific[static_cast<int>(g_fractal_type)].tofloat != fractal_type::NOFRACTAL)
+        if ((g_fractal_specific[+g_fractal_type].calctype == standard_fractal
+                || g_fractal_specific[+g_fractal_type].calctype == calcfroth)
+            && (g_fractal_specific[+g_fractal_type].isinteger == 0 ||
+                 g_fractal_specific[+g_fractal_type].tofloat != fractal_type::NOFRACTAL)
             && (bf_math == bf_math_type::NONE) // for now no arbitrary precision support
             && !(g_is_true_color && g_true_mode != true_color_mode::default_color))
         {
@@ -438,14 +438,14 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
             {
                 if (g_is_mandelbrot)
                 {
-                    g_fractal_specific[static_cast<int>(g_fractal_type)].tojulia = g_fractal_type;
-                    g_fractal_specific[static_cast<int>(g_fractal_type)].tomandel = fractal_type::NOFRACTAL;
+                    g_fractal_specific[+g_fractal_type].tojulia = g_fractal_type;
+                    g_fractal_specific[+g_fractal_type].tomandel = fractal_type::NOFRACTAL;
                     g_is_mandelbrot = false;
                 }
                 else
                 {
-                    g_fractal_specific[static_cast<int>(g_fractal_type)].tojulia = fractal_type::NOFRACTAL;
-                    g_fractal_specific[static_cast<int>(g_fractal_type)].tomandel = g_fractal_type;
+                    g_fractal_specific[+g_fractal_type].tojulia = fractal_type::NOFRACTAL;
+                    g_fractal_specific[+g_fractal_type].tomandel = g_fractal_type;
                     g_is_mandelbrot = true;
                 }
             }
@@ -465,7 +465,7 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
                     break;
                 }
                 g_fractal_type = g_cur_fractal_specific->tojulia;
-                g_cur_fractal_specific = &g_fractal_specific[static_cast<int>(g_fractal_type)];
+                g_cur_fractal_specific = &g_fractal_specific[+g_fractal_type];
                 if (g_julia_c_x == JULIA_C_NOT_SET || g_julia_c_y == JULIA_C_NOT_SET)
                 {
                     g_params[0] = (g_x_max + g_x_min) / 2;
@@ -508,7 +508,7 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
             {
                 // switch to corresponding Mandel set
                 g_fractal_type = g_cur_fractal_specific->tomandel;
-                g_cur_fractal_specific = &g_fractal_specific[static_cast<int>(g_fractal_type)];
+                g_cur_fractal_specific = &g_fractal_specific[+g_fractal_type];
                 if (*frommandel)
                 {
                     g_x_min = jxxmin;
@@ -562,7 +562,7 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
                     g_fractal_type = fractal_type::JULIA;
                 }
             }
-            g_cur_fractal_specific = &g_fractal_specific[static_cast<int>(g_fractal_type)];
+            g_cur_fractal_specific = &g_fractal_specific[+g_fractal_type];
             g_zoom_off = true;
             g_calc_status = calc_status_value::PARAMS_CHANGED;
             *kbdmore = false;
