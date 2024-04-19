@@ -457,7 +457,7 @@ int fullscreen_prompt(      // full-screen prompting routine
                         "No changeable parameters;");
         putstringcenter(instrrow, 0, 80, C_PROMPT_BKGRD,
                 (g_help_mode > help_labels::HELP_INDEX) ?
-                "Press ENTER to exit, ESC to back out, " FK_F1 " for help"
+                "Press ENTER to exit, ESC to back out, F1 for help"
                 : "Press ENTER to exit");
         driver_hide_text_cursor();
         g_text_cbase = 2;
@@ -579,7 +579,7 @@ int fullscreen_prompt(      // full-screen prompting routine
     }
     putstringcenter(instrrow+1, 0, 80, C_PROMPT_BKGRD,
             (g_help_mode > help_labels::HELP_INDEX) ?
-            "Press ENTER when finished, ESCAPE to back out, or " FK_F1 " for help"
+            "Press ENTER when finished, ESCAPE to back out, or F1 for help"
             : "Press ENTER when finished (or ESCAPE to back out)");
 
     done = 0;

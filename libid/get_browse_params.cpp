@@ -38,7 +38,7 @@ get_brws_restart:
         .int_number("Smallest box size shown before crosshairs used (pix)", g_smallest_box_size_shown)
         .string("Browse search filename mask ", g_browse_mask.c_str())
         .comment("")
-        .comment("Press " FK_F4 " to reset browse parameters to defaults.");
+        .comment("Press F4 to reset browse parameters to defaults.");
 
     help_labels const old_help_mode = g_help_mode;     // this prevents HELP from activating
     g_help_mode = help_labels::HELP_BROWSE_PARAMETERS;

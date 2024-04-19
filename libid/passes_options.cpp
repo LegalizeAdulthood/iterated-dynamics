@@ -69,8 +69,8 @@ pass_option_restart:
     g_help_mode = help_labels::HELP_POPTS;
     i = fullscreen_prompt("Passes Options\n"
                           "(not all combinations make sense)\n"
-                          "(Press " FK_F2 " for corner parameters)\n"
-                          "(Press " FK_F6 " for calculation parameters)", k+1, choices, uvalues, 64 | 4, nullptr);
+                          "(Press F2 for corner parameters)\n"
+                          "(Press F6 for calculation parameters)", k+1, choices, uvalues, 64 | 4, nullptr);
     g_help_mode = old_help_mode;
     if (i < 0)
     {

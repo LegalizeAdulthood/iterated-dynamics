@@ -203,7 +203,7 @@ retry_dir:
         ++filecount;
     }
 
-    std::strcpy(instr, "Press " FK_F6 " for default directory, " FK_F4 " to toggle sort ");
+    std::strcpy(instr, "Press F6 for default directory, F4 to toggle sort ");
     if (dosort)
     {
         std::strcat(instr, "off");

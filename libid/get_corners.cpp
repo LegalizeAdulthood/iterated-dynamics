@@ -74,7 +74,7 @@ gc_loop:
             .double_number("Rotation Angle (degrees)", Rotation)
             .double_number("Skew Angle (degrees)", Skew)
             .comment("")
-            .comment("Press " FK_F7 " to switch to \"corners\" mode");
+            .comment("Press F7 to switch to \"corners\" mode");
     }
 
     else
@@ -104,10 +104,10 @@ gc_loop:
             builder.comment("Bottom-left (zeros for top-left X, bottom-right Y)")
                 .double_number(xprompt, g_x_3rd)
                 .double_number(yprompt, g_y_3rd)
-                .comment("Press " FK_F7 " to switch to \"center-mag\" mode");
+                .comment("Press F7 to switch to \"center-mag\" mode");
         }
     }
-    builder.comment("Press " FK_F4 " to reset to type default values");
+    builder.comment("Press F4 to reset to type default values");
 
     help_labels const old_help_mode = g_help_mode;
     g_help_mode = help_labels::HELP_COORDS;
@@ -295,7 +295,7 @@ gsc_loop:
             .double_number("Rotation Angle (degrees)", Rotation)
             .double_number("Skew Angle (degrees)", Skew)
             .comment("")
-            .comment("Press " FK_F7 " to switch to \"corners\" mode");
+            .comment("Press F7 to switch to \"corners\" mode");
     }
     else
     {
@@ -313,9 +313,9 @@ gsc_loop:
         builder.comment("Bottom-left (zeros for top-left X, bottom-right Y)")
             .double_number(xprompt, g_orbit_corner_3_x)
             .double_number(yprompt, g_orbit_corner_3_y)
-            .comment("Press " FK_F7 " to switch to \"center-mag\" mode");
+            .comment("Press F7 to switch to \"center-mag\" mode");
     }
-    builder.comment("Press " FK_F4 " to reset to type default values");
+    builder.comment("Press F4 to reset to type default values");
 
     help_labels const old_help_mode = g_help_mode;
     g_help_mode = help_labels::HELP_SCREEN_COORDS;

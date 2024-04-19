@@ -34,7 +34,7 @@ static void footer_msg(int *i, int options, char const *speedstring)
                     (speedstring) ? "Use the cursor keys or type a value to make a selection"
                     : "Use the cursor keys to highlight your selection");
     putstringcenter(*(i++), 0, 80, C_PROMPT_BKGRD,
-                    (options & CHOICE_MENU) ? "Press ENTER for highlighted choice, or " FK_F1 " for help"
+                    (options & CHOICE_MENU) ? "Press ENTER for highlighted choice, or F1 for help"
                     : ((options & CHOICE_HELP) ? "Press ENTER for highlighted choice, ESCAPE to back out, or F1 for help"
                        : "Press ENTER for highlighted choice, or ESCAPE to back out"));
 }

@@ -157,7 +157,7 @@ static fractal_type select_fracttype(fractal_type t)
     tname[0] = 0;
     int done = fullscreen_choice(CHOICE_HELP | CHOICE_INSTRUCTIONS,
             g_julibrot ? "Select Orbit Algorithm for Julibrot" : "Select a Fractal Type",
-            nullptr, "Press " FK_F2 " for a description of the highlighted type", numtypes,
+            nullptr, "Press F2 for a description of the highlighted type", numtypes,
             (char const **)choices, attributes, 0, 0, 0, j, nullptr, tname, nullptr, sel_fractype_help);
     fractal_type result = fractal_type::NOFRACTAL;
     if (done >= 0)
@@ -804,7 +804,7 @@ gfp_top:
     }
     if (bf_math == bf_math_type::NONE)
     {
-        std::strcat(msg, "\n(Press " FK_F6 " for corner parameters)");
+        std::strcat(msg, "\n(Press F6 for corner parameters)");
         fkeymask = 1U << 6;     // F6 exits
     }
     full_screen_reset_scrolling();
