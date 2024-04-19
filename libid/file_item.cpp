@@ -690,12 +690,7 @@ static int check_gfe_key(int curkey, int choice)
 // subrtn of get_file_entry, separated so that storage gets freed up
 static long gfe_choose_entry(gfe_type type, char const *title, char const *filename, char *entryname)
 {
-#ifdef XFRACT
-    char const *o_instr = "Press " FK_F6 " to select file, " FK_F2 " for details, " FK_F4 " to toggle sort ";
-    // keep the above line length < 80 characters
-#else
-    char const *o_instr = "Press " FK_F6 " to select different file, " FK_F2 " for details, " FK_F4 " to toggle sort ";
-#endif
+    char const *o_instr = "Press F6 to select different file, F2 for details, F4 to toggle sort ";
     int numentries;
     char buf[101];
     entryinfo storage[MAXENTRIES + 1];
