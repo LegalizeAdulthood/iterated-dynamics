@@ -1,15 +1,5 @@
 #pragma once
 
-// TODO: make sure X Window System font can render these chars
-#define UPARR "\x18"
-#define DNARR "\x19"
-#define RTARR "\x1A"
-#define LTARR "\x1B"
-#define UPARR1 "\x18"
-#define DNARR1 "\x19"
-#define RTARR1 "\x1A"
-#define LTARR1 "\x1B"
-
 // Values returned by driver_get_key()
 enum
 {

@@ -564,8 +564,7 @@ static int check_gfe_key(int curkey, int choice)
         driver_put_string(-1, 0, C_GENERAL_LO,
             "\n"
             "\n"
-            " Use " UPARR1 ", " DNARR1 ", " RTARR1 ", " LTARR1
-                ", PgUp, PgDown, Home, and End to scroll text\n"
+            " Use arrow keys, <PageUp>, <PageDown>, <Home>, and <End> to scroll text\n"
             "Any other key to return to selection list");
 
         int top_line = 0;

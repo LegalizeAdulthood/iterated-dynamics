@@ -575,7 +575,7 @@ int fullscreen_prompt(      // full-screen prompting routine
     if (numprompts > 1)
     {
         putstringcenter(instrrow++, 0, 80, C_PROMPT_BKGRD,
-                        "Use " UPARR1 " and " DNARR1 " to select values to change");
+                        "Use <Up> and <Down> to select values to change");
     }
     putstringcenter(instrrow+1, 0, 80, C_PROMPT_BKGRD,
             (g_help_mode > help_labels::HELP_INDEX) ?
@@ -611,7 +611,7 @@ int fullscreen_prompt(      // full-screen prompting routine
         {
             putstringcenter(instrrow, 0, 80, C_PROMPT_BKGRD,
                 (curtype == 'l') ?
-                "Use " LTARR1 " or " RTARR1 " to change value of selected field"
+                "Use <Left> or <Right> to change value of selected field"
                 : "Type in replacement value for selected field");
         }
         else
