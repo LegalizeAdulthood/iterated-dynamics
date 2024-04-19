@@ -2251,9 +2251,8 @@ static bool functionOK(FRACTAL_INFO const *info, int numfn)
 static bool typeOK(FRACTAL_INFO const *info, ext_blk_3 const *blk_3_info)
 {
     int numfn;
-    if ((g_fractal_type == fractal_type::FORMULA || g_fractal_type == fractal_type::FFORMULA)
-        && (info->fractal_type == static_cast<int>(fractal_type::FORMULA)
-            || info->fractal_type == static_cast<int>(fractal_type::FFORMULA)))
+    if ((g_fractal_type == fractal_type::FORMULA || g_fractal_type == fractal_type::FFORMULA) &&
+        (info->fractal_type == +fractal_type::FORMULA || info->fractal_type == +fractal_type::FFORMULA))
     {
         if (!stricmp(blk_3_info->form_name, g_formula_name.c_str()))
         {
@@ -2272,8 +2271,7 @@ static bool typeOK(FRACTAL_INFO const *info, ext_blk_3 const *blk_3_info)
             return false; // two formulas but names don't match
         }
     }
-    else if (info->fractal_type == static_cast<int>(g_fractal_type)
-        || info->fractal_type == static_cast<int>(g_cur_fractal_specific->tofloat))
+    else if (info->fractal_type == +g_fractal_type || info->fractal_type == +g_cur_fractal_specific->tofloat)
     {
         numfn = (g_cur_fractal_specific->flags >> 6) & 7;
         if (numfn > 0)
