@@ -11,10 +11,13 @@ jobs:
     strategy:
       matrix:
         preset: [ debug, release ]
+        # macos-latest is disabled for now
+        os: [ ubuntu-latest, windows-latest ]
         include:
-          - { os: ubuntu-latest, install: install }
-          - { os: windows-latest, install: INSTALL }
-          # macos-latest is disabled for now
+          - install: install
+            os: ubuntu-latest
+          - install: INSTALL
+            os: windows-latest
 
     runs-on: ${{matrix.os}}
 
