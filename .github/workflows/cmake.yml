@@ -10,6 +10,7 @@ jobs:
   build:
     strategy:
       matrix:
+        preset: [ debug, release ]
         include:
           - { os: ubuntu-latest, install: install }
           - { os: windows-latest, install: INSTALL }
@@ -34,10 +35,10 @@ jobs:
           core.exportVariable('ACTIONS_RUNTIME_TOKEN', process.env.ACTIONS_RUNTIME_TOKEN || '');
 
     - name: Run Workflow
-      run: cmake --workflow --preset default
+      run: cmake --workflow --preset ${{matrix.preset}}
 
     - name: Build install target
-      run: cmake --build --preset default --target ${{matrix.install}} 
+      run: cmake --build --preset ${{matrix.preset}} --target ${{matrix.install}} 
 
   cppcheck:
     name: cppcheck
