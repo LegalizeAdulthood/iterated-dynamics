@@ -14,6 +14,7 @@
 
 #include <cstdio>
 #include <cstdlib>
+#include <cstring>
 
 /*
         get_toggles2() is similar to get_toggles, invoked by 'y' key
@@ -81,7 +82,7 @@ int get_toggles2()
             char buff[80]{};
             std::sprintf(buff, "%-1.15lg", g_inversion[i]);
             buff[std::size(uvalues[k].uval.sval)-1] = 0;
-            strcpy(uvalues[k].uval.sval, buff);
+            std::strcpy(uvalues[k].uval.sval, buff);
         }
     }
     choices[++k] = "  (use fixed radius & center when zooming)";
