@@ -48,7 +48,7 @@ jobs:
       run: cmake --build --preset ${{matrix.preset}} --target ${{matrix.install}}
 
     - name: Create packages
-      run: cmake --preset ${{matrix.preset}} --target ${{matrix.package}}
+      run: cmake --build --preset ${{matrix.preset}} --target ${{matrix.package}}
 
   cppcheck:
     name: cppcheck
