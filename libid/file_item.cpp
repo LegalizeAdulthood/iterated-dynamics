@@ -693,7 +693,7 @@ static long gfe_choose_entry(gfe_type type, char const *title, char const *filen
     char const *o_instr = "Press F6 to select different file, F2 for details, F4 to toggle sort ";
     int numentries;
     char buf[101];
-    entryinfo storage[MAXENTRIES + 1];
+    entryinfo storage[MAXENTRIES + 1]{};
     entryinfo *choices[MAXENTRIES + 1] = { nullptr };
     int attributes[MAXENTRIES + 1] = { 0 };
     void (*formatitem)(int, char *);
