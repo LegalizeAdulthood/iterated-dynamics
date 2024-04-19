@@ -248,6 +248,11 @@ enum class direction
     South,
     West
 };
+inline int operator+(direction value)
+{
+    return static_cast<int>(value);
+}
+
 static direction going_to;
 static int trail_row = 0;
 static int trail_col = 0;
@@ -3295,7 +3300,7 @@ static int potential(double mag, long iterations)
 
 inline direction advance(direction dir, int increment)
 {
-    return static_cast<direction>((static_cast<int>(dir) + increment) % 4);
+    return static_cast<direction>((+dir + increment) % 4);
 }
 
 inline void advance_match(direction &coming_from)
