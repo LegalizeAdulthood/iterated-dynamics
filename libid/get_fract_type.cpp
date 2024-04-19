@@ -129,7 +129,7 @@ static fractal_type select_fracttype(fractal_type t)
         {
             if (g_julibrot)
             {
-                if (!((g_fractal_specific[i].flags & OKJB) && *g_fractal_specific[i].name != '*'))
+                if (!(bit_set(g_fractal_specific[i].flags, fractal_flags::OKJB) && *g_fractal_specific[i].name != '*'))
                 {
                     continue;
                 }
@@ -628,7 +628,7 @@ gfp_top:
         numparams = lastparm - firstparm;
     }
 
-    numtrig = (g_cur_fractal_specific->flags >> 6) & 7;
+    numtrig = (+g_cur_fractal_specific->flags >> 6) & 7;
     if (curtype == fractal_type::FORMULA || curtype == fractal_type::FFORMULA)
     {
         numtrig = g_max_function;
@@ -655,9 +655,9 @@ gfp_top:
     }
 
     orbit_bailout = g_cur_fractal_specific->orbit_bailout;
-    if (orbit_bailout != 0
-        && g_cur_fractal_specific->calctype == standard_fractal
-        && (g_cur_fractal_specific->flags & BAILTEST))
+    if (orbit_bailout != 0                                      //
+        && g_cur_fractal_specific->calctype == standard_fractal //
+        && bit_set(g_cur_fractal_specific->flags, fractal_flags::BAILTEST))
     {
         paramvalues[promptnum].type = 'l';
         paramvalues[promptnum].uval.ch.val  = static_cast<int>(g_bail_out_test);
@@ -872,9 +872,9 @@ gfp_top:
     }
 
     orbit_bailout = g_cur_fractal_specific->orbit_bailout;
-    if (orbit_bailout != 0
-        && g_cur_fractal_specific->calctype == standard_fractal
-        && (g_cur_fractal_specific->flags & BAILTEST))
+    if (orbit_bailout != 0                                      //
+        && g_cur_fractal_specific->calctype == standard_fractal //
+        && bit_set(g_cur_fractal_specific->flags, fractal_flags::BAILTEST))
     {
         if (paramvalues[promptnum].uval.ch.val != static_cast<int>(g_bail_out_test))
         {

@@ -404,10 +404,10 @@ int read_overlay()      // read overlay/3D files, if reqr'd
 
     if (read_info.version > 1)
     {
-        if ((g_display_3d == display_3d_modes::NONE)
-            && (read_info.version <= 4
-                || read_info.display_3d > 0
-                || (g_cur_fractal_specific->flags & PARMS3D) != 0))
+        if (g_display_3d == display_3d_modes::NONE //
+            && (read_info.version <= 4             //
+                   || read_info.display_3d > 0     //
+                   || bit_set(g_cur_fractal_specific->flags, fractal_flags::PARMS3D)))
         {
             for (int i = 0; i < 16; i++)
             {
@@ -2273,7 +2273,7 @@ static bool typeOK(FRACTAL_INFO const *info, ext_blk_3 const *blk_3_info)
     }
     else if (info->fractal_type == +g_fractal_type || info->fractal_type == +g_cur_fractal_specific->tofloat)
     {
-        numfn = (g_cur_fractal_specific->flags >> 6) & 7;
+        numfn = (+g_cur_fractal_specific->flags >> 6) & 7;
         if (numfn > 0)
         {
             return functionOK(info, numfn);

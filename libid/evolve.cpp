@@ -443,7 +443,7 @@ int get_the_rest()
 
     copy_genes_from_bank(gene);
 
-    numtrig = (g_cur_fractal_specific->flags >> 6) & 7;
+    numtrig = (+g_cur_fractal_specific->flags >> 6) & 7;
     if (g_fractal_type == fractal_type::FORMULA || g_fractal_type == fractal_type::FFORMULA)
     {
         numtrig = g_max_function;
@@ -461,8 +461,8 @@ choose_vars_restart:
         choices.list(gene[num].name, 7, 7, evolvmodes, static_cast<int>(gene[num].mutate));
     }
 
-    if (g_cur_fractal_specific->calctype == standard_fractal
-        && (g_cur_fractal_specific->flags & BAILTEST))
+    if (g_cur_fractal_specific->calctype == standard_fractal &&
+        bit_set(g_cur_fractal_specific->flags, fractal_flags::BAILTEST))
     {
         choices.list(gene[NUM_GENES - 1].name, 7, 7, evolvmodes, static_cast<int>(gene[NUM_GENES - 1].mutate));
     }
@@ -511,8 +511,8 @@ choose_vars_restart:
         gene[num].mutate = static_cast<variations>(choices.read_list());
     }
 
-    if (g_cur_fractal_specific->calctype == standard_fractal
-        && (g_cur_fractal_specific->flags & BAILTEST))
+    if (g_cur_fractal_specific->calctype == standard_fractal &&
+        bit_set(g_cur_fractal_specific->flags, fractal_flags::BAILTEST))
     {
         gene[NUM_GENES - 1].mutate = static_cast<variations>(choices.read_list());
     }

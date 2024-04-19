@@ -395,7 +395,7 @@ main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bo
         }
         break;
     case ID_KEY_CTL_HOME:               // Ctrl-home
-        if (g_box_count && (g_cur_fractal_specific->flags & NOROTATE) == 0)
+        if (g_box_count && bit_clear(g_cur_fractal_specific->flags, fractal_flags::NOROTATE))
         {
             i = key_count(ID_KEY_CTL_HOME);
             if ((g_zoom_box_skew -= 0.02 * i) < -0.48)
@@ -405,7 +405,7 @@ main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bo
         }
         break;
     case ID_KEY_CTL_END:                // Ctrl-end
-        if (g_box_count && (g_cur_fractal_specific->flags & NOROTATE) == 0)
+        if (g_box_count && bit_clear(g_cur_fractal_specific->flags, fractal_flags::NOROTATE))
         {
             i = key_count(ID_KEY_CTL_END);
             if ((g_zoom_box_skew += 0.02 * i) > 0.48)
@@ -490,13 +490,13 @@ main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bo
         }
         break;
     case ID_KEY_CTL_MINUS:              // Ctrl-kpad-
-        if (g_box_count && (g_cur_fractal_specific->flags & NOROTATE) == 0)
+        if (g_box_count && bit_clear(g_cur_fractal_specific->flags, fractal_flags::NOROTATE))
         {
             g_zoom_box_rotation += key_count(ID_KEY_CTL_MINUS);
         }
         break;
     case ID_KEY_CTL_PLUS:               // Ctrl-kpad+
-        if (g_box_count && (g_cur_fractal_specific->flags & NOROTATE) == 0)
+        if (g_box_count && bit_clear(g_cur_fractal_specific->flags, fractal_flags::NOROTATE))
         {
             g_zoom_box_rotation -= key_count(ID_KEY_CTL_PLUS);
         }

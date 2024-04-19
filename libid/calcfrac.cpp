@@ -1037,12 +1037,11 @@ static void perform_worklist()
             }
         }
     }
-    if (g_std_calc_mode == 'b' && (g_cur_fractal_specific->flags & NOTRACE))
+    if (g_std_calc_mode == 'b' && bit_set(g_cur_fractal_specific->flags, fractal_flags::NOTRACE))
     {
         g_std_calc_mode = '1';
-
     }
-    if (g_std_calc_mode == 'g' && (g_cur_fractal_specific->flags & NOGUESS))
+    if (g_std_calc_mode == 'g' && bit_set(g_cur_fractal_specific->flags, fractal_flags::NOGUESS))
     {
         g_std_calc_mode = '1';
     }

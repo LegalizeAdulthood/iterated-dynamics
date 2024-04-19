@@ -22,6 +22,56 @@ struct MOREPARAMS
     double   paramvalue[MAX_PARAMS-4];  // default parameter values
 };
 
+// bitmask values for fractalspecific flags
+enum class fractal_flags
+{
+    NONE = 0,        // no flags
+    NOZOOM = 1,      // zoombox not allowed at all
+    NOGUESS = 2,     // solid guessing not allowed
+    NOTRACE = 4,     // boundary tracing not allowed
+    NOROTATE = 8,    // zoombox rotate/stretch not allowed
+    NORESUME = 16,   // can't interrupt and resume
+    INFCALC = 32,    // this type calculates forever
+    TRIG1 = 64,      // number of trig functions in formula
+    TRIG2 = 128,     //
+    TRIG3 = 192,     //
+    TRIG4 = 256,     //
+    PARMS3D = 1024,  // uses 3d parameters
+    OKJB = 2048,     // works with Julibrot
+    MORE = 4096,     // more than 4 parms
+    BAILTEST = 8192, // can use different bailout tests
+    BF_MATH = 16384, // supports arbitrary precision
+    LD_MATH = 32768  // supports long double
+};
+inline int operator+(fractal_flags value)
+{
+    return static_cast<int>(value);
+}
+inline fractal_flags operator|(fractal_flags lhs, fractal_flags rhs)
+{
+    return static_cast<fractal_flags>(+lhs | +rhs);
+}
+inline fractal_flags operator&(fractal_flags lhs, fractal_flags rhs)
+{
+    return static_cast<fractal_flags>(+lhs & +rhs);
+}
+inline fractal_flags operator^(fractal_flags lhs, fractal_flags rhs)
+{
+    return static_cast<fractal_flags>(+lhs ^ +rhs);
+}
+inline fractal_flags operator~(fractal_flags lhs)
+{
+    return static_cast<fractal_flags>(~+lhs);
+}
+inline bool bit_set(fractal_flags value, fractal_flags bit)
+{
+    return (value & bit) == bit;
+}
+inline bool bit_clear(fractal_flags value, fractal_flags bit)
+{
+    return (value & bit) == fractal_flags::NONE;
+}
+
 struct fractalspecificstuff
 {
     char const  *name;                  // name of the fractal
@@ -30,7 +80,7 @@ struct fractalspecificstuff
     double paramvalue[4];               // default parameter values
     help_labels helptext;               // helpdefs.h HT_xxxx, -1 for none
     help_labels helpformula;            // helpdefs.h HF_xxxx, -1 for none
-    unsigned flags;                     // constraints, bits defined below
+    fractal_flags flags;                // constraints, bits defined below
     float xmin;                         // default XMIN corner
     float xmax;                         // default XMAX corner
     float ymin;                         // default YMIN corner
@@ -57,27 +107,6 @@ struct fractalspecificstuff
     bool (*per_image)();                // once-per-image setup
     int (*calctype)();                  // name of main fractal function
     int orbit_bailout;                  // usual bailout value for orbit calc
-};
-
-// bitmask values for fractalspecific flags
-enum
-{
-    NOZOOM = 1,      // zoombox not allowed at all
-    NOGUESS = 2,     // solid guessing not allowed
-    NOTRACE = 4,     // boundary tracing not allowed
-    NOROTATE = 8,    // zoombox rotate/stretch not allowed
-    NORESUME = 16,   // can't interrupt and resume
-    INFCALC = 32,    // this type calculates forever
-    TRIG1 = 64,      // number of trig functions in formula
-    TRIG2 = 128,     //
-    TRIG3 = 192,     //
-    TRIG4 = 256,     //
-    PARMS3D = 1024,  // uses 3d parameters
-    OKJB = 2048,     // works with Julibrot
-    MORE = 4096,     // more than 4 parms
-    BAILTEST = 8192, // can use different bailout tests
-    BF_MATH = 16384, // supports arbitrary precision
-    LD_MATH = 32768  // supports long double
 };
 
 extern AlternateMath         g_alternate_math[];    // alternate math function pointers

@@ -21,8 +21,8 @@ void flip_image(int key)
     int ixhalf, iyhalf, tempdot;
 
     // fractal must be rotate-able and be finished
-    if ((g_cur_fractal_specific->flags&NOROTATE) != 0
-        || g_calc_status == calc_status_value::IN_PROGRESS
+    if (bit_set(g_cur_fractal_specific->flags, fractal_flags::NOROTATE) //
+        || g_calc_status == calc_status_value::IN_PROGRESS              //
         || g_calc_status == calc_status_value::RESUMABLE)
     {
         return;

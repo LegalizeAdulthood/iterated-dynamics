@@ -2414,7 +2414,7 @@ int funny_glasses_call(int (*calc)())
             driver_set_video_mode(&g_video_entry);
         }
         g_which_image = stereo_images::BLUE;
-        if (g_cur_fractal_specific->flags & INFCALC)
+        if (bit_set(g_cur_fractal_specific->flags, fractal_flags::INFCALC))
         {
             g_cur_fractal_specific->per_image(); // reset for 2nd image
         }

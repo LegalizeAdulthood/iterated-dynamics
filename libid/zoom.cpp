@@ -761,7 +761,7 @@ static int check_pan() // return 0 if can't, alignment requirement if can
     {
         return 1; // btm, align on any pixel
     }
-    if (g_std_calc_mode != 'g' || (g_cur_fractal_specific->flags&NOGUESS))
+    if (g_std_calc_mode != 'g' || bit_set(g_cur_fractal_specific->flags, fractal_flags::NOGUESS))
     {
         if (g_std_calc_mode == '2' || g_std_calc_mode == '3')   // align on even pixel for 2pass
         {
