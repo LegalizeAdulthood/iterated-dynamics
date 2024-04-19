@@ -46,22 +46,40 @@
       "toolchainFile": "${sourceDir}/vcpkg/scripts/buildsystems/vcpkg.cmake"
     },
     {
+      "name": "debug-config",
+      "hidden": true,
+      "description": "Configure for Debug build",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug"
+      }
+    },
+    {
+      "name": "release-config",
+      "hidden": true,
+      "description": "Configure for Release build",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release"
+      }
+    },
+    {
       "name": "default",
       "displayName": "Configure with default settings",
       "inherits": [ "sibling-build-preset", "project-name-preset", "vcpkg" ]
     },
     {
+      "name": "debug",
+      "displayName": "Configure with Debug settings",
+      "inherits": [ "default", "debug-config" ]
+    },
+    {
+      "name": "release",
+      "displayName": "Configure with Release settings",
+      "inherits": [ "default", "release-config" ]
+    },
+    {
       "name": "cppcheck",
       "displayName": "Configure for use with cppcheck",
       "inherits": [ "sibling-build-preset", "compile-commands", "no-testing", "vcpkg" ]
-    },
-    {
-      "name": "ci-linux",
-      "displayName": "Configure for use with CI build on linux",
-      "inherits": [ "sibling-build-preset", "compile-commands" ],
-      "cacheVariables": {
-        "CMAKE_BUILD_TYPE": "Debug"
-      }
     }
   ],
   "buildPresets": [
@@ -71,14 +89,16 @@
       "configurePreset": "default"
     },
     {
-      "name": "ci-linux",
-      "displayName": "Build with CI linux settings",
-      "configurePreset": "ci-linux",
-      "configuration": "Debug",
-      "nativeToolOptions": [
-        "-k"
-      ],
-      "verbose": true
+      "name": "debug",
+      "displayName": "Build with Debug settings",
+      "configurePreset": "debug",
+      "configuration": "Debug"
+    },
+    {
+      "name": "release",
+      "displayName": "Build with Release settings",
+      "configurePreset": "release",
+      "configuration": "Release"
     }
   ],
   "testPresets": [
@@ -87,20 +107,28 @@
       "hidden": true,
       "output": {
         "outputOnFailure": true
-      },
-      "configuration": "Debug"
+      }
     },
     {
       "name": "default",
       "displayName": "Test with default settings",
+      "inherits": [ "settings" ],
       "configurePreset": "default",
-      "inherits": [ "settings" ]
+      "configuration": "Debug"
     },
     {
-      "name": "ci-linux",
-      "displayName": "Test with CI linux settings",
-      "configurePreset": "ci-linux",
-      "inherits": [ "settings" ]
+      "name": "debug",
+      "displayName": "Test with Debug settings",
+      "inherits": [ "settings" ],
+      "configurePreset": "debug",
+      "configuration": "Debug"
+    },
+    {
+      "name": "release",
+      "displayName": "Test with Release settings",
+      "inherits": [ "settings" ],
+      "configurePreset": "release",
+      "configuration": "Release"
     }
   ],
   "workflowPresets": [
@@ -123,20 +151,38 @@
       ]
     },
     {
-      "name": "ci-linux",
-      "displayName": "Workflow with CI linux settings: configure, build and test",
+      "name": "debug",
+      "displayName": "Workflow with Debug settings: configure, build and test",
       "steps": [
         {
           "type": "configure",
-          "name": "ci-linux"
+          "name": "debug"
         },
         {
           "type": "build",
-          "name": "ci-linux"
+          "name": "debug"
         },
         {
           "type": "test",
-          "name": "ci-linux"
+          "name": "debug"
+        }
+      ]
+    },
+    {
+      "name": "release",
+      "displayName": "Workflow with Release settings: configure, build and test",
+      "steps": [
+        {
+          "type": "configure",
+          "name": "release"
+        },
+        {
+          "type": "build",
+          "name": "release"
+        },
+        {
+          "type": "test",
+          "name": "release"
         }
       ]
     }
