@@ -367,7 +367,7 @@ static void display_page(char const *title, char const *text, unsigned text_len,
                          int page, int num_pages, int start_margin,
                          int *num_link, LINK *link)
 {
-    char temp[9];
+    char temp[20];
 
     helptitle();
     helpinstr();
