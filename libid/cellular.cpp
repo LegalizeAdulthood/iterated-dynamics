@@ -123,7 +123,7 @@ int cellular()
     S16 t, t2;
     S32 randparam;
     double n;
-    char buf[30];
+    char buf[512];
 
     set_Cellular_palette();
 
