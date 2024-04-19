@@ -17,15 +17,15 @@ struct AlternateMath
 
 struct MOREPARAMS
 {
-    fractal_type type;                      // index in fractalname of the fractal
-    char const *param[MAX_PARAMS-4];     // name of the parameters
-    double   paramvalue[MAX_PARAMS-4];   // default parameter values
+    fractal_type type;                  // index in fractalname of the fractal
+    char const *param[MAX_PARAMS-4];    // name of the parameters
+    double   paramvalue[MAX_PARAMS-4];  // default parameter values
 };
 
 struct fractalspecificstuff
 {
     char const  *name;                  // name of the fractal
-                                        // (leading "*" supresses name display)
+                                        // (leading "*" suppresses name display)
     char const  *param[4];              // name of the parameters
     double paramvalue[4];               // default parameter values
     help_labels helptext;               // helpdefs.h HT_xxxx, -1 for none
@@ -35,7 +35,7 @@ struct fractalspecificstuff
     float xmax;                         // default XMAX corner
     float ymin;                         // default YMIN corner
     float ymax;                         // default YMAX corner
-    int   isinteger;                    // 1 if integerfractal, 0 otherwise
+    int   isinteger;                    // 1 if integer fractal, 0 otherwise
     fractal_type tojulia;               // mandel-to-julia switch
     fractal_type tomandel;              // julia-to-mandel switch
     fractal_type tofloat;               // integer-to-floating switch
