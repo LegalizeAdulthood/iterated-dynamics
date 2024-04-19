@@ -30,10 +30,6 @@
 
 namespace fs = std::filesystem;
 
-#ifndef TEST // kills all those assert macros in production version
-#define NDEBUG
-#endif
-
 #define MAX_HIST           16        // number of pages we'll remember
 #define ACTION_CALL         0        // values returned by help_topic()
 #define ACTION_PREV         1
