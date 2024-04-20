@@ -37,3 +37,4 @@ add_executable(id WIN32
     win_main.cpp)
 target_link_libraries(id PUBLIC libid)
 install(TARGETS id DESTINATION .)
+set_property(INSTALL id.exe PROPERTY CPACK_START_MENU_SHORTCUTS "Iterated Dynamics")
