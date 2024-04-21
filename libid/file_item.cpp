@@ -762,7 +762,7 @@ retry:
     return choices[i]->point;
 }
 
-long get_file_entry(gfe_type type, char const *title, char const *fmask, char *filename, char *entryname)
+static long get_file_entry(gfe_type type, char const *title, char const *fmask, char *filename, char *entryname)
 {
     // Formula, LSystem, etc type structure, select from file
     // containing definitions in the form    name { ... }
@@ -829,18 +829,6 @@ long get_file_entry(gfe_type type, char const *title, char const *fmask, char *f
             return entry_pointer;
         }
     }
-}
-
-long get_file_entry(gfe_type type, char const *title, char const *fmask,
-    std::string &filename, char *entryname)
-{
-    char buf[FILE_MAX_PATH];
-    assert(filename.size() < FILE_MAX_PATH);
-    std::strncpy(buf, filename.c_str(), FILE_MAX_PATH);
-    buf[FILE_MAX_PATH - 1] = 0;
-    long const result = get_file_entry(type, title, fmask, buf, entryname);
-    filename = buf;
-    return result;
 }
 
 long get_file_entry(gfe_type type, char const *title, char const *fmask,
