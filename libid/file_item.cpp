@@ -682,7 +682,7 @@ static int check_gfe_key(int curkey, int choice)
     return 0;
 }
 
-static long gfe_choose_entry(gfe_type type, char const *title, char const *filename, char *entryname)
+static long gfe_choose_entry(gfe_type type, char const *title, const std::string &filename, char *entryname)
 {
     char const *o_instr = "Press F6 to select different file, F2 for details, F4 to toggle sort ";
     int numentries;
