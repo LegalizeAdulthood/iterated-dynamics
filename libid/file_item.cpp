@@ -761,7 +761,7 @@ retry:
     return choices[i]->point;
 }
 
-static long get_file_entry(gfe_type type, char const *title, char const *fmask, char *filename, char *entryname)
+static long get_file_entry(gfe_type type, char const *title, char const *fmask, std::string &filename, char *entryname)
 {
     // Formula, LSystem, etc type structure, select from file
     // containing definitions in the form    name { ... }
@@ -773,13 +773,13 @@ static long get_file_entry(gfe_type type, char const *title, char const *fmask, 
         firsttry = false;
         // binary mode used here - it is more work, but much faster,
         //     especially when ftell or fgetpos is used
-        while (newfile || (gfe_file = std::fopen(filename, "rb")) == nullptr)
+        while (newfile || (gfe_file = std::fopen(filename.c_str(), "rb")) == nullptr)
         {
             char buf[60];
             newfile = false;
             if (firsttry)
             {
-                stopmsg(STOPMSG_NONE, std::string{"Can't find "} + filename);
+                stopmsg(STOPMSG_NONE, "Can't find " + filename);
             }
             std::sprintf(buf, "Select %s File", title);
             if (getafilename(buf, fmask, filename))
@@ -833,15 +833,10 @@ static long get_file_entry(gfe_type type, char const *title, char const *fmask, 
 long get_file_entry(gfe_type type, char const *title, char const *fmask,
     std::string &filename, std::string &entryname)
 {
-    char buf[FILE_MAX_PATH];
-    assert(filename.size() < FILE_MAX_PATH);
-    std::strncpy(buf, filename.c_str(), FILE_MAX_PATH);
-    buf[FILE_MAX_PATH - 1] = 0;
     char name_buf[ITEM_NAME_LEN];
     std::strncpy(name_buf, entryname.c_str(), ITEM_NAME_LEN);
     name_buf[ITEM_NAME_LEN - 1] = 0;
-    long const result = get_file_entry(type, title, fmask, buf, name_buf);
-    filename = buf;
+    long const result = get_file_entry(type, title, fmask, filename, name_buf);
     entryname = name_buf;
     return result;
 }
