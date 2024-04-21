@@ -451,14 +451,14 @@ static void initvars_restart()          // <ins> key init
     g_debug_flag = debug_flags::none;      // debugging flag(s) are off
     g_timer_flag = false;                  // timer flags are off
     g_formula_filename = "id.frm";      // default formula file
-    g_formula_name = "";
+    g_formula_name.clear();
     g_l_system_filename = "id.l";
-    g_l_system_name = "";
+    g_l_system_name.clear();
     g_command_file = "id.par";
-    g_command_name = "";
+    g_command_name.clear();
     clear_command_comments();
     g_ifs_filename = "id.ifs";
-    g_ifs_name = "";
+    g_ifs_name.clear();
     reset_ifs_defn();
     g_random_seed_flag = false;                      // not a fixed srand() seed
     g_random_seed = init_rseed;
