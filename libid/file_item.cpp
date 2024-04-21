@@ -682,7 +682,6 @@ static int check_gfe_key(int curkey, int choice)
     return 0;
 }
 
-// subrtn of get_file_entry, separated so that storage gets freed up
 static long gfe_choose_entry(gfe_type type, char const *title, char const *filename, char *entryname)
 {
     char const *o_instr = "Press F6 to select different file, F2 for details, F4 to toggle sort ";
