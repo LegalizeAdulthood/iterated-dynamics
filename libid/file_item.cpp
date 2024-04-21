@@ -39,7 +39,6 @@ bool find_file_item(char *filename, char const *itemname, std::FILE **fileptr, g
 {
     std::FILE *infile = nullptr;
     bool found = false;
-    char parsearchname[ITEM_NAME_LEN + 6];
     char drive[FILE_MAX_DRIVE];
     char dir[FILE_MAX_DIR];
     char fname[FILE_MAX_FNAME];
@@ -86,33 +85,30 @@ bool find_file_item(char *filename, char const *itemname, std::FILE **fileptr, g
         }
     }
 
+    std::string par_search_name;
     switch (itemtype)
     {
     case gfe_type::FORMULA:
-        std::strcpy(parsearchname, "frm:");
-        std::strcat(parsearchname, itemname);
-        parsearchname[ITEM_NAME_LEN + 5] = (char) 0; //safety
+        par_search_name = "frm:";
+        par_search_name += itemname;
         std::strcpy(defaultextension, ".frm");
         split_drive_dir(g_search_for.frm, drive, dir);
         break;
     case gfe_type::L_SYSTEM:
-        std::strcpy(parsearchname, "lsys:");
-        std::strcat(parsearchname, itemname);
-        parsearchname[ITEM_NAME_LEN + 5] = (char) 0; //safety
+        par_search_name = "lsys:";
+        par_search_name += itemname;
         std::strcpy(defaultextension, ".l");
         split_drive_dir(g_search_for.lsys, drive, dir);
         break;
     case gfe_type::IFS:
-        std::strcpy(parsearchname, "ifs:");
-        std::strcat(parsearchname, itemname);
-        parsearchname[ITEM_NAME_LEN + 5] = (char) 0; //safety
+        par_search_name = "ifs:";
+        par_search_name += itemname;
         std::strcpy(defaultextension, ".ifs");
         split_drive_dir(g_search_for.ifs, drive, dir);
         break;
     case gfe_type::PARM:
     default:
-        std::strcpy(parsearchname, itemname);
-        parsearchname[ITEM_NAME_LEN + 5] = (char) 0; //safety
+        par_search_name = itemname;
         std::strcpy(defaultextension, ".par");
         split_drive_dir(g_search_for.par, drive, dir);
         break;
@@ -123,7 +119,7 @@ bool find_file_item(char *filename, char const *itemname, std::FILE **fileptr, g
         infile = std::fopen(g_command_file.c_str(), "rb");
         if (infile != nullptr)
         {
-            if (search_for_entry(infile, parsearchname))
+            if (search_for_entry(infile, par_search_name.c_str()))
             {
                 std::strcpy(filename, g_command_file.c_str());
                 found = true;
