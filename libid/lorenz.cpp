@@ -2451,7 +2451,7 @@ static int ifs3dfloat()
     std::FILE *fp;
     int color;
 
-    double newx, newy, newz, r, sum;
+    double newx, newy, newz, r;
 
     int k;
     int ret;
@@ -2496,15 +2496,12 @@ static int ifs3dfloat()
         r /= RAND_MAX;
 
         // pick which iterated function to execute, weighted by probability
-        sum = g_ifs_definition[12]; // [0][12]
-        k = 0;
-        while (sum < r && ++k < g_num_affine_transforms*NUM_IFS_3D_PARAMS)
+        double sum = 0.0;
+        constexpr int prob_index = NUM_IFS_3D_PARAMS - 1; // last parameter is probability
+        for (k = 0; sum < r && k < g_num_affine_transforms; ++k)
         {
-            sum += g_ifs_definition[k*NUM_IFS_3D_PARAMS+12];
-            if (g_ifs_definition[(k+1)*NUM_IFS_3D_PARAMS+12] == 0)
-            {
-                break; // for safety
-            }
+
+            sum += g_ifs_definition[k * NUM_IFS_3D_PARAMS + prob_index];
         }
 
         // calculate image of last point under selected iterated function
