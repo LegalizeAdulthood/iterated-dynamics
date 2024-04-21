@@ -73,17 +73,7 @@ int ifsload()                   // read in IFS parameters
     }
 
     strlwr(buf);
-    bufptr = &buf[0];
-    int rowsize = NUM_IFS_PARAMS;
-    while (*bufptr)
-    {
-        if (std::strncmp(bufptr, "(3d)", 4) == 0)
-        {
-            g_ifs_type = true;
-            rowsize = NUM_IFS_3D_PARAMS;
-        }
-        ++bufptr;
-    }
+    int const row_size = std::strstr(buf, "(3d)") != nullptr ? NUM_IFS_3D_PARAMS : NUM_IFS_PARAMS;
 
     int ret = 0;
     int i = ret;
@@ -96,7 +86,7 @@ int ifsload()                   // read in IFS parameters
             break;
         }
         g_ifs_definition.push_back(value);
-        if (++i >= NUM_IFS_FUNCTIONS*rowsize)
+        if (++i >= NUM_IFS_FUNCTIONS*row_size)
         {
             stopmsg(STOPMSG_NONE, "IFS definition has too many lines");
             ret = -1;
@@ -114,7 +104,7 @@ int ifsload()                   // read in IFS parameters
         }
     }
 
-    if ((i % rowsize) != 0 || (bufptr && *bufptr != '}'))
+    if ((i % row_size) != 0 || (bufptr && *bufptr != '}'))
     {
         stopmsg(STOPMSG_NONE, "invalid IFS definition");
         ret = -1;
@@ -128,7 +118,7 @@ int ifsload()                   // read in IFS parameters
 
     if (ret == 0)
     {
-        g_num_affine_transforms = i/rowsize;
+        g_num_affine_transforms = i/row_size;
     }
     return ret;
 }
