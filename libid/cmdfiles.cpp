@@ -183,17 +183,17 @@ static bool initcorners = false;
 static bool initparams = false;
 fractalspecificstuff *g_cur_fractal_specific = nullptr;
 
-std::string g_formula_filename;               // file to find (type=)formulas in
-std::string g_formula_name;                   // Name of the Formula (if not null)
-std::string g_l_system_filename;                  // file to find (type=)L-System's in
-std::string g_l_system_name;                      // Name of L-System
-std::string g_command_file;                // file to find command sets in
-std::string g_command_name;                // Name of Command set
-std::string g_ifs_filename;                // file to find (type=)IFS in
-std::string g_ifs_name;                    // Name of the IFS def'n (if not null)
-id::SearchPath g_search_for;
-std::vector<float> g_ifs_definition;            // ifs parameters
-bool g_ifs_type = false;                  // false=2d, true=3d
+std::string g_formula_filename;      // file to find (type=)formulas in
+std::string g_formula_name;          // Name of the Formula (if not null)
+std::string g_l_system_filename;     // file to find (type=)L-System's in
+std::string g_l_system_name;         // Name of L-System
+std::string g_command_file;          // file to find command sets in
+std::string g_command_name;          // Name of Command set
+std::string g_ifs_filename;          // file to find (type=)IFS in
+std::string g_ifs_name;              // Name of the IFS def'n (if not null)
+id::SearchPath g_search_for;         //
+std::vector<float> g_ifs_definition; // ifs parameters
+bool g_ifs_type = false;             // false=2d, true=3d
 
 BYTE g_text_color[] =
 {
