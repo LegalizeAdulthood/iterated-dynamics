@@ -682,7 +682,7 @@ static int check_gfe_key(int curkey, int choice)
     return 0;
 }
 
-static long gfe_choose_entry(gfe_type type, char const *title, const std::string &filename, char *entryname)
+static long gfe_choose_entry(gfe_type type, char const *title, const std::string &filename, std::string &entryname)
 {
     char const *o_instr = "Press F6 to select different file, F2 for details, F4 to toggle sort ";
     int numentries;
@@ -726,7 +726,7 @@ retry:
         std::strcat(instr, "on");
     }
 
-    std::strcpy(buf, entryname); // preset to last choice made
+    std::strcpy(buf, entryname.c_str()); // preset to last choice made
     std::string const heading{std::string{title} + " Selection\n"
         + "File: " + trim_filename(filename, 68)};
     formatitem = nullptr;
@@ -757,11 +757,12 @@ retry:
         // go back to file list or cancel
         return (i == -ID_KEY_F6) ? -2 : -1;
     }
-    std::strcpy(entryname, choices[i]->name);
+    entryname = choices[i]->name;
     return choices[i]->point;
 }
 
-static long get_file_entry(gfe_type type, char const *title, char const *fmask, std::string &filename, char *entryname)
+long get_file_entry(gfe_type type, char const *title, char const *fmask,
+    std::string &filename, std::string &entryname)
 {
     // Formula, LSystem, etc type structure, select from file
     // containing definitions in the form    name { ... }
@@ -795,7 +796,7 @@ static long get_file_entry(gfe_type type, char const *title, char const *fmask, 
         if (entry_pointer == -2)
         {
             newfile = true; // go to file list,
-            continue;    // back to getafilename
+            continue;       // back to getafilename
         }
         if (entry_pointer == -1)
         {
@@ -804,7 +805,7 @@ static long get_file_entry(gfe_type type, char const *title, char const *fmask, 
         switch (type)
         {
         case gfe_type::FORMULA:
-            if (!RunForm(entryname, true))
+            if (!RunForm(entryname.c_str(), true))
             {
                 return 0;
             }
@@ -828,15 +829,4 @@ static long get_file_entry(gfe_type type, char const *title, char const *fmask, 
             return entry_pointer;
         }
     }
-}
-
-long get_file_entry(gfe_type type, char const *title, char const *fmask,
-    std::string &filename, std::string &entryname)
-{
-    char name_buf[ITEM_NAME_LEN];
-    std::strncpy(name_buf, entryname.c_str(), ITEM_NAME_LEN);
-    name_buf[ITEM_NAME_LEN - 1] = 0;
-    long const result = get_file_entry(type, title, fmask, filename, name_buf);
-    entryname = name_buf;
-    return result;
 }
