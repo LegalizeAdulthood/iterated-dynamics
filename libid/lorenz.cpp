@@ -2503,16 +2503,12 @@ static int ifs3dfloat()
         --k;
 
         // calculate image of last point under selected iterated function
-        const float *ffptr = &g_ifs_definition[k * NUM_IFS_3D_PARAMS]; // point to first parm in row
-        newx = *ffptr * inf.orbit[0] +
-               *(ffptr+1) * inf.orbit[1] +
-               *(ffptr+2) * inf.orbit[2] + *(ffptr+9);
-        newy = *(ffptr+3) * inf.orbit[0] +
-               *(ffptr+4) * inf.orbit[1] +
-               *(ffptr+5) * inf.orbit[2] + *(ffptr+10);
-        newz = *(ffptr+6) * inf.orbit[0] +
-               *(ffptr+7) * inf.orbit[1] +
-               *(ffptr+8) * inf.orbit[2] + *(ffptr+11);
+        {
+            const auto row = [&](int idx) { return g_ifs_definition[k * NUM_IFS_3D_PARAMS + idx]; };
+            newx = row(0) * inf.orbit[0] + row(1) * inf.orbit[1] + row(2) * inf.orbit[2] + row(9);
+            newy = row(3) * inf.orbit[0] + row(4) * inf.orbit[1] + row(5) * inf.orbit[2] + row(10);
+            newz = row(6) * inf.orbit[0] + row(7) * inf.orbit[1] + row(8) * inf.orbit[2] + row(11);
+        }
 
         inf.orbit[0] = newx;
         inf.orbit[1] = newy;
