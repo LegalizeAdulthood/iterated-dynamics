@@ -2496,13 +2496,13 @@ static int ifs3dfloat()
         r /= RAND_MAX;
 
         // pick which iterated function to execute, weighted by probability
-        double sum = 0.0;
         constexpr int prob_index = NUM_IFS_3D_PARAMS - 1; // last parameter is probability
-        for (k = 0; sum < r && k < g_num_affine_transforms; ++k)
+        double sum = g_ifs_definition[prob_index];
+        for (k = 1; sum < r && k < g_num_affine_transforms; ++k)
         {
-
             sum += g_ifs_definition[k * NUM_IFS_3D_PARAMS + prob_index];
         }
+        --k;
 
         // calculate image of last point under selected iterated function
         ffptr = &g_ifs_definition[k*NUM_IFS_3D_PARAMS];     // point to first parm in row

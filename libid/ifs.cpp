@@ -74,6 +74,7 @@ int ifsload()                   // read in IFS parameters
 
     strlwr(buf);
     int const row_size = std::strstr(buf, "(3d)") != nullptr ? NUM_IFS_3D_PARAMS : NUM_IFS_PARAMS;
+    g_ifs_type = row_size == NUM_IFS_3D_PARAMS;
 
     int ret = 0;
     int i = ret;
