@@ -2458,8 +2458,6 @@ static int ifs3dfloat()
 
     float3dvtinf inf;
 
-    float *ffptr;
-
     // setup affine screen coord conversion
     setup_convert_to_screen(&inf.cvt);
     srand(1);
@@ -2505,7 +2503,7 @@ static int ifs3dfloat()
         --k;
 
         // calculate image of last point under selected iterated function
-        ffptr = &g_ifs_definition[k*NUM_IFS_3D_PARAMS];     // point to first parm in row
+        const float *ffptr = &g_ifs_definition[k * NUM_IFS_3D_PARAMS]; // point to first parm in row
         newx = *ffptr * inf.orbit[0] +
                *(ffptr+1) * inf.orbit[1] +
                *(ffptr+2) * inf.orbit[2] + *(ffptr+9);
