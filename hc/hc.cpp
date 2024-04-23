@@ -3329,8 +3329,8 @@ void _write_hdr(char const *fname, std::FILE *file)
 
 void write_hdr(char const *fname)
 {
-    std::FILE *temp,
-         *hdr;
+    std::FILE *temp;
+    std::FILE *hdr;
 
     hdr = std::fopen(fname, "rt");
 
@@ -3725,10 +3725,13 @@ void print_document(char const *fname)
 
 void report_memory()
 {
-    long bytes_in_strings = 0,  // bytes in strings
-         text   = 0,   // bytes in topic text (stored on disk)
-         data   = 0,   // bytes in active data structure
-         dead   = 0;   // bytes in unused data structure
+    long bytes_in_strings = 0;
+    long // bytes in strings
+        text = 0;
+    long // bytes in topic text (stored on disk)
+        data = 0;
+    long          // bytes in active data structure
+        dead = 0; // bytes in unused data structure
 
     for (TOPIC const &t : g_topics)
     {
@@ -3822,8 +3825,9 @@ void report_stats()
 
 void add_hlp_to_exe(char const *hlp_fname, char const *exe_fname)
 {
-    int                  exe,   // handles
-                         hlp;
+    int exe;
+    int // handles
+        hlp;
     long                 len;
     int                  size;
     help_sig_info hs;
