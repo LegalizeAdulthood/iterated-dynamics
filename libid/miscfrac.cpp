@@ -215,11 +215,14 @@ static U16 adjust(int xa, int ya, int x, int y, int xb, int yb)
 
 static bool new_subD(int x1, int y1, int x2, int y2, int recur)
 {
-    int x, y;
+    int x;
+    int y;
     int nx1;
     int nx;
-    int ny1, ny;
-    S32 i, v;
+    int ny1;
+    int ny;
+    S32 i;
+    S32 v;
 
     struct sub
     {
@@ -228,7 +231,8 @@ static bool new_subD(int x1, int y1, int x2, int y2, int recur)
         BYTE r[16];  // recursion level
     };
 
-    static sub subx, suby;
+    static sub subx;
+    static sub suby;
 
     recur1 = (int)(320L >> recur);
     suby.t = 2;
@@ -342,8 +346,10 @@ static bool new_subD(int x1, int y1, int x2, int y2, int recur)
 
 static void subDivide(int x1, int y1, int x2, int y2)
 {
-    int x, y;
-    S32 v, i;
+    int x;
+    int y;
+    S32 v;
+    S32 i;
     if ((++plasma_check & 0x7f) == 1)
     {
         if (driver_key_pressed())
@@ -650,16 +656,24 @@ static void set_Plasma_palette()
 
 int diffusion()
 {
-    int xmax, ymax, xmin, ymin;     // Current maximum coordinates
-    int border;   // Distance between release point and fractal
-    int mode;     // Determines diffusion type:  0 = central (classic)
+    int xmax;
+    int ymax;
+    int xmin;
+    int ymin;   // Current maximum coordinates
+    int border; // Distance between release point and fractal
+    int mode;   // Determines diffusion type:  0 = central (classic)
     //                             1 = falling particles
     //                             2 = square cavity
     int colorshift; // If zero, select colors at random, otherwise shift the color every colorshift points
-    int colorcount, currentcolor;
-    double cosine, sine, angle;
-    int x, y;
-    float r, radius;
+    int colorcount;
+    int currentcolor;
+    double cosine;
+    double sine;
+    double angle;
+    int x;
+    int y;
+    float r;
+    float radius;
 
     if (driver_diskp())
     {
@@ -1470,7 +1484,8 @@ static int lyapunov_cycles(long filter_cycles, double a, double b);
 
 int lyapunov()
 {
-    double a, b;
+    double a;
+    double b;
 
     if (driver_key_pressed())
     {
@@ -1589,7 +1604,8 @@ bool lya_setup()
 
 static int lyapunov_cycles(long filter_cycles, double a, double b)
 {
-    int color, lnadjust;
+    int color;
+    int lnadjust;
     double total;
     double temp;
     // e10=22026.4657948  e-10=0.0000453999297625
