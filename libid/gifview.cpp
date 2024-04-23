@@ -90,7 +90,9 @@ int get_bytes(BYTE *where, int how_many)
 int gifview()
 {
     BYTE buffer[16];
-    unsigned top, left, width;
+    unsigned top;
+    unsigned left;
+    unsigned width;
     char temp1[FILE_MAX_DIR];
     BYTE byte_buf[257]; // for decoder
     int status;
@@ -382,7 +384,9 @@ static void close_file()
 
 static int out_line_migs(BYTE *pixels, int linelen)
 {
-    int row, startcol, stopcol;
+    int row;
+    int startcol;
+    int stopcol;
 
     row = gifview_image_top + g_row_count;
     startcol = gifview_image_left;
@@ -395,7 +399,9 @@ static int out_line_migs(BYTE *pixels, int linelen)
 
 static int out_line_dither(BYTE *pixels, int linelen)
 {
-    int nexterr, brt, err;
+    int nexterr;
+    int brt;
+    int err;
     ditherbuf.resize(linelen + 1);
     std::fill(ditherbuf.begin(), ditherbuf.end(), 0);
 
@@ -515,7 +521,8 @@ int sound_line(BYTE *pixels, int linelen)
 
 int pot_line(BYTE *pixels, int linelen)
 {
-    int row, saverowcount;
+    int row;
+    int saverowcount;
     if (g_row_count == 0)
     {
         if (pot_startdisk() < 0)
