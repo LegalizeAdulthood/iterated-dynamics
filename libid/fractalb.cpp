@@ -68,7 +68,9 @@ void showcornersdbl(char const *s)
 void showcorners(char const *s)
 {
     int dec = 20;
-    char msg[100], msg1[200], msg3[400];
+    char msg[100];
+    char msg1[200];
+    char msg3[400];
     bntostr(msg, dec, bnxmin);
     std::snprintf(msg1, std::size(msg1), "bnxmin=%s\nx_min= %.20f\n\n", msg, g_x_min);
     std::strcpy(msg3, s);
@@ -117,7 +119,9 @@ void showbfglobals(char const *s)
 void showcornersbf(char const *s)
 {
     int dec = g_decimals;
-    char msg[100], msg1[200], msg3[600];
+    char msg[100];
+    char msg1[200];
+    char msg3[600];
     if (dec > 20)
     {
         dec = 20;
@@ -155,7 +159,9 @@ void showcornersbf(char const *s)
 void showcornersbfs(char const *s)
 {
     int dec = 20;
-    char msg[100], msg1[200], msg3[500];
+    char msg[100];
+    char msg1[200];
+    char msg3[500];
     bftostr(msg, dec, g_bf_save_x_min);
     std::snprintf(msg1, std::size(msg1), "bf_save_x_min=%s\nx_min= %.20f\n\n", msg, g_x_min);
     std::strcpy(msg3, s);
@@ -184,7 +190,9 @@ void showcornersbfs(char const *s)
 
 void show_two_bf(char const *s1, bf_t t1, char const *s2, bf_t t2, int digits)
 {
-    char msg1[200], msg2[200], msg3[500];
+    char msg1[200];
+    char msg2[200];
+    char msg3[500];
     bftostr_e(msg1, digits, t1);
     bftostr_e(msg2, digits, t2);
     std::snprintf(msg3, std::size(msg3), "\n%s->%s\n%s->%s", s1, msg1, s2, msg2);
@@ -196,7 +204,10 @@ void show_two_bf(char const *s1, bf_t t1, char const *s2, bf_t t2, int digits)
 
 void show_three_bf(char const *s1, bf_t t1, char const *s2, bf_t t2, char const *s3, bf_t t3, int digits)
 {
-    char msg1[200], msg2[200], msg3[200], msg4[700];
+    char msg1[200];
+    char msg2[200];
+    char msg3[200];
+    char msg4[700];
     bftostr_e(msg1, digits, t1);
     bftostr_e(msg2, digits, t2);
     bftostr_e(msg3, digits, t3);
@@ -210,8 +221,11 @@ void show_three_bf(char const *s1, bf_t t1, char const *s2, bf_t t2, char const 
 // for aspect ratio debugging
 void showaspect(char const *s)
 {
-    bf_t bt1, bt2, aspect;
-    char msg[300], str[100];
+    bf_t bt1;
+    bf_t bt2;
+    bf_t aspect;
+    char msg[300];
+    char str[100];
     int saved;
     saved = save_stack();
     bt1    = alloc_stack(rbflength+2);
@@ -236,7 +250,8 @@ void showaspect(char const *s)
 void comparevalues(char const *s, LDBL x, bn_t bnx)
 {
     int dec = 40;
-    char msg[100], msg1[300];
+    char msg[100];
+    char msg1[300];
     bntostr(msg, dec, bnx);
     std::snprintf(msg1, std::size(msg1), "%s\nbignum=%s\ndouble=%.20Lf\n\n", s, msg, x);
     if (stopmsg(STOPMSG_NONE, msg1))
@@ -248,7 +263,8 @@ void comparevalues(char const *s, LDBL x, bn_t bnx)
 void comparevaluesbf(char const *s, LDBL x, bf_t bfx)
 {
     int dec = 40;
-    char msg[300], msg1[700];
+    char msg[300];
+    char msg1[700];
     bftostr_e(msg, dec, bfx);
     std::snprintf(msg1, std::size(msg1), "%s\nbignum=%s\ndouble=%.20Lf\n\n", s, msg, x);
     if (stopmsg(STOPMSG_NONE, msg1))
@@ -356,7 +372,8 @@ int  bnIMAGbailout()
 
 int  bnORbailout()
 {
-    long longtempsqrx, longtempsqry;
+    long longtempsqrx;
+    long longtempsqry;
 
     square_bn(bntmpsqrx, bnnew.x);
     square_bn(bntmpsqry, bnnew.y);
@@ -373,7 +390,8 @@ int  bnORbailout()
 
 int  bnANDbailout()
 {
-    long longtempsqrx, longtempsqry;
+    long longtempsqrx;
+    long longtempsqry;
 
     square_bn(bntmpsqrx, bnnew.x);
     square_bn(bntmpsqry, bnnew.y);
@@ -481,7 +499,8 @@ int  bfIMAGbailout()
 
 int  bfORbailout()
 {
-    long longtempsqrx, longtempsqry;
+    long longtempsqrx;
+    long longtempsqry;
 
     square_bf(bftmpsqrx, bfnew.x);
     square_bf(bftmpsqry, bfnew.y);
@@ -498,7 +517,8 @@ int  bfORbailout()
 
 int  bfANDbailout()
 {
-    long longtempsqrx, longtempsqry;
+    long longtempsqrx;
+    long longtempsqry;
 
     square_bf(bftmpsqrx, bfnew.x);
     square_bf(bftmpsqry, bfnew.y);
@@ -556,7 +576,8 @@ int  bfMANRbailout()
 bool MandelbnSetup()
 {
     // this should be set up dynamically based on corners
-    bn_t bntemp1, bntemp2;
+    bn_t bntemp1;
+    bn_t bntemp2;
     int saved;
     saved = save_stack();
     bntemp1 = alloc_stack(bnlength);
@@ -650,7 +671,8 @@ bool MandelbnSetup()
 bool MandelbfSetup()
 {
     // this should be set up dynamically based on corners
-    bf_t bftemp1, bftemp2;
+    bf_t bftemp1;
+    bf_t bftemp2;
     int saved;
     saved = save_stack();
     bftemp1 = alloc_stack(bflength+2);
@@ -1002,7 +1024,9 @@ BFComplex *cplxmul_bf(BFComplex *t, BFComplex *x, BFComplex *y)
 BFComplex *ComplexPower_bf(BFComplex *t, BFComplex *xx, BFComplex *yy)
 {
     BFComplex tmp;
-    bf_t e2x, siny, cosy;
+    bf_t e2x;
+    bf_t siny;
+    bf_t cosy;
     int saved;
     saved = save_stack();
     e2x  = alloc_stack(rbflength+2);
@@ -1061,7 +1085,9 @@ BNComplex *cplxmul_bn(BNComplex *t, BNComplex *x, BNComplex *y)
 BNComplex *ComplexPower_bn(BNComplex *t, BNComplex *xx, BNComplex *yy)
 {
     BNComplex tmp;
-    bn_t e2x, siny, cosy;
+    bn_t e2x;
+    bn_t siny;
+    bn_t cosy;
     int saved;
     saved = save_stack();
     e2x  = alloc_stack(bnlength);
