@@ -25,7 +25,9 @@ void intro()
 {
     // following overlayed data safe if "putstrings" are resident
     static char PRESS_ENTER[] = {"Press ENTER for main menu, F1 for help."};
-    int       toprow, botrow, delaymax;
+    int toprow;
+    int botrow;
+    int delaymax;
     char      oldchar;
     std::vector<int> authors;
     char credits[32768] = { 0 };
