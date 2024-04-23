@@ -48,7 +48,8 @@ static void plotdorbit(double dx, double dy, int color)
 {
     int i;
     int j;
-    int save_sxoffs, save_syoffs;
+    int save_sxoffs;
+    int save_syoffs;
     if (g_orbit_save_index >= NUM_SAVE_ORBIT-3)
     {
         return;
@@ -134,8 +135,11 @@ void plot_orbit(double real, double imag, int color)
 
 void scrub_orbit()
 {
-    int i, j, c;
-    int save_sxoffs, save_syoffs;
+    int i;
+    int j;
+    int c;
+    int save_sxoffs;
+    int save_syoffs;
     driver_mute();
     save_sxoffs = g_logical_screen_x_offset;
     save_syoffs = g_logical_screen_y_offset;
