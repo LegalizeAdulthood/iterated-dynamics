@@ -173,15 +173,17 @@ int line3d(BYTE * pixels, unsigned linelen)
     int xcenter0 = 0;
     int ycenter0 = 0;      // Unfudged versions
     double r;                    // sphere radius
-    float costheta, sintheta;    // precalculated sin/cos of latitude
-    int next;                    // used by preview and grid
-    int col;                     // current column (original GIF)
-    point cur;            // current pixels
-    point old;            // old pixels
+    float costheta;
+    float sintheta; // precalculated sin/cos of latitude
+    int next;       // used by preview and grid
+    int col;        // current column (original GIF)
+    point cur;      // current pixels
+    point old;      // old pixels
     f_point f_cur = { 0.0 };
     f_point f_old;
     VECTOR v;                    // double vector
-    VECTOR v1, v2;
+    VECTOR v1;
+    VECTOR v2;
     VECTOR crossavg;
     bool crossnotinit;           // flag for crossavg init indication
     LVECTOR lv;                  // long equivalent of v
@@ -250,7 +252,8 @@ int line3d(BYTE * pixels, unsigned linelen)
     {
         for (col = 0; col < (int) linelen; col++)
         {
-            int pal, colornum;
+            int pal;
+            int colornum;
             colornum = pixels[col];
             // effectively (30*R + 59*G + 11*B)/100 scaled 0 to 255
             pal = ((int) g_dac_box[colornum][0] * 77 +
@@ -948,7 +951,10 @@ reallythebottom:
 // vector version of line draw
 static void vdraw_line(double *v1, double *v2, int color)
 {
-    int x1, y1, x2, y2;
+    int x1;
+    int y1;
+    int x2;
+    int y2;
     x1 = (int) v1[0];
     y1 = (int) v1[1];
     x2 = (int) v2[0];
@@ -1226,7 +1232,8 @@ static void putminmax(int x, int y, int /*color*/)
 
 static void putatriangle(point pt1, point pt2, point pt3, int color)
 {
-    int miny, maxy;
+    int miny;
+    int maxy;
     int xlim;
 
     // Too many points off the screen?
@@ -1395,7 +1402,10 @@ static void T_clipcolor(int x, int y, int color)
 
 static void interpcolor(int x, int y, int color)
 {
-    int D, d1, d2, d3;
+    int D;
+    int d1;
+    int d2;
+    int d3;
 
     /* this distance formula is not the usual one - but it has the virtue that
      * it uses ONLY additions (almost) and it DOES go to zero as the points
@@ -1461,7 +1471,9 @@ static void interpcolor(int x, int y, int color)
 
 int targa_color(int x, int y, int color)
 {
-    unsigned long H, S, V;
+    unsigned long H;
+    unsigned long S;
+    unsigned long V;
     BYTE RGB[3];
 
     if (FILLTYPE == 2 || g_glasses_type == 1 || g_glasses_type == 2 || g_truecolor)
@@ -1774,7 +1786,10 @@ bool targa_validate(char const *File_Name)
 
 static int R_H(BYTE R, BYTE G, BYTE B, unsigned long *H, unsigned long *S, unsigned long *V)
 {
-    unsigned long R1, G1, B1, DENOM;
+    unsigned long R1;
+    unsigned long G1;
+    unsigned long B1;
+    unsigned long DENOM;
     BYTE MIN;
 
     *V = R;
@@ -1866,8 +1881,11 @@ static int R_H(BYTE R, BYTE G, BYTE B, unsigned long *H, unsigned long *S, unsig
 
 static int H_R(BYTE *R, BYTE *G, BYTE *B, unsigned long H, unsigned long S, unsigned long V)
 {
-    unsigned long P1, P2, P3;
-    int RMD, I;
+    unsigned long P1;
+    unsigned long P2;
+    unsigned long P3;
+    int RMD;
+    int I;
 
     if (H >= 23040)
     {
@@ -2414,14 +2432,26 @@ static int first_time(int linelen, VECTOR v)
     int err;
     MATRIX lightm;               // m w/no trans, keeps obj. on screen
     float twocosdeltatheta;
-    double xval, yval, zval;     // rotation values
+    double xval;
+    double yval;
+    double zval; // rotation values
     // corners of transformed xdotx by ydots x colors box
-    double xmin, ymin, zmin, xmax, ymax, zmax;
+    double xmin;
+    double ymin;
+    double zmin;
+    double xmax;
+    double ymax;
+    double zmax;
     double v_length;
-    VECTOR origin, direct, tmp;
-    float theta, theta1, theta2; // current,start,stop latitude
-    float phi1, phi2;            // current start,stop longitude
-    float deltatheta;            // increment of latitude
+    VECTOR origin;
+    VECTOR direct;
+    VECTOR tmp;
+    float theta;
+    float theta1;
+    float theta2;     // current,start,stop latitude
+    float phi1;
+    float phi2;       // current start,stop longitude
+    float deltatheta; // increment of latitude
     g_out_line_cleanup = line3d_cleanup;
 
     evenoddrow = 0;
