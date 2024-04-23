@@ -238,7 +238,8 @@ int PopcornFractalFn()
 
 int LPopcornFractalFn()
 {
-    LComplex ltmpx, ltmpy;
+    LComplex ltmpx;
+    LComplex ltmpy;
 
     g_overflow = false;
 
