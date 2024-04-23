@@ -312,14 +312,16 @@ static int scan_entries(std::FILE *infile, entryinfo *choices, char const *itemn
     */
     char buf[101];
     int exclude_entry;
-    long name_offset, temp_offset;
+    long name_offset;
+    long temp_offset;
     long file_offset = -1;
     int numentries = 0;
 
     while (true)
     {
         // scan the file for entry names
-        int c, len;
+        int c;
+        int len;
 top:
         c = skip_white_space(infile, &file_offset);
         if (c == ';')
@@ -458,7 +460,8 @@ bool search_for_entry(std::FILE *infile, char const *itemname)
 
 static void format_parmfile_line(int choice, char *buf)
 {
-    int c, i;
+    int c;
+    int i;
     char line[80];
     std::fseek(gfe_file, gfe_choices[choice]->point, SEEK_SET);
     while (getc(gfe_file) != '{')
@@ -691,7 +694,9 @@ static long gfe_choose_entry(gfe_type type, char const *title, const std::string
     entryinfo *choices[MAXENTRIES + 1] = { nullptr };
     int attributes[MAXENTRIES + 1] = { 0 };
     void (*formatitem)(int, char *);
-    int boxwidth, boxdepth, colwidth;
+    int boxwidth;
+    int boxdepth;
+    int colwidth;
     char instr[80];
 
     static bool dosort = true;
