@@ -154,7 +154,8 @@ int MandelbrotMix4fp_per_pixel()
 int MandelbrotMix4fpFractal() // from formula by Jim Muth
 {
     // z=k*((a*(z^b))+(d*(z^f)))+c,
-    DComplex z_b, z_f;
+    DComplex z_b;
+    DComplex z_f;
     CMPLXpwr(g_old_z, B, z_b);     // (z^b)
     CMPLXpwr(g_old_z, F, z_f);     // (z^f)
     g_new_z.x = K.x*A.x*z_b.x + K.x*D.x*z_f.x + C.x;
