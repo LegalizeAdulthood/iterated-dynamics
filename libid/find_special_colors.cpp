@@ -21,7 +21,8 @@ void find_special_colors()
     int maxb = 0;
     int minb = 9999;
     int med = 0;
-    int maxgun, mingun;
+    int maxgun;
+    int mingun;
 
     g_color_dark = 0;
     g_color_medium = 7;
