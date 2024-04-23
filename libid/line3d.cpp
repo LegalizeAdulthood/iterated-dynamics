@@ -1584,8 +1584,8 @@ static void File_Error(char const *File_Name1, int ERROR)
 //**********************************************************************
 //
 //   This function opens a TARGA_24 file for reading and writing. If
-//   its a new file, (overlay == 0) it writes a header. If it is to
-//   overlay an existing file (overlay == 1) it copies the original
+//   it's a new file, (overlay == false) it writes a header. If it is to
+//   overlay an existing file (overlay == true) it copies the original
 //   header whose length and validity was determined in
 //   Targa_validate.
 //
