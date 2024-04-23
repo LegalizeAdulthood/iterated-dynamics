@@ -39,7 +39,9 @@ void FloatPreCalcMagnet2() // precalculation for Magnet2 (M & J) for speed
 int Magnet1Fractal()
 {
     //  In "Beauty of Fractals", code by Kev Allen.
-    DComplex top, bot, tmp;
+    DComplex top;
+    DComplex bot;
+    DComplex tmp;
     double div;
 
     top.x = g_temp_sqr_x - g_temp_sqr_y + g_float_param->x - 1; // top = Z**2+C-1
@@ -69,7 +71,9 @@ int Magnet1Fractal()
 int Magnet2Fractal()
 {
     //   In "Beauty of Fractals", code by Kev Allen.
-    DComplex top, bot, tmp;
+    DComplex top;
+    DComplex bot;
+    DComplex tmp;
     double div;
 
     top.x = g_old_z.x * (g_temp_sqr_x-g_temp_sqr_y-g_temp_sqr_y-g_temp_sqr_y + T_Cm1.x)
