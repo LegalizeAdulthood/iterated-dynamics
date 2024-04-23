@@ -12,11 +12,14 @@ add_executable(test-id
     "${ID_TEST_CONFIG_FILE}"
     "${ID_TEST_DATA_DIR}/${ID_TEST_IFS_FILE}"
     "${ID_TEST_DATA_SUBDIR}/${ID_TEST_IFS_FILE2}"
+    "${CMAKE_CURRENT_BINARY_DIR}/include/test_check_write_file_data.h"
     "${CMAKE_CURRENT_BINARY_DIR}/include/test_config_data.h"
     "${CMAKE_CURRENT_BINARY_DIR}/include/test_data.h"
     current_path_saver.h
     test_config_data.h.in
     test_data.h.in
+    test_check_write_file.cpp
+    test_check_write_file_data.h.in
     test_choice_builder.cpp
     test_cmplx.cpp
     test_expand_dirname.cpp

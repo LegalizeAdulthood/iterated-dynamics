@@ -21,6 +21,7 @@ set(ID_TEST_CONFIG_FILE "${ID_TEST_DATA_DIR}/config/test.cfg")
 configure_file("test.cfg.in" "${ID_TEST_CONFIG_FILE}" @ONLY)
 configure_file("test_config_data.h.in" "include/test_config_data.h" @ONLY)
 
+# GIF file extensions test data
 set(ID_TEST_GIF_DIR "${ID_TEST_DATA_DIR}/gif")
 macro(configure_gif_extension_file num)
     set("EXT${num}_FILE" "extension${num}.gif")
@@ -36,7 +37,8 @@ configure_gif_extension_file(5)
 configure_gif_extension_file(6)
 configure_gif_extension_file(7)
 
-SET(ID_TEST_FIRST_IFS_NAME "binary")
+# IFS test data
+set(ID_TEST_FIRST_IFS_NAME "binary")
 set(ID_TEST_FIRST_IFS_PARAM1 ".5")
 set(ID_TEST_SECOND_IFS_NAME "3dfern")
 set(ID_TEST_IFS_FILE "test.ifs")
@@ -47,6 +49,7 @@ set(ID_TEST_DATA_SUBDIR "${ID_TEST_DATA_DIR}/${ID_TEST_DATA_SUBDIR_NAME}")
 set(ID_TEST_IFS_FILE2 "test2.ifs")
 configure_file(test.ifs.in "${ID_TEST_DATA_SUBDIR}/${ID_TEST_IFS_FILE2}")
 
+# find_file test data
 set(ID_TEST_FIND_FILE_SUBDIR test_data/find_file)
 set(ID_TEST_DATA_FIND_FILE_DIR "${CMAKE_CURRENT_BINARY_DIR}/${ID_TEST_FIND_FILE_SUBDIR}")
 set(ID_TEST_FIND_FILE1 "find_file1.txt")
@@ -57,3 +60,18 @@ configure_file(test_find_file.txt.in ${ID_TEST_FIND_FILE_SUBDIR}/${ID_TEST_FIND_
 configure_file(test_find_file.txt.in ${ID_TEST_FIND_FILE_SUBDIR}/subdir/${ID_TEST_FIND_FILE3})
 
 configure_file(test_data.h.in include/test_data.h @ONLY)
+
+# check_writefile test data
+set(ID_TEST_CHECK_WRITE_FILE_DATA_DIR   "${ID_TEST_DATA_DIR}/check_writefile")
+set(ID_TEST_CHECK_WRITE_FILE_NEW        "${ID_TEST_CHECK_WRITE_FILE_DATA_DIR}/new_file.gif")
+set(ID_TEST_CHECK_WRITE_FILE_BASE1      "${ID_TEST_CHECK_WRITE_FILE_DATA_DIR}/fract001")
+set(ID_TEST_CHECK_WRITE_FILE_EXT        ".gif")
+set(ID_TEST_CHECK_WRITE_FILE_OTHER_EXT  ".foo")
+set(ID_TEST_CHECK_WRITE_FILE_EXISTS1    "${ID_TEST_CHECK_WRITE_FILE_DATA_DIR}/fract001.gif")
+set(ID_TEST_CHECK_WRITE_FILE_EXISTS2    "${ID_TEST_CHECK_WRITE_FILE_DATA_DIR}/fract002.gif")
+set(ID_TEST_CHECK_WRITE_FILE3           "${ID_TEST_CHECK_WRITE_FILE_DATA_DIR}/fract003.gif")
+configure_file(test_check_write_file_data.h.in "include/test_check_write_file_data.h" @ONLY)
+configure_file("${CMAKE_CURRENT_SOURCE_DIR}/gif/extension1.gif" "${ID_TEST_CHECK_WRITE_FILE_DATA_DIR}/fract001.gif" COPYONLY)
+configure_file("${CMAKE_CURRENT_SOURCE_DIR}/gif/extension1.gif" "${ID_TEST_CHECK_WRITE_FILE_DATA_DIR}/fract002.gif" COPYONLY)
+file(REMOVE "${ID_TEST_CHECK_WRITE_FILE_NEW}")
+file(REMOVE "${ID_TEST_CHECK_WRITE_FILE3}")
