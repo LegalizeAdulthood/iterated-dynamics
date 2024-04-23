@@ -394,7 +394,8 @@ void lRandom()
 
 void dRandom()
 {
-    long x, y;
+    long x;
+    long y;
 
     /* Use the same algorithm as for fixed math so that they will generate
            the same fractals when the srand() function is used. */
@@ -407,7 +408,8 @@ void dRandom()
 
 void mRandom()
 {
-    long x, y;
+    long x;
+    long y;
 
     /* Use the same algorithm as for fixed math so that they will generate
        the same fractals when the srand() function is used. */
@@ -722,7 +724,8 @@ void lStkTrunc()
 {
     /* shifting and shifting back truncates positive numbers,
        so we make the numbers positive */
-    int signx, signy;
+    int signx;
+    int signy;
     signx = sign(Arg1->l.x);
     signy = sign(Arg1->l.y);
     Arg1->l.x = labs(Arg1->l.x);
@@ -875,7 +878,8 @@ void mStkMul()
 
 void lStkMul()
 {
-    long x, y;
+    long x;
+    long y;
 
     x = multiply(Arg2->l.x, Arg1->l.x, g_bit_shift) -
         multiply(Arg2->l.y, Arg1->l.y, g_bit_shift);
@@ -905,7 +909,11 @@ void mStkDiv()
 
 void lStkDiv()
 {
-    long x, y, mod, x2, y2;
+    long x;
+    long y;
+    long mod;
+    long x2;
+    long y2;
 
     mod = multiply(Arg1->l.x, Arg1->l.x, g_bit_shift) +
           multiply(Arg1->l.y, Arg1->l.y, g_bit_shift);
@@ -1015,7 +1023,10 @@ void (*StkFlip)() = dStkFlip;
 
 void dStkSin()
 {
-    double sinx, cosx, sinhy, coshy;
+    double sinx;
+    double cosx;
+    double sinhy;
+    double coshy;
 
     FPUsincos(&Arg1->d.x, &sinx, &cosx);
     FPUsinhcosh(&Arg1->d.y, &sinhy, &coshy);
@@ -1030,7 +1041,12 @@ void mStkSin()
 
 void lStkSin()
 {
-    long x, y, sinx, cosx, sinhy, coshy;
+    long x;
+    long y;
+    long sinx;
+    long cosx;
+    long sinhy;
+    long coshy;
     x = Arg1->l.x >> Delta16;
     y = Arg1->l.y >> Delta16;
     SinCos086(x, &sinx, &cosx);
@@ -1046,7 +1062,11 @@ void (*StkSin)() = dStkSin;
 */
 void dStkTan()
 {
-    double sinx, cosx, sinhy, coshy, denom;
+    double sinx;
+    double cosx;
+    double sinhy;
+    double coshy;
+    double denom;
     Arg1->d.x *= 2;
     Arg1->d.y *= 2;
     FPUsincos(&Arg1->d.x, &sinx, &cosx);
@@ -1064,7 +1084,13 @@ void mStkTan()
 
 void lStkTan()
 {
-    long x, y, sinx, cosx, sinhy, coshy, denom;
+    long x;
+    long y;
+    long sinx;
+    long cosx;
+    long sinhy;
+    long coshy;
+    long denom;
     x = Arg1->l.x >> Delta16;
     x = x << 1;
     y = Arg1->l.y >> Delta16;
@@ -1081,7 +1107,11 @@ void (*StkTan)() = dStkTan;
 
 void dStkTanh()
 {
-    double siny, cosy, sinhx, coshx, denom;
+    double siny;
+    double cosy;
+    double sinhx;
+    double coshx;
+    double denom;
     Arg1->d.x *= 2;
     Arg1->d.y *= 2;
     FPUsincos(&Arg1->d.y, &siny, &cosy);
@@ -1099,7 +1129,13 @@ void mStkTanh()
 
 void lStkTanh()
 {
-    long x, y, siny, cosy, sinhx, coshx, denom;
+    long x;
+    long y;
+    long siny;
+    long cosy;
+    long sinhx;
+    long coshx;
+    long denom;
     x = Arg1->l.x >> Delta16;
     x = x << 1;
     y = Arg1->l.y >> Delta16;
@@ -1116,7 +1152,11 @@ void (*StkTanh)() = dStkTanh;
 
 void dStkCoTan()
 {
-    double sinx, cosx, sinhy, coshy, denom;
+    double sinx;
+    double cosx;
+    double sinhy;
+    double coshy;
+    double denom;
     Arg1->d.x *= 2;
     Arg1->d.y *= 2;
     FPUsincos(&Arg1->d.x, &sinx, &cosx);
@@ -1134,7 +1174,13 @@ void mStkCoTan()
 
 void lStkCoTan()
 {
-    long x, y, sinx, cosx, sinhy, coshy, denom;
+    long x;
+    long y;
+    long sinx;
+    long cosx;
+    long sinhy;
+    long coshy;
+    long denom;
     x = Arg1->l.x >> Delta16;
     x = x << 1;
     y = Arg1->l.y >> Delta16;
@@ -1151,7 +1197,11 @@ void (*StkCoTan)() = dStkCoTan;
 
 void dStkCoTanh()
 {
-    double siny, cosy, sinhx, coshx, denom;
+    double siny;
+    double cosy;
+    double sinhx;
+    double coshx;
+    double denom;
     Arg1->d.x *= 2;
     Arg1->d.y *= 2;
     FPUsincos(&Arg1->d.y, &siny, &cosy);
@@ -1169,7 +1219,13 @@ void mStkCoTanh()
 
 void lStkCoTanh()
 {
-    long x, y, siny, cosy, sinhx, coshx, denom;
+    long x;
+    long y;
+    long siny;
+    long cosy;
+    long sinhx;
+    long coshx;
+    long denom;
     x = Arg1->l.x >> Delta16;
     x = x << 1;
     y = Arg1->l.y >> Delta16;
@@ -1231,7 +1287,10 @@ void StkIdent()
 
 void dStkSinh()
 {
-    double siny, cosy, sinhx, coshx;
+    double siny;
+    double cosy;
+    double sinhx;
+    double coshx;
 
     FPUsincos(&Arg1->d.y, &siny, &cosy);
     FPUsinhcosh(&Arg1->d.x, &sinhx, &coshx);
@@ -1246,7 +1305,12 @@ void mStkSinh()
 
 void lStkSinh()
 {
-    long x, y, sinhx, coshx, siny, cosy;
+    long x;
+    long y;
+    long sinhx;
+    long coshx;
+    long siny;
+    long cosy;
 
     x = Arg1->l.x >> Delta16;
     y = Arg1->l.y >> Delta16;
@@ -1260,7 +1324,10 @@ void (*StkSinh)() = dStkSinh;
 
 void dStkCos()
 {
-    double sinx, cosx, sinhy, coshy;
+    double sinx;
+    double cosx;
+    double sinhy;
+    double coshy;
 
     FPUsincos(&Arg1->d.x, &sinx, &cosx);
     FPUsinhcosh(&Arg1->d.y, &sinhy, &coshy);
@@ -1275,7 +1342,12 @@ void mStkCos()
 
 void lStkCos()
 {
-    long x, y, sinx, cosx, sinhy, coshy;
+    long x;
+    long y;
+    long sinx;
+    long cosx;
+    long sinhy;
+    long coshy;
 
     x = Arg1->l.x >> Delta16;
     y = Arg1->l.y >> Delta16;
@@ -1310,7 +1382,10 @@ void (*StkCosXX)() = dStkCosXX;
 
 void dStkCosh()
 {
-    double siny, cosy, sinhx, coshx;
+    double siny;
+    double cosy;
+    double sinhx;
+    double coshx;
 
     FPUsincos(&Arg1->d.y, &siny, &cosy);
     FPUsinhcosh(&Arg1->d.x, &sinhx, &coshx);
@@ -1325,7 +1400,12 @@ void mStkCosh()
 
 void lStkCosh()
 {
-    long x, y, sinhx, coshx, siny, cosy;
+    long x;
+    long y;
+    long sinhx;
+    long coshx;
+    long siny;
+    long cosy;
 
     x = Arg1->l.x >> Delta16;
     y = Arg1->l.y >> Delta16;
@@ -1721,7 +1801,8 @@ void (*StkLog)() = dStkLog;
 
 void FPUcplxexp(const DComplex *x, DComplex *z)
 {
-    double pow, y;
+    double pow;
+    double y;
     y = x->y;
     pow = std::exp(x->x);
     z->x = pow*std::cos(y);
@@ -1754,7 +1835,8 @@ void dStkPwr()
 
 void mStkPwr()
 {
-    DComplex x, y;
+    DComplex x;
+    DComplex y;
 
     x = MPC2cmplx(Arg2->m);
     y = MPC2cmplx(Arg1->m);
@@ -1766,7 +1848,8 @@ void mStkPwr()
 
 void lStkPwr()
 {
-    DComplex x, y;
+    DComplex x;
+    DComplex y;
 
     x.x = (double)Arg2->l.x / fg;
     x.y = (double)Arg2->l.y / fg;
@@ -1908,7 +1991,8 @@ static unsigned int SkipWhiteSpace(char const *Str)
 // detect if constant is part of a (a,b) construct
 static bool isconst_pair(char const *Str)
 {
-    int n, j;
+    int n;
+    int j;
     bool answer = false;
     // skip past first number
     for (n = 0; std::isdigit(Str[n]) || Str[n] == '.'; n++)
@@ -2299,10 +2383,19 @@ inline void push_pending_op(void (*f)(), int p)
 static bool ParseStr(char const *Str, int pass)
 {
     ConstArg *c;
-    int ModFlag = 999, Len, Equals = 0, Mods[20], mdstk = 0;
+    int ModFlag = 999;
+    int Len;
+    int Equals = 0;
+    int Mods[20];
+    int mdstk = 0;
     int jumptype;
-    double const_pi, const_e;
-    double Xctr, Yctr, Xmagfactor, Rotation, Skew;
+    double const_pi;
+    double const_e;
+    double Xctr;
+    double Yctr;
+    double Xmagfactor;
+    double Rotation;
+    double Skew;
     LDBL Magnification;
     SetRandom = false;
     Randomized = false;
@@ -3833,7 +3926,8 @@ int frm_get_param_stuff(char const *Name)
 static bool frm_check_name_and_sym(std::FILE * open_file, bool report_bad_sym)
 {
     long filepos = ftell(open_file);
-    int c, i;
+    int c;
+    int i;
     bool at_end_of_name = false;
 
     // first, test name
@@ -4198,7 +4292,8 @@ bool intFormulaSetup()
 
 void init_misc()
 {
-    static Arg argfirst, argsecond;
+    static Arg argfirst;
+    static Arg argsecond;
     if (v.empty())
     {
         v.resize(5);
@@ -4275,8 +4370,11 @@ static error_data_st errors[3];
 void frm_error(std::FILE * open_file, long begin_frm)
 {
     token_st tok;
-    int chars_to_error = 0, chars_in_error = 0, token_count;
-    int statement_len, line_number;
+    int chars_to_error = 0;
+    int chars_in_error = 0;
+    int token_count;
+    int statement_len;
+    int line_number;
     char msgbuf[900];
     long filepos;
     std::strcpy(msgbuf, "\n");
@@ -4392,7 +4490,8 @@ void frm_error(std::FILE * open_file, long begin_frm)
 bool frm_prescan(std::FILE * open_file)
 {
     long filepos;
-    long statement_pos, orig_pos;
+    long statement_pos;
+    long orig_pos;
     bool done = false;
     token_st this_token;
     int errors_found = 0;
