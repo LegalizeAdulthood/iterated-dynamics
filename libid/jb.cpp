@@ -156,7 +156,12 @@ bool JulibrotSetup()
 
     if (g_fractal_specific[+g_fractal_type].isinteger > 0)
     {
-        long jxmin, jxmax, jymin, jymax, mxmax, mymax;
+        long jxmin;
+        long jxmax;
+        long jymin;
+        long jymax;
+        long mxmax;
+        long mymax;
         if (g_fractal_specific[+g_new_orbit_type].isinteger == 0)
         {
             stopmsg(STOPMSG_NONE, "Julibrot orbit type isinteger mismatch");
