@@ -16,10 +16,14 @@
 
 int getprecbf_mag()
 {
-    double Xmagfactor, Rotation, Skew;
+    double Xmagfactor;
+    double Rotation;
+    double Skew;
     LDBL Magnification;
-    bf_t bXctr, bYctr;
-    int saved, dec;
+    bf_t bXctr;
+    bf_t bYctr;
+    int saved;
+    int dec;
 
     saved = save_stack();
     bXctr            = alloc_stack(bflength+2);
@@ -44,8 +48,15 @@ int getprecbf_mag()
    (if rez==MAXREZ) or at current resolution (if rez==CURRENTREZ)    */
 int getprecbf(int rezflag)
 {
-    bf_t del1, del2, one, bfxxdel, bfxxdel2, bfyydel, bfyydel2;
-    int digits, dec;
+    bf_t del1;
+    bf_t del2;
+    bf_t one;
+    bf_t bfxxdel;
+    bf_t bfxxdel2;
+    bf_t bfyydel;
+    bf_t bfyydel2;
+    int digits;
+    int dec;
     int saved;
     int rez;
     saved    = save_stack();
