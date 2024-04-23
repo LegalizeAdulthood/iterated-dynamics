@@ -97,7 +97,8 @@ int main_menu(bool full_menu)
     int attributes[44];
     int choicekey[44];
     int i;
-    int nextleft, nextright;
+    int nextleft;
+    int nextright;
     bool showjuliatoggle;
     bool const old_tab_mode = g_tab_mode;
 
