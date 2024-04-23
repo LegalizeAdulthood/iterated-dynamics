@@ -161,7 +161,8 @@ static void lsysf_dobang(lsys_turtlestatef *cmd)
 static void lsysf_dosizedm(lsys_turtlestatef *cmd)
 {
     double angle = (double) cmd->realangle;
-    double s, c;
+    double s;
+    double c;
 
     s = std::sin(angle);
     c = std::cos(angle);
@@ -213,8 +214,10 @@ static void lsysf_dosizegf(lsys_turtlestatef *cmd)
 static void lsysf_dodrawd(lsys_turtlestatef *cmd)
 {
     double angle = (double) cmd->realangle;
-    double s, c;
-    int lastx, lasty;
+    double s;
+    double c;
+    int lastx;
+    int lasty;
     s = std::sin(angle);
     c = std::cos(angle);
 
@@ -230,7 +233,8 @@ static void lsysf_dodrawd(lsys_turtlestatef *cmd)
 static void lsysf_dodrawm(lsys_turtlestatef *cmd)
 {
     double angle = (double) cmd->realangle;
-    double s, c;
+    double s;
+    double c;
 
     s = std::sin(angle);
     c = std::cos(angle);
