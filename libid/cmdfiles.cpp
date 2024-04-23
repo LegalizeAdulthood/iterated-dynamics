@@ -1631,7 +1631,8 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
 
     if (variable == "makemig")
     {
-        int xmult, ymult;
+        int xmult;
+        int ymult;
         if (totparms < 2)
         {
             return bad_arg(curarg);
@@ -1666,7 +1667,10 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
 
     if (variable == "ranges")
     {
-        int i, k, entries, prev;
+        int i;
+        int k;
+        int entries;
+        int prev;
         int tmpranges[128];
 
         if (totparms != intparms)
@@ -3808,7 +3812,8 @@ static int get_curarg_len(char const *curarg)
 // Get max length of current args
 static int get_max_curarg_len(char const *floatvalstr[], int totparms)
 {
-    int tmp, max_str;
+    int tmp;
+    int max_str;
     max_str = 0;
     for (int i = 0; i < totparms; i++)
     {
