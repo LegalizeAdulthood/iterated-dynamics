@@ -259,7 +259,9 @@ The same technique can be applied to the second set of equations:
 
 bool setup_convert_to_screen(affine *scrn_cnvt)
 {
-    double det, xd, yd;
+    double det;
+    double xd;
+    double yd;
 
     det = (g_x_3rd-g_x_min)*(g_y_min-g_y_max) + (g_y_max-g_y_3rd)*(g_x_max-g_x_min);
     if (det == 0)
@@ -669,9 +671,12 @@ rwalk:
 
 int Minverse_julia_orbit()
 {
-    static int   random_dir = 0, random_len = 0;
-    int    newrow, newcol;
-    int    color,  leftright;
+    static int random_dir = 0;
+    static int random_len = 0;
+    int newrow;
+    int newcol;
+    int color;
+    int leftright;
 
     /*
      * First, compute new point
@@ -816,8 +821,10 @@ int Minverse_julia_orbit()
 
 int Linverse_julia_orbit()
 {
-    static int   random_dir = 0, random_len = 0;
-    int    newrow, newcol;
+    static int random_dir = 0;
+    static int random_len = 0;
+    int newrow;
+    int newcol;
     int    color;
 
     /*
@@ -1076,7 +1083,8 @@ int lorenz3d4floatorbit(double *x, double *y, double *z)
 
 int henonfloatorbit(double *x, double *y, double * /*z*/)
 {
-    double newx, newy;
+    double newx;
+    double newy;
     newx  = 1 + *y - a*(*x)*(*x);
     newy  = b*(*x);
     *x = newx;
@@ -1086,7 +1094,8 @@ int henonfloatorbit(double *x, double *y, double * /*z*/)
 
 int henonlongorbit(long *l_x, long *l_y, long * /*l_z*/)
 {
-    long newx, newy;
+    long newx;
+    long newy;
     newx = multiply(*l_x, *l_x, g_bit_shift);
     newx = multiply(newx, l_a, g_bit_shift);
     newx  = g_fudge_factor + *l_y - newx;
@@ -1113,7 +1122,9 @@ int rosslerfloatorbit(double *x, double *y, double *z)
 
 int pickoverfloatorbit(double *x, double *y, double *z)
 {
-    double newx, newy, newz;
+    double newx;
+    double newy;
+    double newz;
     newx = std::sin(a*(*y)) - (*z)*std::cos(b*(*x));
     newy = (*z)*std::sin(c*(*x)) - std::cos(d*(*y));
     newz = std::sin(*x);
@@ -1245,7 +1256,10 @@ int martin2dfloatorbit(double *x, double *y, double * /*z*/)
 
 int mandelcloudfloat(double *x, double *y, double * /*z*/)
 {
-    double newx, newy, x2, y2;
+    double newx;
+    double newy;
+    double x2;
+    double y2;
     x2 = (*x)*(*x);
     y2 = (*y)*(*y);
     if (x2+y2 > 2)
@@ -1261,8 +1275,10 @@ int mandelcloudfloat(double *x, double *y, double * /*z*/)
 
 int dynamfloat(double *x, double *y, double * /*z*/)
 {
-    DComplex cp, tmp;
-    double newx, newy;
+    DComplex cp;
+    DComplex tmp;
+    double newx;
+    double newy;
     cp.x = b* *x;
     cp.y = 0;
     CMPLXtrig0(cp, tmp);
@@ -1291,7 +1307,15 @@ int dynamfloat(double *x, double *y, double * /*z*/)
 
 int iconfloatorbit(double *x, double *y, double *z)
 {
-    double oldx, oldy, zzbar, zreal, zimag, za, zb, zn, p;
+    double oldx;
+    double oldy;
+    double zzbar;
+    double zreal;
+    double zimag;
+    double za;
+    double zb;
+    double zn;
+    double p;
 
     oldx = *x;
     oldy = *y;
@@ -1329,7 +1353,9 @@ int iconfloatorbit(double *x, double *y, double *z)
 
 int latoofloatorbit(double *x, double *y, double * /*z*/)
 {
-    double xold, yold, tmp;
+    double xold;
+    double yold;
+    double tmp;
 
     xold = *x;
     yold = *y;
@@ -1393,11 +1419,18 @@ int orbit2dfloat()
 {
     std::FILE *fp;
     double *soundvar;
-    double x, y, z;
-    int color, col, row;
+    double x;
+    double y;
+    double z;
+    int color;
+    int col;
+    int row;
     int count;
-    int oldrow, oldcol;
-    double *p0, *p1, *p2;
+    int oldrow;
+    int oldcol;
+    double *p0;
+    double *p1;
+    double *p2;
     affine cvt;
     int ret;
 
@@ -1565,11 +1598,18 @@ int orbit2dlong()
 {
     std::FILE *fp;
     long *soundvar;
-    long x, y, z;
-    int color, col, row;
+    long x;
+    long y;
+    long z;
+    int color;
+    int col;
+    int row;
     int count;
-    int oldrow, oldcol;
-    long *p0, *p1, *p2;
+    int oldrow;
+    int oldcol;
+    long *p0;
+    long *p1;
+    long *p2;
     l_affine cvt;
     int ret;
 
@@ -1738,8 +1778,10 @@ static int orbit3dlongcalc()
 {
     std::FILE *fp;
     unsigned long count;
-    int oldcol, oldrow;
-    int oldcol1, oldrow1;
+    int oldcol;
+    int oldrow;
+    int oldcol1;
+    int oldrow1;
     long3dvtinf inf;
     int color;
     int ret;
@@ -1870,8 +1912,10 @@ static int orbit3dfloatcalc()
 {
     std::FILE *fp;
     unsigned long count;
-    int oldcol, oldrow;
-    int oldcol1, oldrow1;
+    int oldcol;
+    int oldrow;
+    int oldcol1;
+    int oldrow1;
     int color;
     int ret;
     float3dvtinf inf;
@@ -2221,7 +2265,9 @@ static int o_color;
 
 int setup_orbits_to_screen(affine *scrn_cnvt)
 {
-    double det, xd, yd;
+    double det;
+    double xd;
+    double yd;
 
     det = (g_orbit_corner_3_x-g_orbit_corner_min_x)*(g_orbit_corner_min_y-g_orbit_corner_max_y) + (g_orbit_corner_max_y-g_orbit_corner_3_y)*(g_orbit_corner_max_x-g_orbit_corner_min_x);
     if (det == 0)
@@ -2452,7 +2498,10 @@ static int ifs3dfloat()
     std::FILE *fp;
     int color;
 
-    double newx, newy, newz, r;
+    double newx;
+    double newy;
+    double newz;
+    double r;
 
     int k;
     int ret;
@@ -2603,7 +2652,13 @@ static int ifs2d()
     int ret;
     std::vector<long> localifs;
     long *lfptr;
-    long x, y, newx, newy, r, sum, tempr;
+    long x;
+    long y;
+    long newx;
+    long newy;
+    long r;
+    long sum;
+    long tempr;
     l_affine cvt;
     // setup affine screen coord conversion
     l_setup_convert_to_screen(&cvt);
@@ -2718,7 +2773,12 @@ static int ifs3dlong()
     int ret;
     std::vector<long> localifs;
     long *lfptr;
-    long newx, newy, newz, r, sum, tempr;
+    long newx;
+    long newy;
+    long newz;
+    long r;
+    long sum;
+    long tempr;
     long3dvtinf inf;
 
     srand(1);
