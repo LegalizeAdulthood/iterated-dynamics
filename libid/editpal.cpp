@@ -51,9 +51,9 @@
 #define MAX_WIDTH        1024     // palette editor cannot be wider than this
 
 static char undofile[] = "id.$$2";  // file where undo list is stored
-#define TITLE   "Id"
+#define TITLE   "Iterated Dynamics"
 
-#define TITLE_LEN (2)
+#define TITLE_LEN (17)
 
 
 #ifdef XFRACT
@@ -1853,7 +1853,7 @@ static void PalTable__DrawStatus(PalTable *me, bool stripe_mode)
             driver_display_string(x, y, fg_color, bg_color, buff);
 
             y = y - 10;
-            std::snprintf(buff, std::size(buff), "%d", color);
+            std::snprintf(buff, std::size(buff), "%-3d", color); // assumes 8-bit color, 0-255 values
             driver_display_string(x, y, fg_color, bg_color, buff);
         }
         Cursor_Show();
@@ -1908,7 +1908,7 @@ static void PalTable__Draw(PalTable *me)
     {
         int center = (width - TITLE_LEN*8) / 2;
 
-        displayf(me->x+center, me->y+RGBEditor_DEPTH/2-6, fg_color, bg_color, TITLE);
+        displayf(me->x+center, me->y+RGBEditor_DEPTH/2-12, fg_color, bg_color, TITLE);
     }
 
     RGBEditor_Draw(me->rgb[0]);
