@@ -358,15 +358,17 @@ bf_t abs_a_bf(bf_t r)
 bf_t unsafe_inv_bf(bf_t r, bf_t n)
 {
     bool signflag = false;
-    int fexp, rexp;
+    int fexp;
+    int rexp;
     LDBL f;
-    bf_t orig_r, orig_n; // orig_bftmp1 not needed here
-    int  orig_bflength,
-         orig_bnlength,
-         orig_padding,
-         orig_rlength,
-         orig_shiftfactor,
-         orig_rbflength;
+    bf_t orig_r;
+    bf_t orig_n; // orig_bftmp1 not needed here
+    int orig_bflength;
+    int orig_bnlength;
+    int orig_padding;
+    int orig_rlength;
+    int orig_shiftfactor;
+    int orig_rbflength;
 
     // use Newton's recursive method for zeroing in on 1/n : r=r(2-rn)
 
@@ -472,8 +474,11 @@ bf_t unsafe_inv_bf(bf_t r, bf_t n)
 //      Make copies first if necessary.
 bf_t unsafe_div_bf(bf_t r, bf_t n1, bf_t n2)
 {
-    int aexp, bexp, rexp;
-    LDBL a, b;
+    int aexp;
+    int bexp;
+    int rexp;
+    LDBL a;
+    LDBL b;
 
     // first, check for valid data
 
@@ -517,13 +522,14 @@ bf_t unsafe_sqrt_bf(bf_t r, bf_t n)
 {
     int almost_match = 0;
     LDBL f;
-    bf_t orig_r, orig_n;
-    int  orig_bflength,
-         orig_bnlength,
-         orig_padding,
-         orig_rlength,
-         orig_shiftfactor,
-         orig_rbflength;
+    bf_t orig_r;
+    bf_t orig_n;
+    int orig_bflength;
+    int orig_bnlength;
+    int orig_padding;
+    int orig_rlength;
+    int orig_shiftfactor;
+    int orig_rbflength;
 
     // use Newton's recursive method for zeroing in on sqrt(n): r=.5(r+n/r)
 
@@ -618,7 +624,8 @@ bf_t unsafe_sqrt_bf(bf_t r, bf_t n)
 bf_t exp_bf(bf_t r, bf_t n)
 {
     U16 fact = 1;
-    S16 * testexp, * rexp;
+    S16 *testexp;
+    S16 *rexp;
 
     testexp = (S16 *)(bftmp2+bflength);
     rexp = (S16 *)(r+bflength);
@@ -657,13 +664,15 @@ bf_t unsafe_ln_bf(bf_t r, bf_t n)
 {
     int almost_match = 0;
     LDBL f;
-    bf_t orig_r, orig_n, orig_bftmp5;
-    int  orig_bflength,
-         orig_bnlength,
-         orig_padding,
-         orig_rlength,
-         orig_shiftfactor,
-         orig_rbflength;
+    bf_t orig_r;
+    bf_t orig_n;
+    bf_t orig_bftmp5;
+    int orig_bflength;
+    int orig_bnlength;
+    int orig_padding;
+    int orig_rlength;
+    int orig_shiftfactor;
+    int orig_rbflength;
 
     // use Newton's recursive method for zeroing in on ln(n): r=r+n*exp(-r)-1
 
@@ -766,7 +775,9 @@ bf_t unsafe_ln_bf(bf_t r, bf_t n)
 bf_t unsafe_sincos_bf(bf_t s, bf_t c, bf_t n)
 {
     U16 fact = 2;
-    S16 * testexp, * cexp, * sexp;
+    S16 *testexp;
+    S16 *cexp;
+    S16 *sexp;
 
     testexp = (S16 *)(bftmp1+bflength);
     cexp = (S16 *)(c+bflength);
@@ -948,14 +959,16 @@ bf_t unsafe_atan_bf(bf_t r, bf_t n)
     int almost_match = 0;
     bool signflag = false;
     LDBL f;
-    bf_t orig_r, orig_n, orig_bf_pi, orig_bftmp3;
-    int  orig_bflength,
-         orig_bnlength,
-         orig_padding,
-         orig_rlength,
-         orig_shiftfactor,
-         orig_rbflength;
-
+    bf_t orig_r;
+    bf_t orig_n;
+    bf_t orig_bf_pi;
+    bf_t orig_bftmp3;
+    int orig_bflength;
+    int orig_bnlength;
+    int orig_padding;
+    int orig_rlength;
+    int orig_shiftfactor;
+    int orig_rbflength;
 
     // use Newton's recursive method for zeroing in on atan(n): r=r-cos(r)(sin(r)-n*cos(r))
 
@@ -1099,7 +1112,8 @@ bf_t unsafe_atan_bf(bf_t r, bf_t n)
 // uses bftmp1 - bftmp6 - global temp bigfloats
 bf_t unsafe_atan2_bf(bf_t r, bf_t ny, bf_t nx)
 {
-    int signx, signy;
+    int signx;
+    int signy;
 
     signx = sign_bf(nx);
     signy = sign_bf(ny);
@@ -1410,9 +1424,11 @@ void norm_sign_bf(bf_t r, bool positive)
 // returns the value of the adjusted exponents
 S16 adjust_bf_add(bf_t n1, bf_t n2)
 {
-    int scale, fill_byte;
+    int scale;
+    int fill_byte;
     S16 rexp;
-    S16 *n1exp, *n2exp;
+    S16 *n1exp;
+    S16 *n2exp;
 
     // scale n1 or n2
     // compare exp's
@@ -1477,10 +1493,12 @@ bf_t max_bf(bf_t r)
 
 int cmp_bf(bf_t n1, bf_t n2)
 {
-    int sign1, sign2;
-    S16 *n1exp, *n2exp;
-    U16 value1, value2;
-
+    int sign1;
+    int sign2;
+    S16 *n1exp;
+    S16 *n2exp;
+    U16 value1;
+    U16 value2;
 
     // compare signs
     sign1 = sign_bf(n1);
@@ -1799,10 +1817,12 @@ bf_t half_a_bf(bf_t r)
 // SIDE-EFFECTS: n1 and n2 are changed to their absolute values
 bf_t unsafe_full_mult_bf(bf_t r, bf_t n1, bf_t n2)
 {
-    int bnl, dbfl;
+    int bnl;
+    int dbfl;
     // cppcheck-suppress unreadVariable
     S16 *rexp;
-    S16 *n1exp, *n2exp;
+    S16 *n1exp;
+    S16 *n2exp;
 
     if (is_bf_zero(n1) || is_bf_zero(n2))
     {
@@ -1837,9 +1857,12 @@ bf_t unsafe_full_mult_bf(bf_t r, bf_t n1, bf_t n2)
 // SIDE-EFFECTS: n1 and n2 are changed to their absolute values
 bf_t unsafe_mult_bf(bf_t r, bf_t n1, bf_t n2)
 {
-    int bnl, bfl, rl;
+    int bnl;
+    int bfl;
+    int rl;
     int rexp;
-    S16 *n1exp, *n2exp;
+    S16 *n1exp;
+    S16 *n2exp;
 
     if (is_bf_zero(n1) || is_bf_zero(n2))
     {
@@ -1884,7 +1907,8 @@ bf_t unsafe_mult_bf(bf_t r, bf_t n1, bf_t n2)
 // SIDE-EFFECTS: n is changed to its absolute value
 bf_t unsafe_full_square_bf(bf_t r, bf_t n)
 {
-    int bnl, dbfl;
+    int bnl;
+    int dbfl;
     // cppcheck-suppress unreadVariable
     S16 *rexp;
     S16 *nexp;
@@ -1927,7 +1951,9 @@ bf_t unsafe_full_square_bf(bf_t r, bf_t n)
 // SIDE-EFFECTS: n is changed to its absolute value
 bf_t unsafe_square_bf(bf_t r, bf_t n)
 {
-    int bnl, bfl, rl;
+    int bnl;
+    int bfl;
+    int rl;
     int rexp;
     S16 *nexp;
 
@@ -1965,7 +1991,8 @@ bf_t unsafe_square_bf(bf_t r, bf_t n)
 bf_t unsafe_mult_bf_int(bf_t r, bf_t n, U16 u)
 {
     int bnl;
-    S16 *rexp, *nexp;
+    S16 *rexp;
+    S16 *nexp;
 
     rexp = (S16 *)(r+bflength);
     nexp = (S16 *)(n+bflength);
@@ -2093,7 +2120,9 @@ bf_t div_a_bf_int(bf_t r, U16 u)
 LDBL extract_value(LDBL f, LDBL b, int *exp_ptr)
 {
     int n;
-    LDBL af, ff, orig_b;
+    LDBL af;
+    LDBL ff;
+    LDBL orig_b;
     LDBL value[15];
     unsigned powertwo;
 
@@ -2343,7 +2372,8 @@ bf10_t mult_a_bf10_int(bf10_t r, int dec, U16 n)
 {
     int signflag;
     int p;
-    unsigned value, overflow;
+    unsigned value;
+    unsigned overflow;
     bf10_t power10;
 
     if (r[1] == 0 || n == 0)
@@ -2382,8 +2412,10 @@ bf10_t mult_a_bf10_int(bf10_t r, int dec, U16 n)
 
 bf10_t div_a_bf10_int(bf10_t r, int dec, U16 n)
 {
-    int dest, p;
-    unsigned value, remainder;
+    int dest;
+    int p;
+    unsigned value;
+    unsigned remainder;
     bf10_t power10;
 
     if (r[1] == 0 || n == 0)
