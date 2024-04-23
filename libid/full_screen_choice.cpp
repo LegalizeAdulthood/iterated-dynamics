@@ -183,19 +183,24 @@ int fullscreen_choice(
     int (*checkkey)(int, int)
 )
 {
-    int titlelines, titlewidth;
+    int titlelines;
+    int titlewidth;
     int reqdrows;
-    int topleftrow, topleftcol;
+    int topleftrow;
+    int topleftcol;
     int topleftchoice;
     int speedrow = 0;  // speed key prompt
     int boxitems;      // boxwidth*boxdepth
-    int curkey, increment, rev_increment = 0;
+    int curkey;
+    int increment;
+    int rev_increment = 0;
     bool redisplay;
     char const *charptr;
     char buf[81];
     char curitem[81];
     char const *itemptr;
-    int ret, old_look_at_mouse;
+    int ret;
+    int old_look_at_mouse;
     int scrunch;  // scrunch up a line
 
     scrunch = (options & CHOICE_CRUNCH) ? 1 : 0;
