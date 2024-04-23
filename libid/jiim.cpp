@@ -150,7 +150,9 @@ void plot8(int x, int y, int color)
 
 void circle(int radius, int color)
 {
-    int x, y, sum;
+    int x;
+    int y;
+    int sum;
 
     x = 0;
     y = radius << 1;
@@ -322,7 +324,8 @@ int PushFloat(float x, float y)
 DComplex PopFloat()
 {
     DComplex pop;
-    float  popx, popy;
+    float popx;
+    float popy;
 
     if (!QueueEmpty())
     {
@@ -381,7 +384,8 @@ int EnQueueLong(long x, long y)
 DComplex DeQueueFloat()
 {
     DComplex out;
-    float outx, outy;
+    float outx;
+    float outy;
 
     if (ListBack != ListFront)
     {
@@ -471,19 +475,26 @@ void Jiim(jiim_types which)
     int count = 0;            // coloring julia
     static int mode = 0;      // point, circle, ...
     int       old_look_at_mouse = g_look_at_mouse;
-    double cr, ci, r;
-    int xfactor, yfactor;             // aspect ratio
+    double cr;
+    double ci;
+    double r;
+    int xfactor;
+    int yfactor; // aspect ratio
 
-    int xoff, yoff;                   // center of the window
-    int x, y;
+    int xoff;
+    int yoff; // center of the window
+    int x;
+    int y;
     int kbdchar = -1;
 
     long iter;
     int color;
     float zoom;
-    int oldsxoffs, oldsyoffs;
+    int oldsxoffs;
+    int oldsyoffs;
     int (*oldcalctype)();
-    int old_x, old_y;
+    int old_x;
+    int old_y;
     double aspect;
     static int randir = 0;
     static int rancnt = 0;
@@ -928,7 +939,9 @@ void Jiim(jiim_types which)
              */
             if (which == jiim_types::JIIM && OKtoMIIM)
             {
-                DComplex f1, f2, Sqrt;        // Fixed points of Julia
+                DComplex f1;
+                DComplex f2;
+                DComplex Sqrt; // Fixed points of Julia
 
                 Sqrt = ComplexSqrtFloat(1 - 4 * cr, -4 * ci);
                 f1.x = (1 + Sqrt.x) / 2;
