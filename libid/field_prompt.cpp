@@ -20,13 +20,17 @@ int field_prompt(
 )
 {
     char const *charptr;
-    int boxwidth, titlelines, titlecol, titlerow;
+    int boxwidth;
+    int titlelines;
+    int titlecol;
+    int titlerow;
     int promptcol;
-    int i, j;
+    int i;
+    int j;
     char buf[81] = { 0 };
-    helptitle();                           // clear screen, display title
-    driver_set_attr(1, 0, C_PROMPT_BKGRD, 24*80);     // init rest to background
-    charptr = hdg;                         // count title lines, find widest
+    helptitle();                                    // clear screen, display title
+    driver_set_attr(1, 0, C_PROMPT_BKGRD, 24 * 80); // init rest to background
+    charptr = hdg;                                  // count title lines, find widest
     boxwidth = 0;
     i = boxwidth;
     titlelines = 1;
