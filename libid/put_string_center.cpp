@@ -19,7 +19,9 @@
 int putstringcenter(int row, int col, int width, int attr, char const *msg)
 {
     char buf[81];
-    int i, j, k;
+    int i;
+    int j;
+    int k;
     i = 0;
 #ifdef XFRACT
     if (width >= 80)
