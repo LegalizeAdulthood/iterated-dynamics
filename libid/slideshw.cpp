@@ -4,6 +4,7 @@
 //*********************************************************************
 #include "slideshw.h"
 
+#include "check_write_file.h"
 #include "port.h"
 #include "prototyp.h"
 
@@ -373,6 +374,7 @@ void recordshw(int key)
     ticks = std::clock();  // current time
     if (fpss == nullptr)
     {
+        check_writefile(g_auto_name, ".key");
         fpss = std::fopen(g_auto_name.c_str(), "w");
         if (fpss == nullptr)
         {

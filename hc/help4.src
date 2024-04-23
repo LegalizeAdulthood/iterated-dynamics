@@ -507,7 +507,8 @@ from the autokey file (see next parameter) and interpreted as if they're
 being entered from the keyboard.
 
 Specifying "record" runs Id in recording mode - all keystrokes are recorded
-in the autokey file.
+in the autokey file.  Unless overwrite=yes is specified, the autokey
+filename will be incremented to avoid overwriting existing files.
 
 See also {Autokey Mode}.
 

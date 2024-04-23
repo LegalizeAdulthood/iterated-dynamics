@@ -293,6 +293,8 @@ o The orbitsavename parameter was added to specify the name of the raw
   orbits file.  The orbits file, if it exists, is overwritten when
   overwrite=yes.  Otherwise, the value of orbitsavename is incremented until
   a filename is formed that does not exist.
+o The autokeyname parameter was enhanced to create a unique filename when
+  autokey=record unless overwrite=yes is specified.
 o The formula parser has been enhanced to remove internal size limitations.
   The only limit on formula parsing is available memory.
 o Printing an image has been removed.  Use your operating system for that.
