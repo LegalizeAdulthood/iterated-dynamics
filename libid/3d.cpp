@@ -117,7 +117,8 @@ void scale(double sx, double sy, double sz, MATRIX m)
 void xrot(double theta, MATRIX m)
 {
     MATRIX rot;
-    double sintheta, costheta;
+    double sintheta;
+    double costheta;
     sintheta = std::sin(theta);
     costheta = std::cos(theta);
     identity(rot);
@@ -132,7 +133,8 @@ void xrot(double theta, MATRIX m)
 void yrot(double theta, MATRIX m)
 {
     MATRIX rot;
-    double sintheta, costheta;
+    double sintheta;
+    double costheta;
     sintheta = std::sin(theta);
     costheta = std::cos(theta);
     identity(rot);
@@ -147,7 +149,8 @@ void yrot(double theta, MATRIX m)
 void zrot(double theta, MATRIX m)
 {
     MATRIX rot;
-    double sintheta, costheta;
+    double sintheta;
+    double costheta;
     sintheta = std::sin(theta);
     costheta = std::cos(theta);
     identity(rot);
