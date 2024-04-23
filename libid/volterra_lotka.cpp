@@ -11,7 +11,13 @@
 // Beauty of Fractals pp. 125 - 127
 int VLfpFractal()
 {
-    double a, b, ab, half, u, w, xy;
+    double a;
+    double b;
+    double ab;
+    double half;
+    double u;
+    double w;
+    double xy;
 
     half = g_params[0] / 2.0;
     xy = g_old_z.x * g_old_z.y;
