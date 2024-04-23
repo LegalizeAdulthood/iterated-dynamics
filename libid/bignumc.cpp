@@ -66,8 +66,10 @@ bn_t copy_bn(bn_t r, bn_t n)
 //  if n1 < n2 returns a negative (bytes left to go when mismatch occured)
 int cmp_bn(bn_t n1, bn_t n2)
 {
-    S16 Svalue1, Svalue2;
-    U16 value1, value2;
+    S16 Svalue1;
+    S16 Svalue2;
+    U16 value1;
+    U16 value2;
 
     // two bytes at a time
     // signed comparison for msb
@@ -360,10 +362,16 @@ bn_t half_a_bn(bn_t r)
 bn_t unsafe_full_mult_bn(bn_t r, bn_t n1, bn_t n2)
 {
     bool sign2 = false;
-    int steps, doublesteps, carry_steps;
-    bn_t n1p, n2p;      // pointers for n1, n2
-    bn_t rp1, rp2, rp3; // pointers for r
-    U32 prod, sum;
+    int steps;
+    int doublesteps;
+    int carry_steps;
+    bn_t n1p;
+    bn_t n2p;           // pointers for n1, n2
+    bn_t rp1;
+    bn_t rp2;
+    bn_t rp3; // pointers for r
+    U32 prod;
+    U32 sum;
 
     bool sign1 = is_bn_neg(n1);
     if (sign1) // =, not ==
@@ -435,10 +443,17 @@ bn_t unsafe_full_mult_bn(bn_t r, bn_t n1, bn_t n2)
 bn_t unsafe_mult_bn(bn_t r, bn_t n1, bn_t n2)
 {
     bool sign2 = false;
-    int steps, doublesteps, carry_steps, skips;
-    bn_t n1p, n2p;      // pointers for n1, n2
-    bn_t rp1, rp2, rp3; // pointers for r
-    U32 prod, sum;
+    int steps;
+    int doublesteps;
+    int carry_steps;
+    int skips;
+    bn_t n1p;
+    bn_t n2p;           // pointers for n1, n2
+    bn_t rp1;
+    bn_t rp2;
+    bn_t rp3; // pointers for r
+    U32 prod;
+    U32 sum;
     int bnl; // temp bnlength holder
 
     bnl = bnlength;
@@ -530,10 +545,16 @@ bn_t unsafe_mult_bn(bn_t r, bn_t n1, bn_t n2)
 // SIDE-EFFECTS: n is changed to its absolute value
 bn_t unsafe_full_square_bn(bn_t r, bn_t n)
 {
-    int steps, doublesteps, carry_steps;
-    bn_t n1p, n2p;
-    bn_t rp1, rp2, rp3;
-    U32 prod, sum;
+    int steps;
+    int doublesteps;
+    int carry_steps;
+    bn_t n1p;
+    bn_t n2p;
+    bn_t rp1;
+    bn_t rp2;
+    bn_t rp3;
+    U32 prod;
+    U32 sum;
 
     if (is_bn_neg(n))    // don't need to keep track of sign since the
     {
@@ -631,11 +652,19 @@ bn_t unsafe_full_square_bn(bn_t r, bn_t n)
 // SIDE-EFFECTS: n is changed to its absolute value
 bn_t unsafe_square_bn(bn_t r, bn_t n)
 {
-    int steps, doublesteps, carry_steps;
-    int skips, rodd;
-    bn_t n1p, n2p, n3p;
-    bn_t rp1, rp2, rp3;
-    U32 prod, sum;
+    int steps;
+    int doublesteps;
+    int carry_steps;
+    int skips;
+    int rodd;
+    bn_t n1p;
+    bn_t n2p;
+    bn_t n3p;
+    bn_t rp1;
+    bn_t rp2;
+    bn_t rp3;
+    U32 prod;
+    U32 sum;
     int bnl;
 
     // This whole procedure would be a great deal simpler if we could assume that
@@ -796,7 +825,8 @@ bn_t mult_a_bn_int(bn_t r, U16 u)
 bn_t unsafe_div_bn_int(bn_t r, bn_t n,  U16 u)
 {
     U32 full_number;
-    U16 quot, rem = 0;
+    U16 quot;
+    U16 rem = 0;
 
     bool sign = is_bn_neg(n);
     if (sign)
@@ -835,7 +865,8 @@ bn_t unsafe_div_bn_int(bn_t r, bn_t n,  U16 u)
 bn_t div_a_bn_int(bn_t r, U16 u)
 {
     U32 full_number;
-    U16 quot, rem = 0;
+    U16 quot;
+    U16 rem = 0;
 
     bool sign = is_bn_neg(r);
     if (sign)
@@ -935,7 +966,8 @@ bf_t copy_bf(bf_t r, bf_t n)
 bf_t floattobf(bf_t r, LDBL f)
 {
     int power;
-    int bnl, il;
+    int bnl;
+    int il;
     if (f == 0)
     {
         clear_bf(r);
@@ -975,7 +1007,8 @@ bf_t floattobf1(bf_t r, LDBL f)
 LDBL bftofloat(bf_t n)
 {
     int power;
-    int bnl, il;
+    int bnl;
+    int il;
     LDBL f;
 
     bnl = bnlength;
