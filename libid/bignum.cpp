@@ -194,7 +194,8 @@ S16 big_setS16(S16 *addr, S16 val)
 int convert_bn(bn_t newnum, bn_t old, int newbnlength, int newintlength,
                int oldbnlength, int oldintlength)
 {
-    int savebnlength, saveintlength;
+    int savebnlength;
+    int saveintlength;
 
     // save lengths so not dependent on external environment
     saveintlength = intlength;
@@ -534,11 +535,12 @@ bn_t unsafe_inv_bn(bn_t r, bn_t n)
 {
     long maxval;
     LDBL f;
-    bn_t orig_r, orig_n; // orig_bntmp1 not needed here
-    int  orig_bnlength,
-         orig_padding,
-         orig_rlength,
-         orig_shiftfactor;
+    bn_t orig_r;
+    bn_t orig_n; // orig_bntmp1 not needed here
+    int orig_bnlength;
+    int orig_padding;
+    int orig_rlength;
+    int orig_shiftfactor;
 
     // use Newton's recursive method for zeroing in on 1/n : r=r(2-rn)
 
@@ -644,9 +646,13 @@ bn_t unsafe_inv_bn(bn_t r, bn_t n)
 //      Make copies first if necessary.
 bn_t unsafe_div_bn(bn_t r, bn_t n1, bn_t n2)
 {
-    int scale1, scale2, i;
+    int scale1;
+    int scale2;
+    int i;
     long maxval;
-    LDBL a, b, f;
+    LDBL a;
+    LDBL b;
+    LDBL f;
 
     // first, check for valid data
     a = bntofloat(n1);
@@ -758,11 +764,12 @@ bn_t sqrt_bn(bn_t r, bn_t n)
 {
     int almost_match = 0;
     LDBL f;
-    bn_t orig_r, orig_n;
-    int  orig_bnlength,
-         orig_padding,
-         orig_rlength,
-         orig_shiftfactor;
+    bn_t orig_r;
+    bn_t orig_n;
+    int orig_bnlength;
+    int orig_padding;
+    int orig_rlength;
+    int orig_shiftfactor;
 
     // use Newton's recursive method for zeroing in on sqrt(n): r=.5(r+n/r)
 
@@ -892,11 +899,14 @@ bn_t unsafe_ln_bn(bn_t r, bn_t n)
     int almost_match = 0;
     long maxval;
     LDBL f;
-    bn_t orig_r, orig_n, orig_bntmp5, orig_bntmp4;
-    int  orig_bnlength,
-         orig_padding,
-         orig_rlength,
-         orig_shiftfactor;
+    bn_t orig_r;
+    bn_t orig_n;
+    bn_t orig_bntmp5;
+    bn_t orig_bntmp4;
+    int orig_bnlength;
+    int orig_padding;
+    int orig_rlength;
+    int orig_shiftfactor;
 
     // use Newton's recursive method for zeroing in on ln(n): r=r+n*exp(-r)-1
 
@@ -1175,11 +1185,14 @@ bn_t unsafe_atan_bn(bn_t r, bn_t n)
 {
     int almost_match = 0;
     LDBL f;
-    bn_t orig_r, orig_n, orig_bn_pi, orig_bntmp3;
-    int  orig_bnlength,
-         orig_padding,
-         orig_rlength,
-         orig_shiftfactor;
+    bn_t orig_r;
+    bn_t orig_n;
+    bn_t orig_bn_pi;
+    bn_t orig_bntmp3;
+    int orig_bnlength;
+    int orig_padding;
+    int orig_rlength;
+    int orig_shiftfactor;
 
     // use Newton's recursive method for zeroing in on atan(n): r=r-cos(r)(sin(r)-n*cos(r))
     bool signflag = false;
@@ -1321,7 +1334,8 @@ bn_t unsafe_atan_bn(bn_t r, bn_t n)
 // uses bntmp1 - bntmp6 - global temp bigfloats
 bn_t unsafe_atan2_bn(bn_t r, bn_t ny, bn_t nx)
 {
-    int signx, signy;
+    int signx;
+    int signy;
 
     signx = sign_bn(nx);
     signy = sign_bn(ny);
