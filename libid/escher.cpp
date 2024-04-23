@@ -9,7 +9,9 @@
 
 int EscherfpFractal() // Science of Fractal Images pp. 185, 187
 {
-    DComplex oldtest, newtest, testsqr;
+    DComplex oldtest;
+    DComplex newtest;
+    DComplex testsqr;
     double testsize = 0.0;
     long testiter = 0;
 
