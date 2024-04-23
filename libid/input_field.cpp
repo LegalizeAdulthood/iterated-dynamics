@@ -25,7 +25,8 @@ int input_field(
     char savefld[81];
     char buf[81];
     int curkey;
-    int i, j;
+    int i;
+    int j;
     int old_look_at_mouse = g_look_at_mouse;
     g_look_at_mouse = 0;
     int ret = -1;
