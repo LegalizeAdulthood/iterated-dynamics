@@ -39,7 +39,14 @@ int quaternionfp_per_pixel()
 
 int QuaternionFPFractal()
 {
-    double a0, a1, a2, a3, n0, n1, n2, n3;
+    double a0;
+    double a1;
+    double a2;
+    double a3;
+    double n0;
+    double n1;
+    double n2;
+    double n3;
     a0 = g_old_z.x;
     a1 = g_old_z.y;
     a2 = g_float_param->x;
