@@ -40,6 +40,7 @@
 #include "stop_msg.h"
 #include "temp_msg.h"
 #include "trig_fns.h"
+#include "trim_filename.h"
 #include "type_has_param.h"
 #include "update_save_name.h"
 #include "version.h"
@@ -314,11 +315,7 @@ top:
             driver_put_string(s_row+1, 16, C_GENERAL_HI, g_formula_name);
             i = static_cast<int>(g_formula_name.length() + 1);
             driver_put_string(s_row+2, 3, C_GENERAL_MED, "Item file:");
-            if (g_formula_filename.length() >= 29)
-            {
-                addrow = 1;
-            }
-            driver_put_string(s_row+2+addrow, 16, C_GENERAL_HI, g_formula_filename);
+            driver_put_string(s_row + 2 + addrow, 16, C_GENERAL_HI, trim_filename(g_formula_filename, 29));
         }
         trigdetails(msg);
         driver_put_string(s_row+1, 16+i, C_GENERAL_HI, msg);
