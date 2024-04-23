@@ -33,7 +33,9 @@ struct Palettetype
 
 bool ValidateLuts(char const *fn)
 {
-    unsigned        r, g, b;
+    unsigned r;
+    unsigned g;
+    unsigned b;
     char    temp[FILE_MAX_PATH+1];
     char    temp_fn[FILE_MAX_PATH];
     std::strcpy(temp, g_map_name.c_str());
