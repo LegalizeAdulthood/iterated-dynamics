@@ -55,7 +55,8 @@ int check_vidmode_key(int option, int k)
 int check_vidmode_keyname(char const *kname)
 {
     // returns key number for the passed keyname, 0 if not a keyname
-    int i, keyset;
+    int i;
+    int keyset;
     keyset = 1058;
     if (*kname == 'S' || *kname == 's')
     {
