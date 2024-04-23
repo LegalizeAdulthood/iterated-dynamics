@@ -83,11 +83,18 @@ void setwait(long *wait)
 //
 void TurkMite1(int maxtur, int rule_len, char const *ru, long maxpts, long wait)
 {
-    int ix, iy, idir, pixel;
-    int kbdchar, step;
+    int ix;
+    int iy;
+    int idir;
+    int pixel;
+    int kbdchar;
+    int step;
     bool antwrap;
-    int x[MAX_ANTS + 1], y[MAX_ANTS + 1];
-    int next_col[MAX_ANTS + 1], rule[MAX_ANTS + 1], dir[MAX_ANTS + 1];
+    int x[MAX_ANTS + 1];
+    int y[MAX_ANTS + 1];
+    int next_col[MAX_ANTS + 1];
+    int rule[MAX_ANTS + 1];
+    int dir[MAX_ANTS + 1];
     antwrap = g_params[4] != 0;
     step = (int) wait;
     if (step == 1)
@@ -267,9 +274,15 @@ static unsigned rotate_left_one(unsigned value)
 // this one ignore the color of the current cell is more like a white ant
 void TurkMite2(int maxtur, int rule_len, char const *ru, long maxpts, long wait)
 {
-    int ix, iy, idir, pixel, dir[MAX_ANTS + 1];
-    int kbdchar, step;
-    int x[MAX_ANTS + 1], y[MAX_ANTS + 1];
+    int ix;
+    int iy;
+    int idir;
+    int pixel;
+    int dir[MAX_ANTS + 1];
+    int kbdchar;
+    int step;
+    int x[MAX_ANTS + 1];
+    int y[MAX_ANTS + 1];
     int rule[MAX_ANTS + 1];
     bool antwrap = g_params[4] != 0;
 
