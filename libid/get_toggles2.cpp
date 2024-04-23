@@ -24,9 +24,11 @@ int get_toggles2()
 {
     char const *choices[18];
     fullscreenvalues uvalues[23];
-    int old_rotate_lo, old_rotate_hi;
+    int old_rotate_lo;
+    int old_rotate_hi;
     int old_distestwidth;
-    double old_potparam[3], old_inversion[3];
+    double old_potparam[3];
+    double old_inversion[3];
     long old_usr_distest;
 
     // fill up the choices (and previous values) arrays
