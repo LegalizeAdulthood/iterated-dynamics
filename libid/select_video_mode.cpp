@@ -14,10 +14,11 @@
 #include "video_mode.h"
 
 #include <algorithm>
-#include <array>
+#include <cassert>
 #include <cstdio>
 #include <cstring>
 #include <filesystem>
+#include <numeric>
 #include <string>
 
 namespace fs = std::filesystem;
@@ -32,7 +33,7 @@ inline bool is_writable(const std::string &path)
     return (fs::status(path).permissions() & read_write) == read_write;
 }
 
-static std::array<int, MAX_VIDEO_MODES> entnums;
+static std::vector<int> entnums;
 static bool modes_changed = false;
 
 static void format_vid_table(int choice, char *buf)
@@ -40,7 +41,9 @@ static void format_vid_table(int choice, char *buf)
     char local_buf[81];
     char kname[5];
     int truecolorbits;
-    std::memcpy((char *)&g_video_entry, (char *)&g_video_table[entnums[choice]],
+    const int idx = entnums[choice];
+    assert(idx < g_video_table_len);
+    std::memcpy((char *)&g_video_entry, (char *)&g_video_table[idx],
            sizeof(g_video_entry));
     vidmode_keyname(g_video_entry.keynum, kname);
     std::sprintf(buf, "%-5s %-25s %5d %5d ",  // 44 chars
@@ -65,14 +68,14 @@ static void format_vid_table(int choice, char *buf)
 
 int select_video_mode(int curmode)
 {
-    int attributes[MAX_VIDEO_MODES];
+    std::vector<int> attributes;
     int ret;
 
-    for (int i = 0; i < g_video_table_len; ++i)  // init tables
-    {
-        entnums[i] = i;
-        attributes[i] = 1;
-    }
+    attributes.resize(g_video_table_len);
+    entnums.resize(g_video_table_len);
+    // init tables
+    std::fill(attributes.begin(), attributes.end(), 1);
+    std::iota(entnums.begin(), entnums.end(), 0);
     std::sort(entnums.begin(), entnums.end(), ent_less);
 
     // pick default mode
@@ -107,7 +110,7 @@ int select_video_mode(int curmode)
     i = fullscreen_choice(CHOICE_HELP,
                           "Select Video Mode",
                           "key...name.......................xdot..ydot.colr.driver......comment......",
-                          nullptr, g_video_table_len, nullptr, attributes,
+                          nullptr, g_video_table_len, nullptr, attributes.data(),
                           1, 16, 74, i, format_vid_table, nullptr, nullptr, check_modekey);
     g_tab_mode = old_tab_mode;
     g_help_mode = old_help_mode;
