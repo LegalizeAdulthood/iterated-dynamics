@@ -11,6 +11,7 @@
 #include "3d.h"
 #include "calcfrac.h"
 #include "check_key.h"
+#include "check_write_file.h"
 #include "cmdfiles.h"
 #include "debug_flags.h"
 #include "drivers.h"
@@ -3215,8 +3216,9 @@ static bool float3dviewtransf(float3dvtinf *inf)
 
 static std::FILE *open_orbitsave()
 {
+    check_writefile(g_orbit_save_name, ".raw");
     std::FILE *fp;
-    if ((g_orbit_save_flags & osf_raw) && (fp = std::fopen("orbits.raw", "w")) != nullptr)
+    if ((g_orbit_save_flags & osf_raw) && (fp = std::fopen(g_orbit_save_name.c_str(), "w")) != nullptr)
     {
         std::fprintf(fp, "pointlist x y z color\n");
         return fp;

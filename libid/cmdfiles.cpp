@@ -168,6 +168,7 @@ bool g_fast_restore = false;
 bool g_organize_formulas_search = false;
 
 int     g_orbit_save_flags = 0;          // for IFS and LORENZ to output acrospin file
+std::string g_orbit_save_name{"orbits.raw"};
 int g_orbit_delay = 0;            // clock ticks delating orbit release
 int g_transparent_color_3d[2] = { 0 }; // transparency min/max values
 long    g_log_map_flag = 0;            // Logarithmic palette flag: 0 = no
@@ -2450,6 +2451,13 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
             return bad_arg(curarg);
         }
         g_orbit_save_flags |= (yesnoval[0] ? osf_raw : 0);
+        return CMDARG_FRACTAL_PARAM;
+    }
+
+    if (variable == "orbitsavename")
+    {
+        // orbitsavename=?
+        g_orbit_save_name = value;
         return CMDARG_FRACTAL_PARAM;
     }
 
