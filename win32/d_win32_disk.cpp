@@ -52,11 +52,6 @@ struct Win32DiskDriver
     { name_, 0, width_, height_, 256, nullptr, "                        " }
 static VIDEOINFO modes[] =
 {
-    DRIVER_MODE("Win32 Disk Video         ",  320,  240),
-    DRIVER_MODE("Win32 Disk Video         ",  400,  300),
-    DRIVER_MODE("Win32 Disk Video         ",  480,  360),
-    DRIVER_MODE("Win32 Disk Video         ",  600,  450),
-    DRIVER_MODE("Win32 Disk Video         ",  640,  480),
     DRIVER_MODE("Win32 Disk Video         ",  800,  600),
     DRIVER_MODE("Win32 Disk Video         ", 1024,  768),
     DRIVER_MODE("Win32 Disk Video         ", 1200,  900),
