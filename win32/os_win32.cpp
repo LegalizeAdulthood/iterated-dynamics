@@ -286,7 +286,8 @@ void setnullvideo()
 */
 int getcolor(int xdot, int ydot)
 {
-    int x1, y1;
+    int x1;
+    int y1;
     x1 = xdot + g_logical_screen_x_offset;
     y1 = ydot + g_logical_screen_y_offset;
     _ASSERTE(x1 >= 0 && x1 <= g_screen_x_dots);
