@@ -31,7 +31,10 @@ void FPUcplxmul(DComplex const *x, DComplex const *y, DComplex *z)
 
 void FPUcplxdiv(DComplex const *x, DComplex const *y, DComplex *z)
 {
-    double mod, tx, yxmod, yymod;
+    double mod;
+    double tx;
+    double yxmod;
+    double yymod;
     mod = y->x * y->x + y->y * y->y;
     if (mod == 0)
     {
@@ -59,7 +62,9 @@ void FPUsinhcosh(double const *Angle, double *Sinh, double *Cosh)
 
 void FPUcplxlog(DComplex const *x, DComplex *z)
 {
-    double mod, zx, zy;
+    double mod;
+    double zx;
+    double zy;
     mod = std::sqrt(x->x*x->x + x->y*x->y);
     zx = std::log(mod);
     zy = std::atan2(x->y, x->x);
