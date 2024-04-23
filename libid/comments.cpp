@@ -157,7 +157,9 @@ enum
 static std::string expand_comments(char const *source)
 {
     int escape = 0;
-    char c, oldc, varname[MAXVNAME];
+    char c;
+    char oldc;
+    char varname[MAXVNAME];
     int k = 0;
     int i = 0;
     oldc = 0;
