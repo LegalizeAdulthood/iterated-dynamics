@@ -47,7 +47,8 @@ bool showtempmsg(char const *msgparm)
 {
     static size_t size = 0;
     char msg[41];
-    int save_sxoffs, save_syoffs;
+    int save_sxoffs;
+    int save_syoffs;
 
     std::strncpy(msg, msgparm, 40);
     msg[40] = 0; // ensure max message len of 40 chars
