@@ -34,7 +34,15 @@ long calcmandfpasm()
     long savedand;
     int savedincr;
     long tmpfsd;
-    double x, y, x2, y2, xy, Cx, Cy, savedx, savedy;
+    double x;
+    double y;
+    double x2;
+    double y2;
+    double xy;
+    double Cx;
+    double Cy;
+    double savedx;
+    double savedy;
 
     if (g_periodicity_check == 0)
     {
