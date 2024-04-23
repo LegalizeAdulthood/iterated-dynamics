@@ -592,7 +592,8 @@ static void  write_cache_lru()
     BYTE *pixelptr;
     long offset;
     BYTE tmpchar = 0;
-    cache *ptr1, *ptr2;
+    cache *ptr1;
+    cache *ptr2;
 #define WRITEGAP 4 // 1 for no gaps
     // scan back to also write any preceding dirty blocks, skipping small gaps
     ptr1 = cache_lru;
