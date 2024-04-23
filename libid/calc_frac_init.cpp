@@ -46,7 +46,12 @@ static void   smallest_add_bf(bf_t num);
    (if rez==MAXREZ) or at current resolution (if rez==CURRENTREZ)    */
 static int getprecdbl(int rezflag)
 {
-    LDBL del1, del2, xdel, xdel2, ydel, ydel2;
+    LDBL del1;
+    LDBL del2;
+    LDBL xdel;
+    LDBL xdel2;
+    LDBL ydel;
+    LDBL ydel2;
     int digits;
     LDBL rez;
     if (rezflag == MAXREZ)
@@ -494,7 +499,10 @@ expand_retry:
         } // end if (integerfractal && !invert && use_grid)
         else
         {
-            double dx0, dy0, dx1, dy1;
+            double dx0;
+            double dy0;
+            double dx1;
+            double dy1;
             // set up dx0 and dy0 analogs of lx0 and ly0
             // put fractal parameters in doubles
             dx0 = g_x_min;                // fill up the x, y grids
@@ -648,10 +656,13 @@ void adjust_cornerbf()
     // make edges very near vert/horiz exact, to ditch rounding errs and
     // to avoid problems when delta per axis makes too large a ratio
     double ftemp;
-    double Xmagfactor, Rotation, Skew;
+    double Xmagfactor;
+    double Rotation;
+    double Skew;
     LDBL Magnification;
 
-    bf_t bftemp, bftemp2;
+    bf_t bftemp;
+    bf_t bftemp2;
     bf_t btmp1;
     int saved;
     saved = save_stack();
@@ -729,8 +740,13 @@ void adjust_corner()
 {
     // make edges very near vert/horiz exact, to ditch rounding errs and
     // to avoid problems when delta per axis makes too large a ratio
-    double ftemp, ftemp2;
-    double Xctr, Yctr, Xmagfactor, Rotation, Skew;
+    double ftemp;
+    double ftemp2;
+    double Xctr;
+    double Yctr;
+    double Xmagfactor;
+    double Rotation;
+    double Skew;
     LDBL Magnification;
 
     if (!g_integer_fractal)
@@ -780,9 +796,20 @@ void adjust_corner()
 static void adjust_to_limitsbf(double expand)
 {
     LDBL limit;
-    bf_t bcornerx[4], bcornery[4];
-    bf_t blowx, bhighx, blowy, bhighy, blimit, bftemp;
-    bf_t bcenterx, bcentery, badjx, badjy, btmp1, btmp2;
+    bf_t bcornerx[4];
+    bf_t bcornery[4];
+    bf_t blowx;
+    bf_t bhighx;
+    bf_t blowy;
+    bf_t bhighy;
+    bf_t blimit;
+    bf_t bftemp;
+    bf_t bcenterx;
+    bf_t bcentery;
+    bf_t badjx;
+    bf_t badjy;
+    bf_t btmp1;
+    bf_t btmp2;
     bf_t bexpand;
     int saved;
     saved = save_stack();
@@ -1031,9 +1058,18 @@ static void adjust_to_limitsbf(double expand)
 
 static void adjust_to_limits(double expand)
 {
-    double cornerx[4], cornery[4];
-    double lowx, highx, lowy, highy, limit, ftemp;
-    double centerx, centery, adjx, adjy;
+    double cornerx[4];
+    double cornery[4];
+    double lowx;
+    double highx;
+    double lowy;
+    double highy;
+    double limit;
+    double ftemp;
+    double centerx;
+    double centery;
+    double adjx;
+    double adjy;
 
     limit = 32767.99;
 
