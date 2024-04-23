@@ -553,7 +553,12 @@ void showdotsaverestore(
 
 int calctypeshowdot()
 {
-    int out, startx, starty, stopx, stopy, width;
+    int out;
+    int startx;
+    int starty;
+    int stopx;
+    int stopy;
+    int width;
     show_dot_direction direction = show_dot_direction::JUST_A_POINT;
     stopx = g_col;
     startx = stopx;
@@ -1074,7 +1079,14 @@ static void perform_worklist()
 
     if (g_distance_estimator) // setup stuff for distance estimator
     {
-        double ftemp, ftemp2, delxx, delyy2, delyy, delxx2, d_x_size, d_y_size;
+        double ftemp;
+        double ftemp2;
+        double delxx;
+        double delyy2;
+        double delyy;
+        double delxx2;
+        double d_x_size;
+        double d_y_size;
         double aspect;
         if (g_distance_estimator_x_dots && g_distance_estimator_y_dots)
         {
@@ -1392,12 +1404,15 @@ static int diffusion_engine()
 {
     double log2 = (double) std::log(2.0);
 
-    int i, j;
+    int i;
+    int j;
 
-    int nx, ny; // number of tyles to build in x and y dirs
+    int nx;
+    int ny; // number of tyles to build in x and y dirs
     // made this to complete the area that is not
     // a square with sides like 2 ** n
-    int rem_x, rem_y; // what is left on the last tile to draw
+    int rem_x;
+    int rem_y; // what is left on the last tile to draw
 
     long unsigned tC; // temp for dif_counter
 
@@ -1405,7 +1420,8 @@ static int diffusion_engine()
 
     int sqsz;  // size of the block being filled
 
-    int colo, rowo; // original col and row
+    int colo;
+    int rowo; // original col and row
 
     int s = 1 << (g_diffusion_bits/2); // size of the square
 
@@ -1638,11 +1654,15 @@ static int sticky_orbits()
         break;
     case 'l':
     {
-        int dX, dY;                     // vector components
-        int final,                      // final row or column number
-            G,                  // used to test for new row or column
-            inc1,           // G increment when row or column doesn't change
-            inc2;               // G increment when row or column changes
+        int dX;
+        int dY;    // vector components
+        int final;
+        int // final row or column number
+            G;
+        int // used to test for new row or column
+            inc1;
+        int       // G increment when row or column doesn't change
+            inc2; // G increment when row or column changes
         char pos_slope;
 
         dX = g_i_x_stop - g_i_x_start;                   // find vector components
@@ -1777,9 +1797,12 @@ static int sticky_orbits()
 
     case 'f':  // this code does not yet work???
     {
-        double Xctr, Yctr;
+        double Xctr;
+        double Yctr;
         LDBL Magnification; // LDBL not really needed here, but used to match function parameters
-        double Xmagfactor, Rotation, Skew;
+        double Xmagfactor;
+        double Rotation;
+        double Skew;
         int angle;
         double factor = PI / 180.0;
         double theta;
@@ -3203,7 +3226,9 @@ static void decomposition()
 //
 static int potential(double mag, long iterations)
 {
-    float f_mag, f_tmp, pot;
+    float f_mag;
+    float f_tmp;
+    float pot;
     int i_pot;
     long l_pot;
 
@@ -3317,9 +3342,13 @@ static int bound_trace_main()
 {
     direction coming_from;
     unsigned int matches_found;
-    int trail_color, fillcolor_used, last_fillcolor_used = -1;
+    int trail_color;
+    int fillcolor_used;
+    int last_fillcolor_used = -1;
     int max_putline_length;
-    int right, left, length;
+    int right;
+    int left;
+    int length;
     if (g_inside_color == COLOR_BLACK || g_outside_color == COLOR_BLACK)
     {
         stopmsg(STOPMSG_NONE, "Boundary tracing cannot be used with inside=0 or outside=0");
@@ -3564,7 +3593,8 @@ static int solid_guess()
     int xlim;
     int ylim;
     int blocksize;
-    unsigned int *pfxp0, *pfxp1;
+    unsigned int *pfxp0;
+    unsigned int *pfxp1;
     unsigned int u;
 
     guessplot = (g_plot != g_put_color && g_plot != symplot2 && g_plot != symplot2J);
@@ -3763,15 +3793,34 @@ static bool guessrow(bool firstpass, int y, int blocksize)
 {
     int j;
     int color;
-    int xplushalf, xplusblock;
-    int ylessblock, ylesshalf, yplushalf, yplusblock;
-    int     c21, c31, c41;         // cxy is the color of pixel at (x,y)
-    int c12, c22, c32, c42;         // where c22 is the topleft corner of
-    int c13, c23, c33;             // the block being handled in current
-    int     c24,    c44;         // iteration
-    int guessed23, guessed32, guessed33, guessed12, guessed13;
-    int prev11, fix21, fix31;
-    unsigned int *pfxptr, pfxmask;
+    int xplushalf;
+    int xplusblock;
+    int ylessblock;
+    int ylesshalf;
+    int yplushalf;
+    int yplusblock;
+    int c21; // cxy is the color of pixel at (x,y)
+    int c31; // where c22 is the top left corner of
+    int c41; // the block being handled in current
+    int c12; // iteration
+    int c22;
+    int c32;
+    int c42;
+    int c13;
+    int c23;
+    int c33;
+    int c24;
+    int c44; 
+    int guessed23;
+    int guessed32;
+    int guessed33;
+    int guessed12;
+    int guessed13;
+    int prev11;
+    int fix21;
+    int fix31;
+    unsigned int *pfxptr;
+    unsigned int pfxmask;
 
     c42 = 0;  // just for warning
     c41 = c42;
@@ -4088,7 +4137,8 @@ static bool guessrow(bool firstpass, int y, int blocksize)
 
 static void plotblock(int buildrow, int x, int y, int color)
 {
-    int xlim, ylim;
+    int xlim;
+    int ylim;
     xlim = x+halfblock;
     if (xlim > g_i_x_stop)
     {
@@ -4243,7 +4293,8 @@ static bool ysym_split(int yaxis_col, bool yaxis_between)
 static void setsymmetry(symmetry_type sym, bool uselist) // set up proper symmetrical plot functions
 {
     int i;
-    int xaxis_row, yaxis_col;           // pixel number for origin
+    int xaxis_row;
+    int yaxis_col; // pixel number for origin
     bool xaxis_between = false;
     bool yaxis_between = false;         // if axis between 2 pixels, not on one
     bool xaxis_on_screen = false;
@@ -4609,7 +4660,12 @@ static int tesseral()
     }
     else // resuming, rebuild work stack
     {
-        int i, mid, curx, cury, xsize, ysize;
+        int i;
+        int mid;
+        int curx;
+        int cury;
+        int xsize;
+        int ysize;
         tess *tp2;
         tp->rgt = -2;
         tp->lft = tp->rgt;
@@ -4714,7 +4770,8 @@ static int tesseral()
         }
 
         {
-            int mid, midcolor;
+            int mid;
+            int midcolor;
             if (tp->x2 - tp->x1 > tp->y2 - tp->y1)
             {
                 // divide down the middle
@@ -4739,7 +4796,8 @@ static int tesseral()
 
         {
             // all 4 edges are the same color, fill in
-            int i, j;
+            int i;
+            int j;
             i = 0;
             if (g_fill_color != 0)
             {
@@ -4799,7 +4857,8 @@ static int tesseral()
 tess_split:
         {
             // box not surrounded by same color, sub-divide
-            int mid, midcolor;
+            int mid;
+            int midcolor;
             tess *tp2;
             if (tp->x2 - tp->x1 > tp->y2 - tp->y1)
             {
@@ -4881,7 +4940,9 @@ tess_end:
     if (tp >= (tess *)&dstack[0])
     {
         // didn't complete
-        int i, xsize, ysize;
+        int i;
+        int xsize;
+        int ysize;
         ysize = 1;
         xsize = ysize;
         i = 2;
@@ -4935,7 +4996,8 @@ static int tesschkrow(int x1, int x2, int y)
 
 static int tesscol(int x, int y1, int y2)
 {
-    int colcolor, i;
+    int colcolor;
+    int i;
     g_col = x;
     g_row = y1;
     g_reset_periodicity = true;
@@ -4960,7 +5022,8 @@ static int tesscol(int x, int y1, int y2)
 
 static int tessrow(int x1, int x2, int y)
 {
-    int rowcolor, i;
+    int rowcolor;
+    int i;
     g_row = y;
     g_col = x1;
     g_reset_periodicity = true;
@@ -5110,7 +5173,8 @@ void symPIplot(int x, int y, int color)
 // Symmetry plot for period PI plus Origin Symmetry
 void symPIplot2J(int x, int y, int color)
 {
-    int i, j;
+    int i;
+    int j;
     while (x <= g_xx_stop)
     {
         g_put_color(x, y, color) ;
@@ -5126,7 +5190,8 @@ void symPIplot2J(int x, int y, int color)
 // Symmetry plot for period PI plus Both Axis Symmetry
 void symPIplot4J(int x, int y, int color)
 {
-    int i, j;
+    int i;
+    int j;
     while (x <= (g_xx_start+g_xx_stop)/2)
     {
         j = g_xx_stop-(x-g_xx_start);
@@ -5175,7 +5240,8 @@ void symplot2Y(int x, int y, int color)
 // Symmetry plot for Origin Symmetry
 void symplot2J(int x, int y, int color)
 {
-    int i, j;
+    int i;
+    int j;
     g_put_color(x, y, color) ;
     i = g_yy_stop-(y-g_yy_start);
     if (i > g_i_y_stop && i < g_logical_screen_y_dots
@@ -5188,7 +5254,8 @@ void symplot2J(int x, int y, int color)
 // Symmetry plot for Both Axis Symmetry
 void symplot4(int x, int y, int color)
 {
-    int i, j;
+    int i;
+    int j;
     j = g_xx_stop-(x-g_xx_start);
     g_put_color(x , y, color) ;
     if (j < g_logical_screen_x_dots)
@@ -5209,7 +5276,8 @@ void symplot4(int x, int y, int color)
 // Symmetry plot for X Axis Symmetry - Striped Newtbasin version
 void symplot2basin(int x, int y, int color)
 {
-    int i, stripe;
+    int i;
+    int stripe;
     g_put_color(x, y, color) ;
     if (g_basin == 2 && color > 8)
     {
@@ -5232,7 +5300,10 @@ void symplot2basin(int x, int y, int color)
 // Symmetry plot for Both Axis Symmetry  - Newtbasin version
 void symplot4basin(int x, int y, int color)
 {
-    int i, j, color1, stripe;
+    int i;
+    int j;
+    int color1;
+    int stripe;
     if (color == 0) // assumed to be "inside" color
     {
         symplot4(x, y, color);
