@@ -18,7 +18,9 @@
    is still valid. */
 void flip_image(int key)
 {
-    int ixhalf, iyhalf, tempdot;
+    int ixhalf;
+    int iyhalf;
+    int tempdot;
 
     // fractal must be rotate-able and be finished
     if (bit_set(g_cur_fractal_specific->flags, fractal_flags::NOROTATE) //
