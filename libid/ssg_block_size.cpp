@@ -8,7 +8,8 @@
 #define maxxblk 202  // must match calcfrac.c
 int ssg_blocksize() // used by solidguessing and by zoom panning
 {
-    int blocksize, i;
+    int blocksize;
+    int i;
     // blocksize 4 if <300 rows, 8 if 300-599, 16 if 600-1199, 32 if >=1200
     blocksize = 4;
     i = 300;
