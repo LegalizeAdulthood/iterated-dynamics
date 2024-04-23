@@ -224,9 +224,15 @@ static bool ent_less(const int lhs, const int rhs)
 
 static void update_id_cfg()
 {
-    char buf[121], kname[5];
-    std::FILE *cfgfile, *outfile;
-    int i, j, linenum, nextlinenum, nextmode;
+    char buf[121];
+    char kname[5];
+    std::FILE *cfgfile;
+    std::FILE *outfile;
+    int i;
+    int j;
+    int linenum;
+    int nextlinenum;
+    int nextmode;
     VIDEOINFO vident{};
 
     const std::string cfgname = find_path("id.cfg");
