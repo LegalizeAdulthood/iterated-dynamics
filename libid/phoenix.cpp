@@ -60,7 +60,8 @@ int PhoenixFractalcplx()
 int LongPhoenixPlusFractal()
 {
     // z(n+1) = z(n)^(degree-1) * (z(n) + p) + qy(n),  y(n+1) = z(n)
-    LComplex loldplus, lnewminus;
+    LComplex loldplus;
+    LComplex lnewminus;
     loldplus = g_l_old_z;
     g_l_temp = g_l_old_z;
     for (int i = 1; i < g_degree; i++)
@@ -79,7 +80,8 @@ int LongPhoenixPlusFractal()
 int PhoenixPlusFractal()
 {
     // z(n+1) = z(n)^(degree-1) * (z(n) + p) + qy(n),  y(n+1) = z(n)
-    DComplex oldplus, newminus;
+    DComplex oldplus;
+    DComplex newminus;
     oldplus = g_old_z;
     g_tmp_z = g_old_z;
     for (int i = 1; i < g_degree; i++)
@@ -98,7 +100,8 @@ int PhoenixPlusFractal()
 int LongPhoenixMinusFractal()
 {
     // z(n+1) = z(n)^(degree-2) * (z(n)^2 + p) + qy(n),  y(n+1) = z(n)
-    LComplex loldsqr, lnewminus;
+    LComplex loldsqr;
+    LComplex lnewminus;
     LCMPLXmult(g_l_old_z, g_l_old_z, loldsqr);
     g_l_temp = g_l_old_z;
     for (int i = 1; i < g_degree; i++)
@@ -117,7 +120,8 @@ int LongPhoenixMinusFractal()
 int PhoenixMinusFractal()
 {
     // z(n+1) = z(n)^(degree-2) * (z(n)^2 + p) + qy(n),  y(n+1) = z(n)
-    DComplex oldsqr, newminus;
+    DComplex oldsqr;
+    DComplex newminus;
     FPUcplxmul(&g_old_z, &g_old_z, &oldsqr);
     g_tmp_z = g_old_z;
     for (int i = 1; i < g_degree; i++)
@@ -136,7 +140,8 @@ int PhoenixMinusFractal()
 int LongPhoenixCplxPlusFractal()
 {
     // z(n+1) = z(n)^(degree-1) * (z(n) + p) + qy(n),  y(n+1) = z(n)
-    LComplex loldplus, lnewminus;
+    LComplex loldplus;
+    LComplex lnewminus;
     loldplus = g_l_old_z;
     g_l_temp = g_l_old_z;
     for (int i = 1; i < g_degree; i++)
@@ -157,7 +162,8 @@ int LongPhoenixCplxPlusFractal()
 int PhoenixCplxPlusFractal()
 {
     // z(n+1) = z(n)^(degree-1) * (z(n) + p) + qy(n),  y(n+1) = z(n)
-    DComplex oldplus, newminus;
+    DComplex oldplus;
+    DComplex newminus;
     oldplus = g_old_z;
     g_tmp_z = g_old_z;
     for (int i = 1; i < g_degree; i++)
@@ -178,7 +184,8 @@ int PhoenixCplxPlusFractal()
 int LongPhoenixCplxMinusFractal()
 {
     // z(n+1) = z(n)^(degree-2) * (z(n)^2 + p) + qy(n),  y(n+1) = z(n)
-    LComplex loldsqr, lnewminus;
+    LComplex loldsqr;
+    LComplex lnewminus;
     LCMPLXmult(g_l_old_z, g_l_old_z, loldsqr);
     g_l_temp = g_l_old_z;
     for (int i = 1; i < g_degree; i++)
@@ -199,7 +206,8 @@ int LongPhoenixCplxMinusFractal()
 int PhoenixCplxMinusFractal()
 {
     // z(n+1) = z(n)^(degree-2) * (z(n)^2 + p) + qy(n),  y(n+1) = z(n)
-    DComplex oldsqr, newminus;
+    DComplex oldsqr;
+    DComplex newminus;
     FPUcplxmul(&g_old_z, &g_old_z, &oldsqr);
     g_tmp_z = g_old_z;
     for (int i = 1; i < g_degree; i++)
