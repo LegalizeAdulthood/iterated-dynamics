@@ -133,9 +133,14 @@ static bool look(bool *stacked)
 
 main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool *stacked)
 {
-    int i, k;
-    static double  jxxmin, jxxmax, jyymin, jyymax; // "Julia mode" entry point
-    static double  jxx3rd, jyy3rd;
+    int i;
+    int k;
+    static double jxxmin;
+    static double jxxmax;
+    static double jyymin;
+    static double jyymax; // "Julia mode" entry point
+    static double jxx3rd;
+    static double jyy3rd;
     long old_maxit;
 
     if (g_quick_calc && g_calc_status == calc_status_value::COMPLETED)
