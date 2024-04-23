@@ -114,13 +114,16 @@ void abort_cellular(int err, int t)
 int cellular()
 {
     S16 start_row;
-    S16 filled, notfilled;
+    S16 filled;
+    S16 notfilled;
     U16 cell_table[32];
     U16 init_string[16];
-    U16 kr, k;
+    U16 kr;
+    U16 k;
     U32 lnnmbr;
     U16 twor;
-    S16 t, t2;
+    S16 t;
+    S16 t2;
     S32 randparam;
     double n;
     char buf[512];
