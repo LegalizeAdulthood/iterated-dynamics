@@ -606,8 +606,10 @@ static void lsysi_dobang(lsys_turtlestatei *cmd)
 static void lsysi_dosizedm(lsys_turtlestatei *cmd)
 {
     double angle = (double) cmd->realangle * ANGLE2DOUBLE;
-    double s, c;
-    long fixedsin, fixedcos;
+    double s;
+    double c;
+    long fixedsin;
+    long fixedcos;
 
     FPUsincos(&angle, &s, &c);
     fixedsin = (long)(s * FIXEDLT1);
@@ -663,9 +665,12 @@ static void lsysi_dosizegf(lsys_turtlestatei *cmd)
 static void lsysi_dodrawd(lsys_turtlestatei *cmd)
 {
     double angle = (double) cmd->realangle * ANGLE2DOUBLE;
-    double s, c;
-    long fixedsin, fixedcos;
-    int lastx, lasty;
+    double s;
+    double c;
+    long fixedsin;
+    long fixedcos;
+    int lastx;
+    int lasty;
 
     FPUsincos(&angle, &s, &c);
     fixedsin = (long)(s * FIXEDLT1);
@@ -683,8 +688,10 @@ static void lsysi_dodrawd(lsys_turtlestatei *cmd)
 static void lsysi_dodrawm(lsys_turtlestatei *cmd)
 {
     double angle = (double) cmd->realangle * ANGLE2DOUBLE;
-    double s, c;
-    long fixedsin, fixedcos;
+    double s;
+    double c;
+    long fixedsin;
+    long fixedcos;
 
     FPUsincos(&angle, &s, &c);
     fixedsin = (long)(s * FIXEDLT1);
@@ -815,8 +822,12 @@ static lsys_cmd *findsize(lsys_cmd *command, lsys_turtlestatei *ts, lsys_cmd **r
 
 static bool lsysi_findscale(lsys_cmd *command, lsys_turtlestatei *ts, lsys_cmd **rules, int depth)
 {
-    float horiz, vert;
-    double xmin, xmax, ymin, ymax;
+    float horiz;
+    float vert;
+    double xmin;
+    double xmax;
+    double ymin;
+    double ymax;
     double locsize;
     double locaspect;
     lsys_cmd *fsret;
@@ -1182,7 +1193,8 @@ static void lsysi_dosincos()
     double TWOPI = 2.0 * PI;
     double twopimax;
     double twopimaxi;
-    double s, c;
+    double s;
+    double c;
 
     locaspect = g_screen_aspect*g_logical_screen_x_dots/g_logical_screen_y_dots;
     twopimax = TWOPI / maxangle;
