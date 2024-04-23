@@ -22,10 +22,14 @@ int passes_options()
     char const *passcalcmodes[] = {"rect", "line"};
 
     fullscreenvalues uvalues[25];
-    int i, j, k;
+    int i;
+    int j;
+    int k;
     int ret;
 
-    int old_periodicity, old_orbit_delay, old_orbit_interval;
+    int old_periodicity;
+    int old_orbit_delay;
+    int old_orbit_interval;
     bool const old_keep_scrn_coords = g_keep_screen_coords;
     char old_drawmode;
 
