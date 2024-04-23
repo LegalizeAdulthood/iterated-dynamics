@@ -35,10 +35,16 @@ int get_view_params()
 {
     char const *choices[16];
     fullscreenvalues uvalues[25];
-    int i, k;
-    float old_viewreduction, old_aspectratio;
-    int old_viewxdots, old_viewydots, old_sxdots, old_sydots;
-    int xmax, ymax;
+    int i;
+    int k;
+    float old_viewreduction;
+    float old_aspectratio;
+    int old_viewxdots;
+    int old_viewydots;
+    int old_sxdots;
+    int old_sydots;
+    int xmax;
+    int ymax;
     char dim1[50];
     char dim2[50];
 
