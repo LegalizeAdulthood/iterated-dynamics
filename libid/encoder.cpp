@@ -330,8 +330,10 @@ int savetodisk(std::string &filename)
 bool encoder()
 {
     bool interrupted;
-    int width, rowlimit;
-    BYTE bitsperpixel, x;
+    int width;
+    int rowlimit;
+    BYTE bitsperpixel;
+    BYTE x;
     FRACTAL_INFO save_info;
 
     if (g_init_batch != batch_modes::NONE)                 // flush any impending keystrokes
@@ -763,7 +765,8 @@ static int extend_blk_len(int datalen)
 
 static int put_extend_blk(int block_id, int block_len, char const *block_data)
 {
-    int i, j;
+    int i;
+    int j;
     char header[15];
     std::strcpy(header, "!\377\013fractint");
     std::sprintf(&header[11], "%03d", block_id);
@@ -1079,7 +1082,8 @@ static char accum[256];
 
 static bool compress(int rowlimit)
 {
-    int outcolor1, outcolor2;
+    int outcolor1;
+    int outcolor2;
     int ent;
     int disp;
     int hsize_reg;
