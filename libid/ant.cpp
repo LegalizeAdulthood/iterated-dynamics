@@ -78,7 +78,7 @@ void setwait(long *wait)
     }
 }
 
-// turkmite from scientific american july 1994 pag 91
+// turkmite from Scientific American July 1994 page 91
 // Tweaked by Luciano Genero & Fulvio Cappelli
 //
 void TurkMite1(int maxtur, int rule_len, char const *ru, long maxpts, long wait)
