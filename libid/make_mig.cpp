@@ -26,16 +26,25 @@ inline char par_key(unsigned int x)
 
 void make_mig(unsigned int xmult, unsigned int ymult)
 {
-    unsigned int xres, yres;
-    unsigned int allxres, allyres, xtot, ytot;
-    unsigned int xloc, yloc;
+    unsigned int xres;
+    unsigned int yres;
+    unsigned int allxres;
+    unsigned int allyres;
+    unsigned int xtot;
+    unsigned int ytot;
+    unsigned int xloc;
+    unsigned int yloc;
     unsigned char ichar;
-    unsigned int allitbl, itbl;
+    unsigned int allitbl;
+    unsigned int itbl;
     unsigned int i;
-    char gifin[15], gifout[15];
-    int errorflag, inputerrorflag;
+    char gifin[15];
+    char gifout[15];
+    int errorflag;
+    int inputerrorflag;
     unsigned char *temp;
-    std::FILE *out, *in;
+    std::FILE *out;
+    std::FILE *in;
 
     errorflag = 0;                          // no errors so
     inputerrorflag = 0;
