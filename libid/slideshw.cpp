@@ -145,7 +145,9 @@ static void message(int secs, char const *buf)
 // this routine reads the file g_auto_name and returns keystrokes
 int slideshw()
 {
-    int out, err, i;
+    int out;
+    int err;
+    int i;
     char buffer[81];
     if (calcwait)
     {
