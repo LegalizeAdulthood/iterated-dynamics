@@ -70,8 +70,12 @@ static void area();
 // returns false if success, true if hit maxrow before done
 static bool putstringwrap(int *row, int col1, int col2, int color, char *str, int maxrow)
 {
-    char save1, save2;
-    int length, decpt, padding, startrow;
+    char save1;
+    char save2;
+    int length;
+    int decpt;
+    int padding;
+    int startrow;
     bool done = false;
     startrow = *row;
     length = (int) std::strlen(str);
@@ -167,7 +171,8 @@ extern long startstack;
 
 bool tab_display_2(char *msg)
 {
-    int row, key = 0;
+    int row;
+    int key = 0;
 
     helptitle();
     driver_set_attr(1, 0, C_GENERAL_MED, 24*80); // init rest to background
