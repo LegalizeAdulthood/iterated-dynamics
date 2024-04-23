@@ -351,7 +351,8 @@ int get_fract_params(bool prompt_for_type_params)        // prompt for type-spec
     char const *v2 = "To   cx (real part)";
     char const *v3 = "To   cy (imaginary part)";
     char const *juliorbitname = nullptr;
-    int numparams, numtrig;
+    int numparams;
+    int numtrig;
     fullscreenvalues paramvalues[30];
     char const *choices[30];
     long oldbailout = 0L;
@@ -451,7 +452,8 @@ int get_fract_params(bool prompt_for_type_params)        // prompt for type-spec
     }
     else if (help_formula >= help_labels::HELP_INDEX)
     {
-        int c, lines;
+        int c;
+        int lines;
         read_help_topic(help_formula, 0, 2000, tstack); // need error handling here ??
         tstack[2000-static_cast<int>(help_formula)] = 0;
         int i = 0;
