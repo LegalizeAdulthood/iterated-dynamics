@@ -14,7 +14,8 @@
 
 void helptitle()
 {
-    char msg[MSG_LEN], buf[MSG_LEN];
+    char msg[MSG_LEN];
+    char buf[MSG_LEN];
     driver_set_clear(); // clear the screen
     std::sprintf(msg, "Iterated Dynamics Version %d.%01d", g_release/100, (g_release%100)/10);
     if (g_release%10)
