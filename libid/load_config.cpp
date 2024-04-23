@@ -37,7 +37,8 @@ void load_config(const std::string &cfg_path)
     std::FILE   *cfgfile;
     VIDEOINFO    vident;
     int          linenum;
-    long         xdots, ydots;
+    long xdots;
+    long ydots;
     int          i;
     int          j;
     int          keynum;
