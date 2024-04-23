@@ -353,7 +353,8 @@ long g_fudge_two;
 
 int longCmplxZpowerFractal()
 {
-    DComplex x, y;
+    DComplex x;
+    DComplex y;
 
     x.x = (double)g_l_old_z.x / g_fudge_factor;
     x.y = (double)g_l_old_z.y / g_fudge_factor;
