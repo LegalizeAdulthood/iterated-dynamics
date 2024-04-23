@@ -33,20 +33,44 @@ using BNComplex = id::complex<bn_t>;
 
 // globals
 extern bf_math_type bf_math;
-extern int bnstep, intlength;
-extern int bnlength, rlength,   padding,   g_decimals,   shiftfactor;
-extern int bflength, rbflength, bfpadding, bfdecimals;
-extern bn_t bntmp1, bntmp2, bntmp3, bntmp4, bntmp5, bntmp6;  // rlength
-extern bn_t bntest1, bntest2, bntest3;                       // rlength
-extern bn_t bntmpcpy1, bntmpcpy2;                            // bnlength
+extern int bnstep;
+extern int intlength;
+extern int bnlength;
+extern int rlength;
+extern int padding;
+extern int g_decimals;
+extern int shiftfactor;
+extern int bflength;
+extern int rbflength;
+extern int bfpadding;
+extern int bfdecimals;
+extern bn_t bntmp1;    // rlength
+extern bn_t bntmp2;    // rlength
+extern bn_t bntmp3;    // rlength
+extern bn_t bntmp4;    // rlength
+extern bn_t bntmp5;    // rlength
+extern bn_t bntmp6;    // rlength
+extern bn_t bntest1;   // rlength
+extern bn_t bntest2;   // rlength
+extern bn_t bntest3;   // rlength
+extern bn_t bntmpcpy1; // bnlength
+extern bn_t bntmpcpy2; // bnlength
 extern bn_t bn_pi;
-extern bn_t bntmp;                                           // rlength
-extern bf_t bftmp1, bftmp2, bftmp3, bftmp4, bftmp5, bftmp6;  // rbflength+2
-extern bf_t bftest1, bftest2, bftest3;                       // rbflength+2
-extern bf_t bftmpcpy1, bftmpcpy2;                            // bflength+2
+extern bn_t bntmp;     // rlength
+extern bf_t bftmp1;    // rbflength+2
+extern bf_t bftmp2;    // rbflength+2
+extern bf_t bftmp3;    // rbflength+2
+extern bf_t bftmp4;    // rbflength+2
+extern bf_t bftmp5;    // rbflength+2
+extern bf_t bftmp6;    // rbflength+2
+extern bf_t bftest1;   // rbflength+2
+extern bf_t bftest2;   // rbflength+2
+extern bf_t bftest3;   // rbflength+2
+extern bf_t bftmpcpy1; // rbflength+2
+extern bf_t bftmpcpy2; // rbflength+2
 extern bf_t bf_pi;
-extern bf_t bftmp;                                           // rbflength
-extern bf10_t bf10tmp;                                            // dec+4
+extern bf_t bftmp;     // rbflength
+extern bf10_t bf10tmp; // dec+4
 extern big_t big_pi;
 
 void calc_lengths();
