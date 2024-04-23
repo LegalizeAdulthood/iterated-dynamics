@@ -50,12 +50,26 @@ bool g_got_real_dac = false;            // true if loaddac has a dacbox
 
 void rotate(int direction)      // rotate-the-palette routine
 {
-    int  kbdchar, last, next;
-    int fkey, step, fstep, jstep, oldstep;
-    int incr, fromred = 0, fromblue = 0, fromgreen = 0, tored = 0, toblue = 0, togreen = 0;
-    int changecolor, changedirection;
+    int kbdchar;
+    int last;
+    int next;
+    int fkey;
+    int step;
+    int fstep;
+    int jstep;
+    int oldstep;
+    int incr;
+    int fromred = 0;
+    int fromblue = 0;
+    int fromgreen = 0;
+    int tored = 0;
+    int toblue = 0;
+    int togreen = 0;
+    int changecolor;
+    int changedirection;
     help_labels old_help_mode;
-    int rotate_max, rotate_size;
+    int rotate_max;
+    int rotate_size;
 
     static int fsteps[] = {2, 4, 8, 12, 16, 24, 32, 40, 54, 100}; // (for Fkeys)
 
