@@ -35,7 +35,8 @@
 
 main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool *stacked)
 {
-    int i, k;
+    int i;
+    int k;
 
     switch (*kbdchar)
     {
@@ -231,7 +232,12 @@ main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bo
             return main_state::CONTINUE;  // disk video and targa, nothing to save
         }
 
-        int oldsxoffs, oldsyoffs, oldxdots, oldydots, oldpx, oldpy;
+        int oldsxoffs;
+        int oldsyoffs;
+        int oldxdots;
+        int oldydots;
+        int oldpx;
+        int oldpy;
         GENEBASE gene[NUM_GENES];
         copy_genes_from_bank(gene);
         oldsxoffs = g_logical_screen_x_offset;
@@ -523,7 +529,8 @@ main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bo
 
     case ID_KEY_F3: //double mutation parameters and regenerate
     {
-        double centerx, centery;
+        double centerx;
+        double centery;
         g_evolve_max_random_mutation = g_evolve_max_random_mutation * 2;
         centerx = g_evolve_x_parameter_offset + g_evolve_x_parameter_range / 2;
         g_evolve_x_parameter_range = g_evolve_x_parameter_range * 2;
