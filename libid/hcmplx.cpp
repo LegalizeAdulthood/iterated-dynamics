@@ -29,7 +29,9 @@ void HComplexSqr(DHyperComplex *arg, DHyperComplex *out)
 
 int HComplexInv(DHyperComplex *arg, DHyperComplex *out)
 {
-    double det, mod, xt_minus_yz;
+    double det;
+    double mod;
+    double xt_minus_yz;
 
     det = (sqr(arg->x - arg->t) + sqr(arg->y + arg->z))*
           (sqr(arg->x + arg->t) + sqr(arg->y - arg->z));
@@ -79,7 +81,10 @@ void HComplexTrig0(DHyperComplex *h, DHyperComplex *out)
        complex valued function of a complex variable can easily
        be generalized to hypercomplex numbers */
 
-    DComplex a, b, resulta, resultb;
+    DComplex a;
+    DComplex b;
+    DComplex resulta;
+    DComplex resultb;
 
     // convert to duplex form
     a.x = h->x - h->t;
