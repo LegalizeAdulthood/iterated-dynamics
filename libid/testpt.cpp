@@ -41,7 +41,11 @@ void testend()       // this routine is called just after the fractal ends
 int testpt(double initreal, double initimag, double parm1, double parm2,
            long maxit, int inside)
 {
-    double oldreal, oldimag, newreal, newimag, magnitude;
+    double oldreal;
+    double oldimag;
+    double newreal;
+    double newimag;
+    double magnitude;
     long color;
     oldreal = parm1;
     oldimag = parm2;
