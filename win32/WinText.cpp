@@ -467,8 +467,12 @@ LRESULT CALLBACK wintext_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 
 void wintext_putstring(WinText *me, int xpos, int ypos, int attrib, char const *string, int *end_row, int *end_col)
 {
-    int j, k, maxrow, maxcol;
-    char xc, xa;
+    int j;
+    int k;
+    int maxrow;
+    int maxcol;
+    char xc;
+    char xa;
 
     ODS("wintext_putstring");
 
@@ -540,7 +544,11 @@ void wintext_paintscreen(WinText *me,
                          int ymin,
                          int ymax)
 {
-    int istart, jstart, length, foreground, background;
+    int istart;
+    int jstart;
+    int length;
+    int foreground;
+    int background;
     unsigned char oldbk;
     unsigned char oldfg;
     HDC hDC;
@@ -641,7 +649,8 @@ void wintext_paintscreen(WinText *me,
 
 void wintext_cursor(WinText *me, int xpos, int ypos, int cursor_type)
 {
-    int x, y;
+    int x;
+    int y;
     ODS("wintext_cursor");
 
     if (me->textmode != 2)  // not in the right mode
@@ -679,7 +688,10 @@ void wintext_cursor(WinText *me, int xpos, int ypos, int cursor_type)
 
 void wintext_set_attr(WinText *me, int row, int col, int attr, int count)
 {
-    int xmin, xmax, ymin, ymax;
+    int xmin;
+    int xmax;
+    int ymin;
+    int ymax;
     xmax = col;
     xmin = xmax;
     ymax = row;
