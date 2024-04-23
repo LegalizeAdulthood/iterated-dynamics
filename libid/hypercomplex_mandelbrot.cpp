@@ -11,7 +11,8 @@
 
 int HyperComplexFPFractal()
 {
-    DHyperComplex hold, hnew;
+    DHyperComplex hold;
+    DHyperComplex hnew;
     hold.x = g_old_z.x;
     hold.y = g_old_z.y;
     hold.z = g_float_param->x;
