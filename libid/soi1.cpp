@@ -243,8 +243,13 @@ static int rhombus_aux(
 {
     // The following variables do not need their values saved
     // used in scanning
-    static long savecolor, color, helpcolor;
-    static int x, y, z, savex;
+    static long savecolor;
+    static long color;
+    static long helpcolor;
+    static int x;
+    static int y;
+    static int z;
+    static int savex;
 
     // number of iterations before SOI iteration cycle
     static long before;
@@ -744,8 +749,12 @@ void soi()
     // cppcheck-suppress unreadVariable
     bool status;
     double tolerance = 0.1;
-    double stepx, stepy;
-    double xxminl, xxmaxl, yyminl, yymaxl;
+    double stepx;
+    double stepy;
+    double xxminl;
+    double xxmaxl;
+    double yyminl;
+    double yymaxl;
     g_soi_min_stack_available = 30000;
     g_rhombus_depth = -1;
     g_max_rhombus_depth = 0;
