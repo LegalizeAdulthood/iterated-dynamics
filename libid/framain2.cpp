@@ -386,7 +386,11 @@ main_state big_while_loop(bool *const kbdmore, bool *const stacked, bool const r
             if (g_view_window && (g_evolving & FIELDMAP) && (g_calc_status != calc_status_value::COMPLETED))
             {
                 // generate a set of images with varied parameters on each one
-                int grout, ecount, tmpxdots, tmpydots, gridsqr;
+                int grout;
+                int ecount;
+                int tmpxdots;
+                int tmpydots;
+                int gridsqr;
                 GENEBASE gene[NUM_GENES];
                 copy_genes_from_bank(gene);
                 if (g_have_evolve_info && (g_calc_status == calc_status_value::RESUMABLE))
@@ -690,7 +694,9 @@ static int call_line3d(BYTE *pixels, int linelen)
 // do all pending movement at once for smooth mouse diagonal moves
 void move_zoombox(int keynum)
 {
-    int vertical, horizontal, getmore;
+    int vertical;
+    int horizontal;
+    int getmore;
     horizontal = 0;
     vertical = horizontal;
     getmore = 1;
