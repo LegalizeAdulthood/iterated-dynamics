@@ -1639,7 +1639,7 @@ bool startdisk1(const std::string &File_Name2, std::FILE *Source, bool overlay)
             }
         }
         // Write image size
-        for (auto &elem : upr_lwr)
+        for (BYTE &elem : upr_lwr)
         {
             std::fputc(elem, fps);
         }
