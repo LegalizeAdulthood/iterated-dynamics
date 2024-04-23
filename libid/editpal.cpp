@@ -295,9 +295,9 @@ static void displayf(int x, int y, int fg, int bg, char const *format, ...)
 
 static void mkpalrange(PALENTRY *p1, PALENTRY *p2, PALENTRY pal[], int num, int skip)
 {
-    double rm = (double)((int) p2->red   - (int) p1->red) / num,
-           gm = (double)((int) p2->green - (int) p1->green) / num,
-           bm = (double)((int) p2->blue  - (int) p1->blue) / num;
+    double rm = (double) ((int) p2->red - (int) p1->red) / num;
+    double gm = (double) ((int) p2->green - (int) p1->green) / num;
+    double bm = (double) ((int) p2->blue - (int) p1->blue) / num;
 
     for (int curr = 0; curr < num; curr += skip)
     {
@@ -761,11 +761,10 @@ static void MoveBox_SetCSize(MoveBox *me, int csize)
 
 static void MoveBox__Draw(MoveBox *me)  // private
 {
-    int width = me->base_width + me->csize*16+1,
-        depth = me->base_depth + me->csize*16+1;
-    int x     = me->x,
-        y     = me->y;
-
+    int width = me->base_width + me->csize * 16 + 1;
+    int depth = me->base_depth + me->csize * 16 + 1;
+    int x = me->x;
+    int y = me->y;
 
     getrow(x, y,         width, &me->t[0]);
     getrow(x, y+depth-1, width, &me->b[0]);
@@ -783,8 +782,8 @@ static void MoveBox__Draw(MoveBox *me)  // private
 
 static void MoveBox__Erase(MoveBox *me)   // private
 {
-    int width = me->base_width + me->csize*16+1,
-        depth = me->base_depth + me->csize*16+1;
+    int width = me->base_width + me->csize * 16 + 1;
+    int depth = me->base_depth + me->csize * 16 + 1;
 
     vputrow(me->x,         me->y, depth, &me->l[0]);
     vputrow(me->x+width-1, me->y, depth, &me->r[0]);
@@ -801,8 +800,8 @@ static void MoveBox__Move(MoveBox *me, int key)
 {
     bool done  = false;
     bool first = true;
-    int     xoff  = 0,
-            yoff  = 0;
+    int xoff = 0;
+    int yoff = 0;
 
     while (!done)
     {
@@ -886,9 +885,9 @@ static void MoveBox__Move(MoveBox *me, int key)
 static bool MoveBox_Process(MoveBox *me)
 {
     int     key;
-    int     orig_x     = me->x,
-            orig_y     = me->y,
-            orig_csize = me->csize;
+    int orig_x = me->x;
+    int orig_y = me->y;
+    int orig_csize = me->csize;
 
     MoveBox__Draw(me);
 
@@ -1432,8 +1431,8 @@ static void RGBEditor_BlankSampleBox(RGBEditor *me)
 
 static void RGBEditor_Update(RGBEditor *me)
 {
-    int x1 = me->x+2+CEditor_WIDTH+1+1,
-        y1 = me->y+2+1;
+    int x1 = me->x + 2 + CEditor_WIDTH + 1 + 1;
+    int y1 = me->y + 2 + 1;
 
     if (me->hidden)
     {
@@ -1450,8 +1449,8 @@ static void RGBEditor_Update(RGBEditor *me)
 
     else if (is_reserved(me->pal))
     {
-        int x2 = x1+RGBEditor_BWIDTH-3,
-            y2 = y1+RGBEditor_BDEPTH-3;
+        int x2 = x1 + RGBEditor_BWIDTH - 3;
+        int y2 = y1 + RGBEditor_BDEPTH - 3;
 
         fillrect(x1, y1, RGBEditor_BWIDTH-2, RGBEditor_BDEPTH-2, bg_color);
         driver_draw_line(x1, y1, x2, y2, fg_color);
@@ -1646,7 +1645,9 @@ static void PalTable__CalcTopBottom(PalTable *me)
 
 static void PalTable__PutBand(PalTable *me, PALENTRY *pal)
 {
-    int r, b, a;
+    int r;
+    int b;
+    int a;
 
     // clip top and bottom values to stop them running off the end of the DAC
 
@@ -1731,7 +1732,9 @@ static void PalTable__UndoProcess(PalTable *me, int delta)   // undo/redo common
     case UNDO_DATA:
     case UNDO_DATA_SINGLE:
     {
-        int      first, last, num;
+        int first;
+        int last;
+        int num;
         PALENTRY temp[256];
 
         if (cmd == UNDO_DATA)
@@ -1834,8 +1837,8 @@ static void PalTable__DrawStatus(PalTable *me, bool stripe_mode)
 
     if (!me->hidden && (width - (RGBEditor_WIDTH*2+4) >= STATUS_LEN*8))
     {
-        int x = me->x + 2 + RGBEditor_WIDTH,
-            y = me->y + PalTable_PALY - 10;
+        int x = me->x + 2 + RGBEditor_WIDTH;
+        int y = me->y + PalTable_PALY - 10;
         int color = PalTable__GetCursorColor(me);
         if (color < 0 || color >= g_colors)   // hmm, the border returns -1
         {
@@ -1863,9 +1866,9 @@ static void PalTable__DrawStatus(PalTable *me, bool stripe_mode)
 
 static void PalTable__HlPal(PalTable *me, int pnum, int color)
 {
-    int x    = me->x + PalTable_PALX + (pnum%16)*me->csize,
-        y    = me->y + PalTable_PALY + (pnum/16)*me->csize,
-        size = me->csize;
+    int x = me->x + PalTable_PALX + (pnum % 16) * me->csize;
+    int y = me->y + PalTable_PALY + (pnum / 16) * me->csize;
+    int size = me->csize;
 
     if (me->hidden)
     {
@@ -1927,10 +1930,10 @@ static void PalTable__Draw(PalTable *me)
 
         else if (is_reserved(pal))
         {
-            int x1 = me->x + xoff + 1,
-                y1 = me->y + yoff + 1,
-                x2 = x1 + me->csize - 2,
-                y2 = y1 + me->csize - 2;
+            int x1 = me->x + xoff + 1;
+            int y1 = me->y + yoff + 1;
+            int x2 = x1 + me->csize - 2;
+            int y2 = y1 + me->csize - 2;
             fillrect(me->x + xoff + 1, me->y + yoff + 1, me->csize-1, me->csize-1, bg_color);
             driver_draw_line(x1, y1, x2, y2, fg_color);
             driver_draw_line(x1, y2, x2, y1, fg_color);
@@ -2052,8 +2055,8 @@ static void PalTable__SaveRect(PalTable *me)
 
 static void PalTable__RestoreRect(PalTable *me)
 {
-    int  width = PalTable_PALX + me->csize*16 + 1 + 1,
-         depth = PalTable_PALY + me->csize*16 + 1 + 1;
+    int width = PalTable_PALX + me->csize * 16 + 1 + 1;
+    int depth = PalTable_PALY + me->csize * 16 + 1 + 1;
 
     if (me->hidden)
     {
@@ -2136,8 +2139,8 @@ static void PalTable__DoCurs(PalTable *me, int key)
 {
     bool done  = false;
     bool first = true;
-    int     xoff  = 0,
-            yoff  = 0;
+    int xoff = 0;
+    int yoff = 0;
 
     while (!done)
     {
@@ -2243,8 +2246,8 @@ static void PalTable__UpdateDAC(PalTable *me)
         }
         else
         {
-            int a = me->curr[0],
-                b = me->curr[1];
+            int a = me->curr[0];
+            int b = me->curr[1];
 
             if (a > b)
             {
@@ -2430,8 +2433,8 @@ static void PalTable__other_key(int key, RGBEditor *rgb, void *info)
     case 'D':    // copy (Duplicate?) color in inactive to color in active
     case 'd':
     {
-        int   a = me->active,
-              b = (a == 0) ? 1 : 0;
+        int a = me->active;
+        int b = (a == 0) ? 1 : 0;
         PALENTRY t;
 
         t = RGBEditor_GetRGB(me->rgb[b]);
@@ -2448,8 +2451,8 @@ static void PalTable__other_key(int key, RGBEditor *rgb, void *info)
 
     case '=':    // create a shade range between the two entries
     {
-        int a = me->curr[0],
-            b = me->curr[1];
+        int a = me->curr[0];
+        int b = me->curr[1];
 
         if (a > b)
         {
@@ -2471,8 +2474,8 @@ static void PalTable__other_key(int key, RGBEditor *rgb, void *info)
 
     case '!':    // swap r<->g
     {
-        int a = me->curr[0],
-            b = me->curr[1];
+        int a = me->curr[0];
+        int b = me->curr[1];
 
         if (a > b)
         {
@@ -2497,8 +2500,8 @@ static void PalTable__other_key(int key, RGBEditor *rgb, void *info)
     case '"':    // UK keyboards
     case 151:    // French keyboards
     {
-        int a = me->curr[0],
-            b = me->curr[1];
+        int a = me->curr[0];
+        int b = me->curr[1];
 
         if (a > b)
         {
@@ -2522,8 +2525,8 @@ static void PalTable__other_key(int key, RGBEditor *rgb, void *info)
     case 156:    // UK keyboards (pound sign)
     case '$':    // For French keyboards
     {
-        int a = me->curr[0],
-            b = me->curr[1];
+        int a = me->curr[0];
+        int b = me->curr[1];
 
         if (a > b)
         {
@@ -2554,8 +2557,8 @@ static void PalTable__other_key(int key, RGBEditor *rgb, void *info)
 
         if (key2 >= '1' && key2 <= '9')
         {
-            int a = me->curr[0],
-                b = me->curr[1];
+            int a = me->curr[0];
+            int b = me->curr[1];
 
             if (a > b)
             {
@@ -2870,8 +2873,8 @@ static void PalTable__other_key(int key, RGBEditor *rgb, void *info)
 
         case 2:  // 'y' mode.  convert range between editors to grey.
         {
-            int a = me->curr[0],
-                b = me->curr[1];
+            int a = me->curr[0];
+            int b = me->curr[1];
 
             if (a > b)
             {
@@ -2911,8 +2914,8 @@ static void PalTable__other_key(int key, RGBEditor *rgb, void *info)
 
         case 2:  // 'y' mode.  convert range between editors to grey.
         {
-            int a = me->curr[0],
-                b = me->curr[1];
+            int a = me->curr[0];
+            int b = me->curr[1];
 
             if (a > b)
             {
