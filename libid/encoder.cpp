@@ -304,7 +304,7 @@ enum e_save_format
     SAVEFORMAT_JPEG
 };
 
-int savetodisk(char *filename)
+static int savetodisk(char *filename)
 {
     e_save_format format = SAVEFORMAT_GIF;
 
