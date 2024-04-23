@@ -87,13 +87,18 @@ void make_batch_file()
     double pdely = 0.0;
     double pdelx2 = 0.0;
     double pdely2 = 0.0;
-    unsigned int pxdots, pydots, xm, ym;
-    double pxxmin = 0.0, pyymax = 0.0;
+    unsigned int pxdots;
+    unsigned int pydots;
+    unsigned int xm;
+    unsigned int ym;
+    double pxxmin = 0.0;
+    double pyymax = 0.0;
     char vidmde[5];
     int promptnum;
     int piecespromts;
     bool have3rd = false;
-    char inpcommandfile[80], inpcommandname[ITEM_NAME_LEN+1];
+    char inpcommandfile[80];
+    char inpcommandname[ITEM_NAME_LEN + 1];
     char inpcomment[4][MAX_COMMENT_LEN];
     fullscreenvalues paramvalues[18];
     char const      *choices[MAXPROMPTS];
@@ -317,7 +322,8 @@ prompt_user:
 
         // sanity checks
         {
-            long xtotal, ytotal;
+            long xtotal;
+            long ytotal;
             int i;
 
             // get resolution from the video name (which must be valid)
@@ -601,7 +607,8 @@ static write_batch_data s_wbdata;
 
 static int getprec(double a, double b, double c)
 {
-    double diff, temp;
+    double diff;
+    double temp;
     int digits;
     double highv = 1.0E20;
     diff = std::fabs(a - b);
@@ -642,12 +649,16 @@ static int getprec(double a, double b, double c)
 
 static void write_batch_parms(char const *colorinf, bool colorsonly, int maxcolor, int ii, int jj)
 {
-    double Xctr, Yctr;
+    double Xctr;
+    double Yctr;
     LDBL Magnification;
-    double Xmagfactor, Rotation, Skew;
+    double Xmagfactor;
+    double Rotation;
+    double Skew;
     char const *sptr;
     char buf[81];
-    bf_t bfXctr = nullptr, bfYctr = nullptr;
+    bf_t bfXctr = nullptr;
+    bf_t bfYctr = nullptr;
     int saved;
     saved = save_stack();
     if (bf_math != bf_math_type::NONE)
@@ -827,7 +838,8 @@ static void write_batch_parms(char const *colorinf, bool colorsonly, int maxcolo
             }
             else
             {
-                int xdigits, ydigits;
+                int xdigits;
+                int ydigits;
                 xdigits = getprec(g_x_min, g_x_max, g_x_3rd);
                 ydigits = getprec(g_y_min, g_y_max, g_y_3rd);
                 put_float(0, g_x_min, xdigits);
@@ -1448,7 +1460,8 @@ static void write_batch_parms(char const *colorinf, bool colorsonly, int maxcolo
 
         if (g_user_std_calc_mode == 'o' && g_set_orbit_corners && g_keep_screen_coords)
         {
-            int xdigits, ydigits;
+            int xdigits;
+            int ydigits;
             put_parm(" %s=", "orbitcorners");
             xdigits = getprec(g_orbit_corner_min_x, g_orbit_corner_max_x, g_orbit_corner_3_x);
             ydigits = getprec(g_orbit_corner_min_y, g_orbit_corner_max_y, g_orbit_corner_3_y);
@@ -1492,8 +1505,13 @@ docolors:
         }
         else
         {
-            int curc, scanc, force, diffmag = -1;
-            int delta, diff1[4][3], diff2[4][3];
+            int curc;
+            int scanc;
+            int force;
+            int diffmag = -1;
+            int delta;
+            int diff1[4][3];
+            int diff2[4][3];
             force = 0;
             curc = force;
 #ifdef XFRACT
@@ -1687,7 +1705,8 @@ inline int nice_line_length()
 
 static void put_parm_line()
 {
-    int len = s_wbdata.len, c;
+    int len = s_wbdata.len;
+    int c;
     if (len > nice_line_length())
     {
         len = nice_line_length()+1;
