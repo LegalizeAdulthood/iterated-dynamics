@@ -55,17 +55,28 @@ int fullscreen_prompt(      // full-screen prompting routine
 )
 {
     char const *hdgscan;
-    int titlelines, titlewidth, titlerow;
-    int maxpromptwidth, maxfldwidth, maxcomment;
-    int boxrow, boxlines;
-    int boxcol, boxwidth;
-    int extralines, extrawidth, extrarow;
+    int titlelines;
+    int titlewidth;
+    int titlerow;
+    int maxpromptwidth;
+    int maxfldwidth;
+    int maxcomment;
+    int boxrow;
+    int boxlines;
+    int boxcol;
+    int boxwidth;
+    int extralines;
+    int extrawidth;
+    int extrarow;
     int instrrow;
-    int promptrow, promptcol, valuecol;
+    int promptrow;
+    int promptcol;
+    int valuecol;
     int curchoice = 0;
     int done;
     int old_look_at_mouse;
-    int curtype, curlen;
+    int curtype;
+    int curlen;
     char buf[81];
 
     // scrolling related variables
@@ -363,7 +374,8 @@ int fullscreen_prompt(      // full-screen prompting routine
     }
 
     {
-        char buffer[256], *hdgline = buffer;
+        char buffer[256];
+        char *hdgline = buffer;
         // center each line of heading independently
         int i;
         std::strcpy(hdgline, hdg);
@@ -818,7 +830,8 @@ fullscreen_exit:
 static int prompt_valuestring(char *buf, fullscreenvalues const *val)
 {
     // format value into buf, return field width
-    int i, ret;
+    int i;
+    int ret;
     switch (val->type)
     {
     case 'd':
@@ -940,10 +953,12 @@ static int input_field_list(
     int (*checkkey)(int)  // routine to check non data keys, or nullptr
 )
 {
-    int initval, curval;
+    int initval;
+    int curval;
     char buf[81];
     int curkey;
-    int ret, old_look_at_mouse;
+    int ret;
+    int old_look_at_mouse;
     old_look_at_mouse = g_look_at_mouse;
     g_look_at_mouse = 0;
     for (initval = 0; initval < llen; ++initval)
