@@ -11,9 +11,13 @@
 // convert center/mag to corners
 void cvtcorners(double Xctr, double Yctr, LDBL Magnification, double Xmagfactor, double Rotation, double Skew)
 {
-    double x, y;
-    double h, w; // half height, width
-    double tanskew, sinrot, cosrot;
+    double x;
+    double y;
+    double h;
+    double w; // half height, width
+    double tanskew;
+    double sinrot;
+    double cosrot;
 
     if (Xmagfactor == 0.0)
     {
@@ -73,11 +77,21 @@ void cvtcorners(double Xctr, double Yctr, LDBL Magnification, double Xmagfactor,
 // convert center/mag to corners using bf
 void cvtcornersbf(bf_t Xctr, bf_t Yctr, LDBL Magnification, double Xmagfactor, double Rotation, double Skew)
 {
-    LDBL x, y;
-    LDBL h, w; // half height, width
-    LDBL xmin, ymin, xmax, ymax, x3rd, y3rd;
-    double tanskew, sinrot, cosrot;
-    bf_t bfh, bfw;
+    LDBL x;
+    LDBL y;
+    LDBL h;
+    LDBL w; // half height, width
+    LDBL xmin;
+    LDBL ymin;
+    LDBL xmax;
+    LDBL ymax;
+    LDBL x3rd;
+    LDBL y3rd;
+    double tanskew;
+    double sinrot;
+    double cosrot;
+    bf_t bfh;
+    bf_t bfw;
     bf_t bftmp;
     int saved;
 
