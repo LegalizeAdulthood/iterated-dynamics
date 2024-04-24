@@ -274,14 +274,16 @@ o Iterated Dynamics is a native 64-bit Windows program written in C++ with a
   CMake build system and vcpkg for obtaining 3rd party library dependencies.
 o All assembly language code has been removed and, where practical, replaced
   with C++ code that performs the same function.
-o A CGA text display is simulated for all prompt screens and help
-  screens.
+o A CGA text display is simulated for all prompt screens and help screens.
 o A "video mode" determines the resolution of all saved images and is provided
   by a driver.  Iterated Dynamics comes with two drivers: Disk and GDI.
   The GDI driver renders to the screen through the Windows GDI interface.
   The disk driver can be used to render images larger than your physical
   screen, but still uses your screen's GUI for displaying status with a
   CGA style window.
+o Id.cfg, which defines the default video modes, was updated to remove all
+  modes smaller than 800x600 and very large disk video modes were added.
+o DOS related information in video modes was dropped.
 o All online help text has been reviewed and revised to drop DOS specific
   discussions.  Where still appropriate the text has been updated to reflect
   that Id is a program operating in a windowed environment.
@@ -295,6 +297,7 @@ o The orbitsavename parameter was added to specify the name of the raw
   a filename is formed that does not exist.
 o The autokeyname parameter was enhanced to create a unique filename when
   autokey=record unless overwrite=yes is specified.
+o Disk video buffer sizes were dramatically increased.
 o The formula parser has been enhanced to remove internal size limitations.
   The only limit on formula parsing is available memory.
 o Printing an image has been removed.  Use your operating system for that.
