@@ -215,12 +215,10 @@ static bool x11_resize(Driver *drv);
 static void x11_set_for_graphics(Driver *drv);
 
 #define DRIVER_MODE(width_, height_) \
-    { "X11 Video                ", 0, width_, height_, 256, nullptr, "                         " }
+    { 0, width_, height_, 256, nullptr, "                         " }
 static const VIDEOINFO modes[] =
 {
     // 4:3 aspect ratio
-    DRIVER_MODE(640, 480),
-    DRIVER_MODE(800, 480),
     DRIVER_MODE(800, 600),
     DRIVER_MODE(1024, 768),
     DRIVER_MODE(1280, 960),
@@ -235,7 +233,6 @@ static const VIDEOINFO modes[] =
     DRIVER_MODE(1920, 1080),
 
     // 8:5 (16:10) aspect ratio
-    DRIVER_MODE(320, 200),
     DRIVER_MODE(1280, 800),
     DRIVER_MODE(1440, 900),
     DRIVER_MODE(1680, 1050),
@@ -2815,7 +2812,7 @@ static void x11_set_keyboard_timeout(Driver *drv, int ms)
  * place this last in the file to avoid having to forward declare routines
  */
 static DriverX11 x11_driver_info = {
-    STD_DRIVER_STRUCT(x11, "An X Window System driver"),
+    STD_DRIVER_STRUCT(x11, "X11"),
     false,                // onroot
     false,                // fullscreen
     false,                // sharecolor
