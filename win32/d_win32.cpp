@@ -128,7 +128,7 @@ win32_terminate(Driver *drv)
 */
 bool win32_init(Driver *drv, int *argc, char **argv)
 {
-    LPCSTR title = "Iterated Dynamics for Windows";
+    LPCSTR title = "Iterated Dynamics";
     DI(di);
 
     ODS("win32_init");

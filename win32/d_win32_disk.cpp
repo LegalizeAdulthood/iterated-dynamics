@@ -140,7 +140,7 @@ initdacbox()
 */
 static bool disk_init(Driver *drv, int *argc, char **argv)
 {
-    LPCSTR title = "Iterated Dynamics for Windows";
+    LPCSTR title = "Iterated Dynamics";
     DI(di);
 
     frame_init(g_instance, title);

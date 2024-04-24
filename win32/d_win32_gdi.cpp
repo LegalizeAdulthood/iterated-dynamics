@@ -191,7 +191,7 @@ gdi_get_max_screen(Driver *drv, int *xmax, int *ymax)
 */
 static bool gdi_init(Driver *drv, int *argc, char **argv)
 {
-    LPCSTR title = "Iterated Dynamics for Windows";
+    LPCSTR title = "Iterated Dynamics";
     DI(di);
 
     ODS("gdi_init");
