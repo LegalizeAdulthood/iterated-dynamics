@@ -37,12 +37,12 @@ bool g_disk_targa = false;
 bool g_disk_flag = false;
 bool g_good_mode = false;        // if non-zero, OK to read/write pixels
 
-#define BLOCKLEN 2048   // must be a power of 2, must match next
-#define BLOCKSHIFT 11   // must match above
-#define CACHEMIN 4      // minimum cache size in Kbytes
-#define CACHEMAX 64     // maximum cache size in Kbytes
-#define FREEMEM  33     // try to leave this much memory unallocated
-#define HASHSIZE 1024   // power of 2, near CACHEMAX/(BLOCKLEN+8)
+#define BLOCKLEN 2048 // must be a power of 2, must match next
+#define BLOCKSHIFT 11 // must match above
+#define CACHEMIN 64   // minimum cache size in Kbytes
+#define CACHEMAX 4096 // maximum cache size in Kbytes
+#define FREEMEM 33    // try to leave this much memory unallocated
+#define HASHSIZE 2048 // power of 2, near CACHEMAX/(BLOCKLEN+8)
 
 struct cache                // structure of each cache entry
 {
