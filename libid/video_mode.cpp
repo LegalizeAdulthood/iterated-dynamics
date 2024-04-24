@@ -6,13 +6,7 @@
 
 #include <cstdio>
 
-/* g_video_table
- *
- *  |--Adapter/Mode-Name------|-------Comments-----------|
- *  |------INT 10H------|Dot-|--Resolution---|
- *  |key|--AX---BX---CX---DX|Mode|--X-|--Y-|Color|
- */
-VIDEOINFO g_video_table[MAX_VIDEO_MODES] = { 0 };
+VIDEOINFO g_video_table[MAX_VIDEO_MODES]{};
 
 int g_video_table_len;                 // number of entries in above
 

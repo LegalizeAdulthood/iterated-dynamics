@@ -439,18 +439,6 @@ disk_window(Driver *drv)
     wintext_texton(&di->base.wintext);
 }
 
-/*
-; **************** Function setvideomode(ax, bx, cx, dx) ****************
-;       This function sets the (alphanumeric or graphic) video mode
-;       of the monitor.   Called with the proper values of AX thru DX.
-;       No returned values, as there is no particular standard to
-;       adhere to in this case.
-
-;       (SPECIAL "TWEAKED" VGA VALUES:  if AX==BX==CX==0, assume we have a
-;       genuine VGA or register compatable adapter and program the registers
-;       directly using the coded value in DX)
-
-*/
 extern void set_disk_dot();
 extern void set_normal_line();
 static void

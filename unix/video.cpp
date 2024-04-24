@@ -81,14 +81,6 @@ int video_vram = 0;
 
 void putstring(int row, int col, int attr, char const *msg);
 
-/*
-
-;       |--Adapter/Mode-Name------|-------Comments-----------|
-
-;       |------INT 10H------|Dot-|--Resolution---|
-;       |key|--AX---BX---CX---DX|Mode|--X-|--Y-|Color|
-*/
-
 VIDEOINFO x11_video_table[] = {
     { 999, 800, 600, 256, nullptr, "                         " },
 };

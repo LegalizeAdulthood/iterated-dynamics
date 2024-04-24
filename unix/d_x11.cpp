@@ -2561,20 +2561,6 @@ x11_shell(Driver * /*drv*/)
     putchar('\n');
 }
 
-/*
-; **************** Function setvideomode(ax, bx, cx, dx) ****************
-;       This function sets the (alphanumeric or graphic) video mode
-;       of the monitor.   Called with the proper values of AX thru DX.
-;       No returned values, as there is no particular standard to
-;       adhere to in this case.
-
-;       (SPECIAL "TWEAKED" VGA VALUES:  if AX==BX==CX==0, assume we have a
-;       genuine VGA or register compatable adapter and program the registers
-;       directly using the coded value in DX)
-
-; Unix: We ignore ax,bx,cx,dx.  dotmode is the "mode" field in the video
-; table.  We use mode 19 for the X window.
-*/
 static void
 x11_set_video_mode(Driver *drv, VIDEOINFO *mode)
 {
