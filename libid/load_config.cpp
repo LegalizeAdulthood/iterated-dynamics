@@ -43,9 +43,7 @@ void load_config(const std::string &cfg_path)
     int          j;
     int          keynum;
     int          colors;
-    char        *fields[6]{};
-    int          textsafe2;
-    int          truecolorbits;
+    char        *fields[5]{};
 
     if (cfg_path.empty()                                             // can't find the file
         || (cfgfile = std::fopen(cfg_path.c_str(), "r")) == nullptr) // can't open it
@@ -92,38 +90,14 @@ void load_config(const std::string &cfg_path)
             }
         }
         keynum = check_vidmode_keyname(tempstring);
+        assert(fields[0]);
+        xdots = std::atol(fields[0]);
         assert(fields[1]);
-        xdots = std::atol(fields[1]);
+        ydots = std::atol(fields[1]);
         assert(fields[2]);
-        ydots = std::atol(fields[2]);
-        assert(fields[3]);
-        colors = std::atoi(fields[3]);
-        if (colors == 4 && std::strchr(strlwr(fields[3]), 'g'))
-        {
-            colors = 256;
-            truecolorbits = 4; // 32 bits
-        }
-        else if (colors == 16 && std::strchr(fields[3], 'm'))
-        {
-            colors = 256;
-            truecolorbits = 3; // 24 bits
-        }
-        else if (colors == 64 && std::strchr(fields[3], 'k'))
-        {
-            colors = 256;
-            truecolorbits = 2; // 16 bits
-        }
-        else if (colors == 32 && std::strchr(fields[3], 'k'))
-        {
-            colors = 256;
-            truecolorbits = 1; // 15 bits
-        }
-        else
-        {
-            truecolorbits = 0;
-        }
+        colors = std::atoi(fields[2]);
 
-        if (j < 5 ||
+        if (j < 4 ||
                 keynum < 0 ||
                 xdots < MIN_PIXELS || xdots > MAX_PIXELS ||
                 ydots < MIN_PIXELS || ydots > MAX_PIXELS ||
@@ -137,17 +111,15 @@ void load_config(const std::string &cfg_path)
         g_cfg_line_nums[g_video_table_len] = linenum; // for update_id_cfg
 
         std::memset(&vident, 0, sizeof(vident));
-        std::strncpy(&vident.name[0], fields[0], std::size(vident.name));
-        std::strncpy(&vident.comment[0], fields[5], std::size(vident.comment));
+        std::strncpy(&vident.comment[0], fields[4], std::size(vident.comment));
         vident.comment[25] = 0;
-        vident.name[25] = 0;
         vident.keynum      = keynum;
         vident.xdots       = (short)xdots;
         vident.ydots       = (short)ydots;
         vident.colors      = colors;
 
         // if valid, add to supported modes
-        vident.driver = driver_find_by_name(fields[4]);
+        vident.driver = driver_find_by_name(fields[3]);
         if (vident.driver != nullptr)
         {
             if (vident.driver->validate_mode(vident.driver, &vident))

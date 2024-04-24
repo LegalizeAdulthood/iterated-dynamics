@@ -78,7 +78,6 @@ TEST(TestLoadConfig, gdiDisk)
 
     ASSERT_EQ(2, g_video_table_len);
     const VIDEOINFO &gdi_mode{g_video_table[0]};
-    EXPECT_STREQ(ID_TEST_GDI_NAME, gdi_mode.name);
     EXPECT_STREQ(ID_TEST_GDI_COMMENT, gdi_mode.comment);
     EXPECT_EQ(ID_TEST_GDI_FN_KEY, gdi_mode.keynum);
     EXPECT_EQ(ID_TEST_GDI_WIDTH, gdi_mode.xdots);
@@ -86,7 +85,6 @@ TEST(TestLoadConfig, gdiDisk)
     EXPECT_EQ(ID_TEST_GDI_COLORS, gdi_mode.colors);
     EXPECT_EQ(&gdi, gdi_mode.driver);
     const VIDEOINFO &disk_mode{g_video_table[1]};
-    EXPECT_STREQ(ID_TEST_DISK_NAME, disk_mode.name);
     EXPECT_STREQ(ID_TEST_DISK_COMMENT, disk_mode.comment);
     EXPECT_EQ(ID_TEST_DISK_FN_KEY, disk_mode.keynum);
     EXPECT_EQ(ID_TEST_DISK_WIDTH, disk_mode.xdots);

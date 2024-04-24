@@ -43,17 +43,17 @@ struct GDIDriver
     bool text_not_graphics;
 };
 
-#define DRIVER_MODE(name_, width_, height_) \
-    { name_, 0, width_, height_, 256, nullptr, "                        " }
+#define DRIVER_MODE(width_, height_) \
+    { 0, width_, height_, 256, nullptr, "                        " }
 static VIDEOINFO modes[] =
 {
-    DRIVER_MODE("Win32 GDI Video          ",  800,  600),
-    DRIVER_MODE("Win32 GDI Video          ", 1024,  768),
-    DRIVER_MODE("Win32 GDI Video          ", 1200,  900),
-    DRIVER_MODE("Win32 GDI Video          ", 1280,  960),
-    DRIVER_MODE("Win32 GDI Video          ", 1400, 1050),
-    DRIVER_MODE("Win32 GDI Video          ", 1500, 1125),
-    DRIVER_MODE("Win32 GDI Video          ", 1600, 1200)
+    DRIVER_MODE( 800,  600),
+    DRIVER_MODE(1024,  768),
+    DRIVER_MODE(1200,  900),
+    DRIVER_MODE(1280,  960),
+    DRIVER_MODE(1400, 1050),
+    DRIVER_MODE(1500, 1125),
+    DRIVER_MODE(1600, 1200)
 };
 #undef DRIVER_MODE
 
@@ -636,7 +636,7 @@ static GDIDriver gdi_driver_info =
 {
     {
         {
-            "gdi", "A GDI driver for 32-bit Windows.",
+            "gdi", "Windows GDI",
             gdi_init,
             gdi_validate_mode,
             gdi_get_max_screen,

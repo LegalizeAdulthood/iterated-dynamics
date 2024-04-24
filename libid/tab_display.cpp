@@ -534,9 +534,9 @@ top:
     driver_put_string(s_row++, 2, C_GENERAL_MED, msg);
     if (g_video_entry.xdots && bf_math == bf_math_type::NONE)
     {
-        std::sprintf(msg, "Video: %dx%dx%d %s %s",
+        std::sprintf(msg, "Video: %dx%dx%d %s",
                 g_video_entry.xdots, g_video_entry.ydots, g_video_entry.colors,
-                g_video_entry.name, g_video_entry.comment);
+                g_video_entry.comment);
         driver_put_string(s_row++, 2, C_GENERAL_MED, msg);
     }
     if (bit_clear(g_cur_fractal_specific->flags, fractal_flags::NOZOOM))

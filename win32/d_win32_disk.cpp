@@ -48,17 +48,17 @@ struct Win32DiskDriver
     unsigned char clut[256][3];
 };
 
-#define DRIVER_MODE(name_, width_, height_ ) \
-    { name_, 0, width_, height_, 256, nullptr, "                        " }
+#define DRIVER_MODE(width_, height_ ) \
+    { 0, width_, height_, 256, nullptr, "                        " }
 static VIDEOINFO modes[] =
 {
-    DRIVER_MODE("Win32 Disk Video         ",  800,  600),
-    DRIVER_MODE("Win32 Disk Video         ", 1024,  768),
-    DRIVER_MODE("Win32 Disk Video         ", 1200,  900),
-    DRIVER_MODE("Win32 Disk Video         ", 1280,  960),
-    DRIVER_MODE("Win32 Disk Video         ", 1400, 1050),
-    DRIVER_MODE("Win32 Disk Video         ", 1500, 1125),
-    DRIVER_MODE("Win32 Disk Video         ", 1600, 1200)
+    DRIVER_MODE( 800,  600),
+    DRIVER_MODE(1024,  768),
+    DRIVER_MODE(1200,  900),
+    DRIVER_MODE(1280,  960),
+    DRIVER_MODE(1400, 1050),
+    DRIVER_MODE(1500, 1125),
+    DRIVER_MODE(1600, 1200)
 };
 #undef DRIVER_MODE
 
@@ -584,7 +584,7 @@ static void disk_flush(Driver *drv)
 static Win32DiskDriver disk_driver_info =
 {
     {
-        "disk", "A disk video driver for 32-bit Windows.",
+        "disk", "Windows Disk",
         disk_init,
         disk_validate_mode,
         disk_get_max_screen,

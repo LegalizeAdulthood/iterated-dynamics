@@ -4,5 +4,5 @@
 ; If the driver rejects the mode, it won't be added to the mode list.
 ;key  name of adapter/mode      |  x |  y |clr| driver | comments
 ;=========================================================================================
-@ID_TEST_GDI_FN@,@ID_TEST_GDI_NAME@,@ID_TEST_GDI_WIDTH@,@ID_TEST_GDI_HEIGHT@,@ID_TEST_GDI_COLORS@,@ID_TEST_GDI_DRIVER@,@ID_TEST_GDI_COMMENT@
-@ID_TEST_DISK_FN@,@ID_TEST_DISK_NAME@,@ID_TEST_DISK_WIDTH@,@ID_TEST_DISK_HEIGHT@,@ID_TEST_DISK_COLORS@,@ID_TEST_DISK_DRIVER@,@ID_TEST_DISK_COMMENT@
+@ID_TEST_GDI_FN@,@ID_TEST_GDI_WIDTH@,@ID_TEST_GDI_HEIGHT@,@ID_TEST_GDI_COLORS@,@ID_TEST_GDI_DRIVER@,@ID_TEST_GDI_COMMENT@
+@ID_TEST_DISK_FN@,@ID_TEST_DISK_WIDTH@,@ID_TEST_DISK_HEIGHT@,@ID_TEST_DISK_COLORS@,@ID_TEST_DISK_DRIVER@,@ID_TEST_DISK_COMMENT@
