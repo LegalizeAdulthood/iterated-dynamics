@@ -4073,12 +4073,9 @@ static bool frm_check_name_and_sym(std::FILE * open_file, bool report_bad_sym)
 */
 static std::string PrepareFormula(std::FILE *file, bool report_bad_sym)
 {
-    std::FILE *debug_fp = nullptr;
-    token_st temp_tok;
     long filepos = ftell(file);
 
     //Test for a repeat
-
     if (!frm_check_name_and_sym(file, report_bad_sym))
     {
         std::fseek(file, filepos, SEEK_SET);
@@ -4096,6 +4093,7 @@ static std::string PrepareFormula(std::FILE *file, bool report_bad_sym)
         return nullptr;
     }
 
+    std::FILE *debug_fp = nullptr;
     if (g_debug_flag == debug_flags::write_formula_debug_information)
     {
         debug_fp = std::fopen("debugfrm.txt", "at");
@@ -4119,6 +4117,7 @@ static std::string PrepareFormula(std::FILE *file, bool report_bad_sym)
     bool Done = false;
 
     //skip opening end-of-lines
+    token_st temp_tok;
     while (!Done)
     {
         frmgettoken(file, &temp_tok);
