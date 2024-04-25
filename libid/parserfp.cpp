@@ -658,8 +658,7 @@ awful_error:
             }
             ffptr = fStkLodDup;
         }
-        else if (prevfptr == fStkSto2
-            && Store[g_store_index-1] == Load[g_load_index])
+        else if (prevfptr == fStkSto2 && Store[g_store_index - 1] == Load[g_load_index])
         {
             // store, load of same value
             // only one operand on stack here when prev oper is Sto2
@@ -670,8 +669,7 @@ awful_error:
         // This may cause roundoff problems when later operators
         //  use the rounded value that was stored here, while the next
         //  operator uses the more accurate internal value.
-        else if (prevfptr == fStkStoClr2
-            && Store[g_store_index-1] == Load[g_load_index])
+        else if (prevfptr == fStkStoClr2 && Store[g_store_index - 1] == Load[g_load_index])
         {
             // store, clear, load same value found
             // only one operand was on stack so this is safe
