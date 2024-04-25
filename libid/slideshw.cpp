@@ -98,15 +98,15 @@ static void get_mnemonic(int code, char *mnemonic)
     }
 }
 
-bool g_busy = false;
-static std::FILE *fpss = nullptr;
-static long starttick;
-static long ticks;
-static int slowcount;
-static bool quotes = false;
-static bool calcwait = false;
-static int repeats = 0;
-static int last1 = 0;
+bool g_busy{};
+static std::FILE *fpss{};
+static long starttick{};
+static long ticks{};
+static int slowcount{};
+static bool quotes{};
+static bool calcwait{};
+static int repeats{};
+static int last1{};
 
 // places a temporary message on the screen in text mode
 static int showtempmsg_txt(int row, int col, int attr, int secs, const char *txt)
