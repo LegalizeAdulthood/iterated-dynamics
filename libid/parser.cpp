@@ -2957,11 +2957,11 @@ int form_per_pixel()
     }
     g_overflow = false;
     jump_index = 0;
-    OpPtr = jump_index;
-    g_store_index = OpPtr;
-    g_load_index = g_store_index;
+    OpPtr = 0;
+    g_store_index = 0;
+    g_load_index = 0;
     Arg1 = &s[0];
-    Arg2 = Arg1;
+    Arg2 = &s[0];
     Arg2--;
 
 
