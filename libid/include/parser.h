@@ -211,7 +211,7 @@ int Formula();
 int BadFormula();
 int form_per_pixel();
 int frm_get_param_stuff(char const *Name);
-bool RunForm(char const *Name, bool report_bad_sym);
+bool RunForm(const std::string &name, bool report_bad_sym);
 bool fpFormulaSetup();
 bool intFormulaSetup();
 void init_misc();

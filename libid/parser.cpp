@@ -4196,7 +4196,7 @@ int BadFormula()
 }
 
 //  returns true if an error occurred
-bool RunForm(char const *Name, bool report_bad_sym)
+bool RunForm(const std::string &name, bool report_bad_sym)
 {
     std::FILE * entry_file = nullptr;
 
@@ -4209,7 +4209,7 @@ bool RunForm(char const *Name, bool report_bad_sym)
         return true;  //  and don't reset the pointers
     }
 
-    if (find_file_item(g_formula_filename, Name, &entry_file, gfe_type::FORMULA))
+    if (find_file_item(g_formula_filename, name.c_str(), &entry_file, gfe_type::FORMULA))
     {
         stopmsg(STOPMSG_NONE, ParseErrs(PE_COULD_NOT_OPEN_FILE_WHERE_FORMULA_LOCATED));
         return true;
@@ -4251,7 +4251,7 @@ bool fpFormulaSetup()
     // TODO: when parsera.c contains assembly equivalents, remove !defined(_WIN32)
 #if !defined(XFRACT) && !defined(_WIN32)
     MathType = D_MATH;
-    bool RunFormRes = !RunForm(g_formula_name.c_str(), false); // RunForm() returns true for failure
+    bool RunFormRes = !RunForm(g_formula_name, false); // RunForm() returns true for failure
     if (RunFormRes
         && fpu >=387
         && g_debug_flag != debug_flags::force_standard_fractal
@@ -4263,7 +4263,7 @@ bool fpFormulaSetup()
     return RunFormRes;
 #else
     MathType = D_MATH;
-    return !RunForm(g_formula_name.c_str(), false); // RunForm() returns true for failure
+    return !RunForm(g_formula_name, false); // RunForm() returns true for failure
 #endif
 }
 
@@ -4285,7 +4285,7 @@ bool intFormulaSetup()
     fg = (double)(1L << g_bit_shift);
     fgLimit = (double)0x7fffffffL / fg;
     ShiftBack = 32 - g_bit_shift;
-    return !RunForm(g_formula_name.c_str(), false);
+    return !RunForm(g_formula_name, false);
 #endif
 }
 
