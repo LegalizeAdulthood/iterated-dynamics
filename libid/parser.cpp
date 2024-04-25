@@ -4071,28 +4071,28 @@ static bool frm_check_name_and_sym(std::FILE * open_file, bool report_bad_sym)
     letter of the name of the formula to be prepared. This function
     is called from RunForm() below.
 */
-static std::string PrepareFormula(std::FILE * File, bool report_bad_sym)
+static std::string PrepareFormula(std::FILE *file, bool report_bad_sym)
 {
     std::FILE *debug_fp = nullptr;
     token_st temp_tok;
-    long filepos = ftell(File);
+    long filepos = ftell(file);
 
     //Test for a repeat
 
-    if (!frm_check_name_and_sym(File, report_bad_sym))
+    if (!frm_check_name_and_sym(file, report_bad_sym))
     {
-        std::fseek(File, filepos, SEEK_SET);
+        std::fseek(file, filepos, SEEK_SET);
         return nullptr;
     }
-    if (!frm_prescan(File))
+    if (!frm_prescan(file))
     {
-        std::fseek(File, filepos, SEEK_SET);
+        std::fseek(file, filepos, SEEK_SET);
         return nullptr;
     }
 
     if (chars_in_formula > 8190)
     {
-        std::fseek(File, filepos, SEEK_SET);
+        std::fseek(file, filepos, SEEK_SET);
         return nullptr;
     }
 
@@ -4121,11 +4121,11 @@ static std::string PrepareFormula(std::FILE * File, bool report_bad_sym)
     //skip opening end-of-lines
     while (!Done)
     {
-        frmgettoken(File, &temp_tok);
+        frmgettoken(file, &temp_tok);
         if (temp_tok.token_type == NOT_A_TOKEN)
         {
             stopmsg(STOPMSG_FIXED_FONT, "Unexpected token error in PrepareFormula\n");
-            std::fseek(File, filepos, SEEK_SET);
+            std::fseek(file, filepos, SEEK_SET);
             if (debug_fp != nullptr)
             {
                 std::fclose(debug_fp);
@@ -4135,7 +4135,7 @@ static std::string PrepareFormula(std::FILE * File, bool report_bad_sym)
         else if (temp_tok.token_type == END_OF_FORMULA)
         {
             stopmsg(STOPMSG_FIXED_FONT, "Formula has no executable instructions\n");
-            std::fseek(File, filepos, SEEK_SET);
+            std::fseek(file, filepos, SEEK_SET);
             if (debug_fp != nullptr)
             {
                 std::fclose(debug_fp);
@@ -4156,12 +4156,12 @@ static std::string PrepareFormula(std::FILE * File, bool report_bad_sym)
     Done = false;
     while (!Done)
     {
-        frmgettoken(File, &temp_tok);
+        frmgettoken(file, &temp_tok);
         switch (temp_tok.token_type)
         {
         case NOT_A_TOKEN:
             stopmsg(STOPMSG_FIXED_FONT, "Unexpected token error in PrepareFormula\n");
-            std::fseek(File, filepos, SEEK_SET);
+            std::fseek(file, filepos, SEEK_SET);
             if (debug_fp != nullptr)
             {
                 std::fclose(debug_fp);
@@ -4169,7 +4169,7 @@ static std::string PrepareFormula(std::FILE * File, bool report_bad_sym)
             return nullptr;
         case END_OF_FORMULA:
             Done = true;
-            std::fseek(File, filepos, SEEK_SET);
+            std::fseek(file, filepos, SEEK_SET);
             break;
         default:
             FormulaStr += temp_tok.token_str;
