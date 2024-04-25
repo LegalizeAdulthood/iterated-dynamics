@@ -810,7 +810,7 @@ long get_file_entry(gfe_type type, char const *title, char const *fmask,
         switch (type)
         {
         case gfe_type::FORMULA:
-            if (!RunForm(entryname, true))
+            if (!run_formula(entryname, true))
             {
                 return 0;
             }

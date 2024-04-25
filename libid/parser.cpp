@@ -4069,7 +4069,7 @@ static bool frm_check_name_and_sym(std::FILE * open_file, bool report_bad_sym)
     and except the final expression in the formula. The open file passed
     as an argument is open in "rb" mode and is positioned at the first
     letter of the name of the formula to be prepared. This function
-    is called from RunForm() below.
+    is called from run_formula() below.
 */
 static std::string PrepareFormula(std::FILE *file, bool report_bad_sym)
 {
@@ -4196,9 +4196,9 @@ int BadFormula()
 }
 
 //  returns true if an error occurred
-bool RunForm(const std::string &name, bool report_bad_sym)
+bool run_formula(const std::string &name, bool report_bad_sym)
 {
-    std::FILE * entry_file = nullptr;
+    std::FILE *entry_file = nullptr;
 
     //  first set the pointers so they point to a fn which always returns 1
     g_cur_fractal_specific->per_pixel = BadFormula;
@@ -4251,7 +4251,7 @@ bool fpFormulaSetup()
     // TODO: when parsera.c contains assembly equivalents, remove !defined(_WIN32)
 #if !defined(XFRACT) && !defined(_WIN32)
     MathType = D_MATH;
-    bool RunFormRes = !RunForm(g_formula_name, false); // RunForm() returns true for failure
+    bool RunFormRes = !run_formula(g_formula_name, false); // run_formula() returns true for failure
     if (RunFormRes
         && fpu >=387
         && g_debug_flag != debug_flags::force_standard_fractal
@@ -4263,7 +4263,7 @@ bool fpFormulaSetup()
     return RunFormRes;
 #else
     MathType = D_MATH;
-    return !RunForm(g_formula_name, false); // RunForm() returns true for failure
+    return !run_formula(g_formula_name, false); // run_formula() returns true for failure
 #endif
 }
 
@@ -4285,7 +4285,7 @@ bool intFormulaSetup()
     fg = (double)(1L << g_bit_shift);
     fgLimit = (double)0x7fffffffL / fg;
     ShiftBack = 32 - g_bit_shift;
-    return !RunForm(g_formula_name, false);
+    return !run_formula(g_formula_name, false);
 #endif
 }
 
