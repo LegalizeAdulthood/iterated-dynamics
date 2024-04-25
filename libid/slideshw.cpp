@@ -321,13 +321,13 @@ start:
             slideshowerr("WAIT needs argument");
         }
         out = 0;
-        s_slow_count = out;
+        s_slow_count = 0;
     }
     else if (std::strcmp("CALCWAIT", buffer) == 0) // wait for calc to finish
     {
         s_calc_wait = true;
         out = 0;
-        s_slow_count = out;
+        s_slow_count = 0;
     }
     else if ((i = check_vidmode_keyname(buffer)) != 0)
     {
