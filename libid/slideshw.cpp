@@ -99,14 +99,14 @@ static void get_mnemonic(int code, char *mnemonic)
 }
 
 bool g_busy{};
-static std::FILE *fpss{};
-static long starttick{};
-static long ticks{};
-static int slowcount{};
-static bool quotes{};
-static bool calcwait{};
-static int repeats{};
-static int last1{};
+static std::FILE *s_slide_show_file{};
+static long s_start_tick{};
+static long s_ticks{};
+static int s_slow_count{};
+static bool s_quotes{};
+static bool s_calc_wait{};
+static int s_repeats{};
+static int s_last1{};
 
 // places a temporary message on the screen in text mode
 static int showtempmsg_txt(int row, int col, int attr, int secs, const char *txt)
@@ -149,15 +149,15 @@ int slideshw()
     int err;
     int i;
     char buffer[81];
-    if (calcwait)
+    if (s_calc_wait)
     {
         if (g_calc_status == calc_status_value::IN_PROGRESS || g_busy)   // restart timer - process not done
         {
             return 0; // wait for calc to finish before reading more keystrokes
         }
-        calcwait = false;
+        s_calc_wait = false;
     }
-    if (fpss == nullptr)     // open files first time through
+    if (s_slide_show_file == nullptr)     // open files first time through
     {
         if (startslideshow() == slides_mode::OFF)
         {
@@ -166,41 +166,41 @@ int slideshw()
         }
     }
 
-    if (ticks) // if waiting, see if waited long enough
+    if (s_ticks) // if waiting, see if waited long enough
     {
-        if (std::clock() - starttick < ticks)   // haven't waited long enough
+        if (std::clock() - s_start_tick < s_ticks)   // haven't waited long enough
         {
             return 0;
         }
-        ticks = 0;
+        s_ticks = 0;
     }
-    if (++slowcount <= 18)
+    if (++s_slow_count <= 18)
     {
-        starttick = std::clock();
-        ticks = CLOCKS_PER_SEC/5; // a slight delay so keystrokes are visible
-        if (slowcount > 10)
+        s_start_tick = std::clock();
+        s_ticks = CLOCKS_PER_SEC/5; // a slight delay so keystrokes are visible
+        if (s_slow_count > 10)
         {
-            ticks /= 2;
+            s_ticks /= 2;
         }
     }
-    if (repeats > 0)
+    if (s_repeats > 0)
     {
-        repeats--;
-        return last1;
+        s_repeats--;
+        return s_last1;
     }
 start:
-    if (quotes) // reading a quoted string
+    if (s_quotes) // reading a quoted string
     {
-        out = fgetc(fpss);
+        out = fgetc(s_slide_show_file);
         if (out != '\"' && out != EOF)
         {
-            last1 = out;
+            s_last1 = out;
             return out;
         }
-        quotes = false;
+        s_quotes = false;
     }
     // skip white space:
-    while ((out = fgetc(fpss)) == ' ' || out == '\t' || out == '\n')
+    while ((out = fgetc(s_slide_show_file)) == ' ' || out == '\t' || out == '\n')
     {
     }
     switch (out)
@@ -209,25 +209,25 @@ start:
         stopslideshow();
         return 0;
     case '\"':        // begin quoted string
-        quotes = true;
+        s_quotes = true;
         goto start;
     case ';':         // comment from here to end of line, skip it
-        while ((out = fgetc(fpss)) != '\n' && out != EOF)
+        while ((out = fgetc(s_slide_show_file)) != '\n' && out != EOF)
         {
         }
         goto start;
     case '*':
-        if (std::fscanf(fpss, "%d", &repeats) != 1
-            || repeats <= 1
-            || repeats >= 256
-            || std::feof(fpss))
+        if (std::fscanf(s_slide_show_file, "%d", &s_repeats) != 1
+            || s_repeats <= 1
+            || s_repeats >= 256
+            || std::feof(s_slide_show_file))
         {
             slideshowerr("error in * argument");
-            repeats = 0;
-            last1 = repeats;
+            s_repeats = 0;
+            s_last1 = s_repeats;
         }
-        repeats -= 2;
-        out = last1;
+        s_repeats -= 2;
+        out = s_last1;
         return out;
     }
 
@@ -238,7 +238,7 @@ start:
         {
             buffer[i++] = (char)out;
         }
-        out = fgetc(fpss);
+        out = fgetc(s_slide_show_file);
         if (out == ' ' || out == '\t' || out == '\n' || out == EOF)
         {
             break;
@@ -257,7 +257,7 @@ start:
     else if (std::strcmp(buffer, "MESSAGE") == 0)
     {
         int secs;
-        if (std::fscanf(fpss, "%d", &secs) != 1)
+        if (std::fscanf(s_slide_show_file, "%d", &secs) != 1)
         {
             slideshowerr("MESSAGE needs argument");
         }
@@ -266,7 +266,7 @@ start:
             int len;
             char buf[41];
             buf[40] = 0;
-            if (std::fgets(buf, std::size(buf), fpss) == nullptr)
+            if (std::fgets(buf, std::size(buf), s_slide_show_file) == nullptr)
             {
                 throw std::system_error(errno, std::system_category(), "slideshw failed fgets");
             }
@@ -278,7 +278,7 @@ start:
     }
     else if (std::strcmp(buffer, "GOTO") == 0)
     {
-        if (std::fscanf(fpss, "%s", buffer) != 1)
+        if (std::fscanf(s_slide_show_file, "%s", buffer) != 1)
         {
             slideshowerr("GOTO needs target");
             out = 0;
@@ -286,14 +286,14 @@ start:
         else
         {
             char buffer1[80];
-            rewind(fpss);
+            rewind(s_slide_show_file);
             std::strcat(buffer, ":");
             do
             {
-                err = std::fscanf(fpss, "%s", buffer1);
+                err = std::fscanf(s_slide_show_file, "%s", buffer1);
             }
             while (err == 1 && std::strcmp(buffer1, buffer) != 0);
-            if (std::feof(fpss))
+            if (std::feof(s_slide_show_file))
             {
                 slideshowerr("GOTO target not found");
                 return 0;
@@ -308,26 +308,26 @@ start:
     else if (std::strcmp("WAIT", buffer) == 0)
     {
         float fticks;
-        err = std::fscanf(fpss, "%f", &fticks); // how many ticks to wait
+        err = std::fscanf(s_slide_show_file, "%f", &fticks); // how many ticks to wait
         driver_set_keyboard_timeout((int)(fticks*1000.f));
         fticks *= CLOCKS_PER_SEC;             // convert from seconds to ticks
         if (err == 1)
         {
-            ticks = (long)fticks;
-            starttick = std::clock();  // start timing
+            s_ticks = (long)fticks;
+            s_start_tick = std::clock();  // start timing
         }
         else
         {
             slideshowerr("WAIT needs argument");
         }
         out = 0;
-        slowcount = out;
+        s_slow_count = out;
     }
     else if (std::strcmp("CALCWAIT", buffer) == 0) // wait for calc to finish
     {
-        calcwait = true;
+        s_calc_wait = true;
         out = 0;
-        slowcount = out;
+        s_slow_count = out;
     }
     else if ((i = check_vidmode_keyname(buffer)) != 0)
     {
@@ -340,31 +340,31 @@ start:
         slideshowerr(msg.str().c_str());
         out = 0;
     }
-    last1 = out;
+    s_last1 = out;
     return out;
 }
 
 slides_mode startslideshow()
 {
-    fpss = std::fopen(g_auto_name.c_str(), "r");
-    if (fpss == nullptr)
+    s_slide_show_file = std::fopen(g_auto_name.c_str(), "r");
+    if (s_slide_show_file == nullptr)
     {
         g_slides = slides_mode::OFF;
     }
-    ticks = 0;
-    quotes = false;
-    calcwait = false;
-    slowcount = 0;
+    s_ticks = 0;
+    s_quotes = false;
+    s_calc_wait = false;
+    s_slow_count = 0;
     return g_slides;
 }
 
 void stopslideshow()
 {
-    if (fpss)
+    if (s_slide_show_file)
     {
-        std::fclose(fpss);
+        std::fclose(s_slide_show_file);
     }
-    fpss = nullptr;
+    s_slide_show_file = nullptr;
     g_slides = slides_mode::OFF;
 }
 
@@ -372,60 +372,60 @@ void recordshw(int key)
 {
     char mn[MAX_MNEMONIC];
     float dt;
-    dt = (float)ticks;      // save time of last call
-    ticks = std::clock();  // current time
-    if (fpss == nullptr)
+    dt = (float)s_ticks;      // save time of last call
+    s_ticks = std::clock();  // current time
+    if (s_slide_show_file == nullptr)
     {
         check_writefile(g_auto_name, ".key");
-        fpss = std::fopen(g_auto_name.c_str(), "w");
-        if (fpss == nullptr)
+        s_slide_show_file = std::fopen(g_auto_name.c_str(), "w");
+        if (s_slide_show_file == nullptr)
         {
             return;
         }
     }
-    dt = ticks-dt;
+    dt = s_ticks-dt;
     dt /= CLOCKS_PER_SEC;  // dt now in seconds
     if (dt > .5) // don't bother with less than half a second
     {
-        if (quotes) // close quotes first
+        if (s_quotes) // close quotes first
         {
-            quotes = false;
-            std::fprintf(fpss, "\"\n");
+            s_quotes = false;
+            std::fprintf(s_slide_show_file, "\"\n");
         }
-        std::fprintf(fpss, "WAIT %4.1f\n", dt);
+        std::fprintf(s_slide_show_file, "WAIT %4.1f\n", dt);
     }
     if (key >= 32 && key < 128)
     {
-        if (!quotes)
+        if (!s_quotes)
         {
-            quotes = true;
-            std::fputc('\"', fpss);
+            s_quotes = true;
+            std::fputc('\"', s_slide_show_file);
         }
-        std::fputc(key, fpss);
+        std::fputc(key, s_slide_show_file);
     }
     else
     {
-        if (quotes) // not an ASCII character - turn off quotes
+        if (s_quotes) // not an ASCII character - turn off quotes
         {
-            std::fprintf(fpss, "\"\n");
-            quotes = false;
+            std::fprintf(s_slide_show_file, "\"\n");
+            s_quotes = false;
         }
         get_mnemonic(key, mn);
         if (*mn)
         {
-            std::fprintf(fpss, "%s", mn);
+            std::fprintf(s_slide_show_file, "%s", mn);
         }
         else if (check_vidmode_key(0, key) >= 0)
         {
             char buf[10];
             vidmode_keyname(key, buf);
-            std::fputs(buf, fpss);
+            std::fputs(buf, s_slide_show_file);
         }
         else   // not ASCII and not FN key
         {
-            std::fprintf(fpss, "%4d", key);
+            std::fprintf(s_slide_show_file, "%4d", key);
         }
-        std::fputc('\n', fpss);
+        std::fputc('\n', s_slide_show_file);
     }
 }
 
