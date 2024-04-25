@@ -987,7 +987,7 @@ void StkClr()
 {
     s[0] = *Arg1;
     Arg1 = &s[0];
-    Arg2 = Arg1;
+    Arg2 = &s[0];
     Arg2--;
 }
 
@@ -2921,7 +2921,8 @@ int Formula()
     }
 
     Arg1 = &s[0];
-    Arg2 = Arg1-1;
+    Arg2 = &s[0];
+    --Arg2;
     while (OpPtr < (int)g_last_op)
     {
         f[OpPtr]();
