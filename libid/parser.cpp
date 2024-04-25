@@ -4071,7 +4071,7 @@ static bool frm_check_name_and_sym(std::FILE * open_file, bool report_bad_sym)
     letter of the name of the formula to be prepared. This function
     is called from RunForm() below.
 */
-static std::string PrepareFormula(std::FILE * File, bool from_prompts1c)
+static std::string PrepareFormula(std::FILE * File, bool report_bad_sym)
 {
     std::FILE *debug_fp = nullptr;
     token_st temp_tok;
@@ -4079,7 +4079,7 @@ static std::string PrepareFormula(std::FILE * File, bool from_prompts1c)
 
     //Test for a repeat
 
-    if (!frm_check_name_and_sym(File, from_prompts1c))
+    if (!frm_check_name_and_sym(File, report_bad_sym))
     {
         std::fseek(File, filepos, SEEK_SET);
         return nullptr;
@@ -4197,7 +4197,7 @@ int BadFormula()
 }
 
 //  returns true if an error occurred
-bool RunForm(char const *Name, bool from_prompts1c)
+bool RunForm(char const *Name, bool report_bad_sym)
 {
     std::FILE * entry_file = nullptr;
 
@@ -4216,7 +4216,7 @@ bool RunForm(char const *Name, bool from_prompts1c)
         return true;
     }
 
-    FormStr = PrepareFormula(entry_file, from_prompts1c);
+    FormStr = PrepareFormula(entry_file, report_bad_sym);
     std::fclose(entry_file);
 
     if (!FormStr.empty())  //  No errors while making string
