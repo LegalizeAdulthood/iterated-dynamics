@@ -970,6 +970,7 @@ void (*StkMod)() = dStkMod;
 
 void StkSto()
 {
+    assert(Store[g_store_index] != nullptr);
     *Store[g_store_index++] = *Arg1;
 }
 
