@@ -427,8 +427,8 @@ the bof60 and bof61 options:
 the magnitude of the orbit point when maxiter was reached, using the formula
 color = (x^2 + y^2) * maxiter/2 + 1.
 
-"Inside=fmod" colors inside pixels according to the magnitude of the last orbit
-point which is within a set distance from the origin.  Then:\
+"Inside=fmod" colors inside pixels according to the magnitude of the last
+orbit point which is within a set distance from the origin.  Then:\
   color = magnitude * colors / closeprox\
 The magnitude used for the comparison is now based on the same calculation as
 is used for the bailout test.  The value of closeprox can be varied
@@ -455,8 +455,8 @@ INSIDE=epscross|startrail
 Kenneth Hooper has written a paper entitled "A Note On Some Internal
 Structures of the Mandelbrot Set" published in "Computers and Graphics", Vol
 15, No.2, pp. 295-297.  In that article he describes Clifford Pickover's
-epsilon cross method which creates some mysterious plant-like tendrils in
-the Mandelbrot set.  The algorithm is this.  In the escape-time calculation of a
+epsilon cross method which creates some mysterious plant-like tendrils in the
+Mandelbrot set.  The algorithm is this.  In the escape-time calculation of a
 fractal, if the orbit comes within .01 of the Y-axis, the orbit is terminated
 and the pixel is colored green.  Similarly, the pixel is colored yellow if it
 approaches the X-axis.  Strictly speaking, this is not an "inside" option
@@ -468,10 +468,10 @@ the test distance triggers an alternative variation of epsilon cross that
 colors the epsilon bands with the iteration; otherwise they are colored
 normally to maintain compatibility.
 
-Hooper has another coloring scheme called star trails that involves
-detecting clusters of points being traversed by the orbit.  A table of tangents
-of each orbit point is built, and the pixel colored according to how many
-orbit points are near the first one before the orbit flies out of the cluster.
+Hooper has another coloring scheme called star trails that involves detecting
+clusters of points being traversed by the orbit.  A table of tangents of each
+orbit point is built, and the pixel colored according to how many orbit
+points are near the first one before the orbit flies out of the cluster.
 This option looks fine with maxiter=16, which greatly speeds the calculation.
 
 Both of these options should be tried with the outside color fixed
@@ -735,11 +735,12 @@ Then q1q2 = 1(x1x2 - y1y2 - z1z2 - w1w2) +
 ~Format+
 Quaternions are not the only possible four dimensional supersets of the
 complex numbers.  William Rowan Hamilton, who discovered quaternions in 1843,
-considered the alternative called the hypercomplex number system.
-Unlike quaternions, the hypercomplex numbers satisfy the commutative law of
+considered the alternative called the hypercomplex number system.  Unlike
+quaternions, the hypercomplex numbers satisfy the commutative law of
 multiplication.  The law which fails is the field property that states that
-all non-zero elements of a field have a multiplicative inverse.  For a non-zero
-hypercomplex number h, the multiplicative inverse 1/h does not always exist.
+all non-zero elements of a field have a multiplicative inverse.  For a non-
+zero hypercomplex number h, the multiplicative inverse 1/h does not always
+exist.
 
 As with quaternions, we will define multiplication in terms of the basis
 vectors 1, i, j, and k, but with subtly different rules.
@@ -796,11 +797,11 @@ is
    z = (imag(c) - imag(d))/2
    w = (real(d) - real(c))/2
 ~Format+
-We can now, for example, compute sin(h).  First compute the two complex numbers
-a and b as above, then set c = sin(a) and d = sin(b) where sin() is the
-complex version of the sin function.  Now use the equations above to solve for
-x, y, z, and w in terms of c and d.  The hypercomplex number (x,y,z,w) thus
-obtained is sin(h).
+We can now, for example, compute sin(h).  First compute the two complex
+numbers a and b as above, then set c = sin(a) and d = sin(b) where sin() is
+the complex version of the sin function.  Now use the equations above to
+solve for x, y, z, and w in terms of c and d.  The hypercomplex number
+(x,y,z,w) thus obtained is sin(h).
 
 The beauty of this is that it really doesn't make any difference what
 function we use.  Instead of sin, we could have used cos, sinh, ln, or z^2.
@@ -815,16 +816,17 @@ and Bert Tyler, Waite Group Press, 1993.
 ;
 ~Topic=GIF Save File Format
 
-The <S>ave command stores screen images as GIF (Graphics Interchange Format) files.
-The <R>estore command loads a GIF image and reads extra information
-from the file to restore all the fractal parameters used to generate the image.
-This GIF89a version of the format allows the placement of application data within
-the file in a standard manner.
+The <S>ave command stores screen images as GIF (Graphics Interchange Format)
+files.
+The <R>estore command loads a GIF image and reads extra information from the
+file to restore all the fractal parameters used to generate the image.
+This GIF89a version of the format allows the placement of application data
+within the file in a standard manner.
 
 GIF was originally created by CompuServe, but it used a compression algorithm
-patented by Unisys in 1985.  This led to patent licensing issues with the file format,
-but all patents relating to the proprietary compression used for GIF have expired as
-of 2004.
+patented by Unisys in 1985.  This led to patent licensing issues with the
+file format, but all patents relating to the proprietary compression used for
+GIF have expired as of 2004.
 ;
 ;
 ;
@@ -1070,11 +1072,11 @@ Direct3D and wrote a book on the Direct3D APIs.  The book, "The Direct3D
 Graphics Pipeline", is available free download at
 <https://legalizeadulthood.wordpress.com/the-direct3d-graphics-pipeline/>
 
-He has worked as a software engineer for his entire career on embedded systems,
-3D graphics workstations, 3D paint software, digital video editing software,
-system management software, home automation software, 3D content creation
-software, solid-state storage management software and currently works on
-hardware accelerated ray tracing.
+He has worked as a software engineer for his entire career on embedded
+systems, 3D graphics workstations, 3D paint software, digital video editing
+software, system management software, home automation software, 3D content
+creation software, solid-state storage management software and currently
+works on hardware accelerated ray tracing.
 
 Main Authors of Fractint, Id's Ancestor.
 
@@ -1383,15 +1385,14 @@ default is none.  The low value attenuates at 1.5 dB/octave, the mid at
 SCALEMAP=nn/nn/nn/...\
 The scale map list is a way of controlling which notes are played by Id
 and only has any effect if note quantisation is switched on in the basic sound
-parameters screen.  It can be very useful when the polyphony is up and the chords
-you're getting are more like dischords. :-)
+parameters screen.  It can be very useful when the polyphony is up and the
+chords you're getting are more like dischords. :-)
 
-The way it works is this: When a sound is played with frequency quantisation on
-its frequency is rounded to the nearest 'proper' note on the musical scale,
-this note number is then looked up in the scale map table and substituted by the
-note indicated in that entry of the table.
-The end result of this is that, for instance, using this sequence of numbers
-as a scale map: \
+The way it works is this: When a sound is played with frequency quantisation
+on its frequency is rounded to the nearest 'proper' note on the musical scale,
+this note number is then looked up in the scale map table and substituted by
+the note indicated in that entry of the table.  The end result of this is
+that, for instance, using this sequence of numbers as a scale map:\
 2,2,4,4,4,7,7,9,9,11,11,11\
 Will ensure that Id uses only the black notes on the keyboard, just the
 sharps and flats for a vaguely oriental feel (to my western ears anyway :-) ).

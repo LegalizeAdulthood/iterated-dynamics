@@ -59,9 +59,9 @@ guessing mode in which the algorithm stops after the nth pass.  This facility
 is for exploring in low resolution when you'd rather see
 a low resolution image with large blocky pixels filling the whole screen than
 a small low resolution image such as you get with the <V> (View Windows)
-command.  Note that on the <X> screen you can't directly type g1 or g2.  Press g
-repeatedly until you get the option you want, or else use the left or right
-arrow keys.
+command.  Note that on the <X> screen you can't directly type g1 or g2.
+Press g repeatedly until you get the option you want, or else use the left
+or right arrow keys.
 
 Boundary Tracing ("b"), which only works accurately with fractal types
 (such as the Mandelbrot set, but not the Newton type) that do not contain
@@ -107,9 +107,9 @@ The "orbitdelay=" option controls how many orbits are computed before the
 orbits are displayed on the screen.  This allows the orbits to settle down.
 The "orbitinterval=" option causes Orbits to plot every nth orbit point.  A
 non-zero value of the "periodicity=" option causes orbits to not plot orbits
-that have reached the bailout conditions or where an orbit goes off the visible
-area of the image.  A zero value of periodicity will plot all orbits except
-as modified by orbitdelay and orbitinterval.
+that have reached the bailout conditions or where an orbit goes off the
+visible area of the image.  A zero value of periodicity will plot all orbits
+except as modified by orbitdelay and orbitinterval.
 
 Synchronous orbits ("s") is an experimental mode using the "fractal
 witchcraft" algorithm based on the Almondbread implementation by Michael
@@ -122,8 +122,8 @@ and julia are implemented.  SOI is only useful for very deep zooms, but only
 up to the limit of double precision.  Within this narrow magnification range,
 SOI can result in tremndous speedups.  If you invoke Id with "debug=3444"
 on the command line, a long double (rather than double) version will be used,
-which allows zooming about 1000 times deeper.  SOI really needs to be ported to
-Id's arbitary precision.
+which allows zooming about 1000 times deeper.  SOI really needs to be ported
+to Id's arbitary precision.
 ;
 ;
 ~Topic=Autokey Mode
@@ -212,8 +212,8 @@ help:
 
   When in the record mode, try to type names quickly, then pause.  If you
   pause partway through a name Id will break up the string in the
-  .KEY file.  For example, if you paused in the middle of typing fract001, you
-  might get:\
+  .KEY file.  For example, if you paused in the middle of typing fract001,
+  you might get:\
       "fract"\
       WAIT 2.2\
       "001"\
@@ -282,10 +282,10 @@ from the inside of the set.  Use a higher value for narrower color bands,
 a lower value for wider ones.  1000 is a good value to start with.
 
 The second distance estimator parameter ("width factor") sets the distance
-from the inside of the set which is to be considered as part of the
-inside.  This value is expressed as a percentage of a pixel width, the
-default is 71.  Negative values are now allowed and give a fraction of a
-percent of the pixel width.  For example: -71 gives 1/71 % of the pixel width.
+from the inside of the set which is to be considered as part of the inside.
+This value is expressed as a percentage of a pixel width, the default is
+71.  Negative values are now allowed and give a fraction of a percent of
+the pixel width.  For example: -71 gives 1/71 % of the pixel width.
 
 You should use 1 or 2 pass mode with the distance estimator method, to
 avoid missing some of the thin strands made visible by it.  For the
@@ -637,10 +637,10 @@ depth.  Try these steps.  Generate a plasma fractal using the 256 color video
 mode.  When the image on the screen is complete, press <Ctrl+S> ("S" for
 "Stereo"), and press <Enter> at the "RDS Parameters" screen prompt to accept
 the defaults. (More on the parameters in a moment.) The screen will be
-converted into a seemingly random collection of colored dots.  Relax your eyes,
-looking through the screen rather than at the screen surface.  The image will
-(hopefully) resolve itself into the hills and valleys of the 3D Plasma
-fractal.
+converted into a seemingly random collection of colored dots.  Relax your
+eyes, looking through the screen rather than at the screen surface.  The
+image will (hopefully) resolve itself into the hills and valleys of the
+3D Plasma fractal.
 
 Because pressing the two-keyed <Ctrl+S> gets tiresome after a while, we have
 made <K> key a synonym for <Ctrl+S> for convenience.  Don't get too attached
@@ -667,11 +667,11 @@ setting, you can place the value in your sstools.ini file with the command
 stereowidth=<nnn>.
 
 The third parameter allows you to control the method use to extract depth
-information from the original image.  If your answer "no" at the "Use Grayscale
-value for Depth" prompt, then the color number of each pixel will be used.
-This value is independent of active color palette.  If you answer "yes" and the
-prompt, then the depth values are keyed to the brightness of the color, which
-will change if you change palettes.
+information from the original image.  If your answer "no" at the "Use
+Grayscale value for Depth" prompt, then the color number of each pixel will
+be used.  This value is independent of active color palette.  If you answer
+"yes" and the prompt, then the depth values are keyed to the brightness of
+the color, which will change if you change palettes.
 
 The fourth parameter allows you to set the position of vertical stereo
 calibration bars to the middle or the top of the image, or have the bars
@@ -716,12 +716,12 @@ fractals if you zoom in a little way.  If the image map is smaller than your
 RDS image, the image map will repeated to fill the space.  If the image map
 is larger, just the upper left corner of the image map will be used.
 
-The original image you are using for your stereogram is saved, so if you want
-to modify the stereogram parameters and try again, just press <Ctrl+S> (or <K>)
-to get the parameter screen, changes the parameters, and press <Enter>.  The
-original image is restored and an RDS transform with the revised parameters is
-performed.  If you press <S> when viewing an RDS image, after the RDS image is
-saved, the original is restored.
+The original image you are using for your stereogram is saved, so if you
+want to modify the stereogram parameters and try again, just press <Ctrl+S>
+(or <K>) to get the parameter screen, changes the parameters, and press
+<Enter>.  The original image is restored and an RDS transform with the
+revised parameters is performed.  If you press <S> when viewing an RDS image,
+after the RDS image is saved, the original is restored.
 
 Try the RDS feature with continuous potential Mandelbrots as well as plasma
 fractals.
@@ -785,7 +785,7 @@ bailout test used by Id is:
 
 bailout test = |z|^2 = x^2 + y^2 >= 4
 
-Using a "bailout" other than 4 allows us to change when the bailout will occur.
+Using a bailout other than 4 allows us to change when the bailout will occur.
 ~OnlineFF
 
 The following bailout tests have been implemented on the <Z> screen:
@@ -950,9 +950,9 @@ Stereo:\
 
 ~OnlineFF
 Ray trace output:\
-   Id can create files of its 3D transformations which are
-   compatible with many ray tracing programs.  Currently four are supported
-   directly: DKB (now obsolete), VIVID, MTV, and RAYSHADE.  In addition a "raw"
+   Id can create files of its 3D transformations which are compatible with
+   many ray tracing programs.  Currently four are supported directly:
+   DKB (now obsolete), VIVID, MTV, and RAYSHADE.  In addition a "raw"
    output is supported which can be relatively easily transformed to be
    usable by many other products.
    One other option is supported: ACROSPIN.  This is not a ray tracer,
@@ -1061,8 +1061,9 @@ light in a following parameter screen - see {Light Source Parameters}.
 "Light source before transformation" uses the illumination direction without
 transforming it.  The light source is fixed relative to your computer screen.
 If you generate a sequence of images with progressive rotation, the effect is
-as if you and the light source are fixed and the object is rotating.  Therefore
-as the object rotates features of the object move in and out of the light.
+as if you and the light source are fixed and the object is rotating.
+Therefore, as the object rotates features of the object move in and out of
+the light.
 
 "Light source after transformation" applies the same transformation to both
 the light direction and the object.  Since both the light direction and the
@@ -1485,9 +1486,9 @@ scaling will be done by the ray tracer.  Thus, in creating the images, no
 facilities for rotations or shifting is provided.  Scaling is provided to
 achieve the correct aspect ratio.
 
-WARNING!  The files created using the ray tracing options can be large.  Setting
-coarse to 40 will result in over 2000 triangles.  Each triangle can utilize
-from 50 to 200 bytes each to describe, so your ray tracing files can
+WARNING!  The files created using the ray tracing options can be large.
+Setting coarse to 40 will result in over 2000 triangles.  Each triangle can
+utilize from 50 to 200 bytes each to describe, so your ray tracing files can
 rapidly approach or exceed 1 MB.
 
 Each file starts with a comment identifying the version of Id

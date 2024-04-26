@@ -255,10 +255,10 @@ integrated documentation file software was written by Ethan Nagel.
 ;
 ;
 ~Topic=New Features in 1.0
-Iterated Dynamics is a fork of the DOS program Fractint.  Fractint has its own
-history spanning many years.  Please consult the Fractint help for its history.
-To avoid being confused with a new release of Fractint, the code has been
-rebranded Iterated Dynamics, or Id for short, throughout.
+Iterated Dynamics is a fork of the DOS program Fractint.  Fractint has
+its own history spanning many years.  Please consult the Fractint help
+for its history.  To avoid being confused with a new release of Fractint,
+the code has been rebranded Iterated Dynamics, or Id for short, throughout.
 
 The source code for Iterated Dynamics lives on github:\
   <https://github.com/LegalizeAdulthood/iterated-dynamics>
@@ -268,19 +268,19 @@ Found a bug?  File an issue on our github project!\
 
 Version 1.0:
 
-o Most of the changes involve internal restructuring of the DOS Fractint code
-  to build a bridge to the future.
+o Most of the changes involve internal restructuring of the DOS Fractint
+  code to build a bridge to the future.
 o Iterated Dynamics is a native 64-bit Windows program written in C++ with a
   CMake build system and vcpkg for obtaining 3rd party library dependencies.
 o All assembly language code has been removed and, where practical, replaced
   with C++ code that performs the same function.
 o A CGA text display is simulated for all prompt screens and help screens.
-o A "video mode" determines the resolution of all saved images and is provided
-  by a driver.  Iterated Dynamics comes with two drivers: Disk and GDI.
-  The GDI driver renders to the screen through the Windows GDI interface.
-  The disk driver can be used to render images larger than your physical
-  screen, but still uses your screen's GUI for displaying status with a
-  CGA style window.
+o A "video mode" determines the resolution of all saved images and is
+  provided by a driver.  Iterated Dynamics comes with two drivers: Disk and
+  GDI.  The GDI driver renders to the screen through the Windows GDI
+  interface.  The disk driver can be used to render images larger than your
+  physical screen, but still uses your screen's GUI for displaying status
+  with a CGA style window.
 o Id.cfg, which defines the default video modes, was updated to remove all
   modes smaller than 800x600 and very large disk video modes were added.
 o DOS related information in video modes was dropped.
@@ -318,9 +318,9 @@ Known limitations:
 
 o Navigation is exclusively through the keyboard.  Mouse support will be
   restored in a subsequent release.
-o Sound output does nothing, although all controls can be set through parameters
-  or interactive screens.  Sound output will be restored once a suitable audio
-  library has been identified.
+o Sound output does nothing, although all controls can be set through
+  parameters or interactive screens.  Sound output will be restored once a
+  suitable audio library has been identified.
 o Some code still assumes 8.3 filenames, but this restriction will be lifted
   over time.  To avoid surprises, continue to use 8.3 filenames until the
   code has been completely audited.
@@ -399,9 +399,9 @@ See the file LICENSE.txt for details on distributing the program.
 ;
 ~Topic=Getting Started
 
-To start the program, locate the Id executable in the installation directory.
-The program displays an initial "credits" screen.  If Id doesn't start properly,
-please see {Common Problems}.
+To start the program, locate the Id executable in the installation
+directory.  The program displays an initial "credits" screen.  If Id
+doesn't start properly, please see {Common Problems}.
 
 Hitting <Enter> gets you from the initial screen to the main menu.  You can
 select options from the menu by moving the highlight with the arrow keys
@@ -556,7 +556,7 @@ Commands marked with an '*' are also available at the credits screen.
   Alt+1 ... Alt+7       Enter evolver mode with selected level of
                         mutation: Alt+1 = low level, Alt+7 = maximum.
                         (dont use the keypad, just the 'top row' numbers)
-                        When in evolve mode then just plain <1>..<7> also work
+                        When in evolve mode then <1>..<7> also work.
 
 {RDS Commands}
   Ctrl+S                Access RDS parameter screen
@@ -592,9 +592,8 @@ you previously generated this session in reverse order.  Id saves
 the last ten images worth of information including fractal type, coordinates,
 colors, and all options.  Image information is saved only when some item
 changes.  After ten images the circular buffer wraps around and earlier
-information is overwritten.  You can set image capacity of the history feature
-using the maxhistory=<nnn> command.  About 1200 bytes of memory is required
-for each image slot.
+information is overwritten.  You can set image capacity of the history
+feature using the maxhistory=<nnn> command.
 
 <Ctrl+H>\
 Redraw the next image in the circular history buffer.  Use this to return to
@@ -675,7 +674,7 @@ With selected fractal types, <Z> allows you to change the {Bailout Test}.
 
 <+> or <->\
 Switch to color-cycling mode and begin cycling the palette
-by shifting each color to the next "contour."  See {Color Cycling Commands}.\
+by shifting each color to the next "contour."  See {Color Cycling Commands}.
 
 <C>\
 Switch to color-cycling mode but do not start cycling.
@@ -959,8 +958,8 @@ After you press <B>, Id prompts for:
   editor to set all 256 possible colors for use with color cycling, then
   you'll want to set the "# of colors" to 256.
 
-  See the {=@RECORDCOLORS Recordcolors} command, which controls when mapfiles
-  are used and when compressed colors are written to par files.
+  See the {=@RECORDCOLORS Recordcolors} command, which controls when
+  mapfiles are used and when compressed colors are written to par files.
 
   maxlinelength: This number controls the maximum width of a parameter
   entry in a par file.  The default is 72 characters.
@@ -968,10 +967,10 @@ After you press <B>, Id prompts for:
   At the bottom of the input screen are inputs for Id's "pieces"
   divide-and-conquer feature.  You can create multiple par entries that
   break an image up into pieces so that you can generate the image pieces
-  one by one.  There are two reasons for doing this.  The first is in case the
-  fractal is very slow, and you want to generate parts of the image at the
-  same time on several computers.  The second is that you might want to make
-  an image greater than 2048 x 2048.  The parameters for this feature are:\
+  one by one.  There are two reasons for doing this.  The first is in case
+  the fractal is very slow, and you want to generate parts of the image at
+  the same time on several computers.  The second is that you might want to
+  make an image greater than 2048 x 2048.  The parameters are:\
      X Multiples - How many divisions of final image in the x direction\
      Y Multiples - How many divisions of final image in the y direction\
      Video mode  - Id video mode for each piece (e.g. "F3")\
@@ -1281,9 +1280,9 @@ saved images.  So you can think of the "video mode" as "image size".
 In a future release, the saved image size will be decoupled from the size
 of the displayed image.
 
-The video modes that can be selected are determined entirely from the settings
-in the id.cfg file.  See {"Customized Video Modes\, id.cfg"} to customize the
-set of supported video modes.
+The video modes that can be selected are determined entirely from the
+settings in the id.cfg file.  See {"Customized Video Modes\, id.cfg"} to
+customize the set of supported video modes.
 
 Any supported video mode can be selected by going to the "Select Video Mode"
 screen (from main menu or by using <Delete>), then using the <Up> and <Down>
@@ -1432,14 +1431,14 @@ gives when deleting a file.  It won't get rid of the first prompt however.
 
 "Smallest window"\
 This parameter determines how small the image would have to be onscreen
-before the browser decides not to include it in the selection of files.  The size
-is entered in decimal pixels so, for instance, this could be set to 0.2 to
-allow images that are up to around three maximum zooms away (depending on
-the current video resolution) to be loaded instantly.  Set this to 0 to
-enable all sub images to be detected.  This can lead to a very cluttered
-screen!  The primary use is in conjunction with the search file mask (see
-below) to allow location of high magnification images within an overall
-view (like the whole Mset).
+before the browser decides not to include it in the selection of files.
+The size is entered in decimal pixels so, for instance, this could be set
+to 0.2 to allow images that are up to around three maximum zooms away
+(depending on the current video resolution) to be loaded instantly.  Set
+this to 0 to enable all sub images to be detected.  This can lead to a very
+cluttered screen!  The primary use is in conjunction with the search file
+mask (see below) to allow location of high magnification images within an
+overall view (like the whole Mandelbrot set).
 
 "Smallest box"\
 This determines when the image location is shown as crosshairs rather than
@@ -1621,10 +1620,10 @@ file (.map assumed).  See {Color Maps}.
   Esc              Exit from color-cycling mode
   + or -           (re)-set the direction of the color-cycling
   Home             Restore original palette
-  Right/Left       (Re)-Set the direction of the color-cycling (just like +/-)
+  Right/Left       Re-/Set the direction of the color-cycling (just like +/-)
   Up/Down          SpeedUp/SlowDown the color cycling process
   F2 thru F10      Select Short--Medium--Long (randomly-generated) color bands
-  1  thru 9        Cycle through 'nn' colors between screen updates (default=1)
+  1 thru 9         Cycle through N colors between screen updates (default=1)
   Enter            Randomly (re)-select all new colors  [TRY THIS ONE!]
   Spacebar         Pause until another key is hit
   < or >           Pause and single-step through one color-cycle
@@ -1861,8 +1860,8 @@ It can be confusing working out what's going on in freestyle mode
 so here's a quick walk through...\
 
 Freestyle palette editing is intended to be a way of colouring an image in
-an intuitive fashion with the minimum of keyboard usage.  In fact everything is
-controllable with the mouse, as the following shows:
+an intuitive fashion with the minimum of keyboard usage.  In fact everything
+is controllable with the mouse, as the following shows:
 
 To start with, generate a plasma type fractal as it has all 256 colours on
 screen at once.  Now bring up the palette editor and press <W> to set up
@@ -1877,30 +1876,33 @@ values change in the status box above the palette grid.  Double clicking the
 right mouse button changes the colour component that's varied in an r-g-b-r-
 cycle.... try it out and conjure up any shade you like!
 
-To vary the width of the band, drag up and down with the right button held down.
-Slower machines may show some 'lag' during this operation, especially if they
-have no math co-processor, so watch out as the mouse movements get buffered.
+To vary the width of the band, drag up and down with the right button held
+down.  Slower machines may show some 'lag' during this operation, so watch
+out as the mouse movements get buffered.
 
 Once you've got the band in a satisfactory position then double click the left
 button to fix it in place.
+
 Continue like this for as long as you like, adding different colours to the
 grey palette.
+
 You'll notice how the band relates to the existing colour, the RGB values give
-the middle colour which are then smoothly shaded out to the colours at the ends
-of the band.  This can lead to some sudden jumps in the shading as the band is
-moved about the screen and the edges come to overlap different areas of colour.
+the middle colour which are then smoothly shaded out to the colours at the
+ends of the band.  This can lead to some sudden jumps in the shading as the
+band is moved about the screen and the edges come to overlap different areas
+of colour.
 
 For really violent jumps in shading try starting with an image that has areas
 that change chaotically, such as a Mandlbrot set.  You'll see what I mean when
 you move the cross hairs into an area close to the 'lake' where the change in
 value from one pixel to the next is sudden, chaotic and large.  Watch out! --
-the strobing effect can be somewhat disturbing.  This is nothing to worry about
-but just a consequence of the manipulation of the palette and the way in which
-the colour bands are calculated.
+the strobing effect can be somewhat disturbing.  This is nothing to worry
+about but just a consequence of the manipulation of the palette and the way in
+which the colour bands are calculated.
 
-I hope that you'll find this a useful tool in colouring an image.  Remember that
-the <H> key can be used to hide the palette box and expose the whole image.
-
+I hope that you'll find this a useful tool in colouring an image.  Remember
+that the <H> key can be used to hide the palette box and expose the whole
+image.
 ;
 ~Topic=Palette Editing Command Summary, Label=HELP_PALETTE_EDITOR
 ; This topic is online only.
@@ -1991,10 +1993,10 @@ the <H> key can be used to hide the palette box and expose the whole image.
  pressing 'Page-up' once.  The center image will now have a white box around
  it.  Hold down the <Ctrl+Arrow> keys to move this box around
  until it's outlining an image you like.  Pressing <B> will now exit from
- evolver mode and redraw the selected image full size.  If, rather than exiting
- from evolver mode, you just press <Enter>, then a whole new set of images
- is generated, all based around the one you selected (which is now the middle
- image of the new set).
+ evolver mode and redraw the selected image full size.  If, rather than
+ exiting from evolver mode, you just press <Enter>, then a whole new set of
+ images is generated, all based around the one you selected (which is now
+ the middle image of the new set).
 
  From a basic point of view that's it!  Just press <Alt+1>-<Alt+7> to scramble
  things when you're out of inspiration, it works for any of the fractal
@@ -2014,12 +2016,12 @@ the <H> key can be used to hide the palette box and expose the whole image.
  maybe, a cats face and you wished to try and get something more cat like.
  To achieve this simply select the desired image and press <F2>.  The newly
  generated images should be more alike, though probably still quite widely
- varied.  With luck, one of the new images will be even more cat like.  Select
- this one and press <F2> again.  Continue like this, selecting the center image
- again if there are no improvements in the current generation, until
- eventually all the images are alike and you've arrived at your goal (or at
- least you're probably as close as it's possible to get with that fractal
- type).
+ varied.  With luck, one of the new images will be even more cat like.
+ Select this one and press <F2> again.  Continue like this, selecting the
+ center image again if there are no improvements in the current generation,
+ until eventually all the images are alike and you've arrived at your goal
+ (or at least you're probably as close as it's possible to get with that
+ fractal type).
 
  As you look for more details in the images it is useful to reduce the number
  of images per generation, thus producing larger sub images.  Pressing <F4>
@@ -2143,8 +2145,8 @@ the <H> key can be used to hide the palette box and expose the whole image.
  It should be noted here that some of the fractal types such as the IFS do not
  terminate, they run on forever and as such aren't usable with the evolver as
  the first sub image would never finish to allow the next one to generate.
- These fractal types are detected and you won't be allowed to start the evolver
- with these.
+ These fractal types are detected and you won't be allowed to start the
+ evolver with these.
 
  There now only remains to mention that you can save image sets and restore
  them later to carry on exploring from a different seed image:
