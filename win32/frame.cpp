@@ -313,7 +313,7 @@ int frame_pump_messages(bool waitflag)
     return g_frame.keypress_count == 0 ? 0 : 1;
 }
 
-int frame_get_key_press(int wait_for_key)
+int frame_get_key_press(bool wait_for_key)
 {
     int i;
 

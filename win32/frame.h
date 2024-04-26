@@ -27,7 +27,7 @@ extern Frame g_frame;
 void frame_init(HINSTANCE instance, LPCSTR title);
 void frame_window(int width, int height);
 int frame_key_pressed();
-int frame_get_key_press(int option);
+int frame_get_key_press(bool wait_for_key);
 int frame_pump_messages(bool waitflag);
 void frame_schedule_alarm(int secs);
 void frame_resize(int width, int height);

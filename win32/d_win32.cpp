@@ -162,7 +162,7 @@ win32_key_pressed(Driver *drv)
         return ch;
     }
     flush_output();
-    ch = handle_special_keys(frame_get_key_press(0));
+    ch = handle_special_keys(frame_get_key_press(false));
     di->key_buffer = ch;
 
     return ch;
@@ -202,7 +202,7 @@ win32_get_key(Driver *drv)
         }
         else
         {
-            ch = handle_special_keys(frame_get_key_press(1));
+            ch = handle_special_keys(frame_get_key_press(true));
         }
     }
     while (ch == 0);
