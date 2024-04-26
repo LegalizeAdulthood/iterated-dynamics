@@ -56,13 +56,15 @@ void intro()
     authors.push_back(i);
 
     helptitle();
-#define END_MAIN_AUTHOR 4
+#define END_MAIN_AUTHOR 6
     toprow = END_MAIN_AUTHOR+1;
     botrow = 21;
     putstringcenter(1, 0, 80, C_TITLE, PRESS_ENTER);
     driver_put_string(2, 0, C_CONTRIB, screen_text);
-    driver_set_attr(3, 0, C_PRIMARY, 80*(END_MAIN_AUTHOR-3));
     driver_set_attr(2, 0, C_AUTHDIV1, 80);
+    driver_set_attr(3, 0, C_PRIMARY, 80);
+    driver_set_attr(4, 0, C_AUTHDIV1, 80);
+    driver_set_attr(5, 0, C_CONTRIB, 80);
     driver_set_attr(END_MAIN_AUTHOR, 0, C_AUTHDIV1, 80);
     driver_set_attr(22, 0, C_AUTHDIV2, 80);
     driver_set_attr(23, 0, C_TITLE_LOW, 160);

@@ -1465,12 +1465,12 @@ Where:\
 ;
 ; Iterated Dynamics intro screen primary authors
 ;
-  Primary Author (current version)
+            Primary Author and Keeper of the Vision
  Richard Thomson      legalize AT xmission.com
-  The Giants on Whose Shoulders We Stand
-; room for 14 authors at a time here
-
-
+              Supporting Cast and Peanut Gallery
+ Paul de Leeuw        ManPWin author, Iterated Dynamics idea sounding board
+            The Giants on Whose Shoulders We Stand
+; room for 15 authors at a time here
 
 
 
@@ -1510,7 +1510,7 @@ Where:\
  Fulvio Cappelli      ants options and speedup
  Lee Crocker          Fast Newton, Inversion, Decomposition..
  Monte Davis          Documentation
- Paul De Leeuw        RDS (Random Dot Stereogram) Feature
+ Paul de Leeuw        RDS (Random Dot Stereogram) Feature
  Jean-Pierre Demailly Xfractint truecolor
  Chuck Ebbert         cmprsd & sqrt logmap, fpu speedups, fast parser
  Dan Farmer           orbits enhancements
