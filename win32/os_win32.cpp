@@ -122,7 +122,7 @@ void CreateMiniDump(EXCEPTION_POINTERS *ep)
 
     if (debughlp == nullptr)
     {
-        MessageBox(nullptr, "An unexpected error occurred.  Iterated Dynamics will now exit.",
+        MessageBox(nullptr, "An unexpected error occurred.  " ID_PROGRAM_NAME " will now exit.",
                    "Id: Unexpected Error", MB_OK);
         return;
     }

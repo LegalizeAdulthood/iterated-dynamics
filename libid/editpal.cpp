@@ -51,7 +51,7 @@
 #define MAX_WIDTH        1024     // palette editor cannot be wider than this
 
 static char undofile[] = "id.$$2";  // file where undo list is stored
-#define TITLE   "Iterated Dynamics"
+#define TITLE   ID_PROGRAM_NAME
 
 #define TITLE_LEN (17)
 

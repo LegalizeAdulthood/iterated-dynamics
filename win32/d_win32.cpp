@@ -110,6 +110,8 @@ win32_terminate(Driver *drv)
             di->saved_screens[i] = nullptr;
         }
     }
+
+    frame_terminate();
 }
 
 /*----------------------------------------------------------------------
@@ -128,7 +130,7 @@ win32_terminate(Driver *drv)
 */
 bool win32_init(Driver *drv, int *argc, char **argv)
 {
-    LPCSTR title = "Iterated Dynamics";
+    LPCSTR title = ID_PROGRAM_NAME;
     DI(di);
 
     ODS("win32_init");

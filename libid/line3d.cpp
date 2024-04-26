@@ -1993,7 +1993,7 @@ ENDTAB\n  0\nENDSEC\n  0\nSECTION\n  2\nENTITIES\n");
 
     if (g_raytrace_format != raytrace_formats::dxf)
     {
-        std::fprintf(File_Ptr1, "{ Created by Iterated Dynamics Ver. %#4.2f }\n\n", g_release / 100.);
+        std::fprintf(File_Ptr1, "{ Created by " ID_PROGRAM_NAME " Ver. %#4.2f }\n\n", g_release / 100.);
     }
 
     if (g_raytrace_format == raytrace_formats::rayshade)

@@ -10,11 +10,14 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 # Set install folder
 set(CMAKE_INSTALL_PREFIX install)
 
-set(ID_PROJECT_NAME "Iterated Dynamics" CACHE STRING "Project name for IDEs")
+set(ID_PROGRAM_NAME "Iterated Dynamics")
+set(ID_VENDOR_NAME  "Legalize Adulthood!")
+
+set(ID_PROJECT_NAME "${ID_PROGRAM_NAME}" CACHE STRING "Project name for IDEs")
 
 project("${ID_PROJECT_NAME}"
     VERSION 1.0.0.0
-    DESCRIPTION "Iterated Dynamics is a fractal generator"
+    DESCRIPTION "${ID_PROGRAM_NAME} is a fractal generator"
     HOMEPAGE_URL "https://LegalizeAdulthood.github.io/iterated-dynamics"
     LANGUAGES CXX)
 

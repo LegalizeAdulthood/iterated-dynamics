@@ -3640,6 +3640,7 @@ bool print_doc_output(int cmd, PD_INFO *pd, void *context)
     {
         std::ostringstream buff;
         info->margin = 0;
+        // TODO: replace this fixed string with ID_PROGRAM_NAME and ID_VERSION
         buff << "\n"
             "                  Iterated Dynamics Version 1.0                 Page "
             << pd->page_num << "\n\n";
@@ -4189,7 +4190,7 @@ void compiler::parse_arguments()
 
 int compiler::process()
 {
-    std::printf("HC - Iterated Dynamics Help Compiler.\n\n");
+    std::printf("HC - " ID_PROGRAM_NAME " Help Compiler.\n\n");
 
     buffer.resize(BUFFER_SIZE);
 

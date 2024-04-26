@@ -15,12 +15,55 @@
 #include "frame.h"
 #include "resource.h"
 
+#include <atlbase.h>
+#include <tchar.h>
+
+#include <string>
+
 #define FRAME_TIMER_ID 2
 
 Frame g_frame = { 0 };
 
+constexpr const char *const LEFT_POS{"WindowPositionLeft"};
+constexpr const char *const TOP_POS{"WindowPositionTop"};
+constexpr const TCHAR *const SETTINGS_KEY{_T("SOFTWARE\\" ID_VENDOR_NAME "\\" ID_PROGRAM_NAME "\\Settings")};
+
+static void save_frame_position(HWND window)
+{
+    RECT rect{};
+    GetWindowRect(window, &rect);
+    CRegKey key;
+    key.Create(HKEY_CURRENT_USER, SETTINGS_KEY);
+    key.SetDWORDValue(LEFT_POS, rect.left);
+    key.SetDWORDValue(TOP_POS, rect.top);
+}
+
+static POINT get_saved_frame_position()
+{
+    POINT pos;
+    CRegKey key;
+    if (key.Open(HKEY_CURRENT_USER, SETTINGS_KEY) == ERROR_SUCCESS)
+    {
+        auto get_dword = [&](const TCHAR *name)
+        {
+            DWORD value;
+            key.QueryDWORDValue(name, value);
+            return value;
+        };
+        pos.x = get_dword(LEFT_POS);
+        pos.y = get_dword(TOP_POS);
+    }
+    else
+    {
+        pos.x = CW_USEDEFAULT;
+        pos.y = CW_USEDEFAULT;
+    }
+    return pos;
+}
+
 static void frame_OnClose(HWND window)
 {
+    save_frame_position(window);
     PostQuitMessage(0);
 }
 
@@ -271,6 +314,11 @@ void frame_init(HINSTANCE instance, LPCSTR title)
     g_frame.keypress_tail  = 0;
 }
 
+void frame_terminate()
+{
+    save_frame_position(g_frame.window);
+}
+
 int frame_pump_messages(bool waitflag)
 {
     MSG msg;
@@ -354,11 +402,12 @@ void frame_window(int width, int height)
     if (nullptr == g_frame.window)
     {
         frame_adjust_size(width, height);
+        const POINT location{get_saved_frame_position()};
         g_frame.window = CreateWindow("IdFrame",
                                       g_frame.title,
                                       WS_OVERLAPPEDWINDOW,
-                                      CW_USEDEFAULT,               // default horizontal position
-                                      CW_USEDEFAULT,               // default vertical position
+                                      location.x,
+                                      location.y,
                                       g_frame.nc_width,
                                       g_frame.nc_height,
                                       nullptr, nullptr, g_frame.instance,

@@ -7,11 +7,8 @@
 #include <DbgHelp.h>
 #include <crtdbg.h>
 
-#include <cassert>
 #include <cctype>
 #include <cstdarg>
-#include <cstdio>
-#include <cstring>
 
 #include "create_minidump.h"
 #include "instance.h"

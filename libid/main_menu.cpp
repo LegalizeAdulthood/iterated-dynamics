@@ -393,7 +393,7 @@ top:
             driver_set_attr(j, 18, C_GENERAL_INPUT, 40);
         }
         putstringcenter(10, 18, 40, C_GENERAL_INPUT,
-                        "Exit from Iterated Dynamics (y/n)? y"
+                        "Exit from " ID_PROGRAM_NAME " (y/n)? y"
                        );
         driver_hide_text_cursor();
         while ((i = driver_get_key()) != 'y' && i != 'Y' && i != ID_KEY_ENTER)
