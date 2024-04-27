@@ -236,7 +236,7 @@ private:
     std::string x_font_name{FONT};    //
     XFontStruct *m_font_info{};       //
     int m_key_buffer{};               // Buffered X key
-    char text_screen[TEXT_HEIGHT][TEXT_WIDTH]{};
+    char m_text_screen[TEXT_HEIGHT][TEXT_WIDTH]{};
     int text_attr[TEXT_HEIGHT][TEXT_WIDTH]{};
     BYTE *font_table{};       //
     bool text_not_graphics{}; // true when displaying text
@@ -462,7 +462,7 @@ void X11Driver::erase_text_screen()
         for (int c = 0; c < TEXT_WIDTH; c++)
         {
             text_attr[r][c] = 0;
-            text_screen[r][c] = ' ';
+            m_text_screen[r][c] = ' ';
         }
 }
 
@@ -2496,12 +2496,12 @@ void X11Driver::scroll_up(int top, int bot)
         for (int c = 0; c < TEXT_WIDTH; c++)
         {
             text_attr[r][c] = text_attr[r+1][c];
-            text_screen[r][c] = text_screen[r+1][c];
+            m_text_screen[r][c] = m_text_screen[r+1][c];
         }
     for (int c = 0; c < TEXT_WIDTH; c++)
     {
         text_attr[bot][c] = 0;
-        text_screen[bot][c] = ' ';
+        m_text_screen[bot][c] = ' ';
     }
     // TODO: draw text
     std::fprintf(stderr, "X11Driver::scroll_up(%d, %d)\n", top, bot);
