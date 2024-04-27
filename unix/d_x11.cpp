@@ -238,17 +238,17 @@ private:
     int m_key_buffer{};               // Buffered X key
     char m_text_screen[TEXT_HEIGHT][TEXT_WIDTH]{};
     int m_text_attr[TEXT_HEIGHT][TEXT_WIDTH]{};
-    bool text_not_graphics{}; // true when displaying text
-    bool ctl_mode{};          // rubber banding and event processing data
-    bool shift_mode{};        //
-    int button_num{};         //
-    int last_x{};             //
-    int last_y{};             //
-    int dx{};                 //
-    int dy{};                 //
-    x11_frame_window frame_;  //
-    x11_text_window text_;    //
-    x11_plot_window plot_;    //
+    bool m_text_not_graphics{}; // true when displaying text
+    bool ctl_mode{};            // rubber banding and event processing data
+    bool shift_mode{};          //
+    int button_num{};           //
+    int last_x{};               //
+    int last_y{};               //
+    int dx{};                   //
+    int dy{};                   //
+    x11_frame_window frame_;    //
+    x11_text_window text_;      //
+    x11_plot_window plot_;      //
 };
 
 #ifdef FPUERR
@@ -1116,7 +1116,7 @@ void X11Driver::ev_key_release(XKeyEvent *xevent)
 
 void X11Driver::ev_expose(XExposeEvent *xevent)
 {
-    if (text_not_graphics)
+    if (m_text_not_graphics)
     {
         // if text window, refresh text
     }
@@ -2408,7 +2408,7 @@ void X11Driver::set_video_mode(VIDEOINFO *mode)
 
 void X11Driver::put_string(int row, int col, int attr, char const *msg)
 {
-    assert(text_not_graphics);
+    assert(m_text_not_graphics);
     if (row != -1)
     {
         g_text_row = row;
@@ -2427,26 +2427,26 @@ void X11Driver::put_string(int row, int col, int attr, char const *msg)
 
 bool X11Driver::is_text()
 {
-    return text_not_graphics;
+    return m_text_not_graphics;
 }
 
 void X11Driver::set_for_text()
 {
-    text_not_graphics = true;
+    m_text_not_graphics = true;
     text_.show();
     plot_.hide();
 }
 
 void X11Driver::set_for_graphics()
 {
-    text_not_graphics = false;
+    m_text_not_graphics = false;
     plot_.show();
     text_.hide();
 }
 
 void X11Driver::set_clear()
 {
-    if (text_not_graphics)
+    if (m_text_not_graphics)
     {
         text_.clear();
     }
