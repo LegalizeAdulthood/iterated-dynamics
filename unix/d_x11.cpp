@@ -227,7 +227,7 @@ private:
     int m_dpy_screen{};            //
     Pixmap m_pixmap{None};         //
     int m_min_width{DEFX};         //
-    int Xwinheight{DEFY};          //
+    int m_min_height{DEFY};        //
     Window Xroot{None};            //
     int xlastcolor{-1};            //
     int xlastfcn{GXcopy};          //
@@ -621,9 +621,9 @@ void X11Driver::clearXwindow()
     XSetForeground(m_dpy, m_gc, do_fake_lut(m_pixtab[0]));
     if (m_on_root)
         XFillRectangle(m_dpy, m_pixmap, m_gc,
-                       0, 0, m_min_width, Xwinheight);
+                       0, 0, m_min_width, m_min_height);
     XFillRectangle(m_dpy, m_window, m_gc,
-                   0, 0, m_min_width, Xwinheight);
+                   0, 0, m_min_width, m_min_height);
     flush();
 }
 
@@ -1647,7 +1647,7 @@ void X11Driver::window()
 
     if (!m_geometry.empty() && !m_on_root)
         XGeometry(m_dpy, m_dpy_screen, m_geometry.c_str(), DEFXY, 0, 1, 1, 0, 0,
-                  &Xwinx, &Xwiny, &m_min_width, &Xwinheight);
+                  &Xwinx, &Xwiny, &m_min_width, &m_min_height);
     if (m_sync)
         XSynchronize(m_dpy, True);
     XSetErrorHandler(errhand);
@@ -1659,10 +1659,10 @@ void X11Driver::window()
     if (m_full_screen || m_on_root)
     {
         m_min_width = DisplayWidth(m_dpy, m_dpy_screen);
-        Xwinheight = DisplayHeight(m_dpy, m_dpy_screen);
+        m_min_height = DisplayHeight(m_dpy, m_dpy_screen);
     }
     g_screen_x_dots = m_min_width;
-    g_screen_y_dots = Xwinheight;
+    g_screen_y_dots = m_min_height;
 
     Xwatt.background_pixel = BlackPixelOfScreen(m_screen);
     Xwatt.bit_gravity = StaticGravity;
@@ -1677,16 +1677,16 @@ void X11Driver::window()
         RemoveRootPixmap();
         m_gc = XCreateGC(m_dpy, Xroot, 0, &Xgcvals);
         m_pixmap = XCreatePixmap(m_dpy, Xroot,
-                                    m_min_width, Xwinheight, m_depth);
+                                    m_min_width, m_min_height, m_depth);
         m_window = Xroot;
-        XFillRectangle(m_dpy, m_pixmap, m_gc, 0, 0, m_min_width, Xwinheight);
+        XFillRectangle(m_dpy, m_pixmap, m_gc, 0, 0, m_min_width, m_min_height);
         XSetWindowBackgroundPixmap(m_dpy, Xroot, m_pixmap);
     }
     else
     {
         Xroot = DefaultRootWindow(m_dpy);
         m_window = XCreateWindow(m_dpy, Xroot, Xwinx, Xwiny,
-                               m_min_width, Xwinheight, 0, m_depth,
+                               m_min_width, m_min_height, 0, m_depth,
                                InputOutput, CopyFromParent,
                                CWBackPixel | CWBitGravity | CWBackingStore,
                                &Xwatt);
@@ -1758,7 +1758,7 @@ bool X11Driver::resize()
         oldx = g_screen_x_dots;
         oldy = g_screen_y_dots;
         m_min_width = g_screen_x_dots;
-        Xwinheight = g_screen_y_dots;
+        m_min_height = g_screen_y_dots;
         g_screen_aspect = g_screen_y_dots/(float) g_screen_x_dots;
         g_final_aspect_ratio = g_screen_aspect;
         int Xpad = 9;
