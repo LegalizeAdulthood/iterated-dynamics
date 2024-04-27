@@ -248,7 +248,7 @@ private:
     int m_dy{};                 //
     x11_frame_window m_frame;   //
     x11_text_window m_text;     //
-    x11_plot_window plot_;      //
+    x11_plot_window m_plot;     //
 };
 
 #ifdef FPUERR
@@ -1522,7 +1522,7 @@ bool X11Driver::init(int *argc, char **argv)
 
     int screen_num = DefaultScreen(m_dpy);
     m_frame.initialize(m_dpy, screen_num, m_geometry.c_str());
-    plot_.initialize(m_dpy, screen_num, m_frame.window());
+    m_plot.initialize(m_dpy, screen_num, m_frame.window());
     m_text.initialize(m_dpy, screen_num, m_frame.window());
 
     return true;
@@ -1592,7 +1592,7 @@ void X11Driver::center_window(bool center_x, bool center_y)
 
     if (center_x)
     {
-        plot_pos.x = (m_frame.width() - plot_.width())/2;
+        plot_pos.x = (m_frame.width() - m_plot.width())/2;
     }
     else
     {
@@ -1601,14 +1601,14 @@ void X11Driver::center_window(bool center_x, bool center_y)
 
     if (center_y)
     {
-        plot_pos.y = (m_frame.height() - plot_.height())/2;
+        plot_pos.y = (m_frame.height() - m_plot.height())/2;
     }
     else
     {
         text_pos.y = (m_frame.height() - m_text.max_height())/2;
     }
 
-    plot_.set_position(plot_pos.x, plot_pos.y);
+    m_plot.set_position(plot_pos.x, plot_pos.y);
     m_text.set_position(text_pos.x, text_pos.y);
 }
 
@@ -2434,13 +2434,13 @@ void X11Driver::set_for_text()
 {
     m_text_not_graphics = true;
     m_text.show();
-    plot_.hide();
+    m_plot.hide();
 }
 
 void X11Driver::set_for_graphics()
 {
     m_text_not_graphics = false;
-    plot_.show();
+    m_plot.show();
     m_text.hide();
 }
 
@@ -2452,7 +2452,7 @@ void X11Driver::set_clear()
     }
     else
     {
-        plot_.clear();
+        m_plot.clear();
     }
 }
 
