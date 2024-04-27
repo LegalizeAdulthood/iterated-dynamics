@@ -231,7 +231,7 @@ private:
     Window m_root_window{None};       //
     int xlastcolor{-1};               //
     int xlastfcn{GXcopy};             //
-    std::vector<BYTE> pixbuf;         //
+    std::vector<BYTE> m_pixels;       //
     XColor cols[256]{};               //
     bool XZoomWaiting{};              //
     char const *x_font_name{FONT};    //
@@ -1781,7 +1781,7 @@ bool X11Driver::resize()
             Xmwidth = 4*g_screen_x_dots;
             Xpad = 32;
         }
-        pixbuf.resize(m_min_width);
+        m_pixels.resize(m_min_width);
         if (m_image != nullptr)
         {
             free(m_image->data);
@@ -2084,12 +2084,12 @@ void X11Driver::write_span(int y, int x, int lastx, BYTE *pixels)
     width = lastx-x+1;
     if (m_use_pixtab)
     {
-        pixbuf.resize(width);
+        m_pixels.resize(width);
         for (int i = 0; i < width; i++)
         {
-            pixbuf[i] = m_pixtab[pixels[i]];
+            m_pixels[i] = m_pixtab[pixels[i]];
         }
-        pixline = pixbuf.data();
+        pixline = m_pixels.data();
     }
     else
     {
