@@ -243,7 +243,7 @@ private:
     bool m_shift_mode{};        //
     int m_button_num{};         //
     int m_last_x{};             //
-    int last_y{};               //
+    int m_last_y{};             //
     int dx{};                   //
     int dy{};                   //
     x11_frame_window frame_;    //
@@ -1153,7 +1153,7 @@ void X11Driver::ev_button_press(XEvent *xevent)
     if (g_look_at_mouse == 3 || !g_zoom_off)
     {
         m_last_x = xevent->xbutton.x;
-        last_y = xevent->xbutton.y;
+        m_last_y = xevent->xbutton.y;
         return;
     }
 
@@ -1261,9 +1261,9 @@ void X11Driver::ev_motion_notify(XEvent *xevent)
         if (g_look_at_mouse == 3 && m_button_num != 0)
         {
             dx += (xevent->xmotion.x-m_last_x)/MOUSE_SCALE;
-            dy += (xevent->xmotion.y-last_y)/MOUSE_SCALE;
+            dy += (xevent->xmotion.y-m_last_y)/MOUSE_SCALE;
             m_last_x = xevent->xmotion.x;
-            last_y = xevent->xmotion.y;
+            m_last_y = xevent->xmotion.y;
         }
         else
         {
