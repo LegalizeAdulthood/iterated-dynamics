@@ -233,7 +233,6 @@ private:
     int xlastfcn{GXcopy};             //
     std::vector<BYTE> m_pixels;       //
     XColor m_colors[256]{};           //
-    bool XZoomWaiting{};              //
     char const *x_font_name{FONT};    //
     XFontStruct *font_info{};         //
     int key_buffer{};                 // Buffered X key
@@ -1233,7 +1232,6 @@ void X11Driver::ev_button_press(XEvent *xevent)
     if (xlastcolor != -1)
         XSetForeground(m_dpy, m_gc, do_fake_lut(xlastcolor));
     XSetFunction(m_dpy, m_gc, xlastfcn);
-    XZoomWaiting = true;
     drawbox(0);
 }
 
