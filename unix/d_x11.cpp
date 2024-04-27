@@ -235,7 +235,7 @@ private:
     XColor m_colors[256]{};           //
     std::string x_font_name{FONT};    //
     XFontStruct *m_font_info{};       //
-    int key_buffer{};                 // Buffered X key
+    int m_key_buffer{};               // Buffered X key
     unsigned char *fontPtr{};         //
     char text_screen[TEXT_HEIGHT][TEXT_WIDTH]{};
     int text_attr[TEXT_HEIGHT][TEXT_WIDTH]{};
@@ -992,101 +992,101 @@ int X11Driver::ev_key_press(XKeyEvent *xevent)
         break;
     case XK_Home:
     case XK_R7:
-        key_buffer = ctl_mode ? ID_KEY_CTL_HOME : ID_KEY_HOME;
+        m_key_buffer = ctl_mode ? ID_KEY_CTL_HOME : ID_KEY_HOME;
         return 1;
     case XK_Left:
     case XK_R10:
-        key_buffer = ctl_mode ? ID_KEY_CTL_LEFT_ARROW : ID_KEY_LEFT_ARROW;
+        m_key_buffer = ctl_mode ? ID_KEY_CTL_LEFT_ARROW : ID_KEY_LEFT_ARROW;
         return 1;
     case XK_Right:
     case XK_R12:
-        key_buffer = ctl_mode ? ID_KEY_CTL_RIGHT_ARROW : ID_KEY_RIGHT_ARROW;
+        m_key_buffer = ctl_mode ? ID_KEY_CTL_RIGHT_ARROW : ID_KEY_RIGHT_ARROW;
         return 1;
     case XK_Down:
     case XK_R14:
-        key_buffer = ctl_mode ? ID_KEY_CTL_DOWN_ARROW : ID_KEY_DOWN_ARROW;
+        m_key_buffer = ctl_mode ? ID_KEY_CTL_DOWN_ARROW : ID_KEY_DOWN_ARROW;
         return 1;
     case XK_Up:
     case XK_R8:
-        key_buffer = ctl_mode ? ID_KEY_CTL_UP_ARROW : ID_KEY_UP_ARROW;
+        m_key_buffer = ctl_mode ? ID_KEY_CTL_UP_ARROW : ID_KEY_UP_ARROW;
         return 1;
     case XK_Insert:
-        key_buffer = ctl_mode ? ID_KEY_CTL_INSERT : ID_KEY_INSERT;
+        m_key_buffer = ctl_mode ? ID_KEY_CTL_INSERT : ID_KEY_INSERT;
         return 1;
     case XK_Delete:
-        key_buffer = ctl_mode ? ID_KEY_CTL_DEL : ID_KEY_DELETE;
+        m_key_buffer = ctl_mode ? ID_KEY_CTL_DEL : ID_KEY_DELETE;
         return 1;
     case XK_End:
     case XK_R13:
-        key_buffer = ctl_mode ? ID_KEY_CTL_END : ID_KEY_END;
+        m_key_buffer = ctl_mode ? ID_KEY_CTL_END : ID_KEY_END;
         return 1;
     case XK_Help:
-        key_buffer = ID_KEY_F1;
+        m_key_buffer = ID_KEY_F1;
         return 1;
     case XK_Prior:
     case XK_R9:
-        key_buffer = ctl_mode ? ID_KEY_CTL_PAGE_UP : ID_KEY_PAGE_UP;
+        m_key_buffer = ctl_mode ? ID_KEY_CTL_PAGE_UP : ID_KEY_PAGE_UP;
         return 1;
     case XK_Next:
     case XK_R15:
-        key_buffer = ctl_mode ? ID_KEY_CTL_PAGE_DOWN : ID_KEY_PAGE_DOWN;
+        m_key_buffer = ctl_mode ? ID_KEY_CTL_PAGE_DOWN : ID_KEY_PAGE_DOWN;
         return 1;
     case XK_F1:
     case XK_L1:
-        key_buffer = shift_mode ? ID_KEY_SF1: ID_KEY_F1;
+        m_key_buffer = shift_mode ? ID_KEY_SF1: ID_KEY_F1;
         return 1;
     case XK_F2:
     case XK_L2:
-        key_buffer = shift_mode ? ID_KEY_SF2: ID_KEY_F2;
+        m_key_buffer = shift_mode ? ID_KEY_SF2: ID_KEY_F2;
         return 1;
     case XK_F3:
     case XK_L3:
-        key_buffer = shift_mode ? ID_KEY_SF3: ID_KEY_F3;
+        m_key_buffer = shift_mode ? ID_KEY_SF3: ID_KEY_F3;
         return 1;
     case XK_F4:
     case XK_L4:
-        key_buffer = shift_mode ? ID_KEY_SF4: ID_KEY_F4;
+        m_key_buffer = shift_mode ? ID_KEY_SF4: ID_KEY_F4;
         return 1;
     case XK_F5:
     case XK_L5:
-        key_buffer = shift_mode ? ID_KEY_SF5: ID_KEY_F5;
+        m_key_buffer = shift_mode ? ID_KEY_SF5: ID_KEY_F5;
         return 1;
     case XK_F6:
     case XK_L6:
-        key_buffer = shift_mode ? ID_KEY_SF6: ID_KEY_F6;
+        m_key_buffer = shift_mode ? ID_KEY_SF6: ID_KEY_F6;
         return 1;
     case XK_F7:
     case XK_L7:
-        key_buffer = shift_mode ? ID_KEY_SF7: ID_KEY_F7;
+        m_key_buffer = shift_mode ? ID_KEY_SF7: ID_KEY_F7;
         return 1;
     case XK_F8:
     case XK_L8:
-        key_buffer = shift_mode ? ID_KEY_SF8: ID_KEY_F8;
+        m_key_buffer = shift_mode ? ID_KEY_SF8: ID_KEY_F8;
         return 1;
     case XK_F9:
     case XK_L9:
-        key_buffer = shift_mode ? ID_KEY_SF9: ID_KEY_F9;
+        m_key_buffer = shift_mode ? ID_KEY_SF9: ID_KEY_F9;
         return 1;
     case XK_F10:
     case XK_L10:
-        key_buffer = shift_mode ? ID_KEY_SF10: ID_KEY_F10;
+        m_key_buffer = shift_mode ? ID_KEY_SF10: ID_KEY_F10;
         return 1;
     case '+':
-        key_buffer = ctl_mode ? ID_KEY_CTL_PLUS : '+';
+        m_key_buffer = ctl_mode ? ID_KEY_CTL_PLUS : '+';
         return 1;
     case '-':
-        key_buffer = ctl_mode ? ID_KEY_CTL_MINUS : '-';
+        m_key_buffer = ctl_mode ? ID_KEY_CTL_MINUS : '-';
         return 1;
         break;
     case XK_Return:
     case XK_KP_Enter:
-        key_buffer = ctl_mode ? ctl('T') : '\n';
+        m_key_buffer = ctl_mode ? ctl('T') : '\n';
         return 1;
     }
     if (charcount == 1)
     {
-        key_buffer = buffer[0];
-        if (key_buffer == '\003')
+        m_key_buffer = buffer[0];
+        if (m_key_buffer == '\003')
         {
             goodbye();
         }
@@ -1228,7 +1228,7 @@ void X11Driver::ev_button_press(XEvent *xevent)
     g_zoom_box_width = ABS(bandx1-bandx0)/g_logical_screen_x_size_dots;
     g_zoom_box_height = g_zoom_box_width;
     if (!g_inside_help)
-        key_buffer = ID_KEY_ENTER;
+        m_key_buffer = ID_KEY_ENTER;
     if (xlastcolor != -1)
         XSetForeground(m_dpy, m_gc, do_fake_lut(xlastcolor));
     XSetFunction(m_dpy, m_gc, xlastfcn);
@@ -1270,7 +1270,7 @@ void X11Driver::ev_motion_notify(XEvent *xevent)
         else
         {
             Cursor_SetPos(xevent->xmotion.x, xevent->xmotion.y);
-            key_buffer = ID_KEY_ENTER;
+            m_key_buffer = ID_KEY_ENTER;
         }
     }
 }
@@ -1282,7 +1282,7 @@ void X11Driver::handle_events()
     if (m_need_redraw)
         redraw();
 
-    while (XPending(m_dpy) && !key_buffer)
+    while (XPending(m_dpy) && !m_key_buffer)
     {
         XNextEvent(m_dpy, &xevent);
         switch (xevent.type)
@@ -1310,19 +1310,19 @@ void X11Driver::handle_events()
         }
     }
 
-    if (!key_buffer && editpal_cursor && !g_inside_help && g_look_at_mouse == 3 &&
+    if (!m_key_buffer && editpal_cursor && !g_inside_help && g_look_at_mouse == 3 &&
             (dx != 0 || dy != 0))
     {
         if (ABS(dx) > ABS(dy))
         {
             if (dx > 0)
             {
-                key_buffer = mousefkey[button_num][0]; // right
+                m_key_buffer = mousefkey[button_num][0]; // right
                 dx--;
             }
             else if (dx < 0)
             {
-                key_buffer = mousefkey[button_num][1]; // left
+                m_key_buffer = mousefkey[button_num][1]; // left
                 dx++;
             }
         }
@@ -1330,12 +1330,12 @@ void X11Driver::handle_events()
         {
             if (dy > 0)
             {
-                key_buffer = mousefkey[button_num][2]; // down
+                m_key_buffer = mousefkey[button_num][2]; // down
                 dy--;
             }
             else if (dy < 0)
             {
-                key_buffer = mousefkey[button_num][3]; // up
+                m_key_buffer = mousefkey[button_num][3]; // up
                 dy++;
             }
         }
@@ -2224,10 +2224,10 @@ int X11Driver::get_key()
 
         handle_events();
 
-        if (key_buffer)
+        if (m_key_buffer)
         {
-            int ch = key_buffer;
-            key_buffer = 0;
+            int ch = m_key_buffer;
+            m_key_buffer = 0;
             skipcount = 9999; // If we got a key, check right away next time
             return translate_key(ch);
         }
@@ -2305,14 +2305,14 @@ void X11Driver::flush_output()
 
 int X11Driver::key_pressed()
 {
-    if (int const ch = key_buffer)
+    if (int const ch = m_key_buffer)
     {
         return ch;
     }
 
     flush_output();
     int const ch = handle_special_keys(frame_.get_key_press(0));
-    key_buffer = ch;
+    m_key_buffer = ch;
 
     return ch;
 }
