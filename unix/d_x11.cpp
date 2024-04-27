@@ -236,7 +236,6 @@ private:
     std::string x_font_name{FONT};    //
     XFontStruct *m_font_info{};       //
     int m_key_buffer{};               // Buffered X key
-    unsigned char *fontPtr{};         //
     char text_screen[TEXT_HEIGHT][TEXT_WIDTH]{};
     int text_attr[TEXT_HEIGHT][TEXT_WIDTH]{};
     BYTE *font_table{};       //
