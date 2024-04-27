@@ -246,7 +246,7 @@ private:
     int m_last_y{};             //
     int m_dx{};                 //
     int m_dy{};                 //
-    x11_frame_window frame_;    //
+    x11_frame_window m_frame;   //
     x11_text_window text_;      //
     x11_plot_window plot_;      //
 };
@@ -1521,9 +1521,9 @@ bool X11Driver::init(int *argc, char **argv)
     }
 
     int screen_num = DefaultScreen(m_dpy);
-    frame_.initialize(m_dpy, screen_num, m_geometry.c_str());
-    plot_.initialize(m_dpy, screen_num, frame_.window());
-    text_.initialize(m_dpy, screen_num, frame_.window());
+    m_frame.initialize(m_dpy, screen_num, m_geometry.c_str());
+    plot_.initialize(m_dpy, screen_num, m_frame.window());
+    text_.initialize(m_dpy, screen_num, m_frame.window());
 
     return true;
 }
@@ -1592,20 +1592,20 @@ void X11Driver::center_window(bool center_x, bool center_y)
 
     if (center_x)
     {
-        plot_pos.x = (frame_.width() - plot_.width())/2;
+        plot_pos.x = (m_frame.width() - plot_.width())/2;
     }
     else
     {
-        text_pos.x = (frame_.width() - text_.max_width())/2;
+        text_pos.x = (m_frame.width() - text_.max_width())/2;
     }
 
     if (center_y)
     {
-        plot_pos.y = (frame_.height() - plot_.height())/2;
+        plot_pos.y = (m_frame.height() - plot_.height())/2;
     }
     else
     {
-        text_pos.y = (frame_.height() - text_.max_height())/2;
+        text_pos.y = (m_frame.height() - text_.max_height())/2;
     }
 
     plot_.set_position(plot_pos.x, plot_pos.y);
@@ -1623,7 +1623,7 @@ void X11Driver::window()
     bool center_x = true;
     bool center_y = true;
     get_max_size(&width, &height, &center_x, &center_y);
-    frame_.window(width, height);
+    m_frame.window(width, height);
     text_.text_on();
     center_window(center_x, center_y);
 #if 0
@@ -2295,7 +2295,7 @@ void X11Driver::flush_output()
         if ((now - last)*frames_per_second > ticks_per_second)
         {
             flush();
-            frame_.pump_messages(false);
+            m_frame.pump_messages(false);
             last = now;
         }
     }
@@ -2309,7 +2309,7 @@ int X11Driver::key_pressed()
     }
 
     flush_output();
-    int const ch = handle_special_keys(frame_.get_key_press(0));
+    int const ch = handle_special_keys(m_frame.get_key_press(0));
     m_key_buffer = ch;
 
     return ch;
