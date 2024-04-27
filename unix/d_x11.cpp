@@ -242,7 +242,7 @@ private:
     bool m_ctl_mode{};          // rubber banding and event processing data
     bool m_shift_mode{};        //
     int m_button_num{};         //
-    int last_x{};               //
+    int m_last_x{};             //
     int last_y{};               //
     int dx{};                   //
     int dy{};                   //
@@ -1152,7 +1152,7 @@ void X11Driver::ev_button_press(XEvent *xevent)
 
     if (g_look_at_mouse == 3 || !g_zoom_off)
     {
-        last_x = xevent->xbutton.x;
+        m_last_x = xevent->xbutton.x;
         last_y = xevent->xbutton.y;
         return;
     }
@@ -1260,9 +1260,9 @@ void X11Driver::ev_motion_notify(XEvent *xevent)
 
         if (g_look_at_mouse == 3 && m_button_num != 0)
         {
-            dx += (xevent->xmotion.x-last_x)/MOUSE_SCALE;
+            dx += (xevent->xmotion.x-m_last_x)/MOUSE_SCALE;
             dy += (xevent->xmotion.y-last_y)/MOUSE_SCALE;
-            last_x = xevent->xmotion.x;
+            m_last_x = xevent->xmotion.x;
             last_y = xevent->xmotion.y;
         }
         else
