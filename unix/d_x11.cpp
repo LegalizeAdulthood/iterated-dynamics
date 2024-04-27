@@ -223,7 +223,7 @@ private:
     Screen *m_screen{};            //
     Colormap m_colormap{None};     //
     int m_depth{};                 //
-    XImage *Ximage{};              //
+    XImage *m_image{};             //
     char *Xdata{};                 //
     int Xdscreen{};                //
     Pixmap Xpixmap{None};          //
@@ -580,9 +580,9 @@ void X11Driver::clearXwindow()
 {
     if (m_fake_lut)
     {
-        for (int j = 0; j < Ximage->height; j++)
-            for (int i = 0; i < Ximage->width; i++)
-                XPutPixel(Ximage, i, j, m_cmap_pixtab[m_pixtab[0]]);
+        for (int j = 0; j < m_image->height; j++)
+            for (int i = 0; i < m_image->width; i++)
+                XPutPixel(m_image, i, j, m_cmap_pixtab[m_pixtab[0]]);
     }
     else if (m_pixtab[0] != 0)
     {
@@ -591,24 +591,24 @@ void X11Driver::clearXwindow()
          */
         if (g_colors == 2)
         {
-            for (int i = 0; i < Ximage->bytes_per_line; i++)
+            for (int i = 0; i < m_image->bytes_per_line; i++)
             {
-                Ximage->data[i] = 0xff;
+                m_image->data[i] = 0xff;
             }
         }
         else
         {
-            for (int i = 0; i < Ximage->bytes_per_line; i++)
+            for (int i = 0; i < m_image->bytes_per_line; i++)
             {
-                Ximage->data[i] = m_pixtab[0];
+                m_image->data[i] = m_pixtab[0];
             }
         }
-        for (int i = 1; i < Ximage->height; i++)
+        for (int i = 1; i < m_image->height; i++)
         {
             std::memcpy(
-                Ximage->data + i*Ximage->bytes_per_line,
-                Ximage->data,
-                Ximage->bytes_per_line);
+                m_image->data + i*m_image->bytes_per_line,
+                m_image->data,
+                m_image->bytes_per_line);
         }
     }
     else
@@ -616,7 +616,7 @@ void X11Driver::clearXwindow()
         /*
          * Initialize image to 0's.
          */
-        std::memset(Ximage->data, 0, Ximage->bytes_per_line*Ximage->height);
+        std::memset(m_image->data, 0, m_image->bytes_per_line*m_image->height);
     }
     xlastcolor = -1;
     XSetForeground(m_dpy, m_gc, do_fake_lut(m_pixtab[0]));
@@ -1142,7 +1142,7 @@ void X11Driver::ev_expose(XExposeEvent *xevent)
         }
         if (x < g_screen_x_dots && y < g_screen_y_dots && w > 0 && h > 0)
         {
-            XPutImage(m_dpy, m_window, m_gc, Ximage, x, y, x, y,
+            XPutImage(m_dpy, m_window, m_gc, m_image, x, y, x, y,
                       xevent->width, xevent->height);
         }
     }
@@ -1785,24 +1785,24 @@ bool X11Driver::resize()
         if (pixbuf != nullptr)
             free(pixbuf);
         pixbuf = (BYTE *) malloc(Xwinwidth *sizeof(BYTE));
-        if (Ximage != nullptr)
+        if (m_image != nullptr)
         {
-            free(Ximage->data);
-            XDestroyImage(Ximage);
+            free(m_image->data);
+            XDestroyImage(m_image);
         }
-        Ximage = XCreateImage(m_dpy, m_visual, m_depth, ZPixmap, 0, nullptr, g_screen_x_dots,
+        m_image = XCreateImage(m_dpy, m_visual, m_depth, ZPixmap, 0, nullptr, g_screen_x_dots,
                                   g_screen_y_dots, Xpad, Xmwidth);
-        if (Ximage == nullptr)
+        if (m_image == nullptr)
         {
             std::printf("XCreateImage failed\n");
             terminate();
             exit(-1);
         }
-        Ximage->data = (char *) malloc(Ximage->bytes_per_line * Ximage->height);
-        if (Ximage->data == nullptr)
+        m_image->data = (char *) malloc(m_image->bytes_per_line * m_image->height);
+        if (m_image->data == nullptr)
         {
-            std::fprintf(stderr, "Malloc failed: %d\n", Ximage->bytes_per_line *
-                    Ximage->height);
+            std::fprintf(stderr, "Malloc failed: %d\n", m_image->bytes_per_line *
+                    m_image->height);
             exit(-1);
         }
         clearXwindow();
@@ -1834,10 +1834,10 @@ void X11Driver::redraw()
 {
     if (m_alarm_on)
     {
-        XPutImage(m_dpy, m_window, m_gc, Ximage, 0, 0, 0, 0,
+        XPutImage(m_dpy, m_window, m_gc, m_image, 0, 0, 0, 0,
                   g_screen_x_dots, g_screen_y_dots);
         if (m_on_root)
-            XPutImage(m_dpy, Xpixmap, m_gc, Ximage, 0, 0, 0, 0,
+            XPutImage(m_dpy, Xpixmap, m_gc, m_image, 0, 0, 0, 0,
                       g_screen_x_dots, g_screen_y_dots);
         m_alarm_on = false;
     }
@@ -1974,14 +1974,14 @@ int X11Driver::read_pixel(int x, int y)
 {
     if (m_fake_lut)
     {
-        XPixel pixel = XGetPixel(Ximage, x, y);
+        XPixel pixel = XGetPixel(m_image, x, y);
         for (int i = 0; i < 256; i++)
             if (m_cmap_pixtab[i] == pixel)
                 return i;
         return 0;
     }
     else
-        return m_inv_pixtab[XGetPixel(Ximage, x, y)];
+        return m_inv_pixtab[XGetPixel(m_image, x, y)];
 }
 
 /*
@@ -2016,7 +2016,7 @@ void X11Driver::write_pixel(int x, int y, int color)
         XSetForeground(m_dpy, m_gc, do_fake_lut(m_pixtab[color]));
         xlastcolor = color;
     }
-    XPutPixel(Ximage, x, y, do_fake_lut(m_pixtab[color]));
+    XPutPixel(m_image, x, y, do_fake_lut(m_pixtab[color]));
     if (m_fast_mode && g_help_mode != help_labels::HELP_PALETTE_EDITOR)
     {
         if (!m_alarm_on)
@@ -2099,7 +2099,7 @@ void X11Driver::write_span(int y, int x, int lastx, BYTE *pixels)
     }
     for (int i = 0; i < width; i++)
     {
-        XPutPixel(Ximage, x+i, y, do_fake_lut(pixline[i]));
+        XPutPixel(m_image, x+i, y, do_fake_lut(pixline[i]));
     }
     if (m_fast_mode && g_help_mode != help_labels::HELP_PALETTE_EDITOR)
     {
@@ -2110,10 +2110,10 @@ void X11Driver::write_span(int y, int x, int lastx, BYTE *pixels)
     }
     else
     {
-        XPutImage(m_dpy, m_window, m_gc, Ximage, x, y, x, y, width, 1);
+        XPutImage(m_dpy, m_window, m_gc, m_image, x, y, x, y, width, 1);
         if (m_on_root)
         {
-            XPutImage(m_dpy, Xpixmap, m_gc, Ximage, x, y, x, y, width, 1);
+            XPutImage(m_dpy, Xpixmap, m_gc, m_image, x, y, x, y, width, 1);
         }
     }
 #else
