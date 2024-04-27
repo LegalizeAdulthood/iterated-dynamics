@@ -219,7 +219,7 @@ private:
     Display *m_dpy{};              //
     Window m_window{None};         //
     GC m_gc{None};                 //
-    Visual *Xvi{};                 //
+    Visual *m_visual{};            //
     Screen *Xsc{};                 //
     Colormap Xcmap{None};          //
     int Xdepth{};                  //
@@ -527,21 +527,21 @@ continue_hdl(int sig, int code, struct sigcontext *scp, char *addr)
 
 void X11Driver::select_visual()
 {
-    Xvi = XDefaultVisualOfScreen(Xsc);
+    m_visual = XDefaultVisualOfScreen(Xsc);
     Xdepth = DefaultDepth(m_dpy, Xdscreen);
 
-    switch (Xvi->c_class)
+    switch (m_visual->c_class)
     {
     case StaticGray:
     case StaticColor:
-        g_colors = (Xdepth <= 8) ? Xvi->map_entries : 256;
+        g_colors = (Xdepth <= 8) ? m_visual->map_entries : 256;
         g_got_real_dac = false;
         m_fake_lut = false;
         break;
 
     case GrayScale:
     case PseudoColor:
-        g_colors = (Xdepth <= 8) ? Xvi->map_entries : 256;
+        g_colors = (Xdepth <= 8) ? m_visual->map_entries : 256;
         g_got_real_dac = true;
         m_fake_lut = false;
         break;
@@ -667,7 +667,7 @@ int X11Driver::xcmapstuff()
     }
     else if (m_private_color)
     {
-        Xcmap = XCreateColormap(m_dpy, m_window, Xvi, AllocAll);
+        Xcmap = XCreateColormap(m_dpy, m_window, m_visual, AllocAll);
         XSetWindowColormap(m_dpy, m_window, Xcmap);
     }
     else
@@ -1790,7 +1790,7 @@ bool X11Driver::resize()
             free(Ximage->data);
             XDestroyImage(Ximage);
         }
-        Ximage = XCreateImage(m_dpy, Xvi, Xdepth, ZPixmap, 0, nullptr, g_screen_x_dots,
+        Ximage = XCreateImage(m_dpy, m_visual, Xdepth, ZPixmap, 0, nullptr, g_screen_x_dots,
                                   g_screen_y_dots, Xpad, Xmwidth);
         if (Ximage == nullptr)
         {
