@@ -18,22 +18,23 @@
 #include <atlbase.h>
 #include <tchar.h>
 
+#include <stdexcept>
 #include <string>
 
 #define FRAME_TIMER_ID 2
 
 Frame g_frame = { 0 };
 
-constexpr const char *const LEFT_POS{"WindowPositionLeft"};
-constexpr const char *const TOP_POS{"WindowPositionTop"};
-constexpr const TCHAR *const SETTINGS_KEY{_T("SOFTWARE\\" ID_VENDOR_NAME "\\" ID_PROGRAM_NAME "\\Settings")};
+constexpr const TCHAR *const LEFT_POS{_T("Left")};
+constexpr const TCHAR *const TOP_POS{_T("Top")};
+constexpr const TCHAR *const WINDOW_POS_KEY{_T("SOFTWARE\\" ID_VENDOR_NAME "\\" ID_PROGRAM_NAME "\\Settings\\Window")};
 
 static void save_frame_position(HWND window)
 {
     RECT rect{};
     GetWindowRect(window, &rect);
     CRegKey key;
-    key.Create(HKEY_CURRENT_USER, SETTINGS_KEY);
+    key.Create(HKEY_CURRENT_USER, WINDOW_POS_KEY);
     key.SetDWORDValue(LEFT_POS, rect.left);
     key.SetDWORDValue(TOP_POS, rect.top);
 }
@@ -42,16 +43,23 @@ static POINT get_saved_frame_position()
 {
     POINT pos;
     CRegKey key;
-    if (key.Open(HKEY_CURRENT_USER, SETTINGS_KEY) == ERROR_SUCCESS)
+    if (key.Open(HKEY_CURRENT_USER, WINDOW_POS_KEY) == ERROR_SUCCESS)
     {
-        auto get_dword = [&](const TCHAR *name)
+        auto get_value = [&](const TCHAR *name)
         {
             DWORD value;
-            key.QueryDWORDValue(name, value);
-            return value;
+            if (const LONG status = key.QueryDWORDValue(name, value); status != ERROR_SUCCESS)
+            {
+                if (status == ERROR_FILE_NOT_FOUND)
+                {
+                    return CW_USEDEFAULT;
+                }
+                throw std::runtime_error(std::string{"QueryDWORDValue "} + name + " failed: " + std::to_string(status));
+            }
+            return static_cast<int>(value);
         };
-        pos.x = get_dword(LEFT_POS);
-        pos.y = get_dword(TOP_POS);
+        pos.x = get_value(LEFT_POS);
+        pos.y = get_value(TOP_POS);
     }
     else
     {
