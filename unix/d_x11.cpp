@@ -199,7 +199,7 @@ private:
         return m_fake_lut ? cmap_pixtab[idx] : idx;
     }
 
-    bool onroot{};                 // = false;
+    bool m_on_root{};                 // = false;
     bool fullscreen{};             // = false;
     bool sharecolor{};             // = false;
     bool privatecolor{};           // = false;
@@ -336,7 +336,7 @@ int X11Driver::check_arg(int argc, char **argv, int *i)
     }
     else if (std::strcmp(argv[*i], "-onroot") == 0)
     {
-        onroot = true;
+        m_on_root = true;
         return 1;
     }
     else if (std::strcmp(argv[*i], "-share") == 0)
@@ -621,7 +621,7 @@ void X11Driver::clearXwindow()
     }
     xlastcolor = -1;
     XSetForeground(Xdp, Xgc, do_fake_lut(pixtab[0]));
-    if (onroot)
+    if (m_on_root)
         XFillRectangle(Xdp, Xpixmap, Xgc,
                        0, 0, Xwinwidth, Xwinheight);
     XFillRectangle(Xdp, Xw, Xgc,
@@ -647,7 +647,7 @@ int X11Driver::xcmapstuff()
 {
     int ncells;
 
-    if (onroot)
+    if (m_on_root)
     {
         privatecolor = false;
     }
@@ -1647,7 +1647,7 @@ void X11Driver::window()
     /* We have to do some X stuff even for disk video, to parse the geometry
      * string */
 
-    if (Xgeometry && !onroot)
+    if (Xgeometry && !m_on_root)
         XGeometry(Xdp, Xdscreen, Xgeometry, DEFXY, 0, 1, 1, 0, 0,
                   &Xwinx, &Xwiny, &Xwinwidth, &Xwinheight);
     if (sync)
@@ -1658,7 +1658,7 @@ void X11Driver::window()
     if (fixcolors > 0)
         g_colors = fixcolors;
 
-    if (fullscreen || onroot)
+    if (fullscreen || m_on_root)
     {
         Xwinwidth = DisplayWidth(Xdp, Xdscreen);
         Xwinheight = DisplayHeight(Xdp, Xdscreen);
@@ -1673,7 +1673,7 @@ void X11Driver::window()
         Xwatt.backing_store = Always;
     else
         Xwatt.backing_store = NotUseful;
-    if (onroot)
+    if (m_on_root)
     {
         Xroot = FindRootWindow();
         RemoveRootPixmap();
@@ -1701,12 +1701,12 @@ void X11Driver::window()
 
     {
         unsigned long event_mask = KeyPressMask | KeyReleaseMask | ExposureMask;
-        if (! onroot)
+        if (! m_on_root)
             event_mask |= ButtonPressMask | ButtonReleaseMask | PointerMotionMask;
         XSelectInput(Xdp, Xw, event_mask);
     }
 
-    if (!onroot)
+    if (!m_on_root)
     {
         XSetBackground(Xdp, Xgc, do_fake_lut(pixtab[0]));
         XSetForeground(Xdp, Xgc, do_fake_lut(pixtab[1]));
@@ -1837,7 +1837,7 @@ void X11Driver::redraw()
     {
         XPutImage(Xdp, Xw, Xgc, Ximage, 0, 0, 0, 0,
                   g_screen_x_dots, g_screen_y_dots);
-        if (onroot)
+        if (m_on_root)
             XPutImage(Xdp, Xpixmap, Xgc, Ximage, 0, 0, 0, 0,
                       g_screen_x_dots, g_screen_y_dots);
         alarmon = false;
@@ -2028,7 +2028,7 @@ void X11Driver::write_pixel(int x, int y, int color)
     else
     {
         XDrawPoint(Xdp, Xw, Xgc, x, y);
-        if (onroot)
+        if (m_on_root)
         {
             XDrawPoint(Xdp, Xpixmap, Xgc, x, y);
         }
@@ -2112,7 +2112,7 @@ void X11Driver::write_span(int y, int x, int lastx, BYTE *pixels)
     else
     {
         XPutImage(Xdp, Xw, Xgc, Ximage, x, y, x, y, width, 1);
-        if (onroot)
+        if (m_on_root)
         {
             XPutImage(Xdp, Xpixmap, Xgc, Ximage, x, y, x, y, width, 1);
         }
