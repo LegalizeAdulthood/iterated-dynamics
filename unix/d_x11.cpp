@@ -98,84 +98,163 @@ enum
     MOUSE_SCALE = 1
 };
 
-struct DriverX11
+constexpr const char *const FONT{"-*-*-medium-r-*-*-9-*-*-*-c-*-iso8859-*"};
+constexpr const int DEFX{640};
+constexpr const int DEFY{480};
+constexpr const char *const DEFXY{"640x480+0+0"};
+
+// The pixtab stuff is so we can map from pixel values 0-n to
+// the actual color table entries which may be anything.
+//
+class X11Driver : public Driver
 {
-    Driver pub;
-    bool onroot;                // = false;
-    bool fullscreen;            // = false;
-    bool sharecolor;            // = false;
-    bool privatecolor;          // = false;
-    int fixcolors;              // = 0;
-    // Run X events synchronously (debugging)
-    bool sync;                  // = false;
-    char const *Xdisplay;       // = "";
-    char const *Xgeometry;      // = nullptr;
-    int doesBacking;
+public:
+    ~X11Driver() override = default;
 
-    /*
-     * The pixtab stuff is so we can map from pixel values 0-n to
-     * the actual color table entries which may be anything.
-     */
-    bool usepixtab;             // = false;
-    unsigned long pixtab[256];
-    int ipixtab[256];
-    XPixel cmap_pixtab[256];    // for faking a LUTs on non-LUT visuals
-    bool cmap_pixtab_alloced;
-    bool g_fake_lut;
+    bool init(int *argc, char **argv) override;
+    bool validate_mode(VIDEOINFO *mode) override;
+    void get_max_screen(int *width, int *height) override;
+    void terminate() override;
+    void pause() override;
+    void resume() override;
+    void schedule_alarm(int secs) override;
+    void window() override;
+    bool resize() override;
+    void redraw() override;
+    int read_palette() override;
+    int write_palette() override;
+    int read_pixel(int x, int y) override;
+    void write_pixel(int x, int y, int color) override;
+    void read_span(int y, int x, int lastx, BYTE *pixels) override;
+    void write_span(int y, int x, int lastx, BYTE *pixels) override;
+    void get_truecolor(int x, int y, int *r, int *g, int *b, int *a) override;
+    void put_truecolor(int x, int y, int r, int g, int b, int a) override;
+    void set_line_mode(int mode) override;
+    void draw_line(int x1, int y1, int x2, int y2, int color) override;
+    void display_string(int x, int y, int fg, int bg, char const *text) override;
+    void save_graphics() override;
+    void restore_graphics() override;
+    int get_key() override;
+    int key_cursor(int row, int col) override;
+    int key_pressed() override;
+    int wait_key_pressed(int timeout) override;
+    void unget_key(int key) override;
+    void shell() override;
+    void set_video_mode(VIDEOINFO *mode) override;
+    void put_string(int row, int col, int attr, char const *msg) override;
+    bool is_text() override;
+    void set_for_text() override;
+    void set_clear() override;
+    void move_cursor(int row, int col) override;
+    void hide_text_cursor() override;
+    void set_attr(int row, int col, int attr, int count) override;
+    void scroll_up(int top, int bot) override;
+    void stack_screen() override;
+    void unstack_screen() override;
+    void discard_screen() override;
+    int init_fm() override;
+    void buzzer(buzzer_codes kind) override;
+    bool sound_on(int frequency) override;
+    void sound_off() override;
+    void mute() override;
+    bool diskp() override;
+    int get_char_attr() override;
+    void put_char_attr(int char_attr) override;
+    void delay(int ms) override;
+    void set_keyboard_timeout(int ms) override;
+    void flush() override;
 
-    bool fastmode;              // = false; Don't draw pixels 1 at a time
-    bool alarmon;               // = false; true if the refresh alarm is on
-    bool doredraw;              // = false; true if we have a redraw waiting
+    void setredrawscreen()
+    {
+        doredraw = 1;
+    }
 
-    Display *Xdp;               // = nullptr;
-    Window Xw;
-    GC Xgc;                     // = nullptr;
-    Visual *Xvi;
-    Screen *Xsc;
-    Colormap Xcmap;
-    int Xdepth;
-    XImage *Ximage;
-    char *Xdata;
-    int Xdscreen;
-    Pixmap Xpixmap;             // = None;
-    int Xwinwidth, Xwinheight;
-    Window Xroot;
-    int xlastcolor;             // = -1;
-    int xlastfcn;               // = GXcopy;
-    BYTE *pixbuf;               // = nullptr;
-    XColor cols[256];
+private:
+    int check_arg(int argc, char **argv, int *i);
+    void doneXwindow();
+    void erase_text_screen();
+    void select_visual();
+    void clearXwindow();
+    int xcmapstuff();
+    int start_video();
+    void get_max_size(unsigned *width, unsigned *height, bool *center_x, bool *center_y);
+    void center_window(bool center_x, bool center_y);
+    int getachar();
+    int get_a_char_delay();
+    int handle_esc();
+    int ev_key_press(XKeyEvent *xevent);
+    void ev_key_release(XKeyEvent *xevent);
+    void ev_expose(XExposeEvent *xevent);
+    void ev_button_press(XEvent *xevent);
+    void ev_motion_notify(XEvent *xevent);
+    void handle_events();
+    int input_pending();
+    Window pr_dwmroot(Display *dpy, Window pwin);
+    Window FindRootWindow();
+    void RemoveRootPixmap();
+    void load_font();
+    void flush_output();
+    unsigned long do_fake_lut(int idx)
+    {
+        return g_fake_lut ? cmap_pixtab[idx] : idx;
+    }
 
-    bool XZoomWaiting;          // = false;
-
-    char const *x_font_name;    // = FONT;
-    XFontStruct *font_info;     // = nullptr;
-
-    int key_buffer;             // = 0; Buffered X key
-
-    unsigned char *fontPtr;     // = nullptr;
-
-    char text_screen[TEXT_HEIGHT][TEXT_WIDTH];
-    int text_attr[TEXT_HEIGHT][TEXT_WIDTH];
-
-    BYTE *font_table;           // = nullptr;
-
-    bool text_not_graphics;            // true when displaying text
-
-    // rubber banding and event processing data
-    bool ctl_mode;
-    bool shift_mode;
-    int button_num;
-    int last_x, last_y;
-    int dx, dy;
-
-    x11_frame_window frame_;
-    x11_text_window text_;
-    x11_plot_window plot_;
+    bool onroot{};                 // = false;
+    bool fullscreen{};             // = false;
+    bool sharecolor{};             // = false;
+    bool privatecolor{};           // = false;
+    int fixcolors{};               // = 0;
+    bool sync{};                   // = false; Run X events synchronously (debugging)
+    char const *Xdisplay{""};      // = "";
+    char const *Xgeometry{};       // = nullptr;
+    int doesBacking{};             //
+    bool usepixtab{};              // = false;
+    unsigned long pixtab[256]{};   //
+    int ipixtab[256]{};            //
+    XPixel cmap_pixtab[256]{};     // for faking a LUTs on non-LUT visuals
+    bool cmap_pixtab_alloced{};    //
+    bool g_fake_lut{};             //
+    bool fastmode{};               // = false; Don't draw pixels 1 at a time
+    bool alarmon{};                // = false; true if the refresh alarm is on
+    bool doredraw{};               // = false; true if we have a redraw waiting
+    Display *Xdp{};                // = nullptr;
+    Window Xw{None};               //
+    GC Xgc{None};                  // = nullptr;
+    Visual *Xvi{};                 //
+    Screen *Xsc{};                 //
+    Colormap Xcmap{None};          //
+    int Xdepth{};                  //
+    XImage *Ximage{};              //
+    char *Xdata{};                 //
+    int Xdscreen{};                //
+    Pixmap Xpixmap{None};          // = None;
+    int Xwinwidth{DEFX};           //
+    int Xwinheight{DEFY};          //
+    Window Xroot{None};            //
+    int xlastcolor{-1};            // = -1;
+    int xlastfcn{GXcopy};          // = GXcopy;
+    BYTE *pixbuf{};                // = nullptr;
+    XColor cols[256]{};            //
+    bool XZoomWaiting{};           // = false;
+    char const *x_font_name{FONT}; // = FONT;
+    XFontStruct *font_info{};      // = nullptr;
+    int key_buffer{};              // = 0; Buffered X key
+    unsigned char *fontPtr{};      // = nullptr;
+    char text_screen[TEXT_HEIGHT][TEXT_WIDTH]{};
+    int text_attr[TEXT_HEIGHT][TEXT_WIDTH]{};
+    BYTE *font_table{};       // = nullptr;
+    bool text_not_graphics{}; // true when displaying text
+    bool ctl_mode{};          // rubber banding and event processing data
+    bool shift_mode{};        //
+    int button_num{};         //
+    int last_x{};             //
+    int last_y{};             //
+    int dx{};                 //
+    int dy{};                 //
+    x11_frame_window frame_;  //
+    x11_text_window text_;    //
+    x11_plot_window plot_;    //
 };
-
-/* convenience macro to declare local variable di pointing to private
-   structure from public pointer */
-#define DIX11(arg_) DriverX11 *di = (DriverX11 *) (arg_)
 
 #ifdef FPUERR
 static void continue_hdl(int sig, int code, struct sigcontext *scp,
@@ -189,11 +268,6 @@ static const int mousefkey[4][4] /* [button][dir] */ = {
     {ID_KEY_CTL_END, ID_KEY_CTL_HOME, ID_KEY_CTL_PAGE_DOWN, ID_KEY_CTL_PAGE_UP}
 };
 
-
-#define DEFX 640
-#define DEFY 480
-#define DEFXY "640x480+0+0"
-
 extern bool editpal_cursor;
 extern void Cursor_SetPos();
 
@@ -204,15 +278,7 @@ extern void Cursor_SetPos();
 
 #define SHELL "/bin/csh"
 
-#define FONT "-*-*-medium-r-*-*-9-*-*-*-c-*-iso8859-*"
 #define DRAW_INTERVAL 6
-
-static void x11_terminate(Driver *drv);
-static void x11_flush(Driver *drv);
-static int x11_write_palette(Driver *drv);
-static void x11_redraw(Driver *drv);
-static bool x11_resize(Driver *drv);
-static void x11_set_for_graphics(Driver *drv);
 
 #define DRIVER_MODE(width_, height_) \
     { 0, width_, height_, 256, nullptr, "                         " }
@@ -240,13 +306,6 @@ static const VIDEOINFO modes[] =
     DRIVER_MODE(2560, 1600)
 };
 
-static unsigned long
-do_fake_lut(DriverX11 *di, int idx)
-{
-    return di->g_fake_lut ? di->cmap_pixtab[idx] : idx;
-}
-#define FAKE_LUT(_di, _idx) do_fake_lut(_di, _idx)
-
 /*
  *----------------------------------------------------------------------
  *
@@ -262,33 +321,32 @@ do_fake_lut(DriverX11 *di, int idx)
  *
  *----------------------------------------------------------------------
  */
-static int
-check_arg(DriverX11 *di, int argc, char **argv, int *i)
+int X11Driver::check_arg(int argc, char **argv, int *i)
 {
     if (std::strcmp(argv[*i], "-display") == 0 && (*i)+1 < argc)
     {
-        di->Xdisplay = argv[(*i)+1];
+        Xdisplay = argv[(*i)+1];
         (*i)++;
         return 1;
     }
     else if (std::strcmp(argv[*i], "-fullscreen") == 0)
     {
-        di->fullscreen = true;
+        fullscreen = true;
         return 1;
     }
     else if (std::strcmp(argv[*i], "-onroot") == 0)
     {
-        di->onroot = true;
+        onroot = true;
         return 1;
     }
     else if (std::strcmp(argv[*i], "-share") == 0)
     {
-        di->sharecolor = true;
+        sharecolor = true;
         return 1;
     }
     else if (std::strcmp(argv[*i], "-fast") == 0)
     {
-        di->fastmode = true;
+        fastmode = true;
         return 1;
     }
     else if (std::strcmp(argv[*i], "-slowdisplay") == 0)
@@ -298,29 +356,29 @@ check_arg(DriverX11 *di, int argc, char **argv, int *i)
     }
     else if (std::strcmp(argv[*i], "-sync") == 0)
     {
-        di->sync = true;
+        sync = true;
         return 1;
     }
     else if (std::strcmp(argv[*i], "-private") == 0)
     {
-        di->privatecolor = true;
+        privatecolor = true;
         return 1;
     }
     else if (std::strcmp(argv[*i], "-fixcolors") == 0 && *i+1 < argc)
     {
-        di->fixcolors = std::atoi(argv[(*i)+1]);
+        fixcolors = std::atoi(argv[(*i)+1]);
         (*i)++;
         return 1;
     }
     else if (std::strcmp(argv[*i], "-geometry") == 0 && *i+1 < argc)
     {
-        di->Xgeometry = argv[(*i)+1];
+        Xgeometry = argv[(*i)+1];
         (*i)++;
         return 1;
     }
     else if (std::strcmp(argv[*i], "-fn") == 0 && *i+1 < argc)
     {
-        di->x_font_name = argv[(*i)+1];
+        x_font_name = argv[(*i)+1];
         (*i)++;
         return 1;
     }
@@ -344,22 +402,21 @@ check_arg(DriverX11 *di, int argc, char **argv, int *i)
  *
  *----------------------------------------------------------------------
  */
-static void
-doneXwindow(DriverX11 *di)
+void X11Driver::doneXwindow()
 {
-    if (di->Xdp == nullptr)
+    if (Xdp == nullptr)
         return;
 
-    if (di->Xgc)
-        XFreeGC(di->Xdp, di->Xgc);
+    if (Xgc)
+        XFreeGC(Xdp, Xgc);
 
-    if (di->Xpixmap)
+    if (Xpixmap)
     {
-        XFreePixmap(di->Xdp, di->Xpixmap);
-        di->Xpixmap = None;
+        XFreePixmap(Xdp, Xpixmap);
+        Xpixmap = None;
     }
-    XFlush(di->Xdp);
-    di->Xdp = nullptr;
+    XFlush(Xdp);
+    Xdp = nullptr;
 }
 
 /*----------------------------------------------------------------------
@@ -384,8 +441,7 @@ doneXwindow(DriverX11 *di)
  *
  *----------------------------------------------------------------------
  */
-static void
-initdacbox()
+static void initdacbox()
 {
     for (int i = 0; i < 256; i++)
     {
@@ -404,14 +460,13 @@ initdacbox()
     g_dac_box[2][1] = g_dac_box[2][2];
 }
 
-static void
-erase_text_screen(DriverX11 *di)
+void X11Driver::erase_text_screen()
 {
     for (int r = 0; r < TEXT_HEIGHT; r++)
         for (int c = 0; c < TEXT_WIDTH; c++)
         {
-            di->text_attr[r][c] = 0;
-            di->text_screen[r][c] = ' ';
+            text_attr[r][c] = 0;
+            text_screen[r][c] = ' ';
         }
 }
 
@@ -471,33 +526,32 @@ continue_hdl(int sig, int code, struct sigcontext *scp, char *addr)
 }
 #endif
 
-static void
-select_visual(DriverX11 *di)
+void X11Driver::select_visual()
 {
-    di->Xvi = XDefaultVisualOfScreen(di->Xsc);
-    di->Xdepth = DefaultDepth(di->Xdp, di->Xdscreen);
+    Xvi = XDefaultVisualOfScreen(Xsc);
+    Xdepth = DefaultDepth(Xdp, Xdscreen);
 
-    switch (di->Xvi->c_class)
+    switch (Xvi->c_class)
     {
     case StaticGray:
     case StaticColor:
-        g_colors = (di->Xdepth <= 8) ? di->Xvi->map_entries : 256;
+        g_colors = (Xdepth <= 8) ? Xvi->map_entries : 256;
         g_got_real_dac = false;
-        di->g_fake_lut = false;
+        g_fake_lut = false;
         break;
 
     case GrayScale:
     case PseudoColor:
-        g_colors = (di->Xdepth <= 8) ? di->Xvi->map_entries : 256;
+        g_colors = (Xdepth <= 8) ? Xvi->map_entries : 256;
         g_got_real_dac = true;
-        di->g_fake_lut = false;
+        g_fake_lut = false;
         break;
 
     case TrueColor:
     case DirectColor:
         g_colors = 256;
         g_got_real_dac = false;
-        di->g_fake_lut = true;
+        g_fake_lut = true;
         break;
 
     default:
@@ -523,40 +577,39 @@ select_visual(DriverX11 *di)
  *
  *----------------------------------------------------------------------
  */
-static void
-clearXwindow(DriverX11 *di)
+void X11Driver::clearXwindow()
 {
-    if (di->g_fake_lut)
+    if (g_fake_lut)
     {
-        for (int j = 0; j < di->Ximage->height; j++)
-            for (int i = 0; i < di->Ximage->width; i++)
-                XPutPixel(di->Ximage, i, j, di->cmap_pixtab[di->pixtab[0]]);
+        for (int j = 0; j < Ximage->height; j++)
+            for (int i = 0; i < Ximage->width; i++)
+                XPutPixel(Ximage, i, j, cmap_pixtab[pixtab[0]]);
     }
-    else if (di->pixtab[0] != 0)
+    else if (pixtab[0] != 0)
     {
         /*
-         * Initialize image to di->pixtab[0].
+         * Initialize image to pixtab[0].
          */
         if (g_colors == 2)
         {
-            for (int i = 0; i < di->Ximage->bytes_per_line; i++)
+            for (int i = 0; i < Ximage->bytes_per_line; i++)
             {
-                di->Ximage->data[i] = 0xff;
+                Ximage->data[i] = 0xff;
             }
         }
         else
         {
-            for (int i = 0; i < di->Ximage->bytes_per_line; i++)
+            for (int i = 0; i < Ximage->bytes_per_line; i++)
             {
-                di->Ximage->data[i] = di->pixtab[0];
+                Ximage->data[i] = pixtab[0];
             }
         }
-        for (int i = 1; i < di->Ximage->height; i++)
+        for (int i = 1; i < Ximage->height; i++)
         {
             std::memcpy(
-                di->Ximage->data + i*di->Ximage->bytes_per_line,
-                di->Ximage->data,
-                di->Ximage->bytes_per_line);
+                Ximage->data + i*Ximage->bytes_per_line,
+                Ximage->data,
+                Ximage->bytes_per_line);
         }
     }
     else
@@ -564,16 +617,16 @@ clearXwindow(DriverX11 *di)
         /*
          * Initialize image to 0's.
          */
-        std::memset(di->Ximage->data, 0, di->Ximage->bytes_per_line*di->Ximage->height);
+        std::memset(Ximage->data, 0, Ximage->bytes_per_line*Ximage->height);
     }
-    di->xlastcolor = -1;
-    XSetForeground(di->Xdp, di->Xgc, FAKE_LUT(di, di->pixtab[0]));
-    if (di->onroot)
-        XFillRectangle(di->Xdp, di->Xpixmap, di->Xgc,
-                       0, 0, di->Xwinwidth, di->Xwinheight);
-    XFillRectangle(di->Xdp, di->Xw, di->Xgc,
-                   0, 0, di->Xwinwidth, di->Xwinheight);
-    x11_flush(&di->pub);
+    xlastcolor = -1;
+    XSetForeground(Xdp, Xgc, do_fake_lut(pixtab[0]));
+    if (onroot)
+        XFillRectangle(Xdp, Xpixmap, Xgc,
+                       0, 0, Xwinwidth, Xwinheight);
+    XFillRectangle(Xdp, Xw, Xgc,
+                   0, 0, Xwinwidth, Xwinheight);
+    flush();
 }
 
 /*----------------------------------------------------------------------
@@ -590,52 +643,51 @@ clearXwindow(DriverX11 *di)
  *
  *----------------------------------------------------------------------
  */
-static int
-xcmapstuff(DriverX11 *di)
+int X11Driver::xcmapstuff()
 {
     int ncells;
 
-    if (di->onroot)
+    if (onroot)
     {
-        di->privatecolor = false;
+        privatecolor = false;
     }
     for (int i = 0; i < g_colors; i++)
     {
-        di->pixtab[i] = i;
-        di->ipixtab[i] = 999;
+        pixtab[i] = i;
+        ipixtab[i] = 999;
     }
     if (!g_got_real_dac)
     {
-        di->Xcmap = DefaultColormapOfScreen(di->Xsc);
-        if (di->g_fake_lut)
-            x11_write_palette(&di->pub);
+        Xcmap = DefaultColormapOfScreen(Xsc);
+        if (g_fake_lut)
+            x11_write_palette(&pub);
     }
-    else if (di->sharecolor)
+    else if (sharecolor)
     {
         g_got_real_dac = false;
     }
-    else if (di->privatecolor)
+    else if (privatecolor)
     {
-        di->Xcmap = XCreateColormap(di->Xdp, di->Xw, di->Xvi, AllocAll);
-        XSetWindowColormap(di->Xdp, di->Xw, di->Xcmap);
+        Xcmap = XCreateColormap(Xdp, Xw, Xvi, AllocAll);
+        XSetWindowColormap(Xdp, Xw, Xcmap);
     }
     else
     {
-        di->Xcmap = DefaultColormap(di->Xdp, di->Xdscreen);
-        for (int powr = di->Xdepth; powr >= 1; powr--)
+        Xcmap = DefaultColormap(Xdp, Xdscreen);
+        for (int powr = Xdepth; powr >= 1; powr--)
         {
             ncells = 1 << powr;
             if (ncells > g_colors)
                 continue;
-            if (XAllocColorCells(di->Xdp, di->Xcmap, False, nullptr, 0, di->pixtab,
+            if (XAllocColorCells(Xdp, Xcmap, False, nullptr, 0, pixtab,
                                  (unsigned int) ncells))
             {
                 g_colors = ncells;
-                di->usepixtab = true;
+                usepixtab = true;
                 break;
             }
         }
-        if (!di->usepixtab)
+        if (!usepixtab)
         {
             std::printf("Couldn't allocate any colors\n");
             g_got_real_dac = false;
@@ -643,7 +695,7 @@ xcmapstuff(DriverX11 *di)
     }
     for (int i = 0; i < g_colors; i++)
     {
-        di->ipixtab[di->pixtab[i]] = i;
+        ipixtab[pixtab[i]] = i;
     }
     /* We must make sure if any color uses position 0, that it is 0.
      * This is so we can clear the image with std::memset.
@@ -651,85 +703,45 @@ xcmapstuff(DriverX11 *di)
      * Then want 0 = cmap 0, cmap 42 = fractint 55.
      * I.e. pixtab[55] = 42, ipixtab[42] = 55.
      */
-    if (di->ipixtab[0] == 999)
+    if (ipixtab[0] == 999)
     {
-        di->ipixtab[0] = 0;
+        ipixtab[0] = 0;
     }
-    else if (di->ipixtab[0] != 0)
+    else if (ipixtab[0] != 0)
     {
         int other;
-        other = di->ipixtab[0];
-        di->pixtab[other] = di->pixtab[0];
-        di->ipixtab[di->pixtab[other]] = other;
-        di->pixtab[0] = 0;
-        di->ipixtab[0] = 0;
+        other = ipixtab[0];
+        pixtab[other] = pixtab[0];
+        ipixtab[pixtab[other]] = other;
+        pixtab[0] = 0;
+        ipixtab[0] = 0;
     }
 
-    if (!g_got_real_dac && g_colors == 2 && BlackPixelOfScreen(di->Xsc) != 0)
+    if (!g_got_real_dac && g_colors == 2 && BlackPixelOfScreen(Xsc) != 0)
     {
-        di->ipixtab[0] = 1;
-        di->pixtab[0] = di->ipixtab[0];
-        di->ipixtab[1] = 0;
-        di->pixtab[1] = di->ipixtab[1];
-        di->usepixtab = true;
+        ipixtab[0] = 1;
+        pixtab[0] = ipixtab[0];
+        ipixtab[1] = 0;
+        pixtab[1] = ipixtab[1];
+        usepixtab = true;
     }
 
     return g_colors;
 }
 
-static int
-x11_start_video(Driver *drv)
+int X11Driver::start_video()
 {
-    DIX11(drv);
-    clearXwindow(di);
+    clearXwindow();
     return 0;
 }
 
-static int
-x11_end_video(Driver *drv)
+int X11Driver::end_video()
 {
     return 0;             // set flag: video ended
 }
 
 
-/*
- *----------------------------------------------------------------------
- *
- * setredrawscreen --
- *
- *  Set the screen refresh flag
- *
- * Results:
- *  None.
- *
- * Side effects:
- *  Sets the flag.
- *
- *----------------------------------------------------------------------
- */
-static void
-setredrawscreen()
-{
-    ((DriverX11 *) g_driver)->doredraw = 1;
-}
-
-/*
- *----------------------------------------------------------------------
- *
- * getachar --
- *
- *  Gets a character.
- *
- * Results:
- *  Key.
- *
- * Side effects:
- *  Reads key.
- *
- *----------------------------------------------------------------------
- */
-static int
-getachar(DriverX11 *di)
+int X11Driver::getachar()
 {
     if (0)
     {
@@ -766,8 +778,7 @@ getachar(DriverX11 *di)
  *
  *----------------------------------------------------------------------
  */
-static int
-translate_key(int ch)
+static int translate_key(int ch)
 {
     if (ch >= 'a' && ch <= 'z')
         return ch;
@@ -849,40 +860,29 @@ translate_key(int ch)
     }
 }
 
-static int get_a_char_delay(DriverX11 *di)
+int X11Driver::get_a_char_delay()
 {
-    int ch = getachar(di);
+    int ch = getachar();
     if (ch == -1)
     {
-        driver_delay(250); // Wait 1/4 sec to see if a control sequence follows
-        ch = getachar(di);
+        delay(250); // Wait 1/4 sec to see if a control sequence follows
+        ch = getachar();
     }
     return ch;
 }
 
-/*----------------------------------------------------------------------
- *
- * handle_esc --
+/* handle_esc --
  *
  *  Handle an escape key.  This may be an escape key sequence
  *  indicating a function key was pressed.
- *
- * Results:
- *  Key.
- *
- * Side effects:
- *  Reads keys.
- *
- *----------------------------------------------------------------------
  */
-static int
-handle_esc(DriverX11 *di)
+int X11Driver::handle_esc()
 {
     // SUN escape key sequences
-    int ch1 = get_a_char_delay(di);
+    int ch1 = get_a_char_delay();
     if (ch1 != '[')       // See if we have esc [
         return ID_KEY_ESC;
-    ch1 = get_a_char_delay(di);
+    ch1 = get_a_char_delay();
     if (ch1 == -1)
         return ID_KEY_ESC;
     switch (ch1)
@@ -898,7 +898,7 @@ handle_esc(DriverX11 *di)
     default:
         break;
     }
-    int ch2 = get_a_char_delay(di);
+    int ch2 = get_a_char_delay();
     if (ch2 == '~')
     {     // esc [ ch1 ~
         switch (ch1)
@@ -921,7 +921,7 @@ handle_esc(DriverX11 *di)
     }
     else
     {
-        int ch3 = get_a_char_delay(di);
+        int ch3 = get_a_char_delay();
         if (ch3 != '~')
         {   // esc [ ch1 ch2 ~
             return ID_KEY_ESC;
@@ -976,8 +976,7 @@ handle_esc(DriverX11 *di)
  * Translate keypress into appropriate character code,
  * according to defines in id.h
  */
-static int
-ev_key_press(DriverX11 *di, XKeyEvent *xevent)
+int X11Driver::ev_key_press(XKeyEvent *xevent)
 {
     int charcount;
     char buffer[1];
@@ -987,110 +986,110 @@ ev_key_press(DriverX11 *di, XKeyEvent *xevent)
     {
     case XK_Control_L:
     case XK_Control_R:
-        di->ctl_mode = true;
+        ctl_mode = true;
         return 1;
 
     case XK_Shift_L:
     case XK_Shift_R:
-        di->shift_mode = true;
+        shift_mode = true;
         break;
     case XK_Home:
     case XK_R7:
-        di->key_buffer = di->ctl_mode ? ID_KEY_CTL_HOME : ID_KEY_HOME;
+        key_buffer = ctl_mode ? ID_KEY_CTL_HOME : ID_KEY_HOME;
         return 1;
     case XK_Left:
     case XK_R10:
-        di->key_buffer = di->ctl_mode ? ID_KEY_CTL_LEFT_ARROW : ID_KEY_LEFT_ARROW;
+        key_buffer = ctl_mode ? ID_KEY_CTL_LEFT_ARROW : ID_KEY_LEFT_ARROW;
         return 1;
     case XK_Right:
     case XK_R12:
-        di->key_buffer = di->ctl_mode ? ID_KEY_CTL_RIGHT_ARROW : ID_KEY_RIGHT_ARROW;
+        key_buffer = ctl_mode ? ID_KEY_CTL_RIGHT_ARROW : ID_KEY_RIGHT_ARROW;
         return 1;
     case XK_Down:
     case XK_R14:
-        di->key_buffer = di->ctl_mode ? ID_KEY_CTL_DOWN_ARROW : ID_KEY_DOWN_ARROW;
+        key_buffer = ctl_mode ? ID_KEY_CTL_DOWN_ARROW : ID_KEY_DOWN_ARROW;
         return 1;
     case XK_Up:
     case XK_R8:
-        di->key_buffer = di->ctl_mode ? ID_KEY_CTL_UP_ARROW : ID_KEY_UP_ARROW;
+        key_buffer = ctl_mode ? ID_KEY_CTL_UP_ARROW : ID_KEY_UP_ARROW;
         return 1;
     case XK_Insert:
-        di->key_buffer = di->ctl_mode ? ID_KEY_CTL_INSERT : ID_KEY_INSERT;
+        key_buffer = ctl_mode ? ID_KEY_CTL_INSERT : ID_KEY_INSERT;
         return 1;
     case XK_Delete:
-        di->key_buffer = di->ctl_mode ? ID_KEY_CTL_DEL : ID_KEY_DELETE;
+        key_buffer = ctl_mode ? ID_KEY_CTL_DEL : ID_KEY_DELETE;
         return 1;
     case XK_End:
     case XK_R13:
-        di->key_buffer = di->ctl_mode ? ID_KEY_CTL_END : ID_KEY_END;
+        key_buffer = ctl_mode ? ID_KEY_CTL_END : ID_KEY_END;
         return 1;
     case XK_Help:
-        di->key_buffer = ID_KEY_F1;
+        key_buffer = ID_KEY_F1;
         return 1;
     case XK_Prior:
     case XK_R9:
-        di->key_buffer = di->ctl_mode ? ID_KEY_CTL_PAGE_UP : ID_KEY_PAGE_UP;
+        key_buffer = ctl_mode ? ID_KEY_CTL_PAGE_UP : ID_KEY_PAGE_UP;
         return 1;
     case XK_Next:
     case XK_R15:
-        di->key_buffer = di->ctl_mode ? ID_KEY_CTL_PAGE_DOWN : ID_KEY_PAGE_DOWN;
+        key_buffer = ctl_mode ? ID_KEY_CTL_PAGE_DOWN : ID_KEY_PAGE_DOWN;
         return 1;
     case XK_F1:
     case XK_L1:
-        di->key_buffer = di->shift_mode ? ID_KEY_SF1: ID_KEY_F1;
+        key_buffer = shift_mode ? ID_KEY_SF1: ID_KEY_F1;
         return 1;
     case XK_F2:
     case XK_L2:
-        di->key_buffer = di->shift_mode ? ID_KEY_SF2: ID_KEY_F2;
+        key_buffer = shift_mode ? ID_KEY_SF2: ID_KEY_F2;
         return 1;
     case XK_F3:
     case XK_L3:
-        di->key_buffer = di->shift_mode ? ID_KEY_SF3: ID_KEY_F3;
+        key_buffer = shift_mode ? ID_KEY_SF3: ID_KEY_F3;
         return 1;
     case XK_F4:
     case XK_L4:
-        di->key_buffer = di->shift_mode ? ID_KEY_SF4: ID_KEY_F4;
+        key_buffer = shift_mode ? ID_KEY_SF4: ID_KEY_F4;
         return 1;
     case XK_F5:
     case XK_L5:
-        di->key_buffer = di->shift_mode ? ID_KEY_SF5: ID_KEY_F5;
+        key_buffer = shift_mode ? ID_KEY_SF5: ID_KEY_F5;
         return 1;
     case XK_F6:
     case XK_L6:
-        di->key_buffer = di->shift_mode ? ID_KEY_SF6: ID_KEY_F6;
+        key_buffer = shift_mode ? ID_KEY_SF6: ID_KEY_F6;
         return 1;
     case XK_F7:
     case XK_L7:
-        di->key_buffer = di->shift_mode ? ID_KEY_SF7: ID_KEY_F7;
+        key_buffer = shift_mode ? ID_KEY_SF7: ID_KEY_F7;
         return 1;
     case XK_F8:
     case XK_L8:
-        di->key_buffer = di->shift_mode ? ID_KEY_SF8: ID_KEY_F8;
+        key_buffer = shift_mode ? ID_KEY_SF8: ID_KEY_F8;
         return 1;
     case XK_F9:
     case XK_L9:
-        di->key_buffer = di->shift_mode ? ID_KEY_SF9: ID_KEY_F9;
+        key_buffer = shift_mode ? ID_KEY_SF9: ID_KEY_F9;
         return 1;
     case XK_F10:
     case XK_L10:
-        di->key_buffer = di->shift_mode ? ID_KEY_SF10: ID_KEY_F10;
+        key_buffer = shift_mode ? ID_KEY_SF10: ID_KEY_F10;
         return 1;
     case '+':
-        di->key_buffer = di->ctl_mode ? ID_KEY_CTL_PLUS : '+';
+        key_buffer = ctl_mode ? ID_KEY_CTL_PLUS : '+';
         return 1;
     case '-':
-        di->key_buffer = di->ctl_mode ? ID_KEY_CTL_MINUS : '-';
+        key_buffer = ctl_mode ? ID_KEY_CTL_MINUS : '-';
         return 1;
         break;
     case XK_Return:
     case XK_KP_Enter:
-        di->key_buffer = di->ctl_mode ? ctl('T') : '\n';
+        key_buffer = ctl_mode ? ctl('T') : '\n';
         return 1;
     }
     if (charcount == 1)
     {
-        di->key_buffer = buffer[0];
-        if (di->key_buffer == '\003')
+        key_buffer = buffer[0];
+        if (key_buffer == '\003')
         {
             goodbye();
         }
@@ -1102,8 +1101,7 @@ ev_key_press(DriverX11 *di, XKeyEvent *xevent)
  *
  * toggle modifier key state for shit and contol keys, otherwise ignore
  */
-static void
-ev_key_release(DriverX11 *di, XKeyEvent *xevent)
+void X11Driver::ev_key_release(XKeyEvent *xevent)
 {
     char buffer[1];
     KeySym keysym;
@@ -1112,19 +1110,18 @@ ev_key_release(DriverX11 *di, XKeyEvent *xevent)
     {
     case XK_Control_L:
     case XK_Control_R:
-        di->ctl_mode = false;
+        ctl_mode = false;
         break;
     case XK_Shift_L:
     case XK_Shift_R:
-        di->shift_mode = false;
+        shift_mode = false;
         break;
     }
 }
 
-static void
-ev_expose(DriverX11 *di, XExposeEvent *xevent)
+void X11Driver::ev_expose(XExposeEvent *xevent)
 {
-    if (di->text_not_graphics)
+    if (text_not_graphics)
     {
         // if text window, refresh text
     }
@@ -1146,14 +1143,13 @@ ev_expose(DriverX11 *di, XExposeEvent *xevent)
         }
         if (x < g_screen_x_dots && y < g_screen_y_dots && w > 0 && h > 0)
         {
-            XPutImage(di->Xdp, di->Xw, di->Xgc, di->Ximage, x, y, x, y,
+            XPutImage(Xdp, Xw, Xgc, Ximage, x, y, x, y,
                       xevent->width, xevent->height);
         }
     }
 }
 
-static void
-ev_button_press(DriverX11 *di, XEvent *xevent)
+void X11Driver::ev_button_press(XEvent *xevent)
 {
     bool done = false;
     bool banding = false;
@@ -1161,8 +1157,8 @@ ev_button_press(DriverX11 *di, XEvent *xevent)
 
     if (g_look_at_mouse == 3 || !g_zoom_off)
     {
-        di->last_x = xevent->xbutton.x;
-        di->last_y = xevent->xbutton.y;
+        last_x = xevent->xbutton.x;
+        last_y = xevent->xbutton.y;
         return;
     }
 
@@ -1172,14 +1168,14 @@ ev_button_press(DriverX11 *di, XEvent *xevent)
     bandy1 = bandy0;
     while (!done)
     {
-        XNextEvent(di->Xdp, xevent);
+        XNextEvent(Xdp, xevent);
         switch (xevent->type)
         {
         case MotionNotify:
-            while (XCheckWindowEvent(di->Xdp, di->Xw, PointerMotionMask, xevent))
+            while (XCheckWindowEvent(Xdp, Xw, PointerMotionMask, xevent))
                 ;
             if (banding)
-                XDrawRectangle(di->Xdp, di->Xw, di->Xgc, MIN(bandx0, bandx1),
+                XDrawRectangle(Xdp, Xw, Xgc, MIN(bandx0, bandx1),
                                MIN(bandy0, bandy1), ABS(bandx1-bandx0),
                                ABS(bandy1-bandy0));
             bandx1 = xevent->xmotion.x;
@@ -1199,17 +1195,17 @@ ev_button_press(DriverX11 *di, XEvent *xevent)
                 if (ABS(bandx1-bandx0) > 10 || ABS(bandy1-bandy0) > 10)
                 {
                     banding = true;
-                    XSetForeground(di->Xdp, di->Xgc, FAKE_LUT(di, g_colors-1));
-                    XSetFunction(di->Xdp, di->Xgc, GXxor);
+                    XSetForeground(Xdp, Xgc, do_fake_lut(g_colors-1));
+                    XSetFunction(Xdp, Xgc, GXxor);
                 }
             }
             if (banding)
             {
-                XDrawRectangle(di->Xdp, di->Xw, di->Xgc, MIN(bandx0, bandx1),
+                XDrawRectangle(Xdp, Xw, Xgc, MIN(bandx0, bandx1),
                                MIN(bandy0, bandy1), ABS(bandx1-bandx0),
                                ABS(bandy1-bandy0));
             }
-            XFlush(di->Xdp);
+            XFlush(Xdp);
             break;
 
         case ButtonRelease:
@@ -1221,7 +1217,7 @@ ev_button_press(DriverX11 *di, XEvent *xevent)
     if (!banding)
         return;
 
-    XDrawRectangle(di->Xdp, di->Xw, di->Xgc, MIN(bandx0, bandx1),
+    XDrawRectangle(Xdp, Xw, Xgc, MIN(bandx0, bandx1),
                    MIN(bandy0, bandy1), ABS(bandx1-bandx0),
                    ABS(bandy1-bandy0));
     if (bandx1 == bandx0)
@@ -1235,160 +1231,128 @@ ev_button_press(DriverX11 *di, XEvent *xevent)
     g_zoom_box_width = ABS(bandx1-bandx0)/g_logical_screen_x_size_dots;
     g_zoom_box_height = g_zoom_box_width;
     if (!g_inside_help)
-        di->key_buffer = ID_KEY_ENTER;
-    if (di->xlastcolor != -1)
-        XSetForeground(di->Xdp, di->Xgc, FAKE_LUT(di, di->xlastcolor));
-    XSetFunction(di->Xdp, di->Xgc, di->xlastfcn);
-    di->XZoomWaiting = true;
+        key_buffer = ID_KEY_ENTER;
+    if (xlastcolor != -1)
+        XSetForeground(Xdp, Xgc, do_fake_lut(xlastcolor));
+    XSetFunction(Xdp, Xgc, xlastfcn);
+    XZoomWaiting = true;
     drawbox(0);
 }
 
-static void
-ev_motion_notify(DriverX11 *di, XEvent *xevent)
+void X11Driver::ev_motion_notify(XEvent *xevent)
 {
     if (editpal_cursor && !g_inside_help)
     {
-        while (XCheckWindowEvent(di->Xdp, di->Xw, PointerMotionMask, xevent))
+        while (XCheckWindowEvent(Xdp, Xw, PointerMotionMask, xevent))
             ;
 
         if (xevent->xmotion.state & Button2Mask ||
                 (xevent->xmotion.state & (Button1Mask | Button3Mask)))
         {
-            di->button_num = 3;
+            button_num = 3;
         }
         else if (xevent->xmotion.state & Button1Mask)
         {
-            di->button_num = 1;
+            button_num = 1;
         }
         else if (xevent->xmotion.state & Button3Mask)
         {
-            di->button_num = 2;
+            button_num = 2;
         }
         else
         {
-            di->button_num = 0;
+            button_num = 0;
         }
 
-        if (g_look_at_mouse == 3 && di->button_num != 0)
+        if (g_look_at_mouse == 3 && button_num != 0)
         {
-            di->dx += (xevent->xmotion.x-di->last_x)/MOUSE_SCALE;
-            di->dy += (xevent->xmotion.y-di->last_y)/MOUSE_SCALE;
-            di->last_x = xevent->xmotion.x;
-            di->last_y = xevent->xmotion.y;
+            dx += (xevent->xmotion.x-last_x)/MOUSE_SCALE;
+            dy += (xevent->xmotion.y-last_y)/MOUSE_SCALE;
+            last_x = xevent->xmotion.x;
+            last_y = xevent->xmotion.y;
         }
         else
         {
             Cursor_SetPos(xevent->xmotion.x, xevent->xmotion.y);
-            di->key_buffer = ID_KEY_ENTER;
+            key_buffer = ID_KEY_ENTER;
         }
     }
 }
 
-/*----------------------------------------------------------------------
- *
- * handle_events --
- *
- *  Handles X events.
- *
- * Results:
- *  None.
- *
- * Side effects:
- *  Does event action.
- *
- *----------------------------------------------------------------------
- */
-static void
-handle_events(DriverX11 *di)
+void X11Driver::handle_events()
 {
     XEvent xevent;
 
-    if (di->doredraw)
-        x11_redraw(&di->pub);
+    if (doredraw)
+        redraw();
 
-    while (XPending(di->Xdp) && !di->key_buffer)
+    while (XPending(Xdp) && !key_buffer)
     {
-        XNextEvent(di->Xdp, &xevent);
+        XNextEvent(Xdp, &xevent);
         switch (xevent.type)
         {
         case KeyRelease:
-            ev_key_release(di, &xevent.xkey);
+            ev_key_release(&xevent.xkey);
             break;
 
         case KeyPress:
-            if (ev_key_press(di, &xevent.xkey))
+            if (ev_key_press(&xevent.xkey))
                 return;
             break;
 
         case MotionNotify:
-            ev_motion_notify(di, &xevent);
+            ev_motion_notify(&xevent);
             break;
 
         case ButtonPress:
-            ev_button_press(di, &xevent);
+            ev_button_press(&xevent);
             break;
 
         case Expose:
-            ev_expose(di, &xevent.xexpose);
+            ev_expose(&xevent.xexpose);
             break;
         }
     }
 
-    if (!di->key_buffer && editpal_cursor && !g_inside_help && g_look_at_mouse == 3 &&
-            (di->dx != 0 || di->dy != 0))
+    if (!key_buffer && editpal_cursor && !g_inside_help && g_look_at_mouse == 3 &&
+            (dx != 0 || dy != 0))
     {
-        if (ABS(di->dx) > ABS(di->dy))
+        if (ABS(dx) > ABS(dy))
         {
-            if (di->dx > 0)
+            if (dx > 0)
             {
-                di->key_buffer = mousefkey[di->button_num][0]; // right
-                di->dx--;
+                key_buffer = mousefkey[button_num][0]; // right
+                dx--;
             }
-            else if (di->dx < 0)
+            else if (dx < 0)
             {
-                di->key_buffer = mousefkey[di->button_num][1]; // left
-                di->dx++;
+                key_buffer = mousefkey[button_num][1]; // left
+                dx++;
             }
         }
         else
         {
-            if (di->dy > 0)
+            if (dy > 0)
             {
-                di->key_buffer = mousefkey[di->button_num][2]; // down
-                di->dy--;
+                key_buffer = mousefkey[button_num][2]; // down
+                dy--;
             }
-            else if (di->dy < 0)
+            else if (dy < 0)
             {
-                di->key_buffer = mousefkey[di->button_num][3]; // up
-                di->dy++;
+                key_buffer = mousefkey[button_num][3]; // up
+                dy++;
             }
         }
     }
 }
 
 // Check if there is a character waiting for us.
-static int
-input_pending(DriverX11 *di)
+int X11Driver::input_pending()
 {
-    return XPending(di->Xdp);
+    return XPending(Xdp);
 }
 
-/*----------------------------------------------------------------------
- *
- * pr_dwmroot --
- *
- *  Search for a dec window manager root window.
- *
- * Results:
- *  Returns the root window.
- *
- * Side effects:
- *  None.
- *
- *----------------------------------------------------------------------
- */
-static Window
-pr_dwmroot(DriverX11 *di, Display *dpy, Window pwin)
+Window X11Driver::pr_dwmroot(Display *dpy, Window pwin)
 {
     // search for DEC Window Manager root
     XWindowAttributes pxwa, cxwa;
@@ -1398,7 +1362,7 @@ pr_dwmroot(DriverX11 *di, Display *dpy, Window pwin)
     if (!XGetWindowAttributes(dpy, pwin, &pxwa))
     {
         std::printf("Search for root: XGetWindowAttributes failed\n");
-        return RootWindow(dpy, di->Xdscreen);
+        return RootWindow(dpy, Xdscreen);
     }
     if (XQueryTree(dpy, pwin, &root, &parent, &child, &nchild))
     {
@@ -1407,47 +1371,31 @@ pr_dwmroot(DriverX11 *di, Display *dpy, Window pwin)
             if (!XGetWindowAttributes(dpy, child[i], &cxwa))
             {
                 std::printf("Search for root: XGetWindowAttributes failed\n");
-                return RootWindow(dpy, di->Xdscreen);
+                return RootWindow(dpy, Xdscreen);
             }
             if (pxwa.width == cxwa.width && pxwa.height == cxwa.height)
-                return pr_dwmroot(di, dpy, child[i]);
+                return pr_dwmroot(dpy, child[i]);
         }
         return pwin;
     }
     else
     {
         std::printf("Id: failed to find root window\n");
-        return RootWindow(dpy, di->Xdscreen);
+        return RootWindow(dpy, Xdscreen);
     }
 }
 
-/*
- *----------------------------------------------------------------------
- *
- * FindRootWindow --
- *
- *  Find the root or virtual root window.
- *
- * Results:
- *  Returns the root window.
- *
- * Side effects:
- *  None.
- *
- *----------------------------------------------------------------------
- */
-static Window
-FindRootWindow(DriverX11 *di)
+Window X11Driver::FindRootWindow()
 {
-    di->Xroot = RootWindow(di->Xdp, di->Xdscreen);
-    di->Xroot = pr_dwmroot(di, di->Xdp, di->Xroot); // search for DEC wm root
+    Xroot = RootWindow(Xdp, Xdscreen);
+    Xroot = pr_dwmroot(Xdp, Xroot); // search for DEC wm root
 
     {   // search for swm/tvtwm root (from ssetroot by Tom LaStrange)
         Window rootReturn, parentReturn, *children;
         unsigned int numChildren;
 
-        Atom SWM_VROOT = XInternAtom(di->Xdp, "__SWM_VROOT", False);
-        XQueryTree(di->Xdp, di->Xroot, &rootReturn, &parentReturn,
+        Atom SWM_VROOT = XInternAtom(Xdp, "__SWM_VROOT", False);
+        XQueryTree(Xdp, Xroot, &rootReturn, &parentReturn,
                    &children, &numChildren);
         for (int i = 0; i < numChildren; i++)
         {
@@ -1456,7 +1404,7 @@ FindRootWindow(DriverX11 *di)
             unsigned long nitems, bytesafter;
             Window *newRoot = nullptr;
 
-            if (XGetWindowProperty(di->Xdp, children[i], SWM_VROOT,
+            if (XGetWindowProperty(Xdp, children[i], SWM_VROOT,
                                    0L, 1L,
                                    False, XA_WINDOW,
                                    &actual_type, &actual_format,
@@ -1464,77 +1412,44 @@ FindRootWindow(DriverX11 *di)
                                    (unsigned char **) &newRoot) == Success &&
                     newRoot)
             {
-                di->Xroot = *newRoot;
+                Xroot = *newRoot;
                 break;
             }
         }
     }
-    return di->Xroot;
+    return Xroot;
 }
 
-/*
- *----------------------------------------------------------------------
- *
- * RemoveRootPixmap --
- *
- *  Clean up old pixmap on the root window.
- *
- * Results:
- *  None.
- *
- * Side effects:
- *  Pixmap is cleaned up.
- *
- *----------------------------------------------------------------------
- */
-static void
-RemoveRootPixmap(DriverX11 *di)
+void X11Driver::RemoveRootPixmap()
 {
     Atom prop, type;
     int format;
     unsigned long nitems, after;
     Pixmap *pm;
 
-    prop = XInternAtom(di->Xdp, "_XSETROOT_ID", False);
-    if (XGetWindowProperty(di->Xdp, di->Xroot, prop, 0L, 1L, 1,
+    prop = XInternAtom(Xdp, "_XSETROOT_ID", False);
+    if (XGetWindowProperty(Xdp, Xroot, prop, 0L, 1L, 1,
                            AnyPropertyType, &type, &format, &nitems, &after,
                            (unsigned char **) &pm) == Success && nitems == 1)
     {
         if (type == XA_PIXMAP && format == 32 && after == 0)
         {
-            XKillClient(di->Xdp, (XID)*pm);
+            XKillClient(Xdp, (XID)*pm);
             XFree((char *)pm);
         }
     }
 }
 
-static void
-load_font(DriverX11 *di)
+void X11Driver::load_font()
 {
-    di->font_info = XLoadQueryFont(di->Xdp, di->x_font_name);
-    if (di->font_info == nullptr)
-        di->font_info = XLoadQueryFont(di->Xdp, "6x12");
+    font_info = XLoadQueryFont(Xdp, x_font_name);
+    if (font_info == nullptr)
+        font_info = XLoadQueryFont(Xdp, "6x12");
 }
 
-/*----------------------------------------------------------------------
- *
- * x11_flush --
- *
- *  Sync the x server
- *
- * Results:
- *  None.
- *
- * Side effects:
- *  Modifies window.
- *
- *----------------------------------------------------------------------
- */
-static void
-x11_flush(Driver *drv)
+void X11DRiver::flush()
 {
-    DIX11(drv);
-    XSync(di->Xdp, False);
+    XSync(Xdp, False);
 }
 
 void fpe_handler(int signum)
@@ -1542,24 +1457,8 @@ void fpe_handler(int signum)
     g_overflow = true;
 }
 
-/*----------------------------------------------------------------------
- *
- * x11_init --
- *
- *  Initialize the windows and stuff.
- *
- * Results:
- *  None.
- *
- * Side effects:
- *  Initializes windows.
- *
- *----------------------------------------------------------------------
- */
-static bool
-x11_init(Driver *drv, int *argc, char **argv)
+bool X11Driver::init(int *argc, char **argv)
 {
-    DIX11(drv);
     /*
      * Check a bunch of important conditions
      */
@@ -1594,7 +1493,7 @@ x11_init(Driver *drv, int *argc, char **argv)
         std::vector<char *> filtered;
         for (int i = 0; i < count; i++)
         {
-            if (! check_arg(di, i, argv, &i))
+            if (! check_arg(i, argv, &i))
             {
                 filtered.push_back(argv[i]);
             }
@@ -1603,20 +1502,20 @@ x11_init(Driver *drv, int *argc, char **argv)
         *argc = filtered.size();
     }
 
-    di->Xdp = XOpenDisplay(di->Xdisplay);
-    if (di->Xdp == nullptr)
+    Xdp = XOpenDisplay(Xdisplay);
+    if (Xdp == nullptr)
     {
-        x11_terminate(drv);
+        terminate();
         return false;
     }
-    di->Xdscreen = XDefaultScreen(di->Xdp);
-    if (di->sync)
-        XSynchronize(di->Xdp, True);
+    Xdscreen = XDefaultScreen(Xdp);
+    if (sync)
+        XSynchronize(Xdp, True);
     XSetErrorHandler(errhand);
 
     {
-        int const width = WidthOfScreen(DefaultScreenOfDisplay(di->Xdp));
-        int const height = HeightOfScreen(DefaultScreenOfDisplay(di->Xdp));
+        int const width = WidthOfScreen(DefaultScreenOfDisplay(Xdp));
+        int const height = HeightOfScreen(DefaultScreenOfDisplay(Xdp));
 
         for (auto m : modes)
         {
@@ -1627,85 +1526,54 @@ x11_init(Driver *drv, int *argc, char **argv)
         }
     }
 
-    int screen_num = DefaultScreen(di->Xdp);
-    di->frame_.initialize(di->Xdp, screen_num, di->Xgeometry);
-    di->plot_.initialize(di->Xdp, screen_num, di->frame_.window());
-    di->text_.initialize(di->Xdp, screen_num, di->frame_.window());
+    int screen_num = DefaultScreen(Xdp);
+    frame_.initialize(Xdp, screen_num, Xgeometry);
+    plot_.initialize(Xdp, screen_num, frame_.window());
+    text_.initialize(Xdp, screen_num, frame_.window());
 
     return true;
 }
 
-static bool x11_validate_mode(Driver *drv, VIDEOINFO *mode)
+bool X11Driver::validate_mode(VIDEOINFO *mode)
 {
     return false;
 }
 
-/*----------------------------------------------------------------------
- *
- * x11_terminate --
- *
- *  Cleanup windows and stuff.
- *
- * Results:
- *  None.
- *
- * Side effects:
- *  Cleans up.
- *
- *----------------------------------------------------------------------
- */
-static void
-x11_terminate(Driver *drv)
+void X11Driver::terminate()
 {
-    DIX11(drv);
-    doneXwindow(di);
+    doneXwindow();
 }
 
-static void x11_pause(Driver *drv)
+void X11Driver::pause()
 {
 }
 
-static void x11_resume(Driver *drv)
+void X11Driver::resume()
 {
 }
 
-/*
- *----------------------------------------------------------------------
- *
- * x11_schedule_alarm --
- *
- *  Start the refresh alarm
- *
- * Results:
- *  None.
- *
- * Side effects:
- *  Starts the alarm.
- *
- *----------------------------------------------------------------------
- */
-static void
-x11_schedule_alarm(Driver *drv, int secs)
+static void handle_sig_alarm()
 {
-    DIX11(drv);
-
-    if (!di->fastmode)
+    ((X11Driver *) g_driver)->setredrawscreen();
+}
+void X11Driver::schedule_alarm(int secs)
+{
+    if (!fastmode)
         return;
 
-    signal(SIGALRM, (SignalHandler) setredrawscreen);
+    signal(SIGALRM, (SignalHandler) handle_sig_alarm);
     if (secs)
         alarm(1);
     else
         alarm(DRAW_INTERVAL);
 
-    di->alarmon = true;
+    alarmon = true;
 }
 
-static void
-max_size(DriverX11 *di, unsigned *width, unsigned *height, bool *center_x, bool *center_y)
+void X11Driver::get_max_size(unsigned *width, unsigned *height, bool *center_x, bool *center_y)
 {
-    *width = di->text_.max_width();
-    *height = di->text_.max_height();
+    *width = text_.max_width();
+    *height = text_.max_height();
     if (g_video_table[g_adapter].xdots > *width)
     {
         *width = g_video_table[g_adapter].xdots;
@@ -1718,155 +1586,138 @@ max_size(DriverX11 *di, unsigned *width, unsigned *height, bool *center_x, bool 
     }
 }
 
-static void center_window(DriverX11 *di, bool center_x, bool center_y)
+void X11Driver::center_window(bool center_x, bool center_y)
 {
     struct x11_point
     {
         int x;
         int y;
     };
-    x11_point text_pos = { 0 };
-    x11_point plot_pos = { 0 };
+    x11_point text_pos{};
+    x11_point plot_pos{};
 
     if (center_x)
     {
-        plot_pos.x = (di->frame_.width() - di->plot_.width())/2;
+        plot_pos.x = (frame_.width() - plot_.width())/2;
     }
     else
     {
-        text_pos.x = (di->frame_.width() - di->text_.max_width())/2;
+        text_pos.x = (frame_.width() - text_.max_width())/2;
     }
 
     if (center_y)
     {
-        plot_pos.y = (di->frame_.height() - di->plot_.height())/2;
+        plot_pos.y = (frame_.height() - plot_.height())/2;
     }
     else
     {
-        text_pos.y = (di->frame_.height() - di->text_.max_height())/2;
+        text_pos.y = (frame_.height() - text_.max_height())/2;
     }
 
-    di->plot_.set_position(plot_pos.x, plot_pos.y);
-    di->text_.set_position(text_pos.x, text_pos.y);
+    plot_.set_position(plot_pos.x, plot_pos.y);
+    text_.set_position(text_pos.x, text_pos.y);
 }
 
 void frame_window(int width, int height)
 {
 }
 
-/*----------------------------------------------------------------------
- *
- * x11_window --
- *
- *  Make the X window.
- *
- * Results:
- *  None.
- *
- * Side effects:
- *  Makes window.
- *
- *----------------------------------------------------------------------
- */
-static void
-x11_window(Driver *drv)
+void X11Driver::window()
 {
-    DIX11(drv);
     unsigned width;
     unsigned height;
     bool center_x = true;
     bool center_y = true;
-    max_size(di, &width, &height, &center_x, &center_y);
-    di->frame_.window(width, height);
-    di->text_.text_on();
-    center_window(di, center_x, center_y);
+    get_max_size(&width, &height, &center_x, &center_y);
+    frame_.window(width, height);
+    text_.text_on();
+    center_window(center_x, center_y);
 #if 0
-    di->base.wintext.hWndParent = g_frame.window;
-    wintext_texton(&di->base.wintext);
-    plot_window(&di->plot, g_frame.window);
-    center_windows(di, center_x, center_y);
+    base.wintext.hWndParent = g_frame.window;
+    wintext_texton(&base.wintext);
+    plot_window(&plot, g_frame.window);
+    center_windows(center_x, center_y);
 
     XSetWindowAttributes Xwatt;
     XGCValues Xgcvals;
     int Xwinx = 0, Xwiny = 0;
-    DIX11(drv);
 
     g_adapter = 0;
 
     /* We have to do some X stuff even for disk video, to parse the geometry
      * string */
 
-    if (di->Xgeometry && !di->onroot)
-        XGeometry(di->Xdp, di->Xdscreen, di->Xgeometry, DEFXY, 0, 1, 1, 0, 0,
-                  &Xwinx, &Xwiny, &di->Xwinwidth, &di->Xwinheight);
-    if (di->sync)
-        XSynchronize(di->Xdp, True);
+    if (Xgeometry && !onroot)
+        XGeometry(Xdp, Xdscreen, Xgeometry, DEFXY, 0, 1, 1, 0, 0,
+                  &Xwinx, &Xwiny, &Xwinwidth, &Xwinheight);
+    if (sync)
+        XSynchronize(Xdp, True);
     XSetErrorHandler(errhand);
-    di->Xsc = ScreenOfDisplay(di->Xdp, di->Xdscreen);
-    select_visual(di);
-    if (di->fixcolors > 0)
-        g_colors = di->fixcolors;
+    Xsc = ScreenOfDisplay(Xdp, Xdscreen);
+    select_visual();
+    if (fixcolors > 0)
+        g_colors = fixcolors;
 
-    if (di->fullscreen || di->onroot)
+    if (fullscreen || onroot)
     {
-        di->Xwinwidth = DisplayWidth(di->Xdp, di->Xdscreen);
-        di->Xwinheight = DisplayHeight(di->Xdp, di->Xdscreen);
+        Xwinwidth = DisplayWidth(Xdp, Xdscreen);
+        Xwinheight = DisplayHeight(Xdp, Xdscreen);
     }
-    g_screen_x_dots = di->Xwinwidth;
-    g_screen_y_dots = di->Xwinheight;
+    g_screen_x_dots = Xwinwidth;
+    g_screen_y_dots = Xwinheight;
 
-    Xwatt.background_pixel = BlackPixelOfScreen(di->Xsc);
+    Xwatt.background_pixel = BlackPixelOfScreen(Xsc);
     Xwatt.bit_gravity = StaticGravity;
-    di->doesBacking = DoesBackingStore(di->Xsc);
-    if (di->doesBacking)
+    doesBacking = DoesBackingStore(Xsc);
+    if (doesBacking)
         Xwatt.backing_store = Always;
     else
         Xwatt.backing_store = NotUseful;
-    if (di->onroot)
+    if (onroot)
     {
-        di->Xroot = FindRootWindow(di);
-        RemoveRootPixmap(di);
-        di->Xgc = XCreateGC(di->Xdp, di->Xroot, 0, &Xgcvals);
-        di->Xpixmap = XCreatePixmap(di->Xdp, di->Xroot,
-                                    di->Xwinwidth, di->Xwinheight, di->Xdepth);
-        di->Xw = di->Xroot;
-        XFillRectangle(di->Xdp, di->Xpixmap, di->Xgc, 0, 0, di->Xwinwidth, di->Xwinheight);
-        XSetWindowBackgroundPixmap(di->Xdp, di->Xroot, di->Xpixmap);
+        Xroot = FindRootWindow();
+        RemoveRootPixmap();
+        Xgc = XCreateGC(Xdp, Xroot, 0, &Xgcvals);
+        Xpixmap = XCreatePixmap(Xdp, Xroot,
+                                    Xwinwidth, Xwinheight, Xdepth);
+        Xw = Xroot;
+        XFillRectangle(Xdp, Xpixmap, Xgc, 0, 0, Xwinwidth, Xwinheight);
+        XSetWindowBackgroundPixmap(Xdp, Xroot, Xpixmap);
     }
     else
     {
-        di->Xroot = DefaultRootWindow(di->Xdp);
-        di->Xw = XCreateWindow(di->Xdp, di->Xroot, Xwinx, Xwiny,
-                               di->Xwinwidth, di->Xwinheight, 0, di->Xdepth,
+        Xroot = DefaultRootWindow(Xdp);
+        Xw = XCreateWindow(Xdp, Xroot, Xwinx, Xwiny,
+                               Xwinwidth, Xwinheight, 0, Xdepth,
                                InputOutput, CopyFromParent,
                                CWBackPixel | CWBitGravity | CWBackingStore,
                                &Xwatt);
-        XStoreName(di->Xdp, di->Xw, "id");
-        di->Xgc = XCreateGC(di->Xdp, di->Xw, 0, &Xgcvals);
+        XStoreName(Xdp, Xw, "id");
+        Xgc = XCreateGC(Xdp, Xw, 0, &Xgcvals);
     }
-    g_colors = xcmapstuff(di);
+    g_colors = xcmapstuff();
     if (g_color_cycle_range_hi == 255)
         g_color_cycle_range_hi = g_colors-1;
 
     {
         unsigned long event_mask = KeyPressMask | KeyReleaseMask | ExposureMask;
-        if (! di->onroot)
+        if (! onroot)
             event_mask |= ButtonPressMask | ButtonReleaseMask | PointerMotionMask;
-        XSelectInput(di->Xdp, di->Xw, event_mask);
+        XSelectInput(Xdp, Xw, event_mask);
     }
 
-    if (!di->onroot)
+    if (!onroot)
     {
-        XSetBackground(di->Xdp, di->Xgc, FAKE_LUT(di, di->pixtab[0]));
-        XSetForeground(di->Xdp, di->Xgc, FAKE_LUT(di, di->pixtab[1]));
-        Xwatt.background_pixel = FAKE_LUT(di, di->pixtab[0]);
-        XChangeWindowAttributes(di->Xdp, di->Xw, CWBackPixel, &Xwatt);
-        XMapWindow(di->Xdp, di->Xw);
+        XSetBackground(Xdp, Xgc, do_fake_lut(pixtab[0]));
+        XSetForeground(Xdp, Xgc, do_fake_lut(pixtab[1]));
+        Xwatt.background_pixel = do_fake_lut(pixtab[0]);
+        XChangeWindowAttributes(Xdp, Xw, CWBackPixel, &Xwatt);
+        XMapWindow(Xdp, Xw);
     }
 
-    x11_resize(drv);
-    x11_flush(drv);
-    x11_write_palette(drv);
+    resize(drv);
+    flush(drv);
+    write_palette(drv);
 
     x11_video_table[0].xdots = g_screen_x_dots;
     x11_video_table[0].ydots = g_screen_y_dots;
@@ -1876,7 +1727,7 @@ x11_window(Driver *drv)
 
 /*----------------------------------------------------------------------
  *
- * x11_resize --
+ * resize --
  *
  *  Look after resizing the window if necessary.
  *
@@ -1888,9 +1739,8 @@ x11_window(Driver *drv)
  *
  *----------------------------------------------------------------------
  */
-static bool x11_resize(Driver *drv)
+bool X11Driver::resize()
 {
-    DIX11(drv);
     static int oldx = -1, oldy = -1;
     int junki;
     unsigned int junkui;
@@ -1898,7 +1748,7 @@ static bool x11_resize(Driver *drv)
     unsigned int width, height;
     Status status;
 
-    XGetGeometry(di->Xdp, di->Xw, &junkw, &junki, &junki, &width, &height,
+    XGetGeometry(Xdp, Xw, &junkw, &junki, &junki, &width, &height,
                  &junkui, &junkui);
 
     if (oldx != width || oldy != height)
@@ -1909,21 +1759,21 @@ static bool x11_resize(Driver *drv)
         x11_video_table[0].ydots = g_screen_y_dots;
         oldx = g_screen_x_dots;
         oldy = g_screen_y_dots;
-        di->Xwinwidth = g_screen_x_dots;
-        di->Xwinheight = g_screen_y_dots;
+        Xwinwidth = g_screen_x_dots;
+        Xwinheight = g_screen_y_dots;
         g_screen_aspect = g_screen_y_dots/(float) g_screen_x_dots;
         g_final_aspect_ratio = g_screen_aspect;
         int Xpad = 9;
         int Xmwidth;
-        if (di->Xdepth == 1)
+        if (Xdepth == 1)
         {
             Xmwidth = 1 + g_screen_x_dots/8;
         }
-        else if (di->Xdepth <= 8)
+        else if (Xdepth <= 8)
         {
             Xmwidth = g_screen_x_dots;
         }
-        else if (di->Xdepth <= 16)
+        else if (Xdepth <= 16)
         {
             Xmwidth = 2*g_screen_x_dots;
             Xpad = 16;
@@ -1933,30 +1783,30 @@ static bool x11_resize(Driver *drv)
             Xmwidth = 4*g_screen_x_dots;
             Xpad = 32;
         }
-        if (di->pixbuf != nullptr)
-            free(di->pixbuf);
-        di->pixbuf = (BYTE *) malloc(di->Xwinwidth *sizeof(BYTE));
-        if (di->Ximage != nullptr)
+        if (pixbuf != nullptr)
+            free(pixbuf);
+        pixbuf = (BYTE *) malloc(Xwinwidth *sizeof(BYTE));
+        if (Ximage != nullptr)
         {
-            free(di->Ximage->data);
-            XDestroyImage(di->Ximage);
+            free(Ximage->data);
+            XDestroyImage(Ximage);
         }
-        di->Ximage = XCreateImage(di->Xdp, di->Xvi, di->Xdepth, ZPixmap, 0, nullptr, g_screen_x_dots,
+        Ximage = XCreateImage(Xdp, Xvi, Xdepth, ZPixmap, 0, nullptr, g_screen_x_dots,
                                   g_screen_y_dots, Xpad, Xmwidth);
-        if (di->Ximage == nullptr)
+        if (Ximage == nullptr)
         {
             std::printf("XCreateImage failed\n");
-            x11_terminate(drv);
+            terminate();
             exit(-1);
         }
-        di->Ximage->data = (char *) malloc(di->Ximage->bytes_per_line * di->Ximage->height);
-        if (di->Ximage->data == nullptr)
+        Ximage->data = (char *) malloc(Ximage->bytes_per_line * Ximage->height);
+        if (Ximage->data == nullptr)
         {
-            std::fprintf(stderr, "Malloc failed: %d\n", di->Ximage->bytes_per_line *
-                    di->Ximage->height);
+            std::fprintf(stderr, "Malloc failed: %d\n", Ximage->bytes_per_line *
+                    Ximage->height);
             exit(-1);
         }
-        clearXwindow(di);
+        clearXwindow();
         return true;
     }
     else
@@ -1969,7 +1819,7 @@ static bool x11_resize(Driver *drv)
 /*
  *----------------------------------------------------------------------
  *
- * x11_redraw --
+ * redraw --
  *
  *  Refresh the screen.
  *
@@ -1981,26 +1831,24 @@ static bool x11_resize(Driver *drv)
  *
  *----------------------------------------------------------------------
  */
-static void
-x11_redraw(Driver *drv)
+void X11Driver::redraw()
 {
-    DIX11(drv);
-    if (di->alarmon)
+    if (alarmon)
     {
-        XPutImage(di->Xdp, di->Xw, di->Xgc, di->Ximage, 0, 0, 0, 0,
+        XPutImage(Xdp, Xw, Xgc, Ximage, 0, 0, 0, 0,
                   g_screen_x_dots, g_screen_y_dots);
-        if (di->onroot)
-            XPutImage(di->Xdp, di->Xpixmap, di->Xgc, di->Ximage, 0, 0, 0, 0,
+        if (onroot)
+            XPutImage(Xdp, Xpixmap, Xgc, Ximage, 0, 0, 0, 0,
                       g_screen_x_dots, g_screen_y_dots);
-        di->alarmon = false;
+        alarmon = false;
     }
-    di->doredraw = false;
+    doredraw = false;
 }
 
 /*
  *----------------------------------------------------------------------
  *
- * x11_read_palette --
+ * read_palette --
  *  Reads the current video palette into g_dac_box.
  *
  *
@@ -2012,17 +1860,15 @@ x11_redraw(Driver *drv)
  *
  *----------------------------------------------------------------------
  */
-static int
-x11_read_palette(Driver *drv)
+int X11Driver::read_palette()
 {
-    DIX11(drv);
     if (!g_got_real_dac)
         return -1;
     for (int i = 0; i < 256; i++)
     {
-        g_dac_box[i][0] = di->cols[i].red/1024;
-        g_dac_box[i][1] = di->cols[i].green/1024;
-        g_dac_box[i][2] = di->cols[i].blue/1024;
+        g_dac_box[i][0] = cols[i].red/1024;
+        g_dac_box[i][1] = cols[i].green/1024;
+        g_dac_box[i][2] = cols[i].blue/1024;
     }
     return 0;
 }
@@ -2030,7 +1876,7 @@ x11_read_palette(Driver *drv)
 /*
  *----------------------------------------------------------------------
  *
- * x11_write_palette --
+ * write_palette --
  *  Writes g_dac_box into the video palette.
  *
  *
@@ -2042,14 +1888,11 @@ x11_read_palette(Driver *drv)
  *
  *----------------------------------------------------------------------
  */
-static int
-x11_write_palette(Driver *drv)
+int X11Driver::write_palette()
 {
-    DIX11(drv);
-
     if (!g_got_real_dac)
     {
-        if (di->g_fake_lut)
+        if (g_fake_lut)
         {
             // !g_got_real_dac, g_fake_lut => truecolor, directcolor displays
             static unsigned char last_dac[256][3];
@@ -2062,18 +1905,18 @@ x11_write_palette(Driver *drv)
                         last_dac[i][1] != g_dac_box[i][1] ||
                         last_dac[i][2] != g_dac_box[i][2])
                 {
-                    di->cols[i].flags = DoRed | DoGreen | DoBlue;
-                    di->cols[i].red = g_dac_box[i][0]*1024;
-                    di->cols[i].green = g_dac_box[i][1]*1024;
-                    di->cols[i].blue = g_dac_box[i][2]*1024;
+                    cols[i].flags = DoRed | DoGreen | DoBlue;
+                    cols[i].red = g_dac_box[i][0]*1024;
+                    cols[i].green = g_dac_box[i][1]*1024;
+                    cols[i].blue = g_dac_box[i][2]*1024;
 
-                    if (di->cmap_pixtab_alloced)
+                    if (cmap_pixtab_alloced)
                     {
-                        XFreeColors(di->Xdp, di->Xcmap, di->cmap_pixtab + i, 1, None);
+                        XFreeColors(Xdp, Xcmap, cmap_pixtab + i, 1, None);
                     }
-                    if (XAllocColor(di->Xdp, di->Xcmap, &di->cols[i]))
+                    if (XAllocColor(Xdp, Xcmap, &cols[i]))
                     {
-                        di->cmap_pixtab[i] = di->cols[i].pixel;
+                        cmap_pixtab[i] = cols[i].pixel;
                     }
                     else
                     {
@@ -2086,7 +1929,7 @@ x11_write_palette(Driver *drv)
                     last_dac[i][2] = g_dac_box[i][2];
                 }
             }
-            di->cmap_pixtab_alloced = true;
+            cmap_pixtab_alloced = true;
             last_dac_inited = true;
         }
         else
@@ -2100,14 +1943,14 @@ x11_write_palette(Driver *drv)
         // g_got_real_dac => grayscale or pseudocolor displays
         for (int i = 0; i < 256; i++)
         {
-            di->cols[i].pixel = di->pixtab[i];
-            di->cols[i].flags = DoRed | DoGreen | DoBlue;
-            di->cols[i].red = g_dac_box[i][0]*1024;
-            di->cols[i].green = g_dac_box[i][1]*1024;
-            di->cols[i].blue = g_dac_box[i][2]*1024;
+            cols[i].pixel = pixtab[i];
+            cols[i].flags = DoRed | DoGreen | DoBlue;
+            cols[i].red = g_dac_box[i][0]*1024;
+            cols[i].green = g_dac_box[i][1]*1024;
+            cols[i].blue = g_dac_box[i][2]*1024;
         }
-        XStoreColors(di->Xdp, di->Xcmap, di->cols, g_colors);
-        XFlush(di->Xdp);
+        XStoreColors(Xdp, Xcmap, cols, g_colors);
+        XFlush(Xdp);
     }
 
     return 0;
@@ -2116,7 +1959,7 @@ x11_write_palette(Driver *drv)
 /*
  *----------------------------------------------------------------------
  *
- * x11_read_pixel --
+ * read_pixel --
  *
  *  Read a point from the screen
  *
@@ -2128,26 +1971,24 @@ x11_write_palette(Driver *drv)
  *
  *----------------------------------------------------------------------
  */
-static int
-x11_read_pixel(Driver *drv, int x, int y)
+int X11Driver::read_pixel(int x, int y)
 {
-    DIX11(drv);
-    if (di->g_fake_lut)
+    if (g_fake_lut)
     {
-        XPixel pixel = XGetPixel(di->Ximage, x, y);
+        XPixel pixel = XGetPixel(Ximage, x, y);
         for (int i = 0; i < 256; i++)
-            if (di->cmap_pixtab[i] == pixel)
+            if (cmap_pixtab[i] == pixel)
                 return i;
         return 0;
     }
     else
-        return di->ipixtab[XGetPixel(di->Ximage, x, y)];
+        return ipixtab[XGetPixel(Ximage, x, y)];
 }
 
 /*
  *----------------------------------------------------------------------
  *
- * x11_write_pixel --
+ * write_pixel --
  *
  *  Write a point to the screen
  *
@@ -2159,10 +2000,8 @@ x11_read_pixel(Driver *drv, int x, int y)
  *
  *----------------------------------------------------------------------
  */
-static void
-x11_write_pixel(Driver *drv, int x, int y, int color)
+void X11Driver::write_pixel(int x, int y, int color)
 {
-    DIX11(drv);
 #ifndef NDEBUG // Debugging checks
     if (color >= g_colors || color < 0)
     {
@@ -2173,25 +2012,25 @@ x11_write_pixel(Driver *drv, int x, int y, int color)
         std::printf("Bad coord %d %d\n", x, y);
     }
 #endif
-    if (di->xlastcolor != color)
+    if (xlastcolor != color)
     {
-        XSetForeground(di->Xdp, di->Xgc, FAKE_LUT(di, di->pixtab[color]));
-        di->xlastcolor = color;
+        XSetForeground(Xdp, Xgc, do_fake_lut(pixtab[color]));
+        xlastcolor = color;
     }
-    XPutPixel(di->Ximage, x, y, FAKE_LUT(di, di->pixtab[color]));
-    if (di->fastmode && g_help_mode != help_labels::HELP_PALETTE_EDITOR)
+    XPutPixel(Ximage, x, y, do_fake_lut(pixtab[color]));
+    if (fastmode && g_help_mode != help_labels::HELP_PALETTE_EDITOR)
     {
-        if (!di->alarmon)
+        if (!alarmon)
         {
-            x11_schedule_alarm(drv, 0);
+            schedule_alarm(drv, 0);
         }
     }
     else
     {
-        XDrawPoint(di->Xdp, di->Xw, di->Xgc, x, y);
-        if (di->onroot)
+        XDrawPoint(Xdp, Xw, Xgc, x, y);
+        if (onroot)
         {
-            XDrawPoint(di->Xdp, di->Xpixmap, di->Xgc, x, y);
+            XDrawPoint(Xdp, Xpixmap, Xgc, x, y);
         }
     }
 }
@@ -2199,7 +2038,7 @@ x11_write_pixel(Driver *drv, int x, int y, int color)
 /*
  *----------------------------------------------------------------------
  *
- * x11_read_span --
+ * read_span --
  *
  *  Reads a line of pixels from the screen.
  *
@@ -2211,20 +2050,19 @@ x11_write_pixel(Driver *drv, int x, int y, int color)
  *
  *----------------------------------------------------------------------
  */
-static void
-x11_read_span(Driver *drv, int y, int x, int lastx, BYTE *pixels)
+void X11Driver::read_span(int y, int x, int lastx, BYTE *pixels)
 {
     int width = lastx-x+1;
     for (int i = 0; i < width; i++)
     {
-        pixels[i] = x11_read_pixel(drv, x+i, y);
+        pixels[i] = read_pixel(drv, x+i, y);
     }
 }
 
 /*
  *----------------------------------------------------------------------
  *
- * x11_write_span --
+ * write_span --
  *
  *  Write a line of pixels to the screen.
  *
@@ -2236,27 +2074,25 @@ x11_read_span(Driver *drv, int y, int x, int lastx, BYTE *pixels)
  *
  *----------------------------------------------------------------------
  */
-static void
-x11_write_span(Driver *drv, int y, int x, int lastx, BYTE *pixels)
+void X11Driver::write_span(int y, int x, int lastx, BYTE *pixels)
 {
     int width;
     BYTE *pixline;
-    DIX11(drv);
 
 #if 1
     if (x == lastx)
     {
-        x11_write_pixel(drv, x, y, pixels[0]);
+        write_pixel(drv, x, y, pixels[0]);
         return;
     }
     width = lastx-x+1;
-    if (di->usepixtab)
+    if (usepixtab)
     {
         for (int i = 0; i < width; i++)
         {
-            di->pixbuf[i] = di->pixtab[pixels[i]];
+            pixbuf[i] = pixtab[pixels[i]];
         }
-        pixline = di->pixbuf;
+        pixline = pixbuf;
     }
     else
     {
@@ -2264,46 +2100,44 @@ x11_write_span(Driver *drv, int y, int x, int lastx, BYTE *pixels)
     }
     for (int i = 0; i < width; i++)
     {
-        XPutPixel(di->Ximage, x+i, y, FAKE_LUT(di, pixline[i]));
+        XPutPixel(Ximage, x+i, y, do_fake_lut(pixline[i]));
     }
-    if (di->fastmode && g_help_mode != help_labels::HELP_PALETTE_EDITOR)
+    if (fastmode && g_help_mode != help_labels::HELP_PALETTE_EDITOR)
     {
-        if (!di->alarmon)
+        if (!alarmon)
         {
-            x11_schedule_alarm(drv, 0);
+            schedule_alarm(drv, 0);
         }
     }
     else
     {
-        XPutImage(di->Xdp, di->Xw, di->Xgc, di->Ximage, x, y, x, y, width, 1);
-        if (di->onroot)
+        XPutImage(Xdp, Xw, Xgc, Ximage, x, y, x, y, width, 1);
+        if (onroot)
         {
-            XPutImage(di->Xdp, di->Xpixmap, di->Xgc, di->Ximage, x, y, x, y, width, 1);
+            XPutImage(Xdp, Xpixmap, Xgc, Ximage, x, y, x, y, width, 1);
         }
     }
 #else
     width = lastx-x+1;
     for (int i = 0; i < width; i++)
     {
-        x11_write_pixel(x+i, y, pixels[i]);
+        write_pixel(x+i, y, pixels[i]);
     }
 #endif
 }
 
-static void x11_get_truecolor(Driver *drv,
-                              int x, int y, int *r, int *g, int *b, int *a)
+void X11Driver::get_truecolor(int x, int y, int *r, int *g, int *b, int *a)
 {
 }
 
-static void x11_put_truecolor(Driver *drv,
-                              int x, int y, int r, int g, int b, int a)
+void X11Driver::put_truecolor(int x, int y, int r, int g, int b, int a)
 {
 }
 
 /*
  *----------------------------------------------------------------------
  *
- * x11_set_line_mode --
+ * set_line_mode --
  *
  *  Set line mode to 0=draw or 1=xor.
  *
@@ -2315,29 +2149,27 @@ static void x11_put_truecolor(Driver *drv,
  *
  *----------------------------------------------------------------------
  */
-static void
-x11_set_line_mode(Driver *drv, int mode)
+void X11Driver::set_line_mode(int mode)
 {
-    DIX11(drv);
-    di->xlastcolor = -1;
+    xlastcolor = -1;
     if (mode == 0)
     {
-        XSetFunction(di->Xdp, di->Xgc, GXcopy);
-        di->xlastfcn = GXcopy;
+        XSetFunction(Xdp, Xgc, GXcopy);
+        xlastfcn = GXcopy;
     }
     else
     {
-        XSetForeground(di->Xdp, di->Xgc, FAKE_LUT(di, g_colors-1));
-        di->xlastcolor = -1;
-        XSetFunction(di->Xdp, di->Xgc, GXxor);
-        di->xlastfcn = GXxor;
+        XSetForeground(Xdp, Xgc, do_fake_lut(g_colors-1));
+        xlastcolor = -1;
+        XSetFunction(Xdp, Xgc, GXxor);
+        xlastfcn = GXxor;
     }
 }
 
 /*
  *----------------------------------------------------------------------
  *
- * x11_draw_line --
+ * draw_line --
  *
  *  Draw a line.
  *
@@ -2349,29 +2181,26 @@ x11_set_line_mode(Driver *drv, int mode)
  *
  *----------------------------------------------------------------------
  */
-static void
-x11_draw_line(Driver *drv, int x1, int y1, int x2, int y2, int color)
+void X11Driver::draw_line(int x1, int y1, int x2, int y2, int color)
 {
-    DIX11(drv);
-    XDrawLine(di->Xdp, di->Xw, di->Xgc, x1, y1, x2, y2);
+    XDrawLine(Xdp, Xw, Xgc, x1, y1, x2, y2);
 }
 
-static void x11_display_string(Driver *drv,
-                               int x, int y, int fg, int bg, char const *text)
+void X11Driver::display_string(int x, int y, int fg, int bg, char const *text)
 {
 }
 
-static void x11_save_graphics(Driver *drv)
+void X11Driver::save_graphics()
 {
 }
 
-static void x11_restore_graphics(Driver *drv)
+void X11Driver::restore_graphics()
 {
 }
 
 /*----------------------------------------------------------------------
  *
- * x11_get_key --
+ * get_key --
  *
  *  Get a key from the keyboard or the X server.
  *  Blocks if block = 1.
@@ -2385,12 +2214,10 @@ static void x11_restore_graphics(Driver *drv)
  *
  *----------------------------------------------------------------------
  */
-static int
-x11_get_key(Driver *drv)
+int X11Driver::get_key()
 {
     int block = 1;
     static int skipcount = 0;
-    DIX11(drv);
 
     while (1)
     {
@@ -2400,12 +2227,12 @@ x11_get_key(Driver *drv)
             break;
         skipcount = 0;
 
-        handle_events(di);
+        handle_events();
 
-        if (di->key_buffer)
+        if (key_buffer)
         {
-            int ch = di->key_buffer;
-            di->key_buffer = 0;
+            int ch = key_buffer;
+            key_buffer = 0;
             skipcount = 9999; // If we got a key, check right away next time
             return translate_key(ch);
         }
@@ -2428,9 +2255,9 @@ x11_get_key(Driver *drv)
 
             // See http://llvm.org/bugs/show_bug.cgi?id=8920
 #if !defined(__clang_analyzer__)
-            FD_SET(ConnectionNumber(di->Xdp), &reads);
+            FD_SET(ConnectionNumber(Xdp), &reads);
 #endif
-            status = select(ConnectionNumber(di->Xdp) + 1, &reads, nullptr, nullptr, &tout);
+            status = select(ConnectionNumber(Xdp) + 1, &reads, nullptr, nullptr, &tout);
 
             if (status <= 0)
                 return 0;
@@ -2440,12 +2267,12 @@ x11_get_key(Driver *drv)
     return 0;
 }
 
-static int x11_key_cursor(Driver *drv, int row, int col)
+int X11Driver::key_cursor(int row, int col)
 {
     return 0;
 }
 
-static void flush_output(DriverX11 *di)
+void X11Driver::flush_output()
 {
     static time_t start = 0;
     static long ticks_per_second = 0;
@@ -2474,42 +2301,40 @@ static void flush_output(DriverX11 *di)
         long now = readticker();
         if ((now - last)*frames_per_second > ticks_per_second)
         {
-            driver_flush();
-            di->frame_.pump_messages(false);
+            flush();
+            frame_.pump_messages(false);
             last = now;
         }
     }
 }
 
-static int x11_key_pressed(Driver *drv)
+int X11Driver::key_pressed()
 {
-    DIX11(drv);
-
-    if (int const ch = di->key_buffer)
+    if (int const ch = key_buffer)
     {
         return ch;
     }
 
-    flush_output(di);
-    int const ch = handle_special_keys(di->frame_.get_key_press(0));
-    di->key_buffer = ch;
+    flush_output();
+    int const ch = handle_special_keys(frame_.get_key_press(0));
+    key_buffer = ch;
 
     return ch;
 }
 
-static int x11_wait_key_pressed(Driver *drv, int timeout)
+int X11Driver::wait_key_pressed(int timeout)
 {
     return 0;
 }
 
-static void x11_unget_key(Driver *drv, int key)
+void X11Driver::unget_key(int key)
 {
 }
 
 /*
  *----------------------------------------------------------------------
  *
- * x11_shell
+ * shell
  *
  *  Exit to a unix shell.
  *
@@ -2521,8 +2346,7 @@ static void x11_unget_key(Driver *drv, int key)
  *
  *----------------------------------------------------------------------
  */
-static void
-x11_shell(Driver * /*drv*/)
+void X11Driver::shell()
 {
     SignalHandler sigint;
     std::string shell{getenv("SHELL")};
@@ -2561,12 +2385,11 @@ x11_shell(Driver * /*drv*/)
     putchar('\n');
 }
 
-static void
-x11_set_video_mode(Driver *drv, VIDEOINFO *mode)
+void X11Driver::set_video_mode(VIDEOINFO *mode)
 {
     if (g_disk_flag)
         enddisk();
-    x11_end_video(drv);
+    end_video();
     g_good_mode = true;
     switch (g_dot_mode)
     {
@@ -2574,8 +2397,8 @@ x11_set_video_mode(Driver *drv, VIDEOINFO *mode)
         break;
 
     case 19: // X window
-        x11_start_video(drv);
-        x11_set_for_graphics(drv);
+        start_video();
+        set_for_graphics();
         break;
 
     default:
@@ -2584,17 +2407,15 @@ x11_set_video_mode(Driver *drv, VIDEOINFO *mode)
     }
     if (g_dot_mode != 0)
     {
-        x11_read_palette(drv);
+        read_palette();
         g_and_color = g_colors-1;
         g_box_count =0;
     }
 }
 
-static void
-x11_put_string(Driver *drv, int row, int col, int attr, char const *msg)
+void X11Driver::put_string(int row, int col, int attr, char const *msg)
 {
-    DIX11(drv);
-    assert(di->text_not_graphics);
+    assert(text_not_graphics);
     if (row != -1)
     {
         g_text_row = row;
@@ -2608,72 +2429,61 @@ x11_put_string(Driver *drv, int row, int col, int attr, char const *msg)
     int c = g_text_cbase + g_text_col;
     assert(r >= 0 && r < X11_TEXT_MAX_ROW);
     assert(c >= 0 && c < X11_TEXT_MAX_COL);
-    di->text_.put_string(c, r, attr, msg, &g_text_row, &g_text_col);
+    text_.put_string(c, r, attr, msg, &g_text_row, &g_text_col);
 }
 
-static bool x11_is_text(Driver *drv)
+bool X11Driver::is_text()
 {
-    DIX11(drv);
-    return di->text_not_graphics;
+    return text_not_graphics;
 }
 
-static void
-x11_set_for_text(Driver *drv)
+void X11Driver::set_for_text()
 {
-    DIX11(drv);
-    di->text_not_graphics = true;
-    di->text_.show();
-    di->plot_.hide();
+    text_not_graphics = true;
+    text_.show();
+    plot_.hide();
 }
 
-static void
-x11_set_for_graphics(Driver *drv)
+void X11Driver::set_for_graphics()
 {
-    DIX11(drv);
-    di->text_not_graphics = false;
-    di->plot_.show();
-    di->text_.hide();
+    text_not_graphics = false;
+    plot_.show();
+    text_.hide();
 }
 
-static void
-x11_set_clear(Driver *drv)
+void X11Driver::set_clear()
 {
-    DIX11(drv);
-    if (di->text_not_graphics)
+    if (text_not_graphics)
     {
-        di->text_.clear();
+        text_.clear();
     }
     else
     {
-        di->plot_.clear();
+        plot_.clear();
     }
 }
 
-static void
-x11_move_cursor(Driver *drv, int row, int col)
+void X11Driver::move_cursor(int row, int col)
 {
     // TODO: draw reverse video text cursor at new position
-    std::fprintf(stderr, "x11_move_cursor(%d,%d)\n", row, col);
+    std::fprintf(stderr, "X11Driver::move_cursor(%d,%d)\n", row, col);
 }
 
-static void
-x11_hide_text_cursor(Driver *drv)
+void X11Driver::hide_text_cursor()
 {
     // TODO: erase cursor if currently drawn
-    std::fprintf(stderr, "x11_hide_text_cursor\n");
+    std::fprintf(stderr, "X11Driver::hide_text_cursor\n");
 }
 
-static void
-x11_set_attr(Driver *drv, int row, int col, int attr, int count)
+void X11Driver::set_attr(int row, int col, int attr, int count)
 {
-    DIX11(drv);
     int i = col;
 
     while (count)
     {
         assert(row < TEXT_HEIGHT);
         assert(i < TEXT_WIDTH);
-        di->text_attr[row][i] = attr;
+        text_attr[row][i] = attr;
         if (++i == TEXT_WIDTH)
         {
             i = 0;
@@ -2682,175 +2492,107 @@ x11_set_attr(Driver *drv, int row, int col, int attr, int count)
         count--;
     }
     // TODO: refresh text
-    std::fprintf(stderr, "x11_set_attr(%d,%d, %d): %d\n", row, col, count, attr);
+    std::fprintf(stderr, "X11Driver::set_attr(%d,%d, %d): %d\n", row, col, count, attr);
 }
 
-static void
-x11_scroll_up(Driver *drv, int top, int bot)
+void X11Driver::scroll_up(int top, int bot)
 {
-    DIX11(drv);
     assert(bot <= TEXT_HEIGHT);
     for (int r = top; r < bot; r++)
         for (int c = 0; c < TEXT_WIDTH; c++)
         {
-            di->text_attr[r][c] = di->text_attr[r+1][c];
-            di->text_screen[r][c] = di->text_screen[r+1][c];
+            text_attr[r][c] = text_attr[r+1][c];
+            text_screen[r][c] = text_screen[r+1][c];
         }
     for (int c = 0; c < TEXT_WIDTH; c++)
     {
-        di->text_attr[bot][c] = 0;
-        di->text_screen[bot][c] = ' ';
+        text_attr[bot][c] = 0;
+        text_screen[bot][c] = ' ';
     }
     // TODO: draw text
-    std::fprintf(stderr, "x11_scroll_up(%d, %d)\n", top, bot);
+    std::fprintf(stderr, "X11Driver::scroll_up(%d, %d)\n", top, bot);
 }
 
-static void
-x11_stack_screen(Driver *drv)
+void X11Driver::stack_screen()
 {
     // TODO
-    std::fprintf(stderr, "x11_stack_screen\n");
+    std::fprintf(stderr, "X11Driver::stack_screen\n");
 }
 
-static void
-x11_unstack_screen(Driver *drv)
+void X11Driver::unstack_screen()
 {
     // TODO
-    std::fprintf(stderr, "x11_unstack_screen\n");
+    std::fprintf(stderr, "X11Driver::unstack_screen\n");
 }
 
-static void
-x11_discard_screen(Driver *drv)
+void X11Driver::discard_screen()
 {
     // TODO
-    std::fprintf(stderr, "x11_discard_screen\n");
+    std::fprintf(stderr, "X11Driver::discard_screen\n");
 }
 
-static int
-x11_init_fm(Driver *drv)
+int X11Driver::init_fm()
 {
     // TODO
     return 0;
 }
 
-static void
-x11_buzzer(Driver *drv, buzzer_codes kind)
+void X11Driver::buzzer(buzzer_codes kind)
 {
     // TODO
-    std::fprintf(stderr, "x11_buzzer(%d)\n", static_cast<int>(kind));
+    std::fprintf(stderr, "X11Driver::buzzer(%d)\n", static_cast<int>(kind));
 }
 
-static bool x11_sound_on(Driver *drv, int freq)
+bool X11Driver::sound_on(int freq)
 {
     // TODO
-    std::fprintf(stderr, "x11_sound_on(%d)\n", freq);
+    std::fprintf(stderr, "X11Driver::sound_on(%d)\n", freq);
     return false;
 }
 
-static void
-x11_sound_off(Driver *drv)
+void X11Driver::sound_off()
 {
     // TODO
-    std::fprintf(stderr, "x11_sound_off\n");
+    std::fprintf(stderr, "X11Driver::sound_off\n");
 }
 
-static void
-x11_mute(Driver *drv)
+void X11Driver::mute()
 {
     // TODO
 }
 
-static bool
-x11_diskp(Driver *drv)
+bool X11Driver::diskp()
 {
     // TODO
     return false;
 }
 
-static int x11_get_char_attr(Driver *drv)
+int X11Driver::get_char_attr()
 {
     // TODO
     return 0;
 }
 
-static void x11_put_char_attr(Driver *drv, int char_attr)
+void X11Driver::put_char_attr(int char_attr)
 {
     // TODO
 }
 
-static void x11_delay(Driver *drv, int ms)
+void X11Driver::delay(int ms)
 {
     // TODO
 }
 
-static void x11_get_max_screen(Driver *drv, int *width, int *height)
+void X11Driver::get_max_screen(int *width, int *height)
 {
     // TODO
 }
 
-static void x11_set_keyboard_timeout(Driver *drv, int ms)
+void X11Driver::set_keyboard_timeout(int ms)
 {
     // TODO
 }
 
+static X11Driver x11_driver_info;
 
-/*
- * place this last in the file to avoid having to forward declare routines
- */
-static DriverX11 x11_driver_info = {
-    STD_DRIVER_STRUCT(x11, "X11"),
-    false,                // onroot
-    false,                // fullscreen
-    false,                // sharecolor
-    false,                // privatecolor
-    0,                    // fixcolors
-    false,                // sync
-    "",                   // Xdisplay
-    nullptr,              // Xgeometry
-    0,                    // doesBacking
-    false,                // usepixtab
-    { 0L },               // pixtab
-    { 0 },                // ipixtab
-    { 0L },               // cmap_pixtab
-    false,                // cmap_pixtab_alloced
-    false,                // g_fake_lut
-    false,                // fastmode
-    false,                // alarmon
-    false,                // doredraw
-    nullptr,              // Xdp
-    None,                 // Xw
-    None,                 // Xgc
-    nullptr,              // Xvi
-    nullptr,              // Xsc
-    None,                 // Xcmap
-    0,                    // Xdepth
-    nullptr,              // Ximage
-    nullptr,              // Xdata
-    0,                    // Xdscreen
-    None,                 // Xpixmap
-    DEFX, DEFY,           // Xwinwidth, Xwinheight
-    None,                 // Xroot
-    -1,                   // xlastcolor
-    GXcopy,               // xlastfcn
-    nullptr,              // pixbuf
-    { 0 },                // cols
-    false,                // XZoomWaiting
-    FONT,                 // x_font_name
-    nullptr,              // font_info
-    0,                    // key_buffer
-    nullptr,              // fontPtr
-    { 0 },                // text_screen
-    { 0 },                // text_attr
-    nullptr,              // font_table
-    false,                // text_not_graphics
-    false,                // ctl_mode
-    false,                // shift_mode
-    0,                    // button_num
-    0, 0,                 // last_x, last_y
-    0, 0,                 // dx, dy
-    {},                   // frame_
-    {},                   // text_
-    {}                    // plot_
-};
-
-Driver *x11_driver = &x11_driver_info.pub;
+Driver *x11_driver = &x11_driver_info;
