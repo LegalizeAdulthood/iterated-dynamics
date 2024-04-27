@@ -196,7 +196,7 @@ private:
     void flush_output();
     unsigned long do_fake_lut(int idx)
     {
-        return m_fake_lut ? cmap_pixtab[idx] : idx;
+        return m_fake_lut ? m_cmap_pixtab[idx] : idx;
     }
 
     bool m_on_root{};              // = false;
@@ -210,7 +210,7 @@ private:
     bool m_use_pixtab{};           // = false;
     unsigned long m_pixtab[256]{}; //
     int m_inv_pixtab[256]{};       //
-    XPixel cmap_pixtab[256]{};     // for faking a LUTs on non-LUT visuals
+    XPixel m_cmap_pixtab[256]{};   // for faking a LUTs on non-LUT visuals
     bool cmap_pixtab_alloced{};    //
     bool m_fake_lut{};             //
     bool fastmode{};               // = false; Don't draw pixels 1 at a time
@@ -582,7 +582,7 @@ void X11Driver::clearXwindow()
     {
         for (int j = 0; j < Ximage->height; j++)
             for (int i = 0; i < Ximage->width; i++)
-                XPutPixel(Ximage, i, j, cmap_pixtab[m_pixtab[0]]);
+                XPutPixel(Ximage, i, j, m_cmap_pixtab[m_pixtab[0]]);
     }
     else if (m_pixtab[0] != 0)
     {
@@ -1911,11 +1911,11 @@ int X11Driver::write_palette()
 
                     if (cmap_pixtab_alloced)
                     {
-                        XFreeColors(Xdp, Xcmap, cmap_pixtab + i, 1, None);
+                        XFreeColors(Xdp, Xcmap, m_cmap_pixtab + i, 1, None);
                     }
                     if (XAllocColor(Xdp, Xcmap, &cols[i]))
                     {
-                        cmap_pixtab[i] = cols[i].pixel;
+                        m_cmap_pixtab[i] = cols[i].pixel;
                     }
                     else
                     {
@@ -1976,7 +1976,7 @@ int X11Driver::read_pixel(int x, int y)
     {
         XPixel pixel = XGetPixel(Ximage, x, y);
         for (int i = 0; i < 256; i++)
-            if (cmap_pixtab[i] == pixel)
+            if (m_cmap_pixtab[i] == pixel)
                 return i;
         return 0;
     }
