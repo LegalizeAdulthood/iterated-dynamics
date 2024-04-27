@@ -199,10 +199,10 @@ private:
         return m_fake_lut ? cmap_pixtab[idx] : idx;
     }
 
-    bool m_on_root{};                 // = false;
-    bool m_full_screen{};             // = false;
-    bool sharecolor{};             // = false;
-    bool privatecolor{};           // = false;
+    bool m_on_root{};              // = false;
+    bool m_full_screen{};          // = false;
+    bool m_share_color{};          // = false;
+    bool m_private_color{};        // = false;
     int fixcolors{};               // = 0;
     bool sync{};                   // = false; Run X events synchronously (debugging)
     char const *Xdisplay{""};      // = "";
@@ -341,7 +341,7 @@ int X11Driver::check_arg(int argc, char **argv, int *i)
     }
     else if (std::strcmp(argv[*i], "-share") == 0)
     {
-        sharecolor = true;
+        m_share_color = true;
         return 1;
     }
     else if (std::strcmp(argv[*i], "-fast") == 0)
@@ -361,7 +361,7 @@ int X11Driver::check_arg(int argc, char **argv, int *i)
     }
     else if (std::strcmp(argv[*i], "-private") == 0)
     {
-        privatecolor = true;
+        m_private_color = true;
         return 1;
     }
     else if (std::strcmp(argv[*i], "-fixcolors") == 0 && *i+1 < argc)
@@ -649,7 +649,7 @@ int X11Driver::xcmapstuff()
 
     if (m_on_root)
     {
-        privatecolor = false;
+        m_private_color = false;
     }
     for (int i = 0; i < g_colors; i++)
     {
@@ -662,11 +662,11 @@ int X11Driver::xcmapstuff()
         if (m_fake_lut)
             x11_write_palette(&pub);
     }
-    else if (sharecolor)
+    else if (m_share_color)
     {
         g_got_real_dac = false;
     }
-    else if (privatecolor)
+    else if (m_private_color)
     {
         Xcmap = XCreateColormap(Xdp, Xw, Xvi, AllocAll);
         XSetWindowColormap(Xdp, Xw, Xcmap);
