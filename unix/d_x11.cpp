@@ -238,7 +238,6 @@ private:
     int m_key_buffer{};               // Buffered X key
     char m_text_screen[TEXT_HEIGHT][TEXT_WIDTH]{};
     int m_text_attr[TEXT_HEIGHT][TEXT_WIDTH]{};
-    BYTE *font_table{};       //
     bool text_not_graphics{}; // true when displaying text
     bool ctl_mode{};          // rubber banding and event processing data
     bool shift_mode{};        //
