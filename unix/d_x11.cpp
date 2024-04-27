@@ -207,7 +207,7 @@ private:
     bool m_sync{};                 // = false; Run X events synchronously (debugging)
     std::string m_display;         //
     std::string m_geometry;        //
-    bool usepixtab{};              // = false;
+    bool m_use_pixtab{};           // = false;
     unsigned long pixtab[256]{};   //
     int ipixtab[256]{};            //
     XPixel cmap_pixtab[256]{};     // for faking a LUTs on non-LUT visuals
@@ -682,11 +682,11 @@ int X11Driver::xcmapstuff()
                                  (unsigned int) ncells))
             {
                 g_colors = ncells;
-                usepixtab = true;
+                m_use_pixtab = true;
                 break;
             }
         }
-        if (!usepixtab)
+        if (!m_use_pixtab)
         {
             std::printf("Couldn't allocate any colors\n");
             g_got_real_dac = false;
@@ -722,7 +722,7 @@ int X11Driver::xcmapstuff()
         pixtab[0] = ipixtab[0];
         ipixtab[1] = 0;
         pixtab[1] = ipixtab[1];
-        usepixtab = true;
+        m_use_pixtab = true;
     }
 
     return g_colors;
@@ -2085,7 +2085,7 @@ void X11Driver::write_span(int y, int x, int lastx, BYTE *pixels)
         return;
     }
     width = lastx-x+1;
-    if (usepixtab)
+    if (m_use_pixtab)
     {
         for (int i = 0; i < width; i++)
         {
