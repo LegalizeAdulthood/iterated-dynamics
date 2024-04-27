@@ -204,7 +204,7 @@ private:
     bool m_share_color{};          // = false;
     bool m_private_color{};        // = false;
     int m_fix_colors{};            // = 0;
-    bool sync{};                   // = false; Run X events synchronously (debugging)
+    bool m_sync{};                 // = false; Run X events synchronously (debugging)
     char const *Xdisplay{""};      // = "";
     char const *Xgeometry{};       // = nullptr;
     int doesBacking{};             //
@@ -356,7 +356,7 @@ int X11Driver::check_arg(int argc, char **argv, int *i)
     }
     else if (std::strcmp(argv[*i], "-sync") == 0)
     {
-        sync = true;
+        m_sync = true;
         return 1;
     }
     else if (std::strcmp(argv[*i], "-private") == 0)
@@ -1509,7 +1509,7 @@ bool X11Driver::init(int *argc, char **argv)
         return false;
     }
     Xdscreen = XDefaultScreen(Xdp);
-    if (sync)
+    if (m_sync)
         XSynchronize(Xdp, True);
     XSetErrorHandler(errhand);
 
@@ -1650,7 +1650,7 @@ void X11Driver::window()
     if (Xgeometry && !m_on_root)
         XGeometry(Xdp, Xdscreen, Xgeometry, DEFXY, 0, 1, 1, 0, 0,
                   &Xwinx, &Xwiny, &Xwinwidth, &Xwinheight);
-    if (sync)
+    if (m_sync)
         XSynchronize(Xdp, True);
     XSetErrorHandler(errhand);
     Xsc = ScreenOfDisplay(Xdp, Xdscreen);
