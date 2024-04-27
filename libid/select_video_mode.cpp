@@ -45,8 +45,8 @@ static void format_vid_table(int choice, char *buf)
            sizeof(g_video_entry));
     vidmode_keyname(g_video_entry.keynum, kname);
     std::sprintf(buf, "%-5s %-12s %5d %5d %3d  %.12s %.26s", // 34 chars
-        kname, g_video_entry.driver->description, g_video_entry.xdots, g_video_entry.ydots, g_video_entry.colors,
-        g_video_entry.driver->name, g_video_entry.comment);
+        kname, g_video_entry.driver->get_description().c_str(), g_video_entry.xdots, g_video_entry.ydots,
+        g_video_entry.colors, g_video_entry.driver->get_name().c_str(), g_video_entry.comment);
 }
 
 int select_video_mode(int curmode)
@@ -257,7 +257,7 @@ static void update_id_cfg()
                     vident.xdots,
                     vident.ydots,
                     colorsbuf,
-                    vident.driver->name,
+                    vident.driver->get_name().c_str(),
                     vident.comment);
             if (++nextmode >= g_video_table_len)
             {

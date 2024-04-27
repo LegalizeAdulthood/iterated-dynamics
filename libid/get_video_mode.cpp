@@ -99,7 +99,7 @@ static void format_vid_inf(int i, char const *err, char *buf)
            sizeof(g_video_entry));
     vidmode_keyname(g_video_entry.keynum, kname);
     std::sprintf(buf, "%-5s %-16s %-4s %5d %5d %3d %-25s",  // 67 chars
-            kname, g_video_entry.driver->description, err,
+            kname, g_video_entry.driver->get_description().c_str(), err,
             g_video_entry.xdots, g_video_entry.ydots,
             g_video_entry.colors, g_video_entry.comment);
     g_video_entry.xdots = 0; // so tab_display knows to display nothing
@@ -175,7 +175,7 @@ int get_video_mode(FRACTAL_INFO *info, ext_blk_3 *blk_3_info)
                 && info->ydots == mode.ydots    //
                 && g_file_colors == mode.colors //
                 && mode.driver != nullptr       //
-                && !(*mode.driver->diskp)(mode.driver);
+                && !mode.driver->diskp();
         });
     if (it == end)
     {
@@ -204,7 +204,7 @@ int get_video_mode(FRACTAL_INFO *info, ext_blk_3 *blk_3_info)
     {
         g_video_entry = g_video_table[i];
         tmpflags = VI_EXACT;
-        if (g_video_entry.driver != nullptr && (*g_video_entry.driver->diskp)(g_video_entry.driver))
+        if (g_video_entry.driver != nullptr && g_video_entry.driver->diskp())
         {
             tmpflags |= VI_DISK;
         }

@@ -225,7 +225,7 @@ bool tab_display_2(char *msg)
         write_row(row++, "xdots %d ydots %d sxdots %d sydots %d", xdots, ydots, sxdots, sydots);
     */
     write_row(row++, "%dx%d dm=%d %s (%s)", g_logical_screen_x_dots, g_logical_screen_y_dots, g_dot_mode,
-              g_driver->name, g_driver->description);
+              g_driver->get_name().c_str(), g_driver->get_description().c_str());
     write_row(row++, "xxstart %d xxstop %d yystart %d yystop %d %s uses_ismand %d",
               g_xx_start, g_xx_stop, g_yy_start, g_yy_stop,
 #if !defined(XFRACT) && !defined(_WIN32)
@@ -530,7 +530,8 @@ top:
     {
         ++s_row;
     }
-    std::snprintf(msg, std::size(msg), "Driver: %s, %s", g_driver->name, g_driver->description);
+    std::snprintf(
+        msg, std::size(msg), "Driver: %s, %s", g_driver->get_name().c_str(), g_driver->get_description().c_str());
     driver_put_string(s_row++, 2, C_GENERAL_MED, msg);
     if (g_video_entry.xdots && bf_math == bf_math_type::NONE)
     {

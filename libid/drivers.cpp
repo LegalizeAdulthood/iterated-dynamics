@@ -14,14 +14,13 @@ extern Driver *disk_driver;
 static int s_num_drivers{};
 static Driver *s_available[MAX_DRIVERS]{};
 
-Driver *g_driver = nullptr;
+Driver *g_driver{};
 
-void
-load_driver(Driver *drv, int *argc, char **argv)
+void load_driver(Driver *drv, int *argc, char **argv)
 {
-    if (drv && drv->init)
+    if (drv != nullptr)
     {
-        const int num = (*drv->init)(drv, argc, argv);
+        const int num = drv->init(argc, argv);
         if (num > 0)
         {
             if (! g_driver)
@@ -60,8 +59,7 @@ int init_drivers(int *argc, char **argv)
 //
 // a driver uses this to inform the system of an available video mode
 //
-void
-add_video_mode(Driver *drv, VIDEOINFO *mode)
+void add_video_mode(Driver *drv, VIDEOINFO *mode)
 {
 #if defined(_WIN32)
     _ASSERTE(g_video_table_len < MAX_VIDEO_MODES);
@@ -72,14 +70,13 @@ add_video_mode(Driver *drv, VIDEOINFO *mode)
     g_video_table_len++;
 }
 
-void
-close_drivers()
+void close_drivers()
 {
     for (int i = 0; i < s_num_drivers; i++)
     {
         if (s_available[i])
         {
-            (*s_available[i]->terminate)(s_available[i]);
+            s_available[i]->terminate();
             s_available[i] = nullptr;
         }
     }
@@ -88,12 +85,11 @@ close_drivers()
     s_num_drivers = 0;
 }
 
-Driver *
-driver_find_by_name(char const *name)
+Driver *driver_find_by_name(char const *name)
 {
     for (int i = 0; i < s_num_drivers; i++)
     {
-        if (std::strcmp(name, s_available[i]->name) == 0)
+        if (name == s_available[i]->get_name())
         {
             return s_available[i];
         }
@@ -101,14 +97,13 @@ driver_find_by_name(char const *name)
     return nullptr;
 }
 
-void
-driver_set_video_mode(VIDEOINFO *mode)
+void driver_set_video_mode(VIDEOINFO *mode)
 {
     if (g_driver != mode->driver)
     {
-        g_driver->pause(g_driver);
+        g_driver->pause();
         g_driver = mode->driver;
-        g_driver->resume(g_driver);
+        g_driver->resume();
     }
-    (*g_driver->set_video_mode)(g_driver, mode);
+    g_driver->set_video_mode(mode);
 }

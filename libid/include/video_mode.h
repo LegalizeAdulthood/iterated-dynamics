@@ -5,7 +5,7 @@ enum
     MAX_VIDEO_MODES = 300       // maximum entries in id.cfg
 };
 
-struct Driver;
+class Driver;
 struct VIDEOINFO
 {                     // All we need to know about a video mode:
     int keynum;       // key number used to invoke this mode: 2-10 = F2-10, 11-40 = Shift,Ctrl,Alt{F1-F10}

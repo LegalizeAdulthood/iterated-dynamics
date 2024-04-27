@@ -122,7 +122,7 @@ void load_config(const std::string &cfg_path)
         vident.driver = driver_find_by_name(fields[3]);
         if (vident.driver != nullptr)
         {
-            if (vident.driver->validate_mode(vident.driver, &vident))
+            if (vident.driver->validate_mode(&vident))
             {
                 // look for a synonym mode and if found, overwite its key
                 bool synonym_found = false;

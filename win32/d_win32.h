@@ -5,9 +5,57 @@
 
 #define WIN32_MAXSCREENS 10
 
-struct Win32BaseDriver
+class Win32BaseDriver : public Driver
 {
-    Driver pub;
+public:
+    Win32BaseDriver(const char *name, const char *description) :
+        m_name(name),
+        m_description(description)
+    {
+    }
+    ~Win32BaseDriver() override = default;
+
+    const std::string &get_name() const override
+    {
+        return m_name;
+    }
+    const std::string &get_description() const override
+    {
+        return m_description;
+    }
+    void shell() override;
+    int key_pressed() override;
+    void terminate() override;
+    bool init(int *argc, char **argv) override;
+    void unget_key(int key) override;
+    int get_key() override;
+    void hide_text_cursor() override;
+    void set_video_mode(VIDEOINFO *mode) override;
+    void put_string(int row, int col, int attr, const char *msg) override;
+    void scroll_up(int top, int bot) override;
+    void move_cursor(int row, int col) override;
+    void set_attr(int row, int col, int attr, int count) override;
+    void stack_screen() override;
+    void unstack_screen() override;
+    void discard_screen() override;
+    int init_fm() override;
+    void buzzer(buzzer_codes kind) override;
+    void sound_off() override;
+    bool sound_on(int frequency) override;
+    void mute() override;
+    bool diskp() override;
+    int key_cursor(int row, int col) override;
+    int wait_key_pressed(int timeout) override;
+    int get_char_attr() override;
+    void put_char_attr(int char_attr) override;
+    void delay(int ms) override;
+    void get_truecolor(int x, int y, int *r, int *g, int *b, int *a) override;
+    void put_truecolor(int x, int y, int r, int g, int b, int a) override;
+    void set_keyboard_timeout(int ms) override;
+
+protected:
+    std::string m_name;
+    std::string m_description;
 
     Frame frame;
     WinText wintext;
@@ -17,44 +65,12 @@ struct Win32BaseDriver
     * When we peeked ahead and saw a keypress, stash it here for later
     * feeding to our caller.
     */
-    int key_buffer;
+    mutable int key_buffer{};
 
-    int screen_count;
-    BYTE *saved_screens[WIN32_MAXSCREENS];
-    int saved_cursor[WIN32_MAXSCREENS+1];
-    bool cursor_shown;
-    int cursor_row;
-    int cursor_col;
+    int screen_count{-1};
+    BYTE *saved_screens[WIN32_MAXSCREENS]{};
+    int saved_cursor[WIN32_MAXSCREENS+1]{};
+    bool cursor_shown{};
+    int cursor_row{};
+    int cursor_col{};
 };
-
-void win32_shell(Driver *drv);
-int win32_key_pressed(Driver *drv);
-void win32_terminate(Driver *drv);
-bool win32_init(Driver *drv, int *argc, char **argv);
-void win32_unget_key(Driver *drv, int key);
-int win32_get_key(Driver *drv);
-void win32_hide_text_cursor(Driver *drv);
-void win32_set_video_mode(Driver *drv, VIDEOINFO *mode);
-void win32_put_string(Driver *drv, int row, int col, int attr, char const *msg);
-void win32_scroll_up(Driver *drv, int top, int bot);
-void win32_move_cursor(Driver *drv, int row, int col);
-void win32_set_attr(Driver *drv, int row, int col, int attr, int count);
-void win32_stack_screen(Driver *drv);
-void win32_unstack_screen(Driver *drv);
-void win32_discard_screen(Driver *drv);
-int win32_init_fm(Driver *drv);
-void win32_buzzer(Driver *drv, buzzer_codes kind);
-bool win32_sound_on(Driver *drv, int freq);
-void win32_sound_off(Driver *drv);
-void win32_mute(Driver *drv);
-bool win32_diskp(Driver *drv);
-int win32_key_cursor(Driver *drv, int row, int col);
-int win32_wait_key_pressed(Driver *drv, int timeout);
-int win32_get_char_attr(Driver *drv);
-void win32_put_char_attr(Driver *drv, int char_attr);
-void win32_delay(Driver *drv, int ms);
-void win32_get_truecolor(Driver *drv, int x, int y, int *r, int *g, int *b, int *a);
-void win32_put_truecolor(Driver *drv, int x, int y, int r, int g, int b, int a);
-void win32_set_keyboard_timeout(Driver *drv, int ms);
-
-#define WIN32_DRIVER_STRUCT(base_, desc_) STD_DRIVER_STRUCT(base_, desc_)
