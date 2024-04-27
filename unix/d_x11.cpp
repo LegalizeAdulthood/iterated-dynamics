@@ -222,7 +222,7 @@ private:
     Visual *m_visual{};            //
     Screen *m_screen{};            //
     Colormap m_colormap{None};     //
-    int Xdepth{};                  //
+    int m_depth{};                 //
     XImage *Ximage{};              //
     char *Xdata{};                 //
     int Xdscreen{};                //
@@ -528,20 +528,20 @@ continue_hdl(int sig, int code, struct sigcontext *scp, char *addr)
 void X11Driver::select_visual()
 {
     m_visual = XDefaultVisualOfScreen(m_screen);
-    Xdepth = DefaultDepth(m_dpy, Xdscreen);
+    m_depth = DefaultDepth(m_dpy, Xdscreen);
 
     switch (m_visual->c_class)
     {
     case StaticGray:
     case StaticColor:
-        g_colors = (Xdepth <= 8) ? m_visual->map_entries : 256;
+        g_colors = (m_depth <= 8) ? m_visual->map_entries : 256;
         g_got_real_dac = false;
         m_fake_lut = false;
         break;
 
     case GrayScale:
     case PseudoColor:
-        g_colors = (Xdepth <= 8) ? m_visual->map_entries : 256;
+        g_colors = (m_depth <= 8) ? m_visual->map_entries : 256;
         g_got_real_dac = true;
         m_fake_lut = false;
         break;
@@ -673,7 +673,7 @@ int X11Driver::xcmapstuff()
     else
     {
         m_colormap = DefaultColormap(m_dpy, Xdscreen);
-        for (int powr = Xdepth; powr >= 1; powr--)
+        for (int powr = m_depth; powr >= 1; powr--)
         {
             ncells = 1 << powr;
             if (ncells > g_colors)
@@ -1678,7 +1678,7 @@ void X11Driver::window()
         RemoveRootPixmap();
         m_gc = XCreateGC(m_dpy, Xroot, 0, &Xgcvals);
         Xpixmap = XCreatePixmap(m_dpy, Xroot,
-                                    Xwinwidth, Xwinheight, Xdepth);
+                                    Xwinwidth, Xwinheight, m_depth);
         m_window = Xroot;
         XFillRectangle(m_dpy, Xpixmap, m_gc, 0, 0, Xwinwidth, Xwinheight);
         XSetWindowBackgroundPixmap(m_dpy, Xroot, Xpixmap);
@@ -1687,7 +1687,7 @@ void X11Driver::window()
     {
         Xroot = DefaultRootWindow(m_dpy);
         m_window = XCreateWindow(m_dpy, Xroot, Xwinx, Xwiny,
-                               Xwinwidth, Xwinheight, 0, Xdepth,
+                               Xwinwidth, Xwinheight, 0, m_depth,
                                InputOutput, CopyFromParent,
                                CWBackPixel | CWBitGravity | CWBackingStore,
                                &Xwatt);
@@ -1764,15 +1764,15 @@ bool X11Driver::resize()
         g_final_aspect_ratio = g_screen_aspect;
         int Xpad = 9;
         int Xmwidth;
-        if (Xdepth == 1)
+        if (m_depth == 1)
         {
             Xmwidth = 1 + g_screen_x_dots/8;
         }
-        else if (Xdepth <= 8)
+        else if (m_depth <= 8)
         {
             Xmwidth = g_screen_x_dots;
         }
-        else if (Xdepth <= 16)
+        else if (m_depth <= 16)
         {
             Xmwidth = 2*g_screen_x_dots;
             Xpad = 16;
@@ -1790,7 +1790,7 @@ bool X11Driver::resize()
             free(Ximage->data);
             XDestroyImage(Ximage);
         }
-        Ximage = XCreateImage(m_dpy, m_visual, Xdepth, ZPixmap, 0, nullptr, g_screen_x_dots,
+        Ximage = XCreateImage(m_dpy, m_visual, m_depth, ZPixmap, 0, nullptr, g_screen_x_dots,
                                   g_screen_y_dots, Xpad, Xmwidth);
         if (Ximage == nullptr)
         {
