@@ -211,7 +211,7 @@ private:
     unsigned long m_pixtab[256]{}; //
     int m_inv_pixtab[256]{};       //
     XPixel m_cmap_pixtab[256]{};   // for faking a LUTs on non-LUT visuals
-    bool cmap_pixtab_alloced{};    //
+    bool m_have_cmap_pixtab{};     //
     bool m_fake_lut{};             //
     bool fastmode{};               // = false; Don't draw pixels 1 at a time
     bool alarmon{};                // = false; true if the refresh alarm is on
@@ -1909,7 +1909,7 @@ int X11Driver::write_palette()
                     cols[i].green = g_dac_box[i][1]*1024;
                     cols[i].blue = g_dac_box[i][2]*1024;
 
-                    if (cmap_pixtab_alloced)
+                    if (m_have_cmap_pixtab)
                     {
                         XFreeColors(Xdp, Xcmap, m_cmap_pixtab + i, 1, None);
                     }
@@ -1928,7 +1928,7 @@ int X11Driver::write_palette()
                     last_dac[i][2] = g_dac_box[i][2];
                 }
             }
-            cmap_pixtab_alloced = true;
+            m_have_cmap_pixtab = true;
             last_dac_inited = true;
         }
         else
