@@ -225,7 +225,7 @@ private:
     int m_depth{};                 //
     XImage *m_image{};             //
     int m_dpy_screen{};            //
-    Pixmap Xpixmap{None};          //
+    Pixmap m_pixmap{None};         //
     int Xwinwidth{DEFX};           //
     int Xwinheight{DEFY};          //
     Window Xroot{None};            //
@@ -408,10 +408,10 @@ void X11Driver::doneXwindow()
     if (m_gc)
         XFreeGC(m_dpy, m_gc);
 
-    if (Xpixmap)
+    if (m_pixmap)
     {
-        XFreePixmap(m_dpy, Xpixmap);
-        Xpixmap = None;
+        XFreePixmap(m_dpy, m_pixmap);
+        m_pixmap = None;
     }
     XFlush(m_dpy);
     m_dpy = nullptr;
@@ -620,7 +620,7 @@ void X11Driver::clearXwindow()
     xlastcolor = -1;
     XSetForeground(m_dpy, m_gc, do_fake_lut(m_pixtab[0]));
     if (m_on_root)
-        XFillRectangle(m_dpy, Xpixmap, m_gc,
+        XFillRectangle(m_dpy, m_pixmap, m_gc,
                        0, 0, Xwinwidth, Xwinheight);
     XFillRectangle(m_dpy, m_window, m_gc,
                    0, 0, Xwinwidth, Xwinheight);
@@ -1676,11 +1676,11 @@ void X11Driver::window()
         Xroot = FindRootWindow();
         RemoveRootPixmap();
         m_gc = XCreateGC(m_dpy, Xroot, 0, &Xgcvals);
-        Xpixmap = XCreatePixmap(m_dpy, Xroot,
+        m_pixmap = XCreatePixmap(m_dpy, Xroot,
                                     Xwinwidth, Xwinheight, m_depth);
         m_window = Xroot;
-        XFillRectangle(m_dpy, Xpixmap, m_gc, 0, 0, Xwinwidth, Xwinheight);
-        XSetWindowBackgroundPixmap(m_dpy, Xroot, Xpixmap);
+        XFillRectangle(m_dpy, m_pixmap, m_gc, 0, 0, Xwinwidth, Xwinheight);
+        XSetWindowBackgroundPixmap(m_dpy, Xroot, m_pixmap);
     }
     else
     {
@@ -1836,7 +1836,7 @@ void X11Driver::redraw()
         XPutImage(m_dpy, m_window, m_gc, m_image, 0, 0, 0, 0,
                   g_screen_x_dots, g_screen_y_dots);
         if (m_on_root)
-            XPutImage(m_dpy, Xpixmap, m_gc, m_image, 0, 0, 0, 0,
+            XPutImage(m_dpy, m_pixmap, m_gc, m_image, 0, 0, 0, 0,
                       g_screen_x_dots, g_screen_y_dots);
         m_alarm_on = false;
     }
@@ -2028,7 +2028,7 @@ void X11Driver::write_pixel(int x, int y, int color)
         XDrawPoint(m_dpy, m_window, m_gc, x, y);
         if (m_on_root)
         {
-            XDrawPoint(m_dpy, Xpixmap, m_gc, x, y);
+            XDrawPoint(m_dpy, m_pixmap, m_gc, x, y);
         }
     }
 }
@@ -2112,7 +2112,7 @@ void X11Driver::write_span(int y, int x, int lastx, BYTE *pixels)
         XPutImage(m_dpy, m_window, m_gc, m_image, x, y, x, y, width, 1);
         if (m_on_root)
         {
-            XPutImage(m_dpy, Xpixmap, m_gc, m_image, x, y, x, y, width, 1);
+            XPutImage(m_dpy, m_pixmap, m_gc, m_image, x, y, x, y, width, 1);
         }
     }
 #else
