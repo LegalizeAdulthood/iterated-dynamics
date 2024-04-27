@@ -214,7 +214,7 @@ private:
     bool m_have_cmap_pixtab{};     //
     bool m_fake_lut{};             //
     bool m_fast_mode{};            // = false; Don't draw pixels 1 at a time
-    bool alarmon{};                // = false; true if the refresh alarm is on
+    bool m_alarm_on{};             // = false; true if the refresh alarm is on
     bool doredraw{};               // = false; true if we have a redraw waiting
     Display *Xdp{};                // = nullptr;
     Window Xw{None};               //
@@ -1566,7 +1566,7 @@ void X11Driver::schedule_alarm(int secs)
     else
         alarm(DRAW_INTERVAL);
 
-    alarmon = true;
+    m_alarm_on = true;
 }
 
 void X11Driver::get_max_size(unsigned *width, unsigned *height, bool *center_x, bool *center_y)
@@ -1832,14 +1832,14 @@ bool X11Driver::resize()
  */
 void X11Driver::redraw()
 {
-    if (alarmon)
+    if (m_alarm_on)
     {
         XPutImage(Xdp, Xw, Xgc, Ximage, 0, 0, 0, 0,
                   g_screen_x_dots, g_screen_y_dots);
         if (m_on_root)
             XPutImage(Xdp, Xpixmap, Xgc, Ximage, 0, 0, 0, 0,
                       g_screen_x_dots, g_screen_y_dots);
-        alarmon = false;
+        m_alarm_on = false;
     }
     doredraw = false;
 }
@@ -2019,7 +2019,7 @@ void X11Driver::write_pixel(int x, int y, int color)
     XPutPixel(Ximage, x, y, do_fake_lut(m_pixtab[color]));
     if (m_fast_mode && g_help_mode != help_labels::HELP_PALETTE_EDITOR)
     {
-        if (!alarmon)
+        if (!m_alarm_on)
         {
             schedule_alarm(drv, 0);
         }
@@ -2103,7 +2103,7 @@ void X11Driver::write_span(int y, int x, int lastx, BYTE *pixels)
     }
     if (m_fast_mode && g_help_mode != help_labels::HELP_PALETTE_EDITOR)
     {
-        if (!alarmon)
+        if (!m_alarm_on)
         {
             schedule_alarm(drv, 0);
         }
