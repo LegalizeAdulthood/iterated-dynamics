@@ -224,7 +224,6 @@ private:
     Colormap m_colormap{None};     //
     int m_depth{};                 //
     XImage *m_image{};             //
-    char *Xdata{};                 //
     int Xdscreen{};                //
     Pixmap Xpixmap{None};          //
     int Xwinwidth{DEFX};           //
