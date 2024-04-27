@@ -207,7 +207,6 @@ private:
     bool m_sync{};                 // = false; Run X events synchronously (debugging)
     std::string m_display;         //
     std::string m_geometry;        //
-    int doesBacking{};             //
     bool usepixtab{};              // = false;
     unsigned long pixtab[256]{};   //
     int ipixtab[256]{};            //
@@ -1668,7 +1667,7 @@ void X11Driver::window()
 
     Xwatt.background_pixel = BlackPixelOfScreen(Xsc);
     Xwatt.bit_gravity = StaticGravity;
-    doesBacking = DoesBackingStore(Xsc);
+    const int doesBacking = DoesBackingStore(Xsc);
     if (doesBacking)
         Xwatt.backing_store = Always;
     else
