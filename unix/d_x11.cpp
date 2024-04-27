@@ -224,7 +224,7 @@ private:
     Colormap m_colormap{None};     //
     int m_depth{};                 //
     XImage *m_image{};             //
-    int Xdscreen{};                //
+    int m_dpy_screen{};            //
     Pixmap Xpixmap{None};          //
     int Xwinwidth{DEFX};           //
     int Xwinheight{DEFY};          //
@@ -527,7 +527,7 @@ continue_hdl(int sig, int code, struct sigcontext *scp, char *addr)
 void X11Driver::select_visual()
 {
     m_visual = XDefaultVisualOfScreen(m_screen);
-    m_depth = DefaultDepth(m_dpy, Xdscreen);
+    m_depth = DefaultDepth(m_dpy, m_dpy_screen);
 
     switch (m_visual->c_class)
     {
@@ -671,7 +671,7 @@ int X11Driver::xcmapstuff()
     }
     else
     {
-        m_colormap = DefaultColormap(m_dpy, Xdscreen);
+        m_colormap = DefaultColormap(m_dpy, m_dpy_screen);
         for (int powr = m_depth; powr >= 1; powr--)
         {
             ncells = 1 << powr;
@@ -1360,7 +1360,7 @@ Window X11Driver::pr_dwmroot(Display *dpy, Window pwin)
     if (!XGetWindowAttributes(dpy, pwin, &pxwa))
     {
         std::printf("Search for root: XGetWindowAttributes failed\n");
-        return RootWindow(dpy, Xdscreen);
+        return RootWindow(dpy, m_dpy_screen);
     }
     if (XQueryTree(dpy, pwin, &root, &parent, &child, &nchild))
     {
@@ -1369,7 +1369,7 @@ Window X11Driver::pr_dwmroot(Display *dpy, Window pwin)
             if (!XGetWindowAttributes(dpy, child[i], &cxwa))
             {
                 std::printf("Search for root: XGetWindowAttributes failed\n");
-                return RootWindow(dpy, Xdscreen);
+                return RootWindow(dpy, m_dpy_screen);
             }
             if (pxwa.width == cxwa.width && pxwa.height == cxwa.height)
                 return pr_dwmroot(dpy, child[i]);
@@ -1379,13 +1379,13 @@ Window X11Driver::pr_dwmroot(Display *dpy, Window pwin)
     else
     {
         std::printf("Id: failed to find root window\n");
-        return RootWindow(dpy, Xdscreen);
+        return RootWindow(dpy, m_dpy_screen);
     }
 }
 
 Window X11Driver::FindRootWindow()
 {
-    Xroot = RootWindow(m_dpy, Xdscreen);
+    Xroot = RootWindow(m_dpy, m_dpy_screen);
     Xroot = pr_dwmroot(m_dpy, Xroot); // search for DEC wm root
 
     {   // search for swm/tvtwm root (from ssetroot by Tom LaStrange)
@@ -1506,7 +1506,7 @@ bool X11Driver::init(int *argc, char **argv)
         terminate();
         return false;
     }
-    Xdscreen = XDefaultScreen(m_dpy);
+    m_dpy_screen = XDefaultScreen(m_dpy);
     if (m_sync)
         XSynchronize(m_dpy, True);
     XSetErrorHandler(errhand);
@@ -1646,20 +1646,20 @@ void X11Driver::window()
      * string */
 
     if (!m_geometry.empty() && !m_on_root)
-        XGeometry(m_dpy, Xdscreen, m_geometry.c_str(), DEFXY, 0, 1, 1, 0, 0,
+        XGeometry(m_dpy, m_dpy_screen, m_geometry.c_str(), DEFXY, 0, 1, 1, 0, 0,
                   &Xwinx, &Xwiny, &Xwinwidth, &Xwinheight);
     if (m_sync)
         XSynchronize(m_dpy, True);
     XSetErrorHandler(errhand);
-    m_screen = ScreenOfDisplay(m_dpy, Xdscreen);
+    m_screen = ScreenOfDisplay(m_dpy, m_dpy_screen);
     select_visual();
     if (m_fix_colors > 0)
         g_colors = m_fix_colors;
 
     if (m_full_screen || m_on_root)
     {
-        Xwinwidth = DisplayWidth(m_dpy, Xdscreen);
-        Xwinheight = DisplayHeight(m_dpy, Xdscreen);
+        Xwinwidth = DisplayWidth(m_dpy, m_dpy_screen);
+        Xwinheight = DisplayHeight(m_dpy, m_dpy_screen);
     }
     g_screen_x_dots = Xwinwidth;
     g_screen_y_dots = Xwinheight;
