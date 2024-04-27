@@ -244,7 +244,7 @@ private:
     int m_button_num{};         //
     int m_last_x{};             //
     int m_last_y{};             //
-    int dx{};                   //
+    int m_dx{};                 //
     int dy{};                   //
     x11_frame_window frame_;    //
     x11_text_window text_;      //
@@ -1260,7 +1260,7 @@ void X11Driver::ev_motion_notify(XEvent *xevent)
 
         if (g_look_at_mouse == 3 && m_button_num != 0)
         {
-            dx += (xevent->xmotion.x-m_last_x)/MOUSE_SCALE;
+            m_dx += (xevent->xmotion.x-m_last_x)/MOUSE_SCALE;
             dy += (xevent->xmotion.y-m_last_y)/MOUSE_SCALE;
             m_last_x = xevent->xmotion.x;
             m_last_y = xevent->xmotion.y;
@@ -1309,19 +1309,19 @@ void X11Driver::handle_events()
     }
 
     if (!m_key_buffer && editpal_cursor && !g_inside_help && g_look_at_mouse == 3 &&
-            (dx != 0 || dy != 0))
+            (m_dx != 0 || dy != 0))
     {
-        if (ABS(dx) > ABS(dy))
+        if (ABS(m_dx) > ABS(dy))
         {
-            if (dx > 0)
+            if (m_dx > 0)
             {
                 m_key_buffer = mousefkey[m_button_num][0]; // right
-                dx--;
+                m_dx--;
             }
-            else if (dx < 0)
+            else if (m_dx < 0)
             {
                 m_key_buffer = mousefkey[m_button_num][1]; // left
-                dx++;
+                m_dx++;
             }
         }
         else
