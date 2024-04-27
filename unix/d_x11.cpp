@@ -196,7 +196,7 @@ private:
     void flush_output();
     unsigned long do_fake_lut(int idx)
     {
-        return g_fake_lut ? cmap_pixtab[idx] : idx;
+        return m_fake_lut ? cmap_pixtab[idx] : idx;
     }
 
     bool onroot{};                 // = false;
@@ -213,7 +213,7 @@ private:
     int ipixtab[256]{};            //
     XPixel cmap_pixtab[256]{};     // for faking a LUTs on non-LUT visuals
     bool cmap_pixtab_alloced{};    //
-    bool g_fake_lut{};             //
+    bool m_fake_lut{};             //
     bool fastmode{};               // = false; Don't draw pixels 1 at a time
     bool alarmon{};                // = false; true if the refresh alarm is on
     bool doredraw{};               // = false; true if we have a redraw waiting
@@ -537,21 +537,21 @@ void X11Driver::select_visual()
     case StaticColor:
         g_colors = (Xdepth <= 8) ? Xvi->map_entries : 256;
         g_got_real_dac = false;
-        g_fake_lut = false;
+        m_fake_lut = false;
         break;
 
     case GrayScale:
     case PseudoColor:
         g_colors = (Xdepth <= 8) ? Xvi->map_entries : 256;
         g_got_real_dac = true;
-        g_fake_lut = false;
+        m_fake_lut = false;
         break;
 
     case TrueColor:
     case DirectColor:
         g_colors = 256;
         g_got_real_dac = false;
-        g_fake_lut = true;
+        m_fake_lut = true;
         break;
 
     default:
@@ -579,7 +579,7 @@ void X11Driver::select_visual()
  */
 void X11Driver::clearXwindow()
 {
-    if (g_fake_lut)
+    if (m_fake_lut)
     {
         for (int j = 0; j < Ximage->height; j++)
             for (int i = 0; i < Ximage->width; i++)
@@ -659,7 +659,7 @@ int X11Driver::xcmapstuff()
     if (!g_got_real_dac)
     {
         Xcmap = DefaultColormapOfScreen(Xsc);
-        if (g_fake_lut)
+        if (m_fake_lut)
             x11_write_palette(&pub);
     }
     else if (sharecolor)
@@ -1892,9 +1892,9 @@ int X11Driver::write_palette()
 {
     if (!g_got_real_dac)
     {
-        if (g_fake_lut)
+        if (m_fake_lut)
         {
-            // !g_got_real_dac, g_fake_lut => truecolor, directcolor displays
+            // !g_got_real_dac, m_fake_lut => truecolor, directcolor displays
             static unsigned char last_dac[256][3];
             static bool last_dac_inited = false;
 
@@ -1934,7 +1934,7 @@ int X11Driver::write_palette()
         }
         else
         {
-            // !g_got_real_dac, !g_fake_lut => static color, static gray displays
+            // !g_got_real_dac, !m_fake_lut => static color, static gray displays
             assert(1);
         }
     }
@@ -1973,7 +1973,7 @@ int X11Driver::write_palette()
  */
 int X11Driver::read_pixel(int x, int y)
 {
-    if (g_fake_lut)
+    if (m_fake_lut)
     {
         XPixel pixel = XGetPixel(Ximage, x, y);
         for (int i = 0; i < 256; i++)
