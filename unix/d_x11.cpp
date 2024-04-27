@@ -111,9 +111,17 @@ class X11Driver : public Driver
 public:
     ~X11Driver() override = default;
 
+    const std::string &get_name() const
+    {
+        return m_name;
+    }
+    const std::string &get_description() const
+    {
+        return m_description;
+    }
     bool init(int *argc, char **argv) override;
     bool validate_mode(VIDEOINFO *mode) override;
-    void get_max_screen(int *width, int *height) override;
+    void get_max_screen(int &width, int &height) override;
     void terminate() override;
     void pause() override;
     void resume() override;
@@ -144,6 +152,7 @@ public:
     void put_string(int row, int col, int attr, char const *msg) override;
     bool is_text() override;
     void set_for_text() override;
+    void set_for_graphics() override;
     void set_clear() override;
     void move_cursor(int row, int col) override;
     void hide_text_cursor() override;
@@ -177,6 +186,7 @@ private:
     void clearXwindow();
     int xcmapstuff();
     int start_video();
+    int end_video();
     void get_max_size(unsigned *width, unsigned *height, bool *center_x, bool *center_y);
     void center_window(bool center_x, bool center_y);
     int getachar();
@@ -199,6 +209,8 @@ private:
         return m_fake_lut ? m_cmap_pixtab[idx] : idx;
     }
 
+    std::string m_name{"x11"};
+    std::string m_description{"X11 Window"};
     bool m_on_root{};                 //
     bool m_full_screen{};             //
     bool m_share_color{};             //
@@ -655,7 +667,7 @@ int X11Driver::xcmapstuff()
     {
         m_colormap = DefaultColormapOfScreen(m_screen);
         if (m_fake_lut)
-            x11_write_palette(&pub);
+            write_palette();
     }
     else if (m_share_color)
     {
@@ -1441,7 +1453,7 @@ void X11Driver::load_font()
         m_font_info = XLoadQueryFont(m_dpy, "6x12");
 }
 
-void X11DRiver::flush()
+void X11Driver::flush()
 {
     XSync(m_dpy, False);
 }
@@ -1515,7 +1527,7 @@ bool X11Driver::init(int *argc, char **argv)
         {
             if (m.xdots <= width && m.ydots <= height)
             {
-                add_video_mode(drv, &m);
+                add_video_mode(this, &m);
             }
         }
     }
@@ -1709,9 +1721,9 @@ void X11Driver::window()
         XMapWindow(m_dpy, m_window);
     }
 
-    resize(drv);
-    flush(drv);
-    write_palette(drv);
+    resize();
+    flush();
+    write_palette();
 
     x11_video_table[0].xdots = g_screen_x_dots;
     x11_video_table[0].ydots = g_screen_y_dots;
@@ -2014,7 +2026,7 @@ void X11Driver::write_pixel(int x, int y, int color)
     {
         if (!m_alarm_on)
         {
-            schedule_alarm(drv, 0);
+            schedule_alarm(0);
         }
     }
     else
@@ -2047,7 +2059,7 @@ void X11Driver::read_span(int y, int x, int lastx, BYTE *pixels)
     int width = lastx-x+1;
     for (int i = 0; i < width; i++)
     {
-        pixels[i] = read_pixel(drv, x+i, y);
+        pixels[i] = read_pixel(x+i, y);
     }
 }
 
@@ -2074,7 +2086,7 @@ void X11Driver::write_span(int y, int x, int lastx, BYTE *pixels)
 #if 1
     if (x == lastx)
     {
-        write_pixel(drv, x, y, pixels[0]);
+        write_pixel(x, y, pixels[0]);
         return;
     }
     width = lastx-x+1;
@@ -2099,7 +2111,7 @@ void X11Driver::write_span(int y, int x, int lastx, BYTE *pixels)
     {
         if (!m_alarm_on)
         {
-            schedule_alarm(drv, 0);
+            schedule_alarm(0);
         }
     }
     else
@@ -2576,7 +2588,7 @@ void X11Driver::delay(int ms)
     // TODO
 }
 
-void X11Driver::get_max_screen(int *width, int *height)
+void X11Driver::get_max_screen(int &width, int &height)
 {
     // TODO
 }
