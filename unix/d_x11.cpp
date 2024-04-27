@@ -247,7 +247,7 @@ private:
     int m_dx{};                 //
     int m_dy{};                 //
     x11_frame_window m_frame;   //
-    x11_text_window text_;      //
+    x11_text_window m_text;     //
     x11_plot_window plot_;      //
 };
 
@@ -1523,7 +1523,7 @@ bool X11Driver::init(int *argc, char **argv)
     int screen_num = DefaultScreen(m_dpy);
     m_frame.initialize(m_dpy, screen_num, m_geometry.c_str());
     plot_.initialize(m_dpy, screen_num, m_frame.window());
-    text_.initialize(m_dpy, screen_num, m_frame.window());
+    m_text.initialize(m_dpy, screen_num, m_frame.window());
 
     return true;
 }
@@ -1566,8 +1566,8 @@ void X11Driver::schedule_alarm(int secs)
 
 void X11Driver::get_max_size(unsigned *width, unsigned *height, bool *center_x, bool *center_y)
 {
-    *width = text_.max_width();
-    *height = text_.max_height();
+    *width = m_text.max_width();
+    *height = m_text.max_height();
     if (g_video_table[g_adapter].xdots > *width)
     {
         *width = g_video_table[g_adapter].xdots;
@@ -1596,7 +1596,7 @@ void X11Driver::center_window(bool center_x, bool center_y)
     }
     else
     {
-        text_pos.x = (m_frame.width() - text_.max_width())/2;
+        text_pos.x = (m_frame.width() - m_text.max_width())/2;
     }
 
     if (center_y)
@@ -1605,11 +1605,11 @@ void X11Driver::center_window(bool center_x, bool center_y)
     }
     else
     {
-        text_pos.y = (m_frame.height() - text_.max_height())/2;
+        text_pos.y = (m_frame.height() - m_text.max_height())/2;
     }
 
     plot_.set_position(plot_pos.x, plot_pos.y);
-    text_.set_position(text_pos.x, text_pos.y);
+    m_text.set_position(text_pos.x, text_pos.y);
 }
 
 void frame_window(int width, int height)
@@ -1624,7 +1624,7 @@ void X11Driver::window()
     bool center_y = true;
     get_max_size(&width, &height, &center_x, &center_y);
     m_frame.window(width, height);
-    text_.text_on();
+    m_text.text_on();
     center_window(center_x, center_y);
 #if 0
     base.wintext.hWndParent = g_frame.window;
@@ -2422,7 +2422,7 @@ void X11Driver::put_string(int row, int col, int attr, char const *msg)
     int c = g_text_cbase + g_text_col;
     assert(r >= 0 && r < X11_TEXT_MAX_ROW);
     assert(c >= 0 && c < X11_TEXT_MAX_COL);
-    text_.put_string(c, r, attr, msg, &g_text_row, &g_text_col);
+    m_text.put_string(c, r, attr, msg, &g_text_row, &g_text_col);
 }
 
 bool X11Driver::is_text()
@@ -2433,7 +2433,7 @@ bool X11Driver::is_text()
 void X11Driver::set_for_text()
 {
     m_text_not_graphics = true;
-    text_.show();
+    m_text.show();
     plot_.hide();
 }
 
@@ -2441,14 +2441,14 @@ void X11Driver::set_for_graphics()
 {
     m_text_not_graphics = false;
     plot_.show();
-    text_.hide();
+    m_text.hide();
 }
 
 void X11Driver::set_clear()
 {
     if (m_text_not_graphics)
     {
-        text_.clear();
+        m_text.clear();
     }
     else
     {
