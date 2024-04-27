@@ -205,8 +205,8 @@ private:
     bool m_private_color{};        // = false;
     int m_fix_colors{};            // = 0;
     bool m_sync{};                 // = false; Run X events synchronously (debugging)
-    std::string m_display;         // = "";
-    char const *Xgeometry{};       // = nullptr;
+    std::string m_display;         //
+    std::string m_geometry;        //
     int doesBacking{};             //
     bool usepixtab{};              // = false;
     unsigned long pixtab[256]{};   //
@@ -372,7 +372,7 @@ int X11Driver::check_arg(int argc, char **argv, int *i)
     }
     else if (std::strcmp(argv[*i], "-geometry") == 0 && *i+1 < argc)
     {
-        Xgeometry = argv[(*i)+1];
+        m_geometry = argv[(*i)+1];
         (*i)++;
         return 1;
     }
@@ -1527,7 +1527,7 @@ bool X11Driver::init(int *argc, char **argv)
     }
 
     int screen_num = DefaultScreen(Xdp);
-    frame_.initialize(Xdp, screen_num, Xgeometry);
+    frame_.initialize(Xdp, screen_num, m_geometry.c_str());
     plot_.initialize(Xdp, screen_num, frame_.window());
     text_.initialize(Xdp, screen_num, frame_.window());
 
@@ -1647,8 +1647,8 @@ void X11Driver::window()
     /* We have to do some X stuff even for disk video, to parse the geometry
      * string */
 
-    if (Xgeometry && !m_on_root)
-        XGeometry(Xdp, Xdscreen, Xgeometry, DEFXY, 0, 1, 1, 0, 0,
+    if (!m_geometry.empty() && !m_on_root)
+        XGeometry(Xdp, Xdscreen, m_geometry.c_str(), DEFXY, 0, 1, 1, 0, 0,
                   &Xwinx, &Xwiny, &Xwinwidth, &Xwinheight);
     if (m_sync)
         XSynchronize(Xdp, True);
