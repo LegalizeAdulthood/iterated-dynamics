@@ -208,7 +208,7 @@ private:
     std::string m_display;         //
     std::string m_geometry;        //
     bool m_use_pixtab{};           // = false;
-    unsigned long pixtab[256]{};   //
+    unsigned long m_pixtab[256]{}; //
     int ipixtab[256]{};            //
     XPixel cmap_pixtab[256]{};     // for faking a LUTs on non-LUT visuals
     bool cmap_pixtab_alloced{};    //
@@ -582,12 +582,12 @@ void X11Driver::clearXwindow()
     {
         for (int j = 0; j < Ximage->height; j++)
             for (int i = 0; i < Ximage->width; i++)
-                XPutPixel(Ximage, i, j, cmap_pixtab[pixtab[0]]);
+                XPutPixel(Ximage, i, j, cmap_pixtab[m_pixtab[0]]);
     }
-    else if (pixtab[0] != 0)
+    else if (m_pixtab[0] != 0)
     {
         /*
-         * Initialize image to pixtab[0].
+         * Initialize image to m_pixtab[0].
          */
         if (g_colors == 2)
         {
@@ -600,7 +600,7 @@ void X11Driver::clearXwindow()
         {
             for (int i = 0; i < Ximage->bytes_per_line; i++)
             {
-                Ximage->data[i] = pixtab[0];
+                Ximage->data[i] = m_pixtab[0];
             }
         }
         for (int i = 1; i < Ximage->height; i++)
@@ -619,7 +619,7 @@ void X11Driver::clearXwindow()
         std::memset(Ximage->data, 0, Ximage->bytes_per_line*Ximage->height);
     }
     xlastcolor = -1;
-    XSetForeground(Xdp, Xgc, do_fake_lut(pixtab[0]));
+    XSetForeground(Xdp, Xgc, do_fake_lut(m_pixtab[0]));
     if (m_on_root)
         XFillRectangle(Xdp, Xpixmap, Xgc,
                        0, 0, Xwinwidth, Xwinheight);
@@ -652,7 +652,7 @@ int X11Driver::xcmapstuff()
     }
     for (int i = 0; i < g_colors; i++)
     {
-        pixtab[i] = i;
+        m_pixtab[i] = i;
         ipixtab[i] = 999;
     }
     if (!g_got_real_dac)
@@ -678,7 +678,7 @@ int X11Driver::xcmapstuff()
             ncells = 1 << powr;
             if (ncells > g_colors)
                 continue;
-            if (XAllocColorCells(Xdp, Xcmap, False, nullptr, 0, pixtab,
+            if (XAllocColorCells(Xdp, Xcmap, False, nullptr, 0, m_pixtab,
                                  (unsigned int) ncells))
             {
                 g_colors = ncells;
@@ -694,13 +694,13 @@ int X11Driver::xcmapstuff()
     }
     for (int i = 0; i < g_colors; i++)
     {
-        ipixtab[pixtab[i]] = i;
+        ipixtab[m_pixtab[i]] = i;
     }
     /* We must make sure if any color uses position 0, that it is 0.
      * This is so we can clear the image with std::memset.
      * So, suppose 0 = cmap 42, cmap 0 = fractint 55.
      * Then want 0 = cmap 0, cmap 42 = fractint 55.
-     * I.e. pixtab[55] = 42, ipixtab[42] = 55.
+     * I.e. m_pixtab[55] = 42, ipixtab[42] = 55.
      */
     if (ipixtab[0] == 999)
     {
@@ -710,18 +710,18 @@ int X11Driver::xcmapstuff()
     {
         int other;
         other = ipixtab[0];
-        pixtab[other] = pixtab[0];
-        ipixtab[pixtab[other]] = other;
-        pixtab[0] = 0;
+        m_pixtab[other] = m_pixtab[0];
+        ipixtab[m_pixtab[other]] = other;
+        m_pixtab[0] = 0;
         ipixtab[0] = 0;
     }
 
     if (!g_got_real_dac && g_colors == 2 && BlackPixelOfScreen(Xsc) != 0)
     {
         ipixtab[0] = 1;
-        pixtab[0] = ipixtab[0];
+        m_pixtab[0] = ipixtab[0];
         ipixtab[1] = 0;
-        pixtab[1] = ipixtab[1];
+        m_pixtab[1] = ipixtab[1];
         m_use_pixtab = true;
     }
 
@@ -1707,9 +1707,9 @@ void X11Driver::window()
 
     if (!m_on_root)
     {
-        XSetBackground(Xdp, Xgc, do_fake_lut(pixtab[0]));
-        XSetForeground(Xdp, Xgc, do_fake_lut(pixtab[1]));
-        Xwatt.background_pixel = do_fake_lut(pixtab[0]);
+        XSetBackground(Xdp, Xgc, do_fake_lut(m_pixtab[0]));
+        XSetForeground(Xdp, Xgc, do_fake_lut(m_pixtab[1]));
+        Xwatt.background_pixel = do_fake_lut(m_pixtab[0]);
         XChangeWindowAttributes(Xdp, Xw, CWBackPixel, &Xwatt);
         XMapWindow(Xdp, Xw);
     }
@@ -1942,7 +1942,7 @@ int X11Driver::write_palette()
         // g_got_real_dac => grayscale or pseudocolor displays
         for (int i = 0; i < 256; i++)
         {
-            cols[i].pixel = pixtab[i];
+            cols[i].pixel = m_pixtab[i];
             cols[i].flags = DoRed | DoGreen | DoBlue;
             cols[i].red = g_dac_box[i][0]*1024;
             cols[i].green = g_dac_box[i][1]*1024;
@@ -2013,10 +2013,10 @@ void X11Driver::write_pixel(int x, int y, int color)
 #endif
     if (xlastcolor != color)
     {
-        XSetForeground(Xdp, Xgc, do_fake_lut(pixtab[color]));
+        XSetForeground(Xdp, Xgc, do_fake_lut(m_pixtab[color]));
         xlastcolor = color;
     }
-    XPutPixel(Ximage, x, y, do_fake_lut(pixtab[color]));
+    XPutPixel(Ximage, x, y, do_fake_lut(m_pixtab[color]));
     if (fastmode && g_help_mode != help_labels::HELP_PALETTE_EDITOR)
     {
         if (!alarmon)
@@ -2089,7 +2089,7 @@ void X11Driver::write_span(int y, int x, int lastx, BYTE *pixels)
     {
         for (int i = 0; i < width; i++)
         {
-            pixbuf[i] = pixtab[pixels[i]];
+            pixbuf[i] = m_pixtab[pixels[i]];
         }
         pixline = pixbuf;
     }
