@@ -241,7 +241,7 @@ private:
     bool m_text_not_graphics{}; // true when displaying text
     bool m_ctl_mode{};          // rubber banding and event processing data
     bool m_shift_mode{};        //
-    int button_num{};           //
+    int m_button_num{};         //
     int last_x{};               //
     int last_y{};               //
     int dx{};                   //
@@ -1243,22 +1243,22 @@ void X11Driver::ev_motion_notify(XEvent *xevent)
         if (xevent->xmotion.state & Button2Mask ||
                 (xevent->xmotion.state & (Button1Mask | Button3Mask)))
         {
-            button_num = 3;
+            m_button_num = 3;
         }
         else if (xevent->xmotion.state & Button1Mask)
         {
-            button_num = 1;
+            m_button_num = 1;
         }
         else if (xevent->xmotion.state & Button3Mask)
         {
-            button_num = 2;
+            m_button_num = 2;
         }
         else
         {
-            button_num = 0;
+            m_button_num = 0;
         }
 
-        if (g_look_at_mouse == 3 && button_num != 0)
+        if (g_look_at_mouse == 3 && m_button_num != 0)
         {
             dx += (xevent->xmotion.x-last_x)/MOUSE_SCALE;
             dy += (xevent->xmotion.y-last_y)/MOUSE_SCALE;
@@ -1315,12 +1315,12 @@ void X11Driver::handle_events()
         {
             if (dx > 0)
             {
-                m_key_buffer = mousefkey[button_num][0]; // right
+                m_key_buffer = mousefkey[m_button_num][0]; // right
                 dx--;
             }
             else if (dx < 0)
             {
-                m_key_buffer = mousefkey[button_num][1]; // left
+                m_key_buffer = mousefkey[m_button_num][1]; // left
                 dx++;
             }
         }
@@ -1328,12 +1328,12 @@ void X11Driver::handle_events()
         {
             if (dy > 0)
             {
-                m_key_buffer = mousefkey[button_num][2]; // down
+                m_key_buffer = mousefkey[m_button_num][2]; // down
                 dy--;
             }
             else if (dy < 0)
             {
-                m_key_buffer = mousefkey[button_num][3]; // up
+                m_key_buffer = mousefkey[m_button_num][3]; // up
                 dy++;
             }
         }
