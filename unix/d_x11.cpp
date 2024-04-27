@@ -228,7 +228,7 @@ private:
     Pixmap m_pixmap{None};            //
     int m_min_width{DEFAULT_WIDTH};   //
     int m_min_height{DEFAULT_HEIGHT}; //
-    Window Xroot{None};               //
+    Window m_root_window{None};       //
     int xlastcolor{-1};               //
     int xlastfcn{GXcopy};             //
     BYTE *pixbuf{};                   //
@@ -1385,15 +1385,15 @@ Window X11Driver::pr_dwmroot(Display *dpy, Window pwin)
 
 Window X11Driver::FindRootWindow()
 {
-    Xroot = RootWindow(m_dpy, m_dpy_screen);
-    Xroot = pr_dwmroot(m_dpy, Xroot); // search for DEC wm root
+    m_root_window = RootWindow(m_dpy, m_dpy_screen);
+    m_root_window = pr_dwmroot(m_dpy, m_root_window); // search for DEC wm root
 
     {   // search for swm/tvtwm root (from ssetroot by Tom LaStrange)
         Window rootReturn, parentReturn, *children;
         unsigned int numChildren;
 
         Atom SWM_VROOT = XInternAtom(m_dpy, "__SWM_VROOT", False);
-        XQueryTree(m_dpy, Xroot, &rootReturn, &parentReturn,
+        XQueryTree(m_dpy, m_root_window, &rootReturn, &parentReturn,
                    &children, &numChildren);
         for (int i = 0; i < numChildren; i++)
         {
@@ -1410,12 +1410,12 @@ Window X11Driver::FindRootWindow()
                                    (unsigned char **) &newRoot) == Success &&
                     newRoot)
             {
-                Xroot = *newRoot;
+                m_root_window = *newRoot;
                 break;
             }
         }
     }
-    return Xroot;
+    return m_root_window;
 }
 
 void X11Driver::RemoveRootPixmap()
@@ -1426,7 +1426,7 @@ void X11Driver::RemoveRootPixmap()
     Pixmap *pm;
 
     prop = XInternAtom(m_dpy, "_XSETROOT_ID", False);
-    if (XGetWindowProperty(m_dpy, Xroot, prop, 0L, 1L, 1,
+    if (XGetWindowProperty(m_dpy, m_root_window, prop, 0L, 1L, 1,
                            AnyPropertyType, &type, &format, &nitems, &after,
                            (unsigned char **) &pm) == Success && nitems == 1)
     {
@@ -1673,19 +1673,19 @@ void X11Driver::window()
         Xwatt.backing_store = NotUseful;
     if (m_on_root)
     {
-        Xroot = FindRootWindow();
+        m_root_window = FindRootWindow();
         RemoveRootPixmap();
-        m_gc = XCreateGC(m_dpy, Xroot, 0, &Xgcvals);
-        m_pixmap = XCreatePixmap(m_dpy, Xroot,
+        m_gc = XCreateGC(m_dpy, m_root_window, 0, &Xgcvals);
+        m_pixmap = XCreatePixmap(m_dpy, m_root_window,
                                     m_min_width, m_min_height, m_depth);
-        m_window = Xroot;
+        m_window = m_root_window;
         XFillRectangle(m_dpy, m_pixmap, m_gc, 0, 0, m_min_width, m_min_height);
-        XSetWindowBackgroundPixmap(m_dpy, Xroot, m_pixmap);
+        XSetWindowBackgroundPixmap(m_dpy, m_root_window, m_pixmap);
     }
     else
     {
-        Xroot = DefaultRootWindow(m_dpy);
-        m_window = XCreateWindow(m_dpy, Xroot, Xwinx, Xwiny,
+        m_root_window = DefaultRootWindow(m_dpy);
+        m_window = XCreateWindow(m_dpy, m_root_window, Xwinx, Xwiny,
                                m_min_width, m_min_height, 0, m_depth,
                                InputOutput, CopyFromParent,
                                CWBackPixel | CWBitGravity | CWBackingStore,
