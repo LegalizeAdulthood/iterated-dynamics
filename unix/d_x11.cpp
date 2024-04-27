@@ -232,7 +232,7 @@ private:
     int xlastcolor{-1};               //
     int xlastfcn{GXcopy};             //
     std::vector<BYTE> m_pixels;       //
-    XColor cols[256]{};               //
+    XColor m_colors[256]{};           //
     bool XZoomWaiting{};              //
     char const *x_font_name{FONT};    //
     XFontStruct *font_info{};         //
@@ -1862,9 +1862,9 @@ int X11Driver::read_palette()
         return -1;
     for (int i = 0; i < 256; i++)
     {
-        g_dac_box[i][0] = cols[i].red/1024;
-        g_dac_box[i][1] = cols[i].green/1024;
-        g_dac_box[i][2] = cols[i].blue/1024;
+        g_dac_box[i][0] = m_colors[i].red/1024;
+        g_dac_box[i][1] = m_colors[i].green/1024;
+        g_dac_box[i][2] = m_colors[i].blue/1024;
     }
     return 0;
 }
@@ -1901,18 +1901,18 @@ int X11Driver::write_palette()
                         last_dac[i][1] != g_dac_box[i][1] ||
                         last_dac[i][2] != g_dac_box[i][2])
                 {
-                    cols[i].flags = DoRed | DoGreen | DoBlue;
-                    cols[i].red = g_dac_box[i][0]*1024;
-                    cols[i].green = g_dac_box[i][1]*1024;
-                    cols[i].blue = g_dac_box[i][2]*1024;
+                    m_colors[i].flags = DoRed | DoGreen | DoBlue;
+                    m_colors[i].red = g_dac_box[i][0]*1024;
+                    m_colors[i].green = g_dac_box[i][1]*1024;
+                    m_colors[i].blue = g_dac_box[i][2]*1024;
 
                     if (m_have_cmap_pixtab)
                     {
                         XFreeColors(m_dpy, m_colormap, m_cmap_pixtab + i, 1, None);
                     }
-                    if (XAllocColor(m_dpy, m_colormap, &cols[i]))
+                    if (XAllocColor(m_dpy, m_colormap, &m_colors[i]))
                     {
-                        m_cmap_pixtab[i] = cols[i].pixel;
+                        m_cmap_pixtab[i] = m_colors[i].pixel;
                     }
                     else
                     {
@@ -1939,13 +1939,13 @@ int X11Driver::write_palette()
         // g_got_real_dac => grayscale or pseudocolor displays
         for (int i = 0; i < 256; i++)
         {
-            cols[i].pixel = m_pixtab[i];
-            cols[i].flags = DoRed | DoGreen | DoBlue;
-            cols[i].red = g_dac_box[i][0]*1024;
-            cols[i].green = g_dac_box[i][1]*1024;
-            cols[i].blue = g_dac_box[i][2]*1024;
+            m_colors[i].pixel = m_pixtab[i];
+            m_colors[i].flags = DoRed | DoGreen | DoBlue;
+            m_colors[i].red = g_dac_box[i][0]*1024;
+            m_colors[i].green = g_dac_box[i][1]*1024;
+            m_colors[i].blue = g_dac_box[i][2]*1024;
         }
-        XStoreColors(m_dpy, m_colormap, cols, g_colors);
+        XStoreColors(m_dpy, m_colormap, m_colors, g_colors);
         XFlush(m_dpy);
     }
 
