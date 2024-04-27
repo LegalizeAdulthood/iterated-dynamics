@@ -240,7 +240,7 @@ private:
     int m_text_attr[TEXT_HEIGHT][TEXT_WIDTH]{};
     bool m_text_not_graphics{}; // true when displaying text
     bool m_ctl_mode{};          // rubber banding and event processing data
-    bool shift_mode{};          //
+    bool m_shift_mode{};        //
     int button_num{};           //
     int last_x{};               //
     int last_y{};               //
@@ -986,7 +986,7 @@ int X11Driver::ev_key_press(XKeyEvent *xevent)
 
     case XK_Shift_L:
     case XK_Shift_R:
-        shift_mode = true;
+        m_shift_mode = true;
         break;
     case XK_Home:
     case XK_R7:
@@ -1031,43 +1031,43 @@ int X11Driver::ev_key_press(XKeyEvent *xevent)
         return 1;
     case XK_F1:
     case XK_L1:
-        m_key_buffer = shift_mode ? ID_KEY_SF1: ID_KEY_F1;
+        m_key_buffer = m_shift_mode ? ID_KEY_SF1: ID_KEY_F1;
         return 1;
     case XK_F2:
     case XK_L2:
-        m_key_buffer = shift_mode ? ID_KEY_SF2: ID_KEY_F2;
+        m_key_buffer = m_shift_mode ? ID_KEY_SF2: ID_KEY_F2;
         return 1;
     case XK_F3:
     case XK_L3:
-        m_key_buffer = shift_mode ? ID_KEY_SF3: ID_KEY_F3;
+        m_key_buffer = m_shift_mode ? ID_KEY_SF3: ID_KEY_F3;
         return 1;
     case XK_F4:
     case XK_L4:
-        m_key_buffer = shift_mode ? ID_KEY_SF4: ID_KEY_F4;
+        m_key_buffer = m_shift_mode ? ID_KEY_SF4: ID_KEY_F4;
         return 1;
     case XK_F5:
     case XK_L5:
-        m_key_buffer = shift_mode ? ID_KEY_SF5: ID_KEY_F5;
+        m_key_buffer = m_shift_mode ? ID_KEY_SF5: ID_KEY_F5;
         return 1;
     case XK_F6:
     case XK_L6:
-        m_key_buffer = shift_mode ? ID_KEY_SF6: ID_KEY_F6;
+        m_key_buffer = m_shift_mode ? ID_KEY_SF6: ID_KEY_F6;
         return 1;
     case XK_F7:
     case XK_L7:
-        m_key_buffer = shift_mode ? ID_KEY_SF7: ID_KEY_F7;
+        m_key_buffer = m_shift_mode ? ID_KEY_SF7: ID_KEY_F7;
         return 1;
     case XK_F8:
     case XK_L8:
-        m_key_buffer = shift_mode ? ID_KEY_SF8: ID_KEY_F8;
+        m_key_buffer = m_shift_mode ? ID_KEY_SF8: ID_KEY_F8;
         return 1;
     case XK_F9:
     case XK_L9:
-        m_key_buffer = shift_mode ? ID_KEY_SF9: ID_KEY_F9;
+        m_key_buffer = m_shift_mode ? ID_KEY_SF9: ID_KEY_F9;
         return 1;
     case XK_F10:
     case XK_L10:
-        m_key_buffer = shift_mode ? ID_KEY_SF10: ID_KEY_F10;
+        m_key_buffer = m_shift_mode ? ID_KEY_SF10: ID_KEY_F10;
         return 1;
     case '+':
         m_key_buffer = m_ctl_mode ? ID_KEY_CTL_PLUS : '+';
@@ -1109,7 +1109,7 @@ void X11Driver::ev_key_release(XKeyEvent *xevent)
         break;
     case XK_Shift_L:
     case XK_Shift_R:
-        shift_mode = false;
+        m_shift_mode = false;
         break;
     }
 }
