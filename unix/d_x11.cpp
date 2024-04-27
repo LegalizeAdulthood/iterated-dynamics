@@ -234,7 +234,7 @@ private:
     std::vector<BYTE> m_pixels;       //
     XColor m_colors[256]{};           //
     std::string x_font_name{FONT};    //
-    XFontStruct *font_info{};         //
+    XFontStruct *m_font_info{};       //
     int key_buffer{};                 // Buffered X key
     unsigned char *fontPtr{};         //
     char text_screen[TEXT_HEIGHT][TEXT_WIDTH]{};
@@ -1438,9 +1438,9 @@ void X11Driver::RemoveRootPixmap()
 
 void X11Driver::load_font()
 {
-    font_info = XLoadQueryFont(m_dpy, x_font_name.c_str());
-    if (font_info == nullptr)
-        font_info = XLoadQueryFont(m_dpy, "6x12");
+    m_font_info = XLoadQueryFont(m_dpy, x_font_name.c_str());
+    if (m_font_info == nullptr)
+        m_font_info = XLoadQueryFont(m_dpy, "6x12");
 }
 
 void X11DRiver::flush()
