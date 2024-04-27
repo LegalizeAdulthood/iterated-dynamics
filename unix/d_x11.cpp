@@ -217,7 +217,7 @@ private:
     bool m_alarm_on{};             // = false; true if the refresh alarm is on
     bool m_need_redraw{};          // = false; true if we have a redraw waiting
     Display *m_dpy{};              // = nullptr;
-    Window Xw{None};               //
+    Window m_window{None};         //
     GC Xgc{None};                  // = nullptr;
     Visual *Xvi{};                 //
     Screen *Xsc{};                 //
@@ -623,7 +623,7 @@ void X11Driver::clearXwindow()
     if (m_on_root)
         XFillRectangle(m_dpy, Xpixmap, Xgc,
                        0, 0, Xwinwidth, Xwinheight);
-    XFillRectangle(m_dpy, Xw, Xgc,
+    XFillRectangle(m_dpy, m_window, Xgc,
                    0, 0, Xwinwidth, Xwinheight);
     flush();
 }
@@ -667,8 +667,8 @@ int X11Driver::xcmapstuff()
     }
     else if (m_private_color)
     {
-        Xcmap = XCreateColormap(m_dpy, Xw, Xvi, AllocAll);
-        XSetWindowColormap(m_dpy, Xw, Xcmap);
+        Xcmap = XCreateColormap(m_dpy, m_window, Xvi, AllocAll);
+        XSetWindowColormap(m_dpy, m_window, Xcmap);
     }
     else
     {
@@ -1142,7 +1142,7 @@ void X11Driver::ev_expose(XExposeEvent *xevent)
         }
         if (x < g_screen_x_dots && y < g_screen_y_dots && w > 0 && h > 0)
         {
-            XPutImage(m_dpy, Xw, Xgc, Ximage, x, y, x, y,
+            XPutImage(m_dpy, m_window, Xgc, Ximage, x, y, x, y,
                       xevent->width, xevent->height);
         }
     }
@@ -1171,10 +1171,10 @@ void X11Driver::ev_button_press(XEvent *xevent)
         switch (xevent->type)
         {
         case MotionNotify:
-            while (XCheckWindowEvent(m_dpy, Xw, PointerMotionMask, xevent))
+            while (XCheckWindowEvent(m_dpy, m_window, PointerMotionMask, xevent))
                 ;
             if (banding)
-                XDrawRectangle(m_dpy, Xw, Xgc, MIN(bandx0, bandx1),
+                XDrawRectangle(m_dpy, m_window, Xgc, MIN(bandx0, bandx1),
                                MIN(bandy0, bandy1), ABS(bandx1-bandx0),
                                ABS(bandy1-bandy0));
             bandx1 = xevent->xmotion.x;
@@ -1200,7 +1200,7 @@ void X11Driver::ev_button_press(XEvent *xevent)
             }
             if (banding)
             {
-                XDrawRectangle(m_dpy, Xw, Xgc, MIN(bandx0, bandx1),
+                XDrawRectangle(m_dpy, m_window, Xgc, MIN(bandx0, bandx1),
                                MIN(bandy0, bandy1), ABS(bandx1-bandx0),
                                ABS(bandy1-bandy0));
             }
@@ -1216,7 +1216,7 @@ void X11Driver::ev_button_press(XEvent *xevent)
     if (!banding)
         return;
 
-    XDrawRectangle(m_dpy, Xw, Xgc, MIN(bandx0, bandx1),
+    XDrawRectangle(m_dpy, m_window, Xgc, MIN(bandx0, bandx1),
                    MIN(bandy0, bandy1), ABS(bandx1-bandx0),
                    ABS(bandy1-bandy0));
     if (bandx1 == bandx0)
@@ -1242,7 +1242,7 @@ void X11Driver::ev_motion_notify(XEvent *xevent)
 {
     if (editpal_cursor && !g_inside_help)
     {
-        while (XCheckWindowEvent(m_dpy, Xw, PointerMotionMask, xevent))
+        while (XCheckWindowEvent(m_dpy, m_window, PointerMotionMask, xevent))
             ;
 
         if (xevent->xmotion.state & Button2Mask ||
@@ -1679,20 +1679,20 @@ void X11Driver::window()
         Xgc = XCreateGC(m_dpy, Xroot, 0, &Xgcvals);
         Xpixmap = XCreatePixmap(m_dpy, Xroot,
                                     Xwinwidth, Xwinheight, Xdepth);
-        Xw = Xroot;
+        m_window = Xroot;
         XFillRectangle(m_dpy, Xpixmap, Xgc, 0, 0, Xwinwidth, Xwinheight);
         XSetWindowBackgroundPixmap(m_dpy, Xroot, Xpixmap);
     }
     else
     {
         Xroot = DefaultRootWindow(m_dpy);
-        Xw = XCreateWindow(m_dpy, Xroot, Xwinx, Xwiny,
+        m_window = XCreateWindow(m_dpy, Xroot, Xwinx, Xwiny,
                                Xwinwidth, Xwinheight, 0, Xdepth,
                                InputOutput, CopyFromParent,
                                CWBackPixel | CWBitGravity | CWBackingStore,
                                &Xwatt);
-        XStoreName(m_dpy, Xw, "id");
-        Xgc = XCreateGC(m_dpy, Xw, 0, &Xgcvals);
+        XStoreName(m_dpy, m_window, "id");
+        Xgc = XCreateGC(m_dpy, m_window, 0, &Xgcvals);
     }
     g_colors = xcmapstuff();
     if (g_color_cycle_range_hi == 255)
@@ -1702,7 +1702,7 @@ void X11Driver::window()
         unsigned long event_mask = KeyPressMask | KeyReleaseMask | ExposureMask;
         if (! m_on_root)
             event_mask |= ButtonPressMask | ButtonReleaseMask | PointerMotionMask;
-        XSelectInput(m_dpy, Xw, event_mask);
+        XSelectInput(m_dpy, m_window, event_mask);
     }
 
     if (!m_on_root)
@@ -1710,8 +1710,8 @@ void X11Driver::window()
         XSetBackground(m_dpy, Xgc, do_fake_lut(m_pixtab[0]));
         XSetForeground(m_dpy, Xgc, do_fake_lut(m_pixtab[1]));
         Xwatt.background_pixel = do_fake_lut(m_pixtab[0]);
-        XChangeWindowAttributes(m_dpy, Xw, CWBackPixel, &Xwatt);
-        XMapWindow(m_dpy, Xw);
+        XChangeWindowAttributes(m_dpy, m_window, CWBackPixel, &Xwatt);
+        XMapWindow(m_dpy, m_window);
     }
 
     resize(drv);
@@ -1747,7 +1747,7 @@ bool X11Driver::resize()
     unsigned int width, height;
     Status status;
 
-    XGetGeometry(m_dpy, Xw, &junkw, &junki, &junki, &width, &height,
+    XGetGeometry(m_dpy, m_window, &junkw, &junki, &junki, &width, &height,
                  &junkui, &junkui);
 
     if (oldx != width || oldy != height)
@@ -1834,7 +1834,7 @@ void X11Driver::redraw()
 {
     if (m_alarm_on)
     {
-        XPutImage(m_dpy, Xw, Xgc, Ximage, 0, 0, 0, 0,
+        XPutImage(m_dpy, m_window, Xgc, Ximage, 0, 0, 0, 0,
                   g_screen_x_dots, g_screen_y_dots);
         if (m_on_root)
             XPutImage(m_dpy, Xpixmap, Xgc, Ximage, 0, 0, 0, 0,
@@ -2026,7 +2026,7 @@ void X11Driver::write_pixel(int x, int y, int color)
     }
     else
     {
-        XDrawPoint(m_dpy, Xw, Xgc, x, y);
+        XDrawPoint(m_dpy, m_window, Xgc, x, y);
         if (m_on_root)
         {
             XDrawPoint(m_dpy, Xpixmap, Xgc, x, y);
@@ -2110,7 +2110,7 @@ void X11Driver::write_span(int y, int x, int lastx, BYTE *pixels)
     }
     else
     {
-        XPutImage(m_dpy, Xw, Xgc, Ximage, x, y, x, y, width, 1);
+        XPutImage(m_dpy, m_window, Xgc, Ximage, x, y, x, y, width, 1);
         if (m_on_root)
         {
             XPutImage(m_dpy, Xpixmap, Xgc, Ximage, x, y, x, y, width, 1);
@@ -2182,7 +2182,7 @@ void X11Driver::set_line_mode(int mode)
  */
 void X11Driver::draw_line(int x1, int y1, int x2, int y2, int color)
 {
-    XDrawLine(m_dpy, Xw, Xgc, x1, y1, x2, y2);
+    XDrawLine(m_dpy, m_window, Xgc, x1, y1, x2, y2);
 }
 
 void X11Driver::display_string(int x, int y, int fg, int bg, char const *text)
