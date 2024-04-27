@@ -199,26 +199,26 @@ private:
         return m_fake_lut ? m_cmap_pixtab[idx] : idx;
     }
 
-    bool m_on_root{};              // = false;
-    bool m_full_screen{};          // = false;
-    bool m_share_color{};          // = false;
-    bool m_private_color{};        // = false;
-    int m_fix_colors{};            // = 0;
-    bool m_sync{};                 // = false; Run X events synchronously (debugging)
+    bool m_on_root{};              //
+    bool m_full_screen{};          //
+    bool m_share_color{};          //
+    bool m_private_color{};        //
+    int m_fix_colors{};            //
+    bool m_sync{};                 // Run X events synchronously (debugging)
     std::string m_display;         //
     std::string m_geometry;        //
-    bool m_use_pixtab{};           // = false;
+    bool m_use_pixtab{};           //
     unsigned long m_pixtab[256]{}; //
     int m_inv_pixtab[256]{};       //
     XPixel m_cmap_pixtab[256]{};   // for faking a LUTs on non-LUT visuals
     bool m_have_cmap_pixtab{};     //
     bool m_fake_lut{};             //
-    bool m_fast_mode{};            // = false; Don't draw pixels 1 at a time
-    bool m_alarm_on{};             // = false; true if the refresh alarm is on
-    bool m_need_redraw{};          // = false; true if we have a redraw waiting
-    Display *m_dpy{};              // = nullptr;
+    bool m_fast_mode{};            // Don't draw pixels 1 at a time
+    bool m_alarm_on{};             // true if the refresh alarm is on
+    bool m_need_redraw{};          // true if we have a redraw waiting
+    Display *m_dpy{};              //
     Window m_window{None};         //
-    GC Xgc{None};                  // = nullptr;
+    GC m_gc{None};                 //
     Visual *Xvi{};                 //
     Screen *Xsc{};                 //
     Colormap Xcmap{None};          //
@@ -226,22 +226,22 @@ private:
     XImage *Ximage{};              //
     char *Xdata{};                 //
     int Xdscreen{};                //
-    Pixmap Xpixmap{None};          // = None;
+    Pixmap Xpixmap{None};          //
     int Xwinwidth{DEFX};           //
     int Xwinheight{DEFY};          //
     Window Xroot{None};            //
-    int xlastcolor{-1};            // = -1;
-    int xlastfcn{GXcopy};          // = GXcopy;
-    BYTE *pixbuf{};                // = nullptr;
+    int xlastcolor{-1};            //
+    int xlastfcn{GXcopy};          //
+    BYTE *pixbuf{};                //
     XColor cols[256]{};            //
-    bool XZoomWaiting{};           // = false;
-    char const *x_font_name{FONT}; // = FONT;
-    XFontStruct *font_info{};      // = nullptr;
-    int key_buffer{};              // = 0; Buffered X key
-    unsigned char *fontPtr{};      // = nullptr;
+    bool XZoomWaiting{};           //
+    char const *x_font_name{FONT}; //
+    XFontStruct *font_info{};      //
+    int key_buffer{};              // Buffered X key
+    unsigned char *fontPtr{};      //
     char text_screen[TEXT_HEIGHT][TEXT_WIDTH]{};
     int text_attr[TEXT_HEIGHT][TEXT_WIDTH]{};
-    BYTE *font_table{};       // = nullptr;
+    BYTE *font_table{};       //
     bool text_not_graphics{}; // true when displaying text
     bool ctl_mode{};          // rubber banding and event processing data
     bool shift_mode{};        //
@@ -406,8 +406,8 @@ void X11Driver::doneXwindow()
     if (m_dpy == nullptr)
         return;
 
-    if (Xgc)
-        XFreeGC(m_dpy, Xgc);
+    if (m_gc)
+        XFreeGC(m_dpy, m_gc);
 
     if (Xpixmap)
     {
@@ -619,11 +619,11 @@ void X11Driver::clearXwindow()
         std::memset(Ximage->data, 0, Ximage->bytes_per_line*Ximage->height);
     }
     xlastcolor = -1;
-    XSetForeground(m_dpy, Xgc, do_fake_lut(m_pixtab[0]));
+    XSetForeground(m_dpy, m_gc, do_fake_lut(m_pixtab[0]));
     if (m_on_root)
-        XFillRectangle(m_dpy, Xpixmap, Xgc,
+        XFillRectangle(m_dpy, Xpixmap, m_gc,
                        0, 0, Xwinwidth, Xwinheight);
-    XFillRectangle(m_dpy, m_window, Xgc,
+    XFillRectangle(m_dpy, m_window, m_gc,
                    0, 0, Xwinwidth, Xwinheight);
     flush();
 }
@@ -1142,7 +1142,7 @@ void X11Driver::ev_expose(XExposeEvent *xevent)
         }
         if (x < g_screen_x_dots && y < g_screen_y_dots && w > 0 && h > 0)
         {
-            XPutImage(m_dpy, m_window, Xgc, Ximage, x, y, x, y,
+            XPutImage(m_dpy, m_window, m_gc, Ximage, x, y, x, y,
                       xevent->width, xevent->height);
         }
     }
@@ -1174,7 +1174,7 @@ void X11Driver::ev_button_press(XEvent *xevent)
             while (XCheckWindowEvent(m_dpy, m_window, PointerMotionMask, xevent))
                 ;
             if (banding)
-                XDrawRectangle(m_dpy, m_window, Xgc, MIN(bandx0, bandx1),
+                XDrawRectangle(m_dpy, m_window, m_gc, MIN(bandx0, bandx1),
                                MIN(bandy0, bandy1), ABS(bandx1-bandx0),
                                ABS(bandy1-bandy0));
             bandx1 = xevent->xmotion.x;
@@ -1194,13 +1194,13 @@ void X11Driver::ev_button_press(XEvent *xevent)
                 if (ABS(bandx1-bandx0) > 10 || ABS(bandy1-bandy0) > 10)
                 {
                     banding = true;
-                    XSetForeground(m_dpy, Xgc, do_fake_lut(g_colors-1));
-                    XSetFunction(m_dpy, Xgc, GXxor);
+                    XSetForeground(m_dpy, m_gc, do_fake_lut(g_colors-1));
+                    XSetFunction(m_dpy, m_gc, GXxor);
                 }
             }
             if (banding)
             {
-                XDrawRectangle(m_dpy, m_window, Xgc, MIN(bandx0, bandx1),
+                XDrawRectangle(m_dpy, m_window, m_gc, MIN(bandx0, bandx1),
                                MIN(bandy0, bandy1), ABS(bandx1-bandx0),
                                ABS(bandy1-bandy0));
             }
@@ -1216,7 +1216,7 @@ void X11Driver::ev_button_press(XEvent *xevent)
     if (!banding)
         return;
 
-    XDrawRectangle(m_dpy, m_window, Xgc, MIN(bandx0, bandx1),
+    XDrawRectangle(m_dpy, m_window, m_gc, MIN(bandx0, bandx1),
                    MIN(bandy0, bandy1), ABS(bandx1-bandx0),
                    ABS(bandy1-bandy0));
     if (bandx1 == bandx0)
@@ -1232,8 +1232,8 @@ void X11Driver::ev_button_press(XEvent *xevent)
     if (!g_inside_help)
         key_buffer = ID_KEY_ENTER;
     if (xlastcolor != -1)
-        XSetForeground(m_dpy, Xgc, do_fake_lut(xlastcolor));
-    XSetFunction(m_dpy, Xgc, xlastfcn);
+        XSetForeground(m_dpy, m_gc, do_fake_lut(xlastcolor));
+    XSetFunction(m_dpy, m_gc, xlastfcn);
     XZoomWaiting = true;
     drawbox(0);
 }
@@ -1676,11 +1676,11 @@ void X11Driver::window()
     {
         Xroot = FindRootWindow();
         RemoveRootPixmap();
-        Xgc = XCreateGC(m_dpy, Xroot, 0, &Xgcvals);
+        m_gc = XCreateGC(m_dpy, Xroot, 0, &Xgcvals);
         Xpixmap = XCreatePixmap(m_dpy, Xroot,
                                     Xwinwidth, Xwinheight, Xdepth);
         m_window = Xroot;
-        XFillRectangle(m_dpy, Xpixmap, Xgc, 0, 0, Xwinwidth, Xwinheight);
+        XFillRectangle(m_dpy, Xpixmap, m_gc, 0, 0, Xwinwidth, Xwinheight);
         XSetWindowBackgroundPixmap(m_dpy, Xroot, Xpixmap);
     }
     else
@@ -1692,7 +1692,7 @@ void X11Driver::window()
                                CWBackPixel | CWBitGravity | CWBackingStore,
                                &Xwatt);
         XStoreName(m_dpy, m_window, "id");
-        Xgc = XCreateGC(m_dpy, m_window, 0, &Xgcvals);
+        m_gc = XCreateGC(m_dpy, m_window, 0, &Xgcvals);
     }
     g_colors = xcmapstuff();
     if (g_color_cycle_range_hi == 255)
@@ -1707,8 +1707,8 @@ void X11Driver::window()
 
     if (!m_on_root)
     {
-        XSetBackground(m_dpy, Xgc, do_fake_lut(m_pixtab[0]));
-        XSetForeground(m_dpy, Xgc, do_fake_lut(m_pixtab[1]));
+        XSetBackground(m_dpy, m_gc, do_fake_lut(m_pixtab[0]));
+        XSetForeground(m_dpy, m_gc, do_fake_lut(m_pixtab[1]));
         Xwatt.background_pixel = do_fake_lut(m_pixtab[0]);
         XChangeWindowAttributes(m_dpy, m_window, CWBackPixel, &Xwatt);
         XMapWindow(m_dpy, m_window);
@@ -1834,10 +1834,10 @@ void X11Driver::redraw()
 {
     if (m_alarm_on)
     {
-        XPutImage(m_dpy, m_window, Xgc, Ximage, 0, 0, 0, 0,
+        XPutImage(m_dpy, m_window, m_gc, Ximage, 0, 0, 0, 0,
                   g_screen_x_dots, g_screen_y_dots);
         if (m_on_root)
-            XPutImage(m_dpy, Xpixmap, Xgc, Ximage, 0, 0, 0, 0,
+            XPutImage(m_dpy, Xpixmap, m_gc, Ximage, 0, 0, 0, 0,
                       g_screen_x_dots, g_screen_y_dots);
         m_alarm_on = false;
     }
@@ -2013,7 +2013,7 @@ void X11Driver::write_pixel(int x, int y, int color)
 #endif
     if (xlastcolor != color)
     {
-        XSetForeground(m_dpy, Xgc, do_fake_lut(m_pixtab[color]));
+        XSetForeground(m_dpy, m_gc, do_fake_lut(m_pixtab[color]));
         xlastcolor = color;
     }
     XPutPixel(Ximage, x, y, do_fake_lut(m_pixtab[color]));
@@ -2026,10 +2026,10 @@ void X11Driver::write_pixel(int x, int y, int color)
     }
     else
     {
-        XDrawPoint(m_dpy, m_window, Xgc, x, y);
+        XDrawPoint(m_dpy, m_window, m_gc, x, y);
         if (m_on_root)
         {
-            XDrawPoint(m_dpy, Xpixmap, Xgc, x, y);
+            XDrawPoint(m_dpy, Xpixmap, m_gc, x, y);
         }
     }
 }
@@ -2110,10 +2110,10 @@ void X11Driver::write_span(int y, int x, int lastx, BYTE *pixels)
     }
     else
     {
-        XPutImage(m_dpy, m_window, Xgc, Ximage, x, y, x, y, width, 1);
+        XPutImage(m_dpy, m_window, m_gc, Ximage, x, y, x, y, width, 1);
         if (m_on_root)
         {
-            XPutImage(m_dpy, Xpixmap, Xgc, Ximage, x, y, x, y, width, 1);
+            XPutImage(m_dpy, Xpixmap, m_gc, Ximage, x, y, x, y, width, 1);
         }
     }
 #else
@@ -2153,14 +2153,14 @@ void X11Driver::set_line_mode(int mode)
     xlastcolor = -1;
     if (mode == 0)
     {
-        XSetFunction(m_dpy, Xgc, GXcopy);
+        XSetFunction(m_dpy, m_gc, GXcopy);
         xlastfcn = GXcopy;
     }
     else
     {
-        XSetForeground(m_dpy, Xgc, do_fake_lut(g_colors-1));
+        XSetForeground(m_dpy, m_gc, do_fake_lut(g_colors-1));
         xlastcolor = -1;
-        XSetFunction(m_dpy, Xgc, GXxor);
+        XSetFunction(m_dpy, m_gc, GXxor);
         xlastfcn = GXxor;
     }
 }
@@ -2182,7 +2182,7 @@ void X11Driver::set_line_mode(int mode)
  */
 void X11Driver::draw_line(int x1, int y1, int x2, int y2, int color)
 {
-    XDrawLine(m_dpy, m_window, Xgc, x1, y1, x2, y2);
+    XDrawLine(m_dpy, m_window, m_gc, x1, y1, x2, y2);
 }
 
 void X11Driver::display_string(int x, int y, int fg, int bg, char const *text)
