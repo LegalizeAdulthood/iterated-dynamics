@@ -220,7 +220,7 @@ private:
     Window m_window{None};         //
     GC m_gc{None};                 //
     Visual *m_visual{};            //
-    Screen *Xsc{};                 //
+    Screen *m_screen{};            //
     Colormap Xcmap{None};          //
     int Xdepth{};                  //
     XImage *Ximage{};              //
@@ -527,7 +527,7 @@ continue_hdl(int sig, int code, struct sigcontext *scp, char *addr)
 
 void X11Driver::select_visual()
 {
-    m_visual = XDefaultVisualOfScreen(Xsc);
+    m_visual = XDefaultVisualOfScreen(m_screen);
     Xdepth = DefaultDepth(m_dpy, Xdscreen);
 
     switch (m_visual->c_class)
@@ -657,7 +657,7 @@ int X11Driver::xcmapstuff()
     }
     if (!g_got_real_dac)
     {
-        Xcmap = DefaultColormapOfScreen(Xsc);
+        Xcmap = DefaultColormapOfScreen(m_screen);
         if (m_fake_lut)
             x11_write_palette(&pub);
     }
@@ -716,7 +716,7 @@ int X11Driver::xcmapstuff()
         m_inv_pixtab[0] = 0;
     }
 
-    if (!g_got_real_dac && g_colors == 2 && BlackPixelOfScreen(Xsc) != 0)
+    if (!g_got_real_dac && g_colors == 2 && BlackPixelOfScreen(m_screen) != 0)
     {
         m_inv_pixtab[0] = 1;
         m_pixtab[0] = m_inv_pixtab[0];
@@ -1652,7 +1652,7 @@ void X11Driver::window()
     if (m_sync)
         XSynchronize(m_dpy, True);
     XSetErrorHandler(errhand);
-    Xsc = ScreenOfDisplay(m_dpy, Xdscreen);
+    m_screen = ScreenOfDisplay(m_dpy, Xdscreen);
     select_visual();
     if (m_fix_colors > 0)
         g_colors = m_fix_colors;
@@ -1665,9 +1665,9 @@ void X11Driver::window()
     g_screen_x_dots = Xwinwidth;
     g_screen_y_dots = Xwinheight;
 
-    Xwatt.background_pixel = BlackPixelOfScreen(Xsc);
+    Xwatt.background_pixel = BlackPixelOfScreen(m_screen);
     Xwatt.bit_gravity = StaticGravity;
-    const int doesBacking = DoesBackingStore(Xsc);
+    const int doesBacking = DoesBackingStore(m_screen);
     if (doesBacking)
         Xwatt.backing_store = Always;
     else
