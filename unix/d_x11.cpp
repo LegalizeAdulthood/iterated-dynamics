@@ -203,7 +203,7 @@ private:
     bool m_full_screen{};          // = false;
     bool m_share_color{};          // = false;
     bool m_private_color{};        // = false;
-    int fixcolors{};               // = 0;
+    int m_fix_colors{};            // = 0;
     bool sync{};                   // = false; Run X events synchronously (debugging)
     char const *Xdisplay{""};      // = "";
     char const *Xgeometry{};       // = nullptr;
@@ -366,7 +366,7 @@ int X11Driver::check_arg(int argc, char **argv, int *i)
     }
     else if (std::strcmp(argv[*i], "-fixcolors") == 0 && *i+1 < argc)
     {
-        fixcolors = std::atoi(argv[(*i)+1]);
+        m_fix_colors = std::atoi(argv[(*i)+1]);
         (*i)++;
         return 1;
     }
@@ -1655,8 +1655,8 @@ void X11Driver::window()
     XSetErrorHandler(errhand);
     Xsc = ScreenOfDisplay(Xdp, Xdscreen);
     select_visual();
-    if (fixcolors > 0)
-        g_colors = fixcolors;
+    if (m_fix_colors > 0)
+        g_colors = m_fix_colors;
 
     if (m_full_screen || m_on_root)
     {
