@@ -205,7 +205,7 @@ private:
     bool m_private_color{};        // = false;
     int m_fix_colors{};            // = 0;
     bool m_sync{};                 // = false; Run X events synchronously (debugging)
-    char const *Xdisplay{""};      // = "";
+    std::string m_display;         // = "";
     char const *Xgeometry{};       // = nullptr;
     int doesBacking{};             //
     bool usepixtab{};              // = false;
@@ -325,7 +325,7 @@ int X11Driver::check_arg(int argc, char **argv, int *i)
 {
     if (std::strcmp(argv[*i], "-display") == 0 && (*i)+1 < argc)
     {
-        Xdisplay = argv[(*i)+1];
+        m_display = argv[(*i)+1];
         (*i)++;
         return 1;
     }
@@ -1502,7 +1502,7 @@ bool X11Driver::init(int *argc, char **argv)
         *argc = filtered.size();
     }
 
-    Xdp = XOpenDisplay(Xdisplay);
+    Xdp = XOpenDisplay(m_display.c_str());
     if (Xdp == nullptr)
     {
         terminate();
