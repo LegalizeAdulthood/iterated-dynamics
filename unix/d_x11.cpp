@@ -213,7 +213,7 @@ private:
     XPixel m_cmap_pixtab[256]{};   // for faking a LUTs on non-LUT visuals
     bool m_have_cmap_pixtab{};     //
     bool m_fake_lut{};             //
-    bool fastmode{};               // = false; Don't draw pixels 1 at a time
+    bool m_fast_mode{};            // = false; Don't draw pixels 1 at a time
     bool alarmon{};                // = false; true if the refresh alarm is on
     bool doredraw{};               // = false; true if we have a redraw waiting
     Display *Xdp{};                // = nullptr;
@@ -345,7 +345,7 @@ int X11Driver::check_arg(int argc, char **argv, int *i)
     }
     else if (std::strcmp(argv[*i], "-fast") == 0)
     {
-        fastmode = true;
+        m_fast_mode = true;
         return 1;
     }
     else if (std::strcmp(argv[*i], "-slowdisplay") == 0)
@@ -1557,7 +1557,7 @@ static void handle_sig_alarm()
 }
 void X11Driver::schedule_alarm(int secs)
 {
-    if (!fastmode)
+    if (!m_fast_mode)
         return;
 
     signal(SIGALRM, (SignalHandler) handle_sig_alarm);
@@ -2017,7 +2017,7 @@ void X11Driver::write_pixel(int x, int y, int color)
         xlastcolor = color;
     }
     XPutPixel(Ximage, x, y, do_fake_lut(m_pixtab[color]));
-    if (fastmode && g_help_mode != help_labels::HELP_PALETTE_EDITOR)
+    if (m_fast_mode && g_help_mode != help_labels::HELP_PALETTE_EDITOR)
     {
         if (!alarmon)
         {
@@ -2101,7 +2101,7 @@ void X11Driver::write_span(int y, int x, int lastx, BYTE *pixels)
     {
         XPutPixel(Ximage, x+i, y, do_fake_lut(pixline[i]));
     }
-    if (fastmode && g_help_mode != help_labels::HELP_PALETTE_EDITOR)
+    if (m_fast_mode && g_help_mode != help_labels::HELP_PALETTE_EDITOR)
     {
         if (!alarmon)
         {
