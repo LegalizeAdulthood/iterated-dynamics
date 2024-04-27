@@ -209,7 +209,7 @@ private:
     std::string m_geometry;        //
     bool m_use_pixtab{};           // = false;
     unsigned long m_pixtab[256]{}; //
-    int ipixtab[256]{};            //
+    int m_inv_pixtab[256]{};       //
     XPixel cmap_pixtab[256]{};     // for faking a LUTs on non-LUT visuals
     bool cmap_pixtab_alloced{};    //
     bool m_fake_lut{};             //
@@ -653,7 +653,7 @@ int X11Driver::xcmapstuff()
     for (int i = 0; i < g_colors; i++)
     {
         m_pixtab[i] = i;
-        ipixtab[i] = 999;
+        m_inv_pixtab[i] = 999;
     }
     if (!g_got_real_dac)
     {
@@ -694,34 +694,34 @@ int X11Driver::xcmapstuff()
     }
     for (int i = 0; i < g_colors; i++)
     {
-        ipixtab[m_pixtab[i]] = i;
+        m_inv_pixtab[m_pixtab[i]] = i;
     }
     /* We must make sure if any color uses position 0, that it is 0.
      * This is so we can clear the image with std::memset.
      * So, suppose 0 = cmap 42, cmap 0 = fractint 55.
      * Then want 0 = cmap 0, cmap 42 = fractint 55.
-     * I.e. m_pixtab[55] = 42, ipixtab[42] = 55.
+     * I.e. m_pixtab[55] = 42, m_inv_pixtab[42] = 55.
      */
-    if (ipixtab[0] == 999)
+    if (m_inv_pixtab[0] == 999)
     {
-        ipixtab[0] = 0;
+        m_inv_pixtab[0] = 0;
     }
-    else if (ipixtab[0] != 0)
+    else if (m_inv_pixtab[0] != 0)
     {
         int other;
-        other = ipixtab[0];
+        other = m_inv_pixtab[0];
         m_pixtab[other] = m_pixtab[0];
-        ipixtab[m_pixtab[other]] = other;
+        m_inv_pixtab[m_pixtab[other]] = other;
         m_pixtab[0] = 0;
-        ipixtab[0] = 0;
+        m_inv_pixtab[0] = 0;
     }
 
     if (!g_got_real_dac && g_colors == 2 && BlackPixelOfScreen(Xsc) != 0)
     {
-        ipixtab[0] = 1;
-        m_pixtab[0] = ipixtab[0];
-        ipixtab[1] = 0;
-        m_pixtab[1] = ipixtab[1];
+        m_inv_pixtab[0] = 1;
+        m_pixtab[0] = m_inv_pixtab[0];
+        m_inv_pixtab[1] = 0;
+        m_pixtab[1] = m_inv_pixtab[1];
         m_use_pixtab = true;
     }
 
@@ -1981,7 +1981,7 @@ int X11Driver::read_pixel(int x, int y)
         return 0;
     }
     else
-        return ipixtab[XGetPixel(Ximage, x, y)];
+        return m_inv_pixtab[XGetPixel(Ximage, x, y)];
 }
 
 /*
