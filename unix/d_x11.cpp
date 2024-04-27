@@ -166,7 +166,7 @@ public:
 
     void setredrawscreen()
     {
-        doredraw = 1;
+        m_need_redraw = true;
     }
 
 private:
@@ -215,7 +215,7 @@ private:
     bool m_fake_lut{};             //
     bool m_fast_mode{};            // = false; Don't draw pixels 1 at a time
     bool m_alarm_on{};             // = false; true if the refresh alarm is on
-    bool doredraw{};               // = false; true if we have a redraw waiting
+    bool m_need_redraw{};          // = false; true if we have a redraw waiting
     Display *Xdp{};                // = nullptr;
     Window Xw{None};               //
     GC Xgc{None};                  // = nullptr;
@@ -1282,7 +1282,7 @@ void X11Driver::handle_events()
 {
     XEvent xevent;
 
-    if (doredraw)
+    if (m_need_redraw)
         redraw();
 
     while (XPending(Xdp) && !key_buffer)
@@ -1841,7 +1841,7 @@ void X11Driver::redraw()
                       g_screen_x_dots, g_screen_y_dots);
         m_alarm_on = false;
     }
-    doredraw = false;
+    m_need_redraw = false;
 }
 
 /*
