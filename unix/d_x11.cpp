@@ -200,7 +200,7 @@ private:
     }
 
     bool m_on_root{};                 // = false;
-    bool fullscreen{};             // = false;
+    bool m_full_screen{};             // = false;
     bool sharecolor{};             // = false;
     bool privatecolor{};           // = false;
     int fixcolors{};               // = 0;
@@ -331,7 +331,7 @@ int X11Driver::check_arg(int argc, char **argv, int *i)
     }
     else if (std::strcmp(argv[*i], "-fullscreen") == 0)
     {
-        fullscreen = true;
+        m_full_screen = true;
         return 1;
     }
     else if (std::strcmp(argv[*i], "-onroot") == 0)
@@ -1658,7 +1658,7 @@ void X11Driver::window()
     if (fixcolors > 0)
         g_colors = fixcolors;
 
-    if (fullscreen || m_on_root)
+    if (m_full_screen || m_on_root)
     {
         Xwinwidth = DisplayWidth(Xdp, Xdscreen);
         Xwinheight = DisplayHeight(Xdp, Xdscreen);
