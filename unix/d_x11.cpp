@@ -237,7 +237,7 @@ private:
     XFontStruct *m_font_info{};       //
     int m_key_buffer{};               // Buffered X key
     char m_text_screen[TEXT_HEIGHT][TEXT_WIDTH]{};
-    int text_attr[TEXT_HEIGHT][TEXT_WIDTH]{};
+    int m_text_attr[TEXT_HEIGHT][TEXT_WIDTH]{};
     BYTE *font_table{};       //
     bool text_not_graphics{}; // true when displaying text
     bool ctl_mode{};          // rubber banding and event processing data
@@ -461,7 +461,7 @@ void X11Driver::erase_text_screen()
     for (int r = 0; r < TEXT_HEIGHT; r++)
         for (int c = 0; c < TEXT_WIDTH; c++)
         {
-            text_attr[r][c] = 0;
+            m_text_attr[r][c] = 0;
             m_text_screen[r][c] = ' ';
         }
 }
@@ -2477,7 +2477,7 @@ void X11Driver::set_attr(int row, int col, int attr, int count)
     {
         assert(row < TEXT_HEIGHT);
         assert(i < TEXT_WIDTH);
-        text_attr[row][i] = attr;
+        m_text_attr[row][i] = attr;
         if (++i == TEXT_WIDTH)
         {
             i = 0;
@@ -2495,12 +2495,12 @@ void X11Driver::scroll_up(int top, int bot)
     for (int r = top; r < bot; r++)
         for (int c = 0; c < TEXT_WIDTH; c++)
         {
-            text_attr[r][c] = text_attr[r+1][c];
+            m_text_attr[r][c] = m_text_attr[r+1][c];
             m_text_screen[r][c] = m_text_screen[r+1][c];
         }
     for (int c = 0; c < TEXT_WIDTH; c++)
     {
-        text_attr[bot][c] = 0;
+        m_text_attr[bot][c] = 0;
         m_text_screen[bot][c] = ' ';
     }
     // TODO: draw text
