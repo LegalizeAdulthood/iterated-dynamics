@@ -221,7 +221,7 @@ private:
     GC m_gc{None};                 //
     Visual *m_visual{};            //
     Screen *m_screen{};            //
-    Colormap Xcmap{None};          //
+    Colormap m_colormap{None};     //
     int Xdepth{};                  //
     XImage *Ximage{};              //
     char *Xdata{};                 //
@@ -657,7 +657,7 @@ int X11Driver::xcmapstuff()
     }
     if (!g_got_real_dac)
     {
-        Xcmap = DefaultColormapOfScreen(m_screen);
+        m_colormap = DefaultColormapOfScreen(m_screen);
         if (m_fake_lut)
             x11_write_palette(&pub);
     }
@@ -667,18 +667,18 @@ int X11Driver::xcmapstuff()
     }
     else if (m_private_color)
     {
-        Xcmap = XCreateColormap(m_dpy, m_window, m_visual, AllocAll);
-        XSetWindowColormap(m_dpy, m_window, Xcmap);
+        m_colormap = XCreateColormap(m_dpy, m_window, m_visual, AllocAll);
+        XSetWindowColormap(m_dpy, m_window, m_colormap);
     }
     else
     {
-        Xcmap = DefaultColormap(m_dpy, Xdscreen);
+        m_colormap = DefaultColormap(m_dpy, Xdscreen);
         for (int powr = Xdepth; powr >= 1; powr--)
         {
             ncells = 1 << powr;
             if (ncells > g_colors)
                 continue;
-            if (XAllocColorCells(m_dpy, Xcmap, False, nullptr, 0, m_pixtab,
+            if (XAllocColorCells(m_dpy, m_colormap, False, nullptr, 0, m_pixtab,
                                  (unsigned int) ncells))
             {
                 g_colors = ncells;
@@ -1911,9 +1911,9 @@ int X11Driver::write_palette()
 
                     if (m_have_cmap_pixtab)
                     {
-                        XFreeColors(m_dpy, Xcmap, m_cmap_pixtab + i, 1, None);
+                        XFreeColors(m_dpy, m_colormap, m_cmap_pixtab + i, 1, None);
                     }
-                    if (XAllocColor(m_dpy, Xcmap, &cols[i]))
+                    if (XAllocColor(m_dpy, m_colormap, &cols[i]))
                     {
                         m_cmap_pixtab[i] = cols[i].pixel;
                     }
@@ -1948,7 +1948,7 @@ int X11Driver::write_palette()
             cols[i].green = g_dac_box[i][1]*1024;
             cols[i].blue = g_dac_box[i][2]*1024;
         }
-        XStoreColors(m_dpy, Xcmap, cols, g_colors);
+        XStoreColors(m_dpy, m_colormap, cols, g_colors);
         XFlush(m_dpy);
     }
 
