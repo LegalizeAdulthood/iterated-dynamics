@@ -99,8 +99,8 @@ enum
 };
 
 constexpr const char *const FONT{"-*-*-medium-r-*-*-9-*-*-*-c-*-iso8859-*"};
-constexpr const int DEFX{640};
-constexpr const int DEFY{480};
+constexpr const int DEFAULT_WIDTH{640};
+constexpr const int DEFAULT_HEIGHT{480};
 constexpr const char *const DEFXY{"640x480+0+0"};
 
 // The pixtab stuff is so we can map from pixel values 0-n to
@@ -199,45 +199,45 @@ private:
         return m_fake_lut ? m_cmap_pixtab[idx] : idx;
     }
 
-    bool m_on_root{};              //
-    bool m_full_screen{};          //
-    bool m_share_color{};          //
-    bool m_private_color{};        //
-    int m_fix_colors{};            //
-    bool m_sync{};                 // Run X events synchronously (debugging)
-    std::string m_display;         //
-    std::string m_geometry;        //
-    bool m_use_pixtab{};           //
-    unsigned long m_pixtab[256]{}; //
-    int m_inv_pixtab[256]{};       //
-    XPixel m_cmap_pixtab[256]{};   // for faking a LUTs on non-LUT visuals
-    bool m_have_cmap_pixtab{};     //
-    bool m_fake_lut{};             //
-    bool m_fast_mode{};            // Don't draw pixels 1 at a time
-    bool m_alarm_on{};             // true if the refresh alarm is on
-    bool m_need_redraw{};          // true if we have a redraw waiting
-    Display *m_dpy{};              //
-    Window m_window{None};         //
-    GC m_gc{None};                 //
-    Visual *m_visual{};            //
-    Screen *m_screen{};            //
-    Colormap m_colormap{None};     //
-    int m_depth{};                 //
-    XImage *m_image{};             //
-    int m_dpy_screen{};            //
-    Pixmap m_pixmap{None};         //
-    int m_min_width{DEFX};         //
-    int m_min_height{DEFY};        //
-    Window Xroot{None};            //
-    int xlastcolor{-1};            //
-    int xlastfcn{GXcopy};          //
-    BYTE *pixbuf{};                //
-    XColor cols[256]{};            //
-    bool XZoomWaiting{};           //
-    char const *x_font_name{FONT}; //
-    XFontStruct *font_info{};      //
-    int key_buffer{};              // Buffered X key
-    unsigned char *fontPtr{};      //
+    bool m_on_root{};                 //
+    bool m_full_screen{};             //
+    bool m_share_color{};             //
+    bool m_private_color{};           //
+    int m_fix_colors{};               //
+    bool m_sync{};                    // Run X events synchronously (debugging)
+    std::string m_display;            //
+    std::string m_geometry;           //
+    bool m_use_pixtab{};              //
+    unsigned long m_pixtab[256]{};    //
+    int m_inv_pixtab[256]{};          //
+    XPixel m_cmap_pixtab[256]{};      // for faking a LUTs on non-LUT visuals
+    bool m_have_cmap_pixtab{};        //
+    bool m_fake_lut{};                //
+    bool m_fast_mode{};               // Don't draw pixels 1 at a time
+    bool m_alarm_on{};                // true if the refresh alarm is on
+    bool m_need_redraw{};             // true if we have a redraw waiting
+    Display *m_dpy{};                 //
+    Window m_window{None};            //
+    GC m_gc{None};                    //
+    Visual *m_visual{};               //
+    Screen *m_screen{};               //
+    Colormap m_colormap{None};        //
+    int m_depth{};                    //
+    XImage *m_image{};                //
+    int m_dpy_screen{};               //
+    Pixmap m_pixmap{None};            //
+    int m_min_width{DEFAULT_WIDTH};   //
+    int m_min_height{DEFAULT_HEIGHT}; //
+    Window Xroot{None};               //
+    int xlastcolor{-1};               //
+    int xlastfcn{GXcopy};             //
+    BYTE *pixbuf{};                   //
+    XColor cols[256]{};               //
+    bool XZoomWaiting{};              //
+    char const *x_font_name{FONT};    //
+    XFontStruct *font_info{};         //
+    int key_buffer{};                 // Buffered X key
+    unsigned char *fontPtr{};         //
     char text_screen[TEXT_HEIGHT][TEXT_WIDTH]{};
     int text_attr[TEXT_HEIGHT][TEXT_WIDTH]{};
     BYTE *font_table{};       //
