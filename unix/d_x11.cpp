@@ -233,7 +233,7 @@ private:
     int xlastfcn{GXcopy};             //
     std::vector<BYTE> m_pixels;       //
     XColor m_colors[256]{};           //
-    char const *x_font_name{FONT};    //
+    std::string x_font_name{FONT};    //
     XFontStruct *font_info{};         //
     int key_buffer{};                 // Buffered X key
     unsigned char *fontPtr{};         //
@@ -1438,7 +1438,7 @@ void X11Driver::RemoveRootPixmap()
 
 void X11Driver::load_font()
 {
-    font_info = XLoadQueryFont(m_dpy, x_font_name);
+    font_info = XLoadQueryFont(m_dpy, x_font_name.c_str());
     if (font_info == nullptr)
         font_info = XLoadQueryFont(m_dpy, "6x12");
 }
