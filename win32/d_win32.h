@@ -52,6 +52,7 @@ public:
     void get_truecolor(int x, int y, int *r, int *g, int *b, int *a) override;
     void put_truecolor(int x, int y, int r, int g, int b, int a) override;
     void set_keyboard_timeout(int ms) override;
+    void debug_text(const char *text) override;
 
 protected:
     std::string m_name;

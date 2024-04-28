@@ -172,6 +172,7 @@ public:
     void delay(int ms) override;
     void set_keyboard_timeout(int ms) override;
     void flush() override;
+    void debug_text(const char *text) override;
 
     void setredrawscreen()
     {
@@ -1456,6 +1457,11 @@ void X11Driver::load_font()
 void X11Driver::flush()
 {
     XSync(m_dpy, False);
+}
+
+void X11Driver::debug_text(const char *text)
+{
+    std::fprintf(std::stderr, "%s", text);
 }
 
 void fpe_handler(int signum)

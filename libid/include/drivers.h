@@ -111,6 +111,7 @@ public:
     virtual void delay(int ms) = 0;                                                  //
     virtual void set_keyboard_timeout(int ms) = 0;                                   //
     virtual void flush() = 0;                                                        //
+    virtual void debug_text(const char *text) = 0;                                   // Emit debug text (no EOL assumed)
 };
 
 /* Define the drivers to be included in the compilation:
@@ -340,4 +341,18 @@ inline void driver_set_keyboard_timeout(int ms)
 inline void driver_flush()
 {
     g_driver->flush();
+}
+inline void driver_debug_text(const char *text)
+{
+    g_driver->debug_text(text);
+}
+// guarantees EOL
+inline void driver_debug_line(const char *line)
+{
+    std::string text{line};
+    if (text.back() != '\n')
+    {
+        text += '\n';
+    }
+    g_driver->debug_text(text.c_str());
 }

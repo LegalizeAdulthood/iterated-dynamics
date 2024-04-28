@@ -483,3 +483,8 @@ void Win32BaseDriver::set_keyboard_timeout(int ms)
 {
     g_frame.set_keyboard_timeout(ms);
 }
+
+void Win32BaseDriver::debug_text(const char *text)
+{
+    OutputDebugStringA(text);
+}

@@ -67,6 +67,7 @@ public:
     MOCK_METHOD(void, delay, (int), (override));
     MOCK_METHOD(void, set_keyboard_timeout, (int), (override));
     MOCK_METHOD(void, flush, (), (override));
+    MOCK_METHOD(void, debug_text, (const char *text), (override));
 };
 
 TEST(TestDriver, loadClose)
