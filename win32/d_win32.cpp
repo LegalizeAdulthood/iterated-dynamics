@@ -70,7 +70,7 @@ static void flush_output()
         if ((now - last)*frames_per_second > ticks_per_second)
         {
             driver_flush();
-            frame_pump_messages(false);
+            g_frame.pump_messages(false);
             last = now;
         }
     }
@@ -210,7 +210,7 @@ void  Win32BaseDriver::shell()
         DWORD status = WaitForSingleObject(pi.hProcess, 100);
         while (WAIT_TIMEOUT == status)
         {
-            frame_pump_messages(false);
+            g_frame.pump_messages(false);
             status = WaitForSingleObject(pi.hProcess, 100);
         }
         CloseHandle(pi.hProcess);
@@ -480,7 +480,7 @@ void Win32BaseDriver::put_char_attr(int char_attr)
 
 void Win32BaseDriver::delay(int ms)
 {
-    frame_pump_messages(false);
+    g_frame.pump_messages(false);
     if (ms >= 0)
     {
         Sleep(ms);

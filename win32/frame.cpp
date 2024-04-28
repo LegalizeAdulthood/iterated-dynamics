@@ -327,11 +327,11 @@ void Frame::terminate()
     save_frame_position(m_window);
 }
 
-int frame_pump_messages(bool waitflag)
+int Frame::pump_messages(bool waitflag)
 {
     MSG msg;
     bool quitting = false;
-    g_frame.m_timed_out = false;
+    m_timed_out = false;
 
     while (!quitting)
     {
@@ -339,10 +339,10 @@ int frame_pump_messages(bool waitflag)
         {
             // no messages waiting
             if (!waitflag
-                || (g_frame.m_key_press_count != 0)
-                || (waitflag && g_frame.m_timed_out))
+                || m_key_press_count != 0
+                || (waitflag && m_timed_out))
             {
-                return (g_frame.m_key_press_count > 0) ? 1 : 0;
+                return m_key_press_count > 0 ? 1 : 0;
             }
         }
 
@@ -366,12 +366,12 @@ int frame_pump_messages(bool waitflag)
         goodbye();
     }
 
-    return g_frame.m_key_press_count == 0 ? 0 : 1;
+    return m_key_press_count == 0 ? 0 : 1;
 }
 
 int Frame::get_key_press(bool wait_for_key)
 {
-    frame_pump_messages(wait_for_key != 0);
+    pump_messages(wait_for_key != 0);
     if (wait_for_key && m_timed_out)
     {
         return 0;

@@ -286,7 +286,7 @@ void GDIDriver::redraw()
     {
         plot_redraw(&plot);
     }
-    frame_pump_messages(false);
+    g_frame.pump_messages(false);
 }
 
 void GDIDriver::window()
