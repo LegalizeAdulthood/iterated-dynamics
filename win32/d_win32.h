@@ -57,7 +57,6 @@ protected:
     std::string m_name;
     std::string m_description;
 
-    Frame frame;
     WinText wintext;
 
     /* key_buffer
