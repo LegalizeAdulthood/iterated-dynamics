@@ -11,7 +11,7 @@
 #include <Windows.h>
 #include <windowsx.h>
 
-#include "WinText.h"
+#include "win_text.h"
 #include "frame.h"
 #include "resource.h"
 

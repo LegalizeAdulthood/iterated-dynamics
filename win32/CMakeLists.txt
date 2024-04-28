@@ -18,8 +18,8 @@ add_library(os STATIC
     parsera.cpp
     plot.h
     plot.cpp
-    WinText.h
-    WinText.cpp
+    win_text.h
+    win_text.cpp
     create_minidump.h
     instance.h
     ods.h

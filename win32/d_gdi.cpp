@@ -26,7 +26,7 @@
 #include "instance.h"
 #include "ods.h"
 #include "plot.h"
-#include "WinText.h"
+#include "win_text.h"
 
 #include <array>
 

@@ -28,7 +28,7 @@
 #include <cstdio>
 #include <ctime>
 
-#include "WinText.h"
+#include "win_text.h"
 #include "d_win32.h"
 #include "frame.h"
 #include "instance.h"

@@ -13,7 +13,7 @@
 #include "port.h"
 #include "id.h"
 
-#include "WinText.h"
+#include "win_text.h"
 #include "ods.h"
 
 #define TIMER_ID 1

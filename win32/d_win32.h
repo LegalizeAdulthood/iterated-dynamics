@@ -1,7 +1,7 @@
 #pragma once
 
 #include "frame.h"
-#include "WinText.h"
+#include "win_text.h"
 
 #define WIN32_MAXSCREENS 10
 

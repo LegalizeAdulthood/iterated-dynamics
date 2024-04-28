@@ -23,7 +23,7 @@
 
 #include <cassert>
 
-#include "WinText.h"
+#include "win_text.h"
 #include "frame.h"
 #include "d_win32.h"
 #include "instance.h"
