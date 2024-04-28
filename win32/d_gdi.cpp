@@ -296,7 +296,7 @@ void GDIDriver::window()
     bool center_x = true, center_y = true;
 
     get_max_size(&width, &height, &center_x, &center_y);
-    frame_window(width, height);
+    g_frame.window(width, height);
     wintext.hWndParent = g_frame.m_window;
     wintext_texton(&wintext);
     plot_window(&plot, g_frame.m_window);

@@ -405,22 +405,15 @@ static void frame_adjust_size(int width, int height)
                         GetSystemMetrics(SM_CYFRAME)*4 + GetSystemMetrics(SM_CYCAPTION) - 1;
 }
 
-void frame_window(int width, int height)
+void Frame::window(int width, int height)
 {
-    if (nullptr == g_frame.m_window)
+    if (nullptr == m_window)
     {
         frame_adjust_size(width, height);
         const POINT location{get_saved_frame_position()};
-        g_frame.m_window = CreateWindow("IdFrame",
-                                      g_frame.m_title.c_str(),
-                                      WS_OVERLAPPEDWINDOW,
-                                      location.x,
-                                      location.y,
-                                      g_frame.m_nc_width,
-                                      g_frame.m_nc_height,
-                                      nullptr, nullptr, g_frame.m_instance,
-                                      nullptr);
-        ShowWindow(g_frame.m_window, SW_SHOWNORMAL);
+        m_window = CreateWindow("IdFrame", m_title.c_str(), WS_OVERLAPPEDWINDOW, location.x, location.y, m_nc_width,
+            m_nc_height, nullptr, nullptr, m_instance, nullptr);
+        ShowWindow(m_window, SW_SHOWNORMAL);
     }
     else
     {
