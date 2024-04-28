@@ -103,7 +103,7 @@ bool Win32BaseDriver::init(int *argc, char **argv)
     LPCSTR title = ID_PROGRAM_NAME;
 
     ODS("win32_init");
-    frame_init(g_instance, title);
+    g_frame.init(g_instance, title);
     if (!wintext_initialize(&wintext, g_instance, nullptr, "Text"))
     {
         return false;

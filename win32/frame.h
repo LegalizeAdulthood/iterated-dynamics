@@ -5,8 +5,11 @@
 
 #define KEYBUFMAX 80
 
-struct Frame
+class Frame
 {
+public:
+    void init(HINSTANCE instance, LPCSTR title);
+
     HINSTANCE m_instance;
     HWND m_window;
     std::string m_title;
@@ -27,7 +30,6 @@ struct Frame
 
 extern Frame g_frame;
 
-void frame_init(HINSTANCE instance, LPCSTR title);
 void frame_terminate();
 void frame_window(int width, int height);
 int frame_key_pressed();

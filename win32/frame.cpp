@@ -291,7 +291,7 @@ static LRESULT CALLBACK frame_proc(HWND window, UINT message, WPARAM wp, LPARAM 
     return 0;
 }
 
-void frame_init(HINSTANCE instance, LPCSTR title)
+void Frame::init(HINSTANCE instance, LPCSTR title)
 {
     LPCTSTR windowClass = _T("IdFrame");
     WNDCLASS  wc;
@@ -299,27 +299,27 @@ void frame_init(HINSTANCE instance, LPCSTR title)
     bool status = GetClassInfo(instance, windowClass, &wc) != 0;
     if (!status)
     {
-        g_frame.m_instance = instance;
-        g_frame.m_title = title;
+        m_instance = instance;
+        m_title = title;
 
         wc.style = 0;
         wc.lpfnWndProc = frame_proc;
         wc.cbClsExtra = 0;
         wc.cbWndExtra = 0;
-        wc.hInstance = g_frame.m_instance;
+        wc.hInstance = m_instance;
         wc.hIcon = LoadIcon(instance, MAKEINTRESOURCE(IDI_ITERATED_DYNAMICS));
         wc.hCursor = LoadCursor(nullptr, IDC_ARROW);
         wc.hbrBackground = (HBRUSH)(COLOR_BACKGROUND+1);
-        wc.lpszMenuName = g_frame.m_title.c_str();
+        wc.lpszMenuName = m_title.c_str();
         wc.lpszClassName = windowClass;
 
         status = RegisterClass(&wc) != 0;
     }
     _ASSERTE(status);
 
-    g_frame.m_key_press_count = 0;
-    g_frame.m_key_press_head  = 0;
-    g_frame.m_key_press_tail  = 0;
+    m_key_press_count = 0;
+    m_key_press_head  = 0;
+    m_key_press_tail  = 0;
 }
 
 void frame_terminate()
