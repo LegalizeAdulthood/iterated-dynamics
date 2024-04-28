@@ -356,3 +356,7 @@ inline void driver_debug_line(const char *line)
     }
     g_driver->debug_text(text.c_str());
 }
+inline void driver_debug_line(const std::string &line)
+{
+    driver_debug_line(line.c_str());
+}
