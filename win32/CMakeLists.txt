@@ -9,7 +9,7 @@ target_link_libraries(os_hc INTERFACE helpcom config)
 
 add_library(os STATIC
     d_win32.cpp
-    d_win32_disk.cpp
+    d_disk.cpp
     d_win32_gdi.cpp
     frame.cpp
     os_win32.cpp
