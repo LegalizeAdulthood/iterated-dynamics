@@ -1,27 +1,28 @@
 #pragma once
 
+#include <array>
 #include <string>
 
 #define KEYBUFMAX 80
 
 struct Frame
 {
-    HINSTANCE instance;
-    HWND window;
-    std::string title;
-    int width;
-    int height;
-    int nc_width;
-    int nc_height;
-    HWND child;
-    bool has_focus;
-    bool timed_out;
+    HINSTANCE m_instance;
+    HWND m_window;
+    std::string m_title;
+    int m_width;
+    int m_height;
+    int m_nc_width;
+    int m_nc_height;
+    HWND m_child;
+    bool m_has_focus;
+    bool m_timed_out;
 
     // the keypress buffer
-    unsigned int  keypress_count;
-    unsigned int  keypress_head;
-    unsigned int  keypress_tail;
-    unsigned int  keypress_buffer[KEYBUFMAX];
+    unsigned int m_key_press_count;
+    unsigned int m_key_press_head;
+    unsigned int m_key_press_tail;
+    std::array<unsigned int, KEYBUFMAX> m_key_press_buffer;
 };
 
 extern Frame g_frame;

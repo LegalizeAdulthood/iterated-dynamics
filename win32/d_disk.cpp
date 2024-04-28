@@ -398,7 +398,7 @@ void DiskDriver::unget_key(int key)
 void DiskDriver::window()
 {
     frame_window(wintext.max_width, wintext.max_height);
-    wintext.hWndParent = g_frame.window;
+    wintext.hWndParent = g_frame.m_window;
     wintext_texton(&wintext);
 }
 

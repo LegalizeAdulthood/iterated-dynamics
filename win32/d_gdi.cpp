@@ -119,20 +119,20 @@ void GDIDriver::center_windows(bool center_x, bool center_y)
 
     if (center_x)
     {
-        plot_pos.x = (g_frame.width - plot.width)/2;
+        plot_pos.x = (g_frame.m_width - plot.width)/2;
     }
     else
     {
-        text_pos.x = (g_frame.width - wintext.max_width)/2;
+        text_pos.x = (g_frame.m_width - wintext.max_width)/2;
     }
 
     if (center_y)
     {
-        plot_pos.y = (g_frame.height - plot.height)/2;
+        plot_pos.y = (g_frame.m_height - plot.height)/2;
     }
     else
     {
-        text_pos.y = (g_frame.height - wintext.max_height)/2;
+        text_pos.y = (g_frame.m_height - wintext.max_height)/2;
     }
 
     bool status = SetWindowPos(plot.window, nullptr,
@@ -207,8 +207,8 @@ bool GDIDriver::resize()
     get_max_size(&width, &height, &center_graphics_x, &center_graphics_y);
     if ((g_video_table[g_adapter].xdots == plot.width)
         && (g_video_table[g_adapter].ydots == plot.height)
-        && (width == g_frame.width)
-        && (height == g_frame.height))
+        && (width == g_frame.m_width)
+        && (height == g_frame.m_height))
     {
         return false;
     }
@@ -297,9 +297,9 @@ void GDIDriver::window()
 
     get_max_size(&width, &height, &center_x, &center_y);
     frame_window(width, height);
-    wintext.hWndParent = g_frame.window;
+    wintext.hWndParent = g_frame.m_window;
     wintext_texton(&wintext);
-    plot_window(&plot, g_frame.window);
+    plot_window(&plot, g_frame.m_window);
     center_windows(center_x, center_y);
 }
 

@@ -77,12 +77,12 @@ static void frame_OnClose(HWND window)
 
 static void frame_OnSetFocus(HWND window, HWND old_focus)
 {
-    g_frame.has_focus = true;
+    g_frame.m_has_focus = true;
 }
 
 static void frame_OnKillFocus(HWND window, HWND old_focus)
 {
-    g_frame.has_focus = false;
+    g_frame.m_has_focus = false;
 }
 
 static void frame_OnPaint(HWND window)
@@ -94,19 +94,19 @@ static void frame_OnPaint(HWND window)
 
 static void frame_add_key_press(unsigned int key)
 {
-    if (g_frame.keypress_count >= KEYBUFMAX)
+    if (g_frame.m_key_press_count >= KEYBUFMAX)
     {
-        _ASSERTE(g_frame.keypress_count < KEYBUFMAX);
+        _ASSERTE(g_frame.m_key_press_count < KEYBUFMAX);
         // no room
         return;
     }
 
-    g_frame.keypress_buffer[g_frame.keypress_head] = key;
-    if (++g_frame.keypress_head >= KEYBUFMAX)
+    g_frame.m_key_press_buffer[g_frame.m_key_press_head] = key;
+    if (++g_frame.m_key_press_head >= KEYBUFMAX)
     {
-        g_frame.keypress_head = 0;
+        g_frame.m_key_press_head = 0;
     }
-    g_frame.keypress_count++;
+    g_frame.m_key_press_count++;
 }
 
 static int mod_key(int modifier, int code, int fik, int *j)
@@ -240,17 +240,17 @@ static void frame_OnChar(HWND hwnd, TCHAR ch, int cRepeat)
 
 static void frame_OnGetMinMaxInfo(HWND hwnd, LPMINMAXINFO info)
 {
-    info->ptMaxSize.x = g_frame.nc_width;
-    info->ptMaxSize.y = g_frame.nc_height;
+    info->ptMaxSize.x = g_frame.m_nc_width;
+    info->ptMaxSize.y = g_frame.m_nc_height;
     info->ptMaxTrackSize = info->ptMaxSize;
     info->ptMinTrackSize = info->ptMaxSize;
 }
 
 static void frame_OnTimer(HWND window, UINT id)
 {
-    _ASSERTE(g_frame.window == window);
+    _ASSERTE(g_frame.m_window == window);
     _ASSERTE(FRAME_TIMER_ID == id);
-    g_frame.timed_out = true;
+    g_frame.m_timed_out = true;
 }
 
 static LRESULT CALLBACK frame_proc(HWND window, UINT message, WPARAM wp, LPARAM lp)
@@ -299,39 +299,39 @@ void frame_init(HINSTANCE instance, LPCSTR title)
     bool status = GetClassInfo(instance, windowClass, &wc) != 0;
     if (!status)
     {
-        g_frame.instance = instance;
-        g_frame.title = title;
+        g_frame.m_instance = instance;
+        g_frame.m_title = title;
 
         wc.style = 0;
         wc.lpfnWndProc = frame_proc;
         wc.cbClsExtra = 0;
         wc.cbWndExtra = 0;
-        wc.hInstance = g_frame.instance;
+        wc.hInstance = g_frame.m_instance;
         wc.hIcon = LoadIcon(instance, MAKEINTRESOURCE(IDI_ITERATED_DYNAMICS));
         wc.hCursor = LoadCursor(nullptr, IDC_ARROW);
         wc.hbrBackground = (HBRUSH)(COLOR_BACKGROUND+1);
-        wc.lpszMenuName = g_frame.title.c_str();
+        wc.lpszMenuName = g_frame.m_title.c_str();
         wc.lpszClassName = windowClass;
 
         status = RegisterClass(&wc) != 0;
     }
     _ASSERTE(status);
 
-    g_frame.keypress_count = 0;
-    g_frame.keypress_head  = 0;
-    g_frame.keypress_tail  = 0;
+    g_frame.m_key_press_count = 0;
+    g_frame.m_key_press_head  = 0;
+    g_frame.m_key_press_tail  = 0;
 }
 
 void frame_terminate()
 {
-    save_frame_position(g_frame.window);
+    save_frame_position(g_frame.m_window);
 }
 
 int frame_pump_messages(bool waitflag)
 {
     MSG msg;
     bool quitting = false;
-    g_frame.timed_out = false;
+    g_frame.m_timed_out = false;
 
     while (!quitting)
     {
@@ -339,10 +339,10 @@ int frame_pump_messages(bool waitflag)
         {
             // no messages waiting
             if (!waitflag
-                || (g_frame.keypress_count != 0)
-                || (waitflag && g_frame.timed_out))
+                || (g_frame.m_key_press_count != 0)
+                || (waitflag && g_frame.m_timed_out))
             {
-                return (g_frame.keypress_count > 0) ? 1 : 0;
+                return (g_frame.m_key_press_count > 0) ? 1 : 0;
             }
         }
 
@@ -366,7 +366,7 @@ int frame_pump_messages(bool waitflag)
         goodbye();
     }
 
-    return g_frame.keypress_count == 0 ? 0 : 1;
+    return g_frame.m_key_press_count == 0 ? 0 : 1;
 }
 
 int frame_get_key_press(bool wait_for_key)
@@ -374,53 +374,53 @@ int frame_get_key_press(bool wait_for_key)
     int i;
 
     frame_pump_messages(wait_for_key != 0);
-    if (wait_for_key && g_frame.timed_out)
+    if (wait_for_key && g_frame.m_timed_out)
     {
         return 0;
     }
 
-    if (g_frame.keypress_count == 0)
+    if (g_frame.m_key_press_count == 0)
     {
         _ASSERTE(wait_for_key == 0);
         return 0;
     }
 
-    i = g_frame.keypress_buffer[g_frame.keypress_tail];
+    i = g_frame.m_key_press_buffer[g_frame.m_key_press_tail];
 
-    if (++g_frame.keypress_tail >= KEYBUFMAX)
+    if (++g_frame.m_key_press_tail >= KEYBUFMAX)
     {
-        g_frame.keypress_tail = 0;
+        g_frame.m_key_press_tail = 0;
     }
-    g_frame.keypress_count--;
+    g_frame.m_key_press_count--;
 
     return i;
 }
 
 static void frame_adjust_size(int width, int height)
 {
-    g_frame.width = width;
-    g_frame.nc_width = width + GetSystemMetrics(SM_CXFRAME)*2;
-    g_frame.height = height;
-    g_frame.nc_height = height +
+    g_frame.m_width = width;
+    g_frame.m_nc_width = width + GetSystemMetrics(SM_CXFRAME)*2;
+    g_frame.m_height = height;
+    g_frame.m_nc_height = height +
                         GetSystemMetrics(SM_CYFRAME)*4 + GetSystemMetrics(SM_CYCAPTION) - 1;
 }
 
 void frame_window(int width, int height)
 {
-    if (nullptr == g_frame.window)
+    if (nullptr == g_frame.m_window)
     {
         frame_adjust_size(width, height);
         const POINT location{get_saved_frame_position()};
-        g_frame.window = CreateWindow("IdFrame",
-                                      g_frame.title.c_str(),
+        g_frame.m_window = CreateWindow("IdFrame",
+                                      g_frame.m_title.c_str(),
                                       WS_OVERLAPPEDWINDOW,
                                       location.x,
                                       location.y,
-                                      g_frame.nc_width,
-                                      g_frame.nc_height,
-                                      nullptr, nullptr, g_frame.instance,
+                                      g_frame.m_nc_width,
+                                      g_frame.m_nc_height,
+                                      nullptr, nullptr, g_frame.m_instance,
                                       nullptr);
-        ShowWindow(g_frame.window, SW_SHOWNORMAL);
+        ShowWindow(g_frame.m_window, SW_SHOWNORMAL);
     }
     else
     {
@@ -431,15 +431,15 @@ void frame_window(int width, int height)
 void frame_resize(int width, int height)
 {
     frame_adjust_size(width, height);
-    BOOL status = SetWindowPos(g_frame.window, nullptr,
-                          0, 0, g_frame.nc_width, g_frame.nc_height,
+    BOOL status = SetWindowPos(g_frame.m_window, nullptr,
+                          0, 0, g_frame.m_nc_width, g_frame.m_nc_height,
                           SWP_NOZORDER | SWP_NOMOVE);
     _ASSERTE(status);
 }
 
 void frame_set_keyboard_timeout(int ms)
 {
-    UINT_PTR result = SetTimer(g_frame.window, FRAME_TIMER_ID, ms, nullptr);
+    UINT_PTR result = SetTimer(g_frame.m_window, FRAME_TIMER_ID, ms, nullptr);
     if (!result)
     {
         DWORD error = GetLastError();
