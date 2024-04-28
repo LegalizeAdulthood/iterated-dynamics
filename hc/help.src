@@ -274,7 +274,7 @@ o Iterated Dynamics is a native 64-bit Windows program written in C++ with a
   CMake build system and vcpkg for obtaining 3rd party library dependencies.
 o All assembly language code has been removed and, where practical, replaced
   with C++ code that performs the same function.
-o A CGA text display is simulated for all prompt screens and help screens.
+o A CGA text display is simulated for all prompt screens and help screens.\
 o A "video mode" determines the resolution of all saved images and is
   provided by a driver.  Iterated Dynamics comes with two drivers: Disk and
   GDI.  The GDI driver renders to the screen through the Windows GDI
@@ -283,11 +283,12 @@ o A "video mode" determines the resolution of all saved images and is
   with a CGA style window.
 o Id.cfg, which defines the default video modes, was updated to remove all
   modes smaller than 800x600 and very large disk video modes were added.
-o DOS related information in video modes was dropped.
+o DOS related information in video modes was dropped.\
 o All online help text has been reviewed and revised to drop DOS specific
   discussions.  Where still appropriate the text has been updated to reflect
   that Id is a program operating in a windowed environment.
-o The release parameter does nothing in this release.  For backward
+o The release parameter resets all values to their default but does not enable
+  any backwards compatible behavior in this release.  For backward
   compatability with old behavior, use Fractint.
 o The monitorwidth parameter was renamed to stereowidth.  The old parameter
   name is still accepted but will be deprecated in a future release.
@@ -297,7 +298,7 @@ o The orbitsavename parameter was added to specify the name of the raw
   a filename is formed that does not exist.
 o The autokeyname parameter was enhanced to create a unique filename when
   autokey=record unless overwrite=yes is specified.
-o Disk video buffer sizes were dramatically increased.
+o Disk video buffer sizes were dramatically increased.\
 o The formula parser has been enhanced to remove internal size limitations.
   The only limit on formula parsing is available memory.
 o Printing an image has been removed.  Use your operating system for that.
@@ -305,14 +306,15 @@ o Printing an image has been removed.  Use your operating system for that.
 o The following parameter file commands are deprecated and support will be
   removed in a future release.  In this release the arguments are parsed
   and validated and the results ignored.\
-  - adapter             - halftone              - ramvideo\
-  - afi                 - linefeed              - rleps\
-  - biospalette         - maxcolorres           - textsafe\
-  - colorps             - noninterlaced         - title\
-  - comport             - pixelzoom             - tplus\
-  - epsf                - plotstyle             - translate\
-  - exitmode            - printer               - tweaklzw\
-  - fpu                 - printfile             - vesadetect
+      adapter             halftone              ramvideo\
+      afi                 linefeed              rleps\
+      biospalette         maxcolorres           textsafe\
+      colorps             noninterlaced         title\
+      comport             pixelzoom             tplus\
+      epsf                plotstyle             translate\
+      exitmode            printer               tweaklzw\
+      fpu                 printfile             vesadetect\
+      gif87a
 
 Known limitations:
 
@@ -324,6 +326,9 @@ o Sound output does nothing, although all controls can be set through
 o Some code still assumes 8.3 filenames, but this restriction will be lifted
   over time.  To avoid surprises, continue to use 8.3 filenames until the
   code has been completely audited.
+o Some formulas don't render correctly.  These problems have been around
+  forever as xfractint also renders them incorrectly.  This will be fixed
+  in a subsequent release.
 ;
 ;
 ;

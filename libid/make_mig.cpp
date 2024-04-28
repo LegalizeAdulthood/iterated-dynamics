@@ -58,8 +58,6 @@ void make_mig(unsigned int xmult, unsigned int ymult)
 
     temp = &g_old_dac_box[0][0];                 // a safe place for our temp data
 
-    g_gif87a_flag = true;                     // for now, force this
-
     // process each input image, one at a time
     for (unsigned ystep = 0U; ystep < ymult; ystep++)
     {
@@ -103,12 +101,6 @@ void make_mig(unsigned int xmult, unsigned int ymult)
                 ytot = yres * ymult;
                 std::memcpy(&temp[6], &xtot, 2);
                 std::memcpy(&temp[8], &ytot, 2);
-                if (g_gif87a_flag)
-                {
-                    temp[3] = '8';
-                    temp[4] = '7';
-                    temp[5] = 'a';
-                }
                 temp[12] = 0; // reserved
                 if (std::fwrite(temp, 13, 1, out) != 1)     // write out the header
                 {
@@ -229,7 +221,7 @@ void make_mig(unsigned int xmult, unsigned int ymult)
                     {
                         inputerrorflag = 9;
                     }
-                    if (!g_gif87a_flag && xstep == xmult-1 && ystep == ymult-1)
+                    if (xstep == xmult-1 && ystep == ymult-1)
                     {
                         if (std::fwrite(temp, 2, 1, out) != 1)
                         {
@@ -246,7 +238,7 @@ void make_mig(unsigned int xmult, unsigned int ymult)
                         {
                             inputerrorflag = 10;
                         }
-                        if (!g_gif87a_flag && xstep == xmult-1 && ystep == ymult-1)
+                        if (xstep == xmult-1 && ystep == ymult-1)
                         {
                             if (std::fwrite(temp, 1, 1, out) != 1)
                             {
@@ -262,7 +254,7 @@ void make_mig(unsigned int xmult, unsigned int ymult)
                         {
                             inputerrorflag = 11;
                         }
-                        if (!g_gif87a_flag && xstep == xmult-1 && ystep == ymult-1)
+                        if (xstep == xmult-1 && ystep == ymult-1)
                         {
                             if (std::fwrite(temp, i, 1, out) != 1)
                             {

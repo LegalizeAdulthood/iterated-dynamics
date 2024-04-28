@@ -108,7 +108,6 @@ std::string g_gif_filename_mask;
 std::string g_save_filename{"fract001"}; // save files using this name
 bool    g_potential_flag = false;        // continuous potential enabled?
 bool    g_potential_16bit = false;               // store 16 bit continuous potential values
-bool    g_gif87a_flag = false;    // true if GIF87a format, false otherwise
 bool    g_dither_flag = false;    // true if want to dither GIFs
 bool    g_ask_video = false;       // flag for video prompting
 bool    g_float_flag = false;
@@ -429,7 +428,6 @@ static void initvars_run()              // once per run init
 static void initvars_restart()          // <ins> key init
 {
     g_record_colors = record_colors_mode::automatic; // use mapfiles in PARs
-    g_gif87a_flag = false;                // turn on GIF89a processing
     g_dither_flag = false;                // no dithering
     g_ask_video = true;                    // turn on video-prompt flag
     g_overwrite_file = false;            // don't overwrite
@@ -1341,7 +1339,6 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         {
             return bad_arg(curarg);
         }
-        g_gif87a_flag = yesnoval[0] != 0;
         return CMDARG_NONE;
     }
 

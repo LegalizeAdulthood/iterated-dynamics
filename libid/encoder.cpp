@@ -117,11 +117,6 @@ static int gif_savetodisk(char *filename)      // save-to-disk routine
 
 restart:
     save16bit = g_disk_16_bit;
-    if (g_gif87a_flag)               // not storing non-standard fractal info
-    {
-        save16bit = false;
-    }
-
     open_file = filename;                  // decode and open the filename
     open_file_ext = DEFAULT_FRACTAL_TYPE; // determine the file extension
     if (save16bit)
@@ -372,19 +367,9 @@ bool encoder()
 #endif
 
     int i = 0;
-    if (g_gif87a_flag)
+    if (std::fwrite("GIF89a", 6, 1, g_outfile) != 1)
     {
-        if (std::fwrite("GIF87a", 6, 1, g_outfile) != 1)
-        {
-            goto oops;             // old GIF Signature
-        }
-    }
-    else
-    {
-        if (std::fwrite("GIF89a", 6, 1, g_outfile) != 1)
-        {
-            goto oops;             // new GIF Signature
-        }
+        goto oops; // new GIF Signature
     }
 
     width = g_logical_screen_x_dots;
@@ -433,10 +418,6 @@ bool encoder()
     if (i > 255)
     {
         i = 255;
-    }
-    if (g_gif87a_flag)
-    {
-        i = 0;                    // for some decoders which can't handle aspect
     }
     if (std::fputc(i, g_outfile) != i)
     {
@@ -561,165 +542,162 @@ bool encoder()
         goto oops;
     }
 
-    if (!g_gif87a_flag)
+    // store non-standard fractal info
+    // loadfile has notes about extension block structure
+    if (interrupted)
     {
-        // store non-standard fractal info
-        // loadfile.c has notes about extension block structure
-        if (interrupted)
-        {
-            save_info.calc_status = static_cast<short>(calc_status_value::PARAMS_CHANGED);     // partial save is not resumable
-        }
-        save_info.tot_extend_len = 0;
-        if (!g_resume_data.empty() && save_info.calc_status == static_cast<short>(calc_status_value::RESUMABLE))
-        {
-            // resume info block, 002
-            save_info.tot_extend_len += extend_blk_len(g_resume_len);
-            std::copy(&g_resume_data[0], &g_resume_data[g_resume_len], &g_block[0]);
-            if (!put_extend_blk(2, g_resume_len, (char *)g_block))
-            {
-                goto oops;
-            }
-        }
-        // save_info.fractal_type gets modified in setup_save_info() in float only version, so we need to use fractype.
-        //    if (save_info.fractal_type == FORMULA || save_info.fractal_type == FFORMULA)
-        if (g_fractal_type == fractal_type::FORMULA || g_fractal_type == fractal_type::FFORMULA)
-        {
-            save_info.tot_extend_len += store_item_name(g_formula_name.c_str());
-        }
-        //    if (save_info.fractal_type == LSYSTEM)
-        if (g_fractal_type == fractal_type::LSYSTEM)
-        {
-            save_info.tot_extend_len += store_item_name(g_l_system_name.c_str());
-        }
-        //    if (save_info.fractal_type == IFS || save_info.fractal_type == IFS3D)
-        if (g_fractal_type == fractal_type::IFS || g_fractal_type == fractal_type::IFS3D)
-        {
-            save_info.tot_extend_len += store_item_name(g_ifs_name.c_str());
-        }
-        if (g_display_3d <= display_3d_modes::NONE && g_iteration_ranges_len)
-        {
-            // ranges block, 004
-            int const num_bytes = g_iteration_ranges_len*2;
-            save_info.tot_extend_len += extend_blk_len(num_bytes);
-            std::vector<char> buffer;
-            for (int range : g_iteration_ranges)
-            {
-                // ranges are stored as 16-bit ints in little-endian byte order
-                buffer.push_back(range & 0xFF);
-                buffer.push_back(static_cast<unsigned>(range & 0xFFFF) >> 8);
-            }
-            if (!put_extend_blk(4, num_bytes, &buffer[0]))
-            {
-                goto oops;
-            }
-
-        }
-        // Extended parameters block 005
-        if (bf_math != bf_math_type::NONE)
-        {
-            save_info.tot_extend_len += extend_blk_len(22 * (bflength + 2));
-            // note: this assumes variables allocated in order starting with
-            // g_bf_x_min in init_bf_2() in BIGNUM.C
-            if (!put_extend_blk(5, 22 * (bflength + 2), (char *) g_bf_x_min))
-            {
-                goto oops;
-            }
-        }
-
-        // Extended parameters block 006
-        if (g_evolving & FIELDMAP)
-        {
-            EVOLUTION_INFO esave_info;
-            if (!g_have_evolve_info || g_calc_status == calc_status_value::COMPLETED)
-            {
-                esave_info.x_parameter_range = g_evolve_x_parameter_range;
-                esave_info.y_parameter_range = g_evolve_y_parameter_range;
-                esave_info.x_parameter_offset = g_evolve_x_parameter_offset;
-                esave_info.y_parameter_offset = g_evolve_y_parameter_offset;
-                esave_info.discrete_x_parameter_offset = (short) g_evolve_discrete_x_parameter_offset;
-                esave_info.discrete_y_paramter_offset = (short) g_evolve_discrete_y_parameter_offset;
-                esave_info.px              = (short)g_evolve_param_grid_x;
-                esave_info.py              = (short)g_evolve_param_grid_y;
-                esave_info.sxoffs          = (short)g_logical_screen_x_offset;
-                esave_info.syoffs          = (short)g_logical_screen_y_offset;
-                esave_info.xdots           = (short)g_logical_screen_x_dots;
-                esave_info.ydots           = (short)g_logical_screen_y_dots;
-                esave_info.image_grid_size = (short) g_evolve_image_grid_size;
-                esave_info.evolving        = (short)g_evolving;
-                esave_info.this_generation_random_seed = (unsigned short) g_evolve_this_generation_random_seed;
-                esave_info.max_random_mutation = g_evolve_max_random_mutation;
-                esave_info.ecount          = (short)(g_evolve_image_grid_size * g_evolve_image_grid_size);  // flag for done
-            }
-            else
-            {
-                // we will need the resuming information
-                esave_info.x_parameter_range = g_evolve_info.x_parameter_range;
-                esave_info.y_parameter_range = g_evolve_info.y_parameter_range;
-                esave_info.x_parameter_offset = g_evolve_info.x_parameter_offset;
-                esave_info.y_parameter_offset = g_evolve_info.y_parameter_offset;
-                esave_info.discrete_x_parameter_offset = (short)g_evolve_info.discrete_x_parameter_offset;
-                esave_info.discrete_y_paramter_offset = (short)g_evolve_info.discrete_y_paramter_offset;
-                esave_info.px              = (short)g_evolve_info.px;
-                esave_info.py              = (short)g_evolve_info.py;
-                esave_info.sxoffs          = (short)g_evolve_info.sxoffs;
-                esave_info.syoffs          = (short)g_evolve_info.syoffs;
-                esave_info.xdots           = (short)g_evolve_info.xdots;
-                esave_info.ydots           = (short)g_evolve_info.ydots;
-                esave_info.image_grid_size = (short)g_evolve_info.image_grid_size;
-                esave_info.evolving        = (short)g_evolve_info.evolving;
-                esave_info.this_generation_random_seed = (unsigned short)g_evolve_info.this_generation_random_seed;
-                esave_info.max_random_mutation = g_evolve_info.max_random_mutation;
-                esave_info.ecount          = g_evolve_info.ecount;
-            }
-            for (int j = 0; j < NUM_GENES; j++)
-            {
-                esave_info.mutate[j] = (short)g_gene_bank[j].mutate;
-            }
-
-            for (int j = 0; j < sizeof(esave_info.future) / sizeof(short); j++)
-            {
-                esave_info.future[j] = 0;
-            }
-
-            decode_evolver_info(&esave_info, 0);
-            // evolution info block, 006
-            save_info.tot_extend_len += extend_blk_len(sizeof(esave_info));
-            if (!put_extend_blk(6, sizeof(esave_info), (char *) &esave_info))
-            {
-                goto oops;
-            }
-        }
-
-        // Extended parameters block 007
-        if (g_std_calc_mode == 'o')
-        {
-            ORBITS_INFO osave_info{};
-            osave_info.oxmin     = g_orbit_corner_min_x;
-            osave_info.oxmax     = g_orbit_corner_max_x;
-            osave_info.oymin     = g_orbit_corner_min_y;
-            osave_info.oymax     = g_orbit_corner_max_y;
-            osave_info.ox3rd     = g_orbit_corner_3_x;
-            osave_info.oy3rd     = g_orbit_corner_3_y;
-            osave_info.keep_scrn_coords = (short) (g_keep_screen_coords ? 1 : 0);
-            osave_info.drawmode  = g_draw_mode;
-
-            // some big-endian logic for the doubles needed here
-            decode_orbits_info(&osave_info, 0);
-            // orbits info block, 007
-            save_info.tot_extend_len += extend_blk_len(sizeof(osave_info));
-            if (!put_extend_blk(7, sizeof(osave_info), (char *) &osave_info))
-            {
-                goto oops;
-            }
-        }
-
-        // main and last block, 001
-        save_info.tot_extend_len += extend_blk_len(sizeof(FRACTAL_INFO));
-        decode_fractal_info(&save_info, 0);
-        if (!put_extend_blk(1, sizeof(FRACTAL_INFO), (char *) &save_info))
+        save_info.calc_status = static_cast<short>(calc_status_value::PARAMS_CHANGED); // partial save is not resumable
+    }
+    save_info.tot_extend_len = 0;
+    if (!g_resume_data.empty() && save_info.calc_status == static_cast<short>(calc_status_value::RESUMABLE))
+    {
+        // resume info block, 002
+        save_info.tot_extend_len += extend_blk_len(g_resume_len);
+        std::copy(&g_resume_data[0], &g_resume_data[g_resume_len], &g_block[0]);
+        if (!put_extend_blk(2, g_resume_len, (char *)g_block))
         {
             goto oops;
         }
+    }
+    // save_info.fractal_type gets modified in setup_save_info() in float only version, so we need to use fractype.
+    //    if (save_info.fractal_type == FORMULA || save_info.fractal_type == FFORMULA)
+    if (g_fractal_type == fractal_type::FORMULA || g_fractal_type == fractal_type::FFORMULA)
+    {
+        save_info.tot_extend_len += store_item_name(g_formula_name.c_str());
+    }
+    //    if (save_info.fractal_type == LSYSTEM)
+    if (g_fractal_type == fractal_type::LSYSTEM)
+    {
+        save_info.tot_extend_len += store_item_name(g_l_system_name.c_str());
+    }
+    //    if (save_info.fractal_type == IFS || save_info.fractal_type == IFS3D)
+    if (g_fractal_type == fractal_type::IFS || g_fractal_type == fractal_type::IFS3D)
+    {
+        save_info.tot_extend_len += store_item_name(g_ifs_name.c_str());
+    }
+    if (g_display_3d <= display_3d_modes::NONE && g_iteration_ranges_len)
+    {
+        // ranges block, 004
+        int const num_bytes = g_iteration_ranges_len*2;
+        save_info.tot_extend_len += extend_blk_len(num_bytes);
+        std::vector<char> buffer;
+        for (int range : g_iteration_ranges)
+        {
+            // ranges are stored as 16-bit ints in little-endian byte order
+            buffer.push_back(range & 0xFF);
+            buffer.push_back(static_cast<unsigned>(range & 0xFFFF) >> 8);
+        }
+        if (!put_extend_blk(4, num_bytes, &buffer[0]))
+        {
+            goto oops;
+        }
+
+    }
+    // Extended parameters block 005
+    if (bf_math != bf_math_type::NONE)
+    {
+        save_info.tot_extend_len += extend_blk_len(22 * (bflength + 2));
+        // note: this assumes variables allocated in order starting with
+        // g_bf_x_min in init_bf_2() in BIGNUM.C
+        if (!put_extend_blk(5, 22 * (bflength + 2), (char *) g_bf_x_min))
+        {
+            goto oops;
+        }
+    }
+
+    // Extended parameters block 006
+    if (g_evolving & FIELDMAP)
+    {
+        EVOLUTION_INFO esave_info;
+        if (!g_have_evolve_info || g_calc_status == calc_status_value::COMPLETED)
+        {
+            esave_info.x_parameter_range = g_evolve_x_parameter_range;
+            esave_info.y_parameter_range = g_evolve_y_parameter_range;
+            esave_info.x_parameter_offset = g_evolve_x_parameter_offset;
+            esave_info.y_parameter_offset = g_evolve_y_parameter_offset;
+            esave_info.discrete_x_parameter_offset = (short) g_evolve_discrete_x_parameter_offset;
+            esave_info.discrete_y_paramter_offset = (short) g_evolve_discrete_y_parameter_offset;
+            esave_info.px              = (short)g_evolve_param_grid_x;
+            esave_info.py              = (short)g_evolve_param_grid_y;
+            esave_info.sxoffs          = (short)g_logical_screen_x_offset;
+            esave_info.syoffs          = (short)g_logical_screen_y_offset;
+            esave_info.xdots           = (short)g_logical_screen_x_dots;
+            esave_info.ydots           = (short)g_logical_screen_y_dots;
+            esave_info.image_grid_size = (short) g_evolve_image_grid_size;
+            esave_info.evolving        = (short)g_evolving;
+            esave_info.this_generation_random_seed = (unsigned short) g_evolve_this_generation_random_seed;
+            esave_info.max_random_mutation = g_evolve_max_random_mutation;
+            esave_info.ecount          = (short)(g_evolve_image_grid_size * g_evolve_image_grid_size); // flag for done
+        }
+        else
+        {
+            // we will need the resuming information
+            esave_info.x_parameter_range = g_evolve_info.x_parameter_range;
+            esave_info.y_parameter_range = g_evolve_info.y_parameter_range;
+            esave_info.x_parameter_offset = g_evolve_info.x_parameter_offset;
+            esave_info.y_parameter_offset = g_evolve_info.y_parameter_offset;
+            esave_info.discrete_x_parameter_offset = (short)g_evolve_info.discrete_x_parameter_offset;
+            esave_info.discrete_y_paramter_offset = (short)g_evolve_info.discrete_y_paramter_offset;
+            esave_info.px              = (short)g_evolve_info.px;
+            esave_info.py              = (short)g_evolve_info.py;
+            esave_info.sxoffs          = (short)g_evolve_info.sxoffs;
+            esave_info.syoffs          = (short)g_evolve_info.syoffs;
+            esave_info.xdots           = (short)g_evolve_info.xdots;
+            esave_info.ydots           = (short)g_evolve_info.ydots;
+            esave_info.image_grid_size = (short)g_evolve_info.image_grid_size;
+            esave_info.evolving        = (short)g_evolve_info.evolving;
+            esave_info.this_generation_random_seed = (unsigned short)g_evolve_info.this_generation_random_seed;
+            esave_info.max_random_mutation = g_evolve_info.max_random_mutation;
+            esave_info.ecount          = g_evolve_info.ecount;
+        }
+        for (int j = 0; j < NUM_GENES; j++)
+        {
+            esave_info.mutate[j] = (short)g_gene_bank[j].mutate;
+        }
+
+        for (int j = 0; j < sizeof(esave_info.future) / sizeof(short); j++)
+        {
+            esave_info.future[j] = 0;
+        }
+
+        decode_evolver_info(&esave_info, 0);
+        // evolution info block, 006
+        save_info.tot_extend_len += extend_blk_len(sizeof(esave_info));
+        if (!put_extend_blk(6, sizeof(esave_info), (char *) &esave_info))
+        {
+            goto oops;
+        }
+    }
+
+    // Extended parameters block 007
+    if (g_std_calc_mode == 'o')
+    {
+        ORBITS_INFO osave_info{};
+        osave_info.oxmin     = g_orbit_corner_min_x;
+        osave_info.oxmax     = g_orbit_corner_max_x;
+        osave_info.oymin     = g_orbit_corner_min_y;
+        osave_info.oymax     = g_orbit_corner_max_y;
+        osave_info.ox3rd     = g_orbit_corner_3_x;
+        osave_info.oy3rd     = g_orbit_corner_3_y;
+        osave_info.keep_scrn_coords = (short) (g_keep_screen_coords ? 1 : 0);
+        osave_info.drawmode  = g_draw_mode;
+
+        // some big-endian logic for the doubles needed here
+        decode_orbits_info(&osave_info, 0);
+        // orbits info block, 007
+        save_info.tot_extend_len += extend_blk_len(sizeof(osave_info));
+        if (!put_extend_blk(7, sizeof(osave_info), (char *) &osave_info))
+        {
+            goto oops;
+        }
+    }
+
+    // main and last block, 001
+    save_info.tot_extend_len += extend_blk_len(sizeof(FRACTAL_INFO));
+    decode_fractal_info(&save_info, 0);
+    if (!put_extend_blk(1, sizeof(FRACTAL_INFO), (char *) &save_info))
+    {
+        goto oops;
     }
 
     if (std::fwrite(";", 1, 1, g_outfile) != 1)

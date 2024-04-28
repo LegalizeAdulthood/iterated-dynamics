@@ -198,8 +198,6 @@
   savename=<path>\\filename Save files using this name (instead of fract001)
   overwrite=no|yes         Don't over-write existing files
   savetime=nnn             Autosave image every nnn minutes of calculation
-  gif87a=yes               Save GIF files in the older GIF87a format
-                           (with no extension blocks)
   dither=yes               Dither color GIFs read into a b/w display.
   parmfile=<path>\\filename File for <@> and <B> commands, default id.par
   formulafile=<path>\\filename  File for type=formula, default id.frm
@@ -1094,13 +1092,6 @@ calculation is in progress.  This is mainly useful with long batches - see
 {Batch Mode}.
 
 ~ONLINEFF
-GIF87a=yes\
-Backward-compatibility switch to force creation of GIF files in the GIF87a
-format.  Id defaults to the GIF89a format which permits storage of
-fractal information within the format.  Using "gif87a=yes" is
-only needed if you wish to view Id images with a GIF decoder that
-cannot accept the newer format.  See {GIF Save File Format}.
-
 DITHER=yes\
 Dither a color file into two colors for monochrome display.  This gives
 a poor-quality display of gray levels.
