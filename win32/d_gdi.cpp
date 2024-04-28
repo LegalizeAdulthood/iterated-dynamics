@@ -213,7 +213,7 @@ bool GDIDriver::resize()
         return false;
     }
 
-    frame_resize(width, height);
+    g_frame.resize(width, height);
     plot_resize(&plot);
     center_windows(center_graphics_x, center_graphics_y);
     return true;

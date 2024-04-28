@@ -13,6 +13,9 @@ public:
     void window(int width, int height);
     int get_key_press(bool wait_for_key);
     int pump_messages(bool waitflag);
+    void resize(int width, int height);
+
+    void adjust_size(int width, int height);
 
     HINSTANCE m_instance;
     HWND m_window;
@@ -34,5 +37,4 @@ public:
 
 extern Frame g_frame;
 
-void frame_resize(int width, int height);
 void frame_set_keyboard_timeout(int ms);

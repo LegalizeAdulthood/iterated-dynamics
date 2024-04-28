@@ -167,7 +167,7 @@ bool DiskDriver::init(int *argc, char **argv)
  */
 bool DiskDriver::resize()
 {
-    frame_resize(wintext.max_width, wintext.max_height);
+    g_frame.resize(wintext.max_width, wintext.max_height);
     if ((g_video_table[g_adapter].xdots == width)
         && (g_video_table[g_adapter].ydots == height))
     {

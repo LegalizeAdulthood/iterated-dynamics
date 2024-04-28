@@ -394,7 +394,7 @@ int Frame::get_key_press(bool wait_for_key)
     return i;
 }
 
-static void frame_adjust_size(int width, int height)
+void Frame::adjust_size(int width, int height)
 {
     g_frame.m_width = width;
     g_frame.m_nc_width = width + GetSystemMetrics(SM_CXFRAME)*2;
@@ -407,7 +407,7 @@ void Frame::window(int width, int height)
 {
     if (nullptr == m_window)
     {
-        frame_adjust_size(width, height);
+        adjust_size(width, height);
         const POINT location{get_saved_frame_position()};
         m_window = CreateWindow("IdFrame", m_title.c_str(), WS_OVERLAPPEDWINDOW, location.x, location.y, m_nc_width,
             m_nc_height, nullptr, nullptr, m_instance, nullptr);
@@ -415,16 +415,14 @@ void Frame::window(int width, int height)
     }
     else
     {
-        frame_resize(width, height);
+        resize(width, height);
     }
 }
 
-void frame_resize(int width, int height)
+void Frame::resize(int width, int height)
 {
-    frame_adjust_size(width, height);
-    BOOL status = SetWindowPos(g_frame.m_window, nullptr,
-                          0, 0, g_frame.m_nc_width, g_frame.m_nc_height,
-                          SWP_NOZORDER | SWP_NOMOVE);
+    adjust_size(width, height);
+    BOOL status = SetWindowPos(m_window, nullptr, 0, 0, m_nc_width, g_frame.m_nc_height, SWP_NOZORDER | SWP_NOMOVE);
     _ASSERTE(status);
 }
 
