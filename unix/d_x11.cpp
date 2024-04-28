@@ -126,7 +126,7 @@ public:
     void pause() override;
     void resume() override;
     void schedule_alarm(int secs) override;
-    void window() override;
+    void create_window() override;
     bool resize() override;
     void redraw() override;
     int read_palette() override;
@@ -1628,7 +1628,7 @@ void frame_window(int width, int height)
 {
 }
 
-void X11Driver::window()
+void X11Driver::create_window()
 {
     unsigned width;
     unsigned height;
