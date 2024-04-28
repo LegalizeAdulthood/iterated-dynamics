@@ -256,7 +256,7 @@ int DiskDriver::write_palette()
 */
 void DiskDriver::schedule_alarm(int secs)
 {
-    wintext_schedule_alarm(&wintext, (secs ? 1 : DRAW_INTERVAL)*1000);
+    wintext.schedule_alarm((secs ? 1 : DRAW_INTERVAL) * 1000);
 }
 
 /*
@@ -379,14 +379,14 @@ void DiskDriver::draw_line(int x1, int y1, int x2, int y2, int color)
 void DiskDriver::redraw()
 {
     ODS("DiskDriver::redraw");
-    wintext_paintscreen(&wintext, 0, 80, 0, 25);
+    wintext.paint_screen(0, 80, 0, 25);
 }
 
 void DiskDriver::create_window()
 {
     g_frame.create_window(wintext.m_max_width, wintext.m_max_height);
-    wintext.m_parent = g_frame.m_window;
-    wintext_texton(&wintext);
+    wintext.set_parent(g_frame.m_window);
+    wintext.text_on();
 }
 
 extern void set_disk_dot();
@@ -415,7 +415,7 @@ void DiskDriver::set_video_mode(VIDEOINFO *mode)
 
 void DiskDriver::set_clear()
 {
-    wintext_clear(&wintext);
+    wintext.clear();
 }
 
 void DiskDriver::display_string(int x, int y, int fg, int bg, char const *text)
@@ -466,7 +466,7 @@ void DiskDriver::resume()
     {
         ShowWindow(wintext.m_window, SW_NORMAL);
     }
-    wintext_resume(&wintext);
+    wintext.resume();
 }
 
 void DiskDriver::save_graphics()

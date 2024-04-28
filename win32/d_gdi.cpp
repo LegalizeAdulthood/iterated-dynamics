@@ -237,7 +237,7 @@ void GDIDriver::schedule_alarm(int secs)
     secs = (secs ? 1 : DRAW_INTERVAL)*1000;
     if (text_not_graphics)
     {
-        wintext_schedule_alarm(&wintext, secs);
+        wintext.schedule_alarm(secs);
     }
     else
     {
@@ -280,7 +280,7 @@ void GDIDriver::redraw()
     ODS("GDIDriver::redraw");
     if (text_not_graphics)
     {
-        wintext_paintscreen(&wintext, 0, 80, 0, 25);
+        wintext.paint_screen(0, 80, 0, 25);
     }
     else
     {
@@ -297,8 +297,8 @@ void GDIDriver::create_window()
 
     get_max_size(&width, &height, &center_x, &center_y);
     g_frame.create_window(width, height);
-    wintext.m_parent = g_frame.m_window;
-    wintext_texton(&wintext);
+    wintext.set_parent(g_frame.m_window);
+    wintext.text_on();
     plot_window(&plot, g_frame.m_window);
     center_windows(center_x, center_y);
 }
@@ -325,7 +325,7 @@ void GDIDriver::set_clear()
 {
     if (text_not_graphics)
     {
-        wintext_clear(&wintext);
+        wintext.clear();
     }
     else
     {
@@ -395,7 +395,7 @@ void GDIDriver::resume()
     }
 
     ShowWindow(wintext.m_window, SW_NORMAL);
-    wintext_resume(&wintext);
+    wintext.resume();
 }
 
 void GDIDriver::display_string(int x, int y, int fg, int bg, char const *text)

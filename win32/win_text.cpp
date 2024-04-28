@@ -255,7 +255,7 @@ void WinText::destroy()
 
     if (m_text_mode == 2)  // text is still active!
     {
-        wintext_textoff(this);
+        text_off();
     }
     if (m_text_mode != 1)  // not in the right mode
     {
@@ -383,7 +383,7 @@ static void wintext_OnPaint(HWND window)
 
     ODS("wintext_OnPaint");
 
-    wintext_paintscreen(g_me, xmin, xmax, ymin, ymax);
+    g_me->paint_screen(xmin, xmax, ymin, ymax);
     EndPaint(window, &ps);
 }
 
