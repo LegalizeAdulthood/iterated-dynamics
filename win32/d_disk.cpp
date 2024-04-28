@@ -405,12 +405,10 @@ void DiskDriver::set_video_mode(VIDEOINFO *mode)
         g_dac_learn = true;
         g_dac_count = g_cycle_limit;
         g_got_real_dac = true;
-
         read_palette();
     }
 
     resize();
-
     set_disk_dot();
     set_normal_line();
 }

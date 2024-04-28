@@ -248,20 +248,16 @@ void Win32BaseDriver::set_video_mode(VIDEOINFO *mode)
         g_dac_learn = true;
         g_dac_count = g_cycle_limit;
         g_got_real_dac = true;          // we are "VGA"
-
-        driver_read_palette();
+        read_palette();
     }
 
     resize();
-
     if (g_disk_flag)
     {
         enddisk();
     }
-
     set_normal_dot();
     set_normal_line();
-
     set_for_graphics();
     set_clear();
 }
