@@ -300,7 +300,7 @@ void frame_init(HINSTANCE instance, LPCSTR title)
     if (!status)
     {
         g_frame.instance = instance;
-        std::strcpy(g_frame.title, title);
+        g_frame.title = title;
 
         wc.style = 0;
         wc.lpfnWndProc = frame_proc;
@@ -310,7 +310,7 @@ void frame_init(HINSTANCE instance, LPCSTR title)
         wc.hIcon = LoadIcon(instance, MAKEINTRESOURCE(IDI_ITERATED_DYNAMICS));
         wc.hCursor = LoadCursor(nullptr, IDC_ARROW);
         wc.hbrBackground = (HBRUSH)(COLOR_BACKGROUND+1);
-        wc.lpszMenuName = g_frame.title;
+        wc.lpszMenuName = g_frame.title.c_str();
         wc.lpszClassName = windowClass;
 
         status = RegisterClass(&wc) != 0;
@@ -412,7 +412,7 @@ void frame_window(int width, int height)
         frame_adjust_size(width, height);
         const POINT location{get_saved_frame_position()};
         g_frame.window = CreateWindow("IdFrame",
-                                      g_frame.title,
+                                      g_frame.title.c_str(),
                                       WS_OVERLAPPEDWINDOW,
                                       location.x,
                                       location.y,

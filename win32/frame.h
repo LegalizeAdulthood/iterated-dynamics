@@ -1,12 +1,14 @@
 #pragma once
 
+#include <string>
+
 #define KEYBUFMAX 80
 
 struct Frame
 {
     HINSTANCE instance;
     HWND window;
-    char title[80];
+    std::string title;
     int width;
     int height;
     int nc_width;
