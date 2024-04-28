@@ -4,28 +4,28 @@
 
 struct Plot
 {
-    HINSTANCE instance;
-    char title[120];
-    HWND parent;
+    HINSTANCE m_instance;
+    char m_title[120];
+    HWND m_parent;
 
-    HWND window;
-    HDC memory_dc;
-    HBITMAP rendering;
-    HBITMAP backup;
-    HFONT font;
+    HWND m_window;
+    HDC m_memory_dc;
+    HBITMAP m_rendering;
+    HBITMAP m_backup;
+    HFONT m_font;
 
-    bool dirty;
-    RECT dirty_region;
-    BITMAPINFO bmi;                     // contains first clut entry too
-    RGBQUAD bmiColors[255];             // color look up table
+    bool m_dirty;
+    RECT m_dirty_region;
+    BITMAPINFO m_bmi;                     // contains first clut entry too
+    RGBQUAD m_bmi_colors[255];             // color look up table
 
-    std::vector<BYTE> pixels;
-    std::vector<BYTE> saved_pixels;
-    size_t pixels_len;
-    size_t row_len;
-    int width;
-    int height;
-    unsigned char clut[256][3];
+    std::vector<BYTE> m_pixels;
+    std::vector<BYTE> m_saved_pixels;
+    size_t m_pixels_len;
+    size_t m_row_len;
+    int m_width;
+    int m_height;
+    unsigned char m_clut[256][3];
 };
 
 int plot_init(Plot *p, HINSTANCE instance, LPCSTR title);

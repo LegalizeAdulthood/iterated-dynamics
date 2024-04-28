@@ -119,7 +119,7 @@ void GDIDriver::center_windows(bool center_x, bool center_y)
 
     if (center_x)
     {
-        plot_pos.x = (g_frame.m_width - plot.width)/2;
+        plot_pos.x = (g_frame.m_width - plot.m_width)/2;
     }
     else
     {
@@ -128,14 +128,14 @@ void GDIDriver::center_windows(bool center_x, bool center_y)
 
     if (center_y)
     {
-        plot_pos.y = (g_frame.m_height - plot.height)/2;
+        plot_pos.y = (g_frame.m_height - plot.m_height)/2;
     }
     else
     {
         text_pos.y = (g_frame.m_height - wintext.m_max_height)/2;
     }
 
-    bool status = SetWindowPos(plot.window, nullptr,
+    bool status = SetWindowPos(plot.m_window, nullptr,
         plot_pos.x, plot_pos.y, 0, 0, SWP_NOZORDER | SWP_NOSIZE) == TRUE;
     _ASSERTE(status);
     status = SetWindowPos(wintext.m_window, nullptr,
@@ -205,8 +205,8 @@ bool GDIDriver::resize()
     bool center_graphics_x = true, center_graphics_y = true;
 
     get_max_size(&width, &height, &center_graphics_x, &center_graphics_y);
-    if ((g_video_table[g_adapter].xdots == plot.width)
-        && (g_video_table[g_adapter].ydots == plot.height)
+    if ((g_video_table[g_adapter].xdots == plot.m_width)
+        && (g_video_table[g_adapter].ydots == plot.m_height)
         && (width == g_frame.m_width)
         && (height == g_frame.m_height))
     {
@@ -311,13 +311,13 @@ bool GDIDriver::is_text()
 void GDIDriver::set_for_text()
 {
     text_not_graphics = true;
-    show_hide_windows(wintext.m_window, plot.window);
+    show_hide_windows(wintext.m_window, plot.m_window);
 }
 
 void GDIDriver::set_for_graphics()
 {
     text_not_graphics = false;
-    show_hide_windows(plot.window, wintext.m_window);
+    show_hide_windows(plot.m_window, wintext.m_window);
     hide_text_cursor();
 }
 
@@ -381,9 +381,9 @@ void GDIDriver::pause()
     {
         ShowWindow(wintext.m_window, SW_HIDE);
     }
-    if (plot.window)
+    if (plot.m_window)
     {
-        ShowWindow(plot.window, SW_HIDE);
+        ShowWindow(plot.m_window, SW_HIDE);
     }
 }
 
