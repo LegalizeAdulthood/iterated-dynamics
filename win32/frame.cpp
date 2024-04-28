@@ -369,29 +369,27 @@ int frame_pump_messages(bool waitflag)
     return g_frame.m_key_press_count == 0 ? 0 : 1;
 }
 
-int frame_get_key_press(bool wait_for_key)
+int Frame::get_key_press(bool wait_for_key)
 {
-    int i;
-
     frame_pump_messages(wait_for_key != 0);
-    if (wait_for_key && g_frame.m_timed_out)
+    if (wait_for_key && m_timed_out)
     {
         return 0;
     }
 
-    if (g_frame.m_key_press_count == 0)
+    if (m_key_press_count == 0)
     {
         _ASSERTE(wait_for_key == 0);
         return 0;
     }
 
-    i = g_frame.m_key_press_buffer[g_frame.m_key_press_tail];
+    const int i = m_key_press_buffer[m_key_press_tail];
 
-    if (++g_frame.m_key_press_tail >= KEYBUFMAX)
+    if (++m_key_press_tail >= KEYBUFMAX)
     {
-        g_frame.m_key_press_tail = 0;
+        m_key_press_tail = 0;
     }
-    g_frame.m_key_press_count--;
+    m_key_press_count--;
 
     return i;
 }

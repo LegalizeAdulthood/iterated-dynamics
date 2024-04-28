@@ -11,6 +11,7 @@ public:
     void init(HINSTANCE instance, LPCSTR title);
     void terminate();
     void window(int width, int height);
+    int get_key_press(bool wait_for_key);
 
     HINSTANCE m_instance;
     HWND m_window;
@@ -32,8 +33,6 @@ public:
 
 extern Frame g_frame;
 
-int frame_key_pressed();
-int frame_get_key_press(bool wait_for_key);
 int frame_pump_messages(bool waitflag);
 void frame_schedule_alarm(int secs);
 void frame_resize(int width, int height);

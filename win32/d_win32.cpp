@@ -131,7 +131,7 @@ int Win32BaseDriver::key_pressed()
         return ch;
     }
     flush_output();
-    ch = handle_special_keys(frame_get_key_press(false));
+    ch = handle_special_keys(g_frame.get_key_press(false));
     key_buffer = ch;
 
     return ch;
@@ -168,7 +168,7 @@ int Win32BaseDriver::get_key()
         }
         else
         {
-            ch = handle_special_keys(frame_get_key_press(true));
+            ch = handle_special_keys(g_frame.get_key_press(true));
         }
     }
     while (ch == 0);
