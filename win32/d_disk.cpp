@@ -63,7 +63,6 @@ public:
     void set_video_mode(VIDEOINFO *mode) override;
     void set_clear() override;
     void display_string(int x, int y, int fg, int bg, char const *text) override;
-    void hide_text_cursor() override;
     bool is_text() override;
     void set_for_text() override;
     void set_for_graphics() override;
@@ -435,16 +434,6 @@ void DiskDriver::set_clear()
 
 void DiskDriver::display_string(int x, int y, int fg, int bg, char const *text)
 {
-}
-
-void DiskDriver::hide_text_cursor()
-{
-    if (cursor_shown)
-    {
-        cursor_shown = false;
-        wintext_hide_cursor(&wintext);
-    }
-    ODS("disk_hide_text_cursor");
 }
 
 bool DiskDriver::is_text()
