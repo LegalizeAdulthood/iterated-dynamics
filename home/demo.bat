@@ -82,6 +82,7 @@ echo   - exit
 echo.
 pause
 call :play-auto-key @demo.par/Mandel_Demo autokeyname=demo3.key
+if exist demo3.par del demo3.par
 exit /b 0
 
 
