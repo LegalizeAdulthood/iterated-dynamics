@@ -163,10 +163,10 @@ void invalidate(WinText *me, int left, int bot, int right, int top)
 {
     RECT exposed =
     {
-        left*me->char_width, top*me->char_height,
-        (right+1)*me->char_width, (bot+1)*me->char_height
+        left*me->m_char_width, top*me->m_char_height,
+        (right+1)*me->m_char_width, (bot+1)*me->m_char_height
     };
-    InvalidateRect(me->hWndCopy, &exposed, FALSE);
+    InvalidateRect(me->m_window, &exposed, FALSE);
 }
 
 /*
@@ -182,9 +182,9 @@ bool wintext_initialize(WinText *me, HINSTANCE hInstance, HWND hWndParent, LPCST
     WNDCLASS  wc;
 
     ODS("wintext_initialize");
-    me->hInstance = hInstance;
-    std::strcpy(me->title_text, titletext);
-    me->hWndParent = hWndParent;
+    me->m_instance = hInstance;
+    std::strcpy(me->m_title, titletext);
+    me->m_parent = hWndParent;
 
     bool return_value = GetClassInfo(hInstance, s_window_class, &wc) != 0;
     if (!return_value)
@@ -197,50 +197,50 @@ bool wintext_initialize(WinText *me, HINSTANCE hInstance, HWND hWndParent, LPCST
         wc.hIcon = nullptr;
         wc.hCursor = LoadCursor(nullptr, IDC_ARROW);
         wc.hbrBackground = static_cast<HBRUSH>(GetStockObject(BLACK_BRUSH));
-        wc.lpszMenuName =  me->title_text;
+        wc.lpszMenuName =  me->m_title;
         wc.lpszClassName = s_window_class;
 
         return_value = RegisterClass(&wc) != 0;
     }
 
     // set up the font characteristics
-    me->char_font = OEM_FIXED_FONT;
-    me->hFont = static_cast<HFONT>(GetStockObject(me->char_font));
+    me->m_char_font = OEM_FIXED_FONT;
+    me->m_font = static_cast<HFONT>(GetStockObject(me->m_char_font));
     hDC = GetDC(hWndParent);
-    hOldFont = static_cast<HFONT>(SelectObject(hDC, me->hFont));
+    hOldFont = static_cast<HFONT>(SelectObject(hDC, me->m_font));
     GetTextMetrics(hDC, &TextMetric);
     SelectObject(hDC, hOldFont);
     ReleaseDC(hWndParent, hDC);
-    me->char_width  = TextMetric.tmMaxCharWidth;
-    me->char_height = TextMetric.tmHeight;
-    me->char_xchars = WINTEXT_MAX_COL;
-    me->char_ychars = WINTEXT_MAX_ROW;
+    me->m_char_width  = TextMetric.tmMaxCharWidth;
+    me->m_char_height = TextMetric.tmHeight;
+    me->m_char_xchars = WINTEXT_MAX_COL;
+    me->m_char_ychars = WINTEXT_MAX_ROW;
 
     // maximum screen width
-    me->max_width = me->char_xchars*me->char_width;
+    me->m_max_width = me->m_char_xchars*me->m_char_width;
     // maximum screen height
-    me->max_height = me->char_ychars*me->char_height;
+    me->m_max_height = me->m_char_ychars*me->m_char_height;
 
     // set up the font and caret information
     for (int i = 0; i < 3; i++)
     {
-        size_t count = std::size(me->cursor_pattern[0])*sizeof(me->cursor_pattern[0][0]);
-        std::memset(&me->cursor_pattern[i][0], 0, count);
+        size_t count = std::size(me->m_cursor_pattern[0])*sizeof(me->m_cursor_pattern[0][0]);
+        std::memset(&me->m_cursor_pattern[i][0], 0, count);
     }
-    for (int j = me->char_height-2; j < me->char_height; j++)
+    for (int j = me->m_char_height-2; j < me->m_char_height; j++)
     {
-        me->cursor_pattern[1][j] = 0x00ff;
+        me->m_cursor_pattern[1][j] = 0x00ff;
     }
-    for (int j = 0; j < me->char_height; j++)
+    for (int j = 0; j < me->m_char_height; j++)
     {
-        me->cursor_pattern[2][j] = 0x00ff;
+        me->m_cursor_pattern[2][j] = 0x00ff;
     }
-    me->bitmap[0] = CreateBitmap(8, me->char_height, 1, 1, &me->cursor_pattern[0][0]);
-    me->bitmap[1] = CreateBitmap(8, me->char_height, 1, 1, &me->cursor_pattern[1][0]);
-    me->bitmap[2] = CreateBitmap(8, me->char_height, 1, 1, &me->cursor_pattern[2][0]);
+    me->m_bitmap[0] = CreateBitmap(8, me->m_char_height, 1, 1, &me->m_cursor_pattern[0][0]);
+    me->m_bitmap[1] = CreateBitmap(8, me->m_char_height, 1, 1, &me->m_cursor_pattern[1][0]);
+    me->m_bitmap[2] = CreateBitmap(8, me->m_char_height, 1, 1, &me->m_cursor_pattern[2][0]);
 
-    me->textmode = 1;
-    me->AltF4hit = false;
+    me->m_text_mode = 1;
+    me->m_alt_f4_hit = false;
 
     return return_value;
 }
@@ -252,21 +252,21 @@ void wintext_destroy(WinText *me)
 {
     ODS("wintext_destroy");
 
-    if (me->textmode == 2)  // text is still active!
+    if (me->m_text_mode == 2)  // text is still active!
     {
         wintext_textoff(me);
     }
-    if (me->textmode != 1)  // not in the right mode
+    if (me->m_text_mode != 1)  // not in the right mode
     {
         return;
     }
 
     for (int i = 0; i < 3; i++)
     {
-        DeleteObject((HANDLE) me->bitmap[i]);
+        DeleteObject((HANDLE) me->m_bitmap[i]);
     }
-    me->textmode = 0;
-    me->AltF4hit = false;
+    me->m_text_mode = 0;
+    me->m_alt_f4_hit = false;
 }
 
 
@@ -279,44 +279,44 @@ int wintext_texton(WinText *me)
 
     ODS("wintext_texton");
 
-    if (me->textmode != 1)  // not in the right mode
+    if (me->m_text_mode != 1)  // not in the right mode
     {
         return 0;
     }
 
     // initialize the cursor
-    me->cursor_x    = 0;
-    me->cursor_y    = 0;
-    me->cursor_type = 0;
-    me->cursor_owned = false;
-    me->showing_cursor = FALSE;
+    me->m_cursor_x    = 0;
+    me->m_cursor_y    = 0;
+    me->m_cursor_type = 0;
+    me->m_cursor_owned = false;
+    me->m_showing_cursor = FALSE;
 
     /* make sure g_me points to me because CreateWindow
      * is going to call the window procedure.
      */
     g_me = me;
     hWnd = CreateWindow(s_window_class,
-                        me->title_text,
-                        (nullptr == me->hWndParent) ? WS_OVERLAPPEDWINDOW : WS_CHILD,
+                        me->m_title,
+                        (nullptr == me->m_parent) ? WS_OVERLAPPEDWINDOW : WS_CHILD,
                         CW_USEDEFAULT,               // default horizontal position
                         CW_USEDEFAULT,               // default vertical position
-                        me->max_width,
-                        me->max_height,
-                        me->hWndParent,
+                        me->m_max_width,
+                        me->m_max_height,
+                        me->m_parent,
                         nullptr,
-                        me->hInstance,
+                        me->m_instance,
                         nullptr);
     _ASSERTE(hWnd);
 
     // squirrel away a global copy of 'hWnd' for later
-    me->hWndCopy = hWnd;
+    me->m_window = hWnd;
 
-    me->textmode = 2;
-    me->AltF4hit = false;
+    me->m_text_mode = 2;
+    me->m_alt_f4_hit = false;
 
-    ShowWindow(me->hWndCopy, SW_SHOWNORMAL);
-    UpdateWindow(me->hWndCopy);
-    InvalidateRect(me->hWndCopy, nullptr, FALSE);
+    ShowWindow(me->m_window, SW_SHOWNORMAL);
+    UpdateWindow(me->m_window);
+    InvalidateRect(me->m_window, nullptr, FALSE);
 
     return 0;
 }
@@ -328,21 +328,21 @@ int wintext_texton(WinText *me)
 int wintext_textoff(WinText *me)
 {
     ODS("wintext_textoff");
-    me->AltF4hit = false;
-    if (me->textmode != 2)  // not in the right mode
+    me->m_alt_f4_hit = false;
+    if (me->m_text_mode != 2)  // not in the right mode
     {
         return 0;
     }
-    DestroyWindow(me->hWndCopy);
-    me->textmode = 1;
+    DestroyWindow(me->m_window);
+    me->m_text_mode = 1;
     return 0;
 }
 
 static void wintext_OnClose(HWND window)
 {
     ODS("wintext_OnClose");
-    g_me->textmode = 1;
-    g_me->AltF4hit = true;
+    g_me->m_text_mode = 1;
+    g_me->m_alt_f4_hit = true;
 }
 
 static void wintext_OnSetFocus(HWND window, HWND old_focus)
@@ -350,14 +350,14 @@ static void wintext_OnSetFocus(HWND window, HWND old_focus)
     ODS("wintext_OnSetFocus");
     // get focus - display caret
     // create caret & display
-    if (TRUE == g_me->showing_cursor)
+    if (TRUE == g_me->m_showing_cursor)
     {
-        g_me->cursor_owned = true;
-        CreateCaret(g_me->hWndCopy, g_me->bitmap[g_me->cursor_type], g_me->char_width, g_me->char_height);
-        SetCaretPos(g_me->cursor_x*g_me->char_width, g_me->cursor_y*g_me->char_height);
+        g_me->m_cursor_owned = true;
+        CreateCaret(g_me->m_window, g_me->m_bitmap[g_me->m_cursor_type], g_me->m_char_width, g_me->m_char_height);
+        SetCaretPos(g_me->m_cursor_x*g_me->m_char_width, g_me->m_cursor_y*g_me->m_char_height);
         //SetCaretBlinkTime(500);
         ODS3("======================== Show Caret %d #3 (%d,%d)", ++carrot_count, g_me->cursor_x*g_me->char_width, g_me->cursor_y*g_me->char_height);
-        ShowCaret(g_me->hWndCopy);
+        ShowCaret(g_me->m_window);
     }
 }
 
@@ -365,9 +365,9 @@ static void wintext_OnKillFocus(HWND window, HWND old_focus)
 {
     // kill focus - hide caret
     ODS("wintext_OnKillFocus");
-    if (TRUE == g_me->showing_cursor)
+    if (TRUE == g_me->m_showing_cursor)
     {
-        g_me->cursor_owned = false;
+        g_me->m_cursor_owned = false;
         ODS1("======================== Hide Caret %d", --carrot_count);
         HideCaret(window);
         DestroyCaret();
@@ -390,10 +390,10 @@ static void wintext_OnPaint(HWND window)
     HDC hDC = BeginPaint(window, &ps);
 
     // the routine below handles *all* window updates
-    int xmin = ps.rcPaint.left/g_me->char_width;
-    int xmax = (ps.rcPaint.right + g_me->char_width - 1)/g_me->char_width;
-    int ymin = ps.rcPaint.top/g_me->char_height;
-    int ymax = (ps.rcPaint.bottom + g_me->char_height - 1)/g_me->char_height;
+    int xmin = ps.rcPaint.left/g_me->m_char_width;
+    int xmax = (ps.rcPaint.right + g_me->m_char_width - 1)/g_me->m_char_width;
+    int ymin = ps.rcPaint.top/g_me->m_char_height;
+    int ymax = (ps.rcPaint.bottom + g_me->m_char_height - 1)/g_me->m_char_height;
 
     ODS("wintext_OnPaint");
 
@@ -404,20 +404,20 @@ static void wintext_OnPaint(HWND window)
 static void wintext_OnSize(HWND window, UINT state, int cx, int cy)
 {
     ODS("wintext_OnSize");
-    if (cx > (WORD)g_me->max_width ||
-            cy > (WORD)g_me->max_height)
+    if (cx > (WORD)g_me->m_max_width ||
+            cy > (WORD)g_me->m_max_height)
     {
         SetWindowPos(window,
                      GetNextWindow(window, GW_HWNDPREV),
-                     0, 0, g_me->max_width, g_me->max_height, SWP_NOMOVE);
+                     0, 0, g_me->m_max_width, g_me->m_max_height, SWP_NOMOVE);
     }
 }
 
 static void wintext_OnGetMinMaxInfo(HWND hwnd, LPMINMAXINFO lpMinMaxInfo)
 {
     ODS("wintext_OnGetMinMaxInfo");
-    lpMinMaxInfo->ptMaxSize.x = g_me->max_width;
-    lpMinMaxInfo->ptMaxSize.y = g_me->max_height;
+    lpMinMaxInfo->ptMaxSize.x = g_me->m_max_width;
+    lpMinMaxInfo->ptMaxSize.y = g_me->m_max_height;
 }
 
 /*
@@ -425,11 +425,11 @@ static void wintext_OnGetMinMaxInfo(HWND hwnd, LPMINMAXINFO lpMinMaxInfo)
 */
 LRESULT CALLBACK wintext_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
-    if (g_me->hWndCopy == nullptr)
+    if (g_me->m_window == nullptr)
     {
-        g_me->hWndCopy = hWnd;
+        g_me->m_window = hWnd;
     }
-    else if (hWnd != g_me->hWndCopy)  // ??? not the text-mode window!
+    else if (hWnd != g_me->m_window)  // ??? not the text-mode window!
     {
         return DefWindowProc(hWnd, message, wParam, lParam);
     }
@@ -503,8 +503,8 @@ void wintext_putstring(WinText *me, int xpos, int ypos, int attrib, char const *
                 maxrow = j;
             if (maxcol < k)
                 maxcol = k;
-            me->chars[j][k] = xc;
-            me->attrs[j][k] = xa;
+            me->m_chars[j][k] = xc;
+            me->m_attrs[j][k] = xa;
         }
     }
     if (i > 0)
@@ -519,18 +519,18 @@ void wintext_scroll_up(WinText *me, int top, int bot)
 {
     for (int row = top; row < bot; row++)
     {
-        char *chars = &me->chars[row][0];
-        unsigned char *attrs = &me->attrs[row][0];
-        char *next_chars = &me->chars[row+1][0];
-        unsigned char *next_attrs = &me->attrs[row+1][0];
+        char *chars = &me->m_chars[row][0];
+        unsigned char *attrs = &me->m_attrs[row][0];
+        char *next_chars = &me->m_chars[row+1][0];
+        unsigned char *next_attrs = &me->m_attrs[row+1][0];
         for (int col = 0; col < WINTEXT_MAX_COL; col++)
         {
             *chars++ = *next_chars++;
             *attrs++ = *next_attrs++;
         }
     }
-    std::memset(&me->chars[bot][0], 0, (size_t) WINTEXT_MAX_COL);
-    std::memset(&me->attrs[bot][0], 0, (size_t) WINTEXT_MAX_COL);
+    std::memset(&me->m_chars[bot][0], 0, (size_t) WINTEXT_MAX_COL);
+    std::memset(&me->m_attrs[bot][0], 0, (size_t) WINTEXT_MAX_COL);
     invalidate(me, 0, bot, WINTEXT_MAX_COL, top);
 }
 
@@ -555,45 +555,45 @@ void wintext_paintscreen(WinText *me,
 
     ODS("wintext_paintscreen");
 
-    if (me->textmode != 2)  // not in the right mode
+    if (me->m_text_mode != 2)  // not in the right mode
         return;
 
     // first time through?  Initialize the 'screen'
-    if (!me->buffer_init)
+    if (!me->m_buffer_init)
     {
-        me->buffer_init = true;
+        me->m_buffer_init = true;
         oldbk = 0x00;
         oldfg = 0x0f;
         int k = (oldbk << 4) + oldfg;
-        me->buffer_init = true;
-        for (int i = 0; i < me->char_xchars; i++)
+        me->m_buffer_init = true;
+        for (int i = 0; i < me->m_char_xchars; i++)
         {
-            for (int j = 0; j < me->char_ychars; j++)
+            for (int j = 0; j < me->m_char_ychars; j++)
             {
-                me->chars[j][i] = ' ';
-                me->attrs[j][i] = k;
+                me->m_chars[j][i] = ' ';
+                me->m_attrs[j][i] = k;
             }
         }
     }
 
     if (xmin < 0)
         xmin = 0;
-    if (xmax >= me->char_xchars)
-        xmax = me->char_xchars-1;
+    if (xmax >= me->m_char_xchars)
+        xmax = me->m_char_xchars-1;
     if (ymin < 0)
         ymin = 0;
-    if (ymax >= me->char_ychars)
-        ymax = me->char_ychars-1;
+    if (ymax >= me->m_char_ychars)
+        ymax = me->m_char_ychars-1;
 
-    hDC = GetDC(me->hWndCopy);
-    SelectObject(hDC, me->hFont);
+    hDC = GetDC(me->m_window);
+    SelectObject(hDC, me->m_font);
     SetBkMode(hDC, OPAQUE);
     SetTextAlign(hDC, TA_LEFT | TA_TOP);
 
-    if (TRUE == me->showing_cursor)
+    if (TRUE == me->m_showing_cursor)
     {
         ODS1("======================== Hide Caret %d", --carrot_count);
-        HideCaret(me->hWndCopy);
+        HideCaret(me->m_window);
     }
 
     /*
@@ -612,7 +612,7 @@ void wintext_paintscreen(WinText *me,
             int k = -1;
             if (i <= xmax)
             {
-                k = me->attrs[j][i];
+                k = me->m_attrs[j][i];
             }
             foreground = (k & 15);
             background = (k >> 4);
@@ -623,9 +623,9 @@ void wintext_paintscreen(WinText *me,
                     SetBkColor(hDC, wintext_color[oldbk]);
                     SetTextColor(hDC, wintext_color[oldfg]);
                     TextOut(hDC,
-                            istart*me->char_width,
-                            jstart*me->char_height,
-                            &me->chars[jstart][istart],
+                            istart*me->m_char_width,
+                            jstart*me->m_char_height,
+                            &me->m_chars[jstart][istart],
                             length);
                 }
                 oldbk = background;
@@ -638,13 +638,13 @@ void wintext_paintscreen(WinText *me,
         }
     }
 
-    if (TRUE == me->showing_cursor)
+    if (TRUE == me->m_showing_cursor)
     {
         ODS1("======================== Show Caret %d", ++carrot_count);
-        ShowCaret(me->hWndCopy);
+        ShowCaret(me->m_window);
     }
 
-    ReleaseDC(me->hWndCopy, hDC);
+    ReleaseDC(me->m_window, hDC);
 }
 
 void wintext_cursor(WinText *me, int xpos, int ypos, int cursor_type)
@@ -653,34 +653,34 @@ void wintext_cursor(WinText *me, int xpos, int ypos, int cursor_type)
     int y;
     ODS("wintext_cursor");
 
-    if (me->textmode != 2)  // not in the right mode
+    if (me->m_text_mode != 2)  // not in the right mode
     {
         return;
     }
 
-    me->cursor_x = xpos;
-    me->cursor_y = ypos;
+    me->m_cursor_x = xpos;
+    me->m_cursor_y = ypos;
     if (cursor_type >= 0)
-        me->cursor_type = cursor_type;
-    if (me->cursor_type < 0)
-        me->cursor_type = 0;
-    if (me->cursor_type > 2)
-        me->cursor_type = 2;
-    if (FALSE == me->showing_cursor)
+        me->m_cursor_type = cursor_type;
+    if (me->m_cursor_type < 0)
+        me->m_cursor_type = 0;
+    if (me->m_cursor_type > 2)
+        me->m_cursor_type = 2;
+    if (FALSE == me->m_showing_cursor)
     {
-        x = me->cursor_x*me->char_width;
-        y = me->cursor_y*me->char_height;
-        CreateCaret(me->hWndCopy, me->bitmap[me->cursor_type],
-                    me->char_width, me->char_height);
+        x = me->m_cursor_x*me->m_char_width;
+        y = me->m_cursor_y*me->m_char_height;
+        CreateCaret(me->m_window, me->m_bitmap[me->m_cursor_type],
+                    me->m_char_width, me->m_char_height);
         SetCaretPos(x, y);
         ODS3("======================== Show Caret %d #2 (%d,%d)", ++carrot_count, x, y);
-        ShowCaret(me->hWndCopy);
-        me->showing_cursor = TRUE;
+        ShowCaret(me->m_window);
+        me->m_showing_cursor = TRUE;
     }
     else
     {
-        x = me->cursor_x*me->char_width;
-        y = me->cursor_y*me->char_height;
+        x = me->m_cursor_x*me->m_char_width;
+        y = me->m_cursor_y*me->m_char_height;
         SetCaretPos(x, y);
         ODS2("======================== Set Caret Pos #1 (%d,%d)", x, y);
     }
@@ -698,7 +698,7 @@ void wintext_set_attr(WinText *me, int row, int col, int attr, int count)
     ymin = ymax;
     for (int i = 0; i < count; i++)
     {
-        me->attrs[row][col+i] = (unsigned char)(attr & 0xFF);
+        me->m_attrs[row][col+i] = (unsigned char)(attr & 0xFF);
     }
     if (xmin + count >= WINTEXT_MAX_COL)
     {
@@ -717,10 +717,10 @@ void wintext_clear(WinText *me)
 {
     for (int y = 0; y < WINTEXT_MAX_ROW; y++)
     {
-        std::memset(&me->chars[y][0], ' ', (size_t) WINTEXT_MAX_COL);
-        std::memset(&me->attrs[y][0], 0xf0, (size_t) WINTEXT_MAX_COL);
+        std::memset(&me->m_chars[y][0], ' ', (size_t) WINTEXT_MAX_COL);
+        std::memset(&me->m_attrs[y][0], 0xf0, (size_t) WINTEXT_MAX_COL);
     }
-    InvalidateRect(me->hWndCopy, nullptr, FALSE);
+    InvalidateRect(me->m_window, nullptr, FALSE);
 }
 
 BYTE *wintext_screen_get(WinText *me)
@@ -728,25 +728,25 @@ BYTE *wintext_screen_get(WinText *me)
     size_t count = sizeof(BYTE)*WINTEXT_MAX_ROW*WINTEXT_MAX_COL;
     BYTE *copy = (BYTE *) malloc(count*2);
     _ASSERTE(copy);
-    std::memcpy(copy, me->chars, count);
-    std::memcpy(copy + count, me->attrs, count);
+    std::memcpy(copy, me->m_chars, count);
+    std::memcpy(copy + count, me->m_attrs, count);
     return copy;
 }
 
 void wintext_screen_set(WinText *me, const BYTE *copy)
 {
     size_t count = sizeof(BYTE)*WINTEXT_MAX_ROW*WINTEXT_MAX_COL;
-    std::memcpy(me->chars, copy, count);
-    std::memcpy(me->attrs, copy + count, count);
-    InvalidateRect(me->hWndCopy, nullptr, FALSE);
+    std::memcpy(me->m_chars, copy, count);
+    std::memcpy(me->m_attrs, copy + count, count);
+    InvalidateRect(me->m_window, nullptr, FALSE);
 }
 
 void wintext_hide_cursor(WinText *me)
 {
-    if (TRUE == me->showing_cursor)
+    if (TRUE == me->m_showing_cursor)
     {
-        me->showing_cursor = FALSE;
-        HideCaret(me->hWndCopy);
+        me->m_showing_cursor = FALSE;
+        HideCaret(me->m_window);
     }
 }
 
@@ -758,7 +758,7 @@ static VOID CALLBACK wintext_timer_redraw(HWND window, UINT msg, UINT_PTR idEven
 
 void wintext_schedule_alarm(WinText *me, int secs)
 {
-    UINT_PTR result = SetTimer(me->hWndCopy, TIMER_ID, secs, wintext_timer_redraw);
+    UINT_PTR result = SetTimer(me->m_window, TIMER_ID, secs, wintext_timer_redraw);
     if (!result)
     {
         DWORD error = GetLastError();
@@ -768,13 +768,13 @@ void wintext_schedule_alarm(WinText *me, int secs)
 
 int wintext_get_char_attr(WinText *me, int row, int col)
 {
-    return ((me->chars[row][col] & 0xFF) << 8) | (me->attrs[row][col] & 0xFF);
+    return ((me->m_chars[row][col] & 0xFF) << 8) | (me->m_attrs[row][col] & 0xFF);
 }
 
 void wintext_put_char_attr(WinText *me, int row, int col, int char_attr)
 {
-    me->chars[row][col] = (char_attr >> 8) & 0xFF;
-    me->attrs[row][col] = (char_attr & 0xFF);
+    me->m_chars[row][col] = (char_attr >> 8) & 0xFF;
+    me->m_attrs[row][col] = (char_attr & 0xFF);
 }
 
 void wintext_resume(WinText *me)

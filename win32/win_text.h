@@ -1,46 +1,37 @@
 #pragma once
 
+#include <string>
+
 #define KEYBUFMAX 80
 #define WINTEXT_MAX_COL 80
 #define WINTEXT_MAX_ROW 25
 
 struct WinText
 {
-    int textmode;
-    bool AltF4hit;
-    int showing_cursor;
-
-    // Local copy of the "screen" characters and attributes
-    char chars[WINTEXT_MAX_ROW][WINTEXT_MAX_COL];
-    unsigned char attrs[WINTEXT_MAX_ROW][WINTEXT_MAX_COL];
-    bool buffer_init;     // false if 'screen' is uninitialized
-
-    // font information
-
-    HFONT hFont;
-    int char_font;
-    int char_width;
-    int char_height;
-    int char_xchars;
-    int char_ychars;
-    int max_width;
-    int max_height;
-
-    // "cursor" variables (AKA the "caret" in Window-Speak)
-    int cursor_x;
-    int cursor_y;
-    int cursor_type;
-    bool cursor_owned;
-    HBITMAP bitmap[3];
-    short cursor_pattern[3][40];
-
-    char title_text[128];           // title-bar text
-
-    // a few Windows variables we need to remember globally
-
-    HWND hWndCopy;                  // a Global copy of hWnd
-    HWND hWndParent;                // a Global copy of hWnd's Parent
-    HINSTANCE hInstance;            // a global copy of hInstance
+    int m_text_mode;
+    bool m_alt_f4_hit;
+    int m_showing_cursor;
+    char m_chars[WINTEXT_MAX_ROW][WINTEXT_MAX_COL]; // Local copy of the screen characters and attributes
+    unsigned char m_attrs[WINTEXT_MAX_ROW][WINTEXT_MAX_COL];
+    bool m_buffer_init; // false if 'screen' is uninitialized
+    HFONT m_font;
+    int m_char_font;
+    int m_char_width;
+    int m_char_height;
+    int m_char_xchars;
+    int m_char_ychars;
+    int m_max_width;
+    int m_max_height;
+    int m_cursor_x;
+    int m_cursor_y;
+    int m_cursor_type;
+    bool m_cursor_owned;
+    HBITMAP m_bitmap[3];
+    short m_cursor_pattern[3][40];
+    char m_title[128];
+    HWND m_window;
+    HWND m_parent;
+    HINSTANCE m_instance;
 };
 
 void         wintext_clear(WinText *);

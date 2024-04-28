@@ -165,7 +165,7 @@ bool DiskDriver::init(int *argc, char **argv)
  */
 bool DiskDriver::resize()
 {
-    g_frame.resize(wintext.max_width, wintext.max_height);
+    g_frame.resize(wintext.m_max_width, wintext.m_max_height);
     if ((g_video_table[g_adapter].xdots == width)
         && (g_video_table[g_adapter].ydots == height))
     {
@@ -384,8 +384,8 @@ void DiskDriver::redraw()
 
 void DiskDriver::create_window()
 {
-    g_frame.create_window(wintext.max_width, wintext.max_height);
-    wintext.hWndParent = g_frame.m_window;
+    g_frame.create_window(wintext.m_max_width, wintext.m_max_height);
+    wintext.m_parent = g_frame.m_window;
     wintext_texton(&wintext);
 }
 
@@ -449,22 +449,22 @@ bool DiskDriver::validate_mode(VIDEOINFO *mode)
 
 void DiskDriver::pause()
 {
-    if (wintext.hWndCopy)
+    if (wintext.m_window)
     {
-        ShowWindow(wintext.hWndCopy, SW_HIDE);
+        ShowWindow(wintext.m_window, SW_HIDE);
     }
 }
 
 void DiskDriver::resume()
 {
-    if (!wintext.hWndCopy)
+    if (!wintext.m_window)
     {
         create_window();
     }
 
-    if (wintext.hWndCopy)
+    if (wintext.m_window)
     {
-        ShowWindow(wintext.hWndCopy, SW_NORMAL);
+        ShowWindow(wintext.m_window, SW_NORMAL);
     }
     wintext_resume(&wintext);
 }
