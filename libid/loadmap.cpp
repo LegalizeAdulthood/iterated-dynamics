@@ -72,8 +72,8 @@ bool ValidateLuts(char const *fn)
     {
         // zap unset entries
         dac[index].green = 40;
-        dac[index].blue = dac[index].green;
-        dac[index].red = dac[index].blue;
+        dac[index].blue = 40;
+        dac[index].red = 40;
         ++index;
     }
     g_color_state = 2;
