@@ -34,6 +34,5 @@ public:
 
 extern Frame g_frame;
 
-void frame_schedule_alarm(int secs);
 void frame_resize(int width, int height);
 void frame_set_keyboard_timeout(int ms);
