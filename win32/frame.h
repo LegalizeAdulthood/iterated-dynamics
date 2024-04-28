@@ -9,6 +9,7 @@ class Frame
 {
 public:
     void init(HINSTANCE instance, LPCSTR title);
+    void terminate();
 
     HINSTANCE m_instance;
     HWND m_window;
@@ -30,7 +31,6 @@ public:
 
 extern Frame g_frame;
 
-void frame_terminate();
 void frame_window(int width, int height);
 int frame_key_pressed();
 int frame_get_key_press(bool wait_for_key);

@@ -322,9 +322,9 @@ void Frame::init(HINSTANCE instance, LPCSTR title)
     m_key_press_tail  = 0;
 }
 
-void frame_terminate()
+void Frame::terminate()
 {
-    save_frame_position(g_frame.m_window);
+    save_frame_position(m_window);
 }
 
 int frame_pump_messages(bool waitflag)

@@ -95,7 +95,7 @@ void Win32BaseDriver::terminate()
         }
     }
 
-    frame_terminate();
+    g_frame.terminate();
 }
 
 bool Win32BaseDriver::init(int *argc, char **argv)
