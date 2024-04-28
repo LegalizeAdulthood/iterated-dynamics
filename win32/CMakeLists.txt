@@ -8,22 +8,23 @@ add_library(os_hc INTERFACE)
 target_link_libraries(os_hc INTERFACE helpcom config)
 
 add_library(os STATIC
-    d_win32.cpp
     d_disk.cpp
-    d_win32_gdi.cpp
+    d_gdi.cpp
+    d_win32.h
+    d_win32.cpp
+    frame.h
     frame.cpp
     os_win32.cpp
     parsera.cpp
+    plot.h
     plot.cpp
+    WinText.h
     WinText.cpp
     create_minidump.h
-    d_win32.h
-    frame.h
     instance.h
     ods.h
-    plot.h
     tos.h
-    WinText.h)
+)
 target_compile_definitions(os PRIVATE ${ID_TARGET_DEFINITIONS} $<$<CONFIG:Debug>:${ID_TARGET_DEFINITIONS_DEBUG}>)
 target_compile_options(os PRIVATE ${ID_TARGET_OPTIONS})
 target_link_libraries(os PUBLIC gdi32.lib user32.lib shlwapi.lib os_hc help_defs)
