@@ -58,7 +58,6 @@ public:
     void set_line_mode(int mode) override;
     void draw_line(int x1, int y1, int x2, int y2, int color) override;
     void redraw() override;
-    void unget_key(int key) override;
     void window() override;
     void set_video_mode(VIDEOINFO *mode) override;
     void set_clear() override;
@@ -381,17 +380,6 @@ void DiskDriver::redraw()
 {
     ODS("disk_redraw");
     wintext_paintscreen(&wintext, 0, 80, 0, 25);
-}
-
-/* unget_key
- *
- * Unread a key!  The key buffer is only one character deep, so we
- * assert if its already full.  This should never happen in real life :-).
- */
-void DiskDriver::unget_key(int key)
-{
-    _ASSERTE(0 == key_buffer);
-    key_buffer = key;
 }
 
 void DiskDriver::window()
