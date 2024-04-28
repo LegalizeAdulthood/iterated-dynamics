@@ -499,5 +499,5 @@ void Win32BaseDriver::put_truecolor(int x, int y, int r, int g, int b, int a)
 
 void Win32BaseDriver::set_keyboard_timeout(int ms)
 {
-    frame_set_keyboard_timeout(ms);
+    g_frame.set_keyboard_timeout(ms);
 }

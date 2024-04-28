@@ -426,9 +426,9 @@ void Frame::resize(int width, int height)
     _ASSERTE(status);
 }
 
-void frame_set_keyboard_timeout(int ms)
+void Frame::set_keyboard_timeout(int ms)
 {
-    UINT_PTR result = SetTimer(g_frame.m_window, FRAME_TIMER_ID, ms, nullptr);
+    UINT_PTR result = SetTimer(m_window, FRAME_TIMER_ID, ms, nullptr);
     if (!result)
     {
         DWORD error = GetLastError();

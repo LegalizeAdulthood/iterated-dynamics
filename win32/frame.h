@@ -14,6 +14,7 @@ public:
     int get_key_press(bool wait_for_key);
     int pump_messages(bool waitflag);
     void resize(int width, int height);
+    void set_keyboard_timeout(int ms);
 
     void adjust_size(int width, int height);
 
@@ -36,5 +37,3 @@ public:
 };
 
 extern Frame g_frame;
-
-void frame_set_keyboard_timeout(int ms);
