@@ -211,7 +211,7 @@ static void main_restart(int const argc, char const *const argv[], bool &stacked
 
     history_init();
 
-    driver_window();
+    driver_create_window();
     std::memcpy(g_old_dac_box, g_dac_box, 256*3);      // save in case colors= present
 
     driver_set_for_text();                      // switch to text mode

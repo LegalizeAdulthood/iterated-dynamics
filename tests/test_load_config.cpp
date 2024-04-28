@@ -21,7 +21,7 @@ public:
     MOCK_METHOD(void, pause, (), (override));
     MOCK_METHOD(void, resume, (), (override));
     MOCK_METHOD(void, schedule_alarm, (int), (override));
-    MOCK_METHOD(void, window, (), (override));
+    MOCK_METHOD(void, create_window, (), (override));
     MOCK_METHOD(bool, resize, (), (override));
     MOCK_METHOD(void, redraw, (), (override));
     MOCK_METHOD(int, read_palette, (), (override));

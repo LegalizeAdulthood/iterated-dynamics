@@ -65,7 +65,7 @@ public:
     virtual void pause() = 0;                                                        // pause this driver
     virtual void resume() = 0;                                                       // resume this driver
     virtual void schedule_alarm(int secs) = 0;                                       // refresh alarm
-    virtual void window() = 0;                                                       // creates a window
+    virtual void create_window() = 0;                                                // creates a window
     virtual bool resize() = 0;                                                       // handles window resize.
     virtual void redraw() = 0;                                                       // redraws the screen
     virtual int read_palette() = 0;                                                  // read palette into g_dac_box
@@ -157,9 +157,9 @@ inline void driver_schedule_alarm(int secs)
 {
     g_driver->schedule_alarm(secs);
 }
-inline void driver_window()
+inline void driver_create_window()
 {
-    g_driver->window();
+    g_driver->create_window();
 }
 inline bool driver_resize()
 {

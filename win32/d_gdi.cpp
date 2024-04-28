@@ -55,7 +55,7 @@ public:
     void set_line_mode(int mode) override;
     void draw_line(int x1, int y1, int x2, int y2, int color) override;
     void redraw() override;
-    void window() override;
+    void create_window() override;
     bool is_text() override;
     void set_for_text() override;
     void set_for_graphics() override;
@@ -289,14 +289,14 @@ void GDIDriver::redraw()
     g_frame.pump_messages(false);
 }
 
-void GDIDriver::window()
+void GDIDriver::create_window()
 {
     int width;
     int height;
     bool center_x = true, center_y = true;
 
     get_max_size(&width, &height, &center_x, &center_y);
-    g_frame.window(width, height);
+    g_frame.create_window(width, height);
     wintext.hWndParent = g_frame.m_window;
     wintext_texton(&wintext);
     plot_window(&plot, g_frame.m_window);
@@ -391,7 +391,7 @@ void GDIDriver::resume()
 {
     if (!wintext.hWndCopy)
     {
-        window();
+        create_window();
     }
 
     ShowWindow(wintext.hWndCopy, SW_NORMAL);

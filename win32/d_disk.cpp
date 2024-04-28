@@ -58,7 +58,7 @@ public:
     void set_line_mode(int mode) override;
     void draw_line(int x1, int y1, int x2, int y2, int color) override;
     void redraw() override;
-    void window() override;
+    void create_window() override;
     void set_video_mode(VIDEOINFO *mode) override;
     void set_clear() override;
     void display_string(int x, int y, int fg, int bg, char const *text) override;
@@ -382,9 +382,9 @@ void DiskDriver::redraw()
     wintext_paintscreen(&wintext, 0, 80, 0, 25);
 }
 
-void DiskDriver::window()
+void DiskDriver::create_window()
 {
-    g_frame.window(wintext.max_width, wintext.max_height);
+    g_frame.create_window(wintext.max_width, wintext.max_height);
     wintext.hWndParent = g_frame.m_window;
     wintext_texton(&wintext);
 }
@@ -459,7 +459,7 @@ void DiskDriver::resume()
 {
     if (!wintext.hWndCopy)
     {
-        window();
+        create_window();
     }
 
     if (wintext.hWndCopy)

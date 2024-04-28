@@ -403,7 +403,7 @@ void Frame::adjust_size(int width, int height)
                         GetSystemMetrics(SM_CYFRAME)*4 + GetSystemMetrics(SM_CYCAPTION) - 1;
 }
 
-void Frame::window(int width, int height)
+void Frame::create_window(int width, int height)
 {
     if (nullptr == m_window)
     {
