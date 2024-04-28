@@ -210,7 +210,6 @@ int fullscreen_prompt(      // full-screen prompting routine
                     {
                         if (extralines + numprompts + titlelines >= 20)
                         {
-                            assert(!"heading overflow");
                             break;
                         }
                         ++extralines;
