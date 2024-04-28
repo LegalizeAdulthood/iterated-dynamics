@@ -198,7 +198,7 @@ bool DiskDriver::resize()
 */
 int DiskDriver::read_palette()
 {
-    ODS("disk_read_palette");
+    ODS("DiskDriver::read_palette");
     if (!g_got_real_dac)
     {
         return -1;
@@ -228,7 +228,7 @@ int DiskDriver::read_palette()
 */
 int DiskDriver::write_palette()
 {
-    ODS("disk_write_palette");
+    ODS("DiskDriver::write_palette");
     for (int i = 0; i < 256; i++)
     {
         clut[i][0] = g_dac_box[i][0];
@@ -317,7 +317,7 @@ int DiskDriver::read_pixel(int x, int y)
 void DiskDriver::write_span(int y, int x, int lastx, BYTE *pixels)
 {
     int width = lastx-x+1;
-    ODS3("disk_write_span (%d,%d,%d)", y, x, lastx);
+    ODS3("DiskDriver::write_span (%d,%d,%d)", y, x, lastx);
 
     for (int i = 0; i < width; i++)
     {
@@ -342,7 +342,7 @@ void DiskDriver::write_span(int y, int x, int lastx, BYTE *pixels)
 */
 void DiskDriver::read_span(int y, int x, int lastx, BYTE *pixels)
 {
-    ODS3("disk_read_span (%d,%d,%d)", y, x, lastx);
+    ODS3("DiskDriver::read_span (%d,%d,%d)", y, x, lastx);
     int width = lastx-x+1;
     for (int i = 0; i < width; i++)
     {
@@ -352,12 +352,12 @@ void DiskDriver::read_span(int y, int x, int lastx, BYTE *pixels)
 
 void DiskDriver::set_line_mode(int mode)
 {
-    ODS1("disk_set_line_mode %d", mode);
+    ODS1("DiskDriver::set_line_mode %d", mode);
 }
 
 void DiskDriver::draw_line(int x1, int y1, int x2, int y2, int color)
 {
-    ODS5("disk_draw_line (%d,%d) (%d,%d) %d", x1, y1, x2, y2, color);
+    ODS5("DiskDriver::draw_line (%d,%d) (%d,%d) %d", x1, y1, x2, y2, color);
     ::draw_line(x1, y1, x2, y2, color);
 }
 
@@ -378,7 +378,7 @@ void DiskDriver::draw_line(int x1, int y1, int x2, int y2, int color)
 */
 void DiskDriver::redraw()
 {
-    ODS("disk_redraw");
+    ODS("DiskDriver::redraw");
     wintext_paintscreen(&wintext, 0, 80, 0, 25);
 }
 

@@ -83,7 +83,7 @@ static void flush_output()
 
 void Win32BaseDriver::terminate()
 {
-    ODS("win32_terminate");
+    ODS("Win32BaseDriver::terminate");
 
     wintext_destroy(&wintext);
     for (int i = 0; i < std::size(saved_screens); i++)
@@ -102,7 +102,7 @@ bool Win32BaseDriver::init(int *argc, char **argv)
 {
     LPCSTR title = ID_PROGRAM_NAME;
 
-    ODS("win32_init");
+    ODS("Win32BaseDriver::init");
     g_frame.init(g_instance, title);
     if (!wintext_initialize(&wintext, g_instance, nullptr, "Text"))
     {
@@ -137,7 +137,7 @@ int Win32BaseDriver::key_pressed()
     return ch;
 }
 
-/* win32_unget_key
+/* unget_key
  *
  * Unread a key!  The key buffer is only one character deep, so we
  * assert if its already full.  This should never happen in real life :-).
@@ -148,7 +148,7 @@ void Win32BaseDriver::unget_key(int key)
     key_buffer = key;
 }
 
-/* win32_get_key
+/* get_key
  *
  * Get a keystroke, blocking if necessary.  First, check the key buffer
  * and if that's empty ask the wintext window to pump a keystroke for us.
@@ -176,21 +176,7 @@ int Win32BaseDriver::get_key()
     return ch;
 }
 
-/*
-*----------------------------------------------------------------------
-*
-* win32_shell --
-*
-*   Exit to a command prompt.
-*
-* Results:
-*   None.
-*
-* Side effects:
-*   Goes to shell
-*
-*----------------------------------------------------------------------
-*/
+// Spawn a command prompt.
 void  Win32BaseDriver::shell()
 {
     STARTUPINFO si =
@@ -230,7 +216,7 @@ void Win32BaseDriver::hide_text_cursor()
     }
 }
 
-// win32_set_video_mode
+// set_video_mode
 extern void set_normal_dot();
 extern void set_normal_line();
 
@@ -336,7 +322,7 @@ void Win32BaseDriver::stack_screen()
         if (i >= WIN32_MAXSCREENS)
         {
             // bug, missing unstack?
-            stopmsg(STOPMSG_NO_STACK, "win32_stack_screen overflow");
+            stopmsg(STOPMSG_NO_STACK, "Win32BaseDriver::stack_screen overflow");
             exit(1);
         }
         saved_screens[i] = wintext_screen_get(&wintext);
@@ -387,30 +373,30 @@ void Win32BaseDriver::discard_screen()
 
 int Win32BaseDriver::init_fm()
 {
-    ODS("win32_init_fm");
+    ODS("Win32BaseDriver::init_fm");
     return 0;
 }
 
 void Win32BaseDriver::buzzer(buzzer_codes kind)
 {
-    ODS1("win32_buzzer %d", kind);
+    ODS1("Win32BaseDriver::buzzer %d", kind);
     MessageBeep(MB_OK);
 }
 
 bool Win32BaseDriver::sound_on(int freq)
 {
-    ODS1("win32_sound_on %d", freq);
+    ODS1("Win32BaseDriver::sound_on %d", freq);
     return false;
 }
 
 void Win32BaseDriver::sound_off()
 {
-    ODS("win32_sound_off");
+    ODS("Win32BaseDriver::sound_off");
 }
 
 void Win32BaseDriver::mute()
 {
-    ODS("win32_mute");
+    ODS("Win32BaseDriver::mute");
 }
 
 bool Win32BaseDriver::diskp()
@@ -420,7 +406,7 @@ bool Win32BaseDriver::diskp()
 
 int Win32BaseDriver::key_cursor(int row, int col)
 {
-    ODS2("win32_key_cursor %d,%d", row, col);
+    ODS2("Win32BaseDriver::key_cursor %d,%d", row, col);
     if (-1 != row)
     {
         cursor_row = row;
@@ -485,12 +471,12 @@ void Win32BaseDriver::delay(int ms)
 
 void Win32BaseDriver::get_truecolor(int x, int y, int *r, int *g, int *b, int *a)
 {
-    _ASSERTE(0 && "win32_get_truecolor called.");
+    _ASSERTE(0 && "Win32BaseDriver::get_truecolor called.");
 }
 
 void Win32BaseDriver::put_truecolor(int x, int y, int r, int g, int b, int a)
 {
-    _ASSERTE(0 && "win32_put_truecolor called.");
+    _ASSERTE(0 && "Win32BaseDriver::put_truecolor called.");
 }
 
 void Win32BaseDriver::set_keyboard_timeout(int ms)

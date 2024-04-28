@@ -150,7 +150,7 @@ void GDIDriver::center_windows(bool center_x, bool center_y)
 
 void GDIDriver::terminate()
 {
-    ODS("gdi_terminate");
+    ODS("GDIDriver::terminate");
 
     plot_terminate(&plot);
     Win32BaseDriver::terminate();
@@ -277,7 +277,7 @@ void GDIDriver::draw_line(int x1, int y1, int x2, int y2, int color)
 
 void GDIDriver::redraw()
 {
-    ODS("gdi_redraw");
+    ODS("GDIDriver::redraw");
     if (text_not_graphics)
     {
         wintext_paintscreen(&wintext, 0, 80, 0, 25);
