@@ -171,10 +171,9 @@ static const BYTE font_8x8[8][1024/8] =
     }
 };
 
-static void
-plot_set_dirty_region(Plot *p, int xmin, int ymin, int xmax, int ymax)
+void Plot::set_dirty_region(int xmin, int ymin, int xmax, int ymax)
 {
-    RECT *r = &p->m_dirty_region;
+    RECT *r = &m_dirty_region;
 
     _ASSERTE(xmin < xmax);
     _ASSERTE(ymin < ymax);
@@ -185,29 +184,29 @@ plot_set_dirty_region(Plot *p, int xmin, int ymin, int xmax, int ymax)
         r->right = xmax;
         r->top = ymin;
         r->bottom = ymax;
-        p->m_dirty = true;
+        m_dirty = true;
     }
     else
     {
         if (xmin < r->left)
         {
             r->left = xmin;
-            p->m_dirty = true;
+            m_dirty = true;
         }
         if (xmax > r->right)
         {
             r->right = xmax;
-            p->m_dirty = true;
+            m_dirty = true;
         }
         if (ymin < r->top)
         {
             r->top = ymin;
-            p->m_dirty = true;
+            m_dirty = true;
         }
         if (ymax > r->bottom)
         {
             r->bottom = ymax;
-            p->m_dirty = true;
+            m_dirty = true;
         }
     }
 }
@@ -217,30 +216,29 @@ plot_set_dirty_region(Plot *p, int xmin, int ymin, int xmax, int ymax)
  * Resize the pixel array to sxdots by sydots and initialize it to zero.
  * Any existing pixel array is freed.
  */
-static void
-init_pixels(Plot *p)
+void Plot::init_pixels()
 {
-    p->m_pixels.clear();
-    p->m_saved_pixels.clear();
-    p->m_width = g_screen_x_dots;
-    p->m_height = g_screen_y_dots;
-    p->m_row_len = p->m_width * sizeof(BYTE);
-    p->m_row_len = ((p->m_row_len + 3)/4)*4;
-    p->m_pixels_len = p->m_row_len * p->m_height;
-    _ASSERTE(p->m_pixels_len > 0);
-    p->m_pixels.resize(p->m_pixels_len);
-    std::memset(&p->m_pixels[0], 0, p->m_pixels_len);
-    p->m_dirty = false;
+    m_pixels.clear();
+    m_saved_pixels.clear();
+    m_width = g_screen_x_dots;
+    m_height = g_screen_y_dots;
+    m_row_len = m_width * sizeof(BYTE);
+    m_row_len = ((m_row_len + 3)/4)*4;
+    m_pixels_len = m_row_len * m_height;
+    _ASSERTE(m_pixels_len > 0);
+    m_pixels.resize(m_pixels_len);
+    std::memset(&m_pixels[0], 0, m_pixels_len);
+    m_dirty = false;
     {
         RECT dirty_rect = { -1, -1, -1, -1 };
-        p->m_dirty_region = dirty_rect;
+        m_dirty_region = dirty_rect;
     }
     {
-        BITMAPINFOHEADER *h = &p->m_bmi.bmiHeader;
+        BITMAPINFOHEADER *h = &m_bmi.bmiHeader;
 
-        h->biSize = sizeof(p->m_bmi.bmiHeader);
-        h->biWidth = p->m_width;
-        h->biHeight = p->m_height;
+        h->biSize = sizeof(m_bmi.bmiHeader);
+        h->biWidth = m_width;
+        h->biHeight = m_height;
         h->biPlanes = 1;
         h->biBitCount = 8;
         h->biCompression = BI_RGB;
@@ -286,26 +284,26 @@ static LRESULT CALLBACK plot_proc(HWND window, UINT message, WPARAM wp, LPARAM l
     return 0;
 }
 
-int plot_init(Plot *p, HINSTANCE instance, LPCSTR title)
+int Plot::init(HINSTANCE instance, LPCSTR title)
 {
     WNDCLASS  wc;
     int result;
 
-    p->m_instance = instance;
-    std::strcpy(p->m_title, title);
+    m_instance = instance;
+    std::strcpy(m_title, title);
 
-    result = GetClassInfo(p->m_instance, s_window_class, &wc);
+    result = GetClassInfo(m_instance, s_window_class, &wc);
     if (!result)
     {
         wc.style = 0;
         wc.lpfnWndProc = plot_proc;
         wc.cbClsExtra = 0;
         wc.cbWndExtra = 0;
-        wc.hInstance = p->m_instance;
+        wc.hInstance = m_instance;
         wc.hIcon = nullptr;
         wc.hCursor = LoadCursor(nullptr, IDC_ARROW);
         wc.hbrBackground = static_cast<HBRUSH>(GetStockObject(BLACK_BRUSH));
-        wc.lpszMenuName =  p->m_title;
+        wc.lpszMenuName =  m_title;
         wc.lpszClassName = s_window_class;
 
         result = RegisterClass(&wc);
@@ -314,131 +312,132 @@ int plot_init(Plot *p, HINSTANCE instance, LPCSTR title)
     return result;
 }
 
-void plot_terminate(Plot *p)
+void Plot::terminate()
 {
     {
-        HBITMAP rendering = (HBITMAP) SelectObject(p->m_memory_dc, (HGDIOBJ) p->m_backup);
-        _ASSERTE(rendering == p->m_rendering);
+        HBITMAP rendering = (HBITMAP) SelectObject(m_memory_dc, (HGDIOBJ) m_backup);
+        _ASSERTE(rendering == m_rendering);
     }
-    DeleteObject(p->m_rendering);
-    DeleteDC(p->m_memory_dc);
-    DestroyWindow(p->m_window);
+    DeleteObject(m_rendering);
+    DeleteDC(m_memory_dc);
+    DestroyWindow(m_window);
 }
 
-static void plot_create_backing_store(Plot *p)
+void Plot::create_backing_store()
 {
     {
-        HDC dc = GetDC(p->m_window);
-        p->m_memory_dc = CreateCompatibleDC(dc);
-        _ASSERTE(p->m_memory_dc);
-        ReleaseDC(p->m_window, dc);
+        HDC dc = GetDC(m_window);
+        m_memory_dc = CreateCompatibleDC(dc);
+        _ASSERTE(m_memory_dc);
+        ReleaseDC(m_window, dc);
     }
 
-    p->m_rendering = CreateCompatibleBitmap(p->m_memory_dc, p->m_width, p->m_height);
-    _ASSERTE(p->m_rendering);
-    p->m_backup = (HBITMAP) SelectObject(p->m_memory_dc, (HGDIOBJ) p->m_rendering);
+    m_rendering = CreateCompatibleBitmap(m_memory_dc, m_width, m_height);
+    _ASSERTE(m_rendering);
+    m_backup = (HBITMAP) SelectObject(m_memory_dc, (HGDIOBJ) m_rendering);
 
-    p->m_font = CreateFont(8, 8, 0, 0, 0, FALSE, FALSE, FALSE, ANSI_CHARSET,
+    m_font = CreateFont(8, 8, 0, 0, 0, FALSE, FALSE, FALSE, ANSI_CHARSET,
                           OUT_RASTER_PRECIS, CLIP_DEFAULT_PRECIS, ANTIALIASED_QUALITY,
                           DEFAULT_PITCH | FF_MODERN, "Courier");
-    _ASSERTE(p->m_font);
-    SelectObject(p->m_memory_dc, (HGDIOBJ) p->m_font);
-    SetBkMode(p->m_memory_dc, OPAQUE);
+    _ASSERTE(m_font);
+    SelectObject(m_memory_dc, (HGDIOBJ) m_font);
+    SetBkMode(m_memory_dc, OPAQUE);
 }
-void plot_window(Plot *p, HWND parent)
+
+void Plot::create_window(HWND parent)
 {
-    if (nullptr == p->m_window)
+    if (nullptr == m_window)
     {
-        init_pixels(p);
-        s_plot = p;
-        p->m_parent = parent;
-        p->m_window = CreateWindow(s_window_class,
-                                  p->m_title,
+        init_pixels();
+        s_plot = this;
+        m_parent = parent;
+        m_window = CreateWindow(s_window_class,
+                                  m_title,
                                   parent ? WS_CHILD : WS_OVERLAPPEDWINDOW,
                                   CW_USEDEFAULT,               // default horizontal position
                                   CW_USEDEFAULT,               // default vertical position
-                                  p->m_width,
-                                  p->m_height,
-                                  parent, nullptr, p->m_instance,
+                                  m_width,
+                                  m_height,
+                                  parent, nullptr, m_instance,
                                   nullptr);
 
-        plot_create_backing_store(p);
+        create_backing_store();
     }
 }
 
-void plot_write_pixel(Plot *p, int x, int y, int color)
+void Plot::write_pixel(int x, int y, int color)
 {
-    _ASSERTE(p->m_pixels.size() == p->m_width* p->m_height);
-    _ASSERTE(x >= 0 && x < p->m_width);
-    _ASSERTE(y >= 0 && y < p->m_height);
-    p->m_pixels[(p->m_height - y - 1)*p->m_row_len + x] = (BYTE)(color & 0xFF);
-    plot_set_dirty_region(p, x, y, x+1, y+1);
+    _ASSERTE(m_pixels.size() == m_width* m_height);
+    _ASSERTE(x >= 0 && x < m_width);
+    _ASSERTE(y >= 0 && y < m_height);
+    m_pixels[(m_height - y - 1)*m_row_len + x] = (BYTE)(color & 0xFF);
+    set_dirty_region(x, y, x+1, y+1);
 }
 
-int plot_read_pixel(Plot *p, int x, int y)
+int Plot::read_pixel(int x, int y)
 {
-    _ASSERTE(p->m_pixels.size() == p->m_width* p->m_height);
-    _ASSERTE(x >= 0 && x < p->m_width);
-    _ASSERTE(y >= 0 && y < p->m_height);
-    return (int) p->m_pixels[(p->m_height - 1 - y)*p->m_row_len + x];
+    _ASSERTE(m_pixels.size() == m_width* m_height);
+    _ASSERTE(x >= 0 && x < m_width);
+    _ASSERTE(y >= 0 && y < m_height);
+    return (int) m_pixels[(m_height - 1 - y)*m_row_len + x];
 }
 
-void plot_write_span(Plot *p, int y, int x, int lastx, const BYTE *pixels)
+void Plot::write_span(int y, int x, int lastx, const BYTE *pixels)
 {
     int width = lastx-x+1;
 
     for (int i = 0; i < width; i++)
     {
-        plot_write_pixel(p, x+i, y, pixels[i]);
+        write_pixel(x+i, y, pixels[i]);
     }
-    plot_set_dirty_region(p, x, y, lastx+1, y+1);
+    set_dirty_region(x, y, lastx+1, y+1);
 }
 
-void plot_flush(Plot *p)
+void Plot::flush()
 {
-    if (p->m_dirty)
+    if (m_dirty)
     {
         RECT r = { -1, -1, -1, -1 };
-        InvalidateRect(p->m_window, nullptr, FALSE);
-        p->m_dirty = false;
-        p->m_dirty_region = r;
+        InvalidateRect(m_window, nullptr, FALSE);
+        m_dirty = false;
+        m_dirty_region = r;
     }
 }
 
-void plot_read_span(Plot *p, int y, int x, int lastx, BYTE *pixels)
+void Plot::read_span(int y, int x, int lastx, BYTE *pixels)
 {
-    plot_flush(p);
+    flush();
     int width = lastx - x + 1;
     for (int i = 0; i < width; i++)
     {
-        pixels[i] = plot_read_pixel(p, x + i, y);
+        pixels[i] = read_pixel(x + i, y);
     }
 }
 
-void plot_set_line_mode(Plot *p, int mode)
+void Plot::set_line_mode(int mode)
 {
 }
 
-void plot_draw_line(Plot *p, int x1, int y1, int x2, int y2, int color)
+void Plot::draw_line(int x1, int y1, int x2, int y2, int color)
 {
-    draw_line(x1, y1, x2, y2, color);
+    ::draw_line(x1, y1, x2, y2, color);
 }
 
-int plot_resize(Plot *p)
+int Plot::resize()
 {
-    if ((g_screen_x_dots == p->m_width) && (g_screen_y_dots == p->m_height))
+    if ((g_screen_x_dots == m_width) && (g_screen_y_dots == m_height))
     {
         return 0;
     }
 
-    init_pixels(p);
-    BOOL status = SetWindowPos(p->m_window, nullptr, 0, 0, p->m_width, p->m_height, SWP_NOZORDER | SWP_NOMOVE);
+    init_pixels();
+    BOOL status = SetWindowPos(m_window, nullptr, 0, 0, m_width, m_height, SWP_NOZORDER | SWP_NOMOVE);
     _ASSERTE(status);
 
-    return !0;
+    return 1;
 }
 
-int plot_read_palette(Plot *p)
+int Plot::read_palette()
 {
     if (!g_got_real_dac)
     {
@@ -447,39 +446,39 @@ int plot_read_palette(Plot *p)
 
     for (int i = 0; i < 256; i++)
     {
-        g_dac_box[i][0] = p->m_clut[i][0];
-        g_dac_box[i][1] = p->m_clut[i][1];
-        g_dac_box[i][2] = p->m_clut[i][2];
+        g_dac_box[i][0] = m_clut[i][0];
+        g_dac_box[i][1] = m_clut[i][1];
+        g_dac_box[i][2] = m_clut[i][2];
     }
     return 0;
 }
 
-int plot_write_palette(Plot *p)
+int Plot::write_palette()
 {
     for (int i = 0; i < 256; i++)
     {
-        p->m_clut[i][0] = g_dac_box[i][0];
-        p->m_clut[i][1] = g_dac_box[i][1];
-        p->m_clut[i][2] = g_dac_box[i][2];
+        m_clut[i][0] = g_dac_box[i][0];
+        m_clut[i][1] = g_dac_box[i][1];
+        m_clut[i][2] = g_dac_box[i][2];
 
-        p->m_bmi.bmiColors[i].rgbRed = g_dac_box[i][0]*4;
-        p->m_bmi.bmiColors[i].rgbGreen = g_dac_box[i][1]*4;
-        p->m_bmi.bmiColors[i].rgbBlue = g_dac_box[i][2]*4;
+        m_bmi.bmiColors[i].rgbRed = g_dac_box[i][0]*4;
+        m_bmi.bmiColors[i].rgbGreen = g_dac_box[i][1]*4;
+        m_bmi.bmiColors[i].rgbBlue = g_dac_box[i][2]*4;
     }
-    plot_redraw(p);
+    redraw();
 
     return 0;
 }
 
-static VOID CALLBACK redraw(HWND window, UINT msg, UINT_PTR idEvent, DWORD dwTime)
+static VOID CALLBACK redraw_window(HWND window, UINT msg, UINT_PTR idEvent, DWORD dwTime)
 {
     InvalidateRect(window, nullptr, FALSE);
     KillTimer(window, PLOT_TIMER_ID);
 }
 
-void plot_schedule_alarm(Plot *p, int secs)
+void Plot::schedule_alarm(int secs)
 {
-    UINT_PTR result = SetTimer(p->m_window, PLOT_TIMER_ID, secs, redraw);
+    UINT_PTR result = SetTimer(m_window, PLOT_TIMER_ID, secs, redraw_window);
     if (!result)
     {
         DWORD error = GetLastError();
@@ -487,20 +486,20 @@ void plot_schedule_alarm(Plot *p, int secs)
     }
 }
 
-void plot_clear(Plot *p)
+void Plot::clear()
 {
-    RECT r = { 0, 0, p->m_width, p->m_height };
-    p->m_dirty_region = r;
-    p->m_dirty = true;
-    std::memset(&p->m_pixels[0], 0, p->m_pixels_len);
+    RECT r = { 0, 0, m_width, m_height };
+    m_dirty_region = r;
+    m_dirty = true;
+    std::memset(&m_pixels[0], 0, m_pixels_len);
 }
 
-void plot_redraw(Plot *p)
+void Plot::redraw()
 {
-    InvalidateRect(p->m_window, nullptr, FALSE);
+    InvalidateRect(m_window, nullptr, FALSE);
 }
 
-void plot_display_string(Plot *p, int x, int y, int fg, int bg, char const *text)
+void Plot::display_string(int x, int y, int fg, int bg, char const *text)
 {
     while (*text)
     {
@@ -512,7 +511,7 @@ void plot_display_string(Plot *p, int x, int y, int fg, int bg, char const *text
             while (col-- > 0)
             {
                 int color = (pixel & (1 << col)) ? fg : bg;
-                plot_write_pixel(p, x1++, y + row, color);
+                write_pixel(x1++, y + row, color);
             }
         }
         x += 8;
@@ -520,13 +519,13 @@ void plot_display_string(Plot *p, int x, int y, int fg, int bg, char const *text
     }
 }
 
-void plot_save_graphics(Plot *p)
+void Plot::save_graphics()
 {
-    p->m_saved_pixels = p->m_pixels;
+    m_saved_pixels = m_pixels;
 }
 
-void plot_restore_graphics(Plot *p)
+void Plot::restore_graphics()
 {
-    p->m_pixels = p->m_saved_pixels;
-    plot_redraw(p);
+    m_pixels = m_saved_pixels;
+    redraw();
 }

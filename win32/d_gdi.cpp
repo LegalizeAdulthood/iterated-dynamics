@@ -152,7 +152,7 @@ void GDIDriver::terminate()
 {
     ODS("GDIDriver::terminate");
 
-    plot_terminate(&plot);
+    plot.terminate();
     Win32BaseDriver::terminate();
 }
 
@@ -174,7 +174,7 @@ bool GDIDriver::init(int *argc, char **argv)
         return false;
     };
 
-    plot_init(&plot, g_instance, "Plot");
+    plot.init(g_instance, "Plot");
 
     // add default list of video modes
     {
@@ -214,7 +214,7 @@ bool GDIDriver::resize()
     }
 
     g_frame.resize(width, height);
-    plot_resize(&plot);
+    plot.resize();
     center_windows(center_graphics_x, center_graphics_y);
     return true;
 }
@@ -223,13 +223,13 @@ bool GDIDriver::resize()
 // Reads the current video palette into g_dac_box.
 int GDIDriver::read_palette()
 {
-    return plot_read_palette(&plot);
+    return plot.read_palette();
 }
 
 // Writes g_dac_box into the video palette.
 int GDIDriver::write_palette()
 {
-    return plot_write_palette(&plot);
+    return plot.write_palette();
 }
 
 void GDIDriver::schedule_alarm(int secs)
@@ -241,38 +241,38 @@ void GDIDriver::schedule_alarm(int secs)
     }
     else
     {
-        plot_schedule_alarm(&plot, secs);
+        plot.schedule_alarm(secs);
     }
 }
 
 void GDIDriver::write_pixel(int x, int y, int color)
 {
-    plot_write_pixel(&plot, x, y, color);
+    plot.write_pixel(x, y, color);
 }
 
 int GDIDriver::read_pixel(int x, int y)
 {
-    return plot_read_pixel(&plot, x, y);
+    return plot.read_pixel(x,y);
 }
 
 void GDIDriver::write_span(int y, int x, int lastx, BYTE *pixels)
 {
-    plot_write_span(&plot, x, y, lastx, pixels);
+    plot.write_span(y, x, lastx, pixels);
 }
 
 void GDIDriver::read_span(int y, int x, int lastx, BYTE *pixels)
 {
-    plot_read_span(&plot, y, x, lastx, pixels);
+    plot.read_span(y, x, lastx, pixels);
 }
 
 void GDIDriver::set_line_mode(int mode)
 {
-    plot_set_line_mode(&plot, mode);
+    plot.set_line_mode(mode);
 }
 
 void GDIDriver::draw_line(int x1, int y1, int x2, int y2, int color)
 {
-    plot_draw_line(&plot, x1, y1, x2, y2, color);
+    plot.draw_line(x1, y1, x2, y2, color);
 }
 
 void GDIDriver::redraw()
@@ -284,7 +284,7 @@ void GDIDriver::redraw()
     }
     else
     {
-        plot_redraw(&plot);
+        plot.redraw();
     }
     g_frame.pump_messages(false);
 }
@@ -299,7 +299,7 @@ void GDIDriver::create_window()
     g_frame.create_window(width, height);
     wintext.set_parent(g_frame.m_window);
     wintext.text_on();
-    plot_window(&plot, g_frame.m_window);
+    plot.create_window(g_frame.m_window);
     center_windows(center_x, center_y);
 }
 
@@ -329,7 +329,7 @@ void GDIDriver::set_clear()
     }
     else
     {
-        plot_clear(&plot);
+        plot.clear();
     }
 }
 
@@ -353,7 +353,7 @@ void GDIDriver::set_video_mode(VIDEOINFO *mode)
     }
 
     resize();
-    plot_clear(&plot);
+    plot.clear();
     if (g_disk_flag)
     {
         enddisk();
@@ -400,22 +400,22 @@ void GDIDriver::resume()
 
 void GDIDriver::display_string(int x, int y, int fg, int bg, char const *text)
 {
-    plot_display_string(&plot, x, y, fg, bg, text);
+    plot.display_string(x, y, fg, bg, text);
 }
 
 void GDIDriver::save_graphics()
 {
-    plot_save_graphics(&plot);
+    plot.save_graphics();
 }
 
 void GDIDriver::restore_graphics()
 {
-    plot_restore_graphics(&plot);
+    plot.restore_graphics();
 }
 
 void GDIDriver::flush()
 {
-    plot_flush(&plot);
+    plot.flush();
 }
 
 GDIDriver gdi_driver_info{};
