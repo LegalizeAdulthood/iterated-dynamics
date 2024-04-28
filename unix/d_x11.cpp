@@ -1461,7 +1461,7 @@ void X11Driver::flush()
 
 void X11Driver::debug_text(const char *text)
 {
-    std::fprintf(std::stderr, "%s", text);
+    std::fprintf(stderr, "%s", text);
 }
 
 void fpe_handler(int signum)
