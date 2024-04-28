@@ -19,6 +19,7 @@
 #include "temp_msg.h"
 #include "video_mode.h"
 
+#include <algorithm>
 #include <array>
 #include <cctype>
 #include <chrono>
@@ -29,6 +30,14 @@
 #include <sstream>
 #include <system_error>
 #include <thread>
+
+// Guard against Windows headers that define these as macros
+#ifdef min
+#undef min
+#endif
+#ifdef max
+#undef max
+#endif
 
 slides_mode g_slides{slides_mode::OFF}; // PLAY autokey=play, RECORD autokey=record
 std::string g_auto_name{"auto.key"};    // record auto keystrokes here
@@ -146,7 +155,6 @@ static void message(int secs, char const *buf)
 int slideshw()
 {
     int out;
-    int err;
     int i;
     char buffer[81];
     if (s_calc_wait)
@@ -166,22 +174,26 @@ int slideshw()
         }
     }
 
+    const clock_t now = std::clock();
     if (s_ticks) // if waiting, see if waited long enough
     {
-        if (std::clock() - s_start_tick < s_ticks)   // haven't waited long enough
+        if (now - s_start_tick < s_ticks)   // haven't waited long enough
         {
             return 0;
         }
         s_ticks = 0;
     }
-    if (++s_slow_count <= 18)
+    constexpr int SLOW_ADJUST_CHAR_COUNT = 15;
+    constexpr int SLOW_INITIAL_CHAR_COUNT = 5;
+    if (++s_slow_count <= SLOW_ADJUST_CHAR_COUNT)
     {
-        s_start_tick = std::clock();
-        s_ticks = CLOCKS_PER_SEC/5; // a slight delay so keystrokes are visible
-        if (s_slow_count > 10)
+        s_start_tick = now;
+        s_ticks = CLOCKS_PER_SEC/10; // a slight delay so keystrokes are visible
+        if (s_slow_count > SLOW_INITIAL_CHAR_COUNT)
         {
-            s_ticks /= 2;
+            s_ticks = std::max(CLOCKS_PER_SEC/150, s_ticks/2);
         }
+        driver_set_keyboard_timeout((1000*s_ticks)/CLOCKS_PER_SEC);
     }
     if (s_repeats > 0)
     {
@@ -212,8 +224,9 @@ start:
         s_quotes = true;
         goto start;
     case ';':         // comment from here to end of line, skip it
-        while ((out = fgetc(s_slide_show_file)) != '\n' && out != EOF)
+        while (out != '\n' && out != EOF)
         {
+            out = fgetc(s_slide_show_file);
         }
         goto start;
     case '*':
@@ -285,14 +298,15 @@ start:
         }
         else
         {
-            char buffer1[80];
+            char line[80];
             rewind(s_slide_show_file);
             std::strcat(buffer, ":");
+            int count;
             do
             {
-                err = std::fscanf(s_slide_show_file, "%s", buffer1);
+                count = std::fscanf(s_slide_show_file, "%s", line);
             }
-            while (err == 1 && std::strcmp(buffer1, buffer) != 0);
+            while (count == 1 && std::strcmp(line, buffer) != 0);
             if (std::feof(s_slide_show_file))
             {
                 slideshowerr("GOTO target not found");
@@ -308,13 +322,13 @@ start:
     else if (std::strcmp("WAIT", buffer) == 0)
     {
         float fticks;
-        err = std::fscanf(s_slide_show_file, "%f", &fticks); // how many ticks to wait
-        driver_set_keyboard_timeout((int)(fticks*1000.f));
+        const int count = std::fscanf(s_slide_show_file, "%f", &fticks); // how many seconds to wait
+        driver_set_keyboard_timeout((int)(fticks*1000.f)); // timeout in ms
         fticks *= CLOCKS_PER_SEC;             // convert from seconds to ticks
-        if (err == 1)
+        if (count == 1)
         {
             s_ticks = (long)fticks;
-            s_start_tick = std::clock();  // start timing
+            s_start_tick = now;  // start timing
         }
         else
         {
