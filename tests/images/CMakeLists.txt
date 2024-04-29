@@ -4,8 +4,7 @@ if(NOT CMAKE_SYSTEM_NAME STREQUAL "Windows")
 endif()
 
 function(add_image_test name)
-    cmake_parse_arguments(IMAGE_TEST "" "" "PARAMETERS")
-
+    cmake_parse_arguments(IMAGE_TEST "" "" "PARAMETERS" ${ARGN})
     list(APPEND IMAGE_TEST_PARAMETERS "batch=yes" "video=F6")
     add_test(NAME ImageTest.${name}
         COMMAND ${CMAKE_COMMAND}
@@ -18,6 +17,8 @@ function(add_image_test name)
             -P "${CMAKE_CURRENT_SOURCE_DIR}/image_compare_test.cmake"
         WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}/home"
     )
+    set_tests_properties(ImageTest.${name} PROPERTIES LABELS "image")
 endfunction()
 
 add_image_test(mandel PARAMETERS type=mandel)
+add_image_test(fractint-formula PARAMETERS type=formula formulafile=fract196.frm formulaname=fractint)

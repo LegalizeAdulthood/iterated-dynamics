@@ -2090,8 +2090,11 @@ static ConstArg *isconst(char const *Str, int Len)
         || (Str[0] == '-' && (std::isdigit(Str[1]) || Str[1] == '.'))
         || Str[0] == '.')
     {
-        if (o[g_operation_index-1].f == StkNeg)
+        assert(g_operation_index > 0);
+        assert(g_operation_index == o.size());
+        if (o.back().f == StkNeg)
         {
+            o.pop_back();
             g_operation_index--;
             Str = Str - 1;
             InitN--;
@@ -2379,6 +2382,7 @@ inline void push_pending_op(void (*f)(), int p)
 {
     o.push_back(PEND_OP{f, p});
     ++g_operation_index;
+    assert(g_operation_index == o.size());
 }
 
 static bool ParseStr(char const *Str, int pass)
@@ -2669,6 +2673,7 @@ static bool ParseStr(char const *Str, int pass)
     }
 
     g_operation_index = 0;
+    o.clear();
     g_store_index = 0;
     g_load_index = g_store_index;
     OpPtr = g_load_index;
