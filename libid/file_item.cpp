@@ -272,7 +272,6 @@ struct entryinfo
     long point; // points to the ( or the { following the name
 };
 
-static char tstack[4096] = { 0 };
 static std::FILE *gfe_file;
 static entryinfo **gfe_choices; // for format_getparm_line
 static char const *gfe_title;
@@ -795,7 +794,6 @@ long get_file_entry(gfe_type type, char const *title, char const *fmask,
 
             firsttry = true; // if around open loop again it is an error
         }
-        setvbuf(gfe_file, tstack, _IOFBF, 4096); // improves speed when file is big
         newfile = false;
         entry_pointer = gfe_choose_entry(type, title, filename, entryname);
         if (entry_pointer == -2)
