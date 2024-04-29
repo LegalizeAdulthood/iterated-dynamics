@@ -62,8 +62,8 @@ IDI_ITERATED_DYNAMICS            ICON                    "Id.ico"
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 1,0,0,0
- PRODUCTVERSION 1,0,0,0
+ FILEVERSION @PROJECT_VERSION_MAJOR@,@PROJECT_VERSION_MINOR@,@PROJECT_VERSION_PATCH@,@PROJECT_VERSION_TWEAK@
+ PRODUCTVERSION @PROJECT_VERSION_MAJOR@,@PROJECT_VERSION_MINOR@,@PROJECT_VERSION_PATCH@,@PROJECT_VERSION_TWEAK@
  FILEFLAGSMASK 0x17L
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -78,15 +78,15 @@ BEGIN
     BEGIN
         BLOCK "040904b0"
         BEGIN
-            VALUE "Comments", ""
-            VALUE "CompanyName", "Legalize Adulthood"
-            VALUE "FileDescription", "id"
-            VALUE "FileVersion", "20.99.8.0"
+            VALUE "Comments", "Are we having fun yet?"
+            VALUE "CompanyName", "@ID_VENDOR_NAME@"
+            VALUE "FileDescription", "@ID_PROGRAM_NAME@ fractal generator"
+            VALUE "FileVersion", "@PROJECT_VERSION_MAJOR@.@PROJECT_VERSION_MINOR@.@PROJECT_VERSION_PATCH@.@PROJECT_VERSION_TWEAK@"
             VALUE "InternalName", "id"
             VALUE "LegalCopyright", "Copyright (C) 2024"
             VALUE "OriginalFilename", "id.rc"
-            VALUE "ProductName", " id"
-            VALUE "ProductVersion", "1.0.0.0"
+            VALUE "ProductName", "@ID_PROGRAM_NAME@"
+            VALUE "ProductVersion", "@PROJECT_VERSION_MAJOR@.@PROJECT_VERSION_MINOR@.@PROJECT_VERSION_PATCH@.@PROJECT_VERSION_TWEAK@ (@ID_GIT_HASH@)"
         END
     END
     BLOCK "VarFileInfo"
