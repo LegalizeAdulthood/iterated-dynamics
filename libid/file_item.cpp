@@ -38,14 +38,14 @@ enum
     MAXENTRIES = 2000L
 };
 
-struct entryinfo
+struct FileEntry
 {
     char name[ITEM_NAME_LEN+2];
     long point; // points to the ( or the { following the name
 };
 
 static std::FILE *gfe_file;
-static entryinfo **gfe_choices; // for format_getparm_line
+static FileEntry **gfe_choices; // for format_getparm_line
 static char const *gfe_title;
 
 bool find_file_item(char *filename, char const *itemname, std::FILE **fileptr, gfe_type itemtype)
@@ -305,7 +305,7 @@ static int skip_comment(std::FILE *infile, long *file_offset)
     return c;
 }
 
-static int scan_entries(std::FILE *infile, entryinfo *choices, char const *itemname)
+static int scan_entries(std::FILE *infile, FileEntry *choices, char const *itemname)
 {
     /*
     function returns the number of entries found; if a
@@ -692,8 +692,8 @@ static long gfe_choose_entry(gfe_type type, char const *title, const std::string
     char const *o_instr = "Press F6 to select different file, F2 for details, F4 to toggle sort ";
     int numentries;
     char buf[101];
-    entryinfo storage[MAXENTRIES + 1]{};
-    entryinfo *choices[MAXENTRIES + 1] = { nullptr };
+    FileEntry storage[MAXENTRIES + 1]{};
+    FileEntry *choices[MAXENTRIES + 1] = { nullptr };
     int attributes[MAXENTRIES + 1] = { 0 };
     void (*formatitem)(int, char *);
     int boxwidth;
@@ -726,7 +726,7 @@ retry:
     if (dosort)
     {
         std::strcat(instr, "off");
-        shell_sort((char *) &choices, numentries, sizeof(entryinfo *));
+        shell_sort((char *) &choices, numentries, sizeof(FileEntry *));
     }
     else
     {
