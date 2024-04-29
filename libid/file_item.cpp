@@ -35,7 +35,7 @@
 
 enum : int
 {
-    MAXENTRIES = 2000L
+    MAXENTRIES = 2000
 };
 
 struct FileEntry
@@ -438,7 +438,7 @@ top:
                     choices[numentries].point = name_offset;
                     if (++numentries >= MAXENTRIES)
                     {
-                        std::sprintf(buf, "Too many entries in file, first %ld used", MAXENTRIES);
+                        std::sprintf(buf, "Too many entries in file, first %d used", MAXENTRIES);
                         stopmsg(STOPMSG_NONE, buf);
                         break;
                     }
