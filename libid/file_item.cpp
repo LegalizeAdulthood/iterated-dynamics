@@ -33,7 +33,10 @@
 #include <cstring>
 #include <string>
 
-#define MAXENTRIES 2000L
+enum
+{
+    MAXENTRIES = 2000L
+};
 
 bool find_file_item(char *filename, char const *itemname, std::FILE **fileptr, gfe_type itemtype)
 {
