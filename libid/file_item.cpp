@@ -38,6 +38,16 @@ enum
     MAXENTRIES = 2000L
 };
 
+struct entryinfo
+{
+    char name[ITEM_NAME_LEN+2];
+    long point; // points to the ( or the { following the name
+};
+
+static std::FILE *gfe_file;
+static entryinfo **gfe_choices; // for format_getparm_line
+static char const *gfe_title;
+
 bool find_file_item(char *filename, char const *itemname, std::FILE **fileptr, gfe_type itemtype)
 {
     std::FILE *infile = nullptr;
@@ -268,16 +278,6 @@ bool find_file_item(std::string &filename, char const *itemname, std::FILE **fil
     filename = buf;
     return result;
 }
-
-struct entryinfo
-{
-    char name[ITEM_NAME_LEN+2];
-    long point; // points to the ( or the { following the name
-};
-
-static std::FILE *gfe_file;
-static entryinfo **gfe_choices; // for format_getparm_line
-static char const *gfe_title;
 
 // skip to next non-white space character and return it
 static int skip_white_space(std::FILE *infile, long *file_offset)
