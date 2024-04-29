@@ -334,7 +334,7 @@ top:
             continue;
         }
         temp_offset = file_offset;
-        name_offset = temp_offset;
+        name_offset = file_offset;
         // next equiv roughly to fscanf(..,"%40[^* \n\r\t({\032]",buf)
         len = 0;
         // allow spaces in entry names in next
