@@ -33,7 +33,7 @@
 #include <cstring>
 #include <string>
 
-enum
+enum : int
 {
     MAXENTRIES = 2000L
 };
