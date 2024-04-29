@@ -1,6 +1,6 @@
 Mandel_Demo        { ; PAR for initialization of Fractint demo
   reset=1900 type=mandel corners=-2.5/1.5/-1.5/1.5 params=0/0 inside=0
-  sound=no
+  sound=no maxiter=678
   }
 
 trunc_demo        { ; PAR for initialization of Fractint demo (New in 19.4)
