@@ -307,11 +307,9 @@ static int skip_comment(std::FILE *infile, long *file_offset)
 
 static int scan_entries(std::FILE *infile, FileEntry *choices, char const *itemname)
 {
-    /*
-    function returns the number of entries found; if a
-    specific entry is being looked for, returns -1 if
-    the entry is found, 0 otherwise.
-    */
+    // returns the number of entries found; if a
+    // specific entry is being looked for, returns -1 if
+    // the entry is found, 0 otherwise.
     char buf[101];
     int exclude_entry;
     long name_offset;
