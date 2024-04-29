@@ -1,5 +1,4 @@
 id_install_home(FILES
-    fend.frm
     fract001.frm
     fract002.frm
     fract003.frm
