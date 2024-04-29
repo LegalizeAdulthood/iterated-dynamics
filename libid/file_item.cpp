@@ -44,9 +44,9 @@ struct FileEntry
     long point; // points to the ( or the { following the name
 };
 
-static std::FILE *gfe_file;
-static FileEntry **gfe_choices; // for format_getparm_line
-static char const *gfe_title;
+static std::FILE *s_gfe_file{};
+static FileEntry **s_gfe_choices{}; // for format_parmfile_line
+static char const *s_gfe_title{};
 
 bool find_file_item(char *filename, char const *itemname, std::FILE **fileptr, gfe_type itemtype)
 {
@@ -465,23 +465,23 @@ static void format_parmfile_line(int choice, char *buf)
     int c;
     int i;
     char line[80];
-    std::fseek(gfe_file, gfe_choices[choice]->point, SEEK_SET);
-    while (getc(gfe_file) != '{')
+    std::fseek(s_gfe_file, s_gfe_choices[choice]->point, SEEK_SET);
+    while (getc(s_gfe_file) != '{')
     {
     }
     do
     {
-        c = getc(gfe_file);
+        c = getc(s_gfe_file);
     }
     while (c == ' ' || c == '\t' || c == ';');
     i = 0;
     while (i < 56 && c != '\n' && c != '\r' && c != EOF && c != '\032')
     {
         line[i++] = (char)((c == '\t') ? ' ' : c);
-        c = getc(gfe_file);
+        c = getc(s_gfe_file);
     }
     line[i] = 0;
-    std::sprintf(buf, "%-20s%-56s", gfe_choices[choice]->name, line);
+    std::sprintf(buf, "%-20s%-56s", s_gfe_choices[choice]->name, line);
 }
 
 static int check_gfe_key(int curkey, int choice)
@@ -507,8 +507,8 @@ static int check_gfe_key(int curkey, int choice)
         bool comment = false;
         int c = 0;
         int widthct = 0;
-        std::fseek(gfe_file, gfe_choices[choice]->point, SEEK_SET);
-        while ((c = fgetc(gfe_file)) != EOF && c != '\032')
+        std::fseek(s_gfe_file, s_gfe_choices[choice]->point, SEEK_SET);
+        while ((c = fgetc(s_gfe_file)) != EOF && c != '\032')
         {
             if (c == ';')
             {
@@ -542,16 +542,16 @@ static int check_gfe_key(int curkey, int choice)
         if (c == EOF || c == '\032')
         {
             // should never happen
-            std::fseek(gfe_file, gfe_choices[choice]->point, SEEK_SET);
+            std::fseek(s_gfe_file, s_gfe_choices[choice]->point, SEEK_SET);
             in_scrolling_mode = false;
         }
-        std::fseek(gfe_file, gfe_choices[choice]->point, SEEK_SET);
-        load_entry_text(gfe_file, infbuf, 17, 0, 0);
+        std::fseek(s_gfe_file, s_gfe_choices[choice]->point, SEEK_SET);
+        load_entry_text(s_gfe_file, infbuf, 17, 0, 0);
         if (lines_in_entry > 17 || widest_entry_line > 74)
         {
             in_scrolling_mode = true;
         }
-        std::strcpy(infhdg, gfe_title);
+        std::strcpy(infhdg, s_gfe_title);
         std::strcat(infhdg, " file entry:\n\n");
         // ... instead, call help with buffer?  heading added
         driver_stack_screen();
@@ -577,8 +577,8 @@ static int check_gfe_key(int curkey, int choice)
             if (rewrite_infbuf)
             {
                 rewrite_infbuf = false;
-                std::fseek(gfe_file, gfe_choices[choice]->point, SEEK_SET);
-                load_entry_text(gfe_file, infbuf, 17, top_line, left_column);
+                std::fseek(s_gfe_file, s_gfe_choices[choice]->point, SEEK_SET);
+                load_entry_text(s_gfe_file, infbuf, 17, top_line, left_column);
                 for (int i = 4; i < (lines_in_entry < 17 ? lines_in_entry + 4 : 21); i++)
                 {
                     driver_put_string(i, 0, C_GENERAL_MED, blanks);
@@ -703,8 +703,8 @@ static long gfe_choose_entry(gfe_type type, char const *title, const std::string
 
     static bool dosort = true;
 
-    gfe_choices = &choices[0];
-    gfe_title = title;
+    s_gfe_choices = &choices[0];
+    s_gfe_title = title;
 
 retry:
     for (int i = 0; i < MAXENTRIES+1; i++)
@@ -715,11 +715,11 @@ retry:
 
     helptitle(); // to display a clue when file big and next is slow
 
-    numentries = scan_entries(gfe_file, &storage[0], nullptr);
+    numentries = scan_entries(s_gfe_file, &storage[0], nullptr);
     if (numentries == 0)
     {
         stopmsg(STOPMSG_NONE, "File doesn't contain any valid entries");
-        std::fclose(gfe_file);
+        std::fclose(s_gfe_file);
         return -2; // back to file list
     }
     std::strcpy(instr, o_instr);
@@ -754,11 +754,11 @@ retry:
         formatitem, buf, nullptr, check_gfe_key);
     if (i == -ID_KEY_F4)
     {
-        rewind(gfe_file);
+        rewind(s_gfe_file);
         dosort = !dosort;
         goto retry;
     }
-    std::fclose(gfe_file);
+    std::fclose(s_gfe_file);
     if (i < 0)
     {
         // go back to file list or cancel
@@ -781,7 +781,7 @@ long get_file_entry(gfe_type type, char const *title, char const *fmask,
         firsttry = false;
         // binary mode used here - it is more work, but much faster,
         //     especially when ftell or fgetpos is used
-        while (newfile || (gfe_file = std::fopen(filename.c_str(), "rb")) == nullptr)
+        while (newfile || (s_gfe_file = std::fopen(filename.c_str(), "rb")) == nullptr)
         {
             char buf[60];
             newfile = false;
