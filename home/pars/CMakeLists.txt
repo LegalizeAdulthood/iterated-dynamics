@@ -3,7 +3,7 @@ id_install_home(FILES
     demo.par
     example1.par
     example2.par
-    fract200.par
+    example3.par
     fract205.par
     id.par
     icons.par
