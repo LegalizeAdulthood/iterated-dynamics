@@ -4,7 +4,7 @@ id_install_home(FILES
     example1.par
     example2.par
     example3.par
-    fract205.par
+    example4.par
     id.par
     icons.par
     lyapunov.par

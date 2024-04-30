@@ -1,5 +1,4 @@
 BMC0884x           { ; 0:11:55.47, 1.3 GHz PIII
-                     ; Fractint Version 2004 Patchlevel 2
 ; Anthony Hanmer 2000-2005, a.hanmer@gmail.com
 ; More work to be found in HanmerIFS_01.ZIP at:
 ; http://spanky.triumf.ca/pub/fractals/FORMULAS/
@@ -8,10 +7,9 @@ BMC0884x           { ; 0:11:55.47, 1.3 GHz PIII
   maxiter=29000
   colors=000006<3>00800900A<9>K04M04O03<2>U01W00W00<10>d00e00f00<14>u70v70\
   w80x80z90<79>zm0zm0zn0<43>zx0zy0zy0zy0zy0<68>zzz
-  }
+}
 
 DC022b6c           { ; 0:45:36.71, 1.3 GHz PIII
-                     ; Fractint Version 2004 Patchlevel 2
 ; Anthony Hanmer 2000-2005, a.hanmer@gmail.com
 ; More work to be found in HanmerIFS_01.ZIP at:
 ; http://spanky.triumf.ca/pub/fractals/FORMULAS/
@@ -19,10 +17,9 @@ DC022b6c           { ; 0:45:36.71, 1.3 GHz PIII
   center-mag=0.3202/4.5196/0.203252 params=0 float=y maxiter=120000
   colors=000006<3>00800900A<9>K04M04O03<2>U01W00W00<10>d00e00f00<14>u70v70\
   w80x80z90<79>zm0zm0zn0<43>zx0zy0zy0zy0zy0<68>zzz
-  }
+}
 
 Sq0002d            { ; 0:23:29.99, 1.3 GHz PIII
-                     ; Fractint Version 2004 Patchlevel 2
 ; Anthony Hanmer 2000-2005, a.hanmer@gmail.com
 ; More work to be found in HanmerIFS_01.ZIP at:
 ; http://spanky.triumf.ca/pub/fractals/FORMULAS/
@@ -31,10 +28,9 @@ Sq0002d            { ; 0:23:29.99, 1.3 GHz PIII
   viewwindows=1/1/yes/0/0
   colors=000006<3>00800900A<9>K04M04O03<2>U01W00W00<10>d00e00f00<14>u70v70\
   w80x80z90<79>zm0zm0zn0<43>zx0zy0zy0zy0zy0<68>zzz
-  }
+}
 
 Sq441              { ; 0:25:74.97, 1.3 GHz PIII
-                     ; Fractint Version 2004 Patchlevel 2
 ; Anthony Hanmer 2000-2005, a.hanmer@gmail.com
 ; More work to be found in HanmerIFS_01.ZIP at:
 ; http://spanky.triumf.ca/pub/fractals/FORMULAS/
@@ -43,10 +39,9 @@ Sq441              { ; 0:25:74.97, 1.3 GHz PIII
   viewwindows=1/1/yes/0/0
   colors=000006<3>00800900A<9>K04M04O03<2>U01W00W00<10>d00e00f00<14>u70v70\
   w80x80z90<79>zm0zm0zn0<43>zx0zy0zy0zy0zy0<68>zzz
-  }
+}
 
 TD081              { ; 0:20:11.22, 1.3 GHz PIII
-                     ; Fractint Version 2004 Patchlevel 2
 ; Anthony Hanmer 2000-2005, a.hanmer@gmail.com
 ; More work to be found in HanmerIFS_01.ZIP at:
 ; http://spanky.triumf.ca/pub/fractals/FORMULAS/
@@ -56,5 +51,4 @@ TD081              { ; 0:20:11.22, 1.3 GHz PIII
   maxiter=46000
   colors=000006<3>00800900A<9>K04M04O03<2>U01W00W00<10>d00e00f00<14>u70v70\
   w80x80z90<79>zm0zm0zn0<43>zx0zy0zy0zy0zy0<68>zzz
-
-  }
+}
