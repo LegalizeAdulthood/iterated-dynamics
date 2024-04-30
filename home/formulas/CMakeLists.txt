@@ -5,7 +5,6 @@ id_install_home(FILES
     fract196.frm
     fract200.frm
     id.frm
-    fract_sy.frm
     ikenaga.frm
     julitile.frm
     newton.frm

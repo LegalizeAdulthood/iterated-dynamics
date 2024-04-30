@@ -1583,3 +1583,26 @@ ULI_6 {
     |z| <= p2+16
   }
 
+comment {
+  This formula uses Newton's formula applied to the real equation :
+     F(x,y) = 0 where F(x,y) = (x^3 + y^2 - 1 , y^3 - x^2 + 1)
+     starting with (x_0,y_0) = z0 = pixel
+  It calculates:
+     (x_(n+1),y_(n+1)) = (x_n,y_n) - (F'(x_n,y_n))^-1 * F(x_n,y_n)
+     where (F'(x_n,y_n))^-1 is the inverse of the Jacobian matrix of F.
+}
+
+Newton_real   { ; Sylvie Gallet, 1996
+      ; Newton's method applied to   x^3 + y^2 - 1 = 0
+      ;                              y^3 - x^2 + 1 = 0
+      ;                              solution (0,-1)
+      ; One parameter : real(p1) = bailout value
+  z = pixel, x = real(z), y = imag(z) :
+  xy = x*y
+  d = 9*xy+4, x2 = x*x, y2 = y*y
+  c = 6*xy+2
+  x1 = x*c - (y*y2 - 3*y - 2)/x
+  y1 = y*c + (x*x2 + 2 - 3*x)/y
+  z = (x1+flip(y1))/d, x = real(z), y = imag(z)
+  (|x| >= p1) || (|y+1| >= p1)
+}
