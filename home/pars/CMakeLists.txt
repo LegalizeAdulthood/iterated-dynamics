@@ -2,7 +2,7 @@ id_install_home(FILES
     cellular.par
     demo.par
     example1.par
-    fract19.par
+    example2.par
     fract200.par
     fract205.par
     id.par
