@@ -556,12 +556,12 @@ skip_UI:
                     std::fprintf(parmfile, "  video=%s", vidmde);
                     std::fprintf(parmfile, " savename=frmig_%c%c\n", PAR_KEY(i), PAR_KEY(j));
                 }
-                std::fprintf(parmfile, "  }\n\n");
+                std::fprintf(parmfile, "}\n\n");
             }
         }
         if (xm > 1 || ym > 1)
         {
-            std::fprintf(fpbat, "id makemig=%u/%u\n", xm, ym);
+            std::fprintf(fpbat, "start/wait id makemig=%u/%u\n", xm, ym);
             std::fprintf(fpbat, "rem Simplgif fractmig.gif simplgif.gif  in case you need it\n");
             std::fprintf(fpbat, ":oops\n");
             std::fclose(fpbat);
