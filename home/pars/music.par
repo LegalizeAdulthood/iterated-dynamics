@@ -1,6 +1,6 @@
 ; The following pars illustrate the sound capabilities of Fractint.
 
-Music_Fractal-1    { ; Intro to the sound of chaos by Bill Jemison [70400,2537]
+Music_Fractal-1    { ; Intro to the sound of chaos by Bill Jemison
   reset=1930 type=mandel passes=1 hertz=220 orbitdelay=1000 sound=y
   video=SF7 showorbit=yes
   center-mag=-0.223108/0.641995/1354.059/0.1539/-7.499/-51.996
@@ -8,7 +8,7 @@ Music_Fractal-1    { ; Intro to the sound of chaos by Bill Jemison [70400,2537]
   colors=@default.map
   }
 
-Music_Fractal-2    { ; (c) Sylvie Gallet [101324,3444], 1996
+Music_Fractal-2    { ; (c) Sylvie Gallet, 1996
   reset=1930 type=barnsleyj3 passes=1 hertz=1200 orbitdelay=1000 sound=z
   video=SF7 maxiter=1000 showorbit=yes
   center-mag=0.207059/0/1.893939
@@ -17,7 +17,7 @@ Music_Fractal-2    { ; (c) Sylvie Gallet [101324,3444], 1996
   colors=@default.map
   }
 
-Pop_Piccolo        { ; (c) Bill Jemison [70400,2537], 1996
+Pop_Piccolo        { ; (c) Bill Jemison, 1996
   reset=1930 type=popcornjul passes=1 hertz=1200 orbitdelay=1000 sound=z
   video=SF7 maxiter=100 showorbit=yes
   center-mag=-0.05295861129553414/-0.72472986547206800/149.6573
