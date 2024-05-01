@@ -1,7 +1,33 @@
 id_install_home(FILES
+    alpha01.l
+    cesaros.l
+    curves.l
+    dekking.l
+    edragons.l
+    gaskets.l
     hanmer.l
+    hanmer1.l
+    hanmer2.l
+    hanmer3_0.l
+    hanmer4.l
+    hanmerc.l
+    horizons.l
     id.l
+    jbartrol.l
     lsysfp.l
+    maze09.l
+    mcworter.l
+    mcworter1.l
+    misc.l
+    miscel1.l
+    norton.l
+    oj-fibona.l
+    oj-plants.l
     penrose.l
+    penrose2.l
+    plants.l
+    rouse.l
+    teachout.l
     tiling.l
+    torres.l
 )
