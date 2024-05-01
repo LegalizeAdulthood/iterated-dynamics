@@ -1,7 +1,6 @@
 id_install_home(FILES
     alpha01.l
     cesaros.l
-    curves.l
     dekking.l
     edragons.l
     gaskets.l
