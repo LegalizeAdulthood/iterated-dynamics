@@ -1,3 +1,11 @@
+text=auto
 *.gif binary
 *.bmp binary
 *.ico binary
+*.bat text
+*.frm text
+*.ifs text
+*.key text
+*.l text
+*.map text
+*.par text
