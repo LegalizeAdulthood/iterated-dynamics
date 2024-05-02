@@ -110,7 +110,7 @@ void CreateMiniDump(EXCEPTION_POINTERS *ep)
 {
     MiniDumpWriteDumpProc *dumper = nullptr;
     HMODULE debughlp = LoadLibrary("dbghelp.dll");
-    char minidump[MAX_PATH] = "id.dmp";
+    char minidump[MAX_PATH] = "id-" ID_GIT_HASH ".dmp";
     MINIDUMP_EXCEPTION_INFORMATION mdei =
     {
         GetCurrentThreadId(),
@@ -130,7 +130,7 @@ void CreateMiniDump(EXCEPTION_POINTERS *ep)
 
     while (PathFileExists(minidump))
     {
-        std::sprintf(minidump, "id-%d.dmp", i++);
+        std::sprintf(minidump, "id-" ID_GIT_HASH "-%d.dmp", i++);
     }
     dump_file = CreateFile(minidump, GENERIC_READ | GENERIC_WRITE,
                            0, nullptr, CREATE_NEW, FILE_ATTRIBUTE_NORMAL, nullptr);
@@ -154,6 +154,7 @@ void CreateMiniDump(EXCEPTION_POINTERS *ep)
     status = FreeLibrary(debughlp);
     _ASSERTE(status);
 
+    if (g_init_batch != batch_modes::NORMAL)
     {
         char msg[MAX_PATH*2];
         std::sprintf(msg, "Unexpected error, crash dump saved to %s.\n"

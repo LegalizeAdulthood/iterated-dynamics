@@ -976,7 +976,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
             {
                 return bad_arg(curarg);
             }
-            g_init_batch = static_cast<batch_modes>(yesnoval[0]);
+            g_init_batch = yesnoval[0] == 0 ? batch_modes::NONE : batch_modes::NORMAL;
             return CMDARG_FRACTAL_PARAM | CMDARG_3D_PARAM;
         }
         if (variable == "maxhistory")       // maxhistory=?

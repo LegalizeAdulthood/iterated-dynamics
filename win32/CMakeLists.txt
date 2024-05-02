@@ -31,10 +31,6 @@ target_link_libraries(os PUBLIC gdi32.lib user32.lib shlwapi.lib os_hc help_defs
 target_include_directories(os PRIVATE ../libid/include PUBLIC .)
 add_dependencies(os native_help)
 
-execute_process(COMMAND "${GITCOMMAND}" log -1 --format=%h
-    WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}"
-    OUTPUT_VARIABLE ID_GIT_HASH
-    OUTPUT_STRIP_TRAILING_WHITESPACE)
 configure_file(id.rc.in id.rc @ONLY)
 add_executable(id WIN32
     Id.ico

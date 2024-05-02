@@ -25,6 +25,10 @@ include(CTest)
 
 set(home_dir "${CMAKE_SOURCE_DIR}/home")
 set(ID_DIR ${CMAKE_CURRENT_SOURCE_DIR})
+execute_process(COMMAND "${GITCOMMAND}" log -1 --format=%h
+    WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}"
+    OUTPUT_VARIABLE ID_GIT_HASH
+    OUTPUT_STRIP_TRAILING_WHITESPACE)
 
 function(set_src_dir src_file)
     set_source_files_properties(${src_file}
