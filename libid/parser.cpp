@@ -4084,18 +4084,18 @@ static std::string PrepareFormula(std::FILE *file, bool report_bad_sym)
     if (!frm_check_name_and_sym(file, report_bad_sym))
     {
         std::fseek(file, filepos, SEEK_SET);
-        return nullptr;
+        return {};
     }
     if (!frm_prescan(file))
     {
         std::fseek(file, filepos, SEEK_SET);
-        return nullptr;
+        return {};
     }
 
     if (chars_in_formula > 8190)
     {
         std::fseek(file, filepos, SEEK_SET);
-        return nullptr;
+        return {};
     }
 
     std::FILE *debug_fp = nullptr;
@@ -4134,7 +4134,7 @@ static std::string PrepareFormula(std::FILE *file, bool report_bad_sym)
             {
                 std::fclose(debug_fp);
             }
-            return nullptr;
+            return {};
         }
         else if (temp_tok.token_type == END_OF_FORMULA)
         {
@@ -4144,7 +4144,7 @@ static std::string PrepareFormula(std::FILE *file, bool report_bad_sym)
             {
                 std::fclose(debug_fp);
             }
-            return nullptr;
+            return {};
         }
         if (temp_tok.token_str[0] == ',')
         {
@@ -4170,7 +4170,7 @@ static std::string PrepareFormula(std::FILE *file, bool report_bad_sym)
             {
                 std::fclose(debug_fp);
             }
-            return nullptr;
+            return {};
         case END_OF_FORMULA:
             Done = true;
             std::fseek(file, filepos, SEEK_SET);
