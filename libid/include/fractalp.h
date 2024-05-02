@@ -78,9 +78,9 @@ struct fractalspecificstuff
                                         // (leading "*" suppresses name display)
     char const  *param[4];              // name of the parameters
     double paramvalue[4];               // default parameter values
-    help_labels helptext;               // helpdefs.h HT_xxxx, -1 for none
-    help_labels helpformula;            // helpdefs.h HF_xxxx, -1 for none
-    fractal_flags flags;                // constraints, bits defined below
+    help_labels helptext;               // helpdefs.h HT_xxxx or NONE
+    help_labels helpformula;            // helpdefs.h HF_xxxx or NONE
+    fractal_flags flags;                // constraints, bits defined above
     float xmin;                         // default XMIN corner
     float xmax;                         // default XMAX corner
     float ymin;                         // default YMIN corner
@@ -90,18 +90,6 @@ struct fractalspecificstuff
     fractal_type tomandel;              // julia-to-mandel switch
     fractal_type tofloat;               // integer-to-floating switch
     symmetry_type symmetry;             // applicable symmetry logic
-                                        //  0 = no symmetry
-                                        // -1 = y-axis symmetry (If No Params)
-                                        //  1 = y-axis symmetry
-                                        // -2 = x-axis symmetry (No Parms)
-                                        //  2 = x-axis symmetry
-                                        // -3 = y-axis AND x-axis (No Parms)
-                                        //  3 = y-axis AND x-axis symmetry
-                                        // -4 = polar symmetry (No Parms)
-                                        //  4 = polar symmetry
-                                        //  5 = PI (sin/cos) symmetry
-                                        //  6 = NEWTON (power) symmetry
-                                        //
     int (*orbitcalc)();                 // function that calculates one orbit
     int (*per_pixel)();                 // once-per-pixel init
     bool (*per_image)();                // once-per-image setup

@@ -14,22 +14,22 @@ enum
 
 enum class symmetry_type
 {
-    NONE                = 0,
-    X_AXIS_NO_PARAM     = -1,
-    X_AXIS              = 1,
-    Y_AXIS_NO_PARAM     = -2,
-    Y_AXIS              = 2,
-    XY_AXIS_NO_PARAM    = -3,
-    XY_AXIS             = 3,
-    ORIGIN_NO_PARAM     = -4,
-    ORIGIN              = 4,
-    PI_SYM_NO_PARAM     = -5,
-    PI_SYM              = 5,
-    X_AXIS_NO_IMAG      = -6,
-    X_AXIS_NO_REAL      = 6,
-    NO_PLOT             = 99,
-    SETUP               = 100,
-    NOT_FORCED          = 999
+    NONE = 0,              //  0: no symmetry
+    X_AXIS_NO_PARAM = -1,  // -1: x-axis symmetry (if no parameters)
+    X_AXIS = 1,            //  1: x-axis symmetry
+    Y_AXIS_NO_PARAM = -2,  // -2: y-axis symmetry (if no parameters)
+    Y_AXIS = 2,            //  2: y-axis symmetry
+    XY_AXIS_NO_PARAM = -3, // -3: y-axis AND x-axis (if no parameters)
+    XY_AXIS = 3,           //  3: y-axis AND x-axis symmetry
+    ORIGIN_NO_PARAM = -4,  // -4: polar symmetry (if no parameters)
+    ORIGIN = 4,            //  4: polar symmetry
+    PI_SYM_NO_PARAM = -5,  // -5: PI (sin/cos) symmetry (if no parameters)
+    PI_SYM = 5,            //  5: PI (sin/cos) symmetry
+    X_AXIS_NO_IMAG = -6,   //
+    X_AXIS_NO_REAL = 6,    //
+    NO_PLOT = 99,          //
+    SETUP = 100,           //
+    NOT_FORCED = 999       //
 };
 
 // values for inside/outside
