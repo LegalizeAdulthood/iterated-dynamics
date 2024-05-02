@@ -1,5 +1,5 @@
 ismand_demo_julia  { ; Image and par Copyright (c) Sylvie Gallet, 1999
-  reset=2000 type=formula formulafile=fract200.frm
+  reset=2000 type=formula formulafile=example3.frm
   formulaname=ismand_demo ismand=n passes=d
   center-mag=0/0/0.6666667
   params=-0.1542022284011214/0.6137691202307978/4/0
@@ -9,7 +9,7 @@ ismand_demo_julia  { ; Image and par Copyright (c) Sylvie Gallet, 1999
 }
 
 ismand_demo_mandel { ; Image and par Copyright (c) Sylvie Gallet, 1999
-  reset=2000 type=formula formulafile=fract200.frm
+  reset=2000 type=formula formulafile=example3.frm
   formulaname=ismand_demo ismand=y passes=d
   center-mag=0/0/0.6666667 params=0/0/4/0 float=y
   maxiter=1000 inside=0 decomp=256 periodicity=0

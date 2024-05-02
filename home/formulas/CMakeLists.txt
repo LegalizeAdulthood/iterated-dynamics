@@ -1,9 +1,9 @@
 id_install_home(FILES
+    example2.frm
+    example3.frm
     fract001.frm
     fract002.frm
     fract003.frm
-    example2.frm
-    fract200.frm
     id.frm
     ikenaga.frm
     julitile.frm
