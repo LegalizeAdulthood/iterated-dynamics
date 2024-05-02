@@ -54,7 +54,7 @@ std::vector<fn_operand> g_function_operands;
 
 extern double _1_;
 extern double _2_;
-extern Arg s[20];
+extern Arg g_stack[20];
 extern std::vector<Arg *> Store;
 extern std::vector<Arg *> Load;
 extern int OpPtr;

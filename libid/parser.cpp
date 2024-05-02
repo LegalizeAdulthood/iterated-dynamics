@@ -200,7 +200,7 @@ Arg *Arg1;
 Arg *Arg2;
 
 // Some of these variables should be renamed for safety
-static Arg s[20];
+Arg g_stack[20]{};
 std::vector<Arg *> Store;
 std::vector<Arg *> Load;
 int OpPtr;
@@ -993,9 +993,9 @@ void StkLod()
 
 void StkClr()
 {
-    s[0] = *Arg1;
-    Arg1 = &s[0];
-    Arg2 = &s[0];
+    g_stack[0] = *Arg1;
+    Arg1 = &g_stack[0];
+    Arg2 = &g_stack[0];
     Arg2--;
 }
 
@@ -2933,8 +2933,8 @@ int Formula()
         }
     }
 
-    Arg1 = &s[0];
-    Arg2 = &s[0];
+    Arg1 = &g_stack[0];
+    Arg2 = &g_stack[0];
     --Arg2;
     while (OpPtr < (int)g_last_op)
     {
@@ -2975,8 +2975,8 @@ int form_per_pixel()
     OpPtr = 0;
     g_store_index = 0;
     g_load_index = 0;
-    Arg1 = &s[0];
-    Arg2 = &s[0];
+    Arg1 = &g_stack[0];
+    Arg2 = &g_stack[0];
     Arg2--;
 
 
