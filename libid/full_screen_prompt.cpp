@@ -126,7 +126,7 @@ int fullscreen_prompt(      // full-screen prompting routine
     {
         bool comment = false;
         int c = 0;
-        int widthct = 0;
+        int line_width = -1;
         while ((c = fgetc(scroll_file)) != EOF && c != '\032')
         {
             if (c == ';')
@@ -137,19 +137,19 @@ int fullscreen_prompt(      // full-screen prompting routine
             {
                 comment = false;
                 lines_in_entry++;
-                widthct =  -1;
+                line_width =  -1;
             }
             else if (c == '\t')
             {
-                widthct += 7 - widthct % 8;
+                line_width += 7 - line_width % 8;
             }
             else if (c == '\r')
             {
                 continue;
             }
-            if (++widthct > widest_entry_line)
+            if (++line_width > widest_entry_line)
             {
-                widest_entry_line = widthct;
+                widest_entry_line = line_width;
             }
             if (c == '}' && !comment)
             {
