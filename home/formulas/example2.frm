@@ -154,7 +154,7 @@ inandout03 { ; Modified for if..else logic 3/19/97 by Sylvie Gallet
 }
 
 inandout04 { ; Modified for if..else logic 3/21/97 by Sylvie Gallet
-  ;p1 = Parameter (default 1), real(p2) = Bailout (default 4)
+   ;p1 = Parameter (default 1), real(p2) = Bailout (default 4)
    ; The next line sets k=default if p1=0, else k=p1
    IF (real(p1) || imag(p1))
       k = p1
