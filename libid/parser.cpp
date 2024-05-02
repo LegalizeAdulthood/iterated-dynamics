@@ -145,32 +145,38 @@ static bool frm_prescan(std::FILE * open_file);
                         case '9'
 
 // token_type definitions
-#define NOT_A_TOKEN           0
-#define PARENS                1
-#define PARAM_VARIABLE        2
-#define USER_NAMED_VARIABLE   3
-#define PREDEFINED_VARIABLE   4
-#define REAL_CONSTANT         5
-#define COMPLEX_CONSTANT      6
-#define FUNCTION              7
-#define PARAM_FUNCTION        8
-#define FLOW_CONTROL          9
-#define OPERATOR             10
-#define END_OF_FORMULA       11
+enum
+{
+    NOT_A_TOKEN = 0,
+    PARENS = 1,
+    PARAM_VARIABLE = 2,
+    USER_NAMED_VARIABLE = 3,
+    PREDEFINED_VARIABLE = 4,
+    REAL_CONSTANT = 5,
+    COMPLEX_CONSTANT = 6,
+    FUNCTION = 7,
+    PARAM_FUNCTION = 8,
+    FLOW_CONTROL = 9,
+    OPERATOR = 10,
+    END_OF_FORMULA = 11
+};
 
 // token IDs
-#define END_OF_FILE            1
-#define ILLEGAL_CHARACTER      2
-#define ILLEGAL_VARIABLE_NAME  3
-#define TOKEN_TOO_LONG         4
-#define FUNC_USED_AS_VAR       5
-#define JUMP_MISSING_BOOLEAN   6
-#define JUMP_WITH_ILLEGAL_CHAR 7
-#define UNDEFINED_FUNCTION     8
-#define ILLEGAL_OPERATOR       9
-#define ILL_FORMED_CONSTANT   10
-#define OPEN_PARENS            1
-#define CLOSE_PARENS          -1
+enum
+{
+    END_OF_FILE = 1,
+    ILLEGAL_CHARACTER = 2,
+    ILLEGAL_VARIABLE_NAME = 3,
+    TOKEN_TOO_LONG = 4,
+    FUNC_USED_AS_VAR = 5,
+    JUMP_MISSING_BOOLEAN = 6,
+    JUMP_WITH_ILLEGAL_CHAR = 7,
+    UNDEFINED_FUNCTION = 8,
+    ILLEGAL_OPERATOR = 9,
+    ILL_FORMED_CONSTANT = 10,
+    OPEN_PARENS = 1,
+    CLOSE_PARENS = -1
+};
 
 struct token_st
 {
@@ -253,44 +259,46 @@ static unsigned int chars_in_formula;
    be used as the argument in a call to ParseErrs(), should use one of these
    defines.
 */
-
-#define PE_NO_ERRORS_FOUND                           -1
-#define PE_SHOULD_BE_ARGUMENT                         0
-#define PE_SHOULD_BE_OPERATOR                         1
-#define PE_NEED_A_MATCHING_OPEN_PARENS                2
-#define PE_NEED_MORE_CLOSE_PARENS                     3
-#define PE_UNDEFINED_OPERATOR                         4
-#define PE_UNDEFINED_FUNCTION                         5
-#define PE_TABLE_OVERFLOW                             6
-#define PE_NO_MATCH_RIGHT_PAREN                       7
-#define PE_NO_LEFT_BRACKET_FIRST_LINE                 8
-#define PE_UNEXPECTED_EOF                             9
-#define PE_INVALID_SYM_USING_NOSYM                   10
-#define PE_FORMULA_TOO_LARGE                         11
-#define PE_INSUFFICIENT_MEM_FOR_TYPE_FORMULA         12
-#define PE_COULD_NOT_OPEN_FILE_WHERE_FORMULA_LOCATED 13
-#define PE_JUMP_NOT_FIRST                            14
-#define PE_NO_CHAR_AFTER_THIS_JUMP                   15
-#define PE_JUMP_NEEDS_BOOLEAN                        16
-#define PE_ENDIF_REQUIRED_AFTER_ELSE                 17
-#define PE_ENDIF_WITH_NO_IF                          18
-#define PE_MISPLACED_ELSE_OR_ELSEIF                  19
-#define PE_UNMATCHED_IF_IN_INIT_SECTION              20
-#define PE_IF_WITH_NO_ENDIF                          21
-#define PE_ERROR_IN_PARSING_JUMP_STATEMENTS          22
-#define PE_TOO_MANY_JUMPS                            23
-#define PE_FORMULA_NAME_TOO_LARGE                    24
-#define PE_ILLEGAL_ASSIGNMENT                        25
-#define PE_ILLEGAL_VAR_NAME                          26
-#define PE_INVALID_CONST                             27
-#define PE_ILLEGAL_CHAR                              28
-#define PE_NESTING_TO_DEEP                           29
-#define PE_UNMATCHED_MODULUS                         30
-#define PE_FUNC_USED_AS_VAR                          31
-#define PE_NO_NEG_AFTER_EXPONENT                     32
-#define PE_TOKEN_TOO_LONG                            33
-#define PE_SECOND_COLON                              34
-#define PE_INVALID_CALL_TO_PARSEERRS                 35
+enum
+{
+    PE_NO_ERRORS_FOUND = -1,
+    PE_SHOULD_BE_ARGUMENT = 0,
+    PE_SHOULD_BE_OPERATOR = 1,
+    PE_NEED_A_MATCHING_OPEN_PARENS = 2,
+    PE_NEED_MORE_CLOSE_PARENS = 3,
+    PE_UNDEFINED_OPERATOR = 4,
+    PE_UNDEFINED_FUNCTION = 5,
+    PE_TABLE_OVERFLOW = 6,
+    PE_NO_MATCH_RIGHT_PAREN = 7,
+    PE_NO_LEFT_BRACKET_FIRST_LINE = 8,
+    PE_UNEXPECTED_EOF = 9,
+    PE_INVALID_SYM_USING_NOSYM = 10,
+    PE_FORMULA_TOO_LARGE = 11,
+    PE_INSUFFICIENT_MEM_FOR_TYPE_FORMULA = 12,
+    PE_COULD_NOT_OPEN_FILE_WHERE_FORMULA_LOCATED = 13,
+    PE_JUMP_NOT_FIRST = 14,
+    PE_NO_CHAR_AFTER_THIS_JUMP = 15,
+    PE_JUMP_NEEDS_BOOLEAN = 16,
+    PE_ENDIF_REQUIRED_AFTER_ELSE = 17,
+    PE_ENDIF_WITH_NO_IF = 18,
+    PE_MISPLACED_ELSE_OR_ELSEIF = 19,
+    PE_UNMATCHED_IF_IN_INIT_SECTION = 20,
+    PE_IF_WITH_NO_ENDIF = 21,
+    PE_ERROR_IN_PARSING_JUMP_STATEMENTS = 22,
+    PE_TOO_MANY_JUMPS = 23,
+    PE_FORMULA_NAME_TOO_LARGE = 24,
+    PE_ILLEGAL_ASSIGNMENT = 25,
+    PE_ILLEGAL_VAR_NAME = 26,
+    PE_INVALID_CONST = 27,
+    PE_ILLEGAL_CHAR = 28,
+    PE_NESTING_TO_DEEP = 29,
+    PE_UNMATCHED_MODULUS = 30,
+    PE_FUNC_USED_AS_VAR = 31,
+    PE_NO_NEG_AFTER_EXPONENT = 32,
+    PE_TOKEN_TOO_LONG = 33,
+    PE_SECOND_COLON = 34,
+    PE_INVALID_CALL_TO_PARSEERRS = 35
+};
 
 static char const *ParseErrs(int which)
 {
