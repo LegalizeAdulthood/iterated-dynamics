@@ -21,4 +21,4 @@ function(add_image_test name)
 endfunction()
 
 add_image_test(mandel PARAMETERS type=mandel)
-add_image_test(fractint-formula PARAMETERS type=formula formulafile=fract196.frm formulaname=fractint)
+add_image_test(fractint-formula PARAMETERS type=formula formulafile=example2.frm formulaname=fractint)

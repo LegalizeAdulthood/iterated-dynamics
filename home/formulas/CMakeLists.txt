@@ -2,7 +2,7 @@ id_install_home(FILES
     fract001.frm
     fract002.frm
     fract003.frm
-    fract196.frm
+    example2.frm
     fract200.frm
     id.frm
     ikenaga.frm

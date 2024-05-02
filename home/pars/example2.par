@@ -56,7 +56,7 @@ Zorro              { ; (c) 1995 Bradley Beacham
 }
 
 30,000-Feet        { ; (c) Robert W. Carr, 1996
-  reset=1960 type=formula formulafile=fract196.frm formulaname=Carr2289
+  reset=1960 type=formula formulafile=example2.frm formulaname=Carr2289
   corners=-0.6675049/0.6648699/-0.50270801/0.49657301
   params=100/150/200/250 float=y maxiter=300 periodicity=0
   colors=00000L012<12>AFSBGUAFS<14>0007Mw<4>e00<4>zz0<4>UFw00`<5>`oz<4>YFw\
@@ -113,7 +113,7 @@ Chip               { ; (c) Sylvie Gallet, 1996
 Fractint           { ; A Newton fractal and the word 'FRACTINT'
                      ; (c) Sylvie Gallet, 1996
                      ; uses a large formula
-  reset=1960 type=formula formulafile=fract196.frm
+  reset=1960 type=formula formulafile=example2.frm
   formulaname=fractint center-mag=0/0/0.6905982 float=y
   periodicity=0
   colors=000000`Y_<6>nrt<15>OI4<6>eYIg_KiaMkcOneQ<4>zp`<4>jdVgaUcZS`WRYUQ<\
@@ -143,7 +143,7 @@ Threeply           { ; (c) Sylvie Gallet, 1996
 
 TileJulia          { ; Your new wallpaper for Windows...
                      ; (c) Sylvie Gallet, 1996
-  reset=1960 type=formula formulafile=fract196.frm
+  reset=1960 type=formula formulafile=example2.frm
   formulaname=tilejulia center-mag=0/0/0.6666667
   params=0.001/0.005/500/0/-1.44/0 float=y periodicity=0
   colors=O0LBBB<12>www<15>000<14>IeqKhuJfr<14>000<15>zrZ<15>000<15>z00<15>\
@@ -153,7 +153,7 @@ TileJulia          { ; Your new wallpaper for Windows...
 
 TileMandel         { ; ...or the background for your Web page?
                      ; (c) Sylvie Gallet, 1996
-  reset=1960 type=formula formulafile=fract196.frm
+  reset=1960 type=formula formulafile=example2.frm
   formulaname=tilemandel center-mag=0/0/0.6666667
   params=-1.238825/0.163073/40/0 float=y periodicity=0
   colors=CCCrdL<12>uoYvpZuoZ<23>DJR<14>WhQXiQYkQ_lQ`nQbpP<19>bXGbVFcVI<5>j\
@@ -162,7 +162,7 @@ TileMandel         { ; ...or the background for your Web page?
 }
 
 Caverns_Of_Mongue  { ; Par and Image Copyright 1996 by Lee H. Skinner
-  reset=1960 type=formula formulafile=fract196.frm
+  reset=1960 type=formula formulafile=example2.frm
   formulaname=Five-Mandels passes=1
   corners=-0.94645508/-0.12360225/-0.30856981/0.30856981
   params=100/150/200/250/0/0 float=y maxiter=1023 inside=0 logmap=yes
@@ -176,7 +176,7 @@ Caverns_Of_Mongue  { ; Par and Image Copyright 1996 by Lee H. Skinner
 }
 
 Mandel-virus       { ; Image and Par Copyright by Lee H. Skinner, 1995
-  reset=1960 type=formula formulafile=fract196.frm
+  reset=1960 type=formula formulafile=example2.frm
   formulaname=shifter01 passes=1
   center-mag=-0.57764380315000000/+0.63032279420000000/1065.972
   params=101/0/0/0 float=y maxiter=1023 inside=bof61 logmap=yes
@@ -213,7 +213,7 @@ Sliced-Tomato      { ; Par and Image Copyright 1995 by Lee H. Skinner
 
 Graphs             { ; Better than a graphic calculator!
                      ; (c) Sylvie Gallet, 1996
-  reset=1960 type=formula formulafile=fract196.frm formulaname=Graph
+  reset=1960 type=formula formulafile=example2.frm formulaname=Graph
   function=sin/abs/ceil/log passes=1 center-mag=0/0/0.2
   params=0.002/0.001 float=y maxiter=99 inside=255
   colors=000hhhzK0zzz0zKzzzzzzzzz0Kzzzz<5>zzzww0zzz<236>zzz000
@@ -244,7 +244,7 @@ Spirals            { ; Uses the new trunc function.
 
 jdsg4101           { ; Par and Image Copyright 1996 by Lee H. Skinner
                      ; time: 13mins 38s at 1600x1200 on a Pentium 166
-  reset=1960 type=formula formulafile=fract196.frm
+  reset=1960 type=formula formulafile=example2.frm
   formulaname=JD-SG-04-1 passes=1
   center-mag=-0.21379120971899780/+0.65418802540150260/902.2811
   params=0.75/0/2/0 float=y maxiter=1023 inside=0 logmap=yes
@@ -258,7 +258,7 @@ jdsg4101           { ; Par and Image Copyright 1996 by Lee H. Skinner
 
 ptcmjn01           { ; Copyright Sylvie Gallet, Aug 1996
                      ; t= 0:25:20.78 on a Pentium 166 at 1600x1200
-  reset=1960 type=formula formulafile=fract196.frm formulaname=ptc+mjn
+  reset=1960 type=formula formulafile=example2.frm formulaname=ptc+mjn
   passes=1 center-mag=-0.555949/0.589869/13.92602
   params=0.077/0.626/6/0 float=y maxiter=1023 inside=0 logmap=3
   colors=00000K00U<13>0fj0ik2ik<15>mww<15>zrw<15>ww0<14>yn7zm8zkA<14>z4c<1\
@@ -268,7 +268,7 @@ ptcmjn01           { ; Copyright Sylvie Gallet, Aug 1996
 
 ptc4m01            { ; Copyright Sylvie Gallet, Aug 1996
                      ; t= 0:02:31.26 on a Pentium 166 at 1600x1200
-  reset=1960 type=formula formulafile=fract196.frm formulaname=ptc+4mandels
+  reset=1960 type=formula formulafile=example2.frm formulaname=ptc+4mandels
   passes=1 center-mag=0/0/0.6666667 params=-1/0/1.4/0/-1.4/0 float=y
   maxiter=255 inside=0 decomp=256 symmetry=none periodicity=0
   colors=06W<11>0fj0ik2ik<15>mww<15>zrw<15>ww0<14>yn7zm8zkA<14>z4c<13>xptx\
@@ -305,7 +305,7 @@ Oortcld            { ; The Oort Cloud, Birthplace of Comets   t=  0:05:37.90
 SG8-21-12          { ; New color scheme for Julia and Mandel sets
                      ; Copyright Sylvie Gallet, April 1997
                      ; t= 0:10:49.33 at 1600 x 1200 on a P166
-  reset=1960 type=formula formulafile=fract196.frm
+  reset=1960 type=formula formulafile=example2.frm
   formulaname=gallet-8-21 passes=1
   center-mag=0.152211/0.485915/5.161535/1/14.997
   params=0.078/-0.64/0.12/0.18/0/0 float=y maxiter=2047 inside=0

@@ -10,7 +10,7 @@ OK-32 { ; Modified for if..else logic 3/19/97 by Sylvie Gallet
    ENDIF
    x = y , y = z , z = a*k + b
    |z| <= test
-   }
+}
 
 OK-34 { ; Modified for if..else logic 3/19/97 by Sylvie Gallet
    z = pixel , c = fn1(pixel) * p1 , test = 10 + p2 :
@@ -21,7 +21,7 @@ OK-34 { ; Modified for if..else logic 3/19/97 by Sylvie Gallet
       z = fn2(z) + x + c
    ENDIF
    |z| <= test
-   }
+}
 
 OK-35 { ; Modified for if..else logic 3/19/97 by Sylvie Gallet
    z = pixel, k = 1 + p1 , test = 10 + p2 :
@@ -32,10 +32,10 @@ OK-35 { ; Modified for if..else logic 3/19/97 by Sylvie Gallet
       z = fn2((z + x) * k * v) + v
    ENDIF
    |z| <= test
-   }
+}
 
 Larry { ; Mutation of 'Michaelbrot' and 'Element'
-   ; Original formulas by Michael Theroux [71673,2767]
+   ; Original formulas by Michael Theroux
    ; Modified for if..else logic 3/19/97 by Sylvie Gallet
    ; For 'Michaelbrot', set FN1 & FN2 =IDENT and P1 & P2 = default
    ; For 'Element', set FN1=IDENT & FN2=SQR and P1 & P2 = default
@@ -56,10 +56,10 @@ Larry { ; Mutation of 'Michaelbrot' and 'Element'
    :
    z = fn1(fn2(z*z)) + c
    |z| <= test
-   }
+}
 
 Moe { ; Mutation of 'Zexpe'.
-   ; Original formula by Lee Skinner [75450,3631]
+   ; Original formula by Lee Skinner
    ; Modified for if..else logic 3/19/97 by Sylvie Gallet
    ; For 'Zexpe', set FN1 & FN2 = IDENT and P1 = default
    ; real(p1) = Bailout (default 100)
@@ -73,7 +73,7 @@ Moe { ; Mutation of 'Zexpe'.
    :
    z = fn2(z)^s + c
    |z| <= test
-   }
+}
 
 Groucho { ; Mutation of 'Fish2'.
    ; Original formula by Dave Oliver via Tim Wegner
@@ -97,10 +97,10 @@ Groucho { ; Mutation of 'Fish2'.
    z1 = c^(fn1(z)-k)
    z = fn2(((c*z1)-k)*(z1))
    |z| <= test
-   }
+}
 
 Zeppo { ; Mutation of 'Liar4'.
-   ; Original formula by Chuck Ebbert [76306,1226]
+   ; Original formula by Chuck Ebbert
    ; Modified for if..else logic 3/19/97 by Sylvie Gallet
    ; For 'Liar4' set FN1 & FN2 =IDENT and P1 & P2 = default
    ; p1 & p2 = Parameters (default 1,0 and 0,0)
@@ -115,7 +115,7 @@ Zeppo { ; Mutation of 'Liar4'.
    z = fn1(1-abs(imag(z)*p-real(z))) +          \
        flip(fn2(1-abs(1-real(z)-imag(z)))) - p2
    |z| <= 1
-   }
+}
 
 inandout02 { ; Modified for if..else logic 3/19/97 by Sylvie Gallet
   ;p1 = Parameter (default 0), real(p2) = Bailout (default 4)
@@ -132,7 +132,7 @@ inandout02 { ; Modified for if..else logic 3/19/97 by Sylvie Gallet
       oldz = z , moldz = mz , z = fn2(z) + p1 , mz = |z|  ;OUT
    ENDIF
    mz <= test
-   }
+}
 
 inandout03 { ; Modified for if..else logic 3/19/97 by Sylvie Gallet
   ;p1 = Parameter (default 0), real(p2) = Bailout (default 4)
@@ -151,7 +151,7 @@ inandout03 { ; Modified for if..else logic 3/19/97 by Sylvie Gallet
    oldz = z , moldz = mz
    z = fn2(z*z) + c , mz = |z|
    mz <= test
-   }
+}
 
 inandout04 { ; Modified for if..else logic 3/21/97 by Sylvie Gallet
   ;p1 = Parameter (default 1), real(p2) = Bailout (default 4)
@@ -174,15 +174,15 @@ inandout04 { ; Modified for if..else logic 3/21/97 by Sylvie Gallet
    ENDIF
    oldz = z , moldz = mz , z = fn1(z*z) + c , mz = |z|
    mz <= test
-   }
+}
 
 comment {
   In this formula, a running count of the iterations is kept. After a
   specified iteration number has been reached, the algorithm is changed.
-  }
+}
 
 shifter01 { ; After shift, switch from z*z to z*z*z
-            ; Bradley Beacham  [74223,2745]
+            ; Bradley Beacham
             ; Modified for if..else logic 3/18/97 by Sylvie Gallet
    ; P1 = shift value, P2 varies bailout value
    z = c = pixel , iter = 1 , shift = p1 , test = 4 + p2 :
@@ -193,7 +193,7 @@ shifter01 { ; After shift, switch from z*z to z*z*z
    ENDIF
    iter = iter + 1
    |z| < test
-   }
+}
 
 {--- ROBERT W. CARR ------------------------------------------------------}
 
@@ -201,9 +201,9 @@ comment {
   This formula Is based on Sylvie Gallet's Five-Mandels formula.
   Though it shouldn't produce a symmetrical image, a modification of pixel
   forces symmetry around the Y axis.
-  }
+}
 
-Carr2289 (YAXIS) { ; Modified Sylvie Gallet frm. [101324,3444],1996
+Carr2289 (YAXIS) { ; Modified Sylvie Gallet frm., 1996
                    ; Modified for if..else logic 3/17/97 by Sylvie Gallet
    ; 0 < real(p1) < imag(p1) < real(p2) < imag(p2) < maxiter, periodicity=0
    pixel = -abs(real(pixel)) + flip(imag(pixel))
@@ -225,11 +225,11 @@ Carr2289 (YAXIS) { ; Modified Sylvie Gallet frm. [101324,3444],1996
    z = z*z + c
    iter = iter + 1
    abs(z) <= bailout
-   }
+}
 
 {--- SYLVIE GALLET -------------------------------------------------------}
 
-Fractint {; Sylvie Gallet [101324,3444], 1996
+Fractint {; Sylvie Gallet, 1996
           ; Modified for if..else logic 3/21/97 by Sylvie Gallet
           ; requires 'periodicity=0'
    ; It uses Newton's formula applied to the equation z^6-1 = 0 and, in the
@@ -271,7 +271,7 @@ Fractint {; Sylvie Gallet [101324,3444], 1996
       ENDIF
    ENDIF
    continue
-   }
+}
 
 comment {
   Five-Mandels shows five Mandelbrot sets that fit into each other.
@@ -288,9 +288,9 @@ comment {
                 FOR iter:=L2+1 to l3-1
                   ...
   To work correctly, this formula requires the use of periodicity=0.
-  }
+}
 
-Five-Mandels (XAXIS) {; Sylvie Gallet [101324,3444], 1996
+Five-Mandels (XAXIS) {; Sylvie Gallet, 1996
    ; 0 < real(p1) < imag(p1) < real(p2) < imag(p2) < maxiter, periodicity=0
    ; Modified for if..else logic 3/17/97 by Sylvie Gallet
    c = z = zorig = pixel
@@ -307,13 +307,13 @@ Five-Mandels (XAXIS) {; Sylvie Gallet [101324,3444], 1996
    z = z*z + c
    iter = iter + 1
    |z| <= bailout
-   }
+}
 
 comment {
   The following formula draws the graphs Of 4 real functions at a time.
-  }
+}
 
-Graph { ; Sylvie Gallet [101324,3444], 1996
+Graph { ; Sylvie Gallet, 1996
         ; Modified for if..else logic 3/17/97 by Sylvie Gallet
    ; 2 parameters: curves thickness = real(p1)
    ;                 axes thickness = imag(p1)
@@ -341,7 +341,7 @@ Graph { ; Sylvie Gallet [101324,3444], 1996
    :
    z = z - 1
    z > 0
-   }
+}
 
 comment {
   The following formula overlays a Mandel And a reverse-Mandel, using a
@@ -349,10 +349,10 @@ comment {
   Since it uses the new predefined variable "whitesq", it's now resolution
   independent and the image can be interrupted, saved and restored.
   Panning an even number of pixels is now possible.
-  }
+}
 
-JD-SG-04-1 { ; Sylvie Gallet [101324,3444], 1996
-   ; On an original idea by Jim Deutch [104074,3171]
+JD-SG-04-1 { ; Sylvie Gallet, 1996
+   ; On an original idea by Jim Deutch
    ; Modified for if..else logic 3/21/97 by Sylvie Gallet
    ; use p1 and p2 to adjust the inverted Mandel
    ; 16-bit Pseudo-HiColor
@@ -364,13 +364,13 @@ JD-SG-04-1 { ; Sylvie Gallet [101324,3444], 1996
    :
    z = z*z + c
    |z| < 4
-   }
+}
 
 comment {
   These formula overlay 3 Or 4 fractals.
-  }
+}
 
-ptc+mjn { ; Sylvie Gallet [101324,3444], 1996
+ptc+mjn { ; Sylvie Gallet, 1996
           ; Modified for if..else logic 3/19/97 by Sylvie Gallet
           ; 24-bit Pseudo-TrueColor
           ; Mandel: z^2 + c , Julia: z^2 + p1 , Newton: z^p2 - 1 = 0
@@ -391,9 +391,9 @@ ptc+mjn { ; Sylvie Gallet [101324,3444], 1996
       z = z*z + c , continue = (|z| <= b1)
    ENDIF
    continue
-   }
+}
 
-ptc+4mandels { ; Sylvie Gallet [101324,3444], 1996
+ptc+4mandels { ; Sylvie Gallet, 1996
                ; 32-bit Pseudo-TrueColor
                ; Modified for if..else logic 3/21/97 by Sylvie Gallet
    cr = real(scrnpix) + 2*imag(scrnpix)
@@ -410,9 +410,9 @@ ptc+4mandels { ; Sylvie Gallet [101324,3444], 1996
    :
    z = z * z + c
    |z| <= 4
-   }
+}
 
-Gallet-8 - 21 { ; Sylvie Gallet [101324, 3444], Apr 1997
+Gallet-8 - 21 { ; Sylvie Gallet, Apr 1997
               ; Requires periodicity = 0 and decomp = 256
               ; p1 = parameter for a Julia set (0 for the Mandelbrot set)
               ; 0 < real(p2) , 0 < imag(p2)
@@ -438,7 +438,7 @@ Gallet-8 - 21 { ; Sylvie Gallet [101324, 3444], Apr 1997
       zmin = znc , z = exp((cnt*zmin0 + zmin)*k)
    ENDIF
    znc <= 4
-   }
+}
 
 {--- JONATHAN OSUCH ------------------------------------------------------}
 
@@ -446,7 +446,7 @@ BirdOfPrey (XAXIS_NOPARM) { ; Optimized by Sylvie Gallet
   z = p1 :
    z = cosxx(sqr(z) + pixel) + pixel
     |z| <= 4
-  }
+}
 
 FractalFenderC (XAXIS_NOPARM) { ; Spectacular!
    ; Modified for if..else logic 3/18/97 by Sylvie Gallet
@@ -456,7 +456,7 @@ FractalFenderC (XAXIS_NOPARM) { ; Spectacular!
    ENDIF
    z = sqr(z) + pixel , x = |z|
    x <= 4
-   }
+}
 
 {--- TERREN SUYDAM -------------------------------------------------------}
 
@@ -474,10 +474,10 @@ comment {
     is 3).
   - For TileJulia, p3 is the Julia parameter.
      These formulas need 'periodicity=0'.
-  }
+}
 
 TileMandel { ; Terren Suydam (terren@io.com), 1996
-             ; modified by Sylvie Gallet [101324,3444]
+             ; modified by Sylvie Gallet
              ; Modified for if..else logic 3/19/97 by Sylvie Gallet
    ; p1 = center = coordinates for a good Mandel
    ; 0 <= real(p2) = magnification. Default for magnification is 1/3
@@ -498,10 +498,10 @@ TileMandel { ; Terren Suydam (terren@io.com), 1996
    z = c = (x+flip(y)) / mag + center :
    z = z*z + c
    |z| <= 4
-   }
+}
 
 TileJulia { ; Terren Suydam (terren@io.com), 1996
-            ; modified by Sylvie Gallet [101324,3444]
+            ; modified by Sylvie Gallet
             ; Modified for if..else logic 3/19/97 by Sylvie Gallet
    ; p1 = center = coordinates for a good Julia
    ; 0 <= real(p2) = magnification. Default for magnification is 1/3
@@ -523,4 +523,4 @@ TileJulia { ; Terren Suydam (terren@io.com), 1996
    z = (x+flip(y)) / mag + center :
    z = z*z + p3
    |z| <= 4
-   }
+}
