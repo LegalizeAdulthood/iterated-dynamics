@@ -303,54 +303,45 @@ enum
 
 static char const *ParseErrs(int which)
 {
-    int lasterr;
-    static char e0[] = {"Should be an Argument"};
-    static char e1[] = {"Should be an Operator"};
-    static char e2[] = {"')' needs a matching '('"};
-    static char e3[] = {"Need more ')'"};
-    static char e4[] = {"Undefined Operator"};
-    static char e5[] = {"Undefined Function"};
-    static char e6[] = {"Table overflow"};
-    static char e7[] = {"Didn't find matching ')' in symmetry declaration"};
-    static char e8[] = {"No '{' found on first line"};
-    static char e9[] = {"Unexpected EOF!"};
-    static char e10[] = {"Symmetry below is invalid, will use NOSYM"};
-    static char e11[] = {"Formula is too large"};
-    static char e12[] = {"Insufficient memory to run fractal type 'formula'"};
-    static char e13[] = {"Could not open file where formula located"};
-    static char e14[] = {"No characters may precede jump instruction"};
-    static char e15[] = {"No characters may follow this jump instruction"};
-    static char e16[] = {"Jump instruction missing required (boolean argument)"};
-    static char e17[] = {"Next jump after \"else\" must be \"endif\""};
-    static char e18[] = {"\"endif\" has no matching \"if\""};
-    static char e19[] = {"Misplaced \"else\" or \"elseif()\""};
-    static char e20[] = {"\"if ()\" in initialization has no matching \"endif\""};
-    static char e21[] = {"\"if ()\" has no matching \"endif\""};
-    static char e22[] = {"Error in parsing jump statements"};
-    static char e23[] = {"Formula has too many jump commands"};
-    static char e24[] = {"Formula name has too many characters"};
-    static char e25[] = {"Only variables are allowed to left of assignment"};
-    static char e26[] = {"Illegal variable name"};
-    static char e27[] = {"Invalid constant expression"};
-    static char e28[] = {"This character not supported by parser"};
-    static char e29[] = {"Nesting of parentheses exceeds maximum depth"};
-    static char e30[] = {"Unmatched modulus operator \"|\" in this expression"}; //last one
-    static char e31[] = {"Can't use function name as variable"};
-    static char e32[] = {"Negative exponent must be enclosed in parens"};
-    static char e33[] = {"Variable or constant exceeds 32 character limit"};
-    static char e34[] = {"Only one \":\" permitted in a formula"};
-    static char e35[] = {"Invalid ParseErrs code"};
-    static char const *ErrStrings[] =
-    {
-        e0, e1, e2, e3, e4, e5,
-        e6, e7, e8, e9, e10,
-        e11, e12, e13, e14, e15,
-        e16, e17, e18, e19, e20,
-        e21, e22, e23, e24, e25,
-        e26, e27, e28, e29, e30,
-        e31, e32, e33, e34, e35
+    static constexpr const char *const ErrStrings[] = {
+        "Should be an Argument",
+        "Should be an Operator",
+        "')' needs a matching '('",
+        "Need more ')'",
+        "Undefined Operator",
+        "Undefined Function",
+        "Table overflow",
+        "Didn't find matching ')' in symmetry declaration",
+        "No '{' found on first line",
+        "Unexpected EOF!",
+        "Symmetry below is invalid, will use NOSYM",
+        "Formula is too large",
+        "Insufficient memory to run fractal type 'formula'",
+        "Could not open file where formula located",
+        "No characters may precede jump instruction",
+        "No characters may follow this jump instruction",
+        "Jump instruction missing required (boolean argument)",
+        "Next jump after \"else\" must be \"endif\"",
+        R"("endif" has no matching "if")",
+        R"msg(Misplaced "else" or "elseif()")msg",
+        R"msg("if ()" in initialization has no matching "endif")msg",
+        R"msg("if ()" has no matching "endif")msg",
+        "Error in parsing jump statements",
+        "Formula has too many jump commands",
+        "Formula name has too many characters",
+        "Only variables are allowed to left of assignment",
+        "Illegal variable name",
+        "Invalid constant expression",
+        "This character not supported by parser",
+        "Nesting of parentheses exceeds maximum depth",
+        R"(Unmatched modulus operator "|" in this expression)", //last one
+        "Can't use function name as variable",
+        "Negative exponent must be enclosed in parens",
+        "Variable or constant exceeds 32 character limit",
+        R"(Only one ":" permitted in a formula)",
+        "Invalid ParseErrs code",
     };
-    lasterr = sizeof(ErrStrings)/sizeof(ErrStrings[0]) - 1;
+    constexpr int lasterr = std::size(ErrStrings) - 1;
     if (which > lasterr)
     {
         which = lasterr;
