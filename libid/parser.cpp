@@ -64,10 +64,10 @@ enum
 unsigned int g_max_function_ops  = MAX_OPS;
 unsigned int g_max_function_args = MAX_ARGS;
 
-static unsigned long number_of_ops{};
-static unsigned long number_of_loads{};
-static unsigned long number_of_stores{};
-static unsigned long number_of_jumps{};
+static unsigned long s_num_ops{};
+static unsigned long s_num_loads{};
+static unsigned long s_num_stores{};
+static unsigned long s_num_jumps{};
 
 struct PEND_OP
 {
@@ -4507,10 +4507,10 @@ bool frm_prescan(std::FILE * open_file)
     int waiting_for_endif = 0;
     int max_parens = sizeof(long) * 8;
 
-    number_of_jumps = 0UL;
-    number_of_stores = number_of_jumps;
-    number_of_loads = number_of_stores;
-    number_of_ops = number_of_loads;
+    s_num_jumps = 0UL;
+    s_num_stores = s_num_jumps;
+    s_num_loads = s_num_stores;
+    s_num_ops = s_num_loads;
     chars_in_formula = 0U;
     uses_jump = false;
     paren = 0;
@@ -4686,8 +4686,8 @@ bool frm_prescan(std::FILE * open_file)
             }
             break;
         case PARAM_VARIABLE: //i.e. p1, p2, p3, p4 or p5
-            number_of_ops++;
-            number_of_loads++;
+            s_num_ops++;
+            s_num_loads++;
             NewStatement = false;
             if (!ExpectingArg)
             {
@@ -4716,8 +4716,8 @@ bool frm_prescan(std::FILE * open_file)
             ExpectingArg = false;
             break;
         case USER_NAMED_VARIABLE: // i.e. c, iter, etc.
-            number_of_ops++;
-            number_of_loads++;
+            s_num_ops++;
+            s_num_loads++;
             NewStatement = false;
             if (!ExpectingArg)
             {
@@ -4731,8 +4731,8 @@ bool frm_prescan(std::FILE * open_file)
             ExpectingArg = false;
             break;
         case PREDEFINED_VARIABLE: // i.e. z, pixel, whitesq, etc.
-            number_of_ops++;
-            number_of_loads++;
+            s_num_ops++;
+            s_num_loads++;
             NewStatement = false;
             if (!ExpectingArg)
             {
@@ -4774,8 +4774,8 @@ bool frm_prescan(std::FILE * open_file)
             break;
         case REAL_CONSTANT: // i.e. 4, (4,0), etc.
             assignment_ok = false;
-            number_of_ops++;
-            number_of_loads++;
+            s_num_ops++;
+            s_num_loads++;
             NewStatement = false;
             if (!ExpectingArg)
             {
@@ -4790,8 +4790,8 @@ bool frm_prescan(std::FILE * open_file)
             break;
         case COMPLEX_CONSTANT: // i.e. (1,2) etc.
             assignment_ok = false;
-            number_of_ops++;
-            number_of_loads++;
+            s_num_ops++;
+            s_num_loads++;
             NewStatement = false;
             if (!ExpectingArg)
             {
@@ -4807,7 +4807,7 @@ bool frm_prescan(std::FILE * open_file)
         case FUNCTION:
             assignment_ok = false;
             NewStatement = false;
-            number_of_ops++;
+            s_num_ops++;
             if (!ExpectingArg)
             {
                 if (!errors_found || errors[errors_found-1].start_pos != statement_pos)
@@ -4887,7 +4887,7 @@ bool frm_prescan(std::FILE * open_file)
             break;
         case PARAM_FUNCTION:
             assignment_ok = false;
-            number_of_ops++;
+            s_num_ops++;
             if (!ExpectingArg)
             {
                 if (!errors_found || errors[errors_found-1].start_pos != statement_pos)
@@ -4914,8 +4914,8 @@ bool frm_prescan(std::FILE * open_file)
             break;
         case FLOW_CONTROL:
             assignment_ok = false;
-            number_of_ops++;
-            number_of_jumps++;
+            s_num_ops++;
+            s_num_jumps++;
             if (!NewStatement)
             {
                 if (!errors_found || errors[errors_found-1].start_pos != statement_pos)
@@ -4935,8 +4935,8 @@ bool frm_prescan(std::FILE * open_file)
                     waiting_for_endif++;
                     break;
                 case 2: //ELSEIF
-                    number_of_ops += 3; //else + two clear statements
-                    number_of_jumps++;  // this involves two jumps
+                    s_num_ops += 3; //else + two clear statements
+                    s_num_jumps++;  // this involves two jumps
                     if (else_has_been_used % 2)
                     {
                         if (!errors_found || errors[errors_found-1].start_pos != statement_pos)
@@ -4997,12 +4997,12 @@ bool frm_prescan(std::FILE * open_file)
             }
             break;
         case OPERATOR:
-            number_of_ops++; //This will be corrected below in certain cases
+            s_num_ops++; //This will be corrected below in certain cases
             switch (this_token.token_id)
             {
             case 0:
             case 11:    // end of statement and :
-                number_of_ops++; // ParseStr inserts a dummy op
+                s_num_ops++; // ParseStr inserts a dummy op
                 if (paren)
                 {
                     if (!errors_found || errors[errors_found-1].start_pos != statement_pos)
@@ -5027,11 +5027,11 @@ bool frm_prescan(std::FILE * open_file)
                 {
                     if (this_token.token_id == 11)
                     {
-                        number_of_ops += 2;
+                        s_num_ops += 2;
                     }
                     else
                     {
-                        number_of_ops++;
+                        s_num_ops++;
                     }
                 }
                 else if (!NewStatement)
@@ -5085,9 +5085,9 @@ bool frm_prescan(std::FILE * open_file)
                 ExpectingArg = true;
                 break;
             case 2:     // =
-                number_of_ops--; //this just converts a load to a store
-                number_of_loads--;
-                number_of_stores++;
+                s_num_ops--; //this just converts a load to a store
+                s_num_loads--;
+                s_num_stores++;
                 if (!assignment_ok)
                 {
                     if (!errors_found || errors[errors_found-1].start_pos != statement_pos)
@@ -5168,7 +5168,7 @@ bool frm_prescan(std::FILE * open_file)
                 assignment_ok = false;
                 if (!(waiting_for_mod & 1L))
                 {
-                    number_of_ops--;
+                    s_num_ops--;
                 }
                 if (!(waiting_for_mod & 1L) && !ExpectingArg)
                 {
@@ -5292,7 +5292,7 @@ bool frm_prescan(std::FILE * open_file)
             }
             break;
         case END_OF_FORMULA:
-            number_of_ops += 3; // Just need one, but a couple of extra just for the heck of it
+            s_num_ops += 3; // Just need one, but a couple of extra just for the heck of it
             if (paren)
             {
                 if (!errors_found || errors[errors_found-1].start_pos != statement_pos)
@@ -5334,7 +5334,7 @@ bool frm_prescan(std::FILE * open_file)
                 statement_pos = ftell(open_file);
             }
 
-            if (number_of_jumps >= MAX_JUMPS)
+            if (s_num_jumps >= MAX_JUMPS)
             {
                 if (!errors_found || errors[errors_found-1].start_pos != statement_pos)
                 {
