@@ -77,7 +77,7 @@ struct PEND_OP
 
 std::vector<JUMP_CONTROL_ST> jump_control;
 int jump_index{};
-static int InitJumpIndex{};
+static int s_init_jump_index{};
 
 inline void push_jump_control_type(int type)
 {
@@ -1872,7 +1872,7 @@ void (*StkPwr)(){dStkPwr};
 void EndInit()
 {
     g_last_init_op = OpPtr;
-    InitJumpIndex = jump_index;
+    s_init_jump_index = jump_index;
 }
 
 void (*PtrEndInit)(){EndInit};
@@ -2905,7 +2905,7 @@ int Formula()
     g_load_index = InitLodPtr;
     g_store_index = InitStoPtr;
     OpPtr = InitOpPtr;
-    jump_index = InitJumpIndex;
+    jump_index = s_init_jump_index;
     // Set the random number
     if (SetRandom || Randomized)
     {
