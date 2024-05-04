@@ -4528,7 +4528,7 @@ bool frm_prescan(std::FILE * open_file)
 
     statement_pos = ftell(open_file);
     orig_pos = statement_pos;
-    for (auto &error : errors)
+    for (error_data_st &error : errors)
     {
         error.start_pos    = 0L;
         error.error_pos    = 0L;
