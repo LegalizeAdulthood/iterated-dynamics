@@ -40,6 +40,7 @@
 #include "trig_fns.h"
 
 #include <algorithm>
+#include <array>
 #include <cassert>
 #include <cctype>
 #include <cfloat>
@@ -200,7 +201,7 @@ Arg *Arg1;
 Arg *Arg2;
 
 // Some of these variables should be renamed for safety
-Arg g_stack[20]{};
+std::array<Arg, 20> g_stack{};
 std::vector<Arg *> Store;
 std::vector<Arg *> Load;
 int OpPtr;
@@ -2399,7 +2400,7 @@ static bool ParseStr(char const *Str, int pass)
     int ModFlag = 999;
     int Len;
     int Equals = 0;
-    int Mods[20];
+    std::array<int, 20> Mods{};
     int mdstk = 0;
     int jumptype;
     double const_pi;
@@ -4379,7 +4380,7 @@ struct error_data_st
     int error_number;
 };
 
-static error_data_st errors[3];
+static std::array<error_data_st, 3> errors{};
 
 void frm_error(std::FILE * open_file, long begin_frm)
 {
