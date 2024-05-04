@@ -236,7 +236,7 @@ bool g_frm_uses_p4{};
 bool g_frm_uses_p5{};
 bool uses_jump{};
 bool g_frm_uses_ismand{};
-static unsigned int chars_in_formula{};
+static unsigned int s_chars_in_formula{};
 
 #define ChkLongDenom(denom)         \
     if ((denom == 0 || g_overflow)) \
@@ -4089,7 +4089,7 @@ static std::string PrepareFormula(std::FILE *file, bool report_bad_sym)
         return {};
     }
 
-    if (chars_in_formula > 8190)
+    if (s_chars_in_formula > 8190)
     {
         std::fseek(file, filepos, SEEK_SET);
         return {};
@@ -4511,7 +4511,7 @@ bool frm_prescan(std::FILE * open_file)
     s_num_stores = s_num_jumps;
     s_num_loads = s_num_stores;
     s_num_ops = s_num_loads;
-    chars_in_formula = 0U;
+    s_chars_in_formula = 0U;
     uses_jump = false;
     paren = 0;
 
@@ -4528,7 +4528,7 @@ bool frm_prescan(std::FILE * open_file)
     {
         filepos = ftell(open_file);
         frmgettoken(open_file, &this_token);
-        chars_in_formula += (int) std::strlen(this_token.token_str);
+        s_chars_in_formula += (int) std::strlen(this_token.token_str);
         switch (this_token.token_type)
         {
         case NOT_A_TOKEN:
