@@ -2378,7 +2378,7 @@ inline void push_pending_op(FunctionPtr f, int p)
     assert(g_operation_index == o.size());
 }
 
-static bool ParseStr(char const *Str, int pass)
+static bool ParseStr(char const *Str)
 {
     ConstArg *c;
     int ModFlag = 999;
@@ -4196,7 +4196,7 @@ bool run_formula(const std::string &name, bool report_bad_sym)
     if (!FormStr.empty())  //  No errors while making string
     {
         parser_allocate();  //  ParseStr() will test if this alloc worked
-        if (ParseStr(FormStr.c_str(), 1))
+        if (ParseStr(FormStr.c_str()))
         {
             return true;   //  parse failed, don't change fn pointers
         }
@@ -4304,7 +4304,7 @@ static void parser_allocate()
 
         if (pass == 0)
         {
-            if (!ParseStr(FormStr.c_str(), pass))
+            if (!ParseStr(FormStr.c_str()))
             {
                 // per Chuck Ebbert, fudge these up a little
                 g_max_function_ops = g_operation_index + 4;
