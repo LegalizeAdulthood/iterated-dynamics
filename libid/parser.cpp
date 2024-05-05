@@ -241,21 +241,29 @@ bool g_uses_jump{};
 bool g_frm_uses_ismand{};
 static unsigned int s_chars_in_formula{};
 
-#define ChkLongDenom(denom)         \
-    if ((denom == 0 || g_overflow)) \
-    {                               \
-        g_overflow = true;          \
-        return;                     \
-    }                               \
-    else if (denom == 0)            \
-        return
-
-#define ChkFloatDenom(denom)        \
-    if (std::fabs(denom) <= DBL_MIN)     \
-    {                               \
-        g_overflow = true;          \
-        return;                     \
+inline bool check_denom(long denom)
+{
+    if (denom == 0 || g_overflow)
+    {
+        g_overflow = true;
+        return true;
     }
+    if (denom == 0)
+    {
+        return true;
+    }
+    return false;
+}
+
+inline bool check_denom(double denom)
+{
+    if (std::fabs(denom) <= DBL_MIN)
+    {
+        g_overflow = true;
+        return true;
+    }
+    return false;
+}
 
 #define LastSqr v[4].a
 
@@ -1072,7 +1080,10 @@ void dStkTan()
     FPUsincos(&Arg1->d.x, &sinx, &cosx);
     FPUsinhcosh(&Arg1->d.y, &sinhy, &coshy);
     denom = cosx + coshy;
-    ChkFloatDenom(denom);
+    if (check_denom(denom))
+    {
+        return;
+    }
     Arg1->d.x = sinx/denom;
     Arg1->d.y = sinhy/denom;
 }
@@ -1098,7 +1109,10 @@ void lStkTan()
     SinCos086(x, &sinx, &cosx);
     SinhCosh086(y, &sinhy, &coshy);
     denom = cosx + coshy;
-    ChkLongDenom(denom);
+    if (check_denom(denom))
+    {
+        return;
+    }
     Arg1->l.x = divide(sinx, denom, g_bit_shift);
     Arg1->l.y = divide(sinhy, denom, g_bit_shift);
 }
@@ -1117,7 +1131,10 @@ void dStkTanh()
     FPUsincos(&Arg1->d.y, &siny, &cosy);
     FPUsinhcosh(&Arg1->d.x, &sinhx, &coshx);
     denom = coshx + cosy;
-    ChkFloatDenom(denom);
+    if (check_denom(denom))
+    {
+        return;
+    }
     Arg1->d.x = sinhx/denom;
     Arg1->d.y = siny/denom;
 }
@@ -1143,7 +1160,10 @@ void lStkTanh()
     SinCos086(y, &siny, &cosy);
     SinhCosh086(x, &sinhx, &coshx);
     denom = coshx + cosy;
-    ChkLongDenom(denom);
+    if (check_denom(denom))
+    {
+        return;
+    }
     Arg1->l.x = divide(sinhx, denom, g_bit_shift);
     Arg1->l.y = divide(siny, denom, g_bit_shift);
 }
@@ -1162,7 +1182,10 @@ void dStkCoTan()
     FPUsincos(&Arg1->d.x, &sinx, &cosx);
     FPUsinhcosh(&Arg1->d.y, &sinhy, &coshy);
     denom = coshy - cosx;
-    ChkFloatDenom(denom);
+    if (check_denom(denom))
+    {
+        return;
+    }
     Arg1->d.x = sinx/denom;
     Arg1->d.y = -sinhy/denom;
 }
@@ -1188,7 +1211,10 @@ void lStkCoTan()
     SinCos086(x, &sinx, &cosx);
     SinhCosh086(y, &sinhy, &coshy);
     denom = coshy - cosx;
-    ChkLongDenom(denom);
+    if (check_denom(denom))
+    {
+        return;
+    }
     Arg1->l.x = divide(sinx, denom, g_bit_shift);
     Arg1->l.y = -divide(sinhy, denom, g_bit_shift);
 }
@@ -1207,7 +1233,10 @@ void dStkCoTanh()
     FPUsincos(&Arg1->d.y, &siny, &cosy);
     FPUsinhcosh(&Arg1->d.x, &sinhx, &coshx);
     denom = coshx - cosy;
-    ChkFloatDenom(denom);
+    if (check_denom(denom))
+    {
+        return;
+    }
     Arg1->d.x = sinhx/denom;
     Arg1->d.y = -siny/denom;
 }
@@ -1233,7 +1262,10 @@ void lStkCoTanh()
     SinCos086(y, &siny, &cosy);
     SinhCosh086(x, &sinhx, &coshx);
     denom = coshx - cosy;
-    ChkLongDenom(denom);
+    if (check_denom(denom))
+    {
+        return;
+    }
     Arg1->l.x = divide(sinhx, denom, g_bit_shift);
     Arg1->l.y = -divide(siny, denom, g_bit_shift);
 }
@@ -1251,7 +1283,10 @@ void dStkRecip()
 {
     double mod;
     mod =Arg1->d.x * Arg1->d.x + Arg1->d.y * Arg1->d.y;
-    ChkFloatDenom(mod);
+    if (check_denom(mod))
+    {
+        return;
+    }
     Arg1->d.x =  Arg1->d.x/mod;
     Arg1->d.y = -Arg1->d.y/mod;
 }
@@ -1275,7 +1310,10 @@ void lStkRecip()
     long mod;
     mod = multiply(Arg1->l.x, Arg1->l.x, g_bit_shift)
           + multiply(Arg1->l.y, Arg1->l.y, g_bit_shift);
-    ChkLongDenom(mod);
+    if (check_denom(mod))
+    {
+        return;
+    }
     Arg1->l.x =  divide(Arg1->l.x, mod, g_bit_shift);
     Arg1->l.y = -divide(Arg1->l.y, mod, g_bit_shift);
 }
