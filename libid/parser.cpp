@@ -3199,7 +3199,7 @@ static bool fill_jump_struct()
 
 static std::string s_formula;
 
-int frmgetchar(std::FILE * openfile)
+static int frmgetchar(std::FILE * openfile)
 {
     int c;
     bool done = false;
@@ -3241,7 +3241,7 @@ int frmgetchar(std::FILE * openfile)
 
 // This function also gets flow control info
 
-void getfuncinfo(token_st * tok)
+static void getfuncinfo(token_st * tok)
 {
     for (int i = 0; i < static_cast<int>(s_func_list.size()); i++)
     {
@@ -3273,7 +3273,7 @@ void getfuncinfo(token_st * tok)
     tok->token_id   = UNDEFINED_FUNCTION;
 }
 
-void getvarinfo(token_st * tok)
+static void getvarinfo(token_st * tok)
 {
     for (int i = 0; i < static_cast<int>(s_constants.size()); i++)
     {
@@ -3404,7 +3404,7 @@ CASE_NUM:
     return true;
 }
 
-void is_complex_constant(std::FILE * openfile, token_st * tok)
+static void is_complex_constant(std::FILE * openfile, token_st * tok)
 {
     assert(tok->token_str[0] == '(');
     token_st temp_tok;
@@ -3531,7 +3531,7 @@ CASE_NUM :
     }
 }
 
-bool frmgetalpha(std::FILE * openfile, token_st * tok)
+static bool frmgetalpha(std::FILE * openfile, token_st * tok)
 {
     int c;
     int i = 1;
@@ -3627,7 +3627,7 @@ CASE_NUM:
     return false;
 }
 
-void frm_get_eos(std::FILE * openfile, token_st * this_token)
+static void frm_get_eos(std::FILE * openfile, token_st * this_token)
 {
     long last_filepos = ftell(openfile);
     int c;
@@ -4336,7 +4336,7 @@ struct error_data_st
 
 static std::array<error_data_st, 3> errors{};
 
-void frm_error(std::FILE * open_file, long begin_frm)
+static void frm_error(std::FILE * open_file, long begin_frm)
 {
     token_st tok;
     int chars_to_error = 0;
@@ -4455,7 +4455,7 @@ void frm_error(std::FILE * open_file, long begin_frm)
 
   The function returns 1 if success, and 0 if errors are found.
 */
-bool frm_prescan(std::FILE * open_file)
+static bool frm_prescan(std::FILE * open_file)
 {
     long filepos;
     long statement_pos;
