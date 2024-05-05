@@ -227,7 +227,7 @@ int InitOpPtr{};
 int g_last_init_op{};
 static int s_delta16{};
 double g_fudge_limit{};
-static double fg{};
+static double s_fudge{};
 static int ShiftBack{};
 static bool SetRandom{};
 static bool Randomized{};
@@ -369,14 +369,14 @@ static void lStkFunct(FunctionPtr fct)   // call lStk via dStk
        intermediate variable needed for safety because of
        different size of double and long in Arg union
     */
-    y = (double)Arg1->l.y / fg;
-    Arg1->d.x = (double)Arg1->l.x / fg;
+    y = (double)Arg1->l.y / s_fudge;
+    Arg1->d.x = (double)Arg1->l.x / s_fudge;
     Arg1->d.y = y;
     (*fct)();
     if (std::fabs(Arg1->d.x) < g_fudge_limit && fabs(Arg1->d.y) < g_fudge_limit)
     {
-        Arg1->l.x = (long)(Arg1->d.x * fg);
-        Arg1->l.y = (long)(Arg1->d.y * fg);
+        Arg1->l.x = (long)(Arg1->d.x * s_fudge);
+        Arg1->l.y = (long)(Arg1->d.y * s_fudge);
     }
     else
     {
@@ -796,7 +796,7 @@ void mStkOne()
 
 void lStkOne()
 {
-    Arg1->l.x = (long) fg;
+    Arg1->l.x = (long) s_fudge;
     Arg1->l.y = 0L;
 }
 
@@ -1852,15 +1852,15 @@ void lStkPwr()
     DComplex x;
     DComplex y;
 
-    x.x = (double)Arg2->l.x / fg;
-    x.y = (double)Arg2->l.y / fg;
-    y.x = (double)Arg1->l.x / fg;
-    y.y = (double)Arg1->l.y / fg;
+    x.x = (double)Arg2->l.x / s_fudge;
+    x.y = (double)Arg2->l.y / s_fudge;
+    y.x = (double)Arg1->l.x / s_fudge;
+    y.y = (double)Arg1->l.y / s_fudge;
     x = ComplexPower(x, y);
     if (std::fabs(x.x) < g_fudge_limit && fabs(x.y) < g_fudge_limit)
     {
-        Arg2->l.x = (long)(x.x * fg);
-        Arg2->l.y = (long)(x.y * fg);
+        Arg2->l.x = (long)(x.x * s_fudge);
+        Arg2->l.y = (long)(x.y * s_fudge);
     }
     else
     {
@@ -2136,8 +2136,8 @@ static ConstArg *is_const(char const *Str, int Len)
             v[g_variable_index].a.m = cmplx2MPC(z);
             break;
         case L_MATH:
-            v[g_variable_index].a.l.x = (long)(z.x * fg);
-            v[g_variable_index].a.l.y = (long)(z.y * fg);
+            v[g_variable_index].a.l.x = (long)(z.x * s_fudge);
+            v[g_variable_index].a.l.y = (long)(z.y * s_fudge);
             break;
         }
         v[g_variable_index].s = Str;
@@ -2632,16 +2632,16 @@ static bool ParseStr(char const *Str)
         v[18].a.m.y = *d2MP(g_params[9]);
         break;
     case L_MATH:
-        v[1].a.l.x = (long)(g_params[0] * fg);
-        v[1].a.l.y = (long)(g_params[1] * fg);
-        v[2].a.l.x = (long)(g_params[2] * fg);
-        v[2].a.l.y = (long)(g_params[3] * fg);
-        v[5].a.l.x = (long)(const_pi * fg);
+        v[1].a.l.x = (long)(g_params[0] * s_fudge);
+        v[1].a.l.y = (long)(g_params[1] * s_fudge);
+        v[2].a.l.x = (long)(g_params[2] * s_fudge);
+        v[2].a.l.y = (long)(g_params[3] * s_fudge);
+        v[5].a.l.x = (long)(const_pi * s_fudge);
         v[5].a.l.y = 0L;
-        v[6].a.l.x = (long)(const_e * fg);
+        v[6].a.l.x = (long)(const_e * s_fudge);
         v[6].a.l.y = 0L;
-        v[8].a.l.x = (long)(g_params[4] * fg);
-        v[8].a.l.y = (long)(g_params[5] * fg);
+        v[8].a.l.x = (long)(g_params[4] * s_fudge);
+        v[8].a.l.y = (long)(g_params[5] * s_fudge);
         v[11].a.l.x = g_logical_screen_x_dots;
         v[11].a.l.x <<= g_bit_shift;
         v[11].a.l.y = g_logical_screen_y_dots;
@@ -2652,16 +2652,16 @@ static bool ParseStr(char const *Str)
         v[13].a.l.x = g_is_mandelbrot ? 1 : 0;
         v[13].a.l.x <<= g_bit_shift;
         v[13].a.l.y = 0L;
-        v[14].a.l.x = (long)(v[14].a.d.x * fg);
-        v[14].a.l.y = (long)(v[14].a.d.y * fg);
-        v[15].a.l.x = (long)(v[15].a.d.x * fg);
-        v[15].a.l.y = (long)(v[15].a.d.y * fg);
-        v[16].a.l.x = (long)(v[16].a.d.x * fg);
-        v[16].a.l.y = (long)(v[16].a.d.y * fg);
-        v[17].a.l.x = (long)(g_params[6] * fg);
-        v[17].a.l.y = (long)(g_params[7] * fg);
-        v[18].a.l.x = (long)(g_params[8] * fg);
-        v[18].a.l.y = (long)(g_params[9] * fg);
+        v[14].a.l.x = (long)(v[14].a.d.x * s_fudge);
+        v[14].a.l.y = (long)(v[14].a.d.y * s_fudge);
+        v[15].a.l.x = (long)(v[15].a.d.x * s_fudge);
+        v[15].a.l.y = (long)(v[15].a.d.y * s_fudge);
+        v[16].a.l.x = (long)(v[16].a.d.x * s_fudge);
+        v[16].a.l.y = (long)(v[16].a.d.y * s_fudge);
+        v[17].a.l.x = (long)(g_params[6] * s_fudge);
+        v[17].a.l.y = (long)(g_params[7] * s_fudge);
+        v[18].a.l.x = (long)(g_params[8] * s_fudge);
+        v[18].a.l.y = (long)(g_params[9] * s_fudge);
         break;
     }
 
@@ -2999,7 +2999,7 @@ int form_per_pixel()
         break;
 
     case L_MATH:
-        v[9].a.l.x = (long)(((g_row+g_col)&1) * fg);
+        v[9].a.l.x = (long)(((g_row+g_col)&1) * s_fudge);
         v[9].a.l.y = 0L;
         v[10].a.l.x = g_col;
         v[10].a.l.x <<= g_bit_shift;
@@ -3030,8 +3030,8 @@ int form_per_pixel()
                     g_old_z.y = 8;
                 }
                 // convert to fudged longs
-                v[0].a.l.x = (long)(g_old_z.x*fg);
-                v[0].a.l.y = (long)(g_old_z.y*fg);
+                v[0].a.l.x = (long)(g_old_z.x*s_fudge);
+                v[0].a.l.y = (long)(g_old_z.y*s_fudge);
                 break;
             }
         }
@@ -4251,8 +4251,8 @@ bool intFormulaSetup()
     return false;
 #else
     MathType = L_MATH;
-    fg = (double)(1L << g_bit_shift);
-    fgLimit = (double)0x7fffffffL / fg;
+    s_fudge = (double)(1L << g_bit_shift);
+    g_fudge_limit = (double)0x7fffffffL / s_fudge;
     ShiftBack = 32 - g_bit_shift;
     return !run_formula(g_formula_name, false);
 #endif
@@ -4270,8 +4270,8 @@ void init_misc()
     }
     Arg1 = &argfirst;
     Arg2 = &argsecond; // needed by all the ?Stk* functions
-    fg = (double)(1L << g_bit_shift);
-    g_fudge_limit = (double)0x7fffffffL / fg;
+    s_fudge = (double)(1L << g_bit_shift);
+    g_fudge_limit = (double)0x7fffffffL / s_fudge;
     ShiftBack = 32 - g_bit_shift;
     s_delta16 = g_bit_shift - 16;
     g_bit_shift_less_1 = g_bit_shift-1;
