@@ -64,7 +64,7 @@ extern int InitStoPtr;
 extern int InitOpPtr;
 extern std::vector<void (*)()> f;
 extern std::vector<JUMP_CONTROL_ST> jump_control;
-extern bool uses_jump;
+extern bool g_uses_jump;
 extern int jump_index;
 
 typedef void OLD_FN();  // old C functions
@@ -1680,7 +1680,7 @@ skipfinalopt:  // -------------- end of final optimizations ------------
 
     // now change the pointers
     if (!g_formula_name.empty()
-        && (!uses_jump || fpfill_jump_struct() == 0))
+        && (!g_uses_jump || fpfill_jump_struct() == 0))
     {
         // but only if parse succeeded
         g_cur_fractal_specific->per_pixel = fform_per_pixel;

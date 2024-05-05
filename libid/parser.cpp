@@ -234,7 +234,7 @@ bool g_frm_uses_p2{};
 bool g_frm_uses_p3{};
 bool g_frm_uses_p4{};
 bool g_frm_uses_p5{};
-bool uses_jump{};
+bool g_uses_jump{};
 bool g_frm_uses_ismand{};
 static unsigned int s_chars_in_formula{};
 
@@ -2401,7 +2401,7 @@ static bool ParseStr(char const *Str, int pass)
     LDBL Magnification;
     SetRandom = false;
     Randomized = false;
-    uses_jump = false;
+    g_uses_jump = false;
     jump_index = 0;
     switch (MathType)
     {
@@ -2829,7 +2829,7 @@ static bool ParseStr(char const *Str, int pass)
             jumptype = isjump(&Str[InitN], Len);
             if (jumptype != 0)
             {
-                uses_jump = true;
+                g_uses_jump = true;
                 switch (jumptype)
                 {
                 case 1:                      // if
@@ -4229,7 +4229,7 @@ bool run_formula(const std::string &name, bool report_bad_sym)
         }
         else
         {
-            if (uses_jump && fill_jump_struct())
+            if (g_uses_jump && fill_jump_struct())
             {
                 stopmsg(STOPMSG_NONE, ParseErrs(PE_ERROR_IN_PARSING_JUMP_STATEMENTS));
                 return true;
@@ -4311,7 +4311,7 @@ void init_misc()
     g_frm_uses_p1 = false;
     g_frm_uses_p2 = false;
     g_frm_uses_p3 = false;
-    uses_jump = false;
+    g_uses_jump = false;
     g_frm_uses_ismand = false;
     g_frm_uses_p4 = false;
     g_frm_uses_p5 = false;
@@ -4512,7 +4512,7 @@ bool frm_prescan(std::FILE * open_file)
     s_num_loads = 0UL;
     s_num_ops = 0UL;
     s_chars_in_formula = 0U;
-    uses_jump = false;
+    g_uses_jump = false;
     paren = 0;
 
     statement_pos = ftell(open_file);
@@ -4927,7 +4927,7 @@ bool frm_prescan(std::FILE * open_file)
             }
             else
             {
-                uses_jump = true;
+                g_uses_jump = true;
                 switch (this_token.token_id)
                 {
                 case 1:  // if
