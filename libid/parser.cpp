@@ -230,7 +230,7 @@ double g_fudge_limit{};
 static double s_fudge{};
 static int s_shift_back{};
 static bool s_set_random{};
-static bool Randomized{};
+static bool s_randomized{};
 static unsigned long RandNum{};
 bool g_frm_uses_p1{};
 bool g_frm_uses_p2{};
@@ -452,7 +452,7 @@ void RandomSeed()
     NewRandNum();
     NewRandNum();
     NewRandNum();
-    Randomized = true;
+    s_randomized = true;
 }
 
 void lStkSRand()
@@ -2396,7 +2396,7 @@ static bool ParseStr(char const *Str)
     double Skew;
     LDBL Magnification;
     s_set_random = false;
-    Randomized = false;
+    s_randomized = false;
     g_uses_jump = false;
     jump_index = 0;
     switch (MathType)
@@ -2904,7 +2904,7 @@ int Formula()
     g_op_ptr = InitOpPtr;
     jump_index = s_init_jump_index;
     // Set the random number
-    if (s_set_random || Randomized)
+    if (s_set_random || s_randomized)
     {
         switch (MathType)
         {
@@ -4225,7 +4225,7 @@ bool fpFormulaSetup()
         && fpu >=387
         && g_debug_flag != debug_flags::force_standard_fractal
         && (orbitsave&2) == 0
-        && !Randomized)
+        && !s_randomized)
     {
         return CvtStk() != 0;    // run fast assembler code in parsera.asm
     }
