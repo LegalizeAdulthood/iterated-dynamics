@@ -2352,23 +2352,22 @@ struct SYMETRY
     symmetry_type n;
 };
 
-static SYMETRY s_symmetry_names[] =
+static constexpr std::array<SYMETRY, 14> s_symmetry_names
 {
-    { "NOSYM",         symmetry_type::NONE },
-    { "XAXIS_NOPARM",  symmetry_type::X_AXIS_NO_PARAM },
-    { "XAXIS",         symmetry_type::X_AXIS },
-    { "YAXIS_NOPARM",  symmetry_type::Y_AXIS_NO_PARAM },
-    { "YAXIS",         symmetry_type::Y_AXIS },
-    { "XYAXIS_NOPARM", symmetry_type::XY_AXIS_NO_PARAM },
-    { "XYAXIS",        symmetry_type::XY_AXIS },
-    { "ORIGIN_NOPARM", symmetry_type::ORIGIN_NO_PARAM },
-    { "ORIGIN",        symmetry_type::ORIGIN },
-    { "PI_SYM_NOPARM", symmetry_type::PI_SYM_NO_PARAM },
-    { "PI_SYM",        symmetry_type::PI_SYM },
-    { "XAXIS_NOIMAG",  symmetry_type::X_AXIS_NO_IMAG },
-    { "XAXIS_NOREAL",  symmetry_type::X_AXIS_NO_REAL },
-    { "NOPLOT",        symmetry_type::NO_PLOT },
-    { "",              symmetry_type::NONE }
+    SYMETRY{ "NOSYM",         symmetry_type::NONE },
+    SYMETRY{ "XAXIS_NOPARM",  symmetry_type::X_AXIS_NO_PARAM },
+    SYMETRY{ "XAXIS",         symmetry_type::X_AXIS },
+    SYMETRY{ "YAXIS_NOPARM",  symmetry_type::Y_AXIS_NO_PARAM },
+    SYMETRY{ "YAXIS",         symmetry_type::Y_AXIS },
+    SYMETRY{ "XYAXIS_NOPARM", symmetry_type::XY_AXIS_NO_PARAM },
+    SYMETRY{ "XYAXIS",        symmetry_type::XY_AXIS },
+    SYMETRY{ "ORIGIN_NOPARM", symmetry_type::ORIGIN_NO_PARAM },
+    SYMETRY{ "ORIGIN",        symmetry_type::ORIGIN },
+    SYMETRY{ "PI_SYM_NOPARM", symmetry_type::PI_SYM_NO_PARAM },
+    SYMETRY{ "PI_SYM",        symmetry_type::PI_SYM },
+    SYMETRY{ "XAXIS_NOIMAG",  symmetry_type::X_AXIS_NO_IMAG },
+    SYMETRY{ "XAXIS_NOREAL",  symmetry_type::X_AXIS_NO_REAL },
+    SYMETRY{ "NOPLOT",        symmetry_type::NO_PLOT },
 };
 
 inline void push_pending_op(FunctionPtr f, int p)
@@ -3998,15 +3997,16 @@ static bool frm_check_name_and_sym(std::FILE * open_file, bool report_bad_sym)
             }
         }
         sym_buf[i] = (char) 0;
-        for (i = 0; s_symmetry_names[i].s[0]; i++)
+        constexpr int num_names{s_symmetry_names.size()};
+        for (i = 0; i < num_names; i++)
         {
-            if (!stricmp(s_symmetry_names[i].s, sym_buf))
+            if (stricmp(s_symmetry_names[i].s, sym_buf) == 0)
             {
                 g_symmetry = s_symmetry_names[i].n;
                 break;
             }
         }
-        if (s_symmetry_names[i].s[0] == (char) 0 && report_bad_sym)
+        if (i == num_names && report_bad_sym)
         {
             std::string msgbuf{ParseErrs(PE_INVALID_SYM_USING_NOSYM)};
             msgbuf += ":\n   ";
