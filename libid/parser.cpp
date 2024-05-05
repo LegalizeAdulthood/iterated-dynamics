@@ -3081,14 +3081,7 @@ int form_per_pixel()
         break;
     }
 
-    if (g_overflow)
-    {
-        return 0;
-    }
-    else
-    {
-        return 1;
-    }
+    return g_overflow ? 0 : 1;
 }
 
 int fill_if_group(int endif_index, JUMP_PTRS_ST* jump_data)
@@ -3353,12 +3346,9 @@ CASE_NUM:
                 tok->token_id = ILL_FORMED_CONSTANT;
                 return false;
             }
-            else
-            {
-                tok->token_str[i++] = (char) c;
-                got_decimal_already = true;
-                filepos = ftell(openfile);
-            }
+            tok->token_str[i++] = (char) c;
+            got_decimal_already = true;
+            filepos = ftell(openfile);
             break;
         default :
             if (c == 'e' && getting_base && (std::isdigit(tok->token_str[i-1]) || (tok->token_str[i-1] == '.' && i > 1)))
@@ -3598,48 +3588,39 @@ CASE_NUM:
                 {
                     return false;
                 }
-                else if (tok->token_type == FLOW_CONTROL && (tok->token_id == 3 || tok->token_id == 4))
+                if (tok->token_type == FLOW_CONTROL && (tok->token_id == 3 || tok->token_id == 4))
                 {
                     tok->token_type = NOT_A_TOKEN;
                     tok->token_id   = JUMP_WITH_ILLEGAL_CHAR;
                     return false;
                 }
-                else
-                {
-                    return true;
-                }
+                return true;
             }
             //can't use function names as variables
-            else if (tok->token_type == FUNCTION || tok->token_type == PARAM_FUNCTION)
+            if (tok->token_type == FUNCTION || tok->token_type == PARAM_FUNCTION)
             {
                 tok->token_type = NOT_A_TOKEN;
                 tok->token_id   = FUNC_USED_AS_VAR;
                 return false;
             }
-            else if (tok->token_type == FLOW_CONTROL && (tok->token_id == 1 || tok->token_id == 2))
+            if (tok->token_type == FLOW_CONTROL && (tok->token_id == 1 || tok->token_id == 2))
             {
                 tok->token_type = NOT_A_TOKEN;
                 tok->token_id   = JUMP_MISSING_BOOLEAN;
                 return false;
             }
-            else if (tok->token_type == FLOW_CONTROL && (tok->token_id == 3 || tok->token_id == 4))
+            if (tok->token_type == FLOW_CONTROL && (tok->token_id == 3 || tok->token_id == 4))
             {
                 if (c == ',' || c == '\n' || c == ':')
                 {
                     return true;
                 }
-                else
-                {
-                    tok->token_type = NOT_A_TOKEN;
-                    tok->token_id   = JUMP_WITH_ILLEGAL_CHAR;
-                    return false;
-                }
+                tok->token_type = NOT_A_TOKEN;
+                tok->token_id   = JUMP_WITH_ILLEGAL_CHAR;
+                return false;
             }
-            else
-            {
-                getvarinfo(tok);
-                return true;
-            }
+            getvarinfo(tok);
+            return true;
         }
     }
     tok->token_str[0] = (char) 0;
@@ -4129,7 +4110,7 @@ static std::string PrepareFormula(std::FILE *file, bool report_bad_sym)
             }
             return {};
         }
-        else if (temp_tok.token_type == END_OF_FORMULA)
+        if (temp_tok.token_type == END_OF_FORMULA)
         {
             stopmsg(STOPMSG_FIXED_FONT, "Formula has no executable instructions\n");
             std::fseek(file, filepos, SEEK_SET);
@@ -4139,10 +4120,7 @@ static std::string PrepareFormula(std::FILE *file, bool report_bad_sym)
             }
             return {};
         }
-        if (temp_tok.token_str[0] == ',')
-        {
-        }
-        else
+        if (temp_tok.token_str[0] != ',')
         {
             FormulaStr += temp_tok.token_str;
             Done = true;
@@ -4222,24 +4200,18 @@ bool run_formula(const std::string &name, bool report_bad_sym)
         {
             return true;   //  parse failed, don't change fn pointers
         }
-        else
+        if (g_uses_jump && fill_jump_struct())
         {
-            if (g_uses_jump && fill_jump_struct())
-            {
-                stopmsg(STOPMSG_NONE, ParseErrs(PE_ERROR_IN_PARSING_JUMP_STATEMENTS));
-                return true;
-            }
-
-            // all parses succeeded so set the pointers back to good functions
-            g_cur_fractal_specific->per_pixel = form_per_pixel;
-            g_cur_fractal_specific->orbitcalc = Formula;
-            return false;
+            stopmsg(STOPMSG_NONE, ParseErrs(PE_ERROR_IN_PARSING_JUMP_STATEMENTS));
+            return true;
         }
+
+        // all parses succeeded so set the pointers back to good functions
+        g_cur_fractal_specific->per_pixel = form_per_pixel;
+        g_cur_fractal_specific->orbitcalc = Formula;
+        return false;
     }
-    else
-    {
-        return true;   // error in making string
-    }
+    return true; // error in making string
 }
 
 
