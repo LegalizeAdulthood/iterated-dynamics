@@ -2153,13 +2153,12 @@ struct FNCT_LIST
 
 } // namespace
 
-static char const *s_jump_list[] =
+static constexpr std::array<char const *, 4> s_jump_list
 {
     "if",
     "elseif",
     "else",
-    "endif",
-    ""
+    "endif"
 };
 
 void (*StkTrig0)(){dStkSin};
@@ -2176,14 +2175,11 @@ void (*StkTrig3)(){dStkCosh};
 */
 int isjump(char const *Str, int Len)
 {
-    for (int i = 0; *s_jump_list[i]; i++)
+    for (int i = 0; i < static_cast<int>(s_jump_list.size()); i++)
     {
-        if ((int) std::strlen(s_jump_list[i]) == Len)
+        if ((int) std::strlen(s_jump_list[i]) == Len && strnicmp(s_jump_list[i], Str, Len) == 0)
         {
-            if (!strnicmp(s_jump_list[i], Str, Len))
-            {
-                return i + 1;
-            }
+            return i + 1;
         }
     }
     return 0;
@@ -3262,9 +3258,9 @@ void getfuncinfo(token_st * tok)
         }
     }
 
-    for (int i = 0; i < 4; i++)        //pick up flow control
+    for (int i = 0; i < static_cast<int>(s_jump_list.size()); i++) // pick up flow control
     {
-        if (!std::strcmp(s_jump_list[i], tok->token_str))
+        if (std::strcmp(s_jump_list[i], tok->token_str) == 0)
         {
             tok->token_type = FLOW_CONTROL;
             tok->token_id   = i + 1;
