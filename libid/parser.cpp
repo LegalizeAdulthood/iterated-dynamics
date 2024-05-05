@@ -2346,28 +2346,28 @@ static constexpr std::array<char const *, 19> s_constants
     "p5"            // v[18]
 };
 
-struct SYMETRY
+struct SymmetryName
 {
     char const *s;
     symmetry_type n;
 };
 
-static constexpr std::array<SYMETRY, 14> s_symmetry_names
+static constexpr std::array<SymmetryName, 14> s_symmetry_names
 {
-    SYMETRY{ "NOSYM",         symmetry_type::NONE },
-    SYMETRY{ "XAXIS_NOPARM",  symmetry_type::X_AXIS_NO_PARAM },
-    SYMETRY{ "XAXIS",         symmetry_type::X_AXIS },
-    SYMETRY{ "YAXIS_NOPARM",  symmetry_type::Y_AXIS_NO_PARAM },
-    SYMETRY{ "YAXIS",         symmetry_type::Y_AXIS },
-    SYMETRY{ "XYAXIS_NOPARM", symmetry_type::XY_AXIS_NO_PARAM },
-    SYMETRY{ "XYAXIS",        symmetry_type::XY_AXIS },
-    SYMETRY{ "ORIGIN_NOPARM", symmetry_type::ORIGIN_NO_PARAM },
-    SYMETRY{ "ORIGIN",        symmetry_type::ORIGIN },
-    SYMETRY{ "PI_SYM_NOPARM", symmetry_type::PI_SYM_NO_PARAM },
-    SYMETRY{ "PI_SYM",        symmetry_type::PI_SYM },
-    SYMETRY{ "XAXIS_NOIMAG",  symmetry_type::X_AXIS_NO_IMAG },
-    SYMETRY{ "XAXIS_NOREAL",  symmetry_type::X_AXIS_NO_REAL },
-    SYMETRY{ "NOPLOT",        symmetry_type::NO_PLOT },
+    SymmetryName{ "NOSYM",         symmetry_type::NONE },
+    SymmetryName{ "XAXIS_NOPARM",  symmetry_type::X_AXIS_NO_PARAM },
+    SymmetryName{ "XAXIS",         symmetry_type::X_AXIS },
+    SymmetryName{ "YAXIS_NOPARM",  symmetry_type::Y_AXIS_NO_PARAM },
+    SymmetryName{ "YAXIS",         symmetry_type::Y_AXIS },
+    SymmetryName{ "XYAXIS_NOPARM", symmetry_type::XY_AXIS_NO_PARAM },
+    SymmetryName{ "XYAXIS",        symmetry_type::XY_AXIS },
+    SymmetryName{ "ORIGIN_NOPARM", symmetry_type::ORIGIN_NO_PARAM },
+    SymmetryName{ "ORIGIN",        symmetry_type::ORIGIN },
+    SymmetryName{ "PI_SYM_NOPARM", symmetry_type::PI_SYM_NO_PARAM },
+    SymmetryName{ "PI_SYM",        symmetry_type::PI_SYM },
+    SymmetryName{ "XAXIS_NOIMAG",  symmetry_type::X_AXIS_NO_IMAG },
+    SymmetryName{ "XAXIS_NOREAL",  symmetry_type::X_AXIS_NO_REAL },
+    SymmetryName{ "NOPLOT",        symmetry_type::NO_PLOT },
 };
 
 inline void push_pending_op(FunctionPtr f, int p)
@@ -2889,7 +2889,6 @@ static bool ParseStr(char const *Str)
     }
     return false;
 }
-
 
 int Formula()
 {
@@ -4082,7 +4081,7 @@ static std::string PrepareFormula(std::FILE *file, bool report_bad_sym)
             if (g_symmetry != symmetry_type::NONE)
             {
                 auto it = std::find_if(std::begin(s_symmetry_names), std::end(s_symmetry_names),
-                    [](SYMETRY const& item) { return item.n == g_symmetry; });
+                    [](const SymmetryName &item) { return item.n == g_symmetry; });
                 if (it != std::end(s_symmetry_names))
                 {
                     std::fprintf(debug_fp, "%s\n", it->s);
