@@ -229,7 +229,7 @@ static int s_delta16{};
 double g_fudge_limit{};
 static double s_fudge{};
 static int s_shift_back{};
-static bool SetRandom{};
+static bool s_set_random{};
 static bool Randomized{};
 static unsigned long RandNum{};
 bool g_frm_uses_p1{};
@@ -426,14 +426,14 @@ void SetRandFnct()
 {
     unsigned Seed;
 
-    if (!SetRandom)
+    if (!s_set_random)
     {
         RandNum = Arg1->l.x ^ Arg1->l.y;
     }
 
     Seed = (unsigned)RandNum ^ (unsigned)(RandNum >> 16);
     srand(Seed);
-    SetRandom = true;
+    s_set_random = true;
 
     // Clear out the seed
     NewRandNum();
@@ -2395,7 +2395,7 @@ static bool ParseStr(char const *Str)
     double Rotation;
     double Skew;
     LDBL Magnification;
-    SetRandom = false;
+    s_set_random = false;
     Randomized = false;
     g_uses_jump = false;
     jump_index = 0;
@@ -2904,7 +2904,7 @@ int Formula()
     g_op_ptr = InitOpPtr;
     jump_index = s_init_jump_index;
     // Set the random number
-    if (SetRandom || Randomized)
+    if (s_set_random || Randomized)
     {
         switch (MathType)
         {
