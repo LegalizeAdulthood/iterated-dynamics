@@ -4716,33 +4716,6 @@ static bool frm_prescan(std::FILE * open_file)
                     s_errors[errors_found++].error_number = PE_SHOULD_BE_OPERATOR;
                 }
             }
-            switch (this_token.id)
-            {
-            case 0:     // pixel
-                break;
-            case 3:     // z
-                break;
-            case 4:     // LastSqr
-                break;
-            case 5:     // pi
-                break;
-            case 6:     // e
-                break;
-            case 7:     // rand
-                break;
-            case 9:     // whitesq
-                break;
-            case 10:    // scrnpix
-                break;
-            case 11:    // scrnmax
-                break;
-            case 12:    // maxit
-                break;
-            case 13:    // ismand
-                break;
-            default:
-                break;
-            }
             ExpectingArg = false;
             break;
         case token_type::REAL_CONSTANT: // i.e. 4, (4,0), etc.
@@ -4802,19 +4775,6 @@ static bool frm_prescan(std::FILE * open_file)
                     s_errors[errors_found].error_pos      = filepos;
                     s_errors[errors_found++].error_number = PE_SHOULD_BE_OPERATOR;
                 }
-            }
-            switch (this_token.id)
-            {
-            case 11:
-                break;
-            case 12:
-                break;
-            case 13:
-                break;
-            case 14:
-                break;
-            default:
-                break;
             }
             NewStatement = false;
             break;
