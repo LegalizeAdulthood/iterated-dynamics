@@ -2173,7 +2173,7 @@ void (*StkTrig3)(){dStkCosh};
     3 - else
     4 - endif
 */
-int isjump(char const *Str, int Len)
+static int is_jump(char const *Str, int Len)
 {
     for (int i = 0; i < static_cast<int>(s_jump_list.size()); i++)
     {
@@ -2819,7 +2819,7 @@ static bool ParseStr(char const *Str, int pass)
             }
             Len = (s_n+1)-InitN;
             s_expecting_arg = false;
-            jumptype = isjump(&Str[InitN], Len);
+            jumptype = is_jump(&Str[InitN], Len);
             if (jumptype != 0)
             {
                 g_uses_jump = true;
