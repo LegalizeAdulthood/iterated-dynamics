@@ -63,9 +63,9 @@ extern int InitLodPtr;
 extern int InitStoPtr;
 extern int InitOpPtr;
 extern std::vector<void (*)()> f;
-extern std::vector<JUMP_CONTROL_ST> jump_control;
+extern std::vector<JUMP_CONTROL_ST> g_jump_control;
 extern bool g_uses_jump;
-extern int jump_index;
+extern int g_jump_index;
 
 typedef void OLD_FN();  // old C functions
 
@@ -1407,7 +1407,7 @@ int fpfill_jump_struct()
     {
         if (find_new_func)
         {
-            switch (jump_control[i].type)
+            switch (g_jump_control[i].type)
             {
             case jump_control_type::IF:
                 JumpFunc = fStkJumpOnFalse;
@@ -1443,9 +1443,9 @@ int fpfill_jump_struct()
     }
 
     // Following for safety only; all should always be false
-    if (i != jump_index
-        || jump_control[i - 1].type != jump_control_type::END_IF
-        || jump_control[0].type != jump_control_type::IF)
+    if (i != g_jump_index
+        || g_jump_control[i - 1].type != jump_control_type::END_IF
+        || g_jump_control[0].type != jump_control_type::IF)
     {
         return 1;
     }
