@@ -217,7 +217,7 @@ unsigned int g_operation_index{};
 unsigned int g_variable_index{};
 unsigned int g_last_op{};
 static unsigned int s_n{};
-static unsigned int NextOp{};
+static unsigned int s_next_op{};
 static unsigned int s_init_n{};
 static int s_paren{};
 static bool s_expecting_arg{};
@@ -2309,8 +2309,8 @@ static FunctionPtr is_func(char const *Str, int Len)
 
 void RecSortPrec()
 {
-    int ThisOp = NextOp++;
-    while (s_op[ThisOp].p > s_op[NextOp].p && NextOp < g_operation_index)
+    int ThisOp = s_next_op++;
+    while (s_op[ThisOp].p > s_op[s_next_op].p && s_next_op < g_operation_index)
     {
         RecSortPrec();
     }
@@ -2874,17 +2874,17 @@ static bool ParseStr(char const *Str)
         }
     }
     push_pending_op(nullptr, 16);
-    NextOp = 0;
+    s_next_op = 0;
     g_last_op = g_operation_index;
-    while (NextOp < g_operation_index)
+    while (s_next_op < g_operation_index)
     {
-        if (s_op[NextOp].f)
+        if (s_op[s_next_op].f)
         {
             RecSortPrec();
         }
         else
         {
-            NextOp++;
+            s_next_op++;
             g_last_op--;
         }
     }
