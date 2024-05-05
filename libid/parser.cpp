@@ -2668,10 +2668,10 @@ static bool ParseStr(char const *Str, int pass)
     g_operation_index = 0;
     o.clear();
     g_store_index = 0;
-    g_load_index = g_store_index;
-    OpPtr = g_load_index;
-    paren = OpPtr;
-    g_last_init_op = paren;
+    g_load_index = 0;
+    OpPtr = 0;
+    paren = 0;
+    g_last_init_op = 0;
     s_expecting_arg = true;
     for (s_n = 0; Str[s_n]; s_n++)
     {
