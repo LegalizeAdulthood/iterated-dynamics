@@ -4684,21 +4684,6 @@ static bool frm_prescan(std::FILE * open_file)
                     s_errors[errors_found++].error_number = PE_SHOULD_BE_OPERATOR;
                 }
             }
-            switch (this_token.token_id)
-            {
-            case 1:
-                break;
-            case 2:
-                break;
-            case 8:
-                break;
-            case 17:
-                break;
-            case 18:
-                break;
-            default:
-                break;
-            }
             ExpectingArg = false;
             break;
         case USER_NAMED_VARIABLE: // i.e. c, iter, etc.
@@ -4802,73 +4787,6 @@ static bool frm_prescan(std::FILE * open_file)
                     s_errors[errors_found].error_pos      = filepos;
                     s_errors[errors_found++].error_number = PE_SHOULD_BE_OPERATOR;
                 }
-            }
-            switch (this_token.token_id)
-            {
-            case 0:
-                break;
-            case 1:
-                break;
-            case 2:
-                break;
-            case 3:
-                break;
-            case 4:
-                break;
-            case 5:
-                break;
-            case 6:
-                break;
-            case 7:
-                break;
-            case 8:
-                break;
-            case 9:
-                break;
-            case 10:
-                break;
-            case 15:
-                break;
-            case 16:
-                break;
-            case 17:
-                break;
-            case 18:
-                break;
-            case 19:
-                break;
-            case 20:
-                break;
-            case 21:
-                break;
-            case 22:
-                break;
-            case 23:
-                break;
-            case 24:
-                break;
-            case 25:
-                break;
-            case 26:
-                break;
-            case 27:
-                break;
-            case 28:
-                break;
-            case 29:
-                break;
-            case 30:
-                break;
-            case 31:
-                break;
-            case 32:
-                break;
-            case 33:
-                break;
-            case 34:
-                break;
-            default:
-                break;
             }
             break;
         case PARAM_FUNCTION:
