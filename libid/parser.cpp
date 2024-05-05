@@ -2493,7 +2493,7 @@ inline void push_pending_op(FunctionPtr f, int p)
     assert(g_operation_index == s_op.size());
 }
 
-static bool ParseStr(char const *Str)
+static bool ParseStr(char const *text)
 {
     ConstArg *c;
     int ModFlag = 999;
@@ -2787,14 +2787,14 @@ static bool ParseStr(char const *Str)
     s_paren = 0;
     g_last_init_op = 0;
     s_expecting_arg = true;
-    for (s_n = 0; Str[s_n]; s_n++)
+    for (s_n = 0; text[s_n]; s_n++)
     {
-        if (!Str[s_n])
+        if (!text[s_n])
         {
             break;
         }
         s_init_n = s_n;
-        switch (Str[s_n])
+        switch (text[s_n])
         {
         case ' ':
         case '\t':
@@ -2808,7 +2808,7 @@ static bool ParseStr(char const *Str)
             s_paren--;
             break;
         case '|':
-            if (Str[s_n+1] == '|')
+            if (text[s_n+1] == '|')
             {
                 s_expecting_arg = true;
                 s_n++;
@@ -2875,7 +2875,7 @@ static bool ParseStr(char const *Str)
             s_expecting_arg = true;
             {
                 FunctionPtr fn;
-                if (Str[s_n + 1] == '=')
+                if (text[s_n + 1] == '=')
                 {
                     s_n++;
                     fn = StkLTE;
@@ -2891,7 +2891,7 @@ static bool ParseStr(char const *Str)
             s_expecting_arg = true;
             {
                 FunctionPtr fn;
-                if (Str[s_n + 1] == '=')
+                if (text[s_n + 1] == '=')
                 {
                     s_n++;
                     fn = StkGTE;
@@ -2917,7 +2917,7 @@ static bool ParseStr(char const *Str)
             break;
         case '=':
             s_expecting_arg = true;
-            if (Str[s_n+1] == '=')
+            if (text[s_n+1] == '=')
             {
                 s_n++;
                 push_pending_op(StkEQ, 6 - (s_paren + Equals)*15);
@@ -2931,13 +2931,13 @@ static bool ParseStr(char const *Str)
             }
             break;
         default:
-            while (std::isalnum(Str[s_n+1]) || Str[s_n+1] == '.' || Str[s_n+1] == '_')
+            while (std::isalnum(text[s_n+1]) || text[s_n+1] == '.' || text[s_n+1] == '_')
             {
                 s_n++;
             }
             Len = (s_n+1)-s_init_n;
             s_expecting_arg = false;
-            if (const jump_control_type type = is_jump(&Str[s_init_n], Len); type != jump_control_type::NONE)
+            if (const jump_control_type type = is_jump(&text[s_init_n], Len); type != jump_control_type::NONE)
             {
                 g_uses_jump = true;
                 switch (type)
@@ -2970,14 +2970,14 @@ static bool ParseStr(char const *Str)
             }
             else
             {
-                if (const FunctionPtr fn = is_func(&Str[s_init_n], Len); fn != NotAFnct)
+                if (const FunctionPtr fn = is_func(&text[s_init_n], Len); fn != NotAFnct)
                 {
                     push_pending_op(fn,  1 - (s_paren + Equals)*15);
                     s_expecting_arg = true;
                 }
                 else
                 {
-                    c = is_const(&Str[s_init_n], Len);
+                    c = is_const(&text[s_init_n], Len);
                     Load[g_load_index++] = &(c->a);
                     push_pending_op(StkLod, 1 - (s_paren + Equals)*15);
                     s_n = s_init_n + c->len - 1;
