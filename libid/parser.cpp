@@ -2153,7 +2153,7 @@ struct FNCT_LIST
 
 } // namespace
 
-static char const *JumpList[] =
+static char const *s_jump_list[] =
 {
     "if",
     "elseif",
@@ -2176,11 +2176,11 @@ void (*StkTrig3)(){dStkCosh};
 */
 int isjump(char const *Str, int Len)
 {
-    for (int i = 0; *JumpList[i]; i++)
+    for (int i = 0; *s_jump_list[i]; i++)
     {
-        if ((int) std::strlen(JumpList[i]) == Len)
+        if ((int) std::strlen(s_jump_list[i]) == Len)
         {
-            if (!strnicmp(JumpList[i], Str, Len))
+            if (!strnicmp(s_jump_list[i], Str, Len))
             {
                 return i + 1;
             }
@@ -3264,7 +3264,7 @@ void getfuncinfo(token_st * tok)
 
     for (int i = 0; i < 4; i++)        //pick up flow control
     {
-        if (!std::strcmp(JumpList[i], tok->token_str))
+        if (!std::strcmp(s_jump_list[i], tok->token_str))
         {
             tok->token_type = FLOW_CONTROL;
             tok->token_id   = i + 1;
