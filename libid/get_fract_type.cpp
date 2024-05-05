@@ -336,7 +336,7 @@ static const char *s_jiim_method[]{
 #endif
 static char JIIMstr2[] = "Left first or Right first?";
 
-static char tstack[4096] = { 0 };
+static char s_tmp_stack[4096]{};
 
 static char const *jiim_left_right_list[]{
     to_string(Minor::left_first), //
@@ -392,7 +392,7 @@ int get_fract_params(bool prompt_for_type_params)        // prompt for type-spec
         }
     }
     g_cur_fractal_specific = &g_fractal_specific[+curtype];
-    tstack[0] = 0;
+    s_tmp_stack[0] = 0;
     help_labels help_formula = g_cur_fractal_specific->helpformula;
     if (help_formula < help_labels::NONE)
     {
@@ -442,7 +442,7 @@ int get_fract_params(bool prompt_for_type_params)        // prompt for type-spec
         if ((!use_filename_ref && find_file_item(filename, entryname, &entryfile, item_for_help(help_formula)) == 0) ||
             (use_filename_ref && find_file_item(filename_ref, entryname, &entryfile, item_for_help(help_formula)) == 0))
         {
-            load_entry_text(entryfile, tstack, 17, 0, 0);
+            load_entry_text(entryfile, s_tmp_stack, 17, 0, 0);
             std::fclose(entryfile);
             if (g_fractal_type == fractal_type::FORMULA || g_fractal_type == fractal_type::FFORMULA)
             {
@@ -454,13 +454,13 @@ int get_fract_params(bool prompt_for_type_params)        // prompt for type-spec
     {
         int c;
         int lines;
-        read_help_topic(help_formula, 0, 2000, tstack); // need error handling here ??
-        tstack[2000-static_cast<int>(help_formula)] = 0;
+        read_help_topic(help_formula, 0, 2000, s_tmp_stack); // need error handling here ??
+        s_tmp_stack[2000-static_cast<int>(help_formula)] = 0;
         int i = 0;
         lines = 0;
         int j = 0;
         int k = 1;
-        while ((c = tstack[i++]) != 0)
+        while ((c = s_tmp_stack[i++]) != 0)
         {
             // stop at ctl, blank, or line with col 1 nonblank, max 16 lines
             if (k && c == ' ' && ++k <= 5)
@@ -492,13 +492,13 @@ int get_fract_params(bool prompt_for_type_params)        // prompt for type-spec
                     }
                     k = 0;
                 }
-                tstack[j++] = (char)c;
+                s_tmp_stack[j++] = (char)c;
             }
         }
-        while (--j >= 0 && tstack[j] == '\n')
+        while (--j >= 0 && s_tmp_stack[j] == '\n')
         {
         }
-        tstack[j+1] = 0;
+        s_tmp_stack[j+1] = 0;
     }
     fractalspecificstuff *savespecific = g_cur_fractal_specific;
     int orbit_bailout;
@@ -814,7 +814,7 @@ gfp_top:
     {
         old_help_mode = g_help_mode;
         g_help_mode = g_cur_fractal_specific->helptext;
-        int i = fullscreen_prompt(msg, promptnum, choices, paramvalues, fkeymask, tstack);
+        int i = fullscreen_prompt(msg, promptnum, choices, paramvalues, fkeymask, s_tmp_stack);
         g_help_mode = old_help_mode;
         if (i < 0)
         {
