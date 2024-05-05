@@ -13,11 +13,20 @@ struct JUMP_PTRS_ST
     int      JumpStoPtr;
 };
 
+enum class jump_control_type
+{
+    NONE = 0,
+    IF = 1,
+    ELSE_IF = 2,
+    ELSE = 3,
+    END_IF = 4
+};
+
 struct JUMP_CONTROL_ST
 {
-    int      type;
+    jump_control_type type;
     JUMP_PTRS_ST ptrs;
-    int      DestJumpIndex;
+    int DestJumpIndex;
 };
 
 // function, load, store pointers

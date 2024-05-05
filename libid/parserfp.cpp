@@ -1409,10 +1409,10 @@ int fpfill_jump_struct()
         {
             switch (jump_control[i].type)
             {
-            case 1:
+            case jump_control_type::IF:
                 JumpFunc = fStkJumpOnFalse;
                 break;
-            case 2:
+            case jump_control_type::ELSE_IF:
                 checkforelse = !checkforelse;
                 if (checkforelse)
                 {
@@ -1423,10 +1423,10 @@ int fpfill_jump_struct()
                     JumpFunc = fStkJumpOnFalse;
                 }
                 break;
-            case 3:
+            case jump_control_type::ELSE:
                 JumpFunc = fStkJump;
                 break;
-            case 4:
+            case jump_control_type::END_IF:
                 JumpFunc = fStkJumpLabel;
                 break;
             default:
@@ -1444,8 +1444,8 @@ int fpfill_jump_struct()
 
     // Following for safety only; all should always be false
     if (i != jump_index
-        || jump_control[i - 1].type != 4
-        || jump_control[0].type != 1)
+        || jump_control[i - 1].type != jump_control_type::END_IF
+        || jump_control[0].type != jump_control_type::IF)
     {
         return 1;
     }

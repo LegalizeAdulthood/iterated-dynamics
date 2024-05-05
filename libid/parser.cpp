@@ -82,7 +82,7 @@ std::vector<JUMP_CONTROL_ST> jump_control;
 int jump_index{};
 static int s_init_jump_index{};
 
-inline void push_jump_control_type(int type)
+inline void push_jump_control_type(jump_control_type type)
 {
     JUMP_CONTROL_ST value{};
     value.type = type;
@@ -2214,16 +2214,16 @@ static FunctionPtr StkTrig3{dStkCosh};
     3 - else
     4 - endif
 */
-static int is_jump(char const *Str, int Len)
+static jump_control_type is_jump(char const *Str, int Len)
 {
     for (int i = 0; i < static_cast<int>(s_jump_list.size()); i++)
     {
         if ((int) std::strlen(s_jump_list[i]) == Len && strnicmp(s_jump_list[i], Str, Len) == 0)
         {
-            return i + 1;
+            return static_cast<jump_control_type>(i + 1);
         }
     }
-    return 0;
+    return jump_control_type::NONE;
 }
 
 char g_max_function{};
@@ -2422,7 +2422,6 @@ static bool ParseStr(char const *Str)
     int Equals = 0;
     std::array<int, 20> Mods{};
     int mdstk = 0;
-    int jumptype;
     double const_pi;
     double const_e;
     double Xctr;
@@ -2859,32 +2858,31 @@ static bool ParseStr(char const *Str)
             }
             Len = (s_n+1)-s_init_n;
             s_expecting_arg = false;
-            jumptype = is_jump(&Str[s_init_n], Len);
-            if (jumptype != 0)
+            if (const jump_control_type type = is_jump(&Str[s_init_n], Len); type != jump_control_type::NONE)
             {
                 g_uses_jump = true;
-                switch (jumptype)
+                switch (type)
                 {
-                case 1:                      // if
+                case jump_control_type::IF:
                     s_expecting_arg = true;
-                    push_jump_control_type(1);
+                    push_jump_control_type(jump_control_type::IF);
                     push_pending_op(StkJumpOnFalse, 1);
                     break;
-                case 2:                     // elseif
+                case jump_control_type::ELSE_IF:
                     s_expecting_arg = true;
-                    push_jump_control_type(2);
-                    push_jump_control_type(2);
+                    push_jump_control_type(jump_control_type::ELSE_IF);
+                    push_jump_control_type(jump_control_type::ELSE_IF);
                     push_pending_op(StkJump, 1);
                     push_pending_op(nullptr, 15);
                     push_pending_op(StkClr, -30000);
                     push_pending_op(StkJumpOnFalse, 1);
                     break;
-                case 3:                     // else
-                    push_jump_control_type(3);
+                case jump_control_type::ELSE:
+                    push_jump_control_type(jump_control_type::ELSE);
                     push_pending_op(StkJump, 1);
                     break;
-                case 4: // endif
-                    push_jump_control_type(4);
+                case jump_control_type::END_IF:
+                    push_jump_control_type(jump_control_type::END_IF);
                     push_pending_op(StkJumpLabel, 1);
                     break;
                 default:
@@ -3128,23 +3126,23 @@ int fill_if_group(int endif_index, JUMP_PTRS_ST* jump_data)
         i--;
         switch (jump_control[i].type)
         {
-        case 1:    //if (); this concludes processing of this group
+        case jump_control_type::IF:    //if (); this concludes processing of this group
             jump_control[i].ptrs = jump_data[ljp];
             jump_control[i].DestJumpIndex = ljp + 1;
             return i;
-        case 2:    //elseif* ( 2 jumps, the else and the if
+        case jump_control_type::ELSE_IF:    //elseif* ( 2 jumps, the else and the if
             // first, the "if" part
             jump_control[i].ptrs = jump_data[ljp];
             jump_control[i].DestJumpIndex = ljp + 1;
 
             // then, the else part
             i--; //fall through to "else" is intentional
-        case 3:
+        case jump_control_type::ELSE:
             jump_control[i].ptrs = jump_data[endif_index];
             jump_control[i].DestJumpIndex = endif_index + 1;
             ljp = i;
             break;
-        case 4:    //endif
+        case jump_control_type::END_IF:    //endif
             i = fill_if_group(i, jump_data);
             break;
         default:
@@ -3173,10 +3171,10 @@ static bool fill_jump_struct()
         {
             switch (jump_control[i].type)
             {
-            case 1:
+            case jump_control_type::IF:
                 JumpFunc = StkJumpOnFalse;
                 break;
-            case 2:
+            case jump_control_type::ELSE_IF:
                 checkforelse = !checkforelse;
                 if (checkforelse)
                 {
@@ -3187,10 +3185,10 @@ static bool fill_jump_struct()
                     JumpFunc = StkJumpOnFalse;
                 }
                 break;
-            case 3:
+            case jump_control_type::ELSE:
                 JumpFunc = StkJump;
                 break;
-            case 4:
+            case jump_control_type::END_IF:
                 JumpFunc = StkJumpLabel;
                 break;
             default:
@@ -3220,8 +3218,8 @@ static bool fill_jump_struct()
 
     // Following for safety only; all should always be false
     if (i != jump_index
-        || jump_control[i - 1].type != 4
-        || jump_control[0].type != 1)
+        || jump_control[i - 1].type != jump_control_type::END_IF
+        || jump_control[0].type != jump_control_type::IF)
     {
         return true;
     }
