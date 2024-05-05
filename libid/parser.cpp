@@ -207,7 +207,7 @@ Arg *Arg2{};
 std::array<Arg, 20> g_stack{};
 std::vector<Arg *> Store;
 std::vector<Arg *> Load;
-int OpPtr{};
+int g_op_ptr{};
 std::vector<FunctionPtr> f;
 std::vector<ConstArg> v;
 int g_store_index{};
@@ -1874,7 +1874,7 @@ static FunctionPtr StkPwr{dStkPwr};
 
 void EndInit()
 {
-    g_last_init_op = OpPtr;
+    g_last_init_op = g_op_ptr;
     s_init_jump_index = jump_index;
 }
 
@@ -1882,7 +1882,7 @@ static FunctionPtr PtrEndInit{EndInit};
 
 void StkJump()
 {
-    OpPtr =  jump_control[jump_index].ptrs.JumpOpPtr;
+    g_op_ptr =  jump_control[jump_index].ptrs.JumpOpPtr;
     g_load_index = jump_control[jump_index].ptrs.JumpLodPtr;
     g_store_index = jump_control[jump_index].ptrs.JumpStoPtr;
     jump_index = jump_control[jump_index].DestJumpIndex;
@@ -2314,13 +2314,13 @@ void RecSortPrec()
     {
         RecSortPrec();
     }
-    if (OpPtr != static_cast<int>(f.size()))
+    if (g_op_ptr != static_cast<int>(f.size()))
     {
         throw std::runtime_error(
-            "OpPtr (" + std::to_string(OpPtr) + ") doesn't match size of f[] (" + std::to_string(f.size()) + ")");
+            "OpPtr (" + std::to_string(g_op_ptr) + ") doesn't match size of f[] (" + std::to_string(f.size()) + ")");
     }
     f.push_back(o[ThisOp].f);
-    ++OpPtr;
+    ++g_op_ptr;
 }
 
 static constexpr std::array<char const *, 19> s_constants
@@ -2669,7 +2669,7 @@ static bool ParseStr(char const *Str, int pass)
     o.clear();
     g_store_index = 0;
     g_load_index = 0;
-    OpPtr = 0;
+    g_op_ptr = 0;
     s_paren = 0;
     g_last_init_op = 0;
     s_expecting_arg = true;
@@ -2901,7 +2901,7 @@ int Formula()
 
     g_load_index = InitLodPtr;
     g_store_index = InitStoPtr;
-    OpPtr = InitOpPtr;
+    g_op_ptr = InitOpPtr;
     jump_index = s_init_jump_index;
     // Set the random number
     if (SetRandom || Randomized)
@@ -2922,10 +2922,10 @@ int Formula()
     Arg1 = &g_stack[0];
     Arg2 = &g_stack[0];
     --Arg2;
-    while (OpPtr < (int)g_last_op)
+    while (g_op_ptr < (int)g_last_op)
     {
-        f[OpPtr]();
-        OpPtr++;
+        f[g_op_ptr]();
+        g_op_ptr++;
     }
 
     switch (MathType)
@@ -2958,7 +2958,7 @@ int form_per_pixel()
     }
     g_overflow = false;
     jump_index = 0;
-    OpPtr = 0;
+    g_op_ptr = 0;
     g_store_index = 0;
     g_load_index = 0;
     Arg1 = &g_stack[0];
@@ -3059,14 +3059,14 @@ int form_per_pixel()
     {
         g_last_init_op = g_last_op;
     }
-    while (OpPtr < g_last_init_op)
+    while (g_op_ptr < g_last_init_op)
     {
-        f[OpPtr]();
-        OpPtr++;
+        f[g_op_ptr]();
+        g_op_ptr++;
     }
     InitLodPtr = g_load_index;
     InitStoPtr = g_store_index;
-    InitOpPtr = OpPtr;
+    InitOpPtr = g_op_ptr;
     // Set old variable for orbits
     switch (MathType)
     {
@@ -3132,7 +3132,7 @@ static bool fill_jump_struct()
 
     std::vector<JUMP_PTRS_ST> jump_data;
 
-    for (OpPtr = 0; OpPtr < (int) g_last_op; OpPtr++)
+    for (g_op_ptr = 0; g_op_ptr < (int) g_last_op; g_op_ptr++)
     {
         if (find_new_func)
         {
@@ -3163,18 +3163,18 @@ static bool fill_jump_struct()
             }
             find_new_func = false;
         }
-        if (*(f[OpPtr]) == StkLod)
+        if (*(f[g_op_ptr]) == StkLod)
         {
             loadcount++;
         }
-        else if (*(f[OpPtr]) == StkSto)
+        else if (*(f[g_op_ptr]) == StkSto)
         {
             storecount++;
         }
-        else if (*(f[OpPtr]) == JumpFunc)
+        else if (*(f[g_op_ptr]) == JumpFunc)
         {
             JUMP_PTRS_ST value{};
-            value.JumpOpPtr = OpPtr;
+            value.JumpOpPtr = g_op_ptr;
             value.JumpLodPtr = loadcount;
             value.JumpStoPtr = storecount;
             jump_data.push_back(value);

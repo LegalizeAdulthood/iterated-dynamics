@@ -57,7 +57,7 @@ extern double _2_;
 extern Arg g_stack[20];
 extern std::vector<Arg *> Store;
 extern std::vector<Arg *> Load;
-extern int OpPtr;
+extern int g_op_ptr;
 extern std::vector<ConstArg> v;
 extern int InitLodPtr;
 extern int InitStoPtr;
@@ -1403,7 +1403,7 @@ int fpfill_jump_struct()
     bool find_new_func = true;
     JUMP_PTRS_ST jump_data[MAX_JUMPS];
 
-    for (OpPtr = 0; OpPtr < (int) g_last_op; OpPtr++)
+    for (g_op_ptr = 0; g_op_ptr < (int) g_last_op; g_op_ptr++)
     {
         if (find_new_func)
         {
@@ -1434,9 +1434,9 @@ int fpfill_jump_struct()
             }
             find_new_func = false;
         }
-        if (g_function_operands[OpPtr].function == JumpFunc)
+        if (g_function_operands[g_op_ptr].function == JumpFunc)
         {
-            jump_data[i].JumpOpPtr = OpPtr*4;
+            jump_data[i].JumpOpPtr = g_op_ptr*4;
             i++;
             find_new_func = true;
         }
@@ -1481,9 +1481,9 @@ int CvtStk()
     // now see if the above assumptions are true
     g_store_index = 0;
     g_load_index = g_store_index;
-    for (OpPtr = g_load_index; OpPtr < (int)g_last_op; OpPtr++)
+    for (g_op_ptr = g_load_index; g_op_ptr < (int)g_last_op; g_op_ptr++)
     {
-        ftst = f[OpPtr];
+        ftst = f[g_op_ptr];
         if (ftst == StkLod)
         {
             if (Load[g_load_index++] == &LASTSQR)
@@ -1564,9 +1564,9 @@ int CvtStk()
 
     g_store_index = 0;
     g_load_index = g_store_index;
-    for (OpPtr = g_load_index; OpPtr < (int)g_last_op; OpPtr++)
+    for (g_op_ptr = g_load_index; g_op_ptr < (int)g_last_op; g_op_ptr++)
     {
-        ftst = f[OpPtr];
+        ftst = f[g_op_ptr];
         bool fnfound = false;
         for (fn_entry *pfe = &afe[0]; pfe <= &afe[LAST_OLD_FN]; pfe++)
         {
@@ -1574,7 +1574,7 @@ int CvtStk()
             {
                 fnfound = true;
                 ntst = pfe->outfn;
-                if (ntst == fStkClr1 && OpPtr == (int)(g_last_op-1))
+                if (ntst == fStkClr1 && g_op_ptr == (int)(g_last_op-1))
                 {
                     ntst = fStkClr2;  // convert the last clear to a clr2
                     DBUGMSG("Last fn (CLR) --> (is really CLR2)");
