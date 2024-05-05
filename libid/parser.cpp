@@ -2012,7 +2012,7 @@ static bool isconst_pair(char const *Str)
     return answer;
 }
 
-static ConstArg *isconst(char const *Str, int Len)
+static ConstArg *is_const(char const *Str, int Len)
 {
     DComplex z;
     // next line enforces variable vs constant naming convention
@@ -2864,7 +2864,7 @@ static bool ParseStr(char const *Str, int pass)
                 }
                 else
                 {
-                    c = isconst(&Str[InitN], Len);
+                    c = is_const(&Str[InitN], Len);
                     Load[g_load_index++] = &(c->a);
                     push_pending_op(StkLod, 1 - (paren + Equals)*15);
                     s_n = InitN + c->len - 1;
