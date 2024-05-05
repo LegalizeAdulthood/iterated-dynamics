@@ -225,7 +225,7 @@ int InitLodPtr{};
 int InitStoPtr{};
 int InitOpPtr{};
 int g_last_init_op{};
-static int Delta16{};
+static int s_delta16{};
 double g_fudge_limit{};
 static double fg{};
 static int ShiftBack{};
@@ -1047,8 +1047,8 @@ void lStkSin()
     long cosx;
     long sinhy;
     long coshy;
-    x = Arg1->l.x >> Delta16;
-    y = Arg1->l.y >> Delta16;
+    x = Arg1->l.x >> s_delta16;
+    y = Arg1->l.y >> s_delta16;
     SinCos086(x, &sinx, &cosx);
     SinhCosh086(y, &sinhy, &coshy);
     Arg1->l.x = multiply(sinx, coshy, ShiftBack);
@@ -1091,9 +1091,9 @@ void lStkTan()
     long sinhy;
     long coshy;
     long denom;
-    x = Arg1->l.x >> Delta16;
+    x = Arg1->l.x >> s_delta16;
     x = x << 1;
-    y = Arg1->l.y >> Delta16;
+    y = Arg1->l.y >> s_delta16;
     y = y << 1;
     SinCos086(x, &sinx, &cosx);
     SinhCosh086(y, &sinhy, &coshy);
@@ -1136,9 +1136,9 @@ void lStkTanh()
     long sinhx;
     long coshx;
     long denom;
-    x = Arg1->l.x >> Delta16;
+    x = Arg1->l.x >> s_delta16;
     x = x << 1;
-    y = Arg1->l.y >> Delta16;
+    y = Arg1->l.y >> s_delta16;
     y = y << 1;
     SinCos086(y, &siny, &cosy);
     SinhCosh086(x, &sinhx, &coshx);
@@ -1181,9 +1181,9 @@ void lStkCoTan()
     long sinhy;
     long coshy;
     long denom;
-    x = Arg1->l.x >> Delta16;
+    x = Arg1->l.x >> s_delta16;
     x = x << 1;
-    y = Arg1->l.y >> Delta16;
+    y = Arg1->l.y >> s_delta16;
     y = y << 1;
     SinCos086(x, &sinx, &cosx);
     SinhCosh086(y, &sinhy, &coshy);
@@ -1226,9 +1226,9 @@ void lStkCoTanh()
     long sinhx;
     long coshx;
     long denom;
-    x = Arg1->l.x >> Delta16;
+    x = Arg1->l.x >> s_delta16;
     x = x << 1;
-    y = Arg1->l.y >> Delta16;
+    y = Arg1->l.y >> s_delta16;
     y = y << 1;
     SinCos086(y, &siny, &cosy);
     SinhCosh086(x, &sinhx, &coshx);
@@ -1312,8 +1312,8 @@ void lStkSinh()
     long siny;
     long cosy;
 
-    x = Arg1->l.x >> Delta16;
-    y = Arg1->l.y >> Delta16;
+    x = Arg1->l.x >> s_delta16;
+    y = Arg1->l.y >> s_delta16;
     SinCos086(y, &siny, &cosy);
     SinhCosh086(x, &sinhx, &coshx);
     Arg1->l.x = multiply(cosy, sinhx, ShiftBack);
@@ -1349,8 +1349,8 @@ void lStkCos()
     long sinhy;
     long coshy;
 
-    x = Arg1->l.x >> Delta16;
-    y = Arg1->l.y >> Delta16;
+    x = Arg1->l.x >> s_delta16;
+    y = Arg1->l.y >> s_delta16;
     SinCos086(x, &sinx, &cosx);
     SinhCosh086(y, &sinhy, &coshy);
     Arg1->l.x = multiply(cosx, coshy, ShiftBack);
@@ -1407,8 +1407,8 @@ void lStkCosh()
     long siny;
     long cosy;
 
-    x = Arg1->l.x >> Delta16;
-    y = Arg1->l.y >> Delta16;
+    x = Arg1->l.x >> s_delta16;
+    y = Arg1->l.y >> s_delta16;
     SinCos086(y, &siny, &cosy);
     SinhCosh086(x, &sinhx, &coshx);
     Arg1->l.x = multiply(cosy, coshx, ShiftBack);
@@ -2511,7 +2511,7 @@ static bool ParseStr(char const *Str)
         StkOne = mStkOne;
         break;
     case L_MATH:
-        Delta16 = g_bit_shift - 16;
+        s_delta16 = g_bit_shift - 16;
         ShiftBack = 32 - g_bit_shift;
         StkAdd = lStkAdd;
         StkSub = lStkSub;
@@ -4273,7 +4273,7 @@ void init_misc()
     fg = (double)(1L << g_bit_shift);
     g_fudge_limit = (double)0x7fffffffL / fg;
     ShiftBack = 32 - g_bit_shift;
-    Delta16 = g_bit_shift - 16;
+    s_delta16 = g_bit_shift - 16;
     g_bit_shift_less_1 = g_bit_shift-1;
     g_frm_uses_p1 = false;
     g_frm_uses_p2 = false;
