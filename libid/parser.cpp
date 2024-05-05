@@ -2324,7 +2324,7 @@ void RecSortPrec()
     ++OpPtr;
 }
 
-static char const *s_constants[] =
+static constexpr std::array<char const *, 19> s_constants
 {
     "pixel",        // v[0]
     "p1",           // v[1]
@@ -2569,7 +2569,7 @@ static bool ParseStr(char const *Str, int pass)
         break;
     }
     g_max_function = 0;
-    for (g_variable_index = 0; g_variable_index < sizeof(s_constants) / sizeof(char*); g_variable_index++)
+    for (g_variable_index = 0; g_variable_index < static_cast<unsigned>(s_constants.size()); g_variable_index++)
     {
         v[g_variable_index].s = s_constants[g_variable_index];
         v[g_variable_index].len = (int) std::strlen(s_constants[g_variable_index]);
@@ -3285,7 +3285,7 @@ void getfuncinfo(token_st * tok)
 
 void getvarinfo(token_st * tok)
 {
-    for (int i = 0; i < sizeof(s_constants)/sizeof(char*); i++)
+    for (int i = 0; i < static_cast<int>(s_constants.size()); i++)
     {
         if (!std::strcmp(s_constants[i], tok->token_str))
         {
