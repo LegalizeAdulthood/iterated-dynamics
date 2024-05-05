@@ -2707,6 +2707,7 @@ static bool ParseStr(char const *Str, int pass)
             }
             else
             {
+                assert(mdstk < Mods.size());
                 Mods[mdstk++] = ModFlag;
                 push_pending_op(StkMod, 2 - (paren + Equals) * 15);
                 ModFlag = paren++;
