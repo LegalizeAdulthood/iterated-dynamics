@@ -55,6 +55,9 @@
 
 MATH_TYPE MathType = D_MATH;
 
+using Function = void();
+using FunctionPtr = Function *;
+
 enum
 {
     MAX_OPS = 250,
@@ -71,7 +74,7 @@ static unsigned long s_num_jumps{};
 
 struct PEND_OP
 {
-    void (*f)();
+    FunctionPtr f;
     int p;
 };
 
@@ -205,7 +208,7 @@ std::array<Arg, 20> g_stack{};
 std::vector<Arg *> Store;
 std::vector<Arg *> Load;
 int OpPtr{};
-std::vector<void (*)()> f;
+std::vector<FunctionPtr> f;
 std::vector<ConstArg> v;
 int g_store_index{};
 int g_load_index{};
@@ -352,14 +355,14 @@ static char const *ParseErrs(int which)
 /* use the following when only float functions are implemented to
    get MP math and Integer math */
 
-static void mStkFunct(void (*fct)())   // call mStk via dStk
+static void mStkFunct(FunctionPtr fct)   // call mStk via dStk
 {
     Arg1->d = MPC2cmplx(Arg1->m);
     (*fct)();
     Arg1->m = cmplx2MPC(Arg1->d);
 }
 
-static void lStkFunct(void (*fct)())   // call lStk via dStk
+static void lStkFunct(FunctionPtr fct)   // call lStk via dStk
 {
     double y;
     /*
@@ -477,7 +480,7 @@ void dStkSRand()
     Arg1->d = v[7].a.d;
 }
 
-void (*StkSRand)(){dStkSRand};
+FunctionPtr StkSRand{dStkSRand};
 
 void dStkLodDup()
 {
@@ -555,7 +558,7 @@ void lStkAbs()
     Arg1->l.y = labs(Arg1->l.y);
 }
 
-void (*StkAbs)(){dStkAbs};
+FunctionPtr StkAbs{dStkAbs};
 
 void dStkSqr()
 {
@@ -589,7 +592,7 @@ void lStkSqr()
     LastSqr.l.y = 0L;
 }
 
-void (*StkSqr)(){dStkSqr};
+FunctionPtr StkSqr{dStkSqr};
 
 void dStkAdd()
 {
@@ -614,7 +617,7 @@ void lStkAdd()
     Arg2--;
 }
 
-void (*StkAdd)(){dStkAdd};
+FunctionPtr StkAdd{dStkAdd};
 
 void dStkSub()
 {
@@ -639,7 +642,7 @@ void lStkSub()
     Arg2--;
 }
 
-void (*StkSub)(){dStkSub};
+FunctionPtr StkSub{dStkSub};
 
 void dStkConj()
 {
@@ -656,7 +659,7 @@ void lStkConj()
     Arg1->l.y = -Arg1->l.y;
 }
 
-void (*StkConj)(){dStkConj};
+FunctionPtr StkConj{dStkConj};
 
 void dStkFloor()
 {
@@ -681,7 +684,7 @@ void lStkFloor()
     Arg1->l.y = (Arg1->l.y) << g_bit_shift;
 }
 
-void (*StkFloor)(){dStkFloor};
+FunctionPtr StkFloor{dStkFloor};
 
 void dStkCeil()
 {
@@ -704,7 +707,7 @@ void lStkCeil()
     Arg1->l.y = -((Arg1->l.y) << g_bit_shift);
 }
 
-void (*StkCeil)(){dStkCeil};
+FunctionPtr StkCeil{dStkCeil};
 
 void dStkTrunc()
 {
@@ -735,7 +738,7 @@ void lStkTrunc()
     Arg1->l.y = signy*Arg1->l.y;
 }
 
-void (*StkTrunc)(){dStkTrunc};
+FunctionPtr StkTrunc{dStkTrunc};
 
 void dStkRound()
 {
@@ -756,7 +759,7 @@ void lStkRound()
     lStkFloor();
 }
 
-void (*StkRound)(){dStkRound};
+FunctionPtr StkRound{dStkRound};
 
 void dStkZero()
 {
@@ -778,7 +781,7 @@ void lStkZero()
     Arg1->l.y = Arg1->l.x;
 }
 
-void (*StkZero)(){dStkZero};
+FunctionPtr StkZero{dStkZero};
 
 void dStkOne()
 {
@@ -797,7 +800,7 @@ void lStkOne()
     Arg1->l.y = 0L;
 }
 
-void (*StkOne)(){dStkOne};
+FunctionPtr StkOne{dStkOne};
 
 void dStkReal()
 {
@@ -815,7 +818,7 @@ void lStkReal()
     Arg1->l.y = 0l;
 }
 
-void (*StkReal)(){dStkReal};
+FunctionPtr StkReal{dStkReal};
 
 void dStkImag()
 {
@@ -836,7 +839,7 @@ void lStkImag()
     Arg1->l.y = 0l;
 }
 
-void (*StkImag)(){dStkImag};
+FunctionPtr StkImag{dStkImag};
 
 void dStkNeg()
 {
@@ -856,7 +859,7 @@ void lStkNeg()
     Arg1->l.y = -Arg1->l.y;
 }
 
-void (*StkNeg)(){dStkNeg};
+FunctionPtr StkNeg{dStkNeg};
 
 void dStkMul()
 {
@@ -887,7 +890,7 @@ void lStkMul()
     Arg2--;
 }
 
-void (*StkMul)(){dStkMul};
+FunctionPtr StkMul{dStkMul};
 
 void dStkDiv()
 {
@@ -923,7 +926,7 @@ void lStkDiv()
     Arg2--;
 }
 
-void (*StkDiv)(){dStkDiv};
+FunctionPtr StkDiv{dStkDiv};
 
 void dStkMod()
 {
@@ -962,7 +965,7 @@ void lStkModOld()
     Arg1->l.y = 0L;
 }
 
-void (*StkMod)(){dStkMod};
+FunctionPtr StkMod{dStkMod};
 
 void StkSto()
 {
@@ -970,7 +973,7 @@ void StkSto()
     *Store[g_store_index++] = *Arg1;
 }
 
-void (*PtrStkSto)(){StkSto};
+FunctionPtr PtrStkSto{StkSto};
 
 void StkLod()
 {
@@ -987,7 +990,7 @@ void StkClr()
     Arg2--;
 }
 
-void (*PtrStkClr)(){StkClr};
+FunctionPtr PtrStkClr{StkClr};
 
 void dStkFlip()
 {
@@ -1016,7 +1019,7 @@ void lStkFlip()
     Arg1->l.y = t;
 }
 
-void (*StkFlip)(){dStkFlip};
+FunctionPtr StkFlip{dStkFlip};
 
 void dStkSin()
 {
@@ -1052,7 +1055,7 @@ void lStkSin()
     Arg1->l.y = multiply(cosx, sinhy, ShiftBack);
 }
 
-void (*StkSin)(){dStkSin};
+FunctionPtr StkSin{dStkSin};
 
 /* The following functions are supported by both the parser and for fn
    variable replacement.
@@ -1100,7 +1103,7 @@ void lStkTan()
     Arg1->l.y = divide(sinhy, denom, g_bit_shift);
 }
 
-void (*StkTan)(){dStkTan};
+FunctionPtr StkTan{dStkTan};
 
 void dStkTanh()
 {
@@ -1145,7 +1148,7 @@ void lStkTanh()
     Arg1->l.y = divide(siny, denom, g_bit_shift);
 }
 
-void (*StkTanh)(){dStkTanh};
+FunctionPtr StkTanh{dStkTanh};
 
 void dStkCoTan()
 {
@@ -1190,7 +1193,7 @@ void lStkCoTan()
     Arg1->l.y = -divide(sinhy, denom, g_bit_shift);
 }
 
-void (*StkCoTan)(){dStkCoTan};
+FunctionPtr StkCoTan{dStkCoTan};
 
 void dStkCoTanh()
 {
@@ -1235,7 +1238,7 @@ void lStkCoTanh()
     Arg1->l.y = -divide(siny, denom, g_bit_shift);
 }
 
-void (*StkCoTanh)(){dStkCoTanh};
+FunctionPtr StkCoTanh{dStkCoTanh};
 
 /* The following functions are not directly used by the parser - support
    for the parser was not provided because the existing parser language
@@ -1317,7 +1320,7 @@ void lStkSinh()
     Arg1->l.y = multiply(siny, coshx, ShiftBack);
 }
 
-void (*StkSinh)(){dStkSinh};
+FunctionPtr StkSinh{dStkSinh};
 
 void dStkCos()
 {
@@ -1354,7 +1357,7 @@ void lStkCos()
     Arg1->l.y = -multiply(sinx, sinhy, ShiftBack);
 }
 
-void (*StkCos)(){dStkCos};
+FunctionPtr StkCos{dStkCos};
 
 // Bogus version of cos, to replicate bug which was in regular cos till v16:
 
@@ -1375,7 +1378,7 @@ void lStkCosXX()
     Arg1->l.y = -Arg1->l.y;
 }
 
-void (*StkCosXX)(){dStkCosXX};
+FunctionPtr StkCosXX{dStkCosXX};
 
 void dStkCosh()
 {
@@ -1412,7 +1415,7 @@ void lStkCosh()
     Arg1->l.y = multiply(siny, sinhx, ShiftBack);
 }
 
-void (*StkCosh)(){dStkCosh};
+FunctionPtr StkCosh{dStkCosh};
 
 void dStkASin()
 {
@@ -1429,7 +1432,7 @@ void lStkASin()
     lStkFunct(dStkASin);
 }
 
-void (*StkASin)(){dStkASin};
+FunctionPtr StkASin{dStkASin};
 
 void dStkASinh()
 {
@@ -1446,7 +1449,7 @@ void lStkASinh()
     lStkFunct(dStkASinh);
 }
 
-void (*StkASinh)(){dStkASinh};
+FunctionPtr StkASinh{dStkASinh};
 
 void dStkACos()
 {
@@ -1463,7 +1466,7 @@ void lStkACos()
     lStkFunct(dStkACos);
 }
 
-void (*StkACos)(){dStkACos};
+FunctionPtr StkACos{dStkACos};
 
 void dStkACosh()
 {
@@ -1480,7 +1483,7 @@ void lStkACosh()
     lStkFunct(dStkACosh);
 }
 
-void (*StkACosh)(){dStkACosh};
+FunctionPtr StkACosh{dStkACosh};
 
 void dStkATan()
 {
@@ -1497,7 +1500,7 @@ void lStkATan()
     lStkFunct(dStkATan);
 }
 
-void (*StkATan)(){dStkATan};
+FunctionPtr StkATan{dStkATan};
 
 void dStkATanh()
 {
@@ -1514,7 +1517,7 @@ void lStkATanh()
     lStkFunct(dStkATanh);
 }
 
-void (*StkATanh)(){dStkATanh};
+FunctionPtr StkATanh{dStkATanh};
 
 void dStkSqrt()
 {
@@ -1532,7 +1535,7 @@ void lStkSqrt()
     Arg1->l = ComplexSqrtLong(Arg1->l.x, Arg1->l.y);
 }
 
-void (*StkSqrt)(){dStkSqrt};
+FunctionPtr StkSqrt{dStkSqrt};
 
 void dStkCAbs()
 {
@@ -1550,7 +1553,7 @@ void lStkCAbs()
     lStkFunct(dStkCAbs);
 }
 
-void (*StkCAbs)(){dStkCAbs};
+FunctionPtr StkCAbs{dStkCAbs};
 
 void dStkLT()
 {
@@ -1577,7 +1580,7 @@ void lStkLT()
     Arg2--;
 }
 
-void (*StkLT)(){dStkLT};
+FunctionPtr StkLT{dStkLT};
 
 void dStkGT()
 {
@@ -1604,7 +1607,7 @@ void lStkGT()
     Arg2--;
 }
 
-void (*StkGT)(){dStkGT};
+FunctionPtr StkGT{dStkGT};
 
 void dStkLTE()
 {
@@ -1634,7 +1637,7 @@ void lStkLTE()
     Arg2--;
 }
 
-void (*StkLTE)(){dStkLTE};
+FunctionPtr StkLTE{dStkLTE};
 
 void dStkGTE()
 {
@@ -1664,7 +1667,7 @@ void lStkGTE()
     Arg2--;
 }
 
-void (*StkGTE)(){dStkGTE};
+FunctionPtr StkGTE{dStkGTE};
 
 void dStkEQ()
 {
@@ -1694,7 +1697,7 @@ void lStkEQ()
     Arg2--;
 }
 
-void (*StkEQ)(){dStkEQ};
+FunctionPtr StkEQ{dStkEQ};
 
 void dStkNE()
 {
@@ -1724,7 +1727,7 @@ void lStkNE()
     Arg2--;
 }
 
-void (*StkNE)(){dStkNE};
+FunctionPtr StkNE{dStkNE};
 
 void dStkOR()
 {
@@ -1751,7 +1754,7 @@ void lStkOR()
     Arg2--;
 }
 
-void (*StkOR)(){dStkOR};
+FunctionPtr StkOR{dStkOR};
 
 void dStkAND()
 {
@@ -1778,7 +1781,7 @@ void lStkAND()
     Arg2--;
 }
 
-void (*StkAND)(){dStkAND};
+FunctionPtr StkAND{dStkAND};
 
 void dStkLog()
 {
@@ -1795,7 +1798,7 @@ void lStkLog()
     lStkFunct(dStkLog);
 }
 
-void (*StkLog)(){dStkLog};
+FunctionPtr StkLog{dStkLog};
 
 void FPUcplxexp(const DComplex *x, DComplex *z)
 {
@@ -1822,7 +1825,7 @@ void lStkExp()
     lStkFunct(dStkExp);
 }
 
-void (*StkExp)(){dStkExp};
+FunctionPtr StkExp{dStkExp};
 
 void dStkPwr()
 {
@@ -1867,7 +1870,7 @@ void lStkPwr()
     Arg2--;
 }
 
-void (*StkPwr)(){dStkPwr};
+FunctionPtr StkPwr{dStkPwr};
 
 void EndInit()
 {
@@ -1875,7 +1878,7 @@ void EndInit()
     s_init_jump_index = jump_index;
 }
 
-void (*PtrEndInit)(){EndInit};
+FunctionPtr PtrEndInit{EndInit};
 
 void StkJump()
 {
@@ -1921,7 +1924,7 @@ void lStkJumpOnFalse()
     }
 }
 
-void (*StkJumpOnFalse)(){dStkJumpOnFalse};
+FunctionPtr StkJumpOnFalse{dStkJumpOnFalse};
 
 void dStkJumpOnTrue()
 {
@@ -1959,7 +1962,7 @@ void lStkJumpOnTrue()
     }
 }
 
-void (*StkJumpOnTrue)(){dStkJumpOnTrue};
+FunctionPtr StkJumpOnTrue{dStkJumpOnTrue};
 
 void StkJumpLabel()
 {
@@ -2148,7 +2151,7 @@ namespace
 struct FNCT_LIST
 {
     char const *s;
-    void (**ptr)();
+    FunctionPtr *ptr;
 };
 
 } // namespace
@@ -2161,10 +2164,10 @@ static constexpr std::array<char const *, 4> s_jump_list
     "endif"
 };
 
-void (*StkTrig0)(){dStkSin};
-void (*StkTrig1)(){dStkSqr};
-void (*StkTrig2)(){dStkSinh};
-void (*StkTrig3)(){dStkCosh};
+FunctionPtr StkTrig0{dStkSin};
+FunctionPtr StkTrig1{dStkSqr};
+FunctionPtr StkTrig2{dStkSinh};
+FunctionPtr StkTrig3{dStkCosh};
 
 /* return values
     0 - Not a jump
@@ -2278,7 +2281,7 @@ static int whichfn(char const *s, int len)
     return out;
 }
 
-static void (*isfunct(char const *Str, int Len))()
+static FunctionPtr isfunct(char const *Str, int Len)
 {
     unsigned n = SkipWhiteSpace(&Str[Len]);
     if (Str[Len+n] == '(')
@@ -2368,7 +2371,7 @@ static SYMETRY SymStr[] =
     { "",              symmetry_type::NONE }
 };
 
-inline void push_pending_op(void (*f)(), int p)
+inline void push_pending_op(FunctionPtr f, int p)
 {
     o.push_back(PEND_OP{f, p});
     ++g_operation_index;
@@ -2756,7 +2759,7 @@ static bool ParseStr(char const *Str, int pass)
         case '<':
             s_expecting_arg = true;
             {
-                void (*fn)();
+                FunctionPtr fn;
                 if (Str[s_n + 1] == '=')
                 {
                     s_n++;
@@ -2772,7 +2775,7 @@ static bool ParseStr(char const *Str, int pass)
         case '>':
             s_expecting_arg = true;
             {
-                void (*fn)();
+                FunctionPtr fn;
                 if (Str[s_n + 1] == '=')
                 {
                     s_n++;
@@ -2853,7 +2856,7 @@ static bool ParseStr(char const *Str, int pass)
             }
             else
             {
-                if (const auto fn = isfunct(&Str[InitN], Len); fn != NotAFnct)
+                if (const FunctionPtr fn = isfunct(&Str[InitN], Len); fn != NotAFnct)
                 {
                     push_pending_op(fn,  1 - (paren + Equals)*15);
                     s_expecting_arg = true;
@@ -3123,7 +3126,7 @@ static bool fill_jump_struct()
     int loadcount = 0;
     int storecount = 0;
     bool checkforelse = false;
-    void (*JumpFunc)() = nullptr;
+    FunctionPtr JumpFunc = nullptr;
     bool find_new_func = true;
 
     std::vector<JUMP_PTRS_ST> jump_data;
