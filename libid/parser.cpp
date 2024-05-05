@@ -2228,7 +2228,7 @@ static constexpr std::array<FNCT_LIST, 34> s_func_list
     FNCT_LIST{"round", &StkRound},
 };
 
-static char const *s_op_list[] =
+static std::array<char const *, 17> s_op_list
 {
     ",",    //  0
     "!=",   //  1
@@ -3764,9 +3764,9 @@ CASE_TERMINATOR:
         this_token->token_str[i] = (char) 0;
         if (this_token->token_type == OPERATOR)
         {
-            for (int j = 0; j < sizeof(s_op_list)/sizeof(s_op_list[0]); j++)
+            for (int j = 0; j < static_cast<int>(s_op_list.size()); j++)
             {
-                if (!std::strcmp(s_op_list[j], this_token->token_str))
+                if (std::strcmp(s_op_list[j], this_token->token_str) == 0)
                 {
                     this_token->token_id = j;
                     break;
