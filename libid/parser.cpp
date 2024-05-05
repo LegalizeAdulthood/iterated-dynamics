@@ -2191,7 +2191,7 @@ int isjump(char const *Str, int Len)
 
 char g_max_function{};
 
-static FNCT_LIST FnctList[] =
+static FNCT_LIST s_func_list[] =
 {
     {"sin",   &StkSin},
     {"sinh",  &StkSinh},
@@ -2287,11 +2287,11 @@ static void (*isfunct(char const *Str, int Len))()
     unsigned n = SkipWhiteSpace(&Str[Len]);
     if (Str[Len+n] == '(')
     {
-        for (n = 0; n < sizeof(FnctList)/sizeof(FNCT_LIST); n++)
+        for (n = 0; n < sizeof(s_func_list)/sizeof(FNCT_LIST); n++)
         {
-            if ((int) std::strlen(FnctList[n].s) == Len)
+            if ((int) std::strlen(s_func_list[n].s) == Len)
             {
-                if (!strnicmp(FnctList[n].s, Str, Len))
+                if (!strnicmp(s_func_list[n].s, Str, Len))
                 {
                     // count function variables
                     int functnum = whichfn(Str, Len);
@@ -2302,7 +2302,7 @@ static void (*isfunct(char const *Str, int Len))()
                             g_max_function = (char)functnum;
                         }
                     }
-                    return *FnctList[n].ptr;
+                    return *s_func_list[n].ptr;
                 }
             }
         }
@@ -3255,9 +3255,9 @@ int frmgetchar(std::FILE * openfile)
 
 void getfuncinfo(token_st * tok)
 {
-    for (int i = 0; i < sizeof(FnctList)/sizeof(FNCT_LIST); i++)
+    for (int i = 0; i < sizeof(s_func_list)/sizeof(FNCT_LIST); i++)
     {
-        if (!std::strcmp(FnctList[i].s, tok->token_str))
+        if (!std::strcmp(s_func_list[i].s, tok->token_str))
         {
             tok->token_id = i;
             if (i >= 11 && i <= 14)
