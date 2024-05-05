@@ -126,7 +126,7 @@ OLD_FN dStkJumpOnTrue;
 OLD_FN dStkJumpOnFalse;
 OLD_FN dStkOne;
 
-typedef void (NEW_FN)();   // new 387-only ASM functions
+typedef void NEW_FN();   // new 387-only ASM functions
 
 NEW_FN fStkPull2;  // pull up fpu stack from 2 to 4
 NEW_FN fStkPush2;  // push down fpu stack from 8 to 6
