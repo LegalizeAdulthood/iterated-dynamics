@@ -219,7 +219,7 @@ unsigned int g_last_op{};
 static unsigned int s_n{};
 static unsigned int NextOp{};
 static unsigned int InitN{};
-static int paren{};
+static int s_paren{};
 static bool s_expecting_arg{};
 int InitLodPtr{};
 int InitStoPtr{};
@@ -2670,7 +2670,7 @@ static bool ParseStr(char const *Str, int pass)
     g_store_index = 0;
     g_load_index = 0;
     OpPtr = 0;
-    paren = 0;
+    s_paren = 0;
     g_last_init_op = 0;
     s_expecting_arg = true;
     for (s_n = 0; Str[s_n]; s_n++)
@@ -2688,29 +2688,29 @@ static bool ParseStr(char const *Str, int pass)
         case '\n':
             break;
         case '(':
-            paren++;
+            s_paren++;
             break;
         case ')':
-            paren--;
+            s_paren--;
             break;
         case '|':
             if (Str[s_n+1] == '|')
             {
                 s_expecting_arg = true;
                 s_n++;
-                push_pending_op(StkOR, 7 - (paren + Equals) * 15);
+                push_pending_op(StkOR, 7 - (s_paren + Equals) * 15);
             }
-            else if (ModFlag == paren-1)
+            else if (ModFlag == s_paren-1)
             {
-                paren--;
+                s_paren--;
                 ModFlag = Mods[--mdstk];
             }
             else
             {
                 assert(mdstk < Mods.size());
                 Mods[mdstk++] = ModFlag;
-                push_pending_op(StkMod, 2 - (paren + Equals) * 15);
-                ModFlag = paren++;
+                push_pending_op(StkMod, 2 - (s_paren + Equals) * 15);
+                ModFlag = s_paren++;
             }
             break;
         case ',':
@@ -2720,42 +2720,42 @@ static bool ParseStr(char const *Str, int pass)
                 s_expecting_arg = true;
                 push_pending_op(nullptr, 15);
                 push_pending_op(StkClr, -30000);
-                paren = 0;
-                Equals = paren;
+                s_paren = 0;
+                Equals = s_paren;
             }
             break;
         case ':':
             s_expecting_arg = true;
             push_pending_op(nullptr, 15);
             push_pending_op(EndInit, -30000);
-            paren = 0;
-            Equals = paren;
+            s_paren = 0;
+            Equals = s_paren;
             g_last_init_op = 10000;
             break;
         case '+':
             s_expecting_arg = true;
-            push_pending_op(StkAdd, 4 - (paren + Equals)*15);
+            push_pending_op(StkAdd, 4 - (s_paren + Equals)*15);
             break;
         case '-':
             if (s_expecting_arg)
             {
-                push_pending_op(StkNeg, 2 - (paren + Equals)*15);
+                push_pending_op(StkNeg, 2 - (s_paren + Equals)*15);
             }
             else
             {
-                push_pending_op(StkSub, 4 - (paren + Equals)*15);
+                push_pending_op(StkSub, 4 - (s_paren + Equals)*15);
                 s_expecting_arg = true;
             }
             break;
         case '&':
             s_expecting_arg = true;
             s_n++;
-            push_pending_op(StkAND, 7 - (paren + Equals)*15);
+            push_pending_op(StkAND, 7 - (s_paren + Equals)*15);
             break;
         case '!':
             s_expecting_arg = true;
             s_n++;
-            push_pending_op(StkNE, 6 - (paren + Equals)*15);
+            push_pending_op(StkNE, 6 - (s_paren + Equals)*15);
             break;
         case '<':
             s_expecting_arg = true;
@@ -2770,7 +2770,7 @@ static bool ParseStr(char const *Str, int pass)
                 {
                     fn = StkLT;
                 }
-                push_pending_op(fn, 6 - (paren + Equals) * 15);
+                push_pending_op(fn, 6 - (s_paren + Equals) * 15);
             }
             break;
         case '>':
@@ -2786,32 +2786,32 @@ static bool ParseStr(char const *Str, int pass)
                 {
                     fn = StkGT;
                 }
-                push_pending_op(fn, 6 - (paren + Equals) * 15);
+                push_pending_op(fn, 6 - (s_paren + Equals) * 15);
             }
             break;
         case '*':
             s_expecting_arg = true;
-            push_pending_op(StkMul, 3 - (paren + Equals)*15);
+            push_pending_op(StkMul, 3 - (s_paren + Equals)*15);
             break;
         case '/':
             s_expecting_arg = true;
-            push_pending_op(StkDiv, 3 - (paren + Equals)*15);
+            push_pending_op(StkDiv, 3 - (s_paren + Equals)*15);
             break;
         case '^':
             s_expecting_arg = true;
-            push_pending_op(StkPwr, 2 - (paren + Equals)*15);
+            push_pending_op(StkPwr, 2 - (s_paren + Equals)*15);
             break;
         case '=':
             s_expecting_arg = true;
             if (Str[s_n+1] == '=')
             {
                 s_n++;
-                push_pending_op(StkEQ, 6 - (paren + Equals)*15);
+                push_pending_op(StkEQ, 6 - (s_paren + Equals)*15);
             }
             else
             {
                 o[g_operation_index-1].f = StkSto;
-                o[g_operation_index-1].p = 5 - (paren + Equals)*15;
+                o[g_operation_index-1].p = 5 - (s_paren + Equals)*15;
                 Store[g_store_index++] = Load[--g_load_index];
                 Equals++;
             }
@@ -2859,14 +2859,14 @@ static bool ParseStr(char const *Str, int pass)
             {
                 if (const FunctionPtr fn = is_func(&Str[InitN], Len); fn != NotAFnct)
                 {
-                    push_pending_op(fn,  1 - (paren + Equals)*15);
+                    push_pending_op(fn,  1 - (s_paren + Equals)*15);
                     s_expecting_arg = true;
                 }
                 else
                 {
                     c = is_const(&Str[InitN], Len);
                     Load[g_load_index++] = &(c->a);
-                    push_pending_op(StkLod, 1 - (paren + Equals)*15);
+                    push_pending_op(StkLod, 1 - (s_paren + Equals)*15);
                     s_n = InitN + c->len - 1;
                 }
             }
@@ -4479,7 +4479,7 @@ bool frm_prescan(std::FILE * open_file)
     s_num_ops = 0UL;
     s_chars_in_formula = 0U;
     g_uses_jump = false;
-    paren = 0;
+    s_paren = 0;
 
     statement_pos = ftell(open_file);
     orig_pos = statement_pos;
@@ -4589,7 +4589,7 @@ bool frm_prescan(std::FILE * open_file)
             switch (this_token.token_id)
             {
             case OPEN_PARENS:
-                if (++paren > max_parens)
+                if (++s_paren > max_parens)
                 {
                     if (!errors_found || errors[errors_found-1].start_pos != statement_pos)
                     {
@@ -4610,9 +4610,9 @@ bool frm_prescan(std::FILE * open_file)
                 waiting_for_mod = waiting_for_mod << 1;
                 break;
             case CLOSE_PARENS:
-                if (paren)
+                if (s_paren)
                 {
-                    paren--;
+                    s_paren--;
                 }
                 else
                 {
@@ -4622,7 +4622,7 @@ bool frm_prescan(std::FILE * open_file)
                         errors[errors_found].error_pos      = filepos;
                         errors[errors_found++].error_number = PE_NEED_A_MATCHING_OPEN_PARENS;
                     }
-                    paren = 0;
+                    s_paren = 0;
                 }
                 if (waiting_for_mod & 1L)
                 {
@@ -4969,7 +4969,7 @@ bool frm_prescan(std::FILE * open_file)
             case 0:
             case 11:    // end of statement and :
                 s_num_ops++; // ParseStr inserts a dummy op
-                if (paren)
+                if (s_paren)
                 {
                     if (!errors_found || errors[errors_found-1].start_pos != statement_pos)
                     {
@@ -4977,7 +4977,7 @@ bool frm_prescan(std::FILE * open_file)
                         errors[errors_found].error_pos      = filepos;
                         errors[errors_found++].error_number = PE_NEED_MORE_CLOSE_PARENS;
                     }
-                    paren = 0;
+                    s_paren = 0;
                 }
                 if (waiting_for_mod)
                 {
@@ -5259,7 +5259,7 @@ bool frm_prescan(std::FILE * open_file)
             break;
         case END_OF_FORMULA:
             s_num_ops += 3; // Just need one, but a couple of extra just for the heck of it
-            if (paren)
+            if (s_paren)
             {
                 if (!errors_found || errors[errors_found-1].start_pos != statement_pos)
                 {
@@ -5267,7 +5267,7 @@ bool frm_prescan(std::FILE * open_file)
                     errors[errors_found].error_pos      = filepos;
                     errors[errors_found++].error_number = PE_NEED_MORE_CLOSE_PARENS;
                 }
-                paren = 0;
+                s_paren = 0;
             }
             if (waiting_for_mod)
             {
