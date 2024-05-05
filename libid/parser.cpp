@@ -4318,30 +4318,21 @@ void init_misc()
 
 static void parser_allocate()
 {
-    for (int pass = 0; pass < 2; pass++)
+    free_workarea();
+    g_max_function_ops = 2300;
+    g_max_function_args = (unsigned)(g_max_function_ops/2.5);
+
+    f.reserve(g_max_function_ops);
+    Store.resize(MAX_STORES);
+    Load.resize(MAX_LOADS);
+    v.resize(g_max_function_args);
+    g_function_operands.resize(g_max_function_ops);
+
+    if (!ParseStr(s_formula.c_str()))
     {
-        free_workarea();
-        if (pass == 0)
-        {
-            g_max_function_ops = 2300;
-            g_max_function_args = (unsigned)(g_max_function_ops/2.5);
-        }
-
-        f.reserve(g_max_function_ops);
-        Store.resize(MAX_STORES);
-        Load.resize(MAX_LOADS);
-        v.resize(g_max_function_args);
-        g_function_operands.resize(g_max_function_ops);
-
-        if (pass == 0)
-        {
-            if (!ParseStr(s_formula.c_str()))
-            {
-                // per Chuck Ebbert, fudge these up a little
-                g_max_function_ops = g_operation_index + 4;
-                g_max_function_args = g_variable_index + 4;
-            }
-        }
+        // per Chuck Ebbert, fudge these up a little
+        g_max_function_ops = g_operation_index + 4;
+        g_max_function_args = g_variable_index + 4;
     }
     g_frm_uses_p1 = false;
     g_frm_uses_p2 = false;
