@@ -3793,6 +3793,7 @@ CASE_TERMINATOR:
                 if (!std::strcmp(OPList[j], this_token->token_str))
                 {
                     this_token->token_id = j;
+                    break;
                 }
             }
         }
