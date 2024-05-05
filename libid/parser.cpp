@@ -2513,6 +2513,8 @@ static bool parse_formula_text(char const *text)
     s_randomized = false;
     g_uses_jump = false;
     g_jump_index = 0;
+    g_jump_control.clear();
+
     switch (MathType)
     {
     case D_MATH:
@@ -3248,30 +3250,33 @@ static bool fill_jump_struct()
     {
         if (find_new_func)
         {
-            switch (g_jump_control[i].type)
+            if (i < static_cast<int>(g_jump_control.size()))
             {
-            case jump_control_type::IF:
-                JumpFunc = StkJumpOnFalse;
-                break;
-            case jump_control_type::ELSE_IF:
-                checkforelse = !checkforelse;
-                if (checkforelse)
+                switch (g_jump_control[i].type)
                 {
-                    JumpFunc = StkJump;
-                }
-                else
-                {
+                case jump_control_type::IF:
                     JumpFunc = StkJumpOnFalse;
+                    break;
+                case jump_control_type::ELSE_IF:
+                    checkforelse = !checkforelse;
+                    if (checkforelse)
+                    {
+                        JumpFunc = StkJump;
+                    }
+                    else
+                    {
+                        JumpFunc = StkJumpOnFalse;
+                    }
+                    break;
+                case jump_control_type::ELSE:
+                    JumpFunc = StkJump;
+                    break;
+                case jump_control_type::END_IF:
+                    JumpFunc = StkJumpLabel;
+                    break;
+                default:
+                    break;
                 }
-                break;
-            case jump_control_type::ELSE:
-                JumpFunc = StkJump;
-                break;
-            case jump_control_type::END_IF:
-                JumpFunc = StkJumpLabel;
-                break;
-            default:
-                break;
             }
             find_new_func = false;
         }
