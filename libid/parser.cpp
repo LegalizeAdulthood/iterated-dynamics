@@ -149,7 +149,7 @@ static bool frm_prescan(std::FILE * open_file);
                         case '9'
 
 // token_type definitions
-enum
+enum class token_type
 {
     NOT_A_TOKEN = 0,
     PARENS = 1,
@@ -185,7 +185,7 @@ enum
 struct token_st
 {
     char str[80];
-    int type;
+    token_type type;
     int id;
     DComplex constant;
 };
@@ -3285,11 +3285,11 @@ static void getfuncinfo(token_st * tok)
             tok->id = i;
             if (i >= 11 && i <= 14)
             {
-                tok->type = PARAM_FUNCTION;
+                tok->type = token_type::PARAM_FUNCTION;
             }
             else
             {
-                tok->type = FUNCTION;
+                tok->type = token_type::FUNCTION;
             }
             return;
         }
@@ -3299,12 +3299,12 @@ static void getfuncinfo(token_st * tok)
     {
         if (std::strcmp(s_jump_list[i], tok->str) == 0)
         {
-            tok->type = FLOW_CONTROL;
+            tok->type = token_type::FLOW_CONTROL;
             tok->id   = i + 1;
             return;
         }
     }
-    tok->type = NOT_A_TOKEN;
+    tok->type = token_type::NOT_A_TOKEN;
     tok->id   = UNDEFINED_FUNCTION;
 }
 
@@ -3323,16 +3323,16 @@ static void getvarinfo(token_st * tok)
             case 13:
             case 17:
             case 18:
-                tok->type = PARAM_VARIABLE;
+                tok->type = token_type::PARAM_VARIABLE;
                 break;
             default:
-                tok->type = PREDEFINED_VARIABLE;
+                tok->type = token_type::PREDEFINED_VARIABLE;
                 break;
             }
             return;
         }
     }
-    tok->type = USER_NAMED_VARIABLE;
+    tok->type = token_type::USER_NAMED_VARIABLE;
     tok->id   = 0;
 }
 
@@ -3363,10 +3363,10 @@ static bool frmgetconstant(std::FILE * openfile, token_st * tok)
         case EOF:
         case '\032':
             tok->str[i] = (char) 0;
-            tok->type = NOT_A_TOKEN;
+            tok->type = token_type::NOT_A_TOKEN;
             tok->id   = END_OF_FILE;
             return false;
-CASE_NUM:
+        CASE_NUM:
             tok->str[i++] = (char) c;
             filepos = ftell(openfile);
             break;
@@ -3375,7 +3375,7 @@ CASE_NUM:
             {
                 tok->str[i++] = (char) c;
                 tok->str[i++] = (char) 0;
-                tok->type = NOT_A_TOKEN;
+                tok->type = token_type::NOT_A_TOKEN;
                 tok->id = ILL_FORMED_CONSTANT;
                 return false;
             }
@@ -3405,7 +3405,7 @@ CASE_NUM:
             {
                 tok->str[i++] = (char) c;
                 tok->str[i++] = (char) 0;
-                tok->type = NOT_A_TOKEN;
+                tok->type = token_type::NOT_A_TOKEN;
                 tok->id = ILL_FORMED_CONSTANT;
                 return false;
             }
@@ -3413,7 +3413,7 @@ CASE_NUM:
             {
                 tok->str[i++] = (char) c;
                 tok->str[i++] = (char) 0;
-                tok->type = NOT_A_TOKEN;
+                tok->type = token_type::NOT_A_TOKEN;
                 tok->id = ILL_FORMED_CONSTANT;
                 return false;
             }
@@ -3428,13 +3428,13 @@ CASE_NUM:
         if (i == 33 && tok->str[32])
         {
             tok->str[33] = (char) 0;
-            tok->type = NOT_A_TOKEN;
+            tok->type = token_type::NOT_A_TOKEN;
             tok->id = TOKEN_TOO_LONG;
             return false;
         }
     }    // end of while loop. Now fill in the value
     tok->constant.x = std::atof(tok->str);
-    tok->type = REAL_CONSTANT;
+    tok->type = token_type::REAL_CONSTANT;
     tok->id   = 0;
     return true;
 }
@@ -3534,11 +3534,11 @@ CASE_NUM :
                 std::strcat(tok->str, temp_tok.str);
                 std::strcat(tok->str, ")");
                 tok->constant.y = temp_tok.constant.x * sign_value;
-                tok->type = tok->constant.y ? COMPLEX_CONSTANT : REAL_CONSTANT;
+                tok->type = tok->constant.y ? token_type::COMPLEX_CONSTANT : token_type::REAL_CONSTANT;
                 tok->id   = 0;
                 if (debug_token != nullptr)
                 {
-                    std::fprintf(debug_token,  "Exiting with type set to %d\n", tok->constant.y ? COMPLEX_CONSTANT : REAL_CONSTANT);
+                    std::fprintf(debug_token,  "Exiting with type set to %d\n", tok->constant.y ? token_type::COMPLEX_CONSTANT : token_type::REAL_CONSTANT);
                     std::fclose(debug_token);
                 }
                 return;
@@ -3557,7 +3557,7 @@ CASE_NUM :
     tok->str[1] = (char) 0;
     tok->constant.x = 0.0;
     tok->constant.y = tok->constant.x;
-    tok->type = PARENS;
+    tok->type = token_type::PARENS;
     tok->id = OPEN_PARENS;
     if (debug_token != nullptr)
     {
@@ -3598,7 +3598,7 @@ CASE_NUM:
         default:
             if (c == '.')       // illegal character in variable or func name
             {
-                tok->type = NOT_A_TOKEN;
+                tok->type = token_type::NOT_A_TOKEN;
                 tok->id   = ILLEGAL_VARIABLE_NAME;
                 tok->str[i++] = '.';
                 tok->str[i] = (char) 0;
@@ -3606,7 +3606,7 @@ CASE_NUM:
             }
             else if (var_name_too_long)
             {
-                tok->type = NOT_A_TOKEN;
+                tok->type = token_type::NOT_A_TOKEN;
                 tok->id   = TOKEN_TOO_LONG;
                 tok->str[i] = (char) 0;
                 fseek(openfile, last_filepos, SEEK_SET);
@@ -3617,38 +3617,38 @@ CASE_NUM:
             getfuncinfo(tok);
             if (c == '(') //getfuncinfo() correctly filled structure
             {
-                if (tok->type == NOT_A_TOKEN)
+                if (tok->type == token_type::NOT_A_TOKEN)
                 {
                     return false;
                 }
-                if (tok->type == FLOW_CONTROL && (tok->id == 3 || tok->id == 4))
+                if (tok->type == token_type::FLOW_CONTROL && (tok->id == 3 || tok->id == 4))
                 {
-                    tok->type = NOT_A_TOKEN;
+                    tok->type = token_type::NOT_A_TOKEN;
                     tok->id   = JUMP_WITH_ILLEGAL_CHAR;
                     return false;
                 }
                 return true;
             }
             //can't use function names as variables
-            if (tok->type == FUNCTION || tok->type == PARAM_FUNCTION)
+            if (tok->type == token_type::FUNCTION || tok->type == token_type::PARAM_FUNCTION)
             {
-                tok->type = NOT_A_TOKEN;
+                tok->type = token_type::NOT_A_TOKEN;
                 tok->id   = FUNC_USED_AS_VAR;
                 return false;
             }
-            if (tok->type == FLOW_CONTROL && (tok->id == 1 || tok->id == 2))
+            if (tok->type == token_type::FLOW_CONTROL && (tok->id == 1 || tok->id == 2))
             {
-                tok->type = NOT_A_TOKEN;
+                tok->type = token_type::NOT_A_TOKEN;
                 tok->id   = JUMP_MISSING_BOOLEAN;
                 return false;
             }
-            if (tok->type == FLOW_CONTROL && (tok->id == 3 || tok->id == 4))
+            if (tok->type == token_type::FLOW_CONTROL && (tok->id == 3 || tok->id == 4))
             {
                 if (c == ',' || c == '\n' || c == ':')
                 {
                     return true;
                 }
-                tok->type = NOT_A_TOKEN;
+                tok->type = token_type::NOT_A_TOKEN;
                 tok->id   = JUMP_WITH_ILLEGAL_CHAR;
                 return false;
             }
@@ -3657,7 +3657,7 @@ CASE_NUM:
         }
     }
     tok->str[0] = (char) 0;
-    tok->type = NOT_A_TOKEN;
+    tok->type = token_type::NOT_A_TOKEN;
     tok->id   = END_OF_FILE;
     return false;
 }
@@ -3678,7 +3678,7 @@ static void frm_get_eos(std::FILE * openfile, token_st * this_token)
     if (c == '}')
     {
         this_token->str[0] = '}';
-        this_token->type = END_OF_FORMULA;
+        this_token->type = token_type::END_OF_FORMULA;
         this_token->id   = 0;
     }
     else
@@ -3711,7 +3711,7 @@ CASE_ALPHA:
         this_token->str[0] = (char) c;
         return frmgetalpha(openfile, this_token);
 CASE_TERMINATOR:
-        this_token->type = OPERATOR; // this may be changed below
+        this_token->type = token_type::OPERATOR; // this may be changed below
         this_token->str[0] = (char) c;
         filepos = ftell(openfile);
         if (c == '<' || c == '>' || c == '=')
@@ -3737,7 +3737,7 @@ CASE_TERMINATOR:
             {
                 std::fseek(openfile, filepos, SEEK_SET);
                 this_token->str[1] = (char) 0;
-                this_token->type = NOT_A_TOKEN;
+                this_token->type = token_type::NOT_A_TOKEN;
                 this_token->id = ILLEGAL_OPERATOR;
                 return false;
             }
@@ -3765,14 +3765,14 @@ CASE_TERMINATOR:
             {
                 std::fseek(openfile, filepos, SEEK_SET);
                 this_token->str[1] = (char) 0;
-                this_token->type = NOT_A_TOKEN;
+                this_token->type = token_type::NOT_A_TOKEN;
                 this_token->id = ILLEGAL_OPERATOR;
                 return false;
             }
         }
         else if (this_token->str[0] == '}')
         {
-            this_token->type = END_OF_FORMULA;
+            this_token->type = token_type::END_OF_FORMULA;
             this_token->id   = 0;
         }
         else if (this_token->str[0] == '\n'
@@ -3783,7 +3783,7 @@ CASE_TERMINATOR:
         }
         else if (this_token->str[0] == ')')
         {
-            this_token->type = PARENS;
+            this_token->type = token_type::PARENS;
             this_token->id = CLOSE_PARENS;
         }
         else if (this_token->str[0] == '(')
@@ -3795,7 +3795,7 @@ CASE_TERMINATOR:
             return true;
         }
         this_token->str[i] = (char) 0;
-        if (this_token->type == OPERATOR)
+        if (this_token->type == token_type::OPERATOR)
         {
             for (int j = 0; j < static_cast<int>(s_op_list.size()); j++)
             {
@@ -3810,13 +3810,13 @@ CASE_TERMINATOR:
     case EOF:
     case '\032':
         this_token->str[0] = (char) 0;
-        this_token->type = NOT_A_TOKEN;
+        this_token->type = token_type::NOT_A_TOKEN;
         this_token->id = END_OF_FILE;
         return false;
     default:
         this_token->str[0] = (char) c;
         this_token->str[1] = (char) 0;
-        this_token->type = NOT_A_TOKEN;
+        this_token->type = token_type::NOT_A_TOKEN;
         this_token->id = ILLEGAL_CHARACTER;
         return false;
     }
@@ -3868,9 +3868,9 @@ int frm_get_param_stuff(char const *Name)
         if (debug_token != nullptr)
         {
             std::fprintf(debug_token, "%s\n", current_token.str);
-            std::fprintf(debug_token, "token_type is %d\n", current_token.type);
+            std::fprintf(debug_token, "token_type is %d\n", static_cast<int>(current_token.type));
             std::fprintf(debug_token, "token_id is %d\n", current_token.id);
-            if (current_token.type == REAL_CONSTANT || current_token.type == COMPLEX_CONSTANT)
+            if (current_token.type == token_type::REAL_CONSTANT || current_token.type == token_type::COMPLEX_CONSTANT)
             {
                 std::fprintf(debug_token, "Real value is %f\n", current_token.constant.x);
                 std::fprintf(debug_token, "Imag value is %f\n", current_token.constant.y);
@@ -3879,7 +3879,7 @@ int frm_get_param_stuff(char const *Name)
         }
         switch (current_token.type)
         {
-        case PARAM_VARIABLE:
+        case token_type::PARAM_VARIABLE:
             if (current_token.id == 1)
             {
                 g_frm_uses_p1 = true;
@@ -3905,11 +3905,13 @@ int frm_get_param_stuff(char const *Name)
                 g_frm_uses_p5 = true;
             }
             break;
-        case PARAM_FUNCTION:
+        case token_type::PARAM_FUNCTION:
             if ((current_token.id - 10) > g_max_function)
             {
                 g_max_function = (char)(current_token.id - 10);
             }
+            break;
+        default:
             break;
         }
     }
@@ -3918,7 +3920,7 @@ int frm_get_param_stuff(char const *Name)
     {
         std::fclose(debug_token);
     }
-    if (current_token.type != END_OF_FORMULA)
+    if (current_token.type != token_type::END_OF_FORMULA)
     {
         g_frm_uses_p1 = false;
         g_frm_uses_p2 = false;
@@ -4133,7 +4135,7 @@ static std::string PrepareFormula(std::FILE *file, bool report_bad_sym)
     while (!Done)
     {
         frmgettoken(file, &temp_tok);
-        if (temp_tok.type == NOT_A_TOKEN)
+        if (temp_tok.type == token_type::NOT_A_TOKEN)
         {
             stopmsg(STOPMSG_FIXED_FONT, "Unexpected token error in PrepareFormula\n");
             std::fseek(file, filepos, SEEK_SET);
@@ -4143,7 +4145,7 @@ static std::string PrepareFormula(std::FILE *file, bool report_bad_sym)
             }
             return {};
         }
-        if (temp_tok.type == END_OF_FORMULA)
+        if (temp_tok.type == token_type::END_OF_FORMULA)
         {
             stopmsg(STOPMSG_FIXED_FONT, "Formula has no executable instructions\n");
             std::fseek(file, filepos, SEEK_SET);
@@ -4166,7 +4168,7 @@ static std::string PrepareFormula(std::FILE *file, bool report_bad_sym)
         frmgettoken(file, &temp_tok);
         switch (temp_tok.type)
         {
-        case NOT_A_TOKEN:
+        case token_type::NOT_A_TOKEN:
             stopmsg(STOPMSG_FIXED_FONT, "Unexpected token error in PrepareFormula\n");
             std::fseek(file, filepos, SEEK_SET);
             if (debug_fp != nullptr)
@@ -4174,7 +4176,7 @@ static std::string PrepareFormula(std::FILE *file, bool report_bad_sym)
                 std::fclose(debug_fp);
             }
             return {};
-        case END_OF_FORMULA:
+        case token_type::END_OF_FORMULA:
             Done = true;
             std::fseek(file, filepos, SEEK_SET);
             break;
@@ -4412,9 +4414,9 @@ static void frm_error(std::FILE * open_file, long begin_frm)
                 statement_len += (int) std::strlen(tok.str);
                 token_count++;
             }
-            if ((tok.type == END_OF_FORMULA)
-                || (tok.type == OPERATOR && (tok.id == 0 || tok.id == 11))
-                || (tok.type == NOT_A_TOKEN && tok.id == END_OF_FILE))
+            if ((tok.type == token_type::END_OF_FORMULA)
+                || (tok.type == token_type::OPERATOR && (tok.id == 0 || tok.id == 11))
+                || (tok.type == token_type::NOT_A_TOKEN && tok.id == END_OF_FILE))
             {
                 done = true;
                 if (token_count > 1 && !initialization_error)
@@ -4517,7 +4519,7 @@ static bool frm_prescan(std::FILE * open_file)
         s_chars_in_formula += (int) std::strlen(this_token.str);
         switch (this_token.type)
         {
-        case NOT_A_TOKEN:
+        case token_type::NOT_A_TOKEN:
             assignment_ok = false;
             switch (this_token.id)
             {
@@ -4603,7 +4605,7 @@ static bool frm_prescan(std::FILE * open_file)
                 return false;
             }
             break;
-        case PARENS:
+        case token_type::PARENS:
             assignment_ok = false;
             NewStatement = false;
             switch (this_token.id)
@@ -4671,7 +4673,7 @@ static bool frm_prescan(std::FILE * open_file)
                 break;
             }
             break;
-        case PARAM_VARIABLE: //i.e. p1, p2, p3, p4 or p5
+        case token_type::PARAM_VARIABLE: //i.e. p1, p2, p3, p4 or p5
             s_num_ops++;
             s_num_loads++;
             NewStatement = false;
@@ -4686,7 +4688,7 @@ static bool frm_prescan(std::FILE * open_file)
             }
             ExpectingArg = false;
             break;
-        case USER_NAMED_VARIABLE: // i.e. c, iter, etc.
+        case token_type::USER_NAMED_VARIABLE: // i.e. c, iter, etc.
             s_num_ops++;
             s_num_loads++;
             NewStatement = false;
@@ -4701,7 +4703,7 @@ static bool frm_prescan(std::FILE * open_file)
             }
             ExpectingArg = false;
             break;
-        case PREDEFINED_VARIABLE: // i.e. z, pixel, whitesq, etc.
+        case token_type::PREDEFINED_VARIABLE: // i.e. z, pixel, whitesq, etc.
             s_num_ops++;
             s_num_loads++;
             NewStatement = false;
@@ -4743,7 +4745,7 @@ static bool frm_prescan(std::FILE * open_file)
             }
             ExpectingArg = false;
             break;
-        case REAL_CONSTANT: // i.e. 4, (4,0), etc.
+        case token_type::REAL_CONSTANT: // i.e. 4, (4,0), etc.
             assignment_ok = false;
             s_num_ops++;
             s_num_loads++;
@@ -4759,7 +4761,7 @@ static bool frm_prescan(std::FILE * open_file)
             }
             ExpectingArg = false;
             break;
-        case COMPLEX_CONSTANT: // i.e. (1,2) etc.
+        case token_type::COMPLEX_CONSTANT: // i.e. (1,2) etc.
             assignment_ok = false;
             s_num_ops++;
             s_num_loads++;
@@ -4775,7 +4777,7 @@ static bool frm_prescan(std::FILE * open_file)
             }
             ExpectingArg = false;
             break;
-        case FUNCTION:
+        case token_type::FUNCTION:
             assignment_ok = false;
             NewStatement = false;
             s_num_ops++;
@@ -4789,7 +4791,7 @@ static bool frm_prescan(std::FILE * open_file)
                 }
             }
             break;
-        case PARAM_FUNCTION:
+        case token_type::PARAM_FUNCTION:
             assignment_ok = false;
             s_num_ops++;
             if (!ExpectingArg)
@@ -4816,7 +4818,7 @@ static bool frm_prescan(std::FILE * open_file)
             }
             NewStatement = false;
             break;
-        case FLOW_CONTROL:
+        case token_type::FLOW_CONTROL:
             assignment_ok = false;
             s_num_ops++;
             s_num_jumps++;
@@ -4900,7 +4902,7 @@ static bool frm_prescan(std::FILE * open_file)
                 }
             }
             break;
-        case OPERATOR:
+        case token_type::OPERATOR:
             s_num_ops++; //This will be corrected below in certain cases
             switch (this_token.id)
             {
@@ -5195,7 +5197,7 @@ static bool frm_prescan(std::FILE * open_file)
                 break;
             }
             break;
-        case END_OF_FORMULA:
+        case token_type::END_OF_FORMULA:
             s_num_ops += 3; // Just need one, but a couple of extra just for the heck of it
             if (s_paren)
             {
