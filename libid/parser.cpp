@@ -3197,7 +3197,7 @@ static bool fill_jump_struct()
     return i < 0;
 }
 
-static std::string FormStr;
+static std::string s_formula;
 
 int frmgetchar(std::FILE * openfile)
 {
@@ -4189,13 +4189,13 @@ bool run_formula(const std::string &name, bool report_bad_sym)
         return true;
     }
 
-    FormStr = PrepareFormula(entry_file, report_bad_sym);
+    s_formula = PrepareFormula(entry_file, report_bad_sym);
     std::fclose(entry_file);
 
-    if (!FormStr.empty())  //  No errors while making string
+    if (!s_formula.empty())  //  No errors while making string
     {
         parser_allocate();  //  ParseStr() will test if this alloc worked
-        if (ParseStr(FormStr.c_str()))
+        if (ParseStr(s_formula.c_str()))
         {
             return true;   //  parse failed, don't change fn pointers
         }
@@ -4303,7 +4303,7 @@ static void parser_allocate()
 
         if (pass == 0)
         {
-            if (!ParseStr(FormStr.c_str()))
+            if (!ParseStr(s_formula.c_str()))
             {
                 // per Chuck Ebbert, fudge these up a little
                 g_max_function_ops = g_operation_index + 4;
