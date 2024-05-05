@@ -2352,7 +2352,7 @@ struct SYMETRY
     symmetry_type n;
 };
 
-static SYMETRY SymStr[] =
+static SYMETRY s_symmetry_names[] =
 {
     { "NOSYM",         symmetry_type::NONE },
     { "XAXIS_NOPARM",  symmetry_type::X_AXIS_NO_PARAM },
@@ -3998,15 +3998,15 @@ static bool frm_check_name_and_sym(std::FILE * open_file, bool report_bad_sym)
             }
         }
         sym_buf[i] = (char) 0;
-        for (i = 0; SymStr[i].s[0]; i++)
+        for (i = 0; s_symmetry_names[i].s[0]; i++)
         {
-            if (!stricmp(SymStr[i].s, sym_buf))
+            if (!stricmp(s_symmetry_names[i].s, sym_buf))
             {
-                g_symmetry = SymStr[i].n;
+                g_symmetry = s_symmetry_names[i].n;
                 break;
             }
         }
-        if (SymStr[i].s[0] == (char) 0 && report_bad_sym)
+        if (s_symmetry_names[i].s[0] == (char) 0 && report_bad_sym)
         {
             std::string msgbuf{ParseErrs(PE_INVALID_SYM_USING_NOSYM)};
             msgbuf += ":\n   ";
@@ -4081,9 +4081,9 @@ static std::string PrepareFormula(std::FILE *file, bool report_bad_sym)
             std::fprintf(debug_fp, "%s\n", g_formula_name.c_str());
             if (g_symmetry != symmetry_type::NONE)
             {
-                auto it = std::find_if(std::begin(SymStr), std::end(SymStr),
+                auto it = std::find_if(std::begin(s_symmetry_names), std::end(s_symmetry_names),
                     [](SYMETRY const& item) { return item.n == g_symmetry; });
-                if (it != std::end(SymStr))
+                if (it != std::end(s_symmetry_names))
                 {
                     std::fprintf(debug_fp, "%s\n", it->s);
                 }
