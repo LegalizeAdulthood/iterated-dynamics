@@ -228,7 +228,7 @@ int g_last_init_op{};
 static int s_delta16{};
 double g_fudge_limit{};
 static double s_fudge{};
-static int ShiftBack{};
+static int s_shift_back{};
 static bool SetRandom{};
 static bool Randomized{};
 static unsigned long RandNum{};
@@ -1051,8 +1051,8 @@ void lStkSin()
     y = Arg1->l.y >> s_delta16;
     SinCos086(x, &sinx, &cosx);
     SinhCosh086(y, &sinhy, &coshy);
-    Arg1->l.x = multiply(sinx, coshy, ShiftBack);
-    Arg1->l.y = multiply(cosx, sinhy, ShiftBack);
+    Arg1->l.x = multiply(sinx, coshy, s_shift_back);
+    Arg1->l.y = multiply(cosx, sinhy, s_shift_back);
 }
 
 static FunctionPtr StkSin{dStkSin};
@@ -1316,8 +1316,8 @@ void lStkSinh()
     y = Arg1->l.y >> s_delta16;
     SinCos086(y, &siny, &cosy);
     SinhCosh086(x, &sinhx, &coshx);
-    Arg1->l.x = multiply(cosy, sinhx, ShiftBack);
-    Arg1->l.y = multiply(siny, coshx, ShiftBack);
+    Arg1->l.x = multiply(cosy, sinhx, s_shift_back);
+    Arg1->l.y = multiply(siny, coshx, s_shift_back);
 }
 
 static FunctionPtr StkSinh{dStkSinh};
@@ -1353,8 +1353,8 @@ void lStkCos()
     y = Arg1->l.y >> s_delta16;
     SinCos086(x, &sinx, &cosx);
     SinhCosh086(y, &sinhy, &coshy);
-    Arg1->l.x = multiply(cosx, coshy, ShiftBack);
-    Arg1->l.y = -multiply(sinx, sinhy, ShiftBack);
+    Arg1->l.x = multiply(cosx, coshy, s_shift_back);
+    Arg1->l.y = -multiply(sinx, sinhy, s_shift_back);
 }
 
 static FunctionPtr StkCos{dStkCos};
@@ -1411,8 +1411,8 @@ void lStkCosh()
     y = Arg1->l.y >> s_delta16;
     SinCos086(y, &siny, &cosy);
     SinhCosh086(x, &sinhx, &coshx);
-    Arg1->l.x = multiply(cosy, coshx, ShiftBack);
-    Arg1->l.y = multiply(siny, sinhx, ShiftBack);
+    Arg1->l.x = multiply(cosy, coshx, s_shift_back);
+    Arg1->l.y = multiply(siny, sinhx, s_shift_back);
 }
 
 static FunctionPtr StkCosh{dStkCosh};
@@ -2512,7 +2512,7 @@ static bool ParseStr(char const *Str)
         break;
     case L_MATH:
         s_delta16 = g_bit_shift - 16;
-        ShiftBack = 32 - g_bit_shift;
+        s_shift_back = 32 - g_bit_shift;
         StkAdd = lStkAdd;
         StkSub = lStkSub;
         StkNeg = lStkNeg;
@@ -4253,7 +4253,7 @@ bool intFormulaSetup()
     MathType = L_MATH;
     s_fudge = (double)(1L << g_bit_shift);
     g_fudge_limit = (double)0x7fffffffL / s_fudge;
-    ShiftBack = 32 - g_bit_shift;
+    s_shift_back = 32 - g_bit_shift;
     return !run_formula(g_formula_name, false);
 #endif
 }
@@ -4272,7 +4272,7 @@ void init_misc()
     Arg2 = &argsecond; // needed by all the ?Stk* functions
     s_fudge = (double)(1L << g_bit_shift);
     g_fudge_limit = (double)0x7fffffffL / s_fudge;
-    ShiftBack = 32 - g_bit_shift;
+    s_shift_back = 32 - g_bit_shift;
     s_delta16 = g_bit_shift - 16;
     g_bit_shift_less_1 = g_bit_shift-1;
     g_frm_uses_p1 = false;
