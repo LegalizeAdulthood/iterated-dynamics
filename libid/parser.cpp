@@ -3280,7 +3280,6 @@ void getfuncinfo(token_st * tok)
     }
     tok->token_type = NOT_A_TOKEN;
     tok->token_id   = UNDEFINED_FUNCTION;
-    return;
 }
 
 void getvarinfo(token_st * tok)
@@ -3542,7 +3541,6 @@ CASE_NUM :
         std::fprintf(debug_token,  "Exiting with ID set to OPEN_PARENS\n");
         std::fclose(debug_token);
     }
-    return;
 }
 
 bool frmgetalpha(std::FILE * openfile, token_st * tok)
@@ -4143,7 +4141,6 @@ static std::string PrepareFormula(std::FILE *file, bool report_bad_sym)
         }
         if (temp_tok.token_str[0] == ',')
         {
-            ;
         }
         else
         {
@@ -4478,7 +4475,6 @@ void frm_error(std::FILE * open_file, long begin_frm)
         std::strcat(msgbuf, "\n");
     }
     stopmsg(STOPMSG_FIXED_FONT, msgbuf);
-    return;
 }
 
 /*frm_prescan() takes an open file with the file pointer positioned at
