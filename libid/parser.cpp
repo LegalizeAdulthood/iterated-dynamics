@@ -2249,7 +2249,6 @@ static std::array<char const *, 17> s_op_list
     "^"     // 16
 };
 
-
 void NotAFnct()
 {
 }
@@ -4040,7 +4039,6 @@ static bool frm_check_name_and_sym(std::FILE * open_file, bool report_bad_sym)
     return true;
 }
 
-
 /* This function sets the
     symmetry and converts a formula into a string  with no spaces,
     and one comma after each expression except where the ':' is placed
@@ -4213,7 +4211,6 @@ bool run_formula(const std::string &name, bool report_bad_sym)
     return true; // error in making string
 }
 
-
 bool fpFormulaSetup()
 {
     // TODO: when parsera.c contains assembly equivalents, remove !defined(_WIN32)
@@ -4257,8 +4254,6 @@ bool intFormulaSetup()
 #endif
 }
 
-
-
 void init_misc()
 {
     static Arg argfirst;
@@ -4282,7 +4277,6 @@ void init_misc()
     g_frm_uses_p4 = false;
     g_frm_uses_p5 = false;
 }
-
 
 static void parser_allocate()
 {
