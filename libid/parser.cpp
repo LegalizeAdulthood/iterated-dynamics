@@ -2191,42 +2191,42 @@ int isjump(char const *Str, int Len)
 
 char g_max_function{};
 
-static FNCT_LIST s_func_list[] =
+static constexpr std::array<FNCT_LIST, 34> s_func_list
 {
-    {"sin",   &StkSin},
-    {"sinh",  &StkSinh},
-    {"cos",   &StkCos},
-    {"cosh",  &StkCosh},
-    {"sqr",   &StkSqr},
-    {"log",   &StkLog},
-    {"exp",   &StkExp},
-    {"abs",   &StkAbs},
-    {"conj",  &StkConj},
-    {"real",  &StkReal},
-    {"imag",  &StkImag},
-    {"fn1",   &StkTrig0},
-    {"fn2",   &StkTrig1},
-    {"fn3",   &StkTrig2},
-    {"fn4",   &StkTrig3},
-    {"flip",  &StkFlip},
-    {"tan",   &StkTan},
-    {"tanh",  &StkTanh},
-    {"cotan", &StkCoTan},
-    {"cotanh", &StkCoTanh},
-    {"cosxx", &StkCosXX},
-    {"srand", &StkSRand},
-    {"asin",  &StkASin},
-    {"asinh", &StkASinh},
-    {"acos",  &StkACos},
-    {"acosh", &StkACosh},
-    {"atan",  &StkATan},
-    {"atanh", &StkATanh},
-    {"sqrt",  &StkSqrt},
-    {"cabs",  &StkCAbs},
-    {"floor", &StkFloor},
-    {"ceil",  &StkCeil},
-    {"trunc", &StkTrunc},
-    {"round", &StkRound},
+    FNCT_LIST{"sin",   &StkSin},
+    FNCT_LIST{"sinh",  &StkSinh},
+    FNCT_LIST{"cos",   &StkCos},
+    FNCT_LIST{"cosh",  &StkCosh},
+    FNCT_LIST{"sqr",   &StkSqr},
+    FNCT_LIST{"log",   &StkLog},
+    FNCT_LIST{"exp",   &StkExp},
+    FNCT_LIST{"abs",   &StkAbs},
+    FNCT_LIST{"conj",  &StkConj},
+    FNCT_LIST{"real",  &StkReal},
+    FNCT_LIST{"imag",  &StkImag},
+    FNCT_LIST{"fn1",   &StkTrig0},
+    FNCT_LIST{"fn2",   &StkTrig1},
+    FNCT_LIST{"fn3",   &StkTrig2},
+    FNCT_LIST{"fn4",   &StkTrig3},
+    FNCT_LIST{"flip",  &StkFlip},
+    FNCT_LIST{"tan",   &StkTan},
+    FNCT_LIST{"tanh",  &StkTanh},
+    FNCT_LIST{"cotan", &StkCoTan},
+    FNCT_LIST{"cotanh", &StkCoTanh},
+    FNCT_LIST{"cosxx", &StkCosXX},
+    FNCT_LIST{"srand", &StkSRand},
+    FNCT_LIST{"asin",  &StkASin},
+    FNCT_LIST{"asinh", &StkASinh},
+    FNCT_LIST{"acos",  &StkACos},
+    FNCT_LIST{"acosh", &StkACosh},
+    FNCT_LIST{"atan",  &StkATan},
+    FNCT_LIST{"atanh", &StkATanh},
+    FNCT_LIST{"sqrt",  &StkSqrt},
+    FNCT_LIST{"cabs",  &StkCAbs},
+    FNCT_LIST{"floor", &StkFloor},
+    FNCT_LIST{"ceil",  &StkCeil},
+    FNCT_LIST{"trunc", &StkTrunc},
+    FNCT_LIST{"round", &StkRound},
 };
 
 static char const *OPList[] =
@@ -2287,23 +2287,20 @@ static void (*isfunct(char const *Str, int Len))()
     unsigned n = SkipWhiteSpace(&Str[Len]);
     if (Str[Len+n] == '(')
     {
-        for (n = 0; n < sizeof(s_func_list)/sizeof(FNCT_LIST); n++)
+        for (n = 0; n < static_cast<unsigned>(s_func_list.size()); n++)
         {
-            if ((int) std::strlen(s_func_list[n].s) == Len)
+            if (!strnicmp(s_func_list[n].s, Str, Len))
             {
-                if (!strnicmp(s_func_list[n].s, Str, Len))
+                // count function variables
+                int functnum = whichfn(Str, Len);
+                if (functnum != 0)
                 {
-                    // count function variables
-                    int functnum = whichfn(Str, Len);
-                    if (functnum != 0)
+                    if (functnum > g_max_function)
                     {
-                        if (functnum > g_max_function)
-                        {
-                            g_max_function = (char)functnum;
-                        }
+                        g_max_function = (char)functnum;
                     }
-                    return *s_func_list[n].ptr;
                 }
+                return *s_func_list[n].ptr;
             }
         }
         return FnctNotFound;
@@ -3255,7 +3252,7 @@ int frmgetchar(std::FILE * openfile)
 
 void getfuncinfo(token_st * tok)
 {
-    for (int i = 0; i < sizeof(s_func_list)/sizeof(FNCT_LIST); i++)
+    for (int i = 0; i < static_cast<int>(s_func_list.size()); i++)
     {
         if (!std::strcmp(s_func_list[i].s, tok->token_str))
         {
