@@ -218,7 +218,7 @@ unsigned int g_variable_index{};
 unsigned int g_last_op{};
 static unsigned int s_n{};
 static unsigned int NextOp{};
-static unsigned int InitN{};
+static unsigned int s_init_n{};
 static int s_paren{};
 static bool s_expecting_arg{};
 int InitLodPtr{};
@@ -2097,7 +2097,7 @@ static ConstArg *is_const(char const *Str, int Len)
             o.pop_back();
             g_operation_index--;
             Str = Str - 1;
-            InitN--;
+            s_init_n--;
             v[g_variable_index].len++;
         }
         unsigned n;
@@ -2679,7 +2679,7 @@ static bool ParseStr(char const *Str, int pass)
         {
             break;
         }
-        InitN = s_n;
+        s_init_n = s_n;
         switch (Str[s_n])
         {
         case ' ':
@@ -2821,9 +2821,9 @@ static bool ParseStr(char const *Str, int pass)
             {
                 s_n++;
             }
-            Len = (s_n+1)-InitN;
+            Len = (s_n+1)-s_init_n;
             s_expecting_arg = false;
-            jumptype = is_jump(&Str[InitN], Len);
+            jumptype = is_jump(&Str[s_init_n], Len);
             if (jumptype != 0)
             {
                 g_uses_jump = true;
@@ -2857,17 +2857,17 @@ static bool ParseStr(char const *Str, int pass)
             }
             else
             {
-                if (const FunctionPtr fn = is_func(&Str[InitN], Len); fn != NotAFnct)
+                if (const FunctionPtr fn = is_func(&Str[s_init_n], Len); fn != NotAFnct)
                 {
                     push_pending_op(fn,  1 - (s_paren + Equals)*15);
                     s_expecting_arg = true;
                 }
                 else
                 {
-                    c = is_const(&Str[InitN], Len);
+                    c = is_const(&Str[s_init_n], Len);
                     Load[g_load_index++] = &(c->a);
                     push_pending_op(StkLod, 1 - (s_paren + Equals)*15);
-                    s_n = InitN + c->len - 1;
+                    s_n = s_init_n + c->len - 1;
                 }
             }
             break;
