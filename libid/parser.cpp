@@ -196,7 +196,7 @@ struct token_st
 #define MAX_STORES ((g_max_function_ops/4)*2)  // at most only half the ops can be stores
 #define MAX_LOADS  ((unsigned)(g_max_function_ops*.8))  // and 80% can be loads
 
-static std::vector<PEND_OP> o;
+static std::vector<PEND_OP> s_op;
 
 static void parser_allocate();
 
@@ -2091,10 +2091,10 @@ static ConstArg *is_const(char const *Str, int Len)
         || Str[0] == '.')
     {
         assert(g_operation_index > 0);
-        assert(g_operation_index == o.size());
-        if (o.back().f == StkNeg)
+        assert(g_operation_index == s_op.size());
+        if (s_op.back().f == StkNeg)
         {
-            o.pop_back();
+            s_op.pop_back();
             g_operation_index--;
             Str = Str - 1;
             s_init_n--;
@@ -2310,7 +2310,7 @@ static FunctionPtr is_func(char const *Str, int Len)
 void RecSortPrec()
 {
     int ThisOp = NextOp++;
-    while (o[ThisOp].p > o[NextOp].p && NextOp < g_operation_index)
+    while (s_op[ThisOp].p > s_op[NextOp].p && NextOp < g_operation_index)
     {
         RecSortPrec();
     }
@@ -2319,7 +2319,7 @@ void RecSortPrec()
         throw std::runtime_error(
             "OpPtr (" + std::to_string(g_op_ptr) + ") doesn't match size of f[] (" + std::to_string(f.size()) + ")");
     }
-    f.push_back(o[ThisOp].f);
+    f.push_back(s_op[ThisOp].f);
     ++g_op_ptr;
 }
 
@@ -2373,9 +2373,9 @@ static SYMETRY SymStr[] =
 
 inline void push_pending_op(FunctionPtr f, int p)
 {
-    o.push_back(PEND_OP{f, p});
+    s_op.push_back(PEND_OP{f, p});
     ++g_operation_index;
-    assert(g_operation_index == o.size());
+    assert(g_operation_index == s_op.size());
 }
 
 static bool ParseStr(char const *Str)
@@ -2666,7 +2666,7 @@ static bool ParseStr(char const *Str)
     }
 
     g_operation_index = 0;
-    o.clear();
+    s_op.clear();
     g_store_index = 0;
     g_load_index = 0;
     g_op_ptr = 0;
@@ -2810,8 +2810,8 @@ static bool ParseStr(char const *Str)
             }
             else
             {
-                o[g_operation_index-1].f = StkSto;
-                o[g_operation_index-1].p = 5 - (s_paren + Equals)*15;
+                s_op[g_operation_index-1].f = StkSto;
+                s_op[g_operation_index-1].p = 5 - (s_paren + Equals)*15;
                 Store[g_store_index++] = Load[--g_load_index];
                 Equals++;
             }
@@ -2878,7 +2878,7 @@ static bool ParseStr(char const *Str)
     g_last_op = g_operation_index;
     while (NextOp < g_operation_index)
     {
-        if (o[NextOp].f)
+        if (s_op[NextOp].f)
         {
             RecSortPrec();
         }
