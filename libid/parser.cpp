@@ -2324,7 +2324,7 @@ void RecSortPrec()
     ++OpPtr;
 }
 
-static char const *Constants[] =
+static char const *s_constants[] =
 {
     "pixel",        // v[0]
     "p1",           // v[1]
@@ -2569,10 +2569,10 @@ static bool ParseStr(char const *Str, int pass)
         break;
     }
     g_max_function = 0;
-    for (g_variable_index = 0; g_variable_index < sizeof(Constants) / sizeof(char*); g_variable_index++)
+    for (g_variable_index = 0; g_variable_index < sizeof(s_constants) / sizeof(char*); g_variable_index++)
     {
-        v[g_variable_index].s = Constants[g_variable_index];
-        v[g_variable_index].len = (int) std::strlen(Constants[g_variable_index]);
+        v[g_variable_index].s = s_constants[g_variable_index];
+        v[g_variable_index].len = (int) std::strlen(s_constants[g_variable_index]);
     }
     cvtcentermag(&Xctr, &Yctr, &Magnification, &Xmagfactor, &Rotation, &Skew);
     const_pi = std::atan(1.0) * 4;
@@ -3285,9 +3285,9 @@ void getfuncinfo(token_st * tok)
 
 void getvarinfo(token_st * tok)
 {
-    for (int i = 0; i < sizeof(Constants)/sizeof(char*); i++)
+    for (int i = 0; i < sizeof(s_constants)/sizeof(char*); i++)
     {
-        if (!std::strcmp(Constants[i], tok->token_str))
+        if (!std::strcmp(s_constants[i], tok->token_str))
         {
             tok->token_id = i;
             switch (i)
