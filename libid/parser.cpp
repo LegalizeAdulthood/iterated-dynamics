@@ -4508,9 +4508,9 @@ bool frm_prescan(std::FILE * open_file)
     int max_parens = sizeof(long) * 8;
 
     s_num_jumps = 0UL;
-    s_num_stores = s_num_jumps;
-    s_num_loads = s_num_stores;
-    s_num_ops = s_num_loads;
+    s_num_stores = 0UL;
+    s_num_loads = 0UL;
+    s_num_ops = 0UL;
     s_chars_in_formula = 0U;
     uses_jump = false;
     paren = 0;
