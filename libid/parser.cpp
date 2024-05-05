@@ -82,7 +82,7 @@ std::vector<JUMP_CONTROL_ST> jump_control;
 int jump_index{};
 static int s_init_jump_index{};
 
-inline void push_jump_control_type(jump_control_type type)
+inline void push_jump(jump_control_type type)
 {
     JUMP_CONTROL_ST value{};
     value.type = type;
@@ -2865,24 +2865,24 @@ static bool ParseStr(char const *Str)
                 {
                 case jump_control_type::IF:
                     s_expecting_arg = true;
-                    push_jump_control_type(jump_control_type::IF);
+                    push_jump(jump_control_type::IF);
                     push_pending_op(StkJumpOnFalse, 1);
                     break;
                 case jump_control_type::ELSE_IF:
                     s_expecting_arg = true;
-                    push_jump_control_type(jump_control_type::ELSE_IF);
-                    push_jump_control_type(jump_control_type::ELSE_IF);
+                    push_jump(jump_control_type::ELSE_IF);
+                    push_jump(jump_control_type::ELSE_IF);
                     push_pending_op(StkJump, 1);
                     push_pending_op(nullptr, 15);
                     push_pending_op(StkClr, -30000);
                     push_pending_op(StkJumpOnFalse, 1);
                     break;
                 case jump_control_type::ELSE:
-                    push_jump_control_type(jump_control_type::ELSE);
+                    push_jump(jump_control_type::ELSE);
                     push_pending_op(StkJump, 1);
                     break;
                 case jump_control_type::END_IF:
-                    push_jump_control_type(jump_control_type::END_IF);
+                    push_jump(jump_control_type::END_IF);
                     push_pending_op(StkJumpLabel, 1);
                     break;
                 default:
