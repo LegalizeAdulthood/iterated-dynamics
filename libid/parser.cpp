@@ -480,7 +480,7 @@ void dStkSRand()
     Arg1->d = v[7].a.d;
 }
 
-FunctionPtr StkSRand{dStkSRand};
+static FunctionPtr StkSRand{dStkSRand};
 
 void dStkLodDup()
 {
@@ -558,7 +558,7 @@ void lStkAbs()
     Arg1->l.y = labs(Arg1->l.y);
 }
 
-FunctionPtr StkAbs{dStkAbs};
+static FunctionPtr StkAbs{dStkAbs};
 
 void dStkSqr()
 {
@@ -592,7 +592,7 @@ void lStkSqr()
     LastSqr.l.y = 0L;
 }
 
-FunctionPtr StkSqr{dStkSqr};
+static FunctionPtr StkSqr{dStkSqr};
 
 void dStkAdd()
 {
@@ -617,7 +617,7 @@ void lStkAdd()
     Arg2--;
 }
 
-FunctionPtr StkAdd{dStkAdd};
+static FunctionPtr StkAdd{dStkAdd};
 
 void dStkSub()
 {
@@ -642,7 +642,7 @@ void lStkSub()
     Arg2--;
 }
 
-FunctionPtr StkSub{dStkSub};
+static FunctionPtr StkSub{dStkSub};
 
 void dStkConj()
 {
@@ -659,7 +659,7 @@ void lStkConj()
     Arg1->l.y = -Arg1->l.y;
 }
 
-FunctionPtr StkConj{dStkConj};
+static FunctionPtr StkConj{dStkConj};
 
 void dStkFloor()
 {
@@ -684,7 +684,7 @@ void lStkFloor()
     Arg1->l.y = (Arg1->l.y) << g_bit_shift;
 }
 
-FunctionPtr StkFloor{dStkFloor};
+static FunctionPtr StkFloor{dStkFloor};
 
 void dStkCeil()
 {
@@ -707,7 +707,7 @@ void lStkCeil()
     Arg1->l.y = -((Arg1->l.y) << g_bit_shift);
 }
 
-FunctionPtr StkCeil{dStkCeil};
+static FunctionPtr StkCeil{dStkCeil};
 
 void dStkTrunc()
 {
@@ -738,7 +738,7 @@ void lStkTrunc()
     Arg1->l.y = signy*Arg1->l.y;
 }
 
-FunctionPtr StkTrunc{dStkTrunc};
+static FunctionPtr StkTrunc{dStkTrunc};
 
 void dStkRound()
 {
@@ -759,7 +759,7 @@ void lStkRound()
     lStkFloor();
 }
 
-FunctionPtr StkRound{dStkRound};
+static FunctionPtr StkRound{dStkRound};
 
 void dStkZero()
 {
@@ -781,7 +781,7 @@ void lStkZero()
     Arg1->l.y = Arg1->l.x;
 }
 
-FunctionPtr StkZero{dStkZero};
+static FunctionPtr StkZero{dStkZero};
 
 void dStkOne()
 {
@@ -800,7 +800,7 @@ void lStkOne()
     Arg1->l.y = 0L;
 }
 
-FunctionPtr StkOne{dStkOne};
+static FunctionPtr StkOne{dStkOne};
 
 void dStkReal()
 {
@@ -818,7 +818,7 @@ void lStkReal()
     Arg1->l.y = 0l;
 }
 
-FunctionPtr StkReal{dStkReal};
+static FunctionPtr StkReal{dStkReal};
 
 void dStkImag()
 {
@@ -839,7 +839,7 @@ void lStkImag()
     Arg1->l.y = 0l;
 }
 
-FunctionPtr StkImag{dStkImag};
+static FunctionPtr StkImag{dStkImag};
 
 void dStkNeg()
 {
@@ -859,7 +859,7 @@ void lStkNeg()
     Arg1->l.y = -Arg1->l.y;
 }
 
-FunctionPtr StkNeg{dStkNeg};
+static FunctionPtr StkNeg{dStkNeg};
 
 void dStkMul()
 {
@@ -890,7 +890,7 @@ void lStkMul()
     Arg2--;
 }
 
-FunctionPtr StkMul{dStkMul};
+static FunctionPtr StkMul{dStkMul};
 
 void dStkDiv()
 {
@@ -926,7 +926,7 @@ void lStkDiv()
     Arg2--;
 }
 
-FunctionPtr StkDiv{dStkDiv};
+static FunctionPtr StkDiv{dStkDiv};
 
 void dStkMod()
 {
@@ -965,7 +965,7 @@ void lStkModOld()
     Arg1->l.y = 0L;
 }
 
-FunctionPtr StkMod{dStkMod};
+static FunctionPtr StkMod{dStkMod};
 
 void StkSto()
 {
@@ -973,7 +973,7 @@ void StkSto()
     *Store[g_store_index++] = *Arg1;
 }
 
-FunctionPtr PtrStkSto{StkSto};
+static FunctionPtr PtrStkSto{StkSto};
 
 void StkLod()
 {
@@ -990,7 +990,7 @@ void StkClr()
     Arg2--;
 }
 
-FunctionPtr PtrStkClr{StkClr};
+static FunctionPtr PtrStkClr{StkClr};
 
 void dStkFlip()
 {
@@ -1019,7 +1019,7 @@ void lStkFlip()
     Arg1->l.y = t;
 }
 
-FunctionPtr StkFlip{dStkFlip};
+static FunctionPtr StkFlip{dStkFlip};
 
 void dStkSin()
 {
@@ -1055,7 +1055,7 @@ void lStkSin()
     Arg1->l.y = multiply(cosx, sinhy, ShiftBack);
 }
 
-FunctionPtr StkSin{dStkSin};
+static FunctionPtr StkSin{dStkSin};
 
 /* The following functions are supported by both the parser and for fn
    variable replacement.
@@ -1103,7 +1103,7 @@ void lStkTan()
     Arg1->l.y = divide(sinhy, denom, g_bit_shift);
 }
 
-FunctionPtr StkTan{dStkTan};
+static FunctionPtr StkTan{dStkTan};
 
 void dStkTanh()
 {
@@ -1148,7 +1148,7 @@ void lStkTanh()
     Arg1->l.y = divide(siny, denom, g_bit_shift);
 }
 
-FunctionPtr StkTanh{dStkTanh};
+static FunctionPtr StkTanh{dStkTanh};
 
 void dStkCoTan()
 {
@@ -1193,7 +1193,7 @@ void lStkCoTan()
     Arg1->l.y = -divide(sinhy, denom, g_bit_shift);
 }
 
-FunctionPtr StkCoTan{dStkCoTan};
+static FunctionPtr StkCoTan{dStkCoTan};
 
 void dStkCoTanh()
 {
@@ -1238,7 +1238,7 @@ void lStkCoTanh()
     Arg1->l.y = -divide(siny, denom, g_bit_shift);
 }
 
-FunctionPtr StkCoTanh{dStkCoTanh};
+static FunctionPtr StkCoTanh{dStkCoTanh};
 
 /* The following functions are not directly used by the parser - support
    for the parser was not provided because the existing parser language
@@ -1320,7 +1320,7 @@ void lStkSinh()
     Arg1->l.y = multiply(siny, coshx, ShiftBack);
 }
 
-FunctionPtr StkSinh{dStkSinh};
+static FunctionPtr StkSinh{dStkSinh};
 
 void dStkCos()
 {
@@ -1357,7 +1357,7 @@ void lStkCos()
     Arg1->l.y = -multiply(sinx, sinhy, ShiftBack);
 }
 
-FunctionPtr StkCos{dStkCos};
+static FunctionPtr StkCos{dStkCos};
 
 // Bogus version of cos, to replicate bug which was in regular cos till v16:
 
@@ -1378,7 +1378,7 @@ void lStkCosXX()
     Arg1->l.y = -Arg1->l.y;
 }
 
-FunctionPtr StkCosXX{dStkCosXX};
+static FunctionPtr StkCosXX{dStkCosXX};
 
 void dStkCosh()
 {
@@ -1415,7 +1415,7 @@ void lStkCosh()
     Arg1->l.y = multiply(siny, sinhx, ShiftBack);
 }
 
-FunctionPtr StkCosh{dStkCosh};
+static FunctionPtr StkCosh{dStkCosh};
 
 void dStkASin()
 {
@@ -1432,7 +1432,7 @@ void lStkASin()
     lStkFunct(dStkASin);
 }
 
-FunctionPtr StkASin{dStkASin};
+static FunctionPtr StkASin{dStkASin};
 
 void dStkASinh()
 {
@@ -1449,7 +1449,7 @@ void lStkASinh()
     lStkFunct(dStkASinh);
 }
 
-FunctionPtr StkASinh{dStkASinh};
+static FunctionPtr StkASinh{dStkASinh};
 
 void dStkACos()
 {
@@ -1466,7 +1466,7 @@ void lStkACos()
     lStkFunct(dStkACos);
 }
 
-FunctionPtr StkACos{dStkACos};
+static FunctionPtr StkACos{dStkACos};
 
 void dStkACosh()
 {
@@ -1483,7 +1483,7 @@ void lStkACosh()
     lStkFunct(dStkACosh);
 }
 
-FunctionPtr StkACosh{dStkACosh};
+static FunctionPtr StkACosh{dStkACosh};
 
 void dStkATan()
 {
@@ -1500,7 +1500,7 @@ void lStkATan()
     lStkFunct(dStkATan);
 }
 
-FunctionPtr StkATan{dStkATan};
+static FunctionPtr StkATan{dStkATan};
 
 void dStkATanh()
 {
@@ -1517,7 +1517,7 @@ void lStkATanh()
     lStkFunct(dStkATanh);
 }
 
-FunctionPtr StkATanh{dStkATanh};
+static FunctionPtr StkATanh{dStkATanh};
 
 void dStkSqrt()
 {
@@ -1535,7 +1535,7 @@ void lStkSqrt()
     Arg1->l = ComplexSqrtLong(Arg1->l.x, Arg1->l.y);
 }
 
-FunctionPtr StkSqrt{dStkSqrt};
+static FunctionPtr StkSqrt{dStkSqrt};
 
 void dStkCAbs()
 {
@@ -1553,7 +1553,7 @@ void lStkCAbs()
     lStkFunct(dStkCAbs);
 }
 
-FunctionPtr StkCAbs{dStkCAbs};
+static FunctionPtr StkCAbs{dStkCAbs};
 
 void dStkLT()
 {
@@ -1580,7 +1580,7 @@ void lStkLT()
     Arg2--;
 }
 
-FunctionPtr StkLT{dStkLT};
+static FunctionPtr StkLT{dStkLT};
 
 void dStkGT()
 {
@@ -1607,7 +1607,7 @@ void lStkGT()
     Arg2--;
 }
 
-FunctionPtr StkGT{dStkGT};
+static FunctionPtr StkGT{dStkGT};
 
 void dStkLTE()
 {
@@ -1637,7 +1637,7 @@ void lStkLTE()
     Arg2--;
 }
 
-FunctionPtr StkLTE{dStkLTE};
+static FunctionPtr StkLTE{dStkLTE};
 
 void dStkGTE()
 {
@@ -1667,7 +1667,7 @@ void lStkGTE()
     Arg2--;
 }
 
-FunctionPtr StkGTE{dStkGTE};
+static FunctionPtr StkGTE{dStkGTE};
 
 void dStkEQ()
 {
@@ -1697,7 +1697,7 @@ void lStkEQ()
     Arg2--;
 }
 
-FunctionPtr StkEQ{dStkEQ};
+static FunctionPtr StkEQ{dStkEQ};
 
 void dStkNE()
 {
@@ -1727,7 +1727,7 @@ void lStkNE()
     Arg2--;
 }
 
-FunctionPtr StkNE{dStkNE};
+static FunctionPtr StkNE{dStkNE};
 
 void dStkOR()
 {
@@ -1754,7 +1754,7 @@ void lStkOR()
     Arg2--;
 }
 
-FunctionPtr StkOR{dStkOR};
+static FunctionPtr StkOR{dStkOR};
 
 void dStkAND()
 {
@@ -1781,7 +1781,7 @@ void lStkAND()
     Arg2--;
 }
 
-FunctionPtr StkAND{dStkAND};
+static FunctionPtr StkAND{dStkAND};
 
 void dStkLog()
 {
@@ -1798,7 +1798,7 @@ void lStkLog()
     lStkFunct(dStkLog);
 }
 
-FunctionPtr StkLog{dStkLog};
+static FunctionPtr StkLog{dStkLog};
 
 void FPUcplxexp(const DComplex *x, DComplex *z)
 {
@@ -1825,7 +1825,7 @@ void lStkExp()
     lStkFunct(dStkExp);
 }
 
-FunctionPtr StkExp{dStkExp};
+static FunctionPtr StkExp{dStkExp};
 
 void dStkPwr()
 {
@@ -1870,7 +1870,7 @@ void lStkPwr()
     Arg2--;
 }
 
-FunctionPtr StkPwr{dStkPwr};
+static FunctionPtr StkPwr{dStkPwr};
 
 void EndInit()
 {
@@ -1878,7 +1878,7 @@ void EndInit()
     s_init_jump_index = jump_index;
 }
 
-FunctionPtr PtrEndInit{EndInit};
+static FunctionPtr PtrEndInit{EndInit};
 
 void StkJump()
 {
@@ -1924,7 +1924,7 @@ void lStkJumpOnFalse()
     }
 }
 
-FunctionPtr StkJumpOnFalse{dStkJumpOnFalse};
+static FunctionPtr StkJumpOnFalse{dStkJumpOnFalse};
 
 void dStkJumpOnTrue()
 {
@@ -1962,7 +1962,7 @@ void lStkJumpOnTrue()
     }
 }
 
-FunctionPtr StkJumpOnTrue{dStkJumpOnTrue};
+static FunctionPtr StkJumpOnTrue{dStkJumpOnTrue};
 
 void StkJumpLabel()
 {
@@ -2164,10 +2164,10 @@ static constexpr std::array<char const *, 4> s_jump_list
     "endif"
 };
 
-FunctionPtr StkTrig0{dStkSin};
-FunctionPtr StkTrig1{dStkSqr};
-FunctionPtr StkTrig2{dStkSinh};
-FunctionPtr StkTrig3{dStkCosh};
+static FunctionPtr StkTrig0{dStkSin};
+static FunctionPtr StkTrig1{dStkSqr};
+static FunctionPtr StkTrig2{dStkSinh};
+static FunctionPtr StkTrig3{dStkCosh};
 
 /* return values
     0 - Not a jump
