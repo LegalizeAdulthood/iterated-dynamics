@@ -2281,7 +2281,7 @@ static int whichfn(char const *s, int len)
     return out;
 }
 
-static FunctionPtr isfunct(char const *Str, int Len)
+static FunctionPtr is_func(char const *Str, int Len)
 {
     unsigned n = SkipWhiteSpace(&Str[Len]);
     if (Str[Len+n] == '(')
@@ -2857,7 +2857,7 @@ static bool ParseStr(char const *Str, int pass)
             }
             else
             {
-                if (const FunctionPtr fn = isfunct(&Str[InitN], Len); fn != NotAFnct)
+                if (const FunctionPtr fn = is_func(&Str[InitN], Len); fn != NotAFnct)
                 {
                     push_pending_op(fn,  1 - (paren + Equals)*15);
                     s_expecting_arg = true;
