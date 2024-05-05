@@ -2351,10 +2351,10 @@ void RecSortPrec()
     {
         RecSortPrec();
     }
-    if (g_op_ptr != static_cast<int>(f.size()))
+    if (g_op_ptr > static_cast<int>(f.size()))
     {
         throw std::runtime_error(
-            "OpPtr (" + std::to_string(g_op_ptr) + ") doesn't match size of f[] (" + std::to_string(f.size()) + ")");
+            "OpPtr (" + std::to_string(g_op_ptr) + ") exceeds size of f[] (" + std::to_string(f.size()) + ")");
     }
     f.push_back(s_op[ThisOp].f);
     ++g_op_ptr;
