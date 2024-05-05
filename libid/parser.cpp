@@ -231,7 +231,7 @@ static double s_fudge{};
 static int s_shift_back{};
 static bool s_set_random{};
 static bool s_randomized{};
-static unsigned long RandNum{};
+static unsigned long s_rand_num{};
 bool g_frm_uses_p1{};
 bool g_frm_uses_p2{};
 bool g_frm_uses_p3{};
@@ -386,7 +386,7 @@ static void lStkFunct(FunctionPtr fct)   // call lStk via dStk
 
 unsigned long NewRandNum()
 {
-    return RandNum = ((RandNum << 15) + rand15()) ^ RandNum;
+    return s_rand_num = ((s_rand_num << 15) + rand15()) ^ s_rand_num;
 }
 
 void lRandom()
@@ -428,10 +428,10 @@ void SetRandFnct()
 
     if (!s_set_random)
     {
-        RandNum = Arg1->l.x ^ Arg1->l.y;
+        s_rand_num = Arg1->l.x ^ Arg1->l.y;
     }
 
-    Seed = (unsigned)RandNum ^ (unsigned)(RandNum >> 16);
+    Seed = (unsigned)s_rand_num ^ (unsigned)(s_rand_num >> 16);
     srand(Seed);
     s_set_random = true;
 
