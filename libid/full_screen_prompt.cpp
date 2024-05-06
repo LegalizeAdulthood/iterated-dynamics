@@ -55,7 +55,6 @@ int fullscreen_prompt(        // full-screen prompting routine
 )
 {
     // scrolling related variables
-    std::FILE * scroll_file = nullptr;     // file with extrainfo entry to scroll
     long scroll_file_start = 0;    // where entry starts in scroll_file
     bool in_scrolling_mode = false; // will be true if need to scroll extrainfo
     int lines_in_entry = 0;        // total lines in entry to be scrolled
@@ -74,6 +73,7 @@ int fullscreen_prompt(        // full-screen prompting routine
        find_file_item() opens the file and sets the file pointer to the
        beginning of the entry.
     */
+    std::FILE *scroll_file = nullptr; // file with extrainfo entry to scroll
     if (extra_info && *extra_info)
     {
         if (g_fractal_type == fractal_type::FORMULA || g_fractal_type == fractal_type::FFORMULA)
