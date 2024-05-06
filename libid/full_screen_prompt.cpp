@@ -544,7 +544,7 @@ int fullscreen_prompt(        // full-screen prompting routine
                 if (in_scrolling_mode)
                 {
                     s_scroll_column_status = 0;
-                    s_scroll_row_status = s_scroll_column_status;
+                    s_scroll_row_status = 0;
                     rewrite_extra_info = true;
                 }
                 break;
@@ -792,7 +792,7 @@ int fullscreen_prompt(        // full-screen prompting routine
             if (in_scrolling_mode)
             {
                 s_scroll_column_status = 0;
-                s_scroll_row_status = s_scroll_column_status;
+                s_scroll_row_status = 0;
                 rewrite_extra_info = true;
             }
             break;
