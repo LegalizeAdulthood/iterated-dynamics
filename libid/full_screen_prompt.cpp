@@ -253,7 +253,7 @@ int fullscreen_prompt(        // full-screen prompting routine
     }
 
     // work out horizontal positioning
-    int maxcomment = 0;
+    int max_comment = 0;
     int maxpromptwidth = 0;
     int maxfldwidth = 0;
     bool anyinput = false;
@@ -270,9 +270,9 @@ int fullscreen_prompt(        // full-screen prompting routine
         int j = (int) std::strlen(prompts[i]);
         if (values[i].type == '*')
         {
-            if (j > maxcomment)
+            if (j > max_comment)
             {
-                maxcomment = j;
+                max_comment = j;
             }
         }
         else
@@ -291,9 +291,9 @@ int fullscreen_prompt(        // full-screen prompting routine
         }
     }
     int boxwidth = maxpromptwidth + maxfldwidth + 2;
-    if (maxcomment > boxwidth)
+    if (max_comment > boxwidth)
     {
-        boxwidth = maxcomment;
+        boxwidth = max_comment;
     }
     if ((boxwidth += 4) > 80)
     {
