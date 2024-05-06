@@ -165,11 +165,8 @@ int fullscreen_prompt(      // full-screen prompting routine
         }
     }
 
-
-
     helptitle();                        // clear screen, display title line
     driver_set_attr(1, 0, C_PROMPT_BKGRD, 24*80);  // init rest of screen to background
-
 
     hdgscan = hdg;                      // count title lines, find widest
     titlewidth = 0;
@@ -461,7 +458,6 @@ int fullscreen_prompt(      // full-screen prompting routine
         driver_put_string(promptrow+i, valuecol, C_PROMPT_LO, buf);
     }
 
-
     if (!anyinput)
     {
         putstringcenter(instrrow++, 0, 80, C_PROMPT_BKGRD,
@@ -580,7 +576,6 @@ int fullscreen_prompt(      // full-screen prompting routine
             }
         }
     }
-
 
     // display footing
     if (numprompts > 1)
@@ -981,7 +976,6 @@ static int input_field_list(
             while (i < vlen)
             {
                 buf[i++] = ' ';
-
             }
         }
         buf[vlen] = 0;
