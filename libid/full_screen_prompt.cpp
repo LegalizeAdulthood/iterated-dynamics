@@ -54,7 +54,6 @@ int fullscreen_prompt(        // full-screen prompting routine
     char *extra_info          // extra info box to display, \n separated
 )
 {
-    int old_look_at_mouse;
     int curtype;
     int curlen;
     char buf[81];
@@ -69,7 +68,7 @@ int fullscreen_prompt(        // full-screen prompting routine
     bool rewrite_extrainfo = false; // if true: rewrite extrainfo to text box
     char blanks[78];               // used to clear text box
 
-    old_look_at_mouse = g_look_at_mouse;
+    const int old_look_at_mouse = g_look_at_mouse;
     g_look_at_mouse = 0;
     promptfkeys = fn_key_mask;
     std::memset(blanks, ' ', 77);   // initialize string of blanks
