@@ -54,7 +54,6 @@ int fullscreen_prompt(        // full-screen prompting routine
     char *extra_info          // extra info box to display, \n separated
 )
 {
-    int boxrow;
     int boxlines;
     int boxcol;
     int boxwidth;
@@ -243,7 +242,7 @@ int fullscreen_prompt(        // full-screen prompting routine
         boxlines = num_prompts;
         titlerow = 1 + j;
     }
-    boxrow = titlerow + titlelines;
+    int boxrow = titlerow + titlelines;
     promptrow = boxrow;
     if (titlerow > 2)
     {
