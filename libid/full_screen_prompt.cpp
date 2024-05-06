@@ -55,7 +55,6 @@ int fullscreen_prompt(        // full-screen prompting routine
 )
 {
     // scrolling related variables
-    bool rewrite_extrainfo = false; // if true: rewrite extrainfo to text box
     char blanks[78];               // used to clear text box
 
     const int old_look_at_mouse = g_look_at_mouse;
@@ -438,6 +437,7 @@ int fullscreen_prompt(        // full-screen prompting routine
         driver_put_string(promptrow+i, valuecol, C_PROMPT_LO, buf);
     }
 
+    bool rewrite_extrainfo = false; // if true: rewrite extrainfo to text box
     if (!anyinput)
     {
         putstringcenter(instrrow++, 0, 80, C_PROMPT_BKGRD,
