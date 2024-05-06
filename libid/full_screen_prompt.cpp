@@ -55,7 +55,6 @@ int fullscreen_prompt(        // full-screen prompting routine
 )
 {
     // scrolling related variables
-    int lines_in_entry = 0;        // total lines in entry to be scrolled
     int vertical_scroll_limit = 0; // don't scroll down if this is top line
     int widest_entry_line = 0;     // length of longest line in entry
     bool rewrite_extrainfo = false; // if true: rewrite extrainfo to text box
@@ -97,6 +96,7 @@ int fullscreen_prompt(        // full-screen prompting routine
     }
 
     // initialize widest_entry_line and lines_in_entry
+    int lines_in_entry = 0;        // total lines in entry to be scrolled
     if (in_scrolling_mode && scroll_file != nullptr)
     {
         bool comment = false;
