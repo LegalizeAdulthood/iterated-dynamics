@@ -254,7 +254,7 @@ int fullscreen_prompt(        // full-screen prompting routine
 
     // work out horizontal positioning
     int max_comment = 0;
-    int maxpromptwidth = 0;
+    int max_prompt_width = 0;
     int maxfldwidth = 0;
     bool anyinput = false;
     for (int i = 0; i < num_prompts; i++)
@@ -278,9 +278,9 @@ int fullscreen_prompt(        // full-screen prompting routine
         else
         {
             anyinput = true;
-            if (j > maxpromptwidth)
+            if (j > max_prompt_width)
             {
-                maxpromptwidth = j;
+                max_prompt_width = j;
             }
             char buf[81];
             j = prompt_valuestring(buf, &values[i]);
@@ -290,7 +290,7 @@ int fullscreen_prompt(        // full-screen prompting routine
             }
         }
     }
-    int boxwidth = maxpromptwidth + maxfldwidth + 2;
+    int boxwidth = max_prompt_width + maxfldwidth + 2;
     if (max_comment > boxwidth)
     {
         boxwidth = max_comment;
