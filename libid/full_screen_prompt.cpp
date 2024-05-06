@@ -54,7 +54,6 @@ int fullscreen_prompt(        // full-screen prompting routine
     char *extra_info          // extra info box to display, \n separated
 )
 {
-    int extralines;
     int extrawidth;
     int extrarow;
     int instrrow;
@@ -176,7 +175,7 @@ int fullscreen_prompt(        // full-screen prompting routine
         }
     }
     extrawidth = 0;
-    extralines = 0;
+    int extralines = 0;
     {
         hdgscan = extra_info;
         if (hdgscan != nullptr)
