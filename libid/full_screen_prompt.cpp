@@ -198,10 +198,9 @@ int fullscreen_prompt(        // full-screen prompting routine
         scroll_file = nullptr;
     }
 
-    /*initialize vertical scroll limit. When the top line of the text
-      box is the vertical scroll limit, the bottom line is the end of the
-      entry, and no further down scrolling is necessary.
-    */
+    // initialize vertical scroll limit. When the top line of the text
+    // box is the vertical scroll limit, the bottom line is the end of the
+    // entry, and no further down scrolling is necessary.
     int vertical_scroll_limit = 0; // don't scroll down if this is top line
     if (in_scrolling_mode)
     {
@@ -213,8 +212,8 @@ int fullscreen_prompt(        // full-screen prompting routine
     int box_lines;
     {
         int i = num_prompts + title_lines + extra_lines + 3; // total rows required
-        int j = (25 - i) / 2;                   // top row of it all when centered
-        j -= j / 4;                         // higher is better if lots extra
+        int j = (25 - i) / 2;                                // top row of it all when centered
+        j -= j / 4;                                          // higher is better if lots extra
         box_lines = num_prompts;
         title_row = 1 + j;
     }
