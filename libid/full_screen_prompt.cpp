@@ -362,7 +362,7 @@ int fullscreen_prompt(        // full-screen prompting routine
         if (in_scrolling_mode)
         {
             *(hdg_line + 31) = (char) 0;   // replace the ')'
-            std::strcat(hdg_line, ". CTRL+(direction key) to scroll text.)");
+            std::strcat(hdg_line, ". Ctrl+<arrow key> to scroll text.)");
         }
 
         title_width = (int) std::strlen(hdg_line);
