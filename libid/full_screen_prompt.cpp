@@ -436,6 +436,18 @@ int fullscreen_prompt(        // full-screen prompting routine
     char blanks[78];                // used to clear text box
     std::memset(blanks, ' ', 77);   // initialize string of blanks
     blanks[77] = 0;
+    int done{};
+    const auto fullscreen_exit = [&]
+    {
+        driver_hide_text_cursor();
+        g_look_at_mouse = old_look_at_mouse;
+        if (scroll_file)
+        {
+            std::fclose(scroll_file);
+            scroll_file = nullptr;
+        }
+        return done;
+    };
     if (!anyinput)
     {
         putstringcenter(instrrow++, 0, 80, C_PROMPT_BKGRD,
@@ -464,14 +476,14 @@ int fullscreen_prompt(        // full-screen prompting routine
             while (!driver_key_pressed())
             {
             }
-            int done = driver_get_key();
+            done = driver_get_key();
             switch (done)
             {
             case ID_KEY_ESC:
                 done = -1;
             case ID_KEY_ENTER:
             case ID_KEY_ENTER_2:
-                goto fullscreen_exit;
+                return fullscreen_exit();
             case ID_KEY_CTL_DOWN_ARROW:    // scrolling key - down one row
                 if (in_scrolling_mode && scroll_row_status < vertical_scroll_limit)
                 {
@@ -549,7 +561,7 @@ int fullscreen_prompt(        // full-screen prompting routine
             case ID_KEY_F10:
                 if (promptfkeys & (1 << (done+1-ID_KEY_F1)))
                 {
-                    goto fullscreen_exit;
+                    return fullscreen_exit();
                 }
             }
         }
@@ -572,7 +584,6 @@ int fullscreen_prompt(        // full-screen prompting routine
         ++curchoice;
     }
 
-    int done = 0;
     while (!done)
     {
         if (rewrite_extrainfo)
@@ -790,15 +801,7 @@ int fullscreen_prompt(        // full-screen prompting routine
         }
     }
 
-fullscreen_exit:
-    driver_hide_text_cursor();
-    g_look_at_mouse = old_look_at_mouse;
-    if (scroll_file)
-    {
-        std::fclose(scroll_file);
-        scroll_file = nullptr;
-    }
-    return done;
+    return fullscreen_exit();
 }
 
 static int prompt_valuestring(char *buf, fullscreenvalues const *val)
