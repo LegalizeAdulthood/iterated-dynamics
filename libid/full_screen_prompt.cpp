@@ -599,13 +599,13 @@ int fullscreen_prompt(        // full-screen prompting routine
             g_text_cbase = j;
         }
 
-        const int curtype = values[cur_choice].type;
+        const int cur_type = values[cur_choice].type;
         char buf[81];
         const int curlen = prompt_valuestring(buf, &values[cur_choice]);
         if (!rewrite_extra_info)
         {
             putstringcenter(instr_row, 0, 80, C_PROMPT_BKGRD,
-                (curtype == 'l') ?
+                (cur_type == 'l') ?
                 "Use <Left> or <Right> to change value of selected field"
                 : "Type in replacement value for selected field");
         }
@@ -616,7 +616,7 @@ int fullscreen_prompt(        // full-screen prompting routine
         driver_put_string(prompt_row+cur_choice, prompt_col, C_PROMPT_HI, prompts[cur_choice]);
 
         int i;
-        if (curtype == 'l')
+        if (cur_type == 'l')
         {
             i = input_field_list(
                     C_PROMPT_CHOOSE, buf, curlen,
@@ -635,23 +635,23 @@ int fullscreen_prompt(        // full-screen prompting routine
         else
         {
             int j = 0;
-            if (curtype == 'i')
+            if (cur_type == 'i')
             {
                 j = INPUTFIELD_NUMERIC | INPUTFIELD_INTEGER;
             }
-            if (curtype == 'L')
+            if (cur_type == 'L')
             {
                 j = INPUTFIELD_NUMERIC | INPUTFIELD_INTEGER;
             }
-            if (curtype == 'd')
+            if (cur_type == 'd')
             {
                 j = INPUTFIELD_NUMERIC | INPUTFIELD_DOUBLE;
             }
-            if (curtype == 'D')
+            if (cur_type == 'D')
             {
                 j = INPUTFIELD_NUMERIC | INPUTFIELD_DOUBLE | INPUTFIELD_INTEGER;
             }
-            if (curtype == 'f')
+            if (cur_type == 'f')
             {
                 j = INPUTFIELD_NUMERIC;
             }
