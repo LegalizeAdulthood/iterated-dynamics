@@ -282,8 +282,8 @@ int fullscreen_prompt(        // full-screen prompting routine
 
     // work out horizontal positioning
     maxcomment = 0;
-    maxpromptwidth = maxcomment;
-    maxfldwidth = maxpromptwidth;
+    maxpromptwidth = 0;
+    maxfldwidth = 0;
     bool anyinput = false;
     for (int i = 0; i < num_prompts; i++)
     {
