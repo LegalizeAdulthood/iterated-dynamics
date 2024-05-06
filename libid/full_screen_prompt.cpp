@@ -31,7 +31,7 @@ static  int input_field_list(int attr, char *fld, int vlen, char const **list, i
                              int row, int col, int (*checkkey)(int));
 static int prompt_valuestring(char *buf, fullscreenvalues const *val);
 
-static int promptfkeys;
+static int s_prompt_fn_keys{};
 
 // These need to be global because F6 exits fullscreen_prompt()
 static int scroll_row_status{};    /* will be set to first line of extra info to
@@ -56,7 +56,7 @@ int fullscreen_prompt(        // full-screen prompting routine
 {
     const int old_look_at_mouse = g_look_at_mouse;
     g_look_at_mouse = 0;
-    promptfkeys = fn_key_mask;
+    s_prompt_fn_keys = fn_key_mask;
 
     /* If applicable, open file for scrolling extrainfo. The function
        find_file_item() opens the file and sets the file pointer to the
@@ -559,7 +559,7 @@ int fullscreen_prompt(        // full-screen prompting routine
             case ID_KEY_F8:
             case ID_KEY_F9:
             case ID_KEY_F10:
-                if (promptfkeys & (1 << (done+1-ID_KEY_F1)))
+                if (s_prompt_fn_keys & (1 << (done+1-ID_KEY_F1)))
                 {
                     return fullscreen_exit();
                 }
@@ -877,7 +877,7 @@ static int prompt_checkkey(int curkey)
     case ID_KEY_F8:
     case ID_KEY_F9:
     case ID_KEY_F10:
-        if (promptfkeys & (1 << (curkey+1-ID_KEY_F1)))
+        if (s_prompt_fn_keys & (1 << (curkey+1-ID_KEY_F1)))
         {
             return curkey;
         }
@@ -911,7 +911,7 @@ static int prompt_checkkey_scroll(int curkey)
     case ID_KEY_F8:
     case ID_KEY_F9:
     case ID_KEY_F10:
-        if (promptfkeys & (1 << (curkey+1-ID_KEY_F1)))
+        if (s_prompt_fn_keys & (1 << (curkey+1-ID_KEY_F1)))
         {
             return curkey;
         }
