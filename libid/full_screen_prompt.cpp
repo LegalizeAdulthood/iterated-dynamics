@@ -134,11 +134,11 @@ int fullscreen_prompt(        // full-screen prompting routine
     helptitle();                        // clear screen, display title line
     driver_set_attr(1, 0, C_PROMPT_BKGRD, 24*80);  // init rest of screen to background
 
-    const char *hdg_scan = hdg;                      // count title lines, find widest
-    int title_width = 0;
+    int title_width = 0;                      // count title lines, find widest
     int title_lines = 1;
     {
         int i = 0;
+        const char *hdg_scan = hdg;
         while (*hdg_scan)
         {
             if (*(hdg_scan++) == '\n')
@@ -155,7 +155,7 @@ int fullscreen_prompt(        // full-screen prompting routine
     int extrawidth = 0;
     int extralines = 0;
     {
-        hdg_scan = extra_info;
+        const char *hdg_scan = extra_info;
         if (hdg_scan != nullptr)
         {
             if (*hdg_scan == 0)
