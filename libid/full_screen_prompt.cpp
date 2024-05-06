@@ -341,34 +341,34 @@ int fullscreen_prompt(        // full-screen prompting routine
 
     {
         char buffer[256];
-        char *hdgline = buffer;
+        char *hdg_line = buffer;
         // center each line of heading independently
         int i;
-        std::strcpy(hdgline, hdg);
+        std::strcpy(hdg_line, hdg);
         for (i = 0; i < title_lines-1; i++)
         {
-            char *next = std::strchr(hdgline, '\n');
+            char *next = std::strchr(hdg_line, '\n');
             if (next == nullptr)
             {
                 break; // shouldn't happen
             }
             *next = '\0';
-            title_width = (int) std::strlen(hdgline);
+            title_width = (int) std::strlen(hdg_line);
             g_text_cbase = box_col + (box_width - title_width) / 2;
-            driver_put_string(title_row+i, 0, C_PROMPT_HI, hdgline);
+            driver_put_string(title_row+i, 0, C_PROMPT_HI, hdg_line);
             *next = '\n';
-            hdgline = next+1;
+            hdg_line = next+1;
         }
         // add scrolling key message, if applicable
         if (in_scrolling_mode)
         {
-            *(hdgline + 31) = (char) 0;   // replace the ')'
-            std::strcat(hdgline, ". CTRL+(direction key) to scroll text.)");
+            *(hdg_line + 31) = (char) 0;   // replace the ')'
+            std::strcat(hdg_line, ". CTRL+(direction key) to scroll text.)");
         }
 
-        title_width = (int) std::strlen(hdgline);
+        title_width = (int) std::strlen(hdg_line);
         g_text_cbase = box_col + (box_width - title_width) / 2;
-        driver_put_string(title_row+i, 0, C_PROMPT_HI, hdgline);
+        driver_put_string(title_row+i, 0, C_PROMPT_HI, hdg_line);
     }
 
     // display extra info
