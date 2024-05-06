@@ -28,10 +28,10 @@ struct fullscreenvalues
 
 int fullscreen_prompt(
     char const *hdg,
-    int numprompts,
+    int num_prompts,
     char const **prompts,
     fullscreenvalues *values,
-    int fkeymask,
-    char *extrainfo);
+    int fn_key_mask,
+    char *extra_info);
 
 void full_screen_reset_scrolling();

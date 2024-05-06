@@ -45,13 +45,13 @@ void full_screen_reset_scrolling()
     scroll_column_status = 0;
 }
 
-int fullscreen_prompt(      // full-screen prompting routine
-    char const *hdg,        // heading, lines separated by \n
-    int numprompts,         // there are this many prompts (max)
-    char const **prompts,   // array of prompting pointers
+int fullscreen_prompt(        // full-screen prompting routine
+    char const *hdg,          // heading, lines separated by \n
+    int num_prompts,          // there are this many prompts (max)
+    char const **prompts,     // array of prompting pointers
     fullscreenvalues *values, // array of values
-    int fkeymask,           // bit n on if Fn to cause return
-    char *extrainfo         // extra info box to display, \n separated
+    int fn_key_mask,          // bit n on if Fn to cause return
+    char *extra_info          // extra info box to display, \n separated
 )
 {
     char const *hdgscan;
@@ -91,7 +91,7 @@ int fullscreen_prompt(      // full-screen prompting routine
 
     old_look_at_mouse = g_look_at_mouse;
     g_look_at_mouse = 0;
-    promptfkeys = fkeymask;
+    promptfkeys = fn_key_mask;
     std::memset(blanks, ' ', 77);   // initialize string of blanks
     blanks[77] = (char) 0;
 
@@ -99,7 +99,7 @@ int fullscreen_prompt(      // full-screen prompting routine
        find_file_item() opens the file and sets the file pointer to the
        beginning of the entry.
     */
-    if (extrainfo && *extrainfo)
+    if (extra_info && *extra_info)
     {
         if (g_fractal_type == fractal_type::FORMULA || g_fractal_type == fractal_type::FFORMULA)
         {
@@ -189,12 +189,12 @@ int fullscreen_prompt(      // full-screen prompting routine
     extrawidth = 0;
     extralines = 0;
     {
-        hdgscan = extrainfo;
+        hdgscan = extra_info;
         if (hdgscan != nullptr)
         {
             if (*hdgscan == 0)
             {
-                extrainfo = nullptr;
+                extra_info = nullptr;
             }
             else
             {
@@ -205,7 +205,7 @@ int fullscreen_prompt(      // full-screen prompting routine
                 {
                     if (*(hdgscan++) == '\n')
                     {
-                        if (extralines + numprompts + titlelines >= 20)
+                        if (extralines + num_prompts + titlelines >= 20)
                         {
                             break;
                         }
@@ -225,7 +225,7 @@ int fullscreen_prompt(      // full-screen prompting routine
     if (in_scrolling_mode && scroll_row_status == 0
         && lines_in_entry == extralines - 2
         && scroll_column_status == 0
-        && std::strchr(extrainfo, '\021') == nullptr)
+        && std::strchr(extra_info, '\021') == nullptr)
     {
         in_scrolling_mode = false;
         std::fclose(scroll_file);
@@ -243,10 +243,10 @@ int fullscreen_prompt(      // full-screen prompting routine
 
     // work out vertical positioning
     {
-        int i = numprompts + titlelines + extralines + 3; // total rows required
+        int i = num_prompts + titlelines + extralines + 3; // total rows required
         int j = (25 - i) / 2;                   // top row of it all when centered
         j -= j / 4;                         // higher is better if lots extra
-        boxlines = numprompts;
+        boxlines = num_prompts;
         titlerow = 1 + j;
     }
     boxrow = titlerow + titlelines;
@@ -269,7 +269,7 @@ int fullscreen_prompt(      // full-screen prompting routine
         }
     }
     extrarow = instrrow + 2;
-    if (numprompts > 1)   // 3 instructions lines
+    if (num_prompts > 1)   // 3 instructions lines
     {
         ++extrarow;
     }
@@ -288,7 +288,7 @@ int fullscreen_prompt(      // full-screen prompting routine
     maxpromptwidth = maxcomment;
     maxfldwidth = maxpromptwidth;
     bool anyinput = false;
-    for (int i = 0; i < numprompts; i++)
+    for (int i = 0; i < num_prompts; i++)
     {
         if (values[i].type == 'y')
         {
@@ -402,7 +402,7 @@ int fullscreen_prompt(      // full-screen prompting routine
     }
 
     // display extra info
-    if (extrainfo)
+    if (extra_info)
     {
 #ifndef XFRACT
 #define S1 '\xC4'
@@ -439,7 +439,7 @@ int fullscreen_prompt(      // full-screen prompting routine
             driver_put_string(extrarow+i, boxwidth-1, C_PROMPT_BKGRD, S4);
         }
         g_text_cbase += (boxwidth - extrawidth) / 2;
-        driver_put_string(extrarow+1, 0, C_PROMPT_TEXT, extrainfo);
+        driver_put_string(extrarow+1, 0, C_PROMPT_TEXT, extra_info);
     }
 
     g_text_cbase = 0;
@@ -451,7 +451,7 @@ int fullscreen_prompt(      // full-screen prompting routine
     }
 
     // display initial values
-    for (int i = 0; i < numprompts; i++)
+    for (int i = 0; i < num_prompts; i++)
     {
         driver_put_string(promptrow+i, promptcol, C_PROMPT_LO, prompts[i]);
         prompt_valuestring(buf, &values[i]);
@@ -474,13 +474,13 @@ int fullscreen_prompt(      // full-screen prompting routine
             {
                 rewrite_extrainfo = false;
                 std::fseek(scroll_file, scroll_file_start, SEEK_SET);
-                load_entry_text(scroll_file, extrainfo, extralines - 2,
+                load_entry_text(scroll_file, extra_info, extralines - 2,
                                 scroll_row_status, scroll_column_status);
                 for (int i = 1; i <= extralines-2; i++)
                 {
                     driver_put_string(extrarow+i, 0, C_PROMPT_TEXT, blanks);
                 }
-                driver_put_string(extrarow+1, 0, C_PROMPT_TEXT, extrainfo);
+                driver_put_string(extrarow+1, 0, C_PROMPT_TEXT, extra_info);
             }
             // TODO: rework key interaction to blocking wait
             while (!driver_key_pressed())
@@ -516,7 +516,7 @@ int fullscreen_prompt(      // full-screen prompting routine
                 }
                 break;
             case ID_KEY_CTL_RIGHT_ARROW:   // scrolling key - right one column
-                if (in_scrolling_mode && std::strchr(extrainfo, '\021') != nullptr)
+                if (in_scrolling_mode && std::strchr(extra_info, '\021') != nullptr)
                 {
                     scroll_column_status++;
                     rewrite_extrainfo = true;
@@ -578,7 +578,7 @@ int fullscreen_prompt(      // full-screen prompting routine
     }
 
     // display footing
-    if (numprompts > 1)
+    if (num_prompts > 1)
     {
         putstringcenter(instrrow++, 0, 80, C_PROMPT_BKGRD,
                         "Use <Up> and <Down> to select values to change");
@@ -601,13 +601,13 @@ int fullscreen_prompt(      // full-screen prompting routine
             int j = g_text_cbase;
             g_text_cbase = 2;
             std::fseek(scroll_file, scroll_file_start, SEEK_SET);
-            load_entry_text(scroll_file, extrainfo, extralines - 2,
+            load_entry_text(scroll_file, extra_info, extralines - 2,
                             scroll_row_status, scroll_column_status);
             for (int i = 1; i <= extralines-2; i++)
             {
                 driver_put_string(extrarow+i, 0, C_PROMPT_TEXT, blanks);
             }
-            driver_put_string(extrarow+1, 0, C_PROMPT_TEXT, extrainfo);
+            driver_put_string(extrarow+1, 0, C_PROMPT_TEXT, extra_info);
             g_text_cbase = j;
         }
 
@@ -722,7 +722,7 @@ int fullscreen_prompt(      // full-screen prompting routine
         case ID_KEY_DOWN_ARROW:
             do
             {
-                if (++curchoice >= numprompts)
+                if (++curchoice >= num_prompts)
                 {
                     curchoice = 0;
                 }
@@ -730,13 +730,13 @@ int fullscreen_prompt(      // full-screen prompting routine
             while (values[curchoice].type == '*');
             break;
         case ID_KEY_PAGE_DOWN:
-            curchoice = numprompts;
+            curchoice = num_prompts;
         case ID_KEY_UP_ARROW:
             do
             {
                 if (--curchoice < 0)
                 {
-                    curchoice = numprompts - 1;
+                    curchoice = num_prompts - 1;
                 }
             }
             while (values[curchoice].type == '*');
@@ -763,7 +763,7 @@ int fullscreen_prompt(      // full-screen prompting routine
             }
             break;
         case ID_KEY_CTL_RIGHT_ARROW:    // scrolling key - right one column
-            if (in_scrolling_mode && std::strchr(extrainfo, '\021') != nullptr)
+            if (in_scrolling_mode && std::strchr(extra_info, '\021') != nullptr)
             {
                 scroll_column_status++;
                 rewrite_extrainfo = true;
