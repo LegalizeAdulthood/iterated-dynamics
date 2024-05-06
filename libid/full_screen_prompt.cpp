@@ -136,14 +136,14 @@ int fullscreen_prompt(        // full-screen prompting routine
 
     const char *hdg_scan = hdg;                      // count title lines, find widest
     int title_width = 0;
-    int titlelines = 1;
+    int title_lines = 1;
     {
         int i = 0;
         while (*hdg_scan)
         {
             if (*(hdg_scan++) == '\n')
             {
-                ++titlelines;
+                ++title_lines;
                 i = -1;
             }
             if (++i > title_width)
@@ -171,7 +171,7 @@ int fullscreen_prompt(        // full-screen prompting routine
                 {
                     if (*(hdg_scan++) == '\n')
                     {
-                        if (extralines + num_prompts + titlelines >= 20)
+                        if (extralines + num_prompts + title_lines >= 20)
                         {
                             break;
                         }
@@ -212,13 +212,13 @@ int fullscreen_prompt(        // full-screen prompting routine
     int titlerow;
     int boxlines;
     {
-        int i = num_prompts + titlelines + extralines + 3; // total rows required
+        int i = num_prompts + title_lines + extralines + 3; // total rows required
         int j = (25 - i) / 2;                   // top row of it all when centered
         j -= j / 4;                         // higher is better if lots extra
         boxlines = num_prompts;
         titlerow = 1 + j;
     }
-    int boxrow = titlerow + titlelines;
+    int boxrow = titlerow + title_lines;
     int promptrow = boxrow;
     if (titlerow > 2)
     {
@@ -345,7 +345,7 @@ int fullscreen_prompt(        // full-screen prompting routine
         // center each line of heading independently
         int i;
         std::strcpy(hdgline, hdg);
-        for (i = 0; i < titlelines-1; i++)
+        for (i = 0; i < title_lines-1; i++)
         {
             char *next = std::strchr(hdgline, '\n');
             if (next == nullptr)
