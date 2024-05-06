@@ -190,7 +190,7 @@ int fullscreen_prompt(      // full-screen prompting routine
         }
     }
     extrawidth = 0;
-    extralines = extrawidth;
+    extralines = 0;
     {
         hdgscan = extrainfo;
         if (hdgscan != nullptr)
