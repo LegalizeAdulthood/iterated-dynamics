@@ -219,7 +219,7 @@ int fullscreen_prompt(        // full-screen prompting routine
         title_row = 1 + j;
     }
     int box_row = title_row + title_lines;
-    int promptrow = box_row;
+    int prompt_row = box_row;
     if (title_row > 2)
     {
         // room for blank between title & box?
@@ -424,10 +424,10 @@ int fullscreen_prompt(        // full-screen prompting routine
     // display initial values
     for (int i = 0; i < num_prompts; i++)
     {
-        driver_put_string(promptrow+i, promptcol, C_PROMPT_LO, prompts[i]);
+        driver_put_string(prompt_row+i, promptcol, C_PROMPT_LO, prompts[i]);
         char buf[81];
         prompt_valuestring(buf, &values[i]);
-        driver_put_string(promptrow+i, valuecol, C_PROMPT_LO, buf);
+        driver_put_string(prompt_row+i, valuecol, C_PROMPT_LO, buf);
     }
 
     bool rewrite_extrainfo = false; // if true: rewrite extrainfo to text box
@@ -613,7 +613,7 @@ int fullscreen_prompt(        // full-screen prompting routine
         {
             rewrite_extrainfo = false;
         }
-        driver_put_string(promptrow+curchoice, promptcol, C_PROMPT_HI, prompts[curchoice]);
+        driver_put_string(prompt_row+curchoice, promptcol, C_PROMPT_HI, prompts[curchoice]);
 
         int i;
         if (curtype == 'l')
@@ -621,7 +621,7 @@ int fullscreen_prompt(        // full-screen prompting routine
             i = input_field_list(
                     C_PROMPT_CHOOSE, buf, curlen,
                     values[curchoice].uval.ch.list, values[curchoice].uval.ch.llen,
-                    promptrow+curchoice, valuecol, in_scrolling_mode ? prompt_checkkey_scroll : prompt_checkkey);
+                    prompt_row+curchoice, valuecol, in_scrolling_mode ? prompt_checkkey_scroll : prompt_checkkey);
             int j;
             for (j = 0; j < values[curchoice].uval.ch.llen; ++j)
             {
@@ -656,7 +656,7 @@ int fullscreen_prompt(        // full-screen prompting routine
                 j = INPUTFIELD_NUMERIC;
             }
             i = input_field(j, C_PROMPT_INPUT, buf, curlen,
-                            promptrow+curchoice, valuecol, in_scrolling_mode ? prompt_checkkey_scroll : prompt_checkkey);
+                            prompt_row+curchoice, valuecol, in_scrolling_mode ? prompt_checkkey_scroll : prompt_checkkey);
             switch (values[curchoice].type)
             {
             case 'd':
@@ -681,13 +681,13 @@ int fullscreen_prompt(        // full-screen prompting routine
             }
         }
 
-        driver_put_string(promptrow+curchoice, promptcol, C_PROMPT_LO, prompts[curchoice]);
+        driver_put_string(prompt_row+curchoice, promptcol, C_PROMPT_LO, prompts[curchoice]);
         {
             int j = (int) std::strlen(buf);
             std::memset(&buf[j], ' ', 80-j);
         }
         buf[curlen] = 0;
-        driver_put_string(promptrow+curchoice, valuecol, C_PROMPT_LO,  buf);
+        driver_put_string(prompt_row+curchoice, valuecol, C_PROMPT_LO,  buf);
 
         switch (i)
         {
