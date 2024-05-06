@@ -54,7 +54,6 @@ int fullscreen_prompt(        // full-screen prompting routine
     char *extra_info          // extra info box to display, \n separated
 )
 {
-    int curchoice = 0;
     int done;
     int old_look_at_mouse;
     int curtype;
@@ -573,6 +572,7 @@ int fullscreen_prompt(        // full-screen prompting routine
             : "Press ENTER when finished (or ESCAPE to back out)");
 
     done = 0;
+    int curchoice = 0;
     while (values[curchoice].type == '*')
     {
         ++curchoice;
