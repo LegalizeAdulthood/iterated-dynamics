@@ -601,7 +601,7 @@ int fullscreen_prompt(        // full-screen prompting routine
 
         const int cur_type = values[cur_choice].type;
         char buf[81];
-        const int curlen = prompt_valuestring(buf, &values[cur_choice]);
+        const int cur_len = prompt_valuestring(buf, &values[cur_choice]);
         if (!rewrite_extra_info)
         {
             putstringcenter(instr_row, 0, 80, C_PROMPT_BKGRD,
@@ -619,7 +619,7 @@ int fullscreen_prompt(        // full-screen prompting routine
         if (cur_type == 'l')
         {
             i = input_field_list(
-                    C_PROMPT_CHOOSE, buf, curlen,
+                    C_PROMPT_CHOOSE, buf, cur_len,
                     values[cur_choice].uval.ch.list, values[cur_choice].uval.ch.llen,
                     prompt_row+cur_choice, value_col, in_scrolling_mode ? prompt_checkkey_scroll : prompt_checkkey);
             int j;
@@ -655,7 +655,7 @@ int fullscreen_prompt(        // full-screen prompting routine
             {
                 j = INPUTFIELD_NUMERIC;
             }
-            i = input_field(j, C_PROMPT_INPUT, buf, curlen,
+            i = input_field(j, C_PROMPT_INPUT, buf, cur_len,
                             prompt_row+cur_choice, value_col, in_scrolling_mode ? prompt_checkkey_scroll : prompt_checkkey);
             switch (values[cur_choice].type)
             {
@@ -686,7 +686,7 @@ int fullscreen_prompt(        // full-screen prompting routine
             int j = (int) std::strlen(buf);
             std::memset(&buf[j], ' ', 80-j);
         }
-        buf[curlen] = 0;
+        buf[cur_len] = 0;
         driver_put_string(prompt_row+cur_choice, value_col, C_PROMPT_LO,  buf);
 
         switch (i)
