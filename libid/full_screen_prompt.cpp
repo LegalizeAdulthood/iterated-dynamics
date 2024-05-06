@@ -55,7 +55,6 @@ int fullscreen_prompt(        // full-screen prompting routine
 )
 {
     // scrolling related variables
-    int vertical_scroll_limit = 0; // don't scroll down if this is top line
     int widest_entry_line = 0;     // length of longest line in entry
     bool rewrite_extrainfo = false; // if true: rewrite extrainfo to text box
     char blanks[78];               // used to clear text box
@@ -211,6 +210,7 @@ int fullscreen_prompt(        // full-screen prompting routine
       box is the vertical scroll limit, the bottom line is the end of the
       entry, and no further down scrolling is necessary.
     */
+    int vertical_scroll_limit = 0; // don't scroll down if this is top line
     if (in_scrolling_mode)
     {
         vertical_scroll_limit = lines_in_entry - (extralines - 2);
