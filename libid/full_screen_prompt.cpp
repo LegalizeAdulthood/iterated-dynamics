@@ -576,10 +576,10 @@ int fullscreen_prompt(        // full-screen prompting routine
             "Press ENTER when finished, ESCAPE to back out, or F1 for help"
             : "Press ENTER when finished (or ESCAPE to back out)");
 
-    int curchoice = 0;
-    while (values[curchoice].type == '*')
+    int cur_choice = 0;
+    while (values[cur_choice].type == '*')
     {
-        ++curchoice;
+        ++cur_choice;
     }
 
     while (!done)
@@ -599,9 +599,9 @@ int fullscreen_prompt(        // full-screen prompting routine
             g_text_cbase = j;
         }
 
-        const int curtype = values[curchoice].type;
+        const int curtype = values[cur_choice].type;
         char buf[81];
-        const int curlen = prompt_valuestring(buf, &values[curchoice]);
+        const int curlen = prompt_valuestring(buf, &values[cur_choice]);
         if (!rewrite_extra_info)
         {
             putstringcenter(instr_row, 0, 80, C_PROMPT_BKGRD,
@@ -613,24 +613,24 @@ int fullscreen_prompt(        // full-screen prompting routine
         {
             rewrite_extra_info = false;
         }
-        driver_put_string(prompt_row+curchoice, prompt_col, C_PROMPT_HI, prompts[curchoice]);
+        driver_put_string(prompt_row+cur_choice, prompt_col, C_PROMPT_HI, prompts[cur_choice]);
 
         int i;
         if (curtype == 'l')
         {
             i = input_field_list(
                     C_PROMPT_CHOOSE, buf, curlen,
-                    values[curchoice].uval.ch.list, values[curchoice].uval.ch.llen,
-                    prompt_row+curchoice, value_col, in_scrolling_mode ? prompt_checkkey_scroll : prompt_checkkey);
+                    values[cur_choice].uval.ch.list, values[cur_choice].uval.ch.llen,
+                    prompt_row+cur_choice, value_col, in_scrolling_mode ? prompt_checkkey_scroll : prompt_checkkey);
             int j;
-            for (j = 0; j < values[curchoice].uval.ch.llen; ++j)
+            for (j = 0; j < values[cur_choice].uval.ch.llen; ++j)
             {
-                if (std::strcmp(buf, values[curchoice].uval.ch.list[j]) == 0)
+                if (std::strcmp(buf, values[cur_choice].uval.ch.list[j]) == 0)
                 {
                     break;
                 }
             }
-            values[curchoice].uval.ch.val = j;
+            values[cur_choice].uval.ch.val = j;
         }
         else
         {
@@ -656,38 +656,38 @@ int fullscreen_prompt(        // full-screen prompting routine
                 j = INPUTFIELD_NUMERIC;
             }
             i = input_field(j, C_PROMPT_INPUT, buf, curlen,
-                            prompt_row+curchoice, value_col, in_scrolling_mode ? prompt_checkkey_scroll : prompt_checkkey);
-            switch (values[curchoice].type)
+                            prompt_row+cur_choice, value_col, in_scrolling_mode ? prompt_checkkey_scroll : prompt_checkkey);
+            switch (values[cur_choice].type)
             {
             case 'd':
             case 'D':
-                values[curchoice].uval.dval = std::atof(buf);
+                values[cur_choice].uval.dval = std::atof(buf);
                 break;
             case 'f':
-                values[curchoice].uval.dval = std::atof(buf);
-                roundfloatd(&values[curchoice].uval.dval);
+                values[cur_choice].uval.dval = std::atof(buf);
+                roundfloatd(&values[cur_choice].uval.dval);
                 break;
             case 'i':
-                values[curchoice].uval.ival = std::atoi(buf);
+                values[cur_choice].uval.ival = std::atoi(buf);
                 break;
             case 'L':
-                values[curchoice].uval.Lval = std::atol(buf);
+                values[cur_choice].uval.Lval = std::atol(buf);
                 break;
             case 's':
-                std::strncpy(values[curchoice].uval.sval, buf, 16);
+                std::strncpy(values[cur_choice].uval.sval, buf, 16);
                 break;
             default: // assume 0x100+n
-                std::strcpy(values[curchoice].uval.sbuf, buf);
+                std::strcpy(values[cur_choice].uval.sbuf, buf);
             }
         }
 
-        driver_put_string(prompt_row+curchoice, prompt_col, C_PROMPT_LO, prompts[curchoice]);
+        driver_put_string(prompt_row+cur_choice, prompt_col, C_PROMPT_LO, prompts[cur_choice]);
         {
             int j = (int) std::strlen(buf);
             std::memset(&buf[j], ' ', 80-j);
         }
         buf[curlen] = 0;
-        driver_put_string(prompt_row+curchoice, value_col, C_PROMPT_LO,  buf);
+        driver_put_string(prompt_row+cur_choice, value_col, C_PROMPT_LO,  buf);
 
         switch (i)
         {
@@ -707,28 +707,28 @@ int fullscreen_prompt(        // full-screen prompting routine
             done = i;
             break;
         case ID_KEY_PAGE_UP:
-            curchoice = -1;
+            cur_choice = -1;
         case ID_KEY_DOWN_ARROW:
             do
             {
-                if (++curchoice >= num_prompts)
+                if (++cur_choice >= num_prompts)
                 {
-                    curchoice = 0;
+                    cur_choice = 0;
                 }
             }
-            while (values[curchoice].type == '*');
+            while (values[cur_choice].type == '*');
             break;
         case ID_KEY_PAGE_DOWN:
-            curchoice = num_prompts;
+            cur_choice = num_prompts;
         case ID_KEY_UP_ARROW:
             do
             {
-                if (--curchoice < 0)
+                if (--cur_choice < 0)
                 {
-                    curchoice = num_prompts - 1;
+                    cur_choice = num_prompts - 1;
                 }
             }
-            while (values[curchoice].type == '*');
+            while (values[cur_choice].type == '*');
             break;
         case ID_KEY_CTL_DOWN_ARROW:     // scrolling key - down one row
             if (in_scrolling_mode && s_scroll_row_status < vertical_scroll_limit)
