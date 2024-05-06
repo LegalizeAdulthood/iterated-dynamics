@@ -164,6 +164,10 @@ enum class token_type
     OPERATOR = 10,
     END_OF_FORMULA = 11
 };
+inline int operator+(token_type value)
+{
+    return static_cast<int>(value);
+}
 
 // token IDs
 enum class token_id
@@ -3622,7 +3626,8 @@ CASE_NUM :
                 tok->id   = token_id::NONE;
                 if (debug_token != nullptr)
                 {
-                    std::fprintf(debug_token,  "Exiting with type set to %d\n", tok->constant.y ? token_type::COMPLEX_CONSTANT : token_type::REAL_CONSTANT);
+                    std::fprintf(debug_token, "Exiting with type set to %d\n",
+                        +(tok->constant.y ? token_type::COMPLEX_CONSTANT : token_type::REAL_CONSTANT));
                     std::fclose(debug_token);
                 }
                 return;
@@ -3955,7 +3960,7 @@ int frm_get_param_stuff(char const *Name)
         if (debug_token != nullptr)
         {
             std::fprintf(debug_token, "%s\n", current_token.str);
-            std::fprintf(debug_token, "token_type is %d\n", static_cast<int>(current_token.type));
+            std::fprintf(debug_token, "token_type is %d\n", +current_token.type);
             std::fprintf(debug_token, "token_id is %d\n", +current_token.id);
             if (current_token.type == token_type::REAL_CONSTANT || current_token.type == token_type::COMPLEX_CONSTANT)
             {
