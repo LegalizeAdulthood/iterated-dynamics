@@ -152,8 +152,8 @@ int fullscreen_prompt(        // full-screen prompting routine
             }
         }
     }
-    int extrawidth = 0;
-    int extralines = 0;
+    int extra_width = 0;
+    int extra_lines = 0;
     {
         const char *scan = extra_info;
         if (scan != nullptr)
@@ -165,22 +165,22 @@ int fullscreen_prompt(        // full-screen prompting routine
             else
             {
                 // count extra lines, find widest
-                extralines = 3;
+                extra_lines = 3;
                 int i = 0;
                 while (*scan)
                 {
                     if (*(scan++) == '\n')
                     {
-                        if (extralines + num_prompts + title_lines >= 20)
+                        if (extra_lines + num_prompts + title_lines >= 20)
                         {
                             break;
                         }
-                        ++extralines;
+                        ++extra_lines;
                         i = -1;
                     }
-                    if (++i > extrawidth)
+                    if (++i > extra_width)
                     {
-                        extrawidth = i;
+                        extra_width = i;
                     }
                 }
             }
@@ -189,7 +189,7 @@ int fullscreen_prompt(        // full-screen prompting routine
 
     // if entry fits in available space, shut off scrolling
     if (in_scrolling_mode && s_scroll_row_status == 0
-        && lines_in_entry == extralines - 2
+        && lines_in_entry == extra_lines - 2
         && s_scroll_column_status == 0
         && std::strchr(extra_info, '\021') == nullptr)
     {
@@ -205,14 +205,14 @@ int fullscreen_prompt(        // full-screen prompting routine
     int vertical_scroll_limit = 0; // don't scroll down if this is top line
     if (in_scrolling_mode)
     {
-        vertical_scroll_limit = lines_in_entry - (extralines - 2);
+        vertical_scroll_limit = lines_in_entry - (extra_lines - 2);
     }
 
     // work out vertical positioning
     int titlerow;
     int boxlines;
     {
-        int i = num_prompts + title_lines + extralines + 3; // total rows required
+        int i = num_prompts + title_lines + extra_lines + 3; // total rows required
         int j = (25 - i) / 2;                   // top row of it all when centered
         j -= j / 4;                         // higher is better if lots extra
         boxlines = num_prompts;
@@ -228,11 +228,11 @@ int fullscreen_prompt(        // full-screen prompting routine
         ++boxlines;
     }
     int instrrow = boxrow+boxlines;
-    if (instrrow + 3 + extralines < 25)
+    if (instrrow + 3 + extra_lines < 25)
     {
         ++boxlines;    // blank at bottom of box
         ++instrrow;
-        if (instrrow + 3 + extralines < 25)
+        if (instrrow + 3 + extra_lines < 25)
         {
             ++instrrow; // blank before instructions
         }
@@ -242,14 +242,14 @@ int fullscreen_prompt(        // full-screen prompting routine
     {
         ++extrarow;
     }
-    if (extrarow + extralines < 25)
+    if (extrarow + extra_lines < 25)
     {
         ++extrarow;
     }
 
     if (in_scrolling_mode)    // set box to max width if in scrolling mode
     {
-        extrawidth = 76;
+        extra_width = 76;
     }
 
     // work out horizontal positioning
@@ -310,9 +310,9 @@ int fullscreen_prompt(        // full-screen prompting routine
     }
     {
         int j = title_width;
-        if (j < extrawidth)
+        if (j < extra_width)
         {
-            j = extrawidth;
+            j = extra_width;
         }
         int i = j + 4 - boxwidth;
         if (i > 0)
@@ -394,22 +394,22 @@ int fullscreen_prompt(        // full-screen prompting routine
         buf[boxwidth-2] = 0;
         g_text_cbase = boxcol + 1;
         driver_put_string(extrarow, 0, C_PROMPT_BKGRD, buf);
-        driver_put_string(extrarow+extralines-1, 0, C_PROMPT_BKGRD, buf);
+        driver_put_string(extrarow+extra_lines-1, 0, C_PROMPT_BKGRD, buf);
         --g_text_cbase;
         driver_put_string(extrarow, 0, C_PROMPT_BKGRD, S5);
-        driver_put_string(extrarow+extralines-1, 0, C_PROMPT_BKGRD, S2);
+        driver_put_string(extrarow+extra_lines-1, 0, C_PROMPT_BKGRD, S2);
         g_text_cbase += boxwidth - 1;
         driver_put_string(extrarow, 0, C_PROMPT_BKGRD, S6);
-        driver_put_string(extrarow+extralines-1, 0, C_PROMPT_BKGRD, S3);
+        driver_put_string(extrarow+extra_lines-1, 0, C_PROMPT_BKGRD, S3);
 
         g_text_cbase = boxcol;
 
-        for (int i = 1; i < extralines-1; ++i)
+        for (int i = 1; i < extra_lines-1; ++i)
         {
             driver_put_string(extrarow+i, 0, C_PROMPT_BKGRD, S4);
             driver_put_string(extrarow+i, boxwidth-1, C_PROMPT_BKGRD, S4);
         }
-        g_text_cbase += (boxwidth - extrawidth) / 2;
+        g_text_cbase += (boxwidth - extra_width) / 2;
         driver_put_string(extrarow+1, 0, C_PROMPT_TEXT, extra_info);
     }
 
@@ -462,9 +462,9 @@ int fullscreen_prompt(        // full-screen prompting routine
             {
                 rewrite_extrainfo = false;
                 std::fseek(scroll_file, scroll_file_start, SEEK_SET);
-                load_entry_text(scroll_file, extra_info, extralines - 2,
+                load_entry_text(scroll_file, extra_info, extra_lines - 2,
                                 s_scroll_row_status, s_scroll_column_status);
-                for (int i = 1; i <= extralines-2; i++)
+                for (int i = 1; i <= extra_lines-2; i++)
                 {
                     driver_put_string(extrarow+i, 0, C_PROMPT_TEXT, blanks);
                 }
@@ -513,7 +513,7 @@ int fullscreen_prompt(        // full-screen prompting routine
             case ID_KEY_CTL_PAGE_DOWN:   // scrolling key - down one screen
                 if (in_scrolling_mode && s_scroll_row_status < vertical_scroll_limit)
                 {
-                    s_scroll_row_status += extralines - 2;
+                    s_scroll_row_status += extra_lines - 2;
                     if (s_scroll_row_status > vertical_scroll_limit)
                     {
                         s_scroll_row_status = vertical_scroll_limit;
@@ -524,7 +524,7 @@ int fullscreen_prompt(        // full-screen prompting routine
             case ID_KEY_CTL_PAGE_UP:     // scrolling key - up one screen
                 if (in_scrolling_mode && s_scroll_row_status > 0)
                 {
-                    s_scroll_row_status -= extralines - 2;
+                    s_scroll_row_status -= extra_lines - 2;
                     if (s_scroll_row_status < 0)
                     {
                         s_scroll_row_status = 0;
@@ -589,9 +589,9 @@ int fullscreen_prompt(        // full-screen prompting routine
             int j = g_text_cbase;
             g_text_cbase = 2;
             std::fseek(scroll_file, scroll_file_start, SEEK_SET);
-            load_entry_text(scroll_file, extra_info, extralines - 2,
+            load_entry_text(scroll_file, extra_info, extra_lines - 2,
                             s_scroll_row_status, s_scroll_column_status);
-            for (int i = 1; i <= extralines-2; i++)
+            for (int i = 1; i <= extra_lines-2; i++)
             {
                 driver_put_string(extrarow+i, 0, C_PROMPT_TEXT, blanks);
             }
@@ -761,7 +761,7 @@ int fullscreen_prompt(        // full-screen prompting routine
         case ID_KEY_CTL_PAGE_DOWN:    // scrolling key - down on screen
             if (in_scrolling_mode && s_scroll_row_status < vertical_scroll_limit)
             {
-                s_scroll_row_status += extralines - 2;
+                s_scroll_row_status += extra_lines - 2;
                 if (s_scroll_row_status > vertical_scroll_limit)
                 {
                     s_scroll_row_status = vertical_scroll_limit;
@@ -772,7 +772,7 @@ int fullscreen_prompt(        // full-screen prompting routine
         case ID_KEY_CTL_PAGE_UP:      // scrolling key - up one screen
             if (in_scrolling_mode && s_scroll_row_status > 0)
             {
-                s_scroll_row_status -= extralines - 2;
+                s_scroll_row_status -= extra_lines - 2;
                 if (s_scroll_row_status < 0)
                 {
                     s_scroll_row_status = 0;
