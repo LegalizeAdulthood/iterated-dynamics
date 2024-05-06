@@ -54,7 +54,6 @@ int fullscreen_prompt(        // full-screen prompting routine
     char *extra_info          // extra info box to display, \n separated
 )
 {
-    int done;
     int old_look_at_mouse;
     int curtype;
     int curlen;
@@ -469,7 +468,7 @@ int fullscreen_prompt(        // full-screen prompting routine
             while (!driver_key_pressed())
             {
             }
-            done = driver_get_key();
+            int done = driver_get_key();
             switch (done)
             {
             case ID_KEY_ESC:
@@ -571,13 +570,13 @@ int fullscreen_prompt(        // full-screen prompting routine
             "Press ENTER when finished, ESCAPE to back out, or F1 for help"
             : "Press ENTER when finished (or ESCAPE to back out)");
 
-    done = 0;
     int curchoice = 0;
     while (values[curchoice].type == '*')
     {
         ++curchoice;
     }
 
+    int done = 0;
     while (!done)
     {
         if (rewrite_extrainfo)
