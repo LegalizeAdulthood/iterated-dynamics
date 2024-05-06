@@ -430,9 +430,9 @@ int fullscreen_prompt(        // full-screen prompting routine
         driver_put_string(prompt_row+i, value_col, C_PROMPT_LO, buf);
     }
 
-    bool rewrite_extrainfo = false; // if true: rewrite extrainfo to text box
-    char blanks[78];                // used to clear text box
-    std::memset(blanks, ' ', 77);   // initialize string of blanks
+    bool rewrite_extra_info = false; // if true: rewrite extra_info to text box
+    char blanks[78];                 // used to clear text box
+    std::memset(blanks, ' ', 77);    // initialize string of blanks
     blanks[77] = 0;
     int done{};
     const auto fullscreen_exit = [&]
@@ -458,9 +458,9 @@ int fullscreen_prompt(        // full-screen prompting routine
         g_text_cbase = 2;
         while (true)
         {
-            if (rewrite_extrainfo)
+            if (rewrite_extra_info)
             {
-                rewrite_extrainfo = false;
+                rewrite_extra_info = false;
                 std::fseek(scroll_file, scroll_file_start, SEEK_SET);
                 load_entry_text(scroll_file, extra_info, extra_lines - 2,
                                 s_scroll_row_status, s_scroll_column_status);
@@ -486,28 +486,28 @@ int fullscreen_prompt(        // full-screen prompting routine
                 if (in_scrolling_mode && s_scroll_row_status < vertical_scroll_limit)
                 {
                     s_scroll_row_status++;
-                    rewrite_extrainfo = true;
+                    rewrite_extra_info = true;
                 }
                 break;
             case ID_KEY_CTL_UP_ARROW:      // scrolling key - up one row
                 if (in_scrolling_mode && s_scroll_row_status > 0)
                 {
                     s_scroll_row_status--;
-                    rewrite_extrainfo = true;
+                    rewrite_extra_info = true;
                 }
                 break;
             case ID_KEY_CTL_LEFT_ARROW:    // scrolling key - left one column
                 if (in_scrolling_mode && s_scroll_column_status > 0)
                 {
                     s_scroll_column_status--;
-                    rewrite_extrainfo = true;
+                    rewrite_extra_info = true;
                 }
                 break;
             case ID_KEY_CTL_RIGHT_ARROW:   // scrolling key - right one column
                 if (in_scrolling_mode && std::strchr(extra_info, '\021') != nullptr)
                 {
                     s_scroll_column_status++;
-                    rewrite_extrainfo = true;
+                    rewrite_extra_info = true;
                 }
                 break;
             case ID_KEY_CTL_PAGE_DOWN:   // scrolling key - down one screen
@@ -518,7 +518,7 @@ int fullscreen_prompt(        // full-screen prompting routine
                     {
                         s_scroll_row_status = vertical_scroll_limit;
                     }
-                    rewrite_extrainfo = true;
+                    rewrite_extra_info = true;
                 }
                 break;
             case ID_KEY_CTL_PAGE_UP:     // scrolling key - up one screen
@@ -529,7 +529,7 @@ int fullscreen_prompt(        // full-screen prompting routine
                     {
                         s_scroll_row_status = 0;
                     }
-                    rewrite_extrainfo = true;
+                    rewrite_extra_info = true;
                 }
                 break;
             case ID_KEY_CTL_END:         // scrolling key - to end of entry
@@ -537,7 +537,7 @@ int fullscreen_prompt(        // full-screen prompting routine
                 {
                     s_scroll_row_status = vertical_scroll_limit;
                     s_scroll_column_status = 0;
-                    rewrite_extrainfo = true;
+                    rewrite_extra_info = true;
                 }
                 break;
             case ID_KEY_CTL_HOME:        // scrolling key - to beginning of entry
@@ -545,7 +545,7 @@ int fullscreen_prompt(        // full-screen prompting routine
                 {
                     s_scroll_column_status = 0;
                     s_scroll_row_status = s_scroll_column_status;
-                    rewrite_extrainfo = true;
+                    rewrite_extra_info = true;
                 }
                 break;
             case ID_KEY_F2:
@@ -584,7 +584,7 @@ int fullscreen_prompt(        // full-screen prompting routine
 
     while (!done)
     {
-        if (rewrite_extrainfo)
+        if (rewrite_extra_info)
         {
             int j = g_text_cbase;
             g_text_cbase = 2;
@@ -602,7 +602,7 @@ int fullscreen_prompt(        // full-screen prompting routine
         const int curtype = values[curchoice].type;
         char buf[81];
         const int curlen = prompt_valuestring(buf, &values[curchoice]);
-        if (!rewrite_extrainfo)
+        if (!rewrite_extra_info)
         {
             putstringcenter(instr_row, 0, 80, C_PROMPT_BKGRD,
                 (curtype == 'l') ?
@@ -611,7 +611,7 @@ int fullscreen_prompt(        // full-screen prompting routine
         }
         else
         {
-            rewrite_extrainfo = false;
+            rewrite_extra_info = false;
         }
         driver_put_string(prompt_row+curchoice, prompt_col, C_PROMPT_HI, prompts[curchoice]);
 
@@ -734,28 +734,28 @@ int fullscreen_prompt(        // full-screen prompting routine
             if (in_scrolling_mode && s_scroll_row_status < vertical_scroll_limit)
             {
                 s_scroll_row_status++;
-                rewrite_extrainfo = true;
+                rewrite_extra_info = true;
             }
             break;
         case ID_KEY_CTL_UP_ARROW:       // scrolling key - up one row
             if (in_scrolling_mode && s_scroll_row_status > 0)
             {
                 s_scroll_row_status--;
-                rewrite_extrainfo = true;
+                rewrite_extra_info = true;
             }
             break;
         case ID_KEY_CTL_LEFT_ARROW:     //scrolling key - left one column
             if (in_scrolling_mode && s_scroll_column_status > 0)
             {
                 s_scroll_column_status--;
-                rewrite_extrainfo = true;
+                rewrite_extra_info = true;
             }
             break;
         case ID_KEY_CTL_RIGHT_ARROW:    // scrolling key - right one column
             if (in_scrolling_mode && std::strchr(extra_info, '\021') != nullptr)
             {
                 s_scroll_column_status++;
-                rewrite_extrainfo = true;
+                rewrite_extra_info = true;
             }
             break;
         case ID_KEY_CTL_PAGE_DOWN:    // scrolling key - down on screen
@@ -766,7 +766,7 @@ int fullscreen_prompt(        // full-screen prompting routine
                 {
                     s_scroll_row_status = vertical_scroll_limit;
                 }
-                rewrite_extrainfo = true;
+                rewrite_extra_info = true;
             }
             break;
         case ID_KEY_CTL_PAGE_UP:      // scrolling key - up one screen
@@ -777,7 +777,7 @@ int fullscreen_prompt(        // full-screen prompting routine
                 {
                     s_scroll_row_status = 0;
                 }
-                rewrite_extrainfo = true;
+                rewrite_extra_info = true;
             }
             break;
         case ID_KEY_CTL_END:          // scrolling key - go to end of entry
@@ -785,7 +785,7 @@ int fullscreen_prompt(        // full-screen prompting routine
             {
                 s_scroll_row_status = vertical_scroll_limit;
                 s_scroll_column_status = 0;
-                rewrite_extrainfo = true;
+                rewrite_extra_info = true;
             }
             break;
         case ID_KEY_CTL_HOME:         // scrolling key - go to beginning of entry
@@ -793,7 +793,7 @@ int fullscreen_prompt(        // full-screen prompting routine
             {
                 s_scroll_column_status = 0;
                 s_scroll_row_status = s_scroll_column_status;
-                rewrite_extrainfo = true;
+                rewrite_extra_info = true;
             }
             break;
         }
