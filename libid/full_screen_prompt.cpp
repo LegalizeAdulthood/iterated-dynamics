@@ -300,7 +300,7 @@ int fullscreen_prompt(        // full-screen prompting routine
         box_width = 80;
     }
     int box_col = (80 - box_width) / 2;       // center the box
-    int promptcol = box_col + 2;
+    int prompt_col = box_col + 2;
     int valuecol = box_col + box_width - max_field_width - 2;
     if (box_width <= 76)
     {
@@ -329,7 +329,7 @@ int fullscreen_prompt(        // full-screen prompting routine
     {
         int i = (90 - box_width) / 20;
         box_col    -= i;
-        promptcol -= i;
+        prompt_col -= i;
         valuecol  -= i;
     }
 
@@ -424,7 +424,7 @@ int fullscreen_prompt(        // full-screen prompting routine
     // display initial values
     for (int i = 0; i < num_prompts; i++)
     {
-        driver_put_string(prompt_row+i, promptcol, C_PROMPT_LO, prompts[i]);
+        driver_put_string(prompt_row+i, prompt_col, C_PROMPT_LO, prompts[i]);
         char buf[81];
         prompt_valuestring(buf, &values[i]);
         driver_put_string(prompt_row+i, valuecol, C_PROMPT_LO, buf);
@@ -613,7 +613,7 @@ int fullscreen_prompt(        // full-screen prompting routine
         {
             rewrite_extrainfo = false;
         }
-        driver_put_string(prompt_row+curchoice, promptcol, C_PROMPT_HI, prompts[curchoice]);
+        driver_put_string(prompt_row+curchoice, prompt_col, C_PROMPT_HI, prompts[curchoice]);
 
         int i;
         if (curtype == 'l')
@@ -681,7 +681,7 @@ int fullscreen_prompt(        // full-screen prompting routine
             }
         }
 
-        driver_put_string(prompt_row+curchoice, promptcol, C_PROMPT_LO, prompts[curchoice]);
+        driver_put_string(prompt_row+curchoice, prompt_col, C_PROMPT_LO, prompts[curchoice]);
         {
             int j = (int) std::strlen(buf);
             std::memset(&buf[j], ' ', 80-j);
