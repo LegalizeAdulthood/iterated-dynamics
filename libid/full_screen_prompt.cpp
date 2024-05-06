@@ -218,16 +218,16 @@ int fullscreen_prompt(        // full-screen prompting routine
         box_lines = num_prompts;
         title_row = 1 + j;
     }
-    int boxrow = title_row + title_lines;
-    int promptrow = boxrow;
+    int box_row = title_row + title_lines;
+    int promptrow = box_row;
     if (title_row > 2)
     {
         // room for blank between title & box?
         --title_row;
-        --boxrow;
+        --box_row;
         ++box_lines;
     }
-    int instrrow = boxrow+box_lines;
+    int instrrow = box_row+box_lines;
     if (instrrow + 3 + extra_lines < 25)
     {
         ++box_lines;    // blank at bottom of box
@@ -334,7 +334,7 @@ int fullscreen_prompt(        // full-screen prompting routine
     }
 
     // display box heading
-    for (int i = title_row; i < boxrow; ++i)
+    for (int i = title_row; i < box_row; ++i)
     {
         driver_set_attr(i, boxcol, C_PROMPT_HI, boxwidth);
     }
@@ -418,7 +418,7 @@ int fullscreen_prompt(        // full-screen prompting routine
     // display empty box
     for (int i = 0; i < box_lines; ++i)
     {
-        driver_set_attr(boxrow+i, boxcol, C_PROMPT_LO, boxwidth);
+        driver_set_attr(box_row+i, boxcol, C_PROMPT_LO, boxwidth);
     }
 
     // display initial values
