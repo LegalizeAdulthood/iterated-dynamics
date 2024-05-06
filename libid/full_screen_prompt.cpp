@@ -138,10 +138,10 @@ int fullscreen_prompt(        // full-screen prompting routine
     int title_lines = 1;
     {
         int i = 0;
-        const char *hdg_scan = hdg;
-        while (*hdg_scan)
+        const char *scan = hdg;
+        while (*scan)
         {
-            if (*(hdg_scan++) == '\n')
+            if (*(scan++) == '\n')
             {
                 ++title_lines;
                 i = -1;
@@ -155,10 +155,10 @@ int fullscreen_prompt(        // full-screen prompting routine
     int extrawidth = 0;
     int extralines = 0;
     {
-        const char *hdg_scan = extra_info;
-        if (hdg_scan != nullptr)
+        const char *scan = extra_info;
+        if (scan != nullptr)
         {
-            if (*hdg_scan == 0)
+            if (*scan == 0)
             {
                 extra_info = nullptr;
             }
@@ -167,9 +167,9 @@ int fullscreen_prompt(        // full-screen prompting routine
                 // count extra lines, find widest
                 extralines = 3;
                 int i = 0;
-                while (*hdg_scan)
+                while (*scan)
                 {
-                    if (*(hdg_scan++) == '\n')
+                    if (*(scan++) == '\n')
                     {
                         if (extralines + num_prompts + title_lines >= 20)
                         {
