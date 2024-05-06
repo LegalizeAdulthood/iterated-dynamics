@@ -54,7 +54,6 @@ int fullscreen_prompt(        // full-screen prompting routine
     char *extra_info          // extra info box to display, \n separated
 )
 {
-    int curtype;
     int curlen;
     char buf[81];
 
@@ -593,7 +592,7 @@ int fullscreen_prompt(        // full-screen prompting routine
             g_text_cbase = j;
         }
 
-        curtype = values[curchoice].type;
+        const int curtype = values[curchoice].type;
         curlen = prompt_valuestring(buf, &values[curchoice]);
         if (!rewrite_extrainfo)
         {
