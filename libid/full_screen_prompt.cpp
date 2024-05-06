@@ -54,7 +54,6 @@ int fullscreen_prompt(        // full-screen prompting routine
     char *extra_info          // extra info box to display, \n separated
 )
 {
-    int promptcol;
     int valuecol;
     int curchoice = 0;
     int done;
@@ -316,7 +315,7 @@ int fullscreen_prompt(        // full-screen prompting routine
         boxwidth = 80;
     }
     int boxcol = (80 - boxwidth) / 2;       // center the box
-    promptcol = boxcol + 2;
+    int promptcol = boxcol + 2;
     valuecol = boxcol + boxwidth - maxfldwidth - 2;
     if (boxwidth <= 76)
     {
