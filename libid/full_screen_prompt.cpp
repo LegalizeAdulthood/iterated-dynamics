@@ -54,7 +54,6 @@ int fullscreen_prompt(        // full-screen prompting routine
     char *extra_info          // extra info box to display, \n separated
 )
 {
-    int curlen;
     char buf[81];
 
     // scrolling related variables
@@ -593,7 +592,7 @@ int fullscreen_prompt(        // full-screen prompting routine
         }
 
         const int curtype = values[curchoice].type;
-        curlen = prompt_valuestring(buf, &values[curchoice]);
+        const int curlen = prompt_valuestring(buf, &values[curchoice]);
         if (!rewrite_extrainfo)
         {
             putstringcenter(instrrow, 0, 80, C_PROMPT_BKGRD,
