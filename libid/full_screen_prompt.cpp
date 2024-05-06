@@ -54,7 +54,6 @@ int fullscreen_prompt(        // full-screen prompting routine
     char *extra_info          // extra info box to display, \n separated
 )
 {
-    int extrarow;
     int instrrow;
     int promptrow;
     int promptcol;
@@ -257,7 +256,7 @@ int fullscreen_prompt(        // full-screen prompting routine
             ++instrrow; // blank before instructions
         }
     }
-    extrarow = instrrow + 2;
+    int extrarow = instrrow + 2;
     if (num_prompts > 1)   // 3 instructions lines
     {
         ++extrarow;
