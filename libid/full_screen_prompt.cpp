@@ -54,8 +54,6 @@ int fullscreen_prompt(        // full-screen prompting routine
     char *extra_info          // extra info box to display, \n separated
 )
 {
-    char buf[81];
-
     // scrolling related variables
     std::FILE * scroll_file = nullptr;     // file with extrainfo entry to scroll
     long scroll_file_start = 0;    // where entry starts in scroll_file
@@ -292,6 +290,7 @@ int fullscreen_prompt(        // full-screen prompting routine
             {
                 maxpromptwidth = j;
             }
+            char buf[81];
             j = prompt_valuestring(buf, &values[i]);
             if (j > maxfldwidth)
             {
@@ -398,6 +397,7 @@ int fullscreen_prompt(        // full-screen prompting routine
 #define S5 "+" // ul corner
 #define S6 "+" // ur corner
 #endif
+        char buf[81];
         std::memset(buf, S1, 80);
         buf[boxwidth-2] = 0;
         g_text_cbase = boxcol + 1;
@@ -433,6 +433,7 @@ int fullscreen_prompt(        // full-screen prompting routine
     for (int i = 0; i < num_prompts; i++)
     {
         driver_put_string(promptrow+i, promptcol, C_PROMPT_LO, prompts[i]);
+        char buf[81];
         prompt_valuestring(buf, &values[i]);
         driver_put_string(promptrow+i, valuecol, C_PROMPT_LO, buf);
     }
@@ -592,6 +593,7 @@ int fullscreen_prompt(        // full-screen prompting routine
         }
 
         const int curtype = values[curchoice].type;
+        char buf[81];
         const int curlen = prompt_valuestring(buf, &values[curchoice]);
         if (!rewrite_extrainfo)
         {
