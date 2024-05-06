@@ -209,21 +209,21 @@ int fullscreen_prompt(        // full-screen prompting routine
     }
 
     // work out vertical positioning
-    int titlerow;
+    int title_row;
     int boxlines;
     {
         int i = num_prompts + title_lines + extra_lines + 3; // total rows required
         int j = (25 - i) / 2;                   // top row of it all when centered
         j -= j / 4;                         // higher is better if lots extra
         boxlines = num_prompts;
-        titlerow = 1 + j;
+        title_row = 1 + j;
     }
-    int boxrow = titlerow + title_lines;
+    int boxrow = title_row + title_lines;
     int promptrow = boxrow;
-    if (titlerow > 2)
+    if (title_row > 2)
     {
         // room for blank between title & box?
-        --titlerow;
+        --title_row;
         --boxrow;
         ++boxlines;
     }
@@ -334,7 +334,7 @@ int fullscreen_prompt(        // full-screen prompting routine
     }
 
     // display box heading
-    for (int i = titlerow; i < boxrow; ++i)
+    for (int i = title_row; i < boxrow; ++i)
     {
         driver_set_attr(i, boxcol, C_PROMPT_HI, boxwidth);
     }
@@ -355,7 +355,7 @@ int fullscreen_prompt(        // full-screen prompting routine
             *next = '\0';
             title_width = (int) std::strlen(hdgline);
             g_text_cbase = boxcol + (boxwidth - title_width) / 2;
-            driver_put_string(titlerow+i, 0, C_PROMPT_HI, hdgline);
+            driver_put_string(title_row+i, 0, C_PROMPT_HI, hdgline);
             *next = '\n';
             hdgline = next+1;
         }
@@ -368,7 +368,7 @@ int fullscreen_prompt(        // full-screen prompting routine
 
         title_width = (int) std::strlen(hdgline);
         g_text_cbase = boxcol + (boxwidth - title_width) / 2;
-        driver_put_string(titlerow+i, 0, C_PROMPT_HI, hdgline);
+        driver_put_string(title_row+i, 0, C_PROMPT_HI, hdgline);
     }
 
     // display extra info
