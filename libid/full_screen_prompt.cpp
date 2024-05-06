@@ -237,14 +237,14 @@ int fullscreen_prompt(        // full-screen prompting routine
             ++instr_row; // blank before instructions
         }
     }
-    int extrarow = instr_row + 2;
+    int extra_row = instr_row + 2;
     if (num_prompts > 1)   // 3 instructions lines
     {
-        ++extrarow;
+        ++extra_row;
     }
-    if (extrarow + extra_lines < 25)
+    if (extra_row + extra_lines < 25)
     {
-        ++extrarow;
+        ++extra_row;
     }
 
     if (in_scrolling_mode)    // set box to max width if in scrolling mode
@@ -393,24 +393,24 @@ int fullscreen_prompt(        // full-screen prompting routine
         std::memset(buf, S1, 80);
         buf[boxwidth-2] = 0;
         g_text_cbase = boxcol + 1;
-        driver_put_string(extrarow, 0, C_PROMPT_BKGRD, buf);
-        driver_put_string(extrarow+extra_lines-1, 0, C_PROMPT_BKGRD, buf);
+        driver_put_string(extra_row, 0, C_PROMPT_BKGRD, buf);
+        driver_put_string(extra_row+extra_lines-1, 0, C_PROMPT_BKGRD, buf);
         --g_text_cbase;
-        driver_put_string(extrarow, 0, C_PROMPT_BKGRD, S5);
-        driver_put_string(extrarow+extra_lines-1, 0, C_PROMPT_BKGRD, S2);
+        driver_put_string(extra_row, 0, C_PROMPT_BKGRD, S5);
+        driver_put_string(extra_row+extra_lines-1, 0, C_PROMPT_BKGRD, S2);
         g_text_cbase += boxwidth - 1;
-        driver_put_string(extrarow, 0, C_PROMPT_BKGRD, S6);
-        driver_put_string(extrarow+extra_lines-1, 0, C_PROMPT_BKGRD, S3);
+        driver_put_string(extra_row, 0, C_PROMPT_BKGRD, S6);
+        driver_put_string(extra_row+extra_lines-1, 0, C_PROMPT_BKGRD, S3);
 
         g_text_cbase = boxcol;
 
         for (int i = 1; i < extra_lines-1; ++i)
         {
-            driver_put_string(extrarow+i, 0, C_PROMPT_BKGRD, S4);
-            driver_put_string(extrarow+i, boxwidth-1, C_PROMPT_BKGRD, S4);
+            driver_put_string(extra_row+i, 0, C_PROMPT_BKGRD, S4);
+            driver_put_string(extra_row+i, boxwidth-1, C_PROMPT_BKGRD, S4);
         }
         g_text_cbase += (boxwidth - extra_width) / 2;
-        driver_put_string(extrarow+1, 0, C_PROMPT_TEXT, extra_info);
+        driver_put_string(extra_row+1, 0, C_PROMPT_TEXT, extra_info);
     }
 
     g_text_cbase = 0;
@@ -466,9 +466,9 @@ int fullscreen_prompt(        // full-screen prompting routine
                                 s_scroll_row_status, s_scroll_column_status);
                 for (int i = 1; i <= extra_lines-2; i++)
                 {
-                    driver_put_string(extrarow+i, 0, C_PROMPT_TEXT, blanks);
+                    driver_put_string(extra_row+i, 0, C_PROMPT_TEXT, blanks);
                 }
-                driver_put_string(extrarow+1, 0, C_PROMPT_TEXT, extra_info);
+                driver_put_string(extra_row+1, 0, C_PROMPT_TEXT, extra_info);
             }
             // TODO: rework key interaction to blocking wait
             while (!driver_key_pressed())
@@ -593,9 +593,9 @@ int fullscreen_prompt(        // full-screen prompting routine
                             s_scroll_row_status, s_scroll_column_status);
             for (int i = 1; i <= extra_lines-2; i++)
             {
-                driver_put_string(extrarow+i, 0, C_PROMPT_TEXT, blanks);
+                driver_put_string(extra_row+i, 0, C_PROMPT_TEXT, blanks);
             }
-            driver_put_string(extrarow+1, 0, C_PROMPT_TEXT, extra_info);
+            driver_put_string(extra_row+1, 0, C_PROMPT_TEXT, extra_info);
             g_text_cbase = j;
         }
 
