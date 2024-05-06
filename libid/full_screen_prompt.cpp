@@ -290,22 +290,22 @@ int fullscreen_prompt(        // full-screen prompting routine
             }
         }
     }
-    int boxwidth = max_prompt_width + max_field_width + 2;
-    if (max_comment > boxwidth)
+    int box_width = max_prompt_width + max_field_width + 2;
+    if (max_comment > box_width)
     {
-        boxwidth = max_comment;
+        box_width = max_comment;
     }
-    if ((boxwidth += 4) > 80)
+    if ((box_width += 4) > 80)
     {
-        boxwidth = 80;
+        box_width = 80;
     }
-    int boxcol = (80 - boxwidth) / 2;       // center the box
+    int boxcol = (80 - box_width) / 2;       // center the box
     int promptcol = boxcol + 2;
-    int valuecol = boxcol + boxwidth - max_field_width - 2;
-    if (boxwidth <= 76)
+    int valuecol = boxcol + box_width - max_field_width - 2;
+    if (box_width <= 76)
     {
         // make margin a bit wider if we can
-        boxwidth += 2;
+        box_width += 2;
         --boxcol;
     }
     {
@@ -314,20 +314,20 @@ int fullscreen_prompt(        // full-screen prompting routine
         {
             j = extra_width;
         }
-        int i = j + 4 - boxwidth;
+        int i = j + 4 - box_width;
         if (i > 0)
         {
             // expand box for title/extra
-            if (boxwidth + i > 80)
+            if (box_width + i > 80)
             {
-                i = 80 - boxwidth;
+                i = 80 - box_width;
             }
-            boxwidth += i;
+            box_width += i;
             boxcol -= i / 2;
         }
     }
     {
-        int i = (90 - boxwidth) / 20;
+        int i = (90 - box_width) / 20;
         boxcol    -= i;
         promptcol -= i;
         valuecol  -= i;
@@ -336,7 +336,7 @@ int fullscreen_prompt(        // full-screen prompting routine
     // display box heading
     for (int i = title_row; i < box_row; ++i)
     {
-        driver_set_attr(i, boxcol, C_PROMPT_HI, boxwidth);
+        driver_set_attr(i, boxcol, C_PROMPT_HI, box_width);
     }
 
     {
@@ -354,7 +354,7 @@ int fullscreen_prompt(        // full-screen prompting routine
             }
             *next = '\0';
             title_width = (int) std::strlen(hdgline);
-            g_text_cbase = boxcol + (boxwidth - title_width) / 2;
+            g_text_cbase = boxcol + (box_width - title_width) / 2;
             driver_put_string(title_row+i, 0, C_PROMPT_HI, hdgline);
             *next = '\n';
             hdgline = next+1;
@@ -367,7 +367,7 @@ int fullscreen_prompt(        // full-screen prompting routine
         }
 
         title_width = (int) std::strlen(hdgline);
-        g_text_cbase = boxcol + (boxwidth - title_width) / 2;
+        g_text_cbase = boxcol + (box_width - title_width) / 2;
         driver_put_string(title_row+i, 0, C_PROMPT_HI, hdgline);
     }
 
@@ -391,14 +391,14 @@ int fullscreen_prompt(        // full-screen prompting routine
 #endif
         char buf[81];
         std::memset(buf, S1, 80);
-        buf[boxwidth-2] = 0;
+        buf[box_width-2] = 0;
         g_text_cbase = boxcol + 1;
         driver_put_string(extra_row, 0, C_PROMPT_BKGRD, buf);
         driver_put_string(extra_row+extra_lines-1, 0, C_PROMPT_BKGRD, buf);
         --g_text_cbase;
         driver_put_string(extra_row, 0, C_PROMPT_BKGRD, S5);
         driver_put_string(extra_row+extra_lines-1, 0, C_PROMPT_BKGRD, S2);
-        g_text_cbase += boxwidth - 1;
+        g_text_cbase += box_width - 1;
         driver_put_string(extra_row, 0, C_PROMPT_BKGRD, S6);
         driver_put_string(extra_row+extra_lines-1, 0, C_PROMPT_BKGRD, S3);
 
@@ -407,9 +407,9 @@ int fullscreen_prompt(        // full-screen prompting routine
         for (int i = 1; i < extra_lines-1; ++i)
         {
             driver_put_string(extra_row+i, 0, C_PROMPT_BKGRD, S4);
-            driver_put_string(extra_row+i, boxwidth-1, C_PROMPT_BKGRD, S4);
+            driver_put_string(extra_row+i, box_width-1, C_PROMPT_BKGRD, S4);
         }
-        g_text_cbase += (boxwidth - extra_width) / 2;
+        g_text_cbase += (box_width - extra_width) / 2;
         driver_put_string(extra_row+1, 0, C_PROMPT_TEXT, extra_info);
     }
 
@@ -418,7 +418,7 @@ int fullscreen_prompt(        // full-screen prompting routine
     // display empty box
     for (int i = 0; i < box_lines; ++i)
     {
-        driver_set_attr(box_row+i, boxcol, C_PROMPT_LO, boxwidth);
+        driver_set_attr(box_row+i, boxcol, C_PROMPT_LO, box_width);
     }
 
     // display initial values
