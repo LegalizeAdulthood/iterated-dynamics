@@ -435,7 +435,7 @@ int fullscreen_prompt(        // full-screen prompting routine
     std::memset(blanks, ' ', 77);    // initialize string of blanks
     blanks[77] = 0;
     int done{};
-    const auto fullscreen_exit = [&]
+    const auto full_screen_exit = [&]
     {
         driver_hide_text_cursor();
         g_look_at_mouse = old_look_at_mouse;
@@ -481,7 +481,7 @@ int fullscreen_prompt(        // full-screen prompting routine
                 done = -1;
             case ID_KEY_ENTER:
             case ID_KEY_ENTER_2:
-                return fullscreen_exit();
+                return full_screen_exit();
             case ID_KEY_CTL_DOWN_ARROW:    // scrolling key - down one row
                 if (in_scrolling_mode && s_scroll_row_status < vertical_scroll_limit)
                 {
@@ -559,7 +559,7 @@ int fullscreen_prompt(        // full-screen prompting routine
             case ID_KEY_F10:
                 if (s_prompt_fn_keys & (1 << (done+1-ID_KEY_F1)))
                 {
-                    return fullscreen_exit();
+                    return full_screen_exit();
                 }
             }
         }
@@ -799,7 +799,7 @@ int fullscreen_prompt(        // full-screen prompting routine
         }
     }
 
-    return fullscreen_exit();
+    return full_screen_exit();
 }
 
 static int prompt_valuestring(char *buf, fullscreenvalues const *val)
