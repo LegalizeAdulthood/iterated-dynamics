@@ -227,17 +227,17 @@ int fullscreen_prompt(        // full-screen prompting routine
         --box_row;
         ++box_lines;
     }
-    int instrrow = box_row+box_lines;
-    if (instrrow + 3 + extra_lines < 25)
+    int instr_row = box_row + box_lines;
+    if (instr_row + 3 + extra_lines < 25)
     {
         ++box_lines;    // blank at bottom of box
-        ++instrrow;
-        if (instrrow + 3 + extra_lines < 25)
+        ++instr_row;
+        if (instr_row + 3 + extra_lines < 25)
         {
-            ++instrrow; // blank before instructions
+            ++instr_row; // blank before instructions
         }
     }
-    int extrarow = instrrow + 2;
+    int extrarow = instr_row + 2;
     if (num_prompts > 1)   // 3 instructions lines
     {
         ++extrarow;
@@ -448,9 +448,9 @@ int fullscreen_prompt(        // full-screen prompting routine
     };
     if (!anyinput)
     {
-        putstringcenter(instrrow++, 0, 80, C_PROMPT_BKGRD,
+        putstringcenter(instr_row++, 0, 80, C_PROMPT_BKGRD,
                         "No changeable parameters;");
-        putstringcenter(instrrow, 0, 80, C_PROMPT_BKGRD,
+        putstringcenter(instr_row, 0, 80, C_PROMPT_BKGRD,
                 (g_help_mode > help_labels::HELP_INDEX) ?
                 "Press ENTER to exit, ESC to back out, F1 for help"
                 : "Press ENTER to exit");
@@ -568,10 +568,10 @@ int fullscreen_prompt(        // full-screen prompting routine
     // display footing
     if (num_prompts > 1)
     {
-        putstringcenter(instrrow++, 0, 80, C_PROMPT_BKGRD,
+        putstringcenter(instr_row++, 0, 80, C_PROMPT_BKGRD,
                         "Use <Up> and <Down> to select values to change");
     }
-    putstringcenter(instrrow+1, 0, 80, C_PROMPT_BKGRD,
+    putstringcenter(instr_row+1, 0, 80, C_PROMPT_BKGRD,
             (g_help_mode > help_labels::HELP_INDEX) ?
             "Press ENTER when finished, ESCAPE to back out, or F1 for help"
             : "Press ENTER when finished (or ESCAPE to back out)");
@@ -604,7 +604,7 @@ int fullscreen_prompt(        // full-screen prompting routine
         const int curlen = prompt_valuestring(buf, &values[curchoice]);
         if (!rewrite_extrainfo)
         {
-            putstringcenter(instrrow, 0, 80, C_PROMPT_BKGRD,
+            putstringcenter(instr_row, 0, 80, C_PROMPT_BKGRD,
                 (curtype == 'l') ?
                 "Use <Left> or <Right> to change value of selected field"
                 : "Type in replacement value for selected field");
