@@ -256,7 +256,7 @@ int fullscreen_prompt(        // full-screen prompting routine
     int max_comment = 0;
     int max_prompt_width = 0;
     int max_field_width = 0;
-    bool anyinput = false;
+    bool any_input = false;
     for (int i = 0; i < num_prompts; i++)
     {
         if (values[i].type == 'y')
@@ -277,7 +277,7 @@ int fullscreen_prompt(        // full-screen prompting routine
         }
         else
         {
-            anyinput = true;
+            any_input = true;
             if (j > max_prompt_width)
             {
                 max_prompt_width = j;
@@ -446,7 +446,7 @@ int fullscreen_prompt(        // full-screen prompting routine
         }
         return done;
     };
-    if (!anyinput)
+    if (!any_input)
     {
         putstringcenter(instr_row++, 0, 80, C_PROMPT_BKGRD,
                         "No changeable parameters;");
