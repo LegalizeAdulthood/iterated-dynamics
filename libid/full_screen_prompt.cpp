@@ -54,7 +54,6 @@ int fullscreen_prompt(        // full-screen prompting routine
     char *extra_info          // extra info box to display, \n separated
 )
 {
-    int maxcomment;
     int boxrow;
     int boxlines;
     int boxcol;
@@ -279,7 +278,7 @@ int fullscreen_prompt(        // full-screen prompting routine
     }
 
     // work out horizontal positioning
-    maxcomment = 0;
+    int maxcomment = 0;
     int maxpromptwidth = 0;
     int maxfldwidth = 0;
     bool anyinput = false;
