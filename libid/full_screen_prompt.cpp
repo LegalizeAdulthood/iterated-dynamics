@@ -54,7 +54,6 @@ int fullscreen_prompt(        // full-screen prompting routine
     char *extra_info          // extra info box to display, \n separated
 )
 {
-    int boxlines;
     int boxcol;
     int boxwidth;
     int extralines;
@@ -235,6 +234,7 @@ int fullscreen_prompt(        // full-screen prompting routine
 
     // work out vertical positioning
     int titlerow;
+    int boxlines;
     {
         int i = num_prompts + titlelines + extralines + 3; // total rows required
         int j = (25 - i) / 2;                   // top row of it all when centered
