@@ -54,7 +54,6 @@ int fullscreen_prompt(        // full-screen prompting routine
     char *extra_info          // extra info box to display, \n separated
 )
 {
-    int valuecol;
     int curchoice = 0;
     int done;
     int old_look_at_mouse;
@@ -316,7 +315,7 @@ int fullscreen_prompt(        // full-screen prompting routine
     }
     int boxcol = (80 - boxwidth) / 2;       // center the box
     int promptcol = boxcol + 2;
-    valuecol = boxcol + boxwidth - maxfldwidth - 2;
+    int valuecol = boxcol + boxwidth - maxfldwidth - 2;
     if (boxwidth <= 76)
     {
         // make margin a bit wider if we can
