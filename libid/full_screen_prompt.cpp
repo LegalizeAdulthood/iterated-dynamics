@@ -134,31 +134,31 @@ int fullscreen_prompt(        // full-screen prompting routine
     helptitle();                        // clear screen, display title line
     driver_set_attr(1, 0, C_PROMPT_BKGRD, 24*80);  // init rest of screen to background
 
-    const char *hdgscan = hdg;                      // count title lines, find widest
-    int titlewidth = 0;
+    const char *hdg_scan = hdg;                      // count title lines, find widest
+    int title_width = 0;
     int titlelines = 1;
     {
         int i = 0;
-        while (*hdgscan)
+        while (*hdg_scan)
         {
-            if (*(hdgscan++) == '\n')
+            if (*(hdg_scan++) == '\n')
             {
                 ++titlelines;
                 i = -1;
             }
-            if (++i > titlewidth)
+            if (++i > title_width)
             {
-                titlewidth = i;
+                title_width = i;
             }
         }
     }
     int extrawidth = 0;
     int extralines = 0;
     {
-        hdgscan = extra_info;
-        if (hdgscan != nullptr)
+        hdg_scan = extra_info;
+        if (hdg_scan != nullptr)
         {
-            if (*hdgscan == 0)
+            if (*hdg_scan == 0)
             {
                 extra_info = nullptr;
             }
@@ -167,9 +167,9 @@ int fullscreen_prompt(        // full-screen prompting routine
                 // count extra lines, find widest
                 extralines = 3;
                 int i = 0;
-                while (*hdgscan)
+                while (*hdg_scan)
                 {
-                    if (*(hdgscan++) == '\n')
+                    if (*(hdg_scan++) == '\n')
                     {
                         if (extralines + num_prompts + titlelines >= 20)
                         {
@@ -309,7 +309,7 @@ int fullscreen_prompt(        // full-screen prompting routine
         --boxcol;
     }
     {
-        int j = titlewidth;
+        int j = title_width;
         if (j < extrawidth)
         {
             j = extrawidth;
@@ -353,8 +353,8 @@ int fullscreen_prompt(        // full-screen prompting routine
                 break; // shouldn't happen
             }
             *next = '\0';
-            titlewidth = (int) std::strlen(hdgline);
-            g_text_cbase = boxcol + (boxwidth - titlewidth) / 2;
+            title_width = (int) std::strlen(hdgline);
+            g_text_cbase = boxcol + (boxwidth - title_width) / 2;
             driver_put_string(titlerow+i, 0, C_PROMPT_HI, hdgline);
             *next = '\n';
             hdgline = next+1;
@@ -366,8 +366,8 @@ int fullscreen_prompt(        // full-screen prompting routine
             std::strcat(hdgline, ". CTRL+(direction key) to scroll text.)");
         }
 
-        titlewidth = (int) std::strlen(hdgline);
-        g_text_cbase = boxcol + (boxwidth - titlewidth) / 2;
+        title_width = (int) std::strlen(hdgline);
+        g_text_cbase = boxcol + (boxwidth - title_width) / 2;
         driver_put_string(titlerow+i, 0, C_PROMPT_HI, hdgline);
     }
 
