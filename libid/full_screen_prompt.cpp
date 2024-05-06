@@ -54,7 +54,6 @@ int fullscreen_prompt(        // full-screen prompting routine
     char *extra_info          // extra info box to display, \n separated
 )
 {
-    int boxwidth;
     int extralines;
     int extrawidth;
     int extrarow;
@@ -312,7 +311,7 @@ int fullscreen_prompt(        // full-screen prompting routine
             }
         }
     }
-    boxwidth = maxpromptwidth + maxfldwidth + 2;
+    int boxwidth = maxpromptwidth + maxfldwidth + 2;
     if (maxcomment > boxwidth)
     {
         boxwidth = maxcomment;
