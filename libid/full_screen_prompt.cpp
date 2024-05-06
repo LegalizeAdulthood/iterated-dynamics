@@ -210,12 +210,12 @@ int fullscreen_prompt(        // full-screen prompting routine
 
     // work out vertical positioning
     int title_row;
-    int boxlines;
+    int box_lines;
     {
         int i = num_prompts + title_lines + extra_lines + 3; // total rows required
         int j = (25 - i) / 2;                   // top row of it all when centered
         j -= j / 4;                         // higher is better if lots extra
-        boxlines = num_prompts;
+        box_lines = num_prompts;
         title_row = 1 + j;
     }
     int boxrow = title_row + title_lines;
@@ -225,12 +225,12 @@ int fullscreen_prompt(        // full-screen prompting routine
         // room for blank between title & box?
         --title_row;
         --boxrow;
-        ++boxlines;
+        ++box_lines;
     }
-    int instrrow = boxrow+boxlines;
+    int instrrow = boxrow+box_lines;
     if (instrrow + 3 + extra_lines < 25)
     {
-        ++boxlines;    // blank at bottom of box
+        ++box_lines;    // blank at bottom of box
         ++instrrow;
         if (instrrow + 3 + extra_lines < 25)
         {
@@ -416,7 +416,7 @@ int fullscreen_prompt(        // full-screen prompting routine
     g_text_cbase = 0;
 
     // display empty box
-    for (int i = 0; i < boxlines; ++i)
+    for (int i = 0; i < box_lines; ++i)
     {
         driver_set_attr(boxrow+i, boxcol, C_PROMPT_LO, boxwidth);
     }
