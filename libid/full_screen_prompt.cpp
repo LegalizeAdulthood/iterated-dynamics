@@ -54,14 +54,9 @@ int fullscreen_prompt(        // full-screen prompting routine
     char *extra_info          // extra info box to display, \n separated
 )
 {
-    // scrolling related variables
-    char blanks[78];               // used to clear text box
-
     const int old_look_at_mouse = g_look_at_mouse;
     g_look_at_mouse = 0;
     promptfkeys = fn_key_mask;
-    std::memset(blanks, ' ', 77);   // initialize string of blanks
-    blanks[77] = (char) 0;
 
     /* If applicable, open file for scrolling extrainfo. The function
        find_file_item() opens the file and sets the file pointer to the
@@ -438,6 +433,9 @@ int fullscreen_prompt(        // full-screen prompting routine
     }
 
     bool rewrite_extrainfo = false; // if true: rewrite extrainfo to text box
+    char blanks[78];                // used to clear text box
+    std::memset(blanks, ' ', 77);   // initialize string of blanks
+    blanks[77] = 0;
     if (!anyinput)
     {
         putstringcenter(instrrow++, 0, 80, C_PROMPT_BKGRD,
