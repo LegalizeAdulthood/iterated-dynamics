@@ -54,7 +54,6 @@ int fullscreen_prompt(        // full-screen prompting routine
     char *extra_info          // extra info box to display, \n separated
 )
 {
-    int instrrow;
     int promptrow;
     int promptcol;
     int valuecol;
@@ -246,7 +245,7 @@ int fullscreen_prompt(        // full-screen prompting routine
         --boxrow;
         ++boxlines;
     }
-    instrrow = boxrow+boxlines;
+    int instrrow = boxrow+boxlines;
     if (instrrow + 3 + extralines < 25)
     {
         ++boxlines;    // blank at bottom of box
