@@ -21,4 +21,5 @@ function(add_image_test name)
 endfunction()
 
 add_image_test(mandel PARAMETERS type=mandel)
+add_image_test(btrace PARAMETERS type=mandel inside=zmag passes=b)
 add_image_test(fractint-formula PARAMETERS type=formula formulafile=example2.frm formulaname=fractint)
