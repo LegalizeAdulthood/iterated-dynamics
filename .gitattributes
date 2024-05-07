@@ -3,6 +3,7 @@ text=auto
 *.bmp binary
 *.ico binary
 *.bat text
+*.cfg text
 *.frm text
 *.ifs text
 *.key text
