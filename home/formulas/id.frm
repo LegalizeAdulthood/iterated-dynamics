@@ -400,7 +400,7 @@ OK-43 { ; dissected spider
 }
 
 Larry { ; Mutation of 'Michaelbrot' and 'Element'
-   ; Original formulas by Michael Theroux [71673,2767]
+   ; Original formulas by Michael Theroux
    ; For 'Michaelbrot', set fn1 & fn2 =ident and p1 & p2 = default
    ; For 'Element', set fn1=ident & fn2=sqr and p1 & p2 = default
    ; p1 = Parameter (default 0.5,0), real(p2) = Bailout (default 4)
@@ -414,7 +414,7 @@ Larry { ; Mutation of 'Michaelbrot' and 'Element'
 }
 
 Moe { ; Mutation of 'Zexpe'.
-   ; Original formula by Lee Skinner [75450,3631]
+   ; Original formula by Lee Skinner
    ; For 'Zexpe', set fn1 & fn2 =ident and p1 = default
    ; real(p1) = Bailout (default 100)
    s = exp(1.,0.), z = pixel, c = fn1(pixel)
@@ -439,7 +439,7 @@ Groucho { ; Mutation of 'Fish2'.
 }
 
 Zeppo { ; Mutation of 'Liar4'.
-   ; Original formula by Chuck Ebbert [76306,1226]
+   ; Original formula by Chuck Ebbert
    ; For 'Liar4' set fn1 & fn2 =ident and p1 & p2 = default
    ; p1 & p2 = Parameters (default 1,0 and 0,0)
    z = pixel
@@ -799,7 +799,7 @@ GenInvMand1_N { ; Jm Collard-Richard
 {--- W. Leroy Davis ------------------------------------------------------}
 
 { These are from: "AKA MrWizard W. LeRoy Davis; SM-ALC/HRUC"
-      davisl@sm-logdis1-aflc.af.mil
+
   The first 3 are variations of:
          z
      gamma(z) = (z/e) * sqrt(2*pi*z) * R
@@ -1459,8 +1459,8 @@ Ent2 { ; Scott Taylor
 
 {--- Michael Theroux & Ron Barnett ---------------------------------------}
 
-test3 { ; Michael Theroux [71673,2767]
-   ; fix and generalization by Ron Barnett [70153,1233]
+test3 { ; Michael Theroux
+   ; fix and generalization by Ron Barnett
    ; =phi
    ; try p1 = 2.236067977 for the golden mean
    z = ((p1 + 1)/2)/pixel:

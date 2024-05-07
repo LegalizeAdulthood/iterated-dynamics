@@ -1,5 +1,5 @@
 
-Gallet-8-01 { ; Sylvie Gallet [101324,3444], Mar 1997
+Gallet-8-01 { ; Sylvie Gallet, Mar 1997
    z = c = pixel , zc = 0 :
    if (zc < 0)
       z = z - p1
@@ -10,7 +10,7 @@ Gallet-8-01 { ; Sylvie Gallet [101324,3444], Mar 1997
    |z| <= p2
 }
 
-Gallet-8-03 { ; Sylvie Gallet [101324,3444], Mar 1997
+Gallet-8-03 { ; Sylvie Gallet, Mar 1997
               ; Requires periodicity = 0
    z = c = zn = pixel :
    zn = zn*zn + c
@@ -20,7 +20,7 @@ Gallet-8-03 { ; Sylvie Gallet [101324,3444], Mar 1997
    |zn| <= 4
 }
 
-Gallet-8-04 { ; Sylvie Gallet [101324,3444], Mar 1997
+Gallet-8-04 { ; Sylvie Gallet, Mar 1997
               ; Requires periodicity = 0
    z = zn = pixel , ex = p1 - 1
    if (p2 || imag(p2))
@@ -36,7 +36,7 @@ Gallet-8-04 { ; Sylvie Gallet [101324,3444], Mar 1997
    |num| >= 0.001
 }
 
-Gallet-8-05 { ; Sylvie Gallet [101324,3444], Mar 1997
+Gallet-8-05 { ; Sylvie Gallet, Mar 1997
               ; Requires periodicity = 0
    z = c = zn = pixel
    if (p1 || imag(p1))
@@ -52,7 +52,7 @@ Gallet-8-05 { ; Sylvie Gallet [101324,3444], Mar 1997
    |zn| <= 4
 }
 
-Gallet-8-06 { ; Sylvie Gallet [101324,3444], Mar 1997
+Gallet-8-06 { ; Sylvie Gallet, Mar 1997
               ; Requires periodicity = 0
    z = c = zn = pixel
    if (p1 || imag(p1))
@@ -68,7 +68,7 @@ Gallet-8-06 { ; Sylvie Gallet [101324,3444], Mar 1997
    |zn| <= 4
 }
 
-Gallet-8-07 { ; Sylvie Gallet [101324,3444], Mar 1997
+Gallet-8-07 { ; Sylvie Gallet, Mar 1997
               ; Requires periodicity = 0
    z = c = zn = pixel
    if (p1 || imag(p1))
@@ -87,7 +87,7 @@ Gallet-8-07 { ; Sylvie Gallet [101324,3444], Mar 1997
    |zn| <= 4
 }
 
-Gallet-8-08 { ; Sylvie Gallet [101324,3444], Mar 1997
+Gallet-8-08 { ; Sylvie Gallet, Mar 1997
               ; Requires periodicity = 0
    z = zn = pixel
    if (p2 || imag(p2))
@@ -103,7 +103,7 @@ Gallet-8-08 { ; Sylvie Gallet [101324,3444], Mar 1997
    |zn| <= 4
 }
 
-Gallet-8-11 { ; Sylvie Gallet [101324,3444], Mar 1997
+Gallet-8-11 { ; Sylvie Gallet, Mar 1997
               ; PHC, requires periodicity = 0 and passes=1
    h = cabs(pixel) , r = real(p3) , ir = imag(p3)
    if (h >= r)
@@ -122,7 +122,7 @@ Gallet-8-11 { ; Sylvie Gallet [101324,3444], Mar 1997
    |z| <= 128
 }
 
-Gallet-8-12 { ; Sylvie Gallet [101324,3444], Mar 1997
+Gallet-8-12 { ; Sylvie Gallet, Mar 1997
               ; Requires periodicity = 0
    h = cabs(pixel) , pinv = 1/p1
    bailout = 2*p1 , r = real(p2) , ir = imag(p2)
@@ -143,7 +143,7 @@ Gallet-8-12 { ; Sylvie Gallet [101324,3444], Mar 1997
    z <= bailout
 }
 
-Gallet-8-14 { ; Sylvie Gallet [101324,3444], Mar 1997
+Gallet-8-14 { ; Sylvie Gallet, Mar 1997
               ; Requires periodicity = 0
    z = 0 , c = zn = pixel , zmin = p1 , k = flip(2*pi/zmin) :
    zn = zn*zn + c , znc = cabs(zn)
@@ -153,7 +153,7 @@ Gallet-8-14 { ; Sylvie Gallet [101324,3444], Mar 1997
    znc <= 4
 }
 
-Gallet-8-15 { ; Sylvie Gallet [101324,3444], Mar 1997
+Gallet-8-15 { ; Sylvie Gallet, Mar 1997
               ; Requires periodicity = 0
    z = 0 , zn = x = y = pixel , zmin = imag(p2) , k = flip(2*pi/zmin) :
    zn = zn*zn - 0.5*zn + p1 , x = zn*zn - 0.5*y + p1
@@ -164,7 +164,7 @@ Gallet-8-15 { ; Sylvie Gallet [101324,3444], Mar 1997
    znc <= real(p2)
 }
 
-Gallet-8-16 { ; Sylvie Gallet [101324,3444], Mar 1997
+Gallet-8-16 { ; Sylvie Gallet, Mar 1997
               ; Requires periodicity = 0
    z = -1 , c = zn = pixel , xmin = ymin = p1
    odd = 0 , k = flip(pi/xmin) :

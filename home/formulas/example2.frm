@@ -476,7 +476,7 @@ comment {
      These formulas need 'periodicity=0'.
 }
 
-TileMandel { ; Terren Suydam (terren@io.com), 1996
+TileMandel { ; Terren Suydam, 1996
              ; modified by Sylvie Gallet
              ; Modified for if..else logic 3/19/97 by Sylvie Gallet
    ; p1 = center = coordinates for a good Mandel
@@ -500,7 +500,7 @@ TileMandel { ; Terren Suydam (terren@io.com), 1996
    |z| <= 4
 }
 
-TileJulia { ; Terren Suydam (terren@io.com), 1996
+TileJulia { ; Terren Suydam, 1996
             ; modified by Sylvie Gallet
             ; Modified for if..else logic 3/19/97 by Sylvie Gallet
    ; p1 = center = coordinates for a good Julia

@@ -1,5 +1,5 @@
-IslandOfChaos(XAXIS_NOPARM) { ; Jonathan Osuch [73277,1432]
-   ; Generalized by Tobey J. E. Reed [76437,375]
+IslandOfChaos(XAXIS_NOPARM) { ; Jonathan Osuch
+   ; Generalized by Tobey J. E. Reed
    ; Try p1=0, p2=4, fn1=sqr, fn2=sin, fn3=cosxx
    ; Note:  use floating point
    z   =  p1, x   =  1:
@@ -9,8 +9,8 @@ IslandOfChaos(XAXIS_NOPARM) { ; Jonathan Osuch [73277,1432]
    |z| <= p2
 }
 
-IslandOfChaosC(XAXIS_NOPARM) { ; Jonathan Osuch [73277,1432]
-   ; Generalized by Tobey J. E. Reed [76437,375]
+IslandOfChaosC(XAXIS_NOPARM) { ; Jonathan Osuch
+   ; Generalized by Tobey J. E. Reed
    ; Try p1=0, p2=4, fn1=sqr, fn2=sin, fn3=cos
    ; Note:  use floating point
    z=p1, x=1:
@@ -46,7 +46,7 @@ jfnz { ; from EXPLOD.FRM
    |z| <= 4
 }
 
-JMask = { ; Ron Barnett [70153,1233]
+JMask = { ; Ron Barnett
    ; try p1 = (1,0), p2 = (0,0.835), fn1 = sin, fn2 = sqr
    z = fn1(pixel):
    z = P1*fn2(z)^2 + P2, |z| <= 4
@@ -79,211 +79,211 @@ JSomethingelse (xyaxis) = {
    |z| <= 1000000
 }
 
-J_Lagandre2 { ; Rob den Braasem [rdb@KTIBV.UUCP]
+J_Lagandre2 { ; Rob den Braasem
    c = pixel, z = P1:
    z = (3 * z*z - 1) / 2 + c
    |z| < 100
 }
 
-J_Lagandre3 { ; Rob den Braasem [rdb@KTIBV.UUCP]
+J_Lagandre3 { ; Rob den Braasem
    c = pixel, z = P1:
    z = z * (5 * z*z - 3) / 2 + c
    |z| < 100
 }
 
-J_Lagandre4 { ; Rob den Braasem [rdb@KTIBV.UUCP]
+J_Lagandre4 { ; Rob den Braasem
    c = pixel, z = P1:
    z = (z*z*(35 * z*z - 30) + 3) / 8 + c
    |z| < 100
 }
 
-J_Lagandre5 { ; Rob den Braasem [rdb@KTIBV.UUCP]
+J_Lagandre5 { ; Rob den Braasem
    c = pixel, z = P1:
    z = z* (z*z*(63 * z*z - 70) + 15 ) / 8 + c
    |z| < 100
 }
 
-J_Lagandre6 { ; Rob den Braasem [rdb@KTIBV.UUCP]
+J_Lagandre6 { ; Rob den Braasem
    c = pixel, z = P1:
    z = (z*z*(z*z*(231 * z*z - 315)  + 105 ) - 5) / 16 + c
    |z| < 100
 }
 
-J_Lagandre7 { ; Rob den Braasem [rdb@KTIBV.UUCP]
+J_Lagandre7 { ; Rob den Braasem
    c = pixel, z = P1:
    z = z* (z*z*(z*z*(429 * z*z - 693) + 315) - 35 ) / 16 + c
    |z| < 100
 }
 
-J_Laguerre2 { ; Rob den Braasem [rdb@KTIBV.UUCP]
+J_Laguerre2 { ; Rob den Braasem
    c = pixel, z = P1:
    z = (z*(z - 4) +2 ) / 2 + c,
    |z| < 100
 }
 
-J_Laguerre3 { ; Rob den Braasem [rdb@KTIBV.UUCP]
+J_Laguerre3 { ; Rob den Braasem
    c = pixel, z = P1:
    z = (z*(z*(-z + 9) -18) + 6 ) / 6 + c,
    |z| < 100
 }
 
-J_Laguerre4 { ; Rob den Braasem [rdb@KTIBV.UUCP]
+J_Laguerre4 { ; Rob den Braasem
    c = pixel, z = P1:
    z = (z * ( z * ( z * ( z - 16)+ 72) - 96)+ 24 ) / 24 + c,
    |z| < 100
 }
 
-J_Laguerre5 { ; Rob den Braasem [rdb@KTIBV.UUCP]
+J_Laguerre5 { ; Rob den Braasem
    c = pixel, z = P1:
    z = (z * ( z * ( z * ( z * (-z +25) -200) +600) -600) + 120 ) / 120 + c,
    |z| < 100
 }
 
-J_Laguerre6 { ; Rob den Braasem [rdb@KTIBV.UUCP]
+J_Laguerre6 { ; Rob den Braasem
    c = pixel, z = P1:
    z = (z *(z *(z *(z *(z*(z -36) +450) -2400) + 5400)-4320)+ 720) / 720 + c,
    |z| < 100
 }
 
-J_TchebychevC2 { ; Rob den Braasem [rdb@KTIBV.UUCP]
+J_TchebychevC2 { ; Rob den Braasem
    c = pixel, z = P1:
    z = c*(z*z-2),
    |z|<100
 }
 
-J_TchebychevC3 { ; Rob den Braasem [rdb@KTIBV.UUCP]
+J_TchebychevC3 { ; Rob den Braasem
    c = pixel, z = P1:
    z = c*z*(z*z-3),
    |z|<100
 }
 
-J_TchebychevC4 { ; Rob den Braasem [rdb@KTIBV.UUCP]
+J_TchebychevC4 { ; Rob den Braasem
    c = pixel, z = P1:
    z = c*(z*z*(z*z-4)+2),
    |z|<100
 }
 
-J_TchebychevC5 { ; Rob den Braasem [rdb@KTIBV.UUCP]
+J_TchebychevC5 { ; Rob den Braasem
    c = pixel, z = P1:
    z = c*z*(z*z*(z*z-5)+5),
    |z|<100
 }
 
-J_TchebychevC6 { ; Rob den Braasem [rdb@KTIBV.UUCP]
+J_TchebychevC6 { ; Rob den Braasem
    c = pixel, z = P1:
    z = c*(z*z*(z*z*(z*z-6)+9)-2),
    |z|<100
 }
 
-J_TchebychevC7 { ; Rob den Braasem [rdb@KTIBV.UUCP]
+J_TchebychevC7 { ; Rob den Braasem
    c = pixel, z = P1:
    z = c*z*(z*z*(z*z*(z*z-7)+14)-7),
    |z|<100
 }
 
-J_TchebychevS2 { ; Rob den Braasem [rdb@KTIBV.UUCP]
+J_TchebychevS2 { ; Rob den Braasem
    c = pixel, z = P1:
    z = c*(z*z-1),
    |z|<100
 }
 
-J_TchebychevS3 { ; Rob den Braasem [rdb@KTIBV.UUCP]
+J_TchebychevS3 { ; Rob den Braasem
    c = pixel, z = P1:
    z = c*z*(z*z-2),
    |z|<100
 }
 
-J_TchebychevS4 { ; Rob den Braasem [rdb@KTIBV.UUCP]
+J_TchebychevS4 { ; Rob den Braasem
    c = pixel, z = P1:
    z = c*(z*z*(z*z-3)+1),
    |z|<100
 }
 
-J_TchebychevS5 { ; Rob den Braasem [rdb@KTIBV.UUCP]
+J_TchebychevS5 { ; Rob den Braasem
    c = pixel, z = P1:
    z = c*z*(z*z*(z*z-4)+3),
    |z|<100
 }
 
-J_TchebychevS6 { ; Rob den Braasem [rdb@KTIBV.UUCP]
+J_TchebychevS6 { ; Rob den Braasem
    c = pixel, z = P1:
    z = c*(z*z*(z*z*(z*z-5)+6)-1),
    |z|<100
 }
 
-J_TchebychevS7 { ; Rob den Braasem [rdb@KTIBV.UUCP]
+J_TchebychevS7 { ; Rob den Braasem
    c = pixel, z = P1:
    z = c*z*(z*z*(z*z*(z*z-6)+10)-4),
    |z|<100
 }
 
-J_TchebychevT2 { ; Rob den Braasem [rdb@KTIBV.UUCP]
+J_TchebychevT2 { ; Rob den Braasem
    c = pixel, z = P1:
    z = c*(2*z*z-1),
    |z|<100
 }
 
-J_TchebychevT3 { ; Rob den Braasem [rdb@KTIBV.UUCP]
+J_TchebychevT3 { ; Rob den Braasem
    c = pixel, z = P1:
    z = c*z*(4*z*z-3),
    |z|<100
 }
 
-J_TchebychevT4 { ; Rob den Braasem [rdb@KTIBV.UUCP]
+J_TchebychevT4 { ; Rob den Braasem
    c = pixel, z = P1:
    z = c*(z*z*(8*z*z+8)+1),
    |z|<100
 }
 
-J_TchebychevT5 { ; Rob den Braasem [rdb@KTIBV.UUCP]
+J_TchebychevT5 { ; Rob den Braasem
    c = pixel, z = P1:
    z = c*(z*(z*z*(16*z*z-20)+5)),
    |z|<100
 }
 
-J_TchebychevT6 { ; Rob den Braasem [rdb@KTIBV.UUCP]
+J_TchebychevT6 { ; Rob den Braasem
    c = pixel, z = P1:
    z = c*(z*z*(z*z*(32*z*z-48)+18)-1),
    |z|<100
 }
 
-J_TchebychevT7 { ; Rob den Braasem [rdb@KTIBV.UUCP]
+J_TchebychevT7 { ; Rob den Braasem
    c = pixel, z = P1:
    z = c*z*(z*z*(z*z*(64*z*z-112)+56)-7),
    |z|<100
 }
 
-J_TchebychevU2 { ; Rob den Braasem [rdb@KTIBV.UUCP]
+J_TchebychevU2 { ; Rob den Braasem
    c = pixel, z = P1:
    z = c*(4*z*z-1),
    |z|<100
 }
 
-J_TchebychevU3 { ; Rob den Braasem [rdb@KTIBV.UUCP]
+J_TchebychevU3 { ; Rob den Braasem
    c = pixel, z = P1:
    z = c*z*(8*z*z-4),
    |z|<100
 }
 
-J_TchebychevU4 { ; Rob den Braasem [rdb@KTIBV.UUCP]
+J_TchebychevU4 { ; Rob den Braasem
    c = pixel, z = P1:
    z = c*(z*z*(16*z*z-12)+1),
    |z|<100
 }
 
-J_TchebychevU5 { ; Rob den Braasem [rdb@KTIBV.UUCP]
+J_TchebychevU5 { ; Rob den Braasem
    c = pixel, z = P1:
    z = c*z*(z*z*(32*z*z-32)+6),
    |z|<100
 }
 
-J_TchebychevU6 { ; Rob den Braasem [rdb@KTIBV.UUCP]
+J_TchebychevU6 { ; Rob den Braasem
    c = pixel, z = P1:
    z = c*(z*z*(z*z*(64*z*z-80)+24)-1),
    |z|<100
 }
 
-J_TchebychevU7 { ; Rob den Braasem [rdb@KTIBV.UUCP]
+J_TchebychevU7 { ; Rob den Braasem
    c = pixel, z = P1:
    z = c*z*(z*z*(z*z*(128*z*z-192)+80)-8),
    |z|<100
@@ -379,20 +379,20 @@ JulibrotSlice1 = { ; Randy Hutson - 2D slice of 4D Julibrot
    LastSqr <= 4
 }
 
-LambdaPwr { ; Ron Barnett [70153,1233]
+LambdaPwr { ; Ron Barnett
    ; try p1 = (0.75,0.75), p2 = (2.5,0)
    z = pixel:
    z = p1*z*(1 - z^p2),
    |z| <= 100
 }
 
-Leeze (XAXIS) = { ; Lee Skinner [75450,3631]
+Leeze (XAXIS) = { ; Lee Skinner
    s = exp(1.,0.), z = Pixel, f = Pixel ^ s:
    z = cosxx (z) + f,
    |z| <= 50
 }
 
-Liar1 { ; by Chuck Ebbert. [76306,1226]
+Liar1 { ; by Chuck Ebbert.
    ; X: X is as true as Y
    ; Y: Y is as true as X is false
    ; Calculate new x and y values simultaneously.
@@ -402,7 +402,7 @@ Liar1 { ; by Chuck Ebbert. [76306,1226]
    |z| <= 1
 }
 
-Liar2 { ; by Chuck Ebbert. [76306,1226]
+Liar2 { ; by Chuck Ebbert.
    ; Same as Liar1 but uses sequential reasoning, calculating
    ;  new y value using new x value.
    ; x(n+1) = 1 - abs(y(n)-x(n) );
@@ -515,14 +515,14 @@ MandConj11 { ; Paul J. Horn
    |z| <= 4
 }
 
-MandellambdaPwr { ; Ron Barnett [70153,1233]
+MandellambdaPwr { ; Ron Barnett
    ; This provide a "map" for LambdaPwr
    z = (1/(p1+1))^(1/p1):
    z = pixel*z*(1 - z^p1),
    |z| <= 100
 }
 
-Mask = { ; Ron Barnett [70153,1233]
+Mask = { ; Ron Barnett
    ; try fn1 = log, fn2 = sinh, fn3 = cosh
    ; P1 = (0,1), P2 = (0,1)
    ; Use floating point
@@ -552,8 +552,8 @@ mfnz { ; from EXPLOD.FRM
    |z| <= 4
 }
 
-Michaelbrot { ; Michael Theroux [71673,2767]
-   ; Fix and generalization by  Ron Barnett [70153,1233]
+Michaelbrot { ; Michael Theroux
+   ; Fix and generalization by  Ron Barnett
    ; Try p1 = 2.236067977 for the golden mean
    ; based on Golden Mean
    z = pixel:
@@ -592,218 +592,218 @@ mz { ; from EXPLOD.FRM
    |z| <= 4
 }
 
-M_Lagandre2 { ; Rob den Braasem [rdb@KTIBV.UUCP]
+M_Lagandre2 { ; Rob den Braasem
    c = P1, z = Pixel:
    z = (3 * z*z - 1) / 2 + c
    |z| < 100
 }
 
-M_Lagandre3 { ; Rob den Braasem [rdb@KTIBV.UUCP]
+M_Lagandre3 { ; Rob den Braasem
    c = P1, z = Pixel:
    z = z * (5 * z*z - 3) / 2 + c
    |z| < 100
 }
 
-M_Lagandre4 { ; Rob den Braasem [rdb@KTIBV.UUCP]
+M_Lagandre4 { ; Rob den Braasem
    c = P1, z = Pixel:
    z = (z*z*(35 * z*z - 30) + 3) / 8 + c
    |z| < 100
 }
 
-M_Lagandre5 { ; Rob den Braasem [rdb@KTIBV.UUCP]
+M_Lagandre5 { ; Rob den Braasem
    c = P1, z = Pixel:
    z = z* (z*z*(63 * z*z - 70) + 15 ) / 8 + c
    |z| < 100
 }
 
-M_Lagandre6 { ; Rob den Braasem [rdb@KTIBV.UUCP]
+M_Lagandre6 { ; Rob den Braasem
    c = P1, z = Pixel:
    z = (z*z*(z*z*(231 * z*z - 315)  + 105 ) - 5) / 16 + c
    |z| < 100
 }
 
-M_Lagandre7 { ; Rob den Braasem [rdb@KTIBV.UUCP]
+M_Lagandre7 { ; Rob den Braasem
    c = P1, z = Pixel:
    z = z* (z*z*(z*z*(429 * z*z - 693) + 315) - 35 ) / 16 + c
    |z| < 100
 }
 
-M_Laguerre2 { ; Rob den Braasem [rdb@KTIBV.UUCP]
+M_Laguerre2 { ; Rob den Braasem
    c = P1, z = Pixel:
    z = (z*(z - 4) +2 ) / 2 + c,
    |z| < 100
 }
 
-M_Laguerre3 { ; Rob den Braasem [rdb@KTIBV.UUCP]
+M_Laguerre3 { ; Rob den Braasem
    c = P1, z = Pixel:
    z = (z*(z*(-z + 9) -18) + 6 ) / 6 + c,
    |z| < 100
 }
 
-M_Laguerre4 { ; Rob den Braasem [rdb@KTIBV.UUCP]
+M_Laguerre4 { ; Rob den Braasem
    c = P1, z = Pixel:
    z = (z * ( z * ( z * ( z - 16)+ 72) - 96)+ 24 ) / 24 + c,
    |z| < 100
 }
 
-M_Laguerre5 { ; Rob den Braasem [rdb@KTIBV.UUCP]
+M_Laguerre5 { ; Rob den Braasem
    c = P1, z = Pixel:
    z = (z * ( z * ( z * ( z * (-z +25) -200) +600) -600) + 120 ) / 120 + c,
    |z| < 100
 }
 
-M_Laguerre6 { ; Rob den Braasem [rdb@KTIBV.UUCP]
+M_Laguerre6 { ; Rob den Braasem
    c = P1, z = Pixel:
    z = (z *(z *(z *(z *(z*(z -36) +450) -2400) +5400) -4320) +720) / 720 + c,
    |z| < 100
 }
 
-M_TchebychevC2 { ; Rob den Braasem [rdb@KTIBV.UUCP]
+M_TchebychevC2 { ; Rob den Braasem
    c = P1, z = Pixel:
    z = c*(z*z-2),
    |z|<100
 }
 
-M_TchebychevC3 { ; Rob den Braasem [rdb@KTIBV.UUCP]
+M_TchebychevC3 { ; Rob den Braasem
    c = P1, z = Pixel:
    z = c*z*(z*z-3),
    |z|<100
 }
 
-M_TchebychevC4 { ; Rob den Braasem [rdb@KTIBV.UUCP]
+M_TchebychevC4 { ; Rob den Braasem
    c = P1, z = Pixel:
    z = c*(z*z*(z*z-4)+2),
    |z|<100
 }
 
-M_TchebychevC5 { ; Rob den Braasem [rdb@KTIBV.UUCP]
+M_TchebychevC5 { ; Rob den Braasem
    c = P1, z = Pixel:
    z = c*z*(z*z*(z*z-5)+5),
    |z|<100
 }
 
-M_TchebychevC6 { ; Rob den Braasem [rdb@KTIBV.UUCP]
+M_TchebychevC6 { ; Rob den Braasem
    c = P1, z = Pixel:
    z = c*(z*z*(z*z*(z*z-6)+9)-2),
    |z|<100
 }
 
-M_TchebychevC7 { ; Rob den Braasem [rdb@KTIBV.UUCP]
+M_TchebychevC7 { ; Rob den Braasem
    c = P1, z = Pixel:
    z = c*z*(z*z*(z*z*(z*z-7)+14)-7),
    |z|<100
 }
 
-M_TchebychevS2 { ; Rob den Braasem [rdb@KTIBV.UUCP]
+M_TchebychevS2 { ; Rob den Braasem
    c = P1, z = Pixel:
    z = c*(z*z-1),
    |z|<100
 }
 
-M_TchebychevS3 { ; Rob den Braasem [rdb@KTIBV.UUCP]
+M_TchebychevS3 { ; Rob den Braasem
    c = P1, z = Pixel:
    z = c*z*(z*z-2),
    |z|<100
 }
 
-M_TchebychevS4 { ; Rob den Braasem [rdb@KTIBV.UUCP]
+M_TchebychevS4 { ; Rob den Braasem
    c = P1, z = Pixel:
    z = c*(z*z*(z*z-3)+1),
    |z|<100
 }
 
-M_TchebychevS5 { ; Rob den Braasem [rdb@KTIBV.UUCP]
+M_TchebychevS5 { ; Rob den Braasem
    c = P1, z = Pixel:
    z = c*z*(z*z*(z*z-4)+3),
    |z|<100
 }
 
-M_TchebychevS6 { ; Rob den Braasem [rdb@KTIBV.UUCP]
+M_TchebychevS6 { ; Rob den Braasem
    c = P1, z = Pixel:
    z = c*(z*z*(z*z*(z*z-5)+6)-1),
    |z|<100
 }
 
-M_TchebychevS7 { ; Rob den Braasem [rdb@KTIBV.UUCP]
+M_TchebychevS7 { ; Rob den Braasem
    c = P1, z = Pixel:
    z = c*z*(z*z*(z*z*(z*z-6)+10)-4),
    |z|<100
 }
 
-M_TchebychevT2 { ; Rob den Braasem [rdb@KTIBV.UUCP]
+M_TchebychevT2 { ; Rob den Braasem
    c = P1, z = Pixel:
    z = c*(2*z*z-1),
    |z|<100
 }
 
-M_TchebychevT3 { ; Rob den Braasem [rdb@KTIBV.UUCP]
+M_TchebychevT3 { ; Rob den Braasem
    c = P1, z = Pixel:
    z = c*z*(4*z*z-3),
    |z|<100
 }
 
-M_TchebychevT4 { ; Rob den Braasem [rdb@KTIBV.UUCP]
+M_TchebychevT4 { ; Rob den Braasem
    c = P1, z = Pixel:
    z = c*(z*z*(8*z*z+8)+1),
    |z|<100
 }
 
-M_TchebychevT5 { ; Rob den Braasem [rdb@KTIBV.UUCP]
+M_TchebychevT5 { ; Rob den Braasem
    c = P1, z = Pixel:
    z = c*(z*(z*z*(16*z*z-20)+5)),
    |z|<100
 }
 
-M_TchebychevT6 { ; Rob den Braasem [rdb@KTIBV.UUCP]
+M_TchebychevT6 { ; Rob den Braasem
    c = P1, z = Pixel:
    z = c*(z*z*(z*z*(32*z*z-48)+18)-1),
    |z|<100
 }
 
-M_TchebychevT7 { ; Rob den Braasem [rdb@KTIBV.UUCP]
+M_TchebychevT7 { ; Rob den Braasem
    c = P1, z = Pixel:
    z = c*z*(z*z*(z*z*(64*z*z-112)+56)-7),
    |z|<100
 }
 
-M_TchebychevU2 { ; Rob den Braasem [rdb@KTIBV.UUCP]
+M_TchebychevU2 { ; Rob den Braasem
    c = P1, z = Pixel:
    z = c*(4*z*z-1),
    |z|<100
 }
 
-M_TchebychevU3 { ; Rob den Braasem [rdb@KTIBV.UUCP]
+M_TchebychevU3 { ; Rob den Braasem
    c = P1, z = Pixel:
    z = c*z*(8*z*z-4),
    |z|<100
 }
 
-M_TchebychevU4 { ; Rob den Braasem [rdb@KTIBV.UUCP]
+M_TchebychevU4 { ; Rob den Braasem
    c = P1, z = Pixel:
    z = c*(z*z*(16*z*z-12)+1),
    |z|<100
 }
 
-M_TchebychevU5 { ; Rob den Braasem [rdb@KTIBV.UUCP]
+M_TchebychevU5 { ; Rob den Braasem
    c = P1, z = Pixel:
    z = c*z*(z*z*(32*z*z-32)+6),
    |z|<100
 }
 
-M_TchebychevU6 { ; Rob den Braasem [rdb@KTIBV.UUCP]
+M_TchebychevU6 { ; Rob den Braasem
    c = P1, z = Pixel:
    z = c*(z*z*(z*z*(64*z*z-80)+24)-1),
    |z|<100
 }
 
-M_TchebychevU7 { ; Rob den Braasem [rdb@KTIBV.UUCP]
+M_TchebychevU7 { ; Rob den Braasem
    c = P1, z = Pixel:
    z = c*z*(z*z*(z*z*(128*z*z-192)+80)-8),
    |z|<100
 }
 
-Natura { ; Michael Theroux [71673,2767]
-   ; Fix and generalization by  Ron Barnett [70153,1233]
+Natura { ; Michael Theroux
+   ; Fix and generalization by  Ron Barnett
    ; phi yoni
    ; try p1 = 2.236067977 for the golden mean
    z = pixel:
@@ -817,7 +817,7 @@ Newducks(XAXIS) = {
    |z|<=4
 }
 
-non-conformal { ; Richard Hughes (Brainy Smurf) [70461,3272]
+non-conformal { ; Richard Hughes (Brainy Smurf)
    ; From Media Magic Calender - August
    z=x=y=x2=y2=0:
    t = x * y,
@@ -852,7 +852,7 @@ OldHalleySin (XYAXIS) { ; Chris Green
    0.0001 <= |s|
 }
 
-OldManowar (XAXIS) { ; Lee Skinner [75450,3631]
+OldManowar (XAXIS) { ; Lee Skinner
    z0 = 0, z1 = 0, test = p1 + 3, c = pixel :
    z = z1*z1 + z0 + c,
    z0 = z1,
@@ -870,7 +870,7 @@ OldNewtonSinExp (XAXIS) { ; Chris Green
    .0001 < |z2|
 }
 
-phoenix_j (XAXIS) { ; Richard Hughes (Brainy Smurf) [70461,3272]
+phoenix_j (XAXIS) { ; Richard Hughes (Brainy Smurf)
    ; Use P1=0.56667/-0.5   &   .1/.8
    ; Use floating point.
    x=real(pixel), y=imag(pixel), z=nx=ny=x1=x2=y1=y2=0:
@@ -881,7 +881,7 @@ phoenix_j (XAXIS) { ; Richard Hughes (Brainy Smurf) [70461,3272]
    |z| <= 4
 }
 
-phoenix_m { ; Richard Hughes (Brainy Smurf) [70461,3272]
+phoenix_m { ; Richard Hughes (Brainy Smurf)
    ; Mandelbrot style map of the Phoenix curves
    ; Use floating point.
    z=x=y=nx=ny=x1=y1=x2=y2=0:
@@ -892,7 +892,7 @@ phoenix_m { ; Richard Hughes (Brainy Smurf) [70461,3272]
    |z| <= 4
 }
 
-PolyGen = { ; Ron Barnett [70153,1233]
+PolyGen = { ; Ron Barnett
    ; p1 must not be zero
    ; zero can be simulated with a small
    ; value for p1
@@ -903,7 +903,7 @@ PolyGen = { ; Ron Barnett [70153,1233]
    |z| <= 100
 }
 
-PseudoLambda { ; Ron Barnett [70153,1233]
+PseudoLambda { ; Ron Barnett
    ; Use floating point.
    ; try p1 = (-1,0.45), p2 = (1,0)
    z = pixel:
@@ -914,7 +914,7 @@ PseudoLambda { ; Ron Barnett [70153,1233]
    |z| <= 100
 }
 
-PseudoMandelLambda { ; Ron Barnett [70153,1233]
+PseudoMandelLambda { ; Ron Barnett
    ; Use floating point.
    z = 0.5, c = pixel:
    x = real(z), y = imag(z),
@@ -924,7 +924,7 @@ PseudoMandelLambda { ; Ron Barnett [70153,1233]
    |z| <= 100
 }
 
-PseudoZeePi = { ; Ron Barnett [70153,1233]
+PseudoZeePi = { ; Ron Barnett
    ; try p1 = 0.1, p2 = 0.39
    z = pixel:
    x = 1-z^p1;
@@ -938,8 +938,8 @@ Ramanujan1(ORIGIN) = {
    |z|<= 4
 }
 
-Raphaelbrot { ; Michael Theroux [71673,2767]
-   ; Fix and generalization by  Ron Barnett [70153,1233]
+Raphaelbrot { ; Michael Theroux
+   ; Fix and generalization by  Ron Barnett
    ; phi
    ; try p1 = 2.236067977 for the golden mean
    z = pixel:
@@ -947,7 +947,7 @@ Raphaelbrot { ; Michael Theroux [71673,2767]
    |z| <= 4
 }
 
-RCL_1 (XAXIS) { ; Ron Lewen [76376,2567]
+RCL_1 (XAXIS) { ; Ron Lewen
    ;  An interesting Biomorph inspired by Pickover's
    ;  Computers, Pattern, Choas and Beauty.
    ;  Use Floating Point
@@ -967,7 +967,7 @@ RCL_11 { ; Ron Lewen, 76376,2567
    abs(z) < 8
 }
 
-RCL_2 (XAXIS) { ; Ron Lewen [76376,2567]
+RCL_2 (XAXIS) { ; Ron Lewen
    ;  A biomorph flower?  Simply a change in initial
    ;  conditions from RCL_1 above
    ; Use Floating Point
@@ -976,7 +976,7 @@ RCL_2 (XAXIS) { ; Ron Lewen [76376,2567]
    |real(z)| <= 100 || |imag(z)| <= 100
 }
 
-RCL_3 (XAXIS) { ; Ron Lewen [76376,2567]
+RCL_3 (XAXIS) { ; Ron Lewen
    ;  A seemingly endless vertical pattern.  The most activity
    ;  is around the center of the image.
    ;  Use Floating Point
