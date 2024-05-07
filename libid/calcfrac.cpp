@@ -3324,7 +3324,7 @@ static int potential(double mag, long iterations)
 
 inline direction advance(direction dir, int increment)
 {
-    return static_cast<direction>((+dir + increment) % 4);
+    return static_cast<direction>((+dir + increment + 4) % 4);
 }
 
 inline void advance_match(direction &coming_from)
