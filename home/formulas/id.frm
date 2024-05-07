@@ -1237,12 +1237,19 @@ RCL_10 { ; Ron Lewen
 
 {--- Jonathan Osuch ------------------------------------------------------}
 
-BirdOfPrey(XAXIS_NOPARM) {
-   z=p1, x=1:
-   (x<10)*(z=sqr(z)+pixel)
-   (10<=x)*(z=cosxx(z)+pixel)
-   x=x+1
-   |z|<=4
+BirdOfPrey(XAXIS_NOPARM) { ; Jonathan Osuch
+   ; Generalized by Tobey J. E. Reed
+   ; Try p1=0, p2=4, fn1=sqr, fn2=cosxx
+   ; Note:  use floating point
+   z = p1,
+   x = 1:
+   if (x  <  10)
+      z = fn1(z) + pixel
+   else
+      z = fn2(z) + pixel
+   endif
+   x = x + 1
+   |z| <= p2
 }
 
 FractalFenderC(XAXIS_NOPARM) { ; Spectacular!

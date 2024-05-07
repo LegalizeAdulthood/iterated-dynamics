@@ -442,12 +442,6 @@ Gallet-8 - 21 { ; Sylvie Gallet, Apr 1997
 
 {--- JONATHAN OSUCH ------------------------------------------------------}
 
-BirdOfPrey (XAXIS_NOPARM) { ; Optimized by Sylvie Gallet
-   z = p1 :
-   z = cosxx(sqr(z) + pixel) + pixel
-    |z| <= 4
-}
-
 FractalFenderC (XAXIS_NOPARM) { ; Spectacular!
    ; Modified for if..else logic 3/18/97 by Sylvie Gallet
    z = p1 , x = |z| :

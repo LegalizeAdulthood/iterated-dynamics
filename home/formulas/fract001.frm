@@ -79,28 +79,6 @@ alt (xaxis) {
    |z| <= 4
 }
 
-BirdOfPrey(XAXIS_NOPARM) { ; Jonathan Osuch
-   ; Generalized by Tobey J. E. Reed
-   ; Try p1=0, p2=4, fn1=sqr, fn2=cosxx
-   ; Note:  use floating point
-   z   = p1,
-   x   = 1:
-   (x  <  10) * (z=fn1(z)+pixel),
-   (10 <= x)  * (z=fn2(z)+pixel),
-   x   = x+1,
-   |z| <=p2
-}
-
-BirdOfPreyC(XAXIS_NOPARM) { ; Jonathan Osuch
-   ; Generalized by Tobey J. E. Reed
-   ; Try p1=0, p2=4, fn1=sqr, fn2=cos
-   ; Note:  use floating point
-   z=p1, x=1:
-   (z=fn1(z)+pixel)*(x<10)+(z=fn2(z)+pixel)*(10<=x),
-   x=x+1,
-   |z|<=p2
-}
-
 cardioid {
    z=0, x=real(pixel), y=imag(pixel),
    c=x*(cos(y)+x*sin(y)):
