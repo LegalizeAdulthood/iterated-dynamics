@@ -4,14 +4,14 @@ Newton_poly { ; Tim Wegner - use float=yes
    z = (2*z3) / (3*z2 - 3);
    z2 = z*z;
    z3 = z*z2,
-  .004 <= |z3 - 3*z|
-  }
+   .004 <= |z3 - 3*z|
+}
 
 newtz3 {
-  ; Note use floating point
-  z = pixel:
-  z2 = z * z,
-  z3 = z2 * z,
-  z = (2 * z3) / (3 * (z2 - 1)),
-  0.004 <= |z3 - 3 * z|
-  }
+   ; Note use floating point
+   z = pixel:
+   z2 = z * z,
+   z3 = z2 * z,
+   z = (2 * z3) / (3 * (z2 - 1)),
+   0.004 <= |z3 - 3 * z|
+}

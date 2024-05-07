@@ -3,11 +3,11 @@
 OK-32 { ; Modified for if..else logic 3/19/97 by Sylvie Gallet
    z = y = x = pixel , k = 1 + p1 , test = 5 + p2 :
    a = fn1(z)
-   IF (a <= y)
+   if (a <= y)
       b = y
-   ELSE
+   else
       b = x
-   ENDIF
+   endif
    x = y , y = z , z = a*k + b
    |z| <= test
 }
@@ -15,22 +15,22 @@ OK-32 { ; Modified for if..else logic 3/19/97 by Sylvie Gallet
 OK-34 { ; Modified for if..else logic 3/19/97 by Sylvie Gallet
    z = pixel , c = fn1(pixel) * p1 , test = 10 + p2 :
    x = abs(real(z)) , y = abs(imag(z))
-   IF (x <= y)
+   if (x <= y)
       z = fn2(z) + y + c
-   ELSE
+   else
       z = fn2(z) + x + c
-   ENDIF
+   endif
    |z| <= test
 }
 
 OK-35 { ; Modified for if..else logic 3/19/97 by Sylvie Gallet
    z = pixel, k = 1 + p1 , test = 10 + p2 :
    v = fn1(z) , x = z*v , y = z/v
-   IF (|x| <= |y|)
+   if (|x| <= |y|)
       z = fn2((z + y) * k * v) + v
-   ELSE
+   else
       z = fn2((z + x) * k * v) + v
-   ENDIF
+   endif
    |z| <= test
 }
 
@@ -42,17 +42,17 @@ Larry { ; Mutation of 'Michaelbrot' and 'Element'
    ; p1 = Parameter (default 0.5,0), real(p2) = Bailout (default 4)
    z = pixel
    ; The next line sets c=default if p1=0, else c=p1
-   IF (real(p1) || imag(p1))
+   if (real(p1) || imag(p1))
       c = p1
-   ELSE
+   else
       c = 0.5
-   ENDIF
+   endif
    ; The next line sets test=4 if real(p2)<=0, else test=real(p2)
-   IF (real(p2) <= 0)
+   if (real(p2) <= 0)
       test = 4
-   ELSE
+   else
       test = real(p2)
-   ENDIF
+   endif
    :
    z = fn1(fn2(z*z)) + c
    |z| <= test
@@ -65,11 +65,11 @@ Moe { ; Mutation of 'Zexpe'.
    ; real(p1) = Bailout (default 100)
    s = exp(1.,0.), z = pixel, c = fn1(pixel)
    ; The next line sets test=100 if real(p1)<=0, else test=real(p1)
-   IF (real(p1) <= 0)
+   if (real(p1) <= 0)
       test = 100
-   ELSE
+   else
       test = real(p1)
-   ENDIF
+   endif
    :
    z = fn2(z)^s + c
    |z| <= test
@@ -82,17 +82,17 @@ Groucho { ; Mutation of 'Fish2'.
    ; p1 = Parameter (default 1,0), real(p2) = Bailout (default 4)
    z = c = pixel
    ; The next line sets k=default if p1=0, else k=p1
-   IF (real(p1) || imag(p1))
+   if (real(p1) || imag(p1))
       k = p1
-   ELSE
+   else
       k = 1
-   ENDIF
+   endif
    ; The next line sets test=4 if real(p2)<=0, else test=real(p2)
-   IF (real(p2) <= 0)
+   if (real(p2) <= 0)
       test = 4
-   ELSE
+   else
       test = real(p2)
-   ENDIF
+   endif
    :
    z1 = c^(fn1(z)-k)
    z = fn2(((c*z1)-k)*(z1))
@@ -106,11 +106,11 @@ Zeppo { ; Mutation of 'Liar4'.
    ; p1 & p2 = Parameters (default 1,0 and 0,0)
    z = pixel
    ; The next line sets p=default if p1=0, else p=p1
-   IF (real(p1) || imag(p1))
+   if (real(p1) || imag(p1))
       p = p1
-   ELSE
+   else
       p = 1
-   ENDIF
+   endif
    :
    z = fn1(1-abs(imag(z)*p-real(z))) +          \
        flip(fn2(1-abs(1-real(z)-imag(z)))) - p2
@@ -118,60 +118,60 @@ Zeppo { ; Mutation of 'Liar4'.
 }
 
 inandout02 { ; Modified for if..else logic 3/19/97 by Sylvie Gallet
-  ;p1 = Parameter (default 0), real(p2) = Bailout (default 4)
-  ;The next line sets test=4 if real(p2)<=0, else test=real(p2)
-   IF (p2 <= 0)
+   ; p1 = Parameter (default 0), real(p2) = Bailout (default 4)
+   ; The next line sets test=4 if real(p2)<=0, else test=real(p2)
+   if (p2 <= 0)
       test = 4
-   ELSE
+   else
       test = real(p2)
-   ENDIF
+   endif
    z = oldz = pixel , moldz = mz = |z| :
-   IF (mz <= moldz)
-      oldz = z , moldz = mz , z = fn1(z) + p1 , mz = |z|  ;IN
-   ELSE
-      oldz = z , moldz = mz , z = fn2(z) + p1 , mz = |z|  ;OUT
-   ENDIF
+   if (mz <= moldz)
+      oldz = z , moldz = mz , z = fn1(z) + p1 , mz = |z|  ; IN
+   else
+      oldz = z , moldz = mz , z = fn2(z) + p1 , mz = |z|  ; OUT
+   endif
    mz <= test
 }
 
 inandout03 { ; Modified for if..else logic 3/19/97 by Sylvie Gallet
-  ;p1 = Parameter (default 0), real(p2) = Bailout (default 4)
-  ;The next line sets test=4 if real(p2)<=0, else test=real(p2)
-   IF (p2 <= 0)
+   ; p1 = Parameter (default 0), real(p2) = Bailout (default 4)
+   ; The next line sets test=4 if real(p2)<=0, else test=real(p2)
+   if (p2 <= 0)
       test = 4
-   ELSE
+   else
       test = real(p2)
-   ENDIF
+   endif
    z = oldz = c = pixel , moldz = mz = |z| :
-   IF (mz <= moldz)
-      c = fn1(c)       ;IN
-   ELSE
-      c = fn1(z * p1)  ;OUT
-   ENDIF
+   if (mz <= moldz)
+      c = fn1(c)       ; IN
+   else
+      c = fn1(z * p1)  ; OUT
+   endif
    oldz = z , moldz = mz
    z = fn2(z*z) + c , mz = |z|
    mz <= test
 }
 
 inandout04 { ; Modified for if..else logic 3/21/97 by Sylvie Gallet
-   ;p1 = Parameter (default 1), real(p2) = Bailout (default 4)
+   ; p1 = Parameter (default 1), real(p2) = Bailout (default 4)
    ; The next line sets k=default if p1=0, else k=p1
-   IF (real(p1) || imag(p1))
+   if (real(p1) || imag(p1))
       k = p1
-   ELSE
+   else
       k = 1
-   ENDIF
+   endif
    ; The next line sets test=4 if real(p2)<=0, else test=real(p2)
-   IF (real(p2) <= 0)
+   if (real(p2) <= 0)
       test = 4
-   ELSE
+   else
       test = real(p2)
-   ENDIF
+   endif
    z = oldz = c = pixel , mz = moldz = |z|
    :
-   IF (mz > moldz)
+   if (mz > moldz)
       c = c*k
-   ENDIF
+   endif
    oldz = z , moldz = mz , z = fn1(z*z) + c , mz = |z|
    mz <= test
 }
@@ -186,11 +186,11 @@ shifter01 { ; After shift, switch from z*z to z*z*z
             ; Modified for if..else logic 3/18/97 by Sylvie Gallet
    ; P1 = shift value, P2 varies bailout value
    z = c = pixel , iter = 1 , shift = p1 , test = 4 + p2 :
-   IF (iter <= shift)
+   if (iter <= shift)
       z = z*z + c
-   ELSE
+   else
       z = z*z*z + c
-   ENDIF
+   endif
    iter = iter + 1
    |z| < test
 }
@@ -211,17 +211,17 @@ Carr2289 (YAXIS) { ; Modified Sylvie Gallet frm., 1996
    z = zorig = pixel - conj(asin(pixel+pixel+0.32))
    d1 = flip(-0.0005935/pixel) , d4 = 4 * d1 , d5 = d1 + d4
    bailout = 4 , iter = 0 :
-   IF (iter == p1)
+   if (iter == p1)
       z = c = 1.5 * zorig + d5
-   ELSEIF (iter == imag(p1))
+   elseif (iter == imag(p1))
       z = c = 2.25 * zorig + d5
-   ELSEIF (iter == p2)
+   elseif (iter == p2)
       z = c = 3.375 * zorig + d5
-   ELSEIF (iter == imag(p2))
+   elseif (iter == imag(p2))
       z = c = 5.0625 * zorig + d5
-   ELSE
+   else
       z = z + d4 , c = c + d4
-   ENDIF
+   endif
    z = z*z + c
    iter = iter + 1
    abs(z) <= bailout
@@ -235,41 +235,41 @@ Fractint {; Sylvie Gallet, 1996
    ; It uses Newton's formula applied to the equation z^6-1 = 0 and, in the
    ; foreground, spells out the word 'FRACTINT'.
    z = pixel-0.025 , x = real(z) , y = imag(z) , text = 0
-   IF (y > -0.225 && y < 0.225)
+   if (y > -0.225 && y < 0.225)
       x1 = x*1.8 , x3 = 3*x
       ty2 = y < 0.025 && y > -0.025 || y > 0.175
-      IF ( x < -1.2 || ty2 && x > -1.25 && x < -1 )
+      if ( x < -1.2 || ty2 && x > -1.25 && x < -1 )
          text = 1
-      ELSEIF ( x < -0.9 || ty2 && x > -0.95 && x < -0.8                  \
+      elseif ( x < -0.9 || ty2 && x > -0.95 && x < -0.8                  \
                || (cabs(sqrt(|z+(0.8,-0.1)|)-0.1) < 0.025 && x > -0.8)   \
                || (y < -x1-1.44 && y > -x1-1.53 && y < 0.025) )
          text = 1
-      ELSEIF ( y > x3+1.5 || y > -x3-1.2 || (y > -0.125 && y < -0.075)   \
+      elseif ( y > x3+1.5 || y > -x3-1.2 || (y > -0.125 && y < -0.075)   \
                && y < x3+1.65 && y < -x3-1.05 )
          text = 1
-      ELSEIF ( cabs(sqrt(|z+0.05|)-0.2) < 0.025 && x < 0.05 )
+      elseif ( cabs(sqrt(|z+0.05|)-0.2) < 0.025 && x < 0.05 )
          text = 1
-      ELSEIF ( (x > 0.225 && x < 0.275 || y > 0.175) && x > 0.1 && x < 0.4 )
+      elseif ( (x > 0.225 && x < 0.275 || y > 0.175) && x > 0.1 && x < 0.4 )
          text = 1
-      ELSEIF ( x > 0.45 && x < 0.5 )
+      elseif ( x > 0.45 && x < 0.5 )
          text = 1
-      ELSEIF ( x < 0.6 || x > 0.8 || ((y > -x1+1.215) && (y < -x1+1.305))  \
+      elseif ( x < 0.6 || x > 0.8 || ((y > -x1+1.215) && (y < -x1+1.305))  \
                && x > 0.55 && x < 0.85 )
          text = 1
-      ELSEIF ( x > 1.025 && x < 1.075 || y > 0.175 && x > 0.9 && x < 1.2 )
+      elseif ( x > 1.025 && x < 1.075 || y > 0.175 && x > 0.9 && x < 1.2 )
          text = 1
-      ENDIF
-   ENDIF
+      endif
+   endif
    z = 1 + (0.0,-0.65) / (pixel+(0.0,.75))
    :
-   IF (text == 0)
+   if (text == 0)
       z2 = z*z , z4 = z2*z2 , n = z4*z2-1 , z = z-n/(6*z4*z)
-      IF (|n| >= 0.0001)
+      if (|n| >= 0.0001)
          continue = 1
-      ELSE
+      else
          continue = 0
-      ENDIF
-   ENDIF
+      endif
+   endif
    continue
 }
 
@@ -278,12 +278,12 @@ comment {
   It uses the following algorithm:
     z=c=pixel
     FOR iter:=0 to l1-1
-      IF the orbit of z*z + c escapes THEN end
-        ELSE
+      if the orbit of z*z + c escapes THEN end
+        else
           z:=z1
           FOR iter:=L1+1 to l2-1
-            IF the orbit of z*z + z1 escapes THEN end
-              ELSE
+            if the orbit of z*z + z1 escapes THEN end
+              else
                 z:=z2
                 FOR iter:=L2+1 to l3-1
                   ...
@@ -295,15 +295,15 @@ Five-Mandels (XAXIS) {; Sylvie Gallet, 1996
    ; Modified for if..else logic 3/17/97 by Sylvie Gallet
    c = z = zorig = pixel
    bailout = 16 , iter = 0 :
-   IF (iter == p1)
+   if (iter == p1)
       z = c = 1.5 * zorig
-   ELSEIF (iter == imag(p1))
+   elseif (iter == imag(p1))
       z = c = 2.25 * zorig
-   ELSEIF (iter == p2)
+   elseif (iter == p2)
       z = c = 3.375 * zorig
-   ELSEIF (iter == imag(p2))
+   elseif (iter == imag(p2))
       z = c = 5.0625 * zorig
-   ENDIF
+   endif
    z = z*z + c
    iter = iter + 1
    |z| <= bailout
@@ -320,24 +320,24 @@ Graph { ; Sylvie Gallet, 1996
    ; choose for example real(p1) = 0.002 and imag(p1) = 0.001
    epsilon = abs(real(p1)) , axes = abs(imag(p1))
    z = 0 , x = round(real(pixel)/epsilon) * epsilon
-   IF ((|real(pixel)| <= axes) || (|imag(pixel)| <= axes))
+   if ((|real(pixel)| <= axes) || (|imag(pixel)| <= axes))
       z = z + 1
-   ENDIF
-   IF (|x + flip(fn1(x))-pixel| <= epsilon)
+   endif
+   if (|x + flip(fn1(x))-pixel| <= epsilon)
       z = z + 2
-   ENDIF
-   IF (|x + flip(fn2(x))-pixel| <= epsilon)
+   endif
+   if (|x + flip(fn2(x))-pixel| <= epsilon)
       z = z + 4
-   ENDIF
-   IF (|x + flip(fn3(x))-pixel| <= epsilon)
+   endif
+   if (|x + flip(fn3(x))-pixel| <= epsilon)
       z = z + 8
-   ENDIF
-   IF (|x + flip(fn4(x))-pixel| <= epsilon)
+   endif
+   if (|x + flip(fn4(x))-pixel| <= epsilon)
       z = z + 16
-   ENDIF
-   IF (z == 0)
+   endif
+   if (z == 0)
       z = z + 100
-   ENDIF
+   endif
    :
    z = z - 1
    z > 0
@@ -356,11 +356,11 @@ JD-SG-04-1 { ; Sylvie Gallet, 1996
    ; Modified for if..else logic 3/21/97 by Sylvie Gallet
    ; use p1 and p2 to adjust the inverted Mandel
    ; 16-bit Pseudo-HiColor
-   IF (whitesq)
+   if (whitesq)
       z = c = pixel
-   ELSE
+   else
       z = c = p1 / (pixel+p2)
-   ENDIF
+   endif
    :
    z = z*z + c
    |z| < 4
@@ -376,20 +376,20 @@ ptc+mjn { ; Sylvie Gallet, 1996
           ; Mandel: z^2 + c , Julia: z^2 + p1 , Newton: z^p2 - 1 = 0
    cr = real(scrnpix) + imag(scrnpix)
    r = cr - 3 * trunc(cr / real(3)) , z = pixel
-   IF (r == 0)
+   if (r == 0)
       c = pixel , b1 = 256
-   ELSEIF (r == 1)
+   elseif (r == 1)
       c = p1 , b1 = 256
-   ELSE
+   else
       c = 0 , b2 = 0.000001 , ex = p2 - 1
-   ENDIF
+   endif
    :
-   IF (r == 2)
+   if (r == 2)
       zd = z^ex , n = zd*z - 1
       z = z - n / (p2*zd) , continue = (|n| >= b2)
-   ELSE
+   else
       z = z*z + c , continue = (|z| <= b1)
-   ENDIF
+   endif
    continue
 }
 
@@ -398,15 +398,15 @@ ptc+4mandels { ; Sylvie Gallet, 1996
                ; Modified for if..else logic 3/21/97 by Sylvie Gallet
    cr = real(scrnpix) + 2*imag(scrnpix)
    r = cr - 4 * trunc(cr / 4)
-   IF (r == 0)
+   if (r == 0)
       z = c = pixel
-   ELSEIF (r == 1)
+   elseif (r == 1)
       z = c = pixel * p1
-   ELSEIF (r == 2)
+   elseif (r == 2)
       z = c = pixel * p2
-   ELSE
+   else
       z = c = pixel * p3
-   ENDIF
+   endif
    :
    z = z * z + c
    |z| <= 4
@@ -417,33 +417,33 @@ Gallet-8 - 21 { ; Sylvie Gallet, Apr 1997
               ; p1 = parameter for a Julia set (0 for the Mandelbrot set)
               ; 0 < real(p2) , 0 < imag(p2)
    im2 = imag(p2)
-   IF (p1 || imag(p1))
+   if (p1 || imag(p1))
       c = p1
-   ELSE
+   else
       c = pixel
-   ENDIF
+   endif
    z = -1 , zn = pixel , zmin = zmin0 = abs(real(p2))
    cmax = trunc(abs(real(p3)))
-   IF (cmax < 2)
+   if (cmax < 2)
       cmax = 2
-   ENDIF
+   endif
    k = flip(6.28318530718/(zmin*real(cmax))) , cnt = -1
    :
    cnt = cnt + 1
-   IF (cnt == cmax)
+   if (cnt == cmax)
       cnt = 0
-   ENDIF
+   endif
    zn = zn*zn + c , znc = cabs(im2*real(zn) + flip(imag(zn)))
-   IF (znc < zmin)
+   if (znc < zmin)
       zmin = znc , z = exp((cnt*zmin0 + zmin)*k)
-   ENDIF
+   endif
    znc <= 4
 }
 
 {--- JONATHAN OSUCH ------------------------------------------------------}
 
 BirdOfPrey (XAXIS_NOPARM) { ; Optimized by Sylvie Gallet
-  z = p1 :
+   z = p1 :
    z = cosxx(sqr(z) + pixel) + pixel
     |z| <= 4
 }
@@ -451,9 +451,9 @@ BirdOfPrey (XAXIS_NOPARM) { ; Optimized by Sylvie Gallet
 FractalFenderC (XAXIS_NOPARM) { ; Spectacular!
    ; Modified for if..else logic 3/18/97 by Sylvie Gallet
    z = p1 , x = |z| :
-   IF (1 < x)
+   if (1 < x)
       z = cosh(z) + pixel
-   ENDIF
+   endif
    z = sqr(z) + pixel , x = |z|
    x <= 4
 }
@@ -483,16 +483,16 @@ TileMandel { ; Terren Suydam (terren@io.com), 1996
    ; 0 <= real(p2) = magnification. Default for magnification is 1/3
    ; 0 <= imag(p2) = numtiles. Default for numtiles is 3
    center = p1
-   IF (p2 > 0)
+   if (p2 > 0)
       mag = real(p2)
-   ELSE
+   else
       mag = 1/3
-   ENDIF
-   IF (imag(p2) > 0)
+   endif
+   if (imag(p2) > 0)
       numtiles = imag(p2)
-   ELSE
+   else
       numtiles = 3
-   ENDIF
+   endif
    omega = numtiles*2*pi/3
    x = asin(sin(omega*real(pixel))) , y = asin(sin(omega*imag(pixel)))
    z = c = (x+flip(y)) / mag + center :
@@ -508,16 +508,16 @@ TileJulia { ; Terren Suydam (terren@io.com), 1996
    ; 0 <= imag(p2) = numtiles. Default for numtiles is 3
    ; p3 is the Julia set parameter
    center = p1
-   IF (p2 > 0)
+   if (p2 > 0)
       mag = real(p2)
-   ELSE
+   else
       mag = 1/3
-   ENDIF
-   IF (imag(p2) > 0)
+   endif
+   if (imag(p2) > 0)
       numtiles = imag(p2)
-   ELSE
+   else
       numtiles = 3
-   ENDIF
+   endif
    omega = numtiles*2*pi/3
    x = asin(sin(omega*real(pixel))) , y = asin(sin(omega*imag(pixel)))
    z = (x+flip(y)) / mag + center :
