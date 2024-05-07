@@ -1587,10 +1587,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
 
     if (variable == "passes")        // passes=?
     {
-        if (charval[0] != '1' && charval[0] != '2' && charval[0] != '3'
-            && charval[0] != 'g' && charval[0] != 'b'
-            && charval[0] != 't' && charval[0] != 's'
-            && charval[0] != 'd' && charval[0] != 'o')
+        if (std::strchr("123gbtsdo", charval[0]) == nullptr)
         {
             return bad_arg(curarg);
         }
