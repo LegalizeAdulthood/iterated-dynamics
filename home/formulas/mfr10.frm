@@ -4,19 +4,19 @@ Multifractal_10    { ;  Albrecht Niekamp  Jan2005
    ; 0_off 1_secant 2_mand 3_bees 4_jul 5_m_mods 6_phoen 7_newt 8_spider
    ;  input2: 2digits_many-mods  2digits_phoenix  2digits_spider
    ;          1digit_shapereset:0_no 1_dblmandel 2_iter-reset 3_both +5_warp
-   ;          4digits reset : 0_no 1_z-reset 2_iter-reset 3_both +5_warp 
+   ;          4digits reset : 0_no 1_z-reset 2_iter-reset 3_both +5_warp
    ; imag(p2)(-) 5digits_colour(bailout) number
    ;  input2 :  4digits(-)_mand/jul 2digits_secant 4digits_bees
    ; real(p3) 2digits_newt 4digits_colour1, 5digits_colour2  5digits_colour3
    ; imag(p3) shape  : factor (fn1), 5digits_colour4  6digits_colour5
    ; real(p4) outside: factor (fn2), 4+1digits_bord-out 4digits+fract_bord-in
-   ; imag(p4) inside1: maxit1, 1digit_use:1_maxit 2(7)_bord-out 3(8)_bord-in 
+   ; imag(p4) inside1: maxit1, 1digit_use:1_maxit 2(7)_bord-out 3(8)_bord-in
    ;                  5digits_factor1 (fn2)  4digits+fract_border1
-   ; real(p5) inside2: maxit2, 1digit_use:1_maxit 2(7)_bord-out 3(8)_bord-in 
+   ; real(p5) inside2: maxit2, 1digit_use:1_maxit 2(7)_bord-out 3(8)_bord-in
    ;                  5digits_factor2 (fn3)  4digits+fract_border2
-   ; imag(p5) inside3: maxit3, 1digit_use:1_maxit 2(7)_bord-out 3(8)_bord-in 
+   ; imag(p5) inside3: maxit3, 1digit_use:1_maxit 2(7)_bord-out 3(8)_bord-in
    ;                  5digits_factor3 (fn4)  4digits+fract_border3
-   ;  optional:  1_lake effect, 2digits_frquency 2digits_level 2digits_ampl 
+   ;  optional:  1_lake effect, 2digits_frquency 2digits_level 2digits_ampl
    ; fn(1) shared by many-mods+bees
    ;
    le=0
@@ -200,9 +200,9 @@ Multifractal_10    { ;  Albrecht Niekamp  Jan2005
       d=(ba-mi3)*1000000
       fr=round((trunc(d/10000))*10)     ; lake effect by S.Gallet
       d=d-fr*1000
-      lv=(trunc(d/100))/100            
+      lv=(trunc(d/100))/100
       d=d-lv*10000
-      am=d/100                          
+      am=d/100
       u=real(rotskew*pi/180)
       t=exp(-flip(u))
       bo=1/real(magxmag)
@@ -217,7 +217,7 @@ Multifractal_10    { ;  Albrecht Niekamp  Jan2005
       if (le)
          dd=lv-d
          z=z+2*dd*(1+am*sin(fr*dd^0.2))*rs
-      endif  
+      endif
       z=z+zz
    else
       da=(ba-mi3)*100000000000
@@ -233,7 +233,7 @@ Multifractal_10    { ;  Albrecht Niekamp  Jan2005
    endif
    ;
    if (vb)
-      if (d3)                                 
+      if (d3)
          if (ab)
             z=z*le+pixel*(le==0)        ; Spider
             c=p1
@@ -242,27 +242,27 @@ Multifractal_10    { ;  Albrecht Niekamp  Jan2005
             c=p1                        ; newton
          endif
       elseif (ab)
-         c=z                            ; Phoenix      
+         c=z                            ; Phoenix
          z=z*le+pixel*(le==0)
       else
          c=0.4*log(sqr(z^mm))           ; many mods
-         z=0 
+         z=0
       endif
    elseif (d3)
       if (ab)
-         c=p1                           ; Julia        
+         c=p1                           ; Julia
          z=z*le+pixel*(le==0)
       else                              ; bees
          c=p1
-         z=z*le+pixel*(le==0)                               
+         z=z*le+pixel*(le==0)
       endif
    elseif (ab)
       c=z                               ; Mandel
       z=0
    else
-      c=z                               ; Secant     
+      c=z                               ; Secant
       z=z*le+pixel*(le==0)
-   endif        
+   endif
    t=0
    bo=|z|
    p=pp
@@ -505,7 +505,7 @@ Multifractal_10    { ;  Albrecht Niekamp  Jan2005
       endif
    endif
    if (vb)
-      if (d3)                                 
+      if (d3)
          if (ab)
             z=z*z+c                     ; Spiderjul     John Horner
             c=c*sp+z
@@ -529,17 +529,17 @@ Multifractal_10    { ;  Albrecht Niekamp  Jan2005
          z=z2*z2+p6*z2+c-p0
       else
          z1=fn1(z)-cb                   ; Bees          Ray Girvan
-         z2=z1^p8-1        
-         z3=p8*(z1^(p8-1)) 
-         z=z-(z2/z3)                        
+         z2=z1^p8-1
+         z3=p8*(z1^(p8-1))
+         z=z-(z2/z3)
       endif
    elseif (ab)
       if (dm)
          z=z*z+c+c*c-dp                 ; Double Mandel
-      else 
-         z2=z*z                         ; Mandel        Pusk s Istv n 
+      else
+         z2=z*z                         ; Mandel        Pusk s Istv n
          z=z2*z2+p6*z2+c-p0
-      endif      
+      endif
    else
       z3=z                              ; Secant        Mike Wareman
       z1=z0*z0*z0*z0-1
