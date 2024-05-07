@@ -117,7 +117,7 @@ CGNewtonSinExp (XAXIS) { ; Chris Green
    .0001 < |z2|
 }
 
-ConformalMapping = {
+ConformalMapping {
    c = pixel, RealZ = Real(c), ImagZ = Imag(c):
    RealZ = Sqr(RealZ) + (RealZ * ImagZ) + Real(c);
    ImagZ = Sqr(ImagZ) + (RealZ * ImagZ) + Imag(c);
@@ -135,13 +135,13 @@ ConjMandelbrot(XAXIS) { ; Paul J. Horn
    LastSqr <= 4
 }
 
-CosInvZ(XYAXIS) = {
+CosInvZ(XYAXIS) {
    z=pixel,inv=1/pixel+p1:
    z=cos(inv/z),
    |z|<=4
 }
 
-CoshInvZ(XYAXIS) = {
+CoshInvZ(XYAXIS) {
    z=pixel,inv=1/pixel+p1:
    z=cosh(inv/z),
    |z|<=4
@@ -212,7 +212,7 @@ EvilEyeC(XAXIS_NOPARM) { ; Jonathan Osuch
    x <= p2
 }
 
-Exipi (XAXIS) = { ; Lee Skinner
+Exipi (XAXIS) { ; Lee Skinner
    s = log(-1.,0.) / (0.,1.), z = Pixel:
    z = z ^ s + pixel,
    |z| <= 100
@@ -334,14 +334,14 @@ flip3_man_m(XAXIS) { ; Richard Hughes (Brainy Smurf)
    |z| <= 4
 }
 
-FlipLambdaJ = { ; Ron Barnett
+FlipLambdaJ { ; Ron Barnett
    ; try p1 = (0.737, 0.949)
    z = pixel:
    z = p1*z*(1-flip(z)*flip(z)),
    |z| <= 100
 }
 
-FlipLambdaM = { ; Ron Barnett
+FlipLambdaM { ; Ron Barnett
    ; provides a "map" of locations for FlipLambdaJ
    ; Try "center-mag" with center = (0.49,0.31)
    ; mag = 10.4
@@ -350,28 +350,28 @@ FlipLambdaM = { ; Ron Barnett
    |z| <= 100
 }
 
-FlipProbJ1 = { ; Ron Barnett
+FlipProbJ1 { ; Ron Barnett
    ; try p1 = (1,1)
    z = pixel:
    z = flip(z)*(1-z) + p1,
    |z| <= 100
 }
 
-FlipProbJ2 = { ; Ron Barnett
+FlipProbJ2 { ; Ron Barnett
    ; try p1 = (-0.88,0.625)
    z = pixel:
    z = z*(p1-flip(z)) + p1,
    |z| <= 100
 }
 
-FlipProbM1 = { ; Ron Barnett
+FlipProbM1 { ; Ron Barnett
    ; provides a "map" of locations for FlipProbJ1
    z = pixel:
    z = flip(z)*(1-z) + pixel,
    |z| <= 100
 }
 
-FlipProbM2 = { ; Ron Barnett
+FlipProbM2 { ; Ron Barnett
    ; provides a "map" of locations for FlipProbJ2
    z = pixel:
    z = z*(pixel-flip(z)) + pixel,
@@ -420,31 +420,31 @@ FlyingSquirrelC(XAXIS_NOPARM) { ; Jonathan Osuch
    x<=p2
 }
 
-Form3 (XAXIS) = { ; Peter Lewman's formulas for Fractint.
+Form3 (XAXIS) { ; Peter Lewman's formulas for Fractint.
    z = Pixel, c = Pixel:
    z = c * z * ( p1 - z ),
    |z| < 4
 }
 
-Form4 (XAXIS) = { ; Peter Lewman's formulas for Fractint.
+Form4 (XAXIS) { ; Peter Lewman's formulas for Fractint.
    z = Pixel, c = P1:
    z = c * z * ( p2 - z ),
    |z| < 4
 }
 
-Form5 (XAXIS) = { ; Peter Lewman's formulas for Fractint.
+Form5 (XAXIS) { ; Peter Lewman's formulas for Fractint.
    z = Pixel, c = Pixel:
    z = p1 / ( fn1(z) + c ),
    |z| < 4
 }
 
-Form6 (XAXIS) = { ; Peter Lewman's formulas for Fractint.
+Form6 (XAXIS) { ; Peter Lewman's formulas for Fractint.
    z = Pixel, c = Pixel:
    z = z^6 + fn1(z) + c,
    |z| < 4
 }
 
-Form7 (XYAXIS) = { ; Peter Lewman's formulas for Fractint.
+Form7 (XYAXIS) { ; Peter Lewman's formulas for Fractint.
    z = Pixel, c = Pixel:
    z = ( c * fn1( fn2(z) + 1 ) ) / ( z * ( fn3(z) - 1) ),
    |z| < 4
@@ -474,14 +474,14 @@ FractalFenderC(XAXIS_NOPARM) { ; Jonathan Osuch
    x <= p2
 }
 
-Frame-RbtJ = { ; Ron Barnett
+Frame-RbtJ { ; Ron Barnett
    ; try p1 = (-1.37, 0.57)
    z = pixel:
    z = z*z*z/5 + z*z + p1,
    |z| <= 100
 }
 
-Frame-RbtM(XAXIS) = { ; Ron Barnett
+Frame-RbtM(XAXIS) { ; Ron Barnett
    ; from Mazes for the Mind by Pickover
    ; provide a "map" of locations for Frame-RbtJ
    z = c = pixel:
@@ -511,13 +511,13 @@ FrogC(XAXIS_NOPARM) { ; Jonathan Osuch
    x <= p2
 }
 
-FrRbtGenJ = { ; Ron Barnett
+FrRbtGenJ { ; Ron Barnett
    z = pixel:
    z = p1*z*z*z + z*z + p2,
    |z| <= 100
 }
 
-FrRbtGenM = { ; Ron Barnett
+FrRbtGenM { ; Ron Barnett
    z = pixel:
    z = p1*z*z*z + z*z + pixel,
    |z| <= 100
@@ -1066,25 +1066,25 @@ IfElsefn1fn2fn3(XAXIS_NOPARM) { ; Jonathan Osuch
    |z| <= p2
 }
 
-IkeFrRbtGenJ = { ; Ron Barnett
+IkeFrRbtGenJ { ; Ron Barnett
    z = pixel:
    z = p1*z*z*z + (p2-1)*z*z - p2,
    |z| <= 100
 }
 
-IkeFrRbtGenM = { ; Ron Barnett
+IkeFrRbtGenM { ; Ron Barnett
    z = 2*(1-pixel)/(3*p1):
    z = p1*z*z*z + (pixel-1)*z*z - pixel,
    |z| <= 100
 }
 
-IkeGenJ = { ; Ron Barnett
+IkeGenJ { ; Ron Barnett
    z = pixel:
    z =p1*z*z*z + (p2-1)*z - p2,
    |z| <= 100
 }
 
-IkeGenM = { ; Ron Barnett
+IkeGenM { ; Ron Barnett
    z = ((1-pixel)/(3*p1))^0.5:
    z =p1*z*z*z + (pixel-1)*z - pixel,
    |z| <= 100

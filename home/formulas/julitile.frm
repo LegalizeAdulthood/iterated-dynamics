@@ -7,8 +7,8 @@
    =  derivatives based, often quite loosely, on the author's originals.    =
    =========================================================================}
 
-!_Press_F2_!     {; There is text in this formula file.  Create a shell with
-                  ; the <D> key and use a text reader to browse the file.
+!_Press_F2_!     { ; There is text in this formula file.  Create a shell with
+                   ; the <D> key and use a text reader to browse the file.
 }
 
 Julitile1               { ; Based on an idea by Ray Girvan

@@ -229,9 +229,9 @@ Carr2289 (YAXIS) { ; Modified Sylvie Gallet frm., 1996
 
 {--- SYLVIE GALLET -------------------------------------------------------}
 
-Fractint {; Sylvie Gallet, 1996
-          ; Modified for if..else logic 3/21/97 by Sylvie Gallet
-          ; requires 'periodicity=0'
+Fractint { ; Sylvie Gallet, 1996
+           ; Modified for if..else logic 3/21/97 by Sylvie Gallet
+           ; requires 'periodicity=0'
    ; It uses Newton's formula applied to the equation z^6-1 = 0 and, in the
    ; foreground, spells out the word 'FRACTINT'.
    z = pixel-0.025 , x = real(z) , y = imag(z) , text = 0

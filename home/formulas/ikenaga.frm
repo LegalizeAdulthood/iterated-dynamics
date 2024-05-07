@@ -24,8 +24,8 @@
 
    ==========================================================================}
 
-!_Press_F2_!     {; There is text in this formula file.  Create a shell with
-                  ; the <D> key and use a text reader to browse the file.
+!_Press_F2_!     { ; There is text in this formula file.  Create a shell with
+                   ; the <D> key and use a text reader to browse the file.
 }
 
 Ikenaga(XAXIS)      { ; this version correct per Roderick Stewart -
@@ -56,7 +56,7 @@ IkenagaJUL          { ; formula from a letter from Joyce Haslam Mar 1993.
    |z| <= 4
 }
 
-IkenagaJULJ.1          { ; formula from a letter from Joyce Haslam Mar 1993.
+IkenagaJULJ.1       { ; formula from a letter from Joyce Haslam Mar 1993.
                       ; Asymmetric.   try p1 = (0.56667, 0.36)
                       ; Next line, from Haslam article Fractal Report 24 p5
                       ; z=z*z*z+ (c-1)*z-c produces same results.
@@ -118,14 +118,14 @@ Ikenaga4BIO(XAXIS)  { ; Ikenaga4 variation - Jon Horner
    |real(z)|<=4 || |imag(z)|<=4
 }
 
-Ikenaga4BIOJUL(ORIGIN){ ; Jon Horner, from IKE4 - FR 25, p2
-                    ; try p1 = (0.3874, 0.85)  float=y
+Ikenaga4BIOJUL(ORIGIN) { ; Jon Horner, from IKE4 - FR 25, p2
+                         ; try p1 = (0.3874, 0.85)  float=y
    z = pixel, c = p1 :
    z = z * z * z * z * (c-1) - c,
    |real(z)|<=4 || |imag(z)|<=4
 }
 
-IkenagaFN(XAXIS)    {; Jon Horner
+IkenagaFN(XAXIS)   { ; Jon Horner
                      ; derived from Ikenaga
    z = (0,0), c = fn1(pixel) :
    z = z * z * z + z * (c-1) - c ,
@@ -139,9 +139,9 @@ IkenagaFNJUL        { ; Jon Horner
    |z| <= 4
 }
 
-IkenagaJUL1+(ORIGIN){ ; formula from an article by Joyce Haslam
-                      ; in Fractal Report 24 (w/+pixel stead of +c)
-                      ; symmetric
+IkenagaJUL1+(ORIGIN) { ; formula from an article by Joyce Haslam
+                       ; in Fractal Report 24 (w/+pixel stead of +c)
+                       ; symmetric
    z = pixel, c = p1 :
    z = z * z * z + (c-1) * z + pixel ,
    |z|<=4
@@ -157,7 +157,7 @@ Ikenaga2(XAXIS)     { ; from Joyce Haslam article, Fractal Report Iss 24 p5.
    |z|<=4
 }
 
-IkenagaMap(XAXIS)   {; from REB001.FRM - by Ron Barnett 70153,1233
+IkenagaMap(XAXIS)  { ; from REB001.FRM - by Ron Barnett 70153,1233
                      ; The initial starting point allows the function to provide
                      ; a "map" for the corresponding Julia (IkenagaJul)
    z = ((1-pixel)/3)^0.5:
@@ -197,25 +197,25 @@ F'FunctionIke       { ; generalized by Jon Horner
    |z| <= 4
 }
 
-IkeGenM             {; from REB002.FRM - by Ron Barnett 70153,1233
+IkeGenM            { ; from REB002.FRM - by Ron Barnett 70153,1233
    z = ((1-pixel)/(3*p1))^0.5:
    z =p1*z*z*z + (pixel-1)*z - pixel,
    |z| <= 100
 }
 
-IkeGenJ             {; from REB002.FRM - by Ron Barnett 70153,1233
+IkeGenJ            { ; from REB002.FRM - by Ron Barnett 70153,1233
    z = pixel:
    z =p1*z*z*z + (p2-1)*z - p2,
    |z| <= 100
 }
 
-IkeFrRbtGenM        {; from REB002.FRM - by Ron Barnett 70153,1233
+IkeFrRbtGenM       { ; from REB002.FRM - by Ron Barnett 70153,1233
    z = 2*(1-pixel)/(3*p1):
    z = p1*z*z*z + (pixel-1)*z*z - pixel,
    |z| <= 100
 }
 
-IkeFrRbtGenJ        {; from REB002.FRM - by Ron Barnett 70153,1233
+IkeFrRbtGenJ       { ; from REB002.FRM - by Ron Barnett 70153,1233
    z = pixel:
    z = p1*z*z*z + (p2-1)*z*z - p2,
    |z| <= 100
