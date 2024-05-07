@@ -414,7 +414,7 @@ Liar2 { ; by Chuck Ebbert.
 }
 
 M-SetInNewton(XAXIS) { ; use float=yes
-   ; jon horner 100112,1700, 12 feb 93
+   ; jon horner, 12 feb 93
    z = 0,  c = pixel,  cminusone = c-1:
    oldz = z,
    nm = 3*c-2*z*cminusone,
@@ -568,7 +568,7 @@ moc { ; from EXPLOD.FRM
    |z| <= 4
 }
 
-Mothra (XAXIS) { ; Ron Lewen, 76376,2567
+Mothra (XAXIS) { ; Ron Lewen
    ; Remember Mothra, the giant Japanese-eating moth?
    ; Well... here he (she?) is as a fractal!   ;
    z=pixel:
@@ -956,7 +956,7 @@ RCL_1 (XAXIS) { ; Ron Lewen
    |real(z)| <= 100 || |imag(z)| <= 100
 }
 
-RCL_11 { ; Ron Lewen, 76376,2567
+RCL_11 { ; Ron Lewen
    ; A variation on the formula used to generate
    ; Figure 9.18 (p. 134) from Pickover's book.
    ; P1 sets the initial value for z.
@@ -985,7 +985,7 @@ RCL_3 (XAXIS) { ; Ron Lewen
    |real(z)| <= 100 || |imag(z)| <= 100
 }
 
-RCL_4_M (XAXIS) { ; Ron Lewen, 76376,2567
+RCL_4_M (XAXIS) { ; Ron Lewen
    ; A Mandelbrot-style variation on Pickover's book,
    ; Figure 8.9 (p. 105).
    ; Use floating point
@@ -994,7 +994,7 @@ RCL_4_M (XAXIS) { ; Ron Lewen, 76376,2567
    |z| <= 4
 }
 
-RCL_4_J { ; Ron Lewen, 76376,2567
+RCL_4_J { ; Ron Lewen
    ;  A julia-style variation of the formula in Figure 8.9
    ;  (p. 105) of Pickover's book.
    z=pixel:
@@ -1002,7 +1002,7 @@ RCL_4_J { ; Ron Lewen, 76376,2567
    |z| <= 4
 }
 
-RCL_5_M (XAXIS) { Ron Lewen, 76376,2567
+RCL_5_M (XAXIS) { Ron Lewen
    ;  A variation on the classical Mandelbrot set
    ;  formula.
    ;  Use floating point
@@ -1011,7 +1011,7 @@ RCL_5_M (XAXIS) { Ron Lewen, 76376,2567
    |z| <= 4
 }
 
-RCL_5_J (ORIGIN) { Ron Lewen, 76376,2567
+RCL_5_J (ORIGIN) { Ron Lewen
    ;  A variation on the classical Julia set.
    ;  Use floating point
    z=pixel:
@@ -1019,7 +1019,7 @@ RCL_5_J (ORIGIN) { Ron Lewen, 76376,2567
    |z| <= 4
 }
 
-RCL_6_M (XAXIS) { ; Ron Lewen, 76376,2567
+RCL_6_M (XAXIS) { ; Ron Lewen
    ;  A variation on the classic Mandelbrot formula
    ;  Use floating point
    z=pixel:
@@ -1027,7 +1027,7 @@ RCL_6_M (XAXIS) { ; Ron Lewen, 76376,2567
    |z| <= 4
 }
 
-RCL_6_J (ORIGIN) { ; Ron Lewen, 76376,2567
+RCL_6_J (ORIGIN) { ; Ron Lewen
    ;  A variation on the classic Julia formula
    ;  use floating point
    z=pixel:
@@ -1035,7 +1035,7 @@ RCL_6_J (ORIGIN) { ; Ron Lewen, 76376,2567
    |z| <= 4
 }
 
-RCL_7 (XAXIS) { ; Ron Lewen, 76376,2567
+RCL_7 (XAXIS) { ; Ron Lewen
    ; Inspired by the Spider
    ; fractal type included with Fractint
    z=c=pixel:
@@ -1044,7 +1044,7 @@ RCL_7 (XAXIS) { ; Ron Lewen, 76376,2567
    |z| <= 4
 }
 
-RCL_8_M { ; Ron Lewen, 76376,2567
+RCL_8_M { ; Ron Lewen
    ;  Another variation on the classic Mandelbrot
    ;  set.
    z=pixel:
@@ -1052,43 +1052,43 @@ RCL_8_M { ; Ron Lewen, 76376,2567
    |real(z)| <= 100 || |imag(z)| <= 100
 }
 
-RCL_8_J (ORIGIN) { ; Ron Lewen, 76376,2567
+RCL_8_J (ORIGIN) { ; Ron Lewen
    z=pixel:
    z=z^2+flip(p1)
    |real(z)| <= 100 || |imag(z)| <= 100
 }
 
-RCL_9 (XAXIS) { ; Ron Lewen, 76376,2567
+RCL_9 (XAXIS) { ; Ron Lewen
    z=pixel:
    z=(z^2+pixel)/(pixel^2+z)
    |z| <= 4
 }
 
-RCL_10 { ; Ron Lewen, 76376,2567
+RCL_10 { ; Ron Lewen
    z=pixel:
    z=flip((z^2+pixel)/(pixel^2+z))
    |z| <= 4
 }
 
-RCL_12 (XAXIS) { ; Ron Lewen, 76376,2567
+RCL_12 (XAXIS) { ; Ron Lewen
    z=pixel:
    z=(z^2+3z+pixel)/(z^2-3z-pixel)
    |z| <= 10
 }
 
-RCL_13 (XAXIS) { ; Ron Lewen, 76376,2567
+RCL_13 (XAXIS) { ; Ron Lewen
    z=pixel:
    z=(z^2+2z+pixel)/(z^2-2z+pixel)
    |z| <= 100
 }
 
-RCL_14 (XAXIS) { ; Ron Lewen, 76376,2567
+RCL_14 (XAXIS) { ; Ron Lewen
    z=pixel:
    z=z^pixel+pixel^z
    |z| <= 96
 }
 
-RCL_15 (XAXIS) { ; Ron Lewen, 76376,2567
+RCL_15 (XAXIS) { ; Ron Lewen
    ; Adapted from Pickover's Biomorph Zoo Collection in
    ; Figure 8.7 (p. 102).
    z=pixel:
@@ -1096,7 +1096,7 @@ RCL_15 (XAXIS) { ; Ron Lewen, 76376,2567
    |real(z)| <= 100 || |imag(z)| <= 100
 }
 
-RCL_16 (XAXIS) { ; Ron Lewen, 76376,2567
+RCL_16 (XAXIS) { ; Ron Lewen
    ; Set fn1 to sqr to generate Figure 9.18 (p. 134)
    ; from Pickover's book.
    ; Set maxiter >= 1000 to see good detail in the spirals
@@ -1106,7 +1106,7 @@ RCL_16 (XAXIS) { ; Ron Lewen, 76376,2567
    abs(z) < 8
 }
 
-RCL_Cosh (XAXIS) { ; Ron Lewen, 76376,2567
+RCL_Cosh (XAXIS) { ; Ron Lewen
    ; Try corners=2.008874/-3.811126/-3.980167/3.779833/
    ; -3.811126/3.779833 to see Figure 9.7 (P. 123) in
    ; Pickover's Computers, Pattern, Chaos and Beauty.
@@ -1117,7 +1117,7 @@ RCL_Cosh (XAXIS) { ; Ron Lewen, 76376,2567
    abs(z) < 40
 }
 
-RCL_Cosh_Flip (XAXIS) { ; Ron Lewen, 76376,2567
+RCL_Cosh_Flip (XAXIS) { ; Ron Lewen
    ; A FLIPed version of RCL_Cosh.
    ; An interesting repeating pattern with lots
    ; of detail.
@@ -1127,7 +1127,7 @@ RCL_Cosh_Flip (XAXIS) { ; Ron Lewen, 76376,2567
    abs(z) < 40
 }
 
-RCL_Cosh_J { ; Ron Lewen, 76376,2567
+RCL_Cosh_J { ; Ron Lewen
    ; A julia-style version of RCL_Cosh above.
    ; Lots of interesting detail to zoom in on.
    ; Use floating point
@@ -1136,7 +1136,7 @@ RCL_Cosh_J { ; Ron Lewen, 76376,2567
    abs(z) < 40
 }
 
-RCL_Cross1  { ; Ron Lewen, 76376,2567
+RCL_Cross1  { ; Ron Lewen
    ; Try p1=(0,1), fn1=sin and fn2=sqr.  Set corners at
    ; -10/10/-7.5/7.5 to see a cross shape.  The larger
    ; lakes at the center of the cross have good detail
@@ -1147,7 +1147,7 @@ RCL_Cross1  { ; Ron Lewen, 76376,2567
    |z| <= 4
 }
 
-RCL_Cross2 { ; Ron Lewen, 76376,2567
+RCL_Cross2 { ; Ron Lewen
    ; Try p1=(0,1), fn1=sin and fn2=sqr.  Set corners at
    ; -10/10/-7.5/7.5 to see a deformed cross shape.
    ; The larger lakes at the center of the cross have
@@ -1160,7 +1160,7 @@ RCL_Cross2 { ; Ron Lewen, 76376,2567
    |z| <= 4
 }
 
-RCL_Logistic_1 (XAXIS) { ; Ron Lewen, 76376,2567
+RCL_Logistic_1 (XAXIS) { ; Ron Lewen
    ; Based on logistic equation  x -> c(x)(1-x) used
    ; to model animal populations.  Try p1=(3,0.1) to
    ; see a family of spiders out for a walk <G>!
@@ -1169,7 +1169,7 @@ RCL_Logistic_1 (XAXIS) { ; Ron Lewen, 76376,2567
    |z| <= 1
 }
 
-RCL_Mandel (XAXIS) { ; Ron Lewen, 76376,2567
+RCL_Mandel (XAXIS) { ; Ron Lewen
    ; The traditional Mandelbrot formula with a different
    ; escape condition.  Try p1=(1,0).  This is basically the M-Set
    ; with more chaos outside.  p1=(0,0) yields a distorted M-set.

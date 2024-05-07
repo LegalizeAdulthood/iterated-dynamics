@@ -971,7 +971,7 @@ F'Liar1 { ; Generalization by Jon Horner of Chuck Ebbert formula.
 }
 
 M-SetInNewton(XAXIS) { ; use float=yes
-   ; jon horner 100112,1700, 12 feb 93
+   ; jon horner, 12 feb 93
    z = 0,  c = pixel,  cminusone = c-1:
    oldz = z, nm = 3*c-2*z*cminusone, dn = 3*(3*z*z+cminusone)
    z = nm/dn+2*z/3
@@ -979,7 +979,7 @@ M-SetInNewton(XAXIS) { ; use float=yes
 }
 
 F'M-SetInNewtonA(XAXIS) { ; use float=yes
-   ; jon horner 100112,1700, 12 feb 93
+   ; jon horner, 12 feb 93
    z = 0,  c = fn1(pixel),  cminusone = c-1:
    oldz = z, nm = p1*c-2*z*cminusone, dn = p1*(3*z*z+cminusone)
    z = nm/dn+2*z/p1
@@ -1207,7 +1207,7 @@ RCL_1(XAXIS) { ; Ron Lewen
    |real(z)| <= 100 || |imag(z)| <= 100
 }
 
-RCL_Cosh(XAXIS) { ; Ron Lewen, 76376,2567
+RCL_Cosh(XAXIS) { ; Ron Lewen
    ; Try corners=2.008874/-3.811126/-3.980167/3.779833/
    ; -3.811126/3.779833 to see Figure 9.7 (P. 123) in
    ; Pickover's Computers, Pattern, Chaos and Beauty.
@@ -1218,7 +1218,7 @@ RCL_Cosh(XAXIS) { ; Ron Lewen, 76376,2567
    abs(z) < 40
 }
 
-Mothra(XAXIS) { ; Ron Lewen, 76376,2567
+Mothra(XAXIS) { ; Ron Lewen
    ; Remember Mothra, the giant Japanese-eating moth?
    ; Well... here he (she?) is as a fractal!
    z=pixel:
@@ -1228,7 +1228,7 @@ Mothra(XAXIS) { ; Ron Lewen, 76376,2567
    |real(z)| <= 100 || |imag(z)| <= 100
 }
 
-RCL_10 { ; Ron Lewen, 76376,2567
+RCL_10 { ; Ron Lewen
    z=pixel:
    z=flip((z^2+pixel)/(pixel^2+z))
    |z| <= 4

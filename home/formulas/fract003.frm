@@ -744,7 +744,7 @@ TjerMandelTangent { ; Fractal Creations example
    |real(z)| < 32
 }
 
-TjerMTet (XAXIS) { ; Mandelbrot form 1 of the Tetration formula -- Lee Skinner 
+TjerMTet (XAXIS) { ; Mandelbrot form 1 of the Tetration formula -- Lee Skinner
    ; Modified and Generalized by Tobey J. E. Reed
    z = pixel:
    z = (pixel ^ z + pixel) + fn1(pixel),

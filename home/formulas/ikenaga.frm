@@ -157,7 +157,7 @@ Ikenaga2(XAXIS)     { ; from Joyce Haslam article, Fractal Report Iss 24 p5.
    |z|<=4
 }
 
-IkenagaMap(XAXIS)  { ; from REB001.FRM - by Ron Barnett 70153,1233
+IkenagaMap(XAXIS)  { ; from REB001.FRM - by Ron Barnett
                      ; The initial starting point allows the function to provide
                      ; a "map" for the corresponding Julia (IkenagaJul)
    z = ((1-pixel)/3)^0.5:
@@ -165,7 +165,7 @@ IkenagaMap(XAXIS)  { ; from REB001.FRM - by Ron Barnett 70153,1233
    |z| <= 4
 }
 
-IkeNewtMand         { ; from REB001.FRM - by Ron Barnett 70153,1233
+IkeNewtMand         { ; from REB001.FRM - by Ron Barnett
                       ; p1 > 0, < 2, float=yes
    z = c = pixel:
    zf = z*z*z + (c-1)*z - c;
@@ -174,7 +174,7 @@ IkeNewtMand         { ; from REB001.FRM - by Ron Barnett 70153,1233
    0.001 <= |zf|
 }
 
-IkeNewtJul          { ; from REB001.FRM - by Ron Barnett 70153,1233
+IkeNewtJul          { ; from REB001.FRM - by Ron Barnett
                       ; p1 > 0, < 2, float=yes
    z =  pixel:
    zf = z*z*z + (p2-1)*z - p2;
@@ -183,7 +183,7 @@ IkeNewtJul          { ; from REB001.FRM - by Ron Barnett 70153,1233
    0.001 <= |zf|
 }
 
-RecipIke            { ; from REB001.FRM - by Ron Barnett 70153,1233
+RecipIke            { ; from REB001.FRM - by Ron Barnett
    z = pixel:
    z = 1/(z*z*z + (p1-1)*z - p1),
    |z| <= 4
@@ -191,31 +191,31 @@ RecipIke            { ; from REB001.FRM - by Ron Barnett 70153,1233
 
 F'FunctionIke       { ; generalized by Jon Horner
                       ; from RecipIke in REB001.FRM
-   : - by Ron Barnett 70153,1233
+   : - by Ron Barnett
    z = pixel:
    z = fn1(z*z*z + (p1-1) * z - p1),
    |z| <= 4
 }
 
-IkeGenM            { ; from REB002.FRM - by Ron Barnett 70153,1233
+IkeGenM            { ; from REB002.FRM - by Ron Barnett
    z = ((1-pixel)/(3*p1))^0.5:
    z =p1*z*z*z + (pixel-1)*z - pixel,
    |z| <= 100
 }
 
-IkeGenJ            { ; from REB002.FRM - by Ron Barnett 70153,1233
+IkeGenJ            { ; from REB002.FRM - by Ron Barnett
    z = pixel:
    z =p1*z*z*z + (p2-1)*z - p2,
    |z| <= 100
 }
 
-IkeFrRbtGenM       { ; from REB002.FRM - by Ron Barnett 70153,1233
+IkeFrRbtGenM       { ; from REB002.FRM - by Ron Barnett
    z = 2*(1-pixel)/(3*p1):
    z = p1*z*z*z + (pixel-1)*z*z - pixel,
    |z| <= 100
 }
 
-IkeFrRbtGenJ       { ; from REB002.FRM - by Ron Barnett 70153,1233
+IkeFrRbtGenJ       { ; from REB002.FRM - by Ron Barnett
    z = pixel:
    z = p1*z*z*z + (p2-1)*z*z - p2,
    |z| <= 100

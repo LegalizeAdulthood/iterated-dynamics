@@ -259,7 +259,7 @@ F'Liar1D { ; Generalization by Jon Horner of Chuck Ebbert formula.
 }
 
 F'M-SetInNewtonA(XAXIS) { ; use float=yes
-   ; jon horner 100112,1700, 12 feb 93
+   ; jon horner, 12 feb 93
    z = 0,  c = fn1(pixel),  cminusone = c-1:
    oldz = z, nm = p1*c-2*z*cminusone, dn = p1*(3*z*z+cminusone),
    z = nm/dn+2*z/p1,
