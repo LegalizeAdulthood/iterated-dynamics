@@ -402,14 +402,24 @@ OK-43 { ; dissected spider
 
 Larry { ; Mutation of 'Michaelbrot' and 'Element'
    ; Original formulas by Michael Theroux
+   ; Modified for if..else logic 3/19/97 by Sylvie Gallet
    ; For 'Michaelbrot', set fn1 & fn2 =ident and p1 & p2 = default
    ; For 'Element', set fn1=ident & fn2=sqr and p1 & p2 = default
    ; p1 = Parameter (default 0.5,0), real(p2) = Bailout (default 4)
    z = pixel
    ; The next line sets c=default if p1=0, else c=p1
-   c = ((0.5,0) * (|p1|<=0) + p1)
+   if (real(p1) || imag(p1))
+      c = p1
+   else
+      c = 0.5
+   endif
    ; The next line sets test=4 if real(p2)<=0, else test=real(p2)
-   test = (4 * (real(p2)<=0) + real(p2) * (0<p2)):
+   if (real(p2) <= 0)
+      test = 4
+   else
+      test = real(p2)
+   endif
+   :
    z = fn1(fn2(z*z)) + c
    |z| <= test
 }

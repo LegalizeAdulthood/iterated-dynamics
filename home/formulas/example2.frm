@@ -34,30 +34,6 @@ OK-35 { ; Modified for if..else logic 3/19/97 by Sylvie Gallet
    |z| <= test
 }
 
-Larry { ; Mutation of 'Michaelbrot' and 'Element'
-   ; Original formulas by Michael Theroux
-   ; Modified for if..else logic 3/19/97 by Sylvie Gallet
-   ; For 'Michaelbrot', set FN1 & FN2 =IDENT and P1 & P2 = default
-   ; For 'Element', set FN1=IDENT & FN2=SQR and P1 & P2 = default
-   ; p1 = Parameter (default 0.5,0), real(p2) = Bailout (default 4)
-   z = pixel
-   ; The next line sets c=default if p1=0, else c=p1
-   if (real(p1) || imag(p1))
-      c = p1
-   else
-      c = 0.5
-   endif
-   ; The next line sets test=4 if real(p2)<=0, else test=real(p2)
-   if (real(p2) <= 0)
-      test = 4
-   else
-      test = real(p2)
-   endif
-   :
-   z = fn1(fn2(z*z)) + c
-   |z| <= test
-}
-
 Moe { ; Mutation of 'Zexpe'.
    ; Original formula by Lee Skinner
    ; Modified for if..else logic 3/19/97 by Sylvie Gallet
