@@ -903,8 +903,8 @@ J_Laguerre3 {
    |z| < 100
 }
 
-J_Lagandre4 {
-   c = pixel, z = p1:
+J_Lagandre4 { ; Rob den Braasem
+   c = pixel, z = P1:
    z = (z*z*(35 * z*z - 30) + 3) / 8 + c
    |z| < 100
 }

@@ -91,12 +91,6 @@ J_Lagandre3 { ; Rob den Braasem
    |z| < 100
 }
 
-J_Lagandre4 { ; Rob den Braasem
-   c = pixel, z = P1:
-   z = (z*z*(35 * z*z - 30) + 3) / 8 + c
-   |z| < 100
-}
-
 J_Lagandre5 { ; Rob den Braasem
    c = pixel, z = P1:
    z = z* (z*z*(63 * z*z - 70) + 15 ) / 8 + c
