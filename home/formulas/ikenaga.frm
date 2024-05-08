@@ -208,9 +208,3 @@ IkeGenJ            { ; from REB002.FRM - by Ron Barnett
    z =p1*z*z*z + (p2-1)*z - p2,
    |z| <= 100
 }
-
-IkeFrRbtGenM       { ; from REB002.FRM - by Ron Barnett
-   z = 2*(1-pixel)/(3*p1):
-   z = p1*z*z*z + (pixel-1)*z*z - pixel,
-   |z| <= 100
-}
