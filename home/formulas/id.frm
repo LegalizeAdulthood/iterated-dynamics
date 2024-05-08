@@ -1253,20 +1253,19 @@ BirdOfPrey(XAXIS_NOPARM) { ; Jonathan Osuch
    |z| <= p2
 }
 
-FractalFenderC(XAXIS_NOPARM) { ; Spectacular!
-   z=p1,x=|z|:
-   (z=cosh(z)+pixel)*(1<x)+(z=z)*(x<=1)
-   z=sqr(z)+pixel,x=|z|
-   x<=4
-}
-
-FractalFenderCa(XAXIS_NOPARM) { ; Spectacular!
-   z=p1,x=|z|:
-   if (0.9999999999 < x)
-      z=cosh(z)+pixel
+FractalFenderC(XAXIS_NOPARM) { ; Jonathan Osuch
+   ; Modified for if..else logic 3/18/97 by Sylvie Gallet
+   ; Generalized by Tobey J. E. Reed
+   ; Try p1=0, p2=4, fn1=cosxx, fn2=sqr
+   ; Try p1=0, p2=4, fn1=cosh, fn2=sqr
+   ; Note:  use floating point, Spectacular!
+   z  = p1, x = |z|:
+   if (1 < x)
+      z = fn1(z) + pixel
    endif
-   z=sqr(z)+pixel,x=|z|
-   x<=4
+   z = fn2(z) + pixel,
+   x = |z|,
+   x <= p2
 }
 
 {--- Lee Skinner ---------------------------------------------------------}

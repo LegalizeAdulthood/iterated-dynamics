@@ -440,18 +440,6 @@ Gallet-8 - 21 { ; Sylvie Gallet, Apr 1997
    znc <= 4
 }
 
-{--- JONATHAN OSUCH ------------------------------------------------------}
-
-FractalFenderC (XAXIS_NOPARM) { ; Spectacular!
-   ; Modified for if..else logic 3/18/97 by Sylvie Gallet
-   z = p1 , x = |z| :
-   if (1 < x)
-      z = cosh(z) + pixel
-   endif
-   z = sqr(z) + pixel , x = |z|
-   x <= 4
-}
-
 {--- TERREN SUYDAM -------------------------------------------------------}
 
 comment {

@@ -407,18 +407,6 @@ FractalFender(XAXIS_NOPARM) { ; Jonathan Osuch
    x <= p2
 }
 
-FractalFenderC(XAXIS_NOPARM) { ; Jonathan Osuch
-   ; Generalized by Tobey J. E. Reed
-   ; Try p1=0, p2=4, fn1=cosxx, fn2=sqr
-   ; Try p1=0, p2=4, fn1=cosh, fn2=sqr
-   ; Note:  use floating point, Spectacular!
-   z  = p1, x  = |z|:
-   (z  = fn1(z)+pixel) * (1<x)+(z=z) * (x<=1),
-   z  = fn2(z)+pixel,
-   x  = |z|,
-   x <= p2
-}
-
 Frame-RbtJ { ; Ron Barnett
    ; try p1 = (-1.37, 0.57)
    z = pixel:
