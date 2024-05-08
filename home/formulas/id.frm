@@ -863,7 +863,7 @@ PsudoMandel(XAXIS) { ; davisl - try center=0,0/magnification=28
 
 J_TchebychevC3 { ; Rob den Braasem
    c = pixel, z = p1:
-   z = c*z*(z*z-3),
+   z = c*z*(z*z-3)
    |z|<100
 }
 
@@ -879,7 +879,7 @@ J_TchebychevS4 { ; Rob den Braasem
    |z|<100
 }
 
-J_TchebychevS6 {
+J_TchebychevS6 { ; Rob den Braasem
    c = pixel, z = p1:
    z = c*(z*z*(z*z*(z*z-5)+6)-1)
    |z|<100
@@ -893,13 +893,13 @@ J_TchebychevS7 {
 
 J_Laguerre2 { ; Rob den Braasem
    c = pixel, z = p1:
-   z = (z*(z - 4) +2 ) / 2 + c,
+   z = (z*(z - 4) +2 ) / 2 + c
    |z| < 100
 }
 
 J_Laguerre3 { ; Rob den Braasem
    c = pixel, z = p1:
-   z = (z*(z*(-z + 9) -18) + 6 ) / 6 + c,
+   z = (z*(z*(-z + 9) -18) + 6 ) / 6 + c
    |z| < 100
 }
 
@@ -1254,7 +1254,7 @@ Mothra(XAXIS) { ; Ron Lewen
    z=pixel:
    a=z^5 + z^3 + z + pixel
    b=z^4 + z^2 + pixel
-   z=b^2/a,
+   z=b^2/a
    |real(z)| <= 100 || |imag(z)| <= 100
 }
 
@@ -1271,7 +1271,7 @@ BirdOfPrey(XAXIS_NOPARM) { ; Jonathan Osuch
    ; Generalized by Tobey J. E. Reed
    ; Try p1=0, p2=4, fn1=sqr, fn2=cosxx
    ; Note:  use floating point
-   z = p1,
+   z = p1
    x = 1:
    if (x  <  10)
       z = fn1(z) + pixel
@@ -1292,8 +1292,8 @@ FractalFenderC(XAXIS_NOPARM) { ; Jonathan Osuch
    if (1 < x)
       z = fn1(z) + pixel
    endif
-   z = fn2(z) + pixel,
-   x = |z|,
+   z = fn2(z) + pixel
+   x = |z|
    x <= p2
 }
 

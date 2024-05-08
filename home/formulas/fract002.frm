@@ -169,12 +169,6 @@ J_TchebychevS5 { ; Rob den Braasem
    |z|<100
 }
 
-J_TchebychevS6 { ; Rob den Braasem
-   c = pixel, z = P1:
-   z = c*(z*z*(z*z*(z*z-5)+6)-1),
-   |z|<100
-}
-
 J_TchebychevS7 { ; Rob den Braasem
    c = pixel, z = P1:
    z = c*z*(z*z*(z*z*(z*z-6)+10)-4),
