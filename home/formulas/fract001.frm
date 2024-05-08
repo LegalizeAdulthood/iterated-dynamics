@@ -442,12 +442,6 @@ FrRbtGenJ { ; Ron Barnett
    |z| <= 100
 }
 
-FrRbtGenM { ; Ron Barnett
-   z = pixel:
-   z = p1*z*z*z + z*z + pixel,
-   |z| <= 100
-}
-
 Fzpcocoh  { ; Lee Skinner
    z = pixel, f = 1. / cosh(pixel):
    z = cosxx (z)  + f,
