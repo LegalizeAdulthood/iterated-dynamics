@@ -885,7 +885,7 @@ J_TchebychevS6 { ; Rob den Braasem
    |z|<100
 }
 
-J_TchebychevS7 {
+J_TchebychevS7 { ; Rob den Braasem
    c = pixel, z = p1:
    z = c*z*(z*z*(z*z*(z*z-6)+10)-4)
    |z|<100
