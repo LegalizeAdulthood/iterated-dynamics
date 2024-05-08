@@ -460,16 +460,21 @@ Zeppo { ; Mutation of 'Liar4'.
    |z| <= 1
 }
 
-inandout02 {
+inandout02 { ; Modified for if..else logic 3/19/97 by Sylvie Gallet
    ; p1 = Parameter (default 0), real(p2) = Bailout (default 4)
    ; The next line sets test=4 if real(p2)<=0, else test=real(p2)
-   test = (4 * (real(p2)<=0) + real(p2) * (0<p2))
-   z = oldz = pixel:
-   a = (|z| <= |oldz|) * (fn1(z)) ; IN
-   b = (|oldz| < |z|) * (fn2(z))  ; OUT
-   oldz = z
-   z = a + b + p1
-   |z| <= test
+   if (p2 <= 0)
+      test = 4
+   else
+      test = real(p2)
+   endif
+   z = oldz = pixel , moldz = mz = |z| :
+   if (mz <= moldz)
+      oldz = z , moldz = mz , z = fn1(z) + p1 , mz = |z|  ; IN
+   else
+      oldz = z , moldz = mz , z = fn2(z) + p1 , mz = |z|  ; OUT
+   endif
+   mz <= test
 }
 
 inandout03 {
