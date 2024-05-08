@@ -1,4 +1,4 @@
-{--- BRADLEY BEACHAM -----------------------------------------------------}
+{--- Bradley Beacham -----------------------------------------------------}
 
 OK-32 { ; Modified for if..else logic 3/19/97 by Sylvie Gallet
    z = y = x = pixel , k = 1 + p1 , test = 5 + p2 :
@@ -171,7 +171,7 @@ shifter01 { ; After shift, switch from z*z to z*z*z
    |z| < test
 }
 
-{--- ROBERT W. CARR ------------------------------------------------------}
+{--- Robert W. Carr ------------------------------------------------------}
 
 comment {
   This formula Is based on Sylvie Gallet's Five-Mandels formula.
@@ -203,7 +203,7 @@ Carr2289 (YAXIS) { ; Modified Sylvie Gallet frm., 1996
    abs(z) <= bailout
 }
 
-{--- SYLVIE GALLET -------------------------------------------------------}
+{--- Sylvie Gallet -------------------------------------------------------}
 
 Fractint { ; Sylvie Gallet, 1996
            ; Modified for if..else logic 3/21/97 by Sylvie Gallet
@@ -416,7 +416,7 @@ Gallet-8 - 21 { ; Sylvie Gallet, Apr 1997
    znc <= 4
 }
 
-{--- TERREN SUYDAM -------------------------------------------------------}
+{--- Terren Suydam -------------------------------------------------------}
 
 comment {
   These formulas are designed to create tilings based on the Mandel or Julia
