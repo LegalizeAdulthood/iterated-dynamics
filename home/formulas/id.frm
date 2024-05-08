@@ -427,13 +427,23 @@ Moe { ; Mutation of 'Zexpe'.
 
 Groucho { ; Mutation of 'Fish2'.
    ; Original formula by Dave Oliver via Tim Wegner
-   ; For 'Fish2', set fn1 & fn2 =ident and p1 & p2 = default
+   ; Modified for if..else logic 3/19/97 by Sylvie Gallet
+   ; For 'Fish2', set FN1 & FN2 =IDENT and P1 & P2 = default
    ; p1 = Parameter (default 1,0), real(p2) = Bailout (default 4)
    z = c = pixel
    ; The next line sets k=default if p1=0, else k=p1
-   k = ((1,0) * (|p1|<=0) + p1)
+   if (real(p1) || imag(p1))
+      k = p1
+   else
+      k = 1
+   endif
    ; The next line sets test=4 if real(p2)<=0, else test=real(p2)
-   test = (4 * (real(p2)<=0) + real(p2) * (0<p2)):
+   if (real(p2) <= 0)
+      test = 4
+   else
+      test = real(p2)
+   endif
+   :
    z1 = c^(fn1(z)-k)
    z = fn2(((c*z1)-k)*(z1))
    |z| <= test
