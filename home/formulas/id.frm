@@ -428,7 +428,7 @@ Moe { ; Mutation of 'Zexpe'.
 Groucho { ; Mutation of 'Fish2'.
    ; Original formula by Dave Oliver via Tim Wegner
    ; Modified for if..else logic 3/19/97 by Sylvie Gallet
-   ; For 'Fish2', set FN1 & FN2 =IDENT and P1 & P2 = default
+   ; For 'Fish2', set fn1 & fn2 =ident AND p1 & p2 = default
    ; p1 = Parameter (default 1,0), real(p2) = Bailout (default 4)
    z = c = pixel
    ; The next line sets k=default if p1=0, else k=p1
@@ -862,12 +862,12 @@ PsudoMandel(XAXIS) { ; davisl - try center=0,0/magnification=28
 {--- Rob Den Braasem -----------------------------------------------------}
 
 J_TchebychevC3 { ; Rob den Braasem
-   c = pixel, z = P1:
+   c = pixel, z = p1:
    z = c*z*(z*z-3),
    |z|<100
 }
 
-J_TchebychevC7 {
+J_TchebychevC7 { ; Rob den Braasem
    c = pixel, z = p1:
    z = c*z*(z*z*(z*z*(z*z-7)+14)-7)
    |z|<100
@@ -892,19 +892,19 @@ J_TchebychevS7 {
 }
 
 J_Laguerre2 { ; Rob den Braasem
-   c = pixel, z = P1:
+   c = pixel, z = p1:
    z = (z*(z - 4) +2 ) / 2 + c,
    |z| < 100
 }
 
 J_Laguerre3 { ; Rob den Braasem
-   c = pixel, z = P1:
+   c = pixel, z = p1:
    z = (z*(z*(-z + 9) -18) + 6 ) / 6 + c,
    |z| < 100
 }
 
 J_Lagandre4 { ; Rob den Braasem
-   c = pixel, z = P1:
+   c = pixel, z = p1:
    z = (z*z*(35 * z*z - 30) + 3) / 8 + c
    |z| < 100
 }
