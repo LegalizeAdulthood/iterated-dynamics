@@ -496,19 +496,27 @@ inandout03 { ; Modified for if..else logic 3/19/97 by Sylvie Gallet
    mz <= test
 }
 
-inandout04 {
+inandout04 { ; Modified for if..else logic 3/21/97 by Sylvie Gallet
    ; p1 = Parameter (default 1), real(p2) = Bailout (default 4)
    ; The next line sets k=default if p1=0, else k=p1
-   k = ((1) * (|p1|<=0) + p1)
+   if (real(p1) || imag(p1))
+      k = p1
+   else
+      k = 1
+   endif
    ; The next line sets test=4 if real(p2)<=0, else test=real(p2)
-   test = (4 * (real(p2)<=0) + real(p2) * (0<p2))
-   z = oldz = c = pixel:
-   a = (|z| <= |oldz|) * (c)   ; IN
-   b = (|oldz| < |z|)  * (c*k) ; OUT
-   c = a + b
-   oldz = z
-   z = fn1(z*z) + c
-   |z| <= test
+   if (real(p2) <= 0)
+      test = 4
+   else
+      test = real(p2)
+   endif
+   z = oldz = c = pixel , mz = moldz = |z|
+   :
+   if (mz > moldz)
+      c = c*k
+   endif
+   oldz = z , moldz = mz , z = fn1(z*z) + c , mz = |z|
+   mz <= test
 }
 
 

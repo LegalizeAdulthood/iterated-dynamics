@@ -93,29 +93,6 @@ Zeppo { ; Mutation of 'Liar4'.
    |z| <= 1
 }
 
-inandout04 { ; Modified for if..else logic 3/21/97 by Sylvie Gallet
-   ; p1 = Parameter (default 1), real(p2) = Bailout (default 4)
-   ; The next line sets k=default if p1=0, else k=p1
-   if (real(p1) || imag(p1))
-      k = p1
-   else
-      k = 1
-   endif
-   ; The next line sets test=4 if real(p2)<=0, else test=real(p2)
-   if (real(p2) <= 0)
-      test = 4
-   else
-      test = real(p2)
-   endif
-   z = oldz = c = pixel , mz = moldz = |z|
-   :
-   if (mz > moldz)
-      c = c*k
-   endif
-   oldz = z , moldz = mz , z = fn1(z*z) + c , mz = |z|
-   mz <= test
-}
-
 comment {
   In this formula, a running count of the iterations is kept. After a
   specified iteration number has been reached, the algorithm is changed.
