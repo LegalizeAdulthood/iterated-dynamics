@@ -234,14 +234,6 @@ F'M-SetInNewtonB(XAXIS) { ; use float=yes, periodicity=no
    |z - oldz| >= p2
 }
 
-F'M-SetInNewtonC(XAXIS) { ; same as F'M-SetInNewtonB except for bailout
-   ; use float=yes, periodicity=no
-   ; (3 <= p1 <= ?) and (1e-30 < p2 < .01)
-   z=0, c=fn1(pixel), cm1=c-1, cm1x2=cm1*2, twoop1=2/p1, p1xc=c*real(p1):
-   z = (p1xc - z*cm1x2 )/( (sqr(z)*3 + cm1 ) * real(p1) ) + z*real(twoop1),
-   abs(|z| - real(lastsqr) ) >= p2
-}
-
 flip0_man_j(ORIGIN) { ; Richard Hughes (Brainy Smurf)
    z=pixel:
    z = flip(sqr(z) + p1),
