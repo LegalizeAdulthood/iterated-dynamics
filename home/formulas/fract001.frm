@@ -414,14 +414,6 @@ Frame-RbtJ { ; Ron Barnett
    |z| <= 100
 }
 
-Frame-RbtM(XAXIS) { ; Ron Barnett
-   ; from Mazes for the Mind by Pickover
-   ; provide a "map" of locations for Frame-RbtJ
-   z = c = pixel:
-   z = z*z*z/5 + z*z + c,
-   |z| <= 100
-}
-
 Frog(XAXIS_NOPARM) { ; Jonathan Osuch
    ; Generalized by Tobey J. E. Reed
    ; Try p1=0, p2=4, fn1=tanh, fn2=sqr
