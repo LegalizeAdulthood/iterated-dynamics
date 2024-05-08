@@ -1383,7 +1383,7 @@ Exipi(XAXIS) {
    |z| <= 100
 }
 
-Fzppchco {
+Fzppchco { ; Lee Skinner
    z = pixel, f = cosxx (pixel):
    z = cosh (z) + f
    |z| <= 50

@@ -520,12 +520,6 @@ Fzpcoseh  { ; Lee Skinner
    |z| <= 50
 }
 
-Fzppchco  { ; Lee Skinner
-   z = pixel, f = cosxx (pixel):
-   z = cosh (z)  + f,
-   |z| <= 50
-}
-
 Fzppchex  { ; Lee Skinner
    z = pixel, f = exp (pixel):
    z = cosh (z) + f,
