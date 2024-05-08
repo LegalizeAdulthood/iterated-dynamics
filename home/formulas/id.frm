@@ -1389,15 +1389,15 @@ Fzppchco { ; Lee Skinner
    |z| <= 50
 }
 
-Fzppcosq {
-   z = pixel, f = sqr (pixel):
-   z = cosxx (z)  + f
+Fzppcosq { ; Lee Skinner
+   z = pixel, f = sqr(pixel):
+   z = cosxx(z) + f
    |z| <= 50
 }
 
-Fzppcosr {
-   z = pixel, f = (pixel) ^ 0.5:
-   z = cosxx (z)  + f
+Fzppcosr { ; Lee Skinner
+   z = pixel, f = pixel ^ 0.5:
+   z = cosxx(z)  + f
    |z| <= 50
 }
 

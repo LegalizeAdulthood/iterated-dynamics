@@ -658,18 +658,6 @@ Fzppcosi  { ; Lee Skinner
    |z| <= 50
 }
 
-Fzppcosq  { ; Lee Skinner
-   z = pixel, f = sqr (pixel):
-   z = cosxx (z)  + f,
-   |z| <= 50
-}
-
-Fzppcosr  { ; Lee Skinner
-   z = pixel, f = (pixel) ^ 0.5:
-   z = cosxx (z)  + f,
-   |z| <= 50
-}
-
 Fzppcota  { ; Lee Skinner
    z = pixel, f = sin(pixel) / cosxx(pixel):
    z = cosxx (z)  + f,
