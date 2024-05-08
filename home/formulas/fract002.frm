@@ -46,12 +46,6 @@ jfnz { ; from EXPLOD.FRM
    |z| <= 4
 }
 
-JMask { ; Ron Barnett
-   ; try p1 = (1,0), p2 = (0,0.835), fn1 = sin, fn2 = sqr
-   z = fn1(pixel):
-   z = P1*fn2(z)^2 + P2, |z| <= 4
-}
-
 joc { ; from EXPLOD.FRM
    z=pixel, c=p1:
    z=sqr(z)+c,

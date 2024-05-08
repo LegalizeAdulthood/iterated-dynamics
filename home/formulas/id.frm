@@ -135,10 +135,10 @@ Mask { ; Ron Barnett, 1993
    |z| <= 4
 }
 
-JMask {  ; Ron Barnett, 1993
+JMask { ; Ron Barnett
+   ; try p1 = (1,0), p2 = (0,0.835), fn1 = sin, fn2 = sqr
    z = fn1(pixel):
-   z = p1*fn2(z)^2 + p2
-   |z| <= 4
+   z = p1*fn2(z)^2 + p2, |z| <= 4
 }
 
 PseudoZeePi { ; Ron Barnett, 1993
