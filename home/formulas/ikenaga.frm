@@ -165,15 +165,6 @@ IkenagaMap(XAXIS)  { ; from REB001.FRM - by Ron Barnett
    |z| <= 4
 }
 
-IkeNewtMand         { ; from REB001.FRM - by Ron Barnett
-                      ; p1 > 0, < 2, float=yes
-   z = c = pixel:
-   zf = z*z*z + (c-1)*z - c;
-   zd = 3*z*z + c-1;
-   z = z - p1*zf/zd,
-   0.001 <= |zf|
-}
-
 IkeNewtJul          { ; from REB001.FRM - by Ron Barnett
                       ; p1 > 0, < 2, float=yes
    z =  pixel:
