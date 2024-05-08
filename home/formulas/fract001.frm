@@ -286,13 +286,6 @@ flip3_man_m(XAXIS) { ; Richard Hughes (Brainy Smurf)
    |z| <= 4
 }
 
-FlipLambdaJ { ; Ron Barnett
-   ; try p1 = (0.737, 0.949)
-   z = pixel:
-   z = p1*z*(1-flip(z)*flip(z)),
-   |z| <= 100
-}
-
 FlipLambdaM { ; Ron Barnett
    ; provides a "map" of locations for FlipLambdaJ
    ; Try "center-mag" with center = (0.49,0.31)

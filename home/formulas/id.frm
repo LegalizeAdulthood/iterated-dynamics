@@ -179,6 +179,7 @@ FrRbtGenM { ; Ron Barnett, 1993
 }
 
 FlipLambdaJ { ; Ron Barnett, 1993
+   ; try p1 = (0.737, 0.949)
    z = pixel:
    z = p1*z*(1-flip(z)*flip(z))
    |z| <= 100
