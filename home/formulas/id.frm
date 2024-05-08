@@ -859,7 +859,7 @@ PsudoMandel(XAXIS) { ; davisl - try center=0,0/magnification=28
    |z| <= 4
 }
 
-{--- Rob Den Braasem -----------------------------------------------------}
+{--- Rob den Braasem -----------------------------------------------------}
 
 J_TchebychevC3 { ; Rob den Braasem
    c = pixel, z = p1:
@@ -873,7 +873,7 @@ J_TchebychevC7 { ; Rob den Braasem
    |z|<100
 }
 
-J_TchebychevS4 {
+J_TchebychevS4 { ; Rob den Braasem
    c = pixel, z = p1:
    z = c*(z*z*(z*z-3)+1)
    |z|<100
