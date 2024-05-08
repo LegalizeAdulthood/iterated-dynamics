@@ -196,9 +196,3 @@ F'FunctionIke       { ; generalized by Jon Horner
    z = fn1(z*z*z + (p1-1) * z - p1),
    |z| <= 4
 }
-
-IkeGenM            { ; from REB002.FRM - by Ron Barnett
-   z = ((1-pixel)/(3*p1))^0.5:
-   z =p1*z*z*z + (pixel-1)*z - pixel,
-   |z| <= 100
-}
