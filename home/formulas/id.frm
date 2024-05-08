@@ -891,9 +891,9 @@ J_TchebychevS7 {
    |z|<100
 }
 
-J_Laguerre2 {
-   c = pixel, z = p1:
-   z = (z*(z - 4) +2 ) / 2 + c
+J_Laguerre2 { ; Rob den Braasem
+   c = pixel, z = P1:
+   z = (z*(z - 4) +2 ) / 2 + c,
    |z| < 100
 }
 
