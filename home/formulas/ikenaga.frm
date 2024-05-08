@@ -214,10 +214,3 @@ IkeFrRbtGenM       { ; from REB002.FRM - by Ron Barnett
    z = p1*z*z*z + (pixel-1)*z*z - pixel,
    |z| <= 100
 }
-
-IkeFrRbtGenJ       { ; from REB002.FRM - by Ron Barnett
-   z = pixel:
-   z = p1*z*z*z + (p2-1)*z*z - p2,
-   |z| <= 100
-}
-
