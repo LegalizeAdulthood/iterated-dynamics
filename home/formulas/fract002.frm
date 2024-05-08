@@ -109,12 +109,6 @@ J_Lagandre7 { ; Rob den Braasem
    |z| < 100
 }
 
-J_Laguerre3 { ; Rob den Braasem
-   c = pixel, z = P1:
-   z = (z*(z*(-z + 9) -18) + 6 ) / 6 + c,
-   |z| < 100
-}
-
 J_Laguerre4 { ; Rob den Braasem
    c = pixel, z = P1:
    z = (z * ( z * ( z * ( z - 16)+ 72) - 96)+ 24 ) / 24 + c,
