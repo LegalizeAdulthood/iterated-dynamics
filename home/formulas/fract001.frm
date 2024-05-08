@@ -925,17 +925,6 @@ GopalsamySinh { ; Ron Barnett
    |z| <= 100
 }
 
-GopalsamyFn { ; Ron Barnett
-   z = pixel:
-   x = real(z), y = imag(z),
-   x1 = fn1(x)*fn2(y),
-   y1 = fn3(x)*fn4(y),
-   x2 = -2*x1*y1 + p1,
-   y = y1*y1 - x1*x1,
-   z = x2 + flip(y),
-   |z| <= 100
-}
-
 IfThenfn1fn2(XAXIS_NOPARM) { ; Jonathan Osuch
    ; Generalized by Tobey J. E. Reed
    ; Try p1=0, p2=4, fn1=sin, fn2=cos

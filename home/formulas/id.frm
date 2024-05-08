@@ -192,7 +192,7 @@ REBRefInd2 {  ; Ron Barnett, 1993
    |z| <= 100
 }
 
-GopalsamyFn {
+GopalsamyFn { ; Ron Barnett
    z = pixel:
    x = real(z), y = imag(z)
    x1 = fn1(x)*fn2(y)
