@@ -349,15 +349,15 @@ OK-34 { ; Modified for if..else logic 3/19/97 by Sylvie Gallet
    |z| <= test
 }
 
-OK-35 {
-   z = pixel, k = 1 + p1:
-   v = fn1(z)
-   x = (z*v)
-   y = (z/v)
-   a = (|x| <= |y|) * ((z + y) * k)
-   b = (|x| > |y|) * ((z + x) * k)
-   z = fn2((a + b) * v) + v
-   |z| <= (10 + p2)
+OK-35 { ; Modified for if..else logic 3/19/97 by Sylvie Gallet
+   z = pixel, k = 1 + p1 , test = 10 + p2 :
+   v = fn1(z) , x = z*v , y = z/v
+   if (|x| <= |y|)
+      z = fn2((z + y) * k * v) + v
+   else
+      z = fn2((z + x) * k * v) + v
+   endif
+   |z| <= test
 }
 
 OK-36 { ; dissected Mandelbrot
