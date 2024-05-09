@@ -448,15 +448,6 @@ MandellambdaPwr { ; Ron Barnett
    |z| <= 100
 }
 
-Mask { ; Ron Barnett
-   ; try fn1 = log, fn2 = sinh, fn3 = cosh
-   ; P1 = (0,1), P2 = (0,1)
-   ; Use floating point
-   z = fn1(pixel):
-   z = P1*fn2(z)^2 + P2*fn3(z)^2 + pixel,
-   |z| <= 4
-}
-
 mc { ; from EXPLOD.FRM
    z=0, c=pixel:
    z=sqr(z)+c,
