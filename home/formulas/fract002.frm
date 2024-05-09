@@ -755,17 +755,6 @@ phoenix_j (XAXIS) { ; Richard Hughes (Brainy Smurf)
    |z| <= 4
 }
 
-phoenix_m { ; Richard Hughes (Brainy Smurf)
-   ; Mandelbrot style map of the Phoenix curves
-   ; Use floating point.
-   z=x=y=nx=ny=x1=y1=x2=y2=0:
-   x2 = sqr(x), y2 = sqr(y),
-   x1 = x2 - y2 + real(pixel) + imag(pixel) * nx,
-   y1 = 2 * x * y + imag(pixel) * ny,
-   nx=x, ny=y, x=x1, y=y1, z=x + flip(y),
-   |z| <= 4
-}
-
 PolyGen { ; Ron Barnett
    ; p1 must not be zero
    ; zero can be simulated with a small
