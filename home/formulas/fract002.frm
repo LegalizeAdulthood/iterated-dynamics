@@ -349,16 +349,6 @@ Liar2 { ; by Chuck Ebbert.
    |z| <= 1
 }
 
-M-SetInNewton(XAXIS) { ; use float=yes
-   ; jon horner, 12 feb 93
-   z = 0,  c = pixel,  cminusone = c-1:
-   oldz = z,
-   nm = 3*c-2*z*cminusone,
-   dn = 3*(3*z*z+cminusone),
-   z = nm/dn+2*z/3,
-   |(z-oldz)|>=|0.01|
-}
-
 m1 { ; from EXPLOD.FRM
    z=0, c=pixel:
    z=sqr(z)+c,
