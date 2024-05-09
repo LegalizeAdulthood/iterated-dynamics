@@ -949,8 +949,8 @@ M_Lagandre2 { ; Rob den Braasem
    |z| < 100
 }
 
-M_Lagandre6 {
-   c = p1, z = Pixel:
+M_Lagandre6 { ; Rob den Braasem
+   c = p1, z = pixel:
    z = (z*z*(z*z*(231 * z*z - 315)  + 105 ) - 5) / 16 + c
    |z| < 100
 }

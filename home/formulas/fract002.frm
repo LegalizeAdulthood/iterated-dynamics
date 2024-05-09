@@ -536,12 +536,6 @@ M_Lagandre5 { ; Rob den Braasem
    |z| < 100
 }
 
-M_Lagandre6 { ; Rob den Braasem
-   c = P1, z = Pixel:
-   z = (z*z*(z*z*(231 * z*z - 315)  + 105 ) - 5) / 16 + c
-   |z| < 100
-}
-
 M_Lagandre7 { ; Rob den Braasem
    c = P1, z = Pixel:
    z = z* (z*z*(z*z*(429 * z*z - 693) + 315) - 35 ) / 16 + c
