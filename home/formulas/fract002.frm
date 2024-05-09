@@ -518,12 +518,6 @@ mz { ; from EXPLOD.FRM
    |z| <= 4
 }
 
-M_Lagandre2 { ; Rob den Braasem
-   c = P1, z = Pixel:
-   z = (3 * z*z - 1) / 2 + c
-   |z| < 100
-}
-
 M_Lagandre3 { ; Rob den Braasem
    c = P1, z = Pixel:
    z = z * (5 * z*z - 3) / 2 + c
