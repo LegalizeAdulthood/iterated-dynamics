@@ -478,13 +478,6 @@ Michaelbrot { ; Michael Theroux
    |z| <= 4
 }
 
-moc { ; from EXPLOD.FRM
-   z=0, c=pixel:
-   z=sqr(z)+c,
-   c=c+p1/c,
-   |z| <= 4
-}
-
 Mothra (XAXIS) { ; Ron Lewen
    ; Remember Mothra, the giant Japanese-eating moth?
    ; Well... here he (she?) is as a fractal!   ;

@@ -1583,7 +1583,7 @@ Mandel3 { ; Fractal Creations example
 
 {--- authors unknown -----------------------------------------------------}
 
-moc {
+moc { ; from explod.frm
    z=0, c=pixel:
    z=sqr(z)+c
    c=c+p1/c
