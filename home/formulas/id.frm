@@ -919,15 +919,15 @@ J_Lagandre4 { ; Rob den Braasem
    |z| < 100
 }
 
-M_TchebychevT5 {
-   c = p1, z = Pixel:
+M_TchebychevT5 { ; Rob den Braasem
+   c = p1, z = pixel:
    z = c*(z*(z*z*(16*z*z-20)+5))
    |z|<100
 }
 
 M_TchebychevC5 { ; Rob den Braasem
    c = p1, z = pixel:
-   z = c*z*(z*z*(z*z-5)+5),
+   z = c*z*(z*z*(z*z-5)+5)
    |z|<100
 }
 
