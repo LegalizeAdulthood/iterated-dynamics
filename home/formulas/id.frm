@@ -925,9 +925,9 @@ M_TchebychevT5 {
    |z|<100
 }
 
-M_TchebychevC5 {
-   c = p1, z = Pixel:
-   z = c*z*(z*z*(z*z-5)+5)
+M_TchebychevC5 { ; Rob den Braasem
+   c = p1, z = pixel:
+   z = c*z*(z*z*(z*z-5)+5),
    |z|<100
 }
 
