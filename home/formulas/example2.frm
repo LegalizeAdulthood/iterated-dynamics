@@ -34,23 +34,6 @@ OK-35 { ; Modified for if..else logic 3/19/97 by Sylvie Gallet
    |z| <= test
 }
 
-Moe { ; Mutation of 'Zexpe'.
-   ; Original formula by Lee Skinner
-   ; Modified for if..else logic 3/19/97 by Sylvie Gallet
-   ; For 'Zexpe', set FN1 & FN2 = IDENT and P1 = default
-   ; real(p1) = Bailout (default 100)
-   s = exp(1.,0.), z = pixel, c = fn1(pixel)
-   ; The next line sets test=100 if real(p1)<=0, else test=real(p1)
-   if (real(p1) <= 0)
-      test = 100
-   else
-      test = real(p1)
-   endif
-   :
-   z = fn2(z)^s + c
-   |z| <= test
-}
-
 Zeppo { ; Mutation of 'Liar4'.
    ; Original formula by Chuck Ebbert
    ; Modified for if..else logic 3/19/97 by Sylvie Gallet

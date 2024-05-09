@@ -426,11 +426,17 @@ Larry { ; Mutation of 'Michaelbrot' and 'Element'
 
 Moe { ; Mutation of 'Zexpe'.
    ; Original formula by Lee Skinner
-   ; For 'Zexpe', set fn1 & fn2 =ident and p1 = default
+   ; Modified for if..else logic 3/19/97 by Sylvie Gallet
+   ; For 'Zexpe', set fn1 & fn2 = ident and p1 = default
    ; real(p1) = Bailout (default 100)
    s = exp(1.,0.), z = pixel, c = fn1(pixel)
    ; The next line sets test=100 if real(p1)<=0, else test=real(p1)
-   test = (100 * (real(p1)<=0) + real(p1) * (0<p1)):
+   if (real(p1) <= 0)
+      test = 100
+   else
+      test = real(p1)
+   endif
+   :
    z = fn2(z)^s + c
    |z| <= test
 }
