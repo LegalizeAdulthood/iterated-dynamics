@@ -326,15 +326,16 @@ OK-22 {
    |z| <= (5 + p1)
 }
 
-OK-32 {
-   z = y = x = pixel, k = 1 + p1:
+OK-32 { ; Modified for if..else logic 3/19/97 by Sylvie Gallet
+   z = y = x = pixel , k = 1 + p1 , test = 5 + p2 :
    a = fn1(z)
-   b = (a <= y) * ((a * k) + y)
-   e = (a > y) * ((a * k) + x)
-   x = y
-   y = z
-   z = b + e
-   |z| <= (5 + p2)
+   if (a <= y)
+      b = y
+   else
+      b = x
+   endif
+   x = y , y = z , z = a*k + b
+   |z| <= test
 }
 
 OK-34 {
