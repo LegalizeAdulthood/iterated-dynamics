@@ -1,16 +1,5 @@
 {--- Bradley Beacham -----------------------------------------------------}
 
-OK-34 { ; Modified for if..else logic 3/19/97 by Sylvie Gallet
-   z = pixel , c = fn1(pixel) * p1 , test = 10 + p2 :
-   x = abs(real(z)) , y = abs(imag(z))
-   if (x <= y)
-      z = fn2(z) + y + c
-   else
-      z = fn2(z) + x + c
-   endif
-   |z| <= test
-}
-
 OK-35 { ; Modified for if..else logic 3/19/97 by Sylvie Gallet
    z = pixel, k = 1 + p1 , test = 10 + p2 :
    v = fn1(z) , x = z*v , y = z/v
