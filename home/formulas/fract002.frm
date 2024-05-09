@@ -668,12 +668,6 @@ M_TchebychevU2 { ; Rob den Braasem
    |z|<100
 }
 
-M_TchebychevU3 { ; Rob den Braasem
-   c = P1, z = Pixel:
-   z = c*z*(8*z*z-4),
-   |z|<100
-}
-
 M_TchebychevU4 { ; Rob den Braasem
    c = P1, z = Pixel:
    z = c*(z*z*(16*z*z-12)+1),
