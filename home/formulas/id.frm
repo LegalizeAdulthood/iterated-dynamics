@@ -937,8 +937,8 @@ M_TchebychevU3 {
    |z|<100
 }
 
-M_TchebychevS3 {
-   c = p1, z = Pixel:
+M_TchebychevS3 { ; Rob den Braasem
+   c = p1, z = pixel:
    z = c*z*(z*z-2)
    |z|<100
 }
