@@ -338,16 +338,6 @@ Leeze (XAXIS) { ; Lee Skinner
    |z| <= 50
 }
 
-Liar1 { ; by Chuck Ebbert.
-   ; X: X is as true as Y
-   ; Y: Y is as true as X is false
-   ; Calculate new x and y values simultaneously.
-   ; y(n+1)=abs((1-x(n) )-y(n) ), x(n+1)=1-abs(y(n)-x(n) )
-   z = pixel:
-   z = 1 - abs(imag(z)-real(z) ) + flip(1 - abs(1-real(z)-imag(z) ) ),
-   |z| <= 1
-}
-
 Liar2 { ; by Chuck Ebbert.
    ; Same as Liar1 but uses sequential reasoning, calculating
    ;  new y value using new x value.
