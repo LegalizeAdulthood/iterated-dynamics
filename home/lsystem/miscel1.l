@@ -12,10 +12,3 @@ CircularTile { ; Adrian Mariano
   y=[F+F+F+F[---Y]+++++F++++++++F-F-F-F]
   angle 24
 }
-
-Pentagram { ; created by Adrian Mariano
-  angle 10
-  axiom fx++fx++fx++fx++fx
-  ; f=f[++++@1.618033989f]
-  x=[++++@i1.618033989f@.618033989f!x!@i.618033989f]
-}

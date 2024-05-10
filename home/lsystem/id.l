@@ -222,14 +222,11 @@ SierpinskiSquare {
   angle 4
   }
 
-
 Pentagram { ; created by Adrian Mariano
-  angle 10
-  axiom fx++fx++fx++fx++fx
-; f=f[++++@1.618033989f]
-  x=[++++@i1.618033989f@.618033989f!x!@i.618033989f]
-  }
-
+   Angle 10
+   Axiom fx++fx++fx++fx++fx
+   x=[++++@i1.618033989f@.618033989f!x!@i.618033989f]
+}
 
 QuadKoch { ; Adrian Mariano, from the Algorithmic Beauty of Plants
        ; Quadratic Koch island, Figure 1.7a p.9
