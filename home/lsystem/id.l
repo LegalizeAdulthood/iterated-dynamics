@@ -382,10 +382,10 @@ Leaf2 { ; Adrian Mariano, from the Algorithmic Beauty of Plants
 }
 
 Bush { ; Adrian Mariano
-  Angle 16
-  Axiom ++++F
-  F=FF-[-F+F+F]+[+F-F-F]
-  }
+   Angle 16
+   Axiom ++++F
+   F=FF-[-F+F+F]+[+F-F-F]
+}
 
 MyTree { ; Adrian Mariano
   Angle 16

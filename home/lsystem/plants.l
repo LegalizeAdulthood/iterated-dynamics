@@ -1,9 +1,3 @@
-Bush { ; Adrian Mariano
-  Angle 16
-  Axiom ++++F
-  F=FF-[-F+F+F]+[+F-F-F]
-}
-
 Leaf1 { ; Adrian Mariano, from the Algorithmic Beauty of Plants
   ; Compound leaf with alternating branches, Figure 5.12b p.130
   angle 8

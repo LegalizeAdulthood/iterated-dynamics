@@ -45,12 +45,6 @@ Boundary { ; William McWorter
   z=-f+zfw
 }
 
-Bush { ; Adrian Mariano
-  Angle 16
-  Axiom ++++F
-  F=FF-[-F+F+F]+[+F-F-F]
-}
-
 Cross { ; William McWorter
   Angle 4
   Axiom FX
