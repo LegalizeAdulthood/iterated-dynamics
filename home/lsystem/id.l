@@ -538,11 +538,11 @@ PentaPlexity {
 ; l=+++F---lhibkl
 
 CircularTile { ; Adrian Mariano
-  axiom X+X+X+X+X+X+X+X+X+X+X+X+X+X+X+X+X+X+X+X+X+X+X+X
-  x=[F+F+F+F[---X-Y]+++++F++++++++F-F-F-F]
-  y=[F+F+F+F[---Y]+++++F++++++++F-F-F-F]
-  angle 24
-  }
+   Angle 24
+   Axiom X+X+X+X+X+X+X+X+X+X+X+X+X+X+X+X+X+X+X+X+X+X+X+X
+   x=[F+F+F+F[---X-Y]+++++F++++++++F-F-F-F]
+   y=[F+F+F+F[---Y]+++++F++++++++F-F-F-F]
+}
 
 Lars1{ ; By Jonathan Osuch [73277,1432]
        ; Based on a suggestion by Lars Vangsgaard
