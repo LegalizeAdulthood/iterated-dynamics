@@ -270,7 +270,7 @@ Stripes            { ; Mandelfn IDENT                       Richard Hughes
 
 
 Autumn             { ; You guessed it!                      Peter Moreland
-  reset type=ifs ifsfile=fractint.ifs ifs=fern
+  reset type=ifs ifsfile=id.ifs ifs=fern
   corners=-8.0/8.000351/-0.999954/11.0
   colors=000DGT<4>jQ1<2>bgO`lVWmZ<5>5np<3>pky<2>Avk<5>l7KhGaeOrPKq9Hp<5>Mjy<4>\
   11`1cR<6>GlJ<2>_J8OSFC`M<7>J7XOFWSNWXVVbXb`bVUor_lfGKp<4>`fYwL6<6>fgSdeQdhTf\
