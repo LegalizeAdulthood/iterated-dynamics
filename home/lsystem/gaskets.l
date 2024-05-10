@@ -13,11 +13,3 @@ Island1 { ; Adrian Mariano
   F=FFFF-F+F+F-F[-GFF+F+FF+F]FF
   G=@8G@I8
 }
-
-Island2 { ; Adrian Mariano
-  ; from The Fractal Geometry of Nature by Mandelbrot
-  angle 4
-  axiom f+f+f+f
-  f=f+gf-ff-f-ff+g+ff-gf+ff+f+ff-g-fff
-  g=@6G@I6
-}

@@ -99,12 +99,12 @@ Island1 { ; Adrian Mariano
   }
 
 Island2 { ; Adrian Mariano
-; from The Fractal Geometry of Nature by Mandelbrot
-  angle 4
-  axiom f+f+f+f
-  f=f+gf-ff-f-ff+g+ff-gf+ff+f+ff-g-fff
-  g=@6G@I6
-  }
+   ; from The Fractal Geometry of Nature by Mandelbrot
+   Angle 4
+   Axiom f+f+f+f
+   f=f+gf-ff-f-ff+g+ff-gf+ff+f+ff-g-fff
+   g=@6G@I6
+}
 
 Quartet { ; Adrian Mariano
 ; from The Fractal Geometry of Nature by Mandelbrot
