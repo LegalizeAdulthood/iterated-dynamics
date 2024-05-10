@@ -919,12 +919,6 @@ RCL_9 (XAXIS) { ; Ron Lewen
    |z| <= 4
 }
 
-RCL_10 { ; Ron Lewen
-   z=pixel:
-   z=flip((z^2+pixel)/(pixel^2+z))
-   |z| <= 4
-}
-
 RCL_12 (XAXIS) { ; Ron Lewen
    z=pixel:
    z=(z^2+3z+pixel)/(z^2-3z-pixel)

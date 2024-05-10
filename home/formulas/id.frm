@@ -1279,11 +1279,10 @@ Mothra(XAXIS) { ; Ron Lewen
 }
 
 RCL_10 { ; Ron Lewen
-   z=pixel:
-   z=flip((z^2+pixel)/(pixel^2+z))
+   z=pixel, psqr=pixel^2:
+   z=flip((z^2+pixel)/(psqr+z))
    |z| <= 4
 }
-
 
 {--- Jonathan Osuch ------------------------------------------------------}
 
