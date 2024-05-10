@@ -208,19 +208,6 @@ AmmannPolyColor {
   D=M
 }
 
-AmmannPoly {
-             ;; by Philippe Hurbain
-             ;; Same as AmmanPolyColor, showing only the
-             ;; pentagon/hexagon tiling
-  Angle 10
-  Axiom x
-  x=@.618034/36[\9@.66D]M[/196.5@.363D][/180y]\72M[/180x]
-  x=[\144@.618034M@i.618034x]\108[\36@.509D@1.18\30D][x]M[\153@.66D]\72[y]M
-  y=@.618034/72[x][\36@.509D]M\144[\9@.66D]M[/180y][/196.5@.363D]
-  y=\36[y]M\144M[/180x]
-  D=M
-}
-
 Stars&PentasColor {
                 ;; by Philippe Hurbain
                 ;; Penrose's stars and pentagon tiling, generated as
