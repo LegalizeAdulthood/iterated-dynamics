@@ -89,14 +89,14 @@ Bows               { ; ribbon and bows                      Pieter Branderhorst
   }
 
 Reach              { ; a stretched wineglass formula        Pieter Branderhorst
-  reset type=formula formulafile=fractint.frm formulaname=Wineglass
+  reset type=formula formulafile=id.frm formulaname=Wineglass
   corners=0.23862567/0.24167464/0.58484177/0.58636416 float=y maxiter=255
   colors=000zzm<20>zzmfdb<5>fdbzz0<4>z0G0wz<7>00zw2z<13>BFx<29>P_vQ`uQ`uQ`u<16\
   2>www
   }
 
 Float              { ; a stretched wineglass formula        Pieter Branderhorst
-  reset type=formula formulafile=fractint.frm formulaname=wineglass
+  reset type=formula formulafile=id.frm formulaname=wineglass
   corners=0.09857260478/0.09856737821/0.14981300096/0.14979180221/0.0985776646\
   3/0.14978712961 float=y
   colors=653CJbNbMLbbjGJYJ_`QIfdbMMKCWmZjNckroRSWWWwvNxwu653653653ECDEEEHFGMMK\
@@ -115,7 +115,7 @@ Shell              { ; this one is a good Rorschach         Pieter Branderhorst
   }
 
 RubberDucky        { ; a stretched wineglass formula        Pieter Branderhorst
-  reset type=formula formulafile=fractint.frm formulaname=wineglass
+  reset type=formula formulafile=id.frm formulaname=wineglass
   corners=0.2408521729/0.2406268424/0.5851913634/0.5851407676/0.240706247/0.58\
   52776043 float=y maxiter=85
   colors=000<32>000AbE<12>HrM<2>czpczp<7>0hez_p<3>zII<3>zaJzgKxrBww0<2>wwi`za<\
@@ -171,7 +171,7 @@ FieryMandelbrot    { ; resembles lightning                  Michael Coddington
 
 DinnerPlate        { ; Looks like china on tablecloth       Dan Farmer
   reset type=formula
-  formulafile=fractint.frm formulaname=LeeMandel2
+  formulafile=id.frm formulaname=LeeMandel2
   corners=-0.0233229/0.0233249/0.2569835/0.291958 inside=0 potential=255/500/500
   colors=000DP_Uoq<20>A4XVqq<18>nwjoIRFns0kuUqq<22>ieiUqo<19>HjCTqq<17>4riUqq<\
   20>9ggUqq<14>SxqRyqTpq<6>LgmUqp<11>Pm`XfjPlZ<4>MjSy3J<5>YEB<15>eOFeOFdOF<11>\
@@ -185,13 +185,13 @@ Batman             { ; Cont Pot... looks like a bat         Dan Farmer
   }
 
 Tonsils            { ; LeeMandel3 forumula, cont. pot.      Dan Farmer
-  reset type=formula formulafile=fractint.frm formulaname=leemandel3
+  reset type=formula formulafile=id.frm formulaname=leemandel3
   corners=1.66875/-1.668761/-2.225006/2.225/-1.668761/2.225 inside=0
   potential=255/500/500 colors=000zk0<253>000
   }
 
 NYUF004            { ; delicate & beautiful                 Dan Farmer
-  reset type=formula formulafile=fractint.frm formulaname=Richard1
+  reset type=formula formulafile=id.frm formulaname=Richard1
   corners=1.0942183/1.0642116/-0.0205947/0.0193983/1.0642116/0.0193983
   inside=0 potential=255/600/500
   colors=000S9jLSd<147>hwXixWiwW<30>Z7wY5xY5x<69>T9j
@@ -216,7 +216,7 @@ NYUF009            { ; pretty bug if changed to float=n     Dan Farmer
 
 
 Arrow              { ; formula Wineglass                    Richard Hughes
-  reset type=formula formulafile=fractint.frm formulaname=Wineglass
+  reset type=formula formulafile=id.frm formulaname=Wineglass
   corners=-0.650529/-0.306983/-0.128843/0.128827 maxiter=256 inside=0
   outside=mult logmap=yes symmetry=xaxis
   colors=00000S88YBBaDDeEEiFFmHHsKKwNNzOOz<2>WWzZZzccz00522755977BAAF<11>cchee\
