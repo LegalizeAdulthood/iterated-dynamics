@@ -28,14 +28,14 @@ comment {
 
 Mandelbrot(XAXIS) { ; Mark Peterson
    ; Classical fractal showing LastSqr speedup
-   z = Pixel, z = Sqr(z):  ; Start with z**2 to initialize LastSqr
-   z = z + Pixel
+   z = pixel, z = Sqr(z):  ; Start with z**2 to initialize LastSqr
+   z = z + pixel
    z = Sqr(z)
    LastSqr <= 4      ; Use LastSqr instead of recalculating
 }
 
 Dragon(ORIGIN) { ; Mark Peterson
-   z = Pixel:
+   z = pixel:
    z = sqr(z) + (-0.74543, 0.2)
    |z| <= 4
 }
@@ -121,7 +121,7 @@ dafrm21 {
 
 Julike { ; Ron Barnett, 1993
    ; a Julia function based upon the Ikenaga function
-   z = Pixel:
+   z = pixel:
    z = z*z*z + (p1-1)*z - p1
    |z| <= 4
 }
@@ -862,25 +862,25 @@ GenInvMand1_N { ; Jm Collard-Richard
 }
 
 Sterling(XAXIS) { ; davisl
-   z = Pixel:
+   z = pixel:
    z = ((z/2.7182818)^z)/sqr(6.2831853*z)
    |z| <= 4
 }
 
 Sterling2(XAXIS) { ; davisl
-   z = Pixel:
+   z = pixel:
    z = ((z/2.7182818)^z)/sqr(6.2831853*z) + pixel
    |z| <= 4
 }
 
 Sterling3(XAXIS) { ; davisl
-   z = Pixel:
+   z = pixel:
    z = ((z/2.7182818)^z)/sqr(6.2831853*z) - pixel
    |z| <= 4
 }
 
 PsudoMandel(XAXIS) { ; davisl - try center=0,0/magnification=28
-   z = Pixel:
+   z = pixel:
    z = ((z/2.7182818)^z)*sqr(6.2831853*z) + pixel
    |z| <= 4
 }
@@ -1214,20 +1214,20 @@ SJMand11 { ; Mandelbrot lambda function - lower bailout
 {--- Kevin Lee -----------------------------------------------------------}
 
 LeeMandel1(XYAXIS) { ; Kevin Lee
-   z=Pixel:
+   z=pixel:
    c=sqr(pixel)/z, c=z+c, z=sqr(c)
    |z|<4
 }
 
 LeeMandel2(XYAXIS) { ; Kevin Lee
-   z=Pixel:
+   z=pixel:
    c=sqr(pixel)/z, c=z+c, z=sqr(c*pixel)
    |z|<4
 }
 
 LeeMandel3(XAXIS) { ; Kevin Lee
-   z=Pixel, c=Pixel-sqr(z):
-   c=Pixel+c/z, z=c-z*pixel
+   z=pixel, c=pixel-sqr(z):
+   c=pixel+c/z, z=c-z*pixel
    |z|<4
 }
 
@@ -1425,7 +1425,7 @@ Fzpfncoh { ; Lee Skinner
 }
 
 Zexpe(XAXIS) {
-   s = exp(1.,0.), z = Pixel:
+   s = exp(1.,0.), z = pixel:
    z = z ^ s + pixel
    |z| <= 100
 }
@@ -1433,7 +1433,7 @@ Zexpe(XAXIS) {
 comment { s = log(-1.,0.) / (0.,1.)   is   (3.14159265358979, 0.0 }
 
 Exipi(XAXIS) {
-   s = log(-1.,0.) / (0.,1.), z = Pixel:
+   s = log(-1.,0.) / (0.,1.), z = pixel:
    z = z ^ s + pixel
    |z| <= 100
 }
@@ -1457,7 +1457,7 @@ Fzppcosr { ; Lee Skinner
 }
 
 Leeze(XAXIS) {
-   s = exp(1.,0.), z = Pixel, f = Pixel ^ s:
+   s = exp(1.,0.), z = pixel, f = pixel ^ s:
    z = cosxx (z) + f
    |z| <= 50
 }
@@ -1498,7 +1498,7 @@ TSinh(XAXIS) { ; Tetrated Hyperbolic Sine - Improper Bailout
   of a hot dog. This was originally several fractals, we have generalized it. }
 
 FnDog(XYAXIS) { ; Scott Taylor
-   z = Pixel, b = p1+2:
+   z = pixel, b = p1+2:
    z = fn1( z ) * pixel
    |z| <= b
 }
@@ -1507,14 +1507,14 @@ Ent { ; Scott Taylor
    ; Try params=.5/.75 and the first function as exp.
    ; Zoom in on the swirls around the middle.  There's a
    ; symmetrical area surrounded by an asymmetric area.
-   z = Pixel, y = fn1(z), base = log(p1):
+   z = pixel, y = fn1(z), base = log(p1):
    z = y * log(z)/base
    |z| <= 4
 }
 
 Ent2 { ; Scott Taylor
    ; try params=2/1, functions=cos/cosh, potential=255/355
-   z = Pixel, y = fn1(z), base = log(p1):
+   z = pixel, y = fn1(z), base = log(p1):
    z = fn2( y * log(z) / base )
    |z| <= 4
 }
@@ -1638,7 +1638,7 @@ ULI_5 {
 }
 
 ULI_6 {
-   z = Pixel:
+   z = pixel:
    z = fn1(p1+z)*fn2(p2-z)
    |z| <= p2+16
 }
