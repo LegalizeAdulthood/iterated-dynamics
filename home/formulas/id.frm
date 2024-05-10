@@ -1632,7 +1632,7 @@ ULI_4 {
 }
 
 ULI_5 {
-   z = Pixel, c = fn1(pixel):
+   z = pixel, c = fn1(pixel):
    z = fn2(1/(z+c))*fn3(z+c)
    |z| <= p1
 }
