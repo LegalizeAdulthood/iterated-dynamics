@@ -45,15 +45,14 @@ Penta { ; by Philippe Hurbain
    f=g
 }
 
-Kites&Darts {
-              ;; by Philippe Hurbain
-              ;; Penrose's kites and darts
-              ;; k generates the kite, a generates the dart
-  Angle 10
-  Axiom k
-  k=+[@.618034a]f@.618034---[-k]f-f---[-k]@i.618034f[@.618034|a]
-  a=[@.618034k]+f@.618034[|a]----f+f----[a]@i.618034f
-  f=g
+Kites&Darts { ; by Philippe Hurbain
+   ; Penrose's kites and darts
+   ; k generates the kite, a generates the dart
+   Angle 10
+   Axiom k
+   k=+[@.618034a]f@.618034---[-k]f-f---[-k]@i.618034f[@.618034|a]
+   a=[@.618034k]+f@.618034[|a]----f+f----[a]@i.618034f
+   f=g
 }
 
 Kites&Darts2 { ; by Philippe Hurbain
