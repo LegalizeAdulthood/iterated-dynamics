@@ -48,10 +48,3 @@ SierpinskiSquare { ; Adrian Mariano
   Axiom F+F+F+F
   F=FF+F+F+F+FF
 }
-
-SquareGasket { ; Adrian Mariano
-  Angle 4
-  Axiom X
-  X=+FXF+FXF+FXF+FXF
-  F=FF
-}

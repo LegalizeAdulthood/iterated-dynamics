@@ -407,11 +407,11 @@ ColorTriangGasket { ; Adrian Mariano
   }
 
 SquareGasket { ; Adrian Mariano
-  Angle 4
-  Axiom X
-  X=+FXF+FXF+FXF+FXF
-  F=FF
-  }
+   Angle 4
+   Axiom X
+   X=+FXF+FXF+FXF+FXF
+   F=FF
+}
 
 DragonCurve { ; Adrian Mariano
   Angle 4

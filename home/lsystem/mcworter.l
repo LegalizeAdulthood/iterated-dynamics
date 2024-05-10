@@ -611,13 +611,6 @@ Snowflake  {
   f=f+f--f+f    ; Forward, turn left, forward, turn left, turn left, ... , forward
 }
 
-SquareGasket { ; Adrian Mariano
-  Angle 4
-  Axiom x
-  x=+fxf+fxf+fxf+fxf
-  f=ff
-}
-
 Strike_S { ; William McWorter
   ; Strikethrough S
   Angle 4
