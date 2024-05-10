@@ -356,12 +356,6 @@ isocright {
   y=-x+f+x-
 }
 
-KochCurve { ; Adrian Mariano
-  Angle 6
-  Axiom F
-  F=F+F--F+F
-}
-
 Lace { ; William McWorter
   ; A 30-60-90 triangle dissects into three
   ; congruent 30-60-90 triangles

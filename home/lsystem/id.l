@@ -421,10 +421,10 @@ Square { ; Adrian Mariano
   }
 
 KochCurve { ; Adrian Mariano
-  Angle 6
-  Axiom F
-  F=F+F--F+F
-  }
+   Angle 6
+   Axiom F
+   F=F+F--F+F
+}
 
 Penrose1 { ; by Herb Savage
    ; based on Martin Gardner's "Penrose Tiles to Trapdoor Ciphers",
