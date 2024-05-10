@@ -132,20 +132,6 @@ Dekking6 {
   f=
 }
 
-Dekking4M {
-  Angle 8
-  Axiom p
-  p=+f-p+f-w-f+t
-  q=---f+++u---f+++r---f+++u
-  r=---f+++r---f+++u+++f---v
-  s=+f-w+f-p+f-w
-  t=+f-p+f-w+f-p
-  u=+f-w+f-p+++f---q
-  v=---f+++r---f+++u---f+++r
-  w=---f+++u---f+++r-f+s
-  f=
-}
-
 Dekking4 { ; Every even order is like Peano's curve
   Angle 4
   Axiom p
