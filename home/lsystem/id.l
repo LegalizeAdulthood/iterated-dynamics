@@ -272,11 +272,11 @@ Plant01 { ; Adrian Mariano, from the Algorithmic Beauty of Plants
   }
 
 Plant02 { ; Adrian Mariano, from the Algorithmic Beauty of Plants
-     ; Plant-like structure, figure 1.24b p.25
-  angle 18
-  axiom f
-  f=F[+F]F[-F][F]
-  }
+   ; Plant-like structure, figure 1.24b p.25
+   Angle 18
+   Axiom f
+   f=F[+F]F[-F][F]
+}
 
 Plant03 { ; Adrian Mariano, from the Algorithmic Beauty of Plants
    ; Plant-like structure, figure 1.24c p.25

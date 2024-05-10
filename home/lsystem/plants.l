@@ -48,13 +48,6 @@ Plant01 { ; Adrian Mariano, from the Algorithmic Beauty of Plants
   f=F[+F]F[-F]F
 }
 
-Plant02 { ; Adrian Mariano, from the Algorithmic Beauty of Plants
-    ; Plant-like structure, figure 1.24b p.25
-  angle 18
-  axiom f
-  f=F[+F]F[-F][F]
-}
-
 Plant11 { ; Adrian Mariano
    axiom f
    f=F[+F[+F][-F]F][-F[+F][-F]F]F[+F][-F]F
