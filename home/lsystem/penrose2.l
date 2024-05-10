@@ -119,17 +119,6 @@ Losanges {
   f=g
 }
 
-Penta {
-        ;; by Philippe Hurbain
-        ;; Same as PentaColor, but showing only the coloring
-  Angle 20
-  Axiom [x]++++[x]++++[x]++++[x]++++[x]
-  x=@.618034++g[@1.1755-------f][|y]----g[|x]
-  x=[|++@.618034g@i.618034x]------[x]g----[y]g
-  y=@.618034++++[x]g|++g[|y]--[y]g|++g[|x]
-  f=g
-}
-
 Kites&Darts {
               ;; by Philippe Hurbain
               ;; Penrose's kites and darts
