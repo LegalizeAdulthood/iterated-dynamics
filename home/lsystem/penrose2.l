@@ -10,18 +10,6 @@ KitesAndDarts { ; by Herb Savage
   F=
 }
 
-KitesAndDartsColor { ; by Herb Savage
-  ; based on Martin Gardner's "Penrose Tiles to Trapdoor Ciphers",
-  ; Roger Penrose's kites and darts
-  Angle 10
-  Axiom WG+XG+WG+XG+WG+XG+WG+XG+WG+X
-  W=[C10F][++@1.618033989C12F][++G---@.618033989G|X-Y|G|W]
-  X=[C10F+++@1.618033989C12F][++@.618033989GZ|X|-G|W]
-  Y=[+C10F][@1.618033989C12F][+G@.618033989|Y+X]
-  Z=[-C10F][@1.618033989C12F][@.618033989G--WG|+Z]
-  F=
-}
-
 PenroseDouble { ; by Herb Savage
   ; This is Penrose3 and Penrose4 superimposed
   Angle 10
