@@ -1242,9 +1242,9 @@ RCL_Pick13 { ; Ron Lewen
    ;  and Credits in Pickover's book.
    ;  Set p1=(3,0) to generate the Frontpiece
    ;  for Appendix C and to (2,0) for Credits
-   ;  Use Floating Point
-   z=.001:
-   z=z^p1+(1/pixel)^p1
+   ;  Use floating point
+   z=.001, invpix=1/pixel:
+   z=z^p1 + invpix^p1,
    |z| <= 100
 }
 

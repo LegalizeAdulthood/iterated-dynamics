@@ -37,17 +37,6 @@ RCL_Pick12 { ; Ron Lewen
    abs(real(z)) < 10 || abs(imag(z)) < 10
 }
 
-RCL_Pick13 { ; Ron Lewen
-   ;  Formula from Frontpiece for Appendix C
-   ;  and Credits in Pickover's book.
-   ;  Set p1=(3,0) to generate the Frontpiece
-   ;  for Appendix C and to (2,0) for Credits
-   ;  Use Floating Point
-   z=.001:
-   z=z^p1+(1/pixel)^p1,
-   |z| <= 100
-}
-
 RCL_Pick2_J { ; Ron Lewen
    ;  A julia set based on the formula in Figure 8.9
    ;  (p. 105) of Pickover's book.  Very similar to
