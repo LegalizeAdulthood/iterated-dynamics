@@ -110,12 +110,6 @@ Plant09 { ; Adrian Mariano
    angle 14
 }
 
-Plant10 { ; Adrian Mariano
-   axiom f
-   f=f[+ff][-ff]f[+ff][-ff]f
-   angle 10
-}
-
 Plant11 { ; Adrian Mariano
    axiom f
    f=F[+F[+F][-F]F][-F[+F][-F]F]F[+F][-F]F
