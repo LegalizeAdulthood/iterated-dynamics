@@ -39,26 +39,6 @@ Dekking3err {
   f=
   g=
 }
-  
-Dekking2 { ; Penrose's rhombus tiling
-  Angle 10
-  Axiom k
-  k=fl
-  l=--fq++++fo--ft
-  y=++fp----fn++fu
-  n=fv++fy----fs++
-  o=fw--fl++++fr--
-  p=--g|fp----fn++fu-
-  q=++g|fq++++fo--ft+
-  r=+fw--fl++++fr|g++
-  s=-fv++fy----fs|g--
-  t=-fv++fy-
-  u=+fw--fl+
-  v=+fo--ft+
-  w=-fn++fu-
-  g=-g++g-
-  f=
-}
 
 Dekking1Improved {
   Angle 3
@@ -137,14 +117,6 @@ Dekking3 {
   Axiom g+g+g+g+g+g+g
   g=[@.25f]g+[@.25f]g---[@.25f]g---[@.25f]g--
   f=
-}
-
-Dekking3err {
-  Angle 7
-  Axiom x+x+x+x+x+x+x
-  x=[@.25c40f]gx+[@.25c44f]gx---[@.25c48f]gx++++[@.25c52f]gx
-  f=
-  g=
 }
 
 Dekking2&Med {
