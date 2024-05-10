@@ -159,10 +159,3 @@ Dekking1Improved {
   f=g+f-g
   g=f+g-f
 }
-
-Dekking1err {
-  Angle 3
-  Axiom f+f+f
-  f=g+f-g
-  g=f+g-g
-}
