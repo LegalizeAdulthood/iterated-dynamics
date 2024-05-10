@@ -243,12 +243,12 @@ Fass1 { ; Adrian Mariano, from the Algorithmic Beauty of Plants
   }
 
 Fass2 { ; Adrian Mariano, from the Algorithmic Beauty of Plants
-    ; FASS curve (4x4 tiles form macrotile), Figure 1.16b p.17
-  angle 4
-  axiom -l
-  L=LFLF+RFR+FLFL-FRF-LFL-FR+F+RF-LFL-FRFRFR+
-  R=-LFLFLF+RFR+FL-F-LF+RFR+FLF+RFRF-LFL-FRFR
-  }
+        ; FASS curve (4x4 tiles form macrotile), Figure 1.16b p.17
+   Angle 4
+   Axiom -l
+   L=LFLF+RFR+FLFL-FRF-LFL-FR+F+RF-LFL-FRFRFR+
+   R=-LFLFLF+RFR+FL-F-LF+RFR+FLF+RFRF-LFL-FRFR
+}
 
 QuadGosper { ; Adrian Mariano, from the Algorithmic Beauty of Plants
          ; Quadratic Gosper curve, Figure 1.11b p.12
