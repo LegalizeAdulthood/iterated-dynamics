@@ -206,19 +206,6 @@ REB004J  { ; Ron Barnett
    z = x*z + pixel, |z| <= 100
 }
 
-REB004M  { ; Ron Barnett
-              ; floating point required
-   ;try p1 = (0.4605, 0.8), fn1 = tan, fn2 = cos
-   z = pixel:
-   x = real(z), y = imag(z);
-   const = x*x + y*y;
-   x1 = -fn1(const - 12*x)*x/(4*const);
-   y1 = -fn2(const + 12*x)*y/(4*const);
-   x2 = x1*x1 - y1*y1 + p1;
-   y2 = 2*x*y;
-   z = x2 + flip(y2), |z| <= 100
-}
-
 REB004N  { ; Ron Barnett
    z = 0.5:
    x = pixel*(z - 1/z) + p1,
