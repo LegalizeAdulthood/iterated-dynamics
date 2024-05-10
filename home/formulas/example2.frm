@@ -236,7 +236,7 @@ ptc+4mandels { ; Sylvie Gallet, 1996
    |z| <= 4
 }
 
-Gallet-8 - 21 { ; Sylvie Gallet, Apr 1997
+Gallet-8-21 { ; Sylvie Gallet, Apr 1997
               ; Requires periodicity = 0 and decomp = 256
               ; p1 = parameter for a Julia set (0 for the Mandelbrot set)
               ; 0 < real(p2) , 0 < imag(p2)
