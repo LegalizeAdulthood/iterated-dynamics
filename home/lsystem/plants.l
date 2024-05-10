@@ -93,16 +93,6 @@ Plant07 { ; Ken Philip, from The Science of Fractal Images p.285b
   angle 14
 }
 
-Plant08 { ; Ken Philip, from The Science of Fractal Images, p.286
-  axiom SLFFF
-  s=[+++Z][---Z]TS
-  z=+H[-Z]L
-  h=-Z[+H]L
-  t=TL
-  l=[-FFF][+FFF]F
-  angle 20
-}
-
 Plant11 { ; Adrian Mariano
    axiom f
    f=F[+F[+F][-F]F][-F[+F][-F]F]F[+F][-F]F

@@ -174,14 +174,14 @@ Plant07 { ; Ken Philip, from The Science of Fractal Images p.285b
   }
 
 Plant08 { ; Ken Philip, from The Science of Fractal Images, p.286
-  axiom SLFFF
-  s=[+++Z][---Z]TS
-  z=+H[-Z]L
-  h=-Z[+H]L
-  t=TL
-  l=[-FFF][+FFF]F
-  angle 20
-  }
+   Angle 20
+   Axiom SLFFF
+   s=[+++Z][---Z]TS
+   z=+H[-Z]L
+   h=-Z[+H]L
+   t=TL
+   l=[-FFF][+FFF]F
+}
 
 Hilbert { ; Ken Philip, from The Science of Fractal Images
   axiom x
