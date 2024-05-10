@@ -352,21 +352,21 @@ Curve4 { ; Adrian Mariano
    }
 
 Leaf1 { ; Adrian Mariano, from the Algorithmic Beauty of Plants
-    ; Compound leaf with alternating branches, Figure 5.12b p.130
-  angle 8
-  axiom x
-  a=n
-  n=o
-  o=p
-  p=x
-  b=e
-  e=h
-  h=j
-  j=y
-  x=F[+A(4)]Fy
-  y=F[-B(4)]Fx
-  F=@1.18F@i1.18
-  }
+   ; Compound leaf with alternating branches, Figure 5.12b p.130
+   Angle 8
+   Axiom x
+   a=n
+   n=o
+   o=p
+   p=x
+   b=e
+   e=h
+   h=j
+   j=y
+   x=F[+A(4)]Fy
+   y=F[-B(4)]Fx
+   F=@1.18F@i1.18
+}
 
 Leaf2 { ; Adrian Mariano, from the Algorithmic Beauty of Plants
    ; Compound leaf with alternating branches, Figure 5.12a p.130
