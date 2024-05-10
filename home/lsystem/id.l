@@ -394,11 +394,11 @@ MyTree { ; Adrian Mariano
 }
 
 ColorTriangGasket { ; Adrian Mariano
-  Angle 6
-  Axiom --X
-  X=++FXF++FXF++FXF>1
-  F=FF
-  }
+   Angle 6
+   Axiom --X
+   X=++FXF++FXF++FXF>1
+   F=FF
+}
 
 SquareGasket { ; Adrian Mariano
    Angle 4
