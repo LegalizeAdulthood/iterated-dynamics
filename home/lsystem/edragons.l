@@ -49,7 +49,7 @@ ADH271a { ; Anthony Hanmer 2000
 }
 
 ADH271b { ; Anthony Hanmer 2000
-   Angle 6 ;
+   Angle 6
    Axiom c9f++c12f++c14f+++c14f--c12f--c9f
    f=f+f+++f++f
 }

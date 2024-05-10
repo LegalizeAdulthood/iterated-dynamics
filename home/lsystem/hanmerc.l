@@ -36,7 +36,7 @@ ADH107h2a1col { ; Anthony Hanmer 2000
 }
 
 ADH107h2a2 { ; Anthony Hanmer 2000
-   Angle 4 ;
+   Angle 4
    Axiom fff+f+fff+f
    f=ff++f+
 }

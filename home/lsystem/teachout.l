@@ -545,7 +545,7 @@ Tri-4-f { ; Gary Teachout
    Angle 12
    Axiom x
    x=++fy-fp++fp---fx---fp-fy+++fp+fx
-   y=--fx+fp--fp+++fy+++fp+fx---fp-fy ; fy--fp--fx+fp+++fy+++@1.25fp--fp@i1.25+fx-- ; 
+   y=--fx+fp--fp+++fy+++fp+fx---fp-fy ; fy--fp--fx+fp+++fy+++@1.25fp--fp@i1.25+fx--
    f=
    p=fp
 }

@@ -14,7 +14,7 @@ Boat2 { ; Try order 17
    f=+ff
 }
 
-Boat3 { ;
+Boat3 {
    Angle 6
    Axiom f
    F=+F+FF+FFF+FFFFF+FFFFFFFF+FFFFFFFFFFFFF
@@ -29,13 +29,13 @@ Boat4 { ; 180 * .75 = 135 -->
    F=+FF
 }
 
-Boat5 { ;
+Boat5 {
    Angle 3
    Axiom -F+F-F+F-F+F
    F=-F+F-FF+FFF
 }
 
-Boat6 { ; 
+Boat6 {
    Angle 3
    Axiom F
    F=-F<25+K 
@@ -64,280 +64,280 @@ Boat6 { ;
 ; M  :First +/- missing.
 ;     
 
-02 { ; 
+02 {
    Angle 4
    Axiom F
    F=+F-F+FF
 }
 
-03 { ; 
+03 {
    Angle 4
    Axiom F
    F=+F-F+FF-FFF
 }
 
-03Ang3ax3 { ;
+03Ang3ax3 {
    Angle 3
    Axiom F+F+F
    F=+F-F+FF-FFF
 }
 
-05 { ;
+05 {
    Angle 4
    Axiom F
    F=+F-F+FF-FFF+FFFFF
 }
 
-08 { ;
+08 {
    Angle 4
    Axiom F
    F=+F-F+FF-FFF+FFFFF-FFFFFFFF
 }
 
-13 { ; 
+13 {
    Angle 4
    Axiom F
    F=+F-FF+FFF-FFFFF+FFFFFFFF-FFFFFFFFFFFFF
 }
 
-13Ax4 { ;
+13Ax4 {
    Angle 4
    Axiom F+F+F+F
    F=+F-F+FF-FFF+FFFFF-FFFFFFFF+FFFFFFFFFFFFF
 }
 
-21 { ; 
+21 {
    Angle 4
    Axiom F
    F=+F-FF+FFF-FFFFF+FFFFFFFF-FFFFFFFFFFFFF+FFFFFFFFFFFFFFFFFFFFF
 }
 
-01b { ; 
+01b {
    Angle 4
    Axiom F
    f=-F[+f]+F[-f]
 }
 
-02b { ; 
+02b {
    Angle 4
    Axiom F
    f=-F[+f]+F[-f]-FF[+f]
 }
 
-03b { ; 
+03b {
    Angle 4
    Axiom F+f+f+f
    f=-F[+f]+F[-f]-FF[+f]+FFF[-f]
 }
 
-05b { ; 
+05b {
    Angle 4
    Axiom F
    f=-F[+f]+F[-f]-FF[+f]+FFF[-f]-FFFFF[+f]
 }
 
-08b { ; 
+08b {
    Angle 4
    Axiom F
    f=+F[-f]-FF[+f]+FFF[-f]+FFFFF[+f]+FFFFFFFF
 }
 
-03b2 { ; 
+03b2 {
    Angle 4
    Axiom F+f+f+f
    f=+F[-f]-FF[+f]+FFF[-f]
 }
 
-02b2 { ; 
+02b2 {
    Angle 4
    Axiom F
    f=+F[-f]-FF[+f]
 }
 
-02c { ; 
+02c {
    Angle 4
    Axiom F+F+F
    F=+F[t]-F[t]+FF[t]
    t=+F-F+FF
 }
 
-03c { ; 
+03c {
    Angle 4
    Axiom F
    F=+F[t]-F[t]+FF[t]-FFF[t]
    t=+F-F+FF-FFF
 }
 
-05c { ;
+05c {
    Angle 4
    Axiom F
    F=+F[t]-F[t]+FF[t]-FFF[t]+FFFFF[t]
    t=+F-F+FF-FFF+FFFFF
 }
 
-08cAng3 {  ;
+08cAng3 {
    Angle 3
    Axiom F
    F=+F[t]-F[t]+FF[t]-FFF[t]+FFFFF[t]-FFFFFFFF[t]
    t=-F+F-FF+FFF-FFFFF+FFFFFFFF
 }
 
-13c {  ;
+13c {
    Angle 4
    Axiom F
    F=+F[t]-F[t]+FF[t]-FFF[t]+FFFFF[t]-FFFFFFFF[t]+FFFFFFFFFFFFF[t]
    t=+F-F+FF-FFF+FFFFF-FFFFFFFF+FFFFFFFFFFFFF
 }
 
-02c- { ; 
+02c- {
    Angle 4
    Axiom F+F+F
    F=-F[t]-F[t]-FF[t]
    t=-F-F-FF
 }
 
-02c-Ang6 {  ;
+02c-Ang6 {
    Angle 6
    Axiom F+F+F
    F=-F[t]-F[t]-FF[t]
    t=-F-F-FF
 }
 
-03c-Ang3 { ;  
+03c-Ang3 {
    Angle 3
    Axiom F+F+F
    F=-F[t]-F[t]-FF[t]-FFF[t]
    t=-F-F-FF-FFF
 }
 
-03c- { ; 
+03c- {
    Angle 4
    Axiom F+F+F
    F=-F[t]-F[t]-FF[t]-FFF[t]
    t=-F-F-FF-FFF
 }
 
-05c-Ang3 { ; 
+05c-Ang3 {
    Angle 3
    Axiom F+F+F
    F=-F[t]-F[t]-FF[t]-FFF[t]-FFFFF[t]
    t=-F-F-FF-FFF-FFFFF
 }
 
-05c- { ;
+05c- {
    Angle 4
    Axiom F+F+F
    F=-F[t]-F[t]-FF[t]-FFF[t]-FFFFF[t]
    t=-F-F-FF-FFF-FFFFF
 }
 
-08c-Ang3 {  ;
+08c-Ang3 {
    Angle 3
    Axiom F+F+F
    F=-F[t]-F[t]-FF[t]-FFF[t]-FFFFF[t]-FFFFFFFF[t]
    t=-F-F-FF-FFF-FFFFF-FFFFFFFF
 }
 
-08c- {  ;
+08c- {
    Angle 4
    Axiom F+F+F
    F=-F[t]-F[t]-FF[t]-FFF[t]-FFFFF[t]-FFFFFFFF[t]
    t=-F-F-FF-FFF-FFFFF-FFFFFFFF
 }
 
-13c- { ; 
+13c- {
    Angle 4
    Axiom F
    F=-F[t]-F[t]-FF[t]-FFF[t]-FFFFF[t]-FFFFFFFF[t]-FFFFFFFFFFFFF[t]
    t=-F-F-FF-FFF-FFFFF-FFFFFFFF-FFFFFFFFFFFFF
 }
 
-03+Ang3 {  ;
+03+Ang3 {
    Angle 3
    Axiom f+f+f
    F=+F+F+FF+FFF
 }
 
-03+Ang4 {  ;
+03+Ang4 {
    Angle 4
    Axiom F
    F=+F+F+FF+FFF
 }
 
-03+Ang6 {  ;
+03+Ang6 {
    Angle 6
    Axiom F
    F=+F+F+FF+FFF
 }
 
-05+Ang3 {  ;
+05+Ang3 {
    Angle 3
    Axiom F
    F=+F+F+FFF+FFF+FFFFF
 }
 
-05+ { ;
+05+ {
    Angle 4
    Axiom F
    F=+F+F+FF+FFF+FFFFF
 }
 
-05+Ang6Color {  ;
+05+Ang6Color {
    Angle 6
    Axiom F
    F=+C1F+<64F+<64FF+<64FFF+<64FFFFF;F
 }
 
-05+Ang6Ax3 {  ;
+05+Ang6Ax3 {
    Angle 6
    Axiom F+F+F
    F=+F+F+FF+FFF+FFFFF
 }
 
-08+ { ;
+08+ {
    Angle 4
    Axiom c1F+c2F+c3F+c4F
    F=+F+F+FF+FFF+FFFFF+FFFFFFFF
 }
 
-08sp {  ;
+08sp {
    Angle 4
    Axiom F
    F=-F+F+FF+FFF+FFFFF+FFFFFFFF
 }
 
-08+Ax4Color { ; 
+08+Ax4Color {
    Angle 4
    Axiom c10F+c20F+c30F+c40F
    F=+F+F+FF+FFF+FFFFF+FFFFFFFF
 }
 
-21+Ang3Color { ;
+21+Ang3Color {
    Angle 3
    Axiom f
    f=+Fc64+Fc32+FFc64+FFFc32+FFFFFc64+FFFFFFFFc32
    f=+FFFFFFFFFFFFFc64+FFFFFFFFFFFFFFFFFFFFFc32
 }
 
-21+ {  ;
+21+ {
    Angle 4
    Axiom f
    f=+F+F+FF+FFF+FFFFF+FFFFFFFF+FFFFFFFFFFFFF+FFFFFFFFFFFFFFFFFFFFF
 }
 
-03M+ { ; 
+03M+ {
    Angle 4
    Axiom F
    F=F+F+FF+FFF
 }
 
-03M_Ax4 { ; 
+03M_Ax4 {
    Angle 4
    Axiom F+F+F+F
    F=F-F+FF-FFF
 }
 
-03M+_Ang3 { ; 
+03M+_Ang3 {
    Angle 3
    Axiom F
    F=F+F+FF+FFF
@@ -349,13 +349,13 @@ Boat6 { ;
    F=F+F+FF+FFF
 }
 
-03M+_Ang6Col { ; 
+03M+_Ang6Col {
    Angle 6
    Axiom F
    F=c1F+c36F+c72Fc108F+c144Fc180Fc216F
 }
 
-03M+_Col{ ; 
+03M+_Col{
    Angle 4
    Axiom F
    F=<1F+<1F+FF>1+FFF>1
@@ -367,128 +367,128 @@ Boat6 { ;
    F=<1F+<1F+FF>1+FFF>1
 }
 
-08M+ { ;
+08M+ {
    Angle 4
    Axiom F
    F=F+F+FF+FFF+FFFFF+FFFFFFFF
 }
 
-08M_Ang3 { ; 
+08M_Ang3 {
    Angle 3
    Axiom F
    F=F+F-FF+FFF-FFFFF+FFFFFFFF
 }
 
-08M+Ang6 { ;
+08M+Ang6 {
    Angle 6
    Axiom F
    F=F+F+FF+FFF+FFFFF+FFFFFFFF
 }
 
-08MColor { ; 
+08MColor {
    Angle 6
    Axiom F
    F=c1F+c4F-c7FF+c12FFF-c20FFFFF+c33FFFFFFFF
 }
 
-08M_Ang6 { ;
+08M_Ang6 {
    Angle 6
    Axiom F
    F=F+F+FF-FFF-FFFFF-FFFFFFFF
 }
 
-21M- {  ;
+21M- {
    Angle 4
    Axiom f
    f=F-F-FF-FFF-FFFFF-FFFFFFFF-FFFFFFFFFFFFF-FFFFFFFFFFFFFFFFFFFFF
 }
 
-sp02-Ang3 { ; 
+sp02-Ang3 {
    Angle 3
    Axiom F
    F=-F-FF
 }
 
-sp02-Ang6 { ; 
+sp02-Ang6 {
    Angle 6
    Axiom F
    F=-F-FF
 }
 
-sp08+ { ; 
+sp08+ {
    Angle 4
    Axiom F
    F=+F+FF+FFF+FFFFF+FFFFFFFF+FFFFFFFFFFFFF
 }
 
-sp13+ { ; 
+sp13+ {
    Angle 4
    Axiom F
    F=+F+FF+FFF+FFFFF+FFFFFFFF+FFFFFFFFFFFFF
 }
 
-sp13-Ax4 { ;
+sp13-Ax4 {
    Angle 4
    Axiom F+F+F+F
    F=-F-FF-FFF-FFFFF-FFFFFFFF-FFFFFFFFFFFFF
 }
 
-Comb05Ang3 { ;
+Comb05Ang3 {
    Angle 3
    Axiom F
    F=-F[T]+F[T]-FF[TT]+FFF[TTT]-FFFFF[TTTTT]
    T=-FFFFF+FFF-FF+F-F
 }
 
-Comb05_2Ang3  { ;
+Comb05_2Ang3  {
    Angle 3
    Axiom F
    F=-F[ttttt]+F[ttt]-FF[tt]+FFF[t]-FFFFF[t]
    T=+F-F+FF-FFF+FFFFF
 }
 
-Comb08-Ax3{  ;
+Comb08-Ax3{
    Angle 3
    Axiom f+f+f
    f=-F[t]-F[t]-FF[t]-FFF[t]-FFFFF[t]-FFFFFFFF[t]
    t=-F-F-FF-FFF-FFFFF-FFFFFFFF
 }
 
-de05+Ang3 { ; 
+de05+Ang3 {
    Angle 3
    Axiom F
    F=+F+F+FF+FFF+FFFFF
    F=-FFF-FF-F-F
 }
 
-de08+Ang3 { ; 
+de08+Ang3 {
    Angle 3
    Axiom F
    F=+F+F+FF+FFF+FFFFF+FFFFFFFF
    F=-FFFFF-FFF-FF-F-F
 }
 
-de08+-Ang6 { ;
+de08+-Ang6 {
    Angle 6
    Axiom F
    F=F+F-FF+FFF-FFFFF+FFFFFFFF+FFFFF-FFF+FF-F+F
 }
 
-de13+Ang3 { ; 
+de13+Ang3 {
    Angle 3
    Axiom F
    F=+F+F+FF+FFF+FFFFF+FFFFFFFF+FFFFFFFFFFFFF
    F=-FFFFFFFF-FFFFF-FFF-FF-F-F
 }
 
-de13+-Ang3 { ; 
+de13+-Ang3 {
    Angle 3
    Axiom F
    F=+F-F+FF-FFF+FFFFF-FFFFFFFF+FFFFFFFFFFFFF
    F=+FFFFFFFF-FFFFF+FFF-FF+F-F
 }
 
-de13+- { ; 
+de13+- {
    Angle 4
    Axiom F
    F=+F-F+FF-FFF+FFFFF-FFFFFFFF+FFFFFFFFFFFFF
@@ -502,7 +502,7 @@ de21+-Ang3 {
    F=-FFFFFFFFFFFFF-FFFFFFFF-FFFFF-FFF-FF-F-F
 }
 
-de34+Ang3 { ; 
+de34+Ang3 {
    Angle 3
    Axiom F
    F=+F+F+FF+FFF+FFFFF+FFFFFFFF+FFFFFFFFFFFFF+FFFFFFFFFFFFFFFFFFFFF+FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
@@ -516,14 +516,14 @@ de34+-Ang3 { ; Prøv tredje orden
    F=+FFFFFFFFFFFFFFFFFFFFF-FFFFFFFFFFFFF+FFFFFFFF-FFFFF+FFF-FF+F-F
 }
 
-de_sp03+Ang30 { ; 
+de_sp03+Ang30 {
    Angle 30
    Axiom F
    F=+F+FF+FFF+FFFFF+FFFFFFFF
    F=-FFFFF-FFF-FF-F
 }
 
-de_sp05- { ; 
+de_sp05- {
    Angle 4
    Axiom F
    F=-@0.75F-FF-FFF-FFFFF-FFF-FF-F-gggg
@@ -536,26 +536,26 @@ de_sp05+Ang4 { ; Same as SpiralTile05 Angle 4
    F=-FFF-FF-F-F
 }
 
-de_sp08- { ; 
+de_sp08- {
    Angle 4
    Axiom -F
    F=-F-FF-FFF-FFFFF-FFFFFFFF-FFFFF-FFF-FF-F
 }
 
-de_sp13- { ; 
+de_sp13- {
    Angle 4
    Axiom -F
    F=-F-FF-FFF-FFFFF-FFFFFFFF-FFFFFFFFFFFFF
    F=-FFFFFFFF-FFFFF-FFF-FF-F
 }
 
-Islands {  ;
+Islands {
    Angle 3
    Axiom F-F-F-F-F-F
    F=-F+F-FF+FFF
 }
 
-R.A. {  ;
+R.A. {
    Angle 3
    Axiom f+f+f+f
    f=+F-[-v]-FF++[+b]+FFF-[-n]-FFFFF+[+m]+FFFFFFFFF
@@ -565,7 +565,7 @@ R.A. {  ;
    m=-F--F---F-----F
 }
 
-R.A.2 {  ;
+R.A.2 {
    Angle 3
    Axiom f
    f=+FF-[-v]-FFF
@@ -575,13 +575,13 @@ R.A.2 {  ;
    m=-F--F---F-----F
 }
 
-Snow {  ;
+Snow {
    Angle 4
    Axiom F+F+F+F+F
    F=-FF-FFFF-FFFF-FFFFFFFF
 } 
 
-Snow2 { ;
+Snow2 {
    Angle 4
    Axiom F+F+F+F
    F=+F+H 
@@ -590,7 +590,7 @@ Snow2 { ;
    K=-F-F--FF---FFF-FFFFF
 }
 
-Snow3 { ;
+Snow3 {
    Angle 4
    Axiom F+F+F+F
    F=-F+K 
@@ -599,7 +599,7 @@ Snow3 { ;
    N=+F+F+FF+++FFF+FFFFF
 }
 
-Snow4{   ;     
+Snow4{
    Angle 4
    Axiom F+F+F+F
    F=+F+K 
@@ -620,7 +620,7 @@ String33 { ; Prøv froth616.map
    f=<1\1d\1d\2d\3d\5d\8d\13d\21d\34d\21d\13d\8d\5d\3d\2d\1d\1d
 }
 
-String55 { ; 
+String55 {
    Angle 10
    Axiom f+f+f+f+f+f+f+f+f+f+f+f+f+f
    f=\1d\1d\2d\3d\5d\8d\13d\21d\34d\55d\34d\21d\13d\8d\5d\3d\2d\1d\1d
@@ -638,7 +638,7 @@ String55_2Col { ; Prøv froth616.map
    f=<1\1d<1\1d<1\2d<1\3d<1\5d<1\8d<1\13d<1\21d<1\34d<1\55d<1\34d<1\21d<1\13d<1\8d<1\5d<1\3d<1\2d<1\1d<1\1d
 }
 
-Moebius { ; 
+Moebius {
    Angle 10
    Axiom f
    f=f[x]
@@ -660,7 +660,7 @@ MoebiusColor { ; Prøv Froth616.maps
    v=<1!\1d<1\1d<1\2d<1\3d<1\5d<1\8d<1\13d<1\21d<1\34d<1\55d<1\34d<1\21d<1\13d<1\8d<1\5d<1\3d<1\2d<1\1d<1\1d
 }
 
-SpiralSinSpirals3 { ;
+SpiralSinSpirals3 {
    Angle 4
    Axiom +F+FF+FFF
    F=+S
@@ -668,7 +668,7 @@ SpiralSinSpirals3 { ;
    H=+F+F+F
 }
 
-SpiralsInSpirals5 { ;
+SpiralsInSpirals5 {
    Angle 4
    Axiom +F+FF+FFF+FFFFF
    F=+S
@@ -678,7 +678,7 @@ SpiralsInSpirals5 { ;
    J=+F+F+F+F+F+F+F+F
 }
 
-SpiralsInSpirals8 { ;
+SpiralsInSpirals8 {
    Angle 4
    Axiom +F+F+FF+FFF+FFFFF+FFFFFFFF
    F=+S
@@ -688,40 +688,40 @@ SpiralsInSpirals8 { ;
    J=+F+F+F+F+F+F+F+F
 }
 
-SpiralTile02 { ;
+SpiralTile02 {
    Angle 6
    Axiom F+F+F+F+F+F
    F=+<3F+<3FF>3->3F
 }
 
-SpiralTile03 { ;
+SpiralTile03 {
    Angle 6
    Axiom F+F+F
    F=+c1F+c2FF+c3FFF-c2FF-c1F
 }
 
-SpiralTile05 { ;
+SpiralTile05 {
    Angle 6
    Axiom f+f+f 
    F=+c1F+c2FF+c3FFF+c4FFFFF
    F=-c3FFF-c2FF-c1F
 }
 
-SpiralTile13{ ;
+SpiralTile13{
    Angle 6
    Axiom c10f+c20f+c30f
    F=+F+FF+FFF+FFFFF+FFFFFFFF+FFFFFFFFFFFFF
    F=-FFFFFFFF-FFFFF-FFF-FF-F
 }
 
-SpiralTile21Ang3{ ;
+SpiralTile21Ang3{
    Angle 3
    Axiom f;-f-f   ;Fjern markeringen hvis 1.order skal være en flise
    F=+c1F+c2FF+c3FFF+c4FFFFF+c5FFFFFFFF+c6FFFFFFFFFFFFF+c7FFFFFFFFFFFFFFFFFFFFF
    F=-c6FFFFFFFFFFFFF-c5FFFFFFFF-c4FFFFF-c3FFF-c2FF-c1F
 }
 
-SpiralTile55{ ;
+SpiralTile55{
    Angle 6
    Axiom f;+f+f
    F=+c1F+c2FF+c3FFF+c4FFFFF+c5FFFFFFFF+c6FFFFFFFFFFFFF
@@ -731,26 +731,26 @@ SpiralTile55{ ;
    F=-c6FFFFFFFFFFFFF-c5FFFFFFFF-c4FFFFF-c3FFF-c2FF-c1F
 }
 
-SpiralCurve03 { ; 
+SpiralCurve03 {
    Angle 6
    Axiom +F+F+FF+FFF-FF-F-F
    f=+f+f+ff+fff-ff-f-f
 }
 
-SpiralCurve03_2 { ; 
+SpiralCurve03_2 {
    Angle 6
    Axiom -C52f>10fC32f>10fC11f-C52fC32fC11f-C52fC11f-C52f-C32f+C11f+C52f+C32fC11f+C52fC32fC11f+C52f>10fC32f>10fC11f
    f=+f+f+ff+fff-ff-f-f
 }
 
-SpiralCurve13 { ;
+SpiralCurve13 {
    Angle 6
    Axiom f
    F=+@0.991<1F+<1FF+<1FFF+<1FFFFF+<1FFFFFFFF+<1FFFFFFFFFFFFF
    F=-<1FFFFFFFF-<1FFFFF-<1FFF-<1FF-<1F|----
 }
 
-SpiralCurve55 { ;
+SpiralCurve55 {
    Angle 6
    Axiom f
    F=+@.85F+FF+FFF+FFFFF+FFFFFFFF+FFFFFFFFFFFFF
@@ -760,7 +760,7 @@ SpiralCurve55 { ;
    F=-FFFFFFFFFFFFF-FFFFFFFF-FFFFF-FFF-FF-F|----
 }
 
-SpiralCurve55Col{ ;
+SpiralCurve55Col{
    Angle 6
    Axiom f
    F=+@.85<1F+<1FF+<1FFF+<1FFFFF+<1FFFFFFFF+<1FFFFFFFFFFFFF
@@ -770,42 +770,42 @@ SpiralCurve55Col{ ;
    F=-<1FFFFFFFFFFFFF-<1FFFFFFFF-<1FFFFF-<1FFF-<1FF-<1F|----
 }
 
-SpiralCurve13_2{ ;
+SpiralCurve13_2{
    Angle 6
    Axiom f+f+f+f+f+f
    F=+F+FF+FFF+FFFFF+FFFFFFFF+FFFFFFFFFFFFF
    F=-FFFFFFFF-FFFFF-FFF-FF-F|----
 }
 
-SpiralCurve13_2B{ ;
+SpiralCurve13_2B{
    Angle 6
-   Axiom f+f+f;
+   Axiom f+f+f
    F=+F+FF+FFF+FFFFF+FFFFFFFF+FFFFFFFFFFFFF
    F=-FFFFFFFF-FFFFF-FFF-FF-F|-
 }
 
-SpiralCurve13_2C{ ;
+SpiralCurve13_2C{
    Angle 6
    Axiom f+f+f+f+f+f+f+f-f-f-f-f-f-f-f-f
    F=+F+FF+FFF+FFFFF+FFFFFFFF+FFFFFFFFFFFFF
    F=-FFFFFFFF-FFFFF-FFF-FF-F|----
 }
 
-SpiralCurve13_2D{ ;
+SpiralCurve13_2D{
    Angle 6
    Axiom f+f+f+f-f-f-f-f-f-f-f-f+f+f+f+f+f+f+f+f-f-f-f-f-f-f-f-f+f+f+f+f
    F=+F+FF+FFF+FFFFF+FFFFFFFF+FFFFFFFFFFFFF
    F=-FFFFFFFF-FFFFF-FFF-FF-F|----
 }
 
-SpiralKurve08 { ;
+SpiralKurve08 {
    Angle 6
    Axiom f+f+f+f-f-f-f-f+f+f+f+f-f-f-f-f
    F=+F+FF+FFF+FFFFF+FFFFFFFF
    F=-FFFFF-FFF-FF-F|----
 }
 
-Curve5{ ;
+Curve5{
    Angle 4
    Axiom F+F+F+F
    F=+F+K 
@@ -814,14 +814,14 @@ Curve5{ ;
    N=-F-F--FF---FFF-FFFFF
 }
 
-CloudOutline { ;
+CloudOutline {
    Angle 4
    Axiom f
    f=-F[+t]+F[-t]-FF[++t]+FFF[---t]
    t=-F+F 
 }
 
-Escher { ; 
+Escher {
    Angle 6
    Axiom flpwe
    f=-c1F[l]-<51F[l]-<51FF[l]-<51FFF[l];-FFFFF[l]
@@ -831,7 +831,7 @@ Escher { ;
    e=F
 }
 
-Flower { ; 
+Flower {
    Angle 30
    Axiom F
    F=+a-b-kk-eee-hhhhh-iiiiiiii-jjjjjjjjjjjjj
@@ -844,7 +844,7 @@ Flower { ;
    j=F
 }
 
-Flower01 { ; 
+Flower01 {
    Angle 15
    Axiom F+F+F
    F=<2H-<2E-<2rr-<2lll>2-wwwww>2-tttttttt>2-SSSSSSSSSSSSS>2-
@@ -857,7 +857,7 @@ Flower01 { ;
    s=F-
 }
 
-Flower02 { ;
+Flower02 {
    Angle 50
    Axiom F
    F=+aaaaaaaaaaaaa-bbbbbbbb+lllll-hhh+ii-j+k
@@ -870,7 +870,7 @@ Flower02 { ;
    k=-F
 }
 
-Flower03 {; 
+Flower03 {
    Angle 40
    Axiom F
    F=+<1aaaaaaaaaaaaa-bbbbbbbb+lllll-hhh+ii-j+k>1
@@ -883,7 +883,7 @@ Flower03 {;
    k=-F
 }
 
-Flower04 { ; 
+Flower04 {
    Angle 50
    Axiom F
    F=-<5a-<5b-<5ll-hhh>5-iiiii>5-jjjjjjjj>5
@@ -895,7 +895,7 @@ Flower04 { ;
    j=-f
 }
 
-Flower05 { ; 
+Flower05 {
    Angle 30
    Axiom F
    F=+aaaaaaaaaaaaa-bbbbbbbb+hhhhh-iii+jj-k+l
@@ -908,7 +908,7 @@ Flower05 { ;
    l=-Fabbhhhiiiiijjjjjjjj
 }
 
-Flower06 { ; 
+Flower06 {
    Angle 16
    Axiom F+F+F+F+F+F+F+F+F+F+F+F+F+F+F+F
    F=+<1H<1E<1WA>1R>1E>1S
@@ -921,7 +921,7 @@ Flower06 { ;
    s=-FFFFFFFFFFFFFFFF
 }
 
-Flower07 { ; 
+Flower07 {
    Angle 8
    Axiom F+F+F+F+F+F+F+F+F+F+F+F+F+F+F+F
    F=+<1H+<1E+<1W+>1A+>1R+>1E
@@ -933,7 +933,7 @@ Flower07 { ;
    E=+FFFF+FFFF
 }
 
-Flower08 { ;
+Flower08 {
    Angle 16
    Axiom ---F+F+F+F+F+F+F+F+F+F+F+F+F+F+F+F
    F=+<10H+<10E+W+>10A+>10R
@@ -958,7 +958,7 @@ Flower09 { ; Prøv 4. orden
 }
 
 
-Flower10 { ; 
+Flower10 {
    Angle 16 ; 32
    Axiom F+F+F+F+F+F+F+F+F+F+F+F+F+F+F+F
    F=+<10e-e-e-e-e-e-e-e-h+h+h+h+h+a-a-a-w+w+s->10r
@@ -970,7 +970,7 @@ Flower10 { ;
    r=-F-FFFFF-F-FFF-FF+FF-FFF-F-FFFFF-F
 }
 
-Flower11 { ; 
+Flower11 {
    Angle 16
    Axiom F+F+F+F+F+F+F+F+F+F+F+F+F+F+F+F
    F=+<10e-e-e-e-e-e-e-e-h+h+h+h+h+a-a-a-w+w+s->10r
@@ -982,7 +982,7 @@ Flower11 { ;
    r=-F-FFFFF-F-FFF-FF-FF-FFF-F-FFFFF-F
 }
 
-Flower12 {; 
+Flower12 {
    Angle 6
    Axiom F+F+F+F+F+F+F+F+F+F+F+F+F+F+F+F
    F=+C10e-e+e-e+e-e+e-e-h+h-h+h-h+a+a-a-w+w+s->10r

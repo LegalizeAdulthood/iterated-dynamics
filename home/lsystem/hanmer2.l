@@ -62,7 +62,7 @@ Border1f { ; William McWorter, altered by Anthony Hanmer 1999
 }
 
 Border1g { ; William McWorter, altered by Anthony Hanmer 1999
-   Angle 4  ;
+   Angle 4
    Axiom XYX+X+XYX+X
    F=
    X=FX+FX+FXFY-FY-
@@ -70,7 +70,7 @@ Border1g { ; William McWorter, altered by Anthony Hanmer 1999
 }
 
 Border1h { ; William McWorter, altered by Anthony Hanmer 1999
-   Angle 4  ;
+   Angle 4
    Axiom XYX+XYX+XYX+XYX
    F=
    X=FX+FX+FXFY-FY-
@@ -78,7 +78,7 @@ Border1h { ; William McWorter, altered by Anthony Hanmer 1999
 }
 
 Border1i { ; William McWorter, altered by Anthony Hanmer 1999
-   Angle 4  ;
+   Angle 4
    Axiom XYX+X+XYX+X
    F=
    X=FX+GX+FXFY-GY-
@@ -86,7 +86,7 @@ Border1i { ; William McWorter, altered by Anthony Hanmer 1999
 }
 
 Border1j { ; William McWorter, altered by Anthony Hanmer 1999
-   Angle 4  ;
+   Angle 4
    Axiom XYX+XYX+XYX+XYX
    F=
    X=FX+GX+FXFY-GY-
@@ -94,7 +94,7 @@ Border1j { ; William McWorter, altered by Anthony Hanmer 1999
 }
 
 Border1k { ; William McWorter, altered by Anthony Hanmer 1999
-   Angle 4  ;
+   Angle 4
    Axiom XYX+X+XYX+X
    F=
    X=GX+FX+FXGY-FY-
@@ -102,7 +102,7 @@ Border1k { ; William McWorter, altered by Anthony Hanmer 1999
 }
 
 Border1l { ; William McWorter, altered by Anthony Hanmer 1999
-   Angle 4  ;
+   Angle 4
    Axiom XYX+XYX+XYX+XYX
    F=
    X=GX+FX+FXGY-FY-
@@ -110,7 +110,7 @@ Border1l { ; William McWorter, altered by Anthony Hanmer 1999
 }
 
 Border1m { ; William McWorter, altered by Anthony Hanmer 1999
-   Angle 4  ;
+   Angle 4
    Axiom XYX-X-XYX-X
    F=
    X=FX+GX+FXFY-GY-
@@ -118,7 +118,7 @@ Border1m { ; William McWorter, altered by Anthony Hanmer 1999
 }
 
 Border1n { ; William McWorter, altered by Anthony Hanmer 1999
-   Angle 4  ;
+   Angle 4
    Axiom XYX-XYX-XYX-XYX
    F=
    X=FX+GX+FXFY-GY-
@@ -126,7 +126,7 @@ Border1n { ; William McWorter, altered by Anthony Hanmer 1999
 }
 
 Border1o { ; William McWorter, altered by Anthony Hanmer 1999
-   Angle 4  ;
+   Angle 4
    Axiom XYX-X-XYX-X
    F=
    X=GX+FX+FXGY-FY-
@@ -134,7 +134,7 @@ Border1o { ; William McWorter, altered by Anthony Hanmer 1999
 }
 
 Border1p { ; William McWorter, altered by Anthony Hanmer 1999
-   Angle 4  ;
+   Angle 4
    Axiom XYX-XYX-XYX-XYX
    F=
    X=GX+FX+FXGY-FY-
@@ -142,7 +142,7 @@ Border1p { ; William McWorter, altered by Anthony Hanmer 1999
 }
 
 Border1q { ; William McWorter, altered by Anthony Hanmer 1999
-   Angle 4  ;
+   Angle 4
    Axiom XY+XY+XY+XY
    F=
    X=FX+FX+FXFY-FY-
@@ -150,7 +150,7 @@ Border1q { ; William McWorter, altered by Anthony Hanmer 1999
 }
 
 Border1r { ; William McWorter, altered by Anthony Hanmer 1999
-   Angle 4  ;
+   Angle 4
    Axiom XY+YX+XY+YX
    F=
    X=FX+FX+FXFY-FY-
@@ -158,7 +158,7 @@ Border1r { ; William McWorter, altered by Anthony Hanmer 1999
 }
 
 Border1s { ; William McWorter, altered by Anthony Hanmer 1999
-   Angle 4  ;
+   Angle 4
    Axiom X+Y+X+Y
    F=
    X=FX+FX+FXFY-FY-
@@ -287,7 +287,7 @@ ADH105d { ; Anthony Hanmer 1999
 }
 
 ADH105h { ; Anthony Hanmer 1999
-   Angle 4 ;
+   Angle 4
    Axiom f+f+f+f
    f=f+f-f
 }
