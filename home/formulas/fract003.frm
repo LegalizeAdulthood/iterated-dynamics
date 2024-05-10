@@ -528,15 +528,6 @@ test2 { ; Michael Theroux
    |z| <= 4;
 }
 
-test3 { ; Michael Theroux
-   ;fix and generalization by Ron Barnett
-   ;=phi
-   ; try p1 = 2.236067977 for the golden mean
-   z = ((p1 + 1)/2)/pixel:
-   z =  z*z + pixel*((p1 + 1)/2)/((p1 - 1)/2),
-   |z| <= 4;
-}
-
 testm {
    ; Try p1=0.25 and p2=0.15 with float=y or potential=255/800/255
    z = 0, c=pixel:

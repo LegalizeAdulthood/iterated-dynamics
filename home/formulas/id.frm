@@ -1523,10 +1523,10 @@ Ent2 { ; Scott Taylor
 
 test3 { ; Michael Theroux
    ; fix and generalization by Ron Barnett
-   ; =phi
+   ; = phi
    ; try p1 = 2.236067977 for the golden mean
-   z = ((p1 + 1)/2)/pixel:
-   z =  z*z + pixel*((p1 + 1)/2)/((p1 - 1)/2)
+   z = ((p1 + 1)/2)/pixel, c = pixel*((p1 + 1)/2)/((p1 - 1)/2):
+   z =  z*z + c
    |z| <= 4
 }
 
