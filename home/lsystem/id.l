@@ -58,7 +58,7 @@ DoubleCesaro { ; Adrian Mariano
 
 FlowSnake { ; Adrian Mariano
 ; from The Fractal Geometry of Nature by Mandelbrot
-   angle=6;
+   angle 6
    axiom FL
    L=FL-FR--FR+FL++FLFL+FR-",
    R=+FL-FRFR--FR-FL++FL+FR",

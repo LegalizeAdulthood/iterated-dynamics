@@ -34,7 +34,7 @@ HexGasket { ; "Hexagonal Gasket" by Michael A. Rouse
    ; six-fold rotational symmetry, symmetric about the origin, and
    ; appears roughly the same at various magnifications. Besides, it's
    ; simple and cool!
-   angle=6
+   angle 6
    axiom F+F+F+F+F+F--
    F=F+F+F--F--F+F+F
 }

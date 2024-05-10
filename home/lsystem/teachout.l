@@ -134,7 +134,7 @@ Peano-c { ; Gary Teachout *
 
 
 Hex-7-b { ; Gary Teachout *
-   angle=12
+   angle 12
    axiom fx
    f=
    x=-f++f-x-f--f+y---f--f+y+f++f-x+++f++f-x-f++f-x+++f--f+y--
