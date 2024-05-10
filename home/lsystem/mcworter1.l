@@ -496,12 +496,6 @@ Maze01M {
   x=x+f+xffx-f-x
 }
 
-Maze01 {
-  Angle 3
-  Axiom c40f+c48f+c56f
-  f=f+ff-f
-}
-
 Maze&Fractal2M {
   Angle 6
   Axiom y

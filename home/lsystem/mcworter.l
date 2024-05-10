@@ -395,9 +395,9 @@ LawnInSpring {
 }
 
 Maze01 {
-  Angle 3
-  Axiom c40f+c48f+c56f
-  f=f+ff-f
+   Angle 3
+   Axiom c40f+c48f+c56f
+   f=f+ff-f
 }
 
 Maze&Fractal1 {
