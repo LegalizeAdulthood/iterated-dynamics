@@ -116,17 +116,16 @@ AmmannPoly { ; by Philippe Hurbain
    D=M
 }
 
-Stars&PentasColor {
-                ;; by Philippe Hurbain
-                ;; Penrose's stars and pentagon tiling, generated as
-                ;; a coloring of kites and darts
-  Angle 20
-  Axiom c04k
-  k=++[@.618034[g-c10@.5878[f]------ff++++f]a]f@.618034------
-  k=[--k]f--f------[--k]@i.618034f[@.618034|a]
-  a=[@.618034k]++f@.618034[|[gc10@.5878+++++++f]a]--------f
-  a=++f--------[c10g@.5878-------f][a]@i.618034f
-  f=g
+Stars&PentasColor { ; by Philippe Hurbain
+   ; Penrose's stars and pentagon tiling, generated as
+   ; a coloring of kites and darts
+   Angle 20
+   Axiom c04k
+   k=++[@.618034[g-c10@.5878[f]------ff++++f]a]f@.618034------
+   k=[--k]f--f------[--k]@i.618034f[@.618034|a]
+   a=[@.618034k]++f@.618034[|[gc10@.5878+++++++f]a]--------f
+   a=++f--------[c10g@.5878-------f][a]@i.618034f
+   f=g
 }
 
 Stars&Pentas1 {
