@@ -209,11 +209,11 @@ Koch5 {
   }
 
 Sierpinski2 { ; from The Science of Fractal Images
-  axiom FXF--FF--FF
-  f=FF
-  x=--FXF++FXF++FXF--
-  angle 6
-  }
+   Angle 6
+   Axiom FXF--FF--FF
+   f=FF
+   x=--FXF++FXF++FXF--
+}
 
 SierpinskiSquare { ; Adrian Mariano
    Angle 4

@@ -21,10 +21,3 @@ Island2 { ; Adrian Mariano
   f=f+gf-ff-f-ff+g+ff-gf+ff+f+ff-g-fff
   g=@6G@I6
 }
-
-Sierpinski2 { ; from The Science of Fractal Images
-  axiom FXF--FF--FF
-  f=FF
-  x=--FXF++FXF++FXF--
-  angle 6
-}
