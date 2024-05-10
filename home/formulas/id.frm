@@ -1603,6 +1603,17 @@ Mandel3 { ; Fractal Creations example
    |z| <= 4
 }
 
+{--- Sylvie Gallet -------------------------------------------------------}
+
+G-3-03-M  { ; Sylvie Gallet, 1996
+   ; Modified Gallet-3-03 formula
+   z = pixel :
+   x = real(z) , y = imag(z)
+   x1 = x - p1 * fn1(y*y + round(p2*fn2(y)))
+   y1 = y - p1 * fn1(x*x + round(p2*fn2(x)))
+   z = x1 + flip(y1)
+   |z| <= 4
+}
 
 {--- authors unknown -----------------------------------------------------}
 
