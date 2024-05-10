@@ -86,15 +86,6 @@ Doily1 {
   f=-f[--f--f]++f[++f--f]--f+
 }
 
-Dragon { ; Adrian Mariano
-  ; from The Fractal Geometry of Nature by Mandelbrot
-  Angle 8
-  Axiom FX
-  F=
-  y=+FX--FY+
-  x=-FX++FY-
-}
-
 Dragon-wm { ; William McWorter
   Angle 4
   Axiom X

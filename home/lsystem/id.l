@@ -26,13 +26,13 @@ Koch6 { ; Adrian Mariano
     }
 
 Dragon { ; Adrian Mariano
-; from The Fractal Geometry of Nature by Mandelbrot
-  Angle 8
-  Axiom FX
-  F=
-  y=+FX--FY+
-  x=-FX++FY-
-  }
+   ; from The Fractal Geometry of Nature by Mandelbrot
+   Angle 8
+   Axiom FX
+   F=
+   y=+FX--FY+
+   x=-FX++FY-
+}
 
 Peano1 { ; Adrian Mariano
    ; from The Fractal Geometry of Nature by Mandelbrot
