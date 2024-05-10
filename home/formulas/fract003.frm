@@ -142,12 +142,6 @@ RCL_Quaternion_M (XAXIS) { ; Ron Lewen
    (a0^2+a1^2+a2^2+a3^2) <= 2
 }
 
-REB004A { ; Ron Barnett
-   ; try p1 = 0.9, p2 = 2, fn1 = sin, fn2 = cos
-   z = pixel:
-   z =p1*fn1(z) + p1*p1*fn2(p2*z) + pixel, |z| <= 100
-}
-
 REB004B { ; Ron Barnett
           ; floating point required
    ; try p1 = 3

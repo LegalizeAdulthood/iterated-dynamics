@@ -205,6 +205,7 @@ GopalsamyFn { ; Ron Barnett
 }
 
 REB004A { ; Ron Barnett, 1993
+   ; try p1 = 0.9, p2 = 2, fn1 = sin, fn2 = cos
    z = pixel:
    z =p1*fn1(z) + p1*p1*fn2(p2*z) + pixel
    |z| <= 100
