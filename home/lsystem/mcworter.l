@@ -240,13 +240,6 @@ Hex1 {
   f=-f+f+f[+f+f+f]-
 }
 
-Hilbert {       ; Ken Philip, from The Science of Fractal Images
-  axiom x
-  x=-YF+XFX+FY- ; cup interior on left during trace
-  y=+XF-YFY-FX+ ; cup interior on right during trace
-  angle 4
-}
-
  Hilbert1 { 
   axiom z
   z=-c32Yc15f+c32Xc15Fc32X+c15Fc32Y-

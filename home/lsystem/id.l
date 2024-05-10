@@ -182,12 +182,12 @@ Plant08 { ; Ken Philip, from The Science of Fractal Images, p.286
    l=[-FFF][+FFF]F
 }
 
-Hilbert { ; Ken Philip, from The Science of Fractal Images
-  axiom x
-  x=-YF+XFX+FY-
-  y=+XF-YFY-FX+
-  angle 4
-  }
+Hilbert {       ; Ken Philip, from The Science of Fractal Images
+   Angle 4
+   Axiom x
+   x=-YF+XFX+FY- ; cup interior on left during trace
+   y=+XF-YFY-FX+ ; cup interior on right during trace
+}
 
 Sierpinski3 { ; From Jim Hanan via Corbit
    Angle 3
