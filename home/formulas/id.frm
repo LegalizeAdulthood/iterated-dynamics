@@ -213,8 +213,9 @@ REB004A { ; Ron Barnett, 1993
 
 REB004K { ; Ron Barnett, 1993
    ; floating point required
+   ; try p1 = (-0.564, 0.045), fn1 = tan
    z = pixel:
-   x = flip(pixel + fn1(3/z - z/4))
+   x = flip(pixel + fn1(3/z - z/4));
    z = x*z + p1
    |z| <= 100
 }

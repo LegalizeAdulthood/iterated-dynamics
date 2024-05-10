@@ -206,14 +206,6 @@ REB004J  { ; Ron Barnett
    z = x*z + pixel, |z| <= 100
 }
 
-REB004K  { ; Ron Barnett
-           ; floating point required
-   ; try p1 = (-0.564, 0.045), fn1 = tan
-   z = pixel:
-   x = flip(pixel + fn1(3/z - z/4));
-   z = x*z + p1, |z| <= 100
-}
-
 REB004L  { ; Ron Barnett
            ; floating point required
    ; try p1 = 1, p2 - 2, fn1 = tan
