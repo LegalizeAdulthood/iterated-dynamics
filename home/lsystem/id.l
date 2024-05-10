@@ -371,15 +371,15 @@ Leaf1 { ; Adrian Mariano, from the Algorithmic Beauty of Plants
   }
 
 Leaf2 { ; Adrian Mariano, from the Algorithmic Beauty of Plants
-    ; Compound leaf with alternating branches, Figure 5.12a p.130
-  angle 8
-  axiom a
-  a=f[+x]fb
-  b=f[-y]fa
-  x=a
-  y=b
-  f=@1.36f@i1.36
-  }
+   ; Compound leaf with alternating branches, Figure 5.12a p.130
+   Angle 8
+   Axiom a
+   a=f[+x]fb
+   b=f[-y]fa
+   x=a
+   y=b
+   f=@1.36f@i1.36
+}
 
 Bush { ; Adrian Mariano
   Angle 16

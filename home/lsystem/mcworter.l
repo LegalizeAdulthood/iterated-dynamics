@@ -393,17 +393,6 @@ Lace { ; William McWorter
   z=-yFw++F++y---
 }
 
-Leaf2 { ; Adrian Mariano, from the Algorithmic Beauty of Plants
-        ; Compound leaf with alternating branches, Figure 5.12a p.130
-  angle 8
-  axiom a
-  a=f[+x]fb
-  b=f[-y]fa
-  x=a
-  y=b
-  f=@1.36f@i1.36
-}
-
 Leafy {
   Angle 50
   Axiom +++++++++++++c6x
