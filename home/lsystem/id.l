@@ -3,27 +3,27 @@ Koch1 { ; Adrian Mariano
   Angle 6
   Axiom F--F--F
   F=F+F--F+F
-  }
+}
 
 Koch2 { ; Adrian Mariano
 ; from The Fractal Geometry of Nature by Mandelbrot
   Angle 12
   Axiom F---F---F---F
   F=-F+++F---F+
-  }
+}
 
 Koch3 { ; Adrian Mariano
 ; from The Fractal Geometry of Nature by Mandelbrot
   Angle 4
   Axiom F-F-F-F
   F=F-F+F+FF-F-F+F
-  }
+}
 
 Koch6 { ; Adrian Mariano
    axiom f+f+f+f
    f=f-ff+ff+f+f-f-ff+f+f-f-ff-ff+f
    angle 4
-    }
+}
 
 Dragon { ; Adrian Mariano
    ; from The Fractal Geometry of Nature by Mandelbrot
@@ -47,14 +47,14 @@ Cesaro { ; Adrian Mariano
   Axiom FX
   F=
   X=----F!X!++++++++F!X!----
-  }
+}
 
 DoubleCesaro { ; Adrian Mariano
 ; from The Fractal Geometry of Nature by Mandelbrot
   Angle 4
   axiom D\90D\90D\90D\90
   D=\42!D!/84!D!\42
-  }
+}
 
 FlowSnake { ; Adrian Mariano
 ; from The Fractal Geometry of Nature by Mandelbrot
@@ -63,7 +63,7 @@ FlowSnake { ; Adrian Mariano
   L=FL-FR--FR+FL++FLFL+FR-",
   R=+FL-FRFR--FR-FL++FL+FR",
   F=
-  }
+}
 
 CantorDust { ; Adrian Mariano
    ; from The Fractal Geometry of Nature by Mandelbrot
@@ -79,7 +79,7 @@ Snowflake2 { ; Adrian Mariano
   axiom F
   F=++!F!F--F--F@IQ3|+F!F--
   F=F--F!+++@Q3F@QI3|+F!F@Q3|+F!F
-  }
+}
 
 SnowflakeColor { ; Adrian Mariano
 ; from The Fractal Geometry of Nature by Mandelbrot
@@ -88,7 +88,7 @@ SnowflakeColor { ; Adrian Mariano
   F=--!F<1!F<1++F<1++F<1@IQ3|-F<1!F<1++
   F=F<1++F<1!---@Q3F<1@QI3|-F<1!F<1@Q3|-F<1!F<1
   F=
-  }
+}
 
 Island1 { ; Adrian Mariano
    ; from The Fractal Geometry of Nature by Mandelbrot
@@ -115,7 +115,7 @@ Quartet { ; Adrian Mariano
   F=
   H=-
   J=+
-  }
+}
 
 SnowFlake1 { ; Adrian Mariano
 ; from The Fractal Geometry of Nature by Mandelbrot
@@ -124,7 +124,7 @@ SnowFlake1 { ; Adrian Mariano
   R=++!FRFU++FU++FU!---@Q3FU|-@IQ3!FRFU!
   U=!FRFU!|+@Q3FR@IQ3+++!FR--FR--FRFU!--
   F=
-  }
+}
 
 SnowFlake3 { ; Adrian Mariano
 ; from The Fractal Geometry of Nature by Mandelbrot
@@ -133,7 +133,7 @@ SnowFlake3 { ; Adrian Mariano
   x=++f!x!fy--fx--fy|+@iq3fyf!x!++f!y!++f!y!fx@q3+++f!y!fx
   y=fyf!x!+++@iq3fyf!x!++f!x!++f!y!fx@q3|+fx--fy--fxf!y!++
   f=
-  }
+}
 
 Tree1 { ; Adrian Mariano
    ; from The Fractal Geometry of Nature by Mandelbrot
@@ -148,7 +148,7 @@ Peano2 { ; Adrian Mariano
   Axiom FXY++F++FXY++F
   X=XY@Q2-F@IQ2-FXY++F++FXY
   Y=-@Q2F-@IQ2FXY
-  }
+}
 
 Sierpinski1 { ; Adrian Mariano
 ; from The Fractal Geometry of Nature by Mandelbrot
@@ -156,14 +156,14 @@ Sierpinski1 { ; Adrian Mariano
   axiom F
   F=FXF
   X=+FXF-FXF-FXF+
-  }
+}
 
 Koch4 { ; Adrian Mariano
 ; from The Fractal Geometry of Nature by Mandelbrot
   angle 12
   axiom f++++f++++f
   f=+f--f++f-
-  }
+}
 
 Plant07 { ; Ken Philip, from The Science of Fractal Images p.285b
    Angle 14
@@ -200,13 +200,13 @@ Peano3 {
   x=XFYFX+F+YFXFY-F-XFYFX
   y=YFXFY-F-XFYFX+F+YFXFY
   angle 4
-  }
+}
 
 Koch5 {
   axiom f+F+F+F
   f=F+F-F-FFF+F+F-F
   angle 4
-  }
+}
 
 Sierpinski2 { ; from The Science of Fractal Images
    Angle 6
@@ -232,7 +232,7 @@ QuadKoch { ; Adrian Mariano, from the Algorithmic Beauty of Plants
   angle 4
   AXIOM F-F-F-F-
   F=F+FF-FF-F-F+F+FF-F-F+F+FF+FF-F
-  }
+}
 
 Fass1 { ; Adrian Mariano, from the Algorithmic Beauty of Plants
         ; FASS curve (3x3 tiles form macrotile), Figure 1.16a p.17
@@ -257,7 +257,7 @@ QuadGosper { ; Adrian Mariano, from the Algorithmic Beauty of Plants
   l=FlFl-Fr-Fr+Fl+Fl-Fr-FrFl+Fr+FlFlFr-Fl+Fr+FlFl+Fr-FlFr-Fr-Fl+Fl+FrFr-
   r=+FlFl-Fr-Fr+Fl+FlFr+Fl-FrFr-Fl-Fr+FlFrFr-Fl-FrFl+Fl+Fr-Fr-Fl+Fl+FrFr
   f=
-  }
+}
 
 Plant01 { ; Adrian Mariano, from the Algorithmic Beauty of Plants
    ; Plant-like structure, figure 1.24a p.25
@@ -316,7 +316,7 @@ Plant10 { ; Adrian Mariano
    axiom f
    f=f[+ff][-ff]f[+ff][-ff]f
    angle 10
-   }
+}
 
 Plant11 { ; Adrian Mariano
    Angle 12
@@ -329,27 +329,27 @@ Curve1 { ; Adrian Mariano, from the Algorithmic Beauty of Plants
   angle 4
   axiom F-F-F-F-
   f=FF-F-F-F-F-F+F
-  }
+}
 
 Curve2 { ; Adrian Mariano, from the Algorithmic Beauty of Plants
   angle 4
   axiom F-F-F-F-
   f=FF-F+F-F-FF
-  }
+}
 
 Curve3 { ; Adrian Mariano, from the Algorithmic Beauty of Plants
      ; curve from figure 1.9e p.10
   axiom F-F-F-F-
   angle 4
   F=F-FF--F-F
-  }
+}
 
 Curve4 { ; Adrian Mariano
    axiom yf
    x=YF+XF+Y
    y=XF-YF-X
    angle 6
-   }
+}
 
 Leaf1 { ; Adrian Mariano, from the Algorithmic Beauty of Plants
    ; Compound leaf with alternating branches, Figure 5.12b p.130
@@ -412,13 +412,13 @@ DragonCurve { ; Adrian Mariano
   Axiom X
   X=X-YF-
   Y=+FX+Y
-  }
+}
 
 Square { ; Adrian Mariano
   Angle 4
   Axiom F+F+F+F
   F=FF+F+F+F+FF
-  }
+}
 
 KochCurve { ; Adrian Mariano
    Angle 6
@@ -449,7 +449,7 @@ ColorPenrose1 { ; by Herb Savage
   Y=-WC02F++XC04F[+++YC04F++ZC02F]-
   Z=--YC04F++++WC02F[+ZC02F++++XC04F]--XC04F
   F=
-  }
+}
 
 Penrose2 { ; by Herb Savage
    ; based on Martin Gardner's "Penrose Tiles to Trapdoor Ciphers",
@@ -496,7 +496,7 @@ DoublePenrose { ; by Herb Savage
   Y=-WF++XF[+++YF++ZF]-
   Z=--YF++++WF[+ZF++++XF]--XF
   F=
-  }
+}
 
 Sphinx { ; by Herb Savage
    ; based on Martin Gardner's "Penrose Tiles to Trapdoor Ciphers"
@@ -547,28 +547,28 @@ Lars1{ ; By Jonathan Osuch [73277,1432]
   Angle 8  ; angle increment/decrement is 45
   axiom [F]++[F]++[F]++F
   F=F[+F][-F]
-  }
+}
 
 Lars2{ ; By Jonathan Osuch [73277,1432]
        ; Based on a suggestion by Lars Vangsgaard
   Angle 8  ; angle increment/decrement is 45
   axiom +[F]++[F]++[F]++F
   F=F[+F][-F]
-  }
+}
 
 Lars1Color{ ; By Jonathan Osuch [73277,1432]
        ; Based on a suggestion by Lars Vangsgaard
   Angle 8  ; angle increment/decrement is 45
   axiom C1[F]++[F]++[F]++F
   F=F<1[+F][-F]>1
-  }
+}
 
 Lars2Color{ ; By Jonathan Osuch [73277,1432]
        ; Based on a suggestion by Lars Vangsgaard
   Angle 8  ; angle increment/decrement is 45
   axiom C1+[F]++[F]++[F]++F
   F=F<1[+F][-F]>1
-  }
+}
 
 Man { ; From Ivan Daunis daunis@teleline.es
    ; looks like man with an odd number of iterations
