@@ -86,13 +86,6 @@ Plant06 { ; Adrian Mariano, from the Algorithmic Beauty of Plants
   F=FF
 }
 
-Plant07 { ; Ken Philip, from The Science of Fractal Images p.285b
-  axiom Z
-  z=zFX[+Z][-Z]
-  x=x[-FFF][+FFF]FX
-  angle 14
-}
-
 Plant11 { ; Adrian Mariano
    axiom f
    f=F[+F[+F][-F]F][-F[+F][-F]F]F[+F][-F]F

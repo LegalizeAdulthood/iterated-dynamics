@@ -165,13 +165,12 @@ Koch4 { ; Adrian Mariano
   f=+f--f++f-
   }
 
-
 Plant07 { ; Ken Philip, from The Science of Fractal Images p.285b
-  axiom Z
-  z=zFX[+Z][-Z]
-  x=x[-FFF][+FFF]FX
-  angle 14
-  }
+   Angle 14
+   Axiom Z
+   z=zFX[+Z][-Z]
+   x=x[-FFF][+FFF]FX
+}
 
 Plant08 { ; Ken Philip, from The Science of Fractal Images, p.286
    Angle 20
