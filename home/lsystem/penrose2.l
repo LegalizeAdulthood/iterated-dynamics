@@ -119,17 +119,6 @@ Losanges {
   f=g
 }
 
-PentaColor {
-             ;; by Philippe Hurbain
-             ;; Simple coloring of Penrose's rhombuses, showing pentagons
-  Angle 20
-  Axiom c04[x]++++[x]++++[x]++++[x]++++[x]
-  x=@.618034++f[c10@1.1755-------f][|y]----f[|x]
-  x=[|++@.618034g@i.618034x]------[x]f----[y]f
-  y=@.618034++++[x]f|++f[|y]--[y]f|++f[|x]
-  f=g
-}
-
 Penta {
         ;; by Philippe Hurbain
         ;; Same as PentaColor, but showing only the coloring
