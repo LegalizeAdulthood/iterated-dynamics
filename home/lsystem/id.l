@@ -311,10 +311,10 @@ Plant06 { ; Adrian Mariano, from the Algorithmic Beauty of Plants
   }
 
 Plant09 { ; Adrian Mariano
-   axiom y
+   Angle 14
+   Axiom y
    x=X[-FFF][+FFF]FX
    y=YFX[+Y][-Y]
-   angle 14
 }
 
 Plant10 { ; Adrian Mariano

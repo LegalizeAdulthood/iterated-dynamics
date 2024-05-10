@@ -103,13 +103,6 @@ Plant08 { ; Ken Philip, from The Science of Fractal Images, p.286
   angle 20
 }
 
-Plant09 { ; Adrian Mariano
-   axiom y
-   x=X[-FFF][+FFF]FX
-   y=YFX[+Y][-Y]
-   angle 14
-}
-
 Plant11 { ; Adrian Mariano
    axiom f
    f=F[+F[+F][-F]F][-F[+F][-F]F]F[+F][-F]F
