@@ -416,13 +416,6 @@ Moore { ; William McWorter
   Y=+FX+FX+FXFY-FYFXFY-FY-FY
 }
 
-Peano1 { ; Adrian Mariano
-  ; from The Fractal Geometry of Nature by Mandelbrot
-  Angle 4
-  Axiom F
-  F=F-F+F+F+F-F-F-F+F
-}
-
 Peanomed { ; William McWorter
   Angle 8
   Axiom -X
