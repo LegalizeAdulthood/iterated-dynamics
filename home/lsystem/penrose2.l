@@ -1,12 +1,12 @@
 PenroseDouble { ; by Herb Savage
-  ; This is Penrose3 and Penrose4 superimposed
-  Angle 10
-  Axiom [X][Y]++[X][Y]++[X][Y]++[X][Y]++[X][Y]
-  W=YF++ZF----XF[-YF----WF]++
-  X=+YF--ZF[---WF--XF]+
-  Y=-WF++XF[+++YF++ZF]-
-  Z=--YF++++WF[+ZF++++XF]--XF
-  F=
+   ; This is Penrose3 and Penrose4 superimposed
+   Angle 10
+   Axiom [X][Y]++[X][Y]++[X][Y]++[X][Y]++[X][Y]
+   W=YF++ZF----XF[-YF----WF]++
+   X=+YF--ZF[---WF--XF]+
+   Y=-WF++XF[+++YF++ZF]-
+   Z=--YF++++WF[+ZF++++XF]--XF
+   F=
 }
 
 ; Generation of Penrose aperiodic tilings

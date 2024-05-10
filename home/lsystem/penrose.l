@@ -85,8 +85,8 @@ Kites&DartsColor { ; by Philippe Hurbain
 }
 
 AmmannPolyColor { ; by Philippe Hurbain
-                  ; Ammann's coloring of Penrose's rhombuses, giving an
-                  ; aperiodic tiling of 2 pentagons and 1 hexagon
+   ; Ammann's coloring of Penrose's rhombuses, giving an
+   ; aperiodic tiling of 2 pentagons and 1 hexagon
    Angle 10
    Axiom c1x
    x=@.618034/36[c3\9@.66D]D[c3/196.5@.363D][/180y]\72D[/180x]
@@ -131,10 +131,10 @@ Stars&Pentas1 { ; by Philippe Hurbain
 }
 
 Stars&Pentas2  { ;; by Philippe Hurbain
-                 ;; Penrose's stars and pentagons, generated from
-                 ;; decomposition rules
-                 ;; u is the star, v is the boat, w is the thin rhombus
-                 ;; x, y and z are the pentagons
+   ;; Penrose's stars and pentagons, generated from
+   ;; decomposition rules
+   ;; u is the star, v is the boat, w is the thin rhombus
+   ;; x, y and z are the pentagons
    Angle 10
    Axiom u
    u=@.381966[v]F[|y][-u]++F|+[v]F[|y]++F|+[v]F[|y]++F|+
