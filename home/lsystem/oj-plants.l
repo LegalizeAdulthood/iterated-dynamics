@@ -1,11 +1,5 @@
 ; l-systems from Ole Jorgensen 
 
-Boat {  ;
-  Axiom f
-  Angle 4
-  f=+f-f
-}
-
 Sporrer { ; 
   angle 4
   axiom F+F+F+F

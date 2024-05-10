@@ -18,16 +18,3 @@ PenroseDouble { ; by Herb Savage
 ; Branko Grunbaum and G.C. Shepard, W.H. Freeman and Company, chapter 10
 ;
 ; Philippe Hurbain
-
-AmmannPolyColor {
-                  ;; by Philippe Hurbain
-                  ;; Ammann's coloring of Penrose's rhombuses, giving an
-                  ;; aperiodic tiling of 2 pentagons and 1 hexagon
-  Angle 10
-  Axiom c1x
-  x=@.618034/36[c3\9@.66D]D[c3/196.5@.363D][/180y]\72D[/180x]
-  x=[\144@.618034M@i.618034x]\108[c3\36@.509D@1.18\30D][x]D[c3\153@.66D]\72[y]D
-  y=@.618034/72[x][c3\36@.509D]D\144[c3\9@.66D]D[/180y][c3/196.5@.363D]
-  y=\36[y]D\144D[/180x]
-  D=M
-}
