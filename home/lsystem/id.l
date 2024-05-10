@@ -506,15 +506,15 @@ DoublePenrose { ; by Herb Savage
   }
 
 Sphinx { ; by Herb Savage
-; based on Martin Gardner's "Penrose Tiles to Trapdoor Ciphers"
-; This is an example of a "reptile"
-  Angle 6
-  Axiom X
-  X=+FF-YFF+FF--FFF|X|F--YFFFYFFF|
-  Y=-FF+XFF-FF++FFF|Y|F++XFFFXFFF|
-  F=GG
-  G=GG
-  }
+   ; based on Martin Gardner's "Penrose Tiles to Trapdoor Ciphers"
+   ; This is an example of a "reptile"
+   Angle 6
+   Axiom X
+   X=+FF-YFF+FF--FFF|X|F--YFFFYFFF|
+   Y=-FF+XFF-FF++FFF|Y|F++XFFFXFFF|
+   F=GG
+   G=GG
+}
 
 PentaPlexity {
 ; Manual construction by Roger Penrose as a prelude to his development of
