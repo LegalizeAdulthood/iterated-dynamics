@@ -428,17 +428,16 @@ KochCurve { ; Adrian Mariano
   F=F+F--F+F
   }
 
-
 Penrose1 { ; by Herb Savage
-; based on Martin Gardner's "Penrose Tiles to Trapdoor Ciphers",
-; Roger Penrose's rhombuses
-  Angle 10
-  Axiom +WF--XF---YF--ZF
-  W=YF++ZF----XF[-YF----WF]++
-  X=+YF--ZF[---WF--XF]+
-  Y=-WF++XF[+++YF++ZF]-
-  Z=--YF++++WF[+ZF++++XF]--XF
-  F=
+   ; based on Martin Gardner's "Penrose Tiles to Trapdoor Ciphers",
+   ; Roger Penrose's rhombuses
+   Angle 10
+   Axiom +WF--XF---YF--ZF
+   W=YF++ZF----XF[-YF----WF]++
+   X=+YF--ZF[---WF--XF]+
+   Y=-WF++XF[+++YF++ZF]-
+   Z=--YF++++WF[+ZF++++XF]--XF
+   F=
 }
 
 ColorPenrose1 { ; by Herb Savage
