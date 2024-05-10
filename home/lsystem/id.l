@@ -1,19 +1,19 @@
 Koch1 { ; Adrian Mariano
-; from The Fractal Geometry of Nature by Mandelbrot
+   ; from The Fractal Geometry of Nature by Mandelbrot
    Angle 6
    Axiom F--F--F
    F=F+F--F+F
 }
 
 Koch2 { ; Adrian Mariano
-; from The Fractal Geometry of Nature by Mandelbrot
+   ; from The Fractal Geometry of Nature by Mandelbrot
    Angle 12
    Axiom F---F---F---F
    F=-F+++F---F+
 }
 
 Koch3 { ; Adrian Mariano
-; from The Fractal Geometry of Nature by Mandelbrot
+   ; from The Fractal Geometry of Nature by Mandelbrot
    Angle 4
    Axiom F-F-F-F
    F=F-F+F+FF-F-F+F
@@ -42,7 +42,7 @@ Peano1 { ; Adrian Mariano
 }
 
 Cesaro { ; Adrian Mariano
-; from The Fractal Geometry of Nature by Mandelbrot
+   ; from The Fractal Geometry of Nature by Mandelbrot
    Angle 34
    Axiom FX
    F=
@@ -50,14 +50,14 @@ Cesaro { ; Adrian Mariano
 }
 
 DoubleCesaro { ; Adrian Mariano
-; from The Fractal Geometry of Nature by Mandelbrot
+   ; from The Fractal Geometry of Nature by Mandelbrot
    Angle 4
    Axiom D\90D\90D\90D\90
    D=\42!D!/84!D!\42
 }
 
 FlowSnake { ; Adrian Mariano
-; from The Fractal Geometry of Nature by Mandelbrot
+   ; from The Fractal Geometry of Nature by Mandelbrot
    Angle 6
    Axiom FL
    L=FL-FR--FR+FL++FLFL+FR-",
@@ -74,7 +74,7 @@ CantorDust { ; Adrian Mariano
 }
 
 Snowflake2 { ; Adrian Mariano
-; from The Fractal Geometry of Nature by Mandelbrot
+   ; from The Fractal Geometry of Nature by Mandelbrot
    Angle 12
    Axiom F
    F=++!F!F--F--F@IQ3|+F!F--
@@ -82,7 +82,7 @@ Snowflake2 { ; Adrian Mariano
 }
 
 SnowflakeColor { ; Adrian Mariano
-; from The Fractal Geometry of Nature by Mandelbrot
+   ; from The Fractal Geometry of Nature by Mandelbrot
    Angle 12
    Axiom F
    F=--!F<1!F<1++F<1++F<1@IQ3|-F<1!F<1++
@@ -107,7 +107,7 @@ Island2 { ; Adrian Mariano
 }
 
 Quartet { ; Adrian Mariano
-; from The Fractal Geometry of Nature by Mandelbrot
+   ; from The Fractal Geometry of Nature by Mandelbrot
    Angle 4
    Axiom fb
    A=FBFA+HFA+FB-FA
@@ -118,7 +118,7 @@ Quartet { ; Adrian Mariano
 }
 
 SnowFlake1 { ; Adrian Mariano
-; from The Fractal Geometry of Nature by Mandelbrot
+   ; from The Fractal Geometry of Nature by Mandelbrot
    Angle 12
    Axiom FR
    R=++!FRFU++FU++FU!---@Q3FU|-@IQ3!FRFU!
@@ -127,7 +127,7 @@ SnowFlake1 { ; Adrian Mariano
 }
 
 SnowFlake3 { ; Adrian Mariano
-; from The Fractal Geometry of Nature by Mandelbrot
+   ; from The Fractal Geometry of Nature by Mandelbrot
    Angle 12
    Axiom fx
    x=++f!x!fy--fx--fy|+@iq3fyf!x!++f!y!++f!y!fx@q3+++f!y!fx
@@ -143,7 +143,7 @@ Tree1 { ; Adrian Mariano
 }
 
 Peano2 { ; Adrian Mariano
-; from The Fractal Geometry of Nature by Mandelbrot
+   ; from The Fractal Geometry of Nature by Mandelbrot
    Angle 8
    Axiom FXY++F++FXY++F
    X=XY@Q2-F@IQ2-FXY++F++FXY
@@ -151,7 +151,7 @@ Peano2 { ; Adrian Mariano
 }
 
 Sierpinski1 { ; Adrian Mariano
-; from The Fractal Geometry of Nature by Mandelbrot
+   ; from The Fractal Geometry of Nature by Mandelbrot
    Angle 3
    Axiom F
    F=FXF
@@ -159,7 +159,7 @@ Sierpinski1 { ; Adrian Mariano
 }
 
 Koch4 { ; Adrian Mariano
-; from The Fractal Geometry of Nature by Mandelbrot
+   ; from The Fractal Geometry of Nature by Mandelbrot
    Angle 12
    Axiom f++++f++++f
    f=+f--f++f-
@@ -439,9 +439,9 @@ Penrose1 { ; by Herb Savage
 }
 
 ColorPenrose1 { ; by Herb Savage
-; based on Martin Gardner's "Penrose Tiles to Trapdoor Ciphers",
-; Roger Penrose's rhombuses
-; Uses color to show the edge matching rules to force nonperiodicy
+   ; based on Martin Gardner's "Penrose Tiles to Trapdoor Ciphers",
+   ; Roger Penrose's rhombuses
+   ; Uses color to show the edge matching rules to force nonperiodicy
    Angle 10
    Axiom +WC02F--XC04F---YC04F--ZC02F
    W=YC04F++ZC02F----XC04F[-YC04F----WC02F]++
@@ -488,7 +488,7 @@ Penrose4 { ; by Herb Savage
 }
 
 DoublePenrose { ; by Herb Savage
-; This is Penrose3 and Penrose4 superimposed
+   ; This is Penrose3 and Penrose4 superimposed
    Angle 10
    Axiom [X][Y]++[X][Y]++[X][Y]++[X][Y]++[X][Y]
    W=YF++ZF----XF[-YF----WF]++
