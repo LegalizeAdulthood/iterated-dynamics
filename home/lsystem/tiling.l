@@ -63,12 +63,12 @@ KitesAndDartsColor { ; by Herb Savage
   }
 
 SpiralTile { ; by Herb Savage
-; based on Martin Gardner's "Penrose Tiles to Trapdoor Ciphers"
-  angle 16
-  axiom X++X++X++X++|G|X++X++X++X
-  X=[C12FX+++++@.7653668647C10F@I.7653668647[-----Y]+++++C12F]
-  Y=[C12F+++++@.7653668647C10F@I.7653668647[-----Y]+++++C12F]
-  }
+   ; based on Martin Gardner's "Penrose Tiles to Trapdoor Ciphers"
+   Angle 16
+   Axiom X++X++X++X++|G|X++X++X++X
+   X=[C12FX+++++@.7653668647C10F@I.7653668647[-----Y]+++++C12F]
+   Y=[C12F+++++@.7653668647C10F@I.7653668647[-----Y]+++++C12F]
+}
 
 VoderbergTile { ; by Herb Savage
    ; based on Martin Gardner's "Penrose Tiles to Trapdoor Ciphers",

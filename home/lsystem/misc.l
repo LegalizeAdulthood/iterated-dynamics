@@ -18,11 +18,3 @@ Pentagram { ; created by Adrian Mariano
   axiom fx++fx++fx++fx++fx
   x=[++++@i1.618033989f@.618033989f!x!@i.618033989f]
 }
-
-SpiralTile { ; by Herb Savage
-  ; based on Martin Gardner's "Penrose Tiles to Trapdoor Ciphers"
-  angle 16
-  axiom X++X++X++X++|G|X++X++X++X
-  X=[C12FX+++++@.7653668647C10F@I.7653668647[-----Y]+++++C12F]
-  Y=[C12F+++++@.7653668647C10F@I.7653668647[-----Y]+++++C12F]
-}
