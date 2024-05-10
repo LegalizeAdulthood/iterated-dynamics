@@ -257,8 +257,9 @@ REB005A  { ; Ron Barnett, 1993
    |z| <= 100
 }
 
-REB005E { ; Ron Barnett, 1993
+REB005E  { ; Ron Barnett
    ; floating point required
+   ; try p1 = (0,0.09), fn1 = sin, fn2 = tan
    z = pixel:
    x = real(z), y = imag(z)
    const = x*x + y*y
