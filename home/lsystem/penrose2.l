@@ -35,20 +35,6 @@ Penrose1Color { ; by Herb Savage
   F=
 }
 
-Penrose1Forced { ; by Herb Savage
-  ; based on Martin Gardner's "Penrose Tiles to Trapdoor Ciphers",
-  ; Roger Penrose's rhombuses
-  ; Uses color to show the edge matching rules to force nonperiodicy
-  Angle 10
-  Axiom +WC10FC12F--XC11FC10F---YC10FC11F--ZC12FC10F
-  W=YC10FC11F++ZC12FC10F----XC11FC10F[-YC10FC11F----WC10FC12F]++
-  X=+YC10FC11F--ZC12FC10F[---WC10FC12F--XC11FC10F]+
-  Y=-WC10FC12F++XC11FC10F[+++YC10FC11F++ZC12FC10F]-
-  Z=--YC10FC11F++++WC10FC12F[+ZC12FC10F++++XC11FC10F]--XC11FC10F
-  F=
-  C=
-}
-
 PenroseDouble { ; by Herb Savage
   ; This is Penrose3 and Penrose4 superimposed
   Angle 10
