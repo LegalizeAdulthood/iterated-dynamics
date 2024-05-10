@@ -132,16 +132,6 @@ Dekking6 {
   f=
 }
 
-Dekking4 { ; Every even order is like Peano's curve
-  Angle 4
-  Axiom p
-  p=fp+f-qfp
-  q=-f+s--f++r-f+s
-  r=--f++r-f+s--f++r
-  s=+f-qfp+f-q
-  f=
-}
-
 Dekking3 {
   Angle 7
   Axiom g+g+g+g+g+g+g
