@@ -34,9 +34,3 @@ Sierpinski3 { ; From Jim Hanan via Corbit
   f=F[-F]F
   angle 3
 }
-
-SierpinskiSquare { ; Adrian Mariano
-  Angle 4
-  Axiom F+F+F+F
-  F=FF+F+F+F+FF
-}

@@ -216,11 +216,11 @@ Sierpinski2 { ; from The Science of Fractal Images
   angle 6
   }
 
-SierpinskiSquare {
-  axiom F+F+F+F
-  f=FF+F+F+F+FF
-  angle 4
-  }
+SierpinskiSquare { ; Adrian Mariano
+   Angle 4
+   Axiom F+F+F+F
+   F=FF+F+F+F+FF
+}
 
 Pentagram { ; created by Adrian Mariano
    Angle 10
