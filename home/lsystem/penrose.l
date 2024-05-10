@@ -128,16 +128,15 @@ Stars&PentasColor { ; by Philippe Hurbain
    f=g
 }
 
-Stars&Pentas1 {
-                ;; by Philippe Hurbain
-                ;; Same as Stars&PentasColor, showing only coloring
-  Angle 20
-  Axiom [k]++++[k]++++[k]++++[k]++++[k]
-  k=++[@.618034[g-@.5878[f]------ff++++f]a]g@.618034------
-  k=[--k]g--g------[--k]@i.618034g[@.618034|a]
-  a=[@.618034k]++g@.618034[|[g@.5878+++++++f]a]--------g
-  a=++g--------[g@.5878-------f][a]@i.618034g
-  f=g
+Stars&Pentas1 { ; by Philippe Hurbain
+   ; Same as Stars&PentasColor, showing only coloring
+   Angle 20
+   Axiom [k]++++[k]++++[k]++++[k]++++[k]
+   k=++[@.618034[g-@.5878[f]------ff++++f]a]g@.618034------
+   k=[--k]g--g------[--k]@i.618034g[@.618034|a]
+   a=[@.618034k]++g@.618034[|[g@.5878+++++++f]a]--------g
+   a=++g--------[g@.5878-------f][a]@i.618034g
+   f=g
 }
 
 Stars&Pentas2  { ;; by Philippe Hurbain
