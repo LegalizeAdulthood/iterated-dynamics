@@ -76,18 +76,16 @@ Kites&Darts3 {
   f=g
 }
 
-Kites&DartsColor {
-                   ;; by Philippe Hurbain
-                   ;; Penrose's kites and darts, with serpentine coloring
-  Angle 10
-  Axiom c4[k]++[k]++[k]++[k]++[k]
-  k=+[@.618034a[g---@.618c10f][--g+++@.618c10f]]
-  k=f@.618034---[-k]f-f---[-k]@i.618034f[@.618034|a]
-  a=[@.618034k]+f@.618034[|a][|g++@.382c10f]----f+
-  a=f----[a][g--@.382c10f]@i.618034f
-  f=g
+Kites&DartsColor { ; by Philippe Hurbain
+   ; Penrose's kites and darts, with serpentine coloring
+   Angle 10
+   Axiom c4[k]++[k]++[k]++[k]++[k]
+   k=+[@.618034a[g---@.618c10f][--g+++@.618c10f]]
+   k=f@.618034---[-k]f-f---[-k]@i.618034f[@.618034|a]
+   a=[@.618034k]+f@.618034[|a][|g++@.382c10f]----f+
+   a=f----[a][g--@.382c10f]@i.618034f
+   f=g
 }
-
 
 AmmannPolyColor {
                   ;; by Philippe Hurbain
