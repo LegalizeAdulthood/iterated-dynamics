@@ -821,12 +821,6 @@ ULI_3  { ; from ULI.FRM
    |z| <= p2
 }
 
-ULI_6  { ; from ULI.FRM
-   z = Pixel:
-   z = fn1(p1+z)*fn2(p2-z),
-   |z| <= p2+16
-}
-
 WaldoTwinsC(XAXIS_NOPARM) { ; Jonathan Osuch
    ; Generalized by Tobey J. E. Reed
    ; Try p1=0, p2=4, fn1=cosxx, fn2=sin
