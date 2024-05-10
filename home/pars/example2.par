@@ -126,7 +126,7 @@ Fractint           { ; A Newton fractal and the word 'FRACTINT'
 
 Newton-real        { ; Newton's method applied to a real equation
                      ; (c) Sylvie Gallet, 1996
-  reset=1920 type=formula formulafile=fractint.frm
+  reset=1920 type=formula formulafile=id.frm
   formulaname=newton_real passes=1
   center-mag=-2.00627/1.71859/0.6666667/-1 params=0.001/0 float=y
   maxiter=500 inside=0 outside=summ
@@ -221,7 +221,7 @@ Graphs             { ; Better than a graphic calculator!
 
 G-3-03-M           { ; Uses the new round function.
                      ; (c) Sylvie Gallet, 1996
-  reset=1940 type=formula formulafile=fractint.frm formulaname=G-3-03-M
+  reset=1940 type=formula formulafile=id.frm formulaname=G-3-03-M
   function=sinh/atanh passes=1
   center-mag=-0.292907/-0.345016/0.1164033/1/44.999 params=10/0/5/15
   float=y outside=atan decomp=256 periodicity=0
