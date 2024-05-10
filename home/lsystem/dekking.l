@@ -112,13 +112,6 @@ Dekking6 {
   f=
 }
 
-Dekking3 {
-  Angle 7
-  Axiom g+g+g+g+g+g+g
-  g=[@.25f]g+[@.25f]g---[@.25f]g---[@.25f]g--
-  f=
-}
-
 Dekking2&Med {
   Angle 10
   Axiom k
