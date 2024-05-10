@@ -28,10 +28,3 @@ Plant11 { ; Adrian Mariano
    f=F[+F[+F][-F]F][-F[+F][-F]F]F[+F][-F]F
    angle 12
 }
-
-Tree1 { ; Adrian Mariano
-  ; from The Fractal Geometry of Nature by Mandelbrot
-  angle=12;
-  axiom +++FX
-  X=@.6[-FX]+FX
-}

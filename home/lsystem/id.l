@@ -136,11 +136,11 @@ SnowFlake3 { ; Adrian Mariano
   }
 
 Tree1 { ; Adrian Mariano
-; from The Fractal Geometry of Nature by Mandelbrot
-  angle=12;
-  axiom +++FX
-  X=@.6[-FX]+FX
-  }
+   ; from The Fractal Geometry of Nature by Mandelbrot
+   Angle 12
+   Axiom +++FX
+   X=@.6[-FX]+FX
+}
 
 Peano2 { ; Adrian Mariano
 ; from The Fractal Geometry of Nature by Mandelbrot
