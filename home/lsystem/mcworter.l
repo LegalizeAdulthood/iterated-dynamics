@@ -209,7 +209,7 @@ Hex1 {
    z=-c32Yc15f+c32Xc15Fc32X+c15Fc32Y-
    x=-YF+XFX+FY-
    y=+XF-YFY-FX+
-   angle 4
+   Angle 4
 }
 
 Hiway { 
@@ -461,7 +461,7 @@ Pentl { ; William McWorter
 
 Plant04 { ; Adrian Mariano, from the Algorithmic Beauty of Plants
    ; Plant-like structure, figure 1.24d p.25
-   angle 18
+   Angle 18
    axiom x
    X=F[+X]F[-X]+X
    F=FF

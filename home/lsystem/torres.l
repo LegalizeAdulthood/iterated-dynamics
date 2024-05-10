@@ -56,7 +56,7 @@ espiral4 {
 }
 
 1heptagon {
-   angle 7
+   Angle 7
    Axiom +[X]+[X]+[X]+[X]+[X]+[X]+[X]
    X=F-[>1@.4X]+[>1@.4X]+[>1@.4X]
 }

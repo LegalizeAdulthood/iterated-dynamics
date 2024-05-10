@@ -6,7 +6,7 @@ adh6894 { ; Anthony Hanmer 2001, a.hanmer@gmail.com
 
 hc043 {  ;  Hanmer Curve variation
    ;  Anthony Hanmer 2001, a.hanmer@gmail.com
-   angle 4; one of the best
+   Angle 4; one of the best
    axiom |f
    f=f[@.5f]f|f+
 }

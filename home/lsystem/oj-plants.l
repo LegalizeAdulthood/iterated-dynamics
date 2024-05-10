@@ -1,13 +1,13 @@
 ; l-systems from Ole Jorgensen 
 
 Sporrer { ; 
-   angle 4
+   Angle 4
    axiom F+F+F+F
    F=-F+F
 } 
 
 Sporrer2 { ; 
-   angle 4
+   Angle 4
    axiom F+F+F+F
    F=+<1F-<1F
 } 
@@ -572,7 +572,7 @@ Seaweed08 { ;
 
 Seed {  ;
    axiom st
-   angle 50
+   Angle 50
    s=<10x[+++++s][-----s]<10x[++++s][----s]<10
    s=x>10[+++s][---s]x>10[++s][--s]x>10[+s][-s]
    t=<10x[+++++t][-----t]<10x[++++t][----t]<10x

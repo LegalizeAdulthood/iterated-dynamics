@@ -22,7 +22,7 @@ Koch3 { ; Adrian Mariano
 Koch6 { ; Adrian Mariano
    axiom f+f+f+f
    f=f-ff+ff+f+f-f-ff+f+f-f-ff-ff+f
-   angle 4
+   Angle 4
 }
 
 Dragon { ; Adrian Mariano
@@ -58,7 +58,7 @@ DoubleCesaro { ; Adrian Mariano
 
 FlowSnake { ; Adrian Mariano
 ; from The Fractal Geometry of Nature by Mandelbrot
-   angle 6
+   Angle 6
    axiom FL
    L=FL-FR--FR+FL++FLFL+FR-",
    R=+FL-FRFR--FR-FL++FL+FR",
@@ -75,7 +75,7 @@ CantorDust { ; Adrian Mariano
 
 Snowflake2 { ; Adrian Mariano
 ; from The Fractal Geometry of Nature by Mandelbrot
-   angle 12
+   Angle 12
    axiom F
    F=++!F!F--F--F@IQ3|+F!F--
    F=F--F!+++@Q3F@QI3|+F!F@Q3|+F!F
@@ -83,7 +83,7 @@ Snowflake2 { ; Adrian Mariano
 
 SnowflakeColor { ; Adrian Mariano
 ; from The Fractal Geometry of Nature by Mandelbrot
-   angle 12
+   Angle 12
    axiom F
    F=--!F<1!F<1++F<1++F<1@IQ3|-F<1!F<1++
    F=F<1++F<1!---@Q3F<1@QI3|-F<1!F<1@Q3|-F<1!F<1
@@ -92,7 +92,7 @@ SnowflakeColor { ; Adrian Mariano
 
 Island1 { ; Adrian Mariano
    ; from The Fractal Geometry of Nature by Mandelbrot
-   angle 4
+   Angle 4
    axiom F+F+F+F
    F=FFFF-F+F+F-F[-GFF+F+FF+F]FF
    G=@8G@I8
@@ -108,7 +108,7 @@ Island2 { ; Adrian Mariano
 
 Quartet { ; Adrian Mariano
 ; from The Fractal Geometry of Nature by Mandelbrot
-   angle 4
+   Angle 4
    axiom fb
    A=FBFA+HFA+FB-FA
    B=FB+FA-FB-JFBFA
@@ -128,7 +128,7 @@ SnowFlake1 { ; Adrian Mariano
 
 SnowFlake3 { ; Adrian Mariano
 ; from The Fractal Geometry of Nature by Mandelbrot
-   angle 12
+   Angle 12
    axiom fx
    x=++f!x!fy--fx--fy|+@iq3fyf!x!++f!y!++f!y!fx@q3+++f!y!fx
    y=fyf!x!+++@iq3fyf!x!++f!x!++f!y!fx@q3|+fx--fy--fxf!y!++
@@ -152,7 +152,7 @@ Peano2 { ; Adrian Mariano
 
 Sierpinski1 { ; Adrian Mariano
 ; from The Fractal Geometry of Nature by Mandelbrot
-   angle 3
+   Angle 3
    axiom F
    F=FXF
    X=+FXF-FXF-FXF+
@@ -160,7 +160,7 @@ Sierpinski1 { ; Adrian Mariano
 
 Koch4 { ; Adrian Mariano
 ; from The Fractal Geometry of Nature by Mandelbrot
-   angle 12
+   Angle 12
    axiom f++++f++++f
    f=+f--f++f-
 }
@@ -199,13 +199,13 @@ Peano3 {
    axiom x
    x=XFYFX+F+YFXFY-F-XFYFX
    y=YFXFY-F-XFYFX+F+YFXFY
-   angle 4
+   Angle 4
 }
 
 Koch5 {
    axiom f+F+F+F
    f=F+F-F-FFF+F+F-F
-   angle 4
+   Angle 4
 }
 
 Sierpinski2 { ; from The Science of Fractal Images
@@ -229,7 +229,7 @@ Pentagram { ; created by Adrian Mariano
 
 QuadKoch { ; Adrian Mariano, from the Algorithmic Beauty of Plants
    ; Quadratic Koch island, Figure 1.7a p.9
-   angle 4
+   Angle 4
    AXIOM F-F-F-F-
    F=F+FF-FF-F-F+F+FF-F-F+F+FF+FF-F
 }
@@ -252,7 +252,7 @@ Fass2 { ; Adrian Mariano, from the Algorithmic Beauty of Plants
 
 QuadGosper { ; Adrian Mariano, from the Algorithmic Beauty of Plants
    ; Quadratic Gosper curve, Figure 1.11b p.12
-   angle 4
+   Angle 4
    axiom -Fr
    l=FlFl-Fr-Fr+Fl+Fl-Fr-FrFl+Fr+FlFlFr-Fl+Fr+FlFl+Fr-FlFr-Fr-Fl+Fl+FrFr-
    r=+FlFl-Fr-Fr+Fl+FlFr+Fl-FrFr-Fl-Fr+FlFrFr-Fl-FrFl+Fl+Fr-Fr-Fl+Fl+FrFr
@@ -315,7 +315,7 @@ Plant09 { ; Adrian Mariano
 Plant10 { ; Adrian Mariano
    axiom f
    f=f[+ff][-ff]f[+ff][-ff]f
-   angle 10
+   Angle 10
 }
 
 Plant11 { ; Adrian Mariano
@@ -326,13 +326,13 @@ Plant11 { ; Adrian Mariano
 
 Curve1 { ; Adrian Mariano, from the Algorithmic Beauty of Plants
    ; curve from figure 1.9a p.10
-   angle 4
+   Angle 4
    axiom F-F-F-F-
    f=FF-F-F-F-F-F+F
 }
 
 Curve2 { ; Adrian Mariano, from the Algorithmic Beauty of Plants
-   angle 4
+   Angle 4
    axiom F-F-F-F-
    f=FF-F+F-F-FF
 }
@@ -340,7 +340,7 @@ Curve2 { ; Adrian Mariano, from the Algorithmic Beauty of Plants
 Curve3 { ; Adrian Mariano, from the Algorithmic Beauty of Plants
    ; curve from figure 1.9e p.10
    axiom F-F-F-F-
-   angle 4
+   Angle 4
    F=F-FF--F-F
 }
 
@@ -348,7 +348,7 @@ Curve4 { ; Adrian Mariano
    axiom yf
    x=YF+XF+Y
    y=XF-YF-X
-   angle 6
+   Angle 6
 }
 
 Leaf1 { ; Adrian Mariano, from the Algorithmic Beauty of Plants

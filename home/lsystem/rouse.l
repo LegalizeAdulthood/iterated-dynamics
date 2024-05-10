@@ -6,7 +6,7 @@
 ; might not be unique, but hey...):
 
 Hextar { ; "Hexagonal Star" by Michael A. Rouse, 1996
-   angle 6
+   Angle 6
    axiom s ; to make things start at
    s=L     ; order 1
    L=LzfR--fR-f++Lf++L-f+Lf+R--y
@@ -16,7 +16,7 @@ Hextar { ; "Hexagonal Star" by Michael A. Rouse, 1996
 }
 
 Hextarb { ; "Hexagonal Star b" 
-   angle 6 { ; by Michael A. Rouse, 1996
+   Angle 6 { ; by Michael A. Rouse, 1996
    axiom s ; to make things start at
    s=Lf++Lf++Lf     ; order 1
    L=LzfR--fR-f++Lf++L-f+Lf+R--y
@@ -34,7 +34,7 @@ HexGasket { ; "Hexagonal Gasket" by Michael A. Rouse
    ; six-fold rotational symmetry, symmetric about the origin, and
    ; appears roughly the same at various magnifications. Besides, it's
    ; simple and cool!
-   angle 6
+   Angle 6
    axiom F+F+F+F+F+F--
    F=F+F+F--F--F+F+F
 }
