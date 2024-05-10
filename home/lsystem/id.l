@@ -452,16 +452,16 @@ ColorPenrose1 { ; by Herb Savage
   }
 
 Penrose2 { ; by Herb Savage
-; based on Martin Gardner's "Penrose Tiles to Trapdoor Ciphers",
-; Roger Penrose's rhombuses
-  Angle 10
-  Axiom ++ZF----XF-YF----WF
-  W=YF++ZF----XF[-YF----WF]++
-  X=+YF--ZF[---WF--XF]+
-  Y=-WF++XF[+++YF++ZF]-
-  Z=--YF++++WF[+ZF++++XF]--XF
-  F=
-  }
+   ; based on Martin Gardner's "Penrose Tiles to Trapdoor Ciphers",
+   ; Roger Penrose's rhombuses
+   Angle 10
+   Axiom ++ZF----XF-YF----WF
+   W=YF++ZF----XF[-YF----WF]++
+   X=+YF--ZF[---WF--XF]+
+   Y=-WF++XF[+++YF++ZF]-
+   Z=--YF++++WF[+ZF++++XF]--XF
+   F=
+}
 
 Penrose3 { ; by Herb Savage
    ; based on Martin Gardner's "Penrose Tiles to Trapdoor Ciphers",

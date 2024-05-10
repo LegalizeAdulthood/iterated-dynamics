@@ -49,18 +49,6 @@ Penrose1Forced { ; by Herb Savage
   C=
 }
 
-Penrose2 { ; by Herb Savage
-  ; based on Martin Gardner's "Penrose Tiles to Trapdoor Ciphers",
-  ; Roger Penrose's rhombuses
-  Angle 10
-  Axiom ++ZF----XF-YF----WF
-  W=YF++ZF----XF[-YF----WF]++
-  X=+YF--ZF[---WF--XF]+
-  Y=-WF++XF[+++YF++ZF]-
-  Z=--YF++++WF[+ZF++++XF]--XF
-  F=
-}
-
 PenroseDouble { ; by Herb Savage
   ; This is Penrose3 and Penrose4 superimposed
   Angle 10
