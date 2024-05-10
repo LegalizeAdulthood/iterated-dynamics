@@ -264,12 +264,12 @@ QuadGosper { ; Adrian Mariano, from the Algorithmic Beauty of Plants
   }
 
 Plant01 { ; Adrian Mariano, from the Algorithmic Beauty of Plants
-     ; Plant-like structure, figure 1.24a p.25
-     ; also p.285a The Science of Fractal Images
-  angle 14
-  axiom f
-  f=F[+F]F[-F]F
-  }
+   ; Plant-like structure, figure 1.24a p.25
+   ; also p.285a The Science of Fractal Images
+   Angle 14
+   Axiom f
+   f=F[+F]F[-F]F
+}
 
 Plant02 { ; Adrian Mariano, from the Algorithmic Beauty of Plants
    ; Plant-like structure, figure 1.24b p.25
