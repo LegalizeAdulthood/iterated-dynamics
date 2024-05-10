@@ -343,7 +343,7 @@ Boat6 { ;
   F=F+F+FF+FFF
 }
 
-03M+_Ang6 {  ;
+03M+_Ang6 {
   Angle 6
   Axiom F
   F=F+F+FF+FFF
@@ -361,7 +361,7 @@ Boat6 { ;
   F=<1F+<1F+FF>1+FFF>1
 } 
 
-03M+_Ang6 { ;
+03M+_Ang6.2 {
   Angle 6
   Axiom F
   F=<1F+<1F+FF>1+FFF>1
