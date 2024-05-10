@@ -401,11 +401,11 @@ Maze01 {
 }
 
 Maze&Fractal1 {
-  Angle 3
-  Axiom x
-  x=fy+fyfy-fy
-  y=fx-fxfx+fx
-  f=
+   Angle 3
+   Axiom x
+   x=fy+fyfy-fy
+   y=fx-fxfx+fx
+   f=
 }
 
 Moore { ; William McWorter

@@ -473,14 +473,6 @@ Maze&Fractal1M {
   y=x-f-xffx+f+x
 }
 
-Maze&Fractal1 {
-  Angle 3
-  Axiom x
-  x=fy+fyfy-fy
-  y=fx-fxfx+fx
-  f=
-}
-
 Maze01rnd {
   Angle 6
   Axiom x
