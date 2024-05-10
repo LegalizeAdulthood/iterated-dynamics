@@ -1,10 +1,10 @@
 Mandel_Demo        { ; PAR for initialization of Fractint demo
-  reset=1900 type=mandel corners=-2.5/1.5/-1.5/1.5 params=0/0 inside=0
+  reset type=mandel corners=-2.5/1.5/-1.5/1.5 params=0/0 inside=0
   sound=no maxiter=678
   }
 
 trunc_demo        { ; PAR for initialization of Fractint demo (New in 19.4)
-  reset=1940 type=lambda(fn||fn) function=conj/trunc
+  reset type=lambda(fn||fn) function=conj/trunc
   center-mag=-4.44089e-015/3.55271e-015/0.2339956
   params=-0.7398119122257053/1.28140703517588/52 float=y maxiter=255
   bailoutest=or inside=0 decomp=256 sound=no
