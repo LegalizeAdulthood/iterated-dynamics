@@ -841,17 +841,6 @@ Vertigo1 { ; by Morgan Savage
   X=X>1F+@.9997X
 }
 
-VoderbergTile { ; by Herb Savage
-  ; based on Martin Gardner's "Penrose Tiles to Trapdoor Ciphers",
-  ; A spiral tiling by Heinz Voderberg
-  angle 30
-  axiom \84.1A\96@4.783386117M@I4.783386117/96A
-  A=X\12X\12X\12X\12X\12X\12X\12X\12X\12X\12X\12X\12X\12X\12X\12Z
-  X=[D\78D\46.37236@3.393427D@I3.393427/46.37236D\114[\168X\24Y]D\78D\46.37236@3.393427D@I3.393427/46.37236D/78D]
-  Y=[D\78D\46.37236@3.393427D@I3.393427/46.37236D/78D\168[\192Y]D\78D\46.37236@3.393427D@I3.393427/46.37236D]
-  Z=[D\78D\46.37236@3.393427D@I3.393427/46.37236D\114D\78D\46.37236@3.393427D@I3.393427/46.37236D/78D]
-}
-
 Xmastree { ; William McWorter
   Angle 10
   Axiom p
