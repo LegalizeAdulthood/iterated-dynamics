@@ -288,7 +288,7 @@ REBRefInd5  { ; Ron Barnett
 RecipIke  { ; Ron Barnett
    ; try p1 = (-1.44,-0.4) with royal.map
    z = pixel:
-   z = 1/(z*z*z + (p1-1)*z - p1),
+   z = 1/(z*z*z + (p1-1)*z - p1)
    |z| <= 4
 }
 

@@ -174,12 +174,6 @@ IkeNewtJul          { ; from REB001.FRM - by Ron Barnett
    0.001 <= |zf|
 }
 
-RecipIke            { ; from REB001.FRM - by Ron Barnett
-   z = pixel:
-   z = 1/(z*z*z + (p1-1)*z - p1),
-   |z| <= 4
-}
-
 F'FunctionIke       { ; generalized by Jon Horner
                       ; from RecipIke in REB001.FRM
    : - by Ron Barnett
