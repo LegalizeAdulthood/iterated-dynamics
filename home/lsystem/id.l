@@ -190,11 +190,10 @@ Hilbert { ; Ken Philip, from The Science of Fractal Images
   }
 
 Sierpinski3 { ; From Jim Hanan via Corbit
-  axiom F-F-F
-  f=F[-F]F
-  angle 3
-  }
-
+   Angle 3
+   Axiom F-F-F
+   f=F[-F]F
+}
 
 Peano3 {
   axiom x

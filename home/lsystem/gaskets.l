@@ -28,9 +28,3 @@ Sierpinski2 { ; from The Science of Fractal Images
   x=--FXF++FXF++FXF--
   angle 6
 }
-
-Sierpinski3 { ; From Jim Hanan via Corbit
-  axiom F-F-F
-  f=F[-F]F
-  angle 3
-}
