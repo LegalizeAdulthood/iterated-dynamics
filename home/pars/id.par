@@ -377,7 +377,7 @@ EvilFrog          { ; Kermit with rabies                   Wesley Loewer
 Horsetail          { ; MIIM Julia                           Michael Snyder
                      ; Reminds me of a horsetail fern
                      ; Give it your highest resolution.
-  reset=1732 type=julia_inverse miim=depth/left
+  reset type=julia_inverse miim=depth/left
   corners=-1.303326/1.303335/-1.0648/1.064791
   params=-0.194/0.6557/3/1024
   }
@@ -385,7 +385,7 @@ Horsetail          { ; MIIM Julia                           Michael Snyder
 SeaHorse           { ; MIIM Julia                           Michael Snyder
                      ; The famous Seahorse Julia -- from a different angle!
                      ; Give it your highest resolution.
-  reset=1732 type=julia_inverse miim=depth/left
+  reset type=julia_inverse miim=depth/left
   corners=-0.213794/0.213791/-1.003197/1.003186/-1.812457/0.013164
   params=-0.74543/0.11301/3/1024
   }
@@ -393,7 +393,7 @@ SeaHorse           { ; MIIM Julia                           Michael Snyder
 SeaShell           { ; MIIM Julia                           Michael Snyder
                      ; Like a Chambered Nautilus cut in half; my favorite.
                      ; Give it your highest resolution.
-  reset=1732 type=julia_inverse miim=depth/right
+  reset type=julia_inverse miim=depth/right
   corners=0.839251/-0.839269/-1.119046/1.119006/-0.839269/1.119006
   params=0.27334/0.00742/5/1024
   }
