@@ -1,15 +1,12 @@
 { Generation of Penrose aperiodic tilings
 
 Thanks to Herb Savage, who showed it was possible to generate those tilings
-with L-systems and Fractint.
+with L-systems.
 
 Based on decomposition of tilings described in Tilings and Pattern, by
 Branko Grunbaum and G.C. Shepard, W.H. Freeman and Company, chapter 10
 
 Philippe Hurbain
-49 rue Jules Fossier
-95380 LOUVRES
-FRANCE
 }
 
 

@@ -1,5 +1,5 @@
 ; Date: Fri, 18 Apr 1997 11:19:47 -0500
-; From: "William A McWorter Jr." <mcworter@midohio.net>
+; From: "William A McWorter Jr."
 ; Subject: Gary Teachout's lsystems
 ;
 ; Some of Gary's lsystems are so weird I added some of his comments in
@@ -9,7 +9,7 @@
 ;
 ; ======
 ;
-; Gary Teachout's lsystems converted to Fractint lsystem syntax by William McWorter
+; Gary Teachout's lsystems converted to lsystem syntax by William McWorter
 ; Those lsystems with a * by Gary's name were written by Gary.
 ;
 ; The dragon, c-curve, tri2m, leaf and fern, all use a delay to simulate size
@@ -519,7 +519,7 @@ Tri-4-b { ; Gary Teachout
    f=
 }
 
-Cross5c { ; Gary Teachout.  Same as Quartet in fractint.l
+Cross5c { ; Gary Teachout.  Same as Quartet in id.l
    Angle 4
    Axiom x
    x=fx+fy-fx-fxfy+

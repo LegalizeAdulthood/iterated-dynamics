@@ -5,7 +5,7 @@
 ; as well as simple plant structures.
 ;
 ; L-system definitions created for Iterated Dynamics
-; by Richard Thomson <legalize@xmission.com>
+; by Richard Thomson
 ;
 Quad_Koch_Isle1 {   ; quadratic Koch island 1
    Angle 4           ; Figure 2.2(a), order 0

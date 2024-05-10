@@ -1,5 +1,5 @@
 ; Date: Wed, 19 Mar 1997 14:04:40 -0600
-; From: "William A McWorter Jr." <mcworter@midohio.net>
+; From: "William A McWorter Jr."
 ;
 
 Norton12 {

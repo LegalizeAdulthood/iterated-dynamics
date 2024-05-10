@@ -1,5 +1,4 @@
-;  From: "Anthony (Tony) Hanmer" <ahanmer@azerin.com>
-;  To: <fractint@lists.xmission.com>
+;  From: "Anthony (Tony) Hanmer"
 ;  Subject: (fractint) L-system tinkerings
 ;  Date: Tue, 16 Nov 1999 11:09:42 +0400
 ;

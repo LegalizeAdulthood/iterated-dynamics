@@ -1,5 +1,5 @@
 ; All the systems in this file is done
-;  by Ole Jorgensen (blwl@sol.dk)
+;  by Ole Jorgensen
 ;
 
 Boat { ; Try order 20

@@ -1,8 +1,6 @@
-;  From: "Anthony (Tony) Hanmer" <ahanmer@azerin.com>
-;  To: <fractint@lists.xmission.com>
+;  From: "Anthony (Tony) Hanmer"
 ;  Subject: (fractint) More L-Systems
 ;  Date: Thu, 18 Nov 1999 11:05:28 +0400
-;  X-MimeOLE: Produced By Microsoft MimeOLE V4.71.1712.3
 ;
 ;  Rather quiet par-wise lately!
 ;
