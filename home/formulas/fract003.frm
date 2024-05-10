@@ -259,14 +259,6 @@ REBRefInd1  { ; Ron Barnett
    |z| <= 100
 }
 
-REBRefInd2  { ; Ron Barnett
-   ; Use floating point
-   ; try p1 = (0.489, 0.844), fn1 = sin, fn2 = sqr
-   z = pixel:
-   z = (z*z-1)/(z*z+2)*fn1(z)*fn2(z) + p1,
-   |z| <= 100
-}
-
 REBRefInd3  { ; Ron Barnett
    ; Use floating point
    ; p1 = (0.48, 0.67), fn1 = sin

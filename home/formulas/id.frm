@@ -186,8 +186,9 @@ FlipLambdaJ { ; Ron Barnett, 1993
    |z| <= 100
 }
 
-REBRefInd2 {  ; Ron Barnett, 1993
+REBRefInd2  { ; Ron Barnett, 1993
    ; Use floating point
+   ; try p1 = (0.489, 0.844), fn1 = sin, fn2 = sqr
    z = pixel:
    z = (z*z-1)/(z*z+2)*fn1(z)*fn2(z) + p1
    |z| <= 100
