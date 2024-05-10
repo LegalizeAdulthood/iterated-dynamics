@@ -318,12 +318,11 @@ Plant10 { ; Adrian Mariano
    angle 10
    }
 
-
 Plant11 { ; Adrian Mariano
-   axiom f
+   Angle 12
+   Axiom f
    f=F[+F[+F][-F]F][-F[+F][-F]F]F[+F][-F]F
-   angle 12
-   }
+}
 
 Curve1 { ; Adrian Mariano, from the Algorithmic Beauty of Plants
      ; curve from figure 1.9a p.10
