@@ -220,10 +220,11 @@ REB004K { ; Ron Barnett, 1993
    |z| <= 100
 }
 
-REB004L { ; Ron Barnett, 1993
+REB004L  { ; Ron Barnett, 1993
    ; floating point required
+   ; try p1 = 1, p2 - 2, fn1 = tan
    z = pixel:
-   x = flip(pixel + fn1(p1/z - z/(p2+1)))
+   x = flip(pixel + fn1(p1/z - z/(p2+1)));
    z = x*z + pixel
    |z| <= 100
 }
