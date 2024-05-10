@@ -510,15 +510,15 @@ Sphinx { ; by Herb Savage
 }
 
 PentaPlexity {
-; Manual construction by Roger Penrose as a prelude to his development of
-; the famous Penrose tiles (the kites and darts) that tile the plane
-; only non-periodically.
-; Translated first to a "dragon curve" and finally to an L-system
-; by Joe Saverino.
-  Angle 10
-  Axiom F++F++F++F++F
-  F=F++F++F|F-F++F
-  }
+   ; Manual construction by Roger Penrose as a prelude to his development of
+   ; the famous Penrose tiles (the kites and darts) that tile the plane
+   ; only non-periodically.
+   ; Translated first to a "dragon curve" and finally to an L-system
+   ; by Joe Saverino.
+   Angle 10
+   Axiom F++F++F++F++F
+   F=F++F++F|F-F++F
+}
 
 ; old PentaPlexity:
 ; Angle 10

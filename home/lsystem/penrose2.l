@@ -96,17 +96,6 @@ PenroseDouble { ; by Herb Savage
   F=
 }
 
-PentaPlexity {
-  ; Manual construction by Roger Penrose as a prelude to his development of
-  ; the famous Penrose tiles (the kites and darts) that tile the plane
-  ; only non-periodically.
-  ; Translated first to a "dragon curve" and finally to an L-system
-  ; by Joe Saverino.
-  Angle 10
-  Axiom F++F++F++F++F
-  F=F++F++F|F-F++F
-}
-
 ; Generation of Penrose aperiodic tilings
 ;
 ; Thanks to Herb Savage, who showed it was possible to generate those tilings
