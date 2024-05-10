@@ -22,14 +22,6 @@ Island2 { ; Adrian Mariano
   g=@6G@I6
 }
 
-Sierpinski1 { ; Adrian Mariano
-  ; from The Fractal Geometry of Nature by Mandelbrot
-  angle 3
-  axiom F
-  F=FXF
-  X=+FXF-FXF-FXF+
-}
-
 Sierpinski2 { ; from The Science of Fractal Images
   axiom FXF--FF--FF
   f=FF
