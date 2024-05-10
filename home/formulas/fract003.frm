@@ -821,12 +821,6 @@ ULI_3  { ; from ULI.FRM
    |z| <= p2
 }
 
-ULI_4  { ; from ULI.FRM
-   z = Pixel:
-   z = fn1(1/(z+p1))*fn2(z+p1),
-   |z| <= p2
-}
-
 ULI_5  { ; from ULI.FRM
    z = Pixel, c = fn1(pixel):
    z = fn2(1/(z+c))*fn3(z+c),
