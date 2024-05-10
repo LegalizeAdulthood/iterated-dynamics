@@ -1,6 +1,6 @@
 
-; These LSystems are designed to be run from FRACTINT.  No compilation is
-; necessary, just copy this file to the FRACTINT directory and run FRACTINT.
+; These LSystems are designed to be run from Id.  No compilation is
+; necessary, just copy this file to the Id directory and run Id.
 ; Select the lsystem fractal type and press F6 to select a file.
 
 
@@ -86,16 +86,15 @@ VoderbergTile { ; by Herb Savage
 ; color cycling introducing hypnotic states.
 
 Vertigo1 { ; by Morgan Savage
-; Try order 13 and color cycle in both 256 and 16 color modes
-  Angle 46
-  Axiom X
-  X=X>1F+@.9997X
-  }
+   ; Try order 13 and color cycle
+   Angle 46
+   Axiom X
+   X=X>1F+@.9997X
+}
 
 Vertigo2 { ; by Morgan Savage
-; Try order 13 and color cycle in both 256 and 16 color modes
-  Angle 49
-  Axiom X
-  X=X>1F+@.9997X
-  }
-
+   ; Try order 13 and color cycle
+   Angle 49
+   Axiom X
+   X=X>1F+@.9997X
+}

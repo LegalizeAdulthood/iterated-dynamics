@@ -37,17 +37,3 @@ SpiralTile { ; by Herb Savage
   X=[C12FX+++++@.7653668647C10F@I.7653668647[-----Y]+++++C12F]
   Y=[C12F+++++@.7653668647C10F@I.7653668647[-----Y]+++++C12F]
 }
-
-Vertigo1 { ; by Morgan Savage
-  ; Try order 13 and color cycle in both 256 and 16 color modes
-  Angle 46
-  Axiom X
-  X=X>1F+@.9997X
-}
-
-Vertigo2 { ; by Morgan Savage
-  ; Try order 13 and color cycle in both 256 and 16 color modes
-  Angle 49
-  Axiom X
-  X=X>1F+@.9997X
-}
