@@ -212,19 +212,6 @@ REB004N  { ; Ron Barnett
    z = pixel*(x - 1/sqr(x) + p2), |z| <= 100
 }
 
-REB005A  { ; Ron Barnett
-              ; floating point required
-   ; try p1 = 0.77, fn1 = ident, fn2 = ident
-   z = pixel:
-   x = real(z), y = imag(z);
-   const = x*x + y*y;
-   x1 = -fn1(const - 12*x)*x/(4*const);
-   y1 = -fn2(const + 12*y)*y/(4*const);
-   x2 = x1*x1 - y1*y1 + p1;
-   y2 = 2*x1*y1;
-   z = x2 + flip(y2), |z| <= 100
-}
-
 REB005B  { ; Ron Barnett
               ; floating point required
    ; try p1 = 0.01, fn1 = ident, fn2 = ident
