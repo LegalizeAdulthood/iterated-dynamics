@@ -284,8 +284,9 @@ REB005F { ; Ron Barnett, 1993
    |z| <= 100
 }
 
-REB005G { ; Ron Barnett, 1993
+REB005G  { ; Ron Barnett
    ; floating point required
+   ; try fn1 = ident, fn2 = sin
    z = pixel:
    x = real(z), y = imag(z)
    const = x*x + y*y
@@ -296,7 +297,6 @@ REB005G { ; Ron Barnett, 1993
    z = x2 + flip(y2)
    |z| <= 100
 }
-
 
 {--- Bradley Beacham -----------------------------------------------------}
 
