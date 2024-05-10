@@ -985,17 +985,6 @@ RCL_Cosh_J { ; Ron Lewen
    abs(z) < 40
 }
 
-RCL_Cross1  { ; Ron Lewen
-   ; Try p1=(0,1), fn1=sin and fn2=sqr.  Set corners at
-   ; -10/10/-7.5/7.5 to see a cross shape.  The larger
-   ; lakes at the center of the cross have good detail
-   ; to zoom in on.
-   ; Use floating point.
-   z=pixel:
-   z=p1*fn1(fn2(z+p1)),
-   |z| <= 4
-}
-
 RCL_Cross2 { ; Ron Lewen
    ; Try p1=(0,1), fn1=sin and fn2=sqr.  Set corners at
    ; -10/10/-7.5/7.5 to see a deformed cross shape.
