@@ -404,12 +404,6 @@ ScSkCosH(XYAXIS) { ; Lee Skinner
    |z|<TEST
 }
 
-ScSkLMS(XAXIS) { ; Lee Skinner
-   z = pixel, TEST = (p1+3):
-   z = log(z) - sin(z),
-   |z|<TEST
-}
-
 ScSkZCZZ(XYAXIS) { ; Lee Skinner
    z = pixel, TEST = (p1+3):
    z = (z*cosxx(z)) - z,

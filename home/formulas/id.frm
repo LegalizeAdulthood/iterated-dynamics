@@ -1473,10 +1473,10 @@ OldManowar(XAXIS) {
    |z| < test
 }
 
-ScSkLMS(XAXIS) {
-   z = pixel, test = (p1+3):
+ScSkLMS(XAXIS) { ; Lee Skinner
+   z = pixel, test = p1 + 3:
    z = log(z) - sin(z)
-   |z|<test
+   |z| < test
 }
 
 ScSkZCZZ(XYAXIS) {
