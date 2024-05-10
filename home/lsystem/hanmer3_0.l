@@ -253,11 +253,10 @@ ADH124e { ; Anthony Hanmer 2000
    f=f-f+f-f
 }
 
-
 ADH125 { ; Anthony Hanmer 2000
    Angle 4
    Axiom f
-s f=ff--g+g++ff++g
+   f=ff--g+g++ff++g
 }
 
 ADH125a { ; Anthony Hanmer 2000
@@ -304,8 +303,7 @@ ADH127b { ; Anthony Hanmer 2000
 
 ADH127c { ; Anthony Hanmer 2000
    Angle 4
-   Axiom 
-f--@.75f--@.75f--@.75f--@.75f--@.75f--@.75f--@.75f--@.75f--@.75f--@.75f
+   Axiom f--@.75f--@.75f--@.75f--@.75f--@.75f--@.75f--@.75f--@.75f--@.75f--@.75f
    f=+ff--g-g+ff
 }
 
