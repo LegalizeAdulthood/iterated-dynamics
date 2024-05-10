@@ -14,11 +14,3 @@ Leaf1 { ; Adrian Mariano, from the Algorithmic Beauty of Plants
   y=F[-B(4)]Fx
   F=@1.18F@i1.18
 }
-
-MyTree { ; Adrian Mariano
-  Angle 16
-  Axiom ++++F
-  F=FF-[XY]+[XY]
-  X=+FY
-  Y=-FX
-}

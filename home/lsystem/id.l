@@ -386,12 +386,12 @@ Bush { ; Adrian Mariano
 }
 
 MyTree { ; Adrian Mariano
-  Angle 16
-  Axiom ++++F
-  F=FF-[XY]+[XY]
-  X=+FY
-  Y=-FX
-  }
+   Angle 16
+   Axiom ++++F
+   F=FF-[XY]+[XY]
+   X=+FY
+   Y=-FX
+}
 
 ColorTriangGasket { ; Adrian Mariano
   Angle 6
