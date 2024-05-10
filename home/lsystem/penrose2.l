@@ -40,16 +40,6 @@ Kites&Darts2 {
   f=g
 }
 
-Kites&Darts3 {
-               ;; by Philippe Hurbain
-               ;; Penrose's kites and darts, with darts seed
-  Angle 10
-  Axiom [a]++[a]++[a]++[a]++[a]
-  k=+[@.618034a]f@.618034---[-k]f-f---[-k]@i.618034f[@.618034|a]
-  a=[@.618034k]+f@.618034[|a]----f+f----[a]@i.618034f
-  f=g
-}
-
 AmmannPolyColor {
                   ;; by Philippe Hurbain
                   ;; Ammann's coloring of Penrose's rhombuses, giving an
