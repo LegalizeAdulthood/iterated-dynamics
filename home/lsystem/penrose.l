@@ -56,14 +56,13 @@ Kites&Darts {
   f=g
 }
 
-Kites&Darts2 {
-               ;; by Philippe Hurbain
-               ;; Penrose's kites and darts, with kites seed
-  Angle 10
-  Axiom [k]++[k]++[k]++[k]++[k]
-  k=+[@.618034a]f@.618034---[-k]f-f---[-k]@i.618034f[@.618034|a]
-  a=[@.618034k]+f@.618034[|a]----f+f----[a]@i.618034f
-  f=g
+Kites&Darts2 { ; by Philippe Hurbain
+   ; Penrose's kites and darts, with kites seed
+   Angle 10
+   Axiom [k]++[k]++[k]++[k]++[k]
+   k=+[@.618034a]f@.618034---[-k]f-f---[-k]@i.618034f[@.618034|a]
+   a=[@.618034k]+f@.618034[|a]----f+f----[a]@i.618034f
+   f=g
 }
 
 Kites&Darts3 { ; by Philippe Hurbain
