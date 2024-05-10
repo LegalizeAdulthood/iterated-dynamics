@@ -20,7 +20,7 @@ Koch3 { ; Adrian Mariano
 }
 
 Koch6 { ; Adrian Mariano
-   axiom f+f+f+f
+   Axiom f+f+f+f
    f=f-ff+ff+f+f-f-ff+f+f-f-ff-ff+f
    Angle 4
 }
@@ -52,14 +52,14 @@ Cesaro { ; Adrian Mariano
 DoubleCesaro { ; Adrian Mariano
 ; from The Fractal Geometry of Nature by Mandelbrot
    Angle 4
-   axiom D\90D\90D\90D\90
+   Axiom D\90D\90D\90D\90
    D=\42!D!/84!D!\42
 }
 
 FlowSnake { ; Adrian Mariano
 ; from The Fractal Geometry of Nature by Mandelbrot
    Angle 6
-   axiom FL
+   Axiom FL
    L=FL-FR--FR+FL++FLFL+FR-",
    R=+FL-FRFR--FR-FL++FL+FR",
    F=
@@ -76,7 +76,7 @@ CantorDust { ; Adrian Mariano
 Snowflake2 { ; Adrian Mariano
 ; from The Fractal Geometry of Nature by Mandelbrot
    Angle 12
-   axiom F
+   Axiom F
    F=++!F!F--F--F@IQ3|+F!F--
    F=F--F!+++@Q3F@QI3|+F!F@Q3|+F!F
 }
@@ -84,7 +84,7 @@ Snowflake2 { ; Adrian Mariano
 SnowflakeColor { ; Adrian Mariano
 ; from The Fractal Geometry of Nature by Mandelbrot
    Angle 12
-   axiom F
+   Axiom F
    F=--!F<1!F<1++F<1++F<1@IQ3|-F<1!F<1++
    F=F<1++F<1!---@Q3F<1@QI3|-F<1!F<1@Q3|-F<1!F<1
    F=
@@ -93,7 +93,7 @@ SnowflakeColor { ; Adrian Mariano
 Island1 { ; Adrian Mariano
    ; from The Fractal Geometry of Nature by Mandelbrot
    Angle 4
-   axiom F+F+F+F
+   Axiom F+F+F+F
    F=FFFF-F+F+F-F[-GFF+F+FF+F]FF
    G=@8G@I8
 }
@@ -109,7 +109,7 @@ Island2 { ; Adrian Mariano
 Quartet { ; Adrian Mariano
 ; from The Fractal Geometry of Nature by Mandelbrot
    Angle 4
-   axiom fb
+   Axiom fb
    A=FBFA+HFA+FB-FA
    B=FB+FA-FB-JFBFA
    F=
@@ -129,7 +129,7 @@ SnowFlake1 { ; Adrian Mariano
 SnowFlake3 { ; Adrian Mariano
 ; from The Fractal Geometry of Nature by Mandelbrot
    Angle 12
-   axiom fx
+   Axiom fx
    x=++f!x!fy--fx--fy|+@iq3fyf!x!++f!y!++f!y!fx@q3+++f!y!fx
    y=fyf!x!+++@iq3fyf!x!++f!x!++f!y!fx@q3|+fx--fy--fxf!y!++
    f=
@@ -153,7 +153,7 @@ Peano2 { ; Adrian Mariano
 Sierpinski1 { ; Adrian Mariano
 ; from The Fractal Geometry of Nature by Mandelbrot
    Angle 3
-   axiom F
+   Axiom F
    F=FXF
    X=+FXF-FXF-FXF+
 }
@@ -161,7 +161,7 @@ Sierpinski1 { ; Adrian Mariano
 Koch4 { ; Adrian Mariano
 ; from The Fractal Geometry of Nature by Mandelbrot
    Angle 12
-   axiom f++++f++++f
+   Axiom f++++f++++f
    f=+f--f++f-
 }
 
@@ -196,14 +196,14 @@ Sierpinski3 { ; From Jim Hanan via Corbit
 }
 
 Peano3 {
-   axiom x
+   Axiom x
    x=XFYFX+F+YFXFY-F-XFYFX
    y=YFXFY-F-XFYFX+F+YFXFY
    Angle 4
 }
 
 Koch5 {
-   axiom f+F+F+F
+   Axiom f+F+F+F
    f=F+F-F-FFF+F+F-F
    Angle 4
 }
@@ -253,7 +253,7 @@ Fass2 { ; Adrian Mariano, from the Algorithmic Beauty of Plants
 QuadGosper { ; Adrian Mariano, from the Algorithmic Beauty of Plants
    ; Quadratic Gosper curve, Figure 1.11b p.12
    Angle 4
-   axiom -Fr
+   Axiom -Fr
    l=FlFl-Fr-Fr+Fl+Fl-Fr-FrFl+Fr+FlFlFr-Fl+Fr+FlFl+Fr-FlFr-Fr-Fl+Fl+FrFr-
    r=+FlFl-Fr-Fr+Fl+FlFr+Fl-FrFr-Fl-Fr+FlFrFr-Fl-FrFl+Fl+Fr-Fr-Fl+Fl+FrFr
    f=
@@ -313,7 +313,7 @@ Plant09 { ; Adrian Mariano
 }
 
 Plant10 { ; Adrian Mariano
-   axiom f
+   Axiom f
    f=f[+ff][-ff]f[+ff][-ff]f
    Angle 10
 }
@@ -327,25 +327,25 @@ Plant11 { ; Adrian Mariano
 Curve1 { ; Adrian Mariano, from the Algorithmic Beauty of Plants
    ; curve from figure 1.9a p.10
    Angle 4
-   axiom F-F-F-F-
+   Axiom F-F-F-F-
    f=FF-F-F-F-F-F+F
 }
 
 Curve2 { ; Adrian Mariano, from the Algorithmic Beauty of Plants
    Angle 4
-   axiom F-F-F-F-
+   Axiom F-F-F-F-
    f=FF-F+F-F-FF
 }
 
 Curve3 { ; Adrian Mariano, from the Algorithmic Beauty of Plants
    ; curve from figure 1.9e p.10
-   axiom F-F-F-F-
+   Axiom F-F-F-F-
    Angle 4
    F=F-FF--F-F
 }
 
 Curve4 { ; Adrian Mariano
-   axiom yf
+   Axiom yf
    x=YF+XF+Y
    y=XF-YF-X
    Angle 6
@@ -545,28 +545,28 @@ CircularTile { ; Adrian Mariano
 Lars1{ ; By Jonathan Osuch [73277,1432]
    ; Based on a suggestion by Lars Vangsgaard
    Angle 8  ; angle increment/decrement is 45
-   axiom [F]++[F]++[F]++F
+   Axiom [F]++[F]++[F]++F
    F=F[+F][-F]
 }
 
 Lars2{ ; By Jonathan Osuch [73277,1432]
    ; Based on a suggestion by Lars Vangsgaard
    Angle 8  ; angle increment/decrement is 45
-   axiom +[F]++[F]++[F]++F
+   Axiom +[F]++[F]++[F]++F
    F=F[+F][-F]
 }
 
 Lars1Color{ ; By Jonathan Osuch [73277,1432]
    ; Based on a suggestion by Lars Vangsgaard
    Angle 8  ; angle increment/decrement is 45
-   axiom C1[F]++[F]++[F]++F
+   Axiom C1[F]++[F]++[F]++F
    F=F<1[+F][-F]>1
 }
 
 Lars2Color{ ; By Jonathan Osuch [73277,1432]
    ; Based on a suggestion by Lars Vangsgaard
    Angle 8  ; angle increment/decrement is 45
-   axiom C1+[F]++[F]++[F]++F
+   Axiom C1+[F]++[F]++[F]++F
    F=F<1[+F][-F]>1
 }
 

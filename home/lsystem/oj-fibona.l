@@ -37,7 +37,7 @@ Boat5 { ;
 
 Boat6 { ; 
    Angle 3
-   axiom F
+   Axiom F
    F=-F<25+K 
    K=+F<25+F<25+L
    M=-F<25-F<25-F<25-F<25-F<25-F<25-F<25+N
@@ -583,7 +583,7 @@ Snow {  ;
 
 Snow2 { ;
    Angle 4
-   axiom F+F+F+F
+   Axiom F+F+F+F
    F=+F+H 
    H=-F-F-F-J
    J=+F+F+F+F+F+K
@@ -592,7 +592,7 @@ Snow2 { ;
 
 Snow3 { ;
    Angle 4
-   axiom F+F+F+F
+   Axiom F+F+F+F
    F=-F+K 
    K=+F+F+F+L
    M=-F-F-F-F-F-F-F+N
@@ -601,7 +601,7 @@ Snow3 { ;
 
 Snow4{   ;     
    Angle 4
-   axiom F+F+F+F
+   Axiom F+F+F+F
    F=+F+K 
    K=-F-L
    M=+F+N
@@ -807,7 +807,7 @@ SpiralKurve08 { ;
 
 Curve5{ ;
    Angle 4
-   axiom F+F+F+F
+   Axiom F+F+F+F
    F=+F+K 
    K=-F-F-L
    M=+F+F+F+N

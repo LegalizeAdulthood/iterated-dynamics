@@ -7,7 +7,7 @@
 
 Hextar { ; "Hexagonal Star" by Michael A. Rouse, 1996
    Angle 6
-   axiom s ; to make things start at
+   Axiom s ; to make things start at
    s=L     ; order 1
    L=LzfR--fR-f++Lf++L-f+Lf+R--y
    R=z++L-fR-f+R--fR--f+Lf++LfyR
@@ -17,7 +17,7 @@ Hextar { ; "Hexagonal Star" by Michael A. Rouse, 1996
 
 Hextarb { ; "Hexagonal Star b" 
    Angle 6 { ; by Michael A. Rouse, 1996
-   axiom s ; to make things start at
+   Axiom s ; to make things start at
    s=Lf++Lf++Lf     ; order 1
    L=LzfR--fR-f++Lf++L-f+Lf+R--y
    R=z++L-fR-f+R--fR--f+Lf++LfyR
@@ -35,7 +35,7 @@ HexGasket { ; "Hexagonal Gasket" by Michael A. Rouse
    ; appears roughly the same at various magnifications. Besides, it's
    ; simple and cool!
    Angle 6
-   axiom F+F+F+F+F+F--
+   Axiom F+F+F+F+F+F--
    F=F+F+F--F--F+F+F
 }
 

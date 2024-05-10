@@ -125,7 +125,7 @@ dragon-sl-25 { ; Gary Teachout *
 
 Peano-c { ; Gary Teachout *
    Angle 8
-   axiom +z
+   Axiom +z
    z=fx
    f=
    x=fx-fy-fx+fy+fx+fy+fx+fy+fx-fy-fx-fy-fx-fy-fx+fy+fx
@@ -135,7 +135,7 @@ Peano-c { ; Gary Teachout *
 
 Hex-7-b { ; Gary Teachout *
    Angle 12
-   axiom fx
+   Axiom fx
    f=
    x=-f++f-x-f--f+y---f--f+y+f++f-x+++f++f-x-f++f-x+++f--f+y--
    y=+f++f-x-f--f+y+f--f+y---f--f+y---f++f-x+++f++f-x+++f--f+y
@@ -144,7 +144,7 @@ Hex-7-b { ; Gary Teachout *
 
 Maple1 { ; Gary Teachout *
    Angle 36
-   axiom +++++++++x
+   Axiom +++++++++x
    x=@0.6x@i0.6----f-@0.5x@i0.5+++++++++f----@0.6x@i0.6++++++++++++++f
    x=---------@0.5x@i0.5+++++++++++++++++f++++++++++++++
 }
@@ -152,7 +152,7 @@ Maple1 { ; Gary Teachout *
 
 Maple2 { ; Gary Teachout *
    Angle 36
-   axiom +++++++++x
+   Axiom +++++++++x
    x=@0.6x@i0.6--f---@0.5x@i0.5+++++++f--@0.6x@i0.6++++++++++++++++f
    x=-----------@0.5x@i0.5+++++++++++++++f++++++++++++++++
 }
@@ -160,14 +160,14 @@ Maple2 { ; Gary Teachout *
 
 Maple3 { ; Gary Teachout *
    Angle 36
-   axiom +++++++++x
+   Axiom +++++++++x
    x=+@0.6x@i0.6-----f-@0.5x@i0.5+++++++++f-----@0.58!x!@i0.58++++++
    x=+++++++++f----------@0.51!x!@i0.51++++++++++++++++++f++++++++++++++
 }
 
 Maple4 { ; Gary Teachout *
    Angle 36
-   axiom +++++++++x
+   Axiom +++++++++x
    x=+@0.6!x!@i0.6-----f-@0.45x@i0.45+++++++++f-----@0.55!x!@i0.55++++
    x=+++++++++++f----------@0.51!x!@i0.51++++++++++++++++++f++++++++++++++
 }
@@ -175,7 +175,7 @@ Maple4 { ; Gary Teachout *
 
 Fern1 { ; Gary Teachout *
    Angle 48
-   axiom ++++++++++++++fx
+   Axiom ++++++++++++++fx
    x=f+++++++++y--------f@0.8x@i0.8------------------------f++++++++++
    x=+++++++!y!------------------f++++++++++++++++++++++++
    y=z
@@ -186,7 +186,7 @@ Fern1 { ; Gary Teachout *
 
 Fern2 { ; Gary Teachout *
    Angle 48
-   axiom +++++++++++++++fx
+   Axiom +++++++++++++++fx
    x=f+++++++++y--------f@0.8x@i0.8-------!y!-----------------
    x=f-f++++++++++++++++++++++++
    y=z
@@ -197,7 +197,7 @@ Fern2 { ; Gary Teachout *
 
 Fern3 { ; Gary Teachout *
    Angle 48
-   axiom +++++++++++++++fx
+   Axiom +++++++++++++++fx
    x=f+++++++++y--------f@0.8+x-@i0.8-------!y!-----------------
    x=f-f++++++++++++++++++++++++
    y=z
@@ -208,7 +208,7 @@ Fern3 { ; Gary Teachout *
 
 Tri2m-1 { ; Gary Teachout *
    Angle 8
-   axiom x
+   Axiom x
    d=
    x=\38!dx!/38dz/52!dp!\52
    p=dx
@@ -217,7 +217,7 @@ Tri2m-1 { ; Gary Teachout *
 
 Tri2m-2 { ; Gary Teachout *
    Angle 8
-   axiom x
+   Axiom x
    d=
    x=\35!dx!/35dz/55!dp!\55
    p=dq
@@ -227,7 +227,7 @@ Tri2m-2 { ; Gary Teachout *
 
 Tri2m-2-b { ; Gary Teachout *
    Angle 8
-   axiom x
+   Axiom x
    d=
    x=dz\35!dx!/35dz/55!dp!\55
    p=dq
@@ -238,7 +238,7 @@ Tri2m-2-b { ; Gary Teachout *
 
 Tri2m-2-c { ; Gary Teachout *
    Angle 8
-   axiom x
+   Axiom x
    x=\35!dx!/90!dp!\55
    p=dq
    q=dx
@@ -246,7 +246,7 @@ Tri2m-2-c { ; Gary Teachout *
 
 Tri2m-3 { ; Gary Teachout *
    Angle 8
-   axiom x
+   Axiom x
    d=
    x=\32!dx!/32dz/58!dp!\58
    p=dq
@@ -290,7 +290,7 @@ c-curve-sl-25 { ; Gary Teachout *
 
 leaf1 { ; Gary Teachout *
    Angle 4
-   axiom \90x
+   Axiom \90x
    x=@0.01d@i0.01\35p/35@0.04d@i0.04@0.85!x!@i0.85\180@0.05d@i0.05/180
    p=q
    q=y
@@ -299,7 +299,7 @@ leaf1 { ; Gary Teachout *
 
 leaf2 { ; Gary Teachout *
    Angle 4
-   axiom \90x
+   Axiom \90x
    x=@0.01d@i0.01\35p/35/40r\40@0.04d@i0.04@0.85!x!@i0.85\180@0.05d@i0.05/180
    p=q
    q=y
@@ -317,7 +317,7 @@ leaf2 { ; Gary Teachout *
 
 IsoTrap4a { ; Gary Teachout *
    Angle 12
-   axiom x
+   Axiom x
    x=p
    p=++@1.732f@i1.732!p!-fz--fr---@1.732fz@i1.732++++@1.732f@i1.732!q!@1.732fz@i1.732++++@1.732f@i1.732!q!----
    q=++++@1.732f@i1.732!p!----@1.732fz@i1.732@1.732f@i1.732!p!----@1.732fz@i1.732+++fs++fz+@1.732f@i1.732!q!--
@@ -329,7 +329,7 @@ IsoTrap4a { ; Gary Teachout *
 
 IsoTrap4b { ; Gary Teachout *
    Angle 12
-   axiom +++++r
+   Axiom +++++r
    p=++@1.732f@i1.732!p!-fz--fr---@1.732fz@i1.732++++@1.732f@i1.732!q!@1.732fz@i1.732++++@1.732f@i1.732!q!----
    q=++++@1.732f@i1.732!p!----@1.732fz@i1.732@1.732f@i1.732!p!----@1.732fz@i1.732+++fs++fz+@1.732f@i1.732!q!--
    r=+++++@1.732f@i1.732!p!----@1.732fz@i1.732@1.732f@i1.732!p!-fz--f!s!--fz-@1.732f@i1.732q+++++
@@ -340,13 +340,13 @@ IsoTrap4b { ; Gary Teachout *
 
 c-curve-1 { ; Gary Teachout *
    Angle 8
-   axiom f
+   Axiom f
    f=-f++f-
 }
 
 c-curve-1.5 { ; Gary Teachout *
    Angle 8
-   axiom f
+   Axiom f
    f=-@1.5f@i1.5++f-
 }
 

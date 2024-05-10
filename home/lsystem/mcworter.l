@@ -205,7 +205,7 @@ Hex1 {
 }
 
    Hilbert1 { 
-   axiom z
+   Axiom z
    z=-c32Yc15f+c32Xc15Fc32X+c15Fc32Y-
    x=-YF+XFX+FY-
    y=+XF-YFY-FX+
@@ -462,7 +462,7 @@ Pentl { ; William McWorter
 Plant04 { ; Adrian Mariano, from the Algorithmic Beauty of Plants
    ; Plant-like structure, figure 1.24d p.25
    Angle 18
-   axiom x
+   Axiom x
    X=F[+X]F[-X]+X
    F=FF
 }
