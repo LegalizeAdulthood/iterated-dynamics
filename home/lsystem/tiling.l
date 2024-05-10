@@ -10,17 +10,17 @@
 ;   3. The comment was corrected.
 
 Penrose1Color { ; by Herb Savage
-; based on Martin Gardner's "Penrose Tiles to Trapdoor Ciphers",
-; Roger Penrose's rhombuses
-; Uses color to show similar lines
-  Angle 10
-  Axiom +WC10F--XC12F---YC12F--ZC10F
-  W=YC12F++ZC10F----XC12F[-YC12F----WC10F]++
-  X=+YC12F--ZC10F[---WC10F--XC12F]+
-  Y=-WC10F++XC12F[+++YC12F++ZC10F]-
-  Z=--YC12F++++WC10F[+ZC10F++++XC12F]--XC12F
-  F=
-  }
+   ; based on Martin Gardner's "Penrose Tiles to Trapdoor Ciphers",
+   ; Roger Penrose's rhombuses
+   ; Uses color to show similar lines
+   Angle 10
+   Axiom +WC10F--XC12F---YC12F--ZC10F
+   W=YC12F++ZC10F----XC12F[-YC12F----WC10F]++
+   X=+YC12F--ZC10F[---WC10F--XC12F]+
+   Y=-WC10F++XC12F[+++YC12F++ZC10F]-
+   Z=--YC12F++++WC10F[+ZC10F++++XC12F]--XC12F
+   F=
+}
 
 Penrose1Forced { ; by Herb Savage
    ; based on Martin Gardner's "Penrose Tiles to Trapdoor Ciphers",

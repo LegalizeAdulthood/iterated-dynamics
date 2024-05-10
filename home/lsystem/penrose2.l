@@ -22,19 +22,6 @@ KitesAndDartsColor { ; by Herb Savage
   F=
 }
 
-Penrose1Color { ; by Herb Savage
-  ; based on Martin Gardner's "Penrose Tiles to Trapdoor Ciphers",
-  ; Roger Penrose's rhombuses
-  ; Uses color to show similar lines
-  Angle 10
-  Axiom +WC10F--XC12F---YC12F--ZC10F
-  W=YC12F++ZC10F----XC12F[-YC12F----WC10F]++
-  X=+YC12F--ZC10F[---WC10F--XC12F]+
-  Y=-WC10F++XC12F[+++YC12F++ZC10F]-
-  Z=--YC12F++++WC10F[+ZC10F++++XC12F]--XC12F
-  F=
-}
-
 PenroseDouble { ; by Herb Savage
   ; This is Penrose3 and Penrose4 superimposed
   Angle 10
