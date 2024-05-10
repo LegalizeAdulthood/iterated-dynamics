@@ -152,10 +152,3 @@ Dekking2 { ; Penrose's rhombus tiling
   g=-g++g-
   f=
 }
-
-Dekking1Improved {
-  Angle 3
-  Axiom g+g+g
-  f=g+f-g
-  g=f+g-f
-}
