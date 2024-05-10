@@ -681,10 +681,10 @@ ThreeTile&med1 {
 }
 
 Tiling1 {
-  Angle 6
-  Axiom x
-  x=f-f-f+f+fx++f-f-f+f+fx--f-f-f+f+fx
-  f=
+   Angle 6
+   Axiom x
+   x=f-f-f+f+fx++f-f-f+f+fx--f-f-f+f+fx
+   f=
 }
 
 Trigrid { 

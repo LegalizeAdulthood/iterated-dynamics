@@ -371,14 +371,6 @@ Alfonseca1 { ;Manuel Alfonseca rendered for fractint
   s=@.5s
 }
 
-
-Tiling1 {
-  Angle 6
-  Axiom x
-  x=f-f-f+f+fx++f-f-f+f+fx--f-f-f+f+fx
-  f=
-}
-
 Maze09rnd {
   Angle 6
   Axiom x
