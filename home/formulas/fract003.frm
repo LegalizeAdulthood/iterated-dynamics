@@ -404,12 +404,6 @@ ScSkCosH(XYAXIS) { ; Lee Skinner
    |z|<TEST
 }
 
-ScSkZCZZ(XYAXIS) { ; Lee Skinner
-   z = pixel, TEST = (p1+3):
-   z = (z*cosxx(z)) - z,
-   |z|<TEST
-}
-
 Silverado(XAXIS) { ; Rollo Silver
    ; Use floating point.
    ; Select p1 such that 0. <= p1 <= 1.

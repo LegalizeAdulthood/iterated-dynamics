@@ -1479,10 +1479,10 @@ ScSkLMS(XAXIS) { ; Lee Skinner
    |z| < test
 }
 
-ScSkZCZZ(XYAXIS) {
-   z = pixel, test = (p1+3):
-   z = (z*cosxx(z)) - z
-   |z|<test
+ScSkZCZZ(XYAXIS) { ; Lee Skinner
+   z = pixel, test = p1 + 3:
+   z = (z*cosxx(z)) - z,
+   |z| < test
 }
 
 TSinh(XAXIS) { ; Tetrated Hyperbolic Sine - Improper Bailout
