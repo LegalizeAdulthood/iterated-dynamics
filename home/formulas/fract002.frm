@@ -787,14 +787,6 @@ PseudoMandelLambda { ; Ron Barnett
    |z| <= 100
 }
 
-PseudoZeePi { ; Ron Barnett
-   ; try p1 = 0.1, p2 = 0.39
-   z = pixel:
-   x = 1-z^p1;
-   z = z*((1-x)/(1+x))^(1/p1) + p2,
-   |z| <= 4
-}
-
 Ramanujan1(ORIGIN) {
    z = pixel:
    z = (cosh(p1 * sqr(z)) - sinh(p2 * sqr(z))/(p2 * sqr(z)))/z,

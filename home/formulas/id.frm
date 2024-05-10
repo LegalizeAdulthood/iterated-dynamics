@@ -142,9 +142,10 @@ JMask { ; Ron Barnett
 }
 
 PseudoZeePi { ; Ron Barnett, 1993
-   z = pixel:
+   ; try p1 = 0.1, p2 = 0.39
+   z = pixel, invp1=1/p1:
    x = 1-z^p1;
-   z = z*((1-x)/(1+x))^(1/p1) + p2
+   z = z*((1-x)/(1+x))^invp1 + p2
    |z| <= 4
 }
 
