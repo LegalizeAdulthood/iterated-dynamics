@@ -235,12 +235,12 @@ QuadKoch { ; Adrian Mariano, from the Algorithmic Beauty of Plants
   }
 
 Fass1 { ; Adrian Mariano, from the Algorithmic Beauty of Plants
-    ; FASS curve (3x3 tiles form macrotile), Figure 1.16a p.17
-  axiom -l
-  angle 4
-  L=LF+RFR+FL-F-LFLFL-FRFR+
-  R=-LFLF+RFRFR+F+RF-LFL-FR
-  }
+        ; FASS curve (3x3 tiles form macrotile), Figure 1.16a p.17
+   Angle 4
+   Axiom -l
+   L=LF+RFR+FL-F-LFLFL-FRFR+
+   R=-LFLF+RFRFR+F+RF-LFL-FR
+}
 
 Fass2 { ; Adrian Mariano, from the Algorithmic Beauty of Plants
         ; FASS curve (4x4 tiles form macrotile), Figure 1.16b p.17

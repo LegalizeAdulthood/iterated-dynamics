@@ -168,14 +168,6 @@ Dragon&med { ; William McWorter
   w=gw
 }
 
-Fass1 { ; Adrian Mariano, from the Algorithmic Beauty of Plants
-        ; FASS curve (3x3 tiles form macrotile), Figure 1.16a p.17
-  axiom -l
-  angle 4
-  L=LF+RFR+FL-F-LFLFL-FRFR+
-  R=-LFLF+RFRFR+F+RF-LFL-FR
-}
-
 FracRhombusTile { ; William McWorter
   Angle 12
   Axiom f
