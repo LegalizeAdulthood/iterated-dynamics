@@ -203,6 +203,7 @@ add_library(libid
     include/set_null_video.h
     include/sign.h
     include/stack_avail.h
+    include/value_saver.h
 )
 
 source_group("Header Files/3d" FILES
@@ -416,6 +417,7 @@ source_group("Header Files/plumbing" FILES
     include/read_ticker.h
     include/set_null_video.h
     include/stack_avail.h
+    include/value_saver.h
 )
 source_group("Source Files/plumbing" FILES
     debug_flags.cpp

@@ -24,6 +24,7 @@ add_executable(test-id
     test_cmplx.cpp
     test_expand_dirname.cpp
     test_find_file.cpp
+    test_find_file.txt.in
     test_find_path.cpp
     test_get_ifs_token.cpp
     test_gif_file.cpp
@@ -36,8 +37,8 @@ add_executable(test-id
     test_split_path.cpp
     test_trim_filename.cpp
     test_update_save_name.cpp
+    test_value_saver.cpp
     test_version.cpp
-    test_find_file.txt.in
 )
 source_group("CMake Scripts" REGULAR_EXPRESSION ".*\\.cmake$")
 source_group("CMake Templates" REGULAR_EXPRESSION ".*\\.in$")

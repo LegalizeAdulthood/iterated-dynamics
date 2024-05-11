@@ -19,6 +19,7 @@
 #include "put_string_center.h"
 #include "round_float_double.h"
 #include "text_screen.h"
+#include "value_saver.h"
 
 #include <cassert>
 #include <cstdio>
@@ -52,8 +53,7 @@ int fullscreen_prompt(        // full-screen prompting routine
     char *extra_info          // extra info box to display, \n separated
 )
 {
-    const int old_look_at_mouse = g_look_at_mouse;
-    g_look_at_mouse = 0;
+    ValueSaver saved_look_at_mouse(g_look_at_mouse, 0);
     s_prompt_fn_keys = fn_key_mask;
 
     /* If applicable, open file for scrolling extrainfo. The function
@@ -437,7 +437,6 @@ int fullscreen_prompt(        // full-screen prompting routine
     const auto full_screen_exit = [&]
     {
         driver_hide_text_cursor();
-        g_look_at_mouse = old_look_at_mouse;
         if (scroll_file)
         {
             std::fclose(scroll_file);
@@ -932,8 +931,7 @@ static int input_field_list(
     char buf[81];
     int curkey;
     int ret;
-    int old_look_at_mouse;
-    old_look_at_mouse = g_look_at_mouse;
+    ValueSaver save_look_at_mouse(g_look_at_mouse, 0);
     g_look_at_mouse = 0;
     for (initval = 0; initval < llen; ++initval)
     {
@@ -1010,6 +1008,5 @@ static int input_field_list(
     }
 inpfldl_end:
     std::strcpy(fld, list[curval]);
-    g_look_at_mouse = old_look_at_mouse;
     return ret;
 }
