@@ -1,28 +1,28 @@
 #include "load_entry_text.h"
 
 void load_entry_text(
-    std::FILE *entfile,
+    std::FILE *entry_file,
     char *buf,
-    int maxlines,
-    int startrow,
-    int startcol)
+    int max_lines,
+    int start_row,
+    int start_col)
 {
     int linelen;
     bool comment = false;
     int c = 0;
-    int tabpos = 7 - (startcol % 8);
+    int tabpos = 7 - (start_col % 8);
 
-    if (maxlines <= 0)
+    if (max_lines <= 0)
     {
         // no lines to get!
         *buf = (char) 0;
         return;
     }
 
-    //move down to starting row
-    for (int i = 0; i < startrow; i++)
+    // move down to starting row
+    for (int i = 0; i < start_row; i++)
     {
-        while ((c = fgetc(entfile)) != '\n' && c != EOF && c != '\032')
+        while ((c = fgetc(entry_file)) != '\n' && c != EOF && c != '\032')
         {
             if (c == ';')
             {
@@ -45,16 +45,16 @@ void load_entry_text(
         }
     }
 
-    // write maxlines of entry
-    while (maxlines-- > 0)
+    // write max_lines of entry
+    while (max_lines-- > 0)
     {
         comment = false;
         c = 0;
         linelen = c;
 
-        // skip line up to startcol
+        // skip line up to start_col
         int i = 0;
-        while (i++ < startcol && (c = fgetc(entfile)) != EOF && c != '\032')
+        while (i++ < start_col && (c = fgetc(entry_file)) != EOF && c != '\032')
         {
             if (c == ';')
             {
@@ -62,7 +62,7 @@ void load_entry_text(
             }
             if (c == '}' && !comment)
             {
-                //reached end of entry
+                // reached end of entry
                 *buf = (char) 0;
                 return;
             }
@@ -77,7 +77,7 @@ void load_entry_text(
             }
             if (c == '\n')
             {
-                //need to insert '\n', even for short lines
+                // need to insert '\n', even for short lines
                 *(buf++) = (char)c;
                 break;
             }
@@ -93,18 +93,18 @@ void load_entry_text(
             continue;
         }
 
-        if (i > startcol)
+        if (i > start_col)
         {
             // can happen because of <tab> character
-            while (i-- > startcol)
+            while (i-- > start_col)
             {
                 *(buf++) = ' ';
                 linelen++;
             }
         }
 
-        //process rest of line into buf
-        while ((c = fgetc(entfile)) != EOF && c != '\032')
+        // process rest of line into buf
+        while ((c = fgetc(entry_file)) != EOF && c != '\032')
         {
             if (c == ';')
             {
@@ -145,7 +145,7 @@ void load_entry_text(
                 }
                 if (c == '}' && !comment)
                 {
-                    //reached end of entry
+                    // reached end of entry
                     *(buf) = (char) 0;
                     return;
                 }

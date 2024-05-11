@@ -3,8 +3,8 @@
 #include <cstdio>
 
 void load_entry_text(
-    std::FILE *entfile,
+    std::FILE *entry_file,
     char *buf,
-    int maxlines,
-    int startrow,
-    int startcol);
+    int max_lines,
+    int start_row,
+    int start_col);
