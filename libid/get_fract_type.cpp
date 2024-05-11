@@ -38,6 +38,7 @@
 #include "stop_msg.h"
 #include "trig_fns.h"
 #include "type_has_param.h"
+#include "value_saver.h"
 #include "zoom.h"
 
 #include <cassert>
@@ -116,8 +117,7 @@ static fractal_type select_fracttype(fractal_type t)
     ft_choices = &choices[0];
 
     // setup context sensitive help
-    help_labels const old_help_mode = g_help_mode;
-    g_help_mode = help_labels::HELP_FRACTALS;
+    ValueSaver save_help_mode(g_help_mode, help_labels::HELP_FRACTALS);
     if (t == fractal_type::IFS3D)
     {
         t = fractal_type::IFS;
@@ -178,8 +178,6 @@ static fractal_type select_fracttype(fractal_type t)
         }
     }
 
-
-    g_help_mode = old_help_mode;
     return result;
 }
 
