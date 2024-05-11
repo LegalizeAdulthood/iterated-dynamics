@@ -15,7 +15,7 @@ void load_entry_text(
     if (max_lines <= 0)
     {
         // no lines to get!
-        *buf = (char) 0;
+        *buf = 0;
         return;
     }
 
@@ -40,7 +40,7 @@ void load_entry_text(
         else
         {
             // reached end of file or end of entry
-            *buf = (char) 0;
+            *buf = 0;
             return;
         }
     }
@@ -63,7 +63,7 @@ void load_entry_text(
             if (c == '}' && !comment)
             {
                 // reached end of entry
-                *buf = (char) 0;
+                *buf = 0;
                 return;
             }
             if (c == '\r')
@@ -85,7 +85,7 @@ void load_entry_text(
         if (c == EOF)
         {
             // unexpected end of file
-            *buf = (char) 0;
+            *buf = 0;
             return;
         }
         if (c == '\n')         // line is already completed
@@ -146,7 +146,7 @@ void load_entry_text(
                 if (c == '}' && !comment)
                 {
                     // reached end of entry
-                    *buf = (char) 0;
+                    *buf = 0;
                     return;
                 }
             }
@@ -154,7 +154,7 @@ void load_entry_text(
         if (c == EOF)
         {
             // unexpected end of file
-            *buf = (char) 0;
+            *buf = 0;
             return;
         }
     }
@@ -162,5 +162,5 @@ void load_entry_text(
     {
         buf--;
     }
-    *buf = (char) 0;
+    *buf = 0;
 }
