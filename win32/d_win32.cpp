@@ -379,8 +379,20 @@ int Win32BaseDriver::init_fm()
 
 void Win32BaseDriver::buzzer(buzzer_codes kind)
 {
-    ODS1("Win32BaseDriver::buzzer %d", kind);
-    MessageBeep(MB_OK);
+    UINT beep{MB_OK};
+    switch (kind)
+    {
+    case buzzer_codes::COMPLETE:
+    default:
+        break;
+    case buzzer_codes::INTERRUPT:
+        beep = MB_ICONWARNING;
+        break;
+    case buzzer_codes::PROBLEM:
+        beep = MB_ICONERROR;
+        break;
+    }
+    MessageBeep(beep);
 }
 
 bool Win32BaseDriver::sound_on(int freq)
