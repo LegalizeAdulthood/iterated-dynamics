@@ -1,4 +1,4 @@
 id_install_home(FILES
-    fract205.ifs
+    hanmer.ifs
     id.ifs
 )

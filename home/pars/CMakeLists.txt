@@ -5,8 +5,8 @@ id_install_home(FILES
     example2.par
     example3.par
     example4.par
-    id.par
     icons.par
+    id.par
     lyapunov.par
     music.par
     newphoen.par

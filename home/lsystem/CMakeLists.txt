@@ -3,7 +3,6 @@ id_install_home(FILES
     cesaros.l
     dekking.l
     edragons.l
-    gaskets.l
     hanmer.l
     hanmer1.l
     hanmer2.l
@@ -17,14 +16,11 @@ id_install_home(FILES
     maze09.l
     mcworter.l
     mcworter1.l
-    misc.l
-    miscel1.l
     norton.l
     oj-fibona.l
     oj-plants.l
     penrose.l
     penrose2.l
-    plants.l
     rouse.l
     teachout.l
     tiling.l
