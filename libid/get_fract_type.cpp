@@ -364,7 +364,6 @@ int get_fract_params(bool prompt_for_type_params)        // prompt for type-spec
     {
         "First Function", "Second Function", "Third Function", "Fourth Function"
     };
-    char *filename;
     char const *entryname;
     std::FILE *entryfile;
     std::vector<char const *> trignameptr;
@@ -392,32 +391,24 @@ int get_fract_params(bool prompt_for_type_params)        // prompt for type-spec
     help_labels help_formula = g_cur_fractal_specific->helpformula;
     if (help_formula < help_labels::NONE)
     {
-        bool use_filename_ref = false;
-        std::string &filename_ref = g_formula_filename;
         if (help_formula == help_labels::SPECIAL_FORMULA)
         {
             // special for formula
-            use_filename_ref = true;
             entryname = g_formula_name.c_str();
         }
         else if (help_formula == help_labels::SPECIAL_L_SYSTEM)
         {
             // special for lsystem
-            use_filename_ref = true;
-            filename_ref = g_l_system_filename;
             entryname = g_l_system_name.c_str();
         }
         else if (help_formula == help_labels::SPECIAL_IFS)
         {
             // special for ifs
-            use_filename_ref = true;
-            filename_ref = g_ifs_filename;
             entryname = g_ifs_name.c_str();
         }
         else
         {
             // this shouldn't happen
-            filename = nullptr;
             entryname = nullptr;
         }
         auto item_for_help = [](help_labels label)
@@ -435,8 +426,22 @@ int get_fract_params(bool prompt_for_type_params)        // prompt for type-spec
                     "Invalid help label " + std::to_string(static_cast<int>(label)) + " for find_file_item");
             }
         };
-        if ((!use_filename_ref && find_file_item(filename, entryname, &entryfile, item_for_help(help_formula)) == 0) ||
-            (use_filename_ref && find_file_item(filename_ref, entryname, &entryfile, item_for_help(help_formula)) == 0))
+        auto item_file = [](help_labels label) -> std::string &
+        {
+            switch (label)
+            {
+            case help_labels::SPECIAL_IFS:
+                return g_ifs_filename;
+            case help_labels::SPECIAL_L_SYSTEM:
+                return g_l_system_filename;
+            case help_labels::SPECIAL_FORMULA:
+                return g_formula_filename;
+            default:
+                throw std::runtime_error(
+                    "Invalid help label " + std::to_string(static_cast<int>(label)) + " for find_file_item");
+            }
+        };
+        if (find_file_item(item_file(help_formula), entryname, &entryfile, item_for_help(help_formula)) == 0)
         {
             load_entry_text(entryfile, s_tmp_stack, 17, 0, 0);
             std::fclose(entryfile);
