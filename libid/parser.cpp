@@ -3340,10 +3340,10 @@ static int frmgetchar(std::FILE * openfile)
             linewrap = true;
             break;
         case ';' :
-            while ((c = getc(openfile)) != '\n' && c != EOF && c != '\032')
+            while ((c = getc(openfile)) != '\n' && c != EOF)
             {
             }
-            if (c == EOF || c == '\032')
+            if (c == EOF)
             {
                 done = true;
             }
@@ -3449,7 +3449,6 @@ static bool frmgetconstant(std::FILE * openfile, token_st * tok)
         switch (c)
         {
         case EOF:
-        case '\032':
             tok->str[i] = (char) 0;
             tok->type = token_type::NOT_A_TOKEN;
             tok->id   = token_id::END_OF_FILE;
@@ -3662,7 +3661,7 @@ static bool frmgetalpha(std::FILE * openfile, token_st * tok)
     bool var_name_too_long = false;
     long filepos;
     long last_filepos = ftell(openfile);
-    while ((c = frmgetchar(openfile)) != EOF && c != '\032')
+    while ((c = frmgetchar(openfile)) != EOF)
     {
         filepos = ftell(openfile);
         switch (c)
@@ -3900,7 +3899,6 @@ CASE_TERMINATOR:
         }
         return this_token->str[0] != '}';
     case EOF:
-    case '\032':
         this_token->str[0] = (char) 0;
         this_token->type = token_type::NOT_A_TOKEN;
         this_token->id = token_id::END_OF_FILE;
@@ -3937,7 +3935,7 @@ int frm_get_param_stuff(char const *Name)
         stopmsg(STOPMSG_NONE, ParseErrs(PE_COULD_NOT_OPEN_FILE_WHERE_FORMULA_LOCATED));
         return 0;
     }
-    while ((c = frmgetchar(entry_file)) != '{' && c != EOF && c != '\032')
+    while ((c = frmgetchar(entry_file)) != '{' && c != EOF)
     {
     }
     if (c != '{')
@@ -4047,7 +4045,6 @@ static bool frm_check_name_and_sym(std::FILE * open_file, bool report_bad_sym)
         switch (c)
         {
         case EOF:
-        case '\032':
             stopmsg(STOPMSG_NONE, ParseErrs(PE_UNEXPECTED_EOF));
             return false;
         case '\r':
@@ -4100,7 +4097,6 @@ static bool frm_check_name_and_sym(std::FILE * open_file, bool report_bad_sym)
             switch (c)
             {
             case EOF:
-            case '\032':
                 stopmsg(STOPMSG_NONE, ParseErrs(PE_UNEXPECTED_EOF));
                 return false;
             case '\r':
@@ -4151,7 +4147,6 @@ static bool frm_check_name_and_sym(std::FILE * open_file, bool report_bad_sym)
             switch (c)
             {
             case EOF:
-            case '\032':
                 stopmsg(STOPMSG_FIXED_FONT, ParseErrs(PE_UNEXPECTED_EOF));
                 return false;
             case '\r':

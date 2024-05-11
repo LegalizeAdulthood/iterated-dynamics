@@ -16,7 +16,7 @@ int file_gets(char *buf, int maxlen, std::FILE *infile)
     while (len < maxlen)
     {
         c = getc(infile);
-        if (c == EOF || c == '\032')
+        if (c == EOF)
         {
             if (len)
             {

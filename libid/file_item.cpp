@@ -301,7 +301,7 @@ static int skip_comment(std::FILE *infile, long *file_offset)
         c = getc(infile);
         (*file_offset)++;
     }
-    while (c != '\n' && c != '\r' && c != EOF && c != '\032');
+    while (c != '\n' && c != '\r' && c != EOF);
     return c;
 }
 
@@ -327,7 +327,7 @@ top:
         if (c == ';')
         {
             c = skip_comment(infile, &file_offset);
-            if (c == EOF || c == '\032')
+            if (c == EOF)
             {
                 break;
             }
@@ -339,7 +339,7 @@ top:
         len = 0;
         // allow spaces in entry names in next
         while (c != ' ' && c != '\t' && c != '(' && c != ';'
-            && c != '{' && c != '\n' && c != '\r' && c != EOF && c != '\032')
+            && c != '{' && c != '\n' && c != '\r' && c != EOF)
         {
             if (len < 40)
             {
@@ -353,7 +353,7 @@ top:
             }
         }
         buf[len] = 0;
-        while (c != '{' &&  c != EOF && c != '\032')
+        while (c != '{' &&  c != EOF)
         {
             if (c == ';')
             {
@@ -371,7 +371,7 @@ top:
         }
         if (c == '{')
         {
-            while (c != '}' && c != EOF && c != '\032')
+            while (c != '}' && c != EOF)
             {
                 if (c == ';')
                 {
@@ -401,7 +401,7 @@ top:
                     }
                 }
             }
-            if (c != '}')     // i.e. is EOF or '\032'
+            if (c != '}')     // i.e. is EOF
             {
                 break;
             }
@@ -445,7 +445,7 @@ top:
                 }
             }
         }
-        else if (c == EOF || c == '\032')
+        else if (c == EOF)
         {
             break;
         }
@@ -473,7 +473,7 @@ static void format_parmfile_line(int choice, char *buf)
     }
     while (c == ' ' || c == '\t' || c == ';');
     i = 0;
-    while (i < 56 && c != '\n' && c != '\r' && c != EOF && c != '\032')
+    while (i < 56 && c != '\n' && c != '\r' && c != EOF)
     {
         line[i++] = (char)((c == '\t') ? ' ' : c);
         c = getc(s_gfe_file);
@@ -506,7 +506,7 @@ static int check_gfe_key(int curkey, int choice)
         int c = 0;
         int widthct = 0;
         std::fseek(s_gfe_file, s_gfe_choices[choice]->point, SEEK_SET);
-        while ((c = fgetc(s_gfe_file)) != EOF && c != '\032')
+        while ((c = fgetc(s_gfe_file)) != EOF)
         {
             if (c == ';')
             {
@@ -537,7 +537,7 @@ static int check_gfe_key(int curkey, int choice)
             }
         }
         bool in_scrolling_mode = false; // true if entry doesn't fit available space
-        if (c == EOF || c == '\032')
+        if (c == EOF)
         {
             // should never happen
             std::fseek(s_gfe_file, s_gfe_choices[choice]->point, SEEK_SET);

@@ -22,7 +22,7 @@ void load_entry_text(
     // move down to starting row
     for (int i = 0; i < start_row; i++)
     {
-        while ((c = fgetc(entry_file)) != '\n' && c != EOF && c != '\032')
+        while ((c = fgetc(entry_file)) != '\n' && c != EOF)
         {
             if (c == ';')
             {
@@ -54,7 +54,7 @@ void load_entry_text(
 
         // skip line up to start_col
         int i = 0;
-        while (i++ < start_col && (c = fgetc(entry_file)) != EOF && c != '\032')
+        while (i++ < start_col && (c = fgetc(entry_file)) != EOF)
         {
             if (c == ';')
             {
@@ -82,7 +82,7 @@ void load_entry_text(
                 break;
             }
         }
-        if (c == EOF || c == '\032')
+        if (c == EOF)
         {
             // unexpected end of file
             *buf = (char) 0;
@@ -104,7 +104,7 @@ void load_entry_text(
         }
 
         // process rest of line into buf
-        while ((c = fgetc(entry_file)) != EOF && c != '\032')
+        while ((c = fgetc(entry_file)) != EOF)
         {
             if (c == ';')
             {
@@ -151,7 +151,7 @@ void load_entry_text(
                 }
             }
         }
-        if (c == EOF || c == '\032')
+        if (c == EOF)
         {
             // unexpected end of file
             *buf = (char) 0;

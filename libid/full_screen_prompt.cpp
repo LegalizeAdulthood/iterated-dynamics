@@ -93,7 +93,7 @@ int fullscreen_prompt(        // full-screen prompting routine
         bool comment = false;
         int c = 0;
         int line_width = -1;
-        while ((c = fgetc(scroll_file)) != EOF && c != '\032')
+        while ((c = fgetc(scroll_file)) != EOF)
         {
             if (c == ';')
             {
@@ -123,7 +123,7 @@ int fullscreen_prompt(        // full-screen prompting routine
                 break;
             }
         }
-        if (c == EOF || c == '\032')
+        if (c == EOF)
         {
             // should never happen
             std::fclose(scroll_file);
