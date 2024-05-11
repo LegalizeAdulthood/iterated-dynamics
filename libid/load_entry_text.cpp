@@ -1,25 +1,9 @@
 #include "load_entry_text.h"
 
-void load_entry_text(
-    std::FILE *entry_file,
-    char *buf,
-    int max_lines,
-    int start_row,
-    int start_col)
+static bool skip_starting_rows(std::FILE *entry_file, int start_row)
 {
-    int linelen;
     bool comment = false;
-    int c = 0;
-    int tabpos = 7 - start_col % 8;
-
-    if (max_lines <= 0)
-    {
-        // no lines to get!
-        *buf = 0;
-        return;
-    }
-
-    // move down to starting row
+    int c;
     for (int i = 0; i < start_row; i++)
     {
         while ((c = fgetc(entry_file)) != '\n' && c != EOF)
@@ -40,17 +24,41 @@ void load_entry_text(
         else
         {
             // reached end of file or end of entry
-            *buf = 0;
-            return;
+            return true;
         }
+    }
+    return false;
+}
+
+void load_entry_text(
+    std::FILE *entry_file,
+    char *buf,
+    int max_lines,
+    int start_row,
+    int start_col)
+{
+    if (max_lines <= 0)
+    {
+        // no lines to get!
+        *buf = 0;
+        return;
+    }
+
+    // move down to starting row
+    if (skip_starting_rows(entry_file, start_row))
+    {
+        // reached end of file or end of entry
+        *buf = 0;
+        return;
     }
 
     // write max_lines of entry
+    const int tabpos = 7 - start_col % 8;
     while (max_lines-- > 0)
     {
-        comment = false;
-        c = 0;
-        linelen = c;
+        bool comment = false;
+        int c = 0;
+        int linelen = 0;
 
         // skip line up to start_col
         int i = 0;
