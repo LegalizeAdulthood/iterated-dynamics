@@ -10,7 +10,7 @@ void load_entry_text(
     int linelen;
     bool comment = false;
     int c = 0;
-    int tabpos = 7 - (start_col % 8);
+    int tabpos = 7 - start_col % 8;
 
     if (max_lines <= 0)
     {
@@ -73,12 +73,12 @@ void load_entry_text(
             }
             if (c == '\t')
             {
-                i += 7 - (i % 8);
+                i += 7 - i % 8;
             }
             if (c == '\n')
             {
                 // need to insert '\n', even for short lines
-                *(buf++) = (char)c;
+                *buf++ = (char)c;
                 break;
             }
         }
@@ -98,7 +98,7 @@ void load_entry_text(
             // can happen because of <tab> character
             while (i-- > start_col)
             {
-                *(buf++) = ' ';
+                *buf++ = ' ';
                 linelen++;
             }
         }
@@ -118,35 +118,35 @@ void load_entry_text(
             {
                 if (c == '\t')
                 {
-                    while ((linelen % 8) != tabpos && linelen < 75)
+                    while (linelen % 8 != tabpos && linelen < 75)
                     {
                         // 76 wide max
-                        *(buf++) = ' ';
+                        *buf++ = ' ';
                         ++linelen;
                     }
                     c = ' ';
                 }
                 if (c == '\n')
                 {
-                    *(buf++) = '\n';
+                    *buf++ = '\n';
                     break;
                 }
                 if (++linelen > 75)
                 {
                     if (linelen == 76)
                     {
-                        *(buf++) = '\021';
+                        *buf++ = '\021';
 
                     }
                 }
                 else
                 {
-                    *(buf++) = (char)c;
+                    *buf++ = (char)c;
                 }
                 if (c == '}' && !comment)
                 {
                     // reached end of entry
-                    *(buf) = (char) 0;
+                    *buf = (char) 0;
                     return;
                 }
             }
