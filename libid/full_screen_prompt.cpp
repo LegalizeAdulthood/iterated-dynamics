@@ -405,11 +405,19 @@ int fullscreen_prompt(        // full-screen prompting routine
 
         for (int i = 1; i < extra_lines-1; ++i)
         {
-            driver_put_string(extra_row+i, 0, C_PROMPT_BKGRD, S4);
-            driver_put_string(extra_row+i, box_width-1, C_PROMPT_BKGRD, S4);
+            driver_put_string(extra_row + i, 0, C_PROMPT_BKGRD, S4);
+            driver_put_string(extra_row + i, box_width - 1, C_PROMPT_BKGRD, S4);
         }
         g_text_cbase += (box_width - extra_width) / 2;
-        driver_put_string(extra_row+1, 0, C_PROMPT_TEXT, extra_info);
+        const std::string extra_text{extra_info};
+        std::string::size_type line_begin{};
+        for (int i = 1; i < extra_lines-1; ++i)
+        {
+            const std::string::size_type line_end = extra_text.find("\n", line_begin);
+            const std::string line{extra_text.substr(line_begin, line_end - line_begin)};
+            driver_put_string(extra_row + i, 0, C_PROMPT_TEXT, line.c_str());
+            line_begin = line_end + 1;
+        }
     }
 
     g_text_cbase = 0;
