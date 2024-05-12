@@ -1,4 +1,5 @@
-// various complex number defs
+// various complex number definitions
+
 #pragma once
 
 #include "port.h"
@@ -7,7 +8,7 @@ namespace id
 {
 
 template <typename T>
-struct hyper_complex
+struct HyperComplex
 {
     T x;
     T y;
@@ -16,26 +17,26 @@ struct hyper_complex
 };
 
 template <typename T>
-struct complex
+struct Complex
 {
     T x;
     T y;
 
-    complex &operator+=(const complex &rhs)
+    Complex &operator+=(const Complex &rhs)
     {
         x += rhs.x;
         y += rhs.y;
         return *this;
     }
 
-    complex &operator-=(const complex &rhs)
+    Complex &operator-=(const Complex &rhs)
     {
         x -= rhs.x;
         y -= rhs.y;
         return *this;
     }
 
-    complex &operator*=(T rhs)
+    Complex &operator*=(T rhs)
     {
         x *= rhs;
         y *= rhs;
@@ -44,54 +45,54 @@ struct complex
 };
 
 template <typename T>
-complex<T> operator+(const complex<T> &val)
+Complex<T> operator+(const Complex<T> &val)
 {
     return val;
 }
 
 template <typename T>
-complex<T> operator-(const complex<T> &val)
+Complex<T> operator-(const Complex<T> &val)
 {
     return {-val.x, -val.y};
 }
 
 template <typename T>
-complex<T> operator+(const complex<T> &lhs, const complex<T> &rhs)
+Complex<T> operator+(const Complex<T> &lhs, const Complex<T> &rhs)
 {
-    complex<T> result = lhs;
+    Complex<T> result = lhs;
     result += rhs;
     return result;
 }
 
 template <typename T>
-complex<T> operator-(const complex<T> &lhs, const complex<T> &rhs)
+Complex<T> operator-(const Complex<T> &lhs, const Complex<T> &rhs)
 {
-    complex<T> result = lhs;
+    Complex<T> result = lhs;
     result -= rhs;
     return result;
 }
 
 template <typename T>
-complex<T> operator*(const complex<T> &lhs, double rhs)
+Complex<T> operator*(const Complex<T> &lhs, double rhs)
 {
-    complex<T> result = lhs;
+    Complex<T> result = lhs;
     result *= rhs;
     return result;
 }
 
 template <typename T>
-complex<T> operator*(double lhs, const complex<T> &rhs)
+Complex<T> operator*(double lhs, const Complex<T> &rhs)
 {
-    complex<T> result = rhs;
+    Complex<T> result = rhs;
     result *= lhs;
     return result;
 }
 
-}
+} // namespace id
 
-using DHyperComplex = id::hyper_complex<double>;
-using LHyperComplex = id::hyper_complex<long>;
+using DHyperComplex = id::HyperComplex<double>;
+using LHyperComplex = id::HyperComplex<long>;
 
-using DComplex = id::complex<double>;
-using LDComplex = id::complex<LDBL>;
-using LComplex = id::complex<long>;
+using DComplex = id::Complex<double>;
+using LDComplex = id::Complex<LDBL>;
+using LComplex = id::Complex<long>;
