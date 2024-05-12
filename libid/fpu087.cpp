@@ -118,6 +118,26 @@ void FPUcplxlog(const DComplex *x, DComplex *z)
         : std::atan2(x->y, x->x);
 }
 
+void FPUcplxexp(const DComplex *x, DComplex *z)
+{
+    const double y = x->y;
+    double pow = std::exp(x->x);
+    if (std::isnan(pow) || std::isinf(pow))
+    {
+        pow = 1.0;
+    }
+    if (x->y == 0.0) /* x is real */
+    {
+        z->x = pow;
+        z->y = 0.0;
+    }
+    else
+    {
+        z->x = pow * std::cos(y);
+        z->y = pow * std::sin(y);
+    }
+}
+
 // Integer Routines
 void SinCos086(long x, long *sinx, long *cosx)
 {
