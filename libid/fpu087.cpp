@@ -62,12 +62,9 @@ void FPUsinhcosh(double const *Angle, double *Sinh, double *Cosh)
 
 void FPUcplxlog(DComplex const *x, DComplex *z)
 {
-    double mod;
-    double zx;
-    double zy;
-    mod = std::sqrt(x->x*x->x + x->y*x->y);
-    zx = std::log(mod);
-    zy = std::atan2(x->y, x->x);
+    const double mod = std::sqrt(x->x * x->x + x->y * x->y);
+    const double zx = std::log(mod);
+    const double zy = std::atan2(x->y, x->x);
 
     z->x = zx;
     z->y = zy;
