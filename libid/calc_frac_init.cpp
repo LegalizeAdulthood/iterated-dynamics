@@ -209,6 +209,13 @@ void calcfracinit() // initialize a *pile* of stuff for fractal calculation
         fractal_floattobf();
         g_user_float_flag = true;
     }
+    else if (g_fractal_type == fractal_type::DIVIDE_BROT5 //
+        && g_debug_flag == debug_flags::force_arbitrary_precision_math)
+    {
+        g_cur_fractal_specific = &g_fractal_specific[+fractal_type::DIVIDE_BROT5];
+        fractal_floattobf();
+        g_user_float_flag = true;
+    }
     else
     {
         free_bf_vars();

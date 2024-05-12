@@ -179,6 +179,13 @@ SUMMARY OF FRACTAL TYPES
     accumulate.  Three parameters: border width (default 10), type,
     and color change rate.
 
+{=HT_DIVIDEBROT5 dividebrot5}
+~Label=HF_DIVIDEBROT5
+    DivideBrot5 formula by Jim Muth.
+      z(0) = 0;
+      z(n+1) = sqr(z(n)) / (z(n)^(-(a-2)) + (b+10^(-20))) + pixel
+    Two parameters: a and b
+
 ~OnlineFF
 {=HT_DYNAM dynamic}
 ~Label=HF_DYNAM
@@ -911,6 +918,7 @@ Select a fractal type:
 { Sierpinski Gasket }
 { Quartic Mandelbrot/Julia }
 { Mandelbrot Mix 4 }
+{ DivideBrot5 }
 { Pickover Mandelbrot/Julia Types }
 { Pickover Popcorn }
 { Dynamic System }
@@ -1699,6 +1707,20 @@ MandelbrotMix4 \{\; Jim Muth\
 Note that Jim uses l=imag(p3)+100, which is to say, the sixth scalar
 parameter, as the bailout.  Our implementation follows Jim if the user
 requests the default bailout.
+;
+;
+~Topic=DivideBrot5, Label=HT_DIVIDEBROT5
+(type=dividebrot5)
+This is Jim Muth's fifth version of the DivideBrot formula.
+
+The formula is:
+
+DivideBrot5 \{ \; Jim Muth\
+   z = 0, c = pixel, a = real(p1) - 2,\
+   b = imag(p1) + 10^(-20) :\
+   z = sqr(z) / (z^(-a) + b) + c\
+   |z| < 16\
+\}
 ;
 ;
 ~Topic=Pickover Mandelbrot/Julia Types, Label=HT_PICKMJ

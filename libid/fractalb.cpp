@@ -13,6 +13,7 @@ fractal routines.
 #include "biginit.h"
 #include "calcfrac.h"
 #include "cmdfiles.h"
+#include "divide_brot.h"
 #include "fractalp.h"
 #include "fractals.h"
 #include "fractype.h"
@@ -660,6 +661,11 @@ bool MandelbnSetup()
             g_symmetry = symmetry_type::NONE;
         }
         break;
+    case fractal_type::DIVIDE_BROT5:
+        init_big_pi();
+        g_c_exponent = -((int) g_params[0] - 2); /* use negative here so only need it once */
+        g_b_const = g_params[1] + 1.0e-20;
+        break;
     default:
         break;
     }
@@ -747,6 +753,11 @@ bool MandelbfSetup()
         {
             g_symmetry = symmetry_type::NONE;
         }
+        break;
+    case fractal_type::DIVIDE_BROT5:
+        init_big_pi();
+        g_c_exponent = -((int) g_params[0] - 2); /* use negative here so only need it once */
+        g_b_const = g_params[1] + 1.0e-20;
         break;
     default:
         break;

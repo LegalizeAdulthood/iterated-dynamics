@@ -530,13 +530,17 @@ void init_bf_dec(int dec)
         // using 2 doesn't gain much and requires another test
         intlength = 4;
     }
-    else if (g_fractal_type == fractal_type::FPMANDELZPOWER || g_fractal_type == fractal_type::FPJULIAZPOWER)
+    else if (g_fractal_type == fractal_type::FPMANDELZPOWER //
+        || g_fractal_type == fractal_type::FPJULIAZPOWER    //
+        || g_fractal_type == fractal_type::DIVIDE_BROT5)
     {
-        intlength = 2;
-        // the bailout tests need greater dynamic range
+        intlength = 4; // 2 leaves artifacts in the center of the lakes
     }
-    else if (g_bail_out_test == bailouts::Real || g_bail_out_test == bailouts::Imag || g_bail_out_test == bailouts::And ||
-             g_bail_out_test == bailouts::Manr)
+    // the bailout tests need greater dynamic range
+    else if (g_bail_out_test == bailouts::Real //
+        || g_bail_out_test == bailouts::Imag   //
+        || g_bail_out_test == bailouts::And    //
+        || g_bail_out_test == bailouts::Manr)
     {
         intlength = 2;
     }
@@ -562,13 +566,17 @@ void init_bf_length(int bnl)
         // using 2 doesn't gain much and requires another test
         intlength = 4;
     }
-    else if (g_fractal_type == fractal_type::FPMANDELZPOWER || g_fractal_type == fractal_type::FPJULIAZPOWER)
+    else if (g_fractal_type == fractal_type::FPMANDELZPOWER //
+        || g_fractal_type == fractal_type::FPJULIAZPOWER    //
+        || g_fractal_type == fractal_type::DIVIDE_BROT5)
     {
-        intlength = 2;
-        // the bailout tests need greater dynamic range
+        intlength = 4; // 2 leaves artifacts in the center of the lakes
     }
-    else if (g_bail_out_test == bailouts::Real || g_bail_out_test == bailouts::Imag || g_bail_out_test == bailouts::And ||
-             g_bail_out_test == bailouts::Manr)
+    // the bailout tests need greater dynamic range
+    else if (g_bail_out_test == bailouts::Real //
+        || g_bail_out_test == bailouts::Imag   //
+        || g_bail_out_test == bailouts::And    //
+        || g_bail_out_test == bailouts::Manr)
     {
         intlength = 2;
     }

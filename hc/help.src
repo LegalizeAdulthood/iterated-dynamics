@@ -114,6 +114,7 @@
 {2.51 , 1, "Escher-Like Julia Sets"}
 {2.52 , 1, "Latoocarfian"}
 {2.53 , 1, "Mandelbrot Mix 4"}
+{2.54 , 1, "DivideBrot5"}
 
 {3.   , 0, Doodads\, Bells\, and Whistles, FF}
 {3.1  , 1, "Drawing Method"}
@@ -315,6 +316,10 @@ o The following parameter file commands are deprecated and support will be
       exitmode            plotstyle             tweaklzw\
       fpu                 printer               vesadetect\
       gif87a              printfile
+o Added new fractal types {Mandelbrot Mix 4} and {DivideBrot5} by Jim Muth.
+  DivideBrot5 has arbitrary precision math support.  Note that image skewing
+  and inversion are not  supported by the AP math routines. See
+  {Arbitrary Precision and Deep Zooming} for other features not supported.
 
 Known limitations:
 

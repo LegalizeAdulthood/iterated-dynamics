@@ -35,6 +35,7 @@ add_library(libid
     barnsley.cpp include/barnsley.h
     cellular.cpp include/cellular.h
     circle_pattern.cpp include/circle_pattern.h
+    divide_brot.cpp include/divide_brot.h
     escher.cpp include/escher.h
     fn_or_fn.cpp include/fn_or_fn.h
     frothy_basin.cpp include/frothy_basin.h
@@ -275,6 +276,7 @@ source_group("Header Files/fractal specific" FILES
     include/barnsley.h
     include/cellular.h
     include/circle_pattern.h
+    include/divide_brot.h
     include/escher.h
     include/fn_or_fn.h
     include/frothy_basin.h
@@ -309,6 +311,7 @@ source_group("Source Files/fractal specific" FILES
     barnsley.cpp
     cellular.cpp
     circle_pattern.cpp
+    divide_brot.cpp
     escher.cpp
     fn_or_fn.cpp
     frothy_basin.cpp

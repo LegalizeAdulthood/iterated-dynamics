@@ -11,6 +11,7 @@
 #include "calcfrac.h"
 #include "cellular.h"
 #include "circle_pattern.h"
+#include "divide_brot.h"
 #include "escher.h"
 #include "fn_or_fn.h"
 #include "fractalb.h"
@@ -174,8 +175,9 @@ AlternateMath g_alternate_math[] =
           increase the precision.
     */
     {fractal_type::FPJULIAZPOWER, bf_math_type::BIGFLT, JuliaZpowerbfFractal, juliabf_per_pixel, MandelbfSetup  },
-    {fractal_type::FPMANDELZPOWER, bf_math_type::BIGFLT , JuliaZpowerbfFractal, mandelbf_per_pixel, MandelbfSetup},
-    {fractal_type::NOFRACTAL, bf_math_type::NONE, nullptr,                nullptr,               nullptr         }
+    {fractal_type::FPMANDELZPOWER, bf_math_type::BIGFLT, JuliaZpowerbfFractal, mandelbf_per_pixel, MandelbfSetup},
+    {fractal_type::DIVIDE_BROT5, bf_math_type::BIGFLT, DivideBrot5bfFractal, dividebrot5bf_per_pixel, MandelbfSetup},
+    {fractal_type::NOFRACTAL, bf_math_type::NONE, nullptr, nullptr, nullptr}
 };
 
 // These are only needed for types with both integer and float variations
@@ -2283,6 +2285,16 @@ fractalspecificstuff g_fractal_specific[] =
         0, fractal_type::NOFRACTAL, fractal_type::NOFRACTAL, fractal_type::NOFRACTAL, symmetry_type::NONE,
         MandelbrotMix4fpFractal, MandelbrotMix4fp_per_pixel, MandelbrotMix4Setup, standard_fractal,
         STDBAILOUT
+    },
+    {
+        "dividebrot5",
+        {"a", "b", "", ""},
+        {2.0, 0.0, 0.0, 0.0},
+        help_labels::HT_DIVIDEBROT5, help_labels::HF_DIVIDEBROT5, fractal_flags::BAILTEST|fractal_flags::BF_MATH,
+        -2.5f, 1.5f, -1.5f, 1.5f,
+        0, fractal_type::NOFRACTAL, fractal_type::NOFRACTAL, fractal_type::NOFRACTAL, symmetry_type::NONE,
+        DivideBrot5fpFractal, DivideBrot5fp_per_pixel, DivideBrot5Setup, standard_fractal,
+        16
     },
 
     {
