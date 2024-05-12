@@ -48,7 +48,7 @@ static std::FILE *s_gfe_file{};
 static FileEntry **s_gfe_choices{}; // for format_parmfile_line
 static char const *s_gfe_title{};
 
-bool find_file_item(char *filename, char const *itemname, std::FILE **fileptr, gfe_type itemtype)
+bool find_file_item(std::string &filename, char const *itemname, std::FILE **fileptr, gfe_type itemtype)
 {
     std::FILE *infile = nullptr;
     bool found = false;
@@ -59,12 +59,11 @@ bool find_file_item(char *filename, char const *itemname, std::FILE **fileptr, g
     char fullpath[FILE_MAX_PATH];
     char defaultextension[5];
 
-
     splitpath(filename, drive, dir, fname, ext);
     make_fname_ext(fullpath, fname, ext);
-    if (stricmp(filename, g_command_file.c_str()))
+    if (stricmp(filename.c_str(), g_command_file.c_str()))
     {
-        infile = std::fopen(filename, "rb");
+        infile = std::fopen(filename.c_str(), "rb");
         if (infile != nullptr)
         {
             if (search_for_entry(infile, itemname))
@@ -86,7 +85,7 @@ bool find_file_item(char *filename, char const *itemname, std::FILE **fileptr, g
             {
                 if (search_for_entry(infile, itemname))
                 {
-                    std::strcpy(filename, fullpath);
+                    filename = fullpath;
                     found = true;
                 }
                 else
@@ -134,7 +133,7 @@ bool find_file_item(char *filename, char const *itemname, std::FILE **fileptr, g
         {
             if (search_for_entry(infile, par_search_name.c_str()))
             {
-                std::strcpy(filename, g_command_file.c_str());
+                filename = g_command_file;
                 found = true;
             }
             else
@@ -153,7 +152,7 @@ bool find_file_item(char *filename, char const *itemname, std::FILE **fileptr, g
         {
             if (search_for_entry(infile, itemname))
             {
-                std::strcpy(filename, fullpath);
+                filename = fullpath;
                 found = true;
             }
             else
@@ -186,7 +185,7 @@ bool find_file_item(char *filename, char const *itemname, std::FILE **fileptr, g
                 {
                     if (search_for_entry(infile, itemname))
                     {
-                        std::strcpy(filename, fullpath);
+                        filename = fullpath;
                         found = true;
                         break;
                     }
@@ -239,7 +238,7 @@ bool find_file_item(char *filename, char const *itemname, std::FILE **fileptr, g
         {
             if (search_for_entry(infile, itemname))
             {
-                std::strcpy(filename, fullpath);
+                filename = fullpath;
                 found = true;
             }
             else
@@ -266,17 +265,6 @@ bool find_file_item(char *filename, char const *itemname, std::FILE **fileptr, g
         std::fclose(infile);
     }
     return false;
-}
-
-bool find_file_item(std::string &filename, char const *itemname, std::FILE **fileptr, gfe_type itemtype)
-{
-    char buf[FILE_MAX_PATH];
-    assert(filename.size() < FILE_MAX_PATH);
-    std::strncpy(buf, filename.c_str(), FILE_MAX_PATH);
-    buf[FILE_MAX_PATH - 1] = 0;
-    bool const result = find_file_item(buf, itemname, fileptr, itemtype);
-    filename = buf;
-    return result;
 }
 
 // skip to next non-white space character and return it

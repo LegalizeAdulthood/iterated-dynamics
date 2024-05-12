@@ -11,7 +11,6 @@ enum class gfe_type
     IFS = 3,
 };
 
-bool find_file_item(char *filename, char const *itemname, std::FILE **fileptr, gfe_type itemtype);
 bool find_file_item(std::string &filename, char const *itemname, std::FILE **fileptr, gfe_type itemtype);
 
 long get_file_entry(gfe_type type, char const *title, char const *fmask, std::string &filename, std::string &entryname);
