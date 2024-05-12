@@ -892,7 +892,7 @@ awful_error:
             }
 
             if (FNPTR(cvtptrx-1) == fStkLodRealC
-                && Load[g_load_index-2]->d.x == _2_)
+                && Load[g_load_index-2]->d.x == 2.0)
             {
                 // -- Convert '2*a' into 'a+a'.
                 if (FNPTR(cvtptrx) == NO_FUNCTION)
@@ -977,7 +977,7 @@ awful_error:
             ffptr = fStkLodRealMul;
 
             if (prevfptr == fStkLodRealC  // use prevfptr here
-                && Load[g_load_index-1]->d.x == _2_)
+                && Load[g_load_index-1]->d.x == 2.0)
             {
                 if (FNPTR(cvtptrx) == fStkPush2)
                 {
@@ -1068,7 +1068,7 @@ awful_error:
             }
             v[g_variable_index].s = nullptr;  // this constant has no name
             v[g_variable_index].len = 0;
-            v[g_variable_index].a.d.x = _1_ / Load[g_load_index-1]->d.x;
+            v[g_variable_index].a.d.x = 1.0 / Load[g_load_index-1]->d.x;
             v[g_variable_index].a.d.y = 0.0;
             {
                 OPPTR(cvtptrx) = &v[g_variable_index++].a;
@@ -1228,7 +1228,7 @@ awful_error:
         if (prevfptr == fStkLodRealC)
         {
             double dTemp = Load[g_load_index-1]->d.x;
-            if (dTemp == _2_ || dTemp == _1_ || dTemp == -1.0 || dTemp == 0.0)
+            if (dTemp == 2.0 || dTemp == 1.0 || dTemp == -1.0 || dTemp == 0.0)
             {
                 // change ^[-1,0,1,or 2] to recip,one,ident,sqr
                 if (FNPTR(cvtptrx-1) == fStkPush2)
@@ -1244,7 +1244,7 @@ awful_error:
                 }
                 --cvtptrx;
                 OPPTR(cvtptrx) = NO_OPERAND;
-                if (dTemp == _2_)
+                if (dTemp == 2.0)
                 {
                     DBUGMSG("[]=Sqr0");
                     ffptr = fStkSqr0;  // no need to compute lastsqr here
@@ -1261,7 +1261,7 @@ awful_error:
                         ffptr = fStkStoSqr0;  // dont save lastsqr
                     }
                 }
-                else if (dTemp == _1_)
+                else if (dTemp == 1.0)
                 {
                     DBUGMSG("[]=Ident");
                     ffptr = fStkIdent;

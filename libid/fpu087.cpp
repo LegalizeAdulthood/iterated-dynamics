@@ -17,10 +17,6 @@
 //  changed at some point.
 //
 
-double _2_ = 2.0;
-double _1_ = 1.0;
-double PointFive = 0.5;
-
 void FPUcplxmul(DComplex const *x, DComplex const *y, DComplex *z)
 {
     double tx;
