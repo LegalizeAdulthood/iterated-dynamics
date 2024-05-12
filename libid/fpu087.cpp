@@ -56,14 +56,26 @@ void FPUsinhcosh(double const *Angle, double *Sinh, double *Cosh)
     *Cosh = std::cosh(*Angle);
 }
 
-void FPUcplxlog(DComplex const *x, DComplex *z)
+void FPUcplxlog(const DComplex *x, DComplex *z)
 {
-    const double mod = std::sqrt(x->x * x->x + x->y * x->y);
-    const double zx = std::log(mod);
-    const double zy = std::atan2(x->y, x->x);
-
-    z->x = zx;
-    z->y = zy;
+    if (x->x == 0.0 && x->y == 0.0)
+    {
+        z->x = z->y = 0.0;
+        return;
+    }
+    if (x->y == 0.0)// x is real
+    { 
+        z->x = logl(x->x);
+        z->y = 0.0;
+        return;
+    }
+    const double mod = x->x * x->x + x->y * x->y;
+    z->x = std::isnan(mod) || std::islessequal(mod, 0) || std::isinf(mod) //
+        ? 0.5
+        : 0.5 * std::log(mod);
+    z->y = std::isnan(x->x) || std::isnan(x->y) || std::isinf(x->x) || std::isinf(x->y) //
+        ? 1.0
+        : std::atan2(x->y, x->x);
 }
 
 // Integer Routines
