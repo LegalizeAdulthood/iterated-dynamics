@@ -100,4 +100,5 @@ char *strupr(char *s);
 #define GET16(c, i)              (i) = (*(unsigned char *)&(c))+\
                                 ((*((unsigned char*)&(c)+1)) << 8)
 #endif
+// MSVC on x64 doesn't have a distinct type for long double vs. double
 using LDBL = long double;
