@@ -367,8 +367,10 @@ bool DivideBrot5Setup()
 
 int DivideBrot5fp_per_pixel()
 {
-    if (g_invert)
+    if (g_invert != 0)
+    {
         invertz2(&g_init);
+    }
     else
     {
         g_init.x = g_dx_pixel();
