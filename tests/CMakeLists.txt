@@ -31,6 +31,7 @@ add_executable(test-id
     test_is_directory.cpp
     test_load_config.cpp
     test_make_path.cpp
+    test_math.cpp
     test_merge_path_names.cpp
     test_path_match.cpp
     test_search_path.cpp
