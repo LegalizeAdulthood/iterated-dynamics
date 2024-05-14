@@ -167,7 +167,7 @@ void lStkAND();
 void dStkLog();
 void mStkLog();
 void lStkLog();
-void FPUcplxexp(const DComplex*, DComplex *);
+void FPUcplxexp(const DComplex *x, DComplex *z); // z = e^x
 void dStkExp();
 void mStkExp();
 void lStkExp();
