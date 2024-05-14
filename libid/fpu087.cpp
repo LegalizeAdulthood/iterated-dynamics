@@ -70,10 +70,26 @@ void FPUsincos(const double *Angle, double *Sin, double *Cos)
     }
 }
 
-void FPUsinhcosh(double const *Angle, double *Sinh, double *Cosh)
+void FPUsinhcosh(const double *Angle, double *Sinh, double *Cosh)
 {
-    *Sinh = std::sinh(*Angle);
-    *Cosh = std::cosh(*Angle);
+    if (std::isnan(*Angle) || std::isinf(*Angle))
+    {
+        *Sinh = 1.0;
+        *Cosh = 1.0;
+    }
+    else
+    {
+        *Sinh = std::sinh(*Angle);
+        *Cosh = std::cosh(*Angle);
+        if (std::isnan(*Sinh) || std::isinf(*Sinh))
+        {
+            *Sinh = 1.0;
+        }
+        if (std::isnan(*Cosh) || std::isinf(*Cosh))
+        {
+            *Cosh = 1.0;
+        }
+    }
 }
 
 void FPUcplxlog(const DComplex *x, DComplex *z)
