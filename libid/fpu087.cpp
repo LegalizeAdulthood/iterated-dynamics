@@ -183,8 +183,7 @@ long RegFloat2Fg(long x, int Fudge)
 
 long RegSftFloat(long x, int Shift)
 {
-    float f;
-    f = em2float(x);
+    float f = em2float(x);
     if (Shift > 0)
     {
         f *= (1 << Shift);
