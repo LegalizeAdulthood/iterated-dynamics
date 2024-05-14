@@ -117,8 +117,7 @@ void FPUcplxlog(const DComplex *x, DComplex *z)
 // Integer Routines
 void SinCos086(long x, long *sinx, long *cosx)
 {
-    double a;
-    a = x/(double)(1 << 16);
+    const double a = x / (double)(1 << 16);
     *sinx = (long)(std::sin(a)*(double)(1 << 16));
     *cosx = (long)(std::cos(a)*(double)(1 << 16));
 }
