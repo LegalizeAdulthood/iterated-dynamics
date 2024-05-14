@@ -99,7 +99,8 @@ void FPUcplxlog(const DComplex *x, DComplex *z)
 {
     if (x->x == 0.0 && x->y == 0.0)
     {
-        z->x = z->y = 0.0;
+        z->x = 0.0;
+        z->y = 0.0;
         return;
     }
     if (x->y == 0.0)// x is real
