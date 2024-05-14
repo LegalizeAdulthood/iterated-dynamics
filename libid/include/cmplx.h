@@ -88,6 +88,17 @@ Complex<T> operator*(double lhs, const Complex<T> &rhs)
     return result;
 }
 
+template <typename T, typename U = T>
+bool operator==(const Complex<T> &lhs, const Complex<U> &rhs)
+{
+    return lhs.x == rhs.x && lhs.y == rhs.y;
+}
+template <typename T, typename U = T>
+bool operator!=(const Complex<T> &lhs, const Complex<U> &rhs)
+{
+    return !(lhs == rhs);
+}
+
 } // namespace id
 
 using DHyperComplex = id::HyperComplex<double>;
