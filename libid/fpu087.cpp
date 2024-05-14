@@ -56,10 +56,18 @@ void FPUcplxdiv(DComplex const *x, DComplex const *y, DComplex *z)
     }
 }
 
-void FPUsincos(double const *Angle, double *Sin, double *Cos)
+void FPUsincos(const double *Angle, double *Sin, double *Cos)
 {
-    *Sin = std::sin(*Angle);
-    *Cos = std::cos(*Angle);
+    if (std::isnan(*Angle) || std::isinf(*Angle))
+    {
+        *Sin = 0.0;
+        *Cos = 1.0;
+    }
+    else
+    {
+        *Sin = std::sin(*Angle);
+        *Cos = std::cos(*Angle);
+    }
 }
 
 void FPUsinhcosh(double const *Angle, double *Sinh, double *Cosh)
