@@ -51,8 +51,11 @@ void FPUcplxdiv(DComplex const *x, DComplex const *y, DComplex *z)
     {
         const double yxmod = y->x / mod;
         const double yymod = -y->y / mod;
-        z->x = x->x * yxmod - x->y * yymod;
-        z->y = x->x * yymod + x->y * yxmod;
+        // Need to compute into temporaries to avoid pointer aliasing
+        const double tx = x->x * yxmod - x->y * yymod;
+        const double ty = x->x * yymod + x->y * yxmod;
+        z->x = tx;
+        z->y = ty;
     }
 }
 

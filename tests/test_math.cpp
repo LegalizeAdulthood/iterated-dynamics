@@ -4,6 +4,7 @@
 #include <gtest/gtest.h>
 
 #include <cmath>
+#include <complex>
 
 namespace id
 {
@@ -127,4 +128,41 @@ TEST(TestMath, infAngleSinHCosH)
 
     EXPECT_EQ(1.0, result_sin);
     EXPECT_EQ(1.0, result_cos);
+}
+
+TEST(TestMath, multiplyAliasing)
+{
+    const DComplex z{1.0, 2.0};
+    DComplex result;
+    FPUcplxmul(&z, &z, &result);
+    const std::complex<double> stdResult{std::complex<double>{1.0, 2.0}*std::complex<double>{1.0, 2.0}};
+
+    DComplex aliasResult{1.0, 2.0};
+    FPUcplxmul(&aliasResult, &aliasResult, &aliasResult);
+
+    EXPECT_EQ(stdResult.real(), result.x);
+    EXPECT_EQ(stdResult.imag(), result.y);
+    EXPECT_EQ(stdResult.real(), aliasResult.x);
+    EXPECT_EQ(stdResult.imag(), aliasResult.y);
+}
+
+TEST(TestMath, divideAliasing)
+{
+    const DComplex num{1.0, 2.0};
+    const DComplex denom{2.0, 4.0};
+    DComplex result;
+    FPUcplxdiv(&num, &denom, &result);
+    const std::complex<double> stdResult{std::complex<double>{1.0, 2.0}/std::complex<double>{2.0, 4.0}};
+
+    DComplex aliasResult1{1.0, 2.0};
+    FPUcplxdiv(&aliasResult1, &denom, &aliasResult1);
+    DComplex aliasResult2{2.0, 4.0};
+    FPUcplxdiv(&num, &aliasResult2, &aliasResult2);
+
+    EXPECT_EQ(stdResult.real(), result.x);
+    EXPECT_EQ(stdResult.imag(), result.y);
+    EXPECT_EQ(stdResult.real(), aliasResult1.x);
+    EXPECT_EQ(stdResult.imag(), aliasResult1.y);
+    EXPECT_EQ(stdResult.real(), aliasResult2.x);
+    EXPECT_EQ(stdResult.imag(), aliasResult2.y);
 }
