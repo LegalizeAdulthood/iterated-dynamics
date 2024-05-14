@@ -124,8 +124,7 @@ void SinCos086(long x, long *sinx, long *cosx)
 
 void SinhCosh086(long x, long *sinx, long *cosx)
 {
-    double a;
-    a = x / (double)(1 << 16);
+    const double a = x / (double)(1 << 16);
     *sinx = (long)(std::sinh(a)*(double)(1 << 16));
     *cosx = (long)(std::cosh(a)*(double)(1 << 16));
 }
