@@ -1,28 +1,34 @@
-// This file contains routines to replace fpu087.asm.
-//
-// This file Copyright 1991 Ken Shirriff.  It may be used according to the
-// fractint license conditions, blah blah blah.
-//
 #include "port.h"
 #include "prototyp.h"
 
 #include "fpu087.h"
 
-#include <cmath>
+#include "fixed_pt.h"
 
-// xxx086 --
-//
-//  Simulate integer math routines using floating point.
-//  This will of course slow things down, so this should all be
-//  changed at some point.
-//
+#include <cfloat>
+#include <cmath>
 
 void FPUcplxmul(DComplex const *x, DComplex const *y, DComplex *z)
 {
     double tx;
-    tx = x->x * y->x - x->y * y->y;
-    z->y = x->x * y->y + x->y * y->x;
-    z->x = tx;
+    double ty;
+    if (y->y == 0.0) // y is real
+    {
+        tx = x->x * y->x;
+        ty = x->y * y->x;
+    }
+    else if (x->y == 0.0) // x is real
+    {
+        tx = x->x * y->x;
+        ty = x->x * y->y;
+    }
+    else
+    {
+        tx = x->x * y->x - x->y * y->y;
+        ty = x->x * y->y + x->y * y->x;
+    }
+    z->x = std::isnan(tx) || std::isinf(tx) ? ID_INFINITY : tx;
+    z->y = std::isnan(ty) || std::isinf(ty) ? ID_INFINITY : ty;
 }
 
 void FPUcplxdiv(DComplex const *x, DComplex const *y, DComplex *z)

@@ -2,6 +2,8 @@
 
 #include "cmplx.h"
 
+constexpr double ID_INFINITY{1.0e+300};
+
 void FPUcplxmul(DComplex const *x, DComplex const *y, DComplex *z);
 void FPUcplxdiv(DComplex const *x, DComplex const *y, DComplex *z);
 void FPUsincos(double const *Angle, double *Sin, double *Cos);
