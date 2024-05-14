@@ -33,21 +33,27 @@ void FPUcplxmul(DComplex const *x, DComplex const *y, DComplex *z)
 
 void FPUcplxdiv(DComplex const *x, DComplex const *y, DComplex *z)
 {
-    double mod;
-    double tx;
-    double yxmod;
-    double yymod;
-    mod = y->x * y->x + y->y * y->y;
-    if (mod == 0)
+    const double mod = y->x * y->x + y->y * y->y;
+    if (mod == 0.0 || std::abs(mod) <= DBL_MIN)
     {
-        static int DivideOverflow = 0;
-        DivideOverflow++;
+        z->x = ID_INFINITY;
+        z->y = ID_INFINITY;
+        g_overflow = true;
+        return;
     }
-    yxmod = y->x / mod;
-    yymod = - y->y / mod;
-    tx = x->x * yxmod - x->y * yymod;
-    z->y = x->x * yymod + x->y * yxmod;
-    z->x = tx;
+
+    if (y->y == 0.0) // if y is real
+    {
+        z->x = x->x / y->x;
+        z->y = x->y / y->x;
+    }
+    else
+    {
+        const double yxmod = y->x / mod;
+        const double yymod = -y->y / mod;
+        z->x = x->x * yxmod - x->y * yymod;
+        z->y = x->x * yymod + x->y * yxmod;
+    }
 }
 
 void FPUsincos(double const *Angle, double *Sin, double *Cos)
