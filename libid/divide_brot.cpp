@@ -5,6 +5,7 @@
 #include "biginit.h"
 #include "calcfrac.h"
 #include "fpu087.h"
+#include "fractalb.h"
 #include "fractals.h"
 #include "id_data.h"
 #include "newton.h"
@@ -12,25 +13,6 @@
 #include "pixel_grid.h"
 
 LDBL g_b_const;
-
-static BFComplex *cmplxlog_bf(BFComplex *t, BFComplex *s)
-{
-    if (is_bf_zero(s->x) && is_bf_zero(s->y))
-    {
-        clear_bf(t->x);
-        clear_bf(t->y);
-    }
-    else
-    {
-        square_bf(t->x, s->x);
-        square_bf(t->y, s->y);
-        add_a_bf(t->x, t->y);
-        ln_bf(t->x, t->x);
-        half_a_bf(t->x);
-        atan2_bf(t->y, s->y, s->x);
-    }
-    return t;
-}
 
 static BFComplex *cplxmul_bf(BFComplex *t, BFComplex *x, BFComplex *y)
 {

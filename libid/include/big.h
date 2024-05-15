@@ -244,7 +244,6 @@ bf_t div_a_bf_int(bf_t r, U16 u);
 /* bigcmplx.c */
 DComplex cmplxbntofloat(BNComplex *s);
 DComplex cmplxbftofloat(BFComplex *s);
-BFComplex *cmplxlog_bf(BFComplex *t, BFComplex *s);
 BFComplex *cplxmul_bf(BFComplex *t, BFComplex *x, BFComplex *y);
 BFComplex *ComplexPower_bf(BFComplex *t, BFComplex *xx, BFComplex *yy);
 BNComplex *ComplexPower_bn(BNComplex *t, BNComplex *xx, BNComplex *yy);
