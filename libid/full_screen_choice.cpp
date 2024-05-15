@@ -14,6 +14,7 @@
 #include "put_string_center.h"
 #include "string_case_compare.h"
 #include "text_screen.h"
+#include "value_saver.h"
 
 #include <cctype>
 #include <cstring>
@@ -200,12 +201,10 @@ int fullscreen_choice(
     char curitem[81];
     char const *itemptr;
     int ret;
-    int old_look_at_mouse;
     int scrunch;  // scrunch up a line
 
     scrunch = (options & CHOICE_CRUNCH) ? 1 : 0;
-    old_look_at_mouse = g_look_at_mouse;
-    g_look_at_mouse = 0;
+    ValueSaver saved_look_at_mouse(g_look_at_mouse, 0);
     ret = -1;
     // preset current to passed string
     int const speed_len = (speed_string == nullptr) ? 0 : (int) std::strlen(speed_string);
@@ -246,7 +245,7 @@ int fullscreen_choice(
     {
         if (current >= num_choices)  // no real choice in the list?
         {
-            goto fs_choice_end;
+            return ret;
         }
         if ((attributes[current] & 256) == 0)
         {
@@ -571,9 +570,9 @@ int fullscreen_choice(
         case ID_KEY_ENTER:
         case ID_KEY_ENTER_2:
             ret = current;
-            goto fs_choice_end;
+            return ret;
         case ID_KEY_ESC:
-            goto fs_choice_end;
+            return ret;
         case ID_KEY_DOWN_ARROW:
             increment = box_width;
             rev_increment = 0 - increment;
@@ -741,7 +740,7 @@ int fullscreen_choice(
                 ret = (*check_key)(curkey, current);
                 if (ret < -1 || ret > 0)
                 {
-                    goto fs_choice_end;
+                    return ret;
                 }
                 if (ret == -1)
                 {
@@ -796,8 +795,4 @@ int fullscreen_choice(
             redisplay = true;
         }
     }
-
-fs_choice_end:
-    g_look_at_mouse = old_look_at_mouse;
-    return ret;
 }
