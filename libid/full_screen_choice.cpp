@@ -184,28 +184,9 @@ int fullscreen_choice(
     int (*check_key)(int curkey, int choice)
     )
 {
-    int titlelines;
-    int titlewidth;
-    int reqdrows;
-    int topleftrow;
-    int topleftcol;
-    int topleftchoice;
-    int speedrow = 0;  // speed key prompt
-    int boxitems;      // boxwidth*boxdepth
-    int curkey;
-    int increment;
-    int rev_increment = 0;
-    bool redisplay;
-    char const *charptr;
-    char buf[81];
-    char curitem[81];
-    char const *itemptr;
-    int ret;
-    int scrunch;  // scrunch up a line
-
-    scrunch = (options & CHOICE_CRUNCH) ? 1 : 0;
+    const int scrunch = (options & CHOICE_CRUNCH) ? 1 : 0; // scrunch up a line
     ValueSaver saved_look_at_mouse(g_look_at_mouse, 0);
-    ret = -1;
+    int ret = -1;
     // preset current to passed string
     int const speed_len = (speed_string == nullptr) ? 0 : (int) std::strlen(speed_string);
     if (speed_len > 0)
@@ -254,11 +235,11 @@ int fullscreen_choice(
         ++current;                  // scan for a real choice
     }
 
-    titlewidth = 0;
-    titlelines = titlewidth;
+    int titlewidth = 0;
+    int titlelines = 0;
     if (hdg)
     {
-        charptr = hdg;              // count title lines, find widest
+        const char *charptr = hdg;              // count title lines, find widest
         int i = 0;
         titlelines = 1;
         while (*charptr)
@@ -287,14 +268,14 @@ int fullscreen_choice(
         }
     }
     // title(1), blank(1), hdg(n), blank(1), body(n), blank(1), instr(?)
-    reqdrows = 3 - scrunch;                // calc rows available
+    int reqdrows = 3 - scrunch;                // calc rows available
     if (hdg)
     {
         reqdrows += titlelines + 1;
     }
     if (instr)                   // count instructions lines
     {
-        charptr = instr;
+        const char *charptr = instr;
         ++reqdrows;
         while (*charptr)
         {
@@ -346,6 +327,8 @@ int fullscreen_choice(
             }
         }
     }
+    int topleftrow;
+    int topleftcol;
     {
         int i = (80 / box_width - col_width) / 2 - 1;
         if (i == 0) // to allow wider prompts
@@ -401,6 +384,7 @@ int fullscreen_choice(
     {
         driver_put_string(topleftrow - 1, topleftcol, C_PROMPT_MED, hdg2);
     }
+    int speedrow = 0;  // speed key prompt
     {
         int i = topleftrow + box_depth + 1;
         if (instr == nullptr || (options & CHOICE_INSTRUCTIONS))   // display default instructions
@@ -423,8 +407,9 @@ int fullscreen_choice(
         }
         if (instr)                            // display caller's instructions
         {
-            charptr = instr;
+            const char *charptr = instr;
             int j = -1;
+            char buf[81];
             while ((buf[++j] = *(charptr++)) != 0)
             {
                 if (buf[j] == '\n')
@@ -438,20 +423,21 @@ int fullscreen_choice(
         }
     }
 
-    boxitems = box_width * box_depth;
-    topleftchoice = 0;                      // pick topleft for init display
+    const int boxitems = box_width * box_depth;
+    int topleftchoice = 0;                      // pick topleft for init display
     while (current - topleftchoice >= boxitems
         || (current - topleftchoice > boxitems/2
             && topleftchoice + boxitems < num_choices))
     {
         topleftchoice += box_width;
     }
-    redisplay = true;
+    bool redisplay = true;
     topleftrow -= scrunch;
     while (true) // main loop
     {
         if (redisplay)                       // display the current choices
         {
+            char buf[81];
             std::memset(buf, ' ', 80);
             buf[box_width*col_width] = 0;
             for (int i = (hdg2) ? 0 : -1; i <= box_depth; ++i)  // blank the box
@@ -475,6 +461,7 @@ int fullscreen_choice(
                 {
                     k = C_PROMPT_MED;
                 }
+                const char *charptr;
                 if (format_item)
                 {
                     (*format_item)(j, buf);
@@ -503,6 +490,8 @@ int fullscreen_choice(
             redisplay = false;
         }
 
+        char curitem[81];
+        char const *itemptr;
         {
             int i = current - topleftchoice;           // highlight the current choice
             if (format_item)
@@ -528,7 +517,7 @@ int fullscreen_choice(
         }
 
         driver_wait_key_pressed(0); // enables help
-        curkey = driver_get_key();
+        int curkey = driver_get_key();
 #ifdef XFRACT
         if (curkey == ID_KEY_F10)
         {
@@ -563,7 +552,8 @@ int fullscreen_choice(
                               k, itemptr);
         }
 
-        increment = 0;
+        int increment = 0;
+        int rev_increment = 0;
         // deal with input key
         switch (curkey)
         {
