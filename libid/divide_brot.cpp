@@ -14,39 +14,6 @@
 
 LDBL g_b_const;
 
-static BFComplex *cplxdiv_bf(BFComplex *t, BFComplex *x, BFComplex *y)
-{
-    bf_t tmp1, denom;
-    int saved;
-    saved = save_stack();
-    tmp1 = alloc_stack(rbflength + 2);
-    denom = alloc_stack(rbflength + 2);
-
-    square_bf(t->x, y->x);
-    square_bf(t->y, y->y);
-    add_bf(denom, t->x, t->y);
-
-    if (is_bf_zero(denom))
-    {
-        g_overflow = true;
-    }
-    else
-    {
-        mult_bf(tmp1, x->x, y->x);
-        mult_bf(t->x, x->y, y->y);
-        add_bf(t->x, tmp1, t->x);
-        div_bf(t->x, t->x, denom);
-
-        mult_bf(tmp1, x->y, y->x);
-        mult_bf(t->y, x->x, y->y);
-        sub_bf(t->y, tmp1, t->y);
-        div_bf(t->y, t->y, denom);
-    }
-
-    restore_stack(saved);
-    return t;
-}
-
 static BFComplex *ComplexPower_bf(BFComplex *t, BFComplex *xx, BFComplex *yy)
 {
     BFComplex tmp;

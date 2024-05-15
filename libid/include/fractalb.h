@@ -25,4 +25,5 @@ int JuliabfFractal();
 int JuliaZpowerbfFractal();
 BFComplex *cmplxlog_bf(BFComplex *t, BFComplex *s);
 BFComplex *cplxmul_bf(BFComplex *t, BFComplex *x, BFComplex *y);
+BFComplex *cplxdiv_bf(BFComplex *t, BFComplex *x, BFComplex *y);
 BFComplex *ComplexPower_bf(BFComplex *t, BFComplex *xx, BFComplex *yy);
