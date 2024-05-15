@@ -17,6 +17,7 @@ int JuliabnFractal();
 int JuliaZpowerbnFractal();
 BNComplex *cmplxlog_bn(BNComplex *t, BNComplex *s);
 BNComplex *cplxmul_bn(BNComplex *t, BNComplex *x, BNComplex *y);
+BNComplex *cplxdiv_bn(BNComplex *t, BNComplex *x, BNComplex *y);
 BNComplex *ComplexPower_bn(BNComplex *t, BNComplex *xx, BNComplex *yy);
 bool MandelbfSetup();
 int mandelbf_per_pixel();

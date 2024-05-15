@@ -14,45 +14,6 @@
 
 LDBL g_b_const;
 
-static BNComplex *cplxdiv_bn(BNComplex *t, BNComplex *x, BNComplex *y)
-{
-    bn_t tmp1, tmp2, denom;
-    int saved;
-    saved = save_stack();
-    tmp1 = alloc_stack(rlength);
-    tmp2 = alloc_stack(rlength);
-    denom = alloc_stack(rlength);
-
-    square_bn(tmp1, y->x);
-    square_bn(tmp2, y->y);
-    add_bn(denom, tmp1 + shiftfactor, tmp2 + shiftfactor);
-
-    if (is_bn_zero(x->x) && is_bn_zero(x->y))
-    {
-        clear_bn(t->x);
-        clear_bn(t->y);
-    }
-    else if (is_bn_zero(denom))
-    {
-        g_overflow = true;
-    }
-    else
-    {
-        mult_bn(tmp1, x->x, y->x);
-        mult_bn(t->x, x->y, y->y);
-        add_bn(tmp2, tmp1 + shiftfactor, t->x + shiftfactor);
-        div_bn(t->x, tmp2, denom);
-
-        mult_bn(tmp1, x->y, y->x);
-        mult_bn(t->y, x->x, y->y);
-        sub_bn(tmp2, tmp1 + shiftfactor, t->y + shiftfactor);
-        div_bn(t->y, tmp2, denom);
-    }
-
-    restore_stack(saved);
-    return t;
-}
-
 /* note: ComplexPower_bn() returns need to be +shiftfactor'ed */
 static BNComplex *ComplexPower_bn(BNComplex *t, BNComplex *xx, BNComplex *yy)
 {
