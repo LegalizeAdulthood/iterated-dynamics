@@ -1108,12 +1108,18 @@ BFComplex *ComplexPower_bf(BFComplex *t, BFComplex *xx, BFComplex *yy)
 
 BNComplex *cmplxlog_bn(BNComplex *t, BNComplex *s)
 {
-    square_bn(t->x, s->x);
-    square_bn(t->y, s->y);
-    add_a_bn(t->x+shiftfactor, t->y+shiftfactor);
-    ln_bn(t->x, t->x+shiftfactor);
-    half_a_bn(t->x);
-    atan2_bn(t->y, s->y, s->x);
+    if (is_bn_zero(s->x) && is_bn_zero(s->y))
+    {
+        clear_bn(t->x);
+        clear_bn(t->y);
+    }
+    else
+    {
+        add_bn(t->x, t->x + shiftfactor, t->y + shiftfactor);
+        ln_bn(t->x, t->x);
+        half_a_bn(t->x);
+        atan2_bn(t->y, s->y, s->x);
+    }
     return t;
 }
 

@@ -246,7 +246,6 @@ DComplex cmplxbntofloat(BNComplex *s);
 DComplex cmplxbftofloat(BFComplex *s);
 BFComplex *ComplexPower_bf(BFComplex *t, BFComplex *xx, BFComplex *yy);
 BNComplex *ComplexPower_bn(BNComplex *t, BNComplex *xx, BNComplex *yy);
-BNComplex *cmplxlog_bn(BNComplex *t, BNComplex *s);
 BNComplex *cplxmul_bn(BNComplex *t, BNComplex *x, BNComplex *y);
 
 #define MATHBITS      32

@@ -14,25 +14,6 @@
 
 LDBL g_b_const;
 
-static BNComplex *cmplxlog_bn(BNComplex *t, BNComplex *s)
-{
-    if (is_bn_zero(s->x) && is_bn_zero(s->y))
-    {
-        clear_bn(t->x);
-        clear_bn(t->y);
-    }
-    else
-    {
-        square_bn(t->x, s->x);
-        square_bn(t->y, s->y);
-        add_bn(t->x, t->x + shiftfactor, t->y + shiftfactor);
-        ln_bn(t->x, t->x);
-        half_a_bn(t->x);
-        atan2_bn(t->y, s->y, s->x);
-    }
-    return t;
-}
-
 static BNComplex *cplxmul_bn(BNComplex *t, BNComplex *x, BNComplex *y)
 {
     bn_t tmp1;
