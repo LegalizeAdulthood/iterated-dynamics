@@ -198,9 +198,8 @@ restart_1:
             attributes[i] = 1;
         }
         g_help_mode = help_labels::HELP_3D_FILL;
-        int i = fullscreen_choice(CHOICE_HELP, "Select 3D Fill Type",
-                nullptr, nullptr, k, (char const **)choices, attributes,
-                0, 0, 0, FILLTYPE+1, nullptr, nullptr, nullptr, nullptr);
+        int i = fullscreen_choice(CHOICE_HELP, "Select 3D Fill Type", nullptr, nullptr, k, choices,
+            attributes, 0, 0, 0, FILLTYPE + 1, nullptr, nullptr, nullptr, nullptr);
         g_help_mode = old_help_mode;
         if (i < 0)
         {

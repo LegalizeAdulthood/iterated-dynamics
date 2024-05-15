@@ -361,10 +361,8 @@ top:
         {
             nextleft = nextright + 1;
         }
-        i = fullscreen_choice(CHOICE_MENU | CHOICE_CRUNCH,
-                              "MAIN MENU",
-                              nullptr, nullptr, nextleft, (char const **) choices, attributes,
-                              2, nextleft/2, 29, 0, nullptr, nullptr, nullptr, menu_checkkey);
+        i = fullscreen_choice(CHOICE_MENU | CHOICE_CRUNCH, "MAIN MENU", nullptr, nullptr, nextleft,
+            choices, attributes, 2, nextleft / 2, 29, 0, nullptr, nullptr, nullptr, menu_checkkey);
         if (i == -1)     // escape
         {
             i = ID_KEY_ESC;

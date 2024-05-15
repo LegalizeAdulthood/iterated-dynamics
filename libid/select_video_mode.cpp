@@ -90,11 +90,10 @@ int select_video_mode(int curmode)
     modes_changed = false;
     g_tab_mode = false;
     g_help_mode = help_labels::HELP_VIDEO_MODE;
-    i = fullscreen_choice(CHOICE_HELP,
-                          "Select Video Mode",
-                          "key...name..........xdot..ydot.colr.driver......comment......",
-                          nullptr, g_video_table_len, nullptr, attributes.data(),
-                          1, 16, 74, i, format_vid_table, nullptr, nullptr, check_modekey);
+    i = fullscreen_choice(CHOICE_HELP, "Select Video Mode",
+        "key...name..........xdot..ydot.colr.driver......comment......", nullptr, g_video_table_len,
+        nullptr, attributes.data(), 1, 16, 74, i, format_vid_table, nullptr, nullptr,
+        check_modekey);
     g_tab_mode = old_tab_mode;
     g_help_mode = old_help_mode;
     if (i == -1)
