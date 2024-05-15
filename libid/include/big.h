@@ -240,11 +240,6 @@ bf_t unsafe_mult_bf_int(bf_t r, bf_t n, U16 u);
 bf_t mult_a_bf_int(bf_t r, U16 u);
 bf_t unsafe_div_bf_int(bf_t r, bf_t n,  U16 u);
 bf_t div_a_bf_int(bf_t r, U16 u);
-/****************************/
-/* bigcmplx.c */
-DComplex cmplxbntofloat(BNComplex *s);
-DComplex cmplxbftofloat(BFComplex *s);
-BFComplex *ComplexPower_bf(BFComplex *t, BFComplex *xx, BFComplex *yy);
 
 #define MATHBITS      32
 #define MATHBYTES     (MATHBITS/8)

@@ -28,6 +28,7 @@
 #include "drivers.h"
 #include "engine_timer.h"
 #include "find_special_colors.h"
+#include "fractalb.h"
 #include "fractalp.h"
 #include "fractals.h"
 #include "fractype.h"
