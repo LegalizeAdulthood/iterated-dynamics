@@ -14,37 +14,6 @@
 
 LDBL g_b_const;
 
-static BFComplex *ComplexPower_bf(BFComplex *t, BFComplex *xx, BFComplex *yy)
-{
-    BFComplex tmp;
-    bf_t e2x, siny, cosy;
-    int saved;
-    saved = save_stack();
-    e2x = alloc_stack(rbflength + 2);
-    siny = alloc_stack(rbflength + 2);
-    cosy = alloc_stack(rbflength + 2);
-    tmp.x = alloc_stack(rbflength + 2);
-    tmp.y = alloc_stack(rbflength + 2);
-
-    /* 0 raised to anything is 0 */
-    if (is_bf_zero(xx->x) && is_bf_zero(xx->y))
-    {
-        clear_bf(t->x);
-        clear_bf(t->y);
-    }
-    else
-    {
-        cmplxlog_bf(t, xx);
-        cplxmul_bf(&tmp, t, yy);
-        exp_bf(e2x, tmp.x);
-        sincos_bf(siny, cosy, tmp.y);
-        mult_bf(t->x, e2x, cosy);
-        mult_bf(t->y, e2x, siny);
-    }
-    restore_stack(saved);
-    return t;
-}
-
 static BNComplex *cmplxlog_bn(BNComplex *t, BNComplex *s)
 {
     if (is_bn_zero(s->x) && is_bn_zero(s->y))
