@@ -245,7 +245,6 @@ bf_t div_a_bf_int(bf_t r, U16 u);
 DComplex cmplxbntofloat(BNComplex *s);
 DComplex cmplxbftofloat(BFComplex *s);
 BFComplex *ComplexPower_bf(BFComplex *t, BFComplex *xx, BFComplex *yy);
-BNComplex *ComplexPower_bn(BNComplex *t, BNComplex *xx, BNComplex *yy);
 
 #define MATHBITS      32
 #define MATHBYTES     (MATHBITS/8)

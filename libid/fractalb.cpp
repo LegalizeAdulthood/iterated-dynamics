@@ -1188,9 +1188,9 @@ BNComplex *ComplexPower_bn(BNComplex *t, BNComplex *xx, BNComplex *yy)
     bn_t cosy;
     int saved;
     saved = save_stack();
-    e2x  = alloc_stack(bnlength);
-    siny = alloc_stack(bnlength);
-    cosy = alloc_stack(bnlength);
+    e2x = alloc_stack(rlength);
+    siny = alloc_stack(rlength);
+    cosy = alloc_stack(rlength);
     tmp.x = alloc_stack(rlength);
     tmp.y = alloc_stack(rlength);
 
@@ -1199,6 +1199,7 @@ BNComplex *ComplexPower_bn(BNComplex *t, BNComplex *xx, BNComplex *yy)
     {
         clear_bn(t->x);
         clear_bn(t->y);
+        restore_stack(saved);
         return t;
     }
 

@@ -14,38 +14,6 @@
 
 LDBL g_b_const;
 
-/* note: ComplexPower_bn() returns need to be +shiftfactor'ed */
-static BNComplex *ComplexPower_bn(BNComplex *t, BNComplex *xx, BNComplex *yy)
-{
-    BNComplex tmp;
-    bn_t e2x, siny, cosy;
-    int saved;
-    saved = save_stack();
-    e2x = alloc_stack(rlength);
-    siny = alloc_stack(rlength);
-    cosy = alloc_stack(rlength);
-    tmp.x = alloc_stack(rlength);
-    tmp.y = alloc_stack(rlength);
-
-    /* 0 raised to anything is 0 */
-    if (is_bn_zero(xx->x) && is_bn_zero(xx->y))
-    {
-        clear_bn(t->x);
-        clear_bn(t->y);
-    }
-    else
-    {
-        cmplxlog_bn(t, xx);
-        cplxmul_bn(&tmp, t, yy);
-        exp_bn(e2x, tmp.x);
-        sincos_bn(siny, cosy, tmp.y);
-        mult_bn(t->x, e2x, cosy);
-        mult_bn(t->y, e2x, siny);
-    }
-    restore_stack(saved);
-    return t;
-}
-
 int dividebrot5bn_per_pixel()
 {
     /* parm.x = xxmin + g_col*delx + g_row*delx2 */
