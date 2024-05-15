@@ -14,23 +14,6 @@
 
 LDBL g_b_const;
 
-static BNComplex *cplxmul_bn(BNComplex *t, BNComplex *x, BNComplex *y)
-{
-    bn_t tmp1;
-    int saved;
-    saved = save_stack();
-    tmp1 = alloc_stack(rlength);
-    mult_bn(t->x, x->x, y->x);
-    mult_bn(t->y, x->y, y->y);
-    sub_bn(t->x, t->x + shiftfactor, t->y + shiftfactor);
-
-    mult_bn(tmp1, x->x, y->y);
-    mult_bn(t->y, x->y, y->x);
-    add_bn(t->y, tmp1 + shiftfactor, t->y + shiftfactor);
-    restore_stack(saved);
-    return t;
-}
-
 static BNComplex *cplxdiv_bn(BNComplex *t, BNComplex *x, BNComplex *y)
 {
     bn_t tmp1, tmp2, denom;
