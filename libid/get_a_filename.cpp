@@ -29,7 +29,7 @@
 enum
 {
     MATCHING = 0,   // string matches list - speed key mode
-    TEMPLATE = -2,  // wild cards present - buiding template
+    TEMPLATE = -2,  // wild cards present - building template
     SEARCHPATH = -3 // no match - building path search name
 };
 
