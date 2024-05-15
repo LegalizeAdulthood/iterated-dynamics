@@ -20,15 +20,15 @@ int fullscreen_choice(
     char const *hdg,
     char const *hdg2,
     char const *instr,
-    int numchoices,
+    int num_choices,
     char const **choices,
     int *attributes,
-    int boxwidth,
-    int boxdepth,
-    int colwidth,
+    int box_width,
+    int box_depth,
+    int col_width,
     int current,
-    void (*formatitem)(int, char*),
-    char *speedstring,
-    int (*speedprompt)(int row, int col, int vid, char const *speedstring, int speed_match),
-    int (*checkkey)(int, int)
-);
+    void (*format_item)(int, char*),
+    char *speed_string,
+    int (*speed_prompt)(int row, int col, int vid, char const *speedstring, int speed_match),
+    int (*check_key)(int, int)
+    );

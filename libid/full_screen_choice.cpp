@@ -170,18 +170,18 @@ int fullscreen_choice(
     char const *hdg,
     char const *hdg2,
     char const *instr,
-    int numchoices,
+    int num_choices,
     char const **choices,
     int *attributes,
-    int boxwidth,
-    int boxdepth,
-    int colwidth,
+    int box_width,
+    int box_depth,
+    int col_width,
     int current,
-    void (*formatitem)(int, char*),
-    char *speedstring,
-    int (*speedprompt)(int row, int col, int vid, char const *speedstring, int speed_match),
-    int (*checkkey)(int, int)
-)
+    void (*format_item)(int choice, char *buf),
+    char *speed_string,
+    int (*speed_prompt)(int row, int col, int vid, char const *speedstring, int speed_match),
+    int (*check_key)(int curkey, int choice)
+    )
 {
     int titlelines;
     int titlewidth;
@@ -208,14 +208,14 @@ int fullscreen_choice(
     g_look_at_mouse = 0;
     ret = -1;
     // preset current to passed string
-    int const speed_len = (speedstring == nullptr) ? 0 : (int) std::strlen(speedstring);
+    int const speed_len = (speed_string == nullptr) ? 0 : (int) std::strlen(speed_string);
     if (speed_len > 0)
     {
         current = 0;
         if (options & CHOICE_NOT_SORTED)
         {
             int k;
-            while (current < numchoices && (k = strncasecmp(speedstring, choices[current], speed_len)) != 0)
+            while (current < num_choices && (k = strncasecmp(speed_string, choices[current], speed_len)) != 0)
             {
                 ++current;
             }
@@ -227,7 +227,7 @@ int fullscreen_choice(
         else
         {
             int k;
-            while (current < numchoices && (k = strncasecmp(speedstring, choices[current], speed_len)) > 0)
+            while (current < num_choices && (k = strncasecmp(speed_string, choices[current], speed_len)) > 0)
             {
                 ++current;
             }
@@ -236,15 +236,15 @@ int fullscreen_choice(
                 --current;
             }
         }
-        if (current >= numchoices) // bumped end of list
+        if (current >= num_choices) // bumped end of list
         {
-            current = numchoices - 1;
+            current = num_choices - 1;
         }
     }
 
     while (true)
     {
-        if (current >= numchoices)  // no real choice in the list?
+        if (current >= num_choices)  // no real choice in the list?
         {
             goto fs_choice_end;
         }
@@ -276,14 +276,14 @@ int fullscreen_choice(
         }
     }
 
-    if (colwidth == 0)             // find widest column
+    if (col_width == 0)             // find widest column
     {
-        for (int i = 0; i < numchoices; ++i)
+        for (int i = 0; i < num_choices; ++i)
         {
             const int len = (int) std::strlen(choices[i]);
-            if (len > colwidth)
+            if (len > col_width)
             {
-                colwidth = len;
+                col_width = len;
             }
         }
     }
@@ -313,42 +313,42 @@ int fullscreen_choice(
     {
         reqdrows += 2;              // standard instructions
     }
-    if (speedstring)
+    if (speed_string)
     {
         ++reqdrows;   // a row for speedkey prompt
     }
     {
         int const max_depth = 25 - reqdrows;
-        if (boxdepth > max_depth) // limit the depth to max
+        if (box_depth > max_depth) // limit the depth to max
         {
-            boxdepth = max_depth;
+            box_depth = max_depth;
         }
-        if (boxwidth == 0)           // pick box width and depth
+        if (box_width == 0)           // pick box width and depth
         {
-            if (numchoices <= max_depth - 2)  // single column is 1st choice if we can
+            if (num_choices <= max_depth - 2)  // single column is 1st choice if we can
             {
-                boxdepth = numchoices;
-                boxwidth = 1;
+                box_depth = num_choices;
+                box_width = 1;
             }
             else
             {
                 // sort-of-wide is 2nd choice
-                boxwidth = 60 / (colwidth + 1);
-                if (boxwidth == 0
-                    || (boxdepth = (numchoices + boxwidth - 1)/boxwidth) > max_depth - 2)
+                box_width = 60 / (col_width + 1);
+                if (box_width == 0
+                    || (box_depth = (num_choices + box_width - 1)/box_width) > max_depth - 2)
                 {
-                    boxwidth = 80 / (colwidth + 1); // last gasp, full width
-                    boxdepth = (numchoices + boxwidth - 1)/boxwidth;
-                    if (boxdepth > max_depth)
+                    box_width = 80 / (col_width + 1); // last gasp, full width
+                    box_depth = (num_choices + box_width - 1)/box_width;
+                    if (box_depth > max_depth)
                     {
-                        boxdepth = max_depth;
+                        box_depth = max_depth;
                     }
                 }
             }
         }
     }
     {
-        int i = (80 / boxwidth - colwidth) / 2 - 1;
+        int i = (80 / box_width - col_width) / 2 - 1;
         if (i == 0) // to allow wider prompts
         {
             i = 1;
@@ -361,8 +361,8 @@ int fullscreen_choice(
         {
             i = 3;
         }
-        colwidth += i;
-        int j = boxwidth*colwidth + i;     // overall width of box
+        col_width += i;
+        int j = box_width*col_width + i;     // overall width of box
         if (j < titlewidth+2)
         {
             j = titlewidth + 2;
@@ -371,22 +371,22 @@ int fullscreen_choice(
         {
             j = 80;
         }
-        if (j <= 70 && boxwidth == 2)         // special case makes menus nicer
+        if (j <= 70 && box_width == 2)         // special case makes menus nicer
         {
             ++j;
-            ++colwidth;
+            ++col_width;
         }
         int k = (80 - j) / 2;                       // center the box
         k -= (90 - j) / 20;
         topleftcol = k + i;                     // column of topleft choice
-        i = (25 - reqdrows - boxdepth) / 2;
+        i = (25 - reqdrows - box_depth) / 2;
         i -= i / 4;                             // higher is better if lots extra
         topleftrow = 3 + titlelines + i;        // row of topleft choice
 
         // now set up the overall display
         helptitle();                            // clear, display title line
         driver_set_attr(1, 0, C_PROMPT_BKGRD, 24*80);      // init rest to background
-        for (i = topleftrow - 1 - titlelines; i < topleftrow + boxdepth + 1; ++i)
+        for (i = topleftrow - 1 - titlelines; i < topleftrow + box_depth + 1; ++i)
         {
             driver_set_attr(i, k, C_PROMPT_LO, j);          // draw empty box
         }
@@ -403,24 +403,24 @@ int fullscreen_choice(
         driver_put_string(topleftrow - 1, topleftcol, C_PROMPT_MED, hdg2);
     }
     {
-        int i = topleftrow + boxdepth + 1;
+        int i = topleftrow + box_depth + 1;
         if (instr == nullptr || (options & CHOICE_INSTRUCTIONS))   // display default instructions
         {
             if (i < 20)
             {
                 ++i;
             }
-            if (speedstring)
+            if (speed_string)
             {
                 speedrow = i;
-                *speedstring = 0;
+                *speed_string = 0;
                 if (++i < 22)
                 {
                     ++i;
                 }
             }
             i -= scrunch;
-            footer_msg(&i, options, speedstring);
+            footer_msg(&i, options, speed_string);
         }
         if (instr)                            // display caller's instructions
         {
@@ -439,13 +439,13 @@ int fullscreen_choice(
         }
     }
 
-    boxitems = boxwidth * boxdepth;
+    boxitems = box_width * box_depth;
     topleftchoice = 0;                      // pick topleft for init display
     while (current - topleftchoice >= boxitems
         || (current - topleftchoice > boxitems/2
-            && topleftchoice + boxitems < numchoices))
+            && topleftchoice + boxitems < num_choices))
     {
-        topleftchoice += boxwidth;
+        topleftchoice += box_width;
     }
     redisplay = true;
     topleftrow -= scrunch;
@@ -454,12 +454,12 @@ int fullscreen_choice(
         if (redisplay)                       // display the current choices
         {
             std::memset(buf, ' ', 80);
-            buf[boxwidth*colwidth] = 0;
-            for (int i = (hdg2) ? 0 : -1; i <= boxdepth; ++i)  // blank the box
+            buf[box_width*col_width] = 0;
+            for (int i = (hdg2) ? 0 : -1; i <= box_depth; ++i)  // blank the box
             {
                 driver_put_string(topleftrow + i, topleftcol, C_PROMPT_LO, buf);
             }
-            for (int i = 0; i + topleftchoice < numchoices && i < boxitems; ++i)
+            for (int i = 0; i + topleftchoice < num_choices && i < boxitems; ++i)
             {
                 // display the choices
                 int j = i + topleftchoice;
@@ -476,16 +476,16 @@ int fullscreen_choice(
                 {
                     k = C_PROMPT_MED;
                 }
-                if (formatitem)
+                if (format_item)
                 {
-                    (*formatitem)(j, buf);
+                    (*format_item)(j, buf);
                     charptr = buf;
                 }
                 else
                 {
                     charptr = choices[j];
                 }
-                driver_put_string(topleftrow + i/boxwidth, topleftcol + (i % boxwidth)*colwidth,
+                driver_put_string(topleftrow + i/box_width, topleftcol + (i % box_width)*col_width,
                                   k, charptr);
             }
             /***
@@ -497,31 +497,31 @@ int fullscreen_choice(
             {
                 driver_put_string(topleftrow - 1, topleftcol, C_PROMPT_LO, "(more)");
             }
-            if (topleftchoice + boxitems < numchoices)
+            if (topleftchoice + boxitems < num_choices)
             {
-                driver_put_string(topleftrow + boxdepth, topleftcol, C_PROMPT_LO, "(more)");
+                driver_put_string(topleftrow + box_depth, topleftcol, C_PROMPT_LO, "(more)");
             }
             redisplay = false;
         }
 
         {
             int i = current - topleftchoice;           // highlight the current choice
-            if (formatitem)
+            if (format_item)
             {
-                (*formatitem)(current, curitem);
+                (*format_item)(current, curitem);
                 itemptr = curitem;
             }
             else
             {
                 itemptr = choices[current];
             }
-            driver_put_string(topleftrow + i/boxwidth, topleftcol + (i % boxwidth)*colwidth,
+            driver_put_string(topleftrow + i/box_width, topleftcol + (i % box_width)*col_width,
                               C_CHOICE_CURRENT, itemptr);
         }
 
-        if (speedstring)                     // show speedstring if any
+        if (speed_string)                     // show speedstring if any
         {
-            show_speedstring(speedrow, speedstring, speedprompt);
+            show_speedstring(speedrow, speed_string, speed_prompt);
         }
         else
         {
@@ -560,7 +560,7 @@ int fullscreen_choice(
             {
                 k = C_PROMPT_MED;
             }
-            driver_put_string(topleftrow + i/boxwidth, topleftcol + (i % boxwidth)*colwidth,
+            driver_put_string(topleftrow + i/box_width, topleftcol + (i % box_width)*col_width,
                               k, itemptr);
         }
 
@@ -575,25 +575,25 @@ int fullscreen_choice(
         case ID_KEY_ESC:
             goto fs_choice_end;
         case ID_KEY_DOWN_ARROW:
-            increment = boxwidth;
+            increment = box_width;
             rev_increment = 0 - increment;
             break;
         case ID_KEY_CTL_DOWN_ARROW:
-            increment = boxwidth;
+            increment = box_width;
             rev_increment = 0 - increment;
             {
                 int newcurrent = current;
-                while ((newcurrent += boxwidth) != current)
+                while ((newcurrent += box_width) != current)
                 {
-                    if (newcurrent >= numchoices)
+                    if (newcurrent >= num_choices)
                     {
-                        newcurrent = (newcurrent % boxwidth) - boxwidth;
+                        newcurrent = (newcurrent % box_width) - box_width;
                     }
                     else if (!isadirname(choices[newcurrent]))
                     {
                         if (current != newcurrent)
                         {
-                            current = newcurrent - boxwidth;
+                            current = newcurrent - box_width;
                         }
                         break;  // breaks the while loop
                     }
@@ -601,26 +601,26 @@ int fullscreen_choice(
             }
             break;
         case ID_KEY_UP_ARROW:
-            rev_increment = boxwidth;
+            rev_increment = box_width;
             increment = 0 - rev_increment;
             break;
         case ID_KEY_CTL_UP_ARROW:
-            rev_increment = boxwidth;
+            rev_increment = box_width;
             increment = 0 - rev_increment;
             {
                 int newcurrent = current;
-                while ((newcurrent -= boxwidth) != current)
+                while ((newcurrent -= box_width) != current)
                 {
                     if (newcurrent < 0)
                     {
-                        newcurrent = (numchoices - current) % boxwidth;
-                        newcurrent =  numchoices + (newcurrent ? boxwidth - newcurrent: 0);
+                        newcurrent = (num_choices - current) % box_width;
+                        newcurrent =  num_choices + (newcurrent ? box_width - newcurrent: 0);
                     }
                     else if (!isadirname(choices[newcurrent]))
                     {
                         if (current != newcurrent)
                         {
-                            current = newcurrent + boxwidth;
+                            current = newcurrent + box_width;
                         }
                         break;  // breaks the while loop
                     }
@@ -639,7 +639,7 @@ int fullscreen_choice(
                 int newcurrent = current;
                 while (++newcurrent != current)
                 {
-                    if (newcurrent >= numchoices)
+                    if (newcurrent >= num_choices)
                     {
                         newcurrent = -1;
                     }
@@ -668,7 +668,7 @@ int fullscreen_choice(
                 {
                     if (newcurrent < 0)
                     {
-                        newcurrent = numchoices;
+                        newcurrent = num_choices;
                     }
                     else if (!isadirname(choices[newcurrent]))
                     {
@@ -682,20 +682,20 @@ int fullscreen_choice(
             }
             break;
         case ID_KEY_PAGE_UP:
-            if (numchoices > boxitems)
+            if (num_choices > boxitems)
             {
                 topleftchoice -= boxitems;
                 increment = -boxitems;
-                rev_increment = boxwidth;
+                rev_increment = box_width;
                 redisplay = true;
             }
             break;
         case ID_KEY_PAGE_DOWN:
-            if (numchoices > boxitems)
+            if (num_choices > boxitems)
             {
                 topleftchoice += boxitems;
                 increment = boxitems;
-                rev_increment = -boxwidth;
+                rev_increment = -box_width;
                 redisplay = true;
             }
             break;
@@ -708,7 +708,7 @@ int fullscreen_choice(
             current = -1;
             rev_increment = 1;
             increment = rev_increment;
-            for (int newcurrent = 0; newcurrent < numchoices; ++newcurrent)
+            for (int newcurrent = 0; newcurrent < num_choices; ++newcurrent)
             {
                 if (!isadirname(choices[newcurrent]))
                 {
@@ -718,15 +718,15 @@ int fullscreen_choice(
             }
             break;
         case ID_KEY_END:
-            current = numchoices;
+            current = num_choices;
             rev_increment = -1;
             increment = rev_increment;
             break;
         case ID_KEY_CTL_END:
-            current = numchoices;
+            current = num_choices;
             rev_increment = -1;
             increment = rev_increment;
-            for (int newcurrent = numchoices - 1; newcurrent >= 0; --newcurrent)
+            for (int newcurrent = num_choices - 1; newcurrent >= 0; --newcurrent)
             {
                 if (!isadirname(choices[newcurrent]))
                 {
@@ -736,9 +736,9 @@ int fullscreen_choice(
             }
             break;
         default:
-            if (checkkey)
+            if (check_key)
             {
-                ret = (*checkkey)(curkey, current);
+                ret = (*check_key)(curkey, current);
                 if (ret < -1 || ret > 0)
                 {
                     goto fs_choice_end;
@@ -749,25 +749,25 @@ int fullscreen_choice(
                 }
             }
             ret = -1;
-            if (speedstring)
+            if (speed_string)
             {
-                process_speedstring(speedstring, choices, curkey, &current,
-                                    numchoices, options & CHOICE_NOT_SORTED);
+                process_speedstring(speed_string, choices, curkey, &current,
+                                    num_choices, options & CHOICE_NOT_SORTED);
             }
             break;
         }
         if (increment)                  // apply cursor movement
         {
             current += increment;
-            if (speedstring)               // zap speedstring
+            if (speed_string)               // zap speedstring
             {
-                speedstring[0] = 0;
+                speed_string[0] = 0;
             }
         }
         while (true)
         {
             // adjust to a non-comment choice
-            if (current < 0 || current >= numchoices)
+            if (current < 0 || current >= num_choices)
             {
                 increment = rev_increment;
             }
@@ -777,9 +777,9 @@ int fullscreen_choice(
             }
             current += increment;
         }
-        if (topleftchoice > numchoices - boxitems)
+        if (topleftchoice > num_choices - boxitems)
         {
-            topleftchoice = ((numchoices + boxwidth - 1)/boxwidth)*boxwidth - boxitems;
+            topleftchoice = ((num_choices + box_width - 1)/box_width)*box_width - boxitems;
         }
         if (topleftchoice < 0)
         {
@@ -787,12 +787,12 @@ int fullscreen_choice(
         }
         while (current < topleftchoice)
         {
-            topleftchoice -= boxwidth;
+            topleftchoice -= box_width;
             redisplay = true;
         }
         while (current >= topleftchoice + boxitems)
         {
-            topleftchoice += boxwidth;
+            topleftchoice += box_width;
             redisplay = true;
         }
     }
