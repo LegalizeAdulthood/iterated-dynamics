@@ -14,23 +14,6 @@
 
 LDBL g_b_const;
 
-static BFComplex *cplxmul_bf(BFComplex *t, BFComplex *x, BFComplex *y)
-{
-    bf_t tmp1;
-    int saved;
-    saved = save_stack();
-    tmp1 = alloc_stack(rbflength + 2);
-    mult_bf(t->x, x->x, y->x);
-    mult_bf(t->y, x->y, y->y);
-    sub_bf(t->x, t->x, t->y);
-
-    mult_bf(tmp1, x->x, y->y);
-    mult_bf(t->y, x->y, y->x);
-    add_bf(t->y, tmp1, t->y);
-    restore_stack(saved);
-    return t;
-}
-
 static BFComplex *cplxdiv_bf(BFComplex *t, BFComplex *x, BFComplex *y)
 {
     bf_t tmp1, denom;
