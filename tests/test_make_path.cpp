@@ -15,94 +15,87 @@ public:
     ~TestMakePath() override = default;
 
 protected:
-    void SetUp() override;
-
-    char buffer[100]{};
+    std::string result{"foo.txt"};
 };
-
-void TestMakePath::SetUp()
-{
-    strcpy(buffer, "foo.txt");
-}
 
 } // namespace
 
 TEST_F(TestMakePath, empty)
 {
-    make_path(buffer, nullptr, nullptr, nullptr, nullptr);
+    result = make_path(nullptr, nullptr, nullptr, nullptr);
 
-    ASSERT_STREQ("", buffer);
+    EXPECT_TRUE(result.empty());
 }
 
 TEST_F(TestMakePath, drive)
 {
-    make_path(buffer, "C:", nullptr, nullptr, nullptr);
+    result = make_path("C:", nullptr, nullptr, nullptr);
 
 #if WIN32
-    ASSERT_STREQ("C:", buffer);
+    ASSERT_EQ("C:", result);
 #else
-    ASSERT_STREQ("", buffer);
+    ASSERT_EQ("", result);
 #endif
 }
 
 TEST_F(TestMakePath, directory)
 {
-    make_path(buffer, nullptr, "foo", nullptr, nullptr);
+    result = make_path(nullptr, "foo", nullptr, nullptr);
 
-    ASSERT_EQ(fs::path{"foo/"}.make_preferred().string(), std::string{buffer});
+    ASSERT_EQ(fs::path{"foo/"}.make_preferred().string(), result);
 }
 
 TEST_F(TestMakePath, filenameNullDirectory)
 {
-    make_path(buffer, nullptr, nullptr, "foo", nullptr);
+    result = make_path(nullptr, nullptr, "foo", nullptr);
 
-    ASSERT_STREQ("foo", buffer);
+    ASSERT_EQ("foo", result);
 }
 
 TEST_F(TestMakePath, filenameEmptyDirectory)
 {
-    make_path(buffer, nullptr, "", "foo", nullptr);
+    result = make_path(nullptr, "", "foo", nullptr);
 
-    ASSERT_STREQ("foo", buffer);
+    ASSERT_EQ("foo", result);
 }
 
 TEST_F(TestMakePath, extension)
 {
-    make_path(buffer, nullptr, nullptr, nullptr, ".gif");
+    result = make_path(nullptr, nullptr, nullptr, ".gif");
 
-    ASSERT_STREQ(".gif", buffer);
+    ASSERT_EQ(".gif", result);
 }
 
 TEST_F(TestMakePath, filenameExtension)
 {
-    make_path(buffer, nullptr, nullptr, "foo", ".gif");
+    result = make_path(nullptr, nullptr, "foo", ".gif");
 
-    ASSERT_STREQ("foo.gif", buffer);
+    ASSERT_EQ("foo.gif", result);
 }
 
 TEST_F(TestMakePath, directoryFilenameExtension)
 {
-    make_path(buffer, nullptr, "tmp", "foo", ".gif");
+    result = make_path(nullptr, "tmp", "foo", ".gif");
 
-    ASSERT_STREQ(fs::path{"tmp/foo.gif"}.make_preferred().string().c_str(), buffer);
+    ASSERT_EQ(fs::path{"tmp/foo.gif"}.make_preferred().string(), result);
 }
 
 TEST_F(TestMakePath, driveDirectoryFilenameExtension)
 {
-    make_path(buffer, "C:", "tmp", "foo", ".gif");
+    result = make_path("C:", "tmp", "foo", ".gif");
 
 #if WIN32
-    ASSERT_STREQ(fs::path{"C:tmp/foo.gif"}.make_preferred().string().c_str(), buffer);
+    ASSERT_EQ(fs::path{"C:tmp/foo.gif"}.make_preferred().string(), result);
 #else
-    ASSERT_STREQ(fs::path{"tmp/foo.gif"}.make_preferred().string().c_str(), buffer);
+    ASSERT_EQ(fs::path{"tmp/foo.gif"}.make_preferred().string(), result);
 #endif
 }
 
 TEST_F(TestMakePath, directoryWithTrailingSlash)
 {
-    make_path(buffer, nullptr, "tmp/", nullptr, nullptr);
+    result = make_path(nullptr, "tmp/", nullptr, nullptr);
 
-    ASSERT_STREQ(fs::path{"tmp/"}.make_preferred().string().c_str(), buffer);
+    ASSERT_EQ(fs::path{"tmp/"}.make_preferred().string(), result);
 }
 
 namespace
@@ -116,35 +109,35 @@ class TestMakeFNameExt : public TestMakePath
 
 TEST_F(TestMakeFNameExt, nullFilename)
 {
-    make_fname_ext(buffer, nullptr, ".par");
+    result = make_fname_ext(nullptr, ".par");
 
-    ASSERT_STREQ(".par", buffer);
+    ASSERT_EQ(".par", result);
 }
 
 TEST_F(TestMakeFNameExt, emptyFilename)
 {
-    make_fname_ext(buffer, "", ".par");
+    result = make_fname_ext("", ".par");
 
-    ASSERT_STREQ(".par", buffer);
+    ASSERT_EQ(".par", result);
 }
 
 TEST_F(TestMakeFNameExt, nullExtension)
 {
-    make_fname_ext(buffer, "id", nullptr);
+    result = make_fname_ext("id", nullptr);
 
-    ASSERT_STREQ("id", buffer);
+    ASSERT_EQ("id", result);
 }
 
 TEST_F(TestMakeFNameExt, emptyExtension)
 {
-    make_fname_ext(buffer, "id", "");
+    result = make_fname_ext("id", "");
 
-    ASSERT_STREQ("id", buffer);
+    ASSERT_EQ("id", result);
 }
 
 TEST_F(TestMakeFNameExt, basic)
 {
-    make_fname_ext(buffer, "id", ".par");
+    result = make_fname_ext("id", ".par");
 
-    ASSERT_STREQ("id.par", buffer);
+    ASSERT_EQ("id.par", result);
 }

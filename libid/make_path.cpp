@@ -1,20 +1,12 @@
 #include "make_path.h"
 
-#include <cassert>
-#include <cstring>
 #include <filesystem>
 #include <string>
 
 namespace fs = std::filesystem;
 
-void make_path(char *template_str, char const *drive, char const *dir, char const *fname, char const *ext)
+std::string make_path(char const *drive, char const *dir, char const *fname, char const *ext)
 {
-    if (template_str == nullptr)
-    {
-        assert(template_str != nullptr);
-        return;
-    }
-
     fs::path result;
     auto not_empty = [](const char *ptr) { return ptr != nullptr && ptr[0] != 0; };
 #ifndef XFRACT
@@ -40,5 +32,5 @@ void make_path(char *template_str, char const *drive, char const *dir, char cons
     {
         result.replace_extension(ext);
     }
-    std::strcpy(template_str, result.lexically_normal().make_preferred().string().c_str());
+    return result.lexically_normal().make_preferred().string();
 }
