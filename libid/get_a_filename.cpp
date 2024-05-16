@@ -42,7 +42,7 @@ struct CHOICE
 {
     char name[13];
     char full_name[FILE_MAX_PATH];
-    char type;
+    bool subdir;
 };
 
 static  int check_f6_key(int curkey, int choice);
@@ -146,7 +146,7 @@ retry_dir:
             }
             std::strncpy(choices[++filecount]->name, DTA.filename.c_str(), 13);
             choices[filecount]->name[12] = 0;
-            choices[filecount]->type = 1;
+            choices[filecount]->subdir = true;
             std::strcpy(choices[filecount]->full_name, DTA.filename.c_str());
             dircount++;
             if (DTA.filename == "..")
@@ -182,13 +182,13 @@ retry_dir:
                     make_path(speedstr, drive, dir, fname, ext);
                     std::strncpy(choices[++filecount]->name, DTA.filename.c_str(), 13);
                     choices[filecount]->name[12] = 0;
-                    choices[filecount]->type = 0;
+                    choices[filecount]->subdir = false;
                 }
                 else
                 {
                     std::strncpy(choices[++filecount]->name, DTA.filename.c_str(), 13);
                     choices[filecount]->name[12] = 0;
-                    choices[filecount]->type = 0;
+                    choices[filecount]->subdir = false;
                     std::strcpy(choices[filecount]->full_name, DTA.filename.c_str());
                 }
             }
@@ -199,7 +199,7 @@ retry_dir:
     if (++filecount == 0)
     {
         std::strcpy(choices[filecount]->name, "*nofiles*");
-        choices[filecount]->type = 0;
+        choices[filecount]->subdir = false;
         ++filecount;
     }
 
@@ -233,7 +233,7 @@ retry_dir:
     {
         for (i = 0; i < filecount; i++) // find first file
         {
-            if (choices[i]->type == 0)
+            if (!choices[i]->subdir)
             {
                 break;
             }
@@ -276,7 +276,7 @@ retry_dir:
     }
     if (speedstr[0] == 0 || speedstate == MATCHING)
     {
-        if (choices[i]->type)
+        if (choices[i]->subdir)
         {
             if (std::strcmp(choices[i]->name, "..") == 0) // go up a directory
             {
