@@ -21,6 +21,7 @@
 #include "get_a_filename.h"
 #include "id_keys.h"
 #include "spindac.h"
+#include "value_saver.h"
 
 #include <cstdio>
 #include <cstring>
@@ -674,11 +675,10 @@ void save_palette()
 
 bool load_palette()
 {
-    help_labels const old_help_mode = g_help_mode;
+    ValueSaver saved_help_mode{g_help_mode, help_labels::HELP_COLORMAP};
     std::string filename{g_map_name};
     driver_stack_screen();
-    g_help_mode = help_labels::HELP_COLORMAP;
-    bool i = getafilename("Select a MAP File", mapmask, filename);
+    const bool i = getafilename("Select a MAP File", mapmask, filename);
     driver_unstack_screen();
     if (!i)
     {
@@ -688,6 +688,5 @@ bool load_palette()
         }
         merge_pathnames(g_map_name, filename.c_str(), cmd_file::AT_CMD_LINE);
     }
-    g_help_mode = old_help_mode;
     return i;
 }
