@@ -53,7 +53,7 @@ static int speedstate{};
 static char const *masks[] = {"*.pot", "*.gif"};
 
 
-static bool getafilename(char const *hdg, char const *file_template, char *flname)
+bool getafilename(char const *hdg, char const *file_template, std::string &flname)
 {
     char user_file_template[FILE_MAX_PATH] = { 0 };
     int rds;  // if getting an RDS image map
@@ -87,13 +87,13 @@ static bool getafilename(char const *hdg, char const *file_template, char *flnam
         choices[i] = &storage[i];
     }
     // save filename
-    std::strcpy(old_flname, flname);
+    std::strcpy(old_flname, flname.c_str());
 
 restart:  // return here if template or directory changes
     tmpmask[0] = 0;
     if (flname[0] == 0)
     {
-        std::strcpy(flname, DOTSLASH);
+        flname = DOTSLASH;
     }
     splitpath(flname , drive, dir, fname, ext);
     make_fname_ext(filename, fname, ext);
@@ -264,14 +264,14 @@ retry_dir:
             std::strcpy(dir, g_fractal_search_dir2.c_str());
         }
         fix_dirname(dir);
-        make_drive_dir(flname, drive, dir);
+        flname = make_drive_dir(drive, dir);
         lastdir = 1 - lastdir;
         goto restart;
     }
     if (i < 0)
     {
         // restore filename
-        std::strcpy(flname, old_flname);
+        flname = old_flname;
         return true;
     }
     if (speedstr[0] == 0 || speedstate == MATCHING)
@@ -303,11 +303,11 @@ retry_dir:
                 std::strcat(dir, choices[i]->full_name);
             }
             fix_dirname(dir);
-            make_drive_dir(flname, drive, dir);
+            flname = make_drive_dir(drive, dir);
             goto restart;
         }
         split_fname_ext(choices[i]->full_name, fname, ext);
-        make_path(flname, drive, dir, fname, ext);
+        flname = make_path(drive, dir, fname, ext);
     }
     else
     {
@@ -337,7 +337,7 @@ retry_dir:
             {
                 std::strcpy(dir, dir1);
             }
-            make_path(flname, drive, dir, fname1, ext1);
+            flname = make_path(drive, dir, fname1, ext1);
             if (std::strchr(fname1, '*') || std::strchr(fname1, '?') ||
                     std::strchr(ext1,   '*') || std::strchr(ext1,   '?'))
             {
@@ -345,7 +345,7 @@ retry_dir:
                 // cppcheck-suppress uselessAssignmentPtrArg
                 file_template = user_file_template;
             }
-            else if (isadirectory(flname))
+            else if (isadirectory(flname.c_str()))
             {
                 fix_dirname(flname);
             }
@@ -356,31 +356,22 @@ retry_dir:
             const std::string full_path{find_path(speedstr)};
             if (!full_path.empty())
             {
-                std::strcpy(flname, full_path.c_str());
+                flname = full_path;
             }
             else
             {
                 // failed, make diagnostic useful:
-                std::strcpy(flname, speedstr);
+                flname = speedstr;
                 if (std::strchr(speedstr, SLASHC) == nullptr)
                 {
                     split_fname_ext(speedstr, fname, ext);
-                    make_path(flname, drive, dir, fname, ext);
+                    flname = make_path(drive, dir, fname, ext);
                 }
             }
         }
     }
     g_browse_name = std::string{fname} + ext;
     return false;
-}
-
-bool getafilename(char const *hdg, char const *file_template, std::string &flname)
-{
-    char buff[FILE_MAX_PATH];
-    std::strncpy(buff, flname.c_str(), FILE_MAX_PATH);
-    bool const result = getafilename(hdg, file_template, buff);
-    flname = buff;
-    return result;
 }
 
 // choice is used by other routines called by fullscreen_choice()
