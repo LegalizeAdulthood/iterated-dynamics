@@ -674,20 +674,19 @@ void save_palette()
 
 bool load_palette()
 {
-    char filename[FILE_MAX_PATH];
     help_labels const old_help_mode = g_help_mode;
-    std::strcpy(filename, g_map_name.c_str());
+    std::string filename{g_map_name};
     driver_stack_screen();
     g_help_mode = help_labels::HELP_COLORMAP;
     bool i = getafilename("Select a MAP File", mapmask, filename);
     driver_unstack_screen();
     if (!i)
     {
-        if (!ValidateLuts(filename))
+        if (!ValidateLuts(filename.c_str()))
         {
             std::memcpy(g_old_dac_box, g_dac_box, 256*3);
         }
-        merge_pathnames(g_map_name, filename, cmd_file::AT_CMD_LINE);
+        merge_pathnames(g_map_name, filename.c_str(), cmd_file::AT_CMD_LINE);
     }
     g_help_mode = old_help_mode;
     return i;

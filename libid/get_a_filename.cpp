@@ -53,7 +53,7 @@ static int speedstate{};
 static char const *masks[] = {"*.pot", "*.gif"};
 
 
-bool getafilename(char const *hdg, char const *file_template, char *flname)
+static bool getafilename(char const *hdg, char const *file_template, char *flname)
 {
     char user_file_template[FILE_MAX_PATH] = { 0 };
     int rds;  // if getting an RDS image map
