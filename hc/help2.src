@@ -3121,6 +3121,25 @@ Peitgen, H.-O. and Saupe, D. The Science of Fractal Images, Springer-Verlag,
 ~Topic=L-Systems, Label=HT_LSYS
 (type=lsystem)
 
+In 1968, the Hungarian biologist Aristid Lindenmayer developed a formal
+language for describing the growth of plant cell structures.  Lindenmayer
+used his formal language to describe the growth patterns of various types
+of algae.  Later, the formal language was used to describe the branching
+structures of higher plants.  The work was popularized among fractal
+enthusiasts in the book "The Algorithmic Beauty of Plants" (1990), by
+Przemyslaw Prusinkiewicz and Aristid Lindenmayer.  Lindenmayer died in
+1989, but his work was continued and extended by Prusinkiewicz whose main
+work consists of using Lindenmayer grammars to model plant growth.
+
+A Lindenmayer system, or L-system for short, consists of a set of symbols,
+a grammar, an interpretation scheme for the symbols and an initial string of
+symbols, called the axiom.  The interpretation scheme operates on a string
+of symbols to create a picture.  The grammar says how symbols in the string
+are replaced in each generation of the system.  Starting with the initial
+string of symbols, the rules of the grammar are applied to all the symbols
+in the string to produce a new string of symbols.  Each application of
+the grammar rules is called a generation.  Well, that's enough theory!
+
 These fractals are constructed from line segments using rules specified in
 drawing commands.  Starting with an initial string, the axiom,
 transformation rules are applied a specified number of times, to produce
@@ -3128,15 +3147,15 @@ the final command string which is used to draw the image.
 
 Like the type=formula fractals, this type requires a separate data file.
 A sample file, id.l, is included with this distribution.  When you
-select type lsystem, the current lsystem file is read and you are asked
-for the lsystem name you wish to run.  Press <F6> at this point if you wish
-to use a different lsystem file.  After selecting an lsystem, you are asked
+select type lsystem, the current L-system file is read and you are asked
+for the L-system name you wish to run.  Press <F6> at this point if you wish
+to use a different L-system file.  After selecting an L-system, you are asked
 for one parameter - the "order", or number of times to execute all the
 transformation rules.  It is wise to start with small orders, because the
 size of the substituted command string grows exponentially and it is very
 easy to exceed your resolution.  (Higher orders take longer to generate
 too.)  The command line options "lname=" and "lfile=" can be used to over-
-ride the default file name and lsystem name.
+ride the default file name and L-system name.
 
 Each L-system entry in the file contains a specification of the angle, the
 axiom, and the transformation rules.  Each item must appear on its own
@@ -3156,10 +3175,10 @@ Transformation rules may operate on any characters except space, tab or
 
 Any information after a ; (semi-colon) on a line is treated as a comment.
 
-Here is a sample lsystem:
+Here is a sample L-system:
 
 ~Format-
-Dragon \{         ; Name of lsystem, \{ indicates start
+Dragon \{         ; Name of L-system, \{ indicates start
   Angle 8        ; Specify the angle increment to 45 degrees
   Axiom FX       ; Starting character string
   F=             ; First rule:  Delete 'F'
@@ -3207,7 +3226,7 @@ for drawing purposes, but can be used to achieve complex translations.
 
 The characters '+', '-', '<', '>', '[', ']', '|', '!', '@', '/', '\\',
 and 'c' are reserved symbols and cannot be redefined.  For example, c=f+f
-and <= , are syntax errors.
+and <=, are syntax errors.
 
 The integer code produces incorrect results in five known instances, Peano2
 with order >= 7, SnowFlake1 with order >=6, and SnowFlake2, SnowFlake3, and
