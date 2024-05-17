@@ -40,7 +40,6 @@ enum
 
 struct CHOICE
 {
-    char name[13];
     char full_name[FILE_MAX_PATH];
     bool subdir;
 };
@@ -144,10 +143,8 @@ retry_dir:
             {
                 DTA.filename += SLASH;
             }
-            std::strncpy(choices[++filecount]->name, DTA.filename.c_str(), 13);
-            choices[filecount]->name[12] = 0;
+            std::strcpy(choices[++filecount]->full_name, DTA.filename.c_str());
             choices[filecount]->subdir = true;
-            std::strcpy(choices[filecount]->full_name, DTA.filename.c_str());
             dircount++;
             if (DTA.filename == "..")
             {
@@ -178,18 +175,13 @@ retry_dir:
                     putstringcenter(2, 0, 80, C_GENERAL_INPUT, DTA.filename.c_str());
 
                     split_fname_ext(DTA.filename, fname, ext);
-                    // just using speedstr as a handy buffer
-                    make_path(speedstr, drive, dir, fname, ext);
-                    std::strncpy(choices[++filecount]->name, DTA.filename.c_str(), 13);
-                    choices[filecount]->name[12] = 0;
+                    make_path(choices[++filecount]->full_name, drive, dir, fname, ext);
                     choices[filecount]->subdir = false;
                 }
                 else
                 {
-                    std::strncpy(choices[++filecount]->name, DTA.filename.c_str(), 13);
-                    choices[filecount]->name[12] = 0;
+                    std::strcpy(choices[++filecount]->full_name, DTA.filename.c_str());
                     choices[filecount]->subdir = false;
-                    std::strcpy(choices[filecount]->full_name, DTA.filename.c_str());
                 }
             }
             out = fr_findnext();
@@ -198,7 +190,7 @@ retry_dir:
     while (++j < numtemplates);
     if (++filecount == 0)
     {
-        std::strcpy(choices[filecount]->name, "*nofiles*");
+        std::strcpy(choices[filecount]->full_name, "*nofiles*");
         choices[filecount]->subdir = false;
         ++filecount;
     }
@@ -278,7 +270,7 @@ retry_dir:
     {
         if (choices[i]->subdir)
         {
-            if (std::strcmp(choices[i]->name, "..") == 0) // go up a directory
+            if (std::strcmp(choices[i]->full_name, "..") == 0) // go up a directory
             {
                 if (std::strcmp(dir, DOTSLASH) == 0)
                 {
