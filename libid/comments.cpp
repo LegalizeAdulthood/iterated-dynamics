@@ -6,16 +6,56 @@
 #include "version.h"
 #include "video_mode.h"
 
+#include <libcpuid/libcpuid.h>
+
 #include <array>
 #include <cstdio>
 #include <cstring>
 #include <ctime>
+#include <stdexcept>
 #include <string>
+
+static std::string get_cpu_id();
 
 std::string g_command_comment[4];
 char g_par_comment[4][MAX_COMMENT_LEN]{};
+std::function<std::string()> g_get_cpu_id{get_cpu_id};
 
 constexpr char ESC{'$'};
+
+static std::string get_cpu_id()
+{
+    static std::string cpu_id;
+    if (cpu_id.empty())
+    {
+        if (!cpuid_present())
+        {
+            cpu_id = "(Unknown CPU)";
+        }
+        auto check = [](int result, const char *label)
+        {
+            if (result < 0)
+            {
+                throw std::runtime_error(std::string{label} + ": " + cpuid_error());
+            }
+        };
+        cpu_id_t data;
+        check(cpu_identify(nullptr, &data), "cpu_identify");
+        std::string brand{data.brand_str};
+        auto drop = [&](const std::string_view text)
+        {
+            for (std::string::size_type pos = brand.find(text); pos != std::string::npos;
+                 pos = brand.find(text))
+            {
+                brand.erase(pos, text.length());
+            }
+        };
+        drop("(R)");
+        drop("(TM)");
+        cpu_id = brand;
+    }
+    return cpu_id;
+}
 
 static char const *expand_var(char const *var, char *buf)
 {
@@ -104,6 +144,11 @@ static char const *expand_var(char const *var, char *buf)
         char vidmde[5];
         vidmode_keyname(g_video_entry.keynum, vidmde);
         std::sprintf(buf, "%s", vidmde);
+        out = buf;
+    }
+    else if (std::strcmp(var, "cpu") == 0)
+    {
+        std::strcpy(buf, g_get_cpu_id().c_str());
         out = buf;
     }
     else

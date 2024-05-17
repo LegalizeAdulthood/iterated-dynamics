@@ -1,5 +1,6 @@
 find_package(Boost REQUIRED)
 find_package(GIF REQUIRED)
+find_package(cpuid CONFIG REQUIRED)
 
 add_library(libid
     include/os.h
@@ -605,5 +606,5 @@ set_source_files_properties(decode_info.cpp
 target_compile_options(libid PUBLIC ${ID_TARGET_OPTIONS})
 target_include_directories(libid PUBLIC include)
 target_link_libraries(libid PRIVATE help_defs helpcom os)
-target_link_libraries(libid PUBLIC config Boost::boost GIF::GIF)
+target_link_libraries(libid PUBLIC config Boost::boost GIF::GIF cpuid::cpuid)
 add_dependencies(libid native_help)

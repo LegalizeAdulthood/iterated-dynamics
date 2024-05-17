@@ -5,6 +5,7 @@
   "dependencies": [
     "boost-algorithm",
     "boost-endian",
+    "cpuid",
     "giflib",
     "gtest",
     {

@@ -1,6 +1,8 @@
 #pragma once
 
+#include <functional>
 #include <string>
+
 enum
 {
     MAX_COMMENT_LEN = 57 // length of par comments
@@ -8,6 +10,7 @@ enum
 
 extern char g_par_comment[4][MAX_COMMENT_LEN];
 extern std::string g_command_comment[4];          // comments for command set
+extern std::function<std::string()> g_get_cpu_id;
 
 inline void clear_command_comments()
 {
