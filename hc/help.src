@@ -269,6 +269,8 @@ Found a bug?  File an issue on our github project!\
 
 Version 1.0:
 
+o New $cpu$ comment string variable expands to a description of your CPU.\
+o Long filenames are now supported throughout.\
 o Most of the changes involve internal restructuring of the DOS Fractint
   code to build a bridge to the future.
 o Iterated Dynamics is a native 64-bit Windows program written in C++ with a
@@ -328,9 +330,6 @@ o Navigation is exclusively through the keyboard.  Mouse support will be
 o Sound output does nothing, although all controls can be set through
   parameters or interactive screens.  Sound output will be restored once a
   suitable audio library has been identified.
-o Some code still assumes 8.3 filenames, but this restriction will be lifted
-  over time.  To avoid surprises, continue to use 8.3 filenames until the
-  code has been completely audited.
 o Some formulas don't render correctly.  These problems have been around
   forever as xfractint also renders them incorrectly.  This will be fixed
   in a subsequent release.
