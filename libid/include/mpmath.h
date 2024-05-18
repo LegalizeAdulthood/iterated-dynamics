@@ -8,12 +8,13 @@
 #include "id_data.h"
 #include "sqr.h"
 
+#include <cstdint>
 #include <vector>
 
 struct MP
 {
-    int Exp;
-    unsigned long Mant;
+    std::int16_t Exp;
+    std::uint32_t Mant;
 };
 
 struct MPC
