@@ -77,8 +77,8 @@ MPC MPCdiv(MPC x, MPC y)
 
     mod = MPCmod(y);
     y.y.Exp ^= 0x8000;
-    y.x = *pMPdiv(y.x, mod);
-    y.y = *pMPdiv(y.y, mod);
+    y.x = *MPdiv386(y.x, mod);
+    y.y = *MPdiv386(y.y, mod);
     return MPCmul(x, y);
 }
 
@@ -171,7 +171,6 @@ MPC cmplx2MPC(DComplex z)
     return x;
 }
 
-MP *(*pMPdiv)(MP x, MP y) = MPdiv386;
 MP *(*pMPadd)(MP x, MP y) = MPadd386;
 MP *(*pMPsub)(MP x, MP y) = MPsub386;
 MP *(*pd2MP)(double x) = d2MP386;
