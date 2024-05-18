@@ -32,5 +32,4 @@ add_executable(id main.cpp)
 target_link_libraries(id PUBLIC libid)
 install(TARGETS id
     DESTINATION .
-    RUNTIME_DEPENDENCIES RUNTIME
 )
