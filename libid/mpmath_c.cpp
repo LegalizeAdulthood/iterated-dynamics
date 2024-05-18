@@ -62,11 +62,6 @@ MPC MPCsqr(MPC x)
     return z;
 }
 
-MP MPCmod(MPC x)
-{
-    return *pMPadd(*pMPmul(x.x, x.x), *pMPmul(x.y, x.y));
-}
-
 MPC MPCmul(MPC x, MPC y)
 {
     MPC z;

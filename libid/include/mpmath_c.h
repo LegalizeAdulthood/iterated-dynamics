@@ -13,7 +13,10 @@ MP *fg2MP386(long, int);// Convert fudged to type MP
 MP *MPsub386(MP, MP);
 MP *MPabs(MP);
 MPC MPCsqr(MPC);
-MP MPCmod(MPC);
+inline MP MPCmod(MPC x)
+{
+    return *pMPadd(*MPmul386(x.x, x.x), *MPmul386(x.y, x.y));
+}
 MPC MPCmul(MPC, MPC);
 MPC MPCdiv(MPC, MPC);
 MPC MPCadd(MPC, MPC);

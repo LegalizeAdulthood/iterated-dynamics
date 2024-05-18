@@ -15,8 +15,10 @@
 
 #include <cmath>
 
-#define modulus(z) (sqr((z).x) + sqr((z).y))
-#define MPCmod(m) (*pMPadd(*pMPmul((m).x, (m).x), *pMPmul((m).y, (m).y)))
+inline double modulus(const DComplex &z)
+{
+    return sqr(z.x) + sqr(z.y);
+}
 
 static MPC s_mpc_old{};
 static MPC s_mpc_new{};
