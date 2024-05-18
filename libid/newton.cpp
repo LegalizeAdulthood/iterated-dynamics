@@ -345,7 +345,7 @@ bool NewtonSetup()
 
 int MPCNewtonFractal()
 {
-    g_mp_overflow = 0;
+    g_mp_overflow = false;
     MPC mpctmp = MPCpow(s_mpc_old, g_degree - 1);
 
     MPC mpcnew;
@@ -392,7 +392,7 @@ int MPCNewtonFractal()
     s_mpc_old.y = *MPmul(temp2, (*MPsub(*MPmul(mpcnew.y, mpctmp.x), *MPmul(mpcnew.x, mpctmp.y))));
     g_new_z.x = *MP2d(s_mpc_old.x);
     g_new_z.y = *MP2d(s_mpc_old.y);
-    return g_mp_overflow;
+    return g_mp_overflow ? 1 : 0;
 }
 
 int MPCjulia_per_pixel()

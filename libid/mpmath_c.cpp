@@ -37,7 +37,7 @@
 
 static MP Ans = { 0 };
 
-int g_mp_overflow = 0;
+bool g_mp_overflow{};
 
 MP *MPabs(MP x)
 {

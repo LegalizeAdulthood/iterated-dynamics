@@ -25,7 +25,7 @@ struct MPC
 extern bool                  g_log_map_calculate;
 extern std::vector<BYTE>     g_log_map_table;
 extern long                  g_log_map_table_max_size;
-extern int                   g_mp_overflow;
+extern bool                  g_mp_overflow;
 extern MPC                   g_mpc_one;
 
 long ExpFloat14(long);

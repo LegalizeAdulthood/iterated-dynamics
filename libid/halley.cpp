@@ -87,16 +87,16 @@ static int  Halleybailout()
     return 0;
 }
 
-static int  MPCHalleybailout()
+static bool MPCHalleybailout()
 {
     static MP mptmpbailout;
     mptmpbailout = *MPabs(*MPsub(MPCmod(s_mpc_new), MPCmod(s_mpc_old)));
     if (MPcmp(mptmpbailout, s_mp_temp_param2_x) < 0)
     {
-        return 1;
+        return true;
     }
     s_mpc_old = s_mpc_new;
-    return 0;
+    return false;
 }
 
 int MPCHalleyFractal()
@@ -109,7 +109,7 @@ int MPCHalleyFractal()
     MPC mpcFX, mpcF1prime, mpcF2prime, mpcHalnumer1;
     MPC mpcHalnumer2, mpcHaldenom, mpctmp2;
 
-    g_mp_overflow = 0;
+    g_mp_overflow = false;
     mpcXtoAlessOne.x = s_mpc_old.x;
     mpcXtoAlessOne.y = s_mpc_old.y;
     for (int ihal = 2; ihal < g_degree; ihal++)
@@ -149,7 +149,7 @@ int MPCHalleyFractal()
     // relaxation coef.
     s_mpc_new = MPCsub(s_mpc_old, mpctmp2);
     g_new_z    = MPC2cmplx(s_mpc_new);
-    return MPCHalleybailout() || g_mp_overflow;
+    return MPCHalleybailout() || g_mp_overflow ? 1 : 0;
 }
 
 int HalleyFractal()
