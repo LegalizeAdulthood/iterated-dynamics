@@ -66,9 +66,6 @@ inline void fSqrt14(float x, float &z)
     fExp14(z, z);
 }
 
-// the following are declared 4 dimensional as an experiment
-// changeing declarations to DComplex and LComplex restores the code
-// to 2D
 union Arg
 {
     DComplex d;
