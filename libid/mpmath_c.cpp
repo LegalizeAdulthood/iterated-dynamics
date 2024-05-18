@@ -157,8 +157,8 @@ DComplex MPC2cmplx(MPC x)
 {
     DComplex z;
 
-    z.x = *pMP2d(x.x);
-    z.y = *pMP2d(x.y);
+    z.x = *MP2d386(x.x);
+    z.y = *MP2d386(x.y);
     return z;
 }
 
@@ -170,8 +170,6 @@ MPC cmplx2MPC(DComplex z)
     x.y = *d2MP386(z.y);
     return x;
 }
-
-double *(*pMP2d)(MP m) = MP2d386;
 
 DComplex ComplexPower(DComplex xx, DComplex yy)
 {

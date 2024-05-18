@@ -2,6 +2,9 @@
 
 #include "mpmath.h"
 
+// Mark Peterson's expanded floating point operators. If
+// the operation results in an overflow (result < 2**(2**14), or division
+// by zero) the global 'g_mp_overflow' is set to one.
 MP *MPmul386(MP, MP);
 MP *MPdiv386(MP, MP);
 MP *MPadd386(MP, MP);
