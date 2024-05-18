@@ -7,7 +7,7 @@
 // by zero) the global 'g_mp_overflow' is set to one.
 MP *MPmul386(MP, MP);
 MP *MPdiv386(MP, MP);
-MP *MPadd386(MP, MP);
+MP *MPadd(MP, MP);
 int MPcmp386(MP, MP);
 MP *d2MP386(double);// Convert double to type MP
 double *MP2d386(MP);
@@ -18,7 +18,7 @@ MP *MPabs(MP);
 MPC MPCsqr(MPC);
 inline MP MPCmod(MPC x)
 {
-    return *MPadd386(*MPmul386(x.x, x.x), *MPmul386(x.y, x.y));
+    return *MPadd(*MPmul386(x.x, x.x), *MPmul386(x.y, x.y));
 }
 MPC MPCmul(MPC, MPC);
 MPC MPCdiv(MPC, MPC);
@@ -28,10 +28,6 @@ MPC MPCpow(MPC, int);
 int MPCcmp(MPC, MPC);
 DComplex MPC2cmplx(MPC);
 MPC cmplx2MPC(DComplex);
-inline MP *MPadd(MP x, MP y)
-{
-    return MPadd386(x, y);
-}
 inline MP *MPsub(MP x, MP y)
 {
     return MPsub386(x, y);

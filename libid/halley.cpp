@@ -115,14 +115,14 @@ int MPCHalleyFractal()
     for (int ihal = 2; ihal < g_degree; ihal++)
     {
         mpctmp2.x = *MPsub386(*MPmul386(mpcXtoAlessOne.x, s_mpc_old.x), *MPmul386(mpcXtoAlessOne.y, s_mpc_old.y));
-        mpctmp2.y = *MPadd386(*MPmul386(mpcXtoAlessOne.x, s_mpc_old.y), *MPmul386(mpcXtoAlessOne.y, s_mpc_old.x));
+        mpctmp2.y = *MPadd(*MPmul386(mpcXtoAlessOne.x, s_mpc_old.y), *MPmul386(mpcXtoAlessOne.y, s_mpc_old.x));
         mpcXtoAlessOne.x = mpctmp2.x;
         mpcXtoAlessOne.y = mpctmp2.y;
     }
     mpcXtoA.x = *MPsub386(*MPmul386(mpcXtoAlessOne.x, s_mpc_old.x), *MPmul386(mpcXtoAlessOne.y, s_mpc_old.y));
-    mpcXtoA.y = *MPadd386(*MPmul386(mpcXtoAlessOne.x, s_mpc_old.y), *MPmul386(mpcXtoAlessOne.y, s_mpc_old.x));
+    mpcXtoA.y = *MPadd(*MPmul386(mpcXtoAlessOne.x, s_mpc_old.y), *MPmul386(mpcXtoAlessOne.y, s_mpc_old.x));
     mpcXtoAplusOne.x = *MPsub386(*MPmul386(mpcXtoA.x, s_mpc_old.x), *MPmul386(mpcXtoA.y, s_mpc_old.y));
-    mpcXtoAplusOne.y = *MPadd386(*MPmul386(mpcXtoA.x, s_mpc_old.y), *MPmul386(mpcXtoA.y, s_mpc_old.x));
+    mpcXtoAplusOne.y = *MPadd(*MPmul386(mpcXtoA.x, s_mpc_old.y), *MPmul386(mpcXtoA.y, s_mpc_old.x));
 
     mpcFX.x = *MPsub386(mpcXtoAplusOne.x, s_mpc_old.x);
     mpcFX.y = *MPsub386(mpcXtoAplusOne.y, s_mpc_old.y); // FX = X^(a+1) - X  = F
@@ -134,11 +134,11 @@ int MPCHalleyFractal()
     mpcF1prime.y = *MPmul386(s_halley_mp_a_plus_one, mpcXtoA.y);                   //  F'
 
     mpctmp2.x = *MPsub386(*MPmul386(mpcF2prime.x, mpcFX.x), *MPmul386(mpcF2prime.y, mpcFX.y));
-    mpctmp2.y = *MPadd386(*MPmul386(mpcF2prime.x, mpcFX.y), *MPmul386(mpcF2prime.y, mpcFX.x));
+    mpctmp2.y = *MPadd(*MPmul386(mpcF2prime.x, mpcFX.y), *MPmul386(mpcF2prime.y, mpcFX.x));
     //  F * F"
 
-    mpcHaldenom.x = *MPadd386(mpcF1prime.x, mpcF1prime.x);
-    mpcHaldenom.y = *MPadd386(mpcF1prime.y, mpcF1prime.y);      //  2 * F'
+    mpcHaldenom.x = *MPadd(mpcF1prime.x, mpcF1prime.x);
+    mpcHaldenom.y = *MPadd(mpcF1prime.y, mpcF1prime.y);      //  2 * F'
 
     mpcHalnumer1 = MPCdiv(mpctmp2, mpcHaldenom);        //  F"F/2F'
     mpctmp2.x = *MPsub386(mpcF1prime.x, mpcHalnumer1.x);

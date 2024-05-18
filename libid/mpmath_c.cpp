@@ -42,7 +42,7 @@ int g_mp_overflow = 0;
 MP *MPsub386(MP x, MP y)
 {
     y.Exp ^= 0x8000;
-    return MPadd386(x, y);
+    return MPadd(x, y);
 }
 
 MP *MPabs(MP x)
@@ -67,7 +67,7 @@ MPC MPCmul(MPC x, MPC y)
     MPC z;
 
     z.x = *MPsub386(*MPmul386(x.x, y.x), *MPmul386(x.y, y.y));
-    z.y = *MPadd386(*MPmul386(x.x, y.y), *MPmul386(x.y, y.x));
+    z.y = *MPadd(*MPmul386(x.x, y.y), *MPmul386(x.y, y.x));
     return z;
 }
 
@@ -86,8 +86,8 @@ MPC MPCadd(MPC x, MPC y)
 {
     MPC z;
 
-    z.x = *MPadd386(x.x, y.x);
-    z.y = *MPadd386(x.y, y.y);
+    z.x = *MPadd(x.x, y.x);
+    z.y = *MPadd(x.y, y.y);
     return z;
 }
 
@@ -129,7 +129,7 @@ MPC MPCpow(MPC x, int exp)
         if (exp & 1)
         {
             zz.x = *MPsub386(*MPmul386(z.x, x.x), *MPmul386(z.y, x.y));
-            zz.y = *MPadd386(*MPmul386(z.x, x.y), *MPmul386(z.y, x.x));
+            zz.y = *MPadd(*MPmul386(z.x, x.y), *MPmul386(z.y, x.x));
             z = zz;
         }
         exp >>= 1;
@@ -838,7 +838,7 @@ StoreAns:
    ret
 MPadd386    ENDP
 */
-MP *MPadd386(MP x, MP y)
+MP *MPadd(MP x, MP y)
 {
     // TODO: implement
     assert(!"MPadd386 called.");
