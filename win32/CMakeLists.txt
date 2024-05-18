@@ -41,4 +41,9 @@ add_executable(id WIN32
 source_group("CMake Templates" REGULAR_EXPRESSION "^.*\.in$")
 target_include_directories(id PUBLIC .)
 target_link_libraries(id PUBLIC libid)
-install(TARGETS id DESTINATION .)
+install(TARGETS id
+    DESTINATION .
+    RUNTIME_DEPENDENCIES
+        PRE_EXCLUDE_REGEXES "api-ms-.*" "ext-ms-.*"
+        POST_EXCLUDE_REGEXES ".*system32/.*\\.dll"
+)

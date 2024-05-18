@@ -30,4 +30,7 @@ add_dependencies(os native_help)
 
 add_executable(id main.cpp)
 target_link_libraries(id PUBLIC libid)
-install(TARGETS id DESTINATION .)
+install(TARGETS id
+    DESTINATION .
+    RUNTIME_DEPENDENCIES RUNTIME
+)
