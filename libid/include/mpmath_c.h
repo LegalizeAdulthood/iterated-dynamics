@@ -9,7 +9,7 @@ MP *MPmul386(MP, MP);
 MP *MPdiv386(MP, MP);
 MP *MPadd(MP, MP);
 int MPcmp386(MP, MP);
-MP *d2MP386(double);// Convert double to type MP
+MP *d2MP(double);// Convert double to type MP
 double *MP2d386(MP);
 MP *fg2MP(long, int);// Convert fudged to type MP
 
@@ -28,10 +28,6 @@ MPC MPCpow(MPC, int);
 int MPCcmp(MPC, MPC);
 DComplex MPC2cmplx(MPC);
 MPC cmplx2MPC(DComplex);
-inline MP *d2MP(double x)
-{
-    return d2MP386(x);
-}
 inline MP *MPmul(MP x, MP y)
 {
     return MPmul386(x, y);

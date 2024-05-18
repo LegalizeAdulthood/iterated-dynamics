@@ -166,8 +166,8 @@ MPC cmplx2MPC(DComplex z)
 {
     MPC x;
 
-    x.x = *d2MP386(z.x);
-    x.y = *d2MP386(z.y);
+    x.x = *d2MP(z.x);
+    x.y = *d2MP(z.y);
     return x;
 }
 
@@ -690,7 +690,7 @@ StoreAns:
    ret
 d2MP386     ENDP
 */
-MP *d2MP386(double x)
+MP *d2MP(double x)
 {
     // TODO: implement
     assert(!"d2MP386 called.");

@@ -58,12 +58,12 @@ bool HalleySetup()
 
     if (g_fractal_type == fractal_type::MPHALLEY)
     {
-        s_halley_mp_a_plus_one = *d2MP386((double)s_halley_a_plus_one);
-        s_halley_mp_a_plus_one_times_degree = *d2MP386((double)s_halley_a_plus_one_times_degree);
-        s_mpc_temp_param.x = *d2MP386(g_param_z1.y);
-        s_mpc_temp_param.y = *d2MP386(g_param_z2.y);
-        s_mp_temp_param2_x = *d2MP386(g_param_z2.x);
-        g_mp_one        = *d2MP386(1.0);
+        s_halley_mp_a_plus_one = *d2MP((double)s_halley_a_plus_one);
+        s_halley_mp_a_plus_one_times_degree = *d2MP((double)s_halley_a_plus_one_times_degree);
+        s_mpc_temp_param.x = *d2MP(g_param_z1.y);
+        s_mpc_temp_param.y = *d2MP(g_param_z2.y);
+        s_mp_temp_param2_x = *d2MP(g_param_z2.x);
+        g_mp_one        = *d2MP(1.0);
     }
 
     if (g_degree % 2)
@@ -204,8 +204,8 @@ int MPCHalley_per_pixel()
         g_init.y = g_dy_pixel();
     }
 
-    s_mpc_old.x = *d2MP386(g_init.x);
-    s_mpc_old.y = *d2MP386(g_init.y);
+    s_mpc_old.x = *d2MP(g_init.x);
+    s_mpc_old.y = *d2MP(g_init.y);
 
     return 0;
 }
