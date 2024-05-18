@@ -114,27 +114,27 @@ int MPCHalleyFractal()
     mpcXtoAlessOne.y = s_mpc_old.y;
     for (int ihal = 2; ihal < g_degree; ihal++)
     {
-        mpctmp2.x = *MPsub(*MPmul386(mpcXtoAlessOne.x, s_mpc_old.x), *MPmul386(mpcXtoAlessOne.y, s_mpc_old.y));
-        mpctmp2.y = *MPadd(*MPmul386(mpcXtoAlessOne.x, s_mpc_old.y), *MPmul386(mpcXtoAlessOne.y, s_mpc_old.x));
+        mpctmp2.x = *MPsub(*MPmul(mpcXtoAlessOne.x, s_mpc_old.x), *MPmul(mpcXtoAlessOne.y, s_mpc_old.y));
+        mpctmp2.y = *MPadd(*MPmul(mpcXtoAlessOne.x, s_mpc_old.y), *MPmul(mpcXtoAlessOne.y, s_mpc_old.x));
         mpcXtoAlessOne.x = mpctmp2.x;
         mpcXtoAlessOne.y = mpctmp2.y;
     }
-    mpcXtoA.x = *MPsub(*MPmul386(mpcXtoAlessOne.x, s_mpc_old.x), *MPmul386(mpcXtoAlessOne.y, s_mpc_old.y));
-    mpcXtoA.y = *MPadd(*MPmul386(mpcXtoAlessOne.x, s_mpc_old.y), *MPmul386(mpcXtoAlessOne.y, s_mpc_old.x));
-    mpcXtoAplusOne.x = *MPsub(*MPmul386(mpcXtoA.x, s_mpc_old.x), *MPmul386(mpcXtoA.y, s_mpc_old.y));
-    mpcXtoAplusOne.y = *MPadd(*MPmul386(mpcXtoA.x, s_mpc_old.y), *MPmul386(mpcXtoA.y, s_mpc_old.x));
+    mpcXtoA.x = *MPsub(*MPmul(mpcXtoAlessOne.x, s_mpc_old.x), *MPmul(mpcXtoAlessOne.y, s_mpc_old.y));
+    mpcXtoA.y = *MPadd(*MPmul(mpcXtoAlessOne.x, s_mpc_old.y), *MPmul(mpcXtoAlessOne.y, s_mpc_old.x));
+    mpcXtoAplusOne.x = *MPsub(*MPmul(mpcXtoA.x, s_mpc_old.x), *MPmul(mpcXtoA.y, s_mpc_old.y));
+    mpcXtoAplusOne.y = *MPadd(*MPmul(mpcXtoA.x, s_mpc_old.y), *MPmul(mpcXtoA.y, s_mpc_old.x));
 
     mpcFX.x = *MPsub(mpcXtoAplusOne.x, s_mpc_old.x);
     mpcFX.y = *MPsub(mpcXtoAplusOne.y, s_mpc_old.y); // FX = X^(a+1) - X  = F
 
-    mpcF2prime.x = *MPmul386(s_halley_mp_a_plus_one_times_degree, mpcXtoAlessOne.x); // mpAp1deg in setup
-    mpcF2prime.y = *MPmul386(s_halley_mp_a_plus_one_times_degree, mpcXtoAlessOne.y);        // F"
+    mpcF2prime.x = *MPmul(s_halley_mp_a_plus_one_times_degree, mpcXtoAlessOne.x); // mpAp1deg in setup
+    mpcF2prime.y = *MPmul(s_halley_mp_a_plus_one_times_degree, mpcXtoAlessOne.y);        // F"
 
-    mpcF1prime.x = *MPsub(*MPmul386(s_halley_mp_a_plus_one, mpcXtoA.x), g_mp_one);
-    mpcF1prime.y = *MPmul386(s_halley_mp_a_plus_one, mpcXtoA.y);                   //  F'
+    mpcF1prime.x = *MPsub(*MPmul(s_halley_mp_a_plus_one, mpcXtoA.x), g_mp_one);
+    mpcF1prime.y = *MPmul(s_halley_mp_a_plus_one, mpcXtoA.y);                   //  F'
 
-    mpctmp2.x = *MPsub(*MPmul386(mpcF2prime.x, mpcFX.x), *MPmul386(mpcF2prime.y, mpcFX.y));
-    mpctmp2.y = *MPadd(*MPmul386(mpcF2prime.x, mpcFX.y), *MPmul386(mpcF2prime.y, mpcFX.x));
+    mpctmp2.x = *MPsub(*MPmul(mpcF2prime.x, mpcFX.x), *MPmul(mpcF2prime.y, mpcFX.y));
+    mpctmp2.y = *MPadd(*MPmul(mpcF2prime.x, mpcFX.y), *MPmul(mpcF2prime.y, mpcFX.x));
     //  F * F"
 
     mpcHaldenom.x = *MPadd(mpcF1prime.x, mpcF1prime.x);

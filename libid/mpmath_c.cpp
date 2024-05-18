@@ -56,8 +56,8 @@ MPC MPCsqr(MPC x)
 {
     MPC z;
 
-    z.x = *MPsub(*MPmul386(x.x, x.x), *MPmul386(x.y, x.y));
-    z.y = *MPmul386(x.x, x.y);
+    z.x = *MPsub(*MPmul(x.x, x.x), *MPmul(x.y, x.y));
+    z.y = *MPmul(x.x, x.y);
     z.y.Exp++;
     return z;
 }
@@ -66,8 +66,8 @@ MPC MPCmul(MPC x, MPC y)
 {
     MPC z;
 
-    z.x = *MPsub(*MPmul386(x.x, y.x), *MPmul386(x.y, y.y));
-    z.y = *MPadd(*MPmul386(x.x, y.y), *MPmul386(x.y, y.x));
+    z.x = *MPsub(*MPmul(x.x, y.x), *MPmul(x.y, y.y));
+    z.y = *MPadd(*MPmul(x.x, y.y), *MPmul(x.y, y.x));
     return z;
 }
 
@@ -122,14 +122,14 @@ MPC MPCpow(MPC x, int exp)
     exp >>= 1;
     while (exp)
     {
-        zz.x = *MPsub(*MPmul386(x.x, x.x), *MPmul386(x.y, x.y));
-        zz.y = *MPmul386(x.x, x.y);
+        zz.x = *MPsub(*MPmul(x.x, x.x), *MPmul(x.y, x.y));
+        zz.y = *MPmul(x.x, x.y);
         zz.y.Exp++;
         x = zz;
         if (exp & 1)
         {
-            zz.x = *MPsub(*MPmul386(z.x, x.x), *MPmul386(z.y, x.y));
-            zz.y = *MPadd(*MPmul386(z.x, x.y), *MPmul386(z.y, x.x));
+            zz.x = *MPsub(*MPmul(z.x, x.x), *MPmul(z.y, x.y));
+            zz.y = *MPadd(*MPmul(z.x, x.y), *MPmul(z.y, x.x));
             z = zz;
         }
         exp >>= 1;
@@ -1027,7 +1027,7 @@ StoreMant:
    ret
 MPmul386    ENDP
 */
-MP *MPmul386(MP x, MP y)
+MP *MPmul(MP x, MP y)
 {
     // TODO: implement
     assert(!"MPmul386 called.");

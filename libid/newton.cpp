@@ -27,7 +27,7 @@ inline double distance(const DComplex &z1, const DComplex &z2)
 
 inline MP pMPsqr(MP z)
 {
-    return *MPmul386(z, z);
+    return *MPmul(z, z);
 }
 
 inline MP MPdistance(const MPC &z1, const MPC &z2)
@@ -349,8 +349,8 @@ int MPCNewtonFractal()
     MPC mpctmp = MPCpow(s_mpc_old, g_degree - 1);
 
     MPC mpcnew;
-    mpcnew.x = *MPsub(*MPmul386(mpctmp.x, s_mpc_old.x), *MPmul386(mpctmp.y, s_mpc_old.y));
-    mpcnew.y = *MPadd(*MPmul386(mpctmp.x, s_mpc_old.y), *MPmul386(mpctmp.y, s_mpc_old.x));
+    mpcnew.x = *MPsub(*MPmul(mpctmp.x, s_mpc_old.x), *MPmul(mpctmp.y, s_mpc_old.y));
+    mpcnew.y = *MPadd(*MPmul(mpctmp.x, s_mpc_old.y), *MPmul(mpctmp.y, s_mpc_old.x));
     s_mpc_temp1.x = *MPsub(mpcnew.x, g_mpc_one.x);
     s_mpc_temp1.y = *MPsub(mpcnew.y, g_mpc_one.y);
     if (MPcmp386(MPCmod(s_mpc_temp1), s_mp_threshold) < 0)
@@ -384,12 +384,12 @@ int MPCNewtonFractal()
         return 1;
     }
 
-    mpcnew.x = *MPadd(*MPmul386(s_mp_degree_minus_1_over_degree, mpcnew.x), s_newton_mp_r_over_d);
-    mpcnew.y = *MPmul386(mpcnew.y, s_mp_degree_minus_1_over_degree);
+    mpcnew.x = *MPadd(*MPmul(s_mp_degree_minus_1_over_degree, mpcnew.x), s_newton_mp_r_over_d);
+    mpcnew.y = *MPmul(mpcnew.y, s_mp_degree_minus_1_over_degree);
     MP temp2 = MPCmod(mpctmp);
     temp2 = *MPdiv386(g_mp_one, temp2);
-    s_mpc_old.x = *MPmul386(temp2, (*MPadd(*MPmul386(mpcnew.x, mpctmp.x), *MPmul386(mpcnew.y, mpctmp.y))));
-    s_mpc_old.y = *MPmul386(temp2, (*MPsub(*MPmul386(mpcnew.y, mpctmp.x), *MPmul386(mpcnew.x, mpctmp.y))));
+    s_mpc_old.x = *MPmul(temp2, (*MPadd(*MPmul(mpcnew.x, mpctmp.x), *MPmul(mpcnew.y, mpctmp.y))));
+    s_mpc_old.y = *MPmul(temp2, (*MPsub(*MPmul(mpcnew.y, mpctmp.x), *MPmul(mpcnew.x, mpctmp.y))));
     g_new_z.x = *MP2d386(s_mpc_old.x);
     g_new_z.y = *MP2d386(s_mpc_old.y);
     return g_mp_overflow;

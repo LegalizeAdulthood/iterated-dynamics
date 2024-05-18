@@ -5,7 +5,7 @@
 // Mark Peterson's expanded floating point operators. If
 // the operation results in an overflow (result < 2**(2**14), or division
 // by zero) the global 'g_mp_overflow' is set to one.
-MP *MPmul386(MP, MP);
+MP *MPmul(MP, MP);
 MP *MPdiv386(MP, MP);
 MP *MPadd(MP, MP);
 int MPcmp386(MP, MP);
@@ -18,7 +18,7 @@ MP *MPabs(MP);
 MPC MPCsqr(MPC);
 inline MP MPCmod(MPC x)
 {
-    return *MPadd(*MPmul386(x.x, x.x), *MPmul386(x.y, x.y));
+    return *MPadd(*MPmul(x.x, x.x), *MPmul(x.y, x.y));
 }
 MPC MPCmul(MPC, MPC);
 MPC MPCdiv(MPC, MPC);
@@ -28,10 +28,6 @@ MPC MPCpow(MPC, int);
 int MPCcmp(MPC, MPC);
 DComplex MPC2cmplx(MPC);
 MPC cmplx2MPC(DComplex);
-inline MP *MPmul(MP x, MP y)
-{
-    return MPmul386(x, y);
-}
 inline MP *MPdiv(MP x, MP y)
 {
     return MPdiv386(x, y);
