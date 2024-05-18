@@ -353,14 +353,14 @@ int MPCNewtonFractal()
     mpcnew.y = *MPadd(*MPmul(mpctmp.x, s_mpc_old.y), *MPmul(mpctmp.y, s_mpc_old.x));
     s_mpc_temp1.x = *MPsub(mpcnew.x, g_mpc_one.x);
     s_mpc_temp1.y = *MPsub(mpcnew.y, g_mpc_one.y);
-    if (MPcmp386(MPCmod(s_mpc_temp1), s_mp_threshold) < 0)
+    if (MPcmp(MPCmod(s_mpc_temp1), s_mp_threshold) < 0)
     {
         if (g_fractal_type == fractal_type::MPNEWTBASIN)
         {
             long tmpcolor;
             tmpcolor = -1;
             for (int i = 0; i < g_degree; i++)
-                if (MPcmp386(MPdistance(g_mpc_roots[i], s_mpc_old), s_mp_threshold) < 0)
+                if (MPcmp(MPdistance(g_mpc_roots[i], s_mpc_old), s_mp_threshold) < 0)
                 {
                     if (g_basin == 2)
                     {

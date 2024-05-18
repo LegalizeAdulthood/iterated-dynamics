@@ -141,11 +141,11 @@ int MPCcmp(MPC x, MPC y)
 {
     MPC z;
 
-    if (MPcmp386(x.x, y.x) || MPcmp386(x.y, y.y))
+    if (MPcmp(x.x, y.x) || MPcmp(x.y, y.y))
     {
         z.x = MPCmod(x);
         z.y = MPCmod(y);
-        return MPcmp386(z.x, z.y);
+        return MPcmp(z.x, z.y);
     }
     else
     {
@@ -901,7 +901,7 @@ ExitCmp:
    ret
 MPcmp386    ENDP
 */
-int MPcmp386(MP x, MP y)
+int MPcmp(MP x, MP y)
 {
     // TODO: implement
     assert(!"MPcmp386 called.");

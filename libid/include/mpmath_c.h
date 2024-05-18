@@ -8,7 +8,7 @@
 MP *MPmul(MP, MP);
 MP *MPdiv(MP, MP);
 MP *MPadd(MP, MP);
-int MPcmp386(MP, MP);
+int MPcmp(MP, MP);
 MP *d2MP(double);// Convert double to type MP
 double *MP2d386(MP);
 MP *fg2MP(long, int);// Convert fudged to type MP
@@ -28,11 +28,6 @@ MPC MPCpow(MPC, int);
 int MPCcmp(MPC, MPC);
 DComplex MPC2cmplx(MPC);
 MPC cmplx2MPC(DComplex);
-inline int MPcmp(MP x, MP y)
-{
-    return MPcmp386(x, y);
-}
-
 
 DComplex ComplexPower(DComplex, DComplex);
 void SetupLogTable();
