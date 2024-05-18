@@ -271,10 +271,10 @@ bool NewtonSetup()
     g_threshold    = .3*PI/g_degree; // less than half distance between roots
     if (g_fractal_type == fractal_type::MPNEWTON || g_fractal_type == fractal_type::MPNEWTBASIN)
     {
-        s_newton_mp_r_over_d = *pd2MP(g_newton_r_over_d);
-        s_mp_degree_minus_1_over_degree = *pd2MP(g_degree_minus_1_over_degree);
-        s_mp_threshold = *pd2MP(g_threshold);
-        g_mp_one = *pd2MP(1.0);
+        s_newton_mp_r_over_d = *d2MP386(g_newton_r_over_d);
+        s_mp_degree_minus_1_over_degree = *d2MP386(g_degree_minus_1_over_degree);
+        s_mp_threshold = *d2MP386(g_threshold);
+        g_mp_one = *d2MP386(1.0);
     }
 
     g_basin = 0;
@@ -314,8 +314,8 @@ bool NewtonSetup()
         // list of roots to discover where we converged for newtbasin
         for (int i = 0; i < g_degree; i++)
         {
-            g_mpc_roots[i].x = *pd2MP(std::cos(i*PI*2.0/(double)g_degree));
-            g_mpc_roots[i].y = *pd2MP(std::sin(i*PI*2.0/(double)g_degree));
+            g_mpc_roots[i].x = *d2MP386(std::cos(i*PI*2.0/(double)g_degree));
+            g_mpc_roots[i].y = *d2MP386(std::sin(i*PI*2.0/(double)g_degree));
         }
     }
 
@@ -398,7 +398,7 @@ int MPCjulia_per_pixel()
         g_old_z.x = g_dx_pixel();
         g_old_z.y = g_dy_pixel();
     }
-    s_mpc_old.x = *pd2MP(g_old_z.x);
-    s_mpc_old.y = *pd2MP(g_old_z.y);
+    s_mpc_old.x = *d2MP386(g_old_z.x);
+    s_mpc_old.y = *d2MP386(g_old_z.y);
     return 0;
 }

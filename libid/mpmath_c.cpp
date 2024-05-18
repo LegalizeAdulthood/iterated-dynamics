@@ -166,12 +166,11 @@ MPC cmplx2MPC(DComplex z)
 {
     MPC x;
 
-    x.x = *pd2MP(z.x);
-    x.y = *pd2MP(z.y);
+    x.x = *d2MP386(z.x);
+    x.y = *d2MP386(z.y);
     return x;
 }
 
-MP *(*pd2MP)(double x) = d2MP386;
 double *(*pMP2d)(MP m) = MP2d386;
 
 DComplex ComplexPower(DComplex xx, DComplex yy)
