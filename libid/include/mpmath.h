@@ -40,11 +40,6 @@ extern MP  *(*pd2MP)(double)                ;
 extern double     *(*pMP2d)(MP)             ;
 long ExpFloat14(long);
 
-// ** Formula Declarations **
-enum MATH_TYPE { D_MATH, M_MATH, L_MATH };
-
-extern MATH_TYPE MathType;
-
 inline void fDiv(float x, float y, float &z)
 {
     *(long*)&z = RegDivFloat(*(long*)&x, *(long*)&y);

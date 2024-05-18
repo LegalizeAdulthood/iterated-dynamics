@@ -53,7 +53,8 @@
 #include <stdexcept>
 #include <string>
 
-MATH_TYPE MathType = D_MATH;
+// ** Formula Declarations **
+enum MATH_TYPE { D_MATH, M_MATH, L_MATH };
 
 using Function = void();
 using FunctionPtr = Function *;
@@ -67,6 +68,7 @@ enum
 unsigned int g_max_function_ops  = MAX_OPS;
 unsigned int g_max_function_args = MAX_ARGS;
 
+static MATH_TYPE s_math_type = D_MATH;
 static unsigned long s_num_ops{};
 static unsigned long s_num_loads{};
 static unsigned long s_num_stores{};
@@ -2163,7 +2165,7 @@ static ConstArg *is_const(char const *Str, int Len)
                 }
                 if (n == 10 || n == 11 || n == 12)
                 {
-                    if (MathType == L_MATH)
+                    if (s_math_type == L_MATH)
                     {
                         driver_unget_key('f');
                     }
@@ -2181,7 +2183,7 @@ static ConstArg *is_const(char const *Str, int Len)
     v[g_variable_index].a.d.x = v[g_variable_index].a.d.y;
 
     // v[vsp].a should already be zeroed out
-    switch (MathType)
+    switch (s_math_type)
     {
     case M_MATH:
         v[g_variable_index].a.m.x.Exp = 0;
@@ -2238,7 +2240,7 @@ static ConstArg *is_const(char const *Str, int Len)
             z.y = 0.0;
         }
         z.x = std::atof(Str);
-        switch (MathType)
+        switch (s_math_type)
         {
         case D_MATH:
             v[g_variable_index].a.d = z;
@@ -2509,7 +2511,7 @@ static bool parse_formula_text(char const *text)
     g_jump_index = 0;
     g_jump_control.clear();
 
-    switch (MathType)
+    switch (s_math_type)
     {
     case D_MATH:
         StkAdd = dStkAdd;
@@ -2701,7 +2703,7 @@ static bool parse_formula_text(char const *text)
     v[16].a.d.x = Rotation;
     v[16].a.d.y = Skew;
 
-    switch (MathType)
+    switch (s_math_type)
     {
     case D_MATH:
         v[1].a.d.x = g_params[0];
@@ -3014,7 +3016,7 @@ int Formula()
     // Set the random number
     if (s_set_random || s_randomized)
     {
-        switch (MathType)
+        switch (s_math_type)
         {
         case D_MATH:
             dRandom();
@@ -3036,7 +3038,7 @@ int Formula()
         g_op_ptr++;
     }
 
-    switch (MathType)
+    switch (s_math_type)
     {
     case D_MATH:
         g_new_z = v[3].a.d;
@@ -3077,7 +3079,7 @@ int form_per_pixel()
     v[10].a.d.x = (double)g_col;
     v[10].a.d.y = (double)g_row;
 
-    switch (MathType)
+    switch (s_math_type)
     {
     case D_MATH:
         if ((g_row+g_col)&1)
@@ -3120,7 +3122,7 @@ int form_per_pixel()
         if (g_invert != 0)
         {
             invertz2(&g_old_z);
-            switch (MathType)
+            switch (s_math_type)
             {
             case D_MATH:
                 v[0].a.d.x = g_old_z.x;
@@ -3145,7 +3147,7 @@ int form_per_pixel()
         }
         else
         {
-            switch (MathType)
+            switch (s_math_type)
             {
             case D_MATH:
                 v[0].a.d.x = g_dx_pixel();
@@ -3176,7 +3178,7 @@ int form_per_pixel()
     InitStoPtr = g_store_index;
     InitOpPtr = g_op_ptr;
     // Set old variable for orbits
-    switch (MathType)
+    switch (s_math_type)
     {
     case D_MATH:
         g_old_z = v[3].a.d;
@@ -4330,7 +4332,7 @@ bool fpFormulaSetup()
 {
     // TODO: when parsera.c contains assembly equivalents, remove !defined(_WIN32)
 #if !defined(XFRACT) && !defined(_WIN32)
-    MathType = D_MATH;
+    s_math_type = D_MATH;
     bool RunFormRes = !run_formula(g_formula_name, false); // run_formula() returns true for failure
     if (RunFormRes
         && fpu >=387
@@ -4342,7 +4344,7 @@ bool fpFormulaSetup()
     }
     return RunFormRes;
 #else
-    MathType = D_MATH;
+    s_math_type = D_MATH;
     return !run_formula(g_formula_name, false); // run_formula() returns true for failure
 #endif
 }
@@ -4361,7 +4363,7 @@ bool intFormulaSetup()
     }
     return false;
 #else
-    MathType = L_MATH;
+    s_math_type = L_MATH;
     s_fudge = (double)(1L << g_bit_shift);
     g_fudge_limit = (double)0x7fffffffL / s_fudge;
     s_shift_back = 32 - g_bit_shift;
