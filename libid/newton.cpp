@@ -32,7 +32,7 @@ inline MP pMPsqr(MP z)
 
 inline MP MPdistance(const MPC &z1, const MPC &z2)
 {
-    return *MPadd(pMPsqr(*MPsub386(z1.x, z2.x)), pMPsqr(*MPsub386(z1.y, z2.y)));
+    return *MPadd(pMPsqr(*MPsub(z1.x, z2.x)), pMPsqr(*MPsub(z1.y, z2.y)));
 }
 
 static MPC s_mpc_old{};
@@ -349,10 +349,10 @@ int MPCNewtonFractal()
     MPC mpctmp = MPCpow(s_mpc_old, g_degree - 1);
 
     MPC mpcnew;
-    mpcnew.x = *MPsub386(*MPmul386(mpctmp.x, s_mpc_old.x), *MPmul386(mpctmp.y, s_mpc_old.y));
+    mpcnew.x = *MPsub(*MPmul386(mpctmp.x, s_mpc_old.x), *MPmul386(mpctmp.y, s_mpc_old.y));
     mpcnew.y = *MPadd(*MPmul386(mpctmp.x, s_mpc_old.y), *MPmul386(mpctmp.y, s_mpc_old.x));
-    s_mpc_temp1.x = *MPsub386(mpcnew.x, g_mpc_one.x);
-    s_mpc_temp1.y = *MPsub386(mpcnew.y, g_mpc_one.y);
+    s_mpc_temp1.x = *MPsub(mpcnew.x, g_mpc_one.x);
+    s_mpc_temp1.y = *MPsub(mpcnew.y, g_mpc_one.y);
     if (MPcmp386(MPCmod(s_mpc_temp1), s_mp_threshold) < 0)
     {
         if (g_fractal_type == fractal_type::MPNEWTBASIN)
@@ -389,7 +389,7 @@ int MPCNewtonFractal()
     MP temp2 = MPCmod(mpctmp);
     temp2 = *MPdiv386(g_mp_one, temp2);
     s_mpc_old.x = *MPmul386(temp2, (*MPadd(*MPmul386(mpcnew.x, mpctmp.x), *MPmul386(mpcnew.y, mpctmp.y))));
-    s_mpc_old.y = *MPmul386(temp2, (*MPsub386(*MPmul386(mpcnew.y, mpctmp.x), *MPmul386(mpcnew.x, mpctmp.y))));
+    s_mpc_old.y = *MPmul386(temp2, (*MPsub(*MPmul386(mpcnew.y, mpctmp.x), *MPmul386(mpcnew.x, mpctmp.y))));
     g_new_z.x = *MP2d386(s_mpc_old.x);
     g_new_z.y = *MP2d386(s_mpc_old.y);
     return g_mp_overflow;
