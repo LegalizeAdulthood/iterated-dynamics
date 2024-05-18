@@ -77,8 +77,8 @@ MPC MPCdiv(MPC x, MPC y)
 
     mod = MPCmod(y);
     y.y.Exp ^= 0x8000;
-    y.x = *MPdiv386(y.x, mod);
-    y.y = *MPdiv386(y.y, mod);
+    y.x = *MPdiv(y.x, mod);
+    y.y = *MPdiv(y.y, mod);
     return MPCmul(x, y);
 }
 
@@ -963,7 +963,7 @@ StoreMant:
    ret
 MPdiv386    ENDP
 */
-MP *MPdiv386(MP x, MP y)
+MP *MPdiv(MP x, MP y)
 {
     // TODO: implement
     assert(!"MPdiv386 called.");
