@@ -13,7 +13,12 @@ MP *d2MP(double);// Convert double to type MP
 double *MP2d(MP);
 MP *fg2MP(long, int);// Convert fudged to type MP
 
-MP *MPsub(MP, MP);
+inline MP *MPsub(MP x, MP y)
+{
+    y.Exp ^= 0x8000;
+    return MPadd(x, y);
+}
+
 MP *MPabs(MP);
 MPC MPCsqr(MPC);
 inline MP MPCmod(MPC x)

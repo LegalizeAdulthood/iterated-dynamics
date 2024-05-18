@@ -39,12 +39,6 @@ static MP Ans = { 0 };
 
 int g_mp_overflow = 0;
 
-MP *MPsub(MP x, MP y)
-{
-    y.Exp ^= 0x8000;
-    return MPadd(x, y);
-}
-
 MP *MPabs(MP x)
 {
     Ans = x;
