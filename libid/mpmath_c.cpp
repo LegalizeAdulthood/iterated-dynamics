@@ -157,8 +157,8 @@ DComplex MPC2cmplx(MPC x)
 {
     DComplex z;
 
-    z.x = *MP2d386(x.x);
-    z.y = *MP2d386(x.y);
+    z.x = *MP2d(x.x);
+    z.y = *MP2d(x.y);
     return z;
 }
 
@@ -737,7 +737,7 @@ StoreAns:
    ret
 MP2d386     ENDP
 */
-double *MP2d386(MP x)
+double *MP2d(MP x)
 {
     // TODO: implement
     static double ans = 0.0;

@@ -10,7 +10,7 @@ MP *MPdiv(MP, MP);
 MP *MPadd(MP, MP);
 int MPcmp(MP, MP);
 MP *d2MP(double);// Convert double to type MP
-double *MP2d386(MP);
+double *MP2d(MP);
 MP *fg2MP(long, int);// Convert fudged to type MP
 
 MP *MPsub(MP, MP);

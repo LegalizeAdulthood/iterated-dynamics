@@ -390,8 +390,8 @@ int MPCNewtonFractal()
     temp2 = *MPdiv(g_mp_one, temp2);
     s_mpc_old.x = *MPmul(temp2, (*MPadd(*MPmul(mpcnew.x, mpctmp.x), *MPmul(mpcnew.y, mpctmp.y))));
     s_mpc_old.y = *MPmul(temp2, (*MPsub(*MPmul(mpcnew.y, mpctmp.x), *MPmul(mpcnew.x, mpctmp.y))));
-    g_new_z.x = *MP2d386(s_mpc_old.x);
-    g_new_z.y = *MP2d386(s_mpc_old.y);
+    g_new_z.x = *MP2d(s_mpc_old.x);
+    g_new_z.y = *MP2d(s_mpc_old.y);
     return g_mp_overflow;
 }
 
