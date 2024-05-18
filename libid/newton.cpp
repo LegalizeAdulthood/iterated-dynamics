@@ -330,10 +330,6 @@ bool NewtonSetup()
     }
 
     g_calc_type = standard_fractal;
-    if (g_fractal_type == fractal_type::MPNEWTON || g_fractal_type == fractal_type::MPNEWTBASIN)
-    {
-        setMPfunctions();
-    }
     return true;
 }
 

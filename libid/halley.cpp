@@ -56,7 +56,6 @@ bool HalleySetup()
 
     if (g_fractal_type == fractal_type::MPHALLEY)
     {
-        setMPfunctions();
         s_halley_mp_a_plus_one = *pd2MP((double)s_halley_a_plus_one);
         s_halley_mp_a_plus_one_times_degree = *pd2MP((double)s_halley_a_plus_one_times_degree);
         s_mpc_temp_param.x = *pd2MP(g_param_z1.y);
