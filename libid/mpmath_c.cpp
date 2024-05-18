@@ -146,11 +146,11 @@ int MPCcmp(MPC x, MPC y)
 {
     MPC z;
 
-    if (pMPcmp(x.x, y.x) || pMPcmp(x.y, y.y))
+    if (MPcmp386(x.x, y.x) || MPcmp386(x.y, y.y))
     {
         z.x = MPCmod(x);
         z.y = MPCmod(y);
-        return pMPcmp(z.x, z.y);
+        return MPcmp386(z.x, z.y);
     }
     else
     {
@@ -176,7 +176,6 @@ MPC cmplx2MPC(DComplex z)
     return x;
 }
 
-int (*pMPcmp)(MP x, MP y) = MPcmp386;
 MP *(*pMPmul)(MP x, MP y) = MPmul386;
 MP *(*pMPdiv)(MP x, MP y) = MPdiv386;
 MP *(*pMPadd)(MP x, MP y) = MPadd386;

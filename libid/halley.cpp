@@ -89,7 +89,7 @@ static int  MPCHalleybailout()
 {
     static MP mptmpbailout;
     mptmpbailout = *MPabs(*pMPsub(MPCmod(s_mpc_new), MPCmod(s_mpc_old)));
-    if (pMPcmp(mptmpbailout, s_mp_temp_param2_x) < 0)
+    if (MPcmp386(mptmpbailout, s_mp_temp_param2_x) < 0)
     {
         return 1;
     }
