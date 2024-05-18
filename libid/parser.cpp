@@ -672,7 +672,7 @@ void mStkSqr()
     Arg1->m.x = *MPsub(LastSqr.m.x, LastSqr.m.y);
     LastSqr.m.x = *MPadd(LastSqr.m.x, LastSqr.m.y);
     LastSqr.m.y.Exp = 0;
-    LastSqr.m.y.Mant = (long) LastSqr.m.y.Exp;
+    LastSqr.m.y.Mant = 0;
 }
 
 void lStkSqr()
@@ -863,9 +863,9 @@ void dStkZero()
 void mStkZero()
 {
     Arg1->m.x.Exp = 0;
-    Arg1->m.x.Mant = Arg1->m.x.Exp;
+    Arg1->m.x.Mant = 0;
     Arg1->m.y.Exp = 0;
-    Arg1->m.y.Mant = Arg1->m.y.Exp;
+    Arg1->m.y.Mant = 0;
 }
 
 void lStkZero()
@@ -903,7 +903,7 @@ void dStkReal()
 void mStkReal()
 {
     Arg1->m.y.Exp = 0;
-    Arg1->m.y.Mant = (long) Arg1->m.y.Exp;
+    Arg1->m.y.Mant = 0;
 }
 
 void lStkReal()
@@ -923,7 +923,7 @@ void mStkImag()
 {
     Arg1->m.x = Arg1->m.y;
     Arg1->m.y.Exp = 0;
-    Arg1->m.y.Mant = (long) Arg1->m.y.Exp;
+    Arg1->m.y.Mant = 0;
 }
 
 void lStkImag()
@@ -1031,7 +1031,7 @@ void mStkMod()
 {
     Arg1->m.x = MPCmod(Arg1->m);
     Arg1->m.y.Exp = 0;
-    Arg1->m.y.Mant = (long) Arg1->m.y.Exp;
+    Arg1->m.y.Mant = 0;
 }
 
 void lStkMod()
@@ -1690,7 +1690,7 @@ void mStkLT()
 {
     Arg2->m.x = *fg2MP((long)(MPcmp(Arg2->m.x, Arg1->m.x) == -1), 0);
     Arg2->m.y.Exp = 0;
-    Arg2->m.y.Mant = (long) Arg2->m.y.Exp;
+    Arg2->m.y.Mant = 0;
     Arg1--;
     Arg2--;
 }
@@ -1717,7 +1717,7 @@ void mStkGT()
 {
     Arg2->m.x = *fg2MP((long)(MPcmp(Arg2->m.x, Arg1->m.x) == 1), 0);
     Arg2->m.y.Exp = 0;
-    Arg2->m.y.Mant = (long) Arg2->m.y.Exp;
+    Arg2->m.y.Mant = 0;
     Arg1--;
     Arg2--;
 }
@@ -1747,7 +1747,7 @@ void mStkLTE()
     comp = MPcmp(Arg2->m.x, Arg1->m.x);
     Arg2->m.x = *fg2MP((long)(comp == -1 || comp == 0), 0);
     Arg2->m.y.Exp = 0;
-    Arg2->m.y.Mant = (long) Arg2->m.y.Exp;
+    Arg2->m.y.Mant = 0;
     Arg1--;
     Arg2--;
 }
@@ -1777,7 +1777,7 @@ void mStkGTE()
     comp = MPcmp(Arg2->m.x, Arg1->m.x);
     Arg2->m.x = *fg2MP((long)(comp == 1 || comp == 0), 0);
     Arg2->m.y.Exp = 0;
-    Arg2->m.y.Mant = (long) Arg2->m.y.Exp;
+    Arg2->m.y.Mant = 0;
     Arg1--;
     Arg2--;
 }
@@ -1807,7 +1807,7 @@ void mStkEQ()
     comp = MPcmp(Arg2->m.x, Arg1->m.x);
     Arg2->m.x = *fg2MP((long)(comp == 0), 0);
     Arg2->m.y.Exp = 0;
-    Arg2->m.y.Mant = (long) Arg2->m.y.Exp;
+    Arg2->m.y.Mant = 0;
     Arg1--;
     Arg2--;
 }
@@ -1837,7 +1837,7 @@ void mStkNE()
     comp = MPcmp(Arg2->m.x, Arg1->m.x);
     Arg2->m.x = *fg2MP((long)(comp != 0), 0);
     Arg2->m.y.Exp = 0;
-    Arg2->m.y.Mant = (long) Arg2->m.y.Exp;
+    Arg2->m.y.Mant = 0;
     Arg1--;
     Arg2--;
 }
@@ -1864,7 +1864,7 @@ void mStkOR()
 {
     Arg2->m.x = *fg2MP((long)(Arg2->m.x.Mant || Arg1->m.x.Mant), 0);
     Arg2->m.y.Exp = 0;
-    Arg2->m.y.Mant = (long) Arg2->m.y.Exp;
+    Arg2->m.y.Mant = 0;
     Arg1--;
     Arg2--;
 }
@@ -1891,7 +1891,7 @@ void mStkAND()
 {
     Arg2->m.x = *fg2MP((long)(Arg2->m.x.Mant && Arg1->m.x.Mant), 0);
     Arg2->m.y.Exp = 0;
-    Arg2->m.y.Mant = (long) Arg2->m.y.Exp;
+    Arg2->m.y.Mant = 0;
     Arg1--;
     Arg2--;
 }
@@ -2187,9 +2187,9 @@ static ConstArg *is_const(char const *Str, int Len)
     {
     case M_MATH:
         v[g_variable_index].a.m.x.Exp = 0;
-        v[g_variable_index].a.m.x.Mant = v[g_variable_index].a.m.x.Exp;
+        v[g_variable_index].a.m.x.Mant = 0;
         v[g_variable_index].a.m.y.Exp = 0;
-        v[g_variable_index].a.m.y.Mant = v[g_variable_index].a.m.y.Exp;
+        v[g_variable_index].a.m.y.Mant = 0;
         break;
     case L_MATH:
         v[g_variable_index].a.l.y = 0;
@@ -3101,9 +3101,9 @@ int form_per_pixel()
         else
         {
             v[9].a.m.x.Exp = 0;
-            v[9].a.m.x.Mant = v[9].a.m.x.Exp;
+            v[9].a.m.x.Mant = 0;
             v[9].a.m.y.Exp = 0;
-            v[9].a.m.y.Mant = v[9].a.m.y.Exp;
+            v[9].a.m.y.Mant = 0;
         }
         v[10].a.m = cmplx2MPC(v[10].a.d);
         break;
