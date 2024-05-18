@@ -31,7 +31,6 @@ extern MPC                   g_mpc_one;
 /* Mark Peterson's expanded floating point operators. If
    the operation results in an overflow (result < 2**(2**14), or division
    by zero) the global 'g_mp_overflow' is set to one. */
-extern MP  *(*pMPsub)(MP , MP);
 extern MP  *(*pd2MP)(double)                ;
 extern double     *(*pMP2d)(MP)             ;
 long ExpFloat14(long);

@@ -56,7 +56,7 @@ MPC MPCsqr(MPC x)
 {
     MPC z;
 
-    z.x = *pMPsub(*MPmul386(x.x, x.x), *MPmul386(x.y, x.y));
+    z.x = *MPsub386(*MPmul386(x.x, x.x), *MPmul386(x.y, x.y));
     z.y = *MPmul386(x.x, x.y);
     z.y.Exp++;
     return z;
@@ -66,7 +66,7 @@ MPC MPCmul(MPC x, MPC y)
 {
     MPC z;
 
-    z.x = *pMPsub(*MPmul386(x.x, y.x), *MPmul386(x.y, y.y));
+    z.x = *MPsub386(*MPmul386(x.x, y.x), *MPmul386(x.y, y.y));
     z.y = *MPadd386(*MPmul386(x.x, y.y), *MPmul386(x.y, y.x));
     return z;
 }
@@ -95,8 +95,8 @@ MPC MPCsub(MPC x, MPC y)
 {
     MPC z;
 
-    z.x = *pMPsub(x.x, y.x);
-    z.y = *pMPsub(x.y, y.y);
+    z.x = *MPsub386(x.x, y.x);
+    z.y = *MPsub386(x.y, y.y);
     return z;
 }
 
@@ -122,13 +122,13 @@ MPC MPCpow(MPC x, int exp)
     exp >>= 1;
     while (exp)
     {
-        zz.x = *pMPsub(*MPmul386(x.x, x.x), *MPmul386(x.y, x.y));
+        zz.x = *MPsub386(*MPmul386(x.x, x.x), *MPmul386(x.y, x.y));
         zz.y = *MPmul386(x.x, x.y);
         zz.y.Exp++;
         x = zz;
         if (exp & 1)
         {
-            zz.x = *pMPsub(*MPmul386(z.x, x.x), *MPmul386(z.y, x.y));
+            zz.x = *MPsub386(*MPmul386(z.x, x.x), *MPmul386(z.y, x.y));
             zz.y = *MPadd386(*MPmul386(z.x, x.y), *MPmul386(z.y, x.x));
             z = zz;
         }
@@ -171,7 +171,6 @@ MPC cmplx2MPC(DComplex z)
     return x;
 }
 
-MP *(*pMPsub)(MP x, MP y) = MPsub386;
 MP *(*pd2MP)(double x) = d2MP386;
 double *(*pMP2d)(MP m) = MP2d386;
 
