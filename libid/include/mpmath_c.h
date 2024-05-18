@@ -15,7 +15,7 @@ MP *MPabs(MP);
 MPC MPCsqr(MPC);
 inline MP MPCmod(MPC x)
 {
-    return *pMPadd(*MPmul386(x.x, x.x), *MPmul386(x.y, x.y));
+    return *MPadd386(*MPmul386(x.x, x.x), *MPmul386(x.y, x.y));
 }
 MPC MPCmul(MPC, MPC);
 MPC MPCdiv(MPC, MPC);

@@ -67,7 +67,7 @@ MPC MPCmul(MPC x, MPC y)
     MPC z;
 
     z.x = *pMPsub(*MPmul386(x.x, y.x), *MPmul386(x.y, y.y));
-    z.y = *pMPadd(*MPmul386(x.x, y.y), *MPmul386(x.y, y.x));
+    z.y = *MPadd386(*MPmul386(x.x, y.y), *MPmul386(x.y, y.x));
     return z;
 }
 
@@ -86,8 +86,8 @@ MPC MPCadd(MPC x, MPC y)
 {
     MPC z;
 
-    z.x = *pMPadd(x.x, y.x);
-    z.y = *pMPadd(x.y, y.y);
+    z.x = *MPadd386(x.x, y.x);
+    z.y = *MPadd386(x.y, y.y);
     return z;
 }
 
@@ -129,7 +129,7 @@ MPC MPCpow(MPC x, int exp)
         if (exp & 1)
         {
             zz.x = *pMPsub(*MPmul386(z.x, x.x), *MPmul386(z.y, x.y));
-            zz.y = *pMPadd(*MPmul386(z.x, x.y), *MPmul386(z.y, x.x));
+            zz.y = *MPadd386(*MPmul386(z.x, x.y), *MPmul386(z.y, x.x));
             z = zz;
         }
         exp >>= 1;
@@ -171,7 +171,6 @@ MPC cmplx2MPC(DComplex z)
     return x;
 }
 
-MP *(*pMPadd)(MP x, MP y) = MPadd386;
 MP *(*pMPsub)(MP x, MP y) = MPsub386;
 MP *(*pd2MP)(double x) = d2MP386;
 double *(*pMP2d)(MP m) = MP2d386;
