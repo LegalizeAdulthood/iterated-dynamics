@@ -20,10 +20,20 @@
 #include <cmath>
 #include <cfloat>
 
-#define distance(z1, z2)  (sqr((z1).x-(z2).x)+sqr((z1).y-(z2).y))
-#define MPCmod(m) (*MPadd386(*MPmul386((m).x, (m).x), *MPmul386((m).y, (m).y)))
-#define pMPsqr(z) (*MPmul386((z), (z)))
-#define MPdistance(z1, z2)  (*MPadd386(pMPsqr(*MPsub386((z1).x, (z2).x)), pMPsqr(*MPsub386((z1).y, (z2).y))))
+inline double distance(const DComplex &z1, const DComplex &z2)
+{
+    return sqr(z1.x - z2.x) + sqr(z1.y - z2.y);
+}
+
+inline MP pMPsqr(MP z)
+{
+    return *MPmul386(z, z);
+}
+
+inline MP MPdistance(const MPC &z1, const MPC &z2)
+{
+    return *MPadd386(pMPsqr(*MPsub386(z1.x, z2.x)), pMPsqr(*MPsub386(z1.y, z2.y)));
+}
 
 static MPC s_mpc_old{};
 static MPC s_mpc_temp1{};
