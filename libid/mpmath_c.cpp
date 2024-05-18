@@ -1069,7 +1069,7 @@ StoreAns:
    ret
 fg2MP386    ENDP
 */
-MP *fg2MP386(long x, int fg)
+MP *fg2MP(long x, int fg)
 {
     assert(!"fg2MP386 called");
     return &Ans;
