@@ -21,8 +21,8 @@
 #include <cfloat>
 
 #define distance(z1, z2)  (sqr((z1).x-(z2).x)+sqr((z1).y-(z2).y))
-#define MPCmod(m) (*pMPadd(*pMPmul((m).x, (m).x), *pMPmul((m).y, (m).y)))
-#define pMPsqr(z) (*pMPmul((z), (z)))
+#define MPCmod(m) (*pMPadd(*MPmul386((m).x, (m).x), *MPmul386((m).y, (m).y)))
+#define pMPsqr(z) (*MPmul386((z), (z)))
 #define MPdistance(z1, z2)  (*pMPadd(pMPsqr(*pMPsub((z1).x, (z2).x)), pMPsqr(*pMPsub((z1).y, (z2).y))))
 
 static MPC s_mpc_old{};
@@ -339,8 +339,8 @@ int MPCNewtonFractal()
     MPC mpctmp = MPCpow(s_mpc_old, g_degree - 1);
 
     MPC mpcnew;
-    mpcnew.x = *pMPsub(*pMPmul(mpctmp.x, s_mpc_old.x), *pMPmul(mpctmp.y, s_mpc_old.y));
-    mpcnew.y = *pMPadd(*pMPmul(mpctmp.x, s_mpc_old.y), *pMPmul(mpctmp.y, s_mpc_old.x));
+    mpcnew.x = *pMPsub(*MPmul386(mpctmp.x, s_mpc_old.x), *MPmul386(mpctmp.y, s_mpc_old.y));
+    mpcnew.y = *pMPadd(*MPmul386(mpctmp.x, s_mpc_old.y), *MPmul386(mpctmp.y, s_mpc_old.x));
     s_mpc_temp1.x = *pMPsub(mpcnew.x, g_mpc_one.x);
     s_mpc_temp1.y = *pMPsub(mpcnew.y, g_mpc_one.y);
     if (MPcmp386(MPCmod(s_mpc_temp1), s_mp_threshold) < 0)
@@ -374,12 +374,12 @@ int MPCNewtonFractal()
         return 1;
     }
 
-    mpcnew.x = *pMPadd(*pMPmul(s_mp_degree_minus_1_over_degree, mpcnew.x), s_newton_mp_r_over_d);
-    mpcnew.y = *pMPmul(mpcnew.y, s_mp_degree_minus_1_over_degree);
+    mpcnew.x = *pMPadd(*MPmul386(s_mp_degree_minus_1_over_degree, mpcnew.x), s_newton_mp_r_over_d);
+    mpcnew.y = *MPmul386(mpcnew.y, s_mp_degree_minus_1_over_degree);
     MP temp2 = MPCmod(mpctmp);
     temp2 = *pMPdiv(g_mp_one, temp2);
-    s_mpc_old.x = *pMPmul(temp2, (*pMPadd(*pMPmul(mpcnew.x, mpctmp.x), *pMPmul(mpcnew.y, mpctmp.y))));
-    s_mpc_old.y = *pMPmul(temp2, (*pMPsub(*pMPmul(mpcnew.y, mpctmp.x), *pMPmul(mpcnew.x, mpctmp.y))));
+    s_mpc_old.x = *MPmul386(temp2, (*pMPadd(*MPmul386(mpcnew.x, mpctmp.x), *MPmul386(mpcnew.y, mpctmp.y))));
+    s_mpc_old.y = *MPmul386(temp2, (*pMPsub(*MPmul386(mpcnew.y, mpctmp.x), *MPmul386(mpcnew.x, mpctmp.y))));
     g_new_z.x = *pMP2d(s_mpc_old.x);
     g_new_z.y = *pMP2d(s_mpc_old.y);
     return g_mp_overflow;
