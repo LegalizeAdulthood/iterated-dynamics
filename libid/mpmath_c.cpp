@@ -193,7 +193,6 @@ DComplex ComplexPower(DComplex xx, DComplex yy)
 
 */
 
-#define Sqrtz(z, rz) (*(rz) = ComplexSqrtFloat((z).x, (z).y))
 
 // rz=Arcsin(z)=-i*Log{i*z+sqrt(1-z*z)}
 void Arcsinz(DComplex z, DComplex *rz)
@@ -203,7 +202,7 @@ void Arcsinz(DComplex z, DComplex *rz)
     FPUcplxmul(&z, &z, &tempz1);
     tempz1.x = 1 - tempz1.x;
     tempz1.y = -tempz1.y;  // tempz1 = 1 - tempz1
-    Sqrtz(tempz1, &tempz1);
+    tempz1 = ComplexSqrtFloat(tempz1);
 
     tempz2.x = -z.y;
     tempz2.y = z.x;                // tempz2 = i*z
@@ -222,7 +221,7 @@ void Arccosz(DComplex z, DComplex *rz)
 
     FPUcplxmul(&z, &z, &temp);
     temp.x -= 1;                                 // temp = temp - 1
-    Sqrtz(temp, &temp);
+    temp = ComplexSqrtFloat(temp);
 
     temp.x += z.x;
     temp.y += z.y;                // temp = z + temp
@@ -238,7 +237,7 @@ void Arcsinhz(DComplex z, DComplex *rz)
 
     FPUcplxmul(&z, &z, &temp);
     temp.x += 1;                                 // temp = temp + 1
-    Sqrtz(temp, &temp);
+    temp = ComplexSqrtFloat(temp);
     temp.x += z.x;
     temp.y += z.y;                // temp = z + temp
     FPUcplxlog(&temp, rz);
@@ -250,7 +249,7 @@ void Arccoshz(DComplex z, DComplex *rz)
     DComplex tempz;
     FPUcplxmul(&z, &z, &tempz);
     tempz.x -= 1;                              // tempz = tempz - 1
-    Sqrtz(tempz, &tempz);
+    tempz = ComplexSqrtFloat(tempz);
     tempz.x = z.x + tempz.x;
     tempz.y = z.y + tempz.y;  // tempz = z + tempz
     FPUcplxlog(&tempz, rz);

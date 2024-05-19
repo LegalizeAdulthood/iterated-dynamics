@@ -20,6 +20,10 @@ LComplex DeQueueLong();
 DComplex DeQueueFloat();
 LComplex ComplexSqrtLong(long, long);
 DComplex ComplexSqrtFloat(double, double);
+inline DComplex ComplexSqrtFloat(const DComplex &z)
+{
+    return ComplexSqrtFloat(z.x, z.y);
+}
 bool Init_Queue(unsigned long);
 void   Free_Queue();
 void   ClearQueue();
