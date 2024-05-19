@@ -126,10 +126,10 @@ static long s_l_xdt{};
 static long s_l_ydt{};
 static long s_init_orbit_long[3]{};
 
-static double dx;
-static double dy;
-static double dz;
-static double dt;
+static double s_dx{};
+static double s_dy{};
+static double s_dz{};
+static double s_dt{};
 static double a;
 static double b;
 static double c;
@@ -461,8 +461,8 @@ lrwalk:
     return true;
 }
 
-static double &cos_b{dx};
-static double &sin_sum_a_b_c{dy};
+static double &cos_b{s_dx};
+static double &sin_sum_a_b_c{s_dy};
 
 bool orbit3dfloatsetup()
 {
@@ -650,7 +650,7 @@ rwalk:
     }
     else
     {
-        dt = g_params[0];
+        s_dt = g_params[0];
         a =  g_params[1];
         b =  g_params[2];
         c =  g_params[3];
@@ -658,9 +658,9 @@ rwalk:
     }
 
     // precalculations for speed
-    adt = a*dt;
-    bdt = b*dt;
-    cdt = c*dt;
+    adt = a*s_dt;
+    bdt = b*s_dt;
+    cdt = c*s_dt;
 
     return true;
 }
@@ -1002,37 +1002,37 @@ int lorenz3d1floatorbit(double *x, double *y, double *z)
 {
     double norm;
 
-    xdt = (*x)*dt;
-    ydt = (*y)*dt;
-    zdt = (*z)*dt;
+    xdt = (*x)*s_dt;
+    ydt = (*y)*s_dt;
+    zdt = (*z)*s_dt;
 
     // 1-lobe Lorenz
     norm = std::sqrt((*x)*(*x)+(*y)*(*y));
-    dx   = (-adt-dt)*(*x) + (adt-bdt)*(*y) + (dt-adt)*norm + ydt*(*z);
-    dy   = (bdt-adt)*(*x) - (adt+dt)*(*y) + (bdt+adt)*norm - xdt*(*z) -
+    s_dx   = (-adt-s_dt)*(*x) + (adt-bdt)*(*y) + (s_dt-adt)*norm + ydt*(*z);
+    s_dy   = (bdt-adt)*(*x) - (adt+s_dt)*(*y) + (bdt+adt)*norm - xdt*(*z) -
            norm*zdt;
-    dz   = (ydt/2) - cdt*(*z);
+    s_dz   = (ydt/2) - cdt*(*z);
 
-    *x += dx;
-    *y += dy;
-    *z += dz;
+    *x += s_dx;
+    *y += s_dy;
+    *z += s_dz;
     return 0;
 }
 
 int lorenz3dfloatorbit(double *x, double *y, double *z)
 {
-    xdt = (*x)*dt;
-    ydt = (*y)*dt;
-    zdt = (*z)*dt;
+    xdt = (*x)*s_dt;
+    ydt = (*y)*s_dt;
+    zdt = (*z)*s_dt;
 
     // 2-lobe Lorenz (the original)
-    dx  = -adt*(*x) + adt*(*y);
-    dy  =  bdt*(*x) - ydt - (*z)*xdt;
-    dz  = -cdt*(*z) + (*x)*ydt;
+    s_dx  = -adt*(*x) + adt*(*y);
+    s_dy  =  bdt*(*x) - ydt - (*z)*xdt;
+    s_dz  = -cdt*(*z) + (*x)*ydt;
 
-    *x += dx;
-    *y += dy;
-    *z += dz;
+    *x += s_dx;
+    *y += s_dy;
+    *z += s_dz;
     return 0;
 }
 
@@ -1040,44 +1040,44 @@ int lorenz3d3floatorbit(double *x, double *y, double *z)
 {
     double norm;
 
-    xdt = (*x)*dt;
-    ydt = (*y)*dt;
-    zdt = (*z)*dt;
+    xdt = (*x)*s_dt;
+    ydt = (*y)*s_dt;
+    zdt = (*z)*s_dt;
 
     // 3-lobe Lorenz
     norm = std::sqrt((*x)*(*x)+(*y)*(*y));
-    dx   = (-(adt+dt)*(*x) + (adt-bdt+zdt)*(*y)) / 3 +
-           ((dt-adt)*((*x)*(*x)-(*y)*(*y)) +
+    s_dx   = (-(adt+s_dt)*(*x) + (adt-bdt+zdt)*(*y)) / 3 +
+           ((s_dt-adt)*((*x)*(*x)-(*y)*(*y)) +
             2*(bdt+adt-zdt)*(*x)*(*y))/(3*norm);
-    dy   = ((bdt-adt-zdt)*(*x) - (adt+dt)*(*y)) / 3 +
-           (2*(adt-dt)*(*x)*(*y) +
+    s_dy   = ((bdt-adt-zdt)*(*x) - (adt+s_dt)*(*y)) / 3 +
+           (2*(adt-s_dt)*(*x)*(*y) +
             (bdt+adt-zdt)*((*x)*(*x)-(*y)*(*y)))/(3*norm);
-    dz   = (3*xdt*(*x)*(*y)-ydt*(*y)*(*y))/2 - cdt*(*z);
+    s_dz   = (3*xdt*(*x)*(*y)-ydt*(*y)*(*y))/2 - cdt*(*z);
 
-    *x += dx;
-    *y += dy;
-    *z += dz;
+    *x += s_dx;
+    *y += s_dy;
+    *z += s_dz;
     return 0;
 }
 
 int lorenz3d4floatorbit(double *x, double *y, double *z)
 {
-    xdt = (*x)*dt;
-    ydt = (*y)*dt;
-    zdt = (*z)*dt;
+    xdt = (*x)*s_dt;
+    ydt = (*y)*s_dt;
+    zdt = (*z)*s_dt;
 
     // 4-lobe Lorenz
-    dx   = (-adt*(*x)*(*x)*(*x) + (2*adt+bdt-zdt)*(*x)*(*x)*(*y) +
-            (adt-2*dt)*(*x)*(*y)*(*y) + (zdt-bdt)*(*y)*(*y)*(*y)) /
+    s_dx   = (-adt*(*x)*(*x)*(*x) + (2*adt+bdt-zdt)*(*x)*(*x)*(*y) +
+            (adt-2*s_dt)*(*x)*(*y)*(*y) + (zdt-bdt)*(*y)*(*y)*(*y)) /
            (2 * ((*x)*(*x)+(*y)*(*y)));
-    dy   = ((bdt-zdt)*(*x)*(*x)*(*x) + (adt-2*dt)*(*x)*(*x)*(*y) +
+    s_dy   = ((bdt-zdt)*(*x)*(*x)*(*x) + (adt-2*s_dt)*(*x)*(*x)*(*y) +
             (-2*adt-bdt+zdt)*(*x)*(*y)*(*y) - adt*(*y)*(*y)*(*y)) /
            (2 * ((*x)*(*x)+(*y)*(*y)));
-    dz   = (2*xdt*(*x)*(*x)*(*y) - 2*xdt*(*y)*(*y)*(*y) - cdt*(*z));
+    s_dz   = (2*xdt*(*x)*(*x)*(*y) - 2*xdt*(*y)*(*y)*(*y) - cdt*(*z));
 
-    *x += dx;
-    *y += dy;
-    *z += dz;
+    *x += s_dx;
+    *y += s_dy;
+    *z += s_dz;
     return 0;
 }
 
@@ -1107,16 +1107,16 @@ int henonlongorbit(long *l_x, long *l_y, long * /*l_z*/)
 
 int rosslerfloatorbit(double *x, double *y, double *z)
 {
-    xdt = (*x)*dt;
-    ydt = (*y)*dt;
+    xdt = (*x)*s_dt;
+    ydt = (*y)*s_dt;
 
-    dx = -ydt - (*z)*dt;
-    dy = xdt + (*y)*adt;
-    dz = bdt + (*z)*xdt - (*z)*cdt;
+    s_dx = -ydt - (*z)*s_dt;
+    s_dy = xdt + (*y)*adt;
+    s_dz = bdt + (*z)*xdt - (*z)*cdt;
 
-    *x += dx;
-    *y += dy;
-    *z += dz;
+    *x += s_dx;
+    *y += s_dy;
+    *z += s_dz;
     return 0;
 }
 
@@ -1282,7 +1282,7 @@ int dynamfloat(double *x, double *y, double * /*z*/)
     cp.x = b* *x;
     cp.y = 0;
     CMPLXtrig0(cp, tmp);
-    newy = *y + dt*std::sin(*x + a*tmp.x);
+    newy = *y + s_dt*std::sin(*x + a*tmp.x);
     if (euler)
     {
         *y = newy;
@@ -1291,7 +1291,7 @@ int dynamfloat(double *x, double *y, double * /*z*/)
     cp.x = b* *y;
     cp.y = 0;
     CMPLXtrig0(cp, tmp);
-    newx = *x - dt*std::sin(*y + a*tmp.x);
+    newx = *x - s_dt*std::sin(*y + a*tmp.x);
     *x = newx;
     *y = newy;
     return 0;
@@ -2056,15 +2056,15 @@ bool dynam2dfloatsetup()
     {
         a = g_params[2]; // parameter
         b = g_params[3]; // parameter
-        dt = g_params[1]; // step size
-        if (dt < 0)
+        s_dt = g_params[1]; // step size
+        if (s_dt < 0)
         {
-            dt = -dt;
+            s_dt = -s_dt;
             euler = true;
         }
-        if (dt == 0)
+        if (s_dt == 0)
         {
-            dt = 0.01;
+            s_dt = 0.01;
         }
     }
     if (g_outside_color == SUM)
