@@ -78,7 +78,6 @@ add_library(libid
     loadfile.cpp include/loadfile.h
     loadmap.cpp include/loadmap.h
     parser.cpp include/parser.h
-    parserfp.cpp
     rotate.cpp include/rotate.h
     slideshw.cpp include/slideshw.h
     stereo.cpp include/stereo.h
@@ -378,7 +377,6 @@ source_group("Source Files/IO" FILES
     loadfile.cpp
     loadmap.cpp
     parser.cpp
-    parserfp.cpp
     rotate.cpp
     slideshw.cpp
     sound.cpp

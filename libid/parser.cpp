@@ -4330,23 +4330,8 @@ bool run_formula(const std::string &name, bool report_bad_sym)
 
 bool fpFormulaSetup()
 {
-    // TODO: when parsera.c contains assembly equivalents, remove !defined(_WIN32)
-#if !defined(XFRACT) && !defined(_WIN32)
-    s_math_type = D_MATH;
-    bool RunFormRes = !run_formula(g_formula_name, false); // run_formula() returns true for failure
-    if (RunFormRes
-        && fpu >=387
-        && g_debug_flag != debug_flags::force_standard_fractal
-        && (orbitsave&2) == 0
-        && !s_randomized)
-    {
-        return CvtStk() != 0;    // run fast assembler code in parsera.asm
-    }
-    return RunFormRes;
-#else
     s_math_type = D_MATH;
     return !run_formula(g_formula_name, false); // run_formula() returns true for failure
-#endif
 }
 
 #undef FORMULA_INTEGER_MATH
@@ -4405,7 +4390,6 @@ static void parser_allocate()
     Store.resize(MAX_STORES);
     Load.resize(MAX_LOADS);
     v.resize(g_max_function_args);
-    g_function_operands.resize(g_max_function_ops);
 
     if (!parse_formula_text(s_formula.c_str()))
     {
@@ -4426,7 +4410,6 @@ void free_workarea()
     Load.clear();
     v.clear();
     f.clear();
-    g_function_operands.clear();
 }
 
 struct error_data_st

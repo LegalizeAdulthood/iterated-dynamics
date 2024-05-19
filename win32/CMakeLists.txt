@@ -15,7 +15,6 @@ add_library(os STATIC
     frame.h
     frame.cpp
     os_win32.cpp
-    parsera.cpp
     plot.h
     plot.cpp
     win_text.h

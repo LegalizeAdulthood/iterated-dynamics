@@ -29,13 +29,6 @@ struct JUMP_CONTROL_ST
     int DestJumpIndex;
 };
 
-// function, load, store pointers
-struct fn_operand
-{
-    void (*function)();
-    Arg *operand;
-};
-
 extern bool                  g_frm_uses_ismand;
 extern bool                  g_frm_uses_p1;
 extern bool                  g_frm_uses_p2;
@@ -43,7 +36,6 @@ extern bool                  g_frm_uses_p3;
 extern bool                  g_frm_uses_p4;
 extern bool                  g_frm_uses_p5;
 extern double                g_fudge_limit;
-extern std::vector<fn_operand> g_function_operands;
 extern bool                  g_is_mandelbrot;
 extern int                   g_last_init_op;
 extern unsigned              g_last_op;
@@ -213,7 +205,6 @@ void EndInit();
 void NotAFnct();
 void FnctNotFound();
 int CvtStk();
-int fFormula();
 void RecSortPrec();
 int Formula();
 int BadFormula();
