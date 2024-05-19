@@ -3,6 +3,7 @@
 #pragma once
 
 #include "port.h"
+#include "sqr.h"
 
 namespace id
 {
@@ -97,6 +98,12 @@ template <typename T, typename U = T>
 bool operator!=(const Complex<T> &lhs, const Complex<U> &rhs)
 {
     return !(lhs == rhs);
+}
+
+template <typename T>
+double modulus(const Complex<T> &z)
+{
+    return sqr(z.x) + sqr(z.y);
 }
 
 } // namespace id

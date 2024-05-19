@@ -15,11 +15,6 @@
 
 #include <cmath>
 
-inline double modulus(const DComplex &z)
-{
-    return sqr(z.x) + sqr(z.y);
-}
-
 static MPC s_mpc_old{};
 static MPC s_mpc_new{};
 static int s_halley_a_plus_one{};

@@ -60,7 +60,6 @@ an appropriate setup, per_image, per_pixel, and orbit routines.
 #include <cmath>
 #include <cstdlib>
 
-#define modulus(z)       (sqr((z).x)+sqr((z).y))
 #define conjugate(pz)   ((pz)->y = 0.0 - (pz)->y)
 #define distance(z1, z2)  (sqr((z1).x-(z2).x)+sqr((z1).y-(z2).y))
 
