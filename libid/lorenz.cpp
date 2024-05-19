@@ -53,7 +53,10 @@ int orbit(T *x, T *y)
     return orbit(x, y, static_cast<T *>(nullptr));
 }
 
-#define RANDOM(x)  (rand()%(x))
+inline int random(int x)
+{
+    return rand() % x;
+}
 
 /* BAD_PIXEL is used to cutoff orbits that are diverging. It might be better
 to test the actual floating point orbit values, but this seems safe for now.
@@ -724,7 +727,7 @@ int Minverse_julia_orbit()
      */
 
     g_new_z       = ComplexSqrtFloat(g_new_z.x - s_Cx, g_new_z.y - s_Cy);
-    leftright = (RANDOM(2)) ? 1 : -1;
+    leftright = (random(2)) ? 1 : -1;
 
     if (newcol < 1 || newcol >= g_logical_screen_x_dots || newrow < 1 || newrow >= g_logical_screen_y_dots)
     {
@@ -795,8 +798,8 @@ int Minverse_julia_orbit()
     case Major::random_run:
         if (random_len-- == 0)
         {
-            random_len = RANDOM(s_run_length);
-            random_dir = RANDOM(3);
+            random_len = random(s_run_length);
+            random_dir = random(3);
         }
         switch (random_dir)
         {
@@ -858,7 +861,7 @@ int Linverse_julia_orbit()
         break;
     case Major::random_walk:
         g_l_new_z = ComplexSqrtLong(g_l_new_z.x - s_Cx_l, g_l_new_z.y - s_Cy_l);
-        if (RANDOM(2))
+        if (random(2))
         {
             g_l_new_z.x = -g_l_new_z.x;
             g_l_new_z.y = -g_l_new_z.y;
@@ -868,8 +871,8 @@ int Linverse_julia_orbit()
         g_l_new_z = ComplexSqrtLong(g_l_new_z.x - s_Cx_l, g_l_new_z.y - s_Cy_l);
         if (random_len == 0)
         {
-            random_len = RANDOM(s_run_length);
-            random_dir = RANDOM(3);
+            random_len = random(s_run_length);
+            random_dir = random(3);
         }
         switch (random_dir)
         {
@@ -880,7 +883,7 @@ int Linverse_julia_orbit()
             g_l_new_z.y = -g_l_new_z.y;
             break;
         case 2:     // random direction
-            if (RANDOM(2))
+            if (random(2))
             {
                 g_l_new_z.x = -g_l_new_z.x;
                 g_l_new_z.y = -g_l_new_z.y;
@@ -907,7 +910,7 @@ int Linverse_julia_orbit()
          * MIIM must skip points that are off the screen boundary,
          * since it cannot read their color.
          */
-        if (RANDOM(2))
+        if (random(2))
         {
             color =  1;
         }
