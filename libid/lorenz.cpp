@@ -124,7 +124,7 @@ static long s_l_bdt{};
 static long s_l_cdt{};
 static long s_l_xdt{};
 static long s_l_ydt{};
-static long initorbitlong[3];
+static long s_init_orbit_long[3]{};
 
 static double dx;
 static double dy;
@@ -335,9 +335,9 @@ bool orbit3dlongsetup()
         projection = 1;
     }
 
-    initorbitlong[0] = g_fudge_factor;  // initial conditions
-    initorbitlong[1] = g_fudge_factor;
-    initorbitlong[2] = g_fudge_factor;
+    s_init_orbit_long[0] = g_fudge_factor;  // initial conditions
+    s_init_orbit_long[1] = g_fudge_factor;
+    s_init_orbit_long[2] = g_fudge_factor;
 
     if (g_fractal_type == fractal_type::LHENON)
     {
@@ -362,9 +362,9 @@ bool orbit3dlongsetup()
         l_sinx = (long)(std::sin(a)*g_fudge_factor);
         l_cosx = (long)(std::cos(a)*g_fudge_factor);
         l_orbit = 0;
-        initorbitlong[2] = 0;
-        initorbitlong[1] = initorbitlong[2];
-        initorbitlong[0] = initorbitlong[1];
+        s_init_orbit_long[2] = 0;
+        s_init_orbit_long[1] = s_init_orbit_long[2];
+        s_init_orbit_long[0] = s_init_orbit_long[1];
     }
     else if (g_fractal_type == fractal_type::INVERSEJULIA)
     {
@@ -433,16 +433,16 @@ bool orbit3dlongsetup()
             break;
         case Major::random_walk:
 lrwalk:
-            initorbitlong[0] = g_fudge_factor + Sqrt.x / 2;
-            g_l_new_z.x = initorbitlong[0];
-            initorbitlong[1] =         Sqrt.y / 2;
-            g_l_new_z.y = initorbitlong[1];
+            s_init_orbit_long[0] = g_fudge_factor + Sqrt.x / 2;
+            g_l_new_z.x = s_init_orbit_long[0];
+            s_init_orbit_long[1] =         Sqrt.y / 2;
+            g_l_new_z.y = s_init_orbit_long[1];
             break;
         case Major::random_run:
-            initorbitlong[0] = g_fudge_factor + Sqrt.x / 2;
-            g_l_new_z.x = initorbitlong[0];
-            initorbitlong[1] =         Sqrt.y / 2;
-            g_l_new_z.y = initorbitlong[1];
+            s_init_orbit_long[0] = g_fudge_factor + Sqrt.x / 2;
+            g_l_new_z.x = s_init_orbit_long[0];
+            s_init_orbit_long[1] =         Sqrt.y / 2;
+            g_l_new_z.y = s_init_orbit_long[1];
             break;
         }
     }
@@ -1669,9 +1669,9 @@ int orbit2dlong()
     }
     oldrow = -1;
     oldcol = oldrow;
-    x = initorbitlong[0];
-    y = initorbitlong[1];
-    z = initorbitlong[2];
+    x = s_init_orbit_long[0];
+    y = s_init_orbit_long[1];
+    z = s_init_orbit_long[2];
     ret = 0;
     count = ret;
     if (g_max_iterations > 0x1fffffL || g_max_count)
@@ -1799,9 +1799,9 @@ static int orbit3dlongcalc()
         color = 1;
     }
 
-    inf.orbit[0] = initorbitlong[0];
-    inf.orbit[1] = initorbitlong[1];
-    inf.orbit[2] = initorbitlong[2];
+    inf.orbit[0] = s_init_orbit_long[0];
+    inf.orbit[1] = s_init_orbit_long[1];
+    inf.orbit[2] = s_init_orbit_long[2];
 
     if (driver_diskp())                  // this would KILL a disk drive!
     {
