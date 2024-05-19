@@ -3789,13 +3789,11 @@ exit_solidguess:
     return 0;
 }
 
-#define calcadot(c, x, y)   \
-{                           \
-    g_col = x;              \
-    g_row = y;              \
-    c = (*g_calc_type)();   \
-    if (c == -1)            \
-        return true;        \
+inline int calc_a_dot(int x, int y)
+{
+    g_col = x;
+    g_row = y;
+    return (*g_calc_type)();
 }
 
 static bool guessrow(bool firstpass, int y, int blocksize)
@@ -3954,20 +3952,32 @@ static bool guessrow(bool firstpass, int y, int blocksize)
             if (guessed33 > 0
                 && (c33 != c44 || c33 != c42 || c33 != c24 || c33 != c32 || c33 != c23))
             {
-                calcadot(c33, xplushalf, yplushalf);
+                c33 = calc_a_dot(xplushalf, yplushalf);
+                if (c33 == -1)
+                {
+                    return true;
+                };
                 guessed33 = 0;
             }
             if (guessed32 > 0
                 && (c32 != c33 || c32 != c42 || c32 != c31 || c32 != c21 || c32 != c41 || c32 != c23))
             {
-                calcadot(c32, xplushalf, y);
+                c32 = calc_a_dot(xplushalf, y);
+                if (c32 == -1)
+                {
+                    return true;
+                };
                 guessed32 = 0;
                 continue;
             }
             if (guessed23 > 0
                 && (c23 != c33 || c23 != c24 || c23 != c13 || c23 != c12 || c23 != c32))
             {
-                calcadot(c23, x, yplushalf);
+                c23 = calc_a_dot(x, yplushalf);
+                if (c23 == -1)
+                {
+                    return true;
+                };
                 guessed23 = 0;
                 continue;
             }
@@ -4039,7 +4049,11 @@ static bool guessrow(bool firstpass, int y, int blocksize)
         prev11 = c31; // for next time around
         if (fix21)
         {
-            calcadot(c21, x, ylesshalf);
+            c21 = calc_a_dot(x, ylesshalf);
+            if (c21 == -1)
+            {
+                return true;
+            };
             if (halfblock > 1 && c21 != c22)
             {
                 plotblock(-1, x, ylesshalf, c21);
@@ -4047,7 +4061,11 @@ static bool guessrow(bool firstpass, int y, int blocksize)
         }
         if (fix31)
         {
-            calcadot(c31, xplushalf, ylesshalf);
+            c31 = calc_a_dot(xplushalf, ylesshalf);
+            if (c31 == -1)
+            {
+                return true;
+            };
             if (halfblock > 1 && c31 != c22)
             {
                 plotblock(-1, xplushalf, ylesshalf, c31);
@@ -4057,7 +4075,11 @@ static bool guessrow(bool firstpass, int y, int blocksize)
         {
             if (guessed12)
             {
-                calcadot(c12, x-halfblock, y);
+                c12 = calc_a_dot(x - halfblock, y);
+                if (c12 == -1)
+                {
+                    return true;
+                };
                 if (halfblock > 1 && c12 != c22)
                 {
                     plotblock(-1, x-halfblock, y, c12);
@@ -4065,7 +4087,11 @@ static bool guessrow(bool firstpass, int y, int blocksize)
             }
             if (guessed13)
             {
-                calcadot(c13, x-halfblock, yplushalf);
+                c13 = calc_a_dot(x - halfblock, yplushalf);
+                if (c13 == -1)
+                {
+                    return true;
+                };
                 if (halfblock > 1 && c13 != c22)
                 {
                     plotblock(-1, x-halfblock, yplushalf, c13);
@@ -4142,7 +4168,6 @@ static bool guessrow(bool firstpass, int y, int blocksize)
     }
     return false;
 }
-#undef calcadot
 
 static void plotblock(int buildrow, int x, int y, int color)
 {
