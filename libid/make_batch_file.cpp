@@ -70,7 +70,10 @@ int g_max_line_length = 72;
 
 static std::FILE *parmfile;
 
-#define PAR_KEY(x)  ( x < 10 ? '0' + x : 'a' - 10 + x)
+inline char par_key(int x)
+{
+    return static_cast<char>(x < 10 ? '0' + x : 'a' - 10 + x);
+}
 
 inline bool is_writable(const std::string &path)
 {
@@ -484,7 +487,7 @@ skip_UI:
                     PCommandName[w] = 0;
                     {
                         char tmpbuff[20];
-                        std::snprintf(tmpbuff, std::size(tmpbuff), "_%c%c", PAR_KEY(i), PAR_KEY(j));
+                        std::snprintf(tmpbuff, std::size(tmpbuff), "_%c%c", par_key(i), par_key(j));
                         std::strcat(PCommandName, tmpbuff);
                     }
                     std::fprintf(parmfile, "%-19s{", PCommandName);
@@ -554,7 +557,7 @@ skip_UI:
                 if (xm > 1 || ym > 1)
                 {
                     std::fprintf(parmfile, "  video=%s", vidmde);
-                    std::fprintf(parmfile, " savename=frmig_%c%c\n", PAR_KEY(i), PAR_KEY(j));
+                    std::fprintf(parmfile, " savename=frmig_%c%c\n", par_key(i), par_key(j));
                 }
                 std::fprintf(parmfile, "}\n\n");
             }
