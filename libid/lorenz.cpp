@@ -2626,8 +2626,6 @@ int ifs()                       // front-end for ifs2d and ifs3d
     return !g_ifs_type ? ifs2d() : ifs3d();
 }
 
-static const char *const insufficient_ifs_mem{"Insufficient memory for IFS"};
-
 // IFS logic shamelessly converted to integer math
 static int ifs2d()
 {
@@ -2663,7 +2661,7 @@ static int ifs2d()
     }
     if (!resized)
     {
-        stopmsg(STOPMSG_NONE, insufficient_ifs_mem);
+        stopmsg(STOPMSG_NONE, "Insufficient memory for IFS");
         return -1;
     }
 
@@ -2776,7 +2774,7 @@ static int ifs3dlong()
     }
     catch (std::bad_alloc const &)
     {
-        stopmsg(STOPMSG_NONE, insufficient_ifs_mem);
+        stopmsg(STOPMSG_NONE, "Insufficient memory for IFS");
         return -1;
     }
 
