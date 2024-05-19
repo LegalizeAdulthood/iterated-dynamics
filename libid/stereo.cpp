@@ -348,7 +348,7 @@ bool do_AutoStereo()
             }
             for (int i = 0; i < g_logical_screen_x_dots; i++)
             {
-                buf[i] = (unsigned char)(rand()%g_colors);
+                buf[i] = (unsigned char)(std::rand()%g_colors);
             }
             outline_stereo(&buf[0], g_logical_screen_x_dots);
         }

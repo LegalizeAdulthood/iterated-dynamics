@@ -38,6 +38,7 @@
 #include <array>
 #include <cmath>
 #include <cstdio>
+#include <cstdlib>
 #include <cstring>
 #include <vector>
 
@@ -1079,7 +1080,7 @@ void Jiim(jiim_types which)
                 {
                 case 0:                     // unmodified random walk
                 default:
-                    if (rand() % 2)
+                    if (std::rand() % 2)
                     {
                         g_new_z.x = -g_new_z.x;
                         g_new_z.y = -g_new_z.y;
@@ -1174,7 +1175,7 @@ void Jiim(jiim_types which)
                     switch (randir)
                     {
                     case 0:             // go random direction for a while
-                        if (rand() % 2)
+                        if (std::rand() % 2)
                         {
                             g_new_z.x = -g_new_z.x;
                             g_new_z.y = -g_new_z.y;
@@ -1182,7 +1183,7 @@ void Jiim(jiim_types which)
                         if (++rancnt > 1024)
                         {
                             rancnt = 0;
-                            if (rand() % 2)
+                            if (std::rand() % 2)
                             {
                                 randir =  1;
                             }

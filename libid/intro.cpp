@@ -16,6 +16,7 @@
 #include "id_keys.h"
 #include "put_string_center.h"
 
+#include <cstdlib>
 #include <ctime>
 #include <vector>
 
@@ -71,7 +72,7 @@ void intro()
 
     driver_set_attr(toprow, 0, C_CONTRIB, (21-END_MAIN_AUTHOR)*80);
     srand((unsigned int)std::clock());
-    j = rand()%(j-(botrow-toprow)); // first to use
+    j = std::rand()%(j-(botrow-toprow)); // first to use
     i = j+botrow-toprow; // last to use
     oldchar = credits[authors.at(i+1)];
     credits[authors.at(i+1)] = 0;

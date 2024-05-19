@@ -24,6 +24,7 @@
 #include "value_saver.h"
 
 #include <cstdio>
+#include <cstdlib>
 #include <cstring>
 #include <ctime>
 

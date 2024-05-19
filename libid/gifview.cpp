@@ -38,6 +38,7 @@
 
 #include <algorithm>
 #include <cstdio>
+#include <cstdlib>
 #include <cstring>
 #include <filesystem>
 #include <vector>
@@ -405,7 +406,7 @@ static int out_line_dither(BYTE *pixels, int linelen)
     ditherbuf.resize(linelen + 1);
     std::fill(ditherbuf.begin(), ditherbuf.end(), 0);
 
-    nexterr = (rand()&0x1f)-16;
+    nexterr = (std::rand()&0x1f)-16;
     for (int i = 0; i < linelen; i++)
     {
         brt = (g_dac_box[pixels[i]][0]*5+g_dac_box[pixels[i]][1]*9 +

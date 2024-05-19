@@ -16,6 +16,8 @@
 #include "spindac.h"
 #include "stop_msg.h"
 
+#include <cstdlib>
+
 std::string const g_altern_map_file{"altern.map"};
 
 static int s_distribution{30};

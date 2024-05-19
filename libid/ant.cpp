@@ -17,13 +17,14 @@
 #include "wait_until.h"
 
 #include <algorithm>
+#include <cstdlib>
 #include <iomanip>
 #include <sstream>
 #include <string>
 #include <vector>
 
 // Generate Random Number 0 <= r < n
-#define RANDOM(n)       ((int)((long)((long)rand() * (long)(n)) >> 15))
+#define RANDOM(n)       ((int)((long)((long)std::rand() * (long)(n)) >> 15))
 #define MAX_ANTS        256
 #define XO              (g_logical_screen_x_dots/2)
 #define YO              (g_logical_screen_y_dots/2)
@@ -303,7 +304,7 @@ void TurkMite2(int maxtur, int rule_len, char const *ru, long maxpts, long wait)
             // init the various turmites N.B. don't use
             // x[0], y[0], dir[0]
             dir[color] = RANDOM(DIRS);
-            rule[color] = (rand() << RANDOM(2)) | RANDOM(2);
+            rule[color] = (std::rand() << RANDOM(2)) | RANDOM(2);
             x[color] = RANDOM(g_logical_screen_x_dots);
             y[color] = RANDOM(g_logical_screen_y_dots);
         }

@@ -35,6 +35,7 @@
 #include <array>
 #include <climits>
 #include <cmath>
+#include <cstdlib>
 #include <vector>
 
 struct point
@@ -558,7 +559,7 @@ int line3d(BYTE * pixels, unsigned linelen)
                 RND = rand15() >> 8;     // 7-bit number
                 RND = RND * RND >> rand_factor;  // n-bit number
 
-                if (rand() & 1)
+                if (std::rand() & 1)
                 {
                     RND = -RND;   // Make +/- n-bit number
                 }

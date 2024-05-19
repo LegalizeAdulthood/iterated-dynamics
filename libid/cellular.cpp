@@ -202,11 +202,11 @@ int cellular()
     if (n == 0)
     {
         // calculate a random rule
-        n = rand()%(int)k;
+        n = std::rand()%(int)k;
         for (int i = 1; i < rule_digits; i++)
         {
             n *= 10;
-            n += rand()%(int)k;
+            n += std::rand()%(int)k;
         }
         g_params[1] = n;
     }
@@ -277,7 +277,7 @@ int cellular()
         {
             for (g_col = 0; g_col <= g_i_x_stop; g_col++)
             {
-                cell_array[filled][g_col] = (BYTE)(rand()%(int)k);
+                cell_array[filled][g_col] = (BYTE)(std::rand()%(int)k);
             }
         } // end of if random
 
@@ -313,8 +313,8 @@ int cellular()
                 // Use a random border
                 for (int i = 0; i <= s_r; i++)
                 {
-                    cell_array[notfilled][i] = (BYTE)(rand()%(int)k);
-                    cell_array[notfilled][g_i_x_stop-i] = (BYTE)(rand()%(int)k);
+                    cell_array[notfilled][i] = (BYTE)(std::rand()%(int)k);
+                    cell_array[notfilled][g_i_x_stop-i] = (BYTE)(std::rand()%(int)k);
                 }
             }
             else
@@ -378,8 +378,8 @@ contloop:
             // Use a random border
             for (int i = 0; i <= s_r; i++)
             {
-                cell_array[notfilled][i] = (BYTE)(rand()%(int)k);
-                cell_array[notfilled][g_i_x_stop-i] = (BYTE)(rand()%(int)k);
+                cell_array[notfilled][i] = (BYTE)(std::rand()%(int)k);
+                cell_array[notfilled][g_i_x_stop-i] = (BYTE)(std::rand()%(int)k);
             }
         }
         else

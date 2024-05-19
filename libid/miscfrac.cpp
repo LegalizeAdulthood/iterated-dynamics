@@ -657,7 +657,7 @@ static void set_Plasma_palette()
 
 inline int random(int x)
 {
-    return rand() % x;
+    return std::rand() % x;
 }
 
 int diffusion()
@@ -794,7 +794,7 @@ int diffusion()
         switch (mode)
         {
         case 0: // Release new point on a circle inside the box
-            angle = 2*(double)rand()/(RAND_MAX/PI);
+            angle = 2*(double)std::rand()/(RAND_MAX/PI);
             FPUsincos(&angle, &sine, &cosine);
             x = (int)(cosine*(xmax-xmin) + g_logical_screen_x_dots);
             y = (int)(sine  *(ymax-ymin) + g_logical_screen_y_dots);
@@ -808,7 +808,7 @@ int diffusion()
             break;
         case 2: /* Release new point on a circle inside the box with radius
                  given by the radius variable */
-            angle = 2*(double)rand()/(RAND_MAX/PI);
+            angle = 2*(double)std::rand()/(RAND_MAX/PI);
             FPUsincos(&angle, &sine, &cosine);
             x = (int)(cosine*radius + g_logical_screen_x_dots);
             y = (int)(sine  *radius + g_logical_screen_y_dots);
@@ -1497,13 +1497,13 @@ int lyapunov()
     g_overflow = false;
     if (g_params[1] == 1)
     {
-        Population = (1.0+rand())/(2.0+RAND_MAX);
+        Population = (1.0+std::rand())/(2.0+RAND_MAX);
     }
     else if (g_params[1] == 0)
     {
         if (population_exceeded() || Population == 0 || Population == 1)
         {
-            Population = (1.0+rand())/(2.0+RAND_MAX);
+            Population = (1.0+std::rand())/(2.0+RAND_MAX);
         }
     }
     else

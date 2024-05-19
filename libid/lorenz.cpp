@@ -55,7 +55,7 @@ int orbit(T *x, T *y)
 
 inline int random(int x)
 {
-    return rand() % x;
+    return std::rand() % x;
 }
 
 /* BAD_PIXEL is used to cutoff orbits that are diverging. It might be better
@@ -2545,7 +2545,7 @@ static int ifs3dfloat()
             ret = -1;
             break;
         }
-        r = rand();      // generate a random number between 0 and 1
+        r = std::rand();      // generate a random number between 0 and 1
         r /= RAND_MAX;
 
         // pick which iterated function to execute, weighted by probability

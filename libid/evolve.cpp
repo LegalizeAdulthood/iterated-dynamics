@@ -491,7 +491,7 @@ choose_vars_restart:
     case ID_KEY_F4: // Randomize all
         for (int num = MAX_PARAMS; num < NUM_GENES; num ++)
         {
-            gene[num].mutate = static_cast<variations>(rand() % static_cast<int>(variations::NUM));
+            gene[num].mutate = static_cast<variations>(std::rand() % static_cast<int>(variations::NUM));
         }
         goto choose_vars_restart;
     case -1:
@@ -638,7 +638,7 @@ choose_vars_restart:
     case ID_KEY_F4: // Randomize all
         for (int num =0; num < MAX_PARAMS; num ++)
         {
-            gene[num].mutate = static_cast<variations>(rand() % static_cast<int>(variations::NUM));
+            gene[num].mutate = static_cast<variations>(std::rand() % static_cast<int>(variations::NUM));
         }
         goto choose_vars_restart;
     case ID_KEY_F6: // go to second screen, put array away first
@@ -956,7 +956,7 @@ void fiddleparms(GENEBASE gene[], int ecount)
 
     for (int i = 0; i < NUM_GENES; i++)
     {
-        (*(gene[i].varyfunc))(gene, rand(), i);
+        (*(gene[i].varyfunc))(gene, std::rand(), i);
     }
 
 }
@@ -972,7 +972,7 @@ static void set_random(int ecount)
     {
         for (int i = 0; i < NUM_GENES; i++)
         {
-            rand();
+            std::rand();
         }
     }
 }
