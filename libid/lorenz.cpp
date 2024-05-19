@@ -160,10 +160,10 @@ static long s_Cy_l{};
  */
 
 // these are potential user parameters
-static bool connect = true;     // flag to connect points with a line
-static bool euler = false;      // use implicit euler approximation for dynamic system
-static int waste = 100;    // waste this many points before plotting
-static int projection = 2; // projection plane - default is to plot x-y
+static bool s_connect{true}; // flag to connect points with a line
+static bool euler = false;   // use implicit euler approximation for dynamic system
+static int waste = 100;      // waste this many points before plotting
+static int projection = 2;   // projection plane - default is to plot x-y
 
 static void fallback_to_random_walk()
 {
@@ -319,7 +319,7 @@ static long l_cosx;
 bool orbit3dlongsetup()
 {
     g_max_count = 0L;
-    connect = true;
+    s_connect = true;
     waste = 100;
     projection = 2;
     if (g_fractal_type == fractal_type::LHENON
@@ -327,7 +327,7 @@ bool orbit3dlongsetup()
         || g_fractal_type == fractal_type::KAM3D
         || g_fractal_type == fractal_type::INVERSEJULIA)
     {
-        connect = false;
+        s_connect = false;
     }
     if (g_fractal_type == fractal_type::LROSSLER)
     {
@@ -468,7 +468,7 @@ static double &sin_sum_a_b_c{s_dy};
 bool orbit3dfloatsetup()
 {
     g_max_count = 0L;
-    connect = true;
+    s_connect = true;
     waste = 100;
     projection = 2;
 
@@ -480,7 +480,7 @@ bool orbit3dfloatsetup()
         || g_fractal_type == fractal_type::FPHOPALONG
         || g_fractal_type == fractal_type::INVERSEJULIAFP)
     {
-        connect = false;
+        s_connect = false;
     }
     if (g_fractal_type == fractal_type::FPLORENZ3D1
         || g_fractal_type == fractal_type::FPLORENZ3D3
@@ -510,13 +510,13 @@ bool orbit3dfloatsetup()
     {
         s_init_orbit_fp[0] = 0.01;  // initial conditions
         s_init_orbit_fp[1] = 0.003;
-        connect = false;
+        s_connect = false;
         waste = 2000;
     }
 
     if (g_fractal_type == fractal_type::LATOO)
     {
-        connect = false;
+        s_connect = false;
     }
 
     if (g_fractal_type == fractal_type::FPHENON || g_fractal_type == fractal_type::FPPICKOVER)
@@ -530,7 +530,7 @@ bool orbit3dfloatsetup()
     {
         s_init_orbit_fp[0] = 0.01;  // initial conditions
         s_init_orbit_fp[1] = 0.003;
-        connect = false;
+        s_connect = false;
         waste = 2000;
         // Initialize parameters
         s_a  =   g_params[0];
@@ -566,7 +566,7 @@ bool orbit3dfloatsetup()
         s_init_orbit_fp[0] = 0;  // initial conditions
         s_init_orbit_fp[1] = 0;
         s_init_orbit_fp[2] = 0;
-        connect = false;
+        s_connect = false;
         s_a =  g_params[0];
         s_b =  g_params[1];
         s_c =  g_params[2];
@@ -1545,7 +1545,7 @@ int orbit2dfloat()
             }
             if ((g_fractal_type != fractal_type::ICON) && (g_fractal_type != fractal_type::LATOO))
             {
-                if (oldcol != -1 && connect)
+                if (oldcol != -1 && s_connect)
                 {
                     driver_draw_line(col, row, oldcol, oldrow, color % g_colors);
                 }
@@ -1734,7 +1734,7 @@ int orbit2dlong()
                 yy = yy/g_fudge_factor;
                 w_snd((int)(yy*100+g_base_hertz));
             }
-            if (oldcol != -1 && connect)
+            if (oldcol != -1 && s_connect)
             {
                 driver_draw_line(col, row, oldcol, oldrow, color%g_colors);
             }
@@ -1860,7 +1860,7 @@ static int orbit3dlongcalc()
                     yy = yy/g_fudge_factor;
                     w_snd((int)(yy*100+g_base_hertz));
                 }
-                if (oldcol != -1 && connect)
+                if (oldcol != -1 && s_connect)
                 {
                     driver_draw_line(inf.col, inf.row, oldcol, oldrow, color%g_colors);
                 }
@@ -1881,7 +1881,7 @@ static int orbit3dlongcalc()
                 // plot if inside window
                 if (inf.col1 >= 0)
                 {
-                    if (oldcol1 != -1 && connect)
+                    if (oldcol1 != -1 && s_connect)
                     {
                         driver_draw_line(inf.col1, inf.row1, oldcol1, oldrow1, color%g_colors);
                     }
@@ -1991,7 +1991,7 @@ static int orbit3dfloatcalc()
                 {
                     w_snd((int)(inf.viewvect[((g_sound_flag & SOUNDFLAG_ORBITMASK) - SOUNDFLAG_X)]*100+g_base_hertz));
                 }
-                if (oldcol != -1 && connect)
+                if (oldcol != -1 && s_connect)
                 {
                     driver_draw_line(inf.col, inf.row, oldcol, oldrow, color%g_colors);
                 }
@@ -2012,7 +2012,7 @@ static int orbit3dfloatcalc()
                 // plot if inside window
                 if (inf.col1 >= 0)
                 {
-                    if (oldcol1 != -1 && connect)
+                    if (oldcol1 != -1 && s_connect)
                     {
                         driver_draw_line(inf.col1, inf.row1, oldcol1, oldrow1, color%g_colors);
                     }
@@ -2039,13 +2039,13 @@ static int orbit3dfloatcalc()
 
 bool dynam2dfloatsetup()
 {
-    connect = false;
+    s_connect = false;
     euler = false;
     s_d = g_params[0]; // number of intervals
     if (s_d < 0)
     {
         s_d = -s_d;
-        connect = true;
+        s_connect = true;
     }
     else if (s_d == 0)
     {
@@ -2211,7 +2211,7 @@ int dynam2dfloat()
 
                 if (count >= g_orbit_delay)
                 {
-                    if (oldcol != -1 && connect)
+                    if (oldcol != -1 && s_connect)
                     {
                         driver_draw_line(col, row, oldcol, oldrow, color%g_colors);
                     }
