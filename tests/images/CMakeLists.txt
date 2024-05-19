@@ -31,7 +31,20 @@ add_fractal_type_image_test(
     cellular circle cmplxmarksjul cmplxmarksmand complexbasin complexnewton
     dividebrot5
     escher_julia
-    mandel
+    gingerbreadman
+    halley hypercomplex hypercomplexj
+    julia julia4 julia_inverse julzpower julzzpwr
+    lambda lambdafn lyapunov
+    magnet1j magnet1m magnet2j magnet2m
+    mandel mandel4 mandelcloud mandelfn mandellambda mandphoenix mandphoenixclx
+    manowar manowarj manzpower manzzpwr marksjulia marksmandel marksmandelpwr
+    newtbasin newton
+    phoenix phoenixcplx
+    quat quatjul
+    sierpinski spider
+    tetrate
+    unity
+    volterra-lotka
 )
 add_image_test(btrace PARAMETERS type=mandel inside=zmag passes=b)
 add_image_test(fractint-formula PARAMETERS type=formula formulafile=example2.frm formulaname=fractint)
