@@ -1394,9 +1394,6 @@ int LongBifurcLambdaTrig()
     return g_overflow;
 }
 
-#define LCMPLXpwr(arg1, arg2, out)    Arg2->l = (arg1); Arg1->l = (arg2);\
-         lStkPwr(); Arg1++; Arg2++; (out) = Arg2->l
-
 long beta;
 
 int BifurcMay()
