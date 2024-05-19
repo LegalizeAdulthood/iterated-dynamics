@@ -143,10 +143,6 @@ static double s_zdt{};
 static double s_init_orbit_fp[3]{};
 
 // The following declarations used for Inverse Julia.
-
-static char NoQueue[] =
-    "Not enough memory: switching to random walk.\n";
-
 static int      mxhits;
 static int      run_length;
 Major           g_major_method;
@@ -168,6 +164,13 @@ static bool connect = true;     // flag to connect points with a line
 static bool euler = false;      // use implicit euler approximation for dynamic system
 static int waste = 100;    // waste this many points before plotting
 static int projection = 2; // projection plane - default is to plot x-y
+
+static void fallback_to_random_walk()
+{
+    stopmsg(
+        STOPMSG_INFO_ONLY | STOPMSG_NO_BUZZER, "Not enough memory: switching to random walk.\n");
+    g_major_method = Major::random_walk;
+}
 
 //****************************************************************
 //                 zoom box conversion functions
@@ -403,8 +406,7 @@ bool orbit3dlongsetup()
             if (!Init_Queue(32*1024UL))
             {
                 // can't get queue memory: fall back to random walk
-                stopmsg(STOPMSG_INFO_ONLY | STOPMSG_NO_BUZZER, NoQueue);
-                g_major_method = Major::random_walk;
+                fallback_to_random_walk();
                 goto lrwalk;
             }
             EnQueueLong((g_fudge_factor + Sqrt.x) / 2,  Sqrt.y / 2);
@@ -415,8 +417,7 @@ bool orbit3dlongsetup()
             if (!Init_Queue(32*1024UL))
             {
                 // can't get queue memory: fall back to random walk
-                stopmsg(STOPMSG_INFO_ONLY | STOPMSG_NO_BUZZER, NoQueue);
-                g_major_method = Major::random_walk;
+                fallback_to_random_walk();
                 goto lrwalk;
             }
             switch (g_inverse_julia_minor_method)
@@ -605,8 +606,7 @@ bool orbit3dfloatsetup()
             if (!Init_Queue(32*1024UL))
             {
                 // can't get queue memory: fall back to random walk
-                stopmsg(STOPMSG_INFO_ONLY | STOPMSG_NO_BUZZER, NoQueue);
-                g_major_method = Major::random_walk;
+                fallback_to_random_walk();
                 goto rwalk;
             }
             EnQueueFloat((float)((1 + Sqrt.x) / 2), (float)(Sqrt.y / 2));
@@ -616,8 +616,7 @@ bool orbit3dfloatsetup()
             if (!Init_Queue(32*1024UL))
             {
                 // can't get queue memory: fall back to random walk
-                stopmsg(STOPMSG_INFO_ONLY | STOPMSG_NO_BUZZER, NoQueue);
-                g_major_method = Major::random_walk;
+                fallback_to_random_walk();
                 goto rwalk;
             }
             switch (g_inverse_julia_minor_method)
