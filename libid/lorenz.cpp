@@ -461,8 +461,8 @@ lrwalk:
     return true;
 }
 
-#define COSB   dx
-#define SINABC dy
+static double &cos_b{dx};
+static double &sin_sum_a_b_c{dy};
 
 bool orbit3dfloatsetup()
 {
@@ -572,8 +572,8 @@ bool orbit3dfloatsetup()
         d =  g_params[3];
         if (g_fractal_type == fractal_type::THREEPLY)
         {
-            COSB   = std::cos(b);
-            SINABC = std::sin(a+b+c);
+            cos_b = std::cos(b);
+            sin_sum_a_b_c = std::sin(a + b + c);
         }
     }
     else if (g_fractal_type == fractal_type::INVERSEJULIAFP)
@@ -1239,7 +1239,7 @@ int quadruptwo2dfloatorbit(double *x, double *y, double * /*z*/)
 int threeply2dfloatorbit(double *x, double *y, double * /*z*/)
 {
     double tmp;
-    tmp = *y - sign(*x)*(std::fabs(std::sin(*x)*COSB+c-(*x)*SINABC));
+    tmp = *y - sign(*x)*(std::fabs(std::sin(*x)*cos_b+c-(*x)*sin_sum_a_b_c));
     *y = a - *x;
     *x = tmp;
     return 0;
