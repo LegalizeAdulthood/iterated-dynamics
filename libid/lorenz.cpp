@@ -1296,13 +1296,12 @@ int dynamfloat(double *x, double *y, double * /*z*/)
     return 0;
 }
 
-#undef  LAMBDA
-#define LAMBDA  g_params[0]
-#define ALPHA   g_params[1]
-#define BETA    g_params[2]
-#define GAMMA   g_params[3]
-#define OMEGA   g_params[4]
-#define DEGREE  g_params[5]
+static const double &LAMBDA{g_params[0]};
+static const double &ALPHA{g_params[1]};
+static const double &BETA{g_params[2]};
+static const double &GAMMA{g_params[3]};
+static const double &OMEGA{g_params[4]};
+static const double &DEGREE{g_params[5]};
 
 int iconfloatorbit(double *x, double *y, double *z)
 {
@@ -1338,17 +1337,11 @@ int iconfloatorbit(double *x, double *y, double *z)
     *z = zzbar;
     return 0;
 }
-#ifdef LAMBDA
-#undef LAMBDA
-#undef ALPHA
-#undef BETA
-#undef GAMMA
-#endif
 
-#define PAR_A   g_params[0]
-#define PAR_B   g_params[1]
-#define PAR_C   g_params[2]
-#define PAR_D   g_params[3]
+static const double &PAR_A{g_params[0]};
+static const double &PAR_B{g_params[1]};
+static const double &PAR_C{g_params[2]};
+static const double &PAR_D{g_params[3]};
 
 int latoofloatorbit(double *x, double *y, double * /*z*/)
 {
@@ -1381,11 +1374,6 @@ int latoofloatorbit(double *x, double *y, double * /*z*/)
 
     return 0;
 }
-
-#undef PAR_A
-#undef PAR_B
-#undef PAR_C
-#undef PAR_D
 
 //********************************************************************
 //   Main fractal engines - put in fractalspecific[fractype].calctype
