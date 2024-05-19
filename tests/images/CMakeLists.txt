@@ -28,6 +28,9 @@ endfunction()
 
 add_fractal_type_image_test(
     barnsleyj1 barnsleyj2 barnsleyj3 barnsleym1 barnsleym2 barnsleym3
+    cellular circle cmplxmarksjul cmplxmarksmand complexbasin complexnewton
+    dividebrot5
+    escher_julia
     mandel
 )
 add_image_test(btrace PARAMETERS type=mandel inside=zmag passes=b)
