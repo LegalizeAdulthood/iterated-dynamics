@@ -110,7 +110,7 @@ static void plothist(int x, int y, int color);
 static bool s_real_time{};
 
 long g_max_count;
-static int t;
+static int s_t{};
 static long l_dx;
 static long l_dy;
 static long l_dz;
@@ -357,7 +357,7 @@ bool orbit3dlongsetup()
         l_b = (long)(g_params[1]*g_fudge_factor);     // stepsize
         l_c = (long)(g_params[2]*g_fudge_factor);     // stop
         l_d = (long) g_params[3];
-        t = (int) l_d;      // points per orbit
+        s_t = (int) l_d;      // points per orbit
 
         l_sinx = (long)(std::sin(a)*g_fudge_factor);
         l_cosx = (long)(std::cos(a)*g_fudge_factor);
@@ -548,7 +548,7 @@ bool orbit3dfloatsetup()
         b =  g_params[1];    // stepsize
         c =  g_params[2];    // stop
         l_d = (long) g_params[3];
-        t = (int) l_d;      // points per orbit
+        s_t = (int) l_d;      // points per orbit
         g_sin_x = std::sin(a);
         g_cos_x = std::cos(a);
         orbit = 0;
@@ -1168,12 +1168,12 @@ int rosslerlongorbit(long *l_x, long *l_y, long *l_z)
 int kamtorusfloatorbit(double *r, double *s, double *z)
 {
     double srr;
-    if (t++ >= l_d)
+    if (s_t++ >= l_d)
     {
         orbit += b;
         (*s) = orbit/3;
         (*r) = (*s);
-        t = 0;
+        s_t = 0;
         *z = orbit;
         if (orbit > c)
         {
@@ -1189,12 +1189,12 @@ int kamtorusfloatorbit(double *r, double *s, double *z)
 int kamtoruslongorbit(long *r, long *s, long *z)
 {
     long srr;
-    if (t++ >= l_d)
+    if (s_t++ >= l_d)
     {
         l_orbit += l_b;
         (*s) = l_orbit/3;
         (*r) = (*s);
-        t = 0;
+        s_t = 0;
         *z = l_orbit;
         if (l_orbit > l_c)
         {
@@ -1506,7 +1506,7 @@ int orbit2dfloat()
         start_resume();
         get_resume(sizeof(count), &count, sizeof(color), &color,
                    sizeof(oldrow), &oldrow, sizeof(oldcol), &oldcol,
-                   sizeof(x), &x, sizeof(y), &y, sizeof(z), &z, sizeof(t), &t,
+                   sizeof(x), &x, sizeof(y), &y, sizeof(z), &z, sizeof(s_t), &s_t,
                    sizeof(orbit), &orbit, sizeof(g_color_iter), &g_color_iter,
                    0);
         end_resume();
@@ -1520,7 +1520,7 @@ int orbit2dfloat()
             alloc_resume(100, 1);
             put_resume(sizeof(count), &count, sizeof(color), &color,
                        sizeof(oldrow), &oldrow, sizeof(oldcol), &oldcol,
-                       sizeof(x), &x, sizeof(y), &y, sizeof(z), &z, sizeof(t), &t,
+                       sizeof(x), &x, sizeof(y), &y, sizeof(z), &z, sizeof(s_t), &s_t,
                        sizeof(orbit), &orbit, sizeof(g_color_iter), &g_color_iter,
                        0);
             ret = -1;
@@ -1689,7 +1689,7 @@ int orbit2dlong()
         start_resume();
         get_resume(sizeof(count), &count, sizeof(color), &color,
                    sizeof(oldrow), &oldrow, sizeof(oldcol), &oldcol,
-                   sizeof(x), &x, sizeof(y), &y, sizeof(z), &z, sizeof(t), &t,
+                   sizeof(x), &x, sizeof(y), &y, sizeof(z), &z, sizeof(s_t), &s_t,
                    sizeof(l_orbit), &l_orbit, sizeof(g_color_iter), &g_color_iter,
                    0);
         end_resume();
@@ -1703,7 +1703,7 @@ int orbit2dlong()
             alloc_resume(100, 1);
             put_resume(sizeof(count), &count, sizeof(color), &color,
                        sizeof(oldrow), &oldrow, sizeof(oldcol), &oldcol,
-                       sizeof(x), &x, sizeof(y), &y, sizeof(z), &z, sizeof(t), &t,
+                       sizeof(x), &x, sizeof(y), &y, sizeof(z), &z, sizeof(s_t), &s_t,
                        sizeof(l_orbit), &l_orbit, sizeof(g_color_iter), &g_color_iter,
                        0);
             ret = -1;
