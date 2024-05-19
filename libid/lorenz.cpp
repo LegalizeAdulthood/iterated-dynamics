@@ -140,7 +140,7 @@ static double s_cdt{};
 static double s_xdt{};
 static double s_ydt{};
 static double s_zdt{};
-static double initorbitfp[3];
+static double s_init_orbit_fp[3]{};
 
 // The following declarations used for Inverse Julia.
 
@@ -496,19 +496,19 @@ bool orbit3dfloatsetup()
         projection = 1; // plot x and z
     }
 
-    initorbitfp[0] = 1;  // initial conditions
-    initorbitfp[1] = 1;
-    initorbitfp[2] = 1;
+    s_init_orbit_fp[0] = 1;  // initial conditions
+    s_init_orbit_fp[1] = 1;
+    s_init_orbit_fp[2] = 1;
     if (g_fractal_type == fractal_type::FPGINGERBREAD)
     {
-        initorbitfp[0] = g_params[0];        // initial conditions
-        initorbitfp[1] = g_params[1];
+        s_init_orbit_fp[0] = g_params[0];        // initial conditions
+        s_init_orbit_fp[1] = g_params[1];
     }
 
     if (g_fractal_type == fractal_type::ICON || g_fractal_type == fractal_type::ICON3D)
     {
-        initorbitfp[0] = 0.01;  // initial conditions
-        initorbitfp[1] = 0.003;
+        s_init_orbit_fp[0] = 0.01;  // initial conditions
+        s_init_orbit_fp[1] = 0.003;
         connect = false;
         waste = 2000;
     }
@@ -527,8 +527,8 @@ bool orbit3dfloatsetup()
     }
     else if (g_fractal_type == fractal_type::ICON || g_fractal_type == fractal_type::ICON3D)
     {
-        initorbitfp[0] = 0.01;  // initial conditions
-        initorbitfp[1] = 0.003;
+        s_init_orbit_fp[0] = 0.01;  // initial conditions
+        s_init_orbit_fp[1] = 0.003;
         connect = false;
         waste = 2000;
         // Initialize parameters
@@ -552,9 +552,9 @@ bool orbit3dfloatsetup()
         g_sin_x = std::sin(s_a);
         g_cos_x = std::cos(s_a);
         orbit = 0;
-        initorbitfp[2] = 0;
-        initorbitfp[1] = initorbitfp[2];
-        initorbitfp[0] = initorbitfp[1];
+        s_init_orbit_fp[2] = 0;
+        s_init_orbit_fp[1] = s_init_orbit_fp[2];
+        s_init_orbit_fp[0] = s_init_orbit_fp[1];
     }
     else if (g_fractal_type == fractal_type::FPHOPALONG
         || g_fractal_type == fractal_type::FPMARTIN
@@ -562,9 +562,9 @@ bool orbit3dfloatsetup()
         || g_fractal_type == fractal_type::QUADRUPTWO
         || g_fractal_type == fractal_type::THREEPLY)
     {
-        initorbitfp[0] = 0;  // initial conditions
-        initorbitfp[1] = 0;
-        initorbitfp[2] = 0;
+        s_init_orbit_fp[0] = 0;  // initial conditions
+        s_init_orbit_fp[1] = 0;
+        s_init_orbit_fp[2] = 0;
         connect = false;
         s_a =  g_params[0];
         s_b =  g_params[1];
@@ -634,17 +634,17 @@ bool orbit3dfloatsetup()
             break;
         case Major::random_walk:
 rwalk:
-            initorbitfp[0] = 1 + Sqrt.x / 2;
-            g_new_z.x = initorbitfp[0];
-            initorbitfp[1] = Sqrt.y / 2;
-            g_new_z.y = initorbitfp[1];
+            s_init_orbit_fp[0] = 1 + Sqrt.x / 2;
+            g_new_z.x = s_init_orbit_fp[0];
+            s_init_orbit_fp[1] = Sqrt.y / 2;
+            g_new_z.y = s_init_orbit_fp[1];
             break;
         case Major::random_run:       // random run, choose intervals
             g_major_method = Major::random_run;
-            initorbitfp[0] = 1 + Sqrt.x / 2;
-            g_new_z.x = initorbitfp[0];
-            initorbitfp[1] = Sqrt.y / 2;
-            g_new_z.y = initorbitfp[1];
+            s_init_orbit_fp[0] = 1 + Sqrt.x / 2;
+            g_new_z.x = s_init_orbit_fp[0];
+            s_init_orbit_fp[1] = Sqrt.y / 2;
+            g_new_z.y = s_init_orbit_fp[1];
             break;
         }
     }
@@ -1486,9 +1486,9 @@ int orbit2dfloat()
 
     oldrow = -1;
     oldcol = oldrow;
-    x = initorbitfp[0];
-    y = initorbitfp[1];
-    z = initorbitfp[2];
+    x = s_init_orbit_fp[0];
+    y = s_init_orbit_fp[1];
+    z = s_init_orbit_fp[2];
     g_color_iter = 0L;
     ret = 0;
     count = ret;
@@ -1932,9 +1932,9 @@ static int orbit3dfloatcalc()
     {
         color = 1;
     }
-    inf.orbit[0] = initorbitfp[0];
-    inf.orbit[1] = initorbitfp[1];
-    inf.orbit[2] = initorbitfp[2];
+    inf.orbit[0] = s_init_orbit_fp[0];
+    inf.orbit[1] = s_init_orbit_fp[1];
+    inf.orbit[2] = s_init_orbit_fp[2];
 
     if (driver_diskp())                  // this would KILL a disk drive!
     {
