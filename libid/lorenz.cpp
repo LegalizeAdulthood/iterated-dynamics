@@ -2248,7 +2248,7 @@ double g_orbit_corner_max_y{};
 double g_orbit_corner_3_x{};
 double g_orbit_corner_3_y{};
 static affine s_o_cvt{};
-static int o_color;
+static int s_o_color{};
 
 int setup_orbits_to_screen(affine *scrn_cnvt)
 {
@@ -2319,7 +2319,7 @@ int plotorbits2dsetup()
         g_orbit_delay = (int)(g_max_iterations - 1);
     }
 
-    o_color = 1;
+    s_o_color = 1;
 
     if (g_outside_color == SUM)
     {
@@ -2342,7 +2342,7 @@ int plotorbits2dfloat()
     {
         driver_mute();
         alloc_resume(100, 1);
-        put_resume(sizeof(o_color), &o_color, 0);
+        put_resume(sizeof(s_o_color), &s_o_color, 0);
         return -1;
     }
 
@@ -2362,21 +2362,21 @@ int plotorbits2dfloat()
     if (g_resuming)
     {
         start_resume();
-        get_resume(sizeof(o_color), &o_color, 0);
+        get_resume(sizeof(s_o_color), &s_o_color, 0);
         end_resume();
     }
 
     if (g_inside_color > COLOR_BLACK)
     {
-        o_color = g_inside_color;
+        s_o_color = g_inside_color;
     }
     else
     {
         // inside <= 0
-        o_color++;
-        if (o_color >= g_colors)   // another color to switch to?
+        s_o_color++;
+        if (s_o_color >= g_colors)   // another color to switch to?
         {
-            o_color = 1;    // (don't use the background color)
+            s_o_color = 1;    // (don't use the background color)
         }
     }
 
@@ -2405,7 +2405,7 @@ int plotorbits2dfloat()
                 w_snd((int)(*soundvar*100+g_base_hertz));
             }
 
-            (*g_plot)(col, row, o_color%g_colors);
+            (*g_plot)(col, row, s_o_color%g_colors);
         }
         else
         {
