@@ -134,12 +134,12 @@ static double s_a{};
 static double s_b{};
 static double s_c{};
 static double s_d{};
-static double adt;
-static double bdt;
-static double cdt;
-static double xdt;
-static double ydt;
-static double zdt;
+static double s_adt{};
+static double s_bdt{};
+static double s_cdt{};
+static double s_xdt{};
+static double s_ydt{};
+static double s_zdt{};
 static double initorbitfp[3];
 
 // The following declarations used for Inverse Julia.
@@ -658,9 +658,9 @@ rwalk:
     }
 
     // precalculations for speed
-    adt = s_a*s_dt;
-    bdt = s_b*s_dt;
-    cdt = s_c*s_dt;
+    s_adt = s_a*s_dt;
+    s_bdt = s_b*s_dt;
+    s_cdt = s_c*s_dt;
 
     return true;
 }
@@ -1002,16 +1002,16 @@ int lorenz3d1floatorbit(double *x, double *y, double *z)
 {
     double norm;
 
-    xdt = (*x)*s_dt;
-    ydt = (*y)*s_dt;
-    zdt = (*z)*s_dt;
+    s_xdt = (*x)*s_dt;
+    s_ydt = (*y)*s_dt;
+    s_zdt = (*z)*s_dt;
 
     // 1-lobe Lorenz
     norm = std::sqrt((*x)*(*x)+(*y)*(*y));
-    s_dx   = (-adt-s_dt)*(*x) + (adt-bdt)*(*y) + (s_dt-adt)*norm + ydt*(*z);
-    s_dy   = (bdt-adt)*(*x) - (adt+s_dt)*(*y) + (bdt+adt)*norm - xdt*(*z) -
-           norm*zdt;
-    s_dz   = (ydt/2) - cdt*(*z);
+    s_dx   = (-s_adt-s_dt)*(*x) + (s_adt-s_bdt)*(*y) + (s_dt-s_adt)*norm + s_ydt*(*z);
+    s_dy   = (s_bdt-s_adt)*(*x) - (s_adt+s_dt)*(*y) + (s_bdt+s_adt)*norm - s_xdt*(*z) -
+           norm*s_zdt;
+    s_dz   = (s_ydt/2) - s_cdt*(*z);
 
     *x += s_dx;
     *y += s_dy;
@@ -1021,14 +1021,14 @@ int lorenz3d1floatorbit(double *x, double *y, double *z)
 
 int lorenz3dfloatorbit(double *x, double *y, double *z)
 {
-    xdt = (*x)*s_dt;
-    ydt = (*y)*s_dt;
-    zdt = (*z)*s_dt;
+    s_xdt = (*x)*s_dt;
+    s_ydt = (*y)*s_dt;
+    s_zdt = (*z)*s_dt;
 
     // 2-lobe Lorenz (the original)
-    s_dx  = -adt*(*x) + adt*(*y);
-    s_dy  =  bdt*(*x) - ydt - (*z)*xdt;
-    s_dz  = -cdt*(*z) + (*x)*ydt;
+    s_dx  = -s_adt*(*x) + s_adt*(*y);
+    s_dy  =  s_bdt*(*x) - s_ydt - (*z)*s_xdt;
+    s_dz  = -s_cdt*(*z) + (*x)*s_ydt;
 
     *x += s_dx;
     *y += s_dy;
@@ -1040,19 +1040,19 @@ int lorenz3d3floatorbit(double *x, double *y, double *z)
 {
     double norm;
 
-    xdt = (*x)*s_dt;
-    ydt = (*y)*s_dt;
-    zdt = (*z)*s_dt;
+    s_xdt = (*x)*s_dt;
+    s_ydt = (*y)*s_dt;
+    s_zdt = (*z)*s_dt;
 
     // 3-lobe Lorenz
     norm = std::sqrt((*x)*(*x)+(*y)*(*y));
-    s_dx   = (-(adt+s_dt)*(*x) + (adt-bdt+zdt)*(*y)) / 3 +
-           ((s_dt-adt)*((*x)*(*x)-(*y)*(*y)) +
-            2*(bdt+adt-zdt)*(*x)*(*y))/(3*norm);
-    s_dy   = ((bdt-adt-zdt)*(*x) - (adt+s_dt)*(*y)) / 3 +
-           (2*(adt-s_dt)*(*x)*(*y) +
-            (bdt+adt-zdt)*((*x)*(*x)-(*y)*(*y)))/(3*norm);
-    s_dz   = (3*xdt*(*x)*(*y)-ydt*(*y)*(*y))/2 - cdt*(*z);
+    s_dx   = (-(s_adt+s_dt)*(*x) + (s_adt-s_bdt+s_zdt)*(*y)) / 3 +
+           ((s_dt-s_adt)*((*x)*(*x)-(*y)*(*y)) +
+            2*(s_bdt+s_adt-s_zdt)*(*x)*(*y))/(3*norm);
+    s_dy   = ((s_bdt-s_adt-s_zdt)*(*x) - (s_adt+s_dt)*(*y)) / 3 +
+           (2*(s_adt-s_dt)*(*x)*(*y) +
+            (s_bdt+s_adt-s_zdt)*((*x)*(*x)-(*y)*(*y)))/(3*norm);
+    s_dz   = (3*s_xdt*(*x)*(*y)-s_ydt*(*y)*(*y))/2 - s_cdt*(*z);
 
     *x += s_dx;
     *y += s_dy;
@@ -1062,18 +1062,18 @@ int lorenz3d3floatorbit(double *x, double *y, double *z)
 
 int lorenz3d4floatorbit(double *x, double *y, double *z)
 {
-    xdt = (*x)*s_dt;
-    ydt = (*y)*s_dt;
-    zdt = (*z)*s_dt;
+    s_xdt = (*x)*s_dt;
+    s_ydt = (*y)*s_dt;
+    s_zdt = (*z)*s_dt;
 
     // 4-lobe Lorenz
-    s_dx   = (-adt*(*x)*(*x)*(*x) + (2*adt+bdt-zdt)*(*x)*(*x)*(*y) +
-            (adt-2*s_dt)*(*x)*(*y)*(*y) + (zdt-bdt)*(*y)*(*y)*(*y)) /
+    s_dx   = (-s_adt*(*x)*(*x)*(*x) + (2*s_adt+s_bdt-s_zdt)*(*x)*(*x)*(*y) +
+            (s_adt-2*s_dt)*(*x)*(*y)*(*y) + (s_zdt-s_bdt)*(*y)*(*y)*(*y)) /
            (2 * ((*x)*(*x)+(*y)*(*y)));
-    s_dy   = ((bdt-zdt)*(*x)*(*x)*(*x) + (adt-2*s_dt)*(*x)*(*x)*(*y) +
-            (-2*adt-bdt+zdt)*(*x)*(*y)*(*y) - adt*(*y)*(*y)*(*y)) /
+    s_dy   = ((s_bdt-s_zdt)*(*x)*(*x)*(*x) + (s_adt-2*s_dt)*(*x)*(*x)*(*y) +
+            (-2*s_adt-s_bdt+s_zdt)*(*x)*(*y)*(*y) - s_adt*(*y)*(*y)*(*y)) /
            (2 * ((*x)*(*x)+(*y)*(*y)));
-    s_dz   = (2*xdt*(*x)*(*x)*(*y) - 2*xdt*(*y)*(*y)*(*y) - cdt*(*z));
+    s_dz   = (2*s_xdt*(*x)*(*x)*(*y) - 2*s_xdt*(*y)*(*y)*(*y) - s_cdt*(*z));
 
     *x += s_dx;
     *y += s_dy;
@@ -1107,12 +1107,12 @@ int henonlongorbit(long *l_x, long *l_y, long * /*l_z*/)
 
 int rosslerfloatorbit(double *x, double *y, double *z)
 {
-    xdt = (*x)*s_dt;
-    ydt = (*y)*s_dt;
+    s_xdt = (*x)*s_dt;
+    s_ydt = (*y)*s_dt;
 
-    s_dx = -ydt - (*z)*s_dt;
-    s_dy = xdt + (*y)*adt;
-    s_dz = bdt + (*z)*xdt - (*z)*cdt;
+    s_dx = -s_ydt - (*z)*s_dt;
+    s_dy = s_xdt + (*y)*s_adt;
+    s_dz = s_bdt + (*z)*s_xdt - (*z)*s_cdt;
 
     *x += s_dx;
     *y += s_dy;
