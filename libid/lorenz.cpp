@@ -162,7 +162,7 @@ static long s_Cy_l{};
 // these are potential user parameters
 static bool s_connect{true}; // flag to connect points with a line
 static bool s_euler{};       // use implicit euler approximation for dynamic system
-static int waste = 100;      // waste this many points before plotting
+static int s_waste{100};     // waste this many points before plotting
 static int projection = 2;   // projection plane - default is to plot x-y
 
 static void fallback_to_random_walk()
@@ -320,7 +320,7 @@ bool orbit3dlongsetup()
 {
     g_max_count = 0L;
     s_connect = true;
-    waste = 100;
+    s_waste = 100;
     projection = 2;
     if (g_fractal_type == fractal_type::LHENON
         || g_fractal_type == fractal_type::KAM
@@ -331,7 +331,7 @@ bool orbit3dlongsetup()
     }
     if (g_fractal_type == fractal_type::LROSSLER)
     {
-        waste = 500;
+        s_waste = 500;
     }
     if (g_fractal_type == fractal_type::LLORENZ)
     {
@@ -469,7 +469,7 @@ bool orbit3dfloatsetup()
 {
     g_max_count = 0L;
     s_connect = true;
-    waste = 100;
+    s_waste = 100;
     projection = 2;
 
     if (g_fractal_type == fractal_type::FPHENON
@@ -486,11 +486,11 @@ bool orbit3dfloatsetup()
         || g_fractal_type == fractal_type::FPLORENZ3D3
         || g_fractal_type == fractal_type::FPLORENZ3D4)
     {
-        waste = 750;
+        s_waste = 750;
     }
     if (g_fractal_type == fractal_type::FPROSSLER)
     {
-        waste = 500;
+        s_waste = 500;
     }
     if (g_fractal_type == fractal_type::FPLORENZ)
     {
@@ -511,7 +511,7 @@ bool orbit3dfloatsetup()
         s_init_orbit_fp[0] = 0.01;  // initial conditions
         s_init_orbit_fp[1] = 0.003;
         s_connect = false;
-        waste = 2000;
+        s_waste = 2000;
     }
 
     if (g_fractal_type == fractal_type::LATOO)
@@ -531,7 +531,7 @@ bool orbit3dfloatsetup()
         s_init_orbit_fp[0] = 0.01;  // initial conditions
         s_init_orbit_fp[1] = 0.003;
         s_connect = false;
-        waste = 2000;
+        s_waste = 2000;
         // Initialize parameters
         s_a  =   g_params[0];
         s_b  =   g_params[1];
@@ -2998,7 +2998,7 @@ static bool long3dviewtransf(long3dvtinf *inf)
         longvmult(inf->orbit, inf->longmat1, inf->viewvect1, g_bit_shift);
     }
 
-    if (g_color_iter <= waste) // waste this many points to find minz and maxz
+    if (g_color_iter <= s_waste) // waste this many points to find minz and maxz
     {
         // find minz and maxz
         for (int i = 0; i < 3; i++)
@@ -3014,7 +3014,7 @@ static bool long3dviewtransf(long3dvtinf *inf)
             }
         }
 
-        if (g_color_iter == waste) // time to work it out
+        if (g_color_iter == s_waste) // time to work it out
         {
             inf->iview[1] = 0L;
             inf->iview[0] = inf->iview[1]; // center viewer on origin
@@ -3176,7 +3176,7 @@ static bool float3dviewtransf(float3dvtinf *inf)
         vmult(inf->orbit, inf->doublemat1, inf->viewvect1);
     }
 
-    if (g_color_iter <= waste) // waste this many points to find minz and maxz
+    if (g_color_iter <= s_waste) // waste this many points to find minz and maxz
     {
         // find minz and maxz
         for (int i = 0; i < 3; i++)
@@ -3191,7 +3191,7 @@ static bool float3dviewtransf(float3dvtinf *inf)
                 inf->maxvals[i] = tmp;
             }
         }
-        if (g_color_iter == waste) // time to work it out
+        if (g_color_iter == s_waste) // time to work it out
         {
             g_view[1] = 0;
             g_view[0] = g_view[1]; // center on origin
