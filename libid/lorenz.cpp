@@ -2238,15 +2238,15 @@ int dynam2dfloat()
     return ret;
 }
 
-bool g_keep_screen_coords = false;
-bool g_set_orbit_corners = false;
-long g_orbit_interval;
-double g_orbit_corner_min_x;
-double g_orbit_corner_min_y;
-double g_orbit_corner_max_x;
-double g_orbit_corner_max_y;
-double g_orbit_corner_3_x;
-double g_orbit_corner_3_y;
+bool g_keep_screen_coords{};
+bool g_set_orbit_corners{};
+long g_orbit_interval{};
+double g_orbit_corner_min_x{};
+double g_orbit_corner_min_y{};
+double g_orbit_corner_max_x{};
+double g_orbit_corner_max_y{};
+double g_orbit_corner_3_x{};
+double g_orbit_corner_3_y{};
 static affine o_cvt;
 static int o_color;
 
