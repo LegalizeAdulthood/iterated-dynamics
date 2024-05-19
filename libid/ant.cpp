@@ -24,7 +24,11 @@
 #include <vector>
 
 // Generate Random Number 0 <= r < n
-#define RANDOM(n)       ((int)((long)((long)std::rand() * (long)(n)) >> 15))
+inline int random(int n)
+{
+    return (int) ((long) std::rand() * (long) n >> 15);
+}
+
 #define MAX_ANTS        256
 #define XO              (g_logical_screen_x_dots/2)
 #define YO              (g_logical_screen_y_dots/2)
@@ -113,7 +117,7 @@ void TurkMite1(int maxtur, int rule_len, char const *ru, long maxpts, long wait)
         {
             // init the rules and colors for the
             // turkmites: 1 turn left, -1 turn right
-            rule[g_color] = 1 - (RANDOM(2) * 2);
+            rule[g_color] = 1 - (random(2) * 2);
             next_col[g_color] = g_color + 1;
         }
         // close the cycle
@@ -152,9 +156,9 @@ void TurkMite1(int maxtur, int rule_len, char const *ru, long maxpts, long wait)
         }
         else
         {
-            dir[g_color] = RANDOM(DIRS);
-            x[g_color] = RANDOM(g_logical_screen_x_dots);
-            y[g_color] = RANDOM(g_logical_screen_y_dots);
+            dir[g_color] = random(DIRS);
+            x[g_color] = random(g_logical_screen_x_dots);
+            y[g_color] = random(g_logical_screen_y_dots);
         }
     }
     maxpts = maxpts / (long) INNER_LOOP;
@@ -303,10 +307,10 @@ void TurkMite2(int maxtur, int rule_len, char const *ru, long maxpts, long wait)
         {
             // init the various turmites N.B. don't use
             // x[0], y[0], dir[0]
-            dir[color] = RANDOM(DIRS);
-            rule[color] = (std::rand() << RANDOM(2)) | RANDOM(2);
-            x[color] = RANDOM(g_logical_screen_x_dots);
-            y[color] = RANDOM(g_logical_screen_y_dots);
+            dir[color] = random(DIRS);
+            rule[color] = (std::rand() << random(2)) | random(2);
+            x[color] = random(g_logical_screen_x_dots);
+            y[color] = random(g_logical_screen_y_dots);
         }
     }
     else
@@ -536,7 +540,7 @@ int ant()
     int maxants = static_cast<int>(g_params[2]);
     if (maxants < 1)               // if maxants == 0 maxants random
     {
-        maxants = 2 + RANDOM(MAX_ANTS - 2);
+        maxants = 2 + random(256 - 2);
     }
     else if (maxants > MAX_ANTS)
     {
@@ -546,7 +550,7 @@ int ant()
     int type = static_cast<int>(g_params[3]);
     if (type < 1 || type > 2)
     {
-        type = RANDOM(2);         // if type == 0 choose a random type
+        type = random(2);         // if type == 0 choose a random type
     }
     switch (type)
     {
