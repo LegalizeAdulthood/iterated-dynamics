@@ -152,8 +152,8 @@ static l_affine s_l_cvt{};
 
 static double s_Cx{};
 static double s_Cy{};
-static long CxLong;
-static long CyLong;
+static long s_Cx_l{};
+static long s_Cy_l{};
 
 /*
  * end of Inverse Julia declarations;
@@ -373,8 +373,8 @@ bool orbit3dlongsetup()
     {
         LComplex Sqrt;
 
-        CxLong = (long)(g_params[0] * g_fudge_factor);
-        CyLong = (long)(g_params[1] * g_fudge_factor);
+        s_Cx_l = (long)(g_params[0] * g_fudge_factor);
+        s_Cy_l = (long)(g_params[1] * g_fudge_factor);
 
         s_max_hits    = (int) g_params[2];
         s_run_length = (int) g_params[3];
@@ -398,7 +398,7 @@ bool orbit3dlongsetup()
         s_l_cvt.e = (long)(s_cvt.e * (1L << 21));
         s_l_cvt.f = (long)(s_cvt.f * (1L << 21));
 
-        Sqrt = ComplexSqrtLong(g_fudge_factor - 4 * CxLong, -4 * CyLong);
+        Sqrt = ComplexSqrtLong(g_fudge_factor - 4 * s_Cx_l, -4 * s_Cy_l);
 
         switch (g_major_method)
         {
@@ -846,7 +846,7 @@ int Linverse_julia_orbit()
         g_l_new_z = PopLong();
         break;
     case Major::random_walk:
-        g_l_new_z = ComplexSqrtLong(g_l_new_z.x - CxLong, g_l_new_z.y - CyLong);
+        g_l_new_z = ComplexSqrtLong(g_l_new_z.x - s_Cx_l, g_l_new_z.y - s_Cy_l);
         if (RANDOM(2))
         {
             g_l_new_z.x = -g_l_new_z.x;
@@ -854,7 +854,7 @@ int Linverse_julia_orbit()
         }
         break;
     case Major::random_run:
-        g_l_new_z = ComplexSqrtLong(g_l_new_z.x - CxLong, g_l_new_z.y - CyLong);
+        g_l_new_z = ComplexSqrtLong(g_l_new_z.x - s_Cx_l, g_l_new_z.y - s_Cy_l);
         if (random_len == 0)
         {
             random_len = RANDOM(s_run_length);
@@ -907,11 +907,11 @@ int Linverse_julia_orbit()
         switch (g_major_method)
         {
         case Major::breadth_first:
-            g_l_new_z = ComplexSqrtLong(g_l_new_z.x - CxLong, g_l_new_z.y - CyLong);
+            g_l_new_z = ComplexSqrtLong(g_l_new_z.x - s_Cx_l, g_l_new_z.y - s_Cy_l);
             EnQueueLong(color * g_l_new_z.x, color * g_l_new_z.y);
             break;
         case Major::depth_first:
-            g_l_new_z = ComplexSqrtLong(g_l_new_z.x - CxLong, g_l_new_z.y - CyLong);
+            g_l_new_z = ComplexSqrtLong(g_l_new_z.x - s_Cx_l, g_l_new_z.y - s_Cy_l);
             PushLong(color * g_l_new_z.x, color * g_l_new_z.y);
             break;
         case Major::random_run:
@@ -934,7 +934,7 @@ int Linverse_julia_orbit()
         if (color < s_max_hits)
         {
             g_put_color(newcol, newrow, color+1);
-            g_l_new_z = ComplexSqrtLong(g_l_new_z.x - CxLong, g_l_new_z.y - CyLong);
+            g_l_new_z = ComplexSqrtLong(g_l_new_z.x - s_Cx_l, g_l_new_z.y - s_Cy_l);
             EnQueueLong(g_l_new_z.x,  g_l_new_z.y);
             EnQueueLong(-g_l_new_z.x, -g_l_new_z.y);
         }
@@ -943,7 +943,7 @@ int Linverse_julia_orbit()
         if (color < s_max_hits)
         {
             g_put_color(newcol, newrow, color+1);
-            g_l_new_z = ComplexSqrtLong(g_l_new_z.x - CxLong, g_l_new_z.y - CyLong);
+            g_l_new_z = ComplexSqrtLong(g_l_new_z.x - s_Cx_l, g_l_new_z.y - s_Cy_l);
             if (g_inverse_julia_minor_method == Minor::left_first)
             {
                 if (QueueFullAlmost())
