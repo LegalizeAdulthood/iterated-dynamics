@@ -65,7 +65,11 @@ use +2.24 for type ICONS. If BAD_PIXEL is set to 20000, this will abort
 with a math error. Note that this approach precludes zooming in very
 far to an orbit type. */
 
-#define BAD_PIXEL  10000L    // pixels can't get this big
+// pixels can't get this big
+enum
+{
+    BAD_PIXEL = 10000L
+};
 
 struct l_affine
 {
