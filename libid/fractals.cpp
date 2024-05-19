@@ -65,8 +65,6 @@ inline void conjugate(DComplex &pz)
     pz.y = - pz.y;
 }
 
-#define distance(z1, z2)  (sqr((z1).x-(z2).x)+sqr((z1).y-(z2).y))
-
 LComplex g_l_coefficient;
 LComplex g_l_old_z;
 LComplex g_l_new_z;
