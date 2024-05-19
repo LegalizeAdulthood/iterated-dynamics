@@ -147,8 +147,8 @@ static int      s_max_hits{};
 static int      s_run_length{};
 Major           g_major_method;
 Minor           g_inverse_julia_minor_method;
-static affine   s_cvt;
-static l_affine lcvt;
+static affine   s_cvt{};
+static l_affine s_l_cvt{};
 
 static double Cx;
 static double Cy;
@@ -391,12 +391,12 @@ bool orbit3dlongsetup()
         setup_convert_to_screen(&s_cvt);
         // Note: using bitshift of 21 for affine, 24 otherwise
 
-        lcvt.a = (long)(s_cvt.a * (1L << 21));
-        lcvt.b = (long)(s_cvt.b * (1L << 21));
-        lcvt.c = (long)(s_cvt.c * (1L << 21));
-        lcvt.d = (long)(s_cvt.d * (1L << 21));
-        lcvt.e = (long)(s_cvt.e * (1L << 21));
-        lcvt.f = (long)(s_cvt.f * (1L << 21));
+        s_l_cvt.a = (long)(s_cvt.a * (1L << 21));
+        s_l_cvt.b = (long)(s_cvt.b * (1L << 21));
+        s_l_cvt.c = (long)(s_cvt.c * (1L << 21));
+        s_l_cvt.d = (long)(s_cvt.d * (1L << 21));
+        s_l_cvt.e = (long)(s_cvt.e * (1L << 21));
+        s_l_cvt.f = (long)(s_cvt.f * (1L << 21));
 
         Sqrt = ComplexSqrtLong(g_fudge_factor - 4 * CxLong, -4 * CyLong);
 
@@ -885,10 +885,10 @@ int Linverse_julia_orbit()
      * otherwise the values of lcvt were truncated.  Used bitshift
      * of 24 otherwise, for increased precision.
      */
-    newcol = (int)((multiply(lcvt.a, g_l_new_z.x >> (g_bit_shift - 21), 21) +
-                    multiply(lcvt.b, g_l_new_z.y >> (g_bit_shift - 21), 21) + lcvt.e) >> 21);
-    newrow = (int)((multiply(lcvt.c, g_l_new_z.x >> (g_bit_shift - 21), 21) +
-                    multiply(lcvt.d, g_l_new_z.y >> (g_bit_shift - 21), 21) + lcvt.f) >> 21);
+    newcol = (int)((multiply(s_l_cvt.a, g_l_new_z.x >> (g_bit_shift - 21), 21) +
+                    multiply(s_l_cvt.b, g_l_new_z.y >> (g_bit_shift - 21), 21) + s_l_cvt.e) >> 21);
+    newrow = (int)((multiply(s_l_cvt.c, g_l_new_z.x >> (g_bit_shift - 21), 21) +
+                    multiply(s_l_cvt.d, g_l_new_z.y >> (g_bit_shift - 21), 21) + s_l_cvt.f) >> 21);
 
     if (newcol < 1 || newcol >= g_logical_screen_x_dots || newrow < 1 || newrow >= g_logical_screen_y_dots)
     {
