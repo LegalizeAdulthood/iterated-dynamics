@@ -29,11 +29,15 @@ inline int random(int n)
     return (int) ((long) std::rand() * (long) n >> 15);
 }
 
-#define MAX_ANTS        256
 #define XO              (g_logical_screen_x_dots/2)
 #define YO              (g_logical_screen_y_dots/2)
-#define DIRS            4
-#define INNER_LOOP      100
+
+enum
+{
+    MAX_ANTS = 256,
+    DIRS = 4,
+    INNER_LOOP = 100
+};
 
 // possible value of idir e relative movement in the 4 directions
 // for x 0, 1, 0, -1
