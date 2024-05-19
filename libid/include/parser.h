@@ -1,7 +1,5 @@
 #pragma once
 
-#include "mpmath.h"
-
 #include <string>
 
 extern bool                  g_frm_uses_ismand;
