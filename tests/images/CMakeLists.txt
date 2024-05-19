@@ -20,6 +20,15 @@ function(add_image_test name)
     set_tests_properties(ImageTest.${name} PROPERTIES LABELS "image")
 endfunction()
 
-add_image_test(mandel PARAMETERS type=mandel)
+function(add_fractal_type_image_test)
+    foreach(type ${ARGN})
+        add_image_test(${type} PARAMETERS type=${type})
+    endforeach()
+endfunction()
+
+add_fractal_type_image_test(
+    barnsleyj1 barnsleyj2 barnsleyj3 barnsleym1 barnsleym2 barnsleym3
+    mandel
+)
 add_image_test(btrace PARAMETERS type=mandel inside=zmag passes=b)
 add_image_test(fractint-formula PARAMETERS type=formula formulafile=example2.frm formulaname=fractint)
