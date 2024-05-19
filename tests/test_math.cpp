@@ -5,6 +5,7 @@
 
 #include <cmath>
 #include <complex>
+#include <fixed_pt.h>
 
 namespace id
 {
