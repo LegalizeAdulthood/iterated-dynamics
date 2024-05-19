@@ -107,7 +107,7 @@ static bool long3dviewtransf(long3dvtinf *inf);
 static bool float3dviewtransf(float3dvtinf *inf);
 static std::FILE *open_orbitsave();
 static void plothist(int x, int y, int color);
-static bool realtime = false;
+static bool s_real_time{};
 
 long g_max_count;
 static int t;
@@ -1850,7 +1850,7 @@ static int orbit3dlongcalc()
             // plot if inside window
             if (inf.col >= 0)
             {
-                if (realtime)
+                if (s_real_time)
                 {
                     g_which_image = stereo_images::RED;
                 }
@@ -1876,7 +1876,7 @@ static int orbit3dlongcalc()
             }
             oldcol = inf.col;
             oldrow = inf.row;
-            if (realtime)
+            if (s_real_time)
             {
                 g_which_image = stereo_images::BLUE;
                 // plot if inside window
@@ -1984,7 +1984,7 @@ static int orbit3dfloatcalc()
             // plot if inside window
             if (inf.col >= 0)
             {
-                if (realtime)
+                if (s_real_time)
                 {
                     g_which_image = stereo_images::RED;
                 }
@@ -2007,7 +2007,7 @@ static int orbit3dfloatcalc()
             }
             oldcol = inf.col;
             oldrow = inf.row;
-            if (realtime)
+            if (s_real_time)
             {
                 g_which_image = stereo_images::BLUE;
                 // plot if inside window
@@ -2440,9 +2440,9 @@ int funny_glasses_call(int (*calc)())
     plot_setup();
     g_plot = g_standard_plot;
     int status = calc();
-    if (realtime && g_glasses_type < 3)
+    if (s_real_time && g_glasses_type < 3)
     {
-        realtime = false;
+        s_real_time = false;
         goto done;
     }
     if (g_glasses_type && status == 0 && g_display_3d != display_3d_modes::NONE)
@@ -2572,7 +2572,7 @@ static int ifs3dfloat()
             // plot if inside window
             if (inf.col >= 0)
             {
-                if (realtime)
+                if (s_real_time)
                 {
                     g_which_image = stereo_images::RED;
                 }
@@ -2593,7 +2593,7 @@ static int ifs3dfloat()
             {
                 return ret;
             }
-            if (realtime)
+            if (s_real_time)
             {
                 g_which_image = stereo_images::BLUE;
                 // plot if inside window
@@ -2875,7 +2875,7 @@ static int ifs3dlong()
             // plot if inside window
             if (inf.col >= 0)
             {
-                if (realtime)
+                if (s_real_time)
                 {
                     g_which_image = stereo_images::RED;
                 }
@@ -2892,7 +2892,7 @@ static int ifs3dlong()
                     (*g_plot)(inf.col, inf.row, color);
                 }
             }
-            if (realtime)
+            if (s_real_time)
             {
                 g_which_image = stereo_images::BLUE;
                 // plot if inside window
@@ -2938,14 +2938,14 @@ static void setupmatrix(MATRIX doublemat)
 int orbit3dfloat()
 {
     g_display_3d = display_3d_modes::MINUS_ONE ;
-    realtime = 0 < g_glasses_type && g_glasses_type < 3;
+    s_real_time = 0 < g_glasses_type && g_glasses_type < 3;
     return funny_glasses_call(orbit3dfloatcalc);
 }
 
 int orbit3dlong()
 {
     g_display_3d = display_3d_modes::MINUS_ONE ;
-    realtime = 0 < g_glasses_type && g_glasses_type < 3;
+    s_real_time = 0 < g_glasses_type && g_glasses_type < 3;
     return funny_glasses_call(orbit3dlongcalc);
 }
 
@@ -2953,7 +2953,7 @@ static int ifs3d()
 {
     g_display_3d = display_3d_modes::MINUS_ONE;
 
-    realtime = 0 < g_glasses_type && g_glasses_type < 3;
+    s_real_time = 0 < g_glasses_type && g_glasses_type < 3;
     if (g_float_flag)
     {
         return funny_glasses_call(ifs3dfloat); // double version of ifs3d
@@ -2974,7 +2974,7 @@ static bool long3dviewtransf(long3dvtinf *inf)
             inf->maxvals[i] = -inf->minvals[i];
         }
         setupmatrix(inf->doublemat);
-        if (realtime)
+        if (s_real_time)
         {
             setupmatrix(inf->doublemat1);
         }
@@ -2984,7 +2984,7 @@ static bool long3dviewtransf(long3dvtinf *inf)
             for (int j = 0; j < 4; j++)
             {
                 inf->longmat[i][j] = (long)(inf->doublemat[i][j] * g_fudge_factor);
-                if (realtime)
+                if (s_real_time)
                 {
                     inf->longmat1[i][j] = (long)(inf->doublemat1[i][j] * g_fudge_factor);
                 }
@@ -2994,7 +2994,7 @@ static bool long3dviewtransf(long3dvtinf *inf)
 
     // 3D VIEWING TRANSFORM
     longvmult(inf->orbit, inf->longmat, inf->viewvect, g_bit_shift);
-    if (realtime)
+    if (s_real_time)
     {
         longvmult(inf->orbit, inf->longmat1, inf->viewvect1, g_bit_shift);
     }
@@ -3034,7 +3034,7 @@ static bool long3dviewtransf(long3dvtinf *inf)
             double tmpz = -((double)inf->maxvals[2]) / g_fudge_factor;
             trans(tmpx, tmpy, tmpz, inf->doublemat);
 
-            if (realtime)
+            if (s_real_time)
             {
                 // center image on origin
                 tmpx = (-inf->minvals[0]-inf->maxvals[0])/(2.0*g_fudge_factor); // center x
@@ -3056,7 +3056,7 @@ static bool long3dviewtransf(long3dvtinf *inf)
                 for (int j = 0; j < 4; j++)
                 {
                     inf->longmat[i][j] = (long)(inf->doublemat[i][j] * g_fudge_factor);
-                    if (realtime)
+                    if (s_real_time)
                     {
                         inf->longmat1[i][j] = (long)(inf->doublemat1[i][j] * g_fudge_factor);
                     }
@@ -3082,7 +3082,7 @@ static bool long3dviewtransf(long3dvtinf *inf)
             {
                 inf->viewvect[i] = (long)(tmpv[i]*g_fudge_factor);
             }
-            if (realtime)
+            if (s_real_time)
             {
                 for (int i = 0; i < 3; i++)
                 {
@@ -3098,7 +3098,7 @@ static bool long3dviewtransf(long3dvtinf *inf)
         else
         {
             longpersp(inf->viewvect, inf->iview, g_bit_shift);
-            if (realtime)
+            if (s_real_time)
             {
                 longpersp(inf->viewvect1, inf->iview, g_bit_shift);
             }
@@ -3127,7 +3127,7 @@ static bool long3dviewtransf(long3dvtinf *inf)
             inf->col = inf->row;
         }
     }
-    if (realtime)
+    if (s_real_time)
     {
         inf->row1 = (int)(((multiply(inf->cvt.c, inf->viewvect1[0], g_bit_shift) +
                             multiply(inf->cvt.d, inf->viewvect1[1], g_bit_shift) +
@@ -3164,7 +3164,7 @@ static bool float3dviewtransf(float3dvtinf *inf)
             inf->maxvals[i] = -100000.0;
         }
         setupmatrix(inf->doublemat);
-        if (realtime)
+        if (s_real_time)
         {
             setupmatrix(inf->doublemat1);
         }
@@ -3172,7 +3172,7 @@ static bool float3dviewtransf(float3dvtinf *inf)
 
     // 3D VIEWING TRANSFORM
     vmult(inf->orbit, inf->doublemat, inf->viewvect);
-    if (realtime)
+    if (s_real_time)
     {
         vmult(inf->orbit, inf->doublemat1, inf->viewvect1);
     }
@@ -3210,7 +3210,7 @@ static bool float3dviewtransf(float3dvtinf *inf)
             double tmpz = -(inf->maxvals[2]);
             trans(tmpx, tmpy, tmpz, inf->doublemat);
 
-            if (realtime)
+            if (s_real_time)
             {
                 // center image on origin
                 tmpx = (-inf->minvals[0]-inf->maxvals[0])/(2.0); // center x
@@ -3229,7 +3229,7 @@ static bool float3dviewtransf(float3dvtinf *inf)
     if (ZVIEWER)
     {
         perspective(inf->viewvect);
-        if (realtime)
+        if (s_real_time)
         {
             perspective(inf->viewvect1);
         }
@@ -3251,7 +3251,7 @@ static bool float3dviewtransf(float3dvtinf *inf)
             inf->col = inf->row;
         }
     }
-    if (realtime)
+    if (s_real_time)
     {
         inf->row1 = (int)(inf->cvt.c*inf->viewvect1[0] + inf->cvt.d*inf->viewvect1[1]
                           + inf->cvt.f + g_yy_adjust1);
