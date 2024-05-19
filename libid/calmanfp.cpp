@@ -26,8 +26,6 @@ void calcmandfpasmstart()
     g_old_color_iter = 0;
 }
 
-#define ABS(x) ((x) < 0?-(x):(x))
-
 long calcmandfpasm()
 {
     long cx;
@@ -143,7 +141,7 @@ long calcmandfpasm()
             }
             else
             {
-                if (ABS(savedx-x) < g_close_enough && ABS(savedy-y) < g_close_enough)
+                if (std::abs(savedx-x) < g_close_enough && std::abs(savedy-y) < g_close_enough)
                 {
                     //          oldcoloriter = 65535;
                     g_old_color_iter = g_max_iterations;
