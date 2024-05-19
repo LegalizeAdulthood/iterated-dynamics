@@ -2247,7 +2247,7 @@ double g_orbit_corner_max_x{};
 double g_orbit_corner_max_y{};
 double g_orbit_corner_3_x{};
 double g_orbit_corner_3_y{};
-static affine o_cvt;
+static affine s_o_cvt{};
 static int o_color;
 
 int setup_orbits_to_screen(affine *scrn_cnvt)
@@ -2298,21 +2298,21 @@ int plotorbits2dsetup()
     // setup affine screen coord conversion
     if (g_keep_screen_coords)
     {
-        if (setup_orbits_to_screen(&o_cvt))
+        if (setup_orbits_to_screen(&s_o_cvt))
         {
             return -1;
         }
     }
     else
     {
-        if (setup_convert_to_screen(&o_cvt))
+        if (setup_convert_to_screen(&s_o_cvt))
         {
             return -1;
         }
     }
     // set so truncation to int rounds to nearest
-    o_cvt.e += 0.5;
-    o_cvt.f += 0.5;
+    s_o_cvt.e += 0.5;
+    s_o_cvt.f += 0.5;
 
     if (g_orbit_delay >= g_max_iterations)   // make sure we get an image
     {
@@ -2395,8 +2395,8 @@ int plotorbits2dfloat()
         }
 
         // else count >= orbit_delay and we want to plot it
-        col = (int)(o_cvt.a*g_new_z.x + o_cvt.b*g_new_z.y + o_cvt.e);
-        row = (int)(o_cvt.c*g_new_z.x + o_cvt.d*g_new_z.y + o_cvt.f);
+        col = (int)(s_o_cvt.a*g_new_z.x + s_o_cvt.b*g_new_z.y + s_o_cvt.e);
+        row = (int)(s_o_cvt.c*g_new_z.x + s_o_cvt.d*g_new_z.y + s_o_cvt.f);
         if (col > 0 && col < g_logical_screen_x_dots && row > 0 && row < g_logical_screen_y_dots)
         {
             // plot if on the screen
