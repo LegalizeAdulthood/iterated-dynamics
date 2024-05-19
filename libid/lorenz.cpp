@@ -150,8 +150,8 @@ Minor           g_inverse_julia_minor_method;
 static affine   s_cvt{};
 static l_affine s_l_cvt{};
 
-static double Cx;
-static double Cy;
+static double s_Cx{};
+static double s_Cy{};
 static long CxLong;
 static long CyLong;
 
@@ -581,8 +581,8 @@ bool orbit3dfloatsetup()
     {
         DComplex Sqrt;
 
-        Cx = g_params[0];
-        Cy = g_params[1];
+        s_Cx = g_params[0];
+        s_Cy = g_params[1];
 
         s_max_hits    = (int) g_params[2];
         s_run_length = (int) g_params[3];
@@ -599,7 +599,7 @@ bool orbit3dfloatsetup()
         setup_convert_to_screen(&s_cvt);
 
         // find fixed points: guaranteed to be in the set
-        Sqrt = ComplexSqrtFloat(1 - 4 * Cx, -4 * Cy);
+        Sqrt = ComplexSqrtFloat(1 - 4 * s_Cx, -4 * s_Cy);
         switch (g_major_method)
         {
         case Major::breadth_first:
@@ -712,7 +712,7 @@ int Minverse_julia_orbit()
      * Now find the next point(s), and flip a coin to choose one.
      */
 
-    g_new_z       = ComplexSqrtFloat(g_new_z.x - Cx, g_new_z.y - Cy);
+    g_new_z       = ComplexSqrtFloat(g_new_z.x - s_Cx, g_new_z.y - s_Cy);
     leftright = (RANDOM(2)) ? 1 : -1;
 
     if (newcol < 1 || newcol >= g_logical_screen_x_dots || newrow < 1 || newrow >= g_logical_screen_y_dots)
