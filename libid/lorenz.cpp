@@ -163,7 +163,7 @@ static long s_Cy_l{};
 static bool s_connect{true}; // flag to connect points with a line
 static bool s_euler{};       // use implicit euler approximation for dynamic system
 static int s_waste{100};     // waste this many points before plotting
-static int projection = 2;   // projection plane - default is to plot x-y
+static int s_projection{2};  // projection plane - default is to plot x-y
 
 static void fallback_to_random_walk()
 {
@@ -321,7 +321,7 @@ bool orbit3dlongsetup()
     g_max_count = 0L;
     s_connect = true;
     s_waste = 100;
-    projection = 2;
+    s_projection = 2;
     if (g_fractal_type == fractal_type::LHENON
         || g_fractal_type == fractal_type::KAM
         || g_fractal_type == fractal_type::KAM3D
@@ -335,7 +335,7 @@ bool orbit3dlongsetup()
     }
     if (g_fractal_type == fractal_type::LLORENZ)
     {
-        projection = 1;
+        s_projection = 1;
     }
 
     s_init_orbit_long[0] = g_fudge_factor;  // initial conditions
@@ -470,7 +470,7 @@ bool orbit3dfloatsetup()
     g_max_count = 0L;
     s_connect = true;
     s_waste = 100;
-    projection = 2;
+    s_projection = 2;
 
     if (g_fractal_type == fractal_type::FPHENON
         || g_fractal_type == fractal_type::FPPICKOVER
@@ -494,7 +494,7 @@ bool orbit3dfloatsetup()
     }
     if (g_fractal_type == fractal_type::FPLORENZ)
     {
-        projection = 1; // plot x and z
+        s_projection = 1; // plot x and z
     }
 
     s_init_orbit_fp[0] = 1;  // initial conditions
@@ -1443,7 +1443,7 @@ int orbit2dfloat()
     setup_convert_to_screen(&cvt);
 
     // set up projection scheme
-    switch (projection)
+    switch (s_projection)
     {
     case 0:
         p0 = &z;
@@ -1623,7 +1623,7 @@ int orbit2dlong()
     l_setup_convert_to_screen(&cvt);
 
     // set up projection scheme
-    switch (projection)
+    switch (s_projection)
     {
     case 0:
         p0 = &z;
