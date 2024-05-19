@@ -37,13 +37,24 @@
 #include <cstdlib>
 #include <vector>
 
+template <typename T>
+using OrbitCalc = int (*)(T *x, T *y, T *z);
+
 // orbitcalc is declared with no arguments so jump through hoops here
-#define LORBIT(x, y, z) \
-   (*(int(*)(long *, long *, long *))g_cur_fractal_specific->orbitcalc)(x, y, z)
-#define FORBIT(x, y, z) \
-   (*(int(*)(double*, double*, double*))g_cur_fractal_specific->orbitcalc)(x, y, z)
+template <typename T>
+int orbit(T *x, T *y, T*z)
+{
+    return (*reinterpret_cast<OrbitCalc<T>>(g_cur_fractal_specific->orbitcalc))(x, y, z);
+}
+
+template <typename T>
+int orbit(T *x, T *y)
+{
+    return orbit(x, y, static_cast<T *>(nullptr));
+}
 
 #define RANDOM(x)  (rand()%(x))
+
 /* BAD_PIXEL is used to cutoff orbits that are diverging. It might be better
 to test the actual floating point orbit values, but this seems safe for now.
 A higher value cannot be used - to test, turn off math coprocessor and
@@ -1565,7 +1576,7 @@ int orbit2dfloat()
             oldrow = oldcol;
         }
 
-        if (FORBIT(p0, p1, p2))
+        if (orbit(p0, p1, p2))
         {
             break;
         }
@@ -1745,7 +1756,7 @@ int orbit2dlong()
         }
 
         // Calculate the next point
-        if (LORBIT(p0, p1, p2))
+        if (orbit(p0, p1, p2))
         {
             break;
         }
@@ -1827,7 +1838,7 @@ static int orbit3dlongcalc()
             break;
         }
 
-        LORBIT(&inf.orbit[0], &inf.orbit[1], &inf.orbit[2]);
+        orbit(&inf.orbit[0], &inf.orbit[1], &inf.orbit[2]);
         if (fp)
         {
             std::fprintf(fp, "%g %g %g 15\n", (double)inf.orbit[0]/g_fudge_factor, (double)inf.orbit[1]/g_fudge_factor, (double)inf.orbit[2]/g_fudge_factor);
@@ -1961,7 +1972,7 @@ static int orbit3dfloatcalc()
             break;
         }
 
-        FORBIT(&inf.orbit[0], &inf.orbit[1], &inf.orbit[2]);
+        orbit(&inf.orbit[0], &inf.orbit[1], &inf.orbit[2]);
         if (fp)
         {
             std::fprintf(fp, "%g %g %g 15\n", inf.orbit[0], inf.orbit[1], inf.orbit[2]);
@@ -2221,7 +2232,7 @@ int dynam2dfloat()
                 oldrow = oldcol;
             }
 
-            if (FORBIT(p0, p1, nullptr))
+            if (orbit(p0, p1))
             {
                 break;
             }
