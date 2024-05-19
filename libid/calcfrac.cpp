@@ -1362,37 +1362,47 @@ static int diffusion_scan()
     return 0;
 }
 
-// little macro that plots a filled square of color c, size s with
+// little function that plots a filled square of color c, size s with
 // top left cornet at (x,y) with optimization from sym_fill_line
-#define plot_block(x, y, s, c) \
-    std::memset(dstack, (c), (s)); \
-    for (int ty = (y); ty < (y)+(s); ty++) \
-       sym_fill_line(ty, (x), (x)+(s)-1, dstack)
+inline void plot_block(int x, int y, int s, int c)
+{
+    std::memset(dstack, c, s);
+    for (int ty = y; ty < y + s; ty++)
+    {
+        sym_fill_line(ty, x, x + s - 1, dstack);
+    }
+}
 
-// macro that does the same as above, but checks the limits in x and y
-#define plot_block_lim(x, y, s, c) \
-    std::memset(dstack, (c), (s)); \
-    for (int ty = (y); ty < std::min((y)+(s), g_i_y_stop+1); ty++) \
-       sym_fill_line(ty, (x), std::min((x)+(s)-1, g_i_x_stop), dstack)
+// function that does the same as above, but checks the limits in x and y
+inline void plot_block_lim(int x, int y, int s, int c)
+{
+    std::memset(dstack, c, s);
+    for (int ty = y; ty < std::min(y + s, g_i_y_stop + 1); ty++)
+    {
+        sym_fill_line(ty, x, std::min(x + s - 1, g_i_x_stop), dstack);
+    }
+}
 
-// macro: count_to_int(dif_counter, colo, rowo)
-#define count_to_int(C, x, y)     \
-    tC = C;                     \
-    x = dif_la[tC&0xFF];        \
-    y = dif_lb[tC&0xFF];        \
-    tC >>= 8;                   \
-    x <<= 4;                    \
-    x += dif_la[tC&0xFF];       \
-    y <<= 4;                    \
-    y += dif_lb[tC&0xFF];       \
-    tC >>= 8;                   \
-    x <<= 4;                    \
-    x += dif_la[tC&0xFF];       \
-    y <<= 4;                    \
-    y += dif_lb[tC&0xFF];       \
-    tC >>= 8;                   \
-    x >>= dif_offset;           \
-    y >>= dif_offset
+// count_to_int(dif_counter, colo, rowo, dif_offset)
+inline void count_to_int(unsigned long C, int &x, int &y, int dif_offset)
+{
+    long unsigned tC = C;
+    x = dif_la[tC & 0xFF];
+    y = dif_lb[tC & 0xFF];
+    tC >>= 8;
+    x <<= 4;
+    x += dif_la[tC & 0xFF];
+    y <<= 4;
+    y += dif_lb[tC & 0xFF];
+    tC >>= 8;
+    x <<= 4;
+    x += dif_la[tC & 0xFF];
+    y <<= 4;
+    y += dif_lb[tC & 0xFF];
+    tC >>= 8;
+    x >>= dif_offset;
+    y >>= dif_offset;
+}
 
 // Calculate the point
 #define calculate               \
@@ -1414,8 +1424,6 @@ static int diffusion_engine()
     // a square with sides like 2 ** n
     int rem_x;
     int rem_y; // what is left on the last tile to draw
-
-    long unsigned tC; // temp for dif_counter
 
     int dif_offset; // offset for adjusting looked-up values
 
@@ -1451,7 +1459,7 @@ static int diffusion_engine()
     {
         while (g_diffusion_counter < (g_diffusion_limit >> 1))
         {
-            count_to_int(g_diffusion_counter, colo, rowo);
+            count_to_int(g_diffusion_counter, colo, rowo, dif_offset);
 
             i = 0;
             g_col = g_i_x_start + colo; // get the right tiles
@@ -1506,7 +1514,7 @@ static int diffusion_engine()
         {
             sqsz = 1 << ((int)(g_diffusion_bits-(int)(std::log(g_diffusion_counter+0.5)/log2)-1)/2);
 
-            count_to_int(g_diffusion_counter, colo, rowo);
+            count_to_int(g_diffusion_counter, colo, rowo, dif_offset);
 
             i = 0;
             do
@@ -1562,7 +1570,7 @@ static int diffusion_engine()
     // from half dif_limit on we only plot 1x1 points :-)
     while (g_diffusion_counter < g_diffusion_limit)
     {
-        count_to_int(g_diffusion_counter, colo, rowo);
+        count_to_int(g_diffusion_counter, colo, rowo, dif_offset);
 
         i = 0;
         do
