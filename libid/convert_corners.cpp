@@ -6,7 +6,11 @@
 
 #include <cmath>
 
-#define deg_to_rad(x) ((x)*(PI/180.0))  // most people "think" in degrees
+// most people "think" in degrees
+inline double deg_to_rad(double x)
+{
+    return x * (PI / 180.0);
+}
 
 // convert center/mag to corners
 void cvtcorners(double Xctr, double Yctr, LDBL Magnification, double Xmagfactor, double Rotation, double Skew)
