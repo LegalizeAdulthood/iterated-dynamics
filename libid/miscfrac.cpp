@@ -655,7 +655,10 @@ static void set_Plasma_palette()
 
 //**************** standalone engine for "diffusion" *******************
 
-#define RANDOM(x)  (rand()%(x))
+inline int random(int x)
+{
+    return rand() % x;
+}
 
 int diffusion()
 {
@@ -801,7 +804,7 @@ int diffusion()
         case 1: /* Release new point on the line ymin somewhere between xmin
                  and xmax */
             y = ymin;
-            x = RANDOM(xmax-xmin) + (g_logical_screen_x_dots-xmax+xmin)/2;
+            x = random(xmax-xmin) + (g_logical_screen_x_dots-xmax+xmin)/2;
             break;
         case 2: /* Release new point on a circle inside the box with radius
                  given by the radius variable */
@@ -867,8 +870,8 @@ int diffusion()
             }
 
             // Take one random step
-            x += RANDOM(3) - 1;
-            y += RANDOM(3) - 1;
+            x += random(3) - 1;
+            y += random(3) - 1;
 
             // Check keyboard
             if ((++plasma_check & 0x7f) == 1)
@@ -895,14 +898,14 @@ int diffusion()
             // Show the moving point
             if (g_show_orbit)
             {
-                g_put_color(x, y, RANDOM(g_colors-1)+1);
+                g_put_color(x, y, random(g_colors-1)+1);
             }
 
         } // End of loop, now fix the point
 
         /* If we're doing colorshifting then use currentcolor, otherwise
            pick one at random */
-        g_put_color(x, y, colorshift?currentcolor:RANDOM(g_colors-1)+1);
+        g_put_color(x, y, colorshift?currentcolor:random(g_colors-1)+1);
 
         // If we're doing colorshifting then check to see if we need to shift
         if (colorshift)
