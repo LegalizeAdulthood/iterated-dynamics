@@ -130,10 +130,10 @@ static double s_dx{};
 static double s_dy{};
 static double s_dz{};
 static double s_dt{};
-static double a;
-static double b;
-static double c;
-static double d;
+static double s_a{};
+static double s_b{};
+static double s_c{};
+static double s_d{};
 static double adt;
 static double bdt;
 static double cdt;
@@ -349,7 +349,7 @@ bool orbit3dlongsetup()
     else if (g_fractal_type == fractal_type::KAM || g_fractal_type == fractal_type::KAM3D)
     {
         g_max_count = 1L;
-        a   = g_params[0];           // angle
+        s_a   = g_params[0];           // angle
         if (g_params[1] <= 0.0)
         {
             g_params[1] = .01;
@@ -359,8 +359,8 @@ bool orbit3dlongsetup()
         s_l_d = (long) g_params[3];
         s_t = (int) s_l_d;      // points per orbit
 
-        l_sinx = (long)(std::sin(a)*g_fudge_factor);
-        l_cosx = (long)(std::cos(a)*g_fudge_factor);
+        l_sinx = (long)(std::sin(s_a)*g_fudge_factor);
+        l_cosx = (long)(std::cos(s_a)*g_fudge_factor);
         l_orbit = 0;
         s_init_orbit_long[2] = 0;
         s_init_orbit_long[1] = s_init_orbit_long[2];
@@ -520,10 +520,10 @@ bool orbit3dfloatsetup()
 
     if (g_fractal_type == fractal_type::FPHENON || g_fractal_type == fractal_type::FPPICKOVER)
     {
-        a =  g_params[0];
-        b =  g_params[1];
-        c =  g_params[2];
-        d =  g_params[3];
+        s_a =  g_params[0];
+        s_b =  g_params[1];
+        s_c =  g_params[2];
+        s_d =  g_params[3];
     }
     else if (g_fractal_type == fractal_type::ICON || g_fractal_type == fractal_type::ICON3D)
     {
@@ -532,25 +532,25 @@ bool orbit3dfloatsetup()
         connect = false;
         waste = 2000;
         // Initialize parameters
-        a  =   g_params[0];
-        b  =   g_params[1];
-        c  =   g_params[2];
-        d  =   g_params[3];
+        s_a  =   g_params[0];
+        s_b  =   g_params[1];
+        s_c  =   g_params[2];
+        s_d  =   g_params[3];
     }
     else if (g_fractal_type == fractal_type::KAMFP || g_fractal_type == fractal_type::KAM3DFP)
     {
         g_max_count = 1L;
-        a = g_params[0];           // angle
+        s_a = g_params[0];           // angle
         if (g_params[1] <= 0.0)
         {
             g_params[1] = .01;
         }
-        b =  g_params[1];    // stepsize
-        c =  g_params[2];    // stop
+        s_b =  g_params[1];    // stepsize
+        s_c =  g_params[2];    // stop
         s_l_d = (long) g_params[3];
         s_t = (int) s_l_d;      // points per orbit
-        g_sin_x = std::sin(a);
-        g_cos_x = std::cos(a);
+        g_sin_x = std::sin(s_a);
+        g_cos_x = std::cos(s_a);
         orbit = 0;
         initorbitfp[2] = 0;
         initorbitfp[1] = initorbitfp[2];
@@ -566,14 +566,14 @@ bool orbit3dfloatsetup()
         initorbitfp[1] = 0;
         initorbitfp[2] = 0;
         connect = false;
-        a =  g_params[0];
-        b =  g_params[1];
-        c =  g_params[2];
-        d =  g_params[3];
+        s_a =  g_params[0];
+        s_b =  g_params[1];
+        s_c =  g_params[2];
+        s_d =  g_params[3];
         if (g_fractal_type == fractal_type::THREEPLY)
         {
-            cos_b = std::cos(b);
-            sin_sum_a_b_c = std::sin(a + b + c);
+            cos_b = std::cos(s_b);
+            sin_sum_a_b_c = std::sin(s_a + s_b + s_c);
         }
     }
     else if (g_fractal_type == fractal_type::INVERSEJULIAFP)
@@ -651,16 +651,16 @@ rwalk:
     else
     {
         s_dt = g_params[0];
-        a =  g_params[1];
-        b =  g_params[2];
-        c =  g_params[3];
+        s_a =  g_params[1];
+        s_b =  g_params[2];
+        s_c =  g_params[3];
 
     }
 
     // precalculations for speed
-    adt = a*s_dt;
-    bdt = b*s_dt;
-    cdt = c*s_dt;
+    adt = s_a*s_dt;
+    bdt = s_b*s_dt;
+    cdt = s_c*s_dt;
 
     return true;
 }
@@ -1085,8 +1085,8 @@ int henonfloatorbit(double *x, double *y, double * /*z*/)
 {
     double newx;
     double newy;
-    newx  = 1 + *y - a*(*x)*(*x);
-    newy  = b*(*x);
+    newx  = 1 + *y - s_a*(*x)*(*x);
+    newy  = s_b*(*x);
     *x = newx;
     *y = newy;
     return 0;
@@ -1125,8 +1125,8 @@ int pickoverfloatorbit(double *x, double *y, double *z)
     double newx;
     double newy;
     double newz;
-    newx = std::sin(a*(*y)) - (*z)*std::cos(b*(*x));
-    newy = (*z)*std::sin(c*(*x)) - std::cos(d*(*y));
+    newx = std::sin(s_a*(*y)) - (*z)*std::cos(s_b*(*x));
+    newy = (*z)*std::sin(s_c*(*x)) - std::cos(s_d*(*y));
     newz = std::sin(*x);
     *x = newx;
     *y = newy;
@@ -1170,12 +1170,12 @@ int kamtorusfloatorbit(double *r, double *s, double *z)
     double srr;
     if (s_t++ >= s_l_d)
     {
-        orbit += b;
+        orbit += s_b;
         (*s) = orbit/3;
         (*r) = (*s);
         s_t = 0;
         *z = orbit;
-        if (orbit > c)
+        if (orbit > s_c)
         {
             return 1;
         }
@@ -1210,8 +1210,8 @@ int kamtoruslongorbit(long *r, long *s, long *z)
 int hopalong2dfloatorbit(double *x, double *y, double * /*z*/)
 {
     double tmp;
-    tmp = *y - sign(*x)*std::sqrt(std::fabs(b*(*x)-c));
-    *y = a - *x;
+    tmp = *y - sign(*x)*std::sqrt(std::fabs(s_b*(*x)-s_c));
+    *y = s_a - *x;
     *x = tmp;
     return 0;
 }
@@ -1219,9 +1219,9 @@ int hopalong2dfloatorbit(double *x, double *y, double * /*z*/)
 int chip2dfloatorbit(double *x, double *y, double * /*z*/)
 {
     double tmp;
-    tmp = *y - sign(*x) * std::cos(sqr(std::log(std::fabs(b*(*x)-c))))
-          * std::atan(sqr(std::log(std::fabs(c*(*x)-b))));
-    *y = a - *x;
+    tmp = *y - sign(*x) * std::cos(sqr(std::log(std::fabs(s_b*(*x)-s_c))))
+          * std::atan(sqr(std::log(std::fabs(s_c*(*x)-s_b))));
+    *y = s_a - *x;
     *x = tmp;
     return 0;
 }
@@ -1229,9 +1229,9 @@ int chip2dfloatorbit(double *x, double *y, double * /*z*/)
 int quadruptwo2dfloatorbit(double *x, double *y, double * /*z*/)
 {
     double tmp;
-    tmp = *y - sign(*x) * std::sin(std::log(std::fabs(b*(*x)-c)))
-          * std::atan(sqr(std::log(std::fabs(c*(*x)-b))));
-    *y = a - *x;
+    tmp = *y - sign(*x) * std::sin(std::log(std::fabs(s_b*(*x)-s_c)))
+          * std::atan(sqr(std::log(std::fabs(s_c*(*x)-s_b))));
+    *y = s_a - *x;
     *x = tmp;
     return 0;
 }
@@ -1239,8 +1239,8 @@ int quadruptwo2dfloatorbit(double *x, double *y, double * /*z*/)
 int threeply2dfloatorbit(double *x, double *y, double * /*z*/)
 {
     double tmp;
-    tmp = *y - sign(*x)*(std::fabs(std::sin(*x)*cos_b+c-(*x)*sin_sum_a_b_c));
-    *y = a - *x;
+    tmp = *y - sign(*x)*(std::fabs(std::sin(*x)*cos_b+s_c-(*x)*sin_sum_a_b_c));
+    *y = s_a - *x;
     *x = tmp;
     return 0;
 }
@@ -1249,7 +1249,7 @@ int martin2dfloatorbit(double *x, double *y, double * /*z*/)
 {
     double tmp;
     tmp = *y - std::sin(*x);
-    *y = a - *x;
+    *y = s_a - *x;
     *x = tmp;
     return 0;
 }
@@ -1266,8 +1266,8 @@ int mandelcloudfloat(double *x, double *y, double * /*z*/)
     {
         return 1;
     }
-    newx = x2-y2+a;
-    newy = 2*(*x)*(*y)+b;
+    newx = x2-y2+s_a;
+    newy = 2*(*x)*(*y)+s_b;
     *x = newx;
     *y = newy;
     return 0;
@@ -1279,19 +1279,19 @@ int dynamfloat(double *x, double *y, double * /*z*/)
     DComplex tmp;
     double newx;
     double newy;
-    cp.x = b* *x;
+    cp.x = s_b* *x;
     cp.y = 0;
     CMPLXtrig0(cp, tmp);
-    newy = *y + s_dt*std::sin(*x + a*tmp.x);
+    newy = *y + s_dt*std::sin(*x + s_a*tmp.x);
     if (euler)
     {
         *y = newy;
     }
 
-    cp.x = b* *y;
+    cp.x = s_b* *y;
     cp.y = 0;
     CMPLXtrig0(cp, tmp);
-    newx = *x - s_dt*std::sin(*y + a*tmp.x);
+    newx = *x - s_dt*std::sin(*y + s_a*tmp.x);
     *x = newx;
     *y = newy;
     return 0;
@@ -2042,20 +2042,20 @@ bool dynam2dfloatsetup()
 {
     connect = false;
     euler = false;
-    d = g_params[0]; // number of intervals
-    if (d < 0)
+    s_d = g_params[0]; // number of intervals
+    if (s_d < 0)
     {
-        d = -d;
+        s_d = -s_d;
         connect = true;
     }
-    else if (d == 0)
+    else if (s_d == 0)
     {
-        d = 1;
+        s_d = 1;
     }
     if (g_fractal_type == fractal_type::DYNAMICFP)
     {
-        a = g_params[2]; // parameter
-        b = g_params[3]; // parameter
+        s_a = g_params[2]; // parameter
+        s_b = g_params[3]; // parameter
         s_dt = g_params[1]; // step size
         if (s_dt < 0)
         {
@@ -2163,11 +2163,11 @@ int dynam2dfloat()
         }
 
         xstep ++;
-        if (xstep >= d)
+        if (xstep >= s_d)
         {
             xstep = 0;
             ystep ++;
-            if (ystep > d)
+            if (ystep > s_d)
             {
                 driver_mute();
                 ret = -1;
@@ -2175,14 +2175,14 @@ int dynam2dfloat()
             }
         }
 
-        xpixel = g_logical_screen_x_size_dots*(xstep+.5)/d;
-        ypixel = g_logical_screen_y_size_dots*(ystep+.5)/d;
+        xpixel = g_logical_screen_x_size_dots*(xstep+.5)/s_d;
+        ypixel = g_logical_screen_y_size_dots*(ystep+.5)/s_d;
         x = (double)((g_x_min+g_delta_x*xpixel) + (g_delta_x2*ypixel));
         y = (double)((g_y_max-g_delta_y*ypixel) + (-g_delta_y2*xpixel));
         if (g_fractal_type == fractal_type::MANDELCLOUD)
         {
-            a = x;
-            b = y;
+            s_a = x;
+            s_b = y;
         }
         oldcol = -1;
 
