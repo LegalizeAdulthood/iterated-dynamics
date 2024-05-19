@@ -115,10 +115,10 @@ static long s_l_dx{};
 static long s_l_dy{};
 static long s_l_dz{};
 static long s_l_dt{};
-static long l_a;
-static long l_b;
-static long l_c;
-static long l_d;
+static long s_l_a{};
+static long s_l_b{};
+static long s_l_c{};
+static long s_l_d{};
 static long l_adt;
 static long l_bdt;
 static long l_cdt;
@@ -341,10 +341,10 @@ bool orbit3dlongsetup()
 
     if (g_fractal_type == fractal_type::LHENON)
     {
-        l_a = (long)(g_params[0]*g_fudge_factor);
-        l_b = (long)(g_params[1]*g_fudge_factor);
-        l_c = (long)(g_params[2]*g_fudge_factor);
-        l_d = (long)(g_params[3]*g_fudge_factor);
+        s_l_a = (long)(g_params[0]*g_fudge_factor);
+        s_l_b = (long)(g_params[1]*g_fudge_factor);
+        s_l_c = (long)(g_params[2]*g_fudge_factor);
+        s_l_d = (long)(g_params[3]*g_fudge_factor);
     }
     else if (g_fractal_type == fractal_type::KAM || g_fractal_type == fractal_type::KAM3D)
     {
@@ -354,10 +354,10 @@ bool orbit3dlongsetup()
         {
             g_params[1] = .01;
         }
-        l_b = (long)(g_params[1]*g_fudge_factor);     // stepsize
-        l_c = (long)(g_params[2]*g_fudge_factor);     // stop
-        l_d = (long) g_params[3];
-        s_t = (int) l_d;      // points per orbit
+        s_l_b = (long)(g_params[1]*g_fudge_factor);     // stepsize
+        s_l_c = (long)(g_params[2]*g_fudge_factor);     // stop
+        s_l_d = (long) g_params[3];
+        s_t = (int) s_l_d;      // points per orbit
 
         l_sinx = (long)(std::sin(a)*g_fudge_factor);
         l_cosx = (long)(std::cos(a)*g_fudge_factor);
@@ -449,15 +449,15 @@ lrwalk:
     else
     {
         s_l_dt = (long)(g_params[0]*g_fudge_factor);
-        l_a = (long)(g_params[1]*g_fudge_factor);
-        l_b = (long)(g_params[2]*g_fudge_factor);
-        l_c = (long)(g_params[3]*g_fudge_factor);
+        s_l_a = (long)(g_params[1]*g_fudge_factor);
+        s_l_b = (long)(g_params[2]*g_fudge_factor);
+        s_l_c = (long)(g_params[3]*g_fudge_factor);
     }
 
     // precalculations for speed
-    l_adt = multiply(l_a, s_l_dt, g_bit_shift);
-    l_bdt = multiply(l_b, s_l_dt, g_bit_shift);
-    l_cdt = multiply(l_c, s_l_dt, g_bit_shift);
+    l_adt = multiply(s_l_a, s_l_dt, g_bit_shift);
+    l_bdt = multiply(s_l_b, s_l_dt, g_bit_shift);
+    l_cdt = multiply(s_l_c, s_l_dt, g_bit_shift);
     return true;
 }
 
@@ -547,8 +547,8 @@ bool orbit3dfloatsetup()
         }
         b =  g_params[1];    // stepsize
         c =  g_params[2];    // stop
-        l_d = (long) g_params[3];
-        s_t = (int) l_d;      // points per orbit
+        s_l_d = (long) g_params[3];
+        s_t = (int) s_l_d;      // points per orbit
         g_sin_x = std::sin(a);
         g_cos_x = std::cos(a);
         orbit = 0;
@@ -1097,9 +1097,9 @@ int henonlongorbit(long *l_x, long *l_y, long * /*l_z*/)
     long newx;
     long newy;
     newx = multiply(*l_x, *l_x, g_bit_shift);
-    newx = multiply(newx, l_a, g_bit_shift);
+    newx = multiply(newx, s_l_a, g_bit_shift);
     newx  = g_fudge_factor + *l_y - newx;
-    newy  = multiply(l_b, *l_x, g_bit_shift);
+    newy  = multiply(s_l_b, *l_x, g_bit_shift);
     *l_x = newx;
     *l_y = newy;
     return 0;
@@ -1168,7 +1168,7 @@ int rosslerlongorbit(long *l_x, long *l_y, long *l_z)
 int kamtorusfloatorbit(double *r, double *s, double *z)
 {
     double srr;
-    if (s_t++ >= l_d)
+    if (s_t++ >= s_l_d)
     {
         orbit += b;
         (*s) = orbit/3;
@@ -1189,14 +1189,14 @@ int kamtorusfloatorbit(double *r, double *s, double *z)
 int kamtoruslongorbit(long *r, long *s, long *z)
 {
     long srr;
-    if (s_t++ >= l_d)
+    if (s_t++ >= s_l_d)
     {
-        l_orbit += l_b;
+        l_orbit += s_l_b;
         (*s) = l_orbit/3;
         (*r) = (*s);
         s_t = 0;
         *z = l_orbit;
-        if (l_orbit > l_c)
+        if (l_orbit > s_l_c)
         {
             return 1;
         }
