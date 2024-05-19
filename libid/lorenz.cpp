@@ -143,7 +143,7 @@ static double s_zdt{};
 static double s_init_orbit_fp[3]{};
 
 // The following declarations used for Inverse Julia.
-static int      mxhits;
+static int      s_max_hits{};
 static int      run_length;
 Major           g_major_method;
 Minor           g_inverse_julia_minor_method;
@@ -376,17 +376,17 @@ bool orbit3dlongsetup()
         CxLong = (long)(g_params[0] * g_fudge_factor);
         CyLong = (long)(g_params[1] * g_fudge_factor);
 
-        mxhits    = (int) g_params[2];
+        s_max_hits    = (int) g_params[2];
         run_length = (int) g_params[3];
-        if (mxhits <= 0)
+        if (s_max_hits <= 0)
         {
-            mxhits = 1;
+            s_max_hits = 1;
         }
-        else if (mxhits >= g_colors)
+        else if (s_max_hits >= g_colors)
         {
-            mxhits = g_colors - 1;
+            s_max_hits = g_colors - 1;
         }
-        g_params[2] = mxhits;
+        g_params[2] = s_max_hits;
 
         setup_convert_to_screen(&s_cvt);
         // Note: using bitshift of 21 for affine, 24 otherwise
@@ -584,17 +584,17 @@ bool orbit3dfloatsetup()
         Cx = g_params[0];
         Cy = g_params[1];
 
-        mxhits    = (int) g_params[2];
+        s_max_hits    = (int) g_params[2];
         run_length = (int) g_params[3];
-        if (mxhits <= 0)
+        if (s_max_hits <= 0)
         {
-            mxhits = 1;
+            s_max_hits = 1;
         }
-        else if (mxhits >= g_colors)
+        else if (s_max_hits >= g_colors)
         {
-            mxhits = g_colors - 1;
+            s_max_hits = g_colors - 1;
         }
-        g_params[2] = mxhits;
+        g_params[2] = s_max_hits;
 
         setup_convert_to_screen(&s_cvt);
 
@@ -744,7 +744,7 @@ int Minverse_julia_orbit()
     switch (g_major_method)
     {
     case Major::breadth_first:
-        if (color < mxhits)
+        if (color < s_max_hits)
         {
             g_put_color(newcol, newrow, color+1);
             EnQueueFloat((float)g_new_z.x, (float)g_new_z.y);
@@ -752,7 +752,7 @@ int Minverse_julia_orbit()
         }
         break;
     case Major::depth_first:
-        if (color < mxhits)
+        if (color < s_max_hits)
         {
             g_put_color(newcol, newrow, color+1);
             if (g_inverse_julia_minor_method == Minor::left_first)
@@ -931,7 +931,7 @@ int Linverse_julia_orbit()
     switch (g_major_method)
     {
     case Major::breadth_first:
-        if (color < mxhits)
+        if (color < s_max_hits)
         {
             g_put_color(newcol, newrow, color+1);
             g_l_new_z = ComplexSqrtLong(g_l_new_z.x - CxLong, g_l_new_z.y - CyLong);
@@ -940,7 +940,7 @@ int Linverse_julia_orbit()
         }
         break;
     case Major::depth_first:
-        if (color < mxhits)
+        if (color < s_max_hits)
         {
             g_put_color(newcol, newrow, color+1);
             g_l_new_z = ComplexSqrtLong(g_l_new_z.x - CxLong, g_l_new_z.y - CyLong);
