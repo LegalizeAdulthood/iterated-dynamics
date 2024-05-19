@@ -119,11 +119,11 @@ static long s_l_a{};
 static long s_l_b{};
 static long s_l_c{};
 static long s_l_d{};
-static long l_adt;
-static long l_bdt;
-static long l_cdt;
-static long l_xdt;
-static long l_ydt;
+static long s_l_adt{};
+static long s_l_bdt{};
+static long s_l_cdt{};
+static long s_l_xdt{};
+static long s_l_ydt{};
 static long initorbitlong[3];
 
 static double dx;
@@ -455,9 +455,9 @@ lrwalk:
     }
 
     // precalculations for speed
-    l_adt = multiply(s_l_a, s_l_dt, g_bit_shift);
-    l_bdt = multiply(s_l_b, s_l_dt, g_bit_shift);
-    l_cdt = multiply(s_l_c, s_l_dt, g_bit_shift);
+    s_l_adt = multiply(s_l_a, s_l_dt, g_bit_shift);
+    s_l_bdt = multiply(s_l_b, s_l_dt, g_bit_shift);
+    s_l_cdt = multiply(s_l_c, s_l_dt, g_bit_shift);
     return true;
 }
 
@@ -986,11 +986,11 @@ int Linverse_julia_orbit()
 
 int lorenz3dlongorbit(long *l_x, long *l_y, long *l_z)
 {
-    l_xdt = multiply(*l_x, s_l_dt, g_bit_shift);
-    l_ydt = multiply(*l_y, s_l_dt, g_bit_shift);
-    s_l_dx  = -multiply(l_adt, *l_x, g_bit_shift) + multiply(l_adt, *l_y, g_bit_shift);
-    s_l_dy  =  multiply(l_bdt, *l_x, g_bit_shift) -l_ydt -multiply(*l_z, l_xdt, g_bit_shift);
-    s_l_dz  = -multiply(l_cdt, *l_z, g_bit_shift) + multiply(*l_x, l_ydt, g_bit_shift);
+    s_l_xdt = multiply(*l_x, s_l_dt, g_bit_shift);
+    s_l_ydt = multiply(*l_y, s_l_dt, g_bit_shift);
+    s_l_dx  = -multiply(s_l_adt, *l_x, g_bit_shift) + multiply(s_l_adt, *l_y, g_bit_shift);
+    s_l_dy  =  multiply(s_l_bdt, *l_x, g_bit_shift) -s_l_ydt -multiply(*l_z, s_l_xdt, g_bit_shift);
+    s_l_dz  = -multiply(s_l_cdt, *l_z, g_bit_shift) + multiply(*l_x, s_l_ydt, g_bit_shift);
 
     *l_x += s_l_dx;
     *l_y += s_l_dy;
@@ -1146,13 +1146,13 @@ int gingerbreadfloatorbit(double *x, double *y, double * /*z*/)
 
 int rosslerlongorbit(long *l_x, long *l_y, long *l_z)
 {
-    l_xdt = multiply(*l_x, s_l_dt, g_bit_shift);
-    l_ydt = multiply(*l_y, s_l_dt, g_bit_shift);
+    s_l_xdt = multiply(*l_x, s_l_dt, g_bit_shift);
+    s_l_ydt = multiply(*l_y, s_l_dt, g_bit_shift);
 
-    s_l_dx  = -l_ydt - multiply(*l_z, s_l_dt, g_bit_shift);
-    s_l_dy  =  l_xdt + multiply(*l_y, l_adt, g_bit_shift);
-    s_l_dz  =  l_bdt + multiply(*l_z, l_xdt, g_bit_shift)
-             - multiply(*l_z, l_cdt, g_bit_shift);
+    s_l_dx  = -s_l_ydt - multiply(*l_z, s_l_dt, g_bit_shift);
+    s_l_dy  =  s_l_xdt + multiply(*l_y, s_l_adt, g_bit_shift);
+    s_l_dz  =  s_l_bdt + multiply(*l_z, s_l_xdt, g_bit_shift)
+             - multiply(*l_z, s_l_cdt, g_bit_shift);
 
     *l_x += s_l_dx;
     *l_y += s_l_dy;
