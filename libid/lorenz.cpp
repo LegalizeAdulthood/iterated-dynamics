@@ -111,10 +111,10 @@ static bool s_real_time{};
 
 long g_max_count;
 static int s_t{};
-static long l_dx;
-static long l_dy;
-static long l_dz;
-static long l_dt;
+static long s_l_dx{};
+static long s_l_dy{};
+static long s_l_dz{};
+static long s_l_dt{};
 static long l_a;
 static long l_b;
 static long l_c;
@@ -448,16 +448,16 @@ lrwalk:
     }
     else
     {
-        l_dt = (long)(g_params[0]*g_fudge_factor);
+        s_l_dt = (long)(g_params[0]*g_fudge_factor);
         l_a = (long)(g_params[1]*g_fudge_factor);
         l_b = (long)(g_params[2]*g_fudge_factor);
         l_c = (long)(g_params[3]*g_fudge_factor);
     }
 
     // precalculations for speed
-    l_adt = multiply(l_a, l_dt, g_bit_shift);
-    l_bdt = multiply(l_b, l_dt, g_bit_shift);
-    l_cdt = multiply(l_c, l_dt, g_bit_shift);
+    l_adt = multiply(l_a, s_l_dt, g_bit_shift);
+    l_bdt = multiply(l_b, s_l_dt, g_bit_shift);
+    l_cdt = multiply(l_c, s_l_dt, g_bit_shift);
     return true;
 }
 
@@ -986,15 +986,15 @@ int Linverse_julia_orbit()
 
 int lorenz3dlongorbit(long *l_x, long *l_y, long *l_z)
 {
-    l_xdt = multiply(*l_x, l_dt, g_bit_shift);
-    l_ydt = multiply(*l_y, l_dt, g_bit_shift);
-    l_dx  = -multiply(l_adt, *l_x, g_bit_shift) + multiply(l_adt, *l_y, g_bit_shift);
-    l_dy  =  multiply(l_bdt, *l_x, g_bit_shift) -l_ydt -multiply(*l_z, l_xdt, g_bit_shift);
-    l_dz  = -multiply(l_cdt, *l_z, g_bit_shift) + multiply(*l_x, l_ydt, g_bit_shift);
+    l_xdt = multiply(*l_x, s_l_dt, g_bit_shift);
+    l_ydt = multiply(*l_y, s_l_dt, g_bit_shift);
+    s_l_dx  = -multiply(l_adt, *l_x, g_bit_shift) + multiply(l_adt, *l_y, g_bit_shift);
+    s_l_dy  =  multiply(l_bdt, *l_x, g_bit_shift) -l_ydt -multiply(*l_z, l_xdt, g_bit_shift);
+    s_l_dz  = -multiply(l_cdt, *l_z, g_bit_shift) + multiply(*l_x, l_ydt, g_bit_shift);
 
-    *l_x += l_dx;
-    *l_y += l_dy;
-    *l_z += l_dz;
+    *l_x += s_l_dx;
+    *l_y += s_l_dy;
+    *l_z += s_l_dz;
     return 0;
 }
 
@@ -1146,17 +1146,17 @@ int gingerbreadfloatorbit(double *x, double *y, double * /*z*/)
 
 int rosslerlongorbit(long *l_x, long *l_y, long *l_z)
 {
-    l_xdt = multiply(*l_x, l_dt, g_bit_shift);
-    l_ydt = multiply(*l_y, l_dt, g_bit_shift);
+    l_xdt = multiply(*l_x, s_l_dt, g_bit_shift);
+    l_ydt = multiply(*l_y, s_l_dt, g_bit_shift);
 
-    l_dx  = -l_ydt - multiply(*l_z, l_dt, g_bit_shift);
-    l_dy  =  l_xdt + multiply(*l_y, l_adt, g_bit_shift);
-    l_dz  =  l_bdt + multiply(*l_z, l_xdt, g_bit_shift)
+    s_l_dx  = -l_ydt - multiply(*l_z, s_l_dt, g_bit_shift);
+    s_l_dy  =  l_xdt + multiply(*l_y, l_adt, g_bit_shift);
+    s_l_dz  =  l_bdt + multiply(*l_z, l_xdt, g_bit_shift)
              - multiply(*l_z, l_cdt, g_bit_shift);
 
-    *l_x += l_dx;
-    *l_y += l_dy;
-    *l_z += l_dz;
+    *l_x += s_l_dx;
+    *l_y += s_l_dy;
+    *l_z += s_l_dz;
 
     return 0;
 }
