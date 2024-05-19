@@ -161,7 +161,7 @@ static long s_Cy_l{};
 
 // these are potential user parameters
 static bool s_connect{true}; // flag to connect points with a line
-static bool euler = false;   // use implicit euler approximation for dynamic system
+static bool s_euler{};       // use implicit euler approximation for dynamic system
 static int waste = 100;      // waste this many points before plotting
 static int projection = 2;   // projection plane - default is to plot x-y
 
@@ -1282,7 +1282,7 @@ int dynamfloat(double *x, double *y, double * /*z*/)
     cp.y = 0;
     CMPLXtrig0(cp, tmp);
     newy = *y + s_dt*std::sin(*x + s_a*tmp.x);
-    if (euler)
+    if (s_euler)
     {
         *y = newy;
     }
@@ -2040,7 +2040,7 @@ static int orbit3dfloatcalc()
 bool dynam2dfloatsetup()
 {
     s_connect = false;
-    euler = false;
+    s_euler = false;
     s_d = g_params[0]; // number of intervals
     if (s_d < 0)
     {
@@ -2059,7 +2059,7 @@ bool dynam2dfloatsetup()
         if (s_dt < 0)
         {
             s_dt = -s_dt;
-            euler = true;
+            s_euler = true;
         }
         if (s_dt == 0)
         {
