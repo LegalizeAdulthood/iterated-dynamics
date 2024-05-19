@@ -228,13 +228,15 @@ int PopcornFractalFn()
     return 0;
 }
 
-#define FIX_OVERFLOW(arg)           \
-    if (g_overflow)                   \
-    {                               \
-        (arg).x = g_fudge_factor;   \
-        (arg).y = 0;                \
-        g_overflow = false;           \
-   }
+inline void fix_overflow(LComplex &arg)
+{
+    if (g_overflow)
+    {
+        arg.x = g_fudge_factor;
+        arg.y = 0;
+        g_overflow = false;
+    }
+}
 
 int LPopcornFractalFn()
 {
@@ -246,19 +248,19 @@ int LPopcornFractalFn()
     // ltmpx contains the generalized value of the old real "x" equation
     LCMPLXtimesreal(g_l_param2, g_l_old_z.y, g_l_temp); // tmp = (C * old.y)
     LCMPLXtrig1(g_l_temp, ltmpx);             // tmpx = trig1(tmp)
-    FIX_OVERFLOW(ltmpx);
+    fix_overflow(ltmpx);
     ltmpx.x += g_l_old_z.y;                   // tmpx = old.y + trig1(tmp)
     LCMPLXtrig0(ltmpx, g_l_temp);             // tmp = trig0(tmpx)
-    FIX_OVERFLOW(g_l_temp);
+    fix_overflow(g_l_temp);
     LCMPLXmult(g_l_temp, g_l_param, ltmpx);        // tmpx = tmp * h
 
     // ltmpy contains the generalized value of the old real "y" equation
     LCMPLXtimesreal(g_l_param2, g_l_old_z.x, g_l_temp); // tmp = (C * old.x)
     LCMPLXtrig3(g_l_temp, ltmpy);             // tmpy = trig3(tmp)
-    FIX_OVERFLOW(ltmpy);
+    fix_overflow(ltmpy);
     ltmpy.x += g_l_old_z.x;                   // tmpy = old.x + trig1(tmp)
     LCMPLXtrig2(ltmpy, g_l_temp);             // tmp = trig2(tmpy)
-    FIX_OVERFLOW(g_l_temp);
+    fix_overflow(g_l_temp);
     LCMPLXmult(g_l_temp, g_l_param, ltmpy);        // tmpy = tmp * h
 
     g_l_new_z.x = g_l_old_z.x - ltmpx.x - ltmpy.y;
