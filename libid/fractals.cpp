@@ -60,7 +60,11 @@ an appropriate setup, per_image, per_pixel, and orbit routines.
 #include <cmath>
 #include <cstdlib>
 
-#define conjugate(pz)   ((pz)->y = 0.0 - (pz)->y)
+inline void conjugate(DComplex &pz)
+{
+    pz.y = - pz.y;
+}
+
 #define distance(z1, z2)  (sqr((z1).x-(z2).x)+sqr((z1).y-(z2).y))
 
 LComplex g_l_coefficient;
@@ -320,7 +324,7 @@ int complex_div(DComplex numerator, DComplex denominator, DComplex *pout)
     {
         return 1;
     }
-    conjugate(&denominator);
+    conjugate(denominator);
     complex_mult(numerator, denominator, pout);
     pout->x = pout->x/mod;
     pout->y = pout->y/mod;
