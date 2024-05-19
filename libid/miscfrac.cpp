@@ -1294,9 +1294,6 @@ int BifurcLambda() // Used by lyanupov
     return population_orbit();
 }
 
-#define LCMPLXtrig0(arg, out) Arg1->l = (arg); ltrig0(); (out) = Arg1->l
-#define  CMPLXtrig0(arg, out) Arg1->d = (arg); dtrig0(); (out) = Arg1->d
-
 int BifurcVerhulstTrig()
 {
     //  Population = Pop + Rate * fn(Pop) * (1 - fn(Pop))
