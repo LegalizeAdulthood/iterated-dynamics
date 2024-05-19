@@ -80,6 +80,31 @@ struct PEND_OP
     int p;
 };
 
+#define MAX_JUMPS 200  // size of JUMP_CONTROL array
+
+struct JUMP_PTRS_ST
+{
+    int      JumpOpPtr;
+    int      JumpLodPtr;
+    int      JumpStoPtr;
+};
+
+enum class jump_control_type
+{
+    NONE = 0,
+    IF = 1,
+    ELSE_IF = 2,
+    ELSE = 3,
+    END_IF = 4
+};
+
+struct JUMP_CONTROL_ST
+{
+    jump_control_type type;
+    JUMP_PTRS_ST ptrs;
+    int DestJumpIndex;
+};
+
 std::vector<JUMP_CONTROL_ST> g_jump_control;
 int g_jump_index{};
 static int s_init_jump_index{};
@@ -477,18 +502,18 @@ static void lStkFunct(FunctionPtr fct)   // call lStk via dStk
     }
 }
 
-unsigned long NewRandNum()
+static unsigned long NewRandNum()
 {
     return s_rand_num = ((s_rand_num << 15) + rand15()) ^ s_rand_num;
 }
 
-void lRandom()
+static void lRandom()
 {
     v[7].a.l.x = NewRandNum() >> (32 - g_bit_shift);
     v[7].a.l.y = NewRandNum() >> (32 - g_bit_shift);
 }
 
-void dRandom()
+static void dRandom()
 {
     long x;
     long y;
@@ -502,7 +527,7 @@ void dRandom()
 
 }
 
-void mRandom()
+static void mRandom()
 {
     long x;
     long y;
@@ -515,7 +540,7 @@ void mRandom()
     v[7].a.m.y = *fg2MP(y, g_bit_shift);
 }
 
-void SetRandFnct()
+static void SetRandFnct()
 {
     unsigned Seed;
 
@@ -534,7 +559,7 @@ void SetRandFnct()
     NewRandNum();
 }
 
-void RandomSeed()
+static void RandomSeed()
 {
     std::time_t ltime;
 
@@ -548,14 +573,14 @@ void RandomSeed()
     s_randomized = true;
 }
 
-void lStkSRand()
+static void lStkSRand()
 {
     SetRandFnct();
     lRandom();
     Arg1->l = v[7].a.l;
 }
 
-void mStkSRand()
+static void mStkSRand()
 {
     Arg1->l.x = Arg1->m.x.Mant ^ (long)Arg1->m.x.Exp;
     Arg1->l.y = Arg1->m.y.Mant ^ (long)Arg1->m.y.Exp;
@@ -564,7 +589,7 @@ void mStkSRand()
     Arg1->m = v[7].a.m;
 }
 
-void dStkSRand()
+static void dStkSRand()
 {
     Arg1->l.x = (long)(Arg1->d.x * (1L << g_bit_shift));
     Arg1->l.y = (long)(Arg1->d.y * (1L << g_bit_shift));
@@ -687,7 +712,7 @@ void lStkSqr()
 
 static FunctionPtr StkSqr{dStkSqr};
 
-void dStkAdd()
+static void dStkAdd()
 {
     Arg2->d.x += Arg1->d.x;
     Arg2->d.y += Arg1->d.y;
@@ -695,14 +720,14 @@ void dStkAdd()
     Arg2--;
 }
 
-void mStkAdd()
+static void mStkAdd()
 {
     Arg2->m = MPCadd(Arg2->m, Arg1->m);
     Arg1--;
     Arg2--;
 }
 
-void lStkAdd()
+static void lStkAdd()
 {
     Arg2->l.x += Arg1->l.x;
     Arg2->l.y += Arg1->l.y;
@@ -712,7 +737,7 @@ void lStkAdd()
 
 static FunctionPtr StkAdd{dStkAdd};
 
-void dStkSub()
+static void dStkSub()
 {
     Arg2->d.x -= Arg1->d.x;
     Arg2->d.y -= Arg1->d.y;
@@ -720,14 +745,14 @@ void dStkSub()
     Arg2--;
 }
 
-void mStkSub()
+static void mStkSub()
 {
     Arg2->m = MPCsub(Arg2->m, Arg1->m);
     Arg1--;
     Arg2--;
 }
 
-void lStkSub()
+static void lStkSub()
 {
     Arg2->l.x -= Arg1->l.x;
     Arg2->l.y -= Arg1->l.y;
@@ -895,38 +920,38 @@ void lStkOne()
 
 static FunctionPtr StkOne{dStkOne};
 
-void dStkReal()
+static void dStkReal()
 {
     Arg1->d.y = 0.0;
 }
 
-void mStkReal()
+static void mStkReal()
 {
     Arg1->m.y.Exp = 0;
     Arg1->m.y.Mant = 0;
 }
 
-void lStkReal()
+static void lStkReal()
 {
     Arg1->l.y = 0l;
 }
 
 static FunctionPtr StkReal{dStkReal};
 
-void dStkImag()
+static void dStkImag()
 {
     Arg1->d.x = Arg1->d.y;
     Arg1->d.y = 0.0;
 }
 
-void mStkImag()
+static void mStkImag()
 {
     Arg1->m.x = Arg1->m.y;
     Arg1->m.y.Exp = 0;
     Arg1->m.y.Mant = 0;
 }
 
-void lStkImag()
+static void lStkImag()
 {
     Arg1->l.x = Arg1->l.y;
     Arg1->l.y = 0l;
@@ -934,19 +959,19 @@ void lStkImag()
 
 static FunctionPtr StkImag{dStkImag};
 
-void dStkNeg()
+static void dStkNeg()
 {
     Arg1->d.x = -Arg1->d.x;
     Arg1->d.y = -Arg1->d.y;
 }
 
-void mStkNeg()
+static void mStkNeg()
 {
     Arg1->m.x.Exp ^= 0x8000;
     Arg1->m.y.Exp ^= 0x8000;
 }
 
-void lStkNeg()
+static void lStkNeg()
 {
     Arg1->l.x = -Arg1->l.x;
     Arg1->l.y = -Arg1->l.y;
@@ -961,7 +986,7 @@ void dStkMul()
     Arg2--;
 }
 
-void mStkMul()
+static void mStkMul()
 {
     Arg2->m = MPCmul(Arg2->m, Arg1->m);
     Arg1--;
@@ -985,21 +1010,21 @@ void lStkMul()
 
 static FunctionPtr StkMul{dStkMul};
 
-void dStkDiv()
+static void dStkDiv()
 {
     FPUcplxdiv(&Arg2->d, &Arg1->d, &Arg2->d);
     Arg1--;
     Arg2--;
 }
 
-void mStkDiv()
+static void mStkDiv()
 {
     Arg2->m = MPCdiv(Arg2->m, Arg1->m);
     Arg1--;
     Arg2--;
 }
 
-void lStkDiv()
+static void lStkDiv()
 {
     long x;
     long y;
@@ -1021,20 +1046,20 @@ void lStkDiv()
 
 static FunctionPtr StkDiv{dStkDiv};
 
-void dStkMod()
+static void dStkMod()
 {
     Arg1->d.x = (Arg1->d.x * Arg1->d.x) + (Arg1->d.y * Arg1->d.y);
     Arg1->d.y = 0.0;
 }
 
-void mStkMod()
+static void mStkMod()
 {
     Arg1->m.x = MPCmod(Arg1->m);
     Arg1->m.y.Exp = 0;
     Arg1->m.y.Mant = 0;
 }
 
-void lStkMod()
+static void lStkMod()
 {
     //   Arg1->l.x = multiply(Arg2->l.x, Arg1->l.x, bitshift) +
     //   multiply(Arg2->l.y, Arg1->l.y, bitshift);
@@ -1047,43 +1072,28 @@ void lStkMod()
     Arg1->l.y = 0L;
 }
 
-void lStkModOld()
-{
-    Arg1->l.x = multiply(Arg2->l.x, Arg1->l.x, g_bit_shift) +
-                multiply(Arg2->l.y, Arg1->l.y, g_bit_shift);
-    if (Arg1->l.x < 0)
-    {
-        g_overflow = true;
-    }
-    Arg1->l.y = 0L;
-}
-
 static FunctionPtr StkMod{dStkMod};
 
-void StkSto()
+static void StkSto()
 {
     assert(Store[g_store_index] != nullptr);
     *Store[g_store_index++] = *Arg1;
 }
 
-static FunctionPtr PtrStkSto{StkSto};
-
-void StkLod()
+static void StkLod()
 {
     Arg1++;
     Arg2++;
     *Arg1 = *Load[g_load_index++];
 }
 
-void StkClr()
+static void StkClr()
 {
     g_stack[0] = *Arg1;
     Arg1 = &g_stack[0];
     Arg2 = &g_stack[0];
     Arg2--;
 }
-
-static FunctionPtr PtrStkClr{StkClr};
 
 void dStkFlip()
 {
@@ -1678,7 +1688,7 @@ void lStkCAbs()
 
 static FunctionPtr StkCAbs{dStkCAbs};
 
-void dStkLT()
+static void dStkLT()
 {
     Arg2->d.x = (double)(Arg2->d.x < Arg1->d.x);
     Arg2->d.y = 0.0;
@@ -1686,7 +1696,7 @@ void dStkLT()
     Arg2--;
 }
 
-void mStkLT()
+static void mStkLT()
 {
     Arg2->m.x = *fg2MP((long)(MPcmp(Arg2->m.x, Arg1->m.x) == -1), 0);
     Arg2->m.y.Exp = 0;
@@ -1695,7 +1705,7 @@ void mStkLT()
     Arg2--;
 }
 
-void lStkLT()
+static void lStkLT()
 {
     Arg2->l.x = (long)(Arg2->l.x < Arg1->l.x) << g_bit_shift;
     Arg2->l.y = 0l;
@@ -1705,7 +1715,7 @@ void lStkLT()
 
 static FunctionPtr StkLT{dStkLT};
 
-void dStkGT()
+static void dStkGT()
 {
     Arg2->d.x = (double)(Arg2->d.x > Arg1->d.x);
     Arg2->d.y = 0.0;
@@ -1713,7 +1723,7 @@ void dStkGT()
     Arg2--;
 }
 
-void mStkGT()
+static void mStkGT()
 {
     Arg2->m.x = *fg2MP((long)(MPcmp(Arg2->m.x, Arg1->m.x) == 1), 0);
     Arg2->m.y.Exp = 0;
@@ -1722,7 +1732,7 @@ void mStkGT()
     Arg2--;
 }
 
-void lStkGT()
+static void lStkGT()
 {
     Arg2->l.x = (long)(Arg2->l.x > Arg1->l.x) << g_bit_shift;
     Arg2->l.y = 0l;
@@ -1732,7 +1742,7 @@ void lStkGT()
 
 static FunctionPtr StkGT{dStkGT};
 
-void dStkLTE()
+static void dStkLTE()
 {
     Arg2->d.x = (double)(Arg2->d.x <= Arg1->d.x);
     Arg2->d.y = 0.0;
@@ -1740,7 +1750,7 @@ void dStkLTE()
     Arg2--;
 }
 
-void mStkLTE()
+static void mStkLTE()
 {
     int comp;
 
@@ -1752,7 +1762,7 @@ void mStkLTE()
     Arg2--;
 }
 
-void lStkLTE()
+static void lStkLTE()
 {
     Arg2->l.x = (long)(Arg2->l.x <= Arg1->l.x) << g_bit_shift;
     Arg2->l.y = 0l;
@@ -1762,7 +1772,7 @@ void lStkLTE()
 
 static FunctionPtr StkLTE{dStkLTE};
 
-void dStkGTE()
+static void dStkGTE()
 {
     Arg2->d.x = (double)(Arg2->d.x >= Arg1->d.x);
     Arg2->d.y = 0.0;
@@ -1770,7 +1780,7 @@ void dStkGTE()
     Arg2--;
 }
 
-void mStkGTE()
+static void mStkGTE()
 {
     int comp;
 
@@ -1782,7 +1792,7 @@ void mStkGTE()
     Arg2--;
 }
 
-void lStkGTE()
+static void lStkGTE()
 {
     Arg2->l.x = (long)(Arg2->l.x >= Arg1->l.x) << g_bit_shift;
     Arg2->l.y = 0l;
@@ -1792,7 +1802,7 @@ void lStkGTE()
 
 static FunctionPtr StkGTE{dStkGTE};
 
-void dStkEQ()
+static void dStkEQ()
 {
     Arg2->d.x = (double)(Arg2->d.x == Arg1->d.x);
     Arg2->d.y = 0.0;
@@ -1800,7 +1810,7 @@ void dStkEQ()
     Arg2--;
 }
 
-void mStkEQ()
+static void mStkEQ()
 {
     int comp;
 
@@ -1812,7 +1822,7 @@ void mStkEQ()
     Arg2--;
 }
 
-void lStkEQ()
+static void lStkEQ()
 {
     Arg2->l.x = (long)(Arg2->l.x == Arg1->l.x) << g_bit_shift;
     Arg2->l.y = 0l;
@@ -1822,7 +1832,7 @@ void lStkEQ()
 
 static FunctionPtr StkEQ{dStkEQ};
 
-void dStkNE()
+static void dStkNE()
 {
     Arg2->d.x = (double)(Arg2->d.x != Arg1->d.x);
     Arg2->d.y = 0.0;
@@ -1830,7 +1840,7 @@ void dStkNE()
     Arg2--;
 }
 
-void mStkNE()
+static void mStkNE()
 {
     int comp;
 
@@ -1842,7 +1852,7 @@ void mStkNE()
     Arg2--;
 }
 
-void lStkNE()
+static void lStkNE()
 {
     Arg2->l.x = (long)(Arg2->l.x != Arg1->l.x) << g_bit_shift;
     Arg2->l.y = 0l;
@@ -1852,7 +1862,7 @@ void lStkNE()
 
 static FunctionPtr StkNE{dStkNE};
 
-void dStkOR()
+static void dStkOR()
 {
     Arg2->d.x = (double)(Arg2->d.x || Arg1->d.x);
     Arg2->d.y = 0.0;
@@ -1860,7 +1870,7 @@ void dStkOR()
     Arg2--;
 }
 
-void mStkOR()
+static void mStkOR()
 {
     Arg2->m.x = *fg2MP((long)(Arg2->m.x.Mant || Arg1->m.x.Mant), 0);
     Arg2->m.y.Exp = 0;
@@ -1869,7 +1879,7 @@ void mStkOR()
     Arg2--;
 }
 
-void lStkOR()
+static void lStkOR()
 {
     Arg2->l.x = (long)(Arg2->l.x || Arg1->l.x) << g_bit_shift;
     Arg2->l.y = 0l;
@@ -1879,7 +1889,7 @@ void lStkOR()
 
 static FunctionPtr StkOR{dStkOR};
 
-void dStkAND()
+static void dStkAND()
 {
     Arg2->d.x = (double)(Arg2->d.x && Arg1->d.x);
     Arg2->d.y = 0.0;
@@ -1887,7 +1897,7 @@ void dStkAND()
     Arg2--;
 }
 
-void mStkAND()
+static void mStkAND()
 {
     Arg2->m.x = *fg2MP((long)(Arg2->m.x.Mant && Arg1->m.x.Mant), 0);
     Arg2->m.y.Exp = 0;
@@ -1896,7 +1906,7 @@ void mStkAND()
     Arg2--;
 }
 
-void lStkAND()
+static void lStkAND()
 {
     Arg2->l.x = (long)(Arg2->l.x && Arg1->l.x) << g_bit_shift;
     Arg2->l.y = 0l;
@@ -1985,7 +1995,7 @@ void lStkPwr()
 
 static FunctionPtr StkPwr{dStkPwr};
 
-void EndInit()
+static void EndInit()
 {
     g_last_init_op = g_op_ptr;
     s_init_jump_index = g_jump_index;
@@ -2362,11 +2372,11 @@ static std::array<char const *, 17> s_op_list
     "^"     // 16
 };
 
-void NotAFnct()
+static void NotAFnct()
 {
 }
 
-void FnctNotFound()
+static void FnctNotFound()
 {
 }
 
@@ -2419,7 +2429,7 @@ static FunctionPtr is_func(char const *Str, int Len)
     return NotAFnct;
 }
 
-void RecSortPrec()
+static void RecSortPrec()
 {
     int ThisOp = s_next_op++;
     while (s_op[ThisOp].p > s_op[s_next_op].p && s_next_op < g_operation_index)
@@ -3194,7 +3204,7 @@ int form_per_pixel()
     return g_overflow ? 0 : 1;
 }
 
-int fill_if_group(int endif_index, JUMP_PTRS_ST* jump_data)
+static int fill_if_group(int endif_index, JUMP_PTRS_ST* jump_data)
 {
     int i   = endif_index;
     int ljp = endif_index; // ljp means "last jump processed"

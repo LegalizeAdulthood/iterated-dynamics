@@ -6,7 +6,9 @@
 #include "fpu087.h"
 #include "fractals.h"
 #include "id_data.h"
+#include "parser.h"
 #include "sqr.h"
+#include "trig_fns.h"
 
 #include <cstdint>
 #include <vector>
@@ -94,98 +96,84 @@ inline long LCMPLXmod(const LComplex &z)
 inline void LCMPLXtrig0(const LComplex &arg, LComplex &out)
 {
     Arg1->l = arg;
-    extern void (*ltrig0)();
     ltrig0();
     out = Arg1->l;
 }
 inline void LCMPLXtrig1(const LComplex &arg, LComplex &out)
 {
     Arg1->l = arg;
-    extern void (*ltrig1)();
     ltrig1();
     out = Arg1->l;
 }
 inline void LCMPLXtrig2(const LComplex &arg, LComplex &out)
 {
     Arg1->l = arg;
-    extern void (*ltrig2)();
     ltrig2();
     out = Arg1->l;
 }
 inline void LCMPLXtrig3(const LComplex &arg, LComplex &out)
 {
     Arg1->l = arg;
-    extern void (*ltrig3)();
     ltrig3();
     out = Arg1->l;
 }
 inline void CMPLXtrig0(const DComplex &arg, DComplex &out)
 {
     Arg1->d = arg;
-    extern void (*dtrig0)();
     dtrig0();
     out = Arg1->d;
 }
 inline void CMPLXtrig1(const DComplex &arg, DComplex &out)
 {
     Arg1->d = arg;
-    extern void (*dtrig1)();
     dtrig1();
     out = Arg1->d;
 }
 inline void CMPLXtrig2(const DComplex &arg, DComplex &out)
 {
     Arg1->d = arg;
-    extern void (*dtrig2)();
     dtrig2();
     out = Arg1->d;
 }
 inline void CMPLXtrig3(const DComplex &arg, DComplex &out)
 {
     Arg1->d = (arg);
-    extern void (*dtrig3)();
     dtrig3();
     (out) = Arg1->d;
 }
 inline void LCMPLXsin(const LComplex &arg, LComplex &out)
 {
     Arg1->l = arg;
-    extern void lStkSin();
     lStkSin();
     (out) = Arg1->l;
 }
 inline void LCMPLXcos(const LComplex &arg, LComplex &out)
 {
     Arg1->l = arg;
-    extern void lStkCos();
     lStkCos();
     out = Arg1->l;
 }
 inline void LCMPLXsinh(const LComplex &arg, LComplex &out)
 {
     Arg1->l = arg;
-    extern void lStkSinh();
     lStkSinh();
     out = Arg1->l;
 }
 inline void LCMPLXcosh(const LComplex &arg, LComplex &out)
 {
     Arg1->l = arg;
-    extern void lStkCosh();
     lStkCosh();
     out = Arg1->l;
 }
 inline void LCMPLXlog(const LComplex &arg, LComplex &out)
 {
     Arg1->l = arg;
-    extern void lStkLog();
     lStkLog();
     out = Arg1->l;
 }
 inline void LCMPLXexp(const LComplex &arg, LComplex &out)
 {
     Arg1->l = arg;
-    extern void lStkExp();
     lStkExp();
     out = Arg1->l;
 }
@@ -203,7 +191,6 @@ inline void LCMPLXpwr(const LComplex &arg1, const LComplex &arg2, LComplex &out)
 {
     Arg2->l = arg1;
     Arg1->l = arg2;
-    extern void lStkPwr();
     lStkPwr();
     Arg1++;
     Arg2++;
@@ -214,7 +201,6 @@ inline void LCMPLXmult(const LComplex &arg1, const LComplex &arg2, LComplex &out
 {
     Arg1->l = arg1;
     Arg2->l = arg2;
-    extern void lStkMul();
     lStkMul();
     Arg1++;
     Arg2++;
@@ -253,41 +239,35 @@ inline double CMPLXmod(const DComplex &z)
 inline void CMPLXsin(const DComplex &arg, DComplex &out)
 {
     Arg1->d = arg;
-    extern void dStkSin();
     dStkSin();
     out = Arg1->d;
 }
 inline void CMPLXcos(const DComplex &arg, DComplex &out)
 {
     Arg1->d = arg;
-    extern void dStkCos();
     dStkCos();
     out = Arg1->d;
 }
 inline void CMPLXsinh(const DComplex &arg, DComplex &out)
 {
     Arg1->d = arg;
-    extern void dStkSinh();
     dStkSinh();
     out = Arg1->d;
 }
 inline void CMPLXcosh(const DComplex &arg, DComplex &out)
 {
     Arg1->d = arg;
-    extern void dStkCosh();
     dStkCosh();
     out = Arg1->d;
 }
 inline void CMPLXlog(const DComplex &arg, DComplex &out)
 {
     Arg1->d = arg;
-    extern void dStkLog();
     dStkLog();
     out = Arg1->d;
 }
 inline void CMPLXexp(const DComplex &arg, DComplex &out)
 {
-    extern void FPUcplxexp(const DComplex *, DComplex *);
     FPUcplxexp(&(arg), &(out));
 }
 inline void CMPLXsqr(const DComplex &arg, DComplex &out)
@@ -307,7 +287,6 @@ inline void CMPLXpwr(const DComplex &arg1, const DComplex &arg2, DComplex &out)
 }
 inline void CMPLXmult1(const DComplex &arg1, const DComplex &arg2, DComplex &out)
 {
-    extern void dStkMul();
     Arg2->d = arg1;
     Arg1->d = arg2;
     dStkMul();
