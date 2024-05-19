@@ -313,8 +313,8 @@ static bool l_setup_convert_to_screen(l_affine *l_cvt)
 
 static double s_orbit{};
 static long s_orbit_l{};
-static long l_sinx;
-static long l_cosx;
+static long s_sin_x_l{};
+static long s_cos_x_l{};
 
 bool orbit3dlongsetup()
 {
@@ -362,8 +362,8 @@ bool orbit3dlongsetup()
         s_l_d = (long) g_params[3];
         s_t = (int) s_l_d;      // points per orbit
 
-        l_sinx = (long)(std::sin(s_a)*g_fudge_factor);
-        l_cosx = (long)(std::cos(s_a)*g_fudge_factor);
+        s_sin_x_l = (long)(std::sin(s_a)*g_fudge_factor);
+        s_cos_x_l = (long)(std::cos(s_a)*g_fudge_factor);
         s_orbit_l = 0;
         s_init_orbit_long[2] = 0;
         s_init_orbit_long[1] = s_init_orbit_long[2];
@@ -1201,8 +1201,8 @@ int kamtoruslongorbit(long *r, long *s, long *z)
         }
     }
     srr = (*s)-multiply((*r), (*r), g_bit_shift);
-    (*s) = multiply((*r), l_sinx, g_bit_shift)+multiply(srr, l_cosx, g_bit_shift);
-    (*r) = multiply((*r), l_cosx, g_bit_shift)-multiply(srr, l_sinx, g_bit_shift);
+    (*s) = multiply((*r), s_sin_x_l, g_bit_shift)+multiply(srr, s_cos_x_l, g_bit_shift);
+    (*r) = multiply((*r), s_cos_x_l, g_bit_shift)-multiply(srr, s_sin_x_l, g_bit_shift);
     return 0;
 }
 
