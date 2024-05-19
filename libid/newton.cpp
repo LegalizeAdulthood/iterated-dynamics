@@ -16,6 +16,7 @@
 #include "mpmath.h"
 #include "mpmath_c.h"
 #include "pixel_grid.h"
+#include "sqr.h"
 
 #include <cmath>
 #include <cfloat>
@@ -71,8 +72,10 @@ void invertz2(DComplex *z)
 }
 
 // Distance of complex z from unit circle
-#define DIST1(z) (((z).x-1.0)*((z).x-1.0)+((z).y)*((z).y))
-#define LDIST1(z) (lsqr((((z).x)-g_fudge_factor)) + lsqr(((z).y)))
+inline double distance1(const DComplex &z)
+{
+    return sqr(z.x - 1.0) + sqr(z.y);
+}
 
 int NewtonFractal2()
 {
@@ -84,7 +87,7 @@ int NewtonFractal2()
     cpower(&g_old_z, g_degree-1, &g_tmp_z);
     complex_mult(g_tmp_z, g_old_z, &g_new_z);
 
-    if (DIST1(g_new_z) < g_threshold)
+    if (distance1(g_new_z) < g_threshold)
     {
         if (g_fractal_type == fractal_type::NEWTBASIN || g_fractal_type == fractal_type::MPNEWTBASIN)
         {
