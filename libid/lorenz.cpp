@@ -144,7 +144,7 @@ static double s_init_orbit_fp[3]{};
 
 // The following declarations used for Inverse Julia.
 static int      s_max_hits{};
-static int      run_length;
+static int      s_run_length{};
 Major           g_major_method;
 Minor           g_inverse_julia_minor_method;
 static affine   s_cvt;
@@ -377,7 +377,7 @@ bool orbit3dlongsetup()
         CyLong = (long)(g_params[1] * g_fudge_factor);
 
         s_max_hits    = (int) g_params[2];
-        run_length = (int) g_params[3];
+        s_run_length = (int) g_params[3];
         if (s_max_hits <= 0)
         {
             s_max_hits = 1;
@@ -585,7 +585,7 @@ bool orbit3dfloatsetup()
         Cy = g_params[1];
 
         s_max_hits    = (int) g_params[2];
-        run_length = (int) g_params[3];
+        s_run_length = (int) g_params[3];
         if (s_max_hits <= 0)
         {
             s_max_hits = 1;
@@ -784,7 +784,7 @@ int Minverse_julia_orbit()
     case Major::random_run:
         if (random_len-- == 0)
         {
-            random_len = RANDOM(run_length);
+            random_len = RANDOM(s_run_length);
             random_dir = RANDOM(3);
         }
         switch (random_dir)
@@ -857,7 +857,7 @@ int Linverse_julia_orbit()
         g_l_new_z = ComplexSqrtLong(g_l_new_z.x - CxLong, g_l_new_z.y - CyLong);
         if (random_len == 0)
         {
-            random_len = RANDOM(run_length);
+            random_len = RANDOM(s_run_length);
             random_dir = RANDOM(3);
         }
         switch (random_dir)
