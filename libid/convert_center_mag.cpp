@@ -11,7 +11,11 @@
 
 #include <cmath>
 
-#define rad_to_deg(x) ((x)*(180.0/PI)) // most people "think" in degrees
+ // most people "think" in degrees
+inline double rad_to_deg(double x)
+{
+    return x * (180.0 / PI);
+}
 
 /*
 convert corners to center/mag
