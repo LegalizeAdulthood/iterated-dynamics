@@ -42,7 +42,7 @@ jobs:
           core.exportVariable('ACTIONS_RUNTIME_TOKEN', process.env.ACTIONS_RUNTIME_TOKEN || '');
 
     - name: Set NUMBER_OF_PROCESSORS on linux
-      run: awk '/processor/{ print $3 + 1 }' /proc/cpuinfo
+      run: echo "NUMBER_OF_PROCESSORS=`awk '/processor/{ print $3 + 1 }' /proc/cpuinfo | tail -1`" >> $GITHUB_ENV
       if: ${{matrix.os == 'ubuntu-latest'}}
 
     - name: Run Workflow
