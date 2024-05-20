@@ -107,6 +107,9 @@
       "hidden": true,
       "output": {
         "outputOnFailure": true
+      },
+      "execution": {
+        "jobs": 4
       }
     },
     {
