@@ -41,6 +41,10 @@ jobs:
           core.exportVariable('ACTIONS_CACHE_URL', process.env.ACTIONS_CACHE_URL || '');
           core.exportVariable('ACTIONS_RUNTIME_TOKEN', process.env.ACTIONS_RUNTIME_TOKEN || '');
 
+    - name: Set NUMBER_OF_PROCESSORS on linux
+      run: echo "NUMBER_OF_PROCESSORS=$(awk '/processor/{ print $3 + 1 }' /proc/cpuinfo)" >> $GITHUB_ENV
+      if: ${{matrix.os == 'ubuntu-latest'}}
+
     - name: Run Workflow
       run: cmake --workflow --preset ${{matrix.preset}}
 
