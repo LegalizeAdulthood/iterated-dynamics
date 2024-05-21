@@ -383,9 +383,9 @@ bool orbit3dlongsetup()
         s_sin_x_l = (long)(std::sin(s_a)*g_fudge_factor);
         s_cos_x_l = (long)(std::cos(s_a)*g_fudge_factor);
         s_orbit_l = 0;
+        s_init_orbit_long[0] = 0;
+        s_init_orbit_long[1] = 0;
         s_init_orbit_long[2] = 0;
-        s_init_orbit_long[1] = s_init_orbit_long[2];
-        s_init_orbit_long[0] = s_init_orbit_long[1];
     }
     else if (g_fractal_type == fractal_type::INVERSEJULIA)
     {
@@ -571,9 +571,9 @@ bool orbit3dfloatsetup()
         g_sin_x = std::sin(s_a);
         g_cos_x = std::cos(s_a);
         s_orbit = 0;
+        s_init_orbit_fp[0] = 0;
+        s_init_orbit_fp[1] = 0;
         s_init_orbit_fp[2] = 0;
-        s_init_orbit_fp[1] = s_init_orbit_fp[2];
-        s_init_orbit_fp[0] = s_init_orbit_fp[1];
     }
     else if (g_fractal_type == fractal_type::FPHOPALONG
         || g_fractal_type == fractal_type::FPMARTIN
@@ -1363,8 +1363,8 @@ static const double &PAR_D{g_params[3]};
 
 int latoofloatorbit(double *x, double *y, double * /*z*/)
 {
-    const double xold = *x;
-    const double yold = *y;
+    double xold = *x;
+    double yold = *y;
 
     //    *x = sin(yold * PAR_B) + PAR_C * sin(xold * PAR_B);
     g_old_z.x = yold * PAR_B;
@@ -1435,10 +1435,10 @@ int orbit2dfloat()
     affine cvt;
     int ret;
 
+    p0 = nullptr;
+    p1 = nullptr;
     p2 = nullptr;
-    p1 = p2;
-    p0 = p1;
-    soundvar = p0;
+    soundvar = nullptr;
 
     fp = open_orbitsave();
     // setup affine screen coord conversion
@@ -1486,13 +1486,13 @@ int orbit2dfloat()
     }
 
     oldrow = -1;
-    oldcol = oldrow;
+    oldcol = -1;
     x = s_init_orbit_fp[0];
     y = s_init_orbit_fp[1];
     z = s_init_orbit_fp[2];
     g_color_iter = 0L;
     ret = 0;
-    count = ret;
+    count = 0;
     if (g_max_iterations > 0x1fffffL || g_max_count)
     {
         g_max_count = 0x7fffffffL;
@@ -1576,7 +1576,7 @@ int orbit2dfloat()
         else
         {
             oldcol = -1;
-            oldrow = oldcol;
+            oldrow = -1;
         }
 
         if (orbit(p0, p1, p2))
@@ -1597,29 +1597,21 @@ int orbit2dfloat()
 
 int orbit2dlong()
 {
-    std::FILE *fp;
-    long *soundvar;
     long x;
     long y;
     long z;
     int color;
-    int col;
-    int row;
     int count;
     int oldrow;
     int oldcol;
-    long *p0;
-    long *p1;
-    long *p2;
     l_affine cvt;
-    int ret;
 
     bool start = true;
-    p2 = nullptr;
-    p1 = p2;
-    p0 = p1;
-    soundvar = p0;
-    fp = open_orbitsave();
+    long *p0 = nullptr;
+    long *p1 = nullptr;
+    long *p2 = nullptr;
+    const long *soundvar = nullptr;
+    std::FILE *fp = open_orbitsave();
 
     // setup affine screen coord conversion
     l_setup_convert_to_screen(&cvt);
@@ -1669,12 +1661,12 @@ int orbit2dlong()
         color = 1;
     }
     oldrow = -1;
-    oldcol = oldrow;
+    oldcol = -1;
     x = s_init_orbit_long[0];
     y = s_init_orbit_long[1];
     z = s_init_orbit_long[2];
-    ret = 0;
-    count = ret;
+    int ret = 0;
+    count = 0;
     if (g_max_iterations > 0x1fffffL || g_max_count)
     {
         g_max_count = 0x7fffffffL;
@@ -1720,8 +1712,8 @@ int orbit2dlong()
             }
         }
 
-        col = (int)((multiply(cvt.a, x, g_bit_shift) + multiply(cvt.b, y, g_bit_shift) + cvt.e) >> g_bit_shift);
-        row = (int)((multiply(cvt.c, x, g_bit_shift) + multiply(cvt.d, y, g_bit_shift) + cvt.f) >> g_bit_shift);
+        const int col = (int)((multiply(cvt.a, x, g_bit_shift) + multiply(cvt.b, y, g_bit_shift) + cvt.e) >> g_bit_shift);
+        const int row = (int)((multiply(cvt.c, x, g_bit_shift) + multiply(cvt.d, y, g_bit_shift) + cvt.f) >> g_bit_shift);
         if (g_overflow)
         {
             g_overflow = false;
@@ -1755,7 +1747,7 @@ int orbit2dlong()
         else
         {
             oldcol = -1;
-            oldrow = oldcol;
+            oldrow = -1;
         }
 
         // Calculate the next point
@@ -1791,9 +1783,9 @@ static int orbit3dlongcalc()
     l_setup_convert_to_screen(&inf.cvt);
 
     oldrow = -1;
-    oldcol = oldrow;
-    oldrow1 = oldcol;
-    oldcol1 = oldrow1;
+    oldcol = -1;
+    oldrow1 = -1;
+    oldcol1 = -1;
     color = 2;
     if (color >= g_colors)
     {
@@ -1812,7 +1804,7 @@ static int orbit3dlongcalc()
     fp = open_orbitsave();
 
     ret = 0;
-    count = ret;
+    count = 0;
     if (g_max_iterations > 0x1fffffL || g_max_count)
     {
         g_max_count = 0x7fffffffL;
@@ -1925,9 +1917,9 @@ static int orbit3dfloatcalc()
     setup_convert_to_screen(&inf.cvt);
 
     oldrow = -1;
-    oldcol = oldrow;
+    oldcol = -1;
     oldrow1 = -1;
-    oldcol1 = oldrow1;
+    oldcol1 = -1;
     color = 2;
     if (color >= g_colors)
     {
@@ -1954,7 +1946,7 @@ static int orbit3dfloatcalc()
         g_max_count = g_max_iterations*1024L;
     }
     g_color_iter = 0L;
-    count = g_color_iter;
+    count = 0L;
     while (g_color_iter++ <= g_max_count) // loop until keypress or maxit
     {
         // calc goes here
@@ -2133,7 +2125,7 @@ int dynam2dfloat()
         color = 1;
     }
     oldrow = -1;
-    oldcol = oldrow;
+    oldcol = -1;
 
     xstep = -1;
     ystep = 0;
@@ -2232,7 +2224,7 @@ int dynam2dfloat()
             else
             {
                 oldcol = -1;
-                oldrow = oldcol;
+                oldrow = -1;
             }
 
             if (orbit(p0, p1))
@@ -2691,8 +2683,8 @@ static int ifs2d()
 
     fp = open_orbitsave();
 
+    x = 0;
     y = 0;
-    x = y;
     ret = 0;
     if (g_max_iterations > 0x1fffffL)
     {
@@ -3016,8 +3008,8 @@ static bool long3dviewtransf(long3dvtinf *inf)
 
         if (g_color_iter == s_waste) // time to work it out
         {
+            inf->iview[0] = 0L; // center viewer on origin
             inf->iview[1] = 0L;
-            inf->iview[0] = inf->iview[1]; // center viewer on origin
 
             /* z value of user's eye - should be more negative than extreme
                            negative part of image */
@@ -3118,12 +3110,12 @@ static bool long3dviewtransf(long3dvtinf *inf)
         if ((long)std::abs(inf->col)+(long)std::abs(inf->row) > BAD_PIXEL)
         {
             inf->row = -2;
-            inf->col = inf->row;
+            inf->col = -2;
         }
         else
         {
             inf->row = -1;
-            inf->col = inf->row;
+            inf->col = -1;
         }
     }
     if (s_real_time)
@@ -3141,12 +3133,12 @@ static bool long3dviewtransf(long3dvtinf *inf)
             if ((long)std::abs(inf->col1)+(long)std::abs(inf->row1) > BAD_PIXEL)
             {
                 inf->row1 = -2;
-                inf->col1 = inf->row1;
+                inf->col1 = -2;
             }
             else
             {
                 inf->row1 = -1;
-                inf->col1 = inf->row1;
+                inf->col1 = -1;
             }
         }
     }
@@ -3193,8 +3185,8 @@ static bool float3dviewtransf(float3dvtinf *inf)
         }
         if (g_color_iter == s_waste) // time to work it out
         {
+            g_view[0] = 0; // center on origin
             g_view[1] = 0;
-            g_view[0] = g_view[1]; // center on origin
             /* z value of user's eye - should be more negative than extreme
                               negative part of image */
             g_view[2] = (inf->minvals[2]-inf->maxvals[2])*(double)ZVIEWER/100.0;
@@ -3242,12 +3234,12 @@ static bool float3dviewtransf(float3dvtinf *inf)
         if ((long)std::abs(inf->col)+(long)std::abs(inf->row) > BAD_PIXEL)
         {
             inf->row = -2;
-            inf->col = inf->row;
+            inf->col = -2;
         }
         else
         {
             inf->row = -1;
-            inf->col = inf->row;
+            inf->col = -1;
         }
     }
     if (s_real_time)
@@ -3261,12 +3253,12 @@ static bool float3dviewtransf(float3dvtinf *inf)
             if ((long)std::abs(inf->col1)+(long)std::abs(inf->row1) > BAD_PIXEL)
             {
                 inf->row1 = -2;
-                inf->col1 = inf->row1;
+                inf->col1 = -2;
             }
             else
             {
                 inf->row1 = -1;
-                inf->col1 = inf->row1;
+                inf->col1 = -1;
             }
         }
     }
