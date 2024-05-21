@@ -1363,18 +1363,14 @@ static const double &PAR_D{g_params[3]};
 
 int latoofloatorbit(double *x, double *y, double * /*z*/)
 {
-    double xold;
-    double yold;
-    double tmp;
-
-    xold = *x;
-    yold = *y;
+    const double xold = *x;
+    const double yold = *y;
 
     //    *x = sin(yold * PAR_B) + PAR_C * sin(xold * PAR_B);
     g_old_z.x = yold * PAR_B;
     g_old_z.y = 0;          // old = (y * B) + 0i (in the complex)
     CMPLXtrig0(g_old_z, g_new_z);
-    tmp = (double) g_new_z.x;
+    double tmp = g_new_z.x;
     g_old_z.x = xold * PAR_B;
     g_old_z.y = 0;          // old = (x * B) + 0i
     CMPLXtrig1(g_old_z, g_new_z);
@@ -1384,7 +1380,7 @@ int latoofloatorbit(double *x, double *y, double * /*z*/)
     g_old_z.x = xold * PAR_A;
     g_old_z.y = 0;          // old = (y * A) + 0i (in the complex)
     CMPLXtrig2(g_old_z, g_new_z);
-    tmp = (double) g_new_z.x;
+    tmp = g_new_z.x;
     g_old_z.x = yold * PAR_A;
     g_old_z.y = 0;          // old = (x * B) + 0i
     CMPLXtrig3(g_old_z, g_new_z);
