@@ -2270,7 +2270,7 @@ fractalspecificstuff g_fractal_specific[] =
         "latoocarfian",
         {"a", "b", "c", "d"},
         {-0.966918, 2.879879, 0.765145, 0.744728},
-        help_labels::HT_LATOO, help_labels::HF_LATOO, fractal_flags::NOGUESS|fractal_flags::NOTRACE|fractal_flags::INFCALC|fractal_flags::MORE|fractal_flags::TRIG4,
+        help_labels::HT_LATOO, help_labels::HF_LATOO, fractal_flags::NOGUESS|fractal_flags::NOTRACE|fractal_flags::INFCALC|fractal_flags::TRIG4,
         -2.0F, 2.0F, -1.5F, 1.5F,
         0, fractal_type::NOFRACTAL, fractal_type::NOFRACTAL, fractal_type::NOFRACTAL, symmetry_type::NONE,
         (VF)latoofloatorbit, nullptr, orbit3dfloatsetup, orbit2dfloat,
