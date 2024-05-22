@@ -1418,33 +1418,17 @@ int inverse_julia_per_image()
 
 int orbit2dfloat()
 {
-    std::FILE *fp;
-    double *soundvar;
-    double x;
-    double y;
-    double z;
-    int color;
-    int col;
-    int row;
-    int count;
-    int oldrow;
-    int oldcol;
-    double *p0;
-    double *p1;
-    double *p2;
+    std::FILE *fp = open_orbitsave();
     affine cvt;
-    int ret;
-
-    p0 = nullptr;
-    p1 = nullptr;
-    p2 = nullptr;
-    soundvar = nullptr;
-
-    fp = open_orbitsave();
-    // setup affine screen coord conversion
-    setup_convert_to_screen(&cvt);
+    setup_convert_to_screen(&cvt); // setup affine screen coord conversion
 
     // set up projection scheme
+    double x = s_init_orbit_fp[0];
+    double y = s_init_orbit_fp[1];
+    double z = s_init_orbit_fp[2];
+    double *p0 = nullptr;
+    double *p1 = nullptr;
+    double *p2 = nullptr;
     switch (s_projection)
     {
     case 0:
@@ -1463,6 +1447,7 @@ int orbit2dfloat()
         p2 = &z;
         break;
     }
+    const double *soundvar = nullptr;
     switch (g_sound_flag & SOUNDFLAG_ORBITMASK)
     {
     case SOUNDFLAG_X:
@@ -1476,6 +1461,7 @@ int orbit2dfloat()
         break;
     }
 
+    int color;
     if (g_inside_color > COLOR_BLACK)
     {
         color = g_inside_color;
@@ -1485,14 +1471,11 @@ int orbit2dfloat()
         color = 2;
     }
 
-    oldrow = -1;
-    oldcol = -1;
-    x = s_init_orbit_fp[0];
-    y = s_init_orbit_fp[1];
-    z = s_init_orbit_fp[2];
+    int oldrow = -1;
+    int oldcol = -1;
     g_color_iter = 0L;
-    ret = 0;
-    count = 0;
+    int ret = 0;
+    int count = 0;
     if (g_max_iterations > 0x1fffffL || g_max_count)
     {
         g_max_count = 0x7fffffffL;
@@ -1537,8 +1520,8 @@ int orbit2dfloat()
             }
         }
 
-        col = (int)(cvt.a*x + cvt.b*y + cvt.e);
-        row = (int)(cvt.c*x + cvt.d*y + cvt.f);
+        const int col = (int)(cvt.a * x + cvt.b * y + cvt.e);
+        const int row = (int)(cvt.c * x + cvt.d * y + cvt.f);
         if (col >= 0 && col < g_logical_screen_x_dots && row >= 0 && row < g_logical_screen_y_dots)
         {
             if (soundvar && (g_sound_flag & SOUNDFLAG_ORBITMASK) > SOUNDFLAG_BEEP)
@@ -1597,26 +1580,17 @@ int orbit2dfloat()
 
 int orbit2dlong()
 {
-    long x;
-    long y;
-    long z;
-    int color;
-    int count;
-    int oldrow;
-    int oldcol;
+    std::FILE *fp = open_orbitsave();
     l_affine cvt;
+    l_setup_convert_to_screen(&cvt); // setup affine screen coord conversion
 
-    bool start = true;
+    // set up projection scheme
+    long x = s_init_orbit_long[0];
+    long y = s_init_orbit_long[1];
+    long z = s_init_orbit_long[2];
     long *p0 = nullptr;
     long *p1 = nullptr;
     long *p2 = nullptr;
-    const long *soundvar = nullptr;
-    std::FILE *fp = open_orbitsave();
-
-    // setup affine screen coord conversion
-    l_setup_convert_to_screen(&cvt);
-
-    // set up projection scheme
     switch (s_projection)
     {
     case 0:
@@ -1635,6 +1609,8 @@ int orbit2dlong()
         p2 = &z;
         break;
     }
+
+    const long *soundvar = nullptr;
     switch (g_sound_flag & SOUNDFLAG_ORBITMASK)
     {
     case SOUNDFLAG_X:
@@ -1648,6 +1624,7 @@ int orbit2dlong()
         break;
     }
 
+    int color;
     if (g_inside_color > COLOR_BLACK)
     {
         color = g_inside_color;
@@ -1660,13 +1637,8 @@ int orbit2dlong()
     {
         color = 1;
     }
-    oldrow = -1;
-    oldcol = -1;
-    x = s_init_orbit_long[0];
-    y = s_init_orbit_long[1];
-    z = s_init_orbit_long[2];
+
     int ret = 0;
-    count = 0;
     if (g_max_iterations > 0x1fffffL || g_max_count)
     {
         g_max_count = 0x7fffffffL;
@@ -1677,6 +1649,9 @@ int orbit2dlong()
     }
     g_color_iter = 0L;
 
+    int count = 0;
+    int oldrow = -1;
+    int oldcol = -1;
     if (g_resuming)
     {
         start_resume();
@@ -1688,6 +1663,7 @@ int orbit2dlong()
         end_resume();
     }
 
+    bool start = true;
     while (g_color_iter++ <= g_max_count) // loop until keypress or maxit
     {
         if (driver_key_pressed())
