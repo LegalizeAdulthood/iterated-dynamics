@@ -1,10 +1,6 @@
 #include "find_extra_param.h"
 
-#include "port.h"
-#include "prototyp.h"
-
 #include "fractalp.h"
-#include "id.h"
 
 int find_extra_param(fractal_type type)
 {
