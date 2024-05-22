@@ -2034,32 +2034,19 @@ bool dynam2dfloatsetup()
  */
 int dynam2dfloat()
 {
-    std::FILE *fp = nullptr;
-    double *soundvar = nullptr;
-    double x = 0.0;
-    double y = 0.0;
-    double z = 0.0;
-    int color = 0;
-    int col = 0;
-    int row = 0;
-    int oldrow = 0;
-    int oldcol = 0;
-    double *p0 = nullptr;
-    double *p1 = nullptr;
-    affine cvt;
-    int ret = 0;
-    int xstep = 0;
-    int ystep = 0; // The starting position step number
-    double xpixel = 0.0;
-    double ypixel = 0.0; // Our pixel position on the screen
+    std::FILE *fp = open_orbitsave();
 
-    fp = open_orbitsave();
     // setup affine screen coord conversion
+    affine cvt;
     setup_convert_to_screen(&cvt);
 
-    p0 = &x;
-    p1 = &y;
+    double x{};
+    double y{};
+    const double z{};
+    double *p0 = &x;
+    double *p1 = &y;
 
+    const double *soundvar = nullptr;
     if ((g_sound_flag & SOUNDFLAG_ORBITMASK) == SOUNDFLAG_X)
     {
         soundvar = &x;
@@ -2074,6 +2061,7 @@ int dynam2dfloat()
     }
 
     long count = 0;
+    int color = 0;
     if (g_inside_color > COLOR_BLACK)
     {
         color = g_inside_color;
@@ -2082,23 +2070,22 @@ int dynam2dfloat()
     {
         color = 1;
     }
-    oldrow = -1;
-    oldcol = -1;
-
-    xstep = -1;
-    ystep = 0;
-
+    int oldrow = -1;
+    int oldcol = -1;
+    int xstep = -1;
+    int ystep = 0; // The starting position step number
     if (g_resuming)
     {
         start_resume();
-        get_resume(sizeof(count), &count, sizeof(color), &color,
-                   sizeof(oldrow), &oldrow, sizeof(oldcol), &oldcol,
-                   sizeof(x), &x, sizeof(y), &y, sizeof(xstep), &xstep,
-                   sizeof(ystep), &ystep, 0);
+        get_resume(sizeof(count), &count, sizeof(color), &color, //
+            sizeof(oldrow), &oldrow, sizeof(oldcol), &oldcol,    //
+            sizeof(x), &x, sizeof(y), &y,                        //
+            sizeof(xstep), &xstep, sizeof(ystep), &ystep,        //
+            0);
         end_resume();
     }
 
-    ret = 0;
+    int ret = 0;
     while (true)
     {
         if (driver_key_pressed())
@@ -2126,8 +2113,9 @@ int dynam2dfloat()
             }
         }
 
-        xpixel = g_logical_screen_x_size_dots*(xstep+.5)/s_d;
-        ypixel = g_logical_screen_y_size_dots*(ystep+.5)/s_d;
+        // Our pixel position on the screen
+        const double xpixel = g_logical_screen_x_size_dots * (xstep + .5) / s_d;
+        const double ypixel = g_logical_screen_y_size_dots * (ystep + .5) / s_d;
         x = (double)((g_x_min+g_delta_x*xpixel) + (g_delta_x2*ypixel));
         y = (double)((g_y_max-g_delta_y*ypixel) + (-g_delta_y2*xpixel));
         if (g_fractal_type == fractal_type::MANDELCLOUD)
@@ -2152,8 +2140,8 @@ int dynam2dfloat()
                 }
             }
 
-            col = (int)(cvt.a*x + cvt.b*y + cvt.e);
-            row = (int)(cvt.c*x + cvt.d*y + cvt.f);
+            const int col = (int)(cvt.a * x + cvt.b * y + cvt.e);
+            const int row = (int)(cvt.c * x + cvt.d * y + cvt.f);
             if (col >= 0 && col < g_logical_screen_x_dots && row >= 0 && row < g_logical_screen_y_dots)
             {
                 if (soundvar && (g_sound_flag & SOUNDFLAG_ORBITMASK) > SOUNDFLAG_BEEP)
@@ -2195,10 +2183,12 @@ int dynam2dfloat()
             }
         }
     }
+
     if (fp)
     {
         std::fclose(fp);
     }
+
     return ret;
 }
 
