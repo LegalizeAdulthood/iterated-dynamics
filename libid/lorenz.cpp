@@ -2286,14 +2286,6 @@ int plotorbits2dsetup()
 
 int plotorbits2dfloat()
 {
-    double *soundvar = nullptr;
-    double x = 0.0;
-    double y = 0.0;
-    double z = 0.0;
-    int col = 0;
-    int row = 0;
-    long count = 0;
-
     if (driver_key_pressed())
     {
         driver_mute();
@@ -2302,6 +2294,10 @@ int plotorbits2dfloat()
         return -1;
     }
 
+    double x = 0.0;
+    double y = 0.0;
+    double z = 0.0;
+    const double *soundvar = nullptr;
     if ((g_sound_flag & SOUNDFLAG_ORBITMASK) == SOUNDFLAG_X)
     {
         soundvar = &x;
@@ -2338,7 +2334,7 @@ int plotorbits2dfloat()
 
     per_pixel(); // initialize the calculations
 
-    for (count = 0; count < g_max_iterations; count++)
+    for (long count = 0; count < g_max_iterations; count++)
     {
         if (orbit_calc() == 1 && g_periodicity_check)
         {
@@ -2351,8 +2347,8 @@ int plotorbits2dfloat()
         }
 
         // else count >= orbit_delay and we want to plot it
-        col = (int)(s_o_cvt.a*g_new_z.x + s_o_cvt.b*g_new_z.y + s_o_cvt.e);
-        row = (int)(s_o_cvt.c*g_new_z.x + s_o_cvt.d*g_new_z.y + s_o_cvt.f);
+        const int col = (int)(s_o_cvt.a * g_new_z.x + s_o_cvt.b * g_new_z.y + s_o_cvt.e);
+        const int row = (int)(s_o_cvt.c * g_new_z.x + s_o_cvt.d * g_new_z.y + s_o_cvt.f);
         if (col > 0 && col < g_logical_screen_x_dots && row > 0 && row < g_logical_screen_y_dots)
         {
             // plot if on the screen
