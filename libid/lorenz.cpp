@@ -84,7 +84,7 @@ struct l_affine
 
 struct long3dvtinf // data used by 3d view transform subroutine
 {
-    long orbit[3];       // interated function orbit value
+    long orbit[3];       // iterated function orbit value
     long iview[3];       // perspective viewer's coordinates
     long viewvect[3];    // orbit transformed for viewing
     long viewvect1[3];   // orbit transformed for viewing
@@ -1745,29 +1745,14 @@ int orbit2dlong()
 
 static int orbit3dlongcalc()
 {
-    std::FILE *fp;
-    unsigned long count;
-    int oldcol;
-    int oldrow;
-    int oldcol1;
-    int oldrow1;
-    long3dvtinf inf;
-    int color;
-    int ret;
-
-    // setup affine screen coord conversion
-    l_setup_convert_to_screen(&inf.cvt);
-
-    oldrow = -1;
-    oldcol = -1;
-    oldrow1 = -1;
-    oldcol1 = -1;
-    color = 2;
+    int color = 2;
     if (color >= g_colors)
     {
         color = 1;
     }
 
+    long3dvtinf inf;
+    l_setup_convert_to_screen(&inf.cvt); // setup affine screen coord conversion
     inf.orbit[0] = s_init_orbit_long[0];
     inf.orbit[1] = s_init_orbit_long[1];
     inf.orbit[2] = s_init_orbit_long[2];
@@ -1777,10 +1762,6 @@ static int orbit3dlongcalc()
         notdiskmsg();
     }
 
-    fp = open_orbitsave();
-
-    ret = 0;
-    count = 0;
     if (g_max_iterations > 0x1fffffL || g_max_count)
     {
         g_max_count = 0x7fffffffL;
@@ -1790,6 +1771,14 @@ static int orbit3dlongcalc()
         g_max_count = g_max_iterations*1024L;
     }
     g_color_iter = 0L;
+
+    std::FILE *fp = open_orbitsave();
+    int ret = 0;
+    unsigned long count = 0;
+    int oldrow = -1;
+    int oldcol = -1;
+    int oldrow1 = -1;
+    int oldcol1 = -1;
     while (g_color_iter++ <= g_max_count) // loop until keypress or maxit
     {
         // calc goes here
@@ -1869,38 +1858,25 @@ static int orbit3dlongcalc()
             }
         }
     }
+
     if (fp)
     {
         std::fclose(fp);
     }
+
     return ret;
 }
 
-
 static int orbit3dfloatcalc()
 {
-    std::FILE *fp;
-    unsigned long count;
-    int oldcol;
-    int oldrow;
-    int oldcol1;
-    int oldrow1;
-    int color;
-    int ret;
-    float3dvtinf inf;
-
-    // setup affine screen coord conversion
-    setup_convert_to_screen(&inf.cvt);
-
-    oldrow = -1;
-    oldcol = -1;
-    oldrow1 = -1;
-    oldcol1 = -1;
-    color = 2;
+    int color = 2;
     if (color >= g_colors)
     {
         color = 1;
     }
+
+    float3dvtinf inf;
+    setup_convert_to_screen(&inf.cvt); // setup affine screen coord conversion
     inf.orbit[0] = s_init_orbit_fp[0];
     inf.orbit[1] = s_init_orbit_fp[1];
     inf.orbit[2] = s_init_orbit_fp[2];
@@ -1910,9 +1886,6 @@ static int orbit3dfloatcalc()
         notdiskmsg();
     }
 
-    fp = open_orbitsave();
-
-    ret = 0;
     if (g_max_iterations > 0x1fffffL || g_max_count)
     {
         g_max_count = 0x7fffffffL;
@@ -1922,7 +1895,14 @@ static int orbit3dfloatcalc()
         g_max_count = g_max_iterations*1024L;
     }
     g_color_iter = 0L;
-    count = 0L;
+
+    std::FILE *fp = open_orbitsave();
+    int ret = 0;
+    unsigned long count = 0;
+    int oldrow = -1;
+    int oldcol = -1;
+    int oldrow1 = -1;
+    int oldcol1 = -1;
     while (g_color_iter++ <= g_max_count) // loop until keypress or maxit
     {
         // calc goes here
@@ -2000,10 +1980,12 @@ static int orbit3dfloatcalc()
             }
         }
     }
+
     if (fp)
     {
         std::fclose(fp);
     }
+
     return ret;
 }
 
