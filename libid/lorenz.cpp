@@ -2237,7 +2237,7 @@ int plotorbits2dsetup()
 {
     if (g_cur_fractal_specific->isinteger != 0)
     {
-        fractal_type tofloat = g_cur_fractal_specific->tofloat;
+        const fractal_type tofloat = g_cur_fractal_specific->tofloat;
         if (tofloat == fractal_type::NOFRACTAL)
         {
             return -1;
@@ -2280,6 +2280,7 @@ int plotorbits2dsetup()
     {
         g_plot = plothist;
     }
+
     return 1;
 }
 
