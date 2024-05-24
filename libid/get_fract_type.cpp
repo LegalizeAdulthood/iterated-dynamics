@@ -193,43 +193,8 @@ static int sel_fractype_help(int curkey, int choice)
     return 0;
 }
 
-static bool select_type_params( // prompt for new fractal type parameters
-    fractal_type newfractype,        // new fractal type
-    fractal_type oldfractype         // previous fractal type
-)
+void set_fractal_default_params(fractal_type oldfractype)
 {
-    bool ret;
-
-sel_type_restart:
-    ret = false;
-    g_fractal_type = newfractype;
-    g_cur_fractal_specific = &g_fractal_specific[+g_fractal_type];
-
-    if (g_fractal_type == fractal_type::LSYSTEM)
-    {
-        ValueSaver saved_help_mode(g_help_mode, help_labels::HT_LSYS);
-        if (get_file_entry(gfe_type::L_SYSTEM, "L-System", lsysmask, g_l_system_filename, g_l_system_name) < 0)
-        {
-            return true;
-        }
-    }
-    else if (g_fractal_type == fractal_type::FORMULA || g_fractal_type == fractal_type::FFORMULA)
-    {
-        ValueSaver saved_help_mode(g_help_mode, help_labels::HT_FORMULA);
-        if (get_file_entry(gfe_type::FORMULA, "Formula", formmask, g_formula_filename, g_formula_name) < 0)
-        {
-            return true;
-        }
-    }
-    else if (g_fractal_type == fractal_type::IFS || g_fractal_type == fractal_type::IFS3D)
-    {
-        ValueSaver saved_help_mode(g_help_mode, help_labels::HT_IFS);
-        if (get_file_entry(gfe_type::IFS, "IFS", ifsmask, g_ifs_filename, g_ifs_name) < 0)
-        {
-            return true;
-        }
-    }
-
     if ((g_fractal_type == fractal_type::BIFURCATION || g_fractal_type == fractal_type::LBIFURCATION)
         && !(oldfractype == fractal_type::BIFURCATION || oldfractype == fractal_type::LBIFURCATION))
     {
@@ -278,6 +243,46 @@ sel_type_restart:
         set_function_parm_defaults();
     }
     set_default_parms();
+}
+
+static bool select_type_params( // prompt for new fractal type parameters
+    fractal_type newfractype,        // new fractal type
+    fractal_type oldfractype         // previous fractal type
+)
+{
+    bool ret;
+
+sel_type_restart:
+    ret = false;
+    g_fractal_type = newfractype;
+    g_cur_fractal_specific = &g_fractal_specific[+g_fractal_type];
+
+    if (g_fractal_type == fractal_type::LSYSTEM)
+    {
+        ValueSaver saved_help_mode(g_help_mode, help_labels::HT_LSYS);
+        if (get_file_entry(gfe_type::L_SYSTEM, "L-System", lsysmask, g_l_system_filename, g_l_system_name) < 0)
+        {
+            return true;
+        }
+    }
+    else if (g_fractal_type == fractal_type::FORMULA || g_fractal_type == fractal_type::FFORMULA)
+    {
+        ValueSaver saved_help_mode(g_help_mode, help_labels::HT_FORMULA);
+        if (get_file_entry(gfe_type::FORMULA, "Formula", formmask, g_formula_filename, g_formula_name) < 0)
+        {
+            return true;
+        }
+    }
+    else if (g_fractal_type == fractal_type::IFS || g_fractal_type == fractal_type::IFS3D)
+    {
+        ValueSaver saved_help_mode(g_help_mode, help_labels::HT_IFS);
+        if (get_file_entry(gfe_type::IFS, "IFS", ifsmask, g_ifs_filename, g_ifs_name) < 0)
+        {
+            return true;
+        }
+    }
+
+    set_fractal_default_params(oldfractype);
 
     if (get_fract_params(false) < 0)
     {
