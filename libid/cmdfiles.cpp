@@ -622,10 +622,10 @@ static void reset_ifs_defn()
 }
 
 
-// mode = 0 command line @filename
-//        1 sstools.ini
-//        2 <@> command after startup
-//        3 command line @filename/setname
+// mode = AT_CMD_LINE           command line @filename
+//        SSTOOLS_INI           sstools.ini
+//        AT_AFTER_STARTUP      <@> command after startup
+//        AT_CMD_LINE_SET_NAME  command line @filename/setname
 static int cmdfile(std::FILE *handle, cmd_file mode)
 {
     // note that cmdfile could be open as text OR as binary

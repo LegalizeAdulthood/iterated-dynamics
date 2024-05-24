@@ -122,10 +122,10 @@ enum sound_flags
 
 enum class cmd_file
 {
-    AT_CMD_LINE = 0,
-    SSTOOLS_INI = 1,
-    AT_AFTER_STARTUP = 2,
-    AT_CMD_LINE_SET_NAME = 3
+    AT_CMD_LINE = 0,         // command line @filename
+    SSTOOLS_INI = 1,         // sstools.ini
+    AT_AFTER_STARTUP = 2,    // <@> command after startup
+    AT_CMD_LINE_SET_NAME = 3 // command line @filename/setname
 };
 
 enum cmdarg_flags
