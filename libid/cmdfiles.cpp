@@ -390,10 +390,9 @@ int load_commands(std::FILE *infile)
 {
     // when called, file is open in binary mode, positioned at the
     // '(' or '{' following the desired parameter set's name
-    int ret;
     initcorners = false;
     s_init_params = false; // reset flags for type=
-    ret = cmdfile(infile, cmd_file::AT_AFTER_STARTUP);
+    const int ret = cmdfile(infile, cmd_file::AT_AFTER_STARTUP);
 
     // PAR reads a file and sets color, don't read colors from GIF
     g_read_color = !(g_colors_preloaded && g_show_file == 0);
