@@ -200,8 +200,6 @@ static bool select_type_params( // prompt for new fractal type parameters
 {
     bool ret;
 
-    help_labels const old_help_mode = g_help_mode;
-
 sel_type_restart:
     ret = false;
     g_fractal_type = newfractype;
@@ -209,29 +207,26 @@ sel_type_restart:
 
     if (g_fractal_type == fractal_type::LSYSTEM)
     {
-        g_help_mode = help_labels::HT_LSYS;
+        ValueSaver saved_help_mode(g_help_mode, help_labels::HT_LSYS);
         if (get_file_entry(gfe_type::L_SYSTEM, "L-System", lsysmask, g_l_system_filename, g_l_system_name) < 0)
         {
-            ret = true;
-            goto sel_type_exit;
+            return true;
         }
     }
-    if (g_fractal_type == fractal_type::FORMULA || g_fractal_type == fractal_type::FFORMULA)
+    else if (g_fractal_type == fractal_type::FORMULA || g_fractal_type == fractal_type::FFORMULA)
     {
-        g_help_mode = help_labels::HT_FORMULA;
+        ValueSaver saved_help_mode(g_help_mode, help_labels::HT_FORMULA);
         if (get_file_entry(gfe_type::FORMULA, "Formula", formmask, g_formula_filename, g_formula_name) < 0)
         {
-            ret = true;
-            goto sel_type_exit;
+            return true;
         }
     }
-    if (g_fractal_type == fractal_type::IFS || g_fractal_type == fractal_type::IFS3D)
+    else if (g_fractal_type == fractal_type::IFS || g_fractal_type == fractal_type::IFS3D)
     {
-        g_help_mode = help_labels::HT_IFS;
+        ValueSaver saved_help_mode(g_help_mode, help_labels::HT_IFS);
         if (get_file_entry(gfe_type::IFS, "IFS", ifsmask, g_ifs_filename, g_ifs_name) < 0)
         {
-            ret = true;
-            goto sel_type_exit;
+            return true;
         }
     }
 
@@ -308,8 +303,6 @@ sel_type_restart:
         }
     }
 
-sel_type_exit:
-    g_help_mode = old_help_mode;
     return ret;
 }
 
