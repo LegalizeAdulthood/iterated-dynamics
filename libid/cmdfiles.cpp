@@ -493,7 +493,8 @@ static void initvars_fractal()          // init vars affecting calculation
     g_fractal_type = fractal_type::MANDEL;                          // initial type Set flag
     g_cur_fractal_specific = &g_fractal_specific[0];                //
     initcorners = false;                                            //
-    s_init_params = false;                                             //
+    s_init_params = false;                                          //
+    s_init_functions = false;                                       //
     g_bail_out = 0;                                                 // no user-entered bailout
     g_bof_match_book_images = true;                                 // use normal bof initialization to make bof images
     g_use_init_orbit = init_orbit_mode::normal;                     //
