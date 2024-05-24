@@ -99,42 +99,42 @@ int     g_show_dot = -1;           // color to show crawling graphics cursor
 int     g_size_dot = 0;            // size of dot crawling cursor
 record_colors_mode g_record_colors = record_colors_mode::none;       // default PAR color-writing method
 char    g_auto_show_dot = 0;        // dark, medium, bright
-bool    g_start_show_orbit = false;        // show orbits on at start of fractal
+bool    g_start_show_orbit{};        // show orbits on at start of fractal
 std::string g_read_filename;           // name of fractal input file
 std::string g_temp_dir;            // name of temporary directory
 std::string g_working_dir;            // name of directory for misc files
 std::string g_organize_formulas_dir;          // name of directory for orgfrm files
 std::string g_gif_filename_mask;
 std::string g_save_filename{"fract001"}; // save files using this name
-bool    g_potential_flag = false;        // continuous potential enabled?
-bool    g_potential_16bit = false;               // store 16 bit continuous potential values
-bool    g_dither_flag = false;    // true if want to dither GIFs
-bool    g_ask_video = false;       // flag for video prompting
-bool    g_float_flag = false;
+bool    g_potential_flag{};        // continuous potential enabled?
+bool    g_potential_16bit{};               // store 16 bit continuous potential values
+bool    g_dither_flag{};    // true if want to dither GIFs
+bool    g_ask_video{};       // flag for video prompting
+bool    g_float_flag{};
 int     g_biomorph = 0;           // flag for biomorph
 int     g_user_biomorph_value = 0;
 int     g_show_file = 0;           // zero if file display pending
-bool    g_random_seed_flag = false;
+bool    g_random_seed_flag{};
 int     g_random_seed = 0;              // Random number seeding flag and value
 int     g_decomp[2] = { 0 };      // Decomposition coloring
 long    g_distance_estimator = 0;
 int     g_distance_estimator_width_factor = 0;
-bool    g_overwrite_file = false;// true if file overwrite allowed
+bool    g_overwrite_file{};// true if file overwrite allowed
 int     g_sound_flag = 0;          // sound control bitfield... see sound.c for useage
 int     g_base_hertz = 0;          // sound=x/y/x hertz value
 int     g_cycle_limit = 0;         // color-rotator upper limit
 int     g_fill_color = 0;          // fillcolor: -1=normal
-bool g_finite_attractor = false;        // finite attractor logic
+bool g_finite_attractor{};        // finite attractor logic
 display_3d_modes g_display_3d = display_3d_modes::NONE; // 3D display flag: 0 = OFF
-bool    g_overlay_3d = false;      // 3D overlay flag
-bool    g_check_cur_dir = false;    // flag to check current dir for files
+bool    g_overlay_3d{};      // 3D overlay flag
+bool    g_check_cur_dir{};    // flag to check current dir for files
 batch_modes g_init_batch = batch_modes::NONE; // 1 if batch run (no kbd)
 int     g_init_save_time = 0;       // autosave minutes
 DComplex  g_init_orbit = { 0.0 };  // initial orbitvalue
 init_orbit_mode g_use_init_orbit = init_orbit_mode::normal;       // flag for initorbit
 int     g_init_mode = 0;        // initial video mode
 int     g_init_cycle_limit = 0;     // initial cycle limit
-bool    g_use_center_mag = false;         // use center-mag corners
+bool    g_use_center_mag{};         // use center-mag corners
 long    g_bail_out = 0;            // user input bailout value
 double  g_inversion[3] = { 0.0 }; // radius, xcenter, ycenter
 int     g_color_cycle_range_lo = 0;
@@ -142,29 +142,29 @@ int     g_color_cycle_range_hi = 0;          // cycling color range
 std::vector<int> g_iteration_ranges;        // iter->color ranges mapping
 int     g_iteration_ranges_len = 0;          // size of ranges array
 BYTE g_map_clut[256][3];          // map= (default colors)
-bool g_map_specified = false;     // map= specified
+bool g_map_specified{};     // map= specified
 BYTE *mapdacbox = nullptr;      // map= (default colors)
 int     g_color_state = 0;         // 0, g_dac_box matches default (bios or map=)
                                 // 1, g_dac_box matches no known defined map
                                 // 2, g_dac_box matches the colorfile map
-bool    g_colors_preloaded = false; // if g_dac_box preloaded for next mode select
+bool    g_colors_preloaded{}; // if g_dac_box preloaded for next mode select
 bool    g_read_color = true;  // flag for reading color from GIF
 double  g_math_tol[2] = {.05, .05}; // For math transition
-bool g_targa_out = false;                 // 3D fullcolor flag
-bool g_truecolor = false;                 // escape time truecolor flag
+bool g_targa_out{};                 // 3D fullcolor flag
+bool g_truecolor{};                 // escape time truecolor flag
 true_color_mode g_true_mode = true_color_mode::default_color;               // truecolor coloring scheme
 std::string g_color_file;          // from last <l> <s> or colors=@filename
-bool g_new_bifurcation_functions_loaded = false; // if function loaded for new bifs
+bool g_new_bifurcation_functions_loaded{}; // if function loaded for new bifs
 float   g_screen_aspect = DEFAULT_ASPECT;   // aspect ratio of the screen
 float   g_aspect_drift = DEFAULT_ASPECT_DRIFT;  // how much drift is allowed and
                                 // still forced to screenaspect
 
 // true - reset viewwindows prior to a restore and
 // do not display warnings when video mode changes during restore
-bool g_fast_restore = false;
+bool g_fast_restore{};
 
 // true: user has specified a directory for Orgform formula compilation files
-bool g_organize_formulas_search = false;
+bool g_organize_formulas_search{};
 
 int     g_orbit_save_flags = 0;          // for IFS and LORENZ to output acrospin file
 std::string g_orbit_save_name{"orbits.raw"};
@@ -173,14 +173,14 @@ int g_transparent_color_3d[2] = { 0 }; // transparency min/max values
 long    g_log_map_flag = 0;            // Logarithmic palette flag: 0 = no
 
 int     g_log_map_fly_calculate = 0;       // calculate logmap on-the-fly
-bool    g_log_map_auto_calculate = false;          // auto calculate logmap
+bool    g_log_map_auto_calculate{};          // auto calculate logmap
 bool    g_bof_match_book_images = true;                  // Flag to make inside=bof options not duplicate bof images
 
-bool    g_escape_exit = false;    // set to true to avoid the "are you sure?" screen
+bool    g_escape_exit{};    // set to true to avoid the "are you sure?" screen
 bool g_first_init = true;                 // first time into cmdfiles?
-static int init_rseed = 0;
-static bool initcorners = false;
-static bool initparams = false;
+static int init_rseed{};
+static bool initcorners{};
+static bool initparams{};
 fractalspecificstuff *g_cur_fractal_specific = nullptr;
 
 std::string g_formula_filename;      // file to find (type=)formulas in
@@ -193,7 +193,7 @@ std::string g_ifs_filename;          // file to find (type=)IFS in
 std::string g_ifs_name;              // Name of the IFS def'n (if not null)
 id::SearchPath g_search_for;         //
 std::vector<float> g_ifs_definition; // ifs parameters
-bool g_ifs_type = false;             // false=2d, true=3d
+bool g_ifs_type{};             // false=2d, true=3d
 
 BYTE g_text_color[] =
 {
@@ -263,7 +263,7 @@ static void process_sstools_ini()
 
 static void process_simple_command(char *curarg)
 {
-    bool processed = false;
+    bool processed{};
     if (std::strchr(curarg, '=') == nullptr)
     {
         // not xxx=yyy, so check for gif
@@ -1700,7 +1700,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         {
             return bad_arg(curarg);
         }
-        bool resized = false;
+        bool resized{};
         try
         {
             g_iteration_ranges.resize(entries);
