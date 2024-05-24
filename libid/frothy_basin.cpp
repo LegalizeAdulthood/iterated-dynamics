@@ -136,34 +136,30 @@ static void set_Froth_palette()
 
 bool froth_setup()
 {
-    double sin_theta;
-    double cos_theta;
-
-    sin_theta = SQRT3/2; // sin(2*PI/3)
-    cos_theta = -0.5;    // cos(2*PI/3)
+    constexpr double sin_theta = SQRT3 / 2; // sin(2*PI/3)
+    constexpr double cos_theta = -0.5;      // cos(2*PI/3)
 
     // for the all important backwards compatibility
     if (g_params[0] != 2)
     {
         g_params[0] = 1;
     }
-    s_fsp.repeat_mapping = (int)g_params[0] == 2;
     if (g_params[1] != 0)
     {
         g_params[1] = 1;
     }
+    s_fsp.repeat_mapping = (int)g_params[0] == 2;
     s_fsp.altcolor = (int)g_params[1];
     s_fsp.fl.f.a = g_params[2];
-
     s_fsp.attractors = std::fabs(s_fsp.fl.f.a) <= FROTH_CRITICAL_A ? (!s_fsp.repeat_mapping ? 3 : 6)
                          : (!s_fsp.repeat_mapping ? 2 : 3);
 
     // new improved values
     // 0.5 is the value that causes the mapping to reach a minimum
-    double x0 = 0.5;
+    constexpr double x0 = 0.5;
     // a/2 is the value that causes the y value to be invariant over the mappings
     s_fsp.fl.f.halfa = s_fsp.fl.f.a/2;
-    double y0 = s_fsp.fl.f.halfa;
+    const double y0 = s_fsp.fl.f.halfa;
     s_fsp.fl.f.top_x1 = froth_top_x_mapping(x0);
     s_fsp.fl.f.top_x2 = froth_top_x_mapping(s_fsp.fl.f.top_x1);
     s_fsp.fl.f.top_x3 = froth_top_x_mapping(s_fsp.fl.f.top_x2);
