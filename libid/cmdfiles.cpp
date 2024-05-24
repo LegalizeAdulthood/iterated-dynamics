@@ -146,9 +146,7 @@ int     g_iteration_ranges_len{};          // size of ranges array
 BYTE g_map_clut[256][3];          // map= (default colors)
 bool g_map_specified{};     // map= specified
 BYTE *mapdacbox = nullptr;      // map= (default colors)
-int     g_color_state{};         // 0, g_dac_box matches default (bios or map=)
-                                // 1, g_dac_box matches no known defined map
-                                // 2, g_dac_box matches the colorfile map
+color_state g_color_state{color_state::DEFAULT}; // g_dac_box matches default (bios or map=)
 bool    g_colors_preloaded{}; // if g_dac_box preloaded for next mode select
 bool    g_read_color = true;  // flag for reading color from GIF
 double  g_math_tol[2] = {.05, .05}; // For math transition
@@ -530,7 +528,7 @@ static void initvars_fractal()
     g_iteration_ranges.clear();                                     //
     g_iteration_ranges_len = 0;                                     //
     g_use_center_mag = true;                                        // use center-mag, not corners
-    g_color_state = 0;                                              //
+    g_color_state = color_state::DEFAULT;                           //
     g_colors_preloaded = false;                                     //
     g_color_cycle_range_lo = 1;                                     //
     g_color_cycle_range_hi = 255;                                   // color cycling default range
@@ -3597,7 +3595,7 @@ static int parse_colors(char const *value)
             {
                 init_msg("", &value[1], cmd_file::AT_CMD_LINE_SET_NAME);
             }
-            g_color_state = 2;
+            g_color_state = color_state::MAP_FILE;
         }
     }
     else
@@ -3693,7 +3691,7 @@ static int parse_colors(char const *value)
             g_dac_box[i][0] = g_dac_box[i][1];
             ++i;
         }
-        g_color_state = 1;
+        g_color_state = color_state::UNKNOWN;
     }
     g_colors_preloaded = true;
     std::memcpy(g_old_dac_box, g_dac_box, 256*3);

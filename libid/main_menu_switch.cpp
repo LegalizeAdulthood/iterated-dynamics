@@ -654,7 +654,7 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
         rotate((*kbdchar == 'c') ? 0 : ((*kbdchar == '+') ? 1 : -1));
         if (std::memcmp(g_old_dac_box, g_dac_box, 256 * 3))
         {
-            g_color_state = 1;
+            g_color_state = color_state::UNKNOWN;
             save_history_info();
         }
         return main_state::CONTINUE;
@@ -683,7 +683,7 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
             g_help_mode = old_help_mode;
             if (std::memcmp(g_old_dac_box, g_dac_box, 256 * 3))
             {
-                g_color_state = 1;
+                g_color_state = color_state::UNKNOWN;
                 save_history_info();
             }
         }

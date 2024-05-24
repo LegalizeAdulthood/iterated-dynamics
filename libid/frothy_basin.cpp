@@ -95,7 +95,7 @@ static void set_Froth_palette()
 {
     char const *mapname;
 
-    if (g_color_state != 0)   // 0 means g_dac_box matches default
+    if (g_color_state != color_state::DEFAULT)   // 0 means g_dac_box matches default
     {
         return;
     }
@@ -129,7 +129,7 @@ static void set_Froth_palette()
         {
             return;
         }
-        g_color_state = 0; // treat map as default
+        g_color_state = color_state::DEFAULT; // treat map as default
         spindac(0, 1);
     }
 }

@@ -158,6 +158,13 @@ enum class display_3d_modes
     B_COMMAND = 2
 };
 
+enum class color_state
+{
+    DEFAULT = 0,  // g_dac_box matches default (bios or map=)
+    UNKNOWN = 1,  // g_dac_box matches no known defined map
+    MAP_FILE = 2, // g_dac_box matches the color file map
+};
+
 extern bool                  g_ask_video;
 extern float                 g_aspect_drift;
 extern char                  g_auto_show_dot;
@@ -169,7 +176,7 @@ extern bool                  g_check_cur_dir;
 extern int                   g_color_cycle_range_hi;
 extern int                   g_color_cycle_range_lo;
 extern std::string           g_color_file;
-extern int                   g_color_state;
+extern color_state           g_color_state;
 extern bool                  g_colors_preloaded;
 extern std::string           g_command_file;
 extern std::string           g_command_name;
