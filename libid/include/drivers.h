@@ -346,6 +346,10 @@ inline void driver_debug_text(const char *text)
 {
     g_driver->debug_text(text);
 }
+inline void driver_debug_text(const std::string &text)
+{
+    driver_debug_text(text.c_str());
+}
 // guarantees EOL
 inline void driver_debug_line(const char *line)
 {
