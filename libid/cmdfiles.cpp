@@ -180,7 +180,7 @@ bool    g_escape_exit{};    // set to true to avoid the "are you sure?" screen
 bool g_first_init = true;                 // first time into cmdfiles?
 static int init_rseed{};
 static bool initcorners{};
-static bool initparams{};
+static bool s_init_params{}; // params set via params=?
 fractalspecificstuff *g_cur_fractal_specific = nullptr;
 
 std::string g_formula_filename;      // file to find (type=)formulas in
@@ -392,7 +392,7 @@ int load_commands(std::FILE *infile)
     // '(' or '{' following the desired parameter set's name
     int ret;
     initcorners = false;
-    initparams = false; // reset flags for type=
+    s_init_params = false; // reset flags for type=
     ret = cmdfile(infile, cmd_file::AT_AFTER_STARTUP);
 
     // PAR reads a file and sets color, don't read colors from GIF
@@ -492,7 +492,7 @@ static void initvars_fractal()          // init vars affecting calculation
     g_fractal_type = fractal_type::MANDEL;                          // initial type Set flag
     g_cur_fractal_specific = &g_fractal_specific[0];                //
     initcorners = false;                                            //
-    initparams = false;                                             //
+    s_init_params = false;                                             //
     g_bail_out = 0;                                                 // no user-entered bailout
     g_bof_match_book_images = true;                                 // use normal bof initialization to make bof images
     g_use_init_orbit = init_orbit_mode::normal;                     //
@@ -1418,7 +1418,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
             g_y_3rd = g_y_min;
             g_y_max = g_cur_fractal_specific->ymax;
         }
-        if (!initparams)
+        if (!s_init_params)
         {
             load_params(g_fractal_type);
         }
@@ -1851,7 +1851,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         {
             return bad_arg(curarg);
         }
-        initparams = true;
+        s_init_params = true;
         for (int k = 0; k < MAX_PARAMS; ++k)
         {
             g_params[k] = (k < totparms) ? floatval[k] : 0.0;
