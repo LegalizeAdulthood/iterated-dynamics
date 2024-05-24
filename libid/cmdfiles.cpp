@@ -25,6 +25,7 @@
 #include "fractals.h"
 #include "fractype.h"
 #include "framain2.h"
+#include "get_fract_type.h"
 #include "get_prec_big_float.h"
 #include "goodbye.h"
 #include "has_ext.h"
@@ -181,6 +182,7 @@ bool g_first_init = true;                 // first time into cmdfiles?
 static int init_rseed{};
 static bool initcorners{};
 static bool s_init_params{}; // params set via params=?
+static bool s_init_functions{}; // trig functions set via function=?
 fractalspecificstuff *g_cur_fractal_specific = nullptr;
 
 std::string g_formula_filename;      // file to find (type=)formulas in
@@ -1406,6 +1408,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         {
             return bad_arg(curarg);
         }
+        const fractal_type old_fractal_type{g_fractal_type};
         g_fractal_type = static_cast<fractal_type>(k);
         g_cur_fractal_specific = &g_fractal_specific[+g_fractal_type];
         if (!initcorners)
@@ -1416,6 +1419,10 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
             g_y_min = g_cur_fractal_specific->ymin;
             g_y_3rd = g_y_min;
             g_y_max = g_cur_fractal_specific->ymax;
+        }
+        if (!s_init_functions)
+        {
+            set_fractal_default_functions(old_fractal_type);
         }
         if (!s_init_params)
         {
@@ -1522,6 +1529,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
             ++value;
         }
         g_new_bifurcation_functions_loaded = true; // for old bifs
+        s_init_functions = true;
         return CMDARG_FRACTAL_PARAM;
     }
 
