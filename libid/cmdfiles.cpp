@@ -91,14 +91,14 @@ static int  get_bf(bf_t bf, char const *curarg);
 static bool isabigfloat(char const *str);
 
 // variables defined by the command line/files processor
-int     g_stop_pass = 0;           // stop at this guessing pass early
-int     g_distance_estimator_x_dots = 0;            // xdots to use for video independence
-int     g_distance_estimator_y_dots = 0;            // ydots to use for video independence
-int     g_bf_digits = 0;           // digits to use (force) for bf_math
+int     g_stop_pass{};           // stop at this guessing pass early
+int     g_distance_estimator_x_dots{};            // xdots to use for video independence
+int     g_distance_estimator_y_dots{};            // ydots to use for video independence
+int     g_bf_digits{};           // digits to use (force) for bf_math
 int     g_show_dot = -1;           // color to show crawling graphics cursor
-int     g_size_dot = 0;            // size of dot crawling cursor
+int     g_size_dot{};            // size of dot crawling cursor
 record_colors_mode g_record_colors = record_colors_mode::none;       // default PAR color-writing method
-char    g_auto_show_dot = 0;        // dark, medium, bright
+char    g_auto_show_dot{};        // dark, medium, bright
 bool    g_start_show_orbit{};        // show orbits on at start of fractal
 std::string g_read_filename;           // name of fractal input file
 std::string g_temp_dir;            // name of temporary directory
@@ -111,40 +111,40 @@ bool    g_potential_16bit{};               // store 16 bit continuous potential 
 bool    g_dither_flag{};    // true if want to dither GIFs
 bool    g_ask_video{};       // flag for video prompting
 bool    g_float_flag{};
-int     g_biomorph = 0;           // flag for biomorph
-int     g_user_biomorph_value = 0;
-int     g_show_file = 0;           // zero if file display pending
+int     g_biomorph{};           // flag for biomorph
+int     g_user_biomorph_value{};
+int     g_show_file{};           // zero if file display pending
 bool    g_random_seed_flag{};
-int     g_random_seed = 0;              // Random number seeding flag and value
+int     g_random_seed{};              // Random number seeding flag and value
 int     g_decomp[2] = { 0 };      // Decomposition coloring
-long    g_distance_estimator = 0;
-int     g_distance_estimator_width_factor = 0;
+long    g_distance_estimator{};
+int     g_distance_estimator_width_factor{};
 bool    g_overwrite_file{};// true if file overwrite allowed
-int     g_sound_flag = 0;          // sound control bitfield... see sound.c for useage
-int     g_base_hertz = 0;          // sound=x/y/x hertz value
-int     g_cycle_limit = 0;         // color-rotator upper limit
-int     g_fill_color = 0;          // fillcolor: -1=normal
+int     g_sound_flag{};          // sound control bitfield... see sound.c for useage
+int     g_base_hertz{};          // sound=x/y/x hertz value
+int     g_cycle_limit{};         // color-rotator upper limit
+int     g_fill_color{};          // fillcolor: -1=normal
 bool g_finite_attractor{};        // finite attractor logic
 display_3d_modes g_display_3d = display_3d_modes::NONE; // 3D display flag: 0 = OFF
 bool    g_overlay_3d{};      // 3D overlay flag
 bool    g_check_cur_dir{};    // flag to check current dir for files
 batch_modes g_init_batch = batch_modes::NONE; // 1 if batch run (no kbd)
-int     g_init_save_time = 0;       // autosave minutes
+int     g_init_save_time{};       // autosave minutes
 DComplex  g_init_orbit = { 0.0 };  // initial orbitvalue
 init_orbit_mode g_use_init_orbit = init_orbit_mode::normal;       // flag for initorbit
-int     g_init_mode = 0;        // initial video mode
-int     g_init_cycle_limit = 0;     // initial cycle limit
+int     g_init_mode{};        // initial video mode
+int     g_init_cycle_limit{};     // initial cycle limit
 bool    g_use_center_mag{};         // use center-mag corners
-long    g_bail_out = 0;            // user input bailout value
+long    g_bail_out{};            // user input bailout value
 double  g_inversion[3] = { 0.0 }; // radius, xcenter, ycenter
-int     g_color_cycle_range_lo = 0;
-int     g_color_cycle_range_hi = 0;          // cycling color range
+int     g_color_cycle_range_lo{};
+int     g_color_cycle_range_hi{};          // cycling color range
 std::vector<int> g_iteration_ranges;        // iter->color ranges mapping
-int     g_iteration_ranges_len = 0;          // size of ranges array
+int     g_iteration_ranges_len{};          // size of ranges array
 BYTE g_map_clut[256][3];          // map= (default colors)
 bool g_map_specified{};     // map= specified
 BYTE *mapdacbox = nullptr;      // map= (default colors)
-int     g_color_state = 0;         // 0, g_dac_box matches default (bios or map=)
+int     g_color_state{};         // 0, g_dac_box matches default (bios or map=)
                                 // 1, g_dac_box matches no known defined map
                                 // 2, g_dac_box matches the colorfile map
 bool    g_colors_preloaded{}; // if g_dac_box preloaded for next mode select
@@ -166,13 +166,13 @@ bool g_fast_restore{};
 // true: user has specified a directory for Orgform formula compilation files
 bool g_organize_formulas_search{};
 
-int     g_orbit_save_flags = 0;          // for IFS and LORENZ to output acrospin file
+int     g_orbit_save_flags{};          // for IFS and LORENZ to output acrospin file
 std::string g_orbit_save_name{"orbits.raw"};
-int g_orbit_delay = 0;            // clock ticks delating orbit release
+int g_orbit_delay{};            // clock ticks delating orbit release
 int g_transparent_color_3d[2] = { 0 }; // transparency min/max values
-long    g_log_map_flag = 0;            // Logarithmic palette flag: 0 = no
+long    g_log_map_flag{};            // Logarithmic palette flag: 0 = no
 
-int     g_log_map_fly_calculate = 0;       // calculate logmap on-the-fly
+int     g_log_map_fly_calculate{};       // calculate logmap on-the-fly
 bool    g_log_map_auto_calculate{};          // auto calculate logmap
 bool    g_bof_match_book_images = true;                  // Flag to make inside=bof options not duplicate bof images
 
@@ -629,8 +629,8 @@ static int cmdfile(std::FILE *handle, cmd_file mode)
     // note that cmdfile could be open as text OR as binary
     // binary is used in @ command processing for reasonable speed note/point
     int i;
-    int lineoffset = 0;
-    int changeflag = 0; // &1 fractal stuff chgd, &2 3d stuff chgd
+    int lineoffset{};
+    int changeflag{}; // &1 fractal stuff chgd, &2 3d stuff chgd
     char linebuf[513];
     char cmdbuf[10000] = { 0 };
 
@@ -673,7 +673,7 @@ static int next_command(
     int *lineoffset,
     cmd_file mode)
 {
-    int cmdlen = 0;
+    int cmdlen{};
     char *lineptr;
     lineptr = linebuf + *lineoffset;
     while (true)
@@ -810,20 +810,20 @@ static int bad_arg(const char *curarg)
 
 int cmdarg(char *curarg, cmd_file mode) // process a single argument
 {
-    int     valuelen = 0;               // length of value
-    int     numval = 0;                 // numeric value of arg
+    int     valuelen{};               // length of value
+    int     numval{};                 // numeric value of arg
     char    charval[16] = { 0 };        // first character of arg
     int     yesnoval[16] = { 0 };       // 0 if 'n', 1 if 'y', -1 if not
     double  ftemp = 0.0;
     char    *argptr2 = nullptr;
-    int     totparms = 0;               // # of / delimited parms
-    int     intparms = 0;               // # of / delimited ints
-    int     floatparms = 0;             // # of / delimited floats
+    int     totparms{};               // # of / delimited parms
+    int     intparms{};               // # of / delimited ints
+    int     floatparms{};             // # of / delimited floats
     int     intval[64] = { 0 };         // pre-parsed integer parms
     double  floatval[16] = { 0.0 };     // pre-parsed floating parms
     char const *floatvalstr[16];        // pointers to float vals
-    char    tmpc = 0;
-    int     lastarg = 0;
+    char    tmpc{};
+    int     lastarg{};
     double Xctr = 0.0;
     double Yctr = 0.0;
     double Xmagfactor = 0.0;
@@ -896,7 +896,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
                 yesnoval[totparms] = 1;
             }
         }
-        char next = 0;
+        char next{};
         if (std::sscanf(argptr, "%c%c", &next, &tmpc) > 0    // NULL entry
             && (next == '/' || next == '=') && tmpc == '/')
         {
@@ -1814,7 +1814,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
 
     if (variable == "potential")     // potential=?
     {
-        int k = 0;
+        int k{};
         while (k < 3 && *value)
         {
             if (k == 1)
@@ -3548,7 +3548,7 @@ static void parse_textcolors(char const *value)
     }
     else
     {
-        int k = 0;
+        int k{};
         while (k < sizeof(g_text_color))
         {
             if (*value == 0)
@@ -3605,8 +3605,8 @@ static int parse_colors(char const *value)
     }
     else
     {
-        int smooth = 0;
-        int i = 0;
+        int smooth{};
+        int i{};
         while (*value)
         {
             if (i >= 256)
@@ -3659,7 +3659,7 @@ static int parse_colors(char const *value)
                     {
                         int spread = smooth + 1;
                         int start = i - spread;
-                        int cnum = 0;
+                        int cnum{};
                         if ((k - (int)g_dac_box[start][j]) == 0)
                         {
                             while (++cnum < spread)
@@ -3890,9 +3890,9 @@ static bool isabigfloat(char const *str)
     // [+|-]numbers][.]numbers[+|-][e|g]numbers
     bool result = true;
     char const *s = str;
-    int numdot = 0;
-    int nume = 0;
-    int numsign = 0;
+    int numdot{};
+    int nume{};
+    int numsign{};
     while (*s != 0 && *s != '/' && *s != ' ')
     {
         if (*s == '-' || *s == '+')
