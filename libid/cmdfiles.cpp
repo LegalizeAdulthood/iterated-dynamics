@@ -814,7 +814,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
     int     numval{};                 // numeric value of arg
     char    charval[16] = { 0 };        // first character of arg
     int     yesnoval[16] = { 0 };       // 0 if 'n', 1 if 'y', -1 if not
-    double  ftemp = 0.0;
+    double  ftemp{};
     char    *argptr2 = nullptr;
     int     totparms{};               // # of / delimited parms
     int     intparms{};               // # of / delimited ints
@@ -824,12 +824,12 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
     char const *floatvalstr[16];        // pointers to float vals
     char    tmpc{};
     int     lastarg{};
-    double Xctr = 0.0;
-    double Yctr = 0.0;
-    double Xmagfactor = 0.0;
-    double Rotation = 0.0;
-    double Skew = 0.0;
-    LDBL Magnification = 0.0;
+    double Xctr{};
+    double Yctr{};
+    double Xmagfactor{};
+    double Rotation{};
+    double Skew{};
+    LDBL Magnification{};
     bf_t bXctr;
     bf_t bYctr;
 
