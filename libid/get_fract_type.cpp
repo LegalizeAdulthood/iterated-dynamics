@@ -193,7 +193,7 @@ static int sel_fractype_help(int curkey, int choice)
     return 0;
 }
 
-void set_fractal_default_params(fractal_type oldfractype)
+void set_fractal_default_functions(fractal_type oldfractype)
 {
     if ((g_fractal_type == fractal_type::BIFURCATION || g_fractal_type == fractal_type::LBIFURCATION)
         && !(oldfractype == fractal_type::BIFURCATION || oldfractype == fractal_type::LBIFURCATION))
@@ -242,7 +242,6 @@ void set_fractal_default_params(fractal_type oldfractype)
     {
         set_function_parm_defaults();
     }
-    set_default_parms();
 }
 
 static bool select_type_params( // prompt for new fractal type parameters
@@ -282,7 +281,8 @@ sel_type_restart:
         }
     }
 
-    set_fractal_default_params(oldfractype);
+    set_fractal_default_functions(oldfractype);
+    set_default_parms();
 
     if (get_fract_params(false) < 0)
     {
