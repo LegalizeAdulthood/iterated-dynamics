@@ -615,10 +615,7 @@ static void initvars_3d()               // init vars affecting 3d
 
 static void reset_ifs_defn()
 {
-    if (!g_ifs_definition.empty())
-    {
-        g_ifs_definition.clear();
-    }
+    g_ifs_definition.clear();
 }
 
 
