@@ -230,28 +230,28 @@ sel_type_restart:
         }
     }
 
-    if (((g_fractal_type == fractal_type::BIFURCATION) || (g_fractal_type == fractal_type::LBIFURCATION))
-        && !((oldfractype == fractal_type::BIFURCATION) || (oldfractype == fractal_type::LBIFURCATION)))
+    if ((g_fractal_type == fractal_type::BIFURCATION || g_fractal_type == fractal_type::LBIFURCATION)
+        && !(oldfractype == fractal_type::BIFURCATION || oldfractype == fractal_type::LBIFURCATION))
     {
         set_trig_array(0, "ident");
     }
-    if (((g_fractal_type == fractal_type::BIFSTEWART) || (g_fractal_type == fractal_type::LBIFSTEWART))
-        && !((oldfractype == fractal_type::BIFSTEWART) || (oldfractype == fractal_type::LBIFSTEWART)))
+    if ((g_fractal_type == fractal_type::BIFSTEWART || g_fractal_type == fractal_type::LBIFSTEWART)
+        && !(oldfractype == fractal_type::BIFSTEWART || oldfractype == fractal_type::LBIFSTEWART))
     {
         set_trig_array(0, "ident");
     }
-    if (((g_fractal_type == fractal_type::BIFLAMBDA) || (g_fractal_type == fractal_type::LBIFLAMBDA))
-        && !((oldfractype == fractal_type::BIFLAMBDA) || (oldfractype == fractal_type::LBIFLAMBDA)))
+    if ((g_fractal_type == fractal_type::BIFLAMBDA || g_fractal_type == fractal_type::LBIFLAMBDA)
+        && !(oldfractype == fractal_type::BIFLAMBDA || oldfractype == fractal_type::LBIFLAMBDA))
     {
         set_trig_array(0, "ident");
     }
-    if (((g_fractal_type == fractal_type::BIFEQSINPI) || (g_fractal_type == fractal_type::LBIFEQSINPI))
-        && !((oldfractype == fractal_type::BIFEQSINPI) || (oldfractype == fractal_type::LBIFEQSINPI)))
+    if ((g_fractal_type == fractal_type::BIFEQSINPI || g_fractal_type == fractal_type::LBIFEQSINPI)
+        && !(oldfractype == fractal_type::BIFEQSINPI || oldfractype == fractal_type::LBIFEQSINPI))
     {
         set_trig_array(0, "sin");
     }
-    if (((g_fractal_type == fractal_type::BIFADSINPI) || (g_fractal_type == fractal_type::LBIFADSINPI))
-        && !((oldfractype == fractal_type::BIFADSINPI) || (oldfractype == fractal_type::LBIFADSINPI)))
+    if ((g_fractal_type == fractal_type::BIFADSINPI || g_fractal_type == fractal_type::LBIFADSINPI)
+        && !(oldfractype == fractal_type::BIFADSINPI || oldfractype == fractal_type::LBIFADSINPI))
     {
         set_trig_array(0, "sin");
     }
@@ -260,14 +260,14 @@ sel_type_restart:
      * Next assumes that user going between popcorn and popcornjul
      * might not want to change function variables
      */
-    if (((g_fractal_type == fractal_type::FPPOPCORN)
-            || (g_fractal_type == fractal_type::LPOPCORN)
-            || (g_fractal_type == fractal_type::FPPOPCORNJUL)
-            || (g_fractal_type == fractal_type::LPOPCORNJUL))
-        && !((oldfractype == fractal_type::FPPOPCORN)
-            || (oldfractype == fractal_type::LPOPCORN)
-            || (oldfractype == fractal_type::FPPOPCORNJUL)
-            || (oldfractype == fractal_type::LPOPCORNJUL)))
+    if ((g_fractal_type == fractal_type::FPPOPCORN
+            || g_fractal_type == fractal_type::LPOPCORN
+            || g_fractal_type == fractal_type::FPPOPCORNJUL
+            || g_fractal_type == fractal_type::LPOPCORNJUL)
+        && !(oldfractype == fractal_type::FPPOPCORN
+            || oldfractype == fractal_type::LPOPCORN
+            || oldfractype == fractal_type::FPPOPCORNJUL
+            || oldfractype == fractal_type::LPOPCORNJUL))
     {
         set_function_parm_defaults();
     }
