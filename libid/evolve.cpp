@@ -286,7 +286,6 @@ void varydbl(GENEBASE gene[], int randval, int i)
     }
     break;
     }
-    return;
 }
 
 int varyint(int randvalue, int limit, variations mode)
@@ -346,7 +345,6 @@ void varyinside(GENEBASE gene[], int randval, int i)
     {
         *(int*)gene[i].addr = choices[wrapped_positive_varyint(randval, 9, gene[i].mutate)];
     }
-    return;
 }
 
 void varyoutside(GENEBASE gene[], int randval, int i)
@@ -356,7 +354,6 @@ void varyoutside(GENEBASE gene[], int randval, int i)
     {
         *(int*)gene[i].addr = choices[wrapped_positive_varyint(randval, 8, gene[i].mutate)];
     }
-    return;
 }
 
 void varybotest(GENEBASE gene[], int randval, int i)
@@ -377,7 +374,6 @@ void varybotest(GENEBASE gene[], int randval, int i)
         // move this next bit to varybot where it belongs
         set_bailout_formula(g_bail_out_test);
     }
-    return;
 }
 
 void varypwr2(GENEBASE gene[], int randval, int i)
@@ -387,7 +383,6 @@ void varypwr2(GENEBASE gene[], int randval, int i)
     {
         *(int*)gene[i].addr = choices[wrapped_positive_varyint(randval, 9, gene[i].mutate)];
     }
-    return;
 }
 
 void varytrig(GENEBASE gene[], int randval, int i)
@@ -398,7 +393,6 @@ void varytrig(GENEBASE gene[], int randval, int i)
             static_cast<trig_fn>(wrapped_positive_varyint(randval, g_num_trig_functions, gene[i].mutate));
     }
     set_trig_pointers(5); //set all trig ptrs up
-    return;
 }
 
 void varyinv(GENEBASE gene[], int randval, int i)
@@ -911,7 +905,6 @@ void set_current_params()
     g_evolve_y_parameter_range = g_cur_fractal_specific->ymax - g_cur_fractal_specific->ymin;
     g_evolve_new_y_parameter_offset = - (g_evolve_y_parameter_range / 2);
     g_evolve_y_parameter_offset = g_evolve_new_y_parameter_offset;
-    return;
 }
 
 void fiddleparms(GENEBASE gene[], int ecount)
@@ -1047,7 +1040,6 @@ void drawparmbox(int mode)
         std::copy(&image_box_values[0], &image_box_values[g_box_count], &g_box_values[0]);
         dispbox();
     }
-    return;
 }
 
 void set_evolve_ranges()
@@ -1061,7 +1053,6 @@ void set_evolve_ranges()
 
     g_evolve_new_discrete_x_parameter_offset = (char)(g_evolve_discrete_x_parameter_offset +(g_evolve_param_grid_x- g_evolve_image_grid_size /2));
     g_evolve_new_discrete_y_parameter_offset = (char)(g_evolve_discrete_y_parameter_offset +(lclpy- g_evolve_image_grid_size /2));
-    return;
 }
 
 void spiralmap(int count)

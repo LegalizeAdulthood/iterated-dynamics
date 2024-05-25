@@ -264,19 +264,16 @@ void Arctanhz(DComplex z, DComplex *rz)
     {
         rz->x = 0;
         rz->y = std::atan(z.y);
-        return;
     }
     else
     {
         if (std::fabs(z.x) == 1.0 && z.y == 0.0)
         {
-            return;
         }
         else if (std::fabs(z.x) < 1.0 && z.y == 0.0)
         {
             rz->x = std::log((1+z.x)/(1-z.x))/2;
             rz->y = 0;
-            return;
         }
         else
         {
@@ -288,7 +285,6 @@ void Arctanhz(DComplex z, DComplex *rz)
             FPUcplxlog(&temp2, &temp2);
             rz->x = .5*temp2.x;
             rz->y = .5*temp2.y;       // rz = .5*temp2
-            return;
         }
     }
 }   // end. Arctanhz

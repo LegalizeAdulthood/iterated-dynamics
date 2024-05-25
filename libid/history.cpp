@@ -182,7 +182,7 @@ void save_history_info()
     current.inversion[0] = g_inversion[0];
     current.inversion[1] = g_inversion[1];
     current.inversion[2] = g_inversion[2];
-    current.decomp = g_decomp[0];;
+    current.decomp = g_decomp[0];
     current.biomorph = g_biomorph;
     current.force_symmetry = g_force_symmetry;
     current.init_3d[0] = g_init_3d[0];

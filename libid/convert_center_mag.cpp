@@ -113,7 +113,6 @@ void cvtcentermag(double *Xctr, double *Yctr, LDBL *Magnification, double *Xmagf
         g_y_3rd = ty3rd;
     }
 #endif
-    return;
 }
 
 

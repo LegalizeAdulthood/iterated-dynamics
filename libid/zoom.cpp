@@ -630,7 +630,7 @@ void zoomoutbf() // for ctl-enter, calc corners for zooming out
     copy_bf(bfplotmx2, tmp4);
     // plotmy1 = (yymin-yy3rd);
     copy_bf(bfplotmy1, tmp1);
-    /* plotmy2 = (xxmax-xx3rd); */;
+    // plotmy2 = (xxmax-xx3rd);
     copy_bf(bfplotmy2, tmp3);
 
     // savxxmin = xxmin; savyymax = yymax;

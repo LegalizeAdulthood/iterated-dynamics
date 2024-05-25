@@ -626,7 +626,7 @@ int get_fract3d_params() // prompt for 3D fractal parameters
     ZVIEWER = builder.read_int_number();
     XSHIFT  = builder.read_int_number();
     YSHIFT  = builder.read_int_number();
-    g_glasses_type = builder.read_int_number();;
+    g_glasses_type = builder.read_int_number();
     if (g_glasses_type < 0 || g_glasses_type > 4)
     {
         g_glasses_type = 0;

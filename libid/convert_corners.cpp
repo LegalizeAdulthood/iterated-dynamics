@@ -74,8 +74,6 @@ void cvtcorners(double Xctr, double Yctr, LDBL Magnification, double Xmagfactor,
     y = -g_x_3rd * sinrot + g_y_3rd *  cosrot;
     g_x_3rd = x + Xctr;
     g_y_3rd = y + Yctr;
-
-    return;
 }
 
 // convert center/mag to corners using bf
@@ -176,5 +174,4 @@ void cvtcornersbf(bf_t Xctr, bf_t Yctr, LDBL Magnification, double Xmagfactor, d
     add_bf(g_bf_y_3rd, bftmp, Yctr);
 
     restore_stack(saved);
-    return;
 }

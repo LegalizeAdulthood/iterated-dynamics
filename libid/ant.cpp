@@ -504,7 +504,7 @@ int ant()
     long const maxpts = labs(static_cast<long>(g_params[1]));
     long const wait = std::abs(g_orbit_delay);
     std::string rule{get_rule()};
-    int rule_len = (int) rule.length();;
+    int rule_len = (int) rule.length();
     if (rule_len > 1)
     {
         // if rule_len == 0 random rule

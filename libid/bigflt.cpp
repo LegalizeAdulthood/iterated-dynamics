@@ -27,7 +27,6 @@ void bf_hexdump(bf_t r)
     }
     std::printf(" e %04hX ", (S16)big_access16(r+bflength));
     std::printf("\n");
-    return;
 }
 
 /**********************************************************************/

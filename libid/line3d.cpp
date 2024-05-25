@@ -1204,7 +1204,6 @@ static void draw_rect(VECTOR V0, VECTOR V1, VECTOR V2, VECTOR V3, int color, boo
             }
         }
     }
-    return;
 }
 
 // replacement for plot - builds a table of min and max x's instead of plot
@@ -2257,7 +2256,6 @@ static void triangle_bounds(float pt_t[3][3])
             }
         }
     }
-    return;
 }
 
 //******************************************************************

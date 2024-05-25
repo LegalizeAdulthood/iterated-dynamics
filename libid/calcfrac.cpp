@@ -3956,7 +3956,7 @@ static bool guessrow(bool firstpass, int y, int blocksize)
                 if (c33 == -1)
                 {
                     return true;
-                };
+                }
                 guessed33 = 0;
             }
             if (guessed32 > 0
@@ -3966,7 +3966,7 @@ static bool guessrow(bool firstpass, int y, int blocksize)
                 if (c32 == -1)
                 {
                     return true;
-                };
+                }
                 guessed32 = 0;
                 continue;
             }
@@ -3977,7 +3977,7 @@ static bool guessrow(bool firstpass, int y, int blocksize)
                 if (c23 == -1)
                 {
                     return true;
-                };
+                }
                 guessed23 = 0;
                 continue;
             }
@@ -4053,7 +4053,7 @@ static bool guessrow(bool firstpass, int y, int blocksize)
             if (c21 == -1)
             {
                 return true;
-            };
+            }
             if (halfblock > 1 && c21 != c22)
             {
                 plotblock(-1, x, ylesshalf, c21);
@@ -4065,7 +4065,7 @@ static bool guessrow(bool firstpass, int y, int blocksize)
             if (c31 == -1)
             {
                 return true;
-            };
+            }
             if (halfblock > 1 && c31 != c22)
             {
                 plotblock(-1, xplushalf, ylesshalf, c31);
@@ -4079,7 +4079,7 @@ static bool guessrow(bool firstpass, int y, int blocksize)
                 if (c12 == -1)
                 {
                     return true;
-                };
+                }
                 if (halfblock > 1 && c12 != c22)
                 {
                     plotblock(-1, x-halfblock, y, c12);
@@ -4091,7 +4091,7 @@ static bool guessrow(bool firstpass, int y, int blocksize)
                 if (c13 == -1)
                 {
                     return true;
-                };
+                }
                 if (halfblock > 1 && c13 != c22)
                 {
                     plotblock(-1, x-halfblock, yplushalf, c13);
