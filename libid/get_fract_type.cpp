@@ -195,48 +195,71 @@ static int sel_fractype_help(int curkey, int choice)
 
 void set_fractal_default_functions(fractal_type oldfractype)
 {
-    if ((g_fractal_type == fractal_type::BIFURCATION || g_fractal_type == fractal_type::LBIFURCATION)
-        && !(oldfractype == fractal_type::BIFURCATION || oldfractype == fractal_type::LBIFURCATION))
+    switch (g_fractal_type)
     {
-        set_trig_array(0, "ident");
-    }
-    else if ((g_fractal_type == fractal_type::BIFSTEWART || g_fractal_type == fractal_type::LBIFSTEWART)
-        && !(oldfractype == fractal_type::BIFSTEWART || oldfractype == fractal_type::LBIFSTEWART))
-    {
-        set_trig_array(0, "ident");
-    }
-    else if ((g_fractal_type == fractal_type::BIFLAMBDA || g_fractal_type == fractal_type::LBIFLAMBDA)
-        && !(oldfractype == fractal_type::BIFLAMBDA || oldfractype == fractal_type::LBIFLAMBDA))
-    {
-        set_trig_array(0, "ident");
-    }
-    else if ((g_fractal_type == fractal_type::BIFEQSINPI || g_fractal_type == fractal_type::LBIFEQSINPI)
-        && !(oldfractype == fractal_type::BIFEQSINPI || oldfractype == fractal_type::LBIFEQSINPI))
-    {
-        set_trig_array(0, "sin");
-    }
-    else if ((g_fractal_type == fractal_type::BIFADSINPI || g_fractal_type == fractal_type::LBIFADSINPI)
-        && !(oldfractype == fractal_type::BIFADSINPI || oldfractype == fractal_type::LBIFADSINPI))
-    {
-        set_trig_array(0, "sin");
-    }
+    case fractal_type::BIFURCATION:
+    case fractal_type::LBIFURCATION:
+        if (!(oldfractype == fractal_type::BIFURCATION || oldfractype == fractal_type::LBIFURCATION))
+        {
+            set_trig_array(0, "ident");
+        }
+        break;
+
+    case fractal_type::BIFSTEWART:
+    case fractal_type::LBIFSTEWART:
+        if (!(oldfractype == fractal_type::BIFSTEWART || oldfractype == fractal_type::LBIFSTEWART))
+        {
+            set_trig_array(0, "ident");
+        }
+        break;
+
+    case fractal_type::BIFLAMBDA:
+    case fractal_type::LBIFLAMBDA:
+        if (!(oldfractype == fractal_type::BIFLAMBDA || oldfractype == fractal_type::LBIFLAMBDA))
+        {
+            set_trig_array(0, "ident");
+        }
+        break;
+
+    case fractal_type::BIFEQSINPI:
+    case fractal_type::LBIFEQSINPI:
+        if (!(oldfractype == fractal_type::BIFEQSINPI || oldfractype == fractal_type::LBIFEQSINPI))
+        {
+            set_trig_array(0, "sin");
+        }
+        break;
+
+    case fractal_type::BIFADSINPI:
+    case fractal_type::LBIFADSINPI:
+        if (!(oldfractype == fractal_type::BIFADSINPI || oldfractype == fractal_type::LBIFADSINPI))
+        {
+            set_trig_array(0, "sin");
+        }
+        break;
+
     // Next assumes that user going between popcorn and popcornjul
     // might not want to change function variables
-    else if ((g_fractal_type == fractal_type::FPPOPCORN
-            || g_fractal_type == fractal_type::LPOPCORN
-            || g_fractal_type == fractal_type::FPPOPCORNJUL
-            || g_fractal_type == fractal_type::LPOPCORNJUL)
-        && !(oldfractype == fractal_type::FPPOPCORN
-            || oldfractype == fractal_type::LPOPCORN
-            || oldfractype == fractal_type::FPPOPCORNJUL
-            || oldfractype == fractal_type::LPOPCORNJUL))
-    {
-        set_function_parm_defaults();
-    }
+    case fractal_type::FPPOPCORN:
+    case fractal_type::LPOPCORN:
+    case fractal_type::FPPOPCORNJUL:
+    case fractal_type::LPOPCORNJUL:
+        if (!(oldfractype == fractal_type::FPPOPCORN || oldfractype == fractal_type::LPOPCORN ||
+                oldfractype == fractal_type::FPPOPCORNJUL || oldfractype == fractal_type::LPOPCORNJUL))
+        {
+            set_function_parm_defaults();
+        }
+        break;
+
     // set LATOO function defaults
-    else if (g_fractal_type == fractal_type::LATOO && oldfractype != fractal_type::LATOO)
-    {
-        set_function_parm_defaults();
+    case fractal_type::LATOO:
+        if (oldfractype != fractal_type::LATOO)
+        {
+            set_function_parm_defaults();
+        }
+        break;
+
+    default:
+        break;
     }
 }
 
