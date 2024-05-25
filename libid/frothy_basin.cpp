@@ -25,14 +25,17 @@
 #include <cmath>
 #include <cstdlib>
 
-#define FROTH_BITSHIFT      28
-#define FROTH_D_TO_L(x)     ((long)((x)*(1L<<FROTH_BITSHIFT)))
-#define FROTH_CLOSE         1e-6      // seems like a good value
-#define FROTH_LCLOSE        FROTH_D_TO_L(FROTH_CLOSE)
-#define SQRT3               1.732050807568877193
-#define FROTH_SLOPE         SQRT3
-#define FROTH_LSLOPE        FROTH_D_TO_L(FROTH_SLOPE)
-#define FROTH_CRITICAL_A    1.028713768218725  // 1.0287137682187249127
+constexpr int FROTH_BITSHIFT{28};
+constexpr long froth_d_to_l(double x)
+{
+    return (long) (x * (1L << FROTH_BITSHIFT));
+}
+constexpr double FROTH_CLOSE{1e-6};                     // seems like a good value
+constexpr long FROTH_LCLOSE{froth_d_to_l(FROTH_CLOSE)}; //
+constexpr double SQRT3{1.732050807568877193};           //
+constexpr double FROTH_SLOPE{SQRT3};                    //
+constexpr long FROTH_LSLOPE{froth_d_to_l(FROTH_SLOPE)}; //
+constexpr double FROTH_CRITICAL_A{1.028713768218725};   // 1.0287137682187249127
 
 struct froth_double_struct
 {
@@ -110,7 +113,6 @@ static void set_Froth_palette()
             else
             {
                 mapname = "froth3.map";
-
             }
         }
         else // colors >= 16
@@ -151,8 +153,14 @@ bool froth_setup()
     s_fsp.repeat_mapping = (int)g_params[0] == 2;
     s_fsp.altcolor = (int)g_params[1];
     s_fsp.fl.f.a = g_params[2];
-    s_fsp.attractors = std::fabs(s_fsp.fl.f.a) <= FROTH_CRITICAL_A ? (!s_fsp.repeat_mapping ? 3 : 6)
-                         : (!s_fsp.repeat_mapping ? 2 : 3);
+    if (std::fabs(s_fsp.fl.f.a) <= FROTH_CRITICAL_A)
+    {
+        s_fsp.attractors = !s_fsp.repeat_mapping ? 3 : 6;
+    }
+    else
+    {
+        s_fsp.attractors = !s_fsp.repeat_mapping ? 2 : 3;
+    }
 
     // new improved values
     // 0.5 is the value that causes the mapping to reach a minimum
@@ -188,29 +196,36 @@ bool froth_setup()
     }
     set_Froth_palette();
     // make the best of the .map situation
-    g_orbit_color = s_fsp.attractors != 6 && g_colors >= 16 ? (s_fsp.shades<<1)+1 : g_colors-1;
+    if (s_fsp.attractors != 6 && g_colors >= 16)
+    {
+        g_orbit_color = (s_fsp.shades << 1) + 1;
+    }
+    else
+    {
+        g_orbit_color = g_colors - 1;
+    }
 
     if (g_integer_fractal)
     {
         froth_long_struct tmp_l;
 
-        tmp_l.a        = FROTH_D_TO_L(s_fsp.fl.f.a);
-        tmp_l.halfa    = FROTH_D_TO_L(s_fsp.fl.f.halfa);
+        tmp_l.a        = froth_d_to_l(s_fsp.fl.f.a);
+        tmp_l.halfa    = froth_d_to_l(s_fsp.fl.f.halfa);
 
-        tmp_l.top_x1   = FROTH_D_TO_L(s_fsp.fl.f.top_x1);
-        tmp_l.top_x2   = FROTH_D_TO_L(s_fsp.fl.f.top_x2);
-        tmp_l.top_x3   = FROTH_D_TO_L(s_fsp.fl.f.top_x3);
-        tmp_l.top_x4   = FROTH_D_TO_L(s_fsp.fl.f.top_x4);
+        tmp_l.top_x1   = froth_d_to_l(s_fsp.fl.f.top_x1);
+        tmp_l.top_x2   = froth_d_to_l(s_fsp.fl.f.top_x2);
+        tmp_l.top_x3   = froth_d_to_l(s_fsp.fl.f.top_x3);
+        tmp_l.top_x4   = froth_d_to_l(s_fsp.fl.f.top_x4);
 
-        tmp_l.left_x1  = FROTH_D_TO_L(s_fsp.fl.f.left_x1);
-        tmp_l.left_x2  = FROTH_D_TO_L(s_fsp.fl.f.left_x2);
-        tmp_l.left_x3  = FROTH_D_TO_L(s_fsp.fl.f.left_x3);
-        tmp_l.left_x4  = FROTH_D_TO_L(s_fsp.fl.f.left_x4);
+        tmp_l.left_x1  = froth_d_to_l(s_fsp.fl.f.left_x1);
+        tmp_l.left_x2  = froth_d_to_l(s_fsp.fl.f.left_x2);
+        tmp_l.left_x3  = froth_d_to_l(s_fsp.fl.f.left_x3);
+        tmp_l.left_x4  = froth_d_to_l(s_fsp.fl.f.left_x4);
 
-        tmp_l.right_x1 = FROTH_D_TO_L(s_fsp.fl.f.right_x1);
-        tmp_l.right_x2 = FROTH_D_TO_L(s_fsp.fl.f.right_x2);
-        tmp_l.right_x3 = FROTH_D_TO_L(s_fsp.fl.f.right_x3);
-        tmp_l.right_x4 = FROTH_D_TO_L(s_fsp.fl.f.right_x4);
+        tmp_l.right_x1 = froth_d_to_l(s_fsp.fl.f.right_x1);
+        tmp_l.right_x2 = froth_d_to_l(s_fsp.fl.f.right_x2);
+        tmp_l.right_x3 = froth_d_to_l(s_fsp.fl.f.right_x3);
+        tmp_l.right_x4 = froth_d_to_l(s_fsp.fl.f.right_x4);
 
         s_fsp.fl.l = tmp_l;
     }
@@ -234,7 +249,7 @@ int calcfroth()   // per pixel 1/2/g, called with row & col set
 
     g_orbit_save_index = 0;
     g_color_iter = 0;
-    if (g_show_dot >0)
+    if (g_show_dot > 0)
     {
         (*g_plot)(g_col, g_row, g_show_dot %g_colors);
     }
