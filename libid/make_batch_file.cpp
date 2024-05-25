@@ -638,7 +638,8 @@ static int getprec(double a, double b, double c)
         diff = temp;
     }
     digits = 7;
-    if (g_debug_flag >= debug_flags::force_precision_0_digits && g_debug_flag < debug_flags::force_precision_20_digits)
+    if (g_debug_flag >= debug_flags::force_precision_0_digits &&
+        g_debug_flag < debug_flags::force_precision_20_digits)
     {
         digits = +g_debug_flag - +debug_flags::force_precision_0_digits;
     }
