@@ -200,32 +200,29 @@ void set_fractal_default_functions(fractal_type oldfractype)
     {
         set_trig_array(0, "ident");
     }
-    if ((g_fractal_type == fractal_type::BIFSTEWART || g_fractal_type == fractal_type::LBIFSTEWART)
+    else if ((g_fractal_type == fractal_type::BIFSTEWART || g_fractal_type == fractal_type::LBIFSTEWART)
         && !(oldfractype == fractal_type::BIFSTEWART || oldfractype == fractal_type::LBIFSTEWART))
     {
         set_trig_array(0, "ident");
     }
-    if ((g_fractal_type == fractal_type::BIFLAMBDA || g_fractal_type == fractal_type::LBIFLAMBDA)
+    else if ((g_fractal_type == fractal_type::BIFLAMBDA || g_fractal_type == fractal_type::LBIFLAMBDA)
         && !(oldfractype == fractal_type::BIFLAMBDA || oldfractype == fractal_type::LBIFLAMBDA))
     {
         set_trig_array(0, "ident");
     }
-    if ((g_fractal_type == fractal_type::BIFEQSINPI || g_fractal_type == fractal_type::LBIFEQSINPI)
+    else if ((g_fractal_type == fractal_type::BIFEQSINPI || g_fractal_type == fractal_type::LBIFEQSINPI)
         && !(oldfractype == fractal_type::BIFEQSINPI || oldfractype == fractal_type::LBIFEQSINPI))
     {
         set_trig_array(0, "sin");
     }
-    if ((g_fractal_type == fractal_type::BIFADSINPI || g_fractal_type == fractal_type::LBIFADSINPI)
+    else if ((g_fractal_type == fractal_type::BIFADSINPI || g_fractal_type == fractal_type::LBIFADSINPI)
         && !(oldfractype == fractal_type::BIFADSINPI || oldfractype == fractal_type::LBIFADSINPI))
     {
         set_trig_array(0, "sin");
     }
-
-    /*
-     * Next assumes that user going between popcorn and popcornjul
-     * might not want to change function variables
-     */
-    if ((g_fractal_type == fractal_type::FPPOPCORN
+    // Next assumes that user going between popcorn and popcornjul
+    // might not want to change function variables
+    else if ((g_fractal_type == fractal_type::FPPOPCORN
             || g_fractal_type == fractal_type::LPOPCORN
             || g_fractal_type == fractal_type::FPPOPCORNJUL
             || g_fractal_type == fractal_type::LPOPCORNJUL)
@@ -236,9 +233,8 @@ void set_fractal_default_functions(fractal_type oldfractype)
     {
         set_function_parm_defaults();
     }
-
     // set LATOO function defaults
-    if (g_fractal_type == fractal_type::LATOO && oldfractype != fractal_type::LATOO)
+    else if (g_fractal_type == fractal_type::LATOO && oldfractype != fractal_type::LATOO)
     {
         set_function_parm_defaults();
     }
