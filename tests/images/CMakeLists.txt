@@ -37,6 +37,7 @@ add_fractal_type_image_test(
     cellular circle cmplxmarksjul cmplxmarksmand complexbasin complexnewton
     dividebrot5
     escher_julia
+    frothybasin
     gingerbreadman
     halley hypercomplex hypercomplexj
     julia julia4 julia_inverse julzpower julzzpwr
