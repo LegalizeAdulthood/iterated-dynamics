@@ -104,7 +104,6 @@ struct PARAMHIST
     bailouts bailoutest;
 };
 
-void param_history(int mode);
 void varydbl(GENEBASE gene[], int randval, int i);
 int varyint(int randvalue, int limit, int mode);
 int wrapped_positive_varyint(int randvalue, int limit, int mode);
@@ -202,7 +201,7 @@ void initgene()
 
 static PARAMHIST oldhistory = { 0 };
 
-static void save_param_history()
+void save_param_history()
 {
     // save the old parameter history
     oldhistory.param0 = g_params[0];
@@ -228,7 +227,7 @@ static void save_param_history()
     oldhistory.bailoutest = g_bail_out_test;
 }
 
-static void restore_param_history()
+void restore_param_history()
 {
     // restore the old parameter history
     g_params[0] = oldhistory.param0;
@@ -253,21 +252,6 @@ static void restore_param_history()
     g_trig_index[2] = static_cast<trig_fn>(oldhistory.trigndx2);
     g_trig_index[3] = static_cast<trig_fn>(oldhistory.trigndx3);
     g_bail_out_test = static_cast<bailouts>(oldhistory.bailoutest);
-}
-
-// mode = 0 for save old history,
-// mode = 1 for restore old history
-void param_history(int mode)
-{
-    if (mode == 0)
-    {
-        save_param_history();
-    }
-
-    if (mode == 1)
-    {
-        restore_param_history();
-    }
 }
 
 // routine to vary doubles
@@ -868,7 +852,7 @@ get_evol_restart:
 
     if (g_evolving && !old_evolving)
     {
-        param_history(0); // save old history
+        save_param_history();
     }
 
     if (!g_evolving && (g_evolving == old_evolving))

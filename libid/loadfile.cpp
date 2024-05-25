@@ -860,7 +860,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
             }
         }
         copy_genes_to_bank(gene);
-        param_history(0); // store history
+        save_param_history();
     }
     else
     {

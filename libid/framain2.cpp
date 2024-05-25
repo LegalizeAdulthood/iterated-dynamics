@@ -427,7 +427,7 @@ main_state big_while_loop(bool *const kbdmore, bool *const stacked, bool const r
                     {
                         g_evolve_this_generation_random_seed = (unsigned int)std::clock(); // time for new set
                     }
-                    param_history(0); // save old history
+                    save_param_history();
                     ecount = 0;
                     g_evolve_max_random_mutation = g_evolve_max_random_mutation * g_evolve_mutation_reduction_factor;
                     g_evolve_x_parameter_offset = g_evolve_new_x_parameter_offset;
@@ -447,7 +447,7 @@ main_state big_while_loop(bool *const kbdmore, bool *const stacked, bool const r
                     spiralmap(ecount); // sets px & py
                     g_logical_screen_x_offset = tmpxdots * g_evolve_param_grid_x;
                     g_logical_screen_y_offset = tmpydots * g_evolve_param_grid_y;
-                    param_history(1); // restore old history
+                    restore_param_history();
                     fiddleparms(gene, ecount);
                     calcfracinit();
                     if (calcfract() == -1)
@@ -495,8 +495,8 @@ done:
                 // set up for 1st selected image, this reuses px and py
                 g_evolve_param_grid_y = g_evolve_image_grid_size /2;
                 g_evolve_param_grid_x = g_evolve_param_grid_y;
-                unspiralmap(); // first time called, w/above line sets up array
-                param_history(1); // restore old history
+                unspiralmap();    // first time called, w/above line sets up array
+                restore_param_history();
                 fiddleparms(gene, 0);
                 copy_genes_to_bank(gene);
             }

@@ -60,7 +60,7 @@ main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bo
             g_evolve_discrete_x_parameter_offset = 0;
             g_evolve_max_random_mutation = 1;           // reset param evolution stuff
             g_set_orbit_corners = false;
-            param_history(0); // save history
+            save_param_history();
             if (i == 0)
             {
                 g_init_mode = g_adapter;
@@ -122,7 +122,7 @@ main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bo
         if (i > 0)
         {
             // time to redraw?
-            param_history(0); // save history
+            save_param_history();
             *kbdmore = false;
             g_calc_status = calc_status_value::PARAMS_CHANGED;
         }
@@ -130,7 +130,7 @@ main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bo
     case 'b': // quick exit from evolve mode
         g_evolving = 0;
         g_view_window = false;
-        param_history(0); // save history
+        save_param_history();
         *kbdmore = false;
         g_calc_status = calc_status_value::PARAMS_CHANGED;
         break;
@@ -252,13 +252,13 @@ main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bo
         g_logical_screen_y_dots = g_screen_y_dots; // for full screen save and pointer move stuff
         g_evolve_param_grid_y = g_evolve_image_grid_size / 2;
         g_evolve_param_grid_x = g_evolve_param_grid_y;
-        param_history(1); // restore old history
+        restore_param_history();
         fiddleparms(gene, 0);
         drawparmbox(1);
         savetodisk(g_save_filename);
         g_evolve_param_grid_x = oldpx;
         g_evolve_param_grid_y = oldpy;
-        param_history(1); // restore old history
+        restore_param_history();
         fiddleparms(gene, unspiralmap());
         g_logical_screen_x_offset = oldsxoffs;
         g_logical_screen_y_offset = oldsyoffs;
@@ -386,7 +386,7 @@ main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bo
                 g_logical_screen_x_offset = g_evolve_param_grid_x * (int)(g_logical_screen_x_size_dots+1+grout);
                 g_logical_screen_y_offset = g_evolve_param_grid_y * (int)(g_logical_screen_y_size_dots+1+grout);
 
-                param_history(1); // restore old history
+                restore_param_history();
                 fiddleparms(gene, unspiralmap()); // change all parameters
                 // to values appropriate to the image selected
                 set_evolve_ranges();
@@ -586,7 +586,7 @@ main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bo
     case ID_KEY_ALT_6:
     case ID_KEY_ALT_7:
         set_mutation_level(*kbdchar-1119);
-        param_history(1); // restore old history
+        restore_param_history();
         *kbdmore = false;
         g_calc_status = calc_status_value::PARAMS_CHANGED;
         break;
@@ -599,7 +599,7 @@ main_state evolver_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bo
     case '6':
     case '7':
         set_mutation_level(*kbdchar-(int)'0');
-        param_history(1); // restore old history
+        restore_param_history();
         *kbdmore = false;
         g_calc_status = calc_status_value::PARAMS_CHANGED;
         break;

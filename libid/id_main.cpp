@@ -553,7 +553,7 @@ resumeloop:
 #if defined(_WIN32)
     _ASSERTE(_CrtCheckMemory());
 #endif
-    param_history(0); // save old history
+    save_param_history();
     // this switch processes gotos that are now inside function
     switch (big_while_loop(&kbdmore, &stacked, resumeflag))
     {

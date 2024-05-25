@@ -175,7 +175,7 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
             g_evolve_discrete_x_parameter_offset = 0;
             g_evolve_max_random_mutation = 1;           // reset param evolution stuff
             g_set_orbit_corners = false;
-            param_history(0); // save history
+            save_param_history();
             if (i == 0)
             {
                 g_init_mode = g_adapter;
@@ -281,7 +281,7 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
         {
             // time to redraw?
             g_quick_calc = false;
-            param_history(0);           // save history
+            save_param_history();
             *kbdmore = false;
             g_calc_status = calc_status_value::PARAMS_CHANGED;
         }
@@ -898,7 +898,7 @@ do_3d_transform:
         g_evolving = FIELDMAP;
         g_view_window = true;
         set_mutation_level(*kbdchar - ID_KEY_ALT_1 + 1);
-        param_history(0); // save parameter history
+        save_param_history();
         *kbdmore = false;
         g_calc_status = calc_status_value::PARAMS_CHANGED;
         break;
