@@ -14,10 +14,6 @@ void load_params(fractal_type fractype)
     for (int i = 0; i < 4; ++i)
     {
         g_params[i] = g_fractal_specific[+fractype].paramvalue[i];
-        if (fractype != fractal_type::CELLULAR && fractype != fractal_type::ANT)
-        {
-            roundfloatd(&g_params[i]); // don't round cellular or ant
-        }
     }
     int extra = find_extra_param(fractype);
     if (extra > -1)
