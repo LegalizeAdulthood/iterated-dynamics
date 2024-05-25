@@ -67,6 +67,7 @@ endif()
 add_compile_options($<$<CXX_COMPILER_ID:MSVC>:/MP>)
 
 add_subdirectory(config)
+add_subdirectory(doc)
 add_subdirectory(hc)
 add_subdirectory(helpcom)
 add_subdirectory(home)
