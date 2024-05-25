@@ -14,7 +14,6 @@ enum class debug_flags
     allow_init_commands_anytime         = 110,
     benchmark_encoder                   = 200,
     prevent_miim                        = 300,
-    prevent_formula_optimizer           = 322,
     show_formula_info_after_compile     = 324,
     force_memory_from_disk              = 420,
     force_memory_from_memory            = 422,
