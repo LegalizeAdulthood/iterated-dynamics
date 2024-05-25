@@ -1,19 +1,19 @@
 This file contains a list of things that are on the "To Do" list of
-the fractint development team, practiced in the true Stone Soup
+the Id development team, practiced in the true Stone Soup
 tradition.  Any item on this list is up for grabs and you are
-encouraged to use this as a starting point for your fractint
+encouraged to use this as a starting point for your Id
 contributions!
 
-This document is arranged by the functional area within fractint.  The
+This document is arranged by the functional area within Id.  The
 functional areas are listed in alphabetical order with each idea
 that's been suggested for improving the various sections.
 
-This file last updated May 10th, 1999
+This file last updated May 24th, 2024.
 
 3D Support
 ----------
 - Provide a way to plug-in a 3D driver by name; platform support
-  determines what drivers are available.  Fractint "native" 3D support
+  determines what drivers are available.  Id "native" 3D support
   available on all platforms.
 - Add arcball for iteractive manipulation of 3D viewing parameters
   (interactively manipulate viewed object by its bounding box)
@@ -102,8 +102,8 @@ Platform Support: unix/X
 - Eliminate use of curses and xterm in favor of native X-based text
   windows
 - Fix function key support (probably a free side-effect of previous item)
-- Use Xt for interface components of "fractint GUI API"
-- 3D drivers: OpenGL, PEX, native X
+- Use Xt for interface components of "Id GUI API"
+- 3D drivers: OpenGL, native X
 - Generate /bin/sh scripts instead of MS-DOS bat files for "b" command
 - long filename problems?
 
