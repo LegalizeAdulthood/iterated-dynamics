@@ -46,7 +46,7 @@ static void blankrows(int row, int count, int attr)
        &8 for parser - use a fixed pitch font
       &16 for info only message (green box instead of red in DOS vsn)
    */
-bool stopmsg(int flags, char const* msg)
+bool stopmsg(int flags, const std::string &msg)
 {
     int toprow;
     int color;
@@ -56,7 +56,7 @@ bool stopmsg(int flags, char const* msg)
     {
         if (std::FILE *fp = dir_fopen(g_working_dir.c_str(), "stopmsg.txt", g_init_batch == batch_modes::NONE ? "w" : "a"))
         {
-            std::fprintf(fp, "%s\n", msg);
+            std::fprintf(fp, "%s\n", msg.c_str());
             std::fclose(fp);
         }
     }
@@ -73,7 +73,7 @@ bool stopmsg(int flags, char const* msg)
         close_drivers();
         exit(1);
 #else
-        std::printf("%s\n", msg);
+        std::printf("%s\n", msg.c_str());
         dopause(1); // pause deferred until after cmdfiles
         return false;
 #endif

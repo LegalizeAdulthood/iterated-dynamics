@@ -13,8 +13,4 @@ enum stopmsg_flags
     STOPMSG_INFO_ONLY   = 16
 };
 
-bool stopmsg(int flags, char const* msg);
-inline bool stopmsg(int flags, const std::string &msg)
-{
-    return stopmsg(flags, msg.c_str());
-}
+bool stopmsg(int flags, const std::string &msg);
