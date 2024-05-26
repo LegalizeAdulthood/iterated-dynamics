@@ -205,17 +205,16 @@ static void main_restart(int const argc, char const *const argv[], bool &stacked
     g_show_dot = -1; // turn off show_dot if entered with <g> command
     g_calc_status = calc_status_value::NO_FRACTAL;                    // no active fractal image
 
+    driver_create_window();
+    std::memcpy(g_old_dac_box, g_dac_box, 256 * 3); // save in case colors= present
+    driver_set_for_text();                          // switch to text mode
+    g_save_dac = 0;                                 // don't save the VGA DAC
+
     cmdfiles(argc, argv);         // process the command-line
     dopause(0);                  // pause for error msg if not batch
     init_msg("", nullptr, cmd_file::AT_CMD_LINE);  // this causes driver_get_key if init_msg called on runup
 
     history_init();
-
-    driver_create_window();
-    std::memcpy(g_old_dac_box, g_dac_box, 256*3);      // save in case colors= present
-
-    driver_set_for_text();                      // switch to text mode
-    g_save_dac = 0;                         // don't save the VGA DAC
 
     if (g_bad_config == config_status::BAD_NO_MESSAGE)
     {
