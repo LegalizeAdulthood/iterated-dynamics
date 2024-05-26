@@ -786,6 +786,11 @@ static int bad_arg(const char *curarg)
     return CMDARG_ERROR;
 }
 
+enum
+{
+    NONNUMERIC = -32767
+};
+
 // cmdarg(string,mode) processes a single command-line/command-file argument
 //  return:
 //    -1 error, >= 0 ok
@@ -794,9 +799,7 @@ static int bad_arg(const char *curarg)
 //      | 2 means 3d parm has been set
 //      | 4 means 3d=yes specified
 //      | 8 means reset specified
-
-#define NONNUMERIC -32767
-
+//
 int cmdarg(char *curarg, cmd_file mode) // process a single argument
 {
     int     valuelen{};               // length of value
