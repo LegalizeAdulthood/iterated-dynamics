@@ -6,7 +6,8 @@ template <typename T>
 class ValueSaver
 {
 public:
-    ValueSaver(T &data, T value) :
+    template <typename U>
+    ValueSaver(T &data, U value) :
         m_saved(data),
         m_data(data)
     {
