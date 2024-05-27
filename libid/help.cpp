@@ -78,7 +78,6 @@ struct help_sig_info
     unsigned long base;     // only if added to id.exe
 };
 
-void print_document(char const *outfname, bool (*msg_func)(int, int), int save_extraseg);
 static bool print_doc_msg_func(int pnum, int num_pages);
 
 static std::FILE *help_file = nullptr;       // help file handle
@@ -900,7 +899,7 @@ int help(int action)
         {
             if (curr.topic_num == -100)
             {
-                print_document("id.txt", print_doc_msg_func, 1);
+                print_document("id.txt", print_doc_msg_func);
                 action = ACTION_PREV2;
             }
             else if (curr.topic_num == -101)
@@ -1340,11 +1339,10 @@ bool makedoc_msg_func(int pnum, int num_pages)
     return result;
 }
 
-void print_document(char const *outfname, bool (*msg_func)(int, int), int save_extraseg)
+void print_document(char const *outfname, bool (*msg_func)(int, int))
 {
     PRINT_DOC_INFO info;
     bool success = false;
-    std::FILE *temp_file = nullptr;
     char const *msg = nullptr;
 
     help_seek(16L);
@@ -1359,22 +1357,6 @@ void print_document(char const *outfname, bool (*msg_func)(int, int), int save_e
     if (msg_func != nullptr)
     {
         msg_func(0, info.num_page);   // initialize
-    }
-
-    if (save_extraseg)
-    {
-        temp_file = std::fopen(TEMP_FILE_NAME, "wb");
-        if (temp_file == nullptr)
-        {
-            msg = "Unable to create temporary file.\n";
-            goto ErrorAbort;
-        }
-
-        if (std::fwrite(info.buffer, sizeof(char), PRINT_BUFFER_SIZE, temp_file) != PRINT_BUFFER_SIZE)
-        {
-            msg = "Error writing temporary file.\n";
-            goto ErrorAbort;
-        }
     }
 
     info.file = std::fopen(outfname, "wt");
@@ -1392,29 +1374,7 @@ void print_document(char const *outfname, bool (*msg_func)(int, int), int save_e
                                print_doc_output,   &info);
     std::fclose(info.file);
 
-    if (save_extraseg)
-    {
-        if (std::fseek(temp_file, 0L, SEEK_SET) != 0L)
-        {
-            msg = "Error reading temporary file.\nSystem may be corrupt!\nSave your image and re-start id!\n";
-            goto ErrorAbort;
-        }
-
-        if (std::fread(info.buffer, sizeof(char), PRINT_BUFFER_SIZE, temp_file) != PRINT_BUFFER_SIZE)
-        {
-            msg = "Error reading temporary file.\nSystem may be corrupt!\nSave your image and re-start id!\n";
-            goto ErrorAbort;
-        }
-    }
-
 ErrorAbort:
-    if (temp_file != nullptr)
-    {
-        std::fclose(temp_file);
-        std::remove(TEMP_FILE_NAME);
-        temp_file = nullptr;
-    }
-
     if (msg != nullptr)
     {
         helptitle();

@@ -121,7 +121,7 @@ bool process_document(PD_FUNC get_info, PD_FUNC output, void *info);
 int help(int);
 int read_help_topic(help_labels label, int , int , void *);
 bool makedoc_msg_func(int pnum, int num_pages);
-void print_document(char const *outfname, bool (*msg_func)(int, int), int save_extraseg);
+void print_document(char const *outfname, bool (*msg_func)(int, int));
 int init_help();
 void end_help();
 bool is_hyphen(char const *ptr);

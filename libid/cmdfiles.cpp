@@ -1,6 +1,6 @@
 // Command-line / Command-File Parser Routines
 //
-#include "cmdfiles.h"
+#include "cmdfiles_test.h"
 
 #include "abort_msg.h"
 #include "bailout_formula.h"
@@ -791,6 +791,45 @@ enum
     NONNUMERIC = -32767
 };
 
+namespace cmd_arg
+{
+
+static StopMsgFn s_stop_msg{stopmsg};
+static GoodbyeFn s_goodbye{goodbye};
+static PrintDocFn s_print_document{print_document};
+
+StopMsgFn get_stop_msg()
+{
+    return s_stop_msg;
+}
+
+void set_stop_msg(const StopMsgFn &fn)
+{
+    s_stop_msg = fn;
+}
+
+GoodbyeFn get_goodbye()
+{
+    return s_goodbye;
+}
+
+void set_goodbye(const GoodbyeFn &fn)
+{
+    s_goodbye = fn;
+}
+
+PrintDocFn get_print_document()
+{
+    return s_print_document;
+}
+
+void set_print_document(const PrintDocFn &fn)
+{
+    s_print_document = fn;
+}
+
+} // namespace cmd_arg
+
 // cmdarg(string,mode) processes a single command-line/command-file argument
 //  return:
 //    -1 error, >= 0 ok
@@ -977,14 +1016,11 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
             {
                 return bad_arg(curarg);
             }
-            else if (numval < 0)
+            if (numval < 0)
             {
                 return bad_arg(curarg);
             }
-            else
-            {
-                g_max_image_history = numval;
-            }
+            g_max_image_history = numval;
             return CMDARG_FRACTAL_PARAM | CMDARG_3D_PARAM;
         }
 
@@ -1043,6 +1079,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
             return CMDARG_FRACTAL_PARAM | CMDARG_3D_PARAM;
         }
 
+        // fpu deprecated; validate arg and gobble
         if (variable == "fpu")
         {
             if (std::strcmp(value, "387") == 0)
@@ -1052,6 +1089,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
             return bad_arg(curarg);
         }
 
+        // exitnoask deprecated; validate arg and gobble
         if (variable == "exitnoask")
         {
             if (yesnoval[0] < 0)
@@ -1064,8 +1102,9 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
 
         if (variable == "makedoc")
         {
-            print_document(*value ? value : "id.txt", makedoc_msg_func, 0);
-            goodbye();
+            cmd_arg::s_print_document(*value ? value : "id.txt", makedoc_msg_func);
+            cmd_arg::s_goodbye();
+            return CMDARG_GOODBYE;
         }
 
         if (variable == "makepar")
@@ -1120,7 +1159,8 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
             {
                 if (read_overlay() != 0)
                 {
-                    goodbye();
+                    cmd_arg::s_goodbye();
+                    return CMDARG_GOODBYE;
                 }
             }
             else if (!g_map_name.empty())
@@ -1133,25 +1173,25 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
             g_logical_screen_y_size_dots = g_logical_screen_y_dots - 1;
             calcfracinit();
             make_batch_file();
-            goodbye();
+            cmd_arg::s_goodbye();
+            return CMDARG_GOODBYE;
         }
     } // end of commands allowed only at startup
 
     if (variable == "reset")
     {
-        initvars_fractal();
-
         // PAR release unknown unless specified
         if (numval < 0)
         {
             return bad_arg(curarg);
         }
+
+        initvars_fractal();
         return CMDARG_FRACTAL_PARAM | CMDARG_RESET;
     }
 
     if (variable == "filename")      // filename=?
     {
-        int existdir;
         if (charval[0] == '.' && value[1] != SLASHC)
         {
             if (valuelen > 4)
@@ -1170,12 +1210,12 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
             return bad_arg(curarg);
         }
 
-        existdir = merge_pathnames(g_read_filename, value, mode);
-        if (existdir == 0)
+        const int exist_dir = merge_pathnames(g_read_filename, value, mode);
+        if (exist_dir == 0)
         {
             g_show_file = 0;
         }
-        else if (existdir < 0)
+        else if (exist_dir < 0)
         {
             init_msg(variable.c_str(), value, mode);
         }
@@ -1188,7 +1228,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
 
     if (variable == "video")         // video=?
     {
-        int k = check_vidmode_keyname(value);
+        const int k = check_vidmode_keyname(value);
         if (k == 0)
         {
             return bad_arg(curarg);
@@ -1211,17 +1251,17 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
 
     if (variable == "map")         // map=, set default colors
     {
-        int existdir;
-        if (valuelen > (FILE_MAX_PATH-1))
+        if (valuelen > FILE_MAX_PATH - 1)
         {
             return bad_arg(curarg);
         }
-        existdir = merge_pathnames(g_map_name, value, mode);
-        if (existdir > 0)
+
+        const int exist_dir = merge_pathnames(g_map_name, value, mode);
+        if (exist_dir > 0)
         {
             return CMDARG_NONE;    // got a directory
         }
-        if (existdir < 0)
+        if (exist_dir < 0) // error
         {
             init_msg(variable.c_str(), value, mode);
             return CMDARG_NONE;
@@ -3721,11 +3761,11 @@ static void argerror(char const *badarg)      // oops. couldn't decode this
                "(see the Startup Help screens or documentation for a complete\n"
                " argument list with descriptions)";
     }
-    stopmsg(STOPMSG_NONE, msg);
+    cmd_arg::s_stop_msg(STOPMSG_NONE, msg);
     if (g_init_batch != batch_modes::NONE)
     {
         g_init_batch = batch_modes::BAILOUT_INTERRUPTED_TRY_SAVE;
-        goodbye();
+        cmd_arg::s_goodbye();
     }
 }
 

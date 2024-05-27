@@ -21,6 +21,7 @@ add_executable(test-id
     test_check_write_file.cpp
     test_check_write_file_data.h.in
     test_choice_builder.cpp
+    test_cmdfiles.cpp
     test_cmplx.cpp
     test_comments.cpp
     test_expand_dirname.cpp

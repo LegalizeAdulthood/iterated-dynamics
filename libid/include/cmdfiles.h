@@ -135,7 +135,8 @@ enum cmdarg_flags
     CMDARG_FRACTAL_PARAM    = 1,
     CMDARG_3D_PARAM         = 2,
     CMDARG_3D_YES           = 4,
-    CMDARG_RESET            = 8
+    CMDARG_RESET            = 8,
+    CMDARG_GOODBYE          = 16,
 };
 
 // for init_batch

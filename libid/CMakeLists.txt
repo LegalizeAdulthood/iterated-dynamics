@@ -64,7 +64,7 @@ add_library(libid
     unity.cpp include/unity.h
     volterra_lotka.cpp include/volterra_lotka.h
 
-    cmdfiles.cpp include/cmdfiles.h
+    cmdfiles.cpp include/cmdfiles.h include/cmdfiles_test.h
     decode_info.cpp include/decode_info.h
     decoder.cpp include/decoder.h
     diskvid.cpp include/diskvid.h
@@ -342,6 +342,7 @@ source_group("Source Files/fractal specific" FILES
 )
 source_group("Header Files/IO" FILES
     include/cmdfiles.h
+    include/cmdfiles_test.h
     include/comments.h
     include/decode_info.h
     include/decoder.h
