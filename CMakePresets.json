@@ -89,7 +89,6 @@
     },
     {
       "name": "ci-vs-2019",
-      "hidden": true,
       "displayName": "Configure for Visual Studio 2019",
       "inherits": [ "default", "gen-vs-2019" ]
     }
@@ -114,7 +113,6 @@
     },
     {
       "name": "ci-vs-2019",
-      "hidden": true,
       "displayName": "Build with Visual Studio 2019 settings",
       "configurePreset": "ci-vs-2019"
     }
@@ -153,7 +151,6 @@
     },
     {
       "name": "ci-vs-2019",
-      "hidden": true,
       "displayName": "Test with Release settings",
       "inherits": [ "settings" ],
       "configurePreset": "ci-vs-2019"
