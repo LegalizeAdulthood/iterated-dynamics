@@ -1,6 +1,5 @@
 set(ID_TEST_DATA_DIR "${CMAKE_CURRENT_BINARY_DIR}/test_data")
 set(ID_TEST_HOME_DIR "${ID_TEST_DATA_DIR}/home")
-set(ID_TEST_IFS_DIR "${ID_TEST_HOME_DIR}/ifs")
 set(ID_TEST_MAP_SUBDIR "maps")
 set(ID_TEST_MAP_DIR "${ID_TEST_HOME_DIR}/${ID_TEST_MAP_SUBDIR}")
 
@@ -46,7 +45,7 @@ set(ID_TEST_FIRST_IFS_NAME "binary")
 set(ID_TEST_FIRST_IFS_PARAM1 ".5")
 set(ID_TEST_SECOND_IFS_NAME "3dfern")
 set(ID_TEST_IFS_FILE "test.ifs")
-configure_file(test.ifs.in "${ID_TEST_IFS_DIR}/${ID_TEST_IFS_FILE}")
+configure_file(test.ifs.in "${ID_TEST_DATA_DIR}/${ID_TEST_IFS_FILE}")
 
 set(ID_TEST_DATA_SUBDIR_NAME    "subdir")
 set(ID_TEST_DATA_SUBDIR         "${ID_TEST_DATA_DIR}/${ID_TEST_DATA_SUBDIR_NAME}")
