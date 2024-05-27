@@ -287,14 +287,11 @@ void setnullvideo()
 */
 int getcolor(int xdot, int ydot)
 {
-    int x1;
-    int y1;
-    x1 = xdot + g_logical_screen_x_offset;
-    y1 = ydot + g_logical_screen_y_offset;
-    _ASSERTE(x1 >= 0 && x1 <= g_screen_x_dots);
-    _ASSERTE(y1 >= 0 && y1 <= g_screen_y_dots);
+    const int x1 = xdot + g_logical_screen_x_offset;
+    const int y1 = ydot + g_logical_screen_y_offset;
     if (x1 < 0 || y1 < 0 || x1 >= g_screen_x_dots || y1 >= g_screen_y_dots)
     {
+        // this can happen in boundary trace
         return 0;
     }
     _ASSERTE(dotread);
