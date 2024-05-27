@@ -16,7 +16,6 @@
 #include "stop_msg.h"
 
 #include <array>
-#include <cassert>
 #include <climits>
 #include <cstdio>
 #include <cstring>
@@ -32,7 +31,7 @@ BYTE *charbuf = nullptr;
 #define MAXHANDLES 256   // arbitrary #, suitably big
 int numTOTALhandles;
 
-char memstr[3][9] = {{"nowhere"}, {"memory"}, {"disk"}};
+static constexpr const char *const memstr[3]{"nowhere", "memory", "disk"};
 
 struct nowhere
 {
@@ -377,10 +376,9 @@ U16 MemoryAlloc(U16 size, long count, int stored_at)
 
     if (stored_at != use_this_type && g_debug_flag == debug_flags::display_memory_statistics)
     {
-        char buf[MSG_LEN];
-        const int num_written = std::snprintf(buf, std::size(buf), "Asked for %s, allocated %ld bytes of %s, handle = %u.",
-                memstr[stored_at], toallocate, memstr[use_this_type], handle);
-        assert(num_written < MSG_LEN);
+        char buf[MSG_LEN * 2];
+        std::snprintf(buf, std::size(buf), "Asked for %s, allocated %ld bytes of %s, handle = %u.",
+            memstr[stored_at], toallocate, memstr[use_this_type], handle);
         stopmsg(STOPMSG_INFO_ONLY | STOPMSG_NO_BUZZER, buf);
         DisplayMemory();
     }
