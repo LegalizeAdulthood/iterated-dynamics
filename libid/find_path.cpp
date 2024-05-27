@@ -33,9 +33,9 @@ std::string find_path(const char *filename,
         return file_path.string();
     }
 
-    const auto check_dir = [&](const std::string &dir)
+    const auto check_dir = [&](const fs::path &dir)
     {
-        fs::path check_path{fs::path{dir} / file_path};
+        fs::path check_path{dir / file_path};
         return exists(check_path) ? check_path.make_preferred().string() : std::string{};
     };
 
