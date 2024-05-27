@@ -16,6 +16,7 @@
 #include "stop_msg.h"
 
 #include <array>
+#include <cassert>
 #include <climits>
 #include <cstdio>
 #include <cstring>
@@ -377,8 +378,9 @@ U16 MemoryAlloc(U16 size, long count, int stored_at)
     if (stored_at != use_this_type && g_debug_flag == debug_flags::display_memory_statistics)
     {
         char buf[MSG_LEN];
-        std::snprintf(buf, std::size(buf), "Asked for %s, allocated %ld bytes of %s, handle = %u.",
+        const int num_written = std::snprintf(buf, std::size(buf), "Asked for %s, allocated %ld bytes of %s, handle = %u.",
                 memstr[stored_at], toallocate, memstr[use_this_type], handle);
+        assert(num_written < MSG_LEN);
         stopmsg(STOPMSG_INFO_ONLY | STOPMSG_NO_BUZZER, buf);
         DisplayMemory();
     }
