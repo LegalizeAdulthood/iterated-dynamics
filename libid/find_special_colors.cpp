@@ -8,8 +8,7 @@
 
 int g_color_dark = 0;       // darkest color in palette
 int g_color_bright = 0;     // brightest color in palette
-int g_color_medium = 0;     /* nearest to medbright grey in palette
-                   Zoom-Box values (2K x 2K screens max) */
+int g_color_medium = 0;     // nearest to medbright grey in palette
 
 //*************** Function find_special_colors ********************
 //
@@ -38,7 +37,7 @@ void find_special_colors()
 #ifdef XFRACT
     if (!(g_got_real_dac || g_fake_lut))
 #else
-    if (g_got_real_dac)
+    if (!g_got_real_dac)
 #endif
     {
         return;
