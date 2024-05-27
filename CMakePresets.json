@@ -62,12 +62,6 @@
       }
     },
     {
-      "name": "gen-vs-2019",
-      "hidden": true,
-      "displayName": "Generate Visual Studio 2019 projects",
-      "generator": "Visual Studio 16 2019"
-    },
-    {
       "name": "default",
       "displayName": "Configure with default settings",
       "inherits": [ "sibling-build-preset", "project-name-preset", "vcpkg" ]
@@ -86,11 +80,6 @@
       "name": "cppcheck",
       "displayName": "Configure for use with cppcheck",
       "inherits": [ "sibling-build-preset", "compile-commands", "no-testing", "vcpkg" ]
-    },
-    {
-      "name": "ci-vs-2019",
-      "displayName": "Configure for Visual Studio 2019",
-      "inherits": [ "default", "gen-vs-2019" ]
     }
   ],
   "buildPresets": [
@@ -110,11 +99,6 @@
       "displayName": "Build with Release settings",
       "configurePreset": "release",
       "configuration": "Release"
-    },
-    {
-      "name": "ci-vs-2019",
-      "displayName": "Build with Visual Studio 2019 settings",
-      "configurePreset": "ci-vs-2019"
     }
   ],
   "testPresets": [
@@ -148,12 +132,6 @@
       "inherits": [ "settings" ],
       "configurePreset": "release",
       "configuration": "Release"
-    },
-    {
-      "name": "ci-vs-2019",
-      "displayName": "Test with Release settings",
-      "inherits": [ "settings" ],
-      "configurePreset": "ci-vs-2019"
     }
   ],
   "workflowPresets": [
@@ -208,24 +186,6 @@
         {
           "type": "test",
           "name": "release"
-        }
-      ]
-    },
-    {
-      "name": "ci-vs-2019",
-      "displayName": "CI Workflow with Visual Studio 2019 settings: configure, build and test",
-      "steps": [
-        {
-          "type": "configure",
-          "name": "ci-vs-2019"
-        },
-        {
-          "type": "build",
-          "name": "ci-vs-2019"
-        },
-        {
-          "type": "test",
-          "name": "ci-vs-2019"
         }
       ]
     }
