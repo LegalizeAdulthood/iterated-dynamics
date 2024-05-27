@@ -267,10 +267,26 @@ The source code for Iterated Dynamics lives on github:\
 Found a bug?  File an issue on our github project!\
   <https://github.com/LegalizeAdulthood/iterated-dynamics/issues>
 
-Version 1.0:
+New features in Version 1.0:
 
 o New $cpu$ comment string variable expands to a description of your CPU.\
 o Long filenames are now supported throughout.\
+o Added new fractal types {Mandelbrot Mix 4} and {DivideBrot5} by Jim Muth.
+  DivideBrot5 has arbitrary precision math support.  Note that image skewing
+  and inversion are not  supported by the AP math routines. See
+  {Arbitrary Precision and Deep Zooming} for other features not supported.
+o The orbitsavename parameter was added to specify the name of the raw
+  orbits file.  The orbits file, if it exists, is overwritten when
+  overwrite=yes.  Otherwise, the value of orbitsavename is incremented until
+  a filename is formed that does not exist.
+o The autokeyname parameter was enhanced to create a unique filename when
+  autokey=record unless overwrite=yes is specified.
+o Disk video buffer sizes were dramatically increased.\
+o The formula parser has been enhanced to remove internal size limitations.
+  The only limit on formula parsing is available memory.
+
+Additional changes in Version 1.0:
+
 o Most of the changes involve internal restructuring of the DOS Fractint
   code to build a bridge to the future.
 o Iterated Dynamics is a native 64-bit Windows program written in C++ with a
@@ -295,15 +311,6 @@ o The release parameter resets all values to their default but does not enable
   compatability with old behavior, use Fractint.
 o The monitorwidth parameter was renamed to stereowidth.  The old parameter
   name is still accepted but will be deprecated in a future release.
-o The orbitsavename parameter was added to specify the name of the raw
-  orbits file.  The orbits file, if it exists, is overwritten when
-  overwrite=yes.  Otherwise, the value of orbitsavename is incremented until
-  a filename is formed that does not exist.
-o The autokeyname parameter was enhanced to create a unique filename when
-  autokey=record unless overwrite=yes is specified.
-o Disk video buffer sizes were dramatically increased.\
-o The formula parser has been enhanced to remove internal size limitations.
-  The only limit on formula parsing is available memory.
 o Printing an image has been removed.  Use your operating system for that.
   :)
 o The following parameter file commands are deprecated and support will be
@@ -318,10 +325,6 @@ o The following parameter file commands are deprecated and support will be
       exitmode            plotstyle             tweaklzw\
       fpu                 printer               vesadetect\
       gif87a              printfile
-o Added new fractal types {Mandelbrot Mix 4} and {DivideBrot5} by Jim Muth.
-  DivideBrot5 has arbitrary precision math support.  Note that image skewing
-  and inversion are not  supported by the AP math routines. See
-  {Arbitrary Precision and Deep Zooming} for other features not supported.
 
 Known limitations:
 
