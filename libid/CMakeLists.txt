@@ -23,6 +23,7 @@ add_library(libid
     fractals.cpp include/fractals.h
     frasetup.cpp include/frasetup.h
     get_julia_attractor.cpp include/get_julia_attractor.h
+    one_or_two_pass.cpp include/one_or_two_pass.h
     orbit.cpp include/orbit.h
     param_not_used.cpp include/param_not_used.h
     pixel_grid.cpp include/pixel_grid.h
@@ -240,6 +241,7 @@ source_group("Header Files/engine" FILES
     include/frasetup.h
     include/get_julia_attractor.h
     include/id_data.h
+    include/one_or_two_pass.h
     include/orbit.h
     include/param_not_used.h
     include/pixel_grid.h
@@ -271,6 +273,7 @@ source_group("Source Files/engine" FILES
     fractals.cpp
     frasetup.cpp
     get_julia_attractor.cpp
+    one_or_two_pass.cpp
     orbit.cpp
     param_not_used.cpp
     pixel_grid.cpp
