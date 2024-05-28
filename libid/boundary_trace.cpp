@@ -221,7 +221,7 @@ int bound_trace_main()
                                     if (fillcolor_used != last_fillcolor_used || length > max_putline_length)
                                     {
                                         // only reset dstack if necessary
-                                        std::memset(dstack,fillcolor_used,length);
+                                        std::memset(dstack, fillcolor_used, length);
                                         last_fillcolor_used = fillcolor_used;
                                         max_putline_length = length;
                                     }
