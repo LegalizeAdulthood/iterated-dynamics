@@ -11,11 +11,12 @@
 #include "ssg_block_size.h"
 #include "work_list.h"
 
+#include <algorithm>
+#include <cstring>
+
 // routines in this module
 static bool guessrow(bool firstpass, int y, int blocksize);
 static void plotblock(int, int, int, int);
-static bool xsym_split(int xaxis_row, bool xaxis_between);
-static bool ysym_split(int yaxis_col, bool yaxis_between);
 
 static bool guessplot = false;          // paint 1st pass row at a time?
 static bool bottom_guess = false;
