@@ -3329,15 +3329,7 @@ inline direction advance(direction dir, int increment)
 
 static int bound_trace_main()
 {
-    direction coming_from;
-    unsigned int matches_found;
-    int trail_color;
-    int fillcolor_used;
     int last_fillcolor_used = -1;
-    int max_putline_length;
-    int right;
-    int left;
-    int length;
     if (g_inside_color == COLOR_BLACK || g_outside_color == COLOR_BLACK)
     {
         stopmsg("Boundary tracing cannot be used with inside=0 or outside=0");
@@ -3350,7 +3342,7 @@ static int bound_trace_main()
     }
 
     g_got_status = 2;
-    max_putline_length = 0; // reset max_putline_length
+    int max_putline_length = 0; // reset max_putline_length
     for (int currow = g_i_y_start; currow <= g_i_y_stop; currow++)
     {
         g_reset_periodicity = true; // reset for a new row
@@ -3362,7 +3354,7 @@ static int bound_trace_main()
                 continue;
             }
 
-            trail_color = g_color;
+            int trail_color = g_color;
             g_row = currow;
             g_col = curcol;
             if ((*g_calc_type)() == -1) // g_color, g_row, g_col are global
@@ -3391,10 +3383,10 @@ static int bound_trace_main()
             trail_row = currow;
             trail_col = curcol;
             trail_color = g_color;
-            fillcolor_used = g_fill_color > 0 ? g_fill_color : trail_color;
-            coming_from = direction::West;
+            const int fillcolor_used = g_fill_color > 0 ? g_fill_color : trail_color;
+            direction coming_from = direction::West;
             going_to = direction::East;
-            matches_found = 0;
+            unsigned int matches_found = 0;
             bool continue_loop = true;
             do
             {
@@ -3473,14 +3465,14 @@ static int bound_trace_main()
                             (going_to == direction::West && coming_from != direction::East))
                         {
                             // fill a row, but only once
-                            right = g_col;
+                            int right = g_col;
                             while (--right >= g_i_x_start && (g_color = getcolor(right,g_row)) == trail_color)
                             {
                                 // do nothing
                             }
                             if (g_color == bkcolor) // check last color
                             {
-                                left = right;
+                                int left = right;
                                 while (getcolor(--left,g_row) == bkcolor)
                                 {
                                     // Should NOT be possible for left < g_i_x_start
@@ -3494,7 +3486,7 @@ static int bound_trace_main()
                                 else
                                 {
                                     // fill the line to the left
-                                    length = right - left + 1;
+                                    const int length = right - left + 1;
                                     if (fillcolor_used != last_fillcolor_used || length > max_putline_length)
                                     {
                                         // only reset dstack if necessary
