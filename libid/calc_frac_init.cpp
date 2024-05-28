@@ -120,7 +120,7 @@ void fractal_floattobf()
 void calcfracinit() // initialize a *pile* of stuff for fractal calculation
 {
     g_old_color_iter = 0L;
-    g_color_iter = g_old_color_iter;
+    g_color_iter = 0L;
     for (int i = 0; i < 10; i++)
     {
         g_rhombus_stack[i] = 0;
@@ -515,7 +515,7 @@ expand_retry:
             dx0 = g_x_min;                // fill up the x, y grids
             dy0 = g_y_max;
             dy1 = 0;
-            dx1 = dy1;
+            dx1 = 0;
             /* this way of defining the dx and dy arrays is not the most
                accurate, but it is kept because it is used to determine
                the limit of resolution */
@@ -1142,9 +1142,9 @@ static void adjust_to_limits(double expand)
     }
     // get min/max x/y values
     highx = cornerx[0];
-    lowx = highx;
+    lowx = cornerx[0];
     highy = cornery[0];
-    lowy = highy;
+    lowy = cornery[0];
 
     for (int i = 1; i < 4; ++i)
     {
@@ -1187,7 +1187,7 @@ static void adjust_to_limits(double expand)
 
     // if any corner has x or y past limit, move the image
     adjy = 0;
-    adjx = adjy;
+    adjx = 0;
 
     for (int i = 0; i < 4; ++i)
     {
