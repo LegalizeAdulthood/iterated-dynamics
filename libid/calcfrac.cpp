@@ -989,7 +989,6 @@ int find_alternate_math(fractal_type type, bf_math_type math)
     return ret;
 }
 
-
 // general escape-time engine routines
 static void perform_worklist()
 {
@@ -1917,7 +1916,6 @@ static int standard_calc(int passnum)
     }
     return 0;
 }
-
 
 int calcmand()              // fast per pixel 1/2/b/g, called with row & col set
 {
@@ -3301,7 +3299,6 @@ static int potential(double mag, long iterations)
     return i_pot;
 }
 
-
 // super solid guessing
 
 // Timothy Wegner invented this solid guessing idea and implemented it in
@@ -3929,7 +3926,6 @@ static void plotblock(int buildrow, int x, int y, int color)
         }
     }
 }
-
 
 // symmetry plot setup
 static bool xsym_split(int xaxis_row, bool xaxis_between)
@@ -4918,6 +4914,7 @@ void symPIplot(int x, int y, int color)
         x += g_pi_in_pixels;
     }
 }
+
 // Symmetry plot for period PI plus Origin Symmetry
 void symPIplot2J(int x, int y, int color)
 {
@@ -4935,6 +4932,7 @@ void symPIplot2J(int x, int y, int color)
         x += g_pi_in_pixels;
     }
 }
+
 // Symmetry plot for period PI plus Both Axis Symmetry
 void symPIplot4J(int x, int y, int color)
 {
