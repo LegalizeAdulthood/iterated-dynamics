@@ -61,9 +61,9 @@ int tesseral()
         int ysize;
         tess *tp2;
         tp->rgt = -2;
-        tp->lft = tp->rgt;
-        tp->bot = tp->lft;
-        tp->top = tp->bot;
+        tp->lft = -2;
+        tp->bot = -2;
+        tp->top = -2;
         cury = g_yy_begin & 0xfff;
         ysize = 1;
         i = (unsigned)g_yy_begin >> 12;
@@ -337,7 +337,7 @@ tess_end:
         int xsize;
         int ysize;
         ysize = 1;
-        xsize = ysize;
+        xsize = 1;
         i = 2;
         while (tp->x2 - tp->x1 - 2 >= i)
         {
