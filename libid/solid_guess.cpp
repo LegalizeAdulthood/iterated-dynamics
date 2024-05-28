@@ -62,7 +62,7 @@ int solid_guess()
 
     blocksize = ssg_blocksize();
     maxblock = blocksize;
-    i = maxblock;
+    i = blocksize;
     g_total_passes = 1;
     while ((i >>= 1) > 1)
     {
@@ -271,8 +271,8 @@ static bool guessrow(bool firstpass, int y, int blocksize)
     unsigned int pfxmask;
 
     c42 = 0;  // just for warning
-    c41 = c42;
-    c44 = c41;
+    c41 = 0;
+    c44 = 0;
 
     halfblock = blocksize >> 1;
     {
@@ -287,8 +287,8 @@ static bool guessrow(bool firstpass, int y, int blocksize)
     prev11 = -1;
     c22 = getcolor(g_i_x_start, y);
     c13 = c22;
-    c12 = c13;
-    c24 = c12;
+    c12 = c22;
+    c24 = c22;
     c21 = getcolor(g_i_x_start, (y > 0)?ylesshalf:0);
     c31 = c21;
     if (yplusblock <= g_i_y_stop)
@@ -300,7 +300,7 @@ static bool guessrow(bool firstpass, int y, int blocksize)
         c24 = -1;
     }
     guessed13 = 0;
-    guessed12 = guessed13;
+    guessed12 = 0;
 
     for (int x = g_i_x_start; x <= g_i_x_stop;)   // increment at end, or when doing continue
     {
@@ -311,13 +311,13 @@ static bool guessrow(bool firstpass, int y, int blocksize)
             {
                 x += maxblock;
                 c13 = c22;
-                c12 = c13;
-                c24 = c12;
-                c21 = c24;
-                c31 = c21;
-                prev11 = c31;
+                c12 = c22;
+                c24 = c22;
+                c21 = c22;
+                c31 = c22;
+                prev11 = c22;
                 guessed13 = 0;
-                guessed12 = guessed13;
+                guessed12 = 0;
                 continue;
             }
         }
@@ -352,8 +352,8 @@ static bool guessrow(bool firstpass, int y, int blocksize)
         else if (!right_guess)
         {
             c44 = -1;
-            c42 = c44;
-            c41 = c42;
+            c42 = -1;
+            c41 = -1;
         }
         if (yplusblock > g_i_y_stop)
         {
@@ -362,20 +362,20 @@ static bool guessrow(bool firstpass, int y, int blocksize)
 
         // guess or calc the remaining 3 quarters of current block
         guessed33 = 1;
-        guessed32 = guessed33;
-        guessed23 = guessed32;
+        guessed32 = 1;
+        guessed23 = 1;
         c33 = c22;
-        c32 = c33;
-        c23 = c32;
+        c32 = c22;
+        c23 = c22;
         if (yplushalf > g_i_y_stop)
         {
             if (!bottom_guess)
             {
                 c33 = -1;
-                c23 = c33;
+                c23 = -1;
             }
             guessed33 = -1;
-            guessed23 = guessed33;
+            guessed23 = -1;
             guessed13 = 0;
         }
         if (xplushalf > g_i_x_stop)
@@ -383,10 +383,10 @@ static bool guessrow(bool firstpass, int y, int blocksize)
             if (!right_guess)
             {
                 c33 = -1;
-                c32 = c33;
+                c32 = -1;
             }
             guessed33 = -1;
-            guessed32 = guessed33;
+            guessed32 = -1;
         }
         while (true) // go around till none of 23,32,33 change anymore
         {
@@ -543,7 +543,7 @@ static bool guessrow(bool firstpass, int y, int blocksize)
         c24 = c44;
         c13 = c33;
         c21 = c41;
-        c31 = c21;
+        c31 = c41;
         c12 = c32;
         guessed12 = guessed32;
         guessed13 = guessed33;
