@@ -10,6 +10,7 @@
 #include "calc_frac_init.h"
 #include "cmdfiles.h"
 #include "convert_center_mag.h"
+#include "diffusion_scan.h"
 #include "drivers.h"
 #include "engine_timer.h"
 #include "file_gets.h"

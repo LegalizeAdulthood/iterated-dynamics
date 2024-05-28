@@ -16,6 +16,7 @@ add_library(libid
     calmanfp.cpp include/calmanfp.h
     convert_center_mag.cpp include/convert_center_mag.h
     convert_corners.cpp include/convert_corners.h
+    diffusion_scan.cpp include/diffusion_scan.h
     fracsuba.cpp include/fracsuba.h
     fractalb.cpp include/fractalb.h
     fractalp.cpp include/fractalp.h
@@ -228,6 +229,7 @@ source_group("Header Files/engine" FILES
     include/calmanfp.h
     include/convert_center_mag.h
     include/convert_corners.h
+    include/diffusion_scan.h
     include/engine_timer.h
     include/fracsuba.h
     include/fractalb.h
@@ -259,6 +261,7 @@ source_group("Source Files/engine" FILES
     calmanfp.cpp
     convert_center_mag.cpp
     convert_corners.cpp
+    diffusion_scan.cpp
     engine_timer.cpp
     fracsuba.cpp
     fractalb.cpp
