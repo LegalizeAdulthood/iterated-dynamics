@@ -252,7 +252,7 @@ bool find_file_item(std::string &filename, char const *itemname, std::FILE **fil
     if (!found)
     {
         std::sprintf(fullpath, "'%s' file entry item not found", itemname);
-        stopmsg(STOPMSG_NONE, fullpath);
+        stopmsg(fullpath);
         return true;
     }
     // found file
@@ -427,7 +427,7 @@ top:
                     if (++numentries >= MAXENTRIES)
                     {
                         std::sprintf(buf, "Too many entries in file, first %d used", MAXENTRIES);
-                        stopmsg(STOPMSG_NONE, buf);
+                        stopmsg(buf);
                         break;
                     }
                 }
@@ -704,7 +704,7 @@ retry:
     numentries = scan_entries(s_gfe_file, &storage[0], nullptr);
     if (numentries == 0)
     {
-        stopmsg(STOPMSG_NONE, "File doesn't contain any valid entries");
+        stopmsg("File doesn't contain any valid entries");
         std::fclose(s_gfe_file);
         return -2; // back to file list
     }
@@ -772,7 +772,7 @@ long get_file_entry(gfe_type type, char const *title, char const *fmask,
             newfile = false;
             if (firsttry)
             {
-                stopmsg(STOPMSG_NONE, "Can't find " + filename);
+                stopmsg("Can't find " + filename);
             }
             std::sprintf(buf, "Select %s File", title);
             if (getafilename(buf, fmask, filename))

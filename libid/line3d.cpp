@@ -812,7 +812,7 @@ int line3d(BYTE * pixels, unsigned linelen)
                 {
                     if (g_debug_flag != debug_flags::none)
                     {
-                        stopmsg(STOPMSG_NONE, "debug, cur.color=bad");
+                        stopmsg("debug, cur.color=bad");
                     }
                     f_cur.color = (float) bad.color;
                     cur.color = (int) f_cur.color;
@@ -844,7 +844,7 @@ int line3d(BYTE * pixels, unsigned linelen)
                             // this shouldn't happen
                             if (g_debug_flag != debug_flags::none)
                             {
-                                stopmsg(STOPMSG_NONE, "debug, normal vector err2");
+                                stopmsg("debug, normal vector err2");
                             }
                             f_cur.color = (float) g_colors;
                             cur.color = (int) f_cur.color;
@@ -1589,7 +1589,7 @@ static void File_Error(char const *File_Name1, int ERROR)
         std::snprintf(msgbuf, std::size(msgbuf), "OOPS, can't handle this type of file.\n");
         break;
     }
-    stopmsg(STOPMSG_NONE, msgbuf);
+    stopmsg(msgbuf);
 }
 
 

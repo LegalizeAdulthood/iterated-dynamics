@@ -186,7 +186,7 @@ static int s_projection{2};  // projection plane - default is to plot x-y
 static void fallback_to_random_walk()
 {
     stopmsg(
-        STOPMSG_INFO_ONLY | STOPMSG_NO_BUZZER, "Not enough memory: switching to random walk.\n");
+        stopmsg_flags::INFO_ONLY | stopmsg_flags::NO_BUZZER, "Not enough memory: switching to random walk.\n");
     g_major_method = Major::random_walk;
 }
 
@@ -2389,9 +2389,9 @@ int funny_glasses_call(int (*calc)())
         if (g_glasses_type == 3)
         {
             // photographer's mode
-            stopmsg(STOPMSG_INFO_ONLY,
-                    "First image (left eye) is ready.  Hit any key to see it,\n"
-                    "then hit <s> to save, hit any other key to create second image.");
+            stopmsg(stopmsg_flags::INFO_ONLY,
+                "First image (left eye) is ready.  Hit any key to see it,\n"
+                "then hit <s> to save, hit any other key to create second image.");
             for (int i = driver_get_key(); i == 's' || i == 'S'; i = driver_get_key())
             {
                 savetodisk(g_save_filename);
@@ -2414,7 +2414,7 @@ int funny_glasses_call(int (*calc)())
         }
         if (g_glasses_type == 3)   // photographer's mode
         {
-            stopmsg(STOPMSG_INFO_ONLY, "Second image (right eye) is ready");
+            stopmsg(stopmsg_flags::INFO_ONLY, "Second image (right eye) is ready");
         }
     }
 done:
@@ -2613,7 +2613,7 @@ static int ifs2d()
     }
     if (!resized)
     {
-        stopmsg(STOPMSG_NONE, "Insufficient memory for IFS");
+        stopmsg("Insufficient memory for IFS");
         return -1;
     }
 
@@ -2726,7 +2726,7 @@ static int ifs3dlong()
     }
     catch (std::bad_alloc const &)
     {
-        stopmsg(STOPMSG_NONE, "Insufficient memory for IFS");
+        stopmsg("Insufficient memory for IFS");
         return -1;
     }
 

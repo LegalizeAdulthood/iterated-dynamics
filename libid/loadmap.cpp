@@ -50,7 +50,7 @@ bool ValidateLuts(char const *fn)
     {
         char line[160];
         std::snprintf(line, std::size(line), "Could not load color map %s", fn);
-        stopmsg(STOPMSG_NONE, line);
+        stopmsg(line);
         return true;
     }
     unsigned index;

@@ -35,7 +35,7 @@ bool snd_open()
         s_snd_fp = std::fopen(soundname, "w");
         if (s_snd_fp == nullptr)
         {
-            stopmsg(STOPMSG_NONE, "Can't open sound*.txt");
+            stopmsg("Can't open sound*.txt");
         }
         else
         {

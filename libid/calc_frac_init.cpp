@@ -541,7 +541,7 @@ expand_retry:
                 {
                     if (tries > 1)
                     {
-                        stopmsg(STOPMSG_NONE, "precision-detection error");
+                        stopmsg("precision-detection error");
                     }
                     /* Previously there were four tests of distortions in the
                        zoom box used to detect precision limitations. In some

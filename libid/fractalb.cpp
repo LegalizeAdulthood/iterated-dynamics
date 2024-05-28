@@ -41,7 +41,7 @@ void show_var_bn(char const *s, bn_t n)
     std::strcat(msg, " ");
     bntostr(msg + std::strlen(s), 40, n);
     msg[79] = 0;
-    stopmsg(STOPMSG_NONE, msg);
+    stopmsg(msg);
 }
 
 void showcornersdbl(char const *s)
@@ -60,7 +60,7 @@ void showcornersdbl(char const *s)
         g_x_3rd, g_y_3rd,                    //
         g_delta_x, g_delta_y,                //
         g_delta_x2, g_delta_y2);
-    if (stopmsg(STOPMSG_NONE, msg))
+    if (stopmsg(msg))
     {
         goodbye();
     }
@@ -93,7 +93,7 @@ void showcorners(char const *s)
     bntostr(msg, dec, bny3rd);
     std::snprintf(msg1, std::size(msg1), "bny3rd=%s\ny_3rd= %.20f\n\n", msg, g_y_3rd);
     std::strcat(msg3, msg1);
-    if (stopmsg(STOPMSG_NONE, msg3))
+    if (stopmsg(msg3))
     {
         goodbye();
     }
@@ -112,7 +112,7 @@ void showbfglobals(char const *s)
         bnstep, bnlength, intlength, rlength, padding,               //
         shiftfactor, g_decimals, bflength, rbflength,                //
         bfdecimals);
-    if (stopmsg(STOPMSG_NONE, msg))
+    if (stopmsg(msg))
     {
         goodbye();
     }
@@ -152,7 +152,7 @@ void showcornersbf(char const *s)
     bftostr(msg, dec, g_bf_y_3rd);
     std::snprintf(msg1, std::size(msg1), "bf_y_3rd=%s\ny_3rd= %.20f\n\n", msg, g_y_3rd);
     std::strcat(msg3, msg1);
-    if (stopmsg(STOPMSG_NONE, msg3))
+    if (stopmsg(msg3))
     {
         goodbye();
     }
@@ -184,7 +184,7 @@ void showcornersbfs(char const *s)
     bftostr(msg, dec, g_bf_save_y_3rd);
     std::snprintf(msg1, std::size(msg1), "bf_save_y_3rd=%s\ny_3rd= %.20f\n\n", msg, g_y_3rd);
     std::strcat(msg3, msg1);
-    if (stopmsg(STOPMSG_NONE, msg3))
+    if (stopmsg(msg3))
     {
         goodbye();
     }
@@ -198,7 +198,7 @@ void show_two_bf(char const *s1, bf_t t1, char const *s2, bf_t t2, int digits)
     bftostr_e(msg1, digits, t1);
     bftostr_e(msg2, digits, t2);
     std::snprintf(msg3, std::size(msg3), "\n%s->%s\n%s->%s", s1, msg1, s2, msg2);
-    if (stopmsg(STOPMSG_NONE, msg3))
+    if (stopmsg(msg3))
     {
         goodbye();
     }
@@ -214,7 +214,7 @@ void show_three_bf(char const *s1, bf_t t1, char const *s2, bf_t t2, char const 
     bftostr_e(msg2, digits, t2);
     bftostr_e(msg3, digits, t3);
     std::snprintf(msg4, std::size(msg4), "\n%s->%s\n%s->%s\n%s->%s", s1, msg1, s2, msg2, s3, msg3);
-    if (stopmsg(STOPMSG_NONE, msg4))
+    if (stopmsg(msg4))
     {
         goodbye();
     }
@@ -241,7 +241,7 @@ void showaspect(char const *s)
             s,
             (g_y_max-g_y_min)/(g_x_max-g_x_min),
             str);
-    if (stopmsg(STOPMSG_NONE, msg))
+    if (stopmsg(msg))
     {
         goodbye();
     }
@@ -256,7 +256,7 @@ void comparevalues(char const *s, LDBL x, bn_t bnx)
     char msg1[300];
     bntostr(msg, dec, bnx);
     std::snprintf(msg1, std::size(msg1), "%s\nbignum=%s\ndouble=%.20Lf\n\n", s, msg, x);
-    if (stopmsg(STOPMSG_NONE, msg1))
+    if (stopmsg(msg1))
     {
         goodbye();
     }
@@ -269,7 +269,7 @@ void comparevaluesbf(char const *s, LDBL x, bf_t bfx)
     char msg1[700];
     bftostr_e(msg, dec, bfx);
     std::snprintf(msg1, std::size(msg1), "%s\nbignum=%s\ndouble=%.20Lf\n\n", s, msg, x);
-    if (stopmsg(STOPMSG_NONE, msg1))
+    if (stopmsg(msg1))
     {
         goodbye();
     }
@@ -283,7 +283,7 @@ void show_var_bf(char const *s, bf_t n)
     std::strcat(msg, " ");
     bftostr_e(msg+std::strlen(s), 40, n);
     msg[79] = 0;
-    if (stopmsg(STOPMSG_NONE, msg))
+    if (stopmsg(msg))
     {
         goodbye();
     }

@@ -811,7 +811,7 @@ gfp_top:
 
     if (prompt_for_type_params && (g_display_3d > display_3d_modes::NONE))
     {
-        stopmsg(STOPMSG_INFO_ONLY | STOPMSG_NO_BUZZER, "Current type has no type-specific parameters");
+        stopmsg(stopmsg_flags::INFO_ONLY | stopmsg_flags::NO_BUZZER, "Current type has no type-specific parameters");
         goto gfp_exit;
     }
     if (g_julibrot)

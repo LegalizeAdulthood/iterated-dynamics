@@ -417,10 +417,7 @@ int plasma()
 
     if (g_colors < 4)
     {
-        stopmsg(STOPMSG_NONE,
-                "Plasma Clouds can currently only be run in a 4-or-more-color video\n"
-                "mode (and color-cycled only on VGA adapters [or EGA adapters in their\n"
-                "640x350x16 mode]).");
+        stopmsg("Plasma Clouds can requires 4 or more color video");
         return -1;
     }
     iparmx = (int)(g_params[0] * 8);
@@ -1049,7 +1046,7 @@ int Bifurcation()
     }
     if (!resized)
     {
-        stopmsg(STOPMSG_NONE, "Insufficient free memory for calculation.");
+        stopmsg("Insufficient free memory for calculation.");
         return -1;
     }
 
@@ -1590,7 +1587,7 @@ bool lya_setup()
     lyaRxy[lyaLength++] = 0;
     if (g_inside_color < COLOR_BLACK)
     {
-        stopmsg(STOPMSG_NONE, "Sorry, inside options other than inside=nnn are not supported by the lyapunov");
+        stopmsg("Sorry, inside options other than inside=nnn are not supported by the lyapunov");
         g_inside_color = 1;
     }
     if (g_user_std_calc_mode == 'o')

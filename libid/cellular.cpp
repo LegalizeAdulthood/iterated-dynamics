@@ -52,37 +52,36 @@ void abort_cellular(int err, int t)
     {
         char msg[30];
         std::snprintf(msg, std::size(msg), "Bad t=%d, aborting\n", t);
-        stopmsg(STOPMSG_NONE, msg);
+        stopmsg(msg);
     }
     break;
     case BAD_MEM:
     {
-        stopmsg(STOPMSG_NONE, "Insufficient free memory for calculation");
+        stopmsg("Insufficient free memory for calculation");
     }
     break;
     case STRING1:
     {
-        stopmsg(STOPMSG_NONE, "String can be a maximum of 16 digits");
+        stopmsg("String can be a maximum of 16 digits");
     }
     break;
     case STRING2:
     {
         static char msg[] = {"Make string of 0's through  's" };
         msg[27] = (char)(k_1 + 48); // turn into a character value
-        stopmsg(STOPMSG_NONE, msg);
+        stopmsg(msg);
     }
     break;
     case TABLEK:
     {
         static char msg[] = {"Make Rule with 0's through  's" };
         msg[27] = (char)(k_1 + 48); // turn into a character value
-        stopmsg(STOPMSG_NONE, msg);
+        stopmsg(msg);
     }
     break;
     case TYPEKR:
     {
-        stopmsg(STOPMSG_NONE,
-            "Type must be 21, 31, 41, 51, 61, 22, 32, 42, 23, 33, 24, 25, 26, 27");
+        stopmsg("Type must be 21, 31, 41, 51, 61, 22, 32, 42, 23, 33, 24, 25, 26, 27");
     }
     break;
     case RULELENGTH:
@@ -98,12 +97,12 @@ void abort_cellular(int err, int t)
             msg[13] = (char)(i+48);
             msg[14] = (char)((rule_digits % 10) + 48);
         }
-        stopmsg(STOPMSG_NONE, msg);
+        stopmsg(msg);
     }
     break;
     case INTERUPT:
     {
-        stopmsg(STOPMSG_NONE, "Interrupted, can't resume");
+        stopmsg("Interrupted, can't resume");
     }
     break;
     case CELLULAR_DONE:

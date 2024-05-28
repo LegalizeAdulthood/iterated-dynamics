@@ -794,7 +794,7 @@ enum
 namespace cmd_arg
 {
 
-static StopMsgFn s_stop_msg{stopmsg};
+static StopMsgFn s_stop_msg{static_cast<StopMsg *>(stopmsg)};
 static GoodbyeFn s_goodbye{goodbye};
 static PrintDocFn s_print_document{print_document};
 
@@ -1749,7 +1749,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         }
         if (!resized)
         {
-            stopmsg(STOPMSG_NO_STACK, "Insufficient memory for ranges=");
+            stopmsg(stopmsg_flags::NO_STACK, "Insufficient memory for ranges=");
             return CMDARG_ERROR;
         }
         g_iteration_ranges_len = entries;
@@ -3761,7 +3761,7 @@ static void argerror(char const *badarg)      // oops. couldn't decode this
                "(see the Startup Help screens or documentation for a complete\n"
                " argument list with descriptions)";
     }
-    cmd_arg::s_stop_msg(STOPMSG_NONE, msg);
+    cmd_arg::s_stop_msg(stopmsg_flags::NONE, msg);
     if (g_init_batch != batch_modes::NONE)
     {
         g_init_batch = batch_modes::BAILOUT_INTERRUPTED_TRY_SAVE;
@@ -3916,7 +3916,7 @@ int init_msg(char const *cmdstr, char const *badfilename, cmd_file mode)
     }
     else if (badfilename)
     {
-        stopmsg(STOPMSG_NONE, msg);
+        stopmsg(msg);
     }
     return 0;
 }

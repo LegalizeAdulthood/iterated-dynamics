@@ -117,7 +117,7 @@ main_state big_while_loop(bool *const kbdmore, bool *const stacked, bool const r
                     }
                     else
                     {
-                        stopmsg(STOPMSG_NONE, "That video mode is not available with your adapter.");
+                        stopmsg("That video mode is not available with your adapter.");
                         g_ask_video = true;
                     }
                     g_init_mode = -1;
@@ -131,15 +131,15 @@ main_state big_while_loop(bool *const kbdmore, bool *const stacked, bool const r
 #define MSG_XY2 "Not enough video memory for that many lines, height cut down."
                     if (g_logical_screen_x_dots > g_screen_x_dots && g_logical_screen_y_dots > g_screen_y_dots)
                     {
-                        stopmsg(STOPMSG_NONE, MSG_XY1 "\n" MSG_XY2);
+                        stopmsg(MSG_XY1 "\n" MSG_XY2);
                     }
                     else if (g_logical_screen_y_dots > g_screen_y_dots)
                     {
-                        stopmsg(STOPMSG_NONE, MSG_XY2);
+                        stopmsg(MSG_XY2);
                     }
                     else
                     {
-                        stopmsg(STOPMSG_NONE, MSG_XY1);
+                        stopmsg(MSG_XY1);
                     }
 #undef MSG_XY1
 #undef MSG_XY2
@@ -203,8 +203,7 @@ main_state big_while_loop(bool *const kbdmore, bool *const stacked, bool const r
                 }
                 if (g_logical_screen_x_dots > g_screen_x_dots || g_logical_screen_y_dots > g_screen_y_dots)
                 {
-                    stopmsg(STOPMSG_NONE,
-                        "View window too large; using full screen.");
+                    stopmsg("View window too large; using full screen.");
                     g_view_window = false;
                     g_view_x_dots = g_screen_x_dots;
                     g_logical_screen_x_dots = g_view_x_dots;
@@ -217,16 +216,14 @@ main_state big_while_loop(bool *const kbdmore, bool *const stacked, bool const r
                 {
                     // so ssg works
                     // but no check if in evolve mode to allow lots of small views
-                    stopmsg(STOPMSG_NONE,
-                        "View window too small; using full screen.");
+                    stopmsg("View window too small; using full screen.");
                     g_view_window = false;
                     g_logical_screen_x_dots = g_screen_x_dots;
                     g_logical_screen_y_dots = g_screen_y_dots;
                 }
                 if ((g_evolving & FIELDMAP) && bit_set(g_cur_fractal_specific->flags, fractal_flags::INFCALC))
                 {
-                    stopmsg(STOPMSG_NONE,
-                        "Fractal doesn't terminate! switching off evolution.");
+                    stopmsg("Fractal doesn't terminate! switching off evolution.");
                     g_evolving ^= FIELDMAP;
                     g_view_window = false;
                     g_logical_screen_x_dots = g_screen_x_dots;
@@ -296,7 +293,7 @@ main_state big_while_loop(bool *const kbdmore, bool *const stacked, bool const r
             {
                 char msg[MSG_LEN];
                 std::snprintf(msg, std::size(msg), "floatflag=%d", g_user_float_flag ? 1 : 0);
-                stopmsg(STOPMSG_NO_BUZZER, msg);
+                stopmsg(stopmsg_flags::NO_BUZZER, msg);
             }
             i = funny_glasses_call(gifview);
             if (g_out_line_cleanup)              // cleanup routine defined?

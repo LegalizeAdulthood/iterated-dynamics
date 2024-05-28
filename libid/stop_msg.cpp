@@ -46,7 +46,7 @@ static void blankrows(int row, int count, int attr)
        &8 for parser - use a fixed pitch font
       &16 for info only message (green box instead of red in DOS vsn)
    */
-bool stopmsg(int flags, const std::string &msg)
+bool stopmsg(stopmsg_flags flags, const std::string &msg)
 {
     int toprow;
     int color;
@@ -87,7 +87,7 @@ bool stopmsg(int flags, const std::string &msg)
     }
     old_look_at_mouse = g_look_at_mouse;
     g_look_at_mouse = -13;
-    if ((flags & STOPMSG_NO_STACK))
+    if (bit_set(flags, stopmsg_flags::NO_STACK))
     {
         blankrows(toprow = 12, 10, 7);
     }
@@ -99,7 +99,7 @@ bool stopmsg(int flags, const std::string &msg)
     }
     g_text_cbase = 2; // left margin is 2
     driver_put_string(toprow, 0, 7, msg);
-    if (flags & STOPMSG_CANCEL)
+    if (bit_set(flags, stopmsg_flags::CANCEL))
     {
         driver_put_string(g_text_row+2, 0, 7, "Escape to cancel, any other key to continue...");
     }
@@ -108,12 +108,13 @@ bool stopmsg(int flags, const std::string &msg)
         driver_put_string(g_text_row+2, 0, 7, "Any key to continue...");
     }
     g_text_cbase = 0; // back to full line
-    color = (flags & STOPMSG_INFO_ONLY) ? C_STOP_INFO : C_STOP_ERR;
+    color = bit_set(flags, stopmsg_flags::INFO_ONLY) ? C_STOP_INFO : C_STOP_ERR;
     driver_set_attr(toprow, 0, color, (g_text_row+1-toprow)*80);
     driver_hide_text_cursor();   // cursor off
-    if ((flags & STOPMSG_NO_BUZZER) == 0)
+    if (!bit_set(flags, stopmsg_flags::NO_BUZZER))
     {
-        driver_buzzer((flags & STOPMSG_INFO_ONLY) ? buzzer_codes::COMPLETE : buzzer_codes::PROBLEM);
+        driver_buzzer(bit_set(flags, stopmsg_flags::INFO_ONLY) ? buzzer_codes::COMPLETE
+                                                                       : buzzer_codes::PROBLEM);
     }
     while (driver_key_pressed())   // flush any keyahead
     {
@@ -127,7 +128,7 @@ bool stopmsg(int flags, const std::string &msg)
             ret = true;
         }
     }
-    if ((flags & STOPMSG_NO_STACK))
+    if (bit_set(flags, stopmsg_flags::NO_STACK))
     {
         blankrows(toprow, 10, 7);
     }

@@ -726,7 +726,7 @@ static void area()
     long cnt = 0;
     if (g_inside_color < COLOR_BLACK)
     {
-        stopmsg(STOPMSG_NONE, "Need solid inside to compute area");
+        stopmsg("Need solid inside to compute area");
         return;
     }
     for (int y = 0; y < g_logical_screen_y_dots; y++)
@@ -750,5 +750,5 @@ static void area()
     std::sprintf(buf, "%s%ld inside pixels of %ld%s%f",
             msg, cnt, (long)g_logical_screen_x_dots*(long)g_logical_screen_y_dots, ".  Total area ",
             cnt/((float)g_logical_screen_x_dots*(float)g_logical_screen_y_dots)*(g_x_max-g_x_min)*(g_y_max-g_y_min));
-    stopmsg(STOPMSG_NO_BUZZER, buf);
+    stopmsg(stopmsg_flags::NO_BUZZER, buf);
 }

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "cmdfiles.h"
+#include "stop_msg.h"
 
 #include <functional>
 
@@ -8,7 +9,7 @@ namespace cmd_arg
 {
 
 // To facilitate testing
-using StopMsg = bool(int flags, const std::string &msg);
+using StopMsg = bool(stopmsg_flags flags, const std::string &msg);
 using StopMsgFn = std::function<StopMsg>;
 StopMsgFn get_stop_msg();
 void set_stop_msg(const StopMsgFn &fn);

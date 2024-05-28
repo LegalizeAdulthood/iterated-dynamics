@@ -351,7 +351,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
     {
         // didn't find a useable file
         std::snprintf(msg, std::size(msg), "Sorry, %s isn't a file I can decode.", g_read_filename.c_str());
-        stopmsg(STOPMSG_NONE, msg);
+        stopmsg(msg);
         return -1;
     }
 
@@ -672,7 +672,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
         g_init_mode = g_adapter;          // use previous adapter mode for overlays
         if (g_file_x_dots > g_logical_screen_x_dots || g_file_y_dots > g_logical_screen_y_dots)
         {
-            stopmsg(STOPMSG_NONE, "Can't overlay with a larger image");
+            stopmsg("Can't overlay with a larger image");
             g_init_mode = -1;
             return -1;
         }

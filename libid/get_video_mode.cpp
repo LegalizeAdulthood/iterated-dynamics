@@ -506,9 +506,9 @@ int get_video_mode(FRACTAL_INFO *info, ext_blk_3 *blk_3_info)
         && (g_init_batch == batch_modes::NONE)
         && (std::fabs(g_final_aspect_ratio - g_screen_aspect) > .00001 || g_view_x_dots != 0))
     {
-        stopmsg(STOPMSG_NO_BUZZER,
-                "Warning: <V>iew parameters are being set to non-standard values.\n"
-                "Remember to reset them when finished with this image!");
+        stopmsg(stopmsg_flags::NO_BUZZER,
+            "Warning: <V>iew parameters are being set to non-standard values.\n"
+            "Remember to reset them when finished with this image!");
     }
     return 0;
 }

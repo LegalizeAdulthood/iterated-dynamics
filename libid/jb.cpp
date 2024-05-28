@@ -123,7 +123,7 @@ bool JulibrotSetup()
 
     if (g_colors < 255)
     {
-        stopmsg(STOPMSG_NONE, "Sorry, but Julibrots require a 256-color video mode");
+        stopmsg("Sorry, but Julibrots require a 256-color video mode");
         return false;
     }
 
@@ -164,7 +164,7 @@ bool JulibrotSetup()
         long mymax;
         if (g_fractal_specific[+g_new_orbit_type].isinteger == 0)
         {
-            stopmsg(STOPMSG_NONE, "Julibrot orbit type isinteger mismatch");
+            stopmsg("Julibrot orbit type isinteger mismatch");
         }
         if (g_fractal_specific[+g_new_orbit_type].isinteger > 1)
         {

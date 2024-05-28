@@ -332,7 +332,7 @@ static void init_bf_2()
     // also leave room for the safe area at top of segment
     if (ptr + NUMVARS*(bflength+2) > maxstack)
     {
-        stopmsg(STOPMSG_NONE, "Requested precision of " + std::to_string(g_decimals) + " too high, aborting");
+        stopmsg("Requested precision of " + std::to_string(g_decimals) + " too high, aborting");
         goodbye();
     }
 
@@ -472,14 +472,14 @@ bn_t alloc_stack(size_t size)
 {
     if (bf_math == bf_math_type::NONE)
     {
-        stopmsg(STOPMSG_NONE, "alloc_stack called with bf_math==0");
+        stopmsg("alloc_stack called with bf_math==0");
         return nullptr;
     }
     const long stack_addr = (long)((stack_ptr-bnroot)+size); // part of bnroot
 
     if (stack_addr > maxstack)
     {
-        stopmsg(STOPMSG_NONE, "Aborting, Out of Bignum Stack Space");
+        stopmsg("Aborting, Out of Bignum Stack Space");
         goodbye();
     }
     // keep track of max ptr

@@ -65,7 +65,7 @@ int TestParameterCommand::exec_cmd_arg(const char *curarg, cmd_file mode)
 
 void TestParameterCommand::expect_stop_msg()
 {
-    EXPECT_CALL(m_stop_msg, Call(STOPMSG_NONE, _)).WillOnce(Return(false));
+    EXPECT_CALL(m_stop_msg, Call(stopmsg_flags::NONE, _)).WillOnce(Return(false));
 }
 
 TEST_F(TestParameterCommand, parameterTooLong)

@@ -203,7 +203,7 @@ void  Win32BaseDriver::shell()
     }
     else
     {
-        stopmsg(STOPMSG_NONE, "Couldn't run shell '" + command_line + "', error " + std::to_string(GetLastError()));
+        stopmsg("Couldn't run shell '" + command_line + "', error " + std::to_string(GetLastError()));
     }
 }
 
@@ -322,7 +322,7 @@ void Win32BaseDriver::stack_screen()
         if (i >= WIN32_MAXSCREENS)
         {
             // bug, missing unstack?
-            stopmsg(STOPMSG_NO_STACK, "Win32BaseDriver::stack_screen overflow");
+            stopmsg(stopmsg_flags::NO_STACK, "Win32BaseDriver::stack_screen overflow");
             exit(1);
         }
         saved_screens[i] = wintext.screen_get();
