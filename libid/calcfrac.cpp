@@ -484,9 +484,9 @@ int calctypeshowdot()
     int width;
     show_dot_direction direction = show_dot_direction::JUST_A_POINT;
     stopx = g_col;
-    startx = stopx;
+    startx = g_col;
     stopy = g_row;
-    starty = stopy;
+    starty = g_row;
     width = showdot_width+1;
     if (width > 0)
     {
@@ -575,7 +575,7 @@ int calcfract()
         if (g_user_std_calc_mode != 'o')
         {
             g_std_calc_mode = '1';
-            g_user_std_calc_mode = g_std_calc_mode;
+            g_user_std_calc_mode = '1';
         }
     }
 
@@ -669,13 +669,13 @@ int calcfract()
             int flip;
             int altern;
             int l = 0;
-            int k = l;
-            int i = k;
+            int k = 0;
+            int i = 0;
             g_log_map_flag = 0; // ranges overrides logmap
             while (i < g_iteration_ranges_len)
             {
                 flip = 0;
-                m = flip;
+                m = 0;
                 altern = 32767;
                 numval = g_iteration_ranges[i++];
                 if (numval < 0)
@@ -743,7 +743,7 @@ int calcfract()
             if (std::fabs(g_f_x_center) < std::fabs(g_x_max-g_x_min) / 100)
             {
                 g_f_x_center = 0.0;
-                g_inversion[1] = g_f_x_center;
+                g_inversion[1] = 0.0;
             }
         }
 
@@ -755,7 +755,7 @@ int calcfract()
             if (std::fabs(g_f_y_center) < std::fabs(g_y_max-g_y_min) / 100)
             {
                 g_f_y_center = 0.0;
-                g_inversion[2] = g_f_y_center;
+                g_inversion[2] = 0.0;
             }
         }
 
@@ -804,15 +804,15 @@ int calcfract()
         g_symmetry = g_cur_fractal_specific->symmetry; //   calctype & symmetry
         g_plot = g_put_color; // defaults when setsymmetry not called or does nothing
         g_xx_begin = 0;
-        g_yy_begin = g_xx_begin;
-        g_xx_start = g_yy_begin;
-        g_yy_start = g_xx_start;
-        g_i_x_start = g_yy_start;
-        g_i_y_start = g_i_x_start;
+        g_yy_begin = 0;
+        g_xx_start = 0;
+        g_yy_start = 0;
+        g_i_x_start = 0;
+        g_i_y_start = 0;
         g_yy_stop = g_logical_screen_y_dots-1;
-        g_i_y_stop = g_yy_stop;
+        g_i_y_stop = g_logical_screen_y_dots-1;
         g_xx_stop = g_logical_screen_x_dots-1;
-        g_i_x_stop = g_xx_stop;
+        g_i_x_stop = g_logical_screen_x_dots-1;
         g_calc_status = calc_status_value::IN_PROGRESS; // mark as in-progress
         g_distance_estimator = 0; // only standard escape time engine supports distest
         // per_image routine is run here
@@ -980,13 +980,13 @@ static void perform_worklist()
     // default setup a new worklist
     g_num_work_list = 1;
     g_work_list[0].xxbegin = 0;
-    g_work_list[0].xxstart = g_work_list[0].xxbegin;
+    g_work_list[0].xxstart = 0;
     g_work_list[0].yybegin = 0;
-    g_work_list[0].yystart = g_work_list[0].yybegin;
+    g_work_list[0].yystart = 0;
     g_work_list[0].xxstop = g_logical_screen_x_dots - 1;
     g_work_list[0].yystop = g_logical_screen_y_dots - 1;
     g_work_list[0].sym = 0;
-    g_work_list[0].pass = g_work_list[0].sym;
+    g_work_list[0].pass = 0;
     if (g_resuming) // restore worklist, if we can't the above will stay in place
     {
         int vsn;
@@ -1085,14 +1085,14 @@ static void perform_worklist()
 
         // pull top entry off worklist
         g_xx_start = g_work_list[0].xxstart;
-        g_i_x_start = g_xx_start;
+        g_i_x_start = g_work_list[0].xxstart;
         g_xx_stop  = g_work_list[0].xxstop;
-        g_i_x_stop  = g_xx_stop;
+        g_i_x_stop  = g_work_list[0].xxstop;
         g_xx_begin  = g_work_list[0].xxbegin;
         g_yy_start = g_work_list[0].yystart;
-        g_i_y_start = g_yy_start;
+        g_i_y_start = g_work_list[0].yystart;
         g_yy_stop  = g_work_list[0].yystop;
-        g_i_y_stop  = g_yy_stop;
+        g_i_y_stop  = g_work_list[0].yystop;
         g_yy_begin  = g_work_list[0].yybegin;
         g_work_pass = g_work_list[0].pass;
         g_work_symmetry  = g_work_list[0].sym;
@@ -1499,7 +1499,7 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
     if (g_inside_color <= BOF60 && g_inside_color >= BOF61)
     {
         g_l_magnitude = 0;
-        g_magnitude = g_l_magnitude;
+        g_magnitude = 0;
         min_orbit = 100000.0;
     }
     g_overflow = false;           // reset integer math overflow flag
@@ -2843,7 +2843,7 @@ static void setsymmetry(symmetry_type sym, bool uselist) // set up proper symmet
         parmszero = (parmszero && g_param_z2.x == 0.0 && g_param_z2.y == 0.0);
     }
     yaxis_col = -1;
-    xaxis_row = yaxis_col;
+    xaxis_row = -1;
     if (bf_math != bf_math_type::NONE)
     {
         saved = save_stack();
