@@ -9,6 +9,7 @@ add_library(libid
     line3d.cpp include/line3d.h
     plot3d.cpp include/plot3d.h
 
+    boundary_trace.cpp include/boundary_trace.h
     calc_frac_init.cpp include/calc_frac_init.h
     calcfrac.cpp include/calcfrac.h
     calcmand.cpp include/calcmand.h
@@ -218,6 +219,7 @@ source_group("Source Files/3d" FILES
 )
 source_group("Header Files/engine" FILES
     include/bailout_formula.h
+    include/boundary_trace.h
     include/calc_frac_init.h
     include/calcfrac.h
     include/calcmand.h
@@ -246,6 +248,7 @@ source_group("Header Files/engine" FILES
 )
 source_group("Source Files/engine" FILES
     bailout_formula.cpp
+    boundary_trace.cpp
     calc_frac_init.cpp
     calcfrac.cpp
     calcmand.cpp

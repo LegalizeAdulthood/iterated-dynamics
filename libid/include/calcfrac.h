@@ -147,3 +147,4 @@ void symplot4(int x, int y, int color);
 void symplot2basin(int x, int y, int color);
 void symplot4basin(int x, int y, int color);
 void noplot(int x, int y, int color);
+void sym_fill_line(int row, int left, int right, BYTE *str);
