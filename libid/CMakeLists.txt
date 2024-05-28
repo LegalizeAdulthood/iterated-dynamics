@@ -98,7 +98,6 @@ add_library(libid
     get_disk_space.cpp include/get_disk_space.h
     memory.cpp include/memory.h
 
-    abort_msg.cpp include/abort_msg.h
     bailout_formula.cpp include/bailout_formula.h
     check_key.cpp include/check_key.h
     check_orbit_name.cpp include/check_orbit_name.h
@@ -429,7 +428,6 @@ source_group("Source Files/plumbing" FILES
     memory.cpp
 )
 source_group("Header Files/ui" FILES
-    include/abort_msg.h
     include/check_key.h
     include/check_orbit_name.h
     include/check_write_file.h
@@ -514,7 +512,6 @@ source_group("Header Files/ui" FILES
     include/zoom.h
 )
 source_group("Source Files/ui" FILES
-    abort_msg.cpp
     check_key.cpp
     check_orbit_name.cpp
     check_write_file.cpp

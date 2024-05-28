@@ -2,7 +2,6 @@
 //
 #include "cmdfiles_test.h"
 
-#include "abort_msg.h"
 #include "bailout_formula.h"
 #include "biginit.h"
 #include "calcfrac.h"
