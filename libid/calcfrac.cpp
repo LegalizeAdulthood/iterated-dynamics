@@ -359,7 +359,7 @@ double fmodtest()
 }
 
 // The sym_fill_line() routine was pulled out of the boundary tracing
-// code for re-use with show_dot. It's purpose is to fill a line with a
+// code for re-use with show dot. It's purpose is to fill a line with a
 // solid color. This assumes that BYTE *str is already filled
 // with the color. The routine does write the line using symmetry
 // in all cases, however the symmetry logic assumes that the line
@@ -570,7 +570,7 @@ int calctypeshowdot()
     {
         if (g_col+width <= g_i_x_stop && g_row+width <= g_i_y_stop)
         {
-            // preferred show_dot shape
+            // preferred show dot shape
             direction = show_dot_direction::UPPER_LEFT;
             startx = g_col;
             stopx  = g_col+width;
@@ -1473,8 +1473,7 @@ static int diffusion_engine()
                     (*g_plot)(g_col, g_row, g_color);
                     j++;
                     g_row += s;                  // next tile
-                }
-                while (j < ny);
+                } while (j < ny);
                 // in the last y tile we may not need to plot the point
                 if (rowo < rem_y)
                 {
@@ -1483,8 +1482,7 @@ static int diffusion_engine()
                 }
                 i++;
                 g_col += s;
-            }
-            while (i < nx);
+            } while (i < nx);
             // in the last x tiles we may not need to plot the point
             if (colo < rem_x)
             {
@@ -1496,8 +1494,7 @@ static int diffusion_engine()
                     (*g_plot)(g_col, g_row, g_color);
                     j++;
                     g_row += s; // next tile
-                }
-                while (j < ny);
+                } while (j < ny);
                 if (rowo < rem_y)
                 {
                     calculate;
@@ -1528,8 +1525,7 @@ static int diffusion_engine()
                     calculate;
                     plot_block(g_col, g_row, sqsz, g_color);
                     j++;
-                }
-                while (j < ny);
+                } while (j < ny);
                 // in the last tile we may not need to plot the point
                 if (rowo < rem_y)
                 {
@@ -1539,8 +1535,7 @@ static int diffusion_engine()
                     plot_block_lim(g_col, g_row, sqsz, g_color);
                 }
                 i++;
-            }
-            while (i < nx);
+            } while (i < nx);
             // in the last tile we may not need to plot the point
             if (colo < rem_x)
             {
@@ -1553,8 +1548,7 @@ static int diffusion_engine()
                     calculate;
                     plot_block_lim(g_col, g_row, sqsz, g_color);
                     j++;
-                }
-                while (j < ny);
+                } while (j < ny);
                 if (rowo < rem_y)
                 {
                     g_row = g_i_y_start + rowo + ny * s;
@@ -1584,8 +1578,7 @@ static int diffusion_engine()
                 calculate;
                 (*g_plot)(g_col, g_row, g_color);
                 j++;
-            }
-            while (j < ny);
+            } while (j < ny);
             // in the last tile we may not need to plot the point
             if (rowo < rem_y)
             {
@@ -1595,8 +1588,7 @@ static int diffusion_engine()
                 (*g_plot)(g_col, g_row, g_color);
             }
             i++;
-        }
-        while (i < nx);
+        } while (i < nx);
         // in the last tile we may nnt need to plot the point
         if (colo < rem_x)
         {
@@ -1609,8 +1601,7 @@ static int diffusion_engine()
                 calculate;
                 (*g_plot)(g_col, g_row, g_color);
                 j++;
-            }
-            while (j < ny);
+            } while (j < ny);
             if (rowo < rem_y)
             {
                 g_row = g_i_y_start + rowo + ny * s;
@@ -3329,22 +3320,11 @@ static int potential(double mag, long iterations)
 
 
 // boundary trace method
-#define bkcolor 0
+constexpr int bkcolor{0};
 
 inline direction advance(direction dir, int increment)
 {
-    return static_cast<direction>((+dir + increment + 4) % 4);
-}
-
-inline void advance_match(direction &coming_from)
-{
-    going_to = advance(going_to, -1);
-    coming_from = advance(going_to, -1);
-}
-
-inline void advance_no_match()
-{
-    going_to = advance(going_to, 1);
+    return static_cast<direction>((+dir + increment) & 0x03);
 }
 
 static int bound_trace_main()
@@ -3385,9 +3365,9 @@ static int bound_trace_main()
             trail_color = g_color;
             g_row = currow;
             g_col = curcol;
-            if ((*g_calc_type)() == -1) // color, row, col are global
+            if ((*g_calc_type)() == -1) // g_color, g_row, g_col are global
             {
-                if (g_show_dot != bkcolor)   // remove show_dot pixel
+                if (g_show_dot != bkcolor)   // remove show dot pixel
                 {
                     (*g_plot)(g_col, g_row, bkcolor);
                 }
@@ -3419,17 +3399,16 @@ static int bound_trace_main()
             do
             {
                 step_col_row();
-                if (g_row >= currow
-                    && g_col >= g_i_x_start
-                    && g_col <= g_i_x_stop
+                if (g_row >= currow         //
+                    && g_col >= g_i_x_start //
+                    && g_col <= g_i_x_stop  //
                     && g_row <= g_i_y_stop)
                 {
                     // the order of operations in this next line is critical
-                    g_color = getcolor(g_col, g_row);
-                    if (g_color == bkcolor && (*g_calc_type)() == -1)
-                        // color, row, col are global for (*calctype)()
+                    if ((g_color = getcolor(g_col, g_row)) == bkcolor && (*g_calc_type)()== -1)
+                        // g_color, g_row, g_col are global for (*g_calc_type)()
                     {
-                        if (g_show_dot != bkcolor)   // remove show_dot pixel
+                        if (g_show_dot != bkcolor)   // remove show dot pixel
                         {
                             (*g_plot)(g_col, g_row, bkcolor);
                         }
@@ -3448,21 +3427,21 @@ static int bound_trace_main()
                         }
                         trail_row = g_row;
                         trail_col = g_col;
-                        advance_match(coming_from);
+                        going_to = advance(going_to, -1);
+                        coming_from = advance(going_to, -1);
                     }
                     else
                     {
-                        advance_no_match();
-                        continue_loop = (going_to != coming_from) || (matches_found > 0);
+                        going_to = advance(going_to, 1);
+                        continue_loop = going_to != coming_from || matches_found > 0;
                     }
                 }
                 else
                 {
-                    advance_no_match();
-                    continue_loop = (going_to != coming_from) || (matches_found > 0);
+                    going_to = advance(going_to, 1);
+                    continue_loop = going_to != coming_from || matches_found > 0;
                 }
-            }
-            while (continue_loop && (g_col != curcol || g_row != currow));
+            } while (continue_loop && (g_col != curcol || g_row != currow));
 
             if (matches_found <= 3)
             {
@@ -3484,47 +3463,42 @@ static int bound_trace_main()
                 do
                 {
                     step_col_row();
-                    if (g_row >= currow
-                        && g_col >= g_i_x_start
-                        && g_col <= g_i_x_stop
-                        && g_row <= g_i_y_stop
-                        && getcolor(g_col, g_row) == trail_color)
-                        // getcolor() must be last
+                    if (g_row >= currow                           //
+                        && g_col >= g_i_x_start                   //
+                        && g_col <= g_i_x_stop                    //
+                        && g_row <= g_i_y_stop                    //
+                        && getcolor(g_col, g_row) == trail_color) // getcolor() must be last
                     {
-                        if (going_to == direction::South
-                            || (going_to == direction::West && coming_from != direction::East))
+                        if (going_to == direction::South ||
+                            (going_to == direction::West && coming_from != direction::East))
                         {
                             // fill a row, but only once
                             right = g_col;
-                            while (--right >= g_i_x_start)
+                            while (--right >= g_i_x_start && (g_color = getcolor(right,g_row)) == trail_color)
                             {
-                                g_color = getcolor(right, g_row);
-                                if (g_color == trail_color)
-                                {
-                                    break;
-                                }
+                                // do nothing
                             }
                             if (g_color == bkcolor) // check last color
                             {
                                 left = right;
-                                while (getcolor(--left, g_row) == bkcolor)
+                                while (getcolor(--left,g_row) == bkcolor)
                                 {
-                                    // Should NOT be possible for left < ixstart
-                                    ; // do nothing
+                                    // Should NOT be possible for left < g_i_x_start
+                                    // do nothing
                                 }
                                 left++; // one pixel too far
                                 if (right == left)   // only one hole
                                 {
-                                    (*g_plot)(left, g_row, fillcolor_used);
+                                    (*g_plot)(left,g_row,fillcolor_used);
                                 }
                                 else
                                 {
                                     // fill the line to the left
-                                    length = right-left+1;
+                                    length = right - left + 1;
                                     if (fillcolor_used != last_fillcolor_used || length > max_putline_length)
                                     {
                                         // only reset dstack if necessary
-                                        std::memset(dstack, fillcolor_used, length);
+                                        memset(dstack,fillcolor_used,length);
                                         last_fillcolor_used = fillcolor_used;
                                         max_putline_length = length;
                                     }
@@ -3534,15 +3508,15 @@ static int bound_trace_main()
                         }
                         trail_row = g_row;
                         trail_col = g_col;
-                        advance_match(coming_from);
+                        going_to = advance(going_to, -1);
+                        coming_from = advance(going_to, -1);
                         match_found = true;
                     }
                     else
                     {
-                        advance_no_match();
+                        going_to = advance(going_to, 1);
                     }
-                }
-                while (!match_found && going_to != coming_from);
+                } while (!match_found && going_to != coming_from);
 
                 if (!match_found)
                 {
@@ -3550,10 +3524,10 @@ static int bound_trace_main()
                     step_col_row();
                     trail_row = g_row;
                     trail_col = g_col;
-                    advance_match(coming_from);
+                    going_to = advance(going_to, -1);
+                    coming_from = advance(going_to, -1);
                 }
-            }
-            while (trail_col != curcol || trail_row != currow);
+            } while (trail_col != curcol || trail_row != currow);
             g_reset_periodicity = true; // reset after a trace/fill
             g_color = bkcolor;
         }
