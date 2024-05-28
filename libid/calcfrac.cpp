@@ -96,7 +96,6 @@ static bool dem_mandel = false;
 //   at end of 1st pass [0]... bits are set if any surrounding block not guessed;
 //   bits are numbered [..][y/16+1][x+1]&(1<<(y&15))
 // size of next puts a limit of MAX_PIXELS pixels across on solid guessing logic
-static BYTE dstack[4096] = { 0 };              // common temp, two put_line calls
 
 // variables exported from this file
 long            g_l_at_rad;                     // finite attractor radius
