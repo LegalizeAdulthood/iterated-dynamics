@@ -19,6 +19,7 @@
 #include "resume.h"
 #include "rotate.h"
 #include "spindac.h"
+#include "sticky_orbits.h"
 #include "trig_fns.h"
 #include "version.h"
 

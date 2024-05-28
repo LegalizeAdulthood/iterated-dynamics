@@ -54,6 +54,7 @@
 #include "solid_guess.h"
 #include "sound.h"
 #include "spindac.h"
+#include "sticky_orbits.h"
 #include "stop_msg.h"
 #include "tesseral.h"
 #include "update_save_name.h"
@@ -79,7 +80,6 @@ static void setsymmetry(symmetry_type sym, bool uselist);
 static bool xsym_split(int xaxis_row, bool xaxis_between);
 static bool ysym_split(int yaxis_col, bool yaxis_between);
 static void put_truecolor_disk(int, int, int);
-static int sticky_orbits();
 
 // added for testing autologmap()
 static long autologmap();
@@ -88,8 +88,8 @@ static DComplex s_saved{};
 static double rqlim_save = 0.0;
 static int (*calctypetmp)() = nullptr;
 static unsigned long lm = 0;                   // magnitude limit (CALCMAND)
-static int xxbegin = 0;                        // these are same as worklist,
-static int yybegin = 0;                        // declared as separate items
+int g_xx_begin = 0;                        // these are same as worklist,
+int g_yy_begin = 0;                        // declared as separate items
 static double dem_delta = 0.0;
 static double dem_width = 0.0;          // distance estimator variables
 static double dem_toobig = 0.0;
@@ -808,9 +808,9 @@ int calcfract()
         g_calc_type = g_cur_fractal_specific->calctype; // per_image can override
         g_symmetry = g_cur_fractal_specific->symmetry; //   calctype & symmetry
         g_plot = g_put_color; // defaults when setsymmetry not called or does nothing
-        xxbegin = 0;
-        yybegin = xxbegin;
-        g_xx_start = yybegin;
+        g_xx_begin = 0;
+        g_yy_begin = g_xx_begin;
+        g_xx_start = g_yy_begin;
         g_yy_start = g_xx_start;
         g_i_x_start = g_yy_start;
         g_i_y_start = g_i_x_start;
@@ -1000,7 +1000,7 @@ static void perform_worklist()
         end_resume();
         if (vsn < 2)
         {
-            xxbegin = 0;
+            g_xx_begin = 0;
         }
     }
 
@@ -1093,12 +1093,12 @@ static void perform_worklist()
         g_i_x_start = g_xx_start;
         g_xx_stop  = g_work_list[0].xxstop;
         g_i_x_stop  = g_xx_stop;
-        xxbegin  = g_work_list[0].xxbegin;
+        g_xx_begin  = g_work_list[0].xxbegin;
         g_yy_start = g_work_list[0].yystart;
         g_i_y_start = g_yy_start;
         g_yy_stop  = g_work_list[0].yystop;
         g_i_y_stop  = g_yy_stop;
-        yybegin  = g_work_list[0].yybegin;
+        g_yy_begin  = g_work_list[0].yybegin;
         g_work_pass = g_work_list[0].pass;
         g_work_symmetry  = g_work_list[0].sym;
         --g_num_work_list;
@@ -1260,227 +1260,6 @@ static void perform_worklist()
     }
 }
 
-char g_draw_mode = 'r';
-
-static int sticky_orbits()
-{
-    g_got_status = 6; // for <tab> screen
-    g_total_passes = 1;
-
-    if (plotorbits2dsetup() == -1)
-    {
-        g_std_calc_mode = 'g';
-        return -1;
-    }
-
-    switch (g_draw_mode)
-    {
-    case 'r':
-    default:
-        // draw a rectangle
-        g_row = yybegin;
-        g_col = xxbegin;
-
-        while (g_row <= g_i_y_stop)
-        {
-            g_current_row = g_row;
-            while (g_col <= g_i_x_stop)
-            {
-                if (plotorbits2dfloat() == -1)
-                {
-                    add_worklist(g_xx_start, g_xx_stop, g_col, g_yy_start, g_yy_stop, g_row, 0, g_work_symmetry);
-                    return -1; // interrupted
-                }
-                ++g_col;
-            }
-            g_col = g_i_x_start;
-            ++g_row;
-        }
-        break;
-    case 'l':
-    {
-        int dX;
-        int dY;    // vector components
-        int final;
-        int // final row or column number
-            G;
-        int // used to test for new row or column
-            inc1;
-        int       // G increment when row or column doesn't change
-            inc2; // G increment when row or column changes
-        char pos_slope;
-
-        dX = g_i_x_stop - g_i_x_start;                   // find vector components
-        dY = g_i_y_stop - g_i_y_start;
-        pos_slope = (char)(dX > 0);                   // is slope positive?
-        if (dY < 0)
-        {
-            pos_slope = (char)!pos_slope;
-        }
-        if (std::abs(dX) > std::abs(dY))                  // shallow line case
-        {
-            if (dX > 0)         // determine start point and last column
-            {
-                g_col = xxbegin;
-                g_row = yybegin;
-                final = g_i_x_stop;
-            }
-            else
-            {
-                g_col = g_i_x_stop;
-                g_row = g_i_y_stop;
-                final = xxbegin;
-            }
-            inc1 = 2 * std::abs(dY);             // determine increments and initial G
-            G = inc1 - std::abs(dX);
-            inc2 = 2 * (std::abs(dY) - std::abs(dX));
-            if (pos_slope)
-            {
-                while (g_col <= final)    // step through columns checking for new row
-                {
-                    if (plotorbits2dfloat() == -1)
-                    {
-                        add_worklist(g_xx_start, g_xx_stop, g_col, g_yy_start, g_yy_stop, g_row, 0, g_work_symmetry);
-                        return -1; // interrupted
-                    }
-                    g_col++;
-                    if (G >= 0)             // it's time to change rows
-                    {
-                        g_row++;      // positive slope so increment through the rows
-                        G += inc2;
-                    }
-                    else                          // stay at the same row
-                    {
-                        G += inc1;
-                    }
-                }
-            }
-            else
-            {
-                while (g_col <= final)    // step through columns checking for new row
-                {
-                    if (plotorbits2dfloat() == -1)
-                    {
-                        add_worklist(g_xx_start, g_xx_stop, g_col, g_yy_start, g_yy_stop, g_row, 0, g_work_symmetry);
-                        return -1; // interrupted
-                    }
-                    g_col++;
-                    if (G > 0)              // it's time to change rows
-                    {
-                        g_row--;      // negative slope so decrement through the rows
-                        G += inc2;
-                    }
-                    else                          // stay at the same row
-                    {
-                        G += inc1;
-                    }
-                }
-            }
-        }   // if |dX| > |dY|
-        else                            // steep line case
-        {
-            if (dY > 0)             // determine start point and last row
-            {
-                g_col = xxbegin;
-                g_row = yybegin;
-                final = g_i_y_stop;
-            }
-            else
-            {
-                g_col = g_i_x_stop;
-                g_row = g_i_y_stop;
-                final = yybegin;
-            }
-            inc1 = 2 * std::abs(dX);             // determine increments and initial G
-            G = inc1 - std::abs(dY);
-            inc2 = 2 * (std::abs(dX) - std::abs(dY));
-            if (pos_slope)
-            {
-                while (g_row <= final)    // step through rows checking for new column
-                {
-                    if (plotorbits2dfloat() == -1)
-                    {
-                        add_worklist(g_xx_start, g_xx_stop, g_col, g_yy_start, g_yy_stop, g_row, 0, g_work_symmetry);
-                        return -1; // interrupted
-                    }
-                    g_row++;
-                    if (G >= 0)                 // it's time to change columns
-                    {
-                        g_col++;  // positive slope so increment through the columns
-                        G += inc2;
-                    }
-                    else                      // stay at the same column
-                    {
-                        G += inc1;
-                    }
-                }
-            }
-            else
-            {
-                while (g_row <= final)    // step through rows checking for new column
-                {
-                    if (plotorbits2dfloat() == -1)
-                    {
-                        add_worklist(g_xx_start, g_xx_stop, g_col, g_yy_start, g_yy_stop, g_row, 0, g_work_symmetry);
-                        return -1; // interrupted
-                    }
-                    g_row++;
-                    if (G > 0)                  // it's time to change columns
-                    {
-                        g_col--;  // negative slope so decrement through the columns
-                        G += inc2;
-                    }
-                    else                      // stay at the same column
-                    {
-                        G += inc1;
-                    }
-                }
-            }
-        }
-        break;
-    } // end case 'l'
-
-    case 'f':  // this code does not yet work???
-    {
-        double Xctr;
-        double Yctr;
-        LDBL Magnification; // LDBL not really needed here, but used to match function parameters
-        double Xmagfactor;
-        double Rotation;
-        double Skew;
-        int angle;
-        double factor = PI / 180.0;
-        double theta;
-        double xfactor = g_logical_screen_x_dots / 2.0;
-        double yfactor = g_logical_screen_y_dots / 2.0;
-
-        angle = xxbegin;  // save angle in x parameter
-
-        cvtcentermag(&Xctr, &Yctr, &Magnification, &Xmagfactor, &Rotation, &Skew);
-        if (Rotation <= 0)
-        {
-            Rotation += 360;
-        }
-
-        while (angle < Rotation)
-        {
-            theta = (double)angle * factor;
-            g_col = (int)(xfactor + (Xctr + Xmagfactor * std::cos(theta)));
-            g_row = (int)(yfactor + (Yctr + Xmagfactor * std::sin(theta)));
-            if (plotorbits2dfloat() == -1)
-            {
-                add_worklist(angle, 0, 0, 0, 0, 0, 0, g_work_symmetry);
-                return -1; // interrupted
-            }
-            angle++;
-        }
-        break;
-    }  // end case 'f'
-    }  // end switch
-
-    return 0;
-}
-
 static int one_or_two_pass()
 {
     int i;
@@ -1503,8 +1282,8 @@ static int one_or_two_pass()
             return 0;
         }
         g_work_pass = 1;
-        xxbegin = g_xx_start;
-        yybegin = g_yy_start;
+        g_xx_begin = g_xx_start;
+        g_yy_begin = g_yy_start;
     }
     // second or only pass
     if (standard_calc(2) == -1)
@@ -1525,8 +1304,8 @@ static int standard_calc(int passnum)
 {
     g_got_status = 0;
     g_current_pass = passnum;
-    g_row = yybegin;
-    g_col = xxbegin;
+    g_row = g_yy_begin;
+    g_col = g_xx_begin;
 
     while (g_row <= g_i_y_stop)
     {

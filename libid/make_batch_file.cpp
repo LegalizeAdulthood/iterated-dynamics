@@ -36,6 +36,7 @@
 #include "sound.h"
 #include "spindac.h"
 #include "stereo.h"
+#include "sticky_orbits.h"
 #include "stop_msg.h"
 #include "trig_fns.h"
 #include "type_has_param.h"

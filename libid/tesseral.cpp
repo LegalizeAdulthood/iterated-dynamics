@@ -18,7 +18,6 @@ static int tessrow(int, int, int);
 
 static bool guessplot = false;          // paint 1st pass row at a time?
 static BYTE dstack[4096] = { 0 };              // common temp, two put_line calls
-static int yybegin = 0;                        // same as worklist, declared as separate items
 
 // tesseral method by CJLT begins here
 
@@ -65,9 +64,9 @@ int tesseral()
         tp->lft = tp->rgt;
         tp->bot = tp->lft;
         tp->top = tp->bot;
-        cury = yybegin & 0xfff;
+        cury = g_yy_begin & 0xfff;
         ysize = 1;
-        i = (unsigned)yybegin >> 12;
+        i = (unsigned)g_yy_begin >> 12;
         while (--i >= 0)
         {
             ysize <<= 1;

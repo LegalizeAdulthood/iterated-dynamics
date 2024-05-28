@@ -70,7 +70,6 @@ extern long                  g_color_iter;
 extern int                   g_current_column;
 extern int                   g_current_pass;
 extern int                   g_current_row;
-extern char                  g_draw_mode;
 extern double                g_f_radius;
 extern double                g_f_x_center;
 extern double                g_f_y_center;
@@ -121,8 +120,10 @@ extern bool                  g_use_old_periodicity;
 extern bool                  g_use_old_distance_estimator;
 extern int                   g_work_pass;
 extern int                   g_work_symmetry;
+extern int                   g_xx_begin;
 extern int                   g_xx_start;
 extern int                   g_xx_stop;
+extern int                   g_yy_begin;
 extern int                   g_yy_start;
 extern int                   g_yy_stop;
 

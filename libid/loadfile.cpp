@@ -41,6 +41,7 @@
 #include "rotate.h"
 #include "round_float_double.h"
 #include "sqr.h"
+#include "sticky_orbits.h"
 #include "stop_msg.h"
 #include "temp_msg.h"
 #include "trig_fns.h"

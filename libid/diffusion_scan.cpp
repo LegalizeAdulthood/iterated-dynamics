@@ -41,7 +41,6 @@ static char dif_lb[] =
     6, 6,14
 };
 
-static int yybegin = 0;                        // declared as separate items
 // next has a skip bit for each maxblock unit;
 //   1st pass sets bit  [1]... off only if block's contents guessed;
 //   at end of 1st pass [0]... bits are set if any surrounding block not guessed;
@@ -160,7 +159,7 @@ static int diffusion_engine()
     rem_x = (g_i_x_stop-g_i_x_start+1) - nx * s;
     rem_y = (g_i_y_stop-g_i_y_start+1) - ny * s;
 
-    if (yybegin == g_i_y_start && g_work_pass == 0)
+    if (g_yy_begin == g_i_y_start && g_work_pass == 0)
     {
         // if restarting on pan:
         g_diffusion_counter =0l;
@@ -168,7 +167,7 @@ static int diffusion_engine()
     else
     {
         // yybegin and passes contain data for resuming the type:
-        g_diffusion_counter = (((long)((unsigned)yybegin)) << 16) | ((unsigned)g_work_pass);
+        g_diffusion_counter = (((long)((unsigned)g_yy_begin)) << 16) | ((unsigned)g_work_pass);
     }
 
     dif_offset = 12-(g_diffusion_bits/2); // offset to adjust coordinates

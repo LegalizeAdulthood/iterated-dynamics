@@ -17,8 +17,6 @@ static void plotblock(int, int, int, int);
 static bool xsym_split(int xaxis_row, bool xaxis_between);
 static bool ysym_split(int yaxis_col, bool yaxis_between);
 
-static int xxbegin = 0;                        // these are same as worklist,
-static int yybegin = 0;                        // declared as separate items
 static bool guessplot = false;          // paint 1st pass row at a time?
 static bool bottom_guess = false;
 static bool right_guess = false;
@@ -74,7 +72,7 @@ int solid_guess()
     // as larger than it really is if necessary (this is the reason symplot
     // routines must check for > xdots/ydots before plotting sym points)
     g_i_x_start &= -1 - (maxblock-1);
-    g_i_y_start = yybegin;
+    g_i_y_start = g_yy_begin;
     g_i_y_start &= -1 - (maxblock-1);
 
     g_got_status = 1;
@@ -94,7 +92,7 @@ int solid_guess()
                 // calc top row
                 if ((*g_calc_type)() == -1)
                 {
-                    add_worklist(g_xx_start, g_xx_stop, xxbegin, g_yy_start, g_yy_stop, yybegin, 0, g_work_symmetry);
+                    add_worklist(g_xx_start, g_xx_stop, g_xx_begin, g_yy_start, g_yy_stop, g_yy_begin, 0, g_work_symmetry);
                     goto exit_solidguess;
                 }
                 g_reset_periodicity = false;

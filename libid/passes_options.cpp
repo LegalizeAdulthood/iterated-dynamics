@@ -11,6 +11,7 @@
 #include "id_data.h"
 #include "id_keys.h"
 #include "lorenz.h"
+#include "sticky_orbits.h"
 
 /*
      passes_options invoked by <p> key
