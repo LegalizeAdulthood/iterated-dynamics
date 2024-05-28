@@ -29,6 +29,7 @@ add_library(libid
     soi.cpp include/soi.h
     soi1.cpp
     ssg_block_size.cpp include/ssg_block_size.h
+    tesseral.cpp include/tesseral.h
     type_has_param.cpp include/type_has_param.h
     wait_until.cpp include/wait_until.h
     work_list.cpp include/work_list.h
@@ -242,6 +243,7 @@ source_group("Header Files/engine" FILES
     include/resume.h
     include/soi.h
     include/ssg_block_size.h
+    include/tesseral.h
     include/type_has_param.h
     include/wait_until.h
     include/work_list.h
@@ -269,6 +271,7 @@ source_group("Source Files/engine" FILES
     soi.cpp
     soi1.cpp
     ssg_block_size.cpp
+    tesseral.cpp
     type_has_param.cpp
     wait_until.cpp
     work_list.cpp
