@@ -54,13 +54,17 @@ configure_file(test.ifs.in      "${ID_TEST_DATA_SUBDIR}/${ID_TEST_IFS_FILE2}")
 
 # find_file test data
 set(ID_TEST_FIND_FILE_SUBDIR            "test_data/find_file")
+set(ID_TEST_FIND_FILE_CASEDIR           "casedir")
 set(ID_TEST_DATA_FIND_FILE_DIR          "${CMAKE_CURRENT_BINARY_DIR}/${ID_TEST_FIND_FILE_SUBDIR}")
 set(ID_TEST_FIND_FILE1                  "find_file1.txt")
 set(ID_TEST_FIND_FILE2                  "find_file2.txt")
 set(ID_TEST_FIND_FILE3                  "find_file3.txt")
+set(ID_TEST_FIND_FILE_CASE_FILENAME     "FIND_FILE4")
+set(ID_TEST_FIND_FILE_CASE              "${ID_TEST_FIND_FILE_CASE_FILENAME}.TXT")
 configure_file(test_find_file.txt.in    "${ID_TEST_FIND_FILE_SUBDIR}/${ID_TEST_FIND_FILE1}")
 configure_file(test_find_file.txt.in    "${ID_TEST_FIND_FILE_SUBDIR}/${ID_TEST_FIND_FILE2}")
-configure_file(test_find_file.txt.in    "${ID_TEST_FIND_FILE_SUBDIR}/subdir/${ID_TEST_FIND_FILE3}")
+configure_file(test_find_file.txt.in    "${ID_TEST_FIND_FILE_SUBDIR}/${ID_TEST_DATA_SUBDIR_NAME}/${ID_TEST_FIND_FILE3}")
+configure_file(test_find_file.txt.in    "${ID_TEST_FIND_FILE_SUBDIR}/${ID_TEST_FIND_FILE_CASEDIR}/${ID_TEST_FIND_FILE_CASE}")
 
 # check_writefile test data
 set(ID_TEST_CHECK_WRITE_FILE_DATA_DIR   "${ID_TEST_DATA_DIR}/check_writefile")

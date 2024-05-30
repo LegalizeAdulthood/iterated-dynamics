@@ -1,5 +1,8 @@
 #include "path_match.h"
 
+#include <boost/algorithm/string/case_conv.hpp>
+
+#include <cctype>
 #include <regex>
 
 namespace fs = std::filesystem;
@@ -12,7 +15,7 @@ static bool match_wild_string(const std::string &pattern, const std::string &tex
     }
     for (std::size_t i = 0; i < text.length(); ++i)
     {
-        if (pattern[i] != '?' && pattern[i] != text[i])
+        if (pattern[i] != '?' && std::tolower(pattern[i]) != std::tolower(text[i]))
         {
             return false;
         }
@@ -42,11 +45,12 @@ static std::regex wild_regex(const std::string &wildcard)
             pat += c;
         }
     }
-    return std::regex(pat);
+    return std::regex(pat, std::regex_constants::ECMAScript | std::regex_constants::icase);
 };
 
 MatchFn match_fn(const fs::path &pattern)
 {
+    using namespace boost::algorithm;
     MatchFn always = [](const fs::path &) { return true; };
     
     MatchFn match_stem;
@@ -78,7 +82,8 @@ MatchFn match_fn(const fs::path &pattern)
     // match exact filename
     else
     {
-        match_stem = [=](const fs::path &path) { return pat_stem == path.stem().string(); };
+        match_stem = [=](const fs::path &path)
+        { return to_lower_copy(pat_stem) == to_lower_copy(path.stem().string()); };
     }
 
     MatchFn match_ext;
@@ -107,9 +112,10 @@ MatchFn match_fn(const fs::path &pattern)
         match_ext = [=](const fs::path &path) { return std::regex_match(path.extension().string(), pat_regex); };
     }
     else
-    // match specific extension
+    // match exact extension
     {
-        match_ext = [=](const fs::path &path) { return pat_ext == path.extension(); };
+        match_ext = [=](const fs::path &path)
+        { return to_lower_copy(pat_ext) == to_lower_copy(path.extension().string()); };
     }
 
     return [=](const fs::path &path) { return match_stem(path) && match_ext(path); };

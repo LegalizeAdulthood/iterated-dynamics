@@ -5,12 +5,15 @@
 
 #include <gmock/gmock.h>
 
+#include <boost/algorithm/string/case_conv.hpp>
+
 #include <algorithm>
 #include <filesystem>
 #include <string>
 #include <vector>
 
 namespace fs = std::filesystem;
+namespace algo = boost::algorithm;
 
 using namespace testing;
 
@@ -73,9 +76,92 @@ TEST(TestFindFile, findFileCurrentDirectory)
 {
     current_path_saver saver{ID_TEST_DATA_FIND_FILE_DIR};
 
-    int result = fr_findfirst(ID_TEST_FIND_FILE1);
+    const int result = fr_findfirst(ID_TEST_FIND_FILE1);
 
     EXPECT_EQ(0, result);
     EXPECT_EQ(ID_TEST_FIND_FILE1, DTA.filename);
+    EXPECT_EQ(0, DTA.attribute);
+}
+
+TEST(TestFindFile, caseInsensitiveExtension)
+{
+    fs::path search_dir{ID_TEST_DATA_FIND_FILE_DIR};
+    search_dir /= ID_TEST_FIND_FILE_CASEDIR;
+    current_path_saver saver{search_dir};
+
+    const int result = fr_findfirst("*.txt");
+
+    EXPECT_EQ(0, result);
+    EXPECT_EQ(ID_TEST_FIND_FILE_CASE, DTA.filename);
+    EXPECT_EQ(0, DTA.attribute);
+}
+
+TEST(TestFindFile, caseInsensitiveExtensionWildcard)
+{
+    fs::path search_dir{ID_TEST_DATA_FIND_FILE_DIR};
+    search_dir /= ID_TEST_FIND_FILE_CASEDIR;
+    current_path_saver saver{search_dir};
+
+    const int result = fr_findfirst("*.?xt");
+
+    EXPECT_EQ(0, result);
+    EXPECT_EQ(ID_TEST_FIND_FILE_CASE, DTA.filename);
+    EXPECT_EQ(0, DTA.attribute);
+}
+
+TEST(TestFindFile, caseInsensitiveExtensionWildcardRegex)
+{
+    fs::path search_dir{ID_TEST_DATA_FIND_FILE_DIR};
+    search_dir /= ID_TEST_FIND_FILE_CASEDIR;
+    current_path_saver saver{search_dir};
+
+    const int result = fr_findfirst("*.?x*");
+
+    EXPECT_EQ(0, result);
+    EXPECT_EQ(ID_TEST_FIND_FILE_CASE, DTA.filename);
+    EXPECT_EQ(0, DTA.attribute);
+}
+
+TEST(TestFindFile, caseInsensitiveFilename)
+{
+    fs::path search_dir{ID_TEST_DATA_FIND_FILE_DIR};
+    search_dir /= ID_TEST_FIND_FILE_CASEDIR;
+    current_path_saver saver{search_dir};
+    const std::string filename{algo::to_lower_copy(std::string{ID_TEST_FIND_FILE_CASE_FILENAME} + ".*")};
+
+    const int result = fr_findfirst(filename.c_str());
+
+    EXPECT_EQ(0, result);
+    EXPECT_EQ(ID_TEST_FIND_FILE_CASE, DTA.filename);
+    EXPECT_EQ(0, DTA.attribute);
+}
+
+TEST(TestFindFile, caseInsensitiveFilenameWildcard)
+{
+    fs::path search_dir{ID_TEST_DATA_FIND_FILE_DIR};
+    search_dir /= ID_TEST_FIND_FILE_CASEDIR;
+    current_path_saver saver{search_dir};
+    const std::string filename{
+        '?' + algo::to_lower_copy(std::string{ID_TEST_FIND_FILE_CASE_FILENAME}).substr(1)};
+
+    const int result = fr_findfirst(filename.c_str());
+
+    EXPECT_EQ(0, result);
+    EXPECT_EQ(ID_TEST_FIND_FILE_CASE, DTA.filename);
+    EXPECT_EQ(0, DTA.attribute);
+}
+
+TEST(TestFindFile, caseInsensitiveFilenameWildcardRegex)
+{
+    fs::path search_dir{ID_TEST_DATA_FIND_FILE_DIR};
+    search_dir /= ID_TEST_FIND_FILE_CASEDIR;
+    current_path_saver saver{search_dir};
+    const std::string filename{
+        "?*" + algo::to_lower_copy(std::string{ID_TEST_FIND_FILE_CASE_FILENAME}).substr(2)};
+
+    const int result = fr_findfirst(filename.c_str());
+
+    EXPECT_EQ(0, result);
+    EXPECT_EQ(ID_TEST_FIND_FILE_CASE, DTA.filename);
     EXPECT_EQ(0, DTA.attribute);
 }
