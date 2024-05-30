@@ -491,7 +491,7 @@ static void lStkFunct(FunctionPtr fct)   // call lStk via dStk
     Arg1->d.x = (double)Arg1->l.x / s_fudge;
     Arg1->d.y = y;
     (*fct)();
-    if (std::fabs(Arg1->d.x) < g_fudge_limit && fabs(Arg1->d.y) < g_fudge_limit)
+    if (std::fabs(Arg1->d.x) < g_fudge_limit && std::fabs(Arg1->d.y) < g_fudge_limit)
     {
         Arg1->l.x = (long)(Arg1->d.x * s_fudge);
         Arg1->l.y = (long)(Arg1->d.y * s_fudge);
@@ -1980,7 +1980,7 @@ void lStkPwr()
     y.x = (double)Arg1->l.x / s_fudge;
     y.y = (double)Arg1->l.y / s_fudge;
     x = ComplexPower(x, y);
-    if (std::fabs(x.x) < g_fudge_limit && fabs(x.y) < g_fudge_limit)
+    if (std::fabs(x.x) < g_fudge_limit && std::fabs(x.y) < g_fudge_limit)
     {
         Arg2->l.x = (long)(x.x * s_fudge);
         Arg2->l.y = (long)(x.y * s_fudge);

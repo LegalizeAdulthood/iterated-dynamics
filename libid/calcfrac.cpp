@@ -729,7 +729,7 @@ int calcfract()
 
         if (g_inversion[0] == AUTO_INVERT)  //  auto calc radius 1/6 screen
         {
-            g_inversion[0] = std::min(fabs(g_x_max - g_x_min),
+            g_inversion[0] = std::min(std::fabs(g_x_max - g_x_min),
                                     std::fabs(g_y_max - g_y_min)) / 6.0;
             fix_inversion(&g_inversion[0]);
             g_f_radius = g_inversion[0];

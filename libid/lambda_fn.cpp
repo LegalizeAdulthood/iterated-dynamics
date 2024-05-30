@@ -59,7 +59,7 @@ int LambdaTrigFractal()
 
 int LambdaTrigfpFractal()
 {
-    if (std::fabs(g_old_z.x) >= g_magnitude_limit2 || fabs(g_old_z.y) >= g_magnitude_limit2)
+    if (std::fabs(g_old_z.x) >= g_magnitude_limit2 || std::fabs(g_old_z.y) >= g_magnitude_limit2)
     {
         return 1;
     }
