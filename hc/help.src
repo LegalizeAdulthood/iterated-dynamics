@@ -284,6 +284,8 @@ o The autokeyname parameter was enhanced to create a unique filename when
 o Disk video buffer sizes were dramatically increased.\
 o The formula parser has been enhanced to remove internal size limitations.
   The only limit on formula parsing is available memory.
+o When browsing for files, e.g. <R>estoring *.GIF files, filenames are
+  compared case insensitive against wildcard search masks.
 
 Additional changes in Version 1.0:
 
