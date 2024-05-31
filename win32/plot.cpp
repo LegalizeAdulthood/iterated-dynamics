@@ -368,8 +368,10 @@ void Plot::create_window(HWND parent)
 void Plot::write_pixel(int x, int y, int color)
 {
     _ASSERTE(m_pixels.size() == m_width* m_height);
-    _ASSERTE(x >= 0 && x < m_width);
-    _ASSERTE(y >= 0 && y < m_height);
+    if (x < 0 || x > m_width || y < 0 || y > m_height)
+    {
+        return;
+    }
     m_pixels[(m_height - y - 1)*m_row_len + x] = (BYTE)(color & 0xFF);
     set_dirty_region(x, y, x+1, y+1);
 }
@@ -377,8 +379,10 @@ void Plot::write_pixel(int x, int y, int color)
 int Plot::read_pixel(int x, int y)
 {
     _ASSERTE(m_pixels.size() == m_width* m_height);
-    _ASSERTE(x >= 0 && x < m_width);
-    _ASSERTE(y >= 0 && y < m_height);
+    if (x < 0 || x > m_width || y < 0 || y > m_height)
+    {
+        return 0;
+    }
     return (int) m_pixels[(m_height - 1 - y)*m_row_len + x];
 }
 

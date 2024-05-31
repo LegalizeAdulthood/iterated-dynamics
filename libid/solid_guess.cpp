@@ -610,6 +610,13 @@ static bool guessrow(bool firstpass, int y, int blocksize)
     return false;
 }
 
+inline void fill_dstack(int x1, int x2, BYTE value)
+{
+    const int begin = std::min(x1, x2);
+    const int end = std::max(x1, x2);
+    std::fill(&dstack[begin], &dstack[end], value);
+}
+
 static void plotblock(int buildrow, int x, int y, int color)
 {
     int xlim;
@@ -623,11 +630,11 @@ static void plotblock(int buildrow, int x, int y, int color)
     {
         if (buildrow == 0)
         {
-            std::fill(&dstack[x], &dstack[xlim], (BYTE) color);
+            fill_dstack(x, xlim, (BYTE) color);
         }
         else
         {
-            std::fill(&dstack[x + OLD_MAX_PIXELS], &dstack[xlim + OLD_MAX_PIXELS], (BYTE) color);
+            fill_dstack(x + OLD_MAX_PIXELS, xlim + OLD_MAX_PIXELS, (BYTE) color);
         }
         if (x >= g_xx_start)   // when x reduced for alignment, paint those dots too
         {
