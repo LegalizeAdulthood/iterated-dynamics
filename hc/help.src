@@ -275,8 +275,8 @@ o All filename parameters are now case sensitive.\
 o When browsing for files, e.g. <R>estoring *.GIF files, filenames are
   compared case insensitive against wildcard search masks.
 o Added new fractal types {Mandelbrot Mix 4} and {DivideBrot5} by Jim Muth.
-  DivideBrot5 has arbitrary precision math support.  Note that image skewing
-  and inversion are not  supported by the AP math routines. See
+  DivideBrot5 has arbitrary precision (AP) math support.  Note that image
+  skewing and inversion are not  supported by the AP math routines. See
   {Arbitrary Precision and Deep Zooming} for other features not supported.
 o The orbitsavename parameter was added to specify the name of the raw
   orbits file.  The orbits file, if it exists, is overwritten when
