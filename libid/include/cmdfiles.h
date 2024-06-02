@@ -128,16 +128,33 @@ enum class cmd_file
     AT_CMD_LINE_SET_NAME = 3 // command line @filename/setname
 };
 
-enum cmdarg_flags
+enum class cmdarg_flags
 {
-    CMDARG_ERROR            = -1,
-    CMDARG_NONE             = 0,
-    CMDARG_FRACTAL_PARAM    = 1,
-    CMDARG_3D_PARAM         = 2,
-    CMDARG_3D_YES           = 4,
-    CMDARG_RESET            = 8,
-    CMDARG_GOODBYE          = 16,
+    ERROR            = -1,
+    NONE             = 0,
+    FRACTAL_PARAM    = 1,
+    PARAM_3D         = 2,
+    YES_3D           = 4,
+    RESET            = 8,
+    GOODBYE          = 16,
 };
+inline int operator+(cmdarg_flags value)
+{
+    return static_cast<int>(value);
+}
+inline cmdarg_flags operator|(cmdarg_flags lhs, cmdarg_flags rhs)
+{
+    return static_cast<cmdarg_flags>(+lhs | +rhs);
+}
+inline cmdarg_flags &operator|=(cmdarg_flags &lhs, cmdarg_flags rhs)
+{
+    lhs = lhs | rhs;
+    return lhs;
+}
+inline bool bit_set(cmdarg_flags flags, cmdarg_flags bit)
+{
+    return (+flags & +bit) == +bit;
+}
 
 // for init_batch
 enum class batch_modes
@@ -256,8 +273,8 @@ extern int                   g_user_biomorph_value;
 extern std::string           g_working_dir;
 
 int cmdfiles(int argc, char const *const *argv);
-int load_commands(std::FILE *);
+cmdarg_flags load_commands(std::FILE *);
 void set_3d_defaults();
 int init_msg(char const *cmdstr, char const *badfilename, cmd_file mode);
-int cmdarg(char *curarg, cmd_file mode);
+cmdarg_flags cmdarg(char *curarg, cmd_file mode);
 int getpower10(LDBL x);

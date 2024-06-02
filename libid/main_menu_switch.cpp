@@ -289,13 +289,13 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
     case '@':                    // execute commands
     case '2':                    // execute commands
         driver_stack_screen();
-        i = get_commands();
+        i = +get_commands();
         if (g_init_mode != -1)
         {
             // video= was specified
             g_adapter = g_init_mode;
             g_init_mode = -1;
-            i |= CMDARG_FRACTAL_PARAM;
+            i |= +cmdarg_flags::FRACTAL_PARAM;
             g_save_dac = 0;
         }
         else if (g_colors_preloaded)
@@ -304,18 +304,18 @@ main_state main_menu_switch(int *kbdchar, bool *frommandel, bool *kbdmore, bool 
             spindac(0, 1);
             g_colors_preloaded = false;
         }
-        else if (i & CMDARG_RESET)           // reset was specified
+        else if (i & +cmdarg_flags::RESET)           // reset was specified
         {
             g_save_dac = 0;
         }
-        if (i & CMDARG_3D_YES)
+        if (i & +cmdarg_flags::YES_3D)
         {
             // 3d = was specified
             *kbdchar = '3';
             driver_unstack_screen();
             goto do_3d_transform;  // pretend '3' was keyed
         }
-        if (i & CMDARG_FRACTAL_PARAM)
+        if (i & +cmdarg_flags::FRACTAL_PARAM)
         {
             // fractal parameter changed
             driver_discard_screen();

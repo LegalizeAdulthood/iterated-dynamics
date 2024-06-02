@@ -1,3 +1,4 @@
 #pragma once
+#include "cmdfiles.h"
 
-int get_commands();
+cmdarg_flags get_commands();

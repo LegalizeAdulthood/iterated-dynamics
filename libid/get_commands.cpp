@@ -11,11 +11,10 @@
 #include <cstdio>
 
 // execute commands from file
-int get_commands()
+cmdarg_flags get_commands()
 {
-    int ret;
     std::FILE *parmfile;
-    ret = 0;
+    cmdarg_flags ret{cmdarg_flags::NONE};
     help_labels const old_help_mode = g_help_mode;
     g_help_mode = help_labels::HELP_PARMFILE;
     long point = get_file_entry(gfe_type::PARM, "Parameter Set", "*.par", g_command_file, g_command_name);
