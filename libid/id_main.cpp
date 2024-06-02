@@ -494,7 +494,11 @@ int id_main(int argc, char *argv[])
 {
     {
         const char *fract_dir = getenv("FRACTDIR");
-        g_fractal_search_dir1 = fract_dir == nullptr ? "." : fract_dir;
+        if (fract_dir == nullptr)
+        {
+            fract_dir = ".";
+        }
+        g_fractal_search_dir1 = fract_dir;
     }
 #ifdef SRCDIR
     g_fractal_search_dir2 = SRCDIR;
