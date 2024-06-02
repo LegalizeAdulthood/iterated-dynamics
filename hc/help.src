@@ -269,8 +269,11 @@ Found a bug?  File an issue on our github project!\
 
 New features in Version 1.0:
 
-o New $cpu$ comment string variable expands to a description of your CPU.\
+o New $cpu$ comment variable expands to a description of your CPU.\
 o Long filenames are now supported throughout.\
+o All filename parameters are now case sensitive.\
+o When browsing for files, e.g. <R>estoring *.GIF files, filenames are
+  compared case insensitive against wildcard search masks.
 o Added new fractal types {Mandelbrot Mix 4} and {DivideBrot5} by Jim Muth.
   DivideBrot5 has arbitrary precision math support.  Note that image skewing
   and inversion are not  supported by the AP math routines. See
@@ -284,8 +287,6 @@ o The autokeyname parameter was enhanced to create a unique filename when
 o Disk video buffer sizes were dramatically increased.\
 o The formula parser has been enhanced to remove internal size limitations.
   The only limit on formula parsing is available memory.
-o When browsing for files, e.g. <R>estoring *.GIF files, filenames are
-  compared case insensitive against wildcard search masks.
 
 Additional changes in Version 1.0:
 
@@ -295,7 +296,8 @@ o Iterated Dynamics is a native 64-bit Windows program written in C++ with a
   CMake build system and vcpkg for obtaining 3rd party library dependencies.
 o All assembly language code has been removed and, where practical, replaced
   with C++ code that performs the same function.
-o A CGA text display is simulated for all prompt screens and help screens.\
+o A CGA text display is simulated for all prompt screens and help
+  screens.
 o A "video mode" determines the resolution of all saved images and is
   provided by a driver.  Iterated Dynamics comes with two drivers: Disk and
   GDI.  The GDI driver renders to the screen through the Windows GDI
