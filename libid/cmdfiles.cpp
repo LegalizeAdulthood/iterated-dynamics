@@ -179,8 +179,8 @@ bool    g_bof_match_book_images = true;                  // Flag to make inside=
 bool    g_escape_exit{};    // set to true to avoid the "are you sure?" screen
 bool g_first_init = true;                 // first time into cmdfiles?
 static int init_rseed{};
-static bool initcorners{};
-static bool s_init_params{}; // params set via params=?
+static bool s_init_corners{};   // corners set via corners= or center-mag=?
+static bool s_init_params{};    // params set via params=?
 static bool s_init_functions{}; // trig functions set via function=?
 fractalspecificstuff *g_cur_fractal_specific = nullptr;
 
@@ -386,13 +386,18 @@ int cmdfiles(int argc, char const *const *argv)
     return 0;
 }
 
+static void init_param_flags()
+{
+    s_init_corners = false;
+    s_init_params = false;
+    s_init_functions = false;
+}
 
+// when called, file is open in binary mode, positioned at the
+// '(' or '{' following the desired parameter set's name
 int load_commands(std::FILE *infile)
 {
-    // when called, file is open in binary mode, positioned at the
-    // '(' or '{' following the desired parameter set's name
-    initcorners = false;
-    s_init_params = false; // reset flags for type=
+    init_param_flags(); // reset flags for type=
     const int ret = cmdfile(infile, cmd_file::AT_AFTER_STARTUP);
 
     // PAR reads a file and sets color, don't read colors from GIF
@@ -492,9 +497,7 @@ static void initvars_fractal()
     g_finite_attractor = false;                          // disable finite attractor logic
     g_fractal_type = fractal_type::MANDEL;               // initial type Set flag
     g_cur_fractal_specific = &g_fractal_specific[0];     //
-    initcorners = false;                                 //
-    s_init_params = false;                               //
-    s_init_functions = false;                            //
+    init_param_flags();                                  //
     g_bail_out = 0;                                      // no user-entered bailout
     g_bof_match_book_images = true;                      // use normal bof initialization to make bof images
     g_use_init_orbit = init_orbit_mode::normal;          //
@@ -1442,7 +1445,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         const fractal_type old_fractal_type{g_fractal_type};
         g_fractal_type = static_cast<fractal_type>(k);
         g_cur_fractal_specific = &g_fractal_specific[+g_fractal_type];
-        if (!initcorners)
+        if (!s_init_corners)
         {
             g_x_min = g_cur_fractal_specific->xmin;
             g_x_3rd = g_x_min;
@@ -2079,7 +2082,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         {
             return CMDARG_NONE; // turns corners mode on
         }
-        initcorners = true;
+        s_init_corners = true;
         // good first approx, but dec could be too big
         dec = get_max_curarg_len(floatvalstr, totparms) + 1;
         if ((dec > DBL_DIG+1 || g_debug_flag == debug_flags::force_arbitrary_precision_math)
@@ -2282,7 +2285,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
         {
             return CMDARG_NONE; // turns center-mag mode on
         }
-        initcorners = true;
+        s_init_corners = true;
         // dec = get_max_curarg_len(floatvalstr, totparms);
         std::sscanf(floatvalstr[2], "%Lf", &Magnification);
 
@@ -2328,7 +2331,7 @@ int cmdarg(char *curarg, cmd_file mode) // process a single argument
 
         // use arbitrary precision
         int saved;
-        initcorners = true;
+        s_init_corners = true;
         bf_math_type old_bf_math = bf_math;
         if (bf_math == bf_math_type::NONE || dec > g_decimals)
         {
