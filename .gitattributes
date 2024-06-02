@@ -1,4 +1,4 @@
-text=auto
+* text=auto
 *.gif binary
 *.bmp binary
 *.ico binary
@@ -10,3 +10,4 @@ text=auto
 *.l text
 *.map text
 *.par text
+*.txt text
