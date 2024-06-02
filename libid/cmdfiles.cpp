@@ -425,52 +425,52 @@ static void initvars_run()              // once per run init
     }
 }
 
-static void initvars_restart()          // <ins> key init
+static void initvars_restart() // <ins> key init
 {
-    g_record_colors = record_colors_mode::automatic; // use mapfiles in PARs
-    g_dither_flag = false;                // no dithering
-    g_ask_video = true;                    // turn on video-prompt flag
-    g_overwrite_file = false;            // don't overwrite
+    g_record_colors = record_colors_mode::automatic;   // use mapfiles in PARs
+    g_dither_flag = false;                             // no dithering
+    g_ask_video = true;                                // turn on video-prompt flag
+    g_overwrite_file = false;                          // don't overwrite
     g_sound_flag = SOUNDFLAG_SPEAKER | SOUNDFLAG_BEEP; // sound is on to PC speaker
-    g_init_batch = batch_modes::NONE;                      // not in batch mode
-    g_check_cur_dir = false;                // flag to check current dire for files
-    g_init_save_time = 0;                   // no auto-save
-    g_init_mode = -1;                   // no initial video mode
-    g_view_window = false;                 // no view window
-    g_view_reduction = 4.2F;
-    g_view_crop = true;
-    g_virtual_screens = true;           // virtual screen modes on
-    g_final_aspect_ratio = g_screen_aspect;
-    g_view_y_dots = 0;
-    g_view_x_dots = g_view_y_dots;
-    g_keep_aspect_ratio = true;               // keep virtual aspect
-    g_z_scroll = true;                     // relaxed screen scrolling
-    g_orbit_delay = 0;                    // full speed orbits
-    g_orbit_interval = 1;                 // plot all orbits
-    g_debug_flag = debug_flags::none;      // debugging flag(s) are off
-    g_timer_flag = false;                  // timer flags are off
-    g_formula_filename = "id.frm";      // default formula file
-    g_formula_name.clear();
-    g_l_system_filename = "id.l";
-    g_l_system_name.clear();
-    g_command_file = "id.par";
-    g_command_name.clear();
-    clear_command_comments();
-    g_ifs_filename = "id.ifs";
-    g_ifs_name.clear();
-    reset_ifs_defn();
-    g_random_seed_flag = false;                      // not a fixed srand() seed
-    g_random_seed = init_rseed;
-    g_read_filename = DOTSLASH;                // initially current directory
-    g_show_file = 1;
+    g_init_batch = batch_modes::NONE;                  // not in batch mode
+    g_check_cur_dir = false;                           // flag to check current dire for files
+    g_init_save_time = 0;                              // no auto-save
+    g_init_mode = -1;                                  // no initial video mode
+    g_view_window = false;                             // no view window
+    g_view_reduction = 4.2F;                           //
+    g_view_crop = true;                                //
+    g_virtual_screens = true;                          // virtual screen modes on
+    g_final_aspect_ratio = g_screen_aspect;            //
+    g_view_y_dots = 0;                                 //
+    g_view_x_dots = 0;                                 //
+    g_keep_aspect_ratio = true;                        // keep virtual aspect
+    g_z_scroll = true;                                 // relaxed screen scrolling
+    g_orbit_delay = 0;                                 // full speed orbits
+    g_orbit_interval = 1;                              // plot all orbits
+    g_debug_flag = debug_flags::none;                  // debugging flag(s) are off
+    g_timer_flag = false;                              // timer flags are off
+    g_formula_filename = "id.frm";                     // default formula file
+    g_formula_name.clear();                            //
+    g_l_system_filename = "id.l";                      //
+    g_l_system_name.clear();                           //
+    g_command_file = "id.par";                         //
+    g_command_name.clear();                            //
+    clear_command_comments();                          //
+    g_ifs_filename = "id.ifs";                         //
+    g_ifs_name.clear();                                //
+    reset_ifs_defn();                                  //
+    g_random_seed_flag = false;                        // not a fixed srand() seed
+    g_random_seed = init_rseed;                        //
+    g_read_filename = DOTSLASH;                        // initially current directory
+    g_show_file = 1;                                   //
     // next should perhaps be fractal re-init, not just <ins> ?
-    g_init_cycle_limit = 55;                   // spin-DAC default speed limit
-    g_map_set = false;                     // no map= name active
-    g_map_specified = false;
-    g_major_method = Major::breadth_first;    // default inverse julia methods
-    g_inverse_julia_minor_method = Minor::left_first;       // default inverse julia methods
-    g_truecolor = false;                  // truecolor output flag
-    g_true_mode = true_color_mode::default_color;
+    g_init_cycle_limit = 55;                          // spin-DAC default speed limit
+    g_map_set = false;                                // no map= name active
+    g_map_specified = false;                          //
+    g_major_method = Major::breadth_first;            // default inverse julia methods
+    g_inverse_julia_minor_method = Minor::left_first; // default inverse julia methods
+    g_truecolor = false;                              // truecolor output flag
+    g_true_mode = true_color_mode::default_color;     //
 }
 
 // init vars affecting calculation
