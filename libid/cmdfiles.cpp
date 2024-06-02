@@ -598,8 +598,8 @@ static void initvars_3d()
     g_blue_crop_right = 4;
     g_red_bright     = 80;
     g_blue_bright   = 100;
-    g_transparent_color_3d[1] = 0;
-    g_transparent_color_3d[0] = g_transparent_color_3d[1]; // no min/max transparency
+    g_transparent_color_3d[0] = 0;
+    g_transparent_color_3d[1] = 0; // no min/max transparency
     set_3d_defaults();
 }
 
