@@ -83,6 +83,7 @@ add_library(libid
     gifview.cpp include/gifview.h
     loadfile.cpp include/loadfile.h
     loadmap.cpp include/loadmap.h
+    lowerize_parameter.cpp include/lowerize_parameter.h
     parser.cpp include/parser.h
     rotate.cpp include/rotate.h
     slideshw.cpp include/slideshw.h
@@ -373,6 +374,7 @@ source_group("Header Files/IO" FILES
     include/gifview.h
     include/loadfile.h
     include/loadmap.h
+    include/lowerize_parameter.h
     include/parser.h
     include/rotate.h
     include/slideshw.h
@@ -394,6 +396,7 @@ source_group("Source Files/IO" FILES
     gifview.cpp
     loadfile.cpp
     loadmap.cpp
+    lowerize_parameter.cpp
     parser.cpp
     rotate.cpp
     slideshw.cpp

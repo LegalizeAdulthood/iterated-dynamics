@@ -39,6 +39,7 @@
 #include "loadmap.h"
 #include "load_params.h"
 #include "lorenz.h"
+#include "lowerize_parameter.h"
 #include "make_batch_file.h"
 #include "make_mig.h"
 #include "merge_path_names.h"
@@ -761,28 +762,6 @@ static bool next_line(std::FILE *handle, char *linebuf, cmd_file mode)
     return true;
 }
 
-static void lowerize_command(char *curarg)
-{
-    char *argptr = curarg;
-    while (*argptr)
-    {
-        // convert to lower case
-        if (*argptr >= 'A' && *argptr <= 'Z')
-        {
-            *argptr += 'a' - 'A';
-        }
-        else if (*argptr == '=')
-        {
-            // don't convert colors=value or comment=value
-            if ((std::strncmp(curarg, "colors=", 7) == 0) || (std::strncmp(curarg, "comment", 7) == 0))
-            {
-                break;
-            }
-        }
-        ++argptr;
-    }
-}
-
 inline cmdarg_flags bad_arg(const char *curarg)
 {
     argerror(curarg);
@@ -867,7 +846,7 @@ cmdarg_flags cmdarg(char *curarg, cmd_file mode) // process a single argument
     bf_t bXctr;
     bf_t bYctr;
 
-    lowerize_command(curarg);
+    lowerize_parameter(curarg);
 
     int j;
     char *value = std::strchr(&curarg[1], '=');
