@@ -616,31 +616,31 @@ static void reset_ifs_defn()
 //        SSTOOLS_INI           sstools.ini
 //        AT_AFTER_STARTUP      <@> command after startup
 //        AT_CMD_LINE_SET_NAME  command line @filename/setname
+// note that cmdfile could be open as text OR as binary
+// binary is used in @ command processing for reasonable speed note/point
 static int cmdfile(std::FILE *handle, cmd_file mode)
 {
-    // note that cmdfile could be open as text OR as binary
-    // binary is used in @ command processing for reasonable speed note/point
-    int i;
-    int lineoffset{};
-    int changeflag{}; // &1 fractal stuff chgd, &2 3d stuff chgd
-    char linebuf[513];
-    char cmdbuf[10000] = { 0 };
-
     if (mode == cmd_file::AT_AFTER_STARTUP || mode == cmd_file::AT_CMD_LINE_SET_NAME)
     {
+        int i;
         while ((i = getc(handle)) != '{' && i != EOF)
         {
         }
         clear_command_comments();
     }
+
+    char cmdbuf[10000] = { 0 };
+    char linebuf[513];
     linebuf[0] = 0;
-    while (next_command(cmdbuf, 10000, handle, linebuf, &lineoffset, mode) > 0)
+    int lineoffset{};
+    int changeflag{}; // &1 fractal stuff chgd, &2 3d stuff chgd
+    while (next_command(cmdbuf, std::size(cmdbuf), handle, linebuf, &lineoffset, mode) > 0)
     {
         if ((mode == cmd_file::AT_AFTER_STARTUP || mode == cmd_file::AT_CMD_LINE_SET_NAME) && std::strcmp(cmdbuf, "}") == 0)
         {
             break;
         }
-        i = cmdarg(cmdbuf, mode);
+        const int i = cmdarg(cmdbuf, mode);
         if (i == CMDARG_ERROR)
         {
             break;
@@ -648,6 +648,7 @@ static int cmdfile(std::FILE *handle, cmd_file mode)
         changeflag |= i;
     }
     std::fclose(handle);
+
     if (changeflag & CMDARG_FRACTAL_PARAM)
     {
         backwards_v18();
