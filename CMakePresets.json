@@ -58,7 +58,7 @@
       "hidden": true,
       "description": "Configure for Release build",
       "cacheVariables": {
-        "CMAKE_BUILD_TYPE": "Release"
+        "CMAKE_BUILD_TYPE": "RelWithDebInfo"
       }
     },
     {
@@ -98,7 +98,7 @@
       "name": "release",
       "displayName": "Build with Release settings",
       "configurePreset": "release",
-      "configuration": "Release"
+      "configuration": "RelWithDebInfo"
     }
   ],
   "testPresets": [
@@ -131,7 +131,15 @@
       "displayName": "Test with Release settings",
       "inherits": [ "settings" ],
       "configurePreset": "release",
-      "configuration": "Release"
+      "configuration": "RelWithDebInfo"
+    }
+  ],
+  "packagePresets": [
+    {
+      "name": "release",
+      "displayName": "Package release build",
+      "configurePreset": "release",
+      "configurations": [ "RelWithDebInfo" ]
     }
   ],
   "workflowPresets": [
@@ -185,6 +193,10 @@
         },
         {
           "type": "test",
+          "name": "release"
+        },
+        {
+          "type": "package",
           "name": "release"
         }
       ]
