@@ -12,3 +12,12 @@
 *.par text
 *.txt text
 *.ini text
+*.h text
+*.cpp text
+*.in text
+*.src text
+*.md text
+.gitattributes text
+.gitmodules text
+*.json text
+*.cmake text
