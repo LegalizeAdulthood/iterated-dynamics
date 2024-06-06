@@ -47,7 +47,7 @@ install(TARGETS id
         POST_EXCLUDE_REGEXES ".*system32/.*\\.dll"
 )
 
-add_custom_target(doc-file SOURCES "${CMAKE_CURRENT_BINARY_DIR}/id.txt")
+add_custom_target(doc-file ALL SOURCES "${CMAKE_CURRENT_BINARY_DIR}/id.txt")
 add_custom_command(OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/id.txt"
     COMMAND id makedoc
     COMMENT "Building documentation text file"
