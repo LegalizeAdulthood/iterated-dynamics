@@ -50,11 +50,14 @@ jobs:
     - name: Create packages
       run: cmake --build --preset ${{matrix.preset}} --target ${{matrix.package}}
 
+    - name: Show artifacts
+      run: dir ../build-${{matrix.preset}}/*.zip
+
     - name: Upload zip package artifacts
       uses: actions/upload-artifact@v4
       if: ${{matrix.os == 'windows-latest'}}
       with:
-        name: Zip-${{runner.os}}-${{github.run_id}}
+        name: Zip-${{runner.os}}-${{matrix.preset}}-${{github.run_id}}
         path: ../build-${{matrix.preset}}/*.zip
         compression-level: 0
 
