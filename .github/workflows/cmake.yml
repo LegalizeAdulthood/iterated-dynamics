@@ -13,15 +13,6 @@ jobs:
         preset: [ debug, release ]
         # macos-latest is disabled for now
         os: [ ubuntu-latest, windows-latest ]
-        include:
-          - install: install
-            os: ubuntu-latest
-          - install: INSTALL
-            os: windows-latest
-          - package: package
-            os: ubuntu-latest
-          - package: PACKAGE
-            os: windows-latest
 
     runs-on: ${{matrix.os}}
 
@@ -42,24 +33,14 @@ jobs:
           core.exportVariable('ACTIONS_RUNTIME_TOKEN', process.env.ACTIONS_RUNTIME_TOKEN || '');
 
     - name: Run Workflow
-      run: cmake --workflow --preset ${{matrix.preset}}
-
-    - name: Build install target
-      run: cmake --build --preset ${{matrix.preset}} --target ${{matrix.install}}
-
-    - name: Create packages
-      run: cmake --build --preset ${{matrix.preset}} --target ${{matrix.package}}
-
-    - name: Copy artifacts
-      run: cmake -E copy ../build-${{matrix.preset}}/*.zip .
-      if: ${{matrix.os == 'windows-latest'}}
+      run: cmake --workflow --preset ci-${{matrix.preset}}
 
     - name: Upload zip package artifacts
       uses: actions/upload-artifact@v4
       if: ${{matrix.os == 'windows-latest'}}
       with:
         name: Zip-${{runner.os}}-${{matrix.preset}}-${{github.run_id}}
-        path: ${{github.workspace}}/*.zip
+        path: ${{github.workspace}}/build-ci-${{matrix.preset}}/*.zip
         compression-level: 0
 
   cppcheck:

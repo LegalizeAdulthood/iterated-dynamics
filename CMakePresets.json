@@ -24,6 +24,12 @@
       "binaryDir": "${sourceDir}/../build-${presetName}"
     },
     {
+      "name": "ci-build-preset",
+      "hidden": true,
+      "description": "CI uses a child directory for the build based on the preset name",
+      "binaryDir": "${sourceDir}/build-${presetName}"
+    },
+    {
       "name": "compile-commands",
       "hidden": true,
       "description": "Generate a compile_commands.json database",
@@ -77,6 +83,16 @@
       "inherits": [ "default", "release-config" ]
     },
     {
+      "name": "ci-debug",
+      "displayName": "CI Configure with Debug settings",
+      "inherits": [ "ci-build-preset", "default", "debug-config" ]
+    },
+    {
+      "name": "ci-release",
+      "displayName": "CI Configure with Release settings",
+      "inherits": [ "ci-build-preset", "default", "release-config" ]
+    },
+    {
       "name": "cppcheck",
       "displayName": "Configure for use with cppcheck",
       "inherits": [ "sibling-build-preset", "compile-commands", "no-testing", "vcpkg" ]
@@ -98,6 +114,18 @@
       "name": "release",
       "displayName": "Build with Release settings",
       "configurePreset": "release",
+      "configuration": "RelWithDebInfo"
+    },
+    {
+      "name": "ci-debug",
+      "displayName": "CI Build with Debug settings",
+      "configurePreset": "ci-debug",
+      "configuration": "Debug"
+    },
+    {
+      "name": "ci-release",
+      "displayName": "CI Build with Release settings",
+      "configurePreset": "ci-release",
       "configuration": "RelWithDebInfo"
     }
   ],
@@ -132,13 +160,45 @@
       "inherits": [ "settings" ],
       "configurePreset": "release",
       "configuration": "RelWithDebInfo"
+    },
+    {
+      "name": "ci-debug",
+      "displayName": "CI Test with Debug settings",
+      "inherits": [ "settings" ],
+      "configurePreset": "ci-debug",
+      "configuration": "Debug"
+    },
+    {
+      "name": "ci-release",
+      "displayName": "CI Test with Release settings",
+      "inherits": [ "settings" ],
+      "configurePreset": "ci-release",
+      "configuration": "RelWithDebInfo"
     }
   ],
   "packagePresets": [
     {
+      "name": "debug",
+      "displayName": "Package debug build",
+      "configurePreset": "debug",
+      "configurations": [ "Debug" ]
+    },
+    {
       "name": "release",
       "displayName": "Package release build",
       "configurePreset": "release",
+      "configurations": [ "RelWithDebInfo" ]
+    },
+    {
+      "name": "ci-debug",
+      "displayName": "CI Package debug build",
+      "configurePreset": "ci-debug",
+      "configurations": [ "Debug" ]
+    },
+    {
+      "name": "ci-release",
+      "displayName": "CI Package release build",
+      "configurePreset": "ci-release",
       "configurations": [ "RelWithDebInfo" ]
     }
   ],
@@ -176,6 +236,10 @@
         {
           "type": "test",
           "name": "debug"
+        },
+        {
+          "type": "package",
+          "name": "debug"
         }
       ]
     },
@@ -198,6 +262,50 @@
         {
           "type": "package",
           "name": "release"
+        }
+      ]
+    },
+    {
+      "name": "ci-debug",
+      "displayName": "CI Workflow with Debug settings: configure, build, test and package",
+      "steps": [
+        {
+          "type": "configure",
+          "name": "ci-debug"
+        },
+        {
+          "type": "build",
+          "name": "ci-debug"
+        },
+        {
+          "type": "test",
+          "name": "ci-debug"
+        },
+        {
+          "type": "package",
+          "name": "ci-debug"
+        }
+      ]
+    },
+    {
+      "name": "ci-release",
+      "displayName": "CI Workflow with Release settings: configure, build, test and package",
+      "steps": [
+        {
+          "type": "configure",
+          "name": "ci-release"
+        },
+        {
+          "type": "build",
+          "name": "ci-release"
+        },
+        {
+          "type": "test",
+          "name": "ci-release"
+        },
+        {
+          "type": "package",
+          "name": "ci-release"
         }
       ]
     }
