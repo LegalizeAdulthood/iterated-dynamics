@@ -54,7 +54,7 @@ jobs:
       run: dir ../build-${{matrix.preset}}/*.zip
       if: ${{matrix.os == 'windows-latest'}}
 
-    - run: dir %HOME%
+    - run: dir ${{env.HOME}}
       if: ${{matrix.os == 'windows-latest'}}
 
     - name: Upload zip package artifacts
