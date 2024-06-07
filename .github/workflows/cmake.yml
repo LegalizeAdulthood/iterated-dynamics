@@ -46,16 +46,17 @@ jobs:
 
     - name: Build install target
       run: cmake --build --preset ${{matrix.preset}} --target ${{matrix.install}}
+    - run: cmake -E copy ../build-${{matrix.preset}}/*.zip .
 
     - name: Create packages
       run: cmake --build --preset ${{matrix.preset}} --target ${{matrix.package}}
 
     - name: Upload zip package artifacts
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       if: ${{matrix.os == 'windows-latest'}}
       with:
         name: Zip-${{runner.os}}-${{matrix.preset}}-${{github.run_id}}
-        path: ${{github.workspace}}/../build-${{matrix.preset}}/*.zip
+        path: ${{github.workspace}}/*.zip
         compression-level: 0
 
   cppcheck:
