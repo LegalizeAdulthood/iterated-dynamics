@@ -1,0 +1,7 @@
+Burning_Ship    { ; Burning Ship Mandelbrot derivative
+                  ; Paul de Leeuw, 23rd May 2024
+  reset=100 type=formula formulafile=MandelbrotDerivatives.frm
+  formulaname=Burning_Ship center-mag=-1.74976/0.0359844/18.72659
+  params=0/0 float=y inside=0 colors=@volcano.map
+}
+
