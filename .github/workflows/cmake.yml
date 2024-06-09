@@ -35,19 +35,27 @@ jobs:
     - name: Run Workflow
       run: cmake --workflow --preset ci-${{matrix.preset}}
 
+    - name: Upload msi package artifacts
+      uses: actions/upload-artifact@v4
+      if: ${{matrix.os == 'windows-latest'}}
+      with:
+        name: Msi-${{matrix.preset}}-${{github.run_id}}
+        path: ${{github.workspace}}/build-ci-${{matrix.preset}}/*.msi
+        compression-level: 0
+
     - name: Upload zip package artifacts
       uses: actions/upload-artifact@v4
       if: ${{matrix.os == 'windows-latest'}}
       with:
-        name: Zip-${{runner.os}}-${{matrix.preset}}-${{github.run_id}}
+        name: Zip-${{matrix.preset}}-${{github.run_id}}
         path: ${{github.workspace}}/build-ci-${{matrix.preset}}/*.zip
         compression-level: 0
 
-    - name: Upload tgz package artifacts
+    - name: Upload tar.gz package artifacts
       uses: actions/upload-artifact@v4
       if: ${{matrix.os == 'ubuntu-latest'}}
       with:
-        name: Tar-${{runner.os}}-${{matrix.preset}}-${{github.run_id}}
+        name: Tar-${{matrix.preset}}-${{github.run_id}}
         path: ${{github.workspace}}/build-ci-${{matrix.preset}}/*.tar.gz
         compression-level: 0
 
