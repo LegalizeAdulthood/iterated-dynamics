@@ -48,7 +48,7 @@ jobs:
       if: ${{matrix.os == 'ubuntu-latest'}}
       with:
         name: Tar-${{runner.os}}-${{matrix.preset}}-${{github.run_id}}
-        path: ${{github.workspace}}/build-ci-${{matrix.preset}}/*.tgz
+        path: ${{github.workspace}}/build-ci-${{matrix.preset}}/*.tar.gz
         compression-level: 0
 
   cppcheck:
