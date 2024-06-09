@@ -43,6 +43,14 @@ jobs:
         path: ${{github.workspace}}/build-ci-${{matrix.preset}}/*.zip
         compression-level: 0
 
+    - name: Upload tgz package artifacts
+      uses: actions/upload-artifact@v4
+      if: ${{matrix.os == 'ubuntu-latest'}}
+      with:
+        name: Tar-${{runner.os}}-${{matrix.preset}}-${{github.run_id}}
+        path: ${{github.workspace}}/build-ci-${{matrix.preset}}/*.tgz
+        compression-level: 0
+
   cppcheck:
     name: cppcheck
     runs-on: ubuntu-latest
