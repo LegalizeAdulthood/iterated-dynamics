@@ -39,7 +39,7 @@ jobs:
       uses: actions/upload-artifact@v4
       if: ${{matrix.os == 'windows-latest'}}
       with:
-        name: Msi-${{matrix.preset}}-${{github.run_id}}
+        name: Msi-${{matrix.preset}}
         path: ${{github.workspace}}/build-ci-${{matrix.preset}}/*.msi
         compression-level: 0
 
@@ -47,7 +47,7 @@ jobs:
       uses: actions/upload-artifact@v4
       if: ${{matrix.os == 'windows-latest'}}
       with:
-        name: Zip-${{matrix.preset}}-${{github.run_id}}
+        name: Zip-${{matrix.preset}}
         path: ${{github.workspace}}/build-ci-${{matrix.preset}}/*.zip
         compression-level: 0
 
@@ -55,7 +55,7 @@ jobs:
       uses: actions/upload-artifact@v4
       if: ${{matrix.os == 'ubuntu-latest'}}
       with:
-        name: Tar-${{matrix.preset}}-${{github.run_id}}
+        name: Tar-${{matrix.preset}}
         path: ${{github.workspace}}/build-ci-${{matrix.preset}}/*.tar.gz
         compression-level: 0
 
