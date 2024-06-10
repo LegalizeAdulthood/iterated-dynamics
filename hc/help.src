@@ -269,6 +269,11 @@ Found a bug?  File an issue on our github project!\
 
 New features in Version 1.0:
 
+o New formula file MandelbrotDerivatives.frm with Burning Ship,
+  Perpendicular Mandelbrot, Heart Mandelbrot, Mandelbar and other
+  Mandelbrot set formula variations.  The parameter file BurningShip.par
+  provides example parameters for these variations.  Contributed by
+  Paul de Leeuw.
 o New $cpu$ comment variable expands to a description of your CPU.\
 o Long filenames are now supported throughout.\
 o All filename parameters are now case sensitive.\
