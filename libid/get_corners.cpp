@@ -41,7 +41,7 @@ static int cmpdbl(double old, double new_val)
 
 int get_corners()
 {
-    ChoiceBuilder<15> builder;
+    ChoiceBuilder<11> builder;
     char xprompt[] = "          X";
     char yprompt[] = "          Y";
     int cmag;
@@ -66,8 +66,11 @@ gc_loop:
     }
     cvtcentermag(&Xctr, &Yctr, &Magnification, &Xmagfactor, &Rotation, &Skew);
 
+    builder.reset();
+    // 10 items
     if (cmag)
     {
+        // 8 items
         builder.double_number("Center X", Xctr)
             .double_number("Center Y", Yctr)
             .double_number("Magnification", (double) Magnification)
@@ -77,11 +80,12 @@ gc_loop:
             .comment("")
             .comment("Press F7 to switch to \"corners\" mode");
     }
-
     else
     {
+        // 10 items
         if (g_draw_mode == 'l')
         {
+            // 6 items
             builder.comment("Left End Point")
                 .double_number(xprompt, g_x_min)
                 .double_number(yprompt, g_y_max)
@@ -91,6 +95,7 @@ gc_loop:
         }
         else
         {
+            // 6 items
             builder.comment("Top-Left Corner")
                 .double_number(xprompt, g_x_min)
                 .double_number(yprompt, g_y_max)
@@ -102,12 +107,14 @@ gc_loop:
                 g_y_3rd = 0;
                 g_x_3rd = g_y_3rd;
             }
+            // 4 items
             builder.comment("Bottom-left (zeros for top-left X, bottom-right Y)")
                 .double_number(xprompt, g_x_3rd)
                 .double_number(yprompt, g_y_3rd)
                 .comment("Press F7 to switch to \"center-mag\" mode");
         }
     }
+    // 1 item
     builder.comment("Press F4 to reset to type default values");
 
     help_labels const old_help_mode = g_help_mode;
