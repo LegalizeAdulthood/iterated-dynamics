@@ -52,7 +52,7 @@ add_custom_command(OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/id.txt"
     COMMAND id makedoc
     COMMENT "Building documentation text file"
     WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}"
-    DEPENDS native-help
+    DEPENDS native_help
 )
 install(FILES "${CMAKE_CURRENT_BINARY_DIR}/id.txt" DESTINATION .)
 set_property(INSTALL "id.txt" PROPERTY CPACK_START_MENU_SHORTCUTS "Documentation")
