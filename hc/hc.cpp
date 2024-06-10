@@ -2983,7 +2983,7 @@ struct DOC_INFO
     bool link_dest_warn;
 };
 
-struct PAGINATE_DOC_INFO : public DOC_INFO
+struct PAGINATE_DOC_INFO : DOC_INFO
 {
     char const *start;
     CONTENT  *c;
