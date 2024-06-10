@@ -4,6 +4,8 @@
  */
 #pragma once
 
+#include <cstring>
+
  /*
  * help file signature
  */
@@ -125,16 +127,20 @@ void print_document(char const *outfname, bool (*msg_func)(int, int));
 int init_help();
 void end_help();
 bool is_hyphen(char const *ptr);
-#ifndef XFRACT
+
+/* Get an int from an unaligned pointer
+ * This routine is needed because this program uses unaligned 2 byte
+ * pointers all over the place.
+ */
 inline int getint(char const *ptr)
 {
-    return *reinterpret_cast<const int *>(ptr);
+    int s;
+    std::memcpy(&s, ptr, sizeof(int));
+    return s;
 }
+
+/* Set an int to an unaligned pointer */
 inline void setint(char *ptr, int n)
 {
-    *reinterpret_cast<int *>(ptr) = n;
+    std::memcpy(ptr, &n, sizeof(int));
 }
-#else
-int getint(char const *ptr);
-void setint(char *ptr, int n);
-#endif

@@ -10,25 +10,6 @@
 #include <cstring>
 #include <string>
 
-#ifdef XFRACT
-/* Get an int from an unaligned pointer
- * This routine is needed because this program uses unaligned 2 byte
- * pointers all over the place.
- */
-int getint(char const *ptr)
-{
-    int s;
-    std::memcpy(&s, ptr, sizeof(int));
-    return s;
-}
-
-/* Set an int to an unaligned pointer */
-void setint(char *ptr, int n)
-{
-    std::memcpy(ptr, &n, sizeof(int));
-}
-#endif
-
 bool is_hyphen(char const *ptr)   /* true if ptr points to a real hyphen */
 {
     /* checkes for "--" and " -" */
