@@ -1725,8 +1725,8 @@ Select previous or next color component in active register
 
 ~onlineFF
 <+> <->\
-Increase or decrease the active color component value by 1  Numeric keypad
-(gray) + and - keys do the same.
+Increase or decrease the active color component value by 1.  Numeric keypad
++ and - keys do the same.
 
 <PageUp> <PageDown>\
 Increase or decrease the active color component value by 5; Moving the
