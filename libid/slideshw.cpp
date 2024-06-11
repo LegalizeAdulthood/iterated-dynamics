@@ -17,6 +17,7 @@
 #include "stop_msg.h"
 #include "tab_display.h"
 #include "temp_msg.h"
+#include "value_saver.h"
 #include "video_mode.h"
 
 #include <algorithm>
@@ -511,10 +512,8 @@ int handle_special_keys(int ch)
     }
     else if (ID_KEY_TAB == ch && g_tab_mode)
     {
-        bool const old_tab_mode = g_tab_mode;
-        g_tab_mode = false;
+        ValueSaver saved_tab_mode(g_tab_mode, false);
         tab_display();
-        g_tab_mode = old_tab_mode;
         ch = 0;
     }
 
