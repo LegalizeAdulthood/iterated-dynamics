@@ -18,6 +18,7 @@
 #include <atlbase.h>
 #include <tchar.h>
 
+#include <cctype>
 #include <stdexcept>
 #include <string>
 
@@ -129,7 +130,7 @@ inline unsigned int mod_key(int modifier, int code, int id_key, unsigned int *j 
 
 #undef ID_DEBUG_KEYSTROKES
 #ifdef ID_DEBUG_KEYSTROKES
-inline void debug_keystroke(const std::string &text)
+inline void debug_key_strokes(const std::string &text)
 {
     driver_debug_line(text);
 }
@@ -226,12 +227,28 @@ static void frame_OnKeyDown(HWND hwnd, UINT vk, BOOL fDown, int cRepeat, UINT fl
             break;
         }
     }
-    // handle Alt+1 through Alt+7
-    if (alt && j >= '1' && j <= '7')
+
+    if (alt && j != 0)
     {
-        i = ID_KEY_ALT_1 + (j - '1');
-        frame_add_key_press(i);
-        debug_key_strokes("OnKeyDown key: " + std::to_string(i));
+        // handle Alt+1 through Alt+7
+        if (j >= '1' && j <= '7')
+        {
+            i = ID_KEY_ALT_1 + (j - '1');
+            frame_add_key_press(i);
+            debug_key_strokes("OnKeyDown key: " + std::to_string(i));
+        }
+        else if (std::tolower(j) == 'a')
+        {
+            i = ID_KEY_ALT_A;
+            frame_add_key_press(i);
+            debug_key_strokes("OnKeyDown key: " + std::to_string(i));
+        }
+        else if (std::tolower(j) == 's')
+        {
+            i = ID_KEY_ALT_S;
+            frame_add_key_press(i);
+            debug_key_strokes("OnKeyDown key: " + std::to_string(i));
+        }
     }
 
     // use this call only for non-ASCII keys

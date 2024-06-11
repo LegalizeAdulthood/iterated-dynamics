@@ -75,7 +75,7 @@ static int menu_checkkey(int curkey, int /*choice*/)
                 return -testkey;
             }
         }
-        // Alt-A and Alt-S
+        // Alt+A and Alt+S
         if (testkey == ID_KEY_ALT_A || testkey == ID_KEY_ALT_S)
         {
             return -testkey;
