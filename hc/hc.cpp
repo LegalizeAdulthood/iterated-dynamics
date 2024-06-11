@@ -1633,23 +1633,21 @@ void read_src(std::string const &fname, modes mode)
         if (ch == '~')   // is is a command?
         {
             bool imbedded;
-            int eoff;
 
             ch = read_char();
             if (ch == '(')
             {
                 imbedded = true;
-                eoff = 0;
             }
             else
             {
                 imbedded = false;
-                eoff = 0;
                 unread_char(ch);
             }
 
             bool done = false;
 
+            int eoff{};
             while (!done)
             {
                 do
