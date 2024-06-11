@@ -109,53 +109,61 @@ static void frame_add_key_press(unsigned int key)
     g_frame.m_key_press_count++;
 }
 
-static int mod_key(int modifier, int code, int fik, int *j)
+inline bool has_mod(int modifier)
 {
-    SHORT state = GetKeyState(modifier);
-    if ((state & 0x8000) != 0)
+    return (GetKeyState(modifier) & 0x8000) != 0;
+}
+
+inline unsigned int mod_key(int modifier, int code, int id_key, unsigned int *j = nullptr)
+{
+    if (has_mod(modifier))
     {
-        if (j)
+        if (j != nullptr)
         {
             *j = 0;
         }
-        return fik;
+        return id_key;
     }
     return 1000 + code;
 }
 
-#define ALT_KEY(fik_)       mod_key(VK_MENU, i, fik_, nullptr)
-#define CTL_KEY(fik_)       mod_key(VK_CONTROL, i, fik_, nullptr)
-#define CTL_KEY2(fik_, j_)  mod_key(VK_CONTROL, i, fik_, j_)
-#define SHF_KEY(fik_)       mod_key(VK_SHIFT, i, fik_, nullptr)
+#undef ID_DEBUG_KEYSTROKES
+#ifdef ID_DEBUG_KEYSTROKES
+inline void debug_keystroke(const std::string &text)
+{
+    driver_debug_line(text);
+}
+#else
+inline void debug_key_strokes(const std::string &text)
+{
+}
+#endif
+
 
 static void frame_OnKeyDown(HWND hwnd, UINT vk, BOOL fDown, int cRepeat, UINT flags)
 {
     // KEYUP, KEYDOWN, and CHAR msgs go to the 'key pressed' code
     // a key has been pressed - maybe ASCII, maybe not
     // if it's an ASCII key, 'WM_CHAR' will handle it
-    unsigned int i;
-    int j;
-    i = MapVirtualKey(vk, 0);
-    j = MapVirtualKey(vk, 2);
+    unsigned int i = MapVirtualKey(vk, MAPVK_VK_TO_VSC);
+    unsigned int j = MapVirtualKey(vk, MAPVK_VK_TO_CHAR);
+    const bool alt = has_mod(VK_MENU);
+    debug_key_strokes("OnKeyDown vk: " + std::to_string(vk) + ", vsc: " + std::to_string(i) + ", char: " + std::to_string(j));
 
     // handle modifier keys on the non-WM_CHAR keys
     if (VK_F1 <= vk && vk <= VK_F10)
     {
-        bool ctl = (GetKeyState(VK_CONTROL) & 0x8000) != 0;
-        bool alt = (GetKeyState(VK_MENU) & 0x8000) != 0;
-        bool shift = (GetKeyState(VK_SHIFT) & 0x8000) != 0;
-
-        if (shift)
+        if (has_mod(VK_SHIFT))
         {
-            i = SHF_KEY(ID_KEY_SF1 + (vk - VK_F1));
+            i = mod_key(VK_SHIFT, i, ID_KEY_SF1 + (vk - 0x70));
         }
-        else if (ctl)
+        else if (has_mod(VK_CONTROL))
         {
-            i = CTL_KEY(ID_KEY_CTL_F1 + (vk - VK_F1));
+            i = mod_key(VK_CONTROL, i, ID_KEY_CTL_F1 + (vk - 0x70));
         }
         else if (alt)
         {
-            i = ALT_KEY(ID_KEY_ALT_F1 + (vk - VK_F1));
+            i = mod_key(VK_MENU, i, ID_KEY_ALT_F1 + (vk - 0x70));
         }
         else
         {
@@ -168,47 +176,46 @@ static void frame_OnKeyDown(HWND hwnd, UINT vk, BOOL fDown, int cRepeat, UINT fl
         {
         // sorted in ID_KEY_xxx order
         case VK_DELETE:
-            i = CTL_KEY(ID_KEY_CTL_DEL);
+            i = mod_key(VK_CONTROL, i, ID_KEY_CTL_DEL);
             break;
         case VK_DOWN:
-            i = CTL_KEY(ID_KEY_CTL_DOWN_ARROW);
+            i = mod_key(VK_CONTROL, i, ID_KEY_CTL_DOWN_ARROW);
             break;
         case VK_END:
-            i = CTL_KEY(ID_KEY_CTL_END);
+            i = mod_key(VK_CONTROL, i, ID_KEY_CTL_END);
             break;
         case VK_RETURN:
-            i = CTL_KEY(ID_KEY_CTL_ENTER);
+            i = mod_key(VK_CONTROL, i, ID_KEY_CTL_ENTER);
             break;
         case VK_HOME:
-            i = CTL_KEY(ID_KEY_CTL_HOME);
+            i = mod_key(VK_CONTROL, i, ID_KEY_CTL_HOME);
             break;
         case VK_INSERT:
-            i = CTL_KEY(ID_KEY_CTL_INSERT);
+            i = mod_key(VK_CONTROL, i, ID_KEY_CTL_INSERT);
             break;
         case VK_LEFT:
-            i = CTL_KEY(ID_KEY_CTL_LEFT_ARROW);
+            i = mod_key(VK_CONTROL, i, ID_KEY_CTL_LEFT_ARROW);
             break;
         case VK_PRIOR:
-            i = CTL_KEY(ID_KEY_CTL_PAGE_UP);
+            i = mod_key(VK_CONTROL, i, ID_KEY_CTL_PAGE_UP);
             break;
         case VK_NEXT:
-            i = CTL_KEY(ID_KEY_CTL_PAGE_DOWN);
+            i = mod_key(VK_CONTROL, i, ID_KEY_CTL_PAGE_DOWN);
             break;
         case VK_RIGHT:
-            i = CTL_KEY(ID_KEY_CTL_RIGHT_ARROW);
+            i = mod_key(VK_CONTROL, i, ID_KEY_CTL_RIGHT_ARROW);
             break;
         case VK_UP:
-            i = CTL_KEY(ID_KEY_CTL_UP_ARROW);
+            i = mod_key(VK_CONTROL, i, ID_KEY_CTL_UP_ARROW);
             break;
-
         case VK_TAB:
-            i = CTL_KEY2(ID_KEY_CTL_TAB, &j);
+            i = mod_key(VK_CONTROL, i, ID_KEY_CTL_TAB, &j);
             break;
         case VK_ADD:
-            i = CTL_KEY2(ID_KEY_CTL_PLUS, &j);
+            i = mod_key(VK_CONTROL, i, ID_KEY_CTL_PLUS, &j);
             break;
         case VK_SUBTRACT:
-            i = CTL_KEY2(ID_KEY_CTL_MINUS, &j);
+            i = mod_key(VK_CONTROL, i, ID_KEY_CTL_MINUS, &j);
             break;
 
         default:
@@ -219,12 +226,21 @@ static void frame_OnKeyDown(HWND hwnd, UINT vk, BOOL fDown, int cRepeat, UINT fl
             break;
         }
     }
+    // handle Alt+1 through Alt+7
+    if (alt && j >= '1' && j <= '7')
+    {
+        i = ID_KEY_ALT_1 + (j - '1');
+        frame_add_key_press(i);
+        debug_key_strokes("OnKeyDown key: " + std::to_string(i));
+    }
 
     // use this call only for non-ASCII keys
     if (!(vk == VK_SHIFT || vk == VK_CONTROL || vk == VK_MENU) && (j == 0))
     {
         frame_add_key_press(i);
+        debug_key_strokes("OnKeyDown key: " + std::to_string(i));
     }
+    debug_key_strokes("OnKeyDown exit vk: " + std::to_string(vk) + ", vsc: " + std::to_string(i) + ", char: " + std::to_string(j));
 }
 
 static void frame_OnChar(HWND hwnd, TCHAR ch, int cRepeat)
@@ -236,6 +252,7 @@ static void frame_OnChar(HWND hwnd, TCHAR ch, int cRepeat)
     j = ch;
     k = (i << 8) + j;
     frame_add_key_press(k);
+    debug_key_strokes("OnChar " + std::to_string(k));
 }
 
 static void frame_OnGetMinMaxInfo(HWND hwnd, LPMINMAXINFO info)
