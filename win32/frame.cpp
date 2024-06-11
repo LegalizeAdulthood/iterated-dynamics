@@ -405,7 +405,7 @@ int Frame::pump_messages(bool waitflag)
 
 int Frame::get_key_press(bool wait_for_key)
 {
-    pump_messages(wait_for_key != 0);
+    pump_messages(wait_for_key);
     if (wait_for_key && m_timed_out)
     {
         return 0;
@@ -413,7 +413,7 @@ int Frame::get_key_press(bool wait_for_key)
 
     if (m_key_press_count == 0)
     {
-        _ASSERTE(wait_for_key == 0);
+        _ASSERTE(!wait_for_key);
         return 0;
     }
 
