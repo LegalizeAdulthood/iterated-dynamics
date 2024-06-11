@@ -268,6 +268,10 @@ static void frame_OnChar(HWND hwnd, TCHAR ch, int cRepeat)
     i = (unsigned int)((cRepeat & 0x00ff0000) >> 16);
     j = ch;
     k = (i << 8) + j;
+    if (k == '\t' && has_mod(VK_SHIFT))
+    {
+        k = ID_KEY_SHF_TAB;
+    }
     frame_add_key_press(k);
     debug_key_strokes("OnChar " + std::to_string(k));
 }

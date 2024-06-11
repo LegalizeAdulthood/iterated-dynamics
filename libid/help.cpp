@@ -15,6 +15,7 @@
 #include "put_string_center.h"
 #include "stop_msg.h"
 #include "text_screen.h"
+#include "value_saver.h"
 #include "version.h"
 
 #include <fcntl.h>
@@ -665,7 +666,10 @@ static int help_topic(HIST *curr, HIST *next, int flags)
             draw_page = 0;
         }
 
-        key = driver_get_key();
+        {
+            ValueSaver saved_tab_mode(g_tab_mode, false);
+            key = driver_get_key();
+        }
 
         switch (key)
         {
