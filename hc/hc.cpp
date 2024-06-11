@@ -828,7 +828,11 @@ char *read_until(char *buff, int len, char const *stop_chars)
             *buff++ = CMD_LITERAL;
         }
 
-        *buff++ = ch;
+        // skip '\r' characters
+        if (ch != '\r')
+        {
+            *buff++ = ch;
+        }
 
         if ((ch&0x100) == 0 && std::strchr(stop_chars, ch) != nullptr)
         {
@@ -904,11 +908,11 @@ void put_spaces(int how_many)
 // used by parse_contents()
 bool get_next_item()
 {
-    skip_over(" \t\n");
+    skip_over(" \t\r\n");
     char *ptr = read_until(cmd, 128, ",}");
     bool last = (*ptr == '}');
     --ptr;
-    while (ptr >= cmd && std::strchr(" \t\n", *ptr))     // strip trailing spaces
+    while (ptr >= cmd && std::strchr(" \t\r\n", *ptr))     // strip trailing spaces
     {
         --ptr;
     }
@@ -1257,7 +1261,7 @@ int create_table()
         {
             ch = read_char();
         }
-        while (ch == '\n' || ch == ' ');
+        while (ch == '\r' || ch == '\n' || ch == ' ');
 
         if (done)
         {
