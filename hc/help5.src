@@ -1208,7 +1208,7 @@ XaoS is a program that specializes in fast, fluid, continuous zooming.
 ;
 ~Topic=Bibliography
 
-Barnsley, Michael: "Fractals Everywhere," Academic Press, 1988.
+Barnsley, Michael: "Fractals Everywhere", Academic Press, 1988.
 
 Davenport, Clyde: "A Hypercomplex Calculus with Applications to Relativity",
    ISBN 0-9623837-0-8.  This self-published expansion of Mr. Davenport's
@@ -1219,42 +1219,74 @@ Davenport, Clyde: "A Hypercomplex Calculus with Applications to Relativity",
 Dewdney, A. K., "Computer Recreations" columns in "Scientific American" --
    8/85, 7/87, 11/87, 12/88, 7/89.
 
-Feder, Jens: "Fractals," Plenum, 1988.\
+Devaney, Robert L., "An Introduction to Chaotic Dynamical Systems",
+   Addison-Wesley, 1989.\
+   A detailed mathematical treatment of chaotic dynamical systems, assuming
+   only a knowledge of calculus as a starting point.
+
+Edgar, Gerald A.: "Classics on Fractals", Addison-Wesley, 1993.\
+   Collects papers related to fractals and the idea of fractional dimension
+   that appeared before Benoit Mandelbrot first coined the term fractal in
+   1975.
+~OnlineFF
+
+Falconer, Kenneth: "Fractal Geometry", Wiley, 1990.\
+   Detailed treatement of the underlying mathematics of fractals,
+   including excursions into topology and measure theory.
+
+Feder, Jens: "Fractals", Plenum, 1988.\
    Quite technical, with good coverage of applications in fluid
    percolation, game theory, and other areas.
 
-Gleick, James: "Chaos: Making a New Science," Viking Press, 1987.\
+Field, Michael and Golubitsky, Martin, "Symmetry in Chaos", Oxford
+   University Press, 1992.\
+   A well illustrated book that introduced the "icon" fractal type.
+
+Gleick, James: "Chaos: Making a New Science", Viking Press, 1987.\
    The best non-technical account of the revolution in our understanding
    of dynamical systems and its connections with fractal geometry.
-~OnlineFF
 
-Mandelbrot, Benoit: "The Fractal Geometry of Nature," W. H. Freeman & Co.,
+Mandelbrot, Benoit: "The Fractal Geometry of Nature", W. H. Freeman & Co.,
    1982.\
    An even more revised and expanded version of the 1977 work.  A rich and
    sometimes confusing stew of formal and informal mathematics, the
    prehistory of fractal geometry, and everything else.  Best taken in
    small doses.
+~OnlineFF
 
-Mandelbrot, Benoit: "Fractals: Form, Chance, and Dimension," W. H. Freeman
+Mandelbrot, Benoit: "Fractals: Form, Chance, and Dimension", W. H. Freeman
    & Co., 1977.\
    A much revised translation of "Les objets fractals: forme, hasard, et
-   dimension," Flammarion, 1975.
+   dimension", Flammarion, 1975.
 
-Peitgen, Heinz-Otto & RICHTER, Peter: "The Beauty of Fractals," Springer-
+Peitgen, Heinz-Otto & Richter, Peter: "The Beauty of Fractals", Springer-
    Verlag, 1986.\
    THE coffee-table book of fractal images, knowledgeable on computer
    graphics as well as the mathematics they portray.
 
-Peitgen, Heinz-Otto & SAUPE, Ditmar: "The Science of Fractal Images,"
+Peitgen, Heinz-Otto & Saupe, Ditmar: "The Science of Fractal Images",
    Springer-Verlag, 1988.\
    A fantastic work, with a few nice pictures, but mostly filled with
    *equations*!!!
 
-Pickover, Clifford: "Computers, Pattern, Chaos, and Beauty," St. Martin's
+Pickover, Clifford: "Computers, Pattern, Chaos, and Beauty", St. Martin's
    Press, 1990.\
 
-Schroeder, Manfred: "Fractals, Chaos, Power Laws," W. H. Freeman
+Schroeder, Manfred: "Fractals, Chaos, Power Laws", W. H. Freeman
    & Co., 1991.\
+~OnlineFF
+
+Sprott, Julien C., "Strange Attractors", M & T Books, 1993.\
+
+Thompson, J. M. T. and Stewart, H. B.: "Nonlinear Dynamics and Chaos",
+   Wiley, 1986.\
+   Detailed discussion of nonlinear dynamical systems, bifurcation
+   points and attractors.  Discusses the Henon map, Rossler's band
+   and the Lorenz attractor.
+
+Viscek, Tamas: "Fractal Growth Phenomena", World Scientific, 1989.\
+   Discusses diffusion-limited aggregation, cluster-cluster aggregation
+   and other models of growth of structures and their fractal properties.
 ;
 ;
 ~Topic=Sound Controls, label=HELP_SOUND
