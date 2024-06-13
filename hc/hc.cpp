@@ -3986,20 +3986,9 @@ struct compiler_options
 class compiler
 {
 public:
-    compiler(int argc_, char *argv_[])
-        : argc(argc_),
-        argv(argv_)
-    {
-    }
+    compiler(int argc_, char *argv_[]);
 
-    ~compiler()
-    {
-        if (swapfile != nullptr)
-        {
-            std::fclose(swapfile);
-            std::remove(m_options.swappath.c_str());
-        }
-    }
+    ~compiler();
 
     int process();
 
@@ -4188,6 +4177,20 @@ compiler_options parse_compiler_options(int argc, char **argv)
 void compiler::parse_arguments()
 {
     m_options = parse_compiler_options(argc, argv);
+}
+
+compiler::compiler(int argc_, char *argv_[]): argc(argc_),
+                                              argv(argv_)
+{
+}
+
+compiler::~compiler()
+{
+    if (swapfile != nullptr)
+    {
+        std::fclose(swapfile);
+        std::remove(m_options.swappath.c_str());
+    }
 }
 
 int compiler::process()
