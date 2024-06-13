@@ -4,6 +4,8 @@
  * See help-compiler.txt for source file syntax.
  *
  */
+#include "compiler.h"
+
 #include <algorithm>
 #include <cassert>
 #include <cctype>
@@ -67,16 +69,6 @@ extern int filelength(int);
 
 namespace
 {
-
-enum class modes
-{
-    NONE = 0,
-    COMPILE,
-    PRINT,
-    APPEND,
-    DELETE,
-    HTML
-};
 
 char const *const DEFAULT_SRC_FNAME = "help.src";
 char const *const DEFAULT_HLP_FNAME = "id.hlp";
@@ -947,7 +939,7 @@ std::string rst_name(std::string const &content_name)
     return name;
 }
 
-void process_doc_contents(modes mode)
+void process_doc_contents(hc::modes mode)
 {
     TOPIC t;
     t.flags     = 0;
@@ -1020,7 +1012,7 @@ void process_doc_contents(modes mode)
             }
 
             // now, make the entry in the buffer
-            if (mode == modes::HTML)
+            if (mode == hc::modes::HTML)
             {
                 std::sprintf(g_curr, "%s", rst_name(c.name).c_str());
                 char *ptr = g_curr + (int) std::strlen(g_curr);
@@ -1574,7 +1566,7 @@ std::FILE *open_include(std::string const &file_name)
     return result;
 }
 
-void read_src(std::string const &fname, modes mode)
+void read_src(std::string const &fname, hc::modes mode)
 {
     int    ch;
     char  *ptr;
@@ -3969,47 +3961,9 @@ void delete_hlp_from_exe(char const *exe_fname)
     }
 }
 
-
-/*
- * command-line parser, etc.
- */
-struct compiler_options
+hc::compiler_options parse_compiler_options(int argc, char **argv)
 {
-    modes       mode{modes::NONE};
-    std::string fname1;
-    std::string fname2;
-    std::string swappath;
-    bool        show_mem{};
-    bool        show_stats{};
-};
-
-class compiler
-{
-public:
-    compiler(int argc_, char *argv_[]);
-
-    ~compiler();
-
-    int process();
-
-private:
-    void parse_arguments();
-    void read_source_file(modes mode);
-    void usage();
-    void compile();
-    void print();
-    void render_html();
-    void paginate_html_document();
-    void print_html_document(std::string const &output_filename);
-
-    int              argc;
-    char           **argv;
-    compiler_options m_options;
-};
-
-compiler_options parse_compiler_options(int argc, char **argv)
-{
-    compiler_options result{};
+    hc::compiler_options result{};
     for (int i = 1; i < argc; ++i)
     {
         const std::string arg{argv[i]};
@@ -4018,9 +3972,9 @@ compiler_options parse_compiler_options(int argc, char **argv)
             switch (arg[1])
             {
             case 'a':
-                if (result.mode == modes::NONE)
+                if (result.mode == hc::modes::NONE)
                 {
-                    result.mode = modes::APPEND;
+                    result.mode = hc::modes::APPEND;
                 }
                 else
                 {
@@ -4029,9 +3983,9 @@ compiler_options parse_compiler_options(int argc, char **argv)
                 break;
 
             case 'c':
-                if (result.mode == modes::NONE)
+                if (result.mode == hc::modes::NONE)
                 {
-                    result.mode = modes::COMPILE;
+                    result.mode = hc::modes::COMPILE;
                 }
                 else
                 {
@@ -4040,9 +3994,9 @@ compiler_options parse_compiler_options(int argc, char **argv)
                 break;
 
             case 'd':
-                if (result.mode == modes::NONE)
+                if (result.mode == hc::modes::NONE)
                 {
-                    result.mode = modes::DELETE;
+                    result.mode = hc::modes::DELETE;
                 }
                 else
                 {
@@ -4051,9 +4005,9 @@ compiler_options parse_compiler_options(int argc, char **argv)
                 break;
 
             case 'h':
-                if (result.mode == modes::NONE)
+                if (result.mode == hc::modes::NONE)
                 {
-                    result.mode = modes::HTML;
+                    result.mode = hc::modes::HTML;
                 }
                 else
                 {
@@ -4074,7 +4028,7 @@ compiler_options parse_compiler_options(int argc, char **argv)
                 break;
 
             case 'm':
-                if (result.mode == modes::COMPILE)
+                if (result.mode == hc::modes::COMPILE)
                 {
                     result.show_mem = true;
                 }
@@ -4085,7 +4039,7 @@ compiler_options parse_compiler_options(int argc, char **argv)
                 break;
 
             case 'o':
-                if (result.mode == modes::HTML)
+                if (result.mode == hc::modes::HTML)
                 {
                     if (i < argc - 1)
                     {
@@ -4104,9 +4058,9 @@ compiler_options parse_compiler_options(int argc, char **argv)
                 break;
 
             case 'p':
-                if (result.mode == modes::NONE)
+                if (result.mode == hc::modes::NONE)
                 {
-                    result.mode = modes::PRINT;
+                    result.mode = hc::modes::PRINT;
                 }
                 else
                 {
@@ -4115,7 +4069,7 @@ compiler_options parse_compiler_options(int argc, char **argv)
                 break;
 
             case 's':
-                if (result.mode == modes::COMPILE)
+                if (result.mode == hc::modes::COMPILE)
                 {
                     result.show_stats = true;
                 }
@@ -4126,7 +4080,7 @@ compiler_options parse_compiler_options(int argc, char **argv)
                 break;
 
             case 'r':
-                if (result.mode == modes::COMPILE || result.mode == modes::PRINT)
+                if (result.mode == hc::modes::COMPILE || result.mode == hc::modes::PRINT)
                 {
                     if (i < argc - 1)
                     {
@@ -4173,6 +4127,220 @@ compiler_options parse_compiler_options(int argc, char **argv)
     }
     return result;
 }
+
+class html_processor
+{
+public:
+    html_processor(std::string const &fname)
+        : m_fname(fname)
+    {
+    }
+
+    void process();
+
+private:
+    void write_index_html();
+    void write_contents();
+    void write_content(CONTENT const &c);
+    void write_topic(TOPIC const &t);
+
+    std::string m_fname;
+};
+
+void html_processor::process()
+{
+    if (g_contents.empty())
+    {
+        fatal(0, ".SRC has no DocContents.");
+    }
+
+    write_index_html();
+    write_contents();
+}
+
+void html_processor::write_index_html()
+{
+    msg("Writing index.rst");
+
+    CONTENT const &toc = g_contents[0];
+    if (toc.num_topic != 1)
+    {
+        throw std::runtime_error("First content block contains multiple topics.");
+    }
+    if (toc.topic_name[0] != DOCCONTENTS_TITLE)
+    {
+        throw std::runtime_error("First content block doesn't contain DocContent.");
+    }
+
+    TOPIC const &toc_topic = g_topics[toc.topic_num[0]];
+    std::ofstream str(g_html_output_dir + "/index.rst");
+    str << ".. toctree::\n";
+    char const *text = get_topic_text(&toc_topic);
+    char const *curr = text;
+    unsigned int len = toc_topic.text_len;
+    while (len > 0)
+    {
+        int size = 0;
+        int width = 0;
+        token_types const tok = find_token_length(token_modes::ONLINE, curr, len, &size, &width);
+
+        switch (tok)
+        {
+        case token_types::TOK_SPACE:
+            break;
+
+        case token_types::TOK_NL:
+            str << '\n';
+            break;
+
+        case token_types::TOK_WORD:
+            str << "   " << std::string(curr, width);
+            break;
+
+        default:
+            throw std::runtime_error("Unexpected token in table of contents.");
+        }
+        len -= size;
+        curr += size;
+    }
+}
+
+void html_processor::write_contents()
+{
+    for (CONTENT const &c : g_contents)
+    {
+        write_content(c);
+    }
+}
+
+void html_processor::write_content(CONTENT const &c)
+{
+    for (int i = 0; i < c.num_topic; ++i)
+    {
+        TOPIC const &t = g_topics[c.topic_num[i]];
+        if (t.title == DOCCONTENTS_TITLE)
+        {
+            continue;
+        }
+
+        write_topic(t);
+    }
+}
+
+void html_processor::write_topic(TOPIC const &t)
+{
+    std::string const filename = rst_name(t.title) + ".rst";
+    msg("Writing %s", filename.c_str());
+    std::ofstream str(g_html_output_dir + '/' + filename);
+    char const *text = get_topic_text(&t);
+    char const *curr = text;
+    unsigned int len = t.text_len;
+    unsigned int column = 0;
+    std::string spaces;
+    auto const nl = [&str, &column](int width)
+    {
+        if (column + width > 70)
+        {
+            str << '\n';
+            column = 0;
+            return true;
+        }
+        return false;
+    };
+    while (len > 0)
+    {
+        int size = 0;
+        int width = 0;
+        token_types const tok = find_token_length(token_modes::ONLINE, curr, len, &size, &width);
+
+        switch (tok)
+        {
+        case token_types::TOK_SPACE:
+            if (!nl(width))
+            {
+                spaces = std::string(width, ' ');
+                column += width;
+            }
+            else
+            {
+                spaces.clear();
+            }
+            break;
+
+        case token_types::TOK_NL:
+            str << '\n';
+            spaces.clear();
+            column = 0;
+            break;
+
+        case token_types::TOK_WORD:
+            if (!nl(width) && !spaces.empty())
+            {
+                str << spaces;
+                spaces.clear();
+            }
+            str << std::string(curr, width);
+            column += width;
+            break;
+
+        case token_types::TOK_PARA:
+            if (column > 0)
+            {
+                str << '\n';
+            }
+            column = 0;
+            spaces.clear();
+            break;
+
+        case token_types::TOK_LINK:
+            {
+                char const *data = &curr[1];
+                int const link_num = getint(data);
+                int const link_topic_num = g_all_links[link_num].topic_num;
+                data += 3*sizeof(int);
+                std::string const link_text(":doc:`" + std::string(data, width) +
+                    " <" + rst_name(g_topics[link_topic_num].title) + ">`");
+                if (!nl(static_cast<int>(link_text.length())) && !spaces.empty())
+                {
+                    str << spaces;
+                    spaces.clear();
+                }
+                str << link_text;
+                column += static_cast<unsigned int>(link_text.length());
+            }
+            break;
+
+        case token_types::TOK_FF:
+        case token_types::TOK_XONLINE:
+        case token_types::TOK_XDOC:
+            break;
+
+        default:
+            throw std::runtime_error("Unexpected token in topic.");
+        }
+        len -= size;
+        curr += size;
+    }
+}
+
+#if defined(_WIN32)
+#pragma warning(push)
+#pragma warning(disable : 4311)
+#endif
+void check_buffer(char const *curr, unsigned int off, char const *buffer)
+{
+    if ((unsigned)(curr + off - buffer) >= (BUFFER_SIZE-1024))
+    {
+        fatal(0, "Buffer overflowerd -- Help topic too large.");
+    }
+}
+#if defined(_WIN32)
+#pragma warning(pop)
+#endif
+
+} // namespace
+
+namespace hc {
 
 void compiler::parse_arguments()
 {
@@ -4531,224 +4699,14 @@ void compiler::paginate_html_document()
     } // for
 }
 
-class html_processor
-{
-public:
-    html_processor(std::string const &fname)
-        : m_fname(fname)
-    {
-    }
-
-    void process();
-
-private:
-    void write_index_html();
-    void write_contents();
-    void write_content(CONTENT const &c);
-    void write_topic(TOPIC const &t);
-
-    std::string m_fname;
-};
-
 void compiler::print_html_document(std::string const &fname)
 {
     html_processor(fname).process();
 }
 
-void html_processor::process()
-{
-    if (g_contents.empty())
-    {
-        fatal(0, ".SRC has no DocContents.");
-    }
-
-    write_index_html();
-    write_contents();
-}
-
-void html_processor::write_index_html()
-{
-    msg("Writing index.rst");
-
-    CONTENT const &toc = g_contents[0];
-    if (toc.num_topic != 1)
-    {
-        throw std::runtime_error("First content block contains multiple topics.");
-    }
-    if (toc.topic_name[0] != DOCCONTENTS_TITLE)
-    {
-        throw std::runtime_error("First content block doesn't contain DocContent.");
-    }
-
-    TOPIC const &toc_topic = g_topics[toc.topic_num[0]];
-    std::ofstream str(g_html_output_dir + "/index.rst");
-    str << ".. toctree::\n";
-    char const *text = get_topic_text(&toc_topic);
-    char const *curr = text;
-    unsigned int len = toc_topic.text_len;
-    while (len > 0)
-    {
-        int size = 0;
-        int width = 0;
-        token_types const tok = find_token_length(token_modes::ONLINE, curr, len, &size, &width);
-
-        switch (tok)
-        {
-        case token_types::TOK_SPACE:
-            break;
-
-        case token_types::TOK_NL:
-            str << '\n';
-            break;
-
-        case token_types::TOK_WORD:
-            str << "   " << std::string(curr, width);
-            break;
-
-        default:
-            throw std::runtime_error("Unexpected token in table of contents.");
-        }
-        len -= size;
-        curr += size;
-    }
-}
-
-void html_processor::write_contents()
-{
-    for (CONTENT const &c : g_contents)
-    {
-        write_content(c);
-    }
-}
-
-void html_processor::write_content(CONTENT const &c)
-{
-    for (int i = 0; i < c.num_topic; ++i)
-    {
-        TOPIC const &t = g_topics[c.topic_num[i]];
-        if (t.title == DOCCONTENTS_TITLE)
-        {
-            continue;
-        }
-
-        write_topic(t);
-    }
-}
-
-void html_processor::write_topic(TOPIC const &t)
-{
-    std::string const filename = rst_name(t.title) + ".rst";
-    msg("Writing %s", filename.c_str());
-    std::ofstream str(g_html_output_dir + '/' + filename);
-    char const *text = get_topic_text(&t);
-    char const *curr = text;
-    unsigned int len = t.text_len;
-    unsigned int column = 0;
-    std::string spaces;
-    auto const nl = [&str, &column](int width)
-    {
-        if (column + width > 70)
-        {
-            str << '\n';
-            column = 0;
-            return true;
-        }
-        return false;
-    };
-    while (len > 0)
-    {
-        int size = 0;
-        int width = 0;
-        token_types const tok = find_token_length(token_modes::ONLINE, curr, len, &size, &width);
-
-        switch (tok)
-        {
-        case token_types::TOK_SPACE:
-            if (!nl(width))
-            {
-                spaces = std::string(width, ' ');
-                column += width;
-            }
-            else
-            {
-                spaces.clear();
-            }
-            break;
-
-        case token_types::TOK_NL:
-            str << '\n';
-            spaces.clear();
-            column = 0;
-            break;
-
-        case token_types::TOK_WORD:
-            if (!nl(width) && !spaces.empty())
-            {
-                str << spaces;
-                spaces.clear();
-            }
-            str << std::string(curr, width);
-            column += width;
-            break;
-
-        case token_types::TOK_PARA:
-            if (column > 0)
-            {
-                str << '\n';
-            }
-            column = 0;
-            spaces.clear();
-            break;
-
-        case token_types::TOK_LINK:
-            {
-                char const *data = &curr[1];
-                int const link_num = getint(data);
-                int const link_topic_num = g_all_links[link_num].topic_num;
-                data += 3*sizeof(int);
-                std::string const link_text(":doc:`" + std::string(data, width) +
-                    " <" + rst_name(g_topics[link_topic_num].title) + ">`");
-                if (!nl(static_cast<int>(link_text.length())) && !spaces.empty())
-                {
-                    str << spaces;
-                    spaces.clear();
-                }
-                str << link_text;
-                column += static_cast<unsigned int>(link_text.length());
-            }
-            break;
-
-        case token_types::TOK_FF:
-        case token_types::TOK_XONLINE:
-        case token_types::TOK_XDOC:
-            break;
-
-        default:
-            throw std::runtime_error("Unexpected token in topic.");
-        }
-        len -= size;
-        curr += size;
-    }
-}
-
-#if defined(_WIN32)
-#pragma warning(push)
-#pragma warning(disable : 4311)
-#endif
-void check_buffer(char const *curr, unsigned int off, char const *buffer)
-{
-    if ((unsigned)(curr + off - buffer) >= (BUFFER_SIZE-1024))
-    {
-        fatal(0, "Buffer overflowerd -- Help topic too large.");
-    }
-}
-#if defined(_WIN32)
-#pragma warning(pop)
-#endif
-
-} // namespace
+} // namespace hc
 
 int main(int argc, char *argv[])
 {
-    return compiler(argc, argv).process();
+    return hc::compiler(argc, argv).process();
 }

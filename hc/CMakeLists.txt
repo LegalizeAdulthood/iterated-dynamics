@@ -1,6 +1,7 @@
 # Copyright 2018 Richard Thomson
 
 add_executable(hc
+    compiler.h
     hc.cpp
     ${OS_HC_FILES})
 target_include_directories(hc PRIVATE ../headers)
