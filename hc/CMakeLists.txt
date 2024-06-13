@@ -1,13 +1,15 @@
 # Copyright 2018 Richard Thomson
 
-add_executable(hc
+add_library(libhc
+    compiler.cpp
     compiler.h
-    hc.cpp
-    hc_main.cpp
-    ${OS_HC_FILES})
-target_include_directories(hc PRIVATE ../headers)
-target_compile_definitions(hc PRIVATE ${ID_TARGET_DEFINITIONS} $<$<CONFIG:Debug>:${ID_TARGET_DEFINITIONS_DEBUG}>)
-target_link_libraries(hc PRIVATE helpcom os_hc)
+)
+target_compile_definitions(libhc PRIVATE ${ID_TARGET_DEFINITIONS} $<$<CONFIG:Debug>:${ID_TARGET_DEFINITIONS_DEBUG}>)
+target_include_directories(libhc PUBLIC .)
+target_link_libraries(libhc PUBLIC helpcom os_hc)
+
+add_executable(hc hc.cpp)
+target_link_libraries(hc PUBLIC libhc)
 
 add_custom_target(native_help
     DEPENDS hc ${CMAKE_CURRENT_BINARY_DIR}/helpdefs.h "${CMAKE_CURRENT_BINARY_DIR}/id.hlp"
