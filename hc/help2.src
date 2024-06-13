@@ -1011,7 +1011,7 @@ Some features of interest:
 
 1. Use the <X> options screen to increase the maximum number of iterations.
 Notice that the boundary of the M-set becomes more and more convoluted (the
-technical terms are "wiggly," "squiggly," and "utterly bizarre") as the Z-
+technical terms are "wiggly", "squiggly", and "utterly bizarre") as the Z-
 magnitudes for points that were still within the set after 150 iterations turn
 out to exceed 2 after 200, 500, or 1200.  In fact, it can be proven that
 the true boundary is infinitely long: detail without limit.
@@ -1215,8 +1215,8 @@ people like stripes and some don't, as always, Id gives you a choice!
 The coloring of the plot shows the "basins of attraction" for each root of
 the polynomial -- i.e., an initial guess within any area of a given color
 would lead you to one of the roots.  As you can see, things get a bit weird
-along certain radial lines or "spokes," those being the lines between
-actual roots.  By "weird," we mean infinitely complex in the good old
+along certain radial lines or "spokes", those being the lines between
+actual roots.  By "weird", we mean infinitely complex in the good old
 fractal sense.  Zoom in and see for yourself.
 
 This fractal type is symmetric about the origin, with the number of
@@ -1535,7 +1535,7 @@ Peterson found them!
 (type=barnsleym1/.../j3)
 
 Michael Barnsley has written a fascinating college-level text, "Fractals
-Everywhere," on fractal geometry and its graphic applications. (See
+Everywhere", on fractal geometry and its graphic applications. (See
 {Bibliography}.) In it, he applies the principle of the M and J
 sets to more general functions of two complex variables.
 

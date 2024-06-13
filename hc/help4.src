@@ -1146,7 +1146,7 @@ with a video mode which isn't currently assigned to a key, you'll have to
 modify the key assignments - see {"Video Mode Function Keys"}.
 
 ASKVIDEO=yes|no\
-If "no," this eliminates the prompt asking you if a file to be restored is
+If "no", this eliminates the prompt asking you if a file to be restored is
 OK for your current video hardware.
 
 VIEWWINDOWS=xx[/xx[/yes|no[/nn[/nn]]]]\
