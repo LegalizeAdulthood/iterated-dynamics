@@ -1,7 +1,156 @@
+; Mandelbrot Derivatives
+;
+; Putting abs() into various parts of the Mandelbrot formula 
+; generates a whole new range of beautiful fractals.  The most
+; famous is "Burning Ship".  Many others have since been discovered.
+; Here are a few.
+;
+; Paul de Leeuw - Tuesday, 11th of June 2024.
+;
+
 Burning_Ship    { ; Burning Ship Mandelbrot derivative
                   ; Paul de Leeuw, 23rd May 2024
   reset=100 type=formula formulafile=MandelbrotDerivatives.frm
   formulaname=Burning_Ship center-mag=-1.74976/0.0359844/18.72659
   params=0/0 float=y inside=0 colors=@volcano.map
+}
+
+Perp_Mandelbrot    { ; Perpendicular Mandelbrot
+  reset=100 type=formula formulafile=mandelbrotderivatives.frm
+  formulaname=Perp_Mandelbrot
+  center-mag=4.44089e-16/-2.22045e-16/0.5226667 params=0/0 float=y
+  inside=0 colors=@volcano.map
+}
+
+Perp_Burning_Ship  { ; Perpendicular Burning Ship
+  reset=100 type=formula formulafile=mandelbrotderivatives.frm
+  formulaname=Perp_Burning_Ship
+  center-mag=4.44089e-16/2.22045e-16/0.5825545
+  params=0.003129890453834161/-0.0031315240083507057 float=y inside=0
+  colors=@volcano.map
+}
+
+Heart_Mandelbrot   { ; Heart Mandelbrot
+  reset=100 type=formula formulafile=mandelbrotderivatives.frm
+  formulaname=Heart_Mandelbrot center-mag=-0.500782/0/0.7183908
+  params=0/0 float=y inside=0 colors=@default.map
+}
+
+Mandelbar          { ; Mandelbar - Tricorn
+  reset=100 type=formula formulafile=mandelbrotderivatives.frm
+  formulaname=Mandelbar center-mag=-0.321764/-4.44089e-16/0.4854219
+  params=0/0 float=y inside=0 colors=@default.map
+}
+
+Celtic_Mandelbrot  { ; Celtic Mandelbrot
+  reset=100 type=formula formulafile=mandelbrotderivatives.frm
+  formulaname=Celtic_Mandelbrot
+  center-mag=-0.643529/-2.22045e-16/0.5501227 params=0/0 float=y
+  inside=0 colors=@default.map
+}
+
+Celtic_Mandelbar   { ; Celtic Mandelbar
+  reset=100 type=formula formulafile=mandelbrotderivatives.frm
+  formulaname=Celtic_Mandelbar center-mag=-0.450704/0/0.6666667
+  params=0/0 float=y inside=0 colors=@default.map
+}
+
+Perp_Celtic        { ; Perpendicular Celtic
+  reset=100 type=formula formulafile=mandelbrotderivatives.frm
+  formulaname=Perp_Celtic center-mag=-0.350548/0/0.6666667 params=0/0
+  float=y inside=0 colors=@default.map
+}
+
+Celtic_Heart       { ; Celtic Heart
+  reset=100 type=formula formulafile=mandelbrotderivatives.frm
+  formulaname=Celtic_Heart center-mag=-0.500782/0/0.6666667 params=0/0
+  float=y inside=0 colors=@default.map
+}
+
+Buffalo            { ; Buffalo
+  reset=100 type=formula formulafile=mandelbrotderivatives.frm
+  formulaname=Buffalo center-mag=-0.350548/0.300626/0.6408046
+  params=0/0 float=y inside=0 colors=@default.map
+}
+
+Perp_Buffalo       { ; Perpendicular Buffalo
+  reset=100 type=formula formulafile=mandelbrotderivatives.frm
+  formulaname=Perp_Buffalo center-mag=-0.350548/-0.100209/0.6666667
+  params=0/0 float=y inside=0 colors=@default.map
+}
+
+Cubic_MandelbrOrth { ; Cubic Mandelbar Orthogonal
+  reset=100 type=formula formulafile=mandelbrotderivatives.frm
+  formulaname=Cubic_MandelbrOrth center-mag=0/0/0.6666667 params=0/0
+  float=y inside=0 colors=@default.map
+}
+
+Cubic_MandelbrDiag { ; Cubic Mandelbar Diagonal
+  reset=100 type=formula formulafile=mandelbrotderivatives.frm
+  formulaname=Cubic_MandelbrDiag center-mag=0/0/0.6666667 params=0/0
+  float=y inside=0 colors=@default.map
+}
+
+Cubic_Burning_Ship { ; Cubic Burning Ship
+  reset=100 type=formula formulafile=mandelbrotderivatives.frm
+  formulaname=Cubic_Burning_Ship center-mag=0/0.150313/0.6666667
+  params=0/0 float=y inside=0 colors=@default.map
+}
+
+Cubic_Buffalo      { ; Cubic Buffalo
+  reset=100 type=formula formulafile=mandelbrotderivatives.frm
+  formulaname=Cubic_Buffalo center-mag=-0.150235/-0.200418/0.6666667
+  params=0/0 float=y inside=0 colors=@default.map
+}
+
+Cubic_Quasi_Heart  { ; Cubic Quasi Heart
+  reset=100 type=formula formulafile=mandelbrotderivatives.frm
+  formulaname=Cubic_Quasi_Heart center-mag=0/0/0.6666667 params=0/0
+  float=y inside=0 colors=@default.map
+}
+
+Cubic_Quasi_Perp   { ; Cubic Quasi Perpendicular
+  reset=100 type=formula formulafile=mandelbrotderivatives.frm
+  formulaname=Cubic_Quasi_Perp center-mag=0/0/0.6666667 params=0/0
+  float=y inside=0 colors=@default.map
+}
+
+CubicQuasiBurnShip { ; Cubic Quasi Burning Ship
+  reset=100 type=formula formulafile=mandelbrotderivatives.frm
+  formulaname=Cubic_QuasiBurnShp center-mag=0/0.200418/0.6666667
+  params=0/0 float=y inside=0 colors=@default.map
+}
+
+Part_Cub_Buff_Real { ; Partial Cubic Buffalo Real
+  reset=100 type=formula formulafile=mandelbrotderivatives.frm
+  formulaname=Part_Cub_Buff_Real center-mag=0/0/0.6666667 params=0/0
+  float=y inside=0 colors=@default.map
+}
+
+Part_Cub_Buff_Imag { ; Partial Cubic Buffalo Imaginary (Squirrel)
+  reset=100 type=formula formulafile=mandelbrotderivatives.frm
+  formulaname=Part_Cub_Buff_Imag center-mag=0/-0.250522/0.6666667
+  params=0/0 float=y inside=0 colors=@default.map
+}
+
+Part_Cub_BS_Real   { ; Partial Cubic Burning Ship Real
+  reset=100 type=formula formulafile=mandelbrotderivatives.frm
+  formulaname=Part_Cub_BS_Real center-mag=0/0/0.6666667 params=0/0
+  float=y inside=0 colors=@default.map
+}
+
+Part_Cub_BS_Imag   { ; Partial Cubic Burning Ship Imaginary
+  reset=100 type=formula formulafile=mandelbrotderivatives.frm
+  formulaname=Part_Cub_BS_Imag center-mag=0/0/0.6666667 params=0/0
+  float=y inside=0 colors=@default.map
+}
+
+Mandelbrot         { ; Good Old Mandelbrot - added for completeness
+  reset=100 type=formula formulafile=mandelbrotderivatives.frm
+  formulaname=Mandelbrot center-mag=-0.450704/0/0.6666667 params=0/0
+  float=y inside=0
+  colors=000b88<8>p33r33s22<2>x11z00z10<24>zn0zp0zr0<2>zx0zz0zz1<24>zznzzp\
+  zzr<2>zzxzzzzzz<57>zX5zX4zW3zW2zV1<27>z50z40z30z20z10z00<28>f00e00d00<26\
+  >JDDIDDHEEGEEFFFFFFFFF<14>a88
 }
 

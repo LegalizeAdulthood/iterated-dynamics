@@ -1,4 +1,5 @@
 id_install_home(FILES
+    BurningShip.par
     cellular.par
     demo.par
     example1.par

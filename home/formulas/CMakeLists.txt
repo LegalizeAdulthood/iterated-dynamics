@@ -7,6 +7,7 @@ id_install_home(FILES
     id.frm
     ikenaga.frm
     julitile.frm
+    MandelbrotDerivatives.frm
     newton.frm
     new_if.frm
 )
