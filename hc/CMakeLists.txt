@@ -3,6 +3,7 @@
 add_executable(hc
     compiler.h
     hc.cpp
+    hc_main.cpp
     ${OS_HC_FILES})
 target_include_directories(hc PRIVATE ../headers)
 target_compile_definitions(hc PRIVATE ${ID_TARGET_DEFINITIONS} $<$<CONFIG:Debug>:${ID_TARGET_DEFINITIONS_DEBUG}>)

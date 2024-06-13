@@ -4705,8 +4705,3 @@ void compiler::print_html_document(std::string const &fname)
 }
 
 } // namespace hc
-
-int main(int argc, char *argv[])
-{
-    return hc::compiler(argc, argv).process();
-}
