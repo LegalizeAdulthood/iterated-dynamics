@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <vector>
 
 namespace hc
 {
@@ -16,9 +17,6 @@ enum class modes
     ASCII_DOC
 };
 
-/*
- * command-line parser, etc.
- */
 struct compiler_options
 {
     modes mode{modes::NONE};
@@ -27,6 +25,9 @@ struct compiler_options
     std::string swappath;
     bool show_mem{};
     bool show_stats{};
+    bool quiet_mode{}; // true if "/Q" option used
+    std::vector<std::string> include_paths;
+    std::string html_output_dir;
 };
 
 compiler_options parse_compiler_options(int argc, char **argv);

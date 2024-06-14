@@ -1,8 +1,9 @@
 # Copyright 2018 Richard Thomson
 
 add_library(libhc
-    compiler.cpp
     compiler.h
+    compiler.cpp
+    parse_compiler_options.cpp
 )
 target_compile_definitions(libhc PRIVATE ${ID_TARGET_DEFINITIONS} $<$<CONFIG:Debug>:${ID_TARGET_DEFINITIONS_DEBUG}>)
 target_include_directories(libhc PUBLIC .)
