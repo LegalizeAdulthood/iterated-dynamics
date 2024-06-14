@@ -96,3 +96,18 @@ TEST_F(TestParseCompilerOptions, modeAsciiDoc)
 
     EXPECT_EQ(hc::modes::ASCII_DOC, m_options.mode);
 }
+
+TEST_F(TestParseCompilerOptions, firstFile)
+{
+    parse_options({"hc.exe", "foo.src"});
+
+    EXPECT_EQ("foo.src", m_options.fname1);
+}
+
+TEST_F(TestParseCompilerOptions, secondFile)
+{
+    parse_options({"hc.exe", "foo.src", "foo.txt"});
+
+    EXPECT_EQ("foo.src", m_options.fname1);
+    EXPECT_EQ("foo.txt", m_options.fname2);
+}
