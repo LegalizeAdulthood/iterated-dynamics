@@ -12,7 +12,8 @@ enum class modes
     PRINT,
     APPEND,
     DELETE,
-    HTML
+    HTML,
+    ASCII_DOC
 };
 
 /*
@@ -27,6 +28,8 @@ struct compiler_options
     bool show_mem{};
     bool show_stats{};
 };
+
+compiler_options parse_compiler_options(int argc, char **argv);
 
 class compiler
 {

@@ -3961,173 +3961,6 @@ void delete_hlp_from_exe(char const *exe_fname)
     }
 }
 
-hc::compiler_options parse_compiler_options(int argc, char **argv)
-{
-    hc::compiler_options result{};
-    for (int i = 1; i < argc; ++i)
-    {
-        const std::string arg{argv[i]};
-        if (arg[0] == '/' || arg[0] == '-')
-        {
-            switch (arg[1])
-            {
-            case 'a':
-                if (result.mode == hc::modes::NONE)
-                {
-                    result.mode = hc::modes::APPEND;
-                }
-                else
-                {
-                    fatal(0, "Cannot have /a with /c, /d, /h or /p");
-                }
-                break;
-
-            case 'c':
-                if (result.mode == hc::modes::NONE)
-                {
-                    result.mode = hc::modes::COMPILE;
-                }
-                else
-                {
-                    fatal(0, "Cannot have /c with /a, /d, /h or /p");
-                }
-                break;
-
-            case 'd':
-                if (result.mode == hc::modes::NONE)
-                {
-                    result.mode = hc::modes::DELETE;
-                }
-                else
-                {
-                    fatal(0, "Cannot have /d with /a, /c, /h or /p");
-                }
-                break;
-
-            case 'h':
-                if (result.mode == hc::modes::NONE)
-                {
-                    result.mode = hc::modes::HTML;
-                }
-                else
-                {
-                    fatal(0, "Cannot have /h with /a, /c, /d or /p");
-                }
-                break;
-
-            case 'i':
-                if (i < argc - 1)
-                {
-                    g_include_paths.emplace_back(argv[i + 1]);
-                    ++i;
-                }
-                else
-                {
-                    fatal(0, "Missing argument for /i");
-                }
-                break;
-
-            case 'm':
-                if (result.mode == hc::modes::COMPILE)
-                {
-                    result.show_mem = true;
-                }
-                else
-                {
-                    fatal(0, "/m switch allowed only when compiling (/c)");
-                }
-                break;
-
-            case 'o':
-                if (result.mode == hc::modes::HTML)
-                {
-                    if (i < argc - 1)
-                    {
-                        g_html_output_dir = argv[i + 1];
-                        ++i;
-                    }
-                    else
-                    {
-                        fatal(0, "Missing argument for /o");
-                    }
-                }
-                else
-                {
-                    fatal(0, "/o switch allowed only when writing HTML (/h)");
-                }
-                break;
-
-            case 'p':
-                if (result.mode == hc::modes::NONE)
-                {
-                    result.mode = hc::modes::PRINT;
-                }
-                else
-                {
-                    fatal(0, "Cannot have /p with /a, /c, /h or /d");
-                }
-                break;
-
-            case 's':
-                if (result.mode == hc::modes::COMPILE)
-                {
-                    result.show_stats = true;
-                }
-                else
-                {
-                    fatal(0, "/s switch allowed only when compiling (/c)");
-                }
-                break;
-
-            case 'r':
-                if (result.mode == hc::modes::COMPILE || result.mode == hc::modes::PRINT)
-                {
-                    if (i < argc - 1)
-                    {
-                        result.swappath = argv[i + 1];
-                        ++i;
-                    }
-                    else
-                    {
-                        fatal(0, "Missing argument for /r");
-                    }
-                }
-                else
-                {
-                    fatal(0, "/r switch allowed when compiling (/c) or printing (/p)");
-                }
-                break;
-
-            case 'q':
-                quiet_mode = true;
-                break;
-
-            default:
-                fatal(0, "Bad command-line switch /%c", arg[1]);
-                break;
-            }
-        }
-        else
-        {
-            // assume it is a filename
-            if (result.fname1.empty())
-            {
-                result.fname1 = arg;
-            }
-            else if (result.fname2.empty())
-            {
-                result.fname2 = arg;
-                std::cout << "Assigning to fname2" << std::endl;
-            }
-            else
-            {
-                fatal(0, "Unexpected command-line argument \"%s\"", arg.c_str());
-            }
-        }
-    }
-    return result;
-}
-
 class html_processor
 {
 public:
@@ -4341,6 +4174,182 @@ void check_buffer(char const *curr, unsigned int off, char const *buffer)
 } // namespace
 
 namespace hc {
+
+compiler_options parse_compiler_options(int argc, char **argv)
+{
+    compiler_options result{};
+    for (int i = 1; i < argc; ++i)
+    {
+        std::string arg{argv[i]};
+        if (arg[0] == '/' || arg[0] == '-')
+        {
+            arg = arg.substr(1);
+            if (arg == "a")
+            {
+                if (result.mode == modes::NONE)
+                {
+                    result.mode = modes::APPEND;
+                }
+                else
+                {
+                    fatal(0, "Cannot have /a with /adoc, /c, /d, /h or /p");
+                }
+            }
+            else if (arg == "adoc")
+            {
+                if (result.mode == modes::NONE)
+                {
+                    result.mode = modes::ASCII_DOC;
+                }
+                else
+                {
+                    fatal(0, "Cannot have /adoc with /a, /c, /d, /h or /p");
+                }
+            }
+            else if (arg == "c")
+            {
+                if (result.mode == modes::NONE)
+                {
+                    result.mode = modes::COMPILE;
+                }
+                else
+                {
+                    fatal(0, "Cannot have /c with /a, /adoc, /d, /h or /p");
+                }
+            }
+            else if (arg == "d")
+            {
+                if (result.mode == modes::NONE)
+                {
+                    result.mode = modes::DELETE;
+                }
+                else
+                {
+                    fatal(0, "Cannot have /d with /a, /adoc, /c, /h or /p");
+                }
+            }
+            else if (arg == "h")
+            {
+                if (result.mode == modes::NONE)
+                {
+                    result.mode = modes::HTML;
+                }
+                else
+                {
+                    fatal(0, "Cannot have /h with /a, /adoc, /c, /d or /p");
+                }
+            }
+            else if (arg == "i")
+            {
+                if (i < argc - 1)
+                {
+                    g_include_paths.emplace_back(argv[i + 1]);
+                    ++i;
+                }
+                else
+                {
+                    fatal(0, "Missing argument for /i");
+                }
+            }
+            else if (arg == "m")
+            {
+                if (result.mode == modes::COMPILE)
+                {
+                    result.show_mem = true;
+                }
+                else
+                {
+                    fatal(0, "/m switch allowed only when compiling (/c)");
+                }
+            }
+            else if (arg == "o")
+            {
+                if (result.mode == modes::HTML)
+                {
+                    if (i < argc - 1)
+                    {
+                        g_html_output_dir = argv[i + 1];
+                        ++i;
+                    }
+                    else
+                    {
+                        fatal(0, "Missing argument for /o");
+                    }
+                }
+                else
+                {
+                    fatal(0, "/o switch allowed only when writing HTML (/h)");
+                }
+            }
+            else if (arg == "p")
+            {
+                if (result.mode == modes::NONE)
+                {
+                    result.mode = modes::PRINT;
+                }
+                else
+                {
+                    fatal(0, "Cannot have /p with /a, /adoc, /c, /h or /d");
+                }
+            }
+            else if (arg == "s")
+            {
+                if (result.mode == modes::COMPILE)
+                {
+                    result.show_stats = true;
+                }
+                else
+                {
+                    fatal(0, "/s switch allowed only when compiling (/c)");
+                }
+            }
+            else if (arg == "r")
+            {
+                if (result.mode == modes::COMPILE || result.mode == modes::PRINT)
+                {
+                    if (i < argc - 1)
+                    {
+                        result.swappath = argv[i + 1];
+                        ++i;
+                    }
+                    else
+                    {
+                        fatal(0, "Missing argument for /r");
+                    }
+                }
+                else
+                {
+                    fatal(0, "/r switch allowed when compiling (/c) or printing (/p)");
+                }
+            }
+            else if (arg == "q")
+            {
+                quiet_mode = true;
+            }
+            else
+            {
+                fatal(0, "Bad command-line switch /%s", arg.c_str());
+            }
+        }
+        else
+        {
+            // assume it is a filename
+            if (result.fname1.empty())
+            {
+                result.fname1 = arg;
+            }
+            else if (result.fname2.empty())
+            {
+                result.fname2 = arg;
+            }
+            else
+            {
+                fatal(0, "Unexpected command-line argument \"%s\"", arg.c_str());
+            }
+        }
+    }
+    return result;
+}
 
 void compiler::parse_arguments()
 {

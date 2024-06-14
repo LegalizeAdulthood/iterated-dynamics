@@ -39,3 +39,5 @@ add_library(help_defs INTERFACE)
 target_sources(help_defs INTERFACE
     ${CMAKE_BINARY_DIR}/include/helpdefs.h)
 target_include_directories(help_defs INTERFACE ${CMAKE_BINARY_DIR}/include)
+
+add_subdirectory(tests)
