@@ -200,7 +200,7 @@ int g_warnings{};                    // number of warnings reported
 std::string g_src_filename;          // command-line .SRC filename
 std::string g_hdr_filename;          // .H filename
 std::string g_hlp_filename;          // .HLP filename
-std::string src_cfname;              // current .SRC filename
+std::string g_current_src_filename;  // current .SRC filename
 int format_exclude = 0;              // disable formatting at this col, 0 to never disable formatting
 std::FILE *swapfile;                 //
 long swappos;                        //
@@ -354,7 +354,7 @@ void print_msg(char const *type, int lnum, char const *format, std::va_list arg)
         std::printf("   %s", type);
         if (lnum > 0)
         {
-            std::printf(" %s %d", src_cfname.c_str(), lnum);
+            std::printf(" %s %d", g_current_src_filename.c_str(), lnum);
         }
         std::printf(": ");
     }
@@ -959,7 +959,7 @@ void process_doc_contents(hc::modes mode)
             c.flags = 0;
             c.num_topic = 0;
             c.doc_page = -1;
-            c.srcfile = src_cfname;
+            c.srcfile = g_current_src_filename;
             c.srcline = g_src_line;
 
             if (get_next_item())
@@ -1089,7 +1089,7 @@ int parse_link()   // returns length of link or 0 on error
     int   err_off;
 
     LINK l;
-    l.srcfile  = src_cfname;
+    l.srcfile  = g_current_src_filename;
     l.srcline  = g_src_line;
     l.doc_page = -1;
 
@@ -1574,7 +1574,7 @@ void read_src(std::string const &fname, hc::modes mode)
     xonline = false;
     xdoc = false;
 
-    src_cfname = fname;
+    g_current_src_filename = fname;
 
     g_src_file = open_include(fname);
     if (g_src_file == nullptr)
@@ -1597,7 +1597,7 @@ void read_src(std::string const &fname, hc::modes mode)
             if (include_stack_top >= 0)
             {
                 std::fclose(g_src_file);
-                src_cfname = include_stack[include_stack_top].fname;
+                g_current_src_filename = include_stack[include_stack_top].fname;
                 g_src_file = include_stack[include_stack_top].file;
                 g_src_line = include_stack[include_stack_top].line;
                 g_src_col  = include_stack[include_stack_top].col;
@@ -1907,7 +1907,7 @@ void read_src(std::string const &fname, hc::modes mode)
                     else
                     {
                         ++include_stack_top;
-                        include_stack[include_stack_top].fname = src_cfname;
+                        include_stack[include_stack_top].fname = g_current_src_filename;
                         include_stack[include_stack_top].file = g_src_file;
                         include_stack[include_stack_top].line = g_src_line;
                         include_stack[include_stack_top].col  = g_src_col;
@@ -1918,7 +1918,7 @@ void read_src(std::string const &fname, hc::modes mode)
                             error(eoff, "Unable to open \"%s\"", file_name.c_str());
                             g_src_file = include_stack[include_stack_top--].file;
                         }
-                        src_cfname = file_name;
+                        g_current_src_filename = file_name;
                         g_src_line = 1;
                         g_src_col = 0;
                     }
@@ -2624,7 +2624,7 @@ void link_topic(LINK &l)
     int const t = find_topic_title(l.name.c_str());
     if (t == -1)
     {
-        src_cfname = l.srcfile;
+        g_current_src_filename = l.srcfile;
         g_src_line = l.srcline; // pretend we are still in the source...
         error(0, "Cannot find implicit hot-link \"%s\".", l.name.c_str());
         g_src_line = -1;  // back to reality
@@ -2643,7 +2643,7 @@ void link_label(LINK &l)
     {
         if (g_topics[lbl->topic_num].flags & TF_DATA)
         {
-            src_cfname = l.srcfile;
+            g_current_src_filename = l.srcfile;
             g_src_line = l.srcline;
             error(0, "Label \"%s\" is a data-only topic.", l.name.c_str());
             g_src_line = -1;
@@ -2657,7 +2657,7 @@ void link_label(LINK &l)
     }
     else
     {
-        src_cfname = l.srcfile;
+        g_current_src_filename = l.srcfile;
         g_src_line = l.srcline; // pretend again
         error(0, "Cannot find explicit hot-link \"%s\".", l.name.c_str());
         g_src_line = -1;
@@ -2670,7 +2670,7 @@ void label_topic(CONTENT &c, int ctr)
     {
         if (g_topics[lbl->topic_num].flags & TF_DATA)
         {
-            src_cfname = c.srcfile;
+            g_current_src_filename = c.srcfile;
             g_src_line = c.srcline;
             error(0, "Label \"%s\" is a data-only topic.", c.topic_name[ctr].c_str());
             g_src_line = -1;
@@ -2691,7 +2691,7 @@ void label_topic(CONTENT &c, int ctr)
     }
     else
     {
-        src_cfname = c.srcfile;
+        g_current_src_filename = c.srcfile;
         g_src_line = c.srcline;
         error(0, "Cannot find DocContent label \"%s\".", c.topic_name[ctr].c_str());
         g_src_line = -1;
@@ -2703,7 +2703,7 @@ void content_topic(CONTENT &c, int ctr)
     int const t = find_topic_title(c.topic_name[ctr].c_str());
     if (t == -1)
     {
-        src_cfname = c.srcfile;
+        g_current_src_filename = c.srcfile;
         g_src_line = c.srcline;
         error(0, "Cannot find DocContent topic \"%s\".", c.topic_name[ctr].c_str());
         g_src_line = -1;  // back to reality
@@ -3033,7 +3033,7 @@ void set_hot_link_doc_page()
             t = find_topic_title(l.name.c_str());
             if (t == -1)
             {
-                src_cfname = l.srcfile;
+                g_current_src_filename = l.srcfile;
                 g_src_line = l.srcline; // pretend we are still in the source...
                 error(0, "Cannot find implicit hot-link \"%s\".", l.name.c_str());
                 g_src_line = -1;  // back to reality
@@ -3048,7 +3048,7 @@ void set_hot_link_doc_page()
             lbl = find_label(l.name.c_str());
             if (lbl == nullptr)
             {
-                src_cfname = l.srcfile;
+                g_current_src_filename = l.srcfile;
                 g_src_line = l.srcline; // pretend again
                 error(0, "Cannot find explicit hot-link \"%s\".", l.name.c_str());
                 g_src_line = -1;
@@ -3131,7 +3131,7 @@ bool pd_get_info(int cmd, PD_INFO *pd, void *context)
         {
             if (info.link_dest_warn)
             {
-                src_cfname = link.srcfile;
+                g_current_src_filename = link.srcfile;
                 g_src_line    = link.srcline;
                 warn(0, "Hot-link destination is not in the document.");
                 g_src_line = -1;
