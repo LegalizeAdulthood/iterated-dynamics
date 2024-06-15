@@ -182,45 +182,35 @@ struct help_sig_info
 };
 
 
-std::vector<TOPIC> g_topics;
-std::vector<LABEL> g_labels;
-std::vector<LABEL> g_private_labels;
-std::vector<LINK> g_all_links;
-std::vector<CONTENT> g_contents;    // the table-of-contents
-
-bool g_quiet_mode = false;          // true if "/Q" option used
-
-int      max_pages        = 0;    // max. pages in any topic
-int      max_links        = 0;    // max. links on any page
-int      num_doc_pages    = 0;    // total number of pages in document
-
-std::FILE    *srcfile;                 // .SRC file
-int      srcline          = 0;    // .SRC line number (used for errors)
-int      srccol           = 0;    // .SRC column.
-
-int      version          = -1;   // help file version
-
-int      errors           = 0,    // number of errors reported
-         warnings         = 0;    // number of warnings reported
-
-std::string src_fname;            // command-line .SRC filename
-std::string hdr_fname;            // .H filename
-std::string hlp_fname;            // .HLP filename
-std::string src_cfname;           // current .SRC filename
-
-int      format_exclude   = 0;    // disable formatting at this col, 0 to
-//    never disable formatting
-std::FILE    *swapfile;
-long     swappos;
-
+std::vector<TOPIC> g_topics;         //
+std::vector<LABEL> g_labels;         //
+std::vector<LABEL> g_private_labels; //
+std::vector<LINK> g_all_links;       //
+std::vector<CONTENT> g_contents;     // the table-of-contents
+bool g_quiet_mode = false;           // true if "/Q" option used
+int max_pages = 0;                   // max. pages in any topic
+int max_links = 0;                   // max. links on any page
+int num_doc_pages = 0;               // total number of pages in document
+std::FILE *srcfile;                  // .SRC file
+int srcline = 0;                     // .SRC line number (used for errors)
+int srccol = 0;                      // .SRC column.
+int version = -1;                    // help file version
+int errors = 0;                      // number of errors reported
+int warnings = 0;                    // number of warnings reported
+std::string src_fname;               // command-line .SRC filename
+std::string hdr_fname;               // .H filename
+std::string hlp_fname;               // .HLP filename
+std::string src_cfname;              // current .SRC filename
+int format_exclude = 0;              // disable formatting at this col, 0 to never disable formatting
+std::FILE *swapfile;                 //
+long swappos;                        //
 std::vector<char> buffer;            // alloc'ed as BUFFER_SIZE bytes
-char             *g_curr;            // current position in the buffer
-char              cmd[128];          // holds the current command
-bool              compress_spaces{}; //
-bool              xonline{};         //
-bool              xdoc{};            //
-
-int const MAX_INCLUDE_STACK = 5;    // allow 5 nested includes
+char *g_curr;                        // current position in the buffer
+char cmd[128];                       // holds the current command
+bool compress_spaces{};              //
+bool xonline{};                      //
+bool xdoc{};                         //
+int const MAX_INCLUDE_STACK = 5;     // allow 5 nested includes
 
 struct include_stack_entry
 {
