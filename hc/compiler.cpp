@@ -192,7 +192,7 @@ int g_max_pages{};                   // max. pages in any topic
 int g_max_links{};                   // max. links on any page
 int g_num_doc_pages{};               // total number of pages in document
 std::FILE *g_src_file{};             // .SRC file
-int srcline = 0;                     // .SRC line number (used for errors)
+int g_src_line{};                    // .SRC line number (used for errors)
 int srccol = 0;                      // .SRC column.
 int version = -1;                    // help file version
 int errors = 0;                      // number of errors reported
@@ -368,7 +368,7 @@ void fatal_msg(int diff, char const *format, ...)
     std::va_list arg;
     va_start(arg, format);
 
-    print_msg("Fatal", srcline-diff, format, arg);
+    print_msg("Fatal", g_src_line-diff, format, arg);
     va_end(arg);
 
     if (errors || warnings)
@@ -385,7 +385,7 @@ void error_msg(int diff, char const *format, ...)
     std::va_list arg;
     va_start(arg, format);
 
-    print_msg("Error", srcline-diff, format, arg);
+    print_msg("Error", g_src_line-diff, format, arg);
     va_end(arg);
 
     if (++errors >= MAX_ERRORS)
@@ -400,7 +400,7 @@ void warn_msg(int diff, char const *format, ...)
     std::va_list arg;
     va_start(arg, format);
 
-    print_msg("Warning", srcline-diff, format, arg);
+    print_msg("Warning", g_src_line-diff, format, arg);
     va_end(arg);
 
     if (++warnings >= MAX_WARNINGS)
@@ -414,7 +414,7 @@ void notice_msg(char const *format, ...)
 {
     std::va_list arg;
     va_start(arg, format);
-    print_msg("Note", srcline, format, arg);
+    print_msg("Note", g_src_line, format, arg);
     va_end(arg);
 }
 
@@ -565,9 +565,9 @@ int read_char_aux()
 {
     int ch;
 
-    if (srcline <= 0)
+    if (g_src_line <= 0)
     {
-        srcline = 1;
+        g_src_line = 1;
         srccol = 0;
     }
 
@@ -611,7 +611,7 @@ int read_char_aux()
         case '\n':
             read_char_sp = 0;   // delete spaces before a \n
             srccol = 0;
-            ++srcline;
+            ++g_src_line;
             return '\n';
 
         case -1:               // EOF
@@ -960,7 +960,7 @@ void process_doc_contents(hc::modes mode)
             c.num_topic = 0;
             c.doc_page = -1;
             c.srcfile = src_cfname;
-            c.srcline = srcline;
+            c.srcline = g_src_line;
 
             if (get_next_item())
             {
@@ -1090,7 +1090,7 @@ int parse_link()   // returns length of link or 0 on error
 
     LINK l;
     l.srcfile  = src_cfname;
-    l.srcline  = srcline;
+    l.srcline  = g_src_line;
     l.doc_page = -1;
 
     char *end = read_until(cmd, 128, "}\n");   // get the entire hot-link
@@ -1599,7 +1599,7 @@ void read_src(std::string const &fname, hc::modes mode)
                 std::fclose(g_src_file);
                 src_cfname = include_stack[include_stack_top].fname;
                 g_src_file = include_stack[include_stack_top].file;
-                srcline = include_stack[include_stack_top].line;
+                g_src_line = include_stack[include_stack_top].line;
                 srccol  = include_stack[include_stack_top].col;
                 --include_stack_top;
                 continue;
@@ -1909,7 +1909,7 @@ void read_src(std::string const &fname, hc::modes mode)
                         ++include_stack_top;
                         include_stack[include_stack_top].fname = src_cfname;
                         include_stack[include_stack_top].file = g_src_file;
-                        include_stack[include_stack_top].line = srcline;
+                        include_stack[include_stack_top].line = g_src_line;
                         include_stack[include_stack_top].col  = srccol;
                         std::string const file_name = &cmd[8];
                         g_src_file = open_include(file_name);
@@ -1919,7 +1919,7 @@ void read_src(std::string const &fname, hc::modes mode)
                             g_src_file = include_stack[include_stack_top--].file;
                         }
                         src_cfname = file_name;
-                        srcline = 1;
+                        g_src_line = 1;
                         srccol = 0;
                     }
 
@@ -2612,7 +2612,7 @@ void read_src(std::string const &fname, hc::modes mode)
 
     std::fclose(g_src_file);
 
-    srcline = -1;
+    g_src_line = -1;
 }
 
 
@@ -2625,9 +2625,9 @@ void link_topic(LINK &l)
     if (t == -1)
     {
         src_cfname = l.srcfile;
-        srcline = l.srcline; // pretend we are still in the source...
+        g_src_line = l.srcline; // pretend we are still in the source...
         error(0, "Cannot find implicit hot-link \"%s\".", l.name.c_str());
-        srcline = -1;  // back to reality
+        g_src_line = -1;  // back to reality
     }
     else
     {
@@ -2644,9 +2644,9 @@ void link_label(LINK &l)
         if (g_topics[lbl->topic_num].flags & TF_DATA)
         {
             src_cfname = l.srcfile;
-            srcline = l.srcline;
+            g_src_line = l.srcline;
             error(0, "Label \"%s\" is a data-only topic.", l.name.c_str());
-            srcline = -1;
+            g_src_line = -1;
         }
         else
         {
@@ -2658,9 +2658,9 @@ void link_label(LINK &l)
     else
     {
         src_cfname = l.srcfile;
-        srcline = l.srcline; // pretend again
+        g_src_line = l.srcline; // pretend again
         error(0, "Cannot find explicit hot-link \"%s\".", l.name.c_str());
-        srcline = -1;
+        g_src_line = -1;
     }
 }
 
@@ -2671,9 +2671,9 @@ void label_topic(CONTENT &c, int ctr)
         if (g_topics[lbl->topic_num].flags & TF_DATA)
         {
             src_cfname = c.srcfile;
-            srcline = c.srcline;
+            g_src_line = c.srcline;
             error(0, "Label \"%s\" is a data-only topic.", c.topic_name[ctr].c_str());
-            srcline = -1;
+            g_src_line = -1;
         }
         else
         {
@@ -2692,9 +2692,9 @@ void label_topic(CONTENT &c, int ctr)
     else
     {
         src_cfname = c.srcfile;
-        srcline = c.srcline;
+        g_src_line = c.srcline;
         error(0, "Cannot find DocContent label \"%s\".", c.topic_name[ctr].c_str());
-        srcline = -1;
+        g_src_line = -1;
     }
 }
 
@@ -2704,9 +2704,9 @@ void content_topic(CONTENT &c, int ctr)
     if (t == -1)
     {
         src_cfname = c.srcfile;
-        srcline = c.srcline;
+        g_src_line = c.srcline;
         error(0, "Cannot find DocContent topic \"%s\".", c.topic_name[ctr].c_str());
-        srcline = -1;  // back to reality
+        g_src_line = -1;  // back to reality
     }
     else
     {
@@ -3034,9 +3034,9 @@ void set_hot_link_doc_page()
             if (t == -1)
             {
                 src_cfname = l.srcfile;
-                srcline = l.srcline; // pretend we are still in the source...
+                g_src_line = l.srcline; // pretend we are still in the source...
                 error(0, "Cannot find implicit hot-link \"%s\".", l.name.c_str());
-                srcline = -1;  // back to reality
+                g_src_line = -1;  // back to reality
             }
             else
             {
@@ -3049,9 +3049,9 @@ void set_hot_link_doc_page()
             if (lbl == nullptr)
             {
                 src_cfname = l.srcfile;
-                srcline = l.srcline; // pretend again
+                g_src_line = l.srcline; // pretend again
                 error(0, "Cannot find explicit hot-link \"%s\".", l.name.c_str());
-                srcline = -1;
+                g_src_line = -1;
             }
             else
             {
@@ -3132,9 +3132,9 @@ bool pd_get_info(int cmd, PD_INFO *pd, void *context)
             if (info.link_dest_warn)
             {
                 src_cfname = link.srcfile;
-                srcline    = link.srcline;
+                g_src_line    = link.srcline;
                 warn(0, "Hot-link destination is not in the document.");
-                srcline = -1;
+                g_src_line = -1;
             }
             return false;
         }
