@@ -188,8 +188,6 @@ struct Include
     int   col;
 };
 
-int const MAX_INCLUDE_STACK = 5; // allow 5 nested includes
-
 std::vector<TOPIC> g_topics;         //
 std::vector<LABEL> g_labels;         //
 std::vector<LABEL> g_private_labels; //
@@ -218,10 +216,9 @@ char g_cmd[128]{};                   // holds the current command
 bool g_compress_spaces{};            //
 bool g_xonline{};                    //
 bool g_xdoc{};                       //
-Include g_include_stack[MAX_INCLUDE_STACK]; //
-int g_include_stack_top{-1};                //
-std::vector<std::string> g_include_paths;   //
-std::string g_html_output_dir{"."};         //
+std::vector<Include> g_include_stack;     //
+std::vector<std::string> g_include_paths; //
+std::string g_html_output_dir{"."};       //
 
 char *get_topic_text(const TOPIC &t);
 
@@ -1591,14 +1588,15 @@ void read_src(std::string const &fname, hc::modes mode)
 
         if (ch == -1)     // EOF?
         {
-            if (g_include_stack_top >= 0)
+            if (!g_include_stack.empty())
             {
                 std::fclose(g_src_file);
-                g_current_src_filename = g_include_stack[g_include_stack_top].fname;
-                g_src_file = g_include_stack[g_include_stack_top].file;
-                g_src_line = g_include_stack[g_include_stack_top].line;
-                g_src_col  = g_include_stack[g_include_stack_top].col;
-                --g_include_stack_top;
+                const Include &top{g_include_stack.back()};
+                g_current_src_filename = top.fname;
+                g_src_file = top.file;
+                g_src_line = top.line;
+                g_src_col = top.col;
+                g_include_stack.pop_back();
                 continue;
             }
             if (in_topic)  // if we're in a topic, finish it
@@ -1897,29 +1895,24 @@ void read_src(std::string const &fname, hc::modes mode)
                 }
                 if (strnicmp(g_cmd, "Include ", 8) == 0)
                 {
-                    if (g_include_stack_top >= MAX_INCLUDE_STACK-1)
+                    const std::string file_name = &g_cmd[8];
+                    if (FILE *new_file = open_include(file_name))
                     {
-                        error(eoff, "Too many nested Includes.");
-                    }
-                    else
-                    {
-                        ++g_include_stack_top;
-                        g_include_stack[g_include_stack_top].fname = g_current_src_filename;
-                        g_include_stack[g_include_stack_top].file = g_src_file;
-                        g_include_stack[g_include_stack_top].line = g_src_line;
-                        g_include_stack[g_include_stack_top].col  = g_src_col;
-                        std::string const file_name = &g_cmd[8];
-                        g_src_file = open_include(file_name);
-                        if (g_src_file == nullptr)
-                        {
-                            error(eoff, "Unable to open \"%s\"", file_name.c_str());
-                            g_src_file = g_include_stack[g_include_stack_top--].file;
-                        }
+                        Include top{};
+                        top.fname = g_current_src_filename;
+                        top.file = g_src_file;
+                        top.line = g_src_line;
+                        top.col  = g_src_col;
+                        g_include_stack.push_back(top);
+                        g_src_file = new_file;
                         g_current_src_filename = file_name;
                         g_src_line = 1;
                         g_src_col = 0;
                     }
-
+                    else
+                    {
+                        error(eoff, "Unable to open \"%s\"", file_name.c_str());
+                    }
                     continue;
                 }
 
