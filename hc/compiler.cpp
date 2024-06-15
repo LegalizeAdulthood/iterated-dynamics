@@ -509,15 +509,15 @@ int add_topic(const TOPIC &t)
 }
 
 
-int add_label(LABEL const *l)
+int add_label(const LABEL &l)
 {
-    if (l->name[0] == '@')    // if it's a private label...
+    if (l.name[0] == '@')    // if it's a private label...
     {
-        g_private_labels.push_back(*l);
+        g_private_labels.push_back(l);
         return static_cast<int>(g_private_labels.size() - 1);
     }
 
-    g_labels.push_back(*l);
+    g_labels.push_back(l);
     return static_cast<int>(g_labels.size() - 1);
 }
 
@@ -1757,7 +1757,7 @@ void read_src(std::string const &fname, hc::modes mode)
                     lbl.topic_num = static_cast<int>(g_topics.size());
                     lbl.topic_off = 0;
                     lbl.doc_page  = -1;
-                    add_label(&lbl);
+                    add_label(lbl);
 
                     formatting = false;
                     centering = false;
@@ -2043,7 +2043,7 @@ void read_src(std::string const &fname, hc::modes mode)
                         lbl.topic_num = static_cast<int>(g_topics.size());
                         lbl.topic_off = (unsigned)(g_curr - &g_buffer[0]);
                         lbl.doc_page  = -1;
-                        add_label(&lbl);
+                        add_label(lbl);
                     }
                 }
                 else if (strnicmp(g_cmd, "Table=", 6) == 0)
@@ -3462,7 +3462,7 @@ void _write_help(std::FILE *file)
     }
 
     // write all public labels
-    for (LABEL const &l : g_labels)
+    for (const LABEL &l : g_labels)
     {
         putw(l.topic_num, file);
         putw(l.topic_off, file);
@@ -3733,7 +3733,7 @@ void report_memory()
 
     dead += static_cast<long>((g_all_links.capacity() - g_all_links.size()) * sizeof(LINK));
 
-    for (LABEL const &l : g_labels)
+    for (const LABEL &l : g_labels)
     {
         data   += sizeof(LABEL);
         bytes_in_strings += (long) l.name.length() + 1;
@@ -3741,7 +3741,7 @@ void report_memory()
 
     dead += static_cast<long>((g_labels.capacity() - g_labels.size()) * sizeof(LABEL));
 
-    for (LABEL const &l : g_private_labels)
+    for (const LABEL &l : g_private_labels)
     {
         data   += sizeof(LABEL);
         bytes_in_strings += (long) l.name.length() + 1;
