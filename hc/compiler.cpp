@@ -209,8 +209,9 @@ char *g_curr{};                      // current position in the buffer
 char g_cmd[128]{};                   // holds the current command
 bool g_compress_spaces{};            //
 bool g_xonline{};                    //
-bool xdoc{};                         //
-int const MAX_INCLUDE_STACK = 5;     // allow 5 nested includes
+bool g_xdoc{};                       //
+
+int const MAX_INCLUDE_STACK = 5; // allow 5 nested includes
 
 struct include_stack_entry
 {
@@ -1572,7 +1573,7 @@ void read_src(std::string const &fname, hc::modes mode)
     int    lformat_exclude = g_format_exclude;
 
     g_xonline = false;
-    xdoc = false;
+    g_xdoc = false;
 
     g_current_src_filename = fname;
 
@@ -1709,7 +1710,7 @@ void read_src(std::string const &fname, hc::modes mode)
                     in_para = false;
                     num_spaces = 0;
                     g_xonline = false;
-                    xdoc = false;
+                    g_xdoc = false;
                     lformat_exclude = g_format_exclude;
                     g_compress_spaces = true;
                     continue;
@@ -1768,7 +1769,7 @@ void read_src(std::string const &fname, hc::modes mode)
                     in_para = false;
                     num_spaces = 0;
                     g_xonline = false;
-                    xdoc = false;
+                    g_xdoc = false;
                     lformat_exclude = g_format_exclude;
                     g_compress_spaces = false;
                     continue;
@@ -2002,12 +2003,12 @@ void read_src(std::string const &fname, hc::modes mode)
                     {
                         *g_curr++ = '\n';    // finish off current paragraph
                     }
-                    if (!xdoc)
+                    if (!g_xdoc)
                     {
                         *g_curr++ = CMD_XDOC;
                     }
                     *g_curr++ = CMD_FF;
-                    if (!xdoc)
+                    if (!g_xdoc)
                     {
                         *g_curr++ = CMD_XDOC;
                     }
@@ -2182,10 +2183,10 @@ void read_src(std::string const &fname, hc::modes mode)
                     if (g_cmd[3] == '+')
                     {
                         check_command_length(eoff, 4);
-                        if (xdoc)
+                        if (g_xdoc)
                         {
                             *g_curr++ = CMD_XDOC;
-                            xdoc = false;
+                            g_xdoc = false;
                         }
                         else
                         {
@@ -2195,10 +2196,10 @@ void read_src(std::string const &fname, hc::modes mode)
                     else if (g_cmd[3] == '-')
                     {
                         check_command_length(eoff, 4);
-                        if (!xdoc)
+                        if (!g_xdoc)
                         {
                             *g_curr++ = CMD_XDOC;
-                            xdoc = true;
+                            g_xdoc = true;
                         }
                         else
                         {
