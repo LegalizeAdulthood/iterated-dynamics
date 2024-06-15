@@ -198,7 +198,7 @@ int g_version{-1};                   // help file version
 int g_errors{};                      // number of errors reported
 int g_warnings{};                    // number of warnings reported
 std::string g_src_filename;          // command-line .SRC filename
-std::string hdr_fname;               // .H filename
+std::string g_hdr_filename;          // .H filename
 std::string hlp_fname;               // .HLP filename
 std::string src_cfname;              // current .SRC filename
 int format_exclude = 0;              // disable formatting at this col, 0 to never disable formatting
@@ -1933,11 +1933,11 @@ void read_src(std::string const &fname, hc::modes mode)
                 {
                     if (strnicmp(cmd, "HdrFile=", 8) == 0)
                     {
-                        if (!hdr_fname.empty())
+                        if (!g_hdr_filename.empty())
                         {
                             warn(eoff, "Header Filename has already been defined.");
                         }
-                        hdr_fname = &cmd[8];
+                        g_hdr_filename = &cmd[8];
                     }
                     else if (strnicmp(cmd, "HlpFile=", 8) == 0)
                     {
@@ -4271,7 +4271,7 @@ void compiler::compile()
 
     read_source_file();
 
-    if (hdr_fname.empty())
+    if (g_hdr_filename.empty())
     {
         error(0, "No .H file defined.  (Use \"~HdrFile=\")");
     }
@@ -4306,7 +4306,7 @@ void compiler::compile()
     }
     if (!g_errors)
     {
-        write_hdr(hdr_fname.c_str());
+        write_hdr(g_hdr_filename.c_str());
     }
     if (!g_errors)
     {
