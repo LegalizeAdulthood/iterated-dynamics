@@ -188,7 +188,7 @@ std::vector<LABEL> g_private_labels;
 std::vector<LINK> g_all_links;
 std::vector<CONTENT> g_contents;    // the table-of-contents
 
-bool quiet_mode = false;          // true if "/Q" option used
+bool g_quiet_mode = false;          // true if "/Q" option used
 
 int      max_pages        = 0;    // max. pages in any topic
 int      max_links        = 0;    // max. links on any page
@@ -433,7 +433,7 @@ void msg_msg(char const *format, ...)
 {
     std::va_list arg;
 
-    if (quiet_mode)
+    if (g_quiet_mode)
     {
         return;
     }
@@ -451,7 +451,7 @@ void show_line(unsigned int line)
 #   define error(...)  (show_line(__LINE__), error_msg(__VA_ARGS__))
 #   define warn(...)   (show_line(__LINE__), warn_msg(__VA_ARGS__))
 #   define notice(...) (show_line(__LINE__), notice_msg(__VA_ARGS__))
-#   define msg(...)    (quiet_mode ? static_cast<void>(0) : (show_line(__LINE__), msg_msg(__VA_ARGS__)))
+#   define msg(...)    (g_quiet_mode ? static_cast<void>(0) : (show_line(__LINE__), msg_msg(__VA_ARGS__)))
 #else
 #define error(...)  error_msg(__VA_ARGS__)
 #define warn(...)   warn_msg(__VA_ARGS__)
@@ -4177,7 +4177,7 @@ namespace hc {
 compiler::compiler(const compiler_options &options) :
     m_options(options)
 {
-    quiet_mode = m_options.quiet_mode;
+    g_quiet_mode = m_options.quiet_mode;
     g_include_paths = m_options.include_paths;
 }
 
