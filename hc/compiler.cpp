@@ -232,7 +232,7 @@ inline void check_buffer(unsigned off)
     check_buffer(g_curr, off, &g_buffer[0]);
 }
 
-std::ostream &operator<<(std::ostream &str, CONTENT const &content)
+std::ostream &operator<<(std::ostream &str, const CONTENT &content)
 {
     str << "Flags: " << std::hex << content.flags << std::dec << '\n'
         << "Id: <" << content.id << ">\n"
@@ -522,9 +522,9 @@ int add_label(const LABEL &l)
 }
 
 
-int add_content(CONTENT const *c)
+int add_content(const CONTENT &c)
 {
-    g_contents.push_back(*c);
+    g_contents.push_back(c);
     return static_cast<int>(g_contents.size() - 1);
 }
 
@@ -946,7 +946,7 @@ void process_doc_contents(hc::modes mode)
     c.is_label[0] = false;
     c.topic_name[0] = DOCCONTENTS_TITLE;
     c.srcline = -1;
-    add_content(&c);
+    add_content(c);
 
     while (true)
     {
@@ -1058,7 +1058,7 @@ void process_doc_contents(hc::modes mode)
                 }
             }
 
-            add_content(&c);
+            add_content(c);
         }
         else if (ch == '~')   // end at any command
         {
@@ -3091,11 +3091,11 @@ void set_content_doc_page()
 }
 
 
-// this funtion also used by print_document()
+// this function also used by print_document()
 bool pd_get_info(int cmd, PD_INFO *pd, void *context)
 {
     DOC_INFO &info = *static_cast<DOC_INFO *>(context);
-    CONTENT const *c;
+    const CONTENT *c;
 
     switch (cmd)
     {
@@ -3379,7 +3379,7 @@ void calc_offsets()    // calc file offset to each topic
                                     g_topics.size() * sizeof(long) +    // offsets to each topic
                                     g_labels.size() * 2 * sizeof(int)); // topic_num/topic_off for all public labels
 
-    offset = std::accumulate(g_contents.begin(), g_contents.end(), offset, [](long offset, CONTENT const &cp) {
+    offset = std::accumulate(g_contents.begin(), g_contents.end(), offset, [](long offset, const CONTENT &cp) {
         return offset += sizeof(int) +  // flags
             1 +                         // id length
             (int) cp.id.length() +      // id text
@@ -3469,7 +3469,7 @@ void _write_help(std::FILE *file)
     }
 
     // write contents
-    for (CONTENT const &cp : g_contents)
+    for (const CONTENT &cp : g_contents)
     {
         putw(cp.flags, file);
 
@@ -3749,7 +3749,7 @@ void report_memory()
 
     dead += static_cast<long>((g_private_labels.capacity() - g_private_labels.size()) * sizeof(LABEL));
 
-    for (CONTENT const &c : g_contents)
+    for (const CONTENT &c : g_contents)
     {
         int t = (MAX_CONTENT_TOPIC - c.num_topic) *
             (sizeof(g_contents[0].is_label[0]) + sizeof(g_contents[0].topic_name[0]) + sizeof(g_contents[0].topic_num[0]));
@@ -3960,7 +3960,7 @@ public:
 private:
     void write_index_html();
     void write_contents();
-    void write_content(CONTENT const &c);
+    void write_content(const CONTENT &c);
     void write_topic(const TOPIC &t);
 
     std::string m_fname;
@@ -3981,7 +3981,7 @@ void html_processor::write_index_html()
 {
     msg("Writing index.rst");
 
-    CONTENT const &toc = g_contents[0];
+    const CONTENT &toc = g_contents[0];
     if (toc.num_topic != 1)
     {
         throw std::runtime_error("First content block contains multiple topics.");
@@ -4026,13 +4026,13 @@ void html_processor::write_index_html()
 
 void html_processor::write_contents()
 {
-    for (CONTENT const &c : g_contents)
+    for (const CONTENT &c : g_contents)
     {
         write_content(c);
     }
 }
 
-void html_processor::write_content(CONTENT const &c)
+void html_processor::write_content(const CONTENT &c)
 {
     for (int i = 0; i < c.num_topic; ++i)
     {
