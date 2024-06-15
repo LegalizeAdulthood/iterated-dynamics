@@ -205,7 +205,7 @@ int g_format_exclude{};              // disable formatting at this col, 0 to nev
 std::FILE *g_swap_file{};            //
 long g_swap_pos{};                   //
 std::vector<char> g_buffer;          // alloc'ed as BUFFER_SIZE bytes
-char *g_curr;                        // current position in the buffer
+char *g_curr{};                      // current position in the buffer
 char cmd[128];                       // holds the current command
 bool compress_spaces{};              //
 bool xonline{};                      //
