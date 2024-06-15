@@ -196,7 +196,7 @@ int g_src_line{};                    // .SRC line number (used for errors)
 int g_src_col{};                     // .SRC column.
 int g_version{-1};                   // help file version
 int g_errors{};                      // number of errors reported
-int warnings = 0;                    // number of warnings reported
+int g_warnings{};                    // number of warnings reported
 std::string src_fname;               // command-line .SRC filename
 std::string hdr_fname;               // .H filename
 std::string hlp_fname;               // .HLP filename
@@ -343,7 +343,7 @@ void report_errors()
     std::printf("\n");
     std::printf("Compiler Status:\n");
     std::printf("%8d Error%c\n",       g_errors, (g_errors == 1)   ? ' ' : 's');
-    std::printf("%8d Warning%c\n",     warnings, (warnings == 1) ? ' ' : 's');
+    std::printf("%8d Warning%c\n",     g_warnings, (g_warnings == 1) ? ' ' : 's');
 }
 
 
@@ -371,7 +371,7 @@ void fatal_msg(int diff, char const *format, ...)
     print_msg("Fatal", g_src_line-diff, format, arg);
     va_end(arg);
 
-    if (g_errors || warnings)
+    if (g_errors || g_warnings)
     {
         report_errors();
     }
@@ -403,7 +403,7 @@ void warn_msg(int diff, char const *format, ...)
     print_msg("Warning", g_src_line-diff, format, arg);
     va_end(arg);
 
-    if (++warnings >= MAX_WARNINGS)
+    if (++g_warnings >= MAX_WARNINGS)
     {
         fatal_msg(0, "Too many warnings!");
     }
@@ -4323,7 +4323,7 @@ void compiler::compile()
         report_memory();
     }
 
-    if (g_errors || warnings)
+    if (g_errors || g_warnings)
     {
         report_errors();
     }
@@ -4343,7 +4343,7 @@ void compiler::print()
         print_document(m_options.fname2.empty() ? DEFAULT_DOC_FNAME : m_options.fname2.c_str());
     }
 
-    if (g_errors || warnings)
+    if (g_errors || g_warnings)
     {
         report_errors();
     }
@@ -4370,7 +4370,7 @@ void compiler::render_html()
     {
         print_html_document(m_options.fname2.empty() ? DEFAULT_HTML_FNAME : m_options.fname2);
     }
-    if (g_errors > 0 || warnings > 0)
+    if (g_errors > 0 || g_warnings > 0)
     {
         report_errors();
     }
