@@ -206,7 +206,7 @@ std::FILE *g_swap_file{};            //
 long g_swap_pos{};                   //
 std::vector<char> g_buffer;          // alloc'ed as BUFFER_SIZE bytes
 char *g_curr{};                      // current position in the buffer
-char cmd[128];                       // holds the current command
+char g_cmd[128]{};                   // holds the current command
 bool compress_spaces{};              //
 bool xonline{};                      //
 bool xdoc{};                         //
@@ -890,10 +890,10 @@ void put_spaces(int how_many)
 bool get_next_item()
 {
     skip_over(" \t\r\n");
-    char *ptr = read_until(cmd, 128, ",}");
+    char *ptr = read_until(g_cmd, 128, ",}");
     bool last = (*ptr == '}');
     --ptr;
-    while (ptr >= cmd && std::strchr(" \t\r\n", *ptr))     // strip trailing spaces
+    while (ptr >= g_cmd && std::strchr(" \t\r\n", *ptr))     // strip trailing spaces
     {
         --ptr;
     }
@@ -967,20 +967,20 @@ void process_doc_contents(hc::modes mode)
                 error(0, "Unexpected end of DocContent entry.");
                 continue;
             }
-            c.id = cmd;
+            c.id = g_cmd;
 
             if (get_next_item())
             {
                 error(0, "Unexpected end of DocContent entry.");
                 continue;
             }
-            int const indent = std::atoi(cmd);
+            int const indent = std::atoi(g_cmd);
 
             bool last = get_next_item();
 
-            if (cmd[0] == '\"')
+            if (g_cmd[0] == '\"')
             {
-                char *ptr = &cmd[1];
+                char *ptr = &g_cmd[1];
                 if (ptr[(int) std::strlen(ptr)-1] == '\"')
                 {
                     ptr[(int) std::strlen(ptr)-1] = '\0';
@@ -997,7 +997,7 @@ void process_doc_contents(hc::modes mode)
             }
             else
             {
-                c.name = cmd;
+                c.name = g_cmd;
             }
 
             // now, make the entry in the buffer
@@ -1023,7 +1023,7 @@ void process_doc_contents(hc::modes mode)
             while (!last)
             {
                 last = get_next_item();
-                if (stricmp(cmd, "FF") == 0)
+                if (stricmp(g_cmd, "FF") == 0)
                 {
                     if (c.flags & CF_NEW_PAGE)
                     {
@@ -1033,9 +1033,9 @@ void process_doc_contents(hc::modes mode)
                     continue;
                 }
 
-                if (cmd[0] == '\"')
+                if (g_cmd[0] == '\"')
                 {
-                    char *ptr = &cmd[1];
+                    char *ptr = &g_cmd[1];
                     if (ptr[(int) std::strlen(ptr)-1] == '\"')
                     {
                         ptr[(int) std::strlen(ptr)-1] = '\0';
@@ -1051,7 +1051,7 @@ void process_doc_contents(hc::modes mode)
                 else
                 {
                     c.is_label[c.num_topic] = true;
-                    c.topic_name[c.num_topic] = cmd;
+                    c.topic_name[c.num_topic] = g_cmd;
                 }
 
                 if (++c.num_topic >= MAX_CONTENT_TOPIC)
@@ -1093,7 +1093,7 @@ int parse_link()   // returns length of link or 0 on error
     l.srcline  = g_src_line;
     l.doc_page = -1;
 
-    char *end = read_until(cmd, 128, "}\n");   // get the entire hot-link
+    char *end = read_until(g_cmd, 128, "}\n");   // get the entire hot-link
 
     if (*end == '\0')
     {
@@ -1113,9 +1113,9 @@ int parse_link()   // returns length of link or 0 on error
 
     *end = '\0';
 
-    if (cmd[0] == '=')   // it's an "explicit" link to a label or "special"
+    if (g_cmd[0] == '=')   // it's an "explicit" link to a label or "special"
     {
-        ptr = std::strchr(cmd, ' ');
+        ptr = std::strchr(g_cmd, ' ');
 
         if (ptr == nullptr)
         {
@@ -1128,28 +1128,28 @@ int parse_link()   // returns length of link or 0 on error
 
         len = (int)(end - ptr);
 
-        if (cmd[1] == '-')
+        if (g_cmd[1] == '-')
         {
             l.type      = link_types::LT_SPECIAL;
-            l.topic_num = std::atoi(&cmd[1]);
+            l.topic_num = std::atoi(&g_cmd[1]);
             l.topic_off = 0;
             l.name.clear();
         }
         else
         {
             l.type = link_types::LT_LABEL;
-            if ((int)std::strlen(cmd) > 32)
+            if ((int)std::strlen(g_cmd) > 32)
             {
                 warn(err_off, "Label is long.");
             }
-            if (cmd[1] == '\0')
+            if (g_cmd[1] == '\0')
             {
                 error(err_off, "Explicit hot-link has no Label.");
                 bad = true;
             }
             else
             {
-                l.name = &cmd[1];
+                l.name = &g_cmd[1];
             }
         }
         if (len == 0)
@@ -1159,7 +1159,7 @@ int parse_link()   // returns length of link or 0 on error
     }
     else
     {
-        ptr = cmd;
+        ptr = g_cmd;
         l.type = link_types::LT_TOPIC;
         len = (int)(end - ptr);
         if (len == 0)
@@ -1205,7 +1205,7 @@ int create_table()
     std::vector<std::string> title;
     char  *table_start;
 
-    ptr = std::strchr(cmd, '=');
+    ptr = std::strchr(g_cmd, '=');
 
     if (ptr == nullptr)
     {
@@ -1288,18 +1288,18 @@ int create_table()
                 unread_char(ch);
             }
 
-            ptr = read_until(cmd, 128, ")\n,");
+            ptr = read_until(g_cmd, 128, ")\n,");
 
             ch = *ptr;
             *ptr = '\0';
 
-            if (stricmp(cmd, "EndTable") == 0)
+            if (stricmp(g_cmd, "EndTable") == 0)
             {
                 done = true;
             }
             else
             {
-                error(1, "Unexpected command in table \"%s\"", cmd);
+                error(1, "Unexpected command in table \"%s\"", g_cmd);
                 warn(1, "Command will be ignored.");
             }
 
@@ -1382,12 +1382,12 @@ void process_comment()
                 unread_char(ch);
             }
 
-            ptr = read_until(cmd, 128, ")\n,");
+            ptr = read_until(g_cmd, 128, ")\n,");
 
             ch = *ptr;
             *ptr = '\0';
 
-            if (stricmp(cmd, "EndComment") == 0)
+            if (stricmp(g_cmd, "EndComment") == 0)
             {
                 if (ch == ',')
                 {
@@ -1414,10 +1414,10 @@ void process_bininc()
     int  handle;
     long len;
 
-    handle = open(&cmd[7], O_RDONLY|O_BINARY);
+    handle = open(&g_cmd[7], O_RDONLY|O_BINARY);
     if (handle == -1)
     {
-        error(0, "Unable to open \"%s\"", &cmd[7]);
+        error(0, "Unable to open \"%s\"", &g_cmd[7]);
         return ;
     }
 
@@ -1425,7 +1425,7 @@ void process_bininc()
 
     if (len >= BUFFER_SIZE)
     {
-        error(0, "File \"%s\" is too large to BinInc (%dK).", &cmd[7], (int)(len >> 10));
+        error(0, "File \"%s\" is too large to BinInc (%dK).", &g_cmd[7], (int)(len >> 10));
         close(handle);
         return ;
     }
@@ -1530,9 +1530,9 @@ enum class STATES   // states for FSM's
 
 void check_command_length(int eoff, int len)
 {
-    if ((int) std::strlen(cmd) != len)
+    if ((int) std::strlen(g_cmd) != len)
     {
-        error(eoff, "Invalid text after a command \"%s\"", cmd+len);
+        error(eoff, "Invalid text after a command \"%s\"", g_cmd+len);
     }
 }
 
@@ -1642,7 +1642,7 @@ void read_src(std::string const &fname, hc::modes mode)
                 while (ch == ' ');
                 unread_char(ch);
 
-                ptr = read_until(cmd, 128, imbedded ? ")\n," : "\n,");
+                ptr = read_until(g_cmd, 128, imbedded ? ")\n," : "\n,");
 
                 if (*ptr == '\0')
                 {
@@ -1671,7 +1671,7 @@ void read_src(std::string const &fname, hc::modes mode)
                 *ptr = '\0';
 
                 // commands allowed anytime...
-                if (strnicmp(cmd, "Topic=", 6) == 0)
+                if (strnicmp(g_cmd, "Topic=", 6) == 0)
                 {
                     if (in_topic)  // if we're in a topic, finish it
                     {
@@ -1682,7 +1682,7 @@ void read_src(std::string const &fname, hc::modes mode)
                         in_topic = true;
                     }
 
-                    char const *topic_title = &cmd[6];
+                    char const *topic_title = &g_cmd[6];
                     size_t const title_len = std::strlen(topic_title);
                     if (title_len == 0)
                     {
@@ -1714,7 +1714,7 @@ void read_src(std::string const &fname, hc::modes mode)
                     compress_spaces = true;
                     continue;
                 }
-                if (strnicmp(cmd, "Data=", 5) == 0)
+                if (strnicmp(g_cmd, "Data=", 5) == 0)
                 {
                     if (in_topic)  // if we're in a topic, finish it
                     {
@@ -1725,7 +1725,7 @@ void read_src(std::string const &fname, hc::modes mode)
                         in_topic = true;
                     }
 
-                    char const *data = &cmd[5];
+                    char const *data = &g_cmd[5];
                     if (data[0] == '\0')
                     {
                         warn(eoff, "Data topic has no label.");
@@ -1743,7 +1743,7 @@ void read_src(std::string const &fname, hc::modes mode)
                         continue;
                     }
 
-                    if (cmd[5] == '@')
+                    if (g_cmd[5] == '@')
                     {
                         warn(eoff, "Data topic has a local label.");
                     }
@@ -1773,7 +1773,7 @@ void read_src(std::string const &fname, hc::modes mode)
                     compress_spaces = false;
                     continue;
                 }
-                if (strnicmp(cmd, "DocContents", 11) == 0)
+                if (strnicmp(g_cmd, "DocContents", 11) == 0)
                 {
                     check_command_length(eoff, 11);
                     if (in_topic)  // if we're in a topic, finish it
@@ -1794,14 +1794,14 @@ void read_src(std::string const &fname, hc::modes mode)
                     in_topic = false;
                     continue;
                 }
-                if (stricmp(cmd, "Comment") == 0)
+                if (stricmp(g_cmd, "Comment") == 0)
                 {
                     process_comment();
                     continue;
                 }
-                if (strnicmp(cmd, "FormatExclude", 13) == 0)
+                if (strnicmp(g_cmd, "FormatExclude", 13) == 0)
                 {
-                    if (cmd[13] == '-')
+                    if (g_cmd[13] == '-')
                     {
                         check_command_length(eoff, 14);
                         if (in_topic)
@@ -1827,7 +1827,7 @@ void read_src(std::string const &fname, hc::modes mode)
                             }
                         }
                     }
-                    else if (cmd[13] == '+')
+                    else if (g_cmd[13] == '+')
                     {
                         check_command_length(eoff, 14);
                         if (in_topic)
@@ -1853,9 +1853,9 @@ void read_src(std::string const &fname, hc::modes mode)
                             }
                         }
                     }
-                    else if (cmd[13] == '=')
+                    else if (g_cmd[13] == '=')
                     {
-                        if (cmd[14] == 'n' || cmd[14] == 'N')
+                        if (g_cmd[14] == 'n' || g_cmd[14] == 'N')
                         {
                             check_command_length(eoff, 15);
                             if (in_topic)
@@ -1867,7 +1867,7 @@ void read_src(std::string const &fname, hc::modes mode)
                                 g_format_exclude = 0;
                             }
                         }
-                        else if (cmd[14] == '\0')
+                        else if (g_cmd[14] == '\0')
                         {
                             lformat_exclude = g_format_exclude;
                         }
@@ -1875,7 +1875,7 @@ void read_src(std::string const &fname, hc::modes mode)
                         {
                             int n = ((in_topic ? lformat_exclude : g_format_exclude) < 0) ? -1 : 1;
 
-                            lformat_exclude = std::atoi(&cmd[14]);
+                            lformat_exclude = std::atoi(&g_cmd[14]);
 
                             if (lformat_exclude <= 0)
                             {
@@ -1898,7 +1898,7 @@ void read_src(std::string const &fname, hc::modes mode)
 
                     continue;
                 }
-                if (strnicmp(cmd, "Include ", 8) == 0)
+                if (strnicmp(g_cmd, "Include ", 8) == 0)
                 {
                     if (include_stack_top >= MAX_INCLUDE_STACK-1)
                     {
@@ -1911,7 +1911,7 @@ void read_src(std::string const &fname, hc::modes mode)
                         include_stack[include_stack_top].file = g_src_file;
                         include_stack[include_stack_top].line = g_src_line;
                         include_stack[include_stack_top].col  = g_src_col;
-                        std::string const file_name = &cmd[8];
+                        std::string const file_name = &g_cmd[8];
                         g_src_file = open_include(file_name);
                         if (g_src_file == nullptr)
                         {
@@ -1931,39 +1931,39 @@ void read_src(std::string const &fname, hc::modes mode)
 
                 if (!in_topic)
                 {
-                    if (strnicmp(cmd, "HdrFile=", 8) == 0)
+                    if (strnicmp(g_cmd, "HdrFile=", 8) == 0)
                     {
                         if (!g_hdr_filename.empty())
                         {
                             warn(eoff, "Header Filename has already been defined.");
                         }
-                        g_hdr_filename = &cmd[8];
+                        g_hdr_filename = &g_cmd[8];
                     }
-                    else if (strnicmp(cmd, "HlpFile=", 8) == 0)
+                    else if (strnicmp(g_cmd, "HlpFile=", 8) == 0)
                     {
                         if (!g_hlp_filename.empty())
                         {
                             warn(eoff, "Help Filename has already been defined.");
                         }
-                        g_hlp_filename = &cmd[8];
+                        g_hlp_filename = &g_cmd[8];
                     }
-                    else if (strnicmp(cmd, "Version=", 8) == 0)
+                    else if (strnicmp(g_cmd, "Version=", 8) == 0)
                     {
                         if (g_version != -1)   // an unlikely value
                         {
                             warn(eoff, "Help version has already been defined");
                         }
-                        g_version = std::atoi(&cmd[8]);
+                        g_version = std::atoi(&g_cmd[8]);
                     }
                     else
                     {
-                        error(eoff, "Bad or unexpected command \"%s\"", cmd);
+                        error(eoff, "Bad or unexpected command \"%s\"", g_cmd);
                     }
 
                     continue;
                 }
                 // commands allowed only in a topic...
-                if (strnicmp(cmd, "FF", 2) == 0)
+                if (strnicmp(g_cmd, "FF", 2) == 0)
                 {
                     check_command_length(eoff, 2);
                     if (in_para)
@@ -1975,7 +1975,7 @@ void read_src(std::string const &fname, hc::modes mode)
                     in_para = false;
                     num_spaces = 0;
                 }
-                else if (strnicmp(cmd, "DocFF", 5) == 0)
+                else if (strnicmp(g_cmd, "DocFF", 5) == 0)
                 {
                     check_command_length(eoff, 5);
                     if (in_para)
@@ -1995,7 +1995,7 @@ void read_src(std::string const &fname, hc::modes mode)
                     in_para = false;
                     num_spaces = 0;
                 }
-                else if (strnicmp(cmd, "OnlineFF", 8) == 0)
+                else if (strnicmp(g_cmd, "OnlineFF", 8) == 0)
                 {
                     check_command_length(eoff, 8);
                     if (in_para)
@@ -2015,9 +2015,9 @@ void read_src(std::string const &fname, hc::modes mode)
                     in_para = false;
                     num_spaces = 0;
                 }
-                else if (strnicmp(cmd, "Label=", 6) == 0)
+                else if (strnicmp(g_cmd, "Label=", 6) == 0)
                 {
-                    char const *label_name = &cmd[6];
+                    char const *label_name = &g_cmd[6];
                     if ((int)std::strlen(label_name) <= 0)
                     {
                         error(eoff, "Label has no name.");
@@ -2037,7 +2037,7 @@ void read_src(std::string const &fname, hc::modes mode)
                             warn(eoff, "Label name is long.");
                         }
 
-                        if ((t.flags & TF_DATA) && cmd[6] == '@')
+                        if ((t.flags & TF_DATA) && g_cmd[6] == '@')
                         {
                             warn(eoff, "Data topic has a local label.");
                         }
@@ -2049,7 +2049,7 @@ void read_src(std::string const &fname, hc::modes mode)
                         add_label(&lbl);
                     }
                 }
-                else if (strnicmp(cmd, "Table=", 6) == 0)
+                else if (strnicmp(g_cmd, "Table=", 6) == 0)
                 {
                     if (in_para)
                     {
@@ -2071,9 +2071,9 @@ void read_src(std::string const &fname, hc::modes mode)
 
                     create_table();
                 }
-                else if (strnicmp(cmd, "FormatExclude", 12) == 0)
+                else if (strnicmp(g_cmd, "FormatExclude", 12) == 0)
                 {
-                    if (cmd[13] == '-')
+                    if (g_cmd[13] == '-')
                     {
                         check_command_length(eoff, 14);
                         if (lformat_exclude > 0)
@@ -2085,7 +2085,7 @@ void read_src(std::string const &fname, hc::modes mode)
                             warn(0, "\"FormatExclude-\" is already in effect.");
                         }
                     }
-                    else if (cmd[13] == '+')
+                    else if (g_cmd[13] == '+')
                     {
                         check_command_length(eoff, 14);
                         if (lformat_exclude < 0)
@@ -2102,9 +2102,9 @@ void read_src(std::string const &fname, hc::modes mode)
                         error(eoff, "Unexpected or invalid argument to FormatExclude.");
                     }
                 }
-                else if (strnicmp(cmd, "Format", 6) == 0)
+                else if (strnicmp(g_cmd, "Format", 6) == 0)
                 {
-                    if (cmd[6] == '+')
+                    if (g_cmd[6] == '+')
                     {
                         check_command_length(eoff, 7);
                         if (!formatting)
@@ -2119,7 +2119,7 @@ void read_src(std::string const &fname, hc::modes mode)
                             warn(eoff, "\"Format+\" is already in effect.");
                         }
                     }
-                    else if (cmd[6] == '-')
+                    else if (g_cmd[6] == '-')
                     {
                         check_command_length(eoff, 7);
                         if (formatting)
@@ -2143,9 +2143,9 @@ void read_src(std::string const &fname, hc::modes mode)
                         error(eoff, "Invalid argument to Format.");
                     }
                 }
-                else if (strnicmp(cmd, "Online", 6) == 0)
+                else if (strnicmp(g_cmd, "Online", 6) == 0)
                 {
-                    if (cmd[6] == '+')
+                    if (g_cmd[6] == '+')
                     {
                         check_command_length(eoff, 7);
 
@@ -2159,7 +2159,7 @@ void read_src(std::string const &fname, hc::modes mode)
                             warn(eoff, "\"Online+\" already in effect.");
                         }
                     }
-                    else if (cmd[6] == '-')
+                    else if (g_cmd[6] == '-')
                     {
                         check_command_length(eoff, 7);
                         if (!xonline)
@@ -2177,9 +2177,9 @@ void read_src(std::string const &fname, hc::modes mode)
                         error(eoff, "Invalid argument to Online.");
                     }
                 }
-                else if (strnicmp(cmd, "Doc", 3) == 0)
+                else if (strnicmp(g_cmd, "Doc", 3) == 0)
                 {
-                    if (cmd[3] == '+')
+                    if (g_cmd[3] == '+')
                     {
                         check_command_length(eoff, 4);
                         if (xdoc)
@@ -2192,7 +2192,7 @@ void read_src(std::string const &fname, hc::modes mode)
                             warn(eoff, "\"Doc+\" already in effect.");
                         }
                     }
-                    else if (cmd[3] == '-')
+                    else if (g_cmd[3] == '-')
                     {
                         check_command_length(eoff, 4);
                         if (!xdoc)
@@ -2210,9 +2210,9 @@ void read_src(std::string const &fname, hc::modes mode)
                         error(eoff, "Invalid argument to Doc.");
                     }
                 }
-                else if (strnicmp(cmd, "Center", 6) == 0)
+                else if (strnicmp(g_cmd, "Center", 6) == 0)
                 {
-                    if (cmd[6] == '+')
+                    if (g_cmd[6] == '+')
                     {
                         check_command_length(eoff, 7);
                         if (!centering)
@@ -2230,7 +2230,7 @@ void read_src(std::string const &fname, hc::modes mode)
                             warn(eoff, "\"Center+\" already in effect.");
                         }
                     }
-                    else if (cmd[6] == '-')
+                    else if (g_cmd[6] == '-')
                     {
                         check_command_length(eoff, 7);
                         if (centering)
@@ -2248,11 +2248,11 @@ void read_src(std::string const &fname, hc::modes mode)
                         error(eoff, "Invalid argument to Center.");
                     }
                 }
-                else if (strnicmp(cmd, "CompressSpaces", 14) == 0)
+                else if (strnicmp(g_cmd, "CompressSpaces", 14) == 0)
                 {
                     check_command_length(eoff, 15);
 
-                    if (cmd[14] == '+')
+                    if (g_cmd[14] == '+')
                     {
                         if (compress_spaces)
                         {
@@ -2263,7 +2263,7 @@ void read_src(std::string const &fname, hc::modes mode)
                             compress_spaces = true;
                         }
                     }
-                    else if (cmd[14] == '-')
+                    else if (g_cmd[14] == '-')
                     {
                         if (!compress_spaces)
                         {
@@ -2279,7 +2279,7 @@ void read_src(std::string const &fname, hc::modes mode)
                         error(eoff, "Invalid argument to CompressSpaces.");
                     }
                 }
-                else if (strnicmp("BinInc ", cmd, 7) == 0)
+                else if (strnicmp("BinInc ", g_cmd, 7) == 0)
                 {
                     if (!(t.flags & TF_DATA))
                     {
@@ -2292,7 +2292,7 @@ void read_src(std::string const &fname, hc::modes mode)
                 }
                 else
                 {
-                    error(eoff, "Bad or unexpected command \"%s\".", cmd);
+                    error(eoff, "Bad or unexpected command \"%s\".", g_cmd);
                 }
                 // else
 
@@ -2303,14 +2303,14 @@ void read_src(std::string const &fname, hc::modes mode)
 
         if (!in_topic)
         {
-            cmd[0] = ch;
-            ptr = read_until(&cmd[1], 127, "\n~");
+            g_cmd[0] = ch;
+            ptr = read_until(&g_cmd[1], 127, "\n~");
             if (*ptr == '~')
             {
                 unread_char('~');
             }
             *ptr = '\0';
-            error(0, "Text outside of any topic \"%s\".", cmd);
+            error(0, "Text outside of any topic \"%s\".", g_cmd);
             continue;
         }
 
