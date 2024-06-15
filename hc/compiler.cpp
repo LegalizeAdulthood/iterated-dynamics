@@ -488,9 +488,9 @@ void release_topic_text(const TOPIC &t, int save)
  */
 
 
-int add_link(LINK *l)
+int add_link(LINK &l)
 {
-    g_all_links.push_back(*l);
+    g_all_links.push_back(l);
     return static_cast<int>(g_all_links.size() - 1);
 }
 
@@ -1170,7 +1170,7 @@ int parse_link()   // returns length of link or 0 on error
     if (!bad)
     {
         check_buffer(1+3*sizeof(int)+len+1);
-        int const lnum = add_link(&l);
+        int const lnum = add_link(l);
         *g_curr++ = CMD_LINK;
         setint(g_curr, lnum);
         g_curr += 3*sizeof(int);
@@ -3123,7 +3123,7 @@ bool pd_get_info(int cmd, PD_INFO *pd, void *context)
 
     case PD_GET_LINK_PAGE:
     {
-        LINK const &link = g_all_links[getint(pd->s)];
+        const LINK &link = g_all_links[getint(pd->s)];
         if (link.doc_page == -1)
         {
             if (info.link_dest_warn)
@@ -3416,10 +3416,10 @@ void insert_real_link_info(char *curr, unsigned int len)
 
         if (tok == token_types::TOK_LINK)
         {
-            LINK *l = &g_all_links[ getint(curr+1) ];
-            setint(curr+1, l->topic_num);
-            setint(curr+1+sizeof(int), l->topic_off);
-            setint(curr+1+2*sizeof(int), l->doc_page);
+            const LINK &l = g_all_links[ getint(curr+1) ];
+            setint(curr+1, l.topic_num);
+            setint(curr+1+sizeof(int), l.topic_off);
+            setint(curr+1+2*sizeof(int), l.doc_page);
         }
 
         len -= size;
@@ -3725,7 +3725,7 @@ void report_memory()
         dead += static_cast<long>((pages.capacity() - pages.size()) * sizeof(PAGE));
     }
 
-    for (LINK const &l : g_all_links)
+    for (const LINK &l : g_all_links)
     {
         data += sizeof(LINK);
         bytes_in_strings += (long) l.name.length();
