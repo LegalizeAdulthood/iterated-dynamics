@@ -3,6 +3,9 @@
 add_library(libhc
     compiler.h
     compiler.cpp
+    help_source.h
+    html_processor.h
+    html_processor.cpp
     parse_compiler_options.cpp
 )
 target_compile_definitions(libhc PRIVATE ${ID_TARGET_DEFINITIONS} $<$<CONFIG:Debug>:${ID_TARGET_DEFINITIONS_DEBUG}>)

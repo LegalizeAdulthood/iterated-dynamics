@@ -6,6 +6,13 @@
  */
 #include "compiler.h"
 
+#include "help_source.h"
+#include "html_processor.h"
+
+#include <port.h>
+#include <id_io.h>
+#include <helpcom.h>
+
 #include <algorithm>
 #include <cassert>
 #include <cctype>
@@ -14,6 +21,7 @@
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
+#include <fcntl.h>
 #include <filesystem>
 #include <fstream>
 #include <iostream>
@@ -25,13 +33,6 @@
 #include <system_error>
 #include <vector>
 
-#include <fcntl.h>
-
-#include "port.h"
-
-#include "id_io.h"
-#include "helpcom.h"
-
 namespace fs = std::filesystem;
 
 #if !defined(O_BINARY)
@@ -41,15 +42,6 @@ namespace fs = std::filesystem;
 #define MAXFILE _MAX_FNAME
 #define MAXEXT  _MAX_EXT
 
- /*
- * When defined, SHOW_ERROR_LINE will cause the line number in HC.C where
- * errors/warnings/messages are generated to be displayed at the start of
- * the line.
- *
- * Used when debugging HC.  Also useful for finding the line (in HC.C) that
- * generated a error or warning.
- */
-#define SHOW_ERROR_LINE
 
 #ifdef XFRACT
 
@@ -68,7 +60,7 @@ extern int filelength(int);
 
 #endif
 
-namespace
+namespace hc
 {
 
 char const *const DEFAULT_SRC_FNAME = "help.src";
@@ -85,93 +77,8 @@ int const MAX_WARNINGS = (25);          // stop after this many warnings
                                         // 0 = never stop
 
 char const *const INDEX_LABEL       = "HELP_INDEX";
-char const *const DOCCONTENTS_TITLE = "DocContent";
 
 int const BUFFER_SIZE = (1024*1024);    // 1 MB
-
-enum class link_types
-{
-    LT_TOPIC,
-    LT_LABEL,
-    LT_SPECIAL
-};
-
-struct LINK
-{
-    link_types type;        // 0 = name is topic title, 1 = name is label,
-                            //   2 = "special topic"; name is nullptr and
-                            //   topic_num/topic_off is valid
-    int      topic_num;     // topic number to link to
-    unsigned topic_off;     // offset into topic to link to
-    int      doc_page;      // document page # to link to
-    std::string name;       // name of label or title of topic to link to
-    std::string srcfile;    // .SRC file link appears in
-    int      srcline;       // .SRC file line # link appears in
-};
-
-
-struct PAGE
-{
-    unsigned offset;    // offset from start of topic text
-    unsigned length;    // length of page (in chars)
-    int      margin;    // if > 0 then page starts in_para and text
-                        // should be indented by this much
-};
-
-
-// values for TOPIC.flags
-enum
-{
-    TF_IN_DOC = 1,          // set if topic is part of the printed document
-    TF_DATA = 2             // set if it is a "data" topic
-};
-
-struct TOPIC
-{
-    unsigned  flags;          // see #defines for TF_???
-    int       doc_page;       // page number in document where topic starts
-    unsigned  title_len;      // length of title
-    std::string title;        // title for this topic
-    int       num_page;       // number of pages
-    std::vector<PAGE> page;   // list of pages
-    unsigned  text_len;       // length of topic text
-    long      text;           // topic text (all pages)
-    long      offset;         // offset from start of file to topic
-};
-
-
-struct LABEL
-{
-    std::string name;         // its name
-    int      topic_num;       // topic number
-    unsigned topic_off;       // offset of label in the topic's text
-    int      doc_page;
-};
-
-
-// values for CONTENT.flags
-enum
-{
-    CF_NEW_PAGE = 1         // true if section starts on a new page
-};
-
-constexpr int MAX_CONTENT_TOPIC = 10;
-
-
-struct CONTENT
-{
-    unsigned  flags;
-    std::string id;
-    std::string name;
-    int       doc_page;
-    unsigned  page_num_pos;
-    int       num_topic;
-    bool      is_label[MAX_CONTENT_TOPIC];
-    std::string topic_name[MAX_CONTENT_TOPIC];
-    int       topic_num[MAX_CONTENT_TOPIC];
-    std::string srcfile;
-    int       srcline;
-};
 
 struct help_sig_info
 {
@@ -218,9 +125,6 @@ bool g_xonline{};                    //
 bool g_xdoc{};                       //
 std::vector<Include> g_include_stack;     //
 std::vector<std::string> g_include_paths; //
-std::string g_html_output_dir{"."};       //
-
-char *get_topic_text(const TOPIC &t);
 
 void check_buffer(char const *curr, unsigned off, char const *buffer);
 
@@ -430,18 +334,6 @@ void show_line(unsigned int line)
 {
     std::printf("[%04d] ", line);
 }
-
-#ifdef SHOW_ERROR_LINE
-#   define error(...)  (show_line(__LINE__), error_msg(__VA_ARGS__))
-#   define warn(...)   (show_line(__LINE__), warn_msg(__VA_ARGS__))
-#   define notice(...) (show_line(__LINE__), notice_msg(__VA_ARGS__))
-#   define msg(...)    (g_quiet_mode ? static_cast<void>(0) : (show_line(__LINE__), msg_msg(__VA_ARGS__)))
-#else
-#define error(...)  error_msg(__VA_ARGS__)
-#define warn(...)   warn_msg(__VA_ARGS__)
-#define notice(...) notice_msg(__VA_ARGS__)
-#define msg(...)    msg_msg(__VA_ARGS__)
-#endif
 
 
 /*
@@ -3940,201 +3832,6 @@ void delete_hlp_from_exe(char const *exe_fname)
     }
 }
 
-class html_processor
-{
-public:
-    html_processor(std::string const &fname)
-        : m_fname(fname)
-    {
-    }
-
-    void process();
-
-private:
-    void write_index_html();
-    void write_contents();
-    void write_content(const CONTENT &c);
-    void write_topic(const TOPIC &t);
-
-    std::string m_fname;
-};
-
-void html_processor::process()
-{
-    if (g_contents.empty())
-    {
-        throw std::runtime_error(".SRC has no DocContents.");
-    }
-
-    write_index_html();
-    write_contents();
-}
-
-void html_processor::write_index_html()
-{
-    msg("Writing index.rst");
-
-    const CONTENT &toc = g_contents[0];
-    if (toc.num_topic != 1)
-    {
-        throw std::runtime_error("First content block contains multiple topics.");
-    }
-    if (toc.topic_name[0] != DOCCONTENTS_TITLE)
-    {
-        throw std::runtime_error("First content block doesn't contain DocContent.");
-    }
-
-    const TOPIC &toc_topic = g_topics[toc.topic_num[0]];
-    std::ofstream str(g_html_output_dir + "/index.rst");
-    str << ".. toctree::\n";
-    char const *text = get_topic_text(toc_topic);
-    char const *curr = text;
-    unsigned int len = toc_topic.text_len;
-    while (len > 0)
-    {
-        int size = 0;
-        int width = 0;
-        token_types const tok = find_token_length(token_modes::ONLINE, curr, len, &size, &width);
-
-        switch (tok)
-        {
-        case token_types::TOK_SPACE:
-            break;
-
-        case token_types::TOK_NL:
-            str << '\n';
-            break;
-
-        case token_types::TOK_WORD:
-            str << "   " << std::string(curr, width);
-            break;
-
-        default:
-            throw std::runtime_error("Unexpected token in table of contents.");
-        }
-        len -= size;
-        curr += size;
-    }
-}
-
-void html_processor::write_contents()
-{
-    for (const CONTENT &c : g_contents)
-    {
-        write_content(c);
-    }
-}
-
-void html_processor::write_content(const CONTENT &c)
-{
-    for (int i = 0; i < c.num_topic; ++i)
-    {
-        const TOPIC &t = g_topics[c.topic_num[i]];
-        if (t.title == DOCCONTENTS_TITLE)
-        {
-            continue;
-        }
-
-        write_topic(t);
-    }
-}
-
-void html_processor::write_topic(const TOPIC &t)
-{
-    std::string const filename = rst_name(t.title) + ".rst";
-    msg("Writing %s", filename.c_str());
-    std::ofstream str(g_html_output_dir + '/' + filename);
-    char const *text = get_topic_text(t);
-    char const *curr = text;
-    unsigned int len = t.text_len;
-    unsigned int column = 0;
-    std::string spaces;
-    auto const nl = [&str, &column](int width)
-    {
-        if (column + width > 70)
-        {
-            str << '\n';
-            column = 0;
-            return true;
-        }
-        return false;
-    };
-    while (len > 0)
-    {
-        int size = 0;
-        int width = 0;
-        token_types const tok = find_token_length(token_modes::ONLINE, curr, len, &size, &width);
-
-        switch (tok)
-        {
-        case token_types::TOK_SPACE:
-            if (!nl(width))
-            {
-                spaces = std::string(width, ' ');
-                column += width;
-            }
-            else
-            {
-                spaces.clear();
-            }
-            break;
-
-        case token_types::TOK_NL:
-            str << '\n';
-            spaces.clear();
-            column = 0;
-            break;
-
-        case token_types::TOK_WORD:
-            if (!nl(width) && !spaces.empty())
-            {
-                str << spaces;
-                spaces.clear();
-            }
-            str << std::string(curr, width);
-            column += width;
-            break;
-
-        case token_types::TOK_PARA:
-            if (column > 0)
-            {
-                str << '\n';
-            }
-            column = 0;
-            spaces.clear();
-            break;
-
-        case token_types::TOK_LINK:
-            {
-                char const *data = &curr[1];
-                int const link_num = getint(data);
-                int const link_topic_num = g_all_links[link_num].topic_num;
-                data += 3*sizeof(int);
-                std::string const link_text(":doc:`" + std::string(data, width) +
-                    " <" + rst_name(g_topics[link_topic_num].title) + ">`");
-                if (!nl(static_cast<int>(link_text.length())) && !spaces.empty())
-                {
-                    str << spaces;
-                    spaces.clear();
-                }
-                str << link_text;
-                column += static_cast<unsigned int>(link_text.length());
-            }
-            break;
-
-        case token_types::TOK_FF:
-        case token_types::TOK_XONLINE:
-        case token_types::TOK_XDOC:
-            break;
-
-        default:
-            throw std::runtime_error("Unexpected token in topic.");
-        }
-        len -= size;
-        curr += size;
-    }
-}
-
 #if defined(_WIN32)
 #pragma warning(push)
 #pragma warning(disable : 4311)
@@ -4149,10 +3846,6 @@ void check_buffer(char const *curr, unsigned int off, char const *buffer)
 #if defined(_WIN32)
 #pragma warning(pop)
 #endif
-
-} // namespace
-
-namespace hc {
 
 compiler::compiler(const compiler_options &options) :
     m_options(options)
