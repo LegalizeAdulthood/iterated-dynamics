@@ -193,7 +193,7 @@ int g_max_links{};                   // max. links on any page
 int g_num_doc_pages{};               // total number of pages in document
 std::FILE *g_src_file{};             // .SRC file
 int g_src_line{};                    // .SRC line number (used for errors)
-int srccol = 0;                      // .SRC column.
+int g_src_col{};                     // .SRC column.
 int version = -1;                    // help file version
 int errors = 0;                      // number of errors reported
 int warnings = 0;                    // number of warnings reported
@@ -557,7 +557,7 @@ void unread_char(int ch)
 
     read_char_buff[++read_char_buff_pos] = ch;
 
-    --srccol;
+    --g_src_col;
 }
 
 
@@ -568,12 +568,12 @@ int read_char_aux()
     if (g_src_line <= 0)
     {
         g_src_line = 1;
-        srccol = 0;
+        g_src_col = 0;
     }
 
     if (read_char_buff_pos >= 0)
     {
-        ++srccol;
+        ++g_src_col;
         return read_char_buff[read_char_buff_pos--];
     }
 
@@ -596,21 +596,21 @@ int read_char_aux()
         {
         case '\t':    // expand a tab
         {
-            int diff = (((srccol/8) + 1) * 8) - srccol;
+            int diff = (((g_src_col/8) + 1) * 8) - g_src_col;
 
-            srccol += diff;
+            g_src_col += diff;
             read_char_sp += diff;
             break;
         }
 
         case ' ':
-            ++srccol;
+            ++g_src_col;
             ++read_char_sp;
             break;
 
         case '\n':
             read_char_sp = 0;   // delete spaces before a \n
-            srccol = 0;
+            g_src_col = 0;
             ++g_src_line;
             return '\n';
 
@@ -630,7 +630,7 @@ int read_char_aux()
                 return ' ';
             }
 
-            ++srccol;
+            ++g_src_col;
             return ch;
 
         } // switch
@@ -644,7 +644,7 @@ int read_char()
 
     ch = read_char_aux();
 
-    while (ch == ';' && srccol == 1)    // skip over comments
+    while (ch == ';' && g_src_col == 1)    // skip over comments
     {
         ch = read_char_aux();
 
@@ -1600,7 +1600,7 @@ void read_src(std::string const &fname, hc::modes mode)
                 src_cfname = include_stack[include_stack_top].fname;
                 g_src_file = include_stack[include_stack_top].file;
                 g_src_line = include_stack[include_stack_top].line;
-                srccol  = include_stack[include_stack_top].col;
+                g_src_col  = include_stack[include_stack_top].col;
                 --include_stack_top;
                 continue;
             }
@@ -1910,7 +1910,7 @@ void read_src(std::string const &fname, hc::modes mode)
                         include_stack[include_stack_top].fname = src_cfname;
                         include_stack[include_stack_top].file = g_src_file;
                         include_stack[include_stack_top].line = g_src_line;
-                        include_stack[include_stack_top].col  = srccol;
+                        include_stack[include_stack_top].col  = g_src_col;
                         std::string const file_name = &cmd[8];
                         g_src_file = open_include(file_name);
                         if (g_src_file == nullptr)
@@ -1920,7 +1920,7 @@ void read_src(std::string const &fname, hc::modes mode)
                         }
                         src_cfname = file_name;
                         g_src_line = 1;
-                        srccol = 0;
+                        g_src_col = 0;
                     }
 
                     continue;
