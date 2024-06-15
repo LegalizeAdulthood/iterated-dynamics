@@ -201,7 +201,7 @@ std::string g_src_filename;          // command-line .SRC filename
 std::string g_hdr_filename;          // .H filename
 std::string g_hlp_filename;          // .HLP filename
 std::string g_current_src_filename;  // current .SRC filename
-int format_exclude = 0;              // disable formatting at this col, 0 to never disable formatting
+int g_format_exclude{};              // disable formatting at this col, 0 to never disable formatting
 std::FILE *swapfile;                 //
 long swappos;                        //
 std::vector<char> buffer;            // alloc'ed as BUFFER_SIZE bytes
@@ -1569,7 +1569,7 @@ void read_src(std::string const &fname, hc::modes mode)
     int    margin     = 0;
     bool in_para = false;
     bool centering = false;
-    int    lformat_exclude = format_exclude;
+    int    lformat_exclude = g_format_exclude;
 
     xonline = false;
     xdoc = false;
@@ -1710,7 +1710,7 @@ void read_src(std::string const &fname, hc::modes mode)
                     num_spaces = 0;
                     xonline = false;
                     xdoc = false;
-                    lformat_exclude = format_exclude;
+                    lformat_exclude = g_format_exclude;
                     compress_spaces = true;
                     continue;
                 }
@@ -1769,7 +1769,7 @@ void read_src(std::string const &fname, hc::modes mode)
                     num_spaces = 0;
                     xonline = false;
                     xdoc = false;
-                    lformat_exclude = format_exclude;
+                    lformat_exclude = g_format_exclude;
                     compress_spaces = false;
                     continue;
                 }
@@ -1817,9 +1817,9 @@ void read_src(std::string const &fname, hc::modes mode)
                         }
                         else
                         {
-                            if (format_exclude > 0)
+                            if (g_format_exclude > 0)
                             {
-                                format_exclude = -format_exclude;
+                                g_format_exclude = -g_format_exclude;
                             }
                             else
                             {
@@ -1843,9 +1843,9 @@ void read_src(std::string const &fname, hc::modes mode)
                         }
                         else
                         {
-                            if (format_exclude < 0)
+                            if (g_format_exclude < 0)
                             {
-                                format_exclude = -format_exclude;
+                                g_format_exclude = -g_format_exclude;
                             }
                             else
                             {
@@ -1864,16 +1864,16 @@ void read_src(std::string const &fname, hc::modes mode)
                             }
                             else
                             {
-                                format_exclude = 0;
+                                g_format_exclude = 0;
                             }
                         }
                         else if (cmd[14] == '\0')
                         {
-                            lformat_exclude = format_exclude;
+                            lformat_exclude = g_format_exclude;
                         }
                         else
                         {
-                            int n = ((in_topic ? lformat_exclude : format_exclude) < 0) ? -1 : 1;
+                            int n = ((in_topic ? lformat_exclude : g_format_exclude) < 0) ? -1 : 1;
 
                             lformat_exclude = std::atoi(&cmd[14]);
 
@@ -1887,7 +1887,7 @@ void read_src(std::string const &fname, hc::modes mode)
 
                             if (!in_topic)
                             {
-                                format_exclude = lformat_exclude;
+                                g_format_exclude = lformat_exclude;
                             }
                         }
                     }
