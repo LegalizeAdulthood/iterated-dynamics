@@ -195,7 +195,7 @@ std::FILE *g_src_file{};             // .SRC file
 int g_src_line{};                    // .SRC line number (used for errors)
 int g_src_col{};                     // .SRC column.
 int g_version{-1};                   // help file version
-int errors = 0;                      // number of errors reported
+int g_errors{};                      // number of errors reported
 int warnings = 0;                    // number of warnings reported
 std::string src_fname;               // command-line .SRC filename
 std::string hdr_fname;               // .H filename
@@ -342,7 +342,7 @@ void report_errors()
 {
     std::printf("\n");
     std::printf("Compiler Status:\n");
-    std::printf("%8d Error%c\n",       errors, (errors == 1)   ? ' ' : 's');
+    std::printf("%8d Error%c\n",       g_errors, (g_errors == 1)   ? ' ' : 's');
     std::printf("%8d Warning%c\n",     warnings, (warnings == 1) ? ' ' : 's');
 }
 
@@ -371,12 +371,12 @@ void fatal_msg(int diff, char const *format, ...)
     print_msg("Fatal", g_src_line-diff, format, arg);
     va_end(arg);
 
-    if (errors || warnings)
+    if (g_errors || warnings)
     {
         report_errors();
     }
 
-    exit(errors + 1);
+    exit(g_errors + 1);
 }
 
 
@@ -388,7 +388,7 @@ void error_msg(int diff, char const *format, ...)
     print_msg("Error", g_src_line-diff, format, arg);
     va_end(arg);
 
-    if (++errors >= MAX_ERRORS)
+    if (++g_errors >= MAX_ERRORS)
     {
         fatal_msg(0, "Too many errors!");
     }
@@ -4218,7 +4218,7 @@ int compiler::process()
         break;
     }
 
-    return errors;     // return the number of errors
+    return g_errors;     // return the number of errors
 }
 
 void compiler::usage()
@@ -4288,27 +4288,27 @@ void compiler::compile()
 
     make_hot_links();  // do even if errors since it may report more...
 
-    if (!errors)
+    if (!g_errors)
     {
         paginate_online();
     }
-    if (!errors)
+    if (!g_errors)
     {
         paginate_document();
     }
-    if (!errors)
+    if (!g_errors)
     {
         calc_offsets();
     }
-    if (!errors)
+    if (!g_errors)
     {
         sort_labels();
     }
-    if (!errors)
+    if (!g_errors)
     {
         write_hdr(hdr_fname.c_str());
     }
-    if (!errors)
+    if (!g_errors)
     {
         write_help(hlp_fname.c_str());
     }
@@ -4323,7 +4323,7 @@ void compiler::compile()
         report_memory();
     }
 
-    if (errors || warnings)
+    if (g_errors || warnings)
     {
         report_errors();
     }
@@ -4334,16 +4334,16 @@ void compiler::print()
     read_source_file();
     make_hot_links();
 
-    if (!errors)
+    if (!g_errors)
     {
         paginate_document();
     }
-    if (!errors)
+    if (!g_errors)
     {
         print_document(m_options.fname2.empty() ? DEFAULT_DOC_FNAME : m_options.fname2.c_str());
     }
 
-    if (errors || warnings)
+    if (g_errors || warnings)
     {
         report_errors();
     }
@@ -4354,23 +4354,23 @@ void compiler::render_html()
     read_source_file();
     make_hot_links();
 
-    if (errors == 0)
+    if (g_errors == 0)
     {
         paginate_html_document();
     }
-    if (!errors)
+    if (!g_errors)
     {
         calc_offsets();
     }
-    if (!errors)
+    if (!g_errors)
     {
         sort_labels();
     }
-    if (errors == 0)
+    if (g_errors == 0)
     {
         print_html_document(m_options.fname2.empty() ? DEFAULT_HTML_FNAME : m_options.fname2);
     }
-    if (errors > 0 || warnings > 0)
+    if (g_errors > 0 || warnings > 0)
     {
         report_errors();
     }
