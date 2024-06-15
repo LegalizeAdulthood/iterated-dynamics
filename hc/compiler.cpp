@@ -204,7 +204,7 @@ std::string g_current_src_filename;  // current .SRC filename
 int g_format_exclude{};              // disable formatting at this col, 0 to never disable formatting
 std::FILE *g_swap_file{};            //
 long g_swap_pos{};                   //
-std::vector<char> buffer;            // alloc'ed as BUFFER_SIZE bytes
+std::vector<char> g_buffer;          // alloc'ed as BUFFER_SIZE bytes
 char *g_curr;                        // current position in the buffer
 char cmd[128];                       // holds the current command
 bool compress_spaces{};              //
@@ -232,7 +232,7 @@ void check_buffer(char const *curr, unsigned off, char const *buffer);
 
 inline void check_buffer(unsigned off)
 {
-    check_buffer(g_curr, off, &buffer[0]);
+    check_buffer(g_curr, off, &g_buffer[0]);
 }
 
 std::ostream &operator<<(std::ostream &str, CONTENT const &content)
@@ -461,18 +461,18 @@ void alloc_topic_text(TOPIC *t, unsigned size)
     t->text = g_swap_pos;
     g_swap_pos += size;
     std::fseek(g_swap_file, t->text, SEEK_SET);
-    std::fwrite(&buffer[0], 1, t->text_len, g_swap_file);
+    std::fwrite(&g_buffer[0], 1, t->text_len, g_swap_file);
 }
 
 
 char *get_topic_text(TOPIC const *t)
 {
     std::fseek(g_swap_file, t->text, SEEK_SET);
-    if (std::fread(&buffer[0], 1, t->text_len, g_swap_file) != t->text_len)
+    if (std::fread(&g_buffer[0], 1, t->text_len, g_swap_file) != t->text_len)
     {
         throw std::system_error(errno, std::system_category(), "get_topic_text failed fread");
     }
-    return &buffer[0];
+    return &g_buffer[0];
 }
 
 
@@ -481,7 +481,7 @@ void release_topic_text(TOPIC const *t, int save)
     if (save)
     {
         std::fseek(g_swap_file, t->text, SEEK_SET);
-        std::fwrite(&buffer[0], 1, t->text_len, g_swap_file);
+        std::fwrite(&g_buffer[0], 1, t->text_len, g_swap_file);
     }
 }
 
@@ -937,7 +937,7 @@ void process_doc_contents(hc::modes mode)
     t.doc_page  = -1;
     t.num_page  = 0;
 
-    g_curr = &buffer[0];
+    g_curr = &g_buffer[0];
 
     CONTENT c{};
     c.flags = 0;
@@ -1016,7 +1016,7 @@ void process_doc_contents(hc::modes mode)
                 {
                     *ptr++ = '.';
                 }
-                c.page_num_pos = (unsigned)((ptr-3) - &buffer[0]);
+                c.page_num_pos = (unsigned)((ptr-3) - &g_buffer[0]);
                 g_curr = ptr;
             }
 
@@ -1076,7 +1076,7 @@ void process_doc_contents(hc::modes mode)
         check_buffer(0);
     }
 
-    alloc_topic_text(&t, (unsigned)(g_curr - &buffer[0]));
+    alloc_topic_text(&t, (unsigned)(g_curr - &g_buffer[0]));
     add_topic(&t);
 }
 
@@ -1455,13 +1455,13 @@ void start_topic(TOPIC *t, char const *title, int title_len)
     t->title.assign(title, title_len);
     t->doc_page = -1;
     t->num_page = 0;
-    g_curr = &buffer[0];
+    g_curr = &g_buffer[0];
 }
 
 
 void end_topic(TOPIC *t)
 {
-    alloc_topic_text(t, (unsigned)(g_curr - &buffer[0]));
+    alloc_topic_text(t, (unsigned)(g_curr - &g_buffer[0]));
     add_topic(t);
 }
 
@@ -1586,7 +1586,7 @@ void read_src(std::string const &fname, hc::modes mode)
 
     in_topic = false;
 
-    g_curr = &buffer[0];
+    g_curr = &g_buffer[0];
 
     while (true)
     {
@@ -2044,7 +2044,7 @@ void read_src(std::string const &fname, hc::modes mode)
 
                         lbl.name      = label_name;
                         lbl.topic_num = static_cast<int>(g_topics.size());
-                        lbl.topic_off = (unsigned)(g_curr - &buffer[0]);
+                        lbl.topic_off = (unsigned)(g_curr - &g_buffer[0]);
                         lbl.doc_page  = -1;
                         add_label(&lbl);
                     }
@@ -3876,11 +3876,11 @@ void add_hlp_to_exe(char const *hlp_fname, char const *exe_fname)
     for (int count = 0; count < len;)
     {
         size = (int) std::min((long)BUFFER_SIZE, len-count);
-        if (read(hlp, &buffer[0], size) != size)
+        if (read(hlp, &g_buffer[0], size) != size)
         {
             throw std::system_error(errno, std::system_category(), "add_hlp_to_exe failed read3");
         }
-        if (write(exe, &buffer[0], size) != size)
+        if (write(exe, &g_buffer[0], size) != size)
         {
             throw std::system_error(errno, std::system_category(), "add_hlp_to_exe failed write");
         }
@@ -4184,7 +4184,7 @@ int compiler::process()
 {
     std::printf("HC - " ID_PROGRAM_NAME " Help Compiler.\n\n");
 
-    buffer.resize(BUFFER_SIZE);
+    g_buffer.resize(BUFFER_SIZE);
 
     switch (m_options.mode)
     {
