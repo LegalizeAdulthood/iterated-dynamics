@@ -122,12 +122,12 @@ TEST_F(TestParseCompilerOptions, secondFile)
     EXPECT_EQ("foo.txt", m_options.fname2);
 }
 
-class TestParseCompilerOptionCombos : public TestParseCompilerOptions,
+class TestOptionCombos : public TestParseCompilerOptions,
                                       public WithParamInterface<std::initializer_list<const char *>>
 {
 };
 
-TEST_P(TestParseCompilerOptionCombos, invalidCombination)
+TEST_P(TestOptionCombos, invalidCombination)
 {
     EXPECT_THROW(parse_options(GetParam()), std::runtime_error);
 }
@@ -188,4 +188,4 @@ static std::initializer_list<const char *> s_invalid_options[]{
     {"too", "many", "files"}, //
 };
 
-INSTANTIATE_TEST_SUITE_P(withOptions, TestParseCompilerOptionCombos, ValuesIn(s_invalid_options));
+INSTANTIATE_TEST_SUITE_P(withOptions, TestOptionCombos, ValuesIn(s_invalid_options));
