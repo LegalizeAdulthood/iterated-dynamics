@@ -3,15 +3,16 @@
 #include <gtest/gtest.h>
 
 #include <algorithm>
-#include <iterator>
 #include <iostream>
+#include <iterator>
 #include <vector>
 
 using namespace testing;
 
-namespace hc {
+namespace hc
+{
 
-std::ostream &operator<<(std::ostream&str, hc::modes value)
+std::ostream &operator<<(std::ostream &str, hc::modes value)
 {
     switch (value)
     {
@@ -98,6 +99,14 @@ TEST_F(TestParseCompilerOptions, modeAsciiDoc)
     EXPECT_EQ(hc::modes::ASCII_DOC, m_options.mode);
 }
 
+TEST_F(TestParseCompilerOptions, asciiDocOutputDir)
+{
+    parse_options({"/adoc", "/o", "out"});
+
+    EXPECT_EQ(hc::modes::ASCII_DOC, m_options.mode);
+    EXPECT_EQ("out", m_options.output_dir);
+}
+
 TEST_F(TestParseCompilerOptions, firstFile)
 {
     parse_options({"foo.src"});
@@ -113,70 +122,70 @@ TEST_F(TestParseCompilerOptions, secondFile)
     EXPECT_EQ("foo.txt", m_options.fname2);
 }
 
-TEST_F(TestParseCompilerOptions, unknownArgument)
-{
-    EXPECT_THROW(parse_options({"/goop"}), std::runtime_error);
-}
-
-class OptionCombos : public TestParseCompilerOptions,
-                                public WithParamInterface<std::initializer_list<const char *>>
+class TestParseCompilerOptionCombos : public TestParseCompilerOptions,
+                                      public WithParamInterface<std::initializer_list<const char *>>
 {
 };
 
-TEST_P(OptionCombos, invalidCombination)
+TEST_P(TestParseCompilerOptionCombos, invalidCombination)
 {
     EXPECT_THROW(parse_options(GetParam()), std::runtime_error);
 }
 
-static std::initializer_list<const char *> s_invalid_combos[]{
-    {"/a", "/adoc"},
-    {"/a", "/c"},
-    {"/a", "/d"},
-    {"/a", "/h"},
-    {"/a", "/m"},
-    {"/a", "/o", "."},
-    {"/a", "/p"},
-    {"/a", "/r", "."},
-    {"/a", "/s"},
-    {"/adoc", "/a"},
-    {"/adoc", "/c"},
-    {"/adoc", "/d"},
-    {"/adoc", "/h"},
-    {"/adoc", "/m"},
-    {"/adoc", "/p"},
-    {"/adoc", "/r", "."},
-    {"/adoc", "/s"},
-    {"/c", "/a"},
-    {"/c", "/adoc"},
-    {"/c", "/d"},
-    {"/c", "/h"},
-    {"/c", "/o", "."},
-    {"/c", "/p"},
-    {"/d", "/a"},
-    {"/d", "/adoc"},
-    {"/d", "/c"},
-    {"/d", "/h"},
-    {"/d", "/m"},
-    {"/d", "/o", "."},
-    {"/d", "/p"},
-    {"/d", "/r", "."},
-    {"/d", "/s"},
-    {"/h", "/a"},
-    {"/h", "/adoc"},
-    {"/h", "/c"},
-    {"/h", "/d"},
-    {"/h", "/m"},
-    {"/h", "/p"},
-    {"/h", "/r", "."},
-    {"/h", "/s"},
-    {"/p", "/a"},
-    {"/p", "/adoc"},
-    {"/p", "/d"},
-    {"/p", "/h"},
-    {"/p", "/m"},
-    {"/p", "/o", "."},
-    {"/p", "/s"},
+static std::initializer_list<const char *> s_invalid_options[]{
+    {"/a", "/adoc"},          //
+    {"/a", "/c"},             //
+    {"/a", "/d"},             //
+    {"/a", "/h"},             //
+    {"/a", "/m"},             //
+    {"/a", "/o", "."},        //
+    {"/a", "/p"},             //
+    {"/a", "/r", "."},        //
+    {"/a", "/s"},             //
+    {"/adoc", "/a"},          //
+    {"/adoc", "/c"},          //
+    {"/adoc", "/d"},          //
+    {"/adoc", "/h"},          //
+    {"/adoc", "/m"},          //
+    {"/adoc", "/p"},          //
+    {"/adoc", "/r", "."},     //
+    {"/adoc", "/s"},          //
+    {"/c", "/a"},             //
+    {"/c", "/adoc"},          //
+    {"/c", "/d"},             //
+    {"/c", "/h"},             //
+    {"/c", "/o", "."},        //
+    {"/c", "/p"},             //
+    {"/d", "/a"},             //
+    {"/d", "/adoc"},          //
+    {"/d", "/c"},             //
+    {"/d", "/h"},             //
+    {"/d", "/m"},             //
+    {"/d", "/o", "."},        //
+    {"/d", "/p"},             //
+    {"/d", "/r", "."},        //
+    {"/d", "/s"},             //
+    {"/h", "/a"},             //
+    {"/h", "/adoc"},          //
+    {"/h", "/c"},             //
+    {"/h", "/d"},             //
+    {"/h", "/m"},             //
+    {"/h", "/o"},             //
+    {"/h", "/p"},             //
+    {"/h", "/r", "."},        //
+    {"/h", "/s"},             //
+    {"/i"},                   //
+    {"/o"},                   //
+    {"/p", "/a"},             //
+    {"/p", "/adoc"},          //
+    {"/p", "/d"},             //
+    {"/p", "/h"},             //
+    {"/p", "/m"},             //
+    {"/p", "/o", "."},        //
+    {"/p", "/s"},             //
+    {"/r"},                   //
+    {"/unknown-option"},      //
+    {"too", "many", "files"}, //
 };
 
-INSTANTIATE_TEST_SUITE_P(
-    TestInvalidParseOptionCombinations, OptionCombos, ValuesIn(s_invalid_combos));
+INSTANTIATE_TEST_SUITE_P(withOptions, TestParseCompilerOptionCombos, ValuesIn(s_invalid_options));

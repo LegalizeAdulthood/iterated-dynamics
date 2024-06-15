@@ -27,7 +27,7 @@ struct compiler_options
     bool show_stats{};
     bool quiet_mode{}; // true if "/Q" option used
     std::vector<std::string> include_paths;
-    std::string html_output_dir;
+    std::string output_dir;
 };
 
 compiler_options parse_compiler_options(int argc, char **argv);

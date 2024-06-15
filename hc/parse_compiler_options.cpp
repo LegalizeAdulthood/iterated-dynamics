@@ -12,7 +12,7 @@ compiler_options parse_compiler_options(int argc, char **argv)
         std::string arg{argv[i]};
         if (arg[0] == '/' || arg[0] == '-')
         {
-            arg = arg.substr(1);
+            arg.erase(0, 1); // drop '/' or '-'
             if (arg == "a")
             {
                 if (result.mode == modes::NONE)
@@ -93,21 +93,23 @@ compiler_options parse_compiler_options(int argc, char **argv)
             }
             else if (arg == "o")
             {
-                if (result.mode == modes::HTML)
+                std::string output_dir;
+                if (i < argc - 1)
                 {
-                    if (i < argc - 1)
-                    {
-                        result.html_output_dir = argv[i + 1];
-                        ++i;
-                    }
-                    else
-                    {
-                        throw std::runtime_error("Missing argument for /o");
-                    }
+                    output_dir = argv[i + 1];
+                    ++i;
                 }
                 else
                 {
-                    throw std::runtime_error("/o switch allowed only when writing HTML (/h)");
+                    throw std::runtime_error("Missing argument for /o");
+                }
+                if (result.mode == modes::HTML || result.mode == modes::ASCII_DOC)
+                {
+                    result.output_dir = output_dir;
+                }
+                else
+                {
+                    throw std::runtime_error("/o switch allowed only when writing HTML (/h) or ASCII doc (/adoc)");
                 }
             }
             else if (arg == "p")
@@ -134,17 +136,19 @@ compiler_options parse_compiler_options(int argc, char **argv)
             }
             else if (arg == "r")
             {
+                std::string swap_path;
+                if (i < argc - 1)
+                {
+                    swap_path = argv[i + 1];
+                    ++i;
+                }
+                else
+                {
+                    throw std::runtime_error("Missing argument for /r");
+                }
                 if (result.mode == modes::COMPILE || result.mode == modes::PRINT)
                 {
-                    if (i < argc - 1)
-                    {
-                        result.swappath = argv[i + 1];
-                        ++i;
-                    }
-                    else
-                    {
-                        throw std::runtime_error("Missing argument for /r");
-                    }
+                    result.swappath = swap_path;
                 }
                 else
                 {
