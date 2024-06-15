@@ -173,7 +173,6 @@ struct CONTENT
     int       srcline;
 };
 
-
 struct help_sig_info
 {
     unsigned long sig;
@@ -181,6 +180,15 @@ struct help_sig_info
     unsigned long base;
 };
 
+struct include_stack_entry
+{
+    std::string fname;
+    std::FILE *file;
+    int   line;
+    int   col;
+};
+
+int const MAX_INCLUDE_STACK = 5; // allow 5 nested includes
 
 std::vector<TOPIC> g_topics;         //
 std::vector<LABEL> g_labels;         //
@@ -210,22 +218,10 @@ char g_cmd[128]{};                   // holds the current command
 bool g_compress_spaces{};            //
 bool g_xonline{};                    //
 bool g_xdoc{};                       //
-
-int const MAX_INCLUDE_STACK = 5; // allow 5 nested includes
-
-struct include_stack_entry
-{
-    std::string fname;
-    std::FILE *file;
-    int   line;
-    int   col;
-};
-include_stack_entry include_stack[MAX_INCLUDE_STACK];
-int include_stack_top = -1;
-
-std::vector<std::string> g_include_paths;
-
-std::string g_html_output_dir = ".";
+include_stack_entry g_include_stack[MAX_INCLUDE_STACK]; //
+int include_stack_top = -1;                             //
+std::vector<std::string> g_include_paths;               //
+std::string g_html_output_dir = ".";                    //
 
 char *get_topic_text(TOPIC const *t);
 
@@ -1598,10 +1594,10 @@ void read_src(std::string const &fname, hc::modes mode)
             if (include_stack_top >= 0)
             {
                 std::fclose(g_src_file);
-                g_current_src_filename = include_stack[include_stack_top].fname;
-                g_src_file = include_stack[include_stack_top].file;
-                g_src_line = include_stack[include_stack_top].line;
-                g_src_col  = include_stack[include_stack_top].col;
+                g_current_src_filename = g_include_stack[include_stack_top].fname;
+                g_src_file = g_include_stack[include_stack_top].file;
+                g_src_line = g_include_stack[include_stack_top].line;
+                g_src_col  = g_include_stack[include_stack_top].col;
                 --include_stack_top;
                 continue;
             }
@@ -1908,16 +1904,16 @@ void read_src(std::string const &fname, hc::modes mode)
                     else
                     {
                         ++include_stack_top;
-                        include_stack[include_stack_top].fname = g_current_src_filename;
-                        include_stack[include_stack_top].file = g_src_file;
-                        include_stack[include_stack_top].line = g_src_line;
-                        include_stack[include_stack_top].col  = g_src_col;
+                        g_include_stack[include_stack_top].fname = g_current_src_filename;
+                        g_include_stack[include_stack_top].file = g_src_file;
+                        g_include_stack[include_stack_top].line = g_src_line;
+                        g_include_stack[include_stack_top].col  = g_src_col;
                         std::string const file_name = &g_cmd[8];
                         g_src_file = open_include(file_name);
                         if (g_src_file == nullptr)
                         {
                             error(eoff, "Unable to open \"%s\"", file_name.c_str());
-                            g_src_file = include_stack[include_stack_top--].file;
+                            g_src_file = g_include_stack[include_stack_top--].file;
                         }
                         g_current_src_filename = file_name;
                         g_src_line = 1;
