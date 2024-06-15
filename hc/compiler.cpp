@@ -223,7 +223,7 @@ int g_include_stack_top{-1};                            //
 std::vector<std::string> g_include_paths;               //
 std::string g_html_output_dir{"."};                     //
 
-char *get_topic_text(TOPIC const &t);
+char *get_topic_text(const TOPIC &t);
 
 void check_buffer(char const *curr, unsigned off, char const *buffer);
 
