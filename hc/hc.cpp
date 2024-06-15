@@ -6,7 +6,7 @@ int main(int argc, char *argv[])
 {
     try
     {
-        return hc::compiler(argc, argv).process();
+        return hc::compiler(hc::parse_compiler_options(argc, argv)).process();
     }
     catch (const std::exception &bang)
     {
@@ -15,7 +15,7 @@ int main(int argc, char *argv[])
     }
     catch (...)
     {
-        std::cerr << "Unxpected exception.\n";
+        std::cerr << "Unexpected exception.\n";
         return 2;
     }
 }

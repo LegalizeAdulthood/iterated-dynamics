@@ -35,7 +35,7 @@ compiler_options parse_compiler_options(int argc, char **argv);
 class compiler
 {
 public:
-    compiler(int argc_, char *argv_[]);
+    compiler(const compiler_options &options);
     ~compiler();
 
     int process();
@@ -50,8 +50,6 @@ private:
     void paginate_html_document();
     void print_html_document(std::string const &output_filename);
 
-    int argc;
-    char **argv;
     compiler_options m_options;
 };
 

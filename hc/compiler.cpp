@@ -155,7 +155,7 @@ enum
     CF_NEW_PAGE = 1         // true if section starts on a new page
 };
 
-int const MAX_CONTENT_TOPIC = 10;
+constexpr int MAX_CONTENT_TOPIC = 10;
 
 
 struct CONTENT
@@ -4174,16 +4174,11 @@ void check_buffer(char const *curr, unsigned int off, char const *buffer)
 
 namespace hc {
 
-void compiler::parse_arguments()
+compiler::compiler(const compiler_options &options) :
+    m_options(options)
 {
-    m_options = parse_compiler_options(argc, argv);
     quiet_mode = m_options.quiet_mode;
     g_include_paths = m_options.include_paths;
-}
-
-compiler::compiler(int argc_, char *argv_[]): argc(argc_),
-                                              argv(argv_)
-{
 }
 
 compiler::~compiler()
@@ -4200,8 +4195,6 @@ int compiler::process()
     std::printf("HC - " ID_PROGRAM_NAME " Help Compiler.\n\n");
 
     buffer.resize(BUFFER_SIZE);
-
-    parse_arguments();
 
     switch (m_options.mode)
     {
