@@ -191,7 +191,7 @@ bool g_quiet_mode{};                 // true if "/Q" option used
 int g_max_pages{};                   // max. pages in any topic
 int g_max_links{};                   // max. links on any page
 int g_num_doc_pages{};               // total number of pages in document
-std::FILE *srcfile;                  // .SRC file
+std::FILE *g_src_file{};             // .SRC file
 int srcline = 0;                     // .SRC line number (used for errors)
 int srccol = 0;                      // .SRC column.
 int version = -1;                    // help file version
@@ -583,14 +583,14 @@ int read_char_aux()
         return ' ';
     }
 
-    if (std::feof(srcfile))
+    if (std::feof(g_src_file))
     {
         return -1;
     }
 
     while (true)
     {
-        ch = getc(srcfile);
+        ch = getc(g_src_file);
 
         switch (ch)
         {
@@ -625,7 +625,7 @@ int read_char_aux()
         default:
             if (read_char_sp > 0)
             {
-                ungetc(ch, srcfile);
+                ungetc(ch, g_src_file);
                 --read_char_sp;
                 return ' ';
             }
@@ -1576,8 +1576,8 @@ void read_src(std::string const &fname, hc::modes mode)
 
     src_cfname = fname;
 
-    srcfile = open_include(fname);
-    if (srcfile == nullptr)
+    g_src_file = open_include(fname);
+    if (g_src_file == nullptr)
     {
         throw std::runtime_error("Unable to open \"" + fname + "\"");
     }
@@ -1596,9 +1596,9 @@ void read_src(std::string const &fname, hc::modes mode)
         {
             if (include_stack_top >= 0)
             {
-                std::fclose(srcfile);
+                std::fclose(g_src_file);
                 src_cfname = include_stack[include_stack_top].fname;
-                srcfile = include_stack[include_stack_top].file;
+                g_src_file = include_stack[include_stack_top].file;
                 srcline = include_stack[include_stack_top].line;
                 srccol  = include_stack[include_stack_top].col;
                 --include_stack_top;
@@ -1908,15 +1908,15 @@ void read_src(std::string const &fname, hc::modes mode)
                     {
                         ++include_stack_top;
                         include_stack[include_stack_top].fname = src_cfname;
-                        include_stack[include_stack_top].file = srcfile;
+                        include_stack[include_stack_top].file = g_src_file;
                         include_stack[include_stack_top].line = srcline;
                         include_stack[include_stack_top].col  = srccol;
                         std::string const file_name = &cmd[8];
-                        srcfile = open_include(file_name);
-                        if (srcfile == nullptr)
+                        g_src_file = open_include(file_name);
+                        if (g_src_file == nullptr)
                         {
                             error(eoff, "Unable to open \"%s\"", file_name.c_str());
-                            srcfile = include_stack[include_stack_top--].file;
+                            g_src_file = include_stack[include_stack_top--].file;
                         }
                         src_cfname = file_name;
                         srcline = 1;
@@ -2610,7 +2610,7 @@ void read_src(std::string const &fname, hc::modes mode)
         check_buffer(0);
     } // while ( 1 )
 
-    std::fclose(srcfile);
+    std::fclose(g_src_file);
 
     srcline = -1;
 }
