@@ -187,8 +187,8 @@ std::vector<LABEL> g_labels;         //
 std::vector<LABEL> g_private_labels; //
 std::vector<LINK> g_all_links;       //
 std::vector<CONTENT> g_contents;     // the table-of-contents
-bool g_quiet_mode = false;           // true if "/Q" option used
-int max_pages = 0;                   // max. pages in any topic
+bool g_quiet_mode{};                 // true if "/Q" option used
+int g_max_pages{};                   // max. pages in any topic
 int max_links = 0;                   // max. links on any page
 int num_doc_pages = 0;               // total number of pages in document
 std::FILE *srcfile;                  // .SRC file
@@ -2944,9 +2944,9 @@ void paginate_online()    // paginate the text for on-line help
             add_page_break(&t, start_margin, text, start, curr, num_links);
         }
 
-        if (max_pages < t.num_page)
+        if (g_max_pages < t.num_page)
         {
-            max_pages = t.num_page;
+            g_max_pages = t.num_page;
         }
 
         release_topic_text(&t, 0);
@@ -3445,7 +3445,7 @@ void _write_help(std::FILE *file)
 
     // write max_pages & max_links
 
-    putw(max_pages, file);
+    putw(g_max_pages, file);
     putw(max_links, file);
 
     // write num_topic, num_label and num_contents
@@ -4507,9 +4507,9 @@ void compiler::paginate_html_document()
             col  += width;
         } // while
 
-        if (max_pages < t.num_page)
+        if (g_max_pages < t.num_page)
         {
-            max_pages = t.num_page;
+            g_max_pages = t.num_page;
         }
 
         release_topic_text(&t, 0);
