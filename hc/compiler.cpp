@@ -180,7 +180,7 @@ struct help_sig_info
     unsigned long base;
 };
 
-struct include_stack_entry
+struct Include
 {
     std::string fname;
     std::FILE *file;
@@ -218,10 +218,10 @@ char g_cmd[128]{};                   // holds the current command
 bool g_compress_spaces{};            //
 bool g_xonline{};                    //
 bool g_xdoc{};                       //
-include_stack_entry g_include_stack[MAX_INCLUDE_STACK]; //
-int g_include_stack_top{-1};                            //
-std::vector<std::string> g_include_paths;               //
-std::string g_html_output_dir{"."};                     //
+Include g_include_stack[MAX_INCLUDE_STACK]; //
+int g_include_stack_top{-1};                //
+std::vector<std::string> g_include_paths;   //
+std::string g_html_output_dir{"."};         //
 
 char *get_topic_text(const TOPIC &t);
 
