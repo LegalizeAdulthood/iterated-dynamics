@@ -11,4 +11,5 @@ source_group("Test Data/IFS" REGULAR_EXPRESSION ".*\\.ifs$")
 source_group("Test Data/Config" REGULAR_EXPRESSION ".*\\.cfg$")
 #target_include_directories(test-hc PUBLIC "${CMAKE_CURRENT_BINARY_DIR}/include")
 target_link_libraries(test-hc PRIVATE GTest::gmock_main libhc)
-gtest_discover_tests(test-hc)
+gtest_discover_tests(test-hc
+    PROPERTIES LABELS hc)
