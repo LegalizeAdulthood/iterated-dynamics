@@ -190,7 +190,7 @@ std::vector<CONTENT> g_contents;     // the table-of-contents
 bool g_quiet_mode{};                 // true if "/Q" option used
 int g_max_pages{};                   // max. pages in any topic
 int g_max_links{};                   // max. links on any page
-int num_doc_pages = 0;               // total number of pages in document
+int g_num_doc_pages{};               // total number of pages in document
 std::FILE *srcfile;                  // .SRC file
 int srcline = 0;                     // .SRC line number (used for errors)
 int srccol = 0;                      // .SRC column.
@@ -3165,7 +3165,7 @@ bool paginate_doc_output(int cmd, PD_INFO *pd, void *context)
         return true;
 
     case PD_HEADING:
-        ++num_doc_pages;
+        ++g_num_doc_pages;
         return true;
 
     case PD_START_SECTION:
@@ -3456,7 +3456,7 @@ void _write_help(std::FILE *file)
 
     // write num_doc_page
 
-    putw(num_doc_pages, file);
+    putw(g_num_doc_pages, file);
 
     // write the offsets to each topic
     for (TOPIC const &t : g_topics)
@@ -3798,7 +3798,7 @@ void report_stats()
     std::printf("%8d Private labels\n", static_cast<int>(g_private_labels.size()));
     std::printf("%8d Table of contents (DocContent) entries\n", static_cast<int>(g_contents.size()));
     std::printf("%8d Online help pages\n", pages);
-    std::printf("%8d Document pages\n", num_doc_pages);
+    std::printf("%8d Document pages\n", g_num_doc_pages);
 }
 
 
