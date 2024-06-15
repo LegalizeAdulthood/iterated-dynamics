@@ -41,8 +41,7 @@ public:
     int process();
 
 private:
-    void parse_arguments();
-    void read_source_file(modes mode);
+    void read_source_file();
     void usage();
     void compile();
     void print();

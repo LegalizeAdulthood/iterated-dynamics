@@ -4256,7 +4256,7 @@ void compiler::usage()
     std::printf("Use \"/q\" for quiet mode. (No status messages.)\n");
 }
 
-void compiler::read_source_file(modes mode)
+void compiler::read_source_file()
 {
     src_fname = m_options.fname1.empty() ? DEFAULT_SRC_FNAME : m_options.fname1;
 
@@ -4269,7 +4269,7 @@ void compiler::read_source_file(modes mode)
     }
     swappos = 0;
 
-    read_src(src_fname, mode);
+    read_src(src_fname, m_options.mode);
 }
 
 void compiler::compile()
@@ -4279,7 +4279,7 @@ void compiler::compile()
         throw std::runtime_error("Unexpected command-line argument \"" + m_options.fname2 + "\"");
     }
 
-    read_source_file(m_options.mode);
+    read_source_file();
 
     if (hdr_fname.empty())
     {
@@ -4341,7 +4341,7 @@ void compiler::compile()
 
 void compiler::print()
 {
-    read_source_file(m_options.mode);
+    read_source_file();
     make_hot_links();
 
     if (!errors)
@@ -4361,7 +4361,7 @@ void compiler::print()
 
 void compiler::render_html()
 {
-    read_source_file(m_options.mode);
+    read_source_file();
     make_hot_links();
 
     if (errors == 0)
