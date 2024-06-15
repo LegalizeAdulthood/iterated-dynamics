@@ -202,7 +202,7 @@ std::string g_hdr_filename;          // .H filename
 std::string g_hlp_filename;          // .HLP filename
 std::string g_current_src_filename;  // current .SRC filename
 int g_format_exclude{};              // disable formatting at this col, 0 to never disable formatting
-std::FILE *swapfile;                 //
+std::FILE *g_swap_file{};            //
 long swappos;                        //
 std::vector<char> buffer;            // alloc'ed as BUFFER_SIZE bytes
 char *g_curr;                        // current position in the buffer
@@ -460,15 +460,15 @@ void alloc_topic_text(TOPIC *t, unsigned size)
     t->text_len = size;
     t->text = swappos;
     swappos += size;
-    std::fseek(swapfile, t->text, SEEK_SET);
-    std::fwrite(&buffer[0], 1, t->text_len, swapfile);
+    std::fseek(g_swap_file, t->text, SEEK_SET);
+    std::fwrite(&buffer[0], 1, t->text_len, g_swap_file);
 }
 
 
 char *get_topic_text(TOPIC const *t)
 {
-    std::fseek(swapfile, t->text, SEEK_SET);
-    if (std::fread(&buffer[0], 1, t->text_len, swapfile) != t->text_len)
+    std::fseek(g_swap_file, t->text, SEEK_SET);
+    if (std::fread(&buffer[0], 1, t->text_len, g_swap_file) != t->text_len)
     {
         throw std::system_error(errno, std::system_category(), "get_topic_text failed fread");
     }
@@ -480,8 +480,8 @@ void release_topic_text(TOPIC const *t, int save)
 {
     if (save)
     {
-        std::fseek(swapfile, t->text, SEEK_SET);
-        std::fwrite(&buffer[0], 1, t->text_len, swapfile);
+        std::fseek(g_swap_file, t->text, SEEK_SET);
+        std::fwrite(&buffer[0], 1, t->text_len, g_swap_file);
     }
 }
 
@@ -4173,9 +4173,9 @@ compiler::compiler(const compiler_options &options) :
 
 compiler::~compiler()
 {
-    if (swapfile != nullptr)
+    if (g_swap_file != nullptr)
     {
-        std::fclose(swapfile);
+        std::fclose(g_swap_file);
         std::remove(m_options.swappath.c_str());
     }
 }
@@ -4252,8 +4252,8 @@ void compiler::read_source_file()
 
     m_options.swappath += SWAP_FNAME;
 
-    swapfile = std::fopen(m_options.swappath.c_str(), "w+b");
-    if (swapfile == nullptr)
+    g_swap_file = std::fopen(m_options.swappath.c_str(), "w+b");
+    if (g_swap_file == nullptr)
     {
         throw std::runtime_error("Cannot create swap file \"" + m_options.swappath + "\"");
     }
