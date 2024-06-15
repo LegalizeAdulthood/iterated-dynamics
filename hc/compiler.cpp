@@ -194,7 +194,7 @@ int g_num_doc_pages{};               // total number of pages in document
 std::FILE *g_src_file{};             // .SRC file
 int g_src_line{};                    // .SRC line number (used for errors)
 int g_src_col{};                     // .SRC column.
-int version = -1;                    // help file version
+int g_version{-1};                   // help file version
 int errors = 0;                      // number of errors reported
 int warnings = 0;                    // number of warnings reported
 std::string src_fname;               // command-line .SRC filename
@@ -1949,11 +1949,11 @@ void read_src(std::string const &fname, hc::modes mode)
                     }
                     else if (strnicmp(cmd, "Version=", 8) == 0)
                     {
-                        if (version != -1)   // an unlikely value
+                        if (g_version != -1)   // an unlikely value
                         {
                             warn(eoff, "Help version has already been defined");
                         }
-                        version = std::atoi(&cmd[8]);
+                        g_version = std::atoi(&cmd[8]);
                     }
                     else
                     {
@@ -3279,7 +3279,7 @@ void _write_hdr(char const *fname, std::FILE *file)
 
     std::fprintf(file, "/* current help file version */\n");
     std::fprintf(file, "\n");
-    std::fprintf(file, "#define %-32s %3d\n", "IDHELP_VERSION", version);
+    std::fprintf(file, "#define %-32s %3d\n", "IDHELP_VERSION", g_version);
     std::fprintf(file, "\n\n");
 
     std::fprintf(file, "/* labels */\n"
@@ -3439,7 +3439,7 @@ void _write_help(std::FILE *file)
     // write the signature and version
 
     hs.sig = HELP_SIG; // Edit line 17 of helpcom.h if this is a syntax error
-    hs.version = version;
+    hs.version = g_version;
 
     std::fwrite(&hs, sizeof(long)+sizeof(int), 1, file);
 
@@ -4279,7 +4279,7 @@ void compiler::compile()
     {
         error(0, "No .HLP file defined.  (Use \"~HlpFile=\")");
     }
-    if (version == -1)
+    if (g_version == -1)
     {
         warn(0, "No help version has been defined.  (Use \"~Version=\")");
     }
