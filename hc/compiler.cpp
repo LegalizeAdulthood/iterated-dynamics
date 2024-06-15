@@ -223,7 +223,7 @@ int g_include_stack_top{-1};                            //
 std::vector<std::string> g_include_paths;               //
 std::string g_html_output_dir{"."};                     //
 
-char *get_topic_text(TOPIC const *t);
+char *get_topic_text(TOPIC const &t);
 
 void check_buffer(char const *curr, unsigned off, char const *buffer);
 
@@ -255,7 +255,7 @@ std::ostream &operator<<(std::ostream &str, PAGE const &page)
     return str << "Offset: " << page.offset << ", Length: " << page.length << ", Margin: " << page.margin;
 }
 
-std::ostream &operator<<(std::ostream &str, TOPIC const &topic)
+std::ostream &operator<<(std::ostream &str, const TOPIC &topic)
 {
     str << "Flags: " << std::hex << topic.flags << std::dec << '\n'
         << "Doc Page: " << topic.doc_page << '\n'
@@ -271,7 +271,7 @@ std::ostream &operator<<(std::ostream &str, TOPIC const &topic)
         << "Offset: " << topic.offset << '\n'
         << "Tokens:\n";
 
-    char const *text = get_topic_text(&topic);
+    char const *text = get_topic_text(topic);
     char const *curr = text;
     unsigned int len = topic.text_len;
 
@@ -452,20 +452,20 @@ void show_line(unsigned int line)
  */
 
 
-void alloc_topic_text(TOPIC *t, unsigned size)
+void alloc_topic_text(TOPIC &t, unsigned size)
 {
-    t->text_len = size;
-    t->text = g_swap_pos;
+    t.text_len = size;
+    t.text = g_swap_pos;
     g_swap_pos += size;
-    std::fseek(g_swap_file, t->text, SEEK_SET);
-    std::fwrite(&g_buffer[0], 1, t->text_len, g_swap_file);
+    std::fseek(g_swap_file, t.text, SEEK_SET);
+    std::fwrite(&g_buffer[0], 1, t.text_len, g_swap_file);
 }
 
 
-char *get_topic_text(TOPIC const *t)
+char *get_topic_text(const TOPIC &t)
 {
-    std::fseek(g_swap_file, t->text, SEEK_SET);
-    if (std::fread(&g_buffer[0], 1, t->text_len, g_swap_file) != t->text_len)
+    std::fseek(g_swap_file, t.text, SEEK_SET);
+    if (std::fread(&g_buffer[0], 1, t.text_len, g_swap_file) != t.text_len)
     {
         throw std::system_error(errno, std::system_category(), "get_topic_text failed fread");
     }
@@ -473,12 +473,12 @@ char *get_topic_text(TOPIC const *t)
 }
 
 
-void release_topic_text(TOPIC const *t, int save)
+void release_topic_text(const TOPIC &t, int save)
 {
     if (save)
     {
-        std::fseek(g_swap_file, t->text, SEEK_SET);
-        std::fwrite(&g_buffer[0], 1, t->text_len, g_swap_file);
+        std::fseek(g_swap_file, t.text, SEEK_SET);
+        std::fwrite(&g_buffer[0], 1, t.text_len, g_swap_file);
     }
 }
 
@@ -495,16 +495,16 @@ int add_link(LINK *l)
 }
 
 
-int add_page(TOPIC *t, PAGE const *p)
+int add_page(TOPIC &t, PAGE const *p)
 {
-    t->page.push_back(*p);
-    return t->num_page++;
+    t.page.push_back(*p);
+    return t.num_page++;
 }
 
 
-int add_topic(TOPIC const *t)
+int add_topic(const TOPIC &t)
 {
-    g_topics.push_back(*t);
+    g_topics.push_back(t);
     return static_cast<int>(g_topics.size() - 1);
 }
 
@@ -1073,8 +1073,8 @@ void process_doc_contents(hc::modes mode)
         check_buffer(0);
     }
 
-    alloc_topic_text(&t, (unsigned)(g_curr - &g_buffer[0]));
-    add_topic(&t);
+    alloc_topic_text(t, (unsigned)(g_curr - &g_buffer[0]));
+    add_topic(t);
 }
 
 
@@ -1445,18 +1445,18 @@ void process_bininc()
 }
 
 
-void start_topic(TOPIC *t, char const *title, int title_len)
+void start_topic(TOPIC &t, char const *title, int title_len)
 {
-    t->flags = 0;
-    t->title_len = title_len;
-    t->title.assign(title, title_len);
-    t->doc_page = -1;
-    t->num_page = 0;
+    t.flags = 0;
+    t.title_len = title_len;
+    t.title.assign(title, title_len);
+    t.doc_page = -1;
+    t.num_page = 0;
     g_curr = &g_buffer[0];
 }
 
 
-void end_topic(TOPIC *t)
+void end_topic(TOPIC &t)
 {
     alloc_topic_text(t, (unsigned)(g_curr - &g_buffer[0]));
     add_topic(t);
@@ -1492,9 +1492,9 @@ void add_blank_for_split()   // add space at g_curr for merging two lines
 }
 
 
-void put_a_char(int ch, TOPIC const *t)
+void put_a_char(int ch, const TOPIC &t)
 {
-    if (ch == '{' && !(t->flags & TF_DATA))    // is it a hot-link?
+    if (ch == '{' && !(t.flags & TF_DATA))    // is it a hot-link?
     {
         parse_link();
     }
@@ -1603,7 +1603,7 @@ void read_src(std::string const &fname, hc::modes mode)
             }
             if (in_topic)  // if we're in a topic, finish it
             {
-                end_topic(&t);
+                end_topic(t);
             }
             if (g_topics.empty())
             {
@@ -1672,7 +1672,7 @@ void read_src(std::string const &fname, hc::modes mode)
                 {
                     if (in_topic)  // if we're in a topic, finish it
                     {
-                        end_topic(&t);
+                        end_topic(t);
                     }
                     else
                     {
@@ -1699,7 +1699,7 @@ void read_src(std::string const &fname, hc::modes mode)
                         error(eoff, "Topic title already exists.");
                     }
 
-                    start_topic(&t, topic_title, static_cast<int>(title_len));
+                    start_topic(t, topic_title, static_cast<int>(title_len));
                     formatting = true;
                     centering = false;
                     state = STATES::S_Start;
@@ -1715,7 +1715,7 @@ void read_src(std::string const &fname, hc::modes mode)
                 {
                     if (in_topic)  // if we're in a topic, finish it
                     {
-                        end_topic(&t);
+                        end_topic(t);
                     }
                     else
                     {
@@ -1745,7 +1745,7 @@ void read_src(std::string const &fname, hc::modes mode)
                         warn(eoff, "Data topic has a local label.");
                     }
 
-                    start_topic(&t, "", 0);
+                    start_topic(t, "", 0);
                     t.flags |= TF_DATA;
 
                     if ((int)std::strlen(data) > 32)
@@ -1775,7 +1775,7 @@ void read_src(std::string const &fname, hc::modes mode)
                     check_command_length(eoff, 11);
                     if (in_topic)  // if we're in a topic, finish it
                     {
-                        end_topic(&t);
+                        end_topic(t);
                     }
                     if (!done)
                     {
@@ -2337,7 +2337,7 @@ void read_src(std::string const &fname, hc::modes mode)
                 }
                 else if (state == STATES::S_Line)
                 {
-                    put_a_char(ch, &t);
+                    put_a_char(ch, t);
                     if ((ch&0xFF) == '\n')
                     {
                         state = STATES::S_Start;
@@ -2415,7 +2415,7 @@ void read_src(std::string const &fname, hc::modes mode)
                     }
                     else
                     {
-                        put_a_char(ch, &t);
+                        put_a_char(ch, t);
                     }
                     break;
 
@@ -2485,7 +2485,7 @@ void read_src(std::string const &fname, hc::modes mode)
                     }
                     else
                     {
-                        put_a_char(ch, &t);
+                        put_a_char(ch, t);
                     }
                     break;
 
@@ -2543,7 +2543,7 @@ void read_src(std::string const &fname, hc::modes mode)
                         {
                             state = STATES::S_Start;
                         }
-                        put_a_char(ch, &t);
+                        put_a_char(ch, t);
                     }
                     break;
 
@@ -2583,7 +2583,7 @@ void read_src(std::string const &fname, hc::modes mode)
                     }
                     else
                     {
-                        put_a_char(ch, &t);
+                        put_a_char(ch, t);
                     }
                 }
                 else if (state == STATES::S_Spaces)
@@ -2775,7 +2775,7 @@ void make_hot_links()
  */
 
 
-void add_page_break(TOPIC *t, int margin, char const *text, char const *start, char const *curr, int num_links)
+void add_page_break(TOPIC &t, int margin, char const *text, char const *start, char const *curr, int num_links)
 {
     PAGE p;
     p.offset = (unsigned)(start - text);
@@ -2804,7 +2804,7 @@ void paginate_online()    // paginate the text for on-line help
             continue;    // don't paginate data topics
         }
 
-        char *text = get_topic_text(&t);
+        char *text = get_topic_text(t);
         char *curr = text;
         unsigned int len = t.text_len;
 
@@ -2858,7 +2858,7 @@ void paginate_online()    // paginate the text for on-line help
                         if (++lnum >= SCREEN_DEPTH)
                         {
                             // go to next page...
-                            add_page_break(&t, start_margin, text, start, curr, num_links);
+                            add_page_break(t, start_margin, text, start, curr, num_links);
                             start = curr + ((tok == token_types::TOK_SPACE) ? size : 0);
                             start_margin = margin;
                             lnum = 0;
@@ -2892,7 +2892,7 @@ void paginate_online()    // paginate the text for on-line help
                 ++lnum;
                 if (lnum >= SCREEN_DEPTH || (col == 0 && lnum == SCREEN_DEPTH-1))
                 {
-                    add_page_break(&t, start_margin, text, start, curr, num_links);
+                    add_page_break(t, start_margin, text, start, curr, num_links);
                     start = curr + size;
                     start_margin = -1;
                     lnum = 0;
@@ -2909,7 +2909,7 @@ void paginate_online()    // paginate the text for on-line help
                     start += size;
                     break;
                 }
-                add_page_break(&t, start_margin, text, start, curr, num_links);
+                add_page_break(t, start_margin, text, start, curr, num_links);
                 start_margin = -1;
                 start = curr + size;
                 lnum = 0;
@@ -2938,7 +2938,7 @@ void paginate_online()    // paginate the text for on-line help
 
         if (!skip_blanks)
         {
-            add_page_break(&t, start_margin, text, start, curr, num_links);
+            add_page_break(t, start_margin, text, start, curr, num_links);
         }
 
         if (g_max_pages < t.num_page)
@@ -2946,7 +2946,7 @@ void paginate_online()    // paginate the text for on-line help
             g_max_pages = t.num_page;
         }
 
-        release_topic_text(&t, 0);
+        release_topic_text(t, 0);
     } // for
 }
 
@@ -3074,11 +3074,11 @@ void set_content_doc_page()
 
     int tnum = find_topic_title(DOCCONTENTS_TITLE);
     assert(tnum >= 0);
-    TOPIC *t = &g_topics[tnum];
+    TOPIC &t = g_topics[tnum];
 
     char *base = get_topic_text(t);
 
-    for (CONTENT const &c : g_contents)
+    for (const CONTENT &c : g_contents)
     {
         assert(c.doc_page >= 1);
         std::sprintf(buf, "%d", c.doc_page);
@@ -3117,7 +3117,7 @@ bool pd_get_info(int cmd, PD_INFO *pd, void *context)
         {
             return false;
         }
-        pd->curr = get_topic_text(&g_topics[c->topic_num[info.topic_num]]);
+        pd->curr = get_topic_text(g_topics[c->topic_num[info.topic_num]]);
         pd->len = g_topics[c->topic_num[info.topic_num]].text_len;
         return true;
 
@@ -3141,7 +3141,7 @@ bool pd_get_info(int cmd, PD_INFO *pd, void *context)
 
     case PD_RELEASE_TOPIC:
         c = &g_contents[info.content_num];
-        release_topic_text(&g_topics[c->topic_num[info.topic_num]], 0);
+        release_topic_text(g_topics[c->topic_num[info.topic_num]], 0);
         return true;
 
     default:
@@ -3456,7 +3456,7 @@ void _write_help(std::FILE *file)
     putw(g_num_doc_pages, file);
 
     // write the offsets to each topic
-    for (TOPIC const &t : g_topics)
+    for (const TOPIC &t : g_topics)
     {
         std::fwrite(&t.offset, sizeof(long), 1, file);
     }
@@ -3486,7 +3486,7 @@ void _write_help(std::FILE *file)
     }
 
     // write topics
-    for (TOPIC const &tp : g_topics)
+    for (const TOPIC &tp : g_topics)
     {
         // write the topics flags
         putw(tp.flags, file);
@@ -3508,7 +3508,7 @@ void _write_help(std::FILE *file)
 
         // insert hot-link info & write the help text
 
-        text = get_topic_text(&tp);
+        text = get_topic_text(tp);
 
         if (!(tp.flags & TF_DATA))     // don't process data topics...
         {
@@ -3518,7 +3518,7 @@ void _write_help(std::FILE *file)
         putw(tp.text_len, file);
         std::fwrite(text, 1, tp.text_len, file);
 
-        release_topic_text(&tp, 0);  // don't save the text even though
+        release_topic_text(tp, 0);  // don't save the text even though
         // insert_real_link_info() modified it
         // because we don't access the info after
         // this.
@@ -3714,7 +3714,7 @@ void report_memory()
     long          // bytes in active data structure
         dead = 0; // bytes in unused data structure
 
-    for (TOPIC const &t : g_topics)
+    for (const TOPIC &t : g_topics)
     {
         data   += sizeof(TOPIC);
         bytes_in_strings += t.title_len;
@@ -3782,7 +3782,7 @@ void report_memory()
 void report_stats()
 {
     int  pages = 0;
-    for (TOPIC const &t : g_topics)
+    for (const TOPIC &t : g_topics)
     {
         pages += t.num_page;
     }
@@ -3961,7 +3961,7 @@ private:
     void write_index_html();
     void write_contents();
     void write_content(CONTENT const &c);
-    void write_topic(TOPIC const &t);
+    void write_topic(const TOPIC &t);
 
     std::string m_fname;
 };
@@ -3991,10 +3991,10 @@ void html_processor::write_index_html()
         throw std::runtime_error("First content block doesn't contain DocContent.");
     }
 
-    TOPIC const &toc_topic = g_topics[toc.topic_num[0]];
+    const TOPIC &toc_topic = g_topics[toc.topic_num[0]];
     std::ofstream str(g_html_output_dir + "/index.rst");
     str << ".. toctree::\n";
-    char const *text = get_topic_text(&toc_topic);
+    char const *text = get_topic_text(toc_topic);
     char const *curr = text;
     unsigned int len = toc_topic.text_len;
     while (len > 0)
@@ -4036,7 +4036,7 @@ void html_processor::write_content(CONTENT const &c)
 {
     for (int i = 0; i < c.num_topic; ++i)
     {
-        TOPIC const &t = g_topics[c.topic_num[i]];
+        const TOPIC &t = g_topics[c.topic_num[i]];
         if (t.title == DOCCONTENTS_TITLE)
         {
             continue;
@@ -4046,12 +4046,12 @@ void html_processor::write_content(CONTENT const &c)
     }
 }
 
-void html_processor::write_topic(TOPIC const &t)
+void html_processor::write_topic(const TOPIC &t)
 {
     std::string const filename = rst_name(t.title) + ".rst";
     msg("Writing %s", filename.c_str());
     std::ofstream str(g_html_output_dir + '/' + filename);
-    char const *text = get_topic_text(&t);
+    char const *text = get_topic_text(t);
     char const *curr = text;
     unsigned int len = t.text_len;
     unsigned int column = 0;
@@ -4392,7 +4392,7 @@ void compiler::paginate_html_document()
             continue;    // don't paginate data topics
         }
 
-        char *text = get_topic_text(&t);
+        char *text = get_topic_text(t);
         char *curr = text;
         unsigned int len = t.text_len;
 
@@ -4509,7 +4509,7 @@ void compiler::paginate_html_document()
             g_max_pages = t.num_page;
         }
 
-        release_topic_text(&t, 0);
+        release_topic_text(t, 0);
     } // for
 }
 
