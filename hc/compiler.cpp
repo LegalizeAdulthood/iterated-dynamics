@@ -20,6 +20,7 @@
 #include <iterator>
 #include <numeric>
 #include <sstream>
+#include <stdexcept>
 #include <string>
 #include <system_error>
 #include <vector>
@@ -447,13 +448,11 @@ void show_line(unsigned int line)
 }
 
 #ifdef SHOW_ERROR_LINE
-#   define fatal(...)  (show_line(__LINE__), fatal_msg(__VA_ARGS__))
 #   define error(...)  (show_line(__LINE__), error_msg(__VA_ARGS__))
 #   define warn(...)   (show_line(__LINE__), warn_msg(__VA_ARGS__))
 #   define notice(...) (show_line(__LINE__), notice_msg(__VA_ARGS__))
 #   define msg(...)    (quiet_mode ? static_cast<void>(0) : (show_line(__LINE__), msg_msg(__VA_ARGS__)))
 #else
-#define fatal(...)  fatal_msg(__VA_ARGS__)
 #define error(...)  error_msg(__VA_ARGS__)
 #define warn(...)   warn_msg(__VA_ARGS__)
 #define notice(...) notice_msg(__VA_ARGS__)
@@ -563,7 +562,7 @@ void unread_char(int ch)
 {
     if (read_char_buff_pos+1 >= READ_CHAR_BUFF_SIZE)
     {
-        fatal(0, "Compiler Error -- Read char buffer overflow!");
+        throw std::runtime_error("Compiler Error -- Read char buffer overflow!");
     }
 
     read_char_buff[++read_char_buff_pos] = ch;
@@ -1269,7 +1268,7 @@ int create_table()
         case '{':
             if (count >= MAX_TABLE_SIZE)
             {
-                fatal(0, "Table is too large.");
+                throw std::runtime_error("Table is too large.");
             }
             len = parse_link();
             g_curr = table_start;   // reset to the start...
@@ -1590,7 +1589,7 @@ void read_src(std::string const &fname, hc::modes mode)
     srcfile = open_include(fname);
     if (srcfile == nullptr)
     {
-        fatal(0, "Unable to open \"%s\"", fname.c_str());
+        throw std::runtime_error("Unable to open \"" + fname + "\"");
     }
 
     msg("Compiling: %s", fname.c_str());
@@ -3334,7 +3333,7 @@ void write_hdr(char const *fname)
         hdr = std::fopen(fname, "wt");
         if (hdr == nullptr)
         {
-            fatal(0, "Cannot create \"%s\".", fname);
+            throw std::runtime_error("Cannot create \"" + std::string{fname} + "\".");
         }
         msg("Writing: %s", fname);
         _write_hdr(fname, hdr);
@@ -3349,7 +3348,7 @@ void write_hdr(char const *fname)
 
     if (temp == nullptr)
     {
-        fatal(0, "Cannot create temporary file: \"%s\".", TEMP_FNAME);
+        throw std::runtime_error("Cannot create temporary file: \"" + std::string{TEMP_FNAME} + "\".");
     }
 
     _write_hdr(fname, temp);
@@ -3359,7 +3358,7 @@ void write_hdr(char const *fname)
 
     if (temp == nullptr)
     {
-        fatal(0, "Cannot open temporary file: \"%s\".", TEMP_FNAME);
+        throw std::runtime_error("Cannot open temporary file: \"" + std::string{TEMP_FNAME} + "\".");
     }
 
     if (compare_files(temp, hdr))     // if they are different...
@@ -3548,7 +3547,7 @@ void write_help(char const *fname)
 
     if (hlp == nullptr)
     {
-        fatal(0, "Cannot create .HLP file: \"%s\".", fname);
+        throw std::runtime_error("Cannot create .HLP file: \"" + std::string{fname} + "\".");
     }
 
     msg("Writing: %s", fname);
@@ -3688,7 +3687,7 @@ void print_document(char const *fname)
 
     if (g_contents.empty())
     {
-        fatal(0, ".SRC has no DocContents.");
+        throw std::runtime_error(".SRC has no DocContents.");
     }
 
     msg("Printing to: %s", fname);
@@ -3700,7 +3699,7 @@ void print_document(char const *fname)
     info.file = std::fopen(fname, "wt");
     if (info.file == nullptr)
     {
-        fatal(0, "Couldn't create \"%s\"", fname);
+        throw std::runtime_error("Couldn't create \"" + std::string{fname} + "\"");
     }
 
     info.margin = PAGE_INDENT;
@@ -3830,13 +3829,13 @@ void add_hlp_to_exe(char const *hlp_fname, char const *exe_fname)
     exe = open(exe_fname, O_RDWR|O_BINARY);
     if (exe == -1)
     {
-        fatal(0, "Unable to open \"%s\"", exe_fname);
+        throw std::runtime_error("Unable to open \"" + std::string{exe_fname} + "\"");
     }
 
     hlp = open(hlp_fname, O_RDONLY|O_BINARY);
     if (hlp == -1)
     {
-        fatal(0, "Unable to open \"%s\"", hlp_fname);
+        throw std::runtime_error("Unable to open \"" + std::string{hlp_fname} + "\"");
     }
 
     msg("Appending %s to %s", hlp_fname, exe_fname);
@@ -3873,7 +3872,7 @@ void add_hlp_to_exe(char const *hlp_fname, char const *exe_fname)
 
     if (hs.sig != HELP_SIG)
     {
-        fatal(0, "Help signature not found in %s", hlp_fname);
+        throw std::runtime_error("Help signature not found in " + std::string{hlp_fname});
     }
 
     msg("Help file %s Version=%d", hlp_fname, hs.version);
@@ -3928,7 +3927,7 @@ void delete_hlp_from_exe(char const *exe_fname)
     exe = open(exe_fname, O_RDWR|O_BINARY);
     if (exe == -1)
     {
-        fatal(0, "Unable to open \"%s\"", exe_fname);
+        throw std::runtime_error("Unable to open \"" + std::string{exe_fname} + "\"");
     }
 
     msg("Deleting help from %s", exe_fname);
@@ -3957,7 +3956,7 @@ void delete_hlp_from_exe(char const *exe_fname)
     else
     {
         close(exe);
-        fatal(0, "No help found in %s", exe_fname);
+        throw std::runtime_error("No help found in " + std::string{exe_fname});
     }
 }
 
@@ -3984,7 +3983,7 @@ void html_processor::process()
 {
     if (g_contents.empty())
     {
-        fatal(0, ".SRC has no DocContents.");
+        throw std::runtime_error(".SRC has no DocContents.");
     }
 
     write_index_html();
@@ -4164,7 +4163,7 @@ void check_buffer(char const *curr, unsigned int off, char const *buffer)
 {
     if ((unsigned)(curr + off - buffer) >= (BUFFER_SIZE-1024))
     {
-        fatal(0, "Buffer overflowerd -- Help topic too large.");
+        throw std::runtime_error("Buffer overflowerd -- Help topic too large.");
     }
 }
 #if defined(_WIN32)
@@ -4226,7 +4225,7 @@ int compiler::process()
     case modes::DELETE:
         if (!m_options.fname2.empty())
         {
-            fatal(0, "Unexpected argument \"%s\"", m_options.fname2.c_str());
+            throw std::runtime_error("Unexpected argument \"" + m_options.fname2 + "\"");
         }
         delete_hlp_from_exe(m_options.fname1.empty() ? DEFAULT_EXE_FNAME : m_options.fname1.c_str());
         break;
@@ -4273,7 +4272,7 @@ void compiler::read_source_file(modes mode)
     swapfile = std::fopen(m_options.swappath.c_str(), "w+b");
     if (swapfile == nullptr)
     {
-        fatal(0, "Cannot create swap file \"%s\"", m_options.swappath.c_str());
+        throw std::runtime_error("Cannot create swap file \"" + m_options.swappath + "\"");
     }
     swappos = 0;
 
@@ -4284,7 +4283,7 @@ void compiler::compile()
 {
     if (!m_options.fname2.empty())
     {
-        fatal(0, "Unexpected command-line argument \"%s\"", m_options.fname2.c_str());
+        throw std::runtime_error("Unexpected command-line argument \"" + m_options.fname2 + "\"");
     }
 
     read_source_file(m_options.mode);
