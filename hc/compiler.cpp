@@ -4220,27 +4220,31 @@ int compiler::process()
 
 void compiler::usage()
 {
-    std::printf("To compile a .SRC file:\n");
-    std::printf("      HC /c [/s] [/m] [/r[path]] [src_file]\n");
-    std::printf("         /s       = report statistics.\n");
-    std::printf("         /m       = report memory usage.\n");
-    std::printf("         /r[path] = set swap file path.\n");
-    std::printf("         src_file = .SRC file.  Default is \"%s\"\n", DEFAULT_SRC_FNAME);
-    std::printf("To print a .SRC file:\n");
-    std::printf("      HC /p [/r[path]] [src_file] [out_file]\n");
-    std::printf("         /r[path] = set swap file path.\n");
-    std::printf("         src_file = .SRC file.  Default is \"%s\"\n", DEFAULT_SRC_FNAME);
+    std::printf("To compile a .SRC file:\n"
+                "      HC /c [/s] [/m] [/r[path]] [src_file]\n"
+                "         /s       = report statistics.\n"
+                "         /m       = report memory usage.\n"
+                "         /r[path] = set swap file path.\n"
+                "         src_file = .SRC file.  Default is \"%s\"\n",
+        DEFAULT_SRC_FNAME);
+    std::printf("To print a .SRC file:\n"
+                "      HC /p [/r[path]] [src_file] [out_file]\n"
+                "         /r[path] = set swap file path.\n"
+                "         src_file = .SRC file.  Default is \"%s\"\n",
+        DEFAULT_SRC_FNAME);
     std::printf("         out_file = Filename to print to. Default is \"%s\"\n",
         DEFAULT_DOC_FNAME);
-    std::printf("To append a .HLP file to an .EXE file:\n");
-    std::printf("      HC /a [hlp_file] [exe_file]\n");
-    std::printf("         hlp_file = .HLP file.  Default is \"%s\"\n", DEFAULT_HLP_FNAME);
+    std::printf("To append a .HLP file to an .EXE file:\n"
+                "      HC /a [hlp_file] [exe_file]\n"
+                "         hlp_file = .HLP file.  Default is \"%s\"\n",
+        DEFAULT_HLP_FNAME);
     std::printf("         exe_file = .EXE file.  Default is \"%s\"\n", DEFAULT_EXE_FNAME);
-    std::printf("To delete help info from an .EXE file:\n");
-    std::printf("      HC /d [exe_file]\n");
-    std::printf("         exe_file = .EXE file.  Default is \"%s\"\n", DEFAULT_EXE_FNAME);
-    std::printf("\n");
-    std::printf("Use \"/q\" for quiet mode. (No status messages.)\n");
+    std::printf("To delete help info from an .EXE file:\n"
+                "      HC /d [exe_file]\n"
+                "         exe_file = .EXE file.  Default is \"%s\"\n",
+        DEFAULT_EXE_FNAME);
+    std::printf("\n"
+                "Use \"/q\" for quiet mode. (No status messages.)\n");
 }
 
 void compiler::read_source_file()
