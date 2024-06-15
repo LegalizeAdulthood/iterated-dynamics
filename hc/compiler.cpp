@@ -189,7 +189,7 @@ std::vector<LINK> g_all_links;       //
 std::vector<CONTENT> g_contents;     // the table-of-contents
 bool g_quiet_mode{};                 // true if "/Q" option used
 int g_max_pages{};                   // max. pages in any topic
-int max_links = 0;                   // max. links on any page
+int g_max_links{};                   // max. links on any page
 int num_doc_pages = 0;               // total number of pages in document
 std::FILE *srcfile;                  // .SRC file
 int srcline = 0;                     // .SRC line number (used for errors)
@@ -2786,9 +2786,9 @@ void add_page_break(TOPIC *t, int margin, char const *text, char const *start, c
     p.margin = margin;
     add_page(t, &p);
 
-    if (max_links < num_links)
+    if (g_max_links < num_links)
     {
-        max_links = num_links;
+        g_max_links = num_links;
     }
 }
 
@@ -3446,7 +3446,7 @@ void _write_help(std::FILE *file)
     // write max_pages & max_links
 
     putw(g_max_pages, file);
-    putw(max_links, file);
+    putw(g_max_links, file);
 
     // write num_topic, num_label and num_contents
 
