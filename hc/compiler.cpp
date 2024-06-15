@@ -221,7 +221,7 @@ bool g_xdoc{};                       //
 include_stack_entry g_include_stack[MAX_INCLUDE_STACK]; //
 int g_include_stack_top{-1};                            //
 std::vector<std::string> g_include_paths;               //
-std::string g_html_output_dir = ".";                    //
+std::string g_html_output_dir{"."};                     //
 
 char *get_topic_text(TOPIC const *t);
 
