@@ -203,7 +203,7 @@ std::string g_hlp_filename;          // .HLP filename
 std::string g_current_src_filename;  // current .SRC filename
 int g_format_exclude{};              // disable formatting at this col, 0 to never disable formatting
 std::FILE *g_swap_file{};            //
-long swappos;                        //
+long g_swap_pos{};                   //
 std::vector<char> buffer;            // alloc'ed as BUFFER_SIZE bytes
 char *g_curr;                        // current position in the buffer
 char cmd[128];                       // holds the current command
@@ -458,8 +458,8 @@ void show_line(unsigned int line)
 void alloc_topic_text(TOPIC *t, unsigned size)
 {
     t->text_len = size;
-    t->text = swappos;
-    swappos += size;
+    t->text = g_swap_pos;
+    g_swap_pos += size;
     std::fseek(g_swap_file, t->text, SEEK_SET);
     std::fwrite(&buffer[0], 1, t->text_len, g_swap_file);
 }
@@ -4257,7 +4257,7 @@ void compiler::read_source_file()
     {
         throw std::runtime_error("Cannot create swap file \"" + m_options.swappath + "\"");
     }
-    swappos = 0;
+    g_swap_pos = 0;
 
     read_src(g_src_filename, m_options.mode);
 }
