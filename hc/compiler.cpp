@@ -199,7 +199,7 @@ int g_errors{};                      // number of errors reported
 int g_warnings{};                    // number of warnings reported
 std::string g_src_filename;          // command-line .SRC filename
 std::string g_hdr_filename;          // .H filename
-std::string hlp_fname;               // .HLP filename
+std::string g_hlp_filename;          // .HLP filename
 std::string src_cfname;              // current .SRC filename
 int format_exclude = 0;              // disable formatting at this col, 0 to never disable formatting
 std::FILE *swapfile;                 //
@@ -1941,11 +1941,11 @@ void read_src(std::string const &fname, hc::modes mode)
                     }
                     else if (strnicmp(cmd, "HlpFile=", 8) == 0)
                     {
-                        if (!hlp_fname.empty())
+                        if (!g_hlp_filename.empty())
                         {
                             warn(eoff, "Help Filename has already been defined.");
                         }
-                        hlp_fname = &cmd[8];
+                        g_hlp_filename = &cmd[8];
                     }
                     else if (strnicmp(cmd, "Version=", 8) == 0)
                     {
@@ -4275,7 +4275,7 @@ void compiler::compile()
     {
         error(0, "No .H file defined.  (Use \"~HdrFile=\")");
     }
-    if (hlp_fname.empty())
+    if (g_hlp_filename.empty())
     {
         error(0, "No .HLP file defined.  (Use \"~HlpFile=\")");
     }
@@ -4310,7 +4310,7 @@ void compiler::compile()
     }
     if (!g_errors)
     {
-        write_help(hlp_fname.c_str());
+        write_help(g_hlp_filename.c_str());
     }
 
     if (m_options.show_stats)
