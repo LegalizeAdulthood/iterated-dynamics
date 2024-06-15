@@ -250,7 +250,7 @@ std::ostream &operator<<(std::ostream &str, CONTENT const &content)
         << "Source Line: " << content.srcline << '\n';
 }
 
-std::ostream &operator<<(std::ostream &str, PAGE const &page)
+std::ostream &operator<<(std::ostream &str, const PAGE &page)
 {
     return str << "Offset: " << page.offset << ", Length: " << page.length << ", Margin: " << page.margin;
 }
@@ -262,7 +262,7 @@ std::ostream &operator<<(std::ostream &str, const TOPIC &topic)
         << "Title Len: " << topic.title_len << '\n'
         << "Title: <" << topic.title << ">\n"
         << "Num Page: " << topic.num_page << '\n';
-    for (PAGE const &page : topic.page)
+    for (const PAGE &page : topic.page)
     {
         str << "    " << page << '\n';
     }
@@ -495,9 +495,9 @@ int add_link(LINK &l)
 }
 
 
-int add_page(TOPIC &t, PAGE const *p)
+int add_page(TOPIC &t, const PAGE &p)
 {
-    t.page.push_back(*p);
+    t.page.push_back(p);
     return t.num_page++;
 }
 
@@ -2781,7 +2781,7 @@ void add_page_break(TOPIC &t, int margin, char const *text, char const *start, c
     p.offset = (unsigned)(start - text);
     p.length = (unsigned)(curr - start);
     p.margin = margin;
-    add_page(t, &p);
+    add_page(t, p);
 
     if (g_max_links < num_links)
     {
@@ -3494,7 +3494,7 @@ void _write_help(std::FILE *file)
         // write offset, length and starting margin for each page
 
         putw(tp.num_page, file);
-        for (PAGE const &p : tp.page)
+        for (const PAGE &p : tp.page)
         {
             putw(p.offset, file);
             putw(p.length, file);
