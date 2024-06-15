@@ -8,6 +8,7 @@
 
 #include "help_source.h"
 #include "html_processor.h"
+#include "messages.h"
 
 #include <port.h>
 #include <id_io.h>
@@ -72,10 +73,6 @@ std::string const DEFAULT_HTML_FNAME = "index.rst";
 char const *const TEMP_FNAME = "hc.tmp";
 char const *const SWAP_FNAME = "hcswap.tmp";
 
-int const MAX_ERRORS = (25);            // stop after this many errors
-int const MAX_WARNINGS = (25);          // stop after this many warnings
-                                        // 0 = never stop
-
 char const *const INDEX_LABEL       = "HELP_INDEX";
 
 int const BUFFER_SIZE = (1024*1024);    // 1 MB
@@ -100,7 +97,6 @@ std::vector<LABEL> g_labels;         //
 std::vector<LABEL> g_private_labels; //
 std::vector<LINK> g_all_links;       //
 std::vector<CONTENT> g_contents;     // the table-of-contents
-bool g_quiet_mode{};                 // true if "/Q" option used
 int g_max_pages{};                   // max. pages in any topic
 int g_max_links{};                   // max. links on any page
 int g_num_doc_pages{};               // total number of pages in document
@@ -108,8 +104,6 @@ std::FILE *g_src_file{};             // .SRC file
 int g_src_line{};                    // .SRC line number (used for errors)
 int g_src_col{};                     // .SRC column.
 int g_version{-1};                   // help file version
-int g_errors{};                      // number of errors reported
-int g_warnings{};                    // number of warnings reported
 std::string g_src_filename;          // command-line .SRC filename
 std::string g_hdr_filename;          // .H filename
 std::string g_hlp_filename;          // .HLP filename
@@ -230,111 +224,6 @@ std::ostream &operator<<(std::ostream &str, const TOPIC &topic)
 
     return str;
 }
-
-/*
- * error/warning/message reporting functions.
- */
-
-
-void report_errors()
-{
-    std::printf("\n");
-    std::printf("Compiler Status:\n");
-    std::printf("%8d Error%c\n",       g_errors, (g_errors == 1)   ? ' ' : 's');
-    std::printf("%8d Warning%c\n",     g_warnings, (g_warnings == 1) ? ' ' : 's');
-}
-
-
-void print_msg(char const *type, int lnum, char const *format, std::va_list arg)
-{
-    if (type != nullptr)
-    {
-        std::printf("   %s", type);
-        if (lnum > 0)
-        {
-            std::printf(" %s %d", g_current_src_filename.c_str(), lnum);
-        }
-        std::printf(": ");
-    }
-    vprintf(format, arg);
-    std::printf("\n");
-    std::fflush(stdout);
-}
-
-void fatal_msg(int diff, char const *format, ...)
-{
-    std::va_list arg;
-    va_start(arg, format);
-
-    print_msg("Fatal", g_src_line-diff, format, arg);
-    va_end(arg);
-
-    if (g_errors || g_warnings)
-    {
-        report_errors();
-    }
-
-    exit(g_errors + 1);
-}
-
-
-void error_msg(int diff, char const *format, ...)
-{
-    std::va_list arg;
-    va_start(arg, format);
-
-    print_msg("Error", g_src_line-diff, format, arg);
-    va_end(arg);
-
-    if (++g_errors >= MAX_ERRORS)
-    {
-        fatal_msg(0, "Too many errors!");
-    }
-}
-
-
-void warn_msg(int diff, char const *format, ...)
-{
-    std::va_list arg;
-    va_start(arg, format);
-
-    print_msg("Warning", g_src_line-diff, format, arg);
-    va_end(arg);
-
-    if (++g_warnings >= MAX_WARNINGS)
-    {
-        fatal_msg(0, "Too many warnings!");
-    }
-}
-
-
-void notice_msg(char const *format, ...)
-{
-    std::va_list arg;
-    va_start(arg, format);
-    print_msg("Note", g_src_line, format, arg);
-    va_end(arg);
-}
-
-
-void msg_msg(char const *format, ...)
-{
-    std::va_list arg;
-
-    if (g_quiet_mode)
-    {
-        return;
-    }
-    va_start(arg, format);
-    print_msg(nullptr, 0, format, arg);
-    va_end(arg);
-}
-
-void show_line(unsigned int line)
-{
-    std::printf("[%04d] ", line);
-}
-
 
 /*
  * store-topic-text-to-disk stuff.
