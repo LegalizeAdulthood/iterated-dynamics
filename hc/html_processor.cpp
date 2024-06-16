@@ -65,7 +65,7 @@ void html_processor::write_index_html()
         throw std::runtime_error("First content block doesn't contain DocContent.");
     }
 
-    const TOPIC &toc_topic = g_topics[toc.topic_num[0]];
+    const TOPIC &toc_topic = g_src.topics[toc.topic_num[0]];
     std::ofstream str(g_html_output_dir + "/index.rst");
     str << ".. toctree::\n";
     char const *text = toc_topic.get_topic_text();
@@ -110,7 +110,7 @@ void html_processor::write_content(const CONTENT &c)
 {
     for (int i = 0; i < c.num_topic; ++i)
     {
-        const TOPIC &t = g_topics[c.topic_num[i]];
+        const TOPIC &t = g_src.topics[c.topic_num[i]];
         if (t.title == DOCCONTENTS_TITLE)
         {
             continue;
@@ -192,7 +192,7 @@ void html_processor::write_topic(const TOPIC &t)
                 int const link_topic_num = g_src.all_links[link_num].topic_num;
                 data += 3*sizeof(int);
                 std::string const link_text(":doc:`" + std::string(data, width) +
-                    " <" + rst_name(g_topics[link_topic_num].title) + ">`");
+                    " <" + rst_name(g_src.topics[link_topic_num].title) + ">`");
                 if (!nl(static_cast<int>(link_text.length())) && !spaces.empty())
                 {
                     str << spaces;

@@ -47,7 +47,6 @@ struct Include
 
 HelpSource g_src;
 
-std::vector<TOPIC> g_topics;              //
 std::vector<LABEL> g_labels;              //
 std::vector<LABEL> g_private_labels;      //
 std::FILE *g_swap_file{};                 //
@@ -77,7 +76,7 @@ void CONTENT::label_topic(int ctr)
 {
     if (LABEL *lbl = find_label(topic_name[ctr].c_str()))
     {
-        if (g_topics[lbl->topic_num].flags & TF_DATA)
+        if (g_src.topics[lbl->topic_num].flags & TF_DATA)
         {
             g_current_src_filename = srcfile;
             g_src_line = srcline;
@@ -87,14 +86,14 @@ void CONTENT::label_topic(int ctr)
         else
         {
             topic_num[ctr] = lbl->topic_num;
-            if (g_topics[lbl->topic_num].flags & TF_IN_DOC)
+            if (g_src.topics[lbl->topic_num].flags & TF_IN_DOC)
             {
                 warn(0, "Topic \"%s\" appears in document more than once.",
-                    g_topics[lbl->topic_num].title.c_str());
+                    g_src.topics[lbl->topic_num].title.c_str());
             }
             else
             {
-                g_topics[lbl->topic_num].flags |= TF_IN_DOC;
+                g_src.topics[lbl->topic_num].flags |= TF_IN_DOC;
             }
         }
     }
@@ -120,14 +119,14 @@ void CONTENT::content_topic(int ctr)
     else
     {
         topic_num[ctr] = t;
-        if (g_topics[t].flags & TF_IN_DOC)
+        if (g_src.topics[t].flags & TF_IN_DOC)
         {
             warn(0, "Topic \"%s\" appears in document more than once.",
-                g_topics[t].title.c_str());
+                g_src.topics[t].title.c_str());
         }
         else
         {
-            g_topics[t].flags |= TF_IN_DOC;
+            g_src.topics[t].flags |= TF_IN_DOC;
         }
     }
 }
@@ -147,7 +146,7 @@ void LINK::link_topic()
     {
         topic_num = t;
         topic_off = 0;
-        doc_page = (g_topics[t].flags & TF_IN_DOC) ? 0 : -1;
+        doc_page = (g_src.topics[t].flags & TF_IN_DOC) ? 0 : -1;
     }
 }
 
@@ -155,7 +154,7 @@ void LINK::link_label()
 {
     if (LABEL *lbl = find_label(name.c_str()))
     {
-        if (g_topics[lbl->topic_num].flags & TF_DATA)
+        if (g_src.topics[lbl->topic_num].flags & TF_DATA)
         {
             g_current_src_filename = srcfile;
             g_src_line = srcline;
@@ -166,7 +165,7 @@ void LINK::link_label()
         {
             topic_num = lbl->topic_num;
             topic_off = lbl->topic_off;
-            doc_page  = (g_topics[lbl->topic_num].flags & TF_IN_DOC) ? 0 : -1;
+            doc_page  = (g_src.topics[lbl->topic_num].flags & TF_IN_DOC) ? 0 : -1;
         }
     }
     else
@@ -317,10 +316,10 @@ int find_topic_title(char const *title)
         len -= 2;
     }
 
-    for (int t = 0; t < static_cast<int>(g_topics.size()); t++)
+    for (int t = 0; t < static_cast<int>(g_src.topics.size()); t++)
     {
-        if ((int) g_topics[t].title.length() == len
-            && strnicmp(title, g_topics[t].title.c_str(), len) == 0)
+        if ((int) g_src.topics[t].title.length() == len
+            && strnicmp(title, g_src.topics[t].title.c_str(), len) == 0)
         {
             return t;
         }
@@ -340,8 +339,8 @@ int HelpSource::add_link(LINK &l)
 
 int add_topic(const TOPIC &t)
 {
-    g_topics.push_back(t);
-    return static_cast<int>(g_topics.size() - 1);
+    g_src.topics.push_back(t);
+    return static_cast<int>(g_src.topics.size() - 1);
 }
 
 int add_label(const LABEL &l)
@@ -1317,7 +1316,7 @@ HelpSource read_src(std::string const &fname, modes mode)
             {
                 end_topic(t);
             }
-            if (g_topics.empty())
+            if (g_src.topics.empty())
             {
                 warn(0, ".SRC file has no topics.");
             }
@@ -1466,7 +1465,7 @@ HelpSource read_src(std::string const &fname, modes mode)
                     }
 
                     lbl.name      = data;
-                    lbl.topic_num = static_cast<int>(g_topics.size());
+                    lbl.topic_num = static_cast<int>(g_src.topics.size());
                     lbl.topic_off = 0;
                     lbl.doc_page  = -1;
                     add_label(lbl);
@@ -1747,7 +1746,7 @@ HelpSource read_src(std::string const &fname, modes mode)
                         }
 
                         lbl.name      = label_name;
-                        lbl.topic_num = static_cast<int>(g_topics.size());
+                        lbl.topic_num = static_cast<int>(g_src.topics.size());
                         lbl.topic_off = (unsigned)(g_curr - &g_buffer[0]);
                         lbl.doc_page  = -1;
                         add_label(lbl);

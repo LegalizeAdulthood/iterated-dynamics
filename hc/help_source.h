@@ -128,11 +128,11 @@ struct HelpSource
 
     std::vector<CONTENT> contents;
     std::vector<LINK> all_links;
+    std::vector<TOPIC> topics;
 };
 
 extern HelpSource g_src;
 
-extern std::vector<TOPIC> g_topics;
 extern std::vector<LABEL> g_labels;
 extern std::vector<LABEL> g_private_labels;
 extern std::FILE *g_swap_file;

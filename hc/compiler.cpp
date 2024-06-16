@@ -237,7 +237,7 @@ void paginate_online()    // paginate the text for on-line help
 
     msg("Paginating online help.");
 
-    for (TOPIC &t : g_topics)
+    for (TOPIC &t : g_src.topics)
     {
         if (t.flags & TF_DATA)
         {
@@ -477,7 +477,7 @@ void set_hot_link_doc_page()
             }
             else
             {
-                l.doc_page = g_topics[t].doc_page;
+                l.doc_page = g_src.topics[t].doc_page;
             }
             break;
 
@@ -514,7 +514,7 @@ void set_content_doc_page()
 
     int tnum = find_topic_title(DOCCONTENTS_TITLE);
     assert(tnum >= 0);
-    TOPIC &t = g_topics[tnum];
+    TOPIC &t = g_src.topics[tnum];
 
     char *base = t.get_topic_text();
 
@@ -557,8 +557,8 @@ bool pd_get_info(int cmd, PD_INFO *pd, void *context)
         {
             return false;
         }
-        pd->curr = g_topics[c->topic_num[info.topic_num]].get_topic_text();
-        pd->len = g_topics[c->topic_num[info.topic_num]].text_len;
+        pd->curr = g_src.topics[c->topic_num[info.topic_num]].get_topic_text();
+        pd->len = g_src.topics[c->topic_num[info.topic_num]].text_len;
         return true;
 
     case PD_GET_LINK_PAGE:
@@ -581,7 +581,7 @@ bool pd_get_info(int cmd, PD_INFO *pd, void *context)
 
     case PD_RELEASE_TOPIC:
         c = &g_src.contents[info.content_num];
-        g_topics[c->topic_num[info.topic_num]].release_topic_text(false);
+        g_src.topics[c->topic_num[info.topic_num]].release_topic_text(false);
         return true;
 
     default:
@@ -619,7 +619,7 @@ bool paginate_doc_output(int cmd, PD_INFO *pd, void *context)
         return true;
 
     case PD_SET_TOPIC_PAGE:
-        g_topics[info->c->topic_num[info->topic_num]].doc_page = pd->page_num;
+        g_src.topics[info->c->topic_num[info->topic_num]].doc_page = pd->page_num;
         return true;
 
     case PD_PERIODIC:
@@ -804,7 +804,7 @@ void calc_offsets()    // calc file offset to each topic
                                     sizeof(int) +                       // num_label
                                     sizeof(int) +                       // num_contents
                                     sizeof(int) +                       // num_doc_pages
-                                    g_topics.size() * sizeof(long) +    // offsets to each topic
+                                    g_src.topics.size() * sizeof(long) +    // offsets to each topic
                                     g_labels.size() * 2 * sizeof(int)); // topic_num/topic_off for all public labels
 
     offset = std::accumulate(g_src.contents.begin(), g_src.contents.end(), offset, [](long offset, const CONTENT &cp) {
@@ -817,7 +817,7 @@ void calc_offsets()    // calc file offset to each topic
             cp.num_topic*sizeof(int);   // topic numbers
     });
 
-    for (TOPIC &tp : g_topics)
+    for (TOPIC &tp : g_src.topics)
     {
         tp.offset = offset;
         offset += (long)sizeof(int) +       // topic flags
@@ -875,7 +875,7 @@ void _write_help(std::FILE *file)
 
     // write num_topic, num_label and num_contents
 
-    putw(static_cast<int>(g_topics.size()), file);
+    putw(static_cast<int>(g_src.topics.size()), file);
     putw(static_cast<int>(g_labels.size()), file);
     putw(static_cast<int>(g_src.contents.size()), file);
 
@@ -884,7 +884,7 @@ void _write_help(std::FILE *file)
     putw(g_num_doc_pages, file);
 
     // write the offsets to each topic
-    for (const TOPIC &t : g_topics)
+    for (const TOPIC &t : g_src.topics)
     {
         std::fwrite(&t.offset, sizeof(long), 1, file);
     }
@@ -914,7 +914,7 @@ void _write_help(std::FILE *file)
     }
 
     // write topics
-    for (TOPIC &tp : g_topics)
+    for (TOPIC &tp : g_src.topics)
     {
         // write the topics flags
         putw(tp.flags, file);
@@ -1142,7 +1142,7 @@ void report_memory()
     long          // bytes in active data structure
         dead = 0; // bytes in unused data structure
 
-    for (const TOPIC &t : g_topics)
+    for (const TOPIC &t : g_src.topics)
     {
         data   += sizeof(TOPIC);
         bytes_in_strings += t.title_len;
@@ -1210,14 +1210,14 @@ void report_memory()
 void report_stats()
 {
     int  pages = 0;
-    for (const TOPIC &t : g_topics)
+    for (const TOPIC &t : g_src.topics)
     {
         pages += t.num_page;
     }
 
     std::printf("\n");
     std::printf("Statistics:\n");
-    std::printf("%8d Topics\n", static_cast<int>(g_topics.size()));
+    std::printf("%8d Topics\n", static_cast<int>(g_src.topics.size()));
     std::printf("%8d Links\n", static_cast<int>(g_src.all_links.size()));
     std::printf("%8d Labels\n", static_cast<int>(g_labels.size()));
     std::printf("%8d Private labels\n", static_cast<int>(g_private_labels.size()));
@@ -1624,7 +1624,7 @@ void compiler::paginate_html_document()
 
     msg("Paginating HTML.");
 
-    for (TOPIC &t : g_topics)
+    for (TOPIC &t : g_src.topics)
     {
         if (t.flags & TF_DATA)
         {
