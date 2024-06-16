@@ -1290,11 +1290,11 @@ void add_hlp_to_exe(char const *hlp_fname, char const *exe_fname)
     for (int count = 0; count < len;)
     {
         size = (int) std::min((long)BUFFER_SIZE, len-count);
-        if (read(hlp, &g_buffer[0], size) != size)
+        if (read(hlp, g_src.buffer.data(), size) != size)
         {
             throw std::system_error(errno, std::system_category(), "add_hlp_to_exe failed read3");
         }
-        if (write(exe, &g_buffer[0], size) != size)
+        if (write(exe, g_src.buffer.data(), size) != size)
         {
             throw std::system_error(errno, std::system_category(), "add_hlp_to_exe failed write");
         }
@@ -1404,7 +1404,7 @@ int compiler::process()
 {
     std::printf("HC - " ID_PROGRAM_NAME " Help Compiler.\n\n");
 
-    g_buffer.resize(BUFFER_SIZE);
+    g_src.buffer.resize(BUFFER_SIZE);
 
     switch (m_options.mode)
     {

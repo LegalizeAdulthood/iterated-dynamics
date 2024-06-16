@@ -48,7 +48,6 @@ struct Include
 
 HelpSource g_src;
 
-std::vector<char> g_buffer;               // buffer to/from swap file
 char *g_curr{};                           // current position in the buffer
 int g_max_links{};                        // max. links on any page
 std::FILE *g_src_file{};                  // .SRC file
@@ -181,7 +180,7 @@ void TOPIC::alloc_topic_text(unsigned size)
     text = g_src.swap_pos;
     g_src.swap_pos += size;
     std::fseek(g_src.swap_file, text, SEEK_SET);
-    std::fwrite(&g_buffer[0], 1, text_len, g_src.swap_file);
+    std::fwrite(g_src.buffer.data(), 1, text_len, g_src.swap_file);
 }
 
 int TOPIC::add_page(const PAGE &p)
@@ -207,13 +206,13 @@ void TOPIC::add_page_break(int margin, char const *text, char const *start, char
 char *TOPIC::get_topic_text()
 {
     read_topic_text();
-    return g_buffer.data();
+    return g_src.buffer.data();
 }
 
 const char *TOPIC::get_topic_text() const
 {
     read_topic_text();
-    return g_buffer.data();
+    return g_src.buffer.data();
 }
 
 void TOPIC::release_topic_text(bool save) const
@@ -221,7 +220,7 @@ void TOPIC::release_topic_text(bool save) const
     if (save)
     {
         std::fseek(g_src.swap_file, text, SEEK_SET);
-        std::fwrite(&g_buffer[0], 1, text_len, g_src.swap_file);
+        std::fwrite(g_src.buffer.data(), 1, text_len, g_src.swap_file);
     }
 }
 
@@ -232,13 +231,13 @@ void TOPIC::start(char const *text, int len)
     title.assign(text, len);
     doc_page = -1;
     num_page = 0;
-    g_curr = &g_buffer[0];
+    g_curr = g_src.buffer.data();
 }
 
 void TOPIC::read_topic_text() const
 {
     std::fseek(g_src.swap_file, text, SEEK_SET);
-    if (std::fread(&g_buffer[0], 1, text_len, g_src.swap_file) != text_len)
+    if (std::fread(g_src.buffer.data(), 1, text_len, g_src.swap_file) != text_len)
     {
         throw std::system_error(errno, std::system_category(), "get_topic_text failed fread");
     }
@@ -248,7 +247,7 @@ void check_buffer(char const *curr, unsigned off, char const *buffer);
 
 inline void check_buffer(unsigned off)
 {
-    check_buffer(g_curr, off, &g_buffer[0]);
+    check_buffer(g_curr, off, g_src.buffer.data());
 }
 
 #if defined(_WIN32)
@@ -650,7 +649,7 @@ void process_doc_contents(char * (*format_toc)(char *buffer, CONTENT &c))
     t.doc_page  = -1;
     t.num_page  = 0;
 
-    g_curr = &g_buffer[0];
+    g_curr = g_src.buffer.data();
 
     CONTENT c{};
     c.flags = 0;
@@ -771,7 +770,7 @@ void process_doc_contents(char * (*format_toc)(char *buffer, CONTENT &c))
         check_buffer(0);
     }
 
-    t.alloc_topic_text((unsigned)(g_curr - &g_buffer[0]));
+    t.alloc_topic_text((unsigned)(g_curr - g_src.buffer.data()));
     g_src.add_topic(t);
 }
 
@@ -800,7 +799,7 @@ void process_doc_contents(modes mode)
                 {
                     *ptr++ = '.';
                 }
-                c.page_num_pos = (unsigned) ((ptr - 3) - &g_buffer[0]);
+                c.page_num_pos = (unsigned) ((ptr - 3) - g_src.buffer.data());
                 return ptr;
             });
     }
@@ -1168,7 +1167,7 @@ void process_bininc()
 
 void end_topic(TOPIC &t)
 {
-    t.alloc_topic_text((unsigned)(g_curr - &g_buffer[0]));
+    t.alloc_topic_text((unsigned)(g_curr - g_src.buffer.data()));
     g_src.add_topic(t);
 }
 
@@ -1287,7 +1286,7 @@ void read_src(std::string const &fname, modes mode)
 
     in_topic = false;
 
-    g_curr = &g_buffer[0];
+    g_curr = g_src.buffer.data();
 
     while (true)
     {
@@ -1741,7 +1740,7 @@ void read_src(std::string const &fname, modes mode)
 
                         lbl.name      = label_name;
                         lbl.topic_num = static_cast<int>(g_src.topics.size());
-                        lbl.topic_off = (unsigned)(g_curr - &g_buffer[0]);
+                        lbl.topic_off = (unsigned)(g_curr - g_src.buffer.data());
                         lbl.doc_page  = -1;
                         g_src.add_label(lbl);
                     }

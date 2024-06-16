@@ -137,11 +137,11 @@ struct HelpSource
     std::vector<LABEL> private_labels;
     std::FILE *swap_file{};
     long swap_pos{};
+    std::vector<char> buffer;               // buffer to/from swap file
 };
 
 extern HelpSource g_src;
 
-extern std::vector<char> g_buffer;
 extern char *g_curr;
 extern int g_max_links;
 extern std::string g_src_filename;
