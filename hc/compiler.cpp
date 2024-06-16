@@ -860,7 +860,7 @@ void _write_help(std::FILE *file)
     // write max_pages & max_links
 
     putw(g_max_pages, file);
-    putw(g_max_links, file);
+    putw(g_src.max_links, file);
 
     // write num_topic, num_label and num_contents
 

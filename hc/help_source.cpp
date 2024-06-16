@@ -48,7 +48,6 @@ struct Include
 
 HelpSource g_src;
 
-int g_max_links{};                        // max. links on any page
 std::FILE *g_src_file{};                  // .SRC file
 int g_src_col{};                          // .SRC column.
 bool g_compress_spaces{};                 //
@@ -196,9 +195,9 @@ void TOPIC::add_page_break(int margin, char const *text, char const *start, char
     p.margin = margin;
     add_page(p);
 
-    if (g_max_links < num_links)
+    if (g_src.max_links < num_links)
     {
-        g_max_links = num_links;
+        g_src.max_links = num_links;
     }
 }
 
