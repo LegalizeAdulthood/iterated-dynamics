@@ -1375,7 +1375,7 @@ void delete_hlp_from_exe(char const *exe_fname)
     }
 }
 
-compiler::compiler(const compiler_options &options) :
+compiler::compiler(const Options &options) :
     m_options(options)
 {
     g_quiet_mode = m_options.quiet_mode;

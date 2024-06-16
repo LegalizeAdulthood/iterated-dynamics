@@ -4,9 +4,9 @@
 
 namespace hc {
 
-compiler_options parse_options(int argc, char **argv)
+Options parse_options(int argc, char **argv)
 {
-    compiler_options result{};
+    Options result{};
     for (int i = 1; i < argc; ++i)
     {
         std::string arg{argv[i]};

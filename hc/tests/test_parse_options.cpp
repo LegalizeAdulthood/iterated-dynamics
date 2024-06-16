@@ -44,7 +44,7 @@ protected:
 
     std::vector<std::string> m_args;
     std::vector<char *> m_argv;
-    hc::compiler_options m_options;
+    hc::Options m_options;
 };
 
 void TestParseCompilerOptions::parse_options(const std::initializer_list<const char *> &args)

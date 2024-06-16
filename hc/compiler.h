@@ -8,7 +8,7 @@
 namespace hc
 {
 
-struct compiler_options
+struct Options
 {
     modes mode{modes::NONE};
     std::string fname1;
@@ -21,12 +21,12 @@ struct compiler_options
     std::string output_dir;
 };
 
-compiler_options parse_options(int argc, char **argv);
+Options parse_options(int argc, char **argv);
 
 class compiler
 {
 public:
-    compiler(const compiler_options &options);
+    compiler(const Options &options);
     ~compiler();
 
     int process();
@@ -40,7 +40,7 @@ private:
     void paginate_html_document();
     void print_html_document(std::string const &output_filename);
 
-    compiler_options m_options;
+    Options m_options;
 };
 
 } // namespace hc
