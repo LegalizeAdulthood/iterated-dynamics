@@ -1,5 +1,7 @@
 #pragma once
 
+#include "modes.h"
+
 #include <string>
 #include <vector>
 
@@ -9,7 +11,7 @@ namespace hc
 constexpr int MAX_CONTENT_TOPIC{10};
 constexpr const char *DOCCONTENTS_TITLE{"DocContent"};
 constexpr char const *INDEX_LABEL{"HELP_INDEX"};
-
+constexpr int BUFFER_SIZE{1024 * 1024}; // 1 MB
 
 // values for CONTENT.flags
 enum
@@ -129,8 +131,14 @@ extern long g_swap_pos;
 extern std::vector<char> g_buffer;
 extern char *g_curr;
 extern int g_max_links;
+extern std::string g_src_filename;
+extern std::string g_hdr_filename;
+extern std::string g_hlp_filename;
+extern int g_version;
+extern std::vector<std::string> g_include_paths;
 
 LABEL *find_label(char const *name);
 int find_topic_title(char const *title);
+void read_src(std::string const &fname, modes mode);
 
-}
+} // namespace hc

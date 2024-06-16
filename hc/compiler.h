@@ -1,21 +1,12 @@
 #pragma once
 
+#include "modes.h"
+
 #include <string>
 #include <vector>
 
 namespace hc
 {
-
-enum class modes
-{
-    NONE = 0,
-    COMPILE,
-    PRINT,
-    APPEND,
-    DELETE,
-    HTML,
-    ASCII_DOC
-};
 
 struct compiler_options
 {
