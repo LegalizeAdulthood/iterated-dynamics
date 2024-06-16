@@ -48,7 +48,6 @@ struct Include
 
 HelpSource g_src;
 
-char *g_curr{};                           // current position in the buffer
 int g_max_links{};                        // max. links on any page
 std::FILE *g_src_file{};                  // .SRC file
 int g_src_col{};                          // .SRC column.
@@ -231,7 +230,7 @@ void TOPIC::start(char const *text, int len)
     title.assign(text, len);
     doc_page = -1;
     num_page = 0;
-    g_curr = g_src.buffer.data();
+    g_src.curr = g_src.buffer.data();
 }
 
 void TOPIC::read_topic_text() const
@@ -247,7 +246,7 @@ void check_buffer(char const *curr, unsigned off, char const *buffer);
 
 inline void check_buffer(unsigned off)
 {
-    check_buffer(g_curr, off, g_src.buffer.data());
+    check_buffer(g_src.curr, off, g_src.buffer.data());
 }
 
 #if defined(_WIN32)
@@ -612,14 +611,14 @@ void put_spaces(int how_many)
             how_many = 255;
         }
 
-        *g_curr++ = CMD_SPACE;
-        *g_curr++ = (BYTE)how_many;
+        *g_src.curr++ = CMD_SPACE;
+        *g_src.curr++ = (BYTE)how_many;
     }
     else
     {
         while (how_many-- > 0)
         {
-            *g_curr++ = ' ';
+            *g_src.curr++ = ' ';
         }
     }
 }
@@ -649,7 +648,7 @@ void process_doc_contents(char * (*format_toc)(char *buffer, CONTENT &c))
     t.doc_page  = -1;
     t.num_page  = 0;
 
-    g_curr = g_src.buffer.data();
+    g_src.curr = g_src.buffer.data();
 
     CONTENT c{};
     c.flags = 0;
@@ -712,7 +711,7 @@ void process_doc_contents(char * (*format_toc)(char *buffer, CONTENT &c))
             }
 
             // now, make the entry in the buffer
-            g_curr = format_toc(g_curr, c);
+            g_src.curr = format_toc(g_src.curr, c);
 
             while (!last)
             {
@@ -764,13 +763,13 @@ void process_doc_contents(char * (*format_toc)(char *buffer, CONTENT &c))
         }
         else
         {
-            *g_curr++ = ch;
+            *g_src.curr++ = ch;
         }
 
         check_buffer(0);
     }
 
-    t.alloc_topic_text((unsigned)(g_curr - g_src.buffer.data()));
+    t.alloc_topic_text((unsigned)(g_src.curr - g_src.buffer.data()));
     g_src.add_topic(t);
 }
 
@@ -898,12 +897,12 @@ int parse_link()   // returns length of link or 0 on error
     {
         check_buffer(1+3*sizeof(int)+len+1);
         int const lnum = g_src.add_link(l);
-        *g_curr++ = CMD_LINK;
-        setint(g_curr, lnum);
-        g_curr += 3*sizeof(int);
-        std::memcpy(g_curr, ptr, len);
-        g_curr += len;
-        *g_curr++ = CMD_LINK;
+        *g_src.curr++ = CMD_LINK;
+        setint(g_src.curr, lnum);
+        g_src.curr += 3*sizeof(int);
+        std::memcpy(g_src.curr, ptr, len);
+        g_src.curr += len;
+        *g_src.curr++ = CMD_LINK;
         return len;
     }
 
@@ -951,7 +950,7 @@ int create_table()
     bool done = false;
 
     first_link = static_cast<int>(g_src.all_links.size());
-    table_start = g_curr;
+    table_start = g_src.curr;
     count = 0;
 
     // first, read all the links in the table
@@ -981,8 +980,8 @@ int create_table()
                 throw std::runtime_error("Table is too large.");
             }
             len = parse_link();
-            g_curr = table_start;   // reset to the start...
-            title.push_back(std::string(g_curr+3*sizeof(int)+1, len+1));
+            g_src.curr = table_start;   // reset to the start...
+            title.push_back(std::string(g_src.curr+3*sizeof(int)+1, len+1));
             if (len >= width)
             {
                 warn(1, "Link is too long; truncating.");
@@ -1058,19 +1057,19 @@ int create_table()
             }
 
             len = static_cast<int>(title[lnum].length());
-            *g_curr++ = CMD_LINK;
-            setint(g_curr, first_link+lnum);
-            g_curr += 3*sizeof(int);
-            std::memcpy(g_curr, title[lnum].c_str(), len);
-            g_curr += len;
-            *g_curr++ = CMD_LINK;
+            *g_src.curr++ = CMD_LINK;
+            setint(g_src.curr, first_link+lnum);
+            g_src.curr += 3*sizeof(int);
+            std::memcpy(g_src.curr, title[lnum].c_str(), len);
+            g_src.curr += len;
+            *g_src.curr++ = CMD_LINK;
 
             if (c < cols-1)
             {
                 put_spaces(width-len);
             }
         }
-        *g_curr++ = '\n';
+        *g_src.curr++ = '\n';
     }
 
     return 1;
@@ -1155,19 +1154,19 @@ void process_bininc()
 
     check_buffer((unsigned)len);
 
-    if (read(handle, g_curr, (unsigned)len) != len)
+    if (read(handle, g_src.curr, (unsigned)len) != len)
     {
         throw std::system_error(errno, std::system_category(), "process_bininc failed read");
     }
 
-    g_curr += (unsigned)len;
+    g_src.curr += (unsigned)len;
 
     close(handle);
 }
 
 void end_topic(TOPIC &t)
 {
-    t.alloc_topic_text((unsigned)(g_curr - g_src.buffer.data()));
+    t.alloc_topic_text((unsigned)(g_src.curr - g_src.buffer.data()));
     g_src.add_topic(t);
 }
 
@@ -1186,15 +1185,15 @@ bool end_of_sentence(char const *ptr)  // true if ptr is at the end of a sentenc
     return *ptr == '.' || *ptr == '?' || *ptr == '!';
 }
 
-void add_blank_for_split()   // add space at g_curr for merging two lines
+void add_blank_for_split()   // add space at g_src.curr for merging two lines
 {
-    if (!is_hyphen(g_curr-1))     // no spaces if it's a hyphen
+    if (!is_hyphen(g_src.curr-1))     // no spaces if it's a hyphen
     {
-        if (end_of_sentence(g_curr-1))
+        if (end_of_sentence(g_src.curr-1))
         {
-            *g_curr++ = ' ';    // two spaces at end of a sentence
+            *g_src.curr++ = ' ';    // two spaces at end of a sentence
         }
-        *g_curr++ = ' ';
+        *g_src.curr++ = ' ';
     }
 }
 
@@ -1208,9 +1207,9 @@ void put_a_char(int ch, const TOPIC &t)
     {
         if ((ch&0xFF) <= MAX_CMD)
         {
-            *g_curr++ = CMD_LITERAL;
+            *g_src.curr++ = CMD_LITERAL;
         }
-        *g_curr++ = ch;
+        *g_src.curr++ = ch;
     }
 }
 
@@ -1286,7 +1285,7 @@ void read_src(std::string const &fname, modes mode)
 
     in_topic = false;
 
-    g_curr = g_src.buffer.data();
+    g_src.curr = g_src.buffer.data();
 
     while (true)
     {
@@ -1664,9 +1663,9 @@ void read_src(std::string const &fname, modes mode)
                     check_command_length(eoff, 2);
                     if (in_para)
                     {
-                        *g_curr++ = '\n';    // finish off current paragraph
+                        *g_src.curr++ = '\n';    // finish off current paragraph
                     }
-                    *g_curr++ = CMD_FF;
+                    *g_src.curr++ = CMD_FF;
                     state = STATES::S_Start;
                     in_para = false;
                     num_spaces = 0;
@@ -1676,16 +1675,16 @@ void read_src(std::string const &fname, modes mode)
                     check_command_length(eoff, 5);
                     if (in_para)
                     {
-                        *g_curr++ = '\n';    // finish off current paragraph
+                        *g_src.curr++ = '\n';    // finish off current paragraph
                     }
                     if (!g_xonline)
                     {
-                        *g_curr++ = CMD_XONLINE;
+                        *g_src.curr++ = CMD_XONLINE;
                     }
-                    *g_curr++ = CMD_FF;
+                    *g_src.curr++ = CMD_FF;
                     if (!g_xonline)
                     {
-                        *g_curr++ = CMD_XONLINE;
+                        *g_src.curr++ = CMD_XONLINE;
                     }
                     state = STATES::S_Start;
                     in_para = false;
@@ -1696,16 +1695,16 @@ void read_src(std::string const &fname, modes mode)
                     check_command_length(eoff, 8);
                     if (in_para)
                     {
-                        *g_curr++ = '\n';    // finish off current paragraph
+                        *g_src.curr++ = '\n';    // finish off current paragraph
                     }
                     if (!g_xdoc)
                     {
-                        *g_curr++ = CMD_XDOC;
+                        *g_src.curr++ = CMD_XDOC;
                     }
-                    *g_curr++ = CMD_FF;
+                    *g_src.curr++ = CMD_FF;
                     if (!g_xdoc)
                     {
-                        *g_curr++ = CMD_XDOC;
+                        *g_src.curr++ = CMD_XDOC;
                     }
                     state = STATES::S_Start;
                     in_para = false;
@@ -1740,7 +1739,7 @@ void read_src(std::string const &fname, modes mode)
 
                         lbl.name      = label_name;
                         lbl.topic_num = static_cast<int>(g_src.topics.size());
-                        lbl.topic_off = (unsigned)(g_curr - g_src.buffer.data());
+                        lbl.topic_off = (unsigned)(g_src.curr - g_src.buffer.data());
                         lbl.doc_page  = -1;
                         g_src.add_label(lbl);
                     }
@@ -1749,7 +1748,7 @@ void read_src(std::string const &fname, modes mode)
                 {
                     if (in_para)
                     {
-                        *g_curr++ = '\n';  // finish off current paragraph
+                        *g_src.curr++ = '\n';  // finish off current paragraph
                         in_para = false;
                         num_spaces = 0;
                         state = STATES::S_Start;
@@ -1822,7 +1821,7 @@ void read_src(std::string const &fname, modes mode)
                         {
                             if (in_para)
                             {
-                                *g_curr++ = '\n';    // finish off current paragraph
+                                *g_src.curr++ = '\n';    // finish off current paragraph
                             }
                             in_para = false;
                             formatting = false;
@@ -1847,7 +1846,7 @@ void read_src(std::string const &fname, modes mode)
 
                         if (g_xonline)
                         {
-                            *g_curr++ = CMD_XONLINE;
+                            *g_src.curr++ = CMD_XONLINE;
                             g_xonline = false;
                         }
                         else
@@ -1860,7 +1859,7 @@ void read_src(std::string const &fname, modes mode)
                         check_command_length(eoff, 7);
                         if (!g_xonline)
                         {
-                            *g_curr++ = CMD_XONLINE;
+                            *g_src.curr++ = CMD_XONLINE;
                             g_xonline = true;
                         }
                         else
@@ -1880,7 +1879,7 @@ void read_src(std::string const &fname, modes mode)
                         check_command_length(eoff, 4);
                         if (g_xdoc)
                         {
-                            *g_curr++ = CMD_XDOC;
+                            *g_src.curr++ = CMD_XDOC;
                             g_xdoc = false;
                         }
                         else
@@ -1893,7 +1892,7 @@ void read_src(std::string const &fname, modes mode)
                         check_command_length(eoff, 4);
                         if (!g_xdoc)
                         {
-                            *g_curr++ = CMD_XDOC;
+                            *g_src.curr++ = CMD_XDOC;
                             g_xdoc = true;
                         }
                         else
@@ -1916,7 +1915,7 @@ void read_src(std::string const &fname, modes mode)
                             centering = true;
                             if (in_para)
                             {
-                                *g_curr++ = '\n';
+                                *g_src.curr++ = '\n';
                                 in_para = false;
                             }
                             state = STATES::S_Start;  // for centering FSM
@@ -2025,11 +2024,11 @@ void read_src(std::string const &fname, modes mode)
                     }
                     else if ((ch&0xFF) == '\n')
                     {
-                        *g_curr++ = ch;    // no need to center blank lines.
+                        *g_src.curr++ = ch;    // no need to center blank lines.
                     }
                     else
                     {
-                        *g_curr++ = CMD_CENTER;
+                        *g_src.curr++ = CMD_CENTER;
                         state = STATES::S_Line;
                         again = true;
                     }
@@ -2058,7 +2057,7 @@ void read_src(std::string const &fname, modes mode)
                 case STATES::S_Start:
                     if ((ch&0xFF) == '\n')
                     {
-                        *g_curr++ = ch;
+                        *g_src.curr++ = ch;
                     }
                     else
                     {
@@ -2084,10 +2083,10 @@ void read_src(std::string const &fname, modes mode)
                         }
                         else
                         {
-                            *g_curr++ = CMD_PARA;
-                            *g_curr++ = (char)num_spaces;
-                            *g_curr++ = (char)num_spaces;
-                            margin_pos = g_curr - 1;
+                            *g_src.curr++ = CMD_PARA;
+                            *g_src.curr++ = (char)num_spaces;
+                            *g_src.curr++ = (char)num_spaces;
+                            margin_pos = g_src.curr - 1;
                             state = STATES::S_FirstLine;
                             again = true;
                             in_para = true;
@@ -2103,7 +2102,7 @@ void read_src(std::string const &fname, modes mode)
                     }
                     else if (ch == ('\n'|0x100))    // force end of para ?
                     {
-                        *g_curr++ = '\n';
+                        *g_src.curr++ = '\n';
                         in_para = false;
                         state = STATES::S_Start;
                     }
@@ -2138,8 +2137,8 @@ void read_src(std::string const &fname, modes mode)
                     }
                     else if ((ch&0xFF) == '\n') // a blank line means end of a para
                     {
-                        *g_curr++ = '\n';   // end the para
-                        *g_curr++ = '\n';   // for the blank line
+                        *g_src.curr++ = '\n';   // end the para
+                        *g_src.curr++ = '\n';   // for the blank line
                         in_para = false;
                         state = STATES::S_Start;
                     }
@@ -2147,7 +2146,7 @@ void read_src(std::string const &fname, modes mode)
                     {
                         if (lformat_exclude > 0 && num_spaces >= lformat_exclude)
                         {
-                            *g_curr++ = '\n';
+                            *g_src.curr++ = '\n';
                             in_para = false;
                             put_spaces(num_spaces);
                             num_spaces = 0;
@@ -2173,7 +2172,7 @@ void read_src(std::string const &fname, modes mode)
                     }
                     else if (ch == ('\n' | 0x100))    // force end of para ?
                     {
-                        *g_curr++ = '\n';
+                        *g_src.curr++ = '\n';
                         in_para = false;
                         state = STATES::S_Start;
                     }
@@ -2208,8 +2207,8 @@ void read_src(std::string const &fname, modes mode)
                     }
                     else if ((ch&0xFF) == '\n') // a blank line means end of a para
                     {
-                        *g_curr++ = '\n';   // end the para
-                        *g_curr++ = '\n';   // for the blank line
+                        *g_src.curr++ = '\n';   // end the para
+                        *g_src.curr++ = '\n';   // for the blank line
                         in_para = false;
                         state = STATES::S_Start;
                     }
@@ -2217,7 +2216,7 @@ void read_src(std::string const &fname, modes mode)
                     {
                         if (num_spaces != margin)
                         {
-                            *g_curr++ = '\n';
+                            *g_src.curr++ = '\n';
                             in_para = false;
                             state = STATES::S_StartFirstLine;  // with current num_spaces
                         }
