@@ -235,13 +235,6 @@ void TOPIC::read_topic_text() const
     }
 }
 
-void check_buffer(char const *curr, unsigned off, char const *buffer);
-
-inline void check_buffer(unsigned off)
-{
-    check_buffer(g_src.curr, off, g_src.buffer.data());
-}
-
 #if defined(_WIN32)
 #pragma warning(push)
 #pragma warning(disable : 4311)
@@ -256,6 +249,11 @@ void check_buffer(char const *curr, unsigned int off, char const *buffer)
 #if defined(_WIN32)
 #pragma warning(pop)
 #endif
+
+inline void check_buffer(unsigned off)
+{
+    check_buffer(g_src.curr, off, g_src.buffer.data());
+}
 
 LABEL *HelpSource::find_label(char const *name)
 {
