@@ -21,7 +21,7 @@ struct compiler_options
     std::string output_dir;
 };
 
-compiler_options parse_compiler_options(int argc, char **argv);
+compiler_options parse_options(int argc, char **argv);
 
 class compiler
 {

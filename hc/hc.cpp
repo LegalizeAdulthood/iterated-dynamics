@@ -6,7 +6,7 @@ int main(int argc, char *argv[])
 {
     try
     {
-        return hc::compiler(hc::parse_compiler_options(argc, argv)).process();
+        return hc::compiler(hc::parse_options(argc, argv)).process();
     }
     catch (const std::exception &bang)
     {

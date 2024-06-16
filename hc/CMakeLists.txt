@@ -9,7 +9,7 @@ add_library(libhc
     html_processor.cpp
     messages.h
     messages.cpp
-    parse_compiler_options.cpp
+    parse_options.cpp
 )
 target_compile_definitions(libhc PRIVATE ${ID_TARGET_DEFINITIONS} $<$<CONFIG:Debug>:${ID_TARGET_DEFINITIONS_DEBUG}>)
 target_include_directories(libhc PUBLIC .)

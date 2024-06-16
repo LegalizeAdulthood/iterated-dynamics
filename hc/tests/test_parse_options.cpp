@@ -54,7 +54,7 @@ void TestParseCompilerOptions::parse_options(const std::initializer_list<const c
     m_args[0] = "hc.exe";
     std::copy(args.begin(), args.end(), m_args.begin() + 1);
     std::transform(m_args.begin(), m_args.end(), m_argv.begin(), [](std::string &arg) { return arg.data(); });
-    m_options = hc::parse_compiler_options(static_cast<int>(m_argv.size()), m_argv.data());
+    m_options = hc::parse_options(static_cast<int>(m_argv.size()), m_argv.data());
 }
 
 TEST_F(TestParseCompilerOptions, modeCompile)

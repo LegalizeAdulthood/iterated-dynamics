@@ -4,7 +4,7 @@ find_package(GTest CONFIG REQUIRED)
 
 add_executable(test-hc
     test_help_source.cpp
-    test_parse_compiler_options.cpp
+    test_parse_options.cpp
 )
 source_group("CMake Scripts" REGULAR_EXPRESSION ".*\\.cmake$")
 source_group("CMake Templates" REGULAR_EXPRESSION ".*\\.in$")

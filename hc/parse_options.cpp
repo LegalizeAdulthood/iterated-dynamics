@@ -4,7 +4,7 @@
 
 namespace hc {
 
-compiler_options parse_compiler_options(int argc, char **argv)
+compiler_options parse_options(int argc, char **argv)
 {
     compiler_options result{};
     for (int i = 1; i < argc; ++i)
