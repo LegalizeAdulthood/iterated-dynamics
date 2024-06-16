@@ -2,29 +2,19 @@
 
 #include "options.h"
 
-#include <string>
+#include <memory>
 
 namespace hc
 {
 
-class compiler
+class Compiler
 {
 public:
-    compiler(const Options &options);
-    ~compiler();
+    virtual ~Compiler() = default;
 
-    int process();
-
-private:
-    void read_source_file();
-    void usage();
-    void compile();
-    void print();
-    void render_html();
-    void paginate_html_document();
-    void print_html_document(const std::string &output_filename);
-
-    Options m_options;
+    virtual int process() = 0;
 };
+
+std::shared_ptr<Compiler> create_compiler(const Options &options);
 
 } // namespace hc

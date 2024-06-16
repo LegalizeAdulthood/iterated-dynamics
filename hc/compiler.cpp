@@ -1375,6 +1375,26 @@ void delete_hlp_from_exe(char const *exe_fname)
     }
 }
 
+class compiler : public Compiler
+{
+public:
+    compiler(const Options &options);
+    ~compiler();
+
+    int process();
+
+private:
+    void read_source_file();
+    void usage();
+    void compile();
+    void print();
+    void render_html();
+    void paginate_html_document();
+    void print_html_document(const std::string &output_filename);
+
+    Options m_options;
+};
+
 compiler::compiler(const Options &options) :
     m_options(options)
 {
@@ -1734,6 +1754,11 @@ void compiler::paginate_html_document()
 void compiler::print_html_document(std::string const &fname)
 {
     html_processor(fname).process();
+}
+
+std::shared_ptr<Compiler> create_compiler(const Options &options)
+{
+    return std::make_shared<compiler>(options);
 }
 
 } // namespace hc
