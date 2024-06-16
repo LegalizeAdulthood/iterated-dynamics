@@ -48,15 +48,14 @@ struct Include
 
 HelpSource g_src;
 
-static std::FILE *s_src_file{};           // .SRC file
-static int s_src_col{};                   // .SRC column.
-static bool s_compress_spaces{};          //
-static char s_cmd[128]{};                 // holds the current command
-static int s_format_exclude{};            // disable formatting at this col, 0 to never disable formatting
-static bool s_xonline{};                  //
-static bool s_xdoc{};                     //
-std::vector<Include> g_include_stack;     //
-
+static std::FILE *s_src_file{};              // .SRC file
+static int s_src_col{};                      // .SRC column.
+static bool s_compress_spaces{};             //
+static char s_cmd[128]{};                    // holds the current command
+static int s_format_exclude{};               // disable formatting at this col, 0 to never disable formatting
+static bool s_xonline{};                     //
+static bool s_xdoc{};                        //
+static std::vector<Include> s_include_stack; //
 static int s_read_char_buff[READ_CHAR_BUFF_SIZE];
 static int s_read_char_buff_pos{-1};
 static int s_read_char_sp{};
@@ -1287,15 +1286,15 @@ void read_src(std::string const &fname, modes mode)
 
         if (ch == -1)     // EOF?
         {
-            if (!g_include_stack.empty())
+            if (!s_include_stack.empty())
             {
                 std::fclose(s_src_file);
-                const Include &top{g_include_stack.back()};
+                const Include &top{s_include_stack.back()};
                 g_current_src_filename = top.fname;
                 s_src_file = top.file;
                 g_src_line = top.line;
                 s_src_col = top.col;
-                g_include_stack.pop_back();
+                s_include_stack.pop_back();
                 continue;
             }
             if (in_topic)  // if we're in a topic, finish it
@@ -1602,7 +1601,7 @@ void read_src(std::string const &fname, modes mode)
                         top.file = s_src_file;
                         top.line = g_src_line;
                         top.col  = s_src_col;
-                        g_include_stack.push_back(top);
+                        s_include_stack.push_back(top);
                         s_src_file = new_file;
                         g_current_src_filename = file_name;
                         g_src_line = 1;
