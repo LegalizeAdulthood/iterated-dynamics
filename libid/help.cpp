@@ -1223,8 +1223,8 @@ static bool print_doc_output(int cmd, PD_INFO *pd, void *context)
         info->margin = 0;
 
         std::memset(line, ' ', 81);
-        std::snprintf(buff, std::size(buff), ID_PROGRAM_NAME " Version %d.%01d%c", g_release/100, (g_release%100)/10,
-                ((g_release%10) ? '0'+(g_release%10) : ' '));
+        std::snprintf(buff, std::size(buff), ID_PROGRAM_NAME " Version %d.%d.%d", ID_VERSION_MAJOR,
+            ID_VERSION_MINOR, ID_VERSION_PATCH);
         std::memmove(line + ((width-(int)(std::strlen(buff))) / 2)-4, buff, std::strlen(buff));
 
         std::snprintf(buff, std::size(buff), "Page %d", pd->page_num);
