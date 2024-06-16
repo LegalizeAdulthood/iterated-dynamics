@@ -42,22 +42,13 @@ namespace fs = std::filesystem;
 #define MAXFILE _MAX_FNAME
 #define MAXEXT  _MAX_EXT
 
-
 #ifdef XFRACT
-
-#ifndef HAVESTRI
-extern int stricmp(char const *, char const *);
-extern int strnicmp(char const *, char const *, int);
-#endif
 extern int filelength(int);
-
-#else
+#endif
 
 #if defined(_WIN32)
 // disable unsafe CRT warnings
 #pragma warning(disable: 4996)
-#endif
-
 #endif
 
 namespace hc

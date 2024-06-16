@@ -14,6 +14,20 @@
 #include <stdexcept>
 #include <system_error>
 
+#ifdef XFRACT
+#ifndef HAVESTRI
+extern int stricmp(char const *, char const *);
+extern int strnicmp(char const *, char const *, int);
+#endif
+extern int filelength(int);
+#endif
+
+#if defined(_WIN32)
+// disable unsafe CRT warnings
+#pragma warning(disable: 4996)
+#endif
+
+
 namespace hc
 {
 
