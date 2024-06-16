@@ -1496,7 +1496,7 @@ void compiler::compile()
 
     read_source_file();
 
-    if (g_hdr_filename.empty())
+    if (g_src.hdr_filename.empty())
     {
         error(0, "No .H file defined.  (Use \"~HdrFile=\")");
     }
@@ -1531,7 +1531,7 @@ void compiler::compile()
     }
     if (!g_errors)
     {
-        write_hdr(g_hdr_filename.c_str());
+        write_hdr(g_src.hdr_filename.c_str());
     }
     if (!g_errors)
     {

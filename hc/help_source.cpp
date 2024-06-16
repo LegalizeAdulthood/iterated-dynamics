@@ -57,7 +57,6 @@ std::vector<std::string> g_include_paths; //
 bool g_xonline{};                         //
 bool g_xdoc{};                            //
 std::vector<Include> g_include_stack;     //
-std::string g_hdr_filename;               // .H filename
 std::string g_hlp_filename;               // .HLP filename
 int g_version{-1};                        // help file version
 
@@ -1626,11 +1625,11 @@ void read_src(std::string const &fname, modes mode)
                 {
                     if (strnicmp(g_cmd, "HdrFile=", 8) == 0)
                     {
-                        if (!g_hdr_filename.empty())
+                        if (!g_src.hdr_filename.empty())
                         {
                             warn(eoff, "Header Filename has already been defined.");
                         }
-                        g_hdr_filename = &g_cmd[8];
+                        g_src.hdr_filename = &g_cmd[8];
                     }
                     else if (strnicmp(g_cmd, "HlpFile=", 8) == 0)
                     {

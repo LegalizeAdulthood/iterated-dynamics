@@ -140,11 +140,11 @@ struct HelpSource
     std::vector<char> buffer;               // buffer to/from swap file
     char *curr{};                           // current position in the buffer
     int max_links{};                        // max. links on any page
+    std::string hdr_filename;               // .H filename
 };
 
 extern HelpSource g_src;
 
-extern std::string g_hdr_filename;
 extern std::string g_hlp_filename;
 extern int g_version;
 extern std::vector<std::string> g_include_paths;
