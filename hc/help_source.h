@@ -144,7 +144,6 @@ struct HelpSource
 
 extern HelpSource g_src;
 
-extern std::string g_src_filename;
 extern std::string g_hdr_filename;
 extern std::string g_hlp_filename;
 extern int g_version;

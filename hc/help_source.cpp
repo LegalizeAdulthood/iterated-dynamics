@@ -57,7 +57,6 @@ std::vector<std::string> g_include_paths; //
 bool g_xonline{};                         //
 bool g_xdoc{};                            //
 std::vector<Include> g_include_stack;     //
-std::string g_src_filename;               // command-line .SRC filename
 std::string g_hdr_filename;               // .H filename
 std::string g_hlp_filename;               // .HLP filename
 int g_version{-1};                        // help file version
