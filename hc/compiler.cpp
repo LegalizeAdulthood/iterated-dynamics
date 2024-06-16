@@ -192,6 +192,12 @@ private:
     void set_content_doc_page();
     void paginate_document();
     void write_hdr();
+    void calc_offsets();
+    void write_help();
+    void report_stats();
+    void add_hlp_to_exe();
+    void delete_hlp_from_exe();
+    void report_memory();
     void paginate_html_document();
     void print_html_document(const std::string &output_filename);
 
@@ -822,8 +828,7 @@ void compiler::write_hdr()
     }
 }
 
-
-void calc_offsets()    // calc file offset to each topic
+void compiler::calc_offsets()    // calc file offset to each topic
 {
     // NOTE: offsets do NOT include 6 bytes for signature & version!
     long offset = static_cast<long>(sizeof(int) +                       // max_pages
@@ -982,12 +987,10 @@ void _write_help(std::FILE *file)
 }
 
 
-void write_help(char const *fname)
+void compiler::write_help()
 {
-    std::FILE *hlp;
-
-    hlp = std::fopen(fname, "wb");
-
+    const char *fname{g_src.hlp_filename.c_str()};
+    std::FILE *hlp = std::fopen(fname, "wb");
     if (hlp == nullptr)
     {
         throw std::runtime_error("Cannot create .HLP file: \"" + std::string{fname} + "\".");
@@ -1160,7 +1163,7 @@ void print_document(char const *fname)
  */
 
 
-void report_memory()
+void compiler::report_memory()
 {
     long bytes_in_strings = 0;
     long // bytes in strings
@@ -1235,7 +1238,7 @@ void report_memory()
 }
 
 
-void report_stats()
+void compiler::report_stats()
 {
     int  pages = 0;
     for (const TOPIC &t : g_src.topics)
@@ -1260,8 +1263,11 @@ void report_stats()
  */
 
 
-void add_hlp_to_exe(char const *hlp_fname, char const *exe_fname)
+void compiler::add_hlp_to_exe()
 {
+    char const *hlp_fname{m_options.fname1.empty() ? DEFAULT_HLP_FNAME : m_options.fname1.c_str()};
+    char const *exe_fname{m_options.fname2.empty() ? DEFAULT_EXE_FNAME : m_options.fname2.c_str()};
+
     int exe;
     int // handles
         hlp;
@@ -1362,12 +1368,16 @@ void add_hlp_to_exe(char const *hlp_fname, char const *exe_fname)
 }
 
 
-void delete_hlp_from_exe(char const *exe_fname)
+void compiler::delete_hlp_from_exe()
 {
-    int   exe;   // file handle
+    if (!m_options.fname2.empty())
+    {
+        throw std::runtime_error("Unexpected argument \"" + m_options.fname2 + "\"");
+    }
+    const char *exe_fname{m_options.fname1.empty() ? DEFAULT_EXE_FNAME : m_options.fname1.c_str()};
     help_sig_info hs;
 
-    exe = open(exe_fname, O_RDWR|O_BINARY);
+    int exe = open(exe_fname, O_RDWR | O_BINARY);
     if (exe == -1)
     {
         throw std::runtime_error("Unable to open \"" + std::string{exe_fname} + "\"");
@@ -1440,16 +1450,11 @@ int compiler::process()
         break;
 
     case modes::APPEND:
-        add_hlp_to_exe(m_options.fname1.empty() ? DEFAULT_HLP_FNAME : m_options.fname1.c_str(),
-                       m_options.fname2.empty() ? DEFAULT_EXE_FNAME : m_options.fname2.c_str());
+        add_hlp_to_exe();
         break;
 
     case modes::DELETE:
-        if (!m_options.fname2.empty())
-        {
-            throw std::runtime_error("Unexpected argument \"" + m_options.fname2 + "\"");
-        }
-        delete_hlp_from_exe(m_options.fname1.empty() ? DEFAULT_EXE_FNAME : m_options.fname1.c_str());
+        delete_hlp_from_exe();
         break;
 
     case modes::HTML:
@@ -1553,7 +1558,7 @@ void compiler::compile()
     }
     if (!g_errors)
     {
-        write_help(g_src.hlp_filename.c_str());
+        write_help();
     }
 
     if (m_options.show_stats)
