@@ -135,11 +135,11 @@ struct HelpSource
     std::vector<TOPIC> topics;
     std::vector<LABEL> labels;
     std::vector<LABEL> private_labels;
+    std::FILE *swap_file{};
 };
 
 extern HelpSource g_src;
 
-extern std::FILE *g_swap_file;
 extern long g_swap_pos;
 extern std::vector<char> g_buffer;
 extern char *g_curr;
@@ -151,6 +151,6 @@ extern int g_version;
 extern std::vector<std::string> g_include_paths;
 
 int find_topic_title(char const *title);
-HelpSource read_src(std::string const &fname, modes mode);
+void read_src(std::string const &fname, modes mode);
 
 } // namespace hc

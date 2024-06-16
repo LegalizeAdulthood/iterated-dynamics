@@ -48,7 +48,6 @@ struct Include
 
 HelpSource g_src;
 
-std::FILE *g_swap_file{};                 //
 long g_swap_pos{};                        //
 std::vector<char> g_buffer;               // buffer to/from swap file
 char *g_curr{};                           // current position in the buffer
@@ -182,8 +181,8 @@ void TOPIC::alloc_topic_text(unsigned size)
     text_len = size;
     text = g_swap_pos;
     g_swap_pos += size;
-    std::fseek(g_swap_file, text, SEEK_SET);
-    std::fwrite(&g_buffer[0], 1, text_len, g_swap_file);
+    std::fseek(g_src.swap_file, text, SEEK_SET);
+    std::fwrite(&g_buffer[0], 1, text_len, g_src.swap_file);
 }
 
 int TOPIC::add_page(const PAGE &p)
@@ -222,8 +221,8 @@ void TOPIC::release_topic_text(bool save) const
 {
     if (save)
     {
-        std::fseek(g_swap_file, text, SEEK_SET);
-        std::fwrite(&g_buffer[0], 1, text_len, g_swap_file);
+        std::fseek(g_src.swap_file, text, SEEK_SET);
+        std::fwrite(&g_buffer[0], 1, text_len, g_src.swap_file);
     }
 }
 
@@ -239,8 +238,8 @@ void TOPIC::start(char const *text, int len)
 
 void TOPIC::read_topic_text() const
 {
-    std::fseek(g_swap_file, text, SEEK_SET);
-    if (std::fread(&g_buffer[0], 1, text_len, g_swap_file) != text_len)
+    std::fseek(g_src.swap_file, text, SEEK_SET);
+    if (std::fread(&g_buffer[0], 1, text_len, g_src.swap_file) != text_len)
     {
         throw std::system_error(errno, std::system_category(), "get_topic_text failed fread");
     }
@@ -1258,7 +1257,7 @@ std::FILE *open_include(std::string const &file_name)
     return result;
 }
 
-HelpSource read_src(std::string const &fname, modes mode)
+void read_src(std::string const &fname, modes mode)
 {
     int    ch;
     char  *ptr;
@@ -2312,7 +2311,6 @@ HelpSource read_src(std::string const &fname, modes mode)
     std::fclose(g_src_file);
 
     g_src_line = -1;
-    return g_src;
 }
 
 } // namespace hc

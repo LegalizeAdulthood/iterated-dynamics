@@ -1382,7 +1382,6 @@ private:
     void print_html_document(const std::string &output_filename);
 
     Options m_options;
-    HelpSource m_src;
 };
 
 compiler::compiler(const Options &options) :
@@ -1394,9 +1393,9 @@ compiler::compiler(const Options &options) :
 
 compiler::~compiler()
 {
-    if (g_swap_file != nullptr)
+    if (g_src.swap_file != nullptr)
     {
-        std::fclose(g_swap_file);
+        std::fclose(g_src.swap_file);
         std::remove(m_options.swappath.c_str());
     }
 }
@@ -1477,14 +1476,14 @@ void compiler::read_source_file()
 
     m_options.swappath += SWAP_FNAME;
 
-    g_swap_file = std::fopen(m_options.swappath.c_str(), "w+b");
-    if (g_swap_file == nullptr)
+    g_src.swap_file = std::fopen(m_options.swappath.c_str(), "w+b");
+    if (g_src.swap_file == nullptr)
     {
         throw std::runtime_error("Cannot create swap file \"" + m_options.swappath + "\"");
     }
     g_swap_pos = 0;
 
-    m_src = read_src(g_src_filename, m_options.mode);
+    read_src(g_src_filename, m_options.mode);
 }
 
 void compiler::compile()
@@ -1527,7 +1526,7 @@ void compiler::compile()
     }
     if (!g_errors)
     {
-        m_src.sort_labels();
+        g_src.sort_labels();
     }
     if (!g_errors)
     {
@@ -1589,7 +1588,7 @@ void compiler::render_html()
     }
     if (!g_errors)
     {
-        m_src.sort_labels();
+        g_src.sort_labels();
     }
     if (g_errors == 0)
     {
@@ -1603,7 +1602,7 @@ void compiler::render_html()
 
 void compiler::paginate_html_document()
 {
-    if (m_src.contents.empty())
+    if (g_src.contents.empty())
     {
         return;
     }
