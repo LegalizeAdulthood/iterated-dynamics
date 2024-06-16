@@ -41,7 +41,7 @@ void html_processor::write_index_html()
     const TOPIC &toc_topic = g_topics[toc.topic_num[0]];
     std::ofstream str(g_html_output_dir + "/index.rst");
     str << ".. toctree::\n";
-    char const *text = get_topic_text(toc_topic);
+    char const *text = toc_topic.get_topic_text();
     char const *curr = text;
     unsigned int len = toc_topic.text_len;
     while (len > 0)
@@ -98,7 +98,7 @@ void html_processor::write_topic(const TOPIC &t)
     std::string const filename = rst_name(t.title) + ".rst";
     msg("Writing %s", filename.c_str());
     std::ofstream str(g_html_output_dir + '/' + filename);
-    char const *text = get_topic_text(t);
+    char const *text = t.get_topic_text();
     char const *curr = text;
     unsigned int len = t.text_len;
     unsigned int column = 0;

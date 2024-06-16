@@ -100,6 +100,8 @@ struct TOPIC
     void alloc_topic_text(unsigned size);
     int add_page(const PAGE &p);
     void add_page_break(int margin, char const *text, char const *start, char const *curr, int num_links);
+    char *get_topic_text();
+    const char *get_topic_text() const;
 
     unsigned  flags;          // see #defines for TF_???
     int       doc_page;       // page number in document where topic starts
@@ -110,6 +112,9 @@ struct TOPIC
     unsigned  text_len;       // length of topic text
     long      text;           // topic text (all pages)
     long      offset;         // offset from start of file to topic
+
+private:
+    void read_topic_text() const;
 };
 
 extern bool g_quiet_mode;
@@ -127,7 +132,6 @@ void warn_msg(int diff, char const *format, ...);
 void notice_msg(char const *format, ...);
 void msg_msg(char const *format, ...);
 
-char *get_topic_text(const TOPIC &t);
 std::string rst_name(std::string const &content_name);
 
 }

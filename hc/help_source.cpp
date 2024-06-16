@@ -1,6 +1,8 @@
 #include "help_source.h"
 
 #include <cstdio>
+#include <stdexcept>
+#include <system_error>
 
 namespace hc
 {
@@ -31,6 +33,27 @@ void TOPIC::add_page_break(int margin, char const *text, char const *start, char
     if (g_max_links < num_links)
     {
         g_max_links = num_links;
+    }
+}
+
+char *TOPIC::get_topic_text()
+{
+    read_topic_text();
+    return g_buffer.data();
+}
+
+const char *TOPIC::get_topic_text() const
+{
+    read_topic_text();
+    return g_buffer.data();
+}
+
+void TOPIC::read_topic_text() const
+{
+    std::fseek(g_swap_file, text, SEEK_SET);
+    if (std::fread(&g_buffer[0], 1, text_len, g_swap_file) != text_len)
+    {
+        throw std::system_error(errno, std::system_category(), "get_topic_text failed fread");
     }
 }
 

@@ -166,7 +166,7 @@ std::ostream &operator<<(std::ostream &str, const TOPIC &topic)
         << "Offset: " << topic.offset << '\n'
         << "Tokens:\n";
 
-    char const *text = get_topic_text(topic);
+    char const *text = topic.get_topic_text();
     char const *curr = text;
     unsigned int len = topic.text_len;
 
@@ -228,17 +228,6 @@ std::ostream &operator<<(std::ostream &str, const TOPIC &topic)
 /*
  * store-topic-text-to-disk stuff.
  */
-
-
-char *get_topic_text(const TOPIC &t)
-{
-    std::fseek(g_swap_file, t.text, SEEK_SET);
-    if (std::fread(&g_buffer[0], 1, t.text_len, g_swap_file) != t.text_len)
-    {
-        throw std::system_error(errno, std::system_category(), "get_topic_text failed fread");
-    }
-    return &g_buffer[0];
-}
 
 
 void release_topic_text(const TOPIC &t, int save)
@@ -2546,7 +2535,7 @@ void paginate_online()    // paginate the text for on-line help
             continue;    // don't paginate data topics
         }
 
-        const char *text = get_topic_text(t);
+        const char *text = t.get_topic_text();
         const char *curr = text;
         unsigned int len = t.text_len;
 
@@ -2818,7 +2807,7 @@ void set_content_doc_page()
     assert(tnum >= 0);
     TOPIC &t = g_topics[tnum];
 
-    char *base = get_topic_text(t);
+    char *base = t.get_topic_text();
 
     for (const CONTENT &c : g_contents)
     {
@@ -2859,7 +2848,7 @@ bool pd_get_info(int cmd, PD_INFO *pd, void *context)
         {
             return false;
         }
-        pd->curr = get_topic_text(g_topics[c->topic_num[info.topic_num]]);
+        pd->curr = g_topics[c->topic_num[info.topic_num]].get_topic_text();
         pd->len = g_topics[c->topic_num[info.topic_num]].text_len;
         return true;
 
@@ -3228,7 +3217,7 @@ void _write_help(std::FILE *file)
     }
 
     // write topics
-    for (const TOPIC &tp : g_topics)
+    for (TOPIC &tp : g_topics)
     {
         // write the topics flags
         putw(tp.flags, file);
@@ -3250,7 +3239,7 @@ void _write_help(std::FILE *file)
 
         // insert hot-link info & write the help text
 
-        text = get_topic_text(tp);
+        text = tp.get_topic_text();
 
         if (!(tp.flags & TF_DATA))     // don't process data topics...
         {
@@ -3939,7 +3928,7 @@ void compiler::paginate_html_document()
             continue;    // don't paginate data topics
         }
 
-        const char *text = get_topic_text(t);
+        const char *text = t.get_topic_text();
         const char *curr = text;
         unsigned int len = t.text_len;
 
