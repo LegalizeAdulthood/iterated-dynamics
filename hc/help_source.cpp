@@ -57,7 +57,6 @@ std::vector<std::string> g_include_paths; //
 bool g_xonline{};                         //
 bool g_xdoc{};                            //
 std::vector<Include> g_include_stack;     //
-int g_version{-1};                        // help file version
 
 static int s_read_char_buff[READ_CHAR_BUFF_SIZE];
 static int s_read_char_buff_pos{-1};
@@ -1640,11 +1639,11 @@ void read_src(std::string const &fname, modes mode)
                     }
                     else if (strnicmp(g_cmd, "Version=", 8) == 0)
                     {
-                        if (g_version != -1)   // an unlikely value
+                        if (g_src.version != -1)   // an unlikely value
                         {
                             warn(eoff, "Help version has already been defined");
                         }
-                        g_version = std::atoi(&g_cmd[8]);
+                        g_src.version = std::atoi(&g_cmd[8]);
                     }
                     else
                     {

@@ -694,7 +694,7 @@ void _write_hdr(char const *fname, std::FILE *file)
 
     std::fprintf(file, "/* current help file version */\n");
     std::fprintf(file, "\n");
-    std::fprintf(file, "#define %-32s %3d\n", "IDHELP_VERSION", g_version);
+    std::fprintf(file, "#define %-32s %3d\n", "IDHELP_VERSION", g_src.version);
     std::fprintf(file, "\n\n");
 
     std::fprintf(file, "/* labels */\n"
@@ -854,7 +854,7 @@ void _write_help(std::FILE *file)
     // write the signature and version
 
     hs.sig = HELP_SIG; // Edit line 17 of helpcom.h if this is a syntax error
-    hs.version = g_version;
+    hs.version = g_src.version;
 
     std::fwrite(&hs, sizeof(long)+sizeof(int), 1, file);
 
@@ -1504,7 +1504,7 @@ void compiler::compile()
     {
         error(0, "No .HLP file defined.  (Use \"~HlpFile=\")");
     }
-    if (g_version == -1)
+    if (g_src.version == -1)
     {
         warn(0, "No help version has been defined.  (Use \"~Version=\")");
     }

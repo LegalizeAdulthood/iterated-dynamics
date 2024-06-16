@@ -142,11 +142,11 @@ struct HelpSource
     int max_links{};                        // max. links on any page
     std::string hdr_filename;               // .H filename
     std::string hlp_filename;               // .HLP filename
+    int version{-1};                        // help file version
 };
 
 extern HelpSource g_src;
 
-extern int g_version;
 extern std::vector<std::string> g_include_paths;
 
 int find_topic_title(char const *title);
