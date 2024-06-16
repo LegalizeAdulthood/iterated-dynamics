@@ -230,16 +230,6 @@ std::ostream &operator<<(std::ostream &str, const TOPIC &topic)
  */
 
 
-void alloc_topic_text(TOPIC &t, unsigned size)
-{
-    t.text_len = size;
-    t.text = g_swap_pos;
-    g_swap_pos += size;
-    std::fseek(g_swap_file, t.text, SEEK_SET);
-    std::fwrite(&g_buffer[0], 1, t.text_len, g_swap_file);
-}
-
-
 char *get_topic_text(const TOPIC &t)
 {
     std::fseek(g_swap_file, t.text, SEEK_SET);
@@ -851,7 +841,7 @@ void process_doc_contents(hc::modes mode)
         check_buffer(0);
     }
 
-    alloc_topic_text(t, (unsigned)(g_curr - &g_buffer[0]));
+    t.alloc_topic_text((unsigned)(g_curr - &g_buffer[0]));
     add_topic(t);
 }
 
@@ -1236,7 +1226,7 @@ void start_topic(TOPIC &t, char const *title, int title_len)
 
 void end_topic(TOPIC &t)
 {
-    alloc_topic_text(t, (unsigned)(g_curr - &g_buffer[0]));
+    t.alloc_topic_text((unsigned)(g_curr - &g_buffer[0]));
     add_topic(t);
 }
 

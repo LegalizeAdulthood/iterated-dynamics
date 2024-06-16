@@ -4,6 +4,7 @@ add_library(libhc
     compiler.h
     compiler.cpp
     help_source.h
+    help_source.cpp
     html_processor.h
     html_processor.cpp
     messages.h

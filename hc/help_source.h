@@ -97,6 +97,8 @@ enum
 
 struct TOPIC
 {
+    void alloc_topic_text(unsigned size);
+
     unsigned  flags;          // see #defines for TF_???
     int       doc_page;       // page number in document where topic starts
     unsigned  title_len;      // length of title
@@ -112,6 +114,9 @@ extern bool g_quiet_mode;
 extern std::vector<CONTENT> g_contents;
 extern std::vector<LINK> g_all_links;
 extern std::vector<TOPIC> g_topics;
+extern long g_swap_pos;
+extern std::FILE *g_swap_file;
+extern std::vector<char> g_buffer;
 
 void show_line(unsigned int line);
 void error_msg(int diff, char const *format, ...);
