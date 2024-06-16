@@ -189,7 +189,7 @@ void html_processor::write_topic(const TOPIC &t)
             {
                 char const *data = &curr[1];
                 int const link_num = getint(data);
-                int const link_topic_num = g_all_links[link_num].topic_num;
+                int const link_topic_num = g_src.all_links[link_num].topic_num;
                 data += 3*sizeof(int);
                 std::string const link_text(":doc:`" + std::string(data, width) +
                     " <" + rst_name(g_topics[link_topic_num].title) + ">`");

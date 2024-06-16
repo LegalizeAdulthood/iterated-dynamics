@@ -47,7 +47,6 @@ struct Include
 
 HelpSource g_src;
 
-std::vector<LINK> g_all_links;            //
 std::vector<TOPIC> g_topics;              //
 std::vector<LABEL> g_labels;              //
 std::vector<LABEL> g_private_labels;      //
@@ -333,10 +332,10 @@ int find_topic_title(char const *title)
 /*
  * memory-allocation functions.
  */
-int add_link(LINK &l)
+int HelpSource::add_link(LINK &l)
 {
-    g_all_links.push_back(l);
-    return static_cast<int>(g_all_links.size() - 1);
+    all_links.push_back(l);
+    return static_cast<int>(all_links.size() - 1);
 }
 
 int add_topic(const TOPIC &t)
@@ -906,7 +905,7 @@ int parse_link()   // returns length of link or 0 on error
     if (!bad)
     {
         check_buffer(1+3*sizeof(int)+len+1);
-        int const lnum = add_link(l);
+        int const lnum = g_src.add_link(l);
         *g_curr++ = CMD_LINK;
         setint(g_curr, lnum);
         g_curr += 3*sizeof(int);
@@ -959,7 +958,7 @@ int create_table()
 
     bool done = false;
 
-    first_link = static_cast<int>(g_all_links.size());
+    first_link = static_cast<int>(g_src.all_links.size());
     table_start = g_curr;
     count = 0;
 
@@ -1061,7 +1060,7 @@ int create_table()
         {
             lnum = c*rows + r;
 
-            if (first_link+lnum >= static_cast<int>(g_all_links.size()))
+            if (first_link+lnum >= static_cast<int>(g_src.all_links.size()))
             {
                 break;
             }

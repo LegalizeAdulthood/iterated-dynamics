@@ -205,7 +205,7 @@ void make_hot_links()
      * Find topic_num and topic_off for all hot-links.  Also flag all hot-
      * links which will (probably) appear in the document.
      */
-    for (LINK &l : g_all_links)
+    for (LINK &l : g_src.all_links)
     {
         // name is the title of the topic
         if (l.type == link_types::LT_TOPIC)
@@ -462,7 +462,7 @@ void set_hot_link_doc_page()
     LABEL *lbl;
     int    t;
 
-    for (LINK &l : g_all_links)
+    for (LINK &l : g_src.all_links)
     {
         switch (l.type)
         {
@@ -563,7 +563,7 @@ bool pd_get_info(int cmd, PD_INFO *pd, void *context)
 
     case PD_GET_LINK_PAGE:
     {
-        const LINK &link = g_all_links[getint(pd->s)];
+        const LINK &link = g_src.all_links[getint(pd->s)];
         if (link.doc_page == -1)
         {
             if (info.link_dest_warn)
@@ -575,7 +575,7 @@ bool pd_get_info(int cmd, PD_INFO *pd, void *context)
             }
             return false;
         }
-        pd->i = g_all_links[getint(pd->s)].doc_page;
+        pd->i = g_src.all_links[getint(pd->s)].doc_page;
         return true;
     }
 
@@ -844,7 +844,7 @@ void insert_real_link_info(char *curr, unsigned int len)
 
         if (tok == token_types::TOK_LINK)
         {
-            const LINK &l = g_all_links[ getint(curr+1) ];
+            const LINK &l = g_src.all_links[ getint(curr+1) ];
             setint(curr+1, l.topic_num);
             setint(curr+1+sizeof(int), l.topic_off);
             setint(curr+1+2*sizeof(int), l.doc_page);
@@ -1153,13 +1153,13 @@ void report_memory()
         dead += static_cast<long>((pages.capacity() - pages.size()) * sizeof(PAGE));
     }
 
-    for (const LINK &l : g_all_links)
+    for (const LINK &l : g_src.all_links)
     {
         data += sizeof(LINK);
         bytes_in_strings += (long) l.name.length();
     }
 
-    dead += static_cast<long>((g_all_links.capacity() - g_all_links.size()) * sizeof(LINK));
+    dead += static_cast<long>((g_src.all_links.capacity() - g_src.all_links.size()) * sizeof(LINK));
 
     for (const LABEL &l : g_labels)
     {
@@ -1218,7 +1218,7 @@ void report_stats()
     std::printf("\n");
     std::printf("Statistics:\n");
     std::printf("%8d Topics\n", static_cast<int>(g_topics.size()));
-    std::printf("%8d Links\n", static_cast<int>(g_all_links.size()));
+    std::printf("%8d Links\n", static_cast<int>(g_src.all_links.size()));
     std::printf("%8d Labels\n", static_cast<int>(g_labels.size()));
     std::printf("%8d Private labels\n", static_cast<int>(g_private_labels.size()));
     std::printf("%8d Table of contents (DocContent) entries\n", static_cast<int>(g_src.contents.size()));

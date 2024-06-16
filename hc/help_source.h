@@ -124,13 +124,14 @@ private:
 struct HelpSource
 {
     int add_content(const CONTENT &c);
+    int add_link(LINK &l);
 
     std::vector<CONTENT> contents;
+    std::vector<LINK> all_links;
 };
 
 extern HelpSource g_src;
 
-extern std::vector<LINK> g_all_links;
 extern std::vector<TOPIC> g_topics;
 extern std::vector<LABEL> g_labels;
 extern std::vector<LABEL> g_private_labels;
