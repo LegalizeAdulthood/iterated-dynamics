@@ -8,6 +8,7 @@
 #include <id_io.h>
 #include <port.h>
 
+#include <algorithm>
 #include <cstdio>
 #include <cstdlib>
 #include <fcntl.h>
@@ -47,7 +48,6 @@ struct Include
 
 HelpSource g_src;
 
-std::vector<LABEL> g_private_labels;      //
 std::FILE *g_swap_file{};                 //
 long g_swap_pos{};                        //
 std::vector<char> g_buffer;               // buffer to/from swap file
@@ -73,7 +73,7 @@ static int s_read_char_sp{};
 
 void CONTENT::label_topic(int ctr)
 {
-    if (LABEL *lbl = find_label(topic_name[ctr].c_str()))
+    if (LABEL *lbl = g_src.find_label(topic_name[ctr].c_str()))
     {
         if (g_src.topics[lbl->topic_num].flags & TF_DATA)
         {
@@ -151,7 +151,7 @@ void LINK::link_topic()
 
 void LINK::link_label()
 {
-    if (LABEL *lbl = find_label(name.c_str()))
+    if (LABEL *lbl = g_src.find_label(name.c_str()))
     {
         if (g_src.topics[lbl->topic_num].flags & TF_DATA)
         {
@@ -268,30 +268,27 @@ void check_buffer(char const *curr, unsigned int off, char const *buffer)
 #pragma warning(pop)
 #endif
 
-LABEL *find_label(char const *name)
+LABEL *HelpSource::find_label(char const *name)
 {
-    if (*name == '@')
+    auto finder = [=](std::vector<LABEL> &collection) -> LABEL *
     {
-        for (LABEL &pl : g_private_labels)
+        for (LABEL &label : collection)
         {
-            if (name == pl.name)
+            if (name == label.name)
             {
-                return &pl;
+                return &label;
             }
         }
-    }
-    else
-    {
-        for (LABEL &l : g_src.labels)
-        {
-            if (name == l.name)
-            {
-                return &l;
-            }
-        }
-    }
+        return nullptr;
+    };
 
-    return nullptr;
+    return finder(name[0] == '@' ? private_labels : labels);
+}
+
+void HelpSource::sort_labels()
+{
+    std::sort(labels.begin(), labels.end());
+    std::sort(private_labels.begin(), private_labels.end());
 }
 
 int find_topic_title(char const *title)
@@ -346,8 +343,8 @@ int HelpSource::add_label(const LABEL &l)
 {
     if (l.name[0] == '@')    // if it's a private label...
     {
-        g_private_labels.push_back(l);
-        return static_cast<int>(g_private_labels.size() - 1);
+        private_labels.push_back(l);
+        return static_cast<int>(private_labels.size() - 1);
     }
 
     labels.push_back(l);
@@ -1444,7 +1441,7 @@ HelpSource read_src(std::string const &fname, modes mode)
                         continue;
                     }
 
-                    if (find_label(data) != nullptr)
+                    if (g_src.find_label(data) != nullptr)
                     {
                         error(eoff, "Label \"%s\" already exists", data);
                         continue;
@@ -1728,7 +1725,7 @@ HelpSource read_src(std::string const &fname, modes mode)
                     {
                         error(eoff, "Label \"%s\" contains illegal characters.", label_name);
                     }
-                    else if (find_label(label_name) != nullptr)
+                    else if (g_src.find_label(label_name) != nullptr)
                     {
                         error(eoff, "Label \"%s\" already exists", label_name);
                     }

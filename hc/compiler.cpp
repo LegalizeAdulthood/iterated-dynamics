@@ -428,7 +428,7 @@ LABEL *find_next_label_by_topic(int t)
     }
 
     LABEL *p = nullptr;
-    for (LABEL &pl : g_private_labels)
+    for (LABEL &pl : g_src.private_labels)
     {
         if (pl.topic_num == t && pl.doc_page == -1)
         {
@@ -482,7 +482,7 @@ void set_hot_link_doc_page()
             break;
 
         case link_types::LT_LABEL:
-            lbl = find_label(l.name.c_str());
+            lbl = g_src.find_label(l.name.c_str());
             if (lbl == nullptr)
             {
                 g_current_src_filename = l.srcfile;
@@ -655,17 +655,6 @@ void paginate_document()
 
     set_hot_link_doc_page();
     set_content_doc_page();
-}
-
-
-/*
- * label sorting stuff
- */
-
-void sort_labels()
-{
-    std::sort(g_src.labels.begin(), g_src.labels.end());
-    std::sort(g_private_labels.begin(), g_private_labels.end());
 }
 
 
@@ -1169,13 +1158,13 @@ void report_memory()
 
     dead += static_cast<long>((g_src.labels.capacity() - g_src.labels.size()) * sizeof(LABEL));
 
-    for (const LABEL &l : g_private_labels)
+    for (const LABEL &l : g_src.private_labels)
     {
         data   += sizeof(LABEL);
         bytes_in_strings += (long) l.name.length() + 1;
     }
 
-    dead += static_cast<long>((g_private_labels.capacity() - g_private_labels.size()) * sizeof(LABEL));
+    dead += static_cast<long>((g_src.private_labels.capacity() - g_src.private_labels.size()) * sizeof(LABEL));
 
     for (const CONTENT &c : g_src.contents)
     {
@@ -1220,7 +1209,7 @@ void report_stats()
     std::printf("%8d Topics\n", static_cast<int>(g_src.topics.size()));
     std::printf("%8d Links\n", static_cast<int>(g_src.all_links.size()));
     std::printf("%8d Labels\n", static_cast<int>(g_src.labels.size()));
-    std::printf("%8d Private labels\n", static_cast<int>(g_private_labels.size()));
+    std::printf("%8d Private labels\n", static_cast<int>(g_src.private_labels.size()));
     std::printf("%8d Table of contents (DocContent) entries\n", static_cast<int>(g_src.contents.size()));
     std::printf("%8d Online help pages\n", pages);
     std::printf("%8d Document pages\n", g_num_doc_pages);
@@ -1538,7 +1527,7 @@ void compiler::compile()
     }
     if (!g_errors)
     {
-        sort_labels();
+        m_src.sort_labels();
     }
     if (!g_errors)
     {
@@ -1600,7 +1589,7 @@ void compiler::render_html()
     }
     if (!g_errors)
     {
-        sort_labels();
+        m_src.sort_labels();
     }
     if (g_errors == 0)
     {

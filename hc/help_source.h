@@ -127,16 +127,18 @@ struct HelpSource
     int add_link(LINK &l);
     int add_topic(const TOPIC &t);
     int add_label(const LABEL &l);
+    LABEL *find_label(char const *name);
+    void sort_labels();
 
     std::vector<CONTENT> contents;
     std::vector<LINK> all_links;
     std::vector<TOPIC> topics;
     std::vector<LABEL> labels;
+    std::vector<LABEL> private_labels;
 };
 
 extern HelpSource g_src;
 
-extern std::vector<LABEL> g_private_labels;
 extern std::FILE *g_swap_file;
 extern long g_swap_pos;
 extern std::vector<char> g_buffer;
@@ -148,7 +150,6 @@ extern std::string g_hlp_filename;
 extern int g_version;
 extern std::vector<std::string> g_include_paths;
 
-LABEL *find_label(char const *name);
 int find_topic_title(char const *title);
 HelpSource read_src(std::string const &fname, modes mode);
 
