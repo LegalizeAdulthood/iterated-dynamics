@@ -648,7 +648,7 @@ bool get_next_item()
     return last;
 }
 
-void process_doc_contents(modes mode)
+void process_doc_contents(char * (*format_toc)(char *buffer, CONTENT &c))
 {
     TOPIC t;
     t.flags     = 0;
@@ -694,7 +694,6 @@ void process_doc_contents(modes mode)
                 error(0, "Unexpected end of DocContent entry.");
                 continue;
             }
-            int const indent = std::atoi(g_cmd);
 
             bool last = get_next_item();
 
@@ -721,24 +720,7 @@ void process_doc_contents(modes mode)
             }
 
             // now, make the entry in the buffer
-            if (mode == modes::HTML)
-            {
-                std::sprintf(g_curr, "%s", rst_name(c.name).c_str());
-                char *ptr = g_curr + (int) std::strlen(g_curr);
-                c.page_num_pos = 0U;
-                g_curr = ptr;
-            }
-            else
-            {
-                std::sprintf(g_curr, "%-5s %*.0s%s", c.id.c_str(), indent*2, "", c.name.c_str());
-                char *ptr = g_curr + (int) std::strlen(g_curr);
-                while ((ptr-g_curr) < PAGE_WIDTH-10)
-                {
-                    *ptr++ = '.';
-                }
-                c.page_num_pos = (unsigned)((ptr-3) - &g_buffer[0]);
-                g_curr = ptr;
-            }
+            g_curr = format_toc(g_curr, c);
 
             while (!last)
             {
@@ -800,6 +782,36 @@ void process_doc_contents(modes mode)
     add_topic(t);
 }
 
+void process_doc_contents(modes mode)
+{
+
+    if (mode == modes::HTML)
+    {
+        process_doc_contents(
+            [](char *buffer, CONTENT &c)
+            {
+                std::sprintf(buffer, "%s", rst_name(c.name).c_str());
+                c.page_num_pos = 0U;
+                return buffer + (int) std::strlen(buffer);
+            });
+    }
+    else
+    {
+        process_doc_contents(
+            [](char *buffer, CONTENT &c)
+            {
+                const int indent = std::atoi(g_cmd);
+                std::sprintf(buffer, "%-5s %*.0s%s", c.id.c_str(), indent * 2, "", c.name.c_str());
+                char *ptr = buffer + (int) std::strlen(buffer);
+                while ((ptr - buffer) < PAGE_WIDTH - 10)
+                {
+                    *ptr++ = '.';
+                }
+                c.page_num_pos = (unsigned) ((ptr - 3) - &g_buffer[0]);
+                return ptr;
+            });
+    }
+}
 
 int parse_link()   // returns length of link or 0 on error
 {
