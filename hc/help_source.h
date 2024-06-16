@@ -124,4 +124,7 @@ extern std::vector<char> g_buffer;
 extern char *g_curr;
 extern int g_max_links;
 
+LABEL *find_label(char const *name);
+int find_topic_title(char const *title);
+
 }

@@ -87,4 +87,63 @@ void TOPIC::read_topic_text() const
     }
 }
 
+LABEL *find_label(char const *name)
+{
+    if (*name == '@')
+    {
+        for (LABEL &pl : g_private_labels)
+        {
+            if (name == pl.name)
+            {
+                return &pl;
+            }
+        }
+    }
+    else
+    {
+        for (LABEL &l : g_labels)
+        {
+            if (name == l.name)
+            {
+                return &l;
+            }
+        }
+    }
+
+    return nullptr;
+}
+
+int find_topic_title(char const *title)
+{
+    while (*title == ' ')
+    {
+        ++title;
+    }
+
+    int len = (int) std::strlen(title) - 1;
+    while (title[len] == ' ' && len > 0)
+    {
+        --len;
+    }
+
+    ++len;
+
+    if (len > 2 && title[0] == '\"' && title[len-1] == '\"')
+    {
+        ++title;
+        len -= 2;
+    }
+
+    for (int t = 0; t < static_cast<int>(g_topics.size()); t++)
+    {
+        if ((int) g_topics[t].title.length() == len
+            && strnicmp(title, g_topics[t].title.c_str(), len) == 0)
+        {
+            return t;
+        }
+    }
+
+    return -1;   // not found
+}
+
 }
