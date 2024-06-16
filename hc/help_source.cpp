@@ -52,7 +52,7 @@ static std::FILE *s_src_file{};           // .SRC file
 static int s_src_col{};                   // .SRC column.
 static bool s_compress_spaces{};          //
 static char s_cmd[128]{};                 // holds the current command
-int g_format_exclude{};                   // disable formatting at this col, 0 to never disable formatting
+static int s_format_exclude{};            // disable formatting at this col, 0 to never disable formatting
 bool g_xonline{};                         //
 bool g_xdoc{};                            //
 std::vector<Include> g_include_stack;     //
@@ -1262,7 +1262,7 @@ void read_src(std::string const &fname, modes mode)
     int    margin     = 0;
     bool in_para = false;
     bool centering = false;
-    int    lformat_exclude = g_format_exclude;
+    int    lformat_exclude = s_format_exclude;
 
     g_xonline = false;
     g_xdoc = false;
@@ -1404,7 +1404,7 @@ void read_src(std::string const &fname, modes mode)
                     num_spaces = 0;
                     g_xonline = false;
                     g_xdoc = false;
-                    lformat_exclude = g_format_exclude;
+                    lformat_exclude = s_format_exclude;
                     s_compress_spaces = true;
                     continue;
                 }
@@ -1463,7 +1463,7 @@ void read_src(std::string const &fname, modes mode)
                     num_spaces = 0;
                     g_xonline = false;
                     g_xdoc = false;
-                    lformat_exclude = g_format_exclude;
+                    lformat_exclude = s_format_exclude;
                     s_compress_spaces = false;
                     continue;
                 }
@@ -1511,9 +1511,9 @@ void read_src(std::string const &fname, modes mode)
                         }
                         else
                         {
-                            if (g_format_exclude > 0)
+                            if (s_format_exclude > 0)
                             {
-                                g_format_exclude = -g_format_exclude;
+                                s_format_exclude = -s_format_exclude;
                             }
                             else
                             {
@@ -1537,9 +1537,9 @@ void read_src(std::string const &fname, modes mode)
                         }
                         else
                         {
-                            if (g_format_exclude < 0)
+                            if (s_format_exclude < 0)
                             {
-                                g_format_exclude = -g_format_exclude;
+                                s_format_exclude = -s_format_exclude;
                             }
                             else
                             {
@@ -1558,16 +1558,16 @@ void read_src(std::string const &fname, modes mode)
                             }
                             else
                             {
-                                g_format_exclude = 0;
+                                s_format_exclude = 0;
                             }
                         }
                         else if (s_cmd[14] == '\0')
                         {
-                            lformat_exclude = g_format_exclude;
+                            lformat_exclude = s_format_exclude;
                         }
                         else
                         {
-                            int n = ((in_topic ? lformat_exclude : g_format_exclude) < 0) ? -1 : 1;
+                            int n = ((in_topic ? lformat_exclude : s_format_exclude) < 0) ? -1 : 1;
 
                             lformat_exclude = std::atoi(&s_cmd[14]);
 
@@ -1581,7 +1581,7 @@ void read_src(std::string const &fname, modes mode)
 
                             if (!in_topic)
                             {
-                                g_format_exclude = lformat_exclude;
+                                s_format_exclude = lformat_exclude;
                             }
                         }
                     }
