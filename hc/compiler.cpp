@@ -226,21 +226,6 @@ std::ostream &operator<<(std::ostream &str, const TOPIC &topic)
 }
 
 /*
- * store-topic-text-to-disk stuff.
- */
-
-
-void release_topic_text(const TOPIC &t, bool save)
-{
-    if (save)
-    {
-        std::fseek(g_swap_file, t.text, SEEK_SET);
-        std::fwrite(&g_buffer[0], 1, t.text_len, g_swap_file);
-    }
-}
-
-
-/*
  * memory-allocation functions.
  */
 
@@ -2677,7 +2662,7 @@ void paginate_online()    // paginate the text for on-line help
             g_max_pages = t.num_page;
         }
 
-        release_topic_text(t, false);
+        t.release_topic_text(false);
     } // for
 }
 
@@ -2818,7 +2803,7 @@ void set_content_doc_page()
         std::memcpy(base + c.page_num_pos + (3 - len), buf, len);
     }
 
-    release_topic_text(t, true);
+    t.release_topic_text(true);
 }
 
 
@@ -2872,7 +2857,7 @@ bool pd_get_info(int cmd, PD_INFO *pd, void *context)
 
     case PD_RELEASE_TOPIC:
         c = &g_contents[info.content_num];
-        release_topic_text(g_topics[c->topic_num[info.topic_num]], false);
+        g_topics[c->topic_num[info.topic_num]].release_topic_text(false);
         return true;
 
     default:
@@ -3249,7 +3234,7 @@ void _write_help(std::FILE *file)
         putw(tp.text_len, file);
         std::fwrite(text, 1, tp.text_len, file);
 
-        release_topic_text(tp, false);  // don't save the text even though
+        tp.release_topic_text(false);  // don't save the text even though
         // insert_real_link_info() modified it
         // because we don't access the info after
         // this.
@@ -4045,7 +4030,7 @@ void compiler::paginate_html_document()
             g_max_pages = t.num_page;
         }
 
-        release_topic_text(t, false);
+        t.release_topic_text(false);
     } // for
 }
 

@@ -102,6 +102,7 @@ struct TOPIC
     void add_page_break(int margin, char const *text, char const *start, char const *curr, int num_links);
     char *get_topic_text();
     const char *get_topic_text() const;
+    void release_topic_text(bool save) const;
 
     unsigned  flags;          // see #defines for TF_???
     int       doc_page;       // page number in document where topic starts

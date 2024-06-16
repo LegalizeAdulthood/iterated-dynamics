@@ -48,6 +48,15 @@ const char *TOPIC::get_topic_text() const
     return g_buffer.data();
 }
 
+void TOPIC::release_topic_text(bool save) const
+{
+    if (save)
+    {
+        std::fseek(g_swap_file, text, SEEK_SET);
+        std::fwrite(&g_buffer[0], 1, text_len, g_swap_file);
+    }
+}
+
 void TOPIC::read_topic_text() const
 {
     std::fseek(g_swap_file, text, SEEK_SET);
