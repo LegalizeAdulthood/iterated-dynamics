@@ -50,7 +50,7 @@ HelpSource g_src;
 
 static std::FILE *s_src_file{};           // .SRC file
 static int s_src_col{};                   // .SRC column.
-bool g_compress_spaces{};                 //
+static bool s_compress_spaces{};          //
 char g_cmd[128]{};                        // holds the current command
 int g_format_exclude{};                   // disable formatting at this col, 0 to never disable formatting
 bool g_xonline{};                         //
@@ -597,7 +597,7 @@ char *pchar(int ch)
 
 void put_spaces(int how_many)
 {
-    if (how_many > 2 && g_compress_spaces)
+    if (how_many > 2 && s_compress_spaces)
     {
         if (how_many > 255)
         {
@@ -1405,7 +1405,7 @@ void read_src(std::string const &fname, modes mode)
                     g_xonline = false;
                     g_xdoc = false;
                     lformat_exclude = g_format_exclude;
-                    g_compress_spaces = true;
+                    s_compress_spaces = true;
                     continue;
                 }
                 if (strnicmp(g_cmd, "Data=", 5) == 0)
@@ -1464,7 +1464,7 @@ void read_src(std::string const &fname, modes mode)
                     g_xonline = false;
                     g_xdoc = false;
                     lformat_exclude = g_format_exclude;
-                    g_compress_spaces = false;
+                    s_compress_spaces = false;
                     continue;
                 }
                 if (strnicmp(g_cmd, "DocContents", 11) == 0)
@@ -1483,7 +1483,7 @@ void read_src(std::string const &fname, modes mode)
                         unread_char('~');
                         done = true;
                     }
-                    g_compress_spaces = true;
+                    s_compress_spaces = true;
                     process_doc_contents(mode);
                     in_topic = false;
                     continue;
@@ -1943,24 +1943,24 @@ void read_src(std::string const &fname, modes mode)
 
                     if (g_cmd[14] == '+')
                     {
-                        if (g_compress_spaces)
+                        if (s_compress_spaces)
                         {
                             warn(eoff, "\"CompressSpaces+\" is already in effect.");
                         }
                         else
                         {
-                            g_compress_spaces = true;
+                            s_compress_spaces = true;
                         }
                     }
                     else if (g_cmd[14] == '-')
                     {
-                        if (!g_compress_spaces)
+                        if (!s_compress_spaces)
                         {
                             warn(eoff, "\"CompressSpaces-\" is already in effect.");
                         }
                         else
                         {
-                            g_compress_spaces = false;
+                            s_compress_spaces = false;
                         }
                     }
                     else
