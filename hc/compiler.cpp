@@ -1180,17 +1180,6 @@ void process_bininc()
 }
 
 
-void start_topic(TOPIC &t, char const *title, int title_len)
-{
-    t.flags = 0;
-    t.title_len = title_len;
-    t.title.assign(title, title_len);
-    t.doc_page = -1;
-    t.num_page = 0;
-    g_curr = &g_buffer[0];
-}
-
-
 void end_topic(TOPIC &t)
 {
     t.alloc_topic_text((unsigned)(g_curr - &g_buffer[0]));
@@ -1435,7 +1424,7 @@ void read_src(std::string const &fname, hc::modes mode)
                         error(eoff, "Topic title already exists.");
                     }
 
-                    start_topic(t, topic_title, static_cast<int>(title_len));
+                    t.start(topic_title, static_cast<int>(title_len));
                     formatting = true;
                     centering = false;
                     state = STATES::S_Start;
@@ -1481,7 +1470,7 @@ void read_src(std::string const &fname, hc::modes mode)
                         warn(eoff, "Data topic has a local label.");
                     }
 
-                    start_topic(t, "", 0);
+                    t.start("", 0);
                     t.flags |= TF_DATA;
 
                     if ((int)std::strlen(data) > 32)

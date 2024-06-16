@@ -103,6 +103,7 @@ struct TOPIC
     char *get_topic_text();
     const char *get_topic_text() const;
     void release_topic_text(bool save) const;
+    void start(char const *text, int len);
 
     unsigned  flags;          // see #defines for TF_???
     int       doc_page;       // page number in document where topic starts
@@ -126,6 +127,7 @@ extern long g_swap_pos;
 extern std::FILE *g_swap_file;
 extern std::vector<char> g_buffer;
 extern int g_max_links;
+extern char *g_curr;
 
 void show_line(unsigned int line);
 void error_msg(int diff, char const *format, ...);

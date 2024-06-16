@@ -57,6 +57,16 @@ void TOPIC::release_topic_text(bool save) const
     }
 }
 
+void TOPIC::start(char const *text, int len)
+{
+    flags = 0;
+    title_len = len;
+    title.assign(text, len);
+    doc_page = -1;
+    num_page = 0;
+    g_curr = &g_buffer[0];
+}
+
 void TOPIC::read_topic_text() const
 {
     std::fseek(g_swap_file, text, SEEK_SET);
