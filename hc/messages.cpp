@@ -10,6 +10,8 @@ namespace hc
 bool g_quiet_mode{};                 // true if "/Q" option used
 int g_errors{};                      // number of errors reported
 int g_warnings{};                    // number of warnings reported
+int g_src_line{};                    // .SRC line number (used for errors)
+std::string g_current_src_filename;  // current .SRC filename
 
 /*
  * error/warning/message reporting functions.

@@ -93,13 +93,11 @@ struct Include
 int g_max_pages{};                   // max. pages in any topic
 int g_num_doc_pages{};               // total number of pages in document
 std::FILE *g_src_file{};             // .SRC file
-int g_src_line{};                    // .SRC line number (used for errors)
 int g_src_col{};                     // .SRC column.
 int g_version{-1};                   // help file version
 std::string g_src_filename;          // command-line .SRC filename
 std::string g_hdr_filename;          // .H filename
 std::string g_hlp_filename;          // .HLP filename
-std::string g_current_src_filename;  // current .SRC filename
 int g_format_exclude{};              // disable formatting at this col, 0 to never disable formatting
 char g_cmd[128]{};                   // holds the current command
 bool g_compress_spaces{};            //
@@ -257,7 +255,7 @@ int add_content(const CONTENT &c)
  */
 
 
-int const READ_CHAR_BUFF_SIZE = 32;
+constexpr int READ_CHAR_BUFF_SIZE{32};
 
 
 int  read_char_buff[READ_CHAR_BUFF_SIZE];
@@ -2232,109 +2230,6 @@ void read_src(std::string const &fname, modes mode)
 /*
  * stuff to resolve hot-link references.
  */
-void link_topic(LINK &l)
-{
-    int const t = find_topic_title(l.name.c_str());
-    if (t == -1)
-    {
-        g_current_src_filename = l.srcfile;
-        g_src_line = l.srcline; // pretend we are still in the source...
-        error(0, "Cannot find implicit hot-link \"%s\".", l.name.c_str());
-        g_src_line = -1;  // back to reality
-    }
-    else
-    {
-        l.topic_num = t;
-        l.topic_off = 0;
-        l.doc_page = (g_topics[t].flags & TF_IN_DOC) ? 0 : -1;
-    }
-}
-
-void link_label(LINK &l)
-{
-    if (LABEL *lbl = find_label(l.name.c_str()))
-    {
-        if (g_topics[lbl->topic_num].flags & TF_DATA)
-        {
-            g_current_src_filename = l.srcfile;
-            g_src_line = l.srcline;
-            error(0, "Label \"%s\" is a data-only topic.", l.name.c_str());
-            g_src_line = -1;
-        }
-        else
-        {
-            l.topic_num = lbl->topic_num;
-            l.topic_off = lbl->topic_off;
-            l.doc_page  = (g_topics[lbl->topic_num].flags & TF_IN_DOC) ? 0 : -1;
-        }
-    }
-    else
-    {
-        g_current_src_filename = l.srcfile;
-        g_src_line = l.srcline; // pretend again
-        error(0, "Cannot find explicit hot-link \"%s\".", l.name.c_str());
-        g_src_line = -1;
-    }
-}
-
-void label_topic(CONTENT &c, int ctr)
-{
-    if (LABEL *lbl = find_label(c.topic_name[ctr].c_str()))
-    {
-        if (g_topics[lbl->topic_num].flags & TF_DATA)
-        {
-            g_current_src_filename = c.srcfile;
-            g_src_line = c.srcline;
-            error(0, "Label \"%s\" is a data-only topic.", c.topic_name[ctr].c_str());
-            g_src_line = -1;
-        }
-        else
-        {
-            c.topic_num[ctr] = lbl->topic_num;
-            if (g_topics[lbl->topic_num].flags & TF_IN_DOC)
-            {
-                warn(0, "Topic \"%s\" appears in document more than once.",
-                    g_topics[lbl->topic_num].title.c_str());
-            }
-            else
-            {
-                g_topics[lbl->topic_num].flags |= TF_IN_DOC;
-            }
-        }
-    }
-    else
-    {
-        g_current_src_filename = c.srcfile;
-        g_src_line = c.srcline;
-        error(0, "Cannot find DocContent label \"%s\".", c.topic_name[ctr].c_str());
-        g_src_line = -1;
-    }
-}
-
-void content_topic(CONTENT &c, int ctr)
-{
-    int const t = find_topic_title(c.topic_name[ctr].c_str());
-    if (t == -1)
-    {
-        g_current_src_filename = c.srcfile;
-        g_src_line = c.srcline;
-        error(0, "Cannot find DocContent topic \"%s\".", c.topic_name[ctr].c_str());
-        g_src_line = -1;  // back to reality
-    }
-    else
-    {
-        c.topic_num[ctr] = t;
-        if (g_topics[t].flags & TF_IN_DOC)
-        {
-            warn(0, "Topic \"%s\" appears in document more than once.",
-                g_topics[t].title.c_str());
-        }
-        else
-        {
-            g_topics[t].flags |= TF_IN_DOC;
-        }
-    }
-}
 
 /*
  * calculate topic_num/topic_off for each link.
@@ -2353,11 +2248,11 @@ void make_hot_links()
         {
             if (c.is_label[ctr])
             {
-                label_topic(c, ctr);
+                c.label_topic(ctr);
             }
             else
             {
-                content_topic(c, ctr);
+                c.content_topic(ctr);
             }
         }
     }
@@ -2371,12 +2266,12 @@ void make_hot_links()
         // name is the title of the topic
         if (l.type == link_types::LT_TOPIC)
         {
-            link_topic(l);
+            l.link_topic();
         }
         // name is the name of a label
         else if (l.type == link_types::LT_LABEL)
         {
-            link_label(l);
+            l.link_label();
         }
         // it's a "special" link; topic_off already has the value
         else if (l.type == link_types::LT_SPECIAL)

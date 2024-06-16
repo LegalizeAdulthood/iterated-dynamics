@@ -19,6 +19,9 @@ enum
 
 struct CONTENT
 {
+    void label_topic(int ctr);
+    void content_topic(int ctr);
+
     unsigned flags;
     std::string id;
     std::string name;
@@ -63,6 +66,9 @@ enum class link_types
 
 struct LINK
 {
+    void link_topic();
+    void link_label();
+
     link_types type;        // 0 = name is topic title, 1 = name is label,
                             //   2 = "special topic"; name is nullptr and
                             //   topic_num/topic_off is valid

@@ -1,5 +1,7 @@
 #include "help_source.h"
 
+#include "messages.h"
+
 #include <cstdio>
 #include <stdexcept>
 #include <system_error>
@@ -17,6 +19,112 @@ long g_swap_pos{};                   //
 std::vector<char> g_buffer;          // buffer to/from swap file
 char *g_curr{};                      // current position in the buffer
 int g_max_links{};                   // max. links on any page
+
+void CONTENT::label_topic(int ctr)
+{
+    if (LABEL *lbl = find_label(topic_name[ctr].c_str()))
+    {
+        if (g_topics[lbl->topic_num].flags & TF_DATA)
+        {
+            g_current_src_filename = srcfile;
+            g_src_line = srcline;
+            error(0, "Label \"%s\" is a data-only topic.", topic_name[ctr].c_str());
+            g_src_line = -1;
+        }
+        else
+        {
+            topic_num[ctr] = lbl->topic_num;
+            if (g_topics[lbl->topic_num].flags & TF_IN_DOC)
+            {
+                warn(0, "Topic \"%s\" appears in document more than once.",
+                    g_topics[lbl->topic_num].title.c_str());
+            }
+            else
+            {
+                g_topics[lbl->topic_num].flags |= TF_IN_DOC;
+            }
+        }
+    }
+    else
+    {
+        g_current_src_filename = srcfile;
+        g_src_line = srcline;
+        error(0, "Cannot find DocContent label \"%s\".", topic_name[ctr].c_str());
+        g_src_line = -1;
+    }
+}
+
+void CONTENT::content_topic(int ctr)
+{
+    int const t = find_topic_title(topic_name[ctr].c_str());
+    if (t == -1)
+    {
+        g_current_src_filename = srcfile;
+        g_src_line = srcline;
+        error(0, "Cannot find DocContent topic \"%s\".", topic_name[ctr].c_str());
+        g_src_line = -1;  // back to reality
+    }
+    else
+    {
+        topic_num[ctr] = t;
+        if (g_topics[t].flags & TF_IN_DOC)
+        {
+            warn(0, "Topic \"%s\" appears in document more than once.",
+                g_topics[t].title.c_str());
+        }
+        else
+        {
+            g_topics[t].flags |= TF_IN_DOC;
+        }
+    }
+}
+
+
+void LINK::link_topic()
+{
+    int const t = find_topic_title(name.c_str());
+    if (t == -1)
+    {
+        g_current_src_filename = srcfile;
+        g_src_line = srcline; // pretend we are still in the source...
+        error(0, "Cannot find implicit hot-link \"%s\".", name.c_str());
+        g_src_line = -1;  // back to reality
+    }
+    else
+    {
+        topic_num = t;
+        topic_off = 0;
+        doc_page = (g_topics[t].flags & TF_IN_DOC) ? 0 : -1;
+    }
+}
+
+void LINK::link_label()
+{
+    if (LABEL *lbl = find_label(name.c_str()))
+    {
+        if (g_topics[lbl->topic_num].flags & TF_DATA)
+        {
+            g_current_src_filename = srcfile;
+            g_src_line = srcline;
+            error(0, "Label \"%s\" is a data-only topic.", name.c_str());
+            g_src_line = -1;
+        }
+        else
+        {
+            topic_num = lbl->topic_num;
+            topic_off = lbl->topic_off;
+            doc_page  = (g_topics[lbl->topic_num].flags & TF_IN_DOC) ? 0 : -1;
+        }
+    }
+    else
+    {
+        g_current_src_filename = srcfile;
+        g_src_line = srcline; // pretend again
+        error(0, "Cannot find explicit hot-link \"%s\".", name.c_str());
+        g_src_line = -1;
+    }
+}
+
 
 void TOPIC::alloc_topic_text(unsigned size)
 {
