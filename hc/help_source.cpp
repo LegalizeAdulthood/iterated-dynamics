@@ -27,6 +27,9 @@ extern int filelength(int);
 #pragma warning(disable: 4996)
 #endif
 
+#if !defined(O_BINARY)
+#define O_BINARY 0
+#endif
 
 namespace hc
 {
