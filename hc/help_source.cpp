@@ -49,7 +49,7 @@ struct Include
 HelpSource g_src;
 
 static std::FILE *s_src_file{};           // .SRC file
-int g_src_col{};                          // .SRC column.
+static int s_src_col{};                   // .SRC column.
 bool g_compress_spaces{};                 //
 char g_cmd[128]{};                        // holds the current command
 int g_format_exclude{};                   // disable formatting at this col, 0 to never disable formatting
@@ -364,7 +364,7 @@ void unread_char(int ch)
 
     s_read_char_buff[++s_read_char_buff_pos] = ch;
 
-    --g_src_col;
+    --s_src_col;
 }
 
 int read_char_aux()
@@ -374,12 +374,12 @@ int read_char_aux()
     if (g_src_line <= 0)
     {
         g_src_line = 1;
-        g_src_col = 0;
+        s_src_col = 0;
     }
 
     if (s_read_char_buff_pos >= 0)
     {
-        ++g_src_col;
+        ++s_src_col;
         return s_read_char_buff[s_read_char_buff_pos--];
     }
 
@@ -402,21 +402,21 @@ int read_char_aux()
         {
         case '\t':    // expand a tab
         {
-            int diff = (((g_src_col/8) + 1) * 8) - g_src_col;
+            int diff = (((s_src_col/8) + 1) * 8) - s_src_col;
 
-            g_src_col += diff;
+            s_src_col += diff;
             s_read_char_sp += diff;
             break;
         }
 
         case ' ':
-            ++g_src_col;
+            ++s_src_col;
             ++s_read_char_sp;
             break;
 
         case '\n':
             s_read_char_sp = 0;   // delete spaces before a \n
-            g_src_col = 0;
+            s_src_col = 0;
             ++g_src_line;
             return '\n';
 
@@ -436,7 +436,7 @@ int read_char_aux()
                 return ' ';
             }
 
-            ++g_src_col;
+            ++s_src_col;
             return ch;
 
         } // switch
@@ -449,7 +449,7 @@ int read_char()
 
     ch = read_char_aux();
 
-    while (ch == ';' && g_src_col == 1)    // skip over comments
+    while (ch == ';' && s_src_col == 1)    // skip over comments
     {
         ch = read_char_aux();
 
@@ -1294,7 +1294,7 @@ void read_src(std::string const &fname, modes mode)
                 g_current_src_filename = top.fname;
                 s_src_file = top.file;
                 g_src_line = top.line;
-                g_src_col = top.col;
+                s_src_col = top.col;
                 g_include_stack.pop_back();
                 continue;
             }
@@ -1601,12 +1601,12 @@ void read_src(std::string const &fname, modes mode)
                         top.fname = g_current_src_filename;
                         top.file = s_src_file;
                         top.line = g_src_line;
-                        top.col  = g_src_col;
+                        top.col  = s_src_col;
                         g_include_stack.push_back(top);
                         s_src_file = new_file;
                         g_current_src_filename = file_name;
                         g_src_line = 1;
-                        g_src_col = 0;
+                        s_src_col = 0;
                     }
                     else
                     {
