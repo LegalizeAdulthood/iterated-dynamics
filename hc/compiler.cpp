@@ -186,7 +186,7 @@ void make_hot_links()
      * Calculate topic_num for all entries in DocContents.  Also set
      * "TF_IN_DOC" flag for all topics included in the document.
      */
-    for (CONTENT &c : g_contents)
+    for (CONTENT &c : g_src.contents)
     {
         for (int ctr = 0; ctr < c.num_topic; ctr++)
         {
@@ -518,7 +518,7 @@ void set_content_doc_page()
 
     char *base = t.get_topic_text();
 
-    for (const CONTENT &c : g_contents)
+    for (const CONTENT &c : g_src.contents)
     {
         assert(c.doc_page >= 1);
         std::sprintf(buf, "%d", c.doc_page);
@@ -540,11 +540,11 @@ bool pd_get_info(int cmd, PD_INFO *pd, void *context)
     switch (cmd)
     {
     case PD_GET_CONTENT:
-        if (++info.content_num >= static_cast<int>(g_contents.size()))
+        if (++info.content_num >= static_cast<int>(g_src.contents.size()))
         {
             return false;
         }
-        c = &g_contents[info.content_num];
+        c = &g_src.contents[info.content_num];
         info.topic_num = -1;
         pd->id       = c->id.c_str();
         pd->title    = c->name.c_str();
@@ -552,7 +552,7 @@ bool pd_get_info(int cmd, PD_INFO *pd, void *context)
         return true;
 
     case PD_GET_TOPIC:
-        c = &g_contents[info.content_num];
+        c = &g_src.contents[info.content_num];
         if (++info.topic_num >= c->num_topic)
         {
             return false;
@@ -580,7 +580,7 @@ bool pd_get_info(int cmd, PD_INFO *pd, void *context)
     }
 
     case PD_RELEASE_TOPIC:
-        c = &g_contents[info.content_num];
+        c = &g_src.contents[info.content_num];
         g_topics[c->topic_num[info.topic_num]].release_topic_text(false);
         return true;
 
@@ -606,7 +606,7 @@ bool paginate_doc_output(int cmd, PD_INFO *pd, void *context)
         return true;
 
     case PD_START_SECTION:
-        info->c = &g_contents[info->content_num];
+        info->c = &g_src.contents[info->content_num];
         return true;
 
     case PD_START_TOPIC:
@@ -640,7 +640,7 @@ void paginate_document()
 {
     PAGINATE_DOC_INFO info;
 
-    if (g_contents.empty())
+    if (g_src.contents.empty())
     {
         return;
     }
@@ -807,7 +807,7 @@ void calc_offsets()    // calc file offset to each topic
                                     g_topics.size() * sizeof(long) +    // offsets to each topic
                                     g_labels.size() * 2 * sizeof(int)); // topic_num/topic_off for all public labels
 
-    offset = std::accumulate(g_contents.begin(), g_contents.end(), offset, [](long offset, const CONTENT &cp) {
+    offset = std::accumulate(g_src.contents.begin(), g_src.contents.end(), offset, [](long offset, const CONTENT &cp) {
         return offset += sizeof(int) +  // flags
             1 +                         // id length
             (int) cp.id.length() +      // id text
@@ -877,7 +877,7 @@ void _write_help(std::FILE *file)
 
     putw(static_cast<int>(g_topics.size()), file);
     putw(static_cast<int>(g_labels.size()), file);
-    putw(static_cast<int>(g_contents.size()), file);
+    putw(static_cast<int>(g_src.contents.size()), file);
 
     // write num_doc_page
 
@@ -897,7 +897,7 @@ void _write_help(std::FILE *file)
     }
 
     // write contents
-    for (const CONTENT &cp : g_contents)
+    for (const CONTENT &cp : g_src.contents)
     {
         putw(cp.flags, file);
 
@@ -1100,7 +1100,7 @@ void print_document(char const *fname)
 {
     PRINT_DOC_INFO info;
 
-    if (g_contents.empty())
+    if (g_src.contents.empty())
     {
         throw std::runtime_error(".SRC has no DocContents.");
     }
@@ -1177,10 +1177,10 @@ void report_memory()
 
     dead += static_cast<long>((g_private_labels.capacity() - g_private_labels.size()) * sizeof(LABEL));
 
-    for (const CONTENT &c : g_contents)
+    for (const CONTENT &c : g_src.contents)
     {
         int t = (MAX_CONTENT_TOPIC - c.num_topic) *
-            (sizeof(g_contents[0].is_label[0]) + sizeof(g_contents[0].topic_name[0]) + sizeof(g_contents[0].topic_num[0]));
+            (sizeof(g_src.contents[0].is_label[0]) + sizeof(g_src.contents[0].topic_name[0]) + sizeof(g_src.contents[0].topic_num[0]));
         data += sizeof(CONTENT) - t;
         dead += t;
         bytes_in_strings += (long) c.id.length() + 1;
@@ -1191,7 +1191,7 @@ void report_memory()
         }
     }
 
-    dead += static_cast<long>((g_contents.capacity() - g_contents.size()) * sizeof(CONTENT));
+    dead += static_cast<long>((g_src.contents.capacity() - g_src.contents.size()) * sizeof(CONTENT));
 
     std::printf("\n");
     std::printf("Memory Usage:\n");
@@ -1221,7 +1221,7 @@ void report_stats()
     std::printf("%8d Links\n", static_cast<int>(g_all_links.size()));
     std::printf("%8d Labels\n", static_cast<int>(g_labels.size()));
     std::printf("%8d Private labels\n", static_cast<int>(g_private_labels.size()));
-    std::printf("%8d Table of contents (DocContent) entries\n", static_cast<int>(g_contents.size()));
+    std::printf("%8d Table of contents (DocContent) entries\n", static_cast<int>(g_src.contents.size()));
     std::printf("%8d Online help pages\n", pages);
     std::printf("%8d Document pages\n", g_num_doc_pages);
 }
@@ -1393,6 +1393,7 @@ private:
     void print_html_document(const std::string &output_filename);
 
     Options m_options;
+    HelpSource m_src;
 };
 
 compiler::compiler(const Options &options) :
@@ -1494,7 +1495,7 @@ void compiler::read_source_file()
     }
     g_swap_pos = 0;
 
-    read_src(g_src_filename, m_options.mode);
+    m_src = read_src(g_src_filename, m_options.mode);
 }
 
 void compiler::compile()
@@ -1613,7 +1614,7 @@ void compiler::render_html()
 
 void compiler::paginate_html_document()
 {
-    if (g_contents.empty())
+    if (m_src.contents.empty())
     {
         return;
     }

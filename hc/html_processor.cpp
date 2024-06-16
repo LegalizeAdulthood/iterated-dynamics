@@ -42,7 +42,7 @@ std::string rst_name(std::string const &content_name)
 
 void html_processor::process()
 {
-    if (g_contents.empty())
+    if (g_src.contents.empty())
     {
         throw std::runtime_error(".SRC has no DocContents.");
     }
@@ -55,7 +55,7 @@ void html_processor::write_index_html()
 {
     msg("Writing index.rst");
 
-    const CONTENT &toc = g_contents[0];
+    const CONTENT &toc = g_src.contents[0];
     if (toc.num_topic != 1)
     {
         throw std::runtime_error("First content block contains multiple topics.");
@@ -100,7 +100,7 @@ void html_processor::write_index_html()
 
 void html_processor::write_contents()
 {
-    for (const CONTENT &c : g_contents)
+    for (const CONTENT &c : g_src.contents)
     {
         write_content(c);
     }

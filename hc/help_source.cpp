@@ -45,7 +45,8 @@ struct Include
     int   col;
 };
 
-std::vector<CONTENT> g_contents;          // the table-of-contents
+HelpSource g_src;
+
 std::vector<LINK> g_all_links;            //
 std::vector<TOPIC> g_topics;              //
 std::vector<LABEL> g_labels;              //
@@ -356,10 +357,10 @@ int add_label(const LABEL &l)
     return static_cast<int>(g_labels.size() - 1);
 }
 
-int add_content(const CONTENT &c)
+int HelpSource::add_content(const CONTENT &c)
 {
-    g_contents.push_back(c);
-    return static_cast<int>(g_contents.size() - 1);
+    contents.push_back(c);
+    return static_cast<int>(contents.size() - 1);
 }
 
 
@@ -669,7 +670,7 @@ void process_doc_contents(char * (*format_toc)(char *buffer, CONTENT &c))
     c.is_label[0] = false;
     c.topic_name[0] = DOCCONTENTS_TITLE;
     c.srcline = -1;
-    add_content(c);
+    g_src.add_content(c);
 
     while (true)
     {
@@ -763,7 +764,7 @@ void process_doc_contents(char * (*format_toc)(char *buffer, CONTENT &c))
                 }
             }
 
-            add_content(c);
+            g_src.add_content(c);
         }
         else if (ch == '~')   // end at any command
         {
@@ -1263,7 +1264,7 @@ std::FILE *open_include(std::string const &file_name)
     return result;
 }
 
-void read_src(std::string const &fname, modes mode)
+HelpSource read_src(std::string const &fname, modes mode)
 {
     int    ch;
     char  *ptr;
@@ -2317,6 +2318,7 @@ void read_src(std::string const &fname, modes mode)
     std::fclose(g_src_file);
 
     g_src_line = -1;
+    return g_src;
 }
 
 } // namespace hc

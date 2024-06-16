@@ -121,7 +121,15 @@ private:
     void read_topic_text() const;
 };
 
-extern std::vector<CONTENT> g_contents;
+struct HelpSource
+{
+    int add_content(const CONTENT &c);
+
+    std::vector<CONTENT> contents;
+};
+
+extern HelpSource g_src;
+
 extern std::vector<LINK> g_all_links;
 extern std::vector<TOPIC> g_topics;
 extern std::vector<LABEL> g_labels;
@@ -139,6 +147,6 @@ extern std::vector<std::string> g_include_paths;
 
 LABEL *find_label(char const *name);
 int find_topic_title(char const *title);
-void read_src(std::string const &fname, modes mode);
+HelpSource read_src(std::string const &fname, modes mode);
 
 } // namespace hc
