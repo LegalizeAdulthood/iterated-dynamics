@@ -2532,21 +2532,6 @@ void make_hot_links()
  */
 
 
-void add_page_break(TOPIC &t, int margin, char const *text, char const *start, char const *curr, int num_links)
-{
-    PAGE p;
-    p.offset = (unsigned)(start - text);
-    p.length = (unsigned)(curr - start);
-    p.margin = margin;
-    t.add_page(p);
-
-    if (g_max_links < num_links)
-    {
-        g_max_links = num_links;
-    }
-}
-
-
 void paginate_online()    // paginate the text for on-line help
 {
     int size;
@@ -2615,7 +2600,7 @@ void paginate_online()    // paginate the text for on-line help
                         if (++lnum >= SCREEN_DEPTH)
                         {
                             // go to next page...
-                            add_page_break(t, start_margin, text, start, curr, num_links);
+                            t.add_page_break(start_margin, text, start, curr, num_links);
                             start = curr + ((tok == token_types::TOK_SPACE) ? size : 0);
                             start_margin = margin;
                             lnum = 0;
@@ -2649,7 +2634,7 @@ void paginate_online()    // paginate the text for on-line help
                 ++lnum;
                 if (lnum >= SCREEN_DEPTH || (col == 0 && lnum == SCREEN_DEPTH-1))
                 {
-                    add_page_break(t, start_margin, text, start, curr, num_links);
+                    t.add_page_break(start_margin, text, start, curr, num_links);
                     start = curr + size;
                     start_margin = -1;
                     lnum = 0;
@@ -2666,7 +2651,7 @@ void paginate_online()    // paginate the text for on-line help
                     start += size;
                     break;
                 }
-                add_page_break(t, start_margin, text, start, curr, num_links);
+                t.add_page_break(start_margin, text, start, curr, num_links);
                 start_margin = -1;
                 start = curr + size;
                 lnum = 0;
@@ -2695,7 +2680,7 @@ void paginate_online()    // paginate the text for on-line help
 
         if (!skip_blanks)
         {
-            add_page_break(t, start_margin, text, start, curr, num_links);
+            t.add_page_break(start_margin, text, start, curr, num_links);
         }
 
         if (g_max_pages < t.num_page)

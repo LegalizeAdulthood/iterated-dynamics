@@ -99,6 +99,7 @@ struct TOPIC
 {
     void alloc_topic_text(unsigned size);
     int add_page(const PAGE &p);
+    void add_page_break(int margin, char const *text, char const *start, char const *curr, int num_links);
 
     unsigned  flags;          // see #defines for TF_???
     int       doc_page;       // page number in document where topic starts
@@ -118,6 +119,7 @@ extern std::vector<TOPIC> g_topics;
 extern long g_swap_pos;
 extern std::FILE *g_swap_file;
 extern std::vector<char> g_buffer;
+extern int g_max_links;
 
 void show_line(unsigned int line);
 void error_msg(int diff, char const *format, ...);

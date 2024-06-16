@@ -20,4 +20,18 @@ int TOPIC::add_page(const PAGE &p)
     return num_page++;
 }
 
+void TOPIC::add_page_break(int margin, char const *text, char const *start, char const *curr, int num_links)
+{
+    PAGE p;
+    p.offset = (unsigned)(start - text);
+    p.length = (unsigned)(curr - start);
+    p.margin = margin;
+    add_page(p);
+
+    if (g_max_links < num_links)
+    {
+        g_max_links = num_links;
+    }
+}
+
 }
