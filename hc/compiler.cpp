@@ -230,7 +230,7 @@ std::ostream &operator<<(std::ostream &str, const TOPIC &topic)
  */
 
 
-void release_topic_text(const TOPIC &t, int save)
+void release_topic_text(const TOPIC &t, bool save)
 {
     if (save)
     {
@@ -2677,7 +2677,7 @@ void paginate_online()    // paginate the text for on-line help
             g_max_pages = t.num_page;
         }
 
-        release_topic_text(t, 0);
+        release_topic_text(t, false);
     } // for
 }
 
@@ -2818,7 +2818,7 @@ void set_content_doc_page()
         std::memcpy(base + c.page_num_pos + (3 - len), buf, len);
     }
 
-    release_topic_text(t, 1);
+    release_topic_text(t, true);
 }
 
 
@@ -2872,7 +2872,7 @@ bool pd_get_info(int cmd, PD_INFO *pd, void *context)
 
     case PD_RELEASE_TOPIC:
         c = &g_contents[info.content_num];
-        release_topic_text(g_topics[c->topic_num[info.topic_num]], 0);
+        release_topic_text(g_topics[c->topic_num[info.topic_num]], false);
         return true;
 
     default:
@@ -3249,7 +3249,7 @@ void _write_help(std::FILE *file)
         putw(tp.text_len, file);
         std::fwrite(text, 1, tp.text_len, file);
 
-        release_topic_text(tp, 0);  // don't save the text even though
+        release_topic_text(tp, false);  // don't save the text even though
         // insert_real_link_info() modified it
         // because we don't access the info after
         // this.
@@ -4045,7 +4045,7 @@ void compiler::paginate_html_document()
             g_max_pages = t.num_page;
         }
 
-        release_topic_text(t, 0);
+        release_topic_text(t, false);
     } // for
 }
 
