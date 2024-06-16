@@ -197,6 +197,7 @@ private:
     void report_stats();
     void add_hlp_to_exe();
     void delete_hlp_from_exe();
+    void print_document();
     void report_memory();
     void paginate_html_document();
     void print_html_document(const std::string &output_filename);
@@ -1009,12 +1010,12 @@ void compiler::write_help()
  */
 
 
-struct PRINT_DOC_INFO : public DOC_INFO
+struct PRINT_DOC_INFO : DOC_INFO
 {
-    std::FILE    *file;
-    int      margin;
-    bool     start_of_line;
-    int      spaces;
+    std::FILE *file;
+    int margin;
+    bool start_of_line;
+    int spaces;
 };
 
 void printerc(PRINT_DOC_INFO *info, int c, int n)
@@ -1069,6 +1070,16 @@ void printers(PRINT_DOC_INFO *info, char const *s, int n)
     }
 }
 
+static std::string version_header()
+{
+    std::ostringstream buff;
+    buff << ID_PROGRAM_NAME << " Version " << ID_VERSION_MAJOR << '.' << ID_VERSION_MINOR << '.'
+         << ID_VERSION_PATCH;
+    const std::string heading{buff.str()};
+    constexpr std::size_t field_width{64};
+    const std::size_t indent{(field_width - heading.size()) / 2};
+    return std::string(indent, ' ') + heading + std::string(field_width - indent - heading.size(), ' ');
+}
 
 bool print_doc_output(int cmd, PD_INFO *pd, void *context)
 {
@@ -1079,10 +1090,7 @@ bool print_doc_output(int cmd, PD_INFO *pd, void *context)
     {
         std::ostringstream buff;
         info->margin = 0;
-        // TODO: replace this fixed string with ID_PROGRAM_NAME and ID_VERSION
-        buff << "\n"
-            "                  Iterated Dynamics Version 1.0                 Page "
-            << pd->page_num << "\n\n";
+        buff << "\n" << version_header() << "Page " << pd->page_num << "\n\n";
         printers(info, buff.str().c_str(), 0);
         info->margin = PAGE_INDENT;
         return true;
@@ -1127,9 +1135,9 @@ bool print_doc_output(int cmd, PD_INFO *pd, void *context)
 }
 
 
-void print_document(char const *fname)
+void compiler::print_document()
 {
-    PRINT_DOC_INFO info;
+    char const *fname{m_options.fname2.empty() ? DEFAULT_DOC_FNAME : m_options.fname2.c_str()};
 
     if (g_src.contents.empty())
     {
@@ -1138,10 +1146,10 @@ void print_document(char const *fname)
 
     msg("Printing to: %s", fname);
 
+    PRINT_DOC_INFO info;
     info.topic_num = -1;
     info.content_num = info.topic_num;
     info.link_dest_warn = false;
-
     info.file = std::fopen(fname, "wt");
     if (info.file == nullptr)
     {
@@ -1588,7 +1596,7 @@ void compiler::print()
     }
     if (!g_errors)
     {
-        print_document(m_options.fname2.empty() ? DEFAULT_DOC_FNAME : m_options.fname2.c_str());
+        print_document();
     }
 
     if (g_errors || g_warnings)
