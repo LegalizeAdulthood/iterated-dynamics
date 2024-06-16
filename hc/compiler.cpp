@@ -1389,7 +1389,7 @@ compiler::compiler(const Options &options) :
     m_options(options)
 {
     g_quiet_mode = m_options.quiet_mode;
-    g_include_paths = m_options.include_paths;
+    g_src.include_paths = m_options.include_paths;
 }
 
 compiler::~compiler()

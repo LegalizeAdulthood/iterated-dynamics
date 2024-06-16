@@ -53,7 +53,6 @@ int g_src_col{};                          // .SRC column.
 bool g_compress_spaces{};                 //
 char g_cmd[128]{};                        // holds the current command
 int g_format_exclude{};                   // disable formatting at this col, 0 to never disable formatting
-std::vector<std::string> g_include_paths; //
 bool g_xonline{};                         //
 bool g_xdoc{};                            //
 std::vector<Include> g_include_stack;     //
@@ -1236,7 +1235,7 @@ std::FILE *open_include(std::string const &file_name)
     std::FILE *result = std::fopen(file_name.c_str(), "rt");
     if (result == nullptr)
     {
-        for (std::string const &dir : g_include_paths)
+        for (std::string const &dir : g_src.include_paths)
         {
             std::string const path{dir + '/' + file_name};
             result = std::fopen(path.c_str(), "rt");

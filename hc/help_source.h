@@ -143,11 +143,10 @@ struct HelpSource
     std::string hdr_filename;               // .H filename
     std::string hlp_filename;               // .HLP filename
     int version{-1};                        // help file version
+    std::vector<std::string> include_paths; //
 };
 
 extern HelpSource g_src;
-
-extern std::vector<std::string> g_include_paths;
 
 int find_topic_title(char const *title);
 void read_src(std::string const &fname, modes mode);
