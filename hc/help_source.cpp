@@ -48,7 +48,7 @@ struct Include
 
 HelpSource g_src;
 
-std::FILE *g_src_file{};                  // .SRC file
+static std::FILE *s_src_file{};           // .SRC file
 int g_src_col{};                          // .SRC column.
 bool g_compress_spaces{};                 //
 char g_cmd[128]{};                        // holds the current command
@@ -389,14 +389,14 @@ int read_char_aux()
         return ' ';
     }
 
-    if (std::feof(g_src_file))
+    if (std::feof(s_src_file))
     {
         return -1;
     }
 
     while (true)
     {
-        ch = getc(g_src_file);
+        ch = getc(s_src_file);
 
         switch (ch)
         {
@@ -431,7 +431,7 @@ int read_char_aux()
         default:
             if (s_read_char_sp > 0)
             {
-                ungetc(ch, g_src_file);
+                ungetc(ch, s_src_file);
                 --s_read_char_sp;
                 return ' ';
             }
@@ -1269,8 +1269,8 @@ void read_src(std::string const &fname, modes mode)
 
     g_current_src_filename = fname;
 
-    g_src_file = open_include(fname);
-    if (g_src_file == nullptr)
+    s_src_file = open_include(fname);
+    if (s_src_file == nullptr)
     {
         throw std::runtime_error("Unable to open \"" + fname + "\"");
     }
@@ -1289,10 +1289,10 @@ void read_src(std::string const &fname, modes mode)
         {
             if (!g_include_stack.empty())
             {
-                std::fclose(g_src_file);
+                std::fclose(s_src_file);
                 const Include &top{g_include_stack.back()};
                 g_current_src_filename = top.fname;
-                g_src_file = top.file;
+                s_src_file = top.file;
                 g_src_line = top.line;
                 g_src_col = top.col;
                 g_include_stack.pop_back();
@@ -1599,11 +1599,11 @@ void read_src(std::string const &fname, modes mode)
                     {
                         Include top{};
                         top.fname = g_current_src_filename;
-                        top.file = g_src_file;
+                        top.file = s_src_file;
                         top.line = g_src_line;
                         top.col  = g_src_col;
                         g_include_stack.push_back(top);
-                        g_src_file = new_file;
+                        s_src_file = new_file;
                         g_current_src_filename = file_name;
                         g_src_line = 1;
                         g_src_col = 0;
@@ -2299,7 +2299,7 @@ void read_src(std::string const &fname, modes mode)
         check_buffer(0);
     } // while ( 1 )
 
-    std::fclose(g_src_file);
+    std::fclose(s_src_file);
 
     g_src_line = -1;
 }
