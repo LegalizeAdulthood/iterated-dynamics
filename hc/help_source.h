@@ -136,11 +136,11 @@ struct HelpSource
     std::vector<LABEL> labels;
     std::vector<LABEL> private_labels;
     std::FILE *swap_file{};
+    long swap_pos{};
 };
 
 extern HelpSource g_src;
 
-extern long g_swap_pos;
 extern std::vector<char> g_buffer;
 extern char *g_curr;
 extern int g_max_links;

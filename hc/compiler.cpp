@@ -1481,7 +1481,7 @@ void compiler::read_source_file()
     {
         throw std::runtime_error("Cannot create swap file \"" + m_options.swappath + "\"");
     }
-    g_swap_pos = 0;
+    g_src.swap_pos = 0;
 
     read_src(g_src_filename, m_options.mode);
 }

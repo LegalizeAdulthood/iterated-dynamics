@@ -48,7 +48,6 @@ struct Include
 
 HelpSource g_src;
 
-long g_swap_pos{};                        //
 std::vector<char> g_buffer;               // buffer to/from swap file
 char *g_curr{};                           // current position in the buffer
 int g_max_links{};                        // max. links on any page
@@ -179,8 +178,8 @@ void LINK::link_label()
 void TOPIC::alloc_topic_text(unsigned size)
 {
     text_len = size;
-    text = g_swap_pos;
-    g_swap_pos += size;
+    text = g_src.swap_pos;
+    g_src.swap_pos += size;
     std::fseek(g_src.swap_file, text, SEEK_SET);
     std::fwrite(&g_buffer[0], 1, text_len, g_src.swap_file);
 }
