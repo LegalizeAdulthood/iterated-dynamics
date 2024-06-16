@@ -14,6 +14,32 @@ namespace hc
 
 std::string g_html_output_dir{"."};
 
+std::string rst_name(std::string const &content_name)
+{
+    std::string name;
+    name.reserve(content_name.length());
+    bool underscore = true;     // can't start with an underscore
+    for (unsigned char c : content_name)
+    {
+        if (std::isalnum(c) != 0)
+        {
+            name += static_cast<char>(std::tolower(c));
+            underscore = false;
+        }
+        else if (!underscore)
+        {
+            name += '_';
+            underscore = true;
+        }
+    }
+    auto pos = name.find_last_not_of('_');
+    if (pos != std::string::npos)
+    {
+        name.erase(pos + 1);
+    }
+    return name;
+}
+
 void html_processor::process()
 {
     if (g_contents.empty())
