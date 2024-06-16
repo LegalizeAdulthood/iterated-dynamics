@@ -34,6 +34,9 @@ extern int filelength(int);
 namespace hc
 {
 
+constexpr int MAX_TABLE_SIZE{100};
+constexpr int READ_CHAR_BUFF_SIZE{32};
+
 struct Include
 {
     std::string fname;
@@ -65,6 +68,10 @@ std::string g_src_filename;               // command-line .SRC filename
 std::string g_hdr_filename;               // .H filename
 std::string g_hlp_filename;               // .HLP filename
 int g_version{-1};                        // help file version
+
+static int s_read_char_buff[READ_CHAR_BUFF_SIZE];
+static int s_read_char_buff_pos{-1};
+static int s_read_char_sp{};
 
 void CONTENT::label_topic(int ctr)
 {
@@ -325,21 +332,17 @@ int find_topic_title(char const *title)
 /*
  * memory-allocation functions.
  */
-
-
 int add_link(LINK &l)
 {
     g_all_links.push_back(l);
     return static_cast<int>(g_all_links.size() - 1);
 }
 
-
 int add_topic(const TOPIC &t)
 {
     g_topics.push_back(t);
     return static_cast<int>(g_topics.size() - 1);
 }
-
 
 int add_label(const LABEL &l)
 {
@@ -353,7 +356,6 @@ int add_label(const LABEL &l)
     return static_cast<int>(g_labels.size() - 1);
 }
 
-
 int add_content(const CONTENT &c)
 {
     g_contents.push_back(c);
@@ -365,30 +367,20 @@ int add_content(const CONTENT &c)
  * read_char() stuff
  */
 
-
-constexpr int READ_CHAR_BUFF_SIZE{32};
-
-
-int  read_char_buff[READ_CHAR_BUFF_SIZE];
-int  read_char_buff_pos = -1;
-int  read_char_sp       = 0;
-
-
 /*
  * Will not handle new-lines or tabs correctly!
  */
 void unread_char(int ch)
 {
-    if (read_char_buff_pos+1 >= READ_CHAR_BUFF_SIZE)
+    if (s_read_char_buff_pos+1 >= READ_CHAR_BUFF_SIZE)
     {
         throw std::runtime_error("Compiler Error -- Read char buffer overflow!");
     }
 
-    read_char_buff[++read_char_buff_pos] = ch;
+    s_read_char_buff[++s_read_char_buff_pos] = ch;
 
     --g_src_col;
 }
-
 
 int read_char_aux()
 {
@@ -400,15 +392,15 @@ int read_char_aux()
         g_src_col = 0;
     }
 
-    if (read_char_buff_pos >= 0)
+    if (s_read_char_buff_pos >= 0)
     {
         ++g_src_col;
-        return read_char_buff[read_char_buff_pos--];
+        return s_read_char_buff[s_read_char_buff_pos--];
     }
 
-    if (read_char_sp > 0)
+    if (s_read_char_sp > 0)
     {
-        --read_char_sp;
+        --s_read_char_sp;
         return ' ';
     }
 
@@ -428,34 +420,34 @@ int read_char_aux()
             int diff = (((g_src_col/8) + 1) * 8) - g_src_col;
 
             g_src_col += diff;
-            read_char_sp += diff;
+            s_read_char_sp += diff;
             break;
         }
 
         case ' ':
             ++g_src_col;
-            ++read_char_sp;
+            ++s_read_char_sp;
             break;
 
         case '\n':
-            read_char_sp = 0;   // delete spaces before a \n
+            s_read_char_sp = 0;   // delete spaces before a \n
             g_src_col = 0;
             ++g_src_line;
             return '\n';
 
         case -1:               // EOF
-            if (read_char_sp > 0)
+            if (s_read_char_sp > 0)
             {
-                --read_char_sp;
+                --s_read_char_sp;
                 return ' ';
             }
             return -1;
 
         default:
-            if (read_char_sp > 0)
+            if (s_read_char_sp > 0)
             {
                 ungetc(ch, g_src_file);
-                --read_char_sp;
+                --s_read_char_sp;
                 return ' ';
             }
 
@@ -465,7 +457,6 @@ int read_char_aux()
         } // switch
     }
 }
-
 
 int read_char()
 {
@@ -528,12 +519,9 @@ int read_char()
     return ch;
 }
 
-
 /*
  * .SRC file parser stuff
  */
-
-
 bool validate_label_name(char const *name)
 {
     if (!std::isalpha(*name) && *name != '@' && *name != '_')
@@ -551,7 +539,6 @@ bool validate_label_name(char const *name)
 
     return true;  // valid
 }
-
 
 char *read_until(char *buff, int len, char const *stop_chars)
 {
@@ -587,7 +574,6 @@ char *read_until(char *buff, int len, char const *stop_chars)
     return buff-1;
 }
 
-
 void skip_over(char const *skip)
 {
     int ch;
@@ -608,7 +594,6 @@ void skip_over(char const *skip)
     }
 }
 
-
 char *pchar(int ch)
 {
     static char buff[16];
@@ -624,7 +609,6 @@ char *pchar(int ch)
 
     return buff;
 }
-
 
 void put_spaces(int how_many)
 {
@@ -647,7 +631,6 @@ void put_spaces(int how_many)
         }
     }
 }
-
 
 // used by parse_contents()
 bool get_next_item()
@@ -923,10 +906,6 @@ int parse_link()   // returns length of link or 0 on error
     return 0;
 }
 
-
-int const MAX_TABLE_SIZE = 100;
-
-
 int create_table()
 {
     char  *ptr;
@@ -1093,7 +1072,6 @@ int create_table()
     return 1;
 }
 
-
 void process_comment()
 {
     int ch;
@@ -1145,7 +1123,6 @@ void process_comment()
     }
 }
 
-
 void process_bininc()
 {
     int  handle;
@@ -1184,13 +1161,11 @@ void process_bininc()
     close(handle);
 }
 
-
 void end_topic(TOPIC &t)
 {
     t.alloc_topic_text((unsigned)(g_curr - &g_buffer[0]));
     add_topic(t);
 }
-
 
 bool end_of_sentence(char const *ptr)  // true if ptr is at the end of a sentence
 {
@@ -1207,7 +1182,6 @@ bool end_of_sentence(char const *ptr)  // true if ptr is at the end of a sentenc
     return *ptr == '.' || *ptr == '?' || *ptr == '!';
 }
 
-
 void add_blank_for_split()   // add space at g_curr for merging two lines
 {
     if (!is_hyphen(g_curr-1))     // no spaces if it's a hyphen
@@ -1219,7 +1193,6 @@ void add_blank_for_split()   // add space at g_curr for merging two lines
         *g_curr++ = ' ';
     }
 }
-
 
 void put_a_char(int ch, const TOPIC &t)
 {
@@ -1237,7 +1210,6 @@ void put_a_char(int ch, const TOPIC &t)
     }
 }
 
-
 enum class STATES   // states for FSM's
 {
     S_Start,                 // initial state, between paragraphs
@@ -1253,7 +1225,6 @@ enum class STATES   // states for FSM's
     S_Spaces
 };
 
-
 void check_command_length(int eoff, int len)
 {
     if ((int) std::strlen(g_cmd) != len)
@@ -1261,7 +1232,6 @@ void check_command_length(int eoff, int len)
         error(eoff, "Invalid text after a command \"%s\"", g_cmd+len);
     }
 }
-
 
 std::FILE *open_include(std::string const &file_name)
 {
@@ -2337,4 +2307,4 @@ void read_src(std::string const &fname, modes mode)
     g_src_line = -1;
 }
 
-}
+} // namespace hc
