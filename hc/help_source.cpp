@@ -53,7 +53,7 @@ static int s_src_col{};                   // .SRC column.
 static bool s_compress_spaces{};          //
 static char s_cmd[128]{};                 // holds the current command
 static int s_format_exclude{};            // disable formatting at this col, 0 to never disable formatting
-bool g_xonline{};                         //
+static bool s_xonline{};                  //
 bool g_xdoc{};                            //
 std::vector<Include> g_include_stack;     //
 
@@ -1264,7 +1264,7 @@ void read_src(std::string const &fname, modes mode)
     bool centering = false;
     int    lformat_exclude = s_format_exclude;
 
-    g_xonline = false;
+    s_xonline = false;
     g_xdoc = false;
 
     g_current_src_filename = fname;
@@ -1402,7 +1402,7 @@ void read_src(std::string const &fname, modes mode)
                     state = STATES::S_Start;
                     in_para = false;
                     num_spaces = 0;
-                    g_xonline = false;
+                    s_xonline = false;
                     g_xdoc = false;
                     lformat_exclude = s_format_exclude;
                     s_compress_spaces = true;
@@ -1461,7 +1461,7 @@ void read_src(std::string const &fname, modes mode)
                     state = STATES::S_Start;
                     in_para = false;
                     num_spaces = 0;
-                    g_xonline = false;
+                    s_xonline = false;
                     g_xdoc = false;
                     lformat_exclude = s_format_exclude;
                     s_compress_spaces = false;
@@ -1671,12 +1671,12 @@ void read_src(std::string const &fname, modes mode)
                     {
                         *g_src.curr++ = '\n';    // finish off current paragraph
                     }
-                    if (!g_xonline)
+                    if (!s_xonline)
                     {
                         *g_src.curr++ = CMD_XONLINE;
                     }
                     *g_src.curr++ = CMD_FF;
-                    if (!g_xonline)
+                    if (!s_xonline)
                     {
                         *g_src.curr++ = CMD_XONLINE;
                     }
@@ -1838,10 +1838,10 @@ void read_src(std::string const &fname, modes mode)
                     {
                         check_command_length(eoff, 7);
 
-                        if (g_xonline)
+                        if (s_xonline)
                         {
                             *g_src.curr++ = CMD_XONLINE;
-                            g_xonline = false;
+                            s_xonline = false;
                         }
                         else
                         {
@@ -1851,10 +1851,10 @@ void read_src(std::string const &fname, modes mode)
                     else if (s_cmd[6] == '-')
                     {
                         check_command_length(eoff, 7);
-                        if (!g_xonline)
+                        if (!s_xonline)
                         {
                             *g_src.curr++ = CMD_XONLINE;
-                            g_xonline = true;
+                            s_xonline = true;
                         }
                         else
                         {
