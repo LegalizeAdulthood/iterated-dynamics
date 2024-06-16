@@ -57,7 +57,6 @@ std::vector<std::string> g_include_paths; //
 bool g_xonline{};                         //
 bool g_xdoc{};                            //
 std::vector<Include> g_include_stack;     //
-std::string g_hlp_filename;               // .HLP filename
 int g_version{-1};                        // help file version
 
 static int s_read_char_buff[READ_CHAR_BUFF_SIZE];
@@ -1633,11 +1632,11 @@ void read_src(std::string const &fname, modes mode)
                     }
                     else if (strnicmp(g_cmd, "HlpFile=", 8) == 0)
                     {
-                        if (!g_hlp_filename.empty())
+                        if (!g_src.hlp_filename.empty())
                         {
                             warn(eoff, "Help Filename has already been defined.");
                         }
-                        g_hlp_filename = &g_cmd[8];
+                        g_src.hlp_filename = &g_cmd[8];
                     }
                     else if (strnicmp(g_cmd, "Version=", 8) == 0)
                     {

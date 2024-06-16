@@ -141,11 +141,11 @@ struct HelpSource
     char *curr{};                           // current position in the buffer
     int max_links{};                        // max. links on any page
     std::string hdr_filename;               // .H filename
+    std::string hlp_filename;               // .HLP filename
 };
 
 extern HelpSource g_src;
 
-extern std::string g_hlp_filename;
 extern int g_version;
 extern std::vector<std::string> g_include_paths;
 

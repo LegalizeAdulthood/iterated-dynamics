@@ -1500,7 +1500,7 @@ void compiler::compile()
     {
         error(0, "No .H file defined.  (Use \"~HdrFile=\")");
     }
-    if (g_hlp_filename.empty())
+    if (g_src.hlp_filename.empty())
     {
         error(0, "No .HLP file defined.  (Use \"~HlpFile=\")");
     }
@@ -1535,7 +1535,7 @@ void compiler::compile()
     }
     if (!g_errors)
     {
-        write_help(g_hlp_filename.c_str());
+        write_help(g_src.hlp_filename.c_str());
     }
 
     if (m_options.show_stats)
