@@ -1,6 +1,7 @@
 #include "html_processor.h"
 
 #include "help_source.h"
+#include "messages.h"
 
 #include <helpcom.h>
 

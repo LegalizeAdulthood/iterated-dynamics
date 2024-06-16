@@ -3,28 +3,6 @@
 #include <string>
 #include <vector>
 
-/*
- * When defined, SHOW_ERROR_LINE will cause the line number in HC.C where
- * errors/warnings/messages are generated to be displayed at the start of
- * the line.
- *
- * Used when debugging HC.  Also useful for finding the line (in HC.C) that
- * generated a error or warning.
- */
-#define SHOW_ERROR_LINE
-
-#ifdef SHOW_ERROR_LINE
-#   define error(...)  (show_line(__LINE__), error_msg(__VA_ARGS__))
-#   define warn(...)   (show_line(__LINE__), warn_msg(__VA_ARGS__))
-#   define notice(...) (show_line(__LINE__), notice_msg(__VA_ARGS__))
-#   define msg(...)    (g_quiet_mode ? static_cast<void>(0) : (show_line(__LINE__), msg_msg(__VA_ARGS__)))
-#else
-#define error(...)  error_msg(__VA_ARGS__)
-#define warn(...)   warn_msg(__VA_ARGS__)
-#define notice(...) notice_msg(__VA_ARGS__)
-#define msg(...)    msg_msg(__VA_ARGS__)
-#endif
-
 namespace hc
 {
 
@@ -119,7 +97,6 @@ private:
     void read_topic_text() const;
 };
 
-extern bool g_quiet_mode;
 extern std::vector<CONTENT> g_contents;
 extern std::vector<LINK> g_all_links;
 extern std::vector<TOPIC> g_topics;
