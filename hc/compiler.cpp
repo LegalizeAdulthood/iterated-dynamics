@@ -92,13 +92,9 @@ struct Include
     int   col;
 };
 
-std::vector<TOPIC> g_topics;         //
 std::vector<LABEL> g_labels;         //
 std::vector<LABEL> g_private_labels; //
-std::vector<LINK> g_all_links;       //
-std::vector<CONTENT> g_contents;     // the table-of-contents
 int g_max_pages{};                   // max. pages in any topic
-int g_max_links{};                   // max. links on any page
 int g_num_doc_pages{};               // total number of pages in document
 std::FILE *g_src_file{};             // .SRC file
 int g_src_line{};                    // .SRC line number (used for errors)
@@ -109,10 +105,6 @@ std::string g_hdr_filename;          // .H filename
 std::string g_hlp_filename;          // .HLP filename
 std::string g_current_src_filename;  // current .SRC filename
 int g_format_exclude{};              // disable formatting at this col, 0 to never disable formatting
-std::FILE *g_swap_file{};            //
-long g_swap_pos{};                   //
-std::vector<char> g_buffer;          // alloc'ed as BUFFER_SIZE bytes
-char *g_curr{};                      // current position in the buffer
 char g_cmd[128]{};                   // holds the current command
 bool g_compress_spaces{};            //
 bool g_xonline{};                    //

@@ -100,18 +100,10 @@ private:
 extern std::vector<CONTENT> g_contents;
 extern std::vector<LINK> g_all_links;
 extern std::vector<TOPIC> g_topics;
-extern long g_swap_pos;
 extern std::FILE *g_swap_file;
+extern long g_swap_pos;
 extern std::vector<char> g_buffer;
-extern int g_max_links;
 extern char *g_curr;
-
-void show_line(unsigned int line);
-void error_msg(int diff, char const *format, ...);
-void warn_msg(int diff, char const *format, ...);
-void notice_msg(char const *format, ...);
-void msg_msg(char const *format, ...);
-
-std::string rst_name(std::string const &content_name);
+extern int g_max_links;
 
 }

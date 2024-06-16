@@ -29,4 +29,6 @@ private:
     std::string m_fname;
 };
 
+std::string rst_name(std::string const &content_name);
+
 } // namespace hc
