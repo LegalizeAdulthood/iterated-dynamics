@@ -8,6 +8,8 @@ namespace hc
 
 constexpr int MAX_CONTENT_TOPIC{10};
 constexpr const char *DOCCONTENTS_TITLE{"DocContent"};
+constexpr char const *INDEX_LABEL{"HELP_INDEX"};
+
 
 // values for CONTENT.flags
 enum
@@ -37,6 +39,20 @@ struct LABEL
     unsigned topic_off;       // offset of label in the topic's text
     int      doc_page;
 };
+
+inline bool operator<(const LABEL &a, const LABEL &b)
+{
+    if (a.name == INDEX_LABEL)
+    {
+        return true;
+    }
+    if (b.name == INDEX_LABEL)
+    {
+        return false;
+    }
+
+    return a.name < b.name;
+}
 
 enum class link_types
 {
@@ -100,6 +116,8 @@ private:
 extern std::vector<CONTENT> g_contents;
 extern std::vector<LINK> g_all_links;
 extern std::vector<TOPIC> g_topics;
+extern std::vector<LABEL> g_labels;
+extern std::vector<LABEL> g_private_labels;
 extern std::FILE *g_swap_file;
 extern long g_swap_pos;
 extern std::vector<char> g_buffer;

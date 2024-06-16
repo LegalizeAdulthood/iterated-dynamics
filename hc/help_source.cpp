@@ -10,6 +10,8 @@ namespace hc
 std::vector<CONTENT> g_contents;     // the table-of-contents
 std::vector<LINK> g_all_links;       //
 std::vector<TOPIC> g_topics;         //
+std::vector<LABEL> g_labels;         //
+std::vector<LABEL> g_private_labels; //
 std::FILE *g_swap_file{};            //
 long g_swap_pos{};                   //
 std::vector<char> g_buffer;          // buffer to/from swap file

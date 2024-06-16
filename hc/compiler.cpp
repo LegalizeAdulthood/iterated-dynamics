@@ -73,8 +73,6 @@ std::string const DEFAULT_HTML_FNAME = "index.rst";
 char const *const TEMP_FNAME = "hc.tmp";
 char const *const SWAP_FNAME = "hcswap.tmp";
 
-char const *const INDEX_LABEL       = "HELP_INDEX";
-
 int const BUFFER_SIZE = (1024*1024);    // 1 MB
 
 struct help_sig_info
@@ -92,8 +90,6 @@ struct Include
     int   col;
 };
 
-std::vector<LABEL> g_labels;         //
-std::vector<LABEL> g_private_labels; //
 int g_max_pages{};                   // max. pages in any topic
 int g_num_doc_pages{};               // total number of pages in document
 std::FILE *g_src_file{};             // .SRC file
@@ -2893,22 +2889,10 @@ void paginate_document()
  * label sorting stuff
  */
 
-bool cmp_LABEL(const LABEL &a, const LABEL &b)
-{
-    if (a.name == INDEX_LABEL)
-        return true;
-    
-    if (b.name == INDEX_LABEL)
-        return false;
-
-    return a.name < b.name;
-}
-
-
 void sort_labels()
 {
-    std::sort(g_labels.begin(), g_labels.end(), cmp_LABEL);
-    std::sort(g_private_labels.begin(), g_private_labels.end(), cmp_LABEL);
+    std::sort(g_labels.begin(), g_labels.end());
+    std::sort(g_private_labels.begin(), g_private_labels.end());
 }
 
 
