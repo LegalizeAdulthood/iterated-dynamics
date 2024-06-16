@@ -2546,11 +2546,11 @@ void paginate_online()    // paginate the text for on-line help
             continue;    // don't paginate data topics
         }
 
-        char *text = get_topic_text(t);
-        char *curr = text;
+        const char *text = get_topic_text(t);
+        const char *curr = text;
         unsigned int len = t.text_len;
 
-        char *start = curr;
+        const char *start = curr;
         bool skip_blanks = false;
         int lnum = 0;
         int num_links = 0;
@@ -3939,11 +3939,11 @@ void compiler::paginate_html_document()
             continue;    // don't paginate data topics
         }
 
-        char *text = get_topic_text(t);
-        char *curr = text;
+        const char *text = get_topic_text(t);
+        const char *curr = text;
         unsigned int len = t.text_len;
 
-        char *start = curr;
+        const char *start = curr;
         bool skip_blanks = false;
         int lnum = 0;
         int num_links = 0;
