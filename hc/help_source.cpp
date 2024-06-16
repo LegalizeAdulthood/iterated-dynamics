@@ -47,7 +47,6 @@ struct Include
 
 HelpSource g_src;
 
-std::vector<LABEL> g_labels;              //
 std::vector<LABEL> g_private_labels;      //
 std::FILE *g_swap_file{};                 //
 long g_swap_pos{};                        //
@@ -283,7 +282,7 @@ LABEL *find_label(char const *name)
     }
     else
     {
-        for (LABEL &l : g_labels)
+        for (LABEL &l : g_src.labels)
         {
             if (name == l.name)
             {
@@ -337,13 +336,13 @@ int HelpSource::add_link(LINK &l)
     return static_cast<int>(all_links.size() - 1);
 }
 
-int add_topic(const TOPIC &t)
+int HelpSource::add_topic(const TOPIC &t)
 {
-    g_src.topics.push_back(t);
-    return static_cast<int>(g_src.topics.size() - 1);
+    topics.push_back(t);
+    return static_cast<int>(topics.size() - 1);
 }
 
-int add_label(const LABEL &l)
+int HelpSource::add_label(const LABEL &l)
 {
     if (l.name[0] == '@')    // if it's a private label...
     {
@@ -351,8 +350,8 @@ int add_label(const LABEL &l)
         return static_cast<int>(g_private_labels.size() - 1);
     }
 
-    g_labels.push_back(l);
-    return static_cast<int>(g_labels.size() - 1);
+    labels.push_back(l);
+    return static_cast<int>(labels.size() - 1);
 }
 
 int HelpSource::add_content(const CONTENT &c)
@@ -778,7 +777,7 @@ void process_doc_contents(char * (*format_toc)(char *buffer, CONTENT &c))
     }
 
     t.alloc_topic_text((unsigned)(g_curr - &g_buffer[0]));
-    add_topic(t);
+    g_src.add_topic(t);
 }
 
 void process_doc_contents(modes mode)
@@ -1175,7 +1174,7 @@ void process_bininc()
 void end_topic(TOPIC &t)
 {
     t.alloc_topic_text((unsigned)(g_curr - &g_buffer[0]));
-    add_topic(t);
+    g_src.add_topic(t);
 }
 
 bool end_of_sentence(char const *ptr)  // true if ptr is at the end of a sentence
@@ -1468,7 +1467,7 @@ HelpSource read_src(std::string const &fname, modes mode)
                     lbl.topic_num = static_cast<int>(g_src.topics.size());
                     lbl.topic_off = 0;
                     lbl.doc_page  = -1;
-                    add_label(lbl);
+                    g_src.add_label(lbl);
 
                     formatting = false;
                     centering = false;
@@ -1749,7 +1748,7 @@ HelpSource read_src(std::string const &fname, modes mode)
                         lbl.topic_num = static_cast<int>(g_src.topics.size());
                         lbl.topic_off = (unsigned)(g_curr - &g_buffer[0]);
                         lbl.doc_page  = -1;
-                        add_label(lbl);
+                        g_src.add_label(lbl);
                     }
                 }
                 else if (strnicmp(g_cmd, "Table=", 6) == 0)

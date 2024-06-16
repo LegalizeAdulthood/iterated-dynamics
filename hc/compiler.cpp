@@ -414,7 +414,7 @@ struct PAGINATE_DOC_INFO : DOC_INFO
 LABEL *find_next_label_by_topic(int t)
 {
     LABEL *g = nullptr;
-    for (LABEL &l : g_labels)
+    for (LABEL &l : g_src.labels)
     {
         if (l.topic_num == t && l.doc_page == -1)
         {
@@ -664,7 +664,7 @@ void paginate_document()
 
 void sort_labels()
 {
-    std::sort(g_labels.begin(), g_labels.end());
+    std::sort(g_src.labels.begin(), g_src.labels.end());
     std::sort(g_private_labels.begin(), g_private_labels.end());
 }
 
@@ -716,12 +716,12 @@ void _write_hdr(char const *fname, std::FILE *file)
         "    SPECIAL_FORMULA                  =  -2,\n"
         "    NONE                             =  -1,\n");
 
-    for (int ctr = 0; ctr < static_cast<int>(g_labels.size()); ctr++)
+    for (int ctr = 0; ctr < static_cast<int>(g_src.labels.size()); ctr++)
     {
-        if (g_labels[ctr].name[0] != '@')  // if it's not a local label...
+        if (g_src.labels[ctr].name[0] != '@')  // if it's not a local label...
         {
-            std::fprintf(file, "    %-32s = %3d%s", g_labels[ctr].name.c_str(), ctr, ctr != static_cast<int>(g_labels.size())-1 ? "," : "");
-            if (g_labels[ctr].name == INDEX_LABEL)
+            std::fprintf(file, "    %-32s = %3d%s", g_src.labels[ctr].name.c_str(), ctr, ctr != static_cast<int>(g_src.labels.size())-1 ? "," : "");
+            if (g_src.labels[ctr].name == INDEX_LABEL)
             {
                 std::fprintf(file, "        /* index */");
             }
@@ -805,7 +805,7 @@ void calc_offsets()    // calc file offset to each topic
                                     sizeof(int) +                       // num_contents
                                     sizeof(int) +                       // num_doc_pages
                                     g_src.topics.size() * sizeof(long) +    // offsets to each topic
-                                    g_labels.size() * 2 * sizeof(int)); // topic_num/topic_off for all public labels
+                                    g_src.labels.size() * 2 * sizeof(int)); // topic_num/topic_off for all public labels
 
     offset = std::accumulate(g_src.contents.begin(), g_src.contents.end(), offset, [](long offset, const CONTENT &cp) {
         return offset += sizeof(int) +  // flags
@@ -876,7 +876,7 @@ void _write_help(std::FILE *file)
     // write num_topic, num_label and num_contents
 
     putw(static_cast<int>(g_src.topics.size()), file);
-    putw(static_cast<int>(g_labels.size()), file);
+    putw(static_cast<int>(g_src.labels.size()), file);
     putw(static_cast<int>(g_src.contents.size()), file);
 
     // write num_doc_page
@@ -890,7 +890,7 @@ void _write_help(std::FILE *file)
     }
 
     // write all public labels
-    for (const LABEL &l : g_labels)
+    for (const LABEL &l : g_src.labels)
     {
         putw(l.topic_num, file);
         putw(l.topic_off, file);
@@ -1161,13 +1161,13 @@ void report_memory()
 
     dead += static_cast<long>((g_src.all_links.capacity() - g_src.all_links.size()) * sizeof(LINK));
 
-    for (const LABEL &l : g_labels)
+    for (const LABEL &l : g_src.labels)
     {
         data   += sizeof(LABEL);
         bytes_in_strings += (long) l.name.length() + 1;
     }
 
-    dead += static_cast<long>((g_labels.capacity() - g_labels.size()) * sizeof(LABEL));
+    dead += static_cast<long>((g_src.labels.capacity() - g_src.labels.size()) * sizeof(LABEL));
 
     for (const LABEL &l : g_private_labels)
     {
@@ -1219,7 +1219,7 @@ void report_stats()
     std::printf("Statistics:\n");
     std::printf("%8d Topics\n", static_cast<int>(g_src.topics.size()));
     std::printf("%8d Links\n", static_cast<int>(g_src.all_links.size()));
-    std::printf("%8d Labels\n", static_cast<int>(g_labels.size()));
+    std::printf("%8d Labels\n", static_cast<int>(g_src.labels.size()));
     std::printf("%8d Private labels\n", static_cast<int>(g_private_labels.size()));
     std::printf("%8d Table of contents (DocContent) entries\n", static_cast<int>(g_src.contents.size()));
     std::printf("%8d Online help pages\n", pages);

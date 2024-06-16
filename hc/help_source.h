@@ -125,15 +125,17 @@ struct HelpSource
 {
     int add_content(const CONTENT &c);
     int add_link(LINK &l);
+    int add_topic(const TOPIC &t);
+    int add_label(const LABEL &l);
 
     std::vector<CONTENT> contents;
     std::vector<LINK> all_links;
     std::vector<TOPIC> topics;
+    std::vector<LABEL> labels;
 };
 
 extern HelpSource g_src;
 
-extern std::vector<LABEL> g_labels;
 extern std::vector<LABEL> g_private_labels;
 extern std::FILE *g_swap_file;
 extern long g_swap_pos;
