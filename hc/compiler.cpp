@@ -626,7 +626,7 @@ bool get_next_item()
     return last;
 }
 
-void process_doc_contents(hc::modes mode)
+void process_doc_contents(modes mode)
 {
     TOPIC t;
     t.flags     = 0;
@@ -699,7 +699,7 @@ void process_doc_contents(hc::modes mode)
             }
 
             // now, make the entry in the buffer
-            if (mode == hc::modes::HTML)
+            if (mode == modes::HTML)
             {
                 std::sprintf(g_curr, "%s", rst_name(c.name).c_str());
                 char *ptr = g_curr + (int) std::strlen(g_curr);
@@ -1242,7 +1242,7 @@ std::FILE *open_include(std::string const &file_name)
     return result;
 }
 
-void read_src(std::string const &fname, hc::modes mode)
+void read_src(std::string const &fname, modes mode)
 {
     int    ch;
     char  *ptr;
