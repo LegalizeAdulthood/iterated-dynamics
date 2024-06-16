@@ -263,13 +263,6 @@ int add_link(LINK &l)
 }
 
 
-int add_page(TOPIC &t, const PAGE &p)
-{
-    t.page.push_back(p);
-    return t.num_page++;
-}
-
-
 int add_topic(const TOPIC &t)
 {
     g_topics.push_back(t);
@@ -2545,7 +2538,7 @@ void add_page_break(TOPIC &t, int margin, char const *text, char const *start, c
     p.offset = (unsigned)(start - text);
     p.length = (unsigned)(curr - start);
     p.margin = margin;
-    add_page(t, p);
+    t.add_page(p);
 
     if (g_max_links < num_links)
     {

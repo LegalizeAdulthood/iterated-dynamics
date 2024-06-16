@@ -98,6 +98,7 @@ enum
 struct TOPIC
 {
     void alloc_topic_text(unsigned size);
+    int add_page(const PAGE &p);
 
     unsigned  flags;          // see #defines for TF_???
     int       doc_page;       // page number in document where topic starts

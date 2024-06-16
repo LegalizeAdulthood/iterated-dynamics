@@ -14,4 +14,10 @@ void TOPIC::alloc_topic_text(unsigned size)
     std::fwrite(&g_buffer[0], 1, text_len, g_swap_file);
 }
 
+int TOPIC::add_page(const PAGE &p)
+{
+    page.push_back(p);
+    return num_page++;
+}
+
 }
