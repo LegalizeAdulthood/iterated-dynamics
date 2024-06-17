@@ -1,0 +1,44 @@
+= Iterated Dynamics
+:toc:
+
+== New Features in 1.0
+
+== Introduction
+
+== Iterated Dynamics Commands
+
+=== Getting Started
+
+== Fractal Types
+
+=== The Mandelbrot Set
+
+== Doodads, Bells, and Whistles
+
+=== Drawing Method
+
+== "3D" Images
+
+=== 3D Mode Selection
+
+== Command Line Parameters, Parameter Files, Batch Mode
+
+=== Using the Command Line
+
+== Hardware Support
+
+=== Notes on Video Modes, "Standard" and Otherwise
+
+=== "Disk-Video" Modes
+
+== Common Problems
+
+== Fractals and the PC
+
+=== A Little History
+
+==== Before Mandelbrot
+
+== Mathematics of the Fractal Types
+
+== Stone Soup With Pixels: The Authors

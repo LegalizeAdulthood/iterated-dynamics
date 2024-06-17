@@ -777,6 +777,15 @@ void process_doc_contents(modes mode)
                 return buffer + (int) std::strlen(buffer);
             });
     }
+    else if (mode == modes::ASCII_DOC)
+    {
+        process_doc_contents(
+            [](char *buffer, CONTENT &c)
+            {
+                c.page_num_pos = 0U;
+                return buffer;
+            });
+    }
     else
     {
         process_doc_contents(

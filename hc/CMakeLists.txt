@@ -1,8 +1,12 @@
 # Copyright 2018 Richard Thomson
 
 add_library(libhc
+    adoc_compiler.h
+    adoc_compiler.cpp
     compiler.h
     compiler.cpp
+    help_compiler.h
+    help_compiler.cpp
     help_source.h
     help_source.cpp
     html_processor.h

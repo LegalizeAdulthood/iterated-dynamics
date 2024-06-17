@@ -254,35 +254,35 @@ bool process_document(PD_FUNC get_info, PD_FUNC output, void *info)
     {
         pd.s = str;
         pd.i = n;
-        return output(PD_PRINT, &pd, info);
+        return output(PD_COMMANDS::PD_PRINT, &pd, info);
     };
     auto const do_print_n = [=, &pd](char ch, int n)
     {
         pd.s = &ch;
         pd.i = n;
-        return output(PD_PRINTN, &pd, info);
+        return output(PD_COMMANDS::PD_PRINTN, &pd, info);
     };
 
-    output(PD_HEADING, &pd, info);
+    output(PD_COMMANDS::PD_HEADING, &pd, info);
 
     bool first_section = true;
     char page_text[30]{};
-    while (get_info(PD_GET_CONTENT, &pd, info))
+    while (get_info(PD_COMMANDS::PD_GET_CONTENT, &pd, info))
     {
-        if (!output(PD_START_SECTION, &pd, info))
+        if (!output(PD_COMMANDS::PD_START_SECTION, &pd, info))
         {
             return false;
         }
 
         if (pd.new_page && pd.line_num != 0)
         {
-            if (!output(PD_FOOTING, &pd, info))
+            if (!output(PD_COMMANDS::PD_FOOTING, &pd, info))
             {
                 return false;
             }
             ++pd.page_num;
             pd.line_num = 0;
-            if (!output(PD_HEADING, &pd, info))
+            if (!output(PD_COMMANDS::PD_HEADING, &pd, info))
             {
                 return false;
             }
@@ -291,13 +291,13 @@ bool process_document(PD_FUNC get_info, PD_FUNC output, void *info)
         {
             if (pd.line_num + 2 > PAGE_DEPTH-CONTENT_BREAK)
             {
-                if (!output(PD_FOOTING, &pd, info))
+                if (!output(PD_COMMANDS::PD_FOOTING, &pd, info))
                 {
                     return false;
                 }
                 ++pd.page_num;
                 pd.line_num = 0;
-                if (!output(PD_HEADING, &pd, info))
+                if (!output(PD_COMMANDS::PD_HEADING, &pd, info))
                 {
                     return false;
                 }
@@ -312,14 +312,14 @@ bool process_document(PD_FUNC get_info, PD_FUNC output, void *info)
             }
         }
 
-        if (!output(PD_SET_SECTION_PAGE, &pd, info))
+        if (!output(PD_COMMANDS::PD_SET_SECTION_PAGE, &pd, info))
         {
             return false;
         }
 
         if (!first_section)
         {
-            if (!output(PD_PRINT_SEC, &pd, info))
+            if (!output(PD_COMMANDS::PD_PRINT_SEC, &pd, info))
             {
                 return false;
             }
@@ -327,9 +327,9 @@ bool process_document(PD_FUNC get_info, PD_FUNC output, void *info)
         }
 
         bool first_topic = true;
-        while (get_info(PD_GET_TOPIC, &pd, info))
+        while (get_info(PD_COMMANDS::PD_GET_TOPIC, &pd, info))
         {
-            if (!output(PD_START_TOPIC, &pd, info))
+            if (!output(PD_COMMANDS::PD_START_TOPIC, &pd, info))
             {
                 return false;
             }
@@ -362,13 +362,13 @@ bool process_document(PD_FUNC get_info, PD_FUNC output, void *info)
 
             if (pd.line_num > PAGE_DEPTH-TOPIC_BREAK)
             {
-                if (!output(PD_FOOTING, &pd, info))
+                if (!output(PD_COMMANDS::PD_FOOTING, &pd, info))
                 {
                     return false;
                 }
                 ++pd.page_num;
                 pd.line_num = 0;
-                if (!output(PD_HEADING, &pd, info))
+                if (!output(PD_COMMANDS::PD_HEADING, &pd, info))
                 {
                     return false;
                 }
@@ -382,7 +382,7 @@ bool process_document(PD_FUNC get_info, PD_FUNC output, void *info)
                 ++pd.line_num;
             }
 
-            if (!output(PD_SET_TOPIC_PAGE, &pd, info))
+            if (!output(PD_COMMANDS::PD_SET_TOPIC_PAGE, &pd, info))
             {
                 return false;
             }
@@ -391,7 +391,7 @@ bool process_document(PD_FUNC get_info, PD_FUNC output, void *info)
             int col = 0;
             do
             {
-                if (!output(PD_PERIODIC, &pd, info))
+                if (!output(PD_COMMANDS::PD_PERIODIC, &pd, info))
                 {
                     return false;
                 }
@@ -423,7 +423,7 @@ bool process_document(PD_FUNC get_info, PD_FUNC output, void *info)
 
                     while (true)
                     {
-                        if (!output(PD_PERIODIC, &pd, info))
+                        if (!output(PD_COMMANDS::PD_PERIODIC, &pd, info))
                         {
                             return false;
                         }
@@ -494,7 +494,7 @@ bool process_document(PD_FUNC get_info, PD_FUNC output, void *info)
                         if (tok == token_types::TOK_LINK)
                         {
                             pd.s = pd.curr+1;
-                            if (get_info(PD_GET_LINK_PAGE, &pd, info))
+                            if (get_info(PD_COMMANDS::PD_GET_LINK_PAGE, &pd, info))
                             {
                                 in_link = 1;
                                 std::snprintf(page_text, std::size(page_text), "(p. %d)", pd.i);
@@ -521,13 +521,13 @@ bool process_document(PD_FUNC get_info, PD_FUNC output, void *info)
                             }
                             if (++pd.line_num >= PAGE_DEPTH)
                             {
-                                if (!output(PD_FOOTING, &pd, info))
+                                if (!output(PD_COMMANDS::PD_FOOTING, &pd, info))
                                 {
                                     return false;
                                 }
                                 ++pd.page_num;
                                 pd.line_num = 0;
-                                if (!output(PD_HEADING, &pd, info))
+                                if (!output(PD_COMMANDS::PD_HEADING, &pd, info))
                                 {
                                     return false;
                                 }
@@ -591,14 +591,14 @@ bool process_document(PD_FUNC get_info, PD_FUNC output, void *info)
                                 return false;
                             }
                         }
-                        if (!output(PD_FOOTING, &pd, info))
+                        if (!output(PD_COMMANDS::PD_FOOTING, &pd, info))
                         {
                             return false;
                         }
                         ++pd.page_num;
                         pd.line_num = 0;
                         skip_blanks = true;
-                        if (!output(PD_HEADING, &pd, info))
+                        if (!output(PD_COMMANDS::PD_HEADING, &pd, info))
                         {
                             return false;
                         }
@@ -619,14 +619,14 @@ bool process_document(PD_FUNC get_info, PD_FUNC output, void *info)
                     {
                         break;
                     }
-                    if (!output(PD_FOOTING, &pd, info))
+                    if (!output(PD_COMMANDS::PD_FOOTING, &pd, info))
                     {
                         return false;
                     }
                     col = 0;
                     pd.line_num = 0;
                     ++pd.page_num;
-                    if (!output(PD_HEADING, &pd, info))
+                    if (!output(PD_COMMANDS::PD_HEADING, &pd, info))
                     {
                         return false;
                     }
@@ -647,7 +647,7 @@ bool process_document(PD_FUNC get_info, PD_FUNC output, void *info)
                         return false;
                     }
                     pd.s = pd.curr+1;
-                    if (get_info(PD_GET_LINK_PAGE, &pd, info))
+                    if (get_info(PD_COMMANDS::PD_GET_LINK_PAGE, &pd, info))
                     {
                         width += 9;
                         std::snprintf(page_text, std::size(page_text), " (p. %d)", pd.i);
@@ -687,7 +687,7 @@ bool process_document(PD_FUNC get_info, PD_FUNC output, void *info)
             }
             while (pd.len > 0);
 
-            get_info(PD_RELEASE_TOPIC, &pd, info);
+            get_info(PD_COMMANDS::PD_RELEASE_TOPIC, &pd, info);
 
             first_topic = false;
         } /* while */
@@ -695,5 +695,5 @@ bool process_document(PD_FUNC get_info, PD_FUNC output, void *info)
         first_section = false;
     } /* while */
 
-    return output(PD_FOOTING, &pd, info);
+    return output(PD_COMMANDS::PD_FOOTING, &pd, info);
 }

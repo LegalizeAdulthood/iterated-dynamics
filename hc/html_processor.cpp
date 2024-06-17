@@ -53,7 +53,7 @@ void html_processor::process()
 
 void html_processor::write_index_html()
 {
-    msg("Writing index.rst");
+    msg(("Writing " + m_fname).c_str());
 
     const CONTENT &toc = g_src.contents[0];
     if (toc.num_topic != 1)

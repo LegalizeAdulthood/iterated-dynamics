@@ -97,7 +97,7 @@ struct PD_INFO
 /*
  * Commands passed to (*get_info)() and (*output)() by process_document()
  */
-enum  PD_COMMANDS
+enum class PD_COMMANDS
 {
     // commands sent to pd_output
     PD_HEADING,         // call at the top of each page
@@ -116,7 +116,7 @@ enum  PD_COMMANDS
     PD_RELEASE_TOPIC,
     PD_GET_LINK_PAGE
 };
-typedef bool (*PD_FUNC)(int cmd, PD_INFO *pd, void *info);
+typedef bool (*PD_FUNC)(PD_COMMANDS cmd, PD_INFO *pd, void *info);
 token_types find_token_length(token_modes mode, char const *curr, unsigned len, int *size, int *width);
 int find_line_width(token_modes mode, char const *curr, unsigned len);
 bool process_document(PD_FUNC get_info, PD_FUNC output, void *info);

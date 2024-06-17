@@ -1,0 +1,117 @@
+~HdrFile=helpdefs.h
+~HlpFile=id.hlp
+~Version=100
+~FormatExclude=8
+;
+;
+;
+~DocContents
+{     , 0, "New Features in 1.0", FF}
+{     , 0, "Introduction", "Conditions on Use", FF}
+
+{1.   , 0, Iterated Dynamics Commands, FF}
+{1.1  , 1, "Getting Started"}
+
+{2.   , 0, "Fractal Types", FF}
+{2.1  , 1, "The Mandelbrot Set"}
+
+{3.   , 0, Doodads\, Bells\, and Whistles, FF}
+{3.1  , 1, "Drawing Method"}
+
+{4.   , 0, "\"3D\" Images", FF}
+{4.1  , 1, "3D Mode Selection"}
+
+{5.   , 0, Command Line Parameters\, Parameter Files\, Batch Mode, FF}
+{5.1  , 1, "Using the Command Line"}
+
+{6.   , 0, Hardware Support, FF}
+{6.1  , 1, Notes on Video Modes\, \"Standard\" and Otherwise}
+{6.2  , 1, "\"Disk-Video\" Modes"}
+
+{7.   , 0, "Common Problems", FF}
+
+{8.   , 0, "Fractals and the PC", FF}
+{8.1  , 1, A Little History}
+{8.1.1, 2, "Before Mandelbrot"}
+
+{Appendix A, 0, Mathematics of the Fractal Types,
+                   "Summary of Fractal Types",
+                   FF}
+
+{Appendix B, 0, Stone Soup With Pixels: The Authors,
+                   "The Stone Soup Story", FF}
+
+;
+; End of DoContents
+;
+;
+;
+~Topic=New Features in 1.0
+;
+;
+;
+~Topic=Introduction
+;
+;
+;
+~Topic=Conditions on Use
+;
+;
+;
+~Topic=Getting Started
+;
+;
+;
+~Topic=Fractal Types
+;
+;
+;
+~Topic=The Mandelbrot Set
+;
+;
+;
+~Topic=Doodads\, Bells\, and Whistles
+;
+;
+;
+~Topic=Drawing Method
+;
+;
+;
+~Topic=\"3D\" Images
+;
+;
+;
+~Topic=3D Mode Selection
+;
+;
+;
+~Topic=Batch Mode
+;
+;
+;
+~Topic=Using the Command Line
+;
+;
+;
+~Topic="Disk-Video" Modes
+;
+;
+;
+~Topic=Common Problems
+;
+;
+;
+~Topic=Fractals and the PC
+;
+;
+;
+~Topic=Before Mandelbrot
+;
+;
+;
+~Topic=Summary of Fractal Types
+;
+;
+;
+~Topic=The Stone Soup Story
