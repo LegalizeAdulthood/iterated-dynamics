@@ -9,6 +9,32 @@
 
 using namespace testing;
 
+namespace std
+{
+
+std::ostream &operator<<(std::ostream &str, const std::vector<const char *> &options)
+{
+    str << '{';
+    bool first{true};
+    for (const char *opt : options)
+    {
+        if (!first)
+        {
+            str << ", ";
+        }
+        str << opt;
+        first = false;
+    }
+    return str << '}';
+}
+
+void PrintTo(const std::vector<const char *> &options, std::ostream *str)
+{
+    *str << options;
+}
+
+} // namespace std
+
 namespace hc
 {
 
@@ -37,17 +63,18 @@ std::ostream &operator<<(std::ostream &str, hc::modes value)
 
 }
 
+
 class TestParseCompilerOptions : public Test
 {
 protected:
-    void parse_options(const std::initializer_list<const char *> &args);
+    void parse_options(const std::vector<const char *> &args);
 
     std::vector<std::string> m_args;
     std::vector<char *> m_argv;
     hc::Options m_options;
 };
 
-void TestParseCompilerOptions::parse_options(const std::initializer_list<const char *> &args)
+void TestParseCompilerOptions::parse_options(const std::vector<const char *> &args)
 {
     m_args.resize(args.size() + 1);
     m_argv.resize(args.size() + 1);
@@ -122,17 +149,16 @@ TEST_F(TestParseCompilerOptions, secondFile)
     EXPECT_EQ("foo.txt", m_options.fname2);
 }
 
-class TestOptionCombos : public TestParseCompilerOptions,
-                                      public WithParamInterface<std::initializer_list<const char *>>
+class withOptions : public TestParseCompilerOptions, public WithParamInterface<std::vector<const char *>>
 {
 };
 
-TEST_P(TestOptionCombos, invalidCombination)
+TEST_P(withOptions, invalidCombination)
 {
     EXPECT_THROW(parse_options(GetParam()), std::runtime_error);
 }
 
-static std::initializer_list<const char *> s_invalid_options[]{
+static std::vector<const char *> s_invalid_options[]{
     {"/a", "/adoc"},          //
     {"/a", "/c"},             //
     {"/a", "/d"},             //
@@ -188,4 +214,4 @@ static std::initializer_list<const char *> s_invalid_options[]{
     {"too", "many", "files"}, //
 };
 
-INSTANTIATE_TEST_SUITE_P(withOptions, TestOptionCombos, ValuesIn(s_invalid_options));
+INSTANTIATE_TEST_SUITE_P(TestOptionCombos, withOptions, ValuesIn(s_invalid_options));
