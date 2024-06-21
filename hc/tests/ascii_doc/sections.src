@@ -1,0 +1,209 @@
+~HdrFile=helpdefs.h
+~HlpFile=id.hlp
+~Version=100
+~FormatExclude=8
+;
+;
+;
+~DocContents
+{     , 0, "New Features in 1.0", FF}
+{     , 0, "Introduction", "Conditions on Use", FF}
+
+{1.   , 0, Iterated Dynamics Commands, FF}
+{1.1  , 1, "Getting Started"}
+
+{2.   , 0, "Fractal Types", FF}
+{2.1  , 1, "The Mandelbrot Set"}
+
+{3.   , 0, Doodads\, Bells\, and Whistles, FF}
+{3.1  , 1, "Drawing Method"}
+
+{4.   , 0, "\"3D\" Images", FF}
+{4.1  , 1, "3D Mode Selection"}
+
+{5.   , 0, Command Line Parameters\, Parameter Files\, Batch Mode, FF}
+{5.1  , 1, "Using the Command Line"}
+
+{6.   , 0, Hardware Support, FF}
+{6.1  , 1, Notes on Video Modes\, \"Standard\" and Otherwise}
+{6.2  , 1, "\"Disk-Video\" Modes"}
+
+{7.   , 0, "Common Problems", FF}
+
+{8.   , 0, "Fractals and the PC", FF}
+{8.1  , 1, A Little History}
+{8.1.1, 2, "Before Mandelbrot"}
+
+{Appendix A, 0, Mathematics of the Fractal Types,
+                   "Summary of Fractal Types",
+                   FF}
+
+{Appendix B, 0, Stone Soup With Pixels: The Authors,
+                   "The Stone Soup Story", FF}
+
+;
+; End of DoContents
+;
+;
+;
+~Topic=New Features in 1.0
+Iterated Dynamics is a fork of the DOS program Fractint.  Fractint has
+its own history spanning many years.  Please consult the Fractint help
+for its history.  To avoid being confused with a new release of Fractint,
+the code has been rebranded Iterated Dynamics, or Id for short, throughout.
+;
+;
+;
+~Topic=Introduction
+Iterated Dynamics, or Id for short, plots and manipulates images of
+"objects" -- actually, sets of mathematical points -- that have fractal
+dimension.  For now, these sets of points have three
+important properties:
+;
+;
+;
+~Topic=Conditions on Use
+
+Iterated Dynamics is open source software.  The copyright is retained by
+the primary author, Richard Thomson.  Legacy code is copyright the
+Stone Soup Group.
+;
+;
+;
+~Topic=Getting Started
+
+To start the program, locate the Id executable in the installation
+directory.  The program displays an initial "credits" screen.
+;
+;
+;
+~Topic=Fractal Types
+
+A list of the fractal types and their mathematics can be found in the
+Summary of Fractal Types.  Some notes about how Id calculates them
+are in "A Little Code".
+;
+;
+;
+~Topic=The Mandelbrot Set, Label=HT_MANDEL
+(type=mandel)
+
+This set is the classic: the only one implemented in many plotting
+programs, and the source of most of the printed fractal images published.
+Like most of the other types in Id, it is simply a
+graph: the x (horizontal) and y (vertical) coordinate axes represent
+ranges of two independent quantities, with various colors used to
+symbolize levels of a third quantity which depends on the first two.  So
+far, so good: basic analytic geometry.
+;
+;
+;
+~Topic=Doodads\, Bells\, and Whistles
+
+Doodads, Bells and Whistles
+;
+;
+;
+~Topic=Drawing Method
+
+The "passes option" (<X> options screen or "passes=" parameter)
+selects one of the single-pass, dual-pass, triple-pass, solid-guessing
+(default), solid-guessing after pass n, boundary tracing, tesseral,
+synchronous orbits, or orbits modes.
+;
+;
+;
+~Topic=\"3D\" Images, Label=HELP_3D
+; Empty in docs, just to have the hotlink defined at chapter level.
+;
+;
+;
+~Topic=3D Mode Selection, Label=HELP_3D_MODE
+
+After hitting <3> and getting past the filename prompt and video mode
+selection, you're presented with a "3D Mode Selection" screen.  If you
+wish to change the default for any of the following parameters,
+use the arrow keys to move through the menu.  When you're
+satisfied press <Enter>.
+;
+;
+;
+~Topic=Using the Command Line
+
+You can specify parameters when you start Id by using a command like:
+
+id sound=off filename=myimage.gif
+
+The individual parameters are separated by one or more spaces (an
+parameter itself may not include spaces).  Upper or lower case may be
+used, and parameters can be in any order.
+;
+;
+;
+~Topic="Disk-Video" Modes
+
+These "video modes" do not involve a graphic display at all.  They use
+memory or your disk drive (as file id.$$$) to store the fractal image.
+These modes are useful for creating images beyond the size of your
+screen, right up to the current internal limit of 32767 x 32767 x 256,
+e.g. for subsequent printing.  They're also useful for background
+processing - create an image in a disk-video mode, save it, then
+restore it in a real video mode.
+;
+;
+;
+~Topic=Common Problems
+
+Here are some common problems and their possible solutions:
+
+If Id hangs on startup, it may have difficulty loading the video
+mode table in id.cfg.  Without a video mode, Id doesn't have any
+sort of driver to interact with the screen and therefore can't
+display any sort of error message.  Try starting Id from the
+directory containing this file.
+;
+;
+;
+~Topic=Fractals and the PC
+;
+;
+;
+~Topic=Before Mandelbrot
+
+Like new forms of life, new branches of mathematics and science don't
+appear from nowhere.  The ideas of fractal geometry can be traced to the
+late nineteenth century, when mathematicians created shapes -- sets of
+points -- that seemed to have no counterpart in nature.  By a wonderful
+irony, the "abstract" mathematics descended from that work has now turned
+out to be more appropriate than any other for describing many natural
+shapes and processes.
+;
+;
+;
+~Topic=Summary of Fractal Types
+SUMMARY OF FRACTAL TYPES
+
+ant
+
+Generalized Ant Automaton as described in the July 1994 Scientific
+American.  Some ants wander around the screen.  A rule string (the first
+parameter) determines the ant's direction.  When the type 1 ant leaves a
+cell of color k, it turns right if the kth symbol in the first parameter
+is a 1, or left otherwise.  Then the color in the old cell is incremented.
+The 2nd parameter is a maximum iteration to guarantee that the fractal
+will terminate.  The 3rd parameter is the number of ants.  The 4th is the
+ant type 1 or 2.  The 5th parameter determines if the ants wrap the screen
+or stop at the edge.  The 6th parameter is a random seed.  You can slow
+down the ants to see them better using the <P> screen Orbit Delay.
+;
+;
+;
+~Topic=The Stone Soup Story
+
+THE STONE SOUP STORY
+
+Once upon a time, somewhere in Eastern Europe, there was a great famine.
+People jealously hoarded whatever food they could find, hiding it even
+from their friends and neighbors.  One day a peddler drove his wagon into a
+village, sold a few of his wares, and began asking questions as if he
+planned to stay for the night.

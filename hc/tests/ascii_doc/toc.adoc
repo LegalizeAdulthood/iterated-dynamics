@@ -42,3 +42,4 @@
 == Mathematics of the Fractal Types
 
 == Stone Soup With Pixels: The Authors
+

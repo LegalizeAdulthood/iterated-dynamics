@@ -69,8 +69,8 @@ private:
     int m_topic_num{};
     bool m_link_dest_warn{};
     int m_spaces{};
+    int m_newlines{};
     bool m_start_of_line{};
-    int m_margin{};
     std::string m_content;
 };
 
@@ -152,23 +152,15 @@ bool AsciiDocProcessor::output(PD_COMMANDS cmd, PD_INFO *pd)
         return true;
 
     case PD_COMMANDS::PD_PRINT_SEC:
-        m_margin = TITLE_INDENT;
-        if (pd->id[0] != '\0')
-        {
-            printers(pd->id, 0);
-            printerc(' ', 1);
-        }
-        printers(pd->title, 0);
-        printerc('\n', 1);
-        m_margin = PAGE_INDENT;
         return true;
 
     case PD_COMMANDS::PD_START_SECTION:
-        m_str << '\n' << pd->title << '\n';
+        printerc('\n', 1);
+        printers(pd->title, std::strlen(pd->title));
+        printerc('\n', 2);
         return true;
 
     case PD_COMMANDS::PD_START_TOPIC:
-        //m_str << "\n=== " << pd->title << '\n';
         return true;
 
     case PD_COMMANDS::PD_SET_SECTION_PAGE:
@@ -191,25 +183,29 @@ void AsciiDocProcessor::printerc(char c, int n)
         }
         else if (c == '\n' || c == '\f')
         {
+            ++m_newlines;
             m_start_of_line = true;
             m_spaces = 0;   // strip spaces before a new-line
-            //m_str << c;
+            if (m_newlines <= 2)
+            {
+                m_str << c;
+            }
         }
         else
         {
             if (m_start_of_line)
             {
-                m_spaces += m_margin;
                 m_start_of_line = false;
             }
 
             while (m_spaces > 0)
             {
-                //m_str << ' ';
+                m_str << ' ';
                 --m_spaces;
             }
 
-            //m_str << c;
+            m_str << c;
+            m_newlines = 0;
         }
     }
 }
