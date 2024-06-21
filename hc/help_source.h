@@ -26,6 +26,7 @@ struct CONTENT
 
     unsigned flags;
     std::string id;
+    int indent;
     std::string name;
     int doc_page;
     unsigned page_num_pos;

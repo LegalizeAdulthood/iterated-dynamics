@@ -630,7 +630,7 @@ bool get_next_item()
     return last;
 }
 
-void process_doc_contents(char * (*format_toc)(char *buffer, CONTENT &c))
+void process_doc_contents(char *(*format_toc)(char *buffer, CONTENT &c))
 {
     TOPIC t;
     t.flags     = 0;
@@ -676,6 +676,7 @@ void process_doc_contents(char * (*format_toc)(char *buffer, CONTENT &c))
                 error(0, "Unexpected end of DocContent entry.");
                 continue;
             }
+            c.indent = std::stoi(s_cmd);
 
             bool last = get_next_item();
 
@@ -791,8 +792,7 @@ void process_doc_contents(modes mode)
         process_doc_contents(
             [](char *buffer, CONTENT &c)
             {
-                const int indent = std::atoi(s_cmd);
-                std::sprintf(buffer, "%-5s %*.0s%s", c.id.c_str(), indent * 2, "", c.name.c_str());
+                std::sprintf(buffer, "%-5s %*.0s%s", c.id.c_str(), c.indent * 2, "", c.name.c_str());
                 char *ptr = buffer + (int) std::strlen(buffer);
                 while ((ptr - buffer) < PAGE_WIDTH - 10)
                 {
