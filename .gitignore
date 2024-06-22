@@ -3,3 +3,4 @@ home/id.txt
 .idea
 .vs
 CMakeUserPresets.json
+build-ci-*

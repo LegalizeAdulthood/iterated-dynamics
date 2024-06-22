@@ -20,7 +20,7 @@ add_library(os STATIC
     stack_avail.cpp
     unixscr.cpp
     video.cpp)
-target_link_libraries(os PUBLIC help_defs os_hc X11 m)
+target_link_libraries(os PUBLIC help-defs os_hc X11 m)
 target_compile_definitions(os PUBLIC ${ID_TARGET_DEFINITIONS} $<$<CONFIG:Debug>:${ID_TARGET_DEFINITIONS_DEBUG}>)
 target_compile_options(os PRIVATE ${ID_TARGET_OPTIONS})
 target_include_directories(os PRIVATE ../libid/include)
