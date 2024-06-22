@@ -4,8 +4,8 @@ if(NOT CMAKE_SYSTEM_NAME STREQUAL "Windows")
     return()
 endif()
 
-add_library(os_hc INTERFACE)
-target_link_libraries(os_hc INTERFACE helpcom config)
+add_library(os-hc INTERFACE)
+target_link_libraries(os-hc INTERFACE helpcom config)
 
 add_library(os STATIC
     d_disk.cpp
@@ -26,7 +26,7 @@ add_library(os STATIC
 )
 target_compile_definitions(os PRIVATE ${ID_TARGET_DEFINITIONS} $<$<CONFIG:Debug>:${ID_TARGET_DEFINITIONS_DEBUG}>)
 target_compile_options(os PRIVATE ${ID_TARGET_OPTIONS})
-target_link_libraries(os PUBLIC gdi32.lib user32.lib shlwapi.lib os_hc help-defs)
+target_link_libraries(os PUBLIC gdi32.lib user32.lib shlwapi.lib os-hc help-defs)
 target_include_directories(os PRIVATE ../libid/include PUBLIC .)
 add_dependencies(os native_help)
 

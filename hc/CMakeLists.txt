@@ -19,7 +19,7 @@ add_library(libhc
 )
 target_compile_definitions(libhc PRIVATE ${ID_TARGET_DEFINITIONS} $<$<CONFIG:Debug>:${ID_TARGET_DEFINITIONS_DEBUG}>)
 target_include_directories(libhc PUBLIC .)
-target_link_libraries(libhc PUBLIC helpcom os_hc)
+target_link_libraries(libhc PUBLIC helpcom os-hc)
 
 add_executable(hc hc.cpp)
 target_link_libraries(hc PUBLIC libhc)
