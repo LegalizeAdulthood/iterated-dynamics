@@ -1118,7 +1118,7 @@ take effect in Inverse Julia mode.
 <Z>         Restore default zoom.\
 
 The Julia Inverse window is only implemented for the classic Mandelbrot
-(type=mandel).  For other "Mandelbrot" types <space> turns on the cursor
+(type=mandel).  For other "Mandelbrot" types <Space> turns on the cursor
 without the Julia window, and allows you to select coordinates of the
 matching Julia set.
 ;
@@ -1380,7 +1380,7 @@ identical to the previous but at whatever new resolution is desired.
 Zooming is ignored, as each plasma-cloud screen is generated randomly.
 
 The random number seed used for each plasma image is displayed on the
-<tab> information screen, and can be entered with the command line
+<Tab> information screen, and can be entered with the command line
 parameter "rseed=" to recreate a particular image.
 
 The algorithm is based on the Pascal program distributed by Bret Mulvey.

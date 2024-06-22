@@ -154,7 +154,7 @@
 
 {Doodad Parameters}
   logmap=yes|old|nn        Yes maps logarithm of iteration to color.  Old uses
-                           old method.  >1 compresses, <-1 for quadratic.
+                           old method.  > 1 compresses, < -1 for quadratic.
   logmode=fly|table|auto   Fly forces on-the-fly calculation of logmap.  Table
                            forces the use of the logmap array.  Auto causes
                            logmap to be recalculated automatically when
@@ -449,7 +449,7 @@ such as a modified copy of id.frm, you won't Id to read the copy
 in your official FRM directory.  Setting curdir=yes at the command line will
 cause Id to look in the current directory for requested files first
 before looking in the default directory set by the other commands.  Warning:
-<tab> screen may not reflect actual file opened in cases where the file was
+<Tab> screen may not reflect actual file opened in cases where the file was
 opened in the current directory.
 
 ~ONLINEFF
@@ -664,7 +664,7 @@ magnification that is popular with some fractal programs and publications.
 Entering just "center-mag=" tells Id to use this form
 (the default mode) rather than "corners=" (see above) when saving parameters
 with the <B> command.
-The <TAB> status
+The <Tab> status
 display shows the "corners" in both forms.  When you specify three values
 (the usual case), this defines a rectangle:  (Xctr, Yctr) specifies the
 coordinates of the center of the image while Mag indicates the amount of

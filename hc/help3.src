@@ -231,7 +231,7 @@ help:
   future.
 
   It is a good idea to use INSERT before a GOTO which restarts the demo.
-  The <insert> key resets Id as if you exited the program and
+  The <Insert> key resets Id as if you exited the program and
   restarted it.
 
 Warning: an autokey file built for this version of Id will probably
@@ -419,7 +419,7 @@ parameter:
   image have low iteration counts - it makes use of the low colors which
   would otherwise be unused.
 
-  logmap=-N (<-1): Similar to logmap=N, but uses a square root
+  logmap=-N (< -1): Similar to logmap=N, but uses a square root
   distribution of the colors instead of a logarithmic one.
 
   logmap=2 or -2: Auto calculates the logmap value for maximum effect.
@@ -544,7 +544,7 @@ There is no easy way to predict in advance what this value should be.
 
 "Modulus" is the bailout value used to determine when an orbit has
 "escaped".  Larger values give more accurate and smoother potential.  A
-value of 500 gives excellent results.  As noted, this value must be <128
+value of 500 gives excellent results.  As noted, this value must be < 128
 for the integer fractal types (if you select a higher number, they will
 use 127).
 
