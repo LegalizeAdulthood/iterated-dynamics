@@ -24,11 +24,11 @@ target_link_libraries(libhc PUBLIC helpcom os-hc)
 add_executable(hc hc.cpp)
 target_link_libraries(hc PUBLIC libhc)
 
-add_custom_target(native_help
+add_custom_target(native-help
     DEPENDS hc ${CMAKE_CURRENT_BINARY_DIR}/helpdefs.h "${CMAKE_CURRENT_BINARY_DIR}/id.hlp"
     SOURCES help.src help2.src help3.src help4.src help5.src)
 source_group("Help Files" REGULAR_EXPRESSION .*\\.src)
-add_dependencies(native_help hc)
+add_dependencies(native-help hc)
 add_custom_command(
     OUTPUT
         ${CMAKE_CURRENT_BINARY_DIR}/helpdefs.h

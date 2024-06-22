@@ -26,7 +26,7 @@ target_compile_options(os PRIVATE ${ID_TARGET_OPTIONS})
 target_include_directories(os PRIVATE ../libid/include)
 
 set_src_dir(unix.cpp)
-add_dependencies(os native_help)
+add_dependencies(os native-help)
 
 add_executable(id main.cpp)
 target_link_libraries(id PUBLIC libid)

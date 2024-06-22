@@ -28,7 +28,7 @@ target_compile_definitions(os PRIVATE ${ID_TARGET_DEFINITIONS} $<$<CONFIG:Debug>
 target_compile_options(os PRIVATE ${ID_TARGET_OPTIONS})
 target_link_libraries(os PUBLIC gdi32.lib user32.lib shlwapi.lib os-hc help-defs)
 target_include_directories(os PRIVATE ../libid/include PUBLIC .)
-add_dependencies(os native_help)
+add_dependencies(os native-help)
 
 configure_file(id.rc.in id.rc @ONLY)
 add_executable(id WIN32
@@ -52,7 +52,7 @@ add_custom_command(OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/id.txt"
     COMMAND id makedoc
     COMMENT "Building documentation text file"
     WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}"
-    DEPENDS native_help
+    DEPENDS native-help
 )
 install(FILES "${CMAKE_CURRENT_BINARY_DIR}/id.txt" DESTINATION .)
 set_property(INSTALL "id.txt" PROPERTY CPACK_START_MENU_SHORTCUTS "Documentation")
