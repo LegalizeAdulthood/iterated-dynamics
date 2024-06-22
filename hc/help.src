@@ -1203,8 +1203,8 @@ These parameters can be used to:\
  o Define a disk video mode up to 32767x32767.  First select a disk video
    mode using <Delete>.  Then on the <V> screen enter both an X and a Y
    value at the Virtual Screen Total Pixels prompts.
- o Define a virtual video mode up to the size that fits in video memory.
-   First select a VESA video mode (dotmode=28) using <Delete>.  Then on
+ o Define a virtual video mode up to the size that fits in memory.
+   First select a video mode using <Delete>.  Then on
    the <V> screen enter both an X and a Y value at the Virtual Screen Total
    Pixels prompts.  The Keep Aspect prompt is used if the asked for virtual
    screen is larger than video memory.  If set, the X and Y values will both
