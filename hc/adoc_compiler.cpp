@@ -3,6 +3,7 @@
 #include "help_source.h"
 #include "messages.h"
 
+#include <algorithm>
 #include <cctype>
 #include <filesystem>
 #include <fstream>
@@ -62,8 +63,10 @@ public:
     bool output(PD_COMMANDS cmd, PD_INFO *pd);
 
 private:
-    void printerc(char c, int n);
-    void printers(char const *s, int n);
+    void emit_char(char c);
+    void emit_key_name();
+    void print_char(char c, int n);
+    void print_string(char const *s, int n);
 
     std::ostream &m_str;
     int m_content_num{};
@@ -147,20 +150,20 @@ bool AsciiDocProcessor::output(PD_COMMANDS cmd, PD_INFO *pd)
         return true;
 
     case PD_COMMANDS::PD_PRINT:
-        printers(pd->s, pd->i);
+        print_string(pd->s, pd->i);
         return true;
 
     case PD_COMMANDS::PD_PRINTN:
-        printerc(*pd->s, pd->i);
+        print_char(*pd->s, pd->i);
         return true;
 
     case PD_COMMANDS::PD_PRINT_SEC:
         return true;
 
     case PD_COMMANDS::PD_START_SECTION:
-        printerc('\n', 1);
-        printers(pd->title, std::strlen(pd->title));
-        printerc('\n', 2);
+        print_char('\n', 1);
+        print_string(pd->title, std::strlen(pd->title));
+        print_char('\n', 2);
         return true;
 
     case PD_COMMANDS::PD_START_TOPIC:
@@ -176,48 +179,92 @@ bool AsciiDocProcessor::output(PD_COMMANDS cmd, PD_INFO *pd)
     }
 }
 
-void AsciiDocProcessor::printerc(char c, int n)
+static bool is_key_name(const std::string &name)
 {
-    auto emit_char = [this](char c)
+    auto is_function_key_name = [](const std::string &name)
     {
-        if (m_start_of_line)
-        {
-            m_start_of_line = false;
-        }
-
-        while (m_spaces > 0)
-        {
-            m_str << ' ';
-            --m_spaces;
-        }
-
-        m_str << c;
-        m_newlines = 0;
+        return name[0] == 'F' && name.size() < 4 &&
+            std::all_of(name.begin() + 1, name.end(), [](char c) { return std::isdigit(c) != 0; });
+    };
+    auto is_modified_key_name = [](const std::string &prefix, const std::string &name)
+    {
+        return name.substr(0, prefix.size()) == prefix && is_key_name(name.substr(prefix.size()));
     };
 
+    return name.size() == 1                                                          //
+        || name == "Enter" || name == "Esc" || name == "Delete" || name == "Insert"  //
+        || name == "Tab" || name == "Space"                                          //
+        || name == "Shift" || name == "Ctrl" || name == "Alt"                        //
+        || name == "Keypad+" || name == "Keypad-"                                    //
+        || name == "PageDown" || name == "PageUp" || name == "Home" || name == "End" //
+        || name == "Left" || name == "Right" || name == "Up" || name == "Down"       //
+        || name == "Fn" || "Arrow"                                                   //
+        || is_function_key_name(name)                                                //
+        || is_modified_key_name("Shift+", name)                                      //
+        || is_modified_key_name("Ctrl+", name)                                       //
+        || is_modified_key_name("Alt+", name);
+}
+
+void AsciiDocProcessor::emit_char(char c)
+{
+    m_start_of_line = false;
+
+    while (m_spaces > 0)
+    {
+        m_str << ' ';
+        --m_spaces;
+    }
+
+    m_str << c;
+    m_newlines = 0;
+}
+
+void AsciiDocProcessor::emit_key_name()
+{
+    for (char c : m_key_name)
+    {
+        emit_char(c);
+    }
+}
+
+void AsciiDocProcessor::print_char(char c, int n)
+{
     while (n-- > 0)
     {
         if (m_inside_key)
         {
             if (c == '>')
             {
-                m_inside_key = false;
-                if (m_key_name.size() == 1)
+                if (m_key_name.empty())
                 {
-                    m_key_name = "kbd:[" + m_key_name + ']';
-                    printers(m_key_name.c_str(), static_cast<int>(m_key_name.size()));
+                    m_key_name += c;
                 }
                 else
                 {
-                    emit_char('<');
-                    printers(m_key_name.c_str(), static_cast<int>(m_key_name.size()));
-                    emit_char('>');
+                    m_inside_key = false;
+                    if (is_key_name(m_key_name))
+                    {
+                        m_key_name = "kbd:[" + m_key_name + ']';
+                        emit_key_name();
+                    }
+                    else if (m_key_name.substr(0,4) == "http")
+                    {
+                        print_string(m_key_name.c_str(), static_cast<int>(m_key_name.size()));
+                    }
+                    else
+                    {
+                        emit_char('<');
+                        emit_key_name();
+                        emit_char('>');
+                    }
                 }
             }
-            else if (!std::isprint(c))
+            else if (!std::isprint(c) || c == ' ')
             {
+                m_inside_key = false;
                 emit_char('<');
-                printers(m_key_name.c_str(), static_cast<int>(m_key_name.size()));
+                emit_key_name();
+                emit_char(c);
             }
             else
             {
@@ -250,20 +297,20 @@ void AsciiDocProcessor::printerc(char c, int n)
     }
 }
 
-void AsciiDocProcessor::printers(char const *s, int n)
+void AsciiDocProcessor::print_string(char const *s, int n)
 {
     if (n > 0)
     {
         while (n-- > 0)
         {
-            printerc(*s++, 1);
+            print_char(*s++, 1);
         }
     }
     else
     {
         while (*s != '\0')
         {
-            printerc(*s++, 1);
+            print_char(*s++, 1);
         }
     }
 }

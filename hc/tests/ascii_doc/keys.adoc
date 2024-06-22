@@ -6,7 +6,12 @@
 
 === Drawing Method
 
-The "passes option" (kbd:[X] options screen or "passes=" parameter) selects
-one of the single-pass, dual-pass, triple-pass, solid-guessing
-(default), solid-guessing after pass n, boundary tracing, tesseral,
-synchronous orbits, or orbits modes.
+The "passes option" (kbd:[X] options screen or "passes=" parameter).
+
+Try pressing kbd:[Enter], kbd:[Esc], kbd:[Left], kbd:[Right], kbd:[Up], kbd:[Down], kbd:[F12],
+kbd:[Insert], kbd:[Delete], kbd:[Tab], kbd:[Space], kbd:[Shift+B], kbd:[Ctrl+E], kbd:[PageUp],
+kbd:[PageDown], kbd:[Shift], kbd:[Ctrl], kbd:[Alt], kbd:[Ctrl+Keypad+], kbd:[Ctrl+Keypad-], kbd:[\],
+kbd:[<], kbd:[>], kbd:[Shift+Fn], kbd:[Home], kbd:[End] or kbd:[Alt+1].
+
+Sometimes you can type < or > to do something.  For degree <= -3, things
+happen.  kbd:[Ctrl+Arrow] keys.
