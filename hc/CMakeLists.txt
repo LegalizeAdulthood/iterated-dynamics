@@ -66,6 +66,5 @@ add_custom_command(
         help3.src
         help4.src
         help5.src)
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/index.adoc DESTINATION .)
 
 add_subdirectory(tests)
