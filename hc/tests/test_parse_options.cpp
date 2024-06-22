@@ -134,6 +134,14 @@ TEST_F(TestParseCompilerOptions, asciiDocOutputDir)
     EXPECT_EQ("out", m_options.output_dir);
 }
 
+TEST_F(TestParseCompilerOptions, asciiDocSwapPath)
+{
+    parse_options({"/adoc", "/r", "swap"});
+
+    EXPECT_EQ(hc::modes::ASCII_DOC, m_options.mode);
+    EXPECT_EQ("swap", m_options.swap_path);
+}
+
 TEST_F(TestParseCompilerOptions, firstFile)
 {
     parse_options({"foo.src"});
@@ -174,7 +182,6 @@ static std::vector<const char *> s_invalid_options[]{
     {"/adoc", "/h"},          //
     {"/adoc", "/m"},          //
     {"/adoc", "/p"},          //
-    {"/adoc", "/r", "."},     //
     {"/adoc", "/s"},          //
     {"/c", "/a"},             //
     {"/c", "/adoc"},          //

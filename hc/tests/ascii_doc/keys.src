@@ -1,0 +1,16 @@
+~HdrFile=helpdefs.h
+~HlpFile=id.hlp
+~Version=100
+~FormatExclude=8
+;
+;
+;
+~DocContents
+{3.   , 0, Doodads\, Bells\, and Whistles, FF}
+{3.1  , 1, "Drawing Method"}
+~Topic=Drawing Method
+
+The "passes option" (<X> options screen or "passes=" parameter)
+selects one of the single-pass, dual-pass, triple-pass, solid-guessing
+(default), solid-guessing after pass n, boundary tracing, tesseral,
+synchronous orbits, or orbits modes.

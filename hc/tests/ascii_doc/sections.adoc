@@ -1,5 +1,6 @@
 = Iterated Dynamics
 :toc:
+:experimental:
 
 == New Features in 1.0
 
@@ -49,7 +50,7 @@ basic analytic geometry.
 
 === Drawing Method
 
-The "passes option" (<X> options screen or "passes=" parameter) selects
+The "passes option" (kbd:[X] options screen or "passes=" parameter) selects
 one of the single-pass, dual-pass, triple-pass, solid-guessing
 (default), solid-guessing after pass n, boundary tracing, tesseral,
 synchronous orbits, or orbits modes.
@@ -58,7 +59,7 @@ synchronous orbits, or orbits modes.
 
 === 3D Mode Selection
 
-After hitting <3> and getting past the filename prompt and video mode
+After hitting kbd:[3] and getting past the filename prompt and video mode
 selection, you're presented with a "3D Mode Selection" screen.  If you
 wish to change the default for any of the following parameters, use the
 arrow keys to move through the menu.  When you're satisfied press
@@ -129,7 +130,7 @@ incremented.  The 2nd parameter is a maximum iteration to guarantee that
 the fractal will terminate.  The 3rd parameter is the number of ants.
 The 4th is the ant type 1 or 2.  The 5th parameter determines if the
 ants wrap the screen or stop at the edge.  The 6th parameter is a random
-seed.  You can slow down the ants to see them better using the <P>
+seed.  You can slow down the ants to see them better using the kbd:[P]
 screen Orbit Delay.
 
 == Stone Soup With Pixels: The Authors

@@ -146,9 +146,10 @@ Options parse_options(int argc, char **argv)
                 {
                     throw std::runtime_error("Missing argument for /r");
                 }
-                if (result.mode == modes::COMPILE || result.mode == modes::PRINT)
+                if (result.mode == modes::COMPILE || result.mode == modes::PRINT ||
+                    result.mode == modes::ASCII_DOC)
                 {
-                    result.swappath = swap_path;
+                    result.swap_path = swap_path;
                 }
                 else
                 {

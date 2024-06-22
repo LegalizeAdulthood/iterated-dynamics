@@ -1401,7 +1401,7 @@ HelpCompiler::~HelpCompiler()
     if (g_src.swap_file != nullptr)
     {
         std::fclose(g_src.swap_file);
-        std::remove(m_options.swappath.c_str());
+        std::remove(m_options.swap_path.c_str());
     }
 }
 
@@ -1474,12 +1474,14 @@ void HelpCompiler::read_source_file()
 {
     s_src_filename = m_options.fname1.empty() ? DEFAULT_SRC_FNAME : m_options.fname1;
 
-    m_options.swappath += SWAP_FNAME;
+    std::filesystem::path swap_path{m_options.swap_path};
+    swap_path /= SWAP_FNAME;
+    m_options.swap_path = swap_path.string();
 
-    g_src.swap_file = std::fopen(m_options.swappath.c_str(), "w+b");
+    g_src.swap_file = std::fopen(m_options.swap_path.c_str(), "w+b");
     if (g_src.swap_file == nullptr)
     {
-        throw std::runtime_error("Cannot create swap file \"" + m_options.swappath + "\"");
+        throw std::runtime_error("Cannot create swap file \"" + m_options.swap_path + "\"");
     }
     g_src.swap_pos = 0;
 

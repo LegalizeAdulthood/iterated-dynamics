@@ -3,6 +3,7 @@
 #include "help_source.h"
 #include "messages.h"
 
+#include <cctype>
 #include <filesystem>
 #include <fstream>
 #include <helpcom.h>
@@ -72,6 +73,8 @@ private:
     int m_newlines{};
     bool m_start_of_line{};
     std::string m_content;
+    bool m_inside_key{};
+    std::string m_key_name;
 };
 
 bool AsciiDocProcessor::info(PD_COMMANDS cmd, PD_INFO *pd)
@@ -175,9 +178,58 @@ bool AsciiDocProcessor::output(PD_COMMANDS cmd, PD_INFO *pd)
 
 void AsciiDocProcessor::printerc(char c, int n)
 {
+    auto emit_char = [this](char c)
+    {
+        if (m_start_of_line)
+        {
+            m_start_of_line = false;
+        }
+
+        while (m_spaces > 0)
+        {
+            m_str << ' ';
+            --m_spaces;
+        }
+
+        m_str << c;
+        m_newlines = 0;
+    };
+
     while (n-- > 0)
     {
-        if (c == ' ')
+        if (m_inside_key)
+        {
+            if (c == '>')
+            {
+                m_inside_key = false;
+                if (m_key_name.size() == 1)
+                {
+                    m_key_name = "kbd:[" + m_key_name + ']';
+                    printers(m_key_name.c_str(), static_cast<int>(m_key_name.size()));
+                }
+                else
+                {
+                    emit_char('<');
+                    printers(m_key_name.c_str(), static_cast<int>(m_key_name.size()));
+                    emit_char('>');
+                }
+            }
+            else if (!std::isprint(c))
+            {
+                emit_char('<');
+                printers(m_key_name.c_str(), static_cast<int>(m_key_name.size()));
+            }
+            else
+            {
+                m_key_name += c;
+            }
+        }
+        else if (c == '<')
+        {
+            m_inside_key = true;
+            m_key_name.clear();
+        }
+        else if (c == ' ')
         {
             ++m_spaces;
         }
@@ -191,21 +243,9 @@ void AsciiDocProcessor::printerc(char c, int n)
                 m_str << c;
             }
         }
-        else
+        else 
         {
-            if (m_start_of_line)
-            {
-                m_start_of_line = false;
-            }
-
-            while (m_spaces > 0)
-            {
-                m_str << ' ';
-                --m_spaces;
-            }
-
-            m_str << c;
-            m_newlines = 0;
+            emit_char(c);
         }
     }
 }
@@ -257,7 +297,8 @@ void AsciiDocCompiler::print_ascii_doc()
         throw std::runtime_error("Couldn't open output file " + out_file.string());
     }
     str << "= Iterated Dynamics\n"
-           ":toc:\n";
+           ":toc:\n"
+           ":experimental:\n";
 
     AsciiDocProcessor processor(str);
     auto info_cb = [](PD_COMMANDS cmd, PD_INFO *pd, void *info)

@@ -16,8 +16,12 @@ endfunction()
 
 configure_file(toc.src ${HC_TEST_DIR}/toc.src COPYONLY)
 file(MAKE_DIRECTORY ${HC_TEST_DIR}/toc)
-add_hc_test(toc PARAMETERS /adoc /o toc toc.src)
+add_hc_test(toc PARAMETERS /adoc /r toc /o toc toc.src)
 
 configure_file(sections.src ${HC_TEST_DIR}/sections.src COPYONLY)
 file(MAKE_DIRECTORY ${HC_TEST_DIR}/sections)
-add_hc_test(sections PARAMETERS /adoc /o sections sections.src)
+add_hc_test(sections PARAMETERS /adoc /r sections /o sections sections.src)
+
+configure_file(keys.src ${HC_TEST_DIR}/keys.src COPYONLY)
+file(MAKE_DIRECTORY ${HC_TEST_DIR}/keys)
+add_hc_test(keys PARAMETERS /adoc /r keys /o keys keys.src)

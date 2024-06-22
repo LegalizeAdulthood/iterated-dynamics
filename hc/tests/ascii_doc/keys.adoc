@@ -1,0 +1,12 @@
+= Iterated Dynamics
+:toc:
+:experimental:
+
+== Doodads, Bells, and Whistles
+
+=== Drawing Method
+
+The "passes option" (kbd:[X] options screen or "passes=" parameter) selects
+one of the single-pass, dual-pass, triple-pass, solid-guessing
+(default), solid-guessing after pass n, boundary tracing, tesseral,
+synchronous orbits, or orbits modes.

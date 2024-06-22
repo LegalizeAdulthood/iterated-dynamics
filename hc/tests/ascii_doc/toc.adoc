@@ -1,5 +1,6 @@
 = Iterated Dynamics
 :toc:
+:experimental:
 
 == New Features in 1.0
 
