@@ -1416,7 +1416,7 @@ Any subsequent images are ignored.  Make sure that the minimum image size
 isn't set too small on the parameters screen.
 
 ~OnlineFF
-"Sorry...it's a read only file, can't del <filename>"\
+"Sorry...it's a read only file, can't del [filename]"\
 "Sorry....can't rename"\
 The file which you were trying to delete or rename has the read only
 attribute set, you'll need to reset this with your operating system before
@@ -1840,7 +1840,7 @@ mode or range between editors in 'y' mode or entire palette if in "normal"
 mode.
 
 <!> <@> <#>\
-Swap R<->G, G<->B, and R<->B columns. <!>, <@>, and <#> are shifted 1, 2,
+Swap R/G, G/B, and R/B columns. <!>, <@>, and <#> are shifted 1, 2,
 and 3, which you may find easier to remember.
 
 <U>\
