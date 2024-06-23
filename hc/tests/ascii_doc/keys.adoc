@@ -15,3 +15,5 @@ kbd:[<], kbd:[>], kbd:[Shift+Fn], kbd:[Home], kbd:[End] or kbd:[Alt+1].
 
 Sometimes you can type < or > to do something.  For degree <= -3, things
 happen.  kbd:[Ctrl+Arrow] keys.
+
+  Indented text doesn't use kbd macro for keys <A>.

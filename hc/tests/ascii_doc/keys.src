@@ -21,3 +21,5 @@ Try pressing <Enter>, <Esc>, <Left>, <Right>, <Up>, <Down>, <F12>,
 
 Sometimes you can type < or > to do something.  For degree <= -3, things happen.
 <Ctrl+Arrow> keys.
+
+  Indented text doesn't use kbd macro for keys <A>.

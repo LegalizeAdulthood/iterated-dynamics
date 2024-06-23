@@ -81,6 +81,7 @@ private:
     bool m_inside_key{};
     std::string m_key_name;
     bool m_inside_bullet{};
+    bool m_indented_line{};
 };
 
 bool AsciiDocProcessor::info(PD_COMMANDS cmd, PD_INFO *pd)
@@ -219,6 +220,10 @@ static bool is_key_name(const std::string &name)
 
 void AsciiDocProcessor::emit_char(char c)
 {
+    if (m_start_of_line)
+    {
+        m_indented_line = m_spaces > 0;
+    }
     m_start_of_line = false;
 
     while (m_spaces > 0)
@@ -292,7 +297,7 @@ void AsciiDocProcessor::print_char(char c, int n)
         {
             m_inside_bullet = true;
         }
-        else if (c == '<')
+        else if (c == '<' && !m_indented_line)
         {
             m_inside_bullet = false;
             m_inside_key = true;
@@ -316,6 +321,7 @@ void AsciiDocProcessor::print_char(char c, int n)
             m_inside_bullet = false;
             ++m_newlines;
             m_start_of_line = true;
+            m_indented_line = false;
             m_spaces = 0;   // strip spaces before a new-line
             if (m_newlines <= 2)
             {
